@@ -131,8 +131,8 @@ theorem exp1_rows : ∀ e ∈ Examples.all, ∃ v ∈ (e.feature? "verb").bind e
   decide
 
 theorem rows_selectsCP :
-    ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb").bind entryOf,
-      (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal) := by
+    Datum.Holds (fun e ↦ (e.feature? "verb").bind entryOf)
+      (fun e v ↦ (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal)) Examples.all 4 := by
   decide
 
 /-! ### Experiment 2 -/

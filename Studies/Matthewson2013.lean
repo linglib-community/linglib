@@ -106,8 +106,8 @@ def flavorTable : List (String × ModalFlavor) :=
     ("teleological", .circumstantial)]
 
 theorem rows_resolve :
-    ∀ e ∈ Examples.all, ∀ s ∈ e.feature? "modal", s ≠ "dim" →
-      (e.parse? "modal" modalTable).isSome := by
+    Datum.Holds (·.feature? "modal")
+      (fun e s ↦ s ≠ "dim" → (e.parse? "modal" modalTable).isSome) Examples.all 52 := by
   decide
 
 /-! ### Force and flavour (§3, §4) -/
@@ -197,22 +197,34 @@ def perspectiveOf : String → Option TemporalPerspective
 
 -- (38), (48), (53), (56), (73), (83)
 theorem dim_rows :
-    ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "orientation").bind orientationOf,
-      (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by
+    Datum.Holds (fun e ↦ (e.feature? "orientation").bind orientationOf)
+      (fun e o ↦
+        (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)))
+      Examples.all 36 := by
   decide
+
+/-- The modal and the temporal orientation a row records. -/
+def modalOrientation? (e : Datum) : Option (ModalItem × TemporalOrientation) :=
+  do pure (← e.parse? "modal" modalTable, ← (e.feature? "orientation").bind orientationOf)
 
 -- §4
 theorem circumstantial_future :
-    ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m.Circumstantial →
-      ∀ o ∈ (e.feature? "orientation").bind orientationOf, o = .future := by
+    Datum.Holds modalOrientation? (fun _ p ↦ p.1.Circumstantial → p.2 = .future)
+      Examples.all 36 := by
   decide
 
 theorem dim_circumstantial :
-    ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m.Circumstantial →
-      ∀ o ∈ (e.feature? "orientation").bind orientationOf,
-        (e.judgment = .acceptable ↔ e.feature? "prospective" = some "true") := by
-  intro e he m hm hc o ho
-  simpa [circumstantial_future e he m hm hc o ho] using dim_rows e he o ho
+    Datum.Holds modalOrientation?
+      (fun e p ↦ p.1.Circumstantial →
+        (e.judgment = .acceptable ↔ e.feature? "prospective" = some "true"))
+      Examples.all 36 := by
+  refine ⟨fun e he ⟨m, o⟩ hp hc ↦ ?_, circumstantial_future.2⟩
+  have ho : o ∈ (e.feature? "orientation").bind orientationOf := by
+    simp only [modalOrientation?, Option.mem_def] at hp
+    cases hm : e.parse? "modal" modalTable <;>
+      cases h : (e.feature? "orientation").bind orientationOf <;> simp_all
+  have hf : o = .future := circumstantial_future.1 e he _ hp hc
+  simpa [hf] using dim_rows.1 e he o ho
 
 -- Fig. 4
 theorem fig4 :
@@ -227,7 +239,7 @@ theorem unmarked_orientation :
     Condoravdi2002.Scope.modal.orientation = .future ∧
       ∀ e ∈ Examples.all, e.feature? "prospective" = some "false" → e.judgment = .acceptable →
         ∀ o ∈ (e.feature? "orientation").bind orientationOf, o ≠ .future :=
-  ⟨rfl, fun e he hp ha o ho hf ↦ by simpa [hp, hf] using (dim_rows e he o ho).1 ha⟩
+  ⟨rfl, fun e he hp ha o ho hf ↦ by simpa [hp, hf] using (dim_rows.1 e he o ho).1 ha⟩
 
 -- (62)
 theorem no_actuality_entailment :

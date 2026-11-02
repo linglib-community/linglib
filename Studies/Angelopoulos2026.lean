@@ -192,11 +192,11 @@ def NominalSort.ofString? : String → Option NominalSort
 
 -- (33), (34), (36), (37)
 theorem rows_sort_diagnostics :
-    ∀ r ∈ Examples.all, ∀ s ∈ ((r.feature? "nounSort").bind NominalSort.ofString?).toList,
-      (r.feature? "diagnostic" = some "truth-predicates" →
+    Datum.Holds (fun r ↦ (r.feature? "nounSort").bind NominalSort.ofString?)
+      (fun r s ↦ (r.feature? "diagnostic" = some "truth-predicates" →
         (r.judgment = .acceptable ↔ s.truthEvaluable)) ∧
       (r.feature? "diagnostic" = some "occurrence-predicates" →
-        (r.judgment = .acceptable ↔ s.occurrenceCompatible)) := by
+        (r.judgment = .acceptable ↔ s.occurrenceCompatible))) Examples.all 8 := by
   decide +kernel
 
 theorem situation_clause_factive :

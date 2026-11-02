@@ -103,8 +103,10 @@ instance {T : Type*} [LinearOrder T] (v : Aspect.ViewpointType) (f : Reichenbach
   cases v <;> dsimp only [frame] <;> infer_instance
 
 theorem rows_annotations :
-    ∀ r ∈ Examples.all, ∀ m ∈ (r.feature? "aux" >>= auxiliary?).toList,
-      ∀ ann ∈ (r.feature? "frame" >>= Annotation.parse?).toList, frame m.viewpoint ann.frame := by
+    Datum.Holds
+      (fun r ↦ do
+        pure (← r.feature? "aux" >>= auxiliary?, ← r.feature? "frame" >>= Annotation.parse?))
+      (fun _ p ↦ frame p.1.viewpoint p.2.frame) Examples.all 3 := by
   decide +kernel
 
 /-- The annotations of the sentences with a perfect auxiliary, the *sudah* sentences of (5). -/
@@ -194,8 +196,10 @@ theorem rows_modal_nominalisation :
 
 -- (44), (48)
 theorem rows_equational :
-    ∀ r ∈ Examples.all, ∀ key ∈ ["adalah", "bukan"], ∀ j ∈ (r.feature? key).toList,
-      (j = "acceptable" ↔ r.feature? "predicate" = some "nominal") := by
+    Datum.Holds
+      (fun r ↦ match ["adalah", "bukan"].filterMap r.feature? with | [] => none | js => some js)
+      (fun r js ↦ ∀ j ∈ js, (j = "acceptable" ↔ r.feature? "predicate" = some "nominal"))
+      Examples.all 9 := by
   decide +kernel
 
 end Arka2013

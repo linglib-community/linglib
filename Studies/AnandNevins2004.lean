@@ -266,25 +266,27 @@ def singleReport? (r : Datum) : Option (Finset (Finset Coord) × List Coord) :=
 /-- A judged reading with every embedded indexical at the reported context is acceptable exactly
 when an operator option of the verb overwrites all their coordinates. -/
 theorem rows_reported :
-    ∀ r ∈ Examples.all, ∀ p ∈ (singleReport? r).toList, ∀ x ∈ r.readings,
+    Datum.Holds singleReport? (fun r p ↦ ∀ x ∈ r.readings,
       x.1 ∈ ["reported context", "both reported"] →
-        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∀ k ∈ p.2, k ∈ S) := by
+        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∀ k ∈ p.2, k ∈ S)) Examples.all 18 := by
   decide +kernel
 
 /-- A judged reading with every embedded indexical at the utterance context is acceptable exactly
 when an operator option of the verb overwrites none of their coordinates. -/
 theorem rows_utterance :
-    ∀ r ∈ Examples.all, ∀ p ∈ (singleReport? r).toList, ∀ x ∈ r.readings,
+    Datum.Holds singleReport? (fun r p ↦ ∀ x ∈ r.readings,
       x.1 ∈ ["utterance context", "both utterance"] →
-        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∀ k ∈ p.2, k ∉ S) := by
+        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∀ k ∈ p.2, k ∉ S)) Examples.all 18 := by
   decide +kernel
 
 /-- A judged mixed reading is acceptable iff an operator option of the verb shifts one embedded
 indexical but not another, which is Shift-Together (16). -/
 theorem rows_mixed :
-    ∀ r ∈ Examples.all, ∀ p ∈ (singleReport? r).toList, ∀ x ∈ r.readings,
+    Datum.Holds singleReport? (fun r p ↦ ∀ x ∈ r.readings,
       "mixed".toList <+: x.1.toList →
-        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∃ k ∈ p.2, ∃ k' ∈ p.2, k ∈ S ∧ k' ∉ S) := by
+        (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∃ k ∈ p.2, ∃ k' ∈ p.2, k ∈ S ∧ k' ∉ S))
+      Examples.all 18 := by
+  refine ⟨?_, by decide +kernel⟩
   decide +kernel
 
 /-- In the lower of two reports, a judged reading is acceptable iff the verbs' operator options make

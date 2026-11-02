@@ -146,8 +146,8 @@ theorem all_patterns_attested (p : InflectionPattern) :
 
 /-- In the split/doubled examples the category carried by both elements is the subject. -/
 theorem splitDoubled_doubles_subject :
-    ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
-      m.pattern = .splitDoubled → m.doubled = {.subj} := by
+    Datum.Holds InflectionalMarking.ofRow?
+      (fun _ m ↦ m.pattern = .splitDoubled → m.doubled = {.subj}) Examples.all 13 := by
   decide +kernel
 
 /-! ### Negative auxiliaries -/

@@ -443,8 +443,8 @@ def readingOf : String → Option BeforeReading
   | _ => none
 
 theorem rows_nonVeridical_before :
-    ∀ e ∈ Examples.all, ∀ r ∈ (e.feature? "reading" >>= readingOf).toList, r ≠ .veridical →
-      e.feature? "connective" = some "before" := by
+    Datum.Holds (fun e ↦ e.feature? "reading" >>= readingOf)
+      (fun e r ↦ r ≠ .veridical → e.feature? "connective" = some "before") Examples.all 5 := by
   decide +kernel
 
 end BeaverCondoravdi2003

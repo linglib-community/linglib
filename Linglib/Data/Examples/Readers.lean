@@ -34,8 +34,9 @@ the reader reads, so that the fit cannot go silently vacuous.
   reads off a row, and the count of rows a reader reads, the coverage witness beside a fit.
 * `Datum.FitsVerdict`: a prediction's fit with the truth-value judgment of a row whose task is
   truth in the context.
-* `Datum.Checks`, `Datum.ChecksVerdict`: the statement a study makes, a fit over the rows
-  bundled with its coverage count.
+* `Datum.Holds`: the statement a study makes, a claim over what a reader reads off the rows
+  bundled with its coverage count; `Datum.Checks` and `Datum.ChecksVerdict` are its fits to the
+  judgment and the verdict.
 
 ## Main statements
 
@@ -189,15 +190,27 @@ instance {α : Type*} (f : Datum → Option α) (rows : List Datum) (n : ℕ) :
     Decidable (ReadCount f rows n) :=
   inferInstanceAs (Decidable (_ = _))
 
+/-- The claim `Q` holds of every row of `rows` and every value the reader `f` reads off it, and
+`f` reads exactly `n` of them: the one statement a study makes about a cluster of rows, whose
+count keeps it from going silently vacuous. A chain of readers is one reader, composed in
+`Option`, so that the count is of the rows the claim is about. -/
+def Holds {α : Type*} (f : Datum → Option α) (Q : Datum → α → Prop) (rows : List Datum)
+    (n : ℕ) : Prop :=
+  (∀ e ∈ rows, ∀ a ∈ f e, Q e a) ∧ ReadCount f rows n
+
+instance {α : Type*} (f : Datum → Option α) (Q : Datum → α → Prop) [∀ e a, Decidable (Q e a)]
+    (rows : List Datum) (n : ℕ) : Decidable (Holds f Q rows n) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 /-- The prediction `P` fits every row of `rows` the reader `f` reads, and `f` reads exactly `n`
-of them: the one statement a study makes about a cluster of rows. -/
+of them: `Holds` for the band of the judgment. -/
 def Checks {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) (rows : List Datum)
     (n : ℕ) : Prop :=
-  (∀ e ∈ rows, e.Fits f P) ∧ ReadCount f rows n
+  Holds f (fun e a ↦ e.judgment.band = P a) rows n
 
 instance {α : Type*} (f : Datum → Option α) (P : α → Judgment.Band) (rows : List Datum)
     (n : ℕ) : Decidable (Checks f P rows n) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+  inferInstanceAs (Decidable (Holds _ _ _ _))
 
 /-- The truth-value counterpart of `Datum.Checks`: the prediction matches every reported verdict
 on a row the reader reads, and exactly `n` rows have both. -/

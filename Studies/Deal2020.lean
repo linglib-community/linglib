@@ -326,25 +326,25 @@ def verbCoords? (r : Datum) : Option (Verb × List Coord) :=
 /-- A reading of the rows' indexicals is available iff a complement the verb selects overwrites
 exactly the coordinates it shifts, per (G2) and Shift Together (72). -/
 theorem rows_shift :
-    ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings,
-      ∀ ps ∈ (shifted? x.1).toList,
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
+    Datum.Holds verbCoords? (fun r p ↦ ∀ x ∈ r.readings, ∀ ps ∈ (shifted? x.1).toList,
+      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)))
+      Examples.all 24 := by
   decide +kernel
 
 /-- A judged de se reading of the rows' shifted indexicals is available exactly when a complement
 the verb selects shifts their coordinates. -/
 theorem rows_deSe :
-    ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings, x.1 = "de se" →
-      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
+    Datum.Holds verbCoords? (fun r p ↦ ∀ x ∈ r.readings, x.1 = "de se" →
+      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s)) Examples.all 24 := by
   decide +kernel
 
 /-- (G3) in the rows: a judged non-de se reading of the rows' shifted indexicals is available
 exactly when a complement the verb selects shifts their coordinates with operators above the
 complementizer, `eventShifted n c = shifted n \ shifted c`. -/
 theorem rows_nonDeSe :
-    ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ c ∈ p.1.cPosition.toList,
+    Datum.Holds verbCoords? (fun r p ↦ ∀ c ∈ p.1.cPosition.toList,
       ∀ x ∈ r.readings, x.1 = "non-de se" →
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
+        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c)) Examples.all 24 := by
   decide +kernel
 
 /-- In the lowest of two reports, a first-person reading is available iff the two verbs' complements

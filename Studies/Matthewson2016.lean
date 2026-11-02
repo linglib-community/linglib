@@ -329,7 +329,7 @@ theorem marking_mirror :
       ∀ e ∈ Matthewson2013.Examples.all,
         ∀ o ∈ (e.feature? "orientation").bind Matthewson2013.orientationOf,
           (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) :=
-  ⟨by decide, Matthewson2013.dim_rows⟩
+  ⟨by decide, Matthewson2013.dim_rows.1⟩
 
 /-! ### Typology (§18.5) -/
 

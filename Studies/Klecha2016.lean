@@ -147,9 +147,9 @@ def cells : List (String × Finset Ordering) :=
 /-- (1), (2), (3): an orientation of a corpus sentence is available exactly when its attitude's
 readings admit it. -/
 theorem rows_readings :
-    ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb" >>= verbOf).toList, ∀ a ∈ v.attitude.toList,
+    Datum.Holds (fun e ↦ e.feature? "verb" >>= verbOf) (fun e v ↦ ∀ a ∈ v.attitude.toList,
       ∀ c ∈ cells, ∀ j ∈ (e.feature? c.1).toList,
-        (j = "available" ↔ c.2 ⊆ readings a Finset.univ) := by
+        (j = "available" ↔ c.2 ⊆ readings a Finset.univ)) Examples.all 5 := by
   decide +kernel
 
 end Klecha2016

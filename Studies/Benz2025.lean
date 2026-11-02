@@ -388,8 +388,10 @@ instance (e : Datum) : Decidable (CellAcceptable e) := by
 
 -- Table 3, (81), (84), (86), (88)
 theorem allowed_rows :
-    ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "outer").bind elementOf,
-      ∀ i ∈ (e.feature? "inner").bind elementOf, (Allowed o i ↔ CellAcceptable e) := by
+    Datum.Holds
+      (fun e ↦ do
+        pure (← (e.feature? "outer").bind elementOf, ← (e.feature? "inner").bind elementOf))
+      (fun e p ↦ (Allowed p.1 p.2 ↔ CellAcceptable e)) Examples.all 10 := by
   decide
 
 /-! ### German resultative data (§4.2)
@@ -407,8 +409,9 @@ theorem rsp_rows_have_entries :
   decide
 
 theorem rsp_verb_classes :
-    ∀ e ∈ rspRows, ∀ v ∈ (e.feature? "m_predicate").bind entryOf,
-      (e.feature? "verb_class" = some "unaccusative" ↔ v.toVerb.IsUnaccusative) := by
+    Datum.Holds (fun e ↦ (e.feature? "m_predicate").bind entryOf)
+      (fun e v ↦ (e.feature? "verb_class" = some "unaccusative" ↔ v.toVerb.IsUnaccusative))
+      rspRows 5 := by
   decide
 
 -- (115e)

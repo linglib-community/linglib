@@ -220,15 +220,16 @@ def formOf (row : Datum) : Option AntonymForm :=
   | _, _ => none
 
 theorem row_factors :
-    ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind lookup,
-      (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
+    Datum.Holds (fun row ↦ (row.feature? "adjective").bind lookup)
+      (fun row a ↦ (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
         (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) ∧
-        (row.feature? "polarity" = some "positive" ↔ a.polarity = .positive) := by
+        (row.feature? "polarity" = some "positive" ↔ a.polarity = .positive)) Examples.all 6 := by
   decide
 
 theorem negated_iff_not :
-    ∀ row ∈ Examples.all, ∀ n ∈ row.feature? "negation",
-      (n = "negated" ↔ " not ".toList <:+: row.primaryText.toList) := by
+    Datum.Holds (·.feature? "negation")
+      (fun row n ↦ (n = "negated" ↔ " not ".toList <:+: row.primaryText.toList))
+      Examples.all 6 := by
   decide
 
 end AlexandropoulouGotzner2024a
