@@ -59,7 +59,7 @@ and then right to left.
 
 namespace HeinzLai2013
 
-open List
+open List Subregular
 
 /-- A symbol of the alphabet of §3 is a harmonizing vowel `+` or `−`, the inert class `C`, or an
 opaque vowel `⊞` or `⊟`. -/
@@ -190,7 +190,7 @@ theorem not_isRightSubsequential_of_isSourGrapes {f : List Seg → List Seg}
     (hlen : ∀ w, (f w).length = w.length) (hf : IsSourGrapes f)
     (hnone : ∀ n, f (replicate n .minus) = replicate n .minus) : ¬ IsRightSubsequential f := by
   intro hR
-  obtain ⟨N, hN⟩ := hR.boundedDependence_left hlen
+  obtain ⟨N, hN⟩ := BoundedDependence.left_of_isRightSubsequential hlen hR
   have h : (f (.plus :: replicate (N + 1) .minus))[N + 1]?
       = (f (.minus :: replicate (N + 1) .minus))[N + 1]? := hN (N + 1) (by simp)
   rw [(hf (N + 1)).1, ← replicate_succ, hnone] at h

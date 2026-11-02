@@ -33,7 +33,7 @@ OCP-merged input, hull-closed — fusion then spreading. Timing slot `i` surface
 
 The map is the flagship *unbounded circumambient* process: whether a position changes
 depends on unboundedly distant material on **both** sides, in the strong witness form
-`utp.requiresBothSides` — perturbing either far side alone reverts the change — with the
+`utp.isUnboundedCircumambient` — perturbing either far side alone reverts the change — with the
 weaker `utp.twoSidedUnboundedDependence` as a corollary. `Studies/MeinhardtEtAl2024` excludes
 the map from the non-interacting bimachines, and `Studies/LamontOHaraSmith2019` shows it weakly
 deterministic in Heinz and Lai's sense.
@@ -60,7 +60,7 @@ deterministic in Heinz and Lai's sense.
   operator in the pointwise H-order: extensive, monotone, idempotent.
 * `utp.mem_range_map_iff` — the outputs of plateauing are the words without an `H O H`
   subsequence.
-* `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
+* `utp.isUnboundedCircumambient` — deleting either flanking H reverts the plateau target, at
   every distance.
 
 ## References
@@ -86,7 +86,7 @@ The string reads back into two-tier representations, and plateauing on represent
 OCP-fusion followed by hull-closure of the association lines (Hyman and Katamba's rule as an
 operation on structures). -/
 
-open Autosegmental
+open Autosegmental Subregular
 
 namespace AssociationState
 
@@ -477,12 +477,12 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
-/-- UTP requires both sides. Its trigger is the two-sided window conjunction, so deleting either
-flanking H reverts the plateau target. -/
-theorem utp.requiresBothSides : RequiresBothSides utp.map :=
-  utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def
+/-- UTP is unbounded circumambient. Its trigger is the two-sided window conjunction, so deleting
+either flanking H reverts the plateau target. -/
+theorem utp.isUnboundedCircumambient : IsUnboundedCircumambient utp.map :=
+  utp.isUnboundedCircumambient_of_surfaces_iff fun _ _ => utp.surfaces_def
 
 theorem utp.twoSidedUnboundedDependence : TwoSidedUnboundedDependence utp.map :=
-  utp.requiresBothSides.twoSidedUnboundedDependence
+  utp.isUnboundedCircumambient.twoSidedUnboundedDependence
 
 end Tone

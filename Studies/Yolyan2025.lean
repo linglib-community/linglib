@@ -22,8 +22,8 @@ The negative results of §5.3 share one argument. On a far-left and on a far-rig
 perturbation of a witness word the target is unchanged, so ⊙ is conjunction there and both
 one-sided outputs are forced true; each transports to the base word by one-sided locality, and
 recombining forces the base target unchanged.
-`not_isBmrsWeaklyDeterministic_of_requiresBothSides` proves this once from the substrate's
-`RequiresBothSides` witness, and Sour Grapes harmony (Thm. 5.2, the conjecture of
+`not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient` proves this once from the substrate's
+`IsUnboundedCircumambient` witness, and Sour Grapes harmony (Thm. 5.2, the conjecture of
 Heinz and Lai), Copperbelt Bemba high-tone spreading (Prop. 5.4) and Tutrugbu ATR harmony
 (Prop. 5.5, through `McCollumEtAl2020`) are its instances. On the positive side, with no
 underlying stress the input predicate is constantly false and ⊙ collapses to disjunction,
@@ -149,14 +149,18 @@ def IsBmrsWeaklyDeterministic (f : List α → List α) : Prop :=
 
 /-! ### The exclusion argument of §5.3 -/
 
-/-- A map that requires both sides is not weakly deterministic, with Thm. 5.2 and Props. 5.4 and 5.5
+/-- An unbounded circumambient map is not weakly deterministic, with Thm. 5.2 and Props. 5.4 and 5.5
 as instances. -/
-theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
-    (hf : RequiresBothSides f) : ¬ IsBmrsWeaklyDeterministic f := by
+theorem not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient {f : List α → List α}
+    (hf : IsUnboundedCircumambient f) : ¬ IsBmrsWeaklyDeterministic f := by
   rintro ⟨L, R, PL, PR, outL, outR, hPL, hPR, hm⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
-  obtain ⟨uL, ⟨hLlen, hLag⟩, hLsym, hLrev⟩ := hw .left
-  obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
+  obtain ⟨uL, hLpert, hLrev⟩ := hw .left
+  obtain ⟨uR, hRpert, hRrev⟩ := hw .right
+  have hLsym := hLpert.getElem?_eq
+  have hRsym := hRpert.getElem?_eq
+  obtain ⟨hLlen, hLag⟩ := hLpert
+  obtain ⟨hRlen, hRag⟩ := hRpert
   simp only [Edge.window_left, Nat.sub_zero] at hLag
   simp only [Edge.window_right, Nat.add_zero] at hRag
   set σ := base[i]'hi with hσ
@@ -165,7 +169,7 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
   have hLboth : Eval PL uL i (.call (outL σ) x) true ∧
       Eval PR uL i (.call (outR σ) x) true := by
     obtain ⟨bL, bR, hevL, hevR, hcomb⟩ :=
-      ((hm uL).2 i (hLlen ▸ hi) σ).mp (hLrev.trans (hLsym.trans hbase))
+      ((hm uL).2 i (hLlen ▸ hi) σ).mp (hLrev.trans hbase)
     rw [decide_eq_true (hLsym.trans hbase), combine_true, eq_comm,
       Bool.and_eq_true] at hcomb
     exact ⟨hcomb.1 ▸ hevL, hcomb.2 ▸ hevR⟩
@@ -173,7 +177,7 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
   have hRboth : Eval PL uR i (.call (outL σ) x) true ∧
       Eval PR uR i (.call (outR σ) x) true := by
     obtain ⟨bL, bR, hevL, hevR, hcomb⟩ :=
-      ((hm uR).2 i (hRlen ▸ hi) σ).mp (hRrev.trans (hRsym.trans hbase))
+      ((hm uR).2 i (hRlen ▸ hi) σ).mp (hRrev.trans hbase)
     rw [decide_eq_true (hRsym.trans hbase), combine_true, eq_comm,
       Bool.and_eq_true] at hcomb
     exact ⟨hcomb.1 ▸ hevL, hcomb.2 ▸ hevR⟩
@@ -216,8 +220,8 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
         fun hv ↦ hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
 -- Thm. 5.2
-theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
-  RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
+theorem sourGrapes_isUnboundedCircumambient : IsUnboundedCircumambient sourGrapes :=
+  IsUnboundedCircumambient.of_flanks (fill := SG.minus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d ↦ 2 * d + 1)
     (t := fun d ↦ d + 1) (fun d ↦ by omega) (fun d ↦ by omega)
     (fun d ↦ by rw [sourGrapes_flankWord_mid]; simp)
@@ -227,13 +231,13 @@ theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
 -- Thm. 5.2
 theorem sourGrapes_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic sourGrapes :=
-  not_isBmrsWeaklyDeterministic_of_requiresBothSides sourGrapes_requiresBothSides
+  not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient sourGrapes_isUnboundedCircumambient
 
 -- Example 2.12, Prop. 5.5
 theorem tutrugbu_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic McCollumEtAl2020.tutrugbu.map :=
-  not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    McCollumEtAl2020.tutrugbu_requiresBothSides
+  not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient
+    McCollumEtAl2020.tutrugbu_isUnboundedCircumambient
 
 /-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
 
@@ -318,14 +322,14 @@ private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
 -- Prop. 5.4
-theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
-  bemba.requiresBothSides_of_flanks (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3)
+theorem bemba_isUnboundedCircumambient : IsUnboundedCircumambient bemba.map :=
+  bemba.isUnboundedCircumambient_of_flanks (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3)
     (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ bembaSurfaces_flankWord_HL)
     (fun d ↦ not_bembaSurfaces_flankWord_LL) (fun d ↦ not_bembaSurfaces_flankWord_HH)
 
 -- Prop. 5.4
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
-  not_isBmrsWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
+  not_isBmrsWeaklyDeterministic_of_isUnboundedCircumambient bemba_isUnboundedCircumambient
 
 /-! ### LHOL stress as a simultaneous application (§5.2)
 
