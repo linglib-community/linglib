@@ -51,6 +51,9 @@ covers exactly the participant sets whose own features are its bundle.
 * [harley-ritter-2002]
 * [harbour-2016]
 * [cysouw-2003]
+* [zwicky-1977b]
+* [corbett-2006]
+* [haspelmath-2021]
 -/
 
 @[expose] public section
@@ -171,7 +174,10 @@ theorem coarsen_ofParticipants_eq_iff (s t : Finset Role) :
 A bundle is a lower set of the chain participant < author, so it is determined by its top
 feature, and ordering values by their tops is the person hierarchy 1 > 2 > 3. It is the order
 coordination induces up to clusivity: a coordination takes the person of its most prominent
-conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules state. -/
+conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules state. It is not the
+only person scale: Zwicky's morphosyntactic hierarchies can order the participants otherwise, as
+Algonquian ranks the second person above the first, and the person scale of Haspelmath's argument
+coding splits is the binary cut between participants and the rest (`Person.Class`). -/
 
 /-- The prominence of a value is the top feature of its bundle: [author] for the first person,
 [participant] for the second, none for the third. -/
