@@ -68,8 +68,8 @@ def Content.target : Content W → Component
 
 /-- The mood state a content induces at a world. -/
 def Content.state : Content W → W → State W
-  | .single f, w => .ofExpState (stateAt f ⊥ w)
-  | .pair g f, w => .ofExpState (stateAt f g w)
+  | .single f, w => .ofOrderedInformationState (stateAt f ⊥ w)
+  | .pair g f, w => .ofOrderedInformationState (stateAt f g w)
 
 /-- The Spanish moods relate a clause to a world through the force of the mood applied to the
 content. A mood and a content that target different components do not combine. -/

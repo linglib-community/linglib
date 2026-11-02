@@ -62,12 +62,13 @@ state accepts the arrow exactly when the arrow returns it unchanged.
 
 ## Implementation notes
 
-States are ordered by inclusion, as for `DynamicSemantics.CCP` and `DynamicSemantics.ExpState`:
-a more informed state lies lower, the minimal state is `⊤`, and Strengthening says that an update
-never adds possibilities. Veltman orients the order the other way, with the minimal state `0` at
-the bottom and the sum of two states their join, and the content is the same; on `Set` the
-reversed orientation would make `⊥` the absurd state `∅` rather than the minimal one. Acceptance
-is `Function.IsFixedPt`, and a sentence is identified with its update.
+States are ordered by inclusion, as for `DynamicSemantics.CCP` and
+`DynamicSemantics.OrderedInformationState`: a more informed state lies lower, the minimal state is
+`⊤`, and Strengthening says that an update never adds possibilities. Veltman orients the order the
+other way, with the minimal state `0` at the bottom and the sum of two states their join, and the
+content is the same; on `Set` the reversed orientation would make `⊥` the absurd state `∅` rather
+than the minimal one. Acceptance is `Function.IsFixedPt`, and a sentence is identified with its
+update.
 
 ## References
 

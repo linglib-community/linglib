@@ -68,14 +68,14 @@ def target : Grammatical → Component
 /-- The indicative is simple necessity over the context set and the subjunctive is local
 necessity under the ordering. -/
 def interp : Grammatical → State W → (W → Prop) → Prop
-  | .indicative, c, p => c.toExpState.boxCs p
-  | .subjunctive, c, p => c.toExpState.localNecessity p
+  | .indicative, c, p => c.toOrderedInformationState.boxCs p
+  | .subjunctive, c, p => c.toOrderedInformationState.localNecessity p
 
 @[simp] theorem interp_indicative (c : State W) (p : W → Prop) :
-    indicative.interp c p = c.toExpState.boxCs p := rfl
+    indicative.interp c p = c.toOrderedInformationState.boxCs p := rfl
 
 @[simp] theorem interp_subjunctive (c : State W) (p : W → Prop) :
-    subjunctive.interp c p = c.toExpState.localNecessity p := rfl
+    subjunctive.interp c p = c.toOrderedInformationState.localNecessity p := rfl
 
 /-- When the context set has a world at least as normal as all of its worlds, each mood is the
 necessity modal of the component it targets. -/
@@ -84,12 +84,12 @@ theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
     m.interp c p ↔ m.target.boxOn c p := by
   cases m
   · exact Iff.rfl
-  · exact ExpState.localNecessity_iff_boxLe hb hleast p
+  · exact OrderedInformationState.localNecessity_iff_boxLe hb hleast p
 
 /-- Every world is in the context set, and `false`, the one `sepProp`-world, is the one optimal
 world. -/
 def sepState : State Bool :=
-  State.ofExpState ⟨Set.univ, .ofCriterion State.sepProp⟩
+  State.ofOrderedInformationState ⟨Set.univ, .ofCriterion State.sepProp⟩
 
 /-- The indicative and the subjunctive disagree on some state and proposition. -/
 theorem indicative_ne_subjunctive :

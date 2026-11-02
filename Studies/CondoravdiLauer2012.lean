@@ -247,7 +247,7 @@ ranked by the participant's preferential commitments. -/
 
 /-- The mood state that a commitment state projects for `a`. -/
 def toState (K : State (A × Force) W) (a : A) : Mood.State W :=
-  .ofExpState ⟨K.commitmentSet (a, .doxastic),
+  .ofOrderedInformationState ⟨K.commitmentSet (a, .doxastic),
     premisePreorder ((fun p : Set W ↦ (· ∈ p)) '' K.contents (a, .preferential))⟩
 
 -- (30): the declarative convention is assertion on the speaker's mood state
@@ -332,9 +332,10 @@ imperative a revision (`imperatives_revise`). -/
 theorem portner_contrary_imperatives (d : Discourse.Role → Mood.State W) (φ : W → Prop) :
     (d .addressee).optimal ⊆ (Discourse.SpeechAct.Force.update .directive
       (Discourse.SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
-  simp only [Discourse.SpeechAct.Force.update_directive_addressee, Mood.State.promote_toExpState,
-    DynamicSemantics.ExpState.optimal, DynamicSemantics.ExpState.promote_order,
-    DynamicSemantics.ExpState.promote_info]
+  simp only [Discourse.SpeechAct.Force.update_directive_addressee,
+    Mood.State.promote_toOrderedInformationState, DynamicSemantics.OrderedInformationState.optimal,
+    DynamicSemantics.OrderedInformationState.promote_order,
+    DynamicSemantics.OrderedInformationState.promote_info]
   refine fun w hw ↦ Preorder.mem_minimals_iff.2 ⟨hw.1, fun b hb hbw ↦ ?_⟩
   exact ⟨⟨hw.2 hb hbw.1.1, fun hb' ↦ by_contra fun hw' ↦ hbw.2 hw' hb'⟩,
     fun hb' hw' ↦ hb' (hbw.1.2 hw')⟩

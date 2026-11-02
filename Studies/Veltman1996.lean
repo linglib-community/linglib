@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.Expectation
+public import Linglib.Semantics.Dynamic.OrderedInformationState
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -21,12 +21,12 @@ fragment without *might* validity is classical, `valid₁_up_iff`.
 
 A state of section 3 pairs an expectation pattern, a preorder on worlds, with the agent's knowledge
 of the facts; *normally φ* refines the pattern in favour of the `φ`-worlds and *presumably φ* tests
-whether `φ` holds in the optimal worlds. That system is `DynamicSemantics.ExpState`, and Examples
-3.10 are stated here as verdicts of validity₁ on the paper's four worlds, together with the
-rain-or-snow contrast by which *normally (p ∨ q)* is stronger than *normally p*, `rain_or_snow` and
-`normally_not_normally_or`. Rules and facts are additive, so a rule that follows under validity₁
-follows under validity₃ as well, `ex310_rule_persists_valid₃`, while the default inference
-*normally p ⊩ presumably p* is valid₁ but neither valid₂ nor valid₃, `not_valid₂_presumably` and
+whether `φ` holds in the optimal worlds. That system is `DynamicSemantics.OrderedInformationState`,
+and Examples 3.10 are stated here as verdicts of validity₁ on the paper's four worlds, together with
+the rain-or-snow contrast by which *normally (p ∨ q)* is stronger than *normally p*, `rain_or_snow`
+and `normally_not_normally_or`. Rules and facts are additive, so a rule that follows under validity₁
+follows under validity₃ as well, `ex310_rule_persists_valid₃`, while the default inference *normally
+p ⊩ presumably p* is valid₁ but neither valid₂ nor valid₃, `not_valid₂_presumably` and
 `not_valid₃_presumably`, which is why Veltman concentrates on validity₁.
 
 Section 4 adds the restricted rules *if φ, then normally ψ*. An expectation frame assigns a pattern
@@ -54,11 +54,11 @@ there](##Veltman1996.State.IsGeneral.presumably_eq_self_iff).
 
 ## Implementation notes
 
-The update with *normally φ* of `DynamicSemantics.ExpState` does not crash, so the second clause of
-Example 3.10(i), where the opposite rule crashes the state, is checked in the system of section 4,
-in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`. On general rules and facts the
-update of section 4, when it does not crash, is that of section 3 (`State.toExpState_normally`,
-`State.toExpState_fact`).
+The update with *normally φ* of `DynamicSemantics.OrderedInformationState` does not crash, so the
+second clause of Example 3.10(i), where the opposite rule crashes the state, is checked in the
+system of section 4, in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`. On general
+rules and facts the update of section 4, when it does not crash, is that of section 3
+(`State.toOrderedInformationState_normally`, `State.toOrderedInformationState_fact`).
 
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
 accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
@@ -79,7 +79,7 @@ of Asher and Morreau in section 5 is discussed in the paper and not formalized.
 
 namespace Veltman1996
 
-open DynamicSemantics DynamicSemantics.ExpState
+open DynamicSemantics DynamicSemantics.OrderedInformationState
 
 /-! ### Might (§2) -/
 
@@ -219,23 +219,25 @@ private theorem atomQ_w₂ : atomQ w₂ := trivial
 private theorem atomQ_w₃ : atomQ w₃ := trivial
 
 /-- The minimal state `0`. -/
-def σ₀ : ExpState PQWorld := ⊤
+def σ₀ : OrderedInformationState PQWorld := ⊤
 
 section Validity
 
 open Function
-open ExpState (promote assert)
+open OrderedInformationState (promote assert)
 
 -- Examples 3.10(i): a rule can have exceptions
 theorem ex310_exception : (σ₀.promote atomP).assert (¬atomP ·) ≠ ⊥ := fun h ↦
-  Set.notMem_empty w₀ (h ▸ ⟨Set.mem_univ _, atomP_w₀⟩ : w₀ ∈ (⊥ : ExpState PQWorld).info)
+  Set.notMem_empty w₀
+    (h ▸ ⟨Set.mem_univ _, atomP_w₀⟩ : w₀ ∈ (⊥ : OrderedInformationState PQWorld).info)
 
 theorem ex310_presumably : [(promote · atomP)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ hw ↦
     ((optimal_promote_of_order_eq_top (σ := σ₀) rfl ⟨w₁, Set.mem_univ _, atomP_w₁⟩).subset hw).2
 
 private theorem not_presumably_w₀ :
-    ¬IsFixedPt (presumablyTest atomP) ((⟨{w₀}, ⊤⟩ : ExpState PQWorld).promote atomP) :=
+    ¬IsFixedPt (presumablyTest atomP)
+      ((⟨{w₀}, ⊤⟩ : OrderedInformationState PQWorld).promote atomP) :=
   fun h ↦ atomP_w₀ <| isFixedPt_presumablyTest_iff.1 h w₀
     ⟨rfl, fun _ hv _ ↦ by obtain rfl : _ = w₀ := hv; exact ⟨trivial, id⟩⟩
 
@@ -262,9 +264,10 @@ theorem ex310_rule_persists :
 validity (Proposition 1.3), unlike the presumption. -/
 theorem ex310_rule_persists_valid₃ :
     [(promote · atomP), (assert · (¬atomP ·))] ⊩₃ (promote · atomP) := by
-  refine ((tfae_entails ?_ (ExpState.isAdditive_promote _)).out 1 3).1 ex310_rule_persists
+  refine ((tfae_entails ?_ (OrderedInformationState.isAdditive_promote _)).out 1 3).1
+    ex310_rule_persists
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  exact ⟨ExpState.isAdditive_promote _, ExpState.isAdditive_assert _⟩
+  exact ⟨OrderedInformationState.isAdditive_promote _, OrderedInformationState.isAdditive_assert _⟩
 
 theorem ex310_irrelevant : [(promote · atomP), (assert · atomQ)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
@@ -293,7 +296,7 @@ theorem ex310_independence :
       ⟨⟨trivial, fun hpw ↦ absurd hpw hnpw⟩, fun hqw ↦ absurd hqw hnqw⟩).2 atomQ_w₂)
 
 theorem ex310_ambiguity :
-    let ψs : List (ExpState PQWorld → ExpState PQWorld) :=
+    let ψs : List (OrderedInformationState PQWorld → OrderedInformationState PQWorld) :=
       [(promote · atomP), (promote · atomQ), (assert · fun w ↦ ¬(atomP w ∧ atomQ w))]
     ¬ψs ⊩₁ presumablyTest atomP ∧ ¬ψs ⊩₁ presumablyTest atomQ := by
   intro ψs
@@ -600,9 +603,9 @@ structure IsGeneral (σ : State W) : Prop where
   default_nonempty : ∀ r ∈ σ.rules, r.default.Nonempty
   coherent : Coherent σ.frame
 
-/-- The expectation state of section 3 that a state presents: its information, ranked by the
+/-- The ordered information state of section 3 that a state presents: its information, ranked by the
 ordering that the defaults of its rules induce. -/
-def toExpState (σ : State W) : ExpState W :=
+def toOrderedInformationState (σ : State W) : OrderedInformationState W :=
   ⟨σ.info, Preorder.ofCriteria (fun w (r : Rule W) ↦ w ∈ r.default) {r | r ∈ σ.rules}⟩
 
 /-- In a general state a set of the rules applies within `s` exactly when some world of `s`
@@ -626,10 +629,12 @@ theorem IsGeneral.applies_iff (h : σ.IsGeneral) {D : List (Rule W)} (hD : ∀ r
 
 /-- On a general state the optimal worlds of Definition 4.13 are the minimal worlds of the
 information under the pattern of section 3, the optimal worlds of Definition 3.4. -/
-theorem IsGeneral.optimal_eq (h : σ.IsGeneral) : (σ.optimal : Set W) = σ.toExpState.optimal := by
+theorem IsGeneral.optimal_eq (h : σ.IsGeneral) :
+    (σ.optimal : Set W) = σ.toOrderedInformationState.optimal := by
   have hgen r (hr : r ∈ σ.rules) (w : W) : w ∈ r.domain := h.domain_eq r hr ▸ Finset.mem_univ w
   ext w
-  rw [Finset.mem_coe, optimal, Finset.mem_filter, ExpState.optimal, Preorder.mem_minimals_iff]
+  rw [Finset.mem_coe, optimal, Finset.mem_filter, OrderedInformationState.optimal,
+    Preorder.mem_minimals_iff]
   refine and_congr_right fun hw ↦ ⟨fun ⟨D, hD, hmax, hc⟩ v hv hvw r hr hrv ↦ ?_, fun hmin ↦ ?_⟩
   · have hsub : ∀ r ∈ D, r ∈ σ.rules := fun r hr ↦ (List.mem_sublists.1 hD).subset hr
     refine hc r (hmax.2 r hr ((h.applies_iff fun r' hr' ↦ ?_).2 ⟨v, hv, fun r' hr' _ ↦ ?_⟩))
@@ -689,16 +694,17 @@ theorem IsGeneral.fact (h : σ.IsGeneral) (φ : Finset W) :
   exacts [⟨h.1, h.2, h.3⟩, isGeneral_of_rules_eq_nil rfl]
 
 omit [DecidableEq W] in
-@[simp] theorem toExpState_init : (init : State W).toExpState = ⊤ :=
-  ExpState.ext (by simp [toExpState, init]) (by simp [toExpState, init])
+@[simp] theorem toOrderedInformationState_init : (init : State W).toOrderedInformationState = ⊤ :=
+  OrderedInformationState.ext (by simp [toOrderedInformationState, init])
+    (by simp [toOrderedInformationState, init])
 
 /-- An update with a general rule that does not crash is the promotion of section 3. -/
-theorem toExpState_normally (h : normally ψ σ ≠ absurd) :
-    (normally ψ σ).toExpState = σ.toExpState.promote (· ∈ ψ) := by
+theorem toOrderedInformationState_normally (h : normally ψ σ ≠ absurd) :
+    (normally ψ σ).toOrderedInformationState = σ.toOrderedInformationState.promote (· ∈ ψ) := by
   unfold normally rule at h ⊢
   split_ifs at h ⊢
-  · refine ExpState.ext rfl ?_
-    rw [toExpState, show {r | r ∈ (⟨ψ ∪ ψᶜ, ψ⟩ : Rule W) :: σ.rules} =
+  · refine OrderedInformationState.ext rfl ?_
+    rw [toOrderedInformationState, show {r | r ∈ (⟨ψ ∪ ψᶜ, ψ⟩ : Rule W) :: σ.rules} =
       insert ⟨ψ ∪ ψᶜ, ψ⟩ {r | r ∈ σ.rules} from Set.ext fun _ ↦ List.mem_cons,
       Preorder.ofCriteria_insert]
     rfl
@@ -706,19 +712,19 @@ theorem toExpState_normally (h : normally ψ σ ≠ absurd) :
 
 omit [Fintype W] in
 /-- An update with a fact that does not crash is the assertion of section 3. -/
-theorem toExpState_fact (h : fact φ σ ≠ absurd) :
-    (fact φ σ).toExpState = σ.toExpState.assert (· ∈ φ) := by
+theorem toOrderedInformationState_fact (h : fact φ σ ≠ absurd) :
+    (fact φ σ).toOrderedInformationState = σ.toOrderedInformationState.assert (· ∈ φ) := by
   unfold fact at h ⊢
   split_ifs at h ⊢
-  · exact ExpState.ext (Finset.coe_inter _ _) rfl
+  · exact OrderedInformationState.ext (Finset.coe_inter _ _) rfl
   · exact (h rfl).elim
 
 /-- On a general state other than the absurd one, *presumably φ* passes exactly when `φ` holds at
 the optimal worlds of section 3, so that the presumptions of section 4 extend those of
 section 3. -/
 theorem IsGeneral.presumably_eq_self_iff (h : σ.IsGeneral) (hσ : σ ≠ absurd) :
-    presumably φ σ = σ ↔ σ.toExpState.boxLe (· ∈ φ) := by
-  rw [ExpState.boxLe, ← h.optimal_eq, presumably]
+    presumably φ σ = σ ↔ σ.toOrderedInformationState.boxLe (· ∈ φ) := by
+  rw [OrderedInformationState.boxLe, ← h.optimal_eq, presumably]
   refine ⟨fun he w hw ↦ by_contra fun hφ ↦ hσ ?_, fun hb ↦ ite_eq_left fun w hw ↦ hb w hw⟩
   rw [← he, ite_eq_right fun hs ↦ hφ (hs hw)]
 
@@ -756,7 +762,8 @@ theorem ex411_specificity :
 normally ¬p*, learning `q` leaves the `p ∧ q`-world out of the optimal worlds (Examples 4.11(i)),
 although the ordering that both defaults induce ranks no `q`-world strictly below it. -/
 example : (3 : World) ∉ (State.init |> normally p |> rule q pᶜ |> fact q).optimal ∧
-    (3 : World) ∈ (State.init |> normally p |> rule q pᶜ |> fact q).toExpState.optimal := by
+    (3 : World) ∈
+      (State.init |> normally p |> rule q pᶜ |> fact q).toOrderedInformationState.optimal := by
   have hσ : (State.init |> normally p |> rule q pᶜ |> fact q) =
       ⟨[⟨q, pᶜ⟩, ⟨p ∪ pᶜ, p⟩], Finset.univ ∩ q⟩ := by decide +kernel
   rw [hσ]
