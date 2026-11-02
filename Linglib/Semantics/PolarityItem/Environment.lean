@@ -94,11 +94,11 @@ theorem signature_smul (l : Signature.classPairs P) (e : Environment σ P) :
 variable (e : Environment σ P)
 
 theorem monotone_of_sign_eq_one (h : e.signature.sign = 1) : Monotone e :=
-  (Signature.soundFor_of_holdsFor e.holdsFor).monotone_of_sign_eq_one h
+  e.holdsFor.monotone_of_sign_eq_one h
 
 /-- An environment of negative sign is downward entailing. -/
 theorem antitone_of_sign_eq_neg_one (h : e.signature.sign = -1) : Antitone e :=
-  (Signature.soundFor_of_holdsFor e.holdsFor).antitone_of_sign_eq_neg_one h
+  e.holdsFor.antitone_of_sign_eq_neg_one h
 
 end Action
 

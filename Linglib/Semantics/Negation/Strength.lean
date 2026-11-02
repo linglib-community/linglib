@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Basic
+public import Linglib.Logic.Natural.Signature
 
 /-!
 # Strengths of negation
@@ -15,8 +15,7 @@ anti-additive and anti-morphic contexts, which are van der Wouden's minimal, reg
 negation. A context is weakly negative when it is downward entailing, anti-additive when it also
 turns disjunctions into conjunctions, and anti-morphic when it also turns conjunctions into
 disjunctions, as clausal negation does. Each strength is the function class of a natural-logic
-signature, and the strength a signature realizes, read off its projection behavior, is [the
-greatest strength whose class contains
+signature, and the strength a signature realizes is [the greatest strength whose class contains
 it](##NaturalLogic.Signature.coe_le_negationStrength_iff), so that the strengths sit among the
 signatures as a chain in reverse.
 
@@ -88,13 +87,12 @@ end Negation
 namespace NaturalLogic.Signature
 
 /-- `negationStrength φ` is the strength of negation the signature `φ` realizes, `⊥` when `φ` is not
-downward entailing. It is read off `project`: a signature is downward entailing when it reverses
-forward entailment, anti-additive when it also turns `cover` into `alternation`, and anti-morphic
-when it also turns `alternation` into `cover`. -/
+downward entailing: weak when its class is antitone, anti-additive when it is also anti-additive,
+and anti-morphic when it is also anti-multiplicative. -/
 def negationStrength (φ : Signature) : WithBot Negation.Strength :=
-  if project .forward φ != .reverse then ⊥
-  else if project .cover φ == .alternation then
-    if project .alternation φ == .cover then Negation.Strength.antiMorphic
+  if .antitone ∉ φ.properties then ⊥
+  else if .antiAdditive ∈ φ.properties then
+    if .antiMultiplicative ∈ φ.properties then Negation.Strength.antiMorphic
     else Negation.Strength.antiAdditive
   else Negation.Strength.weak
 

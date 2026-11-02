@@ -10,27 +10,12 @@ public import Mathlib.Order.Hom.Set
 # Soundness of the projectivity calculus
 
 This file gives the seven relations their lattice content and proves the calculus of
-`Logic/Natural/Basic.lean` sound for it over bounded lattices. Each of its three rules is a lattice
-fact about single constraints or properties, and the join, the projections and the composition are
-sound because they assert only what the rules give. A signature's projection row holds of a
-function exactly when the function is monotone or antitone and carries disjoint and codisjoint
-pairs as the row says. The function
-classes of [icard-2012] fall in their rows, their unit conditions being mathlib's pairing of
-meets with `⊥` and joins with `⊤`, and so do bounded lattice homomorphisms and, into the order
-dual, complementation.
-
-## Main results
-
-* `Relation.Atom.Holds.join`, `Signature.Property.HoldsFor.project`,
-  `Signature.Property.HoldsFor.compose`: soundness of the three rules on atoms and properties.
-* `Relation.Holds.join`: soundness of the join.
-* `soundFor_additive_iff`, …, `soundFor_antiAddMult_iff`: what each projection row demands of a
-  function.
-* `Signature.soundFor_of_holdsFor`: a signature's projection holds of every function in its class.
-* `Signature.SoundFor.comp`: soundness composes along `Signature.compose`.
-* `Signature.SoundFor.monotone_of_sign_eq_one`, `Signature.SoundFor.antitone_of_sign_eq_neg_one`:
-  the sign of a sound signature fixes the direction of the function.
-* `Signature.HoldsFor.comp`: so do the function classes themselves.
+`Logic/Natural/Basic.lean` sound for it over bounded lattices. The join and the projections are
+sound because they assert only what the atom and property rules give, and each rule is a lattice
+fact about single constraints or properties. A signature's projection row holds of a map exactly
+when the map is monotone or antitone and carries disjoint and codisjoint pairs as the row says,
+and [every map in the class of a signature](##NaturalLogic.Signature.soundFor_of_holdsFor) falls
+in its row, as do bounded lattice homomorphisms and, into the order dual, complementation.
 
 ## Implementation notes
 
@@ -410,25 +395,11 @@ theorem Signature.SoundFor.comp₂ {ψ : Signature} {g : γ → δ}
 end Signature₂
 
 
-/-! ### The function class of a signature -/
+/-! ### The projection row of a function class -/
 
 section HoldsFor
 
 variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
-
-/-- The function class a property asserts. -/
-def Signature.Property.HoldsFor : Signature.Property → (α → β) → Prop
-  | .monotone => Monotone
-  | .antitone => Antitone
-  | .additive => fun f => (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤
-  | .multiplicative => fun f => (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥
-  | .antiAdditive => fun f => IsAntiAdditive f ∧ f ⊤ = ⊥
-  | .antiMultiplicative => fun f => IsAntiMultiplicative f ∧ f ⊥ = ⊤
-
-/-- A function has signature σ — is a "σ-function" — when it has every
-property σ asserts. -/
-def Signature.HoldsFor (σ : Signature) (f : α → β) : Prop :=
-  ∀ p ∈ σ.properties, p.HoldsFor f
 
 /-- The property rule is sound: a function with property `p` carries a constraint between its
 arguments to the constraint `Signature.Property.project` says between its values. -/
@@ -457,100 +428,6 @@ theorem Signature.soundFor_of_holdsFor {σ : Signature} {f : α → β}
   obtain ⟨p, hp, a, ha, hab⟩ := (Signature.mem_constraints_project hRe).1 hb
   exact (h p hp).project hab (Relation.holds_iff.1 hR a ha)
 
-theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
-    (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
-  λ p hp => h p (Signature.le_iff.mp hστ hp)
-
-theorem Signature.holdsFor_mono_iff {f : α → β} : Signature.HoldsFor .mono f ↔ Monotone f := by
-  simp [Signature.HoldsFor, Signature.properties, Signature.Property.HoldsFor]
-
-theorem Signature.holdsFor_anti_iff {f : α → β} : Signature.HoldsFor .anti f ↔ Antitone f := by
-  simp [Signature.HoldsFor, Signature.properties, Signature.Property.HoldsFor]
-
-theorem Signature.holdsFor_antiAdd_iff {f : α → β} :
-    Signature.HoldsFor .antiAdd f ↔ IsAntiAdditive f ∧ f ⊤ = ⊥ := by
-  simp only [Signature.HoldsFor, Signature.properties, Finset.mem_insert, Finset.mem_singleton,
-    forall_eq_or_imp, forall_eq, Signature.Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
-
-theorem Signature.holdsFor_antiAddMult_iff {f : α → β} :
-    Signature.HoldsFor .antiAddMult f ↔
-      (IsAntiAdditive f ∧ f ⊤ = ⊥) ∧ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
-  simp only [Signature.HoldsFor, Signature.properties, Finset.mem_insert, Finset.mem_singleton,
-    forall_eq_or_imp, forall_eq, Signature.Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
-
-theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}
-    (gc₁ : GaloisConnection f u) (gc₂ : GaloisConnection l f) :
-    Signature.HoldsFor .addMult f := by
-  intro p hp
-  cases p with
-  | monotone => exact gc₁.monotone_l
-  | additive => exact ⟨λ _ _ => gc₁.l_sup, gc₂.u_top⟩
-  | multiplicative => exact ⟨λ _ _ => gc₂.u_inf, gc₁.l_bot⟩
-  | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
-
-theorem Signature.holdsFor_addMult_id : Signature.HoldsFor .addMult (id : α → α) :=
-  Signature.holdsFor_addMult_of_galoisConnection GaloisConnection.id GaloisConnection.id
-
-theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
-    Signature.HoldsFor .antiAddMult (compl : γ → γ) := by
-  intro p hp
-  cases p with
-  | antitone => exact compl_anti
-  | antiAdditive => exact ⟨isAntiAdditive_compl, compl_top⟩
-  | antiMultiplicative => exact ⟨isAntiMultiplicative_compl, compl_bot⟩
-  | monotone | additive | multiplicative => exact absurd hp (by decide)
-
-/-- The property rule for composition is sound: a function with property `p` after one with
-property `q` has the property `Signature.Property.compose` says. -/
-theorem Signature.Property.HoldsFor.compose {γ : Type*} [Lattice γ] [BoundedOrder γ]
-    {p q r : Signature.Property} {f : β → γ} {g : α → β} (h : p.compose q = some r)
-    (hf : p.HoldsFor f) (hg : q.HoldsFor g) : r.HoldsFor (f ∘ g) := by
-  cases p <;> cases q <;> simp only [Signature.Property.compose, reduceCtorEq,
-    Option.some.injEq] at h <;> subst h <;>
-    simp only [Signature.Property.HoldsFor, IsAntiAdditive, IsAntiMultiplicative] at hf hg ⊢
-  all_goals first
-    | exact Monotone.comp hf hg
-    | exact Antitone.comp hf hg
-    | exact Monotone.comp_antitone hf hg
-    | exact Antitone.comp_monotone hf hg
-    | exact ⟨fun x y ↦ by simp only [Function.comp_apply, hg.1, hf.1],
-        by simp only [Function.comp_apply, hg.2, hf.2]⟩
-
-/-- A ψ-function after a φ-function is a `ψ * φ`-function, over any bounded lattices: the function
-classes compose as `Signature.compose` says ([icard-2012] Definition 2.6 and Lemma 2.7). -/
-theorem Signature.HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Signature}
-    {f : β → γ} {g : α → β} (hf : ψ.HoldsFor f) (hg : φ.HoldsFor g) :
-    (ψ * φ).HoldsFor (f ∘ g) := fun _ hr ↦ by
-  obtain ⟨p, hp, q, hq, h⟩ := Signature.mem_properties_mul.1 hr
-  exact (hf p hp).compose h (hg q hq)
-
 end HoldsFor
-
-section DecidableHoldsFor
-
-variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
-  [Fintype α] [DecidableLE α] [DecidableEq β] [DecidableLE β]
-
-instance Signature.Property.decidableHoldsFor :
-    ∀ (p : Signature.Property) (f : α → β), Decidable (p.HoldsFor f)
-  | .monotone, f => decidable_of_iff (∀ a b, a ≤ b → f a ≤ f b) Iff.rfl
-  | .antitone, f => decidable_of_iff (∀ a b, a ≤ b → f b ≤ f a) Iff.rfl
-  | .additive, f =>
-      decidable_of_iff ((∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) Iff.rfl
-  | .multiplicative, f =>
-      decidable_of_iff ((∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) Iff.rfl
-  | .antiAdditive, f =>
-      decidable_of_iff ((∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥) Iff.rfl
-  | .antiMultiplicative, f =>
-      decidable_of_iff ((∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤) Iff.rfl
-
-instance Signature.decidableHoldsFor (σ : Signature) (f : α → β) :
-    Decidable (σ.HoldsFor f) :=
-  inferInstanceAs (Decidable (∀ p ∈ σ.properties, p.HoldsFor f))
-
-end DecidableHoldsFor
-
 
 end NaturalLogic

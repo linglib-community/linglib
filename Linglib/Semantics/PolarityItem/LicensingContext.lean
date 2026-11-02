@@ -8,7 +8,7 @@ module
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Signatures
+public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel

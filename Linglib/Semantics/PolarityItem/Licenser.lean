@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Signature
 public import Linglib.Logic.Natural.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.Questions.Value

@@ -210,7 +210,8 @@ variable {e : PolarityItem}
 @[simp] theorem licenses_atMost : atMost.licenser.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
   licenses_of_carries_iff id id fun _ ↦
     (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl))
-      not_isStrawsonUE_atMost not_holds_exhaustified_atMost).trans Negation.Strength.le_weak_iff.symm
+      not_isStrawsonUE_atMost not_holds_exhaustified_atMost).trans
+        Negation.Strength.le_weak_iff.symm
 
 @[simp] theorem antiLicenses_atMost :
     atMost.licenser.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
