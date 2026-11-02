@@ -695,8 +695,8 @@ private lemma stressPenultCulminative_isIdempotentElem :
   rw [IsIdempotentElem, ← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
   rw [stressPenultCulminative, mem_inf, mem_inf]
-  refine and_congr
-    (amara_isDefinite.syntacticEquiv_append_left (u := [.unstressed, .unstressed]) le_rfl _ x y) ?_
+  refine and_congr (syntacticClass_eq_iff.1
+    (amara_isDefinite.syntacticClass_append_left (u := [.unstressed, .unstressed]) le_rfl _) x y) ?_
   simp [Syl.isStressed]
 
 /-- Culminative stress-penult is not generalized definite (§6.3), since the class `[σσ]` is
@@ -712,8 +712,8 @@ theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
 /-- Culminative stress-penult is not multitier reverse definite, against the equation of (62)
 (§6.3). -/
 theorem stressPenultCulminative_not_isBTK (k : ℕ) : ¬ IsBTK k stressPenultCulminative := fun h ↦ by
-  have := h.mem_multitierReverseDefiniteVariety.2.2 _ stressPenultCulminative_isIdempotentElem
-    (stressPenultCulminative.syntacticClass [.stressed])
+  have := h.mem_languages_multitierReverseDefiniteVariety.2.2 _
+    stressPenultCulminative_isIdempotentElem (stressPenultCulminative.syntacticClass [.stressed])
   rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
   simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
     this [] [.unstressed]

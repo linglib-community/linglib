@@ -182,6 +182,19 @@ instance : CompleteLattice Pseudovariety.{u} :=
   completeLatticeOfInf _ fun _ ↦ ⟨fun V hV _ _ hM ↦ hM.2 V hV,
     fun V hV M _ hM ↦ mem_sInf.2 ⟨V.finite_of_mem hM, fun _ hW ↦ hV hW M hM⟩⟩
 
+/-- The greatest pseudovariety consists of all finite monoids. -/
+@[simp] theorem mem_top {M : Type u} [Monoid M] : (⊤ : Pseudovariety.{u}).mem M ↔ Finite M :=
+  ⟨And.left, fun h ↦ ⟨h, fun _ h ↦ h.elim⟩⟩
+
+/-- The least pseudovariety consists of the trivial monoids. -/
+@[simp] theorem mem_bot {M : Type u} [Monoid M] :
+    (⊥ : Pseudovariety.{u}).mem M ↔ Subsingleton M := by
+  refine ⟨fun h ↦ h.2 ⟨fun M _ ↦ Subsingleton M, fun _ ↦ Finite.of_subsingleton,
+    fun hf _ ↦ hf.subsingleton, fun hf _ ↦ hf.subsingleton, fun _ _ ↦ inferInstance,
+    inferInstance⟩ trivial, fun _ ↦ ?_⟩
+  have : Unique M := uniqueOfSubsingleton 1
+  exact ⟨Finite.of_subsingleton, fun V _ ↦ V.mem_of_mulEquiv MulEquiv.ofUnique V.memUnit⟩
+
 /-- The pseudovariety *generated* by a class of monoids is the least pseudovariety containing its
 finite members. -/
 def generated (S : ∀ (M : Type u) [Monoid M], Prop) : Pseudovariety.{u} :=
