@@ -46,13 +46,19 @@ state, `weakenConsequent_coherent`. Checked on the paper's eight worlds are Exam
 the Nixon diamond, the student who is presumably an unemployed adult, Independence, defeasible
 Modus Tollens, Modus Ponens over Modus Tollens on a cyclic net, the failure of Hypothetical
 Syllogism, Contraposition and Strengthening the Antecedent beside their defeasible versions, and
-the near-validity of Strengthening with a Consequent and Disjunction of Antecedents.
+the near-validity of Strengthening with a Consequent and Disjunction of Antecedents. On the
+states that general rules build, a frame is coherent when [its pattern
+is](##Veltman1996.State.coherent_ofRules_iff), the optimal worlds are [those of section
+3](##Veltman1996.State.IsGeneral.optimal_eq), and *presumably φ* [passes exactly when it does
+there](##Veltman1996.State.IsGeneral.presumably_eq_self_iff).
 
 ## Implementation notes
 
 The update with *normally φ* of `DynamicSemantics.ExpState` does not crash, so the second clause of
 Example 3.10(i), where the opposite rule crashes the state, is checked in the system of section 4,
-in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`.
+in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`. On general rules and facts the
+update of section 4, when it does not crash, is that of section 3 (`State.toExpState_normally`,
+`State.toExpState_fact`).
 
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
 accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
@@ -576,6 +582,148 @@ theorem rule_self {φ : Finset W} (hφ : φ.Nonempty) : Valid [] (rule φ φ) :=
   rcases List.mem_singleton.1 hc with rfl
   exact fun _ ↦ w.2
 
+/-! ### General rules
+
+Veltman reintroduces *normally ψ* as the general rule `(ψ ∨ ¬ψ) ⇝ ψ`, whose domain is every world
+(Definition 4.1). On the states that general rules build, the frame is a single pattern, the
+ordering the defaults of the rules induce as premises, and the optimal worlds of Definition 4.13
+are the minimal worlds of Definition 3.4. -/
+
+namespace State
+
+variable {σ : State W} {φ ψ : Finset W}
+
+/-- A state is general when its rules are general rules with nonempty defaults and its frame is
+coherent, as every state built from `0` by general rules, facts and presumptions is. -/
+structure IsGeneral (σ : State W) : Prop where
+  domain_eq : ∀ r ∈ σ.rules, r.domain = Finset.univ
+  default_nonempty : ∀ r ∈ σ.rules, r.default.Nonempty
+  coherent : Coherent σ.frame
+
+/-- The expectation state of section 3 that a state presents: its information, ranked by the
+ordering that the defaults of its rules induce. -/
+def toExpState (σ : State W) : ExpState W :=
+  ⟨σ.info, Preorder.ofCriteria (fun w (r : Rule W) ↦ w ∈ r.default) {r | r ∈ σ.rules}⟩
+
+/-- In a general state a set of the rules applies within `s` exactly when some world of `s`
+complies with it. -/
+theorem IsGeneral.applies_iff (h : σ.IsGeneral) {D : List (Rule W)} (hD : ∀ r ∈ D, r ∈ σ.rules)
+    {s : Finset W} : Applies σ.frame D s ↔ ∃ w ∈ s, Complies w D := by
+  constructor
+  · intro hs
+    obtain ⟨w, hw, hc⟩ := hs s subset_rfl
+    exact ⟨w, (Finset.mem_filter.1 hw).1, hc⟩
+  rintro ⟨w₀, hw₀, hc⟩ d hsd
+  by_cases hd : Finset.univ ⊆ d
+  · obtain ⟨n, hn⟩ := h.coherent d ⟨w₀, hsd hw₀⟩
+    refine ⟨n, hn, fun r hr _ ↦ ?_⟩
+    obtain ⟨v, hv⟩ := h.default_nonempty r (hD r hr)
+    have hn' := ((normal_ofRules_iff ..).1 (Finset.mem_filter.1 hn).2).2 r (hD r hr)
+    rw [h.domain_eq r (hD r hr)] at hn'
+    exact hn' hd (Finset.mem_univ n) v (Finset.mem_univ v) hv
+  · exact ⟨w₀, Finset.mem_filter.2 ⟨hsd hw₀, (normal_ofRules_iff ..).2 ⟨hsd hw₀,
+      fun r hr hsub ↦ (hd (h.domain_eq r hr ▸ hsub)).elim⟩⟩, hc⟩
+
+/-- On a general state the optimal worlds of Definition 4.13 are the minimal worlds of the
+information under the pattern of section 3, the optimal worlds of Definition 3.4. -/
+theorem IsGeneral.optimal_eq (h : σ.IsGeneral) : (σ.optimal : Set W) = σ.toExpState.optimal := by
+  have hgen r (hr : r ∈ σ.rules) (w : W) : w ∈ r.domain := h.domain_eq r hr ▸ Finset.mem_univ w
+  ext w
+  rw [Finset.mem_coe, optimal, Finset.mem_filter, ExpState.optimal, Preorder.mem_minimals_iff]
+  refine and_congr_right fun hw ↦ ⟨fun ⟨D, hD, hmax, hc⟩ v hv hvw r hr hrv ↦ ?_, fun hmin ↦ ?_⟩
+  · have hsub : ∀ r ∈ D, r ∈ σ.rules := fun r hr ↦ (List.mem_sublists.1 hD).subset hr
+    refine hc r (hmax.2 r hr ((h.applies_iff fun r' hr' ↦ ?_).2 ⟨v, hv, fun r' hr' _ ↦ ?_⟩))
+      (hgen r hr w)
+    · exact (List.mem_cons.1 hr').elim (· ▸ hr) (hsub r')
+    · rcases List.mem_cons.1 hr' with rfl | hr'
+      · exact hrv
+      · exact hvw r' (hsub r' hr') (hc r' hr' (hgen r' (hsub r' hr') w))
+  · refine ⟨σ.rules.filter (w ∈ ·.default), List.mem_sublists.2 List.filter_sublist,
+      ⟨(h.applies_iff fun r hr ↦ (List.mem_filter.1 hr).1).2
+        ⟨w, hw, fun r hr _ ↦ of_decide_eq_true (List.mem_filter.1 hr).2⟩, fun r hr hap ↦ ?_⟩,
+      fun r hr _ ↦ of_decide_eq_true (List.mem_filter.1 hr).2⟩
+    obtain ⟨u, hu, hc⟩ := (h.applies_iff fun r' hr' ↦
+      (List.mem_cons.1 hr').elim (· ▸ hr) fun h' ↦ (List.mem_filter.1 h').1).1 hap
+    refine List.mem_filter.2 ⟨hr, decide_eq_true (hmin hu (fun r' hr' hwr' ↦ ?_) r hr
+      (hc r List.mem_cons_self (hgen r hr u)))⟩
+    exact hc r' (List.mem_cons_of_mem _ (List.mem_filter.2 ⟨hr', decide_eq_true hwr'⟩))
+      (hgen r' hr' u)
+
+/-- A frame of general rules is coherent exactly when the ordering that their defaults induce has
+a world at least as normal as every world, the coherence of a pattern (Definition 3.3). -/
+theorem coherent_ofRules_iff [Nonempty W] {R : List (Rule W)}
+    (hR : ∀ r ∈ R, r.domain = Finset.univ) :
+    Coherent (Frame.ofRules R) ↔
+      ∃ w, ∀ v, (Preorder.ofCriteria (fun w (r : Rule W) ↦ w ∈ r.default) {r | r ∈ R}).le w v := by
+  constructor
+  · intro h
+    obtain ⟨n, hn⟩ := h Finset.univ Finset.univ_nonempty
+    refine ⟨n, fun v r hr hv ↦ ?_⟩
+    have hn' := ((normal_ofRules_iff ..).1 (Finset.mem_filter.1 hn).2).2 r hr
+    rw [hR r hr] at hn'
+    exact hn' subset_rfl (Finset.mem_univ n) v (Finset.mem_univ v) hv
+  · rintro ⟨w, hw⟩ d ⟨v, hv⟩
+    by_cases hd : Finset.univ ⊆ d
+    · refine ⟨w, Finset.mem_filter.2 ⟨hd (Finset.mem_univ w), (normal_ofRules_iff ..).2
+        ⟨hd (Finset.mem_univ w), fun r hr _ _ u _ hu ↦ hw u r hr hu⟩⟩⟩
+    · exact ⟨v, Finset.mem_filter.2 ⟨hv, (normal_ofRules_iff ..).2 ⟨hv,
+        fun r hr hsub ↦ (hd (hR r hr ▸ hsub)).elim⟩⟩⟩
+
+theorem isGeneral_of_rules_eq_nil (h : σ.rules = []) : σ.IsGeneral :=
+  ⟨by simp [h], by simp [h], fun d ⟨w, hw⟩ ↦
+    ⟨w, Finset.mem_filter.2 ⟨hw, (normal_ofRules_iff ..).2 ⟨hw, by simp [h]⟩⟩⟩⟩
+
+theorem IsGeneral.normally (h : σ.IsGeneral) (ψ : Finset W) :
+    (Veltman1996.normally ψ σ).IsGeneral := by
+  unfold Veltman1996.normally rule
+  split_ifs with hc
+  · refine ⟨?_, ?_, hc.2.1⟩ <;> simp only [List.mem_cons, forall_eq_or_imp]
+    exacts [⟨Finset.union_compl ψ, h.domain_eq⟩,
+      ⟨hc.1.mono Finset.inter_subset_right, h.default_nonempty⟩]
+  · exact isGeneral_of_rules_eq_nil rfl
+
+theorem IsGeneral.fact (h : σ.IsGeneral) (φ : Finset W) :
+    (Veltman1996.fact φ σ).IsGeneral := by
+  unfold Veltman1996.fact
+  split_ifs
+  exacts [⟨h.1, h.2, h.3⟩, isGeneral_of_rules_eq_nil rfl]
+
+omit [DecidableEq W] in
+@[simp] theorem toExpState_init : (init : State W).toExpState = ⊤ :=
+  ExpState.ext (by simp [toExpState, init]) (by simp [toExpState, init])
+
+/-- An update with a general rule that does not crash is the promotion of section 3. -/
+theorem toExpState_normally (h : normally ψ σ ≠ absurd) :
+    (normally ψ σ).toExpState = σ.toExpState.promote (· ∈ ψ) := by
+  unfold normally rule at h ⊢
+  split_ifs at h ⊢
+  · refine ExpState.ext rfl ?_
+    rw [toExpState, show {r | r ∈ (⟨ψ ∪ ψᶜ, ψ⟩ : Rule W) :: σ.rules} =
+      insert ⟨ψ ∪ ψᶜ, ψ⟩ {r | r ∈ σ.rules} from Set.ext fun _ ↦ List.mem_cons,
+      Preorder.ofCriteria_insert]
+    rfl
+  · exact (h rfl).elim
+
+omit [Fintype W] in
+/-- An update with a fact that does not crash is the assertion of section 3. -/
+theorem toExpState_fact (h : fact φ σ ≠ absurd) :
+    (fact φ σ).toExpState = σ.toExpState.assert (· ∈ φ) := by
+  unfold fact at h ⊢
+  split_ifs at h ⊢
+  · exact ExpState.ext (Finset.coe_inter _ _) rfl
+  · exact (h rfl).elim
+
+/-- On a general state other than the absurd one, *presumably φ* passes exactly when `φ` holds at
+the optimal worlds of section 3, so that the presumptions of section 4 extend those of
+section 3. -/
+theorem IsGeneral.presumably_eq_self_iff (h : σ.IsGeneral) (hσ : σ ≠ absurd) :
+    presumably φ σ = σ ↔ σ.toExpState.boxLe (· ∈ φ) := by
+  rw [ExpState.boxLe, ← h.optimal_eq, presumably]
+  refine ⟨fun he w hw ↦ by_contra fun hφ ↦ hσ ?_, fun hb ↦ ite_eq_left fun w hw ↦ hb w hw⟩
+  rw [← he, ite_eq_right fun hs ↦ hφ (hs hw)]
+
+end State
+
 /-! ### Veltman's eight worlds -/
 
 /-- The world `wᵢ` is the set of atoms whose bits are set in `i`, so `w₀ = ∅`, `w₁ = {p}`, `w₂ =
@@ -603,6 +751,20 @@ theorem ex411_specificity :
       Valid [normally p, rule q pᶜ, fact (q ∩ r)] (presumably pᶜ) ∧
       Valid [normally p, rule q pᶜ, rule (q ∩ r) p, fact (q ∩ r)] (presumably p) := by
   decide +kernel
+
+/-- A restricted rule is not a default of the whole pattern: after *normally p* and *if q, then
+normally ¬p*, learning `q` leaves the `p ∧ q`-world out of the optimal worlds (Examples 4.11(i)),
+although the ordering that both defaults induce ranks no `q`-world strictly below it. -/
+example : (3 : World) ∉ (State.init |> normally p |> rule q pᶜ |> fact q).optimal ∧
+    (3 : World) ∈ (State.init |> normally p |> rule q pᶜ |> fact q).toExpState.optimal := by
+  have hσ : (State.init |> normally p |> rule q pᶜ |> fact q) =
+      ⟨[⟨q, pᶜ⟩, ⟨p ∪ pᶜ, p⟩], Finset.univ ∩ q⟩ := by decide +kernel
+  rw [hσ]
+  refine ⟨by decide +kernel, (by decide : (3 : World) ∈ Finset.univ ∩ q), fun v _ hv3 r hr hrv ↦ ?_⟩
+  have hp3 : (3 : World) ∈ p := by decide
+  rcases List.mem_pair.1 hr with rfl | rfl
+  · exact absurd (hv3 _ (List.mem_cons_of_mem _ List.mem_cons_self) hp3) (Finset.mem_compl.1 hrv)
+  · exact hp3
 
 -- Example 4.11
 theorem ex411_iv : Valid [rule p r, rule q (p ∩ rᶜ), fact (p ∩ q)] (presumably rᶜ) := by

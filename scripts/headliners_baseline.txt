@@ -161,7 +161,6 @@ Cohen1999
 CohenKrifka2014
 CohnGordonEtAl2019
 Condoravdi2002
-CondoravdiLauer2012
 CondoravdiLauer2016
 Coon2019
 CoonKeine2021
