@@ -392,6 +392,14 @@ abbrev antiSupport (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
 @[simp] lemma antiSupport_neg (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
 
+@[simp] lemma support_conj (M : Model W Domain Const Pred) (φ ψ : Formula Var Const Pred)
+    (s : Finset (Index W Var Domain)) :
+    support M (.conj φ ψ) s ↔ support M φ s ∧ support M ψ s := Iff.rfl
+
+@[simp] lemma antiSupport_disj (M : Model W Domain Const Pred) (φ ψ : Formula Var Const Pred)
+    (s : Finset (Index W Var Domain)) :
+    antiSupport M (.disj φ ψ) s ↔ antiSupport M φ s ∧ antiSupport M ψ s := Iff.rfl
+
 variable {M : Model W Domain Const Pred} {φ : Formula Var Const Pred} {x : Var}
   {s : Finset (Index W Var Domain)}
 

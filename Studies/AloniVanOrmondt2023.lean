@@ -169,12 +169,9 @@ example : support (amountModel (fun _ ↦ ∅) (fun _ _ ↦ ()) fun w _ ↦ w) (
 private theorem support_enrich_neg_disj_predc :
     support (amountModel R κ μ) (Formula.neg (.disj (.predc A k) (.predc B k))).enrich s ↔
       support (amountModel R κ μ) (Formula.predc (A ∪ B)ᶜ k).enrich s := by
-  refine and_congr_left fun _ ↦ ?_
-  change antiSupport _ (.conj (.disj (.conj _ .ne) (.conj _ .ne)) .ne) s ↔ _
-  rw [antiSupport_conj_ne]
-  change antiSupport _ (.conj _ .ne) s ∧ antiSupport _ (.conj _ .ne) s ↔ _
-  simp only [antiSupport_conj_ne, antiSupport_predc_amountModel, support_predc_amountModel,
-    ← forall₂_and, Set.mem_compl_iff, Set.mem_union, not_or]
+  simp only [Formula.enrich, support_conj, support_neg, antiSupport_conj_ne, antiSupport_disj,
+    antiSupport_predc_amountModel, support_predc_amountModel, ← forall₂_and, Set.mem_compl_iff,
+    Set.mem_union, not_or]
 
 /-- Enriched, *not at least n* is equivalent to *fewer than n*, which blocks it ((41), (42)). -/
 theorem support_enrich_neg_translate_ge :
