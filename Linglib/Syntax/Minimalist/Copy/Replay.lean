@@ -46,7 +46,6 @@ every later one, and only the tokens the derivation merges are pronounced.
   object depends on the trace encoder `τ`; and each lower copy is marked, so deleted, at the step
   that moves it, which leaves no room for externalizations that pronounce several copies. Name
   movers independently of traces and decide deletion at externalization.
-* The lower copies as an admissible cut of the copy object, the one its contraction contracts.
 
 ## References
 

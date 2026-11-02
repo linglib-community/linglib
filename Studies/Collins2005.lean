@@ -6,7 +6,7 @@ public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
-public import Linglib.Syntax.Minimalist.Copy.ToTree
+public import Linglib.Syntax.Minimalist.Copy.BindingAtReading
 public import Linglib.Syntax.Minimalist.Derivation.Smuggling
 public import Linglib.Data.Examples.Readers
 
@@ -689,6 +689,25 @@ theorem reconstructed_iff_reading :
           (c.verdict = .reconstructed ↔ ¬ c.derivation.BindsAtReading ∅ ↑x ↑y ∧
             c.derivation.BindsAtReading (m.current.carrying y) ↑x ↑y) := by
   decide +kernel
+
+/-- On the rows' derivations binding at the copy object is binding at the reading carrying the bound
+token (`Derivation.bindsAtReading_carrying_iff`). -/
+example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ m ∈ c.derivation.replayWithCopies?,
+    ∀ x y : LexicalItem.Token, x ≠ y →
+      (c.derivation.BindsAtReading (m.current.carrying y) ↑x ↑y ↔
+        c.derivation.BindsAtLF ↑x ↑y) := by
+  have h : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.derivation.lexTokens.Nodup ∧
+      (∀ step ∈ c.derivation.steps, step.IsMerge) ∧
+      (∀ step ∈ c.derivation.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) ∧
+      ∀ m ∈ c.derivation.replayWithCopies?,
+        LinearizedSyntacticObject.Marked.MarksName m.current.val ∧
+          LinearizedSyntacticObject.Marked.TraceFree m.current.val ∧
+          LinearizedSyntacticObject.Marked.DistinctDaughters m.current.val := by
+    decide +kernel
+  intro row hrow c hc m hm x y hxy
+  obtain ⟨hd, hmg, hmv, hf⟩ := h row hrow c hc
+  obtain ⟨hn, ht, hdd⟩ := hf m hm
+  exact Derivation.bindsAtReading_carrying_iff hxy hd hmg hmv hm hn ht hdd
 
 /-- The rows of a binding class fit its condition evaluated at level `ℓ`, each row acceptable
 exactly when the condition holds. -/

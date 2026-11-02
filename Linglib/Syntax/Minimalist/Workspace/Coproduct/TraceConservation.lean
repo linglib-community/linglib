@@ -196,6 +196,38 @@ theorem cutSummandsCN_numTraces (T : UnorderedTree (α ⊕ β)) :
       cutSummandsG_numTraces (extractC (τ ∘ UnorderedTree.mk))
         (fun s _ h ↦ by obtain ⟨_ | _, _⟩ := s <;> simp at h; simp [← h, traceLeaf]) t q hq
 
+private theorem numTraces_le_of_mem_subtrees {s : RoseTree (α ⊕ β)} :
+    ∀ t : RoseTree (α ⊕ β), s ∈ t.subtrees → s.numTraces ≤ t.numTraces
+  | .node a cs, h => by
+    rw [RoseTree.subtrees_node, List.mem_cons] at h
+    rcases h with rfl | h
+    · exact le_rfl
+    · obtain ⟨c, hc, hs⟩ := List.mem_flatMap.1 h
+      exact (numTraces_le_of_mem_subtrees c hs).trans
+        ((List.single_le_sum (by simp) _ (List.mem_map_of_mem hc)).trans
+          (RoseTree.sum_map_countP_leaves_le_node _ a cs))
+
+/-- A trace cut of a tree without traces that leaves no trace is the empty cut, since each tree it
+extracts leaves one. -/
+theorem eq_zero_of_mem_cutSummandsCN {T : UnorderedTree (α ⊕ β)} (hT : T.numTraces = 0)
+    {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} (hp : p ∈ cutSummandsCN τ T)
+    (h : p.2.numTraces = 0) : p = (0, T) := by
+  have hcrown : (p.1.map UnorderedTree.numTraces).sum = 0 :=
+    Multiset.sum_eq_zero fun n hn ↦ by
+      obtain ⟨x, hx, rfl⟩ := Multiset.mem_map.1 hn
+      have hxT := cutSummandsCN_mem_subtrees_of_mem_crown τ hp hx
+      induction T using Quotient.inductionOn with
+      | h t =>
+        rw [UnorderedTree.quot_mk_eq_mk, UnorderedTree.subtrees_mk,
+          RoseTree.unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map] at hxT
+        obtain ⟨s, hs, rfl⟩ := hxT
+        exact Nat.eq_zero_of_le_zero ((numTraces_le_of_mem_subtrees t hs).trans_eq hT)
+  have hcard := cutSummandsCN_numTraces τ T p hp
+  rw [hcrown, h, hT, zero_add, zero_add] at hcard
+  have hmem : p ∈ (cutSummandsCN τ T).filter (fun p ↦ p.1.card = 0) :=
+    Multiset.mem_filter.2 ⟨hp, hcard.symm⟩
+  rwa [cutSummandsCN_filter_empty, Multiset.mem_singleton] at hmem
+
 /-- Every tree a trace cut extracts has a lexical root, since traces are never cut. -/
 theorem cutSummandsCN_value_isLeft_of_mem_crown (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.value.isLeft :=
