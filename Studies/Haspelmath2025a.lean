@@ -1,11 +1,10 @@
 module
 
-public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Haspelmath2025a
+public import Linglib.Data.Examples.Languages
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
 public import Linglib.Semantics.Reference.Definiteness
@@ -199,6 +198,9 @@ def IsCopula (S : Set Construction) : Prop := ∃ t ∈ S, t.Copular
 /-- An existive is a copula that occurs in no clauses but existential and predpossessive ones. -/
 def IsExistive (S : Set Construction) : Prop := IsCopula S ∧ S ⊆ {existential, predpossessive}
 
+theorem IsCopula.of_mem {t : Construction} (h : t ∈ S) (ht : t.Copular) : IsCopula S :=
+  ⟨t, h, ht⟩
+
 theorem IsCopula.mono (h : S ⊆ T) : IsCopula S → IsCopula T := fun ⟨t, ht, hc⟩ ↦ ⟨t, h ht, hc⟩
 
 theorem not_isCopula_of_possessional (h : ∀ t ∈ S, t.Possessional) : ¬ IsCopula S :=
@@ -304,31 +306,42 @@ def constructions (row : Datum) : List Construction :=
   (row.features "construction").filterMap (List.lookup · constructionNames) ++
     ((row.parse? "strategy" strategyNames).map (·.construction)).toList
 
-/-- A row's bold form has a morph glossed as an existive. -/
-def GlossesExistive (row : Datum) : Prop :=
-  ∃ g ∈ row.features "boldGloss", "EXV".toList ∈ Gloss.segments g
-
-instance : DecidablePred GlossesExistive := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 open Examples
+
+/-- The links the paper's glosses name on a bold form: a copula, a locative copula and an
+existive. -/
+inductive LinkGloss where
+  | copula
+  | locativeCopula
+  | existive
+  deriving DecidableEq, Repr
+
+/-- The links named among the category labels of a row's bold forms. -/
+def linkGlosses (row : Datum) : List LinkGloss :=
+  ((row.features "boldGloss").flatMap Gloss.labels).filterMap
+    (List.lookup · [("COP".toList, .copula), ("LCOP".toList, .locativeCopula),
+      ("EXV".toList, .existive)])
+
+/-- The bold forms of the rows of a language and a type. -/
+def boldForms (l : Glottocode) (t : Construction) : List (List String) :=
+  (all.filter fun row ↦ row.language = l ∧ t ∈ constructions row).map (·.features "bold")
 
 theorem labels_parse : ∀ row ∈ all,
     (∀ v ∈ row.features "construction", (List.lookup v constructionNames).isSome) ∧
       ((row.feature? "strategy").isSome → (row.parse? "strategy" strategyNames).isSome) := by
   decide +kernel
 
-theorem english_predicational :
-    [ex1, ex2, ex3, ex4, ex5, ex6, ex7].filter (∃ t ∈ constructions ·, t.Predicational) =
-      [ex1, ex3, ex4, ex7] := by
-  decide +kernel
-
+-- Lezgian (8) links its classificational and equational clauses by the same copula, Welsh (9)
+-- by different forms of 'be', and Egyptian Arabic (10) only its equational clause.
 theorem duonominal_coding :
-    ex8a.features "bold" = ex8b.features "bold" ∧ ex9a.features "bold" ≠ ex9b.features "bold" ∧
-      ex10a.features "bold" = [] ∧ ex10b.features "bold" ≠ [] := by
+    boldForms .lezgian classificational = boldForms .lezgian equational ∧
+      boldForms .welsh classificational ≠ boldForms .welsh equational ∧
+      boldForms .egyptianArabic classificational = [[]] ∧
+      boldForms .egyptianArabic equational ≠ [[]] := by
   decide +kernel
 
 theorem copula_gloss_copular : ∀ row ∈ all,
-    (∃ g ∈ row.features "boldGloss", g = "COP" ∨ g = "LCOP") →
+    (.copula ∈ linkGlosses row ∨ .locativeCopula ∈ linkGlosses row) →
       ∀ t ∈ constructions row, t.Copular := by
   decide +kernel
 
@@ -338,31 +351,20 @@ predication. -/
 theorem mandinka_general_location : ∀ t, t ∈ constructions ex57 ↔ t.Locational := by
   decide +kernel
 
--- The 'have' of the Seychelles Creole existential (51) links an existential clause, so it is a
--- copula whatever else it occurs in; one found only in possessional clauses is not.
-theorem seychelles_have {S : Set Construction} (h : ∀ t ∈ constructions ex51, t ∈ S) :
-    "have" ∈ ex51.features "boldGloss" ∧ IsCopula S :=
-  ⟨by decide +kernel, existential, h _ (by decide +kernel), by decide⟩
-
-theorem existive_gloss : ∀ row ∈ all, GlossesExistive row →
-    constructions row = [existential] ∨ row = ex66 ∧ constructions row = [hyparctic] := by
+theorem existive_gloss : ∀ row ∈ all, .existive ∈ linkGlosses row →
+    constructions row = [existential] ∨ constructions row = [hyparctic] := by
   decide +kernel
 
 /-- The Hamar form the paper glosses as an existive occurs in the existential clause (61) and in
 the hyparctic clause (66), so by the paper's definitions it is a copula but not an existive. -/
 theorem hamar_existive {S : Set Construction}
     (h : ∀ t ∈ constructions ex61 ++ constructions ex66, t ∈ S) :
-    GlossesExistive ex61 ∧ GlossesExistive ex66 ∧ IsCopula S ∧ ¬ IsExistive S :=
-  ⟨by decide +kernel, by decide +kernel, ⟨existential, h _ (by decide +kernel), by decide⟩,
-    fun hS ↦ hS.hyparctic_notMem (h _ (by decide +kernel))⟩
+    LinkGloss.existive ∈ linkGlosses ex61 ∧ .existive ∈ linkGlosses ex66 ∧ IsCopula S ∧
+      ¬ IsExistive S :=
+  ⟨by decide +kernel, by decide +kernel, .of_mem (h existential (by decide +kernel)) (by decide),
+    fun hS ↦ hS.hyparctic_notMem (h hyparctic (by decide +kernel))⟩
 
 /-! ### The fragments -/
-
-/-- The segments a glossed word writes, read letter by letter by `ofChar` once its morph
-boundaries are dropped and it is lowercased. -/
-def spell (ofChar : Char → Option Phonology.Segment) (w : String) :
-    Option (List Phonology.Segment) :=
-  ((Gloss.segments w).flatten.map Char.toLower).mapM ofChar
 
 section Finnish
 
@@ -374,9 +376,9 @@ open Phonology Finnish Finnish.Nominal Subregular.LocalRewrite
 -- possessor.
 theorem finnish_adessive :
     (realize [p, e, k, k, a] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
-        (ex25.surfaceTokens.head?.bind (spell Finnish.ofChar)).toList ∧
+        (ex25.glossedWords.head?.bind (·.wordform.mapM Finnish.ofChar)).toList ∧
       (realize [k, a, t, t, o] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
-        (ex53.surfaceTokens.head?.bind (spell Finnish.ofChar)).toList ∧
+        (ex53.glossedWords.head?.bind (·.wordform.mapM Finnish.ofChar)).toList ∧
       Finnish.Case.ade.label.dirOf = some .place := by
   decide
 
@@ -389,7 +391,7 @@ open Phonology Turkish Turkish.Phonology
 -- The word of (31) is the fragment's realization of *satıcı* with the past copular marker and
 -- the first person singular.
 theorem turkish_affixal_copula :
-    ex31.surfaceTokens.map (spell ofChar) = [some (Turkish.realize [s, a, t, ı, c, ı]
+    ex31.glossedWords.map (·.wordform.mapM ofChar) = [some (Turkish.realize [s, a, t, ı, c, ı]
       [Verb.Exponent.pastCopula.form,
         (Verb.Exponent.person .one (.personNumber .first .singular)).form])] := by
   decide
