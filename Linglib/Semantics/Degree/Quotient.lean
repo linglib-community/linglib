@@ -103,6 +103,15 @@ theorem isStrictTotalOrder_lt_iff :
         trans := fun x y z ↦ Quotient.inductionOn₃ x y z fun _ _ _ hab hbc ↦
           _root_.trans (r := φ) hbc hab }
 
+instance [DecidableRel φ] : DecidableRel ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) :=
+  fun x y ↦ Quotient.recOnSubsingleton₂ x y fun _ _ ↦ inferInstanceAs (Decidable (φ _ _))
+
+/-- On a strict weak order the degrees are linearly ordered, as mathlib's `Antisymmetrization` is
+on a total preorder. -/
+instance [IsStrictWeakOrder E φ] [DecidableRel φ] : LinearOrder (CresswellDegree φ) :=
+  have := isStrictTotalOrder_lt_iff.2 ‹IsStrictWeakOrder E φ›
+  linearOrderOfSTO (· < ·)
+
 /-! ### Preorders -/
 
 /-- On a preorder, indistinguishability is mutual comparison, the relation mathlib's
