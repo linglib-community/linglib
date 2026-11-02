@@ -156,7 +156,7 @@ def dim_84a_fuller : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "entity"), ("dimension", "volume"), ("intensive", "false")] }
+    paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "volume"), ("intensive", "false")] }
 
 def dim_84b_heavier : Datum :=
   { id := "wellwood2015_dim_84b_heavier"
@@ -169,7 +169,7 @@ def dim_84b_heavier : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "entity"), ("dimension", "weight"), ("intensive", "false")] }
+    paperFeatures := [("category", "gradableAdj"), ("measuredDomain", "state"), ("dimension", "weight"), ("intensive", "false")] }
 
 def dim_85a_more_heat : Datum :=
   { id := "wellwood2015_dim_85a_more_heat"
@@ -208,7 +208,7 @@ def dim_89a_sped_up : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("category", "atelicVP"), ("measuredDomain", "state"), ("dimension", "speed"), ("intensive", "true")] }
+    paperFeatures := [("category", "atelicVP"), ("measuredDomain", "event"), ("dimension", "speed"), ("intensive", "true")] }
 
 def dim_87a_drove : Datum :=
   { id := "wellwood2015_dim_87a_drove"

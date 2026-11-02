@@ -1,6 +1,8 @@
 module
 
+public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Core.Algebra.Order.Group.Indicator
 public import Linglib.Core.Order.Monotone.Basic
 public import Linglib.Semantics.Degree.Delineation
 public import Linglib.Semantics.Degree.Quantifier
@@ -14,8 +16,9 @@ states of having some heat for *hot*, and in each context a threshold property, 
 set of those states. The positive form says that the subject holds a state with the threshold
 property, so no covert *pos* is needed; the comparative compares an admissible measure of the
 subject's states with the greatest degree of the standard's, after Wellwood, and [does not entail
-the positive](##maxComparative_and_not_mem_image). On a total background *Barcelona is hot* and
-*Miami is hotter than Barcelona* [entail *Miami is hot*](##mem_image_of_maxComparative).
+the positive](##maxComparative_and_not_mem_image). *Barcelona is hot* and *Miami is hotter than
+Barcelona* entail *Miami is hot* under every admissible measure
+[exactly on a total background](##total_iff_forall_mem_image_of_maxComparative).
 Scale-mates share a background and differ in threshold, *hot* [entailing *warm* and not
 conversely](##image_Ici_subset_image_Ici_iff) when its threshold lies strictly above. Two states
 [meet the same thresholds](##antisymmRel_iff_forall_isUpperSet) iff they are tied, and the
@@ -32,18 +35,19 @@ the authors' degree-based variant, iff the measure reflects the background.
   standard degree being the greatest measure of `b`'s states. An admissible measure is
   `StrictMono μ`, Schwarzschild's monotonicity.
 * `holder` need not be injective, since the standard's maximum ranges over several states. The
-  converse of the scale-mate entailment needs each holder to hold one state, the one-to-one
-  thematic relation the paper assumes.
+  converse of the scale-mate entailment and the failure of (19) off a total background need each
+  holder to hold one state, the one-to-one thematic relation the paper assumes.
 
 ## Errata
 
 * §4 calls the states of two cities of equal temperature "not ordered with respect to one
   another", which makes the background non-linear. Read so, a threshold holds of one state and not
   of the other (`antisymmRel_iff_forall_isUpperSet`), so one city is hot and the other not at one
-  temperature, and the inference (19) can fail (`not_mem_image_Ici_of_not_le`). Footnote 10 takes
-  degrees to record classes of states, so the measure reflects the background; the two states are
-  then tied, as Figure 1 draws them, and the background is total (`total_of_reflect_le`),
-  non-linear only in failing antisymmetry.
+  temperature, and the inference (19) fails under some admissible measure
+  (`total_iff_forall_mem_image_of_maxComparative`). Footnote 10 takes degrees to record classes of
+  states, so the measure reflects the background; the two states are then tied, as Figure 1 draws
+  them, and the background is total (`total_of_reflect_le`), non-linear only in failing
+  antisymmetry.
 * §6 calls the difference between a background of states and a linearly ordered scale "not
   relevant for current purposes", but the degree-based variant expresses every threshold only when
   the measure reflects the background (`forall_isUpperSet_exists_preimage_iff`), hence only on a
@@ -84,8 +88,7 @@ theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s 
       rfl ht).2 hlt,
     fun ⟨u, hu, hus⟩ ↦ hsT (hs u hus ▸ hu)⟩
 
-/-- The inference (19): on a total background with an admissible measure, if `b` is hot and `a`
-is hotter than `b`, then `a` is hot, since the threshold is upward closed (18). -/
+-- (19), (18)
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
     (hμ : StrictMono μ) {a b : X} (hb : b ∈ holder '' T)
     (h : MaxComparative .gt (holder · = a) (holder · = b) μ) : a ∈ holder '' T :=
@@ -127,13 +130,41 @@ theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < �
       rfl hs).2 hlt,
     fun ⟨u, hu, hut⟩ ↦ hst (ht u hut ▸ hu)⟩
 
--- An admissible measure realizes the failure: on the componentwise order of `ℕ × ℕ` the sum of
--- the coordinates is strictly monotone and puts `(1, 0)` below the incomparable `(0, 2)`.
-example :
-    StrictMono (fun x : ℕ × ℕ ↦ x.1 + x.2) ∧ ¬ ((1, 0) : ℕ × ℕ) ≤ (0, 2) ∧
-      (1, 0).1 + (1, 0).2 < (0, 2).1 + (0, 2).2 := by
-  refine ⟨fun x y hxy ↦ ?_, by decide, by decide⟩
-  rcases Prod.lt_iff.1 hxy with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ <;> dsimp only <;> omega
+/-- The inference (19) holds under every admissible measure exactly on a total background, when
+each holder holds one state and some admissible measure into a nontrivial linearly ordered
+additive group exists. -/
+theorem total_iff_forall_mem_image_of_maxComparative {G : Type*} [AddCommGroup G] [LinearOrder G]
+    [IsOrderedAddMonoid G] [Nontrivial G] (hinj : holder.Injective) {μ₀ : S → G}
+    (hμ₀ : StrictMono μ₀) :
+    (∀ s t : S, s ≤ t ∨ t ≤ s) ↔ ∀ μ : S → G, StrictMono μ → ∀ T : Set S, IsUpperSet T →
+      ∀ a b, b ∈ holder '' T → MaxComparative .gt (holder · = a) (holder · = b) μ →
+        a ∈ holder '' T := by
+  refine ⟨fun htot μ hμ T hT a b ↦ ?_, fun h s t ↦ by_contra fun hst ↦ ?_⟩
+  · have : @Std.Total S (· ≤ ·) := ⟨htot⟩
+    exact mem_image_of_maxComparative hT hμ
+  · obtain ⟨hst, hts⟩ := not_or.1 hst
+    obtain ⟨μ, hμ, hlt⟩ := hμ₀.exists_strictMono_lt_of_not_ge hts
+    obtain ⟨hs, hc, hn⟩ :=
+      not_mem_image_Ici_of_not_le hst hlt (fun _ h ↦ hinj h) (fun _ h ↦ hinj h)
+    exact hn (h μ hμ _ (isUpperSet_Ici s) _ _ hs hc)
+
+-- With one state per holder, (19) holds under every admissible measure on a linearly ordered
+-- additive group, a total background, and fails under some admissible measure on its componentwise
+-- plane.
+example {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G] [Nontrivial G] :
+    ∀ μ : G → G, StrictMono μ → ∀ T : Set G, IsUpperSet T → ∀ a b, b ∈ id '' T →
+      MaxComparative .gt (id · = a) (id · = b) μ → a ∈ id '' T :=
+  (total_iff_forall_mem_image_of_maxComparative Function.injective_id strictMono_id).1 le_total
+
+example {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G] {ε : G} (hε : 0 < ε) :
+    ¬ ∀ μ : G × G → G, StrictMono μ → ∀ T : Set (G × G), IsUpperSet T → ∀ a b,
+      b ∈ id '' T → MaxComparative .gt (id · = a) (id · = b) μ → a ∈ id '' T := fun h ↦ by
+  have : Nontrivial G := ⟨0, ε, hε.ne⟩
+  have hμ₀ : StrictMono fun p : G × G ↦ p.1 + p.2 := fun p q h ↦
+    (Prod.lt_iff.1 h).elim (fun h ↦ add_lt_add_of_lt_of_le h.1 h.2)
+      fun h ↦ add_lt_add_of_le_of_lt h.1 h.2
+  simpa [Prod.le_def, hε.not_ge] using
+    (total_iff_forall_mem_image_of_maxComparative Function.injective_id hμ₀).2 h (ε, 0) (0, ε)
 
 /-! ### States of equal temperature -/
 
