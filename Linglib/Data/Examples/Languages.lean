@@ -763,6 +763,9 @@ def muirin : Glottocode := "muir1238"
 /-- Muna, `muna1247` (ISO 639-3 `mnb`). -/
 def muna : Glottocode := "muna1247"
 
+/-- Mundari, `mund1320` (ISO 639-3 `unr`). -/
+def mundari : Glottocode := "mund1320"
+
 /-- Mupun, `mupu1234`, a dialect. -/
 def mupun : Glottocode := "mupu1234"
 
@@ -1008,6 +1011,9 @@ def saramaccan : Glottocode := "sara1340"
 
 /-- Sarawak Malay, `sara1351`, a dialect. -/
 def sarawakMalay : Glottocode := "sara1351"
+
+/-- Satawalese, `sata1237` (ISO 639-3 `stw`). -/
+def satawalese : Glottocode := "sata1237"
 
 /-- Scottish Gaelic, `scot1245` (ISO 639-3 `gla`). -/
 def scottishGaelic : Glottocode := "scot1245"
