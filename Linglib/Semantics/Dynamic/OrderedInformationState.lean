@@ -24,8 +24,8 @@ States are ordered by inclusion in both coordinates, so that a state with more i
 more expectations lies lower; Veltman orders them the other way. Assertion and promotion never
 crash. Veltman identifies every state with empty information or an incoherent pattern with the
 absurd state, and his update with *normally φ* crashes when no normal world is a `φ`-world, so on
-a text that crashes his validity₁ and the one here can differ. The crashing update, for the
-restricted rules of his section 4, is in `Studies/Veltman1996.lean`.
+a text that crashes his validity₁ and the one here can differ. His crashing updates are in
+`Studies/Veltman1996.lean`, as those of his section 4 on general rules.
 
 ## TODO
 

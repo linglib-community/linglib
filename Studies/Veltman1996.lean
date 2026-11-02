@@ -34,30 +34,32 @@ to every domain of worlds, Definition 4.2, `Frame`; a world is normal in a domai
 top-ranked in every subdomain containing it, Definition 4.3, `Normal`; a frame is coherent when
 every nonempty domain has a normal world, `Coherent`; accepting a rule refines the pattern at the
 rule's domain and crashes when the result is incoherent, Definitions 4.5 and 4.6, `rule`; and a set
-of defaults applies within the agent's information when every domain extending it has a normal
-world complying with them, Definition 4.9, `Applies`. The optimal worlds comply with a maximal
-applicable set of defaults, Definition 4.13, `State.optimal`, computed over the accepted rules by
-Proposition 4.14. Validity is validity₁, `Valid`. Proved in general are the refinement clause of
-Definition 4.5, `Frame.ofRules_cons_self` and `Frame.ofRules_cons_of_ne`, Proposition 4.7,
-coherent acceptance being applicability of the new rule within its own domain,
-`coherent_cons_iff`, Conditional Identity and Conjunction of Consequents, `rule_self` and
-`conjConsequents`, and the section 5 observation that Weakening the Consequent never crashes a
-state, `weakenConsequent_coherent`. Checked on the paper's eight worlds are Examples 4.8 and 4.11,
-the Nixon diamond, the student who is presumably an unemployed adult, Independence, defeasible
-Modus Tollens, Modus Ponens over Modus Tollens on a cyclic net, the failure of Hypothetical
-Syllogism, Contraposition and Strengthening the Antecedent beside their defeasible versions, and
-the near-validity of Strengthening with a Consequent and Disjunction of Antecedents. On the
-states that general rules build, a frame is coherent when [its pattern
-is](##Veltman1996.State.coherent_ofRules_iff), the optimal worlds are [those of section
-3](##Veltman1996.State.IsGeneral.optimal_eq), and *presumably φ* [passes exactly when it does
-there](##Veltman1996.State.IsGeneral.presumably_eq_self_iff).
+of defaults applies within the agent's information when every domain extending it has a normal world
+complying with them, Definition 4.9, `Applies`. The optimal worlds comply with a maximal applicable
+set of defaults, Definition 4.13, `State.optimal`, computed over the accepted rules by Proposition
+4.14. Validity is validity₁, `Valid`. Proved in general are the refinement clause of Definition 4.5,
+`Frame.ofRules_cons_self` and `Frame.ofRules_cons_of_ne`, Proposition 4.7, coherent acceptance being
+applicability of the new rule within its own domain, `coherent_cons_iff`, Conditional Identity and
+Conjunction of Consequents, `rule_self` and `conjConsequents`, and the section 5 observation that
+Weakening the Consequent never crashes a state, `weakenConsequent_coherent`. Checked on the paper's
+eight worlds are Examples 4.8 and 4.11, the Nixon diamond, the student who is presumably an
+unemployed adult, Independence, defeasible Modus Tollens, Modus Ponens over Modus Tollens on a
+cyclic net, the failure of Hypothetical Syllogism, Contraposition and Strengthening the Antecedent
+beside their defeasible versions, and the near-validity of Strengthening with a Consequent and
+Disjunction of Antecedents. On the states that general rules build, section 4 agrees with section 3:
+a frame is coherent when [its pattern is](##Veltman1996.State.coherent_ofRules_iff), *normally ψ*
+[crashes exactly when no normal world is a
+`ψ`-world](##Veltman1996.State.IsGeneral.normally_eq_absurd_iff) and otherwise promotes `ψ`, the
+optimal worlds are [those of section 3](##Veltman1996.State.IsGeneral.optimal_eq), and *presumably
+φ* [passes exactly when it does there](##Veltman1996.State.IsGeneral.presumably_eq_self_iff).
 
 ## Implementation notes
 
-The update with *normally φ* of `DynamicSemantics.OrderedInformationState` does not crash, so the
-second clause of Example 3.10(i), where the opposite rule crashes the state, is checked in the
-system of section 4, in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`. On general
-rules and facts the update of section 4, when it does not crash, is that of section 3
+The updates of `DynamicSemantics.OrderedInformationState` do not crash, so the crashing system of
+section 3 is the system of section 4 restricted to general rules, in which *normally ψ* is the rule
+`(ψ ∨ ¬ψ) ⇝ ψ`. The second clause of Example 3.10(i), where the opposite rule crashes the state, is
+checked there, `ex310_conflict`, and the remaining examples of section 3, whose texts do not crash,
+on the updates of `DynamicSemantics.OrderedInformationState`
 (`State.toOrderedInformationState_normally`, `State.toOrderedInformationState_fact`).
 
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
@@ -718,6 +720,34 @@ theorem toOrderedInformationState_fact (h : fact φ σ ≠ absurd) :
   split_ifs at h ⊢
   · exact OrderedInformationState.ext (Finset.coe_inter _ _) rfl
   · exact (h rfl).elim
+
+/-- On a general state with information, the update with a general rule crashes exactly when no
+normal world of the pattern of section 3 is a `ψ`-world, Veltman's condition for *normally ψ* in
+section 3 (Definitions 3.3 and 3.9). -/
+theorem IsGeneral.normally_eq_absurd_iff (h : σ.IsGeneral) (hσ : σ.info.Nonempty) :
+    Veltman1996.normally ψ σ = absurd ↔
+      ¬∃ w, (∀ v, σ.toOrderedInformationState.order.le w v) ∧ w ∈ ψ := by
+  obtain ⟨w₀, hw₀⟩ := hσ
+  have : Nonempty W := ⟨w₀⟩
+  have hgen : ∀ r ∈ (⟨ψ ∪ ψᶜ, ψ⟩ : Rule W) :: σ.rules, r.domain = Finset.univ := by
+    simp only [List.mem_cons, forall_eq_or_imp]
+    exact ⟨Finset.union_compl ψ, h.domain_eq⟩
+  have key : (((ψ ∪ ψᶜ) ∩ ψ).Nonempty ∧ Coherent (Frame.ofRules (⟨ψ ∪ ψᶜ, ψ⟩ :: σ.rules)) ∧
+      σ.info.Nonempty) ↔ ∃ w, (∀ v, σ.toOrderedInformationState.order.le w v) ∧ w ∈ ψ := by
+    rw [coherent_ofRules_iff hgen, Finset.union_compl, Finset.univ_inter]
+    constructor
+    · rintro ⟨⟨u, hu⟩, ⟨w, hw⟩, -⟩
+      exact ⟨w, fun v r hr ↦ hw v r (List.mem_cons_of_mem _ hr), hw u _ List.mem_cons_self hu⟩
+    · rintro ⟨w, hw, hwψ⟩
+      refine ⟨⟨w, hwψ⟩, ⟨w, fun v r hr hv ↦ ?_⟩, ⟨w₀, hw₀⟩⟩
+      rcases List.mem_cons.1 hr with rfl | hr
+      · exact hwψ
+      · exact hw v r hr hv
+  unfold Veltman1996.normally rule
+  split_ifs with hc
+  · exact iff_of_false (fun he ↦ List.cons_ne_nil _ _ (congrArg State.rules he))
+      (not_not.2 (key.1 hc))
+  · exact iff_of_true rfl fun hex ↦ hc (key.2 hex)
 
 /-- On a general state other than the absurd one, *presumably φ* passes exactly when `φ` holds at
 the optimal worlds of section 3, so that the presumptions of section 4 extend those of
