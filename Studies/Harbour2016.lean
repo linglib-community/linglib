@@ -311,10 +311,10 @@ theorem exists_generated (c : SupCon (Finset Role)) :
     exact h f (Finset.mem_filter.mpr ⟨mem_univ f, ha⟩)
 
 theorem generated_participant_author :
-    (generated {.participant, .author}).toSetoid = Person.tripartition.toSetoid := by
+    (generated {.participant, .author}).toSetoid = Person.standardTripartition.toSetoid := by
   refine Setoid.ext fun s t ↦ ?_
-  show (generated _).r s t ↔ Person.tripartition.r s t
-  rw [generated_r_iff, Person.tripartition_r_iff]
+  show (generated _).r s t ↔ Person.standardTripartition.r s t
+  rw [generated_r_iff, Person.standardTripartition_r_iff]
   revert s t; decide
 
 theorem generated_hearer {s t : Finset Role} :

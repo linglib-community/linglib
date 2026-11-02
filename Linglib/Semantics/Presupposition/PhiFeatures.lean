@@ -21,7 +21,8 @@ and gender at the gender a referent is socially assigned (`Gendered`). For gende
 masculine the unmarked value, the one coordinations of mixed gender take, with feminine presupposing
 non-masculinity and neuter genderlessness, so the neuter domain lies inside the feminine one. The
 person domains are the participant-set extents of `Person.Bears` pulled back along the participants
-of a referent, and a tripartition value denotes the referents in its domain and in no stronger one.
+of a referent, and a value of the standard tripartition denotes the referents in its domain and in
+no stronger one.
 
 ## Main definitions
 
@@ -31,8 +32,8 @@ of a referent, and a tripartition value denotes the referents in its domain and 
 ## Main results
 
 * `Person.mem_dom_feature_iff`: a person feature's domain is the pullback of `Person.Bears`.
-* `Person.participants_mem_participantSets_first`, `…_second`, `…_third`: the tripartition
-  values denote the referents in their domain and in no stronger one.
+* `Person.participants_mem_participantSets_first`, `…_second`, `…_third`: the standard
+  tripartition values denote the referents in their domain and in no stronger one.
 * `Gender.dom_neuter_subset_dom_feminine`: the neuter domain lies inside the feminine one.
 
 ## Implementation notes
@@ -44,7 +45,7 @@ recruited by honorification. A referent may be gendered neither way, and then it
 gender domains. The person entries take the agent and the addressee as parts of the referent where
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
-including the addressee. The cells of the tripartition are stated one by one, since
+including the addressee. The cells of the standard tripartition are stated one by one, since
 Maximize Presupposition (`Competition.unblocked`) yields them only when the agent is not
 part of the addressee; otherwise the first and second person domains coincide
 (`Sauerland2003.unblocked_second_of_degenerate`). The dual's minimality domain needs a

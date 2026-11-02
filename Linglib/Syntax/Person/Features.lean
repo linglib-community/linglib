@@ -13,37 +13,17 @@ public import Mathlib.Order.Concept
 # Bivalent person features
 
 Person decomposes into two features, [participant] and [author], the bivalent system Ackema and
-Neeleman trace to Halle. Read on participant sets, [participant] holds of the nonempty ones and
-[author] of those containing the speaker, so the participant sets and the features form a formal
-context (`Person.Bears`). A value's bundle is the set of features holding of all its participant
-sets, its intent in the context. Every set containing the speaker is nonempty, so the closed sets of
-features are exactly the lower sets of the chain participant < author: the containment filter
-that rules out an author who is no participant is the closure of the context. Harley and Ritter
-caution that a geometry encodes morphological dependency, which need not follow logical
-implication, so the chain stays a stipulated order, and its coincidence with the closure is a
-theorem about person. Two features see the tripartition and not clusivity: a tripartition value
-covers exactly the participant sets whose own features are its bundle.
-
-## Main definitions
-
-* `Person.Feature`: the two features, ordered participant < author.
-* `Person.Bears`: the features a participant set bears.
-* `Person.toFeatures`: the bundle of a person value.
-* `Person.prominence`: the top of a value's bundle, the person hierarchy.
-* `Person.Category.toFeatures`: the bundle of a referential category.
-
-## Main results
-
-* `Person.wellFormed_iff_isIntent`: the well-formed bundles are the closed sets of the context.
-* `Person.card_wellFormed`: there are three well-formed bundles, so no fourth person.
-* `Person.mem_participantSets_iff`: a tripartition value covers the participant sets whose
-  features are its bundle.
-* `Person.toFeatures_sup`: the bundle of a coordination is the union of its conjuncts' bundles.
-* `Person.mem_toFeatures_iff`: a value bears exactly the features up to its prominence.
-* `Person.prominence_le_iff`: prominence is the order resolution induces up to clusivity.
-* `Person.prominence_le_iff_subset`: prominence orders values by inclusion of their bundles.
-* `Person.Category.sharedPerson_isSome_iff`: a set of categories has a person iff they share a
-  bundle.
+Neeleman trace to Halle. [participant] holds of the nonempty participant sets and [author] of those
+containing the speaker, a formal context (`Person.Bears`) in which a value's bundle is its intent.
+[The bundles passing the containment filter are exactly the closed sets of the
+context](##Person.wellFormed_iff_isIntent), the lower sets of the chain participant < author.
+Harley and Ritter caution that a geometry encodes morphological dependency, not logical
+implication, so the chain stays a stipulated order and its coincidence with the closure is a
+theorem about person. The features see the standard tripartition and not clusivity:
+[its values cover exactly the participant sets whose features are their
+bundle](##Person.mem_participantSets_iff), and
+[ordering values by the tops of their bundles](##Person.prominence_le_iff) is the person
+hierarchy.
 
 ## References
 
@@ -158,8 +138,8 @@ theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFe
 theorem includesSpeaker_iff_author {p : Person} : p.IncludesSpeaker ↔ .author ∈ p.toFeatures := by
   revert p; decide
 
-/-- A tripartition value covers exactly the participant sets whose features are its bundle, the
-sets in the domain of its bundle and in no domain of a more specified one. -/
+/-- A value of the standard tripartition covers exactly the participant sets whose features are
+its bundle, the sets in the domain of its bundle and in no domain of a more specified one. -/
 theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p) (s : Finset Role) :
     s ∈ p.participantSets ↔ univ.filter (Bears s) = p.toFeatures := by
   revert p s; decide
@@ -201,7 +181,7 @@ theorem prominence_le_iff_subset {p q : Person} :
   revert p q; decide
 
 /-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
-`q` iff coordinating them gives `q`'s tripartition value. -/
+`q` iff coordinating them gives `q`'s value in the standard tripartition. -/
 theorem prominence_le_iff {p q : Person} :
     p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
   revert p q; decide
@@ -214,7 +194,7 @@ variable {c : Category}
 
 /-- The bundle of a category is the set of features its participants bear. The features
 underdetermine the first person complex, whose three categories share a bundle; the
-decomposition that distinguishes the exclusive is Harbour's (`Studies.Harbour2016.signOf`). -/
+decomposition that distinguishes the exclusive is Harbour's (`Harbour2016.signOf`). -/
 def toFeatures (c : Category) : Features := univ.filter (Bears c.participants)
 
 @[simp] theorem mem_toFeatures {f : Feature} : f ∈ c.toFeatures ↔ Bears c.participants f := by

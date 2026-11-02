@@ -12,24 +12,12 @@ public import Linglib.Syntax.Person.Basic
 /-!
 # The lattice of persons
 
-A person value covers the referents whose participants form one of its participant sets
-(`Person.participantSets`). As Zwicky proposes, a
-coordination refers to the union of its conjuncts' referents, so its participant sets are the
-pairwise unions `⊻` of theirs. Distinct values cover distinct participant sets, so this makes
-`Person` a join-semilattice whose join `⊔` is person resolution, with third person at the
-bottom. Dalrymple and Kaplan's marker sets are the participant sets of the
-quadripartition, and their union is the join (`Person.ofParticipants_union`).
-
-## Main definitions
-
-* the `SemilatticeSup Person` instance: person resolution as the join.
-
-## Main results
-
-* `Person.participantSets_sup`: the participant sets of a join are the pairwise unions.
-* `Person.ofParticipants_union`: the person of a union of participant sets is the join of their
-  persons.
-* `Person.coarsen_eq_iff`: coarsening sends a value to the tripartition value covering it.
+As Zwicky proposes, a coordination refers to the union of its conjuncts' referents, so
+[its participant sets are the pairwise unions of theirs](##Person.participantSets_sup). Distinct
+values have distinct participant sets, so this makes `Person` a join-semilattice whose join is
+person resolution, with the third person at the bottom. Dalrymple and Kaplan's marker sets are the
+participant sets of the quadripartition, and
+[the person of their union is the join of their persons](##Person.ofParticipants_union).
 
 ## References
 
@@ -97,7 +85,8 @@ theorem participantSets_subset_coarsen (p : Person) :
     p.participantSets ⊆ p.coarsen.participantSets := by
   cases p <;> decide
 
-/-- Coarsening sends a value to the tripartition value covering its participant sets. -/
+/-- Coarsening sends a value to the value of the standard tripartition covering its participant
+sets. -/
 theorem coarsen_eq_iff (p q : Person) :
     p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
   revert p q; decide

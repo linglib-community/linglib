@@ -9,33 +9,17 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Referential person categories
 
-The eight referential person categories. A category is a configuration of the speech-act
-participants a referent contains and of the others it contains, none, one or several: the three
-singular participants and the five attested groups. The two groups this excludes, several
-speakers and an audience with no one else, are the configurations `Category.WellFormed` rejects.
-
-## Main definitions
-
-* `Person.Category`: the eight categories.
-* `Category.toConfig`: the configuration of a category, a bijection onto the well-formed ones.
-* `Category.IsSingular`, `Category.IsGroup`, `Category.IsFirstPersonComplex`,
-  `Category.IsInclusive`: the classes of categories read off the configuration.
-* `Category.person`: the person projection, keeping clusivity on the groups.
-* `Category.ofPersonNumber`: the categories a (person, number) coordinate pair realizes.
-* `Category.sharedPerson`, `Category.sharedNumber`: the coordinates a set of categories
-  shares, neutral values where they differ.
-
-## Main results
-
-* `Category.toConfig_bijective`: the categories are exactly the well-formed configurations.
-* `Category.ofPersonNumber_person`: every category is recovered from its person at some number.
-* `Category.exactCard_eq_card_of_mem_ofPersonNumber`,
-  `Category.disjoint_ofPersonNumber_minimal_augmented`: the categories a number realizes respect
-  its cardinality and the complementarity of minimal and augmented.
+Cysouw's eight referential person categories configure the speech-act participants a referent
+contains with the others it contains, none, one or several: the three singular participants and the
+five attested groups. [They are exactly the well-formed
+configurations](##Person.Category.toConfig_bijective), the two groups this excludes being several
+speakers and an audience with no one else. A category's person keeps clusivity on the groups
+(`Person.Category.person`), and [every category is recovered from its person at some
+number](##Person.Category.ofPersonNumber_person).
 
 ## References
 
-* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
+* [cysouw-2003]
 -/
 
 @[expose] public section

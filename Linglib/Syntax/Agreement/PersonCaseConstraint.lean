@@ -24,8 +24,8 @@ files and compared cell by cell against these grammars.
 ## Main declarations
 
 * `PCC.Grammar`, `PCC.IsLicit`: the P-Constraint grammars and the combinations they license.
-* `PCC.cliticPairs`, `PCC.distinctPairs`: the combinations of the person tripartition, with and
-  without the reflexive diagonal.
+* `PCC.cliticPairs`, `PCC.distinctPairs`: the combinations of the standard person
+  tripartition, with and without the reflexive diagonal.
 
 ## References
 
@@ -174,10 +174,10 @@ def IsLicit (g : Grammar) (s : Scenario Person) : Prop :=
 instance (g : Grammar) : DecidablePred (IsLicit g) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The persons of the tripartition, over which the typology is stated. -/
+/-- The persons of the standard tripartition, over which the typology is stated. -/
 def persons : Finset Person := {.first, .second, .third}
 
-/-- The prediction domain is the combinations of the tripartition. -/
+/-- The prediction domain is the combinations of the standard tripartition. -/
 def cliticPairs : Finset (Scenario Person) :=
   (persons ×ˢ persons).map Scenario.equivProd.symm.toEmbedding
 

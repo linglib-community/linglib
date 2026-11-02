@@ -159,7 +159,7 @@ theorem aab_not_realizable {v : RuleSet (SpanRule 3 ℕ)} {a b : ℕ} (hAH : v.A
 open Clause (Scenario)
 
 /-- A clitic combination is a scenario of the indirect over the direct object on two distinct
-persons of the tripartition. -/
+persons of the standard tripartition. -/
 def Combination : Type := {s : Scenario Person // s ∈ PCC.distinctPairs}
 
 instance : Fintype Combination := inferInstanceAs (Fintype {s // s ∈ PCC.distinctPairs})

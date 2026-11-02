@@ -41,9 +41,9 @@ open _root_.Agreement Function
 
 /-! ### Cells -/
 
-/-- The values Russian distinguishes in each dimension are the persons of the tripartition, the
-singular and the plural, the genders with their subgenders, and the six cases, and it
-distinguishes no definiteness. -/
+/-- The values Russian distinguishes in each dimension are the persons of the standard
+tripartition, the singular and the plural, the genders with their subgenders, and the six cases,
+and it distinguishes no definiteness. -/
 abbrev Value : Dimension → Type
   | .person => {p : Person // ¬ p.MarksClusivity}
   | .number => Gender.numberSystem.values

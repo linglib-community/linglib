@@ -72,8 +72,8 @@ def finite (tense : UD.Tense) (person : Option Person := none) (number : Option 
 A finite verb agrees with its subject in person and number ([huddleston-pullum-2002] ch. 3
 §1.1). -/
 
-/-- The values of a cell of an English finite verb: a person of the tripartition and one of the
-two numbers, and a single value in the dimensions no English verb agrees in. -/
+/-- The values of a cell of an English finite verb: a person of the standard tripartition and one
+of the two numbers, and a single value in the dimensions no English verb agrees in. -/
 abbrev Value : Dimension → Type
   | .person => {p : Person // ¬ p.MarksClusivity}
   | .number => Nouns.numberSystem.values
