@@ -35,8 +35,8 @@ center](##not_pronominalizationConstraint_accused).
   description's noun, a comparison the chapter does not make.
 * The criteria tie proximate and distal demonstratives, which the scale [ranks
   apart](##distal_lt_proximate) on distributional evidence.
-* `givennessKind` sends a class of the scale to the kind of form Gundel et al. list in their
-  Table 1; names, clitics and verbal agreement have none.
+* `givennessKind` reads the kind of form Gundel et al. list in their Table 1 off a class's
+  features; names, clitics and verbal agreement have none.
 * Rows record their markers by the scale's labels as printed, read through `markerTable`.
 * In (12) the roles follow Centering's ranking for English; the first clause's forms are as
   printed and the second's are those its row records.
@@ -149,17 +149,15 @@ section Givenness
 open GundelHedbergZacharski1993
 
 /-- The kind of form in Table 1 of [gundel-hedberg-zacharski-1993] that a class of the scale is,
-where they list one. -/
-def givennessKind : AccessibilityLevel → Option Form.Kind
-  | zero => some .zero
-  | unstressedPron => some .pronoun
-  | stressedPronGesture | stressedPron => some .stressedPronoun
-  | proxDem => some (.demonstrative .proximal)
-  | distalDem => some (.demonstrative .distal)
-  | proxDemMod | proxDemNP => some (.demonstrativeN .proximal)
-  | distalDemMod | distalDemNP => some (.demonstrativeN .distal)
-  | longDefDescription | shortDefDescription => some .definiteN
-  | _ => none
+read off its head, stress, boundness, lexical content and deixis, where they list one. -/
+def givennessKind (l : AccessibilityLevel) : Option Form.Kind :=
+  match l.head, l.deixis with
+  | .zero, _ => some .zero
+  | .pronoun, _ =>
+    if l.bound then none else if l.stressed then some .stressedPronoun else some .pronoun
+  | .demonstrative, some d => some (if l.lexical then .demonstrativeN d else .demonstrative d)
+  | .description, _ => some .definiteN
+  | _, _ => none
 
 /-- The status Gundel et al. code an English form of the scale for. -/
 def givennessStatus (l : AccessibilityLevel) : Option GivennessStatus :=
