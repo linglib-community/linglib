@@ -55,30 +55,28 @@ variable [DecidableEq Domain] [Fintype Domain] [Inhabited Domain]
 translation ([aloni-vanormondt-2023] Proposition 4.1). -/
 theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var} {k : ℕ}
-    (hτ : φ.toModal? = some τ)
+    (hNE : φ.NEFree) {k : ℕ}
     {i : Index W Var Domain} {v : Var → Domain} (u : ℕ → W)
     (hv : ∀ y, i.assign y = ↑(v y)) (hu : u k = i.world) :
     support M φ {i} ↔
       (letI := M.correspondence
-       (τ.st k).Realize (stVal v u)) :=
-  (support_singleton_iff_realize M hτ hv).trans (hu ▸ realize_st M)
+       (φ.toModal.st k).Realize (stVal v u)) :=
+  (support_singleton_iff_realize M hNE hv).trans (hu ▸ realize_st M)
 
 theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
-    (hτ : φ.toModal? = some τ)
-    (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
+    (hNE : φ.NEFree)
+    (hcl : (stClose 0 (φ.toModal.st 0)).freeVarFinset = ∅)
     {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = ↑(v y)) (hsupp : support M φ {i}) :
     (letI := M.correspondence
-     (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) := by
+     (W ⊕ Domain) ⊨ (stClose 0 (φ.toModal.st 0)).toSentence hcl) := by
   let _S := M.correspondence
-  have h1 : (τ.st 0).Realize (stVal v (fun _ => i.world)) :=
-    (support_singleton_iff_st M hτ (fun _ => i.world) hv rfl).mp hsupp
+  have h1 : (φ.toModal.st 0).Realize (stVal v (fun _ => i.world)) :=
+    (support_singleton_iff_st M hNE (fun _ => i.world) hv rfl).mp hsupp
   refine (Formula.realize_toSentence _ hcl
     (stVal v (fun _ => i.world))).mpr ?_
-  refine (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mpr ⟨i.world, ?_⟩
+  refine (realize_stClose 0 (φ.toModal.st 0) _ fun _ => Iff.rfl).mpr ⟨i.world, ?_⟩
   rw [show Function.update (stVal v (fun _ => i.world))
       (Sum.inr 0) (Sum.inl i.world) = stVal v (fun _ => i.world) from
     Function.update_eq_self _ _]
@@ -87,24 +85,23 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
 theorem exists_support_of_models_toSentence
     (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
-    (hτ : φ.toModal? = some τ)
-    (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
+    (hNE : φ.NEFree)
+    (hcl : (stClose 0 (φ.toModal.st 0)).freeVarFinset = ∅)
     (h : letI := M.correspondence
-         (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) :
+         (W ⊕ Domain) ⊨ (stClose 0 (φ.toModal.st 0)).toSentence hcl) :
     ∃ (i : Index W Var Domain) (v : Var → Domain),
       (∀ y, i.assign y = ↑(v y)) ∧ support M φ {i} := by
   let _S := M.correspondence
   have d₀ : Domain := default
-  obtain ⟨w₀, -⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
+  obtain ⟨w₀, -⟩ := (realize_stClose 0 (φ.toModal.st 0) _ fun _ => Iff.rfl).mp
     ((Formula.realize_toSentence _ hcl (fun _ => (Sum.inr d₀ : W ⊕ Domain))).mp h)
-  obtain ⟨w, hw⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
+  obtain ⟨w, hw⟩ := (realize_stClose 0 (φ.toModal.st 0) _ fun _ => Iff.rfl).mp
     ((Formula.realize_toSentence _ hcl (stVal (fun _ => d₀) (fun _ => w₀))).mp h)
   rw [stVal_update_world] at hw
   have hmodal := (realize_st (u := Function.update (fun _ => w₀) 0 w) M).mpr hw
   rw [Function.update_self] at hmodal
   exact ⟨⟨w, fun _ => ↑d₀⟩, fun _ => d₀, fun _ => rfl,
-    (support_singleton_iff_realize M hτ fun _ => rfl).mpr hmodal⟩
+    (support_singleton_iff_realize M hNE fun _ => rfl).mpr hmodal⟩
 
 /-! ### Compactness for the NE-free fragment -/
 
@@ -120,16 +117,15 @@ formulas by ultraproducts and by saturated models through existential second-ord
 theorem isSatisfiable_stClose_of_support {Var : Type*} [DecidableEq Var] [Fintype Var]
     {Const : Type u} {Pred : Type v} {ι : Type*}
     {φs : ι → Formula Var Const Pred}
-    {τs : ι → ModalFormula ((Language.monadic Pred)[[Const]]) Var}
-    (hτ : ∀ i, (φs i).toModal? = some (τs i))
-    (hcl : ∀ i, (stClose 0 ((τs i).st 0)).freeVarFinset = ∅)
+    (hNE : ∀ i, (φs i).NEFree)
+    (hcl : ∀ i, (stClose 0 ((φs i).toModal.st 0)).freeVarFinset = ∅)
     (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
       (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain) (_ : Inhabited Domain)
       (M : Model W Domain Const Pred) (i : Index W Var Domain)
       (v : Var → Domain), (∀ y, i.assign y = ↑(v y)) ∧
         ∀ j ∈ s, support M (φs j) {i}) :
     Theory.IsSatisfiable
-      (Set.range fun i => (stClose 0 ((τs i).st 0)).toSentence (hcl i)) := by
+      (Set.range fun i => (stClose 0 ((φs i).toModal.st 0)).toSentence (hcl i)) := by
   rw [Theory.isSatisfiable_iff_isFinitelySatisfiable]
   intro T₀ hT₀
   classical
@@ -140,9 +136,9 @@ theorem isSatisfiable_stClose_of_support {Var : Type*} [DecidableEq Var] [Fintyp
   have : (W ⊕ Domain) ⊨ (T₀ : ((Language.monadic Pred)[[Const]]).correspondence.Theory) := by
     refine ⟨fun σ hσ => ?_⟩
     obtain ⟨x, rfl⟩ : ∃ x : T₀,
-        (stClose 0 ((τs (f x)).st 0)).toSentence (hcl (f x)) = σ :=
+        (stClose 0 ((φs (f x)).toModal.st 0)).toSentence (hcl (f x)) = σ :=
       ⟨⟨σ, hσ⟩, hf ⟨σ, hσ⟩⟩
-    exact models_toSentence_of_support M (hτ (f x)) (hcl (f x))
+    exact models_toSentence_of_support M (hNE (f x)) (hcl (f x))
       hv (hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x)))
   exact Theory.Model.isSatisfiable (W ⊕ Domain)
 
