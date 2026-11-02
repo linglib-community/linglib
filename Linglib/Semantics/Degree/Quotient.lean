@@ -10,8 +10,7 @@ public import Mathlib.Order.Setoid.Basic
 Cresswell builds degrees from a comparison instead of assuming them. Two things are
 indistinguishable under a comparison $φ$ when they stand in $φ$ to the same things on both sides,
 the degrees are the classes of indistinguishable things, and $φ$ induces a
-[well-defined comparison](##Degree.CresswellDegree.mk_lt_mk) that
-[tells distinct degrees apart](##Degree.cresswellSetoid_lt_eq_bot). The degrees form a scale, a
+[well-defined comparison](##Degree.CresswellDegree.mk_lt_mk) on them. The degrees form a scale, a
 strict total order, [exactly when $φ$ is a strict weak order](##Degree.isStrictTotalOrder_lt_iff),
 and then being indistinguishable is [being incomparable](##Degree.cresswellSetoid_iff_incompRel).
 On a preorder the construction is
@@ -58,12 +57,6 @@ instance : LT (CresswellDegree φ) :=
 /-- The degree of `a` exceeds that of `b` exactly when `φ a b`, [cresswell-1976] (4.2). -/
 @[simp] theorem CresswellDegree.mk_lt_mk : (⟦b⟧ : CresswellDegree φ) < ⟦a⟧ ↔ φ a b :=
   Iff.rfl
-
-/-- The induced comparison tells distinct degrees apart: quotienting again identifies nothing. -/
-theorem cresswellSetoid_lt_eq_bot (φ : E → E → Prop) :
-    cresswellSetoid ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) = ⊥ :=
-  le_bot_iff.1 fun x y ↦ Quotient.inductionOn₂ x y fun _ _ h ↦
-    Quotient.sound ⟨fun c ↦ h.2 ⟦c⟧, fun c ↦ h.1 ⟦c⟧⟩
 
 /-! ### Scales -/
 
