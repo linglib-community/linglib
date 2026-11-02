@@ -1,44 +1,46 @@
 module
 
+public import Mathlib.Order.Basic
 public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Data.Statistics.Cinque2005
 
 /-!
-# Cinque 2005: Deriving Greenberg's Universal 20 and its exceptions
+# Cinque (2005): Deriving Greenberg's Universal 20 and its exceptions
 
-Of the 24 orders of demonstrative, numeral, adjective and noun, 14 are attested, in very
-unequal numbers of languages, and Greenberg's Universal 20 in Hawkins's revision (1)
-misdescribes the postnominal ones. The paper derives exactly the attested orders from one
-order of Merge, `[Dem [Num [A [N]]]]` (7a), and leftward movement of the NP alone or of a phrase
-containing it past each modifier in turn (7b): no movement and pied-piping of the whose-picture
-type, `[NP [XP]]`, are unmarked; movement without pied-piping, pied-piping of the picture-of-who
-type, `[XP [NP]]`, and partial rather than total raising are marked; head movement and movement
-of a phrase without the overt NP are excluded, the asymmetry Kayne's antisymmetry imposes. Each
-attested order has such a derivation and each unattested one would need a wrong order of Merge
-(6a–x), and the number of marked options a derivation uses tracks frequency: none for the two
-orders of very many languages, two for orders of few or very few.
+Of the 24 orders of demonstrative, numeral, adjective and noun, 14 are attested, in very unequal
+numbers of languages, and neither Greenberg's Universal 20 nor Hawkins's revision of it [carves
+out the attested ones](##greenberg_hawkins_mispredict). One order of Merge, `[Dem [Num [A N]]]`,
+and leftward movement of the noun phrase alone or of a phrase containing it [derive exactly the
+attested orders](##u20_reachable_iff_attested). The marked options a derivation needs, ordered
+by their number and then by their severity, [rank the orders as their frequencies
+do](##frequency_antitone), but for the two orders the paper itself sets aside.
 
-`table` is (6) with each order's frequency and the count of marked options the paper's analysis
-of it states; `stagesOf` enumerates the derivations of (7) on the substrate's `Derivation`, an
-optional raise of any subtree containing the overt noun after each Merge, with the orders read
-by the substrate's externalization, and `u20_reachable_iff_attested` is the paper's result. The
-marked options are derived from the derivations rather than transcribed: raising the modifier's
-whole complement pied-pipes, of the whose-picture type when the noun is its specifier, raising
-a proper part strands, and a derivation is partial when the noun moves but not to the left
-edge; `markedOptions` takes the least count over an order's derivations. The derived counts are
-the paper's for every order with a stated count except (6w), which (7b-v) classes as partial
-while the count omits it (`markedOptions_eq_stated`, `markedOptions_w`); with two marked
-options rather than one, its very few languages fit the frequency claim `markedness_extremes`.
-The paper's own derivations of (6a), (6o) and (6n) are `mergeOrder`, `derivation6o` and
-`derivation6n`, the two pied-piping types each keeping the moved phrase's internal order. The
-demonstrative is `Cat.Dem`.
+## Implementation notes
+
+* The derivations of the Merge order with an optional raise after each Merge are enumerated on
+  the substrate's `Derivation`, and an order's surface is read by its externalization. A raise of
+  a modifier's whole complement pied-pipes, of the whose-picture type when the noun is its
+  specifier, a raise of a proper part strands, and a derivation is partial when the noun moves
+  but not to the left edge.
+* An order's markedness is that of its least marked derivation. The paper's own derivations of
+  (6a), (6o) and (6n) are `mergeOrder`, `derivation6o` and `derivation6n`.
+* Greenberg's Universal 20 is read as the paper reads it, over the modifiers before and after
+  the noun, and Hawkins's revision as the paper quotes it.
+
+## Errata
+
+* (6w) is counted as having one marked option, the raising of the noun with pied-piping of the
+  picture-of-who type, though the parameters list it among the orders derived by partial
+  movement, [a second marked option](##markedOptions_w). Its frequency is
+  given as few languages in the text and very few in (6) and the note to it; with two marked
+  options the very few fits the other orders.
 
 ## References
 
-* [G. Cinque, *Deriving Greenberg's Universal 20 and its exceptions* (2005)][cinque-2005]
-* [J. H. Greenberg, *Some Universals of Grammar with Particular Reference to the Order of
-  Meaningful Elements* (1963)][greenberg-1963]
-* [J. A. Hawkins, *Word Order Universals* (1983)][hawkins-1983]
-* [R. S. Kayne, *The Antisymmetry of Syntax* (1994)][kayne-1994]
+* [cinque-2005]
+* [greenberg-1963]
+* [hawkins-1983]
+* [kayne-1994]
 -/
 
 @[expose] public section
@@ -49,18 +51,21 @@ open Minimalist SyntacticObject RoseTree UnorderedTree
 
 /-! ### The orders and their frequencies (6) -/
 
-/-- The paper's frequency labels. -/
-inductive Freq
-  | veryMany | many | few | veryFew | unattested
-  deriving DecidableEq, Repr
+/-- The category a column of (6) names. -/
+def Category.toCat : Category → Cat
+  | .dem => .Dem
+  | .num => .Num
+  | .adj => .A
+  | .noun => .N
 
-/-- A row of (6) records an order of Dem, Num, A and N, its frequency, and the number of marked
-options the paper's derivation of it counts, none for the unattested orders and for (6p). -/
+/-- A row of (6): an order of Dem, Num, A and N, its frequency, and the number of marked options
+the paper states for its derivation. -/
 structure OrderRow where
+  label : Label
   order : List Cat
-  freq : Freq
+  freq : Frequency
   stated : Option ℕ
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- The order is attested. -/
 def OrderRow.Attested (r : OrderRow) : Prop := r.freq ≠ .unattested
@@ -69,30 +74,40 @@ instance (r : OrderRow) : Decidable r.Attested := inferInstanceAs (Decidable (_ 
 
 /-- (6a)–(6x). -/
 def table : List OrderRow :=
-  [ ⟨[.Dem, .Num, .A, .N], .veryMany, some 0⟩   -- a
-  , ⟨[.Dem, .Num, .N, .A], .many, some 1⟩       -- b
-  , ⟨[.Dem, .N, .Num, .A], .veryFew, some 2⟩    -- c
-  , ⟨[.N, .Dem, .Num, .A], .few, some 1⟩        -- d
-  , ⟨[.Num, .Dem, .A, .N], .unattested, none⟩   -- e
-  , ⟨[.Num, .Dem, .N, .A], .unattested, none⟩   -- f
-  , ⟨[.Num, .N, .Dem, .A], .unattested, none⟩   -- g
-  , ⟨[.N, .Num, .Dem, .A], .unattested, none⟩   -- h
-  , ⟨[.A, .Dem, .Num, .N], .unattested, none⟩   -- i
-  , ⟨[.A, .Dem, .N, .Num], .unattested, none⟩   -- j
-  , ⟨[.A, .N, .Dem, .Num], .veryFew, some 2⟩    -- k
-  , ⟨[.N, .A, .Dem, .Num], .few, some 1⟩        -- l
-  , ⟨[.Dem, .A, .Num, .N], .unattested, none⟩   -- m
-  , ⟨[.Dem, .A, .N, .Num], .veryFew, some 2⟩    -- n
-  , ⟨[.Dem, .N, .A, .Num], .many, some 1⟩       -- o
-  , ⟨[.N, .Dem, .A, .Num], .veryFew, none⟩      -- p
-  , ⟨[.Num, .A, .Dem, .N], .unattested, none⟩   -- q
-  , ⟨[.Num, .A, .N, .Dem], .veryFew, some 2⟩    -- r
-  , ⟨[.Num, .N, .A, .Dem], .few, some 2⟩        -- s
-  , ⟨[.N, .Num, .A, .Dem], .few, some 1⟩        -- t
-  , ⟨[.A, .Num, .Dem, .N], .unattested, none⟩   -- u
-  , ⟨[.A, .Num, .N, .Dem], .unattested, none⟩   -- v
-  , ⟨[.A, .N, .Num, .Dem], .veryFew, some 1⟩    -- w
-  , ⟨[.N, .A, .Num, .Dem], .veryMany, some 0⟩ ] -- x
+  orders.map fun o ↦ ⟨o.label, o.order.map Category.toCat, o.frequency, o.markedOptions⟩
+
+/-! ### Greenberg and Hawkins -/
+
+/-- The modifiers before the noun. -/
+def prenominal (ord : List Cat) : List Cat := ord.takeWhile (· ≠ .N)
+
+/-- The modifiers after the noun. -/
+def postnominal (ord : List Cat) : List Cat := (ord.dropWhile (· ≠ .N)).drop 1
+
+/-- Greenberg's Universal 20: the modifiers before the noun come in the order Dem, Num, A, and
+those after it in that order or its mirror image. -/
+def Greenberg (ord : List Cat) : Prop :=
+  (prenominal ord).Sublist [.Dem, .Num, .A] ∧
+    ((postnominal ord).Sublist [.Dem, .Num, .A] ∨ (postnominal ord).Sublist [.A, .Num, .Dem])
+
+/-- Hawkins's revision (1): the modifiers before the noun come in the order Dem, Num, A, and the
+adjective does not precede the noun when the demonstrative or the numeral follows it. -/
+def Hawkins (ord : List Cat) : Prop :=
+  (prenominal ord).Sublist [.Dem, .Num, .A] ∧
+    ¬ (.A ∈ prenominal ord ∧ (.Dem ∈ postnominal ord ∨ .Num ∈ postnominal ord))
+
+instance (ord : List Cat) : Decidable (Greenberg ord) := inferInstanceAs (Decidable (_ ∧ _))
+instance (ord : List Cat) : Decidable (Hawkins ord) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Greenberg's Universal 20 errs on exactly four orders: it excludes the attested (6l), (6p)
+and (6t) and admits the unattested (6g). Hawkins's revision errs on exactly six: it admits the
+unattested (6g) and (6h) and excludes the attested (6k), (6n), (6r) and (6w). -/
+theorem greenberg_hawkins_mispredict :
+    (table.filter fun r ↦ decide r.Attested != decide (Greenberg r.order)).map (·.label) =
+        [.g, .l, .p, .t] ∧
+      (table.filter fun r ↦ decide r.Attested != decide (Hawkins r.order)).map (·.label) =
+        [.g, .h, .k, .n, .r, .w] := by
+  decide +kernel
 
 /-! ### The derivation space (7) -/
 
@@ -159,6 +174,7 @@ def Stage.order (st : Stage) : List Cat := st.derivation.surfaceCats
 /-- The orders some derivation reaches. -/
 def reachableOrders : List (List Cat) := (stages.map Stage.order).eraseDups
 
+/-- An order is reached by some derivation from the Merge order exactly when it is attested. -/
 theorem u20_reachable_iff_attested :
     table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide +kernel
 
@@ -205,19 +221,44 @@ def markedOptions (ord : List Cat) : Option ℕ :=
 
 /-- The derived count is the paper's for every order with a stated count except (6w). -/
 theorem markedOptions_eq_stated :
-    (table.filter fun r => r.stated.isSome && r.order != [.A, .N, .Num, .Dem]).all fun r =>
+    (table.filter fun r => r.stated.isSome && r.label != .w).all fun r =>
       decide (markedOptions r.order = r.stated) := by decide +kernel
 
-/-- For (6w), A N Num Dem, the derivation has two marked options, though the paper counts one,
-consistent with (7b-v) listing it as partial. -/
+-- (6w), (7b-v)
 theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide +kernel
 
 -- (6p)
 theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide +kernel
 
-theorem markedness_extremes :
-    (table.filter fun r => decide r.Attested).all fun r =>
-      decide ((markedOptions r.order = some 0 ↔ r.freq = .veryMany) ∧
-        (markedOptions r.order = some 2 → r.freq = .few ∨ r.freq = .veryFew)) := by decide +kernel
+/-- The severity of a marked option (p. 321): partial movement, then movement without
+pied-piping, then pied-piping of the picture-of-who type. -/
+def Marked.severity : Marked → ℕ
+  | .partialMovement => 1
+  | .withoutPiedPiping => 2
+  | .pictureOfWho => 3
+
+/-- The markedness of a stage: the number of its distinct marked options, then the severity of
+the most severe. -/
+def Stage.markedness (st : Stage) : Lex (ℕ × ℕ) :=
+  toLex (st.marked.eraseDups.length, (st.marked.map Marked.severity).foldr max 0)
+
+/-- The markedness of the least marked derivation of an order. -/
+def markedness (ord : List Cat) : Option (Lex (ℕ × ℕ)) :=
+  ((stages.filter fun st => decide (st.order = ord)).map Stage.markedness).min?
+
+/-- The rank of a frequency, higher for more languages. -/
+def Frequency.rank : Frequency → ℕ
+  | .veryMany => 3
+  | .many => 2
+  | .few => 1
+  | .veryFew | .unattested => 0
+
+/-- Of two attested orders, the more marked is attested in no more languages, but for (6s) and
+(6p), which the paper sets aside. -/
+theorem frequency_antitone :
+    ∀ r ∈ table, ∀ r' ∈ table, r.Attested → r'.Attested → r.label ∉ [.s, .p] →
+      r'.label ∉ [.s, .p] → ∀ m ∈ markedness r.order, ∀ m' ∈ markedness r'.order, m < m' →
+        r'.freq.rank ≤ r.freq.rank := by
+  decide +kernel
 
 end Cinque2005

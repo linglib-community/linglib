@@ -1,0 +1,491 @@
+{
+  "meta": {
+    "bibkey": "cinque-2005",
+    "method": "typology",
+    "description": "The 24 orders of demonstrative, numeral, adjective and noun, each with whether it is attested and, if so, the frequency label the paper gives from its survey of the typological literature, and the number of marked options the paper's discussion of each derivation states. The paper prints no count for (6b) and (6p) and none for the unattested orders.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Label",
+      "doc": "The label of an order in (6).",
+      "levels": [
+        {
+          "name": "a",
+          "label": "(6a)",
+          "doc": "(6a)"
+        },
+        {
+          "name": "b",
+          "label": "(6b)",
+          "doc": "(6b)"
+        },
+        {
+          "name": "c",
+          "label": "(6c)",
+          "doc": "(6c)"
+        },
+        {
+          "name": "d",
+          "label": "(6d)",
+          "doc": "(6d)"
+        },
+        {
+          "name": "e",
+          "label": "(6e)",
+          "doc": "(6e)"
+        },
+        {
+          "name": "f",
+          "label": "(6f)",
+          "doc": "(6f)"
+        },
+        {
+          "name": "g",
+          "label": "(6g)",
+          "doc": "(6g)"
+        },
+        {
+          "name": "h",
+          "label": "(6h)",
+          "doc": "(6h)"
+        },
+        {
+          "name": "i",
+          "label": "(6i)",
+          "doc": "(6i)"
+        },
+        {
+          "name": "j",
+          "label": "(6j)",
+          "doc": "(6j)"
+        },
+        {
+          "name": "k",
+          "label": "(6k)",
+          "doc": "(6k)"
+        },
+        {
+          "name": "l",
+          "label": "(6l)",
+          "doc": "(6l)"
+        },
+        {
+          "name": "m",
+          "label": "(6m)",
+          "doc": "(6m)"
+        },
+        {
+          "name": "n",
+          "label": "(6n)",
+          "doc": "(6n)"
+        },
+        {
+          "name": "o",
+          "label": "(6o)",
+          "doc": "(6o)"
+        },
+        {
+          "name": "p",
+          "label": "(6p)",
+          "doc": "(6p)"
+        },
+        {
+          "name": "q",
+          "label": "(6q)",
+          "doc": "(6q)"
+        },
+        {
+          "name": "r",
+          "label": "(6r)",
+          "doc": "(6r)"
+        },
+        {
+          "name": "s",
+          "label": "(6s)",
+          "doc": "(6s)"
+        },
+        {
+          "name": "t",
+          "label": "(6t)",
+          "doc": "(6t)"
+        },
+        {
+          "name": "u",
+          "label": "(6u)",
+          "doc": "(6u)"
+        },
+        {
+          "name": "v",
+          "label": "(6v)",
+          "doc": "(6v)"
+        },
+        {
+          "name": "w",
+          "label": "(6w)",
+          "doc": "(6w)"
+        },
+        {
+          "name": "x",
+          "label": "(6x)",
+          "doc": "(6x)"
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "doc": "A category of the nominal phrase.",
+      "levels": [
+        {
+          "name": "dem",
+          "label": "Dem",
+          "doc": "the demonstrative"
+        },
+        {
+          "name": "num",
+          "label": "Num",
+          "doc": "the cardinal numeral"
+        },
+        {
+          "name": "adj",
+          "label": "A",
+          "doc": "the adjective"
+        },
+        {
+          "name": "noun",
+          "label": "N",
+          "doc": "the noun"
+        }
+      ]
+    },
+    {
+      "name": "Frequency",
+      "doc": "The frequency an order is attested with, as (6) labels it.",
+      "levels": [
+        {
+          "name": "veryMany",
+          "label": "very many languages",
+          "doc": "very many languages"
+        },
+        {
+          "name": "many",
+          "label": "many languages",
+          "doc": "many languages"
+        },
+        {
+          "name": "few",
+          "label": "few languages",
+          "doc": "few languages"
+        },
+        {
+          "name": "veryFew",
+          "label": "very few languages",
+          "doc": "very few languages"
+        },
+        {
+          "name": "unattested",
+          "label": "∅",
+          "doc": "unattested"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "orders",
+      "structure": "Order",
+      "doc": "an order of the four categories with its frequency and the number of marked options the paper states for its derivation.",
+      "locator": "(6), pp. 319-320; counts pp. 321-324",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "label",
+          "type": "Label",
+          "doc": "The label."
+        },
+        {
+          "name": "order",
+          "type": "list Category",
+          "doc": "The order, left to right."
+        },
+        {
+          "name": "frequency",
+          "type": "Frequency",
+          "doc": "The frequency."
+        },
+        {
+          "name": "markedOptions",
+          "type": "option nat",
+          "doc": "The number of marked options stated for the order's derivation."
+        }
+      ],
+      "rows": [
+        {
+          "label": "(6a)",
+          "order": [
+            "Dem",
+            "Num",
+            "A",
+            "N"
+          ],
+          "frequency": "very many languages",
+          "markedOptions": 0
+        },
+        {
+          "label": "(6b)",
+          "order": [
+            "Dem",
+            "Num",
+            "N",
+            "A"
+          ],
+          "frequency": "many languages",
+          "markedOptions": null
+        },
+        {
+          "label": "(6c)",
+          "order": [
+            "Dem",
+            "N",
+            "Num",
+            "A"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": 2
+        },
+        {
+          "label": "(6d)",
+          "order": [
+            "N",
+            "Dem",
+            "Num",
+            "A"
+          ],
+          "frequency": "few languages",
+          "markedOptions": 1
+        },
+        {
+          "label": "(6e)",
+          "order": [
+            "Num",
+            "Dem",
+            "A",
+            "N"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6f)",
+          "order": [
+            "Num",
+            "Dem",
+            "N",
+            "A"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6g)",
+          "order": [
+            "Num",
+            "N",
+            "Dem",
+            "A"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6h)",
+          "order": [
+            "N",
+            "Num",
+            "Dem",
+            "A"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6i)",
+          "order": [
+            "A",
+            "Dem",
+            "Num",
+            "N"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6j)",
+          "order": [
+            "A",
+            "Dem",
+            "N",
+            "Num"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6k)",
+          "order": [
+            "A",
+            "N",
+            "Dem",
+            "Num"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": 2
+        },
+        {
+          "label": "(6l)",
+          "order": [
+            "N",
+            "A",
+            "Dem",
+            "Num"
+          ],
+          "frequency": "few languages",
+          "markedOptions": 1
+        },
+        {
+          "label": "(6m)",
+          "order": [
+            "Dem",
+            "A",
+            "Num",
+            "N"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6n)",
+          "order": [
+            "Dem",
+            "A",
+            "N",
+            "Num"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": 2
+        },
+        {
+          "label": "(6o)",
+          "order": [
+            "Dem",
+            "N",
+            "A",
+            "Num"
+          ],
+          "frequency": "many languages",
+          "markedOptions": 1
+        },
+        {
+          "label": "(6p)",
+          "order": [
+            "N",
+            "Dem",
+            "A",
+            "Num"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": null
+        },
+        {
+          "label": "(6q)",
+          "order": [
+            "Num",
+            "A",
+            "Dem",
+            "N"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6r)",
+          "order": [
+            "Num",
+            "A",
+            "N",
+            "Dem"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": 2
+        },
+        {
+          "label": "(6s)",
+          "order": [
+            "Num",
+            "N",
+            "A",
+            "Dem"
+          ],
+          "frequency": "few languages",
+          "markedOptions": 2
+        },
+        {
+          "label": "(6t)",
+          "order": [
+            "N",
+            "Num",
+            "A",
+            "Dem"
+          ],
+          "frequency": "few languages",
+          "markedOptions": 1
+        },
+        {
+          "label": "(6u)",
+          "order": [
+            "A",
+            "Num",
+            "Dem",
+            "N"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6v)",
+          "order": [
+            "A",
+            "Num",
+            "N",
+            "Dem"
+          ],
+          "frequency": "∅",
+          "markedOptions": null
+        },
+        {
+          "label": "(6w)",
+          "order": [
+            "A",
+            "N",
+            "Num",
+            "Dem"
+          ],
+          "frequency": "very few languages",
+          "markedOptions": 1
+        },
+        {
+          "label": "(6x)",
+          "order": [
+            "N",
+            "A",
+            "Num",
+            "Dem"
+          ],
+          "frequency": "very many languages",
+          "markedOptions": 0
+        }
+      ]
+    }
+  ]
+}
