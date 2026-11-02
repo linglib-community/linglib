@@ -5,6 +5,7 @@ public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 /-!
 # Japanese pronouns
@@ -18,7 +19,8 @@ and Bhalla show to be sensitive to the complementizer when embedded. The indeter
 Kratzer and Shimoyama, *dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where', *itsu* 'when',
 *naze* 'why' and *dō* 'how', are the interrogatives, and the quantifiers and indefinite series of
 `Fragments/Japanese/Determiners.lean` and `Fragments/Japanese/Indefinites.lean` are built on them,
-as is *nan-* 'how many' before a classifier.
+as is *nan-* 'how many' before a classifier. The demonstrative pronouns *kore*, *sore* and *are*
+are Tsujimura's ko-so-a series: near the speaker, near the listener, and far from both.
 
 ## References
 
@@ -26,6 +28,7 @@ as is *nan-* 'how many' before a classifier.
 * [ochs-1992]
 * [sells-1987]
 * [kratzer-shimoyama-2002]
+* [tsujimura-2014]
 -/
 
 @[expose] public section
@@ -142,6 +145,28 @@ def ikura : InterrogativePronoun := { form := "ikura", script := some "いくら
 /-- いくつ *ikutsu* 'how many'. -/
 def ikutsu : InterrogativePronoun :=
   { form := "ikutsu", script := some "いくつ", ontology := .amount }
+
+/-! ### Demonstrative pronouns -/
+
+/-- これ *kore* 'this one', near the speaker ([tsujimura-2014] (24)). -/
+def kore : DemonstrativePronoun :=
+  { form := "kore", script := some "これ", person := some .third,
+    deixis := Person.first.participantSets }
+
+/-- それ *sore* 'that one', removed from the speaker but close to the listener. Tsujimura also
+gives the so-series a reading slightly removed from both participants, which a cell of
+participant sets does not record ([tsujimura-2014] (24)). -/
+def sore : DemonstrativePronoun :=
+  { form := "sore", script := some "それ", person := some .third,
+    deixis := Person.second.participantSets }
+
+/-- あれ *are* 'that one', far from both the speaker and the listener ([tsujimura-2014] (24)). -/
+def are : DemonstrativePronoun :=
+  { form := "are", script := some "あれ", person := some .third,
+    deixis := Person.third.participantSets }
+
+/-- The demonstrative pronouns. -/
+def demonstratives : List DemonstrativePronoun := [kore, sore, are]
 
 end Pronouns
 

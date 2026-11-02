@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 /-!
-# Spanish personal pronouns
+# Spanish pronouns
 
 The subject pronouns are *yo*, *tú*, *usted*, *él* and *ella* in the singular and *nosotros*,
 *nosotras*, *vosotros*, *vosotras*, *ustedes*, *ellos* and *ellas* in the plural, with *vos* for
@@ -13,7 +14,9 @@ The subject pronouns are *yo*, *tú*, *usted*, *él* and *ella* in the singular 
 take third-person verb forms ([butt-benjamin-2019]). *Usted* is third person in its clitics and
 reflexives as well, *yo la respeto (a usted)* 'I respect you', and it shows a person-case effect:
 the accusative *la* of *se la presentaré a los estudiantes* 'I will introduce her to the
-students' cannot refer to the addressee ([adamson-zompi-2025], after [rezac-2011]).
+students' cannot refer to the addressee ([adamson-zompi-2025], after [rezac-2011]). The
+demonstrative pronouns locate their referent near the speaker (*éste*), at any remove from the
+speaker (*ése*), and away from both participants (*aquél*).
 
 ## References
 
@@ -108,6 +111,28 @@ def addresseePl : Grade → Finset PersonalPronoun
 /-- The subject pronouns. -/
 def pronouns : Finset PersonalPronoun :=
   {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
+
+/-! ### Demonstrative pronouns -/
+
+/-- *éste* 'this one', near to or associated with the speaker ([butt-benjamin-2019] §7.4.1). -/
+def este : DemonstrativePronoun :=
+  { form := "éste", person := some .third, number := some .singular, gender := some .Masc,
+    deixis := Person.first.participantSets }
+
+/-- *ése* 'that one', at any distance from the speaker, so that it can replace *aquél*
+([butt-benjamin-2019] §7.4.1). -/
+def ese : DemonstrativePronoun :=
+  { form := "ése", person := some .third, number := some .singular, gender := some .Masc,
+    deixis := Person.first.participantSetsᶜ }
+
+/-- *aquél* 'that one over there', not used for things close to the hearer or the speaker
+([butt-benjamin-2019] §7.4.1). -/
+def aquel : DemonstrativePronoun :=
+  { form := "aquél", person := some .third, number := some .singular, gender := some .Masc,
+    deixis := Person.third.participantSets }
+
+/-- The demonstrative pronouns, masculine singular. -/
+def demonstratives : List DemonstrativePronoun := [este, ese, aquel]
 
 end Pronouns
 
