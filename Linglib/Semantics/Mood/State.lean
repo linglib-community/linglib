@@ -157,25 +157,25 @@ theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
 /-! ### Order
 
 Mood states are ordered componentwise, a more constrained state lying below a less constrained
-one, and the state with no information, no expectations and no question is the top. -/
+one. They form a complete lattice, the product of the lattice of expectation states and the lattice
+of partitions, whose top is the state with no information, no expectations and no question. -/
 
-instance : PartialOrder (State W) where
-  le c₁ c₂ := c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry
-  le_refl _ := ⟨le_rfl, le_rfl⟩
-  le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
-  le_antisymm _ _ h₁ h₂ :=
-    State.ext (congrArg ExpState.info (h₁.1.antisymm h₂.1))
-      (congrArg ExpState.order (h₁.1.antisymm h₂.1)) (h₁.2.antisymm h₂.2)
+instance : LE (State W) := ⟨fun c₁ c₂ ↦ c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry⟩
+instance : LT (State W) := ⟨fun c₁ c₂ ↦ c₁ ≤ c₂ ∧ ¬c₂ ≤ c₁⟩
+instance : Max (State W) :=
+  ⟨fun c₁ c₂ ↦ ⟨c₁.toExpState ⊔ c₂.toExpState, c₁.inquiry ⊔ c₂.inquiry⟩⟩
+instance : Min (State W) :=
+  ⟨fun c₁ c₂ ↦ ⟨c₁.toExpState ⊓ c₂.toExpState, c₁.inquiry ⊓ c₂.inquiry⟩⟩
+instance : SupSet (State W) := ⟨fun S ↦ ⟨⨆ c ∈ S, c.toExpState, ⨆ c ∈ S, c.inquiry⟩⟩
+instance : InfSet (State W) := ⟨fun S ↦ ⟨⨅ c ∈ S, c.toExpState, ⨅ c ∈ S, c.inquiry⟩⟩
+instance : Top (State W) := ⟨ofExpState ⊤⟩
+instance : Bot (State W) := ⟨⟨⊥, ⊥⟩⟩
 
-instance : SemilatticeInf (State W) where
-  inf c₁ c₂ := ⟨c₁.toExpState ⊓ c₂.toExpState, c₁.inquiry ⊓ c₂.inquiry⟩
-  inf_le_left _ _ := ⟨inf_le_left, inf_le_left⟩
-  inf_le_right _ _ := ⟨inf_le_right, inf_le_right⟩
-  le_inf _ _ _ h₁ h₂ := ⟨le_inf h₁.1 h₂.1, le_inf h₁.2 h₂.2⟩
-
-instance : OrderTop (State W) where
-  top := ofExpState ⊤
-  le_top _ := ⟨le_top, le_top⟩
+instance : CompleteLattice (State W) :=
+  Function.Injective.completeLattice (fun c ↦ (c.toExpState, c.inquiry))
+    (fun _ _ h ↦ State.ext (congrArg (·.1.info) h) (congrArg (·.1.order) h) (congrArg Prod.snd h))
+    Iff.rfl Iff.rfl (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) (fun _ ↦ by simp only [Prod.iSup_mk]; rfl)
+    (fun _ ↦ by simp only [Prod.iInf_mk]; rfl) rfl rfl
 
 theorem le_iff {c₁ c₂ : State W} :
     c₁ ≤ c₂ ↔ c₁.toExpState ≤ c₂.toExpState ∧ c₁.inquiry ≤ c₂.inquiry :=
