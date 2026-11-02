@@ -112,6 +112,10 @@ theorem Term.felicitous_sigma_of_forall {x : V} {φ : Formula V L P}
       Expr.Felicitous M g (.sigma x φ) ∧ ∃ a, Term.realize M g (.sigma x φ) = {a} :=
   ⟨fun ⟨a, _, c⟩ => ⟨a, c⟩, fun ⟨a, c⟩ => ⟨a, Fin.forall_fin_one.2 a, c⟩⟩
 
+@[simp] theorem Term.felicitous_modalBase (acc : P 1) (w u : V) :
+    Expr.Felicitous M g (Term.modalBase acc w u : Term V L P) :=
+  fun _ _ => ⟨trivial, Fin.forall_fin_one.2 trivial⟩
+
 @[simp] theorem Formula.felicitous_top : Expr.Felicitous M g (.top : Formula V L P) := trivial
 
 @[simp] theorem Formula.felicitous_atom {n : ℕ} (r : P n) (w : Term V L P)

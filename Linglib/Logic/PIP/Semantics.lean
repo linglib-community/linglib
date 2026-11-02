@@ -37,6 +37,8 @@ relation to a point: an atom for a term, nothing for a formula.
 * `Term.realize_sigma_eq`, `Term.realize_sigma_eq_of_mem_locals` — the value of a
   summation from a characterization of its body; `Term.realize_sigma_eq_image`,
   `Term.realize_sigma_eq_of_distributive` — over singular and distributive descriptions.
+* `Term.realize_sigma_eq_of_isConjunctive` — a summation over a conjunction of divisive
+  predications is the union of its singular witnesses.
 * `Expr.realize_congr` — values and truth depend only on the variables occurring in an
   expression.
 * `Expr.realize_elim` — the PIP constructs are eliminable: the translation
@@ -323,6 +325,97 @@ theorem Expr.realize_congr :
 theorem Formula.realize_congr {φ : Formula V L P} {g g' : V → Set α} (h : Set.EqOn g g' φ.vars) :
     Formula.Realize M g φ ↔ Formula.Realize M g' φ :=
   Expr.realize_congr M φ h .unit
+
+/-! ### Summation over divisive predications -/
+
+/-- A relation symbol is divisive in a model when it holds only of a nonempty world plurality and
+nonempty arguments, and still holds when they shrink to nonempty subpluralities. -/
+def Model.Divisive (M : Model P α) {n : ℕ} (r : P n) : Prop :=
+  ∀ ⦃Wp : Set α⦄ ⦃ts : Fin n → Set α⦄, M.I r Wp ts → Wp.Nonempty ∧ (∀ i, (ts i).Nonempty) ∧
+    ∀ ⦃Wp' : Set α⦄ ⦃ts' : Fin n → Set α⦄, Wp' ⊆ Wp → Wp'.Nonempty → (∀ i, ts' i ⊆ ts i) →
+      (∀ i, (ts' i).Nonempty) → M.I r Wp' ts'
+
+theorem Term.exists_realize_eq_of_isVar {t : Term V L P} (ht : t.isVar = true) :
+    ∃ x, t.vars = {x} ∧ ∀ g : V → Set α, Term.realize M g t = g x := by
+  cases t <;> simp only [Expr.isVar, Bool.false_eq_true] at ht <;> exact ⟨_, rfl, fun _ => rfl⟩
+
+variable {M} in
+/-- A conjunction of divisive predications holds only where its variables are nonempty, and
+still holds when they shrink to nonempty subpluralities. -/
+theorem Expr.realize_of_isConjunctive {D : ∀ {n : ℕ}, P n → Bool}
+    (hD : ∀ {n : ℕ} (r : P n), D r = true → M.Divisive r) {k : Kind} (e : Expr V L P k)
+    (he : e.isConjunctive D = true) {g : V → Set α} (a : Kind.Point α k)
+    (hr : e.Realize M g a) : (∀ x ∈ e.vars, (g x).Nonempty) ∧
+      ∀ g' : V → Set α, (∀ x ∈ e.vars, g' x ⊆ g x ∧ (g' x).Nonempty) → e.Realize M g' a := by
+  induction e generalizing g with
+  | top => exact ⟨fun _ h => absurd h (Set.notMem_empty _), fun _ _ => trivial⟩
+  | atom r w ts =>
+    simp only [Expr.isConjunctive, Bool.and_eq_true, List.all_eq_true, List.mem_finRange,
+      true_implies] at he
+    obtain ⟨⟨hDr, hw⟩, hts⟩ := he
+    obtain ⟨xw, hvw, hrw⟩ := Term.exists_realize_eq_of_isVar M hw
+    choose xs hvs hrs using fun i => Term.exists_realize_eq_of_isVar M (hts i)
+    have hI : ∀ g : V → Set α, Expr.Realize M g (.atom r w ts) a ↔
+        M.I r (g xw) fun i => g (xs i) := fun g => by
+      change M.I r (Term.realize M g w) (Term.realize M g ∘ ts) ↔ _
+      rw [hrw]
+      exact iff_of_eq (congrArg _ (funext fun i => hrs i g))
+    obtain ⟨hW, hT, hsh⟩ := hD r hDr ((hI g).1 hr)
+    simp only [Expr.vars, hvw, hvs, Set.mem_union, Set.mem_singleton_iff, Set.mem_iUnion]
+    refine ⟨?_, fun g' hg' => (hI g').2 (hsh (hg' _ (.inl rfl)).1 (hg' _ (.inl rfl)).2
+      (fun i => (hg' _ (.inr ⟨i, rfl⟩)).1) fun i => (hg' _ (.inr ⟨i, rfl⟩)).2)⟩
+    rintro x (rfl | ⟨i, rfl⟩)
+    exacts [hW, hT i]
+  | rel R ts =>
+    cases R <;> simp only [Expr.isConjunctive, Bool.false_eq_true] at he
+    obtain ⟨x, hv, hrx⟩ := Term.exists_realize_eq_of_isVar M he
+    obtain ⟨b, hb⟩ : ∃ b, g x = {b} := by
+      have := hr; change ∃ b, Term.realize M g (ts 0) = {b} at this; rwa [hrx] at this
+    have hx : ∀ y ∈ Expr.vars (.rel LogicalRel.sg ts), y = x := by
+      simp only [Expr.vars, Set.mem_iUnion]
+      rintro y ⟨i, hi⟩
+      rw [Subsingleton.elim i 0, hv] at hi
+      exact hi
+    refine ⟨fun y hy => hx y hy ▸ hb ▸ Set.singleton_nonempty b, fun g' hg' => ?_⟩
+    have hmem : x ∈ Expr.vars (.rel LogicalRel.sg ts) := by
+      simp only [Expr.vars, Set.mem_iUnion]; exact ⟨0, hv ▸ rfl⟩
+    change ∃ b, Term.realize M g' (ts 0) = {b}
+    rw [hrx]
+    exact ⟨b, (hg' x hmem).2.subset_singleton_iff.1 (hb ▸ (hg' x hmem).1)⟩
+  | conj φ ψ ihφ ihψ =>
+    simp only [Expr.isConjunctive, Bool.and_eq_true] at he
+    obtain ⟨hφ₁, hφ₂⟩ := ihφ he.1 .unit hr.1
+    obtain ⟨hψ₁, hψ₂⟩ := ihψ he.2 .unit hr.2
+    refine ⟨fun x hx => hx.elim (hφ₁ x) (hψ₁ x), fun g' hg' => ⟨hφ₂ g' fun x hx => hg' x (.inl hx),
+      hψ₂ g' fun x hx => hg' x (.inr hx)⟩⟩
+  | _ => simp only [Expr.isConjunctive, Bool.false_eq_true] at he
+
+/-- The value of a summation over a conjunction of divisive predications: the atoms `a` for which
+the body holds where the summation variable is the singular `{a}` and each local is singular. -/
+theorem Term.realize_sigma_eq_of_isConjunctive {D : ∀ {n : ℕ}, P n → Bool}
+    (hD : ∀ {n : ℕ} (r : P n), D r = true → M.Divisive r) {x : V} {φ : Formula V L P}
+    (hφ : φ.isConjunctive D = true) :
+    Term.realize M g (.sigma x φ) = {a | ∃ b : V → α, Formula.Realize M
+      (fun y => if y = x then {a} else if y ∈ φ.locals then {b y} else g y) φ} := by
+  classical
+  ext a
+  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨g', hg, ha, hr⟩
+    obtain ⟨hne, hsh⟩ := Expr.realize_of_isConjunctive hD φ hφ .unit hr
+    have : Nonempty α := ⟨a⟩
+    refine ⟨fun y => Classical.epsilon (· ∈ g' y), hsh _ fun y hy => ?_⟩
+    by_cases hyx : y = x
+    · subst hyx
+      simpa using ha
+    by_cases hyl : y ∈ φ.locals
+    · simp only [hyx, hyl, ↓reduceIte, Set.singleton_subset_iff, Set.singleton_nonempty, and_true]
+      exact Classical.epsilon_spec (hne y hy)
+    · simp only [hyx, hyl, ↓reduceIte]
+      rw [← hg ⟨hyl, hyx⟩]
+      exact ⟨subset_rfl, hne y hy⟩
+  · rintro ⟨b, hr⟩
+    exact ⟨_, fun y hy => by simp only [hy.1, hy.2, ↓reduceIte], by simp, hr⟩
 
 /-! ### Eliminability -/
 

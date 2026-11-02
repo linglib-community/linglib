@@ -149,12 +149,6 @@ def Scenario.model (S : Scenario W E) : Model Sym (Atom W E) :=
 with a bracketed local variable for the indefinite. -/
 def descE : Fm := .conj (.atom .desc (.var .w) ![.bvar .b]) (.sg (.var .b))
 
-/-- `acc(w, u)`: `u` is accessible from `w`. -/
-def access : Fm := .atom .acc (.var .w) ![.var .u]
-
-/-- `Σu acc(w, u)`: the modal base `β_w`. -/
-def base : Tm := .sigma .u access
-
 /-- The one-place modals (35): `might_w(Σwφ) = some(β_w, Σwφ)` and
 `must_w(Σwφ) = every(β_w, Σwφ)`. -/
 inductive Modal
@@ -172,7 +166,7 @@ def continuation (φ : Fm) : Fm := .atom .cont (.var .w) ![Term.sgPronoun .b φ]
 
 /-- `modal_w(Σwφ) ∧ E ≡ desc_w([b]) ∧ single(b) ∧ cont_w(Σbφ | single(Σbφ))`. -/
 def discourse (m : Modal) (φ : Fm) : Fm :=
-  .conj (.conj (m.apply base (.sigma .w φ)) (.labelDef .E descE)) (continuation φ)
+  .conj (.conj (m.apply (Term.modalBase .acc .w .u) (.sigma .w φ)) (.labelDef .E descE)) (continuation φ)
 
 /-- (80b) ∧ (82b): "Andrea might be eating a cheeseburger. It is large." -/
 def discourseMight : Fm := discourse .might (.label .E)
@@ -209,9 +203,6 @@ variable (S : Scenario W E) (h : Var → Set (Atom W E)) {w₀ : W}
 theorem felicitous_descE : descE.Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (by decide) _
 
-theorem felicitous_access : access.Felicitous S.model h :=
-  Expr.felicitous_of_presupFree _ _ (by decide) _
-
 theorem realize_descE :
     descE.Realize S.model h ↔ ∃ w e, h .w = world w ∧ h .b = {Sum.inr e} ∧ S.desc w e := by
   simp only [descE, Formula.realize_conj, Formula.realize_atom, Formula.realize_sg,
@@ -238,32 +229,26 @@ theorem realize_sigmaW_descE :
     (fun g' _ => (realize_descE S g').trans (exists_congr fun _ => exists_and_left)) (by decide)]
   simp
 
-theorem realize_base (hw : h .w = world w₀) :
-    base.realize S.model h = Sum.inl '' {u | S.acc w₀ u} :=
-  Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
-    simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
-      Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero,
-      hg (by decide : Var.w ∈ _), hw, world_inj, exists_eq_left']
-    rfl
-
 theorem realize_might (hw : h .w = world w₀) :
-    (Modal.apply .might base (.sigma .w descE)).Realize S.model h ↔
+    (Modal.apply .might (Term.modalBase .acc .w .u) (.sigma .w descE)).Realize S.model h ↔
       ∃ u e, S.acc w₀ u ∧ S.desc u e := by
-  rw [Modal.apply, Formula.realize_some, realize_base S h hw, realize_sigmaW_descE,
+  rw [Modal.apply, Formula.realize_some, Term.realize_modalBase S.model h (acc := .acc) (R := S.acc)
+    (fun _ _ => by rw [Scenario.model, Model.intensional_apply₁]; rfl) (by decide : Var.w ≠ .u) hw, realize_sigmaW_descE,
     ← Set.image_inter Sum.inl_injective, Set.image_nonempty]
   simp [Set.Nonempty]
 
 theorem realize_must (hw : h .w = world w₀) :
-    (Modal.apply .must base (.sigma .w descE)).Realize S.model h ↔
+    (Modal.apply .must (Term.modalBase .acc .w .u) (.sigma .w descE)).Realize S.model h ↔
       ∀ u, S.acc w₀ u → ∃ e, S.desc u e := by
-  rw [Modal.apply, Formula.realize_subset, realize_base S h hw, realize_sigmaW_descE,
+  rw [Modal.apply, Formula.realize_subset, Term.realize_modalBase S.model h (acc := .acc) (R := S.acc)
+    (fun _ _ => by rw [Scenario.model, Model.intensional_apply₁]; rfl) (by decide : Var.w ≠ .u) hw, realize_sigmaW_descE,
     Set.image_subset_image_iff Sum.inl_injective]
   rfl
 
 theorem felicitous_modal (m : Modal) :
-    (m.apply base (.sigma .w descE)).Felicitous S.model h := by
-  cases m <;> simp only [Modal.apply, Formula.felicitous_some, Formula.felicitous_subset, base,
-    Term.felicitous_sigma_of_forall _ _ (felicitous_access S),
+    (m.apply (Term.modalBase .acc .w .u) (.sigma .w descE)).Felicitous S.model h := by
+  cases m <;> simp only [Modal.apply, Formula.felicitous_some, Formula.felicitous_subset,
+    Term.felicitous_modalBase,
     Term.felicitous_sigma_of_forall _ _ (felicitous_descE S), and_self]
 
 theorem felicitous_pronoun_iff (hw : h .w = world w₀) :
@@ -279,7 +264,7 @@ theorem felicitous_continuation_iff (hw : h .w = world w₀) :
 
 theorem felicitous_discourse_iff (m : Modal) (hw : h .w = world w₀) :
     (discourse m descE).Felicitous S.model h ↔
-      ((m.apply base (.sigma .w descE)).Realize S.model h → ∃! e, S.desc w₀ e) := by
+      ((m.apply (Term.modalBase .acc .w .u) (.sigma .w descE)).Realize S.model h → ∃! e, S.desc w₀ e) := by
   simp only [discourse, Formula.felicitous_conj, Formula.realize_conj, Formula.felicitous_labelDef,
     Formula.realize_labelDef, felicitous_modal, felicitous_continuation_iff S h hw, implies_true,
     and_true, true_and]
@@ -297,7 +282,7 @@ theorem felicitous_discourseMust_iff (hw : h .w = world w₀) :
       ((∀ u, S.acc w₀ u → ∃ e, S.desc u e) → ∃! e, S.desc w₀ e) := by
   rw [expandSelf_discourseMust, felicitous_discourse_iff S h _ hw, realize_must S h hw]
 
-/-- (88)–(90): a realistic modal base and the scalar implicature that a
+/-- (88)–(90): a realistic modal (Term.modalBase .acc .w .u) and the scalar implicature that a
 satisfier is unique make the `must` discourse felicitous at every world. -/
 theorem felicitous_discourseMust_of_realistic (hr : ∀ w, S.acc w w)
     (hu : ∀ w, (∃ e, S.desc w e) → ∃! e, S.desc w e) (hw : h .w = world w₀) :

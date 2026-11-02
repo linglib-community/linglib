@@ -145,6 +145,24 @@ def Formula.some (s t : Term V L P) : Formula V L P := .neg (.eq (.inter s t) .e
 def Term.sgPronoun (x : V) (φ : Formula V L P) : Term V L P :=
   .presup (.sigma x φ) (.sg (.sigma x φ))
 
+/-- The modal base `Σu acc(w, u)` of the world `w`: the worlds accessible from it. -/
+def Term.modalBase (acc : P 1) (w u : V) : Term V L P := .sigma u (.atom acc (.var w) ![.var u])
+
+/-- Whether an expression is a variable, plain or bracketed. -/
+def Expr.isVar : ∀ {k : Kind}, Expr V L P k → Bool
+  | _, .var _ => true
+  | _, .bvar _ => true
+  | _, _ => false
+
+/-- Whether a formula is a conjunction of `⊤`, singularity statements about variables, and
+predications over variables by relation symbols satisfying `D`. -/
+def Expr.isConjunctive (D : ∀ {n : ℕ}, P n → Bool) : ∀ {k : Kind}, Expr V L P k → Bool
+  | _, .top => true
+  | _, .atom r w ts => D r && w.isVar && (List.finRange _).all fun i => (ts i).isVar
+  | _, .rel .sg ts => (ts 0).isVar
+  | _, .conj φ ψ => φ.isConjunctive D && ψ.isConjunctive D
+  | _, _ => false
+
 /-! ### Variables and substitution -/
 
 /-- The variables occurring in an expression, bracketed or not, bound or free. -/
