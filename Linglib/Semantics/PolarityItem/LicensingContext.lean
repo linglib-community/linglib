@@ -7,6 +7,11 @@ module
 
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Reference.Indefinite
@@ -345,7 +350,8 @@ noncomputable def licenser : LicensingContext → Licenser
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
   | denyVerb => .classical
       ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
-  | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W, fun p ↦ only p.x⟩
+  | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
+      fun p P ↦ Focus.only (· = ·) Set.univ P p.x⟩
   | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
       fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩
   | superlative => .strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
@@ -514,7 +520,7 @@ theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
       (Set.mem_univ true)⟩
 
 theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨Bool, Unit, true⟩, not_isStrawsonUE_only⟩
+  not_forall.2 ⟨⟨Bool, Unit, true⟩, Focus.not_isStrawsonUE_only_eq⟩
 
 theorem not_isStrawsonUE_adversative : ¬ adversative.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
@@ -558,10 +564,11 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .a
 
 /-! ### Strawson licensers -/
 
-theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦ isStrawsonDE_only p.x
+theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
+  Focus.isStrawsonDE_only_eq p.x
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
-  not_antitone_posSupport_only (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
+  Focus.not_antitone_posSupport_only_eq (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g

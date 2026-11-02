@@ -16,7 +16,7 @@ public import Mathlib.Data.Set.Lattice.Bounded
 Grubic analyses the Ngamo alternative-sensitive particles of chapter 7 against the data of
 chapter 6, the rows of `Data.Examples.Grubic2015`, in a question-under-discussion framework. The
 exclusive *yak('i)* has Coppock and Beaver's entry for exclusives, the substrate's
-`Focus.Particles.only`: it presupposes that some alternative at least as strong as the prejacent
+`Focus.only`: it presupposes that some alternative at least as strong as the prejacent
 on a salient scale is true and asserts that no true alternative is stronger. The additive
 *ke('e)* has no truth-conditional content and presupposes a salient antecedent about a different
 topic situation, and the scalar *har('i)* asserts its prejacent and presupposes that a contextual
@@ -42,14 +42,14 @@ not theorems.
 
 namespace Grubic2015
 
-open Exhaustification Presupposition Focus Focus.Particles
+open Exhaustification Presupposition Focus
 
 variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
 
 /-! ### The exclusive *yak('i)*, section 7.1 -/
 
 /-- *Not only Dimza built a house* still entails that Dimza built a house (29). -/
-theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C p w ≠ 0) : w ∈ p :=
+theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C id p w ≠ 0) : w ∈ p :=
   atLeast_subset_subset (by simpa using h)
 
 /-- The answers of (11) are the nonempty conjunctions of a set of atomic answers. -/
@@ -59,7 +59,7 @@ def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
 /-- On the entailment scale over conjunctions of atomic answers, *yak('i)* is true exactly where the
 prejacent is the only true atom ((166) and (25)). -/
 theorem posSupport_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    posSupport (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
+    posSupport (only (· ⊆ ·) (conjunctions atoms) id p) = exh atoms p := by
   ext w
   rw [mem_posSupport, only_eq_one_iff]
   constructor

@@ -83,7 +83,7 @@ def howMany : Set (Set ℕ) := range Ici
 /-- *At most `n`* is [coppock-brochhagen-2013]'s entry on the question of how many, with the
 answers ranked by their lower bounds. -/
 def atMost (n : ℕ) : Set (Set ℕ) :=
-  atMostInq (ranking (oneSided id)) (range (oneSided id)) (oneSided id n)
+  atMostInq (· ≥ ·) univ (oneSided id) n
 
 -- (43c)
 theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=

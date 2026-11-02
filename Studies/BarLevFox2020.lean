@@ -142,8 +142,8 @@ excludable, `only` agrees with the exclusive entry (29b) on the entailment scale
 theorem posSupport_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
     posSupport (only ALT φ) =
-      posSupport (Focus.Particles.only (· ⊆ ·) ALT φ) := by
-  rw [Focus.Particles.posSupport_only_subset hφ]
+      posSupport (Focus.only (· ⊆ ·) ALT id φ) := by
+  rw [Focus.posSupport_only_subset hφ]
   ext w
   simp only [mem_posSupport, only, Trivalent.indicator_apply_eq_one_iff,
     SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, Set.mem_singleton_iff, forall_eq, hIE,

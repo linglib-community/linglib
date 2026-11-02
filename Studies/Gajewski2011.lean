@@ -1,6 +1,11 @@
 module
 
-public import Linglib.Logic.Natural.Strawson
+public import Linglib.Semantics.Presupposition.Strawson
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.PolarityItem.Licensing
@@ -30,7 +35,7 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 * The presupposition triggers have no scale-mates, so their enriched meaning is their full
   meaning, presupposition included, and the strong principle asks for its plain downward
   entailment. The operators are von Fintel's, with their owners, and their Strawson properties
-  are in `Logic/Natural/Strawson.lean`.
+  are in `Semantics/Presupposition/Strawson.lean`.
 * *At most five* against *at most four*, and the cardinal *fewer than four* of the
   scale-truncation discussion, are checked on a six-element domain.
 
@@ -122,9 +127,10 @@ def Licensed : Licenser → Strength → Prop
       ∀ {α : Type} [Fintype α], ScopeAntitone (exhaustified (atMost (α := α) 5) {atMost 4})
   | .some, .weak => ∀ {α : Type}, ScopeAntitone (Det.some : Det α)
   | .some, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (Det.some : Det α) {every})
-  | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
+  | .only, .weak => ∀ {ι W : Type} (x : ι),
+      IsStrawsonDE fun P : ι → Set W ↦ Focus.only (· = ·) Set.univ P x
   | .only, .strong => ∀ {ι W : Type} (x : ι),
-      Antitone fun P : ι → Set W ↦ posSupport (only x P)
+      Antitone fun P : ι → Set W ↦ posSupport (Focus.only (· = ·) Set.univ P x)
   | .conditional, .weak => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
       IsStrawsonDE (Conditional.horizonCounterfactual horizon · q)
   | .conditional, .strong => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
@@ -137,15 +143,16 @@ def Licensed : Licenser → Strength → Prop
 /-- The puzzle is that *only*, *would* and *sorry* are Strawson anti-additive, the Strawson form
 of what strong items were held to need, yet none licenses them. -/
 theorem strawsonAA_not_sufficient :
-    (∀ {ι W : Type} (x : ι), IsStrawsonAntiAdditive (only (W := W) x)) ∧
+    (∀ {ι W : Type} (x : ι),
+        IsStrawsonAntiAdditive fun P : ι → Set W ↦ Focus.only (· = ·) Set.univ P x) ∧
       (∀ {W : Type} (horizon : W → Set W) (q : Set W),
         IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
       (∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧
         ¬ Licensed .sorryThat .strong :=
-  ⟨isStrawsonAntiAdditive_only, Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
-    isStrawsonAntiAdditive_regret, fun h ↦ not_antitone_posSupport_only (h _),
+  ⟨Focus.isStrawsonAntiAdditive_only_eq, Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
+    isStrawsonAntiAdditive_regret, fun h ↦ Focus.not_antitone_posSupport_only_eq (h _),
     fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _),
     fun h ↦ not_antitone_posSupport_regret (h _ _ _)⟩
 
@@ -166,7 +173,7 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
     refine iff_of_false (fun h ↦ ?_) (· rfl)
     exact (h (α := Bool) Set.univ (Set.empty_subset Set.univ) ⟨true, trivial, trivial⟩).elim
       fun _ h ↦ h.2
-  | only => exact iff_of_true isStrawsonDE_only nofun
+  | only => exact iff_of_true Focus.isStrawsonDE_only_eq nofun
   | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
 

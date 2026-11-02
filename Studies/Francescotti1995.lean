@@ -15,7 +15,7 @@ threshold on the number of neighbors the prejacent surpasses (`Meets`); they are
 are the two gaps between them: surpassing exactly one of several neighbors meets Bennett's
 condition but not the majority (`not_meets_most_of_one`), and surpassing all but one meets the
 majority but not Karttunen and Peters' (`meets_most_of_all_but_one`). The universal threshold
-is the scalar presupposition `Focus.Particles.evenPresup`.
+is the scalar presupposition `Focus.evenPresup`.
 
 ## Implementation notes
 
@@ -38,7 +38,7 @@ and how many there are.
 
 namespace Francescotti1995
 
-open Focus.Particles
+open Focus
 
 /-- How many true neighbors the prejacent must surpass in surprise: at least one, all, or
 most. -/

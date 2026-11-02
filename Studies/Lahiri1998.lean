@@ -13,7 +13,7 @@ This file formalizes the paper's account of the Hindi negative polarity items, e
 indefinite plus the focus particle *bhii* 'even' (`HindiUrdu.PolarityItems`). The scalar
 presupposition of *even*, that the prejacent is less likely than every focus alternative,
 clashes with an entailment-monotone likelihood exactly when an alternative entails the
-prejacent (`Focus.Particles.not_evenPresup_of_subset`). The indefinite is the weakest
+prejacent (`Focus.not_evenPresup_of_subset`). The indefinite is the weakest
 predicate, so in an upward-entailing context [every alternative entails the assertion and the
 presupposition is contradictory](##ue_clash), while [a downward-entailing operator reverses the
 entailments and leaves it satisfiable](##de_presup). The restriction of a generic, read as a
@@ -68,7 +68,7 @@ context, nor do the episodic and the non-licensing environments.
 
 namespace Lahiri1998
 
-open Focus.Particles PolarityItem HindiUrdu.PolarityItems
+open Focus PolarityItem HindiUrdu.PolarityItems
 
 /-! ### The implicature clash (§7, §8) -/
 

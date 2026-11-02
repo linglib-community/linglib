@@ -3,7 +3,6 @@ module
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Questions.Unrestricted
-public import Mathlib.Logic.Relation
 
 /-!
 # Coppock and Brochhagen (2013): Raising and resolving issues with scalar modifiers
@@ -11,7 +10,7 @@ public import Mathlib.Logic.Relation
 Coppock and Brochhagen analyse *at least* and *at most* as quantifying over a scale of answers to
 the question under discussion: *at least p* is what *only p* presupposes, that some true answer is
 at least as strong as `p`, and *at most p* is what *only p* asserts, that no true answer is
-stronger. These are `Focus.Particles.atLeast` and `Focus.Particles.atMost`, modifiers of
+stronger. These are `Focus.atLeast` and `Focus.atMost`, modifiers of
 propositions. On the question of how many, with answers ranked by number, they give the truth
 conditions of the modified numerals whether the bare numeral is read two-sidedly or one-sidedly,
 and on a scale of mutually exclusive answers, such as academic ranks, *at least* widens its
@@ -25,9 +24,10 @@ possibilities does not exclude the stronger answers.
 
 ## Implementation notes
 
-* A state is a relation on propositions, and the question of a measure `μ` has the answers
-  `μ ⁻¹' {i}` (two-sided) or `μ ⁻¹' Ici i` (one-sided), ranked by `i`; the paper's assumption of one
-  world for each number is surjectivity of `μ`.
+* The question of a measure `μ` has its answers indexed by number, with contents `μ ⁻¹' {i}`
+  (two-sided) or `μ ⁻¹' Ici i` (one-sided), and the scale ranks the indices. The paper's assumption
+  of one world for each number is surjectivity of `μ`; the truth conditions hold without it, and
+  only the results that need two distinct answers assume it.
 * The choice-function entries (53), (54) and (60) are modelled by the sets of possibilities they
   denote, which is what applying them pointwise yields (`range_choice_apply`).
 * The informational content of inquisitive *at most* is `max` within the common ground of the
@@ -54,7 +54,7 @@ the paper derives with Hackl's *-many* (§3.6).
 
 namespace CoppockBrochhagen2013
 
-open Focus.Particles Inquisitive.Unrestricted Set
+open Focus Inquisitive.Unrestricted Set
 
 /-! ### Truth conditions (§2.6) -/
 
@@ -62,34 +62,18 @@ section Indexed
 
 variable {W α : Type*} [Preorder α] {P : α → Set W}
 
-/-- The ranking of the answers of an indexed question by their index. -/
-abbrev ranking (P : α → Set W) : Set W → Set W → Prop := Relation.Map (· ≥ ·) P P
-
 -- (30)
-theorem atLeast_map (hP : Function.Injective P) (a : α) :
-    atLeast (ranking P) (range P) (P a) = ⋃ i ∈ Ici a, P i := by
+theorem atLeast_ge (a : α) : atLeast (· ≥ ·) univ P a = ⋃ i ∈ Ici a, P i := by
   ext w
-  simp only [mem_atLeast, mem_range, exists_exists_eq_and, Relation.map_apply, hP.eq_iff,
-    mem_iUnion, mem_Ici, exists_prop]
-  constructor
-  · rintro ⟨i, hw, i', j', hij, rfl, rfl⟩
-    exact ⟨i', hij, hw⟩
-  · rintro ⟨i, hai, hw⟩
-    exact ⟨i, hw, i, a, hai, rfl, rfl⟩
+  simp only [mem_atLeast, mem_univ, true_and, mem_iUnion, mem_Ici, exists_prop]
+  exact ⟨fun ⟨i, hw, hi⟩ ↦ ⟨i, hi, hw⟩, fun ⟨i, hi, hw⟩ ↦ ⟨i, hw, hi⟩⟩
 
 -- (31)
-theorem atMost_map (hP : Function.Injective P) (a : α) :
-    atMost (ranking P) (range P) (P a) = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
+theorem atMost_ge (a : α) : atMost (· ≥ ·) univ P a = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
   ext w
-  simp only [mem_atMost, mem_range, forall_exists_index, forall_apply_eq_imp_iff,
-    Relation.map_apply, hP.eq_iff, mem_compl_iff, mem_iUnion, mem_Iic, exists_prop, not_exists,
-    not_and]
-  constructor
-  · rintro h i hi hw
-    obtain ⟨i', j', hij, rfl, rfl⟩ := h i hw
-    exact hi hij
-  · intro h i hw
-    exact ⟨a, i, not_not.1 fun hia ↦ h i hia hw, rfl, rfl⟩
+  simp only [mem_atMost, mem_univ, true_implies, mem_compl_iff, mem_iUnion, mem_Iic,
+    exists_prop, not_exists, not_and]
+  exact ⟨fun h i hi hw ↦ hi (h i hw), fun h i hw ↦ not_not.1 fun hi ↦ h i hi hw⟩
 
 end Indexed
 
@@ -117,28 +101,24 @@ theorem isAntichain_range_twoSided (hμ : Function.Surjective μ) :
 theorem oneSided_injective (hμ : Function.Surjective μ) : Function.Injective (oneSided μ) :=
   hμ.preimage_injective.comp Ici_injective
 
-theorem atLeast_twoSided (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = μ ⁻¹' Ici a := by
-  rw [atLeast_map (twoSided_injective hμ)]
+theorem atLeast_twoSided (a : α) : atLeast (· ≥ ·) univ (twoSided μ) a = μ ⁻¹' Ici a := by
+  rw [atLeast_ge]
   simp only [twoSided, ← preimage_iUnion₂, biUnion_of_singleton]
 
-theorem atLeast_oneSided (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = μ ⁻¹' Ici a := by
-  rw [atLeast_map (oneSided_injective hμ)]
+theorem atLeast_oneSided (a : α) : atLeast (· ≥ ·) univ (oneSided μ) a = μ ⁻¹' Ici a := by
+  rw [atLeast_ge]
   simp only [oneSided, ← preimage_iUnion₂]
   congr 1
   ext x
   simp only [mem_iUnion₂, mem_Ici, exists_prop]
   exact ⟨fun ⟨_, hai, hix⟩ ↦ hai.trans hix, fun h ↦ ⟨a, le_rfl, h⟩⟩
 
-theorem atMost_twoSided (hμ : Function.Surjective μ) (a : α) :
-    atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = μ ⁻¹' Iic a := by
-  rw [atMost_map (twoSided_injective hμ)]
+theorem atMost_twoSided (a : α) : atMost (· ≥ ·) univ (twoSided μ) a = μ ⁻¹' Iic a := by
+  rw [atMost_ge]
   simp only [twoSided, ← preimage_iUnion₂, biUnion_of_singleton, ← preimage_compl, compl_compl]
 
-theorem atMost_oneSided (hμ : Function.Surjective μ) (a : α) :
-    atMost (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = μ ⁻¹' Iic a := by
-  rw [atMost_map (oneSided_injective hμ), compl_Iic]
+theorem atMost_oneSided (a : α) : atMost (· ≥ ·) univ (oneSided μ) a = μ ⁻¹' Iic a := by
+  rw [atMost_ge, compl_Iic]
   simp only [oneSided, ← preimage_iUnion₂, ← preimage_compl]
   congr 1
   ext x
@@ -147,22 +127,20 @@ theorem atMost_oneSided (hμ : Function.Surjective μ) (a : α) :
   exact ⟨fun h ↦ not_lt.1 fun hax ↦ h x hax le_rfl, fun h i hai hix ↦ (hai.trans_le hix).not_ge h⟩
 
 -- (32)
-theorem atMost_twoSided_mono (hμ : Function.Surjective μ) {a b : α} (hab : a ≤ b) :
-    atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) ⊆
-      atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ b) := by
-  rw [atMost_twoSided hμ, atMost_twoSided hμ]
+theorem atMost_twoSided_mono {a b : α} (hab : a ≤ b) :
+    atMost (· ≥ ·) univ (twoSided μ) a ⊆ atMost (· ≥ ·) univ (twoSided μ) b := by
+  rw [atMost_twoSided, atMost_twoSided]
   exact preimage_mono (Iic_subset_Iic.2 hab)
 
 -- (59)
 theorem twoSided_ssubset_atLeast (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
-    twoSided μ a ⊂ atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) := by
-  rw [atLeast_twoSided hμ]
+    twoSided μ a ⊂ atLeast (· ≥ ·) univ (twoSided μ) a := by
+  rw [atLeast_twoSided]
   obtain ⟨w, rfl⟩ := hμ b
   exact ⟨preimage_mono (singleton_subset_iff.2 le_rfl), fun h ↦ hab.ne' (h (hab.le : μ w ∈ Ici a))⟩
 
-theorem atLeast_oneSided_eq (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = oneSided μ a :=
-  atLeast_oneSided hμ a
+theorem atLeast_oneSided_eq (a : α) : atLeast (· ≥ ·) univ (oneSided μ) a = oneSided μ a :=
+  atLeast_oneSided a
 
 end Measure
 
@@ -174,21 +152,19 @@ variable {W : Type*} {μ : W → ℕ}
 
 /-- On the question of how many, *at least* is the Fragment's reading of the numeral it modifies,
 pulled back along the count. -/
-theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
+theorem atLeast_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
-      Focus.Particles.atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
-        μ ⁻¹' m {n} := by
+      Focus.atLeast (· ≥ ·) univ (twoSided μ) n = μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
-  rw [atLeast_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
+  rw [atLeast_twoSided, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
 
 /-- On the question of how many, *at most* is the Fragment's reading of the numeral it modifies,
 pulled back along the count. -/
-theorem atMost_fragment (hμ : Function.Surjective μ) (n : ℕ) :
+theorem atMost_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,
-      Focus.Particles.atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
-        μ ⁻¹' m {n} := by
+      Focus.atMost (· ≥ ·) univ (twoSided μ) n = μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
-  rw [atMost_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_le]
+  rw [atMost_twoSided, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_le]
 
 end Fragment
 
@@ -196,29 +172,31 @@ end Fragment
 
 section Inquisitive
 
-variable {W : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
+variable {ι W : Type*} (S : ι → ι → Prop) (C : Set ι) (P : ι → Set W) (i : ι)
 
-/-- *At least p* raises every answer at least as strong as `p` (52). -/
-def atLeastInq : Set (Set W) := {q ∈ C | S q p}
+/-- *At least i* raises every answer at least as strong as `i` (52). -/
+def atLeastInq : Set (Set W) := P '' {j ∈ C | S j i}
 
-/-- *At most p* raises every answer at most as strong as `p`, cut down to the worlds where no
+/-- *At most i* raises every answer at most as strong as `i`, cut down to the worlds where no
 stronger answer is true (60). -/
-def atMostInq : Set (Set W) := (· ∩ atMost S C p) '' {q ∈ C | S p q}
+def atMostInq : Set (Set W) := (· ∩ atMost S C P i) '' (P '' {j ∈ C | S i j})
 
 /-- The informational content of inquisitive *at least* is `min` (§3.7). -/
-theorem sUnion_atLeastInq : ⋃₀ atLeastInq S C p = atLeast S C p := by
-  ext w; simp [atLeastInq, and_assoc, and_comm, and_left_comm]
+theorem sUnion_atLeastInq : ⋃₀ atLeastInq S C P i = atLeast S C P i := by
+  ext w
+  simp only [atLeastInq, sUnion_image, mem_iUnion, mem_ofPred_eq, exists_prop, mem_atLeast]
+  exact ⟨fun ⟨j, ⟨hj, hs⟩, hw⟩ ↦ ⟨j, hj, hw, hs⟩, fun ⟨j, hj, hw, hs⟩ ↦ ⟨j, ⟨hj, hs⟩, hw⟩⟩
 
 /-- The informational content of inquisitive *at most* is `max`, within the common ground (§3.7). -/
-theorem sUnion_atMostInq : ⋃₀ atMostInq S C p = atMost S C p ∩ ⋃₀ C := by
+theorem sUnion_atMostInq : ⋃₀ atMostInq S C P i = atMost S C P i ∩ ⋃ j ∈ C, P j := by
   ext w
-  simp only [atMostInq, sUnion_image, mem_iUnion, mem_ofPred_eq, mem_inter_iff, exists_prop,
-    mem_sUnion]
+  simp only [atMostInq, image_image, sUnion_image, mem_iUnion, mem_ofPred_eq, mem_inter_iff,
+    exists_prop]
   constructor
-  · rintro ⟨q, ⟨hq, _⟩, hw, hmax⟩
-    exact ⟨hmax, q, hq, hw⟩
-  · rintro ⟨hmax, q, hq, hw⟩
-    exact ⟨q, ⟨hq, hmax q hq hw⟩, hw, hmax⟩
+  · rintro ⟨j, ⟨hj, _⟩, hw, hmax⟩
+    exact ⟨hmax, j, hj, hw⟩
+  · rintro ⟨hmax, j, hj, hw⟩
+    exact ⟨j, ⟨hj, hmax j hj hw⟩, hw, hmax⟩
 
 -- (53)
 theorem range_choice_apply {T : Set (Set W)} (hT : T.Nonempty) :
@@ -238,39 +216,23 @@ section Indexed
 variable {α : Type*} [Preorder α] {P : α → Set W}
 
 -- (58)
-theorem atLeastInq_ranking (hP : Function.Injective P) (a : α) :
-    atLeastInq (ranking P) (range P) (P a) = P '' Ici a := by
-  ext q
-  constructor
-  · rintro ⟨⟨i, rfl⟩, i', j', hij, hi, hj⟩
-    rw [hP hi, hP hj] at hij
-    exact ⟨i, hij, rfl⟩
-  · rintro ⟨i, hai, rfl⟩
-    exact ⟨⟨i, rfl⟩, i, a, hai, rfl, rfl⟩
+theorem atLeastInq_ge (a : α) : atLeastInq (· ≥ ·) univ P a = P '' Ici a := by
+  rw [atLeastInq]; congr 1; ext; simp
 
 -- (63), (64)
-theorem atMostInq_ranking (hP : Function.Injective P) (a : α) :
-    atMostInq (ranking P) (range P) (P a) =
-      (· ∩ atMost (ranking P) (range P) (P a)) '' (P '' Iic a) := by
-  rw [atMostInq]
-  congr 1
-  ext q
-  constructor
-  · rintro ⟨⟨i, rfl⟩, i', j', hij, hi, hj⟩
-    rw [hP hi, hP hj] at hij
-    exact ⟨i, hij, rfl⟩
-  · rintro ⟨i, hia, rfl⟩
-    exact ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩
+theorem atMostInq_ge (a : α) :
+    atMostInq (· ≥ ·) univ P a = (· ∩ atMost (· ≥ ·) univ P a) '' (P '' Iic a) := by
+  rw [atMostInq]; congr 2; ext; simp
 
 end Indexed
 
-variable {S C p}
+variable {S C P i}
 
 -- (58)
 theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
-    IsAttentive (atLeastInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a)) := by
-  rw [atLeastInq_ranking (oneSided_injective hμ)]
+    IsAttentive (atLeastInq (· ≥ ·) univ (oneSided μ) a) := by
+  rw [atLeastInq_ge]
   exact isAttentive_of_ssubset (mem_image_of_mem _ (hab.le : b ∈ Ici a))
     (mem_image_of_mem _ self_mem_Ici) ((preimage_mono (Ici_subset_Ici.2 hab.le)).ssubset_of_ne
       ((oneSided_injective hμ).ne hab.ne'))
@@ -278,37 +240,33 @@ theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W �
 -- (59b)
 theorem not_isAttentive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) (a : α) :
-    ¬ IsAttentive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) :=
-  not_isAttentive_iff.2 ((isAntichain_range_twoSided hμ).subset fun _ h ↦ h.1)
+    ¬ IsAttentive (atLeastInq (· ≥ ·) univ (twoSided μ) a) :=
+  not_isAttentive_iff.2 ((isAntichain_range_twoSided hμ).subset (image_subset_range _ _))
 
 -- (59b)
 theorem isInquisitive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
-    IsInquisitive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) := by
-  rw [atLeastInq_ranking (twoSided_injective hμ),
+    IsInquisitive (atLeastInq (· ≥ ·) univ (twoSided μ) a) := by
+  rw [atLeastInq_ge,
     isInquisitive_iff_nontrivial ((isAntichain_range_twoSided hμ).subset (image_subset_range _ _))]
   exact (nontrivial_of_lt self_mem_Ici hab.le hab).image (twoSided_injective hμ)
 
 -- (64)
-theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
-    (a : α) :
-    atMostInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) =
-      (fun i ↦ μ ⁻¹' Icc i a) '' Iic a := by
-  rw [atMostInq_ranking (oneSided_injective hμ), atMost_oneSided hμ, image_image]
+theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (a : α) :
+    atMostInq (· ≥ ·) univ (oneSided μ) a = (fun i ↦ μ ⁻¹' Icc i a) '' Iic a := by
+  rw [atMostInq_ge, atMost_oneSided, image_image]
   simp only [oneSided, ← preimage_inter, Ici_inter_Iic]
 
 -- (63)
-theorem atMostInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
-    (a : α) :
-    atMostInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = twoSided μ '' Iic a := by
-  rw [atMostInq_ranking (twoSided_injective hμ), atMost_twoSided hμ, image_image]
+theorem atMostInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α} (a : α) :
+    atMostInq (· ≥ ·) univ (twoSided μ) a = twoSided μ '' Iic a := by
+  rw [atMostInq_ge, atMost_twoSided, image_image]
   exact image_congr fun i hi ↦ inter_eq_left.2 (preimage_mono (singleton_subset_iff.2 hi))
 
 -- (64)
 theorem atMostInq_oneSided_id (a : ℕ) :
-    atMostInq (ranking (oneSided (id : ℕ → ℕ))) (range (oneSided id)) (oneSided id a) =
-      (Icc · a) '' Iic a :=
-  atMostInq_oneSided Function.surjective_id a
+    atMostInq (· ≥ ·) univ (oneSided (id : ℕ → ℕ)) a = (Icc · a) '' Iic a :=
+  atMostInq_oneSided a
 
 end Inquisitive
 
@@ -336,11 +294,10 @@ variable {α : Type*} [Preorder α] {P : α → Set W}
 
 /-- A speaker whose information lies within one answer at or above `a`, and decides each answer from
 `a` up, restricts *at least `a`* to one possibility (71). -/
-theorem restrict_atLeastInq_eq_singleton (hP : Function.Injective P) {a b : α} (hab : a ≤ b)
-    {k : Set W} (hk : k ≠ ∅) (hkb : k ⊆ P b)
-    (hsplit : ∀ i, a ≤ i → k ∩ P i = k ∨ k ∩ P i = ∅) :
-    restrict (atLeastInq (ranking P) (range P) (P a)) k = {k} := by
-  rw [atLeastInq_ranking hP]
+theorem restrict_atLeastInq_eq_singleton {a b : α} (hab : a ≤ b) {k : Set W} (hk : k ≠ ∅)
+    (hkb : k ⊆ P b) (hsplit : ∀ i, a ≤ i → k ∩ P i = k ∨ k ∩ P i = ∅) :
+    restrict (atLeastInq (· ≥ ·) univ P a) k = {k} := by
+  rw [atLeastInq_ge]
   refine pro_eq_singleton hk ⟨P b, mem_image_of_mem _ hab, inter_eq_left.2 hkb⟩ ?_
   rintro _ ⟨_, ⟨i, hai, rfl⟩, rfl⟩
   exact hsplit i hai
@@ -366,20 +323,18 @@ theorem split_oneSided {W α : Type*} [LinearOrder α] {μ : W → α} {b : α} 
 -- (70a)
 theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
     {k : Set W} (hk : k ≠ ∅) (hk6 : k ⊆ μ ⁻¹' {6}) :
-    ¬ InteractiveSincerity (atLeastInq (ranking (twoSided μ)) (range (twoSided μ))
-        (twoSided μ 5)) k ∧
-      ¬ InteractiveSincerity (atLeastInq (ranking (oneSided μ)) (range (oneSided μ))
-        (oneSided μ 5)) k := by
+    ¬ InteractiveSincerity (atLeastInq (· ≥ ·) univ (twoSided μ) 5) k ∧
+      ¬ InteractiveSincerity (atLeastInq (· ≥ ·) univ (oneSided μ) 5) k := by
   constructor
   · intro h
-    have hr := restrict_atLeastInq_eq_singleton (twoSided_injective hμ) (by decide : 5 ≤ 6) hk hk6
+    have hr := restrict_atLeastInq_eq_singleton (by decide : 5 ≤ 6) hk hk6
       (fun i _ ↦ split_twoSided hk6 i)
     have := h (nontrivial_iff_isInquisitive_or_isAttentive.2
       (.inl (isInquisitive_atLeastInq_twoSided hμ (by decide : 5 < 6))))
     rw [hr] at this
     exact this.not_subsingleton subsingleton_singleton
   · intro h
-    have hr := restrict_atLeastInq_eq_singleton (oneSided_injective hμ) (by decide : 5 ≤ 6) hk
+    have hr := restrict_atLeastInq_eq_singleton (by decide : 5 ≤ 6) hk
       (fun w hw ↦ mem_preimage.2 (mem_Ici.2 (hk6 hw).ge)) (fun i _ ↦ split_oneSided hk6 i)
     have := h (nontrivial_iff_isInquisitive_or_isAttentive.2
       (.inr (isAttentive_atLeastInq_oneSided hμ (by decide : 5 < 6))))
@@ -387,13 +342,11 @@ theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Fun
     exact this.not_subsingleton subsingleton_singleton
 
 -- (72), (73)
-theorem moreThan_interactiveSincerity {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
-    (k : Set W) :
+theorem moreThan_interactiveSincerity {W : Type*} {μ : W → ℕ} (k : Set W) :
     InteractiveSincerity {μ ⁻¹' Ioi 4} k ∧
-      ⋃₀ {μ ⁻¹' Ioi 4} = ⋃₀ atLeastInq (ranking (twoSided μ)) (range (twoSided μ))
-        (twoSided μ 5) := by
+      ⋃₀ {μ ⁻¹' Ioi 4} = ⋃₀ atLeastInq (· ≥ ·) univ (twoSided μ) 5 := by
   refine ⟨fun h ↦ absurd h (not_nontrivial_singleton), ?_⟩
-  rw [sUnion_atLeastInq, atLeast_twoSided hμ, sUnion_singleton]
+  rw [sUnion_atLeastInq, atLeast_twoSided, sUnion_singleton]
   rfl
 
 /-! ### Exhaustivity (§3.4.2) -/
@@ -411,12 +364,13 @@ def whoSnores : Set (Set World) := {ann, bill, ann ∩ bill}
 -- (77), Figure 4
 theorem exh_contrast :
     ⋃₀ (Exhaustification.exh whoSnores '' {ann}) ⊆ billᶜ ∧
-      (true, true) ∈ ⋃₀ (Exhaustification.exh whoSnores '' atLeastInq (· ⊆ ·) whoSnores ann) := by
+      (true, true) ∈ ⋃₀ (Exhaustification.exh whoSnores '' atLeastInq (· ⊆ ·) whoSnores id ann) := by
   constructor
   · rw [image_singleton, sUnion_singleton]
     exact Exhaustification.exh_subset_compl (by simp [whoSnores])
       fun h ↦ by simpa [ann, bill] using h (show (true, false) ∈ ann from rfl)
-  · refine ⟨_, ⟨ann ∩ bill, ⟨by simp [whoSnores], inter_subset_left⟩, rfl⟩, ⟨rfl, rfl⟩, ?_⟩
+  · refine ⟨_, ⟨ann ∩ bill, ⟨ann ∩ bill, ⟨by simp [whoSnores], inter_subset_left⟩, rfl⟩, rfl⟩,
+      ⟨rfl, rfl⟩, ?_⟩
     rintro q hq -
     simp only [whoSnores, mem_insert_iff, mem_singleton_iff] at hq
     rcases hq with rfl | rfl | rfl

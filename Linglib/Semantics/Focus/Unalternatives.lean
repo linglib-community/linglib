@@ -23,10 +23,10 @@ promotes. Focus Reset leaves a constituent only its literal meaning, as `unfeatu
 
 ## Main definitions
 
-* `Focus.narrow`: the targets of narrow focus on one daughter of a node.
-* `Focus.Restriction`, `Focus.excluded`: the weak and the strong restriction, and what each
-  excludes.
-* `Focus.propagated`: the targets a node excludes by Propagation.
+* `UnalternativeSemantics.narrow`: the targets of narrow focus on one daughter of a node.
+* `UnalternativeSemantics.Restriction`, `UnalternativeSemantics.excluded`: the weak and the
+  strong restriction, and what each excludes.
+* `UnalternativeSemantics.propagated`: the targets a node excludes by Propagation.
 * `WithAlternatives.node`: a branching node of unalternative semantics.
 
 ## Main results
@@ -55,7 +55,11 @@ composes its daughters by a fixed operation `op`. Büring's pointwise combinatio
 
 open Set Function
 
-namespace Focus
+namespace UnalternativeSemantics
+
+/-! ### Targets -/
+
+section Targets
 
 variable {α β γ : Type*} (op : α → β → γ) (a : α) (b : β)
 
@@ -113,11 +117,15 @@ theorem compl_propagated (hop : Bijective (uncurry op)) (u : Set α) (v : Set β
   rw [propagated, ← image_uncurry_prod, ← image_uncurry_prod, ← image_union, this,
     image_compl_eq hop, compl_compl, image_uncurry_prod]
 
-end Focus
+end Targets
+
+end UnalternativeSemantics
+
+/-! ### Nodes -/
 
 namespace WithAlternatives
 
-open Focus
+open UnalternativeSemantics
 
 variable {α β γ : Type*} {op : α → β → γ} {e : Edge} {r : Restriction}
   {d₁ : WithAlternatives α} {d₂ : WithAlternatives β}

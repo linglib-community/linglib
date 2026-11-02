@@ -9,7 +9,7 @@ An additive particle is a focus particle meaning 'also, too', English *too* in *
 Such particles often also mean 'and': Japanese *mo* is 'too' after one phrase and 'and' after each
 of two conjuncts, and Haspelmath counts the additive particle among the two main sources of
 conjunction. This file defines the lexical record of an additive particle, whose meaning is
-`Focus.Particles.additive`; a coordinator whose form is that of an additive particle is
+`Focus.additive`; a coordinator whose form is that of an additive particle is
 `Coordinator.IsAlsoAdditive`.
 
 ## Main definitions

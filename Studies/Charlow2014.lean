@@ -831,37 +831,32 @@ def toSet (Q : E → W → Prop) : Set (E × W) := {xw | Q xw.1 xw.2}
 @[simp] theorem mem_toSet {Q : E → W → Prop} {x : E} {w : W} : (x, w) ∈ toSet Q ↔ Q x w :=
   Iff.rfl
 
-theorem toSet_injective : Function.Injective (toSet : (E → W → Prop) → Set (E × W)) :=
-  Function.uncurry_injective
-
 /-- `only P` holds of `x` at `w` when the VP's value is among its alternatives and *only* on the
 identity scale is true at `(x, w)`. -/
 def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
   P.ordinary ∈ P.alternatives ∧
-    _root_.Focus.Particles.only (· = ·) (toSet '' P.alternatives) (toSet P.ordinary) (x, w) = 1
+    _root_.Focus.only (· = ·) P.alternatives toSet P.ordinary (x, w) = 1
 
 /-- `also P` holds of `x` at `w` when the VP's value is among its alternatives and the additive on
 the identity scale is true at `(x, w)`. -/
 def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
   P.ordinary ∈ P.alternatives ∧
-    _root_.Focus.Particles.additive (· = ·) (toSet '' P.alternatives) (toSet P.ordinary) (x, w) = 1
+    _root_.Focus.additive (· = ·) P.alternatives toSet P.ordinary (x, w) = 1
 
 theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     only P x w ↔ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary} := by
-  simp only [only, _root_.Focus.Particles.only_eq_one_iff, _root_.Focus.Particles.mem_atLeast,
-    _root_.Focus.Particles.mem_atMost, Set.forall_mem_image, Set.exists_mem_image, mem_toSet,
-    toSet_injective.eq_iff, Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
+  simp only [only, _root_.Focus.only_eq_one_iff, _root_.Focus.mem_atLeast,
+    _root_.Focus.mem_atMost, mem_toSet, Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨ho, ⟨_, -, hw, rfl⟩, hmax⟩
-    exact ⟨⟨ho, hw⟩, fun Q ⟨hQ, hQw⟩ ↦ (hmax hQ hQw).symm⟩
+    exact ⟨⟨ho, hw⟩, fun Q ⟨hQ, hQw⟩ ↦ (hmax Q hQ hQw).symm⟩
   · rintro ⟨⟨ho, hw⟩, hu⟩
     exact ⟨ho, ⟨_, ho, hw, rfl⟩, fun Q hQ hQw ↦ (hu Q ⟨hQ, hQw⟩).symm⟩
 
 theorem also_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     also P x w ↔ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w} := by
-  simp only [also, _root_.Focus.Particles.additive_eq_one_iff,
-    _root_.Focus.Particles.mem_additivePresup, Set.exists_mem_image, mem_toSet,
-    toSet_injective.eq_iff]
+  simp only [also, _root_.Focus.additive_eq_one_iff,
+    _root_.Focus.mem_additivePresup, mem_toSet]
   constructor
   · rintro ⟨ho, ⟨Q, hQ, hQw, hne⟩, hw⟩
     have hsub : {P.ordinary} ⊆ {Q | Q ∈ P.alternatives ∧ Q x w} :=

@@ -7,7 +7,12 @@ module
 
 public import Studies.Anscombe1964
 public import Linglib.Semantics.Modality.HistoricalAlternatives
-public import Linglib.Logic.Natural.Strawson
+public import Linglib.Semantics.Presupposition.Strawson
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Tense.Since
 public import Linglib.Data.Examples.BeaverCondoravdi2003
 public import Linglib.Data.Examples.Readers
 

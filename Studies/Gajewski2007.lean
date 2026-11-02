@@ -3,7 +3,12 @@ module
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Natural.Strawson
+public import Linglib.Semantics.Presupposition.Strawson
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Tense.Since
 public import Linglib.Data.Examples.Gajewski2007
 public import Linglib.Data.Examples.Readers
 
@@ -64,7 +69,7 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
 
 namespace Gajewski2007
 
-open ModalLogic NaturalLogic Desire.BestWorlds ConventionalImplicature
+open ModalLogic NaturalLogic Presupposition Desire.BestWorlds ConventionalImplicature
 open SetRel
 
 variable {W : Type*}
@@ -370,7 +375,7 @@ def Env.AntiAdditive : Env → Prop
   | .notThinkWant => ∀ (W : Type) (B R H : SetRel W W), IsAntiAdditive (negStack B B R H)
   | .notWantThink => ∀ (W : Type) (D B R : SetRel W W), IsAntiAdditive (negStack D B R R)
   | .only => ∀ (W ι : Type) (x : ι),
-      IsAntiAdditive fun P : ι → Set W ↦ posSupport (NaturalLogic.only x P)
+      IsAntiAdditive fun P : ι → Set W ↦ posSupport (Focus.only (· = ·) Set.univ P x)
   | .adversative =>
       ∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
         IsAntiAdditive fun p ↦ posSupport (regret dox base g p)
@@ -401,7 +406,7 @@ theorem Env.antiAdditive_iff (e : Env) :
   | notWantThink =>
     exact iff_of_false (fun h ↦ not_isAntiAdditive_negStack (h _ _ _ _)) (by decide)
   | only =>
-    exact iff_of_false (fun h ↦ not_antitone_posSupport_only (h Unit Bool true).antitone)
+    exact iff_of_false (fun h ↦ Focus.not_antitone_posSupport_only_eq (h Unit Bool true).antitone)
       (by decide)
   | adversative =>
     exact iff_of_false (fun h ↦ not_antitone_posSupport_regret (h _ _ _ _).antitone) (by decide)
@@ -418,7 +423,8 @@ instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.anti
 /-- *Only DP*, the adversatives, conditional antecedents and superlatives are all Strawson
 anti-additive, and none is anti-additive ((122)–(131)). -/
 theorem strawsonAntiAdditive_not_sufficient :
-    (∀ (W ι : Type) (x : ι), IsStrawsonAntiAdditive (NaturalLogic.only (W := W) x)) ∧
+    (∀ (W ι : Type) (x : ι),
+        IsStrawsonAntiAdditive fun P : ι → Set W ↦ Focus.only (· = ·) Set.univ P x) ∧
       (∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       (∀ (W : Type) (horizon : W → Set W) (q : Set W),
@@ -426,7 +432,7 @@ theorem strawsonAntiAdditive_not_sufficient :
       (∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
         IsStrawsonAntiAdditive (Degree.superlative (W := W) μ · a)) ∧
       ∀ e ∈ [Env.only, .adversative, .conditional, .superlative], ¬ e.AntiAdditive :=
-  ⟨fun _ _ ↦ isStrawsonAntiAdditive_only, fun _ ↦ isStrawsonAntiAdditive_regret,
+  ⟨fun _ _ ↦ Focus.isStrawsonAntiAdditive_only_eq, fun _ ↦ isStrawsonAntiAdditive_regret,
     fun _ ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
     fun _ _ _ _ ↦ Degree.isStrawsonAntiAdditive_superlative,
     by decide⟩

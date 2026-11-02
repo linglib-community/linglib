@@ -39,7 +39,7 @@ under *only* consumes the alternatives, and without it the [G] on the VP is not 
 [FoC] is the substrate's F-mark `Focus.Mark.focused` and (45) is `WithAlternatives.mark`, the
 domain of a type being all its values. The paper's Givenness is the substrate's
 `WithAlternatives.Given`, and its *only* (56), every true member of the salient set being the
-prejacent, is `Focus.Particles.atMost (· = ·)` at the set the squiggle also carries (55b), so the
+prejacent, is `Focus.atMost (· = ·)` at the set the squiggle also carries (55b), so the
 paper's indirect association through two occurrences of the contextual variable is a fact about
 the substrate and is not restated. The features are part of a node's label (p. 38), so every node
 of a logical form carries a label, and the variants of a form are its relabellings. [G] (47) takes
