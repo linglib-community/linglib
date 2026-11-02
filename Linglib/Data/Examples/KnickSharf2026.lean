@@ -27,7 +27,7 @@ def ex_5 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("reading", "universal"), ("adverbial", "ever since Monday")] }
+    paperFeatures := [("reading", "universal"), ("adverbial", "durative")] }
 
 def ex_6 : Datum :=
   { id := "knicksharf2026_6"
@@ -69,7 +69,7 @@ def ex_8b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("reading", "universal"), ("adverbial", "ever since this morning")] }
+    paperFeatures := [("reading", "universal"), ("adverbial", "durative")] }
 
 def ex_10 : Datum :=
   { id := "knicksharf2026_10"

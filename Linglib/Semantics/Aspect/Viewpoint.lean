@@ -255,6 +255,10 @@ theorem prfv_eq_upperClosure : PRFV P w = upperClosure (τ '' {e | P w e}) :=
 theorem isLowerSet_unbounded (P : W → E → Prop) (w : W) : IsLowerSet (UNBOUNDED P w) := by
   rw [unbounded_eq_lowerClosure]; exact (lowerClosure _).lower
 
+theorem isLowerSet_denote_imperfective (P : W → E → Prop) (w : W) :
+    IsLowerSet (ViewpointType.imperfective.denote P w) :=
+  fun _ _ hle ⟨e, hlt, hP⟩ ↦ ⟨e, hle.trans_lt hlt, hP⟩
+
 theorem isUpperSet_prfv (P : W → E → Prop) (w : W) : IsUpperSet (PRFV P w) := by
   rw [prfv_eq_upperClosure]; exact (upperClosure _).upper
 

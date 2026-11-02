@@ -5,21 +5,22 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Studies.Chierchia2006
+public import Studies.IatridouEtAl2001
 public import Studies.KatzirSingh2015
 
 /-!
 # Knick and Sharf (2026): On focus and the perfect aspect
 
 Knick and Sharf's perfect time span ends at the speech time and starts in a domain $t_r$. With
-the imperfective beneath the perfect, the universal perfect [entails the simple
-present](##universalPerfect_subset_simplePresent); with the perfective, the experiential perfect
-does not, and only it [admits *but she's not anymore*](##completion_continuation). Focus on the
-participle falls on the domain, whose alternatives [form a chain under
-entailment](##isChain_range_universalPerfect), and covert *even* [selects the one reaching furthest
-back](##evenEnrich_universalPerfect_eq_iff), so that the eventuality has held long. A domain
-containing the speech time, as under broad focus, [makes the universal perfect the simple
-present](##universalPerfect_eq_simplePresent), which as the simpler form [wins the competition
-between them](##exists_goodAnswer_universalPerfect_iff).
+the imperfective beneath the perfect, the universal perfect entails the simple present; with the
+perfective, the experiential perfect does not. Focus on the participle falls on the domain, whose
+alternatives [form a chain under entailment](##isChain_range_universalPerfect), and covert *even*
+[selects the one reaching furthest back](##evenEnrich_universalPerfect_eq_iff), leaving [the speech
+time outside it](##not_mem_of_evenEnrich). The universal perfect [survives its competition with
+the simple present exactly then](##survives_universalPerfect_iff), as under *ever since* and not
+under broad focus, where the domain contains the speech time. How a perfect specifies its left
+boundary thus [predicts its reading and whether it admits *but she's not
+anymore*](##form_predicts).
 
 ## Implementation notes
 
@@ -30,7 +31,17 @@ between them](##exists_goodAnswer_universalPerfect_iff).
   time span within $t_r$, and a domain is a set of times; the paper's interval domains are
   `Set.Icc`.
 * The imperfective properly includes the reference interval in the run time of an actual
-  eventuality, `Aspect.ViewpointType.imperfective.denote`, not the modal `Aspect.IMPF`.
+  eventuality, `Aspect.ViewpointType.imperfective.denote`, not the modal `Aspect.IMPF`. Iatridou,
+  Anagnostopoulou and Izvorski's includes it, so an eventuality running exactly from $t_0$ to the
+  speech time [verifies their universal perfect and not this
+  one](##exists_iatridou_not_universalPerfect).
+* *Ever since* is their durative adverbial, the spans starting at $t_0$ with the aspect holding
+  throughout: over the imperfective it is [the universal perfect over
+  $\{t_0\}$](##everSince_universal), and over the perfective it [fails of eventualities that take
+  time](##not_survives_everSince_experiential).
+* A parse is available when it survives the competition in some model whose eventualities take
+  time, as those of *be happy*, *cry* and *be sick* do. The focused perfect has the one parse its
+  logical form gives it, the imperfective beneath the perfect.
 * Entailment in every model quantifies over predicates of intervals, the event domain in which
   every interval is a possible run time.
 * The paper compares alternatives with disjoint, overlapping and nested domains; the three cases
@@ -39,10 +50,26 @@ between them](##exists_goodAnswer_universalPerfect_iff).
 * The complexity of a competitor is the number of heads in its logical form, the simple present
   being the universal perfect with `PERF` deleted.
 
+## Errata
+
+* The account does not exclude an experiential parse of the focused perfect. Its alternatives are
+  ordered by the earliest time of the domain, covert *even* over them is consistent, and the parse
+  [survives the competition](##focused_experiential_available), so the account admits *but she's
+  not anymore* after a focused *has been sick* and a focused perfect of *run*, which the paper
+  judges infelicitous. That narrow focus yields a universal perfect is the conclusion of the
+  paper's diagnostics, which its analysis assumes rather than derives.
+
+## TODO
+
+* The permanent states of *be dead*, the predicate classes under focus and the unavailable
+  shortening contrast are not yet rows paired with predictions.
+
 ## References
 
 * [knick-sharf-2026]
+* [iatridou-anagnostopoulou-izvorski-2001]
 * [chierchia-2006]
+* [rooth-1992]
 * [katzir-singh-2015]
 -/
 
@@ -51,6 +78,7 @@ between them](##exists_goodAnswer_universalPerfect_iff).
 namespace KnickSharf2026
 
 open Aspect Function Set
+open Chierchia2006 (evenEnrich)
 open Event (τ)
 
 variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
@@ -87,8 +115,7 @@ variable {V : W → E → Prop} {D D₁ D₂ : Set T} {t : T} {w : W}
     ∃ x ∈ D, ∃ h : x ≤ t, ∃ e, τ e ≤ (⟨(x, t), h⟩ : NonemptyInterval T) ∧ V w e :=
   mem_perf_inter_preimage_fst
 
-/-- The universal perfect entails its simple present competitor, (39) and (41), whatever its
-domain. -/
+-- (39), (41): whatever its domain
 theorem universalPerfect_subset_simplePresent (V : W → E → Prop) (D : Set T) (t : T) :
     universalPerfect V D t ⊆ simplePresent V t := fun _ hw ↦
   let ⟨_, _, h, e, hlt, hV⟩ := mem_universalPerfect.1 hw
@@ -166,7 +193,6 @@ theorem simplePresent_subset_universalPerfect_iff [NoMaxOrder T] [Nonempty W] :
 
 /-! ### The length implication -/
 
-open Chierchia2006 in
 /-- Covert *even* over the alternatives (38) leaves the universal perfect over `D` intact in every
 model exactly when `D` reaches furthest back, every time of it up to the speech time lying at or
 before such a time of each alternative domain: the length implication. -/
@@ -182,70 +208,113 @@ theorem evenEnrich_universalPerfect_eq_iff [NoMaxOrder T] [Nonempty W] {𝒟 : S
 
 /-! ### Competition with the simple present -/
 
-/-- The competitors of (39) and (41). -/
+/-- The competitors of (39) and (41), the simple present and a perfect. -/
 inductive Competitor
   | simplePresent
-  | universalPerfect
+  | perfect
   deriving DecidableEq
 
-/-- What a competitor means at the speech time `t`, the universal perfect over `D`. -/
-def Competitor.meaning (V : W → E → Prop) (D : Set T) (t : T) : Competitor → Set W
+/-- What a competitor means at the speech time `t`, the perfect meaning `p`. -/
+def Competitor.meaning (V : W → E → Prop) (p : Set W) (t : T) : Competitor → Set W
   | .simplePresent => KnickSharf2026.simplePresent V t
-  | .universalPerfect => KnickSharf2026.universalPerfect V D t
+  | .perfect => p
 
-/-- The heads of the logical form, `PRS IMPF` and `PRS PERF IMPF` (footnote 10). -/
+/-- The heads of the logical form, `PRS IMPF` against `PRS PERF IMPF` or `PRS PERF PRFV`
+(footnote 10). -/
 def Competitor.heads : Competitor → ℕ
   | .simplePresent => 2
-  | .universalPerfect => 3
+  | .perfect => 3
 
-/-- The competition (43) between the simple present and the universal perfect over `D`, the
-question being the competitors themselves. -/
-abbrev competition (V : W → E → Prop) (D : Set T) (t : T) :
+/-- The competition (43) between the simple present and the perfect `p`, the question being the
+competitors themselves. -/
+abbrev competition (V : W → E → Prop) (p : Set W) (t : T) :
     KatzirSingh2015.Scenario W Competitor Competitor where
-  meaning := Competitor.meaning V D t
+  meaning := Competitor.meaning V p t
   complexity := Competitor.heads
   context := univ
-  question := Competitor.meaning V D t
+  question := Competitor.meaning V p t
 
-theorem competition_relevant (c : Competitor) : (competition V D t).Relevant c :=
+theorem competition_relevant {p : Set W} (c : Competitor) : (competition V p t).Relevant c :=
   fun _ _ _ _ h ↦ h c
 
 -- (43), (44)
-theorem goodAnswer_universalPerfect_iff :
-    (competition V D t).GoodAnswer .universalPerfect w ↔
-      w ∈ universalPerfect V D t ∧ ¬ simplePresent V t ⊆ universalPerfect V D t := by
-  refine ⟨fun h ↦ ⟨h.1, fun hs ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨hw, competition_relevant _, ?_⟩⟩
-  · exact (competition V D t).not_goodAnswer_of_simpler (u := .universalPerfect)
-      (v := .simplePresent)
-      (by decide : Competitor.heads .simplePresent < Competitor.heads .universalPerfect) hs
-      (universalPerfect_subset_simplePresent V D t h.1) (competition_relevant _) h
-  · rintro ⟨_ | _, hb, -, -⟩
-    · exact hs hb.1.2
-    · exact (competition V D t).better_irrefl _ hb
+theorem goodAnswer_perfect_iff {p : Set W} :
+    (competition V p t).GoodAnswer .perfect w ↔
+      w ∈ p ∧ ¬ (simplePresent V t ⊆ p ∧ w ∈ simplePresent V t) := by
+  refine ⟨fun h ↦ ⟨h.1, fun ⟨hs, hw⟩ ↦ ?_⟩, fun ⟨hw, hs⟩ ↦ ⟨hw, competition_relevant _, ?_⟩⟩
+  · exact (competition V p t).not_goodAnswer_of_simpler (u := .perfect) (v := .simplePresent)
+      (by decide : Competitor.heads .simplePresent < Competitor.heads .perfect) hs hw
+      (competition_relevant _) h
+  · rintro ⟨_ | _, hb, hw', -⟩
+    · exact hs ⟨hb.1.2, hw'⟩
+    · exact (competition V p t).better_irrefl _ hb
 
-/-- The universal perfect survives its competition with the simple present in some model exactly
-when its domain has a time before the speech time but not the speech time itself, as under
-narrow focus and not under broad focus. -/
-theorem exists_goodAnswer_universalPerfect_iff [NoMaxOrder T] [Nontrivial W] :
-    (∃ (V : W → NonemptyInterval T → Prop) (w : W),
-      (competition V D t).GoodAnswer .universalPerfect w) ↔ t ∉ D ∧ (D ∩ Iic t).Nonempty := by
-  simp_rw [goodAnswer_universalPerfect_iff]
-  refine ⟨fun ⟨V, w, hw, hs⟩ ↦ ⟨fun ht ↦ hs (universalPerfect_eq_simplePresent ht).ge, ?_⟩, ?_⟩
+theorem goodAnswer_universalPerfect_iff :
+    (competition V (universalPerfect V D t) t).GoodAnswer .perfect w ↔
+      w ∈ universalPerfect V D t ∧ ¬ simplePresent V t ⊆ universalPerfect V D t := by
+  rw [goodAnswer_perfect_iff]
+  exact and_congr_right fun hw ↦ not_congr
+    ⟨And.left, fun hs ↦ ⟨hs, universalPerfect_subset_simplePresent V D t hw⟩⟩
+
+/-- A perfect, a proposition in each model, survives the competition with the simple present when
+it is a good answer in some model whose eventualities take time. -/
+def Survives (p : (W → NonemptyInterval T → Prop) → Set W) (t : T) : Prop :=
+  ∃ V : W → NonemptyInterval T → Prop, (∀ w e, V w e → e.fst < e.snd) ∧
+    ∃ w, (competition V (p V) t).GoodAnswer .perfect w
+
+/-- The universal perfect survives its competition with the simple present exactly when its
+domain has a time before the speech time but not the speech time itself, as under narrow focus or
+an overt adverbial and not under broad focus. -/
+theorem survives_universalPerfect_iff [NoMaxOrder T] [Nontrivial W] :
+    Survives (W := W) (universalPerfect · D t) t ↔ t ∉ D ∧ (D ∩ Iic t).Nonempty := by
+  simp_rw [Survives, goodAnswer_universalPerfect_iff]
+  refine ⟨fun ⟨V, _, w, hw, hs⟩ ↦ ⟨fun ht ↦ hs (universalPerfect_eq_simplePresent ht).ge, ?_⟩, ?_⟩
   · obtain ⟨x, hx, hxt, -⟩ := mem_universalPerfect.1 hw
     exact ⟨x, hx, hxt⟩
-  -- a world verifying the universal perfect, beside the simple present's countermodel
+  -- an eventuality from `x` through the speech time, and in another world one starting there
   rintro ⟨ht, x, hx, hxt⟩
   classical
-  obtain ⟨V, hV⟩ := not_forall.1 (mt (simplePresent_subset_universalPerfect_iff (W := W)).1 ht)
-  obtain ⟨w₂, hsp, hu⟩ := not_subset.1 hV
-  obtain ⟨w₁, hne⟩ := exists_ne w₂
+  obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
   obtain ⟨t', ht'⟩ := exists_gt t
-  refine ⟨update V w₁ (· = ⟨(x, t'), hxt.trans ht'.le⟩), w₁,
-    mem_universalPerfect.2 ⟨x, hx, hxt, _, lt_extend hxt ht', by simp⟩, fun hs ↦ hu ?_⟩
-  simpa only [mem_universalPerfect, update_of_ne hne.symm] using
-    hs (a := w₂) (by simpa only [mem_simplePresent, update_of_ne hne.symm] using hsp)
+  refine ⟨update (fun _ e ↦ e = ⟨(t, t'), ht'.le⟩) w₁ (· = ⟨(x, t'), hxt.trans ht'.le⟩), ?_, w₁,
+    mem_universalPerfect.2 ⟨x, hx, hxt, _, lt_extend hxt ht', by simp⟩, fun hs ↦ ?_⟩
+  · intro w e he
+    rcases eq_or_ne w w₁ with rfl | hw
+    · simp only [update_self] at he
+      exact he ▸ hxt.trans_lt ht'
+    · rw [update_of_ne hw] at he
+      exact he ▸ ht'
+  · obtain ⟨y, hy, hyt, e, hlt, he⟩ := mem_universalPerfect.1 <|
+      hs (a := w₂) ⟨_, lt_extend le_rfl ht', by simp [update_of_ne hne.symm]⟩
+    rw [update_of_ne hne.symm] at he
+    subst he
+    exact ht (le_antisymm hyt (NonemptyInterval.le_def.1 hlt.le).1 ▸ hy)
 
-/-! ### The completion continuation -/
+-- (29), (30): an eventuality that has ended
+theorem survives_experientialPerfect [Nonempty W] {x m : T} (hx : x ∈ D) (hxm : x < m)
+    (hmt : m < t) : Survives (W := W) (experientialPerfect · D t) t := by
+  obtain ⟨w⟩ := ‹Nonempty W›
+  refine ⟨fun _ e ↦ e = ⟨(x, m), hxm.le⟩, fun _ _ he ↦ he ▸ hxm, w, goodAnswer_perfect_iff.2
+    ⟨mem_experientialPerfect.2 ⟨x, hx, (hxm.trans hmt).le, ⟨(x, m), hxm.le⟩,
+      NonemptyInterval.le_def.2 ⟨le_rfl, hmt.le⟩, rfl⟩, fun ⟨_, e, hlt, he⟩ ↦ ?_⟩⟩
+  subst he
+  exact hmt.not_ge (NonemptyInterval.le_def.1 hlt.le).2
+
+/-! ### The left boundary specified -/
+
+-- §4.3.4 and §5: a distinct alternative, which the alternatives `C` include [rooth-1992]
+theorem not_mem_of_evenEnrich [NoMaxOrder T] [Nonempty W] {𝒟 : Set (Set T)} {D' : Set T}
+    (he : ∀ V : W → NonemptyInterval T → Prop,
+      evenEnrich ((universalPerfect V · t) '' 𝒟) (universalPerfect V D t) =
+        universalPerfect V D t)
+    (hD' : D' ∈ 𝒟)
+    (hne : ∃ V : W → NonemptyInterval T → Prop, universalPerfect V D' t ≠ universalPerfect V D t) :
+    t ∉ D := fun ht ↦ by
+  obtain ⟨y, ⟨hy, hyt⟩, hty⟩ :=
+    evenEnrich_universalPerfect_eq_iff.1 he D' hD' (subset_lowerClosure ⟨ht, le_rfl⟩)
+  obtain ⟨V, hV⟩ := hne
+  exact hV (by rw [universalPerfect_eq_simplePresent ht,
+    universalPerfect_eq_simplePresent (le_antisymm hyt hty ▸ hy)])
 
 /-- The universal and the experiential reading of the perfect. -/
 inductive Reading
@@ -253,10 +322,112 @@ inductive Reading
   | experiential
   deriving DecidableEq
 
+/-- The aspect beneath the perfect, the imperfective (25) for the universal reading and the
+perfective (28) for the experiential (§4.2). -/
+def Reading.aspect : Reading → (W → E → Prop) → W → Set (NonemptyInterval T)
+  | .universal => ViewpointType.imperfective.denote
+  | .experiential => PRFV
+
 /-- The perfect under a reading. -/
 def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
   | .universal => universalPerfect
   | .experiential => experientialPerfect
+
+/-- The perfect under the durative adverbial *ever since t₀* (4b), (5), (8b): the spans starting
+at `t₀`, the aspect holding throughout them, as [iatridou-anagnostopoulou-izvorski-2001] read
+durative adverbials. -/
+def Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
+  {w | (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
+
+theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
+    Reading.universal.everSince V t₀ t = universalPerfect V {t₀} t := by
+  have h (w : W) : durative (ViewpointType.imperfective.denote V) w =
+      ViewpointType.imperfective.denote V w :=
+    durative_eq_of_isLowerSet (isLowerSet_denote_imperfective V w)
+  simp only [Reading.everSince, Reading.aspect, h]
+  rfl
+
+-- footnote 2: a bounded eventuality that takes time holds throughout no span
+theorem not_survives_everSince_experiential {t₀ : T} :
+    ¬ Survives (W := W) (Reading.experiential.everSince · t₀ t) t :=
+  fun ⟨_, hV, _, hw, _⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
+    (perf_mono (fun _ ↦ inter_subset_right) hw)
+
+-- the imperfective (25) is strict where Iatridou et al.'s is not (footnote 6)
+theorem exists_iatridou_not_universalPerfect [Nonempty W] {t₀ : T} (h : t₀ ≤ t) :
+    ∃ (V : W → NonemptyInterval T → Prop) (w : W),
+      (w, t) ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
+        w ∉ universalPerfect V {t₀} t := by
+  obtain ⟨w⟩ := ‹Nonempty W›
+  refine ⟨fun _ e ↦ e = ⟨(t₀, t), h⟩, w,
+    IatridouEtAl2001.universal_of_covers rfl h le_rfl le_rfl, fun hw ↦ ?_⟩
+  obtain ⟨_, rfl, _, _, hlt, rfl⟩ := mem_universalPerfect.1 hw
+  exact hlt.ne rfl
+
+/-- How the left boundary of the perfect time span is specified (p. 585): not at all, as under
+broad focus without an adverbial; by an overt durative adverbial; or by narrow focus on the
+participle. -/
+inductive LeftBoundary
+  | unspecified
+  | everSince
+  | focused
+  deriving DecidableEq
+
+/-- The parses of a perfect: universal and experiential, except under focus, whose logical form
+(31) has the imperfective beneath the perfect. -/
+def LeftBoundary.parses : LeftBoundary → List Reading
+  | .unspecified | .everSince => [.universal, .experiential]
+  | .focused => [.universal]
+
+/-- A parse is available to a perfect whose left boundary is specified as `b` when, in some
+configuration `b` admits, it survives the competition with the simple present: over a domain
+containing the speech time when unspecified (p. 587), from an earlier time under *ever since*, and
+under focus over a domain on which covert *even* is consistent against alternatives that include a
+distinct one. -/
+def LeftBoundary.Available (W T : Type*) [LinearOrder T] : LeftBoundary → Reading → Prop
+  | .unspecified, r => ∃ (D : Set T) (t : T), t ∈ D ∧ Survives (W := W) (r.perfect · D t) t
+  | .everSince, r => ∃ t₀ t : T, t₀ < t ∧ Survives (W := W) (r.everSince · t₀ t) t
+  | .focused, r => ∃ (D : Set T) (𝒟 : Set (Set T)) (t : T),
+      (∃ D' ∈ 𝒟, ∃ V : W → NonemptyInterval T → Prop, r.perfect V D' t ≠ r.perfect V D t) ∧
+      (∀ V : W → NonemptyInterval T → Prop,
+        evenEnrich ((r.perfect V · t) '' 𝒟) (r.perfect V D t) = r.perfect V D t) ∧
+      Survives (W := W) (r.perfect · D t) t
+
+-- the experiential alternatives are ordered by the earliest time of the domain
+theorem experientialPerfect_mono (h : D₁ ∩ Iic t ⊆ upperClosure (D₂ ∩ Iic t)) :
+    experientialPerfect V D₁ t ⊆ experientialPerfect V D₂ t := fun _ hw ↦
+  let ⟨_, hx, hxt, e, hle, hV⟩ := mem_experientialPerfect.1 hw
+  let ⟨y, ⟨hy, hyt⟩, hyx⟩ := h ⟨hx, hxt⟩
+  mem_experientialPerfect.2
+    ⟨y, hy, hyt, e, hle.trans (NonemptyInterval.le_def.2 ⟨hyx, le_rfl⟩), hV⟩
+
+/-- Were the focused perfect experiential, its parse would be available: covert *even* over its
+alternatives selects the domain reaching least far back, and it survives the competition, so the
+account itself does not exclude the felicity of the continuation of (10) or of (14d). -/
+theorem focused_experiential_available [Nonempty W] :
+    LeftBoundary.focused.Available W ℤ .experiential := by
+  obtain ⟨w⟩ := ‹Nonempty W›
+  let e₀ : NonemptyInterval ℤ := ⟨(0, 2), by norm_num⟩
+  simp only [LeftBoundary.Available, Reading.perfect]
+  refine ⟨{1}, {{1}, {0}}, 3, ⟨{0}, by simp, fun _ e ↦ e = e₀, fun h ↦ ?_⟩, fun V ↦ ?_,
+    survives_experientialPerfect (mem_singleton 1) (by norm_num : (1 : ℤ) < 2) (by norm_num)⟩
+  · -- the eventuality from 0 to 2 lies within a span from 0 and within none from 1
+    have h₀ : w ∈ experientialPerfect (fun _ e ↦ e = e₀) {0} 3 :=
+      mem_experientialPerfect.2 ⟨0, rfl, by norm_num, e₀,
+        NonemptyInterval.le_def.2 ⟨le_rfl, by norm_num⟩, rfl⟩
+    obtain ⟨x, hx, _, e, hle, he⟩ := mem_experientialPerfect.1 (h ▸ h₀)
+    subst he
+    have : x ≤ 0 := (NonemptyInterval.le_def.1 hle).1
+    simp only [mem_singleton_iff] at hx
+    omega
+  · refine Set.ext fun _ ↦ ⟨And.left, fun hw ↦ ⟨hw, ?_⟩⟩
+    rintro _ ⟨D', hD', rfl⟩
+    refine experientialPerfect_mono fun x ⟨hx, hxt⟩ ↦ ?_
+    rcases hD' with rfl | rfl
+    · exact subset_upperClosure ⟨hx, hxt⟩
+    · exact ⟨0, ⟨rfl, by norm_num⟩, by simp only [mem_singleton_iff] at hx; omega⟩
+
+/-! ### The form predicts the reading -/
 
 /-- A reading entails the simple present when in every model, over every domain, the
 eventuality holds at the speech time wherever the perfect does. -/
@@ -275,15 +446,71 @@ theorem Reading.entailsPresent_iff [Nonempty W] [Nontrivial T] {r : Reading} :
 instance [Nonempty W] [Nontrivial T] (r : Reading) : Decidable (r.EntailsPresent W T) :=
   decidable_of_iff _ Reading.entailsPresent_iff.symm
 
+theorem LeftBoundary.available_iff {b : LeftBoundary} {r : Reading} :
+    b.Available Bool ℤ r ↔ ¬ (b = .unspecified ∧ r = .universal) ∧
+      ¬ (b = .everSince ∧ r = .experiential) := by
+  cases b <;> cases r <;> simp only [reduceCtorEq, and_true, and_false, not_true_eq_false,
+    not_false_eq_true, and_self, iff_true, iff_false]
+  · rintro ⟨D, t, ht, hs⟩
+    exact (survives_universalPerfect_iff.1 hs).1 ht
+  · exact ⟨univ, 2, trivial, survives_experientialPerfect (x := 0) (m := 1) trivial
+      (by norm_num) (by norm_num)⟩
+  · refine ⟨0, 1, by norm_num, ?_⟩
+    simp only [everSince_universal]
+    exact survives_universalPerfect_iff.2 ⟨by simp, 0, rfl, by norm_num⟩
+  · rintro ⟨t₀, t, -, hs⟩
+    exact not_survives_everSince_experiential hs
+  · simp only [LeftBoundary.Available, Reading.perfect]
+    let e₀ : NonemptyInterval ℤ := ⟨(1, 3), by norm_num⟩
+    refine ⟨{0}, {{0}, {1}}, 2, ⟨{1}, by simp, fun _ e ↦ e = e₀, fun h ↦ ?_⟩,
+      evenEnrich_universalPerfect_eq_iff.2 ?_,
+      survives_universalPerfect_iff.2 ⟨by simp, 0, rfl, by norm_num⟩⟩
+    · -- the eventuality from 1 to 3 runs through a span from 1 and through none from 0
+      have h₁ : true ∈ universalPerfect (fun _ e ↦ e = e₀) {1} 2 :=
+        mem_universalPerfect.2 ⟨1, rfl, by norm_num, e₀, lt_extend (by norm_num)
+          (by norm_num : (2 : ℤ) < 3), rfl⟩
+      obtain ⟨x, hx, _, e, hlt, he⟩ := mem_universalPerfect.1 (h ▸ h₁)
+      subst he
+      have : 1 ≤ x := (NonemptyInterval.le_def.1 hlt.le).1
+      simp only [mem_singleton_iff] at hx
+      omega
+    · rintro _ (rfl | rfl)
+      · exact le_rfl
+      · exact lowerClosure_le.2 fun x ⟨hx, _⟩ ↦
+          ⟨1, ⟨rfl, by norm_num⟩, by simp only [mem_singleton_iff] at hx; omega⟩
+  · exact focused_experiential_available
+
+instance (b : LeftBoundary) (r : Reading) : Decidable (b.Available Bool ℤ r) :=
+  decidable_of_iff _ LeftBoundary.available_iff.symm
+
+/-- A perfect admits the continuation *but she's not anymore* when one of its parses is available
+and leaves the eventuality free to have ended. -/
+def LeftBoundary.AdmitsCompletion (b : LeftBoundary) : Prop :=
+  ∃ r ∈ b.parses, b.Available Bool ℤ r ∧ ¬ r.EntailsPresent Bool ℤ
+
+instance (b : LeftBoundary) : Decidable b.AdmitsCompletion :=
+  inferInstanceAs (Decidable (∃ r ∈ b.parses, _))
+
+/-- How a row's perfect specifies its left boundary: by focus on the participle, by an overt
+durative adverbial, or not at all. -/
+def leftBoundary (e : Datum) : Option LeftBoundary :=
+  match e.feature? "focus", e.feature? "adverbial" with
+  | some _, _ => some .focused
+  | none, some "durative" => some .everSince
+  | none, none => some .unspecified
+  | none, some _ => none
+
 /-- The reading the paper assigns a row. -/
 def reading (e : Datum) : Option Reading :=
   e.parse? "reading" [("universal", .universal), ("experiential", .experiential)]
 
-/-- The continuation *but she's not anymore* is felicitous on exactly the rows whose reading does
-not entail the simple present: the experiential perfects (6), (8a) and (12), and none of the
-universal perfects (5), (8b) and (10). -/
-theorem completion_continuation :
-    Datum.Checks reading (fun r ↦ .ofProp ¬ r.EntailsPresent Unit ℤ) Examples.all 6 := by
+/-- The form of each perfect predicts its reading, the one parse available to it, and whether it
+admits *but she's not anymore*: the experiential perfects (6), (8a) and (12) do, the universal
+perfects (5) and (8b) under *ever since* and (10) under focus do not. -/
+theorem form_predicts :
+    (∀ e ∈ Examples.all, (leftBoundary e).map (fun b ↦ b.parses.filter (b.Available Bool ℤ ·)) =
+      (reading e).map ([·])) ∧
+    Datum.Checks leftBoundary (fun b ↦ .ofProp b.AdmitsCompletion) Examples.all 6 := by
   decide
 
 end KnickSharf2026

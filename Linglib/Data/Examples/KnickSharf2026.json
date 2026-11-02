@@ -17,9 +17,9 @@
     "readings": [],
     "paperFeatures": [
       ["reading", "universal"],
-      ["adverbial", "ever since Monday"]
+      ["adverbial", "durative"]
     ],
-    "comment": "The overt durative adverbial makes the perfect universal, and the completion continuation contradicts it.",
+    "comment": "The overt durative adverbial *ever since Monday* makes the perfect universal, and the completion continuation contradicts it.",
     "verified": "page-image"
   },
   {
@@ -78,9 +78,9 @@
     "readings": [],
     "paperFeatures": [
       ["reading", "universal"],
-      ["adverbial", "ever since this morning"]
+      ["adverbial", "durative"]
     ],
-    "comment": "With an overt durative adverbial the universal inference is entailed.",
+    "comment": "With the overt durative adverbial *ever since this morning* the universal inference is entailed.",
     "verified": "page-image"
   },
   {
