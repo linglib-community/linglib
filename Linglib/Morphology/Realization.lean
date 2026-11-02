@@ -30,7 +30,7 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 ## Main definitions
 
 * `Morphology.Realization`: indices realized in context, with `IsLicensed`, `Realizes`,
-  `exponents`, `IsTotal` and `IsUnivalent`.
+  `exponents`, `IsTotal`, `IsUnivalent` and `IsCrossCategorial`.
 * `Morphology.IsConstantIn`, `Morphology.IsVariantIn`: constancy and variance of a contextual map
   at an index, which give `IsInvariant` and `IsSuppletive` for forms and `IsIntrinsic` and
   `IsAllosemous` for readings.
@@ -72,6 +72,7 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 * [lohndal-2020]
 * [blevins-2016]
 * [arad-2005]
+* [gouskova-bobaljik-2020]
 -/
 
 @[expose] public section
@@ -145,7 +146,9 @@ def IsInvariant (r : R) : Prop := IsConstantIn S.realize r
 
 /-- `IsSuppletive r` says `r` has two distinct forms, in contexts that need not
 differ, as √GO has *go* and *went*, the case behind [harley-2014]'s argument
-that indices, not forms, individuate. -/
+that indices, not forms, individuate. When the forms are competing Vocabulary
+Items this is suppletive allomorphy, of a root or of an affix alike
+([gouskova-bobaljik-2020]). -/
 def IsSuppletive (r : R) : Prop := IsVariantIn S.realize r
 
 theorem not_isInvariant_of_isSuppletive {r : R} (h : S.IsSuppletive r) :
@@ -195,6 +198,11 @@ def RealizeEq (r r' : R) : Prop := ∀ c, S.realize r c = S.realize r' c
 theorem RealizeEq.symm {r r' : R} (h : S.RealizeEq r r') :
     S.RealizeEq r' r := fun c => (h c).symm
 
+/-- `r` is **cross-categorial** when it is licensed in two contexts whose categories `k` differ,
+as a category-free root is ([marantz-1997], [arad-2005]). -/
+def IsCrossCategorial {K : Type*} (k : Ctx → K) (r : R) : Prop :=
+  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
+
 /-- `IsHomophonous r r'` says the distinct indices `r` and `r'` share every
 realization, as *bank₁* and *bank₂* do; spellout is nowhere required to be
 injective. -/
@@ -231,6 +239,10 @@ instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
 
 instance (r r' : R) : Decidable (S.RealizeEq r r') :=
   inferInstanceAs (Decidable (∀ c : Ctx, S.realize r c = S.realize r' c))
+
+instance {K : Type*} [DecidableEq K] (k : Ctx → K) (r : R) :
+    Decidable (S.IsCrossCategorial k r) :=
+  inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
 
 instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
   inferInstanceAs (Decidable (_ ∧ _))

@@ -8,6 +8,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Root.Basic
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Morphology.Word.Comparative
+public import Studies.Bloomfield1933
 
 /-!
 # Haspelmath (2025): Roots and root classes in comparative grammar
@@ -20,7 +21,9 @@ morphological cores in the formal sense of `Morphology.IsCore`, and it admits bo
 Sorbian *žon-*. Roots are concrete forms, so [the four Arabic forms sharing k-t-b are four
 roots](##Haspelmath2025b.arabic_four_roots), and on the heterosemy view [the noun and the verb
 *hammer* are two roots with one shape](##Haspelmath2025b.hammer_two_roots), [related by sister
-schemas](##Haspelmath2025b.hammer_sisters) that *hammer* and *dance* do not instantiate.
+schemas](##Haspelmath2025b.hammer_sisters) that *hammer* and *dance* do not instantiate. In
+Bloomfield's English words [the roots are the root's exponents](##Haspelmath2025b.bloomfield_roots),
+the suppletive *bet-* of *bet-ter* but not its *-er*.
 
 ## Implementation notes
 
@@ -35,6 +38,7 @@ schemas](##Haspelmath2025b.hammer_sisters) that *hammer* and *dance* do not inst
 
 ## References
 
+* [bloomfield-1933]
 * [haspelmath-2023]
 * [haspelmath-2025b]
 * [jackendoff-audring-2020]
@@ -221,6 +225,27 @@ def latin : Inventory Form := inventory [[laud, o], [laud, ab, am]]
 
 theorem laudab_stem :
     IsStemIn latin.forms latin [laud, ab] ∧ IsStemIn latin.forms latin [laud] := by
+  decide
+
+/-! ### Suppletive alternants -/
+
+/-- Bloomfield's plain and derived words, with the class of each morph's meaning. -/
+def bloomfield : Inventory Morph where
+  forms := [Bloomfield1933.Lexeme.kind, .good, .ox, .card, .go, .land].flatMap fun l ↦
+    [Bloomfield1933.word l .plain, Bloomfield1933.word l .derived]
+  rootClass m :=
+    if m = Bloomfield1933.kind ∨ m = Bloomfield1933.good ∨ m = Bloomfield1933.bet then
+      some .property
+    else if m = Bloomfield1933.ox ∨ m = Bloomfield1933.card then some .object
+    else if m = Bloomfield1933.go ∨ m = Bloomfield1933.went ∨ m = Bloomfield1933.land then
+      some .action
+    else none
+
+/-- In each of Bloomfield's words the roots of definition (1) are the exponent Vocabulary
+Insertion gives the root, *bet-* in *bet-ter* and *went* among them, so the clause on contentful
+forms tells a suppletive alternant of a root from the affix beside it. -/
+theorem bloomfield_roots : ∀ l c,
+    (Bloomfield1933.word l c).filter bloomfield.IsRoot ∈ Bloomfield1933.roots.realize l c := by
   decide
 
 /-! ### Heterosemy (§6) -/

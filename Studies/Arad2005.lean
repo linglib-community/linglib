@@ -2,7 +2,6 @@ module
 
 public import Studies.McCarthy1981
 public import Linglib.Morphology.Realization
-public import Linglib.Morphology.Root.Certificates
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Hebrew.ConsonantalRoots
@@ -890,12 +889,11 @@ theorem isLicensed_roots_iff {r p : String} :
 are the four whose meanings vary with the pattern (Ch. 7). -/
 theorem crossCategorial_iff :
     ∀ r ∈ (Wordlist.analyses.filterMap (·.root)).dedup,
-      Root.IsCrossCategorial roots.toRealization patternHead r ↔
-        r ∈ ["sgr", "qlt", "xšb", "šmn"] := by
-  have key (r : String) : Root.IsCrossCategorial roots.toRealization patternHead r ↔
+      roots.IsCrossCategorial patternHead r ↔ r ∈ ["sgr", "qlt", "xšb", "šmn"] := by
+  have key (r : String) : roots.IsCrossCategorial patternHead r ↔
       ∃ a ∈ Wordlist.analyses, ∃ b ∈ Wordlist.analyses, a.root = some r ∧ b.root = some r ∧
         ∃ p ∈ pattern? a, ∃ q ∈ pattern? b, patternHead p ≠ patternHead q := by
-    simp only [Root.IsCrossCategorial, isLicensed_roots_iff]
+    simp only [Realization.IsCrossCategorial, isLicensed_roots_iff]
     constructor
     · rintro ⟨p, q, hk, ⟨a, ha, har, hp⟩, b, hb, hbr, hq⟩
       exact ⟨a, ha, b, hb, har, hbr, p, hp, q, hq, hk⟩
