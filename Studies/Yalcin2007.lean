@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Insert
 public import Linglib.Data.Examples.Yalcin2007
 public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Dynamic.Consequence
 public import Linglib.Semantics.Modality.DomainSemantics
 
 /-!
@@ -33,7 +34,12 @@ can, while diagonal consequence rejects epistemic contradiction
 (`not_diagonal_epistemic_contradiction`); on factual sentences informational consequence keeps
 the classical schema on which $\neg\varphi \wedge \psi$ entails the absurd sentence exactly when
 $\psi$ entails $\varphi$ (`factual_reductio`). The dual necessity modal yields the same results
-(`not_accepted_neg_must`).
+(`not_accepted_neg_must`). A footnote calls informational consequence similar to Veltman's
+validity₃ and his treatment of *might* very similar to domain semantics. A sentence determines an
+update, which keeps the worlds of a state at which the sentence is true relative to that state:
+informational consequence
+[is validity₃](##Yalcin2007.informationalConsequence_iff_preservesAcceptance) of that update, and
+the updates of the connectives and modals [are Veltman's clauses](##Yalcin2007.update_might).
 
 ## Implementation notes
 
@@ -41,7 +47,9 @@ Sentences form a Boolean algebra pointwise: negation is the complement `φᶜ`, 
 `φ ⊓ ψ`, and the absurd sentence `⊥`. The relational semantics is Kripke's diamond `◇[R]`. The
 largest nonempty substate accepting the antecedent is characterized rather than constructed, and a
 conditional is true only if it exists. The probabilistic extension of the information parameter in
-the paper's seventh section is not modelled.
+the paper's seventh section is not modelled. The update of a sentence is not in the paper, whose
+footnote leaves the comparison informal; Veltman's language has *might* only at the top of a
+sentence, a restriction these clauses do not need.
 
 ## Errata
 
@@ -210,5 +218,57 @@ theorem not_accepted_neg_must {p : Set W} (hs : s.Nonempty) :
   intro h
   obtain ⟨w, hw⟩ := hs
   exact (h w hw).1 ((h w hw).2 w hw)
+
+/-! ### Update semantics -/
+
+section UpdateSemantics
+
+open DynamicSemantics (CCP PreservesAcceptance)
+open Function (IsFixedPt)
+
+variable {Γ : List (Sentence W)}
+
+/-- The update of a state with a sentence keeps the worlds of the state at which the sentence is
+true relative to that state. -/
+def update (φ : Sentence W) : CCP W := fun s ↦ {w ∈ s | φ s w}
+
+theorem isFixedPt_update_iff : IsFixedPt (update φ) s ↔ φ.AcceptedIn s :=
+  Set.sep_eq_self_iff_mem_true
+
+/-- Informational consequence, which fn. 22 calls similar to Veltman's validity₃, is exactly
+validity₃ of the update of a sentence. -/
+theorem informationalConsequence_iff_preservesAcceptance :
+    InformationalConsequence Γ φ ↔ PreservesAcceptance (Γ.map update) (update φ) := by
+  simp [InformationalConsequence, PreservesAcceptance, isFixedPt_update_iff]
+
+theorem update_ofProp (p : Set W) : update (ofProp p) = CCP.up p := rfl
+
+theorem update_compl : update φᶜ = CCP.neg (update φ) := by
+  ext s w
+  exact and_congr_right fun hw ↦ not_congr (and_iff_right hw).symm
+
+theorem update_inf (s : Set W) : update (φ ⊓ ψ) s = update φ s ∩ update ψ s := Set.sep_and ..
+
+theorem update_sup (s : Set W) : update (φ ⊔ ψ) s = update φ s ∪ update ψ s := Set.sep_or ..
+
+/-- Fn. 22 finds Veltman's *might* very similar to the domain semantics of the possibility modal:
+the update of *might φ* is his test on the update of `φ`, and `update_ofProp`, `update_compl`,
+`update_inf` and `update_sup` give the other clauses of his Definition 2.3. -/
+theorem update_might : update φ.might = CCP.might (update φ) := rfl
+
+theorem update_must : update φ.must = CCP.must (update φ) := by
+  ext s w
+  exact and_congr_right fun _ ↦ isFixedPt_update_iff.symm
+
+-- The verdicts of this section carry over to Veltman's system.
+example : ¬PreservesAcceptance [CCP.might (CCP.up {true})] (CCP.up ({true} : Set Bool)) :=
+  fun h ↦ nonfactivity (informationalConsequence_iff_preservesAcceptance.2 h)
+
+example (p : Set W) :
+    PreservesAcceptance [CCP.neg (CCP.up p)] (CCP.neg (CCP.might (CCP.up p))) := by
+  simpa [update_compl, update_might, update_ofProp] using
+    informationalConsequence_iff_preservesAcceptance.1 (lukasiewicz p)
+
+end UpdateSemantics
 
 end Yalcin2007
