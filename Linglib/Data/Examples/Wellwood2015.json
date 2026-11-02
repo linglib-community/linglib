@@ -216,11 +216,11 @@
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
-      ["measuredDomain", "entity"],
+      ["measuredDomain", "state"],
       ["dimension", "volume"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
+    "comment": "Reversal: a GA comparative with an extensive dimension, though GAs introduce states (6).",
     "verified": "page-image"
   },
   {
@@ -238,11 +238,11 @@
     "readings": [],
     "paperFeatures": [
       ["category", "gradableAdj"],
-      ["measuredDomain", "entity"],
+      ["measuredDomain", "state"],
       ["dimension", "weight"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
+    "comment": "Reversal: a GA comparative with an extensive dimension, though GAs introduce states (6).",
     "verified": "page-image"
   },
   {
@@ -264,7 +264,7 @@
       ["dimension", "temperature"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states.",
+    "comment": "Reversal: a nominal comparative with an intensive dimension; the discussion of (67) takes such nouns as predicates of states.",
     "verified": "page-image"
   },
   {
@@ -286,7 +286,7 @@
       ["dimension", "hardness"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states.",
+    "comment": "Reversal: a nominal comparative with an intensive dimension; the discussion of (67) takes such nouns as predicates of states.",
     "verified": "page-image"
   },
   {
@@ -304,11 +304,11 @@
     "readings": [],
     "paperFeatures": [
       ["category", "atelicVP"],
-      ["measuredDomain", "state"],
+      ["measuredDomain", "event"],
       ["dimension", "speed"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: verb but intensive, because the measured domain is states.",
+    "comment": "Reversal: a verbal comparative with an intensive dimension, though verbs introduce events (6).",
     "verified": "page-image"
   },
   {
