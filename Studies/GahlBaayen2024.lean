@@ -25,6 +25,12 @@ examples are.
 * The paper estimates the corpus-scale word-to-word map with the Rescorla–Wagner rule, which is
   not formalized; `W` is the pseudoinverse solution it uses for the toy corpus.
 
+## Errata
+
+* The third line of (A2) prints the right-hand side as `(CᵀS)⁻¹SᵀC` and the sentence after (A2)
+  speaks of calculating `(CᵀC)⁻¹`; the derivation requires `(SᵀS)⁻¹` in both places, as the
+  remaining lines of (A2) show.
+
 ## References
 
 * [gahl-baayen-2024]
@@ -161,6 +167,26 @@ theorem endstateG_isELTrained : IsELTrained toy endstateG :=
 theorem frequencyInformedG_isTrained : IsTrained toy freq frequencyInformedG :=
   isTrained_closedForm toy freq
     ((isUnit_iff_isUnit_det _).2 (isUnit_det_of_right_inverse gramSQ_mul_inv))
+
+private theorem natCast_tokens :
+    (fun i ↦ (((![100, 10, 1] : Fin 3 → ℕ) i : ℕ) : NNReal)) = freq := by
+  funext i; fin_cases i <;> simp [freq]
+
+-- (A3), (A4): the mapping of the three weighted word types is the mapping of the matrices "that
+-- have 100 repeated entries of *time*, ten repeated entries of *lime*, and one entry for *thyme*".
+theorem frequencyInformedG_isELTrained_tokens :
+    IsELTrained (toy.tokens ![100, 10, 1]) frequencyInformedG := by
+  rw [isELTrained_tokens_iff, natCast_tokens]
+  exact frequencyInformedG_isTrained
+
+theorem endstateG_not_isELTrained_tokens :
+    ¬ IsELTrained (toy.tokens ![100, 10, 1]) endstateG := fun hG ↦ by
+  rw [isELTrained_tokens_iff, natCast_tokens] at hG
+  have h := hG.mul_eq (fun i ↦ by fin_cases i <;> simp [freq]) frequencyInformedG_isTrained
+  have hne : (semanticVectors * ratG) time 0 ≠ (semanticVectors * ratGFIL) time 0 := by
+    decide +kernel
+  rw [endstateG_eq, frequencyInformedG_eq, toy_S, ← Matrix.map_mul, ← Matrix.map_mul] at h
+  exact hne (Rat.cast_injective (congrFun (congrFun h time) 0))
 
 /-! ### Semantic support for form -/
 

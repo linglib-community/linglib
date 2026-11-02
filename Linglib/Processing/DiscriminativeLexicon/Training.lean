@@ -1,62 +1,36 @@
 module
 
-public import Linglib.Core.Analysis.LeastSquares
 public import Linglib.Processing.DiscriminativeLexicon.Defs
+public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.LinearAlgebra.Matrix.Dual
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.Matrix.Trace
+public import Mathlib.LinearAlgebra.Matrix.Vec
+public import Mathlib.Order.Filter.Extr
 
 /-!
 # Training a discriminative lexicon
 
-This file defines training for a linear discriminative lexicon and proves the normal equations
-and the existence and uniqueness results that the papers rely on.
-
-A discriminative lexicon is trained by solving `SG = C` in the least-squares sense over the
-semantic matrix `S` and form matrix `C` of a training experience, the mapping matrix `G`
-minimising the frequency-weighted loss `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²`. The weights record the cognitive
-commitment. They are uniform for endstate learning and token counts for the frequency-informed
-learning of Heitmeier, Chuang, Axen and Baayen, and the optimisation itself is fixed. The loss
-separates over form coordinates, so each column of `G` is a vector least-squares problem for the
-`√Q`-scaled design `√Q S`, whose minimisers Mathlib characterises by the adjoint
-(`Core.IsLeastSquares`). From this we obtain the normal equations `SᵀQ(SG − C) = 0` of Gahl and
-Baayen's appendix and their closed form `(SᵀQS)⁻¹SᵀQC`, the existence of trained matrices, the
-uniqueness of the fitted values `SG` and hence of the predicted forms at experienced meanings,
-the solution coset, and Heitmeier's identification of frequency-informed learning under `q` with
-endstate learning on the `√Q`-premultiplied experience. Comprehension is the same regression
-with the two matrices exchanged, `CF = S`, so every result applies to it on the experience
+A discriminative lexicon is trained by solving `SG = C` in the least-squares sense, the mapping
+matrix `G` minimising the frequency-weighted loss `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²`. Uniform weights give
+endstate learning and token counts give frequency-informed learning, which is
+[endstate learning on the repeated tokens](##isELTrained_tokens_iff) and equally
+[on the `√Q`-premultiplied experience](##isELTrained_sqrtScale_iff). Endstate learning is
+[orthogonal projection](##isELTrained_iff_fittedValues_eq_starProjection) onto the space of fitted
+values, whence the [normal equations](##isTrained_iff) `SᵀQ(SG − C) = 0`,
+[existence](##exists_isTrained), and [unique fitted values](##IsTrained.mul_eq); the matrix itself
+is unique
+[exactly when the experienced meanings span the meaning space](##existsUnique_isTrained_iff).
+The residuals are orthogonal to every linear functional of the meanings, so a trained matrix
+[sends the centre of mass](##IsTrained.centerMass_vecMul_eq_of_decodable) of a linearly decodable
+set of meanings to that of its forms. Comprehension is the same regression on the experience
 `⟨C, S⟩`.
-
-The normal equations make the weighted residuals orthogonal to every linear functional of the
-meanings. A trained production matrix therefore reproduces the observed forms on average over
-any set of usage events whose membership is such a functional: it sends the frequency-weighted
-centre of mass of the set's meanings to that of its forms, and under endstate learning centroid
-to centroid. Chuang, Bell, Tseng and Baayen and Lu, Chuang and Baayen observe this as the similarity
-between the contours predicted from centroid embeddings and the average observed contours of
-word types and tone patterns.
-
-## Main definitions
-
-* `TrainingExperience`: a semantic matrix and a form matrix with one usage event per row.
-* `FrequencyVector`, `weightedLoss`: the weights of the usage events and the loss they weight.
-* `IsTrained`, `IsELTrained`: a mapping matrix minimises the weighted loss, under given or
-  uniform weights.
-
-## Main results
-
-* `isTrained_iff`, `isTrained_closedForm`: training is the normal equations `SᵀQ(SG − C) = 0`,
-  which the closed form solves.
-* `IsTrained.mul_eq`, `existsUnique_isTrained_iff`: fitted values are unique, and the trained
-  matrix is unique exactly when the experienced meanings span the meaning space.
-* `isELTrained_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
-* `IsTrained.centerMass_vecMul_eq_of_decodable`, `IsELTrained.centroid_vecMul_eq_of_decodable`:
-  a trained mapping matrix sends the centre of mass of a linearly decodable set of meanings to the
-  centre of mass of its forms.
 
 ## References
 
@@ -79,6 +53,7 @@ namespace DiscriminativeLexicon
 noncomputable section
 
 open Matrix NNReal
+open scoped RealInnerProductSpace
 
 variable {m n d : ℕ}
 
@@ -166,6 +141,8 @@ theorem isTrained_of_mul_eq (h : data.S * G = data.C) : IsTrained data q G :=
   isMinOn_univ_iff.2 fun G' ↦ by
     simpa [weightedLoss, h, dotProduct] using weightedLoss_nonneg data q G'
 
+/-- Rescaling the frequencies does not change what is trained, so a constant may be divided out for
+numerical stability ([heitmeier-chuang-axen-baayen-2024] §3.4). -/
 theorem isTrained_smul_iff {c : ℝ≥0} (hc : 0 < c) :
     IsTrained data (c • q) G ↔ IsTrained data q G := by
   simp only [IsTrained, isMinOn_univ_iff, weightedLoss_smul,
@@ -183,82 +160,112 @@ theorem weightedLoss_sqrtScale :
   rw [hrow, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
   simp [← mul_assoc, Real.mul_self_sqrt (q i).coe_nonneg]
 
-/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience, which is the FIL–EL
-equivalence of [heitmeier-2024] without any invertibility assumption. -/
+/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience ([gahl-baayen-2024] (A4);
+[heitmeier-chuang-axen-baayen-2024] §3.4), which needs no invertibility assumption. -/
 theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrained data q G := by
   have h : weightedLoss (data.sqrtScale q) 1 = weightedLoss data q :=
     funext fun G ↦ weightedLoss_sqrtScale data q G
   simp only [IsELTrained, IsTrained, h]
 
-/-! ### Training as columnwise least squares
+/-- The **token experience** under counts `f` repeats each usage event `i` exactly `f i` times, the
+matrices `S_f` and `C_f` of [heitmeier-chuang-axen-baayen-2024] §3.4, which reflect the entire
+learning history. -/
+def TrainingExperience.tokens (f : Fin m → ℕ) : TrainingExperience (∑ i, f i) n d where
+  S := data.S.submatrix (fun k ↦ (finSigmaFinEquiv.symm k).1) id
+  C := data.C.submatrix (fun k ↦ (finSigmaFinEquiv.symm k).1) id
 
-The loss separates over form coordinates, so column `j` of `G` is a least-squares solution of
-the `√Q`-scaled regression of column `j` of `C` on `S`, a vector problem in Euclidean space. -/
+theorem weightedLoss_tokens (f : Fin m → ℕ) :
+    weightedLoss (data.tokens f) 1 G = weightedLoss data (fun i ↦ (f i : ℝ≥0)) G := by
+  have hrow (k) : ((data.tokens f).S * G - (data.tokens f).C) k =
+      (data.S * G - data.C) (finSigmaFinEquiv.symm k).1 := rfl
+  simp only [weightedLoss, hrow, Pi.one_apply, NNReal.coe_one, one_mul, NNReal.coe_natCast]
+  rw [← finSigmaFinEquiv.sum_comp, Fintype.sum_sigma]
+  simp
 
-theorem weightedLoss_eq_sum_norm_sq :
-    weightedLoss data q G = ∑ j, ‖WithLp.toLp 2 ((q.sqrtQ * data.C).col j) -
-      toEuclideanLin (q.sqrtQ * data.S) (WithLp.toLp 2 (G.col j))‖ ^ 2 := by
-  simp only [toLpLin_toLp, toLin'_apply, ← WithLp.toLp_sub, EuclideanSpace.norm_sq_eq,
-    Pi.sub_apply, Real.norm_eq_abs, sq_abs, ← col_mul_eq_mulVec_col, col_apply, Matrix.mul_assoc,
-    FrequencyVector.sqrtQ, diagonal_mul]
-  rw [Finset.sum_comm]
-  unfold weightedLoss dotProduct
+/-- FIL under token counts is exactly EL on the repeated tokens: working with one row per word type
+weighted by its count trains the same mapping as working with one row per token
+([gahl-baayen-2024] appendix; [heitmeier-chuang-axen-baayen-2024] §3.4). -/
+theorem isELTrained_tokens_iff (f : Fin m → ℕ) :
+    IsELTrained (data.tokens f) G ↔ IsTrained data (fun i ↦ (f i : ℝ≥0)) G := by
+  have h : weightedLoss (data.tokens f) 1 = weightedLoss data fun i ↦ (f i : ℝ≥0) :=
+    funext fun G ↦ weightedLoss_tokens data G f
+  simp only [IsELTrained, IsTrained, h]
+
+/-! ### Training as orthogonal projection
+
+Through `Matrix.vec` the `m × n` tables form a Euclidean space, whose inner product is the trace
+form and in which the loss under uniform weights is the squared distance from the observed forms to
+the fitted values. Mapping matrices need no inner product of their own, and frequency-informed
+learning reduces to this case by `isELTrained_sqrtScale_iff`. -/
+
+/-- The **fitted values** `SG` of a mapping matrix, as a point of the Euclidean space of tables. -/
+def TrainingExperience.fittedValues :
+    Matrix (Fin d) (Fin n) ℝ →ₗ[ℝ] EuclideanSpace ℝ (Fin n × Fin m) where
+  toFun G := WithLp.toLp 2 (data.S * G).vec
+  map_add' G H := by rw [Matrix.mul_add]; rfl
+  map_smul' c G := by rw [Matrix.mul_smul]; rfl
+
+private theorem weightedLoss_one :
+    weightedLoss data 1 G = ‖WithLp.toLp 2 data.C.vec - data.fittedValues G‖ ^ 2 := by
+  rw [EuclideanSpace.real_norm_sq_eq, Fintype.sum_prod_type_right, weightedLoss]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [Finset.mul_sum]
-  refine Finset.sum_congr rfl fun j _ ↦ ?_
-  rw [Matrix.sub_apply]
-  linear_combination -(data.C i j - (data.S * G) i j) ^ 2 * Real.mul_self_sqrt (q i).coe_nonneg
+  simp [TrainingExperience.fittedValues, dotProduct, ← pow_two, sub_sq_comm]
 
-private theorem sum_min_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {β : ι → Type*}
-    (g : ∀ i, β i → ℝ) (x : ∀ i, β i) :
-    (∀ y : ∀ i, β i, ∑ i, g i (x i) ≤ ∑ i, g i (y i)) ↔ ∀ i, ∀ b : β i, g i (x i) ≤ g i b := by
-  refine ⟨fun h i b ↦ ?_, fun h y ↦ Finset.sum_le_sum fun i _ ↦ h i (y i)⟩
-  have hy := h (Function.update x i b)
-  simp_rw [Function.apply_update (fun j ↦ g j) x i b] at hy
-  rw [Finset.sum_update_of_mem (Finset.mem_univ i),
-    ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ i), Finset.erase_eq] at hy
-  linarith
+private theorem isELTrained_iff_forall_inner_eq_zero :
+    IsELTrained data G ↔
+      ∀ H, ⟪WithLp.toLp 2 data.C.vec - data.fittedValues G, data.fittedValues H⟫ = 0 := by
+  have hb : BddBelow (Set.range fun w : LinearMap.range data.fittedValues ↦
+      ‖WithLp.toLp 2 data.C.vec - w‖) := ⟨0, by rintro - ⟨_, rfl⟩; positivity⟩
+  have h := (LinearMap.range data.fittedValues).norm_eq_iInf_iff_inner_eq_zero
+    (u := WithLp.toLp 2 data.C.vec) (LinearMap.mem_range_self data.fittedValues G)
+  rw [le_antisymm_iff, and_iff_left (ciInf_le hb ⟨_, LinearMap.mem_range_self _ G⟩),
+    le_ciInf_iff hb] at h
+  simp only [IsTrained, isMinOn_univ_iff, weightedLoss_one,
+    sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
+  simpa using h
 
-theorem isTrained_iff_forall_isLeastSquares :
-    IsTrained data q G ↔ ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
-      (WithLp.toLp 2 ((q.sqrtQ * data.C).col j)) (WithLp.toLp 2 (G.col j)) := by
-  have key := sum_min_iff (fun j v ↦ ‖WithLp.toLp 2 ((q.sqrtQ * data.C).col j) -
-    toEuclideanLin (q.sqrtQ * data.S) (WithLp.toLp 2 v)‖ ^ 2) G.col
-  simp only [IsTrained, Core.IsLeastSquares, isMinOn_univ_iff, weightedLoss_eq_sum_norm_sq]
-  refine ⟨fun h j z ↦ ?_,
-    fun h G' ↦ key.2 (fun j v ↦ pow_le_pow_left₀ (norm_nonneg _) (h j _) 2) G'.col⟩
-  have := key.1 (fun y ↦ h (of y)ᵀ) j z.ofLp
-  simpa using (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).1 this
+/-- Endstate learning is orthogonal projection: `G` is trained exactly when its fitted values are
+the projection of the observed forms onto the space of all fitted values. -/
+theorem isELTrained_iff_fittedValues_eq_starProjection :
+    IsELTrained data G ↔ data.fittedValues G =
+      (LinearMap.range data.fittedValues).starProjection (WithLp.toLp 2 data.C.vec) := by
+  rw [isELTrained_iff_forall_inner_eq_zero]
+  refine ⟨fun h ↦ (Submodule.eq_starProjection_of_mem_of_inner_eq_zero
+    (LinearMap.mem_range_self _ G) ?_).symm, fun h H ↦ ?_⟩
+  · rintro _ ⟨H, rfl⟩; exact h H
+  · rw [h]; exact Submodule.starProjection_inner_eq_zero _ _ (LinearMap.mem_range_self _ H)
 
 theorem exists_isTrained : ∃ G, IsTrained data q G := by
-  choose x hx using fun j ↦ Core.exists_isLeastSquares (A := toEuclideanLin (q.sqrtQ * data.S))
-    (b := WithLp.toLp 2 ((q.sqrtQ * data.C).col j))
-  exact ⟨Matrix.of fun k j ↦ (x j).ofLp k, (isTrained_iff_forall_isLeastSquares _ _ _).2 hx⟩
+  obtain ⟨G, hG⟩ := LinearMap.mem_range.1 <| Submodule.starProjection_apply_mem
+    (LinearMap.range (data.sqrtScale q).fittedValues) (WithLp.toLp 2 (data.sqrtScale q).C.vec)
+  exact ⟨G, (isELTrained_sqrtScale_iff data q G).1
+    ((isELTrained_iff_fittedValues_eq_starProjection _ _).2 hG)⟩
 
 /-! ### The normal equations -/
 
+private theorem isELTrained_iff_transpose_mul_eq_zero :
+    IsELTrained data G ↔ data.Sᵀ * (data.S * G - data.C) = 0 := by
+  have key (H : Matrix (Fin d) (Fin n) ℝ) :
+      ⟪WithLp.toLp 2 data.C.vec - data.fittedValues G, data.fittedValues H⟫ =
+        -(Hᵀ * (data.Sᵀ * (data.S * G - data.C))).trace := by
+    change ⟪WithLp.toLp 2 (data.C - data.S * G).vec,
+      (WithLp.toLp 2 (data.S * H).vec : EuclideanSpace ℝ _)⟫ = _
+    rw [EuclideanSpace.inner_toLp_toLp, star_trivial, vec_dotProduct_vec, transpose_mul,
+      Matrix.mul_assoc, ← trace_neg, ← Matrix.mul_neg, ← Matrix.mul_neg, neg_sub]
+  rw [isELTrained_iff_forall_inner_eq_zero]
+  simp only [key, neg_eq_zero]
+  exact ⟨fun h ↦ ext_iff_trace_mul_left.2 fun x ↦ by simpa using h xᵀ, fun h H ↦ by simp [h]⟩
+
 /-- `G` is trained iff it satisfies the **normal equations** `SᵀQ(SG − C) = 0`
-([gahl-baayen-2024] (A2), (A4)), by Mathlib's adjoint characterisation of least squares applied
-column by column. -/
+([gahl-baayen-2024] (A2), (A4)). -/
 theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - data.C) = 0 := by
-  have hcol : ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
-      (WithLp.toLp 2 ((q.sqrtQ * data.C).col j)) (WithLp.toLp 2 (G.col j)) ↔
-      ((q.sqrtQ * data.S)ᵀ * (q.sqrtQ * data.C - q.sqrtQ * data.S * G)).col j = 0 := fun j ↦ by
-    rw [Core.isLeastSquares_iff_adjoint_eq_zero, ← toEuclideanLin_conjTranspose_eq_adjoint,
-      conjTranspose_eq_transpose_of_trivial]
-    simp only [toLpLin_toLp, toLin'_apply, ← WithLp.toLp_sub, WithLp.toLp_eq_zero,
-      col_mul_eq_mulVec_col]
-    rfl
-  have hX : (q.sqrtQ * data.S)ᵀ * (q.sqrtQ * data.C - q.sqrtQ * data.S * G) =
-      -(data.Sᵀ * q.Q * (data.S * G - data.C)) := by
-    rw [transpose_mul, FrequencyVector.sqrtQ_transpose, Matrix.mul_assoc q.sqrtQ,
-      ← Matrix.mul_sub, Matrix.mul_assoc, ← Matrix.mul_assoc q.sqrtQ,
-      FrequencyVector.sqrtQ_mul_sqrtQ, ← Matrix.mul_assoc, ← neg_sub (data.S * G) data.C,
-      Matrix.mul_neg]
-  rw [isTrained_iff_forall_isLeastSquares]
-  simp only [hcol]
-  rw [hX, ← neg_eq_zero (a := data.Sᵀ * q.Q * (data.S * G - data.C)), ← transpose_eq_zero]
-  exact ⟨funext, fun h j ↦ congrFun h j⟩
+  have h : (data.sqrtScale q).Sᵀ * ((data.sqrtScale q).S * G - (data.sqrtScale q).C) =
+      data.Sᵀ * q.Q * (data.S * G - data.C) := by
+    change (q.sqrtQ * data.S)ᵀ * (q.sqrtQ * data.S * G - q.sqrtQ * data.C) = _
+    rw [transpose_mul, FrequencyVector.sqrtQ_transpose, Matrix.mul_assoc q.sqrtQ, ← Matrix.mul_sub,
+      Matrix.mul_assoc, ← Matrix.mul_assoc q.sqrtQ, FrequencyVector.sqrtQ_mul_sqrtQ,
+      Matrix.mul_assoc]
+  rw [← isELTrained_sqrtScale_iff, isELTrained_iff_transpose_mul_eq_zero, h]
 
 /-- When `SᵀQS` is invertible, the **closed form** `G = (SᵀQS)⁻¹SᵀQC` is trained
 ([gahl-baayen-2024] (A2), (A4)). -/
@@ -298,12 +305,16 @@ theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Fi
 training events, so fitted values are unique even when `G` is not. -/
 theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') : data.S * G = data.S * G' := by
-  rw [isTrained_iff_forall_isLeastSquares] at hG hG'
+  have h : q.sqrtQ * data.S * G = q.sqrtQ * data.S * G' :=
+    vec_inj.1 <| WithLp.toLp_injective 2 <|
+      ((isELTrained_iff_fittedValues_eq_starProjection _ G).1
+        ((isELTrained_sqrtScale_iff data q G).2 hG)).trans
+      ((isELTrained_iff_fittedValues_eq_starProjection _ G').1
+        ((isELTrained_sqrtScale_iff data q G').2 hG')).symm
   ext i j
-  have h := congrArg (fun v : EuclideanSpace ℝ (Fin m) ↦ v.ofLp i) ((hG j).map_eq (hG' j))
-  simp only [toLpLin_toLp, toLin'_apply, WithLp.ofLp_toLp, ← col_mul_eq_mulVec_col, col_apply,
-    Matrix.mul_assoc, FrequencyVector.sqrtQ, diagonal_mul] at h
-  exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' h
+  have hij := congrFun (congrFun h i) j
+  simp only [Matrix.mul_assoc, FrequencyVector.sqrtQ, diagonal_mul] at hij
+  exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' hij
 
 theorem IsTrained.vecMul_eq_of_mem_span (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') {s : MeaningVector d}
@@ -340,8 +351,8 @@ theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : Mea
     fun h ↦ hφs (by simpa [Matrix.vecMul_add, hvec] using h.symm)⟩
 
 /-- The trained matrix is uniquely determined exactly when the experienced meanings span the
-meaning space, which is the coordinate-free form of the papers' full-column-rank condition on
-the closed-form solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). -/
+meaning space, the coordinate-free form of `S` having full column rank. The papers assume this
+silently in writing the closed form `(SᵀS)⁻¹SᵀC`. -/
 theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     (∃! G : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G) ↔
       Submodule.span ℝ (Set.range data.S.row) = ⊤ := by
@@ -353,22 +364,18 @@ theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     refine ⟨G, hG, fun G' hG' ↦ ext_row fun k ↦ ?_⟩
     simpa using hG'.vecMul_eq_of_mem_span hq hG (Submodule.eq_top_iff'.mp htop (Pi.single k 1))
 
+/-- A form coordinate that is a linear functional of the meanings is reproduced exactly, since its
+residual is then a linear functional of the meanings as well, and so orthogonal to itself. -/
 theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTrained data q G)
     {j₀ : Fin n} {w : MeaningVector d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
     (data.S * G) i j₀ = data.C i j₀ := by
-  obtain ⟨v, rfl⟩ := (dotProductEquiv ℝ (Fin d)).surjective w
-  have hSv : data.S *ᵥ v = data.C.col j₀ := funext fun i' ↦ by
-    rw [col_apply, ← hw i', dotProductEquiv_apply_apply, dotProduct_comm]; rfl
-  have hls : Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
-      (WithLp.toLp 2 ((q.sqrtQ * data.C).col j₀)) (WithLp.toLp 2 v) :=
-    Core.isLeastSquares_of_map_eq (by
-      rw [toLpLin_toLp, toLin'_apply, ← mulVec_mulVec, hSv, ← col_mul_eq_mulVec_col])
-  have h := congrArg (fun u : EuclideanSpace ℝ (Fin m) ↦ u.ofLp i)
-    (((isTrained_iff_forall_isLeastSquares data q G).1 hG j₀).map_eq hls)
-  simp only [toLpLin_toLp, toLin'_apply, WithLp.ofLp_toLp] at h
-  rw [← mulVec_mulVec, ← mulVec_mulVec, hSv, FrequencyVector.sqrtQ, mulVec_diagonal,
-    mulVec_diagonal, ← col_mul_eq_mulVec_col, col_apply, col_apply] at h
-  exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' h
+  have hr := congrFun (hG.sum_smul_sub_eq_zero (LinearMap.proj j₀ ∘ₗ vecMulLinear G - w)) j₀
+  simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.proj_apply, vecMulLinear_apply,
+    hw, Finset.sum_apply, Pi.smul_apply, Pi.sub_apply, Pi.zero_apply, smul_eq_mul,
+    ← mul_apply_eq_vecMul, mul_assoc] at hr
+  have h0 := (Finset.sum_eq_zero_iff_of_nonneg fun x _ ↦
+    mul_nonneg (q x).2 (mul_self_nonneg _)).1 hr i (Finset.mem_univ i)
+  simpa [(NNReal.coe_pos.2 (hq i)).ne', sub_eq_zero] using h0
 
 /-! ### Centres of mass -/
 
