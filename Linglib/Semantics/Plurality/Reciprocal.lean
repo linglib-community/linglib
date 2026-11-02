@@ -338,6 +338,24 @@ theorem OneWayWeakReciprocity.weak [Std.Symm R] (h : OneWayWeakReciprocity R X) 
   ⟨fun x hx ↦ let ⟨y, hy, hne, hR⟩ := h x hx; ⟨y, hy, hR, hne⟩,
     fun x hx ↦ let ⟨y, hy, hne, hR⟩ := h x hx; ⟨y, hy, symm_of R hR, hne.symm⟩⟩
 
+/-- A nonempty set on which each member is related to another has a nonempty subset with Weak
+Reciprocity: dropping a member nobody is related to preserves the hypothesis. -/
+theorem exists_subset_weakReciprocity [DecidableEq α] (hX : X.Nonempty)
+    (h : ∀ a ∈ X, ∃ b ∈ X, R a b ∧ a ≠ b) : ∃ Y ⊆ X, Y.Nonempty ∧ WeakReciprocity R Y := by
+  induction X using Finset.strongInduction with
+  | H X ih =>
+    by_cases hin : ∀ b ∈ X, ∃ a ∈ X, R a b ∧ a ≠ b
+    · exact ⟨X, subset_rfl, hX, h, hin⟩
+    · push Not at hin
+      obtain ⟨b, hb, hno⟩ := hin
+      obtain ⟨c, hc, -, hbc⟩ := h b hb
+      obtain ⟨Y, hY, hne, hW⟩ := ih (X.erase b) (Finset.erase_ssubset hb)
+        ⟨c, Finset.mem_erase.2 ⟨hbc.symm, hc⟩⟩ fun a ha ↦ by
+          obtain ⟨hab, haX⟩ := Finset.mem_erase.1 ha
+          obtain ⟨d, hd, hR, had⟩ := h a haX
+          exact ⟨d, Finset.mem_erase.2 ⟨fun e ↦ hab (hno a haX (e ▸ hR)), hd⟩, hR, had⟩
+      exact ⟨Y, hY.trans (Finset.erase_subset _ _), hne, hW⟩
+
 theorem IntermediateReciprocity.weak (h : IntermediateReciprocity R X) : WeakReciprocity R X := by
   obtain ⟨hX, hr⟩ := h
   have : Nontrivial (X : Set α) := hX

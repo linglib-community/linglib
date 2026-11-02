@@ -199,11 +199,52 @@ def ex220 : Datum :=
     glossedTokens := []
     context := "Four out of the five members of the group know the fifth, a semanticist famous from TV, who doesn't know the other four; those four are complete strangers to each other."
     judgment := .acceptable
-    verdict := some false
     alternatives := []
     readings := []
     paperFeatures := [] }
 
-def all : List Datum := [ex14_15, ex83b, ex99, ex105a, ex119, ex128a, ex135_136, ex135_141, ex135_142, ex143_141, ex153, ex188a, ex220]
+def fn16i : Datum :=
+  { id := "beck2001_fn16i"
+    source := ⟨"beck-2001", "fn. 16 (i)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "(Let's make a bunch of teams such that) none of them outnumber each other."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def fn16ii : Datum :=
+  { id := "beck2001_fn16ii"
+    source := ⟨"beck-2001", "fn. 16 (ii)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "None of them procreated each other."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def fn16iii : Datum :=
+  { id := "beck2001_fn16iii"
+    source := ⟨"beck-2001", "fn. 16 (iii)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "(Line up these glasses on the shelf in such a way that) none of them are behind each other."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def all : List Datum := [ex14_15, ex83b, ex99, ex105a, ex119, ex128a, ex135_136, ex135_141, ex135_142, ex143_141, ex153, ex188a, ex220, fn16i, fn16ii, fn16iii]
 
 end Beck2001.Examples
