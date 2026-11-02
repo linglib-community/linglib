@@ -50,7 +50,7 @@ inductive Stance where
   | delicate
   deriving DecidableEq
 
-instance : Fintype Stance := ⟨{.coarse, .delicate}, λ s => by cases s <;> simp⟩
+instance : Fintype Stance := ⟨{.coarse, .delicate}, fun s ↦ by cases s <;> simp⟩
 
 /-- The poles of the social gender dimension ([west-zimmerman-1987]). -/
 inductive GenderPole where
@@ -67,7 +67,7 @@ inductive SFP where
 variable {R : Type*} [Semiring R]
 
 /-- The direct index has each particle index exactly one stance. -/
-def formStance : AssociationField SFP Stance R := .of λ
+def formStance : AssociationField SFP Stance R := .of fun
   | .ze, .coarse => 1
   | .wa, .delicate => 1
   | _, _ => 0
@@ -75,7 +75,7 @@ def formStance : AssociationField SFP Stance R := .of λ
 /-- The constitutive relation makes coarse intensity part of the preferred image of men and
 delicate intensity of women, each stance indexing its own gender with strength `a` and the
 other with strength `b`, since both sexes use both. -/
-def stanceGender (a b : R) : AssociationField Stance GenderPole R := .of λ
+def stanceGender (a b : R) : AssociationField Stance GenderPole R := .of fun
   | .coarse, .masculine => a
   | .coarse, .feminine => b
   | .delicate, .masculine => b
@@ -102,10 +102,9 @@ theorem wa_indexes_feminine (h : b < a) :
     composed a b .wa .masculine < composed a b .wa .feminine := by
   simpa [composed_wa, stanceGender] using h
 
-theorem indexes_all (hb : 0 < b) (h : b < a) (sfp : SFP) (g : GenderPole) :
-    (composed a b).Indexes sfp g := by
-  cases sfp <;> cases g <;>
-    simp [AssociationField.Indexes, composed_ze, composed_wa, stanceGender] <;>
+theorem composed_pos (hb : 0 < b) (h : b < a) (sfp : SFP) (g : GenderPole) :
+    0 < composed a b sfp g := by
+  cases sfp <;> cases g <;> simp [composed_ze, composed_wa, stanceGender] <;>
     first | exact hb | exact hb.trans h
 
 theorem composed_ze_ne_wa (h : b < a) (g : GenderPole) :

@@ -1,7 +1,8 @@
 module
 
+public import Linglib.Core.Basic.Sign
 public import Linglib.Data.Statistics.BeltramaSoltBurnett2023
-public import Linglib.Pragmatics.SocialMeaning.Persona
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Ring.Rat
@@ -142,11 +143,11 @@ theorem underspecified_mem_uIoo (e : Experiment) (d : Dimension) :
 /-- On the opposition reading the variants are measured against the underspecified one, every
 difference of means counting. -/
 def contrastField (e : Experiment) : AssociationField Variant Dimension SignType :=
-  ((means e).contrast .underspecified).signs
+  .of fun v d ↦ SignType.sign (means e v d - means e .underspecified d)
 
 theorem antipodal_contrastField (e : Experiment) :
     (contrastField e).Antipodal .precise .approximate :=
-  AssociationField.antipodal_signs_contrast_iff.2 fun d ↦ .inl (underspecified_mem_uIoo e d)
+  funext fun d ↦ sign_sub_eq_neg_sign_sub_iff.2 (.inl (underspecified_mem_uIoo e d))
 
 -- p. 825
 theorem contrastField_exp2 : contrastField .exp2 = contrastField .exp1 := by
@@ -178,7 +179,7 @@ precise one is compatible with two personae (`card_compatiblePersonae_neutral_pr
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by
     cases e <;> cases e' <;> simp [contrastField_exp2]
-  exact h ▸ fun _ _ _ ↦ AssociationField.lt_of_signs_contrast_lt
+  exact h ▸ fun _ _ _ hlt ↦ (sub_lt_sub_iff_right _).1 (SignType.sign.monotone.reflect_lt hlt)
 
 /-- The direction of a verdict; a trend counts. -/
 def Verdict.sign : Verdict → SignType
@@ -215,7 +216,15 @@ theorem ground_neutral_approximate :
 
 theorem card_compatiblePersonae_neutral_precise :
     ((neutral .exp2).ground.compatiblePersonae .precise).card = 2 := by
+  rw [AssociationField.card_compatiblePersonae_ground]
   decide +kernel
+
+theorem not_complementary_neutral (e : Experiment) :
+    ¬ (neutral e).ground.Complementary .precise .approximate := fun h ↦
+  (separateLoci_neutral e).not_antipodal <| funext fun d ↦ by
+    have := (AssociationField.complementary_ground_iff.1 h).2 d
+    simp only [SignType.sign_self] at this
+    rw [Pi.neg_apply, this, neg_neg]
 
 theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by
   cases e <;> cases e' <;> decide +kernel

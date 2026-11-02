@@ -28,6 +28,9 @@ when the point lies strictly between the two elements, or all three coincide. A 
 
 variable {α : Type*}
 
+/-- The sign of a sign is itself. -/
+@[simp] theorem SignType.sign_self (s : SignType) : SignType.sign s = s := by cases s <;> rfl
+
 theorem sign_eq_neg_sign_iff [Zero α] [LinearOrder α] {x y : α} :
     SignType.sign x = -SignType.sign y ↔ x < 0 ∧ 0 < y ∨ 0 < x ∧ y < 0 ∨ x = 0 ∧ y = 0 := by
   rcases lt_trichotomy x 0 with hx | rfl | hx <;> rcases lt_trichotomy y 0 with hy | rfl | hy <;>
