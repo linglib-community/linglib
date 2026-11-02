@@ -12,33 +12,20 @@ public import Linglib.Semantics.Degree.Quotient
 A measure `μ : E → D` orders a finite comparison class `C` by a quasi-order whose classes are the
 values `C.image μ`. Bale's universal degree of a member is the position of its class: one plus
 the number of classes below it, over the number of classes, a rational between zero and one.
-Universal degrees record positions and nothing else. They are unchanged by any order embedding of
-the scale, and on a comparison class two measures give the same universal degrees exactly when
-they induce the same quasi-order. Comparing two measures directly is not invariant under
-rescaling one of them (`Degree.Comparison.forall_preimage_interval_eq_iff`), but comparing their
-universal degrees is, which is what makes a comparison between different adjectives meaningful.
-
-## Main definitions
-
-* `Degree.relativeRank`: the position of a value in a finite scale, as a fraction of the scale.
-* `Degree.universalDegree`: the universal degree of a member of a comparison class under a
-  measure.
-
-## Main statements
-
-* `Degree.universalDegree_comp`: universal degrees are invariant under order embeddings of the
-  scale.
-* `Degree.ker_universalDegree`: on a comparison class, universal degrees are a complete invariant
-  of the quasi-order the measure induces.
-* `Degree.universalDegree_eq_iff`: two members share a universal degree exactly when they are
-  equivalent in Cresswell's sense.
+Universal degrees record positions and nothing else. They are
+[unchanged by any order embedding of the scale](##Degree.universalDegree_comp), and on a comparison
+class two measures give the same universal degrees
+[exactly when they induce the same quasi-order](##Degree.ker_universalDegree). Comparing two
+measures directly is not invariant under rescaling one of them
+(`Degree.Comparison.forall_preimage_interval_eq_iff`), but comparing their universal degrees is,
+which is what makes a comparison between different adjectives meaningful.
 
 ## Implementation notes
 
 A comparison class is a `Finset`, Klein's comparison class made finite so that its classes can be
-counted. The primary scale, the quotient of the restricted quasi-order, is order-isomorphic to
-`C.image μ`, where universal degrees are computed; `ker_universalDegree` makes the choice of
-measure immaterial.
+counted. Two members of the class are [equivalent exactly when they share a universal
+degree](##Degree.universalDegree_eq_iff), so the primary scale, the quotient of the restricted
+quasi-order, can be read on `C.image μ`, where universal degrees are computed.
 
 ## References
 
@@ -150,11 +137,11 @@ theorem ker_universalDegree (C : Finset E) :
 equivalent in [cresswell-1976]'s sense under the restricted quasi-order. -/
 theorem universalDegree_eq_iff (hx : x ∈ C) (hy : y ∈ C) :
     universalDegree μ C x = universalDegree μ C y ↔
-      (cresswellSetoid fun a b : C ↦ μ b ≤ μ a).r ⟨x, hx⟩ ⟨y, hy⟩ := by
+      cresswellSetoid (fun a b : C ↦ μ b ≤ μ a) ⟨x, hx⟩ ⟨y, hy⟩ := by
   rw [universalDegree, universalDegree,
-    (relativeRank_strictMonoOn _).injOn.eq_iff (mem_image_of_mem μ hx) (mem_image_of_mem μ hy)]
-  refine ⟨fun h ↦ ⟨fun _ ↦ by simp only [h], fun _ ↦ by simp only [h]⟩, fun ⟨h, _⟩ ↦ ?_⟩
-  exact le_antisymm ((h ⟨x, hx⟩).1 le_rfl) ((h ⟨y, hy⟩).2 le_rfl)
+    (relativeRank_strictMonoOn _).injOn.eq_iff (mem_image_of_mem μ hx) (mem_image_of_mem μ hy),
+    cresswellSetoid_le_measure fun a : C ↦ μ a]
+  rfl
 
 theorem universalDegree_lt_iff_of_image_eq {ν : F → D} {C' : Finset F} {y : F}
     (h : C.image μ = C'.image ν) (hx : x ∈ C) (hy : y ∈ C') :

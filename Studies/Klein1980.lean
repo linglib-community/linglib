@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Degree.Quotient
 public import Studies.Kamp1975
 
 /-!
@@ -22,7 +23,10 @@ relevant but no finer criterion is fixed, Jude and Mona are nondistinct, yet a c
 mental arithmetic ranks Jude above Mona and one that judges proof theory ranks Mona above Jude, so
 the two are incommensurable rather than equivalent and *clever* is [not
 linear](##clever_not_linear), though each context meets the consistency constraint and none ranks
-a pair both ways. Klein's *as … as* is Kamp's *at least as* over all completions.
+a pair both ways. Hence Klein's objection to Cresswell's degrees: the equivalence relation built
+from the comparative captures *exactly as A as* for [*tall*](##equivalent_ofMeasure_iff_cresswell)
+but [identifies Jude and Mona](##cresswell_clever_not_equivalent). Klein's *as … as* is Kamp's *at
+least as* over all completions.
 
 ## Implementation notes
 
@@ -38,6 +42,7 @@ a pair both ways. Klein's *as … as* is Kamp's *at least as* over all completio
 ## References
 
 * [klein-1980]
+* [cresswell-1976]
 * [kamp-1975]
 -/
 
@@ -122,13 +127,17 @@ theorem isMonotone_clever22 : clever22.IsMonotone := by
   rintro - - - - a b ⟨rfl, -⟩ ⟨rfl, -⟩
   exact ⟨fun h ↦ absurd h.1 (by decide), fun h ↦ absurd h.1 (by decide)⟩
 
+-- (33), §3.3
+theorem not_equivalent_clever : ¬ clever.Equivalent cleverContexts Set.univ .j .m := fun h ↦ by
+  have := h clever21 (Set.mem_insert_of_mem _ (Set.mem_insert _ _)) clever_le_clever21 Set.univ
+    subset_rfl trivial trivial
+  exact absurd (this.1.1 ⟨rfl, trivial, trivial⟩).1 (by decide)
+
 /-- *Clever* is not linear: Jude and Mona are nondistinct at `c2`, but its refinement `c21` tells
 them apart, so they are incommensurable rather than equivalent (§3.3). -/
-theorem clever_not_linear : ¬ IsLinear cleverContexts := fun h ↦ by
-  have := h clever (Set.mem_insert _ _) Set.univ .j trivial .m trivial nondistinct_clever clever21
-    (Set.mem_insert_of_mem _ (Set.mem_insert _ _)) clever_le_clever21 Set.univ subset_rfl trivial
-    trivial
-  exact absurd (this.1.1 ⟨rfl, trivial, trivial⟩).1 (by decide)
+theorem clever_not_linear : ¬ IsLinear cleverContexts := fun h ↦
+  not_equivalent_clever (h clever (Set.mem_insert _ _) Set.univ .j trivial .m trivial
+    nondistinct_clever)
 
 /-! ### *Very* narrows the comparison class (eq. 42)
 
@@ -159,8 +168,6 @@ primitive. -/
 def kleinDegree (d : Delineation E) (C : Set E) (u : E) : Set E :=
   {v | d.Nondistinct C u v}
 
-/-- For measure-induced delineations, two entities share a Klein degree iff they share a
-measure value. -/
 theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ C) :
     b ∈ kleinDegree (Delineation.ofMeasure μ) C a ↔ μ a = μ b := by
   have hab : ({a, b} : Set E) ⊆ C := Set.insert_subset ha (Set.singleton_subset_iff.2 hb)
@@ -171,6 +178,41 @@ theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C
   rcases lt_or_gt_of_ne hne with hlt | hgt
   · exact lt_asymm (key.2 hlt) hlt
   · exact lt_asymm hgt (key.1 hgt)
+
+/-! ### Cresswell's equivalence relation ((6), n. 5)
+
+Klein's (6) is Cresswell's relation over the comparative, and on a strict weak order his gloss on
+it, neither more nor less A, is `Degree.cresswellSetoid_iff_incompRel`. On a gapless delineation
+under the consistency constraint the comparative is such an order, so its classes form a scale. -/
+
+example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
+    IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
+  isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
+
+-- p. 30: for *tall*, Klein's degree (62) is Cresswell's class.
+theorem mem_kleinDegree_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :
+    v ∈ kleinDegree (ofMeasure μ) Set.univ u ↔
+      cresswellSetoid ((ofMeasure μ).Outranks Set.univ) u v := by
+  have hO : (ofMeasure μ).Outranks Set.univ = fun a b ↦ μ b < μ a :=
+    funext₂ fun a b ↦ propext (outranks_ofMeasure_iff μ trivial trivial)
+  rw [kleinDegree_ofMeasure μ (Set.mem_univ u) (Set.mem_univ v), hO, cresswellSetoid_lt_measure,
+    Setoid.ker_def]
+
+-- (i), n. 5
+theorem equivalent_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :
+    (ofMeasure μ).Equivalent {ofMeasure μ} Set.univ u v ↔
+      cresswellSetoid ((ofMeasure μ).Outranks Set.univ) u v :=
+  .trans ⟨fun h ↦ h _ rfl le_rfl, fun h _ hd' _ ↦ Set.mem_singleton_iff.1 hd' ▸ h⟩
+    (mem_kleinDegree_ofMeasure_iff_cresswell μ)
+
+/-- Cresswell's relation identifies Jude and Mona at `c2`, since neither is more clever than the
+other there, although they are incommensurable and not *exactly as clever as* each other: Klein's
+objection that the relation need not be *exactly as A as* when the comparison is partial (n. 5). -/
+theorem cresswell_clever_not_equivalent :
+    cresswellSetoid (clever.Outranks Set.univ) .j .m ∧
+      ¬ clever.Equivalent cleverContexts Set.univ .j .m :=
+  ⟨⟨fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h),
+    fun _ ↦ iff_of_false (fun ⟨_, _, h, _⟩ ↦ h) (fun ⟨_, _, h, _⟩ ↦ h)⟩, not_equivalent_clever⟩
 
 /-! ### *As … as* and Kamp's *at least as* (§5.3)
 
