@@ -310,10 +310,27 @@ theorem fifty_follows_the_language :
 
 /-! ### Refining by half -/
 
+private theorem add_half_mem_zmultiples_iff {ε d : ℝ} (hε : ε ≠ 0) :
+    d + ε / 2 ∈ AddSubgroup.zmultiples ε ↔
+      d ∈ AddSubgroup.zmultiples (ε / 2) ∧ d ∉ AddSubgroup.zmultiples ε := by
+  simp only [AddSubgroup.mem_zmultiples_iff, zsmul_eq_mul]
+  constructor
+  · rintro ⟨k, hk⟩
+    refine ⟨⟨2 * k - 1, by push_cast; linear_combination hk⟩, fun ⟨j, hj⟩ ↦ ?_⟩
+    have : ((2 * (k - j) : ℤ) : ℝ) = 1 :=
+      mul_right_cancel₀ hε (by push_cast; linear_combination 2 * hk - 2 * hj)
+    have := Int.cast_eq_one.1 this
+    omega
+  · rintro ⟨⟨m, hm⟩, hn⟩
+    obtain ⟨k, rfl | rfl⟩ := Int.even_or_odd' m
+    · exact absurd ⟨k, by rw [← hm]; push_cast; ring⟩ hn
+    · exact ⟨k + 1, by rw [← hm]; push_cast; ring⟩
+
 theorem halving_adds_most_distorted {d : ℝ} :
     |d - representative 10 d| = 5 ↔
       d ∈ AddSubgroup.zmultiples (5 : ℝ) ∧ d ∉ AddSubgroup.zmultiples (10 : ℝ) := by
   simpa [show (10 : ℝ) / 2 = 5 by norm_num]
-    using abs_sub_representative_eq_half_iff (by norm_num : (0 : ℝ) < 10)
+    using (abs_sub_representative_eq_half_iff (d := d) (by norm_num : (0 : ℝ) < 10)).trans
+      (add_half_mem_zmultiples_iff (by norm_num))
 
 end Krifka2007
