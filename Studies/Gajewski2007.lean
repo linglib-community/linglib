@@ -31,7 +31,7 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
   `Env` lists the environments of the paper's strict NPIs.
 * Propositions are sets of worlds and attitudes relational boxes (`ModalLogic.Box`). An
   environment is the truth set of its sentence, presupposition included, as a function of the
-  proposition in the NPI's clause, and its anti-additivity is `NaturalLogic.IsAntiAdditive` of
+  proposition in the NPI's clause, and its anti-additivity is `IsAntiAdditive` of
   that function: standard entailment, which Appendix 1 argues is the relevant notion.
 * Sentences are trivalent propositions `W → SignType`. The excluded middle of `nrp` is stated
   with the complement's full meaning, `φ u ≠ 1` rather than `φ u = -1`, as in Appendix 2, so that
@@ -69,7 +69,7 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
 
 namespace Gajewski2007
 
-open ModalLogic NaturalLogic Presupposition Desire.BestWorlds ConventionalImplicature
+open ModalLogic Presupposition Desire.BestWorlds ConventionalImplicature
 open SetRel
 
 variable {W : Type*}

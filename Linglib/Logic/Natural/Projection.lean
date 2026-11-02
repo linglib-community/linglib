@@ -1,117 +1,135 @@
 module
 
-public import Linglib.Logic.Natural.Basic
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Logic.Natural.ProjectivitySignature
+public import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.Hom.Set
 
 /-!
-# Soundness of the projectivity calculus
+# Projection through projectivity signatures
 
-This file gives the seven relations their lattice content and proves the calculus of
-`Logic/Natural/Basic.lean` sound for it over bounded lattices. The join and the projections are
-sound because they assert only what the atom and property rules give, and each rule is a lattice
-fact about single constraints or properties. A signature's projection row holds of a map exactly
-when the map is monotone or antitone and carries disjoint and codisjoint pairs as the row says,
-and [every map in the class of a signature](##NaturalLogic.Signature.soundFor_of_holdsFor) falls
-in its row, as do bounded lattice homomorphisms and, into the order dual, complementation.
+A map of known projectivity signature carries a relation between two arguments to a relation
+between their values: a monotone map keeps `⊑`, an antitone one turns it into `⊒`, and the
+additive and multiplicative properties carry disjointness and codisjointness. Projection is an
+[action](##NaturalLogic.ProjectivitySignature.project_project) of the signature monoid on the
+relations, and each signature's row is
+[sound](##NaturalLogic.ProjectivitySignature.soundFor_of_holdsFor) for the maps in its function
+class, as it is for bounded lattice homomorphisms and, into the order dual, for complementation.
 
 ## Implementation notes
 
-* Icard works over Boolean algebras; the proofs need only bounded lattices, and distributivity
-  for the join rule taking a disjoint pair and a codisjoint pair to `≤`.
+* Icard works over Boolean algebras; the proofs need only bounded lattices.
 
 ## References
 
-* [icard-2012] — Definitions 1.2 and 2.3, Lemmas 1.6 and 2.5.
+* [icard-2012]
 -/
 
 @[expose] public section
 
 namespace NaturalLogic
 
+/-! ### Projection -/
 
-/-! ### Lattice content of the relations -/
+namespace ProjectivitySignature
 
-/-- The lattice content of a natural-logic relation ([icard-2012]
-Definition 1.2), in mathlib's complementation vocabulary: `negation` is
-`IsCompl`, `alternation` is `Disjoint`, `cover` is `Codisjoint`; `forward`
-is non-strict `≤` (MacCartney's exclusive reading takes it proper, which
-the projectivity tables do not need). -/
-def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
-    Relation → α → α → Prop
-  | .equiv => (· = ·)
-  | .forward => (· ≤ ·)
-  | .reverse => (· ≥ ·)
-  | .negation => IsCompl
-  | .alternation => Disjoint
-  | .cover => Codisjoint
-  | .independent => fun _ _ => True
+/-- The constraint between the values of a function with property `p` that a constraint `a`
+between its arguments guarantees, when there is one
+(`ProjectivitySignature.Property.HoldsFor.project`): a monotone function keeps `≤` and `≥` and an
+antitone one swaps them, an additive function keeps codisjointness and a multiplicative one
+disjointness, an anti-additive function turns codisjointness into disjointness and an
+anti-multiplicative one the reverse. -/
+def Property.project : Relation.Atom → Property → Option Relation.Atom
+  | .le, .monotone => some .le
+  | .ge, .monotone => some .ge
+  | .le, .antitone => some .ge
+  | .ge, .antitone => some .le
+  | .codisjoint, .additive => some .codisjoint
+  | .disjoint, .multiplicative => some .disjoint
+  | .codisjoint, .antiAdditive => some .disjoint
+  | .disjoint, .antiMultiplicative => some .codisjoint
+  | _, _ => none
 
-/-- The lattice content of an atomic constraint ([icard-2012]
-Definition 1.2). -/
-def Relation.Atom.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
-    Relation.Atom → α → α → Prop
-  | .le => (· ≤ ·)
-  | .ge => (· ≥ ·)
-  | .disjoint => Disjoint
-  | .codisjoint => Codisjoint
+private theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
+    (p.compose q).bind (Property.project a ·) =
+      (Property.project a q).bind (Property.project · p) := by
+  decide
 
-theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
-    {R : Relation} {x y : α} :
-    R.Holds x y ↔ ∀ a ∈ R.constraints, a.Holds x y := by
-  cases R <;>
-    simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
-      isCompl_iff, le_antisymm_iff]
+/-- The projection of a relation through a function of the given signature is the strongest relation
+guaranteed between `f x` and `f y` when `x R y` and `f` has signature `σ` ([icard-2012] Definition
+2.3, computed by his Lemma 2.4): `≡`, since every function preserves equality, and otherwise the
+relation asserting what the property rule gives for each property of `σ` and constraint of `R`
+(`ProjectivitySignature.mem_constraints_project`). Each row is sound
+(`ProjectivitySignature.soundFor_of_holdsFor`) and least (`ProjectivitySignature.isLeast_project` in
+`Logic/Natural/Completeness.lean`). [icard-2012] remarks under the table that `[R]^• = #` for all
+`R` (p. 715), which is what the property rule alone gives for `≡` too. -/
+def project (R : Relation) (σ : ProjectivitySignature) : Relation :=
+  if R = .equiv then .equiv else
+    Relation.ofAtoms fun b ↦ ∃ p ∈ σ.properties, ∃ a ∈ R.constraints, Property.project a p = some b
 
-instance Relation.Atom.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
-    [DecidableEq α] [DecidableLE α] :
-    ∀ (a : Relation.Atom) (x y : α), Decidable (a.Holds x y)
-  | .le, x, y => inferInstanceAs (Decidable (x ≤ y))
-  | .ge, x, y => inferInstanceAs (Decidable (y ≤ x))
-  | .disjoint, x, y => decidable_of_iff (x ⊓ y = ⊥) disjoint_iff.symm
-  | .codisjoint, x, y => decidable_of_iff (x ⊔ y = ⊤) codisjoint_iff.symm
+@[simp] theorem project_equiv (φ : ProjectivitySignature) : project .equiv φ = .equiv := rfl
 
-instance Relation.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
-    [DecidableEq α] [DecidableLE α] :
-    ∀ (R : Relation) (x y : α), Decidable (R.Holds x y)
-  | .equiv, x, y => inferInstanceAs (Decidable (x = y))
-  | .forward, x, y => inferInstanceAs (Decidable (x ≤ y))
-  | .reverse, x, y => inferInstanceAs (Decidable (y ≤ x))
-  | .negation, x, y =>
-      decidable_of_iff (x ⊓ y = ⊥ ∧ x ⊔ y = ⊤)
-        (by rw [← disjoint_iff, ← codisjoint_iff]; exact isCompl_iff.symm)
-  | .alternation, x, y => decidable_of_iff (x ⊓ y = ⊥) disjoint_iff.symm
-  | .cover, x, y => decidable_of_iff (x ⊔ y = ⊤) codisjoint_iff.symm
-  | .independent, _, _ => .isTrue trivial
+@[simp] theorem project_independent (φ : ProjectivitySignature) :
+    project .independent φ = .independent := by
+  cases φ <;> rfl
 
-/-! ### Join soundness -/
+theorem mem_constraints_project {R : Relation} (hR : R ≠ .equiv) {σ : ProjectivitySignature}
+    {b : Relation.Atom} : b ∈ (project R σ).constraints ↔
+      ∃ p ∈ σ.properties, ∃ a ∈ R.constraints, Property.project a p = some b := by
+  revert R σ b
+  decide
 
-/-- The atom rule is sound: chained constraints give the constraint `Relation.Atom.join` says.
-Distributivity is needed for a disjoint pair followed by a codisjoint one, which gives `≤`. -/
-theorem Relation.Atom.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
-    {a b c : Relation.Atom} (h : a.join b = some c) {x y z : β} (ha : a.Holds x y)
-    (hb : b.Holds y z) : c.Holds x z := by
-  cases a <;> cases b <;> simp only [Relation.Atom.join, reduceCtorEq, Option.some.injEq] at h <;>
-    subst h <;> simp only [Relation.Atom.Holds] at ha hb ⊢
-  all_goals first
-    | exact le_trans ha hb
-    | exact ge_trans ha hb
-    | exact hb.mono_left ha
-    | exact ha.mono_right hb
-    | exact ha.le_of_codisjoint hb
-    | exact hb.symm.le_of_codisjoint ha.symm
+/-- Projection through a less specific signature gives a weaker relation. -/
+theorem project_mono (R : Relation) : Monotone (project R) := by
+  intro σ τ h
+  by_cases hR : R = .equiv
+  · subst hR
+    exact le_rfl
+  refine Relation.le_iff.2 fun _ hb ↦ ?_
+  obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hR).1 hb
+  exact (mem_constraints_project hR).2 ⟨p, le_iff.1 h hp, a, ha, hab⟩
 
-/-- Chained relations compose as the join says, constraint by constraint. -/
-theorem Relation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
-    {R S : Relation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
-    (R * S).Holds x z :=
-  Relation.holds_iff.2 fun _ hc ↦ by
-    obtain ⟨a, ha, b, hb, h⟩ := Relation.mem_constraints_mul.1 hc
-    exact Relation.Atom.Holds.join h (Relation.holds_iff.1 hR a ha) (Relation.holds_iff.1 hS b hb)
+private theorem project_ne_equiv : ∀ {R : Relation} (σ : ProjectivitySignature), R ≠ .equiv →
+    project R σ ≠ .equiv := by
+  decide
+
+/-- Projecting through `φ` and then through `ψ` is projecting through `ψ * φ` ([icard-2012]
+Definition 2.6 and Lemma 2.7), since applying the composite property rule is applying the two
+rules in turn. -/
+theorem project_project (R : Relation) (φ ψ : ProjectivitySignature) :
+    project (project R φ) ψ = project R (ψ * φ) := by
+  by_cases hR : R = .equiv
+  · subst hR; simp only [project_equiv]
+  refine Relation.constraints_injective <| Finset.ext fun _ ↦ ?_
+  simp only [mem_constraints_project (project_ne_equiv φ hR), mem_constraints_project hR,
+    mem_properties_mul]
+  exact (exists_bind_comm Property.compose_project).symm
+
+instance : SMul ProjectivitySignature Relation := ⟨fun σ R ↦ project R σ⟩
+
+@[simp] theorem smul_def (σ : ProjectivitySignature) (R : Relation) : σ • R = project R σ := rfl
+
+/-- Projection is an action of the signature monoid on the relations, with
+`ProjectivitySignature.project_project` as its `mul_smul` law. -/
+instance : MulAction ProjectivitySignature Relation where
+  one_smul := by decide
+  mul_smul ψ φ R := (project_project R φ ψ).symm
+
+private theorem eq_of_project_eq : ∀ σ τ : ProjectivitySignature,
+    project .forward σ = project .forward τ → project .negation σ = project .negation τ → σ = τ := by
+  decide
+
+/-- A signature is determined by how it projects the relations, already by its projections of `⊑`
+and `^`. -/
+instance : FaithfulSMul ProjectivitySignature Relation where
+  eq_of_smul_eq_smul {σ τ} h := eq_of_project_eq σ τ (h .forward) (h .negation)
+
+end ProjectivitySignature
 
 /-! ### Soundness of a signature for a function -/
+
+namespace ProjectivitySignature
 
 section SoundFor
 
@@ -121,12 +139,12 @@ variable {α β γ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
 /-- A signature σ is **sound for** `f` when `f` projects every relation as
 σ's row of the projection table says ([icard-2012] Lemma 2.5: every
 φ-function projects `R` to `[R]^φ`). -/
-def Signature.SoundFor (σ : Signature) (f : α → β) : Prop :=
+def SoundFor (σ : ProjectivitySignature) (f : α → β) : Prop :=
   ∀ (R : Relation) (x y : α), R.Holds x y →
-    (Signature.project R σ).Holds (f x) (f y)
+    (project R σ).Holds (f x) (f y)
 
 theorem soundFor_mono_iff {f : α → β} :
-    Signature.SoundFor .mono f ↔ Monotone f := by
+    SoundFor .mono f ↔ Monotone f := by
   constructor
   · intro h x y hxy
     exact h .forward x y hxy
@@ -138,7 +156,7 @@ theorem soundFor_mono_iff {f : α → β} :
     | negation | alternation | cover | independent => trivial
 
 theorem soundFor_anti_iff {f : α → β} :
-    Signature.SoundFor .anti f ↔ Antitone f := by
+    SoundFor .anti f ↔ Antitone f := by
   constructor
   · intro h x y hxy
     exact h .forward x y hxy
@@ -149,12 +167,12 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-theorem Signature.SoundFor.monotone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
+theorem SoundFor.monotone {σ : ProjectivitySignature} {f : α → β} (h : σ.SoundFor f)
     (hσ : σ.sign = 1) : Monotone f := by
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
 
-theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
+theorem SoundFor.antitone {σ : ProjectivitySignature} {f : α → β} (h : σ.SoundFor f)
     (hσ : σ.sign = -1) : Antitone f := by
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
@@ -162,7 +180,7 @@ theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.Sou
 /-- The `.additive` row is sound exactly for the monotone functions sending codisjoint pairs to
 codisjoint pairs. -/
 theorem soundFor_additive_iff {f : α → β} :
-    Signature.SoundFor .additive f ↔
+    SoundFor .additive f ↔
       Monotone f ∧ ∀ ⦃x y⦄, Codisjoint x y → Codisjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .cover x y⟩, fun ⟨hm, hc⟩ R x y hR ↦ ?_⟩
   cases R with
@@ -173,7 +191,7 @@ theorem soundFor_additive_iff {f : α → β} :
   | alternation | independent => trivial
 
 theorem soundFor_mult_iff {f : α → β} :
-    Signature.SoundFor .mult f ↔ Monotone f ∧ ∀ ⦃x y⦄, Disjoint x y → Disjoint (f x) (f y) := by
+    SoundFor .mult f ↔ Monotone f ∧ ∀ ⦃x y⦄, Disjoint x y → Disjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .alternation x y⟩,
     fun ⟨hm, hd⟩ R x y hR ↦ ?_⟩
   cases R with
@@ -184,7 +202,7 @@ theorem soundFor_mult_iff {f : α → β} :
   | cover | independent => trivial
 
 theorem soundFor_antiAdd_iff {f : α → β} :
-    Signature.SoundFor .antiAdd f ↔
+    SoundFor .antiAdd f ↔
       Antitone f ∧ ∀ ⦃x y⦄, Codisjoint x y → Disjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .cover x y⟩, fun ⟨ha, hc⟩ R x y hR ↦ ?_⟩
   cases R with
@@ -195,7 +213,7 @@ theorem soundFor_antiAdd_iff {f : α → β} :
   | alternation | independent => trivial
 
 theorem soundFor_antiMult_iff {f : α → β} :
-    Signature.SoundFor .antiMult f ↔
+    SoundFor .antiMult f ↔
       Antitone f ∧ ∀ ⦃x y⦄, Disjoint x y → Codisjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .alternation x y⟩,
     fun ⟨ha, hd⟩ R x y hR ↦ ?_⟩
@@ -207,7 +225,7 @@ theorem soundFor_antiMult_iff {f : α → β} :
   | cover | independent => trivial
 
 theorem soundFor_addMult_iff {f : α → β} :
-    Signature.SoundFor .addMult f ↔ Monotone f ∧
+    SoundFor .addMult f ↔ Monotone f ∧
       (∀ ⦃x y⦄, Disjoint x y → Disjoint (f x) (f y)) ∧
         ∀ ⦃x y⦄, Codisjoint x y → Codisjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .alternation x y,
@@ -223,7 +241,7 @@ theorem soundFor_addMult_iff {f : α → β} :
 /-- The `.antiAddMult` row is sound exactly for the antitone functions exchanging disjointness
 and codisjointness. -/
 theorem soundFor_antiAddMult_iff {f : α → β} :
-    Signature.SoundFor .antiAddMult f ↔ Antitone f ∧
+    SoundFor .antiAddMult f ↔ Antitone f ∧
       (∀ ⦃x y⦄, Disjoint x y → Codisjoint (f x) (f y)) ∧
         ∀ ⦃x y⦄, Codisjoint x y → Disjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .alternation x y,
@@ -256,86 +274,60 @@ private theorem codisjoint_map_of_isAntiMultiplicative {f : α → β}
   codisjoint_iff.2 (by rw [← h.1, hxy.eq_bot, h.2])
 
 theorem soundFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
-    [BoundedLatticeHomClass F α β] (f : F) : Signature.SoundFor .addMult f :=
+    [BoundedLatticeHomClass F α β] (f : F) : SoundFor .addMult f :=
   soundFor_addMult_iff.2 ⟨OrderHomClass.mono f, fun _ _ h ↦ h.map f, fun _ _ h ↦ h.map f⟩
 
 theorem soundFor_antiAddMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α βᵒᵈ]
     [BoundedLatticeHomClass F α βᵒᵈ] (f : F) :
-    Signature.SoundFor .antiAddMult (OrderDual.ofDual ∘ f) :=
+    SoundFor .antiAddMult (OrderDual.ofDual ∘ f) :=
   soundFor_antiAddMult_iff.2 ⟨fun _ _ h ↦ OrderHomClass.mono f h,
     fun _ _ h ↦ codisjoint_ofDual_iff.2 (h.map f), fun _ _ h ↦ disjoint_ofDual_iff.2 (h.map f)⟩
 
-theorem soundFor_all (f : α → β) : Signature.SoundFor .all f := by
+theorem soundFor_all (f : α → β) : SoundFor .all f := by
   intro R x y hR
   cases R
   case equiv => exact congrArg f hR
   all_goals trivial
 
-/-- Relation-level order soundness: `≤` is the implication order on
-the lattice content ([icard-2012] §1). -/
-theorem _root_.NaturalLogic.Relation.Holds.of_le
-    {R R' : Relation} {u v : β} (h : R.Holds u v) (href : R ≤ R') :
-    R'.Holds u v := by
-  cases R <;> cases R' <;>
-    first
-    | exact h
-    | trivial
-    | exact h.1
-    | exact h.2
-    | exact le_of_eq h
-    | exact le_of_eq (Eq.symm h)
-
-theorem _root_.NaturalLogic.Relation.Holds.apply {ι : Type*} {R : Relation} {f g : ι → β}
-    (h : R.Holds f g) (i : ι) : R.Holds (f i) (g i) := by
-  cases R with
-  | equiv => exact congrFun h i
-  | forward | reverse => exact h i
-  | negation =>
-    exact isCompl_iff.2 ⟨disjoint_iff.2 (congrFun (disjoint_iff.1 h.disjoint) i),
-      codisjoint_iff.2 (congrFun (codisjoint_iff.1 h.codisjoint) i)⟩
-  | alternation => exact disjoint_iff.2 (congrFun (disjoint_iff.1 h) i)
-  | cover => exact codisjoint_iff.2 (congrFun (codisjoint_iff.1 h) i)
-  | independent => trivial
-
-theorem Signature.SoundFor.apply {ι : Type*} {σ : Signature} {f : α → ι → β}
+theorem SoundFor.apply {ι : Type*} {σ : ProjectivitySignature} {f : α → ι → β}
     (h : σ.SoundFor f) (i : ι) : σ.SoundFor (f · i) :=
   fun R x y hR => (h R x y hR).apply i
 
-theorem Signature.SoundFor.of_le {σ τ : Signature} {f : α → β}
+theorem SoundFor.of_le {σ τ : ProjectivitySignature} {f : α → β}
     (h : σ.SoundFor f) (hστ : σ ≤ τ) : τ.SoundFor f :=
-  fun R x y hR => (h R x y hR).of_le (Signature.project_mono R hστ)
+  fun R x y hR => (h R x y hR).of_le (project_mono R hστ)
 
 /-! ### Composition and paths -/
 
 /-- If ψ is sound for the outer function and φ for the inner one, `ψ * φ` is sound for the composite
 ([icard-2012] Lemma 2.7, Proposition 2.10). -/
-theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
+theorem SoundFor.comp {ψ φ : ProjectivitySignature} {f : β → γ}
     {g : α → β} (hf : ψ.SoundFor f) (hg : φ.SoundFor g) :
     (ψ * φ).SoundFor (f ∘ g) := by
   intro R x y hR
-  have h := hf (Signature.project R φ) (g x) (g y) (hg R x y hR)
-  rwa [Signature.project_project] at h
+  have h := hf (project R φ) (g x) (g y) (hg R x y hR)
+  rwa [project_project] at h
 
-theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
+theorem soundFor_addMult_id : SoundFor .addMult (id : α → α) :=
   soundFor_addMult_iff.2 ⟨monotone_id, fun _ _ h ↦ h, fun _ _ h ↦ h⟩
 
-theorem Signature.project_forward_of_sign_eq_one {σ : Signature} (h : σ.sign = 1) :
-    Signature.project .forward σ = .forward := by
+theorem project_forward_of_sign_eq_one {σ : ProjectivitySignature} (h : σ.sign = 1) :
+    project .forward σ = .forward := by
   revert h; cases σ <;> decide
 
-theorem Signature.project_forward_of_sign_eq_neg_one {σ : Signature} (h : σ.sign = -1) :
-    Signature.project .forward σ = .reverse := by
+theorem project_forward_of_sign_eq_neg_one {σ : ProjectivitySignature} (h : σ.sign = -1) :
+    project .forward σ = .reverse := by
   revert h; cases σ <;> decide
 
 /-- A function a signature of positive sign is sound for is monotone. -/
-theorem Signature.SoundFor.monotone_of_sign_eq_one {σ : Signature} {f : α → β}
+theorem SoundFor.monotone_of_sign_eq_one {σ : ProjectivitySignature} {f : α → β}
     (hf : σ.SoundFor f) (h : σ.sign = 1) : Monotone f := fun x y hxy ↦ by
-  simpa [Signature.project_forward_of_sign_eq_one h, Relation.Holds] using hf .forward x y hxy
+  simpa [project_forward_of_sign_eq_one h, Relation.Holds] using hf .forward x y hxy
 
 /-- A function a signature of negative sign is sound for is antitone. -/
-theorem Signature.SoundFor.antitone_of_sign_eq_neg_one {σ : Signature} {f : α → β}
+theorem SoundFor.antitone_of_sign_eq_neg_one {σ : ProjectivitySignature} {f : α → β}
     (hf : σ.SoundFor f) (h : σ.sign = -1) : Antitone f := fun x y hxy ↦ by
-  simpa [Signature.project_forward_of_sign_eq_neg_one h, Relation.Holds] using hf .forward x y hxy
+  simpa [project_forward_of_sign_eq_neg_one h, Relation.Holds] using hf .forward x y hxy
 
 end SoundFor
 
@@ -349,33 +341,35 @@ section ComplInstance
 variable {α : Type*} [BooleanAlgebra α]
 
 theorem compl_soundFor_antiAddMult :
-    Signature.SoundFor .antiAddMult (compl : α → α) :=
+    SoundFor .antiAddMult (compl : α → α) :=
   soundFor_antiAddMult_of_boundedLatticeHomClass (OrderIso.compl α)
 
-theorem not_soundFor_antiAddMult : Signature.SoundFor .antiAddMult Not :=
+theorem not_soundFor_antiAddMult : SoundFor .antiAddMult Not :=
   compl_soundFor_antiAddMult
 
 end ComplInstance
+
+end ProjectivitySignature
 
 /-! ### Per-position profiles
 
 Two-place operators carry one signature per argument position — a
 determiner is one signature in its restrictor and another in its scope.
-`Signature₂` records the pair, `Signature₂.SoundFor` says each component is sound
-for the corresponding section (the other argument held constant), and
-`Signature.SoundFor.comp₂` composes an outer context into both
+`ProjectivitySignature₂` records the pair, `ProjectivitySignature₂.SoundFor` says each component is
+sound for the corresponding section (the other argument held constant), and
+`ProjectivitySignature.SoundFor.comp₂` composes an outer context into both
 positions at once. Certified instances for generalized quantifiers live
 in `Semantics/Quantification/Signatures.lean`. -/
 
 /-- A per-position signature profile for a two-place operator. For
 determiners the positions are restrictor and scope; under the restrictor
 analysis of conditionals, antecedent and consequent. -/
-structure Signature₂ where
-  restrictor : Signature
-  scope : Signature
+structure ProjectivitySignature₂ where
+  restrictor : ProjectivitySignature
+  scope : ProjectivitySignature
   deriving DecidableEq, Repr
 
-section Signature₂
+section ProjectivitySignature₂
 
 variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
   [BoundedOrder β] [Lattice γ] [BoundedOrder γ] [Lattice δ] [BoundedOrder δ]
@@ -383,32 +377,34 @@ variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
 /-- A profile is sound for a two-place operator when each component
 signature is sound for the corresponding section (the other argument held
 constant). -/
-def Signature₂.SoundFor (σ : Signature₂) (f : α → β → γ) : Prop :=
+def ProjectivitySignature₂.SoundFor (σ : ProjectivitySignature₂) (f : α → β → γ) : Prop :=
   (∀ y, σ.restrictor.SoundFor (fun x => f x y)) ∧
   (∀ x, σ.scope.SoundFor (f x))
 
-theorem Signature.SoundFor.comp₂ {ψ : Signature} {g : γ → δ}
-    {σ : Signature₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
-    Signature₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
+theorem ProjectivitySignature.SoundFor.comp₂ {ψ : ProjectivitySignature} {g : γ → δ}
+    {σ : ProjectivitySignature₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
+    ProjectivitySignature₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
   ⟨fun y => hg.comp (hf.1 y), fun x => hg.comp (hf.2 x)⟩
 
-end Signature₂
+end ProjectivitySignature₂
 
 
 /-! ### The projection row of a function class -/
+
+namespace ProjectivitySignature
 
 section HoldsFor
 
 variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
 
 /-- The property rule is sound: a function with property `p` carries a constraint between its
-arguments to the constraint `Signature.Property.project` says between its values. -/
-theorem Signature.Property.HoldsFor.project {p : Signature.Property} {f : α → β}
-    (hf : p.HoldsFor f) {a b : Relation.Atom} (h : Signature.Property.project a p = some b)
+arguments to the constraint `Property.project` says between its values. -/
+theorem Property.HoldsFor.project {p : Property} {f : α → β}
+    (hf : p.HoldsFor f) {a b : Relation.Atom} (h : Property.project a p = some b)
     {x y : α} (ha : a.Holds x y) : b.Holds (f x) (f y) := by
   cases a <;> cases p <;>
-    simp only [Signature.Property.project, reduceCtorEq, Option.some.injEq] at h <;> subst h <;>
-    simp only [Signature.Property.HoldsFor, Relation.Atom.Holds] at hf ha ⊢
+    simp only [Property.project, reduceCtorEq, Option.some.injEq] at h <;> subst h <;>
+    simp only [Property.HoldsFor, Relation.Atom.Holds] at hf ha ⊢
   all_goals first
     | exact hf ha
     | exact codisjoint_map_of_map_sup hf ha
@@ -418,16 +414,18 @@ theorem Signature.Property.HoldsFor.project {p : Signature.Property} {f : α →
 
 /-- σ's projection row is sound for every σ-function ([icard-2012] Lemma 2.5): `≡` because `f` is
 a function, and every other constraint by the property rule. -/
-theorem Signature.soundFor_of_holdsFor {σ : Signature} {f : α → β}
+theorem soundFor_of_holdsFor {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) : σ.SoundFor f := by
   intro R x y hR
   by_cases hRe : R = .equiv
   · subst hRe
     exact congrArg f hR
   refine Relation.holds_iff.2 fun _ hb ↦ ?_
-  obtain ⟨p, hp, a, ha, hab⟩ := (Signature.mem_constraints_project hRe).1 hb
+  obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hRe).1 hb
   exact (h p hp).project hab (Relation.holds_iff.1 hR a ha)
 
 end HoldsFor
+
+end ProjectivitySignature
 
 end NaturalLogic

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Natural.Basic
+public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Logic.Trivalent.Basic
@@ -461,7 +461,7 @@ or a local entailment signature, the settle-for-less and metalinguistic-denial r
 judgment. -/
 structure Row where
   context : Option LicensingContext
-  localSignature : Signature
+  localSignature : ProjectivitySignature
   settleForLess : Bool
   metalinguistic : Bool
   grammatical : Bool
@@ -475,7 +475,7 @@ def contextOf : String → Option LicensingContext
   | "conditionalAntecedent" => some .conditionalAntecedent
   | _ => none
 
-def signatureOf : String → Option Signature
+def signatureOf : String → Option ProjectivitySignature
   | "all" => some .all
   | "mono" => some .mono
   | "anti" => some .anti

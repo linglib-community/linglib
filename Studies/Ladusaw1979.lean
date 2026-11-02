@@ -50,7 +50,7 @@ def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .anti
 -- (37): an operator is downward entailing when it reverses the inclusion of its arguments
 theorem isDownwardEntailing_classical_iff {F : OperatorFamily} :
     IsDownwardEntailing (.classical F) ↔ ∀ p, Antitone (F.op p) :=
-  forall_congr' fun _ ↦ Signature.holdsFor_anti_iff
+  forall_congr' fun _ ↦ ProjectivitySignature.holdsFor_anti_iff
 
 /-- A conditional's consequent, over worlds. -/
 structure Consequent where
@@ -64,7 +64,7 @@ def materialAntecedent : Licenser :=
   .classical ⟨Consequent, fun p ↦ Set p.W, fun p ↦ Set p.W, fun p P ↦ Pᶜ ∪ p.q⟩
 
 theorem isDownwardEntailing_materialAntecedent : IsDownwardEntailing materialAntecedent :=
-  fun _ ↦ Signature.holdsFor_anti_iff.mpr fun _ _ h ↦ Set.union_subset_union_left _
+  fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.mpr fun _ _ h ↦ Set.union_subset_union_left _
     (Set.compl_subset_compl.mpr h)
 
 -- UNVERIFIED: the list is the library's record, not checked against the dissertation.

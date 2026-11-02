@@ -97,9 +97,9 @@ abbrev World := Bool × Finset (Fin 2)
 function of the meaning of the indefinite. -/
 def did (Q : Quantifier (Fin 2)) : Set World := {w | Q w.2}
 
-theorem holdsFor_did : Signature.HoldsFor .addMult did := by
+theorem holdsFor_did : ProjectivitySignature.HoldsFor .addMult did := by
   intro r hr
-  simp only [Signature.properties, Finset.mem_insert, Finset.mem_singleton] at hr
+  simp only [ProjectivitySignature.properties, Finset.mem_insert, Finset.mem_singleton] at hr
   rcases hr with rfl | rfl | rfl
   · exact fun _ _ h _ hw ↦ h _ hw
   · exact ⟨fun _ _ ↦ rfl, rfl⟩
@@ -123,19 +123,20 @@ theorem modalBase_ne_empty : modalBase ≠ ∅ :=
   Nonempty.ne_empty ⟨((false, {0}) : World), by simp [modalBase]⟩
 
 /-- *It is impossible that `p`*: no world of the modal base is a `p`-world. -/
-def impossible : Signature.classPairs (Set World) :=
-  ⟨(fun p ↦ {_w | Disjoint modalBase p}, .antiAdd), Signature.holdsFor_antiAdd_iff.2
+def impossible : ProjectivitySignature.classPairs (Set World) :=
+  ⟨(fun p ↦ {_w | Disjoint modalBase p}, .antiAdd), ProjectivitySignature.holdsFor_antiAdd_iff.2
     ⟨fun _ _ ↦ by ext; simp, by simp⟩⟩
 
 /-- *I am sure that `p`*, *I claim that `p`*: every world of the modal base is a `p`-world. -/
-def necessity : Signature.classPairs (Set World) :=
+def necessity : ProjectivitySignature.classPairs (Set World) :=
   ⟨(fun p ↦ {_w | modalBase ⊆ p}, .mono),
-    Signature.holdsFor_mono_iff.2 fun _ _ h _ hp ↦ (hp : modalBase ⊆ _).trans h⟩
+    ProjectivitySignature.holdsFor_mono_iff.2 fun _ _ h _ hp ↦ (hp : modalBase ⊆ _).trans h⟩
 
 /-- *If `p`, `q`*, the material conditional with the consequent fixed. -/
-def conditional (q : Set World) : Signature.classPairs (Set World) :=
+def conditional (q : Set World) : ProjectivitySignature.classPairs (Set World) :=
   ⟨(fun p ↦ pᶜ ∪ q, .anti),
-    Signature.holdsFor_anti_iff.2 fun _ _ h ↦ union_subset_union_left _ (compl_subset_compl.2 h)⟩
+    ProjectivitySignature.holdsFor_anti_iff.2 fun _ _ h ↦ union_subset_union_left _
+      (compl_subset_compl.2 h)⟩
 
 /-- The consequent of a conditional: *I will apologize to him*, *he has no notion of French at
 all*. -/
@@ -145,14 +146,16 @@ def consequent : Set World := {w | w.1}
 
 /-- The path of the indefinite in a clause with polarity head `pol`, under the layers `t`,
 outermost first. -/
-def path (pol : Signature.classPairs (Set World)) (t : List (Signature.classPairs (Set World))) :
+def path (pol : ProjectivitySignature.classPairs (Set World))
+    (t : List (ProjectivitySignature.classPairs (Set World))) :
     Path (Quantifier (Fin 2)) (Set World) :=
   ⟨pol • ⟨did, .addMult, holdsFor_did⟩, t⟩
 
 /-- The path of the indefinite in a clause with polarity head `pol`, embedded under a polarity
 phrase whose layer is `sup`: the domains are the embedded polarity phrase, TP and CP, and the
 superordinate polarity phrase and TP. -/
-def embedded (pol sup : Signature.classPairs (Set World)) : Path (Quantifier (Fin 2)) (Set World) :=
+def embedded (pol sup : ProjectivitySignature.classPairs (Set World)) :
+    Path (Quantifier (Fin 2)) (Set World) :=
   path pol [1, sup, 1, 1]
 
 -- (18), (31a)
@@ -211,7 +214,7 @@ def someItem : PolarityItem :=
 
 section FlipFlop
 
-attribute [local simp] path embedded negation impossible necessity Signature.sign_mul
+attribute [local simp] path embedded negation impossible necessity ProjectivitySignature.sign_mul
   Function.End.one_def Function.End.mul_def
 
 theorem not_licenses_notImpossible : ¬notImpossible.Licenses quoiQueCeSoit :=
@@ -330,7 +333,7 @@ theorem notImpossibleNot_someone :
   refine ⟨⟨[negation * impossible, 1, 1], by simp [notImpossibleNot, embedded, path],
     acceptable_of_antiLicensor rfl rfl fun hc ↦ ?_⟩, not_licenses_notImpossibleNot_some⟩
   exact not_isAntiAdditive_notImpossibleNot
-    (Signature.holdsFor_antiAdd_iff.1 ((Environment.carries_iff _).1 hc).1).1
+    (ProjectivitySignature.holdsFor_antiAdd_iff.1 ((Environment.carries_iff _).1 hc).1).1
 
 /-! ### Disruption by scalar implicatures -/
 
@@ -389,25 +392,28 @@ theorem antitone_notConn_disj : Antitone fun Q ↦ (notConn disj Q).strong := fu
 -- (50e), (56d)
 /-- *John didn't drink wine and something*: the strengthened polarity phrase and TP. -/
 noncomputable def notAnd : Path (Quantifier (Fin 2)) (Set World) :=
-  ⟨⟨fun Q ↦ (notConn conj Q).strong, .all, fun _ h ↦ absurd h (by simp [Signature.properties])⟩,
+  ⟨⟨fun Q ↦ (notConn conj Q).strong, .all,
+    fun _ h ↦ absurd h (by simp [ProjectivitySignature.properties])⟩,
     [1]⟩
 
 -- (51b), (56e)
 /-- *John didn't drink wine or something*: the strengthened polarity phrase and TP. -/
 noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
-  ⟨⟨fun Q ↦ (notConn disj Q).strong, .anti, Signature.holdsFor_anti_iff.2 antitone_notConn_disj⟩,
+  ⟨⟨fun Q ↦ (notConn disj Q).strong, .anti,
+    ProjectivitySignature.holdsFor_anti_iff.2 antitone_notConn_disj⟩,
     [1]⟩
 
-theorem not_carries_notAnd {t : List (Signature.classPairs (Set World))}
+theorem not_carries_notAnd {t : List (ProjectivitySignature.classPairs (Set World))}
     (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
     ¬(notAnd.environment t).Carries s := fun hc ↦ by
-  have ha := Signature.holdsFor_anti_iff.1
+  have ha := ProjectivitySignature.holdsFor_anti_iff.1
     (((notAnd.environment t).carries_iff.1 hc).1.of_le (by cases s <;> decide))
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)
 
-theorem carries_notOr {t : List (Signature.classPairs (Set World))} (ht : t ∈ notOr.layers.tails) :
+theorem carries_notOr {t : List (ProjectivitySignature.classPairs (Set World))}
+    (ht : t ∈ notOr.layers.tails) :
     (notOr.environment t).Carries .weak := by
   simp [notOr] at ht
   rcases ht with rfl | rfl <;>
@@ -534,15 +540,16 @@ theorem acceptable_any_iff :
     English.PolarityItems.any.Acceptable f ↔ Antitone f ∧ ¬Monotone f := by
   refine ⟨fun h ↦ ?_, fun h ↦ acceptable_of_licensor rfl rfl ?_⟩
   · obtain ⟨ha, hm⟩ := Licenser.carries_ofOperator_iff.1 (h.1 .weak rfl)
-    exact ⟨Signature.holdsFor_anti_iff.1 ha, hm⟩
-  · exact Licenser.carries_ofOperator_iff.2 ⟨Signature.holdsFor_anti_iff.2 h.1, h.2⟩
+    exact ⟨ProjectivitySignature.holdsFor_anti_iff.1 ha, hm⟩
+  · exact Licenser.carries_ofOperator_iff.2 ⟨ProjectivitySignature.holdsFor_anti_iff.2 h.1, h.2⟩
 
 theorem acceptable_someItem_iff : someItem.Acceptable f ↔ ¬(Antitone f ∧ ¬Monotone f) := by
   refine ⟨fun h hc ↦ h.2 .weak rfl (Licenser.carries_ofOperator_iff.2
-    ⟨Signature.holdsFor_anti_iff.2 hc.1, hc.2⟩), fun h ↦ acceptable_of_antiLicensor rfl rfl ?_⟩
+    ⟨ProjectivitySignature.holdsFor_anti_iff.2 hc.1, hc.2⟩),
+    fun h ↦ acceptable_of_antiLicensor rfl rfl ?_⟩
   exact fun hc ↦ h (by
     obtain ⟨ha, hm⟩ := Licenser.carries_ofOperator_iff.1 hc
-    exact ⟨Signature.holdsFor_anti_iff.1 ha, hm⟩)
+    exact ⟨ProjectivitySignature.holdsFor_anti_iff.1 ha, hm⟩)
 
 theorem not_antitone_and_not_monotone (h : Monotone f) : ¬(Antitone f ∧ ¬Monotone f) :=
   fun hc ↦ hc.2 h
@@ -900,7 +907,7 @@ theorem licensed_notSureSubjObj_someone :
       0 3 := acceptable_any_iff.2 (antitone_notSureSubjObj_env_zero 0)
   have h1 : (notSureSubjObj English.PolarityItems.any English.PolarityItems.someone).Acceptable
       1 3 := acceptable_of_antiLicensor rfl rfl fun hc ↦ not_isAntiAdditive_notSureSubjObj_env
-    (Signature.holdsFor_antiAdd_iff.1 (Licenser.carries_ofOperator_iff.1 hc).1).1
+    (ProjectivitySignature.holdsFor_antiAdd_iff.1 (Licenser.carries_ofOperator_iff.1 hc).1).1
   intro i
   refine ⟨3, .intro (by fin_cases i <;> decide) (by decide) (by fin_cases i <;> assumption)
     fun i' hi' _ ↦ .acceptable ?_⟩

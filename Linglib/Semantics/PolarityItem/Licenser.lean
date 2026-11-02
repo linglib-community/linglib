@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Signature
+public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.Questions.Value
@@ -47,9 +47,9 @@ stronger scale-mates; only a scalar licenser has a direct implicature.
 
 * Gajewski asks only for downward entailment of the exhaustified meaning; Zwarts's strengths are
   kept here, and agree with Gajewski's condition at the endpoints of the scale.
-* The unit conditions of `Signature.HoldsFor` do not exclude constant maps, which are downward
-  entailing and, if constantly false, anti-additive; requiring weak strength not to be upward
-  entailing as well excludes them.
+* The unit conditions of `ProjectivitySignature.HoldsFor` do not exclude constant maps, which are
+  downward entailing and, if constantly false, anti-additive; requiring weak strength not to be
+  upward entailing as well excludes them.
 * The question route states the weak form the theory of question value proves, that widening
   never lowers the question's value; van Rooy's strict condition for rhetorical questions is not
   formalized.
@@ -156,7 +156,7 @@ def exhaustified : Licenser → Licenser
 
 /-- A licenser holds a signature outright when every operator in its family does; an operator into
 trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
-def Holds : Licenser → Signature → Prop
+def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
   | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ posSupport (F.op p x)
   | .modal _, _ | .question, _ => False
@@ -182,7 +182,7 @@ exhaustivity operator ([von-fintel-1999], [gajewski-2011]'s Condition 1,
 meaning holds that strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
-  | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toSignature
+  | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toProjectivitySignature
 
 section OfOperator
 
@@ -196,13 +196,14 @@ def ofOperator (f : σ → P) : Licenser :=
 /-- A single operator carries a strength of negation when it is in the function class of the
 strength and is not upward entailing. -/
 theorem carries_ofOperator_iff :
-    (ofOperator f).Carries s ↔ s.toSignature.HoldsFor f ∧ ¬Monotone f := by
-  have ha (h : s.toSignature.HoldsFor f) : Antitone f :=
-    Signature.holdsFor_anti_iff.1 (h.of_le (Negation.Strength.toSignature_antitone bot_le))
+    (ofOperator f).Carries s ↔ s.toProjectivitySignature.HoldsFor f ∧ ¬Monotone f := by
+  have ha (h : s.toProjectivitySignature.HoldsFor f) : Antitone f :=
+    ProjectivitySignature.holdsFor_anti_iff.1
+      (h.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
   cases s <;>
     simp only [ofOperator, Carries, IsStrawsonDE, IsStrawsonUE, exhaustified, Holds]
-  · exact ⟨fun h ↦ ⟨Signature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
-      fun h ↦ ⟨fun _ ↦ Signature.holdsFor_anti_iff.1 h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
+  · exact ⟨fun h ↦ ⟨ProjectivitySignature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
+      fun h ↦ ⟨fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.1 h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
   all_goals exact ⟨fun h ↦ ⟨h.2 ⟨⟩, fun hm ↦ h.1.2 fun _ ↦ hm⟩,
     fun h ↦ ⟨⟨fun _ ↦ ha h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩, fun _ ↦ h.1⟩⟩
 
@@ -244,7 +245,7 @@ def LicensesByRelevance : Licenser → Prop
 theorem licensesByRelevance_question : question.LicensesByRelevance :=
   fun U μ _ P _ _ h ↦ Question.utility_wh_mono U μ P h
 
-variable {L : Licenser} {σ τ : Signature} {s t : Negation.Strength}
+variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
 
 theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
   cases L with
@@ -252,17 +253,17 @@ theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
   | scalar F => exact fun p ↦ (h p).of_le hστ
   | modal _ | question => exact h
 
-theorem Holds.toSignature_of_le (h : L.Holds t.toSignature) (hst : s ≤ t) :
-    L.Holds s.toSignature :=
-  h.of_le (Negation.Strength.toSignature_antitone hst)
+theorem Holds.toProjectivitySignature_of_le (h : L.Holds t.toProjectivitySignature) (hst : s ≤ t) :
+    L.Holds s.toProjectivitySignature :=
+  h.of_le (Negation.Strength.toProjectivitySignature_antitone hst)
 
 theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   cases L with
-  | classical F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
-  | scalar F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
+  | classical F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
+  | scalar F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
   | strawson F =>
     exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posSupport
-      (Signature.holdsFor_anti_iff.mp (h p))
+      (ProjectivitySignature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
 
 /-- Widening strengthens under every operator of a licenser exactly when the licenser is downward
@@ -287,10 +288,10 @@ theorem Carries.of_le (h : L.Carries s) (hts : t ≤ s) : L.Carries t := by
   | antiAdditive | antiMorphic =>
     cases s with
     | weak => exact absurd hts (by decide)
-    | antiAdditive | antiMorphic => exact ⟨h.1, h.2.toSignature_of_le hts⟩
+    | antiAdditive | antiMorphic => exact ⟨h.1, h.2.toProjectivitySignature_of_le hts⟩
 
 theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
-    L.Carries s ↔ L.Carries .weak ∧ L.exhaustified.Holds s.toSignature := by
+    L.Carries s ↔ L.Carries .weak ∧ L.exhaustified.Holds s.toProjectivitySignature := by
   cases s with
   | weak => exact absurd rfl hs
   | antiAdditive | antiMorphic => exact Iff.rfl
@@ -298,19 +299,25 @@ theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
 /-- A classical licenser carries a strength exactly when it holds it outright and is
 non-trivial. -/
 theorem carries_classical_iff {F : OperatorFamily} :
-    (classical F).Carries s ↔ (classical F).Holds s.toSignature ∧ ¬ (classical F).IsStrawsonUE := by
+    (classical F).Carries s ↔
+      (classical F).Holds s.toProjectivitySignature ∧ ¬ (classical F).IsStrawsonUE := by
   cases s with
-  | weak => exact and_congr_left' (forall_congr' fun _ ↦ Signature.holdsFor_anti_iff.symm)
+  | weak => exact and_congr_left' (forall_congr' fun _ ↦
+    ProjectivitySignature.holdsFor_anti_iff.symm)
   | antiAdditive | antiMorphic =>
     exact ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦
-      ⟨⟨isStrawsonDE_of_holds_anti (h.1.toSignature_of_le (s := .weak) (by decide)), h.2⟩, h.1⟩⟩
+      ⟨⟨isStrawsonDE_of_holds_anti (h.1.toProjectivitySignature_of_le (s := .weak) (by decide)),
+        h.2⟩, h.1⟩⟩
 
-theorem holds_toSignature_iff {s₀ : Negation.Strength} (h : L.Holds s₀.toSignature)
-    (hn : ∀ s, s₀ < s → ¬ L.Holds s.toSignature) : L.Holds s.toSignature ↔ s ≤ s₀ :=
-  ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toSignature_of_le hs⟩
+theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
+    (h : L.Holds s₀.toProjectivitySignature)
+    (hn : ∀ s, s₀ < s → ¬ L.Holds s.toProjectivitySignature) :
+    L.Holds s.toProjectivitySignature ↔ s ≤ s₀ :=
+  ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toProjectivitySignature_of_le hs⟩
 
-theorem not_holds_toSignature (h : ¬ L.Holds .anti) : ¬ L.Holds s.toSignature := fun hs ↦
-  h (hs.of_le (Negation.Strength.toSignature_antitone bot_le))
+theorem not_holds_toProjectivitySignature (h : ¬ L.Holds .anti) :
+    ¬ L.Holds s.toProjectivitySignature := fun hs ↦
+  h (hs.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, and not outright once
 its direct implicature is factored in, carries exactly weak strength ([gajewski-2011]). -/
@@ -319,7 +326,7 @@ theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
   cases s with
   | weak => exact iff_of_true ⟨hde, hn⟩ rfl
   | antiAdditive | antiMorphic =>
-    exact iff_of_false (fun hc ↦ not_holds_toSignature h hc.2) (by decide)
+    exact iff_of_false (fun hc ↦ not_holds_toProjectivitySignature h hc.2) (by decide)
 
 end Licenser
 

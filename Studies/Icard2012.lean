@@ -20,7 +20,7 @@ that involves a giant squid is dangerous* entails *Not every job that involves a
 safe*, is derived from the paper's assumption set by three substitutions and two compositions
 (`derives_squid`), and Section 4's correspondence between the signatures and Zwarts's three classes
 of negative polarity items is `Licenses`, read off the substrate's strength map
-`Signature.negationStrength`.
+`ProjectivitySignature.negationStrength`.
 
 ## Implementation notes
 
@@ -37,7 +37,7 @@ of negative polarity items is `Licenses`, read off the substrate's strength map
   to be the most informative one, which is the least in the defined order. Read as printed, every
   join and projection would be `#` and every composition `•`.
 * The remark under the projection table that `[R]^• = #` for every `R` (p. 715) fails at `≡`,
-  since every function preserves equality (`Signature.project_equiv`).
+  since every function preserves equality (`ProjectivitySignature.project_equiv`).
 * Three cells of the composition table (p. 716) are wrong. Anti-additive after anti-additive is
   printed antitone but is monotone; anti-multiplicative after multiplicative is printed antitone
   but is anti-multiplicative; anti-morphic after anti-multiplicative is printed additive but is
@@ -61,15 +61,15 @@ of negative polarity items is `Licenses`, read off the substrate's strength map
 
 namespace Icard2012
 
-open NaturalLogic NaturalLogic.Relation NaturalLogic.Signature
+open NaturalLogic NaturalLogic.Relation NaturalLogic.ProjectivitySignature
 
 /-! ### The printed tables
 
 The join table (Lemma 1.5), the projection table (Lemma 2.4) and the composition table
 (Lemma 2.7) are the substrate's `join`, `project` and `compose`, computed from rules on single
-constraints and properties; the cells are certified sound and least in
-`Logic/Natural/Soundness.lean` and `Logic/Natural/Completeness.lean`, and agree with the printed
-ones except where the errata say. -/
+constraints and properties; the cells are certified sound in `Logic/Natural/Relation.lean` and
+`Logic/Natural/Projection.lean` and least in `Logic/Natural/Completeness.lean`, and agree with the
+printed ones except where the errata say. -/
 
 example : join .alternation .negation = .forward := rfl
 example : join .alternation .reverse = .alternation := rfl
@@ -88,19 +88,21 @@ example : compose .antiAdd .additive = .antiAdd := rfl
 example : compose .mult .addMult = .mult := rfl
 
 -- p. 716: composition is not commutative
-example : (.antiMult : Signature) * .antiAdd = .additive ∧
-    (.antiAdd : Signature) * .antiMult = .mult := ⟨rfl, rfl⟩
+example : (.antiMult : ProjectivitySignature) * .antiAdd = .additive ∧
+    (.antiAdd : ProjectivitySignature) * .antiMult = .mult := ⟨rfl, rfl⟩
 
 -- p. 716: only `⊕` and `⊖` have inverses, so the signatures do not form a group
-example : IsUnit (.antiAddMult : Signature) ∧ ¬ IsUnit (.antiAdd : Signature) :=
+example : IsUnit (.antiAddMult : ProjectivitySignature) ∧
+    ¬ IsUnit (.antiAdd : ProjectivitySignature) :=
   ⟨isUnit_iff.2 ⟨.negative, rfl⟩, fun h ↦ by
     obtain ⟨p, hp⟩ := isUnit_iff.1 h
     cases p <;> cases hp⟩
 
 /-- Negation after negation is a morphism, `⊖ ∘ ⊖ = ⊕`, certified on complementation itself. -/
 example {α : Type*} [BooleanAlgebra α] :
-    Signature.SoundFor (.antiAddMult * .antiAddMult) ((compl : α → α) ∘ compl) :=
-  compl_soundFor_antiAddMult.comp compl_soundFor_antiAddMult
+    ProjectivitySignature.SoundFor (.antiAddMult * .antiAddMult) ((compl : α → α) ∘ compl) :=
+  ProjectivitySignature.compl_soundFor_antiAddMult.comp
+    ProjectivitySignature.compl_soundFor_antiAddMult
 
 /-! ### Errata -/
 
@@ -116,27 +118,29 @@ example : project .equiv .all = .equiv := rfl
 
 /-- Anti-additive after anti-additive is monotone; the printed antitone fails for complementation,
 which applied twice is the identity. -/
-example : (.antiAdd : Signature) * .antiAdd = .mono ∧
-    ∃ f g : Bool → Bool, Signature.HoldsFor .antiAdd f ∧ Signature.HoldsFor .antiAdd g ∧
-      ¬ Signature.HoldsFor .anti (f ∘ g) :=
+example : (.antiAdd : ProjectivitySignature) * .antiAdd = .mono ∧
+    ∃ f g : Bool → Bool, ProjectivitySignature.HoldsFor .antiAdd f ∧
+      ProjectivitySignature.HoldsFor .antiAdd g ∧ ¬ ProjectivitySignature.HoldsFor .anti (f ∘ g) :=
   ⟨rfl, compl, compl, by decide⟩
 
 /-- Anti-multiplicative after multiplicative is anti-multiplicative, more specific than the
 printed antitone. -/
-example : (.antiMult : Signature) * .mult = .antiMult ∧ (.antiMult : Signature) < .anti :=
+example : (.antiMult : ProjectivitySignature) * .mult = .antiMult ∧
+    (.antiMult : ProjectivitySignature) < .anti :=
   ⟨rfl, lt_of_le_of_ne (by decide) (by decide)⟩
 
 /-- Anti-morphic after anti-multiplicative is multiplicative; the printed additive fails for
 complementation after the constant `⊤`, which is the constant `⊥`. -/
-example : (.antiAddMult : Signature) * .antiMult = .mult ∧
-    ∃ f g : Bool → Bool, Signature.HoldsFor .antiAddMult f ∧ Signature.HoldsFor .antiMult g ∧
-      ¬ Signature.HoldsFor .additive (f ∘ g) :=
+example : (.antiAddMult : ProjectivitySignature) * .antiMult = .mult ∧
+    ∃ f g : Bool → Bool, ProjectivitySignature.HoldsFor .antiAddMult f ∧
+      ProjectivitySignature.HoldsFor .antiMult g ∧
+      ¬ ProjectivitySignature.HoldsFor .additive (f ∘ g) :=
   ⟨rfl, compl, fun _ ↦ true, by decide⟩
 
 /-- An additive and an anti-additive function need not stand in `|`: the constant `⊤` and
 complementation are not disjoint. -/
-example : Signature.HoldsFor .additive (fun _ : Bool ↦ true) ∧
-    Signature.HoldsFor .antiAdd (compl : Bool → Bool) ∧
+example : ProjectivitySignature.HoldsFor .additive (fun _ : Bool ↦ true) ∧
+    ProjectivitySignature.HoldsFor .antiAdd (compl : Bool → Bool) ∧
       ¬ Disjoint (fun _ : Bool ↦ true) (compl : Bool → Bool) := by
   refine ⟨by decide, by decide, ?_⟩
   rw [disjoint_iff]
@@ -161,7 +165,7 @@ inductive Ty
 outermost first (Definition 2.1). -/
 structure Lexicon (κ : Type*) where
   ty : κ → Ty
-  marks : κ → List Signature
+  marks : κ → List ProjectivitySignature
 
 variable {κ : Type*}
 
@@ -173,13 +177,13 @@ inductive Term (L : Lexicon κ) : Ty → Type _
 variable {L : Lexicon κ}
 
 /-- The markings a term still carries, applying a term consuming its outermost marking. -/
-def Term.marks : ∀ {τ}, Term L τ → List Signature
+def Term.marks : ∀ {τ}, Term L τ → List ProjectivitySignature
   | _, .const c => L.marks c
   | _, .app s _ => s.marks.tail
 
 /-- The topmost projectivity of a term (Section 2.4) is its outermost marking, `•` when it
 has none. -/
-def Term.top {τ : Ty} (t : Term L τ) : Signature := t.marks.headD .all
+def Term.top {τ : Ty} (t : Term L τ) : ProjectivitySignature := t.marks.headD .all
 
 /-- A context (Section 2.4) is a term with one hole of type `σ`, in function or argument
 position. -/
@@ -199,7 +203,7 @@ def Ctx.fill : ∀ {τ}, Ctx L σ τ → Term L σ → Term L τ
 /-- The projectivity of a context (Definition 2.9) is the identity marking at the hole, the
 context's own projectivity into the function position, and the function's topmost
 projectivity composed with the argument's into the argument position. -/
-def Ctx.pro : ∀ {τ}, Ctx L σ τ → Signature
+def Ctx.pro : ∀ {τ}, Ctx L σ τ → ProjectivitySignature
   | _, .hole => .addMult
   | _, .appL c _ => c.pro
   | _, .appR f c => f.top * c.pro
@@ -232,7 +236,7 @@ functions. -/
 
 /-- A value of a type is of the given markings when it is a function of the first marking
 whose values are of the remaining ones (Definition 2.2). -/
-def Mem : List Signature → ∀ τ, Dom B τ → Prop
+def Mem : List ProjectivitySignature → ∀ τ, Dom B τ → Prop
   | φ :: ms, .arrow σ τ, f => φ.SoundFor (f : Dom B σ → Dom B τ) ∧ ∀ x, Mem ms τ (f x)
   | _, _, _ => True
 
@@ -282,15 +286,15 @@ theorem mem_eval : ∀ {τ} (t : Term L τ), Mem t.marks τ (eval M t)
 /-- Projectivity marking is sound (Proposition 2.10), a context denoting a function of its
 projectivity. -/
 theorem soundFor_ctxFun : ∀ {τ} (c : Ctx L σ τ), c.pro.SoundFor (ctxFun M c)
-  | _, .hole => soundFor_addMult_id
+  | _, .hole => ProjectivitySignature.soundFor_addMult_id
   | _, .appL c u => λ R x y hR => (soundFor_ctxFun c R x y hR).apply (eval M u)
   | _, .appR f c => by
     have h := mem_eval M f
-    show Signature.SoundFor (f.top * c.pro) (eval M f ∘ ctxFun M c)
+    show ProjectivitySignature.SoundFor (f.top * c.pro) (eval M f ∘ ctxFun M c)
     rcases hm : f.marks with _ | ⟨φ, ms⟩
     · rw [show f.top = .all by simp [Term.top, hm],
-        show (Signature.all * c.pro) = .all from Signature.top_mul _]
-      exact soundFor_all _
+        show (ProjectivitySignature.all * c.pro) = .all from ProjectivitySignature.top_mul _]
+      exact ProjectivitySignature.soundFor_all _
     · rw [hm] at h
       rw [show f.top = φ by simp [Term.top, hm]]
       exact h.1.comp (soundFor_ctxFun c)
@@ -434,14 +438,14 @@ antitone context, strong ones an anti-additive context and superstrong ones an
 anti-morphic one. -/
 
 /-- A signature licenses an item of a Zwarts class when the strength of negation it realizes,
-`Signature.negationStrength`, is at least as strong. -/
-def Licenses (level : Negation.Strength) (σ : Signature) : Prop :=
+`ProjectivitySignature.negationStrength`, is at least as strong. -/
+def Licenses (level : Negation.Strength) (σ : ProjectivitySignature) : Prop :=
   (level : WithBot Negation.Strength) ≤ σ.negationStrength
 
-instance (level : Negation.Strength) (σ : Signature) : Decidable (Licenses level σ) :=
+instance (level : Negation.Strength) (σ : ProjectivitySignature) : Decidable (Licenses level σ) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :
+theorem licenses_weak {σ : ProjectivitySignature} (h : σ.sign = -1) :
     Licenses .weak σ := by
   cases σ <;> first | decide | exact absurd h (by decide)
 

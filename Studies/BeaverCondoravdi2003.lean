@@ -56,7 +56,7 @@ context sorts (48).
 
 namespace BeaverCondoravdi2003
 
-open Tense Anscombe1964 Presupposition NaturalLogic
+open Tense Anscombe1964 Presupposition
 
 /-! ### The uniform connective (39)
 

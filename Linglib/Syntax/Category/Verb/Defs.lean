@@ -11,7 +11,7 @@ public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
-public import Linglib.Logic.Natural.Signature
+public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability
@@ -59,7 +59,7 @@ implicative, trigger and so on, are read off these fields by the theories that m
 @[expose] public section
 
 open Aspect ArgumentStructure Presupposition
-open NaturalLogic (Signature)
+open NaturalLogic (ProjectivitySignature)
 open Morphology (Morph)
 
 /-! ### Selectional and inflectional enums -/
@@ -219,7 +219,7 @@ structure Attitude where
       ([hintikka-1962]). Set only where the classification is textbook
       consensus (believe, think, know); preferential attitudes (want, hope)
       are contested ([heim-1992]) and stay `none`. -/
-  complementSig : Option Signature := none
+  complementSig : Option ProjectivitySignature := none
   deriving Repr, BEq
 
 end Verb

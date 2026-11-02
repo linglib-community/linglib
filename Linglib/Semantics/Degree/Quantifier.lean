@@ -6,7 +6,7 @@ public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Core.Order.AntiAdditive
 
 /-!
 # Degree quantifiers
@@ -62,7 +62,7 @@ cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization w
 
 namespace Degree
 
-open NaturalLogic Quantifier Quantifier.Det Set
+open Quantifier Quantifier.Det Set
 
 variable {α D : Type*}
 

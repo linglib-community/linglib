@@ -16,16 +16,16 @@ anti-multiplicative and exchange `⊥` with `⊤`.
 
 ## Main definitions
 
-* `NaturalLogic.IsAntiAdditive`: `f (p ⊔ q) = f p ⊓ f q`.
-* `NaturalLogic.IsAntiMultiplicative`: `f (p ⊓ q) = f p ⊔ f q`.
+* `IsAntiAdditive`: `f (p ⊔ q) = f p ⊓ f q`.
+* `IsAntiMultiplicative`: `f (p ⊓ q) = f p ⊔ f q`.
 
 ## Main statements
 
-* `NaturalLogic.IsAntiAdditive.comp_map_sup`, `NaturalLogic.IsAntiAdditive.map_inf_comp`,
-  `NaturalLogic.isAntiAdditive_iInf`: closure under composition with join- and meet-preserving
+* `IsAntiAdditive.comp_map_sup`, `IsAntiAdditive.map_inf_comp`,
+  `isAntiAdditive_iInf`: closure under composition with join- and meet-preserving
   maps and under pointwise infima.
-* `NaturalLogic.isAntiAdditive_compl`: complementation in a Heyting algebra is anti-additive.
-* `NaturalLogic.IsAntiAdditive.map_compl_iff`: an anti-additive map between Boolean algebras
+* `isAntiAdditive_compl`: complementation in a Heyting algebra is anti-additive.
+* `IsAntiAdditive.map_compl_iff`: an anti-additive map between Boolean algebras
   commutes with complementation iff it is anti-multiplicative and exchanges `⊥` with `⊤`.
 
 ## Implementation notes
@@ -41,9 +41,6 @@ meet are needed. Anti-multiplicativity and its lemmas are generated from anti-ad
 -/
 
 @[expose] public section
-
-namespace NaturalLogic
-
 variable {α β γ : Type*}
 
 /-- A map is anti-additive if it sends joins to meets ([zwarts-1998] (107)). -/
@@ -115,4 +112,3 @@ theorem isAntiAdditive_forall_mem (P : γ → δ → Prop) :
 
 end Set
 
-end NaturalLogic
