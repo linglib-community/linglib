@@ -10,15 +10,10 @@ public import Mathlib.Data.List.Chain
 /-!
 # Lemmas about `List.IsChain`
 
-Three `List.IsChain` facts whose `List.Pairwise` counterparts are in `Init/Data/List/Pairwise.lean`
-but which `Mathlib/Data/List/Chain.lean` lacks. [UPSTREAM] candidates for that file.
-
-## Main results
-
-* `List.isChain_of_forall`: a relation that holds everywhere makes every list a chain, mirroring
-  `List.pairwise_of_forall`.
-* `List.isChain_and_iff` and `List.IsChain.and`: a chain for a conjunction of relations is
-  exactly a chain for each conjunct, mirroring `List.pairwise_and_iff` and `List.Pairwise.and`.
+The `List.IsChain` counterparts of three `List.Pairwise` facts in core that mathlib lacks: a
+relation holding everywhere makes every list a chain, `List.pairwise_of_forall`, and a chain for a
+conjunction of relations is exactly a chain for each conjunct, `List.pairwise_and_iff` and
+`List.Pairwise.and`. [UPSTREAM] candidates for `Mathlib/Data/List/Chain.lean`.
 -/
 
 @[expose] public section
