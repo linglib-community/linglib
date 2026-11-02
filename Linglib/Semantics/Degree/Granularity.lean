@@ -16,49 +16,28 @@ public import Linglib.Semantics.Questions.Partition.Basic
 /-!
 # Scale granularity
 
-A granularity function of width `w` maps each degree to an interval of width `w` that contains
-it. The grain of width `ε` is the granularity function that reports each degree by the nearest
-multiple of `ε`: degrees with the same nearest multiple are indistinguishable, and the cell of a
-degree is the half-open interval of width `ε` centred on that multiple. Krifka builds levels of
-precision this way, Sauerland and Stateva define granularity functions by the properties
-collected in `IsGranularity`, and Deo and Thomas take the cells of a grain as the answers to a
-degree question.
-
-A finer grain is a narrower one, not a refinement. No cell of a wider granularity function fits
-inside a cell of a narrower one, and a grain refines the grain `k` times as wide exactly when `k`
-is odd, so halving the width never refines. Around a common multiple of two widths the cells are
-nested.
-
-## Main definitions
-
-* `Degree.IsGranularity`: a granularity function of a given width.
-* `Degree.grain`: the partition of the scale by nearest multiple of `ε`.
-* `Degree.representative`: the nearest multiple of `ε`.
-
-## Main results
-
-* `Degree.cell_grain`: a cell is the half-open interval of width `ε` centred on its
-  representative.
-* `Degree.IsGranularity.not_subset`: a cell of a wider granularity function never
-  fits inside a cell of a narrower one.
-* `Degree.isGranularity_zero_iff`: the granularity function of width zero is the exact reading,
-  every cell a single degree.
-* `Degree.cell_grain_subset_cell_grain`: around a common multiple, a finer cell lies inside a
-  coarser one.
-* `Degree.grain_le_grain_iff_odd`: the grain of width `ε` refines the grain of width
-  `k * ε` exactly when `k` is odd.
+A granularity function of width $w$ maps each degree to an interval of width $w$ containing it,
+the properties Sauerland and Stateva collect in [`IsGranularity`](##IsGranularity). The grain of
+width $ε$ reports a degree by [the nearest multiple of $ε$](##abs_sub_representative_le_abs_sub),
+as Krifka's levels of precision do, and its cells, which Deo and Thomas take as the answers to a
+degree question, are [the half-open intervals of width $ε$ centred on the
+multiples](##cell_grain). A finer grain is a narrower one, not a refinement: on a dense scale
+[no wider cell fits inside a narrower one](##IsGranularity.not_subset), and a grain refines the
+grain $k$ times as wide [exactly when $k$ is odd](##grain_le_grain_iff_odd), so halving, Krifka's
+optimal refinement, nests the multiples but never the cells.
 
 ## Implementation notes
 
-Cells are half-open, the only choice of endpoints that partitions the scale; Sauerland and Stateva
-write closed intervals and Thomas and Deo open ones. `IsGranularity` states the width by placing
-each cell between the open and the closed interval of that width, which leaves the endpoints
-open, as Thomas and Deo recommend, and needs no `sSup`, which `ℚ` lacks.
+Cells are half-open, as Deo and Thomas write them, since closed cells (Sauerland and Stateva) or
+open ones (Thomas and Deo) of one width do not partition the scale. `IsGranularity` places each
+cell between the open and the closed interval of its width, agnostic about the endpoints as
+Thomas and Deo are after Gyarmathy, and needs no `sSup`, which `ℚ` lacks.
 
 ## References
 
 * [krifka-2007]
 * [sauerland-stateva-2011]
+* [gyarmathy-2017]
 * [thomas-deo-2020]
 * [deo-thomas-2025]
 -/
@@ -84,12 +63,7 @@ structure IsGranularity (γ : D → Set D) (w : D) : Prop where
 
 theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).OrdConnected := by
   obtain ⟨a, h₁, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
-  refine ⟨fun x hx y hy z ⟨hxz, hzy⟩ ↦ ?_⟩
-  rcases ((h₂ hx).1.trans hxz).eq_or_lt with rfl | hlt
-  · exact le_antisymm hxz (h₂ hx).1 ▸ hx
-  rcases (hzy.trans (h₂ hy).2).eq_or_lt with rfl | hlt'
-  · exact le_antisymm (h₂ hy).2 hzy ▸ hy
-  exact h₁ ⟨hlt, hlt'⟩
+  exact ordConnected_of_Ioo fun x hx y hy _ ↦ (Ioo_subset_Ioo (h₂ hx).1 (h₂ hy).2).trans h₁
 
 /-- The granularity function of width zero is the exact reading, every cell a single degree. -/
 theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
@@ -104,7 +78,7 @@ variable [IsOrderedAddMonoid D]
 theorem IsGranularity.nonneg (h : IsGranularity γ w) : 0 ≤ w := by
   obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc 0
   obtain ⟨h₃, h₄⟩ := h₂ (h.mem_self 0)
-  exact le_of_add_le_add_left (a := a) (by simpa using h₃.trans h₄)
+  exact (le_add_iff_nonneg_right a).1 (h₃.trans h₄)
 
 /-- A cell of a wider granularity function never lies inside a cell of a narrower one. -/
 theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ w₁)
@@ -145,10 +119,9 @@ theorem representative_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
 
 variable [IsStrictOrderedRing α]
 
-theorem grain_iff_representative (hε : ε ≠ 0) :
-    grain ε d d' ↔ representative ε d = representative ε d' := by
-  simp only [grain_iff, representative, zsmul_eq_mul]
-  exact ⟨fun h ↦ by rw [h], fun h ↦ by exact_mod_cast mul_right_cancel₀ hε h⟩
+theorem ker_representative (hε : ε ≠ 0) : Setoid.ker (representative ε) = grain ε :=
+  Setoid.ker_comp_of_injective (fun d ↦ round (d / ε)) (g := (· • ε)) fun m n h ↦ by
+    simpa [zsmul_eq_mul, hε] using h
 
 theorem abs_sub_representative_le (hε : 0 < ε) (d : α) : |d - representative ε d| ≤ ε / 2 :=
   abs_sub_round_div_zsmul_le hε d
@@ -163,6 +136,13 @@ theorem cell_grain (hε : 0 < ε) (d : α) :
   ext x
   rw [Setoid.mem_cell, grain_iff, round_eq_iff, mem_Ico, mem_Ico, le_div_iff₀ hε,
     div_lt_iff₀ hε, representative, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
+
+theorem cell_grain_of_mem_zmultiples (hε : 0 < ε) (hd : d ∈ AddSubgroup.zmultiples ε) :
+    (grain ε).cell d = Ico (d - ε / 2) (d + ε / 2) := by
+  rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne' hd]
+
+theorem cell_grain_zero (hε : 0 < ε) : (grain ε).cell 0 = Ico (-(ε / 2)) (ε / 2) := by
+  rw [cell_grain_of_mem_zmultiples hε (zero_mem _), zero_sub, zero_add]
 
 theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
     |d - representative ε d| = ε / 2 ↔
@@ -194,10 +174,10 @@ theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
 
 theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
     representative ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by
-  have hrep := representative_eq_self_of_mem_zmultiples hε.ne' hd
-  rw [← hrep, ← cell_grain hε, hrep]
+  rw [← cell_grain_of_mem_zmultiples hε hd, ← ker_representative hε.ne']
   ext v
-  rw [mem_preimage, mem_singleton_iff, Setoid.mem_cell, grain_iff_representative hε.ne', hrep]
+  rw [mem_preimage, mem_singleton_iff, Setoid.mem_cell, Setoid.ker_def,
+    representative_eq_self_of_mem_zmultiples hε.ne' hd]
 
 theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε := by
   have hd : d ∈ (grain ε).cell d' := h
@@ -217,9 +197,7 @@ the coarser one. -/
 theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
     (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) :
     (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
-  have hε₂ := hε₁.trans_le h
-  rw [cell_grain hε₁, cell_grain hε₂, representative_eq_self_of_mem_zmultiples hε₁.ne' h₁,
-    representative_eq_self_of_mem_zmultiples hε₂.ne' h₂]
+  rw [cell_grain_of_mem_zmultiples hε₁ h₁, cell_grain_of_mem_zmultiples (hε₁.trans_le h) h₂]
   exact Ico_subset_Ico (by linarith) (by linarith)
 
 theorem grain_le_grain_of_odd (j : ℕ) : grain ε ≤ grain ((2 * j + 1 : ℕ) * ε) := by
@@ -235,11 +213,9 @@ theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
   set K : α := (2 * j : ℕ) * ε with hK
   have hj : (1 : α) ≤ j := by exact_mod_cast hj
   have hK' : K = 2 * (j * ε) := by rw [hK]; push_cast; ring
-  have hfine := cell_grain hε (j * ε)
-  rw [representative_eq_self_of_mem_zmultiples hε.ne'
-    (AddSubgroup.mem_zmultiples_iff.2 ⟨j, by rw [zsmul_eq_mul, Int.cast_natCast]⟩)] at hfine
-  have hcoarse := cell_grain (by rw [hK']; positivity : 0 < K) 0
-  rw [representative_eq_self_of_mem_zmultiples (by rw [hK']; positivity) (zero_mem _)] at hcoarse
+  have hfine := cell_grain_of_mem_zmultiples hε (d := j * ε)
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨j, by rw [zsmul_eq_mul, Int.cast_natCast]⟩)
+  have hcoarse := cell_grain_zero (by rw [hK']; positivity : 0 < K)
   have hlo : j * ε - ε / 4 ∈ (grain ε).cell (j * ε) := hfine ▸ ⟨by linarith, by linarith⟩
   have hhi : j * ε + ε / 4 ∈ (grain ε).cell (j * ε) := hfine ▸ ⟨by linarith, by linarith⟩
   have h0 : j * ε - ε / 4 ∈ (grain K).cell 0 := hcoarse ▸ ⟨by nlinarith, by linarith⟩
@@ -251,10 +227,10 @@ theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
 /-- The grain of width `ε` refines the grain of width `k * ε` exactly when `k` is odd. -/
 theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
     grain ε ≤ grain (k * ε) ↔ Odd k := by
-  rcases Nat.even_or_odd' k with ⟨j, rfl | rfl⟩
-  · refine ⟨fun h ↦ absurd h (not_grain_le_grain_of_even hε (by omega)), fun h ↦ ?_⟩
-    exact absurd h (Nat.not_odd_iff_even.2 (even_two_mul j))
-  · exact ⟨fun _ ↦ odd_two_mul_add_one j, fun _ ↦ grain_le_grain_of_odd j⟩
+  obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' k
+  · exact iff_of_false (not_grain_le_grain_of_even hε (by omega))
+      (Nat.not_odd_iff_even.2 (even_two_mul j))
+  · exact iff_of_true (grain_le_grain_of_odd j) (odd_two_mul_add_one j)
 
 end Grain
 

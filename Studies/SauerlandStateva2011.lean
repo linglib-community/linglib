@@ -143,26 +143,28 @@ theorem second_reset_vacuous {β : Type*} [LinearOrder β] (ε : β) :
       ({ε} : Finset β).max' (Finset.singleton_nonempty ε) = ε :=
   ⟨Finset.min'_singleton ε, Finset.max'_singleton ε⟩
 
-private theorem cell_of_mul {ε d₀ : ℝ} (k : ℤ) (hk : (k : ℝ) * ε = d₀) (hε : 0 < ε) :
-    (grain ε).cell d₀ = Set.Ico (d₀ - ε / 2) (d₀ + ε / 2) := by
-  rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'
-    (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]
-
 /-! (13): *5 meters* at 1 m, *4 meters 50* at 50 cm, and *4 meters 90* at 10 cm. -/
 
 example : (grain (1 : ℝ)).cell 5 = Set.Ico (9 / 2) (11 / 2) := by
-  rw [cell_of_mul 5 (by norm_num) one_pos]; norm_num
+  rw [cell_grain_of_mem_zmultiples one_pos (AddSubgroup.mem_zmultiples_iff.2 ⟨5, by norm_num⟩)]
+  norm_num
 
 example : (grain (1 / 2 : ℝ)).cell (9 / 2) = Set.Ico (17 / 4) (19 / 4) := by
-  rw [cell_of_mul 9 (by norm_num) (by norm_num)]; norm_num
+  rw [cell_grain_of_mem_zmultiples (by norm_num)
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨9, by norm_num⟩)]
+  norm_num
 
 example : (grain (1 / 10 : ℝ)).cell (49 / 10) = Set.Ico (97 / 20) (99 / 20) := by
-  rw [cell_of_mul 49 (by norm_num) (by norm_num)]; norm_num
+  rw [cell_grain_of_mem_zmultiples (by norm_num)
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨49, by norm_num⟩)]
+  norm_num
 
 /-! (20): at a coarsest width of ten, *49* and *50* share a cell, which the shorter *50* denotes,
 so *approximately 49* is odd. -/
 
 example : (49 : ℝ) ∈ (grain 10).cell 50 := by
-  rw [cell_of_mul 5 (by norm_num) (by norm_num)]; norm_num
+  rw [cell_grain_of_mem_zmultiples (by norm_num)
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨5, by norm_num⟩)]
+  norm_num
 
 end SauerlandStateva2011
