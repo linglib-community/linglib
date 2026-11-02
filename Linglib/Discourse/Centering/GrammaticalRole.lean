@@ -2,28 +2,30 @@ module
 
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Case.Alignment
 
 /-!
 # Centering theory: ranking by grammatical role
 
-The ranking of forward-looking centers that centering theory assumes for English: the subject
-outranks the object, which outranks every other role. Kameyama argued for grammatical role over
-Sidner's focus-based ranking, Grosz, Joshi, and Weinstein adopt it in their examples, and Gordon,
-Grosz, and Gilliom's repeated-name penalty experiments support it.
+This file defines the grammatical roles by which Grosz, Joshi, and Weinstein rank the
+forward-looking centers of an English utterance: the subject above the objects, and the objects
+above every other role. Sidner's focusing theory had ordered its potential foci by thematic role
+instead. Grosz, Joshi, and Weinstein call grammatical role a major factor in the ranking, not the
+only one, and Gordon, Grosz, and Gilliom found that surface-initial position also raises an
+entity's prominence, whether or not it is the subject. Read as a marking of the comparative
+coding slots, the ranking [groups S with A](##isAccusative_ofArgumentRole) and
+[P with R and T](##isNeutral_ofArgumentRole_comp_ditransitive).
 
-## Main declarations
+## Implementation notes
 
-* `Discourse.Centering.GrammaticalRole`: subject, object, and other, linearly ordered in that
-  order of prominence.
-* `GrammaticalRole.ofArgumentRole`: the role of a comparative coding slot under an accusative
-  alignment, the hom from `ArgumentRole` that connects the ranking to the clause
-  vocabulary.
+The coding-slot map reads a ditransitive as a double-object construction, whose recipient and
+theme are both objects. A recipient in a prepositional phrase is an other role, so no map from
+the coding slots fits both English ditransitive constructions.
 
 ## References
 
-* [kameyama-1986]
 * [grosz-joshi-weinstein-1995]
+* [sidner-1979]
 * [gordon-grosz-gilliom-1993]
 -/
 
@@ -31,7 +33,8 @@ Grosz, and Gilliom's repeated-name penalty experiments support it.
 
 namespace Discourse.Centering
 
-/-- A grammatical role ranking the forward-looking centers: subject over object over the rest. -/
+/-- The grammatical roles by which [grosz-joshi-weinstein-1995] rank forward-looking centers,
+SUBJECT > OBJECT(S) > OTHER (p. 214): the subject, an object, and every other role. -/
 inductive GrammaticalRole where
   | subject
   | object
@@ -52,15 +55,20 @@ theorem object_lt_subject : object < subject := by decide
 
 theorem other_lt_object : other < object := by decide
 
-/-- The role of a comparative coding slot under the accusative alignment the ranking was stated
-for: the S and A slots are the subject and the P, R, and T slots are objects. Obliques lie
-outside the coding slots and are the other roles. -/
+/-- The role of a comparative coding slot in an English clause: S and A are subjects, and P, R,
+and T are objects, R and T as the two objects of a double-object construction. -/
 def ofArgumentRole : ArgumentRole → GrammaticalRole
   | .S | .A => .subject
   | .P | .R | .T => .object
 
 theorem ofArgumentRole_ne_other (r : ArgumentRole) : ofArgumentRole r ≠ other := by
-  cases r <;> decide
+  cases r <;> nofun
+
+theorem isAccusative_ofArgumentRole : Alignment.IsAccusative ofArgumentRole := ⟨rfl, nofun⟩
+
+theorem isNeutral_ofArgumentRole_comp_ditransitive :
+    Alignment.IsNeutral (ofArgumentRole ∘ Alignment.ditransitive) :=
+  ⟨rfl, rfl⟩
 
 end GrammaticalRole
 

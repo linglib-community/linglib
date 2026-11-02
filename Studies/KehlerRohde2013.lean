@@ -544,8 +544,8 @@ theorem voiceProduction_subject_lt :
 /-! ### The Centering term
 
 The stimuli pair same-gender characters, so the prompt pronoun φ-agrees with both. The voice
-manipulation varies the context sentence, (20a) against (20b): the passive promotes the stimulus
-to subject, a stronger signal of topichood than the subject of an active ([davison-1984]), while
+manipulation varies the context sentence, (20a) against (20b): the passive promotes the
+experiencer, Brittany, to subject, a stronger signal of topichood than the subject of an active ([davison-1984]), while
 under the grammatical-role ranking of forward-looking centers the context's subject is the
 backward-looking center of any continuation that mentions it, in either voice. -/
 
