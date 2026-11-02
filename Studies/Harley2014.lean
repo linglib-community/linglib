@@ -7,7 +7,6 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Allosemy
-public import Linglib.Morphology.Root.Certificates
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Clause.Arguments
 public import Linglib.Data.Examples.Harley2014
@@ -209,10 +208,6 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
   refine ⟨unaccusative .singular, unaccusative .plural, hsg ▸ Finset.singleton_nonempty _,
     hpl ▸ Finset.singleton_nonempty _, ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
-
-theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (fun s ↦ {s}) run :=
-  (Morphology.Root.hasSuppletiveCore_singleton realization run).mpr
-    (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))
 
 /-- √548 as a List-3 `Realization.Interpreted` view. -/
 def cahootHead :

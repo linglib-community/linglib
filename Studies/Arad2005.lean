@@ -2,6 +2,7 @@ module
 
 public import Studies.McCarthy1981
 public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Root.Certificates
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Hebrew.ConsonantalRoots
@@ -877,5 +878,30 @@ theorem roots_allosemous :
     ⟨"CeCeC", "taCCiC", "input", ?_, "a_record", ?_, by decide⟩,
     ⟨"1", "maCCeC", "to_think", ?_, "computer", ?_, by decide⟩,
     ⟨"CeCeC", "CaCCeCet", "oil_grease", ?_, "cream", ?_, by decide⟩⟩ <;> decide +kernel
+
+/-- `patternHead p` is the category head of a pattern, v for a binyan and n for a mišqal. -/
+def patternHead (p : String) : Head := if (binyan? p).isSome then .v else .n
+
+theorem isLicensed_roots_iff {r p : String} :
+    roots.IsLicensed r p ↔ ∃ a ∈ Wordlist.analyses, a.root = some r ∧ pattern? a = some p := by
+  simp [Realization.IsLicensed, roots, rootForms, Finset.Nonempty]
+
+/-- The roots of the data that form both verbs and nouns, and so are licensed under v and under n,
+are the four whose meanings vary with the pattern (Ch. 7). -/
+theorem crossCategorial_iff :
+    ∀ r ∈ (Wordlist.analyses.filterMap (·.root)).dedup,
+      Root.IsCrossCategorial roots.toRealization patternHead r ↔
+        r ∈ ["sgr", "qlt", "xšb", "šmn"] := by
+  have key (r : String) : Root.IsCrossCategorial roots.toRealization patternHead r ↔
+      ∃ a ∈ Wordlist.analyses, ∃ b ∈ Wordlist.analyses, a.root = some r ∧ b.root = some r ∧
+        ∃ p ∈ pattern? a, ∃ q ∈ pattern? b, patternHead p ≠ patternHead q := by
+    simp only [Root.IsCrossCategorial, isLicensed_roots_iff]
+    constructor
+    · rintro ⟨p, q, hk, ⟨a, ha, har, hp⟩, b, hb, hbr, hq⟩
+      exact ⟨a, ha, b, hb, har, hbr, p, hp, q, hq, hk⟩
+    · rintro ⟨a, ha, b, hb, har, hbr, p, hp, q, hq, hk⟩
+      exact ⟨p, q, hk, ⟨a, ha, har, hp⟩, b, hb, hbr, hq⟩
+  simp only [key]
+  decide +kernel
 
 end Arad2005

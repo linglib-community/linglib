@@ -95,6 +95,10 @@ theorem not_isConstantIn_of_isVariantIn {g : R → Ctx → Finset X} {r : R}
   obtain ⟨c, c', x, hx, x', hx', hne⟩ := h
   exact fun hc => hne (hc x hx x' hx')
 
+theorem isConstantIn_iff_not_isVariantIn {g : R → Ctx → Finset X} {r : R} :
+    IsConstantIn g r ↔ ¬ IsVariantIn g r := by
+  simp only [IsConstantIn, IsVariantIn, not_exists, not_and, not_not]
+
 theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
     IsConstantIn g r ↔ {x | ∃ c, x ∈ g r c}.Subsingleton := by
   constructor
@@ -415,6 +419,9 @@ end Hom
 equal realization and interpretation profiles. -/
 def ProfileEq (r r' : R) : Prop :=
   (∀ c, S.realize r c = S.realize r' c) ∧ (∀ c, S.interp r c = S.interp r' c)
+
+instance [Fintype Ctx] [DecidableEq F] [DecidableEq M] (r r' : R) : Decidable (S.ProfileEq r r') :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `profileSetoid` is profile equality as a setoid. -/
 def profileSetoid : Setoid R where
