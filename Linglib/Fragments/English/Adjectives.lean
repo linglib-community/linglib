@@ -67,8 +67,12 @@ abbrev tall := height.pos
 
 abbrev short := height.neg
 
-def high : GradableAdjective :=
-  { form := "high", dimension := some .height, antonymForm := some "low" }
+def elevation : AntonymPair :=
+  { dimension := .height, posForm := "high", negForm := "low" }
+
+abbrev high := elevation.pos
+
+abbrev low := elevation.neg
 
 /-- *happy* here is the one-place predicate "x is happy"; the two-place veridical-preferential
 attitude predicate "x is happy that p" is in `Studies/UegakiSudo2019.lean`. -/
@@ -311,6 +315,10 @@ on its negative pole. -/
 def smart : GradableAdjective :=
   { form := "smart", dimension := some .intelligence, comparison := inflectional "smart"
   , antonymForm := some "dumb" }
+
+/-- *Tragic* measures tragedy, which no other entry does. -/
+def tragic : GradableAdjective :=
+  { form := "tragic", dimension := some .tragedy, comparison := analytic "tragic" }
 
 /-- *Clever* measures intelligence, as *smart* does. -/
 def clever : GradableAdjective :=
@@ -574,15 +582,15 @@ abbrev impossible := possibility.neg
 
 /-- The antonym pairs of the fragment. -/
 def pairs : List AntonymPair := [
-  height, happiness, fullness, heat, cost, wetness, cleanliness, straightness, openness,
+  height, elevation, happiness, fullness, heat, cost, wetness, cleanliness, straightness, openness,
   smoothness, hardness, life, size, extremeSize, pristineness, warmth, weight, thickness, depth,
   strength, speed, age, brightness, volume, confidence, sureness, value, beauty, pleasantness,
   expectation, possibility, safety]
 
 /-- The entries outside an antonym pair. -/
 def singletons : List GradableAdjective := [
-  high, sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, clever, wise,
-  confident,
+  sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, tragic, clever,
+  wise, confident,
   doubtful, important, cracked, dented, scratched, shattered, nice, decent,
   acceptable, adequate, horrible, terrible, awful, dreadful, frightening, disgusting, annoying,
   scary, wonderful, delightful, gorgeous, surprising, remarkable, stunning, expected]

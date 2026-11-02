@@ -37,10 +37,11 @@ Stalnaker selection function.
   scale's relation is not imposed on the family; for constructed degrees the field of the induced
   comparison is [the set of classes of the field of the comparison](##field_lt), and everything
   outside that field [falls into one class](##mk_eq_mk_of_notMem_field).
-* The scale of an example is read from `English.Adjectives` and `English.Nouns`. A scale with a
-  physical dimension is that dimension, so *tall* and *long* share one, and any other is the
-  adjective's own. The fragment's *long* is the spatial clause of (4.3); the temporal clause is
-  the paper's and stays here.
+* The scale of an example is read from `English.Adjectives`, `English.Nouns` and
+  `English.MeasurePhrases` (`Degree.ScalarDimension.comparisonScale`), and *six feet* is the
+  paper's degree on the relation ordering lengths: if it is the name of $⟨u, >⟩$ it cannot also be
+  the name of $⟨u, <⟩$ (p. 274). The fragment's *long* is the spatial clause of (4.3); the temporal
+  clause is the paper's and stays here.
 * (66) lies outside the prediction. Cresswell takes it to use the words as if they produced a
   common scale, and says that he does not know how this should be represented.
 
@@ -149,27 +150,11 @@ end Scales
 
 /-! ### The scales of the paper's comparatives -/
 
-/-- A scale is the physical dimension of what is measured or, where there is none, the adjective's
-own dimension: *clever* "will induce its own" scale (2.2), (2.4). -/
-abbrev Scale := QuantityDimension ⊕ ScalarDimension
-
-/-- A directed scale is the relation of a degree read upward or, for *short*, downward (2.1). -/
-abbrev DirectedScale := Scale × Polarity
-
-/-- The directed scale of a gradable adjective. -/
-def adjectiveScale (g : GradableAdjective) : Option DirectedScale :=
-  g.dimension.map fun d ↦ (d.dimension?.elim (.inr d) .inl, g.polarity)
-
 /-- Spatial distance read upward, the scale of *tall* (2.2). -/
 def spatial : DirectedScale := (.inl (.of .length), .positive)
 
 /-- Temporal distance read upward, the scale of *long* of an event (4.3). -/
 def temporal : DirectedScale := (.inl (.of .time), .positive)
-
-/-- A measure phrase names a degree on the relation ordering its unit's dimension, read upward:
-if *six feet* is the name of $⟨u, >⟩$ it cannot also be the name of $⟨u, <⟩$ (p. 274). -/
-def measureScale (t : English.MeasurePhrases.MeasureTerm) : DirectedScale :=
-  (.inl t.dimension, .positive)
 
 /-- A mass noun carries degrees of volume (40) and a count noun, through the plural, a number
 (3.6). -/
@@ -199,7 +184,7 @@ def long (a : E) : Set (Σ s, P s) :=
   {d | a ∈ ω ∧ (a ∈ object ∧ d = ⟨spatial, extent a⟩ ∨ a ∈ event ∧ d = ⟨temporal, duration a⟩)}
 
 -- The fragment's *long* is the spatial clause.
-example : adjectiveScale English.Adjectives.long = some spatial := rfl
+example : English.Adjectives.long.directedScale? = some spatial := rfl
 
 variable {ω object event extent duration}
 
@@ -255,19 +240,19 @@ open English.Adjectives English.MeasurePhrases English.Nouns Examples
 /-- The examples whose judgments follow from their scales. (56) and (57) compare nothing, and
 (50) and (66) are `crossScale`. -/
 def comparisons : List Compared :=
-  [⟨adjectiveScale tall, adjectiveScale tall, ex_13⟩,
-   ⟨adjectiveScale tall, adjectiveScale English.Adjectives.long, ex_15⟩,
-   ⟨adjectiveScale tall, adjectiveScale clever, ex_23⟩,
-   ⟨adjectiveScale tall, some (measureScale foot), ex_35⟩,
-   ⟨adjectiveScale tall, some (measureScale foot), ex_37⟩,
-   ⟨adjectiveScale short, some (measureScale foot), ex_39⟩,
+  [⟨tall.directedScale?, tall.directedScale?, ex_13⟩,
+   ⟨tall.directedScale?, English.Adjectives.long.directedScale?, ex_15⟩,
+   ⟨tall.directedScale?, clever.directedScale?, ex_23⟩,
+   ⟨tall.directedScale?, some foot.directedScale, ex_35⟩,
+   ⟨tall.directedScale?, some foot.directedScale, ex_37⟩,
+   ⟨short.directedScale?, some foot.directedScale, ex_39⟩,
    ⟨some (nounScale water), some (nounScale mud), ex_41⟩,
    ⟨some (nounScale man), some (nounScale bird), ex_52⟩,
-   ⟨adjectiveScale beautiful, adjectiveScale beautiful, ex_62⟩,
-   ⟨adjectiveScale tall, adjectiveScale beautiful, ex_65⟩,
-   ⟨some temporal, adjectiveScale English.Adjectives.long, ex_69⟩,
-   ⟨adjectiveScale short, adjectiveScale short, ex_70⟩,
-   ⟨adjectiveScale tall, adjectiveScale tall, fn10_iii⟩]
+   ⟨beautiful.directedScale?, beautiful.directedScale?, ex_62⟩,
+   ⟨tall.directedScale?, beautiful.directedScale?, ex_65⟩,
+   ⟨some temporal, English.Adjectives.long.directedScale?, ex_69⟩,
+   ⟨short.directedScale?, short.directedScale?, ex_70⟩,
+   ⟨tall.directedScale?, tall.directedScale?, fn10_iii⟩]
 
 /-- An example is acceptable exactly when its terms lie on the same scale, *short* and *six feet*
 being opposed in direction. -/
@@ -277,8 +262,8 @@ theorem scale_eq_iff_acceptable :
 
 /-- The examples printed without an asterisk although their terms lie on different scales. -/
 def crossScale : List Compared :=
-  [⟨adjectiveScale beautiful, adjectiveScale clever, ex_50⟩,
-   ⟨adjectiveScale old, adjectiveScale wise, ex_66⟩]
+  [⟨beautiful.directedScale?, clever.directedScale?, ex_50⟩,
+   ⟨old.directedScale?, wise.directedScale?, ex_66⟩]
 
 theorem scale_ne_of_mem_crossScale :
     ∀ c ∈ crossScale, c.left ≠ c.right ∧ c.row.judgment = .acceptable := by
@@ -287,8 +272,8 @@ theorem scale_ne_of_mem_crossScale :
 /-- (50) has no asterisk and (65) has one, yet the two compare across scales alike, so the account
 gives them no different verdict. -/
 theorem unstarred_crosses_scales :
-    adjectiveScale beautiful ≠ adjectiveScale clever ∧
-      adjectiveScale tall ≠ adjectiveScale beautiful ∧ ex_50.judgment ≠ ex_65.judgment := by
+    beautiful.directedScale? ≠ clever.directedScale? ∧
+      tall.directedScale? ≠ beautiful.directedScale? ∧ ex_50.judgment ≠ ex_65.judgment := by
   decide
 
 end Rows

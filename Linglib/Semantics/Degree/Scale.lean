@@ -23,6 +23,7 @@ a degree achievement is read off that shape.
 * `ScalarDimension`: the dimensions of gradable predicates.
 * `ScalarDimension.boundedness`: the shape of a dimension's scale.
 * `ScalarDimension.dimension?`: the physical dimension of a dimension, if it has one.
+* `ComparisonScale`, `ScalarDimension.comparisonScale`: what two adjectives must share to compare.
 * `ScalarDimension.degree`: the degrees of a dimension.
 * `Boundedness.defaultVendlerClass`: the default Vendler class of a degree achievement on a scale.
 
@@ -42,6 +43,7 @@ density, which Fox and Hackl's Universal Density of Measurement asserts of every
 
 ## References
 
+* [M. J. Cresswell, *The Semantics of Degree* (1976)][cresswell-1976]
 * [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
   Predicates* (2005)][kennedy-mcnally-2005]
 * [C. Kennedy, *Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives*
@@ -71,7 +73,7 @@ inductive ScalarDimension
   -- Sensory
   | temperature | brightness | volume | taste
   -- Evaluative
-  | happiness | cost | price | quality | value | danger | beauty | importance | safety
+  | happiness | cost | price | quality | value | danger | beauty | importance | safety | tragedy
   -- Psychological
   | intelligence | wisdom | expectation | possibility | confidence
   -- State (adjective + deadjectival-verb change dimensions)
@@ -99,7 +101,7 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .wetness | .possibility => .lowerClosed
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .temperature | .brightness | .volume | .taste
-  | .happiness | .cost | .price | .quality | .value | .danger | .beauty
+  | .happiness | .cost | .price | .quality | .value | .danger | .beauty | .tragedy
   | .importance | .intelligence | .wisdom | .expectation
   | .hardness | .color | .corrosion | .quantity
   | .unspecified => .open_
@@ -119,6 +121,16 @@ def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimen
   | .quantity => some 1
   | .speed => some .speed
   | _ => none
+
+/-- A comparison scale is what two adjectives must share to be compared: a physical dimension, or
+for an adjective without one its own dimension. -/
+abbrev ComparisonScale := QuantityDimension ⊕ ScalarDimension
+
+/-- The comparison scale of a dimension is its physical dimension where it has one, so *tall* and
+*wide* share a scale of linear extent, and otherwise the dimension itself, as *clever* induces its
+own scale of cleverness in [cresswell-1976] (2.4). -/
+def ScalarDimension.comparisonScale (d : ScalarDimension) : ComparisonScale :=
+  d.dimension?.elim (.inr d) .inl
 
 /-! ### Degrees -/
 

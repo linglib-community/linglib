@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Degree.Adjective
 public import Linglib.Semantics.Degree.Measure.Quantity
 public import Linglib.Fragments.English.Nouns
 public import Mathlib.Basic.Real.Basic
@@ -58,6 +59,9 @@ structure MeasureTerm extends toEnglishNoun : Nouns.Noun where
   magnitude_pos : 0 < magnitude := by decide +kernel
 
 namespace MeasureTerm
+
+/-- A measure term names an extent from the zero of its dimension, so a positive one. -/
+def directedScale (t : MeasureTerm) : Degree.DirectedScale := (.inl t.dimension, .positive)
 
 /-- The unit quantity a measure term denotes, its size in the reference unit times the unit
 quantity of its dimension. -/

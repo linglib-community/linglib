@@ -30,6 +30,8 @@ relative to a contextual range, is left to the studies.
   this holds exactly on a half-closed scale
   (`AntonymPair.complementaryStandards_iff_of_lexicalStandard_none`).
 * `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
+* `DirectedScale`, `GradableAdjective.directedScale?`: the ordered set an adjective's degrees
+  belong to.
 
 ## References
 
@@ -42,6 +44,8 @@ relative to a contextual range, is left to the studies.
 * [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
   (2012)][morzycki-2012]
 * [G. W. Sassoon, *A Typology of Multidimensional Adjectives* (2013)][sassoon-2013]
+* [M. J. Cresswell, *The Semantics of Degree* (1976)][cresswell-1976]
+* [C. Kennedy, *Projecting the Adjective* (1999)][kennedy-1999]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
   Mildness* (2025)][beltrama-2025]
 * [R. Nouwen, *The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers*
@@ -83,6 +87,11 @@ structure GradableAdjective extends Adjective where
   evaluativeValence : Option EvaluativeValence := none
   deriving Repr
 
+/-- A directed scale is a comparison scale with a polarity. [cresswell-1976] reads it as a relation
+ordering degrees upward or, for *short*, downward; for [kennedy-1999] it is the ordered set of the
+positive or the negative extents on the scale. Comparison is defined only within one. -/
+abbrev DirectedScale := ComparisonScale × Polarity
+
 namespace GradableAdjective
 
 /-- The degree semantics of an adjective, `none` for a non-gradable one. -/
@@ -104,6 +113,10 @@ theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
   | some d =>
     simpa [boundedness, standard, gradability?, hd] using
       Gradability.admits_standard (g := ⟨d, g.polarity, g.lexicalStandard⟩) h
+
+/-- The directed scale of an adjective: its comparison scale with its polarity. -/
+def directedScale? (g : GradableAdjective) : Option DirectedScale :=
+  g.dimension.map fun d ↦ (d.comparisonScale, g.polarity)
 
 end GradableAdjective
 

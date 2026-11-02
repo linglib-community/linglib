@@ -11,11 +11,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "negative"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Cross-polar anomaly: positive matrix adjective, negative subdeletion standard, same scale (length).",
     "verified": "page-image"
   },
@@ -31,11 +27,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "negative"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Cross-polar anomaly with the polarities reversed.",
     "verified": "page-image"
   },
@@ -51,11 +43,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Same-polarity subdeletion control: both adjectives positive on the shared scale of linear extent.",
     "verified": "page-image"
   },
@@ -71,11 +59,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "negative"],
-      ["standard_polarity", "negative"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Same-polarity subdeletion control with two negative adjectives.",
     "verified": "page-image"
   },
@@ -91,11 +75,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Minimal quadruple (61)-(64): cross-polar anomaly generalizes beyond antonym pairs to any polarity mismatch.",
     "verified": "page-image"
   },
@@ -111,11 +91,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "negative"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "tall and low are not antonyms, yet the polarity mismatch is anomalous.",
     "verified": "page-image"
   },
@@ -131,11 +107,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "negative"],
-      ["standard_polarity", "negative"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Same-polarity (negative-negative) member of the quadruple.",
     "verified": "page-image"
   },
@@ -151,11 +123,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "negative"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "true"]
-    ],
+    "paperFeatures": [],
     "comment": "Polarity-mismatch member of the quadruple with the negative adjective in the matrix.",
     "verified": "page-image"
   },
@@ -171,11 +139,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "false"]
-    ],
+    "paperFeatures": [],
     "comment": "Incommensurability: same polarity but distinct scales (height vs cleverness).",
     "verified": "page-image"
   },
@@ -191,11 +155,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["matrix_polarity", "positive"],
-      ["standard_polarity", "positive"],
-      ["shared_scale", "false"]
-    ],
+    "paperFeatures": [],
     "comment": "Incommensurability with two positive adjectives on distinct scales.",
     "verified": "page-image"
   },
@@ -211,10 +171,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["construction", "absolute"]
-    ],
+    "paperFeatures": [],
     "comment": "Measure phrase with a positive adjective: positive extents are bounded, so the ordering is defined.",
     "verified": "page-image"
   },
@@ -230,10 +187,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["construction", "absolute"]
-    ],
+    "paperFeatures": [],
     "comment": "Measure phrase with a negative adjective: negative extents are unbounded above, so the ordering is undefined.",
     "verified": "page-image"
   },
@@ -249,10 +203,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["construction", "comparative"]
-    ],
+    "paperFeatures": [],
     "comment": "Phrasal comparative contrast to (70): the standard is derived by applying short to the measure phrase, not by the measure phrase directly.",
     "verified": "page-image"
   },
@@ -268,10 +219,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["construction", "absolute"]
-    ],
+    "paperFeatures": [],
     "comment": "Negative adjectives reject overt measure phrases; cited in the argument that sharp-flat pairs are both positive.",
     "verified": "page-image"
   },
@@ -287,10 +235,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["construction", "absolute"]
-    ],
+    "paperFeatures": [],
     "comment": "Adverbial counterpart of the measure-phrase restriction.",
     "verified": "page-image"
   }
