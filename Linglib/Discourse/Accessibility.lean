@@ -23,7 +23,9 @@ carries lexical content, whether a name is full, its deixis, its stress and whet
 to reflect are read off the features: informativity, the lexical information a form carries;
 rigidity, its ability to pick out a referent by form alone; and attenuation, its phonological
 size. Each is compared, never counted: a form is more informative than another when it carries
-everything the other does, and the rigidity and attenuation scales are the chapter's own.
+everything the other does. The chapter gives no rigidity or attenuation scale, so their orders
+here separate only names, descriptions and pronominal forms, and phrases, stressed and unstressed
+words, clitics, inflection and zero.
 
 ## Main definitions
 
@@ -36,9 +38,9 @@ everything the other does, and the rigidity and attenuation scales are the chapt
 
 ## Implementation notes
 
-The scale is the paper's ordering of its English form classes, taken as data; the criteria
-are not individually monotone along it, and which comparisons each criterion predicts is the
-business of `Studies/Ariel2001.lean`. The cognitive statuses of referents, as against the
+The scale is the paper's ordering of its English form classes, taken as data; informativity and
+rigidity are not individually antitone along it, and which comparisons the criteria predict
+jointly is the business of `Studies/Ariel2001.lean`. The cognitive statuses of referents, as against the
 forms that code them, are `Discourse.GivennessStatus`.
 
 ## References
@@ -173,11 +175,11 @@ def bound : AccessibilityLevel → Prop
   | .cliticizedPron | .verbalAgreement => True
   | _ => False
 
-instance : DecidablePred modified := λ l => by cases l <;> unfold modified <;> infer_instance
-instance : DecidablePred lexical := λ l => by cases l <;> unfold lexical <;> infer_instance
-instance : DecidablePred full := λ l => by cases l <;> unfold full <;> infer_instance
-instance : DecidablePred stressed := λ l => by cases l <;> unfold stressed <;> infer_instance
-instance : DecidablePred bound := λ l => by cases l <;> unfold bound <;> infer_instance
+instance : DecidablePred modified := fun l ↦ by cases l <;> unfold modified <;> infer_instance
+instance : DecidablePred lexical := fun l ↦ by cases l <;> unfold lexical <;> infer_instance
+instance : DecidablePred full := fun l ↦ by cases l <;> unfold full <;> infer_instance
+instance : DecidablePred stressed := fun l ↦ by cases l <;> unfold stressed <;> infer_instance
+instance : DecidablePred bound := fun l ↦ by cases l <;> unfold bound <;> infer_instance
 
 /-! ### The criteria -/
 

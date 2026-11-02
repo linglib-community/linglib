@@ -2,7 +2,6 @@
   {
     "id": "ariel2001_1",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(1)"},
-    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Melissa: Well, I'll say awakened, cause that's what I have written down. Ron: (Sniff). Frank: Just watch, He'll put a note by it – note by that. I really like that word Melissa.",
     "discourseSegments": [],
@@ -13,10 +12,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["marker", "proxDem"],
-      ["marker", "unstressedPron"],
-      ["marker", "distalDem"],
-      ["marker", "distalDemNP"]
+      ["marker", "distal demonstrative (-NP)"],
+      ["marker", "unstressed pronoun"],
+      ["marker", "distal demonstrative (-NP)"],
+      ["marker", "distal demonstrative+NP"]
     ],
     "comment": "Household corpus. The word awakened is referred to by that, it, that, and that word.",
     "verified": "page-image"
@@ -37,7 +36,7 @@
       ["source", "Haaretz"],
       ["perspective", "victim"],
       ["victim", "zero"],
-      ["rapists", "lastName"]
+      ["rapists", "last name"]
     ],
     "comment": "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name.",
     "verified": "page-image"
@@ -57,7 +56,7 @@
     "paperFeatures": [
       ["source", "Maariv"],
       ["perspective", "rapists"],
-      ["victim", "proxDem"],
+      ["victim", "proximate demonstrative (-NP)"],
       ["rapists", "zero"]
     ],
     "comment": "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun.",
@@ -83,6 +82,7 @@
   },
   {
     "id": "ariel2001_6",
+    "method": "introspection",
     "source": {"bibkey": "ariel-2001", "paperLabel": "(6)"},
     "language": "stan1293",
     "primaryText": "In the garden, I saw a young girl kicking a tree. I looked at them for a while.",
@@ -95,7 +95,7 @@
     "readings": [],
     "paperFeatures": [
       ["antecedent", "girl and tree"],
-      ["marker", "unstressedPron"]
+      ["marker", "unstressed pronoun"]
     ],
     "comment": "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible.",
     "verified": "page-image"
@@ -113,7 +113,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["marker", "stressedPron"]
+      ["marker", "stressed pronoun"]
     ],
     "comment": "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998.",
     "verified": "page-image"
@@ -132,9 +132,9 @@
     "readings": [],
     "paperFeatures": [
       ["position", "headline"],
-      ["marker", "lastName"],
-      ["marker", "lastName"],
-      ["marker", "fullName"],
+      ["marker", "last name"],
+      ["marker", "last name"],
+      ["marker", "full name"],
       ["marker", "zero"]
     ],
     "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, zero (the paper prints 0).",
@@ -154,10 +154,10 @@
     "readings": [],
     "paperFeatures": [
       ["position", "opening sentence"],
-      ["marker", "fullNameMod"],
-      ["marker", "fullNameMod"],
-      ["marker", "fullNameMod"],
-      ["marker", "proxDem"]
+      ["marker", "full name+modifier"],
+      ["marker", "full name+modifier"],
+      ["marker", "full name+modifier"],
+      ["marker", "proximate demonstrative (-NP)"]
     ],
     "comment": "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a).",
     "verified": "page-image"
@@ -175,7 +175,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["marker", "stressedPron"]
+      ["marker", "stressed pronoun"]
     ],
     "comment": "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self.",
     "verified": "page-image"
@@ -195,8 +195,8 @@
       {"name": "the paper coreferent with the newspaper", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["marker", "shortDefDescription"],
-      ["marker", "shortDefDescription"]
+      ["marker", "short definite description"],
+      ["marker", "short definite description"]
     ],
     "comment": "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises.",
     "verified": "page-image"
@@ -214,14 +214,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["topicMarker", "unstressedPron"],
-      ["subjectMarker", "shortDefDescription"]
+      ["topicMarker", "unstressed pronoun"],
+      ["subjectMarker", "short definite description"]
     ],
     "comment": "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses.",
     "verified": "page-image"
   },
   {
     "id": "ariel2001_maya_rachel",
+    "method": "introspection",
     "source": {"bibkey": "ariel-2001", "paperLabel": "§1.2"},
     "language": "stan1293",
     "primaryText": "Maya kissed Rachel. And then she/SHE …",
@@ -236,8 +237,8 @@
       {"name": "SHE = Rachel", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["maya", "unstressedPron"],
-      ["rachel", "stressedPron"]
+      ["maya", "unstressed pronoun"],
+      ["rachel", "stressed pronoun"]
     ],
     "comment": "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun.",
     "verified": "page-image"
