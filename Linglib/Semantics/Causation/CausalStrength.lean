@@ -7,29 +7,14 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Actual causal strength
 
-Icard, Kominsky and Knobe measure how strongly a cause brought about an outcome by weighting its
-sufficiency by the probability of the cause and its necessity by the probability of its absence.
-Here worlds are draws `ι → Bool` of binary variables under a probability measure `μ`, and a cause
-is a set `S` of variables showing the draws of an actual round `w₀`, as Konuk, Quillien and
-Mascarenhas extend the measure to plural causes.
-
-## Main definitions
-
-* `CausalStrength.cause`: the event that the variables of `S` show their actual draws.
-* `CausalStrength.necessity`: the probability that the outcome fails when the cause's variables
-  are redrawn short of the cause and the others keep their actual draws.
-* `CausalStrength.sufficiency`: the probability, where neither cause nor outcome holds, that
-  forcing the cause on produces the outcome.
-* `CausalStrength.score`: sufficiency weighted by the cause's probability plus necessity weighted
-  by its absence's.
-
-## Main results
-
-* `CausalStrength.score_singleton`: under a product measure, a single cause scores its probability
-  times its sufficiency, plus its absence's probability when flipping it removes the outcome.
-* `CausalStrength.score_pi_cause`: under a product measure, when the outcome is that the variables
-  `T` show their actual draws, a part of `T` scores the probability of its absence plus that of the
-  outcome.
+Icard, Kominsky and Knobe measure how strongly a cause brought about an outcome by its
+[score](##CausalStrength.score), its [sufficiency](##CausalStrength.sufficiency) weighted by the
+probability of the cause plus its [necessity](##CausalStrength.necessity) weighted by the
+probability of its absence. Worlds are draws `ι → Bool` of binary variables under a probability
+measure, and a [cause](##CausalStrength.cause) is a set of variables showing the draws of an actual
+round, as Konuk, Quillien and Mascarenhas extend the measure to plural causes. Under a product
+measure a single cause [scores](##CausalStrength.score_singleton) its probability times its
+sufficiency, plus its absence's probability when flipping it removes the outcome.
 
 ## References
 
