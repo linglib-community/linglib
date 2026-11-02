@@ -21,11 +21,13 @@ supported by a team exactly when the types of its worlds are those in `T`.
   disjunction, and finite disjunction with each disjunct conjoined with `NE`.
 * `WorldType n k`, `worldType e M k w`: the world types, and the type of a world.
 * `hintikka e k τ`, `strongHintikka e T`: the Hintikka formulas of a type and of a set of types.
+* `typeDisj e S`: the disjunction of the Hintikka formulas of a set of types.
 
 ## Main results
 
 * `realize_hintikka_iff`: the Hintikka formula of `τ` holds at `w` iff `w` has type `τ`.
 * `worldType_eq_iff_worldBisim`: two worlds have the same type iff they are `k`-bisimilar.
+* `image_worldType_eq_iff_stateBisim`: two teams have the same types iff they are `k`-bisimilar.
 * `realize_hintikka_worldType_iff`: the Hintikka formula of `w`'s type holds at `w'` iff `w'` is
   `k`-bisimilar to `w`.
 * `support_strongHintikka_iff`: a team supports the strong Hintikka formula of `T` iff the types
@@ -53,7 +55,7 @@ variable {W W' : Type*} {Atom : Type*}
 /-! ### `⊤` and finite conjunction -/
 
 /-- The tautology `p ∨ ¬p` for the default atom is `NE`-free, true at every world and
-    supported by every team. BSML has no tautology without atoms. -/
+    supported by every team. -/
 def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
@@ -270,25 +272,37 @@ theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeMode
     simp only [decide_eq_decide]
     exact (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm
   | k + 1, w, w' => by
-    rw [worldType, worldType, Prod.ext_iff, funext_iff, WorldBisim, Finset.ext_iff]
+    rw [worldType, worldType, Prod.ext_iff, funext_iff, WorldBisim, ← Finset.coe_inj,
+      Finset.coe_image, Finset.coe_image, ← Set.liftRel_iff_image_eq]
     simp only [decide_eq_decide]
-    refine and_congr (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm ?_
-    simp only [Finset.mem_image]
-    constructor
-    · intro h
-      refine ⟨fun v hv ↦ ?_, fun v' hv' ↦ ?_⟩
-      · obtain ⟨v', hv', hvv'⟩ := (h _).mp ⟨v, hv, rfl⟩
-        exact ⟨v', hv', (worldType_eq_iff_worldBisim he k v v').mp hvv'.symm⟩
-      · obtain ⟨v, hv, hvv'⟩ := (h _).mpr ⟨v', hv', rfl⟩
-        exact ⟨v, hv, (worldType_eq_iff_worldBisim he k v v').mp hvv'⟩
-    · rintro ⟨h₁, h₂⟩ σ
-      constructor
-      · rintro ⟨v, hv, rfl⟩
-        obtain ⟨v', hv', hb⟩ := h₁ v hv
-        exact ⟨v', hv', ((worldType_eq_iff_worldBisim he k v v').mpr hb).symm⟩
-      · rintro ⟨v', hv', rfl⟩
-        obtain ⟨v, hv, hb⟩ := h₂ v' hv'
-        exact ⟨v, hv, (worldType_eq_iff_worldBisim he k v v').mpr hb⟩
+    exact and_congr (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm
+      ⟨.imp (worldType_eq_iff_worldBisim he k _ _).1,
+        .imp (worldType_eq_iff_worldBisim he k _ _).2⟩
+
+omit [Inhabited Atom] in
+/-- Two teams have the same types exactly when they are `k`-bisimilar, once `e` enumerates every
+    atom. -/
+theorem image_worldType_eq_iff_stateBisim (he : Function.Surjective e) {k : ℕ}
+    {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {s : Finset W} {s' : Finset W'} :
+    s.image (worldType e M k) = s'.image (worldType e M' k) ↔ StateBisim k M s M' s' := by
+  rw [← Finset.coe_inj, Finset.coe_image, Finset.coe_image, ← Set.liftRel_iff_image_eq]
+  exact ⟨.imp (worldType_eq_iff_worldBisim he k _ _).1,
+    .imp (worldType_eq_iff_worldBisim he k _ _).2⟩
+
+omit [Inhabited Atom] in
+/-- The type of a world of a disjoint union is its type in its summand. -/
+theorem worldType_sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) (k : ℕ) :
+    worldType e (M.sum M') k = Sum.elim (worldType e M k) (worldType e M' k) := by
+  induction k with
+  | zero => funext w; cases w <;> rfl
+  | succ k ih =>
+    funext w
+    cases w <;>
+    · refine Prod.ext rfl ?_
+      change Finset.image _ (Finset.map _ _) = Finset.image _ _
+      rw [ih]
+      ext
+      simp
 
 /-- The Hintikka formula of the type of `w` holds at `w'` exactly when `w'` is `k`-bisimilar to `w`
     ([aloni-anttila-yang-2024] Theorem 3.3). -/
@@ -313,12 +327,29 @@ theorem support_bigConj_iff (M : KripkeModel W Atom) (l : List (Formula Atom)) (
   | cons φ rest ih =>
     simp only [bigConj, support_conj, ih, List.forall_mem_cons]
 
+variable (e) in
+theorem neFree_bigDisj_hintikka {k : ℕ} (L : List (WorldType n k)) :
+    (bigDisj (L.map (hintikka e k))).NEFree :=
+  neFree_bigDisj _ fun x hx ↦ by
+    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ
+
 theorem support_bigDisj_hintikka_iff (M : KripkeModel W Atom) {k : ℕ} (L : List (WorldType n k))
     (t : Finset W) :
     support M (bigDisj (L.map (hintikka e k))) t ↔ ∀ w ∈ t, worldType e M k w ∈ L := by
-  rw [support_iff_forall_realize (neFree_bigDisj _ fun x hx ↦ by
-    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ)]
+  rw [support_iff_forall_realize (neFree_bigDisj_hintikka e L)]
   simp [realize_bigDisj, realize_hintikka_iff]
+
+variable (e) in
+/-- The disjunction of the Hintikka formulas of a set of types. -/
+noncomputable def typeDisj {k : ℕ} (S : Finset (WorldType n k)) : Formula Atom :=
+  bigDisj (S.toList.map (hintikka e k))
+
+theorem neFree_typeDisj {k : ℕ} (S : Finset (WorldType n k)) : (typeDisj e S).NEFree :=
+  neFree_bigDisj_hintikka e _
+
+theorem support_typeDisj_iff (M : KripkeModel W Atom) {k : ℕ} (S : Finset (WorldType n k))
+    (t : Finset W) : support M (typeDisj e S) t ↔ t.image (worldType e M k) ⊆ S := by
+  simp only [typeDisj, support_bigDisj_hintikka_iff, Finset.mem_toList, Finset.image_subset_iff]
 
 private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
     ∀ (l : List (WorldType n k)) (t : Finset W),
