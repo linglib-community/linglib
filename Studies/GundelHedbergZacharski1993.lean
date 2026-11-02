@@ -6,6 +6,11 @@ public import Linglib.Discourse.Givenness
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Romance.Spanish.Determiners
+public import Linglib.Fragments.Romance.Spanish.Pronouns
+public import Linglib.Fragments.Slavic.Russian.Determiners
+public import Linglib.Fragments.Slavic.Russian.Pronouns
 public import Linglib.Data.Statistics.GundelHedbergZacharski1993
 
 /-!
@@ -25,12 +30,13 @@ least](##familiar_mostFrequent).
 * The forms Table 1 aligns across languages are `Form.Kind`s. A printed form of Tables 2–6 has
   the kinds it may be: one, except a Spanish personal pronoun, which was not coded for stress, and
   which requires the weaker of the two statuses.
-* A demonstrative's deixis is the participant sets of its anchors. The two-way systems split the
-  author bipartition, read off the English and Mandarin fragments (Chinese *nèi* is *nà*). The
-  paper's medial and distal terms of Japanese and Spanish are read as the tripartition's addressee
-  and other cells. Harbour takes Modern Japanese *ko–so–a* to have become distance-based, while
-  Terenghi lists it as person-oriented and treats Spanish *ese* as also denoting intermediate
-  distance from the speaker.
+* A demonstrative's deixis is the participant sets of its anchors, read off its fragment entry
+  (Chinese *nèi* is *nà*, and the masculine singular stands for each paradigm). Spanish *ese*,
+  usable at any distance from the speaker, covers every participant set without the speaker, and
+  Japanese *so-* the listener's alone, its further reading slightly removed from both
+  participants unrecorded. Harbour takes Modern Japanese *ko–so–a* to have become distance-based,
+  while Terenghi lists it as person-oriented and treats Spanish *ese* as also denoting
+  intermediate distance from the speaker.
 * Japanese *kare*, listed under activated, is a stressed pronoun here, since the paper takes
   Japanese to have no unstressed personal pronoun.
 
@@ -102,26 +108,26 @@ def table1 : Language → List (Form.Kind × GivennessStatus)
      (.indefiniteN, .typeIdentifiable)]
   | .japanese =>
     [(.zero, .inFocus), (.stressedPronoun, .activated),
-     (.demonstrative Person.first.participantSets, .activated),
-     (.demonstrative Person.second.participantSets, .activated),
-     (.demonstrative Person.third.participantSets, .activated),
-     (.demonstrativeN Person.first.participantSets, .activated),
-     (.demonstrativeN Person.second.participantSets, .activated),
-     (.demonstrativeN Person.third.participantSets, .familiar), (.bareN, .typeIdentifiable)]
+     (.demonstrative Japanese.Pronouns.kore.deixis, .activated),
+     (.demonstrative Japanese.Pronouns.sore.deixis, .activated),
+     (.demonstrative Japanese.Pronouns.are.deixis, .activated),
+     (.demonstrativeN Japanese.Determiners.kono.deixis, .activated),
+     (.demonstrativeN Japanese.Determiners.sono.deixis, .activated),
+     (.demonstrativeN Japanese.Determiners.ano.deixis, .familiar), (.bareN, .typeIdentifiable)]
   | .russian =>
     [(.zero, .inFocus), (.pronoun, .inFocus), (.stressedPronoun, .activated),
-     (.demonstrative Person.first.participantSets, .activated),
-     (.demonstrative Person.first.participantSetsᶜ, .activated),
-     (.demonstrativeN Person.first.participantSets, .familiar),
-     (.demonstrativeN Person.first.participantSetsᶜ, .familiar), (.bareN, .typeIdentifiable)]
+     (.demonstrative Russian.Pronouns.ètot.deixis, .activated),
+     (.demonstrative Russian.Pronouns.tot.deixis, .activated),
+     (.demonstrativeN Russian.Determiners.ètot.deixis, .familiar),
+     (.demonstrativeN Russian.Determiners.tot.deixis, .familiar), (.bareN, .typeIdentifiable)]
   | .spanish =>
     [(.zero, .inFocus), (.pronoun, .inFocus), (.stressedPronoun, .activated),
-     (.demonstrative Person.first.participantSets, .activated),
-     (.demonstrative Person.second.participantSets, .activated),
-     (.demonstrative Person.third.participantSets, .activated),
-     (.demonstrativeN Person.first.participantSets, .activated),
-     (.demonstrativeN Person.second.participantSets, .familiar),
-     (.demonstrativeN Person.third.participantSets, .familiar),
+     (.demonstrative Spanish.Pronouns.este.deixis, .activated),
+     (.demonstrative Spanish.Pronouns.ese.deixis, .activated),
+     (.demonstrative Spanish.Pronouns.aquel.deixis, .activated),
+     (.demonstrativeN Spanish.Determiners.este.deixis, .activated),
+     (.demonstrativeN Spanish.Determiners.ese.deixis, .familiar),
+     (.demonstrativeN Spanish.Determiners.aquel.deixis, .familiar),
      (.definiteN, .uniquelyIdentifiable), (.indefiniteN, .typeIdentifiable),
      (.bareN, .typeIdentifiable)]
 
@@ -171,14 +177,22 @@ def Form.kinds : Form → List Form.Kind
   | .thatPronoun => [.demonstrative English.Pronouns.that_.deixis]
   | .thisN => [.demonstrativeN English.Determiners.this.deixis]
   | .thatN => [.demonstrativeN English.Determiners.that.deixis]
-  | .kore | .eto | .este => [.demonstrative Person.first.participantSets]
-  | .sore | .ese => [.demonstrative Person.second.participantSets]
-  | .are | .aquel => [.demonstrative Person.third.participantSets]
-  | .tot => [.demonstrative Person.first.participantSetsᶜ]
-  | .konoN | .etoN | .esteN => [.demonstrativeN Person.first.participantSets]
-  | .sonoN | .eseN => [.demonstrativeN Person.second.participantSets]
-  | .anoN | .aquelN => [.demonstrativeN Person.third.participantSets]
-  | .toN => [.demonstrativeN Person.first.participantSetsᶜ]
+  | .kore => [.demonstrative Japanese.Pronouns.kore.deixis]
+  | .sore => [.demonstrative Japanese.Pronouns.sore.deixis]
+  | .are => [.demonstrative Japanese.Pronouns.are.deixis]
+  | .konoN => [.demonstrativeN Japanese.Determiners.kono.deixis]
+  | .sonoN => [.demonstrativeN Japanese.Determiners.sono.deixis]
+  | .anoN => [.demonstrativeN Japanese.Determiners.ano.deixis]
+  | .eto => [.demonstrative Russian.Pronouns.ètot.deixis]
+  | .tot => [.demonstrative Russian.Pronouns.tot.deixis]
+  | .etoN => [.demonstrativeN Russian.Determiners.ètot.deixis]
+  | .toN => [.demonstrativeN Russian.Determiners.tot.deixis]
+  | .este => [.demonstrative Spanish.Pronouns.este.deixis]
+  | .ese => [.demonstrative Spanish.Pronouns.ese.deixis]
+  | .aquel => [.demonstrative Spanish.Pronouns.aquel.deixis]
+  | .esteN => [.demonstrativeN Spanish.Determiners.este.deixis]
+  | .eseN => [.demonstrativeN Spanish.Determiners.ese.deixis]
+  | .aquelN => [.demonstrativeN Spanish.Determiners.aquel.deixis]
   | .theN | .elN => [.definiteN]
   | .indefiniteThisN => [.indefiniteThisN]
   | .yiN | .aN | .unN => [.indefiniteN]

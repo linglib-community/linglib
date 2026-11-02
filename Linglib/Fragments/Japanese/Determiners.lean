@@ -19,20 +19,22 @@ the supremum for *ka* and the infimum for *mo*, which are `Quantifier.Det.some` 
 remaining quantifiers are words of their own, *subete* 'all', *hotondo* 'most' and *ryōhō*
 'both'. Numeral quantifiers such as *nan-nin-ka* 'several people'
 float away from their noun phrase, and *dare-mo* under clausemate negation is the negative
-indefinite of `Fragments/Japanese/PolarityItems.lean`.
+indefinite of `Fragments/Japanese/PolarityItems.lean`. The demonstrative determiners *kono*, *sono*
+and *ano* are Tsujimura's ko-so-a series before a noun.
 
 ## Main definitions
 
 * `Japanese.Determiners.indefinites`: the indeterminate quantifiers, with the coordinators of
   `Japanese.Coordination` as their particles.
 * `Japanese.Determiners.quantityWords`: the quantifiers that are words of their own.
-* `Japanese.Determiners.inventory`: the determiner inventory, quantifiers only.
+* `Japanese.Determiners.inventory`: the determiner inventory, quantifiers and demonstratives.
 
 ## References
 
 * [chierchia-1998]
 * [kratzer-shimoyama-2002]
 * [shimoyama-2006]
+* [tsujimura-2014]
 -/
 
 @[expose] public section
@@ -71,10 +73,23 @@ def ryoho : QuantificationalDeterminer := { form := "ryōhō", readings := {.bot
 /-- The quantifiers that are words of their own. -/
 def quantityWords : List QuantificationalDeterminer := [subete, hotondo, ryoho]
 
-/-- The determiner inventory has quantifiers only, there being no articles. -/
+/-- この *kono* 'this (N)', near the speaker ([tsujimura-2014] (24)). -/
+def kono : DemonstrativeDeterminer := { form := "kono", deixis := Person.first.participantSets }
+
+/-- その *sono* 'that (N)', near the listener, with the so-series' further reading slightly
+removed from both participants unrecorded ([tsujimura-2014] (24)). -/
+def sono : DemonstrativeDeterminer := { form := "sono", deixis := Person.second.participantSets }
+
+/-- あの *ano* 'that (N)', far from both participants ([tsujimura-2014] (24)). -/
+def ano : DemonstrativeDeterminer := { form := "ano", deixis := Person.third.participantSets }
+
+/-- The demonstrative determiners. -/
+def allDemonstratives : List DemonstrativeDeterminer := [kono, sono, ano]
+
+/-- The determiner inventory has quantifiers and demonstratives, there being no articles. -/
 def inventory : Determiner.Inventory :=
   indefinites.map (.quantifier ·.toQuantifier) ++
-    quantityWords.map .quantifier
+    quantityWords.map .quantifier ++ allDemonstratives.map .demonstrative
 
 theorem denote_dareKa : ⟦dareKa⟧ = ({Det.Family.some} : Set Det.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_disjunctive (q := dareKa) rfl]; rfl
