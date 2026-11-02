@@ -267,6 +267,17 @@ variable {p q : W → Set (NonemptyInterval T)}
 
 @[simp] theorem mem_perf {t : T} : (w, t) ∈ PERF p ↔ ∃ pts ∈ p w, pts.snd = t := Iff.rfl
 
+/-- Under an adverbial fixing the left boundary in `D`, the perfect holds at `t` where the span
+from a time of `D` to `t` belongs to the interval property. -/
+theorem mem_perf_inter_preimage_fst {D : Set T} {t : T} :
+    (w, t) ∈ PERF ((·.fst) ⁻¹' D ∩ p ·) ↔ ∃ x ∈ D, ∃ h : x ≤ t, ⟨(x, t), h⟩ ∈ p w := by
+  rw [mem_perf]
+  constructor
+  · rintro ⟨⟨⟨x, s⟩, h⟩, ⟨hx, hp⟩, rfl⟩
+    exact ⟨x, hx, h, hp⟩
+  · rintro ⟨x, hx, h, hp⟩
+    exact ⟨⟨(x, t), h⟩, ⟨hx, hp⟩, rfl⟩
+
 theorem perf_mono (h : ∀ w, p w ⊆ q w) : PERF p ⊆ PERF q :=
   fun _ ⟨pts, hp, hRB⟩ ↦ ⟨pts, h _ hp, hRB⟩
 
