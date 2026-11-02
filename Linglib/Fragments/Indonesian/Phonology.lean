@@ -173,14 +173,14 @@ def substituting : Finset Segment := {p, t, k, s}
 
 /-- What the prefix nasal and a root-initial `x` fuse into, which is the assimilated nasal,
 except that with `s` it is the palatal `ny`. -/
-def fuse (x : Segment) : List Segment :=
-  if x = s then [ny] else NasalSubstitution.substitute trigger ng x
+def fuse (x : Segment) : Segment :=
+  if x = s then ny else NasalSubstitution.substitute trigger ng x
 
 /-- What the prefix nasal and the base-initial segment `x` surface as. A substituting
 consonant fuses with the nasal, the nasal is lost before a sonorant consonant, and otherwise it
 assimilates. -/
 def juncture (x : Segment) : List Segment :=
-  if x ∈ substituting then fuse x
+  if x ∈ substituting then [fuse x]
   else if sonorantConsonant ≤ x then [x]
   else assimilate [ng, x]
 
