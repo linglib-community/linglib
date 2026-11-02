@@ -4,52 +4,71 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Haspelmath2025a
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Case.Spatial
 public import Linglib.Data.Examples.Readers
+public import Studies.Heine1997
 
 /-!
 # Haspelmath (2025): Nonverbal Clause Constructions
 
-Haspelmath surveys the clauses that lack a typical verb and fixes a term for each of eight types,
-defined by meaning. A duonominal clause puts two nominals in correspondence: it is
-classificational when the second nominal is indefinite and equational when it is definite. An
-attributional clause ascribes a property. A locopossessional clause is about location or
-possession: it is predlocative or appertentive when the nominal that is located or possessed is
-definite, and existential or predpossessive when it is indefinite. A hyparctic clause expresses
-existence regardless of location. Four of the eight types divide into a subject and a predicate.
-
-Forms are classified by the types they occur in. A copula links the two argument positions of
-an equational, ascriptive or locational clause, and an existive is a copula found only in
-existential and predpossessive clauses. A strategy is a way of building one type that is
-defined by form.
+Haspelmath defines by meaning eight types of clause that lack a typical verb, two duonominal, four
+locopossessional, the attributional and the hyparctic, and [four of the eight divide into a
+subject and a predicate](##predicational_iff). A copula links the argument positions of an
+equational, ascriptive or locational clause and an existive is a copula restricted to existential
+and predpossessive clauses, so [an existive is a form found in existential clauses and otherwise
+only in predpossessive ones](##isExistive_iff). Strategies are defined by form, and [the three
+predpossessive strategies the paper names are the forms of Heine's Action, Companion and Location
+Schemas](##predpossessiveStrategy?_eq_some_iff).
 
 ## Implementation notes
 
-* The definiteness of the second nominal, and of the located or possessed nominal, is an
-  argument of the constructor. The grid of the four locopossessional types then holds by
-  construction, and the cover terms are conditions on the arguments.
-* A form is represented by the set of constructions it occurs in, so `IsCopula` and
-  `IsExistive` are conditions on such a set. That a copula is an overt form is not represented.
-* The construction of a row is the type the paper prints with the example, or the type its
-  strategy builds.
+* The definiteness of the second nominal, and of the nominal located or possessed, is an argument
+  of the constructor, so the grid of the four locopossessional types holds by construction and the
+  cover terms are conditions on the arguments.
+* A form is represented by the set of constructions it occurs in as a link, so `IsCopula` and
+  `IsExistive` are conditions on such a set; that a copula is overt is not represented. The Hamar
+  form printed in bold in two rows is taken to be one form.
+* The construction of a row is the type the paper gives the example, or the type its strategy
+  builds.
+* A predpossessive strategy is read off Heine's formula for a source schema, which gives the
+  participant made the subject and the flag of the other.
+* The Turkish fragment follows Göksel and Kerslake in taking -(y)DI as the past copular marker,
+  its y the buffer consonant after a vowel; the paper, citing Kornfilt, bolds the y alone.
+
+## Errata
+
+* Table 1 places the hyparctic type in neither its predicational nor its nonpredicational row,
+  while the abstract and §13 count it among the four nonpredicational types; `Predicational`
+  follows the text.
+* Table 1 lists three subtypes of the equational type, without the tautotic type that §2 and (12)
+  give as the fourth.
+* The Hamar form of (61) and (66) is glossed as an existive, but (66) is a hyparctic clause and an
+  existive is a copula found in no clauses but existential and predpossessive ones, so [by the
+  definitions the form is a copula and not an existive](##hamar_existive).
+* Appendix 1 points the characterizational example to (25a) for (35a), the locopossessional entry
+  to Table 2 "in §11" for §13, and the presentational entry to n. 13 for n. 16.
 
 ## TODO
 
 * The rows hold the examples that introduce the types, the duonominal pairs, the strategy
-  examples, the Turkish and Spanish examples of the section on copulas, the Mandinka example
-  and the hyparctic ones. The paper's other examples are not entered, nor are the subtypes of
-  the equational and existential types or the minor predicate types.
-* The conditions that define the strategies are not stated over rows. Only the locative flag of
-  the Finnish examples is checked, against the fragment.
+  examples, the Turkish and Spanish examples of the section on copulas, the Mandinka example, the
+  Hamar existential and the hyparctic examples. The paper's other examples are not entered, nor
+  are the subtypes of the equational and existential types or the minor predicate types.
+* Only the predpossessive strategies are given forms, and only the locative flag of the Finnish
+  rows is checked against a fragment.
 
 ## References
 
 * [haspelmath-2025a]
+* [heine-1997]
 * [clark-1978]
+* [goksel-kerslake-2005]
+* [kornfilt-1997]
 -/
 
 @[expose] public section
@@ -127,7 +146,8 @@ theorem possessional_iff : t.Possessional ↔ t = appertentive ∨ t = predposse
 
 /-- A predicational clause divides into a subject and a predicate. A duonominal clause does when
 its second nominal is indefinite, and a locopossessional clause when the located or possessed
-nominal is definite, the locative phrase or the possessor then being the predicate. -/
+nominal is definite, the locative phrase or the possessor then being the predicate. The
+hyparctic type does not, as the abstract and §13 have it. -/
 def Predicational : Construction → Prop
   | duonominal d => d = .indefinite
   | attributional => True
@@ -173,7 +193,7 @@ section Forms
 variable {S T : Set Construction}
 
 /-- A copula links the two argument positions of an equational, ascriptive or locational clause,
-`S` being the set of constructions the form occurs in. -/
+`S` being the set of constructions the form occurs in as a link. -/
 def IsCopula (S : Set Construction) : Prop := ∃ t ∈ S, t.Copular
 
 /-- An existive is a copula that occurs in no clauses but existential and predpossessive ones. -/
@@ -195,6 +215,8 @@ theorem isExistive_iff : IsExistive S ↔ existential ∈ S ∧ S ⊆ {existenti
 theorem IsExistive.hyparctic_notMem (h : IsExistive S) : hyparctic ∉ S :=
   fun hm ↦ by simpa using h.2 hm
 
+-- A 'have' found only in predpossessive and existential clauses is an existive, so the
+-- transpossessive-existential strategy then uses one.
 theorem isExistive_pair : IsExistive {existential, predpossessive} :=
   isExistive_iff.2 ⟨by simp, subset_rfl⟩
 
@@ -217,7 +239,7 @@ inductive Strategy where
   | independentPossessor
   /-- An existive. -/
   | existiveCopula
-  /-- The verb of a transpossessive clause. -/
+  /-- The 'have' verb of a transpossessive clause. -/
   | transpossessiveExistential
   /-- A prolocative form, a short form whose meaning elsewhere is 'here' or 'there'. -/
   | prolocative
@@ -231,6 +253,33 @@ def Strategy.construction : Strategy → Construction
   | .obliquePossessor | .independentPossessor => appertentive
   | .existiveCopula | .transpossessiveExistential | .prolocative | .existentPostposing =>
     existential
+
+/-! ### The predpossessive strategies and Heine's event schemas -/
+
+section Heine
+
+open Heine1997 (Formula Schema)
+
+/-- The predpossessive strategy whose form a [heine-1997] formula has, if it is one the paper
+names: a possessor subject with the possessum as its object is transpossessive and with a
+comitative possessum compossessive, and a possessum subject with the possessor flagged by a case
+of place is locpossessive. -/
+def predpossessiveStrategy? (f : Formula) : Option Strategy :=
+  match f.subject, f.entry with
+  | .possessor, .object => some .transpossessive
+  | .possessor, e => if e.case = some .com then some .compossessive else none
+  | .possessee, e => if e.case.bind Case.dirOf = some .place then some .locpossessive else none
+
+/-- The three predpossessive strategies the paper names are the forms of three of
+[heine-1997]'s event schemas, the transpossessive of the Action Schema, the compossessive of the
+Companion Schema and the locpossessive of the Location Schema; the Genitive, Goal, Source, Topic
+and Equation Schemas have none of the three forms. -/
+theorem predpossessiveStrategy?_eq_some_iff (s : Schema) (σ : Strategy) :
+    predpossessiveStrategy? s.formula = some σ ↔ s = .action ∧ σ = .transpossessive ∨
+      s = .companion ∧ σ = .compossessive ∨ s = .location ∧ σ = .locpossessive := by
+  cases s <;> cases σ <;> decide
+
+end Heine
 
 /-! ### The examples -/
 
@@ -255,6 +304,12 @@ def constructions (row : Datum) : List Construction :=
   (row.features "construction").filterMap (List.lookup · constructionNames) ++
     ((row.parse? "strategy" strategyNames).map (·.construction)).toList
 
+/-- A row's bold form has a morph glossed as an existive. -/
+def GlossesExistive (row : Datum) : Prop :=
+  ∃ g ∈ row.features "boldGloss", "EXV".toList ∈ Gloss.segments g
+
+instance : DecidablePred GlossesExistive := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
 open Examples
 
 theorem labels_parse : ∀ row ∈ all,
@@ -277,37 +332,51 @@ theorem copula_gloss_copular : ∀ row ∈ all,
       ∀ t ∈ constructions row, t.Copular := by
   decide +kernel
 
-theorem mandinka_general_location : constructions ex57 = [predlocative, existential] := by
+/-- The Mandinka clause (57) is predlocative or existential as its nominal is read definite or
+indefinite, so its types are exactly the locational ones: it is general locational
+predication. -/
+theorem mandinka_general_location : ∀ t, t ∈ constructions ex57 ↔ t.Locational := by
   decide +kernel
 
-theorem seychelles_have :
-    "have" ∈ ex51.features "boldGloss" ∧ constructions ex51 = [existential] := by
-  decide +kernel
+-- The 'have' of the Seychelles Creole existential (51) links an existential clause, so it is a
+-- copula whatever else it occurs in; one found only in possessional clauses is not.
+theorem seychelles_have {S : Set Construction} (h : ∀ t ∈ constructions ex51, t ∈ S) :
+    "have" ∈ ex51.features "boldGloss" ∧ IsCopula S :=
+  ⟨by decide +kernel, existential, h _ (by decide +kernel), by decide⟩
 
-theorem existive_gloss : ∀ row ∈ all, "EXV" ∈ row.features "boldGloss" →
+theorem existive_gloss : ∀ row ∈ all, GlossesExistive row →
     constructions row = [existential] ∨ row = ex66 ∧ constructions row = [hyparctic] := by
   decide +kernel
 
-/-- The Hamar form glossed as an existive occurs in a hyparctic clause, so whatever other clauses
-it occurs in, it is not an existive as defined. -/
-theorem existive_gloss_hyparctic {S : Set Construction} (h : ∀ t ∈ constructions ex66, t ∈ S) :
-    "EXV" ∈ ex66.features "boldGloss" ∧ ¬ IsExistive S :=
-  ⟨by decide +kernel, fun hS ↦ hS.hyparctic_notMem (h _ (by decide +kernel))⟩
+/-- The Hamar form the paper glosses as an existive occurs in the existential clause (61) and in
+the hyparctic clause (66), so by the paper's definitions it is a copula but not an existive. -/
+theorem hamar_existive {S : Set Construction}
+    (h : ∀ t ∈ constructions ex61 ++ constructions ex66, t ∈ S) :
+    GlossesExistive ex61 ∧ GlossesExistive ex66 ∧ IsCopula S ∧ ¬ IsExistive S :=
+  ⟨by decide +kernel, by decide +kernel, ⟨existential, h _ (by decide +kernel), by decide⟩,
+    fun hS ↦ hS.hyparctic_notMem (h _ (by decide +kernel))⟩
 
 /-! ### The fragments -/
+
+/-- The segments a glossed word writes, read letter by letter by `ofChar` once its morph
+boundaries are dropped and it is lowercased. -/
+def spell (ofChar : Char → Option Phonology.Segment) (w : String) :
+    Option (List Phonology.Segment) :=
+  ((Gloss.segments w).flatten.map Char.toLower).mapM ofChar
 
 section Finnish
 
 open Phonology Finnish Finnish.Nominal Subregular.LocalRewrite
 
-/-- The possessor of the locpossessive example and the location of the existent-postposing one
-are the adessives of *Pekka* and *katto* in the Finnish fragment, after consonant gradation, and
-the adessive is a place case: the locative flag of the locpossessive strategy. -/
+-- The possessor of the locpossessive example (25) and the location of the existent-postposing
+-- example (53) are the adessives of *Pekka* and *katto* in the Finnish fragment, after consonant
+-- gradation, and the adessive is a case of place, the flag the locpossessive strategy puts on the
+-- possessor.
 theorem finnish_adessive :
     (realize [p, e, k, k, a] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
-        (Finnish.ofString? "pekalla").toList ∧
+        (ex25.surfaceTokens.head?.bind (spell Finnish.ofChar)).toList ∧
       (realize [k, a, t, t, o] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
-        (Finnish.ofString? "katolla").toList ∧
+        (ex53.surfaceTokens.head?.bind (spell Finnish.ofChar)).toList ∧
       Finnish.Case.ade.label.dirOf = some .place := by
   decide
 
@@ -317,10 +386,12 @@ section Turkish
 
 open Phonology Turkish Turkish.Phonology
 
+-- The word of (31) is the fragment's realization of *satıcı* with the past copular marker and
+-- the first person singular.
 theorem turkish_affixal_copula :
-    ofSegmented? "satıcı-y-dı-m" = some (Turkish.realize [s, a, t, ı, c, ı]
+    ex31.surfaceTokens.map (spell ofChar) = [some (Turkish.realize [s, a, t, ı, c, ı]
       [Verb.Exponent.pastCopula.form,
-        (Verb.Exponent.person .one (.personNumber .first .singular)).form]) := by
+        (Verb.Exponent.person .one (.personNumber .first .singular)).form])] := by
   decide
 
 end Turkish
