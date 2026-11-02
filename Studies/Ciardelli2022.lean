@@ -12,10 +12,9 @@ to a question, the Kripke modality `□` yields a statement, and knowing whether
 quantifies over the states that settle an agent's issues, and after Ciardelli and Roelofsen the
 agent wonders about `μ` when $\neg\Box\mu \wedge \boxplus\mu$. Of the book's three inquisitive
 states, one [wonders whether `p`](##fig81b_wonders), and there `⊞` [does not distribute over
-inquisitive disjunction](##fig81b_ent_polarQ_not_disj); an agent whose knowledge settles every
-issue [wonders about nothing](##fig81a_not_wonders). [Questions add no statements to
-InqB](##Inquisitive.truthConditional_iff_support_cl_eq), but `⊞?p` is a statement that [no
-`\\/`-free formula expresses](##ent_polarQ_ne_classical).
+inquisitive disjunction](##fig81b_ent_polarQ_not_disj). [Questions add no statements to
+InqB](##Inquisitive.truthConditional_iff_support_cl_eq) and [none under `□`](##nec_eq_classical),
+but `⊞?p` is a statement that [no `\\/`-free formula expresses](##ent_polarQ_ne_classical).
 
 ## Implementation notes
 
@@ -31,8 +30,6 @@ InqB](##Inquisitive.truthConditional_iff_support_cl_eq), but `⊞?p` is a statem
 
 ## TODO
 
-* In the propositional case every formula `□φ` is equivalent to a formula of standard modal logic;
-  the proof needs the resolutions of InqB.
 * Knowing who (3-c) and the failure of $\boxplus\exists xPx \equiv \exists x\boxplus Px$ need the
   predicate logic InqBQ.
 
@@ -111,7 +108,7 @@ theorem fig81c_neither : ∀ w,
       {w} ∈ support fig81c (wonders q.polarQ) := by
   decide
 
-/-- In Fig. 8.1a knowledge settles every issue, so the agent wonders about nothing, p. 255. -/
+-- p. 255
 theorem fig81a_not_wonders (μ : Formula Atom) (w : Finset Atom) :
     {w} ∉ support fig81a (wonders μ) := fun h ↦
   (singleton_mem_support_neg _ _ _).1 h.1 <|
@@ -124,7 +121,25 @@ theorem fig81b_ent_polarQ_not_disj :
       {w} ∉ support fig81b ((Formula.ent p).disj (.ent p.neg)) := by
   decide
 
-/-! ### A statement only a question expresses -/
+/-! ### Statements formed from questions -/
+
+-- Example 3.6.4
+example : p.polarQ.resolutions = [p, p.neg] := rfl
+
+-- Example 3.6.6
+example : (p.polarQ.impl q.polarQ).resolutions.length = 4 := rfl
+
+-- (3-b): the resolution of knowing whether
+example : (Formula.nec p.polarQ).resolutions = [(Formula.nec p).disj (.nec p.neg)] := rfl
+
+/-- In the language with `□` alone every formula `□φ` is equivalent to a formula of standard
+modal logic, the disjunction of `□α` over the resolutions `α` of `φ`, p. 253. -/
+theorem nec_eq_classical (h : φ.IsEntFree) :
+    ∃ α : Formula A, α.IsClassical ∧
+      ∀ {W : Type*} [DecidableEq W] (M : Model W A), support M (.nec φ) = support M α :=
+  ⟨_, Formula.isClassical_of_mem_resolutions (φ := .nec φ) h (List.mem_singleton_self _),
+    fun M ↦ SetLike.ext fun s ↦ by
+      simp [mem_support_iff_exists_mem_resolutions M (.nec φ), Formula.resolutions]⟩
 
 /-- `⊞?p` is a statement that no `\\/`-free formula expresses: an agent who wonders whether `p`
 and one who knows as little and wonders about nothing agree on every classical formula but not on

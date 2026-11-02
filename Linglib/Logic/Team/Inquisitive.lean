@@ -14,8 +14,8 @@ inquisitive disjunction `φ \\/ ψ` is supported by a state that supports either
 propositional system InqB has `⊥`, `∧`, `→` and `\\/` over atoms, and inquisitive modal logic adds
 the modalities `□` and `⊞`, interpreted over a model that relates each world to a set of states.
 This file develops basic results about support, including the empty state property,
-truth-conditionality, the proposition a formula expresses, and the validities of the two
-modalities.
+truth-conditionality, the normal form by resolutions, the proposition a formula expresses, and
+the validities of the two modalities.
 
 ## Main definitions
 
@@ -23,6 +23,7 @@ modalities.
 * `Inquisitive.Formula`: formulas with `\\/`, `□` and `⊞`; the modal-free ones
   (`Inquisitive.Formula.IsModalFree`) are those of InqB.
 * `Inquisitive.Formula.cl`: the classical variant, with every `\\/` replaced by `∨`.
+* `Inquisitive.Formula.resolutions`: the classical formulas naming the ways of settling a formula.
 * `Inquisitive.support`: the lower set of states supporting a formula.
 * `Inquisitive.TruthConditional`: the formulas whose support in a model is truth at every world.
 * `Inquisitive.proposition`: the proposition a formula expresses, as a `Question`.
@@ -36,6 +37,11 @@ other team logics, so that support is decidable; over finitely many worlds this 
 and `Inquisitive.proposition` carries a support set along `Finset W ≃o Set W`. The states related
 to a world need not form a downward-closed set, since, as Ciardelli notes after Meißner and Otto,
 dropping this requirement yields the same logic.
+
+Resolutions are defined for InqB only in the source; the clauses for `□` and `⊞` here are ours,
+chosen so that the resolutions of a `⊞`-free formula are classical. They form a list, so that the
+conjunction indexed by choice functions is a formula, and the list conjunction and disjunction of
+a single formula are that formula, so that a classical formula is its own resolution.
 
 ## References
 
@@ -142,6 +148,16 @@ def IsClassical : Formula Atom → Prop
   | nec φ => φ.IsClassical
   | ent φ => φ.IsClassical
 
+/-- The `⊞`-free formulas, those of the language with `□` alone (§8.2). -/
+def IsEntFree : Formula Atom → Prop
+  | atom _ => True
+  | bot => True
+  | conj φ ψ => φ.IsEntFree ∧ ψ.IsEntFree
+  | impl φ ψ => φ.IsEntFree ∧ ψ.IsEntFree
+  | inqDisj φ ψ => φ.IsEntFree ∧ ψ.IsEntFree
+  | nec φ => φ.IsEntFree
+  | ent _ => False
+
 /-- The classical variant `φᶜˡ` replaces every inquisitive disjunction in `φ` by a classical one
 (Definition 3.4.2). -/
 def cl : Formula Atom → Formula Atom
@@ -158,6 +174,108 @@ theorem isClassical_cl : ∀ φ : Formula Atom, φ.cl.IsClassical
   | conj φ ψ | impl φ ψ => ⟨isClassical_cl φ, isClassical_cl ψ⟩
   | inqDisj φ ψ => ⟨⟨⟨isClassical_cl φ, trivial⟩, isClassical_cl ψ, trivial⟩, trivial⟩
   | nec φ | ent φ => isClassical_cl φ
+
+/-- The conjunction of a list of formulas, `¬⊥` for the empty list and the formula itself for a
+singleton. -/
+def conjList : List (Formula Atom) → Formula Atom
+  | [] => bot.neg
+  | [φ] => φ
+  | φ :: ψ :: φs => conj φ (conjList (ψ :: φs))
+
+/-- The classical disjunction of a list of formulas, `⊥` for the empty list and the formula itself
+for a singleton. -/
+def disjList : List (Formula Atom) → Formula Atom
+  | [] => bot
+  | [φ] => φ
+  | φ :: ψ :: φs => disj φ (disjList (ψ :: φs))
+
+/-- A property closed under `∧` and holding of `¬⊥` and of every formula of a list holds of their
+conjunction, after `List.prod_induction`. -/
+theorem conjList_induction (p : Formula Atom → Prop) (hom : ∀ φ ψ, p φ → p ψ → p (conj φ ψ))
+    (unit : p bot.neg) : ∀ {l : List (Formula Atom)}, (∀ φ ∈ l, p φ) → p (conjList l)
+  | [], _ => unit
+  | [φ], h => h φ (by simp)
+  | φ :: ψ :: φs, h =>
+    hom _ _ (h φ (by simp)) (conjList_induction p hom unit fun χ hχ ↦ h χ (by simp [hχ]))
+
+/-- A property closed under `∨` and holding of `⊥` and of every formula of a list holds of their
+disjunction, after `List.prod_induction`. -/
+theorem disjList_induction (p : Formula Atom → Prop) (hom : ∀ φ ψ, p φ → p ψ → p (disj φ ψ))
+    (unit : p bot) : ∀ {l : List (Formula Atom)}, (∀ φ ∈ l, p φ) → p (disjList l)
+  | [], _ => unit
+  | [φ], h => h φ (by simp)
+  | φ :: ψ :: φs, h =>
+    hom _ _ (h φ (by simp)) (disjList_induction p hom unit fun χ hχ ↦ h χ (by simp [hχ]))
+
+/-- The resolutions of `φ` (Definition 3.6.1), the classical formulas naming the ways of
+settling it. Beyond InqB, `□φ` resolves to the disjunction of `□α` over the resolutions `α` of
+`φ`, and `⊞φ` only to itself. -/
+def resolutions : Formula Atom → List (Formula Atom)
+  | atom p => [atom p]
+  | bot => [bot]
+  | conj φ ψ => φ.resolutions.flatMap fun α ↦ ψ.resolutions.map (conj α)
+  | impl φ ψ => (φ.resolutions.map fun α ↦ ψ.resolutions.map (impl α)).sections.map conjList
+  | inqDisj φ ψ => φ.resolutions ++ ψ.resolutions
+  | nec φ => [disjList (φ.resolutions.map nec)]
+  | ent φ => [ent φ]
+
+/-- Each formula of a choice from a list of lists lies in one of them. -/
+private theorem exists_mem_of_mem_sections {X : Type*} :
+    ∀ {L : List (List X)} {f : List X} {x : X}, f ∈ L.sections → x ∈ f → ∃ l ∈ L, x ∈ l
+  | [], _, _, hf, hx => by simp_all
+  | l :: L, _, x, hf, hx => by
+    obtain ⟨s, hs, a, ha, rfl⟩ : ∃ s ∈ L.sections, ∃ a ∈ l, a :: s = _ := by simpa using hf
+    rcases List.mem_cons.1 hx with rfl | hx
+    · exact ⟨l, by simp, ha⟩
+    · obtain ⟨l', hl', hxl'⟩ := exists_mem_of_mem_sections hs hx
+      exact ⟨l', by simp [hl'], hxl'⟩
+
+/-- Some choice from a list of lists satisfies `P` throughout iff each list has a member
+satisfying `P`. -/
+private theorem exists_mem_sections_iff {X : Type*} {P : X → Prop} :
+    ∀ {L : List (List X)}, (∃ f ∈ L.sections, ∀ x ∈ f, P x) ↔ ∀ l ∈ L, ∃ x ∈ l, P x
+  | [] => by simp
+  | l :: L => by
+    simp only [List.sections, List.mem_flatMap, List.mem_map, List.forall_mem_cons,
+      ← exists_mem_sections_iff (L := L)]
+    constructor
+    · rintro ⟨_, ⟨s, hs, a, ha, rfl⟩, hf⟩
+      exact ⟨⟨a, ha, hf _ (by simp)⟩, s, hs, fun x hx ↦ hf x (by simp [hx])⟩
+    · rintro ⟨⟨a, ha, hPa⟩, s, hs, hPs⟩
+      exact ⟨a :: s, ⟨s, hs, a, ha, rfl⟩, by simpa [hPa] using hPs⟩
+
+/-- The resolutions of a `⊞`-free formula are classical (Proposition 3.6.2). -/
+theorem isClassical_of_mem_resolutions :
+    ∀ {φ α : Formula Atom}, φ.IsEntFree → α ∈ φ.resolutions → α.IsClassical
+  | atom _, _, _, hα | bot, _, _, hα => by obtain rfl := List.mem_singleton.1 hα; trivial
+  | conj φ ψ, _, h, hα => by
+    obtain ⟨a, ha, b, hb, rfl⟩ : ∃ a ∈ φ.resolutions, ∃ b ∈ ψ.resolutions, conj a b = _ := by
+      simpa [resolutions] using hα
+    exact ⟨isClassical_of_mem_resolutions h.1 ha, isClassical_of_mem_resolutions h.2 hb⟩
+  | impl φ ψ, _, h, hα => by
+    obtain ⟨g, hg, rfl⟩ := List.mem_map.1 hα
+    refine conjList_induction _ (fun _ _ ↦ And.intro) ⟨trivial, trivial⟩ fun x hx ↦ ?_
+    obtain ⟨_, hl, hxl⟩ := exists_mem_of_mem_sections hg hx
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.1 hl
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.1 hxl
+    exact ⟨isClassical_of_mem_resolutions h.1 ha, isClassical_of_mem_resolutions h.2 hb⟩
+  | inqDisj φ ψ, _, h, hα => (List.mem_append.1 hα).elim
+    (isClassical_of_mem_resolutions h.1) (isClassical_of_mem_resolutions h.2)
+  | nec φ, _, h, hα => by
+    obtain rfl := List.mem_singleton.1 hα
+    refine disjList_induction _ (fun _ _ ha hb ↦ ⟨⟨⟨ha, trivial⟩, hb, trivial⟩, trivial⟩) trivial
+      fun x hx ↦ ?_
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.1 hx
+    exact isClassical_of_mem_resolutions (φ := φ) (α := a) h ha
+  | ent _, _, h, _ => h.elim
+
+/-- A classical formula is its own only resolution (Proposition 3.6.3). -/
+theorem resolutions_of_isClassical : ∀ {α : Formula Atom}, α.IsClassical → α.resolutions = [α]
+  | atom _, _ | bot, _ | ent _, _ => rfl
+  | conj φ ψ, h | impl φ ψ, h => by
+    simp [resolutions, resolutions_of_isClassical h.1, resolutions_of_isClassical h.2, conjList]
+  | inqDisj _ _, h => h.elim
+  | nec φ, h => by simp [resolutions, resolutions_of_isClassical (α := φ) h, disjList]
 
 end Formula
 
@@ -393,6 +511,86 @@ theorem mem_support_impl_iff_of_truthConditional [DecidableRel M.val] {α : Form
     fun h t hts hαt ↦ (support M ψ).lower ?_ h⟩
   exact fun w hw ↦ Finset.mem_filter.2 ⟨hts hw, (hα t).1 hαt w hw⟩
 
+/-! ### Resolutions (§3.6) -/
+
+theorem mem_support_conjList :
+    ∀ {l : List (Formula Atom)}, s ∈ support M (.conjList l) ↔ ∀ φ ∈ l, s ∈ support M φ
+  | [] => by simp [Formula.conjList]
+  | [φ] => by simp [Formula.conjList]
+  | φ :: ψ :: φs => by
+    rw [Formula.conjList, mem_support_conj, mem_support_conjList]
+    simp
+
+theorem singleton_mem_support_disjList :
+    ∀ {l : List (Formula Atom)}, {w} ∈ support M (.disjList l) ↔ ∃ φ ∈ l, {w} ∈ support M φ
+  | [] => by simp [Formula.disjList]
+  | [φ] => by simp [Formula.disjList]
+  | φ :: ψ :: φs => by
+    rw [Formula.disjList, singleton_mem_support_disj, singleton_mem_support_disjList]
+    simp
+
+theorem truthConditional_of_mem_resolutions :
+    ∀ {φ α : Formula Atom}, α ∈ φ.resolutions → TruthConditional M α
+  | .atom p, _, hα => by obtain rfl := List.mem_singleton.1 hα; exact truthConditional_atom M p
+  | .bot, _, hα => by obtain rfl := List.mem_singleton.1 hα; exact truthConditional_bot M
+  | .conj φ ψ, _, hα => by
+    obtain ⟨a, ha, b, hb, rfl⟩ :
+        ∃ a ∈ φ.resolutions, ∃ b ∈ ψ.resolutions, Formula.conj a b = _ := by
+      simpa [Formula.resolutions] using hα
+    exact (truthConditional_of_mem_resolutions ha).conj (truthConditional_of_mem_resolutions hb)
+  | .impl φ ψ, _, hα => by
+    obtain ⟨g, hg, rfl⟩ := List.mem_map.1 hα
+    refine Formula.conjList_induction _ (fun _ _ ↦ TruthConditional.conj) (truthConditional_neg M _)
+      fun x hx ↦ ?_
+    obtain ⟨_, hl, hxl⟩ := Formula.exists_mem_of_mem_sections hg hx
+    obtain ⟨a, -, rfl⟩ := List.mem_map.1 hl
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.1 hxl
+    exact (truthConditional_of_mem_resolutions hb).impl a
+  | .inqDisj φ ψ, _, hα => (List.mem_append.1 hα).elim
+    truthConditional_of_mem_resolutions truthConditional_of_mem_resolutions
+  | .nec φ, _, hα => by
+    obtain rfl := List.mem_singleton.1 hα
+    refine Formula.disjList_induction _ (fun _ _ _ _ ↦ truthConditional_disj M _ _)
+      (truthConditional_bot M) fun x hx ↦ ?_
+    obtain ⟨a, -, rfl⟩ := List.mem_map.1 hx
+    exact truthConditional_nec M a
+  | .ent φ, _, hα => by obtain rfl := List.mem_singleton.1 hα; exact truthConditional_ent M φ
+
+/-- To support `φ` is to support one of its resolutions (Theorem 3.6.7). -/
+theorem mem_support_iff_exists_mem_resolutions :
+    s ∈ support M φ ↔ ∃ α ∈ φ.resolutions, s ∈ support M α := by
+  induction φ generalizing s with
+  | atom _ | bot | ent _ _ => simp [Formula.resolutions]
+  | conj φ ψ ihφ ihψ =>
+    simp only [mem_support_conj, ihφ, ihψ, Formula.resolutions, List.mem_flatMap, List.mem_map]
+    constructor
+    · rintro ⟨⟨a, ha, hsa⟩, b, hb, hsb⟩
+      exact ⟨_, ⟨a, ha, b, hb, rfl⟩, hsa, hsb⟩
+    · rintro ⟨_, ⟨a, ha, b, hb, rfl⟩, hsa, hsb⟩
+      exact ⟨⟨a, ha, hsa⟩, b, hb, hsb⟩
+  | inqDisj φ ψ ihφ ihψ =>
+    simp only [mem_support_inqDisj, ihφ, ihψ, Formula.resolutions, List.mem_append, or_and_right,
+      exists_or]
+  | impl φ ψ ihφ ihψ =>
+    classical
+    calc s ∈ support M (.impl φ ψ) ↔ ∀ a ∈ φ.resolutions, s ∈ support M (.impl a ψ) := by
+          simp only [mem_support_impl, ihφ, forall_exists_index, and_imp]
+          exact ⟨fun h a ha t hts ↦ h t hts a ha, fun h t hts a ha ↦ h a ha t hts⟩
+      _ ↔ ∀ a ∈ φ.resolutions, ∃ b ∈ ψ.resolutions, s ∈ support M (.impl a b) :=
+          forall₂_congr fun a ha ↦ by
+            simp only [mem_support_impl_iff_of_truthConditional M _ s
+              (truthConditional_of_mem_resolutions M ha), ihψ]
+      _ ↔ _ := by
+          simp only [Formula.resolutions, List.mem_map, exists_exists_and_eq_and,
+            mem_support_conjList, Formula.exists_mem_sections_iff, forall_exists_index, and_imp,
+            forall_apply_eq_imp_iff₂]
+  | nec φ ih =>
+    have htc := truthConditional_of_mem_resolutions M (φ := .nec φ) (List.mem_singleton_self _)
+    simp only [Formula.resolutions, List.mem_singleton, exists_eq_left]
+    rw [htc.mem_support_iff, mem_support_nec]
+    simp only [singleton_mem_support_disjList, List.mem_map, exists_exists_and_eq_and,
+      mem_support_nec, Finset.mem_singleton, forall_eq, ← ih]
+
 /-! ### The proposition expressed (§3.3) -/
 
 section Proposition
@@ -454,6 +652,21 @@ theorem truthConditional_iff_not_isInquisitive :
 (Proposition 3.4.9). -/
 theorem proposition_neg_neg : proposition M φ.neg.neg = (proposition M φ)ᶜᶜ := by
   simp only [Formula.neg, proposition_impl, proposition_bot, himp_bot]
+
+/-- The truth sets of the resolutions of `φ` generate `[φ]_M` (Proposition 3.6.10). -/
+theorem proposition_eq_generate :
+    proposition M φ = Question.generate (truthSet M '' {α | α ∈ φ.resolutions}) := by
+  refine Question.ext <| Fintype.finsetEquivSet.symm.forall_congr_left.2 fun s ↦ ?_
+  simp only [Equiv.symm_symm, Fintype.finsetEquivSet_apply, coe_mem_proposition,
+    Question.mem_generate]
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · obtain ⟨α, hα, hs⟩ := (mem_support_iff_exists_mem_resolutions M φ s).1 h
+    exact .inr ⟨_, ⟨α, hα, rfl⟩, fun w hw ↦ (truthConditional_of_mem_resolutions M hα s).1 hs w hw⟩
+  · rintro (h | ⟨_, ⟨α, hα, rfl⟩, hs⟩)
+    · rw [Finset.coe_eq_empty.1 h]
+      exact empty_mem_support M φ
+    · exact (mem_support_iff_exists_mem_resolutions M φ s).2
+        ⟨α, hα, (truthConditional_of_mem_resolutions M hα s).2 fun w hw ↦ hs hw⟩
 
 end Proposition
 
