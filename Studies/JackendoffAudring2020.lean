@@ -2,7 +2,9 @@ module
 
 public import Linglib.Data.Examples.JackendoffAudring2020
 public import Linglib.Data.Wordlist.JackendoffAudring2020
+public import Linglib.Fragments.English.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Phonology.Prosody.Syllable
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Morphology.Paradigm.Linkage
@@ -59,8 +61,10 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
   well-foundedness claim.
 * The syllables, the *-ish* adjectives and the toponyms are the CLDF forms of
   `Data/Wordlist/JackendoffAudring2020.json`. An adjective or a toponym is read one morph per
-  slot by `CLDF.Wordlist.Form.morphSlots`; a syllable is read by `syllable` as onset, nucleus and
-  coda, each a sequence of segments.
+  slot by `CLDF.Wordlist.Form.morphSlots`. An English syllable is read through the English
+  transcription and split at its nucleus, so the slot before the nucleus also holds the *s* of
+  *str-*, which core syllabification leaves outside the onset; the German stems, with no German
+  transcription yet, are read by position.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
   `ConstructionMorphology.Schema.InstantiatesAt`; a productive variable is one marked open
@@ -80,6 +84,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 namespace JackendoffAudring2020
 
 open Morphology ConstructionMorphology
+open Phonology (Segment)
 
 /-! ### Open and closed variables, (17) and (18)
 
@@ -367,9 +372,22 @@ theorem ismist_pairs (b : B) (i : I) :
 
 /-! ### Ablaut as a link off the nucleus -/
 
-/-- A monosyllable read as onset, nucleus and coda: its last segment is the coda, the one before
-it the nucleus, and the rest the onset, the shape of every syllable of the ablaut pairs. -/
-def syllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List String) :=
+/-- An English form read through its segments as what precedes its nucleus, the nucleus and the
+coda, or as `⊥` throughout if a glyph is not English. -/
+def syllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List Segment) :=
+  (English.Phonology.transcribe f.segments).elim ⊥ fun w ↦
+    ![↑(Prosody.nucleusSplit w).1, ↑(Prosody.nucleusSplit w).2.1, ↑(Prosody.nucleusSplit w).2.2]
+
+/-- The English stems and pasts are in the English transcription, so `syllable` reads none of
+them as `⊥`. -/
+theorem transcribe_ne_none :
+    ∀ f ∈ [Wordlist.sing, Wordlist.sang, Wordlist.string, Wordlist.strung],
+      English.Phonology.transcribe f.segments ≠ none := by
+  decide
+
+/-- A German stem read by position, its last glyph the coda, the one before it the nucleus and the
+rest before the nucleus, the shape of *sprech-* and *sprich-*. -/
+def germanSyllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List String) :=
   ![↑(f.segments.rdrop 2), ↑((f.segments.rtake 2).take 1), ↑(f.segments.rtake 1)]
 
 /-- The variables of the ablaut schemas are the onset and the coda, shared by stem and past,
@@ -391,55 +409,60 @@ def pastSub : Fin 3 → NucleusVar := ![.onset, .past, .coda]
 /-- `nucleusPair v w` links two syllables at every position but the nucleus and pins the
 nuclei `v` and `w`, with `⊥` for an open nucleus. It is the shape of the ablaut schemas (25)
 and (26) and of the German present-tense schema (45). -/
-def nucleusPair (v w : Flat (List String)) : Schema NucleusVar (Flat (List String)) :=
+def nucleusPair {σ : Type*} (v w : Flat (List σ)) : Schema NucleusVar (Flat (List σ)) :=
   ⟨fun | .stem => v | .past => w | _ => ⊥, {.onset, .coda}, by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- The general ablaut schema (25) leaves both nuclei open. -/
-def ablaut : Schema NucleusVar (Flat (List String)) := nucleusPair ⊥ ⊥
+def ablaut {σ : Type*} : Schema NucleusVar (Flat (List σ)) := nucleusPair ⊥ ⊥
 
 /-- The *sing*/*sang* subschema (26) pins /ɪ/ in the stem and /æ/ in the past. -/
-def singSang : Schema NucleusVar (Flat (List String)) := nucleusPair ↑["ɪ"] ↑["æ"]
+def singSang : Schema NucleusVar (Flat (List Segment)) :=
+  nucleusPair ↑[English.Phonology.smallCapitalI] ↑[English.Phonology.æ]
 
 /-- The *string*/*strung* subschema is (26) with /ʌ/ for /æ/. -/
-def stringStrung : Schema NucleusVar (Flat (List String)) := nucleusPair ↑["ɪ"] ↑["ʌ"]
+def stringStrung : Schema NucleusVar (Flat (List Segment)) :=
+  nucleusPair ↑[English.Phonology.smallCapitalI] ↑[English.Phonology.wedge]
 
-theorem comap_stemSub_instantiates_iff {v w : Flat (List String)} {s : Fin 3 → Flat (List String)} :
+theorem comap_stemSub_instantiates_iff {σ : Type*} {v w : Flat (List σ)}
+    {s : Fin 3 → Flat (List σ)} :
     ((nucleusPair v w).comap stemSub).Instantiates s ↔ v ≤ s 1 :=
   ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
 
-theorem comap_pastSub_instantiates_iff {v w : Flat (List String)} {p : Fin 3 → Flat (List String)} :
+theorem comap_pastSub_instantiates_iff {σ : Type*} {v w : Flat (List σ)}
+    {p : Fin 3 → Flat (List σ)} :
     ((nucleusPair v w).comap pastSub).Instantiates p ↔ w ≤ p 1 :=
   ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
 
-theorem nucleusPair_iff {v w : Flat (List String)} {s p : Fin 3 → Flat (List String)} :
+theorem nucleusPair_iff {σ : Type*} {v w : Flat (List σ)} {s p : Fin 3 → Flat (List σ)} :
     (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
       v ≤ s 1 ∧ w ≤ p 1 ∧ Set.EqOn s p {1}ᶜ := by
   rw [Schema.instantiatesAt_elim_iff_eqOn (S := {1}) (by decide) (by decide) (by decide),
     comap_stemSub_instantiates_iff, comap_pastSub_instantiates_iff]
 
 /-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
-theorem ablaut_pairs_iff {s p : Fin 3 → Flat (List String)} :
+theorem ablaut_pairs_iff {σ : Type*} {s p : Fin 3 → Flat (List σ)} :
     ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔ Set.EqOn s p {1}ᶜ := by
   simp [ablaut, nucleusPair_iff]
 
 /-- A subschema with pinned nuclei is a special case of the general ablaut schema, so every
 pair of (26) is a pair of (25). -/
-theorem ablaut_pairs_of_nucleusPair {v w : Flat (List String)} {s p : Fin 3 → Flat (List String)}
+theorem ablaut_pairs_of_nucleusPair {σ : Type*} {v w : Flat (List σ)} {s p : Fin 3 → Flat (List σ)}
     (h : (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
     ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) :=
   ablaut_pairs_iff.2 (nucleusPair_iff.1 h).2.2
 
 -- (25), (26), p. 147: the subschema fills the nucleus variables of the general schema
-theorem instantiation_nucleusPair (v w : List String) :
-    Instantiation ablaut.body (nucleusPair ↑v ↑w).body {.stem, .past} := by
+theorem instantiation_nucleusPair {σ : Type*} (v w : List σ) :
+    Instantiation ablaut.body (nucleusPair (σ := σ) ↑v ↑w).body {.stem, .past} := by
   refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩
   · cases x <;> first | rfl | simp at hx
   · rcases hx with rfl | rfl <;> exact bot_lt_iff_ne_bot.2 Flat.coe_ne_bot
 
 /-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast, the same
 except at the nucleus, where both are present and differ. -/
-theorem contrast_of_nucleusPair {v w : List String} (hvw : v ≠ w) {s p : Fin 3 → Flat (List String)}
-    (h : (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
+theorem contrast_of_nucleusPair {σ : Type*} {v w : List σ} (hvw : v ≠ w)
+    {s p : Fin 3 → Flat (List σ)}
+    (h : (nucleusPair (σ := σ) ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
     Contrast s p {1} := by
   obtain ⟨hv, hw, hs⟩ := nucleusPair_iff.1 h
   rw [Flat.coe_le_iff] at hv hw
@@ -450,8 +473,8 @@ theorem contrast_of_nucleusPair {v w : List String} (hvw : v ≠ w) {s p : Fin 3
   rw [hv, hw]
   exact ⟨Flat.coe_ne_bot, Flat.coe_ne_bot, fun h ↦ hvw (Flat.coe_injective h)⟩
 
-theorem syllable_pairs (o v w c : List String) :
-    (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
+theorem syllable_pairs {σ : Type*} (o v w c : List σ) :
+    (nucleusPair (σ := σ) ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
       (Sum.elim ![↑o, ↑v, ↑c] ![↑o, ↑w, ↑c]) := by
   rw [nucleusPair_iff]
   refine ⟨le_rfl, le_rfl, fun q hq ↦ ?_⟩
@@ -464,7 +487,7 @@ theorem ablaut_words :
       stringStrung.InstantiatesAt (Sum.elim stemSub pastSub)
         (Sum.elim (syllable Wordlist.string) (syllable Wordlist.strung)) ∧
       ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable Wordlist.sprech) (syllable Wordlist.sprich)) := by
+        (Sum.elim (germanSyllable Wordlist.sprech) (germanSyllable Wordlist.sprich)) := by
   decide
 
 /-! ### The present-tense cells of (45) as a morphome -/

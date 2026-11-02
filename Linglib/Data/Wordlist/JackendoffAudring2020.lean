@@ -78,7 +78,7 @@ def string : Form Cell :=
     lexeme := Lexemes.string
     cell := {}
     form := "string"
-    segments := ["s", "t", "r", "ɪ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ɪ", "ŋ"]
     source := [
       ⟨"jackendoff-audring-2020", "(26)"⟩
     ] }
@@ -88,7 +88,7 @@ def strung : Form Cell :=
     lexeme := Lexemes.string_past
     cell := {}
     form := "strung"
-    segments := ["s", "t", "r", "ʌ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ʌ", "ŋ"]
     source := [
       ⟨"jackendoff-audring-2020", "(26)"⟩
     ] }

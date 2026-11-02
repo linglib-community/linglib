@@ -6,11 +6,12 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Wordlist.Bybee1995
+public import Linglib.Fragments.English.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Phonology.Prosody.Syllable
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.List.DropRight
 public import Mathlib.Tactic.FinCases
 
 /-!
@@ -38,8 +39,9 @@ their bases lack the vowel a source-oriented pairing from *string* would demand
 ## Implementation notes
 
 * A corpus is a multiset of forms; the lexicon of a schema's roles is its set of types.
-* The forms of `Data/Wordlist/Bybee1995.json` are read by `syllable` as onset, nucleus and coda,
-  each a sequence of segments.
+* The forms of `Data/Wordlist/Bybee1995.json` are read through the English transcription and
+  split at the nucleus, so the slot before the nucleus also holds the *s* of *str-*, which core
+  syllabification leaves outside the onset, and the nucleus of *strike* is its diphthong.
 * The counts of Table 8.1, the French conjugations children overgeneralize by type rather than
   token frequency, and the German participle and plural cases are not formalized.
 
@@ -55,6 +57,7 @@ their bases lack the vowel a source-oriented pairing from *string* would demand
 namespace Bybee1995
 
 open ConstructionMorphology
+open Phonology (Segment)
 
 variable {P α : Type*} [PartialOrder α] [OrderBot α]
 
@@ -99,18 +102,24 @@ theorem edSchema_isProductive : edSchema.IsProductive := Schema.isProductive_pro
 
 /-! ### The product-oriented class of *strung* -/
 
-/-- A monosyllable read as onset, nucleus and coda: its last segment is the coda, the one before
-it the nucleus, and the rest the onset, the shape of every form of the class. -/
-def syllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List String) :=
-  ![↑(f.segments.rdrop 2), ↑((f.segments.rtake 2).take 1), ↑(f.segments.rtake 1)]
+/-- A form read through its English segments as what precedes its nucleus, the nucleus and the
+coda, or as `⊥` throughout if a glyph is not English. -/
+def syllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List Segment) :=
+  (English.Phonology.transcribe f.segments).elim ⊥ fun w ↦
+    ![↑(Prosody.nucleusSplit w).1, ↑(Prosody.nucleusSplit w).2.1, ↑(Prosody.nucleusSplit w).2.2]
+
+/-- Every form is in the English transcription, so `syllable` reads none as `⊥`. -/
+theorem transcribe_ne_none :
+    ∀ f ∈ Wordlist.all, English.Phonology.transcribe f.segments ≠ none := by
+  decide
 
 /-- The product-oriented schema of the *strung* class over onset, nucleus and coda: the
 nucleus pinned to /ʌ/, the onset open, the coda a closed variable filled from the class. -/
-def strungSchema : Schema (Fin 3) (Flat (List String)) :=
-  ⟨![⊥, ↑["ʌ"], ⊥], {0}, by rintro _ rfl; rfl⟩
+def strungSchema : Schema (Fin 3) (Flat (List Segment)) :=
+  ⟨![⊥, ↑[English.Phonology.wedge], ⊥], {0}, by rintro _ rfl; rfl⟩
 
 /-- The stored members of the class. -/
-def strungClass : Set (Fin 3 → Flat (List String)) :=
+def strungClass : Set (Fin 3 → Flat (List Segment)) :=
   {syllable Wordlist.strung, syllable Wordlist.stung, syllable Wordlist.flung,
     syllable Wordlist.hung}
 
@@ -131,8 +140,11 @@ inductive PairVar
 
 /-- A source-oriented schema pairing a base in /ɪ/ with a past in /ʌ/ over a shared onset and
 coda: the generalization over pairs such as *string*, *strung*. -/
-def sourceOriented : Schema PairVar (Flat (List String)) :=
-  ⟨fun | .base => ↑["ɪ"] | .past => ↑["ʌ"] | _ => ⊥, {.onset, .coda},
+def sourceOriented : Schema PairVar (Flat (List Segment)) :=
+  ⟨fun
+    | .base => ↑[English.Phonology.smallCapitalI]
+    | .past => ↑[English.Phonology.wedge]
+    | _ => ⊥, {.onset, .coda},
     by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- The subscripting of the base's positions. -/

@@ -134,7 +134,7 @@
       "ID": "jackendoffaudring2020_string",
       "Lexeme_ID": "string",
       "Form": "string",
-      "Segments": ["s", "t", "r", "ɪ", "ŋ"],
+      "Segments": ["s", "t", "ɹ", "ɪ", "ŋ"],
       "Comment": "stem",
       "Source": ["jackendoff-audring-2020[(26)]"]
     },
@@ -142,7 +142,7 @@
       "ID": "jackendoffaudring2020_strung",
       "Lexeme_ID": "string_past",
       "Form": "strung",
-      "Segments": ["s", "t", "r", "ʌ", "ŋ"],
+      "Segments": ["s", "t", "ɹ", "ʌ", "ŋ"],
       "Comment": "past tense",
       "Source": ["jackendoff-audring-2020[(26)]"]
     },

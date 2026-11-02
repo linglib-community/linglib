@@ -17,7 +17,9 @@ chart entry, so the values are PHOIBLE's.
 
 * `English.Phonology.p`, `English.Phonology.esh` and the like: the phonemes, as segments of their
   chart entries.
-* `English.Phonology.inventory`: the set of them.
+* `English.Phonology.phonemes`, `English.Phonology.inventory`: the phonemes by glyph, and the set
+  of them.
+* `English.Phonology.transcribe`: the segments of a transcription, a diphthong as two vowels.
 * `English.Phonology.preglottalization`, `English.Phonology.postnasalDeletion`: two rules of
   Hayes's.
 * `English.Phonology.Onset`, `English.Phonology.Onset.of`: the beginnings of words.
@@ -35,8 +37,9 @@ chart entry, so the values are PHOIBLE's.
 The transcription is Hayes's, with plain /p t k/. PHOIBLE's English inventories write the
 voiceless stops aspirated, so no inventory contains these glyphs, and membership in one is not
 stated. English /ɹ/ is the chart's `ɹ`, which is [−consonantal] and so a glide in sonority.
-The chart has no entries for the diphthongs /eɪ aɪ aʊ ɔɪ/, which are left out, and /oʊ/ is the
-monophthong /o/.
+The chart has no entries for diphthongs. Hayes writes a diphthong as the two vowels of its
+beginning and end, so the diphthongs /aɪ aʊ ɔɪ/ of Table 2.2 are transcribed as two segments, and
+/eɪ/, which the table lists among the vowels, is left out; /oʊ/ is the monophthong /o/.
 
 ## References
 
@@ -163,11 +166,32 @@ def openO : Segment := .ofChart .«ɔ»
 /-- The rhotacized upper mid central vowel /ɚ/. -/
 def rightHookSchwa : Segment := .ofChart .«ɚ»
 
+/-- The English phonemes by glyph, in Hayes's transcription. -/
+def phonemes : List (String × Segment) :=
+  [("p", p), ("b", b), ("t", t), ("d", d), ("k", k), ("ɡ", g), ("tʃ", tesh), ("dʒ", dezh),
+    ("f", f), ("v", v), ("θ", θ), ("ð", ð), ("s", s), ("z", z), ("ʃ", esh), ("ʒ", ezh), ("h", h),
+    ("m", m), ("n", n), ("ŋ", ŋ), ("l", l), ("w", w), ("ɹ", turnedR), ("j", j), ("i", i),
+    ("ɪ", smallCapitalI), ("ɛ", epsilon), ("æ", æ), ("ə", schwa), ("ʌ", wedge), ("ɑ", scriptA),
+    ("u", u), ("ʊ", upsilon), ("o", o), ("ɔ", openO), ("ɚ", rightHookSchwa)]
+
 /-- The English phonemes, pairwise distinct. -/
 def inventory : Finset Segment :=
-  ⟨↑[p, b, t, d, k, g, tesh, dezh, f, v, θ, ð, s, z, esh, ezh, h, m, n, ŋ, l, w, turnedR, j, i,
-    smallCapitalI, epsilon, æ, schwa, wedge, scriptA, u, upsilon, o, openO, rightHookSchwa],
-    by decide⟩
+  ⟨↑(phonemes.map Prod.snd), by decide⟩
+
+/-- The open front vowel [a], the beginning of the diphthongs /aɪ/ and /aʊ/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The diphthongs of Table 2.2 by glyph, each the two vowels of its beginning and end (p. 15). -/
+def diphthongs : List (String × List Segment) :=
+  [("aɪ", [a, smallCapitalI]), ("aʊ", [a, upsilon]), ("ɔɪ", [openO, smallCapitalI])]
+
+/-- The segments a glyph transcribes: a phoneme's segment, or a diphthong's two vowels. -/
+def ofGlyph? (x : String) : Option (List Segment) :=
+  ((phonemes.lookup x).map ([·])).orElse fun _ ↦ diphthongs.lookup x
+
+/-- The segments of a transcription, when every glyph is English. -/
+def transcribe (xs : List String) : Option (List Segment) :=
+  (xs.mapM ofGlyph?).map List.flatten
 
 /-! ### Natural classes -/
 

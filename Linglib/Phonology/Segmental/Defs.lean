@@ -123,6 +123,11 @@ end Feature
 /-- A segment: each feature `+`, `−` or unspecified, ordered by specificity. -/
 abbrev Segment := Feature → Flat Bool
 
+/-- Equality of segments is decidable, as one instance rather than one rebuilt from the
+function type at each use, which keeps instance search within bounds for lists of segments. -/
+instance Segment.instDecidableEq : DecidableEq Segment :=
+  inferInstanceAs (DecidableEq (Feature → Flat Bool))
+
 namespace Segment
 
 variable (s : Segment)

@@ -57,7 +57,7 @@ def strung : Form Cell :=
     lexeme := Lexemes.string_past
     cell := {}
     form := "strung"
-    segments := ["s", "t", "r", "ʌ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ʌ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -97,7 +97,7 @@ def strike : Form Cell :=
     lexeme := Lexemes.strike
     cell := {}
     form := "strike"
-    segments := ["s", "t", "r", "aɪ", "k"]
+    segments := ["s", "t", "ɹ", "aɪ", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -107,7 +107,7 @@ def struck : Form Cell :=
     lexeme := Lexemes.strike_past
     cell := {}
     form := "struck"
-    segments := ["s", "t", "r", "ʌ", "k"]
+    segments := ["s", "t", "ɹ", "ʌ", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -137,7 +137,7 @@ def drag : Form Cell :=
     lexeme := Lexemes.drag
     cell := {}
     form := "drag"
-    segments := ["d", "r", "æ", "g"]
+    segments := ["d", "ɹ", "æ", "ɡ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -147,7 +147,7 @@ def drug : Form Cell :=
     lexeme := Lexemes.drag_past
     cell := {}
     form := "drug"
-    segments := ["d", "r", "ʌ", "g"]
+    segments := ["d", "ɹ", "ʌ", "ɡ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -157,7 +157,7 @@ def string : Form Cell :=
     lexeme := Lexemes.string
     cell := {}
     form := "string"
-    segments := ["s", "t", "r", "ɪ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ɪ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
