@@ -13,9 +13,9 @@ kind-referring expression ranges over subkinds sharing no realizations and joint
 kind, becomes the requirement that kind reference go through a partition of the kind's
 realizations into the cells of a contextually salient equivalence relation. Subkinds are referred
 to through the ι of the cells, and an ad hoc kind term such as *the lions that eat people* is the
-ι of κ+, the cells that contain every instance of the restrictor. Mendia's indistinguishability
-relation is Cresswell's degree construction, so an amount reading of a relative clause is the
-same definite under the partition of a preorder into its degrees.
+ι of κ+, the cells that contain every instance of the restrictor. Degrees are cells too, of mutual
+comparison on a preorder, so an [amount reading](##amount_reading) of a relative clause is the same
+definite under the partition of a preorder into its degrees.
 
 ## Implementation notes
 
@@ -23,12 +23,24 @@ same definite under the partition of a preorder into its degrees.
   discussion, a salient kind formation is a `Setoid E`, the partition Π of (28) is its
   `Setoid.classes`, and a subkind is identified with its cell, as the paper does for its tables
   (p. 616: the members of a partition "are always objects, not kinds").
-* (28b) as printed binds `y_k` in the antecedent and uses it in the consequent; it is read with
-  `y_k` bound outside the implication. (33) prints `Π(x_y)` for `Π(x_k)`.
 * The ι of (31) and (36) is `iota`, undefined when no cell or several qualify.
 * Dogs come in every combination of breed and role and lions in every combination of subspecies
   and diet, so there are people-eating lions of both subspecies. The restrictor *lions that eat
   people* is read as footnote 11's *lions that eat only people*, a value of the diet.
+
+## Errata
+
+* (28b) as printed binds `y_k` in the antecedent and uses it in the consequent; it is read with
+  `y_k` bound outside the implication. (33) prints `Π(x_y)` for `Π(x_k)`.
+* (57) is credited to Cresswell and (58) presented as the first step of his construction. His
+  comparison is *more F than* and need not be a preorder, and his equivalence relation compares what
+  two things stand in the comparison to, not the two things with each other. The relations agree on
+  a preorder, the case the paper needs, but not on a strict comparison.
+* The relation of footnote 20 is printed as $x ≽ y ∧ y ⋡ x$, the strict part of the preorder, while
+  the footnote calls it reflexive. The relation with the stated properties is $x ≽ y$ on the
+  classes, which is mathlib's order on `Antisymmetrization`.
+* Footnote 21 states reflexivity as $∀ d, d' ∈ DEG_A [d ≃_A d']$, which says that all degrees are
+  equivalent; $d ≃_A d$ is meant.
 
 ## TODO
 
@@ -219,10 +231,14 @@ theorem the_kappaPlus_diet :
 exactly as A as `a` ((57)–(59), §4.3, p. 617). -/
 theorem amount_reading [Preorder E] {P : Set E} {a : E} (ha : a ∈ P)
     (hP : ∀ x ∈ P, AntisymmRel (· ≤ ·) x a) :
-    iota (· ∈ kappaPlus (Degree.cresswellSetoid (· ≤ ·)) P) =
+    iota (· ∈ kappaPlus (AntisymmRel.setoid E (· ≤ ·)) P) =
       some {y | AntisymmRel (· ≤ ·) a y} := by
-  simp_rw [← Degree.cresswellSetoid_le_iff] at hP
   rw [the_kappaPlus_eq_some _ ha hP]
-  exact congrArg some (Set.ext fun y ↦ (Degree.cresswellSetoid_le_iff y a).trans antisymmRel_comm)
+  exact congrArg some (Set.ext fun _ ↦ antisymmRel_comm)
+
+-- (58) is Cresswell's relation on a preorder.
+example [Preorder E] :
+    Degree.cresswellSetoid ((· ≤ ·) : E → E → Prop) = AntisymmRel.setoid E (· ≤ ·) :=
+  Degree.cresswellSetoid_eq_antisymmRel _
 
 end Mendia2020

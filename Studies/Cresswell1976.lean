@@ -15,20 +15,39 @@ Cresswell's degree of comparison is a point paired with the ordering of its scal
 first exceeds every degree of the second on their common scale, so a comparative across
 scales is anomalous and a disjoined standard is compared universally. Mass nouns and plurals
 carry degrees of volume and of number through the totality operator, degrees need no units
-since any comparison relation yields a scale by quotienting, and the counterfactual *shorter
-than he is* compares heights across worlds.
+since a comparison relation yields its own degrees by quotienting, and the counterfactual
+*shorter than he is* compares heights across worlds.
 
 We take degrees on a family of scales to be mathlib's disjoint sum of the scales' orders and
 prove the same-scale restriction, the universal reading of disjoined standards, the reduction
 of the totality comparatives to volumes and cardinalities, the synonymy of *all* and *every*
-given that there are men, the comparative on constructed degrees, and the counterfactual
-through a Stalnaker selection function.
+given that there are men, the [comparative](##erThan_singleton_mk) and the
+[*exactly*](##exactly_singleton_mk) on constructed degrees, and the counterfactual through a
+Stalnaker selection function.
 
 ## Implementation notes
 
 * The plural is read as in (49), a nonempty set of things satisfying the noun with its
   cardinality; as printed, (3.6) fixes the set to all of them, on which (54) would require
   the set of all men to walk.
+* A degree of (2.1) is a point of a scale in a family. That the point lie in the field of the
+  scale's relation is not imposed on the family; for constructed degrees the field of the induced
+  comparison is [the set of classes of the field of the comparison](##field_lt), and everything
+  outside that field [falls into one class](##mk_eq_mk_of_notMem_field).
+
+## Errata
+
+* The consistency proof for (4.2) opens by supposing $a ≈ c$, $b ≈ c$ and $b ≈ d$. The middle
+  hypothesis is a slip: it would make all four equivalent, and the proof uses only the other two.
+* §2 remarks that whether the relation of a scale is strict or total "seems unimportant". For the
+  construction of §4 it matters. A connected preorder and its strict part
+  [give the same degrees](##Degree.cresswellSetoid_lt_eq_le), but on a partial order the strict
+  part can [identify incomparable points that the order keeps apart](##cresswellSetoid_lt_ne_le).
+
+## TODO
+
+* The relation $>_d$ between pairs of points on a scale with a natural metric (§4), on which *twice
+  as tall* would rest.
 
 ## References
 
@@ -242,10 +261,57 @@ end Plural
 
 /-! ### Degrees from comparisons (§4) -/
 
+section Constructed
+
+variable {E : Type*} (φ : E → E → Prop) {a b : E}
+
 -- (62), (4.2)
-theorem erThan_singleton_mk {E : Type*} (φ : E → E → Prop) (a b : E) :
+theorem erThan_singleton_mk (a b : E) :
     ErThan ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ φ a b :=
   erThan_singleton.trans CresswellDegree.mk_lt_mk
+
+-- p. 274, (4.1)
+theorem exactly_singleton_mk (a b : E) :
+    Exactly ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ cresswellSetoid φ a b :=
+  exactly_singleton.trans CresswellDegree.mk_eq_mk
+
+/-- The field of a relation is the set of things it relates to something in one direction or the
+other (2.1). -/
+def field : Set E := {a | ∃ c, φ a c ∨ φ c a}
+
+-- p. 281
+theorem field_lt :
+    field ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) =
+      Quotient.mk (cresswellSetoid φ) '' field φ := by
+  ext x
+  induction x using Quotient.inductionOn with | _ a
+  constructor
+  · rintro ⟨c, hc⟩
+    induction c using Quotient.inductionOn with | _ c
+    exact ⟨a, ⟨c, hc.symm⟩, rfl⟩
+  · rintro ⟨b, ⟨c, hc⟩, hb⟩
+    exact ⟨⟦c⟧, by rw [← hb]; exact hc.symm⟩
+
+variable {φ} in
+theorem mk_eq_mk_of_notMem_field (ha : a ∉ field φ) (hb : b ∉ field φ) :
+    (⟦a⟧ : CresswellDegree φ) = ⟦b⟧ := by
+  simp only [field, Set.mem_ofPred_eq, not_exists, not_or] at ha hb
+  exact Quotient.sound ⟨fun c ↦ iff_of_false (ha c).1 (hb c).1,
+    fun c ↦ iff_of_false (ha c).2 (hb c).2⟩
+
+/-- A partial order and its strict part need not give the same degrees: of two dimensions, the
+points high on one and low on the other have the same strictly greater and lesser points, but
+neither is at most the other (p. 266). -/
+theorem cresswellSetoid_lt_ne_le :
+    cresswellSetoid ((· < ·) : Bool × Bool → Bool × Bool → Prop) ≠ cresswellSetoid (· ≤ ·) := by
+  intro h
+  have hlt : cresswellSetoid ((· < ·) : Bool × Bool → Bool × Bool → Prop) (true, false)
+      (false, true) := by
+    refine ⟨fun c ↦ ?_, fun c ↦ ?_⟩ <;> obtain ⟨_ | _, _ | _⟩ := c <;> simp [Prod.lt_iff]
+  rw [h] at hlt
+  exact absurd ((hlt.1 (true, false)).1 le_rfl) (by decide)
+
+end Constructed
 
 /-! ### Comparison across worlds ((70)–(73)) -/
 
