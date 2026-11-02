@@ -980,7 +980,6 @@ import Linglib.Data.Examples.HarleyRitter2002
 import Linglib.Data.Examples.McGinnis2013
 import Linglib.Data.Examples.Embick2015
 import Linglib.Data.Examples.Bobaljik2000
-import Linglib.Data.Examples.Rett2015
 import Linglib.Data.Examples.RomeroHan2004
 import Linglib.Data.Examples.Cacchioli2026
 import Linglib.Data.Examples.Franke2011

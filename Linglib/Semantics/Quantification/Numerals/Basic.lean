@@ -150,9 +150,9 @@ numeral to a definite amount, so *a hexagon has fewer than 11 sides* is a weak t
 modifier places a bound on a range of amounts, so *a hexagon has at most 10 sides* is odd and
 the modifier conveys that the speaker does not know the amount.
 
-[kennedy-2015] reduces the split to the ordering the modifier expresses, exclusive for Class A
-and inclusive for Class B (`Degree.Comparison.self_mem_interval_iff`), and derives the ignorance as an
-implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
+[kennedy-2015] and [rett-2015a] reduce the split to the ordering the modifier expresses, exclusive
+for Class A and inclusive for Class B (`Degree.Comparison.self_mem_interval_iff`), and derive the
+ignorance as an implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
 that *at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
 contrast graded and dependent on the question under discussion, and [enguehard-2018] derives
 the inferences of comparative numerals from granularity. -/
@@ -175,6 +175,8 @@ inductive ModifierKind where
   | directional
   /-- An adverb of minimality or maximality, such as *minimally* or *maximally*. -/
   | adverbial
+  /-- An equative, such as *as many as*, which [rett-2015a] adds to Class B. -/
+  | equative
   deriving Repr, DecidableEq
 
 /-- The class of each kind, after [nouwen-2010]'s tentative classification of the English
@@ -185,7 +187,7 @@ spatial sense is directional, which Nouwen puts down to numeral modifiers using 
 senses. -/
 def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
-  | .superlative | .directional | .adverbial => .classB
+  | .superlative | .directional | .adverbial | .equative => .classB
 
 /-- A numeral modifier, an expression that combines with a numeral to bound, fix or approximate
 the amount it names. -/

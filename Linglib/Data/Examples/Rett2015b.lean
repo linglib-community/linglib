@@ -3,21 +3,21 @@ module
 public import Linglib.Data.Examples.Schema
 
 /-!
-# `Rett2015` — typed example data
+# `Rett2015b` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Rett2015.json` by
+Auto-generated from `Linglib/Data/Examples/Rett2015b.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Rett2015.Examples`.
+this module; declarations live in `namespace Rett2015b.Examples`.
 -/
 
 @[expose] public section
 
-namespace Rett2015.Examples
+namespace Rett2015b.Examples
 
 def positive_tall : Datum :=
-  { id := "rett2015_positive_tall"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_positive_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is tall."
@@ -29,8 +29,8 @@ def positive_tall : Datum :=
     paperFeatures := [("construction", "positive"), ("polarity", "positive"), ("evaluative", "true")] }
 
 def positive_short : Datum :=
-  { id := "rett2015_positive_short"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_positive_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is short."
@@ -42,8 +42,8 @@ def positive_short : Datum :=
     paperFeatures := [("construction", "positive"), ("polarity", "negative"), ("evaluative", "true")] }
 
 def comparative_tall : Datum :=
-  { id := "rett2015_comparative_tall"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_comparative_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is taller than Doug."
@@ -55,8 +55,8 @@ def comparative_tall : Datum :=
     paperFeatures := [("construction", "comparative"), ("polarity", "positive"), ("evaluative", "false")] }
 
 def comparative_short : Datum :=
-  { id := "rett2015_comparative_short"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_comparative_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is shorter than Doug."
@@ -68,8 +68,8 @@ def comparative_short : Datum :=
     paperFeatures := [("construction", "comparative"), ("polarity", "negative"), ("evaluative", "false")] }
 
 def equative_tall : Datum :=
-  { id := "rett2015_equative_tall"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_equative_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is as tall as Doug."
@@ -81,8 +81,8 @@ def equative_tall : Datum :=
     paperFeatures := [("construction", "equative"), ("polarity", "positive"), ("evaluative", "false")] }
 
 def equative_short : Datum :=
-  { id := "rett2015_equative_short"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_equative_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is as short as Doug."
@@ -94,8 +94,8 @@ def equative_short : Datum :=
     paperFeatures := [("construction", "equative"), ("polarity", "negative"), ("evaluative", "true")] }
 
 def mp_tall : Datum :=
-  { id := "rett2015_mp_tall"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_mp_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is 6ft tall."
@@ -107,8 +107,8 @@ def mp_tall : Datum :=
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "positive"), ("evaluative", "false")] }
 
 def mp_short : Datum :=
-  { id := "rett2015_mp_short"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_mp_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Adam is 4ft short."
@@ -120,8 +120,8 @@ def mp_short : Datum :=
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "negative")] }
 
 def question_tall : Datum :=
-  { id := "rett2015_question_tall"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_question_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "How tall is Adam?"
@@ -133,8 +133,8 @@ def question_tall : Datum :=
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "positive"), ("evaluative", "false")] }
 
 def question_short : Datum :=
-  { id := "rett2015_question_short"
-    source := ⟨"rett-2015", "Table 3.1"⟩
+  { id := "rett2015b_question_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "How short is Adam?"
@@ -147,4 +147,4 @@ def question_short : Datum :=
 
 def all : List Datum := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short]
 
-end Rett2015.Examples
+end Rett2015b.Examples

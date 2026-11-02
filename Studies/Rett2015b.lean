@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Examples.Rett2015
+public import Linglib.Data.Examples.Rett2015b
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.Degree.Defs
@@ -25,7 +25,7 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 ## References
 
-* [J. Rett, *The semantics of evaluativity* (2015)][rett-2015]
+* [J. Rett, *The semantics of evaluativity* (2015)][rett-2015b]
 * [L. R. Horn, *Toward a new taxonomy for pragmatic inference: Q-based and R-based
   implicature* (1984)][horn-1984]
 * [M. Bierwisch, *The semantics of gradation* (1989)][bierwisch-1989]
@@ -35,7 +35,7 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 @[expose] public section
 
-namespace Rett2015
+namespace Rett2015b
 
 open Degree
 open English.Adjectives
@@ -110,7 +110,7 @@ theorem how_short : evaluativity short .degreeQuestion = some .manner := rfl
 
 /-! ### Polar variance grounded in the comparison semantics
 
-[rett-2015] reduces polar (in)variance to mutual entailment of the antonyms' non-evaluative
+[rett-2015b] reduces polar (in)variance to mutual entailment of the antonyms' non-evaluative
 readings: the strengthened ("exactly") equatives of the two antonyms share truth conditions,
 so a truth-conditionally equivalent unmarked alternative exists and the Marked Meaning
 Principle can fire; the antonym comparatives exclude each other, so no such alternative
@@ -168,4 +168,4 @@ def data : List (Construction × Polarity × Bool) := Examples.all.filterMap dat
 theorem evaluative_iff_observed : ∀ d ∈ data, Evaluative d.1 d.2.1 ↔ d.2.2 = true := by
   decide
 
-end Rett2015
+end Rett2015b
