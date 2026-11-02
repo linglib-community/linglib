@@ -95,6 +95,13 @@ variable {F v}
 
 variable (F)
 
+theorem card_compatiblePersonae :
+    (F.compatiblePersonae v).card = (G.maximalIndepSets.filter (F.indexes v ⊆ ·)).card := by
+  rw [← Finset.card_map (.subtype _)]
+  congr 1
+  ext s
+  simp [Compatible, and_comm]
+
 theorem personae_mono (h : F.indexes v₁ ⊆ F.indexes v₂) : F.personae v₁ ⊆ F.personae v₂ :=
   Finset.monotone_filter_right _ fun _ _ hπ hd ↦ hπ (hd.mono_left h)
 

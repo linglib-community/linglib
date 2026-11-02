@@ -216,7 +216,15 @@ theorem ground_neutral_approximate :
 
 theorem card_compatiblePersonae_neutral_precise :
     ((neutral .exp2).ground.compatiblePersonae .precise).card = 2 := by
+  rw [AssociationField.card_compatiblePersonae_ground]
   decide +kernel
+
+theorem not_complementary_neutral (e : Experiment) :
+    ¬ (neutral e).ground.Complementary .precise .approximate := fun h ↦
+  (separateLoci_neutral e).not_antipodal <| funext fun d ↦ by
+    have := (AssociationField.complementary_ground_iff.1 h).2 d
+    simp only [SignType.sign_self] at this
+    rw [Pi.neg_apply, this, neg_neg]
 
 theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by
   cases e <;> cases e' <;> decide +kernel
