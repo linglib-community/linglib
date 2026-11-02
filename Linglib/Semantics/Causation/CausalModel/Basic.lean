@@ -24,6 +24,8 @@ The solution at a variable depends only on the intervention at that variable and
 * `CausalModel.solve_congr`: interventions agreeing on a variable's ancestors agree there
 * `CausalModel.solve_update_of_not_reflTransGen`: intervening on `c` leaves what `c` does not
   reach unchanged
+* `CausalModel.solve_update_of_solve_eq`: intervening to hold a variable at its value changes
+  nothing
 * `CausalModel.solve_eq_solve_bot_of_mem_contexts`: imposing an observation that holds changes
   nothing
 
@@ -65,6 +67,15 @@ theorem solve_update_of_not_reflTransGen {c v : V} (h : ¬ ReflTransGen M.graph.
     (I : ∀ v, Flat (α v)) (x : Flat (α c)) (u : U) :
     M.solve (Function.update I c x) u v = M.solve I u v :=
   solve_congr (fun w hw ↦ Function.update_of_ne (fun hwc : w = c ↦ h (hwc ▸ hw)) x I) u
+
+/-- Intervening on `c` to hold it at the value it takes anyway changes nothing. -/
+theorem solve_update_of_solve_eq {I : ∀ v, Flat (α v)} {c : V} {x : α c} {u : U}
+    (h : M.solve I u c = x) : M.solve (Function.update I c ↑x) u = M.solve I u := by
+  refine (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm
+  rw [step_apply]
+  rcases eq_or_ne v c with rfl | hv
+  · rw [Function.update_self, Flat.unbotD_coe, h]
+  · rw [Function.update_of_ne hv, ← solve_apply]
 
 end Locality
 
