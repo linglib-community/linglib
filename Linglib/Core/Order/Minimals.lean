@@ -233,4 +233,12 @@ theorem minimals_ofCriteria_eq {C : Type*} {sat : α → C → Prop} {criteria :
     ⟨fun ⟨ha, hmin⟩ ↦ ⟨ha, fun c hc ↦ hmin hb (fun c' hc' _ ↦ hsat c' hc') c hc (hsat c hc)⟩,
       fun ⟨ha, hall⟩ ↦ ⟨ha, fun _ _ _ c hc _ ↦ hall c hc⟩⟩
 
+/-- Under the preorder of a criterion, when some element of the set satisfies the criterion, the
+minimal elements are exactly those that do. -/
+theorem minimals_ofCriterion {P : α → Prop} (hex : ∃ a ∈ s, P a) :
+    (ofCriterion P).minimals s = {a ∈ s | P a} :=
+  let ⟨_, hb, hPb⟩ := hex
+  Set.ext fun _ ↦
+    ⟨fun ⟨ha, hmin⟩ ↦ ⟨ha, hmin hb (fun _ ↦ hPb) hPb⟩, fun ⟨ha, hPa⟩ ↦ ⟨ha, fun _ _ _ _ ↦ hPa⟩⟩
+
 end Preorder

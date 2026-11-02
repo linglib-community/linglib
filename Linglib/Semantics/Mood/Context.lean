@@ -14,11 +14,12 @@ public import Linglib.Semantics.Mood.State
 Portner's discourse context assigns each participant discourse commitments, a mood state, so a
 context is a function `Role → State W`. A sentential force updates one component of the states of
 some participants: assertion meets the speaker's context set with its content, and directing
-promotes the content in the addressee's ordering. Zanuttini, Pak and Portner's promissive adds its
-content to the speaker's To-Do List rather than the addressee's, so a promise and a directive with
-the same content [coincide exactly when both participants' orderings already respect the
-content](##Discourse.SpeechAct.Force.update_promise_eq_directive_iff), so that promoting it changes
-neither.
+promotes the content in the addressee's ordering. Each force [meets a context with a fixed
+content](##Discourse.SpeechAct.Force.isAdditive_update). Zanuttini, Pak and Portner's promissive
+adds its content to the speaker's To-Do List rather than the addressee's, so a promise and a
+directive with the same content [coincide exactly when both participants' orderings already
+respect the content](##Discourse.SpeechAct.Force.update_promise_eq_directive_iff), so that
+promoting it changes neither.
 
 ## Main definitions
 
@@ -70,6 +71,13 @@ def Component.update : Component → State W → (W → Prop) → State W
 @[simp] theorem Component.update_inquisitive (c : State W) (φ : W → Prop) :
     Component.inquisitive.update c φ = c.inquire (Setoid.polar {w | φ w}) := rfl
 
+/-- The update of every component meets a state with a fixed content in that component. -/
+theorem Component.isAdditive_update (k : Component) (φ : W → Prop) :
+    IsAdditive (k.update · φ) := by
+  cases k
+  exacts [State.isAdditive_assert φ, State.isAdditive_promote φ,
+    State.isAdditive_inquire (Setoid.polar {w | φ w})]
+
 end Mood
 
 namespace Discourse.SpeechAct.Force
@@ -116,6 +124,19 @@ theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
     f.update d φ r = d r := by
   simp only [update, hr, ↓reduceIte]
 
+/-- Every force meets a discourse context with a fixed content, so that for texts of forces the
+three consequence relations of dynamic semantics coincide (`DynamicSemantics.tfae_entails`). -/
+theorem isAdditive_update (f : Force) (φ : W → Prop) : IsAdditive (f.update · φ) := fun d ↦
+  funext fun r ↦ show f.update d φ r = d r ⊓ f.update ⊤ φ r by
+    by_cases hr : r ∈ f.holders
+    · cases hc : f.target with
+      | none => simp [update, hr, hc]
+      | some k =>
+        rw [update_apply_of_mem _ _ hr hc, update_apply_of_mem _ _ hr hc]
+        exact k.isAdditive_update φ (d r)
+    · rw [update_apply_of_notMem _ _ hr, update_apply_of_notMem _ _ hr]
+      exact (inf_top_eq _).symm
+
 @[simp] theorem update_assertion_speaker : assertion.update d φ .speaker = (d .speaker).assert φ :=
   update_apply_of_mem (c := .informational) d φ (Finset.mem_singleton_self _) rfl
 
@@ -146,7 +167,7 @@ theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
 orderings already respect the content, since a promise promotes it for the speaker and a directive
 for the addressee ([zanuttini-pak-portner-2012], their (49)). -/
 theorem update_promise_eq_directive_iff :
-    promise.update d φ = directive.update d φ ↔ ∀ r, ExpState.Respects (d r).order φ := by
+    promise.update d φ = directive.update d φ ↔ ∀ r, (d r).order ≤ .ofCriterion φ := by
   simp only [funext_iff, Role.forall_role, update_promise_speaker, update_directive_speaker,
     update_promise_addressee, update_directive_addressee]
   rw [State.promote_eq_self_iff, eq_comm, State.promote_eq_self_iff]

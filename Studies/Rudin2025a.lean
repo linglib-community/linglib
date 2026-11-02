@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Dynamic.Expectation
+public import Linglib.Semantics.Dynamic.OrderedInformationState
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Modality.DomainSemantics
 public import Studies.Khoo2015
@@ -258,9 +258,10 @@ namespace OrdState
 under its ordering source. -/
 def best (i : OrdState W) : Set W := (premisePreorder i.ordering).minimals i.base
 
-/-- A state as an expectation state, its ordering source inducing the pattern and its best worlds
-the optimal worlds. -/
-def toExpState (i : OrdState W) : ExpState W := ⟨i.base, premisePreorder i.ordering⟩
+/-- A state as an ordered information state, its ordering source inducing the pattern and its best
+worlds the optimal worlds. -/
+def toOrderedInformationState (i : OrdState W) : OrderedInformationState W :=
+  ⟨i.base, premisePreorder i.ordering⟩
 
 theorem best_singleton {d p : Set W} (h : (d ∩ p).Nonempty) : best ⟨d, {(· ∈ p)}⟩ = d ∩ p := by
   obtain ⟨w, hwd, hwp⟩ := h
@@ -293,10 +294,11 @@ noncomputable def mightOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
 
 /-- On a compatible context the update of *might p* is Veltman's update with *normally p*, the
 promotion of Portner's To-Do List, on the epistemic ordering source. -/
-theorem toExpState_mightOrdUpdate (h : (c.base ∩ p).Nonempty) :
-    (mightOrdUpdate p c).toExpState = c.toExpState.promote (· ∈ p) := by
+theorem toOrderedInformationState_mightOrdUpdate (h : (c.base ∩ p).Nonempty) :
+    (mightOrdUpdate p c).toOrderedInformationState =
+      c.toOrderedInformationState.promote (· ∈ p) := by
   rw [mightOrdUpdate, ite_eq_left h]
-  exact congrArg (ExpState.mk _) (premisePreorder_insert _ _)
+  exact congrArg (OrderedInformationState.mk _) (premisePreorder_insert _ _)
 
 theorem commensurate_mightOrdUpdate [Finite W] (p : Set W) :
     Commensurate OrdState.base (mightOrd p) (mightOrdUpdate p) := by

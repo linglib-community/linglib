@@ -24,6 +24,8 @@ states, where both kernels collapse to inclusion; and the
 classifications of a stratum as world–assignment pairs
 (`State.uniformEquiv`) and of states up to informational equivalence as
 the complete lattice of upper sets (`State.antisymmetrizationOrderIso`).
+With no discourse referents a state is a set of worlds ordered by inclusion
+(`State.worldOrderIso`), the state of propositional update semantics.
 
 `State` is a type synonym whose `≤` is informativeness, oriented like the
 inclusion order of `Set` and of `DynamicSemantics.CCP`: a more informed state
@@ -494,6 +496,15 @@ noncomputable def uniformEquiv (X : Set V) :
     {e : W × (X → M)} :
     e ∈ uniformEquiv X I ↔ ((Possibility.domainEquiv X).symm e).1 ∈ I.1 :=
   Set.mem_image_equiv
+
+/-- A state with no discourse referents is a set of worlds, and informativeness is inclusion:
+the states of propositional update semantics. -/
+def worldOrderIso : State W Empty M ≃o Set W where
+  toEquiv := Equiv.setCongr (Possibility.worldEquiv W (Flat M))
+  map_rel_iff' {s t} := by
+    have hu (s : State W Empty M) : UniformAt ∅ s := fun _ _ ↦ Set.eq_empty_of_isEmpty _
+    exact (Set.image_subset_image_iff (Possibility.worldEquiv W (Flat M)).injective).trans
+      ((hu s).le_iff_subset (hu t)).symm
 
 variable [DecidableEq V]
 

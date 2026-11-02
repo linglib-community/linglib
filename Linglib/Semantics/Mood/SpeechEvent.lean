@@ -101,21 +101,21 @@ theorem SpeechEvent.toContext_imperative_addressee (todo : W → List (W → Pro
 
 theorem SpeechEvent.mem_toContext_declarative_info (beliefs : W → List (W → Prop)) (w₀ v : W) :
     v ∈ ((SpeechEvent.declarative beliefs).toContext w₀ .speaker).info ↔ ∀ p ∈ beliefs w₀, p v := by
-  rw [SpeechEvent.toContext_declarative_speaker, State.foldl_assert_toExpState,
-    ExpState.mem_foldl_assert_info]
+  rw [SpeechEvent.toContext_declarative_speaker, State.foldl_assert_toOrderedInformationState,
+    OrderedInformationState.mem_foldl_assert_info]
   exact and_iff_right (Set.mem_univ v)
 
 theorem SpeechEvent.toContext_imperative_le (todo : W → List (W → Prop)) (w₀ w v : W) :
     ((SpeechEvent.imperative todo).toContext w₀ .addressee).order.le w v ↔
       ∀ p ∈ todo w₀, p v → p w := by
-  rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toExpState,
-    ExpState.foldl_promote_order_le]
+  rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toOrderedInformationState,
+    OrderedInformationState.foldl_promote_order]
   exact ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
 
 @[simp] theorem SpeechEvent.toContext_imperative_info (todo : W → List (W → Prop)) (w₀ : W) :
     ((SpeechEvent.imperative todo).toContext w₀ .addressee).info = Set.univ := by
-  rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toExpState,
-    ExpState.foldl_promote_info]
+  rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toOrderedInformationState,
+    OrderedInformationState.foldl_promote_info]
   rfl
 
 /-- When some world realizes every item of the To-Do List, the addressee's optimal worlds are
@@ -126,7 +126,8 @@ theorem SpeechEvent.optimal_toContext_imperative {todo : W → List (W → Prop)
       {v | ∀ p ∈ todo w₀, p v} := by
   obtain ⟨x, hx⟩ := h
   ext w
-  rw [ExpState.optimal, Preorder.mem_minimals_iff, SpeechEvent.toContext_imperative_info]
+  rw [OrderedInformationState.optimal, Preorder.mem_minimals_iff,
+    SpeechEvent.toContext_imperative_info]
   refine ⟨fun ⟨_, hw⟩ p hp ↦ (toContext_imperative_le todo w₀ w x).1
       (hw (Set.mem_univ x) ((toContext_imperative_le todo w₀ x w).2 fun q hq _ ↦ hx q hq)) p hp
       (hx p hp),
