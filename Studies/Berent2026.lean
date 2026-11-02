@@ -5,19 +5,20 @@ public import Linglib.Fragments.English.Phonology
 public import Linglib.Fragments.Hebrew.ConsonantalRoots
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Subregular.StrictlyLocal
 public import Studies.BerentEtAl2016
 
 /-!
 # Berent (2026): Three arguments for abstraction in phonology
 
-Three sets of experiments argue that phonological grammar is substance-free. Onsets with larger
-sonority rises are preferred, *blif* to *bnif* to *bdif* to *lbif*, in print and with the lips or
-the tongue suppressed, as [the rise reads only the features defining sonority](##onsetRise_congr).
-Hebrew speakers extend their ban on roots that begin with two identical consonants to /θ/, and ASL
-signers their preference for reduplication to handshapes ASL lacks: [the ban survives any injective
-relabelling](##initialIdentity_map), and a model of token co-occurrence [cannot tell the forms
-apart](##kathath_thathak). English speakers carry doubling over to novel ASL signs, [preferring
-doubled plurals where speakers without plural morphology do not](##plural_transfer).
+Three sets of experiments argue that phonology is substance-free. Onsets with larger sonority rises
+are preferred, *blif* to *bnif* to *bdif* to *lbif*, in print and under articulatory suppression, as
+[the rise reads only the features defining sonority](##onsetRise_congr). Hebrew speakers extend
+their ban on initial identical consonants to /θ/, and ASL signers their preference for reduplication
+to novel handshapes. The ban is strictly local, forbidding ⋊XX for every X, so [it survives any
+injective relabelling](##initialIdentity_map), while [no function of token co-occurrence counts
+decides it](##initialIdentity_not_factorsThrough). English speakers carry doubling over to signs,
+[preferring doubled plurals where speakers without plural morphology do not](##plural_transfer).
 
 ## Implementation notes
 
@@ -27,10 +28,11 @@ doubled plurals where speakers without plural morphology do not](##plural_transf
 * The ban is the paper's generalization over the first two consonants of a root. In
   [mccarthy-1981]'s analysis it follows from the OCP on the root tier, which makes *smm* a
   biliteral root, and rightward spreading (`McCarthy1981.consonantism_biliteral`).
-* The model of token co-occurrence counts adjacent pairs of segments in a lexicon. The paper adds
-  that the place feature of /θ/, a wide tongue-tip constriction, is unattested in Hebrew too. The
-  PHOIBLE features lack it, but `pairCount_eq_zero` holds for tokens of any type, its values
-  included.
+* The model of token co-occurrence counts the 2-factors of a form among those of a lexicon,
+  without word boundaries, so that every factor of *kathath* and *thathak* contains /θ/; with
+  boundaries it could still separate them by the position of the attested /k/. The paper adds that
+  the place feature of /θ/, a wide tongue-tip constriction, is unattested in Hebrew too. The
+  PHOIBLE features lack it, but `pairCount_eq_zero` holds for tokens of any type.
 * The paper credits the signers' preference to the productive reduplication of ASL, so signers
   analyse a doubled sign at the morphological level and nonsigners at the phonological one. The
   level is assumed, not computed by `SpokenLanguage.level`, which reads a taught meaning.
@@ -93,21 +95,52 @@ end Abstract
 
 section Algebraic
 
-variable {α β : Type*} {f : α → β} {x y z : α} {q : α × α} {L : List (List α)}
+variable {α β : Type*} {f : α → β} {x y z : α} {u : List α} {L : List (List α)}
+
+/-- The 3-factors that begin a word with two identical elements, ⋊XX with X a variable over the
+alphabet. -/
+def initialDoubles : Set (Augmented α) := {u | ∃ x, u = [none, some x, some x]}
 
 /-- A consonantal root begins with two identical consonants, which Hebrew bans while allowing
-identical consonants at the end of a root. -/
-def InitialIdentity (r : ConsonantalRoot α) : Prop := ¬ OCP.IsClean (r.segments.take 2)
+identical consonants at the end of a root: the strictly 3-local grammar that forbids
+`initialDoubles` rejects it. -/
+def InitialIdentity (r : ConsonantalRoot α) : Prop :=
+  r.segments ∉ (StrictlyLocalGrammar.ofForbidden initialDoubles).language 3
 
-instance [DecidableEq α] : DecidablePred (InitialIdentity (α := α)) :=
-  fun _ ↦ inferInstanceAs (Decidable (¬ _))
+theorem initialIdentity_iff {r : ConsonantalRoot α} :
+    InitialIdentity r ↔ ∃ x t, r.segments = x :: x :: t := by
+  obtain ⟨w⟩ := r
+  simp only [InitialIdentity, StrictlyLocalGrammar.mem_ofForbidden_language, initialDoubles,
+    Set.mem_ofPred_eq, not_forall, not_not, exists_prop]
+  constructor
+  · rintro ⟨_, hu, x, rfl⟩
+    obtain ⟨i, -, hi, he⟩ := (mem_kFactors_boundary_iff (by norm_num)).1 hu
+    simp only [window, List.ofFn_succ, List.ofFn_zero, List.cons.injEq, Fin.val_zero,
+      Fin.val_succ, and_true] at he
+    obtain ⟨h₀, h₁, h₂⟩ := he
+    have := List.getElem?_int_eq_none_iff.1 (by simpa using h₀.symm)
+    have := List.getElem?_int_eq_none_iff.not.1 (h₁ ▸ Option.some_ne_none x)
+    obtain rfl : i = -1 := by push_cast at *; omega
+    rw [List.getElem?_int_of_nonneg (by omega)] at h₁ h₂
+    norm_num at h₁ h₂
+    rcases w with _ | ⟨a, _ | ⟨b, t⟩⟩ <;> simp only [List.getElem?_nil, List.getElem?_cons_zero,
+      List.getElem?_cons_succ, reduceCtorEq, Option.some.injEq] at h₁ h₂
+    subst h₁ h₂
+    exact ⟨x, t, rfl⟩
+  · rintro ⟨x, t, h⟩
+    exact ⟨_, List.mem_kFactors.2 ⟨⟨[none], t.map some ++ [none, none], by simp [boundary, h]⟩,
+      rfl⟩, x, rfl⟩
+
+instance [DecidableEq α] : DecidablePred (InitialIdentity (α := α)) := fun r ↦
+  decidable_of_iff (r.segments ≠ [] ∧ r.segments[0]? = r.segments[1]?) <| by
+    rw [initialIdentity_iff]
+    rcases r with ⟨_ | ⟨a, _ | ⟨b, t⟩⟩⟩ <;> simp [eq_comm]
 
 /-- The ban gives the same verdict on a root and on its image under an injective relabelling of
 its consonants, so it extends to consonants that the language lacks. -/
 theorem initialIdentity_map (hf : Function.Injective f) (r : ConsonantalRoot α) :
     InitialIdentity (r.map f) ↔ InitialIdentity r := by
-  simp only [InitialIdentity, ConsonantalRoot.segments_map, ← List.map_take, OCP.IsClean,
-    List.isChain_map, hf.ne_iff]
+  rcases r with ⟨_ | ⟨a, _ | ⟨b, t⟩⟩⟩ <;> simp [initialIdentity_iff, hf.eq_iff]
 
 open Hebrew.Phonology in
 -- *dideb* and *bided* 'he isolated', p. 11.
@@ -118,37 +151,37 @@ theorem initialIdentity_iff_judgment :
 
 variable [DecidableEq α]
 
-/-- The number of times the tokens of `q` occur next to each other in the forms of a lexicon, the
-statistic of a model that tracks the co-occurrence of specific tokens. -/
-def pairCount (L : List (List α)) (q : α × α) : ℕ := (L.flatMap fun w ↦ w.zip w.tail).count q
+/-- The number of occurrences of `u` among the 2-factors of the forms of a lexicon, the statistic
+of a model that tracks the co-occurrence of specific tokens. -/
+def pairCount (L : List (List α)) (u : List α) : ℕ := (L.flatMap (List.kFactors 2)).count u
 
-/-- The counts in a lexicon of the adjacent pairs of a form, all that a model of token
-co-occurrence knows of it. -/
-def pairCounts (L : List (List α)) (w : List α) : List ℕ := (w.zip w.tail).map (pairCount L)
+/-- The counts in a lexicon of the 2-factors of a form, all that a model of token co-occurrence
+knows of it. -/
+def pairCounts (L : List (List α)) (w : List α) : List ℕ :=
+  (List.kFactors 2 w).map (pairCount L)
 
-theorem pairCount_eq_zero (hz : ∀ w ∈ L, z ∉ w) (hq : q.1 = z ∨ q.2 = z) : pairCount L q = 0 := by
+theorem pairCount_eq_zero (hz : ∀ w ∈ L, z ∉ w) (hu : z ∈ u) : pairCount L u = 0 := by
   rw [pairCount, List.count_eq_zero]
   simp only [List.mem_flatMap, not_exists, not_and]
-  intro w hw hmem
-  obtain ⟨h₁, h₂⟩ := List.of_mem_zip hmem
-  rcases hq with rfl | rfl
-  exacts [hz w hw h₁, hz w hw (List.mem_of_mem_tail h₂)]
+  exact fun w hw h ↦ hz w hw ((List.mem_kFactors.1 h).1.subset hu)
 
 open Hebrew.Phonology in
 open English.Phonology (θ) in
 /-- Hebrew speakers favoured *kathath* over *thathak* (p. 11). Since /θ/ is neither a Hebrew
-consonant nor one of the archisegments of the alternating stops, every adjacent pair of either
-root has count zero in any lexicon of Hebrew roots, so a model of token co-occurrence cannot tell
-them apart, while the ban rules out *thathak* alone. -/
-theorem kathath_thathak (L : List (ConsonantalRoot Segment))
+consonant nor one of the archisegments of the alternating stops, the two roots have the same pair
+counts in any lexicon of Hebrew roots, so the ban, which separates them, is no function of the
+pair counts. -/
+theorem initialIdentity_not_factorsThrough (L : List (ConsonantalRoot Segment))
     (hL : ∀ r ∈ L, ∀ c ∈ r.segments, c ∈ consonants ∪ {B, K, P}) :
-    pairCounts (L.map (·.segments)) [k, θ, θ] = pairCounts (L.map (·.segments)) [θ, θ, k] ∧
-      ¬ InitialIdentity ⟨[k, θ, θ]⟩ ∧ InitialIdentity ⟨[θ, θ, k]⟩ := by
+    ¬ Function.FactorsThrough InitialIdentity
+        fun r : ConsonantalRoot Segment ↦ pairCounts (L.map (·.segments)) r.segments := by
   have hθ : ∀ w ∈ L.map (·.segments), θ ∉ w := by
     simp only [List.mem_map]
     rintro _ ⟨r, hr, rfl⟩ h
     exact absurd (hL r hr θ h) (by decide +kernel)
-  exact ⟨by simp [pairCounts, pairCount_eq_zero hθ], by decide +kernel, by decide +kernel⟩
+  intro h
+  have := @h ⟨[k, θ, θ]⟩ ⟨[θ, θ, k]⟩ (by simp [pairCounts, pairCount_eq_zero hθ])
+  exact (by decide +kernel : ¬ InitialIdentity ⟨[k, θ, θ]⟩) (this ▸ by decide +kernel)
 
 -- The fragment's roots, archisegments included, form such a lexicon.
 open Hebrew Hebrew.Phonology in
@@ -156,14 +189,18 @@ example : ∀ r ∈ [ktv, pll, rkk, mss, xmm], ∀ c ∈ r.segments, c ∈ conso
   decide +kernel
 
 /-- Native ASL signers preferred novel doubled signs whose handshape ASL lacks to their controls,
-and nonsigners dispreferred them (p. 12). Both forms have only pairs of count zero in any lexicon
-of ASL signs, while the grammar of doubling prefers the doubled sign at the signers' morphological
-level and the control at the nonsigners' phonological one. -/
-theorem unattested_handshapes (hx : ∀ w ∈ L, x ∉ w) (h : x ≠ y) (r : Ranking (Fin 2) 2) :
-    pairCounts L [x, x] = pairCounts L [x, y] ∧
-      (tableau x y .morphology r).optimal = {.reduplicated [x]} ∧
-      (tableau x y .phonology r).optimal = {.simplex [x, y]} :=
-  ⟨by simp [pairCounts, pairCount_eq_zero hx], optimal_morphology h r, optimal_phonology h r⟩
+and nonsigners dispreferred them (p. 12). A doubled sign and its control have the same pair counts
+in any lexicon of ASL signs, so the winner of the doubling grammar, at the signers' morphological
+level or the nonsigners' phonological one, is no function of the pair counts. -/
+theorem doubling_not_factorsThrough (hx : ∀ w ∈ L, x ∉ w) (h : x ≠ y) (l : Level)
+    (r : Ranking (Fin 2) 2) :
+    ¬ Function.FactorsThrough (fun w ↦ ∃ p ∈ (tableau x y l r).optimal, p.surface = w)
+        (pairCounts L) := by
+  intro hf
+  have := @hf [x, x] [x, y] (by simp [pairCounts, pairCount_eq_zero hx])
+  cases l
+  · simp [optimal_phonology h r, Parse.surface, Parse.morphemes, h.symm] at this
+  · simp [optimal_morphology h r, Parse.surface, Parse.morphemes, h] at this
 
 end Algebraic
 
