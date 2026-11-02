@@ -144,33 +144,21 @@ theorem cell_grain_of_mem_zmultiples (hε : 0 < ε) (hd : d ∈ AddSubgroup.zmul
 theorem cell_grain_zero (hε : 0 < ε) : (grain ε).cell 0 = Ico (-(ε / 2)) (ε / 2) := by
   rw [cell_grain_of_mem_zmultiples hε (zero_mem _), zero_sub, zero_add]
 
-theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
-    |d - representative ε d| = ε / 2 ↔
-      d ∈ AddSubgroup.zmultiples (ε / 2) ∧ d ∉ AddSubgroup.zmultiples ε := by
-  have key : |d - representative ε d| = ε * |d / ε - round (d / ε)| := by
-    rw [representative, zsmul_eq_mul, ← abs_of_pos hε, ← abs_mul, abs_of_pos hε]
-    congr 1
-    field_simp
-  rw [key, show ε / 2 = ε * (1 / 2) by ring, mul_right_inj' hε.ne', abs_sub_round_eq_half_iff,
-    AddSubgroup.mem_zmultiples_iff, AddSubgroup.mem_zmultiples_iff]
-  simp only [zsmul_eq_mul]
-  constructor
-  · rintro ⟨k, hk⟩
-    rw [div_eq_iff hε.ne'] at hk
-    refine ⟨⟨2 * k + 1, by rw [hk]; push_cast; ring⟩, ?_⟩
-    rintro ⟨j, hj⟩
-    have h2 : (j : α) = k + 1 / 2 :=
-      mul_right_cancel₀ hε.ne' (hj.trans hk)
-    have : ((2 * (j - k) : ℤ) : α) = 1 := by push_cast; linarith
-    have := Int.cast_eq_one.1 this
-    omega
-  · rintro ⟨⟨m, hm⟩, hn⟩
-    obtain ⟨k, rfl | rfl⟩ := Int.even_or_odd' m
-    · exact absurd ⟨k, by rw [← hm]; push_cast; ring⟩ hn
-    · refine ⟨k, ?_⟩
-      rw [div_eq_iff hε.ne', ← hm]
-      push_cast
-      ring
+/-- The degrees farthest from their representative are the lower ends of the cells. -/
+theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) :
+    |d - representative ε d| = ε / 2 ↔ d + ε / 2 ∈ AddSubgroup.zmultiples ε := by
+  have hd := (grain ε).mem_cell_self d
+  rw [cell_grain hε] at hd
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rw [show d + ε / 2 = representative ε d by
+      rcases (abs_eq (by positivity)).1 h with h | h <;> linarith [hd.2]]
+    exact representative_mem_zmultiples ε d
+  · have hmem : d ∈ (grain ε).cell (d + ε / 2) := by
+      rw [cell_grain_of_mem_zmultiples hε h]
+      constructor <;> linarith
+    rw [← ker_representative hε.ne', Setoid.mem_cell, Setoid.ker_def,
+      representative_eq_self_of_mem_zmultiples hε.ne' h] at hmem
+    rw [hmem, sub_add_cancel_left, abs_neg, abs_of_pos (by positivity)]
 
 theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
     representative ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by

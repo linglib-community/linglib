@@ -14,15 +14,10 @@ Deo and Thomas analyse English *just* as a domain-widening strategy. Besides the
 with *only*, *just* has emphatic, precisifying, minimal-sufficiency, unexplanatory, unelaboratory
 and counterexpectational uses, in some of which its prejacent answers no standard construal of the
 current question. The account replaces the current question by an underspecified question, the
-set of a question's construals at a context, and compares construals by width, which is weaker
-than question entailment. *Just* presupposes that the current question is the widest construal
-that the speaker can answer truthfully and relevantly, and asserts its prejacent.
-
-## Main definitions
-
-* `DeoThomas2025.WiderThan`: the width order on construals, (32).
-* `DeoThomas2025.Context.IsOptimal`: the widest answerable construal, (35).
-* `DeoThomas2025.just`: the lexical entry, (36).
+set of a question's construals at a context, and compares construals [by width](##WiderThan),
+which is weaker than question entailment. [*Just*](##just) presupposes that the current question
+is [the widest construal that the speaker can answer truthfully and
+relevantly](##Context.IsOptimal), and asserts its prejacent.
 
 ## Implementation notes
 

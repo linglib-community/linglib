@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Degree.Granularity
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Data.Examples.SauerlandStateva2011
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 
@@ -13,25 +15,34 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 # Sauerland & Stateva (2011): Two Types of Vagueness
 
 Sauerland and Stateva argue from the distribution of approximators that vagueness comes in two
-kinds. Scalar vagueness belongs to terms that denote a point on a scale, such as numerals: a
-contextual granularity maps the point to an interval around it, after Krifka, and scalar
-approximators such as *exactly* and *approximately* reset the granularity to the finest or the
-coarsest available one. Epistemic vagueness belongs to terms like *heap*, whose extension varies
-across indistinguishable worlds, and epistemic approximators quantify over those worlds. Within
-the scalar class, *absolutely*, *completely* and *more or less* take only scale endpoints and
-block *exactly* and *approximately* there.
+kinds. A scalar term such as a numeral denotes a point on a scale, which a contextual granularity
+maps to an interval around it, after Krifka; an epistemically vague term such as *beef
+Stroganoff* denotes none. *Exactly* resets the granularity to [the finest available
+grain](##exactly_narrowest) and *approximately* to the coarsest, so [a second approximator is
+vacuous](##reset_reset). *Completely* and *more or less* apply at the maximum of an adjective's
+scale and block *exactly* and *approximately* wherever they apply, which [predicts the cited
+distribution](##acceptable_iff_judgment) from the scales of the terms.
 
 ## Implementation notes
 
-Granularities are the grains `Degree.grain`, identified by their widths, and the
-interval a term denotes is the cell of its degree. Cells are half-open so that they partition
-the scale; the chapter writes them closed, (12)–(13). The examples at the end check the
-intervals of (13) and the oddity of (20).
+Granularities are the grains `Degree.grain`, identified by their widths, and the interval a term
+denotes is the cell of its degree. Cells are half-open so that they partition the scale; the
+chapter writes them closed, (12)–(13). A term is given by the endpoints of the scale it denotes a
+point on, `none` for an epistemically vague one: a numeral's scale is the order of `ℕ`, an
+adjective's that of its English fragment entry. *Absolutely* and *totally* share the entry of
+*completely* (p. 135). The rows are the cited judgments on terms with fragment entries.
+
+## Errata
+
+The entries (38) and (46) refer to the maximum of the adjective's scale, so *more or less* does
+not apply to *wet*, whose scale has a minimum but no maximum, and [leaves *approximately wet*
+unblocked](##approximately_wet), which §6.4.1 calls unnatural.
 
 ## References
 
 * [sauerland-stateva-2011]
 * [krifka-2007]
+* [kennedy-mcnally-2005]
 * [lasersohn-1999]
 -/
 
@@ -39,85 +50,128 @@ intervals of (13) and the oddity of (20).
 
 namespace SauerlandStateva2011
 
-open Degree
+open Degree English.Adjectives
 
-/-! ### The two-vagueness classification (§6.3) -/
+/-! ### Scalar approximators, (19), (38), (46) -/
 
-/-- Their example expressions ((4)–(6), (35), (37), (44)–(45)). -/
-inductive Item where
-  | fifty
-  | three
-  | dry
-  | full
-  | beefStroganoff
+/-- The granularity a scalar approximator resets to, (19). -/
+inductive Setting where
+  | finest
+  | coarsest
   deriving DecidableEq, Repr
 
-/-- The dualistic theory classifies scalar terms as denoting scale points, non-endpoints (numerals)
-or endpoints (*dry*, *full*, the closed-scale adjectives of §6.4), and epistemically vague terms as
-denoting no point at all. -/
-inductive ItemClass where
-  | scalarNonEndpoint
-  | scalarEndpoint
-  | epistemic
+/-- A scalar approximator applies at any point of a scale, as *exactly* (19a), or at the maximum
+of an adjective's scale, as *completely* (38). -/
+inductive Target where
+  | point
+  | maximum
   deriving DecidableEq, Repr
 
-/-- Their classification of the example items. -/
-def Item.itemClass : Item → ItemClass
-  | .fifty | .three => .scalarNonEndpoint
-  | .dry | .full => .scalarEndpoint
-  | .beefStroganoff => .epistemic
-
-/-- The approximators whose distribution they cite. -/
-inductive Approximator where
-  | exactly
-  | approximately
-  | absolutely
-  | completely
-  | moreOrLess
+/-- A scalar approximator resets the granularity of its complement and applies at a point or at a
+maximum. -/
+structure Approximator where
+  /-- The granularity it resets to. -/
+  setting : Setting
+  /-- Where on the scale it applies. -/
+  target : Target
   deriving DecidableEq, Repr
 
-/-- Plain scalar approximators select non-endpoints, and the endpoint approximators *absolutely*,
-*completely* and *more or less*, which make endpoints more or less precise and block *exactly* and
-*approximately* there, select endpoints, §6.4 and (32). -/
-def Approximator.selects : Approximator → ItemClass
-  | .exactly | .approximately => .scalarNonEndpoint
-  | .absolutely | .completely | .moreOrLess => .scalarEndpoint
+/-- *exactly*, (19a). -/
+def exactly : Approximator := ⟨.finest, .point⟩
 
-/-- The theory predicts that an approximator combines with an item exactly when the item is of the
-class the approximator selects. -/
-def compatible (a : Approximator) (i : Item) : Prop :=
-  a.selects = i.itemClass
+/-- *approximately*, (19b). -/
+def approximately : Approximator := ⟨.coarsest, .point⟩
 
-instance (a : Approximator) (i : Item) : Decidable (compatible a i) :=
-  inferInstanceAs (Decidable (_ = _))
+/-- *completely*, (38). -/
+def completely : Approximator := ⟨.finest, .maximum⟩
 
-/-- One cited acceptability judgment. -/
-structure Judgment where
-  approximator : Approximator
-  item : Item
-  acceptable : Bool
-  deriving Repr
+/-- *more or less*, (46). -/
+def moreOrLess : Approximator := ⟨.coarsest, .maximum⟩
 
-/-- The cited judgments are (4a)/(4b) *exactly/approximately fifty* vs `#`…*Beef Stroganoff*;
-(6a)/(6b) `*`*absolutely fifty* vs *absolutely* + endpoint; (35a)/(35b) `#`*exactly dry/full* vs
-*exactly three*; (37) *completely dry* vs `#`*completely three*; (44) *approximately three* vs
-`#`…*dry*; and (45) *more or less dry* vs `#`…*three*. -/
-def Judgment.rows : List Judgment :=
-  [⟨.exactly, .fifty, true⟩, ⟨.approximately, .fifty, true⟩,
-   ⟨.exactly, .beefStroganoff, false⟩, ⟨.approximately, .beefStroganoff, false⟩,
-   ⟨.absolutely, .fifty, false⟩, ⟨.absolutely, .full, true⟩,
-   ⟨.exactly, .dry, false⟩, ⟨.exactly, .full, false⟩, ⟨.exactly, .three, true⟩,
-   ⟨.completely, .dry, true⟩, ⟨.completely, .three, false⟩,
-   ⟨.approximately, .three, true⟩, ⟨.approximately, .dry, false⟩,
-   ⟨.moreOrLess, .dry, true⟩, ⟨.moreOrLess, .three, false⟩]
+/-- A numeral denotes a point on the order of the natural numbers. -/
+noncomputable def numeral : Option Boundedness := some (.ofOrder ℕ)
 
-/-- The two-type classification reproduces every cited judgment, an approximator being acceptable
-exactly with the class it selects; this is the dualism argument. -/
-theorem classification_predicts_distribution :
-    ∀ j ∈ Judgment.rows, (compatible j.approximator j.item ↔ j.acceptable) := by
+/-- An adjective denotes a point on its scale. -/
+def adjective (a : GradableAdjective) : Option Boundedness := some a.boundedness
+
+namespace Approximator
+
+/-- An approximator applies to a term that denotes a point, and one that targets the maximum
+only to a term whose scale has one. -/
+def Applies : Approximator → Option Boundedness → Prop
+  | _, none => False
+  | ⟨_, .point⟩, some _ => True
+  | ⟨_, .maximum⟩, some b => b.HasMax
+
+instance instDecidableApplies : ∀ a s, Decidable (Applies a s)
+  | _, none => isFalse id
+  | ⟨_, .point⟩, some _ => isTrue trivial
+  | ⟨_, .maximum⟩, some b => inferInstanceAs (Decidable b.HasMax)
+
+/-- An approximator is acceptable where it applies, unless it targets a point and the
+approximator of its granularity that targets the maximum also applies, which blocks it
+(§6.4.1). -/
+def Acceptable (a : Approximator) (s : Option Boundedness) : Prop :=
+  a.Applies s ∧ (a.target = .point → ¬ (⟨a.setting, .maximum⟩ : Approximator).Applies s)
+
+instance (a : Approximator) (s : Option Boundedness) : Decidable (a.Acceptable s) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+end Approximator
+
+private theorem ofOrder_nat : Boundedness.ofOrder ℕ = .lowerClosed :=
+  Boundedness.ext (iff_of_true Boundedness.hasMin_ofOrder_of_orderBot trivial)
+    (iff_of_false Boundedness.not_hasMax_ofOrder id)
+
+/-- The cited judgments: an approximator, the term it modifies and the row. -/
+noncomputable def judged : List (Approximator × Option Boundedness × Datum) :=
+  [(exactly, numeral, Examples.ex_4a_exactly),
+   (approximately, numeral, Examples.ex_4a_approximately),
+   (exactly, none, Examples.ex_4b_exactly), (approximately, none, Examples.ex_4b_approximately),
+   (completely, numeral, Examples.ex_6a_absolutely),
+   (completely, numeral, Examples.ex_6a_completely), (completely, numeral, Examples.ex_6a_totally),
+   (completely, adjective full, Examples.ex_32a_absolutely),
+   (exactly, adjective full, Examples.ex_32a_exactly),
+   (exactly, adjective dry, Examples.ex_35a_dry), (exactly, adjective full, Examples.ex_35a_full),
+   (exactly, adjective empty, Examples.ex_35a_empty), (exactly, numeral, Examples.ex_35b_three),
+   (exactly, none, Examples.ex_35c_stroganoff), (exactly, none, Examples.ex_35c_heap),
+   (completely, adjective dry, Examples.ex_37a_dry), (completely, numeral, Examples.ex_37b_three),
+   (completely, none, Examples.ex_37c_stroganoff), (completely, none, Examples.ex_37c_heap),
+   (approximately, adjective dry, Examples.ex_44a_dry),
+   (approximately, numeral, Examples.ex_44b_three),
+   (approximately, none, Examples.ex_44c_stroganoff), (approximately, none, Examples.ex_44c_heap),
+   (moreOrLess, adjective dry, Examples.ex_45a_dry), (moreOrLess, numeral, Examples.ex_45b_three),
+   (moreOrLess, none, Examples.ex_45c_stroganoff), (moreOrLess, none, Examples.ex_45c_heap),
+   (exactly, adjective closed_, Examples.p132_closed)]
+
+/-- The entries of the approximators and the scales of the terms predict every cited judgment:
+*exactly* and *approximately* combine with numerals, *completely* and *more or less* with
+adjectives whose scale has a maximum, and none with an epistemically vague term. -/
+theorem acceptable_iff_judgment :
+    ∀ r ∈ judged, (r.1.Acceptable r.2.1 ↔ r.2.2.judgment = .acceptable) := by
+  simp only [judged, numeral, ofOrder_nat]
+  decide
+
+/-- *More or less* needs a maximum and *wet* has only a minimum, so *approximately wet* is
+unblocked, against the judgment of §6.4.1. -/
+theorem approximately_wet :
+    approximately.Acceptable (adjective wet) ∧ Examples.p132_wet.judgment ≠ .acceptable := by
   decide
 
 /-! ### Granularity setting, (12)–(20) -/
+
+/-- The width of the grain an approximator of the setting resets the available grains to, (19). -/
+def Setting.reset {β : Type*} [LinearOrder β] : Setting → (𝒢 : Finset β) → 𝒢.Nonempty → β
+  | .finest, 𝒢, h => 𝒢.min' h
+  | .coarsest, 𝒢, h => 𝒢.max' h
+
+/-- A second scalar approximator is vacuous, as the oddity of (27) shows (§6.3.5): the first
+resets the grains to a single one, which the second returns. -/
+theorem reset_reset {β : Type*} [LinearOrder β] (s t : Setting) (𝒢 : Finset β)
+    (h : 𝒢.Nonempty) : t.reset {s.reset 𝒢 h} (Finset.singleton_nonempty _) = s.reset 𝒢 h := by
+  cases t
+  · exact Finset.min'_singleton _
+  · exact Finset.max'_singleton _
 
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
   (𝒢 : Finset α) (h𝒢 : 𝒢.Nonempty) {d ε : α}
@@ -125,7 +179,7 @@ variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [Floo
 /-- At a degree on every available grain, *exactly* yields the narrowest reading (19a), as for *5
 meters* in Figure 6.1. -/
 theorem exactly_narrowest (hpos : ∀ ε ∈ 𝒢, 0 < ε) (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε)
-    (hε : ε ∈ 𝒢) : (grain (𝒢.min' h𝒢)).cell d ⊆ (grain ε).cell d :=
+    (hε : ε ∈ 𝒢) : (grain (exactly.setting.reset 𝒢 h𝒢)).cell d ⊆ (grain ε).cell d :=
   cell_grain_subset_cell_grain (hpos _ (𝒢.min'_mem h𝒢)) (𝒢.min'_le ε hε) (hd _ (𝒢.min'_mem h𝒢))
     (hd ε hε)
 
@@ -133,15 +187,8 @@ theorem exactly_narrowest (hpos : ∀ ε ∈ 𝒢, 0 < ε) (hd : ∀ ε ∈ 𝒢
 widest available reading, (19b). -/
 theorem approximately_widest (hpos : ∀ ε ∈ 𝒢, 0 < ε)
     (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε) (hε : ε ∈ 𝒢) :
-    (grain ε).cell d ⊆ (grain (𝒢.max' h𝒢)).cell d :=
+    (grain ε).cell d ⊆ (grain (approximately.setting.reset 𝒢 h𝒢)).cell d :=
   cell_grain_subset_cell_grain (hpos ε hε) (𝒢.le_max' ε hε) (hd ε hε) (hd _ (𝒢.max'_mem h𝒢))
-
-/-- A second scalar approximator is vacuous, §6.3.5, since the first resets the granularities to a
-single one, which either reset returns. -/
-theorem second_reset_vacuous {β : Type*} [LinearOrder β] (ε : β) :
-    ({ε} : Finset β).min' (Finset.singleton_nonempty ε) = ε ∧
-      ({ε} : Finset β).max' (Finset.singleton_nonempty ε) = ε :=
-  ⟨Finset.min'_singleton ε, Finset.max'_singleton ε⟩
 
 /-! (13): *5 meters* at 1 m, *4 meters 50* at 50 cm, and *4 meters 90* at 10 cm. -/
 

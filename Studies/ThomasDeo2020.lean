@@ -9,19 +9,13 @@ public import Linglib.Data.Examples.ThomasDeo2020
 # Thomas and Deo (2020): The Interaction of *just* with Modified Scalar Predicates
 
 Thomas and Deo analyse the approximative use of *just* with equatives and comparatives, *just as
-tall as* and *just older than*. A degree is interpreted at a level of precision, the open interval
-whose radius is the grain; an equative places the subject's degree above the infimum of the
-standard's level and a comparative above its supremum. Equatives make stronger claims at finer
-grains and comparatives at coarser ones. *Just* asserts the prejacent at the finest grain and
-denies it at every coarser grain where it would be stronger, so it adds nothing to an equative
-and gives a comparative an upper bound that cannot be cancelled.
-
-## Main definitions
-
-* `ThomasDeo2020.level`: the level of radius `ε` around a degree, (42)–(43).
-* `ThomasDeo2020.equative`, `ThomasDeo2020.comparative`: the constructions at a grain, (45) and
-  (49).
-* `ThomasDeo2020.just`: approximative *just*, (44).
+tall as* and *just older than*. A degree is interpreted at [a level of precision](##level), the open
+interval whose radius is the grain; [an equative](##equative) places the subject's degree above
+the infimum of the standard's level and [a comparative](##comparative) above its supremum.
+Equatives make stronger claims at finer grains and comparatives at coarser ones.
+[*Just*](##just) asserts the prejacent at the finest grain and denies it at every coarser grain
+where it would be stronger, so it adds nothing to an equative and gives a comparative an upper
+bound that cannot be cancelled.
 
 ## Implementation notes
 

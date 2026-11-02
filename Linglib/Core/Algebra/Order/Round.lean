@@ -23,7 +23,6 @@ multiples of `ε`, and shows that `round` of a quotient by an odd natural factor
 * `abs_sub_round_div_zsmul_le`: rounding to the nearest multiple of `ε` moves a point by at
   most `ε / 2`.
 * `abs_sub_round_div_zsmul_le_abs_sub_zsmul`: no multiple of `ε` is nearer.
-* `abs_sub_round_eq_half_iff`: the points moved by exactly a half are the half-integers.
 * `round_div_two_mul_add_one`: `round (x / (2 * j + 1))` is `(round x + j) / (2 * j + 1)`.
 -/
 
@@ -50,26 +49,6 @@ theorem abs_sub_round_div_zsmul_le_abs_sub_zsmul (hε : ε ≠ 0) (d : α) (n : 
     |d - round (d / ε) • ε| ≤ |d - n • ε| := by
   rw [sub_zsmul_eq_sub_mul hε, sub_zsmul_eq_sub_mul hε, abs_mul, abs_mul]
   exact mul_le_mul_of_nonneg_right (round_le (d / ε) n) (abs_nonneg ε)
-
-/-- Rounding moves a point by exactly a half at the half-integers, the equality case of
-`abs_sub_round`. -/
-theorem abs_sub_round_eq_half_iff {x : α} : |x - round x| = 1 / 2 ↔ ∃ k : ℤ, x = k + 1 / 2 := by
-  rw [round_eq]
-  have h0 := Int.fract_nonneg (x + 1 / 2)
-  have h1 := Int.fract_lt_one (x + 1 / 2)
-  have hx : x - ⌊x + 1 / 2⌋ = Int.fract (x + 1 / 2) - 1 / 2 := by rw [Int.fract]; ring
-  rw [hx]
-  constructor
-  · intro h
-    have hf : Int.fract (x + 1 / 2) = 0 := by
-      rcases abs_eq (by norm_num : (0 : α) ≤ 1 / 2) |>.1 h with h | h <;> linarith
-    refine ⟨⌊x + 1 / 2⌋ - 1, ?_⟩
-    rw [Int.fract, sub_eq_zero] at hf
-    push_cast
-    linarith
-  · rintro ⟨k, rfl⟩
-    rw [show (k : α) + 1 / 2 + 1 / 2 = ((k + 1 : ℤ) : α) by push_cast; ring, Int.fract_intCast]
-    norm_num [abs_of_neg]
 
 /-- Rounding a quotient by an odd natural factors through rounding, since the half-integers
 `k * (2 * j + 1) + j + 1 / 2` at which `round (x / (2 * j + 1))` jumps are among those at which
