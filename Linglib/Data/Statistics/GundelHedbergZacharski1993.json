@@ -1,0 +1,839 @@
+{
+  "meta": {
+    "bibkey": "gundel-hedberg-zacharski-1993",
+    "method": "corpus",
+    "description": "The referring expressions of naturally occurring discourse in Mandarin Chinese, English, Japanese, Russian and Spanish, from novels, short stories, magazine articles, news broadcasts, interviews and casual conversations, and for all languages but Russian narrative descriptions of a silent film, each token coded by two coders for the highest cognitive status its referent met in context. A blank cell of the printed tables is no token and is omitted. Spanish personal pronouns were mostly not coded for stress.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Language",
+      "doc": "The languages of the study.",
+      "levels": [
+        {
+          "name": "chinese",
+          "label": "Chinese",
+          "doc": "Mandarin Chinese, Table 2"
+        },
+        {
+          "name": "english",
+          "label": "English",
+          "doc": "English, Table 3"
+        },
+        {
+          "name": "japanese",
+          "label": "Japanese",
+          "doc": "Japanese, Table 4"
+        },
+        {
+          "name": "russian",
+          "label": "Russian",
+          "doc": "Russian, Table 5"
+        },
+        {
+          "name": "spanish",
+          "label": "Spanish",
+          "doc": "Spanish, Table 6"
+        }
+      ]
+    },
+    {
+      "name": "Form",
+      "doc": "A referring form, as the rows of Tables 2-6 print it.",
+      "levels": [
+        {
+          "name": "zero",
+          "label": "ø",
+          "doc": "a zero pronominal"
+        },
+        {
+          "name": "ta",
+          "label": "tā",
+          "doc": "the personal pronoun 's/he, it'"
+        },
+        {
+          "name": "zhe",
+          "label": "zhè",
+          "doc": "the proximal demonstrative pronoun 'this'"
+        },
+        {
+          "name": "nei",
+          "label": "nèi",
+          "doc": "the distal demonstrative pronoun 'that'"
+        },
+        {
+          "name": "zheN",
+          "label": "zhè N",
+          "doc": "the proximal demonstrative determiner with a noun"
+        },
+        {
+          "name": "neiN",
+          "label": "nèi N",
+          "doc": "the distal demonstrative determiner with a noun"
+        },
+        {
+          "name": "yiN",
+          "label": "yī N",
+          "doc": "'one' with a noun, 'a N'"
+        },
+        {
+          "name": "bare",
+          "label": "N",
+          "doc": "a bare noun"
+        },
+        {
+          "name": "it",
+          "label": "it",
+          "doc": "the unstressed personal pronoun"
+        },
+        {
+          "name": "stressedHe",
+          "label": "HE",
+          "doc": "a stressed personal pronoun"
+        },
+        {
+          "name": "thisPronoun",
+          "label": "this",
+          "doc": "the proximal demonstrative pronoun"
+        },
+        {
+          "name": "thatPronoun",
+          "label": "that",
+          "doc": "the distal demonstrative pronoun"
+        },
+        {
+          "name": "thisN",
+          "label": "this N",
+          "doc": "the proximal demonstrative determiner with a noun"
+        },
+        {
+          "name": "thatN",
+          "label": "that N",
+          "doc": "the distal demonstrative determiner with a noun"
+        },
+        {
+          "name": "theN",
+          "label": "the N",
+          "doc": "the definite article with a noun"
+        },
+        {
+          "name": "indefiniteThisN",
+          "label": "indefinite this N",
+          "doc": "indefinite this with a noun"
+        },
+        {
+          "name": "aN",
+          "label": "a N",
+          "doc": "the indefinite article with a noun"
+        },
+        {
+          "name": "kare",
+          "label": "kare",
+          "doc": "the personal pronoun 'he'"
+        },
+        {
+          "name": "kore",
+          "label": "kore",
+          "doc": "the proximal demonstrative pronoun 'this'"
+        },
+        {
+          "name": "sore",
+          "label": "sore",
+          "doc": "the medial demonstrative pronoun 'that'"
+        },
+        {
+          "name": "are",
+          "label": "are",
+          "doc": "the distal demonstrative pronoun 'that'"
+        },
+        {
+          "name": "konoN",
+          "label": "kono N",
+          "doc": "the proximal demonstrative determiner with a noun"
+        },
+        {
+          "name": "sonoN",
+          "label": "sono N",
+          "doc": "the medial demonstrative determiner with a noun"
+        },
+        {
+          "name": "anoN",
+          "label": "ano N",
+          "doc": "the distal demonstrative determiner with a noun"
+        },
+        {
+          "name": "ono",
+          "label": "ono",
+          "doc": "the unstressed personal pronoun 'it'"
+        },
+        {
+          "name": "stressedOno",
+          "label": "ONO",
+          "doc": "the stressed personal pronoun 'it'"
+        },
+        {
+          "name": "eto",
+          "label": "èto",
+          "doc": "the proximal demonstrative pronoun 'this'"
+        },
+        {
+          "name": "tot",
+          "label": "tot",
+          "doc": "the distal demonstrative pronoun 'that'"
+        },
+        {
+          "name": "etoN",
+          "label": "èto N",
+          "doc": "the proximal demonstrative determiner with a noun"
+        },
+        {
+          "name": "toN",
+          "label": "to N",
+          "doc": "the distal demonstrative determiner with a noun"
+        },
+        {
+          "name": "elSubj",
+          "label": "él (subj)",
+          "doc": "the personal pronoun 'he' as subject, stressed or unstressed"
+        },
+        {
+          "name": "elNonsubj",
+          "label": "él (nonsubj)",
+          "doc": "the personal pronoun 'he' as nonsubject, stressed or unstressed"
+        },
+        {
+          "name": "este",
+          "label": "éste",
+          "doc": "the proximal demonstrative pronoun 'this'"
+        },
+        {
+          "name": "ese",
+          "label": "ése",
+          "doc": "the medial demonstrative pronoun 'that'"
+        },
+        {
+          "name": "aquel",
+          "label": "aquél",
+          "doc": "the distal demonstrative pronoun 'that'"
+        },
+        {
+          "name": "esteN",
+          "label": "este N",
+          "doc": "the proximal demonstrative determiner with a noun"
+        },
+        {
+          "name": "eseN",
+          "label": "ese N",
+          "doc": "the medial demonstrative determiner with a noun"
+        },
+        {
+          "name": "aquelN",
+          "label": "aquel N",
+          "doc": "the distal demonstrative determiner with a noun"
+        },
+        {
+          "name": "elN",
+          "label": "el N",
+          "doc": "the definite article with a noun"
+        },
+        {
+          "name": "unN",
+          "label": "un N",
+          "doc": "the indefinite article with a noun"
+        }
+      ]
+    },
+    {
+      "name": "Status",
+      "doc": "The highest cognitive status a referent met, as the columns of Tables 2-6 print it.",
+      "levels": [
+        {
+          "name": "inFocus",
+          "label": "In focus",
+          "doc": "in focus"
+        },
+        {
+          "name": "activated",
+          "label": "Activated",
+          "doc": "activated"
+        },
+        {
+          "name": "familiar",
+          "label": "Familiar",
+          "doc": "familiar"
+        },
+        {
+          "name": "unique",
+          "label": "Unique",
+          "doc": "uniquely identifiable"
+        },
+        {
+          "name": "referential",
+          "label": "Referential",
+          "doc": "referential"
+        },
+        {
+          "name": "typeIdentifiable",
+          "label": "Type",
+          "doc": "type identifiable"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "distribution",
+      "structure": "Cell",
+      "doc": "the tokens of a form whose referent met a status as its highest.",
+      "locator": "Tables 2-6, pp. 291-292",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "language",
+          "type": "Language",
+          "doc": "The language."
+        },
+        {
+          "name": "form",
+          "type": "Form",
+          "doc": "The referring form."
+        },
+        {
+          "name": "status",
+          "type": "Status",
+          "doc": "The highest status the referent met."
+        },
+        {
+          "name": "tokens",
+          "type": "nat",
+          "doc": "The number of tokens."
+        }
+      ],
+      "rows": [
+        {
+          "language": "Chinese",
+          "form": "ø",
+          "status": "In focus",
+          "tokens": 25
+        },
+        {
+          "language": "Chinese",
+          "form": "ø",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Chinese",
+          "form": "tā",
+          "status": "In focus",
+          "tokens": 40
+        },
+        {
+          "language": "Chinese",
+          "form": "zhè",
+          "status": "Activated",
+          "tokens": 2
+        },
+        {
+          "language": "Chinese",
+          "form": "zhè N",
+          "status": "In focus",
+          "tokens": 12
+        },
+        {
+          "language": "Chinese",
+          "form": "zhè N",
+          "status": "Activated",
+          "tokens": 26
+        },
+        {
+          "language": "Chinese",
+          "form": "zhè N",
+          "status": "Familiar",
+          "tokens": 1
+        },
+        {
+          "language": "Chinese",
+          "form": "nèi N",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "Chinese",
+          "form": "nèi N",
+          "status": "Activated",
+          "tokens": 7
+        },
+        {
+          "language": "Chinese",
+          "form": "nèi N",
+          "status": "Familiar",
+          "tokens": 2
+        },
+        {
+          "language": "Chinese",
+          "form": "yī N",
+          "status": "Referential",
+          "tokens": 17
+        },
+        {
+          "language": "Chinese",
+          "form": "yī N",
+          "status": "Type",
+          "tokens": 2
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "In focus",
+          "tokens": 12
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "Activated",
+          "tokens": 17
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "Familiar",
+          "tokens": 14
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "Unique",
+          "tokens": 49
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "Referential",
+          "tokens": 2
+        },
+        {
+          "language": "Chinese",
+          "form": "N",
+          "status": "Type",
+          "tokens": 10
+        },
+        {
+          "language": "English",
+          "form": "it",
+          "status": "In focus",
+          "tokens": 214
+        },
+        {
+          "language": "English",
+          "form": "it",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "English",
+          "form": "HE",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "English",
+          "form": "this",
+          "status": "Activated",
+          "tokens": 15
+        },
+        {
+          "language": "English",
+          "form": "that",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "English",
+          "form": "that",
+          "status": "Activated",
+          "tokens": 17
+        },
+        {
+          "language": "English",
+          "form": "this N",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "English",
+          "form": "this N",
+          "status": "Activated",
+          "tokens": 11
+        },
+        {
+          "language": "English",
+          "form": "that N",
+          "status": "Activated",
+          "tokens": 10
+        },
+        {
+          "language": "English",
+          "form": "that N",
+          "status": "Familiar",
+          "tokens": 7
+        },
+        {
+          "language": "English",
+          "form": "the N",
+          "status": "In focus",
+          "tokens": 30
+        },
+        {
+          "language": "English",
+          "form": "the N",
+          "status": "Activated",
+          "tokens": 95
+        },
+        {
+          "language": "English",
+          "form": "the N",
+          "status": "Familiar",
+          "tokens": 47
+        },
+        {
+          "language": "English",
+          "form": "the N",
+          "status": "Unique",
+          "tokens": 108
+        },
+        {
+          "language": "English",
+          "form": "indefinite this N",
+          "status": "Referential",
+          "tokens": 1
+        },
+        {
+          "language": "English",
+          "form": "a N",
+          "status": "Referential",
+          "tokens": 41
+        },
+        {
+          "language": "English",
+          "form": "a N",
+          "status": "Type",
+          "tokens": 55
+        },
+        {
+          "language": "Japanese",
+          "form": "ø",
+          "status": "In focus",
+          "tokens": 87
+        },
+        {
+          "language": "Japanese",
+          "form": "ø",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "kare",
+          "status": "In focus",
+          "tokens": 4
+        },
+        {
+          "language": "Japanese",
+          "form": "kore",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "kore",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "sore",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "kono N",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "kono N",
+          "status": "Activated",
+          "tokens": 7
+        },
+        {
+          "language": "Japanese",
+          "form": "kono N",
+          "status": "Familiar",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "sono N",
+          "status": "In focus",
+          "tokens": 18
+        },
+        {
+          "language": "Japanese",
+          "form": "sono N",
+          "status": "Activated",
+          "tokens": 15
+        },
+        {
+          "language": "Japanese",
+          "form": "sono N",
+          "status": "Familiar",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "ano N",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "ano N",
+          "status": "Familiar",
+          "tokens": 1
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "In focus",
+          "tokens": 14
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "Activated",
+          "tokens": 32
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "Familiar",
+          "tokens": 17
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "Unique",
+          "tokens": 71
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "Referential",
+          "tokens": 45
+        },
+        {
+          "language": "Japanese",
+          "form": "N",
+          "status": "Type",
+          "tokens": 44
+        },
+        {
+          "language": "Russian",
+          "form": "ø",
+          "status": "In focus",
+          "tokens": 18
+        },
+        {
+          "language": "Russian",
+          "form": "ono",
+          "status": "In focus",
+          "tokens": 51
+        },
+        {
+          "language": "Russian",
+          "form": "ono",
+          "status": "Activated",
+          "tokens": 2
+        },
+        {
+          "language": "Russian",
+          "form": "ONO",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Russian",
+          "form": "èto",
+          "status": "In focus",
+          "tokens": 2
+        },
+        {
+          "language": "Russian",
+          "form": "èto",
+          "status": "Activated",
+          "tokens": 9
+        },
+        {
+          "language": "Russian",
+          "form": "èto N",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "Russian",
+          "form": "èto N",
+          "status": "Activated",
+          "tokens": 7
+        },
+        {
+          "language": "Russian",
+          "form": "èto N",
+          "status": "Familiar",
+          "tokens": 2
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "In focus",
+          "tokens": 25
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "Activated",
+          "tokens": 29
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "Familiar",
+          "tokens": 22
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "Unique",
+          "tokens": 66
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "Referential",
+          "tokens": 21
+        },
+        {
+          "language": "Russian",
+          "form": "N",
+          "status": "Type",
+          "tokens": 28
+        },
+        {
+          "language": "Spanish",
+          "form": "ø",
+          "status": "In focus",
+          "tokens": 63
+        },
+        {
+          "language": "Spanish",
+          "form": "él (subj)",
+          "status": "In focus",
+          "tokens": 30
+        },
+        {
+          "language": "Spanish",
+          "form": "él (subj)",
+          "status": "Activated",
+          "tokens": 3
+        },
+        {
+          "language": "Spanish",
+          "form": "él (nonsubj)",
+          "status": "In focus",
+          "tokens": 57
+        },
+        {
+          "language": "Spanish",
+          "form": "él (nonsubj)",
+          "status": "Activated",
+          "tokens": 2
+        },
+        {
+          "language": "Spanish",
+          "form": "éste",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Spanish",
+          "form": "ése",
+          "status": "Activated",
+          "tokens": 4
+        },
+        {
+          "language": "Spanish",
+          "form": "aquél",
+          "status": "Activated",
+          "tokens": 1
+        },
+        {
+          "language": "Spanish",
+          "form": "ese N",
+          "status": "In focus",
+          "tokens": 1
+        },
+        {
+          "language": "Spanish",
+          "form": "ese N",
+          "status": "Activated",
+          "tokens": 2
+        },
+        {
+          "language": "Spanish",
+          "form": "ese N",
+          "status": "Familiar",
+          "tokens": 3
+        },
+        {
+          "language": "Spanish",
+          "form": "el N",
+          "status": "In focus",
+          "tokens": 23
+        },
+        {
+          "language": "Spanish",
+          "form": "el N",
+          "status": "Activated",
+          "tokens": 45
+        },
+        {
+          "language": "Spanish",
+          "form": "el N",
+          "status": "Familiar",
+          "tokens": 22
+        },
+        {
+          "language": "Spanish",
+          "form": "el N",
+          "status": "Unique",
+          "tokens": 42
+        },
+        {
+          "language": "Spanish",
+          "form": "un N",
+          "status": "Referential",
+          "tokens": 22
+        },
+        {
+          "language": "Spanish",
+          "form": "un N",
+          "status": "Type",
+          "tokens": 10
+        }
+      ]
+    }
+  ]
+}

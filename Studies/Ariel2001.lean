@@ -1,12 +1,11 @@
 module
 
-public import Mathlib.Data.Fintype.Card
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Givenness
 public import Linglib.Discourse.Centering.Basic
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Data.Examples.Ariel2001
 public import Linglib.Data.Examples.Readers
+public import Studies.GundelHedbergZacharski1993
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
@@ -18,8 +17,8 @@ modified full name, coding the least, to a zero. A form codes less accessibility
 informative, rigid and unattenuated it is, and these criteria jointly [order every pair they rank
 as the scale does, except against a short definite description](##lt_of_criteria_lt);
 [attenuation alone never runs against the scale](##attenuation_mono). The rival theories fall
-short of it: [no assignment of Givenness statuses separates the forms](##givenness_not_injective), and
-Centering's Rule 1 [holds whenever every center is
+short of it: the Givenness Hierarchy [gives four of its forms one
+status](##givennessStatus_eq_activated), and Centering's Rule 1 [holds whenever every center is
 lexical](##pronominalizationConstraint_of_lexical), so it does not predict the repeated-name
 penalty, and [fails where the discourse topic is pronominal beside a lexical backward-looking
 center](##not_pronominalizationConstraint_accused).
@@ -36,6 +35,8 @@ center](##not_pronominalizationConstraint_accused).
   description's noun, a comparison the chapter does not make.
 * The criteria tie proximate and distal demonstratives, which the scale [ranks
   apart](##distal_lt_proximate) on distributional evidence.
+* `givennessKind` reads the kind of form Gundel et al. list in their Table 1 off a class's
+  features; names, clitics and verbal agreement have none.
 * Rows record their markers by the scale's labels as printed, read through `markerTable`.
 * In (12) the roles follow Centering's ranking for English; the first clause's forms are as
   printed and the second's are those its row records.
@@ -143,12 +144,43 @@ theorem headline_outmarks :
 
 /-! ### Competing theories -/
 
-/-- No assignment of Givenness statuses separates every form of the scale: *that*, *this*,
-stressed *IT* and *this N* all mark *activated*, and the hierarchy has six statuses for eighteen
-forms. -/
-theorem givenness_not_injective (f : AccessibilityLevel → GivennessStatus) :
-    ¬ Function.Injective f :=
-  fun h ↦ absurd (Fintype.card_le_of_injective f h) (by decide)
+section Givenness
+
+open GundelHedbergZacharski1993
+
+/-- The kind of form in Table 1 of [gundel-hedberg-zacharski-1993] that a class of the scale is,
+read off its head, stress, boundness, lexical content and deixis, where they list one. -/
+def givennessKind (l : AccessibilityLevel) : Option Form.Kind :=
+  match l.head, l.deixis with
+  | .zero, _ => some .zero
+  | .pronoun, _ =>
+    if l.bound then none else if l.stressed then some .stressedPronoun else some .pronoun
+  | .demonstrative, some d => some (if l.lexical then .demonstrativeN d else .demonstrative d)
+  | .description, _ => some .definiteN
+  | _, _ => none
+
+/-- The status Gundel et al. code an English form of the scale for. -/
+def givennessStatus (l : AccessibilityLevel) : Option GivennessStatus :=
+  (givennessKind l).bind (required .english)
+
+/-- The Givenness Hierarchy codes *this N*, *that*, *this* and stressed *IT* for one status,
+activated, though the scale ranks them apart. -/
+theorem givennessStatus_eq_activated :
+    [proxDemNP, distalDem, proxDem, stressedPron].Pairwise (· < ·) ∧
+      ∀ l ∈ [proxDemNP, distalDem, proxDem, stressedPron], givennessStatus l = some .activated := by
+  decide
+
+-- p. 64
+theorem uniquelyIdentifiable_le_of_givennessStatus (s : GivennessStatus)
+    (h : ∀ r ∈ givennessStatus unstressedPron, r ≤ s) : .uniquelyIdentifiable ≤ s :=
+  le_trans (by decide) (h .inFocus rfl)
+
+-- p. 64
+theorem required_zero_eq_pronoun :
+    ∀ l : Language, ∀ s ∈ required l .zero, ∀ s' ∈ required l .pronoun, s = s' := by
+  decide
+
+end Givenness
 
 open Centering
 
