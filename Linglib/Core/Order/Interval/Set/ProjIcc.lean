@@ -13,7 +13,7 @@ The lemmas restate `Set.projIci_eq_self`, `lt_max_iff` and `max_eq_top` through 
 the ray, and are `[UPSTREAM]` additions to `Mathlib.Order.Interval.Set.ProjIcc`.
 -/
 
-@[expose] public section
+public section
 
 namespace Set
 

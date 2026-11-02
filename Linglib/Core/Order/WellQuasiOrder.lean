@@ -20,7 +20,7 @@ finitely many principal filters, and Higman's lemma: over a finite alphabet the 
 * [higman-1952]
 -/
 
-@[expose] public section
+public section
 
 variable {α : Type*}
 

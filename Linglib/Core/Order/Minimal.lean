@@ -20,7 +20,7 @@ minimal elements are those that nothing is `r`-related to.
 * `minimalFor_iff_of_isAntichain`
 -/
 
-@[expose] public section
+public section
 
 variable {ι β : Type*} [Preorder ι] [Preorder β] {P : ι → Prop} {f : ι → β} {r : ι → ι → Prop}
   {i : ι}

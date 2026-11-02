@@ -27,7 +27,7 @@ multiples of `ε`, and shows that `round` of a quotient by an odd natural factor
 * `round_div_two_mul_add_one`: `round (x / (2 * j + 1))` is `(round x + j) / (2 * j + 1)`.
 -/
 
-@[expose] public section
+public section
 
 variable {α : Type*} [Field α] {ε : α}
 

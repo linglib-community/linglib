@@ -20,7 +20,7 @@ the right operand before taking a prefix is a no-op. [UPSTREAM] candidates for
 `Init/Data/List/Nat/TakeDrop.lean`, beside their `getElem` counterparts and `List.ext_getElem?`.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

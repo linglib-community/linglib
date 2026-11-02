@@ -26,7 +26,7 @@ protects as well.
 * [casali-1997]
 -/
 
-@[expose] public section
+public section
 
 namespace Mkochi2021
 

@@ -29,7 +29,7 @@ with probability `1 / #D`.
 * `Equiv.Perm.card_filter_isMinOn_symm_univ_mul_card`: the same count over all permutations.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

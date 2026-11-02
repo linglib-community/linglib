@@ -16,7 +16,7 @@ every element between zero and one of its elements. The subgroups that upper set
 classes cut out, among them `ballAddSubgroup` and `closedBallAddSubgroup`, are order-connected.
 -/
 
-@[expose] public section
+public section
 
 variable {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
 

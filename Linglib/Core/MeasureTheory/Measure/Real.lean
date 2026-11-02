@@ -15,7 +15,7 @@ On a finite type with measurable singletons, the real masses of the atoms of a p
 measure sum to one. `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Real.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace MeasureTheory
 

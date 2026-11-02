@@ -23,7 +23,7 @@ ratio of two class sizes, which needs no finite type of values.
 * [cover-thomas-2006], chapter 2.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal ProbabilityTheory

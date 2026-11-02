@@ -35,7 +35,7 @@ that negation cannot shift the situation argument of the function.
 * [owusu-2022]
 -/
 
-@[expose] public section
+public section
 
 
 namespace Zimmermann2026

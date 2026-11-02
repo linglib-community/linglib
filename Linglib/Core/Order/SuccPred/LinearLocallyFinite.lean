@@ -15,7 +15,7 @@ linear order embeds in `ℤ` by numbering its elements from a base point, `toZ`,
 the successor and predecessor structure of a locally finite order.
 -/
 
-@[expose] public section
+public section
 
 theorem nonempty_orderEmbedding_int (ι : Type*) [LinearOrder ι] [LocallyFiniteOrder ι] :
     Nonempty (ι ↪o ℤ) := by

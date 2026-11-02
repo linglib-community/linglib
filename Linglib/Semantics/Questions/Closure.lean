@@ -24,7 +24,7 @@ the same partition, the kernel of that map.
 * [fox-2018]
 -/
 
-@[expose] public section
+public section
 
 namespace Question
 

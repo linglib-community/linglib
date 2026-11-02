@@ -36,7 +36,7 @@ beside `truncLT_add`.
 * [ebrahimi-fard-guo-kreimer-2004]
 -/
 
-@[expose] public section
+public section
 
 namespace HahnSeries
 

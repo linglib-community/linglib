@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Finset.Max
-public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 public import Linglib.Semantics.Aggregation.Basic
 
 /-!
@@ -194,9 +194,7 @@ theorem utilitarian_weakPareto (hc : ∀ i, 0 ≤ c i) (hpos : ∃ i, 0 < c i) :
     WeakPareto (utilitarian c : Rule ι α K) := by
   intro v x y h
   obtain ⟨i, hi⟩ := hpos
-  have : c ⬝ᵥ v y < c ⬝ᵥ v x :=
-    sum_lt_sum (fun i _ ↦ mul_le_mul_of_nonneg_left (h i).le (hc i))
-      ⟨i, mem_univ _, mul_lt_mul_of_pos_left (h i) hi⟩
+  have := dotProduct_lt_dotProduct_of_nonneg_left (fun j ↦ (h j).le) hc ⟨i, hi, h i⟩
   exact ⟨this.le, this.not_ge⟩
 
 theorem utilitarian_cardinalUnitInvariant :
@@ -277,9 +275,7 @@ theorem asymmRel_paretoRule_iff_forall_utilitarian :
       ∀ c : ι → K, (∀ i, 0 < c i) → AsymmRel (utilitarian c v) x y := by
   refine ⟨fun ⟨h, h'⟩ c hc ↦ ?_, fun h ↦ ⟨?_, fun h' ↦ ?_⟩⟩
   · obtain ⟨i, hi⟩ : ∃ i, v y i < v x i := by simpa [Pi.le_def] using h'
-    have : c ⬝ᵥ v y < c ⬝ᵥ v x :=
-      sum_lt_sum (fun j _ ↦ mul_le_mul_of_nonneg_left (h j) (hc j).le)
-        ⟨i, mem_univ _, mul_lt_mul_of_pos_left hi (hc i)⟩
+    have := dotProduct_lt_dotProduct_of_nonneg_left h (fun j ↦ (hc j).le) ⟨i, hc i, hi⟩
     exact ⟨this.le, this.not_ge⟩
   · exact paretoRule_iff_forall_utilitarian.2 fun c hc ↦ (h c hc).1
   · exact (h 1 fun _ ↦ one_pos).2 (paretoRule_iff_forall_utilitarian.1 h' 1 fun _ ↦ one_pos)

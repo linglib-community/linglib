@@ -26,7 +26,7 @@ of its mean from the point.
 * `ProbabilityTheory.integral_sub_sq`: the second moment about a point.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

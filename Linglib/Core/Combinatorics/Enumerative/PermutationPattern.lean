@@ -33,7 +33,7 @@ permutations realizing `ρ` onto those realizing the identity pattern.
 counts in `Mathlib/Combinatorics/Enumerative/PermutationPattern.lean`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Nat
 

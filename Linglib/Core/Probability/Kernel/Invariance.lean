@@ -51,7 +51,7 @@ that vanishes at a point, hence everywhere. Neither needs the Perron–Frobenius
 `[UPSTREAM]` candidate for `Mathlib/Probability/Kernel/Invariance.lean`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Finset
 open scoped ENNReal

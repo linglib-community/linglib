@@ -23,7 +23,7 @@ abstract index type: at a concrete `Fin n`, unifying `x ᵥ* M` with `M.vecMulLi
 sums of `vecMul` and exhausts the recursion limit.
 -/
 
-@[expose] public section
+public section
 
 open Affine
 

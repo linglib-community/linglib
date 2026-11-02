@@ -36,7 +36,7 @@ answers the entailments go the other way around.
 * [roberts-2012]
 -/
 
-@[expose] public section
+public section
 
 namespace Question
 

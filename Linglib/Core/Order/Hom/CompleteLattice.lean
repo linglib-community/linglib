@@ -21,7 +21,7 @@ the function is `a ↦ b`.
   a bijection.
 -/
 
-@[expose] public section
+public section
 
 namespace CompleteLatticeHom
 

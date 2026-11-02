@@ -18,7 +18,7 @@ prints, against its phonemic transcription where it gives one.
 * [short-1993-czech]
 -/
 
-@[expose] public section
+public section
 
 namespace Short1993
 

@@ -21,7 +21,7 @@ is the base-`M + 1` numeral whose digits are the vector, the canonical such weig
 [UPSTREAM] candidate for `Mathlib/Algebra/Order/BigOperators/Ring/Finset.lean`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

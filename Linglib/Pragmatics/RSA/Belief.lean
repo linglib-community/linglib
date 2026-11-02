@@ -33,7 +33,7 @@ prior conditioned on what she knows.
 * [goodman-stuhlmuller-2013]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory InformationTheory
 open scoped ENNReal

@@ -58,7 +58,7 @@ monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici
 * [lassiter-2017]
 -/
 
-@[expose] public section
+public section
 
 namespace CarianiSantorioWellwood2024
 

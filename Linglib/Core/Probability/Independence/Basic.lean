@@ -15,7 +15,7 @@ relevance measures compute. `[UPSTREAM]` candidates for
 `Mathlib/Probability/Independence/Basic.lean`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 

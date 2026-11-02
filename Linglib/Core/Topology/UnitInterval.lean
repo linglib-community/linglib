@@ -15,7 +15,7 @@ A point of the unit interval and its reflection add up to one as extended nonneg
 form in which they weigh the two points of a Bernoulli measure.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal unitInterval
 

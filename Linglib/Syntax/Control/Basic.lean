@@ -25,7 +25,7 @@ diagnostics of Polinsky and Potsdam.
 * [polinsky-potsdam-2006]
 -/
 
-@[expose] public section
+public section
 
 namespace Control
 

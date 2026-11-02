@@ -65,7 +65,7 @@ names, each tight for its own row.
   Sánchez Valencia.
 -/
 
-@[expose] public section
+public section
 
 namespace NaturalLogic
 

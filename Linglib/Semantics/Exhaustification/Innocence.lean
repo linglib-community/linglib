@@ -26,7 +26,7 @@ maximal consistent inclusions.
 * [bar-lev-fox-2020]
 -/
 
-@[expose] public section
+public section
 
 namespace Exhaustification
 

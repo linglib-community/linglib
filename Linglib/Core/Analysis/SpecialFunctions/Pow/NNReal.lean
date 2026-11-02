@@ -17,7 +17,7 @@ powers, as for the reals.
 `ENNReal.prod_rpow_of_nonneg`.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal
 

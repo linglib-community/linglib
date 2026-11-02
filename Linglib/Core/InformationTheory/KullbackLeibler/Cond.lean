@@ -23,7 +23,7 @@ contained in the second (`klDiv_cond_cond`), and infinite otherwise
 file combining `klDiv` with probability constructions).
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal ProbabilityTheory

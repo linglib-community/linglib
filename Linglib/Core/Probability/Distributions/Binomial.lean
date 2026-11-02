@@ -23,7 +23,7 @@ the `Bin(R, n, p)` formulas, stated in mathlib for `CharZero R`, hold for the fi
 [UPSTREAM] candidates for `Mathlib.Probability.Distributions.Binomial`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory unitInterval
 open scoped ProbabilityTheory Fin.NatCast

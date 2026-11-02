@@ -63,7 +63,7 @@ the authors' degree-based variant, iff the measure reflects the background.
 * [schwarzschild-2002a]
 -/
 
-@[expose] public section
+public section
 
 namespace CarianiSantorioWellwood2023
 

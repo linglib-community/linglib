@@ -31,7 +31,7 @@ positive likelihood, the posterior mass of a point is strictly increasing in its
 `Mathlib.Probability.Kernel.Posterior`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory unitInterval
 open scoped ENNReal

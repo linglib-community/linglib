@@ -30,7 +30,7 @@ excludes only the last two (§18.1, §18.9). The Fragment follows the table.
 * [aikhenvald-2008]
 -/
 
-@[expose] public section
+public section
 
 namespace Aikhenvald2008
 

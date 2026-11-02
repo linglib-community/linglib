@@ -26,7 +26,7 @@ generator is primitive.
 * [connes-kreimer-1998]
 -/
 
-@[expose] public section
+public section
 
 variable {R : Type*} [CommSemiring R] {T M : Type*} [AddCommMonoid M] [Module R M]
 

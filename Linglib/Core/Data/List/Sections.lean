@@ -16,7 +16,7 @@ over the alphabet `l`: membership, compatibility with `map`, and the recursion i
 multiset bind.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

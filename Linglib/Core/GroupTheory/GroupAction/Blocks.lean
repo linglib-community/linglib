@@ -20,7 +20,7 @@ lemma for `MulAction.IsFixedBlock` missing next to mathlib's `MulAction.IsBlock`
   `Set.univ`.
 -/
 
-@[expose] public section
+public section
 
 namespace MulAction
 

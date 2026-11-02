@@ -16,7 +16,7 @@ predicate number as many as the elements satisfying it, the `List` counterpart o
 [UPSTREAM] candidate for `Mathlib/Data/Fintype/Fin.lean`.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

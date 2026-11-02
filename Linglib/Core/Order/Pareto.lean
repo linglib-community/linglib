@@ -38,7 +38,7 @@ minimizers trade the second objective for the first.
 * [boyd-vandenberghe-2004], the scalarization of vector optimization problems.
 -/
 
-@[expose] public section
+public section
 
 variable {𝕜 : Type*} [CommRing 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] {β β₁ β₂ : 𝕜}
   {a b : 𝕜 × 𝕜}

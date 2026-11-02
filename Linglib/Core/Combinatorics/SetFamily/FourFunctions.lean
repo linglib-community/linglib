@@ -19,7 +19,7 @@ corollary of the four functions theorem.
 * [holley-1974]
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

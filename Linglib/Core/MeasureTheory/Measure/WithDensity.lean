@@ -15,7 +15,7 @@ map is reweighting the pushforward by the factor. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/WithDensity.lean`.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal
 

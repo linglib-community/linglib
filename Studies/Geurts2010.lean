@@ -22,7 +22,7 @@ reverses a scale, so that *not all* blocks the local inference, is the negated c
 * [geurts-pouscoulous-2009]
 -/
 
-@[expose] public section
+public section
 
 namespace Geurts2010
 

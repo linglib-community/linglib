@@ -22,7 +22,7 @@ the expected logarithm of the ratio of the masses of the atoms.
 * [cover-thomas-2006]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Real
 open scoped ENNReal

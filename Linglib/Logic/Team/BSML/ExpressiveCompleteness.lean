@@ -52,7 +52,7 @@ completeness of BSML with global disjunction and with the emptiness operator (Th
 * [knudstorp-2023]
 -/
 
-@[expose] public section
+public section
 
 namespace BSML
 

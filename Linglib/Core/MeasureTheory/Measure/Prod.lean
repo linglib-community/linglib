@@ -20,7 +20,7 @@ the product of its marginals. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/Prod.lean`.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal
 

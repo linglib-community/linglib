@@ -60,7 +60,7 @@ has no universal perfect, except where an activity fills the span exactly.
 * [smith-1997]
 -/
 
-@[expose] public section
+public section
 
 namespace IatridouEtAl2001
 

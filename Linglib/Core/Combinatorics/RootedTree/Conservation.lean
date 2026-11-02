@@ -35,7 +35,7 @@ vertex for each.
 * [connes-kreimer-1998]
 -/
 
-@[expose] public section
+public section
 
 open RoseTree UnorderedTree
 

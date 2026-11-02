@@ -34,7 +34,7 @@ the same answer, which is how the model derives hyperbole, metaphor and irony.
 * [kao-goodman-2015]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

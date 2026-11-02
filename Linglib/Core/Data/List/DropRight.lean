@@ -39,7 +39,7 @@ its front counterpart through `List.rtake_eq_reverse_take_reverse` or
   length at least `n`, leaves the tail-take unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

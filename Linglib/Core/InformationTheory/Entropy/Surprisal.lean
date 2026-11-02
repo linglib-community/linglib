@@ -24,7 +24,7 @@ geometric mean of masses, of a measure's own masses for
 * [cover-thomas-2006], chapter 2.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal ProbabilityTheory

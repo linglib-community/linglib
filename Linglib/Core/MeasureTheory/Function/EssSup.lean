@@ -22,7 +22,7 @@ generalizes `essInf_eq_iInf`, where every atom has positive mass.
   is `⊥` at an atom of positive mass.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 
