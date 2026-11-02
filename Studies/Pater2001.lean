@@ -29,11 +29,12 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
   faithfulness the relation, markedness the output. The Indonesian fused nasal is the nasal that
   the Indonesian rules assimilate the prefix nasal to (`NasalSubstitution.substitute`), so fusion
   and assimilation followed by loss of the consonant give one string. The Muna fused nasal is
-  the *m* of *-um-*, as printed.
+  Muna's nasal homorganic with the consonant in the same way: *m* before *p* and *f*, and the *m*
+  of *-um-* unchanged before *w*, whose double articulation no Muna nasal has.
 * [Pharyngeal Expansion] is [−sonorant, +voice], and two segments are homorganic when they agree
-  on place but [strident] and [lateral]. CRISPEDGE[PRWD] counts homorganic pairs at the left edge
-  of a root, which gradient ALIGN-WD makes the left edge of a Prosodic Word. *PL/LAB² counts
-  non-syllabic labials, since PHOIBLE makes round vowels [+labial].
+  on the major articulators (`Segment.Homorganic`). CRISPEDGE[PRWD] counts homorganic pairs at
+  the left edge of a root, which gradient ALIGN-WD makes the left edge of a Prosodic Word.
+  *PL/LAB² counts non-syllabic labials, since PHOIBLE makes round vowels [+labial].
 * With NASASSIM dominated, [the velars alone fuse](##exists_fusingStops_eq_velars), a type
   Newman's typology lacks.
 
@@ -75,13 +76,6 @@ def PharExp (s : Segment) : Prop := s.HasValue .sonorant false ∧ s.HasValue .v
 
 instance : DecidablePred PharExp := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Two segments are homorganic when they agree on every place feature but [strident] and
-[lateral], the agreement that nasal substitution's nasal has with its consonant. -/
-def Homorganic (a b : Segment) : Prop :=
-  ∀ f ∈ FeatureClass.place, f ≠ .strident → f ≠ .lateral → a f = b f
-
-instance : DecidableRel Homorganic := fun _ _ ↦ Finset.decidableDforallFinset
-
 /-- The adjacent pairs of a word. -/
 def pairs (w : List Segment) : List (Segment × Segment) := w.zip w.tail
 
@@ -101,7 +95,7 @@ def nc : Constraint Cand := fun c ↦
 /-- NASASSIM (36): a nasal not homorganic with the consonant after it. -/
 def nasAssim : Constraint Cand := fun c ↦
   (pairs (c.form .rhs)).countP fun p ↦
-    p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ Homorganic p.1 p.2
+    p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ p.1.Homorganic p.2
 
 /-- *PL/LAB², the self-conjunction of *PL/LAB (15): two labial consonants or glides in a
 word, the non-syllabic segments with labial place. -/
@@ -136,7 +130,7 @@ inductive Boundary
 /-- CRISPEDGE[PRWD] (32): place shared across the left edge of a Prosodic Word, which is where
 the nasal and the consonant meet at the left edge of a root. -/
 def crispEdge (b : Boundary) : Constraint Cand := fun c ↦
-  if b = .rootEdge then (pairs (c.form .rhs)).countP fun p ↦ Homorganic p.1 p.2 else 0
+  if b = .rootEdge then (pairs (c.form .rhs)).countP fun p ↦ p.1.Homorganic p.2 else 0
 
 /-- UNIFORMITY of roots: two root segments with one output correspondent. -/
 def uniformityRt (b : Boundary) : Constraint Cand := fun c ↦
@@ -165,7 +159,7 @@ open Indonesian.Phonology
 /-- The Indonesian candidates of a nasal `N` before `x`, whose assimilated and fused nasal is the
 one the Indonesian rules give. -/
 def corr (N x : Segment) : Outcome → Cand :=
-  junctureCorr N x (NasalSubstitution.substitute trigger N x)
+  junctureCorr N x (NasalSubstitution.substitute consonants trigger N x)
 
 /-- The tableau of the nasal `N` before `x` at `b` under the constraints `cs` in rank order. -/
 def tableau (cs : Boundary → List (Constraint Cand)) (N x : Segment) (b : Boundary)
@@ -224,14 +218,18 @@ namespace Muna
 /-- The vowel /u/ of *-um-*. -/
 def u : Segment := .ofChart .«u»
 
-/-- The nasal /m/ of *-um-*, which is also the fused nasal. -/
+/-- The nasal /m/ of *-um-*. -/
 def m : Segment := .ofChart .«m»
+
+/-- The consonants a nasal fuses with, Hayes's [−syllabic] segments. -/
+def trigger : Segment := Segment.ofSpecs [(.syllabic, false)]
 
 /-- The output of each outcome of *-um-* before the root `x :: w`. -/
 def output (x : Segment) (w : List Segment) : UmOutcome → List Segment
   | .infix => x :: u :: m :: w
   | .delete => x :: w
-  | .fuse => m :: w
+  | .fuse =>
+    NasalSubstitution.substitute Data.PHOIBLE.Inventories.Muna.mnb.segments trigger m x :: w
 
 /-- The correspondence of each outcome, from the positions of `u :: m :: x :: w` to those of its
 output: infixation reorders, deletion leaves the affix without correspondents, and fusion maps
