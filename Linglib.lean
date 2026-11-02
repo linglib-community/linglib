@@ -25,7 +25,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.Group.IdempotentPower
-import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Core.Combinatorics.Antimatroid
@@ -728,8 +727,6 @@ import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
-import Linglib.Processing.DiscriminativeLexicon.Defs
-import Linglib.Processing.DiscriminativeLexicon.Measures
 import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Psychophysics.SignalDetection

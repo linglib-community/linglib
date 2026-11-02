@@ -46,61 +46,57 @@ namespace ChuangEtAl2026
 
 open DiscriminativeLexicon Finset Matrix
 
-/-- The fifty f0 values sampled per token at equally spaced points of normalized time
-(§3.2). -/
-abbrev TaiwanMandarinPitchSampleCount : ℕ := 50
+/-- The fifty f0 values sampled per token at equally spaced points of normalized time, centered by
+the token's mean and scaled by its range, so that a contour is a shape rather than a pitch or an
+amplitude (§3.2). -/
+abbrev taiwanMandarinPitchSampleCount : ℕ := 50
 
-/-- The dimension of CKIP's GPT-2 character vectors (§3.1). -/
-abbrev CKIPGPT2HiddenDim : ℕ := 768
-
-/-- A pitch contour consists of the fifty samples, centered by the token's mean and scaled by its
-range (§3.2), so it is a shape rather than a pitch or an amplitude. -/
-abbrev PitchContour : Type := FormVector TaiwanMandarinPitchSampleCount
-
-/-- A contextualized embedding is the mean of the GPT-2 vectors of a token's two characters given
-the preceding context, the current utterance up to the token and the one before it (§3.1). -/
-abbrev ContextualEmbedding : Type := MeaningVector CKIPGPT2HiddenDim
+/-- The dimension of CKIP's GPT-2 character vectors. A contextualized embedding is the mean of the
+vectors of a token's two characters given the preceding context, the current utterance up to the
+token and the one before it (§3.1). -/
+abbrev ckipGPT2HiddenDim : ℕ := 768
 
 /-! ### Comprehension from fifty dimensions (§3.3)
 
-The comprehension matrix `F` predicts a `ContextualEmbedding` `cF` from a `PitchContour` `c`,
-and the production matrix `G` a contour `sG` from an embedding `s` (§3.3–3.4). -/
+The comprehension matrix `F` predicts an embedding `cF` from a contour `c`, and the production
+matrix `G` a contour `sG` from an embedding `s` (§3.3–3.4). -/
 
 -- §3.3.2, fn. 29
 theorem comprehension_not_surjective
-    (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
+    (F : Matrix (Fin taiwanMandarinPitchSampleCount) (Fin ckipGPT2HiddenDim) ℝ) :
     ¬ Function.Surjective F.vecMulLinear := fun h ↦ by
-  simpa [CKIPGPT2HiddenDim, TaiwanMandarinPitchSampleCount] using
+  simpa [ckipGPT2HiddenDim, taiwanMandarinPitchSampleCount] using
     LinearMap.finrank_le_finrank_of_surjective (f := F.vecMulLinear) h
 
 /-- No comprehension matrix inverts production (fn. 29). -/
 theorem production_mul_comprehension_ne_one
-    (G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ)
-    (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
+    (G : Matrix (Fin ckipGPT2HiddenDim) (Fin taiwanMandarinPitchSampleCount) ℝ)
+    (F : Matrix (Fin taiwanMandarinPitchSampleCount) (Fin ckipGPT2HiddenDim) ℝ) :
     G * F ≠ 1 := fun h ↦
   comprehension_not_surjective F fun s ↦ ⟨s ᵥ* G, by simp [vecMul_vecMul, h]⟩
 
 /-! ### Word-centroid contours (§3.4) -/
 
 variable {m : ℕ} {W : Type*} [DecidableEq W]
-  {data : TrainingExperience m TaiwanMandarinPitchSampleCount CKIPGPT2HiddenDim}
-  {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ}
+  {S : Matrix (Fin m) (Fin ckipGPT2HiddenDim) ℝ}
+  {C : Matrix (Fin m) (Fin taiwanMandarinPitchSampleCount) ℝ}
+  {G : Matrix (Fin ckipGPT2HiddenDim) (Fin taiwanMandarinPitchSampleCount) ℝ}
 
 /-- If word-type membership is a linear functional of the embeddings, a least-squares production
 matrix sends a word type's embedding centroid to its mean training contour (§1, §2.2, Fig. 18). -/
-theorem production_centroid_eq_of_decodable (hG : IsELTrained data G) (word : Fin m → W)
-    {w : W} (hw : ∃ i, word i = w) {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ}
-    (hℓ : ∀ i, ℓ (data.S i) = if word i = w then 1 else 0) :
-    (univ.filter (word · = w)).centroid ℝ data.S.row ᵥ* G =
-      (univ.filter (word · = w)).centroid ℝ data.C.row :=
+theorem production_centroid_eq_of_decodable (hG : IsEndstateTrained S C G) (word : Fin m → W)
+    {w : W} (hw : ∃ i, word i = w) {ℓ : (Fin ckipGPT2HiddenDim → ℝ) →ₗ[ℝ] ℝ}
+    (hℓ : ∀ i, ℓ (S i) = if word i = w then 1 else 0) :
+    (univ.filter (word · = w)).centroid ℝ S.row ᵥ* G =
+      (univ.filter (word · = w)).centroid ℝ C.row :=
   hG.centroid_vecMul_eq_of_decodable (by simpa [filter_nonempty_iff] using hw)
     (by simpa using hℓ)
 
 /-- If some linear functional is constant on the training embeddings, the centroid of all embeddings
 produces the grand-mean contour (§3.4.2, Fig. 1). -/
-theorem production_centroid_univ_eq [NeZero m] (hG : IsELTrained data G)
-    {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ} (hℓ : ∀ i, ℓ (data.S i) = 1) :
-    univ.centroid ℝ data.S.row ᵥ* G = univ.centroid ℝ data.C.row :=
+theorem production_centroid_univ_eq [NeZero m] (hG : IsEndstateTrained S C G)
+    {ℓ : (Fin ckipGPT2HiddenDim → ℝ) →ₗ[ℝ] ℝ} (hℓ : ∀ i, ℓ (S i) = 1) :
+    univ.centroid ℝ S.row ᵥ* G = univ.centroid ℝ C.row :=
   hG.centroid_vecMul_eq_of_decodable ⟨0, mem_univ 0⟩ (by simpa using hℓ)
 
 end ChuangEtAl2026

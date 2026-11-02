@@ -57,11 +57,11 @@ variable {d n : ℕ} {Lexeme Cell : Type*}
 
 /-! ### Imputed semantics -/
 
-variable (σ : Lexeme → MeaningVector d) (ε : Cell → MeaningVector d)
+variable (σ : Lexeme → Fin d → ℝ) (ε : Cell → Fin d → ℝ)
 
 /-- A table violating proportional analogy is the paradigm of no linear mapping over imputed
 semantics, so irregular forms cannot be produced from constructed meanings (§12.9). -/
-theorem not_exists_paradigm_eq_of_not_regular {f : ParadigmSystem Lexeme Cell (FormVector n)}
+theorem not_exists_paradigm_eq_of_not_regular {f : ParadigmSystem Lexeme Cell (Fin n → ℝ)}
     (hf : ¬ IsAnalogicallyRegular f) :
     ¬ ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f := by
   rintro ⟨G, rfl⟩
@@ -71,9 +71,9 @@ theorem not_exists_paradigm_eq_of_not_regular {f : ParadigmSystem Lexeme Cell (F
 
 /-- Over linearly independent word-specific embeddings, any form table is the paradigm of some
 linear mapping (Table 16.2, §12.9). -/
-theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell (MeaningVector d)}
+theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell (Fin d → ℝ)}
     (hs : LinearIndependent ℝ (Function.uncurry s))
-    (f : ParadigmSystem Lexeme Cell (FormVector n)) :
+    (f : ParadigmSystem Lexeme Cell (Fin n → ℝ)) :
     ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G s = f := by
   obtain ⟨G, hG⟩ := hs.exists_linearMap_forall_apply_eq (Function.uncurry f)
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
@@ -82,7 +82,7 @@ theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell 
 /-- If the lexeme and inflectional-function vectors are jointly linearly independent, a table is a
 linear paradigm over imputed semantics iff it is analogically regular (§16.6). -/
 theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim σ ε))
-    (f : ParadigmSystem Lexeme Cell (FormVector n)) :
+    (f : ParadigmSystem Lexeme Cell (Fin n → ℝ)) :
     (∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
   refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm G (isAnalogicallyRegular_imputed σ ε),
@@ -99,25 +99,18 @@ theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim �
 
 variable [Fintype Lexeme] [Fintype Cell]
 
-/-- A paradigm is a training experience whose semantic matrix holds the imputed meanings and
-whose form matrix holds the form table, one row per lexeme and cell. -/
-noncomputable def paradigmExperience (f : ParadigmSystem Lexeme Cell (FormVector n)) :
-    TrainingExperience (Fintype.card (Lexeme × Cell)) n d :=
-  let e := (Fintype.equivFin (Lexeme × Cell)).symm
-  ⟨of (Function.uncurry (imputed σ ε) ∘ e), of (Function.uncurry f ∘ e)⟩
-
-/-- Irregularity forces positive training loss, since no mapping matrix fits a suppletive
-paradigm exactly and so every trained matrix carries residual error. -/
-theorem pos_weightedLoss_of_not_regular {f : ParadigmSystem Lexeme Cell (FormVector n)}
-    (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
-    (hq : ∀ i, 0 < q i) (G : Matrix (Fin d) (Fin n) ℝ) :
-    0 < weightedLoss (paradigmExperience σ ε f) q G := by
-  refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 ↦ ?_)
-  have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
+/-- Irregularity forces positive training loss on a paradigm, whose semantic matrix holds the
+imputed meanings and whose form matrix holds the form table, one row per lexeme and cell: no mapping
+matrix fits a suppletive paradigm exactly, so every trained matrix carries residual error. -/
+theorem pos_weightedLoss_of_not_regular {f : ParadigmSystem Lexeme Cell (Fin n → ℝ)}
+    (hf : ¬ IsAnalogicallyRegular f) {q : Lexeme × Cell → NNReal} (hq : ∀ i, 0 < q i)
+    (G : Matrix (Fin d) (Fin n) ℝ) :
+    0 < weightedLoss (of (Function.uncurry (imputed σ ε))) (of (Function.uncurry f)) q G := by
+  refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _ _) (Ne.symm fun h0 ↦ ?_)
+  have hint := (weightedLoss_eq_zero_iff _ _ _ _ hq).1 h0
   refine not_exists_paradigm_eq_of_not_regular σ ε hf
     ⟨G, funext fun l ↦ funext fun c ↦ funext fun j ↦ ?_⟩
-  simpa [paradigmExperience, mul_apply, vecMul, dotProduct] using
-    congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
+  simpa [mul_apply, vecMul, dotProduct] using congrFun (congrFun hint (l, c)) j
 
 /-! ### Incremental learning
 
@@ -126,7 +119,7 @@ mapping matrices of endstate and frequency-informed learning are its equilibria.
 
 section Incremental
 
-variable {m : ℕ} (data : TrainingExperience m n d) (q : FrequencyVector m)
+variable {m : ℕ} (S : Matrix (Fin m) (Fin d) ℝ) (C : Matrix (Fin m) (Fin n) ℝ) (q : Fin m → NNReal)
   (G : Matrix (Fin d) (Fin n) ℝ) {η : ℝ}
 
 -- §6.2
@@ -136,14 +129,14 @@ theorem update_example :
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num [update_apply, vecMul, dotProduct]
 
-theorem sub_vecMul_update_smul_one (x : MeaningVector d) (y : FormVector n) :
+theorem sub_vecMul_update_smul_one (x : Fin d → ℝ) (y : Fin n → ℝ) :
     y - x ᵥ* update (η • 1) 1 x y G = (1 - η * x ⬝ᵥ x) • (y - x ᵥ* G) := by
   rw [sub_vecMul_update]
   ext j
   simp [mul_comm]
 
 -- §6.2
-theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j : Fin n}
+theorem abs_sub_vecMul_update_lt_iff {x : Fin d → ℝ} {y : Fin n → ℝ} {j : Fin n}
     (hj : y j ≠ (x ᵥ* G) j) :
     |y j - (x ᵥ* update (η • 1) 1 x y G) j| < |y j - (x ᵥ* G) j| ↔ |1 - η * x ⬝ᵥ x| < 1 := by
   have h := congrFun (sub_vecMul_update_smul_one G x y (η := η)) j
@@ -151,7 +144,7 @@ theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j
   rw [h, abs_mul, mul_lt_iff_lt_one_left (abs_pos.2 (sub_ne_zero.2 hj))]
 
 -- §6.2
-theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVector d} (y : FormVector n)
+theorem tendsto_vecMul_iterate_update_smul_one {x : Fin d → ℝ} (y : Fin n → ℝ)
     (h : |1 - η * x ⬝ᵥ x| < 1) :
     Tendsto (fun k ↦ x ᵥ* (update (η • 1) 1 x y)^[k] G) atTop (𝓝 y) :=
   tendsto_vecMul_iterate_update y G fun _ ↦ by simpa using h
@@ -159,21 +152,21 @@ theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVector d} (y : FormVe
 /-- A mapping matrix is trained iff the frequency-weighted changes the usage events would make to it
 cancel (§1.3). -/
 theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
-    IsTrained data q G ↔
-      ∑ i, (q i : ℝ) • (update (η • 1) 1 (data.S i) (data.C i) G - G) = 0 := by
-  have key : ∑ i, (q i : ℝ) • (update (η • 1) 1 (data.S i) (data.C i) G - G) =
-      -η • (data.Sᵀ * q.Q * (data.S * G - data.C)) := by
+    IsTrained S C q G ↔
+      ∑ i, (q i : ℝ) • (update (η • 1) 1 (S i) (C i) G - G) = 0 := by
+  have key : ∑ i, (q i : ℝ) • (update (η • 1) 1 (S i) (C i) G - G) =
+      -η • (Sᵀ * diagonal (fun i ↦ (q i : ℝ)) * (S * G - C)) := by
     ext k j
     simp only [update_smul_one, add_sub_cancel_left, Matrix.sum_apply, Matrix.smul_apply,
       vecMulVec_apply, Pi.sub_apply, smul_eq_mul]
     rw [mul_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
-    rw [FrequencyVector.Q, mul_diagonal, transpose_apply, Matrix.sub_apply, mul_apply_eq_vecMul]
+    rw [mul_diagonal, transpose_apply, Matrix.sub_apply, mul_apply_eq_vecMul]
     ring
   rw [isTrained_iff, key, smul_eq_zero, neg_eq_zero, or_iff_right hη]
 
-theorem mul_eq_iff_forall_update_eq_self (hη : η ≠ 0) (hS : ∀ i, data.S i ≠ 0) :
-    data.S * G = data.C ↔ ∀ i, update (η • 1) 1 (data.S i) (data.C i) G = G := by
+theorem mul_eq_iff_forall_update_eq_self (hη : η ≠ 0) (hS : ∀ i, S i ≠ 0) :
+    S * G = C ↔ ∀ i, update (η • 1) 1 (S i) (C i) G = G := by
   refine ⟨fun h i ↦ update_eq_self_of_vecMul_eq _ _ (congrFun h i), fun h ↦ funext fun i ↦ ?_⟩
   rw [mul_apply_eq_vecMul]
   rcases (update_eq_self_iff ..).1 (h i) with h0 | h0
@@ -213,7 +206,7 @@ def trigram : Fin 13 → Augmented Char :=
 
 /-- The past-tense form table at the trigram coding takes each verb's form at each cell from
 the fragment. -/
-def pastTense : ParadigmSystem (Fin 2) cells (FormVector 13) := fun v c ↦
+def pastTense : ParadigmSystem (Fin 2) cells (Fin 13 → ℝ) := fun v c ↦
   cueVector 3 trigram ((verb v).realize c).toList
 
 private theorem mem_cues_walk_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :

@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Processing.DiscriminativeLexicon.Defs
 public import Linglib.Phonology.Subregular.Boundary
 public import Linglib.Core.Data.List.Factors
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Form and meaning coding for the discriminative lexicon
@@ -49,14 +49,13 @@ symbol on each side, as JudiLing's `make_cue_matrix` computes them with `grams =
 def cues (k : ℕ) (w : List Sym) : List (Augmented Sym) := (boundary 2 w).kFactors k
 
 /-- The multiple-hot row over an inventory `inv` marks with `1` the units satisfying `p`. -/
-def multiHot {N : ℕ} {α : Type*} (inv : Fin N → α) (p : α → Prop) [DecidablePred p] :
-    Fin N → ℝ :=
+def multiHot {κ α : Type*} (inv : κ → α) (p : α → Prop) [DecidablePred p] : κ → ℝ :=
   fun j ↦ if p (inv j) then 1 else 0
 
 /-- The row of the form matrix `C` for the form `w` is the indicator of its cues over the cue
 inventory. -/
-def cueVector [DecidableEq Sym] (k : ℕ) {N : ℕ} (inv : Fin N → Augmented Sym) (w : List Sym) :
-    FormVector N :=
+def cueVector [DecidableEq Sym] (k : ℕ) {κ : Type*} (inv : κ → Augmented Sym) (w : List Sym) :
+    κ → ℝ :=
   multiHot inv (· ∈ cues k w)
 
 /-! ### Meaning side -/
