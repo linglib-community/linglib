@@ -78,7 +78,7 @@ def string : Form Cell :=
     lexeme := Lexemes.string
     cell := {}
     form := "string"
-    segments := ["str", "ɪ", "ŋ"]
+    segments := ["s", "t", "r", "ɪ", "ŋ"]
     source := [
       ⟨"jackendoff-audring-2020", "(26)"⟩
     ] }
@@ -88,7 +88,7 @@ def strung : Form Cell :=
     lexeme := Lexemes.string_past
     cell := {}
     form := "strung"
-    segments := ["str", "ʌ", "ŋ"]
+    segments := ["s", "t", "r", "ʌ", "ŋ"]
     source := [
       ⟨"jackendoff-audring-2020", "(26)"⟩
     ] }
@@ -98,7 +98,7 @@ def sprech : Form Cell :=
     lexeme := Lexemes.speak_stem
     cell := {}
     form := "sprech-"
-    segments := ["ʃpr", "ɛ", "x"]
+    segments := ["ʃ", "p", "r", "ɛ", "x"]
     source := [
       ⟨"jackendoff-audring-2020", "(43)"⟩
     ] }
@@ -108,7 +108,7 @@ def sprich : Form Cell :=
     lexeme := Lexemes.speak_stem_present_2_3_sg
     cell := {}
     form := "sprich-"
-    segments := ["ʃpr", "ɪ", "x"]
+    segments := ["ʃ", "p", "r", "ɪ", "x"]
     source := [
       ⟨"jackendoff-audring-2020", "(43)"⟩
     ] }
@@ -118,7 +118,7 @@ def piggish : Form Cell :=
     lexeme := Lexemes.like_a_pig
     cell := {}
     form := "piggish"
-    segments := ["pig", "ish"]
+    morphs := ["pig", "ish"]
     source := [
       ⟨"jackendoff-audring-2020", "7.8.1 (5)"⟩
     ] }
@@ -128,7 +128,7 @@ def childish : Form Cell :=
     lexeme := Lexemes.like_a_child
     cell := {}
     form := "childish"
-    segments := ["child", "ish"]
+    morphs := ["child", "ish"]
     source := [
       ⟨"jackendoff-audring-2020", "7.8.1 (5)"⟩
     ] }
@@ -138,7 +138,7 @@ def sluggish : Form Cell :=
     lexeme := Lexemes.like_a_slug
     cell := {}
     form := "sluggish"
-    segments := ["slug", "ish"]
+    morphs := ["slug", "ish"]
     source := [
       ⟨"jackendoff-audring-2020", "7.8.1 (5)"⟩
     ] }
@@ -148,7 +148,7 @@ def foolish : Form Cell :=
     lexeme := Lexemes.like_a_fool
     cell := {}
     form := "foolish"
-    segments := ["fool", "ish"]
+    morphs := ["fool", "ish"]
     source := [
       ⟨"jackendoff-audring-2020", "7.8.1"⟩
     ] }
@@ -158,7 +158,7 @@ def arrowheadLake : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Arrowhead Lake"
-    segments := ["Arrowhead", "Lake"]
+    morphs := ["Arrowhead", "Lake"]
     source := [
       ⟨"jackendoff-audring-2020", "(17a)"⟩
     ] }
@@ -168,7 +168,7 @@ def loonMountain : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Loon Mountain"
-    segments := ["Loon", "Mountain"]
+    morphs := ["Loon", "Mountain"]
     source := [
       ⟨"jackendoff-audring-2020", "(17a)"⟩
     ] }
@@ -178,7 +178,7 @@ def wissahickonCreek : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Wissahickon Creek"
-    segments := ["Wissahickon", "Creek"]
+    morphs := ["Wissahickon", "Creek"]
     source := [
       ⟨"jackendoff-audring-2020", "(17a)"⟩
     ] }
@@ -188,7 +188,7 @@ def laurelHill : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Laurel Hill"
-    segments := ["Laurel", "Hill"]
+    morphs := ["Laurel", "Hill"]
     source := [
       ⟨"jackendoff-audring-2020", "(17a)"⟩
     ] }
@@ -198,7 +198,7 @@ def sugarIsland : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Sugar Island"
-    segments := ["Sugar", "Island"]
+    morphs := ["Sugar", "Island"]
     source := [
       ⟨"jackendoff-audring-2020", "(17a)"⟩
     ] }
@@ -208,7 +208,7 @@ def mountEverest : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Mount Everest"
-    segments := ["Mount", "Everest"]
+    morphs := ["Mount", "Everest"]
     source := [
       ⟨"jackendoff-audring-2020", "(17b)"⟩
     ] }
@@ -218,7 +218,7 @@ def lakeMichigan : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Lake Michigan"
-    segments := ["Lake", "Michigan"]
+    morphs := ["Lake", "Michigan"]
     source := [
       ⟨"jackendoff-audring-2020", "(17b)"⟩
     ] }
@@ -228,7 +228,7 @@ def capeCod : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Cape Cod"
-    segments := ["Cape", "Cod"]
+    morphs := ["Cape", "Cod"]
     source := [
       ⟨"jackendoff-audring-2020", "(17b)"⟩
     ] }
@@ -238,7 +238,7 @@ def bayOfFundy : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "the Bay of Fundy"
-    segments := ["the", "Bay", "of", "Fundy"]
+    morphs := ["the", "Bay", "of", "Fundy"]
     source := [
       ⟨"jackendoff-audring-2020", "(17d)"⟩
     ] }
@@ -248,7 +248,7 @@ def gulfOfStLawrence : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "the Gulf of St. Lawrence"
-    segments := ["the", "Gulf", "of", "St. Lawrence"]
+    morphs := ["the", "Gulf", "of", "St. Lawrence"]
     source := [
       ⟨"jackendoff-audring-2020", "(17d)"⟩
     ] }
@@ -258,7 +258,7 @@ def capeOfGoodHope : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "the Cape of Good Hope"
-    segments := ["the", "Cape", "of", "Good Hope"]
+    morphs := ["the", "Cape", "of", "Good Hope"]
     source := [
       ⟨"jackendoff-audring-2020", "(17d)"⟩
     ] }
@@ -268,7 +268,7 @@ def isleOfWight : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "the Isle of Wight"
-    segments := ["the", "Isle", "of", "Wight"]
+    morphs := ["the", "Isle", "of", "Wight"]
     source := [
       ⟨"jackendoff-audring-2020", "(17d)"⟩
     ] }
@@ -278,7 +278,7 @@ def morrisMountain : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Morris Mountain"
-    segments := ["Morris", "Mountain"]
+    morphs := ["Morris", "Mountain"]
     source := [
       ⟨"jackendoff-audring-2020", "2.7"⟩
     ] }
@@ -288,7 +288,7 @@ def mountMorris : Form Cell :=
     lexeme := Lexemes.toponym
     cell := {}
     form := "Mount Morris"
-    segments := ["Mount", "Morris"]
+    morphs := ["Mount", "Morris"]
     source := [
       ⟨"jackendoff-audring-2020", "2.7"⟩
     ] }

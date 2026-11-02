@@ -180,15 +180,15 @@
       "ID": "booij2019_tamu",
       "Lexeme_ID": "guest",
       "Form": "tamu",
-      "Segments": ["t", "amu"],
-      "Comment": "base of the reduplication (13); the residue after the initial consonant is one segment, the paper's variable y",
+      "Segments": ["t", "a", "m", "u"],
+      "Comment": "base of the reduplication (13)",
       "Source": ["booij-2019[(12)]"]
     },
     {
       "ID": "booij2019_tetamu",
       "Lexeme_ID": "to_visit",
       "Form": "tətamu",
-      "Segments": ["t", "ə", "t", "amu"],
+      "Segments": ["t", "ə", "t", "a", "m", "u"],
       "Comment": "partial reduplication (13): the initial consonant copied, then the schwa",
       "Source": ["booij-2019[(12)]"]
     },
@@ -196,7 +196,7 @@
       "ID": "booij2019_jawah",
       "Lexeme_ID": "rain",
       "Form": "jawah",
-      "Segments": ["j", "awah"],
+      "Segments": ["j", "a", "w", "a", "h"],
       "Comment": "base of the reduplication (13)",
       "Source": ["booij-2019[(12)]"]
     },
@@ -204,7 +204,7 @@
       "ID": "booij2019_jejawah",
       "Lexeme_ID": "to_play_in_the_rain",
       "Form": "jəjawah",
-      "Segments": ["j", "ə", "j", "awah"],
+      "Segments": ["j", "ə", "j", "a", "w", "a", "h"],
       "Comment": "partial reduplication (13)",
       "Source": ["booij-2019[(12)]"]
     },
@@ -212,7 +212,7 @@
       "ID": "booij2019_geni",
       "Lexeme_ID": "fire",
       "Form": "gəni",
-      "Segments": ["g", "əni"],
+      "Segments": ["g", "ə", "n", "i"],
       "Comment": "base of the reduplication (13)",
       "Source": ["booij-2019[(12)]"]
     },
@@ -220,7 +220,7 @@
       "ID": "booij2019_gegeni",
       "Lexeme_ID": "to_warm_oneself_by_the_fire",
       "Form": "gəgəni",
-      "Segments": ["g", "ə", "g", "əni"],
+      "Segments": ["g", "ə", "g", "ə", "n", "i"],
       "Comment": "partial reduplication (13)",
       "Source": ["booij-2019[(12)]"]
     },

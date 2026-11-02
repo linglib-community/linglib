@@ -107,7 +107,7 @@ def tamu : Form Cell :=
     lexeme := Lexemes.guest
     cell := {}
     form := "tamu"
-    segments := ["t", "amu"]
+    segments := ["t", "a", "m", "u"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }
@@ -117,7 +117,7 @@ def tetamu : Form Cell :=
     lexeme := Lexemes.to_visit
     cell := {}
     form := "tətamu"
-    segments := ["t", "ə", "t", "amu"]
+    segments := ["t", "ə", "t", "a", "m", "u"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }
@@ -127,7 +127,7 @@ def jawah : Form Cell :=
     lexeme := Lexemes.rain
     cell := {}
     form := "jawah"
-    segments := ["j", "awah"]
+    segments := ["j", "a", "w", "a", "h"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }
@@ -137,7 +137,7 @@ def jejawah : Form Cell :=
     lexeme := Lexemes.to_play_in_the_rain
     cell := {}
     form := "jəjawah"
-    segments := ["j", "ə", "j", "awah"]
+    segments := ["j", "ə", "j", "a", "w", "a", "h"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }
@@ -147,7 +147,7 @@ def geni : Form Cell :=
     lexeme := Lexemes.fire
     cell := {}
     form := "gəni"
-    segments := ["g", "əni"]
+    segments := ["g", "ə", "n", "i"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }
@@ -157,7 +157,7 @@ def gegeni : Form Cell :=
     lexeme := Lexemes.to_warm_oneself_by_the_fire
     cell := {}
     form := "gəgəni"
-    segments := ["g", "ə", "g", "əni"]
+    segments := ["g", "ə", "g", "ə", "n", "i"]
     source := [
       ⟨"booij-2019", "(12)"⟩
     ] }

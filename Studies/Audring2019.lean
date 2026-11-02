@@ -36,9 +36,9 @@ do not, and cannot state the pairing they do, which is no product of conditions 
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read as slot-indexed segments
-  by `CLDF.Wordlist.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
-  paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
+* The words are the CLDF forms of `Data/Wordlist/Audring2019.json`, read one morph per slot by
+  `CLDF.Wordlist.Form.morphSlots`: a base slot and an affix slot on the flat carrier, one tier of
+  the paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
   cases for a mother, an antonymic scale and the feature matrix of an inflectional paradigm,
   are not formalized.
 
@@ -64,7 +64,7 @@ def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish
 
 /-- The stored family of (8). -/
 def ishFamily : Set (Fin 2 → Flat String) :=
-  {Wordlist.boyish.slots, Wordlist.foolish.slots, Wordlist.childish.slots}
+  {Wordlist.boyish.morphSlots, Wordlist.foolish.morphSlots, Wordlist.childish.morphSlots}
 
 theorem ishSchema_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ish") :
     ishSchema.Instantiates w := by
@@ -97,13 +97,15 @@ def baseLink : Fin 2 ⊕ Fin 2 → BaseLink := Sum.elim ![.base, .affix₁] ![.b
 
 /-- *boyish* and *childish* are sisters at the affix, since the pair factors through the link. -/
 theorem ish_affix_sisters :
-    (Sum.elim Wordlist.boyish.slots Wordlist.childish.slots).FactorsThrough affixLink := by
+    (Sum.elim Wordlist.boyish.morphSlots Wordlist.childish.morphSlots).FactorsThrough
+      affixLink := by
   decide
 
 /-- *boyish* and *childish* cannot be coindexed at the base. The relation between *boy* and
 *child* is equivalence of function, not sameness, and no sister link states it. -/
 theorem not_base_sisters :
-    ¬ (Sum.elim Wordlist.boyish.slots Wordlist.childish.slots).FactorsThrough baseLink := by
+    ¬ (Sum.elim Wordlist.boyish.morphSlots Wordlist.childish.morphSlots).FactorsThrough
+      baseLink := by
   decide
 
 /-- The mother relates every member of the family through its one variable. -/
@@ -116,7 +118,7 @@ theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
 theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/
-theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Wordlist.trumpish.slots :=
+theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Wordlist.trumpish.morphSlots :=
   ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates (by decide))
 
 /-- A fully specified word, taken as a schema, generates nothing but itself. A sister link
@@ -172,14 +174,14 @@ theorem fulLess_pairs (b : String) :
 affixes. -/
 theorem careful_careless_pairs :
     fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.slots Wordlist.careless.slots) := by
+      (Sum.elim Wordlist.careful.morphSlots Wordlist.careless.morphSlots) := by
   decide
 
 /-- *careful* and *clueless* are not a paired instantiation, since the coindexed base is filled
 differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) := by
+      (Sum.elim Wordlist.careful.morphSlots Wordlist.clueless.morphSlots) := by
   decide
 
 /-- No conditions on the *-ful* and the *-less* adjectives separately pair them as (14) does, so

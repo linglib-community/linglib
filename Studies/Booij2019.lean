@@ -31,11 +31,12 @@ alone carries.
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read one segment per slot on
-  the flat carrier by `CLDF.Wordlist.Form.slots`.
-* A variable is a slot at `⊥`, which any segment fills, where Booij's `C` takes a consonant and
-  `V` a vowel. His `y` ranges over sequences of sounds; here it is one slot, so the wordlist
-  stores the residue of a Javanese base as one segment.
+* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`. The Arabic words are read one
+  segment per slot by `CLDF.Wordlist.Form.slots`; the Javanese words are read by `baseOf` and
+  `reduplicantOf`, whose slots hold sequences of segments, so that `y` takes the residue after
+  the initial consonant.
+* A variable is a slot at `⊥`, which any filler fills, where Booij's `C` takes a consonant and
+  `V` a vowel.
 * Booij offers (2), after the unproductive Dutch diminutive verbs, as an example of the primarily
   motivating function of schemas, so its variables are closed; those of (13) and (16) are open.
 * Only the phonological level of each schema is encoded, not the syntactic and semantic levels or
@@ -43,8 +44,8 @@ alone carries.
 
 ## TODO
 
-* Typed variables and sequence variables need slots that hold descriptions strictly between `⊥`
-  and a segment, which `ConstructionMorphology.Schema.opens_subset` does not let be open.
+* Typed variables need slots that hold descriptions strictly between `⊥` and a segment, which
+  `ConstructionMorphology.Schema.opens_subset` does not let be open.
 * The higher-order schema (5) for Dutch *-er* and its four subschemas, the sister schemas (10)′,
   (11) and (14), the allomorphy schema (18), whose `f/s` and `v/z` are classes of segments, and
   the affixoid subschemas of Section 4.
@@ -108,9 +109,10 @@ inductive RedPart
   | c1 | schwa | y
   deriving DecidableEq
 
-/-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. -/
-def reduplication : Schema RedPart (Flat String) :=
-  .productive fun | .schwa => ↑"ə" | _ => ⊥
+/-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. Its
+slots hold sequences of segments. -/
+def reduplication : Schema RedPart (Flat (List String)) :=
+  .productive fun | .schwa => ↑["ə"] | _ => ⊥
 
 /-- The reduplicant `C₁əC₁y`, whose initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
@@ -118,11 +120,21 @@ def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
 /-- The base `C₁y`. -/
 def baseSub : Fin 2 → RedPart := ![.c1, .y]
 
+/-- A base read as `C₁y`, its initial segment and the rest. -/
+def baseOf {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 2 → Flat (List String) :=
+  ![↑(f.segments.take 1), ↑(f.segments.drop 1)]
+
+/-- A reduplicant read as `C₁əC₁y`, its first three segments one by one and the rest. -/
+def reduplicantOf {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 4 → Flat (List String) :=
+  ![↑(f.segments.take 1), ↑((f.segments.drop 1).take 1), ↑((f.segments.drop 2).take 1),
+    ↑(f.segments.drop 3)]
+
 /-- A reduplicant and a base are paired by (13) exactly when they are $C_1\text{ə}C_1y$ and
 $C_1y$ for one consonant $C_1$ and one residue $y$. -/
-theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat String} :
+theorem reduplication_pairs_iff {r : Fin 4 → Flat (List String)}
+    {b : Fin 2 → Flat (List String)} :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b) ↔
-      ∃ c y, r = ![c, ↑"ə", c, y] ∧ b = ![c, y] := by
+      ∃ c y, r = ![c, ↑["ə"], c, y] ∧ b = ![c, y] := by
   rw [Schema.instantiatesAt_elim_iff_exists_fill]
   refine ⟨fun ⟨x, hr, hb⟩ ↦ ⟨x .c1, x .y, ?_, ?_⟩,
     fun ⟨c, y, hr, hb⟩ ↦ ⟨fun | .c1 => c | _ => y, ?_, ?_⟩⟩ <;>
@@ -133,16 +145,17 @@ theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat 
 -- (12)
 theorem reduplication_verbs :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.tetamu.slots Wordlist.tamu.slots) ∧
+        (Sum.elim (reduplicantOf Wordlist.tetamu) (baseOf Wordlist.tamu)) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.jejawah.slots Wordlist.jawah.slots) ∧
+        (Sum.elim (reduplicantOf Wordlist.jejawah) (baseOf Wordlist.jawah)) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.gegeni.slots Wordlist.geni.slots) := by
+        (Sum.elim (reduplicantOf Wordlist.gegeni) (baseOf Wordlist.geni)) := by
   decide
 
 /-- No condition on reduplicants and bases separately pairs them as (13) does, since
 *tətamu* pairs with *tamu* and *jəjawah* with *jawah* but *tətamu* not with *jawah*. -/
-theorem reduplication_ne_prod (R : Set (Fin 4 → Flat String)) (B : Set (Fin 2 → Flat String)) :
+theorem reduplication_ne_prod (R : Set (Fin 4 → Flat (List String)))
+    (B : Set (Fin 2 → Flat (List String))) :
     {p | reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim p.1 p.2)} ≠ R ×ˢ B :=
   Schema.setOf_instantiatesAt_elim_ne_prod reduplication_verbs.1 reduplication_verbs.2.1
     (a := 0) (b := 0) rfl (by decide) R B
