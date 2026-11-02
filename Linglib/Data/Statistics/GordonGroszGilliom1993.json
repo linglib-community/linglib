@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "bibkey": "gordon-grosz-gilliom-1993",
+    "method": "experiment",
+    "description": "Five self-paced reading experiments that vary whether an entity of a short passage is realized by a pronoun or by a repeated name. Experiment 1 measures the total reading time of the passage; Experiments 2 to 5 measure the reading time of a critical sentence. The tests that bear on the repeated-name penalty are given as printed, by subjects (F1, t1) and by passages (F2, t2); a statistic printed only as less than 1 has no value and no p-value.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The experiment, the two versions of Experiment 2 apart.",
+      "levels": [
+        {"name": "exp1", "label": "Experiment 1", "doc": "Bruno and Tommy: the subject and an object throughout"},
+        {"name": "exp2A", "label": "Experiment 2A", "doc": "Lisa and Joe: the established center in a fronted phrase"},
+        {"name": "exp2B", "label": "Experiment 2B", "doc": "Elizabeth and Tom: the established center in a fronted phrase"},
+        {"name": "exp3", "label": "Experiment 3", "doc": "Susan and Fred: a fronted entity and the subject"},
+        {"name": "exp4", "label": "Experiment 4", "doc": "George and Debbie: continue against shift"},
+        {"name": "exp5", "label": "Experiment 5", "doc": "Susan and Fred: continue against shift after a retain"}
+      ]
+    },
+    {
+      "name": "Measure",
+      "doc": "The reading time a test analyzes.",
+      "levels": [
+        {"name": "passage", "label": "passage", "doc": "the total reading time of the passage"},
+        {"name": "critical", "label": "critical sentence", "doc": "the reading time of the critical sentence"}
+      ]
+    },
+    {
+      "name": "Effect",
+      "doc": "The effect a test assesses, as the paper names it.",
+      "levels": [
+        {"name": "nameNameVsOthers", "label": "name-name vs. pro-name and pro-pro", "doc": "the planned comparison of the name-name condition with the average of the other two"},
+        {"name": "proNameVsProPro", "label": "pro-name vs. pro-pro", "doc": "the comparison of the pro-name and pro-pro conditions"},
+        {"name": "entity1", "label": "pronominalizing Entity1", "doc": "a pronoun or a repeated name for the first-named entity"},
+        {"name": "entity2", "label": "pronominalizing Entity2", "doc": "a pronoun or a repeated name for the second-named entity"},
+        {"name": "numberOfPronouns", "label": "number of pronouns", "doc": "the three conditions pro-pro, pro-name and name-name"},
+        {"name": "subject", "label": "subject", "doc": "a pronoun or a repeated name for the subject of the critical sentence"},
+        {"name": "fronted", "label": "fronted entity", "doc": "a pronoun or a repeated name for the entity of the fronted phrase"},
+        {"name": "pronominalization", "label": "pronominalization", "doc": "a pronoun or a repeated name for the subject of the critical sentence"},
+        {"name": "continueShift", "label": "continue-shift", "doc": "whether the subject of the critical sentence continues or shifts the center"},
+        {"name": "interaction", "label": "interaction", "doc": "the interaction of the two manipulations"},
+        {"name": "penaltyContinue", "label": "repeated-name penalty, continue", "doc": "the repeated-name penalty in the continue condition"},
+        {"name": "penaltyShift", "label": "repeated-name penalty, shift", "doc": "the repeated-name penalty in the shift condition"}
+      ]
+    },
+    {
+      "name": "Statistic",
+      "doc": "The test statistic.",
+      "levels": [
+        {"name": "fTest", "label": "F", "doc": "an analysis of variance"},
+        {"name": "tTest", "label": "t", "doc": "a t test"}
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "tests",
+      "structure": "Test",
+      "doc": "a test of reading time that bears on the repeated-name penalty, by subjects and by passages.",
+      "locator": "pp. 319, 326-327, 331-332, 334-335, 338",
+      "verified": "page-image",
+      "columns": [
+        {"name": "experiment", "type": "Experiment", "doc": "The experiment."},
+        {"name": "measure", "type": "Measure", "doc": "The reading time analyzed."},
+        {"name": "effect", "type": "Effect", "doc": "The effect tested."},
+        {"name": "statistic", "type": "Statistic", "doc": "The test statistic."},
+        {"name": "bySubjects", "type": "option decimal", "doc": "The statistic by subjects, none where printed as less than 1."},
+        {"name": "pSubjects", "type": "option pvalue", "doc": "Its p-value, none where none is printed."},
+        {"name": "byPassages", "type": "option decimal", "doc": "The statistic by passages, none where printed as less than 1."},
+        {"name": "pPassages", "type": "option pvalue", "doc": "Its p-value, none where none is printed."}
+      ],
+      "rows": [
+        {"experiment": "Experiment 1", "measure": "passage", "effect": "name-name vs. pro-name and pro-pro", "statistic": "F", "bySubjects": "24.3", "pSubjects": "< 0.001", "byPassages": "26.0", "pPassages": "< 0.001", "note": "p. 319: F1(1, 11), F2(1, 11); 24 passages give the by-passages test 23 error degrees of freedom, as in F2(2, 46) for the effect of condition"},
+        {"experiment": "Experiment 1", "measure": "passage", "effect": "pro-name vs. pro-pro", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 319: F1(1, 11) < 1, F2(1, 11) < 1"},
+        {"experiment": "Experiment 2A", "measure": "critical sentence", "effect": "pronominalizing Entity1", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 326: F1(1, 15) < 1, F2(1, 23) < 1"},
+        {"experiment": "Experiment 2A", "measure": "critical sentence", "effect": "pronominalizing Entity2", "statistic": "F", "bySubjects": "1.1", "pSubjects": "> 0.20", "byPassages": "1.4", "pPassages": "> 0.20", "note": "p. 326: F1(1, 15), F2(1, 23)"},
+        {"experiment": "Experiment 2A", "measure": "critical sentence", "effect": "interaction", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 326: F1(1, 15) < 1, F2(1, 23) < 1"},
+        {"experiment": "Experiment 2B", "measure": "critical sentence", "effect": "number of pronouns", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 327: F1(2, 34) < 1, F2(2, 46) < 1"},
+        {"experiment": "Experiment 3", "measure": "critical sentence", "effect": "subject", "statistic": "F", "bySubjects": "5.2", "pSubjects": "< 0.05", "byPassages": "13.3", "pPassages": "< 0.001", "note": "p. 331: F1(1, 15), F2(1, 39)"},
+        {"experiment": "Experiment 3", "measure": "critical sentence", "effect": "fronted entity", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "pp. 331-332: F1(1, 15) < 1, F2(1, 39) < 1"},
+        {"experiment": "Experiment 3", "measure": "critical sentence", "effect": "interaction", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 332: F1(1, 15) < 1, F2(1, 39) < 1"},
+        {"experiment": "Experiment 4", "measure": "critical sentence", "effect": "pronominalization", "statistic": "F", "bySubjects": "22.7", "pSubjects": "< 0.001", "byPassages": "9.3", "pPassages": "< 0.005", "note": "p. 334: F1(1, 23), F2(1, 39)"},
+        {"experiment": "Experiment 4", "measure": "critical sentence", "effect": "continue-shift", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 334: F1(1, 23) < 1, F2(1, 39) < 1"},
+        {"experiment": "Experiment 4", "measure": "critical sentence", "effect": "interaction", "statistic": "F", "bySubjects": "6.5", "pSubjects": "< 0.025", "byPassages": "5.7", "pPassages": "< 0.025", "note": "p. 334: F1(1, 23), F2(1, 39)"},
+        {"experiment": "Experiment 4", "measure": "critical sentence", "effect": "repeated-name penalty, continue", "statistic": "t", "bySubjects": "4.7", "pSubjects": "< 0.001", "byPassages": "4.2", "pPassages": "< 0.001", "note": "p. 335: t1(23), t2(39); a penalty of 183 ms"},
+        {"experiment": "Experiment 4", "measure": "critical sentence", "effect": "repeated-name penalty, shift", "statistic": "t", "bySubjects": "1.1", "pSubjects": "> 0.20", "byPassages": "1.0", "pPassages": "> 0.20", "note": "p. 335: t1(23), t2(39); a penalty of 42 ms"},
+        {"experiment": "Experiment 5", "measure": "critical sentence", "effect": "pronominalization", "statistic": "F", "bySubjects": "5.1", "pSubjects": "< 0.05", "byPassages": "4.3", "pPassages": "< 0.05", "note": "p. 338: F1(1, 23), F2(1, 39)"},
+        {"experiment": "Experiment 5", "measure": "critical sentence", "effect": "continue-shift", "statistic": "F", "bySubjects": "1.9", "pSubjects": "> 0.15", "byPassages": "3.7", "pPassages": "< 0.10", "note": "p. 338: F1(1, 23), F2(1, 39)"},
+        {"experiment": "Experiment 5", "measure": "critical sentence", "effect": "interaction", "statistic": "F", "bySubjects": null, "pSubjects": null, "byPassages": null, "pPassages": null, "note": "p. 338: F1(1, 23) < 1, F2(1, 39) < 1"}
+      ]
+    }
+  ]
+}
