@@ -230,7 +230,7 @@ least two possible witnesses, the antiexhaustified existential is consistent
 ([chierchia-2006]). -/
 def LicensesFreeChoice : Licenser → Prop
   | .modal F => ∃ p, ∃ (E : Type) (P : E → Set (F.W p)) (D : Finset E), 1 < D.card ∧
-      (oMinus (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
+      (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
 /-- A question licenses a domain widener by relevance, since widening the domain of a wh-question

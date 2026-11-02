@@ -619,22 +619,18 @@ private def witnessAt (d : Fin 2) : Set (Fin 3) := {d.succ}
 
 theorem licensesFreeChoice_necessityFamily : (Licenser.modal necessityFamily).LicensesFreeChoice :=
   ⟨⟨Fin 3, branching⟩, Fin 2, witnessAt, .univ, by decide, 0,
-    Exhaustification.mem_oMinus_of_forall_ne
-      (fun v hv ↦ by
-        obtain ⟨d, rfl⟩ := Fin.exists_succ_eq.2 hv.2
-        exact Set.mem_iUnion₂.2 ⟨d, Finset.mem_univ _, rfl⟩)
-      fun S _ hne ⟨d, hd⟩ h ↦ by
-        have hd' : (d + 1) ∉ S := fun h' ↦ hne (Finset.eq_univ_iff_forall.2 fun x ↦ by
-          fin_cases d <;> fin_cases x <;> simp_all)
-        have := @h (d + 1).succ ⟨rfl, Fin.succ_ne_zero (d + 1)⟩
-        obtain ⟨e, he, hev⟩ := Set.mem_iUnion₂.1 this
-        exact hd' ((Fin.succ_injective _ (Set.mem_singleton_iff.1 hev)).symm ▸ he)⟩
+    Exhaustification.mem_antiExh_iff.2 ⟨fun v hv ↦
+      let ⟨d, hd⟩ := Fin.exists_succ_eq.2 hv.2; Set.mem_iUnion₂.2 ⟨d, Finset.mem_univ _, hd.symm⟩,
+      .inr fun S hS _ h ↦
+        let ⟨c, _, hc⟩ := Finset.exists_of_ssubset hS
+        let ⟨_, he, hec⟩ := Set.mem_iUnion₂.1 (@h c.succ ⟨rfl, c.succ_ne_zero⟩)
+        hc (Fin.succ_injective _ hec ▸ he)⟩⟩
 
 theorem licensesFreeChoice_modalPossibility : modalPossibility.licenser.LicensesFreeChoice :=
   ⟨⟨Fin 3, branching⟩, Fin 2, witnessAt, .univ, by decide, 0, by
-    show 0 ∈ Exhaustification.oMinus
+    show 0 ∈ Exhaustification.antiExh
       (fun S ↦ branching.preimage (⋃ d ∈ S, witnessAt d)) .univ
-    rw [Exhaustification.oMinus_preimage_biUnion witnessAt branching Finset.univ_nonempty]
+    rw [Exhaustification.antiExh_preimage_biUnion witnessAt branching Finset.univ_nonempty]
     exact Set.mem_iInter₂.2 fun d _ ↦ ⟨d.succ, rfl, rfl, d.succ_ne_zero⟩⟩
 
 end LicensingContext

@@ -18,7 +18,7 @@ where they convey uniqueness (§2.4). In [chierchia-2013]'s framework the DP int
 scalar alternative *at least two* and the pre-exhaustified domain alternatives
 (`Excluder.preExhaustify`, by innocent exclusion as in (56f)). Under a modal, negating the
 domain alternatives gives free choice (`deontic_tolerant`, the general
-`freeChoice_of_proper`), but negating the scalar alternative too is too strong
+`freeChoice_iff_forall_antiExhaustivity`), but negating the scalar alternative too is too strong
 under ◇ and too weak under □ (`deontic_tolerant_box`); in a conditional antecedent
 exhaustification is vacuous (`conditional_vacuous`). Unembedded, the contradiction-tolerant
 operator yields ⊥ (`root_tolerant`, (92)); modal insertion (85)–(87) rescues *irgendein*
