@@ -455,10 +455,7 @@ theorem ablaut_words :
         (Sum.elim Wordlist.string.slots Wordlist.strung.slots) ∧
       ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
         (Sum.elim Wordlist.sprech.slots Wordlist.sprich.slots) := by
-  simp only [singSang, stringStrung, ablaut, nucleusPair_iff]
-  refine ⟨⟨by decide, by decide, ?_⟩, ⟨by decide, by decide, ?_⟩,
-    ⟨bot_le, bot_le, ?_⟩⟩
-  all_goals intro q hq; fin_cases q <;> first | decide | exact (hq rfl).elim
+  decide
 
 /-! ### The present-tense cells of (45) as a morphome -/
 

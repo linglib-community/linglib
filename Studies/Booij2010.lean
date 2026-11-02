@@ -177,7 +177,6 @@ theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
 theorem blackbird_instantiatesAt :
     (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
       ¬ (compoundFamily .nn).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] := by
-  simp only [Schema.instantiatesAt_iff]
   decide
 
 /-- Whether the modifier may itself be a compound (8): allowed by the general schema, forbidden

@@ -31,7 +31,8 @@ coindexed base pairs *careful* with *careless* and not with *clueless*
 (`careful_careless_pairs`, `not_careful_clueless_pairs`). A mother of the two schemas would be
 the meet of their descriptions, which over these slots is empty (`fulLess_mother_eq_bot`) and
 so is instantiated by every word (`fulLess_mother_instantiates`): it states nothing the sisters
-do not, and cannot state the pairing they do.
+do not, and cannot state the pairing they do, which is no product of conditions on single words
+(`fulLess_ne_prod`).
 
 ## Implementation notes
 
@@ -161,20 +162,33 @@ def fulLessWord (b : String) : FulLessVar → Flat String
   | .ful => ↑"ful"
   | .less => ↑"less"
 
+/-- (14) pairs the *-ful* and the *-less* adjective of every base. -/
+theorem fulLess_pairs (b : String) :
+    fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim (word b "ful") (word b "less")) :=
+  ⟨fulLessWord b, fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
+    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> rfl⟩
+
 /-- *careful* and *careless* are a paired instantiation of (14), with the same base and sister
 affixes. -/
 theorem careful_careless_pairs :
     fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.slots Wordlist.careless.slots) :=
-  ⟨fulLessWord "care", fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
-    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> decide⟩
+      (Sum.elim Wordlist.careful.slots Wordlist.careless.slots) := by
+  decide
 
 /-- *careful* and *clueless* are not a paired instantiation, since the coindexed base is filled
 differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) :=
-  fun h ↦ absurd (h.sumElim_apply_eq 0 0 rfl) (by decide)
+      (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) := by
+  decide
+
+/-- No conditions on the *-ful* and the *-less* adjectives separately pair them as (14) does, so
+neither a mother of the two schemas nor any other schema over single words states the
+pairing. -/
+theorem fulLess_ne_prod (A B : Set (Fin 2 → Flat String)) :
+    {p | fulLess.InstantiatesAt (Sum.elim fulSub lessSub) (Sum.elim p.1 p.2)} ≠ A ×ˢ B :=
+  Schema.setOf_instantiatesAt_elim_ne_prod careful_careless_pairs (fulLess_pairs "hope")
+    (a := 0) (b := 0) rfl (by decide) A B
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots
 is empty. It holds nothing but the categories, which the slots do not record. -/
