@@ -258,7 +258,7 @@ private theorem reverse_runFrom (r : R) (xs : List α) :
 
 The recurring two-sided-trigger shape: each side's automaton is the one-bit "some symbol
 on my side satisfies `p`" flag, so `lState`/`rState` compute `List.any` and the cell sees
-exactly the two flags. The conjunctive witness `conjBM` below is an instance. -/
+exactly the two flags. -/
 
 variable (pL pR : α → Bool) (out : Bool → α → Bool → β)
 

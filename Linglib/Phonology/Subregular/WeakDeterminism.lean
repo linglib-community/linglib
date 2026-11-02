@@ -16,8 +16,7 @@ The length bound keeps the first pass from marking up its output: Elgot and Meze
 of an arbitrary regular function needs new symbols in between, and over an alphabet of two or more
 letters new symbols can be coded as longer strings. Subsequential functions that do not lengthen
 their input are weakly deterministic, and a weakly deterministic function that preserves the empty
-word is regular. Later rival classes are named for their mechanisms, such as the non-interacting
-bimachines of `IsNonInteractingBimachineComputable`.
+word is regular.
 
 ## Main definitions
 
