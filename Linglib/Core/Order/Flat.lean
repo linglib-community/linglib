@@ -240,6 +240,11 @@ theorem or_le (hx : x ≤ z) (hy : y ≤ z) : x.or y ≤ z := by
   | bot => exact hy
   | coe a => exact hx
 
+@[simp] theorem or_eq_right : x.or y = y ↔ x ≤ y := by
+  cases x with
+  | bot => simp
+  | coe a => simp [coe_le_iff, eq_comm]
+
 @[simp] theorem or_self (x : Flat α) : x.or x = x := by cases x <;> rfl
 
 /-! ### Meets -/

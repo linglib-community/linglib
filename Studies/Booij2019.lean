@@ -81,15 +81,10 @@ consonants $C_1$, $C_2$ and $C_3$. -/
 theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
     occupation.InstantiatesAt occupationSub w ↔
       ∃ c₁ c₂ c₃, w = ![c₁, ↑"a", c₂, c₂, ↑"aa", c₃] := by
-  refine ⟨fun ⟨u, hu, hw⟩ ↦ ⟨u .c1, u .c2, u .c3, ?_⟩, fun ⟨c₁, c₂, c₃, hw⟩ ↦ ?_⟩
-  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
-    have haa : u .aa = ↑"aa" := Flat.coe_le_iff.1 (hu .aa)
-    subst hw
-    funext i
-    fin_cases i <;> simp [occupationSub, ha, haa]
-  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .a => ↑"a" | .aa => ↑"aa",
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_⟩
-    subst hw
+  rw [Schema.instantiatesAt_iff_exists_fill]
+  refine ⟨fun ⟨x, hw⟩ ↦ ⟨x .c1, x .c2, x .c3, ?_⟩,
+    fun ⟨c₁, c₂, c₃, hw⟩ ↦ ⟨fun | .c1 => c₁ | .c2 => c₂ | _ => c₃, ?_⟩⟩ <;>
+  · subst hw
     funext i
     fin_cases i <;> rfl
 
@@ -128,20 +123,12 @@ $C_1y$ for one consonant $C_1$ and one residue $y$. -/
 theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat String} :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b) ↔
       ∃ c y, r = ![c, ↑"ə", c, y] ∧ b = ![c, y] := by
-  rw [Schema.instantiatesAt_elim_iff_exists]
-  refine ⟨fun ⟨u, hu, hr, hb⟩ ↦ ⟨u .c1, u .y, ?_, ?_⟩, fun ⟨c, y, hr, hb⟩ ↦ ?_⟩
-  · have hs : u .schwa = ↑"ə" := Flat.coe_le_iff.1 (hu .schwa)
-    subst hr
-    funext i
-    fin_cases i <;> simp [redSub, hs]
-  · subst hb
+  rw [Schema.instantiatesAt_elim_iff_exists_fill]
+  refine ⟨fun ⟨x, hr, hb⟩ ↦ ⟨x .c1, x .y, ?_, ?_⟩,
+    fun ⟨c, y, hr, hb⟩ ↦ ⟨fun | .c1 => c | _ => y, ?_, ?_⟩⟩ <;>
+  · subst_vars
     funext i
     fin_cases i <;> rfl
-  · refine ⟨fun | .c1 => c | .schwa => ↑"ə" | .y => y,
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
-      · subst_vars
-        funext i
-        fin_cases i <;> rfl
 
 -- (12)
 theorem reduplication_verbs :
@@ -183,21 +170,13 @@ $aC_1C_2aC_3$ over the same three consonants. -/
 theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p q) ↔
       ∃ c₁ c₂ c₃ v₁ v₂, p = ![c₁, v₁, c₂, v₂, c₃] ∧ q = ![↑"a", c₁, c₂, ↑"a", c₃] := by
-  rw [Schema.instantiatesAt_elim_iff_exists]
-  refine ⟨fun ⟨u, hu, hp, hq⟩ ↦ ⟨u .c1, u .c2, u .c3, u .v1, u .v2, ?_, ?_⟩,
-    fun ⟨c₁, c₂, c₃, v₁, v₂, hp, hq⟩ ↦ ?_⟩
-  · subst hp
+  rw [Schema.instantiatesAt_elim_iff_exists_fill]
+  refine ⟨fun ⟨x, hp, hq⟩ ↦ ⟨x .c1, x .c2, x .c3, x .v1, x .v2, ?_, ?_⟩,
+    fun ⟨c₁, c₂, c₃, v₁, v₂, hp, hq⟩ ↦
+      ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .v1 => v₁ | _ => v₂, ?_, ?_⟩⟩ <;>
+  · subst_vars
     funext i
     fin_cases i <;> rfl
-  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
-    subst hq
-    funext i
-    fin_cases i <;> simp [cmpSub, ha]
-  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .v1 => v₁ | .v2 => v₂ | .a => ↑"a",
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
-      · subst_vars
-        funext i
-        fin_cases i <;> rfl
 
 -- (15)
 theorem comparative_pairs :
