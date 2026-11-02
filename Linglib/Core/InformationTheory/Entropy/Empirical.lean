@@ -14,8 +14,9 @@ public import Linglib.Core.Probability.UniformOn
 Under the uniform measure on a finite type,
 [conditional entropies are counts](##condEntropy_uniformOn_univ): each fibre of the conditioning
 attribute weighs in by its share of the population, with the entropy of the distribution of the
-other attribute on it. The same holds for
-[attributes valued in finite sets](##condEntropy_uniformOn_univ_finset).
+other attribute on it. Equivalently the conditional entropy is
+[an average over the population](##condEntropy_uniformOn_univ_eq_sum_log) of the logarithm of the
+ratio of two class sizes, which needs no finite type of values.
 
 ## References
 
@@ -54,9 +55,7 @@ theorem condEntropy_uniformOn_univ [Fintype Ω] {S T : Type*} [MeasurableSpace S
     Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
   simp_rw [uniformOn_real_apply, hY, hXY]
 
-/-- `condEntropy_uniformOn_univ` for attributes valued in finite sets `A` and `B`, the sums running
-over those sets. -/
-theorem condEntropy_uniformOn_univ_finset [Fintype Ω] {S T : Type*} [MeasurableSpace S]
+private theorem condEntropy_uniformOn_univ_finset [Fintype Ω] {S T : Type*} [MeasurableSpace S]
     [MeasurableSingletonClass S] [DecidableEq S] [MeasurableSpace T] [MeasurableSingletonClass T]
     [DecidableEq T] {X : Ω → S} {Y : Ω → T} {A : Finset S} {B : Finset T} (hX : ∀ ω, X ω ∈ A)
     (hY : ∀ ω, Y ω ∈ B) :
@@ -77,6 +76,51 @@ theorem condEntropy_uniformOn_univ_finset [Fintype Ω] {S T : Type*} [Measurable
   refine Finset.sum_congr rfl fun y _ ↦ ?_
   rw [← Finset.sum_coe_sort A]
   simp only [X', Y', Subtype.ext_iff]
+
+/-- The conditional entropy of one attribute of a finite population given another, under the
+uniform measure, is the average over the population of the logarithm of the size of an individual's
+class under `Y` over the size of its class under `Y` and `X` together. -/
+theorem condEntropy_uniformOn_univ_eq_sum_log [Fintype Ω] {S T : Type*} [MeasurableSpace S]
+    [MeasurableSingletonClass S] [DecidableEq S] [MeasurableSpace T] [MeasurableSingletonClass T]
+    [DecidableEq T] (X : Ω → S) (Y : Ω → T) :
+    H[X | Y ; uniformOn (Set.univ : Set Ω)]
+      = (Fintype.card Ω : ℝ)⁻¹ * ∑ ω, log ((Finset.univ.filter (Y · = Y ω)).card /
+          (Finset.univ.filter fun ω' ↦ Y ω' = Y ω ∧ X ω' = X ω).card) := by
+  have hA (ω : Ω) : X ω ∈ Finset.univ.image X := Finset.mem_image_of_mem _ (Finset.mem_univ _)
+  have hB (ω : Ω) : Y ω ∈ Finset.univ.image Y := Finset.mem_image_of_mem _ (Finset.mem_univ _)
+  set n : T → ℕ := fun y ↦ (Finset.univ.filter (Y · = y)).card with hn
+  set m : T → S → ℕ := fun y x ↦ (Finset.univ.filter fun ω ↦ Y ω = y ∧ X ω = x).card with hm
+  have hmn (y : T) (x : S) : m y x ≤ n y :=
+    Finset.card_le_card fun ω hω ↦ by
+      simp only [Finset.mem_filter] at hω ⊢
+      exact ⟨hω.1, hω.2.1⟩
+  have hgroup : ∑ ω, log ((n (Y ω) : ℝ) / m (Y ω) (X ω))
+      = ∑ y ∈ Finset.univ.image Y, ∑ x ∈ Finset.univ.image X,
+          (m y x : ℝ) * log ((n y : ℝ) / m y x) := by
+    rw [← Finset.sum_fiberwise_of_maps_to (t := Finset.univ.image Y) (g := Y) fun ω _ ↦ hB ω]
+    refine Finset.sum_congr rfl fun y _ ↦ ?_
+    rw [← Finset.sum_fiberwise_of_maps_to (t := Finset.univ.image X) (g := X) fun ω _ ↦ hA ω]
+    refine Finset.sum_congr rfl fun x _ ↦ ?_
+    rw [Finset.filter_filter, Finset.sum_congr rfl (g := fun _ ↦ log ((n y : ℝ) / m y x)),
+      Finset.sum_const, nsmul_eq_mul]
+    intro ω hω
+    obtain ⟨rfl, rfl⟩ := (Finset.mem_filter.1 hω).2
+    rfl
+  rw [condEntropy_uniformOn_univ_finset hA hB]
+  change _ = (Fintype.card Ω : ℝ)⁻¹ * ∑ ω, log ((n (Y ω) : ℝ) / m (Y ω) (X ω))
+  rw [hgroup, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun y _ ↦ ?_
+  rw [Finset.mul_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun x _ ↦ ?_
+  change ((n y : ℝ) / _) * negMulLog ((m y x : ℝ) / n y) =
+    _ * ((m y x : ℝ) * log ((n y : ℝ) / m y x))
+  obtain h0 | h0 := Nat.eq_zero_or_pos (n y)
+  · have hm0 : m y x = 0 := Nat.le_zero.1 (h0 ▸ hmn y x)
+    simp [h0, hm0]
+  · have hn0 : (n y : ℝ) ≠ 0 := by positivity
+    rw [show log ((n y : ℝ) / m y x) = -log ((m y x : ℝ) / n y) by rw [← log_inv, inv_div],
+      negMulLog, div_eq_inv_mul (n y : ℝ)]
+    field_simp
 
 end Empirical
 
