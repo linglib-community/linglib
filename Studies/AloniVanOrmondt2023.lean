@@ -29,10 +29,10 @@ disjuncts split over individuals, [obviating the ignorance](##obviation).
 
 ## Errata
 
-* After Fact 3 the paper says the ignorance fact generalises to arbitrary disjuncts. It fails for
-  disjuncts with a free variable, which Definition 4.12 admits: the universal extension in the
-  proof of Fact 4 is state-based and [supports `[three(x) ∨ more(x)]⁺` but not
-  `◇three(x)`](##not_ignorance_fig15).
+* After Fact 3 the paper says the ignorance fact generalises to arbitrary disjuncts. It does on
+  states whose indices [share one assignment](##QBSML.ignorance_of_assign_eq), but Definition 4.12
+  admits states with several: the universal extension in the proof of Fact 4 is state-based and
+  [supports `[three(x) ∨ more(x)]⁺` but not `◇three(x)`](##not_ignorance_fig15).
 * On p. 542 example (4a) is repeated as "(3-b)", and on p. 546 the blocked (41) is called "(42)".
 
 ## References
