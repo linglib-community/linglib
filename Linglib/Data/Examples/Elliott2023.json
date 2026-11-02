@@ -1,0 +1,124 @@
+[
+  {
+    "id": "elliott2023_7",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there's no bathroom in this house, or it's in a funny place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "The donkey disjunction, attributed to Partee; the paper credits the observation to Evans (1977).",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliott2023_10",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Gabe doesn't have a credit card with him, or he paid with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We're wondering how Gabe paid for dinner.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true if Gabe paid with one credit card and not with another", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "The existential reading in a mixed scenario.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliott2023_11a",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Gabe doesn't have an umbrella, or he remembered to bring it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It has been raining all day. We're wondering whether Gabe got wet on the way here.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Gabe remembered to bring some umbrella of his", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "The existential reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliott2023_11b",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Gabe doesn't have an umbrella, or he forgot to bring it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It has been raining all day. We're wondering whether Gabe got wet on the way here.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Gabe forgot to bring every umbrella of his", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "The universal reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliott2023_12",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Neither is there no bathroom in this house, nor is it in a funny place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "false as soon as there is a bathroom in this house in a funny place", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "A negated donkey disjunction.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliott2023_24",
+    "source": {"bibkey": "elliott-2023", "paperLabel": "(24)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Steven doesn't own no car — it's a ferrari.",
+    "discourseSegments": ["Steven doesn't own no car", "it's a ferrari."],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.3"]
+    ],
+    "comment": "Anaphora to the indefinite of a doubly negated existential.",
+    "verified": "page-image"
+  }
+]
