@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
-public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Core.ModelTheory.Monadic
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Semantics.Composition.FirstOrder

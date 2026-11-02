@@ -120,17 +120,17 @@ variable {α : Type*} {R S : α → α → Prop} {X : Finset α}
 /-- Strong Reciprocity ([langendoen-1978]) is `ful` relativized to `X`, so `X` has two or more
 members and any two distinct members are `R`-related. -/
 def StrongReciprocity (R : α → α → Prop) (X : Finset α) : Prop :=
-  inducedGraph R ↑X ∈ ful.holds
+  inducedGraph R ↑X ∈ ful
 
 /-- Intermediate Reciprocity ([langendoen-1978]) is `lin` relativized to `X`, so `X` has two or
 more members and any two distinct members are joined by a chain of `R`-steps through `X`. -/
 def IntermediateReciprocity (R : α → α → Prop) (X : Finset α) : Prop :=
-  inducedGraph R ↑X ∈ lin.holds
+  inducedGraph R ↑X ∈ lin
 
 /-- One-way Weak Reciprocity ([dalrymple-et-al-1998]) is `tot` relativized to `X`, so `X` has two
 or more members and each is `R`-related to another. -/
 def OneWayWeakReciprocity (R : α → α → Prop) (X : Finset α) : Prop :=
-  inducedGraph R ↑X ∈ tot.holds
+  inducedGraph R ↑X ∈ tot
 
 /-- Inclusive Alternative Ordering ([kanski-1987]) is One-way Weak Reciprocity with the direction
 of `R` ignored, so each member of `X` is `R`-related to another in one direction or the other. -/
@@ -254,7 +254,7 @@ theorem Coverage.quantifier_antitone : Antitone Coverage.quantifier.{u} := by
     | exact ful_le_lin.trans lin_le_tot
 
 theorem Coverage.mem_quantifier_mono (c : Coverage) (hRS : R ≤ S)
-    (h : inducedGraph R ↑X ∈ c.quantifier.holds) : inducedGraph S ↑X ∈ c.quantifier.holds := by
+    (h : inducedGraph R ↑X ∈ c.quantifier) : inducedGraph S ↑X ∈ c.quantifier := by
   cases c
   · exact OneWayWeakReciprocity.mono (R := R) h hRS
   · exact IntermediateReciprocity.mono (R := R) h hRS
@@ -293,7 +293,7 @@ relativization to `X` of the setting's quantifier at the setting's relation. The
 `(.ful, .plain)` gives Strong Reciprocity and `(.tot, .alternative)` Inclusive Alternative
 Ordering. -/
 def Recip (q : Coverage × Direction) (R : α → α → Prop) (X : Finset α) : Prop :=
-  inducedGraph (q.2.rel R) ↑X ∈ q.1.quantifier.holds
+  inducedGraph (q.2.rel R) ↑X ∈ q.1.quantifier
 
 /-- The entailment diagram of [dalrymple-et-al-1998]. A stronger setting of the two parameters
 entails a weaker one. -/
