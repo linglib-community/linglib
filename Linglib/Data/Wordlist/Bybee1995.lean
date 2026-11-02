@@ -57,7 +57,7 @@ def strung : Form Cell :=
     lexeme := Lexemes.string_past
     cell := {}
     form := "strung"
-    segments := ["str", "ʌ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ʌ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -67,7 +67,7 @@ def stung : Form Cell :=
     lexeme := Lexemes.sting_past
     cell := {}
     form := "stung"
-    segments := ["st", "ʌ", "ŋ"]
+    segments := ["s", "t", "ʌ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -77,7 +77,7 @@ def flung : Form Cell :=
     lexeme := Lexemes.fling_past
     cell := {}
     form := "flung"
-    segments := ["fl", "ʌ", "ŋ"]
+    segments := ["f", "l", "ʌ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -97,7 +97,7 @@ def strike : Form Cell :=
     lexeme := Lexemes.strike
     cell := {}
     form := "strike"
-    segments := ["str", "aɪ", "k"]
+    segments := ["s", "t", "ɹ", "aɪ", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -107,7 +107,7 @@ def struck : Form Cell :=
     lexeme := Lexemes.strike_past
     cell := {}
     form := "struck"
-    segments := ["str", "ʌ", "k"]
+    segments := ["s", "t", "ɹ", "ʌ", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -117,7 +117,7 @@ def sneak : Form Cell :=
     lexeme := Lexemes.sneak
     cell := {}
     form := "sneak"
-    segments := ["sn", "i", "k"]
+    segments := ["s", "n", "i", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -127,7 +127,7 @@ def snuck : Form Cell :=
     lexeme := Lexemes.sneak_past
     cell := {}
     form := "snuck"
-    segments := ["sn", "ʌ", "k"]
+    segments := ["s", "n", "ʌ", "k"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -137,7 +137,7 @@ def drag : Form Cell :=
     lexeme := Lexemes.drag
     cell := {}
     form := "drag"
-    segments := ["dr", "æ", "g"]
+    segments := ["d", "ɹ", "æ", "ɡ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -147,7 +147,7 @@ def drug : Form Cell :=
     lexeme := Lexemes.drag_past
     cell := {}
     form := "drug"
-    segments := ["dr", "ʌ", "g"]
+    segments := ["d", "ɹ", "ʌ", "ɡ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -157,7 +157,7 @@ def string : Form Cell :=
     lexeme := Lexemes.string
     cell := {}
     form := "string"
-    segments := ["str", "ɪ", "ŋ"]
+    segments := ["s", "t", "ɹ", "ɪ", "ŋ"]
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }

@@ -1,28 +1,25 @@
 module
 
+public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Order.OrderDual
 
 /-!
 # Feeding and bleeding
 
-This file defines feeding and bleeding, Kiparsky's relations between two rules: applying the
-first to a form feeds the second when the second applies further to the result than to the form,
-and bleeds it when the second applies less far. How far a rule applies takes values in any
-preorder. A predicate, with `False < True`, gives Kiparsky's relations, [the first rule creating or
-destroying a form the second applies to](##RuleInteraction.feeds_iff); the number of times the
-second rule applies gives Baković and Blumenfeld's input-provision and input-removal. [In the
-bleeding order the bled rule applies vacuously](##RuleInteraction.Bleeds.isFixedPt), as [the fed
-rule does in the counterfeeding order](##RuleInteraction.Feeds.isFixedPt).
+This file defines Kiparsky's feeding and bleeding: applying one rule to a form feeds a second when
+the second applies further to the result than to the form, and bleeds it when it applies less far,
+how far being measured in any preorder. [A predicate, with `False < True`, gives Kiparsky's
+relations](##RuleInteraction.feeds_iff), the number of times the second rule applies Baković and
+Blumenfeld's input-provision and input-removal, and [a coarser measure fewer
+interactions](##RuleInteraction.Feeds.of_comp). [In the bleeding order the bled rule applies
+vacuously](##RuleInteraction.Bleeds.isFixedPt), and [a map undoing the first rule bleeds what it
+feeds](##RuleInteraction.bleeds_iff_feeds_of_apply_eq).
 
 ## Implementation notes
 
 The relations take the first rule's map and the second rule's measure, not the rules themselves:
 Kiparsky observes that they turn on what the rules do rather than on their form, and the two rules
 may belong to different modules, as when impoverishment feeds metathesis.
-
-## TODO
-
-* Baković and Blumenfeld's input-rank, the `ℕ`-valued measure, and their output interactions.
 
 ## References
 
@@ -57,6 +54,21 @@ instance [DecidableLT α] : Decidable (Bleeds f r x) := inferInstanceAs (Decidab
 theorem feeds_toDual_comp_iff : Feeds f (toDual ∘ r) x ↔ Bleeds f r x := Iff.rfl
 
 theorem bleeds_toDual_comp_iff : Bleeds f (toDual ∘ r) x ↔ Feeds f r x := Iff.rfl
+
+/-- A map undoing `f` at `x` bleeds at `f x` what `f` feeds at `x`: flipping a rule turns its
+feeding into bleeding. -/
+theorem bleeds_iff_feeds_of_apply_eq (h : g (f x) = x) : Bleeds g r (f x) ↔ Feeds f r x := by
+  rw [Bleeds, h, Feeds]
+
+/-- A measure read through a monotone map feeds only where the measure itself does: coarsening
+how far a rule applies can lose interactions but not create them. -/
+theorem Feeds.of_comp {β : Type*} [LinearOrder β] {φ : β → α} {s : S → β} (hφ : Monotone φ)
+    (h : Feeds f (φ ∘ s) x) : Feeds f s x :=
+  hφ.reflect_lt h
+
+theorem Bleeds.of_comp {β : Type*} [LinearOrder β] {φ : β → α} {s : S → β} (hφ : Monotone φ)
+    (h : Bleeds f (φ ∘ s) x) : Bleeds f s x :=
+  hφ.reflect_lt h
 
 /-! ### Predicates -/
 

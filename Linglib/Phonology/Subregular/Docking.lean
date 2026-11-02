@@ -28,7 +28,8 @@ only that window, so the map depends boundedly on both sides in the sense of
 ## Main results
 
 * `Docking.map_getElem?` — the rewrite pointwise.
-* `Docking.requiresBothSides_of_flanks` — the flank-witness template, from three docking facts.
+* `Docking.isUnboundedCircumambient_of_flanks` — the flank-witness template, from three docking
+  facts.
 * `Docking.ofQF_map_getElem?_congr` — with a bounded guard, the output at a position reads
   only the guard's window.
 * `Docking.ofQF_boundedDependence_left`, `Docking.ofQF_boundedDependence_right` — hence bounded
@@ -89,13 +90,13 @@ def support (w : List α) : Finset ℕ := (Finset.range w.length).filter (P.Dock
 
 /-- The flank-witness template at the docking level. A process that docks a change of the
 filler at a `d`-margined target of a flank word, and does not dock there when either flank
-alone is flipped, requires both sides. -/
-theorem requiresBothSides_of_flanks {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
+alone is flipped, is unbounded circumambient. -/
+theorem isUnboundedCircumambient_of_flanks {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (hfill : P.dock fill ≠ fill) (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hon : ∀ d, P.Docks (flankWord xOn fill yOn (n d)) (t d))
     (hoffL : ∀ d, ¬ P.Docks (flankWord xOff fill yOn (n d)) (t d))
     (hoffR : ∀ d, ¬ P.Docks (flankWord xOn fill yOff (n d)) (t d)) :
-    RequiresBothSides P.map :=
+    IsUnboundedCircumambient P.map :=
   have hmid (x y : α) (d : ℕ) : (flankWord x fill y (n d))[t d]? = some fill :=
     getElem?_flankWord_mid (by have := ht d; omega) (by have := hn d; omega)
   .of_flanks (fill := fill) (xOn := xOn) (yOn := yOn) (xOff := xOff) (yOff := yOff) ht hn

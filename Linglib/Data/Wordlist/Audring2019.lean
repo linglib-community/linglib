@@ -45,7 +45,7 @@ def boyish : Form Cell :=
     lexeme := Lexemes.like_a_boy
     cell := {}
     form := "boyish"
-    segments := ["boy", "ish"]
+    morphs := ["boy", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -55,7 +55,7 @@ def foolish : Form Cell :=
     lexeme := Lexemes.like_a_fool
     cell := {}
     form := "foolish"
-    segments := ["fool", "ish"]
+    morphs := ["fool", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -65,7 +65,7 @@ def childish : Form Cell :=
     lexeme := Lexemes.like_a_child
     cell := {}
     form := "childish"
-    segments := ["child", "ish"]
+    morphs := ["child", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -75,7 +75,7 @@ def trumpish : Form Cell :=
     lexeme := Lexemes.like_trump
     cell := {}
     form := "Trumpish"
-    segments := ["Trump", "ish"]
+    morphs := ["Trump", "ish"]
     source := [
       ⟨"audring-2019", "4.1"⟩
     ] }
@@ -85,7 +85,7 @@ def careful : Form Cell :=
     lexeme := Lexemes.careful
     cell := {}
     form := "careful"
-    segments := ["care", "ful"]
+    morphs := ["care", "ful"]
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
@@ -95,7 +95,7 @@ def careless : Form Cell :=
     lexeme := Lexemes.careless
     cell := {}
     form := "careless"
-    segments := ["care", "less"]
+    morphs := ["care", "less"]
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
@@ -105,7 +105,7 @@ def clueless : Form Cell :=
     lexeme := Lexemes.clueless
     cell := {}
     form := "clueless"
-    segments := ["clue", "less"]
+    morphs := ["clue", "less"]
     source := [
       ⟨"audring-2019", "4.2.2"⟩
     ] }

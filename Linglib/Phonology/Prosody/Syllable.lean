@@ -22,6 +22,7 @@ below.
   from morae.
 * `Syllable.yield`, `Syllable.toOnsetRime`: the segment string of a syllable, and its
   onset-rime structure.
+* `nucleusSplit`: a string split at its first run of vowels.
 * `Syllable.Weight`, `Yield`: a mora count, and the weight profile of a string of syllables.
 * `Level`, `Constituent`, `Tree`: the levels σ < f < ω < φ < ι, the prosodic constituents, and
   the prosodic tree over them.
@@ -185,6 +186,22 @@ def Syllable.toOnsetRime (σ : Syllable) : OnsetRime := ⟨σ.onset, σ.morae⟩
     onset-rime representations agree on weight. -/
 theorem Syllable.toOnsetRime_weight (σ : Syllable) :
     σ.toOnsetRime.rime.length = σ.moraCount := rfl
+
+/-! ### The nucleus of a string -/
+
+/-- A string split at its first maximal run of vowels: what precedes the run, the run, and what
+    follows it. In a monosyllable the run is the nucleus, a diphthong included, and the rest is
+    the material before and after it. -/
+def nucleusSplit (w : List Segment) : List Segment × List Segment × List Segment :=
+  let (pre, rest) := w.span fun x ↦ !decide x.IsVowel
+  let (nuc, post) := rest.span fun x ↦ decide x.IsVowel
+  (pre, nuc, post)
+
+/-- The three parts of `nucleusSplit` spell out the string. -/
+theorem nucleusSplit_append (w : List Segment) :
+    (nucleusSplit w).1 ++ (nucleusSplit w).2.1 ++ (nucleusSplit w).2.2 = w := by
+  simp only [nucleusSplit, List.span_eq_takeWhile_dropWhile, List.append_assoc,
+    List.takeWhile_append_dropWhile]
 
 /-! ### Yields -/
 

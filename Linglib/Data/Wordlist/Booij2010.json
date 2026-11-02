@@ -98,7 +98,7 @@
       "ID": "booij2010_carlessness",
       "Lexeme_ID": "carlessness",
       "Form": "carlessness",
-      "Segments": ["carless", "ness"],
+      "Morphs": ["carless", "ness"],
       "Comment": "the paper's novel coin (Time, October 5, 2009)",
       "Source": ["booij-2010-compass"]
     },
@@ -106,7 +106,7 @@
       "ID": "booij2010_baldness",
       "Lexeme_ID": "baldness",
       "Form": "baldness",
-      "Segments": ["bald", "ness"],
+      "Morphs": ["bald", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
       "Source": ["booij-2010-compass[(1)]"]
     },
@@ -114,7 +114,7 @@
       "ID": "booij2010_bigness",
       "Lexeme_ID": "bigness",
       "Form": "bigness",
-      "Segments": ["big", "ness"],
+      "Morphs": ["big", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
       "Source": ["booij-2010-compass[(1)]"]
     },
@@ -122,7 +122,7 @@
       "ID": "booij2010_blackness",
       "Lexeme_ID": "blackness",
       "Form": "blackness",
-      "Segments": ["black", "ness"],
+      "Morphs": ["black", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
       "Source": ["booij-2010-compass[(1)]"]
     },
@@ -130,7 +130,7 @@
       "ID": "booij2010_britishness",
       "Lexeme_ID": "britishness",
       "Form": "Britishness",
-      "Segments": ["British", "ness"],
+      "Morphs": ["British", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
       "Source": ["booij-2010-compass[(1)]"]
     },
@@ -138,7 +138,7 @@
       "ID": "booij2010_awareness",
       "Lexeme_ID": "awareness",
       "Form": "awareness",
-      "Segments": ["aware", "ness"],
+      "Morphs": ["aware", "ness"],
       "Comment": "the paper's example of an existing deadjectival noun (2)",
       "Source": ["booij-2010-compass[(2)]"]
     },
@@ -146,7 +146,7 @@
       "ID": "booij2010_leesbaar",
       "Lexeme_ID": "readable",
       "Form": "leesbaar",
-      "Segments": ["lees", "baar"],
+      "Morphs": ["lees", "baar"],
       "Comment": "a regular -baar adjective on the transitive verb lezen",
       "Source": ["booij-2010-compass"]
     },
@@ -154,7 +154,7 @@
       "ID": "booij2010_werkbaar",
       "Lexeme_ID": "workable",
       "Form": "werkbaar",
-      "Segments": ["werk", "baar"],
+      "Morphs": ["werk", "baar"],
       "Comment": "a -baar adjective on the intransitive verb werken, overriding the schema's transitive base",
       "Source": ["booij-2010-compass"]
     },
@@ -162,7 +162,7 @@
       "ID": "booij2010_onbedwingbaar",
       "Lexeme_ID": "unsuppressable",
       "Form": "onbedwingbaar",
-      "Segments": ["on", "bedwing", "baar"],
+      "Morphs": ["on", "bedwing", "baar"],
       "Comment": "coined directly from the verb bedwingen by the unified schema (16), with no listed bedwingbaar",
       "Source": ["booij-2010-compass[(15)]"]
     }

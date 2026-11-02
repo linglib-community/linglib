@@ -7,6 +7,7 @@ public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
 public import Linglib.Data.Examples.Dixon1994
 public import Linglib.Data.Examples.Readers
+public import Linglib.Phonology.RuleInteraction
 
 /-!
 # Dixon (1994): Ergativity
@@ -58,7 +59,7 @@ pivots of §6.2.4.
 
 namespace Dixon1994
 
-open Alignment
+open Alignment RuleInteraction
 
 variable {κ : Type*}
 
@@ -275,23 +276,32 @@ def Derivation.apply : Derivation → ArgumentRole → Option ArgumentRole
   | _, .S => some .S
   | _, _ => none
 
-/-- A derivation feeds a pivot for an NP in function `r` when the derived function is a pivot
-function. -/
-def Feeds (π : Pivot) (d : Derivation) (r : ArgumentRole) : Prop :=
-  ∃ g, d.apply r = some g ∧ π.Admits g
+/-- `d.map` is the function the derivation `d` gives an NP, the periphery staying peripheral. -/
+def Derivation.map (d : Derivation) (o : Option ArgumentRole) : Option ArgumentRole :=
+  o.bind d.apply
+
+/-- An NP satisfies a pivot when it bears a pivot function; a peripheral NP satisfies none. -/
+def Pivot.Holds (π : Pivot) : Option ArgumentRole → Prop
+  | none => False
+  | some r => π.Admits r
+
+instance (π : Pivot) : DecidablePred π.Holds
+  | none => inferInstanceAs (Decidable False)
+  | some r => inferInstanceAs (Decidable (π.Admits r))
 
 theorem not_admits_iff :
     (∀ r ∈ ArgumentRole.core, ¬ Pivot.SA.Admits r ↔ r = .P) ∧
       ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by
   decide
 
--- §6.2.1, §6.2.2, §6.2.3
+-- §6.2.1, §6.2.2, §6.2.3: passive alone feeds an S/A pivot for an NP in O function and
+-- antipassive alone an S/O pivot for one in A function, and each bleeds the pivot for the other
 theorem feeds_iff :
-    (∀ d, Feeds .SA d .P ↔ d = .passive) ∧ (∀ d, Feeds .SO d .A ↔ d = .antipassive) ∧
-      ¬ Feeds .SA .passive .A ∧ ¬ Feeds .SO .antipassive .P :=
-  ⟨fun d ↦ by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
-    fun d ↦ by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
-    (fun ⟨_, h, _⟩ ↦ nomatch h), fun ⟨_, h, _⟩ ↦ nomatch h⟩
+    (∀ d : Derivation, Feeds d.map Pivot.SA.Holds (some .P) ↔ d = .passive) ∧
+      (∀ d : Derivation, Feeds d.map Pivot.SO.Holds (some .A) ↔ d = .antipassive) ∧
+      Bleeds Derivation.passive.map Pivot.SA.Holds (some .A) ∧
+      Bleeds Derivation.antipassive.map Pivot.SO.Holds (some .P) := by
+  decide
 
 /-- Interchange A and O, leaving S and the ditransitive roles alone. -/
 def swapAO : ArgumentRole → ArgumentRole

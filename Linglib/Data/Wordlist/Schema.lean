@@ -131,6 +131,10 @@ def map (g : C → D) (f : Form C) : Form D := { f with cell := g f.cell }
 the schemas of `Morphology/ConstructionMorphology/` match. -/
 def slots (f : Form C) (i : Fin f.segments.length) : Flat String := ↑f.segments[i]
 
+/-- `f.morphSlots` reads the morphs of `f` as a slot-indexed item on the flat carrier, one morph
+per slot. -/
+def morphSlots (f : Form C) (i : Fin f.morphs.length) : Flat String := ↑f.morphs[i]
+
 end Form
 
 /-- A `FormRelation α` is a row of the `FormRelationTable`, a relation that a source asserts from

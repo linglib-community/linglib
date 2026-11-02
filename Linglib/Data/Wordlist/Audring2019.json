@@ -78,7 +78,7 @@
       "ID": "audring2019_boyish",
       "Lexeme_ID": "like_a_boy",
       "Form": "boyish",
-      "Segments": ["boy", "ish"],
+      "Morphs": ["boy", "ish"],
       "Comment": "the [N -ish]A family (8)",
       "Source": ["audring-2019[(8)]"]
     },
@@ -86,7 +86,7 @@
       "ID": "audring2019_foolish",
       "Lexeme_ID": "like_a_fool",
       "Form": "foolish",
-      "Segments": ["fool", "ish"],
+      "Morphs": ["fool", "ish"],
       "Comment": "the [N -ish]A family (8)",
       "Source": ["audring-2019[(8)]"]
     },
@@ -94,7 +94,7 @@
       "ID": "audring2019_childish",
       "Lexeme_ID": "like_a_child",
       "Form": "childish",
-      "Segments": ["child", "ish"],
+      "Morphs": ["child", "ish"],
       "Comment": "the [N -ish]A family (8)",
       "Source": ["audring-2019[(8)]"]
     },
@@ -102,7 +102,7 @@
       "ID": "audring2019_trumpish",
       "Lexeme_ID": "like_trump",
       "Form": "Trumpish",
-      "Segments": ["Trump", "ish"],
+      "Morphs": ["Trump", "ish"],
       "Comment": "novel formation showing the base variable is open",
       "Source": ["audring-2019[4.1]"]
     },
@@ -110,7 +110,7 @@
       "ID": "audring2019_careful",
       "Lexeme_ID": "careful",
       "Form": "careful",
-      "Segments": ["care", "ful"],
+      "Morphs": ["care", "ful"],
       "Comment": "the [N -ful]A schema of the second-order schema (14)",
       "Source": ["audring-2019[5]"]
     },
@@ -118,7 +118,7 @@
       "ID": "audring2019_careless",
       "Lexeme_ID": "careless",
       "Form": "careless",
-      "Segments": ["care", "less"],
+      "Morphs": ["care", "less"],
       "Comment": "the [N -less]A schema of the second-order schema (14)",
       "Source": ["audring-2019[5]"]
     },
@@ -126,7 +126,7 @@
       "ID": "audring2019_clueless",
       "Lexeme_ID": "clueless",
       "Form": "clueless",
-      "Segments": ["clue", "less"],
+      "Morphs": ["clue", "less"],
       "Comment": "an [N -less]A word with no [N -ful]A sister",
       "Source": ["audring-2019[4.2.2]"]
     }

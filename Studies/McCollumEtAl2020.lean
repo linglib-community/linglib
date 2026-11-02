@@ -150,20 +150,18 @@ private theorem harmonizes_flankWord_mid (x y : Seg) (d : ℕ) :
   rw [Harmonizes, mem_drop_flankWord_iff (by simp) (by omega), drop_flankWord (by omega)]
   simp [InitialHigh, show 2 * d + 1 - d = d + 1 by omega, List.replicate_succ, eq_comm]
 
-/-- Tutrugbu ATR harmony requires both sides. At every distance a medial `[−high]` vowel
-harmonizes, and changing either the initial vowel or the root alone undoes it. -/
-theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbu.map :=
-  tutrugbu.requiresBothSides_of_flanks (fill := .pfx false false) (xOn := .pfx false false)
+/-- Tutrugbu ATR harmony is unbounded circumambient in the sense of (13). At every distance a medial
+`[−high]` vowel harmonizes, and changing either the initial vowel or the root alone undoes it. -/
+theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbu.map :=
+  tutrugbu.isUnboundedCircumambient_of_flanks (fill := .pfx false false) (xOn := .pfx false false)
     (yOn := .root true) (xOff := .pfx true false) (yOff := .root false)
     (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1) (by decide) (fun _ ↦ by omega)
     (fun _ ↦ by omega) (fun d ↦ (harmonizes_flankWord_mid _ _ d).mpr ⟨rfl, by simp⟩)
     (fun d h ↦ ((harmonizes_flankWord_mid _ _ d).mp h).2 false rfl)
     (fun d h ↦ by simpa using ((harmonizes_flankWord_mid _ _ d).mp h).1)
 
-/-- Tutrugbu ATR harmony is unbounded circumambient in the sense of (13). At every distance one
-medial vowel changes under a far change on either side. -/
 theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbu.map :=
-  tutrugbu_requiresBothSides.twoSidedUnboundedDependence
+  tutrugbu_isUnboundedCircumambient.twoSidedUnboundedDependence
 
 /-- No subsequential transducer computes Tutrugbu ATR harmony, in either direction, (27). -/
 theorem tutrugbu_not_isSubsequential : ∀ d, ¬ IsSubsequential d tutrugbu.map :=
