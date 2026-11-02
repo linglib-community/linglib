@@ -277,8 +277,9 @@ theorem jose_y_tu : [Person.third, .second].toFinset.sup markers ≠ markers .fi
 
 -- fn. 12
 theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
-    markers (Person.tripartitionOf t) ⊆ markers (Person.tripartitionOf s) ↔
-      (Person.tripartitionOf t).prominence ≤ (Person.tripartitionOf s).prominence := by
+    markers (Person.ofParticipants t).coarsen ⊆ markers (Person.ofParticipants s).coarsen ↔
+      (Person.ofParticipants t).coarsen.prominence ≤
+        (Person.ofParticipants s).coarsen.prominence := by
   decide
 
 /-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/

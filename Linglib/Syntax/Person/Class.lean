@@ -8,18 +8,12 @@ public import Linglib.Syntax.Person.Features
 /-!
 # The binary person scale
 
-The load-bearing cut of person prominence puts the speech-act participants, first and second
-person, above the rest. It is Haspelmath's person scale (8a), locuphoric above aliophoric in
-his terms, the cut that Bonet's strong person-case constraint draws, and the coarsening of
-`Person.prominence` at the participant level.
-
-## Main declarations
-
-* `Person.Class`: `nonParticipant < participant`, a two-element bounded linear order.
-* `Person.toClass`: the class of a person, `participant` exactly when it `IsSAP`, and
-  `toClass_mono` for its agreement with `prominence`.
-* `Person.kind_map_toClass_eq_downstream_iff`: a scenario is downstream on the binary scale
-  exactly when its higher-ranked argument alone is a speech-act participant.
+The binary person scale puts the speech-act participants, first and second person, above the rest:
+Haspelmath's person scale, locuphoric above aliophoric in his terms, and the cut that Bonet's
+strong person-case constraint draws. It is [the coarsening of `Person.prominence` at the
+participant level](##Person.toClass_mono), and
+[a scenario is downstream on it](##Person.kind_map_toClass_eq_downstream_iff) exactly when its
+higher-ranked argument alone is a speech-act participant.
 
 ## References
 
@@ -31,6 +25,7 @@ his terms, the cut that Bonet's strong person-case constraint draws, and the coa
 
 namespace Person
 
+-- [haspelmath-2021] (8a).
 /-- The binary person scale ranks speech-act participants above non-participants. -/
 inductive Class where
   | nonParticipant

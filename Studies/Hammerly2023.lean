@@ -133,7 +133,7 @@ def cellGraph (cells : List (Finset (Finset Role))) : Finset (Finset Role × Fin
 
 /-! ### The derived partitions -/
 
-/-- Figure 4: [Participant] over [Author] gives the tripartition. -/
+/-- Figure 4: [Participant] over [Author] gives the standard tripartition. -/
 theorem sda_participant_author :
     sda [.participant, .author] = [{{.speaker}, {.speaker, .addressee}}, {{.addressee}}, {∅}] := by
   decide

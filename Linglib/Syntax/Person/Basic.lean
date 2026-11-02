@@ -11,57 +11,40 @@ public import Linglib.Discourse.Role
 /-!
 # Grammatical person
 
-`Person` is the inventory of values that languages' person systems distinguish, clusivity among
-them. Harbour's quadripartition, first exclusive, first inclusive, second and third, sits beside
-the tripartition's `first`, the first person unmarked for clusivity (English *we*), to which
-`coarsen` sends both clusivity values as coarsening sends `Number.dual` to `Number.plural`. The
-impersonal is not a value but the absence of one, `Option Person`, as the Universal Dependencies
-tag `Person=0` is ingested (`Morphology/Word/UD.lean`). A value means the participant sets its
-referents can have (`Person.participantSets`), and whether it includes the speaker, is a
-speech-act participant, or marks clusivity is read off them.
-
-The person hierarchy 1 > 2 > 3, the hierarchy of reference and coordination of Zwicky, Corbett,
-and Dalrymple and Kaplan, is `Person.prominence`, the top of a value's feature bundle
-(`Syntax/Person/Features.lean`). It is not the only person scale:
-Zwicky distinguishes morphosyntactic hierarchies that order the participants otherwise, as
-Algonquian ranks the second person above the first, and for argument coding splits Haspelmath's
-person scale is the binary cut between participants and the rest (`Person.Class`).
-
-## Main definitions
-
-* `Person`: the inventory.
-* `Person.participantSets`: the participant sets a value covers.
-* `Person.ofParticipants`: the value covering exactly one participant set.
-* `Person.IncludesSpeaker`, `Person.IsSAP`, `Person.MarksClusivity`: predicates read off the
-  participant sets.
-* `Person.coarsen`: the value without its clusivity.
+`Person` names the four persons of Harbour's quadripartition, first exclusive, first inclusive,
+second and third, and the general first person `first` into which his standard tripartition
+conflates the two clusives (English *we*), the conflation being `Person.coarsen`. A value means
+the participant sets its referents can have (`Person.participantSets`),
+[one for each person of the quadripartition](##Person.participantSets_eq_singleton_iff) and two
+for the general first person, and whether it includes the speaker, is a speech-act participant or
+marks clusivity is read off them. The merged cells of the bipartitions and the monopartition are
+not values, nor is the impersonal, `none : Option Person` as the Universal Dependencies tag
+`Person=0` is ingested (`Morphology/Word/UD.lean`).
 
 ## References
 
-* [cysouw-2003]
 * [harbour-2016]
 * [siewierska-2004]
-* [zwicky-1977b]
-* [corbett-2006]
-* [dalrymple-kaplan-2000]
-* [haspelmath-2021]
 -/
 
 @[expose] public section
 
-/-- Grammatical person, clusivity being a distinction among person values rather than an
-orthogonal feature: `firstInclusive` and `firstExclusive` sit beside the tripartition's
-`first`. -/
+-- The clusives are [siewierska-2004]'s inclusive and exclusive (pp. 82-83); the Tok Pisin forms
+-- and the general first person are [harbour-2016]'s (p. 43).
+/-- Grammatical person: the persons of the quadripartition and the general first person of the
+standard tripartition. Clusivity is a distinction among persons rather than an orthogonal
+feature. -/
 inductive Person where
-  /-- `first` is the first person unmarked for clusivity, the tripartition's (English *we*). -/
+  /-- The general first person, including the speaker whether or not it includes the addressee
+  (English *we*). -/
   | first
-  /-- `firstInclusive` is the first person including the addressee (Indonesian *kita*). -/
+  /-- The first person including the addressee (Tok Pisin *yumi*). -/
   | firstInclusive
-  /-- `firstExclusive` is the first person excluding the addressee (Indonesian *kami*). -/
+  /-- The first person excluding the addressee (Tok Pisin *mi*). -/
   | firstExclusive
-  /-- `second` refers to the addressee and not the speaker. -/
+  /-- The second person, including the addressee and not the speaker. -/
   | second
-  /-- `third` refers to neither the speaker nor the addressee. -/
+  /-- The third person, including neither the speaker nor the addressee. -/
   | third
   deriving DecidableEq, Repr, Fintype
 
@@ -70,9 +53,8 @@ namespace Person
 /-! ### Participant sets
 
 A person value covers the referents whose participants, the speaker and the addressee among them,
-form one of its participant sets: `{speaker}` or `{speaker, addressee}` for the first person
-unmarked for clusivity and a single set for each value of the quadripartition. The predicates on
-values read these sets off. -/
+form one of its participant sets: `{speaker}` or `{speaker, addressee}` for the general first
+person and a single set for each person of the quadripartition. -/
 
 open Discourse
 
@@ -93,8 +75,9 @@ theorem participantSets_injective : Function.Injective participantSets := by dec
 theorem participantSets_nonempty (p : Person) : p.participantSets.Nonempty := by
   cases p <;> decide
 
-/-- The person of a referent whose participants are `s` is first inclusive with both, first
-exclusive with the speaker alone, second with the addressee alone, and third with neither. -/
+/-- The quadripartition person of a referent whose participants are `s` is first inclusive with
+both, first exclusive with the speaker alone, second with the addressee alone, and third with
+neither. -/
 def ofParticipants (s : Finset Role) : Person :=
   if .speaker ∈ s then if .addressee ∈ s then .firstInclusive else .firstExclusive
   else if .addressee ∈ s then .second else .third
@@ -117,35 +100,37 @@ theorem ofParticipants_injective : Function.Injective ofParticipants := fun s t 
 /-- The value includes the speaker when each of its participant sets contains the speaker. -/
 def IncludesSpeaker (p : Person) : Prop := ∀ s ∈ p.participantSets, .speaker ∈ s
 
-instance : DecidablePred IncludesSpeaker := fun _ ↦ by unfold IncludesSpeaker; infer_instance
+instance : DecidablePred IncludesSpeaker := fun p ↦
+  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, .speaker ∈ s))
 
 /-- A speech-act participant value has only nonempty participant sets. -/
 def IsSAP (p : Person) : Prop := ∀ s ∈ p.participantSets, s.Nonempty
 
-instance : DecidablePred IsSAP := fun _ ↦ by unfold IsSAP; infer_instance
+instance : DecidablePred IsSAP := fun p ↦
+  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, s.Nonempty))
 
 /-- The value marks clusivity when it includes the speaker and covers a single participant set,
 fixing whether the addressee is included. -/
 def MarksClusivity (p : Person) : Prop :=
   IncludesSpeaker p ∧ p.participantSets.card = 1
 
-instance : DecidablePred MarksClusivity := fun _ ↦ by unfold MarksClusivity; infer_instance
+instance : DecidablePred MarksClusivity := fun p ↦
+  inferInstanceAs (Decidable (IncludesSpeaker p ∧ p.participantSets.card = 1))
 
 /-! ### Coarsening
 
-The clusivity values coarsen to the tripartition's `first`, as `Number.dual` coarsens to
-`Number.plural`, so a system without clusivity realizes inclusive and exclusive referents
-alike. -/
+The standard tripartition conflates the clusives into the general first person, so a system
+without clusivity gives inclusive and exclusive referents one value, as a system without a dual
+gives a dual referent the plural (`Number.System.coarsen`). -/
 
-/-- `coarsen` collapses clusivity, sending a value marking clusivity to the first person and
-keeping every other value. -/
+/-- `coarsen` conflates the clusives into the general first person and keeps every other
+value. -/
 def coarsen (p : Person) : Person := if p.MarksClusivity then .first else p
 
-@[simp] theorem coarsen_idempotent (p : Person) :
-    p.coarsen.coarsen = p.coarsen := by revert p; decide
+@[simp] theorem coarsen_coarsen (p : Person) : p.coarsen.coarsen = p.coarsen := by
+  revert p; decide
 
-theorem coarsen_eq_self_iff (p : Person) :
-    p.coarsen = p ↔ ¬MarksClusivity p := by
+theorem coarsen_eq_self_iff {p : Person} : p.coarsen = p ↔ ¬ p.MarksClusivity := by
   revert p; decide
 
 end Person
