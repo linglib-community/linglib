@@ -224,7 +224,7 @@ theorem eq_of_apply_eq (hl : r.leftReach = 0) (he : r.effect = .replace t) {x y 
     have := le_max_left r.leftContext.length r.effect.leftReach
     rw [← Rule.leftReach, hl] at this; omega)
   induction x generalizing y with
-  | nil => simpa [Rule.apply, Rule.apply.go] using h.symm
+  | nil => simpa using h.symm
   | cons s x ih =>
     have hv : r.verdict [] s x =
         [if r.target ≤ s ∧ MatchesRight r.rightContext x then t else s] := by

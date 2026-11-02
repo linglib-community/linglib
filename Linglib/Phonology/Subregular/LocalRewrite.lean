@@ -291,6 +291,8 @@ def Rule.verdict (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) 
     (r.effect.apply w s d).toList
   else [s]
 
+@[simp] theorem Rule.apply_nil (r : Rule) : r.apply [] = [] := rfl
+
 theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
     (right : List Segment) :
     Rule.apply.go r left (s :: right)
