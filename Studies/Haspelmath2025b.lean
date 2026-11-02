@@ -4,6 +4,7 @@ public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.UD.UPOS
 public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Root.Basic
 public import Linglib.Morphology.Root.Consonantal
 public import Linglib.Morphology.Word.Comparative
@@ -11,24 +12,15 @@ public import Linglib.Morphology.Word.Comparative
 /-!
 # Haspelmath (2025): Roots and root classes in comparative grammar
 
-This file formalizes the definition of the root as a comparative concept in Haspelmath's chapter.
-Its definition (1), a contentful form (`Form`, a morph with its meaning class) that occurs in a
-free form with no other contentful form, is the root of `Morphology.Comparative`, read over a
-fragment's free-form inventory. The qualifying clause separates roots from contentful affixes
-(the Japanese causative `-ase`) and neoclassical combining forms (`geo-`), which are
-morphological cores under the formal base definition of `Morphology/Root/Basic.lean` but not
-roots; it admits bound roots (Sorbian `žon-`) and excludes free forms without a lexical meaning
-(`hello`, fn. 10). Roots are concrete forms (§4), so the four Arabic forms sharing the skeleton
-k-t-b are four roots (`arabic_four_roots`) and the German ablaut pair `lauf` ~ `lief` two.
-`upos` is (10), word classes as comparative concepts, and `unmarkedFunction` the prototypical
-combinations of (9).
-
-§6 adopts the heterosemy view: `hammer` (noun) and `hammer` (verb) are two roots with one
-shape (`hammer_two_roots`), related by the sister schemas of (21) (`nounVerb`, one
-description over shared variables read through two subscriptings,
-`ConstructionMorphology.Schema.InstantiatesAt`), which the pair instantiates
-(`hammer_sisters`) and
-`hammer`/`dance` does not.
+Haspelmath defines a root as a contentful form that can occur in a free form with no other
+contentful form, the `Morphology.Comparative.Inventory.IsRoot` of a language's free forms. The
+qualifying clause excludes contentful affixes such as the Japanese causative *-ase*, combining
+forms such as *geo-* and free forms without a lexical meaning such as *hello*, all of them
+morphological cores in the formal sense of `Morphology.IsCore`, and it admits bound roots such as
+Sorbian *žon-*. Roots are concrete forms, so [the four Arabic forms sharing k-t-b are four
+roots](##Haspelmath2025b.arabic_four_roots), and on the heterosemy view [the noun and the verb
+*hammer* are two roots with one shape](##Haspelmath2025b.hammer_two_roots), [related by sister
+schemas](##Haspelmath2025b.hammer_sisters) that *hammer* and *dance* do not instantiate.
 
 ## Implementation notes
 
@@ -56,8 +48,8 @@ open Morphology Morphology.Comparative
 
 /-! ### Root classes (§5) -/
 
-/-- Word classes are comparative concepts (10): a verb is an action-denoting root, a noun
-an object-denoting root, an adjective a property-denoting root. -/
+/-- The word classes of (10) are comparative concepts, a verb being an action-denoting root, a
+noun an object-denoting root and an adjective a property-denoting root. -/
 def upos : RootClass → UD.UPOS
   | .action => .VERB
   | .object => .NOUN
@@ -90,15 +82,11 @@ structure Form where
   meaning : Option RootClass
   deriving DecidableEq, Repr
 
-/-- The shapes of the forms of a word, for the formal definitions of
-`Morphology/Root/Basic.lean`. -/
-def shapes (w : List Form) : List Morph := w.map Form.shape
-
 /-- The inventory of free forms whose roots are classed by their meanings. -/
 def inventory (forms : List (List Form)) : Inventory Form := ⟨forms, Form.meaning⟩
 
-/-- Fn. 6: a stem is a contiguous string of at least one root and possibly some affixes that
-can be combined with an affix. -/
+/-- A stem is a contiguous string of at least one root and possibly some affixes that can be
+combined with an affix (fn. 6). -/
 def IsStemIn (words : List (List Form)) (L : Inventory Form) (s : List Form) : Prop :=
   let root := L.IsRoot
   let affix := L.IsAffix root
@@ -125,7 +113,7 @@ def japanese : Inventory Form := inventory [[yom, u], [yom, ase, ru]]
 
 -- §2
 theorem ase_not_root : japanese.IsContentful ase ∧ ¬ japanese.IsRoot ase ∧
-    japanese.IsRoot yom := by
+    japanese.IsRoot yom ∧ IsCore japanese.forms ase := by
   decide
 
 /-- The neoclassical combining form `geo-`. -/
@@ -148,15 +136,11 @@ def english : Inventory Form := inventory
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 
 -- §2
-theorem geo_not_root :
-    ¬ english.IsRoot geo ∧
-      geo.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
+theorem geo_not_root : ¬ english.IsRoot geo ∧ IsCore english.forms geo := by
   decide
 
 -- fn. 10
-theorem hello_not_root :
-    ¬ english.IsRoot hello ∧
-      hello.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
+theorem hello_not_root : ¬ english.IsRoot hello ∧ IsCore english.forms hello := by
   decide
 
 /-- The Sorbian object root `žon-` 'wife'. -/
@@ -261,7 +245,7 @@ inductive Value where
   | shape (s : String)
   deriving DecidableEq, Repr
 
-/-- Tier values are discrete: a constant is dominated only by itself. -/
+/-- Tier values are discrete, each dominated only by itself. -/
 instance : PartialOrder Value where
   le a b := a = b
   le_refl _ := rfl

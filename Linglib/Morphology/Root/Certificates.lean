@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Realization
-public import Linglib.Morphology.Root.Basic
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Finset.Dedup
 
@@ -35,10 +34,10 @@ decidable per fragment:
   per-fragment decidable complement to the hom-tier merger theorems.
 
 Core extraction is parametric in `extract : F → Finset C`, so the axis is not
-tied to concatenative form: the concatenative instance `coreMorphsIn` filters
-a word's morphs by `Morph.IsCoreIn` ([bloomfield-1933], [qin-2025]); a
-consonantal-melody instance would take `fun r => r.segments.toFinset` for
-`ConsonantalRoot` (`Root/Consonantal.lean`), not built here.
+tied to concatenative form: a concatenative instance filters a word's morphs by
+`Morphology.IsCore` (`Root/Basic.lean`); a consonantal-melody instance would
+take `fun r => r.segments.toFinset` for `ConsonantalRoot`
+(`Root/Consonantal.lean`). Neither is built here.
 
 These certificates adjudicate the descriptive taxonomy — the suppletion
 trichotomy, l-vs-f, per-fragment categorial freedom — and are deliberately
@@ -55,10 +54,16 @@ root-*question* layer over `Realization`, co-equal with `Paradigm/`,
 * `HasSuppletiveCore`, `IsAffixallyInflected`, `suppletive_core_dichotomy`,
   `suppletive_taxonomy` — the constancy pair's third instantiation and the
   suppletion trichotomy.
-* `coreMorphsIn` — the concatenative core-extraction instance.
 * `IsFunctionalInventory`, `DoesLexicalWork`,
   `isFunctionalInventory_iff_no_lexicalWork` — the l/f-morpheme divide.
 * `IsCrossCategorial` — categorial freedom.
+
+## References
+
+* [arad-2005]
+* [embick-2021]
+* [harley-noyer-1999]
+* [marantz-1997]
 -/
 
 @[expose] public section
@@ -154,16 +159,6 @@ theorem hasSuppletiveCore_singleton (S : Realization R Ctx F) [DecidableEq F]
   have h : cellCores S (fun f => {f}) = S.realize := by
     funext r c; exact cellCores_singleton S r c
   rw [HasSuppletiveCore, h]; rfl
-
-/-! ### The concatenative core-extraction instance -/
-
-/-- The cores of a word ([bloomfield-1933], [qin-2025]): its morphs that occur
-in some primary word, i.e. that satisfy `Morph.IsCoreIn` relative to the
-fragment's word and free-form inventories. The affix side (`-s`, `-ness`) is
-filtered out, so *cat* and *cats* share the single core *cat*. -/
-def coreMorphsIn (words freeForms : List (List Morph)) (w : List Morph) :
-    Finset Morph :=
-  w.toFinset.filter (fun m => m.IsCoreIn words freeForms)
 
 /-! ### Listedness: the l/f-morpheme divide -/
 
