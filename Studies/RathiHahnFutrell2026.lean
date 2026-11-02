@@ -347,7 +347,8 @@ theorem entropy_fst_prod :
       = log k + (k : ℝ)⁻¹ * ∑ j, H[X j ; Measure.infinitePi fun _ ↦ P] := by
   have hX' : Measurable fun ω : Fin k × (ℕ → M) ↦ X ω.1 ω.2 :=
     measurable_phase hX
-  rw [entropy_comm _ measurable_fst hX', chain_rule _ hX' measurable_fst, entropy_fst,
+  rw [entropy_comm _ measurable_fst hX', entropy_pair_eq_add_condEntropy _ hX' measurable_fst,
+    entropy_fst,
     condEntropy_eq_sum _ measurable_fst, Finset.mul_sum]
   congr 1
   refine Finset.sum_congr rfl fun j _ ↦ ?_
@@ -367,9 +368,10 @@ theorem condEntropy_fst_prod {Y : Fin k → (ℕ → M) → T} (hY : ∀ j, Meas
       (measurable_fst.prodMk (measurable_phase hXY))
       (f := fun p : Fin k × S × T ↦ (p.2.1, p.1, p.2.2)) (measurable_of_finite _)
       fun a b h ↦ by simp only [Prod.mk.injEq] at h; exact Prod.ext h.2.1 (Prod.ext h.1 h.2.2)
-  have hc := chain_rule (stream k P) (measurable_phase hX)
+  have hc := entropy_pair_eq_add_condEntropy (stream k P) (measurable_phase hX)
     (measurable_fst.prodMk (measurable_phase hY))
-  have hcj (j : Fin k) := chain_rule (Measure.infinitePi fun _ ↦ P) (hX j) (hY j)
+  have hcj (j : Fin k) :=
+    entropy_pair_eq_add_condEntropy (Measure.infinitePi fun _ ↦ P) (hX j) (hY j)
   simp_rw [hcj, Finset.sum_add_distrib] at hpair
   linarith
 
@@ -934,8 +936,8 @@ theorem pastCondEntropy_tagged_agg_one_lt :
   rw [mutualInfo_eq_entropy_sub_condEntropy μ measurable_fst hZ, entropy_fst,
     Nat.cast_ofNat] at hI
   rw [hclu, hblock]
-  linarith [chain_rule μ (hc 1) (hc 0), entropy_comm μ (hc 1) (hc 0),
-    chain_rule μ measurable_fst hZ]
+  linarith [entropy_pair_eq_add_condEntropy μ (hc 1) (hc 0), entropy_comm μ (hc 1) (hc 0),
+    entropy_pair_eq_add_condEntropy μ measurable_fst hZ]
 
 end VoiceTense
 
@@ -1046,7 +1048,7 @@ theorem condEntropy_fuseLow :
   rw [hrec, hind.condEntropy_eq_entropy h10 (measurable_pi_apply 2),
     (indep d (by decide)).entropy_pair_eq_add (measurable_pi_apply 1) (measurable_pi_apply 0),
     entropy_fair d (by decide), entropy_fair d (by decide)] at hpair
-  linarith [chain_rule (meanings d) (measurable_of_finite tense) hY,
+  linarith [entropy_pair_eq_add_condEntropy (meanings d) (measurable_of_finite tense) hY,
     show H[fun ω ↦ xor (ω 0) (ω 1) ; meanings d] ≤ log 2 by
       simpa using entropy_le_log_card (fun ω : Fin 3 → Bool ↦ xor (ω 0) (ω 1)) (meanings d)]
 

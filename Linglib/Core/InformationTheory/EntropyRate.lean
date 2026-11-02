@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.Probability.Process.Stationary
 public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
@@ -68,7 +68,7 @@ theorem pastCondEntropy_zero : pastCondEntropy X μ 0 = H[X 0 ; μ] := by
   simp
 
 theorem distanceInfo_nonneg (t : ℕ) : 0 ≤ distanceInfo X μ t :=
-  condMutualInfo_nonneg μ (hX _) (hX _) (measurable_block hX 1 _)
+  condMutualInfo_nonneg μ (hX _) (hX _)
 
 /-- The value at distance `t` carries no information about the value at time `0` beyond the values
 between them exactly when the two are independent given those values. -/
@@ -93,7 +93,8 @@ theorem entropy_block (T : ℕ) : H[block X 0 T ; μ] = ∑ t ∈ range T, pastC
   induction T with
   | zero => simp [entropy_of_subsingleton]
   | succ T ih =>
-    rw [sum_range_succ, ← ih, pastCondEntropy, ← chain_rule μ (hX T) (measurable_block hX 0 T),
+    rw [sum_range_succ, ← ih, pastCondEntropy,
+      ← entropy_pair_eq_add_condEntropy μ (hX T) (measurable_block hX 0 T),
       block_zero_succ, entropy_comp_of_injective μ ((hX T).prodMk (measurable_block hX 0 T))
         (measurable_of_finite _) (Fin.snocEquiv _).injective]
 

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Pragmatics.RSA.Belief

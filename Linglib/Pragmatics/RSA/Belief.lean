@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Measure
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.Real

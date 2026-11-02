@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Measure
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.Probability.Distributions.Bernoulli
 
@@ -37,7 +37,7 @@ variable {S : Type*} [MeasurableSpace S] [MeasurableSingletonClass S]
 theorem measureEntropy_bernoulliMeasure {x y : S} (h : x ≠ y) (p : I) :
     Hm[Ber(x, y, p)] = binEntropy p := by
   classical
-  rw [measureEntropy_of_isProbabilityMeasure_finite (A := {x, y})
+  rw [measureEntropy_eq_sum_finset (A := {x, y})
       (bernoulliMeasure_apply_of_notMem_of_notMem p (Finset.measurableSet _).compl (by simp)
         (by simp)),
     Finset.sum_pair h, binEntropy_eq_negMulLog_add_negMulLog_one_sub]

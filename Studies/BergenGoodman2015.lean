@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.InformationTheory.BinaryEntropy
 public import Linglib.Core.Topology.UnitInterval
 public import Linglib.Pragmatics.RSA.Basic

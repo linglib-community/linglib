@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.InformationTheory.Entropy.Empirical
 public import Linglib.Morphology.Paradigm.Complexity
 public import Linglib.Fragments.Greek.StandardModern.Declension
 public import Linglib.Fragments.Burmeso.ObjectAgreement
