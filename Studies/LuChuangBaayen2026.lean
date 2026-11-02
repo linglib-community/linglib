@@ -58,19 +58,19 @@ open DiscriminativeLexicon ChuangEtAl2026 Finset Matrix
 
 /-- The paper samples 100 f0 values per token in normalized time, centered and scaled per
 token (§4.1). -/
-abbrev PitchSampleCount : ℕ := 100
+abbrev pitchSampleCount : ℕ := 100
 
 /-- If every word type is trained and linearly decodable, a least-squares `G` sends a tone pattern's
 centroid embedding to its types' mean contour average (§4.4, §4.2, Fig. 9,
 [chuang-bell-tseng-baayen-2026]). -/
 theorem production_centroid_centroid_eq_of_decodable {m : ℕ} {W : Type*} [DecidableEq W]
-    {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim}
-    {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin PitchSampleCount) ℝ} (hG : IsELTrained data G)
+    {S : Matrix (Fin m) (Fin ckipGPT2HiddenDim) ℝ} {C : Matrix (Fin m) (Fin pitchSampleCount) ℝ}
+    {G : Matrix (Fin ckipGPT2HiddenDim) (Fin pitchSampleCount) ℝ} (hG : IsEndstateTrained S C G)
     (word : Fin m → W) {T : Finset W} (hT : T.Nonempty) (hne : ∀ τ ∈ T, ∃ i, word i = τ)
-    (hdec : ∀ τ ∈ T, ∃ ℓ : ContextualEmbedding →ₗ[ℝ] ℝ,
-      ∀ i, ℓ (data.S i) = if word i = τ then 1 else 0) :
-    (T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ data.S.row) ᵥ* G =
-      T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ data.C.row := by
+    (hdec : ∀ τ ∈ T, ∃ ℓ : (Fin ckipGPT2HiddenDim → ℝ) →ₗ[ℝ] ℝ,
+      ∀ i, ℓ (S i) = if word i = τ then 1 else 0) :
+    (T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ S.row) ᵥ* G =
+      T.centroid ℝ fun τ ↦ (univ.filter (word · = τ)).centroid ℝ C.row := by
   rw [centroid_vecMul hT, centroid_def, centroid_def]
   refine affineCombination_congr _ (fun _ _ ↦ rfl) fun τ hτ ↦ ?_
   obtain ⟨ℓ, hℓ⟩ := hdec τ hτ

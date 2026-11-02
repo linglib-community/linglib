@@ -44,21 +44,22 @@ namespace Saito2025
 
 open DiscriminativeLexicon
 
-/-- The paper's CELEX-derived form matrix has `TriphoneCount` triphones. -/
-abbrev TriphoneCount : ℕ := 14404
+/-- The paper's CELEX-derived form matrix has `triphoneCount` triphones. -/
+abbrev triphoneCount : ℕ := 14404
 
-/-- The pretrained German word2vec embeddings of [muller-2015] have `Word2VecGermanDim`
+/-- The pretrained German word2vec embeddings of [muller-2015] have `word2VecGermanDim`
 dimensions. -/
-abbrev Word2VecGermanDim : ℕ := 300
+abbrev word2VecGermanDim : ℕ := 300
 
 /-- When suffix triphones are linearly decodable from meanings, a trained production matrix gives
 suffixed words strictly greater suffix support `Ĉ i s` (4). -/
 theorem semSupSuffix_lt {m : ℕ}
-    {data : TrainingExperience m TriphoneCount Word2VecGermanDim} {q : FrequencyVector m}
-    {G : Matrix (Fin Word2VecGermanDim) (Fin TriphoneCount) ℝ} (hG : IsTrained data q G)
-    (hq : ∀ i, 0 < q i) {s : Fin TriphoneCount} {w : MeaningVector Word2VecGermanDim →ₗ[ℝ] ℝ}
-    (hw : ∀ i, w (data.S i) = data.C i s) {i k : Fin m} (hik : data.C i s < data.C k s) :
-    (data.S * G) i s < (data.S * G) k s := by
+    {S : Matrix (Fin m) (Fin word2VecGermanDim) ℝ} {C : Matrix (Fin m) (Fin triphoneCount) ℝ}
+    {q : Fin m → NNReal}
+    {G : Matrix (Fin word2VecGermanDim) (Fin triphoneCount) ℝ} (hG : IsTrained S C q G)
+    (hq : ∀ i, 0 < q i) {s : Fin triphoneCount} {w : (Fin word2VecGermanDim → ℝ) →ₗ[ℝ] ℝ}
+    (hw : ∀ i, w (S i) = C i s) {i k : Fin m} (hik : C i s < C k s) :
+    (S * G) i s < (S * G) k s := by
   rwa [hG.mul_apply_eq_of_decodable hq hw i, hG.mul_apply_eq_of_decodable hq hw k]
 
 end Saito2025
