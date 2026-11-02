@@ -3,6 +3,7 @@ module
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Voice.TermRole
 
 /-!
 # Centering theory: ranking by grammatical role
@@ -12,15 +13,16 @@ forward-looking centers of an English utterance: the subject above the objects, 
 above every other role. Sidner's focusing theory had ordered its potential foci by thematic role
 instead. Grosz, Joshi, and Weinstein call grammatical role a major factor in the ranking, not the
 only one, and Gordon, Grosz, and Gilliom found that surface-initial position also raises an
-entity's prominence, whether or not it is the subject. Read as a marking of the comparative
-coding slots, the ranking [groups S with A](##isAccusative_ofArgumentRole) and
-[P with R and T](##isNeutral_ofArgumentRole_comp_ditransitive).
+entity's prominence, whether or not it is the subject. A term of a construction takes its role
+from its transitivity-related role, so that the ranking, read through the comparative coding
+slots, [groups S with A](##isAccusative_ofTermRole_comp_ofArgumentRole).
 
 ## Implementation notes
 
-The coding-slot map reads a ditransitive as a double-object construction, whose recipient and
-theme are both objects. A recipient in a prepositional phrase is an other role, so no map from
-the coding slots fits both English ditransitive constructions.
+Roles are read off the terms of a construction rather than the coding slots, since one coding
+slot can be a core term in one construction and an oblique in another: the recipient of *gave
+her a book* is an object and that of *gave a book to her* an oblique, as is the initial A of a
+long passive.
 
 ## References
 
@@ -55,20 +57,16 @@ theorem object_lt_subject : object < subject := by decide
 
 theorem other_lt_object : other < object := by decide
 
-/-- The role of a comparative coding slot in an English clause: S and A are subjects, and P, R,
-and T are objects, R and T as the two objects of a double-object construction. -/
-def ofArgumentRole : ArgumentRole → GrammaticalRole
+/-- The role of a term in an English clause by its transitivity-related role: an S or A term is
+the subject, a P term an object, and an oblique an other role. -/
+def ofTermRole : Voice.TermRole → GrammaticalRole
   | .S | .A => .subject
-  | .P | .R | .T => .object
+  | .P => .object
+  | .X => .other
 
-theorem ofArgumentRole_ne_other (r : ArgumentRole) : ofArgumentRole r ≠ other := by
-  cases r <;> nofun
-
-theorem isAccusative_ofArgumentRole : Alignment.IsAccusative ofArgumentRole := ⟨rfl, nofun⟩
-
-theorem isNeutral_ofArgumentRole_comp_ditransitive :
-    Alignment.IsNeutral (ofArgumentRole ∘ Alignment.ditransitive) :=
-  ⟨rfl, rfl⟩
+theorem isAccusative_ofTermRole_comp_ofArgumentRole :
+    Alignment.IsAccusative (ofTermRole ∘ Voice.TermRole.ofArgumentRole) :=
+  ⟨rfl, nofun⟩
 
 end GrammaticalRole
 

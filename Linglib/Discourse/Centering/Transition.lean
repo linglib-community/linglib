@@ -8,23 +8,14 @@ public import Mathlib.Order.WithBot
 /-!
 # Centering theory: transitions
 
-The transition from one utterance to the next is classified by two tests on the backward-looking
-center of the second: whether it is the backward-looking center of the first, or the first has
-none, and whether it is the preferred center of the second. Kibble calls the tests *cohesion* and
-*salience*. Brennan, Friedman, and Pollard's four transitions, named continue, retain, smooth
-shift, and rough shift by Walker, Iida, and Cote, are the four outcomes of the two tests; Grosz,
-Joshi, and Weinstein's three, continuation, retaining, and shifting, do not apply the second test
-to a shift. Rule 2 orders the transitions by the first test and then by the second.
-
-## Main declarations
-
-* `Discourse.Centering.ExtendedTransition`: the four transitions, ordered lexicographically by
-  their outcomes on the two tests, `cohesion` and `salience`.
-* `Discourse.Centering.Transition`: the three transitions; `ExtendedTransition.toTransition`
-  merges the two shifts and is monotone.
-* `ExtendedTransition.ofCenters`, `Transition.ofCenters`: the transition determined by the prior
-  backward-looking center, the current one, and the current preferred center.
-* `Discourse.Centering.cbs`, `transitions`: the centers and transitions along a discourse.
+This file defines the transitions of centering theory. The transition from one utterance to the
+next is classified by two tests on the backward-looking center of the second: whether it is the
+backward-looking center of the first, or the first has none, and whether it is the preferred
+center of the second. Kibble calls the tests *cohesion* and *salience*. Brennan, Friedman, and
+Pollard's four transitions, named continue, retain, smooth shift, and rough shift by Walker, Iida,
+and Cote, are the four outcomes of the two tests; Grosz, Joshi, and Weinstein's three,
+continuation, retaining, and shifting, [merge the two shifts](##toTransition_mono). Rule 2 orders
+the transitions [by the first test and then by the second](##lt_iff_toLex_lt).
 
 ## Implementation notes
 
