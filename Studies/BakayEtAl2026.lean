@@ -187,7 +187,7 @@ def matchCount (feats : List F) (cues : List (Cue F)) (s : CueSource) : ℕ :=
 
 /-- Activation is the count of matched cues, weighted by where they are matched. -/
 def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cue F)) : ℕ :=
-  ∑ s, w s * matchCount feats cues s
+  w ⬝ᵥ matchCount feats cues
 
 theorem matchCount_le {a b : List F} {cues : List (Cue F)}
     (h : ∀ c ∈ cues, c.feature ∈ b → c.feature ∈ a) (s : CueSource) :

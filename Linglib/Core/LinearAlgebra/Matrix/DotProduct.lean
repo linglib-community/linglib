@@ -10,18 +10,19 @@ public import Mathlib.LinearAlgebra.Matrix.DotProduct
 /-!
 # Strict monotonicity of the dot product
 
-Mathlib proves that `w ⬝ᵥ u ≤ w ⬝ᵥ v` when `u ≤ v` pointwise and `w` is nonnegative
-(`dotProduct_le_dotProduct_of_nonneg_left`). This file adds the strict version, in which the
-inequality is strict as soon as `u` lies strictly below `v` at a coordinate where `w` is positive.
-A weighted sum therefore respects a Pareto improvement on any positively weighted coordinate.
+`[UPSTREAM]` Mathlib proves that `w ⬝ᵥ u ≤ w ⬝ᵥ v` when `u ≤ v` pointwise and `w` is nonnegative
+(`dotProduct_le_dotProduct_of_nonneg_left`). This file adds
+[the strict version](##dotProduct_lt_dotProduct_of_nonneg_left): the inequality is strict as soon
+as `u` lies strictly below `v` at a coordinate where `w` is positive, so a weighted sum respects a
+Pareto improvement on any positively weighted coordinate.
 
-## Main results
+## Implementation notes
 
-* `dotProduct_lt_dotProduct_of_nonneg_left`, `dotProduct_lt_dotProduct_of_nonneg_right`: the
-  strict monotonicity of the dot product in either argument.
+`gcongr` does not prove these, since its strict-sum lemma `Finset.sum_lt_sum_of_nonempty` asks for
+a strict increase at every coordinate, which fails at the coordinates `w` weights by zero.
 -/
 
-@[expose] public section
+public section
 
 variable {n R : Type*} [Fintype n] [Semiring R] [PartialOrder R] [IsStrictOrderedRing R]
   {u v w : n → R}
