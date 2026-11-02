@@ -39,6 +39,8 @@ def load_papers():
     papers = {}
     for path in glob.glob(os.path.join(EXAMPLES, "*.json")):
         rows = json.load(open(path, encoding="utf-8"))
+        if isinstance(rows, dict):
+            rows = rows["examples"]
         info = dict(ids=set(), keys=set(), dupkeys=set(), vals=collections.defaultdict(set),
                     readings=set(), judgments=set(), bibkeys=set())
         for r in rows:

@@ -30,7 +30,7 @@ against the transparent syntax–semantics mapping.
 * `clauseSort`: the sort a complementizer imposes; `selectsClause` the aspectual heads'
   selection (§4.1).
 * `Predicted`: a verb–complementizer pairing derived from the verb's sort and Vendler class,
-  with the sample verbs' sorts in `lexicon`.
+  with the sample verbs' sorts in `verbEntry`.
 * `licensedIn`: incorporation licensing by clause position (§3.1).
 
 ## References
@@ -97,34 +97,39 @@ instance (v : Verb) (s : NominalSort) (c : Complementizer) : Decidable (Predicte
 
 /-- The sample verbs with the sort of noun each verbalizes (§3.2, where saying, belief, and
 knowledge verbs are content-denoting like *rumor*, emotive factives situation-denoting like
-*sadness*), keyed as in the example rows; *thimame* splits into its attitude and perception
-senses (fn. 16), and *simveni* 'happen' is a situation verb (fn. 14). -/
-def lexicon : List (String × Verb × NominalSort) :=
-  [("leo", leo, .content), ("pistevo", pistevo, .content), ("ksero", ksero, .content),
-    ("katalaveno", katalaveno, .content), ("sinidhitopio", sinidhitopio, .content),
-    ("eksigo", eksigo, .content), ("thimame", thimame, .content),
-    ("metaniono", metaniono, .situation), ("areso", areso, .situation),
-    ("xerome", xerome, .situation), ("thimame_perception", thimameStat, .situation),
-    ("thimono_stative", thimonoStat, .situation), ("simveni", simveni, .situation)]
+*sadness*), as the example rows name them; *thimame* splits into its attitude and perception
+senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono* 'disagree', which
+the rows use only for the ban on prepositions (31), is not among them. -/
+def verbEntry : Examples.Verb → Option (Verb × NominalSort)
+  | .leo => some (leo, .content)
+  | .pistevo => some (pistevo, .content)
+  | .ksero => some (ksero, .content)
+  | .sinidhitopio => some (sinidhitopio, .content)
+  | .eksigo => some (eksigo, .content)
+  | .thimame => some (thimame, .content)
+  | .metaniono => some (metaniono, .situation)
+  | .areso => some (areso, .situation)
+  | .thimamePerception => some (thimameStat, .situation)
+  | .thimonoStative => some (thimonoStat, .situation)
+  | .simveni => some (simveni, .situation)
+  | .djafono => none
 
-def Complementizer.ofString? : String → Option Complementizer
-  | "oti" => some oti
-  | "pu" => some pu
-  | _ => none
+/-- The complementizer a row names. -/
+def complementizerOf : Examples.Complementizer → Complementizer
+  | .oti => oti
+  | .pu => pu
 
 -- fn. 14
 theorem rows_track_selection :
-    ∀ r ∈ Examples.all, r.feature? "confound" = none →
-      ∀ e ∈ ((r.feature? "verb").bind fun name ↦ lexicon.lookup name).toList,
-        ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
-          (r.judgment = .acceptable ↔ Predicted e.1 e.2 c) := by
+    ∀ r ∈ Examples.all, Examples.confound r = none →
+      ∀ e ∈ (Examples.verb r).bind verbEntry, ∀ c ∈ Examples.complementizer r,
+        (r.judgment = .acceptable ↔ Predicted e.1 e.2 (complementizerOf c)) := by
   decide +kernel
 
 -- §2.3
 theorem rows_stativity :
-    ∀ r ∈ Examples.all, r.feature? "confound" = some "manner_adverb" →
-      ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
-        (r.judgment = .acceptable ↔ c = oti) := by
+    ∀ r ∈ Examples.all, Examples.confound r = some .mannerAdverb →
+      ∀ c ∈ Examples.complementizer r, (r.judgment = .acceptable ↔ c = .oti) := by
   decide +kernel
 
 /-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
@@ -169,34 +174,33 @@ def licensedIn (pos : ClausePosition) : Prop := pos.nearestHost.licenses
 instance : DecidablePred licensedIn := fun pos ↦
   inferInstanceAs (Decidable pos.nearestHost.licenses)
 
-def ClausePosition.ofString? : String → Option ClausePosition
-  | "internal_argument" => some .internalArgument
-  | "derived_subject" => some .derivedSubject
-  | "external_argument" => some .externalArgument
-  | "p_complement" => some .pComplement
-  | _ => none
+/-- The position a row names. -/
+def Examples.Position.toClausePosition : Examples.Position → ClausePosition
+  | .internalArgument => .internalArgument
+  | .derivedSubject => .derivedSubject
+  | .externalArgument => .externalArgument
+  | .pComplement => .pComplement
 
 -- §5
 theorem rows_track_licensing :
-    ∀ r ∈ Examples.all, r.feature? "nominalized" = none →
-      ∀ pos ∈ ((r.feature? "position").bind ClausePosition.ofString?).toList,
-        (licensedIn pos ↔ r.judgment ≠ .ungrammatical) := by
+    ∀ r ∈ Examples.all, Examples.nominalized r = none → ∀ pos ∈ Examples.position r,
+      (licensedIn pos.toClausePosition ↔ r.judgment ≠ .ungrammatical) := by
   decide +kernel
 
 /-! ### Content and situation (§3.2) -/
 
-def NominalSort.ofString? : String → Option NominalSort
-  | "content" => some .content
-  | "situation" => some .situation
-  | _ => none
+/-- The sort of noun a row names. -/
+def Examples.NounSort.toNominalSort : Examples.NounSort → NominalSort
+  | .content => .content
+  | .situation => .situation
 
 -- (33), (34), (36), (37)
 theorem rows_sort_diagnostics :
-    ∀ r ∈ Examples.all, ∀ s ∈ ((r.feature? "nounSort").bind NominalSort.ofString?).toList,
-      (r.feature? "diagnostic" = some "truth-predicates" →
-        (r.judgment = .acceptable ↔ s.truthEvaluable)) ∧
-      (r.feature? "diagnostic" = some "occurrence-predicates" →
-        (r.judgment = .acceptable ↔ s.occurrenceCompatible)) := by
+    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r,
+      (Examples.diagnostic r = some .truthPredicates →
+        (r.judgment = .acceptable ↔ s.toNominalSort.truthEvaluable)) ∧
+      (Examples.diagnostic r = some .occurrencePredicates →
+        (r.judgment = .acceptable ↔ s.toNominalSort.occurrenceCompatible)) := by
   decide +kernel
 
 theorem situation_clause_factive :
@@ -232,8 +236,8 @@ theorem content_report_not_factive :
 
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
-      ∃ r ∈ Examples.all, r.feature? "position" = some "internal_argument" ∧
-        r.feature? "diagnostic" = some "clitic-doubling" ∧
+      ∃ r ∈ Examples.all, Examples.position r = some .internalArgument ∧
+        Examples.diagnostic r = some .cliticDoubling ∧
         r.feature? "composition" = some "predicate_modification" :=
   ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, by decide +kernel⟩
 

@@ -120,7 +120,8 @@ def load():
     papers = {}
     for path in sorted(JSON_DIR.glob("*.json")):
         with open(path, encoding="utf-8") as f:
-            papers[path.stem] = json.load(f)
+            data = json.load(f)
+            papers[path.stem] = data["examples"] if isinstance(data, dict) else data
     return papers
 
 

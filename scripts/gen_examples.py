@@ -18,7 +18,9 @@ Example:
 The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
-JSON file format: a single top-level JSON array of example objects. Each
+JSON file format: a top-level JSON array of example objects, or an object
+`{"features": [...], "examples": [...]}` that also declares the paper's feature taxonomy
+(see Typed features below). Each
 object's keys are the fields of the `Datum` Lean struct, plus the
 record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
@@ -67,6 +69,21 @@ Behavior:
 - `--fmt` rewrites the named paper's JSON in canonical format. It needs a
   paper name (or `--all` for a PR whose subject is the reformat): most JSON
   files predate the formatter, and reformatting them all buries a diff.
+
+Typed features: a declared feature names a `paperFeatures` key, the Lean `type` of its values and
+the `lean` name of its reader, and lists its levels, each a Lean `name`, the `label` the rows
+write and a `doc`:
+
+  {"key": "complementizer", "lean": "complementizer", "type": "Complementizer",
+   "doc": "The complementizer of the embedded clause.", "multiple": false,
+   "levels": [{"name": "oti", "label": "oti", "doc": "oti 'that'"}, ...]}
+
+Every value a row records under a declared key must be one of its labels, a key not declared
+`multiple` occurs at most once in a row, and every declared key occurs in some row. The module
+emits each type as an enum and its reader over `Datum`, an `Option` of the type or, for a
+`multiple` key, the `List` of the values, so that a study reads the feature by a total map from
+the enum rather than a table of strings, and a value that drifts fails here rather than leaving
+a theorem silently vacuous. Undeclared keys stay strings.
 
 Dependencies: pure stdlib (json module).
 """
@@ -309,7 +326,86 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     paperFeatures := {features} }}"""
 
 
-def emit_module(author_year: str, examples: list) -> str:
+IDENT = re.compile(r"^[a-z][A-Za-z0-9]*$")
+TYPE_IDENT = re.compile(r"^[A-Z][A-Za-z0-9]*$")
+
+
+def split_data(data, where: str):
+    """The declared features and the example rows of a paper's JSON."""
+    if isinstance(data, list):
+        return [], data
+    if isinstance(data, dict) and set(data) <= {"features", "examples"} and "examples" in data:
+        return data.get("features", []), data["examples"]
+    raise ValueError(f"{where}: top level must be an array of examples or an object with "
+                     f"`features` and `examples`")
+
+
+def validate_features(features: list, examples: list, where: str) -> None:
+    keys, types, leans = set(), set(), set()
+    for i, ft in enumerate(features):
+        w = f"{where}.features[{i}]"
+        extra = set(ft) - {"key", "lean", "type", "doc", "levels", "multiple"}
+        if extra:
+            raise ValueError(f"{w}: unknown keys {sorted(extra)}")
+        for k in ("key", "lean", "type", "doc", "levels"):
+            if k not in ft:
+                raise ValueError(f"{w}: missing `{k}`")
+        if not IDENT.match(ft["lean"]) or ft["lean"] in LEAN_KEYWORDS:
+            raise ValueError(f"{w}: `lean` {ft['lean']!r} is not a Lean identifier")
+        if not TYPE_IDENT.match(ft["type"]):
+            raise ValueError(f"{w}: `type` {ft['type']!r} is not a Lean type name")
+        for seen, v, what in ((keys, ft["key"], "key"), (types, ft["type"], "type"), (leans, ft["lean"], "lean")):
+            if v in seen:
+                raise ValueError(f"{w}: duplicate {what} {v!r}")
+            seen.add(v)
+        names, labels = set(), set()
+        for lv in ft["levels"]:
+            if set(lv) != {"name", "label", "doc"}:
+                raise ValueError(f"{w}: a level needs exactly `name`, `label` and `doc`")
+            if not IDENT.match(lv["name"]) or lv["name"] in LEAN_KEYWORDS:
+                raise ValueError(f"{w}: level name {lv['name']!r} is not a Lean identifier")
+            if lv["name"] in names or lv["label"] in labels:
+                raise ValueError(f"{w}: duplicate level {lv['name']!r} / {lv['label']!r}")
+            names.add(lv["name"]); labels.add(lv["label"])
+        occurs = False
+        for ex in examples:
+            vals = [v for k, v in ex.get("paperFeatures", []) if k == ft["key"]]
+            occurs = occurs or bool(vals)
+            if len(vals) > 1 and not ft.get("multiple", False):
+                raise ValueError(f"{where}: {ex.get('id')}: `{ft['key']}` repeats but is not `multiple`")
+            for v in vals:
+                if v not in labels:
+                    raise ValueError(f"{where}: {ex.get('id')}: `{ft['key']}` value {v!r} is not a "
+                                     f"declared level of {ft['type']}")
+        if not occurs:
+            raise ValueError(f"{w}: no row records `{ft['key']}`")
+
+
+def emit_feature(ft: dict) -> str:
+    ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in ft["levels"])
+    entries = [f"({lean_string(lv['label'])}, .{lv['name']})" for lv in ft["levels"]]
+    lines, cur = [], ""
+    for i, en in enumerate(entries):
+        piece = en + ("," if i < len(entries) - 1 else "")
+        if cur and len(cur) + 1 + len(piece) > 92:
+            lines.append(cur); cur = piece
+        else:
+            cur = f"{cur} {piece}" if cur else piece
+    lines.append(cur)
+    table = "\n    ".join(lines)
+    if ft.get("multiple", False):
+        reader = (f"/-- The values a row records under `{ft['key']}`. -/\n"
+                  f"def {ft['lean']} (e : Datum) : List {ft['type']} :=\n"
+                  f"  (e.features {lean_string(ft['key'])}).filterMap (List.lookup · [{table}])")
+    else:
+        reader = (f"/-- The value a row records under `{ft['key']}`. -/\n"
+                  f"def {ft['lean']} (e : Datum) : Option {ft['type']} :=\n"
+                  f"  e.parse? {lean_string(ft['key'])} [{table}]")
+    return (f"/-- {ft['doc']} -/\ninductive {ft['type']} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n{reader}")
+
+
+def emit_module(author_year: str, examples: list, features: list | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -325,8 +421,13 @@ def emit_module(author_year: str, examples: list) -> str:
             for e in examples
         ]
         all_def = f"def all : List Datum := [{', '.join(local_ids)}]"
+    features = features or []
+    feats = "".join("\n\n" + emit_feature(ft) for ft in features)
+    imports = "import Linglib.Data.Examples.Schema" + (
+        "\nimport Linglib.Data.Examples.Readers\nimport Mathlib.Tactic.DeriveFintype"
+        if features else "")
 
-    return f"""import Linglib.Data.Examples.Schema
+    return f"""{imports}
 
 /-!
 # `{author_year}` — typed example data
@@ -341,7 +442,7 @@ namespace {author_year}.Examples
 
 {body}
 
-{all_def}
+{all_def}{feats}
 
 end {author_year}.Examples
 """
@@ -364,15 +465,10 @@ def process(author_year: str, check: bool) -> bool:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: invalid JSON: {e}\n")
         sys.exit(1)
 
-    if not isinstance(examples, list):
-        sys.stderr.write(
-            f"FATAL: {json_path.relative_to(ROOT)}: top level must be an array of "
-            f"example objects (got {type(examples).__name__})\n"
-        )
-        sys.exit(1)
-
     try:
-        module_text = as_module_if_possible(emit_module(author_year, examples))
+        features, examples = split_data(examples, str(json_path.relative_to(ROOT)))
+        validate_features(features, examples, str(json_path.relative_to(ROOT)))
+        module_text = as_module_if_possible(emit_module(author_year, examples, features))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -587,8 +683,16 @@ def fmt(author_year: str) -> bool:
     identical data."""
     json_path = JSON_DIR / f"{author_year}.json"
     with open(json_path, encoding="utf-8") as f:
-        examples = json.load(f)
-    text = format_examples(examples)
+        data = json.load(f)
+    if isinstance(data, dict):
+        features, examples = split_data(data, str(json_path))
+        body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
+        feats = json.dumps(features, ensure_ascii=False, indent=2).replace("\n", "\n  ")
+        text = f'{{\n  "features": {feats},\n  "examples": {body}\n}}\n'
+        examples = data
+    else:
+        text = format_examples(data)
+        examples = data
     if json.loads(text) != examples:
         sys.stderr.write(
             f"[fmt] REFUSING {json_path.relative_to(ROOT)}: round-trip mismatch\n"

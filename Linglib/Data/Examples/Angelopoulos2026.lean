@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Angelopoulos2026` — typed example data
@@ -510,5 +512,136 @@ def ex_44a : Datum :=
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument"), ("nominalized", "yes")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_31a, ex_31b, ex_31c, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_34a, ex_34b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_6a, ex_11a, ex_12a, ex_14a, ex_14b, ex_19c, ex_20c, ex_21a, ex_21b, ex_22a, ex_22b, ex_23c, ex_35a, ex_35b, ex_36a, ex_37a, ex_38a, ex_38b, fn14_i, ex_43a, ex_44a]
+
+/-- The complementizer of the embedded clause. -/
+inductive Complementizer where
+  /-- oti: *oti* 'that' -/
+  | oti
+  /-- pu: *pu* 'that' -/
+  | pu
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `complementizer`. -/
+def complementizer (e : Datum) : Option Complementizer :=
+  e.parse? "complementizer" [("oti", .oti), ("pu", .pu)]
+
+/-- The embedding verb. -/
+inductive Verb where
+  /-- leo: *leo* 'say' -/
+  | leo
+  /-- metaniono: *metaniono* 'regret' -/
+  | metaniono
+  /-- δjafono 'disagree': *δjafono* 'disagree' -/
+  | djafono
+  /-- pistevo: *pistevo* 'believe' -/
+  | pistevo
+  /-- eksigo: *eksigo* 'explain' -/
+  | eksigo
+  /-- areso: *areso* 'like' -/
+  | areso
+  /-- thimono_stative: *thimono* 'be angry', stative -/
+  | thimonoStative
+  /-- ksero: *ksero* 'know' -/
+  | ksero
+  /-- sinidhitopio: *sinidhitopio* 'realize' -/
+  | sinidhitopio
+  /-- thimame: *thimame* 'remember', attitude -/
+  | thimame
+  /-- thimame_perception: *thimame* 'remember', perception -/
+  | thimamePerception
+  /-- simveni: *simveni* 'happen' -/
+  | simveni
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `verb`. -/
+def verb (e : Datum) : Option Verb :=
+  e.parse? "verb" [("leo", .leo), ("metaniono", .metaniono), ("δjafono 'disagree'", .djafono),
+    ("pistevo", .pistevo), ("eksigo", .eksigo), ("areso", .areso),
+    ("thimono_stative", .thimonoStative), ("ksero", .ksero), ("sinidhitopio", .sinidhitopio),
+    ("thimame", .thimame), ("thimame_perception", .thimamePerception), ("simveni", .simveni)]
+
+/-- The position the clause is merged in. -/
+inductive Position where
+  /-- internal_argument: the internal argument -/
+  | internalArgument
+  /-- derived_subject: a derived subject -/
+  | derivedSubject
+  /-- external_argument: the external argument -/
+  | externalArgument
+  /-- p_complement: the complement of a preposition -/
+  | pComplement
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `position`. -/
+def position (e : Datum) : Option Position :=
+  e.parse? "position" [("internal_argument", .internalArgument), ("derived_subject", .derivedSubject),
+    ("external_argument", .externalArgument), ("p_complement", .pComplement)]
+
+/-- The sort of the noun the clause pairs with. -/
+inductive NounSort where
+  /-- content: content-denoting -/
+  | content
+  /-- situation: situation-denoting -/
+  | situation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nounSort`. -/
+def nounSort (e : Datum) : Option NounSort :=
+  e.parse? "nounSort" [("content", .content), ("situation", .situation)]
+
+/-- The diagnostic the example applies. -/
+inductive Diagnostic where
+  /-- P-ban: the ban on prepositions -/
+  | pBan
+  /-- truth-predicates: truth predicates -/
+  | truthPredicates
+  /-- occurrence-predicates: occurrence predicates -/
+  | occurrencePredicates
+  /-- clitic-doubling: clitic doubling -/
+  | cliticDoubling
+  /-- passivization: passivization -/
+  | passivization
+  /-- manner-adverb: manner adverbs -/
+  | mannerAdverb
+  /-- in-adverbial: in-adverbials -/
+  | inAdverbial
+  /-- noun-complement: noun complements -/
+  | nounComplement
+  /-- factivity: factivity -/
+  | factivity
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("P-ban", .pBan), ("truth-predicates", .truthPredicates),
+    ("occurrence-predicates", .occurrencePredicates), ("clitic-doubling", .cliticDoubling),
+    ("passivization", .passivization), ("manner-adverb", .mannerAdverb),
+    ("in-adverbial", .inAdverbial), ("noun-complement", .nounComplement),
+    ("factivity", .factivity)]
+
+/-- A confound the example controls for. -/
+inductive Confound where
+  /-- p_ban: the ban on prepositions -/
+  | pBan
+  /-- manner_adverb: a manner adverb -/
+  | mannerAdverb
+  /-- factivity_continuation: a factive continuation -/
+  | factivityContinuation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `confound`. -/
+def confound (e : Datum) : Option Confound :=
+  e.parse? "confound" [("p_ban", .pBan), ("manner_adverb", .mannerAdverb),
+    ("factivity_continuation", .factivityContinuation)]
+
+/-- Whether the clause is nominalized. -/
+inductive Nominalized where
+  /-- yes: nominalized -/
+  | yes
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nominalized`. -/
+def nominalized (e : Datum) : Option Nominalized :=
+  e.parse? "nominalized" [("yes", .yes)]
 
 end Angelopoulos2026.Examples
