@@ -225,6 +225,16 @@ theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
 
+/-- If the constraints `U` dominate all the others, a candidate satisfying all of `U` beats a
+candidate violating any of them. -/
+theorem ofRanking_profile_lt_of_forall_dominates {U : Set ι}
+    (hU : ∀ i ∈ U, ∀ j ∉ U, r.Dominates i j) (hc : ∀ i ∈ U, con i c = 0) {i : ι} (hi : i ∈ U)
+    (hd : con i d ≠ 0) :
+    (ofRanking con r candidates).profile c < (ofRanking con r candidates).profile d := by
+  refine ofRanking_profile_lt_iff_exists_dominates.2
+    ⟨i, by rw [hc i hi]; omega, fun j hj ↦ hU i hi j fun hjU ↦ ?_⟩
+  simp [hc j hjU] at hj
+
 /-- Optimality transfers along constraint-wise bounds. Under any ranking, a candidate `d` of a
 second tableau that violates each constraint no more than a winner `c` of the first is itself a
 winner, provided that every candidate of the second tableau violates each constraint at least as
