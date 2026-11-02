@@ -26,7 +26,7 @@ depends only on the values of `g` on `s ∩ t`.
   `g` on `t` are unchanged when `g` is changed off `s ∩ t`, for a property depending on `s` only.
 -/
 
-@[expose] public section
+public section
 
 open Function
 

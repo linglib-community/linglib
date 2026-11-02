@@ -15,7 +15,7 @@ Two two-element multisets are equal exactly when their elements agree in some or
 `Mathlib.Data.Multiset.ZeroCons`, beside `Multiset.pair_comm`.
 -/
 
-@[expose] public section
+public section
 
 namespace Multiset
 

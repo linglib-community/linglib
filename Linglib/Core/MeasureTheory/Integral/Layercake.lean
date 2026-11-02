@@ -20,7 +20,7 @@ formula for the expectation of a random variable with values in `ℕ`. `[UPSTREA
 * `MeasureTheory.lintegral_natCast_eq_tsum_measure_lt`: the tail-sum formula.
 -/
 
-@[expose] public section
+public section
 
 open scoped ENNReal
 

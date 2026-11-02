@@ -17,7 +17,7 @@ each coordinate filters each factor. `[UPSTREAM]` candidates; eventual mathlib h
 `Mathlib.Data.Multiset.Bind`.
 -/
 
-@[expose] public section
+public section
 
 namespace Multiset
 

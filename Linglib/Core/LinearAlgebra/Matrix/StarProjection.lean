@@ -18,7 +18,7 @@ the orthogonal projection onto the row space of `A`.
 `[UPSTREAM]` candidate.
 -/
 
-@[expose] public section
+public section
 
 namespace Matrix
 

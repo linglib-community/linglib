@@ -29,7 +29,7 @@ commutative Hopf algebras in `Mathlib/RingTheory/HopfAlgebra/Basic.lean`.
 * [grinberg-reiner-2020]
 -/
 
-@[expose] public section
+public section
 
 open WithConv
 

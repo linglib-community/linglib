@@ -27,7 +27,7 @@ permutations fixing it leave unchanged.
 * [van-benthem-1984]
 -/
 
-@[expose] public section
+public section
 
 namespace Quantifier
 

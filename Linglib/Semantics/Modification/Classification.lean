@@ -37,7 +37,7 @@ Whether adjectives uniformly denote `Modifier (W → E → Prop)` is a theoretic
 * [kamp-partee-1995]
 -/
 
-@[expose] public section
+public section
 
 namespace Modifier
 

@@ -36,7 +36,7 @@ substitution operation on formulas.
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 -/
 
-@[expose] public section
+public section
 
 namespace BSML
 

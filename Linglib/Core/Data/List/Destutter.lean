@@ -28,7 +28,7 @@ that file.
   only at the seam.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 variable {α : Type*} {R : α → α → Prop} [DecidableRel R] {a b : α} {l m : List α}

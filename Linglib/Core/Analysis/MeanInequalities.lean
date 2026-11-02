@@ -23,7 +23,7 @@ means with the counts as weights.
   counts is at most their likelihood under their relative frequencies.
 -/
 
-@[expose] public section
+public section
 
 open Finset
 

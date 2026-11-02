@@ -25,7 +25,7 @@ of their sections, and *not every* is derived by profile composition.
 * [van-benthem-1984]
 -/
 
-@[expose] public section
+public section
 
 namespace Quantifier.Det
 

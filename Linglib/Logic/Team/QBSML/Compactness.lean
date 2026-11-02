@@ -37,7 +37,7 @@ the family of `◇φₙ` for infinitely many sentences `φₙ` together with
 * [puljujarvi-quadrellaro-2024]
 -/
 
-@[expose] public section
+public section
 
 universe u v
 

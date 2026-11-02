@@ -13,7 +13,7 @@ lemmas restate `Set.Ici_subset_Ioi` and the cover of `Set.Ioi a` by `Set.Ici a` 
 and are `[UPSTREAM]` additions to `Mathlib.Order.UpperLower.Principal`.
 -/
 
-@[expose] public section
+public section
 
 namespace UpperSet
 

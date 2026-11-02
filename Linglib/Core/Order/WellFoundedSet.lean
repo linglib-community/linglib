@@ -15,7 +15,7 @@ public import Mathlib.Order.WellFoundedSet
 element of the set is minimal for `f`.
 -/
 
-@[expose] public section
+public section
 
 namespace Set
 

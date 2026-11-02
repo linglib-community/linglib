@@ -18,7 +18,7 @@ elements of an ordered semiring the rising factorial `(x)ₙ` is monotone in `x`
 [UPSTREAM] candidate for `Mathlib.RingTheory.Polynomial.Pochhammer`.
 -/
 
-@[expose] public section
+public section
 
 open Polynomial
 

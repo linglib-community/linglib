@@ -15,7 +15,7 @@ extension is the cardinality of its `Finset` filter, at any decidability instanc
 statement about `Set.ncard` evaluates by `decide`. [UPSTREAM]
 -/
 
-@[expose] public section
+public section
 
 namespace Set
 

@@ -14,7 +14,7 @@ On a countable type with measurable singletons, absolute continuity is checked o
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace MeasureTheory.Measure
 

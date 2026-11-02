@@ -25,7 +25,7 @@ a split through `Multiset.powerset`.
   second part in the powerset.
 -/
 
-@[expose] public section
+public section
 
 namespace Multiset
 

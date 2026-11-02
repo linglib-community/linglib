@@ -34,7 +34,7 @@ The count is proved over a fixed ambient `Finset` containing both supports
 (`count_powerset_subset`), so the index set stays constant through the induction.
 -/
 
-@[expose] public section
+public section
 
 namespace Multiset
 

@@ -30,7 +30,7 @@ is likewise complete for the flat bounded-bisimulation-invariant properties.
 * [anttila-knudstorp-2025] Anttila and Knudstorp, Convex Team Logics
 -/
 
-@[expose] public section
+public section
 
 namespace BSML
 

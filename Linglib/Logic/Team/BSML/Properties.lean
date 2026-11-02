@@ -38,7 +38,7 @@ needs no normal form.
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 -/
 
-@[expose] public section
+public section
 
 namespace BSML
 

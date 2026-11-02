@@ -19,7 +19,7 @@ countable linear order, which embeds in `ℚ` by Cantor's theorem
 `Order.embedding_from_countable_to_dense`.
 -/
 
-@[expose] public section
+public section
 
 namespace Order
 

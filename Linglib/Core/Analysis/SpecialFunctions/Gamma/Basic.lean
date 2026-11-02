@@ -17,7 +17,7 @@ counterpart of mathlib's `Complex.Gamma_add_nat_div_Gamma_eq`.
 [UPSTREAM] candidate for `Mathlib.Analysis.SpecialFunctions.Gamma.Basic`.
 -/
 
-@[expose] public section
+public section
 
 namespace Real
 

@@ -18,7 +18,7 @@ the lattice of filters, that is, an ultrafilter.
 * `Filter.forall_mem_or_compl_mem_iff`
 -/
 
-@[expose] public section
+public section
 
 namespace Filter
 

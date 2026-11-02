@@ -16,7 +16,7 @@ conjunction of relations is exactly a chain for each conjunct, `List.pairwise_an
 `List.Pairwise.and`. [UPSTREAM] candidates for `Mathlib/Data/List/Chain.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

@@ -46,7 +46,7 @@ monoid, because the pseudovarieties are varieties of semigroups and do not see t
 * [pin-mfa]
 -/
 
-@[expose] public section
+public section
 
 namespace Language
 

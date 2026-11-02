@@ -45,7 +45,7 @@ composite is the shape behind Yan's Asher and Heim solutions.
   Modals and Attitudes
 -/
 
-@[expose] public section
+public section
 
 namespace QBSML
 

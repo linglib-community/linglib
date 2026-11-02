@@ -22,7 +22,7 @@ to a nonzero infinite product.
 * `ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff`
 -/
 
-@[expose] public section
+public section
 
 open Filter Finset Topology
 open scoped ENNReal

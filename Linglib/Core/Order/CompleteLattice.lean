@@ -15,7 +15,7 @@ A supremum over two indices of a family monotone in both is the supremum along t
 `iSup_iSup_eq_left`.
 -/
 
-@[expose] public section
+public section
 
 theorem iSup_iSup_eq_iSup_diag {L : Type*} [CompleteLattice L] {g : ℕ → ℕ → L}
     (hg : ∀ m n m' n', m ≤ m' → n ≤ n' → g m n ≤ g m' n') : ⨆ m, ⨆ n, g m n = ⨆ n, g n n :=

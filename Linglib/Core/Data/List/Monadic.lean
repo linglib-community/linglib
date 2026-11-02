@@ -21,7 +21,7 @@ start. [UPSTREAM] candidate for `Init/Data/List/Monadic.lean`.
   partial fold.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

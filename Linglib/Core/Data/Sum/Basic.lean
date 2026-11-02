@@ -18,7 +18,7 @@ of `Function.Injective.sumElim`.
 `[UPSTREAM]` candidate for `Mathlib/Data/Sum/Basic.lean`, beside `Function.Injective.sumElim`.
 -/
 
-@[expose] public section
+public section
 
 open Sum
 

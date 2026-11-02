@@ -21,7 +21,7 @@ Upstream home: `Mathlib/Order/Monotone/Basic.lean`, beside `Monotone.reflect_lt`
 * `StrictMono.reflect_le`: a strictly monotone map out of a total preorder reflects `≤`.
 -/
 
-@[expose] public section
+public section
 
 /-- A strictly monotone map out of a total preorder reflects `≤`. -/
 theorem StrictMono.reflect_le {α β : Type*} [Preorder α] [@Std.Total α (· ≤ ·)] [Preorder β]

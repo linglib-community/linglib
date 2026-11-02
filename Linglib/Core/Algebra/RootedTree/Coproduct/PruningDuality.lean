@@ -49,7 +49,7 @@ property; the step for several trees uses the product rule of the pairing.
 * [hoffman-2003]
 -/
 
-@[expose] public section
+public section
 
 open RoseTree UnorderedTree WithConv
 

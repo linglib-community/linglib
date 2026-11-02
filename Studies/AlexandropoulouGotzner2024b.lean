@@ -32,7 +32,7 @@ whereas at a single threshold neither distinction exists
 * [kennedy-2007]
 -/
 
-@[expose] public section
+public section
 
 namespace AlexandropoulouGotzner2024b
 

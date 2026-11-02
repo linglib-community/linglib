@@ -17,7 +17,7 @@ restriction to time `b` times the probability of its last step. `[UPSTREAM]` can
 `Mathlib/Probability/Kernel/IonescuTulcea/PartialTraj.lean`.
 -/
 
-@[expose] public section
+public section
 
 open Finset MeasureTheory ProbabilityTheory Preorder
 

@@ -11,7 +11,7 @@ sets and predicates, in `ℝ≥0∞` and on reals, and the almost-everywhere fil
 measure on a finite type.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

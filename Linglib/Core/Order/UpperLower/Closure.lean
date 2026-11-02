@@ -15,7 +15,7 @@ mathlib has the minimal-element lemma only for antichains,
 closure of the pairwise joins, so its minimal elements are those of the pairwise joins.
 -/
 
-@[expose] public section
+public section
 
 open Set
 

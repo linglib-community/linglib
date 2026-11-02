@@ -30,7 +30,7 @@ the externalization, not a law of the copy theory.
 * [nunes-2004]
 -/
 
-@[expose] public section
+public section
 
 namespace Minimalist
 

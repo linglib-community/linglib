@@ -21,7 +21,7 @@ starts with `a`. [UPSTREAM] candidate for `Mathlib/Data/List/Sublists.lean`.
 * `List.revzip_singleton`: the base case.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

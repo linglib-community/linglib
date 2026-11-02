@@ -50,7 +50,7 @@ proofs are pinned to explicit suprema through `CompleteLattice.ωSup_eq_iSup` an
 * [kozen-1981]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory OmegaCompletePartialOrder
 open scoped ENNReal

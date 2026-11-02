@@ -16,7 +16,7 @@ the image points, and a measure on `Option α` is its mass at `none` plus its ma
 `some`. `[UPSTREAM]` candidates for `Mathlib/MeasureTheory/Measure/Basic.lean`.
 -/
 
-@[expose] public section
+public section
 
 open Set
 

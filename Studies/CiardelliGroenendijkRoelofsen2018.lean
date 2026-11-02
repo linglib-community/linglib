@@ -35,7 +35,7 @@ represented.
   (2018)][ciardelli-groenendijk-roelofsen-2018]
 -/
 
-@[expose] public section
+public section
 
 namespace CiardelliGroenendijkRoelofsen2018
 

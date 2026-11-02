@@ -42,7 +42,7 @@ book's `mergeOp` are not; on objects without unary vertices
 * [marcolli-chomsky-berwick-2025]
 -/
 
-@[expose] public section
+public section
 
 namespace Minimalist.Merge
 

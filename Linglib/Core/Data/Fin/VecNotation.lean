@@ -29,7 +29,7 @@ that structural recursion through a `Fin n → α` argument produces (a substitu
   `cons_val_fin_one` first turns the tail into a constant function.
 -/
 
-@[expose] public section
+public section
 
 namespace Matrix
 

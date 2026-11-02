@@ -11,7 +11,7 @@ in any linear order a ray closed above is never inside a ray open below. Both ar
 additions to `Mathlib.Order.Interval.Set.LinearOrder`.
 -/
 
-@[expose] public section
+public section
 
 namespace Set
 

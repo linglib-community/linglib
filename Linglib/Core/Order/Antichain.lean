@@ -21,7 +21,7 @@ deleted.
 * `IsAntichain.preimage_strictMono`
 -/
 
-@[expose] public section
+public section
 
 namespace IsAntichain
 

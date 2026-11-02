@@ -25,7 +25,7 @@ the head. [UPSTREAM] candidates for that file.
 * `List.argmax_eq_head?`: on a list sorted by decreasing score the maximizer is the head.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

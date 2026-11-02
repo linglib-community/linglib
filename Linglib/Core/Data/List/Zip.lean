@@ -15,7 +15,7 @@ public import Mathlib.Data.List.Zip
 [UPSTREAM] candidate for `Mathlib/Data/List/Zip.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

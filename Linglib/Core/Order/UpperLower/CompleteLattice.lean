@@ -15,7 +15,7 @@ every element below `a` that lies in `P` lies in `Q`.
 * `LowerSet.mem_himp`: membership in `P ⇨ Q`.
 -/
 
-@[expose] public section
+public section
 
 namespace LowerSet
 

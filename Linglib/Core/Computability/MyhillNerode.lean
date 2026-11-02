@@ -32,7 +32,7 @@ distinguishable words.
 * [hopcroft-ullman-1979]
 -/
 
-@[expose] public section
+public section
 
 namespace Language
 

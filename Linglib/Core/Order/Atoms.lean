@@ -16,7 +16,7 @@ and the characterization holds for every simple order, so a two-element scale in
 `IsSimpleOrder` instance.
 -/
 
-@[expose] public section
+public section
 
 namespace IsSimpleOrder
 

@@ -33,7 +33,7 @@ the most specific structure subsumed by both inputs, is total, the meet.
 * [carpenter-1992]
 -/
 
-@[expose] public section
+public section
 
 namespace Shieber1986
 

@@ -25,7 +25,7 @@ either side of `1/2` are therefore facts about the entropy of any two-point law.
 * [cover-thomas-2006]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory Real unitInterval
 

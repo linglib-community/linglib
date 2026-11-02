@@ -54,7 +54,7 @@ conjunction, the filter's `inter_sets`, is the axiom Lederman contests.
 * [anderson-2021]
 -/
 
-@[expose] public section
+public section
 
 open Set
 

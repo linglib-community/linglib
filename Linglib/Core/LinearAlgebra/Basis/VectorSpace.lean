@@ -12,7 +12,7 @@ of the family by `Module.Basis.constr` and extended to the whole space by
 `Module.exists_dual_forall_apply_eq_one`, which follows from this one.
 -/
 
-@[expose] public section
+public section
 
 open Module
 

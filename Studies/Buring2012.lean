@@ -24,7 +24,7 @@ feature rather than a feature of its own.
 * [U. Sauerland, *A new semantics for number* (2003)][sauerland-2003]
 -/
 
-@[expose] public section
+public section
 
 namespace Buring2012
 

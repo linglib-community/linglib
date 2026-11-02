@@ -27,7 +27,7 @@ measure, gives `Real.softmax f`.
   the tilt.
 -/
 
-@[expose] public section
+public section
 
 open ProbabilityTheory
 open scoped ENNReal

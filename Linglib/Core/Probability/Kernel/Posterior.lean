@@ -31,7 +31,7 @@ given an observation of a state drawn from the prior leaves the prior invariant.
   the expectation of a statistic that monovaries with the observation's likelihood.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

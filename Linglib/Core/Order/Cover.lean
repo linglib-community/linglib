@@ -22,7 +22,7 @@ covered by the next moves up a linear order one step at a time, so it cannot pas
   an element at or above `x` contains `x`.
 -/
 
-@[expose] public section
+public section
 
 variable {α : Type*}
 

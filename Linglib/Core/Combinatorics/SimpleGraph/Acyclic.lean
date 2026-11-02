@@ -15,7 +15,7 @@ with finitely many edges has a vertex with at most one neighbour, the forest ana
 `SimpleGraph.IsTree.exists_vert_degree_one_of_nontrivial`.
 -/
 
-@[expose] public section
+public section
 
 namespace SimpleGraph
 

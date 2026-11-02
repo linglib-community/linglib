@@ -18,7 +18,7 @@ conditioning up to null sets.
 `[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory
 open scoped ENNReal ProbabilityTheory

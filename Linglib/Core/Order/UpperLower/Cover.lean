@@ -21,7 +21,7 @@ and that element is maximal in it. This is the lower-set counterpart of mathlib'
 * `LowerSet.maximal_of_coe_eq_insert`: the element added is maximal in `t`.
 -/
 
-@[expose] public section
+public section
 
 namespace LowerSet
 

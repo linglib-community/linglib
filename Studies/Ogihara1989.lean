@@ -35,7 +35,7 @@ the stove is stronger.
 * [prior-1967]
 -/
 
-@[expose] public section
+public section
 
 namespace Ogihara1989
 

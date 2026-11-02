@@ -41,7 +41,7 @@ The proof integrates `0 ≤ (X ω - X ω') * (Y ω - Y ω')`, pointwise nonnegat
 the covariance defect. The dual follows by negating `X`.
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 

@@ -20,7 +20,7 @@ satisfy `q`. [UPSTREAM] candidate for `Mathlib/Data/List/Find.lean`.
   satisfies.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

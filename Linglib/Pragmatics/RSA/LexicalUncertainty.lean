@@ -29,7 +29,7 @@ that the speaker knows and the listener does not enters the same way.
 * [franke-bergen-2020]
 -/
 
-@[expose] public section
+public section
 
 open MeasureTheory ProbabilityTheory
 

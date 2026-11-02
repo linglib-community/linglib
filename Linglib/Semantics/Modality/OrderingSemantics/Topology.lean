@@ -33,7 +33,7 @@ so the characterization holds over any domain in the lower-set topology of its r
 * [lewis-1981]
 -/
 
-@[expose] public section
+public section
 
 namespace OrderingSemantics
 

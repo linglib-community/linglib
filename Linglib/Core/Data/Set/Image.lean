@@ -15,7 +15,7 @@ singleton iff the set is, the singleton rung beside `Function.Injective.subsingl
 [UPSTREAM]
 -/
 
-@[expose] public section
+public section
 
 namespace Function.Injective
 

@@ -35,7 +35,7 @@ Proposition 1.4.2 does not; with several occurrences of `β` the unit stage is a
 * [marcolli-chomsky-berwick-2025]
 -/
 
-@[expose] public section
+public section
 
 namespace Minimalist.Merge
 

@@ -15,7 +15,7 @@ and the almost-everywhere filter of a sum of measures is the join of theirs.
 * `MeasureTheory.ae_add_measure_eq`: `ae (μ + ν) = ae μ ⊔ ae ν`.
 -/
 
-@[expose] public section
+public section
 
 open Filter Set
 

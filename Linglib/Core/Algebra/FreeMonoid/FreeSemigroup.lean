@@ -16,7 +16,7 @@ public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 The words of the free semigroup, read in the free monoid, are nonempty.
 -/
 
-@[expose] public section
+public section
 
 variable {α : Type*} (u : FreeSemigroup α)
 

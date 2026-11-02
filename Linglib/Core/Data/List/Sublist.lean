@@ -29,7 +29,7 @@ Two additions to the `List.Sublist` API.
   each pair in the same order there, is a sublist of it (`List.sublist_of_forall_pair_sublist`).
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

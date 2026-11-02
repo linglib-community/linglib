@@ -21,7 +21,7 @@ candidate for that file.
   splits by the finer one.
 -/
 
-@[expose] public section
+public section
 
 namespace List
 

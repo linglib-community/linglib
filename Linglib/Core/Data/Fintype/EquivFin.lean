@@ -17,7 +17,7 @@ equal cardinalities differ by a permutation of the domain, the fibrewise equival
 `Fintype.equivOfCardEq` glued by `Equiv.ofFiberEquiv`. [UPSTREAM]
 -/
 
-@[expose] public section
+public section
 
 namespace Equiv
 

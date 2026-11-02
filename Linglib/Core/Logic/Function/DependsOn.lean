@@ -29,7 +29,7 @@ whether the set is infinite depends exactly on the cofinite sets, and they have 
   not ignore, and these lie in every set it depends on.
 -/
 
-@[expose] public section
+public section
 
 open Function Set
 

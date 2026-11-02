@@ -21,7 +21,7 @@ Closing a set under sups does not change its infimum, nor closing it under infs 
 * `sInf_supClosure`, `sSup_infClosure`: the closures keep the infimum and the supremum.
 -/
 
-@[expose] public section
+public section
 
 variable {ι α : Type*}
 

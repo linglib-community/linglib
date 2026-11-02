@@ -19,7 +19,7 @@ that is independent of which of the two instances a continuity proof was carried
 `Mathlib/Order/OmegaCompletePartialOrder.lean` and `Mathlib/Order/FixedPoints.lean`.
 -/
 
-@[expose] public section
+public section
 
 open OmegaCompletePartialOrder
 
