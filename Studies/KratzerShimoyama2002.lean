@@ -4,7 +4,7 @@ public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Japanese.Determiners
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Fragments.German.PolarityItems
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002

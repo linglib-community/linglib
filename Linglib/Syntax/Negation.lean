@@ -9,7 +9,7 @@ public import Mathlib.Tactic.DeriveFintype
 This file records how a language expresses sentential negation: the marker that expresses it and
 where the marker sits. What negation means is the negative polarity, which acts on a proposition
 by complement (`Polarity.negative`), and the strengths of negation a context can carry are
-`Negation.Strength`, both in `Semantics/Polarity`.
+`Negation.Strength`, both in `Semantics/Negation`.
 
 A language negates a declarative verbal main clause with a marker: an affix on the verb, a free
 particle, an inflecting negative verb, or two morphemes at once (French *ne … pas*). A negative

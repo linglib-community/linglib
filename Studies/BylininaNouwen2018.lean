@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Data.Examples.Readers
 
 /-!

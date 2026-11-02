@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Core.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # Büring 2007: cross-polar nomalies

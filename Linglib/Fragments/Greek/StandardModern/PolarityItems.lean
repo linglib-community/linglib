@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Item
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Greek polarity items

@@ -7,8 +7,8 @@ module
 
 public import Linglib.Logic.Natural.Composition
 public import Linglib.Semantics.Composition.WithAlternatives
-public import Linglib.Semantics.Polarity.Item
-public import Linglib.Semantics.Polarity.Licenser
+public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.Licenser
 
 /-!
 # Environments of a polarity item
@@ -124,16 +124,17 @@ theorem not_carries_of_sign_eq_one (h : e.signature.sign = 1) : ¬e.Carries s :=
 theorem carries_of_le_negationStrength
     (hs : (s : WithBot Negation.Strength) ≤ e.signature.negationStrength) (hne : e ⊥ ≠ e ⊤) :
     e.Carries s := by
-  have hf := e.holdsFor.of_le (Signature.le_toSignature_of_le_negationStrength hs)
+  have hf := e.holdsFor.of_le (Signature.coe_le_negationStrength_iff.1 hs)
   refine e.carries_iff.2 ⟨hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
-  exact Signature.holdsFor_anti_iff.1 (hf.of_le (by cases s <;> decide)) bot_le
+  exact Signature.holdsFor_anti_iff.1 (hf.of_le (Negation.Strength.toSignature_antitone bot_le))
+    bot_le
 
 /-- An environment of negative sign carries weak strength, once it is not constant. -/
 theorem carries_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) (hne : e ⊥ ≠ e ⊤) :
     e.Carries .weak := by
   obtain ⟨s', hs'⟩ :=
     WithBot.ne_bot_iff_exists.1 ((Signature.negationStrength_ne_bot_iff _).2 h)
-  exact e.carries_of_le_negationStrength (hs' ▸ WithBot.coe_le_coe.2 (by cases s' <;> decide)) hne
+  exact e.carries_of_le_negationStrength (hs' ▸ WithBot.coe_le_coe.2 bot_le) hne
 
 end Carries
 

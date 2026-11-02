@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Algebra.Group.Action.Defs
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Logic.Aristotelian.Basic
 public import Linglib.Semantics.Degree.Boundedness

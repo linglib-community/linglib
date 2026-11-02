@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Sigma
 public import Linglib.Semantics.Degree.Quotient
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
 public import Linglib.Data.Examples.Readers

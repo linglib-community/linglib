@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Logic.Natural.Basic
-public import Linglib.Semantics.Polarity.Licensing
-public import Linglib.Semantics.Polarity.Item
+public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Genericity.Normality
 public import Studies.Ladusaw1979

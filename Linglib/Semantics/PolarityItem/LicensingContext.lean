@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Exhaustification.Excluder
-public import Linglib.Semantics.Polarity.Licenser
+public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Reference.Indefinite
@@ -363,8 +363,7 @@ open Licenser
 
 theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s.toSignature :=
   (show negation.licenser.Holds .antiAddMult from fun _ ↦
-    Signature.holdsFor_antiAddMult_compl).toSignature_of_le (s := s) (t := .antiMorphic)
-      (by cases s <;> decide)
+    Signature.holdsFor_antiAddMult_compl).toSignature_of_le (s := s) (t := .antiMorphic) le_top
 
 theorem holds_nobody_iff {s : Negation.Strength} :
     nobody.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Statistics.DenicEtAl2021
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Core.Probability.ConditionalProbability

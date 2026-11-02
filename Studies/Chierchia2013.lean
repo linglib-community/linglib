@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Natural.Soundness
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Fragments.English.PolarityItems

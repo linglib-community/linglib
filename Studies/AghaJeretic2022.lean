@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.AghaJeretic2022
 public import Mathlib.Order.Minimal
 public import Linglib.Data.Examples.Readers

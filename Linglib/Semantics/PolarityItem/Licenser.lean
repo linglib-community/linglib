@@ -9,7 +9,7 @@ public import Linglib.Logic.Natural.Soundness
 public import Linglib.Logic.Natural.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.Questions.Value
-public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Semantics.Negation.Strength
 
 /-!
 # Licensers
@@ -198,7 +198,7 @@ strength and is not upward entailing. -/
 theorem carries_ofOperator_iff :
     (ofOperator f).Carries s ↔ s.toSignature.HoldsFor f ∧ ¬Monotone f := by
   have ha (h : s.toSignature.HoldsFor f) : Antitone f :=
-    Signature.holdsFor_anti_iff.1 (h.of_le (by cases s <;> decide))
+    Signature.holdsFor_anti_iff.1 (h.of_le (Negation.Strength.toSignature_antitone bot_le))
   cases s <;>
     simp only [ofOperator, Carries, IsStrawsonDE, IsStrawsonUE, exhaustified, Holds]
   · exact ⟨fun h ↦ ⟨Signature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
@@ -310,8 +310,7 @@ theorem holds_toSignature_iff {s₀ : Negation.Strength} (h : L.Holds s₀.toSig
   ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toSignature_of_le hs⟩
 
 theorem not_holds_toSignature (h : ¬ L.Holds .anti) : ¬ L.Holds s.toSignature := fun hs ↦
-  h (hs.of_le (Negation.Strength.toSignature_antitone
-    (by cases s <;> decide : Negation.Strength.weak ≤ s)))
+  h (hs.of_le (Negation.Strength.toSignature_antitone bot_le))
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, and not outright once
 its direct implicature is factored in, carries exactly weak strength ([gajewski-2011]). -/

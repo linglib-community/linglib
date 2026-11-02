@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Focus.Marking
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Fragments.Dutch.Particles
 public import Linglib.Fragments.German.Particles
 public import Linglib.Data.Examples.TurcoBraunDimroth2014

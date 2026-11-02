@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.Order.Flat
 
 /-!
