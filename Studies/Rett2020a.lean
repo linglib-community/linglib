@@ -124,13 +124,13 @@ variable {A B : Set (NonemptyInterval T)} {m : T}
 
 theorem before_iff_of_isLeast (h : IsLeast (timeTrace B) m) :
     before A B ↔ ∃ t ∈ timeTrace A, t < m := by
-  simp only [before, maxOnScale_lt_eq, Set.mem_ofPred_eq]
+  simp only [before, mem_maxOnScale_lt]
   exact ⟨fun ⟨t, ht, _, hm, htm⟩ ↦ ⟨t, ht, hm.unique h ▸ htm⟩,
     fun ⟨t, ht, htm⟩ ↦ ⟨t, ht, m, h, htm⟩⟩
 
 theorem after_iff_of_isGreatest (h : IsGreatest (timeTrace B) m) :
     after A B ↔ ∃ t ∈ timeTrace A, m < t := by
-  simp only [after, maxOnScale_gt_eq, Set.mem_ofPred_eq]
+  simp only [after, mem_maxOnScale_gt]
   exact ⟨fun ⟨t, ht, _, hm, htm⟩ ↦ ⟨t, ht, hm.unique h ▸ htm⟩,
     fun ⟨t, ht, htm⟩ ↦ ⟨t, ht, m, h, htm⟩⟩
 
@@ -274,12 +274,11 @@ private theorem timeTrace_image_dual (A : Set (NonemptyInterval T)) :
 
 theorem after_iff_before_dual :
     after A B ↔ before (NonemptyInterval.dual '' A) (NonemptyInterval.dual '' B) := by
-  simp only [after, before, timeTrace_image_dual, maxOnScale_lt_eq, maxOnScale_gt_eq]
+  simp only [after, before, timeTrace_image_dual, mem_maxOnScale_lt, mem_maxOnScale_gt]
   exact Iff.rfl
 
 theorem nonempty_of_before : before A B → (timeTrace B).Nonempty := by
   rintro ⟨-, -, m, hm, -⟩
-  rw [maxOnScale_lt_eq, Set.mem_ofPred_eq] at hm
   exact ⟨m, hm.1⟩
 
 theorem nonempty_of_after (h : after A B) : (timeTrace B).Nonempty := by
@@ -295,8 +294,7 @@ theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ ti
     (hB' : ∃ m', IsLeast (timeTrace B') m') : before A B → before A B' := by
   rintro ⟨t, ht, m, hm, htm⟩
   obtain ⟨m', hm'⟩ := hB'
-  rw [maxOnScale_lt_eq] at hm
-  exact ⟨t, ht, m', by rw [maxOnScale_lt_eq]; exact hm', htm.trans_le (hm.2 (h hm'.1))⟩
+  exact ⟨t, ht, m', mem_maxOnScale_lt.2 hm', htm.trans_le ((mem_maxOnScale_lt.1 hm).2 (h hm'.1))⟩
 
 theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsGreatest (timeTrace B') m') : after A B → after A B' := by
@@ -345,7 +343,7 @@ theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
   refine ⟨fun h ↦ ⟨m, Set.eq_singleton_iff_unique_mem.2 ⟨hB.1, fun t ht ↦ ?_⟩⟩, fun ⟨t, ht⟩ A ↦ ?_⟩
   · refine (hB.2 ht).eq_of_not_lt fun hlt ↦ ?_
     obtain ⟨_, hs, m', hm', hlt'⟩ := (h {NonemptyInterval.pure m}).2 ⟨m, by simp, t, ht, hlt⟩
-    rw [maxOnScale_gt_eq, Set.mem_ofPred_eq] at hm'
+    rw [mem_maxOnScale_gt] at hm'
     rw [mem_timeTrace_pure.1 hs, hm'.unique hB] at hlt'
     exact lt_irrefl m hlt'
   · rw [after_iff_of_isGreatest (by rw [ht]; exact isGreatest_singleton),
@@ -355,7 +353,7 @@ theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
 
 theorem before_iff_uniform :
     before A B ↔ BeaverCondoravdi2003.uniform (· < ·) (timeTrace A) (timeTrace B) := by
-  simp only [before, BeaverCondoravdi2003.uniform, maxOnScale_lt_eq, Set.mem_ofPred_eq]
+  simp only [before, BeaverCondoravdi2003.uniform, mem_maxOnScale_lt]
 
 /-- *Before* agrees with Anscombe's *before ever* on a clause iff the clause has a first time or no
 time precedes all of it (Proposition 2 of Beaver and Condoravdi). -/

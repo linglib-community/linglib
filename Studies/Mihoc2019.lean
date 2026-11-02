@@ -164,14 +164,14 @@ instance (φ : Form) (maxD : ℕ) : Decidable (φ.tc maxD) :=
 
 The comparative forms exclude the numeral and the superlative ones include it, the split of
 [geurts-nouwen-2007] and [nouwen-2010] into Class A and Class B modifiers, here derived from the
-operator through `Comparison.boundary_mem`. -/
+operator through `Comparison.self_mem_interval_iff`. -/
 
 theorem comp_excludes_boundary (f : Extent) (n : ℕ) : ¬ (Form.modified .comp f n).tc n := by
-  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.boundary_mem]
+  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.self_mem_interval_iff]
   cases f <;> simp [Form.toComparison, Comparison.IsStrict]
 
 theorem atSup_includes_boundary (f : Extent) (n : ℕ) : (Form.modified .atSup f n).tc n := by
-  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.boundary_mem]
+  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.self_mem_interval_iff]
   cases f <;> simp [Form.toComparison, Comparison.IsStrict]
 
 /-! ### Subdomain alternatives

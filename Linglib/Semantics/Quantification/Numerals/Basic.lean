@@ -151,7 +151,7 @@ modifier places a bound on a range of amounts, so *a hexagon has at most 10 side
 the modifier conveys that the speaker does not know the amount.
 
 [kennedy-2015] reduces the split to the ordering the modifier expresses, exclusive for Class A
-and inclusive for Class B (`Degree.Comparison.boundary_mem`), and derives the ignorance as an
+and inclusive for Class B (`Degree.Comparison.self_mem_interval_iff`), and derives the ignorance as an
 implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
 that *at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
 contrast graded and dependent on the question under discussion, and [enguehard-2018] derives
