@@ -580,11 +580,11 @@ instance (s : Finset Feature) (done : List ι) (a : ι) : Decidable (S.Possible 
 /-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's bleeding
 over the unchecked features and the operations done. -/
 def Bleeds (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  RuleInteraction.Bleeds (fun a st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
-    (fun b st ↦ S.Possible st.1 st.2 b) a b (s, done)
+  RuleInteraction.Bleeds (fun st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
+    (fun st ↦ S.Possible st.1 st.2 b) (s, done)
 
 instance (s : Finset Feature) (done : List ι) (a b : ι) : Decidable (S.Bleeds s done a b) :=
-  inferInstanceAs (Decidable (RuleInteraction.Bleeds _ _ a b (s, done)))
+  inferInstanceAs (Decidable (RuleInteraction.Bleeds _ _ (s, done)))
 
 /-- Weak Economy does not compare two operations when either would bleed the other. -/
 def Exempt (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=

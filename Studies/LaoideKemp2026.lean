@@ -537,13 +537,13 @@ theorem historic_fág : ∀ c ∈ surfaces (.input (historic Morpheme.hist * fá
 
 /-- Lenition feeds the linking of `d` before *fág*, since `d` cannot link until `{L}` has deleted
 the *f* (§4.2). -/
-theorem lenition_feeds_linking : Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
-    (bundle fág) (d fág) (.input (historic Morpheme.hist * fág)) := by
+theorem lenition_feeds_linking : Feeds (dock · (bundle fág)) (CanDock · (d fág))
+    (.input (historic Morpheme.hist * fág)) := by
   decide
 
 /-- The linking of `d` does not feed lenition before *ól*, giving *d' ól*, not *dh' ól* (§4.2). -/
-theorem not_linking_feeds_lenition : ¬ Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
-    (d ól) (bundle ól) (.input (historic Morpheme.hist * ól)) := by
+theorem not_linking_feeds_lenition : ¬ Feeds (dock · (d ól)) (CanDock · (bundle ól))
+    (.input (historic Morpheme.hist * ól)) := by
   decide
 
 /-! ### Figure 2 -/

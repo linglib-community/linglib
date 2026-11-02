@@ -330,6 +330,12 @@ def Fires (r : Rule) (p : Prefix) : Prop := r.rule.condition (p.around r.slot)
 instance (r : Rule) : DecidablePred r.Fires :=
   fun _ ↦ inferInstanceAs (Decidable (r.rule.condition _))
 
+theorem apply_of_not_fires {r : Rule} {p : Prefix} (h : ¬ r.Fires p) : r.apply p = p := by
+  obtain ⟨s, rule⟩ := r
+  change ¬ rule.condition (p.around s) at h
+  simp only [apply, ImpoverishmentRule.apply, h, ↓reduceIte]
+  cases s <;> rfl
+
 /-- The rule is paradigmatic when its condition factors through its own slot. -/
 def Paradigmatic (r : Rule) : Prop := r.rule.Paradigmatic
 
@@ -349,6 +355,11 @@ def run (rs : List Rule) (p : Prefix) : Prefix := rs.foldl (fun p r ↦ r.apply 
 
 @[simp] theorem run_cons (r : Rule) (rs : List Rule) (p : Prefix) :
     run (r :: rs) p = run rs (r.apply p) := rfl
+
+-- In the bleeding order the bled rule applies vacuously.
+theorem run_pair_of_bleeds {a b : Rule} {p : Prefix} (h : Bleeds a.apply b.Fires p) :
+    run [a, b] p = a.apply p :=
+  h.isFixedPt fun _ ↦ Rule.apply_of_not_fires
 
 /-! ### The block architecture
 
@@ -716,10 +727,11 @@ theorem form_3S3S :
 
 theorem case1_syn_para : run [r34a, r40] prefix3S3S = ⟨[], [], singular⟩ := by decide
 
-theorem case1_para_syn : run [r40, r34a] prefix3S3S = ⟨[], [], third ++ singular⟩ := by decide
-
 /-- (35) removes the agent that (32a) needs, so applying it first bleeds (32a). -/
-theorem r40_bleeds_r34a : Bleeds Rule.apply Rule.Fires r40 r34a prefix3S3S := by decide
+theorem r40_bleeds_r34a : Bleeds r40.apply r34a.Fires prefix3S3S := by decide
+
+theorem case1_para_syn : run [r40, r34a] prefix3S3S = ⟨[], [], third ++ singular⟩ := by
+  rw [run_pair_of_bleeds r40_bleeds_r34a]; decide
 
 -- (31)
 theorem case1_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r34a]) :
@@ -745,7 +757,11 @@ theorem form_3Sno : Taos.form ⟨some (.third, .singular), none, some .dummy⟩ 
 
 theorem case2_dummy_syn_para : run [r45b, r40] prefix3Sno = ⟨[], [], []⟩ := by decide
 
-theorem case2_dummy_para_syn : run [r40, r45b] prefix3Sno = ⟨[], [], [.dummy]⟩ := by decide
+-- (35), (36a)
+theorem r40_bleeds_r45b : Bleeds r40.apply r45b.Fires prefix3Sno := by decide
+
+theorem case2_dummy_para_syn : run [r40, r45b] prefix3Sno = ⟨[], [], [.dummy]⟩ := by
+  rw [run_pair_of_bleeds r40_bleeds_r45b]; decide
 
 theorem case2_singular_syn_para : run [r34a, r45a, r40] prefix3S3S = ⟨[], [], []⟩ := by
   decide
@@ -753,9 +769,6 @@ theorem case2_singular_syn_para : run [r34a, r45a, r40] prefix3S3S = ⟨[], [], 
 theorem case2_singular_para_syn :
     run [r40, r34a, r45a] prefix3S3S = ⟨[], [], third ++ singular⟩ := by
   decide
-
--- (35), (36a)
-theorem r40_bleeds_r45b : Bleeds Rule.apply Rule.Fires r40 r45b prefix3Sno := by decide
 
 theorem case2_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r45b]) :
     (run l prefix3Sno).object = [.dummy] := by
@@ -775,11 +788,11 @@ theorem form_2S3S_ne_form_2S :
 theorem case3_syn_para : (run [r46, r11a] prefix2S3S).agent = [.author false, .atomic true] := by
   decide
 
-theorem case3_para_syn : (run [r11a, r46] prefix2S3S).agent = (run [r11a] prefix2S).agent := by
-  decide
-
 -- (39), (37)
-theorem r11a_bleeds_r46 : Bleeds Rule.apply Rule.Fires r11a r46 prefix2S3S := by decide
+theorem r11a_bleeds_r46 : Bleeds r11a.apply r46.Fires prefix2S3S := by decide
+
+theorem case3_para_syn : (run [r11a, r46] prefix2S3S).agent = (run [r11a] prefix2S).agent := by
+  rw [run_pair_of_bleeds r11a_bleeds_r46]; decide
 
 theorem case3_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r11a, r46]) :
     (run l prefix2S3S).agent = (run [r11a] prefix2S).agent := by
@@ -795,16 +808,16 @@ theorem form_1S3S :
       'm' ∉ "ôn".toList := by
   decide
 
+-- (43), (40)
+theorem r26_bleeds_r32 : Bleeds r26.apply r32.Fires prefix1S3S := by decide
+
 theorem case4_syn_para :
     run [r32, r26] prefix1S3S = ⟨[], first ++ [.minimal true], singular⟩ := by
   decide
 
 theorem case4_para_syn :
     run [r26, r32] prefix1S3S = ⟨[], first ++ [.minimal true], third ++ singular⟩ := by
-  decide
-
--- (43), (40)
-theorem r26_bleeds_r32 : Bleeds Rule.apply Rule.Fires r26 r32 prefix1S3S := by decide
+  rw [run_pair_of_bleeds r26_bleeds_r32]; decide
 
 -- (31)
 theorem case4_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r26, r32]) :
@@ -812,10 +825,12 @@ theorem case4_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r26, r
   rw [run_eq_of_paraThenSyn r26_paradigmatic r32_syntagmatic hl hperm, case4_para_syn]
 
 -- (33), (32), Table 21
-theorem r33_bleeds_r32 :
+theorem r33_bleeds_r32 : Bleeds r33.apply r32.Fires prefix1D3S3S := by decide
+
+theorem case4_r33_r32 :
     (run [r33, r32] prefix1D3S3S).object = third ++ singular ∧
       (run [r32, r33] prefix1D3S3S).object = singular := by
-  decide
+  rw [run_pair_of_bleeds r33_bleeds_r32]; decide
 
 theorem form_1D3S3S :
     Taos.form ⟨some (.first, .dual), some (.third, .singular), some (.third .singular)⟩ =
@@ -833,17 +848,17 @@ theorem form_1S3I :
       'n' ∈ "ónôm".toList := by
   decide
 
+/-- (43) makes the goal non-singular, so applying it first bleeds (44), as the attested *n*
+needs. -/
+theorem r26_bleeds_r29 : Bleeds r26.apply (r29 .goal).Fires prefix1S3I := by decide
+
 theorem case5_para_syn :
     (run [r26, r29 .goal] prefix1S3I).goal = first ++ [.minimal true] := by
-  decide
+  rw [run_pair_of_bleeds r26_bleeds_r29]; decide
 
 theorem case5_syn_para :
     (run [r29 .goal, r26] prefix1S3I).goal = first ++ [.atomic true] := by
   decide
-
-/-- (43) makes the goal non-singular, so applying it first bleeds (44), as the attested *n*
-needs. -/
-theorem r26_bleeds_r29 : Bleeds Rule.apply Rule.Fires r26 (r29 .goal) prefix1S3I := by decide
 
 /-! ### The two kinds interleave (§4.2, §5) -/
 
@@ -1307,8 +1322,7 @@ theorem metathesis_without_r24 :
 /-- Applied to the prefix as Spell-Out leaves it, (24) feeds (23): it removes the goal's
 `[−participant]` that separates the agent's `[+minimal]` from the goal's `[−author]`. -/
 theorem r24_feeds_m23 :
-    Feeds Rule.apply (fun (m : Prefix → TerminalMetathesisRule Terminal) p ↦
-        (m p).apply (linearize p) ≠ linearize p) r24 m23
+    Feeds r24.apply (fun p ↦ (m23 p).apply (linearize p) ≠ linearize p)
       (spellOut ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩) := by
   decide +kernel
 
@@ -1426,8 +1440,7 @@ theorem ondarru_linear_then_markedness :
 /-- In Ondarru, Participant Dissimilation feeds Ergative Metathesis (§3.1.3), T being initial only
 once the absolutive clitic is gone. -/
 theorem ondarru_feeds :
-    Feeds ObliterationRule.apply (fun (m : SpelloutDomain Terminal → SpelloutDomain Terminal) d ↦
-      m d ≠ d) ondarru ergativeMetathesis auxiliary17 := by
+    Feeds ondarru.apply (fun d ↦ ergativeMetathesis d ≠ d) auxiliary17 := by
   decide
 
 theorem zamudio_markedness_then_linear :
@@ -1444,8 +1457,7 @@ theorem zamudio_linear_then_markedness :
 /-- In Zamudio, Participant Dissimilation bleeds Ergative Metathesis (§3.1.4) by removing the
 ergative clitic that would front. -/
 theorem zamudio_bleeds :
-    Bleeds ObliterationRule.apply (fun (m : SpelloutDomain Terminal → SpelloutDomain Terminal) d ↦
-      m d ≠ d) zamudio ergativeMetathesis auxiliary19 := by
+    Bleeds zamudio.apply (fun d ↦ ergativeMetathesis d ≠ d) auxiliary19 := by
   decide
 
 end Basque
