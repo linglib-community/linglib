@@ -2,20 +2,20 @@ module
 
 public import Linglib.Logic.Team.BSML.Properties
 public import Linglib.Logic.Team.BSML.Characteristic
-public import Linglib.Logic.Team.Definability
 
 /-!
 # Expressive completeness for BSML
 
-BSML is, by a result of Knudstorp's, [expressively complete](##BSML.definableClass_support_eq) for
-the classes of pointed team models that are convex, union closed and invariant under bounded
-bisimulation; [convexity cannot be dropped](##BSML.definableClass_support_ssubset_supClosed). Its
+The expressive power of a logic over the atoms $\mathsf{X}$ is the class $\|L\|_{\mathsf{X}}$ of
+properties its formulas express, here the `Set.range` of support over [pointed team
+models](##ModalLogic.PointedTeam). BSML is, by a result of Knudstorp's, [expressively
+complete](##BSML.range_support_eq) for the classes that are convex, union closed and invariant under
+bounded bisimulation; [convexity cannot be dropped](##BSML.range_support_ssubset_supClosed). Its
 `NE`-free fragment, classical modal logic, is [complete for the flat
-classes](##BSML.definableClass_support_neFree_eq) and [expresses strictly
-less](##BSML.definableClass_support_neFree_ssubset). An invariant class reads only [the depth `k`
-world types of a team](##BSML.image_worldType_eq_iff_stateBisim), finitely many over finitely many
-atoms, so [a convex union-closed property of sets of types is one formula across all
-models](##BSML.exists_formula_iff_image_mem).
+classes](##BSML.range_support_neFree_eq) and [expresses strictly
+less](##BSML.range_support_neFree_ssubset). An invariant class reads only [the depth `k` world types
+of a team](##BSML.image_worldType_eq_iff_stateBisim), so [a convex union-closed property of sets of
+types is one formula across all models](##BSML.exists_formula_iff_image_mem).
 
 ## Implementation notes
 
@@ -28,7 +28,7 @@ closure under nonempty unions; the proof carries it across models through their 
 
 The atoms are finite and there is at least one, which drops the source's case of no atoms.
 `Formula` has no primitive `⊥`, and over no atoms its `NE`-free fragment is empty, so
-`definableClass_support_neFree_eq` would fail there; `⊥` and `⊤` are `p ∧ ¬p` and `p ∨ ¬p` for some
+`range_support_neFree_eq` would fail there; `⊥` and `⊤` are `p ∧ ¬p` and `p ∨ ¬p` for some
 atom.
 
 ## Errata
@@ -123,11 +123,11 @@ theorem boundedBisimInvariant_support (φ : Formula Atom) :
 /-- **BSML is not expressively complete** for the union-closed classes invariant under bounded
 bisimulation: the teams holding both a `p`-world and a `¬p`-world, with the empty team, are such a
 class, but no convex one ([anttila-2025] Fact 2.3.19, p. 30). -/
-theorem definableClass_support_ssubset_supClosed [Nonempty Atom] :
-    definableClass (fun (φ : Formula Atom) (p : PointedTeam.{u} Atom) ↦ support p.model φ p.team) ⊂
+theorem range_support_ssubset_supClosed [Nonempty Atom] :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
       {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
         SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
-  refine ⟨definableClass_subset fun φ ↦ ⟨fun M ↦ supClosed_support M φ,
+  refine ⟨Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ supClosed_support M φ,
     boundedBisimInvariant_support φ⟩, fun h ↦ ?_⟩
   inhabit Atom
   let ψ : Formula Atom := .disj (.conj (.atom default) .ne) (.conj (.neg (.atom default)) .ne)
@@ -165,11 +165,10 @@ theorem definableClass_support_ssubset_supClosed [Nonempty Atom] :
   · exact Finset.singleton_ne_empty a ((support_falsum M _).1 hmid)
 
 /-- Classical modal logic expresses strictly less than BSML ([anttila-2025] p. 25). -/
-theorem definableClass_support_neFree_ssubset :
-    definableClass (fun (φ : {φ : Formula Atom // φ.NEFree}) (p : PointedTeam.{u} Atom) ↦
-        support p.model φ.1 p.team) ⊂
-      definableClass (fun (φ : Formula Atom) (p : PointedTeam.{u} Atom) ↦
-        support p.model φ p.team) := by
+theorem range_support_neFree_ssubset :
+    (Set.range fun φ : {φ : Formula Atom // φ.NEFree} ↦
+        {p : PointedTeam.{u} Atom | support p.model φ.1 p.team}) ⊂
+      (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) := by
   refine ⟨fun _ ⟨φ, h⟩ ↦ ⟨φ.1, h⟩, fun h ↦ ?_⟩
   obtain ⟨φ, hφ⟩ := h ⟨.ne, rfl⟩
   let M : KripkeModel PUnit.{u + 1} Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ False⟩
@@ -181,13 +180,14 @@ variable [Finite Atom] [Nonempty Atom]
 /-- **BSML is expressively complete** for the convex, union-closed classes of pointed team models
 invariant under bounded bisimulation: the remark after [anttila-2025] Theorem 3.3.7, p. 83, which
 the conclusion of [aloni-anttila-yang-2024] reports as [knudstorp-2023]'s unpublished result. -/
-theorem definableClass_support_eq :
-    definableClass (fun (φ : Formula Atom) (p : PointedTeam.{u} Atom) ↦ support p.model φ p.team) =
+theorem range_support_eq :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) =
       {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
         (PointedTeam.mk W M ⁻¹' P).OrdConnected ∧ SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧
         BoundedBisimInvariant P} := by
-  refine (definableClass_subset fun φ ↦ ⟨fun M ↦ ⟨ordConnected_support M φ, supClosed_support M φ⟩,
-    boundedBisimInvariant_support φ⟩).antisymm ?_
+  refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
+    ⟨fun M ↦ ⟨ordConnected_support M φ, supClosed_support M φ⟩,
+      boundedBisimInvariant_support φ⟩) ?_
   rintro P ⟨hclosed, k, hk⟩
   inhabit Atom
   obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin Atom
@@ -214,13 +214,13 @@ theorem definableClass_support_eq :
 /-- The `NE`-free fragment of BSML is expressively complete for the flat classes invariant under
 bounded bisimulation ([aloni-anttila-yang-2024] Proposition 3.13; [anttila-2025] Proposition 2.3.13,
 p. 27). -/
-theorem definableClass_support_neFree_eq :
-    definableClass (fun (φ : {φ : Formula Atom // φ.NEFree}) (p : PointedTeam.{u} Atom) ↦
-        support p.model φ.1 p.team) =
+theorem range_support_neFree_eq :
+    (Set.range fun φ : {φ : Formula Atom // φ.NEFree} ↦
+        {p : PointedTeam.{u} Atom | support p.model φ.1 p.team}) =
       {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
         IsFlat (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
-  refine (definableClass_subset fun φ ↦ ⟨fun M ↦ isFlat_support_of_neFree φ.2 M,
-    boundedBisimInvariant_support φ.1⟩).antisymm ?_
+  refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
+    ⟨fun M ↦ isFlat_support_of_neFree φ.2 M, boundedBisimInvariant_support φ.1⟩) ?_
   rintro P ⟨hflat, k, hk⟩
   inhabit Atom
   obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin Atom

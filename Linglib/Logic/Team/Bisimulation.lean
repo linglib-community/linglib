@@ -21,7 +21,6 @@ bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.Poi
 * `Team.Invariant r P P'`: teams related by the lifting of `r` agree on `P` and `P'`.
 * `ModalLogic.WorldBisim k M w M' w'`: `k`-bisimilarity of pointed Kripke models.
 * `ModalLogic.StateBisim k M s M' s'`: its lifting to teams.
-* `ModalLogic.BisimClosed M P`: closure of a team property of `M` under bounded bisimulation.
 
 ## Main results
 
@@ -273,11 +272,6 @@ theorem WorldBisim.val_iff {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : Krip
 def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeModel W' Atom)
     (s' : Finset W') : Prop :=
   Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
-
-/-- A team property of `M` is closed under bounded bisimulation when, for some depth `k`, it is
-    invariant under `k`-bisimilarity within `M`. -/
-def BisimClosed (M : KripkeModel W Atom) (P : Team.TeamProperty W) : Prop :=
-  ∃ k : ℕ, Team.Invariant (WorldBisim k M · M ·) P P
 
 /-! ### Pointed team models -/
 

@@ -6,7 +6,6 @@ public import Linglib.Logic.Team.Bisimulation
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Atoms
 public import Linglib.Logic.Team.Closure
-public import Linglib.Logic.Team.Definability
 
 /-!
 # Modal dependence logic
@@ -32,6 +31,8 @@ team, but the dependence atom breaks union closure.
 * `not_supClosed_dep_of_witness`: the dependence atom is not union-closed.
 * `support_iff_forall_realize`: without dependence atoms, support is pointwise classical truth.
 * `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
+* `range_support_subset`: the classes of pointed team models MDL expresses are downward closed,
+  contain the empty team and are invariant under bounded bisimulation.
 
 ## Implementation notes
 
@@ -249,13 +250,6 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
   exact hq <| (support_dep M [p] q _).1 (h (hs w₁) (hs w₂)) w₁ (by simp) w₂ (by simp)
     (by simpa using hp)
 
-/-! ### Soundness for the closure cell (Definability bridge) -/
-
-open Team in
-theorem definableClass_support_subset (M : KripkeModel W Atom) :
-    definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
-  definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
-
 /-! ### Bisimulation invariance -/
 
 section Bisimulation
@@ -295,6 +289,30 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
         (isLowerSet_support M' ψ)
 
 end Bisimulation
+
+/-! ### Expressive power -/
+
+section ExpressivePower
+
+universe u
+
+/-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
+    depth. -/
+theorem boundedBisimInvariant_support (φ : Formula Atom) :
+    BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
+  ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
+
+/-- MDL expresses only classes of pointed team models that are downward closed, contain the empty
+    team and are invariant under bounded bisimulation. -/
+theorem range_support_subset :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        IsLowerSet (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
+        BoundedBisimInvariant P} :=
+  Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩,
+    boundedBisimInvariant_support φ⟩
+
+end ExpressivePower
 
 /-! ### The classical fragment
 

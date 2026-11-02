@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.Team.QBSML.Defs
 public import Linglib.Logic.Team.Closure
-public import Linglib.Logic.Team.Definability
 
 /-!
 # QBSML formula properties
@@ -125,15 +124,6 @@ theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
     (isLowerSet_support_of_neFree hNE M)
     (supClosed_support M φ)
     (support_empty_of_neFree hNE M)
-
-/-! ### Soundness for the flat cell (Definability bridge) -/
-
-/-- Every team property defined by an NE-free QBSML formula is flat, as in
-    [aloni-vanormondt-2023]'s reduction of NE-free QBSML to classical first-order modal logic. -/
-theorem definableClass_support_neFree_subset (M : Model W Domain Const Pred) :
-    definableClass (fun φ : {φ : Formula Var Const Pred // φ.NEFree} ↦ support M φ.1) ⊆
-      {P | IsFlat P} :=
-  definableClass_subset fun φ ↦ isFlat_support_of_neFree φ.2 M
 
 end Closure
 

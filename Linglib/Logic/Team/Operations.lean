@@ -5,7 +5,6 @@ public import Mathlib.Order.Hom.BoundedLattice
 public import Linglib.Core.Data.Set.Sups
 public import Mathlib.Data.Finset.Lattice.Union
 public import Linglib.Logic.Team.Closure
-public import Linglib.Logic.Team.Definability
 
 /-!
 # Team operations

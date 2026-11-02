@@ -4,7 +4,6 @@ public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
-public import Linglib.Logic.Team.Definability
 public import Linglib.Logic.Team.Atoms
 public import Linglib.Logic.Team.Bisimulation
 
@@ -19,8 +18,9 @@ are union closed and supported by the empty team, but the inclusion atom breaks 
 closure. This file develops the variant whose inclusion atoms relate propositional symbols,
 modal inclusion logic simpliciter in the terms of Anttila, Häggblom and Yang, who axiomatize the
 extended variant, with atoms over classical formulas, and characterize its expressive power. The
-simple variant is strictly less expressive: in one propositional symbol its only inclusion atoms
-are trivial, so every formula is flat.
+simple variant is [strictly less
+expressive](##ModalLogic.Inclusion.range_support_ssubset_of_subsingleton): in one propositional
+symbol its only inclusion atoms are trivial, so every formula is flat.
 
 ## Main definitions
 
@@ -35,12 +35,11 @@ are trivial, so every formula is flat.
 * `supClosed_support`, `support_empty`: support is union closed and contains `∅`.
 * `not_isLowerSet_incl_of_witness`: the inclusion atom is not downward closed.
 * `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
-* `definableClass_support_subset`: every definable team property is union closed, contains `∅`
-  and is closed under bounded bisimulation.
+* `range_support_subset`: the classes of pointed team models the logic expresses are union closed,
+  contain the empty team and are invariant under bounded bisimulation.
 * `support_iff_forall_realize`: when every inclusion atom is trivial, support is pointwise
   classical truth.
-* `not_mem_definableClass_of_subsingleton`: in one propositional symbol, a union-closed,
-  bisimulation-closed property containing the empty team is not definable.
+* `range_support_ssubset_of_subsingleton`: in one propositional symbol that inclusion is strict.
 
 ## Implementation notes
 
@@ -52,7 +51,7 @@ pointwise clause, where the source restricts it to classical formulas.
 ## TODO
 
 * The extended variant, with inclusion atoms over classical formulas, and for it the converse of
-  `definableClass_support_subset`, whose normal form in the source uses atoms `⊤ ⊆ α`.
+  `range_support_subset`, whose normal form in the source uses atoms `⊤ ⊆ α`.
 * The natural-deduction axiomatization and its completeness.
 * The might operator and the singular might operator, which have the same expressive power.
 
@@ -266,7 +265,7 @@ theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeM
 
 section Bisimulation
 
-open ModalLogic (WorldBisim BisimClosed)
+open ModalLogic (WorldBisim)
 
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
@@ -296,20 +295,7 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
     · exact absurd hd (Nat.not_succ_le_zero _)
     exact (ih (Nat.le_of_succ_le_succ hd)).necImage fun _ _ h ↦ h.2
 
-theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
-    BisimClosed M {t | support M φ t} :=
-  ⟨φ.modalDepth, invariant_eval φ le_rfl⟩
-
 end Bisimulation
-
-/-! ### Soundness for the closure cell (Definability bridge) -/
-
-open Team ModalLogic in
-/-- Every MIL-definable team property is union closed, contains the empty team and is bisimulation
-closed ([anttila-haggblom-yang-2025] §3). -/
-theorem definableClass_support_subset (M : KripkeModel W Atom) :
-    definableClass (support M) ⊆ {P | SupClosed P ∧ ∅ ∈ P ∧ BisimClosed M P} :=
-  definableClass_subset fun φ ↦ ⟨supClosed_support M φ, support_empty M φ, bisimClosed_support M φ⟩
 
 /-! ### The classical fragment
 
@@ -348,46 +334,74 @@ theorem support_singleton_iff_realize (hI : φ.InclTrivial) :
     support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hI]
 
-open Team in
-/-- In one propositional symbol every formula is flat, so the property of a team that is empty or
-contains a world where the symbol holds, though union closed, bisimulation closed and containing
-the empty team, is not definable: the converse of `definableClass_support_subset` fails. The
-extended variant of [anttila-haggblom-yang-2025] defines it by the atom `⊤ ⊆ p`. -/
-theorem not_mem_definableClass_of_subsingleton [Subsingleton Atom] (p : Atom) {w₁ w₂ : W}
-    (h₁ : M.val p w₁) (h₂ : ¬ M.val p w₂) :
-    let P : TeamProperty W := {t | t = ∅ ∨ ∃ w ∈ t, M.val p w}
-    (SupClosed P ∧ ∅ ∈ P ∧ ModalLogic.BisimClosed M P) ∧ P ∉ definableClass (support M) := by
-  intro P
-  refine ⟨⟨?_, .inl rfl, 0, fun s s' hs ↦ ?_⟩, fun ⟨φ, hφ⟩ ↦ ?_⟩
-  · rintro s (rfl | ⟨w, hw, hpw⟩) t ht
-    · simpa using ht
-    · exact .inr ⟨w, Finset.mem_union_left _ hw, hpw⟩
-  · have hiff : ∀ {w w'}, ModalLogic.WorldBisim 0 M w M w' → (M.val p w ↔ M.val p w') :=
-      fun h ↦ h p
-    refine ⟨?_, ?_⟩
-    · rintro (rfl | ⟨w, hw, hpw⟩)
-      · refine .inl (Finset.eq_empty_of_forall_notMem fun w' hw' ↦ ?_)
-        obtain ⟨_, h, -⟩ := hs.2 w' hw'
-        exact Finset.notMem_empty _ h
-      · obtain ⟨w', hw', h⟩ := hs.1 w hw
-        exact .inr ⟨w', hw', (hiff h).1 hpw⟩
-    · rintro (rfl | ⟨w', hw', hpw⟩)
-      · refine .inl (Finset.eq_empty_of_forall_notMem fun w hw ↦ ?_)
-        obtain ⟨_, h, -⟩ := hs.1 w hw
-        exact Finset.notMem_empty _ h
-      · obtain ⟨w, hw, h⟩ := hs.2 w' hw'
-        exact .inr ⟨w, hw, (hiff h).2 hpw⟩
-  · have hflat := fun t ↦ support_iff_forall_realize (M := M) (φ.inclTrivial_of_subsingleton) t
-    have h₁₂ : support M φ {w₁, w₂} := by
-      have : ({w₁, w₂} : Finset W) ∈ P := .inr ⟨w₁, by simp, h₁⟩
-      rwa [← hφ] at this
-    have h₂' : ({w₂} : Finset W) ∈ P := by
-      rw [← hφ]
-      exact (hflat _).2 fun w hw ↦ (hflat _).1 h₁₂ w (by simp [Finset.mem_singleton.1 hw])
-    rcases h₂' with h | ⟨w, hw, hpw⟩
-    · exact Finset.singleton_ne_empty _ h
-    · exact h₂ (Finset.mem_singleton.1 hw ▸ hpw)
-
 end Classical
+
+/-! ### Expressive power -/
+
+section ExpressivePower
+
+universe u
+
+/-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
+    depth ([anttila-haggblom-yang-2025] p. 766, by Theorem 3.6). -/
+theorem boundedBisimInvariant_support (φ : Formula Atom) :
+    BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
+  ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl hb).1 hp⟩
+
+/-- The logic expresses only classes of pointed team models that are union closed, contain the
+    empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-2025] p. 766).
+-/
+theorem range_support_subset :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
+        BoundedBisimInvariant P} :=
+  Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨supClosed_support M φ, support_empty M φ⟩,
+    boundedBisimInvariant_support φ⟩
+
+/-- In one propositional symbol every formula is flat, so the inclusion is strict: the teams that
+    are empty or hold a world where the symbol is true form such a class that no formula expresses.
+    The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `⊤ ⊆ p` (p. 768).
+-/
+theorem range_support_ssubset_of_subsingleton [Subsingleton Atom] [Nonempty Atom] :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
+        BoundedBisimInvariant P} := by
+  refine ⟨range_support_subset, fun h ↦ ?_⟩
+  inhabit Atom
+  let Q : Set (PointedTeam.{u} Atom) := {q | q.team = ∅ ∨ ∃ w ∈ q.team, q.model.val default w}
+  have hsup {W : Type u} [DecidableEq W] (M : KripkeModel W Atom) :
+      SupClosed (PointedTeam.mk W M ⁻¹' Q) := by
+    rintro s (hs | ⟨w, hw, hv⟩) t ht
+    · have hs : s = ∅ := hs
+      subst hs
+      simpa using ht
+    · exact .inr ⟨w, Finset.mem_union_left _ hw, hv⟩
+  have hinv : BoundedBisimInvariant Q := ⟨0, by
+    rintro ⟨W, M, s⟩ (hs | ⟨w, hw, hv⟩) ⟨W', M', s'⟩ ⟨hf, hb⟩
+    · refine .inl (Finset.eq_empty_of_forall_notMem fun w' hw' ↦ ?_)
+      obtain ⟨w, hw, -⟩ := hb w' hw'
+      have hs : s = ∅ := hs
+      exact Finset.notMem_empty w (hs ▸ hw)
+    · obtain ⟨w', hw', hb'⟩ := hf w hw
+      exact .inr ⟨w', hw', (hb'.val_iff default).1 hv⟩⟩
+  obtain ⟨φ, hφ⟩ := h ⟨fun M ↦ ⟨hsup M, .inl rfl⟩, hinv⟩
+  let M : KripkeModel (ULift.{u} Bool) Atom := ⟨fun _ ↦ ∅, fun _ w ↦ w.down = true⟩
+  let a : ULift.{u} Bool := ⟨true⟩
+  let b : ULift.{u} Bool := ⟨false⟩
+  have hiff (t : Finset (ULift.{u} Bool)) : support M φ t ↔ t ∈ PointedTeam.mk _ M ⁻¹' Q :=
+    Set.ext_iff.1 hφ (.mk _ M t)
+  have hflat := support_iff_forall_realize (M := M) (φ := φ) φ.inclTrivial_of_subsingleton
+  have htop : support M φ {a, b} := (hiff _).2 (.inr ⟨a, by simp, rfl⟩)
+  have hb : support M φ {b} :=
+    (hflat _).2 fun w hw ↦ (hflat _).1 htop w (by simp [Finset.mem_singleton.1 hw])
+  rcases (hiff _).1 hb with h' | ⟨w, hw, hv⟩
+  · exact Finset.singleton_ne_empty b h'
+  · have hw : w = b := Finset.mem_singleton.1 hw
+    subst hw
+    exact Bool.false_ne_true hv
+
+end ExpressivePower
 
 end ModalLogic.Inclusion
