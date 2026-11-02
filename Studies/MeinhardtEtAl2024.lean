@@ -48,7 +48,7 @@ one](##MeinhardtEtAl2024.exists_isWeaklyDeterministic_not_isNonInteractingBimach
 * Def. 3(a) and Def. 6 quantify over every output, not every change. As printed, Def. 6 fails at
   line (d) of the paper's own Maasai machine in Fig. 8, where a recessive vowel with `q1` on both
   sides stays itself and moving either state alone to `q2` changes it, and [no machine of the kind
-  here computes Maasai under it](##MeinhardtEtAl2024.not_exists_bimachine_maasai_of_def6). Both are
+  here computes Maasai under it](##MeinhardtEtAl2024.run_ne_maasai_of_forall_output_iff). Both are
   read here over changes, as Def. 5 and the paper's prose ("licensed") read them.
 
 ## TODO
@@ -89,27 +89,7 @@ inductive Seg
   | recH
   | dom
   | a
-  deriving DecidableEq, Repr
-
-instance : Fintype Seg where
-  elems := {.recL, .recH, .dom, .a}
-  complete := fun x ↦ by cases x <;> simp
-
-namespace Seg
-
-/-- Whether the segment is a [+ATR] vowel after surface realisation, which holds of `dom` and
-`recH` and fails of `recL` (until raised by spread) and of `a`. -/
-def isPlusATR : Seg → Bool
-  | .recH | .dom => true
-  | _ => false
-
-/-- The surface form of a segment under spreading [+ATR], which raises recessive [-ATR] vowels
-and passes everything else through unchanged, including the opaque /a/. -/
-def raise : Seg → Seg
-  | .recL => .recH
-  | s => s
-
-end Seg
+  deriving DecidableEq, Repr, Fintype
 
 /-- **OSL rule encoding rightward [+ATR] spreading from a dominant root.**
 
@@ -393,52 +373,37 @@ to `recH` iff the word contains a dominant vowel anywhere. This is a union of tw
 spreading passes, so it is semiambient, although a recessive's surface ATR co-varies with
 information unboundedly far on either side. -/
 
-/-- The word contains a dominant trigger. -/
-def hasDom (xs : List Seg) : Bool := xs.any (· == .dom)
-
 /-- Bidirectional dominant-recessive harmony in its non-opaque core, under which a recessive
 raises iff the word has a dominant trigger anywhere. -/
 def maasai (xs : List Seg) : List Seg :=
-  xs.map (fun s ↦ if hasDom xs && s == .recL then .recH else s)
+  xs.map fun s ↦ if Seg.dom ∈ xs ∧ s = .recL then .recH else s
 
 /-- The non-interacting bimachine, whose state on each side tracks a dominant seen on that
 side, raising a recessive if *either* side has one as a union of one-sided rules. -/
 def maasaiBM : Bimachine Bool Bool Seg Seg :=
-  .ofFlags (· == .dom) (· == .dom) fun l s r ↦ if (l || r) && s == .recL then .recH else s
+  .ofFlags (· == .dom) (· == .dom) fun l s r ↦
+    if (l = true ∨ r = true) ∧ s = .recL then .recH else s
 
 theorem maasaiBM_isNonInteracting : IsNonInteracting maasaiBM :=
-  (isNonInteracting_iff_exists_rules.mpr ⟨fun l s ↦ if l && s == .recL then .recH else s,
-    fun r s ↦ if r && s == .recL then .recH else s, by decide⟩).2
+  (isNonInteracting_iff_exists_rules.mpr ⟨fun l s ↦ if l = true ∧ s = .recL then .recH else s,
+    fun r s ↦ if r = true ∧ s = .recL then .recH else s, by decide⟩).2
 
-private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
-    hasDom xs = (hasDom (xs.take i) || hasDom (xs.drop (i + 1)) || (xs[i] == .dom)) := by
-  simp only [hasDom]
-  have heq : xs = xs.take i ++ [xs[i]] ++ xs.drop (i + 1) := by
-    rw [List.append_assoc, List.singleton_append, ← List.drop_eq_getElem_cons hi,
-      List.take_append_drop]
-  conv_lhs => rw [heq]
-  simp only [List.any_append, List.any_cons, List.any_nil, Bool.or_false]
-  cases (xs.take i).any (· == .dom) <;> cases (xs.drop (i + 1)).any (· == .dom) <;>
-    cases (xs[i] == Seg.dom) <;> rfl
-
-private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
-    (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom))
-        && xs[i] == .recL) then Seg.recH else xs[i])
-    = if hasDom xs && xs[i] == .recL then .recH else xs[i] := by
-  rw [hasDom_split xs i hi]
-  cases xs[i] <;> simp [hasDom]
+private theorem dom_mem_iff {xs : List Seg} {i : ℕ} (h : xs[i]? = some .recL) :
+    Seg.dom ∈ xs ↔ Seg.dom ∈ xs.take i ∨ Seg.dom ∈ xs.drop (i + 1) := by
+  obtain ⟨hi, hs⟩ := List.getElem?_eq_some_iff.mp h
+  conv_lhs => rw [← List.take_append_drop i xs, List.drop_eq_getElem_cons hi, hs]
+  simp
 
 theorem maasaiBM_run : maasaiBM.run = maasai := by
   funext xs
-  apply List.ext_getElem?
-  intro i
-  rw [maasaiBM, Bimachine.getElem?_ofFlags_run]
-  rcases lt_or_ge i xs.length with hi | hi
-  · rw [List.getElem?_eq_getElem hi, Option.map_some, maasaiBM_cell_eq xs i hi]
-    simp only [maasai, List.getElem?_map, List.getElem?_eq_getElem hi, Option.map_some, hasDom]
-  · rw [List.getElem?_eq_none hi, Option.map_none]
-    simp only [maasai, List.getElem?_map, List.getElem?_eq_none (by simpa using hi),
-      Option.map_none]
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [maasaiBM, Bimachine.getElem?_ofFlags_run, maasai, List.getElem?_map]
+  cases h : xs[i]? with
+  | none => rfl
+  | some s =>
+    cases s
+    · simp [dom_mem_iff h]
+    all_goals simp
 
 /-- Maasai harmony, in its non-opaque core, is computed by a non-interacting bimachine (Fig. 8). -/
 theorem maasai_isNonInteractingBimachineComputable : IsNonInteractingBimachineComputable maasai :=
@@ -448,39 +413,30 @@ theorem maasai_isNonInteractingBimachineComputable : IsNonInteractingBimachineCo
 /-- Def. 6 as printed, over every output rather than every change, admits no bimachine for Maasai:
 the output of a lone recessive vowel would be fixed by one side, yet a dominant vowel on either
 side raises it. -/
-theorem not_exists_bimachine_maasai_of_def6 :
-    ¬ ∃ (L R : Type) (B : Bimachine L R Seg Seg), B.run = maasai ∧
-      ∀ l x r y, B.output l x r = y ↔
-        (∀ r', B.output l x r' = y) ∨ ∀ l', B.output l' x r = y := by
-  rintro ⟨L, R, B, hB, h⟩
+theorem run_ne_maasai_of_forall_output_iff {L R : Type*} (B : Bimachine L R Seg Seg)
+    (h : ∀ l x r y, B.output l x r = y ↔
+      (∀ r', B.output l x r' = y) ∨ ∀ l', B.output l' x r = y) : B.run ≠ maasai := fun hB ↦ by
   have hone : B.output B.lInit .recL B.rInit = [.recL] := by
-    simpa [Bimachine.run, maasai, hasDom] using congrFun hB [Seg.recL]
+    simpa [Bimachine.run, maasai] using congrFun hB [Seg.recL]
   rcases (h _ _ _ _).mp hone with hr | hl
   · have := congrFun hB [Seg.recL, Seg.dom]
-    simp only [Bimachine.run, Bimachine.runFrom_cons, Bimachine.rState_cons, Bimachine.rState_nil,
-      hr, maasai, hasDom] at this
-    simp at this
-  · have := congrFun hB [Seg.dom, Seg.recL]
-    simp only [Bimachine.run, Bimachine.runFrom_cons, Bimachine.rState_cons, Bimachine.rState_nil,
-      Bimachine.runFrom_nil, hl, maasai, hasDom] at this
-    have := congrArg List.getLast? this
-    simp at this
+    simp [Bimachine.run, hr, maasai] at this
+  · have := congrArg List.getLast? (congrFun hB [Seg.dom, Seg.recL])
+    simp [Bimachine.run, hl, maasai] at this
 
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
   refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
     (xOff := Seg.dom) (yOff := Seg.dom)
     (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1)
     (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ ?_) (fun d ↦ ?_) <;>
-  · have hb : hasDom (flankWord Seg.recL Seg.recL Seg.recL (2 * d + 1)) = false := by
-      simp [hasDom, flankWord]
-    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := fun y ↦ by
-      simp [hasDom, flankWord]
-    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := fun x ↦ by
-      simp [hasDom, flankWord]
-    simp only [maasai, List.getElem?_map,
-      getElem?_flankWord_mid (show 0 < d + 1 by omega) (show d + 1 ≤ 2 * d + 1 by omega),
-      hb, hp, hp']
-    decide
+  · have hb : Seg.dom ∉ flankWord Seg.recL Seg.recL Seg.recL (2 * d + 1) := by
+      simp [flankWord, List.mem_replicate]
+    have hp : ∀ y, Seg.dom ∈ flankWord Seg.dom Seg.recL y (2 * d + 1) := fun y ↦ by
+      simp [flankWord]
+    have hp' : ∀ x, Seg.dom ∈ flankWord x Seg.recL Seg.dom (2 * d + 1) := fun x ↦ by
+      simp [flankWord]
+    simp [maasai, getElem?_flankWord_mid (show 0 < d + 1 by omega)
+      (show d + 1 ≤ 2 * d + 1 by omega), hb, hp, hp']
 
 -- Def. 3
 theorem maasai_isSemiambient : IsSemiambient maasai :=
@@ -491,9 +447,6 @@ theorem maasai_not_isUnboundedCircumambient : ¬ IsUnboundedCircumambient maasai
 
 theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai :=
   maasai_twoSidedUnboundedDependence.not_isSubsequential (fun _ ↦ by simp [maasai]) .left
-
-theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h ↦
-  maasai_not_leftSubsequential h.isLeftSubsequential
 
 /-! ### Tutrugbu
 
@@ -526,13 +479,6 @@ theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
   ⟨Tone.utp.map, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
     utp_not_isNonInteractingBimachineComputable⟩
-
-theorem setOf_isNonInteractingBimachineComputable_ssubset :
-    {f : List Tone.AssociationState → List Tone.AssociationState |
-      IsNonInteractingBimachineComputable f} ⊂ {f | IsBimachineComputable f} :=
-  ⟨fun _ h ↦ .of_lengthPreserving (isNonInteractingBimachineComputable_iff.mp h).1,
-    fun h ↦ utp_not_isNonInteractingBimachineComputable
-      (h (LamontOHaraSmith2019.utp_isWeaklyDeterministic.isBimachineComputable rfl))⟩
 
 /-! ### A bounded two-sided rule
 
@@ -597,7 +543,10 @@ inductive ShiftSym
   | s | t | o | i
   deriving DecidableEq, Repr, Fintype
 
-open ShiftSym in
+section WordValued
+
+open ShiftSym
+
 /-- Each state is the nearest marker on its side. A cell deletes an `s` whose next marker is `t` and
 doubles a `t` whose previous marker is `s`. -/
 def shiftBM : Bimachine (Option ShiftSym) (Option ShiftSym) ShiftSym ShiftSym where
@@ -623,7 +572,6 @@ theorem isNonInteracting_shiftBM : IsNonInteracting shiftBM := fun _ x _ hne ↦
   · exact absurd rfl hne
   · exact absurd rfl hne
 
-open ShiftSym in
 private theorem length_runFrom_shiftBM (l : Option ShiftSym) (xs : List ShiftSym) :
     (shiftBM.runFrom l xs).length =
       xs.length + if l = some s ∧ shiftBM.rState xs = some t then 1 else 0 := by
@@ -633,8 +581,10 @@ private theorem length_runFrom_shiftBM (l : Option ShiftSym) (xs : List ShiftSym
     rw [Bimachine.runFrom_cons, List.length_append, ih, Bimachine.rState_cons]
     cases x <;> simp only [shiftBM] <;> split_ifs <;> simp_all <;> omega
 
-open ShiftSym in
-private theorem shiftBM_append {xs : List ShiftSym} (hxs : ∀ x ∈ xs, x = o ∨ x = i)
+/-- The letters between markers, which pass through unchanged and leave both states alone. -/
+private def NoMarker (xs : List ShiftSym) : Prop := ∀ x ∈ xs, x = o ∨ x = i
+
+private theorem shiftBM_append {xs : List ShiftSym} (hxs : NoMarker xs)
     (l : Option ShiftSym) (ys : List ShiftSym) :
     shiftBM.rState (xs ++ ys) = shiftBM.rState ys ∧
       shiftBM.runFrom l (xs ++ ys) = xs ++ shiftBM.runFrom l ys := by
@@ -645,7 +595,41 @@ private theorem shiftBM_append {xs : List ShiftSym} (hxs : ∀ x ∈ xs, x = o �
     rcases hxs x List.mem_cons_self with rfl | rfl <;>
       exact ⟨(ih' l).1, congrArg (_ :: ·) (ih' l).2⟩
 
-open ShiftSym in
+private theorem run_shiftBM_cons {m : List ShiftSym} (hm : NoMarker m) (x y : ShiftSym) :
+    shiftBM.run (x :: (m ++ [y])) = shiftBM.output none x (shiftBM.rState [y]) ++
+      (m ++ shiftBM.runFrom (shiftBM.lStep none x) [y]) := by
+  rw [Bimachine.run, Bimachine.runFrom_cons, (shiftBM_append hm none [y]).1,
+    (shiftBM_append hm _ [y]).2]
+  rfl
+
+private theorem run_shiftBM_s_t {m : List ShiftSym} (hm : NoMarker m) :
+    shiftBM.run (s :: (m ++ [t])) = m ++ [t, t] :=
+  run_shiftBM_cons hm s t
+
+private theorem run_shiftBM_o_t {m : List ShiftSym} (hm : NoMarker m) :
+    shiftBM.run (o :: (m ++ [t])) = o :: (m ++ [t]) :=
+  run_shiftBM_cons hm o t
+
+private theorem run_shiftBM_s_o {m : List ShiftSym} (hm : NoMarker m) :
+    shiftBM.run (s :: (m ++ [o])) = s :: (m ++ [o]) :=
+  run_shiftBM_cons hm s o
+
+/-- The run at margin `d`: `i` just past the target, far from both markers. -/
+private def shiftRun (d : ℕ) : List ShiftSym :=
+  List.replicate (d + 1) o ++ i :: List.replicate (d + 1) o
+
+private theorem noMarker_shiftRun (d : ℕ) : NoMarker (shiftRun d) := fun x hx ↦ by
+  simp only [shiftRun, List.mem_append, List.mem_cons, List.mem_replicate] at hx
+  rcases hx with ⟨-, h⟩ | h | ⟨-, h⟩ <;> simp [h]
+
+private theorem length_shiftRun (d : ℕ) : (shiftRun d).length = 2 * d + 3 := by
+  simp [shiftRun]; omega
+
+private theorem getElem?_shiftRun_append (d : ℕ) (ys : List ShiftSym) :
+    (shiftRun d ++ ys)[d]? = some o := by
+  rw [List.getElem?_append_left (by rw [length_shiftRun]; omega)]
+  simp [shiftRun, List.getElem?_append]
+
 /-- Word-valued cells do not exclude unbounded circumambience: this length-preserving machine
 licenses each change by one side, and its target needs both. -/
 theorem exists_isNonInteracting_isUnboundedCircumambient :
@@ -653,37 +637,21 @@ theorem exists_isNonInteracting_isUnboundedCircumambient :
       IsNonInteracting B ∧ (∀ w, (B.run w).length = w.length) ∧ IsUnboundedCircumambient B.run := by
   refine ⟨_, _, inferInstance, inferInstance, shiftBM, isNonInteracting_shiftBM,
     fun w ↦ by simpa [Bimachine.run, shiftBM] using length_runFrom_shiftBM none w, fun d ↦ ?_⟩
-  set m := List.replicate (d + 1) o ++ i :: List.replicate (d + 1) o with hmdef
-  have hm : ∀ x ∈ m, x = o ∨ x = i := fun x hx ↦ by
-    simp only [hmdef, List.mem_append, List.mem_cons, List.mem_replicate] at hx
-    rcases hx with ⟨-, h⟩ | h | ⟨-, h⟩ <;> simp [h]
-  have hlen : m.length = 2 * d + 3 := by simp [hmdef]; omega
-  have hd : m[d]? = some o := by simp [hmdef, List.getElem?_append]
-  have hd1 : m[d + 1]? = some i := by simp [hmdef]
-  have hget : ∀ (ys : List ShiftSym) {j : ℕ}, j < m.length → (m ++ ys)[j]? = m[j]? :=
-    fun _ _ h ↦ List.getElem?_append_left h
-  have hbase : (s :: (m ++ [t]))[d + 1]? = some o := by
-    rw [List.getElem?_cons_succ, hget _ (by omega), hd]
-  have hrun : ∀ x y, shiftBM.run (x :: (m ++ [y])) = shiftBM.output none x (shiftBM.rState [y]) ++
-      (m ++ shiftBM.runFrom (shiftBM.lStep none x) [y]) := fun x y ↦ by
-    rw [Bimachine.run, Bimachine.runFrom_cons, (shiftBM_append hm none [y]).1,
-      (shiftBM_append hm _ [y]).2]
-    rfl
-  refine ⟨s :: (m ++ [t]), d + 1, by simp; omega, ?_, fun e ↦ ?_⟩
-  · rw [hbase, hrun]
-    change (m ++ [t, t])[d + 1]? ≠ some o
-    rw [hget _ (by omega), hd1]
-    decide
+  have hm := noMarker_shiftRun d
+  have hbase : (s :: (shiftRun d ++ [t]))[d + 1]? = some o := getElem?_shiftRun_append d _
+  refine ⟨s :: (shiftRun d ++ [t]), d + 1, by simp [length_shiftRun]; omega, ?_, fun e ↦ ?_⟩
+  · rw [hbase, run_shiftBM_s_t hm, List.getElem?_append_left (by rw [length_shiftRun]; omega)]
+    simp [shiftRun]
   · cases e
-    · refine ⟨o :: (m ++ [t]), ⟨by simp, by simp⟩, ?_⟩
-      rw [hbase, hrun]
-      change (o :: (m ++ [t]))[d + 1]? = some o
-      rw [List.getElem?_cons_succ, hget _ (by omega), hd]
-    · refine ⟨s :: (m ++ [o]), ⟨by simp, ?_⟩, ?_⟩
-      · simp only [Edge.window_right, show d + 1 + d + 1 = (2 * d + 1) + 1 by omega,
-          List.take_succ_cons, List.take_append_of_le_length (show 2 * d + 1 ≤ m.length by omega)]
-      · rw [hbase, hrun]
-        change (s :: (m ++ [o]))[d + 1]? = some o
-        rw [List.getElem?_cons_succ, hget _ (by omega), hd]
+    · exact ⟨o :: (shiftRun d ++ [t]), ⟨by simp, by simp⟩, by
+        rw [hbase, run_shiftBM_o_t hm]; exact getElem?_shiftRun_append d _⟩
+    · refine ⟨s :: (shiftRun d ++ [o]), ⟨by simp, ?_⟩, by
+        rw [hbase, run_shiftBM_s_o hm]; exact getElem?_shiftRun_append d _⟩
+      simp only [Edge.window_right, show d + 1 + d + 1 = (2 * d + 1) + 1 by omega,
+        List.take_succ_cons,
+        List.take_append_of_le_length (show 2 * d + 1 ≤ (shiftRun d).length by
+          rw [length_shiftRun]; omega)]
+
+end WordValued
 
 end MeinhardtEtAl2024
