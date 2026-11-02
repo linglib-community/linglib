@@ -133,10 +133,8 @@ def pastSub : Fin 3 → PairVar := ![.onset, .past, .coda]
 
 theorem string_strung_pairs :
     sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
-      (Sum.elim Wordlist.string.slots Wordlist.strung.slots) :=
-  ⟨fun | .onset => ↑"str" | .coda => ↑"ŋ" | .base => ↑"ɪ" | .past => ↑"ʌ",
-    fun v ↦ by cases v <;> decide,
-    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> decide⟩
+      (Sum.elim Wordlist.string.slots Wordlist.strung.slots) := by
+  decide
 
 theorem not_sourceOriented_pairs :
     ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
@@ -145,7 +143,6 @@ theorem not_sourceOriented_pairs :
         (Sum.elim Wordlist.sneak.slots Wordlist.snuck.slots) ∧
       ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
         (Sum.elim Wordlist.drag.slots Wordlist.drug.slots) := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩ <;>
-    exact absurd (Flat.coe_le_iff.1 ((Schema.instantiatesAt_elim_iff.1 h).1 1)) (by decide)
+  decide
 
 end Bybee1995

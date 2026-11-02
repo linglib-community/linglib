@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Core.Data.Sum.Basic
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Core.Order.PartialUnify
 public import Mathlib.Order.Lattice
 
@@ -238,7 +239,9 @@ end Generality
 An item over positions is read against a schema over variables through a subscripting, which is
 a map from positions to variables. Positions with the same subscript are coindexed and must be
 filled alike. Two items form a paired instantiation when their sum instantiates the schema through
-the sum of their subscriptings. -/
+the sum of their subscriptings. Once two pairs fill a coindexed position differently, the pairs
+are [not a product of conditions on the items separately](##setOf_instantiatesAt_elim_ne_prod),
+so no schema over single items, such as one dominating both, states the pairing. -/
 
 section Positions
 variable [PartialOrder α] [OrderBot α] {s : Schema V α} {pos : P → V} {w : P → α}
@@ -278,12 +281,23 @@ theorem instantiatesAt_iff :
       exact hc p
     · rw [Function.extend_apply' _ _ _ hv]
 
+instance decidableInstantiatesAt [Fintype P] [DecidableEq V] [DecidableEq α] [DecidableLE α] :
+    Decidable (s.InstantiatesAt pos w) :=
+  decidable_of_iff _ instantiatesAt_iff.symm
+
 theorem instantiatesAt_comp_equiv (e : Q ≃ P) :
     s.InstantiatesAt (pos ∘ e) (w ∘ e) ↔ s.InstantiatesAt pos w :=
   exists_congr fun u ↦ and_congr_right' <|
     e.surjective.injective_comp_right.eq_iff (a := w) (b := u ∘ pos)
 
 variable {pos₁ : P₁ → V} {pos₂ : P₂ → V} {w₁ : P₁ → α} {w₂ : P₂ → α}
+
+/-- Two items are a paired instantiation exactly when they are one instance of the description
+read through each subscripting. -/
+theorem instantiatesAt_elim_iff_exists :
+    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
+      ∃ u, s.Instantiates u ∧ w₁ = u ∘ pos₁ ∧ w₂ = u ∘ pos₂ := by
+  simp only [InstantiatesAt, Sum.comp_elim, Sum.elim_eq_iff]
 
 /-- Two items are a paired instantiation through their subscriptings exactly when each
 instantiates its pulled-back description, each fills its own coindexed positions alike, and
@@ -303,6 +317,18 @@ theorem InstantiatesAt.sumElim_apply_eq
     (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂)) (a : P₁) (b : P₂)
     (hab : pos₁ a = pos₂ b) : w₁ a = w₂ b :=
   (instantiatesAt_elim_iff.1 h).2.2.2.2 a b hab
+
+/-- The pairs of a paired instantiation are not the product of a set of first items and a set of
+second items once a position of each is coindexed and two pairs fill those positions
+differently. -/
+theorem setOf_instantiatesAt_elim_ne_prod {w₁' : P₁ → α} {w₂' : P₂ → α}
+    (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂))
+    (h' : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁' w₂')) {a : P₁} {b : P₂}
+    (hab : pos₁ a = pos₂ b) (hne : w₁ a ≠ w₂' b) (A : Set (P₁ → α)) (B : Set (P₂ → α)) :
+    {p : (P₁ → α) × (P₂ → α) | s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim p.1 p.2)} ≠
+      A ×ˢ B := fun hAB ↦ by
+  have hm x y := Set.ext_iff.1 hAB (x, y)
+  exact hne (((hm w₁ w₂').2 ⟨((hm _ _).1 h).1, ((hm _ _).1 h').2⟩).sumElim_apply_eq a b hab)
 
 theorem instantiatesAt_elim_swap :
     s.InstantiatesAt (Sum.elim pos₂ pos₁) (Sum.elim w₂ w₁) ↔

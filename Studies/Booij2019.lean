@@ -7,47 +7,58 @@ module
 
 public import Linglib.Data.Wordlist.Booij2019
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Morphology.Morphotactics.TemplateMatch
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 
 /-!
 # Booij (2019): The role of schemas in Construction Morphology
 
-This file formalizes Booij's templatic and second-order schemas as coindexed schemas
-read through subscriptings of template slots. A templatic schema is a description over root
-consonants and vowel constants, and a consonant that occupies two slots, the gemination of the
-Damascus Arabic occupation template `C₁aC₂C₂aaC₃` of (2), is a subscripting that is not
-injective: an item instantiates the schema exactly when its vowels are the template's and the
-two geminate slots are filled alike (`occupation_instantiatesAt_iff`). The subscripting is the
-association of the autosegmental template: the slots it coindexes are the slots associated
-to one melody element (`occupationSub_eq_iff_assoc_eq`), and the association spells out the
-word (`xabbaazMatch_spellout`).
+This file formalizes Booij's templatic and second-order schemas as schemas read through
+subscriptings of their slots. The Damascus Arabic occupation schema (2) gives one root consonant
+two slots, so its subscripting is not injective, and its instances are
+[the words $C_1aC_2C_2aaC_3$](##occupation_instantiatesAt_iff).
 
-Second-order schemas relate two templates over one root. Javanese partial reduplication (13)
-copies the initial consonant into the reduplicant, so the reduplicant repeats one variable and
-shares it with the base (`reduplication_pairs_iff`); the Egyptian Arabic comparative (16) pairs
-an adjective with the comparative template over the same three consonants
-(`comparative_pairs_iff`), so *kibiir* pairs with *akbar* and not with *atxan*.
+A second-order schema is one description read through two subscriptings, one per sister, which
+fill their coindexed variables alike. Javanese partial reduplication (13) pairs
+[a reduplicant $C_1\text{ə}C_1y$ with the base $C_1y$](##reduplication_pairs_iff), and the Egyptian
+Arabic comparative (16) pairs [an adjective $C_1VC_2VC_3$ with the comparative
+$aC_1C_2aC_3$](##comparative_pairs_iff). Neither pairing is a product of a condition on each
+sister, since *kibiir* pairs with *akbar* and *tixiin* with *atxan* but
+[*kibiir* not with *atxan*](##comparative_ne_prod), and
+[likewise for the reduplicants](##reduplication_ne_prod). No schema over single words, and so no
+higher-order schema dominating the sisters, states the correspondence, which the coindexation
+alone carries.
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read as slot-indexed segments
-  on the flat carrier by `CLDF.Wordlist.Form.slots`; slots are `Fin n` positions. A variable
-  standing for a sequence of sounds, the paper's `y`, is one segment holding the residue.
-* The higher-order schema for Dutch *-er* and the affixoid discussion are not formalized.
+* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read one segment per slot on
+  the flat carrier by `CLDF.Wordlist.Form.slots`.
+* A variable is a slot at `⊥`, which any segment fills, where Booij's `C` takes a consonant and
+  `V` a vowel. His `y` ranges over sequences of sounds; here it is one slot, so the wordlist
+  stores the residue of a Javanese base as one segment.
+* Booij offers (2), after the unproductive Dutch diminutive verbs, as an example of the primarily
+  motivating function of schemas, so its variables are closed; those of (13) and (16) are open.
+* Only the phonological level of each schema is encoded, not the syntactic and semantic levels or
+  the coindex that links the three.
+
+## TODO
+
+* Typed variables and sequence variables need slots that hold descriptions strictly between `⊥`
+  and a segment, which `ConstructionMorphology.Schema.opens_subset` does not let be open.
+* The higher-order schema (5) for Dutch *-er* and its four subschemas, the sister schemas (10)′,
+  (11) and (14), the allomorphy schema (18), whose `f/s` and `v/z` are classes of segments, and
+  the affixoid subschemas of Section 4.
 
 ## References
 
 * [booij-2019]
-* [mccarthy-1981]
 -/
 
 @[expose] public section
 
 namespace Booij2019
 
-open Morphology ConstructionMorphology
+open ConstructionMorphology
 
 /-! ### The occupation template `C₁aC₂C₂aaC₃` -/
 
@@ -56,30 +67,31 @@ inductive OccPart
   | c1 | c2 | c3 | a | aa
   deriving DecidableEq
 
-/-- The occupation schema (2) pins the vowels and leaves the root consonants open. -/
+/-- The occupation schema (2) pins the vowels and leaves the root consonants as closed
+variables. -/
 def occupation : Schema OccPart (Flat String) :=
-  ⟨fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3},
-    by rintro _ (rfl | rfl | rfl) <;> rfl⟩
+  .nonproductive fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥
 
 /-- The six slots of `C₁aC₂C₂aaC₃` subscripted by parts, the second consonant occupying
 two. -/
 def occupationSub : Fin 6 → OccPart := ![.c1, .a, .c2, .c2, .aa, .c3]
 
-/-- An item instantiates the occupation schema exactly when its vowels are the template's and
-the two slots of the second consonant are filled alike, since gemination is a subscripting that
-is not injective. -/
+/-- An item instantiates the occupation schema exactly when it is $C_1aC_2C_2aaC_3$ for some
+consonants $C_1$, $C_2$ and $C_3$. -/
 theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
     occupation.InstantiatesAt occupationSub w ↔
-      w 1 = ↑"a" ∧ w 4 = ↑"aa" ∧ w 2 = w 3 := by
-  rw [Schema.instantiatesAt_iff]
-  constructor
-  · rintro ⟨hc, hf⟩
-    exact ⟨Flat.coe_le_iff.1 (hc 1), Flat.coe_le_iff.1 (hc 4), hf (by decide)⟩
-  · rintro ⟨h1, h4, h23⟩
-    refine ⟨fun i ↦ ?_, fun i j hij ↦ ?_⟩
-    · fin_cases i <;> first | exact bot_le | exact h1.ge | exact h4.ge
-    · fin_cases i <;> fin_cases j <;>
-        first | rfl | exact h23 | exact h23.symm | exact absurd hij (by decide)
+      ∃ c₁ c₂ c₃, w = ![c₁, ↑"a", c₂, c₂, ↑"aa", c₃] := by
+  refine ⟨fun ⟨u, hu, hw⟩ ↦ ⟨u .c1, u .c2, u .c3, ?_⟩, fun ⟨c₁, c₂, c₃, hw⟩ ↦ ?_⟩
+  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
+    have haa : u .aa = ↑"aa" := Flat.coe_le_iff.1 (hu .aa)
+    subst hw
+    funext i
+    fin_cases i <;> simp [occupationSub, ha, haa]
+  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .a => ↑"a" | .aa => ↑"aa",
+      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_⟩
+    subst hw
+    funext i
+    fin_cases i <;> rfl
 
 -- (1)
 theorem occupation_nouns :
@@ -87,43 +99,11 @@ theorem occupation_nouns :
       occupation.InstantiatesAt occupationSub Wordlist.xaddaam.slots ∧
         occupation.InstantiatesAt occupationSub Wordlist.bawwaab.slots ∧
           occupation.InstantiatesAt occupationSub Wordlist.sammaak.slots := by
-  simp only [occupation_instantiatesAt_iff]
   decide
 
 theorem not_occupation_of_ne_medial :
-    ¬ occupation.InstantiatesAt occupationSub
-      ![↑"x", ↑"a", ↑"b", ↑"d", ↑"aa", ↑"z"] := by
-  rw [occupation_instantiatesAt_iff]
+    ¬ occupation.InstantiatesAt occupationSub ![↑"x", ↑"a", ↑"b", ↑"d", ↑"aa", ↑"z"] := by
   decide
-
-/-! ### The subscripting as autosegmental association -/
-
-/-- The template of (2) as a CV skeleton. -/
-def occupationTemplate : Autosegmental.Skeleton := [.C, .V, .C, .C, .V, .C]
-
-/-- *xabbaaz* as the association of the root /x b z/ and the vocalism /a aa/ to the template,
-in which the second root consonant is associated to two slots. -/
-def xabbaazMatch : TemplateMatch String where
-  root := ⟨["x", "b", "z"]⟩
-  vocalism := ["a", "aa"]
-  template := occupationTemplate
-  associations :=
-    [⟨.root, 0, 0⟩, ⟨.vocalism, 0, 1⟩, ⟨.root, 1, 2⟩, ⟨.root, 1, 3⟩,
-      ⟨.vocalism, 1, 4⟩, ⟨.root, 2, 5⟩]
-
-/-- The melody element a slot is associated to. -/
-def xabbaazAssoc (i : Fin 6) : Option (AssocSource × Nat) :=
-  (xabbaazMatch.associations.find? (·.slotIndex == i.val)).map fun a ↦ (a.source, a.melodyIndex)
-
-/-- The association lines spell out *xabbaaz*. -/
-theorem xabbaazMatch_spellout : xabbaazMatch.spellout = Wordlist.xabbaaz.segments := by
-  decide
-
-/-- The subscripting and the association agree, as two slots carry the same part exactly when
-they are associated to the same melody element. -/
-theorem occupationSub_eq_iff_assoc_eq (i j : Fin 6) :
-    occupationSub i = occupationSub j ↔ xabbaazAssoc i = xabbaazAssoc j := by
-  fin_cases i <;> fin_cases j <;> decide
 
 /-! ### Javanese partial reduplication -/
 
@@ -135,7 +115,7 @@ inductive RedPart
 
 /-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. -/
 def reduplication : Schema RedPart (Flat String) :=
-  ⟨fun | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}, by rintro _ (rfl | rfl) <;> rfl⟩
+  .productive fun | .schwa => ↑"ə" | _ => ⊥
 
 /-- The reduplicant `C₁əC₁y`, whose initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
@@ -143,24 +123,25 @@ def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
 /-- The base `C₁y`. -/
 def baseSub : Fin 2 → RedPart := ![.c1, .y]
 
-/-- A reduplicant and base instantiate (13) iff the reduplicant has the schwa, copies its initial
-consonant, and shares consonant and residue with the base. -/
+/-- A reduplicant and a base are paired by (13) exactly when they are $C_1\text{ə}C_1y$ and
+$C_1y$ for one consonant $C_1$ and one residue $y$. -/
 theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat String} :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b) ↔
-      r 1 = ↑"ə" ∧ r 0 = r 2 ∧ r 0 = b 0 ∧ r 3 = b 1 := by
-  rw [Schema.instantiatesAt_elim_iff]
-  constructor
-  · rintro ⟨hr, -, hf, -, h⟩
-    exact ⟨Flat.coe_le_iff.1 (hr 1), hf (by decide), h 0 0 (by decide), h 3 1 (by decide)⟩
-  · rintro ⟨h1, h02, h0, h3⟩
-    refine ⟨fun i ↦ ?_, fun i ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_⟩
-    · fin_cases i <;> first | exact bot_le | exact h1.ge
-    · fin_cases i <;> exact bot_le
-    · fin_cases i <;> fin_cases j <;>
-        first | rfl | exact h02 | exact h02.symm | exact absurd hij (by decide)
-    · fin_cases i <;> fin_cases j <;> first | rfl | exact absurd hij (by decide)
-    · fin_cases i <;> fin_cases j <;>
-        first | exact h0 | exact h02.symm.trans h0 | exact h3 | exact absurd hij (by decide)
+      ∃ c y, r = ![c, ↑"ə", c, y] ∧ b = ![c, y] := by
+  rw [Schema.instantiatesAt_elim_iff_exists]
+  refine ⟨fun ⟨u, hu, hr, hb⟩ ↦ ⟨u .c1, u .y, ?_, ?_⟩, fun ⟨c, y, hr, hb⟩ ↦ ?_⟩
+  · have hs : u .schwa = ↑"ə" := Flat.coe_le_iff.1 (hu .schwa)
+    subst hr
+    funext i
+    fin_cases i <;> simp [redSub, hs]
+  · subst hb
+    funext i
+    fin_cases i <;> rfl
+  · refine ⟨fun | .c1 => c | .schwa => ↑"ə" | .y => y,
+      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
+      · subst_vars
+        funext i
+        fin_cases i <;> rfl
 
 -- (12)
 theorem reduplication_verbs :
@@ -170,21 +151,26 @@ theorem reduplication_verbs :
         (Sum.elim Wordlist.jejawah.slots Wordlist.jawah.slots) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
         (Sum.elim Wordlist.gegeni.slots Wordlist.geni.slots) := by
-  simp only [reduplication_pairs_iff]
   decide
+
+/-- No condition on reduplicants and bases separately pairs them as (13) does, since
+*tətamu* pairs with *tamu* and *jəjawah* with *jawah* but *tətamu* not with *jawah*. -/
+theorem reduplication_ne_prod (R : Set (Fin 4 → Flat String)) (B : Set (Fin 2 → Flat String)) :
+    {p | reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim p.1 p.2)} ≠ R ×ˢ B :=
+  Schema.setOf_instantiatesAt_elim_ne_prod reduplication_verbs.1 reduplication_verbs.2.1
+    (a := 0) (b := 0) rfl (by decide) R B
 
 /-! ### The Egyptian Arabic comparative -/
 
 /-- The parts of the comparative schema (16), which are three root consonants, the adjective's
-two open vowels, and the comparative's constant `a`. -/
+two vowels, and the comparative's constant `a`. -/
 inductive CmpPart
   | c1 | c2 | c3 | v1 | v2 | a
   deriving DecidableEq
 
 /-- The comparative schema (16) pins the comparative vowel and leaves all else open. -/
 def comparative : Schema CmpPart (Flat String) :=
-  ⟨fun | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2},
-    by rintro _ (rfl | rfl | rfl | rfl | rfl) <;> rfl⟩
+  .productive fun | .a => ↑"a" | _ => ⊥
 
 /-- The adjective template `C₁VC₂VC₃`. -/
 def adjSub : Fin 5 → CmpPart := ![.c1, .v1, .c2, .v2, .c3]
@@ -192,26 +178,28 @@ def adjSub : Fin 5 → CmpPart := ![.c1, .v1, .c2, .v2, .c3]
 /-- The comparative template `aC₁C₂aC₃`. -/
 def cmpSub : Fin 5 → CmpPart := ![.a, .c1, .c2, .a, .c3]
 
-/-- An adjective and a comparative are a paired instantiation of (16) exactly when the
-comparative has its vowels and the two share their three consonants. -/
+/-- An adjective and a comparative are paired by (16) exactly when they are $C_1VC_2VC_3$ and
+$aC_1C_2aC_3$ over the same three consonants. -/
 theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p q) ↔
-      q 0 = ↑"a" ∧ q 3 = ↑"a" ∧ p 0 = q 1 ∧ p 2 = q 2 ∧ p 4 = q 4 := by
-  rw [Schema.instantiatesAt_elim_iff]
-  constructor
-  · rintro ⟨-, hq, -, -, h⟩
-    exact ⟨Flat.coe_le_iff.1 (hq 0), Flat.coe_le_iff.1 (hq 3), h 0 1 (by decide),
-      h 2 2 (by decide), h 4 4 (by decide)⟩
-  · rintro ⟨h0, h3, h01, h22, h44⟩
-    refine ⟨fun i ↦ ?_, fun i ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_, fun i j hij ↦ ?_⟩
-    · fin_cases i <;> exact bot_le
-    · fin_cases i <;> first | exact bot_le | exact h0.ge | exact h3.ge
-    · fin_cases i <;> fin_cases j <;> first | rfl | exact absurd hij (by decide)
-    · fin_cases i <;> fin_cases j <;>
-        first | rfl | exact h0.trans h3.symm | exact h3.trans h0.symm | exact absurd hij (by decide)
-    · fin_cases i <;> fin_cases j <;>
-        first | exact h01 | exact h22 | exact h44 | exact absurd hij (by decide)
+      ∃ c₁ c₂ c₃ v₁ v₂, p = ![c₁, v₁, c₂, v₂, c₃] ∧ q = ![↑"a", c₁, c₂, ↑"a", c₃] := by
+  rw [Schema.instantiatesAt_elim_iff_exists]
+  refine ⟨fun ⟨u, hu, hp, hq⟩ ↦ ⟨u .c1, u .c2, u .c3, u .v1, u .v2, ?_, ?_⟩,
+    fun ⟨c₁, c₂, c₃, v₁, v₂, hp, hq⟩ ↦ ?_⟩
+  · subst hp
+    funext i
+    fin_cases i <;> rfl
+  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
+    subst hq
+    funext i
+    fin_cases i <;> simp [cmpSub, ha]
+  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .v1 => v₁ | .v2 => v₂ | .a => ↑"a",
+      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
+      · subst_vars
+        funext i
+        fin_cases i <;> rfl
 
+-- (15)
 theorem comparative_pairs :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
         (Sum.elim Wordlist.kibiir.slots Wordlist.akbar.slots) ∧
@@ -219,7 +207,13 @@ theorem comparative_pairs :
         (Sum.elim Wordlist.tixiin.slots Wordlist.atxan.slots) ∧
         ¬ comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
           (Sum.elim Wordlist.kibiir.slots Wordlist.atxan.slots) := by
-  simp only [comparative_pairs_iff]
   decide
+
+/-- No condition on adjectives and comparatives separately pairs them as (16) does, so no schema
+dominating the two sisters states the correspondence of their consonants. -/
+theorem comparative_ne_prod (A B : Set (Fin 5 → Flat String)) :
+    {p | comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p.1 p.2)} ≠ A ×ˢ B :=
+  Schema.setOf_instantiatesAt_elim_ne_prod comparative_pairs.1 comparative_pairs.2.1
+    (a := 0) (b := 1) rfl (by decide) A B
 
 end Booij2019
