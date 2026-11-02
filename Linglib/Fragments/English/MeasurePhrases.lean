@@ -106,6 +106,10 @@ def liter : MeasureTerm :=
 /-- *inch*. -/
 def inch : MeasureTerm :=
   { Nouns.Noun.common "inch" with symbol := "in", dimension := .of .length, magnitude := 254 / 100 }
+/-- *foot*, plural *feet*. -/
+def foot : MeasureTerm :=
+  { Nouns.Noun.common "foot" with
+    symbol := "ft", plural := some "feet", dimension := .of .length, magnitude := 3048 / 100 }
 /-- *mile*. -/
 def mile : MeasureTerm :=
   { Nouns.Noun.common "mile" with
@@ -157,8 +161,8 @@ theorem psi_quantity :
 
 /-- The measure terms. -/
 def measureTerms : List MeasureTerm :=
-  [gram, kilogram, kilo, pound, milliliter, liter, inch, mile, kilometer, meter, hour, second,
-    psi]
+  [gram, kilogram, kilo, pound, milliliter, liter, inch, foot, mile, kilometer, meter, hour,
+    second, psi]
 
 /-- The measure term with singular or plural form `s`. -/
 def measureTerm? (s : String) : Option MeasureTerm :=

@@ -117,6 +117,7 @@ def lot : Noun := .common "lot"
 def bean : Noun := .common "bean"
 def lentil : Noun := .common "lentil"
 def spider : Noun := .common "spider"
+def bird : Noun := .common "bird"
 def pollenGrain : Noun := .common "pollen grain"
 def father : Noun := { Noun.common "father" with referentGender := some .male }
 def mother : Noun := { Noun.common "mother" with referentGender := some .female }
@@ -129,6 +130,7 @@ def child : Noun := { Noun.common "child" with plural := "children" }
 /-! ### Mass nouns -/
 
 def water : Noun := .mass "water"
+def mud : Noun := .mass "mud"
 def sand : Noun := .mass "sand"
 def trash : Noun := .mass "trash"
 def furniture : Noun := .mass "furniture"

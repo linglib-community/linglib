@@ -59,10 +59,6 @@ instance : LT (CresswellDegree φ) :=
 @[simp] theorem CresswellDegree.mk_lt_mk : (⟦b⟧ : CresswellDegree φ) < ⟦a⟧ ↔ φ a b :=
   Iff.rfl
 
-/-- Indistinguishable things have the same degree. -/
-theorem CresswellDegree.mk_eq_mk : (⟦a⟧ : CresswellDegree φ) = ⟦b⟧ ↔ cresswellSetoid φ a b :=
-  Quotient.eq
-
 /-- The induced comparison tells distinct degrees apart: quotienting again identifies nothing. -/
 theorem cresswellSetoid_lt_eq_bot (φ : E → E → Prop) :
     cresswellSetoid ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) = ⊥ :=
@@ -89,16 +85,16 @@ theorem cresswellSetoid_iff_incompRel [IsStrictWeakOrder E φ] :
 theorem isStrictTotalOrder_lt_iff :
     IsStrictTotalOrder (CresswellDegree φ) (· < ·) ↔ IsStrictWeakOrder E φ := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · have hirr (x : E) : ¬ φ x x := irrefl (r := ((· < ·) : CresswellDegree φ → _ → Prop)) ⟦x⟧
-    have heq {x y : E} (hxy : ¬ φ x y ∧ ¬ φ y x) : (⟦x⟧ : CresswellDegree φ) = ⟦y⟧ :=
-      Std.Trichotomous.trichotomous (r := ((· < ·) : CresswellDegree φ → _ → Prop)) _ _ hxy.2 hxy.1
+  · have hirr (x : E) : ¬ φ x x := irrefl_of (· < ·) (⟦x⟧ : CresswellDegree φ)
+    have heq {x y : E} (h : ¬ φ x y ∧ ¬ φ y x) : (⟦x⟧ : CresswellDegree φ) = ⟦y⟧ :=
+      (trichotomous_of (· < ·) (⟦x⟧ : CresswellDegree φ) ⟦y⟧).elim (absurd · h.2)
+        (·.elim id (absurd · h.1))
     exact
       { irrefl := hirr
         trans := fun x y z hxy hyz ↦
-          _root_.trans (r := ((· < ·) : CresswellDegree φ → _ → Prop)) (a := ⟦z⟧) (b := ⟦y⟧)
-            (c := ⟦x⟧) hyz hxy
+          trans_of (· < ·) (a := (⟦z⟧ : CresswellDegree φ)) (b := ⟦y⟧) (c := ⟦x⟧) hyz hxy
         incomp_trans := fun x y z h₁ h₂ ↦
-          have hxz := CresswellDegree.mk_eq_mk.1 ((heq h₁).trans (heq h₂))
+          have hxz : cresswellSetoid φ x z := Quotient.eq.1 ((heq h₁).trans (heq h₂))
           ⟨fun h ↦ hirr z ((hxz.1 z).1 h), fun h ↦ hirr z ((hxz.2 z).1 h)⟩ }
   · exact
       { trichotomous := fun x y ↦ Quotient.inductionOn₂ x y fun _ _ hab hba ↦
