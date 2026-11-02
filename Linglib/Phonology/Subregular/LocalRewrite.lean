@@ -370,6 +370,12 @@ theorem Rule.apply_eq_scan (r : Rule) : r.apply = r.scan [] := by
   show Rule.apply.go r [] input = _
   simpa using (r.scan_rtake [] input).symm
 
+/-- A rule that reads nothing to its left rewrites a word one segment at a time. -/
+theorem Rule.apply_cons_of_leftReach_eq_zero {r : Rule} (h : r.leftReach = 0) (s : Segment)
+    (input : List Segment) : r.apply (s :: input) = r.verdict [] s input ++ r.apply input := by
+  rw [r.apply_eq_scan, Rule.scan, h]
+  simp
+
 /-! ### No right reach: Input Strict Locality
 
 A rule that reads nothing to its right — no right context and no copy from the right —
