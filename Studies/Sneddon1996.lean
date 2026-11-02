@@ -91,13 +91,10 @@ theorem placeAssimilation_s :
 
 /-! ### The forms -/
 
-/-- The segment of a glyph of PHOIBLE's Standard Indonesian inventory. -/
-def ofGlyph (g : String) : Option Segment :=
-  (Data.PHOIBLE.Inventories.Indonesian.ind.phonemes.find? (·.glyph = g)).map
-    (Segment.ofChart ·.features)
-
-/-- The segments of a form, each read through its PHOIBLE glyph. -/
-def segmentsOf (w : Form Cell) : Option (List Segment) := w.segments.mapM ofGlyph
+/-- The segments of a form, each read through its glyph in PHOIBLE's Standard Indonesian
+inventory. -/
+def segmentsOf (w : Form Cell) : Option (List Segment) :=
+  w.segments.mapM Data.PHOIBLE.Inventories.Indonesian.ind.segment?
 
 /-- A relation of the table attaches *meN-*, *peN-*, or *meN-* with *per-* to a base, and after
 *meN-* "the initial *p* of *per-* is not lost" (p. 11). -/
