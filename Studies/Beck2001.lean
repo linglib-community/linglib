@@ -312,9 +312,10 @@ theorem weakReading_eq_zero_iff : weakReading Atom R A = 0 ↔ ¬ A.Nontrivial :
   simp only [ne_eq, presupOfReferent_eq_zero_iff, Option.ne_none_iff_isSome,
     eachOther_atom_isSome_iff]
 
-/-- Cumulating the relation to the definite has the truth conditions of Weak Reciprocity. -/
-theorem weakReading_eq_one_iff :
-    weakReading Atom R A = 1 ↔ A.Nonempty ∧ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
+-- (110), (128)
+theorem cumulatedReading_atom_eq_one_iff {z y : Finset α} :
+    cumulatedReading Atom Atom R z y = 1 ↔
+      z.Nonempty ∧ Set.LiftRel (fun a b ↦ R {a} {b} ∧ a ≠ b) ↑z ↑y := by
   have : (fun p : Finset α × Finset α ↦ presupOfReferent (fun p ↦ eachOther Atom p.1 p.2)
       (fun d p ↦ Atom p.1 ∧ Atom p.2 ∧ R p.1 d) p = 1) =
       Function.uncurry (Relation.Map (fun a b ↦ R {a} {b} ∧ a ≠ b) ({·}) ({·})) := by
@@ -328,8 +329,12 @@ theorem weakReading_eq_one_iff :
       exact ⟨a, b, ⟨hR, hne⟩, rfl, rfl⟩
     · rintro ⟨a, b, ⟨hR, hne⟩, rfl, rfl⟩
       exact ⟨_, eachOther_atom_singleton_of_ne hne, atom_singleton a, atom_singleton b, hR⟩
-  rw [weakReading, cumulatedReading, pluralize_eq_one_iff, weakReciprocity_iff_liftRel,
-    ← cumulation_map_singleton, Cumulation, this]
+  rw [cumulatedReading, pluralize_eq_one_iff, ← cumulation_map_singleton, Cumulation, this]
+
+/-- Cumulating the relation to the definite has the truth conditions of Weak Reciprocity. -/
+theorem weakReading_eq_one_iff :
+    weakReading Atom R A = 1 ↔ A.Nonempty ∧ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
+  rw [weakReading, cumulatedReading_atom_eq_one_iff, weakReciprocity_iff_liftRel]
 
 theorem weakReading_eq_neg_one_iff :
     weakReading Atom R A = -1 ↔ A.Nontrivial ∧ ¬ WeakReciprocity (fun a b ↦ R {a} {b}) A := by

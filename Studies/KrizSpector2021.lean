@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Plural
+public import Studies.Beck2001
+public import Studies.DalrympleEtAl1998
 public import Studies.Kriz2016
 public import Studies.KrizChemla2015
 public import Mathlib.Data.Finset.Interval
@@ -44,7 +46,26 @@ present account (`communicatedContent_solvedMath`, `not_felicitous_solvedMath`).
 appendix's candidates with superpluralities (`CandUp`) yield the upward-homogeneity falsity
 condition and coincide with Križ's generalised homogeneity (`valueUp_eq_generalisedTruthValue`).
 
+Beck's reciprocal tests the account beyond its own data, her cumulated relation taking a bound
+range with its own index. [One-way Weak Reciprocity is then a
+candidate](##pred₂_reciprocated_self_parts), which she argues against, and her exception reading
+[suffices for a candidate](##pred₂_basedOn_of_weakReciprocity) [without being
+one](##basedOn_not_weakReciprocity). The sentence is [true on every candidate under Weak
+Reciprocity](##forall_pred₂_reciprocated_iff) and [false on every candidate when nobody is related
+to anybody](##forall_not_pred₂_reciprocated_iff), and a singular antecedent [still needs the
+definite's presupposition](##reciprocated_singleton). *None of them know each other* stays a puzzle.
+Neutralizing the quantifier's index as (91) requires [yields the reading Beck
+rejects](##noneNeutral_id_iff). Leaving it alone [gives the reading she
+needs](##forall_noneInSitu_iff), by the parse (91) exists to block, and [so does a range of
+*them*](##forall_noneNeutral_const_iff), on a parse neither paper offers. [Asymmetric
+predicates](##fn16_row) then favour the first over the other two.
+
 ## Implementation notes
+
+The paper mentions reciprocals only in a citation. `Reciprocated` arises at logical form, so it
+carries indices as `dist` does, extending (63b) to two places, and its range keeps an index as the
+bound pronoun of (108) does. (88) and (91) are read for *none of*. The range of *them* follows the
+logical form Beck's (5) gives for Heim, Lasnik and May, with *none* in place of *each*.
 
 Pluralities are `Finset Atom` ordered by inclusion, so parts are nonempty subsets, the
 convex closure of (21) is a union of `Finset.Icc` intervals, and candidate domains are
@@ -56,8 +77,15 @@ non-monotonic embeddings such as the paper's (22). Strong relevance is the subst
 gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 `0 < lo ≤ hi ≤ |books|` in place of the paper's 3, 8, and 10.
 
+## Errata
+
+* The prose under (100) assigns the pronoun the index `j`, but in (100) the verb is `like⟨j,k⟩`,
+  whose object index is `k` by the convention of (53b).
+
 ## TODO
 
+* Negation below cumulation, as in Beck's (121c): the paper's proof that negation's scope does not
+  matter covers the one-place `dist` only.
 * The paper's §2.2 critique of Malamud's decision-theoretic account and its §6 open problems
   (functional non-maximality, overt questions) are not formalized.
 * The appendix's revision of *all* in terms of maximal individual witnesses, (117)–(119),
@@ -68,6 +96,8 @@ gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 * [kriz-spector-2021]
 * [kriz-2016]
 * [kriz-chemla-2015]
+* [beck-2001]
+* [heim-lasnik-may-1991]
 * [krifka-1996]
 * [malamud-2012]
 -/
@@ -1018,5 +1048,461 @@ theorem displayValue_eq_pointwise (q : Quantifier.NumberTree) [DecidableRel q] (
   exact ⟨fun h ↦ h.imp fun {b n} ↦ (hcell n b).1, fun h ↦ h.imp fun {b n} ↦ (hcell n b).2⟩
 
 end KrizChemla
+
+/-! ### Reciprocals
+
+Beck's cumulated relation arises at logical form, so it carries argument indices as the
+distributivity operator (63b) does. Its range is a pronoun bound by the antecedent, which keeps its
+own index as in (108). -/
+
+section Reciprocals
+
+variable [DecidableEq Atom] {R : Atom → Atom → W → Prop} {x y z : Finset Atom} {w : W}
+  {H : HParam Atom} {i j : ℕ}
+
+/-- Beck's cumulated relation at `w`, the relation to *the other ones among* the second argument.
+-/
+def Reciprocated (R : Atom → Atom → W → Prop) (z y : Finset Atom) (w : W) : Prop :=
+  Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
+    (Relation.Map (R · · w) ({·}) ({·})) z y = 1
+
+theorem reciprocated_iff :
+    Reciprocated R z y w ↔ z.Nonempty ∧ Set.LiftRel (fun a b ↦ R a b w ∧ a ≠ b) ↑z ↑y := by
+  simp only [Reciprocated, Beck2001.cumulatedReading_atom_eq_one_iff,
+    Sternefeld1998.map_singleton_singleton]
+
+theorem reciprocated_self_iff :
+    Reciprocated R x x w ↔ x.Nonempty ∧ Reciprocal.WeakReciprocity (R · · w) x :=
+  reciprocated_iff
+
+private theorem subset_of_mem_Cand {D : Finset (Finset Atom)} (hD : D ∈ Cand x) (hz : z ∈ D) :
+    z ⊆ x := by
+  obtain ⟨S, hS, rfl⟩ := mem_Cand.1 hD
+  exact ((mem_conv_insert hS).1 hz).1
+
+/-- The parameter reading index `i` by one candidate at `x` and the other indices by another. -/
+def HParam.ofDomains (x : Finset Atom) (i : ℕ) (Di Dj : Finset (Finset Atom)) : HParam Atom :=
+  fun k a ↦ if a = x then (if k = i then Di else Dj) else {a}
+
+theorem HParam.ofDomains_admissible {Di Dj : Finset (Finset Atom)} (hi : Di ∈ Cand x)
+    (hj : Dj ∈ Cand x) : (HParam.ofDomains x i Di Dj).Admissible := fun k a ↦ by
+  simp only [HParam.ofDomains]
+  split_ifs with h h'
+  · exact h ▸ hi
+  · exact h ▸ hj
+  · exact singleton_mem_Cand a
+
+/-- The parameter reading every index universally. -/
+private def univParam : HParam Atom := fun _ a ↦ {a}
+
+private theorem univParam_admissible : (univParam : HParam Atom).Admissible :=
+  fun _ a ↦ singleton_mem_Cand a
+
+/-- The parameter reading every index existentially. -/
+private def partsParam : HParam Atom := fun _ a ↦ if a.Nonempty then parts a else {a}
+
+private theorem partsParam_admissible : (partsParam : HParam Atom).Admissible := fun _ a ↦ by
+  simp only [partsParam]
+  split_ifs with h
+  · exact parts_mem_Cand h
+  · exact singleton_mem_Cand a
+
+private theorem singleton_mem_partsParam {a : Atom} (ha : a ∈ x) (k : ℕ) :
+    {a} ∈ (partsParam : HParam Atom) k x := by
+  simp [partsParam, Finset.nonempty_of_ne_empty (Finset.ne_empty_of_mem ha), ha]
+
+private theorem reciprocated_singleton_singleton {a b : Atom} (hR : R a b w) (hab : a ≠ b) :
+    Reciprocated R {a} {b} w :=
+  reciprocated_iff.2 ⟨Finset.singleton_nonempty a, by simp [Set.LiftRel, hR, hab]⟩
+
+private theorem exists_related_of_reciprocated (hr : Reciprocated R z y w) :
+    ∃ a ∈ z, ∃ b ∈ y, a ≠ b ∧ R a b w := by
+  obtain ⟨⟨a, ha⟩, hl, -⟩ := reciprocated_iff.1 hr
+  obtain ⟨b, hb, hR, hne⟩ := hl a ha
+  exact ⟨a, ha, b, hb, hne, hR⟩
+
+/-- One-way Weak Reciprocity is a candidate interpretation, reading the antecedent universally and
+its range existentially as (99) reads a subject and a coreferential pronoun, where Beck's single
+cover treats the two positions alike and she argues against it as a reading. -/
+theorem pred₂_reciprocated_self_parts (hx : x.Nonempty) (hi : H i x = {x})
+    (hj : H j x = parts x) :
+    pred₂ H i j (Reciprocated R) x x w ↔ Reciprocal.OneWayWeakReciprocity (R · · w) x := by
+  classical
+  simp only [pred₂, hi, hj, Finset.mem_singleton, exists_eq_left, reciprocated_iff, mem_parts]
+  rw [Reciprocal.oneWayWeakReciprocity_iff]
+  constructor
+  · rintro ⟨y, ⟨-, hyx⟩, -, hl, -⟩
+    have hto (a) (ha : a ∈ x) : ∃ b ∈ x, a ≠ b ∧ R a b w :=
+      let ⟨b, hb, hR, hne⟩ := hl a ha
+      ⟨b, hyx hb, hne, hR⟩
+    obtain ⟨a, ha⟩ := hx
+    obtain ⟨b, hb, hne, -⟩ := hto a ha
+    exact ⟨⟨a, ha, b, hb, hne⟩, hto⟩
+  · rintro ⟨-, h⟩
+    refine ⟨x.filter fun b ↦ ∃ a ∈ x, R a b w ∧ a ≠ b, ⟨?_, Finset.filter_subset _ _⟩, hx,
+      fun a ha ↦ ?_, fun b hb ↦ ?_⟩
+    · obtain ⟨a, ha⟩ := hx
+      obtain ⟨b, hb, hne, hR⟩ := h a ha
+      exact ⟨b, Finset.mem_filter.2 ⟨hb, a, ha, hR, hne⟩⟩
+    · obtain ⟨b, hb, hne, hR⟩ := h a ha
+      exact ⟨b, Finset.mem_coe.2 (Finset.mem_filter.2 ⟨hb, a, ha, hR, hne⟩), hR, hne⟩
+    · exact (Finset.mem_filter.1 hb).2
+
+-- (81), (228): the sentence is true on every candidate exactly when the relation holds
+theorem forall_pred₂_reciprocated_iff :
+    (∀ H : HParam Atom, H.Admissible → pred₂ H i j (Reciprocated R) x y w) ↔
+      Reciprocated R x y w := by
+  refine ⟨fun h ↦ ?_, fun h H hH ↦
+    ⟨x, self_mem_of_mem_Cand (hH i x), y, self_mem_of_mem_Cand (hH j y), h⟩⟩
+  obtain ⟨z, hz, u, hu, hr⟩ := h univParam univParam_admissible
+  rwa [Finset.mem_singleton.1 hz, Finset.mem_singleton.1 hu] at hr
+
+/-- The sentence is false on every candidate exactly when no member is related to another, which
+with negation above cumulation is the falsity clause of Beck's homogeneous cumulation (228). -/
+theorem forall_not_pred₂_reciprocated_iff :
+    (∀ H : HParam Atom, H.Admissible → ¬ pred₂ H i j (Reciprocated R) x y w) ↔
+      ∀ a ∈ x, ∀ b ∈ y, a ≠ b → ¬ R a b w := by
+  refine ⟨fun h a ha b hb hab hR ↦ h partsParam partsParam_admissible ⟨{a},
+    singleton_mem_partsParam ha i, {b}, singleton_mem_partsParam hb j,
+    reciprocated_singleton_singleton hR hab⟩, ?_⟩
+  rintro h H hH ⟨z, hz, u, hu, hr⟩
+  obtain ⟨a, ha, b, hb, hne, hR⟩ := exists_related_of_reciprocated hr
+  exact h a (subset_of_mem_Cand (hH i x) hz ha) b (subset_of_mem_Cand (hH j y) hu hb) hne hR
+
+-- (117) to (119): the candidates alone make the singular sentence false and so its negation true,
+-- and only the definite's presupposition leaves every instance undefined
+theorem reciprocated_singleton (a : Atom) (w : W) :
+    (∀ H : HParam Atom, H.Admissible → ¬ pred₂ H i j (Reciprocated R) {a} {a} w) ∧
+    Beck2001.Examples.ex119.judgment ≠ .acceptable ∧
+    ∀ H : HParam Atom, H.Admissible → ∀ z ∈ H i {a}, ∀ y ∈ H j {a},
+      Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
+        (Relation.Map (R · · w) ({·}) ({·})) z y = 0 := by
+  refine ⟨forall_not_pred₂_reciprocated_iff.2 fun u hu v hv hne _ ↦
+    hne ((Finset.mem_singleton.1 hu).trans (Finset.mem_singleton.1 hv).symm),
+    by decide, fun H hH z hz y hy ↦ ?_⟩
+  have key {D : Finset (Finset Atom)} (hD : D ∈ Cand {a}) {u : Finset Atom} (hu : u ∈ D) :
+      u = {a} := by
+    obtain ⟨hne, hsub⟩ := mem_parts.1 (mem_parts_of_mem_Cand (Finset.singleton_nonempty a) hD hu)
+    exact Finset.Subset.antisymm hsub (Finset.singleton_subset_iff.2
+      (let ⟨c, hc⟩ := hne; Finset.mem_singleton.1 (hsub hc) ▸ hc))
+  rw [key (hH i {a}) hz, key (hH j {a}) hy]
+  exact Beck2001.weakReading_eq_zero_iff.2 Finset.not_nontrivial_singleton
+
+/-- The parameter whose candidate at `x` is based on the part `U`. -/
+def HParam.basedOn (x U : Finset Atom) : HParam Atom :=
+  fun _ a ↦ if a = x then conv (insert x {U}) else {a}
+
+theorem HParam.basedOn_admissible {U : Finset Atom} (hU : U ⊆ x) (hne : U.Nonempty) :
+    (HParam.basedOn x U).Admissible := fun _ a ↦ by
+  simp only [HParam.basedOn]
+  split_ifs with h
+  · subst h
+    exact mem_Cand.2 ⟨{U}, Finset.singleton_subset_iff.2 (mem_parts.2 ⟨hne, hU⟩), rfl⟩
+  · exact singleton_mem_Cand a
+
+private theorem mem_basedOn {U u : Finset Atom} (hne : U.Nonempty) (hU : U ⊆ u) (hu : u ⊆ x)
+    (k : ℕ) : u ∈ HParam.basedOn x U k x := by
+  simp only [HParam.basedOn, ↓reduceIte]
+  exact (mem_conv_insert (Finset.singleton_subset_iff.2 (mem_parts.2 ⟨hne, hU.trans hu⟩))).2
+    ⟨hu, U, by simp, hU⟩
+
+-- (139), (140): the exception reading suffices for the candidate based on the covered part
+theorem pred₂_basedOn_of_weakReciprocity {U : Finset Atom} (hU : U ⊆ x) (hne : U.Nonempty)
+    (h : Reciprocal.WeakReciprocity (R · · w) U) :
+    pred₂ (HParam.basedOn x U) i j (Reciprocated R) x x w :=
+  ⟨U, mem_basedOn hne subset_rfl hU i, U, mem_basedOn hne subset_rfl hU j,
+    reciprocated_self_iff.2 ⟨hne, h⟩⟩
+
+-- (25), §3.2, with the candidates generated by the parameter
+theorem true_of_stronglyRelevant_of_r {φ : HParam Atom → W → Prop} {q : Setoid W} {w v : W}
+    (h : q w v) (hv : ∀ H : HParam Atom, H.Admissible → φ H v) :
+    ∀ p ∈ stronglyRelevantSet q (interpretations φ), p w := by
+  rintro p ⟨⟨H, hH, rfl⟩, hrel⟩
+  exact (hrel.iff h).2 (hv H hH)
+
+/-! Beck's pirates, whose situations are lists of arrows. -/
+
+/-- Pirate `a` stares at pirate `b` in a situation. -/
+def Stared (a b : Fin 6) (w : List (Fin 6 × Fin 6)) : Prop := Beck2001.Stares w a b
+  deriving Decidable
+
+/-- *The pirates stared at each other* relative to a parameter. -/
+def Pirates (H : HParam (Fin 6)) (w : List (Fin 6 × Fin 6)) : Prop :=
+  pred₂ H 0 1 (Reciprocated Stared) Finset.univ Finset.univ w
+
+/-- Arrows with no cycle, on which a candidate based on `{0, 1}` holds. -/
+def situationAcyclic : List (Fin 6 × Fin 6) := [(2, 0), (2, 1), (0, 3), (1, 3)]
+
+/-- A cycle of three pirates, in which every candidate for them holds. -/
+def situationThree : List (Fin 6 × Fin 6) := [(0, 1), (1, 2), (2, 0)]
+
+-- (139): the candidate based on the covered part is strictly weaker than the exception reading,
+-- holding where no subgroup has Weak Reciprocity, and no candidate is the exception reading, since
+-- all of them hold in a cycle of three where `{0, 1}` lacks Weak Reciprocity
+theorem basedOn_not_weakReciprocity :
+    (pred₂ (HParam.basedOn {0, 1, 2, 3} {0, 1}) 0 1 (Reciprocated Stared)
+        {0, 1, 2, 3} {0, 1, 2, 3} situationAcyclic ∧
+      ∀ Y : Finset (Fin 6), Y.Nonempty →
+        ¬ Reciprocal.WeakReciprocity (Beck2001.Stares situationAcyclic) Y) ∧
+    (∀ H : HParam (Fin 6), H.Admissible →
+        pred₂ H 0 1 (Reciprocated Stared) {0, 1, 2} {0, 1, 2} situationThree) ∧
+      ¬ Reciprocal.WeakReciprocity (Beck2001.Stares situationThree) {0, 1} := by
+  refine ⟨⟨⟨{0, 1, 2}, mem_basedOn (by decide) (by decide) (by decide) 0, {0, 1, 3},
+    mem_basedOn (by decide) (by decide) (by decide) 1, reciprocated_iff.2 ⟨by decide, ?_⟩⟩,
+    by decide⟩, forall_pred₂_reciprocated_iff.2 (reciprocated_self_iff.2 ⟨by decide, by
+      show Reciprocal.WeakReciprocity (Beck2001.Stares situationThree) {0, 1, 2}
+      decide⟩), by decide⟩
+  simp only [Set.LiftRel, Finset.mem_coe]
+  decide
+
+/-- A situation in which all six pirates are in one cycle. -/
+def situationCycle : List (Fin 6 × Fin 6) := [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)]
+
+private theorem pirates_situationCycle (H : HParam (Fin 6)) (hH : H.Admissible) :
+    Pirates H situationCycle :=
+  forall_pred₂_reciprocated_iff.2 (reciprocated_self_iff.2 ⟨by decide, by
+    show Reciprocal.WeakReciprocity (Beck2001.Stares situationCycle) Finset.univ
+    decide⟩) H hH
+
+-- (25), fn. 17: some issue makes the sentence judged true exactly when one pirate stares at
+-- another, so the existence of an issue says little and the contrasts lie in named candidates
+theorem exists_issue_iff {w : List (Fin 6 × Fin 6)} :
+    (∃ q : Setoid (List (Fin 6 × Fin 6)),
+      (stronglyRelevantSet q (interpretations Pirates)).Nonempty ∧
+        ∀ p ∈ stronglyRelevantSet q (interpretations Pirates), p w) ↔
+      ∃ a b, a ≠ b ∧ Stared a b w := by
+  constructor
+  · rintro ⟨q, ⟨p, hp⟩, h⟩
+    have hw := h p hp
+    obtain ⟨H, -, rfl⟩ := hp.1
+    obtain ⟨z, -, y, -, hr⟩ := hw
+    obtain ⟨a, -, b, -, hne, hR⟩ := exists_related_of_reciprocated hr
+    exact ⟨a, b, hne, hR⟩
+  · rintro ⟨a, b, hne, hR⟩
+    have hdec : (Setoid.ker (Pirates partsParam)).Decides {v | Pirates partsParam v} :=
+      Setoid.decides_iff.2 fun v v' h ↦
+        iff_of_eq (show Pirates partsParam v = Pirates partsParam v' from h)
+    have hp : Pirates partsParam w := ⟨{a}, singleton_mem_partsParam (Finset.mem_univ a) 0, {b},
+      singleton_mem_partsParam (Finset.mem_univ b) 1, reciprocated_singleton_singleton hR hne⟩
+    refine ⟨Setoid.ker (Pirates partsParam), ⟨Pirates partsParam,
+      ⟨partsParam, partsParam_admissible, rfl⟩, hdec⟩, ?_⟩
+    exact true_of_stronglyRelevant_of_r (v := situationCycle)
+      (propext (iff_of_true hp (pirates_situationCycle _ partsParam_admissible)))
+      pirates_situationCycle
+
+/-- The parameter reading both positions as the pluralities of at least `n` pirates, the shape of
+the "8 or more" candidate of (26). -/
+def atLeast (n : ℕ) : HParam (Fin 6) :=
+  fun _ a ↦ if a = Finset.univ
+    then conv (insert Finset.univ (Finset.powersetCard n Finset.univ)) else {a}
+
+theorem atLeast_admissible {n : ℕ} (hn : 0 < n) : (atLeast n).Admissible := fun _ a ↦ by
+  simp only [atLeast]
+  split_ifs with h
+  · subst h
+    exact mem_Cand.2 ⟨_, powersetCard_subset_parts hn, rfl⟩
+  · exact singleton_mem_Cand a
+
+private theorem mem_atLeast_iff {n k : ℕ} (hn₀ : 0 < n) (hn : n ≤ 6) {u : Finset (Fin 6)} :
+    u ∈ atLeast n k Finset.univ ↔ n ≤ u.card := by
+  simp only [atLeast, ↓reduceIte]
+  rw [mem_conv_insert (powersetCard_subset_parts hn₀)]
+  constructor
+  · rintro ⟨-, s, hs, hsu⟩
+    rcases Finset.mem_insert.1 hs with rfl | hs
+    · exact hn.trans (by simpa using Finset.card_le_card hsu)
+    · exact (Finset.mem_powersetCard.1 hs).2 ▸ Finset.card_le_card hsu
+  · intro h
+    obtain ⟨s, hsu, hs⟩ := Finset.exists_subset_card_eq h
+    exact ⟨Finset.subset_univ _, s,
+      Finset.mem_insert_of_mem (Finset.mem_powersetCard.2 ⟨Finset.subset_univ _, hs⟩), hsu⟩
+
+private theorem pirates_atLeast_of_weak {n : ℕ} {U : Finset (Fin 6)} {w : List (Fin 6 × Fin 6)}
+    (hn₀ : 0 < n) (hn : n ≤ 6) (hc : n ≤ U.card) (hne : U.Nonempty)
+    (h : Reciprocal.WeakReciprocity (Beck2001.Stares w) U) : Pirates (atLeast n) w :=
+  ⟨U, (mem_atLeast_iff hn₀ hn).2 hc, U, (mem_atLeast_iff hn₀ hn).2 hc,
+    reciprocated_self_iff.2 ⟨hne, h⟩⟩
+
+-- (135), (136), (141), (142), p. 110: everything relevant leaves a gap, five pirates counting as
+-- enough makes the sentence true in (136) and (141), and (142) needs two to count as enough
+theorem pirates_row :
+    (¬ ∀ H : HParam (Fin 6), H.Admissible → Pirates H Beck2001.situation136) ∧
+    Pirates (atLeast 5) Beck2001.situation136 ∧ Beck2001.Examples.ex135_136.verdict = some true ∧
+    (¬ ∀ H : HParam (Fin 6), H.Admissible → Pirates H Beck2001.situation141) ∧
+    Pirates (atLeast 5) Beck2001.situation141 ∧ Beck2001.Examples.ex135_141.verdict = some true ∧
+    Pirates (atLeast 2) Beck2001.situation142 ∧ ¬ Pirates (atLeast 3) Beck2001.situation142 ∧
+    Beck2001.Examples.ex135_142.judgment = .questionable := by
+  have hnot {w : List (Fin 6 × Fin 6)}
+      (h : ¬ Reciprocal.WeakReciprocity (Beck2001.Stares w) Finset.univ) :
+      ¬ ∀ H : HParam (Fin 6), H.Admissible → Pirates H w :=
+    fun hall ↦ h (reciprocated_self_iff.1 (forall_pred₂_reciprocated_iff.1 hall)).2
+  refine ⟨hnot (by decide), pirates_atLeast_of_weak (U := Beck2001.coveredPirates) (by omega)
+      (by omega) (by decide) (by decide) (by decide), by decide,
+    hnot (by decide), pirates_atLeast_of_weak (U := Beck2001.coveredPirates) (by omega)
+      (by omega) (by decide) (by decide) (by decide), by decide,
+    pirates_atLeast_of_weak (U := {0, 5}) (by omega) (by omega) (by decide) (by decide)
+      (by decide), ?_, by decide⟩
+  rintro ⟨z, -, y, hy, hr⟩
+  have hc : 3 ≤ y.card := (mem_atLeast_iff (by omega) (by omega)).1 hy
+  have hto : ∀ a b, Stared a b Beck2001.situation142 → b ∈ ({0, 5} : Finset (Fin 6)) := by decide
+  have hsub : y ⊆ {0, 5} := fun b hb ↦
+    let ⟨a, _, hR, _⟩ := (reciprocated_iff.1 hr).2.2 b hb
+    hto a b hR
+  have := Finset.card_le_card hsub
+  have h2 : ({0, 5} : Finset (Fin 6)).card = 2 := by decide
+  omega
+
+private theorem all_iff (hH : H.Admissible) (hij : i ≠ j) :
+    all {i} (fun H' a w ↦ pred₂ H' i j (Reciprocated R) a y w) H z w ↔
+      ∃ u ∈ H j y, Reciprocated R z u w :=
+  all_pred₂ hH (by simp) (by simpa using hij.symm) _ _ _ _
+
+-- (143), (79), (82): *all* on the subject makes every candidate false in the situation (141)
+theorem all_pirates_row {H : HParam (Fin 6)} (hH : H.Admissible) :
+    ¬ all {0} (fun H' a w ↦ pred₂ H' 0 1 (Reciprocated Stared) a Finset.univ w) H Finset.univ
+      Beck2001.situation141 ∧ Beck2001.Examples.ex143_141.verdict = some false := by
+  refine ⟨fun h ↦ ?_, by decide⟩
+  obtain ⟨y, -, hr⟩ := (all_iff hH (by decide)).1 h
+  obtain ⟨-, hl, -⟩ := reciprocated_iff.1 hr
+  obtain ⟨b, -, hR, -⟩ := hl 5 (by simp)
+  revert b
+  decide
+
+-- (79), (82), (136): *all* leaves the range open, so (143) has a gap in the situation (136), where
+-- (139) with a cover forced to fit is false; neither paper reports a judgment
+theorem all_pirates_gap :
+    (∃ H : HParam (Fin 6), H.Admissible ∧ all {0}
+      (fun H' a w ↦ pred₂ H' 0 1 (Reciprocated Stared) a Finset.univ w) H Finset.univ
+        Beck2001.situation136) ∧
+    ∃ H : HParam (Fin 6), H.Admissible ∧ ¬ all {0}
+      (fun H' a w ↦ pred₂ H' 0 1 (Reciprocated Stared) a Finset.univ w) H Finset.univ
+        Beck2001.situation136 := by
+  have huniv : (Finset.univ : Finset (Fin 6)).Nonempty := Finset.univ_nonempty
+  have hH := HParam.ofDomains_admissible (x := (Finset.univ : Finset (Fin 6))) (i := 0)
+    (singleton_mem_Cand _) (parts_mem_Cand huniv)
+  refine ⟨⟨_, hH, ?_⟩, univParam, univParam_admissible, fun h ↦ ?_⟩
+  · obtain ⟨z, hz, y, hy, hr⟩ := (pred₂_reciprocated_self_parts (R := Stared)
+      (w := Beck2001.situation136) (H := HParam.ofDomains Finset.univ 0 {Finset.univ}
+        (parts Finset.univ)) (i := 0) (j := 1) huniv (by simp [HParam.ofDomains])
+      (by simp [HParam.ofDomains])).2 (by
+        show Reciprocal.OneWayWeakReciprocity (Beck2001.Stares Beck2001.situation136) Finset.univ
+        decide)
+    have hz' : z = Finset.univ := by simpa [HParam.ofDomains] using hz
+    exact (all_iff hH (by decide)).2 ⟨y, hy, hz' ▸ hr⟩
+  · obtain ⟨y, hy, hr⟩ := (all_iff univParam_admissible (by decide)).1 h
+    obtain rfl : y = Finset.univ := Finset.mem_singleton.1 hy
+    exact absurd (reciprocated_self_iff.1 hr).2 (by
+      show ¬ Reciprocal.WeakReciprocity (Beck2001.Stares Beck2001.situation136) Finset.univ
+      decide)
+
+/-! *None of them know each other*, on three parses. -/
+
+/-- (91), read for *none of*: no plurality among `x` satisfies the scope under *all* on its index,
+`range` giving the reciprocal's range. -/
+def NoneNeutral (i j : ℕ) (R : Atom → Atom → W → Prop) (x : Finset Atom)
+    (range : Finset Atom → Finset Atom) (H : HParam Atom) (w : W) : Prop :=
+  ¬ ∃ X ⊆ x, X.Nonempty ∧ all {i} (fun H' a w ↦ pred₂ H' i j (Reciprocated R) a (range X) w) H X w
+
+/-- (88), read for *none of*: the quantifier's index is not neutralized, which is Beck's route
+through (230) and what the paper rejects for (87). -/
+def NoneInSitu (i j : ℕ) (R : Atom → Atom → W → Prop) (x : Finset Atom) (H : HParam Atom) (w : W) :
+    Prop :=
+  ¬ ∃ X ⊆ x, X.Nonempty ∧ pred₂ H i j (Reciprocated R) X X w
+
+/-- Neutralizing the quantifier's index with the range bound gives, on every parameter, the reading
+(222) that Beck rejects as too weak: no subgroup has Weak Reciprocity. -/
+theorem noneNeutral_id_iff (hH : H.Admissible) (hij : i ≠ j) :
+    NoneNeutral i j R x id H w ↔
+      ∀ Y ⊆ x, Y.Nonempty → ¬ Reciprocal.WeakReciprocity (R · · w) Y := by
+  refine ⟨fun h Y hY hne hW ↦ h ⟨Y, hY, hne, (all_iff hH hij).2 ⟨Y, self_mem_of_mem_Cand (hH j Y),
+    reciprocated_self_iff.2 ⟨hne, hW⟩⟩⟩, ?_⟩
+  rintro h ⟨X, hX, hne, hall⟩
+  obtain ⟨y, hy, hr⟩ := (all_iff hH hij).1 hall
+  obtain ⟨-, hl, -⟩ := reciprocated_iff.1 hr
+  obtain ⟨Y, hY, hYne, hW⟩ := Reciprocal.exists_subset_weakReciprocity hne fun a ha ↦
+    let ⟨b, hb, hR⟩ := hl a ha
+    ⟨b, subset_of_mem_Cand (hH j X) hy hb, hR⟩
+  exact h Y (hY.trans hX) hYne hW
+
+/-- Leaving the quantifier's index alone gives what Beck derives as (230c): the sentence is true on
+every candidate exactly when nobody is related to anybody. -/
+theorem forall_noneInSitu_iff :
+    (∀ H : HParam Atom, H.Admissible → NoneInSitu i j R x H w) ↔
+      ∀ a ∈ x, ∀ b ∈ x, a ≠ b → ¬ R a b w := by
+  refine ⟨fun h a ha b hb hab hR ↦ h partsParam partsParam_admissible
+    ⟨{a, b}, ?_, ⟨a, by simp⟩, {a}, singleton_mem_partsParam (by simp) i, {b},
+      singleton_mem_partsParam (by simp) j, reciprocated_singleton_singleton hR hab⟩, ?_⟩
+  · simp [Finset.insert_subset_iff, ha, hb]
+  · rintro h H hH ⟨X, hX, -, z, hz, u, hu, hr⟩
+    obtain ⟨a, ha, b, hb, hne, hR⟩ := exists_related_of_reciprocated hr
+    exact h a (hX (subset_of_mem_Cand (hH i X) hz ha)) b (hX (subset_of_mem_Cand (hH j X) hu hb))
+      hne hR
+
+/-- A range of *them* with the index neutralized gives the same truth condition, on the logical form
+Beck's (5) gives for Heim, Lasnik and May with *none* in place of *each*, which is not her parse. -/
+theorem forall_noneNeutral_const_iff (hij : i ≠ j) :
+    (∀ H : HParam Atom, H.Admissible → NoneNeutral i j R x (fun _ ↦ x) H w) ↔
+      ∀ a ∈ x, ∀ b ∈ x, a ≠ b → ¬ R a b w := by
+  refine ⟨fun h a ha b hb hab hR ↦ h partsParam partsParam_admissible
+    ⟨{a}, by simpa using ha, ⟨a, by simp⟩, (all_iff partsParam_admissible hij).2
+      ⟨{b}, singleton_mem_partsParam hb j, reciprocated_singleton_singleton hR hab⟩⟩, ?_⟩
+  rintro h H hH ⟨X, hX, -, hall⟩
+  obtain ⟨y, hy, hr⟩ := (all_iff hH hij).1 hall
+  obtain ⟨a, ha, b, hb, hne, hR⟩ := exists_related_of_reciprocated hr
+  exact h a (hX ha) b (subset_of_mem_Cand (hH j x) hy hb) hne hR
+
+/-- Beck's scenario for (220), in which four know a fifth. -/
+abbrev Knows (a b : Fin 5) (_ : Unit) : Prop := Beck2001.KnowsFifth a b
+
+-- (220), (222), (230): the neutralized bound parse makes the sentence true where Beck reports it
+-- would not be, and the other two parses give a gap there
+theorem none_row :
+    (∀ H : HParam (Fin 5), H.Admissible → NoneNeutral 0 1 Knows Finset.univ id H ()) ∧
+    (∃ H : HParam (Fin 5), H.Admissible ∧ NoneInSitu 0 1 Knows Finset.univ H ()) ∧
+    (∃ H : HParam (Fin 5), H.Admissible ∧ ¬ NoneInSitu 0 1 Knows Finset.univ H ()) ∧
+    (∃ H : HParam (Fin 5), H.Admissible ∧
+      NoneNeutral 0 1 Knows Finset.univ (fun _ ↦ Finset.univ) H ()) ∧
+    (∃ H : HParam (Fin 5), H.Admissible ∧
+      ¬ NoneNeutral 0 1 Knows Finset.univ (fun _ ↦ Finset.univ) H ()) ∧
+    Beck2001.Examples.ex220.verdict ≠ some true := by
+  have hk : Knows 0 4 () := by decide
+  refine ⟨fun H hH ↦ (noneNeutral_id_iff hH (by decide)).2 fun Y _ hne ↦
+      Beck2001.knowsFifth_row.1 Y hne,
+    ⟨univParam, univParam_admissible, ?_⟩,
+    ⟨partsParam, partsParam_admissible, fun h ↦ ?_⟩,
+    ⟨univParam, univParam_admissible, ?_⟩,
+    ⟨partsParam, partsParam_admissible, fun h ↦ ?_⟩, by decide⟩
+  · rintro ⟨X, -, hne, z, hz, y, hy, hr⟩
+    rw [Finset.mem_singleton.1 hz, Finset.mem_singleton.1 hy] at hr
+    exact Beck2001.knowsFifth_row.1 X hne (reciprocated_self_iff.1 hr).2
+  · exact h ⟨{0, 4}, Finset.subset_univ _, ⟨0, by simp⟩, {0},
+      singleton_mem_partsParam (by simp) 0, {4}, singleton_mem_partsParam (by simp) 1,
+      reciprocated_singleton_singleton hk (by decide)⟩
+  · rintro ⟨X, -, -, hall⟩
+    obtain ⟨y, hy, hr⟩ := (all_iff univParam_admissible (by decide)).1 hall
+    obtain rfl : y = Finset.univ := Finset.mem_singleton.1 hy
+    obtain ⟨a, -, hR, -⟩ := (reciprocated_iff.1 hr).2.2 0 (Finset.mem_univ 0)
+    revert a
+    decide
+  · exact h ⟨{0}, Finset.subset_univ _, ⟨0, by simp⟩, (all_iff partsParam_admissible (by decide)).2
+      ⟨{4}, singleton_mem_partsParam (Finset.mem_univ 4) 1,
+        reciprocated_singleton_singleton hk (by decide)⟩⟩
+
+/-- On an acyclic relation such as *procreate*, the neutralized bound parse is a tautology, a route
+to the unacceptability of (ii) in Beck's footnote 16, whereas the other two parses give the
+contingent reading she reports as impossible, that nobody is anyone else's parent. -/
+theorem fn16_row (hR : ∀ a, ¬ Relation.TransGen (R · · w) a a) (hH : H.Admissible) (hij : i ≠ j) :
+    NoneNeutral i j R x id H w ∧
+    ((∀ H : HParam Atom, H.Admissible → NoneInSitu i j R x H w) ↔
+      ∀ a ∈ x, ∀ b ∈ x, a ≠ b → ¬ R a b w) ∧
+    ((∀ H : HParam Atom, H.Admissible → NoneNeutral i j R x (fun _ ↦ x) H w) ↔
+      ∀ a ∈ x, ∀ b ∈ x, a ≠ b → ¬ R a b w) ∧
+    Beck2001.Examples.fn16ii.judgment = .unacceptable :=
+  ⟨(noneNeutral_id_iff hH hij).2 fun _ _ hne hW ↦
+    let ⟨a, ha⟩ := DalrympleEtAl1998.exists_transGen_of_oneWayWeak (hW.oneWayWeak hne)
+    hR a ha,
+    forall_noneInSitu_iff, forall_noneNeutral_const_iff hij, by decide⟩
+
+end Reciprocals
 
 end KrizSpector2021
