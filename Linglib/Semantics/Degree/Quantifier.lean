@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Linglib.Core.Order.UpperLower.Closure
+public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Logic.Natural.Additivity
@@ -351,7 +352,7 @@ end MaxComparativeLinearOrder
 The S-comparative of [hoeksema-1983] generalizes the point-standard comparative from a single
 standard to a degree-set standard. Its extension is `μ ⁻¹' strictUpperBounds Δ`, the entities
 measuring above every standard degree, and the binary comparator is its singleton case
-(`Comparison.bounds_singleton`). -/
+(`strictUpperBounds_singleton`). -/
 
 section SetOfDegrees
 variable [Preorder D] (μ : α → D) {Δ : Set D}

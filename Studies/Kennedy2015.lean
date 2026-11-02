@@ -175,6 +175,19 @@ theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
   intro c'
   cases c <;> cases c' <;> simp_all [Comparison.IsStrict]
 
+-- *Fewer than m + 1* and *at most m* select the same numbers, the equivalence of [nouwen-2010]
+-- (2), (3). Only the second has primary implicatures, so the contrast lies in the comparison.
+theorem interval_lt_succ_eq_le_and_primaryImplicatures {m : ℕ} (hm : 0 < m) :
+    Comparison.lt.interval (m + 1) = Comparison.le.interval m ∧
+      primaryImplicatures (Comparison.lt.interval (m + 1)) (alternatives (m + 1)) = univ ∧
+      primaryImplicatures (Comparison.le.interval m) (alternatives m) ≠ univ := by
+  refine ⟨Set.ext fun _ ↦ Nat.lt_succ_iff, primaryImplicatures_eq_univ m.succ_pos (.inr trivial),
+    fun h ↦ ?_⟩
+  have hempty : (∅ : Set ℕ) ∈ primaryImplicatures (Comparison.le.interval m) (alternatives m) :=
+    h ▸ mem_univ _
+  rw [primaryImplicatures_le hm] at hempty
+  exact hempty.1 (empty_subset _)
+
 /-- (44) strengthens no form of a numeral: the bare and Class A forms have no stronger
 alternative, and either primary implicature of a Class B form strengthened contradicts the
 assertion together with the other. -/

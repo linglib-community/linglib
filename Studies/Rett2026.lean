@@ -32,6 +32,13 @@ closed interval of the substrate. The survey counts of Jin and Koenig, the high 
 negation of exclamations, the manner implicature effects and the negative verbs are discussed
 in the paper without a proposal formalized here.
 
+## TODO
+
+This file follows the manuscript of January 2026. Its revision of September 2026 renumbers the
+examples and defines maximality as a supremum whether or not the bound lies in the interval, its
+(60), where (44) required a member of the set. `maxOnScale` and the closed `preEvent` follow (44)
+and note 16 of the January text, while `tallerNeg` already reads the bound through `IsGLB`.
+
 ## References
 
 * [J. Rett, *Semantic ambivalence and expletive negation* (2026)][rett-2026]
@@ -111,6 +118,13 @@ theorem tallerNeg_iff [DenselyOrdered D] : tallerNeg μ a b ↔ μ b < μ a :=
   ⟨fun ⟨_, _, h', h, hlt⟩ ↦ by rwa [h.unique isGLB_Ioi, h'.unique isLUB_Iic] at hlt,
     fun h ↦ ⟨μ a, μ b, isLUB_Iic, isGLB_Ioi, h⟩⟩
 
+-- (44) finds no maximum on the open reading that note 16 sets aside, so `tallerNeg` needs `IsGLB`.
+theorem maxOnScale_lt_Ioi [DenselyOrdered D] (d : D) : maxOnScale .lt (Set.Ioi d) = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hx ↦
+    have h := mem_maxOnScale_lt.1 hx
+    let ⟨_, hdy, hyx⟩ := exists_between h.1
+    hyx.not_ge (h.2 hdy)
+
 theorem tallerNeg_iff_taller [DenselyOrdered D] : tallerNeg μ a b ↔ taller μ a b :=
   (tallerNeg_iff μ a b).trans (taller_iff μ a b).symm
 
@@ -138,7 +152,7 @@ def until_ (B : Set (NonemptyInterval T)) : Prop :=
 theorem until_iff_of_isLeast {B : Set (NonemptyInterval T)} {m' : T}
     (h : IsLeast (timeTrace B) m') :
     until_ A B ↔ ∃ m ∈ maxOnScale .gt (timeTrace A), m < m' := by
-  simp only [until_, maxOnScale_lt_eq, Set.mem_ofPred_eq]
+  simp only [until_, mem_maxOnScale_lt]
   exact ⟨fun ⟨m, hm, _, hm', hlt⟩ ↦ ⟨m, hm, hm'.unique h ▸ hlt⟩,
     fun ⟨m, hm, hlt⟩ ↦ ⟨m, hm, m', h, hlt⟩⟩
 
