@@ -23,10 +23,10 @@ effect is carried by inflectional semantics.
 ## Implementation notes
 
 The paper's positional measures, the semantic support for the vowel and suffix triphones, are
-entries of the predicted form matrix `Ĉ = SG` at the two triphone columns, (3) and (4), the
-substrate's `semanticSupport` at a coordinate indicator; the paper's triphone indexing is not
-reproduced. The comprehension-side measures, which use the matrix `F` solving `CF = S`, and the
-generalized additive models of the articulatory study are not formalized.
+entries of the predicted form matrix `Ĉ = SG` at the two triphone columns, (3) and (4); the
+paper's triphone indexing is not reproduced. The comprehension-side measures, which use the matrix
+`F` solving `CF = S`, and the generalized additive models of the articulatory study are not
+formalized.
 
 ## References
 

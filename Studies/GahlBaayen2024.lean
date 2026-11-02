@@ -2,7 +2,6 @@ module
 
 public import Linglib.Core.LinearAlgebra.Matrix.StarProjection
 public import Linglib.Processing.DiscriminativeLexicon.Coding
-public import Linglib.Processing.DiscriminativeLexicon.Measures
 public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -160,9 +159,10 @@ private theorem frequencyInformedG_eq : frequencyInformedG = ratGFIL.map (Rat.ca
   rw [frequencyInformedG, inv_eq_right_inv gramSQ_mul_inv, toy_S, toy_C, freq_Q,
     ← transpose_map, ← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_mul, h]
 
-theorem endstateG_isELTrained : IsELTrained toy endstateG :=
-  isELTrained_closedForm toy
-    ((isUnit_iff_isUnit_det _).2 (isUnit_det_of_right_inverse gramS_mul_inv))
+theorem endstateG_isELTrained : IsELTrained toy endstateG := by
+  have h := isTrained_closedForm toy 1 (by
+    simpa using (isUnit_iff_isUnit_det _).2 (isUnit_det_of_right_inverse gramS_mul_inv))
+  simpa only [endstateG, FrequencyVector.Q_one, Matrix.mul_one] using h
 
 theorem frequencyInformedG_isTrained : IsTrained toy freq frequencyInformedG :=
   isTrained_closedForm toy freq
@@ -199,8 +199,8 @@ variable {m n d : ℕ} (G : Matrix (Fin d) (Fin n) ℝ) (data : TrainingExperien
 def supportMatrix : Matrix (Fin m) (Fin m) ℝ := data.S * G * data.Cᵀ
 
 theorem supportMatrix_apply (i k : Fin m) :
-    supportMatrix G data i k = semanticSupport G (data.S i) (data.C k) := by
-  rw [supportMatrix, mul_apply, semanticSupport_apply, ← mul_apply_eq_vecMul]
+    supportMatrix G data i k = (data.S i ᵥ* G) ⬝ᵥ data.C k := by
+  rw [supportMatrix, mul_apply]
   rfl
 
 /-- *Semantic support for form* is the diagonal of `T`, the support a word's form receives from
@@ -232,12 +232,12 @@ theorem semanticSupportForForm_endstate_time_lt_thyme :
 /-- Under frequency-informed learning the paper reads support for form off the fitted values
 `√Q S G` of the `√Q`-scaled regression, paired with the words' own triphone vectors (A7). -/
 def semanticSupportForFormFIL (i : Fin 3) : ℝ :=
-  semanticSupport frequencyInformedG ((toy.sqrtScale freq).S i) (toy.C i)
+  ((toy.sqrtScale freq).S i ᵥ* frequencyInformedG) ⬝ᵥ toy.C i
 
 theorem semanticSupportForFormFIL_eq_sqrt_mul (i : Fin 3) :
     semanticSupportForFormFIL i =
       √(freq i) * semanticSupportForForm frequencyInformedG toy i := by
-  simp [semanticSupportForFormFIL, semanticSupportForForm, supportMatrix_apply]
+  simp [semanticSupportForFormFIL, semanticSupportForForm, supportMatrix_apply, smul_vecMul]
 
 /-- Under practice *time* overtakes *thyme*, 39.805 against 6.225 (Table 1), reversing the
 endstate order. -/
@@ -340,14 +340,26 @@ theorem U_mul_W : U * W = U := by
 theorem isStarProjection_W : IsStarProjection W := by
   rw [W_eq_conjTranspose]; exact isStarProjection_conjTranspose_mul_inv_mul isUnit_det_gramU
 
-/-- Regressing the words of each utterance on themselves, as the paper does for the toy corpus,
-does not determine `W`, since the identity, the "ideal solution" of (A9), is trained as well. -/
-theorem not_existsUnique_isELTrained :
-    ¬ ∃! G, IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) G := by
-  rintro ⟨G, -, hG⟩
-  refine absurd (congrFun (congrFun ((hG W (isTrained_of_mul_eq _ _ _ U_mul_W)).trans
-    (hG 1 (isTrained_of_mul_eq _ _ _ (Matrix.mul_one U))).symm) 0) 0) ?_
+-- (A8), (A9): `W` and the "ideal solution", the identity, both solve `UW = U`, and they differ
+theorem W_isELTrained : IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) W :=
+  isTrained_of_mul_eq _ _ _ U_mul_W
+
+theorem one_isELTrained : IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) 1 :=
+  isTrained_of_mul_eq _ _ _ (Matrix.mul_one U)
+
+theorem W_ne_one : W ≠ 1 := fun h ↦ by
+  refine absurd (congrFun (congrFun h 0) 0) ?_
   rw [W_eq]; norm_num [intW]
+
+/-- Regressing the words of each utterance on themselves, as the paper does for the toy corpus,
+does not determine `W`, since five utterances cannot span nine words. -/
+theorem not_existsUnique_isELTrained :
+    ¬ ∃! G, IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) G := fun h ↦ by
+  have htop := (existsUnique_isTrained_iff (data := ⟨U, U⟩) (q := 1) (fun _ ↦ by simp)).1 h
+  have hle := finrank_range_le_card (R := ℝ)
+    (TrainingExperience.S ⟨U, U⟩ : Matrix (Fin 5) (Fin 9) ℝ).row
+  rw [Set.finrank, htop] at hle
+  simp at hle
 
 -- (6)
 theorem le_diag_W (i j : Fin 9) : W j i ≤ W i i := by

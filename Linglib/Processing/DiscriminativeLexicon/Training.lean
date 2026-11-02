@@ -84,9 +84,6 @@ def FrequencyVector.sqrtQ : Matrix (Fin m) (Fin m) ℝ := diagonal fun i ↦ √
 @[simp] theorem FrequencyVector.Q_one : (1 : FrequencyVector m).Q = 1 := by
   simp [FrequencyVector.Q]
 
-@[simp] theorem FrequencyVector.sqrtQ_one : (1 : FrequencyVector m).sqrtQ = 1 := by
-  simp [FrequencyVector.sqrtQ]
-
 @[simp] theorem FrequencyVector.sqrtQ_transpose : q.sqrtQᵀ = q.sqrtQ := diagonal_transpose _
 
 theorem FrequencyVector.sqrtQ_mul_sqrtQ : q.sqrtQ * q.sqrtQ = q.Q := by
@@ -133,20 +130,9 @@ def IsTrained : Prop := IsMinOn (weightedLoss data q) Set.univ G
 /-- **Endstate learning** is training under uniform weights ([gahl-baayen-2024] appendix). -/
 abbrev IsELTrained : Prop := IsTrained data 1 G
 
-theorem weightedLoss_smul (c : ℝ≥0) :
-    weightedLoss data (c • q) G = c * weightedLoss data q G := by
-  simp [weightedLoss, Finset.mul_sum, mul_assoc]
-
 theorem isTrained_of_mul_eq (h : data.S * G = data.C) : IsTrained data q G :=
   isMinOn_univ_iff.2 fun G' ↦ by
     simpa [weightedLoss, h, dotProduct] using weightedLoss_nonneg data q G'
-
-/-- Rescaling the frequencies does not change what is trained, so a constant may be divided out for
-numerical stability ([heitmeier-chuang-axen-baayen-2024] §3.4). -/
-theorem isTrained_smul_iff {c : ℝ≥0} (hc : 0 < c) :
-    IsTrained data (c • q) G ↔ IsTrained data q G := by
-  simp only [IsTrained, isMinOn_univ_iff, weightedLoss_smul,
-    mul_le_mul_iff_right₀ (NNReal.coe_pos.2 hc)]
 
 theorem weightedLoss_sqrtScale :
     weightedLoss (data.sqrtScale q) 1 G = weightedLoss data q G := by
@@ -273,11 +259,6 @@ theorem isTrained_closedForm (hS : IsUnit (data.Sᵀ * q.Q * data.S)) :
     IsTrained data q ((data.Sᵀ * q.Q * data.S)⁻¹ * (data.Sᵀ * q.Q * data.C)) := by
   rw [isTrained_iff, Matrix.mul_sub, ← Matrix.mul_assoc,
     Matrix.mul_nonsing_inv_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 hS), sub_self]
-
-theorem isELTrained_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
-    IsELTrained data ((data.Sᵀ * data.S)⁻¹ * (data.Sᵀ * data.C)) := by
-  simpa only [FrequencyVector.Q_one, Matrix.mul_one] using
-    isTrained_closedForm data 1 (by simpa using hS)
 
 variable {data q G}
 
