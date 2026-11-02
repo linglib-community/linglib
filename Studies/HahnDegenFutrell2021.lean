@@ -165,8 +165,8 @@ theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measura
 theorem condEntropy_memoryState_eq (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
     (hs : IsStationary (fun t ω ↦ (w t ω, memoryState M m₀ w t ω)) μ) (t : ℕ) :
     H[w t | memoryState M m₀ w t ; μ] = H[w 0 | m₀ ; μ] := by
-  have h := (hs t 1).comp (u := fun v ↦ v 0) (measurable_pi_apply 0)
-  simp only [block, Function.comp_def, Fin.val_zero, zero_add] at h
+  have h := (hs t).comp (measurable_pi_apply 0)
+  simp only [Function.comp_def, zero_add] at h
   exact h.condEntropy_eq (hw t) (measurable_memoryState hw hm₀ t) (hw 0) hm₀
 
 variable (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
@@ -184,7 +184,9 @@ theorem pastCondEntropy_le_condEntropy : pastCondEntropy w μ T ≤ H[w 0 | m₀
     condEntropy_nonneg m₀ (block w 0 T) μ]
 
 /-- A listener whose memory entropy is at most `∑ t ∈ Icc 1 T, t * I t` has average surprisal at
-least the entropy rate plus the information beyond distance `T` (Theorem 1). -/
+least the entropy rate plus the information beyond distance `T` (Theorem 1). Here `I t` is
+`distanceInfo w μ t`, defined on p. 731 from the conditional mutual information of (3), whose
+formula is `condMutualInfo_eq_sum_log`. -/
 theorem information_locality_bound :
     entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) ≤ H[w 0 | m₀ ; μ] :=
   entropyRate_add_tsum hw (hs.comp measurable_fst) T ▸
@@ -201,18 +203,19 @@ variable {Ω Ω' W : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] [Measurab
   [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {w : ℕ → Ω → W} {w' : ℕ → Ω' → W}
 
 /-- The bound cannot tell a language from its reversal: a process whose blocks have the laws of
-the reversed blocks of a stationary `w` has the same memory threshold and the same surprisal floor
-(p. 733). -/
+the reversed blocks of `w` has the same memory threshold and the same surprisal floor (p. 733).
+Stationarity of both processes follows from the condition on their blocks. -/
 theorem information_locality_bound_reverse (hw : ∀ t, Measurable (w t))
-    (hw' : ∀ t, Measurable (w' t)) (hs : IsStationary w μ)
+    (hw' : ∀ t, Measurable (w' t))
     (h : ∀ n, ν.map (block w' 0 n) = μ.map fun ω ↦ block w 0 n ω ∘ Fin.rev) (T : ℕ) :
     ∑ t ∈ Icc 1 T, t * distanceInfo w' ν t = ∑ t ∈ Icc 1 T, t * distanceInfo w μ t ∧
       entropyRate w' ν + ∑' t, distanceInfo w' ν (T + t + 1) =
         entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) := by
   refine ⟨sum_congr rfl fun t ht ↦ ?_, ?_⟩
   · obtain ⟨s, rfl⟩ : ∃ s, t = s + 1 := ⟨t - 1, by have := (mem_Icc.1 ht).1; omega⟩
-    rw [distanceInfo_succ_eq_of_map_rev hw hw' h hs]
-  · rw [entropyRate_add_tsum hw' (isStationary_of_map_rev hw hw' h), entropyRate_add_tsum hw hs,
+    rw [distanceInfo_succ_eq_of_map_rev hw hw' h]
+  · rw [entropyRate_add_tsum hw' (isStationary_of_map_rev hw hw' h),
+      entropyRate_add_tsum hw (isStationary_of_map_rev' hw hw' h),
       pastCondEntropy_eq_of_map_rev hw hw' h]
 
 end Reversal

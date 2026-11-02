@@ -834,7 +834,8 @@ theorem pastCondEntropy_nonclustered_zero :
       = pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) 0 := by
   rw [pastCondEntropy_zero (measurable_char _), pastCondEntropy_zero (measurable_char _),
     char_nonclustered_zero]
-  exact ((measurePreserving_flip d).identDistrib_comp (measurable_char _ 0)).entropy_eq
+  have hc := hasLaw_map (P := stream 2 (meanings d)) (measurable_char (tagged agg) 0).aemeasurable
+  exact (HasLaw.identDistrib (hc.comp (measurePreserving_flip d).hasLaw) hc).entropy_eq
 
 theorem pastCondEntropy_tagged_agg_one_le :
     pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) 1
