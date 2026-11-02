@@ -318,6 +318,12 @@ form `Set.LiftRel`, the bivalent common ground of [beck-2001] and [sternefeld-19
 theorem weakReciprocity_iff_liftRel (R : α → α → Prop) (X : Finset α) :
     WeakReciprocity R X ↔ Set.LiftRel (fun a b ↦ R a b ∧ a ≠ b) ↑X ↑X := Iff.rfl
 
+theorem weakReciprocity_pair [DecidableEq α] {a b : α} :
+    WeakReciprocity R {a, b} ↔ a ≠ b ∧ R a b ∧ R b a := by
+  obtain rfl | h := eq_or_ne a b
+  · simp [WeakReciprocity]
+  · simpa [WeakReciprocity, h, h.symm] using fun h h' ↦ And.intro h' h
+
 theorem WeakReciprocity.oneWayWeak (h : WeakReciprocity R X) (hX : X.Nonempty) :
     OneWayWeakReciprocity R X := by
   obtain ⟨x, hx⟩ := hX
@@ -325,6 +331,12 @@ theorem WeakReciprocity.oneWayWeak (h : WeakReciprocity R X) (hX : X.Nonempty) :
   exact oneWayWeakReciprocity_iff.2 ⟨⟨x, hx, y, hy, hxy⟩, fun x hx ↦
     let ⟨y, hy, hR, hne⟩ := h.1 x hx
     ⟨y, hy, hne, hR⟩⟩
+
+theorem OneWayWeakReciprocity.weak [Std.Symm R] (h : OneWayWeakReciprocity R X) :
+    WeakReciprocity R X :=
+  have h := (oneWayWeakReciprocity_iff.1 h).2
+  ⟨fun x hx ↦ let ⟨y, hy, hne, hR⟩ := h x hx; ⟨y, hy, hR, hne⟩,
+    fun x hx ↦ let ⟨y, hy, hne, hR⟩ := h x hx; ⟨y, hy, symm_of R hR, hne.symm⟩⟩
 
 theorem IntermediateReciprocity.weak (h : IntermediateReciprocity R X) : WeakReciprocity R X := by
   obtain ⟨hX, hr⟩ := h
