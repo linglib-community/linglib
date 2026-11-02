@@ -1,232 +1,194 @@
 module
 
+public import Mathlib.Data.Fintype.Card
 public import Linglib.Discourse.Accessibility
 public import Linglib.Discourse.Givenness
 public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Data.Examples.Ariel2001
 public import Linglib.Data.Examples.Readers
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
-# Ariel 2001: accessibility theory
+# Ariel (2001): Accessibility theory: an overview
 
-Referring expressions are accessibility markers: each codes a degree of mental accessibility
-of the representation the addressee is to retrieve, and the eighteen classes of the
-Accessibility Marking Scale run from full name with modifier down to zero. The scale is
-motivated by three partially overlapping criteria — informativity, rigidity, and
-attenuation — each anti-correlated with the accessibility a form codes. The accessibility of
-a representation is a composite of the antecedent's salience (discourse topics, speaker and
-addressee, frame-induced entities), competition among antecedents, distance, and the unity
-between antecedent and anaphor; no single factor decides, as when a topical but distant
-antecedent takes the higher marker over a recent non-topical one. Against the rival
-theories, the Givenness Hierarchy maps many forms of distinct accessibility to one status
-and one form to several, and Centering's pronoun rule is silent on lexical anaphors, so it
-does not predict the repeated-name penalty.
+Referring expressions are accessibility markers: each class on the Accessibility Marking Scale
+codes a degree of accessibility of the mental representation the addressee is to retrieve, from a
+modified full name, coding the least, to a zero. A form codes less accessibility the more
+informative, rigid and unattenuated it is, and these criteria jointly [order every pair they rank
+as the scale does, except against a short definite description](##lt_of_criteria_lt);
+[attenuation alone never runs against the scale](##attenuation_mono). The rival theories fall
+short of it: [no assignment of Givenness statuses separates the forms](##givenness_not_injective), and
+Centering's Rule 1 [holds whenever every center is
+lexical](##pronominalizationConstraint_of_lexical), so it does not predict the repeated-name
+penalty, and [fails where the discourse topic is pronominal beside a lexical backward-looking
+center](##not_pronominalizationConstraint_accused).
 
-## Main definitions
+## Implementation notes
 
-* `head`, `modified`, `lexical`, `full`, `deixis`, `stressed`, `bound`: the form features
-  the scale's labels name.
-* `Factors`: the accessibility factors, with `Factors.Dominates` the factor-wise comparison.
-* `givenness`: the Givenness Hierarchy statuses of the scale's forms, as the paper reports
-  them.
+* `criteria` compares the substrate's `informativity`, `rigidity` and `attenuation` jointly, in
+  the product order. The exceptions are [the partial names and the modified demonstrative
+  phrases](##criteria_lt_and_shortDefDescription_lt_iff), which the criteria rank below a short
+  definite description and the scale above it. The chapter grants that some aspects of the scale
+  are grammatically stipulated and notes a conflict between demonstratives, which code the higher
+  accessibility, and definite descriptions, which are the shorter; the partial names are
+  exceptions only because `informativity` credits a name with as much lexical information as a
+  description's noun, a comparison the chapter does not make.
+* The criteria tie proximate and distal demonstratives, which the scale [ranks
+  apart](##distal_lt_proximate) on distributional evidence.
+* Rows record their markers by the scale's labels as printed, read through `markerTable`.
+* In (12) the roles follow Centering's ranking for English; the first clause's forms are as
+  printed and the second's are those its row records.
 
 ## References
 
 * [ariel-2001]
-* [ariel-1990] — the scale and its distributional basis
-* [gundel-hedberg-zacharski-1993] — the Givenness Hierarchy
-* [grosz-joshi-weinstein-1995] — Centering's pronoun rule
+* [ariel-1990]
+* [gundel-hedberg-zacharski-1993]
+* [grosz-joshi-weinstein-1995]
 -/
 
 @[expose] public section
 
 namespace Ariel2001
 
-open Discourse
+open Discourse AccessibilityLevel
 
-/-! ### Form-function criteria (§1.1) -/
+/-! ### The criteria -/
 
-theorem informativity_modifier :
-    ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
-      a.modified → ¬ b.modified → a < b := by
+/-- The criteria a form meets, ordered so that the lower of two forms is at least as informative,
+as rigid and as unattenuated as the higher. -/
+def criteria (l : AccessibilityLevel) : (Finset Information)ᵒᵈ × Rigidityᵒᵈ × Attenuation :=
+  (OrderDual.toDual l.informativity, OrderDual.toDual l.rigidity, l.attenuation)
+
+/-- The more informative, rigid and unattenuated a form, the lower the accessibility it codes:
+where the criteria jointly rank one form below another, the scale does too, unless the higher is
+a short definite description. -/
+theorem lt_of_criteria_lt {a b : AccessibilityLevel} (h : criteria a < criteria b)
+    (hb : b ≠ shortDefDescription) : a < b := by
+  revert a b
+  simp only [lt_iff_le_not_ge]
   decide
 
-theorem informativity_lexical :
-    ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
-      ¬ a.modified → ¬ b.modified → a.lexical → ¬ b.lexical → a < b := by
+-- p. 54; n. 32
+theorem criteria_lt_and_shortDefDescription_lt_iff (a : AccessibilityLevel) :
+    criteria a < criteria shortDefDescription ∧ shortDefDescription < a ↔
+      a ∈ [lastName, firstName, distalDemMod, proxDemMod] := by
+  revert a
+  simp only [lt_iff_le_not_ge]
   decide
 
-theorem informativity_partial_name :
-    ∀ a b : AccessibilityLevel, a.head = .name → b.head = .name →
-      ¬ a.modified → ¬ b.modified → a.full → ¬ b.full → a < b := by
+/-- Attenuation alone never runs against the scale. -/
+theorem attenuation_mono : Monotone attenuation := by
+  unfold Monotone
   decide
 
-theorem rigidity_full_name :
-    ∀ a b : AccessibilityLevel, a.head = .name → a.full → b.head = .description →
-      a.modified = b.modified → a < b := by
+theorem not_antitone_informativity : ¬ Antitone informativity :=
+  fun h ↦ absurd (h (show lastName ≤ distalDemMod by decide)) (by decide)
+
+theorem not_antitone_rigidity : ¬ Antitone rigidity :=
+  fun h ↦ absurd (h (show shortDefDescription ≤ lastName by decide)) (by decide)
+
+-- p. 51; Kirsner's Dutch demonstratives run the other way, p. 66
+theorem distal_lt_proximate (a b : AccessibilityLevel) (h : criteria a = criteria b)
+    (ha : a.deixis = some Person.first.participantSetsᶜ)
+    (hb : b.deixis = some Person.first.participantSets) : a < b := by
+  revert a b
   decide
 
-theorem rigidity_not_sufficient :
-    AccessibilityLevel.shortDefDescription < AccessibilityLevel.lastName := by
-  decide
+/-! ### The rows -/
 
-theorem attenuation_stress :
-    ∀ a b : AccessibilityLevel, a.head = .pronoun → b.head = .pronoun →
-      a.stressed → ¬ b.stressed → a < b := by
-  decide
+/-- The scale's labels as printed. -/
+def markerTable : List (String × AccessibilityLevel) :=
+  [("full name+modifier", fullNameMod), ("full name", fullName),
+   ("long definite description", longDefDescription),
+   ("short definite description", shortDefDescription), ("last name", lastName),
+   ("first name", firstName), ("distal demonstrative+modifier", distalDemMod),
+   ("proximate demonstrative+modifier", proxDemMod), ("distal demonstrative+NP", distalDemNP),
+   ("proximate demonstrative+NP", proxDemNP), ("distal demonstrative (-NP)", distalDem),
+   ("proximate demonstrative (-NP)", proxDem), ("stressed pronoun+gesture", stressedPronGesture),
+   ("stressed pronoun", stressedPron), ("unstressed pronoun", unstressedPron),
+   ("cliticized pronoun", cliticizedPron), ("verbal person inflections", verbalAgreement),
+   ("zero", zero)]
 
-theorem attenuation_reduction :
-    ∀ a b : AccessibilityLevel,
-      (a.head = .pronoun ∧ b.head = .pronoun ∧ ¬ a.stressed ∧ ¬ a.bound ∧ b.bound) ∨
-        (a.head = .pronoun ∧ b.head = .inflection) ∨ (a.head = .inflection ∧ b.head = .zero) →
-      a < b := by
-  decide
+/-- The marker a row records under `key`. -/
+def marker (r : Datum) (key : String) : Option AccessibilityLevel := r.parse? key markerTable
 
--- §5.1
-theorem deixis_proximate :
-    ∀ a b : AccessibilityLevel, a.head = .demonstrative → b.head = .demonstrative →
-      a.modified = b.modified → a.lexical = b.lexical →
-      a.deixis = some Person.first.participantSetsᶜ → b.deixis = some Person.first.participantSets →
-        a < b := by
-  decide
-
-/-! ### Accessibility as a complex concept (§1.2) -/
-
-/-- The salience of an antecedent by discourse role. -/
-inductive Topicality
-  | nonTopic
-  | localTopic
-  | globalTopic
-  deriving DecidableEq, Repr
-
-/-- Topicality in increasing order. -/
-def Topicality.rank : Topicality → ℕ
-  | .nonTopic => 0
-  | .localTopic => 1
-  | .globalTopic => 2
-
-/-- A degree of accessibility is assessed from distance since the last mention, competing
-antecedents, topicality, and the unity of antecedent and anaphor. -/
-structure Factors where
-  distance : ℕ
-  competitors : ℕ
-  topicality : Topicality
-  tight : Bool
-  deriving DecidableEq, Repr
-
-/-- `a` is at least as accessible as `b` on every factor. -/
-def Factors.Dominates (a b : Factors) : Prop :=
-  a.distance ≤ b.distance ∧ a.competitors ≤ b.competitors ∧
-    b.topicality.rank ≤ a.topicality.rank ∧ (b.tight → a.tight)
-
-instance (a b : Factors) : Decidable (a.Dominates b) := by unfold Factors.Dominates; infer_instance
-
-/-- In *Maya kissed Rachel. And then she/SHE …* the first-mentioned Maya is topical but more
-distant, Rachel more recent but not topical. -/
-def maya : Factors := ⟨2, 1, .localTopic, false⟩
-
-/-- Rachel's factors in the same example. -/
-def rachel : Factors := ⟨1, 1, .nonTopic, false⟩
-
-theorem maya_rachel_incomparable : ¬ maya.Dominates rachel ∧ ¬ rachel.Dominates maya := by
-  decide
-
-/-- The scale label of a marker feature. -/
-def ofLabel : String → Option AccessibilityLevel
-  | "fullNameMod" => some .fullNameMod
-  | "fullName" => some .fullName
-  | "longDefDescription" => some .longDefDescription
-  | "shortDefDescription" => some .shortDefDescription
-  | "lastName" => some .lastName
-  | "firstName" => some .firstName
-  | "distalDemMod" => some .distalDemMod
-  | "proxDemMod" => some .proxDemMod
-  | "distalDemNP" => some .distalDemNP
-  | "proxDemNP" => some .proxDemNP
-  | "distalDem" => some .distalDem
-  | "proxDem" => some .proxDem
-  | "stressedPronGesture" => some .stressedPronGesture
-  | "stressedPron" => some .stressedPron
-  | "unstressedPron" => some .unstressedPron
-  | "cliticizedPron" => some .cliticizedPron
-  | "verbalAgreement" => some .verbalAgreement
-  | "zero" => some .zero
-  | _ => none
-
-/-- The marker a row records under a feature. -/
-def marker (r : Datum) (key : String) : Option AccessibilityLevel :=
-  r.feature? key >>= ofLabel
-
-/-- All the markers a row lists, in order. -/
+/-- The markers a row lists, in order. -/
 def markers (r : Datum) : List AccessibilityLevel :=
-  (r.features "marker").filterMap ofLabel
+  (r.features "marker").filterMap (List.lookup · markerTable)
 
-theorem rows_topicality_over_distance :
-    ∀ r ∈ Examples.all, ∀ m ∈ (marker r "maya").toList, ∀ c ∈ (marker r "rachel").toList,
-      c < m := by
+/-- A row codes the referent under `hi` by a higher accessibility marker than the one under
+`lo`. -/
+def Outmarks (r : Datum) (hi lo : String) : Prop := ∃ h ∈ marker r hi, ∃ l ∈ marker r lo, l < h
+
+instance (r : Datum) (hi lo : String) : Decidable (Outmarks r hi lo) :=
+  inferInstanceAs (Decidable (∃ h ∈ marker r hi, ∃ l ∈ marker r lo, l < h))
+
+-- p. 34
+theorem maya_outmarks_rachel : Outmarks Examples.maya_rachel "maya" "rachel" := by
   decide +kernel
 
 -- (3), (4)
-theorem rows_perspective :
-    ∀ r ∈ Examples.all, ∀ v ∈ (marker r "victim").toList, ∀ p ∈ (marker r "rapists").toList,
-      (r.feature? "perspective" = some "victim" → p < v) ∧
-        (r.feature? "perspective" = some "rapists" → v < p) := by
+theorem perspective_outmarks :
+    ∀ r ∈ [Examples.ex_3, Examples.ex_4], ∃ p ∈ r.feature? "perspective",
+      ∀ o ∈ ["victim", "rapists"], o ≠ p → Outmarks r p o := by
   decide +kernel
 
 -- (8)
-theorem rows_headline :
-    ∀ a ∈ Examples.all, ∀ b ∈ Examples.all,
-      a.source.paperLabel = "(8a)" → b.source.paperLabel = "(8b)" →
-        ∀ p ∈ (markers a).zip (markers b), p.2 < p.1 := by
+theorem headline_outmarks :
+    (∀ p ∈ (markers Examples.ex_8a).zip (markers Examples.ex_8b), p.2 < p.1) ∧
+      (markers Examples.ex_8a).length = 4 ∧ (markers Examples.ex_8b).length = 4 := by
   decide +kernel
 
-/-! ### Competing theories (§4) -/
+/-! ### Competing theories -/
 
-/-- The Givenness Hierarchy statuses of the scale's forms, as the paper reports them for
-English: the pronominal forms are all *in focus*, *that*, *this*, stressed *IT*, and *this
-N* all *activated*, and a full name *uniquely identifiable* or *familiar*, a partial name
-*familiar* or *activated*. -/
-def givenness : AccessibilityLevel → Finset GivennessStatus
-  | .zero | .verbalAgreement | .cliticizedPron | .unstressedPron => {.inFocus}
-  | .stressedPronGesture | .stressedPron | .proxDem | .distalDem | .proxDemNP
-  | .proxDemMod => {.activated}
-  | .distalDemNP | .distalDemMod => {.familiar}
-  | .longDefDescription | .shortDefDescription => {.uniquelyIdentifiable}
-  | .fullNameMod | .fullName => {.uniquelyIdentifiable, .familiar}
-  | .lastName | .firstName => {.familiar, .activated}
+/-- No assignment of Givenness statuses separates every form of the scale: *that*, *this*,
+stressed *IT* and *this N* all mark *activated*, and the hierarchy has six statuses for eighteen
+forms. -/
+theorem givenness_not_injective (f : AccessibilityLevel → GivennessStatus) :
+    ¬ Function.Injective f :=
+  fun h ↦ absurd (Fintype.card_le_of_injective f h) (by decide)
 
-theorem activated_many_forms :
-    (∀ l ∈ [AccessibilityLevel.distalDem, .proxDem, .stressedPron, .proxDemNP],
-      givenness l = {.activated}) ∧
-      ([AccessibilityLevel.distalDem, .proxDem, .stressedPron, .proxDemNP].map
-        AccessibilityLevel.rank).Nodup := by
-  decide
+open Centering
 
-theorem full_name_two_statuses :
-    GivennessStatus.uniquelyIdentifiable ∈ givenness .fullName ∧
-      GivennessStatus.familiar ∈ givenness .fullName := by
-  decide
-
-theorem in_focus_collapse :
-    (∀ l ∈ [AccessibilityLevel.zero, .verbalAgreement, .cliticizedPron, .unstressedPron],
-      givenness l = {.inFocus}) ∧
-      ([AccessibilityLevel.zero, .verbalAgreement, .cliticizedPron, .unstressedPron].map
-        AccessibilityLevel.rank).Nodup := by
-  decide
-
-open Discourse.Centering in
--- Rule 1
+/-- Rule 1 holds of an utterance whose centers are all lexical, whichever non-lexical forms count
+as pronouns, so it does not rule out a repeated name. -/
 theorem pronominalizationConstraint_of_lexical {E R : Type*} [DecidableEq E] [LinearOrder R]
+    {P : Set AccessibilityLevel} (hP : ∀ l ∈ P, ¬ l.lexical)
     (prev cur : Utterance E R AccessibilityLevel) (h : ∀ r ∈ cur.realizations, r.form.lexical) :
-    PronominalizationConstraint {l | l.head = .pronoun} prev cur := by
-  refine pronominalizationConstraint_of_forall_not fun _ ⟨r, hr, _, hp⟩ ↦ ?_
-  have : ∀ l : AccessibilityLevel, l.lexical → l.head ≠ .pronoun := by decide
-  exact this r.form (h r hr) hp
+    PronominalizationConstraint P prev cur :=
+  pronominalizationConstraint_of_forall_not fun _ ⟨r, hr, _, hp⟩ ↦ hP _ hp (h r hr)
 
--- (12)
-theorem rows_topic_over_subject :
-    ∀ r ∈ Examples.all, ∀ t ∈ (marker r "topicMarker").toList,
-      ∀ s ∈ (marker r "subjectMarker").toList, s < t := by
-  decide +kernel
+/-- The referents of (12): officer Feil, the discourse topic, and the officer in charge of him. -/
+inductive Referent
+  | feil
+  | officer
+  deriving DecidableEq, Repr
+
+/-- *the officer in charge of him demanded from him to have a haircut* -/
+def demanded : Utterance Referent GrammaticalRole AccessibilityLevel :=
+  ⟨[⟨.officer, .subject, longDefDescription⟩, ⟨.feil, .other, unstressedPron⟩]⟩
+
+/-- *The officer accused him*, with the markers a row records for the subject and the topic. -/
+def accused (r : Datum) : Option (Utterance Referent GrammaticalRole AccessibilityLevel) := do
+  pure ⟨[⟨.officer, .subject, ← marker r "subjectMarker"⟩,
+    ⟨.feil, .object, ← marker r "topicMarker"⟩]⟩
+
+/-- In (12) the officer, subject of two consecutive clauses, is the backward-looking center of the
+second, yet only the discourse topic is pronominal there: Rule 1 fails for any R1-pronouns that
+include the pronouns and exclude the lexical forms. -/
+theorem not_pronominalizationConstraint_accused {P : Set AccessibilityLevel}
+    (hpron : ∀ l, l.head = .pronoun → l ∈ P) (hlex : ∀ l ∈ P, ¬ l.lexical) :
+    ∃ u ∈ accused Examples.ex_12, cb demanded u = some .officer ∧
+      ¬ PronominalizationConstraint P demanded u := by
+  refine ⟨⟨[⟨.officer, .subject, shortDefDescription⟩, ⟨.feil, .object, unstressedPron⟩]⟩,
+    by decide +kernel, by decide, fun h ↦ ?_⟩
+  obtain ⟨r, hr, he, hP⟩ := h ⟨.feil, by decide, _, .tail _ (.head _), rfl, hpron _ rfl⟩ .officer
+    (by decide)
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl
+  · exact hlex _ hP trivial
+  · cases he
 
 end Ariel2001
