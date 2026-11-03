@@ -27,8 +27,9 @@ operator on the members of `H` true at `w`:
   (`fromSetoid_partition`);
 - `IsStrongestTrueAnswer H w p`, [dayal-1996]'s maximally informative true
   member: the least true member under entailment, `IsLeast`. Its existence is
-  Dayal's existential presupposition `IsExhaustivelyResolvable`; `dayalAns`
-  returns it and `dayalStrongAns` applies Heim's strengthening to it;
+  Dayal's existential presupposition `IsExhaustivelyResolvable`, which holds on the
+  worlds `presupposition H`; `dayalAns` returns it and `dayalStrongAns` applies Heim's
+  strengthening to it;
 - `IsExhaustivelyResolvableOn H s`, the presupposition on an information
   state: a least member the state supports, Dayal's at the singleton `{w}`;
 - `isExhaustivelyResolvable_range_iff`, the presupposition on a topical
@@ -195,6 +196,11 @@ abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (trueAnswers H w) p
 
 /-- Dayal's existential presupposition holds at `w` when a strongest true member exists. -/
 def IsExhaustivelyResolvable : Prop := ∃ p, IsStrongestTrueAnswer H w p
+
+/-- The worlds where Dayal's existential presupposition holds. -/
+def presupposition : Set W := {w | IsExhaustivelyResolvable H w}
+
+@[simp] theorem mem_presupposition : w ∈ presupposition H ↔ IsExhaustivelyResolvable H w := Iff.rfl
 
 theorem isStrongestTrueAnswer_iff {p : Set W} :
     IsStrongestTrueAnswer H w p ↔ p ∈ H ∧ p = weakAnswer H w := by

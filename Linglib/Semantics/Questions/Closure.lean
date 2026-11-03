@@ -14,7 +14,8 @@ of the atoms under conjunction, `infClosure (Set.range a)`, the conjunctions ove
 of atoms; under Spector's higher-order quantification, pruned to disjunctions of atoms as in Fox,
 it denotes their closure under disjunction, `supClosure (Set.range a)`. Both families are read
 off the atoms true at a world, `Preorder.satisfied` with the atoms as criteria, and both induce
-the same partition, the kernel of that map.
+the same partition, the kernel of that map. Closing a finite family under conjunction reduces
+Dayal's presupposition to the existence of a true member.
 
 ## References
 
@@ -70,5 +71,27 @@ theorem partition_supClosure_range :
 theorem partition_infClosure_range_eq_supClosure_range :
     partition (infClosure (Set.range a)) = partition (supClosure (Set.range a)) :=
   partition_infClosure_range.trans partition_supClosure_range.symm
+
+/-- The conjunction of the members true at a world is the strongest true member of the closure
+of a finite family under conjunction. -/
+theorem isStrongestTrueAnswer_infClosure_image {s : Set ι} {w : W} (hs : s.Finite)
+    (h : ∃ i ∈ s, w ∈ a i) :
+    IsStrongestTrueAnswer (infClosure (a '' s)) w (⋂ i ∈ {i ∈ s | w ∈ a i}, a i) := by
+  obtain ⟨i, his, hi⟩ := h
+  have hT : {i ∈ s | w ∈ a i}.Finite := hs.subset (Set.sep_subset _ _)
+  refine ⟨⟨Set.mem_infClosure_image.2 ⟨hT.toFinset, ⟨i, by simp [his, hi]⟩,
+    by simp +contextual [Set.subset_def], by simp⟩, by simp +contextual⟩, ?_⟩
+  rintro _ ⟨hq, hw⟩
+  obtain ⟨t, -, hts, rfl⟩ := Set.mem_infClosure_image.1 hq
+  exact Set.subset_iInter₂ fun j hj ↦
+    Set.biInter_subset_of_mem (s := {i ∈ s | w ∈ a i}) ⟨hts hj, Set.mem_iInter₂.1 hw j hj⟩
+
+theorem presupposition_infClosure_image {s : Set ι} (hs : s.Finite) :
+    presupposition (infClosure (a '' s)) = ⋃ i ∈ s, a i := by
+  refine Set.ext fun w ↦ ⟨fun h ↦ ?_, fun h ↦ ⟨_, isStrongestTrueAnswer_infClosure_image hs
+    (by simpa using h)⟩⟩
+  obtain ⟨_, hq, hw⟩ := h.exists_mem
+  obtain ⟨t, ⟨i, hi⟩, hts, rfl⟩ := Set.mem_infClosure_image.1 hq
+  exact Set.mem_biUnion (hts hi) (Set.mem_iInter₂.1 hw i hi)
 
 end Question

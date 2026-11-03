@@ -12,13 +12,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This one", "judgment": "acceptable"},
-      {"name": "plural answer: This one and that one", "judgment": "unacceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "Also with which; repeated as (6).",
+    "comment": "Answers: This one / This one and that one. Also with which; repeated as (6).",
     "verified": "page-image"
   },
   {
@@ -34,13 +34,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This thing", "judgment": "acceptable"},
-      {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "BI"]
     ],
-    "comment": "Repeated as (5).",
+    "comment": "Answers: This thing / This thing and that thing. Repeated as (5).",
     "verified": "page-image"
   },
   {
@@ -56,13 +56,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This one", "judgment": "unacceptable"},
-      {"name": "plural answer: This one and that one", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PCI"]
     ],
-    "comment": "",
+    "comment": "Answers: This one / This one and that one.",
     "verified": "page-image"
   },
   {
@@ -79,13 +79,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This thing", "judgment": "acceptable"},
-      {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "Repeated as (3) and (38).",
+    "comment": "Answers: This thing / This thing and that thing. Repeated as (3) and (38).",
     "verified": "page-image"
   },
   {
@@ -102,13 +102,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This thing", "judgment": "unacceptable"},
-      {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PBI"]
     ],
-    "comment": "",
+    "comment": "Answers: This thing / This thing and that thing.",
     "verified": "page-image"
   },
   {
@@ -126,13 +126,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: A Juan", "judgment": "acceptable"},
-      {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "The paper prints the translation as 'Who did you saw?'.",
+    "comment": "Answers: A Juan / A Juan y a Pedro. The paper prints the translation as 'Who did you saw?'.",
     "verified": "page-image"
   },
   {
@@ -150,13 +150,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: A Juan", "judgment": "unacceptable"},
-      {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PBI"]
     ],
-    "comment": "The paper prints the translation as 'Who did you saw?'.",
+    "comment": "Answers: A Juan / A Juan y a Pedro. The paper prints the translation as 'Who did you saw?'.",
     "verified": "page-image"
   },
   {
@@ -174,13 +174,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: A Juan", "judgment": "acceptable"},
-      {"name": "plural answer: A Juan y a Pedro", "judgment": "unacceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "",
+    "comment": "Answers: A Juan / A Juan y a Pedro.",
     "verified": "page-image"
   },
   {
@@ -198,13 +198,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This book", "judgment": "acceptable"},
-      {"name": "plural answer: This book and that book", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "Repeated as (4) and (43). Farsi patterns with Brazilian Portuguese que NP.",
+    "comment": "Answers: This book / This book and that book. Repeated as (4) and (43). Farsi patterns with Brazilian Portuguese que NP.",
     "verified": "page-image"
   },
   {
@@ -222,13 +222,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: A Juan", "judgment": "unacceptable"},
-      {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PCI"]
     ],
-    "comment": "",
+    "comment": "Answers: A Juan / A Juan y a Pedro.",
     "verified": "page-image"
   },
   {
@@ -246,13 +246,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This book", "judgment": "unacceptable"},
-      {"name": "plural answer: This book and that book", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PCI"]
     ],
-    "comment": "",
+    "comment": "Answers: This book / This book and that book.",
     "verified": "page-image"
   },
   {
@@ -270,13 +270,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This thing", "judgment": "acceptable"},
-      {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "Repeated as (49).",
+    "comment": "Answers: This thing / This thing and that thing. Repeated as (49).",
     "verified": "page-image"
   },
   {
@@ -294,13 +294,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This book", "judgment": "acceptable"},
-      {"name": "plural answer: This book and that book", "judgment": "unacceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "Repeated as (50).",
+    "comment": "Answers: This book / This book and that book. Repeated as (50).",
     "verified": "page-image"
   },
   {
@@ -318,13 +318,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This book", "judgment": "unacceptable"},
-      {"name": "plural answer: This book and that book", "judgment": "acceptable"}
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "PCI"]
     ],
-    "comment": "",
+    "comment": "Answers: This book / This book and that book.",
     "verified": "page-image"
   },
   {
@@ -341,12 +341,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "free choice answer: This thing or that thing — either one", "judgment": "acceptable"}
+      {"name": "free choice answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "Answerable with a free choice disjunction.",
+    "comment": "Answers: This thing or that thing — either one. Answerable with a free choice disjunction.",
     "verified": "page-image"
   },
   {
@@ -364,12 +364,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "free choice answer: This book or that book — either book", "judgment": "acceptable"}
+      {"name": "free choice answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "",
+    "comment": "Answers: This book or that book — either book.",
     "verified": "page-image"
   },
   {
@@ -409,12 +409,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "collective answer: This and that", "judgment": "acceptable"}
+      {"name": "collective answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "BIs range over pluralities, with or without -ro.",
+    "comment": "Answers: This and that. BIs range over pluralities, with or without -ro.",
     "verified": "page-image"
   },
   {
@@ -541,12 +541,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "free choice answer: This thing or that thing", "judgment": "acceptable"}
+      {"name": "free choice answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SBI"]
     ],
-    "comment": "Some informants accept the free choice answer unembedded; taken to reject the presupposition that Forood is required to buy a particular thing.",
+    "comment": "Answers: This thing or that thing. Some informants accept the free choice answer unembedded; taken to reject the presupposition that Forood is required to buy a particular thing.",
     "verified": "page-image"
   },
   {
@@ -564,12 +564,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "free choice answer: This book or that book", "judgment": "acceptable"}
+      {"name": "free choice answer", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["type", "SCI"]
     ],
-    "comment": "",
+    "comment": "Answers: This book or that book.",
     "verified": "page-image"
   },
   {
@@ -681,13 +681,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "singular answer: This book", "judgment": "acceptable"},
-      {"name": "plural answer: This book and that book", "judgment": "unacceptable"}
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["type", "which CI"]
     ],
-    "comment": "Repeated as (71); uniqueness presupposition.",
+    "comment": "Answers: This book / This book and that book. Repeated as (71); uniqueness presupposition.",
     "verified": "page-image"
   },
   {

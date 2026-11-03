@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This one", .acceptable), ("plural answer: This one and that one", .unacceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_2 : Datum :=
@@ -40,7 +40,7 @@ def ex_2 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "BI")] }
 
 def ex_7 : Datum :=
@@ -54,7 +54,7 @@ def ex_7 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This one", .unacceptable), ("plural answer: This one and that one", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
 def ex_20 : Datum :=
@@ -68,7 +68,7 @@ def ex_20 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_21 : Datum :=
@@ -82,7 +82,7 @@ def ex_21 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This thing", .unacceptable), ("plural answer: This thing and that thing", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
 def ex_16 : Datum :=
@@ -96,7 +96,7 @@ def ex_16 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: A Juan", .acceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_17 : Datum :=
@@ -110,7 +110,7 @@ def ex_17 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: A Juan", .unacceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PBI")] }
 
 def ex_22 : Datum :=
@@ -124,7 +124,7 @@ def ex_22 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: A Juan", .acceptable), ("plural answer: A Juan y a Pedro", .unacceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_23 : Datum :=
@@ -138,7 +138,7 @@ def ex_23 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .acceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_24 : Datum :=
@@ -152,7 +152,7 @@ def ex_24 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: A Juan", .unacceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
 def ex_25 : Datum :=
@@ -166,7 +166,7 @@ def ex_25 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This book", .unacceptable), ("plural answer: This book and that book", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
 def ex_26 : Datum :=
@@ -180,7 +180,7 @@ def ex_26 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_27 : Datum :=
@@ -194,7 +194,7 @@ def ex_27 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .unacceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_28 : Datum :=
@@ -208,7 +208,7 @@ def ex_28 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This book", .unacceptable), ("plural answer: This book and that book", .acceptable)]
+    readings := [("singular answer", .unacceptable), ("plural answer", .acceptable)]
     paperFeatures := [("type", "PCI")] }
 
 def ex_30 : Datum :=
@@ -222,7 +222,7 @@ def ex_30 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("free choice answer: This thing or that thing — either one", .acceptable)]
+    readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_31 : Datum :=
@@ -236,7 +236,7 @@ def ex_31 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("free choice answer: This book or that book — either book", .acceptable)]
+    readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_47 : Datum :=
@@ -264,7 +264,7 @@ def ex_56 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("collective answer: This and that", .acceptable)]
+    readings := [("collective answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_57 : Datum :=
@@ -352,7 +352,7 @@ def ex_64 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("free choice answer: This thing or that thing", .acceptable)]
+    readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SBI")] }
 
 def ex_65 : Datum :=
@@ -366,7 +366,7 @@ def ex_65 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("free choice answer: This book or that book", .acceptable)]
+    readings := [("free choice answer", .acceptable)]
     paperFeatures := [("type", "SCI")] }
 
 def ex_66 : Datum :=
@@ -437,7 +437,7 @@ def ex_70b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .unacceptable)]
+    readings := [("singular answer", .acceptable), ("plural answer", .unacceptable)]
     paperFeatures := [("type", "which CI")] }
 
 def ex_73 : Datum :=
