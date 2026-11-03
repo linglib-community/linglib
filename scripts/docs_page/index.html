@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs | Linglib</title>
+<meta name="description" content="The API documentation of Linglib: its theory, studies, fragments, data and core.">
+<!--SITE_HEAD-->
+<style>
+/* The landing page of the docs: the search, and the library's modules in folds */
+:root { --study: #16a34a; --theory: #4f6fd0; --frag: #c0801f; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --study: #22c55e; --theory: #8aa2ee; --frag: #e2a955; }
+}
+:root[data-theme="dark"] { --study: #22c55e; --theory: #8aa2ee; --frag: #e2a955; }
+.search { position: sticky; top: 0; z-index: 2; background: var(--theme); padding: 12px 0 8px; }
+#q {
+  width: 100%; padding: 10px 14px; font: inherit; font-size: 17px; color: var(--primary);
+  background: var(--entry); border: 1px solid var(--tertiary); border-radius: 8px; outline: none;
+  -webkit-appearance: none; appearance: none;
+}
+#q:focus { border-color: var(--secondary); }
+#q::placeholder { color: var(--secondary); opacity: 0.8; }
+.go { margin: 6px 0 0; font-size: 15px; }
+.go a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.go a:hover { text-decoration-color: currentColor; }
+.tree h2 { display: flex; align-items: center; gap: 9px; font-size: 21px; margin: 30px 0 8px; scroll-margin-top: 70px; }
+.tree h2::before { content: ""; width: 9px; height: 9px; background: var(--tertiary); }
+.tree h2.t::before { background: var(--theory); border-radius: 1.5px; }
+.tree h2.s::before { background: var(--study); border-radius: 50%; }
+.tree h2.f::before { background: var(--frag); width: 8px; height: 8px; margin: 0 0.5px; transform: rotate(45deg); }
+.tree details { scroll-margin-top: 70px; }
+.tree details details, .tree details > ul { margin-left: 16px; }
+.tree summary { list-style: none; padding: 3px 0; cursor: pointer; color: var(--primary); }
+.tree summary::-webkit-details-marker { display: none; }
+.tree summary::after { content: " +"; color: var(--secondary); font-size: 0.85em; }
+.tree details[open] > summary::after { content: " \2212"; }
+.tree summary:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tree ul { list-style: none; margin: 0; padding: 0; }
+.tree li { padding: 2px 0; font-size: 16px; line-height: 1.4; }
+.tree li a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tree a.f { font: 14.5px var(--mono); }
+.tree .ti { color: var(--secondary); font-size: 15px; }
+@media (max-width: 600px) {
+  #q { font-size: 16px; }
+  .tree li { font-size: 15px; }
+  .tree a.f { font-size: 13.5px; }
+  .tree .ti { font-size: 14px; }
+}
+</style>
+</head>
+<body id="top">
+<!--SITE_HEADER-->
+
+<main class="main">
+  <h1>Docs</h1>
+  <form class="search" action="search.html" role="search">
+    <input id="q" name="q" type="search" placeholder="Filter, or Enter to search declarations" aria-label="Filter this page, or press Enter to search declarations" autocomplete="off" spellcheck="false">
+    <p class="go" id="go" hidden><a href="search.html" id="go-link"></a></p>
+  </form>
+  <div class="tree" id="tree">
+<!--TREE-->
+  </div>
+</main>
+
+<!--SITE_FOOTER-->
+<script>
+(function () {
+  const q = document.getElementById("q"), tree = document.getElementById("tree");
+  const go = document.getElementById("go"), goLink = document.getElementById("go-link");
+  const rows = Array.from(tree.querySelectorAll("li"), (li) => [li, (li.textContent + " " + li.querySelector("a").getAttribute("href")).toLowerCase()]);
+  // Inner folds first, so that an outer one sees what is left in them.
+  const folds = Array.from(tree.querySelectorAll("details")).reverse();
+  const sections = Array.from(tree.querySelectorAll("section"));
+  function apply() {
+    const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean), on = terms.length > 0;
+    for (const [li, hay] of rows) li.hidden = !terms.every((t) => hay.includes(t));
+    for (const d of folds) {
+      const any = !!d.querySelector("li:not([hidden])");
+      d.hidden = !any;
+      d.open = on && any;
+    }
+    for (const s of sections) s.hidden = !s.querySelector("li:not([hidden])");
+    go.hidden = !on;
+    if (on) {
+      goLink.href = "search.html?q=" + encodeURIComponent(q.value.trim());
+      goLink.textContent = "Search the declarations for “" + q.value.trim() + "”";
+    }
+  }
+  q.addEventListener("input", apply);
+  q.addEventListener("keydown", (ev) => { if (ev.key === "Escape") { q.value = ""; apply(); } });
+  q.form.addEventListener("submit", (ev) => { if (!q.value.trim()) ev.preventDefault(); });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { ev.preventDefault(); q.focus(); }
+  });
+  // A page's crumb links to its directory here: open the folds down to it.
+  function reveal() {
+    const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!el) return;
+    for (let d = el.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+    el.scrollIntoView();
+  }
+  addEventListener("hashchange", reveal);
+  reveal();
+})();
+</script>
+<!--SITE_SCRIPT-->
+</body>
+</html>
