@@ -7,9 +7,8 @@ public import Linglib.Syntax.Category.Adposition.Spatial
 
 The readers of a verb entry beyond its fields: the entailment profile of the participant in a
 slot, lookup by citation form and sense, and the predicate a verb forms with a path phrase. The
-semantic classifications of an entry live with their theories, each under the `Verb` namespace:
-factivity and trigger status in `Semantics/Presupposition/Verb.lean` and unaccusativity in
-`Semantics/ArgumentStructure/Unaccusativity.lean`.
+semantic classifications of an entry live with their theories: factivity and trigger status on
+`Clause.Embedding` and unaccusativity in `Semantics/ArgumentStructure/Unaccusativity.lean`.
 
 ## Main definitions
 

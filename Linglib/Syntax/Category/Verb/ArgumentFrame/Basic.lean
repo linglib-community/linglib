@@ -40,8 +40,8 @@ computed from the frame's coding
 (`ArgumentFrame.argumentRole`), never stored. `ArgumentFrame` is not under `Verb` because
 complement-taking is cross-categorial: Noonan's complement-taking predicates include adjectives
 and nouns. Control is a participant of a diathesis (`Diathesis.controller`); attitude and opacity
-are recorded on `Verb.Reading`, the selection of clause-typers on `Verb.Takes`, and Deal's
-CP-external shells in `Studies/Deal2026.lean`.
+are recorded on `Clause.Embedding.Reading`, the selection of clause-typers on `Verb.Takes`, and
+Deal's CP-external shells in `Studies/Deal2026.lean`.
 
 ## References
 

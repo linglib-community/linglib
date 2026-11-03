@@ -1,17 +1,14 @@
 module
 
 public import Linglib.Syntax.Clause.Complementation
+public import Linglib.Syntax.Clause.Embedding
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.Category.Verb.Diathesis
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Presupposition.Trigger
-public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
-public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability
@@ -23,12 +20,12 @@ public import Linglib.Morphology.Morph
 # Verb entries
 
 `Verb` is the framework-neutral verb entry shared by every language's fragment. Its fields are
-grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition` and
-`Verb.Attitude`, beside the selectional and inflectional enums `VoiceType`,
+grouped into the facets `Verb.ArgStructure` and `Verb.Aspect` and what it does with a clausal
+complement, `Clause.Embedding`, beside the selectional and inflectional enums `VoiceType`,
 `Verb.PerfectAuxiliary` and `SenseTag`.
 A verb's valency is its participants and their diatheses, each with the participant that
 controls its clausal complement, and a frame-conditioned attitude or opacity lives on a
-`Verb.Reading` row. The classifications of an entry, factive,
+`Clause.Embedding.Reading` row. The classifications of an entry, factive,
 implicative, trigger and so on, are read off these fields by the theories that make them.
 
 ## Implementation notes
@@ -37,14 +34,11 @@ implicative, trigger and so on, are read off these fields by the theories that m
   language fragment extends `Verb` with its inflectional paradigm.
 * The citation form is the list `morphs`, and `Verb.form` is its surface string, so a fragment
   builds a derived form, a converb or a causative, by attaching morphs to `v.morphs`.
-* The facets share their names with the theory namespaces whose values they hold, so a
-  facet field names its type with `_root_`.
 
 ## References
 
 * [bale-schwarz-2026]
 * [dayal-2025]
-* [heim-1992]
 * [icard-2012]
 * [kennedy-2007]
 * [levin-hovav-1995]
@@ -53,13 +47,13 @@ implicative, trigger and so on, are read off these fields by the theories that m
 * [qing-uegaki-2025]
 * [rappaport-hovav-levin-2024]
 * [rappaport-hovav-levin-1998]
+* [roberts-simons-2024]
 * [solstad-bott-2024]
 -/
 
 @[expose] public section
 
-open Aspect ArgumentStructure Presupposition
-open NaturalLogic (ProjectivitySignature)
+open Aspect ArgumentStructure
 open Morphology (Morph)
 
 /-! ### Selectional and inflectional enums -/
@@ -171,68 +165,17 @@ structure Aspect where
   phasal : Option Phasal := none
   deriving Repr, BEq
 
-/-- The presupposition profile of a verb is its factivity class and its implication signature.
-    Whether the verb triggers a presupposition is derived (`Verb.IsTrigger`). -/
-structure Presupposition where
-  /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
-      non-factive. -/
-  factivity : Option _root_.Presupposition.Factivity := none
-  /-- The [nairn-condoravdi-karttunen-2006] implication signature of the verb, the polarity of
-      the complement it implies in a positive and in a negative context; `⊥` for a verb that
-      implies nothing. -/
-  implicative : NaturalLogic.ImplicationSignature := ⊥
-  deriving Repr, BEq
-
-/-- A frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3 *hanaxa*; Greek
-    *thimame*) overrides the lexeme-level attitude, factivity and opacity for its frame (`none`
-    inherits `Verb.attitude`, `Verb.factivity` and `Verb.opaqueContext`) and records the sort of
-    the frame's complement. -/
-structure Reading where
-  /-- The reading applies to every frame of the verb refining this one, in the refinement order
-      on `ArgumentFrame`. -/
-  frame : ArgumentFrame
-  /-- Frame-conditioned attitude override. -/
-  attitude : Option _root_.Attitude := none
-  /-- Frame-conditioned opacity override. -/
-  opaqueContext : Option Bool := none
-  /-- Frame-conditioned factivity override, `none` inheriting `Verb.factivity`. -/
-  factivity : Option _root_.Presupposition.Factivity := none
-  /-- The semantic sort of the complement on this frame
-      ([wurmbrand-lohninger-2023]). -/
-  size : Option Clause.Size := none
-  deriving DecidableEq, Repr
-
-/-- The attitudinal and intensional properties of a verb are its attitude classification,
-    opacity, question-embedding and complement monotonicity. -/
-structure Attitude where
-  /-- Does the verb create an opaque context for its complement? -/
-  opaqueContext : Bool := false
-  /-- The attitude the verb expresses, doxastic or preferential, if it is an attitude verb. -/
-  attitude : Option _root_.Attitude := none
-  /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
-      overrides keyed to the frames of `valency`. -/
-  readings : List Reading := []
-  /-- Entailment signature of the complement position.
-      Classifies this verb's monotonicity w.r.t. its clausal complement.
-      `.mono` is upward monotone, the report closed under entailment of
-      the complement, as in Hintikka-style doxastic semantics
-      ([hintikka-1962]). Set only where the classification is textbook
-      consensus (believe, think, know); preferential attitudes (want, hope)
-      are contested ([heim-1992]) and stay `none`. -/
-  complementSig : Option ProjectivitySignature := none
-  deriving Repr, BEq
-
 end Verb
 
 /--
 The cross-linguistic verb core holds the semantic fields shared across languages.
 
-Composes the `Verb.*` facets (argument structure, aspect, presupposition,
-attitude, root) plus the morphs of the citation form, speech-act status, and a
-polysemy disambiguator. Language-specific fragments extend this with
-morphological fields appropriate to their inflectional system.
+Composes the `Verb.*` facets (argument structure, aspect) and `Clause.Embedding` with the root,
+the morphs of the citation form, speech-act status, and a polysemy disambiguator.
+Language-specific fragments extend this with morphological fields appropriate to their inflectional
+system.
 -/
-structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb.Attitude where
+structure Verb extends Verb.ArgStructure, Verb.Aspect, Clause.Embedding where
   /-- The [levin-1993] classes whose member lists carry the citation form, for the English
       entries; the classes are Levin's, so entries for other languages carry none. A verb Levin
       cross-lists carries every class, and a study chooses a sense by membership. -/
@@ -282,10 +225,6 @@ def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
 Readers over the frames of `Verb.valency` and over `Verb.readings`, such as whether some diathesis
 has a controller. -/
 
-/-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
-def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=
-  v.readings.find? fun r ↦ decide (r.frame ≤ fr)
-
 /-- Every frame of the verb is intransitive. -/
 def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.valency.frames, fr.IsIntransitive
 
@@ -297,16 +236,6 @@ def Verb.HasController (v : Verb) : Prop := ∃ d ∈ v.valency.diatheses, d.con
 
 instance (v : Verb) : Decidable v.HasController :=
   inferInstanceAs (Decidable (∃ d ∈ v.valency.diatheses, _))
-
-/-- The effective attitude on frame `fr` is the reading's override, else the lexeme's
-    default. -/
-def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
-  ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
-
-/-- The effective factivity on frame `fr` is the reading's override, else the lexeme's
-    default. -/
-def Verb.factivityOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Presupposition.Factivity :=
-  ((v.reading? fr).bind (·.factivity)).orElse fun _ ↦ v.factivity
 
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Clause.ComplementType :=
@@ -345,3 +274,13 @@ def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.valency.frames, fr.HasNo
 
 instance (v : Verb) : Decidable v.TakesNominal :=
   inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
+
+/-- The verb triggers a presupposition when what it does with its complement does
+(`Clause.Embedding.IsTrigger`), when it is phasal, presupposing the prior state
+(`Aspect.Phasal.denote`), or when it is an occasion verb, presupposing an eventuality that gave its
+agent reason to act. [roberts-simons-2024] explain factives and phasals as preconditions of the
+event the verb describes, and [solstad-bott-2024] identify occasion verbs. -/
+def Verb.IsTrigger (v : Verb) : Prop :=
+  v.toEmbedding.IsTrigger ∨ v.phasal ≠ none ∨ v.senseTag = .occasion
+
+instance : DecidablePred Verb.IsTrigger := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))

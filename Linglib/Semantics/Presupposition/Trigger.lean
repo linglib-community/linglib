@@ -8,9 +8,9 @@ belongs to a class by the kind of expression that hosts it (`TriggerClass`), the
 of the projection literature after Zeevat and after Tonhauser, Beaver, Roberts and Simons. Abusch
 divides triggers into hard ones, whose presupposition always projects, and soft ones, whose
 presupposition can be suspended (`Hardness`). Karttunen divides the factive predicates into true
-factives and semi-factives (`Factivity`). A verb's entry records its factivity, and whether it is a
-trigger is derived (`Verb.IsTrigger`); an adverb, particle or affix that triggers a presupposition
-is a `TriggerItem`.
+factives and semi-factives (`Factivity`). The entry of a clause-embedding predicate records its
+factivity, and whether it is a trigger is derived (`Clause.Embedding.IsTrigger`, `Verb.IsTrigger`);
+an adverb, particle or affix that triggers a presupposition is a `TriggerItem`.
 
 ## Implementation notes
 
@@ -85,8 +85,8 @@ inductive TriggerClass where
   | aspectual
   deriving DecidableEq, Repr
 
-/-- A presupposition trigger outside the verbal lexicon, an adverb, particle or affix, with its
-trigger class. A verb's presuppositions are recorded on its `Verb` entry. -/
+/-- A presupposition trigger that is an adverb, particle or affix, with its trigger class. A
+clause-embedding predicate's presuppositions are recorded on its `Clause.Embedding`. -/
 structure TriggerItem where
   /-- The citation form, a romanization where the language is not written in Latin script. -/
   form : String
