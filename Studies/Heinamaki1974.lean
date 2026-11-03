@@ -25,8 +25,8 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
 * A clause carries the intervals it specifies, its `Clause.intervals`, "and no shorter or longer
   stretch of time", so these are the maximal intervals and not the run times of
   `Semantics/Tense/RunTimes.lean`, which a state closes under subintervals.
-* The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted among
-  achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
+* The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted
+  among achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
   `VendlerClass.duration`, which an accomplishment shares.
 * Intervals are closed, so *until* has the final point of (12) and not the alternative of a final
   bound (p. 123), and *A until B* reduces to $\mathrm{tr}(B)$ falling within $J$.
