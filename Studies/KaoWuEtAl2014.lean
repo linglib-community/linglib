@@ -153,8 +153,8 @@ theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
   rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff one_pos]
-  rfl
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff one_pos,
+    mem_sem]
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
 prior gives mass to both meanings with affect, which is hyperbole. -/

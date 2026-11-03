@@ -94,8 +94,8 @@ theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
   rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα]
-  rfl
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
+    Set.mem_ofPred_eq]
 
 /-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 valence, through the negative valence of terrible weather. -/

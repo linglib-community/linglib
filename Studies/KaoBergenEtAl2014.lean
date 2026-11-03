@@ -122,10 +122,10 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
 
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
-      ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
+      ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
   rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα]
-  rfl
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
+    Set.mem_ofPred_eq]
 
 /-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
 name whenever some animal of positive prior shares the value. -/
