@@ -24,6 +24,7 @@ is that tense for all cells
 ## References
 
 * [prior-1967]
+* [burgess-1984]
 * [blackburn-derijke-venema-2001]
 -/
 
@@ -59,13 +60,15 @@ variable [LT T]
   simp [Box]
 
 /-- Sometime in the past is left adjoint to always in the future. The unit is the mixing principle
-`CpGPp` of [prior-1967] (p. 35) and the counit is his `CPGpp` (p. 38). -/
+`CpGPp` of [prior-1967] (p. 35), the axiom (A0c) of [burgess-1984], and the counit is Prior's
+`CPGpp` (p. 38), Burgess's thesis 3(h) (second edition, p. 9). -/
 theorem diamond_past_box_future_gc :
     GaloisConnection (◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦future⟧] :=
   inv_toSetRel_past (T := T) ▸ diamond_box_gc _
 
 /-- Sometime in the future is left adjoint to always in the past. The unit is the mixing principle
-`CpHFp` of [prior-1967] (p. 35) and the counit is his `CFHpp` (p. 38). -/
+`CpHFp` of [prior-1967] (p. 35), the axiom (A0d) of [burgess-1984], and the counit is Prior's
+`CFHpp` (p. 38), the mirror image of Burgess's thesis 3(h). -/
 theorem diamond_future_box_past_gc :
     GaloisConnection (◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦past⟧] :=
   inv_toSetRel_future (T := T) ▸ diamond_box_gc _
