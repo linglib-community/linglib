@@ -448,7 +448,7 @@
     "language": "stan1288",
     "primaryText": "¿Quién hay en la fiesta?",
     "glossedTokens": [
-      ["Quién", "who.SG"], ["hay", "was.at"], ["en", "in"], ["la", "the"], ["fiesta", "party"]
+      ["Quién", "who.SG"], ["hay", "was"], ["en", "at"], ["la", "the"], ["fiesta", "party"]
     ],
     "translation": "Who was there at the party?",
     "context": "A context that does not satisfy existence.",
@@ -467,8 +467,8 @@
   },
   {
     "id": "elliottnicolaesauerland2022_59",
-    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(59)"},
-    "reportedIn": null,
+    "source": {"bibkey": "maldonado-2020", "paperLabel": "(15b)"},
+    "reportedIn": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(59)"},
     "language": "stan1288",
     "primaryText": "Juan no sabe quiénes van a venir a la fiesta",
     "glossedTokens": [
@@ -484,7 +484,7 @@
       ["context", "atLeastOne"],
       ["form", "quienes"]
     ],
-    "comment": "",
+    "comment": "Reworded from Maldonado's example, which is marked #/?? there.",
     "verified": "page-image"
   },
   {
@@ -581,7 +581,7 @@
     "paperFeatures": [
       ["type", "PBI"]
     ],
-    "comment": "Answer: Al y Bob y Al y Charles.",
+    "comment": "Answer: Al y Bob y Al y Charles. The paper credits Alonso-Ovalle and Rouillard (2019), whose example number is unchecked.",
     "verified": "page-image"
   },
   {

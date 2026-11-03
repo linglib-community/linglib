@@ -1,6 +1,5 @@
 module
 
-public import Studies.Dayal2016
 public import Studies.ElliottNicolaeSauerland2022
 public import Linglib.Data.Examples.AlonsoOvalleRouillard2023
 public import Linglib.Data.Examples.Readers
@@ -39,12 +38,12 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
   wider set than `ElliottNicolaeSauerland2022.Form.alts`.
 * The weak singular ranges over nonempty restrictors, (32), (35), so it [presupposes
   existence](##not_subset_presupposition_weak_singular), where Elliott et al.'s (57) and n. 19 have
-  *quién* acceptable without it. Dayal's soft existence would let a questioner suspend the
-  presupposition, but [does so equally for the strong plural](##coherent_suspended), so the contrast
-  with *quiénes* stays open.
-* (52) is `ElliottNicolaeSauerland2022.AvoidsIneffability` with every alternative counted as
+  *quién* acceptable without it.
+* (52) says no alternative is defined, where Elliott et al.'s (45) says none is defined with EXH.
+  `ElliottNicolaeSauerland2022.AvoidsIneffability` is the latter, with every alternative counted as
   equivalent, which is harmless over a distributive nucleus
-  (`ElliottNicolaeSauerland2022.Form.strawsonEquiv`).
+  (`ElliottNicolaeSauerland2022.Form.strawsonEquiv`). The alternatives in the one theorem using it
+  are undefined outright, so it holds on either statement.
 
 ## TODO
 
@@ -318,10 +317,11 @@ theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b
   refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
   rintro _ (rfl | rfl | rfl) - hs
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
-      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (hs (.inl rfl))
+      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
   · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
-      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (hs (.inl rfl))
-  · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis (hs (.inr rfl))
+      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
+  · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis
+      (strengthen_subset _ _ _ (hs (.inr rfl)))
 
 end WeakPlural
 
@@ -414,30 +414,11 @@ theorem disjunction_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (
     iff_true_intro (Disjunction.answer_mem_hamblin_whDomain ha hb hc _), true_iff]
   decide +kernel
 
--- the gap: a context not assuming existence does not support the weak singular, though *quién* is
--- acceptable there, Elliott et al.'s (57)
+-- the gap: a context not assuming existence does not support the weak singular
 theorem not_subset_presupposition_weak_singular [Finite E] {c : Set E} (hbot : ⊥ ∈ c) :
-    ¬ c ⊆ presupposition (hamblin Ici (whDomain (E := E) none)) ∧
-      ElliottNicolaeSauerland2022.Examples.ex_57.judgment = .acceptable := by
+    ¬ c ⊆ presupposition (hamblin Ici (whDomain (E := E) none)) := by
   rw [presupposition_hamblin_whDomain]
-  exact ⟨fun h ↦ h hbot rfl, by decide⟩
-
--- Dayal's *if anyone* suspends the presupposition of either phrase, so it leaves the contrast of
--- (57) underived
-theorem coherent_suspended [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
-    Dayal2016.Coherent (presupposition (hamblin Ici (whDomain (E := E) none))) .soft .suspended ∧
-      Dayal2016.Coherent (presupposition (hamblin Ici (whStrongPlural (E := E))))
-        .soft .suspended := by
-  refine ⟨(Dayal2016.coherent_iff ?_ ?_).2 ⟨rfl, by simp⟩, (Dayal2016.coherent_iff ?_ ?_).2
-    ⟨rfl, by simp⟩⟩
-  · rw [presupposition_hamblin_whDomain]
-    exact ⟨a, ha.ne_bot⟩
-  · rw [presupposition_hamblin_whDomain]
-    exact ⟨⊥, fun h ↦ h rfl⟩
-  · rw [presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural]
-    exact ⟨_, sup_mem_whStrongPlural ha hb hab⟩
-  · rw [presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural]
-    exact ⟨⊥, fun h ↦ (mem_whStrongPlural.1 h).1 rfl⟩
+  exact fun h ↦ h hbot rfl
 
 -- (22a), (23): two groups have an answer over quantifiers and, (26), none over individuals
 theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (hg₂ : g₂ ∈ whStrongPlural)

@@ -13,11 +13,12 @@ Singular simplex *wh* phrases in Greek, Hungarian and Spanish lack the uniquenes
 singular *which* phrases, yet plural ones keep an anti-singleton inference. Dayal's account and the
 weak plural survive if a simplex phrase can also range over upward-entailing quantifiers, which
 [presuppose nothing](##presupposition_upwardGQ). Strengthening is then obligatory wherever an
-equivalent alternative is defined, so without a plural antecedent *quién* is
+equivalent alternative is defined with it, so without a plural antecedent *quién* is
 [usable in any context](##Item.usable_quien_of_not) and *quiénes*
-[only where antiuniqueness holds](##Item.usable_quienes_iff), and the [answer](##rows_agree) and
-[context](##context_rows_agree) judgments follow. Heim's catfish shows what the principle yields at
-a context: [the weak implicated presupposition](##avoidsIneffability_a_iff).
+[only where antiuniqueness holds](##Item.usable_quienes_iff_of_not), and the
+[answer](##rows_agree) and [context](##context_rows_agree) judgments follow. Heim's catfish shows
+what the principle yields at a context: [the weak implicated
+presupposition](##avoidsIneffability_a_iff).
 
 ## Implementation notes
 
@@ -30,23 +31,26 @@ a context: [the weak implicated presupposition](##avoidsIneffability_a_iff).
 * EXH is `Presupposition.strengthen`, which excludes only strictly stronger alternatives where (40)
   excludes every non-weaker one; [they agree on comparable
   alternatives](##exhPrs_eq_strengthen), as on the scale (53).
-* `AvoidsIneffability` is (45) for one occurrence of EXH, all the Spanish data needs, so clause (c)
-  makes the competitor bare.
-* The paper makes *quién_e* an alternative to both plural forms, p. 564, and *quién_(et)t* one to
-  *quiénes_e*, p. 571. (59) also needs a competitor defined for *quiénes_(et)t* where existence is
-  presupposed, here *quiénes_e*. *quién_(et)t* cannot be one: it would rule out the form where
-  existence is not assumed, against n. 19. There Brevity decides between two forms the paper calls
-  equivalent, `Form.simpler`.
-* A plural antecedent makes the plural an alternative to the singular forms, p. 570, the proposition
-  `pl`. (24c) has one. (68) has none, and the paper leaves it open: [both phrases are predicted
-  usable](##usable_ex_68), against the judgment on *quiénes*.
+* `AvoidsIneffability` is (45) for one occurrence of EXH, all the Spanish data needs. Clause (c)
+  allows the competitor no deactivated EXH, so it competes with EXH active, as (46) and (47) do.
+* A context is the set of worlds compatible with what the relevant individual believes. Under the
+  Matrix K axiom they adopt from Meyer, n. 14, the same set is the doxastic state `K` quantifies
+  over, as in the catfish theorems.
+* The paper makes *quién_e* an alternative to both plural forms, p. 564, *quién_(et)t* one to
+  *quiénes_e*, p. 571, and the plural one to the singular forms where the context supplies it,
+  p. 570, the proposition `pl`. Without a plural antecedent the higher-order forms are both usable
+  where existence is not assumed, and Brevity chooses between them, n. 19, `Form.simpler`.
+* (24c) has a plural antecedent. With one *quiénes_e* can also drop EXH where existence is
+  presupposed, which the paper does not test. (68) has none, and the paper leaves it open: [both
+  phrases are predicted usable](##usable_ex_68), against the judgment on *quiénes*.
 
 ## Errata
 
 Table 1 prints a cross for the anti-singleton inference of plural *which* phrases, and (15) tags a
 plural *which* question as carrying uniqueness, against (3), (16), (17) and the surrounding text.
 The proposition said to answer (76) prints `B ⊕ C` where (76) and the sentences before it have
-`A ⊕ C`.
+`A ⊕ C`. The text before (55) calls *quién_e* acceptable in `≥ 1` contexts, against (51); it should
+be the ambiguous *quién*.
 
 ## TODO
 
@@ -64,6 +68,7 @@ The proposition said to answer (76) prints `B ⊕ C` where (76) and the sentence
 * [fox-2018]
 * [heim-1991]
 * [percus-2006]
+* [meyer-2014]
 -/
 
 @[expose] public section
@@ -271,21 +276,12 @@ def StrawsonEquiv (H H' : Set (Set W)) : Prop :=
   ∀ ⦃w p q⦄, IsStrongestTrueAnswer H w p → IsStrongestTrueAnswer H' w q → p = q
 
 /-- *Avoid Ineffability!* (45) for one occurrence of EXH: EXH can be dropped from `[EXH φ]` in a
-context unless an alternative equivalent to `φ` is defined there. A form is usable when defined
-throughout the context with EXH or, EXH being dropped, without it. -/
+context unless an alternative equivalent to `φ` is defined there with EXH. A form is usable when
+defined throughout the context with EXH or, EXH being dropped, without it. -/
 def AvoidsIneffability (alts : S → Set S) (equiv : S → S → Prop) (content : S → Set W) (c : Set W)
     (φ : S) : Prop :=
-  c ⊆ strengthen alts content φ ∨ (c ⊆ content φ ∧ ∀ ψ ∈ alts φ, equiv φ ψ → ¬ c ⊆ content ψ)
-
--- a usable form is a strongest one defined in the context, the alternatives being equivalent
-theorem AvoidsIneffability.minimalFor {equiv : S → S → Prop} {c : Set W} (hc : c.Nonempty)
-    (hequiv : ∀ ψ ∈ alts φ, equiv φ ψ) (h : AvoidsIneffability alts equiv content c φ) :
-    MinimalFor (· ∈ insert φ (alts φ) ∩ content ⁻¹' Ici c) content φ := by
-  rw [minimalFor_preimage_Ici_iff]
-  refine h.elim (fun h ↦ ⟨h.trans (strengthen_subset _ _ _), fun ψ hψ hss hcψ ↦ ?_⟩)
-    fun h ↦ ⟨h.1, fun ψ hψ _ ↦ h.2 ψ hψ (hequiv ψ hψ)⟩
-  obtain ⟨v, hv⟩ := hc
-  exact (mem_strengthen_iff.1 (h hv)).2 ψ hψ (hcψ hv) hss
+  c ⊆ strengthen alts content φ ∨
+    (c ⊆ content φ ∧ ∀ ψ ∈ alts φ, equiv φ ψ → ¬ c ⊆ strengthen alts content ψ)
 
 end Principles
 
@@ -317,6 +313,9 @@ theorem strengthen_a (hu : u ≠ univ) :
     (ssubset_univ_iff.2 hu) (by rintro _ rfl -; exact subset_rfl)]
   exact Set.ext fun w ↦ by simp [Article.content]
 
+theorem strengthen_the : strengthen Article.alts (Article.content u) .the = u :=
+  strengthen_eq_self (by rintro _ rfl hss; exact hss.not_subset (subset_univ _))
+
 -- (44): with the embedded EXH the speaker would know that uniqueness fails, which is too strong
 theorem mem_Iic_strengthen_a_iff (hu : u ≠ univ) :
     c ∈ Iic (strengthen Article.alts (Article.content u) .a) ↔ c ⊆ uᶜ := by
@@ -341,9 +340,10 @@ theorem avoidsIneffability_a_iff (hu : u ≠ univ) (hc : c.Nonempty) :
   · rintro (h | ⟨-, h⟩)
     · obtain ⟨v, hv⟩ := hc
       exact fun hs ↦ h hv (hs hv)
-    · exact h .the rfl trivial
+    · exact fun hs ↦ h .the rfl trivial (by rwa [strengthen_the])
   · refine fun h ↦ .inr ⟨subset_univ _, ?_⟩
     rintro _ rfl -
+    rw [strengthen_the]
     exact h
 
 end Catfish
@@ -371,10 +371,9 @@ for the singular forms, as a plural antecedent does. -/
 def Form.alts (pl : Prop) : Form → Set Form
   | .queSg => ∅
   | .quePl => {.queSg}
-  | .quienE => {f | pl ∧ f = .quienesE}
-  | .quienGQ => {f | f = .quienE ∨ pl ∧ f = .quienesE}
+  | .quienE | .quienGQ => {f | pl ∧ f = .quienesE}
   | .quienesE => {.quienE, .quienGQ}
-  | .quienesGQ => {.quienE, .quienesE}
+  | .quienesGQ => {.quienE}
 
 /-- The simpler form with the same Hamblin set that Brevity prefers (n. 19). -/
 def Form.simpler : Form → Set Form
@@ -421,7 +420,7 @@ theorem Form.strawsonEquiv (f g : Form) : StrawsonEquiv (f.answers (E := E)) g.a
 
 theorem Form.usable_iff (f : Form) : f.Usable pl c ↔
     c ⊆ strengthen (Form.alts pl) Form.content f ∨
-      (c ⊆ f.content ∧ ∀ ψ ∈ Form.alts pl f, ¬ c ⊆ ψ.content) := by
+      (c ⊆ f.content ∧ ∀ ψ ∈ Form.alts pl f, ¬ c ⊆ strengthen (Form.alts pl) Form.content ψ) := by
   constructor
   · rintro (h | ⟨h₁, h₂⟩)
     · exact .inl h
@@ -495,7 +494,7 @@ theorem strengthen_quePl (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (pl : P
     (by rintro _ rfl -; exact subset_rfl), content_quePl, content_queSg]
   rfl
 
--- (46), (64): the antiuniqueness of *quiénes_e* with EXH
+-- (64): the antiuniqueness of *quiénes_e* with EXH
 theorem strengthen_quienesE (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (pl : Prop) :
     strengthen (Form.alts pl) Form.content .quienesE = {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} := by
   rw [strengthen_eq_sdiff (alts := Form.alts pl) (φ := Form.quienesE) (ψ := Form.quienE)
@@ -507,41 +506,28 @@ theorem strengthen_quienesE (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (pl 
     · exact subset_rfl
     · exact (hlt.not_subset (by rw [content_quienGQ]; exact subset_univ _)).elim
 
-theorem strengthen_quienGQ_of_not (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : ¬ pl) :
-    strengthen (Form.alts pl) Form.content .quienGQ = {w : E | ¬ IsAtom w} := by
-  rw [strengthen_eq_sdiff (alts := Form.alts pl) (φ := Form.quienGQ) (ψ := Form.quienE)
-    (Or.inl rfl)
-    (by rw [content_quienE, content_quienGQ]
-        exact (atoms_ssubset_nonNull ha hb hab).trans nonNull_ssubset_univ) ?_,
-    content_quienGQ, content_quienE]
-  · exact Set.ext fun w ↦ by simp
-  · rintro _ (rfl | ⟨h, -⟩) -
-    · exact subset_rfl
-    · exact (hpl h).elim
+omit [IsAtomistic E] in
+theorem strengthen_quienGQ_of_not (hpl : ¬ pl) :
+    strengthen (Form.alts pl) Form.content .quienGQ = (univ : Set E) := by
+  rw [strengthen_eq_self, content_quienGQ]
+  rintro _ ⟨h, -⟩
+  exact (hpl h).elim
 
 theorem strengthen_quienGQ_of (hpl : pl) :
     strengthen (Form.alts pl) Form.content .quienGQ = {(⊥ : E)} := by
   rw [strengthen_eq_sdiff (alts := Form.alts pl) (φ := Form.quienGQ) (ψ := Form.quienesE)
-    (Or.inr ⟨hpl, rfl⟩)
-    (by rw [content_quienesE, content_quienGQ]; exact nonNull_ssubset_univ) ?_,
-    content_quienGQ, content_quienesE]
-  · exact Set.ext fun w ↦ by simp
-  · rintro _ (rfl | ⟨-, rfl⟩) -
-    · rw [content_quienE, content_quienesE]
-      exact fun _ hx ↦ IsAtom.ne_bot hx
-    · exact subset_rfl
+    ⟨hpl, rfl⟩ (by rw [content_quienesE, content_quienGQ]; exact nonNull_ssubset_univ)
+    (by rintro _ ⟨-, rfl⟩ -; exact subset_rfl), content_quienGQ, content_quienesE]
+  exact Set.ext fun w ↦ by simp
 
-theorem strengthen_quienesGQ (pl : Prop) :
-    strengthen (Form.alts pl) Form.content .quienesGQ = {(⊥ : E)} := by
-  rw [strengthen_eq_sdiff (alts := Form.alts pl) (φ := Form.quienesGQ) (ψ := Form.quienesE)
-    (Or.inr rfl)
-    (by rw [content_quienesE, content_quienesGQ]; exact nonNull_ssubset_univ) ?_,
-    content_quienesGQ, content_quienesE]
-  · exact Set.ext fun w ↦ by simp
-  · rintro _ (rfl | rfl) -
-    · rw [content_quienE, content_quienesE]
-      exact fun _ hx ↦ IsAtom.ne_bot hx
-    · exact subset_rfl
+-- p. 564: *quiénes_(et)t* with EXH excludes uniqueness
+theorem strengthen_quienesGQ (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (pl : Prop) :
+    strengthen (Form.alts pl) Form.content .quienesGQ = {w : E | ¬ IsAtom w} := by
+  rw [strengthen_eq_sdiff (alts := Form.alts pl) (φ := Form.quienesGQ) (ψ := Form.quienE) rfl
+    (by rw [content_quienE, content_quienesGQ]
+        exact (atoms_ssubset_nonNull ha hb hab).trans nonNull_ssubset_univ)
+    (by rintro _ rfl -; exact subset_rfl), content_quienesGQ, content_quienE]
+  exact Set.ext fun w ↦ by simp
 
 /-! ### Where each form is usable (§4.6) -/
 
@@ -565,68 +551,71 @@ theorem usable_quePl_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hc : c
   · rintro (h | ⟨h, hd⟩)
     · obtain ⟨v, hv⟩ := hc
       exact ⟨fun x hx ↦ (h hx).1, fun hs ↦ (h hv).2 (hs hv)⟩
-    · exact ⟨h, fun hs ↦ hd .queSg rfl (by rwa [content_queSg])⟩
+    · exact ⟨h, fun hs ↦ hd .queSg rfl (by rwa [strengthen_queSg])⟩
   · rintro ⟨h, hn⟩
     refine .inr ⟨h, ?_⟩
     rintro _ rfl hs
-    exact hn (by rwa [content_queSg] at hs)
+    exact hn (by rwa [strengthen_queSg] at hs)
 
 -- (59)–(65): wherever *quiénes_e* is defined *quién_(et)t* is too, so EXH is obligatory on it
-theorem usable_quienesE_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
+theorem usable_quienesE_iff_of_not (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : ¬ pl) :
     Form.quienesE.Usable pl c ↔ c ⊆ {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} := by
   rw [Form.usable_iff, strengthen_quienesE ha hb hab]
   refine ⟨fun h ↦ h.resolve_right fun ⟨_, h⟩ ↦ h .quienGQ (Or.inr rfl) ?_, .inl⟩
-  rw [content_quienGQ]
+  rw [strengthen_quienGQ_of_not hpl]
   exact subset_univ _
 
--- *quién_(et)t* drops EXH wherever uniqueness is not assumed
-theorem usable_quienGQ_iff_of_not (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : ¬ pl)
-    (hc : c.Nonempty) : Form.quienGQ.Usable pl c ↔ ¬ c ⊆ {w : E | IsAtom w} := by
-  rw [Form.usable_iff, strengthen_quienGQ_of_not ha hb hab hpl, content_quienGQ]
+-- with a plural antecedent *quién_(et)t* with EXH presupposes nonexistence, so EXH can drop
+theorem usable_quienesE_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : pl)
+    (hc : c.Nonempty) :
+    Form.quienesE.Usable pl c ↔ c ⊆ {w : E | w ≠ ⊥} ∧ ¬ c ⊆ {w : E | IsAtom w} := by
+  rw [Form.usable_iff, strengthen_quienesE ha hb hab, content_quienesE]
   constructor
-  · rintro (h | ⟨-, hd⟩)
+  · rintro (h | ⟨h, hd⟩)
     · obtain ⟨v, hv⟩ := hc
-      exact fun hs ↦ h hv (hs hv)
-    · exact fun hs ↦ hd .quienE (Or.inl rfl) (by rwa [content_quienE])
-  · refine fun hn ↦ .inr ⟨subset_univ _, ?_⟩
-    rintro _ (rfl | ⟨h, -⟩) hs
-    · exact hn (by rwa [content_quienE] at hs)
-    · exact hpl h
+      exact ⟨fun x hx ↦ (h hx).1, fun hs ↦ (h hv).2 (hs hv)⟩
+    · exact ⟨h, fun hs ↦ hd .quienE (Or.inl rfl) (by rwa [strengthen_quienE ha hb hab])⟩
+  · rintro ⟨h, hn⟩
+    refine .inr ⟨h, ?_⟩
+    rintro _ (rfl | rfl) hs
+    · exact hn (by rwa [strengthen_quienE ha hb hab] at hs)
+    · rw [strengthen_quienGQ_of hpl] at hs
+      obtain ⟨v, hv⟩ := hc
+      exact h hv (hs hv)
 
--- (56): with the plural available it also needs existence not to be assumed
-theorem usable_quienGQ_iff_of (hpl : pl) (hc : c.Nonempty) :
-    Form.quienGQ.Usable pl c ↔ ⊥ ∈ c := by
+-- without a plural antecedent *quién_(et)t* has no alternative, so it is usable anywhere
+omit [IsAtomistic E] in
+theorem usable_quienGQ_of_not (hpl : ¬ pl) : Form.quienGQ.Usable pl c := by
+  refine .inl ?_
+  rw [strengthen_quienGQ_of_not hpl]
+  exact subset_univ _
+
+-- (56): with the plural available EXH stays where *quiénes_e* with EXH is defined
+theorem usable_quienGQ_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : pl)
+    (hc : c.Nonempty) :
+    Form.quienGQ.Usable pl c ↔ ¬ c ⊆ {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} := by
   rw [Form.usable_iff, strengthen_quienGQ_of hpl, content_quienGQ]
   constructor
   · rintro (h | ⟨-, hd⟩)
     · obtain ⟨v, hv⟩ := hc
-      exact (h hv : v = ⊥) ▸ hv
-    · refine by_contra fun hb ↦ hd .quienesE (Or.inr ⟨hpl, rfl⟩) ?_
-      rw [content_quienesE]
-      exact fun x hx hxb ↦ hb (hxb ▸ hx)
-  · refine fun hb ↦ .inr ⟨subset_univ _, ?_⟩
-    rintro _ (rfl | ⟨-, rfl⟩) hs
-    · rw [content_quienE] at hs
-      exact IsAtom.ne_bot (hs hb) rfl
-    · rw [content_quienesE] at hs
-      exact hs hb rfl
+      exact fun hs ↦ (hs hv).1 (h hv)
+    · exact fun hs ↦ hd .quienesE ⟨hpl, rfl⟩ (by rwa [strengthen_quienesE ha hb hab])
+  · refine fun hn ↦ .inr ⟨subset_univ _, ?_⟩
+    rintro _ ⟨-, rfl⟩ hs
+    exact hn (by rwa [strengthen_quienesE ha hb hab] at hs)
 
--- n. 19: *quiénes_(et)t* is usable exactly where existence is not assumed
-theorem usable_quienesGQ_iff (hc : c.Nonempty) : Form.quienesGQ.Usable pl c ↔ ⊥ ∈ c := by
-  rw [Form.usable_iff, strengthen_quienesGQ, content_quienesGQ]
+-- n. 19: *quiénes_(et)t* is usable wherever uniqueness is not assumed, before Brevity
+theorem usable_quienesGQ_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hc : c.Nonempty) :
+    Form.quienesGQ.Usable pl c ↔ ¬ c ⊆ {w : E | IsAtom w} := by
+  rw [Form.usable_iff, strengthen_quienesGQ ha hb hab, content_quienesGQ]
   constructor
   · rintro (h | ⟨-, hd⟩)
     · obtain ⟨v, hv⟩ := hc
-      exact (h hv : v = ⊥) ▸ hv
-    · refine by_contra fun hb ↦ hd .quienesE (Or.inr rfl) ?_
-      rw [content_quienesE]
-      exact fun x hx hxb ↦ hb (hxb ▸ hx)
-  · refine fun hb ↦ .inr ⟨subset_univ _, ?_⟩
-    rintro _ (rfl | rfl) hs
-    · rw [content_quienE] at hs
-      exact IsAtom.ne_bot (hs hb) rfl
-    · rw [content_quienesE] at hs
-      exact hs hb rfl
+      exact fun hs ↦ h hv (hs hv)
+    · exact fun hs ↦ hd .quienE rfl (by rwa [strengthen_quienE ha hb hab])
+  · refine fun hn ↦ .inr ⟨subset_univ _, ?_⟩
+    rintro _ rfl hs
+    exact hn (by rwa [strengthen_quienE ha hb hab] at hs)
 
 -- comparing presuppositions in the context does not suffice: where existence is presupposed
 -- *quiénes_e* is a strongest form defined, yet it is out, as EXH cannot be dropped, (58), (59)
@@ -646,7 +635,7 @@ theorem minimalFor_quienesE_not_usable (ha : IsAtom a) (hb : IsAtom b) (hab : a 
     · rw [content_quienE] at hc
       exact hna (hc (.inr rfl))
     · exact hss.not_subset (by rw [content_quienGQ]; exact subset_univ _)
-  · exact ((usable_quienesE_iff ha hb hab).1 h (.inl rfl)).2 ha
+  · exact ((usable_quienesE_iff_of_not ha hb hab not_false).1 h (.inl rfl)).2 ha
 
 /-! ### The pronounced phrases -/
 
@@ -658,13 +647,9 @@ omit [IsAtomistic E] [Finite E] in
 theorem Form.chosen_iff_usable {f : Form} (hf : f ≠ .quienesGQ) : f.Chosen pl c ↔ f.Usable pl c :=
   and_iff_left <| by cases f <;> first | exact absurd rfl hf | rintro _ ⟨⟩
 
-theorem not_chosen_quienesGQ (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hc : c.Nonempty) :
-    ¬ Form.quienesGQ.Chosen pl c := fun ⟨h, hn⟩ ↦ by
-  have hbot := (usable_quienesGQ_iff hc).1 h
-  refine hn .quienGQ rfl ?_
-  by_cases hpl : pl
-  · exact (usable_quienGQ_iff_of hpl hc).2 hbot
-  · exact (usable_quienGQ_iff_of_not ha hb hab hpl hc).2 fun hs ↦ IsAtom.ne_bot (hs hbot) rfl
+omit [IsAtomistic E] in
+theorem not_chosen_quienesGQ (hpl : ¬ pl) : ¬ Form.quienesGQ.Chosen pl c :=
+  fun ⟨_, hn⟩ ↦ hn .quienGQ rfl (usable_quienGQ_of_not hpl)
 
 end Forms
 
@@ -701,15 +686,14 @@ inductive Ctx
 def Item.Predicted (pl : Prop) : Item → Ctx → Prop
   | .queSg, κ => κ = .exactlyOne
   | .quePl, κ => κ = .atLeastOne ∨ κ = .several
-  | .quien, κ => ¬ pl ∨ κ = .exactlyOne ∨ κ = .noExistence ∨ κ = .zeroOrSeveral
-  | .quienes, κ => κ = .several
+  | .quien, κ => ¬ pl ∨ κ ≠ .several
+  | .quienes, κ => κ = .several ∨ pl ∧ κ = .atLeastOne
 
 instance (pl : Prop) [Decidable pl] : ∀ i κ, Decidable (Item.Predicted pl i κ)
   | .queSg, κ => inferInstanceAs (Decidable (κ = .exactlyOne))
   | .quePl, κ => inferInstanceAs (Decidable (κ = .atLeastOne ∨ κ = .several))
-  | .quien, κ => inferInstanceAs
-      (Decidable (¬ pl ∨ κ = .exactlyOne ∨ κ = .noExistence ∨ κ = .zeroOrSeveral))
-  | .quienes, κ => inferInstanceAs (Decidable (κ = .several))
+  | .quien, κ => inferInstanceAs (Decidable (¬ pl ∨ κ ≠ .several))
+  | .quienes, κ => inferInstanceAs (Decidable (κ = .several ∨ pl ∧ κ = .atLeastOne))
 
 section Items
 
@@ -732,46 +716,49 @@ def Ctx.set (a b : E) : Ctx → Set E
 
 variable [Finite E]
 
-/-- Without a plural antecedent *quién* is usable in every context: either the context is all
-atoms, for *quién_e*, or *quién_(et)t* drops EXH. -/
-theorem Item.usable_quien_of_not (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : ¬ pl)
-    (hc : c.Nonempty) : Item.quien.Usable pl c := by
-  by_cases hs : c ⊆ {w : E | IsAtom w}
-  · exact ⟨.quienE, .inl rfl, (Form.chosen_iff_usable (by simp)).2
-      ((usable_quienE_iff ha hb hab).2 hs)⟩
-  · exact ⟨.quienGQ, .inr rfl, (Form.chosen_iff_usable (by simp)).2
-      ((usable_quienGQ_iff_of_not ha hb hab hpl hc).2 hs)⟩
+omit [IsAtomistic E] in
+/-- Without a plural antecedent *quién* is usable in every context: *quién_(et)t* has no
+alternative to compete with. -/
+theorem Item.usable_quien_of_not (hpl : ¬ pl) : Item.quien.Usable pl c :=
+  ⟨.quienGQ, .inr rfl, (Form.chosen_iff_usable (by simp)).2 (usable_quienGQ_of_not hpl)⟩
 
 theorem Item.usable_quien_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : pl)
-    (hc : c.Nonempty) : Item.quien.Usable pl c ↔ c ⊆ {w : E | IsAtom w} ∨ ⊥ ∈ c := by
+    (hc : c.Nonempty) : Item.quien.Usable pl c ↔ ¬ c ⊆ {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} := by
   constructor
   · rintro ⟨f, rfl | rfl, h⟩
-    · exact .inl ((usable_quienE_iff ha hb hab).1 h.1)
-    · exact .inr ((usable_quienGQ_iff_of hpl hc).1 h.1)
-  · rintro (h | h)
-    · exact ⟨.quienE, .inl rfl, (Form.chosen_iff_usable (by simp)).2
-        ((usable_quienE_iff ha hb hab).2 h)⟩
-    · exact ⟨.quienGQ, .inr rfl, (Form.chosen_iff_usable (by simp)).2
-        ((usable_quienGQ_iff_of hpl hc).2 h)⟩
+    · obtain ⟨v, hv⟩ := hc
+      exact fun hs ↦ (hs hv).2 ((usable_quienE_iff ha hb hab).1 h.1 hv)
+    · exact (usable_quienGQ_iff_of ha hb hab hpl hc).1 h.1
+  · exact fun h ↦ ⟨.quienGQ, .inr rfl, (Form.chosen_iff_usable (by simp)).2
+      ((usable_quienGQ_iff_of ha hb hab hpl hc).2 h)⟩
 
-/-- *Quiénes* is usable only where antiuniqueness holds throughout the context: *quiénes_e* cannot
-drop EXH, and Brevity leaves its higher-order parse to *quién*. -/
-theorem Item.usable_quienes_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hc : c.Nonempty) :
+/-- Without a plural antecedent *quiénes* is usable only where antiuniqueness holds throughout the
+context: *quiénes_e* cannot drop EXH, and Brevity leaves its higher-order parse to *quién*. -/
+theorem Item.usable_quienes_iff_of_not (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : ¬ pl) :
     Item.quienes.Usable pl c ↔ c ⊆ {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} := by
   constructor
   · rintro ⟨f, rfl | rfl, h⟩
-    · exact (usable_quienesE_iff ha hb hab).1 h.1
-    · exact (not_chosen_quienesGQ ha hb hab hc h).elim
+    · exact (usable_quienesE_iff_of_not ha hb hab hpl).1 h.1
+    · exact (not_chosen_quienesGQ hpl h).elim
   · exact fun h ↦ ⟨.quienesE, .inl rfl, (Form.chosen_iff_usable (by simp)).2
-      ((usable_quienesE_iff ha hb hab).2 h)⟩
+      ((usable_quienesE_iff_of_not ha hb hab hpl).2 h)⟩
+
+theorem Item.usable_quienes_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (hpl : pl)
+    (hc : c.Nonempty) :
+    Item.quienes.Usable pl c ↔ c ⊆ {w : E | w ≠ ⊥} ∧ ¬ c ⊆ {w : E | IsAtom w} := by
+  constructor
+  · rintro ⟨f, rfl | rfl, h⟩
+    · exact (usable_quienesE_iff_of ha hb hab hpl hc).1 h.1
+    · have hs := not_not.1 (mt (usable_quienGQ_iff_of ha hb hab hpl hc).2 (h.2 .quienGQ rfl))
+      exact ⟨fun x hx ↦ (hs hx).1, (usable_quienesGQ_iff ha hb hab hc).1 h.1⟩
+  · exact fun h ↦ ⟨.quienesE, .inl rfl, (Form.chosen_iff_usable (by simp)).2
+      ((usable_quienesE_iff_of ha hb hab hpl hc).2 h)⟩
 
 theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) (κ : Ctx) :
     i.Usable pl (κ.set a b) ↔ i.Predicted pl κ := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
   have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
     (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
-  have hbne : (⊥ : E) ≠ a ⊔ b := hne.symm
-  have hba : (⊥ : E) ≠ a := ha.ne_bot.symm
   have hbA : ¬ IsAtom (⊥ : E) := fun h ↦ h.ne_bot rfl
   have hnon : (κ.set a b).Nonempty := by cases κ <;> simp [Ctx.set]
   have hatoms : κ.set a b ⊆ {w : E | IsAtom w} ↔ κ = .exactlyOne := by
@@ -780,8 +767,10 @@ theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i :
     cases κ <;> simp [Ctx.set, insert_subset_iff, ha.ne_bot, hne]
   have hplural : κ.set a b ⊆ {w : E | w ≠ ⊥ ∧ ¬ IsAtom w} ↔ κ = .several := by
     cases κ <;> simp [Ctx.set, insert_subset_iff, ha, ha.ne_bot, hne, hna]
-  have hbot : ⊥ ∈ κ.set a b ↔ κ = .noExistence ∨ κ = .zeroOrSeveral := by
-    cases κ <;> simp [Ctx.set, hba, hbne]
+  have hmixed : (κ.set a b ⊆ {w : E | w ≠ ⊥} ∧ ¬ κ.set a b ⊆ {w : E | IsAtom w}) ↔
+      κ = .atLeastOne ∨ κ = .several := by
+    rw [hnull, hatoms]
+    cases κ <;> simp
   cases i with
   | queSg =>
     rw [Item.Predicted, ← hatoms]
@@ -790,11 +779,7 @@ theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i :
       exact usable_queSg_iff.1 h.1
     · exact fun h ↦ ⟨.queSg, rfl, (Form.chosen_iff_usable (by simp)).2 (usable_queSg_iff.2 h)⟩
   | quePl =>
-    have hiff : (κ.set a b ⊆ {w : E | w ≠ ⊥} ∧ ¬ κ.set a b ⊆ {w : E | IsAtom w}) ↔
-        κ = .atLeastOne ∨ κ = .several := by
-      rw [hnull, hatoms]
-      cases κ <;> simp
-    rw [Item.Predicted, ← hiff]
+    rw [Item.Predicted, ← hmixed]
     constructor
     · rintro ⟨_, rfl, h⟩
       exact (usable_quePl_iff ha hb hab hnon).1 h.1
@@ -802,17 +787,22 @@ theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i :
         ((usable_quePl_iff ha hb hab hnon).2 h)⟩
   | quien =>
     by_cases hpl : pl
-    · rw [Item.usable_quien_iff_of ha hb hab hpl hnon, hatoms, hbot, Item.Predicted]
+    · rw [Item.usable_quien_iff_of ha hb hab hpl hnon, hplural, Item.Predicted]
       simp [hpl]
-    · exact iff_of_true (Item.usable_quien_of_not ha hb hab hpl hnon) (.inl hpl)
+    · exact iff_of_true (Item.usable_quien_of_not hpl) (.inl hpl)
   | quienes =>
-    rw [Item.usable_quienes_iff ha hb hab hnon, hplural, Item.Predicted]
+    by_cases hpl : pl
+    · rw [Item.usable_quienes_iff_of ha hb hab hpl hnon, hmixed, Item.Predicted]
+      simp only [hpl, true_and]
+      exact or_comm
+    · rw [Item.usable_quienes_iff_of_not ha hb hab hpl, hplural, Item.Predicted]
+      simp [hpl]
 
 theorem Item.atom_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) :
     a ∈ (i.Answers : Set E) ↔ i ≠ .quePl ∧ i ≠ .quienes := by
   cases i <;> simp [Item.Answers, Item.parses, strengthen_queSg, strengthen_quePl ha hb hab,
-    strengthen_quienE ha hb hab, strengthen_quienGQ_of_not ha hb hab not_false,
-    strengthen_quienesE ha hb hab, strengthen_quienesGQ, ha, ha.ne_bot]
+    strengthen_quienE ha hb hab, strengthen_quienGQ_of_not not_false,
+    strengthen_quienesE ha hb hab, strengthen_quienesGQ ha hb hab, ha]
 
 theorem Item.sup_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) :
     a ⊔ b ∈ (i.Answers : Set E) ↔ i ≠ .queSg := by
@@ -820,8 +810,8 @@ theorem Item.sup_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
   have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
     (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
   cases i <;> simp [Item.Answers, Item.parses, strengthen_queSg, strengthen_quePl ha hb hab,
-    strengthen_quienE ha hb hab, strengthen_quienGQ_of_not ha hb hab not_false,
-    strengthen_quienesE ha hb hab, strengthen_quienesGQ, hne, hna]
+    strengthen_quienE ha hb hab, strengthen_quienGQ_of_not not_false,
+    strengthen_quienesE ha hb hab, strengthen_quienesGQ ha hb hab, hne, hna]
 
 end Items
 
@@ -965,7 +955,7 @@ theorem usable_ex_68 (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
       Item.quienes.Usable False (Ctx.several.set a b) ∧
         Examples.ex_68.alternatives.head?.map Prod.snd = some .unacceptable :=
   ⟨(Item.usable_set_iff ha hb hab _ _).2 (.inl not_false),
-    (Item.usable_set_iff ha hb hab _ _).2 rfl, by decide⟩
+    (Item.usable_set_iff ha hb hab _ _).2 (.inl rfl), by decide⟩
 
 omit [IsAtomistic E] [Finite E] in
 -- (76), (77): two groups have an answer over the quantifiers and, p. 575, none over individuals
