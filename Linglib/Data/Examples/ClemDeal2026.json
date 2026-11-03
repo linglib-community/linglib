@@ -1,0 +1,1138 @@
+[
+  {
+    "id": "clemdeal2026_4a",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 19"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(4a)"},
+    "language": "chay1248",
+    "primaryText": "Ka yunka-w.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ka", "1"], ["yunka-w", "swim-1"]
+    ],
+    "translation": "I swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "min"],
+      ["objectSyntax", "absent"]
+    ],
+    "comment": "Repeated as (25).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_4a_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 19"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(4a)"},
+    "language": "chay1248",
+    "primaryText": "Ka-ri yunka-w.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ka-ri", "1-ERG"], ["yunka-w", "swim-1"]
+    ],
+    "translation": "I swim.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "min"],
+      ["objectSyntax", "absent"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (25).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_4b",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 19"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(4b)"},
+    "language": "chay1248",
+    "primaryText": "Wi'nawe chiwe-r-in tanan-ke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wi'nawe", "my.son"], ["chiwe-r-in", "get.lost-IND-3"], ["tanan-ke", "forest-LOC"]
+    ],
+    "translation": "My son got lost in the forest.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["objectSyntax", "absent"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_4b_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 19"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(4b)"},
+    "language": "chay1248",
+    "primaryText": "Wi'nawe-ri chiwe-r-in tanan-ke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wi'nawe-ri", "my.son-ERG"], ["chiwe-r-in", "get.lost-IND-3"], ["tanan-ke", "forest-LOC"]
+    ],
+    "translation": "My son got lost in the forest.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["objectSyntax", "absent"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_6a",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 24"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(6a)"},
+    "language": "chay1248",
+    "primaryText": "I'wara ka-ri-nke pera-ra-w-nke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I'wara", "yesterday"], ["ka-ri-nke", "1-ERG-2.O"], ["pera-ra-w-nke", "call-IND-1-2.O"]
+    ],
+    "translation": "I called you yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I'wara ka-ri-nke pera-ra-nke.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "min"],
+      ["object", "2"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"],
+      ["case", "-ri"],
+      ["caseOn", "subject"],
+      ["oagrOnS", "-(n)ken"]
+    ],
+    "comment": "Repeated as (2b), (18) and (32). The verb's -w is printed as optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_6b",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 24"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(6b)"},
+    "language": "chay1248",
+    "primaryText": "Kiya-ri-nkema au-ra-i-nkema kampita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kiya-ri-nkema", "1PL.EXCL-ERG-2PL.O"], ["au-ra-i-nkema", "hit-IND-1PL.EXCL-2PL.O"],
+      ["kampita", "2PL"]
+    ],
+    "translation": "We hit you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1excl"],
+      ["subjectNumber", "aug"],
+      ["object", "2"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"],
+      ["oagrOnS", "-((n)ke)ma'"]
+    ],
+    "comment": "Repeated as (12). The object is overt after the verb (note 14).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_6b_nke",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 24"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(6b)"},
+    "language": "chay1248",
+    "primaryText": "Kiya-ri-nke au-ra-i-nkema kampita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kiya-ri-nke", "1PL.EXCL-ERG-2PL.O"], ["au-ra-i-nkema", "hit-IND-1PL.EXCL-2PL.O"],
+      ["kampita", "2PL"]
+    ],
+    "translation": "We hit you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1excl"],
+      ["subjectNumber", "aug"],
+      ["object", "2"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"],
+      ["oagrOnS", "-(n)ken"]
+    ],
+    "comment": "(6b) prints the subject's -nke(ma) with ma optional; (36d) derives only the form with ma.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7a",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 27"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7a)"},
+    "language": "chay1248",
+    "primaryText": "I'wara kema nu'wi-r-an-ku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I'wara", "yesterday"], ["kema", "2"], ["nu'wi-r-an-ku", "tell.off-IND-2-1.O"]
+    ],
+    "translation": "You told me off yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "min"],
+      ["object", "1"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "Repeated as (2a) and (14a), and the grammatical variant of (11).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7a_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 27"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7a)"},
+    "language": "chay1248",
+    "primaryText": "I'wara kema-ri nu'wi-r-an-ku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I'wara", "yesterday"], ["kema-ri", "2-ERG"], ["nu'wi-r-an-ku", "tell.off-IND-2-1.O"]
+    ],
+    "translation": "You told me off yesterday.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "min"],
+      ["object", "1"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (2a) and (14a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7b",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 27"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7b)"},
+    "language": "chay1248",
+    "primaryText": "Ya'wan-rusa kete-r-in-kui.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ya'wan-rusa", "snake-PL"], ["kete-r-in-kui", "bite-IND-3-1PL.EXCL.O"]
+    ],
+    "translation": "Snakes bit us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ya'wan-usa kete-r-in-kui.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "aug"],
+      ["object", "1excl"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "Repeated as (14b). The r of the plural is printed as optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7b_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 27"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7b)"},
+    "language": "chay1248",
+    "primaryText": "Ya'wan-rusa-ri kete-r-in-kui.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ya'wan-rusa-ri", "snake-PL-ERG"], ["kete-r-in-kui", "bite-IND-3-1PL.EXCL.O"]
+    ],
+    "translation": "Snakes bit us.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "aug"],
+      ["object", "1excl"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "dropped"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (14b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7c",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7c)"},
+    "language": "chay1248",
+    "primaryText": "Pitru nate-r-in-ke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru", "Peter"], ["nate-r-in-ke", "trust-IND-3-2.O"]
+    ],
+    "translation": "Peter trusts you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Pitru nate-r-in-nke.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "2"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "Repeated as (16). The n of the object marker is printed as optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_7c_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 28"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(7c)"},
+    "language": "chay1248",
+    "primaryText": "Pitru-ri nate-r-in-ke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru-ri", "Peter-ERG"], ["nate-r-in-ke", "trust-IND-3-2.O"]
+    ],
+    "translation": "Peter trusts you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "2"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (16).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8a",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8a)"},
+    "language": "chay1248",
+    "primaryText": "Kiya na'wan-ra-i Pitru.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kiya", "1PL.EXCL"], ["na'wan-ra-i", "miss-IND-1PL.EXCL"], ["Pitru", "Peter"]
+    ],
+    "translation": "We miss Peter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Kiya na'wan-a-i Pitru.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1excl"],
+      ["subjectNumber", "aug"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "Repeated as (23a). The r of the indicative is printed as optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8a_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8a)"},
+    "language": "chay1248",
+    "primaryText": "Kiya-ri na'wan-ra-i Pitru.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kiya-ri", "1PL.EXCL-ERG"], ["na'wan-ra-i", "miss-IND-1PL.EXCL"], ["Pitru", "Peter"]
+    ],
+    "translation": "We miss Peter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Kiya-ri na'wan-a-i Pitru.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1excl"],
+      ["subjectNumber", "aug"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (23a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8b",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8b)"},
+    "language": "chay1248",
+    "primaryText": "Kema paki-r-an mi'ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kema", "2"], ["paki-r-an", "break-IND-2"], ["mi'ne", "mocahua"]
+    ],
+    "translation": "You broke the mocahua.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "Repeated as (23b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8b_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8b)"},
+    "language": "chay1248",
+    "primaryText": "Kema-ri paki-r-an mi'ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kema-ri", "2-ERG"], ["paki-r-an", "break-IND-2"], ["mi'ne", "mocahua"]
+    ],
+    "translation": "You broke the mocahua.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (23b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8c",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8c)"},
+    "language": "chay1248",
+    "primaryText": "Pitru iwa-r-in pepekunu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru", "Peter"], ["iwa-r-in", "steal-IND-3"], ["pepekunu", "necklace"]
+    ],
+    "translation": "Peter stole a necklace.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "Repeated as (23c).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_8c_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 33"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(8c)"},
+    "language": "chay1248",
+    "primaryText": "Pitru-ri iwa-r-in pepekunu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru-ri", "Peter-ERG"], ["iwa-r-in", "steal-IND-3"], ["pepekunu", "necklace"]
+    ],
+    "translation": "Peter stole a necklace.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (23c).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_9a",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 159"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(9a)"},
+    "language": "chay1248",
+    "primaryText": "Pituru Kusi awe-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pituru", "Pedro"], ["Kusi", "Jose"], ["awe-r-in", "hit-IND-3"]
+    ],
+    "translation": "Pedro hit Jose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "Repeated as (20a) and (26a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_9a_ri",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 159"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(9a)"},
+    "language": "chay1248",
+    "primaryText": "Pituru-ri Kusi awe-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pituru-ri", "Pedro-ERG"], ["Kusi", "Jose"], ["awe-r-in", "hit-IND-3"]
+    ],
+    "translation": "Pedro hit Jose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (20a) and (26a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_9b",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 159"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(9b)"},
+    "language": "chay1248",
+    "primaryText": "Kusi Pituru awe-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kusi", "Jose"], ["Pituru", "Pedro"], ["awe-r-in", "hit-IND-3"]
+    ],
+    "translation": "Pedro hit Jose.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "fronted"]
+    ],
+    "comment": "Repeated as (20b) and (26b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_9b_ri",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 159"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(9b)"},
+    "language": "chay1248",
+    "primaryText": "Kusi Pituru-ri awe-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kusi", "Jose"], ["Pituru-ri", "Pedro-ERG"], ["awe-r-in", "hit-IND-3"]
+    ],
+    "translation": "Pedro hit Jose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "fronted"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "Repeated as (20b) and (26b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_11",
+    "source": {"bibkey": "clem-deal-2026", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "chay1248",
+    "primaryText": "I'wara kema-ku nu'wi-r-an-ku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I'wara", "yesterday"], ["kema-ku", "2-1.O"], ["nu'wi-r-an-ku", "tell.off-IND-2-1.O"]
+    ],
+    "translation": "You told me off yesterday.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "min"],
+      ["object", "1"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"],
+      ["oagrOnS", "-ku"]
+    ],
+    "comment": "Luis Ulloa, personal communication.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_21a",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 161"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(21a)"},
+    "language": "chay1248",
+    "primaryText": "Sanapi i-te-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sanapi", "woman"], ["i-te-r-in", "say-VAL-IND-3"]
+    ],
+    "translation": "The woman told someone.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "The string is grammatical only on the reading of (21b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_21a_ri",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 161"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(21a)"},
+    "language": "chay1248",
+    "primaryText": "Sanapi-ri i-te-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sanapi-ri", "woman-ERG"], ["i-te-r-in", "say-VAL-IND-3"]
+    ],
+    "translation": "The woman told someone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "dropped"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_21b",
+    "source": {"bibkey": "barraza-de-garcia-2005", "paperLabel": "p. 162"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(21b)"},
+    "language": "chay1248",
+    "primaryText": "Sanapi i-te-r-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sanapi", "woman"], ["i-te-r-in", "say-VAL-IND-3"]
+    ],
+    "translation": "Someone told the woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "The overt nominal is the object; the subject is dropped.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_27",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 32"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(27)"},
+    "language": "chay1248",
+    "primaryText": "Pitru na'wan-in sa'-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru", "Peter"], ["na'wan-in", "miss-3"], ["sa'-in", "spouse-3"]
+    ],
+    "translation": "Peter misses his wife.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_27_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 32"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(27)"},
+    "language": "chay1248",
+    "primaryText": "Pitru-ri na'wan-in sa'-in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pitru-ri", "Peter-ERG"], ["na'wan-in", "miss-3"], ["sa'-in", "spouse-3"]
+    ],
+    "translation": "Peter misses his wife.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "min"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_28",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(28)"},
+    "language": "chay1248",
+    "primaryText": "Ka mapa-te-ra-we kara kayu atari kayu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ka", "1"], ["mapa-te-ra-we", "receive-VAL-IND-1"], ["kara", "three"], ["kayu", "egg"],
+      ["atari", "hen"], ["kayu", "egg"]
+    ],
+    "translation": "I received three eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_28_ri",
+    "source": {"bibkey": "bourdeau-2015", "paperLabel": "p. 31"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(28)"},
+    "language": "chay1248",
+    "primaryText": "Ka-ri mapa-te-ra-we kara kayu atari kayu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ka-ri", "1-ERG"], ["mapa-te-ra-we", "receive-VAL-IND-1"], ["kara", "three"],
+      ["kayu", "egg"], ["atari", "hen"], ["kayu", "egg"]
+    ],
+    "translation": "I received three eggs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "min"],
+      ["object", "3"],
+      ["objectNumber", "aug"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ri"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_42a",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "p. 602"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(42a)"},
+    "language": "yaku1245",
+    "primaryText": "Masha salamat türgennik sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["salamat", "porridge"], ["türgennik", "quickly"],
+      ["sie-te", "eat-PST.3SG"]
+    ],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "fronted"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_42a_y",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "p. 602"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(42a)"},
+    "language": "yaku1245",
+    "primaryText": "Masha salamat-y türgennik sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["salamat-y", "porridge-ACC"], ["türgennik", "quickly"],
+      ["sie-te", "eat-PST.3SG"]
+    ],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "fronted"],
+      ["case", "-y"],
+      ["caseOn", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_42b",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "p. 602"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(42b)"},
+    "language": "yaku1245",
+    "primaryText": "Masha türgennik salamat sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["türgennik", "quickly"], ["salamat", "porridge"],
+      ["sie-te", "eat-PST.3SG"]
+    ],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "belowAdverb"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_42b_y",
+    "source": {"bibkey": "baker-vinokurova-2010", "paperLabel": "p. 602"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(42b)"},
+    "language": "yaku1245",
+    "primaryText": "Masha türgennik salamat-y sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Masha", "Masha"], ["türgennik", "quickly"], ["salamat-y", "porridge-ACC"],
+      ["sie-te", "eat-PST.3SG"]
+    ],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "belowAdverb"],
+      ["case", "-y"],
+      ["caseOn", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_45a",
+    "source": {"bibkey": "valenzuela-2011", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(45a)"},
+    "language": "jebe1250",
+    "primaryText": "Kwa tek-susu-llen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kwa", "1SG"], ["tek-susu-llen", "CAUS-grow.up-1SG>2SG"]
+    ],
+    "translation": "I raised you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "sg"],
+      ["object", "2"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "Valenzuela (2011:109) calls =ler ungrammatical here, in the authors' report.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_45b",
+    "source": {"bibkey": "valenzuela-2011", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(45b)"},
+    "language": "jebe1250",
+    "primaryText": "Ma'ki'na kenmama' lumer-lama'u'ku?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ma'ki'na", "why"], ["kenmama'", "2PL"], ["lumer-lama'u'ku", "laugh.at-NFUT.2PL>1SG"]
+    ],
+    "translation": "Why did you (plural) laugh at me?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["subjectNumber", "pl"],
+      ["object", "1"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "dropped"]
+    ],
+    "comment": "Valenzuela (2011:109) calls =ler ungrammatical here, in the authors' report.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_46a",
+    "source": {"bibkey": "valenzuela-2011", "paperLabel": "p. 100"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(46a)"},
+    "language": "jebe1250",
+    "primaryText": "Kuda=ler aperku-tu-dek-llidek pu'yek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kuda=ler", "1PL.EXCL=ERG"], ["aperku-tu-dek-llidek", "not.share-VAL-3PL.O-1PL.EXCL>3PL"],
+      ["pu'yek", "fishing"]
+    ],
+    "translation": "We (exclusive) did not share the fishing with them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1excl"],
+      ["subjectNumber", "pl"],
+      ["object", "3"],
+      ["objectNumber", "pl"],
+      ["objectSyntax", "dropped"],
+      ["case", "=ler"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_46b",
+    "source": {"bibkey": "valenzuela-2011", "paperLabel": "p. 105"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(46b)"},
+    "language": "jebe1250",
+    "primaryText": "Kishu ka'-lli nana isha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kishu", "Jesús"], ["ka'-lli", "eat-NFUT.3SG"], ["nana", "that"], ["isha", "paujil"]
+    ],
+    "translation": "Jesús ate the paujil (a species of curassow).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_46b_ler",
+    "source": {"bibkey": "valenzuela-2011", "paperLabel": "p. 105"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(46b)"},
+    "language": "jebe1250",
+    "primaryText": "Kishu=ler ka'-lli nana isha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kishu=ler", "Jesús=ERG"], ["ka'-lli", "eat-NFUT.3SG"], ["nana", "that"],
+      ["isha", "paujil"]
+    ],
+    "translation": "Jesús ate the paujil (a species of curassow).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "inSitu"],
+      ["case", "=ler"],
+      ["caseOn", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_49a",
+    "source": {"bibkey": "maslova-2003", "paperLabel": "p. 93"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(49a)"},
+    "language": "sout2750",
+    "primaryText": "Tet kimnī met-kele kudede-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tet", "your"], ["kimnī", "whip"], ["met-kele", "me-ACC"], ["kudede-m", "kill-TR.3SG"]
+    ],
+    "translation": "Your whip has killed me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "3"],
+      ["subjectNumber", "sg"],
+      ["object", "1"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-gele"],
+      ["caseOn", "object"]
+    ],
+    "comment": "The paper names the marker -gele; the example prints -kele.",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_49b",
+    "source": {"bibkey": "maslova-2003", "paperLabel": "p. 95"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(49b)"},
+    "language": "sout2750",
+    "primaryText": "Met tet-ul kudede-t.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Met", "I"], ["tet-ul", "you-ACC"], ["kudede-t", "kill-FUT(TR.1SG)"]
+    ],
+    "translation": "I will kill you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "sg"],
+      ["object", "2"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "inSitu"],
+      ["case", "-ul"],
+      ["caseOn", "object"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "clemdeal2026_49c",
+    "source": {"bibkey": "maslova-2003", "paperLabel": "p. 89"},
+    "reportedIn": {"bibkey": "clem-deal-2026", "paperLabel": "(49c)"},
+    "language": "sout2750",
+    "primaryText": "Met mēmē iŋī.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Met", "I"], ["mēmē", "bear"], ["iŋī", "be.afraid(TR.1SG)"]
+    ],
+    "translation": "I am afraid of the bear.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["subjectNumber", "sg"],
+      ["object", "3"],
+      ["objectNumber", "sg"],
+      ["objectSyntax", "inSitu"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

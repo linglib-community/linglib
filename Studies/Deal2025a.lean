@@ -42,6 +42,35 @@ def Licit (g : Grammar) (s : Scenario Person) : Prop :=
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
+/-- Under (30) a combination is licit exactly when the direct object does not satisfy the probe and
+the indirect object bears a feature dominated by every dynamic feature of the direct object, the
+geometric closure of each containing it. -/
+theorem licit_iff : ∀ (g : Grammar) (s : Scenario Person),
+    Licit g s ↔ (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧
+      ∃ y ∈ spec s.high, ∀ x ∈ spec s.low ∩ g.dynamic, x ≤ y := by
+  decide +kernel
+
+/-- (30) licenses no more than the 2024 algorithm, since a person bears whatever its segments depend
+on: the two part only where the direct object's dynamic features have no common dependent. -/
+theorem Licit.deal2024 {g : Grammar} {s : Scenario Person} (h : Licit g s) :
+    Deal2024.Licit g s := by
+  obtain ⟨hs, y, hy, hxy⟩ := (licit_iff g s).1 h
+  refine (Deal2024.licit_iff g s).2 ⟨hs, fun x hx ↦ ?_⟩
+  exact spec_isLowerSet _ (hxy x (by simpa [and_comm] using hx)) hy
+
+theorem Licit.third {g : Grammar} {s : Scenario Person} (h : Licit g s) (p : Person) :
+    Licit g ⟨p, .third⟩ := by
+  have hthird : spec Person.third = {pi} := by decide
+  obtain ⟨hs, -⟩ := (licit_iff g s).1 h
+  refine (licit_iff g _).2 ⟨fun x hx hxt ↦ hs x hx ?_, pi, pi_mem_spec p, fun x hx ↦ ?_⟩
+  · dsimp only at hxt
+    rw [hthird, Finset.mem_singleton] at hxt
+    exact hxt ▸ pi_mem_spec _
+  · rw [Finset.mem_inter] at hx
+    dsimp only at hx
+    rw [hthird, Finset.mem_singleton] at hx
+    exact hx.1.le
+
 /-- The two algorithms agree on every combination exactly when the grammar has a satisfaction
 condition or does not mark both [SPKR] and [ADDR] for dynamic interaction ((30)). -/
 theorem forall_licit_iff_iff (g : Grammar) :
