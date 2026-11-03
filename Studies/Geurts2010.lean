@@ -31,8 +31,8 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
 * `Sentence.survivors` applies heuristic (i) categorically, with one alternative per cell and `size`
   for economy, so (26b) comes out by length rather than the monolexicality p. 124 credits. Heuristic
   (ii), which p. 117 invokes, is not formalized.
-* Upper sets are the closure of the disjuncts under conjunction and disjunction ([each is a union of
-  conjunctions](##eq_iUnion_iInter_of_isUpperSet)).
+* Upper sets model the closure of the disjuncts under conjunction and disjunction, up to the empty
+  set and the whole space.
 * (61b, c) are read through the quantifiers of (62).
 
 ## Errata
@@ -43,13 +43,12 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
   wherever just one disjunct holds pass](##isSecondaryImplicature_upperSets_iff), and it [gives
   ignorance](##notMem_polar_Ici_of_mem_primaryImplicatures).
 * p. 115: "American" for British.
-* p. 143: (25) should end [*or we love it*](##compl_sdiff_like).
-* p. 149: (42b) is [*some but not many*](##exh_compl_many), not "many but not all".
+* p. 143: (25) should end *or we love it*.
+* p. 149: (42b) is *some but not many*, as the computation there gives, not "many but not all".
 * p. 168: (9a) for (9).
-* pp. 169–170: (11) and (16) put the disjunction outside the belief, [harmlessly given (10) or
-  (15)](##subset_or_subset_iff).
+* pp. 169–170: (11) and (16) put the disjunction outside the belief, where the prose has it inside.
 * p. 188: (46) omits *not*.
-* p. 189: [O reaches RICH₂ given RICH₁](##exh_rich), so "out of reach" overstates.
+* p. 189: O reaches RICH₂ given the alternative RICH₁, so "out of reach" overstates.
 
 ## TODO
 
@@ -80,19 +79,6 @@ variable {W : Type*} {s φ ψ : Set W}
 
 /-! ### The Standard Recipe -/
 
--- the diagram of p. 39: non-belief is disbelief or no opinion, no opinion being non-competence
-theorem compl_Iic_eq_union (ψ : Set W) :
-    (Iic ψ)ᶜ = (Iic ψᶜ \ {∅}) ∪ (polar ψ : Set (Set W))ᶜ := by
-  rw [← compl_Iic_inter_polar]
-  ext s
-  simp only [mem_union, mem_inter_iff, mem_compl_iff, mem_Iic, SetLike.mem_coe, mem_polar]
-  tauto
-
--- p. 40: (16) and (17) exclude each other, so (16) cannot come from strengthening (17)
-theorem disjoint_Iic_compl_polar (ψ : Set W) :
-    Disjoint (Iic ψᶜ) (polar ψ : Set (Set W))ᶜ :=
-  disjoint_left.2 fun _ h hc ↦ hc (mem_polar.2 (.inr h))
-
 -- p. 110, footnote 4; p. 167
 theorem inter_nonempty_of_subset_union (hq : s ⊆ φ ∪ ψ) (hψ : ¬ s ⊆ ψ) : (s ∩ φ).Nonempty :=
   let ⟨_, hw, hwψ⟩ := not_subset.1 hψ
@@ -105,11 +91,6 @@ theorem notMem_polar_of_subset_union (hq : s ⊆ φ ∪ ψ) (hφ : ¬ s ⊆ φ) 
   (mem_polar.1 h).elim hφ fun hc ↦
     let ⟨_, hw, hwφ⟩ := inter_nonempty_of_subset_union hq hψ
     hc hw hwφ
-
--- pp. 114, 120: what is possible and on which the speaker has an opinion, the speaker believes
-theorem subset_of_inter_nonempty_of_mem_polar (hp : (s ∩ ψ).Nonempty) (hc : s ∈ polar ψ) :
-    s ⊆ ψ :=
-  (mem_polar.1 hc).resolve_right fun h ↦ let ⟨_, hw, hwψ⟩ := hp; h hw hwψ
 
 /-! ### Long disjunctions
 
@@ -162,24 +143,10 @@ theorem notMem_polar_Ici_of_mem_primaryImplicatures (ha : IsAtom a) (hb : IsAtom
   exact hweak _ (isLowerSet_Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
     hna hy ((ha.le_iff_eq (mem_Ioi.1 (hq hy)).ne').1 hya).ge
 
--- an upper set of the worlds of (29) is a union of conjunctions of disjuncts, so that the upper
--- sets are the closure p. 64 considers
-theorem eq_iUnion_iInter_of_isUpperSet {κ : Type*} {u : Set (Set κ)} (hu : IsUpperSet u) :
-    u = ⋃ x ∈ u, ⋂ i ∈ x, Ici ({i} : Set κ) := by
-  ext w
-  simp only [mem_iUnion, mem_iInter, mem_Ici, singleton_subset_iff, exists_prop]
-  exact ⟨fun hw ↦ ⟨w, hw, fun _ h ↦ h⟩, fun ⟨x, hx, h⟩ ↦ hu (fun i hi ↦ h i hi) hx⟩
-
 variable [IsAtomic α]
 
 private theorem exists_isAtom_le {y : α} (hy : y ∈ Ioi ⊥) : ∃ b, IsAtom b ∧ b ≤ y :=
   (eq_bot_or_exists_atom_le y).resolve_left (mem_Ioi.1 hy).ne'
-
--- an upper set with every atom in it holds wherever a disjunct does
-private theorem Ioi_bot_subset_of_forall_isAtom_mem {χ : Set α} (hχ : IsUpperSet χ)
-    (h : ∀ x, IsAtom x → x ∈ χ) : Ioi ⊥ ⊆ χ := fun _ hy ↦
-  let ⟨_, hb, hby⟩ := exists_isAtom_le hy
-  hχ hby (h _ hb)
 
 -- contra p. 64: over alternatives closed under conjunction and disjunction, an alternative passes
 -- the consistency check just when it holds in no world in which only one disjunct does
@@ -191,7 +158,9 @@ theorem isSecondaryImplicature_upperSets_iff :
     ⟨fun h x hx hxt ↦ ?_, fun h χ hχ hχφ hsub ↦ ?_⟩
   · exact h _ (isLowerSet_Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
       fun y hy hle ↦ hy.2 ((hx.le_iff_eq (mem_Ioi.1 hy.1).ne').1 hle ▸ hxt)
-  · exact hχφ.2 (Ioi_bot_subset_of_forall_isAtom_mem hχ fun b hb ↦ hsub ⟨hb.bot_lt, h b hb⟩)
+  · exact hχφ.2 fun y hy ↦
+      let ⟨b, hb, hby⟩ := exists_isAtom_le hy
+      hχ hby (hsub ⟨hb.bot_lt, h b hb⟩)
 
 /-- Closing the alternatives of a long disjunction under conjunction and under disjunction, and
 strengthening wherever Competence is consistent, yields exactly the exclusive reading. -/
@@ -206,18 +175,6 @@ theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
     le_rfl⟩
   · exact hna (le_antisymm hbx (h hb.bot_lt) ▸ hb)
   · exact hna ((hy.le_iff_eq hx.ne').1 hxy ▸ hy)
-
--- the exclusive state itself meets the weak implicatures of that closure, so the reading is not
--- vacuous
-theorem setOf_isAtom_mem_primaryImplicatures :
-    {x : α | IsAtom x} ∈ primaryImplicatures (Ioi ⊥) {χ | IsUpperSet χ} :=
-  mem_primaryImplicatures.2 fun _ hχ hχφ hsub ↦
-    hχφ.2 (Ioi_bot_subset_of_forall_isAtom_mem hχ fun _ hb ↦ hsub hb)
-
-example : Ioi ⊥ \ ⋃₀ {t | IsSecondaryImplicature (Ioi ⊥) {χ | IsUpperSet χ} t} =
-    {w : Set (Fin 3) | ∃ i, w = {i}} := by
-  rw [Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom]
-  exact Set.ext fun _ ↦ Set.isAtom_iff
 
 end LongDisjunction
 
@@ -260,21 +217,12 @@ def Believes (V : P → Set W) (s : Set W) (x : Sentence P) : Prop := s ⊆ x.ev
 /-- $\mathrm{Poss}_S$: a speaker in state `s` considers what the sentence says possible. -/
 def Poss (V : P → Set W) (s : Set W) (x : Sentence P) : Prop := (s ∩ x.eval V s).Nonempty
 
-/-- The sentence `x` entails the sentence `y`. -/
-def Entails (V : P → Set W) (x y : Sentence P) : Prop := ∀ s, x.Believes V s → y.Believes V s
-
 theorem poss_of_believes (hs : s.Nonempty) (h : x.Believes V s) : x.Poss V s :=
   let ⟨w, hw⟩ := hs
   ⟨w, hw, h hw⟩
 
 theorem believes_may (hs : s.Nonempty) : (may x).Believes V s ↔ x.Poss V s :=
   ⟨fun h ↦ let ⟨_, hw⟩ := hs; h hw, fun h _ _ ↦ h⟩
-
-theorem believes_and : (and x y).Believes V s ↔ x.Believes V s ∧ y.Believes V s :=
-  subset_inter_iff
-
-theorem believes_neg : (neg x).Believes V s ↔ ¬ x.Poss V s :=
-  ⟨fun h ⟨_, hw, hwx⟩ ↦ h hw hwx, fun h w hw hwx ↦ h ⟨w, hw, hwx⟩⟩
 
 theorem poss_neg : (neg x).Poss V s ↔ ¬ x.Believes V s := by
   simp [Poss, Believes, eval, inter_compl_nonempty_iff]
@@ -288,15 +236,6 @@ theorem poss_or : (or x y).Poss V s ↔ x.Poss V s ∨ y.Poss V s := by
 sentence uttered and none of the alternatives `alts`. -/
 def standardRecipe (V : P → Set W) (x : Sentence P) (alts : Set (Sentence P)) : Set (Set W) :=
   {s | s.Nonempty ∧ x.Believes V s ∧ ∀ a ∈ alts, ¬ a.Believes V s}
-
--- on a plain disjunction this is the recipe of `NeoGricean.primaryImplicatures`
-theorem mem_standardRecipe_or_iff (hp : V p ⊂ V p ∪ V q) (hq : V q ⊂ V p ∪ V q) :
-    s ∈ standardRecipe V (or (atom p) (atom q)) {atom p, atom q} ↔
-      s.Nonempty ∧ s ∈ Iic (V p ∪ V q) ∩ primaryImplicatures (V p ∪ V q) {V p, V q} := by
-  simp only [standardRecipe, mem_ofPred_eq, mem_inter_iff, mem_primaryImplicatures]
-  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
-  simp only [mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  exact ⟨fun ⟨h1, h2⟩ ↦ ⟨fun _ ↦ h1, fun _ ↦ h2⟩, fun ⟨h1, h2⟩ ↦ ⟨h1 hp, h2 hq⟩⟩
 
 -- (11), steps i–iv of p. 110: for a plain disjunction the Standard Recipe delivers ignorance
 theorem poss_of_mem_standardRecipe_or
@@ -320,12 +259,6 @@ and `b` for $i_3$, where only `y` is. -/
 abbrev cells (V : P → Set W) (x y a b c : Sentence P) : List (Set (Set W) × Sentence P) :=
   [({s | x.Poss V s ∧ y.Poss V s}, c), ({s | x.Poss V s ∧ ¬ y.Poss V s}, a),
     ({s | ¬ x.Poss V s ∧ y.Poss V s}, b)]
-
-/-- The alternatives of pp. 115–116: in its cell, a consistent speaker of `u` believes the sentence,
-and the sentence entails `u`. -/
-def AreAlternatives (V : P → Set W) (u : Sentence P) (alts : List (Set (Set W) × Sentence P)) :
-    Prop :=
-  ∀ c ∈ alts, ∀ s ∈ c.1, s.Nonempty → u.Believes V s → c.2.Believes V s ∧ c.2.Entails V u
 
 variable {κ : Type*} [Preorder κ] {cost : Sentence P → κ}
 
@@ -366,35 +299,6 @@ that of no opinion. The three-way partition of p. 113 is the partition by what i
 alternatives have the same size, as p. 122 says of (22). -/
 abbrev altsScalar (V : P → Set W) (u x : Sentence P) : List (Set (Set W) × Sentence P) :=
   cells V x (neg x) x (and u (neg x)) (and u (may x))
-
-example : AreAlternatives V (or (atom p) (atom q)) (altsOr V p q) := by
-  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
-    and_true]
-  refine ⟨fun s ⟨hp, hq⟩ hs h ↦ ⟨believes_and.2 ⟨(believes_may hs).2 hp,
-        believes_and.2 ⟨(believes_may hs).2 hq, h⟩⟩,
-      fun _ h' ↦ (believes_and.1 (believes_and.1 h').2).2⟩,
-    fun s ⟨_, hq⟩ _ h ↦ ⟨fun w hw ↦ (h hw).resolve_right fun hwq ↦ hq ⟨w, hw, hwq⟩,
-      fun _ h' _ hw ↦ .inl (h' hw)⟩,
-    fun s ⟨hp, _⟩ _ h ↦ ⟨fun w hw ↦ (h hw).resolve_left fun hwp ↦ hp ⟨w, hw, hwp⟩,
-      fun _ h' _ hw ↦ .inr (h' hw)⟩⟩
-
-example : AreAlternatives V (may (or (atom p) (atom q))) (altsMayOr V p q) := by
-  have key {r : P} (hr : V r ⊆ V p ∪ V q) : (may (atom r)).Entails V (may (or (atom p) (atom q))) :=
-    fun _ h _ hw ↦ (h hw).mono (inter_subset_inter_right _ hr)
-  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
-    and_true]
-  exact ⟨fun s ⟨hp, hq⟩ hs _ ↦ ⟨believes_and.2 ⟨(believes_may hs).2 hp, (believes_may hs).2 hq⟩,
-      fun t h ↦ key subset_union_left t (believes_and.1 h).1⟩,
-    fun s ⟨hp, _⟩ hs _ ↦ ⟨(believes_may hs).2 hp, key subset_union_left⟩,
-    fun s ⟨_, hq⟩ hs _ ↦ ⟨(believes_may hs).2 hq, key subset_union_right⟩⟩
-
-example (hx : x.Entails V u) : AreAlternatives V u (altsScalar V u x) := by
-  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
-    and_true]
-  exact ⟨fun s ⟨hp, _⟩ hs h ↦ ⟨believes_and.2 ⟨h, (believes_may hs).2 hp⟩,
-      fun _ h' ↦ (believes_and.1 h').1⟩,
-    fun s ⟨_, hn⟩ _ _ ↦ ⟨not_poss_neg.1 hn, hx⟩,
-    fun s ⟨hp, _⟩ _ h ↦ ⟨believes_and.2 ⟨h, believes_neg.2 hp⟩, fun _ h' ↦ (believes_and.1 h').1⟩⟩
 
 -- p. 115: the speaker of (15) considers both disjuncts possible
 theorem mem_survivors_or_iff :
@@ -483,34 +387,11 @@ theorem readings_ssubset_iff (q : Quant) :
     exact down notMoreThanOne_not_predictsLocalSIWeak notMoreThanOne_not_predictsLocalSI
       not_classical_notMoreThanOne local_notMoreThanOne
 
-variable {some many all : Set W}
+variable {some all : Set W}
 
--- (39)–(40), p. 148: `exh` is the operator O of (39); O (44b), the parse under negation (42c)
-theorem exh_many (hs : many ⊆ some) (ha : all ⊂ many) :
-    exh {some, many, all} many = many \ all := by
-  rw [exh_insert_of_subset hs, exh_insert_of_subset subset_rfl, exh_singleton_of_not_subset ha.2]
-
--- (43), p. 149: O (43b), the parse (42b)
-theorem exh_compl_many (hs : many ⊂ some) (ha : all ⊆ many) :
-    exh {someᶜ, manyᶜ, allᶜ} manyᶜ = manyᶜ ∩ some := by
-  rw [exh_insert_of_not_subset fun h ↦ hs.2 (compl_subset_compl.1 h),
-    exh_insert_of_subset subset_rfl, exh_singleton_of_subset (compl_subset_compl.2 ha),
-    sdiff_compl]
-
--- (47), p. 150: the Power Principle prefers (42b) to the readings (42a) and (42c)
-theorem isLeast_readings_negation (hs : many ⊂ some) (ha : all ⊂ many) :
-    IsLeast {manyᶜ, exh {someᶜ, manyᶜ, allᶜ} manyᶜ, (exh {some, many, all} many)ᶜ}
-      (exh {someᶜ, manyᶜ, allᶜ} manyᶜ) := by
-  rw [exh_compl_many hs ha.1, exh_many hs.1 ha]
-  refine ⟨by simp, ?_⟩
-  rintro _ (rfl | rfl | rfl)
-  · exact inter_subset_left
-  · exact subset_rfl
-  · exact fun w hw hn ↦ hw.1 hn.1
-
--- (57), pp. 156–157: the Power Principle prefers the narrow-scope parse (57b) of (56b), which
--- yields the inference the text says does not go through. That it is the stronger needs a serial
--- relation, which the text leaves tacit
+-- (47), (57), pp. 150, 156–157, with O of (39) as `exh`: the Power Principle prefers the
+-- narrow-scope parse (57b) of (56b), which yields the inference the text says does not go through.
+-- That it is the stronger needs a serial relation, which the text leaves tacit
 theorem isLeast_readings_core (R : SetRel W W) [ModalLogic.IsSerial R] (ha : all ⊂ some) :
     IsLeast {R.core some, exh {R.core some, R.core all} (R.core some),
         R.core (exh {some, all} some)} (R.core (exh {some, all} some)) := by
@@ -525,19 +406,6 @@ theorem isLeast_readings_core (R : SetRel W W) [ModalLogic.IsSerial R] (ha : all
     · obtain ⟨v, hv⟩ := ModalLogic.IsSerial.serial (R := R) w
       exact absurd (hwq hv) (hw hv).2
   · exact subset_rfl
-
--- (25), p. 143: the negated upper-bounded *like* is *don't like or love*, not the printed *don't
--- like or don't love*, which excludes the continuation *we LOVE it*
-theorem compl_sdiff_like {like love : Set W} (h : love ⊆ like) :
-    (like \ love)ᶜ = likeᶜ ∪ love ∧ Disjoint (likeᶜ ∪ loveᶜ) love := by
-  refine ⟨by ext w; simp only [mem_compl_iff, mem_sdiff, mem_union]; tauto, ?_⟩
-  exact disjoint_left.2 fun _ hw hl ↦ hw.elim (· (h hl)) (· hl)
-
--- (48)–(49), p. 189: O can shift a lower bound too, given the alternative RICH₁
-theorem exh_rich {rich rich₂ : Set W} (h : rich₂ ⊆ rich) (hne : rich₂.Nonempty) :
-    exh {rich \ rich₂} rich = rich₂ := by
-  obtain ⟨v, hv⟩ := hne
-  rw [exh_singleton_of_not_subset fun hs ↦ (hs (h hv)).2 hv, sdiff_sdiff_eq_self h]
 
 end Conventionalism
 
@@ -581,18 +449,13 @@ theorem isSecondaryImplicature_mango_iff (hA : A ⊆ F) (hM : (M \ F).Nonempty)
 
 open GeurtsPouscoulous2009 in
 -- §8.2, (10)–(12), pp. 168–169, after [vanrooij-schulz-2004] and [russell-2006]: the reading of (9)
--- that looks local, from the strong implicature at the speaker and Competence of the subject
+-- that looks local, from the strong implicature at the speaker and Competence of the subject. The
+-- step for *hope*, (15)–(17), pp. 170–171, has the same form and differs in the plausibility of
+-- (16)
 theorem subset_core_exh {R : SetRel W W} {some all : Set W} (hall : all ⊂ some)
     (hq : s ⊆ R.core some) (h10 : s ⊆ (R.core all)ᶜ) (h11 : s ⊆ R.core all ∪ R.core allᶜ) :
     s ⊆ R.core (Exhaustification.exh {some, all} some) :=
   fun _ hw ↦ local_of_global_of_opinionated R hall (hq hw) (h10 hw) (h11 hw)
-
--- (10)–(12) and, for *hope*, (15)–(17), pp. 170–171, share this form, for any attitude: what
--- separates them is the plausibility of the second premise. (11) and (16), as printed, have the
--- disjunction outside the speaker's belief; given the first premise that says the same
-theorem subset_or_subset_iff {X Y : Set W} (h10 : s ⊆ Xᶜ) : (s ⊆ X ∨ s ⊆ Y) ↔ s ⊆ X ∪ Y :=
-  ⟨fun h ↦ h.elim (·.trans subset_union_left) (·.trans subset_union_right),
-    fun h ↦ .inr fun _ hw ↦ (h hw).resolve_left (h10 hw)⟩
 
 section Indefinites
 
@@ -606,13 +469,6 @@ theorem subset_inter_compl_ofSuccessors
     (h34 : ¬ t ⊆ SetRel.ofSuccessors all) (hc : t ∈ polar (SetRel.ofSuccessors all)) :
     t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some ∩ (SetRel.ofSuccessors all)ᶜ :=
   subset_inter h32 ((Question.mem_polar.1 hc).resolve_left h34)
-
--- p. 139: that (14) is false, given (32), entails (35), so that the alternative-based inference is
--- the stronger
-theorem subset_compl_ofSuccessors (h32 : t ⊆ SetRel.ofSuccessors sailor)
-    (h14 : t ⊆ Prod.fst ⁻¹' (SetRel.ofSuccessors (sailor ⊓ all)).dom ᶜ) :
-    t ⊆ (SetRel.ofSuccessors all)ᶜ :=
-  fun p hp hall ↦ h14 hp ⟨p.2, h32 hp, hall⟩
 
 end Indefinites
 
@@ -658,29 +514,16 @@ theorem rows_table2 {a : Fin 4 → Set W} (ha : StrictAnti a) :
   · simpa using ha.lt_iff_gt.symm
   · simpa using (compl_lt_compl_iff_lt.trans ha.lt_iff_gt).symm
 
-/-- The inferences of the rows that a Gricean derivation bears on, which the text says are conveyed
-or not. -/
+/-- The three contrasts on which Gricean reasoning derives one inference and not its neighbour. -/
 inductive Item where
-  | disjunct | freeChoice | sameLength | afterUse | longer | figs | mango | referent | everySailor
+  | sameLength | longer | figs | mango | referent | everySailor
   deriving DecidableEq
 
 /-- The statement that the theory derives the inference, over any model of the sentence. -/
 def Item.Derived : Item → Prop
-  | .disjunct => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (or (atom true) (atom false)) (altsOr V true false) →
-        (atom true).Poss V s ∧ (atom false).Poss V s
-  | .freeChoice => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (may (or (atom true) (atom false))) (altsMayOr V true false) →
-        (may (atom true)).Believes V s ∧ (may (atom false)).Believes V s
   | .sameLength => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
       s ∈ survivors V size (atom true) (altsScalar V (atom true) (atom false)) →
         ¬ (atom false).Believes V s
-  | .afterUse => ∀ {W : Type} (V : Bool → Set W) (cost : Sentence Bool → ℕ) (s : Set W),
-      cost (atom false) ≤ cost (atom true) →
-        cost (and (atom true) (neg (atom false))) ≤ cost (atom true) →
-        ¬ cost (and (atom true) (may (atom false))) ≤ cost (atom true) →
-        s ∈ survivors V cost (atom true) (altsScalar V (atom true) (atom false)) →
-        ¬ (atom false).Believes V s ∧ (atom false).Poss V s
   | .longer => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
       s ∈ survivors V size (atom true) (altsScalar V (atom true) (and (atom false) (atom true))) →
         ¬ (and (atom false) (atom true)).Believes V s
@@ -695,53 +538,40 @@ def Item.Derived : Item → Prop
       t ⊆ SetRel.ofSuccessors sailor → t ⊆ (SetRel.ofSuccessors all)ᶜ →
         t ⊆ Prod.fst ⁻¹' (SetRel.ofSuccessors (sailor ⊓ all)).dom ᶜ
 
--- (26b), p. 124: *big toe* is longer than *toe*, so that nothing rules out believing it
-theorem Item.not_derived_longer : ¬ Item.longer.Derived := fun h ↦
-  @h Unit (fun _ ↦ univ) univ
-    (mem_survivors_scalar_iff.2 ⟨univ_nonempty, fun _ _ ↦ mem_univ _, by simp [size]⟩)
-    fun _ _ ↦ ⟨mem_univ _, mem_univ _⟩
-
--- (3), p. 165: Competence is not consistent for the first disjunct
-theorem Item.not_derived_mango : ¬ Item.mango.Derived := fun h ↦ by
-  have hA : ({2} : Set (Fin 3)) ⊆ {1, 2} := by simp
-  have hM : (({0} : Set (Fin 3)) \ {1, 2}).Nonempty := ⟨0, by simp⟩
-  have hF : (({1, 2} : Set (Fin 3)) \ ({0} ∪ {2})).Nonempty := ⟨1, by simp⟩
-  have := (isSecondaryImplicature_mango_iff hA hM hF (by simp)).1
-    (@h (Fin 3) {0} {1, 2} {2} hA hM hF)
-  exact absurd (mem_singleton_iff.1 (this ▸ mem_singleton (0 : Fin 3))) (by decide)
-
--- pp. 139, 180: (35) does not entail that (14) is false, so that the story need not be about every
--- sailor
-theorem Item.not_derived_everySailor : ¬ Item.everySailor.Derived := fun h ↦ by
-  have := @h Unit Bool (fun _ ↦ univ) (fun _ ↦ {true}) {((), false)}
-    (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.ofSuccessors] at hb)
-  exact this rfl ⟨true, mem_univ _, rfl⟩
-
 theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
-  | .disjunct => iff_of_true (fun _ _ h ↦ (mem_survivors_or_iff.1 h).2.2) (by decide)
-  | .freeChoice => iff_of_true (fun _ _ h ↦ (mem_survivors_may_or_iff.1 h).2) (by decide)
   | .sameLength => iff_of_true (fun _ _ h ↦ (mem_survivors_scalar_iff.1 h).2.2 le_rfl) (by decide)
-  | .afterUse => iff_of_true (fun _ _ _ ha hb hc h ↦
-      have ⟨_, _, hp, hn⟩ := (mem_survivors_of_available ha hb hc).1 h
-      ⟨poss_neg.1 hn, hp⟩) (by decide)
-  | .longer => iff_of_false Item.not_derived_longer (by decide)
+  -- (26b), p. 124: *big toe* is longer than *toe*, so that nothing rules out believing it
+  | .longer => iff_of_false (fun h ↦ @h Unit (fun _ ↦ univ) univ
+      (mem_survivors_scalar_iff.2 ⟨univ_nonempty, fun _ _ ↦ mem_univ _, by simp [size]⟩)
+      fun _ _ ↦ ⟨mem_univ _, mem_univ _⟩) (by decide)
   | .figs => iff_of_true (fun _ _ _ ↦ isSecondaryImplicature_mango) (by decide)
-  | .mango => iff_of_false Item.not_derived_mango (by decide)
+  -- (3), p. 165: Competence is not consistent for the first disjunct
+  | .mango => iff_of_false (fun h ↦ by
+      have hA : ({2} : Set (Fin 3)) ⊆ {1, 2} := by simp
+      have hM : (({0} : Set (Fin 3)) \ {1, 2}).Nonempty := ⟨0, by simp⟩
+      have hF : (({1, 2} : Set (Fin 3)) \ ({0} ∪ {2})).Nonempty := ⟨1, by simp⟩
+      have := (isSecondaryImplicature_mango_iff hA hM hF (by simp)).1
+        (@h (Fin 3) {0} {1, 2} {2} hA hM hF)
+      exact absurd (mem_singleton_iff.1 (this ▸ mem_singleton (0 : Fin 3))) (by decide)) (by decide)
   | .referent => iff_of_true (fun _ _ _ _ h32 h34 hc ↦
       (subset_inter_compl_ofSuccessors h32 h34 hc).trans inter_subset_right) (by decide)
-  | .everySailor => iff_of_false Item.not_derived_everySailor (by decide)
+  -- pp. 139, 180: (35) does not entail that (14) is false: the story need not be about every sailor
+  | .everySailor => iff_of_false (fun h ↦ by
+      have := @h Unit Bool (fun _ ↦ univ) (fun _ ↦ {true}) {((), false)}
+        (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.ofSuccessors] at hb)
+      exact this rfl ⟨true, mem_univ _, rfl⟩) (by decide)
 
 /-- Reads the item of a row and whether the text says the inference is conveyed. -/
 def inference? (ex : Datum) : Option (Item × Bool) := do
-  let item ← ex.parse? "item" [("disjunct", Item.disjunct), ("freeChoice", .freeChoice),
-    ("sameLength", .sameLength), ("afterUse", .afterUse), ("longer", .longer), ("figs", .figs),
-    ("mango", .mango), ("referent", .referent), ("everySailor", .everySailor)]
+  let item ← ex.parse? "item" [("sameLength", Item.sameLength), ("longer", .longer),
+    ("figs", .figs), ("mango", .mango), ("referent", .referent), ("everySailor", .everySailor)]
   let conveys ← ex.bool? "conveys"
   pure (item, conveys)
 
-example : Datum.ReadCount inference? Examples.all 11 := by decide
+example : Datum.ReadCount inference? Examples.all 7 := by decide
 
--- the rows on which a derivation bears: the theory derives what the text says is conveyed
+-- (13), (26), (6), (3), (31), (29): the theory derives what the text says is conveyed, and not its
+-- neighbour
 theorem rows_conveys : ∀ r ∈ Examples.all.filterMap inference?, (r.2 = true ↔ r.1.Derived) := by
   simp only [Item.derived_iff]
   decide

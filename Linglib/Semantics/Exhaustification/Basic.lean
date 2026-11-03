@@ -126,9 +126,6 @@ theorem exh_insert_of_not_subset (h : ¬ p ⊆ q) : exh (insert q C) p = exh C p
     fun ⟨⟨hp, hw⟩, hq⟩ ↦ ⟨hp, fun r hr hwr ↦
       hr.elim (fun e ↦ absurd (e ▸ hwr) hq) (hw r · hwr)⟩⟩
 
-theorem exh_singleton_of_subset (h : p ⊆ q) : exh {q} p = p :=
-  exh_eq_self fun _ hr ↦ (Set.mem_singleton_iff.1 hr) ▸ h
-
 theorem exh_singleton_of_not_subset (h : ¬ p ⊆ q) : exh {q} p = p \ q := by
   rw [← insert_empty_eq, exh_insert_of_not_subset h, exh_empty]
 

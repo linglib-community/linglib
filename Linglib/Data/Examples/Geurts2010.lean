@@ -139,7 +139,7 @@ def ex_11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "disjunct"), ("inference", "He may be British."), ("conveys", "true")] }
+    paperFeatures := [("inference", "He may be British."), ("conveys", "true")] }
 
 def ex_12 : Datum :=
   { id := "geurts2010_12"
@@ -153,7 +153,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "freeChoice"), ("inference", "He may be British."), ("conveys", "true")] }
+    paperFeatures := [("inference", "He may be British."), ("conveys", "true")] }
 
 def ex_19 : Datum :=
   { id := "geurts2010_19"
@@ -167,7 +167,7 @@ def ex_19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "freeChoice"), ("inference", "You can have chocolate cake."), ("conveys", "true")] }
+    paperFeatures := [("inference", "You can have chocolate cake."), ("conveys", "true")] }
 
 def ex_13 : Datum :=
   { id := "geurts2010_13"
@@ -195,7 +195,7 @@ def ex_23 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "afterUse"), ("inference", "George doesn't know whether all the nurses were drunk."), ("conveys", "true")] }
+    paperFeatures := [("inference", "George doesn't know whether all the nurses were drunk."), ("conveys", "true")] }
 
 def ex_26a : Datum :=
   { id := "geurts2010_26a"

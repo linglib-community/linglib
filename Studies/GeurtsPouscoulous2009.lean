@@ -142,8 +142,6 @@ abbrev Situation := Fin 3 → Fin 3 → Prop
 and each of the others with two of them. -/
 abbrev figure2 : Situation := fun s c ↦ s = 0 ∨ (s = 1 ∧ c ≠ 2) ∨ (s = 2 ∧ c ≠ 0)
 
-example : ∃! s : Fin 3, ∀ c, figure2 s c := ⟨0, fun _ ↦ .inl rfl, by decide⟩
-
 /-- The situation for *more than one* and the two downward-entailing sentences, in which every
 square is connected with some circle and two of them with all. -/
 abbrev allSome : Situation := fun s c ↦ s ≠ 0 ∨ c = 0

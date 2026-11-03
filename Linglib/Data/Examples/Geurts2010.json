@@ -185,7 +185,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "disjunct"],
       ["inference", "He may be British."],
       ["conveys", "true"]
     ],
@@ -206,7 +205,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "freeChoice"],
       ["inference", "He may be British."],
       ["conveys", "true"]
     ],
@@ -227,7 +225,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "freeChoice"],
       ["inference", "You can have chocolate cake."],
       ["conveys", "true"]
     ],
@@ -269,7 +266,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "afterUse"],
       ["inference", "George doesn't know whether all the nurses were drunk."],
       ["conveys", "true"]
     ],
