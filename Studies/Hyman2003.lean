@@ -106,7 +106,7 @@ theorem carp_sortedLT : carp.slots.SortedLT := by decide
 
 /-- The template admits exactly the strings of extensions rising in its order. -/
 theorem mem_carp_language {c : List Ext} : c ∈ carp.language ↔ c.SortedLT := by
-  rw [carp.mem_language_iff_sublist rfl]
+  rw [carp.mem_language_iff_sublist (by decide) rfl]
   refine ⟨fun h ↦ (carp_sortedLT.pairwise.sublist h).sortedLT, fun h ↦ ?_⟩
   exact List.sublist_of_subperm_of_sortedLE
     (List.subperm_of_subset h.nodup fun x _ ↦ by cases x <;> decide) h.sortedLE

@@ -120,7 +120,7 @@ def preverbTemplate : AffixTemplate PreverbGroup where
 
 theorem licensed_preverbTemplate_iff {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)} :
     preverbTemplate.Licensed w ↔ (w.map Sigma.fst).Sublist [.localization, .direction] :=
-  AffixTemplate.mem_language_iff_sublist rfl
+  AffixTemplate.mem_language_iff_sublist (by decide) rfl
 
 /-- A string of preverbs the template licenses has at most two. -/
 theorem length_le_two_of_licensed {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)}
