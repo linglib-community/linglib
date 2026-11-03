@@ -79,9 +79,8 @@ theorem linearWill_iff_linearWas_toDual :
   exact ⟨fun ⟨u, hu, h⟩ ↦ ⟨OrderDual.toDual u, hu, h⟩, fun ⟨u, hu, h⟩ ↦ ⟨u.ofDual, hu, h⟩⟩
 
 -- (1a)
-theorem linearWill_linearWill (h : linearWill (linearWill A) t) : linearWill A t := by
-  have := Tense.diamond_diamond_toSetRel h
-  rwa [Tense.comp_future_future] at this
+theorem linearWill_linearWill (h : linearWill (linearWill A) t) : linearWill A t :=
+  diamond_four h
 
 -- (1b)
 theorem not_forall_imp_linearWill : ¬ ∀ (A : ℤ → Prop) (t : ℤ), A t → linearWill A t :=
@@ -89,21 +88,15 @@ theorem not_forall_imp_linearWill : ¬ ∀ (A : ℤ → Prop) (t : ℤ), A t →
 
 /-- (1c) is valid on a time line exactly when it has no last moment (p. 9). -/
 theorem forall_imp_linearWill_linearWas_iff :
-    (∀ (A : T → Prop) (t : T), A t → linearWill (linearWas A) t) ↔ NoMaxOrder T := by
-  refine ⟨fun h ↦ ⟨fun t ↦ ?_⟩, fun _ A t hA ↦ ?_⟩
-  · obtain ⟨u, hu, -⟩ := linearWill_iff.1 (h (· = t) t rfl)
-    exact ⟨u, hu⟩
-  · obtain ⟨u, hu⟩ := exists_gt t
-    exact linearWill_iff.2 ⟨u, hu, linearWas_iff.2 ⟨t, hu, hA⟩⟩
+    (∀ (A : T → Prop) (t : T), A t → linearWill (linearWas A) t) ↔ NoMaxOrder T :=
+  (Tense.inv_toSetRel_future (T := T) ▸ le_diamond_diamond_inv_iff).trans
+    Tense.isSerial_toSetRel_future_iff
 
 -- (1d), p. 9
 theorem forall_imp_linearWas_linearWill_iff :
-    (∀ (A : T → Prop) (t : T), A t → linearWas (linearWill A) t) ↔ NoMinOrder T := by
-  refine ⟨fun h ↦ ⟨fun t ↦ ?_⟩, fun _ A t hA ↦ ?_⟩
-  · obtain ⟨u, hu, -⟩ := linearWas_iff.1 (h (· = t) t rfl)
-    exact ⟨u, hu⟩
-  · obtain ⟨u, hu⟩ := exists_lt t
-    exact linearWas_iff.2 ⟨u, hu, linearWill_iff.2 ⟨t, hu, hA⟩⟩
+    (∀ (A : T → Prop) (t : T), A t → linearWas (linearWill A) t) ↔ NoMinOrder T :=
+  (Tense.inv_toSetRel_past (T := T) ▸ le_diamond_diamond_inv_iff).trans
+    Tense.isSerial_toSetRel_past_iff
 
 -- (2a), p. 10
 theorem linearWill_linearWas (hA : A t) (h : linearWill (fun _ ↦ True) t) :

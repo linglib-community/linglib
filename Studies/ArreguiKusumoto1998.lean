@@ -280,14 +280,15 @@ theorem extension_after_past [DenselyOrdered T] :
       ∃ t', t'.Precedes t ∧ M.vp k t' := by
   simp [↓Allen.diamond_precedes_diamond_precedes]
 
-theorem not_extension_after_past_int :
-    ∃ (M : Model ℤ) (t : NonemptyInterval ℤ), (∃ t', t'.Precedes t ∧ M.vp 0 t') ∧
-      ¬ M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp 0)))) t := by
-  have key (t' : NonemptyInterval ℤ) (h : t'.snd < 1) : ¬ 0 < t'.fst := by
-    have := t'.fst_le_snd
-    omega
-  exact ⟨⟨fun _ t ↦ t = .pure 0, fun _ X ↦ X, .pure 0⟩, .pure 1, ⟨.pure 0, by decide, rfl⟩,
-    by simpa [Diamond, NonemptyInterval.Precedes] using key⟩
+/-- *After* absorbs the past operator of its clause in every model exactly when time is dense, so
+the root printed in (27), with a single existential over two past operators, assumes density. -/
+theorem forall_extension_after_past_iff :
+    (∀ (M : Model T) (k : ℕ) (t : NonemptyInterval T),
+      M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) t ↔
+        ∃ t', t'.Precedes t ∧ M.vp k t') ↔ DenselyOrdered T :=
+  ⟨fun h ↦ Allen.diamond_precedes_den_iff.1 fun Q t hQ ↦
+      (h ⟨fun _ ↦ Q, fun _ X ↦ X, t⟩ 0 t).2 (Allen.diamond_toSetRel_precedes.1 hQ),
+    fun _ _ _ _ ↦ extension_after_past⟩
 
 -- (30)
 theorem extension_before_present :

@@ -17,9 +17,9 @@ monotone in the predicate (`ModalLogic.diamond_mono`): the readings of *again* d
 constituent it modifies, repetitive on a change-of-state predicate and restitutive on the result
 state inside it, and a predicate that entails another gives the stronger presupposition, which
 is why the repetitive reading entails the restitutive one. It is monotone in the relation
-(`ModalLogic.diamond_restrict`), and where the eventualities are times and `R` relates a time to
-the earlier times it is the past of tense logic (`Tense.diamond_toSetRel_past`). The phasal verbs
-*stop*, *start* and *continue* presuppose the same possibility of a prior state
+(`ModalLogic.diamond_le_diamond_iff`), and where the eventualities are times and `R` relates a
+time to the earlier times it is the past of tense logic (`Tense.diamond_toSetRel_past`). The phasal
+verbs *stop*, *start* and *continue* presuppose the same possibility of a prior state
 (`Semantics/Aspect/Phasal.lean`).
 
 ## Main definitions

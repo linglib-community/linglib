@@ -118,7 +118,6 @@ import Linglib.Logic.Team.Atoms
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
-import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.Antichain
