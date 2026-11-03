@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Individual
 
 /-!

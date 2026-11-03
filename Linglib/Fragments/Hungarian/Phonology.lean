@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Hungarian
 public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.Sonority
 public import Linglib.Phonology.Harmony.System
 
 /-!
@@ -67,12 +68,13 @@ open Phonology Phonology.Harmony Data.PHOIBLE
 
 /-! ### The vowel inventory -/
 
-/-- The features the vowel system (7) uses, with [syllabic] marking the vowels. -/
-def contrastive : Finset Phonology.Feature := {.syllabic, .high, .low, .back, .round}
+/-- The features the vowel system (7) uses. -/
+def contrastive : Finset Phonology.Feature := {.high, .low, .back, .round}
 
-/-- A vowel is its chart entry's segment, with its departure, on the contrastive features. -/
+/-- A vowel is its chart entry's segment, with its departure, on the major class features, which
+mark it as a vowel, and the contrastive features. -/
 def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
-  .ofChart m departure contrastive
+  .ofChart m departure (Sonority.features ∪ contrastive)
 
 /-- The high front unrounded vowel /i/, orthographic ⟨i⟩. -/
 def i : Segment := vowel .«i»

@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Exhaustification.Trivalent
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.WangDavidson2026
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod
 
 /-!
@@ -81,21 +82,34 @@ theorem not_filters_xor : ¬ Filters fun a b ↦ -(a * b) := by
 /-- The valuations of two atoms. -/
 abbrev Val := Bool × Bool
 
-/-- The alternatives of `p ∨ q` are `p`, `q` and `p ∧ q` (3a). -/
-def orAlts : Finset (Finset Val) :=
-  altsFromPreds [fun v ↦ v.1 || v.2, Prod.fst, Prod.snd, fun v ↦ v.1 && v.2]
+/-- The alternatives of `p ∨ q` are `p ∨ q` itself, `p`, `q` and `p ∧ q` (3a). -/
+def orAlt : Fin 4 → Set Val
+  | 0 => {v | v.1 ∨ v.2}
+  | 1 => {v | v.1}
+  | 2 => {v | v.2}
+  | 3 => {v | v.1 ∧ v.2}
+
+instance : ∀ i, DecidablePred (· ∈ orAlt i)
+  | 0 => inferInstanceAs (DecidablePred fun v : Val ↦ v.1 ∨ v.2)
+  | 1 => inferInstanceAs (DecidablePred fun v : Val ↦ v.1)
+  | 2 => inferInstanceAs (DecidablePred fun v : Val ↦ v.2)
+  | 3 => inferInstanceAs (DecidablePred fun v : Val ↦ v.1 ∧ v.2)
 
 -- (3b)
 theorem excluded_or :
-    innocent.excluded orAlts (predToFinset fun v : Val ↦ v.1 || v.2)
-      = {predToFinset fun v : Val ↦ v.1 && v.2} := by
-  decide
+    {a | IsInnocentlyExcludable (Set.range orAlt) (orAlt 0) a} = {orAlt 3} := by
+  have h : ∀ i, IsInnocentlyExcludable (Set.range orAlt) (orAlt 0) (orAlt i) ↔ i = 3 := by
+    decide
+  ext a
+  refine ⟨fun ha ↦ ?_, ?_⟩
+  · obtain ⟨i, rfl⟩ := ha.1
+    exact congrArg orAlt ((h i).1 ha)
+  · rintro rfl
+    exact (h 3).2 rfl
 
 /-- Bivalent exhaustification of `p ∨ q` is `p xor q` (3c). -/
-theorem exh_or :
-    innocent.exh orAlts (predToFinset fun v : Val ↦ v.1 || v.2)
-      = predToFinset fun v : Val ↦ v.1 ^^ v.2 := by
-  decide
+theorem exh_or : exhIE (Set.range orAlt) (orAlt 0) = {v | Xor v.1 v.2} := by
+  ext v; revert v; decide
 
 /-! ### George's algorithm -/
 
@@ -211,8 +225,8 @@ def bathLeft : Val → SignType := fun v ↦ .ofProp v.1
 def bathRight : Val → SignType := fun v ↦ if v.1 then 0 else .ofProp v.2
 
 /-- The alternatives of the bathroom disjunction. -/
-def bathAlts : List (Val → SignType) :=
-  [bathLeft, bathRight, fun v ↦ bathLeft v ⊓ bathRight v]
+def bathAlts : Fin 3 → Val → SignType :=
+  ![bathLeft, bathRight, fun v ↦ bathLeft v ⊓ bathRight v]
 
 /-- The inclusive bathroom disjunction. -/
 def bathOr : Val → SignType := fun v ↦ bathLeft v ⊔ bathRight v

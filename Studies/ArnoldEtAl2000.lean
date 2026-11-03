@@ -1,67 +1,67 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Phonology.HarmonicGrammar.IntersectingFamilies
 public import Linglib.Discourse.Givenness
 public import Linglib.Data.Examples.ArnoldEtAl2000
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Ring
 public import Linglib.Data.Examples.Readers
+public import Studies.Hawkins1994
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid.Difference
 
 /-!
-# Arnold, Wasow, Losongco & Ginstrom 2000: heaviness vs. newness
+# Arnold, Losongco, Wasow and Ginstrom (2000): Heaviness vs. Newness
 
-Postverbal constituent order in English — heavy NP shift and the dative alternation — has
-been attributed to grammatical weight (Behaghel's law of growing constituents) and to
-discourse status (given before new), but the two are confounded: given referents get short
-expressions and new ones long. A corpus study of the Aligned-Hansard debates and an
-elicitation experiment in which directors instruct actors to give objects to toy animals
-measure heaviness as the difference in word count between the two constituents and newness
-by prior mention, and find that both factors independently shift the order, the newer and
-heavier constituent coming later, with neither reducible to the other. Their relative
-strength varies with the data: heaviness dominates where length differences are large,
-newness where the given referent has just been mentioned — a system of interacting
-constraints whose strength grows as the competing constraint weakens. Speakers' early
-disfluencies favour goal-first orders, so the postponement of new and heavy material serves
-planning as well as comprehension.
+This file models the order of two postverbal constituents in heavy NP shift and the English
+dative alternation as [the paper's logistic regression](##themeLastProb_eq): end weight and given
+before new read the constituents in the order spoken, a cost of the theme-last order is the
+intercept, and the theme comes last with probability $\sigma(w_H h + w_N n - w_B)$ for the
+differences $h$ in words and $n$ in newness. [Neither factor reduces to the
+other](##factorsThrough_heavyDiff_iff) and [they do not interact in the
+log-odds](##interaction_logit_eq_zero), yet [newness matters most where the rest predicts
+least](##themeLastProb_new_sub_given_lt_iff). [Hawkins's recognition domain grades the order as
+end weight does](##sum_crd_verbPhrase_sub), [as the paper counts](##crd_ex5_ex8).
 
-The two factors are read as weighted constraints over the two orders of a constituent pair:
-a graded penalty for putting the heavier constituent first, sized by the length difference the
-paper measures, and a penalty for putting a new constituent before a given one. The harmony
-difference between the orders is the weighted sum of the two signed preferences, which is
-the additive independence the paper reports; the paper's interaction is a matter of effect
-size in the data and is not represented.
+## Implementation notes
 
-## Main definitions
-
-* `Phrase`, `Pair`, `Order`: a constituent by word count and givenness, a postverbal pair,
-  and which constituent comes last.
-* `heavyFirst`, `newFirst`: the two constraints; `con` their weighted family.
-* `heavyDiff`, `newDiff`: each constraint's signed preference for the theme-last order.
+* Newness is the paper's coding after Prince: given if the referent was mentioned before in the
+  agenda item or the exchange, inferables counted as given. `BinaryGivenness` is read here as
+  that coding, discourse-old against discourse-new, not as identifiability.
+* Heaviness enters as the difference in words, the measure the paper takes; its regressions bin
+  the difference into three categories for the dative alternation and five for heavy NP shift.
+  For heavy NP shift the theme is the direct object and the goal the prepositional phrase, and
+  the paper codes the newness of the direct object only.
+* The construction's baseline is the regressions' intercept; the verb factor of the
+  heavy-NP-shift corpus, selected without interactions, would be one baseline per verb.
+* The experiment's newness × heaviness interaction lies outside a grammar of these constraints;
+  its production-difficulty and participant factors and the fitted coefficients are not
+  represented.
 
 ## References
 
 * [arnold-losongco-wasow-ginstrom-2000]
-* [behaghel-1909] — the law of growing constituents
-* [prince-1992] — discourse-given, inferable, and new
+* [behaghel-1909]
+* [prince-1992]
+* [hawkins-1994]
 -/
 
 @[expose] public section
 
 namespace ArnoldEtAl2000
 
-open OptimalityTheory HarmonicGrammar Discourse
+open OptimalityTheory HarmonicGrammar Discourse Real
 
-/-! ### Phrases, orderings, and candidates -/
+/-! ### The grammar -/
 
-/-- A constituent by the two measures the paper codes: word count and discourse status. -/
+/-- A constituent by the two measures the paper codes. -/
 structure Phrase where
+  /-- Its length in words. -/
   words : ℕ
+  /-- Its discourse status. -/
   discourse : BinaryGivenness
   deriving DecidableEq
 
-/-- A postverbal pair: theme and goal for the dative alternation, direct object and PP for
-heavy NP shift. -/
+/-- A postverbal pair: theme and goal for the dative alternation, direct object and
+prepositional phrase for heavy NP shift. -/
 abbrev Pair := Phrase × Phrase
 
 /-- Which constituent comes last: `themeLast` is the double object or the shifted order,
@@ -69,114 +69,225 @@ abbrev Pair := Phrase × Phrase
 inductive Order
   | themeLast
   | goalLast
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
+instance : MeasurableSpace Order := ⊤
+instance : MeasurableSingletonClass Order := ⟨fun _ ↦ trivial⟩
+
+/-- A candidate is a pair in one of its two orders. -/
 abbrev Candidate := Pair × Order
 
-/-! ### The two constraints -/
+/-- A candidate's two constituents in the order spoken. -/
+def linearize : Candidate → Phrase × Phrase
+  | ((th, gl), .themeLast) => (gl, th)
+  | (p, .goalLast) => p
 
-/-- The weight penalty: the number of words by which the first constituent exceeds the
-second — the relative length the paper measures. -/
-def heavyFirst : Constraint Candidate
-  | ((th, gl), .themeLast) => gl.words - th.words
-  | ((th, gl), .goalLast) => th.words - gl.words
+/-- End weight, Behaghel's law ([behaghel-1909]), on the lengths of two constituents in the order
+spoken: the words by which the first exceeds the second. -/
+def heavyFirst : Constraint (ℕ × ℕ) := fun c ↦ c.1 - c.2
 
-/-- The newness penalty: a new constituent before a given one. -/
-def newFirst : Constraint Candidate
-  | ((th, gl), .themeLast) => if gl.discourse = .new ∧ th.discourse = .given then 1 else 0
-  | ((th, gl), .goalLast) => if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
+/-- Given before new, on the statuses of two constituents in the order spoken: a new constituent
+before a given one. -/
+def newFirst : Constraint (BinaryGivenness × BinaryGivenness) :=
+  Constraint.binary (· = (.new, .given))
 
-/-- The two constraints. -/
-def con : ConstraintSet Candidate (Fin 2) := ![heavyFirst, newFirst]
+/-- The construction's own cost: a violation for the theme-last order whatever the
+constituents, the intercept of the paper's regressions. -/
+def starThemeLast : Constraint Candidate := Constraint.binary (·.2 = .themeLast)
 
-/-- The weights: `wH` for heaviness, `wN` for newness. -/
-def weights (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]
+/-- End weight and given before new read the constituents in the order spoken, the
+construction's cost the order itself. -/
+def con : ConstraintSet Candidate (Fin 3) :=
+  ![heavyFirst ∘ Prod.map Phrase.words Phrase.words ∘ linearize,
+    newFirst ∘ Prod.map Phrase.discourse Phrase.discourse ∘ linearize, starThemeLast]
 
-/-! ### Signed preferences -/
+/-- The weights: `wH` for heaviness, `wN` for newness, `wB` for the construction's baseline. -/
+def weights (wH wN wB : ℝ) : Fin 3 → ℝ := ![wH, wN, wB]
 
-/-- Heaviness's preference for `themeLast`: the theme's length minus the goal's. -/
+/-- The probability of the theme-last order of a pair. -/
+noncomputable def themeLastProb (wH wN wB : ℝ) (p : Pair) : ℝ :=
+  (maxEnt (con.comap (p, ·)).violations (weights wH wN wB)).real {.themeLast}
+
+/-- The heaviness predictor: the theme's length minus the goal's. -/
 def heavyDiff (p : Pair) : ℝ := (p.1.words : ℝ) - p.2.words
 
-/-- Newness's preference for `themeLast`: `1` when the theme is new and the goal given, `-1`
-in the mirror case, `0` otherwise. -/
+/-- The newness predictor: the violations of given before new with the theme first less those
+with the goal first, `1` when the theme is new and the goal given, `-1` in the mirror case, `0`
+otherwise. -/
 def newDiff (p : Pair) : ℝ :=
-  (if p.1.discourse = .new ∧ p.2.discourse = .given then (1 : ℝ) else 0) -
-    (if p.2.discourse = .new ∧ p.1.discourse = .given then (1 : ℝ) else 0)
+  (newFirst (p.1.discourse, p.2.discourse) : ℝ) - newFirst (p.2.discourse, p.1.discourse)
 
-theorem cast_sub_sub_cast_sub (a b : ℕ) : ((a - b : ℕ) : ℝ) - ((b - a : ℕ) : ℝ) = a - b := by
-  rcases le_total a b with h | h
-  · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
-  · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
+variable {wH wN wB : ℝ}
 
-theorem score_diff_eq_components (wH wN : ℝ) (p : Pair) :
-    harmonyScore con (weights wH wN) (p, .themeLast) -
-      harmonyScore con (weights wH wN) (p, .goalLast) = wH * heavyDiff p + wN * newDiff p := by
+theorem harmonyScore_themeLast_sub (p : Pair) :
+    harmonyScore con (weights wH wN wB) (p, .themeLast) -
+      harmonyScore con (weights wH wN wB) (p, .goalLast) =
+        wH * heavyDiff p + wN * newDiff p - wB := by
   obtain ⟨th, gl⟩ := p
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  simp only [con, weights, heavyFirst, newFirst, Fin.sum_univ_two, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  have h := cast_sub_sub_cast_sub th.words gl.words
-  unfold heavyDiff newDiff
+  have h : ((th.words - gl.words : ℕ) : ℝ) - ((gl.words - th.words : ℕ) : ℝ) =
+      th.words - gl.words := by
+    exact_mod_cast (by omega : ((th.words - gl.words : ℕ) : ℤ) - (gl.words - th.words : ℕ) =
+      th.words - gl.words)
+  simp only [con, weights, harmonyScore_cons, harmonyScore_nil, Function.comp_apply, linearize,
+    Prod.map, heavyFirst, starThemeLast, Constraint.binary_apply, heavyDiff, newDiff,
+    reduceCtorEq, ite_true, ite_false]
   push_cast
   linear_combination wH * h
 
-theorem themeLast_iff (wH wN : ℝ) (p : Pair) :
-    harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
-      0 < wH * heavyDiff p + wN * newDiff p := by
-  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
+-- the paper's logistic regression on the heaviness and newness predictors, with an intercept
+theorem themeLastProb_eq (p : Pair) :
+    themeLastProb wH wN wB p = sigmoid (wH * heavyDiff p + wN * newDiff p - wB) := by
+  rw [themeLastProb, maxEnt_real_singleton_of_pair _ _ (a := Order.themeLast) (b := .goalLast)
+    (by decide) (by decide), harmony_violations, harmonyScore_comap, harmonyScore_comap,
+    harmonyScore_themeLast_sub]
 
-/-! ### Independence -/
+theorem logit_themeLastProb (p : Pair) :
+    logit (themeLastProb wH wN wB p) =
+      harmonyScore con (weights wH wN wB) (p, .themeLast) -
+        harmonyScore con (weights wH wN wB) (p, .goalLast) := by
+  rw [themeLastProb_eq, logit_sigmoid, harmonyScore_themeLast_sub]
 
-theorem heaviness_alone {wH : ℝ} (hH : 0 < wH) (p : Pair) :
-    harmonyDominates con (weights wH 0) (p, .themeLast) (p, .goalLast) ↔
-      p.2.words < p.1.words := by
-  rw [themeLast_iff, zero_mul, add_zero, mul_pos_iff_of_pos_left hH, heavyDiff, sub_pos,
-    Nat.cast_lt]
+-- the newer and heavier the theme, the likelier it comes last
+theorem themeLastProb_le_themeLastProb (hH : 0 ≤ wH) (hN : 0 ≤ wN) {p q : Pair}
+    (hh : heavyDiff p ≤ heavyDiff q) (hn : newDiff p ≤ newDiff q) :
+    themeLastProb wH wN wB p ≤ themeLastProb wH wN wB q := by
+  rw [themeLastProb_eq, themeLastProb_eq]
+  gcongr
 
-theorem newness_alone {wN : ℝ} (hN : 0 < wN) (p : Pair) :
-    harmonyDominates con (weights 0 wN) (p, .themeLast) (p, .goalLast) ↔
-      p.1.discourse = .new ∧ p.2.discourse = .given := by
-  rw [themeLast_iff, zero_mul, zero_add, mul_pos_iff_of_pos_left hN, newDiff]
-  split_ifs <;> simp_all
+/-! ### Neither factor reduces to the other -/
 
-theorem score_diff_add_word (wH wN : ℝ) (th gl : Phrase) :
-    harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .themeLast) -
-        harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .goalLast) =
-      harmonyScore con (weights wH wN) ((th, gl), .themeLast) -
-        harmonyScore con (weights wH wN) ((th, gl), .goalLast) + wH := by
-  rw [score_diff_eq_components, score_diff_eq_components]
-  simp only [heavyDiff, newDiff]
+/-- The order's probability is a function of the heaviness difference alone exactly when newness
+has no weight. -/
+theorem factorsThrough_heavyDiff_iff :
+    (themeLastProb wH wN wB).FactorsThrough heavyDiff ↔ wN = 0 := by
+  refine ⟨fun h ↦ ?_, fun h p q hpq ↦ by simp only [themeLastProb_eq, h, zero_mul, hpq]⟩
+  simpa [themeLastProb_eq, heavyDiff, newDiff, newFirst] using
+    @h (⟨0, .new⟩, ⟨0, .given⟩) (⟨0, .given⟩, ⟨0, .given⟩) (by simp [heavyDiff])
+
+-- and a function of the newness difference alone exactly when heaviness has no weight
+theorem factorsThrough_newDiff_iff :
+    (themeLastProb wH wN wB).FactorsThrough newDiff ↔ wH = 0 := by
+  refine ⟨fun h ↦ ?_, fun h p q hpq ↦ by simp only [themeLastProb_eq, h, zero_mul, hpq]⟩
+  simpa [themeLastProb_eq, heavyDiff, newDiff] using
+    @h (⟨1, .given⟩, ⟨0, .given⟩) (⟨0, .given⟩, ⟨0, .given⟩) (by simp [newDiff])
+
+/-! ### Interaction -/
+
+/-- The pair of a length and a givenness profile. -/
+def pair (l : ℕ × ℕ) (s : BinaryGivenness × BinaryGivenness) : Pair :=
+  (⟨l.1, s.1⟩, ⟨l.2, s.2⟩)
+
+/-- The four pairs crossing two givenness profiles, the rows, with two length profiles, the
+columns. -/
+def cross (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) : Square Pair :=
+  ⟨pair l s, pair l' s, pair l s', pair l' s'⟩
+
+theorem independent_cross (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) :
+    (cross l l' s s').Independent con .themeLast .goalLast := by
+  intro k
+  fin_cases k
+  exacts [.inl ⟨rfl, rfl⟩, .inr ⟨rfl, rfl⟩, .inl ⟨rfl, rfl⟩]
+
+/-- Newness and heaviness do not interact in the log-odds of the theme-last order, as in the
+corpus regressions; the experiment's interaction lies outside the grammar. -/
+theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) :
+    (cross l l' s s').interaction (fun p ↦ logit (themeLastProb wH wN wB p)) = 0 := by
+  simpa only [logit_themeLastProb] using
+    (independent_cross l l' s s').interaction_harmonyScore_sub (weights wH wN wB)
+
+/-- Newness raises the probability of the theme-last order the more, the weaker the prediction
+that heaviness and the construction's baseline make without it: the pattern of the corpus
+figures, which the paper reads as interacting constraints. -/
+theorem themeLastProb_new_sub_given_lt_iff (hN : 0 < wN) (m n m' n' : ℕ) :
+    themeLastProb wH wN wB (⟨m', .new⟩, ⟨n', .given⟩) -
+        themeLastProb wH wN wB (⟨m', .given⟩, ⟨n', .new⟩) <
+      themeLastProb wH wN wB (⟨m, .new⟩, ⟨n, .given⟩) -
+        themeLastProb wH wN wB (⟨m, .given⟩, ⟨n, .new⟩) ↔
+      |wH * ((m : ℝ) - n) - wB| < |wH * ((m' : ℝ) - n') - wB| := by
+  have hnew (k l : ℕ) : themeLastProb wH wN wB (⟨k, .new⟩, ⟨l, .given⟩) =
+      sigmoid (wH * ((k : ℝ) - l) - wB + wN) := by
+    rw [themeLastProb_eq]
+    congr 1
+    simp [heavyDiff, newDiff, newFirst]
+    ring
+  have hgiven (k l : ℕ) : themeLastProb wH wN wB (⟨k, .given⟩, ⟨l, .new⟩) =
+      sigmoid (wH * ((k : ℝ) - l) - wB - wN) := by
+    rw [themeLastProb_eq]
+    congr 1
+    simp [heavyDiff, newDiff, newFirst]
+    ring
+  have h2 (c : ℝ) : c + wN + (c - wN) = 2 * c := by ring
+  rw [hnew, hgiven, hnew, hgiven, sigmoid_sub_sigmoid_lt_sigmoid_sub_sigmoid_iff (by ring)
+    (by linarith), h2, h2, abs_mul, abs_mul, abs_two, mul_lt_mul_iff_right₀ two_pos]
+
+-- (17): with a longer, newer constituent before a shorter, given one, both factors weigh
+-- against the attested order, which is less probable than with constituents alike
+theorem themeLastProb_lt_themeLastProb_of_lt_of_new_of_given {p : Pair} (q : Phrase)
+    (hH : 0 ≤ wH) (hw : 0 < wH + wN) (hl : p.2.words < p.1.words)
+    (hth : p.1.discourse = .new) (hgl : p.2.discourse = .given) :
+    themeLastProb wH wN wB (q, q) < themeLastProb wH wN wB p := by
+  have hd : (1 : ℝ) ≤ p.1.words - p.2.words := by
+    rw [le_sub_iff_add_le']
+    exact_mod_cast hl
+  rw [themeLastProb_eq, themeLastProb_eq, sigmoid_lt_iff]
+  simp only [newDiff, heavyDiff, newFirst, Constraint.binary_apply, hth, hgl, sub_self,
+    Prod.mk.injEq, reduceCtorEq, and_self, ite_true, ite_false]
   push_cast
-  ring
+  linarith [mul_le_mul_of_nonneg_left hd hH]
 
-theorem one_factor_decides (wH wN : ℝ) (p : Pair) :
-    (newDiff p = 0 → (harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
-      0 < wH * heavyDiff p)) ∧
-    (heavyDiff p = 0 → (harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
-      0 < wN * newDiff p)) :=
-  ⟨fun h => by rw [themeLast_iff, h, mul_zero, add_zero],
-    fun h => by rw [themeLast_iff, h, mul_zero, zero_add]⟩
-
-/-! ### The paper's examples -/
+/-! ### Hawkins's recognition domain -/
 
 /-- The number of words in a constituent as printed. -/
-def words (s : String) : ℕ := (s.toList.filter (· = ' ')).length + 1
+def wordCount (s : String) : ℕ := (s.toList.filter (· = ' ')).length + 1
 
-/-- The word counts of a row's two constituents in surface order. -/
+/-- The lengths of a row's two constituents in the order printed. -/
 def constituents (r : Datum) : Option (ℕ × ℕ) := do
   let a ← r.feature? "first"
   let b ← r.feature? "second"
-  pure (words a, words b)
+  pure (wordCount a, wordCount b)
 
-theorem rows_heavier_last :
-    ∀ r ∈ Examples.all, r.feature? "exception" = none →
-      ∀ c ∈ (constituents r).toList, c.1 ≤ c.2 := by
+/-- A verb and the two constituents after it, of `c.1` and `c.2` words, as Hawkins's recognition
+domain reads them, each constituent constructed by its first word: a preposition, a determiner
+or a name. -/
+def verbPhrase (c : ℕ × ℕ) : List Hawkins1994.IC := [⟨0, 0⟩, ⟨0, c.1 - 1⟩, ⟨0, c.2 - 1⟩]
+
+-- the domain runs through the first constituent to the word constructing the second
+theorem sum_crd_verbPhrase {c : ℕ × ℕ} (h : 1 ≤ c.1) :
+    (Hawkins1994.crd (verbPhrase c)).sum = c.1 + 2 := by
+  simp [verbPhrase, Hawkins1994.crd, Hawkins1994.crdTail, Hawkins1994.IC.words]
+  omega
+
+/-- Hawkins's recognition domain of an order exceeds that of the reverse order by the end weight
+it violates beyond the reverse: early immediate constituents grades the order as end weight
+does. -/
+theorem sum_crd_verbPhrase_sub {c : ℕ × ℕ} (h₁ : 1 ≤ c.1) (h₂ : 1 ≤ c.2) :
+    ((Hawkins1994.crd (verbPhrase c)).sum : ℤ) - (Hawkins1994.crd (verbPhrase c.swap)).sum =
+      heavyFirst c - heavyFirst c.swap := by
+  rw [sum_crd_verbPhrase h₁, sum_crd_verbPhrase (c := c.swap) h₂]
+  simp only [heavyFirst, Prod.fst_swap, Prod.snd_swap]
+  omega
+
+/-- Hawkins's recognition domain covers four words in (5) and eleven in its unshifted order (4),
+and five in (8) against four in the unshifted *That brings Barry Bonds to the plate*. -/
+theorem crd_ex5_ex8 :
+    (constituents Examples.ex_5).map (fun c ↦ ((Hawkins1994.crd (verbPhrase c)).sum,
+      (Hawkins1994.crd (verbPhrase c.swap)).sum)) = some (4, 11) ∧
+    (constituents Examples.ex_8).map (fun c ↦ ((Hawkins1994.crd (verbPhrase c)).sum,
+      (Hawkins1994.crd (verbPhrase c.swap)).sum)) = some (5, 4) := by
   decide +kernel
 
--- (17)
-theorem rows_exceptions_lighter_last :
+/-! ### The paper's examples -/
+
+-- the printed orders satisfy end weight
+theorem rows_heavyFirst_eq_zero :
+    ∀ r ∈ Examples.all, r.feature? "exception" = none →
+      ∀ c ∈ (constituents r).toList, heavyFirst c = 0 := by
+  decide +kernel
+
+-- but for (8) and (17)
+theorem rows_heavyFirst_pos :
     ∀ r ∈ Examples.all, (r.feature? "exception").isSome →
-      ∀ c ∈ (constituents r).toList, c.2 < c.1 := by
+      ∀ c ∈ (constituents r).toList, 0 < heavyFirst c := by
   decide +kernel
 
 end ArnoldEtAl2000

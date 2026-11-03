@@ -157,9 +157,9 @@ theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d
   simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁', hw₂']
   tauto
 
-theorem II_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
-    (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
-    II {φ, d₁, d₂, c} φ = {φ, d₁, d₂} := by
+theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+    (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) {r : Set World} :
+    IsInnocentlyIncludable {φ, d₁, d₂, c} φ r ↔ r = φ ∨ r = d₁ ∨ r = d₂ := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   obtain ⟨w₀, ⟨⟨hw₀, hw₀₁⟩, hw₀₂⟩, hw₀c⟩ := h
@@ -167,11 +167,9 @@ theorem II_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w �
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := hw₁
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
-  rw [hM.II_eq ⟨w₀, hw₀, by
+  rw [hM.isInnocentlyIncludable_iff ⟨w₀, hw₀, by
     simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2, hw₀, hw₀₁, hw₀₂, hw₀c]⟩]
-  ext r
-  simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left]
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
   constructor
   · rintro ⟨rfl | rfl | rfl | rfl, h⟩
     · exact Or.inl rfl
@@ -361,9 +359,11 @@ theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
-theorem II_fcAlts :
-    II (fcAlts R a b) (R.preimage (a ∪ b)) = {R.preimage (a ∪ b), R.preimage a, R.preimage b} :=
-  II_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both
+theorem isInnocentlyIncludable_fcAlts_iff {q : Set W} :
+    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔
+      q = R.preimage (a ∪ b) ∨ q = R.preimage a ∨ q = R.preimage b :=
+  isInnocentlyIncludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+    hF.exists_both
 
 /-- The only excludable alternative of `◇(a ∨ b)` is the conjunctive one. -/
 theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
@@ -396,7 +396,7 @@ open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
 noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → SignType :=
-  {w | ∀ r ∈ II ALT φ, w ∈ r}.indicator
+  {w | ∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r}.indicator
     fun w ↦ SignType.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
@@ -405,20 +405,21 @@ theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitne
       R.preimage a ∩ R.preimage b := by
   ext w
   simp only [Function.mem_support, ne_eq, only, Set.indicator_apply_eq_zero,
-    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq, II_fcAlts hF,
-    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
+    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
+    isInnocentlyIncludable_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
 theorem posSupport_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
-    (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
+    (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
+    (hII : ∀ r, IsInnocentlyIncludable ALT φ r ↔ r = φ) :
     posSupport (only ALT φ) =
       posSupport (Focus.only (· ⊆ ·) ALT id φ) := by
   rw [Focus.posSupport_only_subset hφ]
   ext w
   simp only [mem_posSupport, only, Trivalent.indicator_apply_eq_one_iff,
-    SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, Set.mem_singleton_iff, forall_eq, hIE,
+    SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, forall_eq, hIE,
     and_imp, mem_exh]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,
     fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hne hwq ↦ hne (h q hq hwq)⟩⟩

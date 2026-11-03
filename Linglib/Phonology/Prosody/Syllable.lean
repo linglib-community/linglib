@@ -22,7 +22,7 @@ below.
   from morae.
 * `Syllable.yield`, `Syllable.toOnsetRime`: the segment string of a syllable, and its
   onset-rime structure.
-* `nucleusSplit`: a string split at its first run of vowels.
+* `nucleusSplit`: a string split at its first run of syllabic segments.
 * `Syllable.Weight`, `Yield`: a mora count, and the weight profile of a string of syllables.
 * `Level`, `Constituent`, `Tree`: the levels σ < f < ω < φ < ι, the prosodic constituents, and
   the prosodic tree over them.
@@ -189,12 +189,12 @@ theorem Syllable.toOnsetRime_weight (σ : Syllable) :
 
 /-! ### The nucleus of a string -/
 
-/-- A string split at its first maximal run of vowels: what precedes the run, the run, and what
-    follows it. In a monosyllable the run is the nucleus, a diphthong included, and the rest is
-    the material before and after it. -/
+/-- A string split at its first maximal run of syllabic segments: what precedes the run, the run,
+    and what follows it. In a monosyllable the run is the nucleus, a diphthong included, and the
+    rest is the material before and after it. -/
 def nucleusSplit (w : List Segment) : List Segment × List Segment × List Segment :=
-  let (pre, rest) := w.span fun x ↦ !decide x.IsVowel
-  let (nuc, post) := rest.span fun x ↦ decide x.IsVowel
+  let (pre, rest) := w.span fun x ↦ !decide x.IsSyllabic
+  let (nuc, post) := rest.span fun x ↦ decide x.IsSyllabic
   (pre, nuc, post)
 
 /-- The three parts of `nucleusSplit` spell out the string. -/

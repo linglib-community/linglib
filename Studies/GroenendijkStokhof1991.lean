@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Assignment
 public import Linglib.Logic.CylindricAlgebra
 public import Linglib.Semantics.Dynamic.DPL.Context
-public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Semantics.Dynamic.DRT.Relational
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic

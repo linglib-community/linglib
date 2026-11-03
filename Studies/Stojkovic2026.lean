@@ -181,11 +181,11 @@ def system : ConstraintSystem Context Candidate Con where
   gen := candidates
   con
     | .noHiatus => fun (c, k) ↦ Hiatus.count (output c k)
-    | .noCluster => fun (c, k) ↦ ((output c k).zip (output c k).tail).countP fun p ↦
-        decide (p.1.HasValue .syllabic false ∧ p.2.HasValue .syllabic false)
+    | .noCluster => fun (c, k) ↦ Constraint.forbidPairs
+        (fun a b ↦ a.HasValue .syllabic false ∧ b.HasValue .syllabic false) (output c k)
     | .specify => fun (c, k) ↦ (output c k).count node₀
-    | .noShare => fun (c, k) ↦ ((output c k).zip (output c k).tail).countP fun p ↦
-        decide (p.1.HasValue .back false ∧ p.2.HasValue .back false ∧ p.1 ∈ input c)
+    | .noShare => fun (c, k) ↦ Constraint.forbidPairs
+        (fun a b ↦ a.HasValue .back false ∧ b.HasValue .back false ∧ a ∈ input c) (output c k)
     | .depBack => fun (c, k) ↦ dep c .back true k
     | .depNonhigh => fun (c, k) ↦ dep c .high false k
     | .depHigh => fun (c, k) ↦ dep c .high true k

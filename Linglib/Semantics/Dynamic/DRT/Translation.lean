@@ -1,19 +1,17 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Verification
+public import Linglib.Semantics.Dynamic.DRT.Verification.Partial
 public import Mathlib.ModelTheory.Semantics
 
 /-!
 # From DRT to predicate logic
 
 This file translates each DRS into a `FirstOrder.Language.Formula` and proves that the
-translation is realized exactly when the DRS is verified, Kamp and Reyle's reduction of the DRS
-language to first-order logic in §1.5, also given by Muskens. The universe of a sub-DRS is
+translation is realized exactly when the DRS is verified. The universe of a sub-DRS is
 existentially closed (`closeExists`, via `Formula.iExs`), and the antecedent of a `⇒` universally
-(`closeForall`, via `Formula.iAlls`). The translation of a proper DRS realizes the same way under
-every assignment, as truth in the model (p. 138). The translation is correct for the total
-semantics, and so for Kamp and Reyle's own on DRSs that declare no referent twice
-(`DRS.isTrue_iff_realize_toFormula` in `DRS/Dynamics.lean`).
+(`closeForall`, via `Formula.iAlls`). The translation is correct for verification by total
+assignments, and so for [truth in Kamp and Reyle's sense](##DRT.DRS.isTrue_iff_realize_toFormula)
+on proper DRSs that declare no referent twice.
 
 ## Main declarations
 
@@ -109,63 +107,25 @@ end Translation
 
 variable {M : Type x} [L.Structure M]
 
-/-! ### Agreement of the translation with the bespoke semantics -/
-
-/-- The assignment that agrees with `v` off `U` and is given by `i` on `U`. -/
-private def extendOn [DecidableEq V] (U : Finset V) (v : V → M) (i : {x // x ∈ U} → M) : V → M :=
-  fun x => if h : x ∈ U then i ⟨x, h⟩ else v x
+/-! ### Correctness of the translation -/
 
 private theorem elim_comp_splitOn [DecidableEq V] (U : Finset V) (v : V → M)
-    (i : {x // x ∈ U} → M) : (Sum.elim v i) ∘ (splitOn U) = extendOn U v i := by
+    (i : {x // x ∈ U} → M) : (Sum.elim v i) ∘ (splitOn U) = Function.updateFinset v U i := by
   funext x
-  simp only [splitOn, extendOn, Function.comp_apply]
+  simp only [splitOn, Function.updateFinset, Function.comp_apply]
   by_cases h : x ∈ U <;> simp [h]
-
-private theorem extendOn_agrees [DecidableEq V] (U : Finset V) (v : V → M)
-    (i : {x // x ∈ U} → M) : ∀ x ∉ U, extendOn U v i x = v x := by
-  intro x hx; simp only [extendOn, dite_eq_right hx]
-
-private theorem extendOn_restrict [DecidableEq V] (U : Finset V) (v v' : V → M)
-    (h : ∀ x ∉ U, v' x = v x) : extendOn U v (fun s => v' s.val) = v' := by
-  funext x
-  simp only [extendOn]
-  by_cases hx : x ∈ U
-  · simp [hx]
-  · simp [hx, h x hx]
-
-private theorem exists_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
-    (P : (V → M) → Prop) :
-    (∃ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
-      ∃ v', (∀ x ∉ U, v' x = v x) ∧ P v' := by
-  constructor
-  · rintro ⟨i, hi⟩
-    exact ⟨extendOn U v i, extendOn_agrees U v i, hi⟩
-  · rintro ⟨v', hagree, hv'⟩
-    refine ⟨fun s => v' s.val, ?_⟩
-    rw [extendOn_restrict U v v' hagree]; exact hv'
-
-private theorem forall_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
-    (P : (V → M) → Prop) :
-    (∀ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
-      ∀ v', (∀ x ∉ U, v' x = v x) → P v' := by
-  constructor
-  · intro hi v' hagree
-    have := hi (fun s => v' s.val)
-    rwa [extendOn_restrict U v v' hagree] at this
-  · intro hv' i
-    exact hv' (extendOn U v i) (extendOn_agrees U v i)
 
 theorem realize_closeExists [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
     (closeExists U φ).Realize v ↔ ∃ v', (∀ x ∉ U, v' x = v x) ∧ φ.Realize v' := by
   rw [closeExists, Formula.realize_iExs]
   simp only [Formula.realize_relabel, elim_comp_splitOn]
-  exact exists_extend_iff U v (Formula.Realize φ)
+  simp only [← Function.mem_range_updateFinset_iff, Set.exists_range_iff]
 
 theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
     (closeForall U φ).Realize v ↔ ∀ v', (∀ x ∉ U, v' x = v x) → φ.Realize v' := by
   rw [closeForall, Formula.realize_iAlls]
   simp only [Formula.realize_relabel, elim_comp_splitOn]
-  exact forall_extend_iff U v (Formula.Realize φ)
+  simp only [← Function.mem_range_updateFinset_iff, Set.forall_mem_range]
 
 private theorem Condition.realize_toFormulaAll_of_forall [DecidableEq V]
     {cs : List (Condition L V)} {v : V → M}
@@ -182,7 +142,7 @@ private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
     (ih : ∀ c ∈ K.conditions, ∀ w : V → M,
       (Condition.toFormula c).Realize w ↔ VerifiesConditionTotal w c) :
     (DRS.toFormula K).Realize v ↔ ∃ v', K.Extends v v' ∧ VerifiesTotal v' K := by
-  simp only [DRS.toFormula_eq, realize_closeExists, Box.Extends, verifiesTotal_iff]
+  simp only [DRS.toFormula_eq, realize_closeExists, DRS.Extends, verifiesTotal_iff]
   exact exists_congr fun v' => and_congr_right fun _ =>
     Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v'
 
@@ -224,5 +184,12 @@ a new value here and is inert there. -/
 theorem DRS.realize_toFormula_of_isProper [DecidableEq V] {K : DRS L V} (hK : K.IsProper)
     (v : V → M) : K.toFormula.Realize v ↔ ∃ f : V → M, VerifiesTotal f K := by
   rw [DRS.realize_toFormula, exists_extends_verifiesTotal_iff_of_isProper hK]
+
+/-- The truth of a proper, reuse-free DRS is the truth of its first-order translation (§1.5). -/
+theorem DRS.isTrue_iff_realize_toFormula [DecidableEq V] {K : DRS L V} (hrf : K.ReuseFreeAt ∅)
+    (hK : K.IsProper) (f' : V → M) : K.IsTrue M ↔ (K.toFormula).Realize f' :=
+  (DRS.exists_extends_verifiesTotal_iff_exists_verifies hrf (hK ▸ Finset.Subset.refl _) (f := ⊥)
+    (by simp) fun x hx ↦ absurd hx (Finset.notMem_empty x)).symm.trans
+    (DRS.realize_toFormula K f').symm
 
 end DRT

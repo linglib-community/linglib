@@ -24,10 +24,17 @@ The file also names some natural classes by their features. The sonority hierarc
 `Phonology/Segmental/Sonority.lean`, and the theorems about segments in
 `Phonology/Segmental/Basic.lean`.
 
+## Implementation notes
+
+[syllabic] is a feature of segments here, as in Hayes, for whom a segment is [+syllabic] when it
+is the nucleus of its syllable. Elsewhere syllabicity is structure and no segment is specified for
+it, so what is a change of position there is a change of feature here, as in glide formation.
+
 ## References
 
 * [hayes-2009]: the features of ch. 4 and Table 4.7, the tongue-root feature (p. 83), and the
   manner classes (p. 77)
+* [kaisse-2011]: [syllabic] as the head or nucleus of the syllable
 * [halle-vaux-wolfe-2000]: [ATR] and [RTR]
 -/
 
@@ -149,9 +156,15 @@ def ofSpecs (specs : List (Feature × Bool)) : Segment := fun f ↦ specs.lookup
 
 /-! ### Natural classes -/
 
-/-- A vowel is a [+syllabic] segment. -/
-def IsVowel : Prop := s.HasValue .syllabic true
-instance : Decidable s.IsVowel := inferInstanceAs (Decidable (s.HasValue _ _))
+/-- A segment is syllabic when it is [+syllabic], the nucleus of its syllable, as a vowel, a
+syllabic liquid or a syllabic nasal is. -/
+def IsSyllabic : Prop := s.HasValue .syllabic true
+instance : Decidable s.IsSyllabic := inferInstanceAs (Decidable (s.HasValue _ _))
+
+/-- A vowel is a [+syllabic, −consonantal] segment, which the syllabic liquids and nasals are not
+([hayes-2009], Table 4.1 and §4.4.3). -/
+def IsVowel : Prop := s.IsSyllabic ∧ s.HasValue .consonantal false
+instance : Decidable s.IsVowel := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A consonant is a [+consonantal] segment. -/
 def IsConsonant : Prop := s.HasValue .consonantal true
@@ -186,9 +199,5 @@ inductive Segment.Class where
   /-- A vowel. -/
   | vowel
   deriving DecidableEq, Repr, Fintype
-
-/-- A segment is a vowel when [+syllabic] and a consonant otherwise. -/
-def Segment.toClass (s : Segment) : Segment.Class :=
-  if s.IsVowel then .vowel else .consonant
 
 end Phonology

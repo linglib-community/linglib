@@ -4,6 +4,7 @@ public import Linglib.Data.PHOIBLE.Inventories.Turkish
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.Sonority
 public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -93,10 +94,10 @@ namespace Turkish.Phonology
 
 /-! ### Segments -/
 
-/-- A vowel is its chart entry's segment, with its departure, on the features that distinguish
-the eight vowels and [voice]. -/
+/-- A vowel is its chart entry's segment, with its departure, on the major class features, which
+mark it as a vowel, the features that distinguish the eight vowels, and [voice]. -/
 def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
-  .ofChart m departure {.syllabic, .voice, .high, .back, .round}
+  .ofChart m departure (Sonority.features ∪ {.voice, .high, .back, .round})
 
 /-- A consonant is its chart entry's segment on every feature but [back], which is contrastive
 among consonants on the palatal lateral alone. -/

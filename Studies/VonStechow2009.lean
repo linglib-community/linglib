@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Mereology
@@ -126,7 +127,7 @@ end Achievements
 -- (27)
 theorem pluperfect_before_speech
     (h : ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] P) s) : ∃ t < s, P t := by
-  simpa using diamond_diamond_toSetRel h
+  simpa using diamond_four h
 
 -- (55)
 theorem exists_future_perfect_before_speech :

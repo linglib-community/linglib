@@ -7,7 +7,7 @@ public import Linglib.Fragments.English.Adpositions
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.TemporalConnectives
 public import Linglib.Semantics.Aspect.SubintervalProperty
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Exceptive
 public import Studies.Giannakidou2002
 public import Mathlib.Data.Set.Finite.Lemmas

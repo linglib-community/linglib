@@ -1,36 +1,42 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Defs
+public import Linglib.Core.ModelTheory.Atom
+public import Mathlib.Data.Finset.Image
 
 /-!
-# Structural operations on DRSs
+# Discourse representation structures
 
-This file develops the structural theory of the DRSs of `DRS/Defs.lean`, namely the renaming of
-discourse referents, the merge algebra, the transport of the extension relation along renaming,
-and occurring and free referents. Renaming along a bijection gives Kamp and Reyle's alphabetic
-variants (the prose preceding Def. 1.4.8).
+A *discourse representation structure* (DRS) pairs a finite set of discourse referents, its
+universe, with a list of conditions on them. A condition is atomic, an atom of a
+`FirstOrder.Language` or an equation between referents, or complex, a negation, conditional or
+disjunction of sub-DRSs, so DRSs and conditions are defined by simultaneous recursion. This file
+defines both, together with their syntactic theory: merge, renaming, occurring and free referents,
+and properness.
 
-## Main declarations
+## Main definitions
 
-* `DRS.map`: renaming along `f : V → W`, functorial.
-* `DRS.varFinset`, `DRS.freeVarFinset`: occurring and free referents.
-* `DRS.IsProper`: no free referent (Def. 1.4.2–1.4.3); decidable.
-* `DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
-
-## Main statements
-
-* `DRS.isProper_merge`: merging a proper DRS with an increment whose free referents
-  it declares is proper.
+* `DRT.DRS`, `DRT.Condition`: DRSs and conditions over a language `L` and referent type `V`.
+* `DRT.DRS.merge`, `DRT.DRS.map`: the merge of two DRSs, and renaming along `f : V → W`.
+* `DRT.DRS.varFinset`, `DRT.DRS.freeVarFinset`: occurring and free referents.
+* `DRT.DRS.IsProper`: no free referent.
 
 ## Implementation notes
 
-Renaming, occurring and free referents, and reuse-freeness are each three mutually recursive
-functions, on DRSs, conditions and condition lists, by structural recursion through the
-nesting, so the kernel evaluates them and `decide` settles them on concrete DRSs.
+* `DRS` is a `structure` in a mutual block with `Condition`, since Kamp and Reyle define the two
+  by simultaneous recursion. Being recursive, it has no definitional eta, so a proof about a
+  variable DRS that must unfold a recursive definition starts from `cases K`.
+* `referents` is the textbook universe `U`: `universe` is a Lean keyword and `univ` collides with
+  `Finset.univ`. `conditions` is a `List`, since an inductive cannot nest through `Finset` or
+  `Multiset`; set semantics is recovered by the interpretation (`verifiesTotal_perm`).
+* Renaming and occurring and free referents are each three mutually recursive functions, on DRSs,
+  conditions and condition lists, by structural recursion through the nesting, so the kernel
+  evaluates them and `decide` settles them on concrete DRSs.
+* `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 
 ## References
 
 * [kamp-reyle-1993]
+* [muskens-1996]
 -/
 
 @[expose] public section
@@ -41,7 +47,75 @@ namespace DRT
 
 universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w} {W : Type x} {M X : Type*}
+variable {L : Language.{u, v}} {V : Type w} {W : Type x} {X : Type*}
+
+mutual
+
+/-- A discourse representation structure pairs a universe of discourse referents, the objects
+under discussion, with the conditions that record what has been said of them. These are the
+finite DRSs of Def. 1.5.1. Def. 1.4.1 lets both components be infinite, which Kamp and Reyle set
+aside for the rest of the volume (p. 128). -/
+@[ext] structure DRS (L : Language.{u, v}) (V : Type w) where
+  /-- The universe `U`: the discourse referents the DRS introduces. -/
+  referents : Finset V
+  /-- The conditions of the DRS. -/
+  conditions : List (Condition L V)
+
+/-- A DRS-condition is atomic, an atom or an equation, or complex, a negation (Def. 1.4.1) or a
+conditional or disjunction (Chapter 2). Sub-DRSs occur only inside complex conditions. -/
+inductive Condition (L : Language.{u, v}) (V : Type w) where
+  /-- The atomic condition of an atom over the referents. -/
+  | atom (a : L.Atom V)
+  /-- Atomic equality condition `u = v`. -/
+  | eq (u v : V)
+  /-- Complex condition `¬K`. -/
+  | neg (K : DRS L V)
+  /-- Complex condition `K₁ ⇒ K₂` (antecedent ⇒ consequent). -/
+  | imp (ante cons : DRS L V)
+  /-- Complex condition `K₁ ∨ K₂`. -/
+  | dis (left right : DRS L V)
+
+end
+
+namespace DRS
+
+/-- The empty DRS `⟨∅, []⟩`. -/
+def empty : DRS L V := .mk ∅ []
+
+instance : Inhabited (DRS L V) := ⟨empty⟩
+
+/-- The merge `K₁ ⊕ K₂` unions the referents and appends the conditions —
+[muskens-1996]'s compositional operation (Kamp & Reyle combine DRSs
+incrementally via the construction algorithm instead). An operation, not a
+syntactic constructor. -/
+def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
+  .mk (K₁.referents ∪ K₂.referents) (K₁.conditions ++ K₂.conditions)
+
+@[simp] theorem referents_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
+    (K₁.merge K₂).referents = K₁.referents ∪ K₂.referents := rfl
+
+@[simp] theorem conditions_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
+    (K₁.merge K₂).conditions = K₁.conditions ++ K₂.conditions := rfl
+
+end DRS
+
+@[induction_eliminator] theorem Condition.induction {motive : Condition L V → Prop}
+    (atom : ∀ a, motive (.atom a))
+    (eq : ∀ u v, motive (.eq u v))
+    (neg : ∀ K, (∀ c ∈ K.conditions, motive c) → motive (.neg K))
+    (imp : ∀ a c, (∀ d ∈ a.conditions, motive d) → (∀ d ∈ c.conditions, motive d) →
+      motive (.imp a c))
+    (dis : ∀ l r, (∀ d ∈ l.conditions, motive d) → (∀ d ∈ r.conditions, motive d) →
+      motive (.dis l r)) (c : Condition L V) : motive c :=
+  Condition.rec (motive_1 := fun K => ∀ c ∈ K.conditions, motive c)
+    (motive_3 := fun cs => ∀ c ∈ cs, motive c) (fun _ _ h => h) atom eq neg imp dis
+    (fun _ h => absurd h List.not_mem_nil)
+    (fun _ _ hd hds _ he => (List.mem_cons.1 he).elim (· ▸ hd) (hds _)) c
+
+/-- A condition is atomic when it is an atom or an equation (Def. 1.4.1). -/
+inductive Condition.IsAtomic : Condition L V → Prop
+  | atom (a : L.Atom V) : Condition.IsAtomic (.atom a)
+  | eq (u v : V) : Condition.IsAtomic (.eq u v)
 
 /-! ### Renaming -/
 
@@ -122,33 +196,7 @@ theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
 
 end Condition
 
-/-! ### Renaming and extension -/
-
 namespace DRS
-
-theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : W → M) :
-    (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
-  simp only [Box.Extends, referents_map, Function.comp_apply]
-  refine ⟨fun h x hx => h (e x) (by simpa using hx), fun h y hy => ?_⟩
-  have hx : e.symm y ∉ K.referents := fun hm =>
-    hy (by simpa using Finset.mem_image_of_mem e hm)
-  simpa using h (e.symm y) hx
-
-theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
-    (P : (V → M) → Prop) :
-    (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
-  simp only [extends_map]
-  refine ⟨fun ⟨g, hg, hp⟩ => ⟨g ∘ e, hg, hp⟩, fun ⟨g, hg, hp⟩ => ⟨g ∘ e.symm, ?_⟩⟩
-  have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
-  exact key.symm ▸ ⟨hg, hp⟩
-
-theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
-    (P : (V → M) → Prop) :
-    (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
-  simp only [extends_map]
-  refine ⟨fun H g hg => ?_, fun H g hg => H (g ∘ e) hg⟩
-  have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
-  exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
 
 @[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K :=
   map_id_of_forall fun c _ => Condition.map_id c
@@ -294,9 +342,9 @@ theorem coe_freeVarFinset (K : DRS L V) :
     (↑K.freeVarFinset : Set V) = ↑(Condition.freeVarFinsetL K.conditions) \ ↑K.referents := by
   rw [freeVarFinset_eq, Finset.coe_sdiff]
 
-theorem freeVarFinset_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
-    freeVarFinset ⟨U, conds⟩ ⊆ X ↔ Condition.freeVarFinsetL conds ⊆ X ∪ U := by
-  rw [freeVarFinset_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
+theorem freeVarFinset_subset_iff {K : DRS L V} {X : Finset V} :
+    K.freeVarFinset ⊆ X ↔ Condition.freeVarFinsetL K.conditions ⊆ X ∪ K.referents := by
+  rw [freeVarFinset_eq, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
 
 end DRS
 
@@ -331,29 +379,21 @@ theorem Condition.freeVarFinsetL_subset_varFinsetL (cs : List (Condition L V)) :
 
 namespace DRS
 
-@[simp] theorem empty_merge (K : DRS L V) : (empty : DRS L V).merge K = K := by
-  cases K with
-  | mk r c => simp [merge, empty]
+@[simp] theorem empty_merge (K : DRS L V) : (empty : DRS L V).merge K = K :=
+  DRS.ext (Finset.empty_union _) (List.nil_append _)
 
-@[simp] theorem merge_empty (K : DRS L V) : K.merge (empty : DRS L V) = K := by
-  cases K with
-  | mk r c => simp [merge, empty]
+@[simp] theorem merge_empty (K : DRS L V) : K.merge (empty : DRS L V) = K :=
+  DRS.ext (Finset.union_empty _) (List.append_nil _)
 
 theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
-    (K₁.merge K₂).merge K₃ = K₁.merge (K₂.merge K₃) := by
-  cases K₁; cases K₂; cases K₃
-  simp only [merge, referents_mk, conditions_mk]
-  rw [Finset.union_assoc, List.append_assoc]
+    (K₁.merge K₂).merge K₃ = K₁.merge (K₂.merge K₃) :=
+  DRS.ext (Finset.union_assoc _ _ _) (List.append_assoc _ _ _)
 
 theorem freeVarFinset_merge_subset {X : Finset V} {K₁ K₂ : DRS L V}
     (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents) :
     (K₁.merge K₂).freeVarFinset ⊆ X := by
-  obtain ⟨U₁, c₁⟩ := K₁
-  obtain ⟨U₂, c₂⟩ := K₂
-  rw [referents_mk] at h₂
-  rw [freeVarFinset_subset_iff] at h₁ h₂
-  rw [merge, referents_mk, conditions_mk, freeVarFinset_subset_iff,
-    Condition.freeVarFinsetL_append, ← Finset.union_assoc]
+  rw [freeVarFinset_subset_iff] at h₁ h₂ ⊢
+  rw [conditions_merge, referents_merge, Condition.freeVarFinsetL_append, ← Finset.union_assoc]
   exact Finset.union_subset (h₁.trans Finset.subset_union_left) h₂
 
 /-- A DRS is *proper* iff it has no free discourse referent
@@ -371,94 +411,5 @@ theorem isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
     (h₂.trans Finset.subset_union_right))
 
 end DRS
-
-/-! ### Reuse-freeness
-
-No discourse referent is declared twice along a nesting path: each universe is
-fresh for the ambient declarations, threaded through sub-boxes the way
-verification threads the base (the antecedent of a `⇒` feeds its referents
-into the consequent). This is the hypothesis under which the total
-agree-off-universe semantics and the partial semantics coincide
-(`DRS.trueRel_iff_exists_verifies` in `DRS/Dynamics.lean`). -/
-
-mutual
-/-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its
-conditions are reuse-free at the grown set. -/
-def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
-  | ⟨U, cs⟩ => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) cs
-/-- A condition is reuse-free at ambient declarations `X` when each sub-box is, the
-consequent of a `⇒` at the declarations grown by the antecedent's universe. -/
-def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
-  | .atom _ => True
-  | .eq _ _ => True
-  | .neg K => DRS.ReuseFreeAt X K
-  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
-  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
-/-- Every condition of the list is reuse-free at `X`. -/
-def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
-  | [] => True
-  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
-end
-
-namespace Condition
-
-@[simp] theorem reuseFreeAt_atom (X : Finset V) (a : L.Atom V) : ReuseFreeAt X (.atom a) :=
-  trivial
-
-@[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
-    ReuseFreeAt X (.eq u v : Condition L V) := trivial
-
-@[simp] theorem reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
-    ReuseFreeAt X (.neg K) ↔ K.ReuseFreeAt X := Iff.rfl
-
-@[simp] theorem reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
-    ReuseFreeAt X (.imp a c) ↔ a.ReuseFreeAt X ∧ c.ReuseFreeAt (X ∪ a.referents) := Iff.rfl
-
-@[simp] theorem reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
-    ReuseFreeAt X (.dis l r) ↔ l.ReuseFreeAt X ∧ r.ReuseFreeAt X := Iff.rfl
-
-@[simp] theorem reuseFreeAllAt_nil (X : Finset V) :
-    ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
-
-@[simp] theorem reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
-    (cs : List (Condition L V)) :
-    ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := Iff.rfl
-
-end Condition
-
-@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
-    DRS.ReuseFreeAt X (.mk U conds) ↔ Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds :=
-  Iff.rfl
-
-mutual
-/-- Reuse-freeness of a DRS is decidable. -/
-@[instance_reducible]
-def DRS.decidableReuseFreeAt (X : Finset V) : (K : DRS L V) → Decidable (K.ReuseFreeAt X)
-  | ⟨U, cs⟩ => @instDecidableAnd _ _ inferInstance (Condition.decidableReuseFreeAllAt (X ∪ U) cs)
-/-- Reuse-freeness of a condition is decidable. -/
-@[instance_reducible]
-def Condition.decidableReuseFreeAt (X : Finset V) :
-    (c : Condition L V) → Decidable (c.ReuseFreeAt X)
-  | .atom _ => instDecidableTrue
-  | .eq _ _ => instDecidableTrue
-  | .neg K => DRS.decidableReuseFreeAt X K
-  | .imp a c =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X a)
-        (DRS.decidableReuseFreeAt (X ∪ a.referents) c)
-  | .dis l r =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X l) (DRS.decidableReuseFreeAt X r)
-/-- Reuse-freeness of a list of conditions is decidable. -/
-@[instance_reducible]
-def Condition.decidableReuseFreeAllAt (X : Finset V) :
-    (cs : List (Condition L V)) → Decidable (Condition.ReuseFreeAllAt X cs)
-  | [] => instDecidableTrue
-  | c :: cs =>
-      @instDecidableAnd _ _ (Condition.decidableReuseFreeAt X c)
-        (Condition.decidableReuseFreeAllAt X cs)
-end
-
-attribute [instance] DRS.decidableReuseFreeAt Condition.decidableReuseFreeAt
-  Condition.decidableReuseFreeAllAt
-
 
 end DRT

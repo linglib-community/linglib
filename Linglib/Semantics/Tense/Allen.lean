@@ -460,14 +460,25 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
   rw [ofPosition, relation_mem_filter, position_relation]
 
-/-- On dense time the precedence of a precedence is a precedence. -/
+instance : (toSetRel precedes : SetRel (NonemptyInterval T) _).IsTrans :=
+  ⟨fun _ _ _ h₁ h₂ ↦ relation_mem_precedes.2
+    (NonemptyInterval.precedes_trans (relation_mem_precedes.1 h₂) (relation_mem_precedes.1 h₁))⟩
+
+/-- Precedence relates two intervals through a third exactly when time is dense. -/
+theorem toSetRel_precedes_subset_comp_self_iff :
+    (toSetRel precedes : SetRel (NonemptyInterval T) _) ⊆ toSetRel precedes ○ toSetRel precedes ↔
+      DenselyOrdered T where
+  mp h := ⟨fun a b hab ↦
+    let ⟨c, h₁, h₂⟩ := @h (.pure b, .pure a) (relation_mem_precedes.2 hab)
+    ⟨c.fst, relation_mem_precedes.1 h₂, c.fst_le_snd.trans_lt (relation_mem_precedes.1 h₁)⟩⟩
+  mpr _ := fun _ h ↦ let ⟨u, hu, hu'⟩ := exists_between (relation_mem_precedes.1 h)
+    ⟨.pure u, relation_mem_precedes.2 hu', relation_mem_precedes.2 hu⟩
+
+/-- On dense time the composite of precedence with itself is precedence. -/
 theorem toSetRel_precedes_comp_self [DenselyOrdered T] :
     (toSetRel precedes ○ toSetRel precedes : SetRel (NonemptyInterval T) _) =
-      toSetRel precedes := by
-  ext ⟨π, r⟩
-  simp only [SetRel.mem_comp, mem_toSetRel, relation_mem_precedes]
-  exact ⟨fun ⟨_, h₁, h₂⟩ ↦ NonemptyInterval.precedes_trans h₂ h₁,
-    fun h ↦ let ⟨u, hu, hu'⟩ := exists_between h; ⟨.pure u, hu', hu⟩⟩
+      toSetRel precedes :=
+  subset_antisymm SetRel.comp_subset_self (toSetRel_precedes_subset_comp_self_iff.2 ‹_›)
 
 end LinearOrder
 
