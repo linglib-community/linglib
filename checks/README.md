@@ -47,6 +47,7 @@ python3 scripts/checks.py status [SOURCE ...]
 python3 scripts/checks.py sign SOURCE --claims prop-4,prop-5 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
 python3 scripts/checks.py diff SOURCE CLAIM
+python3 scripts/checks.py core [--json]
 ```
 
 `sign` records the hash of the claim's statement closure. The closure takes in:
@@ -66,6 +67,18 @@ since the signed commit. An upgrade of Lean's pretty-printer can also make sign-
 * `relies`: its own sign-off is current, but such a claim is not checked.
 * `stale`, `unchecked`, `missing`.
 * `broken`: one of its declarations does not resolve.
+* `unproved`: one of its declarations rests on `sorry`, or on an axiom other than `propext`,
+  `Classical.choice` and `Quot.sound`, through its proof or a definition it uses. This includes the
+  axiom that `native_decide` adds, which trusts the compiler. The status line still shows the
+  sign-off, since a statement can be faithful without being proved.
+
+## The reviewed core
+
+`core` lists the declarations of the checked claims, with the project definitions their statements
+use, grouped by module; `--json` gives the same as data. A claim is checked only if the claims it
+relies on are, so the core is closed: nothing in it depends for its meaning on a declaration
+outside it. Its proofs may use declarations outside it, which need no review, and it is relative to
+the Mathlib that the project pins.
 
 Who checks which source is arranged in GitHub issues, not here. The files record only what has been
 checked.

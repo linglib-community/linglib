@@ -16,12 +16,19 @@ A claim is
 * `stale` when its statement closure has changed since the sign-off;
 * `unchecked` when it has no sign-off;
 * `missing` when the source's claim has no Lean statement yet;
-* `broken` when one of its declarations does not resolve.
+* `broken` when one of its declarations does not resolve;
+* `unproved` when one of its declarations rests, through its proof or the definitions it uses, on
+  `sorry` or on an axiom beyond Lean's standard three, whatever its sign-off says.
+
+The checked claims form the reviewed core: their declarations, and the project definitions their
+statements use. Since a claim is checked only if the claims it relies on are, nothing in the core
+depends for its meaning on anything outside it.
 
 Usage, from the repository root:
 
     python3 scripts/checks.py status [SOURCE ...]
     python3 scripts/checks.py diff SOURCE CLAIM
+    python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --claims ID,ID,...) --by GITHUB_HANDLE
 
 Sign-offs are made by people. `sign` refuses to run inside an agent session (`CLAUDECODE`).
@@ -43,6 +50,7 @@ CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies", "Eval", "Lab"]
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "missing"}
 HASH_VERSION = "v1"
+STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 
 
 def load_sources(keys=None):
@@ -136,7 +144,7 @@ def claim_hash(claim, data):
 
 
 def evaluate(sources):
-    """The status of every claim, keyed by `(source, id)`."""
+    """The status and details of every claim, keyed by `(source, id)`, and the closures."""
     names = sorted({d for src in sources.values() for c in src["claims"]
                     for d in c.get("decls", [])})
     data = closures(names)
@@ -164,6 +172,7 @@ def evaluate(sources):
             info[ref]["hash"] = digest
             closure = {n for d in decls for n in data["roots"][d]["closure"]}
             info[ref]["deps"] = {c for n in closure for c in covering.get(n, ())} - {ref}
+            info[ref]["closure"] = closure | set(decls)
             info[ref]["files"] = sorted({data["nodes"][n]["module"] for n in closure | set(decls)})
             checks = claim.get("check", [])
             if not checks:
@@ -172,6 +181,11 @@ def evaluate(sources):
                 own[ref] = "stale"
             else:
                 own[ref] = "signed"
+            info[ref]["signoff"] = own[ref]
+            axioms = {a for d in decls for a in data["roots"][d]["axioms"]} - STANDARD_AXIOMS
+            if axioms:
+                info[ref]["axioms"] = sorted(axioms)
+                own[ref] = "unproved"
 
     status = {}
 
@@ -188,7 +202,7 @@ def evaluate(sources):
 
     for ref in own:
         status[ref] = effective(ref)
-    return status, info
+    return status, info, data
 
 
 def cmd_status(args):
@@ -196,7 +210,7 @@ def cmd_status(args):
     problems = validate(sources)
     for p in problems:
         print(f"invalid: {p}")
-    status, info = evaluate(sources)
+    status, info, _ = evaluate(sources)
     for key in sources if not args.sources else args.sources:
         refs = [r for r in status if r[0] == key]
         counts = {}
@@ -211,13 +225,43 @@ def cmd_status(args):
                                                     for b in info[r]["blocking"]) + ")"
             if status[r] == "broken":
                 line += "  (unresolved: " + ", ".join(info[r]["unresolved"]) + ")"
+            if status[r] == "unproved":
+                line += f"  ({info[r]['signoff']}; rests on " + ", ".join(info[r]["axioms"]) + ")"
             print(line)
     return 1 if problems else 0
 
 
+def cmd_core(args):
+    sources = load_sources()
+    status, info, data = evaluate(sources)
+    claims = sorted(r for r in status if status[r] == "checked")
+    decls = {}
+    for ref in claims:
+        for name in info[ref]["closure"]:
+            node = data["nodes"][name]
+            entry = decls.setdefault(name, {"module": node["module"], "kind": node["kind"],
+                                            "states": []})
+            if name in info[ref]["claim"]["decls"]:
+                entry["states"].append(f"{ref[0]}/{ref[1]}")
+    modules = sorted({d["module"] for d in decls.values()})
+    if args.json:
+        print(json.dumps({"claims": [f"{k}/{c}" for k, c in claims], "modules": modules,
+                          "declarations": dict(sorted(decls.items()))}, indent=2))
+        return 0
+    print(f"{len(claims)} checked claim(s) from {len({k for k, _ in claims})} source(s): "
+          f"{len(decls)} declaration(s) in {len(modules)} module(s)")
+    for module in modules:
+        print(module)
+        for name, d in sorted(decls.items()):
+            if d["module"] == module:
+                states = f"  (states {', '.join(d['states'])})" if d["states"] else ""
+                print(f"  {d['kind']:<11} {name}{states}")
+    return 0
+
+
 def cmd_diff(args):
     sources = load_sources([args.source])
-    status, info = evaluate(sources)
+    status, info, _ = evaluate(sources)
     ref = (args.source, args.claim)
     if ref not in info:
         sys.exit(f"no claim {args.claim} in {args.source}")
@@ -258,7 +302,7 @@ def cmd_sign(args):
     problems = [p for p in validate(sources)]
     if problems:
         sys.exit("fix the check file first:\n" + "\n".join(problems))
-    status, info = evaluate(sources)
+    status, info, _ = evaluate(sources)
     claims = sources[args.source]["claims"]
     ids = [c["id"] for c in claims] if args.all else args.claims.split(",")
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
@@ -275,7 +319,7 @@ def cmd_sign(args):
             if args.all:
                 continue
             sys.exit(f"{cid} is {status[ref]} and cannot be signed")
-        if status[ref] in ("checked", "relies") and args.all:
+        if info[ref]["signoff"] == "signed" and args.all:
             continue
         entry = (f'\n  [[claim.check]]\n  by     = "{args.by}"\n  date   = {today}\n'
                  f'  commit = "{commit}"\n  hash   = "{info[ref]["hash"]}"\n')
@@ -296,6 +340,9 @@ def main():
     p.add_argument("source")
     p.add_argument("claim")
     p.set_defaults(func=cmd_diff)
+    p = sub.add_parser("core", help="the declarations of the checked claims")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_core)
     p = sub.add_parser("sign", help="sign claims you have checked")
     p.add_argument("source")
     g = p.add_mutually_exclusive_group(required=True)
