@@ -184,6 +184,9 @@ def chácobo : Glottocode := "chac1251"
 /-- Chamorro, `cham1312` (ISO 639-3 `cha`). -/
 def chamorro : Glottocode := "cham1312"
 
+/-- Shawi, `chay1248` (ISO 639-3 `cbt`). -/
+def shawi : Glottocode := "chay1248"
+
 /-- Cheyenne, `chey1247` (ISO 639-3 `chy`). -/
 def cheyenne : Glottocode := "chey1247"
 
@@ -471,6 +474,9 @@ def jaujaWancaQuechua : Glottocode := "jauj1238"
 
 /-- Javanese, `java1254` (ISO 639-3 `jav`). -/
 def javanese : Glottocode := "java1254"
+
+/-- Jebero, `jebe1250` (ISO 639-3 `jeb`). -/
+def jebero : Glottocode := "jebe1250"
 
 /-- Kagulu, `kagu1239` (ISO 639-3 `kki`). -/
 def kagulu : Glottocode := "kagu1239"

@@ -36,6 +36,7 @@ is set difference, and scansion is a greedy decomposition of the node.
 * `head?_insertions_singleton`, `head?_scansion_singleton`: at a single matrix the first insertion
   is the first applicable item, so on a Vocabulary ordered by specificity it is the Subset
   Principle's winner.
+* `scan_congr`: a Vocabulary with no contexts of insertion scans the same way in every environment.
 
 ## References
 
@@ -104,6 +105,14 @@ theorem scan_cons_of_discharge_eq_some (h : discharge i env ms = some ms') :
 theorem scan_cons_of_discharge_eq_none (h : discharge i env ms = none) :
     scan (i :: rest) env ms = scan rest env ms := by
   simp [scan, h]
+
+theorem insertions_cons_of_discharge_eq_some (h : discharge i env ms = some ms') :
+    insertions (i :: rest) env ms = i :: insertions rest env ms' := by
+  rw [insertions, scan_cons_of_discharge_eq_some h]
+
+theorem insertions_cons_of_discharge_eq_none (h : discharge i env ms = none) :
+    insertions (i :: rest) env ms = insertions rest env ms := by
+  rw [insertions, scan_cons_of_discharge_eq_none h, insertions]
 
 theorem val_add_discharge : ∀ {ms ms' : List (Finset F)}, discharge i env ms = some ms' →
     i.features.val + (ms'.map Finset.val).sum = (ms.map Finset.val).sum
@@ -185,6 +194,58 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
       if Applies i ({ env with focus := m } : Neighborhood (Finset F))
         then some [m \ i.features] else none := by
   simp [discharge]
+
+/-- An item with no context of insertion discharges the same features in every environment. -/
+theorem discharge_congr (hi : ∀ x ∈ i.site, x.1 = 0) (env env' : Neighborhood (Finset F)) :
+    ∀ ms, discharge i env ms = discharge i env' ms
+  | [] => rfl
+  | m :: ms => by
+    have h : Applies i ({ env with focus := m } : Neighborhood (Finset F)) ↔
+        Applies i ({ env' with focus := m } : Neighborhood (Finset F)) := by
+      simp only [VocabularyItem.applies_iff]
+      refine forall₂_congr fun x hx ↦ ?_
+      obtain ⟨o, f⟩ := x
+      obtain rfl : o = 0 := hi _ hx
+      simp [Neighborhood.mem_def]
+    simp only [discharge, h, discharge_congr hi env env' ms]
+
+/-- A Vocabulary with no contexts of insertion scans the same way in every environment. -/
+theorem scan_congr (env env' : Neighborhood (Finset F)) :
+    ∀ items : RuleSet (VocabularyItem F E), (∀ i ∈ items, ∀ x ∈ i.site, x.1 = 0) →
+      ∀ ms, scan items env ms = scan items env' ms
+  | [], _, _ => rfl
+  | i :: rest, h, ms => by
+    have hr := scan_congr env env' rest fun j hj ↦ h j (List.mem_cons_of_mem _ hj)
+    simp only [scan, discharge_congr (h i List.mem_cons_self) env env' ms, hr]
+
+/-- A Vocabulary with no contexts of insertion ignores a feature of a matrix that none of its items
+mentions. -/
+theorem insertions_sdiff_singleton (env : Neighborhood (Finset F)) (x : F) :
+    ∀ items : RuleSet (VocabularyItem F E), (∀ i ∈ items, ∀ y ∈ i.site, y.1 = 0 ∧ y.2 ≠ x) →
+      ∀ m : Finset F, insertions items env [m \ {x}] = insertions items env [m]
+  | [], _, _ => rfl
+  | i :: rest, h, m => by
+    have ih := insertions_sdiff_singleton env x rest fun j hj ↦ h j (List.mem_cons_of_mem _ hj)
+    have happ : Applies i ({ env with focus := m \ {x} } : Neighborhood (Finset F)) ↔
+        Applies i ({ env with focus := m } : Neighborhood (Finset F)) := by
+      simp only [VocabularyItem.applies_iff]
+      refine forall₂_congr fun y hy ↦ ?_
+      obtain ⟨k, f⟩ := y
+      obtain ⟨rfl, hf⟩ := h i List.mem_cons_self _ hy
+      simp [Neighborhood.mem_def, hf]
+    by_cases ha : Applies i ({ env with focus := m } : Neighborhood (Finset F))
+    · have h₁ : discharge i env [m \ {x}] = some [(m \ {x}) \ i.features] := by
+        rw [discharge_singleton, ite_eq_left (happ.2 ha)]
+      have h₂ : discharge i env [m] = some [m \ i.features] := by
+        rw [discharge_singleton, ite_eq_left ha]
+      rw [insertions_cons_of_discharge_eq_some h₁, insertions_cons_of_discharge_eq_some h₂,
+        sdiff_sdiff_comm, ih]
+    · have h₁ : discharge i env [m \ {x}] = none := by
+        rw [discharge_singleton, ite_eq_right fun h' ↦ ha (happ.1 h')]
+      have h₂ : discharge i env [m] = none := by
+        rw [discharge_singleton, ite_eq_right ha]
+      rw [insertions_cons_of_discharge_eq_none h₁, insertions_cons_of_discharge_eq_none h₂]
+      exact ih m
 
 /-- At a single matrix, the first item inserted is the first item that applies there. -/
 theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (VocabularyItem F E),

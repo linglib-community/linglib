@@ -117,35 +117,6 @@ theorem mem_II_of_cell_witness {target : Set World}
   rw [II_eq_nonExcludable_of_cell_nonempty ALT φ ⟨w, hwitness⟩]
   exact ⟨htarget_alt, fun hexc => hwitness.2.1 target hexc htarget⟩
 
-/-! ### Consequences of a world of the cell -/
-
-theorem exhIEII_implies_cell_witnessed_alt {target : Set World}
-    (htarget_alt : target ∈ ALT)
-    (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
-    ∀ u, exhIEII ALT φ u → target u := by
-  intro u h_exh
-  exact h_exh.2.2 target (mem_II_of_cell_witness ALT φ htarget_alt w hwitness htarget)
-
-theorem exhIEII_implies_cell_witnessed_alts
-    (targets : List (Set World))
-    (h_in_alt : ∀ t ∈ targets, t ∈ ALT)
-    (w : World) (hwitness : cell ALT φ w)
-    (h_witness : ∀ t ∈ targets, t w) :
-    ∀ u, exhIEII ALT φ u → ∀ t ∈ targets, t u :=
-  fun u h_exh t ht =>
-    exhIEII_implies_cell_witnessed_alt ALT φ
-      (h_in_alt t ht) w hwitness (h_witness t ht) u h_exh
-
-theorem exhIEII_negates_excludable {target : Set World}
-    (h_ie : IsInnocentlyExcludable ALT φ target) :
-    ∀ u, exhIEII ALT φ u → ¬ target u :=
-  fun _ h_exh => h_exh.2.1 target h_ie
-
-theorem not_isInnocentlyExcludable_of_cell_witness {target : Set World}
-    (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
-    ¬ IsInnocentlyExcludable ALT φ target :=
-  fun h_ie => hwitness.2.1 target h_ie htarget
-
 /-! ### Cells from a characterization of innocent exclusion -/
 
 theorem cell_eq_of_iff {P : Set World → Prop}
@@ -183,7 +154,7 @@ variable {ALT φ} {M : Set World}
 
 theorem IsMinimalCover.singleton {w₀ : World} (hw₀ : w₀ ∈ φ) (h : ∀ q ∈ ALT, w₀ ∈ q → φ ⊆ q) :
     IsMinimalCover ALT φ {w₀} :=
-  ⟨fun _ hv ↦ hv ▸ hw₀, fun _ hw ↦ ⟨w₀, rfl, fun q hq hq₀ ↦ h q hq hq₀ hw⟩, by simp⟩
+  ⟨fun _ hv ↦ hv ▸ hw₀, fun _ hw ↦ ⟨w₀, rfl, fun q ⟨hq, hq₀⟩ ↦ ⟨hq, h q hq hq₀ hw⟩⟩, by simp⟩
 
 theorem IsMinimalCover.cell_eq (hM : IsMinimalCover ALT φ M) :
     cell ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by

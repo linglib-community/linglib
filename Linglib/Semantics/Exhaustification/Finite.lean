@@ -112,13 +112,13 @@ def minimalWorlds : Finset W :=
 
 theorem mem_minimalWorlds {u : W} :
     u ∈ minimalWorlds ALT φ ↔ u ∈ exhMW ALT.toSetFamily ↑φ := by
-  rw [minimalWorlds, Finset.mem_filter]
-  change _ ↔ (u ∈ (↑φ : Set W) ∧ ¬ ∃ v, v ∈ (↑φ : Set W) ∧ (v <[ALT.toSetFamily] u))
-  have hle : ∀ x y : W, (x ≤[ALT.toSetFamily] y) ↔ ∀ a ∈ ALT, x ∈ a → y ∈ a := fun x y ↦
-    ⟨fun h a ha ↦ h _ (Finset.mem_toSetFamily.2 ⟨a, ha, rfl⟩), fun h _ hs ↦ by
+  rw [minimalWorlds, Finset.mem_filter, mem_exhMW, MinimalFor]
+  have hle : ∀ x y : W, Preorder.satisfied (· ∈ ·) ALT.toSetFamily x ≤
+      Preorder.satisfied (· ∈ ·) ALT.toSetFamily y ↔ ∀ a ∈ ALT, x ∈ a → y ∈ a := fun x y ↦
+    ⟨fun h a ha hxa ↦ (h ⟨Finset.mem_toSetFamily.2 ⟨a, ha, rfl⟩, hxa⟩).2, fun h _ ⟨hs, hxs⟩ ↦ by
       obtain ⟨a, ha, rfl⟩ := Finset.mem_toSetFamily.1 hs
-      exact h a ha⟩
-  simp only [ltALT, hle, Finset.mem_coe, not_exists, not_and, not_not]
+      exact ⟨hs, h a ha hxs⟩⟩
+  simp only [hle, Finset.mem_coe]
 
 /-- The innocently excludable alternatives of a finite family, those false at every minimal
 world. -/
@@ -341,8 +341,8 @@ theorem innocent_exh_erase_entailed
     show φ \ ((innocentlyExcludable ALT φ).biUnion id)
       = φ \ ((innocentlyExcludable (ALT.erase a) φ).biUnion id)
     rw [h_ie_eq]
-  obtain ⟨u, hu⟩ := exists_minimal_of_finite ALT.toSetFamily ↑φ (Finset.finite_toSetFamily ALT)
-    hphi_nonempty
+  obtain ⟨u, hu⟩ :=
+    exhMW_nonempty (Finset.finite_toSetFamily ALT) (Finset.coe_nonempty.2 hphi_nonempty)
   have hu' := (mem_minimalWorlds ALT φ).2 hu
   ext b
   simp only [innocentlyExcludable, minimalWorlds_erase_of_subset h_entails, Finset.mem_filter,

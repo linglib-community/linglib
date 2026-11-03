@@ -311,14 +311,15 @@ theorem isInnocentlyExcludable_but_some (hF : Finset.univ.erase g ∈ F) :
   have ha : Ici {g} ∈ but Det.some Finset.univ '' F := ⟨_, hF, but_some_univ_erase⟩
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ ha]
   rintro u ⟨hu, hmin⟩ hgu
-  refine hmin ⟨u.erase g, ?_, fun q hq hqv ↦ ?_, fun h ↦ ?_⟩
-  · obtain ⟨x, ⟨-, hx⟩, hxu⟩ := hu
+  have hv : u.erase g ∈ but Det.some Finset.univ {g} := by
+    obtain ⟨x, ⟨-, hx⟩, hxu⟩ := hu
     exact ⟨x, ⟨Finset.mem_univ x, hx⟩,
       Finset.mem_erase.2 ⟨fun h ↦ hx (h ▸ Finset.mem_singleton_self g), hxu⟩⟩
-  · obtain ⟨X, -, rfl⟩ := hq
+  have h := hmin hv fun q ⟨hq, hqv⟩ ↦ ⟨hq, by
+    obtain ⟨X, -, rfl⟩ := hq
     obtain ⟨x, hx, hxv⟩ := hqv
-    exact ⟨x, hx, Finset.mem_of_mem_erase hxv⟩
-  · exact Finset.notMem_erase g u (h _ ha hgu (Finset.mem_singleton_self g))
+    exact ⟨x, hx, Finset.mem_of_mem_erase hxv⟩⟩
+  exact Finset.notMem_erase g u ((h ⟨ha, hgu⟩).2 (Finset.mem_singleton_self g))
 
 theorem exhIE_but_some_ne {a : α} (hag : a ≠ g) (hF : Finset.univ.erase g ∈ F) :
     exhIE (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠

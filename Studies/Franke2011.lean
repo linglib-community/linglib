@@ -53,7 +53,8 @@ fixed points are perfect Bayesian equilibria.
 * Theorem 3 is proved for interpretation games with positive priors. The proof completes the
   paper's sketch by showing that the sender's choices only grow around a cycle of the chain.
 * Fact 2 holds for alternatives monotonically determined by the others, as in the paper's
-  conjunctive example, and fails for the negation of an alternative (`not_ltALT_insert_compl`).
+  conjunctive example, and fails for the negation of an alternative
+  (`not_satisfied_ssubset_insert_compl`).
 
 ## TODO
 
@@ -1621,21 +1622,24 @@ def alternatives : Set (Set T) := Set.range fun m ↦ {t | G.meaning m t}
 variable {G : InterpGame T M}
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
-theorem leALT_alternatives_iff {t' t : T} :
-    leALT (alternatives G) t' t ↔ G.trueMessages t' ⊆ G.trueMessages t := by
-  simp only [leALT, alternatives, Set.forall_mem_range, subset_iff, InterpGame.mem_trueMessages]
-  exact Iff.rfl
+theorem satisfied_alternatives_subset_iff {t' t : T} :
+    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊆ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+      G.trueMessages t' ⊆ G.trueMessages t := by
+  simp only [Set.subset_def, Preorder.mem_satisfied, and_imp, alternatives, Set.forall_mem_range,
+    Set.mem_range_self, true_and, Set.mem_ofPred_eq, subset_iff, InterpGame.mem_trueMessages]
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
-theorem ltALT_alternatives_iff {t' t : T} :
-    ltALT (alternatives G) t' t ↔ G.trueMessages t' ⊂ G.trueMessages t := by
-  rw [ltALT, leALT_alternatives_iff, leALT_alternatives_iff, ssubset_iff_subset_not_subset]
+theorem satisfied_alternatives_ssubset_iff {t' t : T} :
+    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊂ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+      G.trueMessages t' ⊂ G.trueMessages t := by
+  simp only [ssubset_iff_subset_not_subset, satisfied_alternatives_subset_iff]
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem mem_exhMW_alternatives {m : M} {t : T} :
     t ∈ exhMW (alternatives G) {t | G.meaning m t} ↔
       G.meaning m t ∧ ∀ t', G.meaning m t' → ¬ G.trueMessages t' ⊂ G.trueMessages t := by
-  simp only [mem_exhMW, ltALT_alternatives_iff, Set.mem_ofPred_eq, not_exists, not_and]
+  simp only [mem_exhMW, MinimalFor, ← not_lt_iff_le_imp_ge, satisfied_alternatives_ssubset_iff,
+    Set.mem_ofPred_eq]
 
 /-- The first sophisticated receiver's reading of a message entails its exhaustification by
 minimal models (Fact 1). -/
@@ -1681,28 +1685,41 @@ variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 
 /-- `A` is monotonically determined by the alternatives when, whenever every alternative true at
 `w` is true at `v`, `A` at `w` forces `A` at `v`. -/
-def MonotoneDetermined (A : Set W) : Prop := ∀ w v, leALT ALT w v → w ∈ A → v ∈ A
+def MonotoneDetermined (A : Set W) : Prop :=
+  ∀ w v, Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v → w ∈ A → v ∈ A
+
+theorem satisfied_insert_subset_iff_of_monotoneDetermined {A : Set W}
+    (hA : MonotoneDetermined ALT A) {w v : W} :
+    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊆ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
+      Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v := by
+  refine ⟨fun h a ⟨ha, hwa⟩ ↦ ⟨ha, (h ⟨Set.mem_insert_of_mem _ ha, hwa⟩).2⟩,
+    fun h a ⟨ha, hwa⟩ ↦ ⟨ha, ?_⟩⟩
+  rcases ha with rfl | ha
+  exacts [hA w v h hwa, (h ⟨ha, hwa⟩).2]
 
 -- Fact 2
-theorem ltALT_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined ALT A) :
-    ltALT (insert A ALT) = ltALT ALT := by
-  have key : ∀ w v, leALT (insert A ALT) w v ↔ leALT ALT w v := fun w v ↦
-    ⟨fun h a ha ↦ h a (Set.mem_insert_of_mem _ ha),
-     fun h a ha ↦ (Set.mem_insert_iff.mp ha).elim (fun e ↦ e ▸ hA w v h) (h a)⟩
-  funext w v; simp only [ltALT, key]
+theorem satisfied_insert_ssubset_iff_of_monotoneDetermined {A : Set W}
+    (hA : MonotoneDetermined ALT A) {w v : W} :
+    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊂ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
+      Preorder.satisfied (· ∈ ·) ALT w ⊂ Preorder.satisfied (· ∈ ·) ALT v := by
+  simp only [ssubset_iff_subset_not_subset,
+    satisfied_insert_subset_iff_of_monotoneDetermined ALT hA]
 
 theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined ALT A) :
     exhMW (insert A ALT) φ = exhMW ALT φ := by
-  unfold exhMW; rw [ltALT_insert_of_monotoneDetermined ALT hA]
+  ext u
+  simp only [mem_exhMW, MinimalFor, satisfied_insert_subset_iff_of_monotoneDetermined ALT hA]
 
 -- Fact 2
-theorem not_ltALT_insert_compl :
-    ltALT ({(· = true)} : Set (Set Bool)) false true ∧
-      ¬ ltALT (insert (· = false) {(· = true)}) false true := by
-  refine ⟨⟨fun a ha h ↦ ?_, fun h ↦ ?_⟩, fun h ↦ ?_⟩
-  · rw [Set.mem_singleton_iff] at ha; subst ha; exact absurd h Bool.false_ne_true
-  · exact Bool.false_ne_true (h _ rfl rfl)
-  · exact absurd (h.1 (· = false) (Set.mem_insert _ _) rfl) (by decide)
+theorem not_satisfied_ssubset_insert_compl :
+    Preorder.satisfied (· ∈ ·) ({(· = true)} : Set (Set Bool)) false ⊂
+        Preorder.satisfied (· ∈ ·) {(· = true)} true ∧
+      ¬ Preorder.satisfied (· ∈ ·) (insert (· = false) {(· = true)} : Set (Set Bool)) false ⊂
+        Preorder.satisfied (· ∈ ·) (insert (· = false) {(· = true)}) true := by
+  refine ⟨⟨fun a ⟨ha, h⟩ ↦ ?_, fun h ↦ Bool.false_ne_true (h ⟨rfl, rfl⟩).2⟩,
+    fun h ↦ Bool.noConfusion (h.1 ⟨Set.mem_insert _ _, rfl⟩).2⟩
+  obtain rfl := ha
+  exact absurd h Bool.false_ne_true
 
 /-- A world is indistinguishable from a set of worlds by the alternatives when every alternative
 true throughout the set is true at it and every alternative false throughout the set is false
@@ -1718,8 +1735,8 @@ theorem exhIE_eq_setOf_indistinguishable (hfin : ALT.Finite) :
   ext w
   refine ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun a ha ↦ ⟨fun hX ↦ ?_, h a ha⟩⟩,
     fun ⟨hw, h⟩ ↦ ⟨hw, fun a ha ↦ (h a ha).2⟩⟩
-  obtain ⟨u, hu, huw⟩ := exists_isMinimal_le ALT φ hfin hw
-  exact huw a ha (hX hu)
+  obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
+  exact (huw ⟨ha, hX hu⟩).2
 
 end Appendix
 
@@ -1742,14 +1759,14 @@ def alt₂ : Set (Set (Bool × Bool)) := insert (A ∩ B) alt₁
 
 theorem exhMW_alt₁ : exhMW alt₁ (A ∪ B) = {(true, false), (false, true)} := by
   ext ⟨a, b⟩
-  simp only [mem_exhMW, ltALT, leALT_iff, alt₁, Set.mem_insert_iff, Set.mem_singleton_iff,
-    forall_eq_or_imp, forall_eq, A, B, Set.mem_union, Set.mem_ofPred_eq, Prod.exists,
-    Bool.exists_bool, Prod.mk.injEq]
+  simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, alt₁,
+    Set.mem_insert_iff, Set.mem_singleton_iff, A, B, Set.mem_union, Set.mem_ofPred_eq,
+    Prod.forall, Bool.forall_bool, Prod.mk.injEq]
   cases a <;> cases b <;> simp
 
 theorem exhMW_alt₂ : exhMW alt₂ (A ∪ B) = exhMW alt₁ (A ∪ B) :=
   exhMW_insert_of_monotoneDetermined _ _ fun _ _ h hw ↦
-    ⟨h A (by simp [alt₁]) hw.1, h B (by simp [alt₁]) hw.2⟩
+    ⟨(h ⟨by simp [alt₁], hw.1⟩).2, (h ⟨by simp [alt₁], hw.2⟩).2⟩
 
 -- (113)
 theorem exhaustivity_operators :
