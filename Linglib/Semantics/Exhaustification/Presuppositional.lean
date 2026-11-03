@@ -16,9 +16,9 @@ the prejacent is false, so that it contributes nothing to the falsity conditions
 prejacent. Del Pinal, Bassi and Sauerland's `pex^{IE+II}` adds the presupposition that the
 relevant innocently includable alternatives other than the prejacent are homogeneous, true
 together or false together, and its presupposition survives negation: negation denies the
-assertion and leaves the presupposition. When the prejacent lies between the meet and the join of those alternatives, as
-`◇(p ∨ q)` lies between `◇p ∧ ◇q` and `◇p ∨ ◇q`, homogeneity makes it true where all of them are
-and false where none is.
+assertion and leaves the presupposition. When the prejacent lies between the meet and the join of
+those alternatives, as `◇(p ∨ q)` lies between `◇p ∧ ◇q` and `◇p ∨ ◇q`, homogeneity makes it true
+where all of them are and false where none is.
 
 ## Main definitions
 
@@ -106,13 +106,15 @@ alternatives in the relevance set `Rc` are false and that the innocently includa
 other than the prejacent, are homogeneous. -/
 noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
     World → SignType :=
-  (excludesIE ALT φ Rc ∩ {w | Homogeneous (II ALT φ \ {φ} ∩ Rc) w}).indicator
+  (excludesIE ALT φ Rc ∩
+    {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w}).indicator
     fun w ↦ SignType.ofProp (w ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
 theorem pexIEII_ne_zero_iff :
-    pexIEII ALT φ Rc w ≠ 0 ↔ w ∈ excludesIE ALT φ Rc ∧ Homogeneous (II ALT φ \ {φ} ∩ Rc) w := by
+    pexIEII ALT φ Rc w ≠ 0 ↔ w ∈ excludesIE ALT φ Rc ∧
+      Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w := by
   simp [pexIEII]
 
 theorem pexIEII_eq_one_iff : pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∈ φ := by
@@ -123,26 +125,31 @@ theorem pexIEII_eq_neg_one_iff : pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc 
 
 /-- A prejacent between the meet and the join of its relevant includable alternatives is true
 under `pex` exactly where the presupposition holds and all of them are true. -/
-theorem pexIEII_eq_one_iff_forall_mem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
-    (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
-    pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∈ α :=
+theorem pexIEII_eq_one_iff_forall_mem
+    (hl : ⋂₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} ⊆ φ)
+    (hu : φ ⊆ ⋃₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}) :
+    pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧
+      ∀ α ∈ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}, w ∈ α :=
   pexIEII_eq_one_iff.trans <| and_congr_right fun h ↦ (pexIEII_ne_zero_iff.1 h).2.mem_iff hl hu
 
 /-- A prejacent between the meet and the join of its relevant includable alternatives is false
 under `pex` exactly where the presupposition holds and all of them are false. -/
-theorem pexIEII_eq_neg_one_iff_forall_notMem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
-    (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
-    pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∉ α :=
+theorem pexIEII_eq_neg_one_iff_forall_notMem
+    (hl : ⋂₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} ⊆ φ)
+    (hu : φ ⊆ ⋃₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}) :
+    pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧
+      ∀ α ∈ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}, w ∉ α :=
   pexIEII_eq_neg_one_iff.trans <| and_congr_right fun h ↦
     (pexIEII_ne_zero_iff.1 h).2.notMem_iff hl hu
 
-theorem pexIEII_ne_zero_iff_of_inter_eq_empty (h : II ALT φ \ {φ} ∩ Rc = ∅) :
+theorem pexIEII_ne_zero_iff_of_inter_eq_empty
+    (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} = ∅) :
     pexIEII ALT φ Rc w ≠ 0 ↔ w ∈ excludesIE ALT φ Rc := by
   simp [pexIEII_ne_zero_iff, h]
 
 /-- Without relevant includable alternatives, `pex^{IE+II}` is `pex^{IE}` when the relevant
 excludable alternatives entail the prejacent: where the prejacent is false, so are they. -/
-theorem pexIEII_eq_pexIE (h : II ALT φ \ {φ} ∩ Rc = ∅)
+theorem pexIEII_eq_pexIE (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} = ∅)
     (hIE : ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ψ ⊆ φ) :
     pexIEII ALT φ Rc = pexIE ALT φ Rc := by
   funext w

@@ -3,8 +3,9 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Option
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
-public import Linglib.Semantics.Exhaustification.PreExhaustified
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 public import Linglib.Data.Examples.Readers
 
@@ -16,7 +17,7 @@ entailing contexts, free choice under deontic modals and modal variation under e
 ones (§2), but, unlike *irgendein* or *vreun*, grammatical and non-modal when unembedded,
 where they convey uniqueness (§2.4). In [chierchia-2013]'s framework the DP introduces the
 scalar alternative *at least two* and the pre-exhaustified domain alternatives
-(`Excluder.preExhaustify`, by innocent exclusion as in (56f)). Under a modal, negating the
+(`preExhaustify`, by innocent exclusion as in (56f)). Under a modal, negating the
 domain alternatives gives free choice (`deontic_tolerant`, the general
 `freeChoice_iff_forall_antiExhaustivity`), but negating the scalar alternative too is too strong
 under ◇ and too weak under □ (`deontic_tolerant_box`); in a conditional antecedent
@@ -56,6 +57,36 @@ namespace AlonsoOvalleMoghiseh2025a
 open Exhaustification ModalLogic Finset
 open scoped SetRel
 
+/-! ### Pre-exhaustified alternatives -/
+
+/-- The pre-exhaustified alternatives (56f): each member of the family exhaustified against the
+family by innocent exclusion. -/
+def preExhaustify {W ι : Type*} (f : ι → Set W) (i : ι) : Set W := exhIE (Set.range f) (f i)
+
+section Decidable
+
+variable {W ι : Type*} [Fintype W] [Fintype ι] {s p : Set W} {f : ι → Set W}
+  [DecidablePred (· ∈ s)] [∀ i, DecidablePred (· ∈ f i)] [DecidablePred (· ∈ p)]
+
+instance (i : ι) : DecidablePred (· ∈ preExhaustify f i) :=
+  inferInstanceAs (DecidablePred (· ∈ exhIE (Set.range f) (f i)))
+
+instance : ∀ o : Option ι, DecidablePred (· ∈ o.elim s f)
+  | none => inferInstanceAs (DecidablePred (· ∈ s))
+  | some i => inferInstanceAs (DecidablePred (· ∈ f i))
+
+/-- Exhaustifying against an alternative together with an indexed family is exhaustifying against
+the family `Option.elim · s f` (`Option.range_elim`), so it is decidable. -/
+instance : DecidablePred (· ∈ exh (insert s (Set.range f)) p) := fun w ↦
+  decidable_of_iff (w ∈ exh (Set.range fun o : Option ι ↦ o.elim s f) p) <| by
+    rw [Option.range_elim]
+
+instance : DecidablePred (· ∈ exhIE (insert s (Set.range f)) p) := fun w ↦
+  decidable_of_iff (w ∈ exhIE (Set.range fun o : Option ι ↦ o.elim s f) p) <| by
+    rw [Option.range_elim]
+
+end Decidable
+
 /-! ### The two-book model (§3) -/
 
 /-- A world records which of the two books Forood bought. -/
@@ -66,26 +97,33 @@ def buys (v : Buy) (i : Fin 2) : Prop := i ∈ v
 
 instance (v : Buy) : DecidablePred (buys v) := fun i => inferInstanceAs (Decidable (i ∈ v))
 
-/-- The proposition denoted by a decidable predicate on worlds. -/
-abbrev prop {W : Type*} [Fintype W] (p : W → Prop) [DecidablePred p] : Finset W :=
-  univ.filter p
-
 /-- The assertion (56c) is that Forood bought a book. -/
-def assertion : Finset Buy := prop (claim buys univ)
+def assertion : Set Buy := {v | claim buys univ v}
 
 /-- The scalar alternative (54) is that Forood bought at least two books. -/
-def scalar : Finset Buy := prop (2 ≤ ·.card)
+def scalar : Set Buy := {v | 2 ≤ v.card}
 
 /-- Exactly one book is bought. -/
-def exactlyOne : Finset Buy := prop (·.card = 1)
+def exactlyOne : Set Buy := {v | v.card = 1}
 
-/-- The domain alternatives (55) restrict the claim to each proper subdomain. -/
-def domainAlts : Finset (Finset Buy) :=
-  (subdomainAlternatives .proper univ).image fun S => prop (claim buys S)
+/-- The proper subdomains of the two books. -/
+def subdomains : Finset (Finset (Fin 2)) := subdomainAlternatives .proper univ
 
--- (56f)
-theorem preExhaustify_domainAlts :
-    innocent.preExhaustify domainAlts = {prop (· = {0}), prop (· = {1})} := by decide
+/-- The domain alternative (55) restricts the claim to a proper subdomain. -/
+def domainAlt (S : subdomains) : Set Buy := {v | claim buys S v}
+
+instance : DecidablePred (· ∈ assertion) := fun v ↦ inferInstanceAs (Decidable (claim buys univ v))
+instance : DecidablePred (· ∈ scalar) := fun v ↦ inferInstanceAs (Decidable (2 ≤ v.card))
+instance : DecidablePred (· ∈ exactlyOne) := fun v ↦ inferInstanceAs (Decidable (v.card = 1))
+instance (S : subdomains) : DecidablePred (· ∈ domainAlt S) := fun v ↦
+  inferInstanceAs (Decidable (claim buys S v))
+
+/-- The pre-exhaustified domain alternative of a subdomain says that Forood bought exactly its
+books (56f). -/
+theorem preExhaustify_domainAlt (S : subdomains) : preExhaustify domainAlt S = {(S : Buy)} := by
+  ext v
+  revert v S
+  decide
 
 /-! ### Modal contexts (§3, §5) -/
 
@@ -117,18 +155,26 @@ def buysM (m : Modal) (i : Fin 2) : Prop := i ∈ m.2
 instance (m : Modal) : DecidablePred (buysM m) := fun i => inferInstanceAs (Decidable (i ∈ m.2))
 
 /-- A proposition about the buy-world, evaluated at a modal world. -/
-def at' (p : Finset Buy) : Finset Modal := prop (·.2 ∈ p)
+def at' (p : Set Buy) : Set Modal := {m | m.2 ∈ p}
 
 /-- ◇ as an operation on propositions. -/
-def dia (p : Finset Modal) : Finset Modal := prop (◇[acc] (· ∈ p))
+def dia (p : Set Modal) : Set Modal := {m | ◇[acc] (· ∈ p) m}
 
 /-- □ as an operation on propositions. -/
-def box' (p : Finset Modal) : Finset Modal := prop (□[acc] (· ∈ p))
+def box' (p : Set Modal) : Set Modal := {m | □[acc] (· ∈ p) m}
+
+instance (p : Set Buy) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ at' p) := fun m ↦
+  inferInstanceAs (Decidable (m.2 ∈ p))
+
+instance (p : Set Modal) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ dia p) := fun m ↦
+  inferInstanceAs (Decidable (◇[acc] (· ∈ p) m))
+
+instance (p : Set Modal) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ box' p) := fun m ↦
+  inferInstanceAs (Decidable (□[acc] (· ∈ p) m))
 
 /-- The alternatives of a modalized clause apply the modal pointwise (fn. 15). -/
-def lift (M : Finset Modal → Finset Modal) (ALT : Finset (Finset Buy)) :
-    Finset (Finset Modal) :=
-  ALT.image (M ∘ at')
+abbrev lift {ι : Type*} (M : Set Modal → Set Modal) (f : ι → Set Buy) : ι → Set Modal :=
+  fun i ↦ M (at' (f i))
 
 /-- Free choice holds at a modal world when each book is permitted. -/
 def fc (m : Modal) : Prop := FreeChoice acc m univ buysM
@@ -138,77 +184,109 @@ instance : DecidablePred fc := fun m => inferInstanceAs (Decidable (FreeChoice a
 /-- Exhaustifying ◇(b₁∨b₂) over all alternatives at once gives free choice together with the
 unattested ¬◇(b₁∧b₂) (61). -/
 theorem deontic_tolerant :
-    tolerant.exh ({dia (at' scalar)} ∪ innocent.preExhaustify (lift dia domainAlts))
-        (dia (at' assertion)) = prop fc \ dia (at' scalar) := by decide +kernel
+    exh (insert (dia (at' scalar)) (Set.range (preExhaustify (lift dia domainAlt))))
+        (dia (at' assertion)) = {m | fc m} \ dia (at' scalar) := by
+  ext m
+  revert m
+  decide +kernel
 
 /-- Under □ the same exhaustification is too weak — it holds where Forood may buy more than one book
 (67)–(68). -/
 theorem deontic_tolerant_box :
     world {{0}, {1}, {0, 1}} {0} ∈
-      tolerant.exh ({box' (at' scalar)} ∪ innocent.preExhaustify (lift box' domainAlts))
-        (box' (at' assertion)) := by decide +kernel
+      exh (insert (box' (at' scalar)) (Set.range (preExhaustify (lift box' domainAlt))))
+        (box' (at' assertion)) := by
+  decide +kernel
 
 /-- Modal insertion rescues an unembedded *irgendein* — the result is contingent and conveys
 ignorance about each book (85)–(87). -/
 theorem modal_insertion :
-    let φ := tolerant.exh ({box' (at' scalar)} ∪ innocent.preExhaustify (lift box' domainAlts))
+    let φ := exh (insert (box' (at' scalar)) (Set.range (preExhaustify (lift box' domainAlt))))
       (box' (at' assertion))
-    φ.Nonempty ∧ φ ⊆ dia (prop (buysM · 0)) ∩ dia (prop (buysM · 1)) ∩
-      dia (prop (¬ buysM · 0)) ∩ dia (prop (¬ buysM · 1)) := by decide +kernel
+    φ.Nonempty ∧ φ ⊆ dia {m | buysM m 0} ∩ dia {m | buysM m 1} ∩
+      dia {m | ¬ buysM m 0} ∩ dia {m | ¬ buysM m 1} := by
+  dsimp only
+  refine ⟨⟨world {{0}, {1}} {0}, by decide +kernel⟩, ?_⟩
+  rw [Set.subset_def]
+  decide +kernel
 
 /-! ### Unembedded *yek-i* DPs (§4) -/
 
 /-- Unembedded, the contradiction-tolerant operator yields ⊥ (92). -/
 theorem root_tolerant :
-    tolerant.exh ({scalar} ∪ innocent.preExhaustify domainAlts) assertion = ∅ := by decide
+    exh (insert scalar (Set.range (preExhaustify domainAlt))) assertion = ∅ := by
+  ext v
+  revert v
+  decide
 
 /-- Partial scalar exhaustification gives uniqueness (93a). -/
-theorem root_scalar : innocent.exh {scalar} assertion = exactlyOne := by decide
+theorem root_scalar : exhIE {scalar} assertion = exactlyOne := by
+  rw [exhIE_singleton ⟨{0}, by decide⟩]
+  ext v
+  revert v
+  decide
 
 /-- Partial domain exhaustification returns the scalar alternative itself, so the Exhaustification
 Economy Principle blocks it (93b)–(94). -/
-theorem root_domain : innocent.exh (innocent.preExhaustify domainAlts) assertion = scalar := by
+theorem root_domain : exhIE (Set.range (preExhaustify domainAlt)) assertion = scalar := by
+  ext v
+  revert v
   decide
 
 /-- No alternative is innocently excludable, so the root operator is vacuous and the derivation of
 uniqueness in (101)–(103) fails. -/
 theorem root_innocent :
-    innocent.exh ({scalar} ∪ innocent.preExhaustify domainAlts) assertion = assertion := by decide
+    exhIE (insert scalar (Set.range (preExhaustify domainAlt))) assertion = assertion := by
+  ext v
+  revert v
+  decide
 
 /-! ### Split exhaustification (§5) -/
 
 /-- Scalar exhaustification below ◇ and domain exhaustification above it give free choice with
 embedded uniqueness, compatible with ◇(b₁∧b₂) (119). -/
 theorem split_diamond :
-    innocent.exh (innocent.preExhaustify (lift dia domainAlts)) (dia (at' exactlyOne)) =
-      prop fc ∩ dia (at' exactlyOne) ∧
+    exhIE (Set.range (preExhaustify (lift dia domainAlt))) (dia (at' exactlyOne)) =
+      {m | fc m} ∩ dia (at' exactlyOne) ∧
     world {{0}, {1}, {0, 1}} {0} ∈
-      innocent.exh (innocent.preExhaustify (lift dia domainAlts)) (dia (at' exactlyOne)) := by
+      exhIE (Set.range (preExhaustify (lift dia domainAlt))) (dia (at' exactlyOne)) := by
+  refine ⟨?_, by decide +kernel⟩
+  ext m
+  revert m
   decide +kernel
 
 /-- Under □, every permitted world has exactly one book bought and each book is permitted (120).
 -/
 theorem split_box :
-    innocent.exh (innocent.preExhaustify (lift box' domainAlts)) (box' (at' exactlyOne)) =
-      prop fc ∩ box' (at' exactlyOne) := by decide +kernel
+    exhIE (Set.range (preExhaustify (lift box' domainAlt))) (box' (at' exactlyOne)) =
+      {m | fc m} ∩ box' (at' exactlyOne) := by
+  ext m
+  revert m
+  decide +kernel
 
 /-- A single contradiction-free operator below ◇ is vacuous (`root_innocent`), so the result is
 ◇(b₁∨b₂) — too weak for free choice (143). -/
 theorem single_below :
     world {{0}} {0} ∈
-      dia (at' (innocent.exh ({scalar} ∪ innocent.preExhaustify domainAlts) assertion)) ∧
-      ¬ fc (world {{0}} {0}) := by decide +kernel
+      dia (at' (exhIE (insert scalar (Set.range (preExhaustify domainAlt))) assertion)) ∧
+      ¬ fc (world {{0}} {0}) := by
+  decide +kernel
 
 /-- A single contradiction-free operator above ◇ negates the scalar alternative, forbidding ◇(b₁∧b₂)
 (146). -/
 theorem single_above :
-    innocent.exh ({dia (at' scalar)} ∪ innocent.preExhaustify (lift dia domainAlts))
-        (dia (at' assertion)) = prop fc \ dia (at' scalar) := by decide +kernel
+    exhIE (insert (dia (at' scalar)) (Set.range (preExhaustify (lift dia domainAlt))))
+        (dia (at' assertion)) = {m | fc m} \ dia (at' scalar) := by
+  ext m
+  revert m
+  decide +kernel
 
 /-- Two contradiction-free operators, below and above ◇, also forbid ◇(b₁∧b₂) (144)–(145). -/
 theorem two_innocent :
-    innocent.exh ({dia (at' scalar)} ∪ innocent.preExhaustify (lift dia domainAlts))
-        (dia (at' exactlyOne)) = (prop fc ∩ dia (at' exactlyOne)) \ dia (at' scalar) := by
+    exhIE (insert (dia (at' scalar)) (Set.range (preExhaustify (lift dia domainAlt))))
+        (dia (at' exactlyOne)) = ({m | fc m} ∩ dia (at' exactlyOne)) \ dia (at' scalar) := by
+  ext m
+  revert m
   decide +kernel
 
 /-! ### Downward entailing contexts (§3, §5) -/
@@ -217,27 +295,42 @@ theorem two_innocent :
 abbrev Cond := Buy × Bool
 
 /-- *If Forood reads a book, he gets a gift* (78b). -/
-def conditional : Finset Cond := prop fun c => claim buys univ c.1 → c.2 = true
+def conditional : Set Cond := {c | claim buys univ c.1 → c.2 = true}
 
 /-- The conditional with scalar exhaustification in its antecedent (130e). -/
-def conditionalUnique : Finset Cond := prop fun c => c.1.card = 1 → c.2 = true
+def conditionalUnique : Set Cond := {c | c.1.card = 1 → c.2 = true}
 
-/-- The domain alternatives of the conditional (78d). -/
-def condAlts : Finset (Finset Cond) :=
-  (subdomainAlternatives .proper (univ : Finset (Fin 2))).image fun S =>
-    prop fun c => claim buys S c.1 → c.2 = true
+/-- The domain alternative of the conditional for a proper subdomain (78d). -/
+def condAlt (S : subdomains) : Set Cond := {c | claim buys S c.1 → c.2 = true}
+
+instance : DecidablePred (· ∈ conditional) := fun c ↦
+  inferInstanceAs (Decidable (claim buys univ c.1 → c.2 = true))
+
+instance : DecidablePred (· ∈ conditionalUnique) := fun c ↦
+  inferInstanceAs (Decidable (c.1.card = 1 → c.2 = true))
+
+instance (S : subdomains) : DecidablePred (· ∈ condAlt S) := fun c ↦
+  inferInstanceAs (Decidable (claim buys S c.1 → c.2 = true))
 
 /-- The scalar alternative is entailed and the domain alternatives are vacuous, so the plain
 existential reading survives; likewise for (135) (78)–(80). -/
 theorem conditional_vacuous :
-    tolerant.exh {prop fun c : Cond => 2 ≤ c.1.card → c.2 = true} conditional = conditional ∧
-      innocent.exh (innocent.preExhaustify condAlts) conditional = conditional ∧
-      innocent.exh (innocent.preExhaustify condAlts) conditionalUnique = conditionalUnique := by
-  decide
+    exh {{c : Cond | 2 ≤ c.1.card → c.2 = true}} conditional = conditional ∧
+      exhIE (Set.range (preExhaustify condAlt)) conditional = conditional ∧
+      exhIE (Set.range (preExhaustify condAlt)) conditionalUnique = conditionalUnique := by
+  refine ⟨exh_eq_self ?_, ?_, ?_⟩
+  · simp only [Set.mem_singleton_iff, forall_eq, Set.subset_def]
+    decide
+  all_goals
+    ext c
+    revert c
+    decide
 
 /-- Scalar exhaustification inside the antecedent weakens the conditional, which Maximize Strength
 (132) forbids (131). -/
-theorem conditional_weakening : conditional ⊂ conditionalUnique := by decide
+theorem conditional_weakening : conditional ⊂ conditionalUnique := by
+  simp only [Set.ssubset_def, Set.subset_def]
+  decide
 
 /-! ### The paper's verdicts -/
 

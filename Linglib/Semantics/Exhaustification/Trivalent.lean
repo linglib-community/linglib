@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
@@ -8,16 +8,11 @@ public import Linglib.Logic.Trivalent.Pointwise
 
 This file defines Spector and Sudo's two trivalent exhaustification operators. Both assert the
 prejacent and deny its innocently excludable alternatives, computed by Fox's algorithm on the
-classical truth conditions; they differ in the negation applied to a denied alternative. `exh1` uses
-weak negation, under which an undefined alternative counts as denied, so the operator is undefined
-exactly where the prejacent is (`exh1_eq_zero_iff`). `exh2` uses strong negation, under which an
-undefined alternative leaves the whole undefined, so the operator inherits the presuppositions of
-the alternatives it denies (`exh2_eq_zero_iff`).
-
-## Implementation notes
-
-The innocently excludable alternatives are `Exhaustification.innocent.excluded` applied to the
-positive supports of the trivalent propositions (`posSupport`), the worlds where each is `1`.
+classical truth conditions, the worlds where each proposition is `1`; they differ in the negation
+applied to a denied alternative. `exh1` uses weak negation, under which an undefined alternative
+counts as denied, so the operator is undefined exactly where the prejacent is (`exh1_eq_zero_iff`).
+`exh2` uses strong negation, under which an undefined alternative leaves the whole undefined, so the
+operator inherits the presuppositions of the alternatives it denies (`exh2_eq_zero_iff`).
 
 ## References
 
@@ -31,58 +26,38 @@ namespace Exhaustification.Trivalent
 
 open Exhaustification
 
-variable {W : Type} [Fintype W] [DecidableEq W]
+variable {W ι : Type*} [Fintype W] [Fintype ι] (alts : ι → W → SignType) (p : W → SignType)
 
-/-- The innocently excludable alternatives of a trivalent prejacent, computed classically. -/
-def excluded (alts : List (W → SignType)) (p : W → SignType) :
-    Finset (Finset W) :=
-  innocent.excluded (alts.map fun q ↦ (posSupport q).toFinset).toFinset (posSupport p).toFinset
+/-- An alternative is excluded when its classical truth conditions are innocently excludable given
+the prejacent's. -/
+def Excluded (i : ι) : Prop :=
+  IsInnocentlyExcludable (Set.range fun j ↦ posSupport (alts j)) (posSupport p)
+    (posSupport (alts i))
 
-/-- Weak-negation exhaustification is `1` where the prejacent is `1` and no excludable
-alternative is, `-1` where the prejacent is `-1` or some excludable alternative is `1`, and `0`
-where the prejacent is `0`. -/
-def exh1 (alts : List (W → SignType)) (p : W → SignType) :
-    W → SignType :=
-  fun w ↦ match p w with
-    | .zero => 0
-    | .neg => -1
-    | .pos =>
-      if alts.all fun q ↦
-        if (posSupport q).toFinset ∈ excluded alts p then q w != 1 else true
-      then 1
-      else -1
+instance (i : ι) : Decidable (Excluded alts p i) :=
+  inferInstanceAs (Decidable (IsInnocentlyExcludable (Set.range fun j ↦ posSupport (alts j))
+    (posSupport p) ((fun j ↦ posSupport (alts j)) i)))
 
-/-- Strong-negation exhaustification is `0` where the prejacent or some excludable alternative
-is `0`, `1` where the prejacent is `1` and every excludable alternative is `-1`, and `-1`
-otherwise. -/
-def exh2 (alts : List (W → SignType)) (p : W → SignType) :
-    W → SignType :=
-  fun w ↦
-    if alts.any fun q ↦ (posSupport q).toFinset ∈ excluded alts p ∧ q w == 0
-    then 0
-    else match p w with
-      | .zero => 0
-      | .neg => -1
-      | .pos =>
-        if alts.all fun q ↦
-          if (posSupport q).toFinset ∈ excluded alts p then q w == -1 else true
-        then 1
-        else -1
+/-- Weak-negation exhaustification is `0` where the prejacent is, and elsewhere classical innocent
+exclusion on the worlds where each proposition is `1`. -/
+def exh1 (w : W) : SignType :=
+  if p w = 0 then 0
+  else if w ∈ exhIE (Set.range fun j ↦ posSupport (alts j)) (posSupport p) then 1 else -1
 
-variable (alts : List (W → SignType)) (p : W → SignType) (w : W)
+/-- Strong-negation exhaustification is `0` where the prejacent or some excluded alternative is,
+`1` where the prejacent is `1` and every excluded alternative is `-1`, and `-1` otherwise. -/
+def exh2 (w : W) : SignType :=
+  if p w = 0 ∨ ∃ i, Excluded alts p i ∧ alts i w = 0 then 0
+  else if p w = 1 ∧ ∀ i, Excluded alts p i → alts i w = -1 then 1 else -1
+
+variable (w : W)
 
 theorem exh1_eq_zero_iff : exh1 alts p w = 0 ↔ p w = 0 := by
-  unfold exh1; split <;> (try split) <;> simp_all
+  unfold exh1; split_ifs <;> simp_all
 
 theorem exh2_eq_zero_iff :
-    exh2 alts p w = 0 ↔
-      p w = 0 ∨
-        ∃ q ∈ alts, (posSupport q).toFinset ∈ excluded alts p ∧ q w = 0 := by
-  unfold exh2
-  simp only [List.any_eq_true, decide_eq_true_eq, beq_iff_eq]
-  split
-  · exact iff_of_true rfl (Or.inr ‹_›)
-  · split <;> (try split) <;> simp_all
+    exh2 alts p w = 0 ↔ p w = 0 ∨ ∃ i, Excluded alts p i ∧ alts i w = 0 := by
+  unfold exh2; split_ifs <;> simp_all
 
 theorem exh1_preserves_presup (h : p w = 0) : exh1 alts p w = 0 :=
   (exh1_eq_zero_iff alts p w).2 h

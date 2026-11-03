@@ -217,10 +217,10 @@ theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell
   · intro hv q hq
     by_cases hIE : IsInnocentlyExcludable H p q
     · exact ⟨fun hwq ↦ (hw.2.1 q hIE hwq).elim, fun hvq ↦ (hv.2.1 q hIE hvq).elim⟩
-    · exact ⟨fun _ ↦ hv.2.2 q ⟨hq, hIE⟩, fun _ ↦ hw.2.2 q ⟨hq, hIE⟩⟩
+    · exact ⟨fun _ ↦ hv.2.2 q hq hIE, fun _ ↦ hw.2.2 q hq hIE⟩
   · intro hv
     exact ⟨(hv p hp).1 hw.1, fun q hIE hvq ↦ hw.2.1 q hIE ((hv q hIE.1).2 hvq),
-      fun r hr ↦ (hv r hr.1).1 (hw.2.2 r hr)⟩
+      fun r hr hnr ↦ (hv r hr).1 (hw.2.2 r hr hnr)⟩
 
 theorem isCellValued_cell : IsCellValued (cell H) H := fun _ hp _ hw ↦ cell_eq_strongAnswer hp hw
 

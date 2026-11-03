@@ -6,7 +6,7 @@ public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Resolution
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 
 /-!
 # Answerhood operators on Hamblin sets
