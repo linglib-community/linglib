@@ -12,7 +12,7 @@ public import Linglib.Fragments.Kawapanan.Shawi.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Studies.Baker2015
 public import Studies.BejarRezac2009
-public import Studies.Deal2024
+public import Studies.Deal2025a
 
 /-!
 # Clem and Deal (2026): Dependent case by Agree
@@ -48,6 +48,7 @@ forward hierarchy](##directionality).
 
 * [clem-deal-2026]
 * [deal-2024]
+* [deal-2025a]
 * [deal-2010]
 * [clem-2019]
 * [bejar-rezac-2009]
@@ -108,8 +109,8 @@ variable (g : Grammar) (l : Locus) (nom : Arg → Nominal)
 def agreed (goals : List Arg) : List Arg :=
   (run g (fun a ↦ (nom a).1) goals).interacted
 
-/-- Agree is bidirectional ((31)): a head holding `fs` flags its next goal with all of `fs` and
-takes on the goal's φ-features. -/
+/-- Agree is bidirectional ((31)): a head holding `fs` flags its next goal with all of `fs`, beyond
+the mark of agreement that is [deal-2025a]'s goal flag, and takes on the goal's φ-features. -/
 def flagsFrom : Finset Feature → List Arg → List (Arg × Finset Feature)
   | _, [] => []
   | fs, a :: as => (a, fs) :: flagsFrom (fs ∪ phi (nom a)) as
@@ -577,11 +578,11 @@ theorem table7 (p : Grammar × PCCType)
   exact ⟨(dependentCase_v_iff p.1 s o).trans (key p hp _ _ h),
     (dependentCase_T_iff p.1 s o).trans (key p hp _ _ h.symm)⟩
 
-private theorem not_forall_licit_iff_swap {g : Grammar} {t : PCCType}
-    (ht : ¬ t.Licit ⟨.third, .first⟩) :
-    ¬ ∀ p q : Person, p.prominence ≠ q.prominence → (Licit g ⟨p, q⟩ ↔ t.Licit ⟨q, p⟩) := fun h ↦
-  ht ((h .first .third (by decide)).1 ((((h .third .first (by decide)).2
-    (participant_third_licit t .first (by decide)))).third .first))
+private theorem not_forall_iff_swap {L : Scenario Person → Prop}
+    (hL : ∀ s, L s → ∀ p, L ⟨p, .third⟩) {t : PCCType} (ht : ¬ t.Licit ⟨.third, .first⟩) :
+    ¬ ∀ p q : Person, p.prominence ≠ q.prominence → (L ⟨p, q⟩ ↔ t.Licit ⟨q, p⟩) := fun h ↦
+  ht ((h .first .third (by decide)).1 (hL _ ((h .third .first (by decide)).2
+    (participant_third_licit t .first (by decide))) .first))
 
 /-- The Directionality Correlation (54). Whatever a hierarchy effect `t` that bans a first-person
 direct object under a third-person indirect object, no probe on v yields its reverse and no probe on
@@ -593,10 +594,15 @@ theorem directionality (g : Grammar) {t : PCCType} (ht : ¬ t.Licit ⟨.third, .
       (DependentCase g .v (nominals (s, n) (o, n)) (goals .v .high) ↔ t.Licit ⟨o, s⟩)) ∧
     ¬ ∀ s o : Person, s.prominence ≠ o.prominence →
       (DependentCase g .T (nominals (s, n) (o, n)) (goals .T .high) ↔ t.Licit ⟨s, o⟩) :=
-  ⟨fun h ↦ not_forall_licit_iff_swap ht fun p q hpq ↦
-      (dependentCase_v_iff g (p, n) (q, n)).symm.trans (h p q hpq),
-    fun h ↦ not_forall_licit_iff_swap ht fun p q hpq ↦
-      (dependentCase_T_iff g (q, n) (p, n)).symm.trans (h q p hpq.symm)⟩
+  ⟨fun h ↦ not_forall_iff_swap (L := Deal2024.Licit g) (fun _ hs p ↦ Deal2024.Licit.third hs p) ht
+      fun p q hpq ↦ (dependentCase_v_iff g (p, n) (q, n)).symm.trans (h p q hpq),
+    fun h ↦ not_forall_iff_swap (L := Deal2024.Licit g) (fun _ hs p ↦ Deal2024.Licit.third hs p) ht
+      fun p q hpq ↦ (dependentCase_T_iff g (q, n) (p, n)).symm.trans (h q p hpq.symm)⟩
+
+-- (54), under (30) of [deal-2025a]
+theorem not_forall_agree_iff_swap (g : Grammar) {t : PCCType} (ht : ¬ t.Licit ⟨.third, .first⟩) :
+    ¬ ∀ p q : Person, p.prominence ≠ q.prominence → (Deal2025a.Licit g ⟨p, q⟩ ↔ t.Licit ⟨q, p⟩) :=
+  not_forall_iff_swap (L := Deal2025a.Licit g) (fun _ hs p ↦ Deal2025a.Licit.third hs p) ht
 
 /-! ### Cyclic Agree (§3.1) -/
 
