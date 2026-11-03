@@ -3,6 +3,7 @@
     "id": "alonsoovallemoghiseh2025b_1",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(1)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "What book did you buy?",
     "glossedTokens": [],
@@ -15,8 +16,7 @@
       {"name": "plural answer: This one and that one", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["language", "English"]
+      ["type", "SCI"]
     ],
     "comment": "Also with which; repeated as (6).",
     "verified": "page-image"
@@ -25,6 +25,7 @@
     "id": "alonsoovallemoghiseh2025b_2",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(2)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "What did you buy?",
     "glossedTokens": [],
@@ -37,8 +38,7 @@
       {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "BI"],
-      ["language", "English"]
+      ["type", "BI"]
     ],
     "comment": "Repeated as (5).",
     "verified": "page-image"
@@ -47,6 +47,7 @@
     "id": "alonsoovallemoghiseh2025b_7",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(7)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "What books did you buy?",
     "glossedTokens": [],
@@ -59,8 +60,7 @@
       {"name": "plural answer: This one and that one", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PCI"],
-      ["language", "English"]
+      ["type", "PCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -83,8 +83,7 @@
       {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "no"]
+      ["type", "SBI"]
     ],
     "comment": "Repeated as (3) and (38).",
     "verified": "page-image"
@@ -107,8 +106,7 @@
       {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PBI"],
-      ["ro", "no"]
+      ["type", "PBI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -117,6 +115,7 @@
     "id": "alonsoovallemoghiseh2025b_16",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(16)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1288",
     "primaryText": "¿A quién viste?",
     "glossedTokens": [
@@ -131,8 +130,7 @@
       {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["language", "Spanish"]
+      ["type", "SBI"]
     ],
     "comment": "The paper prints the translation as 'Who did you saw?'.",
     "verified": "page-image"
@@ -141,6 +139,7 @@
     "id": "alonsoovallemoghiseh2025b_17",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(17)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1288",
     "primaryText": "¿A quiénes viste?",
     "glossedTokens": [
@@ -155,8 +154,7 @@
       {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PBI"],
-      ["language", "Spanish"]
+      ["type", "PBI"]
     ],
     "comment": "The paper prints the translation as 'Who did you saw?'.",
     "verified": "page-image"
@@ -165,6 +163,7 @@
     "id": "alonsoovallemoghiseh2025b_22",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(22)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1288",
     "primaryText": "¿A qué estudiante viste?",
     "glossedTokens": [
@@ -179,8 +178,7 @@
       {"name": "plural answer: A Juan y a Pedro", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["language", "Spanish"]
+      ["type", "SCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -204,8 +202,7 @@
       {"name": "plural answer: This book and that book", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "no"]
+      ["type", "SCI"]
     ],
     "comment": "Repeated as (4) and (43). Farsi patterns with Brazilian Portuguese que NP.",
     "verified": "page-image"
@@ -214,6 +211,7 @@
     "id": "alonsoovallemoghiseh2025b_24",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(24)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1288",
     "primaryText": "¿A qué estudiantes viste?",
     "glossedTokens": [
@@ -228,8 +226,7 @@
       {"name": "plural answer: A Juan y a Pedro", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PCI"],
-      ["language", "Spanish"]
+      ["type", "PCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -253,8 +250,7 @@
       {"name": "plural answer: This book and that book", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PCI"],
-      ["ro", "no"]
+      ["type", "PCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -278,8 +274,7 @@
       {"name": "plural answer: This thing and that thing", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "yes"]
+      ["type", "SBI"]
     ],
     "comment": "Repeated as (49).",
     "verified": "page-image"
@@ -303,8 +298,7 @@
       {"name": "plural answer: This book and that book", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "yes"]
+      ["type", "SCI"]
     ],
     "comment": "Repeated as (50).",
     "verified": "page-image"
@@ -328,8 +322,7 @@
       {"name": "plural answer: This book and that book", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "PCI"],
-      ["ro", "yes"]
+      ["type", "PCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -351,9 +344,7 @@
       {"name": "free choice answer: This thing or that thing — either one", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "no"],
-      ["modal", "must"]
+      ["type", "SBI"]
     ],
     "comment": "Answerable with a free choice disjunction.",
     "verified": "page-image"
@@ -376,17 +367,16 @@
       {"name": "free choice answer: This book or that book — either book", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "no"],
-      ["modal", "must"]
+      ["type", "SCI"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "alonsoovallemoghiseh2025b_47",
-    "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(47)"},
-    "reportedIn": null,
+    "source": {"bibkey": "karimi-2003", "paperLabel": "p. 92"},
+    "reportedIn": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(47)"},
+    "method": "description",
     "language": "west2369",
     "primaryText": "Kimea aghlab ye sher az Hafez ro bara ma mixun-e.",
     "glossedTokens": [
@@ -399,10 +389,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["ro", "yes"],
       ["inference", "specificity"]
     ],
-    "comment": "Karimi 2003: 92 — -ro on an existential DP yields a specific reading.",
+    "comment": "-ro on an existential DP yields a specific reading.",
     "verified": "page-image"
   },
   {
@@ -423,8 +412,7 @@
       {"name": "collective answer: This and that", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["predicate", "collective"]
+      ["type", "SBI"]
     ],
     "comment": "BIs range over pluralities, with or without -ro.",
     "verified": "page-image"
@@ -445,8 +433,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["predicate", "collective"]
+      ["type", "SCI"]
     ],
     "comment": "Singular what CIs range over atoms only, so a collective predicate has no true answer.",
     "verified": "page-image"
@@ -468,10 +455,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "no"],
-      ["modal", "must"],
-      ["scenario", "freeChoice59"]
+      ["type", "SBI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -493,10 +477,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "no"],
-      ["modal", "must"],
-      ["scenario", "freeChoice59"]
+      ["type", "SCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -518,10 +499,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "yes"],
-      ["modal", "must"],
-      ["scenario", "freeChoice59"]
+      ["type", "SBI"]
     ],
     "comment": "Printed unmarked; the prose says it is not a felicitous description of the scenario (59) (verdict false): -ro neutralizes the disjunctions, so no free choice interpretation.",
     "verified": "page-image"
@@ -543,10 +521,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "yes"],
-      ["modal", "must"],
-      ["scenario", "freeChoice59"]
+      ["type", "SCI"]
     ],
     "comment": "Printed unmarked; the prose says it is not a felicitous description of the scenario (59) (verdict false).",
     "verified": "page-image"
@@ -555,7 +530,6 @@
     "id": "alonsoovallemoghiseh2025b_64",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(64)"},
     "reportedIn": null,
-    "method": "elicitation",
     "language": "west2369",
     "primaryText": "Forood bayad chi ro bexar-e?",
     "glossedTokens": [
@@ -570,9 +544,7 @@
       {"name": "free choice answer: This thing or that thing", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SBI"],
-      ["ro", "yes"],
-      ["modal", "must"]
+      ["type", "SBI"]
     ],
     "comment": "Some informants accept the free choice answer unembedded; taken to reject the presupposition that Forood is required to buy a particular thing.",
     "verified": "page-image"
@@ -595,9 +567,7 @@
       {"name": "free choice answer: This book or that book", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["type", "SCI"],
-      ["ro", "yes"],
-      ["modal", "must"]
+      ["type", "SCI"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -670,7 +640,6 @@
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
-      ["ro", "yes"],
       ["property", "D-linked"]
     ],
     "comment": "Printed unmarked; the prose calls it deviant in the scenario (68), where the set of books is neither salient nor discourse-given (verdict false).",
@@ -692,8 +661,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "which CI"],
-      ["ro", "no"]
+      ["type", "which CI"]
     ],
     "comment": "Object which CIs are obligatorily -ro marked.",
     "verified": "page-image"
@@ -717,8 +685,7 @@
       {"name": "plural answer: This book and that book", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["type", "which CI"],
-      ["ro", "yes"]
+      ["type", "which CI"]
     ],
     "comment": "Repeated as (71); uniqueness presupposition.",
     "verified": "page-image"
@@ -741,8 +708,6 @@
     "readings": [],
     "paperFeatures": [
       ["type", "which CI"],
-      ["ro", "yes"],
-      ["modal", "must"],
       ["inference", "free choice"]
     ],
     "comment": "Unlike (74) in English and unlike -ro marked what CIs, allows the free choice interpretation.",
@@ -752,6 +717,7 @@
     "id": "alonsoovallemoghiseh2025b_74",
     "source": {"bibkey": "alonso-ovalle-moghiseh-2025b", "paperLabel": "(74)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Roya found out which book Forood must buy.",
     "glossedTokens": [],
@@ -762,9 +728,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "which CI"],
-      ["language", "English"],
-      ["modal", "must"]
+      ["type", "which CI"]
     ],
     "comment": "Printed unmarked; the prose says that, unlike (73), it cannot felicitously describe the scenario (72) (verdict false).",
     "verified": "page-image"
@@ -786,9 +750,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "which CI"],
-      ["ro", "yes"],
-      ["modal", "must"]
+      ["type", "which CI"]
     ],
     "comment": "Printed unmarked; the prose says it cannot felicitously describe the scenario (72): with -æ the free choice interpretation is blocked (verdict false).",
     "verified": "page-image"
