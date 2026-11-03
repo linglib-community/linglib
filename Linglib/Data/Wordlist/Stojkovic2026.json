@@ -657,22 +657,6 @@
       "Source": ["stojkovic-2026[Table 1]"]
     },
     {
-      "ID": "stojkovic2026_slovak_plain_lform",
-      "Lexeme_ID": "battle_slovak",
-      "Cell": "l_form_f_sg",
-      "Form": "bojovala",
-      "Morphs": ["boj", "ov", "a", "l", "a"],
-      "Source": ["stojkovic-2026[Table 1]"]
-    },
-    {
-      "ID": "stojkovic2026_slovak_plain_prs",
-      "Lexeme_ID": "battle_slovak",
-      "Cell": "prs_2sg",
-      "Form": "bojujeʃ",
-      "Morphs": ["boj", "u", "je", "ʃ"],
-      "Source": ["stojkovic-2026[Table 1]"]
-    },
-    {
       "ID": "stojkovic2026_slovenian_plain_lform",
       "Lexeme_ID": "travel_slovenian",
       "Cell": "l_form_f_sg",
@@ -855,7 +839,7 @@
       "Cell": "l_form_f_sg",
       "Form": "bojovala",
       "Morphs": ["boj", "ov", "a", "l", "a"],
-      "Source": ["stojkovic-2026[Table 2]"]
+      "Source": ["stojkovic-2026[Table 1]", "stojkovic-2026[Table 2]"]
     },
     {
       "ID": "stojkovic2026_slovak_palatal_prs",
@@ -863,7 +847,7 @@
       "Cell": "prs_2sg",
       "Form": "bojujeʃ",
       "Morphs": ["boj", "u", "je", "ʃ"],
-      "Source": ["stojkovic-2026[Table 2]"]
+      "Source": ["stojkovic-2026[Table 1]", "stojkovic-2026[Table 2]"]
     },
     {
       "ID": "stojkovic2026_silesian_palatal_lform",
@@ -1037,14 +1021,15 @@
     {
       "Name": "Verbalizer",
       "Lean": "verbalizer",
-      "Type": "String"
+      "Type": "String",
+      "Description": "the verbalizer the paper takes a form to write, where the form writes another"
     }
   ],
   "AnalysisTable": [
     {
       "Form_ID": "stojkovic2026_belarusian_plain_lform",
       "Root": "plain",
-      "Verbalizer": "orthographic"
+      "Verbalizer": "ov"
     },
     {
       "Form_ID": "stojkovic2026_belarusian_plain_prs",
@@ -1148,8 +1133,7 @@
     },
     {
       "Form_ID": "stojkovic2026_russian_plain_lform",
-      "Root": "plain",
-      "Verbalizer": "orthographic"
+      "Root": "plain"
     },
     {
       "Form_ID": "stojkovic2026_russian_plain_prs",
@@ -1161,14 +1145,6 @@
     },
     {
       "Form_ID": "stojkovic2026_silesian_plain_prs",
-      "Root": "plain"
-    },
-    {
-      "Form_ID": "stojkovic2026_slovak_plain_lform",
-      "Root": "plain"
-    },
-    {
-      "Form_ID": "stojkovic2026_slovak_plain_prs",
       "Root": "plain"
     },
     {
@@ -1198,7 +1174,7 @@
     {
       "Form_ID": "stojkovic2026_belarusian_palatal_lform",
       "Root": "palatal",
-      "Verbalizer": "orthographic"
+      "Verbalizer": "ov"
     },
     {
       "Form_ID": "stojkovic2026_belarusian_palatal_prs",
@@ -1302,8 +1278,7 @@
     },
     {
       "Form_ID": "stojkovic2026_russian_palatal_lform",
-      "Root": "palatal",
-      "Verbalizer": "orthographic"
+      "Root": "palatal"
     },
     {
       "Form_ID": "stojkovic2026_russian_palatal_prs",

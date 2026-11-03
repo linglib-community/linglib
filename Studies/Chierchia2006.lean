@@ -11,54 +11,49 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Chierchia (2006): Broaden your views
 
-Chierchia treats every polarity-sensitive item as an existential that activates domain
-alternatives, Kadmon and Landman's domain widening. An enrichment operation factors the
-alternatives into meaning, and an implicature-freezing operator σ locks the result in place.
-The items differ in two respects, (94): the size of their alternatives, large subdomains (MAX)
-enriched by the even-like `evenEnrich` or every subdomain that stands a chance (MIN) enriched by
-the antiexhaustive `oMinus`, and whether σ presupposes proper strengthening. Pure
-negative-polarity items (*mai*, *ever*) are MAX; *any* is MIN with the plain σ; Italian
-*qualsiasi* is MIN with the presuppositional σ; the existential free-choice items (*irgendein*,
-*uno N qualsiasi*) add the uniqueness implicature of their indefinite morphology, after Kratzer
-and Shimoyama.
-
-## Main definitions
-
-* `evenEnrich`, `oMinus`: the even-like enrichment `E`, (108b), and the antiexhaustive enrichment
-  `O⁻` of a domain-dependent proposition, (108c).
-* `exactlyOne`, `atLeastTwo`: the exhaustified indefinite, (81b), and its scalar alternative.
-* `Profile`, `Freezer`: the parameters of (94), with the plain and the strong σ of (72).
-* `Profile.Felicitous`: a logical form is felicitous when σ admits its output and the sentence is
-  consistent.
-* `Available`, `Excluded`: some admissible model makes a reading felicitous, or none does.
+Chierchia treats every polarity-sensitive item as an existential over domain alternatives,
+Kadmon and Landman's domain widening, enriched by an operation that factors the alternatives into
+meaning and frozen by an operator σ. Large alternatives trigger the even-like `evenEnrich`, which
+[contradicts a positive existential](##evenEnrich_disj_eq_empty) and so confines the pure
+negative-polarity items to negative contexts. Alternatives of every size trigger the antiexhaustive
+`Exhaustification.antiExh`. Those items differ in whether σ presupposes proper strengthening and in
+a uniqueness implicature from indefinite morphology, after Kratzer and Shimoyama, which [clashes
+with free choice](##antiExh_exactlyOne_eq_empty) in an episodic sentence but under a necessity
+modal [makes every member an option](##antiExh_core_exactlyOne_inter_dom). Over the paper's
+environments the lexicon [predicts every judged reading](##judgedReadings_predicted) and [every
+sentence judged as a whole](##judgedSentences_predicted).
 
 ## Implementation notes
 
-Propositions are sets of worlds, and "stronger relative to the common ground" in (50a) is
-entailment. A domain is a finite set of possible witnesses, the widened domain of (57b), so
-(61b)'s alternatives are those over its nonempty subdomains; large alternatives are taken to be
-the proper ones. As in (95), a formula is a function from domains to propositions. `oMinus`
-follows (108c) rather than (62): relating only alternatives over disjoint subdomains keeps the
-whole domain from being an antecedent, which the appendix requires to avoid (118). A scalar
-item's uniqueness implicature is added where it strengthens, by the selection of the strongest
-enriched meaning in (110), which yields the `some_D` of (91) under negation.
+* Propositions are sets of worlds, and "stronger relative to the common ground" is entailment. A
+  domain is a finite set of possible witnesses, the alternatives are the existentials over its
+  nonempty subdomains, and the large ones are taken to be the proper ones. A formula is a function
+  from domains to propositions.
+* A scalar item's uniqueness implicature is added where it strengthens, by the paper's selection of
+  the strongest enriched meaning, which yields its `some_D` reading under negation.
+* σ and the recursion of the appendix are not represented: a reading is a logical form placing σ
+  among the environment's operators. The future and the imperative are treated as necessity modals
+  and the generic as a positive context without an actuality condition, since the paper computes
+  none of them in detail. Subtrigging enters as a domain anchored to the actual individuals.
+* A reading the paper marks `??` or worse is predicted excluded and one marked at most `?`
+  available, so its milder dispreferences are not derived. Rows rescued by a covert modal or
+  explained by intervention carry a `device` feature and are set aside.
 
-σ and the recursion of appendix A3 are not represented; a reading is a logical form placing σ
-among the environment's operators, as in (64)–(65), (91) and (93). The future and the imperative
-are treated as necessity modals and the generic as a positive context without an actuality
-condition, since the paper computes none of them beyond (55), (71) and §2. Subtrigging enters
-as a domain anchored to the actual individuals, (68c). A reading marked `??` or worse is
-predicted excluded and one marked at most `?` available, so the dispreferences of (10e), (10g)
-and (93b) are not derived. Rows rescued by a covert modal, (4), (8a) and (89), or by
-intervention, (86)–(87), carry a `device` feature and are set aside.
+## Errata
+
+* The paper glosses σ over a necessity modal as some member being necessarily a witness and each
+  possibly one. Its enrichment [entails the
+  gloss](##Exhaustification.antiExh_core_biUnion_inter_dom_subset) but not conversely: where one
+  doughnut is tasted in every accessible world and the other in only some, the gloss holds and
+  [the enrichment fails](##notMem_antiExh_core_tasted).
 
 ## TODO
 
-* The intervention effect (86)–(87), a DP between σ and the item, is a syntactic stipulation in
-  the paper and is not formalized.
-* The paper excludes the scoped-out logical form (74b) without subtrigging only "by whatever
-  rules out *I read any book*"; an actualist scope that presupposes rather than entails
-  actuality would derive it.
+* The intervention effect, a DP between σ and the item, is a syntactic stipulation in the paper
+  and is not formalized.
+* The paper excludes the scoped-out logical form without subtrigging only "by whatever rules out
+  *I read any book*"; an actualistic scope that presupposes rather than entails actuality would
+  derive it.
 
 ## References
 
@@ -129,8 +124,6 @@ def evenEnrich (C : Set (Set W)) (p : Set W) : Set W := {w | w ∈ p ∧ ∀ q �
 
 theorem evenEnrich_subset (C : Set (Set W)) (p : Set W) : evenEnrich C p ⊆ p := fun _ h ↦ h.1
 
-/-- The even-like implicature is a condition on the alternatives, not on the world: enrichment
-is vacuous or a contradiction. -/
 theorem evenEnrich_eq_or_eq_empty (C : Set (Set W)) (p : Set W) :
     evenEnrich C p = p ∨ evenEnrich C p = ∅ := by
   by_cases h : ∀ q ∈ C, p ⊆ q
@@ -150,8 +143,7 @@ theorem evenEnrich_disj_eq_empty {D S : Finset E} {P : E → Set W} {C : Set (Se
     let ⟨x, hx, hPx⟩ := Set.mem_iUnion₂.1 (h (Set.mem_biUnion ha hPa))
     hSw x hx hPx
 
-/-- Under an antitone embedding, even-like enrichment of the embedded prejacent is vacuous, (49) and
-(53). -/
+-- (49), (53)
 theorem evenEnrich_image_antitone_eq {C : Set W → Set W} (hC : Antitone C) {A : Set (Set W)}
     {p : Set W} (hA : ∀ q ∈ A, q ⊆ p) : evenEnrich (C '' A) (C p) = C p :=
   Set.Subset.antisymm (evenEnrich_subset _ _)
@@ -178,8 +170,7 @@ def exactlyOne (S : Finset E) : Set W := {w | ∃! x, x ∈ S ∧ w ∈ P x}
 in (79c). -/
 def atLeastTwo (S : Finset E) : Set W := {w | ∃ x ∈ S, ∃ y ∈ S, x ≠ y ∧ w ∈ P x ∧ w ∈ P y}
 
-/-- Exhaustifying the existential against its scalar alternative yields the exhaustified
-indefinite, (81a)–(81b), provided some world has a witness but not two. -/
+-- (81a), (81b)
 theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ (⋃ x ∈ S, P x) ⊆ atLeastTwo P S) :
     exh {atLeastTwo P S} (⋃ x ∈ S, P x) = exactlyOne P S := by
   ext w
@@ -194,14 +185,14 @@ theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ (⋃ x ∈ S, P x) ⊆ atLeastTwo P
 
 /-- With two possible witnesses, the uniqueness and free-choice implicatures clash, so an episodic
 existential free-choice item is contradictory (82). -/
-theorem oMinus_exactlyOne_eq_empty (hD : 1 < D.card) : oMinus (exactlyOne P) D = ∅ := by
-  classical
-  refine Set.eq_empty_of_forall_notMem fun w ⟨⟨x, ⟨_, hPx⟩, hu⟩, h⟩ ↦ ?_
+theorem antiExh_exactlyOne_eq_empty (hD : 1 < D.card) : antiExh (exactlyOne P) D = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun w h ↦ ?_
+  obtain ⟨x, ⟨hx, hPx⟩, hu⟩ := h.1
   obtain ⟨b, hb, hbx⟩ := Finset.exists_mem_ne hD x
-  obtain ⟨y, ⟨hy, hPy⟩, -⟩ := h {x} (by simpa) {b} (by simpa) (by simp) (by simp)
-    (Finset.disjoint_singleton.2 hbx.symm) ⟨x, ⟨by simp, hPx⟩, fun z hz ↦ by simpa using hz.1⟩
-  rw [Finset.mem_singleton] at hy
-  exact hbx (hy ▸ hu y ⟨hy ▸ hb, hPy⟩)
+  obtain ⟨y, ⟨hy, hPy⟩, -⟩ := (mem_iff_mem_of_mem_antiExh h hx hb).1
+    ⟨x, ⟨Finset.mem_singleton_self x, hPx⟩, fun _ hz ↦ Finset.mem_singleton.1 hz.1⟩
+  obtain rfl := Finset.mem_singleton.1 hy
+  exact hbx (hu y ⟨hb, hPy⟩)
 
 section Necessity
 
@@ -209,7 +200,7 @@ variable {R : SetRel W W} {w : W}
 
 -- (117c)
 theorem notMem_core_exactlyOne (hw : w ∈ R.dom)
-    (h : w ∈ oMinus (fun S ↦ R.core (exactlyOne P S)) D) (hS : S ⊂ D) (hS' : S.Nonempty) :
+    (h : w ∈ antiExh (fun S ↦ R.core (exactlyOne P S)) D) (hS : S ⊂ D) (hS' : S.Nonempty) :
     w ∉ R.core (exactlyOne P S) := by
   classical
   intro hcore
@@ -222,25 +213,32 @@ theorem notMem_core_exactlyOne (hw : w ∈ R.dom)
   obtain ⟨hyD, hyS⟩ := Finset.mem_sdiff.1 hy
   exact hyS ((hz x ⟨hS.subset hx, hPx⟩).trans (hz y ⟨hyD, hPy⟩).symm ▸ hx)
 
-/-- Under a necessity modal, every member of a domain of two or more is a witness in some accessible
-world (117d), (93d). -/
-theorem oMinus_core_exactlyOne_subset (hD : 1 < D.card) :
-    oMinus (fun S ↦ R.core (exactlyOne P S)) D ∩ R.dom ⊆ ⋂ a ∈ D, R.preimage (P a) := by
+/-- Under a necessity modal, an existential free-choice item over a domain of two or more says that
+in every accessible world exactly one member is a witness and that every member is a witness in
+some accessible world, (116b) and (117d). -/
+theorem antiExh_core_exactlyOne_inter_dom (hD : 1 < D.card) :
+    antiExh (fun S ↦ R.core (exactlyOne P S)) D ∩ R.dom =
+      R.core (exactlyOne P D) ∩ (⋂ a ∈ D, R.preimage (P a)) ∩ R.dom := by
   classical
-  refine fun w ⟨h, hw⟩ ↦ Set.mem_iInter₂.2 fun a ha ↦ ?_
-  have hne : (D.erase a).Nonempty :=
-    Finset.card_pos.1 (by rw [Finset.card_erase_of_mem ha]; omega)
-  have hnot := notMem_core_exactlyOne P hw h (Finset.erase_ssubset ha) hne
-  simp only [SetRel.mem_core, not_forall] at hnot
-  obtain ⟨v, hv, hnot⟩ := hnot
-  obtain ⟨z, ⟨hz, hPz⟩, hu⟩ := h.1 hv
-  by_cases hza : z = a
-  · exact ⟨v, hza ▸ hPz, hv⟩
-  · exact absurd ⟨z, ⟨Finset.mem_erase.2 ⟨hza, hz⟩, hPz⟩,
-      fun y hy ↦ hu y ⟨Finset.mem_of_mem_erase hy.1, hy.2⟩⟩ hnot
+  refine Set.Subset.antisymm (fun w ⟨h, hw⟩ ↦ ⟨⟨h.1, Set.mem_iInter₂.2 fun a ha ↦ ?_⟩, hw⟩) ?_
+  · have hne : (D.erase a).Nonempty :=
+      Finset.card_pos.1 (by rw [Finset.card_erase_of_mem ha]; omega)
+    have hnot := notMem_core_exactlyOne P hw h (Finset.erase_ssubset ha) hne
+    simp only [SetRel.mem_core, not_forall] at hnot
+    obtain ⟨v, hv, hnot⟩ := hnot
+    obtain ⟨z, ⟨hz, hPz⟩, hu⟩ := h.1 hv
+    by_cases hza : z = a
+    · exact ⟨v, hza ▸ hPz, hv⟩
+    · exact absurd ⟨z, ⟨Finset.mem_erase.2 ⟨hza, hz⟩, hPz⟩,
+        fun y hy ↦ hu y ⟨Finset.mem_of_mem_erase hy.1, hy.2⟩⟩ hnot
+  · refine fun w ⟨⟨hall, hposs⟩, hw⟩ ↦ ⟨mem_antiExh_iff.2 ⟨hall, .inr fun S hS _ h ↦ ?_⟩, hw⟩
+    obtain ⟨a, ha, haS⟩ := Finset.exists_of_ssubset hS
+    obtain ⟨u, hPa, hu⟩ := Set.mem_iInter₂.1 hposs a ha
+    obtain ⟨x, ⟨hx, hPx⟩, -⟩ := h hu
+    obtain ⟨_, -, huniq⟩ := hall hu
+    exact haS ((huniq x ⟨hS.subset hx, hPx⟩).trans (huniq a ⟨ha, hPa⟩).symm ▸ hx)
 
-/-- If every nonempty subdomain is necessarily witnessed by exactly one member, the domain has at
-most one member (118). -/
+-- (118)
 theorem card_le_one_of_forall_mem_core_exactlyOne (hw : w ∈ R.dom)
     (h : ∀ T ⊆ D, T.Nonempty → w ∈ R.core (exactlyOne P T)) : D.card ≤ 1 := by
   refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
@@ -261,8 +259,8 @@ def accessible : SetRel (Fin 3) (Fin 3) := {p | p.1 = 0 ∧ p.2 ≠ 0}
 def married (d : Fin 2) : Set (Fin 3) := {d.succ}
 
 -- (84), (85)
-theorem zero_mem_oMinus_preimage_exactlyOne_married :
-    0 ∈ oMinus (fun S ↦ accessible.preimage (exactlyOne married S)) .univ := by
+theorem zero_mem_antiExh_preimage_exactlyOne_married :
+    0 ∈ antiExh (fun S ↦ accessible.preimage (exactlyOne married S)) .univ := by
   have key (T : Finset (Fin 2)) (hT : T.Nonempty) :
       0 ∈ accessible.preimage (exactlyOne married T) :=
     let ⟨d, hd⟩ := hT
@@ -270,8 +268,8 @@ theorem zero_mem_oMinus_preimage_exactlyOne_married :
   exact ⟨key _ Finset.univ_nonempty, fun _ _ T _ _ hT _ _ ↦ key T hT⟩
 
 -- (115), (117)
-theorem zero_mem_oMinus_core_exactlyOne_married :
-    0 ∈ oMinus (fun S ↦ accessible.core (exactlyOne married S)) .univ := by
+theorem zero_mem_antiExh_core_exactlyOne_married :
+    0 ∈ antiExh (fun S ↦ accessible.core (exactlyOne married S)) .univ := by
   refine ⟨fun v hv ↦ ?_, fun S _ T _ _ ⟨d, hd⟩ hST h ↦ ?_⟩
   · obtain ⟨x, rfl⟩ := Fin.exists_succ_eq.2 hv.2
     exact ⟨x, ⟨Finset.mem_univ x, rfl⟩, fun _ hy ↦ (Fin.succ_injective _ hy.2).symm⟩
@@ -286,6 +284,40 @@ theorem not_forall_zero_mem_core_exactlyOne_married :
     (show 0 ∈ accessible.dom from ⟨1, rfl, by decide⟩) h) (by decide)
 
 end Existential
+
+/-! ### Subtrigging, §5.2 -/
+
+section Subtrigging
+
+variable (P : E → Set W) {D : Finset E}
+
+/-- An episodic scope is actualistic: it holds of an individual at a world only if the individual
+exists there. -/
+def IsActualistic (actual : W → Set E) (P : E → Set W) : Prop := ∀ a w, w ∈ P a → a ∈ actual w
+
+-- (67)
+theorem antiExh_biUnion_eq_empty_of_isActualistic {actual : W → Set E}
+    (hP : IsActualistic actual P) (hD : D.Nonempty) (hwide : ∀ w, ∃ a ∈ D, a ∉ actual w) :
+    antiExh (fun S ↦ ⋃ a ∈ S, P a) D = ∅ :=
+  (antiExh_biUnion P hD).trans <| Set.eq_empty_of_forall_notMem fun w hw ↦
+    let ⟨a, ha, hna⟩ := hwide w; hna (hP a w (Set.mem_iInter₂.1 hw a ha))
+
+end Subtrigging
+
+/-! ### Universal free-choice items under a necessity modal, (93) -/
+
+/-- Doughnut `d` is tasted in world `1`, and doughnut `1` in world `2` as well. -/
+def tasted (d : Fin 2) : Set (Fin 3) := {w | w = 1 ∨ d = 1 ∧ w = 2}
+
+-- (91b), (93d)
+theorem notMem_antiExh_core_tasted :
+    (0 ∈ accessible.core (⋃ d ∈ Finset.univ, tasted d) ∧
+      ∀ d, 0 ∈ accessible.preimage (tasted d)) ∧
+    0 ∉ antiExh (fun S ↦ accessible.core (⋃ d ∈ S, tasted d)) .univ := by
+  refine ⟨?_, notMem_antiExh_of_singleton (Finset.mem_univ 1) (Finset.mem_univ 0) ?_ ?_⟩ <;>
+    simp only [accessible, tasted, SetRel.mem_core, SetRel.mem_preimage, Set.mem_iUnion,
+      Set.mem_ofPred_eq, Finset.mem_univ, Finset.mem_singleton, exists_prop, exists_eq_left] <;>
+    decide
 
 /-! ### The distribution of the items, (94) -/
 
@@ -309,7 +341,7 @@ theorem Freezer.admits_of_strong (f : Freezer) {s q : Set W} (h : Freezer.strong
 trigger antiexhaustive enrichment, (108c). -/
 def DomainAlternatives.enrich : DomainAlternatives → (Finset E → Set W) → Finset E → Set W
   | .max, F, D => evenEnrich (F '' {S | S ⊂ D ∧ S.Nonempty}) (F D)
-  | .min, F, D => oMinus F D
+  | .min, F, D => antiExh F D
 
 theorem exactlyOne_subset_biUnion (S : Finset E) : exactlyOne P S ⊆ ⋃ x ∈ S, P x :=
   fun _ ⟨_, ⟨hx, hPx⟩, _⟩ ↦ Set.mem_biUnion hx hPx
@@ -387,7 +419,7 @@ theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     funext (Profile.statement_antitone hC)
   simp only [Profile.frozen, hmin, hstrong, hpre, DomainAlternatives.enrich,
     Freezer.Admits] at h
-  exact not_oMinus_ssubset_of_antitone P hC h
+  exact not_antiExh_ssubset_of_antitone P hC h
 
 -- (82), footnote 42
 theorem not_felicitous_freeze_id_of_scalar {outer : Set W → Set W}
@@ -396,18 +428,18 @@ theorem not_felicitous_freeze_id_of_scalar {outer : Set W → Set W}
   rintro ⟨-, h⟩
   simp only [Profile.sentence, Profile.frozen, Profile.prejacent_freeze, hmin,
     DomainAlternatives.enrich, Profile.statement_of_scalar hs monotone_id, id_eq,
-    oMinus_exactlyOne_eq_empty P hD, hout] at h
+    antiExh_exactlyOne_eq_empty P hD, hout] at h
   exact Set.not_nonempty_empty h
 
 -- (67)
 theorem not_felicitous_freeze_id_id_of_isActualist {actual : W → Set E}
-    (hmin : p.alternatives = .min) (hs : p.scalar = false) (hP : IsActualist actual P)
+    (hmin : p.alternatives = .min) (hs : p.scalar = false) (hP : IsActualistic actual P)
     (hD : D.Nonempty) (hwide : ∀ w, ∃ a ∈ D, a ∉ actual w) :
     ¬ p.Felicitous P D (.freeze id id) := by
   rintro ⟨-, h⟩
   simp only [Profile.sentence, Profile.frozen, Profile.prejacent_freeze, hmin,
     DomainAlternatives.enrich, Profile.statement_of_not_scalar hs, id_eq,
-    oMinus_biUnion_eq_empty_of_isActualist P hP hD hwide] at h
+    antiExh_biUnion_eq_empty_of_isActualistic P hP hD hwide] at h
   exact Set.not_nonempty_empty h
 
 /-- A model of an item's context supplies an accessibility relation, the scope, the domain of
@@ -469,9 +501,9 @@ sentence an actualist scope over a domain widened beyond the actual individuals,
 subtrigging anchors it to them, (68c). -/
 def Environment.Admissible (m : Model W E) : Environment → Prop
   | .episodic | .negation =>
-    1 < m.D.card ∧ IsActualist m.actual m.P ∧ ∀ w, ∃ a ∈ m.D, a ∉ m.actual w
+    1 < m.D.card ∧ IsActualistic m.actual m.P ∧ ∀ w, ∃ a ∈ m.D, a ∉ m.actual w
   | .episodicSubtrigged | .negationSubtrigged =>
-    1 < m.D.card ∧ IsActualist m.actual m.P ∧ ∃ w, ∀ a ∈ m.D, a ∈ m.actual w
+    1 < m.D.card ∧ IsActualistic m.actual m.P ∧ ∃ w, ∀ a ∈ m.D, a ∈ m.actual w
   | .generic => 1 < m.D.card
   | _ => 1 < m.D.card ∧ ∀ w, w ∈ m.R.dom
 
@@ -584,8 +616,8 @@ theorem Profile.compl_core_statement {R : SetRel W W} (S : Finset E) :
 theorem Profile.felicitous_freeze {D : Finset E} {outer inner : Set W → Set W} {v w : W}
     (hmin : p.alternatives = .min)
     (hv : v ∈ inner (p.statement inner P D))
-    (hv' : v ∉ oMinus (fun S ↦ inner (p.statement inner P S)) D)
-    (hw : w ∈ outer (oMinus (fun S ↦ inner (p.statement inner P S)) D)) :
+    (hv' : v ∉ antiExh (fun S ↦ inner (p.statement inner P S)) D)
+    (hw : w ∈ outer (antiExh (fun S ↦ inner (p.statement inner P S)) D)) :
     p.Felicitous P D (.freeze outer inner) := by
   refine ⟨p.freezer.admits_of_strong ?_, w, ?_⟩ <;>
     simp only [Profile.frozen, Profile.sentence, Profile.prejacent_freeze, hmin,
@@ -596,8 +628,8 @@ theorem Profile.felicitous_freeze {D : Finset E} {outer inner : Set W → Set W}
 theorem Profile.felicitous_scopedOut {D : Finset E} {C : Set W → Set W} {v w : W}
     (hmin : p.alternatives = .min)
     (hv : v ∈ p.statement id (fun a ↦ C (P a)) D)
-    (hv' : v ∉ oMinus (p.statement id fun a ↦ C (P a)) D)
-    (hw : w ∈ oMinus (p.statement id fun a ↦ C (P a)) D) :
+    (hv' : v ∉ antiExh (p.statement id fun a ↦ C (P a)) D)
+    (hw : w ∈ antiExh (p.statement id fun a ↦ C (P a)) D) :
     p.Felicitous P D (.scopedOut C) := by
   refine ⟨p.freezer.admits_of_strong ?_, w, ?_⟩ <;>
     simp only [Profile.frozen, Profile.sentence, Profile.prejacent_scopedOut, hmin,
@@ -605,17 +637,19 @@ theorem Profile.felicitous_scopedOut {D : Finset E} {C : Set W → Set W} {v w :
   · exact ⟨fun _ h ↦ h.1, fun h ↦ hv' (h hv)⟩
   · exact hw
 
-private theorem forall_mem_powerset_univ {q : Finset (Fin 2) → Prop} :
-    (∀ S ∈ (Finset.univ : Finset (Fin 2)).powerset, q S) ↔ q ∅ ∧ q {0} ∧ q {1} ∧ q .univ := by
-  rw [show (Finset.univ : Finset (Fin 2)).powerset = {∅, {0}, {1}, .univ} by decide]
-  simp
+private theorem forall_ssubset_univ {q : Finset (Fin 2) → Prop} :
+    (∀ S ⊂ (Finset.univ : Finset (Fin 2)), q S) ↔ q ∅ ∧ q {0} ∧ q {1} := by
+  refine ⟨fun h ↦ ⟨h _ (by decide), h _ (by decide), h _ (by decide)⟩, fun ⟨h₀, h₁, h₂⟩ S hS ↦ ?_⟩
+  have : S ∈ ({∅, {0}, {1}} : Finset (Finset (Fin 2))) := by revert S; decide
+  simp only [Finset.mem_insert, Finset.mem_singleton] at this
+  rcases this with rfl | rfl | rfl <;> assumption
 
 /-- Decides a fact about one of the finite models. -/
 local macro "model_fact" : tactic => `(tactic| (
   simp only [Profile.statement_of_not_scalar, Profile.statement_id, Profile.statement_core,
     Profile.statement_preimage, Profile.compl_statement_compl, Profile.compl_core_statement,
     SetRel.mem_core, SetRel.mem_preimage, SetRel.mem_dom, Set.mem_iUnion, exists_prop, exactlyOne,
-    forall_mem_powerset_univ,
+    forall_ssubset_univ, IsActualistic,
     ExistsUnique, Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_iInter, id_eq, Finset.mem_univ,
     modalModel, widenedModel, anchoredModel]
   and_intros <;> decide))
@@ -624,8 +658,8 @@ theorem available_possibility_existential (hmin : p.alternatives = .min) :
     Available p .possibility .existential := by
   refine ⟨Fin 7, Fin 2, modalModel, ⟨by decide, by model_fact⟩, _, List.mem_singleton_self _,
     Profile.felicitous_freeze (v := 3) (w := 0) hmin ?_
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)
-      (mem_oMinus_of_forall_subset ?_ ?_)⟩
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)
+      (mem_antiExh_iff.2 ⟨?_, .inl ?_⟩)⟩
   all_goals obtain ⟨_, _ | _, _⟩ := p <;> model_fact
 
 theorem available_possibility_universal (hmin : p.alternatives = .min)
@@ -634,25 +668,25 @@ theorem available_possibility_universal (hmin : p.alternatives = .min)
   obtain rfl := hs
   refine ⟨Fin 7, Fin 2, modalModel, ⟨by decide, by model_fact⟩, _, List.mem_singleton_self _,
     Profile.felicitous_freeze (v := 1) (w := 5) hmin (by model_fact)
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1)
         (by model_fact) (by model_fact))
-      ⟨4, mem_oMinus_of_forall_subset (by model_fact) (by model_fact), by model_fact⟩⟩
+      ⟨4, mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩, by model_fact⟩⟩
 
 theorem felicitous_core_existential (hmin : p.alternatives = .min) :
     p.Felicitous modalModel.P modalModel.D (.freeze id modalModel.R.core) := by
   refine Profile.felicitous_freeze (v := 3) (w := 0) hmin ?_
-    (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)
-    (mem_oMinus_of_forall_ne ?_ ?_)
+    (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)
+    (mem_antiExh_iff.2 ⟨?_, .inr ?_⟩)
   all_goals obtain ⟨_, _ | _, _⟩ := p <;> model_fact
 
 theorem felicitous_core_universal (hmin : p.alternatives = .min) (hs : p.scalar = false) :
     p.Felicitous modalModel.P modalModel.D (.freeze modalModel.R.core id) := by
   obtain ⟨a, _, f⟩ := p
   obtain rfl := hs
-  have h4 : (4 : Fin 7) ∈ oMinus (fun S ↦ id (Profile.statement ⟨a, false, f⟩ id modalModel.P S))
-      modalModel.D := mem_oMinus_of_forall_subset (by model_fact) (by model_fact)
+  have h4 : (4 : Fin 7) ∈ antiExh (fun S ↦ id (Profile.statement ⟨a, false, f⟩ id modalModel.P S))
+      modalModel.D := mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩
   refine Profile.felicitous_freeze (v := 1) (w := 5) hmin (by model_fact)
-    (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide)
+    (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1)
       (by model_fact) (by model_fact)) fun b hb ↦ ?_
   obtain rfl : b = 4 := by revert b; model_fact
   exact h4
@@ -689,26 +723,26 @@ theorem available_necessity_universal (hmin : p.alternatives = .min) (hs : p.sca
 
 theorem available_negation_rhetorical (hmin : p.alternatives = .min) :
     Available p .negation .rhetorical := by
-  refine ⟨Bool, Fin 2, widenedModel, ⟨by decide, by unfold IsActualist; model_fact, by model_fact⟩,
+  refine ⟨Bool, Fin 2, widenedModel, ⟨by decide, by model_fact, by model_fact⟩,
     _, List.mem_singleton_self _, Profile.felicitous_freeze (v := true) (w := true) hmin ?_
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)⟩
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)⟩
   all_goals obtain ⟨_, _ | _, _⟩ := p <;> model_fact
 
 theorem available_negation_negativePolarity (hmin : p.alternatives = .min)
     (hplain : p.freezer = .plain) : Available p .negation .negativePolarity := by
-  refine ⟨Bool, Fin 2, widenedModel, ⟨by decide, by unfold IsActualist; model_fact, by model_fact⟩,
+  refine ⟨Bool, Fin 2, widenedModel, ⟨by decide, by model_fact, by model_fact⟩,
     _, List.mem_singleton_self _, by simp [Freezer.Admits, hplain], false, ?_⟩
   simp only [Profile.sentence, Profile.frozen, Profile.prejacent_freeze, hmin,
     DomainAlternatives.enrich]
-  exact mem_oMinus_of_forall_subset (by model_fact) (by model_fact)
+  exact mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩
 
 theorem available_negationNecessity_rhetorical (hmin : p.alternatives = .min) :
     Available p .negationNecessity .rhetorical := by
   refine ⟨Fin 7, Fin 2, modalModel, ⟨by decide, by model_fact⟩, _, List.mem_singleton_self _,
     Profile.felicitous_freeze (v := 3) (w := 3) hmin ?_
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide) ?_ ?_)⟩
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) ?_ ?_)⟩
   all_goals obtain ⟨_, _ | _, _⟩ := p <;> model_fact
 
 theorem available_negationNecessity_negativePolarity (hmin : p.alternatives = .min)
@@ -717,43 +751,43 @@ theorem available_negationNecessity_negativePolarity (hmin : p.alternatives = .m
     by simp [Freezer.Admits, hplain], 6, ?_⟩
   simp only [Profile.sentence, Profile.frozen, Profile.prejacent_freeze, hmin,
     DomainAlternatives.enrich]
-  exact mem_oMinus_of_forall_subset (by model_fact) (by model_fact)
+  exact mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩
 
 theorem available_negationSubtrigged_rhetorical (hmin : p.alternatives = .min)
     (hs : p.scalar = false) : Available p .negationSubtrigged .rhetorical := by
   obtain ⟨_, _, _⟩ := p
   obtain rfl := hs
-  exact ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by unfold IsActualist; model_fact,
+  exact ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by model_fact,
     by model_fact⟩, _, List.mem_singleton_self _,
     Profile.felicitous_freeze (v := 1) (w := 1) hmin (by model_fact)
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1)
         (by model_fact) (by model_fact))
-      (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1)
         (by model_fact) (by model_fact))⟩
 
 theorem available_negationSubtrigged_negativePolarity (hmin : p.alternatives = .min)
     (hs : p.scalar = false) : Available p .negationSubtrigged .negativePolarity := by
   obtain ⟨_, _, _⟩ := p
   obtain rfl := hs
-  exact ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by unfold IsActualist; model_fact,
+  exact ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by model_fact,
     by model_fact⟩, _, List.mem_cons_of_mem _ (List.mem_singleton_self _),
     Profile.felicitous_scopedOut (v := 1) (w := 2) hmin (by model_fact)
-      (notMem_oMinus_of_singleton (Finset.mem_univ 1) (Finset.mem_univ 0) (by decide)
+      (notMem_antiExh_of_singleton (Finset.mem_univ 1) (Finset.mem_univ 0)
         (by model_fact) (by model_fact))
-      (mem_oMinus_of_forall_subset (by model_fact) (by model_fact))⟩
+      (mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩)⟩
 
 theorem felicitous_anchored_universal (hmin : p.alternatives = .min) (hs : p.scalar = false) :
     p.Felicitous anchoredModel.P anchoredModel.D (.freeze id id) := by
   obtain ⟨_, _, _⟩ := p
   obtain rfl := hs
   exact Profile.felicitous_freeze (v := 1) (w := 0) hmin (by model_fact)
-    (notMem_oMinus_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1) (by decide)
+    (notMem_antiExh_of_singleton (Finset.mem_univ 0) (Finset.mem_univ 1)
       (by model_fact) (by model_fact))
-    (mem_oMinus_of_forall_subset (by model_fact) (by model_fact))
+    (mem_antiExh_iff.2 ⟨by model_fact, .inl (by model_fact)⟩)
 
 theorem available_episodicSubtrigged_universal (hmin : p.alternatives = .min)
     (hs : p.scalar = false) : Available p .episodicSubtrigged .universal :=
-  ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by unfold IsActualist; model_fact, by model_fact⟩,
+  ⟨Fin 3, Fin 2, anchoredModel, ⟨by decide, by model_fact, by model_fact⟩,
     _, List.mem_singleton_self _, felicitous_anchored_universal hmin hs⟩
 
 theorem available_generic_universal (hmin : p.alternatives = .min) (hs : p.scalar = false) :
