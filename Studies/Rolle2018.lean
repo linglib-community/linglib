@@ -158,13 +158,13 @@ the first. -/
 def culmin (tier : C → Fin n → TRN) (t : TRN) : Constraint C :=
   fun c ↦ (Finset.univ.filter (tier c · = t)).card - 1
 
-theorem le_of_mem_cophonologicalEval_omxobm {tier : C → Fin n → TRN} {B : Fin n → TRN}
+theorem le_of_mem_optimal_omxobm {tier : C → Fin n → TRN} {B : Fin n → TRN}
     (hB : ∃ c ∈ candidates, tier c ≤ B) :
-    ∀ c ∈ cophonologicalEval default ((l, omxobm tier B) :: sub) candidates, tier c ≤ B :=
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier B) :: sub) candidates, tier c ≤ B :=
   fun c hc ↦ by
     obtain ⟨d, hd, hdB⟩ := hB
     simpa [omxobm, absentViol_eq_zero_iff] using
-      eq_zero_of_mem_cophonologicalEval (pre := [(l, omxobm tier B)]) hc hd
+      eq_zero_of_mem_optimal (pre := [(l, omxobm tier B)]) hc hd
         (by simpa [omxobm, absentViol_eq_zero_iff])
 
 /-- The basemap output: the trigger's tune docked onto the target's deficient projection, the
@@ -197,30 +197,30 @@ winner bears at each unit of the target nothing or the tone the tune puts there,
 target's own tones (ch. 5, (22) and Tableau 5). -/
 theorem dominant (host : List (TBU S)) (u : Tune) (tier : C → Fin host.length → TRN)
     (hu : ∃ c ∈ candidates, tier c = basemapTier host u) :
-    ∀ c ∈ cophonologicalEval default ((l, omxobm tier (basemapTier host u)) :: sub) candidates,
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier (basemapTier host u)) :: sub) candidates,
       ∀ i, tier c i ≤ (u.realize host.length)[i.1]'(by simp) := fun c hc i ↦
-  basemapTier_apply host u i ▸ le_of_mem_cophonologicalEval_omxobm
+  basemapTier_apply host u i ▸ le_of_mem_optimal_omxobm
     (hu.imp fun _ ↦ .imp_right le_of_eq) c hc i
 
 /-- A trigger with no tune is subtractive: under OMxOBM(T) towards the basemap induced from the
 target, every winner leaves the target unvalued (ch. 5, §5.3.3). -/
 theorem subtractive (host : List (TBU S)) (e : Edge) (tier : C → Fin host.length → TRN)
     (hu : ∃ c ∈ candidates, tier c = ⊥) :
-    ∀ c ∈ cophonologicalEval default
+    ∀ c ∈ Cophonology.optimal default
         ((l, omxobm tier (basemapTier host ⟨[], e⟩)) :: sub) candidates, tier c = ⊥ := by
   have hB : basemapTier host ⟨[], e⟩ = ⊥ := funext fun i ↦ by
     simp [basemapTier_apply, TRN.bot_eq_empty]
   rw [hB]
   exact fun c hc ↦ le_bot_iff.1 <|
-    le_of_mem_cophonologicalEval_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
+    le_of_mem_optimal_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
 
 theorem omxobm_stem_unvalued (host : List (TBU S)) (tier : C → Fin host.length → TRN)
     (h : ∀ τ ∈ host, ¬ τ.IsValued) (hu : ∃ c ∈ candidates, tier c = ⊥) :
-    ∀ c ∈ cophonologicalEval default ((l, omxobm tier (tonalTier host)) :: sub) candidates,
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier (tonalTier host)) :: sub) candidates,
       tier c = ⊥ := by
   rw [tonalTier_eq_bot_iff.2 h]
   exact fun c hc ↦ le_bot_iff.1 <|
-    le_of_mem_cophonologicalEval_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
+    le_of_mem_optimal_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
 
 /-- In a privative culminative system with the toneme `t`, a trigger whose subranking puts
 OBMOMx(T) towards the stem and CULMINATIVITY first leaves a target bearing `t` once as it is:
@@ -229,11 +229,11 @@ theorem recessive (host : List (TBU S)) (tier : C → Fin host.length → TRN) {
     (hhost : (Finset.univ.filter (tonalTier host · = t)).card = 1)
     (hpriv : ∀ c ∈ candidates, ∀ i, tier c i = ⊥ ∨ tier c i = t)
     (hu : ∃ c ∈ candidates, tier c = tonalTier host) :
-    ∀ c ∈ cophonologicalEval default
+    ∀ c ∈ Cophonology.optimal default
         ((l, obmomx tier (tonalTier host)) :: (l', culmin tier t) :: sub) candidates,
       tier c = tonalTier host := fun c hc ↦ by
   obtain ⟨d, hd, hdt⟩ := hu
-  have h0 := eq_zero_of_mem_cophonologicalEval
+  have h0 := eq_zero_of_mem_optimal
     (pre := [(l, obmomx tier (tonalTier host)), (l', culmin tier t)]) hc hd <| by
       simp [obmomx, culmin, absentViol_eq_zero_iff, hdt, hhost]
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, obmomx,
@@ -259,9 +259,9 @@ theorem recessive (host : List (TBU S)) (tier : C → Fin host.length → TRN) {
 the tune's docking to the rest of the ranking (ch. 5, Tableau 9). -/
 theorem recessive_unvalued (host : List (TBU S)) (tier : C → Fin host.length → TRN)
     (h : ∀ τ ∈ host, ¬ τ.IsValued) :
-    cophonologicalEval default ((l, obmomx tier (tonalTier host)) :: sub) candidates =
-      cophonologicalEval (default.filter (·.1 ≠ l)) sub candidates :=
-  cophonologicalEval_cons_of_forall_eq fun c _ d _ ↦ by
+    Cophonology.optimal default ((l, obmomx tier (tonalTier host)) :: sub) candidates =
+      Cophonology.optimal (default.filter (·.1 ≠ l)) sub candidates :=
+  optimal_cons_of_forall_eq fun c _ d _ ↦ by
     simp [obmomx, tonalTier_eq_bot_iff.2 h, absentViol_eq_zero_iff.2 bot_le]
 
 /-! ### Tableaux on the target's tier
@@ -270,24 +270,24 @@ The candidates of Tableaux 5, 8 and 9 of ch. 5, read through the tones of the ta
 
 -- Kalabari *mí* 'this' with *námá* 'meat': OMxOBM(T) keeps the tune's L H and the toneless
 -- target and rejects the target's own H H, leaving the choice to IO(T).
-example : cophonologicalEval ([] : List (ℕ × Constraint (Fin 2 → TRN)))
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 2 → TRN)))
     [(0, omxobm id (basemapTier [⟨(), TRN.H⟩, ⟨(), TRN.H⟩] ⟨[.L, .H], .left⟩))]
     {![.L, .H], ![.H, .H], ⊥} = {![.L, .H], ⊥} := by
   decide
 
 -- Japanese *múraki* with *-si* 'Mr.': the recessive ranking keeps the target as it is.
-example : cophonologicalEval ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
     [(0, obmomx id ![.H, ⊥, ⊥]), (1, culmin id .H)]
     {![.H, ⊥, ⊥], ![.H, ⊥, .H], ![⊥, ⊥, .H], ⊥} = {![.H, ⊥, ⊥]} := by
   decide
 
 -- Japanese *yosida* with *-si*: the same ranking lets the tune dock, while OMxOBM(T) towards the
 -- stem would not.
-example : cophonologicalEval ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
     [(0, obmomx id ⊥), (1, culmin id .H)] {![⊥, ⊥, .H], ⊥} = {![⊥, ⊥, .H], ⊥} := by
   decide
 
-example : cophonologicalEval ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
     [(0, omxobm id ⊥)] {![⊥, ⊥, .H], ⊥} = {⊥} := by
   decide
 
