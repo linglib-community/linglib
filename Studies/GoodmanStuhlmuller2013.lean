@@ -22,8 +22,8 @@ rule (`listener`).
 ## Implementation notes
 
 * The speaker is `RSA.speaker` at her posterior belief and no cost, composed with the draw of
-  her observation. The literal listener is uniform on an utterance's extension, so only the
-  support of the belief matters.
+  her observation; `RSA.speaker_eq_softmax` is equations (2) and (3). The literal listener is
+  uniform on an utterance's extension, so only the support of the belief matters.
 * The model takes any number of objects, and the alternatives and predictions are for three. An
   utterance's extension is a row of the tree of numbers, the numerals on their lower-bounded
   meaning.

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.Belief
+public import Linglib.Pragmatics.RSA.KullbackLeibler
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -269,9 +269,9 @@ variable {φ μ α}
 theorem beliefAlignment_eq_softmax_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
     (hφ' : φ ≠ ∞) :
     beliefAlignment φ μ α = Kernel.softmax fun syl c ↦
-      -((ENNReal.ofReal α * klDiv (reasoner φ μ syl) (naive φ μ c) : ℝ≥0∞) : EReal) := by
+      α * -(klDiv (reasoner φ μ syl) (naive φ μ c) : EReal) := by
   have (us : List Sentence) := isProbabilityMeasure_listener (μ := μ) hφ hφ' us
-  rw [beliefAlignment, speaker_eq_softmax_klDiv hα]
+  rw [beliefAlignment, speaker_eq_softmax_klDiv hα.le]
   simp
 
 /-- As printed, the state-communication and belief-alignment speakers are one speaker. -/
@@ -363,8 +363,8 @@ private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set Stat
 theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     beliefAlignment 0 μ α syl {c} = 0 ↔
       ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
-  rw [beliefAlignment_zero, speaker_cond_listener_truthful_apply_singleton_eq_zero_iff hα,
-    ae_le_iff_subset hμ]
+  rw [beliefAlignment_zero, speaker_listener_truthful_apply_singleton_eq_zero_iff hα (o := syl)
+      cond_absolutelyContinuous, ae_cond_mem_iff .of_discrete, ae_le_iff_subset hμ]
 
 theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
     (hne : (extension syl.premises).Nonempty)
@@ -372,10 +372,12 @@ theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (
     (hc' : extension syl.premises ⊆ extension (Conclusion.said c')) :
     (beliefAlignment 0 μ α syl).real {c} < (beliefAlignment 0 μ α syl).real {c'} ↔
       μ (extension (Conclusion.said c')) < μ (extension (Conclusion.said c)) := by
+  have := cond_isProbabilityMeasure (μ := μ) (s := extension syl.premises) fun h ↦
+    let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h)
   rw [beliefAlignment_zero]
-  exact speaker_zero_cond_listener_truthful_real_singleton_lt_iff hα
-    (fun h ↦ let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h))
-    ((ae_le_iff_subset hμ).2 hc) ((ae_le_iff_subset hμ).2 hc')
+  exact speaker_zero_listener_truthful_real_singleton_lt_iff hα (o := syl) cond_absolutelyContinuous
+    ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc))
+    ((ae_cond_mem_iff .of_discrete).2 ((ae_le_iff_subset hμ).2 hc'))
 
 /-- Without noise the belief-alignment speaker answers *nothing follows* to every syllogism that
 entails no quantified conclusion (section 2.3.4). -/
