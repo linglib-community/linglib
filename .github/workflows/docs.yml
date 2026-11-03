@@ -129,6 +129,9 @@ jobs:
       - name: Check example literals
         run: python3 scripts/check_examples.py
 
+      - name: Export human checks
+        run: python3 scripts/checks.py status --json > .lake/build/checks.json
+
       - name: Compose site
         run: |
           # doc-gen4 output lives under /docs/, so existing deep links survive. Its landing, study and
@@ -140,10 +143,11 @@ jobs:
           # The bibliography at /bibliography/, with where each work is cited.
           python3 scripts/gen_bibliography_page.py --out .lake/build/doc-site/bibliography
           # The rebuilt landing, study and theory pages, read from doc-gen4's untouched output and
-          # written over its copy at /docs/. A declaration that loses its anchor fails the deploy.
+          # written over its copy at /docs/, each declaration with its human checks. A declaration
+          # that loses its anchor fails the deploy.
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
-            --redirect .lake/build/doc-site/docs-new
+            --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
