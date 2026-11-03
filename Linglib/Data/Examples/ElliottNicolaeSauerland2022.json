@@ -1,0 +1,674 @@
+[
+  {
+    "id": "elliottnicolaesauerland2022_2",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which employee left early?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SCI"]
+    ],
+    "comment": "Answers: Moss left early / Roy and Moss left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_3",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which employees left early?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PCI"]
+    ],
+    "comment": "Answers: Roy left early / Roy and Moss left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_11",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who is leaving early?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Who are leaving early?", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "BI"]
+    ],
+    "comment": "Answers: Roy is leaving early / Roy and Moss are leaving early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_12",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Pjos andras efige noris?",
+    "glossedTokens": [
+      ["Pjos", "who.SG"], ["andras", "man.SG"], ["efige", "left"], ["noris", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SCI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_13",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "Melyik fiú ment el?",
+    "glossedTokens": [
+      ["Melyik", "which"], ["fiú", "boy.SG"], ["ment", "goes"], ["el", "away"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SCI"]
+    ],
+    "comment": "Answers: John went away / John and Bill went away.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_14",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Qué chico se fue pronto?",
+    "glossedTokens": [
+      ["Qué", "which"], ["chico", "boy.SG"], ["se", "REFL"], ["fue", "left"], ["pronto", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SCI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_15",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Pji andres efigan noris?",
+    "glossedTokens": [
+      ["Pji", "who.PL"], ["andres", "man.PL"], ["efigan", "left"], ["noris", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PCI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early. Tagged UP in print; see Errata in the study.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_16",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "Melyik fiúk mentek el?",
+    "glossedTokens": [
+      ["Melyik", "which"], ["fiúk", "boy.PL"], ["mentek", "went"], ["el", "away"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PCI"]
+    ],
+    "comment": "Answers: John went away / John and Bill went away.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_17",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Qué chicos se fueron pronto?",
+    "glossedTokens": [
+      ["Qué", "which"], ["chicos", "boy.PL"], ["se", "REFL"], ["fueron", "left"],
+      ["pronto", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PCI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_18",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Pjos efige noris?",
+    "glossedTokens": [
+      ["Pjos", "who.SG"], ["efige", "left"], ["noris", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answers: John left early / John and Mary left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_19",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "Ki énekel?",
+    "glossedTokens": [
+      ["Ki", "who.SG"], ["énekel", "sings"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answers: John sings / John and Mary sing.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_20",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién se fue pronto?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["se", "REFL"], ["fue", "left"], ["pronto", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_21",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "mode1248",
+    "primaryText": "Pji efigan noris?",
+    "glossedTokens": [
+      ["Pji", "who.PL"], ["efigan", "left"], ["noris", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers: John left early / John and Mary left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_22",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(22)"},
+    "reportedIn": null,
+    "language": "hung1274",
+    "primaryText": "Kik énekelnek?",
+    "glossedTokens": [
+      ["Kik", "who.PL"], ["énekelnek", "sing"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers: John sings / John and Mary sing.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_23",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes se fueron pronto?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["se", "REFL"], ["fueron", "left"], ["pronto", "early"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers: John left early / John and Bill left early.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_24a",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(24a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "pero no me acuerdo quién",
+    "glossedTokens": [
+      ["pero", "but"], ["no", "not"], ["me", "REFL"], ["acuerdo", "remember"], ["quién", "who.SG"]
+    ],
+    "translation": "but I don't remember who.",
+    "context": "One of my friends called",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "pero no me acuerdo quiénes", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "exactlyOne"],
+      ["form", "quien"],
+      ["rival", "quienes"]
+    ],
+    "comment": "Repeated as (55a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_24b",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(24b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "pero no me acuerdo quién",
+    "glossedTokens": [
+      ["pero", "but"], ["no", "not"], ["me", "REFL"], ["acuerdo", "remember"], ["quién", "who.SG"]
+    ],
+    "translation": "but I don't remember who.",
+    "context": "At least one person called",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "pero no me acuerdo quiénes", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "atLeastOne"],
+      ["form", "quien"],
+      ["rival", "quienes"]
+    ],
+    "comment": "Repeated as (55b) and (58).",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_24c",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(24c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "pero no me acuerdo quiénes",
+    "glossedTokens": [
+      ["pero", "but"], ["no", "not"], ["me", "REFL"], ["acuerdo", "remember"],
+      ["quiénes", "who.PL"]
+    ],
+    "translation": "but I don't remember who.",
+    "context": "Several friends called",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "pero no me acuerdo quién", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "several"],
+      ["antecedent", "plural"],
+      ["form", "quienes"],
+      ["rival", "quien"]
+    ],
+    "comment": "Repeated as (56). The paper reports that an anonymous reviewer perceives no contrast.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_25",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(25)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan no sabe qué amigos van a venir a la fiesta",
+    "glossedTokens": [
+      ["Juan", "Juan"], ["no", "not"], ["sabe", "know"], ["qué", "which"], ["amigos", "friends"],
+      ["van", "will"], ["a", "a"], ["venir", "come"], ["a", "to"], ["la", "the"],
+      ["fiesta", "party"]
+    ],
+    "translation": "Juan doesn't know which friends will come to the party",
+    "context": "Juan is expecting at least one friend to come to the party.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Juan no sabe quiénes van a venir a la fiesta", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "atLeastOne"],
+      ["form", "quePl"],
+      ["rival", "quienes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_57",
+    "source": {"bibkey": "maldonado-2020", "paperLabel": "n. 16 (i)"},
+    "reportedIn": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(57)"},
+    "language": "stan1288",
+    "primaryText": "¿Quién hay en la fiesta?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["hay", "was.at"], ["en", "in"], ["la", "the"], ["fiesta", "party"]
+    ],
+    "translation": "Who was there at the party?",
+    "context": "A context that does not satisfy existence.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "¿Quiénes hay en la fiesta?", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "noExistence"],
+      ["form", "quien"],
+      ["rival", "quienes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_59",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan no sabe quiénes van a venir a la fiesta",
+    "glossedTokens": [
+      ["Juan", "Juan"], ["no", "not"], ["sabe", "know"], ["quiénes", "who.PL"], ["van", "will"],
+      ["a", "a"], ["venir", "come"], ["a", "to"], ["la", "the"], ["fiesta", "party"]
+    ],
+    "translation": "Juan doesn't know who will come to the party",
+    "context": "Juan is expecting at least one of his friends to come with him to the party.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "atLeastOne"],
+      ["form", "quienes"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_66",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan no sabe qué amigos van a venir",
+    "glossedTokens": [
+      ["Juan", "Juan"], ["no", "not"], ["sabe", "know"], ["qué", "which"], ["amigos", "friend.PL"],
+      ["van", "go"], ["a", "PREP"], ["venir", "come"]
+    ],
+    "translation": "Juan doesn't know which friends will come to the party.",
+    "context": "Juan is expecting at least one friend to come to the party, but two or more might come.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Juan no sabe qué amigo van a venir", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "atLeastOne"],
+      ["form", "quePl"],
+      ["rival", "queSg"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_68",
+    "source": {"bibkey": "maldonado-2020", "paperLabel": "(18a)"},
+    "reportedIn": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(68)"},
+    "language": "stan1288",
+    "primaryText": "¿Quién está ahí?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["está", "is"], ["ahí", "there"]
+    ],
+    "translation": "Who is in there?",
+    "context": "Mary and John arrive at their apartment, where there is supposed to be no one. They hear two people whispering inside. Mary asks:",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "¿Quiénes está ahí?", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "twoWhispering"],
+      ["form", "quien"],
+      ["rival", "quienes"]
+    ],
+    "comment": "The paper leaves this unexplained; printed with the singular verb throughout.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_n19i",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "n. 19 (i)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1288",
+    "primaryText": "¿Quién entró en la habitación?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["entró", "entered.SG"], ["en", "in"], ["la", "the"],
+      ["habitación", "room"]
+    ],
+    "translation": "Who entered the room?",
+    "context": "The speaker isn't certain if anyone entered the room, but if someone did, it was at least two people.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "¿Quénes entraron en la habitación?", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["context", "zeroOrSeveral"],
+      ["form", "quien"],
+      ["rival", "quienes"]
+    ],
+    "comment": "Printed quénes for the plural.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_76",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(76)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes formaron un grupo?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["formaron", "formed"], ["un", "a"], ["grupo", "group"]
+    ],
+    "translation": "Who formed a group?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "two-group answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answer: Al y Bob y Al y Charles.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_79",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(79)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién se reunió en el patio?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["se", "REFL"], ["reunió", "gathered"], ["en", "in"], ["el", "the"],
+      ["patio", "playground"]
+    ],
+    "translation": "Who gathered in the playground?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Unexpected on (78); the paper leaves the collective predicates open.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_80",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(80)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién formó un grupo?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["formó", "formed"], ["un", "a"], ["grupo", "group"]
+    ],
+    "translation": "Who formed a group?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Unexpected on (78); the paper leaves the collective predicates open.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_81",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(81)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién pesa 300kg?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["pesa", "weighs"], ["300kg", "300kg"]
+    ],
+    "translation": "Who weighs 300kg?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "distributive answer", "judgment": "acceptable"},
+      {"name": "collective answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answer: John, Mary and Bill, obligatorily distributive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "elliottnicolaesauerland2022_82",
+    "source": {"bibkey": "elliott-nicolae-sauerland-2022", "paperLabel": "(82)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes bebieron 40 cervezas juntos?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["bebieron", "drink.PL"], ["40", "40"], ["cervezas", "beer"],
+      ["juntos", "together"]
+    ],
+    "translation": "Who drank 40 beers together?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "¿Quién bebió 40 cervezas juntos?", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
