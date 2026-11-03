@@ -2,43 +2,50 @@ module
 
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Questions.Number
+public import Mathlib.Order.SupClosed
 public import Linglib.Data.Examples.AlonsoOvalleRouillard2023
 public import Linglib.Data.Examples.Readers
 
 /-!
 # Alonso-Ovalle and Rouillard (2023): Spanish bare interrogatives and number
 
-Spanish *quién* admits singular and plural answers, *quiénes* only plural ones. With Maldonado the
-singular is weak and the plural strong, and [the answer judgments follow](##rows_agree). Over
-individuals a collective nucleus is
-[defined only where it holds of one member](##isExhaustivelyResolvable_starred_image_iff); over
-conjunctions and disjunctions
-[two groups have a strongest answer](##isStrongestTrueAnswer_hamblin_starred) and
-[a free choice disjunction can be one](##Question.isLeast_supported_hamblin). Elliott, Nicolae and
-Sauerland keep a strong singular and a weak plural, separating forms by presupposition under
-[Avoid Ineffability](##avoidsIneffability_quienesE_iff). But where one group lifted the piano a
-strong singular's [only answer is the tautology](##isStrongestTrueAnswer_hamblinPlus_starred_atoms)
-while a weak one [names the group](##isStrongestTrueAnswer_hamblin_starred_singleton), and under
-*must* the weak plural keeps [a disjunction competition cannot remove](##mem_strengthen_mixed).
+Spanish *quién* admits singular and plural answers, *quiénes* only plural ones. With Maldonado's
+weak singular and strong plural [the judgments follow](##rows_agree), and ranging over conjunctions
+and disjunctions gives [two groups a strongest answer](##isStrongestTrueAnswer_hamblin_starred) and
+[free choice disjunctions](##inter_nonempty_atom_plurality), as individuals do not. Elliott, Nicolae
+and Sauerland's strong singular and weak plural, regulated by
+[Avoid Ineffability](##avoidsIneffability_quienesE_iff), leave a collective lifting only
+[the tautology as an answer](##isStrongestTrueAnswer_upwardGQ_starred_atoms) and under *must* keep
+[disjunctions competition cannot remove](##mem_strengthen_disjunction).
 
 ## Implementation notes
 
 * A world of a distributive nucleus is the plurality it holds of, so the member for `x` is
   `Set.Ici x`. A world of a collective or mixed nucleus is the extension of the predicate before
-  closure under sum, and `starred x` is the worlds where `x` is a sum from it. Under *must* a world
-  is identified with its modal base, so `Form.contentMust` is `Question.box`'s presupposition read
-  through `Question.isExhaustivelyResolvable_box_iff`.
+  closure under sum, and `starred x` is the worlds where `x` is a sum from it.
+* Under *must* a world is replaced by its modal base. `Question.isExhaustivelyResolvable_box_iff`
+  gives the equivalence at one world, and `Form.contentMust` compares forms over every set of
+  pluralities, the empty one included; since (14) compares domains of worlds, this takes each base
+  to be realized.
 * The paper's Hamblin sets have undefined members, `#` in (41), (54) and (77). Here they are total:
-  the strong singular's set is over the atoms, as (50c) lists it.
-* The paper does not fix the alternatives of Elliott et al.'s forms. `Form.alts` follows their
-  remark that *quién* is an available alternative to the more complex *quiénes* and not conversely;
-  they add that context can supply the plural, which is not modelled.
-* The paper restricts `G+` to conjunctions and disjunctions for illustration, (47), and
-  `hamblinPlus` follows it. The restriction matters under *must*: over the atoms of (50c) [no member
-  is strongest on the modal base of (68b)](##notMem_contentMust_quienGQ), so *quién(et)t* is
-  stronger than *quiénes(et)t* and competition with it [excludes (68a)](##notMem_strengthen_atoms).
-  The vacuity the paper's §5.3 attributes to it holds of [all positive combinations of
-  atoms](##isExhaustivelyResolvableOn_latticeClosure).
+  the strong singular's set is over the atoms, as (50c) lists it. Since `#` is never true this does
+  not affect Dayal's presupposition.
+* Elliott et al. let a higher-order phrase range over the upward-entailing quantifiers, of which
+  `G+` (47) is a fragment chosen for illustration, so `upwardGQ` is the range and `hamblinPlus` the
+  printed fragment. The reasoning of the paper's §5.3 needs the former, where the singular form is
+  [vacuous under *must*](##isExhaustivelyResolvableOn_upwardGQ). On the fragment [no member is
+  strongest on the modal base of (68b)](##notMem_contentMust_hamblinPlus), competition [does exclude
+  (68a)](##notMem_strengthen_atoms), and EXHp [drops where the form is
+  undefined](##avoidsIneffability_hamblinPlus), as the paper's fallback paragraph says.
+* The paper calls its three forms competing and §5.3 treats *quiénes_e* and *quién(et)t* as
+  alternatives to *quiénes(et)t*. `Form.alts` follows Elliott et al.'s remark that *quién* is an
+  available alternative to the more complex *quiénes* and not conversely; they add that context can
+  supply the plural, which is not modelled. With *quiénes_e* among its alternatives, EXHp would drop
+  from *quién(et)t* only where existence is not assumed, the case the paper states.
+* `AvoidsIneffability` is (52), without the Strawson equivalence and the count of occurrences of EXH
+  in Elliott et al.'s statement. On it [unembedded *quiénes(et)t* is usable only where nobody
+  left](##avoidsIneffability_quienesGQ_iff), which leaves nothing for Brevity to do, whereas the
+  paper invokes Brevity for this form and Elliott et al. expect both forms to be possible.
 
 ## TODO
 
@@ -189,14 +196,41 @@ theorem inter_nonempty_of_isLeast_supported {H : Set (Set W)} {s p q : Set W}
   exact ⟨key h.1.2 (fun hsq ↦ subset_union_left.trans (h.2 ⟨hq, hsq⟩)) hpq,
     key (union_comm p q ▸ h.1.2) (fun hsp ↦ subset_union_right.trans (h.2 ⟨hp, hsp⟩)) hqp⟩
 
+-- (27b), (38b): a disjunction of an atom and a plurality can be the strongest answer on the weak
+-- singular, and it conveys that either alone is permitted
+theorem inter_nonempty_atom_plurality [CompleteLattice E] {a b c : E} (ha : IsAtom a)
+    (hb : IsAtom b) (hdis : Disjoint a (b ⊔ c)) :
+    IsLeast (supported (hamblin Ici (whDomain none)) {a, b ⊔ c}) (Ici a ∪ Ici (b ⊔ c)) ∧
+      (({a, b ⊔ c} : Set E) ∩ Ici a).Nonempty ∧ (({a, b ⊔ c} : Set E) ∩ Ici (b ⊔ c)).Nonempty := by
+  have hne : b ⊔ c ≠ ⊥ := fun h ↦ hb.ne_bot (sup_eq_bot_iff.1 h).1
+  have hmem {x : E} (hx : x ≠ ⊥) : x ∈ whDomain (E := E) none := by
+    rw [whDomain_of_ne_singular (by simp)]
+    exact hx
+  have hleast := isLeast_supported_hamblin_pair (hmem ha.ne_bot) (hmem hne) (s := {a, b ⊔ c})
+    (.inl rfl) (.inr rfl) (by simp [subset_def])
+  refine ⟨hleast, inter_nonempty_of_isLeast_supported hleast
+    (.inl (subset_infClosure (mem_image_of_mem _ (hmem ha.ne_bot))))
+    (.inl (subset_infClosure (mem_image_of_mem _ (hmem hne)))) (fun h ↦ ?_) fun h ↦ ?_⟩
+  · have hle : b ⊔ c ≤ a := h self_mem_Ici
+    exact hne (le_bot_iff.1 (hdis hle le_rfl))
+  · have hle : a ≤ b ⊔ c := h self_mem_Ici
+    exact ha.ne_bot (le_bot_iff.1 (hdis le_rfl hle))
+
 /-! ### Elliott et al.'s forms -/
 
-/-- The Hamblin set over `G+` (47): an empty restrictor adds the tautology and the contradiction. -/
+/-- Elliott et al.'s range for a higher-order phrase over `D`, the upward-entailing generalized
+quantifiers that live on `D`: the positive combinations of its members and the trivial
+quantifiers. -/
+def upwardGQ (P : E → Set W) (D : Set E) : Set (Set W) :=
+  insert univ (insert ∅ (latticeClosure (P '' D)))
+
+/-- The fragment `G+` (47), of conjunctions and disjunctions: an empty restrictor adds the tautology
+and the contradiction. -/
 def hamblinPlus (P : E → Set W) (D : Set E) : Set (Set W) := insert univ (insert ∅ (hamblin P D))
 
-section HamblinPlus
+section Ranges
 
-variable {P : E → Set W} {D : Set E} {s q : Set W}
+variable {P : E → Set W} {D : Set E} {s q r : Set W} {w : W}
 
 theorem isLeast_supported_hamblinPlus (hs : s.Nonempty)
     (h : IsLeast (supported (hamblin P D) s) q) : IsLeast (supported (hamblinPlus P D) s) q := by
@@ -206,33 +240,126 @@ theorem isLeast_supported_hamblinPlus (hs : s.Nonempty)
   · exact absurd (subset_empty_iff.1 hsr) hs.ne_empty
   · exact h.2 ⟨hr, hsr⟩
 
+theorem exists_mem_of_mem_latticeClosure (hr : r ∈ latticeClosure (P '' D)) (hw : w ∈ r) :
+    ∃ x ∈ D, w ∈ P x := by
+  have ht : IsSublattice {r : Set W | w ∈ r → ∃ x ∈ D, w ∈ P x} := by
+    refine ⟨fun r₁ h₁ r₂ h₂ h ↦ ?_, fun r₁ h₁ r₂ _ h ↦ ?_⟩
+    · rcases h with h | h
+      exacts [h₁ h, h₂ h]
+    · obtain ⟨h, -⟩ := h
+      exact h₁ h
+  exact latticeClosure_min (by rintro _ ⟨x, hx, rfl⟩ h; exact ⟨x, hx, h⟩) ht hr hw
+
+theorem biInter_subset_of_mem_latticeClosure (hr : r ∈ latticeClosure (P '' D)) (hw : w ∈ r) :
+    ⋂ x ∈ {x ∈ D | w ∈ P x}, P x ⊆ r := by
+  have ht : IsSublattice {r : Set W | w ∈ r → ⋂ x ∈ {x ∈ D | w ∈ P x}, P x ⊆ r} := by
+    refine ⟨fun r₁ h₁ r₂ h₂ h ↦ ?_, fun r₁ h₁ r₂ h₂ h ↦ ?_⟩
+    · rcases h with h | h
+      exacts [(h₁ h).trans subset_union_left, (h₂ h).trans subset_union_right]
+    · obtain ⟨h, h'⟩ := h
+      exact subset_inter (h₁ h) (h₂ h')
+  exact latticeClosure_min
+    (by rintro _ ⟨x, hx, rfl⟩ h; exact biInter_subset_of_mem ⟨hx, h⟩) ht hr hw
+
+-- n. 21: where no member of the domain holds the only true answer is the tautology
+theorem isStrongestTrueAnswer_upwardGQ_univ (h : ∀ x ∈ D, w ∉ P x) :
+    IsStrongestTrueAnswer (upwardGQ P D) w univ := by
+  refine ⟨⟨.inl rfl, trivial⟩, ?_⟩
+  rintro r ⟨rfl | rfl | hr, hwr⟩
+  · exact le_rfl
+  · exact hwr.elim
+  · obtain ⟨x, hx, hwx⟩ := exists_mem_of_mem_latticeClosure hr hwr
+    exact (h x hx hwx).elim
+
 -- (50): always defined
-theorem presupposition_hamblinPlus (hD : D.Finite) : presupposition (hamblinPlus P D) = univ := by
+theorem presupposition_upwardGQ (hD : D.Finite) : presupposition (upwardGQ P D) = univ := by
   refine eq_univ_of_forall fun w ↦ ?_
   by_cases h : ∃ x ∈ D, w ∈ P x
-  · have hs := isStrongestTrueAnswer_hamblin (P := P) hD h
-    refine ⟨_, ⟨.inr (.inr hs.1.1), hs.1.2⟩, ?_⟩
+  · have hs := isStrongestTrueAnswer_infClosure_image hD h
+    refine ⟨_, ⟨.inr (.inr (infClosure_min subset_latticeClosure
+      isSublattice_latticeClosure.infClosed hs.1.1)), hs.1.2⟩, ?_⟩
     rintro r ⟨rfl | rfl | hr, hwr⟩
     · exact subset_univ _
     · exact hwr.elim
-    · exact hs.2 ⟨hr, hwr⟩
-  · refine ⟨univ, ⟨.inl rfl, trivial⟩, ?_⟩
-    rintro r ⟨rfl | rfl | hr, hwr⟩
-    · exact le_rfl
-    · exact hwr.elim
-    · exact (h (by simpa using subset_biUnion_of_mem_hamblin hr hwr)).elim
+    · exact biInter_subset_of_mem_latticeClosure hr hwr
+  · exact ⟨_, isStrongestTrueAnswer_upwardGQ_univ fun x hx hw ↦ h ⟨x, hx, hw⟩⟩
 
-end HamblinPlus
+end Ranges
+
+section Distributive
+
+variable [CompleteLattice E] {D : Set E} {r : Set E}
+
+theorem isUpperSet_of_mem_latticeClosure (hr : r ∈ latticeClosure (Ici '' D)) : IsUpperSet r :=
+  latticeClosure_min (t := {r : Set E | IsUpperSet r})
+    (by rintro _ ⟨x, -, rfl⟩; exact isUpperSet_Ici x)
+    ⟨fun _ hp _ hq ↦ hp.union hq, fun _ hp _ hq ↦ hp.inter hq⟩ hr
+
+variable [IsAtomistic E] [Finite E]
+
+theorem Ici_mem_latticeClosure (hD : ∀ a : E, IsAtom a → a ∈ D) {t : E} (ht : t ≠ ⊥) :
+    Ici t ∈ latticeClosure (Ici '' D) := by
+  refine infClosure_min subset_latticeClosure isSublattice_latticeClosure.infClosed ?_
+  have hfin := toFinite {a : E | IsAtom a ∧ a ≤ t}
+  obtain ⟨a, ha, hat⟩ := (eq_bot_or_exists_atom_le t).resolve_left ht
+  refine Set.mem_infClosure_image.2 ⟨hfin.toFinset, ⟨a, by simp [ha, hat]⟩,
+    fun x hx ↦ hD x (by simpa using hx : IsAtom x ∧ x ≤ t).1, ?_⟩
+  simp only [hfin.mem_toFinset, ← Ici_sSup]
+  rw [sSup_atoms_le_eq]
+
+theorem isLeast_supported_upwardGQ (hD : ∀ a : E, IsAtom a → a ∈ D) {s : Set E} (hs : s.Nonempty)
+    (hbot : ⊥ ∉ s) : IsLeast (supported (upwardGQ Ici D) s) (⋃ t ∈ s, Ici t) := by
+  have hfin := toFinite s
+  refine ⟨⟨.inr (.inr ?_), fun x hx ↦ mem_biUnion hx self_mem_Ici⟩, ?_⟩
+  · refine supClosure_min (s := Ici '' s) (by
+      rintro _ ⟨t, ht, rfl⟩; exact Ici_mem_latticeClosure hD fun h ↦ hbot (h ▸ ht))
+      isSublattice_latticeClosure.supClosed (Set.mem_supClosure_image.2
+        ⟨hfin.toFinset, by simpa using hs, by simp, by simp⟩)
+  · rintro r ⟨rfl | rfl | hr, hsr⟩
+    · exact subset_univ _
+    · exact absurd (subset_empty_iff.1 hsr) hs.ne_empty
+    · exact iUnion₂_subset fun t ht v hv ↦ isUpperSet_of_mem_latticeClosure hr hv (hsr ht)
+
+-- under *must* a phrase over the upward-entailing quantifiers is defined on every modal base, the
+-- vacuity of the paper's §5.3
+theorem isExhaustivelyResolvableOn_upwardGQ (hD : ∀ a : E, IsAtom a → a ∈ D) (s : Set E) :
+    IsExhaustivelyResolvableOn (upwardGQ Ici D) s := by
+  rcases s.eq_empty_or_nonempty with rfl | hs
+  · exact ⟨∅, ⟨.inr (.inl rfl), empty_subset _⟩, fun r _ ↦ empty_subset r⟩
+  by_cases hbot : ⊥ ∈ s
+  · refine ⟨univ, ⟨.inl rfl, subset_univ _⟩, ?_⟩
+    rintro r ⟨rfl | rfl | hr, hsr⟩
+    · exact le_rfl
+    · exact (hsr hbot).elim
+    · exact fun v _ ↦ isUpperSet_of_mem_latticeClosure hr bot_le (hsr hbot)
+  · exact ⟨_, isLeast_supported_upwardGQ hD hs hbot⟩
+
+-- p. 303: with a distributive nucleus the two higher-order forms have the same Hamblin set
+theorem upwardGQ_whDomain_singular :
+    upwardGQ Ici (whDomain (E := E) (some .singular)) = upwardGQ Ici (whDomain (some .plural)) := by
+  have hle : latticeClosure (Ici '' whDomain (E := E) (some .plural)) ≤
+      latticeClosure (Ici '' whDomain (E := E) (some .singular)) :=
+    latticeClosure_min (by
+      rintro _ ⟨t, ht, rfl⟩
+      exact Ici_mem_latticeClosure (fun a ha ↦ mem_whDomain_singular.2 ha)
+        (mem_whDomain_plural.1 ht)) isSublattice_latticeClosure
+  have hge : latticeClosure (Ici '' whDomain (E := E) (some .singular)) ≤
+      latticeClosure (Ici '' whDomain (E := E) (some .plural)) :=
+    latticeClosure.monotone (image_mono fun _ hx ↦
+      mem_whDomain_of_isAtom _ (mem_whDomain_singular.1 hx))
+  rw [upwardGQ, upwardGQ, le_antisymm hge hle]
+
+end Distributive
 
 /-- The forms of Elliott et al., by what they range over and their number. -/
 inductive Form
   /-- *quién_e*, over individuals with a strong singular trace, (40). -/
   | quienE
-  /-- *quién_(et)t*, over `G+` with a strong singular trace, (50). -/
+  /-- *quién_(et)t*, over quantifiers with a strong singular trace, (50). -/
   | quienGQ
   /-- *quiénes_e*, over individuals with a weak plural trace, (43). -/
   | quienesE
-  /-- *quiénes_(et)t*, over `G+` with a weak plural trace, (65). -/
+  /-- *quiénes_(et)t*, over quantifiers with a weak plural trace, (65). -/
   | quienesGQ
   deriving DecidableEq
 
@@ -248,18 +375,20 @@ section Forms
 
 variable [CompleteLattice E]
 
-/-- The Hamblin sets (41), (44b), (50c) and (65b), of a distributive nucleus. -/
-def Form.hamblinSet : Form → Set (Set E)
+/-- The Hamblin sets of a distributive nucleus, (41) and (44b), and (50c) and (65b) over a range `G`
+for the higher-order forms. -/
+def Form.hamblinSet (G : Set E → Set (Set E)) : Form → Set (Set E)
   | .quienE => whHamblin (some .singular)
   | .quienesE => whHamblin (some .plural)
-  | .quienGQ => hamblinPlus Ici (whDomain (some .singular))
-  | .quienesGQ => hamblinPlus Ici (whDomain (some .plural))
+  | .quienGQ => G (whDomain (some .singular))
+  | .quienesGQ => G (whDomain (some .plural))
 
 /-- The presupposition of a form's question. -/
-def Form.content (f : Form) : Set E := presupposition f.hamblinSet
+def Form.content (f : Form) : Set E := presupposition (f.hamblinSet (upwardGQ Ici))
 
 /-- The presupposition of a form's question under *must*, (67), on the modal bases. -/
-def Form.contentMust (f : Form) : Set (Set E) := {s | IsExhaustivelyResolvableOn f.hamblinSet s}
+def Form.contentMust (G : Set E → Set (Set E)) (f : Form) : Set (Set E) :=
+  {s | IsExhaustivelyResolvableOn (f.hamblinSet G) s}
 
 /-! ### Avoid Ineffability -/
 
@@ -303,11 +432,11 @@ variable [Finite E]
 
 omit [IsAtomistic E] in
 theorem content_quienGQ : Form.content (E := E) .quienGQ = univ :=
-  presupposition_hamblinPlus (toFinite _)
+  presupposition_upwardGQ (toFinite _)
 
 omit [IsAtomistic E] in
 theorem content_quienesGQ : Form.content (E := E) .quienesGQ = univ :=
-  presupposition_hamblinPlus (toFinite _)
+  presupposition_upwardGQ (toFinite _)
 
 -- (51)
 theorem content_quienesE_ssubset : Form.content (E := E) .quienesE ⊂ Form.content .quienGQ := by
@@ -349,6 +478,31 @@ theorem avoidsIneffability_quienGQ (hc : ¬ c ⊆ {w : E | IsAtom w}) :
   | quienesE => exact hpl trivial
   | quienesGQ => exact hpl trivial
 
+-- *quién_(et)t* being always defined, EXHp stays on *quiénes_(et)t*, which then excludes every
+-- world where someone left, without Brevity (p. 303)
+theorem avoidsIneffability_quienesGQ_iff :
+    AvoidsIneffability Form.alts Form.content c .quienesGQ ↔ c ⊆ {(⊥ : E)} := by
+  have hss : Form.content (E := E) .quienesE ⊂ Form.content .quienesGQ := by
+    rw [content_quienesE, content_quienesGQ]
+    exact ⟨subset_univ _, fun h ↦ mem_whDomain_plural.1 (h (mem_univ ⊥)) rfl⟩
+  have hstr : strengthen Form.alts Form.content .quienesGQ = {(⊥ : E)} := by
+    rw [strengthen_eq_sdiff (alts := Form.alts) (ψ := Form.quienesE)
+      ⟨by simp, by simp [Form.IsPlural]⟩ hss, content_quienesE, content_quienesGQ]
+    · exact Set.ext fun w ↦ by simp [mem_whDomain_plural]
+    · rintro χ ⟨hχ, -⟩ hlt
+      cases χ with
+      | quienE =>
+        rw [content_quienE, content_quienesE]
+        exact fun x hx ↦ mem_whDomain_of_isAtom _ (mem_whDomain_singular.1 hx)
+      | quienesE => exact subset_rfl
+      | quienGQ => exact (hlt.not_subset (by rw [content_quienGQ]; exact subset_univ _)).elim
+      | quienesGQ => exact (hχ rfl).elim
+  rw [AvoidsIneffability, hstr]
+  refine ⟨fun h ↦ h.resolve_right fun ⟨_, h⟩ ↦
+    h .quienGQ ⟨by simp, by simp [Form.IsPlural]⟩ ?_, .inl⟩
+  rw [content_quienGQ]
+  exact subset_univ _
+
 -- comparing presuppositions in the context does not suffice: where existence is presupposed
 -- *quiénes_e* is a strongest form defined, yet it is out, as EXHp cannot be dropped
 theorem minimalFor_quienesE_not_avoidsIneffability (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
@@ -386,15 +540,19 @@ theorem not_isExhaustivelyResolvable_starred_atoms (hg : ¬ IsAtom g) :
   rintro ⟨_, ⟨⟨z, hz, rfl⟩, hzw⟩, -⟩
   exact hg (singleton_mem_starred_iff.1 hzw ▸ mem_whDomain_singular.1 hz)
 
--- (55), n. 21: over `G+` its only true answer there is the tautology, which (53b) cannot be
-theorem isStrongestTrueAnswer_hamblinPlus_starred_atoms (hg : ¬ IsAtom g) :
-    IsStrongestTrueAnswer (hamblinPlus starred (whDomain (some Number.singular))) {g} univ := by
-  refine ⟨⟨.inl rfl, trivial⟩, ?_⟩
-  rintro r ⟨rfl | rfl | hr, hw⟩
-  · exact le_rfl
-  · exact hw.elim
-  · obtain ⟨x, hx, hwx⟩ := mem_iUnion₂.1 (subset_biUnion_of_mem_hamblin hr hw)
-    exact (hg (singleton_mem_starred_iff.1 hwx ▸ mem_whDomain_singular.1 hx)).elim
+-- (55), n. 21: over quantifiers its only true answer there is the tautology, which (53b) cannot be
+theorem isStrongestTrueAnswer_upwardGQ_starred_atoms (hg : ¬ IsAtom g) :
+    IsStrongestTrueAnswer (upwardGQ starred (whDomain (some Number.singular))) {g} univ :=
+  isStrongestTrueAnswer_upwardGQ_univ fun _ hx hw ↦
+    hg (singleton_mem_starred_iff.1 hw ▸ mem_whDomain_singular.1 hx)
+
+-- n. 21: the tautology is compatible with no lifting, unlike the group's answer
+theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
+  have hemp {x : E} : ¬ AlgClosure (· ∈ (∅ : Set E)) x := fun hx ↦ by
+    induction hx with
+    | base h => exact h
+    | sum _ _ ih _ => exact ih
+  exact hemp (h ▸ mem_univ _ : (∅ : Set E) ∈ starred g)
 
 end StrongSingular
 
@@ -402,14 +560,50 @@ end StrongSingular
 
 section WeakPlural
 
-variable {a b c : E}
+variable {a b c u v : E}
 
--- on the printed (47), the base of (68b) and (27b) has no strongest member over (50c)'s atoms
-theorem notMem_contentMust_quienGQ (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hbc : b ≠ c)
-    (hdis : Disjoint a (b ⊔ c)) : ({a, b ⊔ c} : Set E) ∉ Form.contentMust .quienGQ := by
+/-- On the weak plural a disjunction of disjoint individuals, atoms as in (68a) or an atom and a
+plurality as in (68b), is the strongest answer on its modal base, and competition cannot remove it:
+the forms over individuals are undefined there, and *quién_(et)t* has the same Hamblin set. -/
+theorem mem_strengthen_disjunction [IsAtomistic E] [Finite E] (hu : u ≠ ⊥) (hv : v ≠ ⊥)
+    (hdis : Disjoint u v) :
+    IsLeast (supported (Form.hamblinSet (upwardGQ Ici) .quienesGQ) {u, v}) (Ici u ∪ Ici v) ∧
+      ({u, v} : Set E) ∈ strengthen Form.alts (Form.contentMust (upwardGQ Ici)) .quienesGQ := by
+  have hleast : IsLeast (supported (Form.hamblinSet (upwardGQ Ici) .quienesGQ) {u, v})
+      (Ici u ∪ Ici v) := by
+    have h := isLeast_supported_upwardGQ (D := whDomain (some Number.plural))
+      (fun a ha ↦ mem_whDomain_of_isAtom _ ha) (s := {u, v}) ⟨u, .inl rfl⟩
+      (by rintro (h | h); exacts [hu h.symm, hv h.symm])
+    simpa [Form.hamblinSet] using h
+  refine ⟨hleast, mem_strengthen_iff.2 ⟨⟨_, hleast⟩, ?_⟩⟩
+  rintro ψ ⟨hψ, -⟩ hs hss
+  cases ψ with
+  | quienesGQ => exact hψ rfl
+  | quienE =>
+    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
+  | quienesE =>
+    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
+  | quienGQ =>
+    refine hss.ne ?_
+    simp only [Form.contentMust, Form.hamblinSet, upwardGQ_whDomain_singular]
+
+-- (74), (75b): on the strong plural no member is true at an atom
+theorem notMem_of_mem_hamblin_whStrongPlural {q : Set E} (hq : q ∈ hamblin Ici whStrongPlural)
+    (ha : IsAtom a) : a ∉ q := fun h ↦ by
+  obtain ⟨x, hx, hxa⟩ := mem_iUnion₂.1 (subset_biUnion_of_mem_hamblin hq h)
+  exact (mem_whStrongPlural.1 (isUpperSet_whStrongPlural hxa hx)).2 ha
+
+/-! The fragment (47), on which *quién_(et)t* is not vacuous under *must*. -/
+
+-- the base of (68b) and (27b) has no strongest member over the atoms of (50c)
+theorem notMem_contentMust_hamblinPlus (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)
+    (hbc : b ≠ c) (hdis : Disjoint a (b ⊔ c)) :
+    ({a, b ⊔ c} : Set E) ∉ Form.contentMust (hamblinPlus Ici) .quienGQ := by
   have hnle : ¬ a ≤ b ⊔ c := fun h ↦ ha.ne_bot (le_bot_iff.1 (hdis le_rfl h))
   have hsel {y : E} (hy : IsAtom y) (hyle : y ≤ b ⊔ c) :
-      Ici a ∪ Ici y ∈ supported (Form.hamblinSet (E := E) .quienGQ) {a, b ⊔ c} := by
+      Ici a ∪ Ici y ∈ supported (Form.hamblinSet (hamblinPlus Ici) .quienGQ) {a, b ⊔ c} := by
     have hm {z : E} (hz : IsAtom z) : Ici z ∈ Ici '' whDomain (some Number.singular) :=
       mem_image_of_mem _ (mem_whDomain_singular.2 hz)
     refine ⟨.inr (.inr (.inr (sup_mem_supClosure (hm ha) (hm hy)))), ?_⟩
@@ -436,30 +630,8 @@ theorem notMem_contentMust_quienGQ (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom 
         · exact hnle ((hyA.le_iff_eq ha.ne_bot).1 h' ▸ hyle)
         · exact hbc (((hyA.le_iff_eq hb.ne_bot).1 h).trans ((hyA.le_iff_eq hc.ne_bot).1 h').symm)
 
-/-- On the weak plural the disjunction of an atom and a plurality, (68b), is the strongest answer on
-its modal base, and no competitor is defined there, so competition cannot remove it. -/
-theorem mem_strengthen_mixed (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hbc : b ≠ c)
-    (hdis : Disjoint a (b ⊔ c)) :
-    IsLeast (supported (Form.hamblinSet (E := E) .quienesGQ) {a, b ⊔ c}) (Ici a ∪ Ici (b ⊔ c)) ∧
-      ({a, b ⊔ c} : Set E) ∈ strengthen Form.alts Form.contentMust .quienesGQ := by
-  have hleast : IsLeast (supported (Form.hamblinSet (E := E) .quienesGQ) {a, b ⊔ c})
-      (Ici a ∪ Ici (b ⊔ c)) :=
-    isLeast_supported_hamblinPlus ⟨a, .inl rfl⟩ (isLeast_supported_hamblin_pair
-      (mem_whDomain_of_isAtom _ ha) (mem_whDomain_plural.2 fun h ↦ hb.ne_bot (sup_eq_bot_iff.1 h).1)
-      (.inl rfl) (.inr rfl) (by simp [subset_def]))
-  refine ⟨hleast, mem_strengthen_iff.2 ⟨⟨_, hleast⟩, ?_⟩⟩
-  rintro ψ ⟨hψ, -⟩ hs -
-  cases ψ with
-  | quienesGQ => exact hψ rfl
-  | quienE =>
-    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
-      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
-  | quienesE =>
-    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
-      (fun h ↦ h.2 rfl) hdis (.inl rfl) (.inr rfl) hs
-  | quienGQ => exact notMem_contentMust_quienGQ ha hb hc hbc hdis hs
-
-theorem contentMust_quienesGQ [Finite E] : Form.contentMust (E := E) .quienesGQ = univ := by
+theorem contentMust_hamblinPlus_quienesGQ [Finite E] :
+    Form.contentMust (E := E) (hamblinPlus Ici) .quienesGQ = univ := by
   refine eq_univ_of_forall fun s ↦ ?_
   rcases s.eq_empty_or_nonempty with rfl | hs
   · exact ⟨∅, ⟨.inr (.inl rfl), empty_subset _⟩, fun r _ ↦ empty_subset r⟩
@@ -474,63 +646,38 @@ theorem contentMust_quienesGQ [Finite E] : Form.contentMust (E := E) .quienesGQ 
       (fun x hx ↦ mem_whDomain_plural.2 fun h ↦ hbot (h ▸ hx)) subset_rfl
       fun x hx ↦ mem_biUnion hx self_mem_Ici)⟩
 
--- on the printed (47), *quién_(et)t* under *must* is strictly stronger than *quiénes_(et)t*, so
--- competition with it removes the disjunction of atoms (68a)
+-- on the fragment *quién_(et)t* is strictly stronger than *quiénes_(et)t*, so competition with it
+-- removes the disjunction of atoms (68a) where the modal base is known
 theorem notMem_strengthen_atoms [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)
     (hbc : b ≠ c) (hdis : Disjoint a (b ⊔ c)) :
-    ({a, b} : Set E) ∉ strengthen Form.alts Form.contentMust .quienesGQ := by
+    ({a, b} : Set E) ∉ strengthen Form.alts (Form.contentMust (hamblinPlus Ici)) .quienesGQ := by
   intro h
-  have hbase : ({a, b} : Set E) ∈ Form.contentMust .quienGQ :=
+  have hbase : ({a, b} : Set E) ∈ Form.contentMust (hamblinPlus Ici) .quienGQ :=
     ⟨_, isLeast_supported_hamblinPlus ⟨a, .inl rfl⟩ (isLeast_supported_hamblin_pair
       (mem_whDomain_singular.2 ha) (mem_whDomain_singular.2 hb) (.inl rfl) (.inr rfl)
       (by simp [subset_def]))⟩
-  have huniv {s : Set E} : s ∈ Form.contentMust .quienesGQ := by
-    rw [contentMust_quienesGQ]; trivial
+  have huniv {s : Set E} : s ∈ Form.contentMust (hamblinPlus Ici) .quienesGQ := by
+    rw [contentMust_hamblinPlus_quienesGQ]; trivial
   exact (mem_strengthen_iff.1 h).2 .quienGQ ⟨by simp, by simp [Form.IsPlural]⟩ hbase
-    ⟨fun _ _ ↦ huniv, fun hsub ↦ notMem_contentMust_quienGQ ha hb hc hbc hdis (hsub huniv)⟩
+    ⟨fun _ _ ↦ huniv, fun hsub ↦ notMem_contentMust_hamblinPlus ha hb hc hbc hdis (hsub huniv)⟩
 
--- p. 304: *quién_(et)t* under *must* is vacuous once `G+` has every positive combination of atoms
-theorem isExhaustivelyResolvableOn_latticeClosure [IsAtomistic E] [Finite E] (s : Set E) :
-    IsExhaustivelyResolvableOn
-      (insert univ (insert ∅ (latticeClosure (Ici '' whDomain (E := E) (some .singular))))) s := by
-  set H := latticeClosure (Ici '' whDomain (E := E) (some .singular)) with hH
-  have hup {r : Set E} (hr : r ∈ H) : IsUpperSet r :=
-    latticeClosure_min (t := {r : Set E | IsUpperSet r})
-      (by rintro _ ⟨x, -, rfl⟩; exact isUpperSet_Ici x)
-      ⟨fun _ hp _ hq ↦ hp.union hq, fun _ hp _ hq ↦ hp.inter hq⟩ hr
-  have hIci {t : E} (ht : t ≠ ⊥) : Ici t ∈ H := by
-    refine infClosure_min (s := Ici '' whDomain (some .singular)) subset_latticeClosure
-      isSublattice_latticeClosure.infClosed ?_
-    have hfin := toFinite {a : E | IsAtom a ∧ a ≤ t}
-    obtain ⟨a, ha, hat⟩ := (eq_bot_or_exists_atom_le t).resolve_left ht
-    refine Set.mem_infClosure_image.2 ⟨hfin.toFinset, ⟨a, by simp [ha, hat]⟩,
-      fun x hx ↦ mem_whDomain_singular.2 (by simpa using hx : IsAtom x ∧ x ≤ t).1, ?_⟩
-    simp only [hfin.mem_toFinset, ← Ici_sSup]
-    rw [sSup_atoms_le_eq]
-  rcases s.eq_empty_or_nonempty with rfl | hs
-  · exact ⟨∅, ⟨.inr (.inl rfl), empty_subset _⟩, fun r _ ↦ empty_subset r⟩
-  by_cases hbot : ⊥ ∈ s
-  · refine ⟨univ, ⟨.inl rfl, subset_univ _⟩, ?_⟩
-    rintro r ⟨rfl | rfl | hr, hsr⟩
-    · exact le_rfl
-    · exact (hsr hbot).elim
-    · exact fun v _ ↦ hup hr bot_le (hsr hbot)
-  · have hfin := toFinite s
-    refine ⟨⋃ t ∈ s, Ici t, ⟨.inr (.inr ?_), fun x hx ↦ mem_biUnion hx self_mem_Ici⟩, ?_⟩
-    · refine supClosure_min (s := Ici '' s) (by
-        rintro _ ⟨t, ht, rfl⟩; exact hIci fun h ↦ hbot (h ▸ ht))
-        isSublattice_latticeClosure.supClosed (Set.mem_supClosure_image.2
-          ⟨hfin.toFinset, by simpa using hs, by simp, by simp⟩)
-    · rintro r ⟨rfl | rfl | hr, hsr⟩
-      · exact subset_univ _
-      · exact absurd (subset_empty_iff.1 hsr) hs.ne_empty
-      · exact iUnion₂_subset fun t ht v hv ↦ hup hr hv (hsr ht)
-
--- (74), (75b): on the strong plural no member is true at an atom
-theorem notMem_of_mem_hamblin_whStrongPlural {q : Set E} (hq : q ∈ hamblin Ici whStrongPlural)
-    (ha : IsAtom a) : a ∉ q := fun h ↦ by
-  obtain ⟨x, hx, hxa⟩ := mem_iUnion₂.1 (subset_biUnion_of_mem_hamblin hq h)
-  exact (mem_whStrongPlural.1 (isUpperSet_whStrongPlural hxa hx)).2 ha
+-- p. 304: even so EXHp drops where *quién_(et)t* is undefined, and (68a) returns
+theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)
+    (hbc : b ≠ c) (hdis : Disjoint a (b ⊔ c)) :
+    AvoidsIneffability Form.alts (Form.contentMust (hamblinPlus Ici))
+      {{a, b}, {a, b ⊔ c}} .quienesGQ := by
+  have hab : Disjoint a b := hdis.mono_right le_sup_left
+  refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
+  rintro ψ ⟨hψ, -⟩ hs
+  cases ψ with
+  | quienesGQ => exact hψ rfl
+  | quienE =>
+    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (hs (.inl rfl))
+  | quienesE =>
+    exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+      (fun h ↦ h.2 rfl) hab (.inl rfl) (.inr rfl) (hs (.inl rfl))
+  | quienGQ => exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis (hs (.inr rfl))
 
 end WeakPlural
 
@@ -586,7 +733,7 @@ private theorem sup_mem_whStrongPlural (ha : IsAtom a) (hb : IsAtom b) (hab : a 
   mem_whStrongPlural.2 ⟨fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1, fun h ↦
     not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)⟩
 
--- (38), (70b): the weak singular has every disjunction
+-- (36a), (38b): the weak singular has every disjunction
 theorem Disjunction.answer_mem_hamblin_whDomain (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)
     (k : Disjunction) : k.answer a b c d ∈ hamblin Ici (whDomain none) := by
   have hm {x : E} (hx : x ≠ ⊥) : Ici x ∈ Ici '' whDomain none :=
@@ -611,7 +758,7 @@ theorem Disjunction.answer_mem_hamblin_whStrongPlural_iff (ha : IsAtom a) (hb : 
     exact .inr (sup_mem_supClosure (mem_image_of_mem _ (sup_mem_whStrongPlural ha hb hab))
       (mem_image_of_mem _ (sup_mem_whStrongPlural hc hd hcd)))
 
--- the disjunctive answers judged for *quién* and *quiénes*, (27), (28), (66), (68)
+-- the disjunctive answers judged for *quiénes*, (28), (66), (68), and the one row for *quién*, (27)
 theorem disjunction_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hd : IsAtom d)
     (hab : a ≠ b) (hcd : c ≠ d) :
     ∀ e ∈ Examples.all, ∀ r ∈ e.readings, ∀ k ∈ disjunction? r.1,
@@ -623,17 +770,26 @@ theorem disjunction_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (
     iff_true_intro (Disjunction.answer_mem_hamblin_whDomain ha hb hc _), true_iff]
   decide +kernel
 
--- (22a), (23): two groups are an answer on the strong plural
-theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (hg₂ : g₂ ∈ whStrongPlural) :
-    IsExhaustivelyResolvable (hamblin starred whStrongPlural) {g₁, g₂} ↔
-      Examples.ex_22a.readings.lookup "two-group answer" = some .acceptable :=
-  iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred hg₁ hg₂⟩ (by decide)
+-- (22a), (23): two groups have an answer over quantifiers and, (26), none over individuals
+theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (hg₂ : g₂ ∈ whStrongPlural)
+    (hne : g₁ ≠ g₂) :
+    (IsExhaustivelyResolvable (hamblin starred whStrongPlural) {g₁, g₂} ↔
+        Examples.ex_22a.readings.lookup "two-group answer" = some .acceptable) ∧
+      ¬ IsExhaustivelyResolvable (starred '' whStrongPlural) {g₁, g₂} := by
+  refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred hg₁ hg₂⟩ (by decide), fun h ↦ ?_⟩
+  obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
+  exact hne ((huniq g₁ ⟨hg₁, .base (.inl rfl)⟩).trans (huniq g₂ ⟨hg₂, .base (.inr rfl)⟩).symm)
 
--- (53): one collective lifting is an answer on the weak singular
-theorem collective_answer_iff {g : E} (hg : g ∈ whDomain none) :
-    IsExhaustivelyResolvable (hamblin starred (whDomain none)) {g} ↔
-      Examples.ex_53a.readings.lookup "collective answer" = some .acceptable :=
-  iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred_singleton hg⟩ (by decide)
+-- (53): one collective lifting is answered by naming the group on the weak singular, and on the
+-- strong singular, whose answer is the tautology, it is not
+theorem collective_answer_iff {g : E} (hg : g ∈ whDomain none) (hna : ¬ IsAtom g) :
+    (IsStrongestTrueAnswer (hamblin starred (whDomain none)) {g} (starred g) ↔
+        Examples.ex_53a.readings.lookup "collective answer" = some .acceptable) ∧
+      ¬ IsStrongestTrueAnswer (upwardGQ starred (whDomain (some Number.singular))) {g}
+        (starred g) :=
+  ⟨iff_of_true (isStrongestTrueAnswer_hamblin_starred_singleton hg) (by decide), fun h ↦
+    starred_ne_univ (le_antisymm (subset_univ _)
+      (h.unique (isStrongestTrueAnswer_upwardGQ_starred_atoms hna)).symm.le)⟩
 
 end Rows
 
