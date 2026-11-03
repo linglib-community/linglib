@@ -34,8 +34,8 @@ proper superset of those the other elision violates.
   morpheme-initial constraint at a word boundary too, which the paper's table of violations
   leaves out and which changes no prediction.
 * `schematic k` is the paper's schematic juncture `/CV₁ + V₂C/` at the survey's kind `k`, with
-  `C` and `V` the natural classes [+consonantal] and [+syllabic]; it witnesses that every kind of
-  juncture has a context.
+  `C` and `V` the natural classes [+consonantal] and [+syllabic, −consonantal]; it witnesses that
+  every kind of juncture has a context.
 
 ## References
 
@@ -206,8 +206,8 @@ structure IsOfKind (c : Context) (k : Data.Hiatus.Juncture) : Prop where
 /-- The paper's schematic consonant, the natural class [+consonantal]. -/
 def C : Segment := .ofSpecs [(.consonantal, true)]
 
-/-- The paper's schematic vowel, the natural class [+syllabic]. -/
-def V : Segment := .ofSpecs [(.syllabic, true)]
+/-- The paper's schematic vowel, the natural class [+syllabic, −consonantal]. -/
+def V : Segment := .ofSpecs [(.syllabic, true), (.consonantal, false)]
 
 /-- The paper's schematic juncture `/CV₁ + V₂C/` at the survey's kind `k`, at the start of an
 utterance. -/
