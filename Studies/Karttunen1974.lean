@@ -1,37 +1,41 @@
 module
 
-public import Studies.Heinamaki1974
+public import Linglib.Semantics.Tense.RunTimes
 public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Karttunen (1974): Until
 
 Karttunen argues that English has two *until*s. Durative *until* modifies a durative sentence and
-marks the minimum length of its interval: some run-time of `A` reaches a time of `B`. Punctual
-*until* is a negative polarity item whose logical form is that of *before*, *A not until T* being
-the negation of Anscombe's quantificational *before* (33). What distinguishes it from *before* is
-a pragmatic presupposition of lateness, *A before T or A when T* (34), with Heinämäki's *when*.
-Since the logical form holds of a clause that never happens, the commitment to *A when T* follows
-from assertion and presupposition by disjunctive syllogism (36), which is why *Nancy didn't get
-married until she died* (23) commits the speaker to a marriage at her death.
+marks the minimum length of its interval: some run-time of `A` begins before a time of `B` and
+reaches it. Punctual *until* is a negative polarity item whose logical form is that of *before*,
+*A not until T* being the negation of Anscombe's quantificational *before* (33). What distinguishes
+it from *before* is a pragmatic presupposition of lateness, *A before T or A when T* (34), where
+*A when T* is that `A` holds at the time `T`. Since the logical form holds of a clause that never
+happens, the commitment to *A when T* follows from assertion and presupposition by disjunctive
+syllogism (36), which is why *Nancy didn't get married until she died* (23) commits the speaker to
+a marriage at her death.
 
 ## References
 
 * [karttunen-1974]
 * [anscombe-1964]
-* [heinamaki-1974]
 -/
 
 @[expose] public section
 
 namespace Karttunen1974
 
-open Tense Anscombe1964 Heinamaki1974
+open Tense
 
 variable {T : Type*} [LinearOrder T] (A B : Set (NonemptyInterval T))
 
-/-- Durative *A until B* holds when some run-time of `A` reaches a time of `B`. -/
-def until_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+/-- Durative *A until B* holds when some run-time of `A` begins before a time of `B` and reaches
+it: *until* marks the minimum length of the interval. -/
+def until_ : Prop := ∃ J ∈ A, ∃ t ∈ timeTrace B, J.fst < t ∧ t ≤ J.snd
+
+/-- *A when T*, in the presupposition (34), holds when `A` holds at a time of `T`. -/
+def when_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- Punctual *A not until B*, (33), is *A not before B*. -/
 def notUntil : Prop := ¬ Tense.beforeEver A B
@@ -40,7 +44,10 @@ def notUntil : Prop := ¬ Tense.beforeEver A B
 def presupposition : Prop := Tense.beforeEver A B ∨ when_ A B
 
 theorem until_veridical_complement : until_ A B → ∃ t, t ∈ timeTrace B :=
-  fun ⟨t, _, ht⟩ ↦ ⟨t, ht⟩
+  fun ⟨_, _, t, ht, _⟩ ↦ ⟨t, ht⟩
+
+theorem when_of_until : until_ A B → when_ A B :=
+  fun ⟨J, hJ, t, ht, hlt, hle⟩ ↦ ⟨t, ⟨J, hJ, hlt.le, hle⟩, ht⟩
 
 /-- Every time of `A` is one at which `B` holds or has held. -/
 theorem notUntil_iff : notUntil A B ↔ timeTrace A ⊆ upperClosure (timeTrace B) := by

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Finnish.Indefinites
 public import Linglib.Semantics.PolarityItem.Licensing
-public import Linglib.Fragments.Finnish.TemporalConnectives
 
 /-!
 # Finnish polarity-sensitive items
@@ -59,10 +58,10 @@ def kukaTahansa : PolarityItem :=
 /-! ### PPI -/
 
 /-- *vasta* 'only then', the punctual *until* of a positive clause, the twin of German *erst* and
-the positive counterpart of the negated *ennen kuin* ([karttunen-1974]). Its connective entry is
-`Finnish.TemporalConnectives.vasta`. -/
+the positive counterpart of the negated *ennen kuin* ([karttunen-1974]), as in *prinsessa heräsi
+vasta yhdeksältä* 'the princess did not wake up until nine'. -/
 def vasta : PolarityItem :=
-  { form := TemporalConnectives.vasta.form
+  { form := "vasta"
   , antiLicensor := some .antiMorphic }
 
 /-- The entries. -/

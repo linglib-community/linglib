@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.PolarityItem.Basic
-public import Linglib.Fragments.Dutch.TemporalConnectives
 
 /-!
 # Dutch polarity items
@@ -26,10 +25,10 @@ namespace Dutch.PolarityItems
 
 open PolarityItem
 
-/-- *pas*, the punctual *until* of a positive clause. Its connective entry is
-`Dutch.TemporalConnectives.pas`. -/
+/-- *pas*, the punctual *until* of a positive clause, *Marie kwam pas om 9 uur aan* 'Marie only
+arrived at nine'. -/
 def pas : PolarityItem :=
-  { form := TemporalConnectives.pas.form
+  { form := "pas"
   , antiLicensor := some .antiMorphic }
 
 /-- *ooit* 'ever', a weak negative polarity item that is also a weak positive polarity item
