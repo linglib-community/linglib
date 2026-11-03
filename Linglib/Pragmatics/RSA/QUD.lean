@@ -42,6 +42,18 @@ theorem listener_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableS
   rw [Kernel.map_apply_singleton, listener_truthful_apply, cond_apply .of_discrete,
     ENNReal.div_eq_inv_mul]
 
+/-- Within a finite context set, a literal listener's probability of an answer is the prior mass
+of the states of the set where the utterance is true and that have the answer, over the prior
+mass of the states of the set where it is true. -/
+theorem listener_restrict_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
+    [Countable U] [DecidableEq X] (μ : Measure W) (C : Finset W) (sem : U → Set W)
+    [∀ u, DecidablePred (· ∈ sem u)] (q : W → X) (u : U) (x : X) :
+    (listener (μ.restrict ↑C) (truthful sem)).map q u {x} =
+      μ ↑((C.filter (· ∈ sem u)).filter (q · = x)) / μ ↑(C.filter (· ∈ sem u)) := by
+  rw [listener_truthful_map_apply_singleton, Measure.restrict_apply .of_discrete,
+    Measure.restrict_apply .of_discrete]
+  congr 2 <;> ext <;> simp [and_comm, and_left_comm]
+
 variable [Fintype W] [Fintype U] [Fintype X] {α : ℝ}
 
 /-- **Nonliteral production.** The speaker who addresses a question to a literal listener
