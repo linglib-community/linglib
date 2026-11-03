@@ -22,7 +22,7 @@ Sorbian *žon-*. Roots are concrete forms, so [the four Arabic forms sharing k-t
 roots](##Haspelmath2025b.arabic_four_roots), and on the heterosemy view [the noun and the verb
 *hammer* are two roots with one shape](##Haspelmath2025b.hammer_two_roots), [related by sister
 schemas](##Haspelmath2025b.hammer_sisters) that *hammer* and *dance* do not instantiate. In
-Bloomfield's English words [the roots are the root's exponents](##Haspelmath2025b.bloomfield_roots),
+Bloomfield's English words [the roots are the stems](##Haspelmath2025b.bloomfield_roots),
 the suppletive *bet-* of *bet-ter* but not its *-er*.
 
 ## Implementation notes
@@ -232,7 +232,7 @@ theorem laudab_stem :
 /-- Bloomfield's plain and derived words, with the class of each morph's meaning. -/
 def bloomfield : Inventory Morph where
   forms := [Bloomfield1933.Lexeme.kind, .good, .ox, .card, .go, .land].flatMap fun l ↦
-    [Bloomfield1933.word l .plain, Bloomfield1933.word l .derived]
+    [Bloomfield1933.word l .plain, Bloomfield1933.word l l.derived]
   rootClass m :=
     if m = Bloomfield1933.kind ∨ m = Bloomfield1933.good ∨ m = Bloomfield1933.bet then
       some .property
@@ -241,11 +241,12 @@ def bloomfield : Inventory Morph where
       some .action
     else none
 
-/-- In each of Bloomfield's words the roots of definition (1) are the exponent Vocabulary
+/-- In each of Bloomfield's words the roots of definition (1) are its stem, the exponent Vocabulary
 Insertion gives the root, *bet-* in *bet-ter* and *went* among them, so the clause on contentful
 forms tells a suppletive alternant of a root from the affix beside it. -/
-theorem bloomfield_roots : ∀ l c,
-    (Bloomfield1933.word l c).filter bloomfield.IsRoot ∈ Bloomfield1933.roots.realize l c := by
+theorem bloomfield_roots : ∀ l, ∀ c ∈ [.plain, l.derived],
+    (Bloomfield1933.word l c).filter bloomfield.IsRoot ∈
+      Bloomfield1933.analysis.stem.realize l c := by
   decide
 
 /-! ### Heterosemy (§6) -/

@@ -1,33 +1,24 @@
 module
 
+public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Morphology.Paradigm.Canonical
 public import Linglib.Morphology.Paradigm.Function
+public import Studies.Stump2006
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Stump (2016): Inflectional Paradigms
 
-This file formalizes two of the deviations from the canonical content-to-form isomorphism
-argued for in Stump's book, on the paradigm-linkage model of the substrate's
-`Morphology.Linkage`. Latin deponent verbs inflect by means of the morphology that
-ordinarily expresses a verb's passive forms: the deponent *cōnārī* realizes its active
-content cells with the passive personal endings a regular verb like *parāre* uses only for
-its passive, and lacks passive-meaning forms. This is a property mapping that crosses the
-voice axis: the regular verb's linkage preserves the content cell's property set and is
-canonical (`parareLinkage_isCanonical`), while the deponent's replaces active with passive
-on every active cell (`conari_deviates_on_every_active_cell`,
-`conari_active_realized_by_passive_form`), so that the same active content cell has an
-active form correspondent for the one verb and a passive one for the other
-(`depon_vs_regular`).
-
-The Kashmiri recent, indefinite and remote preterites of the intransitive conjugations II
-and III are realized through four morphomic properties, the past morphomes a to d, by
-property mappings that differ by one morphome (`pmII`, `pmIII`): the indefinite past of
-WUP and the recent past of WUPH share the past b form correspondent and inflect alike
-(`kashmiri_inflect_alike`), as do the remote past of WUP and the indefinite past of WUPH
-(`kashmiri_inflect_alike_pastC`). Content cells carry the tenses and form cells the morphomes,
-and within one conjugation the preterites keep distinct form correspondents
-(`linkII_not_syncretic`). The form cells are realized by the PFM block cascade of
-`Morphology.Paradigm.Function`.
+Stump builds the canonical inflectional paradigm on Corbett's canonical inflection, in which
+Turkish ADAM and TAVAN [inflect canonically](##Stump2016.turkish_isCanonical) once vowel
+harmony, which [spells one genitive suffix two ways](##Stump2016.genitive_harmony), is set
+aside. Deviations from the canonical isomorphism of content and form are property mappings of a
+paradigm linkage: the Latin deponent *cōnārī* [realizes its active cells with the passive
+endings](##Stump2016.conari_active_realized_by_passive_form) that *parāre* keeps for its passive,
+and in Kashmiri [the indefinite past of WUP and the recent past of WUPH inflect
+alike](##Stump2016.kashmiri_inflect_alike) through morphomes that two conjugations map
+differently. Suppletion is an alternation between independent stems, and the heteroclite PRAMEN
+of Stump's earlier analysis [has such stems](##Stump2016.pramen_independent).
 
 ## Implementation notes
 
@@ -41,6 +32,8 @@ every property set with a single tense.
 ## References
 
 * [stump-2016]
+* [stump-2006]
+* [corbett-2007]
 -/
 
 @[expose] public section
@@ -100,8 +93,7 @@ def conariContentCells : List Cell :=
   [⟨.s1, .active⟩, ⟨.s2, .active⟩, ⟨.s3, .active⟩,
    ⟨.p1, .active⟩, ⟨.p2, .active⟩, ⟨.p3, .active⟩]
 
-/-- The regular verb's linkage is canonical, property-set preserving (`pm = id`)
-and stem invariant ([stump-2016] §7.1, characteristics (2a)–(2b)). -/
+-- §7.1, (2a), (2b) [stump-2016]
 theorem parareLinkage_isCanonical : parareLinkage.IsCanonical id :=
   Linkage.canonical_isCanonical Function.injective_id fun _ : LatinVerb ↦ LatinStem.para
 
@@ -251,5 +243,90 @@ theorem linkII_not_syncretic : ¬ linkII.IsSyncretic :=
     Linkage.isInjective_of_injective_pm fun _ ↦ Finset.image_injective morphomeII_injective
 
 end Kashmiri
+
+/-! ### Canonical inflection (Ch. 2) -/
+
+section Turkish
+
+open Function
+open _root_.Phonology (Segment)
+open Turkish Turkish.Phonology Turkish.Nominal
+
+/-- The numbers of the Turkish nominal paradigm. -/
+inductive TurkishNumber where
+  | singular
+  | plural
+  deriving DecidableEq, Fintype
+
+/-- The Turkish nouns ADAM 'man' and TAVAN 'ceiling' of Tables 2.1 and 2.2. -/
+inductive TurkishNoun where
+  | adam
+  | tavan
+  deriving DecidableEq, Fintype
+
+/-- The stem of a Turkish noun. -/
+def TurkishNoun.stem : TurkishNoun → List Segment
+  | .adam => [a, d, a, m]
+  | .tavan => [t, a, v, a, n]
+
+/-- The suffixes of a cell, the plural before the case suffix, none in the nominative singular. -/
+def suffixes : Turkish.Case × TurkishNumber → List Suffix
+  | (k, n) => forms ((match n with | .singular => [] | .plural => [⟨_, .plural⟩]) ++
+      match k with
+      | .nom => [] | .acc => [⟨_, .accusative⟩] | .dat => [⟨_, .dative⟩]
+      | .loc => [⟨_, .locative⟩] | .abl => [⟨_, .ablative⟩] | .gen => [⟨_, .genitive⟩])
+
+/-- Each cell pairs a noun's stem with the cell's suffixes. -/
+def turkishParts :
+    Realization TurkishNoun (Turkish.Case × TurkishNumber) (List Segment × List Suffix) :=
+  ⟨fun l c ↦ {(l.stem, suffixes c)}⟩
+
+/-- The underlying forms of the two nouns, the stem with the suffixes attached. -/
+def turkish : Realization TurkishNoun (Turkish.Case × TurkishNumber) (List Segment) :=
+  turkishParts.map (Function.uncurry underlying)
+
+/-- The analysis of the forms into stems and suffixes. -/
+def turkishAnalysis : turkish.Analysis (List Segment) (List Suffix) :=
+  ⟨turkishParts, underlying, fun _ _ ↦ rfl⟩
+
+/-- ADAM and TAVAN inflect canonically, each with one stem across its cells, with distinct stems,
+distinct suffixes in distinct cells and the same suffixes in corresponding cells (Tables 2.1 to
+2.3). -/
+theorem turkish_isCanonical : turkishAnalysis.IsCanonical where
+  isTotal := by decide
+  isUnivalent := by decide
+  stem_isInvariant := by decide
+  stem_disjoint := (by decide : ∀ c l l', l ≠ l' →
+    Disjoint (turkishAnalysis.stem.realize l c) (turkishAnalysis.stem.realize l' c))
+  inflection_disjoint := (by decide : ∀ l c c', c ≠ c' →
+    Disjoint (turkishAnalysis.inflection.realize l c) (turkishAnalysis.inflection.realize l c'))
+  inflection_isInvariant := by decide
+
+-- p. 32
+theorem turkish_realize_disjoint :
+    (∀ l, Pairwise (Disjoint on turkish.realize l)) ∧
+      ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realize l c) :=
+  turkish_isCanonical.realize_disjoint (by decide)
+
+/-- The genitive suffix -(n)In is the same after ADAM and after EV 'house', but vowel harmony
+spells it -ın and -in, so the paradigms share their inflectional marking only below vowel harmony
+(fn. 1). -/
+theorem genitive_harmony :
+    (underlying [a, d, a, m] [Exponent.genitive.form]).drop 4 =
+        (underlying [e, v] [Exponent.genitive.form]).drop 2 ∧
+      (Turkish.realize [a, d, a, m] [Exponent.genitive.form]).drop 4 ≠
+        (Turkish.realize [e, v] [Exponent.genitive.form]).drop 2 := by
+  decide
+
+end Turkish
+
+/-! ### Suppletion (Ch. 11) -/
+
+/-- The two stems of [stump-2006]'s PRAMEN belong to distinct declensions, so no pattern confined
+to one declension determines them: they are independent stems, and their alternation is
+suppletion (§11.1). -/
+theorem pramen_independent :
+    ¬ Stump2006.czLinkage.IsClassDetermined {p | ∀ σ σ', (p σ).decl = (p σ').decl} .pramen :=
+  Stump2006.pramen_heteroclite.not_isClassDetermined fun _ hp ↦ hp
 
 end Stump2016

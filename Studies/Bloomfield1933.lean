@@ -7,6 +7,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Paradigm.Canonical
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.Root.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -27,9 +28,10 @@ not](##Bloomfield1933.suppletion).
 ## Implementation notes
 
 The words of the suppletion examples are spelled out by Vocabulary Insertion, a root and the head
-of its secondary derivation each by its own items. A suppletive alternant is an item conditioned
-by the neighbouring terminal, so the two kinds of suppletion are form variance at the root and at
-the head. An exponent is a list of morphs, the zero alternant the empty one.
+of its secondary derivation each by its own items, and analysed into stems and inflectional
+material (`Morphology.Realization.Analysis`). Suppletion of an underlying form is variance of a
+lexeme's stems across its cells, and suppletion of a bound form variance of a cell's inflectional
+material across lexemes. An exponent is a list of morphs, the zero alternant the empty one.
 
 ## TODO
 
@@ -129,6 +131,20 @@ inductive Lexeme where
   | land
   deriving DecidableEq, Fintype
 
+/-- The cells of the examples, the plain form and the comparative, the plural and the past. -/
+inductive Cell where
+  | plain
+  | cmpr
+  | pl
+  | past
+  deriving DecidableEq, Fintype
+
+/-- The cell of a lexeme's secondary derivative. -/
+def Lexeme.derived : Lexeme → Cell
+  | .kind | .good => .cmpr
+  | .ox | .card => .pl
+  | .go | .land => .past
+
 /-- The terminals of a word, a root and the head of its secondary derivation. -/
 inductive Terminal where
   | root (l : Lexeme)
@@ -137,17 +153,12 @@ inductive Terminal where
   | past
   deriving DecidableEq
 
-/-- The head of a lexeme's secondary derivation, the comparative, the plural or the past. -/
-def Lexeme.head : Lexeme → Terminal
-  | .kind | .good => .cmpr
-  | .ox | .card => .pl
-  | .go | .land => .past
-
-/-- A word is the plain root or its secondary derivative. -/
-inductive Cell where
-  | plain
-  | derived
-  deriving DecidableEq, Fintype
+/-- The head a cell adds to the root, none in the plain form. -/
+def Cell.head? : Cell → Option Terminal
+  | .plain => none
+  | .cmpr => some .cmpr
+  | .pl => some .pl
+  | .past => some .past
 
 open DistributedMorphology Morphology.Exponence in
 /-- The Vocabulary Items condition each suppletive alternant on its neighbour, *bet-* and *went* on
@@ -161,34 +172,48 @@ def vocabulary : RuleSet (VocabularyItem Terminal (List Morph)) :=
     ⟨{(0, .past), (-1, .root .go)}, []⟩, {.past} ⟷ [ed]]
 
 open DistributedMorphology in
-/-- The root of `l`, with the head of its derivation to the right in the derived word. -/
-def rootSite (l : Lexeme) : Cell → Neighborhood (Finset Terminal)
-  | .plain => ⟨{.root l}, [], []⟩
-  | .derived => ⟨{.root l}, [], [{l.head}]⟩
+/-- The root of `l` in the cell `c`, with the cell's head to its right. -/
+def rootSite (l : Lexeme) (c : Cell) : Neighborhood (Finset Terminal) :=
+  ⟨{.root l}, [], (c.head?.map ({·})).toList⟩
 
 open DistributedMorphology in
-/-- The head of `l`'s derived word, with the root to its left. -/
-def headSite (l : Lexeme) : Neighborhood (Finset Terminal) := ⟨{l.head}, [{.root l}], []⟩
+/-- The head `t` beside the root of `l`. -/
+def headSite (l : Lexeme) (t : Terminal) : Neighborhood (Finset Terminal) := ⟨{t}, [{.root l}], []⟩
 
 open DistributedMorphology in
-/-- The roots, realized in the plain and the derived word. -/
-def roots : Realization Lexeme Cell (List Morph) :=
-  ⟨fun l c ↦ (subsetPrinciple vocabulary (rootSite l c)).toFinset⟩
+/-- The exponent of the head of `l`'s cell `c`, the empty list where the cell adds no head. -/
+def headExponent (l : Lexeme) (c : Cell) : Option (List Morph) :=
+  match c.head? with
+  | none => some []
+  | some t => subsetPrinciple vocabulary (headSite l t)
 
 open DistributedMorphology in
-/-- The heads, realized beside the roots that take them. -/
-def heads : Realization Terminal Lexeme (List Morph) :=
-  ⟨fun t l ↦ if l.head = t then (subsetPrinciple vocabulary (headSite l)).toFinset else ∅⟩
+/-- The pairs of a root's exponent and the inflectional material beside it, in the plain form and
+in each lexeme's derivative. -/
+def parts : Realization Lexeme Cell (List Morph × List Morph) :=
+  ⟨fun l c ↦ if c = .plain ∨ c = l.derived then
+    (Option.map₂ Prod.mk (subsetPrinciple vocabulary (rootSite l c)) (headExponent l c)).toFinset
+    else ∅⟩
+
+/-- The words, each a stem followed by its inflectional material. -/
+def english : Realization Lexeme Cell (List Morph) := parts.map (Function.uncurry (· ++ ·))
+
+/-- The analysis of the words into stems and inflectional material. -/
+def analysis : english.Analysis (List Morph) (List Morph) := ⟨parts, (· ++ ·), fun _ _ ↦ rfl⟩
 
 open DistributedMorphology in
 /-- The word of `l` in the cell `c`, the root's exponent followed by the head's. -/
 def word (l : Lexeme) (c : Cell) : List Morph :=
-  (subsetPrinciple vocabulary (rootSite l c)).getD [] ++
-    if c = .derived then (subsetPrinciple vocabulary (headSite l)).getD [] else []
+  (subsetPrinciple vocabulary (rootSite l c)).getD [] ++ (headExponent l c).getD []
+
+theorem english_realize_eq :
+    ∀ l, english.realize l .plain = {word l .plain} ∧
+      english.realize l l.derived = {word l l.derived} := by
+  decide
 
 -- §13.4, §13.7
 theorem derived_words :
-    [Lexeme.kind, .good, .ox, .card, .go, .land].map (word · .derived) =
+    [Lexeme.kind, .good, .ox, .card, .go, .land].map (fun l ↦ word l l.derived) =
       [[kind, er], [bet, er], [ox, en], [card, z], [went], [land, ed]] := by
   decide
 
@@ -196,14 +221,19 @@ theorem derived_words :
 *kind* and *ox* keep theirs, and the plural has the suppletive alternant *-en* after *ox*, while
 the comparative keeps *-er* (§13.7). -/
 theorem suppletion :
-    roots.IsSuppletive .good ∧ roots.IsSuppletive .go ∧ roots.IsInvariant .kind ∧
-      roots.IsInvariant .ox ∧ heads.IsSuppletive .pl ∧ heads.IsInvariant .cmpr := by
+    analysis.stem.IsSuppletive .good ∧ analysis.stem.IsSuppletive .go ∧
+      analysis.stem.IsInvariant .kind ∧ analysis.stem.IsInvariant .ox ∧
+      analysis.inflection.transpose.IsSuppletive .pl ∧
+      analysis.inflection.transpose.IsInvariant .cmpr := by
   decide
 
 -- §13.7: "a zero-alternant replaces the bound form, and a suppletive alternant the underlying
 -- form, in cases like ... go : went"
-theorem go_went : roots.realize .go .derived = {[went]} ∧ heads.realize .past .go = {[]} ∧
-    heads.IsSuppletive .past := by
+theorem go_went : english.realize .go .past = {[went]} ∧
+    analysis.inflection.realize .go .past = {[]} ∧
+    analysis.inflection.transpose.IsSuppletive .past := by
   decide
+
+theorem not_isCanonical : ¬ analysis.IsCanonical := fun h ↦ h.not_isSuppletive.1 .good suppletion.1
 
 end Bloomfield1933

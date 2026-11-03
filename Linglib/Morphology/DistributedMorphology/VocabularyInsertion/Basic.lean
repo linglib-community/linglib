@@ -2,6 +2,8 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.Neighborhood
 public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Realization
+public import Mathlib.Data.Finset.Option
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Order.Prod.Lex.Basic
@@ -42,6 +44,8 @@ pattern across nested neighborhoods.
   the winner less specific, retreat to the general case.
 * `DistributedMorphology.isContiguous_subsetPrinciple`: an antihomophonous vocabulary realizes
   contiguous patterns over neighborhoods ordered by inclusion.
+* `DistributedMorphology.toRealization_isUnivalent`: Vocabulary Insertion, as a
+  `Morphology.Realization`, realizes no cell overabundantly.
 
 ## References
 
@@ -114,8 +118,8 @@ open Morphology.Exponence
 
 variable {F E : Type*} {i j : VocabularyItem F E} {n : Neighborhood (Finset F)}
 
-/-- A Vocabulary Item exposes the shared exponence interface: its contexts are neighborhoods, and
-it applies in those bearing every positioned feature of its site. -/
+/-- A Vocabulary Item is a rule of exponence whose contexts are neighborhoods, applying in those
+that bear every positioned feature of its site. -/
 instance : Rule (VocabularyItem F E) (Neighborhood (Finset F)) E :=
   ⟨exponent, fun i n ↦ ∀ x ∈ i.site, x ∈ n⟩
 
@@ -144,8 +148,8 @@ theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n �
     Applies i n' :=
   fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
 
-/-- Specificity is reverse inclusion of sites: an item applies in fewer neighborhoods exactly when
-its site is larger, since principal up-sets are ordered reversely to their generators. -/
+/-- An item applies in fewer neighborhoods than another exactly when its site is larger, since
+principal up-sets are ordered reversely to their generators. -/
 theorem applySet_subset_iff : applySet i ⊆ applySet j ↔ j.site ⊆ i.site := by
   classical
   rw [applySet_eq, applySet_eq, Set.Ici_subset_Ici, Neighborhood.ofFinset_subset_ofFinset]
@@ -260,5 +264,36 @@ theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn
 
 end SubsetPrinciple
+
+/-! ### Vocabulary Insertion as a realization -/
+
+section Realization
+
+variable {F E R Ctx : Type*} [DecidableEq F] {items : RuleSet (VocabularyItem F E)}
+  {site : R → Ctx → Neighborhood (Finset F)} {r : R}
+
+/-- The realization by `items` inserts at each index and context the exponent the Subset Principle
+selects in the neighborhood `site r c`. -/
+def toRealization (items : RuleSet (VocabularyItem F E))
+    (site : R → Ctx → Neighborhood (Finset F)) : Morphology.Realization R Ctx E :=
+  ⟨fun r c ↦ (subsetPrinciple items (site r c)).toFinset⟩
+
+@[simp] theorem toRealization_realize (r : R) (c : Ctx) :
+    (toRealization items site).realize r c = (subsetPrinciple items (site r c)).toFinset := rfl
+
+/-- The Subset Principle selects one item, so Vocabulary Insertion realizes no cell
+overabundantly. -/
+theorem toRealization_isUnivalent : (toRealization items site).IsUnivalent := fun r c ↦ by
+  rw [toRealization_realize, Option.card_toFinset]
+  cases subsetPrinciple items (site r c) <;> simp
+
+/-- An index is suppletive exactly when two of its contexts select items with distinct
+exponents. -/
+theorem toRealization_isSuppletive_iff : (toRealization items site).IsSuppletive r ↔
+    ∃ c c' e e', subsetPrinciple items (site r c) = some e ∧
+      subsetPrinciple items (site r c') = some e' ∧ e ≠ e' := by
+  simp [Morphology.Realization.IsSuppletive, Morphology.IsVariantIn]
+
+end Realization
 
 end DistributedMorphology

@@ -32,7 +32,8 @@ takes the lexeme's root.
 
 ## Main results
 
-* `Linkage.IsHeteroclite.isSuppletive`: heteroclisis entails suppletion.
+* `Linkage.IsHeteroclite.isSuppletive`, `Linkage.IsHeteroclite.not_isClassDetermined`: heteroclisis
+  entails suppletion, the stems of a heteroclite lexeme being determined by no one class.
 * `Linkage.realized_eq_of_corr_eq`: equal correspondent sets force equal realizations.
 * `Linkage.ofFun_isCanonical_iff`: under an injective identification, the linkage of a stem
   choice is canonical exactly when each lexeme's stem is constant.
@@ -197,6 +198,14 @@ theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsIn
 theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSuppletive l :=
   let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
   ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
+
+/-- When each pattern draws its stems from one class, a heteroclite lexeme's stems are not
+class-determined, so their alternation is suppletion in [stump-2016]'s sense. -/
+theorem IsHeteroclite.not_isClassDetermined {A : Set (S → Z)}
+    (hA : ∀ p ∈ A, ∀ σ σ', cls (p σ) = cls (p σ')) (h : ℓ.IsHeteroclite cls l) :
+    ¬ ℓ.IsClassDetermined A l := fun ⟨p, hp, hl⟩ ↦
+  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
+  hne (by rw [hl σ z hz, hl σ' z' hz']; exact hA p hp σ σ')
 
 /-! ### Decidability
 
