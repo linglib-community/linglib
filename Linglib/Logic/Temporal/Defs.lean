@@ -24,8 +24,8 @@ logic is a multimodal Kripke logic by construction.
 * `TWFrame`: a frame, with historical equivalence an antitone family of setoids.
 * `TWFrame.alt`: historical equivalence at a time as an accessibility relation.
 * `TWFrame.ofDatedFacts`: the frame of worlds agreeing on the facts dated by each time.
-* `OForm`, `TWFrame.sat`: the object language and satisfaction.
-* `OForm.M`, `OForm.Fut`, `OForm.Pst`, `OForm.dia`, `OForm.imp`, `OForm.or`: the derived
+* `Formula`, `TWFrame.sat`: the object language and satisfaction.
+* `Formula.M`, `Formula.Fut`, `Formula.Pst`, `Formula.dia`, `Formula.imp`, `Formula.or`: the derived
   connectives.
 
 ## References
@@ -64,21 +64,21 @@ def ofDatedFacts {Fact : Type*} (time : Fact → T) (holds : World → Fact → 
 end TWFrame
 
 /-- The object language `L` of T × W logic ([von-kutschera-1997] §1). -/
-inductive OForm (Atom : Type*) where
+inductive Formula (Atom : Type*) where
   /-- A sentential constant. -/
-  | atom : Atom → OForm Atom
+  | atom : Atom → Formula Atom
   /-- Negation. -/
-  | neg : OForm Atom → OForm Atom
+  | neg : Formula Atom → Formula Atom
   /-- Conjunction. -/
-  | and : OForm Atom → OForm Atom → OForm Atom
+  | and : Formula Atom → Formula Atom → Formula Atom
   /-- `G` — "it will always be that" (∀ later times, same world). -/
-  | G : OForm Atom → OForm Atom
+  | G : Formula Atom → Formula Atom
   /-- `H` — "it has always been that" (∀ earlier times, same world). -/
-  | H : OForm Atom → OForm Atom
+  | H : Formula Atom → Formula Atom
   /-- `N` — historical necessity (∀ `∼ₜ`-alternatives, same time). -/
-  | N : OForm Atom → OForm Atom
+  | N : Formula Atom → Formula Atom
   /-- `box` — truth in all worlds (von Kutschera's `N₄`). -/
-  | box : OForm Atom → OForm Atom
+  | box : Formula Atom → Formula Atom
   deriving DecidableEq
 
 namespace TWFrame
@@ -91,7 +91,7 @@ open scoped ModalLogic Denotes in
     and past tense cells, historical equivalence `sim t`, and the universal relation — making the
     object logic a multimodal Kripke logic by construction. -/
 def sat (F : TWFrame World T) (V : Atom → T → World → Prop) :
-    OForm Atom → T → World → Prop
+    Formula Atom → T → World → Prop
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
@@ -107,21 +107,21 @@ end TWFrame
 variable {Atom : Type*}
 
 /-- Historical possibility `M = ¬N¬` (the Ockhamist `◇`). -/
-def OForm.M (a : OForm Atom) : OForm Atom := .neg (.N (.neg a))
+def Formula.M (a : Formula Atom) : Formula Atom := .neg (.N (.neg a))
 
 /-- Tense `F` — "it will at some point be that" (`¬G¬`). -/
-def OForm.Fut (a : OForm Atom) : OForm Atom := .neg (.G (.neg a))
+def Formula.Fut (a : Formula Atom) : Formula Atom := .neg (.G (.neg a))
 
 /-- Tense `P` — "it was at some point that" (`¬H¬`). -/
-def OForm.Pst (a : OForm Atom) : OForm Atom := .neg (.H (.neg a))
+def Formula.Pst (a : Formula Atom) : Formula Atom := .neg (.H (.neg a))
 
 /-- Possibility in all worlds `◇ = ¬□¬`. -/
-def OForm.dia (a : OForm Atom) : OForm Atom := .neg (.box (.neg a))
+def Formula.dia (a : Formula Atom) : Formula Atom := .neg (.box (.neg a))
 
 /-- Material implication `a ⊃ b := ¬(a ∧ ¬b)`. -/
-def OForm.imp (a b : OForm Atom) : OForm Atom := .neg (.and a (.neg b))
+def Formula.imp (a b : Formula Atom) : Formula Atom := .neg (.and a (.neg b))
 
 /-- Disjunction `a ∨ b := ¬(¬a ∧ ¬b)`. -/
-def OForm.or (a b : OForm Atom) : OForm Atom := .neg (.and (.neg a) (.neg b))
+def Formula.or (a b : Formula Atom) : Formula Atom := .neg (.and (.neg a) (.neg b))
 
 end Temporal

@@ -47,7 +47,7 @@ universe u v
 variable {Atom : Type*}
 
 /-- The sentential constants occurring in a formula. -/
-def mentions : OForm Atom → Atom → Prop
+def mentions : Formula Atom → Atom → Prop
   | .atom p,  q => p = q
   | .neg a,   q => mentions a q
   | .and a b, q => mentions a q ∨ mentions b q
@@ -62,7 +62,7 @@ A formula's truth at a point depends only on the valuation of the atoms it menti
 
 theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
     (V₁ V₂ : Atom → T → World → Prop) :
-    ∀ (a : OForm Atom), (∀ p, mentions a p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
+    ∀ (a : Formula Atom), (∀ p, mentions a p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
       ∀ t w, (F.sat V₁ a t w ↔ F.sat V₂ a t w)
   | .atom p,  h, t, w => h p rfl t w
   | .neg a,   h, t, w => by
@@ -85,72 +85,72 @@ theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
       exact forall_congr' fun w' ↦ sat_iff_of_agree F V₁ V₂ a h t w'
 
 /-- A formula is **valid** when it is true at every point of every T × W model. -/
-def Valid (a : OForm Atom) : Prop :=
+def Valid (a : Formula Atom) : Prop :=
   ∀ {T : Type u} {World : Type v} [LinearOrder T]
     (F : TWFrame World T) (V : Atom → T → World → Prop) (t : T) (w : World),
     F.sat V a t w
 
-open OForm in
+open Formula in
 /-- The Hilbert calculus `TW` of [von-kutschera-1997] has propositional axioms, the tense axioms
 `A1`–`A3`, the modal axioms `A4`–`A5`, the interaction axioms `A6`–`A8`, modus ponens,
 necessitation for `H`, `N` and `□`, and Gabbay's irreflexivity rule. -/
-inductive Provable : OForm Atom → Prop where
+inductive Provable : Formula Atom → Prop where
   /-- Propositional `K` combinator. -/
-  | impK (a b : OForm Atom) : Provable (a.imp (b.imp a))
+  | impK (a b : Formula Atom) : Provable (a.imp (b.imp a))
   /-- Propositional `S` combinator. -/
-  | impS (a b c : OForm Atom) :
+  | impS (a b c : Formula Atom) :
       Provable ((a.imp (b.imp c)).imp ((a.imp b).imp (a.imp c)))
   /-- Classical contraposition. -/
-  | contra (a b : OForm Atom) : Provable (((a.neg).imp (b.neg)).imp (b.imp a))
+  | contra (a b : Formula Atom) : Provable (((a.neg).imp (b.neg)).imp (b.imp a))
   /-- Conjunction introduction. -/
-  | andI (a b : OForm Atom) : Provable (a.imp (b.imp (a.and b)))
+  | andI (a b : Formula Atom) : Provable (a.imp (b.imp (a.and b)))
   /-- Conjunction elimination (left). -/
-  | andL (a b : OForm Atom) : Provable ((a.and b).imp a)
+  | andL (a b : Formula Atom) : Provable ((a.and b).imp a)
   /-- Conjunction elimination (right). -/
-  | andR (a b : OForm Atom) : Provable ((a.and b).imp b)
+  | andR (a b : Formula Atom) : Provable ((a.and b).imp b)
   /-- A1a — `K` axiom for `G`. -/
-  | a1a (a b : OForm Atom) : Provable (((a.imp b).G.and a.G).imp b.G)
+  | a1a (a b : Formula Atom) : Provable (((a.imp b).G.and a.G).imp b.G)
   /-- A1b — `K` axiom for `H`. -/
-  | a1b (a b : OForm Atom) : Provable (((a.imp b).H.and a.H).imp b.H)
+  | a1b (a b : Formula Atom) : Provable (((a.imp b).H.and a.H).imp b.H)
   /-- A1c — the mixing principle `A ⊃ HFA` of [prior-1967]. -/
-  | a1c (a : OForm Atom) : Provable (a.imp a.Fut.H)
+  | a1c (a : Formula Atom) : Provable (a.imp a.Fut.H)
   /-- A1d — the mixing principle `A ⊃ GPA` of [prior-1967]. -/
-  | a1d (a : OForm Atom) : Provable (a.imp a.Pst.G)
+  | a1d (a : Formula Atom) : Provable (a.imp a.Pst.G)
   /-- A2 — `4` axiom for `G` (transitivity). -/
-  | a2 (a : OForm Atom) : Provable (a.G.imp a.G.G)
+  | a2 (a : Formula Atom) : Provable (a.G.imp a.G.G)
   /-- A3a — future linearity (`.3`). -/
-  | a3a (a : OForm Atom) : Provable (a.Fut.imp (a.Fut.or (a.or a.Pst)).G)
+  | a3a (a : Formula Atom) : Provable (a.Fut.imp (a.Fut.or (a.or a.Pst)).G)
   /-- A3b — past linearity (`.3`). -/
-  | a3b (a : OForm Atom) : Provable (a.Pst.imp (a.Fut.or (a.or a.Pst)).H)
+  | a3b (a : Formula Atom) : Provable (a.Pst.imp (a.Fut.or (a.or a.Pst)).H)
   /-- A4a — `T` axiom for `N`. -/
-  | a4a (a : OForm Atom) : Provable (a.N.imp a)
+  | a4a (a : Formula Atom) : Provable (a.N.imp a)
   /-- A4b — `K` axiom for `N`. -/
-  | a4b (a b : OForm Atom) : Provable (((a.imp b).N.and a.N).imp b.N)
+  | a4b (a b : Formula Atom) : Provable (((a.imp b).N.and a.N).imp b.N)
   /-- A4c — `5` axiom for `N`. -/
-  | a4c (a : OForm Atom) : Provable (a.M.imp a.M.N)
+  | a4c (a : Formula Atom) : Provable (a.M.imp a.M.N)
   /-- A5a — `K` axiom for `□`. -/
-  | a5a (a b : OForm Atom) : Provable (((a.imp b).box.and a.box).imp b.box)
+  | a5a (a b : Formula Atom) : Provable (((a.imp b).box.and a.box).imp b.box)
   /-- A5b — `5` axiom for `□`. -/
-  | a5b (a : OForm Atom) : Provable (a.dia.imp a.dia.box)
+  | a5b (a : Formula Atom) : Provable (a.dia.imp a.dia.box)
   /-- A6 — past/necessity interaction `PNA ⊃ NPA`. -/
-  | a6 (a : OForm Atom) : Provable (a.N.Pst.imp a.Pst.N)
+  | a6 (a : Formula Atom) : Provable (a.N.Pst.imp a.Pst.N)
   /-- A7 — `□` dominates `N` (`□A ⊃ NA`). -/
-  | a7 (a : OForm Atom) : Provable (a.box.imp a.N)
+  | a7 (a : Formula Atom) : Provable (a.box.imp a.N)
   /-- A8a — past/`□` interaction `P□A ⊃ □PA`. -/
-  | a8a (a : OForm Atom) : Provable (a.box.Pst.imp a.Pst.box)
+  | a8a (a : Formula Atom) : Provable (a.box.Pst.imp a.Pst.box)
   /-- A8b — future/`□` interaction `F□A ⊃ □FA`. -/
-  | a8b (a : OForm Atom) : Provable (a.box.Fut.imp a.Fut.box)
+  | a8b (a : Formula Atom) : Provable (a.box.Fut.imp a.Fut.box)
   /-- Modus ponens. -/
-  | mp {a b : OForm Atom} : Provable (a.imp b) → Provable a → Provable b
+  | mp {a b : Formula Atom} : Provable (a.imp b) → Provable a → Provable b
   /-- Necessitation for `H`. -/
-  | necH {a : OForm Atom} : Provable a → Provable a.H
+  | necH {a : Formula Atom} : Provable a → Provable a.H
   /-- Necessitation for `N`. -/
-  | necN {a : OForm Atom} : Provable a → Provable a.N
+  | necN {a : Formula Atom} : Provable a → Provable a.N
   /-- Necessitation for `□`. -/
-  | necBox {a : OForm Atom} : Provable a → Provable a.box
+  | necBox {a : Formula Atom} : Provable a → Provable a.box
   /-- Gabbay's irreflexivity rule infers `A` from `□(¬q ∧ Gq) ⊃ A` when `q` is not in `A`. -/
-  | ir {a : OForm Atom} (q : Atom) :
-      Provable ((OForm.and (.neg (.atom q)) (.G (.atom q))).box.imp a) →
+  | ir {a : Formula Atom} (q : Atom) :
+      Provable ((Formula.and (.neg (.atom q)) (.G (.atom q))).box.imp a) →
       ¬ mentions a q → Provable a
 
 /-! ### Soundness -/
@@ -159,7 +159,7 @@ open TWFrame
 open ModalLogic (box_four box_T)
 
 /-- Every `TW`-provable formula is T × W-valid, the soundness of `TW` ([von-kutschera-1997]). -/
-theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
+theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
   intro T World _ F V t w
   induction h generalizing V t w with
   | impK _ _ => simp only [sat_imp]; exact fun p _ ↦ p
@@ -209,7 +209,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   | @ir a q _ hq ih =>
       classical
       let V' : Atom → T → World → Prop := fun p t'' w'' ↦ if p = q then t < t'' else V p t'' w''
-      have hbox : F.sat V' (OForm.and (.neg (.atom q)) (.G (.atom q))).box t w := by
+      have hbox : F.sat V' (Formula.and (.neg (.atom q)) (.G (.atom q))).box t w := by
         intro w' _; refine ⟨?_, fun t' ht' ↦ ?_⟩ <;> simp only [sat_neg, sat_atom, V']
         exacts [lt_irrefl t, Tense.mem_toSetRel_future.1 ht']
       have hagree : ∀ p, mentions a p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
@@ -221,7 +221,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
 
 /-- `TW` is complete for its models, the main theorem. The language needs infinitely many atoms for
 the irreflexivity rule to have a fresh one. -/
-theorem completeness [Countable Atom] [Infinite Atom] {a : OForm Atom} (h : Valid.{0, 0} a) :
+theorem completeness [Countable Atom] [Infinite Atom] {a : Formula Atom} (h : Valid.{0, 0} a) :
     Provable a := by
   -- TODO: the canonical separated model of the maximal consistent sets of `TW` (see `## TODO`).
   sorry
@@ -230,11 +230,12 @@ theorem completeness [Countable Atom] [Infinite Atom] {a : OForm Atom} (h : Vali
 (6), and is not provable in `TW`, whose models allow any valuation. -/
 theorem not_provable_imp_N (p : Atom) :
     (∀ {T World : Type} [LinearOrder T] (F : TWFrame World T) (V : Atom → T → World → Prop),
-      Thomason1984.IsAssignment F V → ∀ t w, F.sat V ((OForm.atom p).imp (OForm.atom p).N) t w) ∧
-    ¬ Provable ((OForm.atom p).imp (OForm.atom p).N) := by
+      Thomason1984.IsAssignment F V → ∀ t w,
+        F.sat V ((Formula.atom p).imp (Formula.atom p).N) t w) ∧
+    ¬ Provable ((Formula.atom p).imp (Formula.atom p).N) := by
   refine ⟨fun F V hV t w ↦ (sat_imp F V _ _ t w).2 fun h ↦
     (Thomason1984.sat_N_iff hV (a := .atom p) trivial).2 h, fun h ↦ ?_⟩
-  have hv : Valid.{0, 0} ((OForm.atom p).imp (OForm.atom p).N) := soundness h
+  have hv : Valid.{0, 0} ((Formula.atom p).imp (Formula.atom p).N) := soundness h
   have hs := hv (T := Unit) (World := Bool) ⟨fun _ ↦ ⊤, fun _ _ _ ↦ le_rfl⟩
     (fun _ _ w ↦ w = true) () true
   exact Bool.false_ne_true ((sat_imp _ _ _ _ _ _).1 hs rfl false trivial)

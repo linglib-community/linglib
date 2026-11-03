@@ -19,7 +19,7 @@ Since every world has the same times,
 
 ## Implementation notes
 
-* Thomason's `□` is historical necessity, `OForm.N`; `OForm.box` is not in his language.
+* Thomason's `□` is historical necessity, `Formula.N`; `Formula.box` is not in his language.
 * The chapter was read in the second edition of the Handbook (2002, vol. 7), whose pages the
   locators give, which reprints it with bracketed editorial updates. The first edition was not
   available, so the 1984 page numbers are unchecked.
@@ -48,7 +48,7 @@ namespace Thomason1984
 open Temporal Temporal.TWFrame
 
 variable {T World Atom : Type*} [LinearOrder T] {F : TWFrame World T}
-  {V : Atom → T → World → Prop} {a : OForm Atom} {t : T} {w w' : World}
+  {V : Atom → T → World → Prop} {a : Formula Atom} {t : T} {w w' : World}
 
 /-- Definition 7: an assignment treats historical alternatives through a time alike on each atom,
 up to and including that time. -/
@@ -65,8 +65,8 @@ theorem isAssignment_iff_sim_le :
   ⟨fun h _ _ _ hww f hf ↦ h f.1 hf hww, fun h p t₁ _ _ _ hle hww ↦ h _ hww (p, t₁) hle⟩
 
 /-- A formula contains no occurrences of `F` when it has no `G`, the primitive of which `F` is the
-dual in `OForm`. -/
-def ContainsNoF : OForm Atom → Prop
+dual in `Formula`. -/
+def ContainsNoF : Formula Atom → Prop
   | .atom _ => True
   | .neg a => ContainsNoF a
   | .and a b => ContainsNoF a ∧ ContainsNoF b
@@ -76,7 +76,7 @@ def ContainsNoF : OForm Atom → Prop
   | .box a => ContainsNoF a
 
 theorem sat_iff_of_sim (hV : IsAssignment F V) :
-    ∀ {a : OForm Atom}, ContainsNoF a → ∀ {t : T} {w w' : World}, F.sim t w w' →
+    ∀ {a : Formula Atom}, ContainsNoF a → ∀ {t : T} {w w' : World}, F.sim t w w' →
       (F.sat V a t w ↔ F.sat V a t w')
   | .atom p, _, _, _, _, h => hV p le_rfl h
   | .neg a, ha, _, _, _, h => not_congr (sat_iff_of_sim hV (a := a) ha h)
@@ -151,13 +151,13 @@ theorem sat_G_fut_excluded_middle_iff :
     not_not]
 
 -- (15), p. 217
-theorem valid_fifteen : F.sat V ((OForm.Fut (.G (.and a (.neg a)))).imp
+theorem valid_fifteen : F.sat V ((Formula.Fut (.G (.and a (.neg a)))).imp
     (.N (.Fut (.G (.and a (.neg a)))))) t w := by
   simp only [sat_imp, sat_N, sat_fut_G_contradiction_iff]
   exact fun h _ _ ↦ h
 
 -- (16), p. 217
-theorem valid_sixteen : F.sat V ((OForm.G (.Fut (.or a (.neg a)))).imp
+theorem valid_sixteen : F.sat V ((Formula.G (.Fut (.or a (.neg a)))).imp
     (.N (.G (.Fut (.or a (.neg a)))))) t w := by
   simp only [sat_imp, sat_N, sat_G_fut_excluded_middle_iff]
   exact fun h _ _ ↦ h
