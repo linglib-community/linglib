@@ -17,16 +17,15 @@ public import Studies.Deal2024
 /-!
 # Clem and Deal (2026): Dependent case by Agree
 
-Ergative and accusative are derived here from Agree alone. A probe flags each goal with all the
-features its head holds, so [a second goal receives the first goal's φ-features](##flagged_pair),
-and a dependent case is the vocabulary item spelling out that φ on a nominal. The Shawi subject is
-spelled out as [*-ri* followed by the verb's object agreement](##forms_of_licit) exactly when the
-strictly descending probe on v reaches it after a high object, and the same machinery [predicts the
-Shawi, Shiwilu, Sakha and Kolyma Yukaghir rows](##rows_predicted). A hierarchy is then the run of a
-probe over a feature geometry, not a stipulated ranking: [no probe yields one with third person
-above second](##not_forall_iff_rule37), and [a third-person first goal bleeds no probe that reaches
-a second goal at all](##directionality), so ergative goes with forward hierarchies and accusative
-with reverse ones.
+A probe flags each goal with all the features its head holds, so [a second goal receives the first
+goal's φ-features](##flagged_pair), and a dependent case is the vocabulary item spelling out that φ
+on a nominal. The Shawi subject surfaces with [*-ri* and the verb's object
+agreement](##forms_of_licit) when the strictly descending probe on v reaches it after a high object,
+and the same machinery [predicts the rows of four languages](##rows_predicted). Since a hierarchy is
+a probe's run over a feature geometry, [no probe puts third person above
+second](##not_forall_iff_rule37), and [a third-person first goal never bleeds a probe that can reach
+a second goal](##directionality), whence ergative with forward hierarchies and accusative with
+reverse.
 
 ## Implementation notes
 
