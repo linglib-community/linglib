@@ -24,8 +24,7 @@ agreement](##forms_of_licit) when the strictly descending probe on v reaches it 
 and the same machinery [predicts the rows of four languages](##rows_predicted). Since a hierarchy is
 a probe's run over a feature geometry, [no probe puts third person above
 second](##not_forall_iff_rule37), and [a third-person first goal never bleeds a probe that can reach
-a second goal](##directionality), whence ergative with forward hierarchies and accusative with
-reverse.
+a second goal](##directionality), so ergative goes with forward hierarchies, accusative with reverse.
 
 ## Implementation notes
 
