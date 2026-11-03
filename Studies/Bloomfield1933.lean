@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Fragments.English.Inflection
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Paradigm.Canonical
@@ -112,14 +113,8 @@ def go : Morph := .root "go"
 def went : Morph := .root "went"
 /-- The English root *land*. -/
 def land : Morph := .root "land"
-/-- The comparative suffix *-er*. -/
-def er : Morph := .suff "er"
 /-- *-en*, the suppletive alternant of the plural suffix. -/
 def en : Morph := .suff "en"
-/-- The plural suffix, [-z] after *card*. -/
-def z : Morph := .suff "z"
-/-- The past suffix, [-ed] after *land*. -/
-def ed : Morph := .suff "ed"
 
 /-- The lexemes of the examples, the regular *card* and *land* beside *ox* and *go*. -/
 inductive Lexeme where
@@ -168,8 +163,9 @@ def vocabulary : RuleSet (VocabularyItem Terminal (List Morph)) :=
   [⟨{(0, .root .good), (1, .cmpr)}, [bet]⟩, {.root .good} ⟷ [good],
     ⟨{(0, .root .go), (1, .past)}, [went]⟩, {.root .go} ⟷ [go],
     {.root .kind} ⟷ [kind], {.root .ox} ⟷ [ox], {.root .card} ⟷ [card], {.root .land} ⟷ [land],
-    {.cmpr} ⟷ [er], ⟨{(0, .pl), (-1, .root .ox)}, [en]⟩, {.pl} ⟷ [z],
-    ⟨{(0, .past), (-1, .root .go)}, []⟩, {.past} ⟷ [ed]]
+    {.cmpr} ⟷ [English.Inflection.er], ⟨{(0, .pl), (-1, .root .ox)}, [en]⟩,
+    {.pl} ⟷ [English.Inflection.s], ⟨{(0, .past), (-1, .root .go)}, []⟩,
+    {.past} ⟷ [English.Inflection.ed]]
 
 open DistributedMorphology in
 /-- The root of `l` in the cell `c`, with the cell's head to its right. -/
@@ -214,7 +210,8 @@ theorem english_realize_eq :
 -- §13.4, §13.7
 theorem derived_words :
     [Lexeme.kind, .good, .ox, .card, .go, .land].map (fun l ↦ word l l.derived) =
-      [[kind, er], [bet, er], [ox, en], [card, z], [went], [land, ed]] := by
+      [[kind, English.Inflection.er], [bet, English.Inflection.er], [ox, en],
+        [card, English.Inflection.s], [went], [land, English.Inflection.ed]] := by
   decide
 
 /-- *good* and *go* have the suppletive alternants *bet-* and *went* of the underlying form, while
