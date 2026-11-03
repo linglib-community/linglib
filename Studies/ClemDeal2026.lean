@@ -23,8 +23,8 @@ on a nominal. The Shawi subject surfaces with [*-ri* and the verb's object
 agreement](##forms_of_licit) when the strictly descending probe on v reaches it after a high object,
 and the same machinery [predicts the rows of four languages](##rows_predicted). Since a hierarchy is
 a probe's run over a feature geometry, [no probe puts third person above
-second](##not_forall_iff_rule37), and [a third-person first goal never bleeds a probe that can reach
-a second goal](##directionality), so ergative goes with forward hierarchies and accusative reverse.
+second](##not_forall_iff_rule37), and [no probe on v yields a reverse hierarchy, nor one on T a
+forward hierarchy](##directionality).
 
 ## Implementation notes
 
@@ -41,8 +41,8 @@ a second goal](##directionality), so ergative goes with forward hierarchies and 
   as the object, but (15) rules out every first-person object, so [the mechanism gives no ergative
   at 1→1 and does give it at 2→2](##diagonal). The tables have no reflexive rows.
 * (6b) prints the subject's object agreement as *-nke(ma)*, but (36d) spells out [PART, AUG, v] as a
-  whole and none of the routes to its absence in §3.3 deletes [AUG] alone, so bare *-nke* on the
-  subject of a 2PL object is not derived.
+  whole and none of the routes to its absence in §3.3 deletes [AUG] alone, so [bare *-nke* on the
+  subject of a 2PL object is not derived](##not_predicted_bare_nke).
 
 ## References
 
@@ -95,64 +95,78 @@ abbrev Nominal := Person × Number
 def phi (a : Nominal) : Finset Feature :=
   (spec a.1).image .person ∪ if a.2 = .augmented then {.aug} else ∅
 
-/-- The goals a probe of grammar `g` Agrees with, in search order. -/
-def agreed (g : Grammar) (goals : List (Nominal)) : List (Nominal) :=
-  (run g Prod.fst goals).interacted
+/-- The nominals of a clause by argument. -/
+def nominals (s o : Nominal) : Arg → Nominal
+  | .subject => s
+  | .object => o
+
+section Flags
+
+variable (g : Grammar) (l : Locus) (nom : Arg → Nominal)
+
+/-- The arguments a probe of grammar `g` Agrees with, in search order. -/
+def agreed (goals : List Arg) : List Arg :=
+  (run g (fun a ↦ (nom a).1) goals).interacted
 
 /-- Agree is bidirectional ((31)): a head holding `fs` flags its next goal with all of `fs` and
 takes on the goal's φ-features. -/
-def flagsFrom : Finset Feature → List (Nominal) → List ((Nominal) × Finset Feature)
+def flagsFrom : Finset Feature → List Arg → List (Arg × Finset Feature)
   | _, [] => []
-  | fs, a :: as => (a, fs) :: flagsFrom (fs ∪ phi a) as
+  | fs, a :: as => (a, fs) :: flagsFrom (fs ∪ phi (nom a)) as
 
 /-- The goals of a probe on `l` with their flags, the head starting with its category feature. -/
-def flagged (g : Grammar) (l : Locus) (goals : List (Nominal)) :
-    List ((Nominal) × Finset Feature) :=
-  flagsFrom {.head l} (agreed g goals)
+def flagged (goals : List Arg) : List (Arg × Finset Feature) :=
+  flagsFrom nom {.head l} (agreed g nom goals)
 
-theorem agreed_pair (g : Grammar) (a b : Nominal) :
-    agreed g [a, b] = a :: if Licit g ⟨b.1, a.1⟩ then [b] else [] :=
-  interacted_run_pair g Prod.fst a b
+theorem agreed_pair (a b : Arg) :
+    agreed g nom [a, b] = a :: if Licit g ⟨(nom b).1, (nom a).1⟩ then [b] else [] :=
+  interacted_run_pair g _ a b
 
 /-- Feature transfer under Agree is transitive ((31)): a probe flags its first goal with its
 category feature alone and, if it goes on to a second, flags that with the first goal's φ-features
 as well. -/
-theorem flagged_pair (g : Grammar) (l : Locus) (a b : Nominal) :
-    flagged g l [a, b] =
-      (a, {.head l}) :: if Licit g ⟨b.1, a.1⟩ then [(b, {.head l} ∪ phi a)] else [] := by
+theorem flagged_pair (a b : Arg) :
+    flagged g l nom [a, b] =
+      (a, {.head l}) ::
+        if Licit g ⟨(nom b).1, (nom a).1⟩ then [(b, {.head l} ∪ phi (nom a))] else [] := by
   rw [flagged, agreed_pair]
   split_ifs <;> rfl
 
-theorem flagged_singleton (g : Grammar) (l : Locus) (a : Nominal) :
-    flagged g l [a] = [(a, {.head l})] := by
-  have h : agreed g [a] = [a] := by
+theorem flagged_singleton (a : Arg) : flagged g l nom [a] = [(a, {.head l})] := by
+  have h : agreed g nom [a] = [a] := by
     obtain ⟨_ | x, dyn⟩ := g
     · simp [agreed, run, Minimalist.Probe.Dynamic.agree_cons]
-    · by_cases hx : x ∈ spec a.1 <;> simp [agreed, run, Minimalist.Probe.Dynamic.agree_cons, hx]
+    · by_cases hx : x ∈ spec (nom a).1 <;>
+        simp [agreed, run, Minimalist.Probe.Dynamic.agree_cons, hx]
   rw [flagged, h]
   rfl
 
 /-- A probe assigns dependent case when one of its goals bears a flag with φ in it, the structure
 that a dependent-case vocabulary item realizes ((31), (34), (43)). -/
-def DependentCase (g : Grammar) (l : Locus) (goals : List (Nominal)) : Prop :=
-  ∃ x ∈ flagged g l goals, Feature.person .pi ∈ x.2
+def DependentCase (goals : List Arg) : Prop :=
+  ∃ x ∈ flagged g l nom goals, Feature.person .pi ∈ x.2
 
-instance (g : Grammar) (l : Locus) (goals : List (Nominal)) :
-    Decidable (DependentCase g l goals) :=
+instance (goals : List Arg) : Decidable (DependentCase g l nom goals) :=
   inferInstanceAs (Decidable (∃ x ∈ _, _))
 
 theorem pi_mem_phi (a : Nominal) : Feature.person .pi ∈ phi a := by
   simp [phi]
 
 -- (53)
-theorem dependentCase_pair_iff (g : Grammar) (l : Locus) (a b : Nominal) :
-    DependentCase g l [a, b] ↔ Licit g ⟨b.1, a.1⟩ := by
+theorem dependentCase_pair_iff (a b : Arg) :
+    DependentCase g l nom [a, b] ↔ Licit g ⟨(nom b).1, (nom a).1⟩ := by
   simp only [DependentCase, flagged_pair]
   split_ifs with h <;> simp [h, pi_mem_phi]
 
-theorem not_dependentCase_singleton (g : Grammar) (l : Locus) (a : Nominal) :
-    ¬ DependentCase g l [a] := by
-  simp [DependentCase, flagged_singleton]
+-- (15), (17), (19), (22), table 7
+theorem dependentCase_sd_iff (a b : Arg) :
+    DependentCase strictlyDescending l nom [a, b] ↔
+      .speaker ∉ spec (nom a).1 ∧
+        (.participant ∈ spec (nom a).1 → .participant ∈ spec (nom b).1) := by
+  by_cases h : .participant ∈ spec (nom a).1 <;>
+    simp [dependentCase_pair_iff, licit_iff, strictlyDescending, h]
+
+end Flags
 
 /-! ### The position of the object -/
 
@@ -185,16 +199,18 @@ def positions (p : Person) : ObjectSyntax → List ObjectPosition
 /-- The goals a probe at `l` meets: the object and then the subject on v ((22)), by the cyclic
 expansion of [bejar-rezac-2009] ((13)); the subject and then the object on T ((41)); and the
 subject alone when the object is low ((24)). -/
-def goals (l : Locus) (pos : ObjectPosition) (subj obj : Nominal) : List (Nominal) :=
-  match l, pos with
-  | .v, .high => [obj, subj]
-  | .T, .high => [subj, obj]
-  | _, .low => [subj]
+def goals : Locus → ObjectPosition → List Arg
+  | .v, .high => [.object, .subject]
+  | .T, .high => [.subject, .object]
+  | _, .low => [.subject]
 
-/-- The argument bearing a probe's dependent case, its second goal. -/
-def Locus.dependentArg : Locus → Arg
-  | .v => .subject
-  | .T => .object
+theorem dependentCase_v_iff (g : Grammar) (s o : Nominal) :
+    DependentCase g .v (nominals s o) (goals .v .high) ↔ Licit g ⟨s.1, o.1⟩ :=
+  dependentCase_pair_iff g .v (nominals s o) .object .subject
+
+theorem dependentCase_T_iff (g : Grammar) (s o : Nominal) :
+    DependentCase g .T (nominals s o) (goals .T .high) ↔ Licit g ⟨o.1, s.1⟩ :=
+  dependentCase_pair_iff g .T (nominals s o) .subject .object
 
 /-! ### Spell-out -/
 
@@ -214,7 +230,7 @@ def objectItems : List (VocabularyItem Feature String) :=
     {.person .participant, .head .v} ⟷ "-(n)ken"]
 
 /-- The dependent-case system of a language: its probe, the head of the probe, and the vocabulary
-that spells out flags (table 6). -/
+that spells out flags, in scansion order (table 6). -/
 structure CaseSystem where
   grammar : Grammar
   locus : Locus
@@ -235,19 +251,20 @@ def kolymaYukaghir : CaseSystem :=
   ⟨weak, .T, [⟨{(0, .person .pi), (0, .person .participant), (-1, .person .pi), (-1, .d)}, "-ul"⟩,
     caseItem "-gele"]⟩
 
-/-- The items each goal's flag receives, the goal's own features one terminal to its left. -/
-def CaseSystem.inserted (sys : CaseSystem) (s o : Nominal) (pos : ObjectPosition) :
+/-- The items the flag of an argument receives, its own features one terminal to the left, and
+nothing if the probe never reaches it. -/
+def CaseSystem.inserted (sys : CaseSystem) (s o : Nominal) (pos : ObjectPosition) (x : Arg) :
     List (VocabularyItem Feature String) :=
-  (flagged sys.grammar sys.locus (goals sys.locus pos s o)).flatMap fun x ↦
-    insertions sys.items { focus := ∅, leftCtx := [insert .d (phi x.1)] } [x.2]
+  ((flagged sys.grammar sys.locus (nominals s o) (goals sys.locus pos)).lookup x).elim [] fun fs ↦
+    insertions sys.items { focus := ∅, leftCtx := [insert .d (phi (nominals s o x))] } [fs]
 
-/-- The exponents the flags of a clause receive. -/
-def CaseSystem.forms (sys : CaseSystem) (s o : Nominal) (pos : ObjectPosition) :
+/-- The exponents the flag of an argument receives. -/
+def CaseSystem.forms (sys : CaseSystem) (s o : Nominal) (pos : ObjectPosition) (x : Arg) :
     List String :=
-  (sys.inserted s o pos).map (·.exponent)
+  (sys.inserted s o pos x).map (·.exponent)
 
 /-- The Shawi subject is ergative when its flag receives *-ri*. -/
-def Ergative (s o : Nominal) (pos : ObjectPosition) : Prop := ri ∈ shawi.inserted s o pos
+def Ergative (s o : Nominal) (pos : ObjectPosition) : Prop := ri ∈ shawi.inserted s o pos .subject
 
 instance (s o : Nominal) (pos : ObjectPosition) : Decidable (Ergative s o pos) :=
   inferInstanceAs (Decidable (_ ∈ _))
@@ -263,13 +280,14 @@ theorem applies_caseItem {e : String} {m : Finset Feature} {a : Nominal} :
       Feature.person .pi ∈ m := by
   simp [VocabularyItem.applies_iff, caseItem, Neighborhood.mem_def, pi_mem_phi]
 
+private theorem objectItems_site :
+    ∀ i ∈ objectItems, ∀ y ∈ i.site, y.1 = 0 ∧ y.2 ≠ Feature.person .pi := by
+  simp [objectItems]
+  grind
+
 theorem insertions_objectItems (env : Neighborhood (Finset Feature)) (ms : List (Finset Feature)) :
     insertions objectItems env ms = insertions objectItems ∅ ms :=
-  congrArg Prod.fst (scan_congr env ∅ _ (by simp [objectItems]; grind) ms)
-
-private theorem phi_of_ne {p : Person} {n : Number} (h : n ≠ .augmented) :
-    phi (p, n) = phi (p, .minimal) := by
-  simp [phi, h]
+  congrArg Prod.fst (scan_congr env ∅ _ (fun i hi y hy ↦ (objectItems_site i hi y hy).1) ms)
 
 private theorem insertions_ri_second (a o : Nominal) :
     insertions (ri :: objectItems) { focus := ∅, leftCtx := [insert .d (phi a)] }
@@ -281,12 +299,8 @@ private theorem insertions_ri_second (a o : Nominal) :
       some [({.head .v} ∪ phi o) \ {.person .pi}] := by
     rw [discharge_singleton, ite_eq_left (show Applies ri _ from applies_caseItem.2 hpi)]
     rfl
-  rw [insertions, scan_cons_of_discharge_eq_some hd]
-  refine congrArg (ri :: ·) ((insertions_objectItems _ _).trans ?_)
-  obtain ⟨p, n⟩ := o
-  by_cases hn : n = .augmented
-  · subst hn; cases p <;> decide
-  · rw [phi_of_ne hn]; cases p <;> decide
+  rw [insertions_cons_of_discharge_eq_some hd, insertions_objectItems,
+    insertions_sdiff_singleton ∅ _ _ objectItems_site]
 
 private theorem insertions_ri_first (a : Nominal) :
     insertions (ri :: objectItems) { focus := ∅, leftCtx := [insert .d (phi a)] }
@@ -294,31 +308,34 @@ private theorem insertions_ri_first (a : Nominal) :
   have hd : discharge ri { focus := ∅, leftCtx := [insert .d (phi a)] } [{.head .v}] = none := by
     rw [discharge_singleton, ite_eq_right fun h : Applies ri _ ↦ by
       simpa using applies_caseItem.1 h]
-  rw [insertions, scan_cons_of_discharge_eq_none hd]
-  exact (insertions_objectItems _ _).trans (by decide)
+  rw [insertions_cons_of_discharge_eq_none hd, insertions_objectItems]
+  decide
 
 variable {s o : Nominal} {pos : ObjectPosition}
 
-theorem shawi_inserted_low : shawi.inserted s o .low = [] := by
-  simp only [CaseSystem.inserted, shawi, goals, flagged_singleton, List.flatMap_cons,
-    List.flatMap_nil, List.append_nil]
+theorem shawi_inserted_object : shawi.inserted s o pos .object = [] := by
+  cases pos <;> simp only [CaseSystem.inserted, shawi, goals, flagged_pair, flagged_singleton,
+    nominals]
+  · split_ifs <;> exact insertions_ri_first o
+  · rfl
+
+theorem shawi_inserted_low : shawi.inserted s o .low .subject = [] := by
+  simp only [CaseSystem.inserted, shawi, goals, flagged_singleton]
   exact insertions_ri_first s
 
 theorem shawi_inserted_high :
-    shawi.inserted s o .high =
+    shawi.inserted s o .high .subject =
       if Licit strictlyDescending ⟨s.1, o.1⟩ then
         ri :: insertions objectItems ∅ [{.head .v} ∪ phi o]
       else [] := by
-  simp only [CaseSystem.inserted, shawi, goals, flagged_pair]
-  split_ifs with h
-  · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
-    rw [insertions_ri_first, insertions_ri_second]
+  simp only [CaseSystem.inserted, shawi, goals, flagged_pair, nominals]
+  by_cases h : Licit strictlyDescending ⟨s.1, o.1⟩
+  · simp only [h, ↓reduceIte]
+    exact insertions_ri_second s o
+  · simp only [h, ↓reduceIte]
     rfl
-  · simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
-    exact insertions_ri_first o
 
-theorem ergative_iff :
-    Ergative s o pos ↔ pos = .high ∧ Licit strictlyDescending ⟨s.1, o.1⟩ := by
+theorem ergative_iff : Ergative s o pos ↔ pos = .high ∧ Licit strictlyDescending ⟨s.1, o.1⟩ := by
   cases pos with
   | low => simp [Ergative, shawi_inserted_low]
   | high =>
@@ -329,13 +346,13 @@ theorem ergative_iff :
 agreement of the verb ((33), (34), (36)), which is the sense in which ergative case and object
 agreement on the subject are both features of the object realized on the subject. -/
 theorem forms_of_licit (h : Licit strictlyDescending ⟨s.1, o.1⟩) :
-    shawi.forms s o .high = Kawapanan.Shawi.ergativeMarker :: objectAgreement o := by
+    shawi.forms s o .high .subject = Kawapanan.Shawi.ergativeMarker :: objectAgreement o := by
   simp only [CaseSystem.forms, shawi_inserted_high, ite_eq_left h]
   rfl
 
 -- (12)
 example :
-    shawi.forms (.firstExclusive, .augmented) (.second, .augmented) .high =
+    shawi.forms (.firstExclusive, .augmented) (.second, .augmented) .high .subject =
       ["-ri", "-((n)ke)ma'"] := by
   decide +kernel
 
@@ -347,7 +364,7 @@ theorem objectAgreement_eq_objectMarker :
 
 -- §2, fn. 7, §3.3
 theorem objectItem_inserted {i : VocabularyItem Feature String} (hi : i ∈ objectItems)
-    (h : i ∈ shawi.inserted s o pos) (hne : s.1.prominence ≠ o.1.prominence) :
+    (h : i ∈ shawi.inserted s o pos .subject) (hne : s.1.prominence ≠ o.1.prominence) :
     Ergative s o pos ∧ .speaker ∈ spec s.1 ∧ o.1 = .second := by
   have key : ∀ q p : Person, Licit strictlyDescending ⟨q, p⟩ → q.prominence ≠ p.prominence →
       p ≠ .third → .speaker ∈ spec q ∧ p = .second := by
@@ -356,7 +373,7 @@ theorem objectItem_inserted {i : VocabularyItem Feature String} (hi : i ∈ obje
     intro n
     by_cases hn : n = .augmented
     · subst hn; decide
-    · rw [phi_of_ne hn]; decide
+    · simp only [phi, hn, ite_false]; decide
   have hri : i ≠ ri := by
     rintro rfl
     exact absurd hi (by decide +kernel)
@@ -395,25 +412,29 @@ theorem table4 :
     marking .second .first = .impossible ∧ marking .second .third = .optional ∧
     marking .third .first = .impossible ∧ marking .third .second = .impossible ∧
     marking .third .third = .optional := by
-  decide +kernel
+  simp only [marking, ergative_iff]
+  decide
 
 -- (23), (24)
 theorem marking_optional_iff (s o : Person) : marking s o = .optional ↔ ¬ o.IsSAP := by
-  revert s o; decide +kernel
+  simp only [marking, ergative_iff]
+  revert s o
+  decide
 
 -- (5), (10), (15)
 theorem diagonal :
     ¬ Ergative (.first, .minimal) (.first, .minimal) .high ∧
       Ergative (.second, .minimal) (.second, .minimal) .high ∧
       Ergative (.third, .minimal) (.third, .minimal) .high := by
-  decide +kernel
+  simp only [ergative_iff]
+  decide
 
 -- (49), §5.2: *-gele* with a third-person subject, *-ul* between local persons, nothing at 1→3
 example :
-    kolymaYukaghir.forms (.third, .singular) (.first, .singular) .high = ["-gele"] ∧
-      kolymaYukaghir.forms (.first, .singular) (.second, .singular) .high = ["-ul"] ∧
-      kolymaYukaghir.forms (.first, .singular) (.third, .singular) .high = [] ∧
-      kolymaYukaghir.forms (.first, .singular) (.third, .singular) .low = [] := by
+    kolymaYukaghir.forms (.third, .singular) (.first, .singular) .high .object = ["-gele"] ∧
+      kolymaYukaghir.forms (.first, .singular) (.second, .singular) .high .object = ["-ul"] ∧
+      kolymaYukaghir.forms (.first, .singular) (.third, .singular) .high .object = [] ∧
+      kolymaYukaghir.forms (.first, .singular) (.third, .singular) .low .object = [] := by
   decide +kernel
 
 /-! ### The rows -/
@@ -436,7 +457,7 @@ def nominal? (e : Datum) (person number : String) : Option Nominal := do
   pure (← e.parse? person personTable, ← e.parse? number numberTable)
 
 /-- What a row presents: the language's system, the arguments, the object's syntax, the case marker
-it prints and the argument bearing it, and whether it prints object agreement on the subject. -/
+it prints and the argument bearing it, and the object agreement it prints on the subject. -/
 structure Stimulus where
   sys : CaseSystem
   subj : Nominal
@@ -444,7 +465,7 @@ structure Stimulus where
   objectSyntax : ObjectSyntax
   case? : Option String
   caseOn : Option Arg
-  oagrOnS : Bool
+  oagrOnS : Option String
 
 /-- A row's stimulus. -/
 def stimulus? (e : Datum) : Option Stimulus := do
@@ -453,22 +474,28 @@ def stimulus? (e : Datum) : Option Stimulus := do
   let s ← nominal? e "subject" "subjectNumber"
   let x ← e.parse? "objectSyntax" syntaxTable
   pure ⟨sys, s, (nominal? e "object" "objectNumber").getD (.third, .minimal), x, e.feature? "case",
-    e.parse? "caseOn" [("subject", .subject), ("object", .object)],
-    e.feature? "oagrOnS" = some "yes"⟩
+    e.parse? "caseOn" [("subject", .subject), ("object", .object)], e.feature? "oagrOnS"⟩
 
-/-- A stimulus is grammatical when a position open to its object spells out the printed case on the
-probe's second goal, the first item of the spell-out, and object agreement on the subject only where
-the vocabulary has some to spell out (optional, fn. 7). -/
+/-- A stimulus is grammatical when, in a position open to its object, each argument's flag begins
+with exactly the case the row prints on it, and any object agreement printed on the subject is
+what the subject's flag spells out after that (it is optional, fn. 7). -/
 def predicted (c : Stimulus) : Judgment.Band :=
   .ofProp (∃ pos ∈ positions c.obj.1 c.objectSyntax,
-    let f := c.sys.forms c.subj c.obj pos
-    f.head? = c.case? ∧ (∀ a ∈ c.caseOn, a = c.sys.locus.dependentArg) ∧
-      (c.oagrOnS = true → 1 < f.length))
+    (∀ x ∈ [Arg.subject, .object], (c.sys.forms c.subj c.obj pos x).head? =
+      if c.caseOn = some x then c.case? else none) ∧
+    ∀ f ∈ c.oagrOnS, f ∈ (c.sys.forms c.subj c.obj pos .subject).tail)
 
-/-- Every row of Shawi, Shiwilu, Sakha and Kolyma Yukaghir is judged as the run of the language's
-probe and its vocabulary predict: a sentence is accepted exactly when some position open to its
-object spells out what it prints. -/
-theorem rows_predicted : Datum.Checks stimulus? predicted Examples.all 43 := by
+/-- Every row of Shawi, Shiwilu, Sakha and Kolyma Yukaghir but the bare *-nke* of (6b) is judged as
+the run of the language's probe and its vocabulary predict: a sentence is accepted exactly when some
+position open to its object spells out what it prints, on the argument it prints it on. -/
+theorem rows_predicted :
+    Datum.Checks stimulus? predicted (Examples.all.erase Examples.ex_6b_nke) 42 := by
+  decide +kernel
+
+-- (6b), (36d)
+theorem not_predicted_bare_nke :
+    Examples.ex_6b_nke.judgment.band = .accepted ∧
+      (stimulus? Examples.ex_6b_nke).map predicted = some .rejected := by
   decide +kernel
 
 /-! ### Configurational rules (§1, §4.1) -/
@@ -485,42 +512,41 @@ theorem rule1_overgenerates :
     ¬ Ergative (.second, .minimal) (.first, .minimal) .high ∧
     ¬ Ergative (.third, .minimal) (.first, .minimal) .high ∧
     ¬ Ergative (.third, .minimal) (.second, .minimal) .high := by
-  decide +kernel
+  simp only [ergative_iff]
+  decide
 
 /-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): over the ranking `rank`, an NP
 takes the ergative when it c-commands a caseless NP no higher on `rank`. -/
-def rule37 (rank : Person → ℕ) (s o : Person) (pos : ObjectPosition) :
+def rule37 (rank : Person → ℕ) (s o : Nominal) (pos : ObjectPosition) :
     Case.Valuation Arg (Case × Case.Mechanism) :=
-  let person : Arg → Person
-    | .subject => s
-    | .object => o
   (DependentCase.Rules.ofAlignment .ergative).dependentPassBy
-    (fun p q ↦ p.1 < q.1 ∧ rank (person q.2) ≤ rank (person p.2)) (fun _ ↦ True)
+    (fun p q ↦ p.1 < q.1 ∧ rank (nominals s o q.2).1 ≤ rank (nominals s o p.2).1) (fun _ ↦ True)
     (Case.lexicalValuation (fun _ ↦ none) (domain pos))
 
 -- (37), §4.1
-theorem rule37_valueOf_iff (rank : Person → ℕ) (s o : Person) :
-    ((rule37 rank s o .high).valueOf .subject).map (·.1) = some .erg ↔ rank o ≤ rank s := by
-  by_cases h : rank o ≤ rank s <;>
-    simp [rule37, domain, h, DependentCase.Rules.dependentPassBy, DependentCase.Rules.ofAlignment,
-      Case.lexicalValuation, Case.slotValuation, Case.Valuation.initial,
-      Case.Valuation.caselessEntries, Case.Valuation.fill, Case.Valuation.fillFrom,
-      Case.Valuation.valueOf, Case.Valuation.offer]
+theorem rule37_valueOf_iff (rank : Person → ℕ) (s o : Nominal) :
+    ((rule37 rank s o .high).valueOf .subject).map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
+  by_cases h : rank o.1 ≤ rank s.1 <;>
+    simp [rule37, domain, nominals, h, DependentCase.Rules.dependentPassBy,
+      DependentCase.Rules.ofAlignment, Case.lexicalValuation, Case.slotValuation,
+      Case.Valuation.initial, Case.Valuation.caselessEntries, Case.Valuation.fill,
+      Case.Valuation.fillFrom, Case.Valuation.valueOf, Case.Valuation.offer]
 
 /-- Agree cannot do what (37) can: no probe yields the rule over a ranking with third person above
 second, since a probe that gets past a second person gets past a third (§4.1). -/
 theorem not_forall_iff_rule37 (g : Grammar) {rank : Person → ℕ} (h : rank .second < rank .third)
     (n : Number) : ¬ ∀ s o : Person, s.prominence ≠ o.prominence →
-      (DependentCase g .v (goals .v .high (s, n) (o, n)) ↔
-        ((rule37 rank s o .high).valueOf .subject).map (·.1) = some .erg) := by
+      (DependentCase g .v (nominals (s, n) (o, n)) (goals .v .high) ↔
+        ((rule37 rank (s, n) (o, n) .high).valueOf .subject).map (·.1) = some .erg) := by
   intro hg
-  have h₁ : Licit g ⟨.third, .second⟩ := (dependentCase_pair_iff g .v (.second, n) (.third, n)).1
-    ((hg .third .second (by decide)).2 ((rule37_valueOf_iff ..).2 h.le))
+  have h₁ : Licit g ⟨.third, .second⟩ := (dependentCase_v_iff g (.third, n) (.second, n)).1
+    ((hg .third .second (by decide)).2 ((rule37_valueOf_iff rank (.third, n) (.second, n)).2 h.le))
   have hsub : spec Person.third ⊆ spec Person.second := by decide
   have h₂ : Licit g ⟨.second, .third⟩ :=
     Licit.mono (s := ⟨.third, .second⟩) (t := ⟨.second, .third⟩) hsub hsub h₁
-  exact absurd ((rule37_valueOf_iff ..).1 ((hg .second .third (by decide)).1
-    ((dependentCase_pair_iff g .v (.third, n) (.second, n)).2 h₂))) (not_le.2 h)
+  exact absurd ((rule37_valueOf_iff rank (.second, n) (.third, n)).1
+    ((hg .second .third (by decide)).1 ((dependentCase_v_iff g (.second, n) (.third, n)).2 h₂)))
+    (not_le.2 h)
 
 /-! ### The typology of global case splits (§5) -/
 
@@ -530,58 +556,56 @@ def Locus.alignment : Locus → Alignment.AlignmentType
   | .T => .accusative
 
 -- §5.1 [deal-2010] [clem-2019] [baker-vinokurova-2010]
-theorem noPCC_iff_assignCases (l : Locus) (pos : ObjectPosition) (s o : Nominal) :
-    DependentCase noPCC l (goals l pos s o) ↔
-      ((DependentCase.assignCases l.alignment (fun _ ↦ none) (domain pos)).valueOf
-        l.dependentArg).map (·.2) = some .dependent := by
+theorem noPCC_iff_assignCases (l : Locus) (pos : ObjectPosition) (s o : Nominal) (x : Arg) :
+    (∃ fs, (x, fs) ∈ flagged noPCC l (nominals s o) (goals l pos) ∧ Feature.person .pi ∈ fs) ↔
+      ((DependentCase.assignCases l.alignment (fun _ ↦ none) (domain pos)).valueOf x).map (·.2) =
+        some .dependent := by
   have h : ∀ p q : Person, Licit noPCC ⟨p, q⟩ := by decide +kernel
-  cases l <;> cases pos <;> simp [goals, dependentCase_pair_iff, not_dependentCase_singleton, h] <;>
-    decide
+  cases l <;> cases pos <;> cases x <;>
+    simp [goals, flagged_pair, flagged_singleton, h, pi_mem_phi] <;> decide
 
--- table 7, strong
-theorem dependentCase_strong_iff (l : Locus) (a b : Nominal) :
-    DependentCase strong l [a, b] ↔ .participant ∉ spec a.1 := by
-  simp [dependentCase_pair_iff, licit_iff, strong]
+-- table 7
+theorem table7 (p : Grammar × PCCType)
+    (hp : p ∈ [(strong, .strong), (weak, .weak), (strictlyDescending, .strictlyDescending)])
+    (s o : Nominal) (h : s.1.prominence ≠ o.1.prominence) :
+    (DependentCase p.1 .v (nominals s o) (goals .v .high) ↔ p.2.Licit ⟨s.1, o.1⟩) ∧
+      (DependentCase p.1 .T (nominals s o) (goals .T .high) ↔ p.2.Licit ⟨o.1, s.1⟩) := by
+  have key : ∀ p ∈ [((strong, .strong) : Grammar × PCCType), (weak, .weak),
+      (strictlyDescending, .strictlyDescending)], ∀ a b : Person, a.prominence ≠ b.prominence →
+        (Licit p.1 ⟨a, b⟩ ↔ p.2.Licit ⟨a, b⟩) := by
+    decide +kernel
+  exact ⟨(dependentCase_v_iff p.1 s o).trans (key p hp _ _ h),
+    (dependentCase_T_iff p.1 s o).trans (key p hp _ _ h.symm)⟩
 
--- table 7, weak
-theorem dependentCase_weak_iff (l : Locus) (a b : Nominal) :
-    DependentCase weak l [a, b] ↔ (.participant ∈ spec a.1 → .participant ∈ spec b.1) := by
-  by_cases h : .participant ∈ spec a.1 <;> simp [dependentCase_pair_iff, licit_iff, weak, h]
+private theorem not_forall_licit_iff_swap {g : Grammar} {t : PCCType}
+    (ht : ¬ t.Licit ⟨.third, .first⟩) :
+    ¬ ∀ p q : Person, p.prominence ≠ q.prominence → (Licit g ⟨p, q⟩ ↔ t.Licit ⟨q, p⟩) := fun h ↦
+  ht ((h .first .third (by decide)).1 ((((h .third .first (by decide)).2
+    (participant_third_licit t .first (by decide)))).third .first))
 
--- (15), (17), (19), (22), table 7
-theorem dependentCase_sd_iff (l : Locus) (a b : Nominal) :
-    DependentCase strictlyDescending l [a, b] ↔
-      .speaker ∉ spec a.1 ∧ (.participant ∈ spec a.1 → .participant ∈ spec b.1) := by
-  by_cases h : .participant ∈ spec a.1 <;>
-    simp [dependentCase_pair_iff, licit_iff, strictlyDescending, h]
-
--- table 7, Shawi; Kashmiri, fn. 42
-theorem dependentCase_sd_off_diagonal_iff (l : Locus) (a b : Nominal)
-    (h : a.1.prominence ≠ b.1.prominence) :
-    DependentCase strictlyDescending l [a, b] ↔ a.1.prominence < b.1.prominence :=
-  (dependentCase_pair_iff ..).trans (sd_off_diagonal_iff_outranks ⟨b.1, a.1⟩ h.symm)
-
-/-- The Directionality Correlation (54). Once a grammar assigns dependent case at all, a
-third-person first goal never bleeds it: on v a third-person object lets the probe reach any
-subject, and on T a third-person subject lets it reach any object. So only the object's person can
-bleed ergative, a forward hierarchy, and only the subject's person accusative, a reverse one. -/
-theorem directionality {g : Grammar} {l : Locus} {a b : Nominal}
-    (h : DependentCase g l [a, b]) (n : Number) (c : Nominal) :
-    DependentCase g .v (goals .v .high c (.third, n)) ∧
-      DependentCase g .T (goals .T .high (.third, n) c) :=
-  have hl := ((dependentCase_pair_iff ..).1 h).third c.1
-  ⟨(dependentCase_pair_iff ..).2 hl, (dependentCase_pair_iff ..).2 hl⟩
-
--- fn. 29, fn. 44
-theorem not_forall_ergative_iff_object_outranks (g : Grammar) (n : Number) :
+/-- The Directionality Correlation (54). Whatever a hierarchy effect `t` that bans a first-person
+direct object under a third-person indirect object, no probe on v yields its reverse and no probe on
+T its forward form, since a first goal's person is what bleeds a probe: only the object's can bleed
+ergative and only the subject's accusative. This excludes ergative where the object outranks the
+subject, as reported for Fore and Dalabon (fns. 29, 44). -/
+theorem directionality (g : Grammar) {t : PCCType} (ht : ¬ t.Licit ⟨.third, .first⟩) (n : Number) :
+    (¬ ∀ s o : Person, s.prominence ≠ o.prominence →
+      (DependentCase g .v (nominals (s, n) (o, n)) (goals .v .high) ↔ t.Licit ⟨o, s⟩)) ∧
     ¬ ∀ s o : Person, s.prominence ≠ o.prominence →
-      (DependentCase g .v (goals .v .high (s, n) (o, n)) ↔ s.prominence < o.prominence) := by
-  intro hg
-  have h₁ := (hg .second .first (by decide)).2 (by decide)
-  have h₂ := (directionality h₁ n (.first, n)).1
-  exact absurd ((hg .first .third (by decide)).1 h₂) (by decide)
+      (DependentCase g .T (nominals (s, n) (o, n)) (goals .T .high) ↔ t.Licit ⟨s, o⟩) :=
+  ⟨fun h ↦ not_forall_licit_iff_swap ht fun p q hpq ↦
+      (dependentCase_v_iff g (p, n) (q, n)).symm.trans (h p q hpq),
+    fun h ↦ not_forall_licit_iff_swap ht fun p q hpq ↦
+      (dependentCase_T_iff g (q, n) (p, n)).symm.trans (h q p hpq.symm)⟩
 
 /-! ### Cyclic Agree (§3.1) -/
+
+/-- The cyclic probes of [bejar-rezac-2009] compared with Deal's, on the six cells only: every
+reflexive cell is inverse (`AgreementSystem.isInverse_self`), where a third-person first goal lets
+Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
+example : (BejarRezac2009.kashmiri).IsInverse ⟨.third, .third⟩ ∧
+    Licit strictlyDescending ⟨.third, .third⟩ ∧ Licit weak ⟨.third, .third⟩ :=
+  ⟨Minimalist.CyclicAgree.AgreementSystem.isInverse_self _ _, by decide, by decide⟩
 
 -- §3.1
 theorem kashmiri_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :

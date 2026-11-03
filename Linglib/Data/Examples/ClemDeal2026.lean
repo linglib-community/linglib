@@ -83,7 +83,7 @@ def ex_6a : Datum :=
     judgment := .acceptable
     alternatives := [("I'wara ka-ri-nke pera-ra-nke.", .acceptable)]
     readings := []
-    paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("object", "2"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "yes")] }
+    paperFeatures := [("subject", "1"), ("subjectNumber", "min"), ("object", "2"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-(n)ken")] }
 
 def ex_6b : Datum :=
   { id := "clemdeal2026_6b"
@@ -97,7 +97,7 @@ def ex_6b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "yes")] }
+    paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-((n)ke)ma'")] }
 
 def ex_6b_nke : Datum :=
   { id := "clemdeal2026_6b_nke"
@@ -111,7 +111,7 @@ def ex_6b_nke : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "yes")] }
+    paperFeatures := [("subject", "1excl"), ("subjectNumber", "aug"), ("object", "2"), ("objectNumber", "aug"), ("objectSyntax", "inSitu"), ("case", "-ri"), ("caseOn", "subject"), ("oagrOnS", "-(n)ken")] }
 
 def ex_7a : Datum :=
   { id := "clemdeal2026_7a"
@@ -349,7 +349,7 @@ def ex_11 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "1"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("oagrOnS", "yes")] }
+    paperFeatures := [("subject", "2"), ("subjectNumber", "min"), ("object", "1"), ("objectNumber", "min"), ("objectSyntax", "dropped"), ("oagrOnS", "-ku")] }
 
 def ex_21a : Datum :=
   { id := "clemdeal2026_21a"

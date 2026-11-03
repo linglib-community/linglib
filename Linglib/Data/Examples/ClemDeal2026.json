@@ -120,7 +120,7 @@
       ["objectSyntax", "dropped"],
       ["case", "-ri"],
       ["caseOn", "subject"],
-      ["oagrOnS", "yes"]
+      ["oagrOnS", "-(n)ken"]
     ],
     "comment": "Repeated as (2b), (18) and (32). The verb's -w is printed as optional.",
     "verified": "page-image"
@@ -149,7 +149,7 @@
       ["objectSyntax", "inSitu"],
       ["case", "-ri"],
       ["caseOn", "subject"],
-      ["oagrOnS", "yes"]
+      ["oagrOnS", "-((n)ke)ma'"]
     ],
     "comment": "Repeated as (12). The object is overt after the verb (note 14).",
     "verified": "page-image"
@@ -178,7 +178,7 @@
       ["objectSyntax", "inSitu"],
       ["case", "-ri"],
       ["caseOn", "subject"],
-      ["oagrOnS", "yes"]
+      ["oagrOnS", "-(n)ken"]
     ],
     "comment": "(6b) prints the subject's -nke(ma) with ma optional; (36d) derives only the form with ma.",
     "verified": "page-image"
@@ -629,7 +629,7 @@
       ["object", "1"],
       ["objectNumber", "min"],
       ["objectSyntax", "dropped"],
-      ["oagrOnS", "yes"]
+      ["oagrOnS", "-ku"]
     ],
     "comment": "Luis Ulloa, personal communication.",
     "verified": "page-image"
