@@ -83,8 +83,8 @@ instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : IsFiniteMeasur
 
 /-- The pragmatic listener over meaning and question inverts the speaker against the product of
 the meaning prior and the question prior; its first marginal is the meaning listener. -/
-noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
-    [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
+noncomputable def L1 (μ : Measure Meaning) (ν : Measure QUD) (α : ℝ) :
+    Kernel Weather (Meaning × QUD) :=
   listener (μ.prod ν) (S1 μ α)
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)

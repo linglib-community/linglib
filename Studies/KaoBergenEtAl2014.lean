@@ -86,8 +86,8 @@ instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × Goal) : IsFiniteMeasu
 
 /-- The pragmatic listener over meaning and goal inverts the speaker against the product of
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
-noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
-    [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
+noncomputable def L1 (μ : Measure Meaning) (ν : Measure Goal) (α : ℝ) :
+    Kernel Cat (Meaning × Goal) :=
   listener (μ.prod ν) (S1 μ α)
 
 section Speaker
@@ -135,6 +135,7 @@ theorem nonliteral (hα : 0 < α) {g : Goal} (hν : ν {g} ≠ 0) {f f' : Featur
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hp, g, hν, (.animal, f'), hf, rfl, ha⟩
 
+omit [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] in
 /-- Category inference is prior-driven. Since a goal projects the category away, the speaker
 behaves alike at the animal and at the person with the same features, and the listener's
 posterior odds between the two categories at a feature vector are their prior odds. -/

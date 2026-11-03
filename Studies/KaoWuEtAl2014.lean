@@ -137,8 +137,8 @@ instance (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : IsFiniteMeasur
 
 /-- The pragmatic listener over meaning and goal, eq. 10, inverts the speaker against the product
 of the meaning prior and the goal prior; its first marginal is the meaning listener. -/
-noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
-    [IsProbabilityMeasure ν] (c : ℝ) : Kernel Price (Meaning × Goal) :=
+noncomputable def L1 (μ : Measure Meaning) (ν : Measure Goal) (c : ℝ) :
+    Kernel Price (Meaning × Goal) :=
   listener (μ.prod ν) (S1 μ c)
 
 section Support
