@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Woolford1997
 public import Linglib.Fragments.NezPerce.Case
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Minimalist.Case.Dependent
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 public import Mathlib.Data.Finset.Dedup
@@ -19,17 +19,18 @@ public import Mathlib.Data.Fintype.Basic
 This file derives the Case patterns of Nez Perce, Thangu and Kalkatungu from an inventory in which
 ergative is lexical and objects have two structural Cases, objective outside VP and accusative
 inside it. The formula $\#\text{arguments} - \#\text{lexical Cases} - 1$ bounds the accusatives and
-[economy picks the arguments that move out of VP](##mem_derivations_iff), so [a lexically Cased
-subject denies accusative to its highest object](##getElem?_ne_acc_of_mem_derivations). Settings for
-ergative and dative [give each language its patterns](##rows_patterns), and one Kalkatungu clause is
+[economy picks the argument that moves out of VP](##mem_derivations_obligatory_iff), so [a lexically
+Cased subject denies accusative to its highest object](##getElem?_ne_acc_of_mem_derivations).
+Settings for ergative and dative [give each language its patterns](##rows_patterns), and one
+Kalkatungu clause is
 [ergative in morphology, accusative in agreement and tripartite in Case](##kalkatungu_alignments).
 The accusative rule of dependent case [derives the same patterns](##map_value?_assign) where objects
 can be nominative.
 
 ## Implementation notes
 
-* P. 207 states economy for one denied argument. Where two move, each path is compared separately
-  and the higher argument takes the higher position.
+* P. 207 states economy for one denied argument, and so does this file. Where two arguments leave
+  VP, as without accusative, `place` gives the higher one the higher position by definition.
 * The comparison with dependent case is not the paper's. It feeds the accusative rules the paper's
   lexical ergative, where Marantz's is dependent, and [fails for
   objective](##objective_not_elsewhere).
@@ -116,14 +117,7 @@ def lexical? : Case → Option Lexical
 /-- The Case is assigned or checked by a functional head. -/
 def IsFunctional (c : Case) : Prop := c = .nom ∨ c = .obj
 
-instance : DecidablePred IsFunctional := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
 variable {c : Case}
-
-@[simp] theorem not_isFunctional_acc : ¬ acc.IsFunctional := by decide
-
-@[simp] theorem not_isFunctional_lexical (l : Lexical) : ¬ (lexical l).IsFunctional := by
-  simp [IsFunctional]
 
 theorem IsFunctional.ne_acc (h : c.IsFunctional) : c ≠ .acc := by
   rcases h with rfl | rfl <;> decide
@@ -181,13 +175,27 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 
 /-! ### Derivations -/
 
-/-- Case on arguments, the highest first: an argument keeps its lexical Case, the highest caseless
-arguments take the Cases `cs` in turn, and the remaining ones accusative. -/
-@[simp] def place : List Case → List (Option Lexical) → List Case
-  | _, [] => []
-  | cs, some l :: r => .lexical l :: place cs r
-  | [], none :: r => .acc :: place [] r
-  | c :: cs, none :: r => c :: place cs r
+/-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads
+of (1a) value the highest caseless arguments with `cs` in turn, and V gives the rest accusative. -/
+def place (cs : List Case) (args : List (Option Lexical)) : List Case :=
+  (Minimalist.agreeValues (fun _ ↦ True) cs
+    (_root_.Case.Valuation.initial (fun o ↦ _root_.Case.Valuation.offer (o.map .lexical)) args)).map
+      fun p ↦ p.2.value?.getD .acc
+
+@[simp] theorem place_nil_right (cs : List Case) : place cs [] = [] := by
+  simp [place, _root_.Case.Valuation.initial]
+
+@[simp] theorem place_some_cons (cs : List Case) (l : Lexical) (r : List (Option Lexical)) :
+    place cs (some l :: r) = .lexical l :: place cs r := by
+  simp [place, _root_.Case.Valuation.initial, Minimalist.agreeValues_cons_right_of_not]
+
+@[simp] theorem place_nil_none_cons (r : List (Option Lexical)) :
+    place [] (none :: r) = .acc :: place [] r := by
+  simp [place, _root_.Case.Valuation.initial]
+
+@[simp] theorem place_cons_none_cons (c : Case) (cs : List Case) (r : List (Option Lexical)) :
+    place (c :: cs) (none :: r) = c :: place cs r := by
+  simp [place, _root_.Case.Valuation.initial, Minimalist.agreeValues_cons_cons]
 
 theorem place_map_some_append (cs : List Case) (ls : List Lexical) (r : List (Option Lexical)) :
     place cs (ls.map some ++ r) = ls.map Case.lexical ++ place cs r := by
@@ -204,13 +212,26 @@ theorem place_congr_of_none_notMem (cs cs' : List Case) (h : none ∉ args) :
     | none => simp at h
     | some l => simp [ih fun hr ↦ h (List.mem_cons_of_mem _ hr)]
 
-@[simp] theorem length_place (cs : List Case) (args : List (Option Lexical)) :
-    (place cs args).length = args.length := by
-  fun_induction place cs args <;> simp [*]
+theorem getElem?_place (cs : List Case) (args : List (Option Lexical)) (i : ℕ) :
+    (place cs args)[i]? = args[i]?.map
+      (Option.elim · (cs.getD ((args.take i).count none) .acc) Case.lexical) := by
+  induction args generalizing cs i with
+  | nil => simp
+  | cons o r ih => cases o <;> cases cs <;> cases i <;> simp_all
 
 theorem count_acc_place (cs : List Case) (h : .acc ∉ cs) (args : List (Option Lexical)) :
     (place cs args).count .acc = args.count none - cs.length := by
-  fun_induction place cs args <;> grind
+  induction args generalizing cs with
+  | nil => simp
+  | cons o r ih =>
+    cases o with
+    | some l => simp [ih cs h]
+    | none =>
+      cases cs with
+      | nil => simpa [List.count_cons] using ih [] h
+      | cons c cs =>
+        have hc : c ≠ .acc := fun hc ↦ h (hc ▸ List.mem_cons_self)
+        simp [hc, ih cs fun hm ↦ h (List.mem_cons_of_mem _ hm)]
 
 theorem count_acc_place_singleton (hc : c.IsFunctional) (args : List (Option Lexical)) :
     (place [c] args).count .acc = (maxAcc args).toNat := by
@@ -218,203 +239,63 @@ theorem count_acc_place_singleton (hc : c.IsFunctional) (args : List (Option Lex
 
 theorem count_place_le (he : e.IsFunctional) (cs : List Case) (args : List (Option Lexical)) :
     (place cs args).count e ≤ cs.count e := by
-  have := he.ne_acc
-  have := he.lexical_ne
-  fun_induction place cs args <;> grind
+  induction args generalizing cs with
+  | nil => simp
+  | cons o r ih =>
+    cases o with
+    | some l => simpa [List.count_cons, he.lexical_ne l] using ih cs
+    | none =>
+      cases cs with
+      | nil => simpa [List.count_cons, he.ne_acc.symm] using ih []
+      | cons c cs =>
+        simp only [place_cons_none_cons, List.count_cons]
+        have := ih cs
+        omega
 
 /-! ### Economy -/
 
-/-- The Cases an argument can bear: a lexical Case is kept, and a caseless argument takes a
-structural Case, accusative inside VP or a functional Case outside it. -/
-def Slot : Option Lexical → Case → Prop
-  | some l, d => d = .lexical l
-  | none, d => d = .acc ∨ d.IsFunctional
+/-- The derivation in which the argument at `i` is denied accusative and takes `c` outside VP: the
+derivations of p. 207 differ only in `i`, the length of that argument's path. -/
+def denyAt (c : Case) (args : List (Option Lexical)) (i : ℕ) : List Case :=
+  args.mapIdx fun j o ↦ o.elim (if j = i then c else .acc) Case.lexical
 
-/-- A logically possible derivation with `n` accusatives, `cs` being the Cases outside VP from the
-highest position down: the positions fill from the top, each takes one argument, and the higher
-argument takes the higher position. -/
-structure Candidate (cs : List Case) (n : ℕ) (args : List (Option Lexical)) (d : List Case) :
-    Prop where
-  slots : List.Forall₂ Slot args d
-  count_acc : d.count .acc = n
-  filter_prefix : d.filter (·.IsFunctional) <+: cs
+theorem idxOf_none_le {j : ℕ} (h : args[j]? = some none) : args.idxOf none ≤ j := by
+  induction args generalizing j with
+  | nil => simp at h
+  | cons o r ih => cases o <;> cases j <;> simp_all
 
-/-- The path of the argument that moves out of VP for a Case, its depth among the arguments, and
-nothing if no argument moves for that Case. -/
-def pathLength (d : List Case) (e : Case) : ℕ :=
-  if e ∈ d.filter (·.IsFunctional) then d.idxOf e else 0
+theorem count_take_eq_zero_iff {j : ℕ} (ha : none ∈ args) :
+    (args.take j).count none = 0 ↔ j ≤ args.idxOf none := by
+  induction args generalizing j with
+  | nil => simp at ha
+  | cons o r ih => cases o <;> cases j <;> simp_all
 
-section
+theorem denyAt_idxOf (c : Case) (args : List (Option Lexical)) :
+    denyAt c args (args.idxOf none) = place [c] args := by
+  refine List.ext_getElem? fun j ↦ ?_
+  rw [denyAt, List.getElem?_mapIdx, getElem?_place]
+  rcases hj : args[j]? with _ | _ | l
+  · rfl
+  · have ha := List.mem_of_getElem? hj
+    by_cases h : j = args.idxOf none
+    · simp [h, (count_take_eq_zero_iff ha).2 le_rfl]
+    · obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (mt (count_take_eq_zero_iff ha).1
+        (not_le.2 (lt_of_le_of_ne (idxOf_none_le hj) (Ne.symm h))))
+      simp [h, hk]
+  · rfl
 
-variable {cs : List Case} {n : ℕ}
-
-theorem forall₂_slot_place (hcs : ∀ c ∈ cs, c.IsFunctional) (args : List (Option Lexical)) :
-    List.Forall₂ Slot args (place cs args) := by
-  induction args generalizing cs with
-  | nil => simp
-  | cons o r ih =>
-    cases o with
-    | some l => simpa [Slot] using ih hcs
-    | none =>
-      cases cs with
-      | nil => simpa [Slot] using ih hcs
-      | cons c cs =>
-        simpa [Slot, hcs c List.mem_cons_self] using ih fun _ h ↦ hcs _ (List.mem_cons_of_mem _ h)
-
-theorem filter_place (hcs : ∀ c ∈ cs, c.IsFunctional) (hk : cs.length ≤ args.count none) :
-    (place cs args).filter (·.IsFunctional) = cs := by
-  induction args generalizing cs with
-  | nil => simpa [eq_comm] using hk
-  | cons o r ih =>
-    cases o with
-    | some l => simpa using ih hcs (by simpa using hk)
-    | none =>
-      cases cs with
-      | nil => simpa using ih hcs (by simp)
-      | cons c cs =>
-        simp only [place, List.filter_cons, hcs c List.mem_cons_self, decide_true, reduceIte]
-        rw [ih (fun _ h ↦ hcs _ (List.mem_cons_of_mem _ h)) (by simpa using hk)]
-
-theorem count_acc_add_length_filter (h : List.Forall₂ Slot args d) :
-    d.count .acc + (d.filter (·.IsFunctional)).length = args.count none := by
-  induction h with
-  | nil => simp
-  | @cons o e r d he _ ih =>
-    cases o with
-    | some l =>
-      obtain rfl : e = .lexical l := he
-      simpa using ih
-    | none =>
-      rcases (he : e = .acc ∨ e.IsFunctional) with rfl | hf
-      · simp; omega
-      · simp [hf, hf.ne_acc]; omega
-
-theorem idxOf_place_le_idxOf_place_cons {cs : List Case} (hnd : (c :: cs).Nodup) (he : e ∈ cs)
-    (r : List (Option Lexical)) : (place cs r).idxOf e ≤ (place (c :: cs) r).idxOf e := by
-  induction r generalizing c cs with
-  | nil => simp
-  | cons o r ih =>
-    cases o with
-    | some l => by_cases h : Case.lexical l = e <;> simp [h, ih hnd he]
-    | none =>
-      cases cs with
-      | nil => simp at he
-      | cons c' cs =>
-        by_cases h : c' = e
-        · simp [h]
-        · have hne : c ≠ e := by grind
-          simpa [List.idxOf_cons, h, hne] using
-            ih (List.nodup_cons.1 hnd).2 ((List.mem_cons.1 he).resolve_left (Ne.symm h))
-
-theorem idxOf_place_le (h : List.Forall₂ Slot args d) (hnd : cs.Nodup)
-    (hf : d.filter (·.IsFunctional) = cs) (he : e ∈ cs) :
-    (place cs args).idxOf e ≤ d.idxOf e := by
-  have hfun : e.IsFunctional := by subst hf; simpa using (List.mem_filter.1 he).2
-  induction h generalizing cs with
-  | nil => simp_all
-  | @cons o e' r d he' hs ih =>
-    cases o with
-    | some l =>
-      obtain rfl : e' = .lexical l := he'
-      simpa [List.idxOf_cons, hfun.lexical_ne l] using
-        ih hnd (by simpa using hf) he
-    | none =>
-      rcases (he' : e' = .acc ∨ e'.IsFunctional) with rfl | hm
-      · have hf' : d.filter (·.IsFunctional) = cs := by simpa using hf
-        cases cs with
-        | nil => simp at he
-        | cons c cs =>
-          by_cases hc : c = e
-          · simp [hc]
-          · have h1 := idxOf_place_le_idxOf_place_cons hnd
-              ((List.mem_cons.1 he).resolve_left (Ne.symm hc)) r
-            simpa [List.idxOf_cons, hfun.ne_acc.symm, hc] using h1.trans (ih hnd hf' he)
-      · obtain rfl : e' :: d.filter (·.IsFunctional) = cs := by simpa [hm] using hf
-        by_cases hc : e' = e
-        · simp [hc]
-        · simpa [List.idxOf_cons, hc] using
-            ih (List.nodup_cons.1 hnd).2 rfl ((List.mem_cons.1 he).resolve_left (Ne.symm hc))
-
-theorem eq_place_of_forall_idxOf_le (h : List.Forall₂ Slot args d)
-    (hf : d.filter (·.IsFunctional) = cs) (hnd : cs.Nodup)
-    (hle : ∀ e ∈ cs, d.idxOf e ≤ (place cs args).idxOf e) : d = place cs args := by
-  have hfun : ∀ {e : Case}, e ∈ cs → e.IsFunctional := fun he ↦ by
-    subst hf; simpa using (List.mem_filter.1 he).2
-  induction h generalizing cs with
-  | nil => simp
-  | @cons o e' r d he' hs ih =>
-    cases o with
-    | some l =>
-      obtain rfl : e' = .lexical l := he'
-      have := ih (by simpa using hf) hnd
-        (fun e he ↦ by simpa [List.idxOf_cons, (hfun he).lexical_ne l] using hle e he) hfun
-      simp [this]
-    | none =>
-      rcases (he' : e' = .acc ∨ e'.IsFunctional) with rfl | hm
-      · have hf' : d.filter (·.IsFunctional) = cs := by simpa using hf
-        cases cs with
-        | nil => simp [ih hf' hnd (by simp) (by simp)]
-        | cons c cs =>
-          simpa [List.idxOf_cons, (hfun List.mem_cons_self).ne_acc.symm] using
-            hle c List.mem_cons_self
-      · obtain rfl : e' :: d.filter (·.IsFunctional) = cs := by simpa [hm] using hf
-        have hne (e : Case) (he : e ∈ d.filter (·.IsFunctional)) : e' ≠ e :=
-          fun h ↦ (List.nodup_cons.1 hnd).1 (h ▸ he)
-        have := ih rfl (List.nodup_cons.1 hnd).2
-          (fun e he ↦ by simpa [List.idxOf_cons, hne e he] using hle e (List.mem_cons_of_mem _ he))
-          (fun he ↦ hfun (List.mem_cons_of_mem _ he))
-        exact congrArg (e' :: ·) this
-
-theorem Candidate.filter_eq {X : List Case} (h : Candidate X n args d) :
-    d.filter (·.IsFunctional) = X.take (args.count none - n) := by
-  have hc := count_acc_add_length_filter h.slots
-  rw [h.count_acc] at hc
-  have hp := List.prefix_iff_eq_take.1 h.filter_prefix
-  rwa [show (d.filter (·.IsFunctional)).length = args.count none - n by omega] at hp
-
-theorem Candidate.sub_le_length {X : List Case} (h : Candidate X n args d) :
-    args.count none - n ≤ X.length := by
-  have hc := count_acc_add_length_filter h.slots
-  have := h.filter_prefix.length_le
-  rw [h.count_acc] at hc
-  omega
-
-theorem candidate_place {X : List Case} (hX : ∀ c ∈ X, c.IsFunctional) (hn : n ≤ args.count none)
-    (hk : args.count none - n ≤ X.length) :
-    Candidate X n args (place (X.take (args.count none - n)) args) := by
-  have hlen : (X.take (args.count none - n)).length = args.count none - n := by
-    simp [List.length_take, hk]
-  have hsub : ∀ c ∈ X.take (args.count none - n), c.IsFunctional :=
-    fun c hc ↦ hX c (List.mem_of_mem_take hc)
-  refine ⟨forall₂_slot_place hsub args, ?_, ?_⟩
-  · rw [count_acc_place _ fun h ↦ (hsub _ h).ne_acc rfl, hlen]
-    omega
-  · rw [filter_place hsub (by omega)]
-    exact List.take_prefix _ _
-
--- p. 207
-theorem minimalFor_pathLength_iff {X : List Case} (hX : ∀ c ∈ X, c.IsFunctional) (hnd : X.Nodup)
-    (hn : n ≤ args.count none) :
-    MinimalFor (Candidate X n args) pathLength d ↔
-      args.count none - n ≤ X.length ∧ d = place (X.take (args.count none - n)) args := by
-  have hndt := hnd.sublist (List.take_sublist (args.count none - n) X)
-  have hleast {j : List Case} (hj : Candidate X n args j) (hk : args.count none - n ≤ X.length) :
-      pathLength (place (X.take (args.count none - n)) args) ≤ pathLength j := fun e ↦ by
-    simp only [pathLength, (candidate_place hX hn hk).filter_eq, hj.filter_eq]
-    split_ifs with he
-    · exact idxOf_place_le hj.slots hndt hj.filter_eq he
-    · exact le_rfl
+-- p. 207: the shortest path is the highest caseless argument's
+theorem minimalFor_iff {i : ℕ} :
+    MinimalFor (fun i ↦ args[i]? = some none) id i ↔ none ∈ args ∧ i = args.idxOf none := by
   constructor
-  · rintro ⟨hd, hmin⟩
-    have hk := hd.sub_le_length
-    have hp := candidate_place hX hn hk
-    refine ⟨hk, eq_place_of_forall_idxOf_le hd.slots hd.filter_eq hndt fun e he ↦ ?_⟩
-    have h := hmin hp (hleast hd hk) e
-    simpa only [pathLength, hd.filter_eq, hp.filter_eq, he, reduceIte] using h
-  · rintro ⟨hk, rfl⟩
-    exact ⟨candidate_place hX hn hk, fun j hj _ ↦ hleast hj hk⟩
-
-end
+  · rintro ⟨hi, hmin⟩
+    have ha : none ∈ args := List.mem_of_getElem? hi
+    have hidx : args[args.idxOf none]? = some none := by
+      simp [List.getElem?_eq_getElem (List.idxOf_lt_length_iff.2 ha)]
+    exact ⟨ha, (hmin hidx (idxOf_none_le hi)).antisymm (idxOf_none_le hi)⟩
+  · rintro ⟨ha, rfl⟩
+    exact ⟨by simp [List.getElem?_eq_getElem (List.idxOf_lt_length_iff.2 ha)],
+      fun _ hj _ ↦ idxOf_none_le hj⟩
 
 /-! ### Assignment and the positions outside VP -/
 
@@ -461,13 +342,6 @@ theorem isFunctional_highestCase (hc : c.IsFunctional) (args : List (Option Lexi
   · exact .inl rfl
   · exact hc
 
-theorem isFunctional_of_mem_outside (hc : c.IsFunctional) (args : List (Option Lexical)) :
-    ∀ e ∈ outside c args, e.IsFunctional := by
-  rcases args with _ | ⟨_ | _, _⟩ <;> simp [outside, highestCase, Case.IsFunctional] <;> exact hc
-
-theorem nodup_outside (c : Case) (args : List (Option Lexical)) : (outside c args).Nodup := by
-  rcases args with _ | ⟨_ | _, _⟩ <;> simp [outside, highestCase]
-
 theorem acc_notMem_outside (hc : c.IsFunctional) (args : List (Option Lexical)) :
     .acc ∉ outside c args := by
   rcases args with _ | ⟨_ | _, _⟩ <;> simp [outside, highestCase, hc.ne_acc.symm]
@@ -511,18 +385,18 @@ theorem derivations_obligatory (c : Case) (args : List (Option Lexical)) :
   · have h0 : args.count none = 0 := List.count_eq_zero.2 ha
     simp [h0, pattern, place_congr_of_none_notMem [] [highestCase c args] ha]
 
-/-- The formula and the language's setting fix how many accusatives a verb assigns, and among the
-logically possible derivations with that many, the derivations are those in which every moved
-argument takes the shortest path. -/
-theorem mem_derivations_iff (hc : c.IsFunctional) :
-    d ∈ derivations a c args ↔ ∃ n ∈ a.counts (maxAcc args).toNat,
-      MinimalFor (Candidate (outside c args) n args) pathLength d := by
-  rw [mem_derivations]
-  refine exists_congr fun n ↦ and_congr_right fun hn ↦ ?_
-  have hle := Assignment.le_of_mem_counts hn
-  rw [toNat_maxAcc] at hle
-  rw [minimalFor_pathLength_iff (isFunctional_of_mem_outside hc args) (nodup_outside c args)
-    (by omega), eq_comm]
+/-- Under obligatory accusative a clause's pattern is the logically possible derivation with the
+shortest path out of VP, the formula having fixed how many arguments are denied accusative. -/
+theorem mem_derivations_obligatory_iff (ha : none ∈ args) :
+    d ∈ derivations .obligatory c args ↔
+      ∃ i, MinimalFor (fun i ↦ args[i]? = some none) id i ∧
+        d = denyAt (highestCase c args) args i := by
+  rw [derivations_obligatory, List.mem_singleton, pattern, ← denyAt_idxOf]
+  constructor
+  · rintro rfl
+    exact ⟨_, minimalFor_iff.2 ⟨ha, rfl⟩, rfl⟩
+  · rintro ⟨i, hi, rfl⟩
+    rw [(minimalFor_iff.1 hi).2]
 
 /-! ### The generalizations -/
 
@@ -550,14 +424,14 @@ theorem count_obj_le_one_of_mem_derivations (hc : c.IsFunctional)
     ((outside c args).take (args.count none - n)) args
   exact h.trans (((List.take_sublist _ _).count_le _).trans (count_obj_outside_le_one hc args))
 
--- economy, not the formula, excludes a lower argument moving past a higher one
+-- (25c): denying the lower object meets the formula, and economy alone excludes it
 theorem economy_excludes :
-    Candidate [.nom, .obj] 1 [none, none, none] [.nom, .acc, .obj] ∧
-      ¬ MinimalFor (Candidate [.nom, .obj] 1 [none, none, none]) pathLength [.nom, .acc, .obj] ∧
-      [.nom, .obj, .acc] ∈ derivations .optional .obj [none, none, none] := by
-  refine ⟨⟨by simp [Slot, Case.IsFunctional], by decide, by decide⟩, ?_, by decide⟩
-  rw [minimalFor_pathLength_iff (by decide) (by decide) (by decide)]
-  decide
+    denyAt .obj [some .erg, none, none] 2 = [.erg, .acc, .obj] ∧
+      ([.erg, .acc, .obj] : List Case).count .acc = (maxAcc [some .erg, none, none]).toNat ∧
+      ¬ MinimalFor (fun i ↦ ([some .erg, none, none] : List (Option Lexical))[i]? = some none) id
+        2 := by
+  refine ⟨rfl, by decide, fun h ↦ ?_⟩
+  simpa using (minimalFor_iff.1 h).2
 
 -- without accusative the limit of one position has force
 theorem derivations_lacking_three : derivations .lacking .obj [none, none, none] = [] := by
@@ -595,36 +469,28 @@ theorem lexical_acc_notMem (hc : c.IsFunctional) (l : Lexical) :
     [.lexical l, .acc] ∉ derivations a c [some l, none] := fun hd ↦ by
   simpa using getElem?_ne_acc_of_mem_derivations (ls := []) (r := []) hc hd
 
--- p. 204: the strong interpretation, `.lacking` under a lexical subject, fails where (24b) succeeds
-theorem strong_underivable :
+-- p. 204: the strong interpretation, `.lacking` under a lexical subject, fails where (24b)
+-- succeeds, and inherent accusative rescues it only to overgenerate (pp. 201, 203)
+theorem strong_interpretation :
     derivations .lacking .obj [some .erg, none, none] = [] ∧
-      [.erg, .obj, .acc] ∈ derivations .obligatory .obj [some .erg, none, none] := by
-  decide
-
--- p. 204: inherent accusative rescues the strong interpretation only to overgenerate; pp. 201, 203
-theorem inherent_accusative_overgenerates :
-    derivations .lacking .obj [some .erg, none, some .acc] = [[.erg, .obj, .lexAcc]] ∧
+      [.erg, .obj, .acc] ∈ derivations .obligatory .obj [some .erg, none, none] ∧
+      derivations .lacking .obj [some .erg, none, some .acc] = [[.erg, .obj, .lexAcc]] ∧
       derivations .lacking .obj [some .erg, some .acc] = [[.erg, .lexAcc]] ∧
       derivations .lacking .obj [some .erg, some .dat, some .acc] = [[.erg, .dat, .lexAcc]] ∧
       Case.lexAcc.label = .acc := by
   decide
 
--- p. 204, p. 207: on the weak reading of Burzio's generalization, with no inherent accusative
-theorem double_object_passive : derivations .obligatory .nom [none, none] = [[.nom, .acc]] := by
-  decide
-
--- p. 207: an external subject with a lexical object assigns no accusative
-theorem burzio_too_strong : derivations .obligatory .obj [none, some .dat] = [[.nom, .dat]] := by
+-- pp. 204, 207: a double-object passive with no inherent accusative, and an external subject over a
+-- lexical object with no accusative at all, so the formula is not Burzio's generalization
+theorem burzio_patterns :
+    derivations .obligatory .nom [none, none] = [[.nom, .acc]] ∧
+      derivations .obligatory .obj [none, some .dat] = [[.nom, .dat]] := by
   decide
 
 -- pp. 205-206: one argument, caseless or lexically Cased
-theorem derivations_intransitive (a : Assignment) (c : Case) :
-    derivations a c [none] = [[.nom]] := by
-  cases a <;> rfl
-
-theorem derivations_lexical_intransitive (a : Assignment) (c : Case) (l : Lexical) :
-    derivations a c [some l] = [[.lexical l]] := by
-  cases a <;> rfl
+theorem derivations_intransitive (a : Assignment) (c : Case) (l : Lexical) :
+    derivations a c [none] = [[.nom]] ∧ derivations a c [some l] = [[.lexical l]] := by
+  cases a <;> exact ⟨rfl, rfl⟩
 
 -- p. 202, note 26: nominative-objective without accusative, or beside nominative-accusative
 theorem nom_obj_mem :
@@ -678,28 +544,22 @@ def thangu : Params := { ergative := .obligatory, dative := .obligatory }
 /-- Kalkatungu assigns ergative obligatorily and dative optionally. -/
 def kalkatungu : Params := { ergative := .obligatory, dative := .optional }
 
--- (60)
-theorem nezPerce_patterns :
+-- (60), and p. 223: there is no parameter of ergativity beyond the verbs' ability to assign it
+theorem patterns_table :
     nezPerce.patterns = [[.nom], [.nom, .acc], [.erg, .obj], [.nom, .acc, .acc],
-      [.nom, .dat, .acc], [.erg, .obj, .acc], [.erg, .dat, .obj]] := by
+      [.nom, .dat, .acc], [.erg, .obj, .acc], [.erg, .dat, .obj]] ∧
+      thangu.patterns = [[.nom], [.erg, .obj], [.erg, .dat, .obj]] ∧
+      kalkatungu.patterns = [[.nom], [.erg, .obj], [.erg, .obj, .acc], [.erg, .dat, .obj]] ∧
+      ({ ergative := .lacking, dative := .lacking } : Params).patterns =
+        [[.nom], [.nom, .acc], [.nom, .acc, .acc]] := by
   decide
 
-theorem thangu_patterns : thangu.patterns = [[.nom], [.erg, .obj], [.erg, .dat, .obj]] := by
-  decide
-
-theorem kalkatungu_patterns :
-    kalkatungu.patterns = [[.nom], [.erg, .obj], [.erg, .obj, .acc], [.erg, .dat, .obj]] := by
-  decide
-
--- p. 223: there is no parameter of ergativity beyond the verbs' ability to assign the Case
-theorem patterns_of_ergative_lacking :
-    ({ ergative := .lacking, dative := .lacking } : Params).patterns =
-      [[.nom], [.nom, .acc], [.nom, .acc, .acc]] := by
-  decide
-
--- four-way, three-way, four-way
-theorem card_coreCases :
-    nezPerce.coreCases.card = 4 ∧ thangu.coreCases.card = 3 ∧ kalkatungu.coreCases.card = 4 := by
+-- four-way, three-way, four-way; objective and accusative are one comparative accusative, as in the
+-- fragment's paradigm, and Thangu's only object Case is Schebeck's accusative (note 35)
+theorem coreCases_table :
+    nezPerce.coreCases.card = 4 ∧ thangu.coreCases.card = 3 ∧ kalkatungu.coreCases.card = 4 ∧
+      nezPerce.coreCases.image Case.label = Finset.univ.image NezPerce.Case.label ∧
+      thangu.coreCases.image Case.label = {.nom, .erg, .acc} := by
   decide
 
 -- p. 216: accusative never surfaces in Thangu, whether or not its verbs can assign it
@@ -718,17 +578,6 @@ theorem dative_not_forced :
 theorem case_shortage_fails :
     [.nom, .obj] ∈ ({ ergative := .optional, dative := .obligatory, accusative := .lacking } :
       Params).patterns := by
-  decide
-
--- the fragment's paradigm has the comparative values of the four-way system: objective and
--- accusative are one comparative accusative
-theorem image_label_coreCases :
-    nezPerce.coreCases.image Case.label = Finset.univ.image NezPerce.Case.label := by
-  decide
-
--- note 35: Thangu's only object Case is the accusative of Schebeck's description
-theorem image_label_coreCases_thangu :
-    thangu.coreCases.image Case.label = {.nom, .erg, .acc} := by
   decide
 
 /-! ### The rows -/
@@ -884,11 +733,6 @@ def Case.dependentValue : Case → Option (_root_.Case × _root_.Case.Mechanism)
   | .obj => none
   | .acc => some (.acc, .dependent)
   | .lexical l => some ((Case.lexical l).label, .lexical)
-
-theorem getElem?_place (cs : List Case) (args : List (Option Lexical)) (i : ℕ) :
-    (place cs args)[i]? = args[i]?.map
-      (Option.elim · (cs.getD ((args.take i).count none) .acc) Case.lexical) := by
-  fun_induction place cs args generalizing i <;> cases i <;> simp_all
 
 theorem map_value?_assign_eq_map_place (args : List (Option Lexical)) :
     ((Rules.ofAlignment .accusative).assign lexicalValue args).map (·.2.value?) =
