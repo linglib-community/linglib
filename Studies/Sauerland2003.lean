@@ -13,11 +13,11 @@ features as presuppositions: `[Sg]` is the identity function presupposing an ato
 admits an atom or a mass; `Number.dom` keeps the atomic case), `[Pl]` the identity with no
 presupposition, and Heim's Maximize Presupposition has the speaker use the most specific feature
 whose presupposition holds, (7). In competition with the singular the plural is therefore
-unblocked only at non-atoms (`unblocked_plural`), which the coordination *Kai and Lina* shows
+unblocked only at non-atoms (`Number.unblocked_plural`), which the coordination *Kai and Lina* shows
 (`coordination_plural`), and at atoms too once the singular is blocked by an independent factor,
 singular *they* (13) or polite address (14) (`unblocked_plural_of_singular_blocked`).
-The two domains are nested (`sg_domain_ssubset_pl`), an instance of his Feature-Subset
-Principle (46), and since the features are domain restrictions the competition is
+The two domains are nested (`Number.dom_singular_ssubset_dom_plural`), an instance of his
+Feature-Subset Principle (46), and since the features are domain restrictions the competition is
 presuppositional rather than scalar. The person features (44) compete the same way: the second
 person is used outside the first person's domain and the third outside the participants', the
 non-participant presupposition of (47) (`unblocked_second`, `unblocked_third`), except in a
@@ -63,35 +63,9 @@ theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
 
-theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) := by
-  rw [Number.dom_plural]
-  exact ⟨Set.subset_univ _, fun h ↦ coordination_plural ha hb hne (h (Set.mem_univ _))⟩
-
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
     (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
   cum_maximal_unique algClosure_cum h₁ h₂
-
-/-- The two number features that can head a φP are each other's alternatives. -/
-def numberAlts : Option Number → Set (Option Number) := fun _ ↦ {some .singular, some .plural}
-
-theorem unblocked_singular :
-    unblocked numberAlts Number.dom (some .singular) = {x : E | Atom x} := by
-  rw [unblocked_eq_self]
-  · ext x; exact Number.mem_dom_singular x
-  · rintro ⟨ψ, hψ, hss⟩
-    rcases hψ with rfl | rfl
-    · exact hss.ne rfl
-    · exact hss.not_subset fun x _ ↦ by rw [Number.dom_plural]; trivial
-
-theorem unblocked_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    unblocked numberAlts Number.dom (some .plural) = {x : E | ¬ Atom x} := by
-  rw [unblocked_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
-    (sg_domain_ssubset_pl ha hb hne)]
-  · ext x; simp [Number.mem_dom_singular]
-  · rintro χ (rfl | rfl) hss
-    · exact le_rfl
-    · exact absurd rfl hss.ne
 
 /-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
 theorem unblocked_plural_of_singular_blocked :
@@ -102,10 +76,10 @@ theorem unblocked_plural_of_singular_blocked :
   exact hss.ne rfl
 
 theorem atom_mem_unblocked_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    a ∉ unblocked numberAlts Number.dom (some .plural) ∧
+    a ∉ unblocked Number.alts Number.dom (some .plural) ∧
       a ∈ unblocked (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
-  rw [unblocked_plural ha hb hne, unblocked_plural_of_singular_blocked]
-  exact ⟨fun h ↦ h ha, Set.mem_univ _⟩
+  rw [Number.unblocked_plural (not_atom_sup_of_ne ha hb hne), unblocked_plural_of_singular_blocked]
+  exact ⟨fun h ↦ h.2 ha, Set.mem_univ _⟩
 
 end Number
 

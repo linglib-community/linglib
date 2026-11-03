@@ -97,12 +97,15 @@ theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
 
 variable [DecidableEq α]
 
+omit [DecidableEq α] in
 theorem atomsOf_region : atomsOf (region B S) = region B (atomsOf S) := by
   ext s; simp only [atomsOf, region, atom_iff_card, and_assoc]
 
+omit [DecidableEq α] in
 theorem nonAtomsOf_region : nonAtomsOf (region B S) = region B (nonAtomsOf S) := by
   ext s; simp only [nonAtomsOf, region, atom_iff_card, and_assoc]
 
+omit [DecidableEq α] in
 theorem nonMinimalOf_region (hS : ∀ k, S k → B.card ≤ k) :
     nonMinimalOf (region B S) = region B (nonMinimalOf S) := by
   ext s; simp only [nonMinimalOf, atomize_region hS, region]; tauto
@@ -126,6 +129,7 @@ private theorem nonMinimalOf_iterate (n : ℕ) : nonMinimalOf^[n] (2 ≤ ·) = (
     rw [Function.iterate_succ_apply', ih]
     ext j; simp only [nonMinimalOf, atomize_le]; omega
 
+omit [DecidableEq α] in
 private theorem nonMinimalOf_iterate_region (n : ℕ) (S : ℕ → Prop) :
     nonMinimalOf^[n] (region (∅ : Finset α) S) = region ∅ (nonMinimalOf^[n] S) := by
   induction n with
@@ -137,6 +141,7 @@ omit [DecidableEq α] in
 private theorem nonempty_eq_region : (Finset.Nonempty : Finset α → Prop) = region ∅ (1 ≤ ·) := by
   ext t; simp [region, Finset.one_le_card]
 
+omit [DecidableEq α] in
 /-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms (31), the dual of
 (30) at `n = 0` and the trial at `n = 1`. -/
 theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
@@ -148,6 +153,7 @@ theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
   simp [region]
 
 -- (30)
+omit [DecidableEq α] in
 theorem atomize_atomsOf (s : Finset α) :
     atomize (atomsOf Finset.Nonempty) s ↔ s.card = 1 := by
   have ha : atomsOf (1 ≤ ·) = ((· = 1) : ℕ → Prop) := by

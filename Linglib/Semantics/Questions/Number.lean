@@ -60,16 +60,10 @@ theorem mem_whDomain_of_isAtom (n : Option Number) {a : E} (ha : IsAtom a) : a �
 in which the nucleus holds of `x`. -/
 def whHamblin (n : Option Number) : Set (Set E) := Ici '' whDomain n
 
-/-- The competitors of a *wh* phrase: *which N* competes in number with the singular and the
-plural, and *who* and *what*, which carry no number, with nothing. -/
-def numberAlts : Option Number → Set (Option Number)
-  | none => ∅
-  | some _ => {some .singular, some .plural}
-
 /-- The situations in which a *wh* question is felicitous: its existential presupposition holds
 and that of no competitor with a stronger one does. -/
 def whFelicitous (n : Option Number) : Set E :=
-  unblocked numberAlts (fun m ↦ presupposition (whHamblin m)) n
+  unblocked Number.alts (fun m ↦ presupposition (whHamblin m)) n
 
 variable [IsAtomistic E]
 
@@ -92,7 +86,7 @@ theorem presupposition_whHamblin (n : Option Number) :
   Set.ext (isExhaustivelyResolvable_whHamblin_iff n)
 
 theorem whFelicitous_eq_unblocked_whDomain (n : Option Number) :
-    whFelicitous (E := E) n = unblocked numberAlts whDomain n := by
+    whFelicitous (E := E) n = unblocked Number.alts whDomain n := by
   simp only [whFelicitous, presupposition_whHamblin]
 
 theorem whFelicitous_none : whFelicitous (E := E) none = {w | w ≠ ⊥} := by
@@ -120,7 +114,7 @@ theorem whFelicitous_of_ne_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b) (h
       (Mereology.atom_iff_isAtom.2 hb) hab
       (Mereology.atom_iff_isAtom.2 (mem_whDomain_singular.1 (h hab')))
   rw [whFelicitous_eq_unblocked_whDomain,
-    unblocked_eq_sdiff (alts := numberAlts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
+    unblocked_eq_sdiff (alts := Number.alts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
   · exact Set.ext fun _ ↦ and_congr_right fun _ ↦ not_congr mem_whDomain_singular
   · rintro χ (rfl | rfl) hχ
     · exact subset_rfl

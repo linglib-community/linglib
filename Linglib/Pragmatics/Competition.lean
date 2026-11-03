@@ -17,9 +17,10 @@ of bidirectional optimality theory (`BidirectionalOT.blocks_iff_blocked`).
 Along at-issue content over the weakly assertable alternatives, blocking is Katzir's
 neo-Gricean principle, and along conventional-implicature content it is Lo Guercio's Maximize
 Conventional Implicatures. Along presuppositional content over `sameAssertion` it is Heim's
-Maximize Presupposition, and its condition at a context, as Schlenker states it, is
-`unblocked`: the presupposition less the presuppositions of the strictly stronger alternatives,
-whose removal is Percus's anti-presupposition and Sauerland's implicated presupposition. The
+Maximize Presupposition, which Schlenker states over presuppositions satisfied in a context. Its
+form point by point, after Chemla's epistemic step, is `unblocked`: the presupposition less the
+presuppositions of the strictly stronger alternatives, whose removal is Percus's anti-presupposition
+and Sauerland's implicated presupposition. The
 relations carry no theory of why competition obtains, so pragmatic and grammatical accounts of
 each principle state their disagreement over one definition.
 
@@ -46,6 +47,7 @@ each principle state their disagreement over one definition.
 * [lo-guercio-2025]
 * [heim-1991]
 * [schlenker-2012]
+* [chemla-2008]
 * [percus-2006]
 * [sauerland-2008a]
 -/

@@ -32,8 +32,8 @@ tableaux are decided by the kernel. The paper's examples are the rows of
   the context, while `mpConstraint` counts a bundle's shortfall from the full bundle. On the lower
   sets of the chain the two agree when every stronger bundle is compatible, the shortfall being
   the number of strictly stronger competitors; deriving the constraint from
-  `Competition.unblocked` over `Number.dom` waits on the dual's minimality domain, which
-  `Number.dom` does not yet restrict.
+  `Competition.unblocked` over `Number.dom` waits on a domain for the dual, whose region is built
+  on the `[−atomic]` that `Number.dom` does not read.
 
 ## References
 

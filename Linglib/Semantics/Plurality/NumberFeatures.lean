@@ -42,7 +42,8 @@ features (`Semantics/Plurality/Number.lean`).
 
 Harbour argues that the features are bivalent, a privative encoding collapsing values such as
 unit augmented and minimal; a bundle here is the set of positive values of a bivalent valuation,
-the negative values being its complement. The examples use the powerset lattice `Finset (Fin n)`
+the negative values being its complement. `Number.dom` reads the positive values alone. The
+examples use the powerset lattice `Finset (Fin n)`
 on its nonempty subsets, whose atoms are the singletons.
 
 ## References
