@@ -29,7 +29,7 @@ disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows
   and Rouillard, which the paper endorses for bare phrases; extending it to complex phrases is this
   file's choice. Competition in number applies only over individuals: [obligatory competition
   over conjunctions and disjunctions would cost a singular phrase its plural
-  answers](##unblocked_hamblin_domain_singular), as those authors observe.
+  answers](##strengthen_hamblin_domain_singular), as those authors observe.
 * The free choice answers some informants accept to *-ro* questions under *must* are not fitted: the
   analysis predicts presupposition failure, and the paper takes them to be rejecting it.
 * The paper's taxonomy of interrogatives stays a row feature, since no theory-layer type of *wh*
@@ -42,9 +42,9 @@ disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows
   sets.
 * The paper objects that singular interrogatives over pluralities would not compete with plural
   ones, wrongly admitting singular answers to the latter. [Over Dayal's domains its own Hamblin sets
-  leave any competition among them vacuous](##unblocked_hamblin_whDomain), so (25) must come from
+  leave any competition among them vacuous](##strengthen_hamblin_whDomain), so (25) must come from
   the phrase's domain or, by Elliott, Nicolae and Sauerland's Brevity, from plurals lacking those
-  Hamblin sets, while [with *-ro* Dayal's competition returns](##unblocked_hamblinRo_whDomain) and
+  Hamblin sets, while [with *-ro* Dayal's competition returns](##strengthen_hamblinRo_whDomain) and
   (28) needs neither.
 * (51) prints *have-to* in the LFs of the non-modal (49)–(50), and (40), (45) and (53) print
   `B[(thing₁,r) ∧ B(thing₂,r)]` for `[B(thing₁,r) ∧ B(thing₂,r)]`.
@@ -70,7 +70,7 @@ disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Question Set Competition Quantifier
+open Question Set Presupposition Quantifier
 open scoped SetRel
 
 variable {E W : Type*}
@@ -306,21 +306,21 @@ theorem dayalAns_hamblin_whDomain [IsAtomistic E] (n : Option Number) (hw : w �
     exact congrArg Ici (sSup_whDomain_le n w), ← dayalAns_eq_some_iff] at h
 
 -- p. 8: the objection to singular interrogatives over pluralities, against (29)
-theorem unblocked_hamblin_whDomain (alts : Option Number → Set (Option Number))
+theorem strengthen_hamblin_whDomain (alts : Option Number → Set (Option Number))
     (n : Option Number) :
-    unblocked alts (fun m ↦ presupposition (hamblin Ici (whDomain m))) n = {w : E | w ≠ ⊥} := by
+    strengthen alts (fun m ↦ presupposition (hamblin Ici (whDomain m))) n = {w : E | w ≠ ⊥} := by
   simp only [presupposition_hamblin_whDomain]
-  exact unblocked_eq_self fun ⟨_, _, h⟩ ↦ h.ne rfl
+  exact strengthen_eq_self fun _ _ h ↦ h.ne rfl
 
 -- (23): [alonso-ovalle-rouillard-2023] p. 294, EXHp "cannot be obligatory" with a weak singular,
 -- which would convey uniqueness; this is the pointwise form, not competition in a context
-theorem unblocked_hamblin_domain_singular {a : E} (ha : IsAtom a) :
-    unblocked (fun _ ↦ {.singular, .plural}) (fun m ↦ presupposition (hamblin Ici m.domain))
+theorem strengthen_hamblin_domain_singular {a : E} (ha : IsAtom a) :
+    strengthen (fun _ ↦ {.singular, .plural}) (fun m ↦ presupposition (hamblin Ici m.domain))
       Marking.singular = {w : E | IsAtom w} := by
   have hsg : presupposition (hamblin Ici Marking.singular.domain) = {w : E | w ≠ ⊥} :=
     (presupposition_hamblin_domain .singular).trans domain_neutral
   have hpl := presupposition_hamblin_domain (E := E) .plural
-  refine (unblocked_eq_sdiff (ψ := .plural) (by simp) ?_ ?_).trans ?_
+  refine (strengthen_eq_sdiff (ψ := .plural) (by simp) ?_ ?_).trans ?_
   · rw [hsg, hpl]
     exact ⟨fun _ hw ↦ (Marking.mem_domain_plural.1 hw).1,
       fun h ↦ (Marking.mem_domain_plural.1 (h ha.ne_bot)).2 ha⟩
@@ -335,8 +335,8 @@ theorem unblocked_hamblin_domain_singular {a : E} (ha : IsAtom a) :
 end Finite
 
 -- (28): *-ro* restores Dayal's domains and competition
-theorem unblocked_hamblinRo_whDomain (n : Option Number) :
-    unblocked Number.alts (fun m ↦ presupposition (hamblinRo Ici (whDomain m))) n =
+theorem strengthen_hamblinRo_whDomain (n : Option Number) :
+    strengthen Number.alts (fun m ↦ presupposition (hamblinRo Ici (whDomain m))) n =
       whFelicitous (E := E) n := by
   simp only [hamblinRo_eq_image]
   rfl

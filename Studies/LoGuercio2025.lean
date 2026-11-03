@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Data.Examples.LoGuercio2025
 
 /-!
@@ -16,8 +16,8 @@ of felicitous use, so one sentence has stronger such content than another when i
 set is a proper subset of the other's, and the principle Maximize Conventional Implicatures!
 forbids a sentence when a formal alternative in the sense of Katzir and of Fox and
 Katzir, one no more complex than it, has stronger content. All three principles
-are instances of the substrate's `Competition.Blocked`, here along conventional-implicature
-content.
+have this form, here along conventional-implicature content (`Blocked`), and
+`Presupposition.strengthen` computes the inference along it as along presuppositions.
 
 The worked case is the epithet. Out of the blue, *John arrived first* carries no inference
 that John is no bastard, because *that bastard John arrived first* is not a formal
@@ -29,8 +29,8 @@ mentioned, its phrase enters the substitution source, the epithet alternative is
 substituting it for the subject and then *John* for *Pedro*, the paper's derivation (24)
 (`epithet_alternative_priorMention`), and the inference arises (`priorMention_yes_ACI`): the
 bare sentence is then used exactly where the speaker does not hold the attitude
-(`unblocked_priorMention`), where out of the blue it is used whatever the attitude
-(`unblocked_outOfBlue`).
+(`strengthen_priorMention`), where out of the blue it is used whatever the attitude
+(`strengthen_outOfBlue`).
 
 ## Implementation notes
 
@@ -54,7 +54,7 @@ theorems.
 
 namespace LoGuercio2025
 
-open PhraseStructure.Tree Competition
+open PhraseStructure.Tree Presupposition
 open PhraseStructure
 
 /-! ### The epithet as a structural alternative -/
@@ -170,10 +170,15 @@ theorem epithet_ciStronger_than_bare :
 
 /-! ### The inference -/
 
+/-- Maximize Conventional Implicatures! forbids a sentence with a formal alternative of strictly
+stronger conventional-implicature content. -/
+def Blocked (lex : Finset (Tree Cat EWord)) (φ : Tree Cat EWord) : Prop :=
+  ∃ φ' ∈ structuralAlternatives lex φ, expressiveCI φ' ⊂ expressiveCI φ
+
 /-- Out of the blue the bare sentence does not violate the principle, since every formal
 alternative is free of the epithet construction, so none has stronger content. -/
 theorem outOfBlue_no_ACI :
-    ¬ Blocked (structuralAlternatives epithetLex) expressiveCI johnArrived := by
+    ¬ Blocked epithetLex johnArrived := by
   rintro ⟨φ', hφ', hss⟩
   obtain ⟨w, -, h_alt⟩ := Set.not_subset.1 hss.2
   exact h_alt fun ⟨s, hs, hse⟩ ↦ absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
@@ -181,27 +186,27 @@ theorem outOfBlue_no_ACI :
 /-- After the mention the bare sentence violates the principle, since the epithet sentence is a
 formal alternative with stronger content. -/
 theorem priorMention_yes_ACI :
-    Blocked (structuralAlternatives priorContextLex) expressiveCI johnArrived :=
+    Blocked priorContextLex johnArrived :=
   ⟨bastardJohnArrived, epithet_alternative_priorMention, epithet_ciStronger_than_bare⟩
 
 private theorem expressiveCI_johnArrived : expressiveCI johnArrived = Set.univ :=
   Set.eq_univ_of_forall fun _ h ↦ absurd h (by decide)
 
-theorem unblocked_outOfBlue :
-    unblocked (structuralAlternatives epithetLex) expressiveCI johnArrived = Set.univ := by
-  rw [unblocked_eq_self outOfBlue_no_ACI, expressiveCI_johnArrived]
+theorem strengthen_outOfBlue :
+    strengthen (structuralAlternatives epithetLex) expressiveCI johnArrived = Set.univ := by
+  rw [strengthen_eq_self fun ψ hψ hss ↦ outOfBlue_no_ACI ⟨ψ, hψ, hss⟩, expressiveCI_johnArrived]
 
-theorem unblocked_priorMention :
-    unblocked (structuralAlternatives priorContextLex) expressiveCI johnArrived = {false} := by
+theorem strengthen_priorMention :
+    strengthen (structuralAlternatives priorContextLex) expressiveCI johnArrived = {false} := by
   ext w
   cases w
   · simp only [Set.mem_singleton_iff, iff_true]
-    refine mem_unblocked_iff.2 ⟨expressiveCI_johnArrived ▸ Set.mem_univ _,
+    refine mem_strengthen_iff.2 ⟨expressiveCI_johnArrived ▸ Set.mem_univ _,
       fun ψ _ hψ hss ↦ hss.ne ?_⟩
     rw [expressiveCI_johnArrived]
     exact Set.eq_univ_of_forall fun _ h ↦ absurd (hψ h) Bool.false_ne_true
   · simp only [Set.mem_singleton_iff, Bool.true_eq_false, iff_false]
-    exact Set.disjoint_left.1 (disjoint_unblocked_of_ssubset epithet_alternative_priorMention
+    exact Set.disjoint_left.1 (disjoint_strengthen_of_ssubset epithet_alternative_priorMention
       epithet_ciStronger_than_bare) (fun _ ↦ rfl)
 
 end LoGuercio2025

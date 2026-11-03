@@ -7,7 +7,6 @@ public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Semantics.Aspect.Phasal
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
-public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
@@ -28,7 +27,7 @@ entails a proposition when every state it admits believes the proposition.
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of
   states included in `p`, and possibility and ignorance are the corresponding overlap
   conditions.
-* Maximize Presupposition is blocking, `Competition.Blocked`. A sentence without a
+* Maximize Presupposition is violated by a presuppositionally stronger rival. A sentence without a
   presupposition violates it in every context, as in the dissertation's tableaux, and its rank
   below Felicity Presupposition confines its effect to contexts that entail the presupposition.
 * The aspectual triggers take their meanings from `Presupposition.again` and
@@ -117,17 +116,15 @@ theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presu
 /-- Maximize Presupposition is violated by a candidate that its rival blocks, the rival being
 presuppositionally stronger, admitted by strictly fewer contexts, (3c). -/
 def ViolMP (rival c : Candidate W) : Prop :=
-  Competition.Blocked (fun _ ↦ {rival}) Candidate.admits c
-
-theorem violMP_iff {rival c : Candidate W} : ViolMP rival c ↔ rival.admits ⊂ c.admits :=
-  ⟨fun ⟨_, h, hss⟩ ↦ h ▸ hss, fun h ↦ ⟨rival, rfl, h⟩⟩
+  rival.admits ⊂ c.admits
 
 theorem violMP_of_presup_none {rival c : Candidate W} {p : Set W} (hc : c.presup = none)
-    (hr : rival.presup = some p) : ViolMP rival c :=
-  violMP_iff.2 (Candidate.admits_of_presup_none hc ▸ Candidate.admits_ssubset_univ hr)
+    (hr : rival.presup = some p) : ViolMP rival c := by
+  rw [ViolMP, Candidate.admits_of_presup_none hc]
+  exact Candidate.admits_ssubset_univ hr
 
 theorem not_violMP_self (c : Candidate W) : ¬ ViolMP c c :=
-  fun h ↦ (violMP_iff.1 h).ne rfl
+  fun h ↦ h.ne rfl
 
 /-- `Beats cs a b` compares two candidates by strict domination along the list `cs` of violation
 predicates, `a` beating `b` at the first constraint on which they differ. -/

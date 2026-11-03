@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Interval.Set.Defs
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Core.Order.UpperLower.Finset
@@ -47,13 +47,13 @@ gender domains. The person entries take the agent and the addressee as parts of 
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
 including the addressee. The cells of the standard tripartition are stated one by one, since
-Maximize Presupposition (`Competition.unblocked`) yields them only when the agent is not
+Maximize Presupposition (`Presupposition.strengthen`) yields them only when the agent is not
 part of the addressee; otherwise the first and second person domains coincide
-(`Sauerland2003.unblocked_second_of_degenerate`).
+(`Sauerland2003.strengthen_second_of_degenerate`).
 
 Number is read at the positive values of a bundle alone, so the plural, `[−atomic, −minimal]`,
 restricts nothing, where Harbour's region operators read the same bundle as excluding atoms.
-[Competition recovers those regions](##Number.unblocked_plural) for the singular and the plural
+[Strengthening recovers those regions](##Number.strengthen_plural) for the singular and the plural
 but not for the dual, whose region `Number.dualOf` is built on `[−atomic]`, a value this reading
 lacks, so the dual restricts nothing. This is Martí's undergeneration argument against
 inclusive-only plurals.
@@ -173,7 +173,7 @@ end Person
 
 namespace Number
 
-open Competition
+open Presupposition
 
 variable {E : Type*} [PartialOrder E] (x : E)
 
@@ -219,22 +219,22 @@ theorem dom_singular_ssubset_dom_plural (hy : ¬ Atom y) :
   rw [dom_plural]
   exact ⟨Set.subset_univ _, fun h ↦ hy ((mem_dom_singular y).1 (h (Set.mem_univ y)))⟩
 
-/-- The singular is unblocked on the `[+atomic]` region. -/
-theorem unblocked_singular :
-    unblocked alts dom (some .singular) = {x : E | atomsOf ⊤ x} := by
-  rw [unblocked_eq_self]
+/-- The singular's strengthening is the `[+atomic]` region. -/
+theorem strengthen_singular :
+    strengthen alts dom (some .singular) = {x : E | atomsOf ⊤ x} := by
+  rw [strengthen_eq_self]
   · ext x
     simp [atomsOf]
-  · rintro ⟨ψ, hψ, hss⟩
+  · rintro ψ hψ hss
     rcases hψ with rfl | rfl
     · exact hss.ne rfl
     · exact hss.not_subset fun x _ ↦ by rw [dom_plural]; trivial
 
-/-- In competition with the singular, the plural's unrestricted domain is the `[−atomic]` region:
+/-- Strengthened against the singular, the plural's unrestricted domain is the `[−atomic]` region:
 the inclusive reading of the bundle recovers the exclusive one. -/
-theorem unblocked_plural (hy : ¬ Atom y) :
-    unblocked alts dom (some .plural) = {x : E | nonAtomsOf ⊤ x} := by
-  rw [unblocked_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
+theorem strengthen_plural (hy : ¬ Atom y) :
+    strengthen alts dom (some .plural) = {x : E | nonAtomsOf ⊤ x} := by
+  rw [strengthen_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
     (dom_singular_ssubset_dom_plural hy)]
   · ext x
     simp [mem_dom_singular, nonAtomsOf]

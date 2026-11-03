@@ -8,7 +8,6 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Quantification.Numerals.Roundness
-public import Linglib.Pragmatics.Competition
 public import Studies.Krifka2007
 public import Linglib.Data.Examples.Haslinger2025
 
@@ -61,7 +60,7 @@ def manner (φ : S) : ℕ × ℕ := (complexity φ, potential φ)
 on both orderings and better on one, (59): competition among the potentially p-equivalent
 sentences along the Manner profile. -/
 abbrev Blocked (ψ : S) : Prop :=
-  Competition.Blocked (fun ψ ↦ {φ | PotEquiv φ ψ}) (manner complexity potential) ψ
+  ∃ φ, PotEquiv φ ψ ∧ manner complexity potential φ < manner complexity potential ψ
 
 /-- By the form–meaning correlation, an unblocked sentence with more potential for imprecision than
 a potentially p-equivalent competitor is strictly simpler than it. -/

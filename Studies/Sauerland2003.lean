@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 
 /-!
 # Sauerland (2003): a new semantics for number
@@ -13,16 +13,16 @@ features as presuppositions: `[Sg]` is the identity function presupposing an ato
 admits an atom or a mass; `Number.dom` keeps the atomic case), `[Pl]` the identity with no
 presupposition, and Heim's Maximize Presupposition has the speaker use the most specific feature
 whose presupposition holds, (7). In competition with the singular the plural is therefore
-unblocked only at non-atoms (`Number.unblocked_plural`), which the coordination *Kai and Lina* shows
-(`coordination_plural`), and at atoms too once the singular is blocked by an independent factor,
-singular *they* (13) or polite address (14) (`unblocked_plural_of_singular_blocked`).
+unblocked only at non-atoms (`Number.strengthen_plural`), which the coordination *Kai and Lina*
+shows (`coordination_plural`), and at atoms too once the singular is blocked by an independent
+factor, singular *they* (13) or polite address (14) (`strengthen_plural_of_singular_blocked`).
 The two domains are nested (`Number.dom_singular_ssubset_dom_plural`), an instance of his
 Feature-Subset Principle (46), and since the features are domain restrictions the competition is
 presuppositional rather than scalar. The person features (44) compete the same way: the second
 person is used outside the first person's domain and the third outside the participants', the
-non-participant presupposition of (47) (`unblocked_second`, `unblocked_third`), except in a
+non-participant presupposition of (47) (`strengthen_second`, `strengthen_third`), except in a
 context whose speaker is part of the addressee, where the first and second person domains
-coincide and competition cannot separate them (`unblocked_second_of_degenerate`).
+coincide and competition cannot separate them (`strengthen_second_of_degenerate`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
@@ -49,7 +49,7 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Mereology (D)
-open Competition Trivalent
+open Presupposition Trivalent
 
 variable {E : Type*}
 
@@ -68,17 +68,18 @@ theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure 
   cum_maximal_unique algClosure_cum h₁ h₂
 
 /-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
-theorem unblocked_plural_of_singular_blocked :
-    unblocked (fun _ ↦ {some .plural}) (Number.dom (E := E)) (some .plural) = Set.univ := by
-  rw [unblocked_eq_self, Number.dom_plural]
-  rintro ⟨ψ, hψ, hss⟩
+theorem strengthen_plural_of_singular_blocked :
+    strengthen (fun _ ↦ {some .plural}) (Number.dom (E := E)) (some .plural) = Set.univ := by
+  rw [strengthen_eq_self, Number.dom_plural]
+  rintro ψ hψ hss
   rw [Set.mem_singleton_iff.1 hψ] at hss
   exact hss.ne rfl
 
-theorem atom_mem_unblocked_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    a ∉ unblocked Number.alts Number.dom (some .plural) ∧
-      a ∈ unblocked (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
-  rw [Number.unblocked_plural (not_atom_sup_of_ne ha hb hne), unblocked_plural_of_singular_blocked]
+theorem atom_mem_strengthen_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+    a ∉ strengthen Number.alts Number.dom (some .plural) ∧
+      a ∈ strengthen (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
+  rw [Number.strengthen_plural (not_atom_sup_of_ne ha hb hne),
+    strengthen_plural_of_singular_blocked]
   exact ⟨fun h ↦ h.2 ha, Set.mem_univ _⟩
 
 end Number
@@ -100,10 +101,10 @@ theorem dom_first_ssubset_dom_second (h : ¬ c.agent ≤ c.addressee) :
   exact (Person.mem_dom_first c _).1 (hsub ((Person.mem_dom_second c c.addressee).2
     (Or.inr le_rfl)))
 
-theorem unblocked_first :
-    unblocked personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
-  refine unblocked_eq_self ?_
-  rintro ⟨ψ, hψ, hss⟩
+theorem strengthen_first :
+    strengthen personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
+  refine strengthen_eq_self ?_
+  rintro ψ hψ hss
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
   rcases hψ with rfl | rfl | rfl
   · exact hss.ne rfl
@@ -111,10 +112,10 @@ theorem unblocked_first :
       (Person.mem_dom_second c x).2 (Or.inl ((Person.mem_dom_first c x).1 hx))
   · exact hss.not_subset (Person.dom_third c ▸ Set.subset_univ _)
 
-theorem unblocked_second (h : ¬ c.agent ≤ c.addressee) :
-    unblocked personAlts (Person.dom c) (some .second) =
+theorem strengthen_second (h : ¬ c.agent ≤ c.addressee) :
+    strengthen personAlts (Person.dom c) (some .second) =
       Person.dom c (some .second) \ Person.dom c (some .first) := by
-  refine unblocked_eq_sdiff (by simp [personAlts]) (dom_first_ssubset_dom_second c h) ?_
+  refine strengthen_eq_sdiff (by simp [personAlts]) (dom_first_ssubset_dom_second c h) ?_
   rintro χ hχ hss
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
   rcases hχ with rfl | rfl | rfl
@@ -122,10 +123,10 @@ theorem unblocked_second (h : ¬ c.agent ≤ c.addressee) :
   · exact absurd rfl hss.ne
   · exact absurd (Person.dom_third c ▸ Set.subset_univ _) hss.not_subset
 
-theorem unblocked_second_of_degenerate (h : c.agent ≤ c.addressee) :
-    unblocked personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
-  refine unblocked_eq_self ?_
-  rintro ⟨ψ, hψ, hss⟩
+theorem strengthen_second_of_degenerate (h : c.agent ≤ c.addressee) :
+    strengthen personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
+  refine strengthen_eq_self ?_
+  rintro ψ hψ hss
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
   rcases hψ with rfl | rfl | rfl
   · refine hss.not_subset fun x hx ↦ (Person.mem_dom_first c x).2 ?_
@@ -136,12 +137,12 @@ theorem unblocked_second_of_degenerate (h : c.agent ≤ c.addressee) :
 
 /-- The third person is used outside the participants' domain, the non-participant
 presupposition of (47), when some referent lies outside it. -/
-theorem unblocked_third (h : ∃ x, x ∉ Person.dom c (some .second)) :
-    unblocked personAlts (Person.dom c) (some .third) = (Person.dom c (some .second))ᶜ := by
+theorem strengthen_third (h : ∃ x, x ∉ Person.dom c (some .second)) :
+    strengthen personAlts (Person.dom c) (some .third) = (Person.dom c (some .second))ᶜ := by
   obtain ⟨x, hx⟩ := h
   have hss : Person.dom c (some .second) ⊂ Person.dom c (some .third) :=
     Person.dom_third c ▸ Set.ssubset_univ_iff.2 fun h ↦ hx (h ▸ Set.mem_univ x)
-  rw [unblocked_eq_sdiff (by simp [personAlts]) hss, Person.dom_third, Set.compl_eq_univ_sdiff]
+  rw [strengthen_eq_sdiff (by simp [personAlts]) hss, Person.dom_third, Set.compl_eq_univ_sdiff]
   rintro χ hχ hss'
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
   rcases hχ with rfl | rfl | rfl

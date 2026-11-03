@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Lattice.Order
 public import Mathlib.Order.Atoms
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Semantics.Questions.HamblinSet
 
@@ -29,7 +29,7 @@ neither null nor atomic](##Question.whFelicitous_plural).
 
 namespace Question
 
-open Set Competition
+open Set Presupposition
 
 variable {E : Type*} [CompleteLattice E]
 
@@ -63,7 +63,7 @@ def whHamblin (n : Option Number) : Set (Set E) := Ici '' whDomain n
 /-- The situations in which a *wh* question is felicitous: its existential presupposition holds
 and that of no competitor with a stronger one does. -/
 def whFelicitous (n : Option Number) : Set E :=
-  unblocked Number.alts (fun m ↦ presupposition (whHamblin m)) n
+  strengthen Number.alts (fun m ↦ presupposition (whHamblin m)) n
 
 variable [IsAtomistic E]
 
@@ -85,19 +85,19 @@ theorem presupposition_whHamblin (n : Option Number) :
     presupposition (whHamblin n) = whDomain (E := E) n :=
   Set.ext (isExhaustivelyResolvable_whHamblin_iff n)
 
-theorem whFelicitous_eq_unblocked_whDomain (n : Option Number) :
-    whFelicitous (E := E) n = unblocked Number.alts whDomain n := by
+theorem whFelicitous_eq_strengthen_whDomain (n : Option Number) :
+    whFelicitous (E := E) n = strengthen Number.alts whDomain n := by
   simp only [whFelicitous, presupposition_whHamblin]
 
 theorem whFelicitous_none : whFelicitous (E := E) none = {w | w ≠ ⊥} := by
-  rw [whFelicitous_eq_unblocked_whDomain, unblocked_eq_self, whDomain_of_ne_singular (by simp)]
-  rintro ⟨_, h, -⟩
+  rw [whFelicitous_eq_strengthen_whDomain, strengthen_eq_self, whDomain_of_ne_singular (by simp)]
+  rintro _ h -
   exact h
 
 theorem whFelicitous_singular : whFelicitous (E := E) (some .singular) = {w | IsAtom w} := by
-  rw [whFelicitous_eq_unblocked_whDomain, unblocked_eq_self]
+  rw [whFelicitous_eq_strengthen_whDomain, strengthen_eq_self]
   · exact Set.ext fun _ ↦ mem_whDomain_singular
-  · rintro ⟨_, h | h, hss⟩ <;> rw [h] at hss
+  · rintro _ (h | h) hss <;> rw [h] at hss
     · exact hss.ne rfl
     · exact hss.not_subset fun x hx ↦ mem_whDomain_of_isAtom _ (mem_whDomain_singular.1 hx)
 
@@ -113,8 +113,8 @@ theorem whFelicitous_of_ne_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b) (h
     exact Mereology.not_atom_sup_of_ne (Mereology.atom_iff_isAtom.2 ha)
       (Mereology.atom_iff_isAtom.2 hb) hab
       (Mereology.atom_iff_isAtom.2 (mem_whDomain_singular.1 (h hab')))
-  rw [whFelicitous_eq_unblocked_whDomain,
-    unblocked_eq_sdiff (alts := Number.alts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
+  rw [whFelicitous_eq_strengthen_whDomain,
+    strengthen_eq_sdiff (alts := Number.alts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
   · exact Set.ext fun _ ↦ and_congr_right fun _ ↦ not_congr mem_whDomain_singular
   · rintro χ (rfl | rfl) hχ
     · exact subset_rfl
@@ -127,7 +127,7 @@ theorem whFelicitous_plural {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a �
   whFelicitous_of_ne_singular (E := E) ha hb hab (m := .plural) (by decide)
 
 theorem notMem_whFelicitous_bot (n : Option Number) : (⊥ : E) ∉ whFelicitous n := by
-  rw [whFelicitous_eq_unblocked_whDomain]
-  exact fun h ↦ (unblocked_subset _ _ _ h).2 rfl
+  rw [whFelicitous_eq_strengthen_whDomain]
+  exact fun h ↦ (strengthen_subset _ _ _ h).2 rfl
 
 end Question

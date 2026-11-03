@@ -41,7 +41,7 @@ is open: Martí argues for the former within Harbour's typology, an inclusive-on
 `[−atomic]` that duals and paucals are built on, and the experiments of Tieu, Bill, Romoli and Crain
 favour the latter (`Studies/TieuEtAl2020.lean`). `Number.dom` states the inclusive-only reading of
 a bundle, and competition recovers these regions from it for the singular and plural alone
-(`Number.unblocked_plural`). The operators apply to events as well as individuals.
+(`Number.strengthen_plural`). The operators apply to events as well as individuals.
 
 ## References
 
