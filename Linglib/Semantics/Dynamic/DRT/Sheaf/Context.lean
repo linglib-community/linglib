@@ -20,7 +20,8 @@ context are signed atoms; they rename covariantly along context morphisms.
 
 ## Main definitions
 
-* `DRT.Context`, `DRT.Context.Hom`: contexts `(L, X)` and their morphisms, a `Category`.
+* `DRT.Context`, `DRT.Context.Hom`: contexts `(L, X)` and their morphisms, a `Category`, with
+  the referents functor `Context.varsFunctor`.
 * `DRT.Literal`: literals `±A(x̄)` over a context, with `Literal.map` (renaming), the
   complementary literal `-l`, decidable equality and finiteness.
 * `DRT.Literal.functor`: literals as a functor to types.
@@ -80,6 +81,15 @@ def Hom.extend [DecidableEq V] (f : c ⟶ c') (t : V) : V :=
 @[simp] theorem Hom.extend_coe [DecidableEq V] (f : c ⟶ c') (t : c.vars) :
     f.extend t = (f.map t : V) := by
   simp [Hom.extend]
+
+variable (L V) in
+/-- The referent maps make the referents of contexts a functor to types. -/
+def varsFunctor : Context L V ⥤ Type w where
+  obj c := c.vars
+  map f := TypeCat.ofHom f.map
+
+@[simp] theorem varsFunctor_map (f : c ⟶ c') (t : c.vars) : (varsFunctor L V).map f t = f.map t :=
+  rfl
 
 end Context
 

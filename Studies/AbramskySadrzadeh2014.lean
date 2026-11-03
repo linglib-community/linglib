@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Gluing
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Gluing
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Mathlib.MeasureTheory.Measure.Map
 public import Mathlib.Data.Fin.VecNotation

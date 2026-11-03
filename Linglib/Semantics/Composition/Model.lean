@@ -24,7 +24,7 @@ the model's symbols in `Composition/FirstOrder.lean`.
 The interpretation at a world is a mathlib first-order structure `L.Structure E`, carried as a
 term rather than an instance, since a family of structures on one carrier indexed by worlds
 cannot be found by instance search. Symbols are read off through `Structure.funMap` and
-`Structure.RelMap`, as DRT reads off the truth of atomic conditions (`Semantics/Dynamic/DRS/`),
+`Structure.RelMap`, as DRT reads off the truth of atomic conditions (`Semantics/Dynamic/DRT/`),
 and a formula is realized at a world by `Formula.RealizeAt m.interp w`. The concrete toy model of
 `Studies/HeimKratzer1998` follows mathlib's concrete-language idiom.
 

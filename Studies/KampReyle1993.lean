@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Dynamics
-public import Linglib.Semantics.Dynamic.DRS.Accessibility
+public import Linglib.Semantics.Dynamic.DRT.Relational
+public import Linglib.Semantics.Dynamic.DRT.Accessibility
 public import Linglib.Core.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 
@@ -14,7 +14,7 @@ extensions of the embedding that keep the values it has already assigned (Defs. 
 the semantics `DRS.Verifies`, and a DRS is true when some embedding of its universe verifies it
 from the empty input (Def. 1.4.5, `DRS.IsTrue`).
 
-* `DRT.DRS.isProper_iff_forall_occurrence` (in `DRS/Accessibility.lean`): a DRS is proper iff
+* `DRT.DRS.isProper_iff_forall_occurrence` (in `DRT/Accessibility.lean`): a DRS is proper iff
   every referent of an atomic condition is accessible where the condition occurs, the
   motivation for Def. 1.4.3 (p. 111).
 
@@ -335,12 +335,12 @@ theorem donkey_not_consequent_accessible : ¬ AccessibleTo donkey donkeyCons don
   simp only [DRS.occurrences, donkey, Condition.occurrencesList, Condition.occurrences_imp,
     List.append_nil, List.mem_cons, List.mem_append, Prod.mk.injEq] at h
   rcases h with ⟨-, h⟩ | (⟨rfl, -⟩ | h) | ⟨-, h⟩ | h
-  · simpa [donkeyAnte] using congrArg Box.referents h
+  · simpa [donkeyAnte] using congrArg DRS.referents h
   · rcases List.mem_cons.1 hmem with h | h
-    · exact absurd (congrArg Box.referents h) (by decide)
-    · simpa [donkeyCons] using congrArg Box.conditions (List.mem_singleton.1 h)
+    · exact absurd (congrArg DRS.referents h) (by decide)
+    · simpa [donkeyCons] using congrArg DRS.conditions (List.mem_singleton.1 h)
   · simp [donkeyAnte, Condition.occurrencesList, Condition.occurrences] at h
-  · simpa [donkeyAnte, donkeyCons] using congrArg Box.referents h
+  · simpa [donkeyAnte, donkeyCons] using congrArg DRS.referents h
   · simp [donkeyCons, Condition.occurrencesList, Condition.occurrences] at h
 
 /-! ### Model evaluation: the donkey conditional in concrete models
