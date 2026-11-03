@@ -11,7 +11,7 @@ public import Linglib.Syntax.Category.Pronoun.Demonstrative
 # Japanese pronouns
 
 The personal pronouns of Japanese are the first-person forms *watashi*, *boku* and *ore*, which
-differ in register, the last two indexing the masculine stance Ochs describes, the second-person
+differ in register, the second-person
 *kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. With them are the reciprocal
 *otagai* and the reflexive *jibun*. The honorific grades rank *kimi* below *anata*, as they rank the
 plain verb below the addressee-honorific suffix *-mas-* (`Japanese.Verb.Exponent.mas`), which Alok
@@ -25,7 +25,6 @@ are Tsujimura's ko-so-a series: near the speaker, near the listener, and far fro
 ## References
 
 * [alok-bhalla-2026]
-* [ochs-1992]
 * [sells-1987]
 * [kratzer-shimoyama-2002]
 * [tsujimura-2014]
@@ -52,14 +51,12 @@ def watashi : PersonalPronoun :=
   { form := "watashi", script := some "私", person := some .first, number := some .singular,
     register := .neutral }
 
-/-- 僕 *boku* 'I', informal, associated with men through its register rather than a gender
-feature ([ochs-1992]). -/
+/-- 僕 *boku* 'I', informal. -/
 def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .singular,
     register := .informal }
 
-/-- 俺 *ore* 'I', very informal, indexing masculinity through an assertive stance
-([ochs-1992]). -/
+/-- 俺 *ore* 'I', very informal. -/
 def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .singular,
     register := .informal }
