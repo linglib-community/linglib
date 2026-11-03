@@ -11,9 +11,9 @@ realizers, the assignments that make it true, are the [verifying
 embeddings](##DRT.Theory.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on contexts
 that is a sheaf for a presieve [exactly when it is jointly surjective on
 referents](##DRT.isSheafFor_assignments_iff), the first of Abramsky and Sadrzadeh's two conditions
-on covers. An assignment [realizes the least gluing](##DRT.Cover.mem_realizers_iff) of a family
-along a cover exactly when its restrictions realize the local theories, so the realizers of the
-gluing are [the compatible families of local realizers](##DRT.Cover.realizersEquiv).
+on covers. An assignment [realizes the least gluing](##DRT.Cover.realizers_pushforward) of a
+family along a cover exactly when its restrictions realize the local theories, so the realizers of
+the gluing are [the compatible families of local realizers](##DRT.Cover.realizersEquiv).
 
 ## Implementation notes
 
@@ -54,46 +54,55 @@ theorem holds_comp_val_iff (l : Literal c) (g : V → M) :
     l.Holds (g ∘ Subtype.val) ↔ (l.atom.Realize g ↔ l.pos) :=
   .rfl
 
+variable (M) in
+/-- The realizers of a set of literals are the assignments of the context's referents that make
+each of them true. -/
+def realizers (S : Set (Literal c)) : Set (c.vars → M) :=
+  upperPolar (fun l g ↦ l.Holds g) S
+
+variable {S : Set (Literal c)}
+
+theorem mem_realizers {g : c.vars → M} : g ∈ realizers M S ↔ ∀ l ∈ S, l.Holds g :=
+  .rfl
+
+theorem realizers_iUnion {ι : Sort*} (S : ι → Set (Literal c)) :
+    realizers M (⋃ i, S i) = ⋂ i, realizers M (S i) :=
+  upperPolar_iUnion ..
+
+theorem realizers_image_map (f : c ⟶ c') (S : Set (Literal c)) :
+    realizers M (map f '' S) = (· ∘ f.map) ⁻¹' realizers M S := by
+  ext
+  simp [mem_realizers]
+
+theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ S, l.pos) {g : V → M} :
+    g ∘ Subtype.val ∈ realizers M S ↔ g ∈ Atom.realizers M (atom '' S) := by
+  simp only [mem_realizers, holds_comp_val_iff, Atom.mem_realizers, Set.forall_mem_image]
+  exact forall₂_congr fun l hl ↦ by simp [hpos l hl]
+
 end Literal
 
 namespace Theory
 
-variable [L.Structure M]
-
-variable (M) in
-/-- The realizers of a theory are the assignments of the context's referents that make each of its
-literals true. -/
-def realizers (s : Theory c) : Set (c.vars → M) := {g | ∀ l ∈ s.lits, l.Holds g}
-
-variable {s : Theory c}
-
-theorem mem_realizers {g : c.vars → M} : g ∈ s.realizers M ↔ ∀ l ∈ s.lits, l.Holds g :=
-  .rfl
+variable [L.Structure M] {s : Theory c}
 
 /-- An embedding verifies the DRS of a theory exactly when its restriction to the context's
 referents realizes the theory. -/
 theorem verifies_toDRS_iff {g : V → M} :
-    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ s.realizers M := by
-  rw [verifiesTotal_iff, mem_realizers]
+    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ Literal.realizers M (s.lits : Set (Literal c)) := by
+  rw [verifiesTotal_iff, Literal.mem_realizers]
   simp only [toDRS, DRS.conditions_mk, List.mem_map, Finset.mem_toList, forall_exists_index,
-    and_imp, forall_apply_eq_imp_iff₂]
+    and_imp, forall_apply_eq_imp_iff₂, Finset.mem_coe]
   refine forall₂_congr fun l _ ↦ ?_
   rw [Literal.holds_comp_val_iff]
   unfold Literal.toCondition
   cases l.pos <;> simp [Box.Extends, ← funext_iff]
 
-theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ s.lits, l.pos) {g : V → M} :
-    g ∘ Subtype.val ∈ s.realizers M ↔
-      g ∈ Atom.realizers M (Literal.atom '' (s.lits : Set (Literal c))) := by
-  simp only [mem_realizers, Literal.holds_comp_val_iff, Atom.mem_realizers, Set.forall_mem_image,
-    Finset.mem_coe]
-  exact forall₂_congr fun l hl ↦ by simp [hpos l hl]
-
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
 theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : Theory c'} {g : c'.vars → M}
-    (h : g ∈ s.realizers M) : g ∘ f.map ∈ (s.restrict f).realizers M :=
-  fun _ hl ↦ h _ (mem_restrict.1 hl)
+    (h : g ∈ Literal.realizers M (s.lits : Set (Literal c'))) :
+    g ∘ f.map ∈ Literal.realizers M ((s.restrict f).lits : Set (Literal c)) :=
+  Literal.mem_realizers.2 fun _ hl ↦ Literal.mem_realizers.1 h _ (mem_restrict.1 hl)
 
 end Theory
 
@@ -161,11 +170,9 @@ theorem isSheafFor_assignments_iff [Nontrivial M] :
   push Not at ht
   classical
   obtain ⟨a, b, hab⟩ := exists_pair_ne M
-  refine hab (congrFun (h.isSeparatedFor (fun _ _ _ _ ↦ a) (fun _ ↦ a)
-    (Function.update (fun _ ↦ a) t b) (fun _ _ _ ↦ rfl) fun Y f hf ↦ funext fun s ↦ ?_) t |>.trans
-    (Function.update_self ..))
-  show Function.update (fun _ ↦ a) t b (f.map s) = a
-  exact Function.update_of_ne (ht Y f hf s) _ _
+  have := h.isSeparatedFor (fun _ _ _ _ ↦ a) (fun _ ↦ a) (Function.update (fun _ ↦ a) t b)
+    (fun _ _ _ ↦ rfl) fun Y f hf ↦ funext fun s ↦ by simp [ht Y f hf s]
+  simpa [hab] using congrFun this t
 
 variable (L V) in
 /-- Presieves jointly surjective on referents form a coverage; a referent of a pulled-back context
@@ -200,25 +207,24 @@ theorem presieve_mem_referentPrecoverage (C : Cover c ι) :
   (ofArrows_mem_comap_jointlySurjectivePrecoverage_iff _).2 C.exists_map_eq
 
 variable [L.Structure M] [Fintype ι] [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
-  {x : ∀ i, Theory (C.part i)} {s : Theory c}
+  (x : ∀ i, Theory (C.part i))
 
-/-- An assignment realizes the least gluing of a family exactly when its restriction along every
-cover morphism realizes the local theory. -/
-theorem mem_realizers_iff (hs : s.lits = C.pushforward x) {g : c.vars → M} :
-    g ∈ s.realizers M ↔ ∀ i, g ∘ (C.map i).map ∈ (x i).realizers M := by
-  simp only [Theory.mem_realizers, hs, mem_pushforward, forall_exists_index, and_imp]
-  exact ⟨fun h i m hm ↦ h _ i m hm rfl, by rintro h _ i m hm rfl; exact h i m hm⟩
+/-- An assignment makes the renamed local literals of a family true exactly when its restriction
+along every cover morphism realizes the local theory. -/
+theorem realizers_pushforward : Literal.realizers M (C.pushforward x : Set (Literal c)) =
+    ⋂ i, (· ∘ (C.map i).map) ⁻¹' Literal.realizers M ((x i).lits : Set (Literal (C.part i))) := by
+  simp only [pushforward, Finset.coe_biUnion, Finset.coe_univ, Set.mem_univ, Set.iUnion_true,
+    Finset.coe_image, Literal.realizers_iUnion, Literal.realizers_image_map]
 
-/-- The realizers of the least gluing of a family are the compatible families of local
-realizers. -/
-noncomputable def realizersEquiv (hs : s.lits = C.pushforward x) :
-    s.realizers M ≃ {g : ∀ i, (x i).realizers M //
-      Arrows.Compatible (assignments L V M) C.map fun i ↦ (g i).1} :=
-  ((Equiv.ofBijective _ ((isSheafFor_ofArrows_iff_bijective_toCompatible _ _).1
-    (isSheafFor_assignments C.presieve_mem_referentPrecoverage))).subtypeEquiv
-      (q := fun g ↦ ∀ i, g.1 i ∈ (x i).realizers M) fun _ ↦ mem_realizers_iff hs).trans
-    { toFun g := ⟨fun i ↦ ⟨g.1.1 i, g.2 i⟩, g.1.2⟩
-      invFun g := ⟨⟨fun i ↦ (g.1 i).1, g.2⟩, fun i ↦ (g.1 i).2⟩ }
+/-- The realizers of the renamed local literals of a family, its least gluing when it has one, are
+the compatible families of local realizers. -/
+noncomputable def realizersEquiv :
+    Literal.realizers M (C.pushforward x : Set (Literal c)) ≃
+      {g : Subtype (Arrows.Compatible (assignments L V M) C.map) //
+        ∀ i, g.1 i ∈ Literal.realizers M ((x i).lits : Set (Literal (C.part i)))} :=
+  (Equiv.ofBijective _ ((isSheafFor_ofArrows_iff_bijective_toCompatible _ _).1
+    (isSheafFor_assignments C.presieve_mem_referentPrecoverage))).subtypeEquiv fun g ↦
+      (Set.ext_iff.1 (realizers_pushforward x) g).trans Set.mem_iInter
 
 end Cover
 

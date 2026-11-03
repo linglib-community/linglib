@@ -365,24 +365,36 @@ theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅
   let _ := system .twoWitches
   refine Set.eq_empty_of_forall_notMem fun r hr ↦ ?_
   rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_sameGlue,
-    ← Theory.comp_val_mem_realizers_iff (by decide +kernel), sameCover.mem_realizers_iff rfl] at hr
+    ← Literal.comp_val_mem_realizers_iff (by decide +kernel)] at hr
+  simp only [sameGlue, Cover.realizers_pushforward, Set.mem_iInter, Set.mem_preimage,
+    Literal.mem_realizers] at hr
   have h₀ := hr 0 (lit .blightedBobsMare ![.b, .x]) (by decide +kernel)
   have h₁ := hr 1 (lit .killedCobsSow ![.k, .y]) (by decide +kernel)
   simp [Literal.Holds, lit, sameCover, hom, holds] at h₀ h₁
   simp_all
 
+/-- Local witnesses: Hob's witch is `w₁`, Nob's is `w₂`, and every other referent is the
+situation. -/
+def witnesses : ∀ i, (![hobCtx, nobCtx] i).vars → Obj
+  | 0 => fun t ↦ if t.1 = .x then .w₁ else .s
+  | 1 => fun t ↦ if t.1 = .y then .w₂ else .s
+
 /-- Keeping the witches apart, which leaves Nob's beliefs as they are, makes Hob's belief and the
-content of Nob's question true together. -/
+content of Nob's question true together: a witness of each, agreeing on the situation they share,
+glues into a witness of both. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   let _ := system .twoWitches
-  refine ⟨fun | .x => .w₁ | .y => .w₂ | _ => .s, ?_⟩
+  have hw (i) : witnesses i ∈ Literal.realizers Obj ((sections i).lits : Set (Literal _)) := by
+    fin_cases i <;> intro l hl <;>
+      simp only [sections, Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton] at hl <;>
+      rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, witnesses, holds]
+  let g := (apartCover.realizersEquiv sections).symm
+    ⟨⟨witnesses, arrows_compatible_assignments_iff.2 (by decide +kernel)⟩, hw⟩
+  refine ⟨fun ℓ ↦ g.1 ⟨ℓ, by cases ℓ <;> decide⟩, ?_⟩
   rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_apartGlue,
-    ← Theory.comp_val_mem_realizers_iff (by decide +kernel), apartCover.mem_realizers_iff rfl]
-  intro i
-  fin_cases i <;> intro l hl <;>
-    simp only [sections, Finset.mem_insert, Finset.mem_singleton] at hl <;>
-    rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, apartCover, hom, holds]
+    ← Literal.comp_val_mem_realizers_iff (by decide +kernel)]
+  exact g.2
 
 end HobNob
 
