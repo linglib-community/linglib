@@ -563,7 +563,8 @@ class ModulePage:
         if c["source"] == source:
             return esc(c["label"])
         b = self.lib.bib.get(c["source"])
-        paper = link(f'{self.root}bibliography/#{c["source"]}', esc(b["label"] if b else c["source"]))
+        label = b["label"] if b else c["source"]
+        paper = link(f'{self.root}bibliography/#{c["source"]}', esc(label))
         return f'{paper}, {esc(c["label"])}'
 
     def checks(self, d):
