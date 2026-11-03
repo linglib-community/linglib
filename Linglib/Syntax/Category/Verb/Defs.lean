@@ -171,8 +171,9 @@ end Verb
 The cross-linguistic verb core holds the semantic fields shared across languages.
 
 Composes the `Verb.*` facets (argument structure, aspect) and `Clause.Embedding` with the root,
-the morphs of the citation form, speech-act status, and a polysemy disambiguator. Language-specific fragments extend this with
-morphological fields appropriate to their inflectional system.
+the morphs of the citation form, speech-act status, and a polysemy disambiguator.
+Language-specific fragments extend this with morphological fields appropriate to their inflectional
+system.
 -/
 structure Verb extends Verb.ArgStructure, Verb.Aspect, Clause.Embedding where
   /-- The [levin-1993] classes whose member lists carry the citation form, for the English
