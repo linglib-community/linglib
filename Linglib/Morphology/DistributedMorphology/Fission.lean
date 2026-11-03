@@ -36,6 +36,7 @@ is set difference, and scansion is a greedy decomposition of the node.
 * `head?_insertions_singleton`, `head?_scansion_singleton`: at a single matrix the first insertion
   is the first applicable item, so on a Vocabulary ordered by specificity it is the Subset
   Principle's winner.
+* `scan_congr`: a Vocabulary with no contexts of insertion scans the same way in every environment.
 
 ## References
 
@@ -185,6 +186,29 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
       if Applies i ({ env with focus := m } : Neighborhood (Finset F))
         then some [m \ i.features] else none := by
   simp [discharge]
+
+/-- An item with no context of insertion discharges the same features in every environment. -/
+theorem discharge_congr (hi : ∀ x ∈ i.site, x.1 = 0) (env env' : Neighborhood (Finset F)) :
+    ∀ ms, discharge i env ms = discharge i env' ms
+  | [] => rfl
+  | m :: ms => by
+    have h : Applies i ({ env with focus := m } : Neighborhood (Finset F)) ↔
+        Applies i ({ env' with focus := m } : Neighborhood (Finset F)) := by
+      simp only [VocabularyItem.applies_iff]
+      refine forall₂_congr fun x hx ↦ ?_
+      obtain ⟨o, f⟩ := x
+      obtain rfl : o = 0 := hi _ hx
+      simp [Neighborhood.mem_def]
+    simp only [discharge, h, discharge_congr hi env env' ms]
+
+/-- A Vocabulary with no contexts of insertion scans the same way in every environment. -/
+theorem scan_congr (env env' : Neighborhood (Finset F)) :
+    ∀ items : RuleSet (VocabularyItem F E), (∀ i ∈ items, ∀ x ∈ i.site, x.1 = 0) →
+      ∀ ms, scan items env ms = scan items env' ms
+  | [], _, _ => rfl
+  | i :: rest, h, ms => by
+    have hr := scan_congr env env' rest fun j hj ↦ h j (List.mem_cons_of_mem _ hj)
+    simp only [scan, discharge_congr (h i List.mem_cons_self) env env' ms, hr]
 
 /-- At a single matrix, the first item inserted is the first item that applies there. -/
 theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (VocabularyItem F E),
