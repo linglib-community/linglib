@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.BooleanSubalgebra
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 
 /-!
 # Relevance of alternatives

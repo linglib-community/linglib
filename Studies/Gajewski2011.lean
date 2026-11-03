@@ -6,7 +6,7 @@ public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Fragments.English.PolarityItems

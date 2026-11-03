@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Trivalent
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Sigma
@@ -131,7 +132,7 @@ def Parse.interpWithMate (sal : F → F) :
       (fun w ↦ -p w, fun w ↦ -q w)
   | .exh t, x =>
       let (p, q) := t.interpWithMate sal x
-      (Trivalent.exh2 [q] p, Trivalent.exh2 [p] q)
+      (Trivalent.exh2 (fun _ : Unit ↦ q) p, Trivalent.exh2 (fun _ : Unit ↦ p) q)
   | .also t, x =>
       let pres := t.interpWithMate sal (sal x)
       let (p, q) := t.interpWithMate sal x
@@ -427,24 +428,32 @@ derived in `exh_or_direct`. -/
 abbrev Doxa := Finset Taught
 
 /-- The covert necessity operator holds when the state supports `p` throughout. -/
-def Doxa.must (s : Doxa) (p : Taught → Bool) : Bool := decide (∀ t ∈ s, p t)
+def Doxa.Must (s : Doxa) (p : Taught → Bool) : Prop := ∀ t ∈ s, p t
+
+instance (s : Doxa) (p : Taught → Bool) : Decidable (s.Must p) :=
+  inferInstanceAs (Decidable (∀ t ∈ s, p t))
 
 /-- The state leaves `p` open. -/
-def Doxa.may (s : Doxa) (p : Taught → Bool) : Bool := decide (∃ t ∈ s, p t)
+def Doxa.May (s : Doxa) (p : Taught → Bool) : Prop := ∃ t ∈ s, p t
+
+instance (s : Doxa) (p : Taught → Bool) : Decidable (s.May p) :=
+  inferInstanceAs (Decidable (∃ t ∈ s, p t))
 
 /-- The meaning of *exh* > □ > *exh* over disjunction is computed by innocent exclusion over
 belief states, with prejacent `□ exh (A ∨ B)` and the pre-exhaustified disjuncts `□ (A ∧ ¬B)`
 and `□ (B ∧ ¬A)` as alternatives. -/
-def ignoranceScope : Finset Doxa :=
-  innocent.exh
-    (altsFromPreds [(·.must Taught.onlyArabic), (·.must Taught.onlyBasque)])
-    (predToFinset (·.must Taught.exactlyOne))
+def ignoranceScope : Set Doxa :=
+  exhIE (Set.range fun i ↦ {s | s.Must (![Taught.onlyArabic, Taught.onlyBasque] i)})
+    {s | s.Must Taught.exactlyOne}
+
+instance : DecidablePred (· ∈ ignoranceScope) := fun s ↦
+  show Decidable (s ∈ exhIE _ _) from inferInstance
 
 -- (31)
 theorem ignorance_scope_eq :
     ignoranceScope =
-      predToFinset (fun s ↦
-        s.must Taught.exactlyOne && s.may (!·.arabic) && s.may (!·.basque)) := by decide
+      {s | s.Must Taught.exactlyOne ∧ s.May (!·.arabic) ∧ s.May (!·.basque)} := by
+  ext s; revert s; decide
 
 /-- The additive presupposition of parse (34) = (37a), *also* over the full ignorance meaning,
 is that some salient individual's belief-state content is the whole of (31). -/
@@ -457,9 +466,9 @@ instance (salient : List Doxa) : Decidable (presup34 salient) :=
 salient individual believed to teach exactly one, one believed to teach Arabic only, and one
 believed to teach Basque only. The paper defers the derivation to [marty-romoli-2021]'s (85). -/
 def presup35 (salient : List Doxa) : Prop :=
-  (∃ s ∈ salient, s.must Taught.exactlyOne)
-  ∧ (∃ s ∈ salient, s.must Taught.onlyArabic)
-  ∧ (∃ s ∈ salient, s.must Taught.onlyBasque)
+  (∃ s ∈ salient, s.Must Taught.exactlyOne)
+  ∧ (∃ s ∈ salient, s.Must Taught.onlyArabic)
+  ∧ (∃ s ∈ salient, s.Must Taught.onlyBasque)
 
 instance (salient : List Doxa) : Decidable (presup35 salient) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))

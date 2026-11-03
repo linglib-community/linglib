@@ -793,11 +793,8 @@ import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.InnocentInclusion
-import Linglib.Semantics.Exhaustification.PreExhaustified
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Focus.Control

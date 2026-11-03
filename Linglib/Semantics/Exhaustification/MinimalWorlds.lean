@@ -91,6 +91,17 @@ instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, Decida
     simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, Set.mem_range,
       and_imp, forall_exists_index, forall_apply_eq_imp_iff, exists_apply_eq_apply, true_and]
 
+instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, DecidablePred (· ∈ f i)]
+    {A : Set ι} [DecidablePred (· ∈ A)] [DecidablePred (· ∈ φ)] :
+    DecidablePred (· ∈ exhMW (f '' A) φ) := fun u ↦
+  decidable_of_iff (u ∈ φ ∧ ∀ v, v ∈ φ → (∀ i, i ∈ A → v ∈ f i → u ∈ f i) →
+      ∀ i, i ∈ A → u ∈ f i → v ∈ f i) <| by
+    simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, Set.mem_image,
+      and_imp, forall_exists_index, forall_apply_eq_imp_iff₂]
+    exact and_congr_right fun _ ↦ forall₂_congr fun v _ ↦
+      ⟨fun h hvu i hi hui ↦ ⟨⟨i, hi, rfl⟩, h (fun a ha hva ↦ (hvu a ha hva).2) i hi hui⟩,
+        fun h hvu i hi hui ↦ (h (fun a ha hva ↦ ⟨⟨a, ha, rfl⟩, hvu a ha hva⟩) i hi hui).2⟩
+
 /-! ### Representative minimal worlds -/
 
 variable (ALT φ) in
