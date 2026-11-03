@@ -109,10 +109,10 @@ variable (l : U → M → ℝ≥0∞)
 `L₀(m | u) ∝ l(m, u) P(m)`, and each later one is the listener of the speaker (2) who answers
 the one before. -/
 noncomputable abbrev listener (t : ℕ) : Kernel U M :=
-  (RSA.round P Kernel.id Measure.dirac α C)^[t] (Kernel.ofDensity P l)
+  (RSA.recurse P Kernel.id Measure.dirac α C)^[t] (Kernel.ofDensity P l)
 
 theorem listener_succ (t : ℕ) : listener P C α l (t + 1) =
-    RSA.round P Kernel.id Measure.dirac α C (listener P C α l t) :=
+    RSA.recurse P Kernel.id Measure.dirac α C (listener P C α l t) :=
   Function.iterate_succ_apply' _ _ _
 
 variable {P C α l} {u : U} {m : M}
@@ -121,7 +121,7 @@ variable {P C α l} {u : U} {m : M}
 a meaning it does not apply to. -/
 theorem listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) (t : ℕ) :
     listener P C α l t u {m} = 0 :=
-  RSA.iterate_round_id_dirac_apply_singleton_eq_zero hα (by
+  RSA.iterate_recurse_id_dirac_apply_singleton_eq_zero hα (by
     rw [Kernel.ofDensity_apply_singleton, h, zero_mul, ENNReal.zero_div]) t
 
 /-- The speakers of the recursion respect the lexicon. No meaning is expressed by an utterance
@@ -137,7 +137,7 @@ include hP hl hα
 
 theorem listener_apply_singleton_ne_zero (h : l u m ≠ 0) (t : ℕ) :
     listener P C α l t u {m} ≠ 0 := by
-  refine RSA.iterate_round_id_dirac_apply_singleton_ne_zero hα (hP m) ?_ t
+  refine RSA.iterate_recurse_id_dirac_apply_singleton_ne_zero hα (hP m) ?_ t
   rw [Kernel.ofDensity_apply_singleton]
   exact ENNReal.div_ne_zero.2 ⟨mul_ne_zero h (hP m), ENNReal.sum_ne_top.2 fun m' _ ↦
     ENNReal.mul_ne_top (hl u m') (measure_ne_top _ _)⟩
@@ -180,7 +180,7 @@ theorem exists_tendsto_freeEnergy : ∃ g, Tendsto (fun t ↦ RSA.freeEnergy P K
     (RSA.speaker α C (listener P C α l t) Measure.dirac) (listener P C α l t)) atTop (𝓝 g) :=
   have : IsMarkovKernel (RSA.speaker α C (Kernel.ofDensity P l) Measure.dirac) :=
     isMarkovKernel_speaker_listener (C := C) hP hl hα hm 0
-  RSA.exists_tendsto_freeEnergy_iterate_round (RSA.id_comp_real_mul_dirac_real P) hα
+  RSA.exists_tendsto_freeEnergy_iterate_recurse (RSA.id_comp_real_mul_dirac_real P) hα
     (fun o ↦ by rw [Measure.id_comp]; exact hP o) (Kernel.ofDensity P l)
 
 end Recursion

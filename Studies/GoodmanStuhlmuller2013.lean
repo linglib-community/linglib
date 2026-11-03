@@ -106,8 +106,8 @@ instance : IsFiniteKernel (speaker sem α n) :=
 noncomputable def listener : Kernel U (Fin (N + 1)) :=
   RSA.listener (uniformOn Set.univ) (speaker sem α n)
 
-/-- Equations (1) to (4) are one round of the recursion from the literal listener. -/
-example : listener sem α n = RSA.round (uniformOn Set.univ) (hypergeometric N n)
+/-- Equations (1) to (4) are one level of the recursion from the literal listener. -/
+example : listener sem α n = RSA.recurse (uniformOn Set.univ) (hypergeometric N n)
     ((hypergeometric N n)†(uniformOn Set.univ)) α 0 (literal sem) := rfl
 
 variable {sem α n} {u : U}

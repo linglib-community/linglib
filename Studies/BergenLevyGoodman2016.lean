@@ -17,7 +17,7 @@ level before it. An M-implicature pairs the costlier of two synonymous utterance
 probable meaning: *John has the ability to finish the homework* suggests he will not. In the Horn
 game a cheap and a costly utterance are both true of a frequent and a rare meaning. The Rational
 Speech Act model cannot pair them with meanings: [two utterances its literal listener reads alike
-are read alike at every level of the recursion](##iterate_round_short_eq_long), whatever their
+are read alike at every level of the recursion](##iterate_recurse_short_eq_long), whatever their
 costs. Under lexical uncertainty the speaker uses one of the lexica that refine each utterance's
 meaning, and the listener, unsure which, inverts the speaker of each.
 [She then finds the rare meaning likelier after the costly utterance than after the cheap
@@ -93,7 +93,7 @@ def scalarSem : ScalarUtt → Set ScalarWorld
 
 /-- The listener at recursion level `n`. -/
 noncomputable abbrev scalarListener (α : ℝ) (n : ℕ) : Kernel ScalarUtt ScalarWorld :=
-  (round (uniformOn Set.univ) Kernel.id Measure.dirac α 0)^[n]
+  (recurse (uniformOn Set.univ) Kernel.id Measure.dirac α 0)^[n]
     (listener (uniformOn Set.univ) (truthful scalarSem))
 
 private theorem sum_world (f : ScalarWorld → ℝ) : ∑ w, f w = f .all + f .someNotAll :=
@@ -111,13 +111,13 @@ include hα
 
 private theorem all_someNotAll_eq_zero : scalarListener α n .all {.someNotAll} = 0 :=
   not_not.1 fun h ↦ by
-    simpa [scalarSem] using (iterate_round_listener_truthful_apply_singleton_ne_zero_iff hα n).1 h
+    simpa [scalarSem] using (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).1 h
 
 private theorem all_someNotAll_real : (scalarListener α n .all).real {.someNotAll} = 0 := by
   rw [measureReal_def, all_someNotAll_eq_zero hα n, ENNReal.toReal_zero]
 
 private theorem some_ne_zero (w : ScalarWorld) : scalarListener α n .some {w} ≠ 0 :=
-  (iterate_round_listener_truthful_apply_singleton_ne_zero_iff hα n).2
+  (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).2
     ⟨Set.mem_univ w, uniform_ne_zero w⟩
 
 private theorem isProbabilityMeasure_some : IsProbabilityMeasure (scalarListener α n .some) :=
@@ -142,7 +142,7 @@ private theorem some_all_lt_one : (scalarListener α n .some).real {.all} < 1 :=
 private theorem all_all : (scalarListener α n .all).real {.all} = 1 := by
   have : IsProbabilityMeasure (scalarListener α n .all) :=
     (eq_zero_or_isProbabilityMeasure _).resolve_left fun h ↦
-      (iterate_round_listener_truthful_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
+      (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
         (u := .all) (w := .all) hα n).2 ⟨rfl, uniform_ne_zero _⟩ (by rw [h]; rfl)
   have h := sum_measureReal_singleton_eq_one (scalarListener α n .all)
   rwa [sum_world, all_someNotAll_real hα n, add_zero] at h
@@ -169,7 +169,7 @@ theorem scalarListener_succ_some_all :
     rw [speaker_dirac_zero_real_singleton hα.le, sum_utt]
     simp only [hL, all_someNotAll_real hα n, some_someNotAll hα n]
     rw [Real.zero_rpow hα.ne', zero_add, div_self hy.ne']
-  rw [show scalarListener α (n + 1) = _ from Function.iterate_succ_apply' _ _ _, round_id_dirac,
+  rw [show scalarListener α (n + 1) = _ from Function.iterate_succ_apply' _ _ _, recurse_id_dirac,
     listener_real_singleton, sum_world, uniformOn_univ_real_singleton,
     uniformOn_univ_real_singleton, hs₁, hs₂]
   rw [show Fintype.card ScalarWorld = 2 from rfl]
@@ -313,10 +313,10 @@ noncomputable def L1 : Kernel Utterance (Meaning × Lexicon) :=
 
 /-- **Lemma 2.** Without lexical uncertainty the cheap and the costly utterance are interpreted
 alike at every level of the recursion, whatever their costs, the rationality and the prior. -/
-theorem iterate_round_short_eq_long (n : ℕ) :
-    (RSA.round μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .short =
-      (RSA.round μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .long :=
-  iterate_round_apply_eq_of_apply_eq (listener_apply_eq_of_apply_singleton_eq_mul one_ne_zero
+theorem iterate_recurse_short_eq_long (n : ℕ) :
+    (RSA.recurse μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .short =
+      (RSA.recurse μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .long :=
+  iterate_recurse_apply_eq_of_apply_eq (listener_apply_eq_of_apply_singleton_eq_mul one_ne_zero
     ENNReal.one_ne_top fun w ↦ by simp [truthful_apply_singleton, sem, base, Refinement.den]) n
 
 /-! ### Under lexical uncertainty -/
