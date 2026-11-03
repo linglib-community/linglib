@@ -1,18 +1,22 @@
 module
 
 public import Linglib.Core.Basic.Sign
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
 
 /-!
 # Association fields
 
-An association field gives each variant of a variable a signed strength toward each trait,
-positive when the variant indexes the trait and negative when it indexes away from it. Two variants
-are [antipodal](##SocialMeaning.AssociationField.Antipodal) when they index every trait in
-opposite directions. Over the dimensions of social evaluation a field grounds each variant in the
-poles its signs point to, its Eckert field in Burnett's sense. The field of a variant is a persona
-exactly when its association with
+An association field gives each variant of a variable a signed strength toward each trait, and a
+variant [indexes a trait](##SocialMeaning.AssociationField.Indexes) when that strength is positive.
+The rates of a kernel are such a field, and [composing kernels composes what they
+index](##SocialMeaning.AssociationField.indexes_ofKernel_comp). Two variants are
+[antipodal](##SocialMeaning.AssociationField.Antipodal) when they index every trait in opposite
+directions. Over the dimensions of social evaluation a field grounds each variant in the poles its
+signs point to, its Eckert field in Burnett's sense, [the positive pole being what it
+indexes](##SocialMeaning.AssociationField.mem_ground_indexes_iff_indexes). The field of a variant is
+a persona exactly when its association with
 [every dimension is nonzero](##SocialMeaning.AssociationField.ground_indexes_mem_maximalIndepSets_iff),
 a variant with $z$ null associations is compatible with
 [$2^z$ personae](##SocialMeaning.AssociationField.card_compatiblePersonae_ground), and two variants
@@ -21,13 +25,14 @@ exactly when the first is associated with every dimension and the second's signs
 
 ## Implementation notes
 
-The carrier is `SignType` for a field that records only the direction of an association, and a
-linear order for one that records ratings.
+The carrier is `SignType` for a field that records only the direction of an association, a linear
+order for one that records ratings, and `ℝ≥0∞` for the rates of a kernel.
 
 ## References
 
 * [eckert-2008]
 * [burnett-2019]
+* [ochs-1992]
 * [beltrama-solt-burnett-2023]
 -/
 
@@ -42,6 +47,47 @@ abbrev AssociationField (Variant Trait R : Type*) := Variant → Trait → R
 namespace AssociationField
 
 variable {Variant Trait R : Type*} {v v₁ v₂ : Variant}
+
+section Indexes
+
+variable [Zero R] [LT R] (M : AssociationField Variant Trait R)
+
+/-- A variant indexes a trait when its association with the trait is positive. -/
+def Indexes (v : Variant) (t : Trait) : Prop := 0 < M v t
+
+instance [DecidableLT R] (v : Variant) (t : Trait) : Decidable (M.Indexes v t) :=
+  inferInstanceAs (Decidable (0 < M v t))
+
+end Indexes
+
+section Kernel
+
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal
+
+variable {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
+
+/-- The rates of a kernel are an association field: a form's association with a row of the kernel is
+the mass the row gives it. -/
+noncomputable def ofKernel (κ : Kernel α β) : AssociationField β α ℝ≥0∞ := fun b a ↦ κ a {b}
+
+@[simp] theorem ofKernel_apply (κ : Kernel α β) (b : β) (a : α) : ofKernel κ b a = κ a {b} := rfl
+
+@[simp] theorem indexes_ofKernel {κ : Kernel α β} {b : β} {a : α} :
+    (ofKernel κ).Indexes b a ↔ κ a {b} ≠ 0 :=
+  pos_iff_ne_zero
+
+/-- A form indexes a row of a composition exactly when it indexes a meaning that indexes the row:
+the direct relation of a form to a social meaning and the constitutive relation of that meaning to
+an identity, in the model of [ochs-1992]. -/
+theorem indexes_ofKernel_comp [Fintype β] [MeasurableSingletonClass β] [MeasurableSingletonClass γ]
+    (η : Kernel β γ) (κ : Kernel α β) :
+    (ofKernel (η ∘ₖ κ)).Indexes = Relation.Comp (ofKernel η).Indexes (ofKernel κ).Indexes := by
+  ext c a
+  simp only [indexes_ofKernel, Relation.Comp, Kernel.comp_apply_singleton_ne_zero_iff]
+  exact exists_congr fun _ ↦ and_comm
+
+end Kernel
 
 section Antipodal
 
@@ -74,6 +120,13 @@ def ground [Zero R] [Preorder R] [DecidableLT R] (M : AssociationField Variant D
     {M : AssociationField Variant Dimension R} {p : Pole} :
     p ∈ M.ground.indexes v ↔ SignType.sign (M v p.dimension) = p.polarity :=
   mem_poles
+
+/-- A variant grounds in the positive pole of a dimension exactly when it indexes the dimension. -/
+theorem mem_ground_indexes_iff_indexes [Zero R] [Preorder R] [DecidableLT R]
+    {M : AssociationField Variant Dimension R} {p : Pole} (hp : p.polarity = 1) :
+    p ∈ M.ground.indexes v ↔ M.Indexes v p.dimension := by
+  rw [mem_ground_indexes, hp, sign_eq_one_iff]
+  rfl
 
 section LinearOrder
 

@@ -157,6 +157,14 @@ theorem ground_contrastField_precise (e : Experiment) :
     (contrastField e).ground.indexes .precise = {.competent, .cold, .antiSolidary} := by
   cases e <;> decide +kernel
 
+-- The positive poles of the precise variant are what it indexes, and it indexes away from warmth.
+example (e : Experiment) : (contrastField e).Indexes .precise .competence ∧
+    ¬ (contrastField e).Indexes .precise .warmth :=
+  ⟨(AssociationField.mem_ground_indexes_iff_indexes (p := .competent) rfl).1
+      (by rw [ground_contrastField_precise]; decide),
+    fun h ↦ absurd ((AssociationField.mem_ground_indexes_iff_indexes (p := .warm) rfl).2 h)
+      (by rw [ground_contrastField_precise]; decide)⟩
+
 theorem ground_contrastField_approximate (e : Experiment) :
     (contrastField e).ground.indexes .approximate = {.incompetent, .warm, .solidary} := by
   rw [(antipodal_contrastField e).ground_indexes, ground_contrastField_precise]; decide

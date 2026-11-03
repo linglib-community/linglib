@@ -4,6 +4,7 @@ public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Statistics.Burnett2019
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Studies.Eckert2008
 public import Studies.Labov2012
@@ -25,7 +26,8 @@ Priors are integer weights read off the paper's tables, the listener normalizing
 speaker's rationality is a parameter, `6` where the paper computes a number. Persona selection
 is the sequential rule (15). Table 9 states no rationality. Its 33, 50 and 66 for the classes are
 what the joint rule (16) gives at rationality 6, and what the sequential rule gives at a
-persona-selection rationality of `ln 5`; at 6 the sequential rule gives about 25, 50 and 75.
+persona-selection rationality of `ln 5`; at 6 the sequential rule gives about 25, 50 and 75. On the
+prior's support the speaker's positive rates [are the Eckert–Montague field](##indexes_S1).
 
 ## TODO
 
@@ -37,6 +39,7 @@ persona-selection rationality of `ln 5`; at 6 the sequential rule gives about 25
 * [eckert-2008]
 * [labov-2012]
 * [lewis-1969]
+* [ochs-1992]
 * [podesva-reynolds-callier-baptiste-2015]
 -/
 
@@ -82,6 +85,19 @@ noncomputable abbrev S1 (α : ℝ) (prior : Measure (Persona G)) : Kernel (Perso
 /-- The naive listener inverts the speaker against the prior (18). -/
 noncomputable abbrev L1 (α : ℝ) (prior : Measure (Persona G)) : Kernel V (Persona G) :=
   listener prior (S1 F α prior)
+
+omit [Nonempty (Persona G)] in
+-- p. 428, after Ochs: variants index "sets of properties, stances or other concepts/ideas". A
+-- persona the prior charges uses a variant exactly when the variant indexes one of its properties,
+-- the Eckert–Montague field being the composite of the relation of a variant to a property with the
+-- relation of a property to a persona.
+theorem indexes_S1 {α : ℝ} (hα : 0 < α) (prior : Measure (Persona G)) [IsFiniteMeasure prior]
+    (v : V) (π : Persona G) :
+    (AssociationField.ofKernel (S1 F α prior)).Indexes v π ↔
+      (∃ p ∈ F.indexes v, p ∈ π.1) ∧ prior {π} ≠ 0 := by
+  rw [AssociationField.indexes_ofKernel,
+    speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα, Finset.mem_coe,
+    GroundedField.mem_personae, GroundedField.meets_iff]
 
 end Game
 
@@ -396,6 +412,13 @@ private theorem casual_ne_zero : ∀ π, casual {π} ≠ 0 :=
 
 private theorem careful_ne_zero : ∀ π, careful {π} ≠ 0 :=
   ofWeights_ne_zero fun π ↦ by unfold carefulWeight; split_ifs <;> decide
+
+-- The cool guy, sharing competence with *-ing*, uses it; the doofus, sharing nothing, does not.
+example : (AssociationField.ofKernel (S1 ingField 6 casual)).Indexes .velar coolGuy ∧
+    ¬ (AssociationField.ofKernel (S1 ingField 6 casual)).Indexes .velar doofus :=
+  ⟨(indexes_S1 _ (by norm_num) casual _ _).2 ⟨⟨.competent, by decide +kernel, by decide +kernel⟩,
+      casual_ne_zero _⟩,
+    fun h ↦ absurd ((indexes_S1 _ (by norm_num) casual _ _).1 h).1 (by decide +kernel)⟩
 
 /-- At the barbecue the cool guy says *-in'* with probability `8 ^ 6 / (7 ^ 6 + 8 ^ 6)`, about
 69% (p. 435). -/

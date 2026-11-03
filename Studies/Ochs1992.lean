@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.Ochs1992
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.StructureDataset.Ochs1992
 public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!
 # Ochs (1992): Indexing gender
@@ -15,20 +16,23 @@ A speaker of some social identity takes up a social meaning, a stance, act or ac
 the norms of a community set, and a linguistic form realizes that meaning, so the use of a form
 across identities is a composition of Markov kernels and the relations of Ochs's model are their
 supports. A form indexes an identity exactly when [it directly indexes a meaning that helps to
-constitute the identity](##indexes_comp), and [exclusively only if every such meaning points to that
-identity alone](##exclusivelyIndexes_comp_iff). Identities [differ in a form of one stance exactly
-as they differ in the stance](##ExclusivelyIndexes.comp_apply_lt_iff), and a hearer [learns no more
-about a speaker from the form than from the stance](##blackwellDominates_comp). [The indirect
-indexes of two Japanese particles](##rows_figure_14_1) follow from one difference between men and
-women, [each cell of the comparison of caregivers](##rows_figure_14_3) is one difference between two
-communities, and [a later *maaloo* changes what a past activity has been](##credited_exchange).
+constitute the identity](##SocialMeaning.AssociationField.indexes_ofKernel_comp), and [exclusively
+only if every such meaning points to that identity alone](##exclusivelyIndexes_comp_iff). Identities
+[differ in a form of one stance exactly as they differ in the
+stance](##ExclusivelyIndexes.comp_apply_lt_iff), and a hearer [learns no more about a speaker from
+the form than from the stance](##blackwellDominates_comp). [The indirect indexes of two Japanese
+particles](##rows_figure_14_1) follow from one difference between men and women, [each cell of the
+comparison of caregivers](##rows_figure_14_3) is one difference between two communities, and [a
+later *maaloo* changes what a past activity has been](##credited_exchange).
 
 ## Implementation notes
 
 * The chapter calls the relation of language to gender distributional and probabilistic and prints
   no numbers, so the kernels are arbitrary and the comparisons it states are hypotheses.
 * The kernels run from identity to form, the direction of use. Indexing reads them backwards, as
-  their support. A direct index of gender is mediation through the identity itself, `Kernel.id`.
+  the positive associations of `SocialMeaning.AssociationField.ofKernel`: the direct relation for a
+  kernel from meanings to forms, and the constitutive relation for one from identities to meanings.
+  A direct index of gender is mediation through the identity itself, `Kernel.id`.
 * The dashed arrows of Figure 14.2 are two-headed. A chain of kernels [through several
   domains](##indexes_comp_comp) takes one direction at a time, since closing a symmetric relation
   under transitivity would join the two voices through any stance open to both.
@@ -67,6 +71,7 @@ namespace Ochs1992
 open MeasureTheory ProbabilityTheory
 open CLDF.StructureDataset (Language Coded)
 open Japanese.Particles (ze wa)
+open SocialMeaning.AssociationField (indexes_ofKernel indexes_ofKernel_comp ofKernel)
 open scoped ENNReal
 
 /-! ### Direct and constitutive relations -/
@@ -75,19 +80,16 @@ section Model
 
 variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B]
 
-/-- A form `f` *indexes* `a` under a kernel from such `a`s to forms when `a` yields `f` with nonzero
-mass. A kernel from social meanings to forms gives the direct indexical relation, and one from
-identities to meanings the relation in which a meaning helps to constitute an identity. -/
-def Indexes (κ : Kernel A B) (f : B) (a : A) : Prop := κ a {f} ≠ 0
-
 /-- A form *exclusively indexes* `a` when it indexes `a` and nothing else, the strict,
 presuppositional relation of pp. 339-340. -/
-def ExclusivelyIndexes (κ : Kernel A B) (f : B) (a : A) : Prop := ∀ a', Indexes κ f a' ↔ a' = a
+def ExclusivelyIndexes (κ : Kernel A B) (f : B) (a : A) : Prop :=
+  ∀ a', (ofKernel κ).Indexes f a' ↔ a' = a
 
 -- p. 340: the chapter's two senses of non-exclusive, that a form is used by both sexes and that it
 -- marks other social information as well, are this one fact at the two kernels.
 theorem not_exclusivelyIndexes_of_indexes {κ : Kernel A B} {f : B} {a a₁ a₂ : A} (hne : a₁ ≠ a₂)
-    (h₁ : Indexes κ f a₁) (h₂ : Indexes κ f a₂) : ¬ ExclusivelyIndexes κ f a := fun h ↦
+    (h₁ : (ofKernel κ).Indexes f a₁) (h₂ : (ofKernel κ).Indexes f a₂) :
+    ¬ ExclusivelyIndexes κ f a := fun h ↦
   hne (((h a₁).1 h₁).trans ((h a₂).1 h₂).symm)
 
 variable {I M F : Type*} [MeasurableSpace I] [MeasurableSpace M] [MeasurableSpace F]
@@ -112,52 +114,49 @@ private theorem apply_compl_lt_iff [IsMarkovKernel κ] {s : Set M} (hs : Measura
 
 variable [Fintype M] [MeasurableSingletonClass M] [MeasurableSingletonClass F]
 
-/-- A form indexes an identity exactly when it directly indexes a social meaning that helps to
-constitute the identity: the solid and the dashed arrows of Figure 14.2 (pp. 342-343). -/
-theorem indexes_comp (η : Kernel M F) (κ : Kernel I M) :
-    Indexes (η ∘ₖ κ) = Relation.Comp (Indexes η) (Indexes κ) := by
-  ext f i
-  exact (Kernel.comp_apply_singleton_ne_zero_iff η κ).trans (exists_congr fun _ ↦ and_comm)
-
 -- p. 343: "particular social meanings may be constituted through other social meanings".
 theorem indexes_comp_comp {S : Type*} [MeasurableSpace S] [Fintype S] [MeasurableSingletonClass S]
     (η : Kernel M F) (κ : Kernel S M) (σ : Kernel I S) :
-    Indexes (η ∘ₖ κ ∘ₖ σ) = Relation.Comp (Indexes η) (Relation.Comp (Indexes κ) (Indexes σ)) := by
-  rw [indexes_comp, indexes_comp, Relation.comp_assoc]
+    (ofKernel (η ∘ₖ κ ∘ₖ σ)).Indexes =
+      Relation.Comp (ofKernel η).Indexes
+        (Relation.Comp (ofKernel κ).Indexes (ofKernel σ).Indexes) := by
+  rw [indexes_ofKernel_comp, indexes_ofKernel_comp, Relation.comp_assoc]
 
 /-- A form exclusively indexes an identity exactly when it indexes the identity and every meaning it
 directly indexes helps to constitute that identity alone, so a form used to convey anything open to
 both sexes does not pragmatically presuppose either (pp. 340-341). -/
 theorem exclusivelyIndexes_comp_iff :
     ExclusivelyIndexes (η ∘ₖ κ) f i ↔
-      (∃ m, Indexes η f m ∧ Indexes κ m i) ∧
-        ∀ m, Indexes η f m → ∀ i', Indexes κ m i' → i' = i := by
-  simp only [ExclusivelyIndexes, indexes_comp, Relation.Comp]
+      (∃ m, (ofKernel η).Indexes f m ∧ (ofKernel κ).Indexes m i) ∧
+        ∀ m, (ofKernel η).Indexes f m → ∀ i', (ofKernel κ).Indexes m i' → i' = i := by
+  simp only [ExclusivelyIndexes, indexes_ofKernel_comp, Relation.Comp]
   exact ⟨fun h ↦ ⟨(h i).2 rfl, fun m hm i' hi' ↦ (h i').1 ⟨m, hm, hi'⟩⟩,
     fun ⟨⟨m, hm, hi⟩, hall⟩ a' ↦ ⟨fun ⟨m', hm', ha'⟩ ↦ hall m' hm' a' ha', fun e ↦ e ▸ ⟨m, hm, hi⟩⟩⟩
 
 -- p. 340: a form associated with an identity through a meaning open to another is not exclusive.
-theorem not_exclusivelyIndexes_comp {i₁ i₂ : I} (hne : i₁ ≠ i₂) (hm : Indexes η f m)
-    (h₁ : Indexes κ m i₁) (h₂ : Indexes κ m i₂) : ¬ ExclusivelyIndexes (η ∘ₖ κ) f i := fun h ↦
+theorem not_exclusivelyIndexes_comp {i₁ i₂ : I} (hne : i₁ ≠ i₂) (hm : (ofKernel η).Indexes f m)
+    (h₁ : (ofKernel κ).Indexes m i₁) (h₂ : (ofKernel κ).Indexes m i₂) :
+    ¬ ExclusivelyIndexes (η ∘ₖ κ) f i := fun h ↦
   hne (((exclusivelyIndexes_comp_iff.1 h).2 m hm i₁ h₁).trans
     ((exclusivelyIndexes_comp_iff.1 h).2 m hm i₂ h₂).symm)
 
 -- p. 340: a form with several meanings, such as a tag question, is used more by an identity that
 -- takes up each of them at least as often and one of them more often.
 theorem comp_apply_lt_of_forall_le [IsFiniteKernel η] [IsFiniteKernel κ]
-    (h : ∀ m, Indexes η f m → κ i {m} ≤ κ i' {m}) (hm : Indexes η f m) (hlt : κ i {m} < κ i' {m}) :
+    (h : ∀ m, (ofKernel η).Indexes f m → κ i {m} ≤ κ i' {m}) (hm : (ofKernel η).Indexes f m)
+    (hlt : κ i {m} < κ i' {m}) :
     (η ∘ₖ κ) i {f} < (η ∘ₖ κ) i' {f} := by
   classical
   have hterm (m' : M) : κ i {m'} * η m' {f} ≤ κ i' {m'} * η m' {f} := by
     by_cases hm' : η m' {f} = 0
     · simp [hm']
-    · exact mul_le_mul' (h m' hm') le_rfl
+    · exact mul_le_mul' (h m' (indexes_ofKernel.2 hm')) le_rfl
   rw [Kernel.comp_apply_singleton, Kernel.comp_apply_singleton,
     ← Finset.add_sum_erase _ _ (Finset.mem_univ m),
     ← Finset.add_sum_erase _ (fun m' ↦ κ i' {m'} * η m' {f}) (Finset.mem_univ m)]
   exact ENNReal.add_lt_add_of_lt_of_le
     (ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
-    ((ENNReal.mul_lt_mul_iff_left hm (measure_ne_top _ _)).2 hlt)
+    ((ENNReal.mul_lt_mul_iff_left (indexes_ofKernel.1 hm) (measure_ne_top _ _)).2 hlt)
     (Finset.sum_le_sum fun m' _ ↦ hterm m')
 
 namespace ExclusivelyIndexes
@@ -166,15 +165,16 @@ theorem comp_apply (h : ExclusivelyIndexes η f m) (i : I) :
     (η ∘ₖ κ) i {f} = κ i {m} * η m {f} := by
   rw [Kernel.comp_apply_singleton]
   refine Finset.sum_eq_single m (fun m' _ hm' ↦ ?_) (by simp)
-  rw [show η m' {f} = 0 from by_contra fun hne ↦ hm' ((h m').1 hne), mul_zero]
+  rw [show η m' {f} = 0 from by_contra fun hne ↦ hm' ((h m').1 (indexes_ofKernel.2 hne)),
+    mul_zero]
 
 -- p. 350: the identities a form indexes are settled by the community, whose kernel `κ` alone
 -- decides them, so the simplified register, directly indexing accommodation in both communities,
 -- indirectly indexes caregivers with children in one and members with foreign dignitaries in the
 -- other.
 theorem indexes_comp_iff (h : ExclusivelyIndexes η f m) :
-    Indexes (η ∘ₖ κ) f i ↔ Indexes κ m i := by
-  simp [Indexes, h.comp_apply, show η m {f} ≠ 0 from (h m).2 rfl]
+    (ofKernel (η ∘ₖ κ)).Indexes f i ↔ (ofKernel κ).Indexes m i := by
+  simp [indexes_ofKernel, h.comp_apply, indexes_ofKernel.1 ((h m).2 rfl)]
 
 -- pp. 340-341: a form of one stance exclusively indexes an identity exactly when the stance does.
 theorem comp_iff (h : ExclusivelyIndexes η f m) :
@@ -185,7 +185,7 @@ theorem comp_iff (h : ExclusivelyIndexes η f m) :
 theorem comp_apply_lt_iff [IsFiniteKernel η] (h : ExclusivelyIndexes η f m) :
     (η ∘ₖ κ) i {f} < (η ∘ₖ κ) i' {f} ↔ κ i {m} < κ i' {m} := by
   rw [h.comp_apply, h.comp_apply]
-  exact ENNReal.mul_lt_mul_iff_left ((h m).2 rfl) (measure_ne_top _ _)
+  exact ENNReal.mul_lt_mul_iff_left (indexes_ofKernel.1 ((h m).2 rfl)) (measure_ne_top _ _)
 
 -- Two forms of one stance differ between identities in the same proportion.
 theorem comp_apply_mul_comm (h : ExclusivelyIndexes η f m) (h' : ExclusivelyIndexes η f' m) :
@@ -435,15 +435,15 @@ private noncomputable def particleOf : Kernel Stance Particle :=
 private instance : IsMarkovKernel particleOf := by unfold particleOf; infer_instance
 
 private theorem particleOf_ze : ExclusivelyIndexes particleOf ze .coarseIntensity := fun s ↦ by
-  cases s <;> simp [Indexes, particleOf, Kernel.deterministic_apply, Set.indicator, ze, wa]
+  cases s <;> simp [indexes_ofKernel, particleOf, Kernel.deterministic_apply, Set.indicator, ze, wa]
 
 -- The whole pipeline: *ze* is used by women as well as men, more by men, and exclusively by
 -- neither.
-example : Indexes (particleOf ∘ₖ stanceRates) ze .female ∧
+example : (ofKernel (particleOf ∘ₖ stanceRates)).Indexes ze .female ∧
     (particleOf ∘ₖ stanceRates) .female {ze} < (particleOf ∘ₖ stanceRates) .male {ze} ∧
     ¬ ExclusivelyIndexes (particleOf ∘ₖ stanceRates) ze .male := by
-  have hg (g : Gender) : Indexes stanceRates Stance.coarseIntensity g :=
-    Kernel.ofWeights_apply_singleton_ne_zero (by cases g <;> simp)
+  have hg (g : Gender) : (ofKernel stanceRates).Indexes Stance.coarseIntensity g :=
+    indexes_ofKernel.2 <| Kernel.ofWeights_apply_singleton_ne_zero (by cases g <;> simp)
       (fun s ↦ by cases g <;> cases s <;> simp)
   exact ⟨particleOf_ze.indexes_comp_iff.2 (hg _), particleOf_ze.comp_apply_lt_iff.2 stanceRates_lt,
     not_exclusivelyIndexes_comp (i₁ := .male) (i₂ := .female) (by decide) ((particleOf_ze _).2 rfl)
@@ -476,8 +476,10 @@ private instance : IsMarkovKernel orientationOf := by unfold orientationOf; infe
 
 private theorem strategyOf_exclusive (s : Strategy) :
     ExclusivelyIndexes strategyOf s s.orientation := fun o ↦
-  ⟨fun h ↦ by_contra fun hne ↦ h (Kernel.ofWeights_apply_singleton_eq_zero (by simp [Ne.symm hne])),
-    fun h ↦ Kernel.ofWeights_apply_singleton_ne_zero (by simp [h]) fun _ ↦ by split <;> simp⟩
+  ⟨fun h ↦ by_contra fun hne ↦ indexes_ofKernel.1 h
+      (Kernel.ofWeights_apply_singleton_eq_zero (by simp [Ne.symm hne])),
+    fun h ↦ indexes_ofKernel.2 <|
+      Kernel.ofWeights_apply_singleton_ne_zero (by simp [h]) fun _ ↦ by split <;> simp⟩
 
 -- Figure 14.3 is satisfiable: at these kernels every cell of the figure holds.
 example : ∀ r ∈ figure143, ∀ r' ∈ figure143, r ≠ r' → ∀ c ∈ r.strategies,
@@ -521,7 +523,7 @@ private theorem sum_tagMeaning (g : TagMeaning → ℝ≥0∞) :
 -- The second sense of non-exclusive: a tag question exclusively indexes none of its meanings.
 example (m : TagMeaning) : ¬ ExclusivelyIndexes tagOf .tagQuestion m :=
   not_exclusivelyIndexes_of_indexes (a₁ := .hesitancy) (a₂ := .confirmationCheck) (by decide)
-    (by simp [Indexes, tagOf_apply]) (by simp [Indexes, tagOf_apply])
+    (by simp [indexes_ofKernel, tagOf_apply]) (by simp [indexes_ofKernel, tagOf_apply])
 
 /-- Rates at which women take up hesitancy more and each gender confirmation checks alike. -/
 private noncomputable def tagRates : Kernel Gender TagMeaning :=
@@ -546,11 +548,11 @@ example :
   have hlt : (1 : ℝ≥0∞) / 4 < 2 / 4 :=
     ENNReal.div_lt_div_right (by simp) (by simp) (by norm_num)
   refine comp_apply_lt_of_forall_le (m := .hesitancy) (fun m hm ↦ ?_)
-    (by simp [Indexes, tagOf_apply]) (by simpa only [tagRates_apply] using hlt)
+    (by simp [indexes_ofKernel, tagOf_apply]) (by simpa only [tagRates_apply] using hlt)
   cases m with
   | hesitancy => simpa only [tagRates_apply] using hlt.le
   | confirmationCheck => simp only [tagRates_apply, le_refl]
-  | other => exact absurd (tagOf_apply .other) (by simpa [Indexes] using hm)
+  | other => exact absurd hm (by simp [indexes_ofKernel, tagOf_apply])
 
 /-- Rates at which women take up only hesitancy, and men confirmation checks and other things. -/
 private noncomputable def splitRates : Kernel Gender TagMeaning :=
