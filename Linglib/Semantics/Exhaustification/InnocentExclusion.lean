@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Exhaustification.Alternatives
+public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Mathlib.Data.Set.Finite.Powerset
 public import Mathlib.Order.Minimal
@@ -149,20 +149,25 @@ theorem IsConsistentExclusion.subset_sdiff_satisfied {X : Set (Set World)}
     X ⊆ ALT \ Preorder.satisfied (· ∈ ·) ALT u :=
   fun b hb ↦ mem_sdiff_satisfied.2 ⟨hX.1 hb, fun hub ↦ hu ⟨b, hb, hub⟩⟩
 
+private theorem sdiff_satisfied_subset_iff {u v : World} :
+    ALT \ Preorder.satisfied (· ∈ ·) ALT u ⊆ ALT \ Preorder.satisfied (· ∈ ·) ALT v ↔
+      Preorder.satisfied (· ∈ ·) ALT v ⊆ Preorder.satisfied (· ∈ ·) ALT u := by
+  simp only [Set.subset_def, mem_sdiff_satisfied, Preorder.mem_satisfied]
+  exact ⟨fun h b ⟨hb, hvb⟩ ↦ ⟨hb, not_not.1 fun hub ↦ (h b ⟨hb, hub⟩).2 hvb⟩,
+    fun h b ⟨hb, hub⟩ ↦ ⟨hb, fun hvb ↦ hub (h b ⟨hb, hvb⟩).2⟩⟩
+
 /-- The alternatives false at a prejacent world form a maximal consistent exclusion iff the world
 is minimal. -/
 theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
     Maximal (IsConsistentExclusion ALT φ) (ALT \ Preorder.satisfied (· ∈ ·) ALT u) ↔
       u ∈ exhMW ALT φ := by
-  refine ⟨fun hmax ↦ ⟨hu, fun ⟨v, hv, hvu, huv⟩ ↦ huv fun c hc huc ↦ by_contra fun hvc ↦ ?_⟩,
-    fun ⟨_, hmin⟩ ↦ maximal_subset_iff'.2 ⟨isConsistentExclusion_sdiff_satisfied hu,
-      fun Y ⟨hY, v, hv, hvY⟩ hXY b hb ↦ mem_sdiff_satisfied.2 ⟨hY hb, fun hub ↦ ?_⟩⟩⟩
-  · have hle := hmax.2 (isConsistentExclusion_sdiff_satisfied hv) fun b hb ↦
-      let ⟨hbA, hub⟩ := mem_sdiff_satisfied.1 hb
-      mem_sdiff_satisfied.2 ⟨hbA, fun hvb ↦ hub (hvu b hbA hvb)⟩
-    exact (mem_sdiff_satisfied.1 (hle (mem_sdiff_satisfied.2 ⟨hc, hvc⟩))).2 huc
-  · exact hmin ⟨v, hv, fun c hc hvc ↦ by_contra fun huc ↦
-      hvY ⟨c, hXY (mem_sdiff_satisfied.2 ⟨hc, huc⟩), hvc⟩, fun huv ↦ hvY ⟨b, hb, huv b (hY hb) hub⟩⟩
+  refine ⟨fun hmax ↦ ⟨hu, fun v hv hvu ↦ sdiff_satisfied_subset_iff.1
+    (hmax.2 (isConsistentExclusion_sdiff_satisfied hv) (sdiff_satisfied_subset_iff.2 hvu))⟩,
+    fun hmin ↦ ⟨isConsistentExclusion_sdiff_satisfied hu, fun Y hY hXY ↦ ?_⟩⟩
+  obtain ⟨v, hv, hvY⟩ := hY.2
+  have hYv := hY.subset_sdiff_satisfied hvY
+  exact hYv.trans (sdiff_satisfied_subset_iff.2
+    (hmin.2 hv (sdiff_satisfied_subset_iff.1 (hXY.trans hYv))))
 
 /-- Every maximal consistent exclusion is the set of alternatives false at a minimal world. -/
 theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
@@ -185,7 +190,7 @@ theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a �
 
 theorem exists_maximal_isConsistentExclusion (hfin : ALT.Finite) (hsat : φ.Nonempty) :
     ∃ X, Maximal (IsConsistentExclusion ALT φ) X :=
-  let ⟨_, hu⟩ := exists_minimal_of_finite ALT φ hfin hsat
+  let ⟨_, hu⟩ := exhMW_nonempty hfin hsat
   ⟨_, (maximal_sdiff_satisfied_iff hu.1).2 hu⟩
 
 theorem not_isInnocentlyExcludable_of_phi_subset {ALT : Set (Set World)} {φ : Set World}
@@ -243,10 +248,10 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
   ⟨hu.1, fun a ha ↦ (isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ a ha.1).1 ha hu⟩
 
 theorem exhIE_univ : exhIE univ φ = φ :=
-  (exhIE_subset _ _).antisymm ((exhMW_univ φ).ge.trans (exhMW_subset_exhIE _ _))
+  (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
-  fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun ⟨_, hv, _, hvu⟩ ↦ hvu fun a ha hau ↦ hex a ha hau hv⟩
+  fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun _ hv _ a ⟨ha, hua⟩ ↦ ⟨ha, hex a ha hua hv⟩⟩
 
 theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
@@ -317,9 +322,9 @@ theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Se
     (hp : p ∈ ALT) (hq : q ∈ ALT) (hcov : φ ⊆ p ∪ q) (hne : (φ \ q).Nonempty) :
     ¬ IsInnocentlyExcludable ALT φ p := by
   obtain ⟨w, hw, hwq⟩ := hne
-  obtain ⟨u, hu, huw⟩ := exists_isMinimal_le ALT φ hfin hw
+  obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ p hp]
-  exact fun h ↦ h hu ((hcov hu.1).resolve_right fun huq ↦ hwq (huw q hq huq))
+  exact fun h ↦ h hu ((hcov hu.1).resolve_right fun huq ↦ hwq (huw ⟨hq, huq⟩).2)
 
 theorem exhIE_eq_setOf_exhMW_subset_compl :
     exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → u ∉ a} :=
@@ -333,9 +338,9 @@ theorem IsMinimalCover.isInnocentlyExcludable_iff (hM : IsMinimalCover ALT φ M)
     (ha : a ∈ ALT) : IsInnocentlyExcludable ALT φ a ↔ ∀ v ∈ M, v ∉ a := by
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ a ha, hM.exhMW_eq]
   constructor
-  · exact fun h v hv hva ↦ h ⟨hM.mem v hv, v, hv, leALT_refl _ _, leALT_refl _ _⟩ hva
-  · rintro h u ⟨_, v, hv, _, huv⟩ hua
-    exact h v hv (huv a ha hua)
+  · exact fun h v hv hva ↦ h ⟨hM.mem v hv, v, hv, rfl⟩ hva
+  · rintro h u ⟨_, v, hv, hvu⟩ hua
+    exact h v hv (hvu.ge ⟨ha, hua⟩).2
 
 theorem IsMinimalCover.exhIE_eq (hM : IsMinimalCover ALT φ M) :
     exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, (∀ v ∈ M, v ∉ a) → u ∉ a} :=
@@ -350,29 +355,32 @@ prejacent world above another verifies the conjunction of the alternatives true 
 every minimal world falsifies. -/
 theorem exhMW_eq_exhIE_of_infClosed (hfin : ALT.Finite) (hinf : InfClosed ALT) :
     exhMW ALT φ = exhIE ALT φ := by
-  refine (exhMW_subset_exhIE ALT φ).antisymm fun u hu ↦ ⟨hu.1, fun ⟨v, hv, hvu, huv⟩ ↦ ?_⟩
+  refine (exhMW_subset_exhIE ALT φ).antisymm fun u hu ↦
+    ⟨hu.1, fun v hv hvu ↦ by_contra fun huv ↦ ?_⟩
   have hne : {a ∈ ALT | u ∈ a}.Nonempty := by
     by_contra h
-    exact huv fun a ha hua ↦ (h ⟨a, ha, hua⟩).elim
+    exact huv fun a ha ↦ (h ⟨a, ha⟩).elim
   have hA : ⋂₀ {a ∈ ALT | u ∈ a} ∈ ALT :=
     hinf.sInf_mem_of_nonempty (hfin.subset fun _ h ↦ h.1) hne fun _ h ↦ h.1
   refine hu.2 _ ((isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ hA).2 ?_) fun a ha ↦ ha.2
   rintro w ⟨-, hmin⟩ hwA
-  have huw : u ≤[ALT] w := fun a ha hua ↦ hwA a ⟨ha, hua⟩
-  exact hmin ⟨v, hv, leALT_trans _ _ _ _ hvu huw, fun hwv ↦ huv (leALT_trans _ _ _ _ huw hwv)⟩
+  have huw : Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT w :=
+    fun a ha ↦ ⟨ha.1, hwA a ha⟩
+  exact huv (huw.trans (hmin hv (hvu.trans huw)))
 
-theorem leALT_sUnion_image_powerset {u v : World} :
-    (u ≤[sUnion '' 𝒫 ALT] v) ↔ u ≤[ALT] v := by
-  refine ⟨fun h a ha hua ↦ ?_, fun h _ ⟨X, hX, hXa⟩ hua ↦ ?_⟩
-  · have := h a ⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩ hua
-    exact this
+theorem satisfied_sUnion_image_powerset_subset_iff {u v : World} :
+    Preorder.satisfied (· ∈ ·) (sUnion '' 𝒫 ALT) u ⊆
+        Preorder.satisfied (· ∈ ·) (sUnion '' 𝒫 ALT) v ↔
+      Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v := by
+  refine ⟨fun h a ⟨ha, hua⟩ ↦ ⟨ha, ?_⟩, fun h _ ⟨⟨X, hX, hXa⟩, hua⟩ ↦ ⟨⟨X, hX, hXa⟩, ?_⟩⟩
+  · exact (h ⟨⟨{a}, singleton_subset_iff.2 ha, sUnion_singleton a⟩, hua⟩).2
   · subst hXa
     obtain ⟨b, hb, hub⟩ := hua
-    exact ⟨b, hb, h b (hX hb) hub⟩
+    exact ⟨b, hb, (h ⟨hX hb, hub⟩).2⟩
 
 theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT φ := by
-  unfold exhMW ltALT
-  simp only [leALT_sUnion_image_powerset]
+  ext u
+  simp only [mem_exhMW, MinimalFor, satisfied_sUnion_image_powerset_subset_iff]
 
 /-- Innocent exclusion is unchanged by closing the alternatives under disjunction, since a
 disjunction fails at every minimal world iff each disjunct does. -/
@@ -426,9 +434,9 @@ theorem isInnocentlyExcludable_iff_forall_minimal {a : Set World} (ha : a ∈ AL
     IsInnocentlyExcludable ALT φ a ↔
       ∀ P, Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P → a ∉ P := by
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ ha]
-  refine ⟨?_, fun h u hu hua ↦ h _ ((mem_exhMW_iff_minimal ALT φ).1 hu).2 ⟨ha, hua⟩⟩
+  refine ⟨?_, fun h u hu hua ↦ h _ (mem_exhMW_iff_minimal.1 hu).2 ⟨ha, hua⟩⟩
   rintro h _ ⟨⟨u, hu, rfl⟩, hmin⟩ ⟨-, hua⟩
-  exact h ((mem_exhMW_iff_minimal ALT φ).2 ⟨hu, ⟨u, hu, rfl⟩, hmin⟩) hua
+  exact h (mem_exhMW_iff_minimal.2 ⟨hu, ⟨u, hu, rfl⟩, hmin⟩) hua
 
 /-- Innocent exclusion keeps the prejacent worlds verifying only alternatives that some minimal
 verified set contains. -/

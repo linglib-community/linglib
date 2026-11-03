@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Exhaustification.Disjunctive
+public import Studies.BarLevFox2020
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Statistics.KrizChemla2015
@@ -123,6 +123,33 @@ theorem exists_mem_biUnion_and_not (h : Separating D x P) {a : Atom} (ha : a ∈
 theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x ∩ D, atom P b) {a : Atom}
     (ha : a ∈ x ∩ D) : ¬ P a w :=
   fun hPa ↦ hw (Set.mem_biUnion ha hPa)
+
+section Conjunction
+
+variable {World ι : Type*} {I : Finset ι} {p : ι → Set World}
+
+-- The conjunction of the disjuncts is innocently excludable once it joins their closure.
+theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
+    (h2 : 2 ≤ I.card) :
+    IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i)
+      (⋂ i ∈ I, p i) := by
+  refine (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
+  intro w ⟨hw, hmin⟩
+  obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 hw
+  obtain ⟨j, hj, hji⟩ := Finset.exists_mem_ne (by omega : 1 < I.card) i
+  intro hall
+  simp only [Set.mem_iInter] at hall
+  obtain ⟨v, hv⟩ := hsep i hi
+  have hle := hmin (Set.mem_biUnion hi ((hv i hi).2 rfl)) fun q ⟨hq, hvq⟩ ↦ ⟨hq, ?_⟩
+  · exact hji ((hv j hj).1
+      (hle ⟨Or.inr (subset_supClosure (Set.mem_image_of_mem p hj)), hall j hj⟩).2)
+  rcases hq with rfl | hq
+  · exact absurd (Set.mem_iInter₂.1 hvq j hj) (by rw [hv j hj]; exact hji)
+  · obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+    obtain ⟨k, hk, hvk⟩ := Set.mem_iUnion₂.1 hvq
+    exact Set.mem_biUnion hk (((hv k (hS hk)).1 hvk) ▸ hwi)
+
+end Conjunction
 
 theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating D x P) (h2 : 2 ≤ (x ∩ D).card)
     {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x ∩ D, atom P a) (supClosure (atom P '' ↑(x ∩ D))))
@@ -333,7 +360,7 @@ theorem disjunction_not_both :
     exhIEII {kellyLaughed ∪ janeLaughed, kellyLaughed, janeLaughed, kellyLaughed ∩ janeLaughed}
         (kellyLaughed ∪ janeLaughed) =
       (kellyLaughed ∪ janeLaughed) \ (kellyLaughed ∩ janeLaughed) :=
-  exhIEII_pair_inter le_rfl
+  BarLevFox2020.exhIEII_pair_inter le_rfl
     ⟨{.kelly}, ⟨Or.inl (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
     ⟨{.jane}, ⟨Or.inr (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
 
