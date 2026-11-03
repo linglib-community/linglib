@@ -59,8 +59,8 @@ def deleted (D : Finset ElidedVowel) : Finset ℕ := D.image (Casali1997.positio
 
 /-- The form a candidate gives. -/
 def resolve (D : Finset ElidedVowel) : List Segment :=
-  c.stemBody ++ (if .first ∈ D then [] else [c.v1]) ++ (if .second ∈ D then [] else [c.v2]) ++
-    c.suffixBody
+  c.leftBody ++ (if .first ∈ D then [] else [c.v1]) ++ (if .second ∈ D then [] else [c.v2]) ++
+    c.rightBody
 
 /-- `corr c D` is the correspondence between the unrepaired concatenation and the form that the
 candidate `D` gives, the deletion of the positions of its vowels. -/
@@ -70,7 +70,7 @@ def corr (D : Finset ElidedVowel) : Correspondence BinaryRole Segment :=
 /-- The output of each correspondence is the form of its candidate. -/
 theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve c D := by
   have hmem (k : ℕ) : k ∈ deleted c D ↔
-      .first ∈ D ∧ k = c.stemBody.length ∨ .second ∈ D ∧ k = c.stemBody.length + 1 := by
+      .first ∈ D ∧ k = c.leftBody.length ∨ .second ∈ D ∧ k = c.leftBody.length + 1 := by
     simp only [deleted, Finset.mem_image]
     refine ⟨?_, by rintro (⟨h, rfl⟩ | ⟨h, rfl⟩) <;> exact ⟨_, h, rfl⟩⟩
     rintro ⟨_ | _, h, rfl⟩ <;> simp [h, Casali1997.position, Juncture.v1Idx, Juncture.v2Idx]
@@ -138,6 +138,21 @@ variable {c long}
 
 theorem resolve_empty : resolve c ∅ = c.input := by simp [resolve, Juncture.input]
 
+theorem resolve_first : resolve c {.first} = c.elideV1 := by
+  simp [resolve, Juncture.elideV1, Juncture.right]
+
+theorem resolve_second : resolve c {.second} = c.elideV2 := by
+  simp [resolve, Juncture.elideV2, Juncture.left]
+
+/-- Deleting both vowels of two morphs free of hiatus brings no two vowels together, since a vowel
+before the first or after the second would already be in hiatus with it. -/
+private theorem free_resolve_pair (hl : Free c.left) (hr : Free c.right) :
+    Free (resolve c {.first, .second}) := by
+  have h : resolve c {.first, .second} = c.leftBody ++ c.rightBody := by simp [resolve]
+  rw [h, Free, List.isChain_append]
+  refine ⟨hl.left_of_append, hr.tail, fun x hx y _ hxy ↦ ?_⟩
+  exact (List.isChain_append.1 hl).2.2 x hx c.v1 rfl ⟨hxy.1, c.v1_isVowel⟩
+
 private theorem v1Idx_ne_v2Idx : c.v1Idx ≠ c.v2Idx := by
   simp [Juncture.v1Idx, Juncture.v2Idx]
 
@@ -167,19 +182,20 @@ local macro "regular_beats " k:num : tactic =>
 
 /-- Between a morph and a suffix that is not a root, under the regular hierarchy, the second
 vowel deletes when the first is long or the sole segment of its morph, and the first vowel deletes
-otherwise. This holds when the second vowel is short and not alone in its morph, and deleting
-either vowel or both leaves no vowel sequence. -/
-theorem optimal_regular (hl : c.left ≠ .root) (hr : c.right ≠ .root) (hv₂ : c.v2Idx ∉ long)
-    (hs : c.suffixBody ≠ []) (hfree : ∀ D : Finset ElidedVowel, D.Nonempty →
-      Hiatus.count (resolve c D) = 0) :
+otherwise. This holds when the second vowel is short and not alone in its morph, and neither morph
+has a vowel sequence of its own. -/
+theorem optimal_regular (hl : c.leftKind ≠ .root) (hr : c.rightKind ≠ .root) (hv₂ : c.v2Idx ∉ long)
+    (hs : c.rightBody ≠ []) (hfl : Free c.left) (hfr : Free c.right) :
     (tableau c long Wordlist.Hierarchy.regular.order).optimal =
-      {if c.v1Idx ∈ long ∨ c.stemBody = [] then {.second} else {.first}} := by
+      {if c.v1Idx ∈ long ∨ c.leftBody = [] then {.second} else {.first}} := by
   have hne := v1Idx_ne_v2Idx (c := c)
-  have h₀ : Hiatus.count (resolve c ∅) ≠ 0 := fun h ↦
-    c.not_free_input ((Hiatus.free_iff_count_eq_zero _).2 (resolve_empty ▸ h))
-  have h₁ := hfree {.first} (by simp)
-  have h₂ := hfree {.second} (by simp)
-  have h₃ := hfree {.first, .second} (by simp)
+  have hl := (free_iff_count_eq_zero _).1 hfl
+  have hr' := (free_iff_count_eq_zero _).1 hfr
+  have h₀ : Hiatus.count (resolve c ∅) ≠ 0 := by rw [resolve_empty, c.count_input]; omega
+  have h₁ : Hiatus.count (resolve c {.first}) = 0 := by rw [resolve_first, c.count_elideV1, hl, hr']
+  have h₂ : Hiatus.count (resolve c {.second}) = 0 := by
+    rw [resolve_second, c.count_elideV2, hl, hr']
+  have h₃ := (free_iff_count_eq_zero _).1 (free_resolve_pair hfl hfr)
   refine Tableau.optimal_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun D _ hD ↦ ?_⟩
   split_ifs at hD ⊢ with hlong
   · rcases finset_cases D with rfl | rfl | rfl | rfl
@@ -203,12 +219,7 @@ theorem optimal_regular (hl : c.left ≠ .root) (hr : c.right ≠ .root) (hv₂ 
 with a vowel. -/
 def context? (before : Option Morph.Kind) (left right : Morph.Kind) (l r : List Segment) :
     Option Context :=
-  match l.reverse, r with
-  | v₁ :: stem, v₂ :: suffix =>
-    if h : v₁.IsVowel ∧ v₂.IsVowel then
-      some ⟨⟨stem.reverse, v₁, v₂, suffix, h.1, h.2⟩, before, left, right⟩
-    else none
-  | _, _ => none
+  (Juncture.ofForms? l r).map fun j ↦ ⟨j, before, left, right⟩
 
 /-- An example records its context, the positions of its long vowels, the segments of the morph
 before the context, the hierarchy of its suffix and the attested deletion. -/

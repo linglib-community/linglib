@@ -181,7 +181,7 @@ noncomputable def classicalW : Fin 3 → ℝ := ![2.47, 1.89, 1]
 which is realized faithfully as the bare stem, its only candidate, and of the two suffixed
 inputs. Two outputs collide when they are the same string. -/
 def starHomophony : Constraint (Fin 2 → Resolution) := fun f ↦
-  homophonyAvoidance (Fin.cons definite.stem fun k ↦ resolve (f k) (inputs k))
+  homophonyAvoidance (Fin.cons definite.left fun k ↦ resolve (f k) (inputs k))
 
 /-- The fitted \*HOMOPHONY weight, a posterior mean. -/
 noncomputable def homophonyWeight : ℝ := 2.27
@@ -213,11 +213,11 @@ avoidance not involving a null morpheme. -/
 /-- REALIZEMORPHEME is violated when the suffix has a null realization, the suffixed form
 surfacing as its bare stem. -/
 def realizeMorpheme : Constraint (Hiatus.Juncture × Resolution) :=
-  Constraint.binary fun c ↦ resolve c.2 c.1 = c.1.stem
+  Constraint.binary fun c ↦ resolve c.2 c.1 = c.1.left
 
 theorem realizeMorpheme_eq (j : Hiatus.Juncture) (o : Resolution) :
-    realizeMorpheme (j, o) = if o = .deletion ∧ j.suffixBody = [] then 1 else 0 := by
-  cases o <;> simp [realizeMorpheme, resolve, j.input_ne_stem, j.epenthesize_ne_stem]
+    realizeMorpheme (j, o) = if o = .deletion ∧ j.rightBody = [] then 1 else 0 := by
+  cases o <;> simp [realizeMorpheme, resolve, j.input_ne_left, j.epenthesize_ne_left]
 
 theorem starHomophony_eq_joint_realizeMorpheme :
     starHomophony = realizeMorpheme.joint inputs := by

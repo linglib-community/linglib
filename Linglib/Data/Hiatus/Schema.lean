@@ -25,7 +25,7 @@ vowel with some suffixes and the second with others has two rows.
 namespace Data.Hiatus
 
 /-- The kind of juncture at which two vowels meet. -/
-inductive Juncture where
+inductive JunctureKind where
   /-- Between two lexical words. -/
   | lexicalLexical
   /-- Between a lexical word and a following function word. -/
@@ -51,7 +51,7 @@ structure ElisionRow where
   /-- The language, under the name the paper uses. -/
   language : String
   /-- The kind of juncture. -/
-  juncture : Juncture
+  juncture : JunctureKind
   /-- The vowel that elides there. -/
   elided : ElidedVowel
   /-- The paper marks the report as uncertain. -/
