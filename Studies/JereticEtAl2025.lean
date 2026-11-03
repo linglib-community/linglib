@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.JereticEtAl2025
 public import Linglib.Syntax.Cat
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Fragments.Romance.French.Determiners
 public import Linglib.Fragments.English.Determiners
@@ -25,7 +25,7 @@ licenses the Maximize Presupposition competition the silent parse cannot enter o
 worked example runs this on (25): the dual parse is barred, pronounceability is thereby derived
 rather than stipulated, and *tous* violates Maximize Presupposition through *les deux*
 (`tous_blocked_via_indirect`), so that it is used in the domain of three cups and not in the domain
-of two (`unblocked_tous`).
+of two (`strengthen_tous`).
 
 Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
 dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
@@ -251,7 +251,7 @@ one NP over two terminals, so every step is a `decide` or one Katzir substitutio
 
 section WorkedExample
 
-open PhraseStructure Tree Competition
+open PhraseStructure Tree Presupposition
 
 /-- The two evaluation contexts are a domain of two cups and a domain of three; the dual
 presupposition is satisfied only in the first. -/
@@ -361,8 +361,12 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
   refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
   funext w; cases w <;> rfl
 
-theorem lesDeux_mem_sameAssertion :
-    lesDeuxVerres ∈ sameAssertion frenchIndirectSrc assertionFn tousVerres :=
+/-- The indirect alternatives with the same assertion, the competitors of Maximize
+Presupposition. -/
+def sameAssertionAlts (t : Tree Cat String) : Set (Tree Cat String) :=
+  {t' ∈ frenchIndirectSrc t | assertionFn t' = assertionFn t}
+
+theorem lesDeux_mem_sameAssertionAlts : lesDeuxVerres ∈ sameAssertionAlts tousVerres :=
   ⟨lesDeux_indirectAlt_tous, rfl⟩
 
 theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tousVerres :=
@@ -370,8 +374,8 @@ theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tous
     (Set.not_subset.2 ⟨.w3, rfl, (by decide : ¬ meaning lesDeuxVerres .w3 = true)⟩)
 
 theorem tous_blocked_via_indirect :
-    Blocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres :=
-  ⟨lesDeuxVerres, lesDeux_mem_sameAssertion, presupFn_lesDeux_ssubset_tous⟩
+    ∃ ψ ∈ sameAssertionAlts tousVerres, presupFn ψ ⊂ presupFn tousVerres :=
+  ⟨lesDeuxVerres, lesDeux_mem_sameAssertionAlts, presupFn_lesDeux_ssubset_tous⟩
 
 private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈ presupFn t) :
     presupFn t = Set.univ :=
@@ -380,16 +384,15 @@ private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈
     split_ifs at h ⊢
     simp_all
 
-theorem unblocked_tous :
-    unblocked (sameAssertion frenchIndirectSrc assertionFn) presupFn tousVerres = {.w3} := by
+theorem strengthen_tous : strengthen sameAssertionAlts presupFn tousVerres = {.w3} := by
   ext w
   cases w
   · simp only [Set.mem_singleton_iff, reduceCtorEq, iff_false]
-    exact Set.disjoint_left.1 (disjoint_unblocked_of_ssubset lesDeux_mem_sameAssertion
+    exact Set.disjoint_left.1 (disjoint_strengthen_of_ssubset lesDeux_mem_sameAssertionAlts
       presupFn_lesDeux_ssubset_tous) (by decide : meaning lesDeuxVerres .w2 = true)
   · simp only [Set.mem_singleton_iff, iff_true]
     have htous : WorldEx.w3 ∈ presupFn tousVerres := rfl
-    exact mem_unblocked_iff.2 ⟨htous, fun ψ _ hψ hss ↦
+    exact mem_strengthen_iff.2 ⟨htous, fun ψ _ hψ hss ↦
       hss.ne ((presupFn_eq_univ_of_w3 hψ).trans (presupFn_eq_univ_of_w3 htous).symm)⟩
 
 end WorkedExample

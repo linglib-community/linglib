@@ -47,8 +47,8 @@ presupposes genderlessness (§6, (45)); [sauerland-2008b]'s Dominance test, the 
 coordination takes, likewise makes masculine less marked than feminine (pp. 63–65). The
 presentation here reconstructs the ordering as two binary features with the containment
 [+neuter] → [+feminine], so the three genders of a sex-based system are the initial segments of
-the chain feminine < neuter, neuter the most specified and masculine the least, as for person and
-number (`Person.Features`, `Number.Features`). -/
+the chain feminine < neuter, neuter the most specified and masculine the least, as for person
+(`Person.Features`). -/
 
 /-- The two gender features, neuter depending on feminine. -/
 inductive Feature where

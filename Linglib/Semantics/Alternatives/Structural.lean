@@ -14,7 +14,8 @@ contraction, and substitution of a constituent by a same-category item of the su
 source, the lexicon together with the tree's own subtrees. A tree is *at most as complex* as
 another if these operations reach it from the other (definition (19)), and the structural
 alternatives of a tree are the trees at most as complex as it (definition (20)). Structural
-alternatives are one source of alternatives for the competition relations of `Competition`.
+alternatives are one source of alternatives for presuppositional strengthening and the
+conversational principles.
 
 ## Main definitions
 

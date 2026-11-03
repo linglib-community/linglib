@@ -35,7 +35,7 @@ and only an ordinary question suspend it](##coherent_iff).
   noun; the phrase ranges over the non-null individuals of the domain.
 * The chapter treats the plurality requirement as an implicature without choosing a mechanism;
   here it is Maximize Presupposition between the singular and the plural question
-  (`Competition.unblocked`), Sauerland's mechanism among those it cites.
+  (`Presupposition.strengthen`), Sauerland's mechanism among those it cites.
 * An exchange is modelled by the questioner's assumptions inside the common ground. A soft
   presupposition must hold in the former, a hard one in the latter; *if anyone* restricts the
   assumptions to the presupposition, and a reply must be consistent with the common ground.

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Plurality.Number
 
 /-!
 # Link's algebra of plurals
@@ -70,9 +71,10 @@ variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
 
 /-! ### Predicate operators -/
 
-/-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12). -/
-def properPlural (P : E → Prop) (x : E) : Prop :=
-  AlgClosure P x ∧ ¬ Atom x
+/-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12), Harbour's
+`[−atomic]` of the closure. -/
+def properPlural (P : E → Prop) : E → Prop :=
+  Number.nonAtomsOf (AlgClosure P)
 
 /-- A distributive predicate holds of atoms only (D.19). -/
 def IsDistr (P : E → Prop) : Prop :=
