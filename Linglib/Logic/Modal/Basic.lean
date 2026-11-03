@@ -76,9 +76,6 @@ variable (R) {q : W → Prop}
 theorem box_restrict (p : W → Prop) : Antitone fun R : SetRel W W ↦ □[R] p :=
   fun _ _ h _ hb v hwv ↦ hb v (h hwv)
 
-theorem diamond_restrict (p : W → Prop) : Monotone fun R : SetRel W W ↦ ◇[R] p :=
-  fun _ _ h _ ⟨v, hwv, hpv⟩ ↦ ⟨v, h hwv, hpv⟩
-
 /-! ### Transitive closure
 
 Necessity along the transitive closure of `R` is the infinite conjunction of iterated

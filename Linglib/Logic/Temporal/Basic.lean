@@ -7,6 +7,7 @@ module
 
 public import Linglib.Logic.Temporal.Defs
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Tense.Quantificational
 
 /-!
 # T × W tense-modal logic: the modal algebra of satisfaction
@@ -64,10 +65,10 @@ instance (t : T) : (F.alt t).IsTrans := ⟨fun _ _ _ ↦ (F.sim t).iseqv.trans�
     F.sat V (.and a b) t w ↔ F.sat V a t w ∧ F.sat V b t w := Iff.rfl
 
 @[simp] theorem sat_G (a : OForm Atom) (t : T) (w : World) :
-    F.sat V (.G a) t w ↔ ∀ t', t < t' → F.sat V a t' w := Iff.rfl
+    F.sat V (.G a) t w ↔ ∀ t', t < t' → F.sat V a t' w := Tense.box_toSetRel_future
 
 @[simp] theorem sat_H (a : OForm Atom) (t : T) (w : World) :
-    F.sat V (.H a) t w ↔ ∀ t', t' < t → F.sat V a t' w := Iff.rfl
+    F.sat V (.H a) t w ↔ ∀ t', t' < t → F.sat V a t' w := Tense.box_toSetRel_past
 
 @[simp] theorem sat_N (a : OForm Atom) (t : T) (w : World) :
     F.sat V (.N a) t w ↔ ∀ w', F.sim t w w' → F.sat V a t w' := Iff.rfl
@@ -142,25 +143,20 @@ theorem N_isIndicial (t : T) : IsIndicial □[F.alt t] :=
 
 /-! ### The temporal adjunctions `Fut ⊣ H`, `Pst ⊣ G`
 
-The tense operators are Galois-adjoint on each model's entailment preorder ([burgess-1984]): `Fut`
-(future `∃`) is left adjoint to `H` (past `∀`), and `Pst` (past `∃`) to `G` (future `∀`). -/
+The tense operators are Galois-adjoint on each model's entailment preorder ([burgess-1984]), world
+by world: `Fut` (future `∃`) is left adjoint to `H` (past `∀`), and `Pst` (past `∃`) to `G` (future
+`∀`), the adjunctions of the tense cells at each world. -/
 
 theorem Fut_adjoint_H (a b : OForm Atom) :
-    F.entails V a.Fut b ↔ F.entails V a (.H b) := by
-  simp only [entails, sat_Fut, sat_H]
-  constructor
-  · intro h t w hat t' ht
-    exact h t' w ⟨t, ht, hat⟩
-  · rintro h t w ⟨u, htu, hau⟩
-    exact h u w hau t htu
+    F.entails V a.Fut b ↔ F.entails V a (.H b) :=
+  forall_comm.trans <| .trans (forall_congr' fun w ↦ by
+    simpa [Pi.le_def] using Tense.diamond_future_box_past_gc (F.sat V a · w) (F.sat V b · w))
+    forall_comm
 
 theorem Pst_adjoint_G (a b : OForm Atom) :
-    F.entails V a.Pst b ↔ F.entails V a (.G b) := by
-  simp only [entails, sat_Pst, sat_G]
-  constructor
-  · intro h t w hat t' ht
-    exact h t' w ⟨t, ht, hat⟩
-  · rintro h t w ⟨u, hut, hau⟩
-    exact h u w hau t hut
+    F.entails V a.Pst b ↔ F.entails V a (.G b) :=
+  forall_comm.trans <| .trans (forall_congr' fun w ↦ by
+    simpa [Pi.le_def] using Tense.diamond_past_box_future_gc (F.sat V a · w) (F.sat V b · w))
+    forall_comm
 
 end Temporal.TWFrame

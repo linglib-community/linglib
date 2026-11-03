@@ -8,6 +8,7 @@ module
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # T × W tense-modal logic: frames, language and satisfaction
@@ -87,18 +88,18 @@ namespace TWFrame
 
 variable {T : Type u} {World : Type v} {Atom : Type*} [Preorder T]
 
-open scoped ModalLogic in
+open scoped ModalLogic Denotes in
 /-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
-    `G`/`H`/`N`/`box` are the Kripke boxes `□` over, respectively, future precedence `<`, past
-    precedence `>`, historical equivalence `sim t`, and the universal relation — making the
+    `G`/`H`/`N`/`box` are the Kripke boxes `□` along, respectively, the relations of the future
+    and past tense cells, historical equivalence `sim t`, and the universal relation — making the
     object logic a multimodal Kripke logic by construction. -/
 def sat (F : TWFrame World T) (V : Atom → T → World → Prop) :
     OForm Atom → T → World → Prop
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
-  | .G a,     t, w => □[{(t, t') : T × T | t < t'}] (fun t' => F.sat V a t' w) t
-  | .H a,     t, w => □[{(t, t') : T × T | t' < t}] (fun t' => F.sat V a t' w) t
+  | .G a,     t, w => □[Tense.toSetRel ⟦Tense.future⟧] (fun t' => F.sat V a t' w) t
+  | .H a,     t, w => □[Tense.toSetRel ⟦Tense.past⟧] (fun t' => F.sat V a t' w) t
   | .N a,     t, w => □[F.alt t] (fun w' => F.sat V a t w') w
   | .box a,   t, w => □[.univ] (fun w' => F.sat V a t w') w
 

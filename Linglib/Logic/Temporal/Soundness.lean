@@ -230,7 +230,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
       let V' : Atom → T → World → Prop := fun p t'' w'' => if p = q then t < t'' else V p t'' w''
       have hbox : F.sat V' (OForm.and (.neg (.atom q)) (.G (.atom q))).box t w := by
         intro w' _; refine ⟨?_, fun t' ht' => ?_⟩ <;> simp only [sat_neg, sat_atom, V']
-        exacts [lt_irrefl t, ht']
+        exacts [lt_irrefl t, Tense.mem_toSetRel_future.1 ht']
       have hagree : ∀ p, a.mentions p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
         intro p hp tt ww
         have hpq : p ≠ q := fun e => hq (e ▸ hp)
