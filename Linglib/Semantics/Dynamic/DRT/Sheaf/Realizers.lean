@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Gluing
-public import Linglib.Semantics.Dynamic.DRS.Verification
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Gluing
+public import Linglib.Semantics.Dynamic.DRT.Verification.Total
 
 /-!
 # Realizers of basic DRSs
@@ -87,12 +87,12 @@ referents realizes the theory. -/
 theorem verifies_toDRS_iff {g : V → M} :
     VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ s.realizers M := by
   rw [verifiesTotal_iff, mem_realizers]
-  simp only [toDRS, DRS.conditions_mk, List.mem_map, Finset.mem_toList, forall_exists_index,
+  simp only [toDRS, List.mem_map, Finset.mem_toList, forall_exists_index,
     and_imp, forall_apply_eq_imp_iff₂]
   refine forall₂_congr fun l _ ↦ ?_
   rw [Literal.holds_comp_val_iff]
   unfold Literal.toCondition
-  cases l.pos <;> simp [Box.Extends, ← funext_iff]
+  cases l.pos <;> simp [DRS.Extends, ← funext_iff]
 
 theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ s.lits, l.pos) {g : V → M} :
     g ∘ Subtype.val ∈ s.realizers M ↔

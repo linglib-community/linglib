@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Basic
-public import Linglib.Semantics.Dynamic.DRS.Context
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Context
+public import Linglib.Semantics.Dynamic.DRT.Syntax
 public import Mathlib.CategoryTheory.Opposites
 public import Mathlib.Data.Finset.Sort
 

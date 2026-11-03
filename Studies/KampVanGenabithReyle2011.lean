@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.ContextChange
+public import Linglib.Semantics.Dynamic.DRT.ContextChange
 public import Mathlib.Data.Fin.VecNotation
 
 /-!

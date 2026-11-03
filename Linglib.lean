@@ -771,15 +771,6 @@ import Linglib.Semantics.Degree.Measure.Dimension
 import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Linglib.Semantics.Dynamic.DRS.Box
-import Linglib.Semantics.Dynamic.DRS.Context
-import Linglib.Semantics.Dynamic.DRS.Defs
-import Linglib.Semantics.Dynamic.DRS.Dynamics
-import Linglib.Semantics.Dynamic.DRS.Gluing
-import Linglib.Semantics.Dynamic.DRS.Presheaf
-import Linglib.Semantics.Dynamic.DRS.Reduction
-import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Dynamic.Possibility

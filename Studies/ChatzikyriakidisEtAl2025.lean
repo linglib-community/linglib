@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Core.ModelTheory.Atom
-public import Linglib.Semantics.Dynamic.DRS.Realizers
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Realizers
 public import Studies.Cooper2023
 
 /-!
