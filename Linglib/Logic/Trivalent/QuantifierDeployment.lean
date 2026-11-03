@@ -37,6 +37,8 @@ scope, then, a deployed determiner is a supervaluation over repairs.
 
 * `Trivalent.deployWith_unary`: deploying a unary function is the supervaluation over the repairs
   of its argument.
+* `Trivalent.forall_repairs_imp_iff`: a property of the repairs forces definedness on a domain
+  exactly when it never holds of both a set and the set with one more element of the domain.
 * `Trivalent.deployQuantifier_eq_supervaluationOn`, `Trivalent.deployQuantifier_ofProp`: a
   deployed quantifier is the supervaluation over the repairs of its argument, and the quantifier
   itself on a classical predicate.
@@ -137,6 +139,64 @@ theorem le_upperRepair_of_mem_repairs {A : U → SignType} {g : U → Bool} (hg 
   ext h
   simp only [mem_repairs, Set.mem_singleton_iff, funext_iff]
   exact forall_congr' fun u ↦ by cases g u <;> simp [ofProp]
+
+/-! ### Single steps
+
+A predicate undefined at a single point has two repairs, differing at that point, and any
+predicate undefined at a point has repairs true on its positive extension and on that extension
+with the point added. So whether a property of the repairs forces a predicate to be defined turns
+on single steps. -/
+
+section Step
+
+open Classical in
+/-- The predicate true on `B`, undefined at `a` and false elsewhere. -/
+private noncomputable def gapAt (B : Set U) (a : U) : U → SignType :=
+  fun x ↦ if x ∈ B then 1 else if x = a then 0 else -1
+
+/-- When `a ∉ B`, the repairs of `gapAt B a` are true on `B` or on `insert a B`. -/
+private theorem setOf_eq_of_mem_repairs_gapAt {B : Set U} {a : U} (ha : a ∉ B) {g : U → Bool}
+    (hg : g ∈ repairs (gapAt B a)) : {x | g x} = B ∨ {x | g x} = insert a B := by
+  classical
+  rw [mem_repairs] at hg
+  have hB : ∀ x, x ≠ a → (g x ↔ x ∈ B) := fun x hx ↦ by
+    have := hg x
+    by_cases hxB : x ∈ B <;> simp_all [gapAt]
+  cases hga : g a
+  · refine .inl (Set.ext fun x ↦ ?_)
+    by_cases hx : x = a
+    · subst hx; simp [hga, ha]
+    · exact hB x hx
+  · refine .inr (Set.ext fun x ↦ ?_)
+    by_cases hx : x = a
+    · subst hx; simp [hga]
+    · simp [hx, hB x hx]
+
+/-- Over a domain `R`, a property `P` of sets that holds of the repairs of a trivalent predicate
+only when the predicate is defined throughout `R` is one that never holds of both a set and the
+set with one more element of `R`. -/
+theorem forall_repairs_imp_iff (P : Set U → Prop) (R : Set U) :
+    (∀ A : U → SignType, (∀ g ∈ repairs A, P {a | g a}) → ∀ a ∈ R, A a ≠ 0) ↔
+      ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
+  classical
+  constructor
+  · rintro h B a haR haB ⟨hB, hB'⟩
+    refine h (gapAt B a) (fun g hg ↦ ?_) a haR (by simp [gapAt, haB])
+    rcases setOf_eq_of_mem_repairs_gapAt haB hg with e | e <;> rw [e] <;> assumption
+  · intro h A hA a haR hAa
+    have hlow := lowerRepair_mem_repairs A
+    have hstep : (fun x ↦ decide (A x = 1 ∨ x = a)) ∈ repairs A := by
+      rw [mem_repairs]
+      intro x
+      by_cases hx : x = a
+      · subst hx; simp [hAa]
+      · have := mem_repairs.1 hlow x
+        simpa [lowerRepair, hx] using this
+    refine h {x | A x = 1} a haR (by simp [hAa]) ⟨?_, ?_⟩
+    · simpa [lowerRepair] using hA _ hlow
+    · simpa [Set.insert_def, or_comm] using hA _ hstep
+
+end Step
 
 /-! ### Deployed quantifiers -/
 
