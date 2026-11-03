@@ -104,6 +104,7 @@ variable [Fintype W] [Fintype U] [MeasurableSingletonClass U] [Countable O]
 
 theorem isProbabilityMeasure_speaker_of_absolutelyContinuous (hα : 0 ≤ α)
     (hq : q ≪ speaker α C L b o) : IsProbabilityMeasure (speaker α C L b o) := by
+  rw [speaker_eq_ofWeights] at hq ⊢
   refine Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous (fun _ ↦ ?_) hq
   exact ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα
     (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _)) ENNReal.ofReal_ne_top
@@ -132,7 +133,9 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
     ring
   have key := toReal_klDiv_ofWeights_add_measureEntropy (μ := q) (i := o)
     (w := fun o u ↦ (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (exp (-(α * C u))))
-    (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top) hq
+    (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top)
+    (by rwa [speaker_eq_ofWeights] at hq)
+  rw [← speaker_eq_ofWeights] at key
   simp only [hterm, ← Finset.mul_sum] at key
   simp only [ENNReal.toReal_mul, ENNReal.toReal_ofReal (exp_pos _).le] at key
   rw [integral_fintype .of_finite]

@@ -266,12 +266,11 @@ instance : IsFiniteKernel (beliefAlignment φ μ α) :=
 
 variable {φ μ α}
 
-theorem beliefAlignment_eq_softmax_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
-    (hφ' : φ ≠ ∞) :
+theorem beliefAlignment_eq_softmax_klDiv [IsProbabilityMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞) :
     beliefAlignment φ μ α = Kernel.softmax fun syl c ↦
       α * -(klDiv (reasoner φ μ syl) (naive φ μ c) : EReal) := by
   have (us : List Sentence) := isProbabilityMeasure_listener (μ := μ) hφ hφ' us
-  rw [beliefAlignment, speaker_eq_softmax_klDiv hα.le]
+  rw [beliefAlignment, speaker_eq_softmax_klDiv]
   simp
 
 /-- As printed, the state-communication and belief-alignment speakers are one speaker. -/

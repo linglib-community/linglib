@@ -195,7 +195,7 @@ theorem agents_image (e : S ≃ S) (he : ∀ s, pr {e s} = pr {s}) (n : ℕ) :
       rfl
   | succ n ih =>
     refine ⟨fun s ↦ softmax_apply_eq fun m ↦ ?_, fun m s ↦ ?_⟩
-    · simp only [actionSpeakerScore, actionUtility_single, measureReal_def, ih.2]
+    · simp only [actionUtility_single, measureReal_def, ih.2]
     · exact listener_apply_singleton_of_equiv pr _ e he (fun t ↦ by rw [ih.1]) s
 
 -- §2.4.2: so the expected success of any speaker of the moved lexicon with any hearer of a moved

@@ -7,9 +7,10 @@ public import Linglib.Pragmatics.RSA.Basic
 # The speaker and the Kullback–Leibler divergence
 
 Goodman and Stuhlmüller's speaker scores an utterance by the expected log-probability its listener
-gives the state under her belief. That score and the negative Kullback–Leibler divergence of the
-listener from her belief differ by the entropy of the belief, which no utterance changes, so she is
-equally [the softmax of the negative divergence](##RSA.speaker_eq_softmax_klDiv), and at no cost
+gives the state under her belief. [That utility and the negative Kullback–Leibler divergence of the
+listener from her belief differ by the entropy of the belief](##RSA.utility_eq_neg_klDiv_sub), which
+no utterance changes, so she is equally
+[the softmax of the negative divergence](##RSA.speaker_eq_softmax_klDiv), and at no cost
 [prefers the utterance whose listener is closer to her
 belief](##RSA.speaker_zero_real_singleton_lt_iff_klDiv).
 
@@ -30,19 +31,24 @@ variable {W U O : Type*} [MeasurableSpace W] [Fintype W] [MeasurableSingletonCla
   [MeasurableSingletonClass O] {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W} {o : O}
   {u u' : U}
 
-theorem speaker_eq_softmax_klDiv [∀ o, IsProbabilityMeasure (b o)]
-    [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 ≤ α) :
-    speaker α C L b = Kernel.softmax fun o u ↦
-      α * -(klDiv (b o) (L u) : EReal) - ((α * C u : ℝ) : EReal) := by
-  rw [speaker, Kernel.ofWeights_rpow_mul_eq_softmax]
-  refine Kernel.softmax_eq_of_add (k := fun o ↦ α * -Hm[b o]) fun o u ↦ ?_
-  rw [geomMean_eq_exp_neg_lintegral_surprisal, EReal.log_exp,
+omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
+/-- The utility of an utterance is minus the divergence of its listener from the belief, less its
+cost and the entropy of the belief, which no utterance changes. -/
+theorem utility_eq_neg_klDiv_sub {β : Measure W} [IsProbabilityMeasure β]
+    [IsZeroOrProbabilityMeasure (L u)] :
+    utility C L β u = -(klDiv β (L u) : EReal) - (C u : EReal) - ((Hm[β] : ℝ) : EReal) := by
+  rw [utility, ← Measure.log_geomMean, geomMean_eq_exp_neg_lintegral_surprisal, EReal.log_exp,
     lintegral_surprisal_eq_ofReal_add_klDiv, EReal.coe_ennreal_add,
     EReal.neg_add (.inl (EReal.coe_ennreal_ne_bot _)) (.inr (EReal.coe_ennreal_ne_bot _)),
-    EReal.coe_ennreal_ofReal, max_eq_left (measureEntropy_nonneg _), sub_eq_add_neg,
-    ← EReal.coe_neg, EReal.left_distrib_of_nonneg_of_ne_top (EReal.coe_nonneg.2 hα) (EReal.coe_ne_top α),
-    ← EReal.coe_mul, EReal.coe_neg (α * C u), sub_eq_add_neg]
-  ac_rfl
+    EReal.coe_ennreal_ofReal, max_eq_left (measureEntropy_nonneg _)]
+  simp only [sub_eq_add_neg, add_comm, add_left_comm, add_assoc]
+
+theorem speaker_eq_softmax_klDiv [∀ o, IsProbabilityMeasure (b o)]
+    [∀ u, IsZeroOrProbabilityMeasure (L u)] :
+    speaker α C L b = Kernel.softmax fun o u ↦
+      α * (-(klDiv (b o) (L u) : EReal) - (C u : EReal)) :=
+  Kernel.softmax_eq_of_add (k := fun o ↦ -(α * Hm[b o])) fun o u ↦ by
+    rw [utility_eq_neg_klDiv_sub, EReal.coe_mul_sub_coe, sub_eq_add_neg, EReal.coe_neg]
 
 theorem speaker_zero_real_singleton_lt_iff_klDiv [IsProbabilityMeasure (b o)]
     [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 < α) :

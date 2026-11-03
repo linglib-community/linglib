@@ -97,14 +97,9 @@ theorem expectedReward_single [DecidableEq W] (L : Kernel U W) (u : U) (w : W) :
 variable [Fintype U] [DiscreteMeasurableSpace U] [Fintype A] [MeasurableSpace A]
   [DiscreteMeasurableSpace A]
 
-/-- The score of an action for the listener is rationality times expected reward. -/
-noncomputable def policyScore (β : ℝ) (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) :
-    EReal :=
-  ((β * expectedReward L R u a : ℝ) : EReal)
-
 /-- The listener's policy is the softmax of expected reward at rationality `β`. -/
 noncomputable def policy (β : ℝ) (L : Kernel U W) (R : A → W → ℝ) : Kernel U A :=
-  Kernel.softmax (policyScore β L R)
+  Kernel.softmax fun u a ↦ ((β * expectedReward L R u a : ℝ) : EReal)
 
 variable (β : ℝ) (L : Kernel U W) (R : A → W → ℝ)
 
@@ -141,9 +136,8 @@ difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (expectedReward L R u a - expectedReward L R u a')) := by
-  rw [policy, Kernel.softmax_real_singleton_of_pair (score := policyScore β L R) (w := u) haa'
-    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c),
-    policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
+  rw [policy, Kernel.softmax_real_singleton_of_pair haa' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _)
+    (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c), EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 
 theorem actionUtility_policy_eq_of_expectedReward_eq_add {L' : Kernel U W} {u' : U} {c : ℝ}
@@ -161,17 +155,12 @@ section Speaker
 variable {W M A : Type*} [MeasurableSpace W] [Countable W] [MeasurableSingletonClass W]
   [MeasurableSpace M] [Fintype M] [Fintype A] [MeasurableSpace A]
 
-/-- The speaker's score of an utterance is rationality times its utility, less its cost. -/
-noncomputable def actionSpeakerScore (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ)
-    (w : W) (m : M) : EReal :=
-  ((β * actionUtility π R m w - cost m : ℝ) : EReal)
-
 /-- The decision-theoretic speaker is the softmax of utility less cost at rationality `β`. The
 utility is the true reward of the listener's choice, linear in the listener's probabilities, where
 `RSA.speaker` scores an utterance by the logarithm of the listener's mass. -/
 noncomputable def actionSpeaker (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ) :
     Kernel W M :=
-  Kernel.softmax (actionSpeakerScore β cost π R)
+  Kernel.softmax fun w m ↦ ((β * actionUtility π R m w - cost m : ℝ) : EReal)
 
 variable (β : ℝ) (R : A → W → ℝ) (cost : M → ℝ) (π : Kernel M A)
 
@@ -192,18 +181,15 @@ theorem actionSpeaker_apply_singleton_ne_zero : actionSpeaker β cost π R w {m}
 theorem actionSpeaker_real_lt_iff :
     (actionSpeaker β cost π R w).real {m} < (actionSpeaker β cost π R w).real {m'} ↔
       β * actionUtility π R m w - cost m < β * actionUtility π R m' w - cost m' := by
-  rw [actionSpeaker, Kernel.softmax_real_singleton_lt_iff (score := actionSpeakerScore β cost π R)
-    (w := w) (fun _ ↦ EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, actionSpeakerScore,
-    actionSpeakerScore, EReal.coe_lt_coe_iff]
+  rw [actionSpeaker, Kernel.softmax_coe_real_singleton_lt_iff]
 
 /-- With two utterances, the speaker's share of one is the logistic function of the scaled
 difference in utility less the difference in cost. -/
 theorem actionSpeaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
     (actionSpeaker β cost π R w).real {m} =
       Real.sigmoid (β * (actionUtility π R m w - actionUtility π R m' w) - (cost m - cost m')) := by
-  rw [actionSpeaker, Kernel.softmax_real_singleton_of_pair (score := actionSpeakerScore β cost π R)
-    (w := w) hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _)
-    (fun c _ ↦ hall c), actionSpeakerScore, actionSpeakerScore, EReal.toReal_coe,
+  rw [actionSpeaker, Kernel.softmax_real_singleton_of_pair hmm' (EReal.coe_ne_bot _)
+    (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c), EReal.toReal_coe,
     EReal.toReal_coe]
   ring_nf
 
