@@ -1,0 +1,338 @@
+[
+  {
+    "id": "heinamaki1974_68",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (68)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Max stayed inside while the temperature was minus 40°.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "state"],
+      ["temporal", "state"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_69a",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (69)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue fixed the TV while Sam was planting sunflowers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "accomplishment"],
+      ["temporal", "activity"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_69b",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (69)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The telegram arrived while Sam was planting sunflowers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "achievement"],
+      ["temporal", "activity"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_70",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (70)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lucy was writing letters while Bill read the detective story.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "activity"],
+      ["temporal", "accomplishment"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_71",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (71)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Phil was running while he found an opossum on the road.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "activity"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_72",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 49 (72)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The car was waiting in the street while Bill opened the door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "while"],
+      ["main", "activity"],
+      ["temporal", "accomplishment"]
+    ],
+    "comment": "Good on the reading where opening the door takes time; odd where it is instantaneous.",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_86",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 53 (86)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "As long as Bill was ill he felt depressed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "as long as"],
+      ["main", "state"],
+      ["temporal", "state"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_87",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 53 (87)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "As long as the dog was running, the cat was running, too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "as long as"],
+      ["main", "activity"],
+      ["temporal", "activity"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_88",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 54 (88)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sam fixed the roof as long as he had nails.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "as long as"],
+      ["main", "accomplishment"],
+      ["temporal", "state"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_89",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 54 (89)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Max walked to work as long as the horse died.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "as long as"],
+      ["main", "activity"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "Printed as (98); the following text calls it (89).",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_1",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We enjoyed camping until mosquitoes showed up.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "state"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_2",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lydia looked for her teddy bear until she found it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "activity"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_3",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We waited until Mark washed the dishes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "activity"],
+      ["temporal", "accomplishment"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_4",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Claire kept telling funny stories until Paul was in a good mood.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "activity"],
+      ["temporal", "state"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_5",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John built a house until he ran out of bricks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "accomplishment"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "heinamaki1974_6",
+    "source": {"bibkey": "heinamaki-1974", "paperLabel": "p. 120 (6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We noticed the bat until it took off.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "until"],
+      ["main", "achievement"],
+      ["temporal", "achievement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

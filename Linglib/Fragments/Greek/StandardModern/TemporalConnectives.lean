@@ -27,24 +27,15 @@ open Tense
 
 /-- *prin* (πριν) 'before' takes a *na*-subjunctive complement, as in *efije prin na erthi o
 Janis* 'she left before Janis came'. -/
-def prin : Connective where
-  form := "prin"
-  relation := .before
-  mood := some .subjunctive
+def prin : Connective := { form := "prin", relation := .before }
 
 /-- *afou* (αφού) 'after' takes an indicative complement, as in *efije afou irthe o Janis* 'she
 left after Janis came'. -/
-def afou : Connective where
-  form := "afou"
-  relation := .after
-  mood := some .indicative
+def afou : Connective := { form := "afou", relation := .after }
 
 /-- *otan* (όταν) 'when' takes an indicative complement, as in *efije otan irthe o Janis* 'she
 left when Janis came'. -/
-def otan : Connective where
-  form := "otan"
-  relation := .when_
-  mood := some .indicative
+def otan : Connective := { form := "otan", relation := .when_ }
 
 /-- *mexri* (μέχρι) means 'until', as in *i prigipisa kimotane mexri ta mesanixta* 'the princess
 was sleeping until midnight'. -/

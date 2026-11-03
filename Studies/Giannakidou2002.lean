@@ -88,7 +88,7 @@ namespace Giannakidou2002
 
 open Event (τ)
 
-open Aspect Tense Karttunen1974 Heinamaki1974
+open Aspect Tense Karttunen1974
 open PolarityItem (LicensingContext)
 
 variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
@@ -189,12 +189,11 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     exact ht' ▸ hle
 
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
-    (h : eventiveUntil P w t) : ¬ before (τ '' {e | P w e}) t :=
-  fun ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ ↦
-    absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
+    (h : eventiveUntil P w t) : ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=
+  ((eventiveUntil_iff P w t).1 h).1
 
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
-    ¬ before (τ '' {e | P w e}) t :=
+    ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=
   fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he
 
 /-! ### The paper's sentences -/
@@ -210,8 +209,13 @@ midnight'. -/
 def paraMononEntry : Tense.Connective :=
   { form := Greek.StandardModern.PolarityItems.paraMonon.form, relation := .until_ }
 
+/-- The paper's connective entry lists Dutch *pas* 'only then' as an *until* word, as in *Marie kwam
+pas om 9 uur aan* 'Marie only arrived at nine'. -/
+def pasEntry : Tense.Connective :=
+  { form := Dutch.PolarityItems.pas.form, relation := .until_ }
+
 /-- `c.entry` is the connective entry of `c`, the fragment's, or the paper's own for *para
-monon*. -/
+monon* and *pas*. -/
 def Connective.entry : Connective → Tense.Connective
   | .until => English.TemporalConnectives.until_
   | .mexri => Greek.StandardModern.TemporalConnectives.mexri
@@ -220,7 +224,7 @@ def Connective.entry : Connective → Tense.Connective
   | .til => Icelandic.TemporalConnectives.thangadTil
   | .fyrrEn => Icelandic.TemporalConnectives.fyrrEn
   | .tot => Dutch.TemporalConnectives.tot
-  | .pas => Dutch.TemporalConnectives.pas
+  | .pas => pasEntry
 
 /-- `c.polarityItem` is the polarity item that the connective `c` is or doubles as, for the Greek,
 Icelandic and Dutch punctual *until* words, and English *until* in its eventive use. -/
