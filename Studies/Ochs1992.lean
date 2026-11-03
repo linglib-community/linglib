@@ -13,18 +13,15 @@ public import Linglib.Fragments.Japanese.Particles
 
 A speaker of some social identity takes up a social meaning, a stance, act or activity, at rates
 the norms of a community set, and a linguistic form realizes that meaning, so the use of a form
-across identities is a composition of Markov kernels. The relations of Ochs's model are the supports
-of those kernels: a form indexes an identity exactly when [it directly indexes a meaning that helps
-to constitute the identity](##indexes_comp), and [it indexes one identity exclusively only if its
-stance does](##ExclusivelyIndexes.comp_iff). Identities [differ in a form of a stance exactly as
-they differ in the stance](##ExclusivelyIndexes.comp_apply_lt_iff), and [in two forms of one stance
-by the same proportion](##ExclusivelyIndexes.comp_apply_mul_comm). A hearer [learns no more about a
-speaker from the form than from the stance](##blackwellDominates_comp), while a catalogue of
-correlations between forms and speakers [need not be mediated at
-all](##not_isGarblingOf_of_apply_eq). [The indirect indexes of two Japanese
-particles](##rows_figure_14_1) follow from one difference between men and women, [each cell of the
-comparison of caregivers](##rows_figure_14_3) is one difference between two communities, and [a
-later *maaloo* changes what a past activity has been](##credited_exchange).
+across identities is a composition of Markov kernels and the relations of Ochs's model are their
+supports. A form indexes an identity exactly when [it directly indexes a meaning that helps to
+constitute the identity](##indexes_comp), and [exclusively only if every such meaning points to that
+identity alone](##exclusivelyIndexes_comp_iff). Identities [differ in a form of one stance exactly
+as they differ in the stance](##ExclusivelyIndexes.comp_apply_lt_iff), and a hearer [learns no more
+about a speaker from the form than from the stance](##blackwellDominates_comp). [The indirect
+indexes of two Japanese particles](##rows_figure_14_1) follow from one difference between men and
+women, [each cell of the comparison of caregivers](##rows_figure_14_3) is one difference between two
+communities, and [a later *maaloo* changes what a past activity has been](##credited_exchange).
 
 ## Implementation notes
 
@@ -32,6 +29,11 @@ later *maaloo* changes what a past activity has been](##credited_exchange).
   no numbers, so the kernels are arbitrary and the comparisons it states are hypotheses.
 * The kernels run from identity to form, the direction of use. Indexing reads them backwards, as
   their support. A direct index of gender is mediation through the identity itself, `Kernel.id`.
+* The dashed arrows of Figure 14.2 are two-headed. A chain of kernels [through several
+  domains](##indexes_comp_comp) takes one direction at a time, since closing a symmetric relation
+  under transitivity would join the two voices through any stance open to both.
+* The chapter names the tag question (p. 340) but prints none, so it has no row and appears only in
+  a witness.
 * A strategy's orientation is who accommodates in the dyad of caregiver and child, the caregiver in
   a child-centered strategy, and the child in an other-centered one.
 * The comparison of rates reads the "little simplification" of Figure 14.3 and the "rarely" of
@@ -82,6 +84,12 @@ def Indexes (κ : Kernel A B) (f : B) (a : A) : Prop := κ a {f} ≠ 0
 presuppositional relation of pp. 339-340. -/
 def ExclusivelyIndexes (κ : Kernel A B) (f : B) (a : A) : Prop := ∀ a', Indexes κ f a' ↔ a' = a
 
+-- p. 340: the chapter's two senses of non-exclusive, that a form is used by both sexes and that it
+-- marks other social information as well, are this one fact at the two kernels.
+theorem not_exclusivelyIndexes_of_indexes {κ : Kernel A B} {f : B} {a a₁ a₂ : A} (hne : a₁ ≠ a₂)
+    (h₁ : Indexes κ f a₁) (h₂ : Indexes κ f a₂) : ¬ ExclusivelyIndexes κ f a := fun h ↦
+  hne (((h a₁).1 h₁).trans ((h a₂).1 h₂).symm)
+
 variable {I M F : Type*} [MeasurableSpace I] [MeasurableSpace M] [MeasurableSpace F]
   {η : Kernel M F} {κ : Kernel I M} {f f' : F} {m : M} {i i' : I}
 
@@ -109,21 +117,54 @@ constitute the identity: the solid and the dashed arrows of Figure 14.2 (pp. 342
 theorem indexes_comp (η : Kernel M F) (κ : Kernel I M) :
     Indexes (η ∘ₖ κ) = Relation.Comp (Indexes η) (Indexes κ) := by
   ext f i
-  simp only [Indexes, Relation.Comp, Kernel.comp_apply, Measure.comp_apply_singleton_ne_zero_iff]
-  exact ⟨fun ⟨m, h₁, h₂⟩ ↦ ⟨m, h₂, h₁⟩, fun ⟨m, h₁, h₂⟩ ↦ ⟨m, h₂, h₁⟩⟩
+  exact (Kernel.comp_apply_singleton_ne_zero_iff η κ).trans (exists_congr fun _ ↦ and_comm)
+
+-- p. 343: "particular social meanings may be constituted through other social meanings".
+theorem indexes_comp_comp {S : Type*} [MeasurableSpace S] [Fintype S] [MeasurableSingletonClass S]
+    (η : Kernel M F) (κ : Kernel S M) (σ : Kernel I S) :
+    Indexes (η ∘ₖ κ ∘ₖ σ) = Relation.Comp (Indexes η) (Relation.Comp (Indexes κ) (Indexes σ)) := by
+  rw [indexes_comp, indexes_comp, Relation.comp_assoc]
+
+/-- A form exclusively indexes an identity exactly when it indexes the identity and every meaning it
+directly indexes helps to constitute that identity alone, so a form used to convey anything open to
+both sexes does not pragmatically presuppose either (pp. 340-341). -/
+theorem exclusivelyIndexes_comp_iff :
+    ExclusivelyIndexes (η ∘ₖ κ) f i ↔
+      (∃ m, Indexes η f m ∧ Indexes κ m i) ∧
+        ∀ m, Indexes η f m → ∀ i', Indexes κ m i' → i' = i := by
+  simp only [ExclusivelyIndexes, indexes_comp, Relation.Comp]
+  exact ⟨fun h ↦ ⟨(h i).2 rfl, fun m hm i' hi' ↦ (h i').1 ⟨m, hm, hi'⟩⟩,
+    fun ⟨⟨m, hm, hi⟩, hall⟩ a' ↦ ⟨fun ⟨m', hm', ha'⟩ ↦ hall m' hm' a' ha', fun e ↦ e ▸ ⟨m, hm, hi⟩⟩⟩
 
 -- p. 340: a form associated with an identity through a meaning open to another is not exclusive.
 theorem not_exclusivelyIndexes_comp {i₁ i₂ : I} (hne : i₁ ≠ i₂) (hm : Indexes η f m)
-    (h₁ : Indexes κ m i₁) (h₂ : Indexes κ m i₂) : ¬ ExclusivelyIndexes (η ∘ₖ κ) f i := fun h ↦ by
-  have key {x} (hx : Indexes κ m x) : x = i :=
-    (h x).1 (by rw [indexes_comp]; exact ⟨m, hm, hx⟩)
-  exact hne ((key h₁).trans (key h₂).symm)
+    (h₁ : Indexes κ m i₁) (h₂ : Indexes κ m i₂) : ¬ ExclusivelyIndexes (η ∘ₖ κ) f i := fun h ↦
+  hne (((exclusivelyIndexes_comp_iff.1 h).2 m hm i₁ h₁).trans
+    ((exclusivelyIndexes_comp_iff.1 h).2 m hm i₂ h₂).symm)
+
+-- p. 340: a form with several meanings, such as a tag question, is used more by an identity that
+-- takes up each of them at least as often and one of them more often.
+theorem comp_apply_lt_of_forall_le [IsFiniteKernel η] [IsFiniteKernel κ]
+    (h : ∀ m, Indexes η f m → κ i {m} ≤ κ i' {m}) (hm : Indexes η f m) (hlt : κ i {m} < κ i' {m}) :
+    (η ∘ₖ κ) i {f} < (η ∘ₖ κ) i' {f} := by
+  classical
+  have hterm (m' : M) : κ i {m'} * η m' {f} ≤ κ i' {m'} * η m' {f} := by
+    by_cases hm' : η m' {f} = 0
+    · simp [hm']
+    · exact mul_le_mul' (h m' hm') le_rfl
+  rw [Kernel.comp_apply_singleton, Kernel.comp_apply_singleton,
+    ← Finset.add_sum_erase _ _ (Finset.mem_univ m),
+    ← Finset.add_sum_erase _ (fun m' ↦ κ i' {m'} * η m' {f}) (Finset.mem_univ m)]
+  exact ENNReal.add_lt_add_of_lt_of_le
+    (ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
+    ((ENNReal.mul_lt_mul_iff_left hm (measure_ne_top _ _)).2 hlt)
+    (Finset.sum_le_sum fun m' _ ↦ hterm m')
 
 namespace ExclusivelyIndexes
 
 theorem comp_apply (h : ExclusivelyIndexes η f m) (i : I) :
     (η ∘ₖ κ) i {f} = κ i {m} * η m {f} := by
-  rw [Kernel.comp_apply, Measure.comp_apply_singleton]
+  rw [Kernel.comp_apply_singleton]
   refine Finset.sum_eq_single m (fun m' _ hm' ↦ ?_) (by simp)
   rw [show η m' {f} = 0 from by_contra fun hne ↦ hm' ((h m').1 hne), mul_zero]
 
@@ -135,9 +176,7 @@ theorem indexes_comp_iff (h : ExclusivelyIndexes η f m) :
     Indexes (η ∘ₖ κ) f i ↔ Indexes κ m i := by
   simp [Indexes, h.comp_apply, show η m {f} ≠ 0 from (h m).2 rfl]
 
-/-- A form of one stance exclusively indexes an identity exactly when the stance does, so that a
-form used to convey a stance open to both sexes does not pragmatically presuppose either
-(pp. 340-341). -/
+-- pp. 340-341: a form of one stance exclusively indexes an identity exactly when the stance does.
 theorem comp_iff (h : ExclusivelyIndexes η f m) :
     ExclusivelyIndexes (η ∘ₖ κ) f i ↔ ExclusivelyIndexes κ m i :=
   forall_congr' fun _ ↦ by rw [h.indexes_comp_iff]
@@ -155,6 +194,13 @@ theorem comp_apply_mul_comm (h : ExclusivelyIndexes η f m) (h' : ExclusivelyInd
   ring
 
 end ExclusivelyIndexes
+
+-- p. 343: a difference in a stance reaches a form through an act the stance helps to constitute.
+example {S : Type*} [MeasurableSpace S] [Fintype S] [MeasurableSingletonClass S] [IsFiniteKernel η]
+    {ξ : Kernel S M} [IsFiniteKernel ξ] {σ : Kernel I S} {s : S} (h : ExclusivelyIndexes η f m)
+    (h' : ExclusivelyIndexes ξ m s) :
+    (η ∘ₖ ξ ∘ₖ σ) i {f} < (η ∘ₖ ξ ∘ₖ σ) i' {f} ↔ σ i {s} < σ i' {s} :=
+  (h.comp_iff.2 h').comp_apply_lt_iff
 
 end Model
 
@@ -309,28 +355,30 @@ inductive Party where
   | child
   deriving DecidableEq
 
-/-- The exchange of a praising strategy of Figure 14.3 over an activity of caregiver and child. -/
-def StructureDataset.Strategy.exchange : Strategy → List (Party × Party)
-  | .unidirectional => [(.caregiver, .child)]
-  | .bidirectional => [(.caregiver, .child), (.child, .caregiver)]
-  | _ => []
+/-- The exchange of praises over an activity of caregiver and child under an orientation: the
+caregiver praises the child, and under the other-centered orientation the child, expected to answer,
+praises the caregiver in turn (pp. 353-354). -/
+def StructureDataset.Orientation.exchange : Orientation → List (Party × Party)
+  | .childCentered => [(.caregiver, .child)]
+  | .otherCentered => [(.caregiver, .child), (.child, .caregiver)]
 
 /-- A caregiver's praise makes a past joint activity solely the child's accomplishment, and a second
 *maaloo*, said later, makes the same activity jointly accomplished, so that what the activity has
 been depends on talk that follows it (pp. 345, 353-354). -/
 theorem credited_exchange :
-    credited Strategy.unidirectional.exchange = {.child} ∧
-      Strategy.bidirectional.exchange =
-        Strategy.unidirectional.exchange ++ [(.child, .caregiver)] ∧
-      credited Strategy.bidirectional.exchange = Set.univ := by
-  refine ⟨?_, rfl, ?_⟩ <;> ext p <;> cases p <;> simp [credited, Strategy.exchange]
+    credited Orientation.childCentered.exchange = {.child} ∧
+      Orientation.otherCentered.exchange =
+        Orientation.childCentered.exchange ++ [(.child, .caregiver)] ∧
+      credited Orientation.otherCentered.exchange = Set.univ := by
+  refine ⟨?_, rfl, ?_⟩ <;> ext p <;> cases p <;> simp [credited, Orientation.exchange]
 
 -- pp. 347, 353-354: the praising row of Figure 14.3 from the exchanges: a caregiver is credited
 -- exactly under the other-centered strategy, which is exactly the bidirectional one.
 theorem rows_praising : ∀ r ∈ figure143, ∀ c ∈ r.praising,
-    (Bidirectional c.code.exchange ↔ c.code = .bidirectional) ∧
-      (.caregiver ∈ credited c.code.exchange ↔ c.code.orientation = .otherCentered) := by
-  simp [figure143, Bidirectional, credited, Strategy.exchange, Strategy.orientation]
+    (Bidirectional c.code.orientation.exchange ↔ c.code = .bidirectional) ∧
+      (.caregiver ∈ credited c.code.orientation.exchange ↔
+        c.code.orientation = .otherCentered) := by
+  simp [figure143, Bidirectional, credited, Orientation.exchange, Strategy.orientation]
   rintro _ _ (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp
 
 /-- The strategy a printed form of the chapter exemplifies. -/
@@ -437,6 +485,93 @@ example : ∀ r ∈ figure143, ∀ r' ∈ figure143, r ≠ r' → ∀ c ∈ r.st
       (strategyOf ∘ₖ orientationOf) r.language {c.code} := fun r hr r' hr' hne c hc ↦
   (rows_figure_14_3 strategyOf_exclusive hr hr' hne hc).2 (by
     simp [orientationOf, Kernel.deterministic_apply, Set.indicator, samoan, american])
+
+/-- The two meanings of a tag question (p. 340), and whatever else a speaker does. -/
+private inductive TagMeaning where
+  | hesitancy
+  | confirmationCheck
+  | other
+  deriving DecidableEq, Fintype
+
+private inductive TagForm where
+  | tagQuestion
+  | other
+  deriving DecidableEq
+
+private instance : MeasurableSpace TagMeaning := ⊤
+private instance : DiscreteMeasurableSpace TagMeaning := ⟨fun _ ↦ trivial⟩
+private instance : MeasurableSpace TagForm := ⊤
+private instance : DiscreteMeasurableSpace TagForm := ⟨fun _ ↦ trivial⟩
+
+/-- A tag question conveys either of its meanings. -/
+private noncomputable def tagOf : Kernel TagMeaning TagForm :=
+  Kernel.deterministic (fun m ↦ match m with | .other => .other | _ => .tagQuestion) .of_discrete
+
+private instance : IsMarkovKernel tagOf := by unfold tagOf; infer_instance
+
+private theorem tagOf_apply (m : TagMeaning) :
+    tagOf m {.tagQuestion} = if m = .other then 0 else 1 := by
+  cases m <;> simp [tagOf, Kernel.deterministic_apply, Set.indicator]
+
+private theorem sum_tagMeaning (g : TagMeaning → ℝ≥0∞) :
+    ∑ m, g m = g .hesitancy + g .confirmationCheck + g .other := by
+  rw [show (Finset.univ : Finset TagMeaning) = {.hesitancy, .confirmationCheck, .other} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_pair (by decide), add_assoc]
+
+-- The second sense of non-exclusive: a tag question exclusively indexes none of its meanings.
+example (m : TagMeaning) : ¬ ExclusivelyIndexes tagOf .tagQuestion m :=
+  not_exclusivelyIndexes_of_indexes (a₁ := .hesitancy) (a₂ := .confirmationCheck) (by decide)
+    (by simp [Indexes, tagOf_apply]) (by simp [Indexes, tagOf_apply])
+
+/-- Rates at which women take up hesitancy more and each gender confirmation checks alike. -/
+private noncomputable def tagRates : Kernel Gender TagMeaning :=
+  Kernel.ofWeights fun g m ↦ match g, m with
+    | .female, .hesitancy | .male, .other => 2
+    | _, _ => 1
+
+private instance : IsFiniteKernel tagRates := by unfold tagRates; infer_instance
+
+private theorem tagRates_apply (g : Gender) (m : TagMeaning) :
+    tagRates g {m} = (match g, m with
+      | .female, .hesitancy | .male, .other => 2
+      | _, _ => 1) / 4 := by
+  have h4 : (1 : ℝ≥0∞) + 1 + 2 = 4 := by norm_num
+  have h4' : (2 : ℝ≥0∞) + 1 + 1 = 4 := by norm_num
+  cases g <;> cases m <;>
+    simp only [tagRates, Kernel.ofWeights_apply_singleton, sum_tagMeaning, h4, h4']
+
+-- A difference in use follows from differences in the meanings taken together.
+example :
+    (tagOf ∘ₖ tagRates) .male {.tagQuestion} < (tagOf ∘ₖ tagRates) .female {.tagQuestion} := by
+  have hlt : (1 : ℝ≥0∞) / 4 < 2 / 4 :=
+    ENNReal.div_lt_div_right (by simp) (by simp) (by norm_num)
+  refine comp_apply_lt_of_forall_le (m := .hesitancy) (fun m hm ↦ ?_)
+    (by simp [Indexes, tagOf_apply]) (by simpa only [tagRates_apply] using hlt)
+  cases m with
+  | hesitancy => simpa only [tagRates_apply] using hlt.le
+  | confirmationCheck => simp only [tagRates_apply, le_refl]
+  | other => exact absurd (tagOf_apply .other) (by simpa [Indexes] using hm)
+
+/-- Rates at which women take up only hesitancy, and men confirmation checks and other things. -/
+private noncomputable def splitRates : Kernel Gender TagMeaning :=
+  Kernel.ofWeights fun g m ↦ match g, m with
+    | .female, .hesitancy | .male, .confirmationCheck | .male, .other => 1
+    | _, _ => 0
+
+-- But not conversely: women use the form more here though men take up one of its meanings more, so
+-- `ExclusivelyIndexes.comp_apply_lt_iff` needs its hypothesis.
+example : (tagOf ∘ₖ splitRates) .male {.tagQuestion} <
+      (tagOf ∘ₖ splitRates) .female {.tagQuestion} ∧
+    splitRates .female {.confirmationCheck} < splitRates .male {.confirmationCheck} := by
+  constructor
+  · norm_num [Kernel.comp_apply_singleton, sum_tagMeaning, tagOf_apply, splitRates,
+      Kernel.ofWeights_apply_singleton]
+  · simp [splitRates, Kernel.ofWeights_apply_singleton, sum_tagMeaning]
+
+-- Closing a symmetric relation under transitivity joins any two things related to a common third.
+example {α : Type*} {r : α → α → Prop} {m g₁ g₂ : α} (h₁ : r m g₁) (h₂ : r m g₂) :
+    Relation.EqvGen r g₁ g₂ :=
+  .trans _ _ _ (.symm _ _ (.rel _ _ h₁)) (.rel _ _ h₂)
 
 end Witnesses
 
