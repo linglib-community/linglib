@@ -224,7 +224,7 @@ def pluralities : Set E := {x | x ≠ ⊥ ∧ ¬ IsAtom x}
 
 theorem isUpperSet_pluralities : IsUpperSet (pluralities : Set E) :=
   fun _ _ hxy ⟨hx, hna⟩ ↦ ⟨fun h ↦ hx (le_bot_iff.1 (h ▸ hxy)),
-    fun hy ↦ hna ((hy.le_iff.1 hxy).resolve_left hx ▸ hy)⟩
+    fun hy ↦ hna ((hy.le_iff_eq hx).1 hxy ▸ hy)⟩
 
 -- (21), (25)
 theorem dom_hamblin_pluralities [Finite E] :
@@ -234,11 +234,11 @@ theorem dom_hamblin_pluralities [Finite E] :
     fun hw ↦ mem_biUnion hw self_mem_Ici⟩
 
 private theorem not_isAtom_sup (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) : ¬ IsAtom (a ⊔ b) :=
-  fun h ↦ Mereology.not_atom_sup_of_ne (Mereology.atom_iff_isAtom.2 ha)
-    (Mereology.atom_iff_isAtom.2 hb) hab (Mereology.atom_iff_isAtom.2 h)
+  fun h ↦ hab (((h.le_iff_eq ha.ne_bot).1 le_sup_left).trans
+    ((h.le_iff_eq hb.ne_bot).1 le_sup_right).symm)
 
 private theorem sup_ne_bot (ha : IsAtom a) : a ⊔ b ≠ ⊥ :=
-  fun h ↦ ha.ne_bot (le_bot_iff.1 (h ▸ le_sup_left))
+  fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
 
 theorem sup_mem_domain_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (n : Option Number) :
     a ⊔ b ∈ domain n ↔ n ≠ some .singular := by
@@ -331,7 +331,7 @@ variable [CompleteLattice E] {a b : E} {D s : Set E}
 
 private theorem eq_of_le_atom {x c : E} (hD : ⊥ ∉ D) (hx : x ∈ D) (hc : IsAtom c) (hxc : x ≤ c) :
     x = c :=
-  (hc.le_iff.1 hxc).resolve_left fun h ↦ hD (h ▸ hx)
+  (hc.le_iff_eq (ne_of_mem_of_not_mem hx hD)).1 hxc
 
 -- (34)–(36): the free choice disjunction answers the question in the scenario (59)
 theorem isLeast_supported_hamblin (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (haD : a ∈ D)
@@ -362,7 +362,8 @@ theorem Wh.freeChoice_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has :
   rw [isExhaustivelyResolvable_box_iff _ permits_singleton (x := s) (s := s) fun _ ↦ Iff.rfl]
   cases i with
   | individuals n =>
-    exact iff_of_false (not_isExhaustivelyResolvableOn_image_Ici hab ha hb (fun h ↦ h.2 rfl) has hbs)
+    exact iff_of_false
+      (not_isExhaustivelyResolvableOn_image_Ici hab ha hb (fun h ↦ h.2 rfl) has hbs)
       Bool.false_ne_true
   | quantifiers n =>
     exact iff_of_true ⟨_, isLeast_supported_hamblin ha hb hab (mem_domain_of_isAtom n ha)
