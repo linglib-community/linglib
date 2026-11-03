@@ -32,6 +32,10 @@ Usage, from the repository root:
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --claims ID,ID,...) --by GITHUB_HANDLE
 
+`status` fails when a check file is invalid or a claim is broken, so that CI catches a renamed or
+removed declaration. A stale claim does not fail it: a statement may change, and its sign-off then
+says so.
+
 Sign-offs are made by people. `sign` refuses to run inside an agent session (`CLAUDECODE`).
 """
 
@@ -253,7 +257,7 @@ def cmd_status(args):
             if status[r] == "unproved":
                 line += f"  ({info[r]['signoff']}; rests on " + ", ".join(info[r]["axioms"]) + ")"
             print(line)
-    return 1 if problems else 0
+    return 1 if problems or "broken" in status.values() else 0
 
 
 def cmd_core(args):

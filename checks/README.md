@@ -80,6 +80,9 @@ relies on are, so the core is closed: nothing in it depends for its meaning on a
 outside it. Its proofs may use declarations outside it, which need no review, and it is relative to
 the Mathlib that the project pins.
 
+CI runs `status`, which fails on an invalid file or a `broken` claim, so renaming or removing a
+declaration a claim names means updating its file in the same PR. A `stale` claim does not fail CI.
+
 The docs pages show, under each declaration stating a `checked`, `relies` or `stale` claim, who
 checked it and when, which claim it relies on, or that it has changed since; the docs workflow
 reads `checks.py status --json`.
