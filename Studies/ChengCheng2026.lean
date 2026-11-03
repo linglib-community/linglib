@@ -15,7 +15,7 @@ noun phrase.
 
 ## Implementation notes
 
-* Heads are parts of an interval partition of `Harley2017.Feature`. The paper's causative v is
+* Heads are parts of a partition of the `Harley2017.Feature`s. The paper's causative v is
   Harley's lower Caus, which Harley takes to be productive; the paper's (28) calls it lexical.
 * One linking hypothesis connects the tests to structure: a form separating *dǎ* from what
   follows it is acceptable iff the two do not share a complex head.
@@ -74,7 +74,7 @@ theorem subsetPrinciple_v (l r : List (Finset Feature)) :
   simp [RuleSet.applicable, vocabulary]
 
 /-- The exponents of the heads bearing Voice, the lower Caus and v, in that order. -/
-def topDown (P : IntervalPartition Feature) : List (Option Exponent) :=
+def topDown {s : Finset Feature} (P : Finpartition s) : List (Option Exponent) :=
   [.voice, .caus₁, .v].map fun f ↦ subsetPrinciple vocabulary (P.part f)
 
 /-- The exponents a datum lists, in surface order. -/
@@ -85,18 +85,23 @@ theorem exponents_ex_30 :
     ∀ d ∈ [Examples.ex_30a, Examples.ex_30b], exponents d = [.ba, .gei, .da] := by
   decide +kernel
 
-/-- An interval partition of v, the lower Caus and Voice realizes the exponents of (30) iff it is
-discrete. -/
-theorem topDown_eq_iff {P : IntervalPartition Feature} (hs : P.support = {.v, .caus₁, .voice})
+/-- A partition of v, the lower Caus and Voice realizes the exponents of (30) iff it is discrete. -/
+theorem topDown_eq_iff {P : Finpartition Harley2017.vCausVoice}
     {d : Datum} (hd : d ∈ [Examples.ex_30a, Examples.ex_30b]) :
-    topDown P = (exponents d).map some ↔ P = .discrete {.v, .caus₁, .voice} := by
+    topDown P = (exponents d).map some ↔ P = ⊥ := by
   rw [exponents_ex_30 d hd]
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · simp only [topDown, List.map_cons, List.map_nil, List.cons.injEq, and_true] at h
-    rw [← hs, IntervalPartition.eq_discrete_iff_injOn, hs]
-    intro x hx y hy hxy
-    simp at hx hy
-    grind
+    have hinj : Set.InjOn P.part Harley2017.vCausVoice := by
+      intro x hx y hy hxy
+      simp at hx hy
+      grind
+    refine le_bot_iff.1 fun b hb ↦ ?_
+    obtain ⟨x, hx⟩ := P.nonempty_of_mem_parts hb
+    refine ⟨{x}, Finpartition.mem_bot_iff.2 ⟨x, P.le hb hx, rfl⟩, fun y hy ↦ ?_⟩
+    rw [Finset.mem_singleton]
+    exact hinj (P.le hb hy) (P.le hb hx)
+      ((P.part_eq_of_mem hb hy).trans (P.part_eq_of_mem hb hx).symm)
   · subst h
     simp [topDown]
     decide
