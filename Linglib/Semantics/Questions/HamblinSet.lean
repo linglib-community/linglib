@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Data.Finset.SetFamily
-public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Set.Finite.Basic
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Resolution
 public import Linglib.Semantics.Questions.Partition.Inquisitive
@@ -51,9 +50,7 @@ operator on the members of `H` true at `w`:
   which holds where the member is the strongest true one (`mem_exh_iff_isStrongestTrueAnswer`),
   so that the presupposition holds throughout a set of worlds exactly when exhaustifying members
   gives each of their cells there (`forall_isExhaustivelyResolvable_iff_exh_inter`); a strongest
-  true member is never dominated (`not_dominated_of_isStrongestTrueAnswer`);
-- `F.toSetFamily`, a finite family of finite propositions, on which the
-  presuppositions are decidable.
+  true member is never dominated (`not_dominated_of_isStrongestTrueAnswer`).
 
 The presupposition holds exactly when the weak answer is itself a member
 (`isExhaustivelyResolvable_iff`), so Dayal's operator agrees with Heim's and
@@ -537,50 +534,6 @@ theorem isStrongestTrueAnswer_of_setOf_not_dominated (hH : H.Finite) {p : Set W}
   ⟨⟨h.1.1.1, h.1.2⟩, fun _ ⟨hq, hwq⟩ ↦
     let ⟨_, hm, hmd, hwm, hmq⟩ := Exhaustification.exists_mem_subset_not_dominated hH hq hwq
     (h.2 ⟨⟨hm, hmd⟩, hwm⟩).trans hmq⟩
-
-/-! ### Finite Hamblin sets
-
-A finite family of finite propositions is the carrier on which the
-presupposition is decidable; `Finset.toSetFamily` places it in the `Set (Set W)` API. -/
-
-section Finite
-
-theorem isExhaustivelyResolvable_toSetFamily_iff (F : Finset (Finset W)) (w : W) :
-    IsExhaustivelyResolvable F.toSetFamily w ↔ ∃ p ∈ F, w ∈ p ∧ ∀ q ∈ F, w ∈ q → p ⊆ q := by
-  constructor
-  · rintro ⟨p, ⟨hp, hw⟩, hmin⟩
-    obtain ⟨p', hp', rfl⟩ := Finset.mem_toSetFamily.1 hp
-    exact ⟨p', hp', hw, fun q hq hwq =>
-      Finset.coe_subset.1 (hmin ⟨Finset.mem_toSetFamily.2 ⟨q, hq, rfl⟩, hwq⟩)⟩
-  · rintro ⟨p, hp, hw, hmin⟩
-    refine ⟨↑p, ⟨Finset.mem_toSetFamily.2 ⟨p, hp, rfl⟩, hw⟩, ?_⟩
-    rintro q ⟨hq, hwq⟩
-    obtain ⟨q', hq', rfl⟩ := Finset.mem_toSetFamily.1 hq
-    exact Finset.coe_subset.2 (hmin q' hq' hwq)
-
-instance [DecidableEq W] (F : Finset (Finset W)) (w : W) :
-    Decidable (IsExhaustivelyResolvable F.toSetFamily w) :=
-  decidable_of_iff _ (isExhaustivelyResolvable_toSetFamily_iff F w).symm
-
-theorem isExhaustivelyResolvableOn_toSetFamily_iff (F : Finset (Finset W)) (s : Finset W) :
-    IsExhaustivelyResolvableOn F.toSetFamily ↑s ↔
-      ∃ p ∈ F, s ⊆ p ∧ ∀ q ∈ F, s ⊆ q → p ⊆ q := by
-  constructor
-  · rintro ⟨p, ⟨hp, hs⟩, hmin⟩
-    obtain ⟨p', hp', rfl⟩ := Finset.mem_toSetFamily.1 hp
-    exact ⟨p', hp', Finset.coe_subset.1 hs, fun q hq hsq =>
-      Finset.coe_subset.1 (hmin ⟨Finset.mem_toSetFamily.2 ⟨q, hq, rfl⟩, Finset.coe_subset.2 hsq⟩)⟩
-  · rintro ⟨p, hp, hs, hmin⟩
-    refine ⟨↑p, ⟨Finset.mem_toSetFamily.2 ⟨p, hp, rfl⟩, Finset.coe_subset.2 hs⟩, ?_⟩
-    rintro q ⟨hq, hsq⟩
-    obtain ⟨q', hq', rfl⟩ := Finset.mem_toSetFamily.1 hq
-    exact Finset.coe_subset.2 (hmin q' hq' (Finset.coe_subset.1 hsq))
-
-instance [DecidableEq W] (F : Finset (Finset W)) (s : Finset W) :
-    Decidable (IsExhaustivelyResolvableOn F.toSetFamily ↑s) :=
-  decidable_of_iff _ (isExhaustivelyResolvableOn_toSetFamily_iff F s).symm
-
-end Finite
 
 /-! ### Polar and declarative questions -/
 
