@@ -30,7 +30,7 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 ## Main definitions
 
 * `Morphology.Realization`: indices realized in context, with `IsLicensed`, `Realizes`,
-  `exponents`, `IsTotal` and `IsUnivalent`.
+  `exponents`, `IsTotal`, `IsUnivalent` and `IsCrossCategorial`.
 * `Morphology.IsConstantIn`, `Morphology.IsVariantIn`: constancy and variance of a contextual map
   at an index, which give `IsInvariant` and `IsSuppletive` for forms and `IsIntrinsic` and
   `IsAllosemous` for readings.
@@ -72,6 +72,7 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 * [lohndal-2020]
 * [blevins-2016]
 * [arad-2005]
+* [gouskova-bobaljik-2020]
 -/
 
 @[expose] public section
@@ -94,6 +95,10 @@ theorem not_isConstantIn_of_isVariantIn {g : R → Ctx → Finset X} {r : R}
     (h : IsVariantIn g r) : ¬ IsConstantIn g r := by
   obtain ⟨c, c', x, hx, x', hx', hne⟩ := h
   exact fun hc => hne (hc x hx x' hx')
+
+theorem isConstantIn_iff_not_isVariantIn {g : R → Ctx → Finset X} {r : R} :
+    IsConstantIn g r ↔ ¬ IsVariantIn g r := by
+  simp only [IsConstantIn, IsVariantIn, not_exists, not_and, not_not]
 
 theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
     IsConstantIn g r ↔ {x | ∃ c, x ∈ g r c}.Subsingleton := by
@@ -141,7 +146,9 @@ def IsInvariant (r : R) : Prop := IsConstantIn S.realize r
 
 /-- `IsSuppletive r` says `r` has two distinct forms, in contexts that need not
 differ, as √GO has *go* and *went*, the case behind [harley-2014]'s argument
-that indices, not forms, individuate. -/
+that indices, not forms, individuate. When the forms are competing Vocabulary
+Items this is suppletive allomorphy, of a root or of an affix alike
+([gouskova-bobaljik-2020]). -/
 def IsSuppletive (r : R) : Prop := IsVariantIn S.realize r
 
 theorem not_isInvariant_of_isSuppletive {r : R} (h : S.IsSuppletive r) :
@@ -191,6 +198,11 @@ def RealizeEq (r r' : R) : Prop := ∀ c, S.realize r c = S.realize r' c
 theorem RealizeEq.symm {r r' : R} (h : S.RealizeEq r r') :
     S.RealizeEq r' r := fun c => (h c).symm
 
+/-- `r` is **cross-categorial** when it is licensed in two contexts whose categories `k` differ,
+as a category-free root is ([marantz-1997], [arad-2005]). -/
+def IsCrossCategorial {K : Type*} (k : Ctx → K) (r : R) : Prop :=
+  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
+
 /-- `IsHomophonous r r'` says the distinct indices `r` and `r'` share every
 realization, as *bank₁* and *bank₂* do; spellout is nowhere required to be
 injective. -/
@@ -227,6 +239,10 @@ instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
 
 instance (r r' : R) : Decidable (S.RealizeEq r r') :=
   inferInstanceAs (Decidable (∀ c : Ctx, S.realize r c = S.realize r' c))
+
+instance {K : Type*} [DecidableEq K] (k : Ctx → K) (r : R) :
+    Decidable (S.IsCrossCategorial k r) :=
+  inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
 
 instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -415,6 +431,9 @@ end Hom
 equal realization and interpretation profiles. -/
 def ProfileEq (r r' : R) : Prop :=
   (∀ c, S.realize r c = S.realize r' c) ∧ (∀ c, S.interp r c = S.interp r' c)
+
+instance [Fintype Ctx] [DecidableEq F] [DecidableEq M] (r r' : R) : Decidable (S.ProfileEq r r') :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `profileSetoid` is profile equality as a setoid. -/
 def profileSetoid : Setoid R where
