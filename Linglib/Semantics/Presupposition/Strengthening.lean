@@ -14,7 +14,8 @@ presuppositions. Heim's Maximize Presupposition, as Schlenker states it, compare
 satisfied in a context: an expression must be [a strongest alternative defined
 there](##Presupposition.minimalFor_preimage_Ici_iff). [Strengthening is that condition at one-point
 contexts](##Presupposition.mem_strengthen_iff_minimalFor_singleton), its form after Chemla's
-epistemic step.
+epistemic step, and the condition is [strengthening through a knowledge
+operator](##Presupposition.mem_strengthen_Iic_iff).
 
 ## References
 
@@ -70,6 +71,19 @@ theorem mem_strengthen_iff_minimalFor_singleton :
   exact and_congr_right fun _ ↦
     ⟨fun h ψ hψ hss hw ↦ h ψ hψ (Set.singleton_subset_iff.1 hw) hss,
       fun h ψ hψ hw hss ↦ h ψ hψ hss (Set.singleton_subset_iff.2 hw)⟩
+
+/-- Through a knowledge operator, whose presupposition holds of the information states that
+support it, strengthening is the condition at a context: the operand is defined there and no
+strictly stronger alternative is. -/
+theorem mem_strengthen_Iic_iff :
+    c ∈ strengthen alts (fun ψ ↦ Set.Iic (content ψ)) φ ↔
+      c ⊆ content φ ∧ ∀ ψ ∈ alts φ, content ψ ⊂ content φ → ¬ c ⊆ content ψ := by
+  have key {p q : Set W} : Set.Iic p ⊂ Set.Iic q ↔ p ⊂ q :=
+    ⟨fun h ↦ ⟨h.subset (le_refl p), fun hqp ↦ h.not_subset fun _ hr ↦ le_trans hr hqp⟩,
+      fun h ↦ ⟨fun _ hr ↦ le_trans hr h.subset, fun hqp ↦ h.not_subset (hqp (le_refl q))⟩⟩
+  rw [mem_strengthen_iff]
+  exact and_congr_right fun _ ↦ ⟨fun h ψ hψ hss hc ↦ h ψ hψ hc (key.2 hss),
+    fun h ψ hψ hc hss ↦ h ψ hψ (key.1 hss) hc⟩
 
 theorem strengthen_eq_self (h : ∀ ψ ∈ alts φ, ¬ content ψ ⊂ content φ) :
     strengthen alts content φ = content φ :=
