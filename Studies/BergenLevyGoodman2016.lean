@@ -20,9 +20,9 @@ Speech Act model cannot pair them with meanings: [two utterances its literal lis
 are read alike at every level of the recursion](##iterate_round_short_eq_long), whatever their
 costs. Under lexical uncertainty the speaker uses one of the lexica that refine each utterance's
 meaning, and the listener, unsure which, inverts the speaker of each.
-[She then finds the rare meaning likelier after the costly utterance than after the cheap one](##L1_fst_rare_lt), and so
-associates each form with the meaning of its markedness, [the pairs weak bidirection takes to be
-super-optimal](##setOf_associates_eq_superoptimalSet).
+[She then finds the rare meaning likelier after the costly utterance than after the cheap
+one](##L1_fst_rare_lt), and so associates each form with the meaning of its markedness, [the pairs
+weak bidirection takes to be super-optimal](##setOf_associates_eq_superoptimalSet).
 
 ## Implementation notes
 
