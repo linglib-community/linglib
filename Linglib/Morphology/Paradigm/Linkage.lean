@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Inflection
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Prod
@@ -29,6 +30,8 @@ takes the lexeme's root.
 * `Linkage.ofFun`, `Linkage.canonical`: the linkage of a stem-choice function.
 * `Linkage.ofRules`: the linkage of rules of paradigm linkage, each cell taking the stem its
   lexeme's rules realize over the lexeme's root.
+* `Linkage.toInflectionalParadigm`: the inflectional paradigm of a linkage's form
+  correspondents.
 
 ## Main results
 
@@ -269,6 +272,39 @@ theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : S} (h : ℓ.corr l
   rw [realized_eq_image_corr, realized_eq_image_corr, h]
 
 end Realized
+
+/-! ### The inflectional paradigm of a linkage -/
+
+/-- The inflectional paradigm of a linkage with realization rules `rf` builds the forms of each
+content cell from its form correspondents. -/
+def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W := ⟨⟨ℓ.corr⟩, rf⟩
+
+section ToInflectionalParadigm
+
+variable (rf : Z → M → W)
+
+/-- The stems of a linkage's inflectional paradigm are the stems it selects. -/
+theorem toInflectionalParadigm_stem [DecidableEq Z] :
+    (ℓ.toInflectionalParadigm rf).stem = ℓ.toRealization := by
+  show (⟨fun l σ ↦ (ℓ.corr l σ).image Prod.fst⟩ : Realization L S Z) = ⟨ℓ.realize⟩
+  congr 1
+  funext l σ
+  ext z
+  simp
+
+/-- A linkage is stem-invariant exactly when its inflectional paradigm's stems are invariant, the
+lexical row of canonical inflection. -/
+theorem isStemInvariant_iff_stem_isInvariant [DecidableEq Z] :
+    ℓ.IsStemInvariant ↔ ∀ l, (ℓ.toInflectionalParadigm rf).stem.IsInvariant l := by
+  rw [toInflectionalParadigm_stem]; rfl
+
+theorem toInflectionalParadigm_realization_realize [DecidableEq W] (l : L) (σ : S) :
+    (ℓ.toInflectionalParadigm rf).realization.realize l σ =
+      (ℓ.realize l σ).image fun z ↦ rf z (ℓ.pm l σ) := by
+  ext w
+  simp [InflectionalParadigm.realization, toInflectionalParadigm]
+
+end ToInflectionalParadigm
 
 /-! ### Linkages of stem-choice functions -/
 

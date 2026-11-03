@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Morphology.Paradigm.Canonical
+public import Linglib.Morphology.Inflection
 public import Linglib.Morphology.Paradigm.Function
 public import Studies.Stump2006
 public import Mathlib.Tactic.DeriveFintype
@@ -281,31 +281,29 @@ def turkishParts :
     Realization TurkishNoun (Turkish.Case × TurkishNumber) (List Segment × List Suffix) :=
   ⟨fun l c ↦ {(l.stem, suffixes c)}⟩
 
-/-- The underlying forms of the two nouns, the stem with the suffixes attached. -/
-def turkish : Realization TurkishNoun (Turkish.Case × TurkishNumber) (List Segment) :=
-  turkishParts.map (Function.uncurry underlying)
-
-/-- The analysis of the forms into stems and suffixes. -/
-def turkishAnalysis : turkish.Analysis (List Segment) (List Suffix) :=
-  ⟨turkishParts, underlying, fun _ _ ↦ rfl⟩
+/-- The inflectional paradigm of the two nouns, each underlying form the stem with the cell's
+suffixes attached. -/
+def turkish : InflectionalParadigm TurkishNoun (Turkish.Case × TurkishNumber) (List Segment)
+    (List Suffix) (List Segment) :=
+  ⟨turkishParts, underlying⟩
 
 /-- ADAM and TAVAN inflect canonically, each with one stem across its cells, with distinct stems,
 distinct suffixes in distinct cells and the same suffixes in corresponding cells (Tables 2.1 to
 2.3). -/
-theorem turkish_isCanonical : turkishAnalysis.IsCanonical where
+theorem turkish_isCanonical : turkish.IsCanonical where
   isTotal := by decide
   isUnivalent := by decide
   stem_isInvariant := by decide
   stem_disjoint := (by decide : ∀ c l l', l ≠ l' →
-    Disjoint (turkishAnalysis.stem.realize l c) (turkishAnalysis.stem.realize l' c))
+    Disjoint (turkish.stem.realize l c) (turkish.stem.realize l' c))
   inflection_disjoint := (by decide : ∀ l c c', c ≠ c' →
-    Disjoint (turkishAnalysis.inflection.realize l c) (turkishAnalysis.inflection.realize l c'))
+    Disjoint (turkish.inflection.realize l c) (turkish.inflection.realize l c'))
   inflection_isInvariant := by decide
 
 -- p. 32
 theorem turkish_realize_disjoint :
-    (∀ l, Pairwise (Disjoint on turkish.realize l)) ∧
-      ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realize l c) :=
+    (∀ l, Pairwise (Disjoint on turkish.realization.realize l)) ∧
+      ∀ c, Pairwise (Disjoint on fun l ↦ turkish.realization.realize l c) :=
   turkish_isCanonical.realize_disjoint (by decide)
 
 /-- The genitive suffix -(n)In is the same after ADAM and after EV 'house', but vowel harmony

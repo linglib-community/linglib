@@ -9,24 +9,25 @@ public import Linglib.Morphology.Realization
 public import Mathlib.Data.Set.Function
 
 /-!
-# Canonical inflection
+# Inflectional paradigms
 
-Corbett defines canonical inflection by comparing the forms of a paradigm. Across the cells of a
-lexeme the lexical material, the stem, stays the same while the inflectional material differs,
-and across lexemes at one cell the stems differ while the inflectional material stays the same.
-An analysis of a realization of lexemes over cells gives each form the stem and inflectional
-material it is built from by one morphotactics, and canonical inflection is the four comparisons
-with every cell realized by exactly one form. When forms decompose uniquely, [the comparisons
-entail that every cell has its own form](##IsCanonical.realize_disjoint), as Stump observes, and a
-canonical analysis has [neither a suppletive stem nor a suppletive
+An inflectional paradigm builds the forms of each lexeme at each cell from a stem, its lexical
+material, and inflectional material, joined by one morphotactics. Corbett defines canonical
+inflection by comparing them: across the cells of a lexeme the stem stays the same while the
+inflectional material differs, and across lexemes at one cell the stems differ while the
+inflectional material stays the same. A canonical paradigm satisfies the four comparisons and
+realizes every cell by exactly one form. When forms decompose uniquely, [the comparisons entail
+that every cell has its own form](##IsCanonical.realize_disjoint), as Stump observes, and a
+canonical paradigm has [neither a suppletive stem nor a suppletive
 affix](##IsCanonical.not_isSuppletive).
 
 ## Implementation notes
 
 The morphotactics is one function for every cell and lexeme, so Corbett's first row, the same
-composition throughout, holds by construction. A theory supplies the analysis: Distributed
-Morphology the exponents of a root and of the head beside it, Paradigm Function Morphology the
-stems and the property sets the realization rules spell out.
+composition throughout, holds by construction. Theories supply the paradigm: Distributed
+Morphology the exponents of a root and of the head beside it, Paradigm Function Morphology a
+linkage's form correspondents and its realization rules. Two paradigms analyse the same forms
+when their realizations are equal.
 
 ## References
 
@@ -36,25 +37,24 @@ stems and the property sets the realization rules spell out.
 
 @[expose] public section
 
-namespace Morphology.Realization
+namespace Morphology
 
 open Function
 
-variable {L C F Z I : Type*} [DecidableEq F]
-
-/-- An **analysis** of a realization of lexemes over cells gives each form of a cell the stem and
-inflectional material it is built from by the morphotactics `compose`. -/
-structure Analysis (W : Realization L C F) (Z I : Type*) where
+/-- An **inflectional paradigm** builds the forms of each lexeme at each cell from pairs of a stem
+and inflectional material, joined by the morphotactics `compose`. -/
+structure InflectionalParadigm (L C Z I F : Type*) where
   /-- The pairs of a stem and inflectional material that build the forms of each cell. -/
   parts : Realization L C (Z × I)
   /-- The morphotactics joining a stem and inflectional material into a form. -/
   compose : Z → I → F
-  /-- The forms of each cell are those the morphotactics builds from its pairs. -/
-  realize_eq : ∀ l c, W.realize l c = (parts.realize l c).image (uncurry compose)
 
-namespace Analysis
+namespace InflectionalParadigm
 
-variable {W : Realization L C F} (P : W.Analysis Z I)
+variable {L C Z I F : Type*} (P : InflectionalParadigm L C Z I F)
+
+/-- The forms of each cell, the morphotactics applied to its pairs. -/
+def realization [DecidableEq F] : Realization L C F := P.parts.map (uncurry P.compose)
 
 section Rows
 
@@ -68,8 +68,8 @@ def inflection : Realization L C I := P.parts.map Prod.snd
 
 end Rows
 
-/-- An analysis is **unambiguous** when its morphotactics builds distinct forms from distinct pairs
-of the analysis. -/
+/-- A paradigm is **unambiguous** when its morphotactics builds distinct forms from distinct pairs
+of the paradigm. -/
 def IsUnambiguous : Prop := Set.InjOn (uncurry P.compose) {x | ∃ l c, x ∈ P.parts.realize l c}
 
 theorem isUnambiguous_iff : P.IsUnambiguous ↔ ∀ l c, ∀ x ∈ P.parts.realize l c, ∀ l' c',
@@ -77,23 +77,24 @@ theorem isUnambiguous_iff : P.IsUnambiguous ↔ ∀ l c, ∀ x ∈ P.parts.reali
   ⟨fun h _ _ _ hx _ _ _ hy he ↦ h ⟨_, _, hx⟩ ⟨_, _, hy⟩ he,
     fun h _ ⟨_, _, hx⟩ _ ⟨_, _, hy⟩ he ↦ h _ _ _ hx _ _ _ hy he⟩
 
-instance [Fintype L] [Fintype C] [DecidableEq Z] [DecidableEq I] :
+instance [Fintype L] [Fintype C] [DecidableEq Z] [DecidableEq I] [DecidableEq F] :
     Decidable P.IsUnambiguous :=
   decidable_of_iff _ P.isUnambiguous_iff.symm
 
 theorem IsUnambiguous.of_injective2 (hc : Injective2 P.compose) : P.IsUnambiguous :=
   fun _ _ _ _ h ↦ Prod.ext (hc h).1 (hc h).2
 
-variable [DecidableEq Z] [DecidableEq I]
+variable [DecidableEq F] [DecidableEq Z] [DecidableEq I]
 
-/-- **Canonical inflection** ([corbett-2007], [stump-2016]): every cell has exactly one form, the
-stems of a lexeme are the same across its cells and differ between lexemes, and the inflectional
-material of a cell differs between the cells of a lexeme and is the same across lexemes. -/
+/-- A **canonical inflectional paradigm** ([corbett-2007], [stump-2016]) realizes every cell by
+exactly one form, keeps a lexeme's stems the same across its cells and distinct between lexemes,
+and keeps a cell's inflectional material distinct between the cells of a lexeme and the same
+across lexemes. -/
 structure IsCanonical : Prop where
   /-- Every cell of every lexeme has a form. -/
-  isTotal : W.IsTotal
+  isTotal : P.realization.IsTotal
   /-- No cell has more than one form. -/
-  isUnivalent : W.IsUnivalent
+  isUnivalent : P.realization.IsUnivalent
   /-- Each lexeme's stems are the same across its cells. -/
   stem_isInvariant : ∀ l, P.stem.IsInvariant l
   /-- Distinct lexemes have disjoint stems at each cell. -/
@@ -106,30 +107,29 @@ structure IsCanonical : Prop where
 variable {P}
 
 omit [DecidableEq Z] [DecidableEq I] in
-/-- A form shared by two cells of an unambiguous analysis comes from a pair of both cells. -/
-theorem exists_mem_of_mem_realize (hP : P.IsUnambiguous) {l l' : L} {c c' : C} {w : F}
-    (hw : w ∈ W.realize l c) (hw' : w ∈ W.realize l' c') :
+/-- A form shared by two cells of an unambiguous paradigm comes from a pair of both cells. -/
+theorem exists_mem_of_mem_realization (hP : P.IsUnambiguous) {l l' : L} {c c' : C} {w : F}
+    (hw : w ∈ P.realization.realize l c) (hw' : w ∈ P.realization.realize l' c') :
     ∃ x ∈ P.parts.realize l c, x ∈ P.parts.realize l' c' := by
-  rw [P.realize_eq] at hw hw'
   obtain ⟨x, hx, rfl⟩ := Finset.mem_image.1 hw
   obtain ⟨y, hy, he⟩ := Finset.mem_image.1 hw'
   exact ⟨x, hx, hP ⟨_, _, hy⟩ ⟨_, _, hx⟩ he ▸ hy⟩
 
-/-- In an unambiguous canonical analysis the distinct cells of a lexeme have distinct forms, and
+/-- In an unambiguous canonical paradigm the distinct cells of a lexeme have distinct forms, and
 so do corresponding cells of distinct lexemes, Corbett's comparison of outcomes. -/
 theorem IsCanonical.realize_disjoint (h : P.IsCanonical) (hP : P.IsUnambiguous) :
-    (∀ l, Pairwise (Disjoint on W.realize l)) ∧
-      ∀ c, Pairwise (Disjoint on fun l ↦ W.realize l c) := by
+    (∀ l, Pairwise (Disjoint on P.realization.realize l)) ∧
+      ∀ c, Pairwise (Disjoint on fun l ↦ P.realization.realize l c) := by
   refine ⟨fun l c c' hcc ↦ Finset.disjoint_left.2 fun w hw hw' ↦ ?_,
     fun c l l' hll ↦ Finset.disjoint_left.2 fun w hw hw' ↦ ?_⟩
-  · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realize hP hw hw'
+  · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realization hP hw hw'
     exact Finset.disjoint_left.1 (h.inflection_disjoint l hcc)
       (Finset.mem_image_of_mem Prod.snd hx) (Finset.mem_image_of_mem Prod.snd hx')
-  · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realize hP hw hw'
+  · obtain ⟨x, hx, hx'⟩ := exists_mem_of_mem_realization hP hw hw'
     exact Finset.disjoint_left.1 (h.stem_disjoint c hll)
       (Finset.mem_image_of_mem Prod.fst hx) (Finset.mem_image_of_mem Prod.fst hx')
 
-/-- A canonical analysis has no suppletive stem, and no cell whose inflectional material is
+/-- A canonical paradigm has no suppletive stem, and no cell whose inflectional material is
 suppletive across lexemes. -/
 theorem IsCanonical.not_isSuppletive (h : P.IsCanonical) :
     (∀ l, ¬ P.stem.IsSuppletive l) ∧ ∀ c, ¬ P.inflection.transpose.IsSuppletive c :=
@@ -137,6 +137,6 @@ theorem IsCanonical.not_isSuppletive (h : P.IsCanonical) :
     fun c hs ↦ P.inflection.transpose.not_isInvariant_of_isSuppletive hs
       (h.inflection_isInvariant c)⟩
 
-end Analysis
+end InflectionalParadigm
 
-end Morphology.Realization
+end Morphology

@@ -8,7 +8,7 @@ module
 public import Linglib.Fragments.English.Inflection
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Paradigm.Canonical
+public import Linglib.Morphology.Inflection
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.Root.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -29,10 +29,11 @@ not](##Bloomfield1933.suppletion).
 ## Implementation notes
 
 The words of the suppletion examples are spelled out by Vocabulary Insertion, a root and the head
-of its secondary derivation each by its own items, and analysed into stems and inflectional
-material (`Morphology.Realization.Analysis`). Suppletion of an underlying form is variance of a
-lexeme's stems across its cells, and suppletion of a bound form variance of a cell's inflectional
-material across lexemes. An exponent is a list of morphs, the zero alternant the empty one.
+of its secondary derivation each by its own items, into an inflectional paradigm of stems and
+inflectional material (`Morphology.InflectionalParadigm`). Suppletion of an underlying form is
+variance of a lexeme's stems across its cells, and suppletion of a bound form variance of a cell's
+inflectional material across lexemes. An exponent is a list of morphs, the zero alternant the
+empty one.
 
 ## TODO
 
@@ -191,11 +192,10 @@ def parts : Realization Lexeme Cell (List Morph × List Morph) :=
     (Option.map₂ Prod.mk (subsetPrinciple vocabulary (rootSite l c)) (headExponent l c)).toFinset
     else ∅⟩
 
-/-- The words, each a stem followed by its inflectional material. -/
-def english : Realization Lexeme Cell (List Morph) := parts.map (Function.uncurry (· ++ ·))
-
-/-- The analysis of the words into stems and inflectional material. -/
-def analysis : english.Analysis (List Morph) (List Morph) := ⟨parts, (· ++ ·), fun _ _ ↦ rfl⟩
+/-- The inflectional paradigm of the examples, each word a stem followed by its inflectional
+material. -/
+def english : InflectionalParadigm Lexeme Cell (List Morph) (List Morph) (List Morph) :=
+  ⟨parts, (· ++ ·)⟩
 
 open DistributedMorphology in
 /-- The word of `l` in the cell `c`, the root's exponent followed by the head's. -/
@@ -203,8 +203,8 @@ def word (l : Lexeme) (c : Cell) : List Morph :=
   (subsetPrinciple vocabulary (rootSite l c)).getD [] ++ (headExponent l c).getD []
 
 theorem english_realize_eq :
-    ∀ l, english.realize l .plain = {word l .plain} ∧
-      english.realize l l.derived = {word l l.derived} := by
+    ∀ l, english.realization.realize l .plain = {word l .plain} ∧
+      english.realization.realize l l.derived = {word l l.derived} := by
   decide
 
 -- §13.4, §13.7
@@ -218,19 +218,19 @@ theorem derived_words :
 *kind* and *ox* keep theirs, and the plural has the suppletive alternant *-en* after *ox*, while
 the comparative keeps *-er* (§13.7). -/
 theorem suppletion :
-    analysis.stem.IsSuppletive .good ∧ analysis.stem.IsSuppletive .go ∧
-      analysis.stem.IsInvariant .kind ∧ analysis.stem.IsInvariant .ox ∧
-      analysis.inflection.transpose.IsSuppletive .pl ∧
-      analysis.inflection.transpose.IsInvariant .cmpr := by
+    english.stem.IsSuppletive .good ∧ english.stem.IsSuppletive .go ∧
+      english.stem.IsInvariant .kind ∧ english.stem.IsInvariant .ox ∧
+      english.inflection.transpose.IsSuppletive .pl ∧
+      english.inflection.transpose.IsInvariant .cmpr := by
   decide
 
 -- §13.7: "a zero-alternant replaces the bound form, and a suppletive alternant the underlying
 -- form, in cases like ... go : went"
-theorem go_went : english.realize .go .past = {[went]} ∧
-    analysis.inflection.realize .go .past = {[]} ∧
-    analysis.inflection.transpose.IsSuppletive .past := by
+theorem go_went : english.realization.realize .go .past = {[went]} ∧
+    english.inflection.realize .go .past = {[]} ∧
+    english.inflection.transpose.IsSuppletive .past := by
   decide
 
-theorem not_isCanonical : ¬ analysis.IsCanonical := fun h ↦ h.not_isSuppletive.1 .good suppletion.1
+theorem not_isCanonical : ¬ english.IsCanonical := fun h ↦ h.not_isSuppletive.1 .good suppletion.1
 
 end Bloomfield1933

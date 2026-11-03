@@ -246,7 +246,7 @@ Insertion gives the root, *bet-* in *bet-ter* and *went* among them, so the clau
 forms tells a suppletive alternant of a root from the affix beside it. -/
 theorem bloomfield_roots : ∀ l, ∀ c ∈ [.plain, l.derived],
     (Bloomfield1933.word l c).filter bloomfield.IsRoot ∈
-      Bloomfield1933.analysis.stem.realize l c := by
+      Bloomfield1933.english.stem.realize l c := by
   decide
 
 /-! ### Heterosemy (§6) -/
