@@ -17,70 +17,39 @@ public import Mathlib.Data.Fintype.Basic
 # Woolford (1997): Four-Way Case Systems: Ergative, Nominative, Objective and Accusative
 
 This file derives the Case patterns of Nez Perce, Thangu and Kalkatungu from an inventory in which
-ergative is a lexical Case and objects have two structural Cases, objective outside VP and
-accusative inside it. A verb assigns at most $\#\text{arguments} - \#\text{lexical Cases} - 1$
-accusatives, and [economy sends the highest caseless arguments out of
-VP](##mem_derivations_iff), so that [a lexically Cased subject denies accusative to its
-highest object](##getElem?_ne_acc_of_mem_derivations) in any language and, where accusative is
-obligatory, [to no other](##count_acc_of_mem_derivations_obligatory). Whether a language assigns
-ergative and dative obligatorily or optionally then [gives it its patterns](##rows_patterns), and
-one clause of Kalkatungu is [ergative in morphology, nominative-accusative in agreement and
-tripartite in abstract Case](##kalkatungu_alignments). With these lexical Cases as its input, [the
-accusative rule of dependent case derives the same patterns](##map_value?_assign) wherever objects
+ergative is lexical and objects have two structural Cases, objective outside VP and accusative
+inside it. The formula $\#\text{arguments} - \#\text{lexical Cases} - 1$ bounds the accusatives and
+[economy picks the arguments that move out of VP](##mem_derivations_iff), so [a lexically Cased
+subject denies accusative to its highest object](##getElem?_ne_acc_of_mem_derivations). Settings for
+ergative and dative [give each language its patterns](##rows_patterns), and one Kalkatungu clause is
+[ergative in morphology, accusative in agreement and tripartite in Case](##kalkatungu_alignments).
+The accusative rule of dependent case [derives the same patterns](##map_value?_assign) where objects
 can be nominative.
 
 ## Implementation notes
 
-* Arguments are listed from the thematically highest down, so list position stands in for the
-  height the economy condition measures and the path of a moved argument is its index.
-* P. 207 states economy for one argument denied accusative. Where two move, as without accusative,
-  `Candidate` keeps the higher argument in the higher position and `pathLength` compares each moved
-  argument's path separately, an extension of the paper's condition: a total of the paths would tie
-  on derivations whose paths cross.
-* A row's Cases are in the Agent Goal Theme order of (22), not surface order. Its lexical Cases
-  are the verb's choice and feed the prediction; its structural Cases are what is predicted.
-* Null arguments in the rows of section 2 are given the Cases the verb's agreement and the paper's
-  prose assign them, and `comment` says which. The first and second person subject pronouns of (40)
-  and (41) show no ergative and are glossed for no Case; the rows take them as abstractly ergative,
-  which is how p. 197 treats such pronouns.
-* The prose before (27) also subtracts arguments with Case from a preposition, which (27) does not
-  mention and no example tests.
-* The strong interpretation of (19), on which a lexical subject denies accusative to every object,
-  is `Assignment.lacking` on a clause with a lexical subject.
-* `Params.deniedObject` is one Case per language, so Hindi's option of an objective *-ko* object
-  (notes 17, 43) is not modelled. `Params.frames` has the classic type of ergative language, with
-  nominative intransitive subjects (p. 190), which (60) does not list.
-* `Case.position` is the tree (9), for the Cases of Nez Perce; note 21 expects dative subjects to
-  raise as well.
-* The comparison with dependent case is not the paper's, which cites no work on it. It runs the
-  accusative rules with the paper's lexical ergative as input, where Marantz's own ergative is
-  dependent, and it [does not extend to objective](##objective_not_elsewhere).
+* P. 207 states economy for one denied argument. Where two move, each path is compared separately
+  and the higher argument takes the higher position.
+* The comparison with dependent case is not the paper's. It feeds the accusative rules the paper's
+  lexical ergative, where Marantz's is dependent, and [fails for
+  objective](##objective_not_elsewhere).
 
 ## Errata
 
-* The conclusions (p. 223) say that languages not assigning Case inside VP, or doing so optionally,
-  may manifest the nominative-accusative pattern. The sentence is about nominative-objective, as
-  on p. 202: [without accusative the nominative-accusative pattern cannot
-  arise](##nom_acc_notMem_lacking).
-* P. 207 promises evidence in section 3 that some languages assign no structural accusative. Section
-  3 has none: [Thangu's patterns do not depend on it](##thangu_accusative_irrelevant), as p. 216
-  says, and Kalkatungu has accusative.
-* Note 30 names an intransitive verb with a lexical Case as where the formula goes negative. So does
-  [any verb whose every argument has lexical Case](##maxAcc_neg_iff), as in the ergative-dative
-  pattern (18b) and in (63), so (27) must be read with a floor at zero.
-* (8) cannot tell the attested (22A.4) from the starred (22B.7). Its dative and objective are both
-  *-na*, the goal of (7) is *-na* glossed objective, (58) lists no dative, and both objects are
-  third singular, so the prefix does not decide.
-* (54) and (60) attribute Thangu's ditransitives to an obligatory dative, but [an optional dative
-  gives the same patterns where accusative is lacking](##dative_not_forced).
-* (32) is glossed 'bite' and translated 'hit'.
+* P. 223 says nominative-accusative where p. 202 has nominative-objective: [the former cannot arise
+  without accusative](##nom_acc_notMem_lacking).
+* P. 207 promises evidence in section 3 that languages can lack accusative, but [Thangu's patterns
+  do not depend on it](##thangu_accusative_irrelevant) and Kalkatungu has it.
+* Note 30's negative case is [any verb with only lexical Cases](##maxAcc_neg_iff), as in (18b) and
+  (63), not just intransitives.
+* (8) has the surface form of the starred (22B.7): its dative and objective are both *-na*.
+* Thangu's obligatory dative in (60) [is not forced](##dative_not_forced).
 
 ## TODO
 
-* The passives (14) and (15), and the claim of section 1.2.1 that only structurally Cased objects
-  passivize.
-* The number agreement of (28) to (34), which reads the same two positions as (48).
-* Accusative Case Blocking, the operation p. 208 proposes as the source of the formula.
+* The passives (14), (15) and the claim of section 1.2.1 about them.
+* The number agreement of (28) to (34).
+* Accusative Case Blocking (p. 208).
 
 ## References
 
@@ -181,7 +150,8 @@ variable {c e : Case} {args r : List (Option Lexical)} {d : List Case}
 
 /-! ### The Max. Acc. formula -/
 
-/-- The Max. Acc. formula (27) on a verb's arguments, each with the lexical Case it assigns. -/
+/-- The Max. Acc. formula (27) on a verb's arguments, highest first, each with the lexical Case it
+assigns. The prose before (27) also subtracts Case from a preposition, which no example tests. -/
 def maxAcc (args : List (Option Lexical)) : ℤ := args.length - args.countP Option.isSome - 1
 
 -- p. 205: one less than the number of arguments that need structural Case
@@ -625,7 +595,7 @@ theorem lexical_acc_notMem (hc : c.IsFunctional) (l : Lexical) :
     [.lexical l, .acc] ∉ derivations a c [some l, none] := fun hd ↦ by
   simpa using getElem?_ne_acc_of_mem_derivations (ls := []) (r := []) hc hd
 
--- p. 204: the strong interpretation fails where (24b) succeeds
+-- p. 204: the strong interpretation, `.lacking` under a lexical subject, fails where (24b) succeeds
 theorem strong_underivable :
     derivations .lacking .obj [some .erg, none, none] = [] ∧
       [.erg, .obj, .acc] ∈ derivations .obligatory .obj [some .erg, none, none] := by
@@ -672,7 +642,8 @@ theorem nom_acc_notMem_lacking (c : Case) :
 /-! ### Typological variation -/
 
 /-- A language's settings: ergative on transitive subjects, dative on goals, its accusative, and
-what a denied object takes. -/
+what a denied object takes, one Case per language, so Hindi's objective *-ko* (notes 17, 43) is
+left out. -/
 structure Params where
   ergative : Assignment
   dative : Assignment
@@ -684,7 +655,8 @@ namespace Params
 
 variable (P : Params)
 
-/-- The intransitive, transitive and ditransitive verbs the settings allow. -/
+/-- The intransitive, transitive and ditransitive verbs the settings allow, intransitive subjects
+being caseless as in the classic ergative type (p. 190). -/
 def frames : List (List (Option Lexical)) :=
   [none] :: (P.ergative.options .erg).map ([·, none]) ++
     (P.ergative.options .erg).flatMap fun s ↦ (P.dative.options .dat).map ([s, ·, none])
