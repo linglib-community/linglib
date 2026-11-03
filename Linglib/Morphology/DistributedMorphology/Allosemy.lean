@@ -331,7 +331,7 @@ alloseme the Subset Principle picks. -/
 def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
     Morphology.Realization.Interpreted Unit (Neighborhood (Finset Feature)) Unit Sem where
   realize _ _ := ∅
-  interp _ n := (subsetPrinciple v n).elim ∅ ({·})
+  interp := (toRealization v fun _ n ↦ n).realize
 
 /-- The verbal categorizer is allosemous, eventive under an eventive complement and zero
 elsewhere. -/
