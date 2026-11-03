@@ -64,7 +64,7 @@ variable {W : Type*}
 
 theorem local_reading (R : SetRel W W) {some all : Set W} (h : all ⊂ some) :
     R.core (exh {some, all} some) = R.core some ∩ R.core allᶜ := by
-  rw [exh_pair h.2, Set.sdiff_eq, core_inter]
+  rw [exh_insert_of_subset subset_rfl, exh_singleton_of_not_subset h.2, Set.sdiff_eq, core_inter]
 
 theorem local_of_global_of_opinionated (R : SetRel W W) {some all : Set W} (h : all ⊂ some)
     {w : W} (h₃₁ : w ∈ R.core some) (h₃₂ : w ∉ R.core all)
@@ -141,6 +141,8 @@ abbrev Situation := Fin 3 → Fin 3 → Prop
 /-- Figure 2, the printed stimulus for *all*: the top square is connected with all three circles,
 and each of the others with two of them. -/
 abbrev figure2 : Situation := fun s c ↦ s = 0 ∨ (s = 1 ∧ c ≠ 2) ∨ (s = 2 ∧ c ≠ 0)
+
+example : ∃! s : Fin 3, ∀ c, figure2 s c := ⟨0, fun _ ↦ .inl rfl, by decide⟩
 
 /-- The situation for *more than one* and the two downward-entailing sentences, in which every
 square is connected with some circle and two of them with all. -/

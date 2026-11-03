@@ -105,24 +105,32 @@ theorem excludes_eq_compl_sUnion (C : Set (Set W)) (p : Set W) :
 theorem exh_eq_sdiff (C : Set (Set W)) (p : Set W) : exh C p = p \ ⋃₀ {q ∈ C | ¬ p ⊆ q} := by
   rw [exh, excludes_eq_compl_sUnion, Set.sdiff_eq]
 
-/-- When every alternative is entailed by the prejacent or entails the non-entailed `q`,
-exhaustifying removes just `q`. -/
-theorem exh_eq_sdiff_of_forall (hq : q ∈ C) (hpq : ¬ p ⊆ q) (h : ∀ r ∈ C, p ⊆ r ∨ r ⊆ q) :
-    exh C p = p \ q :=
-  Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun hw hwq ↦ hpq (hw q hq hwq),
-    fun hw r hr hwr ↦ (h r hr).resolve_right fun hrq ↦ hw (hrq hwr)⟩
-
-theorem exh_pair (h : ¬ p ⊆ q) : exh {p, q} p = p \ q :=
-  exh_eq_sdiff_of_forall (by simp) h (by
-    rintro r (rfl | rfl)
-    exacts [.inl subset_rfl, .inr subset_rfl])
-
 theorem exh_eq_self_iff : exh C p = p ↔ ∀ q ∈ C, (p ∩ q).Nonempty → p ⊆ q :=
   ⟨fun h q hq ⟨w, hw, hwq⟩ ↦ by rw [← h] at hw; exact hw.2 q hq hwq,
     fun h ↦ (exh_subset C p).antisymm fun w hw ↦ ⟨hw, fun q hq hwq ↦ h q hq ⟨w, hw, hwq⟩⟩⟩
 
 theorem exh_eq_self (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
   exh_eq_self_iff.2 fun q hq _ ↦ h q hq
+
+@[simp] theorem exh_empty (p : Set W) : exh ∅ p = p := exh_eq_self fun _ h ↦ h.elim
+
+/-- An alternative the prejacent entails is inert. -/
+theorem exh_insert_of_subset (h : p ⊆ q) : exh (insert q C) p = exh C p :=
+  Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun hw r hr ↦ hw r (.inr hr),
+    fun hw r hr hwr ↦ hr.elim (fun e ↦ e ▸ h) (hw r · hwr)⟩
+
+/-- An alternative the prejacent does not entail is denied. -/
+theorem exh_insert_of_not_subset (h : ¬ p ⊆ q) : exh (insert q C) p = exh C p \ q :=
+  Set.ext fun _ ↦ ⟨fun ⟨hp, hw⟩ ↦
+      ⟨⟨hp, fun r hr ↦ hw r (.inr hr)⟩, fun hq ↦ h (hw q (.inl rfl) hq)⟩,
+    fun ⟨⟨hp, hw⟩, hq⟩ ↦ ⟨hp, fun r hr hwr ↦
+      hr.elim (fun e ↦ absurd (e ▸ hwr) hq) (hw r · hwr)⟩⟩
+
+theorem exh_singleton_of_subset (h : p ⊆ q) : exh {q} p = p :=
+  exh_eq_self fun _ hr ↦ (Set.mem_singleton_iff.1 hr) ▸ h
+
+theorem exh_singleton_of_not_subset (h : ¬ p ⊆ q) : exh {q} p = p \ q := by
+  rw [← insert_empty_eq, exh_insert_of_not_subset h, exh_empty]
 
 theorem excludes_antitone (h : C ⊆ C') (p : Set W) : excludes C' p ⊆ excludes C p :=
   fun _ hw q hq ↦ hw q (h hq)

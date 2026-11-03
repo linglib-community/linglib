@@ -231,10 +231,11 @@ theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
 
 theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
   obtain ⟨rfl, -, hn, ⟨a, has, han⟩, -⟩ := h
-  have hexh : exh {s ∪ n, s, n, e} s = s \ n := exh_eq_sdiff_of_forall (by simp)
-    (fun h ↦ han (h has)) (by
-      rintro r (rfl | rfl | rfl | rfl)
-      exacts [.inl subset_union_left, .inl subset_rfl, .inr subset_rfl, .inr hn])
+  have hsn : ¬ s ⊆ n := fun h ↦ han (h has)
+  have hexh : exh {s ∪ n, s, n, e} s = s \ n := by
+    rw [exh_insert_of_subset subset_union_left, exh_insert_of_subset subset_rfl,
+      exh_insert_of_not_subset hsn, exh_singleton_of_not_subset (hsn <| ·.trans hn),
+      sdiff_sdiff_left, sup_eq_right.2 hn]
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨a, has, han⟩), hexh]
 
 theorem exhIE_n : exhIE {w, s, n, e} n = n \ s := by

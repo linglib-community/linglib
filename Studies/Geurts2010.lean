@@ -4,9 +4,8 @@ public import Studies.GeurtsPouscoulous2009
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Geurts2010
-public import Mathlib.Algebra.Notation.Indicator
 public import Mathlib.Order.Atoms
-public import Mathlib.Order.Minimal
+public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
@@ -20,7 +19,7 @@ disjunction](##Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom); under *
 consistent state](##Sentence.standardRecipe_may_or_eq_empty). Partitioning the speaker's states
 instead gives [free choice](##Sentence.mem_survivors_may_or_iff) and [form-sensitive scalar
 inferences](##Sentence.mem_survivors_scalar_iff). Comparing readings for strength [picks out the
-upward-entailing scopes](##boundedReading_ssubset_iff), where the experiment finds no upper bound.
+upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no upper bound.
 
 ## Implementation notes
 
@@ -30,11 +29,11 @@ upward-entailing scopes](##boundedReading_ssubset_iff), where the experiment fin
   alternative; strengthening wherever it holds is an assumption made here, the book's Recipe being
   a heuristic.
 * `Sentence.survivors` applies heuristic (i) categorically, with one alternative per cell and `size`
-  for economy, so (26b) comes out by length rather than the monolexicality p. 124 credits.
+  for economy, so (26b) comes out by length rather than the monolexicality p. 124 credits. Heuristic
+  (ii), which p. 117 invokes, is not formalized.
 * Upper sets are the closure of the disjuncts under conjunction and disjunction ([each is a union of
   conjunctions](##eq_iUnion_iInter_of_isUpperSet)).
-* The alternatives of (20), p. 120, are reconstructed; (61b, c) are read through the quantifiers of
-  (62).
+* (61b, c) are read through the quantifiers of (62).
 
 ## Errata
 
@@ -54,8 +53,8 @@ upward-entailing scopes](##boundedReading_ssubset_iff), where the experiment fin
 
 ## TODO
 
-* §8.3 presupposition implicatures, §6.6 open alternatives, and Spector's route (pp. 169–170,
-  [spector-2006]).
+* §8.3 presupposition implicatures, §6.6 open alternatives, Spector's route (pp. 169–170,
+  [spector-2006]), and the free choice of (20), p. 120, without a modal.
 * The consistency check against the innocent exclusion of [fox-2007] at (34) and (35).
 * The experiments of Chapters 4 and 5, for `Data/Statistics`.
 
@@ -80,19 +79,6 @@ open Set NeoGricean Question
 variable {W : Type*} {s φ ψ : Set W}
 
 /-! ### The Standard Recipe -/
-
-/-- Soames's Competence⁺ (12), p. 37: the speaker's beliefs agree with the facts at `w`. -/
-def CompetentPlus (w : W) (s ψ : Set W) : Prop := (w ∈ ψ → s ⊆ ψ) ∧ (w ∉ ψ → s ⊆ ψᶜ)
-
--- p. 38
-theorem CompetentPlus.mem_polar {w : W} (h : CompetentPlus w s ψ) : s ∈ polar ψ :=
-  Question.mem_polar.2 ((em (w ∈ ψ)).imp h.1 h.2)
-
--- p. 38, Travis, who has an opinion on everything regardless of the facts
-theorem not_competentPlus_of_subset {w : W} (hs : s.Nonempty) (hw : w ∉ ψ) (h : s ⊆ ψ) :
-    ¬ CompetentPlus w s ψ := fun hc ↦
-  let ⟨_, hv⟩ := hs
-  hc.2 hw hv (h hv)
 
 -- the diagram of p. 39: non-belief is disbelief or no opinion, no opinion being non-competence
 theorem compl_Iic_eq_union (ψ : Set W) :
@@ -120,23 +106,16 @@ theorem notMem_polar_of_subset_union (hq : s ⊆ φ ∪ ψ) (hφ : ¬ s ⊆ φ) 
     let ⟨_, hw, hwφ⟩ := inter_nonempty_of_subset_union hq hψ
     hc hw hwφ
 
--- p. 120: what is possible and on which the speaker has an opinion, the speaker believes
+-- pp. 114, 120: what is possible and on which the speaker has an opinion, the speaker believes
 theorem subset_of_inter_nonempty_of_mem_polar (hp : (s ∩ ψ).Nonempty) (hc : s ∈ polar ψ) :
     s ⊆ ψ :=
   (mem_polar.1 hc).resolve_right fun h ↦ let ⟨_, hw, hwψ⟩ := hp; h hw hwψ
 
--- p. 54: the Horn scale (4) makes (10) an alternative to (9), but (9) entails (10), so that the
--- weak implicature contradicts Quality
-theorem Iic_inter_compl_Iic_eq_empty {ι : Type*} [Preorder ι] {E : Set W → Set W} {a : ι → Set W}
-    {i j : ι} (hE : Antitone E) (ha : Antitone a) (h : i ≤ j) :
-    Iic (E (a i)) ∩ (Iic (E (a j)))ᶜ = ∅ :=
-  eq_empty_of_forall_notMem fun _ hs ↦ hs.2 (subset_trans hs.1 (hE (ha h)))
-
 /-! ### Long disjunctions
 
-The worlds of (29) are ordered by what they make true. A world with `⊥` below it is one in which no
-disjunct holds, so the long disjunction (31) is `Ioi ⊥`; the conjunction of the disjuncts below `x`
-is `Ici x`, and a world in which just one disjunct holds is an atom. -/
+The worlds of (29), p. 61, are ordered by what they make true. A world with `⊥` below it is one in
+which no disjunct holds, so the long disjunction (31) is `Ioi ⊥`; the conjunction of the disjuncts
+below `x` is `Ici x`, and a world in which just one disjunct holds is an atom. -/
 
 section LongDisjunction
 
@@ -164,34 +143,10 @@ theorem isSecondaryImplicature_Ici (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom 
   have hxc : x = c := (hc.le_iff_eq hx).1 (hsub ⟨hc.bot_lt, notMem_Ici_of_isAtom hc ha.1 hac⟩)
   exact hbc (hxb.symm.trans hxc)
 
--- (32), p. 62: over the alternatives of the parse (A ∨ B) ∨ C, the strong implicature of (32b)
--- goes through, which rules out the world in which only C holds
-theorem isSecondaryImplicature_parse (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hab : a ≠ b)
-    (hac : a ≠ c) :
-    IsSecondaryImplicature (Ioi ⊥)
-      {(Ici a ∪ Ici b) ∩ Ici c, (Ici a ∩ Ici b) ∪ Ici c, Ici a ∩ Ici b ∩ Ici c}
-      ((Ici a ∩ Ici b) ∪ Ici c) := by
-  have hb' : a ∉ Ici b := notMem_Ici_of_isAtom ha hb.1 hab.symm
-  have hc' : a ∉ Ici c := notMem_Ici_of_isAtom ha hc.1 hac.symm
-  have hψ : a ∉ (Ici a ∩ Ici b) ∪ Ici c := by rintro (h | h); exacts [hb' h.2, hc' h]
-  refine isSecondaryImplicature_iff.2 ⟨by simp, ⟨?_, fun h ↦ hψ (h ha.bot_lt)⟩, ?_⟩
-  · rintro y (h | h)
-    exacts [ha.bot_lt.trans_le h.1, hc.bot_lt.trans_le h]
-  · have hsdiff : a ∈ Ioi ⊥ \ ((Ici a ∩ Ici b) ∪ Ici c) := ⟨ha.bot_lt, hψ⟩
-    rintro χ (rfl | rfl | rfl) - h
-    exacts [hc' (h hsdiff).2, hψ (h hsdiff), hc' (h hsdiff).2]
-
--- pp. 62–63: the two binary parses each eliminate one column too many
-theorem union_sdiff_parse_left (A B C : Set W) :
+-- pp. 62–63: the binary parse (32) eliminates one column too many, and (33) symmetrically
+theorem union_sdiff_parse (A B C : Set W) :
     ((A ∪ B) ∪ C) \ (((A ∪ B) ∩ C) ∪ ((A ∩ B) ∪ C) ∪ (A ∩ B ∩ C)) =
       ((A ∪ B) \ (A ∩ B)) \ C := by
-  ext w
-  simp only [mem_sdiff, mem_union, mem_inter_iff]
-  tauto
-
-theorem union_sdiff_parse_right (A B C : Set W) :
-    (A ∪ (B ∪ C)) \ ((A ∪ (B ∩ C)) ∪ (A ∩ (B ∪ C)) ∪ (A ∩ (B ∩ C))) =
-      ((B ∪ C) \ (B ∩ C)) \ A := by
   ext w
   simp only [mem_sdiff, mem_union, mem_inter_iff]
   tauto
@@ -214,15 +169,6 @@ theorem eq_iUnion_iInter_of_isUpperSet {κ : Type*} {u : Set (Set κ)} (hu : IsU
   ext w
   simp only [mem_iUnion, mem_iInter, mem_Ici, singleton_subset_iff, exists_prop]
   exact ⟨fun hw ↦ ⟨w, hw, fun _ h ↦ h⟩, fun ⟨x, hx, h⟩ ↦ hu (fun i hi ↦ h i hi) hx⟩
-
--- p. 61: the only alternative (30) of the substitution method leaves worlds with two disjuncts
-example : ({0, 1} : Set (Fin 3)) ∈ Ioi ⊥ \ Ici ⊤ ∧ ¬ IsAtom ({0, 1} : Set (Fin 3)) := by
-  refine ⟨⟨bot_lt_iff_ne_bot.2 (insert_nonempty _ _).ne_empty, fun h ↦ ?_⟩, fun h ↦ ?_⟩
-  · simpa using h (mem_univ (2 : Fin 3))
-  · obtain ⟨i, hi⟩ := Set.isAtom_iff.1 h
-    have h0 : (0 : Fin 3) ∈ ({i} : Set (Fin 3)) := hi ▸ (by simp)
-    have h1 : (1 : Fin 3) ∈ ({i} : Set (Fin 3)) := hi ▸ (by simp)
-    exact absurd (subsingleton_singleton h0 h1) (by decide)
 
 variable [IsAtomic α]
 
@@ -267,13 +213,6 @@ theorem setOf_isAtom_mem_primaryImplicatures :
     {x : α | IsAtom x} ∈ primaryImplicatures (Ioi ⊥) {χ | IsUpperSet χ} :=
   mem_primaryImplicatures.2 fun _ hχ hχφ hsub ↦
     hχφ.2 (Ioi_bot_subset_of_forall_isAtom_mem hχ fun _ hb ↦ hsub hb)
-
--- p. 41: that the speaker cannot believe all the disjuncts false holds at any length
-theorem eq_empty_of_forall_subset_compl_Ici {s : Set α} (hq : s ⊆ Ioi ⊥)
-    (h : ∀ a, IsAtom a → s ⊆ (Ici a)ᶜ) : s = ∅ :=
-  eq_empty_of_forall_notMem fun _ hy ↦
-    let ⟨_, hb, hby⟩ := exists_isAtom_le (hq hy)
-    h _ hb hy hby
 
 example : Ioi ⊥ \ ⋃₀ {t | IsSecondaryImplicature (Ioi ⊥) {χ | IsUpperSet χ} t} =
     {w : Set (Fin 3) | ∃ i, w = {i}} := by
@@ -324,6 +263,10 @@ def Poss (V : P → Set W) (s : Set W) (x : Sentence P) : Prop := (s ∩ x.eval 
 /-- The sentence `x` entails the sentence `y`. -/
 def Entails (V : P → Set W) (x y : Sentence P) : Prop := ∀ s, x.Believes V s → y.Believes V s
 
+theorem poss_of_believes (hs : s.Nonempty) (h : x.Believes V s) : x.Poss V s :=
+  let ⟨w, hw⟩ := hs
+  ⟨w, hw, h hw⟩
+
 theorem believes_may (hs : s.Nonempty) : (may x).Believes V s ↔ x.Poss V s :=
   ⟨fun h ↦ let ⟨_, hw⟩ := hs; h hw, fun h _ _ ↦ h⟩
 
@@ -371,269 +314,131 @@ theorem standardRecipe_may_or_eq_empty (p q : P) :
   · exact ha _ (by simp) ((believes_may hs).2 h)
   · exact ha _ (by simp) ((believes_may hs).2 h)
 
-open Classical in
-/-- The sentence a speaker in state `s` could have used to express what the speaker considers
-possible, among `x` and `y`: `c` in cell $i_1$, where both are, `a` in $i_2$, where only `x` is, and
-`b` in $i_3$, where only `y` is. Cell $i_4$, where neither is, falls with $i_3$; the examples
-discard it by Quality or consistency. -/
-noncomputable def say (V : P → Set W) (x y a b c : Sentence P) (s : Set W) : Sentence P :=
-  if x.Poss V s then (if y.Poss V s then c else a) else b
+/-- The partition of pp. 113–117 by what the speaker considers possible among `x` and `y`, with the
+sentence that expresses each cell: `c` for $i_1$, where both are, `a` for $i_2$, where only `x` is,
+and `b` for $i_3$, where only `y` is. -/
+abbrev cells (V : P → Set W) (x y a b c : Sentence P) : List (Set (Set W) × Sentence P) :=
+  [({s | x.Poss V s ∧ y.Poss V s}, c), ({s | x.Poss V s ∧ ¬ y.Poss V s}, a),
+    ({s | ¬ x.Poss V s ∧ y.Poss V s}, b)]
 
-theorem say_of_poss (hx : x.Poss V s) (hy : y.Poss V s) : say V x y a b c s = c := by
-  simp [say, hx, hy]
-
-theorem say_rec {C : Sentence P → Prop} (hc : x.Poss V s → y.Poss V s → C c)
-    (ha : x.Poss V s → ¬ y.Poss V s → C a) (hb : ¬ x.Poss V s → C b) :
-    C (say V x y a b c s) := by
-  unfold say
-  split_ifs with h h'
-  exacts [hc h h', ha h h', hb h]
-
-/-- The alternatives of pp. 115–116: what a consistent speaker of `u` would say is something the
-speaker believes and which entails `u`. -/
-def AreAlternatives (V : P → Set W) (u : Sentence P) (say : Set W → Sentence P) : Prop :=
-  ∀ s, s.Nonempty → u.Believes V s → (say s).Believes V s ∧ (say s).Entails V u
+/-- The alternatives of pp. 115–116: in its cell, a consistent speaker of `u` believes the sentence,
+and the sentence entails `u`. -/
+def AreAlternatives (V : P → Set W) (u : Sentence P) (alts : List (Set (Set W) × Sentence P)) :
+    Prop :=
+  ∀ c ∈ alts, ∀ s ∈ c.1, s.Nonempty → u.Believes V s → c.2.Believes V s ∧ c.2.Entails V u
 
 variable {κ : Type*} [Preorder κ] {cost : Sentence P → κ}
 
 /-- The alternative heuristic (i): the consistent states that believe the sentence uttered and
-could not have expressed which cell they are in by a sentence at most as complex. The partition is
-the fibres of `say`, and `cost` ranks sentences, lower meaning more available. -/
+could not have expressed their cell by a sentence at most as complex, lower `cost` meaning more
+available. -/
 def survivors (V : P → Set W) (cost : Sentence P → κ) (u : Sentence P)
-    (say : Set W → Sentence P) : Set (Set W) :=
-  {s | s.Nonempty ∧ u.Believes V s ∧ ¬ cost (say s) ≤ cost u}
+    (alts : List (Set (Set W) × Sentence P)) : Set (Set W) :=
+  {s | s.Nonempty ∧ u.Believes V s ∧ ∀ c ∈ alts, s ∈ c.1 → ¬ cost c.2 ≤ cost u}
 
-theorem mem_survivors_say_iff (ha : cost a ≤ cost u) (hb : cost b ≤ cost u)
-    (hc : ¬ cost c ≤ cost u) :
-    s ∈ survivors V cost u (say V x y a b c) ↔
+-- `i₂` and `i₃` go by the heuristic, and `i₄` by Quality
+theorem mem_survivors_cells_iff (ha : cost a ≤ cost u) (hb : cost b ≤ cost u)
+    (hc : ¬ cost c ≤ cost u) (hq : ∀ s, s.Nonempty → u.Believes V s → x.Poss V s ∨ y.Poss V s) :
+    s ∈ survivors V cost u (cells V x y a b c) ↔
       s.Nonempty ∧ u.Believes V s ∧ x.Poss V s ∧ y.Poss V s := by
-  simp only [survivors, mem_ofPred_eq, say]
-  split_ifs <;> simp_all
-
--- the alternative heuristic (ii), p. 116: where the alternative of cell `i₁` is the hardest to
--- express, the most likely states are those of `i₁`
-theorem maximalFor_say_iff {Q : Set W → Prop} (ha : cost a < cost c) (hb : cost b < cost c)
-    {s₀ : Set W} (h₀ : Q s₀) (hx₀ : x.Poss V s₀) (hy₀ : y.Poss V s₀) :
-    MaximalFor Q (fun s ↦ cost (say V x y a b c s)) s ↔ Q s ∧ x.Poss V s ∧ y.Poss V s := by
-  have hle : ∀ t, cost (say V x y a b c t) ≤ cost c := fun _ ↦
-    say_rec (C := fun r ↦ cost r ≤ cost c) (fun _ _ ↦ le_rfl) (fun _ _ ↦ ha.le) fun _ ↦ hb.le
-  refine ⟨fun h ↦ ⟨h.1, ?_⟩, fun ⟨hs, hx, hy⟩ ↦ ⟨hs, fun t _ _ ↦ ?_⟩⟩
-  · have hge : cost c ≤ cost (say V x y a b c s) := by
-      simpa only [say_of_poss hx₀ hy₀] using
-        h.2 h₀ (by simpa only [say_of_poss hx₀ hy₀] using hle s)
-    by_contra hn
-    have hlt : cost (say V x y a b c s) < cost c :=
-      say_rec (C := fun r ↦ cost r < cost c) (fun h1 h2 ↦ absurd ⟨h1, h2⟩ hn) (fun _ _ ↦ ha)
-        fun _ ↦ hb
-    exact hlt.not_ge hge
-  · simpa only [say_of_poss hx hy] using hle t
-
-/-- The partition of (15) and (20): `c` says that `x` and `y` are possible, on top of `u`. -/
-noncomputable abbrev sayEither (V : P → Set W) (x y a b u : Sentence P) : Set W → Sentence P :=
-  say V x y a b (and (may x) (and (may y) u))
-
-theorem mem_survivors_sayEither_iff (ha : a.size ≤ u.size) (hb : b.size ≤ u.size) :
-    s ∈ survivors V size u (sayEither V x y a b u) ↔
-      s.Nonempty ∧ u.Believes V s ∧ x.Poss V s ∧ y.Poss V s :=
-  mem_survivors_say_iff ha hb (by simp only [size]; omega)
-
-private theorem believes_entails_top (hs : s.Nonempty) (hu : u.Believes V s) (hx : x.Poss V s)
-    (hy : y.Poss V s) :
-    (and (may x) (and (may y) u)).Believes V s ∧ (and (may x) (and (may y) u)).Entails V u :=
-  ⟨believes_and.2 ⟨(believes_may hs).2 hx, believes_and.2 ⟨(believes_may hs).2 hy, hu⟩⟩,
-    fun _ h ↦ (believes_and.1 (believes_and.1 h).2).2⟩
+  simp only [survivors, mem_ofPred_eq, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, and_true]
+  refine and_congr_right fun hs ↦ and_congr_right fun hu ↦ ⟨fun ⟨_, h2, h3⟩ ↦ ?_,
+    fun ⟨hx, hy⟩ ↦ ⟨fun _ ↦ hc, fun h ↦ absurd hy h.2, fun h ↦ absurd hx h.1⟩⟩
+  rcases hq s hs hu with hx | hy
+  · exact ⟨hx, by_contra fun hy ↦ h2 ⟨hx, hy⟩ ha⟩
+  · exact ⟨by_contra fun hx ↦ h3 ⟨hx, hy⟩ hb, hy⟩
 
 /-- (15), p. 115: *George is British or Canadian*, with the alternatives (16). -/
-noncomputable abbrev sayOr (V : P → Set W) (p q : P) : Set W → Sentence P :=
-  sayEither V (atom p) (atom q) (atom p) (atom q) (or (atom p) (atom q))
+abbrev altsOr (V : P → Set W) (p q : P) : List (Set (Set W) × Sentence P) :=
+  cells V (atom p) (atom q) (atom p) (atom q)
+    (and (may (atom p)) (and (may (atom q)) (or (atom p) (atom q))))
 
 /-- (17), p. 117: *George may be British or Canadian*, with the alternatives (18). For the
 performative (19), p. 118, a state is what the speaker permits. -/
-noncomputable abbrev sayMayOr (V : P → Set W) (p q : P) : Set W → Sentence P :=
-  say V (atom p) (atom q) (may (atom p)) (may (atom q)) (and (may (atom p)) (may (atom q)))
-
--- p. 115: the speaker of (15) considers both disjuncts possible
-theorem mem_survivors_or_iff :
-    s ∈ survivors V size (or (atom p) (atom q)) (sayOr V p q) ↔
-      s.Nonempty ∧ s ⊆ V p ∪ V q ∧ (atom p).Poss V s ∧ (atom q).Poss V s :=
-  mem_survivors_sayEither_iff (by simp [size]) (by simp [size])
-
--- p. 115: (16) are alternatives in the sense of the method
-example : AreAlternatives V (or (atom p) (atom q)) (sayOr V p q) :=
-  fun s hs h ↦ say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V (or (atom p) (atom q)))
-    (believes_entails_top hs h)
-    (fun _ hq ↦ ⟨fun w hw ↦ (h hw).resolve_right fun hwq ↦ hq ⟨w, hw, hwq⟩,
-      fun _ h' _ hw ↦ .inl (h' hw)⟩)
-    fun hp ↦ ⟨fun w hw ↦ (h hw).resolve_left fun hwp ↦ hp ⟨w, hw, hwp⟩,
-      fun _ h' _ hw ↦ .inr (h' hw)⟩
-
-/-- Free choice: of the speakers of *George may be British or Canadian*, those that survive the
-alternative heuristic are just the consistent ones that consider each disjunct possible. -/
-theorem mem_survivors_may_or_iff :
-    s ∈ survivors V size (may (or (atom p) (atom q))) (sayMayOr V p q) ↔
-      s.Nonempty ∧ (atom p).Poss V s ∧ (atom q).Poss V s := by
-  rw [mem_survivors_say_iff (by simp [size]) (by simp [size]) (by simp [size])]
-  refine ⟨fun ⟨hs, _, h⟩ ↦ ⟨hs, h⟩, fun ⟨hs, hp, hq⟩ ↦ ⟨hs, ?_, hp, hq⟩⟩
-  exact (believes_may hs).2 (poss_or.2 (.inl hp))
-
--- p. 117: (18) are alternatives in the sense of the method
-example : AreAlternatives V (may (or (atom p) (atom q))) (sayMayOr V p q) := fun s hs h ↦ by
-  have key {r : P} (hr : V r ⊆ V p ∪ V q) : (may (atom r)).Entails V (may (or (atom p) (atom q))) :=
-    fun _ h' _ hw ↦ (h' hw).mono (inter_subset_inter_right _ hr)
-  refine say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V (may (or (atom p) (atom q))))
-    (fun hp hq ↦ ⟨believes_and.2 ⟨(believes_may hs).2 hp, (believes_may hs).2 hq⟩,
-      fun t h' ↦ key subset_union_left t (believes_and.1 h').1⟩)
-    (fun hp _ ↦ ⟨(believes_may hs).2 hp, key subset_union_left⟩) fun hp ↦ ?_
-  rcases poss_or.1 ((believes_may hs).1 h) with h' | h'
-  · exact absurd h' hp
-  · exact ⟨(believes_may hs).2 h', key subset_union_right⟩
-
--- p. 118: the survivors believe the very alternative the Standard Recipe has them not believe
-theorem believes_of_mem_survivors_may_or
-    (h : s ∈ survivors V size (may (or (atom p) (atom q))) (sayMayOr V p q)) :
-    (may (atom p)).Believes V s ∧ (may (atom q)).Believes V s :=
-  have ⟨hs, hp, hq⟩ := mem_survivors_may_or_iff.1 h
-  ⟨(believes_may hs).2 hp, (believes_may hs).2 hq⟩
-
--- p. 117 applies the heuristic (ii) to (17), and p. 119 reasons by (i) for (19): both single out
--- `i₁`
-theorem maximalFor_sayMayOr_iff (hp : (V p).Nonempty) (hq : (V q).Nonempty) :
-    MaximalFor (fun s : Set W ↦ s.Nonempty ∧ (may (or (atom p) (atom q))).Believes V s)
-      (fun s ↦ (sayMayOr V p q s).size) s ↔
-      (s.Nonempty ∧ (may (or (atom p) (atom q))).Believes V s) ∧
-        (atom p).Poss V s ∧ (atom q).Poss V s := by
-  obtain ⟨w, hw⟩ := hp
-  obtain ⟨v, hv⟩ := hq
-  exact maximalFor_say_iff (by simp [size]) (by simp [size]) (s₀ := V p ∪ V q)
-    ⟨⟨w, .inl hw⟩, fun _ _ ↦ ⟨w, .inl hw, .inl hw⟩⟩ ⟨w, .inl hw, hw⟩ ⟨v, .inr hv, hv⟩
-
--- pp. 119–120: free choice reports, where `V` gives the restaurant's permissions: with Competence
--- for each proposition at issue the weak inferences become beliefs
-theorem subset_of_mem_survivors_or
-    (h : s ∈ survivors V size (or (atom p) (atom q)) (sayOr V p q)) (hp : s ∈ polar (V p))
-    (hq : s ∈ polar (V q)) : s ⊆ V p ∧ s ⊆ V q :=
-  have ⟨_, _, hpp, hpq⟩ := mem_survivors_or_iff.1 h
-  ⟨subset_of_inter_nonempty_of_mem_polar hpp hp, subset_of_inter_nonempty_of_mem_polar hpq hq⟩
+abbrev altsMayOr (V : P → Set W) (p q : P) : List (Set (Set W) × Sentence P) :=
+  cells V (atom p) (atom q) (may (atom p)) (may (atom q)) (and (may (atom p)) (may (atom q)))
 
 /-- (13), p. 112: *many of the nurses were drunk*, with the alternatives (14), p. 113: `x` in the
 cell of believing `x`, `u` and not `x` in that of believing its negation, and `u` and maybe `x` in
 that of no opinion. The three-way partition of p. 113 is the partition by what is possible, among
 `x` and its negation, since only the inconsistent state considers neither possible. The last two
 alternatives have the same size, as p. 122 says of (22). -/
-noncomputable abbrev sayScalar (V : P → Set W) (u x : Sentence P) : Set W → Sentence P :=
-  say V x (neg x) x (and u (neg x)) (and u (may x))
+abbrev altsScalar (V : P → Set W) (u x : Sentence P) : List (Set (Set W) × Sentence P) :=
+  cells V x (neg x) x (and u (neg x)) (and u (may x))
+
+example : AreAlternatives V (or (atom p) (atom q)) (altsOr V p q) := by
+  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
+    and_true]
+  refine ⟨fun s ⟨hp, hq⟩ hs h ↦ ⟨believes_and.2 ⟨(believes_may hs).2 hp,
+        believes_and.2 ⟨(believes_may hs).2 hq, h⟩⟩,
+      fun _ h' ↦ (believes_and.1 (believes_and.1 h').2).2⟩,
+    fun s ⟨_, hq⟩ _ h ↦ ⟨fun w hw ↦ (h hw).resolve_right fun hwq ↦ hq ⟨w, hw, hwq⟩,
+      fun _ h' _ hw ↦ .inl (h' hw)⟩,
+    fun s ⟨hp, _⟩ _ h ↦ ⟨fun w hw ↦ (h hw).resolve_left fun hwp ↦ hp ⟨w, hw, hwp⟩,
+      fun _ h' _ hw ↦ .inr (h' hw)⟩⟩
+
+example : AreAlternatives V (may (or (atom p) (atom q))) (altsMayOr V p q) := by
+  have key {r : P} (hr : V r ⊆ V p ∪ V q) : (may (atom r)).Entails V (may (or (atom p) (atom q))) :=
+    fun _ h _ hw ↦ (h hw).mono (inter_subset_inter_right _ hr)
+  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
+    and_true]
+  exact ⟨fun s ⟨hp, hq⟩ hs _ ↦ ⟨believes_and.2 ⟨(believes_may hs).2 hp, (believes_may hs).2 hq⟩,
+      fun t h ↦ key subset_union_left t (believes_and.1 h).1⟩,
+    fun s ⟨hp, _⟩ hs _ ↦ ⟨(believes_may hs).2 hp, key subset_union_left⟩,
+    fun s ⟨_, hq⟩ hs _ ↦ ⟨(believes_may hs).2 hq, key subset_union_right⟩⟩
+
+example (hx : x.Entails V u) : AreAlternatives V u (altsScalar V u x) := by
+  simp only [AreAlternatives, List.forall_mem_cons, List.not_mem_nil, false_implies, implies_true,
+    and_true]
+  exact ⟨fun s ⟨hp, _⟩ hs h ↦ ⟨believes_and.2 ⟨h, (believes_may hs).2 hp⟩,
+      fun _ h' ↦ (believes_and.1 h').1⟩,
+    fun s ⟨_, hn⟩ _ _ ↦ ⟨not_poss_neg.1 hn, hx⟩,
+    fun s ⟨hp, _⟩ _ h ↦ ⟨believes_and.2 ⟨h, believes_neg.2 hp⟩, fun _ h' ↦ (believes_and.1 h').1⟩⟩
+
+-- p. 115: the speaker of (15) considers both disjuncts possible
+theorem mem_survivors_or_iff :
+    s ∈ survivors V size (or (atom p) (atom q)) (altsOr V p q) ↔
+      s.Nonempty ∧ s ⊆ V p ∪ V q ∧ (atom p).Poss V s ∧ (atom q).Poss V s :=
+  mem_survivors_cells_iff (by simp [size]) (by simp [size]) (by simp [size])
+    fun _ hs hu ↦ poss_or.1 (poss_of_believes hs hu)
+
+/-- Free choice: of the speakers of *George may be British or Canadian*, those that survive the
+alternative heuristic are just the consistent ones that believe *may* of each disjunct, the very
+alternatives the Standard Recipe has them not believe. -/
+theorem mem_survivors_may_or_iff :
+    s ∈ survivors V size (may (or (atom p) (atom q))) (altsMayOr V p q) ↔
+      s.Nonempty ∧ (may (atom p)).Believes V s ∧ (may (atom q)).Believes V s := by
+  rw [mem_survivors_cells_iff (by simp [size]) (by simp [size]) (by simp [size])
+    fun _ hs hu ↦ poss_or.1 ((believes_may hs).1 hu)]
+  refine and_congr_right fun hs ↦ ?_
+  simp only [believes_may hs]
+  exact ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨poss_or.2 (.inl h.1), h⟩⟩
 
 /-- The alternative heuristic is sensitive to form: a speaker's saying `u` rules out that the
 speaker believes `x` just when `x` is no more complex than `u`. -/
 theorem mem_survivors_scalar_iff :
-    s ∈ survivors V size u (sayScalar V u x) ↔
+    s ∈ survivors V size u (altsScalar V u x) ↔
       s.Nonempty ∧ u.Believes V s ∧ (x.size ≤ u.size → ¬ x.Believes V s) := by
-  simp only [survivors, mem_ofPred_eq, say]
-  refine and_congr_right fun hs ↦ and_congr_right fun _ ↦ ?_
-  rw [← not_poss_neg]
-  by_cases hp : x.Poss V s <;> by_cases hn : (neg x).Poss V s
-  · simp [hp, hn, size]
-  · simp [hp, hn]
-  · simp [hp, hn, size]
-  · rw [not_poss_neg] at hn
-    exact absurd (let ⟨w, hw⟩ := hs; ⟨w, hw, hn hw⟩) hp
+  simp only [survivors, mem_ofPred_eq, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, and_true, not_poss_neg]
+  refine and_congr_right fun hs ↦ and_congr_right fun _ ↦
+    ⟨fun ⟨_, h, _⟩ hle hb ↦ h ⟨poss_of_believes hs hb, hb⟩ hle, fun h ↦ ⟨fun _ ↦ ?_,
+      fun hb hle ↦ h hle hb.2, fun _ ↦ ?_⟩⟩ <;> simp only [size] <;> omega
 
--- p. 113: (14) are alternatives in the sense of the method
-example (hx : x.Entails V u) : AreAlternatives V u (sayScalar V u x) :=
-  fun s hs h ↦ say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V u)
-    (fun hp _ ↦ ⟨believes_and.2 ⟨h, (believes_may hs).2 hp⟩, fun _ h' ↦ (believes_and.1 h').1⟩)
-    (fun _ hn ↦ ⟨not_poss_neg.1 hn, hx⟩)
-    fun hp ↦ ⟨believes_and.2 ⟨h, believes_neg.2 hp⟩, fun _ h' ↦ (believes_and.1 h').1⟩
-
--- p. 114: Competence eliminates the cell of no opinion, which leaves the strong implicature
-theorem subset_compl_of_mem_survivors_scalar
-    (h : s ∈ survivors V size (atom p) (sayScalar V (atom p) (atom q))) (hc : s ∈ polar (V q)) :
-    s ⊆ (V q)ᶜ :=
-  (Question.mem_polar.1 hc).resolve_left ((mem_survivors_scalar_iff.1 h).2.2 le_rfl)
-
--- (23), p. 122: with *many though not all* in the discourse (of the interns, in the text), previous
--- use lowers that alternative, the state of believing *not all* goes too, and no opinion is left
-theorem mem_survivors_indicator_iff (hx : x.size ≤ u.size) :
-    s ∈ survivors V (({and u (neg x)}ᶜ : Set (Sentence P)).indicator size) u (sayScalar V u x) ↔
-      s.Nonempty ∧ u.Believes V s ∧ x.Poss V s ∧ (neg x).Poss V s := by
-  have hu : u ∈ ({and u (neg x)}ᶜ : Set (Sentence P)) := fun h ↦ by
-    have := congrArg size (mem_singleton_iff.1 h)
-    simp only [size] at this
-    omega
-  have hc : and u (may x) ∈ ({and u (neg x)}ᶜ : Set (Sentence P)) := fun h ↦ by
-    simpa using mem_singleton_iff.1 h
-  refine mem_survivors_say_iff ?_ ?_ ?_
-  · rw [indicator_of_mem hu]
-    by_cases h : x ∈ ({and u (neg x)}ᶜ : Set (Sentence P))
-    · rwa [indicator_of_mem h]
-    · simp [indicator_of_notMem h]
-  · simp [indicator_of_notMem]
-  · rw [indicator_of_mem hu, indicator_of_mem hc]
-    simp only [size]
-    omega
+-- (23), p. 122: once previous use makes (22a) as available as what was said, the state of believing
+-- *not all* goes too and no opinion is left
+theorem mem_survivors_of_available (ha : cost x ≤ cost u) (hb : cost (and u (neg x)) ≤ cost u)
+    (hc : ¬ cost (and u (may x)) ≤ cost u) :
+    s ∈ survivors V cost u (altsScalar V u x) ↔
+      s.Nonempty ∧ u.Believes V s ∧ x.Poss V s ∧ (neg x).Poss V s :=
+  mem_survivors_cells_iff ha hb hc fun s hs _ ↦
+    let ⟨w, hw⟩ := hs
+    (em (w ∈ x.eval V s)).imp (⟨w, hw, ·⟩) (⟨w, hw, ·⟩)
 
 end Sentence
 
 open Sentence
-
-section Pizza
-
-variable {D : Type*}
-
-/-- The clauses of (20), *many people had pizza or pasta*, and of its alternatives. -/
-inductive PizzaClause where
-  | manyEither | manyPizza | manyPasta | somePizza | somePasta
-
-/-- The worlds at which a clause of (20) holds, where `pizza w` and `pasta w` are those who had
-pizza and pasta at `w`. -/
-def PizzaClause.val (many : Set D → Prop) (pizza pasta : W → Set D) : PizzaClause → Set W
-  | manyEither => {w | many (pizza w ∪ pasta w)}
-  | manyPizza => {w | many (pizza w)}
-  | manyPasta => {w | many (pasta w)}
-  | somePizza => {w | (pizza w).Nonempty}
-  | somePasta => {w | (pasta w).Nonempty}
-
-variable {many : Set D → Prop} {pizza pasta : W → Set D}
-
-local notation "V₂₀" => PizzaClause.val many pizza pasta
-
-/-- Alternatives to (20), reconstructed after (18) for the partition of p. 120 by *some people had
-pizza* and *some people had pasta*. -/
-noncomputable abbrev sayMany (many : Set D → Prop) (pizza pasta : W → Set D) :
-    Set W → Sentence PizzaClause :=
-  sayEither (PizzaClause.val many pizza pasta) (atom .somePizza) (atom .somePasta) (atom .manyPizza)
-    (atom .manyPasta) (atom .manyEither)
-
--- (20), p. 120: free choice with no modal
-theorem mem_survivors_many_iff :
-    s ∈ survivors V₂₀ size (atom .manyEither) (sayMany many pizza pasta) ↔
-      s.Nonempty ∧ (atom .manyEither).Believes V₂₀ s ∧ (atom .somePizza).Poss V₂₀ s ∧
-        (atom .somePasta).Poss V₂₀ s :=
-  mem_survivors_sayEither_iff le_rfl le_rfl
-
-example (hm : Monotone many) :
-    AreAlternatives V₂₀ (atom .manyEither) (sayMany many pizza pasta) := fun s hs h ↦
-  say_rec (C := fun r ↦ r.Believes V₂₀ s ∧ r.Entails V₂₀ (atom .manyEither))
-    (believes_entails_top hs h)
-    (fun _ hn ↦ ⟨fun w hw ↦ by
-      have he : pasta w = ∅ := not_nonempty_iff_eq_empty.1 fun hw' ↦ hn ⟨w, hw, hw'⟩
-      simpa [eval, PizzaClause.val, he] using h hw, fun _ h' _ hw ↦ hm subset_union_left (h' hw)⟩)
-    fun hn ↦ ⟨fun w hw ↦ by
-      have he : pizza w = ∅ := not_nonempty_iff_eq_empty.1 fun hw' ↦ hn ⟨w, hw, hw'⟩
-      simpa [eval, PizzaClause.val, he] using h hw, fun _ h' _ hw ↦ hm subset_union_right (h' hw)⟩
-
-end Pizza
-
--- (31), p. 61, with p. 115, extending the text: a speaker who rules out a disjunct could have used
--- the shorter disjunction, so the survivors of the heuristic consider every disjunct possible
-theorem inter_nonempty_of_forall_not_subset {ι : Type*} {A : ι → Set W} {J : Finset ι} {i : ι}
-    (hq : s ⊆ ⋃ j ∈ J, A j) (h : ∀ J' ⊂ J, ¬ s ⊆ ⋃ j ∈ J', A j) (hi : i ∈ J) :
-    (s ∩ A i).Nonempty := by
-  classical
-  by_contra hne
-  refine h _ (Finset.erase_ssubset hi) fun w hw ↦ ?_
-  obtain ⟨j, hj, hwj⟩ := mem_iUnion₂.1 (hq hw)
-  exact mem_iUnion₂.2 ⟨j, Finset.mem_erase.2 ⟨fun he ↦ hne ⟨w, hw, he ▸ hwj⟩, hj⟩, hwj⟩
 
 /-! ### Conventionalism -/
 
@@ -643,73 +448,54 @@ open Quantifier Quantifier.Det GeurtsPouscoulous2009 Exhaustification
 
 private theorem someNotAllC_subset (R : Situation) : someNotAllC R ⊆ someC R := fun _ h ↦ h.1
 
-/-- Enhanced lexicalism in its weak version (33) prefers the upper-bounded reading of (62) provided
-this strengthens the sentence, which holds just under the upward-entailing quantifiers. -/
-theorem boundedReading_ssubset_iff (q : Quant) :
-    localReading q ⊂ classicalReading q ↔ PredictsLocalSIWeak (q.sem : Det (Fin 3)) := by
-  have pos {r : Quant} {t : Trial} (hr : PredictsLocalSIWeak (r.sem : Det (Fin 3)))
-      (hc : Classical r t) (hl : ¬ Local r t) :
-      (localReading r ⊂ classicalReading r) ↔ PredictsLocalSIWeak (r.sem : Det (Fin 3)) :=
-    iff_of_true ⟨fun R hR ↦ hr univ (someNotAllC_subset R) hR, fun h ↦ hl (h hc)⟩ hr
-  have neg {r : Quant} {t : Trial} (hr : ¬ PredictsLocalSIWeak (r.sem : Det (Fin 3)))
-      (hc : ¬ Classical r t) (hl : Local r t) :
-      (localReading r ⊂ classicalReading r) ↔ PredictsLocalSIWeak (r.sem : Det (Fin 3)) :=
-    iff_of_false (fun h ↦ hc (h.1 hl)) hr
+/-- Enhanced lexicalism prefers the upper-bounded reading of (62): in its weak version (33) provided
+this strengthens the sentence, just under the upward-entailing quantifiers, and in its strong
+version (32) unless it weakens the sentence, which adds the non-monotone *exactly two*. -/
+theorem readings_ssubset_iff (q : Quant) :
+    (localReading q ⊂ classicalReading q ↔ PredictsLocalSIWeak (q.sem : Det (Fin 3))) ∧
+      (¬ classicalReading q ⊂ localReading q ↔ PredictsLocalSI (q.sem : Det (Fin 3))) := by
+  have up {r : Quant} {t : Trial} (hw : PredictsLocalSIWeak (r.sem : Det (Fin 3)))
+      (hs : PredictsLocalSI (r.sem : Det (Fin 3))) (hc : Classical r t) (hl : ¬ Local r t) :
+      (localReading r ⊂ classicalReading r ↔ PredictsLocalSIWeak (r.sem : Det (Fin 3))) ∧
+        (¬ classicalReading r ⊂ localReading r ↔ PredictsLocalSI (r.sem : Det (Fin 3))) :=
+    ⟨iff_of_true ⟨fun R hR ↦ hw univ (someNotAllC_subset R) hR, fun h ↦ hl (h hc)⟩ hw,
+      iff_of_true (fun h ↦ hl (h.1 hc)) hs⟩
+  have down {r : Quant} {t : Trial} (hw : ¬ PredictsLocalSIWeak (r.sem : Det (Fin 3)))
+      (hs : ¬ PredictsLocalSI (r.sem : Det (Fin 3))) (hc : ¬ Classical r t) (hl : Local r t) :
+      (localReading r ⊂ classicalReading r ↔ PredictsLocalSIWeak (r.sem : Det (Fin 3))) ∧
+        (¬ classicalReading r ⊂ localReading r ↔ PredictsLocalSI (r.sem : Det (Fin 3))) :=
+    ⟨iff_of_false (fun h ↦ hc (h.1 hl)) hw, iff_of_false (not_not.2
+      ⟨fun R hR ↦ not_not.1 hs univ (someNotAllC_subset R) hR, fun h' ↦ hc (h' hl)⟩) hs⟩
   cases q with
-  | all => exact pos all_predictsLocalSIWeak classical_all not_local_all
+  | all => exact up all_predictsLocalSIWeak all_predictsLocalSI classical_all not_local_all
   | moreThanOne =>
-    exact pos moreThanOne_predictsLocalSIWeak classical_moreThanOne not_local_moreThanOne
+    exact up moreThanOne_predictsLocalSIWeak moreThanOne_predictsLocalSI classical_moreThanOne
+      not_local_moreThanOne
   | exactlyTwo =>
-    exact neg exactlyTwo_not_predictsLocalSIWeak not_classical_exactlyTwo_b local_exactlyTwo_b
-  | notAll => exact neg notAll_not_predictsLocalSIWeak not_classical_notAll local_notAll
+    exact ⟨iff_of_false (fun h ↦ not_classical_exactlyTwo_b (h.1 local_exactlyTwo_b))
+        exactlyTwo_not_predictsLocalSIWeak,
+      iff_of_true (fun h ↦ not_local_exactlyTwo_a (h.1 classical_exactlyTwo_a))
+        exactlyTwo_predictsLocalSI⟩
+  | notAll =>
+    exact down notAll_not_predictsLocalSIWeak notAll_not_predictsLocalSI not_classical_notAll
+      local_notAll
   | notMoreThanOne =>
-    exact neg notMoreThanOne_not_predictsLocalSIWeak not_classical_notMoreThanOne
-      local_notMoreThanOne
-
--- (32), pp. 146–147: the strong version prefers it unless this weakens the sentence, which also
--- covers the non-monotone *exactly two*
-theorem not_classicalReading_ssubset_iff (q : Quant) :
-    ¬ classicalReading q ⊂ localReading q ↔ PredictsLocalSI (q.sem : Det (Fin 3)) := by
-  have anti {r : Quant} (hr : ¬ PredictsLocalSI (r.sem : Det (Fin 3))) {t : Trial}
-      (hc : ¬ Classical r t) (hl : Local r t) :
-      (¬ classicalReading r ⊂ localReading r) ↔ PredictsLocalSI (r.sem : Det (Fin 3)) :=
-    iff_of_false (not_not.2 ⟨fun R hR ↦ not_not.1 hr univ (someNotAllC_subset R) hR,
-      fun h' ↦ hc (h' hl)⟩) hr
-  cases q with
-  | all =>
-    exact iff_of_true ((boundedReading_ssubset_iff .all).2 all_predictsLocalSIWeak).not_gt
-      all_predictsLocalSI
-  | moreThanOne =>
-    exact iff_of_true
-      ((boundedReading_ssubset_iff .moreThanOne).2 moreThanOne_predictsLocalSIWeak).not_gt
-      moreThanOne_predictsLocalSI
-  | exactlyTwo =>
-    exact iff_of_true (fun h ↦ not_local_exactlyTwo_a (h.1 classical_exactlyTwo_a))
-      exactlyTwo_predictsLocalSI
-  | notAll => exact anti notAll_not_predictsLocalSI not_classical_notAll local_notAll
-  | notMoreThanOne =>
-    exact anti notMoreThanOne_not_predictsLocalSI not_classical_notMoreThanOne
-      local_notMoreThanOne
-
--- p. 159: of the squares of Figure 1, one is connected to all the circles
-theorem existsUnique_figure2 : ∃! s : Fin 3, ∀ c, figure2 s c :=
-  ⟨0, fun _ ↦ .inl rfl, by decide⟩
+    exact down notMoreThanOne_not_predictsLocalSIWeak notMoreThanOne_not_predictsLocalSI
+      not_classical_notMoreThanOne local_notMoreThanOne
 
 variable {some many all : Set W}
 
--- (39)–(40): `exh` is the operator O of (39); O (44b), the parse under negation (42c)
+-- (39)–(40), p. 148: `exh` is the operator O of (39); O (44b), the parse under negation (42c)
 theorem exh_many (hs : many ⊆ some) (ha : all ⊂ many) :
-    exh {some, many, all} many = many \ all :=
-  exh_eq_sdiff_of_forall (by simp) ha.2 (by
-    rintro r (rfl | rfl | rfl)
-    exacts [.inl hs, .inl subset_rfl, .inr subset_rfl])
+    exh {some, many, all} many = many \ all := by
+  rw [exh_insert_of_subset hs, exh_insert_of_subset subset_rfl, exh_singleton_of_not_subset ha.2]
 
--- (43): O (43b), the parse (42b)
+-- (43), p. 149: O (43b), the parse (42b)
 theorem exh_compl_many (hs : many ⊂ some) (ha : all ⊆ many) :
     exh {someᶜ, manyᶜ, allᶜ} manyᶜ = manyᶜ ∩ some := by
-  rw [exh_eq_sdiff_of_forall (q := someᶜ) (by simp) (fun h ↦ hs.2 (compl_subset_compl.1 h)) (by
-    rintro r (rfl | rfl | rfl)
-    exacts [.inr subset_rfl, .inl subset_rfl, .inl (compl_subset_compl.2 ha)]), sdiff_compl]
+  rw [exh_insert_of_not_subset fun h ↦ hs.2 (compl_subset_compl.1 h),
+    exh_insert_of_subset subset_rfl, exh_singleton_of_subset (compl_subset_compl.2 ha),
+    sdiff_compl]
 
 -- (47), p. 150: the Power Principle prefers (42b) to the readings (42a) and (42c)
 theorem isLeast_readings_negation (hs : many ⊂ some) (ha : all ⊂ many) :
@@ -729,7 +515,7 @@ theorem isLeast_readings_core (R : SetRel W W) [ModalLogic.IsSerial R] (ha : all
     IsLeast {R.core some, exh {R.core some, R.core all} (R.core some),
         R.core (exh {some, all} some)} (R.core (exh {some, all} some)) := by
   have hcore : R.core (some \ all) ⊆ R.core some := fun _ hw _ hv ↦ (hw hv).1
-  rw [exh_pair ha.2]
+  rw [exh_insert_of_subset (p := some) subset_rfl, exh_singleton_of_not_subset ha.2]
   refine ⟨by simp, ?_⟩
   rintro _ (rfl | rfl | rfl)
   · exact hcore
@@ -751,8 +537,7 @@ theorem compl_sdiff_like {like love : Set W} (h : love ⊆ like) :
 theorem exh_rich {rich rich₂ : Set W} (h : rich₂ ⊆ rich) (hne : rich₂.Nonempty) :
     exh {rich \ rich₂} rich = rich₂ := by
   obtain ⟨v, hv⟩ := hne
-  rw [exh_eq_sdiff_of_forall (mem_singleton _) (fun hs ↦ (hs (h hv)).2 hv)
-    (by rintro r rfl; exact .inr subset_rfl), sdiff_sdiff_eq_self h]
+  rw [exh_singleton_of_not_subset fun hs ↦ (hs (h hv)).2 hv, sdiff_sdiff_eq_self h]
 
 end Conventionalism
 
@@ -762,7 +547,7 @@ section Embedded
 
 variable {M A F : Set W}
 
--- §8.1, (6)–(8): the implicature *not all the figs* passes the consistency check
+-- §8.1, (6)–(8), pp. 166–167: the implicature *not all the figs* passes the consistency check
 theorem isSecondaryImplicature_mango (hA : A ⊆ F) (hM : (M \ F).Nonempty)
     (hF : (F \ (M ∪ A)).Nonempty) : IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} A := by
   obtain ⟨f, hf, hfn⟩ := hF
@@ -804,17 +589,10 @@ theorem subset_core_exh {R : SetRel W W} {some all : Set W} (hall : all ⊂ some
 
 -- (10)–(12) and, for *hope*, (15)–(17), pp. 170–171, share this form, for any attitude: what
 -- separates them is the plausibility of the second premise. (11) and (16), as printed, have the
--- disjunction outside the speaker's belief; given the first premise that says the same, and without
--- it it is strictly stronger
+-- disjunction outside the speaker's belief; given the first premise that says the same
 theorem subset_or_subset_iff {X Y : Set W} (h10 : s ⊆ Xᶜ) : (s ⊆ X ∨ s ⊆ Y) ↔ s ⊆ X ∪ Y :=
   ⟨fun h ↦ h.elim (·.trans subset_union_left) (·.trans subset_union_right),
     fun h ↦ .inr fun _ hw ↦ (h hw).resolve_left (h10 hw)⟩
-
-example : ∃ (s X Y : Set (Fin 2)), s ⊆ X ∪ Y ∧ ¬ (s ⊆ X ∨ s ⊆ Y) :=
-  ⟨univ, {0}, {0}ᶜ, (union_compl_self _).ge, by
-    rintro (h | h)
-    · exact absurd (h (mem_univ 1)) (by simp)
-    · exact h (mem_univ 0) rfl⟩
 
 section Indefinites
 
@@ -868,7 +646,7 @@ example : Datum.ReadCount Table2Row.ofDatum Examples.all 8 := by decide
 -- Table 2: the alternatives printed are those of the definition (24) by Horn sets, on which a
 -- sentence is an alternative iff it is stronger, for any strictly stronger meanings of the four
 -- quantifiers. The reversal under negation is among sentences; the meanings keep their order, and
--- the ordering a Horn scale (4) would impose plays no part (pp. 57–59)
+-- the ordering a Horn scale (4), p. 51, would impose plays no part (pp. 57–59)
 theorem rows_table2 {a : Fin 4 → Set W} (ha : StrictAnti a) :
     ∀ r ∈ Examples.all.filterMap Table2Row.ofDatum, ∀ k,
       k ∈ r.alternatives ↔ r.polarity • a k ⊂ r.polarity • a r.quantifier := by
@@ -889,20 +667,22 @@ inductive Item where
 /-- The statement that the theory derives the inference, over any model of the sentence. -/
 def Item.Derived : Item → Prop
   | .disjunct => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (or (atom true) (atom false)) (sayOr V true false) →
+      s ∈ survivors V size (or (atom true) (atom false)) (altsOr V true false) →
         (atom true).Poss V s ∧ (atom false).Poss V s
   | .freeChoice => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (may (or (atom true) (atom false))) (sayMayOr V true false) →
-        (atom true).Poss V s ∧ (atom false).Poss V s
+      s ∈ survivors V size (may (or (atom true) (atom false))) (altsMayOr V true false) →
+        (may (atom true)).Believes V s ∧ (may (atom false)).Believes V s
   | .sameLength => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (atom true) (sayScalar V (atom true) (atom false)) →
+      s ∈ survivors V size (atom true) (altsScalar V (atom true) (atom false)) →
         ¬ (atom false).Believes V s
-  | .afterUse => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V (({and (atom true) (neg (atom false))}ᶜ : Set (Sentence Bool)).indicator size)
-        (atom true) (sayScalar V (atom true) (atom false)) →
+  | .afterUse => ∀ {W : Type} (V : Bool → Set W) (cost : Sentence Bool → ℕ) (s : Set W),
+      cost (atom false) ≤ cost (atom true) →
+        cost (and (atom true) (neg (atom false))) ≤ cost (atom true) →
+        ¬ cost (and (atom true) (may (atom false))) ≤ cost (atom true) →
+        s ∈ survivors V cost (atom true) (altsScalar V (atom true) (atom false)) →
         ¬ (atom false).Believes V s ∧ (atom false).Poss V s
   | .longer => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
-      s ∈ survivors V size (atom true) (sayScalar V (atom true) (and (atom false) (atom true))) →
+      s ∈ survivors V size (atom true) (altsScalar V (atom true) (and (atom false) (atom true))) →
         ¬ (and (atom false) (atom true)).Believes V s
   | .figs => ∀ {W : Type} (M F A : Set W), A ⊆ F → (M \ F).Nonempty → (F \ (M ∪ A)).Nonempty →
       IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} A
@@ -941,10 +721,9 @@ theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mang
   | .disjunct => iff_of_true (fun _ _ h ↦ (mem_survivors_or_iff.1 h).2.2) (by decide)
   | .freeChoice => iff_of_true (fun _ _ h ↦ (mem_survivors_may_or_iff.1 h).2) (by decide)
   | .sameLength => iff_of_true (fun _ _ h ↦ (mem_survivors_scalar_iff.1 h).2.2 le_rfl) (by decide)
-  | .afterUse => iff_of_true (fun _ _ h ↦ by
-      obtain ⟨_, _, hp, hn⟩ :=
-        (mem_survivors_indicator_iff (x := atom false) (u := atom true) le_rfl).1 h
-      exact ⟨poss_neg.1 hn, hp⟩) (by decide)
+  | .afterUse => iff_of_true (fun _ _ _ ha hb hc h ↦
+      have ⟨_, _, hp, hn⟩ := (mem_survivors_of_available ha hb hc).1 h
+      ⟨poss_neg.1 hn, hp⟩) (by decide)
   | .longer => iff_of_false Item.not_derived_longer (by decide)
   | .figs => iff_of_true (fun _ _ _ ↦ isSecondaryImplicature_mango) (by decide)
   | .mango => iff_of_false Item.not_derived_mango (by decide)
@@ -980,7 +759,8 @@ example : Datum.ReadCount quantifierRow? Examples.all 3 := by decide
 -- none of these inferences goes through
 theorem rows_61 : ∀ r ∈ Examples.all.filterMap quantifierRow?,
     ¬ classicalReading r.1 ⊂ localReading r.1 ∧ r.2 = false := by
-  simp only [not_classicalReading_ssubset_iff, Quant.predictsLocalSI_iff]
+  have h (q : Quant) := (readings_ssubset_iff q).2
+  simp only [h, Quant.predictsLocalSI_iff]
   decide
 
 /-- Reads whether the inference of a row of (56) is conveyed. -/

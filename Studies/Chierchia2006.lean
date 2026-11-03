@@ -173,9 +173,9 @@ def atLeastTwo (S : Finset E) : Set W := {w | ∃ x ∈ S, ∃ y ∈ S, x ≠ y 
 -- (81a), (81b)
 theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ (⋃ x ∈ S, P x) ⊆ atLeastTwo P S) :
     exh {atLeastTwo P S} (⋃ x ∈ S, P x) = exactlyOne P S := by
+  rw [exh_singleton_of_not_subset h]
   ext w
-  simp only [mem_exh, Set.mem_singleton_iff, forall_eq, imp_iff_not h]
-  simp only [Set.mem_iUnion, exists_prop, exactlyOne, atLeastTwo, Set.mem_ofPred_eq]
+  simp only [Set.mem_sdiff, Set.mem_iUnion, exists_prop, exactlyOne, atLeastTwo, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨x, hx, hPx⟩, h2⟩
     exact ⟨x, ⟨hx, hPx⟩, fun y ⟨hy, hPy⟩ ↦ by_contra fun hyx ↦ h2 ⟨y, hy, x, hx, hyx, hPy, hPx⟩⟩
