@@ -259,6 +259,9 @@ def darma : Glottocode := "darm1243"
 /-- Defaka, `defa1248` (ISO 639-3 `afn`). -/
 def defaka : Glottocode := "defa1248"
 
+/-- Dhangu, `dhan1270` (ISO 639-3 `dhg`). -/
+def dhangu : Glottocode := "dhan1270"
+
 /-- Dieri, `dier1241` (ISO 639-3 `dif`). -/
 def dieri : Glottocode := "dier1241"
 
@@ -309,6 +312,9 @@ def even : Glottocode := "even1260"
 
 /-- Ewe, `ewee1241` (ISO 639-3 `ewe`). -/
 def ewe : Glottocode := "ewee1241"
+
+/-- Faroese, `faro1244` (ISO 639-3 `fao`). -/
+def faroese : Glottocode := "faro1244"
 
 /-- Fijian, `fiji1243` (ISO 639-3 `fij`). -/
 def fijian : Glottocode := "fiji1243"

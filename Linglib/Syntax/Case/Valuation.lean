@@ -91,6 +91,9 @@ def offer (o : Option β) : FeatureSlot β := o.elim .unvalued .valued
 @[simp] theorem offer_ne_absent (o : Option β) : offer o ≠ .absent := by
   cases o <;> simp
 
+@[simp] theorem value?_offer (o : Option β) : (offer o).value? = o := by
+  cases o <;> rfl
+
 @[simp] theorem map_offer {γ : Type*} (g : β → γ) (o : Option β) :
     (offer o).map g = offer (o.map g) := by
   cases o <;> rfl
