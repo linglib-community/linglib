@@ -24,7 +24,9 @@ what one of Dayal's three does](##Wh.presupposition_eq), and [the free choice di
 * A world is the plurality bought, as in `Dayal2016`, so the distributive *bought* of `x` is
   `Set.Ici x`. The subsets of a domain are finite, as mathlib's closures make them.
 * The paper derives no plural interrogative. Without *-ro* a plural phrase here ranges over
-  pluralities alone, as the paper reports Maldonado proposing for plural bare interrogatives.
+  pluralities alone, as the paper reports Maldonado proposing for plural bare interrogatives, and
+  `Wh.presupposition` does not let a singular phrase compete with it: with competition in both
+  directions the singular phrase would lose its plural answers.
 * The free choice answers some informants accept to *-ro* questions under *must* are not fitted: the
   analysis predicts presupposition failure, and the paper takes them to be rejecting it.
 
