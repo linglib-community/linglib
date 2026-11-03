@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Core.Order.Partition.IntervalPartition
+public import Linglib.Core.Order.OrdConnected
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Mathlib.Order.Partition.Finpartition
 public import Studies.Pylkkanen2008
 
 /-!
@@ -10,8 +11,9 @@ public import Studies.Pylkkanen2008
 
 Harley adopts Pylkkänen's view that the functions of little v may be bundled on one head or split
 across several, and proposes the hierarchy vP > ApplP > CausP1 > VoiceP > CausP2 (49). A pattern
-is an interval partition of the projections a structure realizes, whose parts are its heads. Key's
-analysis of Turkish causatives follows by Vocabulary Insertion over these heads.
+is a partition of the projections a structure realizes, whose parts are its heads, and the patterns
+of (49) [bundle only neighbouring projections](##patterns_isContiguous). Key's analysis of Turkish
+causatives follows by Vocabulary Insertion over these heads.
 
 ## Main definitions
 
@@ -22,8 +24,10 @@ analysis of Turkish causatives follows by Vocabulary Insertion over these heads.
 
 ## Implementation notes
 
-* A projection absent from a pattern lies outside its support; the projections (49) calls
-  distinct are singleton parts.
+* A projection absent from a pattern lies outside the set it partitions; the projections (49)
+  calls distinct are singleton parts.
+* Harley raises spanning only as an alternative to bundling, so being an interval of the realized
+  projections is a theorem about the patterns of (49) rather than part of their type.
 * `ofCauseHead` is undefined on phase-selecting Cause, which would need a second Voice below
   CausP2.
 
@@ -63,27 +67,41 @@ inductive Feature where
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.ctorIdx (by decide)
 
+/-- v, the lower Caus and Voice, the projections of (49a) and of Pylkkänen's causatives. -/
+abbrev vCausVoice : Finset Feature := {.v, .caus₁, .voice}
+
 /-- (49a) Turkish: v, the lower Caus and Voice on separate heads. -/
-def turkish : IntervalPartition Feature := .discrete {.v, .caus₁, .voice}
+def turkish : Finpartition vCausVoice := ⊥
 
 /-- (49b) Hiaki: all five projections on separate heads. -/
-def hiaki : IntervalPartition Feature := .discrete .univ
+def hiaki : Finpartition (.univ : Finset Feature) := ⊥
 
 /-- (49c) Korean: v and Appl on separate heads, the upper Caus on the head of Voice. -/
-def korean : IntervalPartition Feature := ⟨[{.v}, {.appl}, {.voice, .caus₂}], by decide, by decide⟩
+def korean : Finpartition ({.v, .appl, .voice, .caus₂} : Finset Feature) :=
+  ⟨{{.v}, {.appl}, {.voice, .caus₂}}, by decide, by decide, by decide⟩
 
 /-- (49d) Italian: v and Voice on one head. -/
-def italian : IntervalPartition Feature := .indiscrete {.v, .voice} (by decide)
+def italian : Finpartition ({.v, .voice} : Finset Feature) := .indiscrete (by decide)
 
 /-- Among (49a–d), only Italian puts Voice on the head of v. -/
-theorem voice_mem_part_v_iff :
-    ∀ P ∈ [turkish, hiaki, korean, italian], Feature.voice ∈ P.part .v ↔ P = italian := by
-  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-  refine ⟨iff_of_false ?_ (ne_of_apply_ne IntervalPartition.support ?_),
-    iff_of_false ?_ (ne_of_apply_ne IntervalPartition.support ?_),
-    iff_of_false ?_ (ne_of_apply_ne IntervalPartition.support ?_), iff_of_true ?_ (by trivial)⟩
-  all_goals simp [turkish, hiaki, korean, italian]
-  all_goals decide
+theorem voice_mem_part_v :
+    Feature.voice ∉ turkish.part .v ∧ Feature.voice ∉ hiaki.part .v ∧
+      Feature.voice ∉ korean.part .v ∧ Feature.voice ∈ italian.part .v := by
+  decide
+
+-- (49), read as spanning: each head bundles only projections neighbouring among those realized
+theorem patterns_isContiguous :
+    IsContiguous (fun x : vCausVoice ↦ turkish.part x) ∧
+      IsContiguous (fun x : (.univ : Finset Feature) ↦ hiaki.part x) ∧
+      IsContiguous (fun x : ({.v, .appl, .voice, .caus₂} : Finset Feature) ↦ korean.part x) ∧
+      IsContiguous (fun x : ({.v, .voice} : Finset Feature) ↦ italian.part x) := by
+  decide
+
+-- a head bundling v with Voice past a realized lower Caus is not a span
+example : ¬ IsContiguous fun x : vCausVoice ↦
+    (⟨{{.v, .voice}, {.caus₁}}, by decide, by decide, by decide⟩ :
+      Finpartition vCausVoice).part x := by
+  decide
 
 /-! ### Key's Turkish causatives -/
 
@@ -120,17 +138,20 @@ private theorem vocabulary_pairwise (ρ : Root) :
   simpa [vocabulary] using (VocabularyItem.specificity_lt_of_applySet_ssubset hlt).le
 
 /-- The terminal of the head bearing the lower Caus. -/
-def causTerminal (P : IntervalPartition Feature) : Terminal :=
+def causTerminal {s : Finset Feature} (P : Finpartition s) : Terminal :=
   (P.part .caus₁).map .inl
 
 /-- The lexical causative: v and the lower Caus on one head. -/
-def lexical : IntervalPartition Feature := ⟨[{.v, .caus₁}, {.voice}], by decide, by decide⟩
+def lexical : Finpartition vCausVoice :=
+  ⟨{{.v, .caus₁}, {.voice}}, by decide, by decide, by decide⟩
 
 theorem lexical_part_caus₁ : lexical.part .caus₁ = {.v, .caus₁} := by decide
 
+theorem turkish_part_caus₁ : turkish.part .caus₁ = {.caus₁} := by decide
+
 /-- A lexical causative allomorph applies to the head bearing Caus only if v is on that head, in
 every context. -/
-theorem v_mem_of_applies {P : IntervalPartition Feature} {ρ : Root} {l r : List Terminal}
+theorem v_mem_of_applies {s : Finset Feature} {P : Finpartition s} {ρ : Root} {l r : List Terminal}
     (h : Applies (lexicalItem ρ) (⟨causTerminal P, l, r⟩ : Neighborhood Terminal)) :
     Feature.v ∈ P.part .caus₁ := by
   simpa [Neighborhood.mem_def, causTerminal] using h (0, .inl .v) (by simp [lexicalItem])
@@ -152,9 +173,9 @@ theorem subsetPrinciple_lexical (ρ : Root) :
 theorem subsetPrinciple_productive (ρ : Root) (l r : List Terminal) :
     subsetPrinciple (vocabulary ρ) ⟨causTerminal turkish, l, r⟩ = some .dir := by
   have hl : ¬ Applies (lexicalItem ρ) (⟨causTerminal turkish, l, r⟩ : Neighborhood _) :=
-    fun h ↦ by simpa [turkish] using v_mem_of_applies h
+    fun h ↦ by simpa [turkish_part_caus₁] using v_mem_of_applies h
   have hd : Applies dirItem (⟨causTerminal turkish, l, r⟩ : Neighborhood _) := by
-    simp [dirItem, causTerminal, turkish]
+    simp [dirItem, causTerminal, turkish_part_caus₁]
   rw [subsetPrinciple_eq_head?_applicable (vocabulary_pairwise ρ),
     show RuleSet.applicable (vocabulary ρ) _ = [dirItem] by
       simp [RuleSet.applicable, vocabulary, hl, hd]]
@@ -166,15 +187,15 @@ open Pylkkanen2008 in
 /-- Pylkkänen's root- and verb-selecting causative heads as patterns, on the chapter's reading of
 [key-2013]: root-selecting Cause shares the head of v, verb-selecting Cause is the lower Caus on a
 head of its own, and Voice-bundling puts Cause on the head of Voice. -/
-def ofCauseHead : CauseHead → Option (IntervalPartition Feature)
-  | ⟨.root, true⟩ => some (.indiscrete {.v, .caus₁, .voice} (by decide))
+def ofCauseHead : CauseHead → Option (Finpartition vCausVoice)
+  | ⟨.root, true⟩ => some (.indiscrete (by decide))
   | ⟨.root, false⟩ => some lexical
-  | ⟨.verb, true⟩ => some ⟨[{.v}, {.caus₁, .voice}], by decide, by decide⟩
+  | ⟨.verb, true⟩ => some ⟨{{.v}, {.caus₁, .voice}}, by decide, by decide, by decide⟩
   | ⟨.verb, false⟩ => some turkish
   | ⟨.phase, _⟩ => none
 
 /-- A causative head has a causee position iff its pattern puts v and Voice on different heads. -/
-theorem hasCauseePosition_iff {c : Pylkkanen2008.CauseHead} {P : IntervalPartition Feature}
+theorem hasCauseePosition_iff {c : Pylkkanen2008.CauseHead} {P : Finpartition vCausVoice}
     (h : ofCauseHead c = some P) : c.HasCauseePosition ↔ Feature.voice ∉ P.part .v := by
   obtain ⟨_ | _ | _, _ | _⟩ := c <;> cases h <;>
     simp [Pylkkanen2008.hasCauseePosition_iff, lexical, turkish] <;> decide
