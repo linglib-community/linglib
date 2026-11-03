@@ -9,8 +9,9 @@ public import Linglib.Semantics.Modality.HistoricalAlternatives
 On a T × W frame the worlds share one time order, and worlds are historical alternatives through a
 time when they differ only in what is future to it. Thomason makes atoms respect this: an assignment
 treats alternatives alike up to and including the time, which holds of a valuation [exactly when
-the frame refines the agreement of worlds on its dated atoms](##isAssignment_iff_sim_le). Then [a
-formula without the future tense is historically necessary when true](##sat_N_iff) and the past of
+the frame refines the agreement of worlds on its atoms up to each
+time](##isAssignment_iff_sim_le). Then [a formula without the future tense is historically
+necessary when true](##sat_N_iff) and the past of
 a necessity is a necessity of the past, while [the converse fails](##exists_not_N_past_imp_past_N).
 Since every world has the same times,
 [whether a last moment lies ahead](##sat_fut_G_contradiction_iff) and
@@ -55,26 +56,27 @@ def IsAssignment (F : TWFrame World T) (V : Atom → T → World → Prop) : Pro
   ∀ p ⦃t₁ t w w'⦄, t₁ ≤ t → F.sim t w w' → (V p t₁ w ↔ V p t₁ w')
 
 /-- A valuation is an assignment of a frame exactly when the frame's historical equivalence refines
-agreement on the valuation's dated atoms, so `TWFrame.ofDatedFacts` is the coarsest frame for
-which the valuation is an assignment. -/
+agreement on the valuation's atoms up to each time, so `TWFrame.ofDatedFacts` is the coarsest frame
+for which the valuation is an assignment. -/
 theorem isAssignment_iff_sim_le :
     IsAssignment F V ↔
       ∀ t, F.sim t ≤ (TWFrame.ofDatedFacts (World := World) Prod.snd
         (fun w (f : Atom × T) ↦ V f.1 f.2 w)).sim t :=
   ⟨fun h _ _ _ hww f hf ↦ h f.1 hf hww, fun h p t₁ _ _ _ hle hww ↦ h _ hww (p, t₁) hle⟩
 
-/-- A formula is free of the future tense when it has no `G`, the dual of `F`. -/
-def FFree : OForm Atom → Prop
+/-- A formula contains no occurrences of `F` when it has no `G`, the primitive of which `F` is the
+dual in `OForm`. -/
+def ContainsNoF : OForm Atom → Prop
   | .atom _ => True
-  | .neg a => FFree a
-  | .and a b => FFree a ∧ FFree b
+  | .neg a => ContainsNoF a
+  | .and a b => ContainsNoF a ∧ ContainsNoF b
   | .G _ => False
-  | .H a => FFree a
-  | .N a => FFree a
-  | .box a => FFree a
+  | .H a => ContainsNoF a
+  | .N a => ContainsNoF a
+  | .box a => ContainsNoF a
 
 theorem sat_iff_of_sim (hV : IsAssignment F V) :
-    ∀ {a : OForm Atom}, FFree a → ∀ {t : T} {w w' : World}, F.sim t w w' →
+    ∀ {a : OForm Atom}, ContainsNoF a → ∀ {t : T} {w w' : World}, F.sim t w w' →
       (F.sat V a t w ↔ F.sat V a t w')
   | .atom p, _, _, _, _, h => hV p le_rfl h
   | .neg a, ha, _, _, _, h => not_congr (sat_iff_of_sim hV (a := a) ha h)
@@ -91,12 +93,12 @@ theorem sat_iff_of_sim (hV : IsAssignment F V) :
 
 /-- (6): under an assignment, a formula without the future tense is historically necessary exactly
 when it is true (p. 209). -/
-theorem sat_N_iff (hV : IsAssignment F V) (ha : FFree a) :
+theorem sat_N_iff (hV : IsAssignment F V) (ha : ContainsNoF a) :
     F.sat V (.N a) t w ↔ F.sat V a t w :=
   ⟨fun h ↦ h w ((F.sim t).iseqv.refl w), fun h _ hw ↦ (sat_iff_of_sim hV ha hw).1 h⟩
 
 -- (6) in the terms of `HistoricalAlternatives.settled`: past and present issues are settled.
-theorem settled_sat (hV : IsAssignment F V) (ha : FFree a) (cg : Set World) :
+theorem settled_sat (hV : IsAssignment F V) (ha : ContainsNoF a) (cg : Set World) :
     HistoricalAlternatives.settled F.alternatives cg t (F.sat V a t) :=
   fun _ _ _ hv ↦ sat_iff_of_sim hV ha hv
 

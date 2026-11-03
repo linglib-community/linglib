@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.LeftLinear
 public import Linglib.Semantics.Tense.Allen
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Modal.Defs
@@ -8,23 +9,23 @@ public import Linglib.Logic.Modal.Defs
 # Quantificational tense
 
 Read quantificationally, a tense quantifies over the times its cell admits, as in the tense logic
-of Prior. The quantificational tense of a cell is possibility along the cell's relation
-(`Tense.toSetRel`, and `Allen.toSetRel` on intervals), so `◇[toSetRel ⟦past⟧] P t` says that `P`
-held at some time before `t`, and necessity `□` along the relation says that it held at all of
-them. Sometime in the past is
+of Prior: `◇[toSetRel ⟦past⟧] P t`, possibility along the cell's relation (`Tense.toSetRel`, and
+`Allen.toSetRel` on intervals), says that `P` held at some time before `t`, and `□` that it held at
+all of them. Sometime in the past is
 [left adjoint to always in the future](##Tense.diamond_past_box_future_gc). The schemas beyond
-$K_t$ correspond to the shape of time: $FFp \to Fp$ is [axiom 4](##ModalLogic.diamond_four) of a
-transitive relation, its converse holds
-[exactly when time is dense](##Tense.diamond_future_den_iff), and $Gp \to Fp$
-[exactly when time has no last moment](##Tense.isSerial_toSetRel_future_iff). A
-tense under a tense [entails the tense of the composed cell](##Tense.diamond_diamond_toSetRel), and
-is that tense for all cells
+$K_t$ correspond to the structure of time: $FFp \to Fp$ is [axiom 4](##ModalLogic.diamond_four),
+its converse holds [exactly when time is dense](##Tense.diamond_future_den_iff), $Gp \to Fp$
+[exactly when time has no last moment](##Tense.isSerial_toSetRel_future_iff), and $PFp \to Mp$
+[exactly when time does not branch forward](##Tense.diamond_past_diamond_future_le_iff). A tense
+under a tense [entails the tense of the composed cell](##Tense.diamond_diamond_toSetRel), and is
+that tense for all cells
 [exactly when time is dense without endpoints](##Tense.diamond_toSetRel_comp_iff).
 
 ## References
 
 * [prior-1967]
 * [burgess-1984]
+* [thomason-1984]
 * [blackburn-derijke-venema-2001]
 -/
 
@@ -100,7 +101,79 @@ theorem diamond_future_den_iff :
       DenselyOrdered T :=
   diamond_den_iff.trans toSetRel_future_subset_comp_self_iff
 
+/-- The quantificational tense of the unconstrained cell is `M` of [prior-1967], true when `P`
+holds, will hold or held (p. 38). -/
+theorem diamond_toSetRel_top :
+    ◇[toSetRel ⊤] P t ↔ ◇[toSetRel ⟦past⟧] P t ∨ P t ∨ ◇[toSetRel ⟦future⟧] P t := by
+  simp only [Diamond, mem_toSetRel_top_iff, mem_toSetRel_past, mem_toSetRel_future, or_and_right,
+    exists_or, exists_eq_left]
+
 end LT
+
+section PartialOrder
+
+variable [PartialOrder T] {p r : T}
+
+/-- The relation of the unconstrained cell is comparability. -/
+theorem mem_toSetRel_top_iff_le : p ~[toSetRel ⊤] r ↔ p ≤ r ∨ r ≤ p := by
+  rw [mem_toSetRel_top_iff]
+  refine ⟨?_, fun h ↦ h.elim (fun h ↦ ?_) fun h ↦ ?_⟩
+  · rintro (h | rfl | h)
+    exacts [.inr h.le, .inl le_rfl, .inl h.le]
+  · obtain rfl | h := h.eq_or_lt
+    exacts [.inr (.inl rfl), .inr (.inr h)]
+  · obtain rfl | h := h.eq_or_lt
+    exacts [.inr (.inl rfl), .inl h]
+
+/-- $FPp \to Mp$, the form `CFPpAApPpFp` of [prior-1967] (p. 52) and the axiom AK8 that
+[thomason-1984] reports from Kamp, holds exactly when the predecessors of any time are comparable,
+the *trees* of [burgess-1984], with no branching to the left. -/
+theorem diamond_future_diamond_past_le_iff :
+    (◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
+      IsLeftLinear T := by
+  rw [show (◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) = _ from
+    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff]
+  refine ⟨fun h ↦ ⟨fun a b c ha hb ↦ ?_⟩, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
+  · obtain rfl | hac := ha.eq_or_lt
+    · exact .inr hb
+    obtain rfl | hbc := hb.eq_or_lt
+    · exact .inl ha
+    exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_future.2 hac, mem_toSetRel_past.2 hbc⟩)
+  · exact mem_toSetRel_top_iff_le.2 (h.comparable_of_le_common (mem_toSetRel_future.1 h₁).le
+      (mem_toSetRel_past.1 h₂).le)
+
+/-- $PFp \to Mp$, the form `CPFpAApPpFp` of [prior-1967] (p. 52) and the axiom AK7 that
+[thomason-1984] reports from Kamp, holds exactly when the successors of any time are comparable,
+with no branching to the right. -/
+theorem diamond_past_diamond_future_le_iff :
+    (◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
+      IsLeftLinear Tᵒᵈ := by
+  rw [show (◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) = _ from
+    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff, isLeftLinear_orderDual_iff]
+  refine ⟨fun h a b c ha hb ↦ ?_, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
+  · obtain rfl | hac := ha.eq_or_lt
+    · exact .inl hb
+    obtain rfl | hbc := hb.eq_or_lt
+    · exact .inr ha
+    exact mem_toSetRel_top_iff_le.1 (h ⟨c, mem_toSetRel_past.2 hac, mem_toSetRel_future.2 hbc⟩)
+  · exact mem_toSetRel_top_iff_le.2 (h (mem_toSetRel_past.1 h₁).le (mem_toSetRel_future.1 h₂).le)
+
+/-- Axiom 5 along the unconstrained cell, the law `CMNMpNMp` of [prior-1967] read through
+`ModalLogic.box_five_iff`, holds exactly when time branches neither way. -/
+theorem isEuclidean_toSetRel_top_iff :
+    IsEuclidean (toSetRel ⊤ : SetRel T T) ↔ IsLeftLinear T ∧ IsLeftLinear Tᵒᵈ := by
+  rw [isLeftLinear_orderDual_iff]
+  refine ⟨fun h ↦ ⟨⟨fun a b c ha hb ↦ ?_⟩, fun a b c ha hb ↦ ?_⟩,
+    fun ⟨hl, hr⟩ ↦ ⟨fun w v u hv hu ↦ ?_⟩⟩
+  · exact mem_toSetRel_top_iff_le.1 (h.eucl c a b (mem_toSetRel_top_iff_le.2 (.inr ha))
+      (mem_toSetRel_top_iff_le.2 (.inr hb)))
+  · exact mem_toSetRel_top_iff_le.1 (h.eucl c a b (mem_toSetRel_top_iff_le.2 (.inl ha))
+      (mem_toSetRel_top_iff_le.2 (.inl hb)))
+  · rw [mem_toSetRel_top_iff_le] at hv hu ⊢
+    rcases hv with hv | hv <;> rcases hu with hu | hu
+    exacts [hr hv hu, .inr (hu.trans hv), .inl (hv.trans hu), hl.comparable_of_le_common hv hu]
+
+end PartialOrder
 
 section LinearOrder
 

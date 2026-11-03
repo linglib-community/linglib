@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.LeftLinear
-public import Linglib.Semantics.Tense.Defs
+public import Linglib.Semantics.Tense.Quantificational
 public import Mathlib.Order.Zorn
 
 /-!
@@ -178,7 +178,41 @@ theorem mem_future_atom_iff (φ : Set M) (m : M) (h : Flag M) :
   ⟨fun ⟨m', hm', hlt, hφ⟩ ↦ ⟨m', ⟨hm', hφ⟩, Tense.mem_toSetRel_future.2 hlt⟩,
     fun ⟨m', ⟨hm', hφ⟩, hlt⟩ ↦ ⟨m', hm', Tense.mem_toSetRel_future.1 hlt, hφ⟩⟩
 
+/-! #### Linearity along a history
+
+[A moment that branches refutes](##not_diamond_past_diamond_future_le) $PFp \to Mp$ along the
+moments. The Ockhamist operators restore it, and its mirror image, since a history is a chain. -/
+
+private theorem mem_of_mem_flag (hm : m ∈ h) {z : M} (hz : z ∈ h) (hφ : (z, h) ∈ φ) :
+    (m, h) ∈ past φ ∨ (m, h) ∈ φ ∨ (m, h) ∈ future φ := by
+  obtain hle | hle := h.le_or_le hm hz
+  · obtain rfl | hlt := hle.eq_or_lt
+    exacts [.inr (.inl hφ), .inr (.inr ⟨z, hz, hlt, hφ⟩)]
+  · obtain rfl | hlt := hle.eq_or_lt
+    exacts [.inr (.inl hφ), .inl ⟨z, hlt, hφ⟩]
+
+/-- On the history of evaluation, a past future is a past, a present or a future, whether or not
+the moments branch. -/
+theorem past_future_subset (hm : m ∈ h) (hφ : (m, h) ∈ past (future φ)) :
+    (m, h) ∈ past φ ∨ (m, h) ∈ φ ∨ (m, h) ∈ future φ :=
+  let ⟨_, _, _, hz, _, hz'⟩ := hφ
+  mem_of_mem_flag hm hz hz'
+
+/-- On the history of evaluation of a left-linear frame, a future past is a past, a present or a
+future. -/
+theorem future_past_subset [IsLeftLinear M] (hm : m ∈ h) (hφ : (m, h) ∈ future (past φ)) :
+    (m, h) ∈ past φ ∨ (m, h) ∈ φ ∨ (m, h) ∈ future φ :=
+  let ⟨_, hy, _, _, hzy, hz'⟩ := hφ
+  mem_of_mem_flag hm (Flag.Iic_subset hy hzy.le) hz'
+
 end Ockhamist
+
+open ModalLogic Tense in
+/-- A moment with two immediate successors refutes $PFp \to Mp$ along the moments of the frame. -/
+theorem not_diamond_past_diamond_future_le {x : M} (hx : IsBranching x) :
+    ¬ ((◇[toSetRel ⟦Tense.past⟧] ∘ ◇[toSetRel ⟦Tense.future⟧] : (M → Prop) → M → Prop) ≤
+      ◇[toSetRel ⊤]) :=
+  fun h ↦ hx.not_isLeftLinear_orderDual (diamond_past_diamond_future_le_iff.1 h)
 
 /-! ### Finite frames
 

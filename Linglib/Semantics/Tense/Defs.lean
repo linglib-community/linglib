@@ -174,6 +174,11 @@ theorem mem_toSetRel : p ~[toSetRel C] r ↔ ∃ o ∈ C, o.Compares r p := .rfl
 @[simp] theorem mem_toSetRel_future : p ~[toSetRel ⟦future⟧] r ↔ p < r := by
   simp [mem_toSetRel, Denotes.denote, denote]
 
+theorem mem_toSetRel_top_iff : p ~[toSetRel ⊤] r ↔ r < p ∨ r = p ∨ p < r :=
+  ⟨fun ⟨o, _, h⟩ ↦ by cases o; exacts [.inl h, .inr (.inl h), .inr (.inr h)],
+    fun h ↦ h.elim (⟨.lt, Finset.mem_univ _, ·⟩) fun h ↦
+      h.elim (⟨.eq, Finset.mem_univ _, ·⟩) (⟨.gt, Finset.mem_univ _, ·⟩)⟩
+
 @[simp] theorem toSetRel_bot : (toSetRel ⊥ : SetRel T T) = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨_, ho, _⟩ ↦ Finset.notMem_empty _ ho
 
