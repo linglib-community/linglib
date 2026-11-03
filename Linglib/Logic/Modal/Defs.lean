@@ -11,8 +11,9 @@ In Kripke semantics a proposition is *necessary* at a world when it is true at e
 accessible from it, and *possible* when it is true at some; the accessibility relation fixes the
 kind of modality. Each of the axioms T, D, B, 4 and 5 holds along a relation
 [exactly when the relation is reflexive](##box_T_iff), serial, symmetric, transitive or Euclidean
-respectively. Possibility is [left adjoint to necessity along the converse
-relation](##diamond_box_gc), necessity at a world
+respectively, and possibility along one relation entails possibility along another
+[exactly when the second contains the first](##diamond_le_diamond_iff). Possibility is [left
+adjoint to necessity along the converse relation](##diamond_box_gc), necessity at a world
 [depends on exactly the worlds it accesses](##dependsOn_box_iff), and Negation Swap,
 $\Box \neg p \leftrightarrow \neg \Box p$, holds everywhere
 [exactly when the relation is the graph of a function](##box_compl_eq_iff).
@@ -36,6 +37,7 @@ transitivity are mathlib's.
 
 * [kripke-1963] — relational semantics
 * [blackburn-derijke-venema-2001] — Chapter 3, frame definability
+* [prior-1967] — the mixing principles, density on a reflexive relation, and time's end
 -/
 
 @[expose] public section
@@ -131,9 +133,16 @@ theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
 theorem box_top : □[R] ⊤ = ⊤ := by
   simpa using (diamond_box_gc R.inv).u_top
 
+variable {R} in
+/-- Possibility along `R` entails possibility along `S` exactly when `S` contains `R`, so a law
+between possibilities defines an inclusion of relations. -/
+theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R ⊆ S where
+  mp h := fun ⟨w, v⟩ hwv ↦ match h (· = v) w ⟨v, hwv, rfl⟩ with | ⟨_, hS, rfl⟩ => hS
+  mpr h _ _ := fun ⟨v, hwv, hv⟩ ↦ ⟨v, h hwv, hv⟩
+
 /-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
-tense this is Prior's axiom of conversion $A \supset GPA$: what is the case will always have been
-the case. -/
+tense this is the mixing principle $A \supset GPA$ that [prior-1967] takes from Ockham: what is the
+case will always have been the case. -/
 theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
   (diamond_box_gc R).le_u_l p
 
@@ -204,6 +213,9 @@ theorem box_B [R.IsSymm] (h : p w) : □[R] (◇[R] p) w := fun _ hwv ↦ ⟨w, 
 theorem box_four [R.IsTrans] (h : □[R] p w) : □[R] (□[R] p) w :=
   fun _ hwv u hvu ↦ h u (R.trans hwv hvu)
 
+theorem diamond_four [R.IsTrans] (h : ◇[R] (◇[R] p) w) : ◇[R] p w :=
+  let ⟨_, hwv, u, hvu, hu⟩ := h; ⟨u, R.trans hwv hvu, hu⟩
+
 theorem box_five [IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv ↦ ⟨u, IsEuclidean.eucl w v u hwv hwu, hpu⟩
@@ -249,6 +261,20 @@ theorem box_four_iff : Box R ≤ Box R ∘ Box R ↔ R.IsTrans where
 theorem box_five_iff : Diamond R ≤ Box R ∘ Diamond R ↔ IsEuclidean R where
   mp h := ⟨fun w v u hwv hwu ↦ match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
   mpr _ _ _ := box_five
+
+/-- Den, `◇p → ◇◇p`, the converse of 4 for possibility, defines density: whatever `R` relates, it
+relates through an intermediate world. A reflexive relation validates it trivially, through the
+endpoints, as [prior-1967] notes of a reflexive *later than* (p. 39). -/
+theorem diamond_den_iff : Diamond R ≤ Diamond R ∘ Diamond R ↔ R ⊆ R ○ R := by
+  rw [show Diamond R ∘ Diamond R = Diamond (R ○ R) from (funext (diamond_comp R R)).symm,
+    diamond_le_diamond_iff]
+
+/-- `p → ◇_R ◇_{R⁻¹} p` defines seriality: a world can return to itself through a successor
+exactly when it has one. For the future this is the observation of [prior-1967] that if time has
+an end, *it will have been that p* is not implied by *p* (p. 40). -/
+theorem le_diamond_diamond_inv_iff : id ≤ Diamond R ∘ Diamond R.inv ↔ IsSerial R where
+  mp h := ⟨fun w ↦ let ⟨v, hv, _⟩ := h (fun _ ↦ True) w trivial; ⟨v, hv⟩⟩
+  mpr _ _ w hp := let ⟨v, hv⟩ := IsSerial.serial (R := R) w; ⟨v, hv, w, hv, hp⟩
 
 /-! ### Seriality and functionality at a world
 
