@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.Exhaustification.Disjunctive
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Data.Examples.Chierchia2013

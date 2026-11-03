@@ -171,13 +171,15 @@ def toSegment : Sonority → Segment
 
 /-- The features that define a class (Hayes p. 77): [−sonorant] for an obstruent, [−approximant,
 +sonorant] for a nasal, [+consonantal, +approximant] for a liquid, [−syllabic, −consonantal] for a
-glide and [+syllabic] for a vowel. -/
+glide and [+syllabic, −consonantal] for a vowel. Hayes lists a vowel as [+syllabic] with the
+complication of the syllabic consonants left to his next section, and his Table 4.1 has it
+[−consonantal]. -/
 def description : Sonority → Segment
   | .obstruent => .ofSpecs [(.sonorant, false)]
   | .nasal => .ofSpecs [(.approximant, false), (.sonorant, true)]
   | .liquid => .ofSpecs [(.consonantal, true), (.approximant, true)]
   | .glide => .ofSpecs [(.syllabic, false), (.consonantal, false)]
-  | .vowel => .ofSpecs [(.syllabic, true)]
+  | .vowel => .ofSpecs [(.syllabic, true), (.consonantal, false)]
 
 /-- The sonority of a segment: an obstruent if [−sonorant], else a nasal if [−approximant], else
 a liquid if [+consonantal], else a vowel if [+syllabic], and otherwise a glide. A syllabic liquid
@@ -307,7 +309,7 @@ namespace Segment
 variable (s : Segment)
 
 theorem isVowel_iff_le : s.IsVowel ↔ Sonority.vowel.description ≤ s := by
-  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
+  rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel, IsSyllabic]
 
 theorem isObstruent_iff_le : s.IsObstruent ↔ Sonority.obstruent.description ≤ s := by
   rw [Sonority.description, ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]

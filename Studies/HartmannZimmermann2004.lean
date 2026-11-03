@@ -10,7 +10,7 @@ public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Syntax.Reflex
 public import Linglib.Fragments.Tangale.TAM
 public import Linglib.Fragments.Tangale.Focus

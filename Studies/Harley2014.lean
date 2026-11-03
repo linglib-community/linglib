@@ -191,19 +191,19 @@ but gaps (an empty `interp` fiber outside the frame, via
 `Allosemy.toInterpreted`): `vocabulary` is the List-2 map, `cahootLF` the
 List-3 map. -/
 
-/-- List 2 is a `Realization` whose fiber at a root is its Elsewhere-selected
-exponent, and `∅` at an index with no item. -/
+/-- List 2 is the `Realization` by Vocabulary Insertion, whose fiber at a root is its
+Elsewhere-selected exponent, and `∅` at an index with no item. -/
 def realization : Morphology.Realization Root (Arguments Number) String :=
-  ⟨fun r c ↦ (spellout c r).elim ∅ ({·})⟩
+  toRealization vocabulary fun r c ↦ site c r
 
 /-- √322 realizes two nonempty, distinct fibers across two licensed clauses —
 the *go*/*went* case the predicate names (§2.2). -/
 theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
   have hsg : realization.realize run (unaccusative .singular) = {"vuite"} := by
-    show (spellout (unaccusative .singular) run).elim ∅ ({·}) = _
+    show (spellout (unaccusative .singular) run).toFinset = _
     simp [run_sg]
   have hpl : realization.realize run (unaccusative .plural) = {"tenne"} := by
-    show (spellout (unaccusative .plural) run).elim ∅ ({·}) = _
+    show (spellout (unaccusative .plural) run).toFinset = _
     simp [run_pl]
   refine ⟨unaccusative .singular, unaccusative .plural, hsg ▸ Finset.singleton_nonempty _,
     hpl ▸ Finset.singleton_nonempty _, ?_⟩

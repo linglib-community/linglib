@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Verification
+public import Linglib.Semantics.Dynamic.DRT.Verification.Partial
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
 

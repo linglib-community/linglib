@@ -85,15 +85,15 @@ theorem cell_nonempty_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ 
   obtain ⟨i, hi⟩ := hI
   refine ⟨w, Set.mem_biUnion hi (hw i hi),
     fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q),
-    fun r ⟨hr, _⟩ ↦ ?_⟩
+    fun r hr _ ↦ ?_⟩
   obtain ⟨S, ⟨j, hj⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hr)
   exact Set.mem_biUnion hj (hw j (hS hj))
 
-theorem II_eq_self_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
-    II A (⋃ i ∈ I, p i) = A := by
-  rw [II_eq_nonExcludable_of_cell_nonempty _ _
+theorem isInnocentlyIncludable_iff_of_subset_supClosure (hI : I.Nonempty)
+    (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {q : Set World} :
+    IsInnocentlyIncludable A (⋃ i ∈ I, p i) q ↔ q ∈ A := by
+  rw [isInnocentlyIncludable_iff_of_cell_nonempty
     (cell_nonempty_of_subset_supClosure hA hsplit hsep hI hall)]
-  ext q
   exact and_iff_left (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q)
 
 theorem exhIEII_eq_inter_sInter (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
@@ -104,11 +104,11 @@ theorem exhIEII_eq_inter_sInter (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w 
   constructor
   · rintro ⟨hφ, _, hne⟩
     exact ⟨hφ, Set.mem_sInter.2 fun r hr ↦
-      hne r ⟨hr, not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep r⟩⟩
+      hne r hr (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep r)⟩
   · rintro ⟨hφ, hall'⟩
     exact ⟨hφ, fun q hq ↦
       absurd hq (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q),
-      fun r ⟨hr, _⟩ ↦ Set.mem_sInter.1 hall' r hr⟩
+      fun r hr _ ↦ Set.mem_sInter.1 hall' r hr⟩
 
 end Family
 

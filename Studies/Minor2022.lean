@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Minor2022
 public import Linglib.Semantics.Dynamic.PCDRT
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Mathlib.Data.Set.Card
 

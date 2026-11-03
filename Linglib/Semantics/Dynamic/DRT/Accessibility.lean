@@ -1,14 +1,15 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Linglib.Semantics.Dynamic.DRT.Syntax
+public import Mathlib.Logic.Relation
 
 /-!
-# Accessibility of discourse referents
+# Subordination and accessibility
 
-A discourse referent is accessible from a condition when it is declared in a box that is
-accessible where the condition occurs: the box containing the condition, the boxes it is
-nested in, and the antecedent of a conditional for its consequent (Kamp and Reyle, Def. 1.4.11,
-Def. 2.1.3, Def. 2.4.4). Accessibility is a property of occurrences: one box can
+A DRS is subordinate to another when it occurs inside one of its complex conditions. A discourse
+referent is accessible from a condition when it is declared in a box that is accessible where the
+condition occurs: the box containing the condition, the boxes it is nested in, and the antecedent
+of a conditional for its consequent. Accessibility is a property of occurrences: one box can
 occur twice in a DRS, at places with different accessible boxes. An occurrence is reached from
 the host by a walk that steps into the sub-boxes of complex conditions, collecting the boxes
 accessible at each step, and the walk is computed by a structural recursion that decides
@@ -16,9 +17,11 @@ accessibility.
 
 ## Main definitions
 
+* `DRT.DirectlySubordinate`, `DRT.Subordinate`, `DRT.WeakSubordinate`: immediate subordination
+  and its transitive and reflexive-transitive closures.
 * `DRT.ScopeStep`, `DRT.Occurrence`: a step into a sub-box, collecting the accessible boxes,
   and the occurrences of boxes in a host.
-* `DRT.AccessibleFrom`: a referent accessible from a condition (Def. 1.4.11).
+* `DRT.AccessibleFrom`: a referent accessible from a condition.
 * `DRT.DRS.Accessible`: a referent accessible where another is declared.
 * `DRT.AccessibleTo`: a box accessible to another, in the sense of Geurts, Beaver and Maier.
 
@@ -31,10 +34,10 @@ accessibility.
 
 ## Implementation notes
 
-Kamp and Reyle state Def. 2.1.3 and Def. 2.4.4 for DRS values. Read on values, they let a chain
+Kamp and Reyle state accessibility for DRS values. Read on values, it lets a chain
 pass through a second occurrence of an equal box and make a referent accessible where no
 occurrence of the condition sees it, so the definitions here quantify over occurrences.
-`AccessibleFrom`, like Def. 2.1.3, asks only that some occurrence of the condition see the
+`AccessibleFrom`, like their definition, asks only that some occurrence of the condition see the
 referent, which properness does not imply: in `[ | ¬[y | P y], ¬[ | P y]]` the condition `P y`
 sees `y` at its first occurrence and leaves it free at its second. Properness is therefore
 characterized at occurrences.
@@ -55,6 +58,66 @@ namespace DRT
 universe u v w
 
 variable {L : Language.{u, v}} {V : Type w}
+
+/-! ### Subordination -/
+
+/-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions, by the `neg`
+case of Def. 1.4.10(i), the `⇒` cases of Def. 2.1.2 (which subordinates *both* components of a
+conditional to the containing DRS), and the `∨` cases of Def. 2.4.3(i)(c), where no disjunct is
+subordinate to another. It is a relation on DRS values, where the textbook's is on box
+occurrences. Every clause pins the containing box in its conclusion, since an unpinned clause
+(such as consequent-below-antecedent) would hold of every pair of DRSs via a manufactured
+container. The `⇒` visibility asymmetry is not subordination but accessibility. -/
+inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
+  /-- The body of a `¬` is directly subordinate to the containing DRS. -/
+  | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
+  /-- The antecedent of a `⇒` is directly subordinate to the containing DRS. -/
+  | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
+  /-- The consequent of a `⇒` is directly subordinate to the containing DRS. -/
+  | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c D
+  /-- The left disjunct of a `∨` is directly subordinate to the containing DRS. -/
+  | disL {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate l D
+  /-- The right disjunct of a `∨` is directly subordinate to the containing DRS. -/
+  | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
+
+/-- `Subordinate` is the `<` of Def. 1.4.10(ii), the transitive closure of
+`DirectlySubordinate`. -/
+abbrev Subordinate : DRS L V → DRS L V → Prop :=
+  Relation.TransGen DirectlySubordinate
+
+/-- `WeakSubordinate` is the `≤` of Def. 1.4.10(ii), the reflexive-transitive closure of
+`DirectlySubordinate`. -/
+abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
+  Relation.ReflTransGen DirectlySubordinate
+
+theorem DirectlySubordinate.sizeOf_lt {K' K : DRS L V} (h : DirectlySubordinate K' K) :
+    sizeOf K' < sizeOf K := by
+  obtain ⟨U, conds⟩ := K
+  cases h with
+  | neg h | impAnte h | impCons h | disL h | disR h =>
+    have := List.sizeOf_lt_of_mem h
+    simp_all
+    omega
+
+theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
+    sizeOf K' < sizeOf K := by
+  induction h with
+  | single h => exact h.sizeOf_lt
+  | tail _ h ih => exact ih.trans h.sizeOf_lt
+
+theorem Subordinate.irrefl (K : DRS L V) : ¬ Subordinate K K :=
+  fun h => absurd h.sizeOf_lt (lt_irrefl _)
+
+/-- Weak subordination is a partial order on DRS values. -/
+theorem WeakSubordinate.antisymm {K' K : DRS L V} (h : WeakSubordinate K' K)
+    (h' : WeakSubordinate K K') : K' = K := by
+  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁
+  · rfl
+  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h' with rfl | h₂
+  · rfl
+  exact absurd ((Subordinate.sizeOf_lt h₁).trans (Subordinate.sizeOf_lt h₂)) (lt_irrefl _)
+
+/-! ### Occurrences -/
 
 /-- One step of the walk, from an occurrence of a box `D` whose accessible boxes are `bs`
 (innermost first, `D` included) into a sub-box of one of its complex conditions; the

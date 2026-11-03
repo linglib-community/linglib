@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.HarmonicGrammar.IntersectingFamilies
 public import Linglib.Phonology.HarmonicGrammar.Noise
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid.Difference
 public import Studies.Zuraw2010
 
 /-!
@@ -326,21 +327,15 @@ constraint makes is neither antitone nor monotone in the other. -/
 theorem not_antitone_not_monotone_sigmoid_sub (n : ℝ) {u u' : ℝ} (hu : u < u') :
     ¬ Antitone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) ∧
       ¬ Monotone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) := by
-  set D := fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')
-  have hpos : 0 < D 0 := sub_pos.2 (sigmoid_strictMono (by linarith))
-  have hbot : Tendsto D atBot (𝓝 0) := by
-    have h (v : ℝ) : Tendsto (fun a ↦ sigmoid (n - a - v)) atBot (𝓝 1) :=
-      tendsto_sigmoid_atTop.comp (tendsto_atTop_add_const_right _ _
-        (tendsto_atTop_add_const_left _ _ tendsto_neg_atBot_atTop))
-    simpa using (h u).sub (h u')
-  have htop : Tendsto D atTop (𝓝 0) := by
-    have h (v : ℝ) : Tendsto (fun a ↦ sigmoid (n - a - v)) atTop (𝓝 0) :=
-      tendsto_sigmoid_atBot.comp (tendsto_atBot_add_const_right _ _
-        (tendsto_atBot_add_const_left _ _ tendsto_neg_atTop_atBot))
-    simpa using (h u).sub (h u')
-  refine ⟨fun hD ↦ ?_, fun hD ↦ ?_⟩
-  · exact hpos.not_ge (ge_of_tendsto hbot (eventually_le_atBot 0 |>.mono fun a ha ↦ hD ha))
-  · exact hpos.not_ge (ge_of_tendsto htop (eventually_ge_atTop 0 |>.mono fun a ha ↦ hD ha))
+  have hlt (t : ℝ) (ht : t ≠ 0) :
+      sigmoid (n - (n - (u + u') / 2 + t) - u) - sigmoid (n - (n - (u + u') / 2 + t) - u') <
+        sigmoid (n - (n - (u + u') / 2) - u) - sigmoid (n - (n - (u + u') / 2) - u') := by
+    rw [sigmoid_sub_sigmoid_lt_sigmoid_sub_sigmoid_iff (by ring) (by linarith),
+      show n - (n - (u + u') / 2) - u + (n - (n - (u + u') / 2) - u') = 0 by ring,
+      show n - (n - (u + u') / 2 + t) - u + (n - (n - (u + u') / 2 + t) - u') = -2 * t by ring]
+    simpa [abs_mul] using ht
+  exact ⟨fun hD ↦ (hlt (-1) (by norm_num)).not_ge (hD (by linarith)),
+    fun hD ↦ (hlt 1 one_ne_zero).not_ge (hD (by linarith))⟩
 
 end StochasticOT
 

@@ -25,7 +25,8 @@ and `b` to `c` in `S`. A cell is also a relation between times (`toSetRel`), the
 relations `<`, `=` and `>` of its positions. The relation is defined on any order, so the past
 relates a moment of branching time to the moments below it. On linear time it is the constraint
 `compare r p ∈ C`, and the relation of a composed cell contains the composite of the relations,
-with equality when time is dense and has no first or last moment.
+with equality for all cells [exactly when time is dense and has no first or last
+moment](##Tense.toSetRel_comp_iff).
 
 ## Main declarations
 
@@ -173,6 +174,11 @@ theorem mem_toSetRel : p ~[toSetRel C] r ↔ ∃ o ∈ C, o.Compares r p := .rfl
 @[simp] theorem mem_toSetRel_future : p ~[toSetRel ⟦future⟧] r ↔ p < r := by
   simp [mem_toSetRel, Denotes.denote, denote]
 
+theorem mem_toSetRel_top_iff : p ~[toSetRel ⊤] r ↔ r < p ∨ r = p ∨ p < r :=
+  ⟨fun ⟨o, _, h⟩ ↦ by cases o; exacts [.inl h, .inr (.inl h), .inr (.inr h)],
+    fun h ↦ h.elim (⟨.lt, Finset.mem_univ _, ·⟩) fun h ↦
+      h.elim (⟨.eq, Finset.mem_univ _, ·⟩) (⟨.gt, Finset.mem_univ _, ·⟩)⟩
+
 @[simp] theorem toSetRel_bot : (toSetRel ⊥ : SetRel T T) = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨_, ho, _⟩ ↦ Finset.notMem_empty _ ho
 
@@ -198,14 +204,31 @@ theorem inv_toSetRel (C : Finset Ordering) :
 @[simp] theorem inv_toSetRel_future : (toSetRel ⟦future⟧ : SetRel T T).inv = toSetRel ⟦past⟧ :=
   inv_toSetRel _
 
+/-- The past relates a time to an earlier one through a third exactly when time is dense. -/
+theorem toSetRel_past_subset_comp_self_iff :
+    (toSetRel ⟦past⟧ : SetRel T T) ⊆ toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ ↔ DenselyOrdered T where
+  mp h := ⟨fun _ _ hab ↦ let ⟨c, h₁, h₂⟩ := h (mem_toSetRel_past.2 hab)
+    ⟨c, mem_toSetRel_past.1 h₂, mem_toSetRel_past.1 h₁⟩⟩
+  mpr _ := fun _ h ↦ let ⟨c, h₁, h₂⟩ := exists_between (mem_toSetRel_past.1 h)
+    ⟨c, mem_toSetRel_past.2 h₂, mem_toSetRel_past.2 h₁⟩
+
+/-- The future relates a time to a later one through a third exactly when time is dense. -/
+theorem toSetRel_future_subset_comp_self_iff :
+    (toSetRel ⟦future⟧ : SetRel T T) ⊆ toSetRel ⟦future⟧ ○ toSetRel ⟦future⟧ ↔
+      DenselyOrdered T where
+  mp h := ⟨fun _ _ hab ↦ let ⟨c, h₁, h₂⟩ := h (mem_toSetRel_future.2 hab)
+    ⟨c, mem_toSetRel_future.1 h₁, mem_toSetRel_future.1 h₂⟩⟩
+  mpr _ := fun _ h ↦ let ⟨c, h₁, h₂⟩ := exists_between (mem_toSetRel_future.1 h)
+    ⟨c, mem_toSetRel_future.2 h₁, mem_toSetRel_future.2 h₂⟩
+
 end LT
 
-theorem toSetRel_past_comp_self [Preorder T] [DenselyOrdered T] :
-    (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel T T) = toSetRel ⟦past⟧ := by
-  ext ⟨p, r⟩
-  simp only [SetRel.mem_comp, mem_toSetRel_past]
-  exact ⟨fun ⟨_, h₁, h₂⟩ ↦ h₂.trans h₁,
-    fun h ↦ let ⟨u, hu, hu'⟩ := exists_between h; ⟨u, hu', hu⟩⟩
+instance [Preorder T] : (toSetRel ⟦past⟧ : SetRel T T).IsTrans :=
+  ⟨fun _ _ _ h₁ h₂ ↦ mem_toSetRel_past.2 ((mem_toSetRel_past.1 h₂).trans (mem_toSetRel_past.1 h₁))⟩
+
+instance [Preorder T] : (toSetRel ⟦future⟧ : SetRel T T).IsTrans :=
+  ⟨fun _ _ _ h₁ h₂ ↦ mem_toSetRel_future.2 ((mem_toSetRel_future.1 h₁).trans
+    (mem_toSetRel_future.1 h₂))⟩
 
 section LinearOrder
 
@@ -235,6 +258,21 @@ theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] (C D : Fi
   ext ⟨p, r⟩
   simp only [SetRel.mem_comp, mem_toSetRel_iff, compare_mem_comp_iff]
   exact exists_congr fun _ ↦ and_comm
+
+/-- Composition is exact for all cells exactly when time is dense and has no first or last
+moment: density comes from the past of a past, and a time before and after each time from the
+unconstrained cell, the composite of the past with the future. -/
+theorem toSetRel_comp_iff :
+    (∀ C D : Finset Ordering, toSetRel C ○ toSetRel D = (toSetRel (comp D C) : SetRel T T)) ↔
+      DenselyOrdered T ∧ NoMinOrder T ∧ NoMaxOrder T := by
+  refine ⟨fun h ↦ ⟨?_, ⟨fun t ↦ ?_⟩, ⟨fun t ↦ ?_⟩⟩, fun ⟨_, _, _⟩ ↦ toSetRel_comp⟩
+  · exact toSetRel_past_subset_comp_self_iff.1 (by rw [h, comp_past_past])
+  · obtain ⟨s, hs, -⟩ := (h ⟦past⟧ ⟦future⟧).ge
+      (show (t, t) ∈ toSetRel (comp ⟦future⟧ ⟦past⟧) by simp)
+    exact ⟨s, mem_toSetRel_past.1 hs⟩
+  · obtain ⟨s, hs, -⟩ := (h ⟦future⟧ ⟦past⟧).ge
+      (show (t, t) ∈ toSetRel (comp ⟦past⟧ ⟦future⟧) by simp)
+    exact ⟨s, mem_toSetRel_future.1 hs⟩
 
 end LinearOrder
 

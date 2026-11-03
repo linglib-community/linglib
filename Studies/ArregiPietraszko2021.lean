@@ -599,11 +599,7 @@ def resolve (j : Hiatus.Juncture) : List Segment :=
 
 /-- Two exponents joined, with the hiatus between them resolved if there is one. -/
 def join (x y : List Segment) : List Segment :=
-  match x.reverse, y with
-  | v₁ :: stem, v₂ :: suffix =>
-    if h : v₁.IsVowel ∧ v₂.IsVowel then resolve ⟨stem.reverse, v₁, v₂, suffix, h.1, h.2⟩
-    else x ++ y
-  | _, _ => x ++ y
+  (Hiatus.Juncture.ofForms? x y).elim (x ++ y) resolve
 
 /-- The exponent of a constituent of a complex head of prefixes. -/
 structure Exponent where

@@ -118,7 +118,6 @@ import Linglib.Logic.Team.Atoms
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
-import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.Antichain
@@ -771,15 +770,6 @@ import Linglib.Semantics.Degree.Measure.Dimension
 import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Linglib.Semantics.Dynamic.DRS.Box
-import Linglib.Semantics.Dynamic.DRS.Context
-import Linglib.Semantics.Dynamic.DRS.Defs
-import Linglib.Semantics.Dynamic.DRS.Dynamics
-import Linglib.Semantics.Dynamic.DRS.Gluing
-import Linglib.Semantics.Dynamic.DRS.Presheaf
-import Linglib.Semantics.Dynamic.DRS.Reduction
-import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Dynamic.Possibility
@@ -793,11 +783,8 @@ import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.InnocentInclusion
-import Linglib.Semantics.Exhaustification.PreExhaustified
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Focus.Control

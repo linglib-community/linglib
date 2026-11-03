@@ -253,6 +253,8 @@ theorem isGap_iff_not_homogeneous (hx : x.Nonempty) :
   simp only [IsGap, Set.mem_ofPred_eq, Finset.subset_iff]
   grind
 
+section
+
 variable [DecidableEq Atom]
 
 /-- A participant who reads the definite homogeneously but reverses the positive judgment to
@@ -275,6 +277,8 @@ theorem domainRestriction_of_isGap (hw : IsGap x w) :
   simp only [barePlural, neg_eq_iff_eq_neg, SignType.supervaluation_eq_one_iff,
     SignType.supervaluation_eq_neg_one_iff, Finset.mem_filter]
   exact ⟨fun _ h ↦ h.2, ⟨b, Finset.mem_filter.2 ⟨hb, hbw⟩⟩, fun _ h ↦ h.2⟩
+
+end
 
 /-! ### Binary and ternary judgments -/
 
@@ -310,17 +314,16 @@ theorem mates_primal : mates {.mystery, .strong} = primalMates :=
 
 section General
 
-variable {W : Type*} [Fintype W] [DecidableEq W] {wk st : Finset W} {A : Finset Item}
+variable {W : Type*} {wk st : Set W} {A : Finset Item}
 
 private theorem exh_mates_mystery : exh (mates A) (primal wk st) .mystery = wk := by
-  change innocent.exh (({.weak} : Finset Item).image (primal wk st)) wk = wk
-  rw [Finset.image_singleton]
-  exact innocent_exh_eq_self_of_forall_subset (by simp [primal])
+  change exhIE (primal wk st '' ↑({.weak} : Finset Item)) wk = wk
+  exact exhIE_eq_self_of_forall _ _ (by simp [primal])
 
 private theorem exh_mates_weak_of_forall (h : ∀ i ∈ A, wk ⊆ primal wk st i) :
     exh (mates A) (primal wk st) .weak = wk :=
-  innocent_exh_eq_self_of_forall_subset fun a ha ↦ by
-    obtain ⟨i, hi, rfl⟩ := Finset.mem_image.1 ha
+  exhIE_eq_self_of_forall _ _ fun a ha _ ↦ by
+    obtain ⟨i, hi, rfl⟩ := ha
     exact h i hi
 
 theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk st) .weak = wk :=
@@ -330,69 +333,74 @@ theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk
 -- (10)
 theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
     exh (mates A) (primal wk st) .weak = wk \ st := by
-  have hne : wk ≠ st := fun e ↦ by simp [e] at h
-  have himg : (A.image (primal wk st)).erase wk = {st} := by
-    ext a
-    simp only [Finset.mem_erase, Finset.mem_image, Finset.mem_singleton]
-    constructor
-    · rintro ⟨ha, i, -, rfl⟩
-      cases i <;> first | exact absurd rfl ha | rfl
-    · rintro rfl
-      exact ⟨hne.symm, .strong, hA, rfl⟩
-  change innocent.exh (A.image (primal wk st)) wk = wk \ st
-  rw [innocent_exh_erase_entailed subset_rfl (h.mono Finset.sdiff_subset), himg,
-    innocent_exh_singleton h]
+  have himg : insert wk (primal wk st '' A) = {wk, st} := by
+    refine Set.insert_subset_iff.2 ⟨.inl rfl, ?_⟩ |>.antisymm
+      (Set.insert_subset_insert (Set.singleton_subset_iff.2 ⟨.strong, hA, rfl⟩))
+    rintro _ ⟨i, -, rfl⟩
+    cases i <;> simp [primal]
+  change exhIE (primal wk st '' A) wk = wk \ st
+  rw [← exhIE_insert_of_subset subset_rfl
+      (exhMW_nonempty (A.finite_toSet.image _) (h.mono Set.sdiff_subset)), himg,
+    exhIE_pair_sdiff _ h]
 
 -- (11), (10)
 theorem strengthened_mates_mystery :
     strengthened (mates A) (primal wk st) .mystery =
-      innocent.exh {exh (mates A) (primal wk st) .weak} wk := by
-  change innocent.exh (({.weak} : Finset Item).image (exh (mates A) (primal wk st)))
+      exhIE {exh (mates A) (primal wk st) .weak} wk := by
+  change exhIE (exh (mates A) (primal wk st) '' ↑({.weak} : Finset Item))
     (exh (mates A) (primal wk st) .mystery) = _
-  rw [Finset.image_singleton, exh_mates_mystery]
+  rw [Finset.coe_singleton, Set.image_singleton, exh_mates_mystery]
 
 theorem strengthened_mates_mystery_of_notMem (hA : .strong ∉ A) :
     strengthened (mates A) (primal wk st) .mystery = wk := by
   rw [strengthened_mates_mystery, exh_mates_weak_of_notMem hA]
-  exact innocent_exh_eq_self_of_forall_subset (by simp)
+  exact exhIE_singleton_self wk
 
 -- (11)
 theorem strengthened_mates_mystery_of_mem (hA : .strong ∈ A) (h : st ⊆ wk) (hne : st.Nonempty) :
     strengthened (mates A) (primal wk st) .mystery = st := by
   rw [strengthened_mates_mystery]
   rcases (wk \ st).eq_empty_or_nonempty with h₁ | h₁
-  · have hsub := Finset.sdiff_eq_empty_iff_subset.1 h₁
+  · have hsub := Set.sdiff_eq_empty.1 h₁
     rw [exh_mates_weak_of_forall fun i _ ↦ by cases i <;> first | exact subset_rfl | exact hsub,
-      innocent_exh_eq_self_of_forall_subset (by simp)]
+      exhIE_singleton_self]
     exact hsub.antisymm h
   · have h₂ : (wk \ (wk \ st)).Nonempty := by
-      rwa [sdiff_sdiff_right_self, Finset.inf_eq_inter, Finset.inter_eq_right.2 h]
-    rw [exh_mates_weak_of_mem hA h₁, innocent_exh_singleton h₂, sdiff_sdiff_right_self,
-      Finset.inf_eq_inter, Finset.inter_eq_right.2 h]
+      rwa [Set.sdiff_sdiff_right_self, Set.inter_eq_right.2 h]
+    rw [exh_mates_weak_of_mem hA h₁, exhIE_singleton h₂, Set.sdiff_sdiff_right_self,
+      Set.inter_eq_right.2 h]
 
 theorem strengthened_mates_not_mystery (h : st ⊆ wk) :
     strengthened (mates A) (compl ∘ primal wk st) .mystery = wkᶜ := by
   rw [compl_comp_primal, strengthened_mates_mystery,
     exh_mates_weak_of_forall fun i _ ↦ by
-      cases i <;> first | exact subset_rfl | exact Finset.compl_subset_compl.2 h]
-  exact innocent_exh_eq_self_of_forall_subset (by simp)
+      cases i <;> first | exact subset_rfl | exact Set.compl_subset_compl.2 h]
+  exact exhIE_singleton_self _
 
 end General
 
-variable [Fintype Atom] {A : Finset Item} {w' : Finset Atom}
+variable {A : Finset Item} {w' : Finset Atom}
 
 variable (x) in
 /-- *Some* and the definite hold where some object of the plurality has the property, the weak
 pole of the scale. -/
-def someWorlds : Finset (Finset Atom) := Finset.univ.filter fun w ↦ ∃ a ∈ x, a ∈ w
+def someWorlds : Set (Finset Atom) := {w | ∃ a ∈ x, a ∈ w}
 
 variable (x) in
 /-- *All* holds where every object of the plurality has the property, the strong pole. -/
-def allWorlds : Finset (Finset Atom) := Finset.univ.filter (x ⊆ ·)
+def allWorlds : Set (Finset Atom) := {w | x ⊆ w}
 
-@[simp] theorem mem_someWorlds : w ∈ someWorlds x ↔ ∃ a ∈ x, a ∈ w := by simp [someWorlds]
+@[simp] theorem mem_someWorlds : w ∈ someWorlds x ↔ ∃ a ∈ x, a ∈ w := Iff.rfl
 
-@[simp] theorem mem_allWorlds : w ∈ allWorlds x ↔ x ⊆ w := by simp [allWorlds]
+@[simp] theorem mem_allWorlds : w ∈ allWorlds x ↔ x ⊆ w := Iff.rfl
+
+variable [DecidableEq Atom] in
+instance : DecidablePred (· ∈ someWorlds x) := fun w ↦
+  inferInstanceAs (Decidable (∃ a ∈ x, a ∈ w))
+
+variable [DecidableEq Atom] in
+instance : DecidablePred (· ∈ allWorlds x) := fun w ↦
+  inferInstanceAs (Decidable (x ⊆ w))
 
 theorem allWorlds_subset_someWorlds (hx : x.Nonempty) : allWorlds x ⊆ someWorlds x :=
   fun _ hw ↦ mem_someWorlds.2 (hx.elim fun a ha ↦ ⟨a, ha, mem_allWorlds.1 hw ha⟩)
@@ -417,6 +425,8 @@ theorem definite_in_gap_iff_some_in_all (hw : IsGap x w) (hw' : x ⊆ w') :
     rw [strengthened_mates_mystery_of_notMem hA, exh_mates_weak_of_notMem hA]
     simp [hw.1, hsome]
 
+variable [DecidableEq Atom] [Fintype Atom]
+
 variable (x A) in
 /-- The account's binary judgments of the positive and the negative definite at a world, for a
 participant whose alternatives to *some* are `A`. -/
@@ -431,13 +441,12 @@ theorem implicaturePattern_of_isGap (hw : IsGap x w) :
       else .quantified ⟨.existential, .low⟩).binaryPattern := by
   have hx : x.Nonempty := hw.1.imp fun _ h ↦ h.1
   have hall : ¬ x ⊆ w := fun h ↦ hw.2.elim fun a ha ↦ ha.2 (h ha.1)
-  rw [implicaturePattern, strengthened_mates_not_mystery (allWorlds_subset_someWorlds hx)]
+  simp only [implicaturePattern, strengthened_mates_not_mystery (allWorlds_subset_someWorlds hx)]
   split_ifs with hA
-  · rw [strengthened_mates_mystery_of_mem hA (allWorlds_subset_someWorlds hx)
-      ⟨x, mem_allWorlds.2 subset_rfl⟩]
-    simp [hw.1, hall, Reading.binaryPattern, Reading.gapPattern]
-  · rw [strengthened_mates_mystery_of_notMem hA]
-    simp [hw.1, Reading.binaryPattern, Reading.gapPattern]
+  · simp [strengthened_mates_mystery_of_mem hA (allWorlds_subset_someWorlds hx)
+      ⟨x, mem_allWorlds.2 subset_rfl⟩, hw.1, hall, Reading.binaryPattern, Reading.gapPattern]
+  · simp [strengthened_mates_mystery_of_notMem hA, hw.1, Reading.binaryPattern,
+      Reading.gapPattern]
 
 end Implicature
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Semantics.Dynamic.DRT.Relational
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Mathlib.Data.Fin.VecNotation
 
@@ -290,7 +290,7 @@ theorem not_isProper_improper : ¬ improper.IsProper := by decide
 theorem toRel_improper_eq {M : Type*} [girlLang.Structure M] :
     (DRS.toRel improper : Update (ℕ → M)) = DRS.toRel proper := by
   ext ⟨a, a'⟩
-  simp [DRS.toRel_iff, improper, proper, talks, Box.Extends]
+  simp [DRS.toRel_iff, improper, proper, talks, DRS.Extends]
   exact fun _ _ g _ hg ↦ ⟨g, fun _ ↦ rfl, hg⟩
 
 end Representational
@@ -301,8 +301,8 @@ end Representational
 assignments and notes a second difference: on `[ | [x | man x] ⇒ [x | mortal x]]`, where `x` is
 declared twice, standard DRT ignores the second declaration and says that every man is mortal,
 while here the second `x` takes a new value and the box says that there is a mortal if there is
-a man. The partial semantics `DRS.Verifies` (`DRS/Verification.lean`) renders standard DRT: the
-re-declaration is inert, and in a model with a non-mortal man the two truth values differ
+a man. The partial semantics `DRS.Verifies` (`Verification/Partial.lean`) renders standard DRT:
+the re-declaration is inert, and in a model with a non-mortal man the two truth values differ
 (`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is reuse-freeness
 (`fn4_not_reuseFreeAt`), the hypothesis of the reconciliation
 `DRS.trueRel_iff_exists_verifies`. -/
@@ -343,7 +343,7 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
   rw [verifiesTotal_iff]
   intro c hc
-  simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
+  simp only [fn4, List.mem_singleton] at hc
   subst hc
   rw [verifiesTotal_imp]
   intro g₁ _ _
@@ -351,7 +351,7 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
     fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
   rw [verifiesTotal_iff]
   intro c hc
-  simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
+  simp only [fn4Cons, List.mem_singleton] at hc
   subst hc
   rw [verifiesTotal_atom, Language.Atom.realize_mk]
   show Function.update g₁ 0 1 0 = 1

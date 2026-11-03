@@ -1,42 +1,41 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Basic
 public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Dynamic.DRT.Verification.Total
+public import Mathlib.Data.Finset.Piecewise
 
 /-!
-# Verifying embeddings for DRSs
+# Verification by partial embeddings
 
-A DRS is verified by partial embeddings: `DRS.Verifies K f g` says the output embedding `g`
-extends the input `f` by exactly the universe of `K` and verifies its conditions, an atomic
-condition requiring its referents to be valued (Kamp and Reyle, Defs. 1.4.4, 2.1.4 and 2.4.2;
-Kamp, van Genabith and Reyle, Def. 19). A DRS is true in a model when an embedding of its
-universe verifies it from the empty input (Def. 1.4.5). The file also defines Muskens's semantics
-by total assignments, `VerifiesTotal`, in which a sub-DRS existentially reassigns its universe
-along `Box.Extends`, and proves that the two semantics agree on DRSs that declare no referent
-twice.
+This file defines verification in Kamp and Reyle's form. A pair of partial embeddings verifies a
+DRS when the output extends the input by exactly the universe of the DRS and verifies its
+conditions, an atomic condition requiring its referents to be valued. A DRS is true in a model
+when an embedding of its universe verifies it from the empty input. On DRSs that declare no
+referent twice this [agrees with verification by total
+assignments](##DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies).
+
+## Main definitions
+
+* `DRT.DRS.Verifies`, `DRT.Condition.Holds`: verification of DRSs and conditions.
+* `DRT.DRS.IsTrue`: truth in a model.
+* `DRT.DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
 
 ## Main statements
 
-* `DRT.DRS.verifies_merge`: the Merging Lemma — a merge is verified by sequencing, when the
-  second universe captures no referent the first DRS's conditions use outside its own.
-* `DRT.Condition.holds_congr`: a condition reads an embedding only at its occurring referents.
+* `DRT.DRS.verifies_merge`: a merge is verified by sequencing, when the second universe captures
+  no referent the first DRS's conditions use outside its own.
 * `DRT.DRS.exists_verifies_iff_isTrue`: an input valuing no occurring referent verifies a DRS
   exactly when the DRS is true.
-* `DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies`: on reuse-free DRSs the total and
-  partial semantics agree.
-* `DRT.verifiesTotal_map`: alphabetic variants have the same total semantics (Def. 1.4.8).
 
 ## Implementation notes
 
-* On a DRS that re-declares a referent the two semantics diverge (Muskens's fn. 4):
+* On a DRS that re-declares a referent the two semantics diverge:
   `[ | [x | man x] ⇒ [x | mortal x]]` says that every man is mortal under `Verifies`, where the
   re-declaration is inert, and that there is a mortal if there is a man under `VerifiesTotal`
   (`Studies/Muskens1996.lean`).
 * `Verifies` reads an input at its occurring referents, not only the free ones: whether a
   re-declared referent is already valued matters. Congruence is therefore stated over
   `varFinset`; under `VerifiesTotal` the free referents suffice.
-* Both semantics are defined by structural recursion through the nested conditions, so the
-  clause characterizations hold by `Iff.rfl`.
 
 ## References
 
@@ -59,8 +58,9 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
 mutual
 /-- `DRS.Verifies K f g` says the pair of partial embeddings `⟨f, g⟩` *verifies* `K`: the output
-`g` extends the input `f` by exactly the universe and verifies the conditions (Def. 1.4.4;
-Kamp, van Genabith and Reyle, Def. 19(i)). -/
+`g` extends the input `f` by exactly the universe and verifies the conditions (Kamp, van Genabith
+and Reyle, Def. 19(i)). This packages how Def. 1.4.4(ii)(f) enters a sub-DRS; Def. 1.4.4(i), that
+`f` verifies `K`, is unary, and is `Condition.HoldsAll K.conditions f` here. -/
 def DRS.Verifies : DRS L V → PartialAssign V M → PartialAssign V M → Prop
   | .mk U cs, f, g => f ≤ g ∧ g.domain = f.domain ∪ ↑U ∧ Condition.HoldsAll cs g
 /-- `Condition.Holds c g` says the partial embedding `g` verifies the DRS-condition `c`
@@ -398,204 +398,107 @@ theorem DRS.verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     exact ⟨hle₁.trans hle₂, by rw [hdom₂, hdom₁, Set.union_assoc],
       (Condition.holdsAll_congr cs₁ heq).mp hh₁, hh₂⟩
 
-/-! ### Verification by total assignments
+/-! ### Reuse-freeness
 
-Muskens's semantics: embeddings are total, and a sub-DRS existentially reassigns its universe
-along `Box.Extends`, so a re-declared referent takes a fresh value. -/
+No discourse referent is declared twice along a nesting path: each universe is
+fresh for the ambient declarations, threaded through sub-boxes the way
+verification threads the base (the antecedent of a `⇒` feeds its referents
+into the consequent). This is the hypothesis under which the total
+agree-off-universe semantics and the partial semantics coincide
+(`DRS.exists_extends_verifiesTotal_iff_exists_verifies`). -/
 
-mutual
-/-- `VerifiesTotal f K` says the total assignment `f` verifies every condition of `K`. -/
-def VerifiesTotal : (V → M) → DRS L V → Prop
-  | f, ⟨_, cs⟩ => VerifiesAllTotal f cs
-/-- `VerifiesConditionTotal f c` says the total assignment `f` verifies the DRS-condition `c`;
-a sub-DRS is entered by existentially (re)assigning along its extension relation. -/
-def VerifiesConditionTotal : (V → M) → Condition L V → Prop
-  | f, .atom a => a.Realize f
-  | f, .eq a b => f a = f b
-  | f, .neg K => ¬ ∃ g, K.Extends f g ∧ VerifiesTotal g K
-  | f, .imp a c => ∀ g, a.Extends f g → VerifiesTotal g a →
-      ∃ h, c.Extends g h ∧ VerifiesTotal h c
-  | f, .dis l r =>
-      (∃ g, l.Extends f g ∧ VerifiesTotal g l) ∨ (∃ g, r.Extends f g ∧ VerifiesTotal g r)
-/-- `VerifiesAllTotal f cs` says `f` verifies every condition of `cs`. -/
-def VerifiesAllTotal : (V → M) → List (Condition L V) → Prop
-  | _, [] => True
-  | f, c :: cs => VerifiesConditionTotal f c ∧ VerifiesAllTotal f cs
-end
-
-variable {f' : V → M}
-
-theorem verifiesAllTotal_iff {cs : List (Condition L V)} :
-    VerifiesAllTotal f' cs ↔ ∀ c ∈ cs, VerifiesConditionTotal f' c := by
-  induction cs with
-  | nil => simp [VerifiesAllTotal]
-  | cons c cs ih => simp [VerifiesAllTotal, ih]
-
-@[simp] theorem verifiesTotal_mk (U : Finset V) (conds : List (Condition L V)) :
-    VerifiesTotal f' (.mk U conds) ↔ ∀ c ∈ conds, VerifiesConditionTotal f' c :=
-  verifiesAllTotal_iff
-
-theorem verifiesTotal_iff {K : DRS L V} :
-    VerifiesTotal f' K ↔ ∀ c ∈ K.conditions, VerifiesConditionTotal f' c := by
-  cases K; exact verifiesAllTotal_iff
-
-@[simp] theorem verifiesTotal_empty : VerifiesTotal f' (.empty : DRS L V) := by
-  simp [DRS.empty]
-
-@[simp] theorem verifiesTotal_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
-    VerifiesTotal f' (K₁.merge K₂) ↔ VerifiesTotal f' K₁ ∧ VerifiesTotal f' K₂ := by
-  simp only [verifiesTotal_iff, DRS.conditions_merge, List.forall_mem_append]
-
-@[simp] theorem verifiesTotal_atom (a : L.Atom V) :
-    VerifiesConditionTotal f' (.atom a) ↔ a.Realize f' := .rfl
-
-@[simp] theorem verifiesTotal_eq (a b : V) :
-    VerifiesConditionTotal f' (.eq a b : Condition L V) ↔ f' a = f' b := Iff.rfl
-
-@[simp] theorem verifiesTotal_neg (K : DRS L V) :
-    VerifiesConditionTotal f' (.neg K) ↔ ¬ ∃ g, K.Extends f' g ∧ VerifiesTotal g K := Iff.rfl
-
-@[simp] theorem verifiesTotal_imp (a c : DRS L V) :
-    VerifiesConditionTotal f' (.imp a c) ↔
-      ∀ g, a.Extends f' g → VerifiesTotal g a →
-        ∃ h, c.Extends g h ∧ VerifiesTotal h c := Iff.rfl
-
-@[simp] theorem verifiesTotal_dis (l r : DRS L V) :
-    VerifiesConditionTotal f' (.dis l r) ↔
-      (∃ g, l.Extends f' g ∧ VerifiesTotal g l) ∨
-        (∃ g, r.Extends f' g ∧ VerifiesTotal g r) := Iff.rfl
-
-theorem verifiesTotal_perm {U : Finset V} {cs ds : List (Condition L V)} (h : cs.Perm ds) :
-    VerifiesTotal f' (.mk U cs) ↔ VerifiesTotal f' (.mk U ds) := by
-  simp only [verifiesTotal_mk, h.mem_iff]
-
-/-! ### Alphabetic variants -/
-
-section Map
-
-variable {W : Type*} [DecidableEq W]
-
-private theorem verifiesTotal_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
-    (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
-      VerifiesConditionTotal u (c.map e) ↔ VerifiesConditionTotal (u ∘ e) c) :
-    VerifiesTotal g (K.map e) ↔ VerifiesTotal (g ∘ e) K := by
-  simp only [verifiesTotal_iff, DRS.conditions_map, List.forall_mem_map]
-  exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
-
-private theorem exists_extends_verifiesTotal_map_aux (e : V ≃ W) (K : DRS L V) (f : W → M)
-    (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
-      VerifiesConditionTotal u (c.map e) ↔ VerifiesConditionTotal (u ∘ e) c) :
-    (∃ g, (K.map e).Extends f g ∧ VerifiesTotal g (K.map e)) ↔
-      ∃ g, K.Extends (f ∘ e) g ∧ VerifiesTotal g K :=
-  (exists_congr fun g => and_congr_right fun _ => verifiesTotal_map_all e K g ih).trans
-    (DRS.exists_extends_map e K f (VerifiesTotal · K))
-
-theorem verifiesTotal_map_condition (e : V ≃ W) (f : W → M) (c : Condition L V) :
-    VerifiesConditionTotal f (c.map e) ↔ VerifiesConditionTotal (f ∘ e) c := by
-  induction c generalizing f with
-  | atom a => simp [Condition.map]
-  | eq a b => simp [Condition.map]
-  | neg K ih =>
-    simp only [Condition.map, verifiesTotal_neg]
-    exact not_congr (exists_extends_verifiesTotal_map_aux e K f ih)
-  | imp a c iha ihc =>
-    simp only [Condition.map, verifiesTotal_imp]
-    refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr
-      (verifiesTotal_map_all e a g iha) (exists_extends_verifiesTotal_map_aux e c g ihc)) ?_
-    exact DRS.forall_extends_map e a f
-      (fun u => VerifiesTotal u a → ∃ h', c.Extends u h' ∧ VerifiesTotal h' c)
-  | dis l r ihl ihr =>
-    simp only [Condition.map, verifiesTotal_dis]
-    exact or_congr (exists_extends_verifiesTotal_map_aux e l f ihl)
-      (exists_extends_verifiesTotal_map_aux e r f ihr)
-
-/-- `f` verifies `K.map e` iff `f ∘ e` verifies `K`, so alphabetic variants have the same
-semantics. -/
-theorem verifiesTotal_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
-    VerifiesTotal f (K.map e) ↔ VerifiesTotal (f ∘ e) K :=
-  verifiesTotal_map_all e K f (fun c _ u => verifiesTotal_map_condition e u c)
-
-theorem exists_extends_verifiesTotal_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
-    (∃ g, (K.map e).Extends f g ∧ VerifiesTotal g (K.map e)) ↔
-      ∃ g, K.Extends (f ∘ e) g ∧ VerifiesTotal g K :=
-  (exists_congr fun g => and_congr_right fun _ => verifiesTotal_map e g K).trans
-    (DRS.exists_extends_map e K f (VerifiesTotal · K))
-
-end Map
-
-/-! ### Coincidence for the total semantics -/
-
-section Coincidence
+section ReuseFree
 
 variable [DecidableEq V]
 
-private theorem verifiesTotal_of_eqOn {K : DRS L V}
-    (ih : ∀ c ∈ K.conditions, ∀ {g₁ g₂ : V → M}, Set.EqOn g₁ g₂ ↑c.freeVarFinset →
-      (VerifiesConditionTotal g₁ c ↔ VerifiesConditionTotal g₂ c))
-    (g g' : V → M) (hgg' : Set.EqOn g g' ↑(Condition.freeVarFinsetL K.conditions)) :
-    VerifiesTotal g K → VerifiesTotal g' K := fun hv => verifiesTotal_iff.2 fun c hc =>
-  (ih c hc (hgg'.mono (Finset.coe_subset.mpr
-    (Condition.freeVarFinset_subset_freeVarFinsetL hc)))).mp (verifiesTotal_iff.1 hv c hc)
+mutual
+/-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its
+conditions are reuse-free at the grown set. -/
+def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
+  | ⟨U, cs⟩ => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) cs
+/-- A condition is reuse-free at ambient declarations `X` when each sub-box is, the
+consequent of a `⇒` at the declarations grown by the antecedent's universe. -/
+def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
+  | .atom _ => True
+  | .eq _ _ => True
+  | .neg K => DRS.ReuseFreeAt X K
+  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
+  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
+/-- Every condition of the list is reuse-free at `X`. -/
+def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
+  | [] => True
+  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
+end
 
-/-- Total verification of a condition reads the assignment only at its free referents
-(Def. 1.4.2). -/
-theorem verifiesConditionTotal_congr (c : Condition L V) {f₁ f₂ : V → M}
-    (h : Set.EqOn f₁ f₂ ↑c.freeVarFinset) :
-    VerifiesConditionTotal f₁ c ↔ VerifiesConditionTotal f₂ c := by
-  induction c generalizing f₁ f₂ with
-  | atom a =>
-    simp only [verifiesTotal_atom, Atom.Realize]
-    rw [show f₁ ∘ a.args = f₂ ∘ a.args from funext fun i => h (by simp)]
-  | eq a b =>
-    simp only [verifiesTotal_eq]
-    rw [h (by simp), h (by simp)]
-  | neg K ih =>
-    rw [Condition.freeVarFinset_neg, DRS.coe_freeVarFinset] at h
-    simp only [verifiesTotal_neg]
-    exact not_congr (Box.exists_extends_congr K (verifiesTotal_of_eqOn ih) h)
-  | imp a c iha ihc =>
-    rw [Condition.freeVarFinset_imp, Finset.coe_union, Finset.coe_sdiff,
-      DRS.coe_freeVarFinset, DRS.coe_freeVarFinset, ← Set.union_sdiff_distrib] at h
-    simp only [verifiesTotal_imp]
-    refine Box.forall_extends_congr a (S := ↑(Condition.freeVarFinsetL a.conditions) ∪
-      (↑(Condition.freeVarFinsetL c.conditions) \ ↑c.referents)) ?_ h
-    intro g g' hgg' H hv'
-    exact Box.exists_extends_imp c (verifiesTotal_of_eqOn ihc)
-      (hgg'.mono Set.subset_union_right)
-      (H (verifiesTotal_of_eqOn iha g' g (hgg'.symm.mono Set.subset_union_left) hv'))
-  | dis l r ihl ihr =>
-    rw [Condition.freeVarFinset_dis, Finset.coe_union, DRS.coe_freeVarFinset,
-      DRS.coe_freeVarFinset] at h
-    simp only [verifiesTotal_dis]
-    exact or_congr
-      (Box.exists_extends_congr l (verifiesTotal_of_eqOn ihl) (h.mono Set.subset_union_left))
-      (Box.exists_extends_congr r (verifiesTotal_of_eqOn ihr) (h.mono Set.subset_union_right))
+namespace Condition
 
-/-- "Some extension verifies `K`" reads the input assignment only at `K`'s free referents. -/
-theorem exists_extends_verifiesTotal_congr {K : DRS L V} {f₁ f₂ : V → M}
-    (h : Set.EqOn f₁ f₂ ↑K.freeVarFinset) :
-    (∃ g, K.Extends f₁ g ∧ VerifiesTotal g K) ↔ ∃ g, K.Extends f₂ g ∧ VerifiesTotal g K := by
-  rw [DRS.coe_freeVarFinset] at h
-  exact Box.exists_extends_congr K
-    (verifiesTotal_of_eqOn fun c _ _ _ => verifiesConditionTotal_congr c) h
+@[simp] theorem reuseFreeAt_atom (X : Finset V) (a : L.Atom V) : ReuseFreeAt X (.atom a) :=
+  trivial
 
-/-- A proper DRS is verified by some extension of any input iff some assignment verifies it. -/
-theorem exists_extends_verifiesTotal_iff_of_isProper {K : DRS L V} (hK : K.IsProper)
-    (f : V → M) : (∃ g, K.Extends f g ∧ VerifiesTotal g K) ↔ ∃ g : V → M, VerifiesTotal g K := by
-  refine ⟨fun ⟨g, _, hg⟩ => ⟨g, hg⟩, fun ⟨g, hg⟩ =>
-    (exists_extends_verifiesTotal_congr (f₁ := g) ?_).mp ⟨g, Box.Extends.refl K g, hg⟩⟩
-  rw [DRS.IsProper] at hK
-  simp [hK]
+@[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
+    ReuseFreeAt X (.eq u v : Condition L V) := trivial
 
-end Coincidence
+@[simp] theorem reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
+    ReuseFreeAt X (.neg K) ↔ K.ReuseFreeAt X := Iff.rfl
 
-/-! ### Reconciliation
+@[simp] theorem reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
+    ReuseFreeAt X (.imp a c) ↔ a.ReuseFreeAt X ∧ c.ReuseFreeAt (X ∪ a.referents) := Iff.rfl
+
+@[simp] theorem reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
+    ReuseFreeAt X (.dis l r) ↔ l.ReuseFreeAt X ∧ r.ReuseFreeAt X := Iff.rfl
+
+@[simp] theorem reuseFreeAllAt_nil (X : Finset V) :
+    ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
+
+@[simp] theorem reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
+    (cs : List (Condition L V)) :
+    ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := Iff.rfl
+
+end Condition
+
+@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
+    DRS.ReuseFreeAt X (.mk U conds) ↔ Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds :=
+  Iff.rfl
+
+mutual
+/-- Reuse-freeness of a DRS is decidable. -/
+@[instance_reducible]
+def DRS.decidableReuseFreeAt (X : Finset V) : (K : DRS L V) → Decidable (K.ReuseFreeAt X)
+  | ⟨U, cs⟩ => @instDecidableAnd _ _ inferInstance (Condition.decidableReuseFreeAllAt (X ∪ U) cs)
+/-- Reuse-freeness of a condition is decidable. -/
+@[instance_reducible]
+def Condition.decidableReuseFreeAt (X : Finset V) :
+    (c : Condition L V) → Decidable (c.ReuseFreeAt X)
+  | .atom _ => instDecidableTrue
+  | .eq _ _ => instDecidableTrue
+  | .neg K => DRS.decidableReuseFreeAt X K
+  | .imp a c =>
+      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X a)
+        (DRS.decidableReuseFreeAt (X ∪ a.referents) c)
+  | .dis l r =>
+      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X l) (DRS.decidableReuseFreeAt X r)
+/-- Reuse-freeness of a list of conditions is decidable. -/
+@[instance_reducible]
+def Condition.decidableReuseFreeAllAt (X : Finset V) :
+    (cs : List (Condition L V)) → Decidable (Condition.ReuseFreeAllAt X cs)
+  | [] => instDecidableTrue
+  | c :: cs =>
+      @instDecidableAnd _ _ (Condition.decidableReuseFreeAt X c)
+        (Condition.decidableReuseFreeAllAt X cs)
+end
+
+attribute [instance] DRS.decidableReuseFreeAt Condition.decidableReuseFreeAt
+  Condition.decidableReuseFreeAllAt
+
+end ReuseFree
+
+/-! ### Agreement with total assignments
 
 On reuse-free DRSs the total and partial semantics agree: a total verifying extension restricts
 to a partial one, and a partial one totalizes by reading the input off its domain. On a DRS that
 re-declares a referent they diverge (fn. 4; witness in `Studies/Muskens1996.lean`). -/
 
-section Reconciliation
+section Agreement
 
 variable [DecidableEq V]
 
@@ -626,7 +529,7 @@ private theorem verifies_restrictTotal {X U : Finset V} {cs : List (Condition L 
       (∀ x ∈ X ∪ U, k x = ↑(k' x)) → (VerifiesAllTotal k' cs ↔ Condition.HoldsAll cs k))
     {f : PartialAssign V M} {f' g' : V → M}
     (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x))
-    (hext : Box.Extends (.mk U cs : DRS L V) f' g') (hv : VerifiesAllTotal g' cs) :
+    (hext : DRS.Extends (.mk U cs : DRS L V) f' g') (hv : VerifiesAllTotal g' cs) :
     DRS.Verifies (.mk U cs) f (restrictTotal ↑(X ∪ U) g') := by
   have hagree : ∀ x ∈ X, g' x = f' x := fun x hx =>
     hext x (Finset.disjoint_left.mp hXU hx)
@@ -646,7 +549,7 @@ private theorem extends_verifiesTotal_unbotD {X U : Finset V} {cs : List (Condit
     {f g : PartialAssign V M} {f' : V → M}
     (hdom : f.domain = ↑X) (hff' : ∀ x ∈ X, f x = ↑(f' x))
     (hv : DRS.Verifies (.mk U cs) f g) :
-    Box.Extends (.mk U cs : DRS L V) f' (fun x => (g x).unbotD (f' x)) ∧
+    DRS.Extends (.mk U cs : DRS L V) f' (fun x => (g x).unbotD (f' x)) ∧
       VerifiesAllTotal (fun x => (g x).unbotD (f' x)) cs := by
   obtain ⟨hle, hdomg, hh⟩ := hv
   have hval : ∀ x ∈ X ∪ U, g x = ↑((g x).unbotD (f' x)) := by
@@ -728,7 +631,7 @@ theorem Condition.verifiesConditionTotal_iff_holds {X : Finset V} (c : Condition
       · by_cases hxUa : x ∈ Ua
         · exact Finset.mem_union_left _ (Finset.mem_union_right _ hxUa)
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
-          rw [DRS.freeVarFinset_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
+          rw [DRS.freeVarFinset_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
     have hIHa : ∀ (k : PartialAssign V M) (k' : V → M), k.domain = ↑(X ∪ Ua) →
         (∀ x ∈ X ∪ Ua, k x = ↑(k' x)) →
@@ -826,6 +729,6 @@ theorem DRS.exists_extends_verifiesTotal_iff_exists_verifies {X : Finset V} {K :
     obtain ⟨hext, hv⟩ := extends_verifiesTotal_unbotD hIH hdom hff' hg
     exact ⟨_, hext, (verifiesTotal_mk U cs).mpr (verifiesAllTotal_iff.mp hv)⟩
 
-end Reconciliation
+end Agreement
 
 end DRT
