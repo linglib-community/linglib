@@ -5,15 +5,10 @@ public import Mathlib.Order.CompleteLattice.Defs
 /-!
 # The complete lattice of preorders on a type
 
-The preorders on a type, ordered by inclusion of their relations, form a complete lattice, as the
-equivalence relations on a type do (`Setoid.completeLattice`). The top preorder relates every two
-elements, the bottom preorder is equality, and the infimum of a family relates two elements when
-every member of the family does.
-
-## Main definitions
-
-* `Preorder.ofLE`: the preorder of a reflexive transitive relation.
-* `Preorder.instCompleteLattice`: the complete lattice of preorders on a type.
+The preorders on a type, ordered by inclusion of their relations, [form a complete
+lattice](##instCompleteLattice), as the equivalence relations on a type do
+(`Setoid.completeLattice`). The top preorder relates every two elements, the bottom preorder is
+equality, and the infimum of a family relates two elements when every member of the family does.
 
 ## Implementation notes
 
@@ -44,9 +39,6 @@ variable {α : Type*}
 /-- Preorders are ordered by inclusion: `p ≤ q` when `q` relates every pair that `p` does. -/
 instance : LE (Preorder α) where
   le p q := ∀ ⦃a b⦄, p.le a b → q.le a b
-
-theorem le_def {p q : Preorder α} : p ≤ q ↔ ∀ ⦃a b⦄, p.le a b → q.le a b :=
-  Iff.rfl
 
 instance : PartialOrder (Preorder α) where
   lt p q := p ≤ q ∧ ¬ q ≤ p
@@ -79,11 +71,5 @@ instance instCompleteLattice : CompleteLattice (Preorder α) :=
 instance : DecidableRel (⊤ : Preorder α).le := fun _ _ ↦ isTrue trivial
 
 instance [DecidableEq α] : DecidableRel (⊥ : Preorder α).le := fun a b ↦ decEq a b
-
-theorem inf_iff_and {p q : Preorder α} {a b : α} : (p ⊓ q).le a b ↔ p.le a b ∧ q.le a b :=
-  Iff.rfl
-
-theorem sInf_iff {S : Set (Preorder α)} {a b : α} : (sInf S).le a b ↔ ∀ p ∈ S, p.le a b :=
-  Iff.rfl
 
 end Preorder
