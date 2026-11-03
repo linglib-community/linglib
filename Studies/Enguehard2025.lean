@@ -143,8 +143,8 @@ private theorem isStrongestTrueAnswer_of_exhMW_subset {B : Set (Set W)} {φ : Se
     (hB : B.Finite) (hφ : φ ∈ B) (hw : w ∈ φ) (h : exhMW B φ ⊆ strongAnswer B w) :
     IsStrongestTrueAnswer B w φ :=
   ⟨⟨hφ, hw⟩, fun ψ ⟨hψ, hwψ⟩ _ hv ↦
-    let ⟨_, hu, huv⟩ := exists_isMinimal_le B φ hB hv
-    huv ψ hψ ((h hu ψ hψ).1 hwψ)⟩
+    let ⟨_, hu, huv⟩ := exists_mem_exhMW_le hB hv
+    (huv ⟨hψ, (h hu ψ hψ).1 hwψ⟩).2⟩
 
 /-- (26), with its extension in the appendix: for finitely many alternatives, they are strongly
 stable iff exhaustifying them yields every cell of the partition they induce, iff exhaustifying
@@ -211,12 +211,12 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
   tfae_have 6 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h ⟨w, rfl⟩
     exact ⟨p, isStrongestTrueAnswer_of_exhMW_subset hA hp
-      (exhMW_subset A p (he ▸ self_mem_strongAnswer A w)) he.le⟩
+      (exhMW_subset (he ▸ self_mem_strongAnswer A w)) he.le⟩
   tfae_have 1 → 7 := fun h ↦
     (image_congr fun p hp ↦ exhMW_eq_exh_of_nonempty _ _ (hstar h p hp)).trans (h13 h)
   tfae_have 7 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h.ge ⟨w, rfl⟩
-    have hw : w ∈ p := exhMW_subset _ p (he ▸ self_mem_strongAnswer A w)
+    have hw : w ∈ p := exhMW_subset (he ▸ self_mem_strongAnswer A w)
     exact ⟨p, isStrongestTrueAnswer_of_setOf_not_dominated hA
       (isStrongestTrueAnswer_of_exhMW_subset hA' hp hw (he.le.trans (hsub w)))⟩
   tfae_finish
