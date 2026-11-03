@@ -42,10 +42,10 @@ and remain postpositions or particles with a directional meaning.
 
 The chapter says that the raising of a nominal complement is semantically conditioned and does
 not state the condition. Helmantel's analysis, which the chapter names as a starting point,
-supplies one: the complement raises when the phrase is directional and the adposition is not
-inherently directional, since an inherently directional adposition such as *naar* 'to' checks
-the directionality itself. That condition entails the chapter's rule and keeps the grammar's
-inherently directional prepositions out of the postpositional order.
+supplies one: the specifier of the directional projection reads a noun phrase as a path, which the
+object of an inherently directional adposition such as *naar* 'to' is not. That keeps [every
+directional preposition of the grammar with no postpositional
+use](##directional_post_or_pointLocative) out of the postpositional order.
 
 ## Main definitions
 
@@ -77,10 +77,9 @@ inherently directional prepositions out of the postpositional order.
 
 `Raises` idealizes the chapter's semantic condition to directionality, so
 `linearization_eq_post_iff` predicts a postpositional order for every directional preposition.
-Helmantel's condition removes *naar*, *tot* and *van*, but *vanaf*, *vanuit* and *via*, which
-she does not classify, still come out postpositional although the grammar records no such use,
-and the prepositional phrase inside *van het dak af* 'off the roof' is read as locational
-although *van* denotes a source path.
+Helmantel's condition removes that overprediction from the lexicon but `Raises` does not read it.
+The prepositional phrase inside *van het dak af* 'off the roof' is read as locational although
+*van* denotes a source path.
 
 ## References
 
@@ -230,17 +229,15 @@ theorem circumP_patterns_with_preP :
 
 /-! ### The condition on nominal raising -/
 
-/-- The semantic condition the chapter leaves open is, in Helmantel's analysis, that the
-adposition is not inherently directional: a directional phrase raises its nominal complement
-when its directionality is syntactic rather than lexical, and that raising entails the chapter's
-idealized rule. -/
-theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Spatial.Path.Direction}
-    (h : Helmantel2002.DPRaises (d ≠ .place) inherent) : Raises .nominal d :=
-  h.1
+/-- The semantic condition the chapter leaves open is, in Helmantel's analysis, that the object can
+be read as a path in the specifier, which the object of an inherently directional adposition cannot.
+A directional preposition of the fragment either has a recorded postpositional use or is one of her
+point locatives, so that condition removes all of the rule's overprediction. -/
+theorem directional_post_or_pointLocative :
+    ∀ a ∈ inventory, (∃ d ∈ a.direction .pre, d ≠ .place) →
+      a.IsPostposition ∨ a.toAdposition ∈ Helmantel2002.pointLocatives.map (·.toAdposition) := by
+  decide
 
-/-- Under that condition the inherently directional prepositions *naar*, *tot* and *van* raise no
-complement and have no postpositional use, as the fragment records, which removes them from the
-rule's overprediction. -/
 theorem pointLocative_not_postP :
     ∀ a ∈ Helmantel2002.pointLocatives, ¬ a.IsPostposition :=
   fun a ha h ↦ by
