@@ -361,6 +361,20 @@ theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d
     rw [List.cons_append, optimal_ofList_cons_of_forall_eq (h F List.mem_cons_self),
       ih fun F' hF' ↦ h F' (List.mem_cons_of_mem _ hF')]
 
+/-- If some candidate satisfies every constraint ranked above the others, so does every
+winner. -/
+theorem eq_zero_of_mem_optimal_ofList_append (hc : c ∈ (ofList s (Fs ++ Gs)).optimal)
+    (hd : d ∈ s) (h0 : ∀ F ∈ Fs, F d = 0) : ∀ F ∈ Fs, F c = 0 := by
+  induction Fs generalizing s with
+  | nil => simp
+  | cons F Fs ih =>
+    rw [List.cons_append, optimal_ofList_cons] at hc
+    have hF : F d = 0 := h0 F List.mem_cons_self
+    have hc' := (ofList (s.argmin F) (Fs ++ Gs)).optimal_subset hc
+    refine List.forall_mem_cons.2 ⟨Nat.le_zero.1 (hF ▸ (Finset.mem_argmin.1 hc').2 d hd), ih hc ?_
+      fun F' hF' ↦ h0 F' (List.mem_cons_of_mem _ hF')⟩
+    exact Finset.mem_argmin.2 ⟨hd, fun _ _ ↦ hF ▸ Nat.zero_le _⟩
+
 /-! ### Anti-faithfulness -/
 
 theorem _root_.OptimalityTheory.Constraint.argmin_antifaithful (h : ∃ c ∈ s, 0 < F c) :

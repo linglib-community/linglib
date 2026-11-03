@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Equiv.Defs
+public import Linglib.Core.Order.Flat
 
 /-!
 # Tonal root nodes and subtonal features
@@ -22,7 +23,8 @@ have register features and no TRN.
 ## Main definitions
 
 * `Subtonal`, `TRN` — the two feature dimensions and the root node; `TRN.bundleEquiv`
-  identifies a root node with its feature bundle `Subtonal → Option Bool`.
+  identifies a root node with its feature bundle `Subtonal → Flat Bool`, and root nodes are
+  ordered by subsumption of their bundles, `TRN.empty` least.
 * `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four full specifications;
   `TRN.empty` — the unspecified node.
 * `TRN.assimilate`, `TRN.merge`, `TRN.dock` — the feature operations, through the bundle.
@@ -51,7 +53,7 @@ inductive Subtonal where
   deriving DecidableEq, Repr, Inhabited
 
 /-- A **tonal root node**: a `[±upper]` and a `[±raised]` value, each possibly unspecified.
-A structure rather than the bundle `Subtonal → Option Bool`, so that `DecidableEq` derives
+A structure rather than the bundle `Subtonal → Flat Bool`, so that `DecidableEq` derives
 and literals reduce; `TRN.bundleEquiv` is the bundle view. -/
 structure TRN where
   upper : Option Bool
@@ -77,12 +79,12 @@ namespace TRN
 @[match_pattern] def superHigh : TRN := ⟨some true, some true⟩
 
 /-- The feature bundle of a node. -/
-def toBundle (t : TRN) : Subtonal → Option Bool
+def toBundle (t : TRN) : Subtonal → Flat Bool
   | .upper => t.upper
   | .raised => t.raised
 
 /-- The node of a feature bundle. -/
-def ofBundle (b : Subtonal → Option Bool) : TRN := ⟨b .upper, b .raised⟩
+def ofBundle (b : Subtonal → Flat Bool) : TRN := ⟨b .upper, b .raised⟩
 
 @[simp] theorem toBundle_upper (t : TRN) : t.toBundle .upper = t.upper := rfl
 
@@ -90,15 +92,32 @@ def ofBundle (b : Subtonal → Option Bool) : TRN := ⟨b .upper, b .raised⟩
 
 @[simp] theorem ofBundle_toBundle (t : TRN) : ofBundle t.toBundle = t := rfl
 
-@[simp] theorem toBundle_ofBundle (b : Subtonal → Option Bool) : (ofBundle b).toBundle = b := by
+@[simp] theorem toBundle_ofBundle (b : Subtonal → Flat Bool) : (ofBundle b).toBundle = b := by
   funext f; cases f <;> rfl
 
 /-- A root node is its feature bundle. -/
-def bundleEquiv : TRN ≃ (Subtonal → Option Bool) where
+def bundleEquiv : TRN ≃ (Subtonal → Flat Bool) where
   toFun := toBundle
   invFun := ofBundle
   left_inv := ofBundle_toBundle
   right_inv := toBundle_ofBundle
+
+/-- Root nodes are ordered by subsumption, the order of their bundles as descriptions: `t ≤ t'`
+when `t'` has every feature value that `t` specifies. -/
+instance : PartialOrder TRN := PartialOrder.lift toBundle bundleEquiv.injective
+
+theorem le_iff {t t' : TRN} :
+    t ≤ t' ↔ t.toBundle .upper ≤ t'.toBundle .upper ∧ t.toBundle .raised ≤ t'.toBundle .raised :=
+  ⟨fun h ↦ ⟨h .upper, h .raised⟩, fun h f ↦ by cases f; exacts [h.1, h.2]⟩
+
+instance : DecidableLE TRN := fun _ _ ↦ decidable_of_iff _ le_iff.symm
+
+/-- The unspecified node is the least. -/
+instance : OrderBot TRN where
+  bot := empty
+  bot_le _ f := by cases f <;> exact bot_le
+
+theorem bot_eq_empty : (⊥ : TRN) = empty := rfl
 
 /-- **Subtonal assimilation** at `f`: the target takes its value at `f` from the source,
 its other feature untouched. Laal M-lowering ([lionnet-2022] §5.2) is `assimilate .raised`:
