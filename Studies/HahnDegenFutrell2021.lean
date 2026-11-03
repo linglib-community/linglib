@@ -298,7 +298,8 @@ theorem sesotho_forms_licensed :
 the perfect. -/
 def paperSesothoTemplate : AffixTemplate Sesotho.Verb.Slot :=
   { Sesotho.Verb.template with
-    suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative] }
+    suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative]
+    nodup := by decide }
 
 -- (44)
 theorem demuth_perfect_passive :

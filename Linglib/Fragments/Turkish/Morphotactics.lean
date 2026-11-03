@@ -398,11 +398,15 @@ before the copular marker when that is a group-1 marker after -DI or the third-p
 or after -DIr when it is the third-person plural (§8.3.2, §8.3.3, §8.4). -/
 def Licensed (xs : List (Σ σ, Exponent σ)) : Prop :=
   template.Licensed xs ∨
-    ({ template with suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .person,
-        .copula, .generalizing] }.Licensed xs ∧
+    ({ template with
+        suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .person, .copula,
+          .generalizing]
+        nodup := by decide }.Licensed xs ∧
       ∃ x ∈ xs, x.2.IsThirdPlural ∨ x.2.group? = some .one ∧ ⟨_, .di⟩ ∈ xs) ∨
-    ({ template with suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .copula,
-        .generalizing, .person] }.Licensed xs ∧ ∃ x ∈ xs, x.2.IsThirdPlural)
+    ({ template with
+        suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .generalizing,
+          .person]
+        nodup := by decide }.Licensed xs ∧ ∃ x ∈ xs, x.2.IsThirdPlural)
 
 instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
