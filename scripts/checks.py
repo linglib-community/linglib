@@ -76,7 +76,8 @@ def validate(sources):
             ids.add(cid)
             relation = claim.get("relation")
             if relation not in RELATIONS:
-                problems.append(f"{key}/{cid}: relation {relation!r} is not one of {sorted(RELATIONS)}")
+                problems.append(
+                    f"{key}/{cid}: relation {relation!r} is not one of {sorted(RELATIONS)}")
             if relation not in ("exact", "missing") and not claim.get("notes"):
                 problems.append(f"{key}/{cid}: a `{relation}` claim needs notes")
             if relation == "missing" and claim.get("decls"):
@@ -136,7 +137,8 @@ def claim_hash(claim, data):
 
 def evaluate(sources):
     """The status of every claim, keyed by `(source, id)`."""
-    names = sorted({d for src in sources.values() for c in src["claims"] for d in c.get("decls", [])})
+    names = sorted({d for src in sources.values() for c in src["claims"]
+                    for d in c.get("decls", [])})
     data = closures(names)
     covering = {}
     for key, src in sources.items():
@@ -223,7 +225,8 @@ def cmd_diff(args):
     if not checks:
         sys.exit(f"{args.claim} has never been signed")
     last = checks[-1]
-    print(f"{args.claim}: {status[ref]}; signed at {last['commit']} by {last['by']} on {last['date']}")
+    print(f"{args.claim}: {status[ref]}; signed at {last['commit']} by {last['by']} "
+          f"on {last['date']}")
     if status[ref] != "stale":
         return 0
     files = [str(Path(*m.split(".")).with_suffix(".lean")) for m in info[ref].get("files", [])]
@@ -233,9 +236,15 @@ def cmd_diff(args):
 def insert_check(text, cid, entry):
     """The TOML text with `entry` appended to the claim with id `cid`."""
     lines = text.splitlines(keepends=True)
-    start = next(i for i, l in enumerate(lines) if re.match(rf'\s*id\s*=\s*"{re.escape(cid)}"\s*$', l))
-    end = next((i for i in range(start + 1, len(lines)) if lines[i].strip() == "[[claim]]"), len(lines))
-    while end > start + 1 and (not lines[end - 1].strip() or lines[end - 1].lstrip().startswith("#")):
+    id_line = re.compile(rf'\s*id\s*=\s*"{re.escape(cid)}"\s*$')
+    start = next(i for i, l in enumerate(lines) if id_line.match(l))
+    end = next((i for i in range(start + 1, len(lines)) if lines[i].strip() == "[[claim]]"),
+               len(lines))
+
+    def filler(line):
+        return not line.strip() or line.lstrip().startswith("#")
+
+    while end > start + 1 and filler(lines[end - 1]):
         end -= 1
     return "".join(lines[:end]) + entry + "".join(lines[end:])
 
