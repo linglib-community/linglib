@@ -27,6 +27,7 @@ depends for its meaning on anything outside it.
 Usage, from the repository root:
 
     python3 scripts/checks.py status [SOURCE ...]
+    python3 scripts/checks.py status --json   # every claim, for the docs pages
     python3 scripts/checks.py diff SOURCE CLAIM
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --claims ID,ID,...) --by GITHUB_HANDLE
@@ -205,9 +206,33 @@ def evaluate(sources):
     return status, info, data
 
 
+def status_json(sources, status, info):
+    """Every claim with its status and newest sign-off, as `gen_docs_pages.py --checks` reads it."""
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, check=True,
+                            capture_output=True, text=True).stdout.strip()
+    claims = []
+    for (key, cid), st in status.items():
+        claim = info[(key, cid)]["claim"]
+        last = (claim.get("check") or [None])[-1]
+        claims.append({
+            "source": key, "id": cid, "label": claim.get("label", cid),
+            "relation": claim.get("relation"), "notes": claim.get("notes", "").strip(),
+            "decls": claim.get("decls", []), "status": st,
+            "check": last and {"by": last.get("by"), "date": str(last.get("date")),
+                               "commit": last.get("commit")},
+            "blocking": [f"{k}/{c}" for k, c in info[(key, cid)].get("blocking", [])]})
+    return {"commit": commit, "claims": claims}
+
+
 def cmd_status(args):
     sources = load_sources(args.sources)
     problems = validate(sources)
+    if args.json:
+        if problems:
+            sys.exit("invalid check files:\n" + "\n".join(problems))
+        status, info, _ = evaluate(sources)
+        print(json.dumps(status_json(sources, status, info), indent=2))
+        return 0
     for p in problems:
         print(f"invalid: {p}")
     status, info, _ = evaluate(sources)
@@ -335,6 +360,7 @@ def main():
     sub = parser.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("status", help="the status of every claim")
     p.add_argument("sources", nargs="*")
+    p.add_argument("--json", action="store_true", help="as data, for the docs pages")
     p.set_defaults(func=cmd_status)
     p = sub.add_parser("diff", help="what changed since a claim was signed")
     p.add_argument("source")
