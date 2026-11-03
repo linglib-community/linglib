@@ -11,10 +11,10 @@ public import Linglib.Semantics.Exhaustification.Pointwise
 /-!
 # Exhaustification
 
-This file defines the exclusion every theory of *only* and of exhaustification shares.
-`excludes C p` holds where every true alternative in `C` is entailed by the prejacent `p`; it is
-the assertion of the entailment-scale *only*, and `exh C p`, the prejacent together with it, is
-Chierchia's operator `O`, which denies every alternative the prejacent does not entail. Over
+This file defines Chierchia's exhaustification operator `O` and its exclusion component.
+`excludes C p` holds at the worlds where every true alternative in `C` is entailed by the
+prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` is the prejacent
+together with `excludes C p`: it denies every alternative the prejacent does not entail. Over
 finitely many worlds and an indexed family of alternatives, membership in `exh` is decidable.
 
 ## Main statements
