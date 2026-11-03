@@ -11,9 +11,9 @@ and *whatsoever* are licensed by any downward-entailing operator; the strong one
 finger*, *budge an inch*, *in years*, *until* and additive *either*, need an anti-additive
 licenser, and Gajewski shows that *either* is out under *only* although *only* is Strawson
 anti-additive. *Any* and the free relatives *whatever*, *whoever* and *whichever* have free choice
-readings. The positive polarity items are blocked by clausal negation: *someone* also by the other
-anti-additive operators but not by *at most five* (Szabolcsi), and *already*, *too* (the
-positive counterpart of *either*), *somewhat*, *rather*, *tons of* and *awfully* at least by
+readings. The positive polarity items are blocked by clausal negation: *someone*, *already* and
+*rather* also by the other anti-additive operators but not by *at most five* (Ladusaw, Szabolcsi),
+and *too* (the positive counterpart of *either*), *somewhat*, *tons of* and *awfully* at least by
 clausal negation. The idioms *wild horses*, *all the tea in China*, *a ten-foot pole* and *in a
 million years* are Israel's maximizer negative polarity items and *at the drop of a hat*, *in a
 jiffy*, *for a pittance* and *for a song* his minimizer positive ones; his classification of the
@@ -36,6 +36,7 @@ anti-licensor, anti-morphic strength, which every positive polarity item has by 
 
 ## References
 
+* [ladusaw-1979]
 * [israel-2011]
 * [gajewski-2011]
 * [chierchia-2006]
@@ -149,10 +150,11 @@ def someone : PolarityItem :=
   { form := "someone"
   , antiLicensor := some .antiAdditive }
 
-/-- *already*, a temporal positive polarity item. -/
+/-- *already*, a temporal positive polarity item, blocked under *no one* and not under *few* or *at
+most three*, *\*No one has already finished his exam* ([ladusaw-1979]). -/
 def already : PolarityItem :=
   { form := "already"
-  , antiLicensor := some .antiMorphic }
+  , antiLicensor := some .antiAdditive }
 
 /-- *too*, an additive positive polarity item, the positive counterpart of *either*
 ([ladd-1981]). -/
@@ -165,10 +167,11 @@ def somewhat : PolarityItem :=
   { form := "somewhat"
   , antiLicensor := some .antiMorphic }
 
-/-- *rather*, a degree positive polarity item. -/
+/-- *rather*, a positive polarity item, blocked under *no one* and not under *few* or *at most
+three*, *\*No one would rather be in Cleveland* ([ladusaw-1979]). -/
 def rather : PolarityItem :=
   { form := "rather"
-  , antiLicensor := some .antiMorphic }
+  , antiLicensor := some .antiAdditive }
 
 /-- *tons of*, an emphatic positive polarity item, as in *She has tons of friends.* -/
 def tonsOf : PolarityItem :=
