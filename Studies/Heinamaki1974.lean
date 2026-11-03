@@ -25,10 +25,10 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
 * A clause carries the intervals it specifies, its `Clause.intervals`, "and no shorter or longer
   stretch of time", so these are the maximal intervals and not the run times of
   `Semantics/Tense/RunTimes.lean`, which a state closes under subintervals.
-* Her "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted among
-  achievements here. Her "durative" is `Durative`, a state or an activity, narrower than
+* The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted among
+  achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
   `VendlerClass.duration`, which an accomplishment shares.
-* Intervals are closed, so *until* has the final point of (12) and not her alternative of a final
+* Intervals are closed, so *until* has the final point of (12) and not the alternative of a final
   bound (p. 123), and *A until B* reduces to $\mathrm{tr}(B)$ falling within $J$.
 * The speakers' variants are left out: *before* with $\mathrm{tr}(A) < \mathrm{tr}(B)$ for an
   accomplishment temporal clause (p. 73), *after* with $J' = J$ for an accomplishment main clause
@@ -40,7 +40,7 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
 
 * (12) and (93) ask that the main clause not specify a moment, inferred from (5) and (88) (pp. 54,
   120), but the accomplishments of those sentences do not specify moments (p. 26), so [the formulas
-  admit both](##rows_accomplishment_admitted). Her prose has the right condition, that the main
+  admit both](##rows_accomplishment_admitted). The prose has the right condition, that the main
   clause be durative.
 * The main clause of (12) is to hold up to the reference point (p. 122), but as moments are
   intervals (p. 24), `J'` can be one, and [(12) holds of a main clause that only begins
@@ -81,7 +81,7 @@ structure Clause (T : Type*) [LE T] where
 
 /-- The context a sentence is evaluated in. -/
 structure Context (T : Type*) [LT T] where
-  /-- The present moment, her `tp`. -/
+  /-- The present moment, the thesis's `tp`. -/
   now : T
   /-- The final point of the period of *since*: the present moment, the time of the narrative, or
   the time of an adverb in the main clause (63). -/
