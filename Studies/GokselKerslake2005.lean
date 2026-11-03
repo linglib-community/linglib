@@ -175,8 +175,8 @@ def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 /-- Bracketed vowels and consonants are the two repairs of hiatus, elision in *araba-m* and
 epenthesis in *masa-ya* (§6.1.3). -/
 theorem hiatus_repairs :
-    (possessive (.personNumber .first .singular)).form.attach arabaIm.stem = arabaIm.elideV2 ∧
-    dative.form.attach masaA.stem = masaA.epenthesize y :=
+    (possessive (.personNumber .first .singular)).form.attach arabaIm.left = arabaIm.elideV2 ∧
+    dative.form.attach masaA.left = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
 

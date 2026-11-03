@@ -112,8 +112,8 @@ variable {c}
     some p ∈ violations c .second ↔ c.Protects p c.v2Idx := Iff.rfl
 
 theorem soleSegment_mem_violations_second_iff :
-    some .soleSegment ∈ violations c .second ↔ resolve c .second = c.stem := by
-  rw [resolve_second, c.elideV2_eq_stem_iff]
+    some .soleSegment ∈ violations c .second ↔ resolve c .second = c.left := by
+  rw [resolve_second, c.elideV2_eq_left_iff]
   simp
 
 end Violations
@@ -154,7 +154,7 @@ theorem optimal_eq_singleton_of_forall_dominates {e e' : ElidedVowel} (hne : e �
     (tableau c r).optimal = {e} :=
   (optimal_eq_singleton_iff hne r).2 ⟨i, hi', hi, fun j hj _ ↦ hr j fun h ↦ hi (h ▸ hj)⟩
 
-theorem exists_optimal_eq_first (h : c.stemBody ≠ []) : ∃ r, (tableau c r).optimal = {.first} :=
+theorem exists_optimal_eq_first (h : c.leftBody ≠ []) : ∃ r, (tableau c r).optimal = {.first} :=
   (exists_optimal_eq_singleton_iff (e' := .second) (by decide)).2 fun hs ↦ by
     simpa [h] using hs (show some .morphemeInitial ∈ violations c .second by simp)
 
@@ -168,15 +168,15 @@ private theorem forall_option_prominence {P : Option Prominence → Prop} :
 when the first morph is a root and the second is not. This covers the boundary between two
 lexical words, between a lexical and a function word in either order, between a prefix of more
 than one segment and a root, between a root and a suffix, and between two affixes or clitics. -/
-theorem exists_mem_optimal_second_iff (h : c.stemBody ≠ []) :
-    (∃ r, .second ∈ (tableau c r).optimal) ↔ c.left = .root ∧ c.right ≠ .root := by
+theorem exists_mem_optimal_second_iff (h : c.leftBody ≠ []) :
+    (∃ r, .second ∈ (tableau c r).optimal) ↔ c.leftKind = .root ∧ c.rightKind ≠ .root := by
   rw [exists_mem_optimal_iff (e' := .first) (by decide), Set.ssubset_def, Set.subset_def,
     Set.subset_def, forall_option_prominence, forall_option_prominence]
   simp [h]
 
 -- (15), (16)
-theorem exists_optimal_eq_of_vowelPrefix (h : c.stemBody = []) (hs : c.suffixBody ≠ [])
-    (hl : c.left ≠ .root) (hr : c.right = .root) (e : ElidedVowel) :
+theorem exists_optimal_eq_of_vowelPrefix (h : c.leftBody = []) (hs : c.rightBody ≠ [])
+    (hl : c.leftKind ≠ .root) (hr : c.rightKind = .root) (e : ElidedVowel) :
     ∃ r, (tableau c r).optimal = {e} := by
   cases e
   · refine (exists_optimal_eq_singleton_iff (e' := .second) (by decide)).2 fun hsub ↦ ?_
@@ -188,7 +188,7 @@ theorem exists_optimal_eq_of_vowelPrefix (h : c.stemBody = []) (hs : c.suffixBod
 
 /-- The kinds of the two morphs at a kind of juncture of the survey. A lexical word is a root,
 and a function word is free and not a root. -/
-def kinds : Data.Hiatus.Juncture → Morph.Kind × Morph.Kind
+def kinds : Data.Hiatus.JunctureKind → Morph.Kind × Morph.Kind
   | .lexicalLexical => (.root, .root)
   | .lexicalFunction => (.root, .free)
   | .prefixRoot => (.bound .before .affix, .root)
@@ -198,10 +198,10 @@ def kinds : Data.Hiatus.Juncture → Morph.Kind × Morph.Kind
 
 /-- `IsOfKind c k` holds when the context `c` is a juncture of the survey's kind `k` at which the
 first vowel begins no morph. -/
-structure IsOfKind (c : Context) (k : Data.Hiatus.Juncture) : Prop where
-  stemBody_ne_nil : c.stemBody ≠ []
-  left : c.left = (kinds k).1
-  right : c.right = (kinds k).2
+structure IsOfKind (c : Context) (k : Data.Hiatus.JunctureKind) : Prop where
+  leftBody_ne_nil : c.leftBody ≠ []
+  leftKind : c.leftKind = (kinds k).1
+  rightKind : c.rightKind = (kinds k).2
 
 /-- The paper's schematic consonant, the natural class [+consonantal]. -/
 def C : Segment := .ofSpecs [(.consonantal, true)]
@@ -211,27 +211,27 @@ def V : Segment := .ofSpecs [(.syllabic, true), (.consonantal, false)]
 
 /-- The paper's schematic juncture `/CV₁ + V₂C/` at the survey's kind `k`, at the start of an
 utterance. -/
-def schematic (k : Data.Hiatus.Juncture) : Context where
-  stemBody := [C]
+def schematic (k : Data.Hiatus.JunctureKind) : Context where
+  leftBody := [C]
   v1 := V
   v2 := V
-  suffixBody := [C]
+  rightBody := [C]
   v1_isVowel := by decide
   v2_isVowel := by decide
-  before := none
-  left := (kinds k).1
-  right := (kinds k).2
+  beforeKind := none
+  leftKind := (kinds k).1
+  rightKind := (kinds k).2
 
-theorem isOfKind_schematic (k : Data.Hiatus.Juncture) : IsOfKind (schematic k) k :=
+theorem isOfKind_schematic (k : Data.Hiatus.JunctureKind) : IsOfKind (schematic k) k :=
   ⟨List.cons_ne_nil _ _, rfl, rfl⟩
 
-theorem exists_mem_optimal_iff_of_isOfKind {k : Data.Hiatus.Juncture} (hc : IsOfKind c k)
+theorem exists_mem_optimal_iff_of_isOfKind {k : Data.Hiatus.JunctureKind} (hc : IsOfKind c k)
     {e : ElidedVowel} : (∃ r, e ∈ (tableau c r).optimal) ↔
       e = .first ∨ (kinds k).1 = .root ∧ (kinds k).2 ≠ .root := by
   cases e
-  · obtain ⟨r, hr⟩ := exists_optimal_eq_first hc.stemBody_ne_nil
+  · obtain ⟨r, hr⟩ := exists_optimal_eq_first hc.leftBody_ne_nil
     exact iff_of_true ⟨r, hr ▸ Finset.mem_singleton_self _⟩ (.inl rfl)
-  · rw [exists_mem_optimal_second_iff hc.stemBody_ne_nil, hc.left, hc.right]
+  · rw [exists_mem_optimal_second_iff hc.leftBody_ne_nil, hc.leftKind, hc.rightKind]
     simp
 
 -- (10), (12)
@@ -246,15 +246,15 @@ theorem lexical_on_top {r : Ranking (Option Prominence) 5}
     (hc : IsOfKind c .prefixRoot) (hc' : IsOfKind c' .rootSuffix) :
     (tableau c r).optimal = {.first} ∧ (tableau c' r).optimal = {.second} :=
   ⟨optimal_eq_singleton_of_forall_dominates (e' := .second) (by decide)
-      (by simp [hc.left, kinds]) (by simp [hc.right, kinds]) hr,
+      (by simp [hc.leftKind, kinds]) (by simp [hc.rightKind, kinds]) hr,
     optimal_eq_singleton_of_forall_dominates (e' := .first) (by decide)
-      (by simp [hc'.right, kinds]) (by simp [hc'.left, kinds]) hr⟩
+      (by simp [hc'.rightKind, kinds]) (by simp [hc'.leftKind, kinds]) hr⟩
 
 -- (19), (20)
 theorem soleSegment_over_lexical {r : Ranking (Option Prominence) 5}
     (h₁ : r.Dominates (some .soleSegment) (some .lexical))
     (h₂ : r.Dominates (some .lexical) (some .morphemeInitial)) (hc : IsOfKind c .rootSuffix) :
-    (tableau c r).optimal = {if c.suffixBody = [] then .first else .second} := by
+    (tableau c r).optimal = {if c.rightBody = [] then .first else .second} := by
   obtain ⟨hs, hl, hr⟩ := hc
   simp only [kinds] at hl hr
   split_ifs with hsuf
@@ -279,7 +279,7 @@ theorem survey_allowed :
 
 /-- The survey reports an elision of the second vowel at exactly the kinds of juncture where the
 analysis allows one, before a function word and before a suffix. -/
-theorem survey_second_iff {k : Data.Hiatus.Juncture} (hc : IsOfKind c k) :
+theorem survey_second_iff {k : Data.Hiatus.JunctureKind} (hc : IsOfKind c k) :
     (∃ row ∈ Data.Hiatus.Casali1997.rows, row.juncture = k ∧ row.elided = .second) ↔
       ∃ r, .second ∈ (tableau c r).optimal := by
   rw [exists_mem_optimal_iff_of_isOfKind hc]

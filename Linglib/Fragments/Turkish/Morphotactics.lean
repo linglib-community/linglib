@@ -137,16 +137,16 @@ theorem attach_concat_alternates {s : Suffix} {b h : Segment} {t : List Segment}
 /-- After a vowel-final stem a bracketed vowel is lost, so attachment is the elision of the
 second vowel of the juncture. -/
 theorem attach_eq_elideV2 (j : Hiatus.Juncture) {s : Suffix} (hb : s.bracketed = some j.v2)
-    (hs : s.segments = j.suffixBody) : s.attach j.stem = j.elideV2 := by
-  simp [attach, Hiatus.Juncture.stem, Hiatus.Juncture.elideV2, initial_concat hb, hs,
+    (hs : s.segments = j.rightBody) : s.attach j.left = j.elideV2 := by
+  simp [attach, Hiatus.Juncture.left, Hiatus.Juncture.elideV2, initial_concat hb, hs,
     j.v1_isVowel, j.v2_isVowel]
 
 /-- After a vowel-final stem a bracketed consonant appears before the vowel of the suffix, so
 attachment is the insertion of that consonant at the juncture. -/
 theorem attach_eq_epenthesize (j : Hiatus.Juncture) {s : Suffix} {c : Segment}
-    (hb : s.bracketed = some c) (hc : ¬ c.IsVowel) (hs : s.segments = j.suffix) :
-    s.attach j.stem = j.epenthesize c := by
-  simp [attach, Hiatus.Juncture.stem, Hiatus.Juncture.epenthesize, Hiatus.Juncture.suffix,
+    (hb : s.bracketed = some c) (hc : ¬ c.IsVowel) (hs : s.segments = j.right) :
+    s.attach j.left = j.epenthesize c := by
+  simp [attach, Hiatus.Juncture.left, Hiatus.Juncture.epenthesize, Hiatus.Juncture.right,
     initial_concat hb, hs, j.v1_isVowel, hc]
 
 /-- After a vowel-final stem the attachment of a bracketed suffix is a repair of hiatus. If the
@@ -155,8 +155,8 @@ suffix's vowel. -/
 theorem attach_concat_eq_repair {s : Suffix} {b h : Segment} {t : List Segment}
     (hb : s.bracketed = some b) (hs : s.segments = h :: t) (hbh : ¬ (b.IsVowel ↔ h.IsVowel))
     (w : List Segment) {l : Segment} (hl : l.IsVowel) :
-    (∃ j : Hiatus.Juncture, j.stem = w ++ [l] ∧ s.attach (w ++ [l]) = j.elideV2) ∨
-      ∃ j : Hiatus.Juncture, j.stem = w ++ [l] ∧ s.attach (w ++ [l]) = j.epenthesize b := by
+    (∃ j : Hiatus.Juncture, j.left = w ++ [l] ∧ s.attach (w ++ [l]) = j.elideV2) ∨
+      ∃ j : Hiatus.Juncture, j.left = w ++ [l] ∧ s.attach (w ++ [l]) = j.epenthesize b := by
   by_cases hbv : b.IsVowel
   · exact .inl ⟨⟨w, l, b, s.segments, hl, hbv⟩, rfl,
       attach_eq_elideV2 ⟨w, l, b, s.segments, hl, hbv⟩ hb rfl⟩
