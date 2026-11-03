@@ -21,8 +21,8 @@ constraint cannot choose among them and the choice falls to the other constraint
 ## Implementation notes
 
 Forms carry no syllable boundaries, so `Hiatus.count` also counts a vowel sequence within one
-syllable, and glide formation and diphthong formation, which turn on the syllabification of the two
-vowels, are not defined.
+syllable, such as a diphthong or a long vowel written as two segments. Glide formation and diphthong
+formation, which turn on the syllabification of the two vowels, are not defined.
 
 ## References
 
