@@ -16,7 +16,9 @@ proofs. Mathlib and Lean are trusted and not followed.
     lake exe checkClosure Mod₁ Mod₂ … -- name₁ name₂ …
 
 imports the modules, and prints as JSON, for each name, whether it resolves, its module, its
-docstring and its closure, together with the text of every declaration in a closure. The text of a
+docstring, its closure and the axioms it rests on, together with the text of every declaration in a
+closure. The axioms are collected through proofs as well as statements, so that a `sorry` or an
+unproved assumption anywhere beneath a declaration shows. The text of a
 declaration is its pretty-printed type, followed for a definition by its pretty-printed value, with
 full names, so that it does not depend on the namespaces open where it was written.
 -/
@@ -115,7 +117,8 @@ def run (names : List Name) : MetaM Json := do
         ("module", toJson ((moduleOf? env n).getD .anonymous).toString),
         ("doc", doc),
         ("line", toJson (range.map (·.range.pos.line))),
-        ("closure", toJson ((reach st.edges n).map Name.toString))])
+        ("closure", toJson ((reach st.edges n).map Name.toString)),
+        ("axioms", toJson ((← collectAxioms n).map Name.toString))])
     else
       roots := roots.push (n.toString, Json.mkObj [("found", false)])
   let nodes : Array (String × Json) := st.nodes.toArray.map fun (n, node) ↦
