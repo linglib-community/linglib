@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Data.Examples.GeurtsPouscoulous2009
@@ -9,18 +10,18 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Geurts and Pouscoulous (2009): Embedded implicatures?!?
 
-This file formalizes the theoretical frame of [geurts-pouscoulous-2009]'s experimental case
-against conventionalist theories of scalar implicature ([chierchia-2004], [fox-2007],
-[chierchia-fox-spector-2008]), which posit a silent exhaustivity operator adjoinable to any
-clause and predict local scalar inferences systematically. The operator `so` negates every
-stronger alternative of its prejacent; under a belief verb the parse with `so` below the verb
+This file formalizes the theoretical frame of [geurts-pouscoulous-2009]'s experimental case against
+conventionalist theories of scalar implicature ([chierchia-2004], [fox-2007],
+[chierchia-fox-spector-2008]), which posit a silent exhaustivity operator adjoinable to any clause
+and predict local scalar inferences systematically. The operator `Exhaustification.exh` denies every
+alternative its prejacent does not entail; under a belief verb the parse with it below the verb
 yields the local reading, that the agent believes *some but not all*, and the parse above it the
-global reading, that the agent believes *some* and does not believe *all*
-(`local_reading`, `so_pair`). The paper's Gricean reply is that the local reading follows from the
-global one whenever the agent is opinionated on the stronger alternative
-(`local_of_global_of_opinionated`), while the analogous derivation for a universal quantifier
-needs a uniformity assumption across the domain (`all_not_all_of_uniform`) that is far less
-plausible, so seemingly local inferences are expected under *believe* and nowhere else.
+global reading, that the agent believes *some* and does not believe *all* (`local_reading`). The
+paper's Gricean reply is that the local reading follows from the global one whenever the agent is
+opinionated on the stronger alternative (`local_of_global_of_opinionated`), while the analogous
+derivation for a universal quantifier needs a uniformity assumption across the domain
+(`all_not_all_of_uniform`) that is far less plausible, so seemingly local inferences are expected
+under *believe* and nowhere else.
 
 Mainstream conventionalism predicts the local construal wherever the embedding scope is not
 downward entailing (`PredictsLocalSI`, weakly `PredictsLocalSIWeak`). The third experiment's
@@ -39,7 +40,7 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
   for *all* (`figure2`) and gives only the conditions the others satisfy, which the other situations
   here meet.
 * The paper's remark that lexicalist conventionalism reaches only the local reading is not
-  formalized; `so` is the syntax-based variant's operator.
+  formalized; `exh` is the syntax-based variant's operator.
 
 ## References
 
@@ -54,31 +55,20 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
 
 namespace GeurtsPouscoulous2009
 
-open Quantifier Quantifier.Det ModalLogic
+open Quantifier Quantifier.Det ModalLogic Exhaustification
 open SetRel
 
 variable {W : Type*}
 
 /-! ### The silent exhaustivity operator -/
 
-/-- The silent operator of syntax-based conventionalism conjoins the prejacent with the negation
-of every stronger alternative. -/
-def so (φ : Set W) (A : Set (Set W)) : Set W := {w | w ∈ φ ∧ ∀ ψ ∈ A, ψ ⊂ φ → w ∉ ψ}
-
-theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
-  ext w
-  simp only [so, Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
-    forall_eq_or_imp, forall_eq]
-  exact ⟨fun ⟨hw, _, hψ⟩ ↦ ⟨hw, hψ h⟩,
-    fun ⟨hw, hψ⟩ ↦ ⟨hw, fun hφ ↦ absurd hφ (lt_irrefl φ), fun _ ↦ hψ⟩⟩
-
 theorem local_reading (R : SetRel W W) {some all : Set W} (h : all ⊂ some) :
-    R.core (so some {some, all}) = R.core some ∩ R.core allᶜ := by
-  rw [so_pair h, Set.sdiff_eq, core_inter]
+    R.core (exh {some, all} some) = R.core some ∩ R.core allᶜ := by
+  rw [exh_pair h.2, Set.sdiff_eq, core_inter]
 
 theorem local_of_global_of_opinionated (R : SetRel W W) {some all : Set W} (h : all ⊂ some)
     {w : W} (h₃₁ : w ∈ R.core some) (h₃₂ : w ∉ R.core all)
-    (h₃₃ : w ∈ R.core all ∨ w ∈ R.core allᶜ) : w ∈ R.core (so some {some, all}) := by
+    (h₃₃ : w ∈ R.core all ∨ w ∈ R.core allᶜ) : w ∈ R.core (exh {some, all} some) := by
   rw [local_reading R h]
   exact ⟨h₃₁, h₃₃.resolve_left h₃₂⟩
 
@@ -217,6 +207,14 @@ theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : Det
   simp only [Quant.sem] at key
   revert key
   decide
+
+theorem Quant.predictsLocalSI_iff :
+    ∀ q : Quant, PredictsLocalSI (q.sem : Det (Fin 3)) ↔ q ∉ [Quant.notAll, .notMoreThanOne]
+  | .all => iff_of_true all_predictsLocalSI (by decide)
+  | .moreThanOne => iff_of_true moreThanOne_predictsLocalSI (by decide)
+  | .exactlyTwo => iff_of_true exactlyTwo_predictsLocalSI (by decide)
+  | .notAll => iff_of_false notAll_not_predictsLocalSI (by decide)
+  | .notMoreThanOne => iff_of_false notMoreThanOne_not_predictsLocalSI (by decide)
 
 theorem classical_all : Classical .all .none :=
   show ∀ s : Fin 3, True → s ∈ someC figure2 by decide

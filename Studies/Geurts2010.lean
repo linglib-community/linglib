@@ -226,6 +226,15 @@ example : ({0, 1} : Set (Fin 3)) ∈ Ioi ⊥ \ Ici ⊤ ∧ ¬ IsAtom ({0, 1} : S
 
 variable [IsAtomic α]
 
+private theorem exists_isAtom_le {y : α} (hy : y ∈ Ioi ⊥) : ∃ b, IsAtom b ∧ b ≤ y :=
+  (eq_bot_or_exists_atom_le y).resolve_left (mem_Ioi.1 hy).ne'
+
+-- an upper set with every atom in it holds wherever a disjunct does
+private theorem Ioi_bot_subset_of_forall_isAtom_mem {χ : Set α} (hχ : IsUpperSet χ)
+    (h : ∀ x, IsAtom x → x ∈ χ) : Ioi ⊥ ⊆ χ := fun _ hy ↦
+  let ⟨_, hb, hby⟩ := exists_isAtom_le hy
+  hχ hby (h _ hb)
+
 -- contra p. 64: over alternatives closed under conjunction and disjunction, an alternative passes
 -- the consistency check just when it holds in no world in which only one disjunct does
 theorem isSecondaryImplicature_upperSets_iff :
@@ -236,9 +245,7 @@ theorem isSecondaryImplicature_upperSets_iff :
     ⟨fun h x hx hxt ↦ ?_, fun h χ hχ hχφ hsub ↦ ?_⟩
   · exact h _ (isLowerSet_Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
       fun y hy hle ↦ hy.2 ((hx.le_iff_eq (mem_Ioi.1 hy.1).ne').1 hle ▸ hxt)
-  · obtain ⟨y, hy, hyχ⟩ := not_subset.1 hχφ.2
-    obtain ⟨b, hb, hby⟩ := (eq_bot_or_exists_atom_le y).resolve_left (mem_Ioi.1 hy).ne'
-    exact hyχ (hχ hby (hsub ⟨hb.bot_lt, h b hb⟩))
+  · exact hχφ.2 (Ioi_bot_subset_of_forall_isAtom_mem hχ fun b hb ↦ hsub ⟨hb.bot_lt, h b hb⟩)
 
 /-- Closing the alternatives of a long disjunction under conjunction and under disjunction, and
 strengthening wherever Competence is consistent, yields exactly the exclusive reading. -/
@@ -248,7 +255,7 @@ theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
   simp only [mem_sdiff, mem_Ioi, mem_sUnion, mem_ofPred_eq, isSecondaryImplicature_upperSets_iff]
   refine ⟨fun ⟨hx, hn⟩ ↦ ?_, fun hx ↦ ⟨hx.bot_lt, fun ⟨t, ⟨_, _, h⟩, hxt⟩ ↦ h x hx hxt⟩⟩
   by_contra hna
-  obtain ⟨b, hb, hbx⟩ := (eq_bot_or_exists_atom_le x).resolve_left hx.ne'
+  obtain ⟨b, hb, hbx⟩ := exists_isAtom_le hx
   refine hn ⟨Ici x, ⟨isUpperSet_Ici x, ⟨fun _ hy ↦ hx.trans_le hy, fun h ↦ ?_⟩, fun y hy hxy ↦ ?_⟩,
     le_rfl⟩
   · exact hna (le_antisymm hbx (h hb.bot_lt) ▸ hb)
@@ -259,15 +266,13 @@ theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
 theorem setOf_isAtom_mem_primaryImplicatures :
     {x : α | IsAtom x} ∈ primaryImplicatures (Ioi ⊥) {χ | IsUpperSet χ} :=
   mem_primaryImplicatures.2 fun _ hχ hχφ hsub ↦
-    let ⟨y, hy, hyχ⟩ := not_subset.1 hχφ.2
-    let ⟨_, hb, hby⟩ := (eq_bot_or_exists_atom_le y).resolve_left (mem_Ioi.1 hy).ne'
-    hyχ (hχ hby (hsub hb))
+    hχφ.2 (Ioi_bot_subset_of_forall_isAtom_mem hχ fun _ hb ↦ hsub hb)
 
 -- p. 41: that the speaker cannot believe all the disjuncts false holds at any length
 theorem eq_empty_of_forall_subset_compl_Ici {s : Set α} (hq : s ⊆ Ioi ⊥)
     (h : ∀ a, IsAtom a → s ⊆ (Ici a)ᶜ) : s = ∅ :=
-  eq_empty_of_forall_notMem fun y hy ↦
-    let ⟨_, hb, hby⟩ := (eq_bot_or_exists_atom_le y).resolve_left (mem_Ioi.1 (hq hy)).ne'
+  eq_empty_of_forall_notMem fun _ hy ↦
+    let ⟨_, hb, hby⟩ := exists_isAtom_le (hq hy)
     h _ hb hy hby
 
 example : Ioi ⊥ \ ⋃₀ {t | IsSecondaryImplicature (Ioi ⊥) {χ | IsUpperSet χ} t} =
@@ -454,7 +459,7 @@ theorem mem_survivors_or_iff :
   mem_survivors_sayEither_iff (by simp [size]) (by simp [size])
 
 -- p. 115: (16) are alternatives in the sense of the method
-theorem areAlternatives_sayOr : AreAlternatives V (or (atom p) (atom q)) (sayOr V p q) :=
+example : AreAlternatives V (or (atom p) (atom q)) (sayOr V p q) :=
   fun s hs h ↦ say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V (or (atom p) (atom q)))
     (believes_entails_top hs h)
     (fun _ hq ↦ ⟨fun w hw ↦ (h hw).resolve_right fun hwq ↦ hq ⟨w, hw, hwq⟩,
@@ -472,8 +477,7 @@ theorem mem_survivors_may_or_iff :
   exact (believes_may hs).2 (poss_or.2 (.inl hp))
 
 -- p. 117: (18) are alternatives in the sense of the method
-theorem areAlternatives_sayMayOr :
-    AreAlternatives V (may (or (atom p) (atom q))) (sayMayOr V p q) := fun s hs h ↦ by
+example : AreAlternatives V (may (or (atom p) (atom q))) (sayMayOr V p q) := fun s hs h ↦ by
   have key {r : P} (hr : V r ⊆ V p ∪ V q) : (may (atom r)).Entails V (may (or (atom p) (atom q))) :=
     fun _ h' _ hw ↦ (h' hw).mono (inter_subset_inter_right _ hr)
   refine say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V (may (or (atom p) (atom q))))
@@ -535,7 +539,7 @@ theorem mem_survivors_scalar_iff :
     exact absurd (let ⟨w, hw⟩ := hs; ⟨w, hw, hn hw⟩) hp
 
 -- p. 113: (14) are alternatives in the sense of the method
-theorem areAlternatives_sayScalar (hx : x.Entails V u) : AreAlternatives V u (sayScalar V u x) :=
+example (hx : x.Entails V u) : AreAlternatives V u (sayScalar V u x) :=
   fun s hs h ↦ say_rec (C := fun r ↦ r.Believes V s ∧ r.Entails V u)
     (fun hp _ ↦ ⟨believes_and.2 ⟨h, (believes_may hs).2 hp⟩, fun _ h' ↦ (believes_and.1 h').1⟩)
     (fun _ hn ↦ ⟨not_poss_neg.1 hn, hx⟩)
@@ -607,7 +611,7 @@ theorem mem_survivors_many_iff :
         (atom .somePasta).Poss V₂₀ s :=
   mem_survivors_sayEither_iff le_rfl le_rfl
 
-theorem areAlternatives_sayMany (hm : Monotone many) :
+example (hm : Monotone many) :
     AreAlternatives V₂₀ (atom .manyEither) (sayMany many pizza pasta) := fun s hs h ↦
   say_rec (C := fun r ↦ r.Believes V₂₀ s ∧ r.Entails V₂₀ (atom .manyEither))
     (believes_entails_top hs h)
@@ -724,12 +728,8 @@ theorem isLeast_readings_negation (hs : many ⊂ some) (ha : all ⊂ many) :
 theorem isLeast_readings_core (R : SetRel W W) [ModalLogic.IsSerial R] (ha : all ⊂ some) :
     IsLeast {R.core some, exh {R.core some, R.core all} (R.core some),
         R.core (exh {some, all} some)} (R.core (exh {some, all} some)) := by
-  have hsome : exh {some, all} some = some \ all :=
-    exh_eq_sdiff_of_forall (by simp) ha.2 (by
-      rintro r (rfl | rfl)
-      exacts [.inl subset_rfl, .inr subset_rfl])
   have hcore : R.core (some \ all) ⊆ R.core some := fun _ hw _ hv ↦ (hw hv).1
-  rw [hsome]
+  rw [exh_pair ha.2]
   refine ⟨by simp, ?_⟩
   rintro _ (rfl | rfl | rfl)
   · exact hcore
@@ -797,10 +797,10 @@ theorem isSecondaryImplicature_mango_iff (hA : A ⊆ F) (hM : (M \ F).Nonempty)
 open GeurtsPouscoulous2009 in
 -- §8.2, (10)–(12), pp. 168–169, after [vanrooij-schulz-2004] and [russell-2006]: the reading of (9)
 -- that looks local, from the strong implicature at the speaker and Competence of the subject
-theorem subset_core_sdiff {R : SetRel W W} {some all : Set W} (hall : all ⊂ some)
+theorem subset_core_exh {R : SetRel W W} {some all : Set W} (hall : all ⊂ some)
     (hq : s ⊆ R.core some) (h10 : s ⊆ (R.core all)ᶜ) (h11 : s ⊆ R.core all ∪ R.core allᶜ) :
-    s ⊆ R.core (some \ all) :=
-  so_pair hall ▸ fun _ hw ↦ local_of_global_of_opinionated R hall (hq hw) (h10 hw) (h11 hw)
+    s ⊆ R.core (Exhaustification.exh {some, all} some) :=
+  fun _ hw ↦ local_of_global_of_opinionated R hall (hq hw) (h10 hw) (h11 hw)
 
 -- (10)–(12) and, for *hope*, (15)–(17), pp. 170–171, share this form, for any attitude: what
 -- separates them is the plausibility of the second premise. (11) and (16), as printed, have the
@@ -980,16 +980,8 @@ example : Datum.ReadCount quantifierRow? Examples.all 3 := by decide
 -- none of these inferences goes through
 theorem rows_61 : ∀ r ∈ Examples.all.filterMap quantifierRow?,
     ¬ classicalReading r.1 ⊂ localReading r.1 ∧ r.2 = false := by
-  have key : ∀ r ∈ Examples.all.filterMap quantifierRow?,
-      r.1 ∈ [Quant.all, .moreThanOne, .exactlyTwo] ∧ r.2 = false := by decide
-  intro r hr
-  refine ⟨(not_classicalReading_ssubset_iff _).2 ?_, (key r hr).2⟩
-  rcases List.mem_cons.1 (key r hr).1 with h | h
-  · exact h ▸ all_predictsLocalSI
-  rcases List.mem_cons.1 h with h | h
-  · exact h ▸ moreThanOne_predictsLocalSI
-  rcases List.mem_singleton.1 h with h
-  exact h ▸ exactlyTwo_predictsLocalSI
+  simp only [not_classicalReading_ssubset_iff, Quant.predictsLocalSI_iff]
+  decide
 
 /-- Reads whether the inference of a row of (56) is conveyed. -/
 def attitudeRow? (ex : Datum) : Option Bool :=

@@ -112,6 +112,11 @@ theorem exh_eq_sdiff_of_forall (hq : q ∈ C) (hpq : ¬ p ⊆ q) (h : ∀ r ∈ 
   Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun hw hwq ↦ hpq (hw q hq hwq),
     fun hw r hr hwr ↦ (h r hr).resolve_right fun hrq ↦ hw (hrq hwr)⟩
 
+theorem exh_pair (h : ¬ p ⊆ q) : exh {p, q} p = p \ q :=
+  exh_eq_sdiff_of_forall (by simp) h (by
+    rintro r (rfl | rfl)
+    exacts [.inl subset_rfl, .inr subset_rfl])
+
 theorem exh_eq_self_iff : exh C p = p ↔ ∀ q ∈ C, (p ∩ q).Nonempty → p ⊆ q :=
   ⟨fun h q hq ⟨w, hw, hwq⟩ ↦ by rw [← h] at hw; exact hw.2 q hq hwq,
     fun h ↦ (exh_subset C p).antisymm fun w hw ↦ ⟨hw, fun q hq hwq ↦ h q hq ⟨w, hw, hwq⟩⟩⟩
