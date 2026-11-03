@@ -46,21 +46,21 @@ theorem exhIE_conjDisjAlternatives (hab : ((a ∩ b) \ c).Nonempty)
     · rintro v (rfl | rfl)
       exacts [Or.inl ⟨hxa, hxb⟩, Or.inr hyc]
     · rcases hw with ⟨hwa, hwb⟩ | hwc
-      · refine ⟨x, Or.inl rfl, fun q hq hxq ↦ ?_⟩
+      · refine ⟨x, Or.inl rfl, fun q ⟨hq, hxq⟩ ↦ ⟨hq, ?_⟩⟩
         simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inl ⟨hwa, hwb⟩, (hxc hxq.2).elim, Or.inl hwa, Or.inl hwb, (hxc hxq.2).elim,
           (hxc hxq.2).elim, ⟨hwa, hwb⟩, hwa, hwb, (hxc hxq).elim]
-      · refine ⟨y, Or.inr rfl, fun q hq hyq ↦ ?_⟩
+      · refine ⟨y, Or.inr rfl, fun q ⟨hq, hyq⟩ ↦ ⟨hq, ?_⟩⟩
         simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inr hwc, (hya hyq.1.1).elim, Or.inr hwc, Or.inr hwc, (hya hyq.1).elim,
           (hyb hyq.1).elim, (hya hyq.1).elim, (hya hyq).elim, (hyb hyq).elim, hwc]
     · rintro v (rfl | rfl) u (rfl | rfl) huv
-      · exact leALT_refl _ _
-      · exact (hxc (huv c (by simp [conjDisjAlternatives]) hyc)).elim
-      · exact (hya (huv a (by simp [conjDisjAlternatives]) hxa)).elim
-      · exact leALT_refl _ _
+      · exact subset_rfl
+      · exact (hxc (huv ⟨by simp [conjDisjAlternatives], hyc⟩).2).elim
+      · exact (hya (huv ⟨by simp [conjDisjAlternatives], hxa⟩).2).elim
+      · exact subset_rfl
   rw [hM.exhIE_eq]
   ext u
   simp only [conjDisjAlternatives, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp,

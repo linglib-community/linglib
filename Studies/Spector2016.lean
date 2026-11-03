@@ -17,14 +17,14 @@ practical consequences. With a single alternative the operators agree (`elementa
 disjunction with only its disjuncts as alternatives, the minimal-world operator returns the
 exclusive reading while innocent exclusion is vacuous (`exhMW_or`, `exhIE_or`); adding the
 conjunction as an alternative leaves the order on worlds, and so the minimal worlds,
-unchanged (`leALT_or_and_iff`) and makes innocent exclusion exclusive too (`exhIE_or_and`).
-The paper's shortcut for computing innocent exclusion over a large alternative set, running
-the minimal-world operator over the elementary propositions instead, is illustrated on
-*either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`). Finally, a vacuous
-minimal-world operator makes innocent exclusion vacuous (`exhIE_eq_of_exhMW_eq`), which
-settles the infinite case of *there are at least n stars* against the alternatives *exactly
-m* and *at least m* for every `m` ([schwarz-2013]): every world with at least `n` stars, or
-infinitely many, is minimal (`exhMW_stars`, `exhIE_stars`).
+unchanged (`satisfied_or_and_subset_iff`) and makes innocent exclusion exclusive too
+(`exhIE_or_and`). The paper's shortcut for computing innocent exclusion over a large
+alternative set, running the minimal-world operator over the elementary propositions instead,
+is illustrated on *either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`).
+Finally, a vacuous minimal-world operator makes innocent exclusion vacuous
+(`exhIE_eq_of_exhMW_eq`), which settles the infinite case of *there are at least n stars*
+against the alternatives *exactly m* and *at least m* for every `m` ([schwarz-2013]): every
+world with at least `n` stars, or infinitely many, is minimal (`exhMW_stars`, `exhIE_stars`).
 
 ## Implementation notes
 
@@ -49,6 +49,7 @@ substrate's compatible sets carry separately.
 namespace Spector2016
 
 open Exhaustification Set
+open Preorder (satisfied)
 
 variable {World : Type*}
 
@@ -59,16 +60,12 @@ theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, �
   ext u
   constructor
   · rintro ⟨hu, hmin⟩
-    refine ⟨hu, fun hψu ↦ hmin ⟨w, hwφ, fun a ha haw ↦ ?_, fun h ↦ hwψ (h ψ (Or.inr rfl) hψu)⟩⟩
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-    rcases ha with rfl | rfl
-    · exact hu
+    refine ⟨hu, fun hψu ↦ hwψ (hmin hwφ ?_ ⟨Or.inr rfl, hψu⟩).2⟩
+    rintro a ⟨rfl | rfl, haw⟩
+    · exact ⟨Or.inl rfl, hu⟩
     · exact absurd haw hwψ
   · rintro ⟨hu, hψu⟩
-    refine ⟨hu, ?_⟩
-    rintro ⟨v, hv, -, hnle⟩
-    refine hnle fun a ha hau ↦ ?_
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    refine ⟨hu, fun v hv _ a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
     rcases ha with rfl | rfl
     · exact hv
     · exact absurd hau hψu
@@ -87,35 +84,19 @@ theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ 
   constructor
   · rintro ⟨hu, hmin⟩
     by_cases hAu : u ∈ A
-    · refine Or.inl ⟨hAu, fun hBu ↦ hmin ⟨w, Or.inl hwA, fun a ha haw ↦ ?_, fun h ↦ ?_⟩⟩
-      · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-        rcases ha with rfl | rfl
-        · exact hAu
-        · exact absurd haw hwB
-      · exact hwB (h B (Or.inr rfl) hBu)
-    · rcases hu with hAu' | hBu
-      · exact absurd hAu' hAu
-      · exact Or.inr ⟨hBu, hAu⟩
+    · refine Or.inl ⟨hAu, fun hBu ↦ hwB (hmin (Or.inl hwA) ?_ ⟨Or.inr rfl, hBu⟩).2⟩
+      rintro a ⟨rfl | rfl, haw⟩
+      · exact ⟨Or.inl rfl, hAu⟩
+      · exact absurd haw hwB
+    · exact Or.inr ⟨hu.resolve_left hAu, hAu⟩
   · rintro (⟨hAu, hBu⟩ | ⟨hBu, hAu⟩)
-    · refine ⟨Or.inl hAu, ?_⟩
-      rintro ⟨v, hv, hle, hnle⟩
-      have hAv : v ∈ A := by
-        rcases hv with hAv | hBv
-        · exact hAv
-        · exact absurd (hle B (Or.inr rfl) hBv) hBu
-      refine hnle fun a ha hau ↦ ?_
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    · refine ⟨Or.inl hAu, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
+      have hAv : v ∈ A := hv.resolve_right fun hBv ↦ hBu (hle ⟨Or.inr rfl, hBv⟩).2
       rcases ha with rfl | rfl
       · exact hAv
       · exact absurd hau hBu
-    · refine ⟨Or.inr hBu, ?_⟩
-      rintro ⟨v, hv, hle, hnle⟩
-      have hBv : v ∈ B := by
-        rcases hv with hAv | hBv
-        · exact absurd (hle A (Or.inl rfl) hAv) hAu
-        · exact hBv
-      refine hnle fun a ha hau ↦ ?_
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    · refine ⟨Or.inr hBu, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
+      have hBv : v ∈ B := hv.resolve_left fun hAv ↦ hAu (hle ⟨Or.inl rfl, hAv⟩).2
       rcases ha with rfl | rfl
       · exact absurd hau hAu
       · exact hBv
@@ -133,28 +114,27 @@ theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
   · exact absurd hw'B (hsub (Or.inr ⟨hw'B, hw'A⟩))
 
 theorem exhMW_congr {ALT ALT' : Set (Set World)} (φ : Set World)
-    (h : ∀ u v, (u ≤[ALT] v) ↔ (u ≤[ALT'] v)) : exhMW ALT φ = exhMW ALT' φ := by
+    (h : ∀ u v, satisfied (· ∈ ·) ALT u ⊆ satisfied (· ∈ ·) ALT v ↔
+      satisfied (· ∈ ·) ALT' u ⊆ satisfied (· ∈ ·) ALT' v) :
+    exhMW ALT φ = exhMW ALT' φ := by
   ext u
-  show (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT] u) ↔ (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT'] u)
-  simp only [ltALT, h]
+  simp only [mem_exhMW, MinimalFor, h]
 
-theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{A, B}] v) := by
+theorem satisfied_or_and_subset_iff (u v : World) :
+    satisfied (· ∈ ·) {A, B, A ∩ B} u ⊆ satisfied (· ∈ ·) {A, B, A ∩ B} v ↔
+      satisfied (· ∈ ·) {A, B} u ⊆ satisfied (· ∈ ·) {A, B} v := by
   constructor
-  · intro h a ha
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-    rcases ha with rfl | rfl
-    · exact h _ (Or.inl rfl)
-    · exact h _ (Or.inr (Or.inl rfl))
-  · intro h a ha
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-    rcases ha with rfl | rfl | rfl
-    · exact h _ (Or.inl rfl)
-    · exact h _ (Or.inr rfl)
-    · exact fun ⟨hAu, hBu⟩ ↦ ⟨h _ (Or.inl rfl) hAu, h _ (Or.inr rfl) hBu⟩
+  · rintro h a ⟨rfl | rfl, hau⟩
+    · exact ⟨Or.inl rfl, (h ⟨Or.inl rfl, hau⟩).2⟩
+    · exact ⟨Or.inr rfl, (h ⟨Or.inr (Or.inl rfl), hau⟩).2⟩
+  · rintro h a ⟨rfl | rfl | rfl, hau⟩
+    · exact ⟨Or.inl rfl, (h ⟨Or.inl rfl, hau⟩).2⟩
+    · exact ⟨Or.inr (Or.inl rfl), (h ⟨Or.inr rfl, hau⟩).2⟩
+    · exact ⟨Or.inr (Or.inr rfl), (h ⟨Or.inl rfl, hau.1⟩).2, (h ⟨Or.inr rfl, hau.2⟩).2⟩
 
 theorem exhMW_or_and (hA : (A \ B).Nonempty) :
     exhMW {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) :=
-  (exhMW_congr (A ∪ B) (leALT_or_and_iff (A := A) (B := B))).trans (exhMW_or hA)
+  (exhMW_congr (A ∪ B) (satisfied_or_and_subset_iff (A := A) (B := B))).trans (exhMW_or hA)
 
 theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
@@ -196,39 +176,26 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
   constructor
   · rintro ⟨hu, hmin⟩
     by_cases hmu : u ∈ m
-    · refine Or.inl ⟨hmu, fun hpsu ↦ hmin ⟨w, Or.inl hwm, fun a ha haw ↦ ?_, fun h ↦ ?_⟩⟩
-      · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-        rcases ha with rfl | rfl | rfl
-        · exact hmu
+    · refine Or.inl ⟨hmu, fun hpsu ↦ ?_⟩
+      have hle : satisfied (· ∈ ·) {m, p, s} w ⊆ satisfied (· ∈ ·) {m, p, s} u := by
+        rintro a ⟨rfl | rfl | rfl, haw⟩
+        · exact ⟨Or.inl rfl, hmu⟩
         · exact absurd haw hwp
         · exact absurd haw hws
-      · rcases hpsu with hpu | hsu
-        · exact hwp (h p (Or.inr (Or.inl rfl)) hpu)
-        · exact hws (h s (Or.inr (Or.inr rfl)) hsu)
-    · rcases hu with hmu' | hpsu
-      · exact absurd hmu' hmu
-      · exact Or.inr ⟨hpsu, hmu⟩
+      rcases hpsu with hpu | hsu
+      · exact hwp (hmin (Or.inl hwm) hle ⟨Or.inr (Or.inl rfl), hpu⟩).2
+      · exact hws (hmin (Or.inl hwm) hle ⟨Or.inr (Or.inr rfl), hsu⟩).2
+    · exact Or.inr ⟨hu.resolve_left hmu, hmu⟩
   · rintro (⟨hmu, hpsu⟩ | ⟨⟨hpu, hsu⟩, hmu⟩)
-    · refine ⟨Or.inl hmu, ?_⟩
-      rintro ⟨v, hv, hle, hnle⟩
-      have hmv : v ∈ m := by
-        rcases hv with hmv | ⟨hpv, -⟩
-        · exact hmv
-        · exact (hpsu (Or.inl (hle p (Or.inr (Or.inl rfl)) hpv))).elim
-      refine hnle fun a ha hau ↦ ?_
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    · refine ⟨Or.inl hmu, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
+      have hmv : v ∈ m :=
+        hv.resolve_right fun hpsv ↦ hpsu (Or.inl (hle ⟨Or.inr (Or.inl rfl), hpsv.1⟩).2)
       rcases ha with rfl | rfl | rfl
       · exact hmv
       · exact (hpsu (Or.inl hau)).elim
       · exact (hpsu (Or.inr hau)).elim
-    · refine ⟨Or.inr ⟨hpu, hsu⟩, ?_⟩
-      rintro ⟨v, hv, hle, hnle⟩
-      have hpsv : v ∈ p ∧ v ∈ s := by
-        rcases hv with hmv | hpsv
-        · exact absurd (hle m (Or.inl rfl) hmv) hmu
-        · exact hpsv
-      refine hnle fun a ha hau ↦ ?_
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    · refine ⟨Or.inr ⟨hpu, hsu⟩, fun v hv hle a ⟨ha, hau⟩ ↦ ⟨ha, ?_⟩⟩
+      have hpsv : v ∈ p ∧ v ∈ s := hv.resolve_left fun hmv ↦ hmu (hle ⟨Or.inl rfl, hmv⟩).2
       rcases ha with rfl | rfl | rfl
       · exact absurd hau hmu
       · exact hpsv.1
@@ -253,22 +220,20 @@ def atLeast (n : ℕ) : Set Stars := {w | (n : Stars) ≤ w}
 /-- The alternatives of *at least n* are every *exactly m* and every *at least m*. -/
 def starsALT : Set (Set Stars) := range exactly ∪ range atLeast
 
-theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
+theorem eq_of_satisfied_subset_stars {u v : Stars}
+    (h : satisfied (· ∈ ·) starsALT u ⊆ satisfied (· ∈ ·) starsALT v) : u = v := by
   induction u using WithTop.recTopCoe with
   | top =>
     induction v using WithTop.recTopCoe with
     | top => rfl
     | coe k =>
-      have := h (atLeast (k + 1)) (Or.inr ⟨k + 1, rfl⟩) le_top
-      exact absurd (WithTop.coe_le_coe.1 this) (by omega)
-  | coe n => exact (h (exactly n) (Or.inl ⟨n, rfl⟩) rfl).symm
+      have : ⊤ ∈ atLeast (k + 1) := le_top (a := ((k + 1 : ℕ) : Stars))
+      exact absurd (WithTop.coe_le_coe.1 (h ⟨Or.inr ⟨k + 1, rfl⟩, this⟩).2) (by omega)
+  | coe n => exact (h ⟨Or.inl ⟨n, rfl⟩, rfl⟩).2.symm
 
-theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n := by
-  refine Set.Subset.antisymm (exhMW_subset _ _) fun u hu ↦ ⟨hu, ?_⟩
-  rintro ⟨v, -, hle, hnle⟩
-  have := eq_of_leALT_stars hle
-  subst this
-  exact hnle (leALT_refl _ _)
+theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n :=
+  Set.Subset.antisymm exhMW_subset fun _ hu ↦
+    ⟨hu, fun _ _ hle ↦ by rw [eq_of_satisfied_subset_stars hle]⟩
 
 theorem exhIE_stars (n : ℕ) : exhIE starsALT (atLeast n) = atLeast n :=
   exhIE_eq_of_exhMW_eq (exhMW_stars n)
