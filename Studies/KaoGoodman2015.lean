@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
 
 /-!
@@ -92,10 +93,8 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1]
-  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff hα 0 (L0 μ) project μ ν
-    u m).trans ?_
-  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
+  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα]
   rfl
 
 /-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative

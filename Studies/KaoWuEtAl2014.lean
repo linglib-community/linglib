@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Rat.Floor
@@ -151,10 +152,8 @@ at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1]
-  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff one_pos (cost c) (L0 μ)
-    project μ ν u m).trans ?_
-  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
+  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff one_pos]
   rfl
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
