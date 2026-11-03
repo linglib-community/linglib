@@ -289,21 +289,27 @@ theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w =
   rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
-theorem leALT_infClosure_range_iff {u v : W} :
-    (u ≤[infClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
+theorem satisfied_infClosure_range_subset_iff {u v : W} :
+    Preorder.satisfied (· ∈ ·) (infClosure (range a)) u ⊆
+      Preorder.satisfied (· ∈ ·) (infClosure (range a)) v ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (subset_infClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
-  · rintro h _ hq hu
+    exact mem_satisfied_iff.2
+      (h ⟨subset_infClosure (mem_range_self i), mem_satisfied_iff.1 hi⟩).2
+  · rintro h q ⟨hq, hu⟩
+    refine ⟨hq, ?_⟩
     obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
     exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
-theorem leALT_supClosure_range_iff {u v : W} :
-    (u ≤[supClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
+theorem satisfied_supClosure_range_subset_iff {u v : W} :
+    Preorder.satisfied (· ∈ ·) (supClosure (range a)) u ⊆
+      Preorder.satisfied (· ∈ ·) (supClosure (range a)) v ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (subset_supClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
-  · rintro h _ hq hu
+    exact mem_satisfied_iff.2
+      (h ⟨subset_supClosure (mem_range_self i), mem_satisfied_iff.1 hi⟩).2
+  · rintro h q ⟨hq, hu⟩
+    refine ⟨hq, ?_⟩
     obtain ⟨S, -, rfl⟩ := mem_supClosure_range.1 hq
     obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
     exact mem_biUnion hi (mem_satisfied_iff.1 (h (mem_satisfied_iff.2 hui)))
@@ -368,25 +374,23 @@ theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
   · rintro ⟨hu, hmin⟩
     obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
-    have hvu : v ≤[supClosure (range a)] u := leALT_supClosure_range_iff.2 (by
+    have hvu := (satisfied_supClosure_range_subset_iff (u := v) (v := u)).2 (by
       rw [hv, Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui))
-    have huv : u ≤[supClosure (range a)] v :=
-      by_contra fun h ↦ hmin ⟨v, mem_biUnion hi (hsing hv), hvu, h⟩
+    have huv := hmin (mem_biUnion hi (hsing hv)) hvu
     refine ⟨i, hi, subset_antisymm ?_ ?_⟩
     · rw [← hv]
-      exact leALT_supClosure_range_iff.1 huv
+      exact satisfied_supClosure_range_subset_iff.1 huv
     · rw [Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui)
   · rintro ⟨i, hi, hu⟩
-    refine ⟨mem_biUnion hi (hsing hu), ?_⟩
-    rintro ⟨v, hv, hvu, hnuv⟩
+    refine ⟨mem_biUnion hi (hsing hu), fun v hv hvu ↦ ?_⟩
     obtain ⟨j, -, hvj⟩ := mem_iUnion₂.1 hv
     have hj : j ∈ atoms v := mem_satisfied_iff.2 hvj
-    have hji : j ∈ atoms u := leALT_supClosure_range_iff.1 hvu hj
+    have hji : j ∈ atoms u := satisfied_supClosure_range_subset_iff.1 hvu hj
     rw [hu, Finset.coe_singleton, mem_singleton_iff] at hji
     subst hji
-    refine hnuv (leALT_supClosure_range_iff.2 ?_)
+    refine satisfied_supClosure_range_subset_iff.2 ?_
     rw [hu, Finset.coe_singleton]
     exact singleton_subset_iff.2 hj
 
