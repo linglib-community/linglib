@@ -40,10 +40,11 @@ namespace Ga
 
 /-- The reading of the controlled `ni`-frame carries the complement's sort in the classification
 of [wurmbrand-lohninger-2023] where [wurmbrand-2024] classes the verb. -/
-def niReading (size : Clause.Size) : Verb.Reading := { frame := niFrame, size := some size }
+def niReading (size : Clause.Size) : Clause.Embedding.Reading :=
+  { frame := niFrame, size := some size }
 
 /-- The reading of a finite `akɛ`-frame is a proposition. -/
-def akeReading : Verb.Reading := { frame := akeFrame, size := some .proposition }
+def akeReading : Clause.Embedding.Reading := { frame := akeFrame, size := some .proposition }
 
 /-! ### Subject control -/
 

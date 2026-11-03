@@ -11,7 +11,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Studies.Karttunen1971b
 public import Linglib.Syntax.Minimalist.Clause.Spine
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Examples.Readers
 
 /-!

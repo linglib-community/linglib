@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.German.Verbs
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Statistics.SolstadBott2024
 public import Studies.SolstadBott2022
 public import Studies.Schlenker2009
