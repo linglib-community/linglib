@@ -35,8 +35,8 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
   verification and bracketed prediction rates turned into majority responses; the paper's
   statistical tests and its methodological argument that the inference paradigm inflates rates
   stay in prose.
-* The verification situations are three squares and three circles; the exact figures of the
-  stimuli are not given in the paper, only the conditions they satisfy, which the three situations
+* The verification situations are three squares and three circles. The paper prints the stimulus
+  for *all* (`figure2`) and gives only the conditions the others satisfy, which the other situations
   here meet.
 * The paper's remark that lexicalist conventionalism reaches only the local reading is not
   formalized; `so` is the syntax-based variant's operator.
@@ -117,6 +117,24 @@ theorem moreThanOne_predictsLocalSIWeak [Fintype α] :
     PredictsLocalSIWeak (Quant.moreThanOne.sem : Det α) :=
   scopeMonotone_atLeast 2
 
+theorem exactlyTwo_not_predictsLocalSIWeak :
+    ¬ PredictsLocalSIWeak (Quant.exactlyTwo.sem : Det (Fin 3)) :=
+  fun h ↦ not_monotone_exactly (n := 2) (by simp) (h Set.univ)
+
+theorem notAll_not_predictsLocalSIWeak :
+    ¬ PredictsLocalSIWeak (Quant.notAll.sem : Det (Fin 3)) := fun h ↦
+  h Set.univ (Set.empty_subset Set.univ) (fun hall ↦ hall (Set.mem_univ 0)) subset_rfl
+
+theorem notMoreThanOne_not_predictsLocalSIWeak :
+    ¬ PredictsLocalSIWeak (Quant.notMoreThanOne.sem : Det (Fin 3)) := by
+  intro h
+  have key : Quant.notMoreThanOne.sem (Set.univ : Set (Fin 3)) ∅ →
+      Quant.notMoreThanOne.sem (Set.univ : Set (Fin 3)) Set.univ :=
+    h Set.univ (Set.empty_subset _)
+  simp only [Quant.sem] at key
+  revert key
+  decide
+
 theorem notAll_not_predictsLocalSI [Fintype α] : ¬ PredictsLocalSI (Quant.notAll.sem : Det α) :=
   not_not.mpr scopeMonotone_every.compl
 
@@ -130,8 +148,12 @@ theorem notMoreThanOne_not_predictsLocalSI [Fintype α] :
 circles. -/
 abbrev Situation := Fin 3 → Fin 3 → Prop
 
-/-- The situation for *all*, *more than one* and the two downward-entailing sentences, in which
-every square is connected with some circle and two of them with all. -/
+/-- Figure 2, the printed stimulus for *all*: the top square is connected with all three circles,
+and each of the others with two of them. -/
+abbrev figure2 : Situation := fun s c ↦ s = 0 ∨ (s = 1 ∧ c ≠ 2) ∨ (s = 2 ∧ c ≠ 0)
+
+/-- The situation for *more than one* and the two downward-entailing sentences, in which every
+square is connected with some circle and two of them with all. -/
 abbrev allSome : Situation := fun s c ↦ s ≠ 0 ∨ c = 0
 
 /-- One square connected with some but not all circles, one with all, one with none. -/
@@ -152,15 +174,22 @@ inductive Trial
   deriving DecidableEq, Repr
 
 def situation : Quant → Trial → Situation
+  | .all, _ => figure2
   | .exactlyTwo, .a => onePartial
   | .exactlyTwo, .b => twoPartial
   | _, _ => allSome
 
+/-- The situations in which the sentence with quantifier `q` is true on its classical construal. -/
+def classicalReading (q : Quant) : Set Situation := {R | q.sem Set.univ (someC R)}
+
+/-- The situations in which it is true on its local-implicature construal. -/
+def localReading (q : Quant) : Set Situation := {R | q.sem Set.univ (someNotAllC R)}
+
 /-- The classical construal of a verification item. -/
-def Classical (q : Quant) (t : Trial) : Prop := q.sem Set.univ (someC (situation q t))
+def Classical (q : Quant) (t : Trial) : Prop := situation q t ∈ classicalReading q
 
 /-- The local-implicature construal of a verification item. -/
-def Local (q : Quant) (t : Trial) : Prop := q.sem Set.univ (someNotAllC (situation q t))
+def Local (q : Quant) (t : Trial) : Prop := situation q t ∈ localReading q
 
 /-- What mainstream conventionalism predicts of an item, the local construal outside
 downward-entailing scopes and the classical one within them. -/
@@ -190,33 +219,33 @@ theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : Det
   decide
 
 theorem classical_all : Classical .all .none :=
-  show ∀ s : Fin 3, True → s ∈ someC allSome by decide
+  show ∀ s : Fin 3, True → s ∈ someC figure2 by decide
 
 theorem not_local_all : ¬ Local .all .none :=
-  show ¬ ∀ s : Fin 3, True → s ∈ someNotAllC allSome by decide
+  show ¬ ∀ s : Fin 3, True → s ∈ someNotAllC figure2 by decide
 
 theorem classical_moreThanOne : Classical .moreThanOne .none := by
-  simp only [Classical, Quant.sem, situation]
+  simp only [Classical, classicalReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem not_local_moreThanOne : ¬ Local .moreThanOne .none := by
-  simp only [Local, Quant.sem, situation]
+  simp only [Local, localReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem classical_exactlyTwo_a : Classical .exactlyTwo .a := by
-  simp only [Classical, Quant.sem, situation]
+  simp only [Classical, classicalReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem not_local_exactlyTwo_a : ¬ Local .exactlyTwo .a := by
-  simp only [Local, Quant.sem, situation]
+  simp only [Local, localReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem not_classical_exactlyTwo_b : ¬ Classical .exactlyTwo .b := by
-  simp only [Classical, Quant.sem, situation]
+  simp only [Classical, classicalReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem local_exactlyTwo_b : Local .exactlyTwo .b := by
-  simp only [Local, Quant.sem, situation]
+  simp only [Local, localReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem not_classical_notAll : ¬ Classical .notAll .none :=
@@ -226,11 +255,11 @@ theorem local_notAll : Local .notAll .none :=
   show ¬ ∀ s : Fin 3, True → s ∈ someNotAllC allSome by decide
 
 theorem not_classical_notMoreThanOne : ¬ Classical .notMoreThanOne .none := by
-  simp only [Classical, Quant.sem, situation]
+  simp only [Classical, classicalReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 theorem local_notMoreThanOne : Local .notMoreThanOne .none := by
-  simp only [Local, Quant.sem, situation]
+  simp only [Local, localReading, Set.mem_ofPred_eq, Quant.sem, situation]
   decide
 
 /-! ### The verification rows -/

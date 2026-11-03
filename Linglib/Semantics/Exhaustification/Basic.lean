@@ -105,6 +105,13 @@ theorem excludes_eq_compl_sUnion (C : Set (Set W)) (p : Set W) :
 theorem exh_eq_sdiff (C : Set (Set W)) (p : Set W) : exh C p = p \ ⋃₀ {q ∈ C | ¬ p ⊆ q} := by
   rw [exh, excludes_eq_compl_sUnion, Set.sdiff_eq]
 
+/-- When every alternative is entailed by the prejacent or entails the non-entailed `q`,
+exhaustifying removes just `q`. -/
+theorem exh_eq_sdiff_of_forall (hq : q ∈ C) (hpq : ¬ p ⊆ q) (h : ∀ r ∈ C, p ⊆ r ∨ r ⊆ q) :
+    exh C p = p \ q :=
+  Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun hw hwq ↦ hpq (hw q hq hwq),
+    fun hw r hr hwr ↦ (h r hr).resolve_right fun hrq ↦ hw (hrq hwr)⟩
+
 theorem exh_eq_self_iff : exh C p = p ↔ ∀ q ∈ C, (p ∩ q).Nonempty → p ⊆ q :=
   ⟨fun h q hq ⟨w, hw, hwq⟩ ↦ by rw [← h] at hw; exact hw.2 q hq hwq,
     fun h ↦ (exh_subset C p).antisymm fun w hw ↦ ⟨hw, fun q hq hwq ↦ h q hq ⟨w, hw, hwq⟩⟩⟩
