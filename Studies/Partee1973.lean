@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
 
 /-!
