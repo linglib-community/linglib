@@ -47,3 +47,10 @@ lean_lib PsychVerbs where
 
 lean_lib scratch where
   globs := #[.submodules `scratch]
+
+/-- The statement closures of declarations, read by `scripts/checks.py` to record and verify
+    human checks that statements are faithful to their sources (`checks/`). -/
+lean_exe checkClosure where
+  root := `CheckClosure
+  srcDir := "scripts/checks"
+  supportInterpreter := true
