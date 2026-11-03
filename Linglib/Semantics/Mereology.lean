@@ -3,11 +3,11 @@ module
 public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.Data.Finset.Grade
 public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Antichain
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.SupClosed
 public import Mathlib.Order.Zorn
 public import Linglib.Core.Data.Fintype.Order
-public import Linglib.Core.Order.Antichain
 
 /-!
 # Algebraic mereology
@@ -89,7 +89,7 @@ theorem singleton_qua (n : α) : QUA (· = n) :=
 
 theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : β → Prop}
     (hP : QUA P) : QUA (P ∘ d) :=
-  hP.preimage_strictMono hd
+  fun _ ha _ hb hab hle ↦ hP ha hb (hd (hle.lt_of_ne hab)).ne (hd (hle.lt_of_ne hab)).le
 
 /-- The `P`-atoms ([krifka-1989]) are the minimal `P`-elements. -/
 abbrev atomize (P : α → Prop) : α → Prop := Minimal P

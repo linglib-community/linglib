@@ -3,7 +3,6 @@ module
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Algebra.Order.Group.Indicator
-public import Linglib.Core.Order.Monotone.Basic
 public import Linglib.Semantics.Degree.Delineation
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Fragments.English.Adjectives
@@ -94,7 +93,8 @@ theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet 
     (h : MaxComparative .gt (holder · = a) (holder · = b) μ) : a ∈ holder '' T :=
   let ⟨_, hs, hsb⟩ := hb
   let ⟨y, hya, hlt⟩ := h.exists_lt hsb
-  ⟨y, hT (hμ.reflect_le hlt.le) hs, hya⟩
+  ⟨y, hT (by_contra fun hn ↦
+    (hμ (lt_of_le_not_ge ((total_of _ _ _).resolve_left hn) hn)).not_gt hlt) hs, hya⟩
 
 -- On three heat states `0 < 1 < 2`, Barcelona holding `0` and `1` and Miami `2`, *hot* the
 -- states from `1` up: (19a) and (19b) hold, and so (19c).
