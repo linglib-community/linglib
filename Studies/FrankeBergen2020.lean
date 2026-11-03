@@ -2,7 +2,7 @@ module
 
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Data.List.ProdSigma
 public import Mathlib.Tactic.DeriveFintype
 
@@ -153,7 +153,7 @@ position: `some ↔ all`, and `not all` for `none`. -/
 lexical alternative of *none*. -/
 inductive AltQuant where
   | none | some | all | notAll
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 instance : Coe AristQuant AltQuant where
   coe
@@ -331,11 +331,8 @@ theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +ke
 
 theorem moi_ss_ne_innocent_exclusion :
     exhMeaning {.matrix, .outer, .inner} .ss wSA
-      ∧ wSA ∉ Exhaustification.innocent.exh
-          (Exhaustification.altsFromPreds
-            ((matrixAlts .ss).map fun a w ↦ decide (altLiteral a w)))
-          (Exhaustification.predToFinset
-            fun w ↦ decide (exhMeaning {.outer, .inner} .ss w)) :=
+      ∧ wSA ∉ Exhaustification.exhIE ((fun a ↦ {w | altLiteral a w}) '' {a | a ∈ matrixAlts .ss})
+          {w | exhMeaning {.outer, .inner} .ss w} :=
   ⟨by decide +kernel, by decide +kernel⟩
 
 theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel

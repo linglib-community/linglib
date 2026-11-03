@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Monotone.Basic
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Logic.Trivalent.Pointwise
 

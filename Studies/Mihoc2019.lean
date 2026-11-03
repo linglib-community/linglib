@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Exhaustification.Pointwise
 public import Mathlib.Data.Set.Card
 

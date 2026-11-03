@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Alternatives.Symmetric
 public import Linglib.Semantics.Alternatives.Relevance
 public import Studies.Katzir2007
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.FoxKatzir2011

@@ -11,34 +11,20 @@ public import Linglib.Semantics.Exhaustification.Pointwise
 /-!
 # Exhaustification
 
-An exhaustification operator asserts a prejacent and denies a selection of its alternatives.
-This file defines the selection every theory of *only* and of exhaustification shares, the
-alternatives the prejacent does not entail, and the finite excluders that vary it.
+This file defines Chierchia's exhaustification operator `O` and its exclusion component.
+`excludes C p` holds at the worlds where every true alternative in `C` is entailed by the
+prejacent `p`, which is the assertion of the entailment-scale *only*. `exh C p` is the prejacent
+together with `excludes C p`: it denies every alternative the prejacent does not entail. Over
+finitely many worlds and an indexed family of alternatives, membership in `exh` is decidable.
 
-`excludes C p` is the exclusion component, holding where every true alternative in `C` is entailed
-by `p`. It is the assertion of the entailment-scale *only* (`Focus.only`), as in Horn,
-Rooth and von Fintel, and `exh C p`, the prejacent together with the exclusion, is Chierchia's
-operator `O`. Exclusion is anti-additive in the prejacent (`excludes_union`). Over an `Irredundant`
-family, where each alternative has a world of its own, exclusion separates resolutions of the
-alternative set (`Irredundant.excludes_injOn`), and narrowing the alternatives weakens it
-(`excludes_antitone`). Read at a world, `exh` against a family of alternatives is `exhAgainst` the
-members the prejacent does not entail (`mem_exh_range_iff_exhAgainst`), over an irredundant family
-every other member (`Irredundant.mem_exh_range_iff`). Against the image or range of an indexed
-family, `exh` denies the members the prejacent does not entail (`mem_exh_image_iff`), decidably over
-finite worlds. When the prejacent is maximal among the alternatives, exclusion is Rooth's condition
-that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`).
+## Main statements
 
-A member is `Dominated` when the members strictly stronger than it cover it, as the union of two
-members neither of which entails the other is (`dominated_union`); exhaustifying a dominated member
-gives the contradiction (`exh_eq_empty_of_dominated`). Among finitely many alternatives the
-dominated ones change no exhaustification (`exh_setOf_not_dominated`).
-
-An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
-`tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.preFilter` offers an
-excluder only some of the alternatives, which can strengthen the result, the asymmetry Fox and
-Katzir state between the formal alternative source and contextual restriction; restricting the
-denied alternatives to the relevant ones, after Magri, is the relevance set of
-`Exhaustification.excludesIE`. The innocent excluder is `innocent` in `Finite`.
+* `Exhaustification.exh_eq_sdiff`: `exh` removes from the prejacent the alternatives it does not
+  entail.
+* `Exhaustification.Irredundant.excludes_injOn`: over an irredundant family, exclusion separates
+  the alternative sets that contain the prejacent.
+* `Exhaustification.exh_setOf_not_dominated`: among finitely many alternatives, the dominated ones
+  change no exhaustification.
 
 ## References
 
@@ -46,10 +32,7 @@ denied alternatives to the relevant ones, after Magri, is the relevance set of
 * [rooth-1992]
 * [von-fintel-1999]
 * [chierchia-2006]
-* [chierchia-2013]
-* [fox-2007]
 * [fox-katzir-2011]
-* [magri-2009]
 * [enguehard-2025]
 -/
 
@@ -256,77 +239,5 @@ theorem exh_setOf_not_dominated (hC : C.Finite) (p : Set W) :
   exact (hw.2 m ⟨hm, hmd⟩ hwm).trans hmq
 
 end Dominated
-
-variable [Fintype W] [DecidableEq W]
-
-/-- The worlds satisfying a `Bool` predicate. -/
-def predToFinset (p : W → Bool) : Finset W :=
-  Finset.univ.filter (fun w => p w)
-
-/-- The alternative set of a list of `Bool` predicates. -/
-def altsFromPreds (alts : List (W → Bool)) : Finset (Finset W) :=
-  (alts.map predToFinset).toFinset
-
-@[simp] theorem altsFromPreds_singleton (p : W → Bool) :
-    altsFromPreds [p] = ({predToFinset p} : Finset (Finset W)) := by
-  simp [altsFromPreds]
-
-/-- A choice, for each alternative set and prejacent, of the alternatives to deny. -/
-structure Excluder (W : Type*) [Fintype W] [DecidableEq W] where
-  /-- Given a prejacent `φ` and an alternative set `ALT`, return the
-      alternatives whose negation should be conjoined with `φ`. -/
-  excluded : Finset (Finset W) → Finset W → Finset (Finset W)
-  /-- The strategy returns a sub-collection of the offered alternatives. -/
-  excluded_subset : ∀ ALT φ, excluded ALT φ ⊆ ALT
-
-namespace Excluder
-
-variable (E : Excluder W) (ALT : Finset (Finset W)) (φ : Finset W)
-
-/-- The prejacent with every excluded alternative denied. -/
-def exh : Finset W :=
-  φ \ (E.excluded ALT φ).biUnion id
-
-theorem exh_subset_phi : E.exh ALT φ ⊆ φ := Finset.sdiff_subset
-
-theorem mem_exh_iff {w : W} :
-    w ∈ E.exh ALT φ ↔ w ∈ φ ∧ ∀ a ∈ E.excluded ALT φ, w ∉ a := by
-  simp only [exh, Finset.mem_sdiff, Finset.mem_biUnion, id_eq, not_exists, not_and]
-
-/-! ### Filtering the offered alternatives -/
-
-/-- Offer the excluder only the alternatives in `K`. -/
-def preFilter (K : Finset (Finset W)) : Excluder W where
-  excluded A ψ := E.excluded (A ∩ K) ψ
-  excluded_subset _ _ := (E.excluded_subset _ _).trans Finset.inter_subset_left
-
-@[simp] theorem preFilter_excluded (K : Finset (Finset W)) :
-    (E.preFilter K).excluded ALT φ = E.excluded (ALT ∩ K) φ := rfl
-
-end Excluder
-
-/-! ### The tolerant excluder -/
-
-/-- The tolerant excluder denies every alternative not entailed by the prejacent. -/
-def tolerant : Excluder W where
-  excluded ALT φ := ALT.filter (fun a => ¬ φ ⊆ a)
-  excluded_subset _ _ := Finset.filter_subset _ _
-
-@[simp] theorem tolerant_excluded (ALT : Finset (Finset W)) (φ : Finset W) :
-    tolerant.excluded ALT φ = ALT.filter (fun a => ¬ φ ⊆ a) := rfl
-
-theorem mem_tolerant_excluded {ALT : Finset (Finset W)} {φ a : Finset W} :
-    a ∈ tolerant.excluded ALT φ ↔ a ∈ ALT ∧ ¬ φ ⊆ a := by
-  simp [tolerant_excluded, Finset.mem_filter]
-
-theorem mem_tolerant_exh_iff (ALT : Finset (Finset W)) (φ : Finset W) {w : W} :
-    w ∈ tolerant.exh ALT φ ↔ w ∈ φ ∧ ∀ a ∈ ALT, ¬ φ ⊆ a → w ∉ a := by
-  rw [Excluder.mem_exh_iff]
-  refine and_congr_right (fun _ => ?_)
-  simp [tolerant_excluded, Finset.mem_filter, and_imp]
-
-theorem entailed_not_excluded {ALT : Finset (Finset W)} {φ a : Finset W}
-    (h : φ ⊆ a) : a ∉ tolerant.excluded ALT φ := by
-  simp [h]
 
 end Exhaustification

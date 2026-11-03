@@ -365,15 +365,13 @@ section Strengthening
 
 open Magri2014 (strengthened primalMates primal)
 
-variable (q : NumberTree) [DecidableRel q] (n : ℕ)
+variable (q : NumberTree) (n : ℕ)
 
 /-- The displays of `n` boys on which the some-substituted reading holds, the weak pole. -/
-def weakPole : Finset (Fin n → SignType) :=
-  Finset.univ.filter fun w ↦ someReading q (List.ofFn w)
+def weakPole : Set (Fin n → SignType) := {w | someReading q (List.ofFn w)}
 
 /-- The displays of `n` boys on which the all-substituted reading holds, the strong pole. -/
-def strongPole : Finset (Fin n → SignType) :=
-  Finset.univ.filter fun w ↦ allReading q (List.ofFn w)
+def strongPole : Set (Fin n → SignType) := {w | allReading q (List.ofFn w)}
 
 variable {q n}
 
@@ -385,14 +383,12 @@ theorem globalExh_iff_mem_strengthened
     globalExh q (List.ofFn w) ↔
       w ∈ strengthened primalMates (primal (weakPole q n) (strongPole q n)) .mystery := by
   rcases (weakPole q n \ strongPole q n).eq_empty_or_nonempty with h₀ | h₀
-  · have hsub := Finset.sdiff_eq_empty_iff_subset.1 h₀
+  · have hsub := Set.sdiff_eq_empty.1 h₀
     rw [Magri2014.strengthened_primal_mystery_of_subset hsub]
-    have hw : w ∈ weakPole q n ↔ someReading q (List.ofFn w) := by simp [weakPole]
-    have hw' : w ∈ strongPole q n ↔ allReading q (List.ofFn w) := by simp [strongPole]
-    exact ⟨fun h ↦ hw.2 h.1, fun h ↦ ⟨hw.1 h, hw'.1 (hsub h)⟩⟩
-  · have h₂ := h.resolve_left fun hsub ↦ by simp [Finset.sdiff_eq_empty_iff_subset.2 hsub] at h₀
+    exact ⟨And.left, fun h ↦ ⟨h, hsub h⟩⟩
+  · have h₂ := h.resolve_left fun hsub ↦ by simp [Set.sdiff_eq_empty.2 hsub] at h₀
     rw [Magri2014.strengthened_primal_mystery h₀ h₂]
-    simp [weakPole, strongPole, globalExh]
+    rfl
 
 end Strengthening
 

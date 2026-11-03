@@ -18,7 +18,7 @@ maximal consistent inclusions.
 ## Main statements
 
 * `Exhaustification.isGreatest_setOf_isInnocentlyExcludable`
-* `Exhaustification.isGreatest_II`
+* `Exhaustification.isGreatest_setOf_isInnocentlyIncludable`
 
 ## References
 
@@ -49,10 +49,10 @@ theorem isGreatest_setOf_isInnocentlyExcludable (hfin : ALT.Finite) (hsat : φ.N
 /-- **Innocent inclusion is the greatest natural consistent inclusion.** Over finitely many
 alternatives, when innocent exclusion is consistent the innocently includable alternatives are
 the greatest set a natural consistent rule selects from the maximal consistent inclusions. -/
-theorem isGreatest_II (hfin : ALT.Finite) (hne : (exhIE ALT φ).Nonempty) :
+theorem isGreatest_setOf_isInnocentlyIncludable (hfin : ALT.Finite) (hne : (exhIE ALT φ).Nonempty) :
     IsGreatest ((fun F ↦ F _ {R | Maximal (IsConsistentInclusion ALT φ) R}) ''
         {F | IsNaturalSelection F ∧ IsConsistentSelection F})
-      (II ALT φ) :=
+      {a | IsInnocentlyIncludable ALT φ a} :=
   isGreatest_setOf_forall_maximal hfin (fun _ h ↦ h.1)
     ⟨∅, empty_subset _, by rwa [sInter_empty, inter_univ]⟩
 
