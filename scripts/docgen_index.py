@@ -73,7 +73,7 @@ def parse_decl(page, block, did):
     stmt = header + "".join(eqs) + part(after, "constructors") + part(after, "structure_fields")
     refs = []
     for href in HREF.findall(stmt):
-        link = site_link(page, href)
+        link = site_link(page, html.unescape(href))
         if link and "#" in link and not link.startswith("references.html"):
             if link.split("#", 1)[1] != did and link not in refs:
                 refs.append(link)
@@ -83,7 +83,7 @@ def parse_decl(page, block, did):
         "src": src.group(1) if src else "",
         "lines": [int(src.group(2)), int(src.group(3))] if src else None,
         "sorried": 'class="decl sorried"' in block[:80] or "sorried" in block[:block.find(">")],
-        "anchors": [a for a in ANCHOR.findall(block) if a != did],
+        "anchors": [a for a in map(html.unescape, ANCHOR.findall(block)) if a != did],
         "refs": refs,
         "doc": text(after[:min([i for i in (after.find("<details"), after.find('<ul class="'))
                                 if i >= 0] + [len(after)])]),
@@ -111,7 +111,7 @@ def parse_page(doc, path):
                            "id": head.group(2) if head else "", "title": text(head.group(3)) if head else "",
                            "text": text(block)})
         else:
-            blocks.append({"type": "decl", **parse_decl(page, block, m.group(2))})
+            blocks.append({"type": "decl", **parse_decl(page, block, html.unescape(m.group(2)))})
     return {"module": name.group(1), "path": page, "blocks": blocks}
 
 

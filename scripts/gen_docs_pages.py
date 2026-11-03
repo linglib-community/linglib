@@ -1,24 +1,31 @@
 #!/usr/bin/env python3
-"""Rebuild doc-gen4's study pages as the docs pages of linglib.io.
+"""Rebuild doc-gen4's study and theory pages as the docs pages of linglib.io, with their landing page.
 
-A study page shows the paper's title and citation, the module docstring, and the declarations by
-section. The theorems with a docstring, the study's headline results, are open cards; every other
-declaration is a row that opens in place, and a declaration's "Built from" line opens the file's
-definitions its statement names. The right column places the study in the library: the theory and
-fragments its statements use, with the names they use, the imports they never name, the studies on
-the same theory, the papers it cites and those citing it, and the papers it cites that no study
-formalizes. Everything comes from doc-gen4's output, read by `docgen_index`, and from the
-bibliography; signatures and equations are doc-gen4's own, with their links.
+A page shows the module docstring and the declarations by section, its headline declarations as
+open cards and every other declaration as a row that opens in place, whose "Built from" line opens
+the file's definitions its statement names. On a study page, which also shows the paper's title and
+citation, the headlines are the theorems with a docstring. The right column places the study in the
+library: the theory and fragments its statements use, with the names they use, the imports they
+never name, the studies on the same theory, the papers it cites and those citing it, and the papers
+it cites that no study formalizes.
 
-The pages replace doc-gen4's own at `docs/Studies/`, so `--root` and `--docs-base`, the site's root
-and doc-gen4's pages relative to a study page, default to that place.
+On a theory page the headlines are the declarations the module docstring links to, as a mathlib
+header names a file's main definitions and results, or the theorems with a docstring if it links to
+none. The right column has the theory it builds on, then the theory, studies and fragments whose
+statements use it, with the names they use, and the other files of its directory.
+
+Everything comes from doc-gen4's output, read by `docgen_index`, and from the bibliography;
+signatures and equations are doc-gen4's own, with their links.
+
+The pages replace doc-gen4's own at the same addresses, and the landing page its `index.html`, so
+links to them keep landing. `--root` is the site's root relative to the docs directory.
 
 Usage, from the repository root, after doc-gen4 has written `.lake/build/doc` and it is copied to
 `.lake/build/doc-site/docs`:
 
     python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs
-    python3 scripts/gen_docs_pages.py --out DIR --only KehlerRohde2013   # some studies only
-    python3 scripts/gen_docs_pages.py --out DIR --check   # also confirm every anchor survives
+    python3 scripts/gen_docs_pages.py --out DIR --only KehlerRohde2013 Linglib.Phonology   # some only
+    python3 scripts/gen_docs_pages.py --out DIR --check   # also confirm anchors survive, links land
     python3 scripts/gen_docs_pages.py --out DIR --redirect OLD   # OLD/Studies/X.html forwards here
 """
 
@@ -26,6 +33,7 @@ import argparse
 import html
 import json
 import math
+import os
 import posixpath
 import re
 import shutil
@@ -40,8 +48,9 @@ import site_shell  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "scripts" / "docs_page"
 REPO = "https://github.com/linglib-community/linglib"
+MATHLIB_DOCS = "https://leanprover-community.github.io/mathlib4_docs/"
 THEORY = ("Semantics", "Syntax", "Pragmatics", "Morphology", "Phonology", "Processing",
-          "Discourse", "Logic", "Typology", "Features", "Phenomena")
+          "Discourse", "Logic")
 KW = {"def": "def", "theorem": "theorem", "inductive": "inductive", "instance": "instance",
       "structure": "structure", "abbrev": "abbrev", "class": "class", "axiom": "axiom",
       "opaque": "opaque"}
@@ -72,6 +81,10 @@ REDIRECT = """<!DOCTYPE html>
 </html>
 """
 SHOWN = 5
+# How many of each kind of neighbor a theory page's graph and lists show before folding the rest.
+FILES_SHOWN, STUDIES_SHOWN = 8, 14
+# The sections of a module docstring that note a file's details, rather than say what it offers.
+NOTES = "Implementation notes|TODO|Errata|Notation|References"
 # Docstrings write mathematics in TeX between dollar signs, as doc-gen4 reads them; a page with
 # any loads MathJax, configured as doc-gen4's but drawing SVG, so that no web fonts load.
 TEX = re.compile(r"(?<![\\$])\$(?!\s)[^$<>]+?(?<![\s\\])\$|\$\$.+?\$\$", re.S)
@@ -119,6 +132,14 @@ def node_of(page):
     return None
 
 
+def file_node(page):
+    """The node of a page in a theory page's graph, where a theory or Core file is its own node."""
+    p = page.split("#")[0].removesuffix(".html").split("/")
+    if p[0] == "Linglib" and len(p) >= 3 and (p[1] in THEORY or p[1] == "Core"):
+        return ("t" if p[1] in THEORY else "c"), "/".join(p[1:])
+    return node_of(page)
+
+
 def node_id(node):
     kind, name = node
     return name if kind == "s" else f"{kind}-{name}"
@@ -126,7 +147,7 @@ def node_id(node):
 
 def node_label(node):
     kind, name = node
-    return " / ".join(re.split(r"[./]", name)) if kind in "td" else name
+    return " / ".join(re.split(r"[./]", name)) if kind in "tdc" else name
 
 
 def bib_label(f, year):
@@ -158,6 +179,26 @@ def match_study(key, names):
     return cands[0] if cands else None
 
 
+def namespace(names):
+    """The namespace all of a file's declarations but its instances sit in, or "" if none."""
+    plain = [n for n in names if not n.rsplit(".", 1)[-1].startswith("inst")] or names
+    return ".".join(os.path.commonprefix([n.split(".")[:-1] for n in plain]))
+
+
+def parents(d):
+    """A directory and those above it, up to the root, as paths relative to the root."""
+    while d:
+        yield d
+        d = posixpath.dirname(d)
+    yield ""
+
+
+def page_name(page):
+    """A page's name beside the names of other pages: a study's, or a file's path in the library."""
+    stem = page.removesuffix(".html")
+    return stem.split("/", 1)[1]
+
+
 def year_of(study):
     m = re.search(r"\d{4}", study)
     return int(m.group(0)) if m else None
@@ -172,7 +213,12 @@ class Library:
         self.modules, self.decls, self.used_by = dx.build(doc)
         data = json.loads((doc / "declarations" / "declaration-data.bmp").read_text(encoding="utf-8"))
         self.decl_data, self.instances_for = data["declarations"], data.get("instancesFor", {})
-        self.studies = gb.study_names()
+        self.imported_by = {m: d["importedBy"] for m, d in data["modules"].items()}
+        self.files = {p.relative_to(doc).as_posix() for p in doc.rglob("*") if p.is_file()}
+        # The libraries whose modules the data lists but whose pages the site does not carry.
+        carried = {p.split("/")[0].removesuffix(".html") for p in self.files}
+        self.upstream = {m.split(".")[0] for m in data["modules"]} - carried
+        self.studies = {s for s in gb.study_names() if f"Studies/{s}.html" in self.modules}
         self.bib, self.study_key = {}, {}
         for kind, key, f in gb.parse_bib(gb.BIB.read_text(encoding="utf-8")):
             y = re.search(r"\d{4}[a-z]?", key)
@@ -202,6 +248,16 @@ class Library:
         for s, nodes in self.uses.items():
             for n in nodes:
                 self.users[n].add(s)
+        # For each page, the other pages whose statements name its declarations, and those names.
+        self.named_by = defaultdict(lambda: defaultdict(set))
+        self.in_dir = defaultdict(list)
+        for page, mod in self.modules.items():
+            self.in_dir[posixpath.dirname(page)].append(page)
+            for b in mod["blocks"]:
+                for ref in b.get("refs", ()):
+                    used, _, anchor = ref.partition("#")
+                    if used != page and used in self.modules:
+                        self.named_by[used][page].add(anchor)
 
     def idf(self, node):
         return math.log((len(self.uses) + 1) / (1 + len(self.users[node])))
@@ -209,6 +265,13 @@ class Library:
     def entry(self, study):
         key = self.study_key.get(study)
         return (key, self.bib[key]) if key else (None, None)
+
+    def title(self, page):
+        """A module's title, the first heading of its docstring, or its own name."""
+        for b in self.modules[page]["blocks"][:1]:
+            if b["type"] == "doc" and b["level"] == 1:
+                return b["title"]
+        return page.removesuffix(".html").split("/")[-1]
 
     def cites(self, study):
         """The bibliography keys a study's file cites."""
@@ -219,13 +282,20 @@ class Library:
 # ---------------------------------------------------------------- one page
 
 
-class StudyPage:
-    def __init__(self, lib, page, root, docs_base, sha):
-        self.lib, self.page, self.root, self.docs, self.sha = lib, page, root, docs_base, sha
-        self.study = self.ns = node_of(page)[1]
+class ModulePage:
+    """A module's page: reading doc-gen4's, and the declarations. A kind of page adds its heading
+    and the right column."""
+
+    # Whether a docstring's opening paper locator is shown apart: a locator needs a paper to name.
+    locators = True
+
+    def __init__(self, lib, page, site_root, sha):
+        self.lib, self.page, self.sha = lib, page, sha
+        self.docs = "../" * page.count("/")
+        self.root = self.docs + site_root
         self.raw = (lib.doc / page).read_text(encoding="utf-8")
         self.module = re.search(r'const MODULE_NAME="([^"]+)"', self.raw).group(1)
-        self.key, self.entry = lib.entry(self.study)
+        self.study, self.ns, self.key, self.entry = None, "", None, None
 
     # -- links and citations
 
@@ -234,27 +304,37 @@ class StudyPage:
         if url.startswith(("@@", "#")) or re.match(r"[a-z]+:", url):
             return url
         path, _, frag = dx.site_link(self.page, url).partition("#")
+        frag = "#" + frag if frag else ""
         if path == self.page:
-            return "#" + frag if frag else "#top"
-        if path.startswith("Studies/"):
-            return path.split("/", 1)[1] + ("#" + frag if frag else "")
-        return self.docs + path + ("#" + frag if frag else "")
+            return frag or "#top"
+        if path.split("/")[0].removesuffix(".html") in self.lib.upstream:
+            return MATHLIB_DOCS + path + frag
+        # A docstring's path to a file, which doc-gen4 read from the site's root, starts in some
+        # directory above this page or in the library's own.
+        here = posixpath.dirname(self.page)
+        for d in (*parents(here), "Linglib"):
+            if posixpath.join(d, path) in self.lib.files:
+                return posixpath.relpath(posixpath.join(d, path), here) + frag
+        return None
 
     def to(self, page, anchor=""):
         """A site-relative page, and anchor, for the rebuilt page."""
         rel = posixpath.relpath(page, posixpath.dirname(self.page))
         return self.href(rel + ("#" + anchor if anchor else ""))
 
+    def to_study(self, study):
+        return self.to(f"Studies/{study}.html")
+
     def cite(self, m):
         key, label = m.group(2), m.group(3)
         b = self.lib.bib.get(key)
         if not b:
             return link(f"@@bibliography/#{key}", label, "cite")
-        if b["study"] == self.study:
+        if self.study and b["study"] == self.study:
             return f'<span class="cite self">{esc(b["label"])}</span>'
         title = esc(text(b["title"]))
         if b["study"]:
-            return (f'<a class="cite done" href="{esc(b["study"])}.html" title="{title}">'
+            return (f'<a class="cite done" href="{esc(self.to_study(b["study"]))}" title="{title}">'
                     f'{esc(b["label"])}</a>')
         cls, tail = ("cite", "") if b["formalized"] else ("cite open", ", not yet formalized")
         return (f'<a class="{cls}" href="@@bibliography/#{esc(key)}" title="{title}{tail}">'
@@ -263,14 +343,20 @@ class StudyPage:
     def rewrite(self, h, short=False):
         """doc-gen4's HTML with links for the rebuilt page and author-year citations."""
         h = CITE_LINK.sub(self.cite, h)
-        h = re.sub(r'href="([^"]*)"', lambda m: f'href="{esc(self.href(html.unescape(m.group(1))))}"', h)
+        # A link to no page, such as a docstring's path to a file since moved, keeps its text.
+        def anchor(m):
+            return m.group(0) if self.href(html.unescape(m.group(1))) else m.group(2)
+        h = re.sub(r'<a href="([^"]*)"[^>]*>(.*?)</a>', anchor, h, flags=re.S)
+        h = re.sub(r'href="([^"]*)"',
+                   lambda m: f'href="{esc(self.href(html.unescape(m.group(1))) or "#top")}"', h)
         h = h.replace('href="@@', f'href="{self.root}')
         if short:
             # One space between tokens: the nested `.fn` boxes wrap a long term at its own
             # structure, so the pretty-printer's line breaks for a fixed width are dropped. Names
             # print without the study's namespace, which the file opens.
             h = re.sub(r">([^<]*)<", lambda m: ">" + re.sub(r"\s+", " ", m.group(1)) + "<", h)
-            h = re.sub(r'(?<![#/"\w.])' + re.escape(self.ns) + r"\.(?=\w)", "", h)
+            if self.ns:
+                h = re.sub(r'(?<![#/"\w.])' + re.escape(self.ns) + r"\.(?=\w)", "", h)
         return h
 
     # -- reading doc-gen4's page
@@ -309,7 +395,7 @@ class StudyPage:
                 cur["prose"] += self.rewrite(prose).strip()
                 continue
             cur = cur or self.section()
-            d = self.read_decl(did, block, cur["id"])
+            d = self.read_decl(html.unescape(did), block, cur["id"])
             self.decls.append(d)
             cur["decls"].append(d)
         self.fold()
@@ -318,7 +404,7 @@ class StudyPage:
         """The References list: each entry's label, linked to its bibliography entry, its title,
         and a link to the study formalizing it, if another study does."""
         def item(li):
-            study = re.search(r'href="([A-Z]\w+)\.html"', li.group(1))
+            study = re.search(r'href="(?:[./]*Studies/)?([A-Z]\w+)\.html"', li.group(1))
             key = re.search(r'bibliography/#([\w-]+)', li.group(1))
             k = key.group(1) if key else self.lib.study_key.get(study.group(1)) if study else self.key
             b = self.lib.bib.get(k)
@@ -327,7 +413,7 @@ class StudyPage:
             out = (f'<li>{link(f"{self.root}bibliography/#{k}", esc(b["label"]))}'
                    f'<span class="rt">, {esc(text(b["title"]))}</span>')
             if b["study"] and b["study"] != self.study:
-                out += f' {link(b["study"] + ".html", "formalized", "study")}'
+                out += f' {link(self.to_study(b["study"]), "formalized", "study")}'
             return out + "</li>"
         items = re.sub(r"<li>(.*?)</li>", item, m.group(2), flags=re.S)
         return f'{m.group(1)}<ul class="refs">{items}</ul>'
@@ -363,7 +449,7 @@ class StudyPage:
              "fields_id": fields_id.group(1) if fields_id else "",
              "eqs": [self.rewrite(e, short=True) for e in eqs], "refs": refs,
              "uses": sorted({r.split("#", 1)[1] for r in refs if r.split("#")[0] == self.page})}
-        m = LOC.match(d["doc"])
+        m = LOC.match(d["doc"]) if self.locators else None
         d["loc"] = ""
         if m:
             d["loc"], d["doc"] = text(m.group(1)), "<p>" + m.group(2).upper() + d["doc"][m.end():]
@@ -395,8 +481,7 @@ class StudyPage:
 
     # -- the declarations
 
-    @staticmethod
-    def headline(d):
+    def headline(self, d):
         return d["kind"] == "theorem" and bool(text(d["doc"]))
 
     def built_from(self, d):
@@ -459,7 +544,7 @@ class StudyPage:
         far = self.elsewhere(d)
         if far:
             out += '<p class="used">Used in ' + and_more([
-                link(self.to(p), esc(p.removesuffix(".html").split("/")[-1])) for p in far]) + "</p>"
+                link(self.to(p), esc(page_name(p))) for p in far]) + "</p>"
         return out
 
     def card(self, d):
@@ -477,7 +562,7 @@ class StudyPage:
         fields = f'<ul class="fields"{fid}>{d["fields"]}</ul>' if d["fields"] else ""
         doc = f'<div class="ddoc">{d["doc"]}</div>\n' if text(d["doc"]) else ""
         lede = ""
-        if head:
+        if head and doc:
             lede, doc = f'<div class="lede">{d["doc"]}</div>\n', ""
         loc = self.loc(d)
         src = ""
@@ -519,8 +604,11 @@ class StudyPage:
             for d in s["decls"]:
                 if d["folded"]:
                     continue
-                cls = ("head" if self.headline(d) else "thm") if d["kind"] == "theorem" else "def"
-                items.append(f'<li class="{cls}"><a href="#{esc(d["id"])}" data-for="{esc(d["id"])}">'
+                cls = "thm" if d["kind"] == "theorem" else "def"
+                cls = ("head" if cls == "thm" else "def head") if self.headline(d) else cls
+                # The column cuts a long name short.
+                full = f' title="{esc(d["name"])}"' if len(d["name"]) > 24 else ""
+                items.append(f'<li class="{cls}"><a href="#{esc(d["id"])}" data-for="{esc(d["id"])}"{full}>'
                              f'{esc(d["name"])}</a></li>')
             if items:
                 groups.append(f'<li class="grp">{link("#" + s["id"], esc(s["title"]), "gh")}'
@@ -539,27 +627,112 @@ class StudyPage:
                 out[d["id"]]["c"] = text(d["doc"])
         return out
 
-    # -- where the study sits
+    # -- where the file sits
 
     def short(self, node, anchor):
-        """A name without its framework's, data module's or this study's namespace."""
+        """A name without its framework's, data module's or this file's namespace."""
         dotted = node[1].replace("/", ".")
         for pre in (dotted, dotted.rsplit(".", 1)[0], self.ns, dotted.split(".")[0]):
-            if anchor.startswith(pre + "."):
+            if pre and anchor.startswith(pre + "."):
                 return anchor[len(pre) + 1:]
         return anchor
 
-    def rail(self):
-        lib, me = self.lib, self.study
-        used = defaultdict(dict)   # node -> {anchor: page}
+    def named(self):
+        """The declarations of other pages this file's statements name: node -> {name: page}."""
+        used = defaultdict(dict)
         for d in self.decls:
             for ref in d["refs"]:
                 page, anchor = ref.split("#", 1)
-                node = node_of(page)
-                if node and page != self.page and node[0] in "tfd":
+                node = self.node(page)
+                if node and page != self.page and node[0] in "tfdc":
                     used[node].setdefault(anchor, page)
+        return used
+
+    def imports(self):
         listed = self.raw[self.raw.find('<div class="imports">'):self.raw.find("Imported by")]
-        imports = re.findall(r'<li><a href="[^"]*">([^<]+)</a></li>', listed)
+        return re.findall(r'<li><a href="[^"]*">([^<]+)</a></li>', listed)
+
+    def module_list(self, summary, modules):
+        hrefs = {m: self.to(m.replace(".", "/") + ".html") for m in modules}
+        rows = "".join(f'<li>{link(hrefs[m], esc(m)) if hrefs[m] else esc(m)}</li>' for m in modules)
+        return f"<details><summary>{esc(summary)}</summary><ul>{rows}</ul></details>"
+
+    def study_item(self, nodes, s, note=""):
+        """A study's row, adding its node to the graph. `note` is HTML."""
+        _, e = self.lib.entry(s)
+        nodes.setdefault(s, {"k": "s", "y": year_of(s), "l": e["label"] if e else s,
+                             "d": text(e["title"]) if e else s, "h": self.to_study(s)})
+        return (f'<li class="s" data-node="{esc(s)}">'
+                f'{link(self.to_study(s), esc(nodes[s]["l"]), "nd")}{note}</li>')
+
+    def framework(self, nodes, node, page, desc=None):
+        """A theory or fragment node of the graph, whose page is `page`."""
+        if not desc:
+            m, s = len(self.lib.node_pages[node]), len(self.lib.users[node])
+            desc = f"{m} module{'' if m == 1 else 's'} · {s} {'study' if s == 1 else 'studies'}"
+        nodes[node_id(node)] = {"k": node[0], "l": node_label(node), "h": self.to(page), "d": desc}
+
+    @staticmethod
+    def graph_data(nodes, edges, focus):
+        for n in nodes.values():
+            if n.get("y") is None:
+                n.pop("y", None)
+        return {"nodes": nodes, "edges": edges, "focus": focus}
+
+    # -- the page
+
+    def render(self, template):
+        self.read()
+        rail, graph = self.rail()
+        title, cite, crumbs = self.heading()
+        out = site_shell.render(template, self.root, "Docs", self.sha)
+        prose = self.moddoc + "".join(s["prose"] for s in self.sections)
+        prose += "".join(d["doc"] for d in self.shown)
+        tex = TEX.search(re.sub(r"<code>.*?</code>", "", prose, flags=re.S))
+        subst = {"<!--MATH-->": MATH if tex else "", "<!--TITLE_TEXT-->": esc(text(title)),
+                 "<!--DESCRIPTION-->": esc(text(title)), "<!--ASSETS-->": self.docs,
+                 "<!--TITLE-->": title, "<!--CITE-->": cite, "<!--CRUMBS-->": crumbs,
+                 "<!--MODDOC-->": self.moddoc, "<!--NDECL-->": str(len(self.shown)),
+                 "<!--INDEX-->": self.index(), "<!--DECLS-->": self.body(), "<!--RAIL-->": rail,
+                 "/*GRAPH*/": json.dumps(graph, ensure_ascii=False).replace("</", "<\\/"),
+                 "/*PREVIEW*/": json.dumps(self.preview(), ensure_ascii=False).replace("</", "<\\/")}
+        for k, v in subst.items():
+            assert out.count(k) >= 1, k
+            out = out.replace(k, v)
+        return out
+
+
+class StudyPage(ModulePage):
+    def __init__(self, lib, page, site_root, sha):
+        super().__init__(lib, page, site_root, sha)
+        self.study = self.ns = node_of(page)[1]
+        self.key, self.entry = lib.entry(self.study)
+
+    node = staticmethod(node_of)
+
+    def heading(self):
+        e = self.entry
+        title = e["title"] if e else esc(self.h1)
+        cite = ""
+        if e:
+            venue = f' {e["venue"]}' if e["venue"] else ""
+            cite = f'<p class="cite-line">{esc(e["authors"])} ({esc(e["year"])}).{venue}</p>'
+        source = f'{REPO}/blob/{self.sha or "main"}/{self.module.replace(".", "/")}.lean'
+        links = [link(source, "Source")]
+        if self.key:
+            links.append(link(f"{self.root}bibliography/#{self.key}", "Bibliography"))
+            paper = f'https://doi.org/{e["doi"]}' if e["doi"] else e["url"]
+            if paper:
+                links.append(link(paper, "Paper"))
+        cite += f'\n<p class="links">{" ".join(links)}</p>'
+        crumbs = (f'{link(self.docs, "Docs")} / {link(self.docs + "#studies", "Studies")} / '
+                  f'{esc(self.module)}')
+        return title, cite, crumbs
+
+    def rail(self):
+        lib, me = self.lib, self.study
+        used = self.named()
+        imports = self.imports()
         imported = {node_of(m.replace(".", "/") + ".html") for m in imports} - {None}
         idle = sorted(n for n in imported if n[0] in "tf" and n not in used and lib.node_pages[n])
         label = self.entry["label"] if self.entry else me
@@ -572,11 +745,7 @@ class StudyPage:
 
         def framework(node, desc=None):
             first = min(used[node].values()) if node in used else min(lib.node_pages[node])
-            m, s = len(lib.node_pages[node]), len(lib.users[node])
-            count = (f"{m} module{'' if m == 1 else 's'} · "
-                     f"{s} {'study' if s == 1 else 'studies'}")
-            nodes[node_id(node)] = {"k": node[0], "l": node_label(node), "h": self.to(first),
-                                    "d": desc or count}
+            self.framework(nodes, node, first, desc)
             return first
 
         rank = {"t": 0, "f": 1, "d": 2}
@@ -602,12 +771,8 @@ class StudyPage:
                 f'{esc(node_label(n))}</a>' for n in idle) + ".</p>")
 
         def study_item(s, why=""):
-            _, e = lib.entry(s)
-            nodes.setdefault(s, {"k": "s", "y": year_of(s), "l": e["label"] if e else s,
-                                 "d": text(e["title"]) if e else s, "h": f"{s}.html"})
             note = f' <span class="why">{esc(why)}</span>' if why else ""
-            return (f'<li class="s" data-node="{esc(s)}">'
-                    f'{link(s + ".html", esc(nodes[s]["l"]), "nd")}{note}</li>')
+            return self.study_item(nodes, s, note)
 
         def by_year(s):
             return (year_of(s) or 0, s)
@@ -654,54 +819,253 @@ class StudyPage:
             more = f'<p class="quiet">and {len(frontier) - 8} more</p>' if len(frontier) > 8 else ""
             parts.append("<h3>Cites, not yet formalized</h3>\n<ul>" + "".join(rows) + "</ul>" + more)
         if imports:
-            parts.append(f"<details><summary>All {len(imports)} imports</summary><ul>"
-                         + "".join(f"<li>{esc(m)}</li>" for m in imports) + "</ul></details>")
-        for n in nodes.values():
-            if n.get("y") is None:
-                n.pop("y", None)
-        return "\n".join(parts), {"nodes": nodes, "edges": edges, "focus": me}
+            parts.append(self.module_list(f"All {len(imports)} imports", imports))
+        return "\n".join(parts), self.graph_data(nodes, edges, me)
 
-    # -- the page
 
-    def render(self, template):
-        self.read()
-        rail, graph = self.rail()
-        e = self.entry
-        title = e["title"] if e else esc(self.h1)
-        cite = ""
-        if e:
-            venue = f' {e["venue"]}' if e["venue"] else ""
-            cite = f'<p class="cite-line">{esc(e["authors"])} ({esc(e["year"])}).{venue}</p>'
+class TheoryPage(ModulePage):
+    locators = False
+    node = staticmethod(file_node)
+
+    def __init__(self, lib, page, site_root, sha):
+        super().__init__(lib, page, site_root, sha)
+        self.me = file_node(page)
+        self.ns = namespace([b["id"] for b in lib.modules[page]["blocks"] if b["type"] == "decl"])
+        self.headlines = set()
+
+    def read(self):
+        super().read()
+        doc = re.sub(rf'<h2 [^>]*>(?:{NOTES})\b.*?(?=<h2 |$)', "", self.moddoc, flags=re.S)
+        linked = {html.unescape(u) for u in re.findall(r'href="#([^"]+)"', doc)}
+        self.headlines = linked & set(self.order)
+
+    def headline(self, d):
+        return d["id"] in self.headlines if self.headlines else super().headline(d)
+
+    def heading(self):
+        path = self.page.removesuffix(".html").split("/")[1:]
+        crumbs = [link(self.docs, "Docs")]
+        for i, part in enumerate(path[:-1]):
+            crumbs.append(link(f'{self.docs}#{"/".join(path[:i + 1])}', esc(part)))
+        crumbs.append(esc(path[-1]))
+        line = f"import {self.module}" + (f" · namespace {self.ns}" if self.ns else "")
         source = f'{REPO}/blob/{self.sha or "main"}/{self.module.replace(".", "/")}.lean'
-        links = [link(source, "Source")]
-        if self.key:
-            links.append(link(f"{self.root}bibliography/#{self.key}", "Bibliography"))
-            paper = f'https://doi.org/{e["doi"]}' if e["doi"] else e["url"]
-            if paper:
-                links.append(link(paper, "Paper"))
-        cite += f'\n<p class="links">{" ".join(links)}</p>'
-        out = site_shell.render(template, self.root, "Docs", self.sha)
-        prose = self.moddoc + "".join(s["prose"] for s in self.sections)
-        prose += "".join(d["doc"] for d in self.shown)
-        tex = TEX.search(re.sub(r"<code>.*?</code>", "", prose, flags=re.S))
-        subst = {"<!--MATH-->": MATH if tex else "","<!--TITLE_TEXT-->": esc(text(title)), "<!--DESCRIPTION-->": esc(text(title)),
-                 "<!--ASSETS-->": "../", "<!--TITLE-->": title, "<!--CITE-->": cite,
-                 "<!--CRUMBS-->": f'{link(self.docs, "Docs")} / Studies / {esc(self.module)}',
-                 "<!--MODDOC-->": self.moddoc, "<!--NDECL-->": str(len(self.shown)),
-                 "<!--INDEX-->": self.index(), "<!--DECLS-->": self.body(), "<!--RAIL-->": rail,
-                 "/*GRAPH*/": json.dumps(graph, ensure_ascii=False).replace("</", "<\\/"),
-                 "/*PREVIEW*/": json.dumps(self.preview(), ensure_ascii=False).replace("</", "<\\/")}
-        for k, v in subst.items():
-            assert out.count(k) >= 1, k
-            out = out.replace(k, v)
+        cite = f'<p class="modline">{esc(line)}</p>\n<p class="links">{link(source, "Source")}</p>'
+        return esc(self.h1), cite, " / ".join(crumbs)
+
+    @staticmethod
+    def listing(title, rows):
+        """Rows under a heading, the first few shown and the others folded."""
+        if not rows:
+            return ""
+        out = f"<h3>{esc(title)}</h3>\n<ul>{''.join(rows[:FILES_SHOWN])}</ul>"
+        if len(rows) > FILES_SHOWN:
+            out += (f'<details class="more"><summary>and {len(rows) - FILES_SHOWN} more</summary>'
+                    f'<ul>{"".join(rows[FILES_SHOWN:])}</ul></details>')
         return out
+
+    def own_names(self, anchors, shown=4):
+        """This file's declarations another file names, linked to where they are on this page."""
+        names = []
+        for a in sorted(anchors):
+            d = self.by_id.get(a)
+            short = d["name"] if d else a.removeprefix(self.ns + ".")
+            names.append(link("#" + a, esc(short)))
+        return f'<span class="names">{and_more(names, shown)}</span>'
+
+    def rail(self):
+        lib, me = self.lib, node_id(self.me)
+        nodes = {me: {"k": "t", "b": "focus", "l": node_label(self.me), "d": "This page", "h": "#top"}}
+        edges, pages_of = [], {me: {self.page}}
+        parts = ['<h2>Connections</h2>\n<div class="graph" id="graph"><svg id="g" viewBox="0 0 300 206" '
+                 'role="img" aria-label="This file below the theory it builds on, above the theory '
+                 'built on it, the studies using it by year and the fragments using it"></svg>'
+                 '<div class="tip" id="tip" role="tooltip"></div></div>']
+
+        def file_item(node, page, note, in_graph, label=None):
+            tag = f' data-node="{esc(node_id(node))}"' if in_graph else ""
+            head = link(self.to(page), esc(label or node_label(node)), "nd")
+            return f'<li class="{node[0]}"{tag}>{head} {note}</li>'
+
+        def add_file(node, page, band, desc=None):
+            self.framework(nodes, node, page, desc or lib.title(page))
+            nodes[node_id(node)]["b"] = band
+            pages_of[node_id(node)] = {page}
+
+        # What it builds on: the theory above it in the graph, and Core and data in the list alone.
+        used = self.named()
+        rank = {"t": 0, "f": 1, "c": 2, "d": 3}
+        order = sorted(used, key=lambda n: (rank[n[0]], -len(used[n]), n[1]))
+        above = [n for n in order if n[0] == "t"][:FILES_SHOWN]
+        rows = []
+        for node in order:
+            first = min(used[node].values())
+            if node in above:
+                add_file(node, first, "up")
+                edges.append([me, node_id(node), "use"])
+            names = [link(self.to(p, a), esc(self.short(node, a)))
+                     for a, p in sorted(used[node].items())]
+            rows.append(file_item(node, first, f'<span class="names">{and_more(names, 4)}</span>',
+                                  node in above))
+        parts.append(self.listing("Builds on", rows))
+        imports = self.imports()
+        idle = {}
+        for m in imports:
+            page = m.replace(".", "/") + ".html"
+            node = file_node(page)
+            if node and node[0] == "t" and node not in used and page in lib.modules:
+                idle[node] = page
+        if idle:
+            shown = sorted(idle)[:max(0, FILES_SHOWN - len(above))]
+            for n in shown:
+                add_file(n, idle[n], "up", "imported, named in no signature here")
+                edges.append([me, node_id(n), "weak"])
+            parts.append('<p class="quiet">Imported but named in no signature: ' + ", ".join(
+                f'<a href="{esc(self.to(idle[n]))}"'
+                + (f' data-node="{esc(node_id(n))}"' if n in shown else "")
+                + f'>{esc(node_label(n))}</a>' for n in sorted(idle)) + ".</p>")
+
+        # What uses it: the theory, then the studies by year, then the languages.
+        files, studies, langs = {}, {}, defaultdict(lambda: (set(), set()))
+        for page, anchors in lib.named_by.get(self.page, {}).items():
+            node = file_node(page)
+            if node and node[0] == "t":
+                files[node] = (page, anchors)
+            elif node and node[0] == "s":
+                studies[node[1]] = anchors
+            elif node and node[0] == "f":
+                langs[node][0].add(page)
+                langs[node][1].update(anchors)
+
+        order = sorted(files, key=lambda n: (-len(files[n][1]), n[1]))
+        below = order[:FILES_SHOWN]
+        rows = []
+        for node in order:
+            page, anchors = files[node]
+            if node in below:
+                add_file(node, page, "down")
+                edges.append([node_id(node), me, "use"])
+            rows.append(file_item(node, page, self.own_names(anchors), node in below))
+        parts.append(self.listing("Theory built on it", rows))
+
+        def by_year(s):
+            return (year_of(s) or 0, s)
+
+        ranked = sorted(studies, key=lambda s: (-len(studies[s]), by_year(s)))
+        listed = (sorted(ranked[:FILES_SHOWN], key=by_year)
+                  + sorted(ranked[FILES_SHOWN:], key=by_year))
+        rows = [self.study_item(nodes, s, " " + self.own_names(studies[s])) for s in listed]
+        for s in ranked[STUDIES_SHOWN:]:
+            del nodes[s]
+        for s in ranked[:STUDIES_SHOWN]:
+            pages_of[s] = {f"Studies/{s}.html"}
+            edges.append([s, me, "use"])
+        parts.append(self.listing("Studies using it", rows))
+
+        order = sorted(langs, key=lambda n: (-len(langs[n][1]), n[1]))
+        rows = []
+        for node in order:
+            pages, anchors = langs[node]
+            first = min(pages)
+            if node in order[:FILES_SHOWN]:
+                self.framework(nodes, node, first)
+                pages_of[node_id(node)] = pages
+                edges.append([node_id(node), me, "use"])
+            rows.append(file_item(node, first, self.own_names(anchors, 2), node in order[:FILES_SHOWN]))
+        parts.append(self.listing("Fragments using it", rows))
+
+        # Among its neighbors, who names whom, which hovering a neighbor shows.
+        users = [n for n in pages_of if n != me and nodes[n].get("b") != "up"]
+        targets = [n for n in pages_of if n != me and nodes[n]["k"] == "t"]
+        for a in users:
+            for b in targets:
+                named = (q in lib.named_by.get(p, ()) for p in pages_of[b] for q in pages_of[a])
+                if a != b and any(named):
+                    edges.append([a, b, "near"])
+
+        # The rest of its directory.
+        here = posixpath.dirname(self.page)
+        siblings = [p for p in lib.in_dir[here] if p != self.page]
+        rows = []
+        for p in siblings:
+            node = file_node(p)
+            rows.append(file_item(node, p, f'<span class="why">{esc(lib.title(p))}</span>',
+                                  node_id(node) in nodes, p.removesuffix(".html").split("/")[-1]))
+        parts.append(self.listing("Also in " + " / ".join(here.split("/")[1:]), rows))
+
+        importers = lib.imported_by.get(self.module, [])
+        if imports:
+            parts.append(self.module_list(f"All {len(imports)} imports", imports))
+        if importers:
+            parts.append(self.module_list(f"All {len(importers)} importers", sorted(importers)))
+        return "\n".join(p for p in parts if p), self.graph_data(nodes, edges, me)
+
+
+# ---------------------------------------------------------------- the landing page
+
+
+def file_tree(lib, pages, base):
+    """`pages`, all below the directory `base`: its subdirectories fold, then its files."""
+    dirs, rows = defaultdict(list), []
+    for page in sorted(pages):
+        rest = page[len(base) + 1:]
+        if "/" in rest:
+            dirs[rest.split("/")[0]].append(page)
+        else:
+            name, title = rest.removesuffix(".html"), lib.title(page)
+            note = f' <span class="ti">{esc(title)}</span>' if title != name else ""
+            rows.append(f'<li>{link(page, esc(name), "f")}{note}</li>')
+    folds = [fold(f"{base}/{d}".removeprefix("Linglib/"), d, file_tree(lib, dirs[d], f"{base}/{d}"))
+             for d in sorted(dirs)]
+    return "".join(folds) + (f'<ul>{"".join(rows)}</ul>' if rows else "")
+
+
+def fold(fid, summary, body):
+    return f'<details id="{esc(fid)}"><summary>{esc(summary)}</summary>{body}</details>'
+
+
+def study_tree(lib, pages):
+    """The studies by decade, the latest first, each by year."""
+    decades = defaultdict(list)
+    for page in pages:
+        s = node_of(page)[1]
+        decades[(year_of(s) or 0) // 10 * 10].append((year_of(s) or 0, s, page))
+    out = []
+    for decade in sorted(decades, reverse=True):
+        rows = []
+        for _, s, page in sorted(decades[decade]):
+            _, e = lib.entry(s)
+            title = e["title"] if e else esc(lib.title(page))
+            rows.append(f'<li>{link(page, esc(e["label"] if e else s))} <span class="ti">{title}</span></li>')
+        out.append(fold(f"studies-{decade}s", f"{decade}s", f'<ul>{"".join(rows)}</ul>'))
+    return "".join(out)
+
+
+def landing(lib, template, site_root, sha):
+    """The landing page of the docs: the search, and every module by the layer it belongs to."""
+    def tree(top):
+        return file_tree(lib, [p for p in lib.modules if p.startswith(top + "/")], top)
+
+    areas = "".join(fold(a, a, tree(f"Linglib/{a}")) for a in THEORY)
+    others = "".join(fold(t, t, tree(t)) for t in ("Eval", "Lab"))
+    general = "".join(f'<li>{link(p, esc(label))}</li>' for p, label in
+                      (("foundational_types.html", "Foundational types"), ("tactics.html", "Tactics"),
+                       ("references.html", "References")))
+    studies = study_tree(lib, [p for p in lib.modules if p.startswith("Studies/")])
+    sections = [("theory", "t", "Theory", areas), ("studies", "s", "Studies", studies),
+                ("fragments", "f", "Fragments", tree("Linglib/Fragments")),
+                ("data", "d", "Data", tree("Linglib/Data")), ("core", "d", "Core", tree("Linglib/Core")),
+                ("other", "d", "Other", f'{others}<ul>{general}</ul>')]
+    tree = "\n".join(f'<section id="{sid}"><h2 class="{cls}">{esc(title)}</h2>{body}</section>'
+                     for sid, cls, title, body in sections)
+    return site_shell.render(template, site_root, "Docs", sha).replace("<!--TREE-->", tree)
 
 
 # ---------------------------------------------------------------- the site
 
 
 def check(lib, out, written):
-    """Declarations doc-gen4 places on a study page that the rebuilt page has no anchor for."""
+    """Declarations doc-gen4 places on a rebuilt page that the page has no anchor for."""
     ids = {p: set(re.findall(r'\bid="([^"]+)"', (out / p).read_text(encoding="utf-8"))) for p in written}
     lost = []
     for d in lib.decl_data.values():
@@ -711,44 +1075,86 @@ def check(lib, out, written):
     return lost
 
 
+def dead_links(out, written):
+    """Relative links on the rebuilt pages, the graph's too, that land on no file of the docs."""
+    dead, seen = [], {}
+    for page in written:
+        raw = (out / page).read_text(encoding="utf-8")
+        for a, b in set(re.findall(r'(?:href|src)="([^"#]+)|"h": "([^"#]+)', raw)):
+            url = html.unescape(a or b)
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(page), url))
+            if re.match(r"[a-z]+:", url) or target.startswith("../"):
+                continue
+            if target not in seen:
+                seen[target] = (out / target).is_file() or (out / target / "index.html").is_file()
+            if not seen[target]:
+                dead.append((page, url))
+    return dead
+
+
+def is_theory(page):
+    p = page.split("/")
+    return p[0] == "Linglib" and len(p) >= 3 and p[1] in THEORY
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--doc", type=Path, default=Path(".lake/build/doc"), help="doc-gen4's output")
-    ap.add_argument("--out", type=Path, required=True, help="directory for the rebuilt pages")
-    ap.add_argument("--root", default="../../", help="the site's root, relative to a study page")
-    ap.add_argument("--docs-base", default="../", help="doc-gen4's pages, relative to a study page")
-    ap.add_argument("--only", nargs="*", help="rebuild these studies only")
-    ap.add_argument("--check", action="store_true", help="confirm every declaration keeps its anchor")
-    ap.add_argument("--redirect", type=Path, help="also leave pages here that forward to the pages")
+    ap.add_argument("--out", type=Path, required=True, help="the docs directory, for the rebuilt pages")
+    ap.add_argument("--root", default="../", help="the site's root, relative to the docs directory")
+    ap.add_argument("--only", nargs="*", help="rebuild these studies, modules and modules below these")
+    ap.add_argument("--check", action="store_true", help="confirm declarations keep anchors, links land")
+    ap.add_argument("--redirect", type=Path, help="also leave pages here that forward to the study pages")
     args = ap.parse_args()
 
+    # The pages are read from `--doc`, whose study pages must still be doc-gen4's: a rebuilt page is
+    # no module page, so reading a tree of them would quietly lose the studies.
+    if args.doc.resolve() == args.out.resolve():
+        sys.exit("--out must not be --doc: the pages are read from the one and written to the other")
     lib = Library(args.doc)
     sha = site_shell.git_commit()
+    studies = sorted(p for p in lib.modules if p.startswith("Studies/"))
+    theory = sorted(filter(is_theory, lib.modules))
+    if not studies or not theory:
+        sys.exit(f"{args.doc} has {len(studies)} study and {len(theory)} theory pages of doc-gen4's")
     template = (PAGE / "template.html").read_text(encoding="utf-8")
-    (args.out / "Studies").mkdir(parents=True, exist_ok=True)
+    args.out.mkdir(parents=True, exist_ok=True)
     for asset in ("docs.css", "docs.js"):
         shutil.copy(PAGE / asset, args.out / asset)
-    pages = sorted(p for p in lib.modules if p.startswith("Studies/"))
+    home = (PAGE / "index.html").read_text(encoding="utf-8")
+    (args.out / "index.html").write_text(landing(lib, home, args.root, sha), encoding="utf-8")
     if args.only:
-        pages = [p for p in pages if node_of(p)[1] in args.only]
-    for page in pages:
-        out = StudyPage(lib, page, args.root, args.docs_base, sha).render(template)
-        (args.out / page).write_text(out, encoding="utf-8")
-    print(f"wrote {len(pages)} study pages to {args.out}")
-    if args.redirect:
+        def chosen(page):
+            mod = page.removesuffix(".html").replace("/", ".")
+            return any(mod in (o, f"Studies.{o}") or mod.startswith(o + ".") for o in args.only)
+        studies, theory = list(filter(chosen, studies)), list(filter(chosen, theory))
+    for cls, pages in ((StudyPage, studies), (TheoryPage, theory)):
         for page in pages:
+            dest = args.out / page
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(cls(lib, page, args.root, sha).render(template), encoding="utf-8")
+    print(f"wrote the landing page, {len(studies)} study and {len(theory)} theory pages to {args.out}")
+    (args.out / "Studies").mkdir(parents=True, exist_ok=True)
+    (args.out / "Studies" / "index.html").write_text(
+        REDIRECT.format(href="../#studies", js=json.dumps("../#studies")), encoding="utf-8")
+    if args.redirect:
+        for page in studies:
             stub = args.redirect / page
             stub.parent.mkdir(parents=True, exist_ok=True)
             href = posixpath.relpath((args.out / page).resolve().as_posix(),
                                      stub.parent.resolve().as_posix())
             stub.write_text(REDIRECT.format(href=esc(href), js=json.dumps(href)), encoding="utf-8")
-        print(f"wrote {len(pages)} forwarding pages to {args.redirect}")
+        print(f"wrote {len(studies)} forwarding pages to {args.redirect}")
     if args.check:
-        lost = check(lib, args.out, pages)
+        lost = check(lib, args.out, studies + theory)
         for page, frag in lost:
             print(f"{page}: no anchor for {frag}")
         print(f"{len(lost)} declarations without an anchor")
-        sys.exit(1 if lost else 0)
+        dead = dead_links(args.out, ["index.html", *studies, *theory])
+        for page, url in dead:
+            print(f"{page}: no page at {url}")
+        print(f"{len(dead)} links to no page")
+        sys.exit(1 if lost or dead else 0)
 
 
 if __name__ == "__main__":
