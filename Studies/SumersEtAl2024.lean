@@ -13,7 +13,7 @@ On the speaker model of Sumers, Ho, Griffiths and Hawkins, Grice's maxims of qua
 relation are two independent objectives a speaker trades off. Truthfulness is an epistemic
 utility, `1` for a true utterance and `-1` for a false one (5), `truthfulness`; relevance is a
 decision-theoretic utility after van Rooy and Benz, the reward the listener earns by acting on
-the utterance in a decision problem (6)–(8), `RSA.actionUtility` of `RSA.policy`; and the speaker
+the utterance in a decision problem (6)–(8), the reward expected of `RSA.policy`; and the speaker
 of a Rational Speech Act model, after Frank and Goodman, soft-maximizes their convex combination
 at a weight `λ` plus a cost term (9), `combinedUtility`, `speaker`. The endpoints are the purely
 truthful speaker, who is insensitive to the decision problem and uniform over the true utterances,
@@ -92,7 +92,7 @@ open scoped ENNReal
 
 section Objectives
 
-variable {W U A : Type*} [DecidableEq W] [MeasurableSpace U] [Fintype A] [MeasurableSpace A]
+variable {W U A : Type*} [DecidableEq W] [MeasurableSpace U] [MeasurableSpace A]
 
 /-- Truthfulness as epistemic utility (5) is `1` for a true utterance and `-1` for a false one. -/
 def truthfulness (sem : U → Finset W) (u : U) (w : W) : ℝ := if w ∈ sem u then 1 else -1
@@ -101,7 +101,7 @@ def truthfulness (sem : U → Finset W) (u : U) (w : W) : ℝ := if w ∈ sem u 
 adds the cost term. -/
 noncomputable def combinedUtility (lam : ℝ) (cost : U → ℝ) (sem : U → Finset W)
     (π : Kernel U A) (R : A → W → ℝ) (u : U) (w : W) : ℝ :=
-  lam * actionUtility π R u w + (1 - lam) * truthfulness sem u w + cost u
+  lam * ∫ a, R a w ∂(π u) + (1 - lam) * truthfulness sem u w + cost u
 
 variable (cost : U → ℝ) (sem : U → Finset W) (π : Kernel U A) (R : A → W → ℝ) {u : U}
   {w : W}
@@ -111,7 +111,7 @@ theorem combinedUtility_zero :
   simp [combinedUtility]
 
 theorem combinedUtility_one :
-    combinedUtility 1 cost sem π R u w = actionUtility π R u w + cost u := by
+    combinedUtility 1 cost sem π R u w = ∫ a, R a w ∂(π u) + cost u := by
   simp [combinedUtility]
 
 end Objectives
@@ -120,7 +120,7 @@ section Speaker
 
 variable {W U A : Type*} [Fintype W] [DecidableEq W] [MeasurableSpace W]
   [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
-  [Fintype A] [MeasurableSpace A]
+  [MeasurableSpace A]
 
 /-- The speaker (1) is the softmax of combined utility at rationality `βS`. -/
 noncomputable def speaker (βS lam : ℝ) (cost : U → ℝ) (sem : U → Finset W)
@@ -154,7 +154,7 @@ not. -/
 theorem speaker_one_real_lt_iff (hβ : 0 < βS) (c : ℝ) :
     (speaker βS 1 (fun _ ↦ c) sem π R w).real {u} <
         (speaker βS 1 (fun _ ↦ c) sem π R w).real {u'} ↔
-      actionUtility π R u w < actionUtility π R u' w := by
+      ∫ a, R a w ∂(π u) < ∫ a, R a w ∂(π u') := by
   rw [speaker_real_lt_iff _ _ _ _ _ hβ, combinedUtility_one, combinedUtility_one]
   exact add_lt_add_iff_right c
 
@@ -185,14 +185,15 @@ variable (L : Kernel U W) [IsMarkovKernel L] {r s : ℝ} (c : Finset W) {u u' : 
   {β : ℝ}
 
 theorem expectedReward_cellReward (u : U) :
-    expectedReward L (cellReward r s c) u 0 = s + (r - s) * cellMass L c u ∧
-      expectedReward L (cellReward r s c) u 1 = r + (s - r) * cellMass L c u := by
+    ∫ w, cellReward r s c 0 w ∂(L u) = s + (r - s) * cellMass L c u ∧
+      ∫ w, cellReward r s c 1 w ∂(L u) = r + (s - r) * cellMass L c u := by
   have htot := sum_filter_add_sum_filter_not univ (· ∈ c) fun w ↦ (L u).real {w}
   have h1 : ∑ w, (L u).real {w} = 1 := sum_measureReal_singleton_eq_one (L u)
   rw [filter_mem_eq_inter, univ_inter, h1] at htot
   have hB : ∑ w with w ∉ c, (L u).real {w} = 1 - cellMass L c u := by
     rw [cellMass]; linarith
-  simp only [expectedReward, cellReward, Fin.isValue, iff_true, Fin.one_eq_zero_iff,
+  simp only [integral_fintype .of_finite, smul_eq_mul, cellReward, Fin.isValue, iff_true,
+      Fin.one_eq_zero_iff,
     OfNat.ofNat_ne_one, iff_false, mul_ite, sum_ite, not_not, filter_mem_eq_inter, univ_inter,
     ← sum_mul, hB, cellMass]
   constructor <;> ring
@@ -202,11 +203,10 @@ variable [Fintype U] [DiscreteMeasurableSpace U]
 /-- Relevance under the cell decision problem is a logistic function of the posterior mass on
 the cell, the calculation of Appendix A. -/
 theorem actionUtility_cellReward (hw : w ∈ c) :
-    actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u w =
+    ∫ a, cellReward r s c a w ∂(policy β L (cellReward r s c) u) =
       s + (r - s) * Real.sigmoid (β * (r - s) * (2 * cellMass L c u - 1)) := by
   obtain ⟨h0, h1⟩ := expectedReward_cellReward L c (r := r) (s := s) u
-  rw [actionUtility_of_pair (cellReward r s c) (policy β L (cellReward r s c)) (a := 0) (a' := 1)
-      (by decide) (fun a ↦ by fin_cases a <;> simp),
+  rw [integral_of_pair (a := 0) (a' := 1) (by decide) (fun a ↦ by fin_cases a <;> simp),
     policy_real_of_pair L (cellReward r s c) (a := 0) (a' := 1) (by decide)
       (fun a ↦ by fin_cases a <;> simp), h0, h1]
   simp only [cellReward, hw, Fin.isValue, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, iff_false,
@@ -217,8 +217,8 @@ theorem actionUtility_cellReward (hw : w ∈ c) :
 (Theorem 2). -/
 theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0 < β)
     (hu : 0 < cellMass L c u) (hu' : 0 < cellMass L c u') :
-    actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u w <
-        actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u' w ↔
+    ∫ a, cellReward r s c a w ∂(policy β L (cellReward r s c) u) <
+        ∫ a, cellReward r s c a w ∂(policy β L (cellReward r s c) u') ↔
       qudUtility L c u < qudUtility L c u' := by
   rw [actionUtility_cellReward L c hw, actionUtility_cellReward L c hw, qudUtility, qudUtility,
     Real.log_lt_log_iff hu hu', add_lt_add_iff_left,
@@ -230,8 +230,8 @@ theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0
 (Theorem 1). -/
 theorem actionUtility_lt_iff_log_lt (hrs : s < r) (hβ : 0 < β) (hu : 0 < (L u).real {w})
     (hu' : 0 < (L u').real {w}) :
-    actionUtility (policy β L (cellReward r s {w})) (cellReward r s {w}) u w <
-        actionUtility (policy β L (cellReward r s {w})) (cellReward r s {w}) u' w ↔
+    ∫ a, cellReward r s {w} a w ∂(policy β L (cellReward r s {w}) u) <
+        ∫ a, cellReward r s {w} a w ∂(policy β L (cellReward r s {w}) u') ↔
       Real.log ((L u).real {w}) < Real.log ((L u').real {w}) := by
   rw [actionUtility_lt_iff_qudUtility_lt L {w} (mem_singleton_self w) hrs hβ
     (by rwa [cellMass, sum_singleton]) (by rwa [cellMass, sum_singleton]), qudUtility, qudUtility,
@@ -302,11 +302,12 @@ variable [MeasurableSpace (K → V)] [DiscreteMeasurableSpace (K → V)] [Fintyp
 theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p : V → Prop)
     [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w ↦ p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
-    expectedReward (RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))))
-        (reward val feat) u a =
+    ∫ w, reward val feat a w
+        ∂(RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (S u : Set (K → V))) u) =
       ∑ k ∈ feat a, if k = f then (∑ x with p x, val x) / (univ.filter p).card
         else (∑ x, val x) / Fintype.card V := by
-  simp only [expectedReward, listener_uniformOn_truthful_real_singleton, hS, mem_filter, mem_univ,
+  simp only [integral_fintype .of_finite, smul_eq_mul, listener_uniformOn_truthful_real_singleton,
+      hS, mem_filter, mem_univ,
     true_and,
     reward, mul_sum]
   rw [sum_comm]
@@ -367,22 +368,22 @@ noncomputable abbrev prior : Kernel (Feature × Value) (Feature → Value) :=
 variable (fs : Fin 3 → Finset Feature) (u : Feature × Value) (a : Fin 3) {β βS : ℝ}
 
 theorem expectedReward_listener :
-    expectedReward listener (reward val fs) u a = ∑ k ∈ fs a, if k = u.1 then val u.2 else 0 := by
+    ∫ w, reward val fs a w ∂(listener u) = ∑ k ∈ fs a, if k = u.1 then val u.2 else 0 := by
   rw [expectedReward_listener_filter (S := sem) (u := u) (· = u.2) ⟨u.2, rfl⟩ u.1 rfl,
     sum_val]
   simp [filter_eq']
 
-theorem expectedReward_prior : expectedReward prior (reward val fs) u a = 0 := by
+theorem expectedReward_prior : ∫ w, reward val fs a w ∂(prior u) = 0 := by
   rw [expectedReward_listener_filter (S := fun _ ↦ univ) (u := u) (fun _ ↦ True)
     ⟨u.2, trivial⟩ u.1 (filter_true_of_mem fun _ _ ↦ trivial).symm, sum_val]
   simp
   exact fun _ ↦ sum_val
 
 theorem actionUtility_eq_prior_of_expectedReward {c : ℝ}
-    (h : ∀ a, expectedReward listener (reward val fs) u a = c) :
-    actionUtility (policy β listener (reward val fs)) (reward val fs) u world =
-      actionUtility (policy β prior (reward val fs)) (reward val fs) u world :=
-  actionUtility_policy_eq_of_expectedReward_eq_add listener (reward val fs) fun a ↦ by
+    (h : ∀ a, ∫ w, reward val fs a w ∂(listener u) = c) :
+    ∫ a, reward val fs a world ∂(policy β listener (reward val fs) u) =
+      ∫ a, reward val fs a world ∂(policy β prior (reward val fs) u) :=
+  integral_policy_eq_of_integral_eq_add listener (reward val fs) fun a ↦ by
     rw [h a, expectedReward_prior, zero_add]
 
 -- Figure 6
@@ -391,36 +392,38 @@ theorem reward_world :
   simp [reward, feat, world, val]; norm_num
 
 theorem actionUtility_prior :
-    actionUtility (policy β prior (reward val feat)) (reward val feat) u world = -2 / 3 := by
+    ∫ a, reward val feat a world ∂(policy β prior (reward val feat) u) = -2 / 3 := by
   obtain ⟨h0, h1, h2⟩ := reward_world
-  simp only [actionUtility, policy_real_singleton, expectedReward_prior, mul_zero,
+  rw [integral_fintype .of_finite]
+  simp only [smul_eq_mul, policy_real_singleton, expectedReward_prior, mul_zero,
     Fin.sum_univ_three, h0, h1, h2]
   rw [show (fun _ : Fin 3 ↦ (0 : ℝ)) = 0 from rfl, Real.softmax_zero]
   norm_num
 
 theorem green_two_true_irrelevant :
     world ∈ sem (.green, 4) ∧
-      actionUtility (policy β listener (reward val feat)) (reward val feat) (.green, 4) world =
-        actionUtility (policy β prior (reward val feat)) (reward val feat) (.green, 4) world :=
+      ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.green, 4)) =
+        ∫ a, reward val feat a world ∂(policy β prior (reward val feat) (.green, 4)) :=
   ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat]⟩
 
 theorem red_zero_true_irrelevant :
     world ∈ sem (.red, 2) ∧
-      actionUtility (policy β listener (reward val feat)) (reward val feat) (.red, 2) world =
-        actionUtility (policy β prior (reward val feat)) (reward val feat) (.red, 2) world :=
+      ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.red, 2)) =
+        ∫ a, reward val feat a world ∂(policy β prior (reward val feat) (.red, 2)) :=
   ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat, val]⟩
 
 theorem expectedReward_spots (v : Value) :
-    expectedReward listener (reward val feat) (.spots, v) a = if a = 0 then val v else 0 := by
+    ∫ w, reward val feat a w ∂(listener (.spots, v)) = if a = 0 then val v else 0 := by
   fin_cases a <;> simp [expectedReward_listener, feat]
 
 theorem actionUtility_spots (v : Value) :
-    actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world =
+    ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, v)) =
       (Real.exp (β * val v) - 3) / (Real.exp (β * val v) + 2) := by
   obtain ⟨h0, h1, h2⟩ := reward_world
-  simp only [actionUtility, policy_real_singleton, expectedReward_spots, Real.softmax_apply,
+  rw [integral_fintype .of_finite]
+  simp only [smul_eq_mul, policy_real_singleton, expectedReward_spots, Real.softmax_apply,
     Fin.sum_univ_three, h0, h1, h2]
   simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]
@@ -429,8 +432,8 @@ theorem actionUtility_spots (v : Value) :
   ring
 
 theorem spots_relevant_iff (hβ : 0 < β) (v : Value) :
-    actionUtility (policy β prior (reward val feat)) (reward val feat) (.spots, v) world <
-        actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world ↔
+    ∫ a, reward val feat a world ∂(policy β prior (reward val feat) (.spots, v)) <
+        ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, v)) ↔
       0 < val v := by
   have key : 1 < Real.exp (β * val v) ↔ 0 < val v := by
     rw [Real.one_lt_exp_iff]; exact mul_pos_iff_of_pos_left hβ
@@ -440,9 +443,8 @@ theorem spots_relevant_iff (hβ : 0 < β) (v : Value) :
 
 theorem exaggeration_relevant (hβ : 0 < β) :
     world ∈ sem (.spots, 3) ∧ world ∉ sem (.spots, 4) ∧
-      actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 3) world <
-        actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 4)
-          world := by
+      ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, 3)) <
+        ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, 4)) := by
   refine ⟨by simp [sem, world], by simp [sem, world], ?_⟩
   rw [actionUtility_spots, actionUtility_spots, ← sub_pos]
   have h1 := Real.exp_pos (β * val 3)
@@ -464,8 +466,8 @@ theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
         world).real {(.spots, 4)} <
       (speaker βS lam (fun _ ↦ c) sem (policy β listener (reward val feat)) (reward val feat)
         world).real {(.spots, 3)} ↔
-      lam * (actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 4) world
-        - actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 3) world)
+      lam * (∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, 4))
+        - ∫ a, reward val feat a world ∂(policy β listener (reward val feat) (.spots, 3)))
         < 2 * (1 - lam) := by
   rw [speaker_real_lt_iff _ _ _ _ _ hβS]
   simp only [combinedUtility, truthfulness, sem, mem_filter, mem_univ, true_and, world,
@@ -473,26 +475,24 @@ theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
   constructor <;> intro h <;> linarith
 
 theorem spots_irrelevant_allSpotted (v : Value) :
-    actionUtility (policy β listener (reward val featSpotted)) (reward val featSpotted)
-        (.spots, v) world =
-      actionUtility (policy β prior (reward val featSpotted)) (reward val featSpotted)
-        (.spots, v) world :=
+    ∫ a, reward val featSpotted a world ∂(policy β listener (reward val featSpotted) (.spots, v)) =
+      ∫ a, reward val featSpotted a world ∂(policy β prior (reward val featSpotted) (.spots, v)) :=
   actionUtility_eq_prior_of_expectedReward featSpotted _ (c := val v) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, featSpotted]
 
 theorem green_relevant_allSpotted (hβ : 0 < β) :
-    actionUtility (policy β prior (reward val featSpotted)) (reward val featSpotted)
-        (.green, 4) world <
-      actionUtility (policy β listener (reward val featSpotted)) (reward val featSpotted)
-        (.green, 4) world := by
+    ∫ a, reward val featSpotted a world ∂(policy β prior (reward val featSpotted) (.green, 4)) <
+      ∫ a, reward val featSpotted a world
+        ∂(policy β listener (reward val featSpotted) (.green, 4)) := by
   have hR : reward val featSpotted 0 world = 3 ∧ reward val featSpotted 1 world = 1 ∧
       reward val featSpotted 2 world = -1 := by
     simp [reward, featSpotted, world, val]; norm_num
-  have hE : ∀ a, expectedReward listener (reward val featSpotted) (.green, 4) a =
+  have hE : ∀ a, ∫ w, reward val featSpotted a w ∂(listener (.green, 4)) =
       if a = 0 then 2 else 0 := by
     intro a; fin_cases a <;> simp [expectedReward_listener, featSpotted, val]; norm_num
   obtain ⟨h0, h1, h2⟩ := hR
-  simp only [actionUtility, policy_real_singleton, expectedReward_prior, hE, mul_zero,
+  rw [integral_fintype .of_finite, integral_fintype .of_finite]
+  simp only [smul_eq_mul, policy_real_singleton, expectedReward_prior, hE, mul_zero,
     Fin.sum_univ_three, h0, h1, h2, Real.softmax_apply]
   simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]

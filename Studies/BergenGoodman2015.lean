@@ -100,7 +100,7 @@ theorem speaker_geomPool_eq_ofWeights {O : Type*} [MeasurableSpace O] [Countable
       (by simp [EReal.coe_ennreal_ne_bot])).ne'
   have hct (x : ℝ≥0∞) : EReal.exp (-(x : EReal)) ^ α ≠ ∞ :=
     ENNReal.rpow_ne_top_of_nonneg hα (by simp [EReal.coe_ennreal_ne_bot])
-  rw [speaker]
+  rw [speaker_eq_ofWeights]
   refine Kernel.ofWeights_eq_of_mul
     (c := fun o ↦ EReal.exp (-(ENNReal.ofReal (Hm[b o]) : EReal)) ^ α)
     (fun o ↦ hc0 _ ENNReal.ofReal_ne_top) (fun o ↦ hct _) fun o v ↦ ?_

@@ -158,9 +158,9 @@ theorem speaker_eq_softmax (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goa
   · have h0 : literal μ u {t} ≠ 0 :=
       (listener_truthful_apply_singleton_ne_zero_iff μ _ u t).2 ⟨Finset.mem_coe.2 h, hμ t⟩
     rw [ENNReal.log_pos_real h0 (measure_ne_top _ _), utility, Goal.value, measureReal_def,
-      mul_sub, EReal.coe_sub, EReal.coe_mul, EReal.coe_mul]
+      ← EReal.coe_sub, ← EReal.coe_mul]
   · rw [literal, listener_truthful_apply_singleton_of_notMem μ _ (by simpa using h),
-      ENNReal.log_zero, EReal.coe_mul_bot_of_pos hlam, EReal.bot_sub]
+      ENNReal.log_zero, EReal.bot_sub, EReal.coe_mul_bot_of_pos hlam]
 
 theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
     (hu' : t ∈ ⟦u'⟧ᴹ) :
