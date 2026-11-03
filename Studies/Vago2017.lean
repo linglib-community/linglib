@@ -144,8 +144,8 @@ theorem resolve_first : resolve c {.first} = c.elideV1 := by
 theorem resolve_second : resolve c {.second} = c.elideV2 := by
   simp [resolve, Juncture.elideV2, Juncture.left]
 
-/-- Deleting both vowels of two morphs free of hiatus brings no two vowels together, since a vowel
-before the first or after the second would already be in hiatus with it. -/
+-- Deleting both vowels of two morphs free of hiatus brings no two vowels together, since a vowel
+-- before the first or after the second would already be in hiatus with it.
 private theorem free_resolve_pair (hl : Free c.left) (hr : Free c.right) :
     Free (resolve c {.first, .second}) := by
   have h : resolve c {.first, .second} = c.leftBody ++ c.rightBody := by simp [resolve]
