@@ -63,6 +63,7 @@ instance search prefers, making every later `⊓` noncomputable.
 * [spector-sudo-2017]
 * [fox-2013]
 * [de-finetti-1936]
+* [george-2014]
 -/
 
 @[expose] public section
@@ -228,8 +229,10 @@ quantifiers of [haug-2014], adopted by [coppock-beaver-2015] and [cooper-2023], 
 only when every instance is, so that a quantified presupposition projects existentially.
 Restricted to a pair of instances the families are the binary connectives — Weak Kleene
 `meetWeak`, Strong Kleene `⊓`, and, for Haug's quantifier, Belnap's skip-undefined
-`meetBelnap` (`forallHaug_pair`). Middle Kleene reads its operands left to right, so it has
-no order-free quantifier. -/
+`meetBelnap` (`forallHaug_pair`). Middle Kleene reads its operands left to right, so no
+quantifier restricts to it on a pair of instances. Peters-Kleene deployment, which derives Middle
+Kleene from the classical connectives, takes a quantifier's instances as a single argument, and
+so gives the Strong Kleene quantifiers ([george-2014] §4.1). -/
 
 open Classical in
 /-- `forallWith D p` is the universal quantifier undefined unless `D` holds, and otherwise false
@@ -362,6 +365,9 @@ variable {ι : Sort*} {p : ι → SignType}
   rw [forallStrong, forallWith_eq_zero_iff, not_or, not_exists, not_forall]
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
+
+theorem forallStrong_ne_zero_iff : forallStrong p ≠ 0 ↔ (∃ i, p i = -1) ∨ ∀ i, p i ≠ 0 := by
+  rw [ne_eq, forallStrong_eq_zero_iff, not_and_or, not_forall_not, not_exists]
 
 @[simp] theorem existsStrong_eq_one_iff : existsStrong p = 1 ↔ ∃ i, p i = 1 := by
   rw [existsStrong, existsWith_eq_one_iff, and_iff_right_iff_imp]
