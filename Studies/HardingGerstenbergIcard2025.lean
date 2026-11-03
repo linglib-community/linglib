@@ -16,7 +16,7 @@ Rational Speech Act game, after Frank and Goodman, whose literal meaning is actu
 whose speaker is useful rather than informative, after Sumers and colleagues. The literal
 listener conditions a prior over causal situations on the message (2); the listener acts in a
 decision problem by the softmax of expected reward (3), `RSA.policy`; the speaker maximizes the
-reward of the listener's action, `RSA.actionUtility` (4), less the message's cost (6),
+reward of the listener's action, in expectation (4), less the message's cost (6),
 `RSA.actionSpeaker`; the pragmatic listener is the posterior of the speaker at the prior (7); and
 the goodness of an explanation is the gain in expected reward over acting on the prior alone (8),
 `goodness`. When the listener's interests are unknown the decision problem is the manipulation
@@ -72,7 +72,7 @@ variable {W M A : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpac
 /-- The goodness (8) of a message at a world is the listener's expected reward after the
 message less what acting on the prior alone would have earned. -/
 noncomputable def goodness (πL πPrior : Kernel M A) (R : A → W → ℝ) (m : M) (w : W) : ℝ :=
-  actionUtility πL R m w - actionUtility πPrior R m w
+  ∫ a, R a w ∂(πL m) - ∫ a, R a w ∂(πPrior m)
 
 end Framework
 
@@ -188,13 +188,14 @@ noncomputable abbrev L0 : Kernel Msg World :=
 noncomputable abbrev prior : Kernel Msg World := Kernel.const Msg μ
 
 theorem expectedReward_L0 (a : Act) :
-    expectedReward L0 reward 0 a = 0 ∧
-      expectedReward L0 reward 1 a = if a = 1 then 1 else -1 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two,
+    ∫ w, reward a w ∂(L0 0) = 0 ∧
+      ∫ w, reward a w ∂(L0 1) = if a = 1 then 1 else -1 := by
+  fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_two,
     listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
 
-theorem expectedReward_prior (m : Msg) (a : Act) : expectedReward prior reward m a = 0 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformOn_univ_real_singleton, reward]
+theorem expectedReward_prior (m : Msg) (a : Act) : ∫ w, reward a w ∂(prior m) = 0 := by
+  fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_two,
+      uniformOn_univ_real_singleton, reward]
 
 variable {βL βS : ℝ}
 
@@ -217,14 +218,13 @@ theorem policy_prior_half (m : Msg) : (policy βL prior reward m).real {1} = 1 /
 
 -- (4)
 theorem utility_L0 :
-    actionUtility (policy βL L0 reward) reward 0 0 = 0 ∧
-      actionUtility (policy βL L0 reward) reward 0 1 = 0 ∧
-      actionUtility (policy βL L0 reward) reward 1 0 = 1 - 2 * Real.sigmoid (2 * βL) ∧
-      actionUtility (policy βL L0 reward) reward 1 1 = 2 * Real.sigmoid (2 * βL) - 1 := by
+    ∫ a, reward a 0 ∂(policy βL L0 reward 0) = 0 ∧
+      ∫ a, reward a 1 ∂(policy βL L0 reward 0) = 0 ∧
+      ∫ a, reward a 0 ∂(policy βL L0 reward 1) = 1 - 2 * Real.sigmoid (2 * βL) ∧
+      ∫ a, reward a 1 ∂(policy βL L0 reward 1) = 2 * Real.sigmoid (2 * βL) - 1 := by
   have h := policy_L0_both (βL := βL)
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    rw [actionUtility_of_pair reward (policy βL L0 reward) (a := 1) (a' := 0) (by decide)
-      (by decide)]
+    rw [integral_of_pair (a := 1) (a' := 0) (by decide) (by decide)]
   · rw [h.2]; simp [reward]; norm_num
   · rw [h.2]; simp [reward]; norm_num
   · rw [h.1]; simp [reward]; ring
@@ -304,25 +304,24 @@ theorem goodness_pos (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
   have hsum : (PL βL βS c 0).real {0} + (PL βL βS c 0).real {1} = 1 :=
     measureReal_singleton_add_singleton_of_pair (PL βL βS c 0) (ω := 0) (ω' := 1) (by decide)
       (fun w _ => by fin_cases w <;> simp)
-  have hE : expectedReward (PL βL βS c) reward 0 0 - expectedReward (PL βL βS c) reward 0 1 =
+  have hE : ∫ w, reward 0 w ∂(PL βL βS c 0) - ∫ w, reward 1 w ∂(PL βL βS c 0) =
       2 * ((PL βL βS c 0).real {0} - (PL βL βS c 0).real {1}) := by
-    simp [expectedReward, Fin.sum_univ_two, reward]
+    simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_two, reward]
     ring
-  have hpos : 0 < βL * (expectedReward (PL βL βS c) reward 0 0 -
-      expectedReward (PL βL βS c) reward 0 1) := by
+  have hpos : 0 < βL * (∫ w, reward 0 w ∂(PL βL βS c 0) -
+      ∫ w, reward 1 w ∂(PL βL βS c 0)) := by
     rw [hE]
     have := (μ_singleton 0).2
     nlinarith
-  rw [goodness, actionUtility_of_pair reward (policy βL (PL βL βS c) reward) (a := 0) (a' := 1)
-    (by decide) (by decide),
-    actionUtility_of_pair reward (policy βL prior reward) (a := 0) (a' := 1)
-    (by decide) (by decide), policy_real_of_pair (PL βL βS c) reward (u := 0) (a := 0) (a' := 1)
+  rw [goodness, integral_of_pair (a := 0) (a' := 1) (by decide) (by decide),
+    integral_of_pair (a := 0) (a' := 1) (by decide) (by decide),
+        policy_real_of_pair (PL βL βS c) reward (u := 0) (a := 0) (a' := 1)
     (by decide) (by decide), policy_real_of_pair prior reward (u := 0) (a := 0) (a' := 1)
     (by decide) (by decide), expectedReward_prior, expectedReward_prior]
   have hσ := Real.sigmoid_lt hpos
   rw [Real.sigmoid_zero] at hσ
   simp only [reward, Fin.isValue, ↓reduceIte, Fin.one_eq_zero_iff, mul_one, sub_zero,
-    mul_zero, Real.sigmoid_zero]
+    mul_zero, Real.sigmoid_zero] at hσ ⊢
   norm_num at hσ ⊢
   linarith
 
@@ -356,10 +355,11 @@ theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
   simp [listener_uniformOn_truthful_apply_singleton, measureReal_def, sem]
 
 theorem expectedReward_L0 :
-    expectedReward L0 reward 0 0 = 0 ∧ expectedReward L0 reward 0 1 = -1 ∧
-      expectedReward L0 reward 1 0 = 0 ∧ expectedReward L0 reward 1 1 = -1 / 3 := by
+    ∫ w, reward 0 w ∂(L0 0) = 0 ∧ ∫ w, reward 1 w ∂(L0 0) = -1 ∧
+      ∫ w, reward 0 w ∂(L0 1) = 0 ∧ ∫ w, reward 1 w ∂(L0 1) = -1 / 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [expectedReward, Fin.sum_univ_four, listener_uniformOn_truthful_apply_singleton,
+    simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_four,
+        listener_uniformOn_truthful_apply_singleton,
       measureReal_def, sem, reward] <;> norm_num
 
 /-- The two messages are not equally useful, since at any rationality the listener replaces the
@@ -399,15 +399,16 @@ noncomputable abbrev L0 : Kernel Msg World :=
   RSA.listener (uniformOn Set.univ) (truthful fun m ↦ (sem m : Set World))
 
 theorem expectedReward_L0_conj (a : Act) :
-    expectedReward L0 reward 2 a = if a = 2 then 1 else 0 := by
-  fin_cases a <;> simp [expectedReward, Fin.sum_univ_three,
+    ∫ w, reward a w ∂(L0 2) = if a = 2 then 1 else 0 := by
+  fin_cases a <;> simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_three,
     listener_uniformOn_truthful_apply_singleton, measureReal_def, sem, reward]
 
 theorem expectedReward_L0_C :
-    expectedReward L0 reward 0 0 = 1 / 2 ∧ expectedReward L0 reward 0 1 = -1 / 2 ∧
-      expectedReward L0 reward 0 2 = 1 / 2 := by
+    ∫ w, reward 0 w ∂(L0 0) = 1 / 2 ∧ ∫ w, reward 1 w ∂(L0 0) = -1 / 2 ∧
+      ∫ w, reward 2 w ∂(L0 0) = 1 / 2 := by
   refine ⟨?_, ?_, ?_⟩ <;>
-    simp [expectedReward, Fin.sum_univ_three, listener_uniformOn_truthful_apply_singleton,
+    simp [integral_fintype .of_finite, smul_eq_mul, Fin.sum_univ_three,
+        listener_uniformOn_truthful_apply_singleton,
       measureReal_def, sem, reward]
   norm_num
 
@@ -423,8 +424,8 @@ theorem policy_L0 {βL : ℝ} (hβ : 0 < βL) :
 /-- With a sufficient cost difference the speaker prefers the shorter message although it is
 less useful, the redundancy trade-off of section 4.4.1. -/
 theorem speaker_prefers_short {βL βS : ℝ} (cost : Msg → ℝ)
-    (h : βS * (actionUtility (policy βL L0 reward) reward 2 2 -
-        actionUtility (policy βL L0 reward) reward 0 2)
+    (h : βS * (∫ a, reward a 2 ∂(policy βL L0 reward 2) -
+        ∫ a, reward a 2 ∂(policy βL L0 reward 0))
       < cost 2 - cost 0) :
     (actionSpeaker βS cost (policy βL L0 reward) reward 2).real {2} <
       (actionSpeaker βS cost (policy βL L0 reward) reward 2).real {0} := by

@@ -141,6 +141,9 @@ instance [Nonempty M] (n : ℕ) : IsMarkovKernel (agents pr lam L n).1 := by
       fun _ _ ↦ EReal.coe_ne_top _
   · exact inferInstanceAs (IsMarkovKernel (actionSpeaker _ _ _ _))
 
+instance (n : ℕ) : IsFiniteKernel (agents pr lam L n).2 := by
+  cases n <;> exact inferInstanceAs (IsFiniteKernel (listener _ _))
+
 -- Note 2: every speaker sends every message, false ones included, with positive probability.
 theorem agents_fst_apply_ne_zero (n : ℕ) (s : S) (m : M) : (agents pr lam L n).1 s {m} ≠ 0 := by
   cases n
@@ -153,8 +156,8 @@ theorem agents_succ_fst_real_of_pair (n : ℕ) (s : S) {m m' : M} (hmm' : m ≠ 
     (hall : ∀ c, c = m ∨ c = m') :
     ((agents pr lam L (n + 1)).1 s).real {m} = Real.sigmoid (lam *
       (((agents pr lam L n).2 m).real {s} - ((agents pr lam L n).2 m').real {s})) := by
-  rw [agents_succ_fst, actionSpeaker_real_of_pair (fun a ↦ Pi.single a 1) 0 _ hmm' hall,
-    actionUtility_single, actionUtility_single]
+  rw [agents_succ_fst, actionSpeaker_real_of_pair (fun a ↦ Pi.single a 1) 0 _ hmm' hall]
+  simp only [integral_pi_single]
   simp
 
 -- With two messages, the literal speaker's share of one is the logistic function of the scaled
@@ -195,7 +198,7 @@ theorem agents_image (e : S ≃ S) (he : ∀ s, pr {e s} = pr {s}) (n : ℕ) :
       rfl
   | succ n ih =>
     refine ⟨fun s ↦ softmax_apply_eq fun m ↦ ?_, fun m s ↦ ?_⟩
-    · simp only [actionUtility_single, measureReal_def, ih.2]
+    · simp only [integral_pi_single, measureReal_def, ih.2]
     · exact listener_apply_singleton_of_equiv pr _ e he (fun t ↦ by rw [ih.1]) s
 
 -- §2.4.2: so the expected success of any speaker of the moved lexicon with any hearer of a moved
