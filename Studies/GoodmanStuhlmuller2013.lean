@@ -4,6 +4,7 @@ public import Linglib.Core.Probability.Distributions.Hypergeometric
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.Recursion
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.NumberTree
@@ -104,6 +105,10 @@ instance : IsFiniteKernel (speaker sem α n) :=
 /-- The listener (equation 1) inverts the speaker against a uniform prior. -/
 noncomputable def listener : Kernel U (Fin (N + 1)) :=
   RSA.listener (uniformOn Set.univ) (speaker sem α n)
+
+/-- Equations (1) to (4) are one round of the recursion from the literal listener. -/
+example : listener sem α n = RSA.round (uniformOn Set.univ) (hypergeometric N n)
+    ((hypergeometric N n)†(uniformOn Set.univ)) α 0 (literal sem) := rfl
 
 variable {sem α n} {u : U}
 
@@ -274,6 +279,13 @@ theorem one_full {s : Fin 4} (hs : 1 < s) :
     (listener NumUtt.extension α 3 .one).real {s} <
       (listener NumUtt.extension α 3 .one).real {1} :=
   listener_full_lt hα (by decide) (by revert s; decide)
+
+-- A speaker who knows less can lose a state her listener allowed: after looking at two objects she
+-- never says *all*, though *all* is true at the state with three.
+example : listener QUtt.extension α 2 .all {3} = 0 := by
+  refine RSA.listener_apply_singleton_eq_zero ?_
+  rw [show (3 : Fin 4) = Fin.last 3 from rfl, speaker_last hα (by norm_num) (s := 2) (by decide)]
+  exact RSA.speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _ (by decide)
 
 private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : NumUtt) :
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *

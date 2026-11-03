@@ -651,16 +651,6 @@ theorem speaker_apply_singleton_eq_mul_of_apply_eq [MeasurableSingletonClass U] 
   simp only [div_eq_mul_inv]
   ring
 
-/-- **Synonyms stay synonyms.** Two utterances that the speaker's listener interprets alike are
-interpreted alike by the listener of the speaker, whatever their costs, the rationality, the
-speaker's beliefs and the prior: the speaker weighs them by their costs alone, a constant factor
-that the listener's normalization cancels. Iterated, this is [bergen-levy-goodman-2016]'s
-argument that synonyms are interpreted alike at every level of the recursion. -/
-theorem listener_speaker_apply_congr [MeasurableSingletonClass U] (μ : Measure O) {u' : U}
-    (h : L u = L u') : listener μ (speaker α C L b) u' = listener μ (speaker α C L b) u :=
-  listener_apply_eq_of_apply_singleton_eq_mul (ofReal_exp_ne_zero _) ENNReal.ofReal_ne_top
-    fun _ ↦ speaker_apply_singleton_eq_mul_of_apply_eq h
-
 variable [∀ u, IsFiniteMeasure (L u)]
 
 /-- When every listener dominates every belief, the score of `RSA.speaker_eq_softmax` is real: the
