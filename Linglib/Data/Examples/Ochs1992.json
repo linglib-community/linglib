@@ -1,0 +1,180 @@
+[
+  {
+    "id": "ochs1992_ze",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "Figure 14.1"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "ze",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directIndex", "coarse intensity"],
+      ["indirectIndex", "male voice"]
+    ],
+    "comment": "A sentence-final particle, printed without a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_wa",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "Figure 14.1"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "wa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directIndex", "delicate intensity"],
+      ["indirectIndex", "female voice"]
+    ],
+    "comment": "A sentence-final particle, printed without a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_tummy",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 349"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "tummy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Baby Talk register, phonological simplification, against 'stomach'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Extensive simplification"],
+      ["community", "Mainstream American"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_what",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 351"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "What?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Response to a child's unintelligible utterance, indicating unintelligibility.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Display minimal grasp"]
+    ],
+    "comment": "Printed in English for a response available in both communities and preferred by Samoan caregivers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_dontUnderstand",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 351"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't understand",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Response to a child's unintelligible utterance, indicating unintelligibility.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Display minimal grasp"]
+    ],
+    "comment": "Printed in English for a response available in both communities and preferred by Samoan caregivers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_huh",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 351"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Huh?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Response to a child's unintelligible utterance, indicating unintelligibility.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Display minimal grasp"]
+    ],
+    "comment": "Printed in English for a response available in both communities and preferred by Samoan caregivers; p. 352 repeats it as expressing minimal understanding.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_good",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 353"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Good!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A praise directed at a child for a jointly accomplished activity, with no mention of the mother's role.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Unidirectional"],
+      ["community", "Mainstream American"]
+    ],
+    "comment": "The first letters of the word are broken in the scan.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_castle",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 353"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Look at the beautiful castle you made!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A praise directed at a child for a jointly accomplished activity, with no mention of the mother's role.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Unidirectional"],
+      ["community", "Mainstream American"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "ochs1992_maaloo",
+    "source": {"bibkey": "ochs-1992", "paperLabel": "p. 354"},
+    "reportedIn": null,
+    "method": "corpus",
+    "language": "samo1305",
+    "primaryText": "Maaloo!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Well done!",
+    "context": "A praise, to be answered by a second maaloo directed at its producer.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "Bidirectional"],
+      ["community", "Samoan"]
+    ],
+    "comment": "From the author's own longitudinal study in Falefaa, 1978-9 and 1981 (p. 337).",
+    "verified": "page-image"
+  }
+]

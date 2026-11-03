@@ -1,0 +1,171 @@
+{
+ "bibkey": "ochs-1992",
+ "description": "Ochs's comparison of two speech communities: the verbal strategies of mothers and other caregivers with young children.",
+ "ContributionTable": [
+  {
+   "ID": "figure_14_3",
+   "Name": "Figure 14.3",
+   "Lean": "figure143",
+   "Source": "ochs-1992[Figure 14.3, p. 347]",
+   "Description": "Verbal strategies that constitute mothering.",
+   "comment": "Transcribed from the page image. The figure's column heads give each community's orientation in parentheses, recorded as the parameter orientation."
+  }
+ ],
+ "LanguageTable": [
+  {
+   "ID": "american",
+   "Name": "Mainstream American",
+   "Glottocode": "stan1293",
+   "comment": "A speech community rather than a language, Anglo white middle class American households (p. 337); the Glottocode is of its language."
+  },
+  {
+   "ID": "samoan",
+   "Name": "Samoan",
+   "Glottocode": "samo1305",
+   "comment": "Traditional Western Samoan households (p. 337)."
+  }
+ ],
+ "ParameterTable": [
+  {
+   "ID": "strategy",
+   "Name": "verbal strategy",
+   "Lean": "Strategy",
+   "Description": "The strategies of Figure 14.3, whose three rows are three verbal practices (p. 347)."
+  },
+  {
+   "ID": "orientation",
+   "Name": "orientation",
+   "Lean": "Orientation",
+   "Description": "The orientation printed in parentheses in the column heads of Figure 14.3."
+  },
+  {
+   "ID": "production",
+   "Name": "Production strategies",
+   "Lean": "Production",
+   "Codes": "strategy",
+   "Description": "Verbal strategies for getting messages across to young children (p. 347)."
+  },
+  {
+   "ID": "interpretive",
+   "Name": "Interpretive strategies",
+   "Lean": "Interpretive",
+   "Codes": "strategy",
+   "Description": "Verbal strategies for clarifying messages of young children (p. 347)."
+  },
+  {
+   "ID": "praising",
+   "Name": "Praising",
+   "Lean": "Praising",
+   "Codes": "strategy",
+   "Description": "Verbal strategies for evaluating accomplishments of children and others (p. 347)."
+  }
+ ],
+ "CodeTable": [
+  {
+   "ID": "extensive_simplification",
+   "Parameter_ID": "strategy",
+   "Name": "Extensive simplification",
+   "Lean": "extensiveSimplification",
+   "Description": "Extensive simplification"
+  },
+  {
+   "ID": "little_simplification",
+   "Parameter_ID": "strategy",
+   "Name": "Little simplification",
+   "Lean": "littleSimplification",
+   "Description": "Little simplification"
+  },
+  {
+   "ID": "express_guess",
+   "Parameter_ID": "strategy",
+   "Name": "Express guess and negotiate meaning",
+   "Lean": "expressGuess",
+   "Description": "Express guess and negotiate meaning"
+  },
+  {
+   "ID": "display_minimal_grasp",
+   "Parameter_ID": "strategy",
+   "Name": "Display minimal grasp",
+   "Lean": "displayMinimalGrasp",
+   "Description": "Display minimal grasp"
+  },
+  {
+   "ID": "unidirectional",
+   "Parameter_ID": "strategy",
+   "Name": "Unidirectional",
+   "Lean": "unidirectional",
+   "Description": "Unidirectional"
+  },
+  {
+   "ID": "bidirectional",
+   "Parameter_ID": "strategy",
+   "Name": "Bidirectional",
+   "Lean": "bidirectional",
+   "Description": "Bidirectional"
+  },
+  {
+   "ID": "child_centered",
+   "Parameter_ID": "orientation",
+   "Name": "child-centered",
+   "Lean": "childCentered",
+   "Description": "child-centered"
+  },
+  {
+   "ID": "other_centered",
+   "Parameter_ID": "orientation",
+   "Name": "other-centered",
+   "Lean": "otherCentered",
+   "Description": "other-centered"
+  }
+ ],
+ "ValueTable": [
+  {
+   "Language_ID": "american",
+   "Parameter_ID": "orientation",
+   "Code_ID": "child_centered",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "american",
+   "Parameter_ID": "production",
+   "Code_ID": "extensive_simplification",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "american",
+   "Parameter_ID": "interpretive",
+   "Code_ID": "express_guess",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "american",
+   "Parameter_ID": "praising",
+   "Code_ID": "unidirectional",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "orientation",
+   "Code_ID": "other_centered",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "production",
+   "Code_ID": "little_simplification",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "interpretive",
+   "Code_ID": "display_minimal_grasp",
+   "Contribution_ID": "figure_14_3"
+  },
+  {
+   "Language_ID": "samoan",
+   "Parameter_ID": "praising",
+   "Code_ID": "bidirectional",
+   "Contribution_ID": "figure_14_3"
+  }
+ ]
+}

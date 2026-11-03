@@ -113,7 +113,7 @@ def Factor.dimension : Factor ≃ Dimension where
 
 /-- The mean composite scores of an experiment. -/
 def means (e : Experiment) : AssociationField Variant Dimension ℚ :=
-  .of fun v d ↦ (ratings e v (Factor.dimension.symm d)).mean.toRat
+  fun v d ↦ (ratings e v (Factor.dimension.symm d)).mean.toRat
 
 /-- A sign field is borne out by an experiment when the means order every two variants that the
 field orders. -/
@@ -143,7 +143,7 @@ theorem underspecified_mem_uIoo (e : Experiment) (d : Dimension) :
 /-- On the opposition reading the variants are measured against the underspecified one, every
 difference of means counting. -/
 def contrastField (e : Experiment) : AssociationField Variant Dimension SignType :=
-  .of fun v d ↦ SignType.sign (means e v d - means e .underspecified d)
+  fun v d ↦ SignType.sign (means e v d - means e .underspecified d)
 
 theorem antipodal_contrastField (e : Experiment) :
     (contrastField e).Antipodal .precise .approximate :=
@@ -190,7 +190,7 @@ def Verdict.sign : Verdict → SignType
 /-- On the neutral reading the underspecified variant is the zero point, and a variant indexes a
 dimension in the direction of its reported difference from it (p. 828). -/
 def neutral (e : Experiment) : AssociationField Variant Dimension SignType :=
-  .of fun v d ↦ match v with
+  fun v d ↦ match v with
     | .precise => (verdicts e (Factor.dimension.symm d) .preciseUnderspecified).verdict.sign
     | .underspecified => 0
     | .approximate =>

@@ -3,7 +3,6 @@ module
 public import Linglib.Core.Basic.Sign
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
-public import Mathlib.LinearAlgebra.Matrix.Defs
 
 /-!
 # Association fields
@@ -22,15 +21,13 @@ exactly when the first is associated with every dimension and the second's signs
 
 ## Implementation notes
 
-An association field is a `Matrix`, so composing associations through a mediating domain, as in
-Ochs's indirect indexicality, is matrix multiplication. The carrier is `SignType` for fields that
-record only the direction of an association, and an ordered semiring for strengths that compose.
+The carrier is `SignType` for a field that records only the direction of an association, and a
+linear order for one that records ratings.
 
 ## References
 
 * [eckert-2008]
 * [burnett-2019]
-* [ochs-1992]
 * [beltrama-solt-burnett-2023]
 -/
 
@@ -40,7 +37,7 @@ namespace SocialMeaning
 
 /-- An association field gives each variant of a variable a signed strength toward each trait,
 positive when the variant indexes the trait and negative when it indexes away from it. -/
-abbrev AssociationField (Variant Trait R : Type*) := Matrix Variant Trait R
+abbrev AssociationField (Variant Trait R : Type*) := Variant → Trait → R
 
 namespace AssociationField
 
