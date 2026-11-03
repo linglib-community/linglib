@@ -128,6 +128,12 @@ theorem realizeLeft_singleton (n : ℕ) (t : TRN) : realizeLeft n [t] = List.rep
   | zero => rfl
   | succ n ih => simp [realizeLeft, ih, List.replicate_succ]
 
+theorem realizeLeft_nil (n : ℕ) : realizeLeft n [] = List.replicate n .empty := by
+  cases n <;> rfl
+
+@[simp] theorem realize_nil (e : Edge) (n : ℕ) : realize ⟨[], e⟩ n = List.replicate n .empty := by
+  cases e <;> simp [realize, realizeLeft_nil]
+
 @[simp] theorem realize_singleton (t : TRN) (e : Edge) (n : ℕ) :
     realize ⟨[t], e⟩ n = List.replicate n t := by
   cases e <;> simp [realize, realizeLeft_singleton]

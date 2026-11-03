@@ -64,6 +64,11 @@ theorem mergeRanking_empty_sub (default : List (L × Constraint C)) :
     mergeRanking default [] = default := by
   simp [mergeRanking]
 
+theorem mergeRanking_cons (default sub : List (L × Constraint C)) (l : L) (k : Constraint C) :
+    mergeRanking default ((l, k) :: sub) =
+      (l, k) :: mergeRanking (default.filter (·.1 ≠ l)) sub := by
+  simp [mergeRanking, List.filter_filter, Bool.and_comm, beq_eq_decide]
+
 /-! ### Cophonological evaluation -/
 
 /-- Cophonological evaluation takes the optimal candidates under the default ranking merged
@@ -79,6 +84,26 @@ theorem cophonologicalEval_empty_sub
     cophonologicalEval defaultRanking [] candidates
       = (Tableau.ofList candidates (defaultRanking.map (·.2))).optimal := by
   rw [cophonologicalEval, mergeRanking_empty_sub]
+
+variable {default pre sub : List (L × Constraint C)} {candidates : Finset C} {l : L}
+  {k : Constraint C} {c d : C}
+
+/-- If some candidate satisfies every constraint at the top of the trigger's subranking, so does
+every winner. -/
+theorem eq_zero_of_mem_cophonologicalEval
+    (hc : c ∈ cophonologicalEval default (pre ++ sub) candidates) (hd : d ∈ candidates)
+    (h0 : ∀ p ∈ pre, p.2 d = 0) : ∀ p ∈ pre, p.2 c = 0 := by
+  rw [cophonologicalEval, mergeRanking, List.append_assoc, List.map_append] at hc
+  exact List.forall_mem_map.1 <|
+    Tableau.eq_zero_of_mem_optimal_ofList_append hc hd (List.forall_mem_map.2 h0)
+
+/-- A constraint at the top of the subranking that rates every candidate alike does not change
+the winners. -/
+theorem cophonologicalEval_cons_of_forall_eq (h : ∀ c ∈ candidates, ∀ d ∈ candidates, k c = k d) :
+    cophonologicalEval default ((l, k) :: sub) candidates =
+      cophonologicalEval (default.filter (·.1 ≠ l)) sub candidates := by
+  rw [cophonologicalEval, mergeRanking_cons, List.map_cons,
+    Tableau.optimal_ofList_cons_of_forall_eq h, cophonologicalEval]
 
 end Eval
 
