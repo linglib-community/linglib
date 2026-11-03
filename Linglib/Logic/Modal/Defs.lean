@@ -37,6 +37,7 @@ transitivity are mathlib's.
 
 * [kripke-1963] — relational semantics
 * [blackburn-derijke-venema-2001] — Chapter 3, frame definability
+* [prior-1967] — the mixing principles, density on a reflexive relation, and time's end
 -/
 
 @[expose] public section
@@ -140,8 +141,8 @@ theorem diamond_le_diamond_iff {S : SetRel W' W} : Diamond R ≤ Diamond S ↔ R
   mpr h _ _ := fun ⟨v, hwv, hv⟩ ↦ ⟨v, h hwv, hv⟩
 
 /-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
-tense this is the converse axiom $A \supset GPA$ of $K_t$: what is the case will always have been
-the case. -/
+tense this is the mixing principle $A \supset GPA$ that [prior-1967] takes from Ockham: what is the
+case will always have been the case. -/
 theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
   (diamond_box_gc R).le_u_l p
 
@@ -262,13 +263,15 @@ theorem box_five_iff : Diamond R ≤ Box R ∘ Diamond R ↔ IsEuclidean R where
   mpr _ _ _ := box_five
 
 /-- Den, `◇p → ◇◇p`, the converse of 4 for possibility, defines density: whatever `R` relates, it
-relates through an intermediate world. -/
+relates through an intermediate world. A reflexive relation validates it trivially, through the
+endpoints, as [prior-1967] notes of a reflexive *later than* (p. 39). -/
 theorem diamond_den_iff : Diamond R ≤ Diamond R ∘ Diamond R ↔ R ⊆ R ○ R := by
   rw [show Diamond R ∘ Diamond R = Diamond (R ○ R) from (funext (diamond_comp R R)).symm,
     diamond_le_diamond_iff]
 
 /-- `p → ◇_R ◇_{R⁻¹} p` defines seriality: a world can return to itself through a successor
-exactly when it has one. -/
+exactly when it has one. For the future this is the observation of [prior-1967] that if time has
+an end, *it will have been that p* is not implied by *p* (p. 40). -/
 theorem le_diamond_diamond_inv_iff : id ≤ Diamond R ∘ Diamond R.inv ↔ IsSerial R where
   mp h := ⟨fun w ↦ let ⟨v, hv, _⟩ := h (fun _ ↦ True) w trivial; ⟨v, hv⟩⟩
   mpr _ _ w hp := let ⟨v, hv⟩ := IsSerial.serial (R := R) w; ⟨v, hv, w, hv, hp⟩

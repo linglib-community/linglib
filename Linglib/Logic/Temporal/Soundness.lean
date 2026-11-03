@@ -31,6 +31,7 @@ the atoms it mentions.
 
 * [von-kutschera-1997]
 * [thomason-1984]
+* [prior-1967]
 -/
 
 @[expose] public section
@@ -134,9 +135,9 @@ inductive Provable : OForm Atom → Prop where
   | a1a (a b : OForm Atom) : Provable (((a.imp b).G.and a.G).imp b.G)
   /-- A1b — `K` axiom for `H`. -/
   | a1b (a b : OForm Atom) : Provable (((a.imp b).H.and a.H).imp b.H)
-  /-- A1c — Prior conversion `A ⊃ HFA`. -/
+  /-- A1c — the mixing principle `A ⊃ HFA` of [prior-1967]. -/
   | a1c (a : OForm Atom) : Provable (a.imp a.Fut.H)
-  /-- A1d — Prior conversion `A ⊃ GPA`. -/
+  /-- A1d — the mixing principle `A ⊃ GPA` of [prior-1967]. -/
   | a1d (a : OForm Atom) : Provable (a.imp a.Pst.G)
   /-- A2 — `4` axiom for `G` (transitivity). -/
   | a2 (a : OForm Atom) : Provable (a.G.imp a.G.G)

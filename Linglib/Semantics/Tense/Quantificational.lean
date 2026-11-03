@@ -41,6 +41,8 @@ section LT
 
 variable [LT T]
 
+-- The next five lemmas include the B-series definitions of `P`, `F`, `G` and `H` in [prior-1967]
+-- (p. 38).
 @[simp] theorem diamond_toSetRel_past : ◇[toSetRel ⟦past⟧] P t ↔ ∃ t' < t, P t' := by
   simp [Diamond]
 
@@ -56,34 +58,39 @@ variable [LT T]
 @[simp] theorem box_toSetRel_future : □[toSetRel ⟦future⟧] P t ↔ ∀ t' > t, P t' := by
   simp [Box]
 
-/-- Sometime in the past is left adjoint to always in the future. -/
+/-- Sometime in the past is left adjoint to always in the future. The unit is the mixing principle
+`CpGPp` of [prior-1967] (p. 35) and the counit is his `CPGpp` (p. 38). -/
 theorem diamond_past_box_future_gc :
     GaloisConnection (◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦future⟧] :=
   inv_toSetRel_past (T := T) ▸ diamond_box_gc _
 
-/-- Sometime in the future is left adjoint to always in the past. -/
+/-- Sometime in the future is left adjoint to always in the past. The unit is the mixing principle
+`CpHFp` of [prior-1967] (p. 35) and the counit is his `CFHpp` (p. 38). -/
 theorem diamond_future_box_past_gc :
     GaloisConnection (◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦past⟧] :=
   inv_toSetRel_future (T := T) ▸ diamond_box_gc _
 
-/-- Every time has a past exactly when time has no first moment, so that $Hp \to Pp$ holds. -/
+/-- Every time has a past exactly when time has no first moment, so that $Hp \to Pp$ holds, the
+mirror image of the axiom A2 of [prior-1967] (p. 40). -/
 theorem isSerial_toSetRel_past_iff : IsSerial (toSetRel ⟦past⟧ : SetRel T T) ↔ NoMinOrder T :=
   ⟨fun h ↦ ⟨fun t ↦ let ⟨s, hs⟩ := h.serial t; ⟨s, mem_toSetRel_past.1 hs⟩⟩,
     fun h ↦ ⟨fun t ↦ let ⟨s, hs⟩ := h.exists_lt t; ⟨s, mem_toSetRel_past.2 hs⟩⟩⟩
 
-/-- Every time has a future exactly when time has no last moment, so that $Gp \to Fp$ holds. -/
+/-- Every time has a future exactly when time has no last moment, so that $Gp \to Fp$ holds, the
+axiom A2 of [prior-1967] (p. 38). -/
 theorem isSerial_toSetRel_future_iff : IsSerial (toSetRel ⟦future⟧ : SetRel T T) ↔ NoMaxOrder T :=
   ⟨fun h ↦ ⟨fun t ↦ let ⟨s, hs⟩ := h.serial t; ⟨s, mem_toSetRel_future.1 hs⟩⟩,
     fun h ↦ ⟨fun t ↦ let ⟨s, hs⟩ := h.exists_gt t; ⟨s, mem_toSetRel_future.2 hs⟩⟩⟩
 
-/-- Den for the past: a past is a past of a past, $Pp \to PPp$, exactly when time is dense. -/
+/-- Den for the past: a past is a past of a past, $Pp \to PPp$, exactly when time is dense. This is
+the mirror image of the axiom A4 of [prior-1967]. -/
 theorem diamond_past_den_iff :
     (◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦past⟧] ↔
       DenselyOrdered T :=
   diamond_den_iff.trans toSetRel_past_subset_comp_self_iff
 
 /-- Den for the future: a future is a future of a future, $Fp \to FFp$, exactly when time is
-dense. -/
+dense. This is the axiom A4 of [prior-1967] (pp. 38-39); the modal axiom 4 is his A3. -/
 theorem diamond_future_den_iff :
     (◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) ≤
         ◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦future⟧] ↔
