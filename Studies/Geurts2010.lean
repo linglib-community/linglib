@@ -13,84 +13,51 @@ public import Mathlib.Order.UpperLower.Basic
 # Geurts (2010): Quantity Implicatures
 
 A quantity implicature is an inference about a speaker's beliefs, drawn from the speaker's not
-having said something stronger. If alternatives are closed under conjunction and disjunction, as
-the book declines to do, and Competence is assumed wherever it is consistent, the Standard Recipe
-[gives exactly the exclusive reading of a long
-disjunction](##Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom), but under *may* it [leaves
-the speaker no consistent state](##Sentence.standardRecipe_may_or_eq_empty). Starting from a
-partition of the speaker's states gives [free choice](##Sentence.mem_survivors_may_or_iff) and
-[form-sensitive scalar inferences](##Sentence.mem_survivors_scalar_iff). Comparing readings for
-strength [picks out the upward-entailing scopes](##boundedReading_ssubset_iff) in which the
-verification experiment finds no upper bound.
+having said something stronger. With alternatives closed under conjunction and disjunction, which
+the book declines, and Competence assumed wherever consistent, the Standard Recipe [gives exactly
+the exclusive reading of a long
+disjunction](##Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom); under *may* it [leaves no
+consistent state](##Sentence.standardRecipe_may_or_eq_empty). Partitioning the speaker's states
+instead gives [free choice](##Sentence.mem_survivors_may_or_iff) and [form-sensitive scalar
+inferences](##Sentence.mem_survivors_scalar_iff). Comparing readings for strength [picks out the
+upward-entailing scopes](##boundedReading_ssubset_iff), where the experiment finds no upper bound.
 
 ## Implementation notes
 
-* A state is the set of worlds compatible with what the speaker believes. For the performative (19),
-  p. 118, it is read as what the speaker permits, the text giving the case the same logical
-  structure.
-* `may` quantifies over the speaker's own state, so that the assumption of p. 111, footnote 5, that
-  a speaker who does not believe that something may be so believes that it is not, holds by
-  construction.
-* `NeoGricean.IsSecondaryImplicature` is not the book's rule: the Standard Recipe is a heuristic and
-  the hearer may adopt or reject Competence (pp. 37, 39–40). It is used as the necessary condition
-  on Competence of p. 41, checked per alternative rather than jointly, and strengthening wherever it
-  holds is an assumption made here.
-* `Sentence.survivors` applies the heuristic (i) categorically to single states with one alternative
-  per cell, where p. 116 has "probably", p. 121 weighs states against each other and pp. 113 and 115
-  allow several sentences. `Sentence.Entails` preserves belief, not truth.
-* `Sentence.size` stands in for economy and is one instance of the preorder `cost`, where lower
-  means more available (p. 123). Previous use in (23), p. 122, is modelled by lowering the sentence
-  to zero, although the text has the *construction* used, of the interns.
-* (26b), p. 124, comes out under the heuristic (i) alone, by length, where the text credits
-  monolexicality and salience.
-* The upper sets of the worlds of (29), p. 61, are the closure of the disjuncts under conjunction
-  and disjunction ([each is a union of conjunctions](##eq_iUnion_iInter_of_isUpperSet)), up to the
-  empty set and the whole space, neither of which bears on a strong implicature.
-* The alternatives of (20) are a reconstruction, since p. 120 prints none; the extension to any
-  number of disjuncts in `inter_nonempty_of_forall_not_subset` is not the text's. A state of (32),
-  p. 179, as a relation between worlds and values of the referent, renders a model the text calls
-  "extremely sketchy" (p. 178).
-* The operator O of (39), p. 148, is `Exhaustification.exh`.
-* (61b) and (61c) are read through the quantifiers of (62), which the text calls parallel (p. 159).
+* A state is the worlds compatible with the speaker's beliefs. `may` quantifies over it, which
+  builds in footnote 5 of p. 111.
+* `IsSecondaryImplicature` serves as the necessary condition on Competence of p. 41, per
+  alternative; strengthening wherever it holds is an assumption made here, the book's Recipe being
+  a heuristic.
+* `Sentence.survivors` applies heuristic (i) categorically, with one alternative per cell and `size`
+  for economy, so (26b) comes out by length rather than the monolexicality p. 124 credits.
+* Upper sets are the closure of the disjuncts under conjunction and disjunction ([each is a union of
+  conjunctions](##eq_iUnion_iInter_of_isUpperSet)).
+* The alternatives of (20), p. 120, are reconstructed; (61b, c) are read through the quantifiers of
+  (62).
 
 ## Errata
 
-* pp. 63–64 say that (35) enables the inferences that the speaker does not know whether or not `x`.
-  With three disjuncts they enable only that the speaker does not believe `x`: [believing a disjunct
-  false stays consistent](##isSecondaryImplicature_Ici) with Quality and the weak implicatures of
-  (34) and (35), though [not of all disjuncts together](##eq_empty_of_forall_subset_compl_Ici). So
-  the looseness p. 40 calls immaterial matters here, and "why not infer one of the two?" (p. 41) is
-  answered only for two.
-* p. 64 rejects closing the alternatives under disjunction as repeating the trouble of (32). Under
-  that closure the weak implicature of *A or B* blocks the strong implicature of (32b), since
-  Quality would then give belief in *A or B*: [only alternatives false wherever just one disjunct
-  holds pass](##isSecondaryImplicature_upperSets_iff), and the closure [gives ignorance about every
-  disjunct](##notMem_polar_Ici_of_mem_primaryImplicatures). (7d), p. 167, is such a disjunctive
-  alternative, and p. 168 itself blocks its strengthening.
-* p. 115 concludes that George "may be American", for British.
-* p. 143 paraphrases the negated upper-bounded *like* in (25) as "either we don't like coffee or we
-  don't love it". [It is *or we love it*](##compl_sdiff_like): the printed form excludes the
-  continuation *we LOVE it*, and p. 187 has "like but not love".
-* p. 149 says that (42b) expresses the "many but not all" reading of (41). The computation on the
-  same page, p. 150, and [`exh`](##exh_compl_many) give *some but not many*.
-* p. 168 cites (9a), but (9) has no parts.
-* (11), p. 169, prints the disjunction outside the speaker's belief, where the prose has it inside,
-  as Competence of the subject, and (16), p. 170, follows it. [Given (10) or (15) the two
-  coincide](##subset_or_subset_iff), so the derivation stands.
-* (46), p. 188, prints *drinking and drinking non-alcoholic beverages*. By (39) the prejacent is
-  conjoined with the *denial* of the alternative.
-* p. 189 overstates in putting the shift of a lower bound "simply out of reach" of O: [O reaches it
-  given the alternative RICH₁](##exh_rich), the stipulation pp. 188–189 grant elsewhere as "wildly
-  ad hoc".
+* pp. 63–64: with three disjuncts (35) gives only non-belief in `x`, since [believing it false stays
+  consistent](##isSecondaryImplicature_Ici).
+* p. 64: closure under disjunction does not repeat the trouble of (32): [only alternatives false
+  wherever just one disjunct holds pass](##isSecondaryImplicature_upperSets_iff), and it [gives
+  ignorance](##notMem_polar_Ici_of_mem_primaryImplicatures).
+* p. 115: "American" for British.
+* p. 143: (25) should end [*or we love it*](##compl_sdiff_like).
+* p. 149: (42b) is [*some but not many*](##exh_compl_many), not "many but not all".
+* p. 168: (9a) for (9).
+* pp. 169–170: (11) and (16) put the disjunction outside the belief, [harmlessly given (10) or
+  (15)](##subset_or_subset_iff).
+* p. 188: (46) omits *not*.
+* p. 189: [O reaches RICH₂ given RICH₁](##exh_rich), so "out of reach" overstates.
 
 ## TODO
 
-* The presupposition-based implicatures of §8.3, the open alternatives of §6.6 with conditional
-  perfection, and Spector's route for belief reports (pp. 169–170, [spector-2006]) are not
-  formalized.
-* Separate the consistency check from the innocent exclusion of [fox-2007] at (34) and (35), which
-  should locate what disjunctive closure adds.
-* The experiments of Chapters 4 and 5 belong in `Data/Statistics`.
+* §8.3 presupposition implicatures, §6.6 open alternatives, and Spector's route (pp. 169–170,
+  [spector-2006]).
+* The consistency check against the innocent exclusion of [fox-2007] at (34) and (35).
+* The experiments of Chapters 4 and 5, for `Data/Statistics`.
 
 ## References
 
@@ -475,7 +442,8 @@ private theorem believes_entails_top (hs : s.Nonempty) (hu : u.Believes V s) (hx
 noncomputable abbrev sayOr (V : P → Set W) (p q : P) : Set W → Sentence P :=
   sayEither V (atom p) (atom q) (atom p) (atom q) (or (atom p) (atom q))
 
-/-- (17), p. 117: *George may be British or Canadian*, with the alternatives (18). -/
+/-- (17), p. 117: *George may be British or Canadian*, with the alternatives (18). For the
+performative (19), p. 118, a state is what the speaker permits. -/
 noncomputable abbrev sayMayOr (V : P → Set W) (p q : P) : Set W → Sentence P :=
   say V (atom p) (atom q) (may (atom p)) (may (atom q)) (and (may (atom p)) (may (atom q)))
 
@@ -579,8 +547,8 @@ theorem subset_compl_of_mem_survivors_scalar
     s ⊆ (V q)ᶜ :=
   (Question.mem_polar.1 hc).resolve_left ((mem_survivors_scalar_iff.1 h).2.2 le_rfl)
 
--- (23), p. 122: with *many though not all* in the discourse, previous use lowers that alternative,
--- the state of believing *not all* goes too, and no opinion is left
+-- (23), p. 122: with *many though not all* in the discourse (of the interns, in the text), previous
+-- use lowers that alternative, the state of believing *not all* goes too, and no opinion is left
 theorem mem_survivors_indicator_iff (hx : x.size ≤ u.size) :
     s ∈ survivors V (({and u (neg x)}ᶜ : Set (Sentence P)).indicator size) u (sayScalar V u x) ↔
       s.Nonempty ∧ u.Believes V s ∧ x.Poss V s ∧ (neg x).Poss V s := by
@@ -652,9 +620,8 @@ theorem areAlternatives_sayMany (hm : Monotone many) :
 
 end Pizza
 
--- (31), p. 61, with p. 115: a speaker who rules out a disjunct could have used the shorter
--- disjunction, so that the survivors of the heuristic consider every disjunct possible, at any
--- length
+-- (31), p. 61, with p. 115, extending the text: a speaker who rules out a disjunct could have used
+-- the shorter disjunction, so the survivors of the heuristic consider every disjunct possible
 theorem inter_nonempty_of_forall_not_subset {ι : Type*} {A : ι → Set W} {J : Finset ι} {i : ι}
     (hq : s ⊆ ⋃ j ∈ J, A j) (h : ∀ J' ⊂ J, ¬ s ⊆ ⋃ j ∈ J', A j) (hi : i ∈ J) :
     (s ∩ A i).Nonempty := by
