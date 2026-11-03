@@ -1,8 +1,9 @@
 module
 
+public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Questions.Closure
-public import Studies.Dayal2016
+public import Linglib.Semantics.Questions.Number
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
@@ -12,23 +13,26 @@ public import Linglib.Data.Examples.Readers
 
 Farsi singular *what* interrogatives, bare (*chi*) and complex (*che ketab-i*), allow singular and
 plural answers; with the differential object marker *-ro* only the bare ones do. An interrogative
-ranges over the conjunctions and disjunctions of the nonempty subsets of its domain, so [a strongest
-true answer exists as soon as some answer is true](##dom_hamblin), whatever the domain's number.
+ranges over the conjunctions and disjunctions of the nonempty subsets of its domain, so [it
+presupposes only that some answer is true](##presupposition_hamblin), whatever the domain's number.
 *-ro* restricts those subsets to singletons, [leaving the individuals of the
-domain](##hamblinRo_eq_image) and with them Dayal's presupposition: [each interrogative presupposes
-what one of Dayal's three does](##Wh.presupposition_eq), and [the free choice disjunctions under
-*must* disappear](##Wh.freeChoice_iff). [The paper's answer judgments follow](##rows_agree).
+domain](##hamblinRo_eq_image), with Dayal's presupposition. [Each interrogative is then felicitous
+on one of three domains](##Range.felicitous_eq), and [the free choice disjunctions under *must*
+disappear](##Range.freeChoice_iff). [The paper's answer judgments follow](##rows_agree).
 
 ## Implementation notes
 
-* A world is the plurality bought, as in `Dayal2016`, so the distributive *bought* of `x` is
-  `Set.Ici x`. The subsets of a domain are finite, as mathlib's closures make them.
-* The paper derives no plural interrogative. Without *-ro* a plural phrase here ranges over
-  pluralities alone, as the paper reports Maldonado proposing for plural bare interrogatives, and
-  `Wh.presupposition` does not let a singular phrase compete with it: with competition in both
-  directions the singular phrase would lose its plural answers.
+* A world is the plurality bought, so the distributive *bought* of `x` is `Set.Ici x`. The subsets
+  of a domain are finite, as mathlib's closures make them.
+* The paper gives no LF for its plural interrogatives. Without *-ro* a plural phrase here ranges
+  over pluralities alone, which the paper reports Maldonado proposing for bare phrases; extending it
+  to complex phrases is this file's choice. Competition in number applies only over individuals:
+  [world by world over conjunctions and disjunctions it would cost a singular phrase its plural
+  answers](##unblocked_hamblin_domain_singular).
 * The free choice answers some informants accept to *-ro* questions under *must* are not fitted: the
   analysis predicts presupposition failure, and the paper takes them to be rejecting it.
+* The paper's taxonomy of interrogatives stays a row feature, since no theory-layer type of *wh*
+  phrase exists for a Farsi fragment entry to instantiate.
 
 ## Errata
 
@@ -36,9 +40,10 @@ what one of Dayal's three does](##Wh.presupposition_eq), and [the free choice di
   the empty set](##not_exists_forall_ncard_eq_one). `IsSingletonSelection` requires it of nonempty
   sets.
 * The paper objects that singular interrogatives over pluralities would not compete with plural
-  ones, wrongly admitting singular answers to the latter. [Its own Hamblin sets leave the
-  competition equally vacuous](##unblocked_dom_hamblin), so (25) needs the plural domain above,
-  while [with *-ro* Dayal's competition returns](##unblocked_dom_hamblinRo) and (28) does not.
+  ones, wrongly admitting singular answers to the latter. [Over Dayal's domains its own Hamblin sets
+  leave any competition among them vacuous](##unblocked_hamblin_whDomain), so (25) must come from
+  the phrase's domain or from plurals lacking those Hamblin sets, while [with *-ro* Dayal's
+  competition returns](##unblocked_hamblinRo_whDomain) and (28) needs neither.
 * (51) prints *have-to* in the LFs of the non-modal (49)–(50), and (40), (45) and (53) print
   `B[(thing₁,r) ∧ B(thing₂,r)]` for `[B(thing₁,r) ∧ B(thing₂,r)]`.
 
@@ -63,7 +68,7 @@ what one of Dayal's three does](##Wh.presupposition_eq), and [the free choice di
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Question Set Competition Quantifier Dayal2016
+open Question Set Competition Quantifier
 open scoped SetRel
 
 variable {E W : Type*}
@@ -71,9 +76,6 @@ variable {E W : Type*}
 /-! ### Hamblin sets over conjunctions and disjunctions -/
 
 section Hamblin
-
-/-- The worlds where ANS (8) is defined on a Hamblin set, the `dom` of EXHp (15). -/
-def dom (H : Set (Set W)) : Set W := {w | IsExhaustivelyResolvable H w}
 
 variable (P : E → Set W) (D : Set E)
 
@@ -118,26 +120,22 @@ theorem subset_biUnion_of_mem_hamblin (hq : q ∈ hamblin P D) : q ⊆ ⋃ x ∈
   · exact (biInter_subset_of_mem hx).trans (subset_biUnion_of_mem (hXD hx))
   · exact biUnion_subset_biUnion_left hXD
 
--- (10), (11), (41), (46)
+-- (10), (11), (41), (46): the conjunctions give the answer, the disjunctions change nothing
 theorem isStrongestTrueAnswer_hamblin (hD : D.Finite) (h : ∃ x ∈ D, w ∈ P x) :
     IsStrongestTrueAnswer (hamblin P D) w (⋂ x ∈ {x ∈ D | w ∈ P x}, P x) := by
-  obtain ⟨x₀, hx₀, hw₀⟩ := h
-  have hT : {x ∈ D | w ∈ P x}.Finite := hD.subset (sep_subset _ _)
-  have hmem : ⋂ x ∈ {x ∈ D | w ∈ P x}, P x ∈ hamblin P D :=
-    mem_hamblin.2 ⟨hT.toFinset, ⟨x₀, by simp [hx₀, hw₀]⟩, by simp +contextual [subset_def],
-      .inl (by simp)⟩
-  refine ⟨⟨hmem, by simp +contextual⟩, fun q ⟨hq, hw⟩ ↦ ?_⟩
-  obtain ⟨X, -, hXD, rfl | rfl⟩ := mem_hamblin.1 hq
-  · exact subset_iInter₂ fun y hy ↦
-      biInter_subset_of_mem (s := {x ∈ D | w ∈ P x}) ⟨hXD hy, mem_iInter₂.1 hw y hy⟩
-  · obtain ⟨y, hy, hwy⟩ := mem_iUnion₂.1 hw
-    exact (biInter_subset_of_mem (s := {x ∈ D | w ∈ P x}) ⟨hXD hy, hwy⟩).trans
-      (subset_biUnion_of_mem hy)
+  have hs := isStrongestTrueAnswer_infClosure_image hD h
+  refine ⟨⟨.inl hs.1.1, hs.1.2⟩, ?_⟩
+  rintro q ⟨hq | hq, hw⟩
+  · exact hs.2 ⟨hq, hw⟩
+  · obtain ⟨t, -, hts, rfl⟩ := Set.mem_supClosure_image.1 hq
+    obtain ⟨x, hx, hwx⟩ := mem_iUnion₂.1 hw
+    exact (hs.2 ⟨subset_infClosure (mem_image_of_mem _ (hts hx)), hwx⟩).trans
+      (subset_biUnion_of_mem hx)
 
 /-- An interrogative over conjunctions and disjunctions presupposes only that some member of its
 domain makes the nucleus true: the conjunction over all such members is the strongest true answer,
 however many there are. -/
-theorem dom_hamblin (hD : D.Finite) : dom (hamblin P D) = ⋃ x ∈ D, P x :=
+theorem presupposition_hamblin (hD : D.Finite) : presupposition (hamblin P D) = ⋃ x ∈ D, P x :=
   Set.ext fun _ ↦ ⟨fun h ↦ let ⟨_, hq, hw⟩ := h.exists_mem; subset_biUnion_of_mem_hamblin hq hw,
     fun h ↦ ⟨_, isStrongestTrueAnswer_hamblin hD (by simpa using h)⟩⟩
 
@@ -180,144 +178,206 @@ theorem hamblinRo_eq_image : hamblinRo P D = P '' D := by
 
 end Hamblin
 
-/-! ### Number -/
+/-! ### Number and competition -/
 
 section Number
 
-variable [CompleteLattice E] {a b w : E}
+/-- The number marking of an interrogative phrase. -/
+inductive Marking
+  /-- No semantic number, as the root (37) of a singular bare phrase or an English bare phrase. -/
+  | neutral
+  /-- SING (42), of a singular complex phrase. -/
+  | singular
+  /-- Plural marking. -/
+  | plural
+  deriving DecidableEq
 
-theorem exists_mem_domain_le [Finite E] (n : Option Number) (hw : w ≠ ⊥) : ∃ x ∈ domain n, x ≤ w :=
+/-- The number of Dayal's domain that a marking carries. -/
+def Marking.number : Marking → Option Number
+  | .neutral => none
+  | .singular => some .singular
+  | .plural => some .plural
+
+/-- What an interrogative phrase ranges over. -/
+inductive Range
+  /-- The individuals of Dayal's domains (9), (12), (14). -/
+  | individuals
+  /-- The conjunctions and disjunctions (29) over a marked domain. -/
+  | quantifiers
+  /-- The same over singletons, with *-ro* (51). -/
+  | singletons
+  deriving DecidableEq
+
+/-- The marking whose domain a phrase presupposes: its own, except that a singular phrase over
+quantifiers patterns with a neutral one. -/
+def Range.pattern : Range → Marking → Marking
+  | .quantifiers, .singular => .neutral
+  | _, m => m
+
+variable [CompleteLattice E] {w : E}
+
+/-- The domain a marked phrase ranges over, `[−atomic]` of the non-null individuals when plural. -/
+def Marking.domain : Marking → Set E
+  | .neutral => whDomain none
+  | .singular => whDomain (some .singular)
+  | .plural => {x | Number.nonAtomsOf (· ≠ ⊥) x}
+
+/-- The Hamblin set of a phrase whose nucleus is distributive. -/
+def Range.hamblinSet : Range → Marking → Set (Set E)
+  | .individuals, m => Ici '' whDomain m.number
+  | .quantifiers, m => hamblin Ici m.domain
+  | .singletons, m => hamblinRo Ici m.domain
+
+/-- The worlds where a question is defined: ANS (8), under the competition of EXHp (15) when the
+phrase ranges over individuals. -/
+def Range.felicitous : Range → Marking → Set E
+  | .individuals, m => whFelicitous m.number
+  | r, m => presupposition (r.hamblinSet m)
+
+theorem Marking.mem_domain_plural {x : E} :
+    x ∈ Marking.plural.domain ↔ x ≠ ⊥ ∧ ¬ IsAtom x :=
+  and_congr_right fun _ ↦ not_congr Mereology.atom_iff_isAtom
+
+theorem isUpperSet_domain_plural : IsUpperSet (Marking.plural.domain : Set E) := fun _ _ hxy hx ↦ by
+  obtain ⟨hne, hna⟩ := Marking.mem_domain_plural.1 hx
+  exact Marking.mem_domain_plural.2 ⟨fun h ↦ hne (le_bot_iff.1 (h ▸ hxy)),
+    fun hy ↦ hna ((hy.le_iff_eq hne).1 hxy ▸ hy)⟩
+
+theorem bot_notMem_domain (m : Marking) : (⊥ : E) ∉ m.domain := by
+  cases m <;> simp [Marking.domain, whDomain, Number.nonAtomsOf]
+
+theorem Marking.atom_mem_domain_iff {a : E} (ha : IsAtom a) (m : Marking) :
+    a ∈ m.domain ↔ m ≠ .plural := by
+  cases m <;> simp [Marking.domain, Number.nonAtomsOf, Mereology.atom_iff_isAtom, ha,
+    mem_whDomain_of_isAtom]
+
+theorem domain_neutral : Marking.domain .neutral = {x : E | x ≠ ⊥} :=
+  whDomain_of_ne_singular (by simp)
+
+theorem presupposition_hamblinRo_domain [IsAtomistic E] (m : Marking) :
+    presupposition (hamblinRo Ici m.domain) = (m.domain : Set E) := by
+  rw [hamblinRo_eq_image]
+  cases m
+  · exact presupposition_whHamblin none
+  · exact presupposition_whHamblin (some .singular)
+  · refine Set.ext fun w ↦ ⟨fun h ↦ ?_, fun hw ↦ ⟨Ici w, ⟨⟨w, hw, rfl⟩, self_mem_Ici⟩, ?_⟩⟩
+    · obtain ⟨_, ⟨x, hx, rfl⟩, hxw⟩ := h.exists_mem
+      exact isUpperSet_domain_plural hxw hx
+    · rintro _ ⟨⟨x, -, rfl⟩, hxw⟩
+      exact Ici_subset_Ici.2 hxw
+
+section Finite
+
+variable [Finite E]
+
+theorem exists_mem_whDomain_le (n : Option Number) (hw : w ≠ ⊥) : ∃ x ∈ whDomain n, x ≤ w :=
   let ⟨a, ha, haw⟩ := (eq_bot_or_exists_atom_le w).resolve_left hw
-  ⟨a, mem_domain_of_isAtom n ha, haw⟩
+  ⟨a, mem_whDomain_of_isAtom n ha, haw⟩
 
-theorem dom_hamblin_domain [Finite E] (n : Option Number) :
-    dom (hamblin Ici (domain n)) = {w : E | w ≠ ⊥} := by
-  rw [dom_hamblin (toFinite _)]
+theorem presupposition_hamblin_whDomain (n : Option Number) :
+    presupposition (hamblin Ici (whDomain n)) = {w : E | w ≠ ⊥} := by
+  rw [presupposition_hamblin (toFinite _)]
   refine Set.ext fun w ↦ ⟨fun h ↦ ?_, fun hw ↦ ?_⟩
   · rintro rfl
     obtain ⟨x, hx, hxw⟩ := mem_iUnion₂.1 h
     exact hx.2 (le_bot_iff.1 hxw)
-  · obtain ⟨x, hx, hxw⟩ := exists_mem_domain_le n hw
+  · obtain ⟨x, hx, hxw⟩ := exists_mem_whDomain_le n hw
     exact mem_biUnion hx hxw
 
+-- (21), (25), (40), (45)
+theorem presupposition_hamblin_domain (m : Marking) :
+    presupposition (hamblin Ici m.domain) = ((Range.pattern .quantifiers m).domain : Set E) := by
+  cases m
+  · exact (presupposition_hamblin_whDomain none).trans domain_neutral.symm
+  · exact (presupposition_hamblin_whDomain (some .singular)).trans domain_neutral.symm
+  · rw [presupposition_hamblin (toFinite _)]
+    exact Set.ext fun w ↦ ⟨fun h ↦ let ⟨_, hx, hxw⟩ := mem_iUnion₂.1 h;
+      isUpperSet_domain_plural hxw hx, fun hw ↦ mem_biUnion hw self_mem_Ici⟩
+
 -- (40), (45), (46): the answer to a plural world, even over atoms, is the conjunction of its parts
-theorem dayalAns_hamblin_domain [IsAtomistic E] [Finite E] (n : Option Number) (hw : w ≠ ⊥) :
-    dayalAns (hamblin Ici (domain n)) w = some (Ici w) := by
-  have h := isStrongestTrueAnswer_hamblin (P := Ici) (toFinite (domain n))
-    (exists_mem_domain_le n hw)
-  rwa [show ⋂ x ∈ {x ∈ domain n | w ∈ Ici x}, Ici x = Ici w by
+theorem dayalAns_hamblin_whDomain [IsAtomistic E] (n : Option Number) (hw : w ≠ ⊥) :
+    dayalAns (hamblin Ici (whDomain n)) w = some (Ici w) := by
+  have h := isStrongestTrueAnswer_hamblin (P := Ici) (toFinite (whDomain n))
+    (exists_mem_whDomain_le n hw)
+  rwa [show ⋂ x ∈ {x ∈ whDomain n | w ∈ Ici x}, Ici x = Ici w by
     rw [← Ici_sSup]
-    exact congrArg Ici (sSup_domain_le n w), ← dayalAns_eq_some_iff] at h
+    exact congrArg Ici (sSup_whDomain_le n w), ← dayalAns_eq_some_iff] at h
 
 -- p. 8: the objection to singular interrogatives over pluralities, against (29)
-theorem unblocked_dom_hamblin [Finite E] (n : Option Number) :
-    unblocked numberAlts (fun m ↦ dom (hamblin Ici (domain m))) n = {w : E | w ≠ ⊥} := by
-  simp only [dom_hamblin_domain]
+theorem unblocked_hamblin_whDomain (alts : Option Number → Set (Option Number))
+    (n : Option Number) :
+    unblocked alts (fun m ↦ presupposition (hamblin Ici (whDomain m))) n = {w : E | w ≠ ⊥} := by
+  simp only [presupposition_hamblin_whDomain]
   exact unblocked_eq_self fun ⟨_, _, h⟩ ↦ h.ne rfl
 
--- (26)–(28), (53), (55): with *-ro*, Dayal's domains and competition
-theorem unblocked_dom_hamblinRo (n : Option Number) :
-    unblocked numberAlts (fun m ↦ dom (hamblinRo Ici (domain m))) n = felicitous (E := E) n := by
+-- (23): competition in both directions, world by world, would cost the singular its plural answers
+theorem unblocked_hamblin_domain_singular {a : E} (ha : IsAtom a) :
+    unblocked (fun _ ↦ {.singular, .plural}) (fun m ↦ presupposition (hamblin Ici m.domain))
+      Marking.singular = {w : E | IsAtom w} := by
+  have hsg : presupposition (hamblin Ici Marking.singular.domain) = {w : E | w ≠ ⊥} :=
+    (presupposition_hamblin_domain .singular).trans domain_neutral
+  have hpl := presupposition_hamblin_domain (E := E) .plural
+  refine (unblocked_eq_sdiff (ψ := .plural) (by simp) ?_ ?_).trans ?_
+  · rw [hsg, hpl]
+    exact ⟨fun _ hw ↦ (Marking.mem_domain_plural.1 hw).1,
+      fun h ↦ (Marking.mem_domain_plural.1 (h ha.ne_bot)).2 ha⟩
+  · rintro χ (rfl | rfl) hχ
+    · exact absurd hχ (ssubset_irrefl _)
+    · exact subset_rfl
+  · rw [hsg, hpl]
+    exact Set.ext fun w ↦ ⟨fun ⟨h, hn⟩ ↦ by_contra fun hna ↦
+      hn (Marking.mem_domain_plural.2 ⟨h, hna⟩),
+      fun h ↦ ⟨h.ne_bot, fun hp ↦ (Marking.mem_domain_plural.1 hp).2 h⟩⟩
+
+end Finite
+
+-- (28): *-ro* restores Dayal's domains and competition
+theorem unblocked_hamblinRo_whDomain (n : Option Number) :
+    unblocked numberAlts (fun m ↦ presupposition (hamblinRo Ici (whDomain m))) n =
+      whFelicitous (E := E) n := by
   simp only [hamblinRo_eq_image]
   rfl
 
-/-- The pluralities, the domain of a plural interrogative phrase without *-ro*. -/
-def pluralities : Set E := {x | x ≠ ⊥ ∧ ¬ IsAtom x}
+end Number
 
-theorem isUpperSet_pluralities : IsUpperSet (pluralities : Set E) :=
-  fun _ _ hxy ⟨hx, hna⟩ ↦ ⟨fun h ↦ hx (le_bot_iff.1 (h ▸ hxy)),
-    fun hy ↦ hna ((hy.le_iff_eq hx).1 hxy ▸ hy)⟩
+/-! ### Two things -/
 
--- (21), (25)
-theorem dom_hamblin_pluralities [Finite E] :
-    dom (hamblin Ici pluralities) = (pluralities : Set E) := by
-  rw [dom_hamblin (toFinite _)]
-  exact Set.ext fun w ↦ ⟨fun h ↦ let ⟨_, hx, hxw⟩ := mem_iUnion₂.1 h; isUpperSet_pluralities hxw hx,
-    fun hw ↦ mem_biUnion hw self_mem_Ici⟩
+section Atoms
 
-private theorem not_isAtom_sup (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) : ¬ IsAtom (a ⊔ b) :=
+variable [CompleteLattice E] {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+
+include ha hb hab
+
+private theorem not_isAtom_sup : ¬ IsAtom (a ⊔ b) :=
   fun h ↦ hab (((h.le_iff_eq ha.ne_bot).1 le_sup_left).trans
     ((h.le_iff_eq hb.ne_bot).1 le_sup_right).symm)
 
-private theorem sup_ne_bot (ha : IsAtom a) : a ⊔ b ≠ ⊥ :=
-  fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-
-theorem sup_mem_domain_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (n : Option Number) :
-    a ⊔ b ∈ domain n ↔ n ≠ some .singular := by
-  by_cases hn : n = some .singular
-  · simp [hn, mem_domain_singular, not_isAtom_sup ha hb hab]
-  · simp [hn, domain_of_ne_singular hn, sup_ne_bot ha]
+theorem Marking.sup_mem_domain_iff (m : Marking) : a ⊔ b ∈ m.domain ↔ m ≠ .singular := by
+  have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
+  have hna := not_isAtom_sup ha hb hab
+  cases m <;> simp [Marking.domain, Number.nonAtomsOf, Mereology.atom_iff_isAtom, hne, hna,
+    mem_whDomain_singular, whDomain_of_ne_singular]
 
 variable [IsAtomistic E]
 
-theorem atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (n : Option Number) :
-    a ∈ felicitous n ↔ n = none ∨ n = some .singular := by
-  rcases n with _ | m
-  · simp [felicitous_none, ha.ne_bot]
-  · by_cases hm : m = .singular
-    · simp [hm, felicitous_singular, ha]
-    · simp [felicitous_of_ne_singular ha hb hab hm, ha, hm]
+-- each marking's domain is where Dayal's question of that number is felicitous
+theorem Marking.whFelicitous_number (m : Marking) : whFelicitous m.number = (m.domain : Set E) := by
+  cases m
+  · exact whFelicitous_none.trans domain_neutral.symm
+  · exact whFelicitous_singular.trans (Set.ext fun _ ↦ mem_whDomain_singular.symm)
+  · exact (whFelicitous_plural ha hb hab).trans (Set.ext fun _ ↦ Marking.mem_domain_plural.symm)
 
-theorem sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (n : Option Number) :
-    a ⊔ b ∈ felicitous n ↔ n ≠ some .singular := by
-  rcases n with _ | m
-  · simp [felicitous_none, sup_ne_bot ha]
-  · by_cases hm : m = .singular
-    · simp [hm, felicitous_singular, not_isAtom_sup ha hb hab]
-    · simp [felicitous_of_ne_singular ha hb hab hm, sup_ne_bot ha, not_isAtom_sup ha hb hab, hm]
-
-end Number
-
-/-! ### The interrogatives -/
-
-/-- What an interrogative phrase ranges over. -/
-inductive Wh
-  /-- The individuals of a number, as on Dayal's analysis and, by `hamblinRo_eq_image`, with
-  *-ro*. -/
-  | individuals (n : Option Number)
-  /-- The conjunctions and disjunctions (29) over the individuals of a number. -/
-  | quantifiers (n : Option Number)
-  /-- The conjunctions and disjunctions over pluralities. -/
-  | plural
-  deriving DecidableEq
-
-namespace Wh
-
-variable [CompleteLattice E] {a b : E}
-
-/-- The Hamblin set of an interrogative whose nucleus is distributive. -/
-def hamblinSet : Wh → Set (Set E)
-  | .individuals n => Dayal2016.hamblin n
-  | .quantifiers n => AlonsoOvalleMoghiseh2025b.hamblin Ici (domain n)
-  | .plural => AlonsoOvalleMoghiseh2025b.hamblin Ici pluralities
-
-/-- The worlds where an interrogative's question is defined: ANS (8), under the competition of
-EXHp (15) when it ranges over individuals, whose condition is `Competition.unblocked`. -/
-def presupposition : Wh → Set E
-  | .individuals n => felicitous n
-  | i => dom i.hamblinSet
-
-/-- The number whose individuals, on Dayal's analysis, an interrogative's presupposition matches. -/
-def pattern : Wh → Option Number
-  | .individuals n => n
-  | .quantifiers _ => none
-  | .plural => some .plural
-
-/-- Each interrogative presupposes what one of Dayal's three does: conjunctions and disjunctions
-make a singular phrase pattern with a bare one, *-ro* restores the singular, and a plural phrase
+/-- Each interrogative is felicitous on the domain of its pattern. Conjunctions and disjunctions
+make a singular phrase pattern with a neutral one, *-ro* restores the singular, and a plural phrase
 stays plural. -/
-theorem presupposition_eq [IsAtomistic E] [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
-    ∀ i : Wh, (i.presupposition : Set E) = felicitous i.pattern
-  | .individuals _ => rfl
-  | .quantifiers n => (dom_hamblin_domain n).trans felicitous_none.symm
-  | .plural => dom_hamblin_pluralities.trans (felicitous_plural ha hb hab).symm
+theorem Range.felicitous_eq [Finite E] (r : Range) (m : Marking) :
+    (r.felicitous m : Set E) = (r.pattern m).domain := by
+  cases r
+  · exact Marking.whFelicitous_number ha hb hab m
+  · exact presupposition_hamblin_domain m
+  · exact presupposition_hamblinRo_domain m
 
-/-- Whether an interrogative ranges over disjunctions of individuals. -/
-def freeChoice : Wh → Bool
-  | .quantifiers _ => true
-  | _ => false
-
-end Wh
+end Atoms
 
 /-! ### Questions with *must* -/
 
@@ -329,16 +389,18 @@ def permits : SetRel (Set E) E := .ofSuccessors id
 theorem permits_singleton (v : E) : ∃ A : Set E, ∀ u, A ~[permits] u ↔ u = v :=
   ⟨{v}, fun _ ↦ Iff.rfl⟩
 
-variable [CompleteLattice E] {a b : E} {D s : Set E}
+variable [CompleteLattice E] {a b : E} {D s : Set E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+  (has : a ∈ s) (hbs : b ∈ s)
 
 private theorem eq_of_le_atom {x c : E} (hD : ⊥ ∉ D) (hx : x ∈ D) (hc : IsAtom c) (hxc : x ≤ c) :
     x = c :=
   (hc.le_iff_eq (ne_of_mem_of_not_mem hx hD)).1 hxc
 
+include ha hb hab has hbs
+
 -- (34)–(36): the free choice disjunction answers the question in the scenario (59)
-theorem isLeast_supported_hamblin (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (haD : a ∈ D)
-    (hbD : b ∈ D) (hD : ⊥ ∉ D) (has : a ∈ s) (hbs : b ∈ s) (hs : s ⊆ Ici a ∪ Ici b) :
-    IsLeast (supported (hamblin Ici D) s) (Ici a ∪ Ici b) := by
+theorem isLeast_supported_hamblin (haD : a ∈ D) (hbD : b ∈ D) (hD : ⊥ ∉ D)
+    (hs : s ⊆ Ici a ∪ Ici b) : IsLeast (supported (hamblin Ici D) s) (Ici a ∪ Ici b) := by
   refine ⟨⟨.inr (sup_mem_supClosure (mem_image_of_mem _ haD) (mem_image_of_mem _ hbD)), hs⟩, ?_⟩
   rintro q ⟨hq, hsq⟩
   obtain ⟨X, ⟨x, hx⟩, hXD, rfl | rfl⟩ := mem_hamblin.1 hq
@@ -349,32 +411,38 @@ theorem isLeast_supported_hamblin (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b
     exact union_subset (subset_biUnion_of_mem (mem ha has)) (subset_biUnion_of_mem (mem hb hbs))
 
 -- (32), (33), (62), (63): over individuals, *must* requires a particular individual
-theorem not_isExhaustivelyResolvableOn_image_Ici (hab : a ≠ b) (ha : IsAtom a) (hb : IsAtom b)
-    (hD : ⊥ ∉ D) (has : a ∈ s) (hbs : b ∈ s) : ¬ IsExhaustivelyResolvableOn (Ici '' D) s := by
+theorem not_isExhaustivelyResolvableOn_image_Ici (hD : ⊥ ∉ D) :
+    ¬ IsExhaustivelyResolvableOn (Ici '' D) s := by
   rintro ⟨_, ⟨⟨x, hx, rfl⟩, hxs⟩, -⟩
   exact hab ((eq_of_le_atom hD hx ha (hxs has)).symm.trans (eq_of_le_atom hD hx hb (hxs hbs)))
 
 /-- In a scenario where *must* requires one of two things and permits buying either alone, a
 question under *must* is defined exactly when its phrase ranges over disjunctions of individuals,
 with the free choice disjunction as its answer. Individuals, and so *-ro*, demand a particular
-thing, and pluralities a particular group. -/
-theorem Wh.freeChoice_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has : a ∈ s) (hbs : b ∈ s)
-    (hs : s ⊆ Ici a ∪ Ici b) (i : Wh) :
-    IsExhaustivelyResolvable (box i.hamblinSet permits) s ↔ i.freeChoice = true := by
+thing, and disjunctions of pluralities are false where one thing alone was bought. -/
+theorem Range.freeChoice_iff (hs : s ⊆ Ici a ∪ Ici b) (r : Range) (m : Marking) :
+    IsExhaustivelyResolvable (box (r.hamblinSet m) permits) s ↔
+      r = .quantifiers ∧ m ≠ .plural := by
   rw [isExhaustivelyResolvable_box_iff _ permits_singleton (x := s) (s := s) fun _ ↦ Iff.rfl]
-  cases i with
-  | individuals n =>
-    exact iff_of_false
-      (not_isExhaustivelyResolvableOn_image_Ici hab ha hb (fun h ↦ h.2 rfl) has hbs)
-      Bool.false_ne_true
-  | quantifiers n =>
-    exact iff_of_true ⟨_, isLeast_supported_hamblin ha hb hab (mem_domain_of_isAtom n ha)
-      (mem_domain_of_isAtom n hb) (fun h ↦ h.2 rfl) has hbs hs⟩ rfl
-  | plural =>
-    refine iff_of_false ?_ Bool.false_ne_true
-    rintro ⟨q, ⟨hq, hsq⟩, -⟩
-    obtain ⟨x, hx, hxa⟩ := mem_iUnion₂.1 (subset_biUnion_of_mem_hamblin hq (hsq has))
-    exact (isUpperSet_pluralities hxa hx).2 ha
+  have atoms {m : Marking} (hm : m ≠ .plural) :
+      IsExhaustivelyResolvableOn (hamblin Ici m.domain) s :=
+    ⟨_, isLeast_supported_hamblin ha hb hab has hbs ((Marking.atom_mem_domain_iff ha m).2 hm)
+      ((Marking.atom_mem_domain_iff hb m).2 hm) (bot_notMem_domain m) hs⟩
+  cases r with
+  | individuals =>
+    exact iff_of_false (not_isExhaustivelyResolvableOn_image_Ici ha hb hab has hbs fun h ↦ h.2 rfl)
+      (by simp)
+  | singletons =>
+    simp only [hamblinSet, hamblinRo_eq_image, reduceCtorEq, false_and, iff_false]
+    exact not_isExhaustivelyResolvableOn_image_Ici ha hb hab has hbs (bot_notMem_domain m)
+  | quantifiers =>
+    cases m
+    · exact iff_of_true (atoms (by simp)) (by simp)
+    · exact iff_of_true (atoms (by simp)) (by simp)
+    · refine iff_of_false ?_ (by simp)
+      rintro ⟨q, ⟨hq, hsq⟩, -⟩
+      obtain ⟨x, hx, hxa⟩ := mem_iUnion₂.1 (subset_biUnion_of_mem_hamblin hq (hsq has))
+      exact (Marking.mem_domain_plural.1 (isUpperSet_domain_plural hxa hx)).2 ha
 
 end Must
 
@@ -382,32 +450,33 @@ end Must
 
 section Collective
 
-variable [CompleteLattice E] {a b : E}
+variable [CompleteLattice E] {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
 
 /-- *Mix together*, a collective predicate true in a world of the pluralities bought in it. -/
 def mixed (x : E) : Set E := {w | x ≤ w ∧ ¬ IsAtom x}
 
+include ha hb hab
+
 -- (56), (57)
-theorem nonempty_dom_hamblin_mixed_iff [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
-    (n : Option Number) :
-    (dom (hamblin mixed (domain n)) : Set E).Nonempty ↔ n ≠ some .singular := by
-  rw [dom_hamblin (toFinite _)]
-  refine ⟨?_, fun hn ↦ ⟨a ⊔ b, mem_biUnion ((sup_mem_domain_iff ha hb hab n).2 hn)
+theorem nonempty_presupposition_hamblin_mixed_iff [Finite E] (m : Marking) :
+    (presupposition (hamblin mixed m.domain) : Set E).Nonempty ↔ m ≠ .singular := by
+  rw [presupposition_hamblin (toFinite _)]
+  refine ⟨?_, fun hm ↦ ⟨a ⊔ b, mem_biUnion ((Marking.sup_mem_domain_iff ha hb hab m).2 hm)
     ⟨le_rfl, not_isAtom_sup ha hb hab⟩⟩⟩
   rintro ⟨w, h⟩ rfl
   obtain ⟨x, hx, hwx⟩ := mem_iUnion₂.1 h
-  exact hwx.2 (mem_domain_singular.1 hx)
+  exact hwx.2 (mem_whDomain_singular.1 hx)
 
 -- (56), (57)
-theorem nonempty_dom_hamblinRo_mixed_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
-    (n : Option Number) :
-    (dom (hamblinRo mixed (domain n)) : Set E).Nonempty ↔ n ≠ some .singular := by
+theorem nonempty_presupposition_hamblinRo_mixed_iff (m : Marking) :
+    (presupposition (hamblinRo mixed m.domain) : Set E).Nonempty ↔ m ≠ .singular := by
   rw [hamblinRo_eq_image]
-  refine ⟨?_, fun hn ↦ ⟨a ⊔ b, mixed (a ⊔ b), ⟨⟨_, (sup_mem_domain_iff ha hb hab n).2 hn, rfl⟩,
-    le_rfl, not_isAtom_sup ha hb hab⟩, ?_⟩⟩
+  refine ⟨?_, fun hm ↦ ⟨a ⊔ b, mixed (a ⊔ b),
+    ⟨⟨_, (Marking.sup_mem_domain_iff ha hb hab m).2 hm, rfl⟩, le_rfl, not_isAtom_sup ha hb hab⟩,
+    ?_⟩⟩
   · rintro ⟨w, h⟩ rfl
     obtain ⟨_, ⟨x, hx, rfl⟩, hwx⟩ := h.exists_mem
-    exact hwx.2 (mem_domain_singular.1 hx)
+    exact hwx.2 (mem_whDomain_singular.1 hx)
   · rintro _ ⟨⟨x, -, rfl⟩, hxw, hx⟩
     exact fun v hv ↦ ⟨hxw.trans hv.1, hx⟩
 
@@ -415,36 +484,36 @@ end Collective
 
 /-! ### The paper's judgments -/
 
-/-- The interrogative of a row, by its language, its type in the paper's taxonomy, and whether it
-carries *-ro*. -/
-def wh? (e : Datum) : Option Wh :=
-  (e.byLanguage [
-    (.english, [("BI", .individuals none), ("SCI", .individuals (some .singular)),
-      ("PCI", .individuals (some .plural))]),
-    (.spanish, [("SBI", .quantifiers (some .singular)), ("PBI", .plural),
-      ("SCI", .individuals (some .singular)), ("PCI", .individuals (some .plural))]),
-    (.westernFarsi, if "ro" ∈ e.surfaceTokens then
-      [("SBI", .individuals none), ("SCI", .individuals (some .singular)),
-        ("PCI", .individuals (some .plural))]
-    else
-      [("SBI", .quantifiers none), ("SCI", .quantifiers (some .singular)), ("PBI", .plural),
-        ("PCI", .plural)])]).bind (e.parse? "type")
+/-- The marking of a row's interrogative phrase, by its type in the paper's taxonomy. -/
+def marking? (e : Datum) : Option Marking :=
+  e.parse? "type" [("BI", .neutral), ("SBI", .neutral), ("SCI", .singular), ("PBI", .plural),
+    ("PCI", .plural)]
 
-/-- The judgment of a row's reading whose name begins with `pre`. -/
-def reading? (e : Datum) (pre : String) : Option Judgment :=
-  (e.readings.find? fun r ↦ pre.toList.isPrefixOf r.1.toList).map Prod.snd
+/-- What a row's interrogative phrase ranges over: individuals in English and in Spanish complex
+phrases, otherwise quantifiers, or singletons with *-ro*. -/
+def range? (e : Datum) : Option Range :=
+  e.byLanguage [(.english, .individuals),
+    (.spanish, if e.feature? "type" ∈ [some "SBI", some "PBI"] then .quantifiers else .individuals),
+    (.westernFarsi, if "ro" ∈ e.surfaceTokens then .singletons else .quantifiers)]
+
+/-- A row's interrogative. -/
+def wh? (e : Datum) : Option (Range × Marking) := do
+  pure (← range? e, ← marking? e)
 
 /-- A row's interrogative, where the paper judges its singular and plural answers. -/
-def answers? (e : Datum) : Option Wh := (wh? e).filter fun _ ↦ (reading? e "singular").isSome
+def answers? (e : Datum) : Option (Range × Marking) :=
+  (wh? e).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
 
-/-- A row's singular answer is accepted exactly when its interrogative's presupposition holds in a
-world where one atom was bought, and its plural answer when it holds where two were. -/
-theorem rows_agree [CompleteLattice E] [IsAtomistic E] [Finite E] {a b : E} (ha : IsAtom a)
-    (hb : IsAtom b) (hab : a ≠ b) : ∀ e ∈ Examples.all, ∀ i ∈ answers? e,
-      (a ∈ i.presupposition ↔ reading? e "singular" = some .acceptable) ∧
-        (a ⊔ b ∈ i.presupposition ↔ reading? e "plural" = some .acceptable) := by
-  simp only [Wh.presupposition_eq ha hb hab, atom_mem_felicitous_iff ha hb hab,
-    sup_mem_felicitous_iff ha hb hab]
+variable [CompleteLattice E] {a b : E} {s : Set E}
+
+/-- A row's singular answer is accepted exactly when its interrogative is felicitous in a world
+where one atom was bought, and its plural answer when it is felicitous where two were. -/
+theorem rows_agree [IsAtomistic E] [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
+    ∀ e ∈ Examples.all, ∀ i ∈ answers? e,
+      (a ∈ i.1.felicitous i.2 ↔ e.readings.lookup "singular answer" = some .acceptable) ∧
+        (a ⊔ b ∈ i.1.felicitous i.2 ↔ e.readings.lookup "plural answer" = some .acceptable) := by
+  simp only [Range.felicitous_eq ha hb hab, Marking.atom_mem_domain_iff ha,
+    Marking.sup_mem_domain_iff ha hb hab]
   decide +kernel
 
 example : Datum.ReadCount answers? Examples.all 14 := by decide +kernel
@@ -452,33 +521,47 @@ example : Datum.ReadCount answers? Examples.all 14 := by decide +kernel
 example := rows_agree (E := Set (Fin 2)) (Set.isAtom_singleton 0) (Set.isAtom_singleton 1) (by simp)
 
 -- (60)–(63)
-theorem scenario_rows : Datum.ChecksVerdict wh? Wh.freeChoice Examples.all 4 := by decide +kernel
+theorem scenario_rows (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has : a ∈ s) (hbs : b ∈ s)
+    (hs : s ⊆ Ici a ∪ Ici b) : ∀ e ∈ Examples.all, ∀ i ∈ wh? e, ∀ v ∈ e.verdict,
+      (IsExhaustivelyResolvable (box (i.1.hamblinSet i.2) permits) s ↔ v = true) := by
+  simp only [Range.freeChoice_iff ha hb hab has hbs hs]
+  decide +kernel
 
-example := Wh.freeChoice_iff (E := Set (Fin 2)) (a := {0}) (b := {1}) (s := {{0}, {1}})
+example : Datum.ChecksVerdict wh? (fun i ↦ decide (i.1 = .quantifiers ∧ i.2 ≠ .plural))
+    Examples.all 4 := by decide +kernel
+
+-- the scenario (59) is satisfiable: buying either thing alone is permitted
+example := scenario_rows (E := Set (Fin 2)) (a := {0}) (b := {1}) (s := {{0}, {1}})
   (Set.isAtom_singleton 0) (Set.isAtom_singleton 1) (by simp) (by simp) (by simp)
   (by rintro _ (rfl | rfl) <;> simp)
 
-/-- A row's interrogative, where a free choice answer answers it. -/
-def freeChoiceAnswer? (e : Datum) : Option Wh :=
-  (wh? e).filter fun i ↦ i.freeChoice ∧ (reading? e "free choice").isSome
+/-- A row's interrogative, where the paper judges a free choice answer to a question without
+*-ro*. -/
+def freeChoiceAnswer? (e : Datum) : Option (Range × Marking) :=
+  (wh? e).filter fun i ↦ i.1 = .quantifiers ∧ (e.readings.lookup "free choice answer").isSome
 
 -- (30), (31)
-theorem freeChoiceAnswer_rows : ∀ e ∈ Examples.all, ∀ _ ∈ freeChoiceAnswer? e,
-    reading? e "free choice" = some .acceptable := by decide +kernel
+theorem freeChoiceAnswer_rows (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (has : a ∈ s)
+    (hbs : b ∈ s) (hs : s ⊆ Ici a ∪ Ici b) : ∀ e ∈ Examples.all, ∀ i ∈ freeChoiceAnswer? e,
+      (IsExhaustivelyResolvable (box (i.1.hamblinSet i.2) permits) s ↔
+        e.readings.lookup "free choice answer" = some .acceptable) := by
+  simp only [Range.freeChoice_iff ha hb hab has hbs hs]
+  decide +kernel
 
 example : Datum.ReadCount freeChoiceAnswer? Examples.all 2 := by decide +kernel
 
-/-- A row's number, where it combines *baham* 'together' with a collective predicate. -/
-def collective? (e : Datum) : Option (Option Number) :=
-  if "baham" ∈ e.surfaceTokens then e.parse? "type" [("SBI", none), ("SCI", some .singular)]
-  else none
+/-- A row's marking, where it combines *baham* 'together' with a collective predicate. -/
+def collective? (e : Datum) : Option Marking :=
+  if "baham" ∈ e.surfaceTokens then marking? e else none
 
 -- (56), (57), each with or without *-ro*
-theorem collective_rows [CompleteLattice E] [Finite E] {a b : E} (ha : IsAtom a) (hb : IsAtom b)
-    (hab : a ≠ b) : ∀ e ∈ Examples.all, ∀ n ∈ collective? e,
-      ((dom (hamblin mixed (domain n)) : Set E).Nonempty ↔ e.judgment = .acceptable) ∧
-        ((dom (hamblinRo mixed (domain n)) : Set E).Nonempty ↔ e.judgment = .acceptable) := by
-  simp only [nonempty_dom_hamblin_mixed_iff ha hb hab, nonempty_dom_hamblinRo_mixed_iff ha hb hab]
+theorem collective_rows [Finite E] (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
+    ∀ e ∈ Examples.all, ∀ m ∈ collective? e,
+      ((presupposition (hamblin mixed m.domain) : Set E).Nonempty ↔ e.judgment = .acceptable) ∧
+        ((presupposition (hamblinRo mixed m.domain) : Set E).Nonempty ↔
+          e.judgment = .acceptable) := by
+  simp only [nonempty_presupposition_hamblin_mixed_iff ha hb hab,
+    nonempty_presupposition_hamblinRo_mixed_iff ha hb hab]
   decide +kernel
 
 example : Datum.ReadCount collective? Examples.all 2 := by decide +kernel

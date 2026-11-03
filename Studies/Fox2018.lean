@@ -164,18 +164,6 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
   exact exists_congr fun i ↦ and_congr_right fun _ ↦
     ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
-theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
-    (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (infClosure (range a)) w := by
-  classical
-  obtain ⟨i, hi⟩ := hw
-  let T : Finset ι := Finset.univ.filter (fun i ↦ w ∈ a i)
-  have hT : ∀ i, i ∈ T ↔ w ∈ a i := fun i ↦ by simp [T]
-  refine ⟨(⋂ i ∈ T, a i), ⟨mem_infClosure_range.2 ⟨T, ⟨i, (hT i).2 hi⟩, rfl⟩,
-    mem_iInter₂.2 fun i hi ↦ (hT i).1 hi⟩, ?_⟩
-  rintro _ ⟨hq, hwS⟩ v hv
-  obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
-  exact mem_iInter₂.2 fun j hj ↦ mem_iInter₂.1 hv j ((hT j).2 (mem_iInter₂.1 hwS j hj))
-
 /-! ### Negative islands -/
 
 /-- A question containing the disjunction of two members neither of which entails the other fails
