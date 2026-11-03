@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Core.ModelTheory.Atom
-public import Linglib.Semantics.Dynamic.DRS.Realizers
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Realizers
 public import Studies.Cooper2023
 
 /-!
@@ -359,32 +359,42 @@ theorem atom_image_apartGlue :
   tauto
 
 /-- *She (the same witch)*. Aligned on the witch, Hob's belief and the content of Nob's question
-are not both true where different witches blighted the mare and killed the sow, since their
-witnesses are the compatible pairs of local witnesses and compatibility gives both one witch. -/
+are not both true where different witches blighted the mare and killed the sow, since a witness of
+their gluing restricts to a witness of each, and the cover sends both witches to one referent. -/
 theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
   let _ := system .twoWitches
   refine Set.eq_empty_of_forall_notMem fun r hr ↦ ?_
   rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_sameGlue,
-    ← Theory.comp_val_mem_realizers_iff (by decide +kernel)] at hr
-  obtain ⟨g, hg⟩ := sameCover.realizersEquiv (M := Obj) (x := sections) rfl ⟨_, hr⟩
-  have h₀ := (g 0).2 (lit .blightedBobsMare ![.b, .x]) (by decide +kernel)
-  have h₁ := (g 1).2 (lit .killedCobsSow ![.k, .y]) (by decide +kernel)
-  have h := hg 0 1 ⟨.x, by decide⟩ ⟨.y, by decide⟩ rfl
-  simp [Literal.Holds, lit, holds] at h₀ h₁
+    ← Literal.comp_val_mem_realizers_iff (by decide +kernel)] at hr
+  simp only [sameGlue, Cover.realizers_pushforward, Set.mem_iInter, Set.mem_preimage,
+    Literal.mem_realizers] at hr
+  have h₀ := hr 0 (lit .blightedBobsMare ![.b, .x]) (by decide +kernel)
+  have h₁ := hr 1 (lit .killedCobsSow ![.k, .y]) (by decide +kernel)
+  simp [Literal.Holds, lit, sameCover, hom, holds] at h₀ h₁
   simp_all
 
+/-- Local witnesses: Hob's witch is `w₁`, Nob's is `w₂`, and every other referent is the
+situation. -/
+def witnesses : ∀ i, (![hobCtx, nobCtx] i).vars → Obj
+  | 0 => fun t ↦ if t.1 = .x then .w₁ else .s
+  | 1 => fun t ↦ if t.1 = .y then .w₂ else .s
+
 /-- Keeping the witches apart, which leaves Nob's beliefs as they are, makes Hob's belief and the
-content of Nob's question true together. -/
+content of Nob's question true together: a witness of each, agreeing on the situation they share,
+glues into a witness of both. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   let _ := system .twoWitches
-  refine ⟨fun | .x => .w₁ | .y => .w₂ | _ => .s, ?_⟩
+  have hw (i) : witnesses i ∈ Literal.realizers Obj ((sections i).lits : Set (Literal _)) := by
+    fin_cases i <;> intro l hl <;>
+      simp only [sections, Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton] at hl <;>
+      rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, witnesses, holds]
+  let g := (apartCover.realizersEquiv sections).symm
+    ⟨⟨witnesses, arrows_compatible_assignments_iff.2 (by decide +kernel)⟩, hw⟩
+  refine ⟨fun ℓ ↦ g.1 ⟨ℓ, by cases ℓ <;> decide⟩, ?_⟩
   rw [mem_extension_recTypes, ← Atom.mem_realizers, ← atom_image_apartGlue,
-    ← Theory.comp_val_mem_realizers_iff (by decide +kernel), apartCover.mem_realizers_iff rfl]
-  intro i
-  fin_cases i <;> intro l hl <;>
-    simp only [sections, Finset.mem_insert, Finset.mem_singleton] at hl <;>
-    rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, apartCover, hom, holds]
+    ← Literal.comp_val_mem_realizers_iff (by decide +kernel)]
+  exact g.2
 
 end HobNob
 

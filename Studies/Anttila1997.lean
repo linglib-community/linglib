@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Data.Examples.Anttila1997
 public import Linglib.Fragments.Finnish.Phonology
 public import Mathlib.Data.Fin.VecNotation
@@ -113,9 +114,10 @@ def Constraint.violations : Constraint → List Syllable → ℕ
   | .weightSonority w s, l => l.countP fun σ => decide (σ.weight = some w ∧ σ.nucleus = some s)
   | .stressSonority st s, l =>
     l.countP fun σ => decide (σ.stressed = st ∧ σ.nucleus = some s)
-  | .clash st, l => (l.zip l.tail).countP fun p => decide (p.1.stressed = st ∧ p.2.stressed = st)
+  | .clash st, l =>
+    OptimalityTheory.Constraint.forbidPairs (fun a b ↦ a.stressed = st ∧ b.stressed = st) l
   | .collision w, l =>
-    (l.zip l.tail).countP fun p => decide (p.1.weight = some w ∧ p.2.weight = some w)
+    OptimalityTheory.Constraint.forbidPairs (fun a b ↦ a.weight = some w ∧ b.weight = some w) l
 
 /-! ### The grammar for Finnish (28), (50) -/
 

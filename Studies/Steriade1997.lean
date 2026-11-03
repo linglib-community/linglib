@@ -147,13 +147,13 @@ namespace Allomorph
 accent marks as stressed, in the form's cell. -/
 def ofForm (f : Form Wordlist.Cell) : Allomorph :=
   let w := (f.segments.span (· ∉ boundaries)).1
-  ⟨w.map segment, ((w.filter fun x ↦ (segment x).IsVowel).findIdxs (· ∈ accented)).toFinset,
+  ⟨w.map segment, ((w.filter fun x ↦ (segment x).IsSyllabic).findIdxs (· ∈ accented)).toFinset,
     f.cell⟩
 
 variable (a : Allomorph)
 
 /-- The nuclei of an allomorph, its syllabic segments in order. -/
-def nuclei : List Segment := a.segments.filter fun x ↦ x.IsVowel
+def nuclei : List Segment := a.segments.filter fun x ↦ x.IsSyllabic
 
 end Allomorph
 
@@ -183,7 +183,7 @@ def candidates (x : Lexeme) : Finset Allomorph :=
 
 /-- The final consonant of an allomorph, if it ends in one. -/
 def finalConsonant (a : Allomorph) : Finset Segment :=
-  (a.segments.getLast?.filter fun s ↦ !decide s.IsVowel).toFinset
+  (a.segments.getLast?.filter fun s ↦ !decide s.IsSyllabic).toFinset
 
 /-- Lex C], the paper's (8), requires the final consonant of the allomorph to have a featurally
 identical counterpart in some listed allomorph. -/
@@ -204,7 +204,7 @@ def lexVGender (L : Finset Allomorph) : Constraint Allomorph :=
 /-- The rime of the last syllable, the segments from the last vowel on. -/
 def rime : List Segment → List Segment
   | [] => []
-  | s :: ss => if ∃ x ∈ ss, x.IsVowel then rime ss else s :: ss
+  | s :: ss => if ∃ x ∈ ss, x.IsSyllabic then rime ss else s :: ss
 
 /-- Lex σ' (p. 10) requires the stressed syllable of the allomorph to be identical in its
 entirety to that of some listed allomorph. -/
@@ -290,8 +290,13 @@ def lexStressVerb (L : Finset Allomorph) : Constraint Allomorph :=
 /-- The syllables of a string of segments that have an onset, counted from zero. Each syllabic
 segment heads a syllable, which has an onset when a nonsyllabic segment precedes it. -/
 def onsetful (w : List Segment) : Finset ℕ :=
-  (((w.zip (none :: w.map some)).filter fun p ↦ p.1.IsVowel).findIdxs
-    fun p ↦ p.2.any fun q ↦ !decide q.IsVowel).toFinset
+  (((w.zip (none :: w.map some)).filter fun p ↦ p.1.IsSyllabic).findIdxs
+    fun p ↦ p.2.any fun q ↦ !decide q.IsSyllabic).toFinset
+
+-- The final [l̩] of *-able* heads its syllable, but it is no vowel and so no hiatus before one.
+example : (segment "l̩").IsSyllabic ∧ ¬ (segment "l̩").IsVowel ∧
+    Hiatus.count [segment "l̩", segment "a"] = 0 := by
+  decide
 
 /-- The suffix *-able*, [əbl̩], after the morph boundary of the printed *remédiable*. -/
 def able : List Segment := following Wordlist.remediable

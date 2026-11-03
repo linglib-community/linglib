@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Presheaf
+public import Linglib.Semantics.Dynamic.DRT.Sheaf.Presheaf
 public import Mathlib.CategoryTheory.Sites.Coverage
 public import Mathlib.CategoryTheory.Sites.JointlySurjective
 public import Mathlib.Data.Fintype.Inv

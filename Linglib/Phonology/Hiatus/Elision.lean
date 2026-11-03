@@ -6,24 +6,14 @@ public import Linglib.Morphology.Morph
 /-!
 # Prominent positions at a juncture of two morphs
 
-Where two vowels meet at the boundary of two morphs, eliding either removes the hiatus, and
-which one goes depends on the positions the two vowels occupy. Casali identifies the positions
-whose segments resist deletion as the beginning of a word, a lexical word or root, the beginning
-of a morph, and a morph of one segment. A juncture whose two sides are adjacent morphs of known
-kinds fixes all four: a morph is lexical when it is a root, and a morph begins a word unless it is
-joined as an affix or clitic to the morph before it.
-
-## Main definitions
-
-* `Phonology.Hiatus.Context`: a juncture of two adjacent morphs, with their kinds and the kind of
-  the morph before them.
-* `Phonology.Hiatus.Prominence`, `Phonology.Hiatus.Context.Protects`: the prominent positions,
-  and the positions of the unrepaired concatenation that lie in each.
-
-## Main results
-
-* `Phonology.Hiatus.Context.protects_v1Idx`, `Phonology.Hiatus.Context.protects_v2Idx`: the
-  prominent positions of each vowel, read off the kinds of the morphs and the length of each.
+Where two vowels meet at the boundary of two morphs, eliding either removes the hiatus, and which
+one goes depends on the positions the two vowels occupy. Casali identifies the positions whose
+segments resist deletion as the beginning of a word, a lexical word or root, the beginning of a
+morph, and a morph of one segment. A `Phonology.Hiatus.Context`, a juncture whose two sides are
+adjacent morphs of known kinds, fixes all four: a morph is lexical when it is a root, and begins a
+word unless it is joined as an affix or clitic to the morph before it. So the
+[first](##protects_v1Idx) and [second vowel](##protects_v2Idx) lie in positions read off the kinds
+of the morphs and the length of each.
 
 ## References
 
@@ -49,15 +39,15 @@ inductive Prominence where
   | soleSegment
   deriving DecidableEq, Fintype, Repr
 
-/-- A context is a juncture whose stem and suffix are the forms of two adjacent morphs, together
-with the kinds of the two morphs and of the morph before them, if there is one. -/
+/-- A context is a juncture whose two forms are those of two adjacent morphs, together with the
+kinds of the two morphs and of the morph before them, if there is one. -/
 structure Context extends Juncture where
   /-- The kind of the morph before the first, if there is one. -/
-  before : Option Morph.Kind
+  beforeKind : Option Morph.Kind
   /-- The kind of the first morph. -/
-  left : Morph.Kind
+  leftKind : Morph.Kind
   /-- The kind of the second morph. -/
-  right : Morph.Kind
+  rightKind : Morph.Kind
 
 namespace Context
 
@@ -68,11 +58,11 @@ position `p`. The first position and the position of the second vowel each begin
 begin a word unless that morph is joined as an affix or clitic to the morph before it. A position
 is lexical when its morph is a root, and is a sole segment when its morph has no other. -/
 def Protects : Prominence → ℕ → Prop
-  | .wordInitial, k => k = 0 ∧ (∀ b ∈ c.before, ¬ b.JoinsAt .clitic c.left) ∨
-      k = c.v2Idx ∧ ¬ c.left.JoinsAt .clitic c.right
-  | .lexical, k => k ≤ c.v1Idx ∧ c.left = .root ∨ c.v2Idx ≤ k ∧ c.right = .root
+  | .wordInitial, k => k = 0 ∧ (∀ b ∈ c.beforeKind, ¬ b.JoinsAt .clitic c.leftKind) ∨
+      k = c.v2Idx ∧ ¬ c.leftKind.JoinsAt .clitic c.rightKind
+  | .lexical, k => k ≤ c.v1Idx ∧ c.leftKind = .root ∨ c.v2Idx ≤ k ∧ c.rightKind = .root
   | .morphemeInitial, k => k = 0 ∨ k = c.v2Idx
-  | .soleSegment, k => k = 0 ∧ c.stemBody = [] ∨ k = c.v2Idx ∧ c.suffixBody = []
+  | .soleSegment, k => k = 0 ∧ c.leftBody = [] ∨ k = c.v2Idx ∧ c.rightBody = []
 
 instance (p : Prominence) : DecidablePred (c.Protects p) := fun _ ↦ by
   cases p <;> unfold Protects <;> infer_instance
@@ -87,9 +77,9 @@ is lexical when its morph is a root, and begins a morph or makes it up when it i
 it. -/
 @[simp] theorem protects_v1Idx {p : Prominence} :
     c.Protects p c.v1Idx ↔ match p with
-      | .wordInitial => c.stemBody = [] ∧ ∀ b ∈ c.before, ¬ b.JoinsAt .clitic c.left
-      | .lexical => c.left = .root
-      | .morphemeInitial | .soleSegment => c.stemBody = [] := by
+      | .wordInitial => c.leftBody = [] ∧ ∀ b ∈ c.beforeKind, ¬ b.JoinsAt .clitic c.leftKind
+      | .lexical => c.leftKind = .root
+      | .morphemeInitial | .soleSegment => c.leftBody = [] := by
   cases p <;> protects_simp
 
 /-- The second vowel always begins a morph, begins a word when its morph is not joined to the
@@ -97,10 +87,10 @@ first, is lexical when its morph is a root, and makes up its morph when that has
 segment. -/
 @[simp] theorem protects_v2Idx {p : Prominence} :
     c.Protects p c.v2Idx ↔ match p with
-      | .wordInitial => ¬ c.left.JoinsAt .clitic c.right
-      | .lexical => c.right = .root
+      | .wordInitial => ¬ c.leftKind.JoinsAt .clitic c.rightKind
+      | .lexical => c.rightKind = .root
       | .morphemeInitial => True
-      | .soleSegment => c.suffixBody = [] := by
+      | .soleSegment => c.rightBody = [] := by
   cases p <;> protects_simp
 
 end Context

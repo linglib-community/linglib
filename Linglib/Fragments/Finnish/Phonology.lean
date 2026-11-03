@@ -3,6 +3,7 @@ module
 public import Linglib.Data.PHOIBLE.Inventories.Finnish
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.Sonority
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -113,11 +114,12 @@ open Phonology Phonology.Harmony Subregular.LocalRewrite Data.PHOIBLE
 
 A phoneme is named by its letter, so `a` is ɑ, `ä` is æ and `ö` is ø. -/
 
-/-- The features that distinguish the vowels, with [syllabic] marking them as vowels. -/
-def contrastive : Finset Phonology.Feature := {.syllabic, .high, .low, .back, .round}
+/-- The features that distinguish the vowels. -/
+def contrastive : Finset Phonology.Feature := {.high, .low, .back, .round}
 
-/-- A vowel is its chart entry's segment on the contrastive features. -/
-def vowel (m : FeatureMatrix) : Segment := .ofChart m ⊥ contrastive
+/-- A vowel is its chart entry's segment on the major class features, which mark it as a vowel,
+and the contrastive features. -/
+def vowel (m : FeatureMatrix) : Segment := .ofChart m ⊥ (Sonority.features ∪ contrastive)
 
 /-- The low back vowel /ɑ/. -/
 def a : Segment := vowel .«ɑ»
@@ -198,7 +200,7 @@ def O : Segment := o ⊓ ö
 
 /-- `V` is the vowel of the illative -Vn, a vowel with no other feature. As a rule context it
 is any vowel. -/
-def V : Segment := Segment.ofSpecs [(.syllabic, true)]
+def V : Segment := Sonority.vowel.toSegment
 
 /-- `C`, as a rule context, is any consonant. -/
 def C : Segment := Segment.ofSpecs [(.syllabic, false)]
