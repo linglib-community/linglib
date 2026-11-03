@@ -217,6 +217,13 @@ theorem listener_apply_singleton_congr {u : U} {w₁ w₂ : W} (hS : S w₁ {u} 
     (hμ : μ {w₁} = μ {w₂}) : listener μ S u {w₁} = listener μ S u {w₂} := by
   rw [listener_apply_singleton, listener_apply_singleton, hS, hμ]
 
+/-- Bayes' rule keeps the prior odds of two states that give the utterance the same mass. -/
+theorem listener_apply_singleton_mul_eq_of_apply_eq {u : U} {w₁ w₂ : W}
+    (hS : S w₁ {u} = S w₂ {u}) : listener μ S u {w₁} * μ {w₂} = listener μ S u {w₂} * μ {w₁} := by
+  rw [listener_apply_singleton, listener_apply_singleton, hS, ENNReal.div_eq_inv_mul,
+    ENNReal.div_eq_inv_mul]
+  ring
+
 theorem listener_apply_finset (u : U) (E : Finset W) :
     listener μ S u ↑E = (∑ w ∈ E, S w {u} * μ {w}) / ∑ w, S w {u} * μ {w} := by
   rw [listener, Kernel.ofDensity_eq_ofWeights, Kernel.ofWeights_apply_finset]

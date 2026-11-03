@@ -130,11 +130,6 @@ def QUD.cell : QUD → World → Finset World
   | .max, w => {w}
   | .now, w => Finset.univ.filter (·.now = w.now)
 
-theorem QUD.cell_preimage (q : QUD) (w : World) : q.cell ⁻¹' {q.cell w} = ↑(q.cell w) := by
-  ext w'
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, Finset.mem_coe]
-  cases q <;> cases w <;> cases w' <;> decide
-
 /-! ### Context sets -/
 
 /-- The context set that John smoked. -/
@@ -159,16 +154,12 @@ instance (C : Finset World) (q : QUD) : IsFiniteKernel (L0 C q) :=
 /-- The literal listener counts the worlds of the context set where the utterance is true and
 the question's answer is the world's, over those where the utterance is true. -/
 def l0 (C : Finset World) (q : QUD) (u : Utterance) (w : World) : ℕ × ℕ :=
-  (((C.filter (· ∈ u.sem)).filter (· ∈ q.cell w)).card, (C.filter (· ∈ u.sem)).card)
+  (((C.filter (· ∈ u.sem)).filter (q.cell · = q.cell w)).card, (C.filter (· ∈ u.sem)).card)
 
 theorem L0_apply (C : Finset World) (q : QUD) (u : Utterance) (w : World) :
     L0 C q u {q.cell w} = ((l0 C q u w).1 : ℝ≥0∞) / (l0 C q u w).2 := by
-  have e1 : u.sem ∩ ↑C = ↑(C.filter (· ∈ u.sem)) := by ext; simp [and_comm]
-  have e2 : u.sem ∩ ↑(q.cell w) ∩ ↑C = ↑((C.filter (· ∈ u.sem)).filter (· ∈ q.cell w)) := by
-    ext; simp; tauto
-  rw [L0, listener_truthful_map_apply_singleton, QUD.cell_preimage,
-    Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,
-    Measure.count_apply_finset, Measure.count_apply_finset, l0]
+  rw [L0, listener_restrict_truthful_map_apply_singleton, Measure.count_apply_finset,
+    Measure.count_apply_finset, l0]
 
 theorem prior_ne_zero (u : Utterance) : u.prior ≠ 0 := by
   rcases u with _ | ⟨p, b⟩ <;> try cases p
