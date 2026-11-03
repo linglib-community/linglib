@@ -4,7 +4,7 @@ public import Mathlib.Data.Set.Lattice.Order
 public import Mathlib.Order.Atoms
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Closure
 
 /-!
 # Number in Hamblin sets
@@ -12,7 +12,8 @@ public import Linglib.Semantics.Questions.HamblinSet
 This file defines the Hamblin sets of *wh* phrases over a lattice of pluralities. A situation is
 identified with the plurality the nucleus holds of, so the member for `x` is `Set.Ici x`, and a
 phrase of number `n` ranges over the non-null individuals in Sauerland's domain of `n`, the atoms
-for a singular phrase and all of them otherwise. Dayal's presupposition on such a Hamblin set
+for a singular phrase and all of them otherwise; a strong plural phrase ranges over the non-atoms
+(`whStrongPlural`). Dayal's presupposition on such a Hamblin set
 [holds exactly in the situations of the domain](##Question.isExhaustivelyResolvable_whHamblin_iff).
 Under competition in number a plural phrase is then [felicitous exactly in the situations that are
 neither null nor atomic](##Question.whFelicitous_plural).
@@ -55,6 +56,17 @@ theorem mem_whDomain_of_isAtom (n : Option Number) {a : E} (ha : IsAtom a) : a �
   · exact h ▸ mem_whDomain_singular.2 ha
   · rw [whDomain_of_ne_singular h]
     exact ha.ne_bot
+
+/-- The domain of a strong plural *wh* phrase: the individuals neither null nor atomic. -/
+def whStrongPlural : Set E := {x | Number.nonAtomsOf (· ≠ ⊥) x}
+
+theorem mem_whStrongPlural {x : E} : x ∈ whStrongPlural ↔ x ≠ ⊥ ∧ ¬ IsAtom x :=
+  and_congr_right fun _ ↦ not_congr Mereology.atom_iff_isAtom
+
+theorem isUpperSet_whStrongPlural : IsUpperSet (whStrongPlural : Set E) := fun _ _ hxy hx ↦ by
+  obtain ⟨hne, hna⟩ := mem_whStrongPlural.1 hx
+  exact mem_whStrongPlural.2 ⟨fun h ↦ hne (le_bot_iff.1 (h ▸ hxy)),
+    fun hy ↦ hna ((hy.le_iff_eq hne).1 hxy ▸ hy)⟩
 
 /-- The Hamblin set of a *wh* phrase of number `n`: the member for `x` is `Ici x`, the situations
 in which the nucleus holds of `x`. -/
@@ -129,5 +141,22 @@ theorem whFelicitous_plural {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a �
 theorem notMem_whFelicitous_bot (n : Option Number) : (⊥ : E) ∉ whFelicitous n := by
   rw [whFelicitous_eq_strengthen_whDomain]
   exact fun h ↦ (strengthen_subset _ _ _ h).2 rfl
+
+omit [IsAtomistic E] in
+theorem exists_mem_whDomain_le [Finite E] (n : Option Number) {w : E} (hw : w ≠ ⊥) :
+    ∃ x ∈ whDomain n, x ≤ w :=
+  let ⟨a, ha, haw⟩ := (eq_bot_or_exists_atom_le w).resolve_left hw
+  ⟨a, mem_whDomain_of_isAtom n ha, haw⟩
+
+omit [IsAtomistic E] in
+theorem presupposition_hamblin_whDomain [Finite E] (n : Option Number) :
+    presupposition (hamblin Ici (whDomain n)) = {w : E | w ≠ ⊥} := by
+  rw [presupposition_hamblin (toFinite _)]
+  refine Set.ext fun w ↦ ⟨fun h ↦ ?_, fun hw ↦ ?_⟩
+  · rintro rfl
+    obtain ⟨x, hx, hxw⟩ := mem_iUnion₂.1 h
+    exact hx.2 (le_bot_iff.1 hxw)
+  · obtain ⟨x, hx, hxw⟩ := exists_mem_whDomain_le n hw
+    exact mem_biUnion hx hxw
 
 end Question

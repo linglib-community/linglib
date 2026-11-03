@@ -4,6 +4,7 @@ public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
+public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Order.SupClosed
 
 /-!
@@ -15,7 +16,10 @@ of atoms; under Spector's higher-order quantification, pruned to disjunctions of
 it denotes their closure under disjunction, `supClosure (Set.range a)`. Both families are read
 off the atoms true at a world, `Preorder.satisfied` with the atoms as criteria, and both induce
 the same partition, the kernel of that map. Closing a finite family under conjunction reduces
-Dayal's presupposition to the existence of a true member.
+Dayal's presupposition to the existence of a true member. An interrogative ranging over both is
+`hamblin`: its [strongest true answer is the conjunction of its true
+members](##Question.isStrongestTrueAnswer_hamblin), and on an information state of a distributive
+nucleus [the strongest member supported can be a disjunction](##Question.isLeast_supported_hamblin).
 
 ## References
 
@@ -93,5 +97,112 @@ theorem presupposition_infClosure_image {s : Set ι} (hs : s.Finite) :
   obtain ⟨_, hq, hw⟩ := h.exists_mem
   obtain ⟨t, ⟨i, hi⟩, hts, rfl⟩ := Set.mem_infClosure_image.1 hq
   exact Set.mem_biUnion (hts hi) (Set.mem_iInter₂.1 hw i hi)
+
+/-! ### Conjunctions and disjunctions together -/
+
+section Hamblin
+
+variable (P : ι → Set W) (D : Set ι)
+
+/-- The Hamblin set of an interrogative with nucleus `P` over the domain `D`, ranging over
+conjunctions and disjunctions of individuals: the conjunctions and the disjunctions of `P` over the
+nonempty finite subsets of `D`. -/
+@[expose] def hamblin : Set (Set W) := infClosure (P '' D) ∪ supClosure (P '' D)
+
+variable {P D} {q : Set W} {w : W}
+
+theorem mem_hamblin : q ∈ hamblin P D ↔
+    ∃ X : Finset ι, X.Nonempty ∧ ↑X ⊆ D ∧ (⋂ x ∈ X, P x = q ∨ ⋃ x ∈ X, P x = q) := by
+  simp only [hamblin, Set.mem_union, Set.mem_infClosure_image, Set.mem_supClosure_image,
+    ← exists_or, ← and_or_left]
+
+theorem hamblin_mono {D' : Set ι} (h : D' ⊆ D) : hamblin P D' ⊆ hamblin P D :=
+  Set.union_subset_union (infClosure_mono (Set.image_mono h)) (supClosure_mono (Set.image_mono h))
+
+@[simp] theorem hamblin_singleton (x : ι) : hamblin P {x} = {P x} := by simp [hamblin]
+
+@[simp] theorem hamblin_empty : hamblin P ∅ = ∅ := by simp [hamblin]
+
+theorem subset_biUnion_of_mem_hamblin (hq : q ∈ hamblin P D) : q ⊆ ⋃ x ∈ D, P x := by
+  obtain ⟨X, ⟨x, hx⟩, hXD, rfl | rfl⟩ := mem_hamblin.1 hq
+  · exact (Set.biInter_subset_of_mem hx).trans (Set.subset_biUnion_of_mem (hXD hx))
+  · exact Set.biUnion_subset_biUnion_left hXD
+
+theorem isStrongestTrueAnswer_hamblin (hD : D.Finite) (h : ∃ x ∈ D, w ∈ P x) :
+    IsStrongestTrueAnswer (hamblin P D) w (⋂ x ∈ {x ∈ D | w ∈ P x}, P x) := by
+  have hs := isStrongestTrueAnswer_infClosure_image hD h
+  refine ⟨⟨.inl hs.1.1, hs.1.2⟩, ?_⟩
+  rintro q ⟨hq | hq, hw⟩
+  · exact hs.2 ⟨hq, hw⟩
+  · obtain ⟨t, -, hts, rfl⟩ := Set.mem_supClosure_image.1 hq
+    obtain ⟨x, hx, hwx⟩ := Set.mem_iUnion₂.1 hw
+    exact (hs.2 ⟨subset_infClosure (Set.mem_image_of_mem _ (hts hx)), hwx⟩).trans
+      (Set.subset_biUnion_of_mem hx)
+
+/-- An interrogative over conjunctions and disjunctions presupposes only that some member of its
+domain makes the nucleus true: the conjunction over all such members is the strongest true answer,
+however many there are. -/
+theorem presupposition_hamblin (hD : D.Finite) : presupposition (hamblin P D) = ⋃ x ∈ D, P x :=
+  Set.ext fun _ ↦ ⟨fun h ↦ let ⟨_, hq, hw⟩ := h.exists_mem; subset_biUnion_of_mem_hamblin hq hw,
+    fun h ↦ ⟨_, isStrongestTrueAnswer_hamblin hD (by simpa using h)⟩⟩
+
+end Hamblin
+
+/-! ### Distributive nuclei -/
+
+section Distributive
+
+open Set
+
+variable {E : Type*} {D s T : Set E} {a b : E}
+
+section Preorder
+
+variable [Preorder E]
+
+/-- The disjunction of the elements of a finite `T` is the strongest member of a Hamblin set
+supported on a state `s` when `T` lies in the domain and in `s` and everything in `s` lies above
+some element of `T`. -/
+theorem isLeast_supported_hamblin (hT : T.Finite) (hne : T.Nonempty) (hTD : T ⊆ D) (hTs : T ⊆ s)
+    (hs : s ⊆ ⋃ t ∈ T, Ici t) : IsLeast (supported (hamblin Ici D) s) (⋃ t ∈ T, Ici t) := by
+  refine ⟨⟨.inr (Set.mem_supClosure_image.2 ⟨hT.toFinset, by simpa using hne, by simpa using hTD,
+    by simp⟩), hs⟩, ?_⟩
+  rintro q ⟨hq, hsq⟩
+  obtain ⟨X, -, -, rfl | rfl⟩ := mem_hamblin.1 hq
+  · exact iUnion₂_subset fun t ht ↦ subset_iInter₂ fun x hx ↦
+      Ici_subset_Ici.2 (mem_iInter₂.1 (hsq (hTs ht)) x hx)
+  · refine iUnion₂_subset fun t ht ↦ ?_
+    obtain ⟨x, hx, hxt⟩ := mem_iUnion₂.1 (hsq (hTs ht))
+    exact (Ici_subset_Ici.2 hxt).trans (subset_biUnion_of_mem hx)
+
+theorem isLeast_supported_hamblin_pair (haD : a ∈ D) (hbD : b ∈ D) (has : a ∈ s) (hbs : b ∈ s)
+    (hs : s ⊆ Ici a ∪ Ici b) : IsLeast (supported (hamblin Ici D) s) (Ici a ∪ Ici b) := by
+  simpa using isLeast_supported_hamblin (T := {a, b}) (toFinite _) ⟨a, .inl rfl⟩
+    (pair_subset haD hbD) (pair_subset has hbs) (by simpa using hs)
+
+theorem presupposition_image_Ici (hD : IsUpperSet D) : presupposition (Ici '' D) = D := by
+  refine Set.ext fun w ↦ ⟨fun h ↦ ?_, fun hw ↦ ⟨Ici w, ⟨⟨w, hw, rfl⟩, self_mem_Ici⟩, ?_⟩⟩
+  · obtain ⟨_, ⟨x, hx, rfl⟩, hxw⟩ := h.exists_mem
+    exact hD hxw hx
+  · rintro _ ⟨⟨x, -, rfl⟩, hxw⟩
+    exact Ici_subset_Ici.2 hxw
+
+theorem presupposition_hamblin_Ici (hfin : D.Finite) (hD : IsUpperSet D) :
+    presupposition (hamblin Ici D) = D := by
+  rw [presupposition_hamblin hfin]
+  exact Set.ext fun w ↦ ⟨fun h ↦ let ⟨_, hx, hxw⟩ := mem_iUnion₂.1 h; hD hxw hx,
+    fun hw ↦ mem_biUnion hw self_mem_Ici⟩
+
+end Preorder
+
+/-- Over individuals, a state with two disjoint elements supports no member: there is no one
+individual below both. -/
+theorem not_isExhaustivelyResolvableOn_image_Ici [PartialOrder E] [OrderBot E] (hD : ⊥ ∉ D)
+    (hab : Disjoint a b) (has : a ∈ s) (hbs : b ∈ s) :
+    ¬ IsExhaustivelyResolvableOn (Ici '' D) s := by
+  rintro ⟨_, ⟨⟨x, hx, rfl⟩, hxs⟩, -⟩
+  exact hD (le_bot_iff.1 (hab (hxs has) (hxs hbs)) ▸ hx)
+
+end Distributive
 
 end Question
