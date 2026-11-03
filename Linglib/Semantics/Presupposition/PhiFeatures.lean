@@ -177,27 +177,47 @@ open Presupposition
 
 variable {E : Type*} [PartialOrder E] (x : E)
 
-/-- [atomic] is defined of the atoms, the `[+atomic]` region of the whole domain, and [minimal],
-whose dual region needs `[−atomic]`, of everything. -/
+/-- `[+atomic]` is defined of the atoms, the `[+atomic]` region of the whole domain, and
+`[+minimal]`, whose dual region needs `[−atomic]`, and `[+additive]`, of everything. -/
 def Feature.dom : Feature → Set E
   | .atomic => {x | atomsOf ⊤ x}
-  | .minimal => Set.univ
+  | .minimal | .additive => Set.univ
+
+/-- A bundle is defined where its positive values are. -/
+def Bundle.dom (b : Bundle) : Set E := (b.filter (·.2)).inf (Feature.dom ·.1)
+
+@[simp] theorem Bundle.dom_empty : Bundle.dom (E := E) ∅ = Set.univ := rfl
+
+/-- A bundle's region lies in its domain: `dom` is the inclusive reading of what `Bundle.exact`
+reads exclusively. -/
+theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : b.exact ⊤ x) : x ∈ Bundle.dom b := by
+  refine Set.singleton_subset_iff.1 (Finset.le_inf fun v hv ↦ Set.singleton_subset_iff.2 ?_)
+  obtain ⟨hvb, hv2⟩ := Finset.mem_filter.1 hv
+  obtain ⟨f, _ | _⟩ := v
+  · cases hv2
+  · cases f
+    · exact ⟨trivial, Bundle.atom_of_exact hvb h⟩
+    · trivial
+    · trivial
 
 /-- The singular is defined of the atoms; the plural, the dual, an absent value and a value
 without a bundle restrict nothing. -/
 def dom (n : Option Number) : Set E :=
-  (n.bind Features.ofNumber).elim Set.univ (·.inf Feature.dom)
+  (n.bind Bundle.ofNumber).elim Set.univ Bundle.dom
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
 @[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := by
-  simp [dom, Features.ofNumber, singularF_eq, Feature.dom, atomsOf]
+  simp [dom, Bundle.ofNumber, Bundle.singular, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton, Feature.dom, atomsOf]
 
 @[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := by
-  simp [dom, Features.ofNumber, dualF_eq, Feature.dom]
+  simp [dom, Bundle.ofNumber, Bundle.dual, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton, Feature.dom]
 
 @[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
-  simp [dom, Features.ofNumber, pluralF]
+  simp [dom, Bundle.ofNumber, Bundle.plural, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton]
 
 /-- Only the singular restricts. -/
 theorem dom_eq_univ_of_ne_singular {n : Option Number} (h : n ≠ some .singular) :
