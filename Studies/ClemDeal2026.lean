@@ -10,6 +10,10 @@ public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Kawapanan.Shawi.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
+public import Linglib.Syntax.Minimalist.Case.SyntacticObject
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Probe.CyclicExpansion
 public import Studies.Baker2015
 public import Studies.BejarRezac2009
 public import Studies.Deal2025a
@@ -34,6 +38,7 @@ forward hierarchy](##directionality).
   the impoverishment itself is not encoded.
 * The rows of (42), (45), (46) and (49) are read with the object positions of Shawi, as note 38
   assumes for Shiwilu.
+* The paper's v is `Cat.Voice` and its categorizing v is `Cat.v`, the labels note 19 offers.
 
 ## Errata
 
@@ -43,6 +48,11 @@ forward hierarchy](##directionality).
 * (6b) prints the subject's object agreement as *-nke(ma)*, but (36d) spells out [PART, AUG, v] as a
   whole and none of the routes to its absence in §3.3 deletes [AUG] alone, so [bare *-nke* on the
   subject of a 2PL object is not derived](##not_predicted_bare_nke).
+
+## TODO
+
+* `positions` stipulates that fronting and pro-drop require the high position; `clause .low` can
+  still front, and a phase condition on movement should exclude it.
 
 ## References
 
@@ -70,6 +80,7 @@ namespace ClemDeal2026
 open Deal2024 Phi.PersonSegment DistributedMorphology Morphology.Exponence
 open Clause (Scenario)
 open Baker2015 (Arg)
+open Minimalist (Derivation LexicalItem CaseAssigners HeadFunction)
 open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Goal flagging -/
@@ -197,21 +208,80 @@ def positions (p : Person) : ObjectSyntax → List ObjectPosition
   | .fronted | .dropped => [.high]
   | .belowAdverb | .absent => [.low]
 
-/-- The goals a probe at `l` meets: the object and then the subject on v ((22)), by the cyclic
-expansion of [bejar-rezac-2009] ((13)); the subject and then the object on T ((41)); and the
-subject alone when the object is low ((24)). -/
-def goals : Locus → ObjectPosition → List Arg
-  | .v, .high => [.object, .subject]
-  | .T, .high => [.subject, .object]
-  | _, .low => [.subject]
+/-- The lexical items of (30): the arguments, the root, categorizing v, the v that introduces the
+subject (fn. 19 notes it is Voice for some), T and C. -/
+def subjD : LexicalItem.Token := ⟨.of .D [], 1⟩
+@[inherit_doc subjD] def objD : LexicalItem.Token := ⟨.of .D [], 2⟩
+@[inherit_doc subjD] def root : LexicalItem.Token := ⟨.of .V [.D], 3⟩
+@[inherit_doc subjD] def vcat : LexicalItem.Token := ⟨.of .v [.V], 4⟩
+@[inherit_doc subjD] def voice : LexicalItem.Token := ⟨.of .Voice [.v], 5⟩
+@[inherit_doc subjD] def tense : LexicalItem.Token := ⟨.of .T [.Voice], 6⟩
+@[inherit_doc subjD] def comp : LexicalItem.Token := ⟨.of .C [.T], 7⟩
+
+/-- The clause (30): the object merges with the root, moves over categorizing v if it is high, and
+may front past T ((26b)). -/
+def clause (pos : ObjectPosition) (fronted : Bool := false) : Derivation :=
+  ⟨root, [.em .left objD, .em .right vcat] ++ (if pos = .high then [.im objD .left] else []) ++
+    [.em .right voice, .em .left subjD, .em .right tense] ++
+    (if fronted then [.im objD .left] else []) ++ [.em .right comp]⟩
+
+/-- The token of an argument. -/
+def tokenOf : Arg → LexicalItem.Token
+  | .subject => subjD
+  | .object => objD
+
+/-- The argument of a token. -/
+def argOf (x : LexicalItem.Token) : Option Arg :=
+  [Arg.subject, .object].find? (tokenOf · = x)
+
+/-- The head of a probe. -/
+def Locus.cat : Locus → Minimalist.Cat
+  | .v => .Voice
+  | .T => .T
+
+/-- The phase heads are categorizing v, whose complement holds a low object ((30)), and C. -/
+def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .v ∨ a.item.cat = .C
+
+instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The phase heads of an object, by position. -/
+def phaseSet (t : Minimalist.LinearizedSyntacticObject) : Finset Core.Order.TreePath :=
+  ((Minimalist.phaseHeads .raising t IsPhaseHead).map (·.1)).toFinset
+
+/-- The arguments a probe at `l` meets in a derivation, by the cyclic expansion of
+[bejar-rezac-2009] ((13)), the complement of a phase below it closed to it. -/
+def goalsIn (d : Derivation) (l : Locus) : List Arg :=
+  d.externalize?.elim [] fun t ↦
+    ((Minimalist.tokenList t.val).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
+      (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
+        (Minimalist.sealed (phaseSet t) (Minimalist.complementDomain .raising t ∅)
+          (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf
+
+/-- The goals a probe at `l` meets in the clause (30) with its object in position `pos`. -/
+def goals (l : Locus) (pos : ObjectPosition) : List Arg := goalsIn (clause pos) l
+
+-- (22), (19)
+theorem goals_v_high : goals .v .high = [.object, .subject] := by decide +kernel
+
+-- (41), (50)
+theorem goals_T_high : goals .T .high = [.subject, .object] := by decide +kernel
+
+-- (24)
+theorem goals_low (l : Locus) : goals l .low = [.subject] := by cases l <;> decide +kernel
+
+-- fn. 13
+theorem goalsIn_fronted : goalsIn (clause .high (fronted := true)) .v = [.object, .subject] := by
+  decide +kernel
 
 theorem dependentCase_v_iff (g : Grammar) (s o : Nominal) :
-    DependentCase g .v (nominals s o) (goals .v .high) ↔ Licit g ⟨s.1, o.1⟩ :=
-  dependentCase_pair_iff g .v (nominals s o) .object .subject
+    DependentCase g .v (nominals s o) (goals .v .high) ↔ Licit g ⟨s.1, o.1⟩ := by
+  rw [goals_v_high]
+  exact dependentCase_pair_iff g .v (nominals s o) .object .subject
 
 theorem dependentCase_T_iff (g : Grammar) (s o : Nominal) :
-    DependentCase g .T (nominals s o) (goals .T .high) ↔ Licit g ⟨o.1, s.1⟩ :=
-  dependentCase_pair_iff g .T (nominals s o) .subject .object
+    DependentCase g .T (nominals s o) (goals .T .high) ↔ Licit g ⟨o.1, s.1⟩ := by
+  rw [goals_T_high]
+  exact dependentCase_pair_iff g .T (nominals s o) .subject .object
 
 /-! ### Spell-out -/
 
@@ -315,13 +385,13 @@ private theorem insertions_ri_first (a : Nominal) :
 variable {s o : Nominal} {pos : ObjectPosition}
 
 theorem shawi_inserted_object : shawi.inserted s o pos .object = [] := by
-  cases pos <;> simp only [CaseSystem.inserted, shawi, goals, flagged_pair, flagged_singleton,
-    nominals]
+  cases pos <;> simp only [CaseSystem.inserted, shawi, goals_v_high, goals_low, flagged_pair,
+    flagged_singleton, nominals]
   · split_ifs <;> exact insertions_ri_first o
   · rfl
 
 theorem shawi_inserted_low : shawi.inserted s o .low .subject = [] := by
-  simp only [CaseSystem.inserted, shawi, goals, flagged_singleton]
+  simp only [CaseSystem.inserted, shawi, goals_low, flagged_singleton]
   exact insertions_ri_first s
 
 theorem shawi_inserted_high :
@@ -329,7 +399,7 @@ theorem shawi_inserted_high :
       if Licit strictlyDescending ⟨s.1, o.1⟩ then
         ri :: insertions objectItems ∅ [{.head .v} ∪ phi o]
       else [] := by
-  simp only [CaseSystem.inserted, shawi, goals, flagged_pair, nominals]
+  simp only [CaseSystem.inserted, shawi, goals_v_high, flagged_pair, nominals]
   by_cases h : Licit strictlyDescending ⟨s.1, o.1⟩
   · simp only [h, ↓reduceIte]
     exact insertions_ri_second s o
@@ -501,34 +571,40 @@ theorem not_predicted_bare_nke :
 
 /-! ### Configurational rules (§1, §4.1) -/
 
-/-- The NPs of the subject's spell-out domain, highest first: a low object is in another. -/
-def domain : ObjectPosition → List Arg
-  | .high => [.subject, .object]
-  | .low => [.subject]
+/-- The configurational rules of an alignment apply in the phase of C, reading what it transfers. -/
+def assigners (a : Alignment.AlignmentType) : CaseAssigners where
+  rules
+    | .C => DependentCase.Rules.ofAlignment a
+    | _ => {}
+
+/-- The case and mechanism the configurational rules of an alignment give an argument. -/
+def ruleCase (a : Alignment.AlignmentType) (d : Derivation) (x : Arg) :
+    Option (Case × Case.Mechanism) :=
+  d.externalize?.bind fun t ↦
+    ((assigners a).assignOn .raising t (Minimalist.complementDomain .raising t ∅) IsPhaseHead
+      (fun _ ↦ .unvalued) [subjD, objD]).valueOf (tokenOf x)
 
 -- (1), (7a–c) [baker-2015]
 theorem rule1_overgenerates :
-    ((DependentCase.assignCases .ergative (fun _ ↦ none) (domain .high)).valueOf .subject).map
-      (·.1) = some .erg ∧
+    (ruleCase .ergative (clause .high) .subject).map (·.1) = some .erg ∧
     ¬ Ergative (.second, .minimal) (.first, .minimal) .high ∧
     ¬ Ergative (.third, .minimal) (.first, .minimal) .high ∧
     ¬ Ergative (.third, .minimal) (.second, .minimal) .high := by
   simp only [ergative_iff]
-  decide
+  decide +kernel
 
-/-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): over the ranking `rank`, an NP
-takes the ergative when it c-commands a caseless NP no higher on `rank`. -/
-def rule37 (rank : Person → ℕ) (s o : Nominal) (pos : ObjectPosition) :
-    Case.Valuation Arg (Case × Case.Mechanism) :=
+/-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): of two NPs in one domain, over
+the ranking `rank`, the one c-commanding a caseless NP no higher on `rank` takes the ergative. -/
+def rule37 (rank : Person → ℕ) (s o : Nominal) : Case.Valuation Arg (Case × Case.Mechanism) :=
   (DependentCase.Rules.ofAlignment .ergative).dependentPassBy
     (fun p q ↦ p.1 < q.1 ∧ rank (nominals s o q.2).1 ≤ rank (nominals s o p.2).1) (fun _ ↦ True)
-    (Case.lexicalValuation (fun _ ↦ none) (domain pos))
+    (Case.lexicalValuation (fun _ ↦ none) [.subject, .object])
 
 -- (37), §4.1
 theorem rule37_valueOf_iff (rank : Person → ℕ) (s o : Nominal) :
-    ((rule37 rank s o .high).valueOf .subject).map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
+    ((rule37 rank s o).valueOf .subject).map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
   by_cases h : rank o.1 ≤ rank s.1 <;>
-    simp [rule37, domain, nominals, h, DependentCase.Rules.dependentPassBy,
+    simp [rule37, nominals, h, DependentCase.Rules.dependentPassBy,
       DependentCase.Rules.ofAlignment, Case.lexicalValuation, Case.slotValuation,
       Case.Valuation.initial, Case.Valuation.caselessEntries, Case.Valuation.fill,
       Case.Valuation.fillFrom, Case.Valuation.valueOf, Case.Valuation.offer]
@@ -538,7 +614,7 @@ second, since a probe that gets past a second person gets past a third (§4.1). 
 theorem not_forall_iff_rule37 (g : Grammar) {rank : Person → ℕ} (h : rank .second < rank .third)
     (n : Number) : ¬ ∀ s o : Person, s.prominence ≠ o.prominence →
       (DependentCase g .v (nominals (s, n) (o, n)) (goals .v .high) ↔
-        ((rule37 rank (s, n) (o, n) .high).valueOf .subject).map (·.1) = some .erg) := by
+        ((rule37 rank (s, n) (o, n)).valueOf .subject).map (·.1) = some .erg) := by
   intro hg
   have h₁ : Licit g ⟨.third, .second⟩ := (dependentCase_v_iff g (.third, n) (.second, n)).1
     ((hg .third .second (by decide)).2 ((rule37_valueOf_iff rank (.third, n) (.second, n)).2 h.le))
@@ -557,13 +633,21 @@ def Locus.alignment : Locus → Alignment.AlignmentType
   | .T => .accusative
 
 -- §5.1 [deal-2010] [clem-2019] [baker-vinokurova-2010]
-theorem noPCC_iff_assignCases (l : Locus) (pos : ObjectPosition) (s o : Nominal) (x : Arg) :
+theorem noPCC_iff_ruleCase (l : Locus) (pos : ObjectPosition) (s o : Nominal) (x : Arg) :
     (∃ fs, (x, fs) ∈ flagged noPCC l (nominals s o) (goals l pos) ∧ Feature.person .pi ∈ fs) ↔
-      ((DependentCase.assignCases l.alignment (fun _ ↦ none) (domain pos)).valueOf x).map (·.2) =
-        some .dependent := by
+      (ruleCase l.alignment (clause pos) x).map (·.2) = some .dependent := by
   have h : ∀ p q : Person, Licit noPCC ⟨p, q⟩ := by decide +kernel
+  have hr : (ruleCase l.alignment (clause pos) x).map (·.2) = some .dependent ↔
+      pos = .high ∧ (l = .v ∧ x = .subject ∨ l = .T ∧ x = .object) := by
+    cases l <;> cases pos <;> cases x <;> decide +kernel
+  rw [hr]
   cases l <;> cases pos <;> cases x <;>
-    simp [goals, flagged_pair, flagged_singleton, h, pi_mem_phi] <;> decide
+    simp [goals_v_high, goals_T_high, goals_low, flagged_pair, flagged_singleton, h, pi_mem_phi]
+
+-- (26b), fn. 13: `assignOn` has no proviso excluding the A-bar copy, so the rule also marks a
+-- fronted object, whose copy now c-commands the subject's, where the goals of v stay as they were
+example : (ruleCase .ergative (clause .high (fronted := true)) .object).map (·.1) = some .erg := by
+  decide +kernel
 
 -- table 7
 theorem table7 (p : Grammar × PCCType)
