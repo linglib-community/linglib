@@ -83,6 +83,10 @@ variable {I : Type*}
 @[expose] def former [LT I] : Modifier (I → E → Prop) :=
   fun N t x ↦ (∃ t' < t, N t' x) ∧ ¬ N t x
 
+@[simp] theorem former_apply [LT I] (N : I → E → Prop) (t : I) (x : E) :
+    former N t x ↔ (∃ t' < t, N t' x) ∧ ¬ N t x :=
+  Iff.rfl
+
 theorem former_isPrivative [LT I] : IsPrivative (former : Modifier (I → E → Prop)) :=
   isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
 

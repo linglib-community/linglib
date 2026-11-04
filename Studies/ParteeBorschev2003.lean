@@ -1,6 +1,7 @@
 module
 
-public import Studies.ParteeBorschev2001
+public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Possession.Relationalizer
 
 /-!
 # Partee and Borschev (2003): Genitives, Relational Nouns, and Argument-Modifier Ambiguity
@@ -43,13 +44,13 @@ variable {I E : Type*} [LT I] {N : I → E → Prop} {R : E → I → E → Prop
 theorem readingA_eq_readingB_of_constant (hR : ∀ t t' x, R y t x ↔ R y t' x) :
     π (former N) R y = former (π N R y) := by
   funext t x
-  simp only [former, π_apply, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
+  simp only [former_apply, π_apply₂, eq_iff_iff]
   grind
 
 /-- On what stays an `N`, *former* on the whole relational noun (20) is *former* on its relation
 part alone (50), §6.2.2. -/
 theorem former_π_iff_of_forall (hN : ∀ t', N t' x) :
     former (π N R y) t x ↔ N t x ∧ former (R y) t x := by
-  simp [former, π_apply, hN]
+  simp [π_apply₂, hN]
 
 end ParteeBorschev2003

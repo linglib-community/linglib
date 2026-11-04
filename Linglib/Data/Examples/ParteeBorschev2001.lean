@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `ParteeBorschev2001` — typed example data
@@ -237,7 +239,7 @@ def ex26 : Datum :=
     judgment := .acceptable
     alternatives := [("Diese Bücher sind alte.", .ungrammatical)]
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("agreement", "nonagreeing")] }
 
 def ex27 : Datum :=
   { id := "parteeborschev2001_ex27"
@@ -251,7 +253,7 @@ def ex27 : Datum :=
     judgment := .acceptable
     alternatives := [("Diese Bücher sind mein.", .ungrammatical)]
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("agreement", "agreeing")] }
 
 def ex28a : Datum :=
   { id := "parteeborschev2001_ex28a"
@@ -492,5 +494,60 @@ def exfn13instr : Datum :=
     paperFeatures := [("case", "instrumental")] }
 
 def all : List Datum := [ex1c, ex2c, ex3c, ex17a, ex17b, ex17c, ex17d, ex17e, ex17f, ex23a, ex23b, ex24a, ex24b, ex25a, ex25b, ex26, ex27, ex28a, ex28b, ex29a, ex29b, ex30a, ex30b, ex32a, ex32b, ex33a, ex33b, ex34a, ex34b, ex35a, ex35b, ex35c, exfn13nom, exfn13instr]
+
+/-- The head noun of the subject of a copular clause. -/
+inductive Noun where
+  /-- team: *team* -/
+  | team
+  /-- brother: *brother* -/
+  | brother
+  /-- father: *father* -/
+  | father
+  /-- favorite movie: *favorite movie* -/
+  | favoriteMovie
+  /-- teacher: *teacher* -/
+  | teacher
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `noun`. -/
+def noun (e : Datum) : Option Noun :=
+  e.parse? "noun" [("team", .team), ("brother", .brother), ("father", .father),
+    ("favorite movie", .favoriteMovie), ("teacher", .teacher)]
+
+/-- The determiner of the subject of a copular clause. -/
+inductive Subject where
+  /-- demonstrative: *that* -/
+  | demonstrative
+  /-- possessive: *his*, *Dad's* -/
+  | possessive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def subject (e : Datum) : Option Subject :=
+  e.parse? "subject" [("demonstrative", .demonstrative), ("possessive", .possessive)]
+
+/-- Whether a German predicate agrees with its subject. -/
+inductive Agreement where
+  /-- agreeing: agrees, as *meine* -/
+  | agreeing
+  /-- nonagreeing: does not agree, as *alt* and *mein* -/
+  | nonagreeing
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `agreement`. -/
+def agreement (e : Datum) : Option Agreement :=
+  e.parse? "agreement" [("agreeing", .agreeing), ("nonagreeing", .nonagreeing)]
+
+/-- The case of a Russian or Polish predicate. -/
+inductive PredicateCase where
+  /-- instrumental: instrumental -/
+  | instrumental
+  /-- nominative: nominative -/
+  | nominative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `case`. -/
+def predicateCase (e : Datum) : Option PredicateCase :=
+  e.parse? "case" [("instrumental", .instrumental), ("nominative", .nominative)]
 
 end ParteeBorschev2001.Examples
