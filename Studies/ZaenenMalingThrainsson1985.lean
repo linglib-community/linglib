@@ -44,7 +44,7 @@ argument tested is assigned SUBJ.
   *finnast*, *sakna*, *vanta*, *gefallen* and *übel sein*, whose subjects or datives are
   experiencers here, nor for *abhören*, whose roles follow *biðja*'s.
 * An association is an injective map from the arguments to the functions, functional
-  uniqueness being injectivity. Default case marking is `Minimalist.agreeValues` on the arguments
+  uniqueness being injectivity. Default case marking is `Minimalist.agreeValueList` on the arguments
   listed highest function first, with which it agrees extensionally, so the persistence of
   idiosyncratic case is `Case.Valuation.Extends`.
 * Principle (61a) fixes no order among the objects, which gives *gefa* its two associations
@@ -192,11 +192,11 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 /-- Default case marking, (61d), as a step of case valuation on arguments listed highest
 function first: the highest not yet valued takes the nominative and the next the accusative. -/
 def defaultCase [DecidableEq C] {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
-  Minimalist.agreeValues (fun _ ↦ True) [P.nom, P.acc] s
+  Minimalist.agreeValueList (fun _ ↦ True) [P.nom, P.acc] s
 
 theorem extends_defaultCase [DecidableEq C] {α : Type*} (s : Case.Valuation α C) :
     s.Extends (fun c ↦ c = P.nom ∨ c = P.acc) (P.defaultCase s) :=
-  Minimalist.extends_agreeValues (by simp) s
+  Minimalist.extends_agreeValueList (by simp) s
 
 theorem mem_defaultCase_of_lexicalCase [DecidableEq C] {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
     (hc : x.lexicalCase = some c) :

@@ -21,7 +21,7 @@ the reader reads, so that the fit cannot go silently vacuous.
 
 * `Datum.feature?`, `Datum.features`: the first value and every value of a key of
   `paperFeatures`.
-* `Datum.parse?`: the first value of a key read through a table.
+* `Datum.parse?`, `Datum.parseAll?`: the first value and every value of a key read through a table.
 * `Datum.byLanguage`: the entry of a table under a row's language, keyed by the `Glottocode`
   constants of `Data/Examples/Languages.lean`.
 * `Datum.digits?`, `Datum.nat?`, `Datum.int?`, `Datum.decimal?`: numerals.
@@ -120,6 +120,11 @@ def features : List String :=
 has the key and `table` lists its value. -/
 def parse? {α : Type*} (table : List (String × α)) : Option α :=
   (e.feature? key).bind (List.lookup · table)
+
+/-- `e.parseAll? key table` is every value of `key` in `e` read through `table`, if `table` lists
+them all. -/
+def parseAll? {α : Type*} (table : List (String × α)) : Option (List α) :=
+  (e.features key).mapM (List.lookup · table)
 
 /-- `e.byLanguage table` is the entry of `table` under the language of `e`, if `table` lists it:
 how a study reads a row through the languages of its sample. -/

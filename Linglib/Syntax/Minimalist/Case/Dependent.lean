@@ -24,7 +24,7 @@ and listed from the highest down, and `Case/SyntacticObject.lean` reads them off
 
 ## Main definitions
 
-* `agreeValue`, `agreeValues`, `agreeValueOn`: Agree on the highest caseless NP of a domain, with
+* `agreeValue`, `agreeValueList`, `agreeValueOn`: Agree on the highest caseless NP of a domain, with
   each of several values in turn, or on the closest.
 * `PhasedNP`: an NP placed by hand: the case slot it enters with, absent for PRO, its phase, and
   the phase it shifts into.
@@ -198,30 +198,30 @@ def agreeValueOn (lt : α → α → Prop) [DecidableRel lt] (P : α → Prop) [
 
 /-- Agree with each value in turn: the highest unvalued NP that `P` selects takes the first, the next
     the second. -/
-def agreeValues (P : α → Prop) [DecidablePred P] (vs : List β) (s : Valuation α β) :
+def agreeValueList (P : α → Prop) [DecidablePred P] (vs : List β) (s : Valuation α β) :
     Valuation α β :=
   vs.foldl (fun st v ↦ agreeValue P v st) s
 
-@[simp] theorem agreeValues_nil (s : Valuation α β) : agreeValues P [] s = s := rfl
+@[simp] theorem agreeValueList_nil (s : Valuation α β) : agreeValueList P [] s = s := rfl
 
-@[simp] theorem agreeValues_nil_right (vs : List β) : agreeValues P vs [] = [] := by
-  induction vs <;> simp_all [agreeValues]
+@[simp] theorem agreeValueList_nil_right (vs : List β) : agreeValueList P vs [] = [] := by
+  induction vs <;> simp_all [agreeValueList]
 
-theorem agreeValues_cons_right_of_not {p : α × FeatureSlot β} (hp : ¬ (p.2 = .unvalued ∧ P p.1))
-    (vs : List β) (s : Valuation α β) : agreeValues P vs (p :: s) = p :: agreeValues P vs s := by
+theorem agreeValueList_cons_right_of_not {p : α × FeatureSlot β} (hp : ¬ (p.2 = .unvalued ∧ P p.1))
+    (vs : List β) (s : Valuation α β) : agreeValueList P vs (p :: s) = p :: agreeValueList P vs s := by
   induction vs generalizing s with
   | nil => rfl
-  | cons v vs ih => simpa [agreeValues, hp] using ih (agreeValue P v s)
+  | cons v vs ih => simpa [agreeValueList, hp] using ih (agreeValue P v s)
 
-theorem agreeValues_cons_cons {p : α × FeatureSlot β} (hp : p.2 = .unvalued ∧ P p.1) (v : β)
+theorem agreeValueList_cons_cons {p : α × FeatureSlot β} (hp : p.2 = .unvalued ∧ P p.1) (v : β)
     (vs : List β) (s : Valuation α β) :
-    agreeValues P (v :: vs) (p :: s) = (p.1, .valued v) :: agreeValues P vs s := by
-  have h : agreeValues P (v :: vs) (p :: s) = agreeValues P vs ((p.1, .valued v) :: s) := by
-    simp [agreeValues, hp]
-  exact h.trans (agreeValues_cons_right_of_not (by simp) vs s)
+    agreeValueList P (v :: vs) (p :: s) = (p.1, .valued v) :: agreeValueList P vs s := by
+  have h : agreeValueList P (v :: vs) (p :: s) = agreeValueList P vs ((p.1, .valued v) :: s) := by
+    simp [agreeValueList, hp]
+  exact h.trans (agreeValueList_cons_right_of_not (by simp) vs s)
 
-theorem extends_agreeValues {p : β → Prop} {vs : List β} (hv : ∀ v ∈ vs, p v) (s : Valuation α β) :
-    Valuation.Extends p s (agreeValues P vs s) :=
+theorem extends_agreeValueList {p : β → Prop} {vs : List β} (hv : ∀ v ∈ vs, p v) (s : Valuation α β) :
+    Valuation.Extends p s (agreeValueList P vs s) :=
   Valuation.Extends.foldl vs (fun v hm st ↦ extends_agreeValue (hv v hm) st) s
 
 end Agree

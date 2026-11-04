@@ -220,7 +220,7 @@ def passiveClause (agent goal : Bool) : Derivation :=
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
     (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
-      (fun x ↦ if x = proD then .absent else .unvalued) xs).map (·.2.value?.map (·.1))
+      (fun x ↦ if x = proD then .absent else .unvalued) xs).values.map (·.map (·.1))
 
 /-! ### Positions -/
 
@@ -246,7 +246,7 @@ def domainOrder : List Cat := [.D, .v, .C]
 /-- The cases of hand-placed NPs, positionally. -/
 def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
     List (Option Case) :=
-  (g.assign id probes domainOrder nps).map (·.2.value?.map (·.1))
+  (g.assign id probes domainOrder nps).values.map (·.map (·.1))
 
 /-! ### The constructions -/
 

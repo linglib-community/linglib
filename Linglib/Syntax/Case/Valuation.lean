@@ -35,8 +35,8 @@ in which adding an assigner may change what values a nominal but never leaves on
 * `Case.Valuation.initial`, `Case.Valuation.fill`, `Case.Valuation.caseless`: the valuation with
   given slots, the simultaneous valuation of the unvalued nominals, and the positions of the
   caseless ones.
-* `Case.Valuation.valueOf`: the value of a nominal, the nominals being identified by their own
-  type rather than by a label.
+* `Case.Valuation.valueOf`, `Case.Valuation.values`: the value of a nominal, the nominals being
+  identified by their own type rather than by a label, and the values of them all.
 * `Case.Valuation.Extends`: one valuation extends another by values satisfying a predicate.
 * `Case.Valuation.ValuedLE`: one valuation values every nominal another does.
 
@@ -167,6 +167,19 @@ theorem mem_caseless {P : α → Prop} [DecidablePred P] {s : Valuation α β} {
     i ∈ caseless P s ↔ ∃ x k, s[i]? = some (x, k) ∧ k.value? = none ∧ P x := by
   simp only [caseless, mem_map, Prod.exists, exists_and_right, exists_eq_right]
   exact exists_congr fun _ ↦ mem_caselessEntries
+
+/-- The values of the nominals, from the highest down, `none` for a nominal without one. -/
+def values (s : Valuation α β) : List (Option β) := s.map (·.2.value?)
+
+@[simp] theorem values_nil : values ([] : Valuation α β) = [] := rfl
+
+@[simp] theorem values_cons (p : α × FeatureSlot β) (s : Valuation α β) :
+    values (p :: s) = p.2.value? :: values s := rfl
+
+@[simp] theorem length_values (s : Valuation α β) : (values s).length = s.length := length_map ..
+
+theorem getElem?_values (s : Valuation α β) (i : ℕ) :
+    (values s)[i]? = s[i]?.map (·.2.value?) := getElem?_map ..
 
 /-! ### Extension -/
 
