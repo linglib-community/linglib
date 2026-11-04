@@ -314,8 +314,8 @@ allowing a contextual standard only where conventional meaning is insufficient (
 (66)). The standards a scale itself fixes are those every automorphism of its degrees fixes, and
 the endpoint standards are among them (`UpperSet.isInvariant_Ioi_of_isBot`), so a scale admits an
 endpoint standard where it has a standard of that kind, and the contextual standard only where it
-fixes no standard but the trivial ones. The lexical necessity and extreme standards it never admits. On the
-canonical scales the endpoint standards are the only nontrivial invariant ones
+fixes no standard but the trivial ones. The lexical necessity and extreme standards it never
+admits. On the canonical scales the endpoint standards are the only nontrivial invariant ones
 (`isInvariant_degreeShape_iff`). -/
 def Admits (b : Boundedness) : PositiveStandard → Prop
   | .contextual  => ∀ U : UpperSet b.DegreeShape, U.IsInvariant → U = ⊥ ∨ U = ⊤

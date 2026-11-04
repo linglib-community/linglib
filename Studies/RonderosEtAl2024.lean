@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.RonderosEtAl2024
 public import Linglib.Data.Statistics.RonderosEtAl2024
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Data.Finset.Basic
 

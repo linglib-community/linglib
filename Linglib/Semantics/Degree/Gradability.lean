@@ -21,6 +21,11 @@ endpoint](##Gradability.complementary_standard_iff).
 
 @[expose] public section
 
+/-- A directed scale is a comparison scale with a polarity. [cresswell-1976] reads it as a relation
+ordering degrees upward or, for *short*, downward; for [kennedy-1999] it is the ordered set of the
+positive or the negative extents on the scale. Comparison is defined only within one. -/
+abbrev DirectedScale := ComparisonScale × Polarity
+
 /-- The degree semantics of a gradable predicate is the dimension it measures, the pole it
 measures towards, and the standard its lexicon fixes, `none` taking the scale's default. -/
 structure Gradability where
@@ -35,6 +40,9 @@ structure Gradability where
 namespace Gradability
 
 variable (g : Gradability)
+
+/-- The directed scale of a gradable predicate is its comparison scale with its polarity. -/
+def directedScale : DirectedScale := (g.dimension.comparisonScale, g.polarity)
 
 /-- The scale is the dimension's, dualized at the negative pole. -/
 def boundedness : Boundedness := g.polarity • g.dimension.boundedness

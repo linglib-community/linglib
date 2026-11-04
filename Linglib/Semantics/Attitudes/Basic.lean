@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.EvaluativeValence
 public import Linglib.Semantics.Presupposition.Trigger
 
 /-!
@@ -52,7 +52,7 @@ or her doxastic alternatives, compatible with what she believes, among which it 
 inductive Doxastic.Alternatives
   | epistemic
   | doxastic
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr
 
 /-- An attitude predicate is doxastic, with an accessibility semantics over its alternatives
 ([hintikka-1962]), or preferential, with an evaluative valence and a record of whether it is

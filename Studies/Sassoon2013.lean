@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Data.Examples.Sassoon2013
 public import Linglib.Data.Examples.Readers
 

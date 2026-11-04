@@ -235,8 +235,8 @@ theorem possible_eq_preimage : possible P = likelihood P ⁻¹' Set.Ioi ⊥ := b
 *impossible* the maximum of the dual (§5.2.5). The fragment's possibility scale is only lower
 closed; the maximum of the probability scale is the book's claim that *possible* shares the scale
 of *likely*. -/
-example : English.Adjectives.possible.standard = .minEndpoint ∧
-    English.Adjectives.impossible.standard = .maxEndpoint := by
+example : English.Adjectives.possible.standard = some .minEndpoint ∧
+    English.Adjectives.impossible.standard = some .maxEndpoint := by
   decide
 
 /-- *Certain* and *possible* are [lassiter-2015]'s strong *must* and *might* at threshold one (p.

@@ -12,16 +12,15 @@ public import Mathlib.Order.Interval.Set.Disjoint
 # Antonymy
 
 The members of an antonym pair, *tall* and *short* or *happy* and *unhappy*, measure the same
-degrees under inverse orderings, so an adjective's `Polarity` says which member it is, and `negative
-* p` is the polarity of the antonym of a `p` adjective. Polarity acts on
+degrees under inverse orderings, so an adjective's `Polarity` says which member it is, and
+`negative * p` is the polarity of the antonym of a `p` adjective. Polarity acts on
 [boundedness](##Boundedness.negative_smul) and on [comparisons](##Comparison.negative_smul) through
 the order dual. The positive forms of the members are
 [contradictory](##AntonymForm.isCompl_contradictoryDenotation), as *clean* and *dirty* are, or
 [contrary](##AntonymForm.isContrary_strengthenedDenotation), as *tall* and *short* are, two cells of
 the Aristotelian square. The contrary case is a `ThresholdPair` on a linearly ordered scale, and
 [its gap](##ThresholdPair.gap_nonempty_iff) keeps *not unhappy* apart from *happy* in the quadruplet
-`AntonymForm`. `EvaluativeValence`, whether a predicate denotes a good or a bad property, is a
-second axis on which the poles differ.
+`AntonymForm`.
 
 ## References
 
@@ -31,7 +30,6 @@ second axis on which the poles differ.
 * [horn-1989]
 * [krifka-2007b]
 * [tessler-franke-2019]
-* [nouwen-2024]
 -/
 
 @[expose] public section
@@ -56,25 +54,6 @@ instance : MulAction Polarity Comparison :=
 
 @[simp] theorem Comparison.negative_smul (c : Comparison) : Polarity.negative • c = c.dual :=
   rfl
-
-/-! ### Evaluative valence -/
-
-/-- The evaluative valence of a gradable predicate records whether it denotes a good, a bad or
-an evaluatively neutral property, which is distinct from scalar polarity ([nouwen-2024]).
-Negative valence yields high-degree intensifiers and positive valence moderate-degree ones, which
-Nouwen explains by the Goldilocks effect, the negative evaluation of a scale's extremes. -/
-inductive EvaluativeValence where
-  | positive
-  | negative
-  | neutral
-  deriving Repr, DecidableEq
-
-/-- The valence of the opposite pole of an antonym pair swaps positive and negative and keeps
-neutral. -/
-def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
-  | .positive => .negative
-  | .negative => .positive
-  | .neutral => .neutral
 
 /-! ### The two-threshold model of a contrary pair -/
 
