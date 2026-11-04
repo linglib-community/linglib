@@ -1,6 +1,6 @@
 [
   {
-    "id": "woolford1997_1",
+    "id": "woolford1997_3",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(3)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -15,14 +15,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "nominative"],
-      ["clause", "intransitive"]
+      ["case", "nominative"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
     ],
-    "comment": "Rude 1982, (19).",
+    "comment": "Rude 1982, (19). Repeated as (35).",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_2",
+    "id": "woolford1997_4",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(4)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -37,14 +38,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "nominative-accusative"],
-      ["clause", "transitive"]
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
     ],
-    "comment": "Rude 1988, (31). Neither case is overt; only the nominative triggers agreement.",
+    "comment": "Rude 1988, (31). Neither Case is overt; only the nominative triggers agreement. Repeated as (36).",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_3",
+    "id": "woolford1997_5",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(5)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -59,14 +63,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "ergative-objective"],
-      ["clause", "transitive"]
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
     ],
-    "comment": "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object triggers object agreement.",
+    "comment": "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object object agreement.",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_4",
+    "id": "woolford1997_6",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(6)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -82,14 +89,19 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "nominative-accusative-accusative"],
-      ["clause", "ditransitive"]
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
     ],
-    "comment": "Rude, personal communication. Neither object triggers agreement.",
+    "comment": "Rude, personal communication. Cases in Agent Goal Theme order; neither object triggers agreement.",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_5",
+    "id": "woolford1997_7",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(7)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -105,14 +117,19 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "ergative-objective-accusative"],
-      ["clause", "ditransitive"]
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
     ],
-    "comment": "Rude, personal communication. The goal is objective and triggers object agreement; the theme is accusative.",
+    "comment": "Rude, personal communication. Cases in Agent Goal Theme order: the goal is objective, the theme accusative.",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_6",
+    "id": "woolford1997_8",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(8)"},
     "reportedIn": null,
     "language": "nezp1238",
@@ -128,14 +145,890 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "ergative-dative-objective"],
-      ["clause", "ditransitive"]
+      ["case", "ergative"],
+      ["case", "dative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
     ],
-    "comment": "Rude, personal communication. With a dative goal the theme gets objective case.",
+    "comment": "Rude, personal communication. Headed Ergative-Objective-Dative in surface order; the Cases here are in the Agent Goal Theme order of (22). Dative and objective are both -na here, and the goal of (7) is -na glossed OBJ.",
     "verified": "page-image"
   },
   {
-    "id": "woolford1997_7",
+    "id": "woolford1997_16A1",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(16A.1)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_16A2",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(16A.2)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_16B1",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(16B.1)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_16B2",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(16B.2)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22A1",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22A.1)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Accusative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22A2",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22A.2)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Dative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "dative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22A3",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22A.3)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Objective Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22A4",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22A.4)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Dative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "dative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B1",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.1)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Objective Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "objective"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B2",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.2)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Objective Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "objective"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B3",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.3)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Accusative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B4",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.4)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Nominative Dative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "dative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B5",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.5)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Accusative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "accusative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B6",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.6)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Accusative Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "accusative"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B7",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.7)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Objective Objective.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["case", "objective"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_22B8",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(22B.8)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ergative Dative Accusative.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "dative"],
+      ["case", "accusative"]
+    ],
+    "comment": "A pattern of Cases the paper tabulates, not a sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_29a",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(29a)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Hi-kúu-se.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hi-kúu-se", "3-go-ASP/SG"]
+    ],
+    "translation": "He/she is going.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_29b",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(29b)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Hi-ku-síix.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hi-ku-síix", "3-go-ASP/PL"]
+    ],
+    "translation": "They are going.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["phi", "3pl"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_30a",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Pée-ke'nip-se.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pée-ke'nip-se", "3/3-bite-ASP/SG"]
+    ],
+    "translation": "He is biting it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
+    ],
+    "comment": "Rude 1982, (4). Both arguments are null: the portmanteau shows an objective object, so the subject is ergative.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_30b",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Pée-ke'nip-six.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pée-ke'nip-six", "3/3-bite-ASP/PL"]
+    ],
+    "translation": "They are biting it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3pl"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
+    ],
+    "comment": "Rude 1982, (4). Cannot mean 'He is biting them'. Both arguments are null: the portmanteau shows an objective object, so the subject is ergative.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_31a",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(31a)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Hi-kú-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hi-kú-ye", "3-go-ASP"]
+    ],
+    "translation": "He went.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (5).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_31b",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(31b)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Hi-pe-kú-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hi-pe-kú-ye", "3-PL.SUBJ-go-ASP"]
+    ],
+    "translation": "They went.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["phi", "3pl"],
+      ["prefix", "hi"]
+    ],
+    "comment": "No locator is printed; (31a) gives Rude 1982, (5).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_32",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(32)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Pée-pe-ke'nip-e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pée-pe-ke'nip-e", "3/3-PL.SUBJ-bite-ASP"]
+    ],
+    "translation": "They hit it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3pl"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
+    ],
+    "comment": "Rude 1982, (6). The gloss has 'bite' and the translation 'hit'. Both arguments are null: the portmanteau shows an objective object, so the subject is ergative.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_33",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "'e-pe-nées-hexn-e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["'e-pe-nées-hexn-e", "1/3-PL.SUBJ-PL.OBJ-see-ASP"]
+    ],
+    "translation": "We saw them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "1pl"],
+      ["phi", "3pl"],
+      ["prefix", "'e"]
+    ],
+    "comment": "Rude 1985, p. 39. Both arguments are null: the prefix shows an objective object, so the subject is ergative, unmarked as first and second person pronouns are (p. 197).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_34",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Háama-nm hi-néec-'wi-ye wewúkiye-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Háama-nm", "man-ERG"], ["hi-néec-'wi-ye", "3-PL.OBJ-shoot-ASP"],
+      ["wewúkiye-ne", "elk-OBJ"]
+    ],
+    "translation": "The man shot the elk(plural).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "3pl"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1986a, (13). Repeated as (38).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_37",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Hi-táamyan-a 'áatway-nim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hi-táamyan-a", "3/1-hit-ASP"], ["'áatway-nim", "old.woman-ERG"]
+    ],
+    "translation": "The old woman hit me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "1sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (29). The objective object is null.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_39",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(39)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "'ip-ním pée-hexn-e walás-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["'ip-ním", "he-ERG"], ["pée-hexn-e", "3/3-see-ASP"], ["walás-na", "knife-OBJ"]
+    ],
+    "translation": "He saw the knife.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "pée"]
+    ],
+    "comment": "Rude 1982, (34).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_40",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(40)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "'íin 'e-nées-hexn-e walás-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["'íin", "I"], ["'e-nées-hexn-e", "1/3-PL.OBJ-see-ASP"], ["walás-na", "knife-OBJ"]
+    ],
+    "translation": "I saw the knives.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "1sg"],
+      ["phi", "3pl"],
+      ["prefix", "'e"]
+    ],
+    "comment": "Rude 1982, (32). The pronoun is glossed for no Case and shows no ergative; the row takes it as abstractly ergative, since the object is objective and p. 197 takes such pronouns to lack the distinction in form only.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_41",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "'ee 'aw-'yáax̣n-o'qa ku's-pé wex̣weqé-ne titlúu-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["'ee", "you"], ["'aw-'yáax̣n-o'qa", "2/3-can-find"], ["ku's-pé", "places-in"],
+      ["wex̣weqé-ne", "frog-OBJ"], ["titlúu-ne", "big-OBJ"]
+    ],
+    "translation": "You can find a big frog in those places.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["phi", "2sg"],
+      ["phi", "3sg"],
+      ["prefix", "'e"]
+    ],
+    "comment": "Rude 1982, (25), from Aoki 1979. The prefix 'e surfaces as 'a by vowel harmony. The pronoun is glossed for no Case and shows no ergative; the row takes it as abstractly ergative, since the object is objective and p. 197 takes such pronouns to lack the distinction in form only.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_42",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(42)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Kii héeneku' céep-Ø hi-'níp-e háacwal-Ø.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kii", "now"], ["héeneku'", "again"], ["céep-Ø", "arrow-ACC"], ["hi-'níp-e", "3-take-ASP"],
+      ["háacwal-Ø", "boy-NOM"]
+    ],
+    "translation": "Now the boy again took an arrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (94), from Phinney 1934.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_43",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Kawá tax̣c qáamsit-Ø Ø-wiyáamk-o' kaa Ø-túut-nu'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kawá", "then"], ["tax̣c", "soon"], ["qáamsit-Ø", "qáamsit-ACC"],
+      ["Ø-wiyáamk-o'", "1-peel-ASP"], ["kaa", "and"], ["Ø-túut-nu'", "1-grind-ASP"]
+    ],
+    "translation": "Then soon I will peel and grind the qáamsit.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["phi", "1sg"],
+      ["phi", "3sg"],
+      ["prefix", "Ø"]
+    ],
+    "comment": "Rude 1986a, (23), from Phinney 1934.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_44",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Kaa qiyáaw'is nacó'x̣-Ø hi-nwíhna-'ni-s.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kaa", "and"], ["qiyáaw'is", "dried"], ["nacó'x̣-Ø", "salmon-ACC"],
+      ["hi-nwíhna-'ni-s", "3/1-leave-APPL-ASP"]
+    ],
+    "translation": "and he has left me dried salmon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "1sg"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1986a, (79), from Phinney 1934. Subject and objective object are null.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_45",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Kaa píst-Ø hi-'naxpayk-óo-ya síteqs-Ø.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kaa", "and"], ["píst-Ø", "father-ACC"], ["hi-'naxpayk-óo-ya", "3-bring-DIR-ASP"],
+      ["síteqs-Ø", "liver-ACC"]
+    ],
+    "translation": "And she brought her father the liver.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"],
+      ["case", "accusative"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["phi", "3sg"],
+      ["prefix", "hi"]
+    ],
+    "comment": "Rude 1982, (97), from Phinney 1934, p. 327. The subject is null.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_49",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "dhan1270",
+    "primaryText": "Taykka-Ø ṛakkunʸT̪in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taykka-Ø", "woman-NOM"], ["ṛakkunʸT̪in", "died"]
+    ],
+    "translation": "Woman died.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "Schebeck 1976, (11).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_50",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "dhan1270",
+    "primaryText": "Yūlŋu-T̪u taykka-N̪a puyan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yūlŋu-T̪u", "man-ERG"], ["taykka-N̪a", "woman-OBJ"], ["puyan", "hit"]
+    ],
+    "translation": "Man hit woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"]
+    ],
+    "comment": "Schebeck 1976, (15). What Schebeck labels accusative is labeled objective here (note 35).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_51",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "dhan1270",
+    "primaryText": "Yūlŋu-T̪u yūttu-N̪a kuŋan taykka-Ku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Yūlŋu-T̪u", "man-ERG"], ["yūttu-N̪a", "child-OBJ"], ["kuŋan", "give"],
+      ["taykka-Ku", "woman-DAT"]
+    ],
+    "translation": "Man gave child to woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "dative"],
+      ["case", "objective"]
+    ],
+    "comment": "Schebeck 1976, (18). Cases in Agent Goal Theme order.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_55",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "Maṛapai-Ø mal̪t̪a-Ø iŋka-n̪a-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maṛapai-Ø", "women-NOM"], ["mal̪t̪a-Ø", "mob(=pl)-NOM"],
+      ["iŋka-n̪a-na", "came-PAST-3pl.SUBJ"]
+    ],
+    "translation": "The women came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "Blake 1982, (34). The labels on unmarked forms are Woolford's (note 39).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_56",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "Maṛapai-t̪u mal̪t̪a-yi ŋai-Ø l̪ayi-n̪a-ŋi-na makat̪i-t̪u.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maṛapai-t̪u", "woman-ERG"], ["mal̪t̪a-yi", "mob-ERG"], ["ŋai-Ø", "me-OBJ"],
+      ["l̪ayi-n̪a-ŋi-na", "hit-PAST-1sg.OBJ-3pl.SUBJ"], ["makat̪i-t̪u", "hand-INSTR"]
+    ],
+    "translation": "The women hit me with their hands.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "objective"]
+    ],
+    "comment": "Blake 1982, (35). The labels on unmarked forms are Woolford's (note 39).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_57",
     "source": {"bibkey": "woolford-1997", "paperLabel": "(57)"},
     "reportedIn": null,
     "language": "kalk1246",
@@ -151,10 +1044,401 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "ergative-objective-accusative"],
-      ["clause", "ditransitive"]
+      ["case", "ergative"],
+      ["case", "objective"],
+      ["case", "accusative"]
     ],
-    "comment": "Blake 1982, (47). Only the goal triggers object agreement; the case labels on the unmarked forms are Woolford's.",
+    "comment": "Blake 1982, (47). Only the goal triggers object agreement; the labels on unmarked forms are Woolford's (note 39).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_10a",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Konan þýddi bókina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Konan", "woman-NOM"], ["þýddi", "translated"], ["bókina", "book-ACC"]
+    ],
+    "translation": "The woman translated the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"]
+    ],
+    "comment": "Yip, Maling and Jackendoff 1987, p. 234.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_10b",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Barninu batnaði veikin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Barninu", "child-DAT"], ["batnaði", "recovered-from"], ["veikin", "disease-NOM"]
+    ],
+    "translation": "The child recovered from the disease.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "dative"],
+      ["case", "nominative"]
+    ],
+    "comment": "Yip, Maling and Jackendoff 1987, p. 223. The gloss adds (*ACC).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_fn16i",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "note 16 (i)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Mér vantar hníf.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mér", "me-DAT"], ["vantar", "lacks"], ["hníf", "knife-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "dative"],
+      ["case", "lexical-accusative"]
+    ],
+    "comment": "An exception Yip, Maling and Jackendoff 1987, p. 232, take to have lexical accusative. The source prints no translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_fn16ii",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "note 16 (ii)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Peningana vantar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peningana", "the.money-ACC"], ["vantar", "is.lacking"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "lexical-accusative"]
+    ],
+    "comment": "Without the experiencer the theme keeps its lexical accusative. The source prints no translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_fn16iii",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "note 16 (iii)"},
+    "reportedIn": null,
+    "language": "faro1244",
+    "primaryText": "Mær líkar henda filmin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mær", "me-DAT"], ["líkar", "likes"], ["henda", "this"], ["filmin", "film-ACC"]
+    ],
+    "translation": "I like this film.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "dative"],
+      ["case", "objective"]
+    ],
+    "comment": "Barnes 1986, (12). Labeled accusative in the literature; the note argues it may be objective.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_fn18i",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "note 18 (i)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Bátnum hvolfdi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bátnum", "boat-DAT"], ["hvolfdi", "capsized"]
+    ],
+    "translation": "The boat capsized.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "dative"]
+    ],
+    "comment": "Levin and Simpson 1981, (1b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_11",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "hind1269",
+    "primaryText": "Raam rotii khaataa thaa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Raam", "Ram(masc)-NOM"], ["rotii", "bread(fem)-ACC"], ["khaataa", "eat(imp,masc)"],
+      ["thaa", "be(past,masc)"]
+    ],
+    "translation": "Ram (habitually) ate bread.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"],
+      ["case", "accusative"]
+    ],
+    "comment": "Mahajan 1989, (5).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_12",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "hind1269",
+    "primaryText": "Siitaa-ko larke pasand the.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Siitaa-ko", "Sita-DAT"], ["larke", "boys-NOM"], ["pasand", "like"],
+      ["the", "be-past(plural)"]
+    ],
+    "translation": "Sita likes the boys.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "dative"],
+      ["case", "nominative"]
+    ],
+    "comment": "Mahajan 1991, (7).",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_13",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "hind1269",
+    "primaryText": "Raam-ne rotii khaayii thii.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Raam-ne", "Ram-ERG"], ["rotii", "bread(fem)-NOM"], ["khaayii", "eat(perf,fem)"],
+      ["thii", "be(past,fem)"]
+    ],
+    "translation": "Ram had eaten bread.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "nominative"]
+    ],
+    "comment": "Mahajan 1990, p. 73.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_63",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(63)"},
+    "reportedIn": null,
+    "language": "hind1269",
+    "primaryText": "BaccoN-ne siitaa-ko dekhaa thaa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["BaccoN-ne", "children-ERG"], ["siitaa-ko", "Sita-DAT"],
+      ["dekhaa", "see(perfective-masc.sg.)"], ["thaa", "be(past-masc.sg.)"]
+    ],
+    "translation": "The children had seen Sita (fem. name).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "ergative"],
+      ["case", "dative"]
+    ],
+    "comment": "Mahajan 1990, p. 73. Note 43 says the argument holds if -ko is dative, accusative or objective; the row keeps Mahajan's gloss.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_nez_nom",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ø",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "nominative"],
+      ["exponent", "Ø"],
+      ["agreement", "subject"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_nez_erg",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "nim",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "ergative"],
+      ["exponent", "nim"],
+      ["agreement", "subject"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_nez_obj",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "ne",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "objective"],
+      ["exponent", "ne"],
+      ["agreement", "object"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_nez_acc",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Ø",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "accusative"],
+      ["exponent", "Ø"],
+      ["agreement", "none"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_kal_nom",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "Ø",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "nominative"],
+      ["exponent", "Ø"],
+      ["agreement", "subject"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_kal_erg",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "t̪u",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "ergative"],
+      ["exponent", "t̪u"],
+      ["agreement", "subject"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_kal_obj",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "Ø",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "objective"],
+      ["exponent", "Ø"],
+      ["agreement", "object"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "woolford1997_58_kal_acc",
+    "source": {"bibkey": "woolford-1997", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "kalk1246",
+    "primaryText": "Ø",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cell", "accusative"],
+      ["exponent", "Ø"],
+      ["agreement", "none"]
+    ],
+    "comment": "A cell of the paper's table of Cases, exponents and agreement.",
     "verified": "page-image"
   }
 ]

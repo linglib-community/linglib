@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Syntax.Voice.TermRole
 
 /-!
 # Constructions and the types of voice alternation
@@ -41,28 +42,6 @@ rest, are defined from these notions, after Creissels.
 @[expose] public section
 
 namespace Voice
-
-/-! ### Transitivity-related roles -/
-
-/-- The role of a nominal term in [creissels-2024]'s binary core-term system is one of the
-core roles S, A and P, or X for an oblique. -/
-inductive TermRole where
-  /-- The sole core term of an intransitive clause. -/
-  | S
-  /-- The agent-like core term of a transitive clause. -/
-  | A
-  /-- The patient-like core term of a transitive clause. -/
-  | P
-  /-- An oblique. -/
-  | X
-  deriving DecidableEq, Repr
-
-/-- The transitivity-related role of a comparative coding role, under which recipients and
-themes are P-like core terms. -/
-def TermRole.ofArgumentRole : ArgumentRole → TermRole
-  | .S => .S
-  | .A => .A
-  | .P | .R | .T => .P
 
 /-! ### Participant fate -/
 

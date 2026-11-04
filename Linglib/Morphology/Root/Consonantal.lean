@@ -16,9 +16,9 @@ The type of segments is a parameter, so that a root may be a list of feature bun
 symbols or of coarser classes. In autosegmental terms a root is an unlinked melody on the
 consonantal tier, and `TemplateMatch` associates it with a template.
 
-The roots of other programs live under their owners: a root over `Morph` is a morph of a primary
-word (`Morphology/Root/Basic.lean`), and `DistributedMorphology.Root` and `ArgumentStructure.Root` are
-the acategorial terminal and the lexical-semantic root.
+The roots of other programs live under their owners: a morphological core is a morph of a primary
+word (`Morphology.IsCore`), and `DistributedMorphology.Root` and `ArgumentStructure.Root` are the
+acategorial terminal and the lexical-semantic root.
 
 ## Main definitions
 

@@ -1,58 +1,54 @@
 module
 
 public import Linglib.Phonology.Tone.Grammatical
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Cophonology
 
 /-!
 # Rolle (2018): Grammatical tone: typology and theory
 
-This file formalizes the dissertation's account of dominant grammatical tone, the replacement
-of a target's underlying tones by a trigger's grammatical tune, through its two mechanisms.
-Cophonology-scope answers the scope problem: hierarchy exchange lays the vocabulary items of
-a specifier–head–complement configuration out from outermost to innermost, `Position`, and an
-item's cophonology scopes over everything located inwardly, `ScopesOver`, so the dominant
-trigger is the outer item. The dominant-tone asymmetry, that triggers are dependents and
-lexical heads never impose dominance outward, is read off the order, and the typology table
-of trigger–target pairs is reproduced once objects sit in specifier position,
-`Row.dominant_iff`. Matrix–basemap correspondence answers the erasure problem: a dominant
-trigger's subranking promotes faithfulness to the output of a basemap derivation whose input
-is the induced projection of the target with its tones unvalued, `basemapOutput`, and
-cophonological evaluation under that subranking selects exactly the candidates whose tonal
-tier matches the basemap's, `coph_selects_basemap_faithful`; the same constraint referring to
-the stem itself yields the recessive pattern, in which the tune does not apply to a valued
-target.
+Hierarchy exchange lays the vocabulary items of a specifier–head–complement configuration out
+from outermost to innermost, and an item's cophonology scopes over those located inwardly of it,
+so that [a trigger–target pair is attested with dominant tone exactly when the trigger scopes
+over the target](##Row.dominant_iff). Matrix–basemap correspondence requires the tones of one
+output to be present in another's. Ranked first towards a basemap induced from the target with
+its tones unvalued, the matrix-to-basemap direction [bounds the winner by the trigger's tune,
+whatever the target's tones](##dominant), and [erases them where there is no tune](##subtractive).
+Ranked first towards the stem, the basemap-to-matrix direction [keeps a valued target as it
+is](##recessive) in a privative culminative system and [is vacuous on an unvalued
+one](##recessive_unvalued), [where the other direction would block the
+tune](##omxobm_stem_unvalued).
 
 ## Implementation notes
 
-Positions are the three of one specifier–head–complement configuration; a trigger–target pair
-on a larger spine is read at the configuration containing both, which is how the typology
-table's rows are placed. Basemap induction is represented by unvaluing the target's tones, the
-basemap derivation by the overwrite that docks the tune, and matrix–basemap correspondence by
-identity on the tonal tier, the substrate's `Correspondence.identViol`. The Izon and Hausa
-case studies and the treatment of apparent outward dominance are not formalized.
+* Candidates are read through `tier`, the tones of the target's units, compared unit by unit
+  under the subsumption order on root nodes; a target tone that coincides with the tune's on the
+  same unit is therefore not told apart from it, as Rolle's autosegmental correspondence does.
+* IO(T) and the docking constraint are not modelled, so `dominant` bounds the winner's tones by
+  the tune's rather than fixing them.
+* Positions are the three of one configuration; a trigger–target pair on a larger spine is read
+  at the configuration containing both.
+
+## Errata
+
+* The discussion of the table summarizing the dominant-tone asymmetry calls the reverse of its
+  row a. "row b."; it is row f.
+
+## TODO
+
+* The Izon and Hausa case studies and the treatment of apparent outward dominance.
 
 ## References
 
-* [N. R. Rolle, *Grammatical tone: typology and theory* (2018)][rolle-2018]
-* [L. Benua, *Transderivational identity: phonological relations between words*
-  (1997)][benua-1997]
-* [J. J. McCarthy, A. Prince, *Faithfulness and reduplicative identity*
-  (1995)][mccarthy-prince-1995]
-* [S. Inkelas, C. Zoll, *Is grammar dependence real? A comparison between cophonological and
-  indexed constraint approaches to morphologically conditioned phonology*
-  (2007)][inkelas-zoll-2007]
-* [H. Sande, P. Jenks, *Cophonologies by phase* (2017)][sande-jenks-2017]
-* [G. Ó. Hansson, *(Dis)agreement by (non)correspondence: inspecting the foundations*
-  (2014)][hansson-2014]
-* [R. S. Kayne, *The antisymmetry of syntax* (1994)][kayne-1994]
+* [rolle-2018]
+* [inkelas-zoll-2007]
+* [benua-1997]
 -/
 
 @[expose] public section
 
 namespace Rolle2018
 
-open Tone OptimalityTheory
+open Tone OptimalityTheory OptimalityTheory.Cophonology
 
 /-! ### Cophonology-scope -/
 
@@ -67,48 +63,26 @@ inductive Position
 
 namespace Position
 
+/-- The depth of a position, innermost first. -/
 def toFin : Position → Fin 3
   | .complement => 0
   | .head => 1
   | .spec => 2
 
-theorem toFin_injective : Function.Injective toFin := by
-  intro a b h; cases a <;> cases b <;> simp_all [toFin]
+theorem toFin_injective : Function.Injective toFin := by decide
 
-noncomputable instance : LinearOrder Position := LinearOrder.lift' toFin toFin_injective
-
-/-- A dependent position: any position but the head. -/
-def IsDependent (p : Position) : Prop := p ≠ .head
-
-instance : DecidablePred IsDependent := fun p ↦ inferInstanceAs (Decidable (p ≠ .head))
+instance : LinearOrder Position := LinearOrder.lift' toFin toFin_injective
 
 end Position
 
-/-- Cophonology-scope: the vocabulary item at `p` scopes over the item at `q` when `q` is
-located inwardly, so that `p`'s subranking governs the constituent containing both. -/
+/-- Cophonology-scope, extending the stem scope of [inkelas-zoll-2007]: the vocabulary item at
+`p` scopes over the item at `q` when `q` is located inwardly, so that `p`'s subranking governs
+the constituent containing both. -/
 def ScopesOver (p q : Position) : Prop := q < p
 
-noncomputable instance : DecidableRel ScopesOver := fun p q ↦ inferInstanceAs (Decidable (q < p))
+instance : DecidableRel ScopesOver := fun p q ↦ inferInstanceAs (Decidable (q < p))
 
-theorem scopesOver_head_iff (p : Position) : ScopesOver p .head ↔ p = .spec := by
-  cases p <;> decide
-
-theorem not_scopesOver_spec (p : Position) : ¬ ScopesOver p .spec := by
-  cases p <;> decide
-
-theorem not_scopesOver_of_complement (q : Position) : ¬ ScopesOver .complement q := by
-  cases q <;> decide
-
-theorem isDependent_of_scopesOver_head {p : Position} (h : ScopesOver p .head) :
-    p.IsDependent := by
-  rw [scopesOver_head_iff] at h
-  subst h
-  decide
-
-/-- The trigger–target pairs of the dominant-tone asymmetry table, with the positions the
-dissertation assigns them: an affix is a head taking the root, or the inner stem, as its
-complement; modifiers and objects are specifiers; an inner item stands to an outer one as the
-complement of the outer configuration. -/
+/-- The trigger–target pairs of the table summarizing the dominant-tone asymmetry. -/
 inductive Row
   | affixRoot
   | outerAffixStem
@@ -122,7 +96,9 @@ inductive Row
   | verbObject
   deriving DecidableEq, Fintype
 
-/-- The trigger's position. -/
+/-- The trigger's position. An affix is a head taking the root, or the inner stem, as its
+complement; modifiers and objects are specifiers, the object that of vP; an inner item stands to
+an outer one as the complement of the outer configuration. -/
 def Row.trigger : Row → Position
   | .affixRoot | .outerAffixStem | .nounModifier | .verbObject => .head
   | .modifierNoun | .outerModifierNoun | .objectVerb => .spec
@@ -130,104 +106,189 @@ def Row.trigger : Row → Position
 
 /-- The target's position. -/
 def Row.target : Row → Position
-  | .affixRoot | .outerAffixStem => .complement
-  | .modifierNoun | .outerModifierNoun | .objectVerb | .rootAffix | .innerAffixOuter => .head
+  | .affixRoot | .outerAffixStem | .outerModifierNoun => .complement
+  | .modifierNoun | .objectVerb | .rootAffix | .innerAffixOuter => .head
   | .nounModifier | .innerModifierOuter | .verbObject => .spec
 
-/-- The table's dominant column: dominant tone from a dependent onto a lexical head or an
-inner item is attested, dominant tone outward from a head or from an inner item is not. -/
-def Row.DominantAttested : Row → Prop
-  | .affixRoot | .outerAffixStem | .modifierNoun | .outerModifierNoun | .objectVerb => True
-  | .rootAffix | .innerAffixOuter | .nounModifier | .innerModifierOuter | .verbObject => False
+/-- The rows the table marks attested with dominant tone, from a dependent onto a lexical head
+or onto an inner item. -/
+def Row.DominantAttested (r : Row) : Prop :=
+  r = .affixRoot ∨ r = .outerAffixStem ∨ r = .modifierNoun ∨ r = .outerModifierNoun ∨
+    r = .objectVerb
 
-instance : DecidablePred Row.DominantAttested := fun r ↦ by
-  cases r <;> unfold Row.DominantAttested <;> infer_instance
+instance : DecidablePred Row.DominantAttested := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
+/-- A trigger–target pair is attested with dominant tone exactly when the trigger scopes over the
+target (ch. 6, Table 3, from the CoP-scope hierarchy (12) and the object in the specifier of vP,
+Figure 15). -/
 theorem Row.dominant_iff (r : Row) : r.DominantAttested ↔ ScopesOver r.trigger r.target := by
   cases r <;> decide
 
 /-! ### Matrix–basemap correspondence -/
 
-variable {S : Type}
+variable {S C L : Type*} [DecidableEq L] {n : ℕ} {candidates : Finset C}
+  {default sub : List (L × Constraint C)} {l l' : L}
 
-/-- The tonal tier, the tone of each tone-bearing unit, along which matrix and basemap outputs are
-compared. -/
-def tonalTier (tbus : List (TBU S)) : List TRN := tbus.map TBU.tone
+/-- The tonal tier of a string, the tone of each of its units. -/
+def tonalTier (w : List (TBU S)) (i : Fin w.length) : TRN := w[i].tone
 
-@[simp] theorem tonalTier_eq_map (tbus : List (TBU S)) : tonalTier tbus = tbus.map TBU.tone :=
-  rfl
+theorem tonalTier_eq_bot_iff {w : List (TBU S)} : tonalTier w = ⊥ ↔ ∀ τ ∈ w, ¬ τ.IsValued := by
+  simp [funext_iff, tonalTier, TBU.IsValued, TRN.bot_eq_empty, List.forall_mem_iff_getElem,
+    Fin.forall_iff]
 
-/-- Matrix–basemap correspondence on the tonal tier: the identity violations between two
-tiers, the substrate's output–output identity restricted to tone. -/
-def basemapViolations (tier₁ tier₂ : List TRN) : ℕ :=
-  (Correspondence.parallel tier₁ tier₂).identViol .lhs .rhs
+/-- The units at which a tone of the tier `X` is not present in the tier `Y`. -/
+def absentViol (X Y : Fin n → TRN) : ℕ := (Finset.univ.filter fun i ↦ ¬ X i ≤ Y i).card
 
-theorem basemapViolations_self (t : List TRN) : basemapViolations t t = 0 :=
-  Correspondence.identViol_identity t
+theorem absentViol_eq_zero_iff {X Y : Fin n → TRN} : absentViol X Y = 0 ↔ X ≤ Y := by
+  simp [absentViol, Finset.filter_eq_empty_iff, Pi.le_def]
 
-theorem eq_of_basemapViolations_eq_zero {t₁ t₂ : List TRN} (hLen : t₁.length = t₂.length)
-    (h : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
-  unfold basemapViolations Correspondence.identViol at h
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at h
-  apply List.ext_getElem hLen
-  intro n hn₁ hn₂
-  have hmem : ((⟨n, hn₁⟩ : Fin t₁.length), (⟨n, hn₂⟩ : Fin t₂.length)) ∈
-      (Correspondence.parallel t₁ t₂).edge .lhs .rhs := by
-    rw [Correspondence.parallel_edge_lhs_rhs]
-    exact (Correspondence.mem_diagonal _ _).mpr rfl
-  have hne := h hmem
-  simp only [Correspondence.parallel_form_lhs, Correspondence.parallel_form_rhs, not_not] at hne
-  simpa using hne
+/-- OMxOBM(T), an output–output correspondence constraint in the sense of [benua-1997] directed
+from the matrix output to the basemap output: all tone of the matrix must be present in the
+basemap. -/
+def omxobm (tier : C → Fin n → TRN) (basemap : Fin n → TRN) : Constraint C :=
+  fun c ↦ absentViol (tier c) basemap
 
-/-- The matrix–basemap constraint of a trigger's subranking: a candidate's tonal tier against
-the basemap output's. -/
-def mxbm {C : Type} (basemapTier : List TRN) (extractTier : C → List TRN) : Constraint C :=
-  fun c ↦ basemapViolations (extractTier c) basemapTier
+/-- OBMOMx(T), directed from the basemap output to the matrix output: all tone of the basemap
+must be present in the matrix. -/
+def obmomx (tier : C → Fin n → TRN) (basemap : Fin n → TRN) : Constraint C :=
+  fun c ↦ absentViol basemap (tier c)
 
-open OptimalityTheory.Cophonology (cophonologicalEval mergeRanking)
+/-- CULMINATIVITY for the toneme `t`: a candidate violates it at each occurrence of `t` beyond
+the first. -/
+def culmin (tier : C → Fin n → TRN) (t : TRN) : Constraint C :=
+  fun c ↦ (Finset.univ.filter (tier c · = t)).card - 1
 
-variable {L C : Type} [DecidableEq L] (extractTier : C → List TRN) (l : L)
-  (defaultRanking : List (L × Constraint C)) (candidates : Finset C)
-
-theorem coph_selects_basemap_faithful (basemapTier : List TRN)
-    (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
-    (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier) :
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm basemapTier extractTier)] candidates,
-      extractTier c = basemapTier := by
-  intro c hc
-  simp only [cophonologicalEval, mergeRanking] at hc
-  obtain ⟨c₀, hc₀, he⟩ := hFaithful
-  have hZero : mxbm basemapTier extractTier c = 0 :=
-    Nat.le_zero.1 <| (Tableau.constraints_zero_le_of_mem_optimal hc hc₀).trans_eq
-      (by simp [mxbm, he, basemapViolations_self])
-  exact eq_of_basemapViolations_eq_zero (hLen c (Tableau.optimal_subset hc)) hZero
-
-theorem recessive (host : List (TBU S))
-    (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
-    (hFaithful : ∃ c ∈ candidates, extractTier c = tonalTier host) :
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm (tonalTier host) extractTier)] candidates,
-      extractTier c = tonalTier host :=
-  coph_selects_basemap_faithful extractTier l defaultRanking candidates _
-    (by simpa using hLen) hFaithful
+theorem le_of_mem_optimal_omxobm {tier : C → Fin n → TRN} {B : Fin n → TRN}
+    (hB : ∃ c ∈ candidates, tier c ≤ B) :
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier B) :: sub) candidates, tier c ≤ B :=
+  fun c hc ↦ by
+    obtain ⟨d, hd, hdB⟩ := hB
+    simpa [omxobm, absentViol_eq_zero_iff] using
+      eq_zero_of_mem_optimal (pre := [(l, omxobm tier B)]) hc hd
+        (by simpa [omxobm, absentViol_eq_zero_iff])
 
 /-- The basemap output: the trigger's tune docked onto the target's deficient projection, the
-target with its tones unvalued, which is the structure common to the vocabulary items that the
-constraint's similarity condition picks out. -/
+target with its tones unvalued. -/
 def basemapOutput (host : List (TBU S)) (u : Tune) : List (TBU S) :=
   overwrite (unvalue host) u
 
-theorem tonalTier_basemapOutput_singleton (host : List (TBU S)) (t : TRN) :
-    tonalTier (basemapOutput host ⟨[t], .left⟩) = host.map fun _ ↦ t := by
-  rw [tonalTier_eq_map, basemapOutput, overwrite_unvalue, map_tone_overwrite_singleton]
+theorem basemapOutput_eq_apply (host : List (TBU S)) (u : Tune) :
+    basemapOutput host u = Dominance.replacive.apply u host :=
+  overwrite_unvalue host u
 
-theorem dominant (host : List (TBU S)) (t : TRN)
-    (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
-    (hFaithful : ∃ c ∈ candidates, extractTier c = host.map fun _ ↦ t) :
-    ∀ c ∈ cophonologicalEval defaultRanking
-        [(l, mxbm (tonalTier (basemapOutput host ⟨[t], .left⟩)) extractTier)] candidates,
-      extractTier c = host.map fun _ ↦ t := by
-  rw [tonalTier_basemapOutput_singleton]
-  exact coph_selects_basemap_faithful extractTier l defaultRanking candidates _
-    (by simpa using hLen) hFaithful
+@[simp] theorem map_tone_basemapOutput (host : List (TBU S)) (u : Tune) :
+    (basemapOutput host u).map TBU.tone = u.realize host.length := by
+  simp [basemapOutput_eq_apply]
+
+@[simp] theorem length_basemapOutput (host : List (TBU S)) (u : Tune) :
+    (basemapOutput host u).length = host.length := by
+  simp [basemapOutput_eq_apply]
+
+/-- The basemap output's tonal tier, unit by unit of the target. -/
+def basemapTier (host : List (TBU S)) (u : Tune) : Fin host.length → TRN :=
+  tonalTier (basemapOutput host u) ∘ Fin.cast (length_basemapOutput host u).symm
+
+theorem basemapTier_apply (host : List (TBU S)) (u : Tune) (i : Fin host.length) :
+    basemapTier host u i = (u.realize host.length)[i.1]'(by simp) := by
+  simp [basemapTier, tonalTier, ← List.getElem_map TBU.tone]
+
+/-- Under a trigger whose subranking puts OMxOBM(T) towards the induced basemap first, every
+winner bears at each unit of the target nothing or the tone the tune puts there, whatever the
+target's own tones (ch. 5, (22) and Tableau 5). -/
+theorem dominant (host : List (TBU S)) (u : Tune) (tier : C → Fin host.length → TRN)
+    (hu : ∃ c ∈ candidates, tier c = basemapTier host u) :
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier (basemapTier host u)) :: sub) candidates,
+      ∀ i, tier c i ≤ (u.realize host.length)[i.1]'(by simp) := fun c hc i ↦
+  basemapTier_apply host u i ▸ le_of_mem_optimal_omxobm
+    (hu.imp fun _ ↦ .imp_right le_of_eq) c hc i
+
+/-- A trigger with no tune is subtractive: under OMxOBM(T) towards the basemap induced from the
+target, every winner leaves the target unvalued (ch. 5, §5.3.3). -/
+theorem subtractive (host : List (TBU S)) (e : Edge) (tier : C → Fin host.length → TRN)
+    (hu : ∃ c ∈ candidates, tier c = ⊥) :
+    ∀ c ∈ Cophonology.optimal default
+        ((l, omxobm tier (basemapTier host ⟨[], e⟩)) :: sub) candidates, tier c = ⊥ := by
+  have hB : basemapTier host ⟨[], e⟩ = ⊥ := funext fun i ↦ by
+    simp [basemapTier_apply, TRN.bot_eq_empty]
+  rw [hB]
+  exact fun c hc ↦ le_bot_iff.1 <|
+    le_of_mem_optimal_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
+
+theorem omxobm_stem_unvalued (host : List (TBU S)) (tier : C → Fin host.length → TRN)
+    (h : ∀ τ ∈ host, ¬ τ.IsValued) (hu : ∃ c ∈ candidates, tier c = ⊥) :
+    ∀ c ∈ Cophonology.optimal default ((l, omxobm tier (tonalTier host)) :: sub) candidates,
+      tier c = ⊥ := by
+  rw [tonalTier_eq_bot_iff.2 h]
+  exact fun c hc ↦ le_bot_iff.1 <|
+    le_of_mem_optimal_omxobm (hu.imp fun _ ↦ .imp_right le_of_eq) c hc
+
+/-- In a privative culminative system with the toneme `t`, a trigger whose subranking puts
+OBMOMx(T) towards the stem and CULMINATIVITY first leaves a target bearing `t` once as it is:
+the tune does not apply (ch. 5, (32) and Tableau 8). -/
+theorem recessive (host : List (TBU S)) (tier : C → Fin host.length → TRN) {t : TRN}
+    (hhost : (Finset.univ.filter (tonalTier host · = t)).card = 1)
+    (hpriv : ∀ c ∈ candidates, ∀ i, tier c i = ⊥ ∨ tier c i = t)
+    (hu : ∃ c ∈ candidates, tier c = tonalTier host) :
+    ∀ c ∈ Cophonology.optimal default
+        ((l, obmomx tier (tonalTier host)) :: (l', culmin tier t) :: sub) candidates,
+      tier c = tonalTier host := fun c hc ↦ by
+  obtain ⟨d, hd, hdt⟩ := hu
+  have h0 := eq_zero_of_mem_optimal
+    (pre := [(l, obmomx tier (tonalTier host)), (l', culmin tier t)]) hc hd <| by
+      simp [obmomx, culmin, absentViol_eq_zero_iff, hdt, hhost]
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, obmomx,
+    culmin, absentViol_eq_zero_iff] at h0
+  have hT := hpriv c (Tableau.optimal_subset hc)
+  have hH := hdt ▸ hpriv d hd
+  -- Every unit bearing `t` in the target bears it in the winner, and the winner bears it once.
+  have hsub : Finset.univ.filter (tonalTier host · = t) ⊆ Finset.univ.filter (tier c · = t) :=
+    fun i hi ↦ by
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
+      exact (hT i).elim (fun h ↦ by rw [h, ← le_bot_iff.1 (h ▸ hi ▸ h0.1 i)]) id
+  have heq := Finset.eq_of_subset_of_card_le hsub (by omega)
+  funext i
+  have hi : tier c i = t ↔ tonalTier host i = t := by
+    simpa using congrArg (i ∈ ·) heq.symm
+  rcases hT i with h | h
+  · rcases hH i with h' | h'
+    · rw [h, h']
+    · rw [h, h']; exact h.symm.trans (hi.2 h')
+  · rw [h, hi.1 h]
+
+/-- On an unvalued target, OBMOMx(T) towards the stem rates every candidate alike, so it leaves
+the tune's docking to the rest of the ranking (ch. 5, Tableau 9). -/
+theorem recessive_unvalued (host : List (TBU S)) (tier : C → Fin host.length → TRN)
+    (h : ∀ τ ∈ host, ¬ τ.IsValued) :
+    Cophonology.optimal default ((l, obmomx tier (tonalTier host)) :: sub) candidates =
+      Cophonology.optimal (default.filter (·.1 ≠ l)) sub candidates :=
+  optimal_cons_of_forall_eq fun c _ d _ ↦ by
+    simp [obmomx, tonalTier_eq_bot_iff.2 h, absentViol_eq_zero_iff.2 bot_le]
+
+/-! ### Tableaux on the target's tier
+
+The candidates of Tableaux 5, 8 and 9 of ch. 5, read through the tones of the target. -/
+
+-- Kalabari *mí* 'this' with *námá* 'meat': OMxOBM(T) keeps the tune's L H and the toneless
+-- target and rejects the target's own H H, leaving the choice to IO(T).
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 2 → TRN)))
+    [(0, omxobm id (basemapTier [⟨(), TRN.H⟩, ⟨(), TRN.H⟩] ⟨[.L, .H], .left⟩))]
+    {![.L, .H], ![.H, .H], ⊥} = {![.L, .H], ⊥} := by
+  decide
+
+-- Japanese *múraki* with *-si* 'Mr.': the recessive ranking keeps the target as it is.
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+    [(0, obmomx id ![.H, ⊥, ⊥]), (1, culmin id .H)]
+    {![.H, ⊥, ⊥], ![.H, ⊥, .H], ![⊥, ⊥, .H], ⊥} = {![.H, ⊥, ⊥]} := by
+  decide
+
+-- Japanese *yosida* with *-si*: the same ranking lets the tune dock, while OMxOBM(T) towards the
+-- stem would not.
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+    [(0, obmomx id ⊥), (1, culmin id .H)] {![⊥, ⊥, .H], ⊥} = {![⊥, ⊥, .H], ⊥} := by
+  decide
+
+example : Cophonology.optimal ([] : List (ℕ × Constraint (Fin 3 → TRN)))
+    [(0, omxobm id ⊥)] {![⊥, ⊥, .H], ⊥} = {⊥} := by
+  decide
 
 end Rolle2018

@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.Interval.Set.Defs
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Core.Order.UpperLower.Finset
@@ -46,16 +47,25 @@ gender domains. The person entries take the agent and the addressee as parts of 
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
 including the addressee. The cells of the standard tripartition are stated one by one, since
-Maximize Presupposition (`Competition.unblocked`) yields them only when the agent is not
+Maximize Presupposition (`Presupposition.strengthen`) yields them only when the agent is not
 part of the addressee; otherwise the first and second person domains coincide
-(`Sauerland2003.unblocked_second_of_degenerate`). The dual's minimality domain needs a
-mereological predicate the entity domain's order does not supply, so the dual restricts nothing.
+(`Sauerland2003.strengthen_second_of_degenerate`).
+
+Number is read at the positive values of a bundle alone, so the plural, `[−atomic, −minimal]`,
+restricts nothing, where Harbour's region operators read the same bundle as excluding atoms.
+[Strengthening recovers those regions](##Number.strengthen_plural) for the singular and the plural
+but not for the dual, whose region `Number.dualOf` is built on `[−atomic]`, a value this reading
+lacks, so the dual restricts nothing. This is Martí's undergeneration argument against
+inclusive-only plurals.
 
 ## References
 
 * [sauerland-2003]
 * [sauerland-2008b]
 * [wang-r-2023]
+* [harbour-2014]
+* [marti-2020a]
+* [schlenker-2012]
 -/
 
 @[expose] public section
@@ -163,29 +173,51 @@ end Person
 
 namespace Number
 
+open Presupposition
+
 variable {E : Type*} [PartialOrder E] (x : E)
 
-/-- [atomic] is defined of the atoms, and [minimal], pending a minimality predicate, of
-everything. -/
+/-- `[+atomic]` is defined of the atoms, the `[+atomic]` region of the whole domain, and
+`[+minimal]`, whose dual region needs `[−atomic]`, and `[+additive]`, of everything. -/
 def Feature.dom : Feature → Set E
-  | .atomic => {x | Atom x}
-  | .minimal => Set.univ
+  | .atomic => {x | atomsOf ⊤ x}
+  | .minimal | .additive => Set.univ
 
-/-- The singular is defined of the atoms; the plural, the dual (pending a minimality
-predicate), an absent value and a value without a bundle restrict nothing. -/
+/-- A bundle is defined where its positive values are. -/
+def Bundle.dom (b : Bundle) : Set E := (b.filter (·.2)).inf (Feature.dom ·.1)
+
+@[simp] theorem Bundle.dom_empty : Bundle.dom (E := E) ∅ = Set.univ := rfl
+
+/-- A bundle's region lies in its domain: `dom` is the inclusive reading of what `Bundle.exact`
+reads exclusively. -/
+theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : b.exact ⊤ x) : x ∈ Bundle.dom b := by
+  refine Set.singleton_subset_iff.1 (Finset.le_inf fun v hv ↦ Set.singleton_subset_iff.2 ?_)
+  obtain ⟨hvb, hv2⟩ := Finset.mem_filter.1 hv
+  obtain ⟨f, _ | _⟩ := v
+  · cases hv2
+  · cases f
+    · exact ⟨trivial, Bundle.atom_of_exact hvb h⟩
+    · trivial
+    · trivial
+
+/-- The singular is defined of the atoms; the plural, the dual, an absent value and a value
+without a bundle restrict nothing. -/
 def dom (n : Option Number) : Set E :=
-  (n.bind Features.ofNumber).elim Set.univ (·.inf Feature.dom)
+  (n.bind Bundle.ofNumber).elim Set.univ Bundle.dom
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
 @[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := by
-  simp [dom, Features.ofNumber, singularF_eq, Feature.dom]
+  simp [dom, Bundle.ofNumber, Bundle.singular, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton, Feature.dom, atomsOf]
 
 @[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := by
-  simp [dom, Features.ofNumber, dualF_eq, Feature.dom]
+  simp [dom, Bundle.ofNumber, Bundle.dual, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton, Feature.dom]
 
 @[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
-  simp [dom, Features.ofNumber, pluralF]
+  simp [dom, Bundle.ofNumber, Bundle.plural, Bundle.dom, Finset.filter_insert,
+    Finset.filter_singleton]
 
 /-- Only the singular restricts. -/
 theorem dom_eq_univ_of_ne_singular {n : Option Number} (h : n ≠ some .singular) :
@@ -193,6 +225,42 @@ theorem dom_eq_univ_of_ne_singular {n : Option Number} (h : n ≠ some .singular
   rcases n with _ | n
   · rfl
   · cases n <;> first | exact absurd rfl h | rfl | simp
+
+/-- The alternatives of a number value under Maximize Presupposition: a value competes with the
+singular and the plural, and an absent value, which carries no number, with nothing. -/
+def alts : Option Number → Set (Option Number)
+  | none => ∅
+  | some _ => {some .singular, some .plural}
+
+variable {y : E}
+
+theorem dom_singular_ssubset_dom_plural (hy : ¬ Atom y) :
+    dom (E := E) (some .singular) ⊂ dom (some .plural) := by
+  rw [dom_plural]
+  exact ⟨Set.subset_univ _, fun h ↦ hy ((mem_dom_singular y).1 (h (Set.mem_univ y)))⟩
+
+/-- The singular's strengthening is the `[+atomic]` region. -/
+theorem strengthen_singular :
+    strengthen alts dom (some .singular) = {x : E | atomsOf ⊤ x} := by
+  rw [strengthen_eq_self]
+  · ext x
+    simp [atomsOf]
+  · rintro ψ hψ hss
+    rcases hψ with rfl | rfl
+    · exact hss.ne rfl
+    · exact hss.not_subset fun x _ ↦ by rw [dom_plural]; trivial
+
+/-- Strengthened against the singular, the plural's unrestricted domain is the `[−atomic]` region:
+the inclusive reading of the bundle recovers the exclusive one. -/
+theorem strengthen_plural (hy : ¬ Atom y) :
+    strengthen alts dom (some .plural) = {x : E | nonAtomsOf ⊤ x} := by
+  rw [strengthen_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
+    (dom_singular_ssubset_dom_plural hy)]
+  · ext x
+    simp [mem_dom_singular, nonAtomsOf]
+  · rintro χ (rfl | rfl) hss
+    · exact le_rfl
+    · exact absurd rfl hss.ne
 
 end Number
 

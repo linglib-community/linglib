@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Pi
-public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Magri (2014): An Account for the Homogeneity Effect Triggered by Plural Definites and Conjunction
@@ -39,9 +39,10 @@ of the classroom example of [gajewski-2005]; neither is modeled.
 
 ## Implementation notes
 
-* Meanings are sets of worlds over a finite world type; exhaustification is the substrate's
-  innocent exclusion, so the excludable alternatives of (18) are those of the appendix's (70)
-  throughout, which agrees with the paper's simpler definition on every computation it performs.
+* Meanings are sets of worlds; exhaustification is the substrate's innocent exclusion `exhIE`
+  against the meanings of an item's Horn-mates, so the excludable alternatives of (18) are those of
+  the appendix's (70) throughout, which agrees with the paper's simpler definition on every
+  computation it performs.
 * Each item carries its own Horn-mates, which is how the non-transitivity of (52b), (54b) and
   (69b) is encoded; the prejacent is not among its own alternatives.
 * The consistency hypotheses of the general computations, that the weak pole can hold without
@@ -67,29 +68,46 @@ of the classroom example of [gajewski-2005]; neither is modeled.
 
 namespace Magri2014
 
-open Exhaustification Finset Function
+open Exhaustification Function
 
-variable {W ι : Type*} [Fintype W] [DecidableEq W] [DecidableEq ι]
+variable {W ι : Type*}
 
 /-! ### Iterated exhaustification over Horn-mates (§3.1, §3.2) -/
 
 /-- (18) with each item's own Horn-mates: the meaning of the item `i` exhaustified against the
 meanings of its Horn-mates. -/
-def exh (mates : ι → Finset ι) (m : ι → Finset W) (i : ι) : Finset W :=
-  innocent.exh ((mates i).image m) (m i)
+def exh (mates : ι → Finset ι) (m : ι → Set W) (i : ι) : Set W :=
+  exhIE (m '' mates i) (m i)
 
 /-- (19): the strengthened meaning is the iterated exhaustification of [spector-2007b], the outer
 operator denying the strengthened meanings of the Horn-mates. Two iterations suffice for every
 configuration of the paper. -/
-def strengthened (mates : ι → Finset ι) (m : ι → Finset W) : ι → Finset W :=
+def strengthened (mates : ι → Finset ι) (m : ι → Set W) : ι → Set W :=
   (exh mates)^[2] m
 
-theorem exh_comp_equiv (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Finset W) :
+section Decidable
+
+variable {mates : ι → Finset ι} {m : ι → Set W} [∀ i, DecidablePred (· ∈ m i)]
+
+instance (i : ι) : DecidablePred (· ∈ (compl ∘ m) i) := fun w ↦
+  inferInstanceAs (Decidable (w ∈ (m i)ᶜ))
+
+variable [Fintype W] [Fintype ι] [DecidableEq ι]
+
+instance (i : ι) : DecidablePred (· ∈ exh mates m i) :=
+  inferInstanceAs (DecidablePred (· ∈ exhIE (m '' mates i) (m i)))
+
+instance (i : ι) : DecidablePred (· ∈ strengthened mates m i) :=
+  inferInstanceAs (DecidablePred (· ∈ exh mates (exh mates m) i))
+
+end Decidable
+
+theorem exh_comp_equiv [DecidableEq ι] (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Set W) :
     exh (fun i ↦ (mates (σ i)).image σ.symm) (m ∘ σ) = exh mates m ∘ σ := by
   funext i
-  simp [exh, image_image, comp_def]
+  simp [exh, Set.image_image]
 
-theorem strengthened_comp_equiv (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Finset W) :
+theorem strengthened_comp_equiv [DecidableEq ι] (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Set W) :
     strengthened (fun i ↦ (mates (σ i)).image σ.symm) (m ∘ σ) = strengthened mates m ∘ σ := by
   show exh _ (exh _ (m ∘ σ)) = exh mates (exh mates m) ∘ σ
   rw [exh_comp_equiv, exh_comp_equiv]
@@ -102,7 +120,7 @@ inductive Item where
   | mystery
   | weak
   | strong
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- (52b): in the primal theory the item is a Horn-mate of the weak pole only, while the two poles
 are Horn-mates of each other. -/
@@ -112,7 +130,7 @@ def primalMates : Item → Finset Item
   | .strong => {.weak}
 
 /-- (52a): in the primal theory the item means the weak pole. -/
-def primal (wk st : Finset W) : Item → Finset W
+def primal (wk st : Set W) : Item → Set W
   | .mystery => wk
   | .weak => wk
   | .strong => st
@@ -124,9 +142,14 @@ abbrev swap : Equiv.Perm Item := Equiv.swap .weak .strong
 def dualMates (i : Item) : Finset Item := (primalMates (swap i)).image swap
 
 /-- (54a): in the dual theory the item means the strong pole. -/
-def dual (wk st : Finset W) : Item → Finset W := primal st wk ∘ swap
+def dual (wk st : Set W) : Item → Set W := primal st wk ∘ swap
 
-variable {wk st : Finset W}
+variable {wk st : Set W}
+
+instance [DecidablePred (· ∈ wk)] [DecidablePred (· ∈ st)] :
+    ∀ i, DecidablePred (· ∈ primal wk st i)
+  | .mystery | .weak => inferInstanceAs (DecidablePred (· ∈ wk))
+  | .strong => inferInstanceAs (DecidablePred (· ∈ st))
 
 theorem compl_comp_primal : compl ∘ primal wk st = primal wkᶜ stᶜ := by
   funext i
@@ -145,52 +168,47 @@ theorem strengthened_dual : strengthened dualMates (dual wk st) =
   rw [this]
   exact strengthened_comp_equiv swap primalMates (primal st wk)
 
-theorem exh_primal_mystery : exh primalMates (primal wk st) .mystery = wk := by
-  show innocent.exh (({.weak} : Finset Item).image (primal wk st)) wk = wk
-  rw [image_singleton]
-  exact innocent_exh_eq_self_of_forall_subset (by simp [primal])
+theorem exh_primal_mystery : exh primalMates (primal wk st) .mystery = wk :=
+  exhIE_eq_self_of_forall _ _ (by simp [primalMates, primal])
 
 theorem exh_primal_weak (h : (wk \ st).Nonempty) :
     exh primalMates (primal wk st) .weak = wk \ st := by
-  have hne : wk ≠ st := fun e ↦ by simp [e] at h
-  show innocent.exh (({.mystery, .strong} : Finset Item).image (primal wk st)) wk = wk \ st
-  rw [image_insert, image_singleton]
-  simp only [primal]
-  rw [innocent_exh_erase_entailed subset_rfl (h.mono sdiff_subset), erase_insert (by simpa),
-    innocent_exh_singleton h]
+  show exhIE (primal wk st '' ↑({.mystery, .strong} : Finset Item)) wk = wk \ st
+  rw [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq, Set.image_singleton]
+  exact (exhIE_insert_of_subset subset_rfl
+    (exhMW_nonempty (Set.finite_singleton st) (h.mono Set.sdiff_subset))).trans (exhIE_singleton h)
 
 theorem exh_primal_weak_of_subset (h : wk ⊆ st) : exh primalMates (primal wk st) .weak = wk :=
-  innocent_exh_eq_self_of_forall_subset (by simp [primal, primalMates, h])
+  exhIE_eq_self_of_forall _ _ (by simp [primal, primalMates, h])
 
 -- (53b), (37)
 theorem strengthened_primal_mystery (h₁ : (wk \ st).Nonempty) (h₂ : (wk ∩ st).Nonempty) :
     strengthened primalMates (primal wk st) .mystery = wk ∩ st := by
-  show innocent.exh (({.weak} : Finset Item).image (exh primalMates (primal wk st)))
+  show exhIE (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
     (exh primalMates (primal wk st) .mystery) = wk ∩ st
-  rw [image_singleton, exh_primal_weak h₁, exh_primal_mystery,
-    innocent_exh_singleton (by rwa [sdiff_sdiff_right_self, inf_eq_inter]), sdiff_sdiff_right_self,
-    inf_eq_inter]
+  rw [Finset.coe_singleton, Set.image_singleton, exh_primal_weak h₁, exh_primal_mystery,
+    exhIE_singleton (by rwa [Set.sdiff_sdiff_right_self]), Set.sdiff_sdiff_right_self]
 
 theorem strengthened_primal_mystery_of_subset (h : wk ⊆ st) :
     strengthened primalMates (primal wk st) .mystery = wk := by
-  show innocent.exh (({.weak} : Finset Item).image (exh primalMates (primal wk st)))
+  show exhIE (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
     (exh primalMates (primal wk st) .mystery) = wk
-  rw [image_singleton, exh_primal_weak_of_subset h, exh_primal_mystery]
-  exact innocent_exh_eq_self_of_forall_subset (by simp)
+  rw [Finset.coe_singleton, Set.image_singleton, exh_primal_weak_of_subset h, exh_primal_mystery]
+  exact exhIE_singleton_self wk
 
 /-- (53b): in an upward-entailing environment the primal item strengthens to the strong pole. -/
 theorem strengthened_primal_mystery_eq_strong (h : st ⊆ wk) (hne : st.Nonempty) :
     strengthened primalMates (primal wk st) .mystery = st := by
   rcases (wk \ st).eq_empty_or_nonempty with h₁ | h₁
-  · rw [strengthened_primal_mystery_of_subset (sdiff_eq_empty_iff_subset.1 h₁)]
-    exact subset_antisymm (sdiff_eq_empty_iff_subset.1 h₁) h
-  · rw [strengthened_primal_mystery h₁ (by rwa [inter_eq_right.2 h]), inter_eq_right.2 h]
+  · rw [strengthened_primal_mystery_of_subset (Set.sdiff_eq_empty.1 h₁)]
+    exact (Set.sdiff_eq_empty.1 h₁).antisymm h
+  · rw [strengthened_primal_mystery h₁ (by rwa [Set.inter_eq_right.2 h]), Set.inter_eq_right.2 h]
 
 /-- (53a): under negation the primal item is not strengthened and shows its weak meaning. -/
 theorem strengthened_primal_not_mystery (h : st ⊆ wk) :
     strengthened primalMates (compl ∘ primal wk st) .mystery = wkᶜ := by
   rw [compl_comp_primal]
-  exact strengthened_primal_mystery_of_subset (compl_subset_compl.2 h)
+  exact strengthened_primal_mystery_of_subset (Set.compl_subset_compl.2 h)
 
 -- (55b)
 theorem strengthened_dual_mystery (h : st ⊆ wk) :
@@ -204,57 +222,61 @@ theorem strengthened_dual_not_mystery (h : st ⊆ wk) (h₁ : (wk \ st).Nonempty
   rw [compl_comp_dual, strengthened_dual]
   show strengthened primalMates (primal stᶜ wkᶜ) .mystery = wkᶜ
   rw [strengthened_primal_mystery (by rwa [compl_sdiff_compl])
-      (by rwa [inter_eq_right.2 (compl_subset_compl.2 h)]),
-    inter_eq_right.2 (compl_subset_compl.2 h)]
+      (by rwa [Set.inter_eq_right.2 (Set.compl_subset_compl.2 h)]),
+    Set.inter_eq_right.2 (Set.compl_subset_compl.2 h)]
 
 theorem primal_gap (h : st ⊆ wk) (hne : st.Nonempty) :
     (strengthened primalMates (primal wk st) .mystery)ᶜ ∩
       (strengthened primalMates (compl ∘ primal wk st) .mystery)ᶜ = wk \ st := by
   rw [strengthened_primal_mystery_eq_strong h hne, strengthened_primal_not_mystery h, compl_compl,
-    inter_comm, ← inf_eq_inter, ← sdiff_eq]
+    Set.inter_comm, Set.sdiff_eq]
 
 theorem dual_gap (h : st ⊆ wk) (h₁ : (wk \ st).Nonempty) (h₂ : wkᶜ.Nonempty) :
     (strengthened dualMates (dual wk st) .mystery)ᶜ ∩
       (strengthened dualMates (compl ∘ dual wk st) .mystery)ᶜ = wk \ st := by
   rw [strengthened_dual_mystery h, strengthened_dual_not_mystery h h₁ h₂, compl_compl,
-    inter_comm, ← inf_eq_inter, ← sdiff_eq]
+    Set.inter_comm, Set.sdiff_eq]
 
 /-! ### Plural definites and plural morphology (§3.3, §3.4) -/
 
 section Definites
 
-variable (D : Type*) [Fintype D]
+open Finset
+
+variable (D : Type*)
 
 /-- The worlds, extensions of the predicate over the domain `D`, where at least `n` members
 satisfy it. -/
-def atLeast (n : ℕ) : Finset (Finset D) := univ.filter fun s ↦ n ≤ s.card
+def atLeast (n : ℕ) : Set (Finset D) := {s | n ≤ s.card}
 
 /-- (31c), (24c): SOME and SING, at least one. -/
-abbrev some : Finset (Finset D) := atLeast D 1
+abbrev some : Set (Finset D) := atLeast D 1
 
 /-- (24b): TWO, at least two. -/
-abbrev two : Finset (Finset D) := atLeast D 2
+abbrev two : Set (Finset D) := atLeast D 2
 
 /-- (31b): ALL, the whole domain. -/
-abbrev all : Finset (Finset D) := atLeast D (Fintype.card D)
+abbrev all [Fintype D] : Set (Finset D) := atLeast D (Fintype.card D)
 
 variable {D}
 
-theorem mem_atLeast {n : ℕ} {s : Finset D} : s ∈ atLeast D n ↔ n ≤ s.card := by
-  simp [atLeast]
+instance {n : ℕ} : DecidablePred (· ∈ atLeast D n) := fun s ↦
+  inferInstanceAs (Decidable (n ≤ s.card))
+
+theorem mem_atLeast {n : ℕ} {s : Finset D} : s ∈ atLeast D n ↔ n ≤ s.card := Iff.rfl
+
+theorem atLeast_subset_atLeast {m n : ℕ} (h : m ≤ n) : atLeast D n ⊆ atLeast D m := fun _ hs ↦
+  mem_atLeast.2 (h.trans (mem_atLeast.1 hs))
+
+variable [Fintype D]
 
 theorem mem_all {s : Finset D} : s ∈ all D ↔ s = univ := by
   rw [mem_atLeast]
   exact ⟨fun h ↦ eq_univ_of_card s (le_antisymm (card_le_univ s) h),
     fun h ↦ by subst h; exact Finset.card_univ.ge⟩
 
-theorem atLeast_subset_atLeast {m n : ℕ} (h : m ≤ n) : atLeast D n ⊆ atLeast D m := fun _ hs ↦
-  mem_atLeast.2 (h.trans (mem_atLeast.1 hs))
-
 theorem atLeast_nonempty {n : ℕ} (h : n ≤ Fintype.card D) : (atLeast D n).Nonempty :=
   ⟨univ, mem_atLeast.2 (Finset.card_univ (α := D) ▸ h)⟩
-
-variable [DecidableEq D]
 
 -- (27), (34)
 theorem strengthened_atLeast {m n : ℕ} (hmn : m ≤ n) (hn : n ≤ Fintype.card D) :
@@ -283,23 +305,25 @@ end Definites
 
 section ExactlyOne
 
-variable (S P : Type*) [Fintype S] [Fintype P] [DecidableEq S] [DecidableEq P]
+open Finset
+
+variable (S P : Type*) [Fintype S] [Fintype P] [DecidableEq P]
 
 /-- The worlds, assignments of solved problems to students, where the number of students whose
 solved problems satisfy `q` is exactly `n`. -/
-def solvedBy (q : Finset P → Prop) [DecidablePred q] (n : ℕ) : Finset (S → Finset P) :=
-  univ.filter fun w ↦ (univ.filter fun s ↦ q (w s)).card = n
+def solvedBy (q : Finset P → Prop) [DecidablePred q] (n : ℕ) : Set (S → Finset P) :=
+  {w | (univ.filter fun s ↦ q (w s)).card = n}
 
 /-- (36c): ∃!SOME, exactly one student solved some of the problems. -/
-def exactlyOneSome : Finset (S → Finset P) := solvedBy S P (fun s ↦ 1 ≤ s.card) 1
+def exactlyOneSome : Set (S → Finset P) := solvedBy S P (fun s ↦ 1 ≤ s.card) 1
 
 /-- (36b): ∃!ALL, exactly one student solved all the problems. -/
-def exactlyOneAll : Finset (S → Finset P) := solvedBy S P (fun s ↦ s = univ) 1
+def exactlyOneAll : Set (S → Finset P) := solvedBy S P (fun s ↦ s = univ) 1
 
 /-- ¬∃₂SOME ∧ ∃₁ALL: at most one student solved some of the problems, and one solved them
 all. -/
-def uniqueSolverAll : Finset (S → Finset P) :=
-  univ.filter fun w ↦ (univ.filter fun s ↦ 1 ≤ (w s).card).card ≤ 1 ∧ ∃ s, w s = univ
+def uniqueSolverAll : Set (S → Finset P) :=
+  {w | (univ.filter fun s ↦ 1 ≤ (w s).card).card ≤ 1 ∧ ∃ s, w s = univ}
 
 variable {S P}
 
@@ -307,8 +331,8 @@ variable {S P}
 theorem exactlyOneSome_inter_exactlyOneAll [Nonempty P] :
     exactlyOneSome S P ∩ exactlyOneAll S P = uniqueSolverAll S P := by
   ext w
-  simp only [exactlyOneSome, exactlyOneAll, uniqueSolverAll, solvedBy, mem_inter, mem_filter,
-    mem_univ, true_and]
+  simp only [exactlyOneSome, exactlyOneAll, uniqueSolverAll, solvedBy, Set.mem_inter_iff,
+    Set.mem_ofPred_eq]
   have hsub : (univ.filter fun s ↦ w s = univ) ⊆ univ.filter fun s ↦ 1 ≤ (w s).card := by
     intro s hs
     rw [mem_filter] at hs ⊢
@@ -346,7 +370,8 @@ inductive Boy where
 conjunction the strong pole (56). -/
 theorem not_andUnF_eq_not_or :
     strengthened dualMates (compl ∘ dual (some Boy) (all Boy)) .mystery = (some Boy)ᶜ :=
-  strengthened_dual_not_mystery (atLeast_subset_atLeast Fintype.card_pos) (by decide) (by decide)
+  strengthened_dual_not_mystery (atLeast_subset_atLeast Fintype.card_pos) ⟨{.adam}, by decide⟩
+    ⟨∅, by decide⟩
 
 /-- The five sentences of the appendix's enriched configuration (69): focused and unfocused
 conjunction, the two atomic conjuncts, and disjunction. -/
@@ -356,7 +381,7 @@ inductive ConjItem where
   | left
   | right
   | or
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- (69b): the atomic conjuncts are alternatives of both conjunctions and of disjunction, after
 [sauerland-2004]; disjunction is an alternative of focused conjunction only. -/
@@ -368,12 +393,18 @@ def conjMates : ConjItem → Finset ConjItem
   | .or => {.andF, .left, .right}
 
 /-- (69a): the meanings of the five sentences. -/
-def conj : ConjItem → Finset (Finset Boy)
+def conj : ConjItem → Set (Finset Boy)
   | .andF => all Boy
   | .andUnF => all Boy
-  | .left => univ.filter (.adam ∈ ·)
-  | .right => univ.filter (.bill ∈ ·)
+  | .left => {w | .adam ∈ w}
+  | .right => {w | .bill ∈ w}
   | .or => some Boy
+
+instance : ∀ i, DecidablePred (· ∈ conj i)
+  | .andF | .andUnF => inferInstanceAs (DecidablePred (· ∈ all Boy))
+  | .left => inferInstanceAs (DecidablePred (· ∈ {w : Finset Boy | .adam ∈ w}))
+  | .right => inferInstanceAs (DecidablePred (· ∈ {w : Finset Boy | .bill ∈ w}))
+  | .or => inferInstanceAs (DecidablePred (· ∈ some Boy))
 
 -- (71)
 theorem exh_not_conj :
@@ -381,12 +412,14 @@ theorem exh_not_conj :
       exh conjMates (compl ∘ conj) .andUnF = (all Boy)ᶜ ∧
       exh conjMates (compl ∘ conj) .left = (conj .left)ᶜ ∩ some Boy ∧
       exh conjMates (compl ∘ conj) .right = (conj .right)ᶜ ∩ some Boy := by
-  decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> ext w <;> revert w <;> decide
 
 /-- (72): with the enriched alternatives, negated unfocused conjunction still strengthens to
 negated disjunction, as in (61). -/
 theorem strengthened_not_andUnF :
     strengthened conjMates (compl ∘ conj) .andUnF = (some Boy)ᶜ := by
+  ext w
+  revert w
   decide
 
 theorem strengthened_not_andUnF_eq :

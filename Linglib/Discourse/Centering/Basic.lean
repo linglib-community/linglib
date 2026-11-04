@@ -8,33 +8,15 @@ public import Mathlib.Order.RelClasses
 /-!
 # Centering theory: centers and the pronominalization rule
 
-Grosz, Joshi, and Weinstein's centering theory tracks the entities an utterance is about. An
-utterance realizes entities in grammatical roles; its forward-looking centers are those entities
-ranked by role, the first of them its preferred center, and its backward-looking center is the
-highest-ranked forward-looking center of the previous utterance that it realizes. Rule 1 says
-that if the utterance pronominalizes any forward-looking center of the previous one, it
-pronominalizes its backward-looking center. Which forms count as pronouns for Rule 1, the
-R1-pronouns of Poesio and colleagues, the theory leaves open, so each realization records its form
-and the rule takes the R1-pronouns as an argument. Gordon, Grosz, and Gilliom's unconditional
-form mentions them only in its conclusion, so counting more forms as R1-pronouns can only help it
-(`CbPronominalized.mono`).
-
-## Main declarations
-
-* `Discourse.Centering.Realization` and `Discourse.Centering.Utterance`: a noun phrase realizing
-  an entity in a role by an expression of some form, and an utterance as its realizations in
-  surface order. `e ∈ u` says that `u` realizes `e`, and `u.Pronominalizes P e` that it does so
-  by a form in `P`.
-* `Utterance.ranked`, `Utterance.cf`, `Utterance.cp`: the realizations in rank order, the
-  forward-looking centers, and the preferred center.
-* `Utterance.rank`: the rank of an entity in an utterance, the highest role in which it is
-  realized.
-* `Discourse.Centering.backwardCenters`: the entities realized in both utterances that the
-  previous one ranks highest, several when roles tie.
-* `Discourse.Centering.cb`: the backward-looking center, for any current utterance with
-  decidable membership, characterized by `cb_eq_some_iff` and `cb_mem_backwardCenters`.
-* `Discourse.Centering.PronominalizationConstraint` and `CbPronominalized`: Rule 1 and Gordon,
-  Grosz, and Gilliom's unconditional strengthening of it, for a set of R1-pronoun forms.
+This file defines the centers of Grosz, Joshi, and Weinstein's centering theory. An utterance
+realizes entities in grammatical roles; its forward-looking centers are those entities ranked by
+role, the first of them its preferred center, and its backward-looking center is [the
+highest-ranked forward-looking center of the previous utterance that it realizes](##cb_eq_some_iff),
+[the preferred center whenever that is realized](##cb_eq_of_cp_eq). Rule 1 says that if an
+utterance pronominalizes any forward-looking center of the previous one, it pronominalizes the
+backward-looking center. The forms that count as pronouns for the rule, the R1-pronouns of Poesio
+and colleagues, are a parameter, and Gordon, Grosz, and Gilliom's unconditional form of the rule
+[survives counting more forms as R1-pronouns](##CbPronominalized.mono).
 
 ## Implementation notes
 
@@ -55,7 +37,6 @@ reference.
 
 * [grosz-joshi-weinstein-1995]
 * [gordon-grosz-gilliom-1993]
-* [kameyama-1986]
 * [poesio-stevenson-eugenio-hitzeman-2004]
 -/
 
@@ -209,6 +190,12 @@ theorem cb_eq_some_iff : cb prev cur = some e ↔
 
 theorem cb_eq_none_iff : cb prev cur = none ↔ ∀ e ∈ prev.cf, e ∉ cur := by
   simp [cb, List.find?_eq_none]
+
+/-- The preferred center of `prev` is the backward-looking center of any utterance realizing
+it. -/
+theorem cb_eq_of_cp_eq (hp : prev.cp = some e) (he : e ∈ cur) : cb prev cur = some e := by
+  obtain ⟨l, hl⟩ := List.head?_eq_some_iff.mp hp
+  simp [cb, hl, he]
 
 /-- No forward-looking center of `prev` realized in `cur` outranks the backward-looking center:
 every realization in `prev` of an entity realized in `cur` is ranked at or below some

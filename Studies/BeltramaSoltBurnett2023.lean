@@ -1,7 +1,8 @@
 module
 
+public import Linglib.Core.Basic.Sign
 public import Linglib.Data.Statistics.BeltramaSoltBurnett2023
-public import Linglib.Pragmatics.SocialMeaning.Persona
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Ring.Rat
@@ -112,7 +113,7 @@ def Factor.dimension : Factor ≃ Dimension where
 
 /-- The mean composite scores of an experiment. -/
 def means (e : Experiment) : AssociationField Variant Dimension ℚ :=
-  .of fun v d ↦ (ratings e v (Factor.dimension.symm d)).mean.toRat
+  fun v d ↦ (ratings e v (Factor.dimension.symm d)).mean.toRat
 
 /-- A sign field is borne out by an experiment when the means order every two variants that the
 field orders. -/
@@ -142,11 +143,11 @@ theorem underspecified_mem_uIoo (e : Experiment) (d : Dimension) :
 /-- On the opposition reading the variants are measured against the underspecified one, every
 difference of means counting. -/
 def contrastField (e : Experiment) : AssociationField Variant Dimension SignType :=
-  ((means e).contrast .underspecified).signs
+  fun v d ↦ SignType.sign (means e v d - means e .underspecified d)
 
 theorem antipodal_contrastField (e : Experiment) :
     (contrastField e).Antipodal .precise .approximate :=
-  AssociationField.antipodal_signs_contrast_iff.2 fun d ↦ .inl (underspecified_mem_uIoo e d)
+  funext fun d ↦ sign_sub_eq_neg_sign_sub_iff.2 (.inl (underspecified_mem_uIoo e d))
 
 -- p. 825
 theorem contrastField_exp2 : contrastField .exp2 = contrastField .exp1 := by
@@ -155,6 +156,14 @@ theorem contrastField_exp2 : contrastField .exp2 = contrastField .exp1 := by
 theorem ground_contrastField_precise (e : Experiment) :
     (contrastField e).ground.indexes .precise = {.competent, .cold, .antiSolidary} := by
   cases e <;> decide +kernel
+
+-- The positive poles of the precise variant are what it indexes, and it indexes away from warmth.
+example (e : Experiment) : (contrastField e).Indexes .precise .competence ∧
+    ¬ (contrastField e).Indexes .precise .warmth :=
+  ⟨(AssociationField.mem_ground_indexes_iff_indexes (p := .competent) rfl).1
+      (by rw [ground_contrastField_precise]; decide),
+    fun h ↦ absurd ((AssociationField.mem_ground_indexes_iff_indexes (p := .warm) rfl).2 h)
+      (by rw [ground_contrastField_precise]; decide)⟩
 
 theorem ground_contrastField_approximate (e : Experiment) :
     (contrastField e).ground.indexes .approximate = {.incompetent, .warm, .solidary} := by
@@ -178,7 +187,7 @@ precise one is compatible with two personae (`card_compatiblePersonae_neutral_pr
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by
     cases e <;> cases e' <;> simp [contrastField_exp2]
-  exact h ▸ fun _ _ _ ↦ AssociationField.lt_of_signs_contrast_lt
+  exact h ▸ fun _ _ _ hlt ↦ (sub_lt_sub_iff_right _).1 (SignType.sign.monotone.reflect_lt hlt)
 
 /-- The direction of a verdict; a trend counts. -/
 def Verdict.sign : Verdict → SignType
@@ -189,7 +198,7 @@ def Verdict.sign : Verdict → SignType
 /-- On the neutral reading the underspecified variant is the zero point, and a variant indexes a
 dimension in the direction of its reported difference from it (p. 828). -/
 def neutral (e : Experiment) : AssociationField Variant Dimension SignType :=
-  .of fun v d ↦ match v with
+  fun v d ↦ match v with
     | .precise => (verdicts e (Factor.dimension.symm d) .preciseUnderspecified).verdict.sign
     | .underspecified => 0
     | .approximate =>
@@ -215,7 +224,15 @@ theorem ground_neutral_approximate :
 
 theorem card_compatiblePersonae_neutral_precise :
     ((neutral .exp2).ground.compatiblePersonae .precise).card = 2 := by
+  rw [AssociationField.card_compatiblePersonae_ground]
   decide +kernel
+
+theorem not_complementary_neutral (e : Experiment) :
+    ¬ (neutral e).ground.Complementary .precise .approximate := fun h ↦
+  (separateLoci_neutral e).not_antipodal <| funext fun d ↦ by
+    have := (AssociationField.complementary_ground_iff.1 h).2 d
+    simp only [SignType.sign_self] at this
+    rw [Pi.neg_apply, this, neg_neg]
 
 theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by
   cases e <;> cases e' <;> decide +kernel

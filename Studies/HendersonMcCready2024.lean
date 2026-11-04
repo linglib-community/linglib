@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Tactic.DeriveFintype

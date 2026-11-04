@@ -126,6 +126,11 @@ theorem cond_cond_of_ae_le (hs : MeasurableSet s) (ht : MeasurableSet t) (hst : 
   rw [cond_cond_eq_cond_inter ht hs, Set.inter_comm]
   exact cond_congr_set (Filter.inter_eventuallyEqSet_left.2 hst)
 
+theorem ae_cond_mem_iff (hs : MeasurableSet s) : (∀ᵐ x ∂μ[|s], x ∈ t) ↔ s ≤ᵐ[μ] t := by
+  rw [cond, Measure.ae_ennreal_smul_measure_iff (ENNReal.inv_ne_zero.2 (measure_ne_top _ _)),
+    ae_restrict_iff' hs]
+  rfl
+
 theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
     μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t := by
   refine ⟨fun h ↦ ?_, fun h ↦ cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩

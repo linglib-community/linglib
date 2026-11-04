@@ -27,7 +27,7 @@ how the unmarked case is realized.
 
 * `alignment?`: the book's sorting of its languages by alignment type.
 * `Observed`, `Realizes`: the case a gloss shows, and when the algorithm's output realizes it.
-* `rows_case`: the book's introductory clauses, each derived by `assignCases` from its
+* `rows_case`: the book's introductory clauses, each derived by `Rules.assign` from its
   alignment type.
 
 ## Implementation notes
@@ -114,8 +114,9 @@ def observed? (r : Datum) (np : Arg) : Option Observed :=
     the nominative, absolutive and unmarked NPs the leftovers. -/
 theorem rows_case :
     ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ [Arg.subject, .object],
-      ∀ o ∈ observed? r np, ∀ v ∈ (assignCases lang (fun _ ↦ none) (domain r)).valueOf np,
-        Realizes v.1 v.2 o := by
+      ∀ o ∈ observed? r np,
+        ∀ v ∈ ((Rules.ofAlignment lang).assign (fun _ ↦ none) (domain r) np).value?,
+          Realizes v.1 v.2 o := by
   decide
 
 -- (22), (23)
@@ -127,7 +128,7 @@ theorem subject_case_of_same_agreement : ∀ r ∈ Examples.all, ∀ r' ∈ Exam
   decide
 
 private theorem valueOf_subject_of_high_eq_none {g : Rules} (hg : g.high = none) :
-    (g.assign (fun _ : Arg ↦ none) [.subject, .object]).valueOf .subject =
+    (g.assign (fun _ : Arg ↦ none) [.subject, .object] .subject).value? =
       g.unmarked.map (·, .unmarked) := by
   obtain ⟨hi, lo, un⟩ := g
   dsimp only at hg
@@ -145,7 +146,7 @@ theorem ergative_independent_of_agreement {r r' : Datum} (hr : r ∈ Examples.al
     (ha' : r'.feature? "subjectAgreement" = some "yes") {g : Rules} (hg : g.high = none) :
     observed? r .subject ≠ observed? r' .subject ∧
       ∀ o ∈ observed? r' .subject,
-        ∀ v ∈ (g.assign (fun _ ↦ none) (domain r')).valueOf .subject, ¬ Realizes v.1 v.2 o := by
+        ∀ v ∈ (g.assign (fun _ ↦ none) (domain r') .subject).value?, ¬ Realizes v.1 v.2 o := by
   obtain ⟨h, h'⟩ := subject_case_of_same_agreement r hr r' hr' ht ht' hl ha ha'
   refine ⟨by rw [h, h']; decide, fun o ho v hv hre ↦ ?_⟩
   rw [h', Option.mem_some_iff] at ho

@@ -2,28 +2,32 @@ module
 
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Clause.Alignment
+public import Linglib.Syntax.Voice.TermRole
 
 /-!
 # Centering theory: ranking by grammatical role
 
-The ranking of forward-looking centers that centering theory assumes for English: the subject
-outranks the object, which outranks every other role. Kameyama argued for grammatical role over
-Sidner's focus-based ranking, Grosz, Joshi, and Weinstein adopt it in their examples, and Gordon,
-Grosz, and Gilliom's repeated-name penalty experiments support it.
+This file defines the grammatical roles by which Grosz, Joshi, and Weinstein rank the
+forward-looking centers of an English utterance: the subject above the objects, and the objects
+above every other role. Sidner's focusing theory had ordered its potential foci by thematic role
+instead. Grosz, Joshi, and Weinstein call grammatical role a major factor in the ranking, not the
+only one, and Gordon, Grosz, and Gilliom found that surface-initial position also raises an
+entity's prominence, whether or not it is the subject. A term of a construction takes its role
+from its transitivity-related role, so that the ranking, read through the comparative coding
+slots, [groups S with A](##isAccusative_ofTermRole_comp_ofArgumentRole).
 
-## Main declarations
+## Implementation notes
 
-* `Discourse.Centering.GrammaticalRole`: subject, object, and other, linearly ordered in that
-  order of prominence.
-* `GrammaticalRole.ofArgumentRole`: the role of a comparative coding slot under an accusative
-  alignment, the hom from `ArgumentRole` that connects the ranking to the clause
-  vocabulary.
+Roles are read off the terms of a construction rather than the coding slots, since one coding
+slot can be a core term in one construction and an oblique in another: the recipient of *gave
+her a book* is an object and that of *gave a book to her* an oblique, as is the initial A of a
+long passive.
 
 ## References
 
-* [kameyama-1986]
 * [grosz-joshi-weinstein-1995]
+* [sidner-1979]
 * [gordon-grosz-gilliom-1993]
 -/
 
@@ -31,7 +35,8 @@ Grosz, and Gilliom's repeated-name penalty experiments support it.
 
 namespace Discourse.Centering
 
-/-- A grammatical role ranking the forward-looking centers: subject over object over the rest. -/
+/-- The grammatical roles by which [grosz-joshi-weinstein-1995] rank forward-looking centers,
+SUBJECT > OBJECT(S) > OTHER (p. 214): the subject, an object, and every other role. -/
 inductive GrammaticalRole where
   | subject
   | object
@@ -52,15 +57,16 @@ theorem object_lt_subject : object < subject := by decide
 
 theorem other_lt_object : other < object := by decide
 
-/-- The role of a comparative coding slot under the accusative alignment the ranking was stated
-for: the S and A slots are the subject and the P, R, and T slots are objects. Obliques lie
-outside the coding slots and are the other roles. -/
-def ofArgumentRole : ArgumentRole → GrammaticalRole
+/-- The role of a term in an English clause by its transitivity-related role: an S or A term is
+the subject, a P term an object, and an oblique an other role. -/
+def ofTermRole : Voice.TermRole → GrammaticalRole
   | .S | .A => .subject
-  | .P | .R | .T => .object
+  | .P => .object
+  | .X => .other
 
-theorem ofArgumentRole_ne_other (r : ArgumentRole) : ofArgumentRole r ≠ other := by
-  cases r <;> decide
+theorem isAccusative_ofTermRole_comp_ofArgumentRole :
+    Alignment.IsAccusative (ofTermRole ∘ Voice.TermRole.ofArgumentRole) :=
+  ⟨rfl, nofun⟩
 
 end GrammaticalRole
 

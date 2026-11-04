@@ -9,19 +9,13 @@ public import Linglib.Data.Examples.ThomasDeo2020
 # Thomas and Deo (2020): The Interaction of *just* with Modified Scalar Predicates
 
 Thomas and Deo analyse the approximative use of *just* with equatives and comparatives, *just as
-tall as* and *just older than*. A degree is interpreted at a level of precision, the open interval
-whose radius is the grain; an equative places the subject's degree above the infimum of the
-standard's level and a comparative above its supremum. Equatives make stronger claims at finer
-grains and comparatives at coarser ones. *Just* asserts the prejacent at the finest grain and
-denies it at every coarser grain where it would be stronger, so it adds nothing to an equative
-and gives a comparative an upper bound that cannot be cancelled.
-
-## Main definitions
-
-* `ThomasDeo2020.level`: the level of radius `ε` around a degree, (42)–(43).
-* `ThomasDeo2020.equative`, `ThomasDeo2020.comparative`: the constructions at a grain, (45) and
-  (49).
-* `ThomasDeo2020.just`: approximative *just*, (44).
+tall as* and *just older than*. A degree is interpreted at [a level of precision](##level), the open
+interval whose radius is the grain; [an equative](##equative) places the subject's degree above
+the infimum of the standard's level and [a comparative](##comparative) above its supremum.
+Equatives make stronger claims at finer grains and comparatives at coarser ones.
+[*Just*](##just) asserts the prejacent at the finest grain and denies it at every coarser grain
+where it would be stronger, so it adds nothing to an equative and gives a comparative an upper
+bound that cannot be cancelled.
 
 ## Implementation notes
 
@@ -99,18 +93,16 @@ theorem isGLB_level [DenselyOrdered D] (hε : 0 < ε) : IsGLB (level ε d) (d - 
 theorem isLUB_level [DenselyOrdered D] (hε : 0 < ε) : IsLUB (level ε d) (d + ε) :=
   isLUB_Ioo (Set.nonempty_Ioo.1 ⟨d, mem_level_self hε⟩)
 
-/-- The level of radius `ε` around `d` is the union over alignments of the grain cells containing
-`d` (footnote 9). -/
+/-- The level of radius `ε` around `d` is the union, over the translates of the grain of width
+`ε`, of the cells containing `d` (footnote 9). -/
 theorem level_eq_iUnion_cell {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
     [FloorRing α] {ε : α} (hε : 0 < ε) (d : α) :
-    level ε d = ⋃ t, {y | y - t ∈ (grain ε).cell (d - t)} := by
+    level ε d = ⋃ t, ((grain ε).comap (· - t)).cell d := by
   ext y
-  simp only [Set.mem_iUnion, Set.mem_ofPred_eq, mem_level]
+  simp only [Set.mem_iUnion, Setoid.mem_cell, Setoid.comap_rel, mem_level]
   refine ⟨fun h ↦ ⟨min y d + ε / 2, ?_⟩, fun ⟨t, ht⟩ ↦ ?_⟩
-  · have h0 := cell_grain hε 0
-    rw [representative_eq_self_of_mem_zmultiples hε.ne' (zero_mem _), zero_sub, zero_add] at h0
-    have key : ∀ z, min y d ≤ z → z - min y d < ε → z - (min y d + ε / 2) ∈ (grain ε).cell 0 :=
-      fun z h₁ h₂ ↦ h0 ▸ ⟨by linarith, by linarith⟩
+  · have key : ∀ z, min y d ≤ z → z - min y d < ε → z - (min y d + ε / 2) ∈ (grain ε).cell 0 :=
+      fun z h₁ h₂ ↦ cell_grain_zero hε ▸ ⟨by linarith, by linarith⟩
     have hd := key d (min_le_right y d) (by
       rcases min_choice y d with hm | hm <;> rw [hm] <;> linarith [(abs_sub_lt_iff.1 h).2])
     have hy := key y (min_le_left y d) (by

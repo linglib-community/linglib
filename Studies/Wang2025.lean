@@ -2,14 +2,12 @@ module
 
 public import Linglib.Fragments.Mandarin.Adverbs
 public import Linglib.Fragments.Mandarin.Verbs
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Semantics.Aspect.Phasal
-public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
-public import Linglib.Pragmatics.Competition
-public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
@@ -29,7 +27,7 @@ entails a proposition when every state it admits believes the proposition.
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of
   states included in `p`, and possibility and ignorance are the corresponding overlap
   conditions.
-* Maximize Presupposition is blocking, `Competition.Blocked`. A sentence without a
+* Maximize Presupposition is violated by a presuppositionally stronger rival. A sentence without a
   presupposition violates it in every context, as in the dissertation's tableaux, and its rank
   below Felicity Presupposition confines its effect to contexts that entail the presupposition.
 * The aspectual triggers take their meanings from `Presupposition.again` and
@@ -118,17 +116,15 @@ theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presu
 /-- Maximize Presupposition is violated by a candidate that its rival blocks, the rival being
 presuppositionally stronger, admitted by strictly fewer contexts, (3c). -/
 def ViolMP (rival c : Candidate W) : Prop :=
-  Competition.Blocked (fun _ ↦ {rival}) Candidate.admits c
-
-theorem violMP_iff {rival c : Candidate W} : ViolMP rival c ↔ rival.admits ⊂ c.admits :=
-  ⟨fun ⟨_, h, hss⟩ ↦ h ▸ hss, fun h ↦ ⟨rival, rfl, h⟩⟩
+  rival.admits ⊂ c.admits
 
 theorem violMP_of_presup_none {rival c : Candidate W} {p : Set W} (hc : c.presup = none)
-    (hr : rival.presup = some p) : ViolMP rival c :=
-  violMP_iff.2 (Candidate.admits_of_presup_none hc ▸ Candidate.admits_ssubset_univ hr)
+    (hr : rival.presup = some p) : ViolMP rival c := by
+  rw [ViolMP, Candidate.admits_of_presup_none hc]
+  exact Candidate.admits_ssubset_univ hr
 
 theorem not_violMP_self (c : Candidate W) : ¬ ViolMP c c :=
-  fun h ↦ (violMP_iff.1 h).ne rfl
+  fun h ↦ h.ne rfl
 
 /-- `Beats cs a b` compares two candidates by strict domination along the list `cs` of violation
 predicates, `a` beating `b` at the first constraint on which they differ. -/
@@ -391,64 +387,112 @@ end Aspectual
 
 section Exhaustification
 
-variable [DecidableEq W]
+open Exhaustification
 
 /-- The reading of (24) for the maximal subset `M` is `φ` with every member of `M` negated. -/
-def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
-  φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
+def exhMx (φ : Set W) (M : Set (Set W)) : Set W := φ \ ⋃₀ M
 
-open Exhaustification in
 -- (20), (24), (25)
-theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
-    (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
-    exhIE alts.toSetFamily ↑φ = ↑(exhMx φ M₀) := by
-  rw [exhIE_eq_sdiff_of_maximal_unique _ _ (isMaximalExclusion_iff.1 h₀) fun X hX ↦ ?_]
-  · ext w
-    simp [exhMx, Finset.mem_toSetFamily]
-  · obtain ⟨M, -, rfl⟩ := Finset.exists_toSetFamily_eq_of_subset hX.prop.1
-    rw [huniq M (isMaximalExclusion_iff.2 hX)]
+theorem exhIE_eq_exhMx_of_unique {φ : Set W} {alts M₀ : Set (Set W)}
+    (h₀ : Maximal (IsConsistentExclusion alts φ) M₀)
+    (huniq : ∀ M, Maximal (IsConsistentExclusion alts φ) M → M = M₀) :
+    exhIE alts φ = exhMx φ M₀ :=
+  exhIE_eq_sdiff_of_maximal_unique alts φ h₀ huniq
+
+/-- The maximal consistent exclusions among the alternatives `f` are the sets of those false at a
+minimal world. -/
+private theorem maximal_isConsistentExclusion_range_iff {ι : Type*} {f : ι → Set W} {φ : Set W}
+    {X : Set (Set W)} :
+    Maximal (IsConsistentExclusion (Set.range f) φ) X ↔
+      ∃ u ∈ exhMW (Set.range f) φ, X = f '' {i | u ∉ f i} := by
+  have key (u : W) :
+      Set.range f \ Preorder.satisfied (· ∈ ·) (Set.range f) u = f '' {i | u ∉ f i} := by
+    ext b
+    simp only [mem_sdiff_satisfied, Set.mem_range, Set.mem_image, Set.mem_ofPred_eq]
+    exact ⟨fun ⟨⟨i, hi⟩, hu⟩ ↦ ⟨i, hi ▸ hu, hi⟩, fun ⟨i, hu, hi⟩ ↦ ⟨⟨i, hi⟩, hi ▸ hu⟩⟩
+  simp_rw [← key]
+  exact ⟨Maximal.exists_eq_sdiff_satisfied,
+    fun ⟨u, hu, hX⟩ ↦ hX ▸ (maximal_sdiff_satisfied_iff hu.1).2 hu⟩
 
 /-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/
 abbrev PQ := Bool × Bool
 
 /-- The alternative `p` of (26). -/
-def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
+def pAlt : Set PQ := {w | w.1 = true}
 
 /-- The alternative `q` of (26). -/
-def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
+def qAlt : Set PQ := {w | w.2 = true}
+
+instance : DecidablePred (· ∈ pAlt) := fun w ↦ inferInstanceAs (Decidable (w.1 = true))
+
+instance : DecidablePred (· ∈ qAlt) := fun w ↦ inferInstanceAs (Decidable (w.2 = true))
+
+/-- The alternatives of (26), `p`, `q` and their conjunction. -/
+def disjAlts : Fin 3 → Set PQ
+  | 0 => pAlt
+  | 1 => qAlt
+  | 2 => pAlt ∩ qAlt
+
+instance : ∀ i, DecidablePred (· ∈ disjAlts i)
+  | 0 => inferInstanceAs (DecidablePred (· ∈ pAlt))
+  | 1 => inferInstanceAs (DecidablePred (· ∈ qAlt))
+  | 2 => inferInstanceAs (DecidablePred (· ∈ pAlt ∩ qAlt))
 
 -- (26)
 theorem disjunction_two_maxima :
-    Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
-        {pAlt, pAlt ∩ qAlt} ∧
-      Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
-        {qAlt, pAlt ∩ qAlt} ∧
+    (∀ X, Maximal (IsConsistentExclusion (Set.range disjAlts) (pAlt ∪ qAlt)) X ↔
+        X = {pAlt, pAlt ∩ qAlt} ∨ X = {qAlt, pAlt ∩ qAlt}) ∧
       exhMx (pAlt ∪ qAlt) {pAlt, pAlt ∩ qAlt} = qAlt \ pAlt ∧
       exhMx (pAlt ∪ qAlt) {qAlt, pAlt ∩ qAlt} = pAlt \ qAlt := by
-  decide
+  have hMW : exhMW (Set.range disjAlts) (pAlt ∪ qAlt) = {(false, true), (true, false)} := by
+    ext w; revert w; decide
+  have h₁ : {i | (false, true) ∉ disjAlts i} = {0, 2} := by ext i; revert i; decide
+  have h₂ : {i | (true, false) ∉ disjAlts i} = {1, 2} := by ext i; revert i; decide
+  refine ⟨fun X ↦ ?_, ?_, ?_⟩
+  · simp only [maximal_isConsistentExclusion_range_iff, hMW, Set.mem_insert_iff,
+      Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left, h₁, h₂, Set.image_insert_eq,
+      Set.image_singleton]
+    rfl
+  · rw [exhMx, Set.sUnion_pair, Set.union_eq_left.2 Set.inter_subset_left, Set.union_sdiff_left]
+  · rw [exhMx, Set.sUnion_pair, Set.union_eq_left.2 Set.inter_subset_right,
+      Set.union_sdiff_right]
 
 /-- The cell of (48) in which the state held in the past iff `past` and holds now iff `now`, a
 world being the pair of the two truth values. -/
-def cell (past now : Bool) : Finset PQ := {(past, now)}
+def cell (past now : Bool) : Set PQ := {(past, now)}
 
-/-- The alternatives of (48), the four cells. -/
-def cells : Finset (Finset PQ) :=
-  {cell false true, cell true false, cell true true, cell false false}
+/-- The alternatives of (48), the four cells, indexed by the world each contains. -/
+def cells (w : PQ) : Set PQ := cell w.1 w.2
+
+instance (w : PQ) : DecidablePred (· ∈ cells w) := fun v ↦
+  inferInstanceAs (Decidable (v = (w.1, w.2)))
 
 /-- The prejacent of (46), that the state does not hold now, the alternative of a sentence with
 *buzai* 'no longer'. -/
-def notNow : Finset PQ := Finset.univ.filter (·.2 = false)
+def notNow : Set PQ := {w | w.2 = false}
+
+instance : DecidablePred (· ∈ notNow) := fun w ↦ inferInstanceAs (Decidable (w.2 = false))
 
 /-- The alternative of *buzai* has two maximal consistent subsets (49), meaning that the state held
 in the past or that it did not. -/
 theorem notNow_two_maxima :
-    Exhaustification.IsMaximalExclusion cells notNow
-        {cell false true, cell true true, cell false false} ∧
-      Exhaustification.IsMaximalExclusion cells notNow
-        {cell false true, cell true false, cell true true} ∧
+    (∀ X, Maximal (IsConsistentExclusion (Set.range cells) notNow) X ↔
+        X = {cell false true, cell true true, cell false false} ∨
+          X = {cell false true, cell true false, cell true true}) ∧
       exhMx notNow {cell false true, cell true true, cell false false} = cell true false ∧
       exhMx notNow {cell false true, cell true false, cell true true} = cell false false := by
-  decide
+  have hMW : exhMW (Set.range cells) notNow = {(true, false), (false, false)} := by
+    ext w; revert w; decide
+  have h₁ : {i | (true, false) ∉ cells i} = {(false, true), (true, true), (false, false)} := by
+    ext i; revert i; decide
+  have h₂ : {i | (false, false) ∉ cells i} = {(false, true), (true, false), (true, true)} := by
+    ext i; revert i; decide
+  refine ⟨fun X ↦ ?_, ?_, ?_⟩
+  · simp only [maximal_isConsistentExclusion_range_iff, hMW, Set.mem_insert_iff,
+      Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left, h₁, h₂, Set.image_insert_eq,
+      Set.image_singleton]
+    rfl
+  all_goals ext ⟨_ | _, _ | _⟩ <;> simp [exhMx, notNow, cell]
 
 end Exhaustification
 

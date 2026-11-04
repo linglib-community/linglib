@@ -90,6 +90,34 @@ theorem forbidPairs_eq_zero_iff (w : List α) :
       rw [List.isChain_cons_cons, ← ih]
       by_cases hab : R a b <;> simp [hab]
 
+/-- The violations split at any element, as `List.isChain_split` splits a chain. -/
+theorem forbidPairs_split (l₁ : List α) (c : α) (l₂ : List α) :
+    forbidPairs R (l₁ ++ c :: l₂) = forbidPairs R (l₁ ++ [c]) + forbidPairs R (c :: l₂) := by
+  induction l₁ with
+  | nil => simp
+  | cons a t ih => cases t with
+    | nil => simp
+    | cons b t => simp only [List.cons_append, forbidPairs_cons_cons] at ih ⊢; omega
+
+theorem forbidPairs_append_cons_cons (l₁ : List α) (b c : α) (l₂ : List α) :
+    forbidPairs R (l₁ ++ b :: c :: l₂) =
+      forbidPairs R (l₁ ++ [b]) + (if R b c then 1 else 0) + forbidPairs R (c :: l₂) := by
+  rw [forbidPairs_split, forbidPairs_cons_cons, Nat.add_assoc]
+
+/-- Two first elements related alike give a string the same violations. -/
+theorem forbidPairs_congr_head {a b : α} (h : ∀ x, R a x ↔ R b x) (w : List α) :
+    forbidPairs R (a :: w) = forbidPairs R (b :: w) := by
+  cases w <;> simp [h]
+
+/-- Two last elements related alike give a string the same violations. -/
+theorem forbidPairs_congr_last {a b : α} (h : ∀ x, R x a ↔ R x b) (w : List α) :
+    forbidPairs R (w ++ [a]) = forbidPairs R (w ++ [b]) := by
+  induction w with
+  | nil => simp
+  | cons c t ih => cases t with
+    | nil => simp [h]
+    | cons d t => simpa using ih
+
 end forbidPairs
 
 section DecidableEq

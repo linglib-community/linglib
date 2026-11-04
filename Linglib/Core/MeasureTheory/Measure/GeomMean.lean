@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Pow.NNReal
 public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Prod
@@ -35,6 +36,8 @@ its integral.
   vanishes at an atom of positive mass.
 * `MeasureTheory.Measure.geomMean_eq_ofReal_exp_sum_log`: the mean is the exponential of the
   expected logarithm.
+* `MeasureTheory.Measure.log_geomMean`: its logarithm is the expected logarithm, in `EReal`, for any
+  function.
 -/
 
 @[expose] public section
@@ -104,6 +107,17 @@ theorem geomMean_eq_ofReal_exp_sum_log (h0 : ∀ a, μ {a} ≠ 0 → f a ≠ 0)
     rw [← ENNReal.ofReal_toReal (htop a hμ), ENNReal.ofReal_rpow_of_pos hpos,
       Real.rpow_def_of_pos hpos, ENNReal.toReal_ofReal hpos.le, mul_comm]
 
+/-- The logarithm of the geometric mean is the expected logarithm, with `0 * ⊥ = 0` at an atom of
+no mass and `⊥` at an atom of positive mass where the function vanishes. -/
+theorem log_geomMean (μ : Measure α) (f : α → ℝ≥0∞) :
+    ENNReal.log (μ.geomMean f) = ∑ a, (μ.real {a} : EReal) * ENNReal.log (f a) := by
+  classical
+  rw [geomMean]
+  induction (Finset.univ : Finset α) using Finset.induction_on with
+  | empty => simp
+  | insert a s ha ih =>
+    rw [Finset.prod_insert ha, Finset.sum_insert ha, ENNReal.log_mul_add, ENNReal.log_rpow, ih]
+
 /-- Under a product measure the geometric mean is the mean over the first factor of the means over
 the second. -/
 theorem geomMean_prod {β : Type*} [MeasurableSpace β] [Fintype β] (μ : Measure α) (ν : Measure β)
@@ -133,6 +147,17 @@ positive mass is that constant. -/
 theorem geomMean_of_forall_eq [IsProbabilityMeasure μ] (h : ∀ a, μ {a} ≠ 0 → f a = c) :
     μ.geomMean f = c :=
   (geomMean_congr h).trans (geomMean_const μ c)
+
+/-- The geometric mean under a probability measure of the indicator of a set is `1` when the
+measure concentrates on the set and `0` otherwise. -/
+theorem geomMean_indicator_one [IsProbabilityMeasure μ] (s : Set α)
+    [Decidable (∀ᵐ a ∂μ, a ∈ s)] :
+    μ.geomMean (s.indicator 1) = if ∀ᵐ a ∂μ, a ∈ s then 1 else 0 := by
+  split_ifs with h
+  · exact geomMean_of_forall_eq fun a ha ↦ Set.indicator_of_mem (ae_iff_of_countable.1 h a ha) 1
+  · obtain ⟨a, ha, has⟩ : ∃ a, μ {a} ≠ 0 ∧ a ∉ s := by
+      simpa [ae_iff_of_countable] using h
+    exact geomMean_eq_zero_iff.2 ⟨a, ha, Set.indicator_of_notMem has 1⟩
 
 /-- The geometric mean of the exponential of minus a function is the exponential of minus its
 integral. -/

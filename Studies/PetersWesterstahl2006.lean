@@ -6,6 +6,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Lindstrom
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic
@@ -28,6 +29,13 @@ respectable quantifiers the book offers as no determiner's meaning, MO, which ho
 restrictor has more elements than the scope,
 [is not conservative](##PetersWesterstahl2006.not_conservative_mo), while Div and Sqt are
 patterns of the triangle, ruled out on empirical grounds alone.
+
+The same triangle decides first-order definability. *At least `k`* [is
+definable](##PetersWesterstahl2006.foDefinable_atLeast), while the properly proportional
+quantifiers, *most* among them, are closed under isomorphism and yet
+[no sentence defines them](##PetersWesterstahl2006.not_foDefinable_thresholdGt), even on finite
+universes. Dropping conservativity and extension, a quantifier of type `⟨1⟩` is
+[a relation between cardinal numbers](##PetersWesterstahl2006.existsUnique_cardinal_relation).
 
 ## Implementation notes
 
@@ -119,11 +127,11 @@ theorem duplicatorWinsBijective_oneCycle_twoCycles (r : ℕ) :
     (fun _ _ hd ↦ eq_zero_of_addRight_one_zpow (hd.trans hlt))
     (fun _ _ hd ↦ eq_zero_of_addRight_zero_one_zpow (by exact_mod_cast hd))
 
-theorem oneCycle_mem_lin (r : ℕ) : oneCycle r ∈ Reciprocal.lin.holds :=
+theorem oneCycle_mem_lin (r : ℕ) : ⟦oneCycle r⟧ ∈ Reciprocal.lin :=
   ⟨ZMod.nontrivial_iff.2 (by have := Nat.one_lt_two_pow_iff.2 r.succ_ne_zero; omega),
     fun _ _ hxy ↦ transGen_add_one hxy⟩
 
-theorem twoCycles_not_mem_lin (r : ℕ) : twoCycles r ∉ Reciprocal.lin.holds := by
+theorem twoCycles_not_mem_lin (r : ℕ) : ⟦twoCycles r⟧ ∉ Reciprocal.lin := by
   rintro ⟨-, h⟩
   have hfst {a b : ZMod 2 × ZMod (2 ^ r)}
       (hab : TransGen (fun x y ↦ y = Equiv.addRight ((0 : ZMod 2), (1 : ZMod (2 ^ r))) x) a b) :
@@ -135,7 +143,8 @@ theorem twoCycles_not_mem_lin (r : ℕ) : twoCycles r ∉ Reciprocal.lin.holds :
     (show (0 : ZMod 2) ≠ 1 by decide)
 
 /-- `LIN` is not definable in `FO(Mon)` (Corollary 8). -/
-theorem lin_not_monDefinable : ¬ Language.graph.MonDefinable Set.univ Reciprocal.lin.{0}.holds :=
+theorem lin_not_monDefinable :
+    ¬ Language.graph.MonDefinable Set.univ (Quotient.mk _ ⁻¹' Reciprocal.lin.{0}) :=
   not_monDefinable_of_duplicatorWinsBijective fun r ↦
     ⟨oneCycle r, trivial, twoCycles r, trivial, duplicatorWinsBijective_oneCycle_twoCycles r,
       oneCycle_mem_lin r, twoCycles_not_mem_lin r⟩
@@ -180,6 +189,93 @@ def sqt : Det.Family.{0} := (NumberTree.ofSizes fun x p ↦ p < x * x).toFamily
 example : (div.Conservative ∧ div.Ext ∧ div.Isom) ∧ (sqt.Conservative ∧ sqt.Ext ∧ sqt.Isom) :=
   ⟨conservative_ext_isom_iff_exists_toFamily.2 ⟨_, rfl⟩,
     conservative_ext_isom_iff_exists_toFamily.2 ⟨_, rfl⟩⟩
+
+/-! ### Quantifiers as relations between cardinals -/
+
+open Cardinal in
+/-- Ch. 3, Fact 4, after Mostowski: a quantifier of type `⟨1⟩` is a unique binary relation between
+cardinal numbers, holding of `|M - A|` and `|A|`. -/
+theorem existsUnique_cardinal_relation
+    (Q : LindstromQuantifier.{0, 0, u} (Language.monadic (Fin 1))) :
+    ∃! R : Cardinal.{u} → Cardinal.{u} → Prop, ∀ (M : Type u) (A : Set M),
+      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
+        R #↥Aᶜ #↥A := by
+  classical
+  let c (k m : Cardinal.{u}) (S : (Language.monadic (Fin 1)).Relations 1 → Prop) : Cardinal.{u} :=
+    if S (.pred 0) then m else k
+  have hc (M : Type u) (A : Set M) :
+      LindstromQuantifier.typeCount (⟨M, monadic.structure ![A]⟩ :
+        Bundled.{u} (Language.monadic (Fin 1)).Structure) = c #↥Aᶜ #↥A := funext fun S ↦ by
+    have hcell : @unaryType _ M (monadic.structure ![A]) ⁻¹' {S} = {x | x ∈ A ↔ S (.pred 0)} :=
+      Set.ext fun x ↦ (unaryType_monadic_structure_eq_iff x S).trans Fin.forall_fin_one
+    rw [LindstromQuantifier.typeCount]
+    change #↥(@unaryType _ M (monadic.structure ![A]) ⁻¹' {S}) = _
+    rw [hcell]
+    by_cases hS : S (.pred 0) <;> simp [c, hS, Set.compl_def]
+  have key (M : Type u) (A : Set M) :
+      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
+        LindstromQuantifier.typeCountEquiv.symm (c #↥Aᶜ #↥A) ∈ Q := by
+    rw [← hc]
+    exact iff_of_eq (congrArg (· ∈ Q) (LindstromQuantifier.typeCountEquiv.symm_apply_apply _).symm)
+  refine ⟨fun k m ↦ LindstromQuantifier.typeCountEquiv.symm (c k m) ∈ Q, key, fun R' hR' ↦ ?_⟩
+  funext k m
+  obtain ⟨⟨M, S⟩, hM⟩ := LindstromQuantifier.typeCount_surjective (c k m)
+  obtain ⟨A, rfl⟩ : ∃ A : Set M, S = monadic.structure ![A] :=
+    ⟨_, (monadic.eq_structure S).trans (by congr 1; exact funext (Fin.forall_fin_one.2 rfl))⟩
+  rw [hc] at hM
+  obtain rfl : #↥Aᶜ = k := by simpa [c] using congrFun hM fun _ ↦ False
+  obtain rfl : #↥A = m := by simpa [c] using congrFun hM fun _ ↦ True
+  exact propext ((hR' M A).symm.trans (key M A))
+
+/-! ### First-order definability on the triangle -/
+
+/-- Ch. 14, Fact 4: no sentence defines a properly proportional quantifier, even on finite
+universes, though each is closed under isomorphism and so is a Lindström quantifier. Below any
+line of the tree, `(n * (q - p), p * n)` and `(n * (q - p), p * n + 1)` still differ. -/
+theorem not_foDefinable_thresholdGt {p q : ℕ} (hp : 0 < p) (hpq : p < q) :
+    ¬ (NumberTree.thresholdGt p q).toFamily.FODefinable := by
+  obtain ⟨r, rfl⟩ : ∃ r, q = p + (r + 1) := ⟨q - p - 1, by omega⟩
+  rw [NumberTree.foDefinable_toFamily_iff]
+  rintro ⟨n, h, -, -⟩
+  have hle : n ≤ p * n := Nat.le_mul_of_pos_left n hp
+  have ha : n ≤ n * (r + 1) := Nat.le_mul_of_pos_right n r.succ_pos
+  have h' := ((h _ _ ha (by omega : n ≤ p * n + 1)).trans (h _ _ ha hle).symm).1
+  simp only [NumberTree.thresholdGt, NumberTree.ofSizes_apply] at h'
+  have hlt : p * (n * (r + 1) + (p * n + 1)) < (p + (r + 1)) * (p * n + 1) := by nlinarith
+  have heq : p * (n * (r + 1) + p * n) = (p + (r + 1)) * (p * n) := by ring
+  exact absurd (h' hlt) (by omega)
+
+-- p. 468
+theorem not_foDefinable_threshold {p q : ℕ} (hp : 0 < p) (hpq : p < q) :
+    ¬ (NumberTree.threshold p q).toFamily.FODefinable := by
+  obtain ⟨r, rfl⟩ : ∃ r, q = p + (r + 1) := ⟨q - p - 1, by omega⟩
+  obtain ⟨s, rfl⟩ : ∃ s, p = s + 1 := ⟨p - 1, by omega⟩
+  rw [NumberTree.foDefinable_toFamily_iff]
+  rintro ⟨n, h, -, -⟩
+  have ha : n ≤ (n + 1) * (r + 1) := by nlinarith
+  have h' := ((h _ _ ha (by omega : n ≤ s * (n + 1) + n + 1)).trans
+    (h _ _ ha (by omega : n ≤ s * (n + 1) + n)).symm).1
+  simp only [NumberTree.threshold, NumberTree.ofSizes_apply] at h'
+  have heq : (s + 1) * ((n + 1) * (r + 1) + (s * (n + 1) + n + 1)) =
+      (s + 1 + (r + 1)) * (s * (n + 1) + n + 1) := by ring
+  have hlt : (s + 1 + (r + 1)) * (s * (n + 1) + n) <
+      (s + 1) * ((n + 1) * (r + 1) + (s * (n + 1) + n)) := by nlinarith
+  exact absurd (h' heq.le) (by omega)
+
+-- p. 468
+theorem not_foDefinable_most : ¬ (NumberTree.most.toFamily : Det.Family.{u}).FODefinable := by
+  rw [← NumberTree.thresholdGt_one_two]
+  exact not_foDefinable_thresholdGt one_pos one_lt_two
+
+theorem foDefinable_atLeast (k : ℕ) :
+    ((NumberTree.atLeast k).toFamily : Det.Family.{u}).FODefinable :=
+  (NumberTree.foDefinable_toFamily_iff _).2
+    ⟨k, fun _ _ _ _ ↦ by simp only [NumberTree.atLeast]; omega, fun _ _ _ _ ↦ .rfl,
+      fun _ _ _ _ ↦ by simp only [NumberTree.atLeast]; omega⟩
+
+theorem exists_toFamily_eq_thresholdGt (p q : ℕ) :
+    ∃ D : Lindstrom.Det.{u}, D.toFamily = (NumberTree.thresholdGt p q).toFamily :=
+  Lindstrom.isom_iff_exists_toFamily.1 (NumberTree.constant_toFamily _).isom
 
 end Universals
 

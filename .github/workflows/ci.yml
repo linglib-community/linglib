@@ -75,6 +75,14 @@ jobs:
           "$RUNNER_TEMP/cldf-venv/bin/pip" install --quiet pycldf==2.1.1
           "$RUNNER_TEMP/cldf-venv/bin/python" scripts/export_examples_cldf.py --validate "$RUNNER_TEMP/cldf-examples"
 
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL /usr/share/swift /usr/local/share/boost
+          sudo docker image prune --all --force || true
+          df -h /
+
       - name: Install elan
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none

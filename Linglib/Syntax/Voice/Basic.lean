@@ -264,10 +264,10 @@ abbrev agentVoice : Voice := active
 
 /-- The passive of a frame with a complement (by default the transitive frame). It makes the first
 complement the subject and pivot, and denucleativizes the external argument while keeping it in
-participant structure, implied here and expressed as an oblique in a long passive ([creissels-2024]
-§8.3.2.1). -/
-def passive (fr : ArgumentFrame := .np) : Voice :=
-  of fr ⟨some .nominal, fr.complements.tail ++ [.implicit]⟩ <|
+participant structure at position `a`: implied by default, and an oblique in a long passive
+([creissels-2024] §8.3.2.1). -/
+def passive (fr : ArgumentFrame := .np) (a : ArgumentFrame.Position := .implicit) : Voice :=
+  of fr ⟨some .nominal, fr.complements.tail ++ [a]⟩ <|
     some (complement (fr.complements.length - 1)) :: some external ::
       (List.range (fr.complements.length - 1)).map (some ∘ complement)
 

@@ -49,7 +49,7 @@ entailing.
 
 namespace VonFintel1999
 
-open NaturalLogic Presupposition Modality Conditional Desire.BestWorlds
+open Presupposition Modality Conditional Desire.BestWorlds
 
 variable {W ι : Type*}
 

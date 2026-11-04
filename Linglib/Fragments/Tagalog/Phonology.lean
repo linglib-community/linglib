@@ -130,11 +130,11 @@ def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
 
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following non-nasal
 consonant. -/
-def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ŋ
+def assimilate : List Segment → List Segment := NasalSubstitution.assimilate consonants trigger ŋ
 
 /-- `substitute x` is the nasal that the prefix nasal and a stem-initial `x` surface as under
 substitution. -/
-def substitute : Segment → Segment := NasalSubstitution.substitute trigger ŋ
+def substitute : Segment → Segment := NasalSubstitution.substitute consonants trigger ŋ
 
 /-- `cluster pre stem` attaches the prefix that consists of `pre` and the nasal to `stem`, with
 assimilation of the nasal to the stem-initial segment alone. -/

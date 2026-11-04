@@ -158,27 +158,27 @@ def ditransitive : Derivation :=
 /-- The cases a grammar reads off a derivation, the indirect object `goalD` dative from its
     lexical head where `datIO` says so. -/
 def casesOf (g : CaseAssigners) (d : Derivation) (datIO : Bool) :
-    Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=
+    Option (LexicalItem.Token → FeatureSlot (Case × Case.Mechanism)) :=
   d.externalize?.map fun t ↦
     g.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
       (fun x ↦ if datIO && x = goalD then .valued .dat else .unvalued) [subjD, objD, goalD]
 
 /-- The cases of the Mongolian ditransitive. -/
-def ditransitiveCases : Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=
+def ditransitiveCases : Option (LexicalItem.Token → FeatureSlot (Case × Case.Mechanism)) :=
   casesOf grammar ditransitive true
 
 theorem do_gets_dependent_acc :
-    ditransitiveCases.bind (·.valueOf objD) = some (.acc, .dependent) := by decide +kernel
+    ditransitiveCases.bind (· objD |>.value?) = some (.acc, .dependent) := by decide +kernel
 
 theorem subject_gets_nom_by_agree :
-    ditransitiveCases.bind (·.valueOf subjD) = some (.nom, .agree) := by decide +kernel
+    ditransitiveCases.bind (· subjD |>.value?) = some (.nom, .functional) := by decide +kernel
 
 theorem io_has_lexical_case :
-    ditransitiveCases.bind (·.valueOf goalD) = some (.dat, .lexical) := by decide +kernel
+    ditransitiveCases.bind (· goalD |>.value?) = some (.dat, .lexical) := by decide +kernel
 
 theorem vpEdge_dependentAcc :
     vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
-      (ditransitiveCases.bind (·.valueOf objD)).map (·.2) = some .dependent := by
+      (ditransitiveCases.bind (· objD |>.value?)).map (·.2) = some .dependent := by
   decide +kernel
 
 /-! ### The scrambling constructions and their chains -/
@@ -333,11 +333,12 @@ theorem mongolian_differs_from_sakha_in_dat_only :
   ⟨rfl, rfl, funext fun c ↦ by cases c <;> rfl⟩
 
 theorem mongolian_derives_no_dative :
-    (∀ s ∈ casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false, ∀ p ∈ s,
-      p.2.value?.map (·.1) ≠ some .dat) ∧
-    (casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false).bind (·.valueOf goalD) ≠
+    (∀ s ∈ casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false,
+      ∀ x ∈ [subjD, objD, goalD], (s x).value?.map (·.1) ≠ some .dat) ∧
+    (casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false).bind
+        (· goalD |>.value?) ≠
       (casesOf BakerVinokurova2010.grammar (BakerVinokurova2010.ditransitiveClause true) false).bind
-        (·.valueOf goalD) := by
+        (· goalD |>.value?) := by
   decide +kernel
 
 end Gong2022

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.Probability.Kernel.Module
-public import Linglib.Pragmatics.RSA.Belief
+public import Linglib.Pragmatics.RSA.KullbackLeibler
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
 
@@ -38,9 +38,9 @@ interpretation rule (`wir`).
   kernel (`RSA.listener_apply_eq_posterior`).
 * The lexical uncertainty model is stated over arbitrary finite types of worlds, observations,
   interpretations and messages. Appendix A's two steps are general:
-  `RSA.speaker_cond_listener_truthful_apply_eq`, that against a literal listener the speaker
-  depends on what she knows only through the messages it entails, and
-  `RSA.speaker_cond_ofDensity_apply_eq`, that the prior cancels against a reweighted prior.
+  `RSA.speaker_listener_truthful_apply_eq_iff`, that against a literal listener the speaker
+  depends on her belief only through the messages it entails, and
+  `RSA.speaker_ofDensity_apply_congr`, that the prior cancels against a reweighted prior.
 
 ## TODO
 
@@ -420,8 +420,7 @@ rationality (§5.2). -/
 theorem table1_prefers_around {lam : ℝ} (hlam : 0 < lam) :
     (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.between1_7} <
       (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.around4} := by
-  rw [RSA.speaker_zero_real_singleton_lt_iff_klDiv hlam
-      ⟨.around4, klDiv_ne_top table1_ac_around4 .of_finite⟩,
+  rw [RSA.speaker_zero_real_singleton_lt_iff_klDiv hlam,
     ← ENNReal.toReal_lt_toReal (klDiv_ne_top table1_ac_around4 .of_finite)
       (klDiv_ne_top table1_ac_between1_7 .of_finite),
     toReal_klDiv_eq_sum_log_div table1_ac_around4, toReal_klDiv_eq_sum_log_div table1_ac_between1_7]
@@ -534,15 +533,19 @@ noncomputable def luS1 (i : I) : Kernel O M :=
 
 theorem luS1_apply_singleton_eq_zero_iff (hlam : 0 < lam) {o : O} {i : I} {m : M} :
     luS1 P sem cost lam i o {m} = 0 ↔ ¬ Quality P sem o i m := by
-  rw [luS1, RSA.speaker_cond_listener_truthful_apply_singleton_eq_zero_iff hlam,
-    snd_preimage_ae_le_iff_quality]
+  rw [luS1, RSA.speaker_listener_truthful_apply_singleton_eq_zero_iff hlam (o := o)
+      cond_absolutelyContinuous, ae_cond_mem_iff .of_discrete, snd_preimage_ae_le_iff_quality]
 
 theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (i : I) :
     luS1 P sem cost lam i o₂ = luS1 P sem cost lam i o₁ :=
-  RSA.speaker_cond_listener_truthful_apply_eq hlam.le ho₁ ho₂ fun m ↦ by
-    rw [snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,
-      quality_iff_of_sameSupport P sem hs]
+  have := cond_isProbabilityMeasure ho₁
+  have := cond_isProbabilityMeasure ho₂
+  (RSA.speaker_listener_truthful_apply_eq_iff hlam (o := o₁) (o' := o₂) cond_absolutelyContinuous
+    cond_absolutelyContinuous).2 fun m ↦ by
+      rw [ae_cond_mem_iff .of_discrete, ae_cond_mem_iff .of_discrete,
+        snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,
+        quality_iff_of_sameSupport P sem hs]
 
 theorem speaker_ofDensity_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (G : O → M → ℝ≥0∞)
@@ -551,9 +554,15 @@ theorem speaker_ofDensity_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
         (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₂ =
       RSA.speaker lam cost (Kernel.ofDensity P fun m p ↦ G p.2 m)
         (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₁ :=
-  RSA.speaker_cond_ofDensity_apply_eq hlam ho₁ ho₂ (g := G o₁)
-    (fun m p (hp : p.2 = o₁) _ ↦ congrArg (G · m) hp)
-    fun m p (hp : p.2 = o₂) _ ↦ (congrArg (G · m) hp).trans (hG m)
+  have := cond_isProbabilityMeasure ho₁
+  have := cond_isProbabilityMeasure ho₂
+  have hmem {o : O} {p : W × O} (hp : P[|Prod.snd ⁻¹' {o}] {p} ≠ 0) : p.2 = o :=
+    ae_iff_of_countable.1 (ae_cond_mem .of_discrete) p hp
+  RSA.speaker_ofDensity_apply_congr hlam cond_absolutelyContinuous cond_absolutelyContinuous
+    fun m ↦ by
+      rw [Measure.geomMean_of_forall_eq (c := G o₁ m) fun p hp ↦
+          (congrArg (G · m) (hmem hp)).trans (hG m),
+        Measure.geomMean_of_forall_eq (c := G o₁ m) fun p hp ↦ congrArg (G · m) (hmem hp)]
 
 variable [Fintype I] [MeasurableSpace I] (PI : Measure I)
 

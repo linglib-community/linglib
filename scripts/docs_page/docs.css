@@ -39,6 +39,7 @@ code { font-family: var(--mono); font-size: 0.84em; padding: 1px 3px; background
 .crumbs a:hover { color: var(--primary); }
 .head h1 { font-size: 30px; line-height: 1.22; margin: 6px 0 10px; text-wrap: balance; }
 .cite-line { margin: 0; font-size: 15px; color: var(--secondary); }
+.modline { margin: 0; font: 13px/1.5 var(--mono); color: var(--secondary); overflow-wrap: anywhere; }
 .links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 8px 0 0; font-size: 15px; }
 .links a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
 .links a:hover { text-decoration-color: currentColor; }
@@ -116,7 +117,7 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .decl.head + .decl.head { margin-top: 12px; }
 .decl.head::before { left: -1px; top: -1px; bottom: -1px; width: 3px; border-radius: 8px 0 0 8px; }
 .decl.head.sorried::before { border-radius: 0; border-left-width: 3px; }
-.decl.head .dh .nm { font-size: 15px; }
+.decl.head .dh .nm { font-size: 15px; font-weight: 650; }
 .decl.head + .row { border-top: 0; }
 .decl.row { padding: 0 0 0 14px; }
 .decl.row::before { top: 10px; bottom: auto; height: 14px; }
@@ -181,6 +182,9 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 }
 .map .grp li.head a { font-weight: 650; }
 .map .grp li.head a::before { left: 0; top: 0.45em; width: 7px; height: 7px; }
+/* A headline definition keeps its tick, in the weight of a headline theorem */
+.map .grp li.def.head a { color: var(--primary); }
+.map .grp li.def.head a::before { left: 3px; top: 0.75em; width: 6px; height: 1px; border-radius: 0; background: var(--tertiary); box-shadow: none; }
 .map .grp li a.here { background: var(--code-bg); color: var(--primary); }
 
 /* Connections */
@@ -201,9 +205,9 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .graph .t { fill: var(--theory); }
 .graph .f { fill: var(--frag); }
 .graph .g { fill: var(--theme); stroke: var(--ghost); stroke-width: 1.4; stroke-dasharray: 2 1.6; }
-.graph .focus .s { stroke: var(--theme); stroke-width: 2; }
+.graph .focus .s, .graph .focus .t { stroke: var(--theme); stroke-width: 2; }
 .graph .ring { fill: none; stroke: var(--primary); stroke-width: 1.3; }
-.graph .tick { font-size: 9.5px; fill: var(--secondary); text-anchor: middle; }
+.graph .tick { font-size: 9.5px; fill: var(--secondary); text-anchor: middle; paint-order: stroke; stroke: var(--theme); stroke-width: 3px; }
 .graph .axis { stroke: var(--border); stroke-width: 1; }
 .tip {
   position: absolute; z-index: 5; pointer-events: none; max-width: 240px; padding: 5px 9px;
@@ -221,7 +225,7 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .rail li.t::before { --c: var(--theory); border-radius: 1.5px; }
 .rail li.f::before { --c: var(--frag); width: 6px; height: 6px; transform: rotate(45deg); left: 1.5px; }
 .rail li.g::before { border: 1.3px dashed var(--ghost); border-radius: 50%; width: 8px; height: 8px; }
-.rail li.d::before { --c: var(--tertiary); width: 7px; height: 2px; top: 0.85em; }
+.rail li.d::before, .rail li.c::before { --c: var(--tertiary); width: 7px; height: 2px; top: 0.85em; }
 .rail li a.nd { color: var(--primary); }
 .rail li a.nd:hover, .rail li.lit a.nd { text-decoration: underline; text-underline-offset: 3px; }
 .rail .why { color: var(--secondary); font-size: 13px; }
@@ -232,8 +236,12 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .rail .quiet a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
 .rail details { margin: 14px 0 0; font-size: 13px; color: var(--secondary); }
 .rail details summary { cursor: pointer; }
-.rail details li { padding-left: 0; font: 12px/1.6 var(--mono); }
-.rail details li::before { display: none; }
+.rail details:not(.more) li { padding-left: 0; font: 12px/1.6 var(--mono); }
+.rail details:not(.more) li::before { display: none; }
+.rail details a { color: var(--secondary); }
+.rail details a:hover { color: var(--primary); text-decoration: underline; }
+.rail details.more { margin-top: 2px; }
+.rail details.more li a.nd { color: var(--primary); }
 
 /* Previews of in-page declarations */
 .pop {

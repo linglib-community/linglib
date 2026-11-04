@@ -7,6 +7,7 @@ public import Linglib.Discourse.Centering.Basic
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
 public import Linglib.Fragments.English.Pronouns
+public import Linglib.Syntax.Voice.Basic
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
@@ -544,10 +545,12 @@ theorem voiceProduction_subject_lt :
 /-! ### The Centering term
 
 The stimuli pair same-gender characters, so the prompt pronoun φ-agrees with both. The voice
-manipulation varies the context sentence, (20a) against (20b): the passive promotes the stimulus
-to subject, a stronger signal of topichood than the subject of an active ([davison-1984]), while
-under the grammatical-role ranking of forward-looking centers the context's subject is the
-backward-looking center of any continuation that mentions it, in either voice. -/
+manipulation varies the context sentence, (20a) against (20b): the passive promotes the
+experiencer, Brittany, to subject, a stronger signal of topichood than the subject of an active
+([davison-1984]), while under the grammatical-role ranking of forward-looking centers the
+context's subject is the backward-looking center of any continuation that mentions it, in either
+voice. The two context sentences are the active and the long passive of *amaze*, and their
+centering roles are read off the terms of the two constructions. -/
 
 /-- The two characters of (20), both third-person singular feminine. -/
 def amanda : Word :=
@@ -563,24 +566,51 @@ theorem she_ambiguous_over_stimuli :
       English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
   decide
 
-/-- The context sentence of (20) by voice, *Amanda amazed Brittany* in the active and *Brittany
-was amazed by Amanda*, with Amanda in the by-phrase, in the passive. -/
-def contextSentence : Voice → Utterance Word GrammaticalRole Head
-  | .active => { realizations := [⟨amanda, .subject, .name⟩, ⟨brittany, .object, .name⟩] }
-  | .passive => { realizations := [⟨brittany, .subject, .name⟩, ⟨amanda, .other, .name⟩] }
+/-- The voice of a context sentence of (20): the active, and the long passive, which keeps Amanda
+in a by-phrase. -/
+def Voice.toVoice : Voice → _root_.Voice
+  | .active => .active
+  | .passive => .passive .np .adpositional
+
+theorem isPassivization_toVoice_passive : Voice.passive.toVoice.IsPassivization := by decide
+
+/-- The participants of *amaze* by initial slot, the stimulus Amanda and the experiencer
+Brittany. -/
+def amazeParticipant : ArgumentFrame.Slot → Word
+  | .external => amanda
+  | .complement _ => brittany
+
+/-- The context sentence of (20) in voice `v`, *Amanda amazed Brittany* or *Brittany was amazed
+by Amanda*: each participant the derived construction expresses, by name, in the order of the
+derived slots and in the centering role of its term. -/
+def contextSentence (v : Voice) : Utterance Word GrammaticalRole Head :=
+  ⟨v.toVoice.derived.slots.filterMap fun t ↦ do
+    let i ← v.toVoice.derived.participantAt t
+    let s ← v.toVoice.initial.links.get i
+    let r ← (v.toVoice.derived.construction i).role
+    pure ⟨amazeParticipant s, .ofTermRole r, .name⟩⟩
+
+theorem contextSentence_active :
+    contextSentence .active = ⟨[⟨amanda, .subject, .name⟩, ⟨brittany, .object, .name⟩]⟩ := by
+  decide
+
+theorem contextSentence_passive :
+    contextSentence .passive = ⟨[⟨brittany, .subject, .name⟩, ⟨amanda, .other, .name⟩]⟩ := by
+  decide
 
 /-- The subject of the context sentence. -/
 def contextSubject : Voice → Word
   | .active => amanda
   | .passive => brittany
 
-theorem cb_contextSentence (v : Voice) {cur : Utterance Word GrammaticalRole Head}
-    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur = some (contextSubject v) := by
+theorem cp_contextSentence (v : Voice) : (contextSentence v).cp = some (contextSubject v) := by
   cases v
-  · rw [cb, show (contextSentence .active).cf = [amanda, brittany] by decide]
-    simp [show amanda ∈ cur from h, contextSubject]
-  · rw [cb, show (contextSentence .passive).cf = [brittany, amanda] by decide]
-    simp [show brittany ∈ cur from h, contextSubject]
+  · rw [contextSentence_active]; decide
+  · rw [contextSentence_passive]; decide
+
+theorem cb_contextSentence (v : Voice) {cur : Utterance Word GrammaticalRole Head}
+    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur = some (contextSubject v) :=
+  cb_eq_of_cp_eq (cp_contextSentence v) h
 
 /-- A pronominalization rate that depends on the context's subject only through whether it is the
 backward-looking center is the same in both voices, so it cannot print as the subject rates of

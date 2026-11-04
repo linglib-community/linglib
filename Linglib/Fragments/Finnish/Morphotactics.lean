@@ -184,6 +184,12 @@ not. -/
 theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
   decide
 
+/-- Dropping the possessive ending of *vaimo-ine-ni* leaves a string the template admits but no
+word: a template can forbid an ending, not require one. -/
+theorem not_isSublistClosed_wellFormed : ¬ Language.IsSublistClosed {es | WellFormed es} := fun h ↦
+  not_wellFormed_comitative <| h (w := [⟨_, .case .com⟩,
+    ⟨_, .possessive (.personNumber .first .singular)⟩]) (by simp) (show WellFormed _ by decide)
+
 /-! ### Realization -/
 
 /-- Finnish nominals distinguish the singular and the plural. -/

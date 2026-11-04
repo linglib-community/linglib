@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Czech
 public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.Sonority
 
 /-!
 # Czech phonology
@@ -70,11 +71,12 @@ namespace Czech.Phonology
 The phonemes are Short's (pp. 456–457), each named by the letter he writes it with, so that
 `ť` is [c], `c` is [ts] and `h` is [ɦ]. -/
 
-/-- The features that distinguish the five vowels, with [syllabic] marking them as vowels. -/
-def contrastive : Finset Phonology.Feature := {.syllabic, .high, .low, .back, .round}
+/-- The features that distinguish the five vowels. -/
+def contrastive : Finset Phonology.Feature := {.high, .low, .back, .round}
 
-/-- A vowel is its chart entry's segment on the features that distinguish the five vowels. -/
-def vowel (m : FeatureMatrix) : Segment := .ofChart m ⊥ contrastive
+/-- A vowel is its chart entry's segment on the major class features, which mark it as a vowel,
+and the features that distinguish the five vowels. -/
+def vowel (m : FeatureMatrix) : Segment := .ofChart m ⊥ (Sonority.features ∪ contrastive)
 
 /-- The low vowel /a/, long /aː/ written *á*. -/
 def a : Segment := vowel .«a»

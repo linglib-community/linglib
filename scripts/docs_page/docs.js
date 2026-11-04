@@ -7,29 +7,42 @@
   const hoverable = matchMedia("(hover: hover)").matches;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- the graph: theory above, papers on a year axis, the languages below
+  // ---- the graph: theory above, papers on a year axis, the languages below. A study's page has the
+  // study on the axis; a theory file's has the file between the theory it builds on and all that uses it
   const graph = $("graph");
   if (graph) {
     const G = JSON.parse($("graph-data").textContent), N = G.nodes, E = G.edges, FOCUS = G.focus;
-    const W = 300, Y = { t: 24, s: 100, g: 100, f: 182 }, X0 = 16, X1 = 284;
+    const W = 300, X0 = 16, X1 = 284, band = (id) => N[id].b || N[id].k;
     const years = Object.values(N).map((n) => n.y).filter(Boolean);
     const lo = Math.floor((Math.min(...years) - 3) / 10) * 10, hi = Math.max(Math.max(...years) + 3, lo + 20);
     const xOfYear = (y) => X0 + (y - lo) / (hi - lo) * (X1 - X0);
-    const pos = {};
-    // Papers sit at their year; two in one place stagger up and down.
+    // Papers sit at their year; those in one place stack, upward once the axis is close.
     const papers = Object.keys(N).filter((id) => N[id].y).sort((a, b) => N[a].y - N[b].y);
+    const stack = {}, xs = {};
     papers.forEach((id, i) => {
-      const x = xOfYear(N[id].y), prev = papers[i - 1];
-      const clash = prev && Math.abs(pos[prev].x - x) < 9;
-      pos[id] = { x, y: Y.s + (clash ? 9 : 0) };
-      if (clash && pos[prev].y === Y.s) pos[prev].y = Y.s - 9;
+      xs[id] = xOfYear(N[id].y);
+      const near = papers.slice(0, i).filter((o) => Math.abs(xs[o] - xs[id]) < 9).map((o) => stack[o]);
+      stack[id] = [0, 9, -9, -18, -27, -36, -45].find((d) => !near.includes(d)) ?? -45;
     });
+    let Y = { t: 24, s: 100, g: 100, f: 182 }, H = 206;
+    if (N[FOCUS].k === "t") {
+      const has = (b) => Object.keys(N).some((id) => band(id) === b);
+      let y = 12;
+      Y = {};
+      for (const b of ["up", "focus", "down"]) if (has(b)) { Y[b] = y; y += 42; }
+      if (papers.length) { Y.s = y + Math.max(0, -Math.min(...Object.values(stack)) - 18); y = Y.s + 54; }
+      if (has("f")) { Y.f = y; y += 20; }
+      H = y - 8;
+    }
+    $("g").setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const pos = {};
+    for (const id of papers) pos[id] = { x: xs[id], y: Y.s + stack[id] };
     // The other bands spread evenly across the width, in the order of the mean year of their papers.
-    for (const k of ["t", "f"]) {
-      const ids = Object.keys(N).filter((id) => N[id].k === k);
+    for (const k of ["focus", "t", "up", "down", "f"]) {
+      const ids = Object.keys(N).filter((id) => band(id) === k);
       const bary = (id) => {
-        const xs = E.filter((e) => e[2] !== "cite" && (e[1] === id || e[0] === id)).map((e) => pos[e[0] === id ? e[1] : e[0]]).filter(Boolean).map((p) => p.x);
-        return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : (X0 + X1) / 2;
+        const at = E.filter((e) => e[2] !== "cite" && (e[1] === id || e[0] === id)).map((e) => pos[e[0] === id ? e[1] : e[0]]).filter(Boolean).map((p) => p.x);
+        return at.length ? at.reduce((a, b) => a + b, 0) / at.length : (X0 + X1) / 2;
       };
       const order = ids.map((id) => [id, bary(id)]).sort((a, b) => a[1] - b[1]);
       const step = (X1 - X0) / Math.max(1, order.length);
@@ -40,19 +53,22 @@
     const arc = (a, b) => { const dip = Math.max(a.y, b.y) + 16 + Math.min(30, Math.abs(a.x - b.x) * 0.25); return `M${a.x},${a.y} C${a.x},${dip} ${b.x},${dip} ${b.x},${b.y}`; };
     const shape = (id) => {
       const n = N[id], p = pos[id], foc = id === FOCUS;
+      if (n.k === "t" && foc) return `<rect class="ring" x="${p.x - 9.5}" y="${p.y - 9.5}" width="19" height="19" rx="2.5"/><rect class="t" x="${p.x - 6}" y="${p.y - 6}" width="12" height="12" rx="1.5"/>`;
       if (n.k === "t") return `<rect class="t" x="${p.x - 4.5}" y="${p.y - 4.5}" width="9" height="9" rx="1.5"/>`;
       if (n.k === "f") return `<rect class="f" x="${p.x - 4}" y="${p.y - 4}" width="8" height="8" rx="1" transform="rotate(45 ${p.x} ${p.y})"/>`;
       if (n.k === "g") return `<circle class="g" cx="${p.x}" cy="${p.y}" r="4.6"/>`;
       return (foc ? `<circle class="ring" cx="${p.x}" cy="${p.y}" r="9"/>` : "") + `<circle class="s" cx="${p.x}" cy="${p.y}" r="${foc ? 6 : 4.6}"/>`;
     };
-    let h = `<line class="axis" x1="${X0}" x2="${X1}" y1="${Y.s + 22}" y2="${Y.s + 22}"/>`;
-    const step = hi - lo > 60 ? 20 : 10;
-    for (let yr = Math.ceil(lo / step) * step; yr <= hi; yr += step) h += `<text class="tick" x="${xOfYear(yr)}" y="${Y.s + 34}">${yr}</text>`;
+    let h = papers.length ? `<line class="axis" x1="${X0}" x2="${X1}" y1="${Y.s + 22}" y2="${Y.s + 22}"/>` : "";
     h += E.filter((e) => pos[e[0]] && pos[e[1]]).map((e, i) => {
-      const a = pos[e[0]], b = pos[e[1]];
-      const cls = e[2] === "cite" ? "e lat" : "e" + (e[0] === FOCUS || e[1] === FOCUS ? " on" : "") + (e[2] === "weak" ? " weak" : "");
+      const a = pos[e[0]], b = pos[e[1]], lat = e[2] === "cite" || e[2] === "near";
+      const cls = lat ? "e lat" : "e" + (e[0] === FOCUS || e[1] === FOCUS ? " on" : "") + (e[2] === "weak" ? " weak" : "");
       return `<path class="${cls}" data-i="${E.indexOf(e)}" d="${e[2] === "cite" ? arc(a, b) : curve(a, b)}"/>`;
     }).join("");
+    if (papers.length) {
+      const step = hi - lo > 60 ? 20 : 10;
+      for (let yr = Math.ceil(lo / step) * step; yr <= hi; yr += step) h += `<text class="tick" x="${xOfYear(yr)}" y="${Y.s + 34}">${yr}</text>`;
+    }
     h += Object.keys(N).filter((id) => pos[id]).map((id) => `<a class="n${id === FOCUS ? " focus" : ""}" data-id="${esc(id)}" href="${esc(N[id].h)}" aria-label="${esc(N[id].l)}">` +
       `<circle class="hit" cx="${pos[id].x}" cy="${pos[id].y}" r="10"/>${shape(id)}</a>`).join("");
     svg.innerHTML = h;
@@ -81,6 +97,7 @@
     svg.addEventListener("focusin", (ev) => { const n = ev.target.closest(".n"); if (n) light(n.dataset.id, true); });
     svg.addEventListener("focusout", () => light(null));
     for (const el of document.querySelectorAll(".rail [data-node]")) {
+      if (!N[el.dataset.node]) continue;
       el.addEventListener("pointerenter", () => light(el.dataset.node, true));
       el.addEventListener("pointerleave", () => light(null));
     }

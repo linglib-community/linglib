@@ -140,10 +140,17 @@ theorem clog_card_parts_minterms_le :
   Nat.clog_le_of_le_pow (Finpartition.card_parts_minterms_le_two_pow φ)
 
 variable (φ) in
+theorem card_range_le_two_pow_card_parts_minterms :
+    Nat.card (Set.range φ) ≤ 2 ^ #(Finpartition.minterms φ).parts := by
+  have : Finite (closure (Set.range φ) : Set α) := inferInstanceAs (Finite (closure (Set.range φ)))
+  rw [← card_closure]
+  exact Nat.card_mono (Set.toFinite _) subset_closure
+
+variable (φ) in
 -- Theorem 5, lower bound: `m` formulas need `⌈log₂ m⌉` bit positions.
 theorem clog_card_range_le_card_parts_minterms :
     Nat.clog 2 (Nat.card (Set.range φ)) ≤ #(Finpartition.minterms φ).parts :=
-  Nat.clog_le_of_le_pow (Finpartition.card_range_le_two_pow_card_parts_minterms φ)
+  Nat.clog_le_of_le_pow (card_range_le_two_pow_card_parts_minterms φ)
 
 end Bounds
 
@@ -182,7 +189,7 @@ theorem card_parts_minterms_digit (n : ℕ) : #(Finpartition.minterms (digit n))
 theorem card_parts_minterms_id (β : Type*) [Fintype β] [DecidableEq β] :
     #(Finpartition.minterms (id : Finset β → Finset β)).parts = Fintype.card β := by
   refine le_antisymm ((Finpartition.card_parts_le_card _).trans_eq (by simp)) ?_
-  have := Finpartition.card_range_le_two_pow_card_parts_minterms (id : Finset β → Finset β)
+  have := card_range_le_two_pow_card_parts_minterms (id : Finset β → Finset β)
   rwa [Set.range_id, Nat.card_univ, Nat.card_eq_fintype_card, Fintype.card_finset,
     Nat.pow_le_pow_iff_right one_lt_two] at this
 

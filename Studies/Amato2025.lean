@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Minimalist.Verbal.Voice

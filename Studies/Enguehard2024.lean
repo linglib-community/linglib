@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Pragmatics.Competition
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Measure.Dirac
@@ -382,7 +382,7 @@ theorem H1.not_H2 (h : H1 κ) : ¬ H2 κ :=
 
 /-! ### Maximize Presupposition over the conditions -/
 
-open Competition (unblocked)
+open Presupposition (strengthen)
 
 /-- The English numbers are each other's alternatives. -/
 def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem.values}
@@ -394,18 +394,18 @@ def mpPresup (S : Set Condition) : Number → Set Condition
   | .plural => Set.univ
   | _ => ∅
 
-theorem unblocked_mpPresup_singular (S : Set Condition) :
-    unblocked englishAlts (mpPresup S) .singular = S := by
-  refine Competition.unblocked_eq_self ?_
-  rintro ⟨m, hm, hss⟩
+theorem strengthen_mpPresup_singular (S : Set Condition) :
+    strengthen englishAlts (mpPresup S) .singular = S := by
+  refine Presupposition.strengthen_eq_self ?_
+  rintro m hm hss
   rcases (by simpa [englishAlts, numberSystem] using hm : m = .singular ∨ m = .plural)
     with rfl | rfl
   · exact hss.ne rfl
   · exact hss.not_subset (Set.subset_univ _)
 
-theorem unblocked_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
-    unblocked englishAlts (mpPresup S) .plural = Sᶜ := by
-  rw [Competition.unblocked_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
+theorem strengthen_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
+    strengthen englishAlts (mpPresup S) .plural = Sᶜ := by
+  rw [Presupposition.strengthen_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
     hS.lt_top, Set.compl_eq_univ_sdiff]
   · rfl
   rintro χ hχ hss
@@ -416,10 +416,10 @@ theorem unblocked_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
 
 /-- Maximize Presupposition puts the two numbers in complementary distribution over the
 conditions, as §4.1 says competition must. -/
-theorem unblocked_mpPresup_isCompl {S : Set Condition} (hS : S ≠ Set.univ) :
-    IsCompl (unblocked englishAlts (mpPresup S) .singular)
-      (unblocked englishAlts (mpPresup S) .plural) := by
-  rw [unblocked_mpPresup_singular, unblocked_mpPresup_plural hS]
+theorem strengthen_mpPresup_isCompl {S : Set Condition} (hS : S ≠ Set.univ) :
+    IsCompl (strengthen englishAlts (mpPresup S) .singular)
+      (strengthen englishAlts (mpPresup S) .plural) := by
+  rw [strengthen_mpPresup_singular, strengthen_mpPresup_plural hS]
   exact isCompl_compl
 
 /-- A production kernel follows the use conditions `U` when in every condition it almost surely
@@ -436,15 +436,15 @@ theorem Follows.eq_dirac {U : Number → Set Condition} (h : Follows U κ) {c : 
 
 -- (8), §4.1
 theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
-    (h : Follows (unblocked englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
+    (h : Follows (strengthen englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
   h.eq_dirac fun m ↦ by
     have hS : Set.Iio Condition.mix ≠ Set.univ := fun h ↦
       lt_irrefl Condition.mix (Set.mem_Iio.1 (h ▸ Set.mem_univ _))
     cases m
-    case singular => rw [unblocked_mpPresup_singular]; split_ifs <;> simp_all
-    case plural => rw [unblocked_mpPresup_plural hS]; split_ifs <;> simp_all
+    case singular => rw [strengthen_mpPresup_singular]; split_ifs <;> simp_all
+    case plural => rw [strengthen_mpPresup_plural hS]; split_ifs <;> simp_all
     all_goals
-      refine ⟨fun hc ↦ absurd (Competition.unblocked_subset _ _ _ hc) (Set.notMem_empty c),
+      refine ⟨fun hc ↦ absurd (Presupposition.strengthen_subset _ _ _ hc) (Set.notMem_empty c),
         fun h ↦ ?_⟩
       split_ifs at h
 

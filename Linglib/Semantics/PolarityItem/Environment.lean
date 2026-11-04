@@ -47,8 +47,8 @@ namespace PolarityItem
 open NaturalLogic
 
 /-- Sentential negation as a layer: complementation, anti-morphic. -/
-def negation {P : Type*} [BooleanAlgebra P] : Signature.classPairs P :=
-  ⟨(compl, .antiAddMult), Signature.holdsFor_antiAddMult_compl⟩
+def negation {P : Type*} [BooleanAlgebra P] : ProjectivitySignature.classPairs P :=
+  ⟨(compl, .antiAddMult), ProjectivitySignature.holdsFor_antiAddMult_compl⟩
 
 /-- The environment of a polarity item in a domain: the meaning of the domain as a function of the
 meaning of the item, with a signature whose function class contains it. -/
@@ -57,7 +57,7 @@ structure Environment (σ P : Type*) [Lattice σ] [BoundedOrder σ] [Lattice P] 
   /-- The meaning of the domain as a function of the meaning of the item. -/
   toFun : σ → P
   /-- A signature whose function class contains the environment. -/
-  signature : Signature
+  signature : ProjectivitySignature
   holdsFor : signature.HoldsFor toFun
 
 namespace Environment
@@ -71,23 +71,25 @@ instance : CoeFun (Environment σ P) fun _ ↦ σ → P := ⟨toFun⟩
 attribute [coe] toFun
 
 @[simp]
-theorem coe_mk (f : σ → P) (φ : Signature) (h : φ.HoldsFor f) :
+theorem coe_mk (f : σ → P) (φ : ProjectivitySignature) (h : φ.HoldsFor f) :
     ⇑(⟨f, φ, h⟩ : Environment σ P) = f :=
   rfl
 
 /-- A layer acts on the environment of the domain below it, composing its map with the
 environment and multiplying its signature with the environment's. -/
-instance : MulAction (Signature.classPairs P) (Environment σ P) where
-  smul l e := ⟨l.1.1 ∘ e, l.1.2 * e.signature, (Signature.mem_classPairs.1 l.2).comp e.holdsFor⟩
+instance : MulAction (ProjectivitySignature.classPairs P) (Environment σ P) where
+  smul l e := ⟨l.1.1 ∘ e, l.1.2 * e.signature,
+    (ProjectivitySignature.mem_classPairs.1 l.2).comp e.holdsFor⟩
   one_smul e := Environment.ext rfl (one_mul e.signature)
   mul_smul a b e := Environment.ext rfl (mul_assoc a.1.2 b.1.2 e.signature)
 
 @[simp]
-theorem coe_smul (l : Signature.classPairs P) (e : Environment σ P) : ⇑(l • e) = l.1.1 ∘ e :=
+theorem coe_smul (l : ProjectivitySignature.classPairs P) (e : Environment σ P) :
+    ⇑(l • e) = l.1.1 ∘ e :=
   rfl
 
 @[simp]
-theorem signature_smul (l : Signature.classPairs P) (e : Environment σ P) :
+theorem signature_smul (l : ProjectivitySignature.classPairs P) (e : Environment σ P) :
     (l • e).signature = l.1.2 * e.signature :=
   rfl
 
@@ -113,7 +115,7 @@ variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder 
 def Carries (s : Negation.Strength) : Prop :=
   (Licenser.ofOperator e).Carries s
 
-theorem carries_iff : e.Carries s ↔ s.toSignature.HoldsFor e ∧ ¬Monotone e :=
+theorem carries_iff : e.Carries s ↔ s.toProjectivitySignature.HoldsFor e ∧ ¬Monotone e :=
   Licenser.carries_ofOperator_iff
 
 /-- An environment of positive sign carries no strength of negation. -/
@@ -124,16 +126,17 @@ theorem not_carries_of_sign_eq_one (h : e.signature.sign = 1) : ¬e.Carries s :=
 theorem carries_of_le_negationStrength
     (hs : (s : WithBot Negation.Strength) ≤ e.signature.negationStrength) (hne : e ⊥ ≠ e ⊤) :
     e.Carries s := by
-  have hf := e.holdsFor.of_le (Signature.coe_le_negationStrength_iff.1 hs)
+  have hf := e.holdsFor.of_le (ProjectivitySignature.coe_le_negationStrength_iff.1 hs)
   refine e.carries_iff.2 ⟨hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
-  exact Signature.holdsFor_anti_iff.1 (hf.of_le (Negation.Strength.toSignature_antitone bot_le))
+  exact ProjectivitySignature.holdsFor_anti_iff.1
+    (hf.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
     bot_le
 
 /-- An environment of negative sign carries weak strength, once it is not constant. -/
 theorem carries_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) (hne : e ⊥ ≠ e ⊤) :
     e.Carries .weak := by
   obtain ⟨s', hs'⟩ :=
-    WithBot.ne_bot_iff_exists.1 ((Signature.negationStrength_ne_bot_iff _).2 h)
+    WithBot.ne_bot_iff_exists.1 ((ProjectivitySignature.negationStrength_ne_bot_iff _).2 h)
   exact e.carries_of_le_negationStrength (hs' ▸ WithBot.coe_le_coe.2 bot_le) hne
 
 end Carries
@@ -149,14 +152,14 @@ structure Path (σ P : Type*) [Lattice σ] [BoundedOrder σ] [Lattice P] [Bounde
   minimal : Environment σ P
   /-- The layers between successive domains, outermost first, each in the function class of its
   signature. -/
-  layers : List (Signature.classPairs P)
+  layers : List (ProjectivitySignature.classPairs P)
 
 namespace Path
 
 variable {σ P : Type*} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
 
 /-- The environment of the domain reached through the layers `t`, on which they act together. -/
-def environment (t : List (Signature.classPairs P)) : Environment σ P :=
+def environment (t : List (ProjectivitySignature.classPairs P)) : Environment σ P :=
   t.prod • p.minimal
 
 @[simp]
@@ -165,7 +168,8 @@ theorem environment_nil : p.environment [] = p.minimal :=
 
 /-- The environment of each domain is that of the one below under a layer. -/
 @[simp]
-theorem environment_cons (l : Signature.classPairs P) (t : List (Signature.classPairs P)) :
+theorem environment_cons (l : ProjectivitySignature.classPairs P)
+    (t : List (ProjectivitySignature.classPairs P)) :
     p.environment (l :: t) = l • p.environment t := by
   rw [environment, environment, List.prod_cons, mul_smul]
 
@@ -173,12 +177,13 @@ section WithAlternatives
 
 /-- The meaning of the domain reached through the layers `t` with its alternatives, when `A` gives
 the alternatives of the minimal domain: the layers apply to each alternative. -/
-def withAlternatives (A : σ → Set P) (t : List (Signature.classPairs P)) (x : σ) :
+def withAlternatives (A : σ → Set P) (t : List (ProjectivitySignature.classPairs P)) (x : σ) :
     WithAlternatives P :=
-  (t.prod : Function.End P × Signature).1 <$> ⟨p.minimal x, A x⟩
+  (t.prod : Function.End P × ProjectivitySignature).1 <$> ⟨p.minimal x, A x⟩
 
 @[simp]
-theorem ordinary_withAlternatives (A : σ → Set P) (t : List (Signature.classPairs P)) (x : σ) :
+theorem ordinary_withAlternatives (A : σ → Set P)
+    (t : List (ProjectivitySignature.classPairs P)) (x : σ) :
     (p.withAlternatives A t x).ordinary = p.environment t x :=
   rfl
 
@@ -188,8 +193,8 @@ theorem withAlternatives_nil (A : σ → Set P) (x : σ) :
   id_map _
 
 @[simp]
-theorem withAlternatives_cons (A : σ → Set P) (l : Signature.classPairs P)
-    (t : List (Signature.classPairs P)) (x : σ) :
+theorem withAlternatives_cons (A : σ → Set P) (l : ProjectivitySignature.classPairs P)
+    (t : List (ProjectivitySignature.classPairs P)) (x : σ) :
     p.withAlternatives A (l :: t) x = l.1.1 <$> p.withAlternatives A t x := by
   simp only [withAlternatives, List.prod_cons, Submonoid.coe_mul, Prod.fst_mul]
   exact comp_map _ _ _

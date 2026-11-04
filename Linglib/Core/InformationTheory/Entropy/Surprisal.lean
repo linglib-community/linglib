@@ -70,10 +70,12 @@ private theorem surprisal_mul_measure_singleton {ν : Measure S} {s : S} [IsFini
 /-- The cross-entropy, the expected surprisal under `μ` of the atoms as `ν` weighs them, is the
 entropy of `μ` plus the divergence of `μ` from `ν`; both sides are infinite unless `μ ≪ ν`. -/
 theorem lintegral_surprisal_eq_ofReal_add_klDiv [Fintype S] {ν : Measure S}
-    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
+    [IsProbabilityMeasure μ] [IsZeroOrProbabilityMeasure ν] :
     ∫⁻ s, surprisal ν s ∂μ = ENNReal.ofReal (Hm[μ]) + klDiv μ ν := by
   by_cases hμν : μ ≪ ν
-  · rw [lintegral_fintype, Finset.sum_congr rfl fun s _ ↦
+  · have : IsProbabilityMeasure ν := (eq_zero_or_isProbabilityMeasure ν).resolve_left fun h0 ↦
+      NeZero.ne μ (Measure.measure_univ_eq_zero.1 (hμν (by rw [h0]; rfl)))
+    rw [lintegral_fintype, Finset.sum_congr rfl fun s _ ↦
         surprisal_mul_measure_singleton prob_le_one fun h h0 ↦ h (hμν h0),
       ← ENNReal.ofReal_sum_of_nonneg fun s _ ↦ mul_nonneg measureReal_nonneg
         (neg_nonneg.2 (log_nonpos measureReal_nonneg measureReal_le_one)),
@@ -95,7 +97,7 @@ theorem lintegral_surprisal_eq_ofReal_add_klDiv [Fintype S] {ν : Measure S}
 /-- The geometric mean under `μ` of the masses of a probability measure `ν` is the exponential of
 minus the cross-entropy, the expected surprisal under `μ` of the atoms as `ν` weighs them. -/
 theorem geomMean_eq_exp_neg_lintegral_surprisal [Fintype S] (μ ν : Measure S) [IsFiniteMeasure μ]
-    [IsProbabilityMeasure ν] :
+    [IsZeroOrProbabilityMeasure ν] :
     (μ.geomMean fun s ↦ ν {s}) = EReal.exp (-((∫⁻ s, surprisal ν s ∂μ : ℝ≥0∞) : EReal)) := by
   rw [← Measure.geomMean_exp_neg]
   exact congrArg _ (funext fun s ↦ (exp_neg_surprisal prob_le_one).symm)

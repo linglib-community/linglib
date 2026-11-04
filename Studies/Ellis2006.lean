@@ -51,6 +51,14 @@ private theorem one_dotProduct_cue (v : Cue → ℝ) : 1 ⬝ᵥ v = v .adverb + 
   rw [one_dotProduct, show (univ : Finset Cue) = {.adverb, .inflection} from rfl,
     sum_pair (by decide)]
 
+/-- On the utterance with both cues, `update` is the Rescorla–Wagner equation: each cue gains its
+salience times the outcome's rate times the error against the cues' summed strength. -/
+example (V : Matrix Cue κ ℝ) (c : Cue) :
+    update α β 1 lam V c j = V c j + α c * β j * (lam j - (V .adverb j + V .inflection j)) := by
+  have h := update_indicator_apply α β V (univ : Finset Cue) Set.univ lam c j
+  simp only [coe_univ, Set.indicator_univ] at h
+  rw [h, show (univ : Finset Cue) = {.adverb, .inflection} from rfl, sum_pair (by decide)]
+
 /-! ### Overshadowing -/
 
 theorem iterate_update_zero_apply (n : ℕ) (c : Cue) :

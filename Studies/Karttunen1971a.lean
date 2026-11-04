@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.Implicative
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Verbs.Copular
 

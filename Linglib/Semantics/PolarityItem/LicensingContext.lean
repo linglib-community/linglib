@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
@@ -367,24 +367,30 @@ noncomputable def licenser : LicensingContext → Licenser
 
 open Licenser
 
-theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s.toSignature :=
+theorem holds_negation (s : Negation.Strength) :
+    negation.licenser.Holds s.toProjectivitySignature :=
   (show negation.licenser.Holds .antiAddMult from fun _ ↦
-    Signature.holdsFor_antiAddMult_compl).toSignature_of_le (s := s) (t := .antiMorphic) le_top
+    ProjectivitySignature.holdsFor_antiAddMult_compl).toProjectivitySignature_of_le
+      (s := s) (t := .antiMorphic) le_top
 
 theorem holds_nobody_iff {s : Negation.Strength} :
-    nobody.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    nobody.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨rightAntiAdditive_no _,
       eq_false fun h ↦ p.nonempty.elim fun _ hx ↦ h hx trivial⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, Set.univ⟩, Set.univ_nonempty⟩)).2.1
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp
+    (h ⟨⟨Bool, Set.univ⟩, Set.univ_nonempty⟩)).2.1
     {true} {false}
   simp [Det.no] at this
 
-theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s.toSignature ↔ s ≤ .weak := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr (scopeAntitone_few p.A))
+theorem holds_few_iff {s : Negation.Strength} :
+    few.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mpr
+    (scopeAntitone_few p.A))
     fun s hs h ↦ ?_
-  have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
+  have := (ProjectivitySignature.holdsFor_antiAdd_iff.mp
+    ((h.toProjectivitySignature_of_le (s := .antiAdditive)
     (by revert hs; cases s <;> decide)) ⟨⟨Fin 3, Set.univ⟩⟩)).1 {0} {1}
   revert this
   show Det.few (Set.univ : Set (Fin 3)) ({0} ∪ {1}) = (_ ∧ _) → False
@@ -392,10 +398,11 @@ theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s.toSignature
   decide
 
 theorem holds_atMost_iff {s : Negation.Strength} :
-    atMost.licenser.Holds s.toSignature ↔ s ≤ .weak := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr
+    atMost.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mpr
     (scopeAntitone_atMost p.n p.A)) fun s hs h ↦ ?_
-  have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
+  have := (ProjectivitySignature.holdsFor_antiAdd_iff.mp
+    ((h.toProjectivitySignature_of_le (s := .antiAdditive)
     (by revert hs; cases s <;> decide)) ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)).1 {true} {false}
   revert this
   show Det.atMost 1 (Set.univ : Set Bool) ({true} ∪ {false}) = (_ ∧ _) → False
@@ -403,70 +410,73 @@ theorem holds_atMost_iff {s : Negation.Strength} :
   decide
 
 theorem holds_universalRestrictor_iff {s : Negation.Strength} :
-    universalRestrictor.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    universalRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨leftAntiAdditive_every _,
       eq_false fun h ↦ p.nonuniversal.elim fun _ hx ↦ hx (h trivial)⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp
     (h ⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩)).2.1 {true} {false}
   simp [Det.every] at this
 
 theorem holds_withoutClause_iff {s : Negation.Strength} :
-    withoutClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    withoutClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨fun _ _ ↦ sdiff_sup, sdiff_top _⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨Unit, ∅⟩)).2.2
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨Unit, ∅⟩)).2.2
   exact Set.empty_ne_univ (by simpa using this)
 
 theorem holds_beforeClause_iff {s : Negation.Strength} :
-    beforeClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨fun _ _ ↦ propext beforeEver_union_right,
     eq_bot_iff.2 fun ⟨t, _, h⟩ ↦ lt_irrefl t (h t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩)
     fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
   simp [beforeEver, timeTrace] at this
 
 theorem holds_exceedsFamily_iff {s : Negation.Strength} :
-    (classical exceedsFamily).Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    (classical exceedsFamily).Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨fun Δ Δ' ↦ propext (show _ ∈ strictUpperBounds (Δ ∪ Δ') ↔ _ ∈ strictUpperBounds Δ ∧ _ by
       simp [strictUpperBounds, or_imp, forall_and]),
       eq_false fun h ↦ lt_irrefl _ (h (Set.mem_univ (p.μ p.x)))⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ℕ, id, 1⟩)).2.1 ({2} : Set ℕ) {1}
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ℕ, id, 1⟩)).2.1
+    ({2} : Set ℕ) {1}
   simp at this
 
 theorem holds_clausalComparative_iff {s : Negation.Strength} :
-    clausalComparative.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive :=
+    clausalComparative.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
 theorem holds_tooTo_iff {s : Negation.Strength} :
-    tooTo.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive :=
+    tooTo.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
 theorem holds_doubtVerb_iff {s : Negation.Strength} :
-    doubtVerb.licenser.Holds s.toSignature ↔ s ≤ .weak := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr
+    doubtVerb.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mpr
     fun P Q hPQ hQ hP ↦ hQ fun _ hv ↦ hPQ (hP hv)) fun s hs h ↦ ?_
-  have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
+  have := (ProjectivitySignature.holdsFor_antiAdd_iff.mp
+    ((h.toProjectivitySignature_of_le (s := .antiAdditive)
     (by revert hs; cases s <;> decide)) ⟨Bool, .univ, true⟩)).1 {true} {false}
   revert this
   simp only [SetRel.core, Set.mem_ofPred_eq, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
   decide
 
 theorem holds_denyVerb_iff {s : Negation.Strength} :
-    denyVerb.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
-  refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
+    denyVerb.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
+  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
     ⟨fun P Q ↦ propext (show p.w ∈ p.R.core (P ∪ Q)ᶜ ↔ p.w ∈ p.R.core Pᶜ ∧ p.w ∈ p.R.core Qᶜ from
       ⟨fun h ↦ ⟨fun _ hv hP ↦ h hv (.inl hP), fun _ hv hQ ↦ h hv (.inr hQ)⟩,
         fun ⟨h₁, h₂⟩ _ hv hPQ ↦ hPQ.elim (h₁ hv) (h₂ hv)⟩),
       eq_false fun h ↦ p.serial.elim fun v hv ↦ h hv trivial⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩)).2.1
+  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp
+    (h ⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩)).2.1
     {true} {false}
   revert this
   simp only [SetRel.core, Set.mem_ofPred_eq, Set.inf_eq_inter, sup_Prop_eq, eq_iff_iff]
@@ -545,7 +555,7 @@ theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .anti :=
   have hA : ¬ Det.few (Set.univ : Set (Fin 3)) ≤ Det.no Set.univ := fun hle ↦
     absurd (hle {0} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified Det.few {Det.no} (Set.univ : Set (Fin 3))) :=
-    Signature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, Set.univ⟩⟩)
+    ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, Set.univ⟩⟩)
   refine Det.not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hx ↦ hx) hA
     (hanti (a := ∅) (b := {0}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
   rintro _ rfl hno
@@ -555,7 +565,7 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .a
   have hA : ¬ Det.atMost 1 (Set.univ : Set Bool) ≤ Det.atMost 0 Set.univ := fun hle ↦
     absurd (hle {true} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified (Det.atMost 1) {Det.atMost 0} (Set.univ : Set Bool)) :=
-    Signature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)
+    ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)
   refine Det.not_exhaustified_of_not_le (Set.mem_singleton _)
     (show Det.atMost 0 (Set.univ : Set Bool) ∅ by decide) hA
     (hanti (a := ∅) (b := {true}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
@@ -568,34 +578,36 @@ theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
   Focus.isStrawsonDE_only_eq p.x
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
-  Focus.not_antitone_posSupport_only_eq (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
+  Focus.not_antitone_posSupport_only_eq
+    (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
-  Desire.BestWorlds.not_antitone_posSupport_regret (Signature.holdsFor_anti_iff.mp
+  Desire.BestWorlds.not_antitone_posSupport_regret (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   Degree.isStrawsonDE_superlative p.μ p.x
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  Degree.not_antitone_posSupport_superlative (Signature.holdsFor_anti_iff.mp
+  Degree.not_antitone_posSupport_superlative (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
   fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
 
 theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .anti := fun h ↦
-  Conditional.not_antitone_posSupport_horizonCounterfactual (Signature.holdsFor_anti_iff.mp
+  Conditional.not_antitone_posSupport_horizonCounterfactual
+    (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
 theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_since p.ago
 
 theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h ↦
-  not_antitone_posSupport_since (Signature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
+  not_antitone_posSupport_since (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
 
@@ -607,22 +619,18 @@ private def witnessAt (d : Fin 2) : Set (Fin 3) := {d.succ}
 
 theorem licensesFreeChoice_necessityFamily : (Licenser.modal necessityFamily).LicensesFreeChoice :=
   ⟨⟨Fin 3, branching⟩, Fin 2, witnessAt, .univ, by decide, 0,
-    Exhaustification.mem_oMinus_of_forall_ne
-      (fun v hv ↦ by
-        obtain ⟨d, rfl⟩ := Fin.exists_succ_eq.2 hv.2
-        exact Set.mem_iUnion₂.2 ⟨d, Finset.mem_univ _, rfl⟩)
-      fun S _ hne ⟨d, hd⟩ h ↦ by
-        have hd' : (d + 1) ∉ S := fun h' ↦ hne (Finset.eq_univ_iff_forall.2 fun x ↦ by
-          fin_cases d <;> fin_cases x <;> simp_all)
-        have := @h (d + 1).succ ⟨rfl, Fin.succ_ne_zero (d + 1)⟩
-        obtain ⟨e, he, hev⟩ := Set.mem_iUnion₂.1 this
-        exact hd' ((Fin.succ_injective _ (Set.mem_singleton_iff.1 hev)).symm ▸ he)⟩
+    Exhaustification.mem_antiExh_iff.2 ⟨fun v hv ↦
+      let ⟨d, hd⟩ := Fin.exists_succ_eq.2 hv.2; Set.mem_iUnion₂.2 ⟨d, Finset.mem_univ _, hd.symm⟩,
+      .inr fun S hS _ h ↦
+        let ⟨c, _, hc⟩ := Finset.exists_of_ssubset hS
+        let ⟨_, he, hec⟩ := Set.mem_iUnion₂.1 (@h c.succ ⟨rfl, c.succ_ne_zero⟩)
+        hc (Fin.succ_injective _ hec ▸ he)⟩⟩
 
 theorem licensesFreeChoice_modalPossibility : modalPossibility.licenser.LicensesFreeChoice :=
   ⟨⟨Fin 3, branching⟩, Fin 2, witnessAt, .univ, by decide, 0, by
-    show 0 ∈ Exhaustification.oMinus
+    show 0 ∈ Exhaustification.antiExh
       (fun S ↦ branching.preimage (⋃ d ∈ S, witnessAt d)) .univ
-    rw [Exhaustification.oMinus_preimage_biUnion witnessAt branching Finset.univ_nonempty]
+    rw [Exhaustification.antiExh_preimage_biUnion witnessAt branching Finset.univ_nonempty]
     exact Set.mem_iInter₂.2 fun d _ ↦ ⟨d.succ, rfl, rfl, d.succ_ne_zero⟩⟩
 
 end LicensingContext

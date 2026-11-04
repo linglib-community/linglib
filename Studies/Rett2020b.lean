@@ -35,7 +35,7 @@ leaves uncertain have no rows.
 ## References
 
 * [J. Rett, *Separate but equal: a typology of equative constructions* (2020)][rett-2020b]
-* [J. Rett, *The semantics of evaluativity* (2015)][rett-2015]
+* [J. Rett, *The semantics of evaluativity* (2015)][rett-2015b]
 * [C. Kennedy, *Modes of comparison* (2007)][kennedy-2007a]
 -/
 

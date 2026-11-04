@@ -1,0 +1,479 @@
+{
+  "description": "The Indonesian and Muna forms of Pater's reanalysis of Austronesian nasal substitution: Indonesian meN- before voiceless and voiced obstruents, a root-internal cluster and meN- before per-, and Muna -um- before labial-initial roots. Example numbers are those of the manuscript the paper's cover sheet calls a slightly revised version of the chapter.",
+  "ParameterTable": [
+    {
+      "ID": "paksa",
+      "Name": "paksa",
+      "Description": ""
+    },
+    {
+      "ID": "memaksa",
+      "Name": "məmaksa",
+      "Description": "to force"
+    },
+    {
+      "ID": "buat",
+      "Name": "buat",
+      "Description": ""
+    },
+    {
+      "ID": "membuat",
+      "Name": "məmbuat",
+      "Description": "to make/do"
+    },
+    {
+      "ID": "empat",
+      "Name": "əmpat",
+      "Description": "four"
+    },
+    {
+      "ID": "pilih",
+      "Name": "pilih",
+      "Description": ""
+    },
+    {
+      "ID": "memilih",
+      "Name": "məmilih",
+      "Description": ""
+    },
+    {
+      "ID": "beli",
+      "Name": "bəli",
+      "Description": ""
+    },
+    {
+      "ID": "membeli",
+      "Name": "məmbəli",
+      "Description": ""
+    },
+    {
+      "ID": "besar",
+      "Name": "besar",
+      "Description": ""
+    },
+    {
+      "ID": "memperbesar",
+      "Name": "məmpərbesar",
+      "Description": "to enlarge"
+    },
+    {
+      "ID": "baru",
+      "Name": "baru",
+      "Description": ""
+    },
+    {
+      "ID": "baru_irr",
+      "Name": "baru",
+      "Description": "happy"
+    },
+    {
+      "ID": "bala",
+      "Name": "ɓala",
+      "Description": ""
+    },
+    {
+      "ID": "bala_irr",
+      "Name": "ɓala",
+      "Description": "big"
+    },
+    {
+      "ID": "pili",
+      "Name": "pili",
+      "Description": ""
+    },
+    {
+      "ID": "mili",
+      "Name": "mili",
+      "Description": "choose"
+    },
+    {
+      "ID": "futaa",
+      "Name": "futaa",
+      "Description": ""
+    },
+    {
+      "ID": "mutaa",
+      "Name": "mutaa",
+      "Description": "laugh"
+    },
+    {
+      "ID": "waa",
+      "Name": "waa",
+      "Description": ""
+    },
+    {
+      "ID": "maa",
+      "Name": "maa",
+      "Description": "give"
+    },
+    {
+      "ID": "wanu",
+      "Name": "wanu",
+      "Description": ""
+    },
+    {
+      "ID": "wanu_irr",
+      "Name": "wanu",
+      "Description": "get up"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "paksa",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "paksa"
+    },
+    {
+      "ID": "memaksa",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "memaksa"
+    },
+    {
+      "ID": "buat",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "buat"
+    },
+    {
+      "ID": "membuat",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "membuat"
+    },
+    {
+      "ID": "empat",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "empat"
+    },
+    {
+      "ID": "pilih",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "pilih"
+    },
+    {
+      "ID": "memilih",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "memilih"
+    },
+    {
+      "ID": "beli",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "beli"
+    },
+    {
+      "ID": "membeli",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "membeli"
+    },
+    {
+      "ID": "besar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "besar"
+    },
+    {
+      "ID": "memperbesar",
+      "Language_ID": "indo1316",
+      "Parameter_ID": "memperbesar"
+    },
+    {
+      "ID": "baru",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "baru"
+    },
+    {
+      "ID": "baru_irr",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "baru_irr"
+    },
+    {
+      "ID": "bala",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "bala"
+    },
+    {
+      "ID": "bala_irr",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "bala_irr"
+    },
+    {
+      "ID": "pili",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "pili"
+    },
+    {
+      "ID": "mili",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "mili"
+    },
+    {
+      "ID": "futaa",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "futaa"
+    },
+    {
+      "ID": "mutaa",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "mutaa"
+    },
+    {
+      "ID": "waa",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "waa"
+    },
+    {
+      "ID": "maa",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "maa"
+    },
+    {
+      "ID": "wanu",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "wanu"
+    },
+    {
+      "ID": "wanu_irr",
+      "Language_ID": "muna1247",
+      "Parameter_ID": "wanu_irr"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "pater2001_paksa",
+      "Lexeme_ID": "paksa",
+      "Form": "paksa",
+      "Segments": ["p", "a", "k", "s", "a"],
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_memaksa",
+      "Lexeme_ID": "memaksa",
+      "Form": "məmaksa",
+      "Segments": ["m", "ə", "m", "a", "k", "s", "a"],
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_buat",
+      "Lexeme_ID": "buat",
+      "Form": "buat",
+      "Segments": ["b", "u", "a", "t"],
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_membuat",
+      "Lexeme_ID": "membuat",
+      "Form": "məmbuat",
+      "Segments": ["m", "ə", "m", "b", "u", "a", "t"],
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_empat",
+      "Lexeme_ID": "empat",
+      "Form": "əmpat",
+      "Segments": ["ə", "m", "p", "a", "t"],
+      "Source": ["pater-2001[(4)]"]
+    },
+    {
+      "ID": "pater2001_pilih",
+      "Lexeme_ID": "pilih",
+      "Form": "pilih",
+      "Segments": ["p", "i", "l", "i", "h"],
+      "Source": ["pater-2001[(38)]"]
+    },
+    {
+      "ID": "pater2001_memilih",
+      "Lexeme_ID": "memilih",
+      "Form": "məmilih",
+      "Segments": ["m", "ə", "m", "i", "l", "i", "h"],
+      "Source": ["pater-2001[(38)]"]
+    },
+    {
+      "ID": "pater2001_beli",
+      "Lexeme_ID": "beli",
+      "Form": "bəli",
+      "Segments": ["b", "ə", "l", "i"],
+      "Source": ["pater-2001[(37)]"]
+    },
+    {
+      "ID": "pater2001_membeli",
+      "Lexeme_ID": "membeli",
+      "Form": "məmbəli",
+      "Segments": ["m", "ə", "m", "b", "ə", "l", "i"],
+      "Source": ["pater-2001[(37)]"]
+    },
+    {
+      "ID": "pater2001_besar",
+      "Lexeme_ID": "besar",
+      "Form": "besar",
+      "Segments": ["b", "ə", "s", "a", "r"],
+      "Source": ["pater-2001[(25a)]"]
+    },
+    {
+      "ID": "pater2001_memperbesar",
+      "Lexeme_ID": "memperbesar",
+      "Form": "məmpərbesar",
+      "Segments": ["m", "ə", "m", "p", "ə", "r", "b", "ə", "s", "a", "r"],
+      "Source": ["pater-2001[(25a)]"]
+    },
+    {
+      "ID": "pater2001_baru",
+      "Lexeme_ID": "baru",
+      "Form": "baru",
+      "Segments": ["b", "a", "r", "u"],
+      "Source": ["pater-2001[(11a)]"]
+    },
+    {
+      "ID": "pater2001_baru_irr",
+      "Lexeme_ID": "baru_irr",
+      "Form": "baru",
+      "Segments": ["b", "a", "r", "u"],
+      "Source": ["pater-2001[(11a)]"]
+    },
+    {
+      "ID": "pater2001_bala",
+      "Lexeme_ID": "bala",
+      "Form": "ɓala",
+      "Segments": ["ɓ", "a", "l", "a"],
+      "Source": ["pater-2001[(11b)]"]
+    },
+    {
+      "ID": "pater2001_bala_irr",
+      "Lexeme_ID": "bala_irr",
+      "Form": "ɓala",
+      "Segments": ["ɓ", "a", "l", "a"],
+      "Source": ["pater-2001[(11b)]"]
+    },
+    {
+      "ID": "pater2001_pili",
+      "Lexeme_ID": "pili",
+      "Form": "pili",
+      "Segments": ["p", "i", "l", "i"],
+      "Source": ["pater-2001[(11c)]"]
+    },
+    {
+      "ID": "pater2001_mili",
+      "Lexeme_ID": "mili",
+      "Form": "mili",
+      "Segments": ["m", "i", "l", "i"],
+      "Source": ["pater-2001[(11c)]"]
+    },
+    {
+      "ID": "pater2001_futaa",
+      "Lexeme_ID": "futaa",
+      "Form": "futaa",
+      "Segments": ["f", "u", "t", "a", "a"],
+      "Source": ["pater-2001[(11d)]"]
+    },
+    {
+      "ID": "pater2001_mutaa",
+      "Lexeme_ID": "mutaa",
+      "Form": "mutaa",
+      "Segments": ["m", "u", "t", "a", "a"],
+      "Source": ["pater-2001[(11d)]"]
+    },
+    {
+      "ID": "pater2001_waa",
+      "Lexeme_ID": "waa",
+      "Form": "waa",
+      "Segments": ["w", "a", "a"],
+      "Source": ["pater-2001[(11e)]"]
+    },
+    {
+      "ID": "pater2001_maa",
+      "Lexeme_ID": "maa",
+      "Form": "maa",
+      "Segments": ["m", "a", "a"],
+      "Source": ["pater-2001[(11e)]"]
+    },
+    {
+      "ID": "pater2001_wanu",
+      "Lexeme_ID": "wanu",
+      "Form": "wanu",
+      "Segments": ["w", "a", "n", "u"],
+      "Source": ["pater-2001[(11f)]"]
+    },
+    {
+      "ID": "pater2001_wanu_irr",
+      "Lexeme_ID": "wanu_irr",
+      "Form": "wanu",
+      "Segments": ["w", "a", "n", "u"],
+      "Source": ["pater-2001[(11f)]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "pater2001_paksa_memaksa",
+      "Form_ID": "pater2001_paksa",
+      "Target_ID": "pater2001_memaksa",
+      "Relation": "meN-",
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_buat_membuat",
+      "Form_ID": "pater2001_buat",
+      "Target_ID": "pater2001_membuat",
+      "Relation": "meN-",
+      "Source": ["pater-2001[(3)]"]
+    },
+    {
+      "ID": "pater2001_pilih_memilih",
+      "Form_ID": "pater2001_pilih",
+      "Target_ID": "pater2001_memilih",
+      "Relation": "meN-",
+      "Source": ["pater-2001[(38)]"]
+    },
+    {
+      "ID": "pater2001_beli_membeli",
+      "Form_ID": "pater2001_beli",
+      "Target_ID": "pater2001_membeli",
+      "Relation": "meN-",
+      "Source": ["pater-2001[(37)]"]
+    },
+    {
+      "ID": "pater2001_besar_memperbesar",
+      "Form_ID": "pater2001_besar",
+      "Target_ID": "pater2001_memperbesar",
+      "Relation": "meN- per-",
+      "Source": ["pater-2001[(25a)]"]
+    },
+    {
+      "ID": "pater2001_baru_baru_irr",
+      "Form_ID": "pater2001_baru",
+      "Target_ID": "pater2001_baru_irr",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11a)]"]
+    },
+    {
+      "ID": "pater2001_bala_bala_irr",
+      "Form_ID": "pater2001_bala",
+      "Target_ID": "pater2001_bala_irr",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11b)]"]
+    },
+    {
+      "ID": "pater2001_pili_mili",
+      "Form_ID": "pater2001_pili",
+      "Target_ID": "pater2001_mili",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11c)]"]
+    },
+    {
+      "ID": "pater2001_futaa_mutaa",
+      "Form_ID": "pater2001_futaa",
+      "Target_ID": "pater2001_mutaa",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11d)]"]
+    },
+    {
+      "ID": "pater2001_waa_maa",
+      "Form_ID": "pater2001_waa",
+      "Target_ID": "pater2001_maa",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11e)]"]
+    },
+    {
+      "ID": "pater2001_wanu_wanu_irr",
+      "Form_ID": "pater2001_wanu",
+      "Target_ID": "pater2001_wanu_irr",
+      "Relation": "-um-",
+      "Source": ["pater-2001[(11f)]"]
+    }
+  ]
+}

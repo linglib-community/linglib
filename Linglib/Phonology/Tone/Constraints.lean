@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Autosegmental.Floating
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 
 /-!
 # Tonal constraints
@@ -136,9 +136,8 @@ def starFall : Constraint (Candidate u) :=
     the tonal tier, with adjacency measured over the surviving tones in tier order, so
     deletions skip positions. -/
 def starMlessL : Constraint (Candidate u) :=
-  fun c ↦
-    let aliveValues : List TRN := c.alive.map fun k ↦ u.upper[k].value
-    (aliveValues.zip aliveValues.tail).countP (fun p ↦ decide (p = (TRN.M, TRN.L)))
+  fun c ↦ Constraint.forbidPairs (fun a b ↦ a = TRN.M ∧ b = TRN.L)
+    (c.alive.map fun k ↦ u.upper[k].value)
 
 /-! ### HAVETONE -/
 

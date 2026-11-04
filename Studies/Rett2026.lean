@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Order.UpperLower.Basic
 public import Studies.Rett2020a
-public import Studies.Heinamaki1974
 public import Linglib.Data.Examples.Rett2026
 public import Linglib.Data.Examples.Readers
 
@@ -156,6 +155,9 @@ theorem until_iff_of_isLeast {B : Set (NonemptyInterval T)} {m' : T}
   exact ⟨fun ⟨m, hm, _, hm', hlt⟩ ↦ ⟨m, hm, hm'.unique h ▸ hlt⟩,
     fun ⟨m, hm, hlt⟩ ↦ ⟨m, hm, m', h, hlt⟩⟩
 
+/-- *A since B* holds when some time of `B` is at or before every time of `A`. -/
+def since (B : Set (NonemptyInterval T)) : Prop := ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
+
 variable [OrderBot T] (s : T)
 
 /-- The runtime of a negated event is the interval from the beginning of time to the event's start.
@@ -200,9 +202,8 @@ theorem until_preEvent_completive_iff (i : NonemptyInterval T) :
     until_iff_of_isLeast A (isLeast_timeTrace_completive_preEvent i.fst)]
 
 theorem since_preEvent_completive_iff :
-    Heinamaki1974.since A (completive (preEvent s)) ↔
-      Heinamaki1974.since A {NonemptyInterval.pure s} := by
-  unfold Heinamaki1974.since
+    since A (completive (preEvent s)) ↔ since A {NonemptyInterval.pure s} := by
+  unfold since
   rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_preEvent s), timeTrace_singleton,
     NonemptyInterval.coe_pure]
 

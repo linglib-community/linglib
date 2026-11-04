@@ -1,0 +1,2123 @@
+[
+  {
+    "id": "helmantel2002_1_24a_plek",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(24a), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Onder het bed is een fijne plek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Onder", "under"], ["het", "the"], ["bed", "bed"], ["is", "is"], ["een", "a"],
+      ["fijne", "nice"], ["plek", "place"]
+    ],
+    "translation": "Under the bed is a nice place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "plek"],
+      ["adposition", "onder"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_24a_reis",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(24a), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Onder het bed is een fijne reis",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Onder", "under"], ["het", "the"], ["bed", "bed"], ["is", "is"], ["een", "a"],
+      ["fijne", "nice"], ["reis", "journey"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "reis"],
+      ["adposition", "onder"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_24b_reis",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(24b), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Naar Amsterdam is een fijne reis",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Naar", "to"], ["Amsterdam", "Amsterdam"], ["is", "is"], ["een", "a"], ["fijne", "nice"],
+      ["reis", "journey"]
+    ],
+    "translation": "To Amsterdam is a nice journey.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "reis"],
+      ["adposition", "naar"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_24b_plek",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(24b), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Naar Amsterdam is een fijne plek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Naar", "to"], ["Amsterdam", "Amsterdam"], ["is", "is"], ["een", "a"], ["fijne", "nice"],
+      ["plek", "place"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "plek"],
+      ["adposition", "naar"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_25a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(25a), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Langs de snelweg is een fijne plek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Langs", "along"], ["de", "the"], ["snelweg", "highway"], ["is", "is"], ["een", "a"],
+      ["fijne", "nice"], ["plek", "place"]
+    ],
+    "translation": "Along the highway is a nice place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "plek"],
+      ["adposition", "langs"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_25b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(25b), printed (25a), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Langs Schiphol is de kortste route",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Langs", "along"], ["Schiphol", "Schiphol"], ["is", "is"], ["de", "the"],
+      ["kortste", "shortest"], ["route", "route"]
+    ],
+    "translation": "Along Schiphol is the shortest route.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "reis"],
+      ["adposition", "langs"]
+    ],
+    "comment": "The page prints a second a.; the text calls it (25b). *route* tests as *reis* does.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_26a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(26a), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan bevindt zich achter het theater",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["bevindt", "finds"], ["zich", "REFL"], ["achter", "behind"], ["het", "the"],
+      ["theater", "theatre"]
+    ],
+    "translation": "Jan is behind the theatre.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "bevinden"],
+      ["adposition", "achter"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_26b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(26b), ch. 1, p. 13"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan bevindt zich beneden de grote rivieren",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["bevindt", "finds"], ["zich", "REFL"], ["beneden", "below"], ["de", "the"],
+      ["grote", "big"], ["rivieren", "rivers"]
+    ],
+    "translation": "Jan is south of the big rivers.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "bevinden"],
+      ["adposition", "beneden"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_26c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(26c), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De praatpalen bevinden zich langs de snelweg",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["praatpalen", "emergency telephones"], ["bevinden", "find"],
+      ["zich", "REFL"], ["langs", "along"], ["de", "the"], ["snelweg", "highway"]
+    ],
+    "translation": "The emergency telephones are located along the highway.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "bevinden"],
+      ["adposition", "langs"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_27_naar",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(27), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan bevindt zich naar Amsterdam",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["bevindt", "finds"], ["zich", "REFL"], ["naar", "to"],
+      ["Amsterdam", "Amsterdam"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "bevinden"],
+      ["adposition", "naar"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_27_tot",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(27), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan bevindt zich tot Amsterdam",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["bevindt", "finds"], ["zich", "REFL"], ["tot", "until"],
+      ["Amsterdam", "Amsterdam"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "bevinden"],
+      ["adposition", "tot"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_28a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28a), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan zet het boek de kast in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["zet", "puts"], ["het", "the"], ["boek", "book"], ["de", "the"],
+      ["kast", "cupboard"], ["in", "in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "zetten"],
+      ["adposition", "in"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_28b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28b), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan zet het boek de kast op",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["zet", "puts"], ["het", "the"], ["boek", "book"], ["de", "the"],
+      ["kast", "cupboard"], ["op", "on"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "zetten"],
+      ["adposition", "op"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_29a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(29a), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het pontje zet Mery het IJ over",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["pontje", "ferry"], ["zet", "puts"], ["Mery", "Mery"], ["het", "the"],
+      ["IJ", "IJ"], ["over", "across"]
+    ],
+    "translation": "The ferry brings Mery across the IJ.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "zetten"],
+      ["adposition", "over"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_29b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(29b), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Cohen zet de illegalen het land uit",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Cohen", "Cohen"], ["zet", "puts"], ["de", "the"], ["illegalen", "illegals"],
+      ["het", "the"], ["land", "country"], ["uit", "out"]
+    ],
+    "translation": "Cohen deports the illegal immigrants.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "zetten"],
+      ["adposition", "uit"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_30a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(30a), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is op de berg gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["op", "on"], ["de", "the"], ["berg", "mountain"],
+      ["gewandeld", "walked"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "wandelen"],
+      ["adposition", "op"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_30b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(30b), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is in de berg gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["in", "in"], ["de", "the"], ["berg", "mountain"],
+      ["gewandeld", "walked"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "wandelen"],
+      ["adposition", "in"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_30c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(30c), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is langs de berg gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["langs", "along"], ["de", "the"], ["berg", "mountain"],
+      ["gewandeld", "walked"]
+    ],
+    "translation": "Jan has walked along the mountain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "wandelen"],
+      ["adposition", "langs"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_30d",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(30d), ch. 1, p. 14"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is door het bos gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["door", "through"], ["het", "the"], ["bos", "forest"],
+      ["gewandeld", "walked"]
+    ],
+    "translation": "Jan has walked through the forest.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "wandelen"],
+      ["adposition", "door"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_31a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31a), ch. 1, p. 15"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet fietst twee meter de tunnel in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["fietst", "cycles"], ["twee", "two"], ["meter", "metres"], ["de", "the"],
+      ["tunnel", "tunnel"], ["in", "in"]
+    ],
+    "translation": "Piet cycles two metres into the tunnel.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "in"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_31b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31b), ch. 1, p. 15"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet fietst twee meter de berg op",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["fietst", "cycles"], ["twee", "two"], ["meter", "metres"], ["de", "the"],
+      ["berg", "mountain"], ["op", "on"]
+    ],
+    "translation": "Piet cycles two metres onto the mountain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "op"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_31c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31c), ch. 1, p. 15"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Hein rijdt twee meter de Erasmusbrug over",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hein", "Hein"], ["rijdt", "drives"], ["twee", "two"], ["meter", "metres"], ["de", "the"],
+      ["Erasmusbrug", "Erasmus Bridge"], ["over", "across"]
+    ],
+    "translation": "Hein drives two metres across the Erasmus Bridge.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "over"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_1_31d",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31d), ch. 1, p. 15"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet rijdt drie meter de Schipholtunnel door",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["rijdt", "drives"], ["drie", "three"], ["meter", "metres"], ["de", "the"],
+      ["Schipholtunnel", "Schiphol Tunnel"], ["door", "through"]
+    ],
+    "translation": "Piet drives three metres through the Schiphol Tunnel.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "door"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_27c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(27c), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De bal rolt drie meter het strafschopgebied binnen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["bal", "ball"], ["rolt", "rolls"], ["drie", "three"], ["meter", "metres"],
+      ["het", "the"], ["strafschopgebied", "penalty area"], ["binnen", "inside"]
+    ],
+    "translation": "The ball rolls three metres into the penalty area.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "binnen"]
+    ],
+    "comment": "(27a,b) repeat (31a,b) of chapter 1.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_28c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28c), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Hein fietst 100 km het IJsselmeer rond",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hein", "Hein"], ["fietst", "cycles"], ["100 km", "100 km"], ["het", "the"],
+      ["IJsselmeer", "IJsselmeer"], ["rond", "around"]
+    ],
+    "translation": "Hein cycles 100 km around the IJsselmeer.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "rond"]
+    ],
+    "comment": "(28a,b) repeat (31c,d) of chapter 1.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_28d_om",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28d), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet rent twee meter het huis om",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["rent", "runs"], ["twee", "two"], ["meter", "meters"], ["het", "the"],
+      ["huis", "house"], ["om", "around"]
+    ],
+    "translation": "Piet runs two metres around/past the house.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "om"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_28d_langs",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28d), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet rent twee meter het huis langs",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["rent", "runs"], ["twee", "two"], ["meter", "meters"], ["het", "the"],
+      ["huis", "house"], ["langs", "along"]
+    ],
+    "translation": "Piet runs two metres around/past the house.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "langs"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_28d_voorbij",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28d), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet rent twee meter het huis voorbij",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["rent", "runs"], ["twee", "two"], ["meter", "meters"], ["het", "the"],
+      ["huis", "house"], ["voorbij", "past"]
+    ],
+    "translation": "Piet runs two metres around/past the house.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "voorbij"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_28e",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(28e), ch. 4, p. 112"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Hein rent drie meter de tunnel uit",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hein", "Hein"], ["rent", "runs"], ["drie", "three"], ["meter", "meters"], ["de", "the"],
+      ["tunnel", "tunnel"], ["uit", "out"]
+    ],
+    "translation": "Hein runs three metres out of the tunnel.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "pathLength"],
+      ["adposition", "uit"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_13",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(13), ch. 2, p. 30"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Deze stoel heeft Maurits op gezeten",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Deze", "this"], ["stoel", "chair"], ["heeft", "has"], ["Maurits", "Maurits"], ["op", "on"],
+      ["gezeten", "sat"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "prePP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "Footnote 8: many speakers reject it, but such sentences can be heard in spoken language.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_14a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(14a), ch. 2, p. 30"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat eekhoorntjes slapen tot de lente",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["eekhoorntjes", "squirrels"], ["slapen", "sleep"], ["tot", "till"],
+      ["de", "the"], ["lente", "spring"]
+    ],
+    "translation": "that squirrels sleep till spring",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "prePPDir"],
+      ["adposition", "tot"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_14b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(14b), ch. 2, p. 31"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat ik luister naar muziek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["ik", "I"], ["luister", "listen"], ["naar", "to"], ["muziek", "music"]
+    ],
+    "translation": "that I listen to music",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "prePP"],
+      ["adposition", "naar"],
+      ["object", "definite"]
+    ],
+    "comment": "A selected PP, which projects no directionality phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_18",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(18), ch. 2, p. 31"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "het station zal hij naar lopen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["het", "the"], ["station", "station"], ["zal", "will"], ["hij", "he"], ["naar", "to"],
+      ["lopen", "walk"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "prePPDir"],
+      ["adposition", "naar"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_29a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(29a), ch. 2, p. 35"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Piet loopt de gracht langs",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Piet", "Piet"], ["loopt", "walks"], ["de", "the"], ["gracht", "canal"],
+      ["langs", "along"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "postPP"],
+      ["adposition", "langs"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_29b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(29b), ch. 2, p. 35"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Joris rijdt de berg op",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Joris", "Joris"], ["rijdt", "drives"], ["de", "the"],
+      ["berg", "mountain"], ["op", "on"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_2_36",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(36), ch. 2, p. 38"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan de tunnel waarschijnlijk in is gefietst",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["de", "the"], ["tunnel", "tunnel"],
+      ["waarschijnlijk", "probably"], ["in", "in"], ["is", "is"], ["gefietst", "cycled"]
+    ],
+    "translation": "that Jan has probably cycled into the tunnel",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "postPP"],
+      ["adposition", "in"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_38a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(38a), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De knikkers rollen door chloor",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["knikkers", "marbles"], ["rollen", "roll"], ["door", "through"],
+      ["chloor", "chlorine"]
+    ],
+    "translation": "The marbles are rolling through chlorine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePP"],
+      ["adposition", "door"],
+      ["object", "bareMass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_38b_bare",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(38b), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De knikkers rollen chloor door",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["knikkers", "marbles"], ["rollen", "roll"], ["chloor", "chlorine"],
+      ["door", "through"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "door"],
+      ["object", "bareMass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_38b_de",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(38b), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De knikkers rollen de chloor door",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["knikkers", "marbles"], ["rollen", "roll"], ["de", "the"],
+      ["chloor", "chlorine"], ["door", "through"]
+    ],
+    "translation": "The marbles are rolling through chlorine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "door"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_39a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(39a), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan gooit de inhoud van het zakje in water",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["gooit", "puts"], ["de", "the"], ["inhoud", "contents"], ["van", "of"],
+      ["het", "the"], ["zakje", "bag"], ["in", "in"], ["water", "water"]
+    ],
+    "translation": "Jan puts the contents of the bag into water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePP"],
+      ["adposition", "in"],
+      ["object", "bareMass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_39b_bare",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(39b), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan gooit de inhoud van het zakje water in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["gooit", "puts"], ["de", "the"], ["inhoud", "contents"], ["van", "of"],
+      ["het", "the"], ["zakje", "bag"], ["water", "water"], ["in", "in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "in"],
+      ["object", "bareMass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_39b_het",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(39b), ch. 3, p. 76"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan gooit de inhoud van het zakje het water in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["gooit", "puts"], ["de", "the"], ["inhoud", "contents"], ["van", "of"],
+      ["het", "the"], ["zakje", "bag"], ["het", "the"], ["water", "water"], ["in", "in"]
+    ],
+    "translation": "Jan puts the contents of the bag into (the) water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "in"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_40a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(40a), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan stapt op de loopplank",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["stapt", "steps"], ["op", "on"], ["de", "the"], ["loopplank", "gangplank"]
+    ],
+    "translation": "Jan steps on(to) the gangplank.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_40b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(40b), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan stapt de loopplank op",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["stapt", "steps"], ["de", "the"], ["loopplank", "gangplank"], ["op", "on"]
+    ],
+    "translation": "Jan steps onto the gangplank.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_41a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(41a), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan stapt op de kiezelsteen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["stapt", "steps"], ["op", "on"], ["de", "the"], ["kiezelsteen", "pebble"]
+    ],
+    "translation": "Jan steps on the pebble.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePP"],
+      ["adposition", "op"],
+      ["object", "pointlike"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_41b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(41b), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan stapt de kiezelsteen op",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["stapt", "steps"], ["de", "the"], ["kiezelsteen", "pebble"], ["op", "on"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "pointlike"]
+    ],
+    "comment": "Not ungrammatical but weird for an adult and a pebble of average size; acceptable if Jan is a gnome or the pebble a boulder.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_42a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(42a), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan de berg nu op wandelt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["de", "the"], ["berg", "mountain"], ["nu", "now"],
+      ["op", "on"], ["wandelt", "walks"]
+    ],
+    "translation": "that Jan walks up the mountain now",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_42b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(42b), ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan er nu in woont",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["er", "there"], ["nu", "now"], ["in", "in"],
+      ["woont", "lives"]
+    ],
+    "translation": "that Jan lives in it now",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "rWordPP"],
+      ["adposition", "in"],
+      ["object", "rWord"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_3_42c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(42b*), printed a second b., ch. 3, p. 77"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan de flats nu tussen woont",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["de", "the"], ["flats", "flats"], ["nu", "now"],
+      ["tussen", "between"], ["woont", "lives"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraction"],
+      ["structure", "prePP"],
+      ["adposition", "tussen"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9a_voor",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9a), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter voor de auto",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["voor", "in front of"], ["de", "the"],
+      ["auto", "car"]
+    ],
+    "translation": "two metres in front of / behind the car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "voor"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9a_achter",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9a), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter achter de auto",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["achter", "behind"], ["de", "the"], ["auto", "car"]
+    ],
+    "translation": "two metres in front of / behind the car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "achter"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9b_boven",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9b), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter boven ons",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["boven", "above"], ["ons", "us"]
+    ],
+    "translation": "two metres above / under us",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "boven"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9b_onder",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9b), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter onder ons",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["onder", "under"], ["ons", "us"]
+    ],
+    "translation": "two metres above / under us",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "onder"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9c), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter naast het raam",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["naast", "next to"], ["het", "the"],
+      ["raam", "window"]
+    ],
+    "translation": "two metres next to the window",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "naast"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_9d",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(9d), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee kilometer buiten de stad",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["kilometer", "kilometres"], ["buiten", "outside"], ["de", "the"],
+      ["stad", "city"]
+    ],
+    "translation": "two kilometres outside the city",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "buiten"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_10a_in",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(10a), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter in de berg",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["in", "in"], ["de", "the"], ["berg", "mountain"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "in"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_10a_op",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(10a), ch. 4, p. 103"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter op de berg",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["op", "on"], ["de", "the"], ["berg", "mountain"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "op"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_10b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(10b), ch. 4, p. 104"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter binnen de stad",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["binnen", "inside"], ["de", "the"], ["stad", "city"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "binnen"]
+    ],
+    "comment": "Footnote 7: judgements differ for binnen when the border of the object is considered.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_10c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(10c), ch. 4, p. 104"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter bij de auto",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["bij", "near"], ["de", "the"], ["auto", "car"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "bij"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_10d",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(10d), ch. 4, p. 104"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "twee meter tussen het raam en de deur",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["twee", "two"], ["meter", "metres"], ["tussen", "between"], ["het", "the"],
+      ["raam", "window"], ["en", "and"], ["de", "the"], ["deur", "door"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "tussen"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_15a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(15a), ch. 4, p. 106"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het boek hangt 30 cm aan de muur",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["boek", "book"], ["hangt", "hangs"], ["30 cm", "30 cm"], ["aan", "on"],
+      ["de", "the"], ["muur", "wall"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "aan"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_15b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(15b), ch. 4, p. 106"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan woont 30 meter bij de molen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["woont", "lives"], ["30 meter", "30 metres"], ["bij", "near"],
+      ["de", "the"], ["molen", "mill"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "bij"]
+    ],
+    "comment": "Footnote 10: an interpretation can be construed, Jan lives near the mill at a distance of 30 metres.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_15c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(15c), ch. 4, p. 106"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Piet woont 30 km tussen Leiden en Pieterburen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Piet", "Piet"], ["woont", "lives"], ["30 km", "30 km"], ["tussen", "between"],
+      ["Leiden", "Leiden"], ["en", "and"], ["Pieterburen", "Pieterburen"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "tussen"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_15d",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(15d), ch. 4, p. 106"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Joris staat 2 meter in het strafschopgebied",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Joris", "Joris"], ["staat", "stands"], ["2 meter", "2 metres"], ["in", "in"],
+      ["het", "the"], ["strafschopgebied", "penalty area"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "in"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_15e",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(15e), ch. 4, p. 106"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Korneel woont 1 km binnen de bebouwde kom",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Korneel", "Korneel"], ["woont", "lives"], ["1 km", "1 km"], ["binnen", "inside"],
+      ["de", "the"], ["bebouwde kom", "built-up area"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "length"],
+      ["adposition", "binnen"]
+    ],
+    "comment": "Printed *?; see footnote 7.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19a_achter",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19a), ch. 4, p. 107"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan woont vlak achter het station",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["woont", "lives"], ["vlak", "close"], ["achter", "behind"], ["het", "the"],
+      ["station", "station"]
+    ],
+    "translation": "Jan lives just behind / above / under / near the station.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "achter"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19a_boven",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19a), ch. 4, p. 107"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan woont vlak boven het station",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["woont", "lives"], ["vlak", "close"], ["boven", "above"], ["het", "the"],
+      ["station", "station"]
+    ],
+    "translation": "Jan lives just behind / above / under / near the station.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "boven"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19a_onder",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19a), ch. 4, p. 107"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan woont vlak onder het station",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["woont", "lives"], ["vlak", "close"], ["onder", "under"], ["het", "the"],
+      ["station", "station"]
+    ],
+    "translation": "Jan lives just behind / above / under / near the station.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "onder"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19a_bij",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19a), ch. 4, p. 107"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan woont vlak bij het station",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["woont", "lives"], ["vlak", "close"], ["bij", "near"], ["het", "the"],
+      ["station", "station"]
+    ],
+    "translation": "Jan lives just behind / above / under / near the station.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "bij"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19b), ch. 4, p. 107"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De bal ligt vlak buiten het strafschopgebied",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["bal", "ball"], ["ligt", "lies"], ["vlak", "close"], ["buiten", "outside"],
+      ["het", "the"], ["strafschopgebied", "penalty area"]
+    ],
+    "translation": "The ball is lying just outside the penalty area.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "buiten"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_19c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(19c), ch. 4, p. 108"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het kasteel ligt vlak aan het water",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["kasteel", "castle"], ["ligt", "lies"], ["vlak", "close"], ["aan", "on"],
+      ["het", "the"], ["water", "water"]
+    ],
+    "translation": "The castle is close to the water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "aan"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_20a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(20a), ch. 4, p. 108"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Peter staat vlak op de grond",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peter", "Peter"], ["staat", "stands"], ["vlak", "close"], ["op", "on"], ["de", "the"],
+      ["grond", "ground"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "op"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_20b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(20b), ch. 4, p. 108"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Peter staat vlak tussen de wolkenkrabbers",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peter", "Peter"], ["staat", "stands"], ["vlak", "close"], ["tussen", "between"],
+      ["de", "the"], ["wolkenkrabbers", "sky scrapers"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "tussen"]
+    ],
+    "comment": "Not predicted by the generalisation of p. 109; attributed to tussen's two reference objects.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_4_20c",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(20c), ch. 4, p. 108"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De bal ligt vlak in het strafschopgebied",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["bal", "ball"], ["ligt", "lies"], ["vlak", "close"], ["in", "in"],
+      ["het", "the"], ["strafschopgebied", "penalty area"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "vlak"],
+      ["adposition", "in"]
+    ],
+    "comment": "Not predicted by the generalisation of p. 109; attributed to in's inclusion relation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_12a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(12a), ch. 5, p. 127"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan speelde erin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["speelde", "played"], ["erin", "therein"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "rWordPP"],
+      ["adposition", "in"],
+      ["object", "rWord"]
+    ],
+    "comment": "Footnote 9: some speakers accept daar in place of er with contrastive stress.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_12b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(12b), ch. 5, p. 127"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan speelde in de tuin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["speelde", "played"], ["in", "in"], ["de", "the"],
+      ["tuin", "garden"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "prePP"],
+      ["adposition", "in"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_17a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(17a), ch. 5, p. 129"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Johan een t-shirt draagt onder zijn toga aan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Johan", "Johan"], ["een", "a"], ["t-shirt", "t-shirt"],
+      ["draagt", "wears"], ["onder", "under"], ["zijn", "his"], ["toga", "robe"], ["aan", "on"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "circumPP"],
+      ["adposition", "onder"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_17b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(17b), ch. 5, p. 129"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan uitrustte tegen de muur aan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["uitrustte", "rested"], ["tegen", "against"],
+      ["de", "the"], ["muur", "wall"], ["aan", "on"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "circumPP"],
+      ["adposition", "tegen"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_17a_pre",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(17a), ch. 5, p. 129"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Johan een t-shirt draagt onder zijn toga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Johan", "Johan"], ["een", "a"], ["t-shirt", "t-shirt"],
+      ["draagt", "wears"], ["onder", "under"], ["zijn", "his"], ["toga", "robe"]
+    ],
+    "translation": "that Johan wears a t-shirt underneath his robe",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "prePP"],
+      ["adposition", "onder"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_5_17b_pre",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(17b), ch. 5, p. 129"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "dat Jan uitrustte tegen de muur",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dat", "that"], ["Jan", "Jan"], ["uitrustte", "rested"], ["tegen", "against"],
+      ["de", "the"], ["muur", "wall"]
+    ],
+    "translation": "that Jan rested against the wall",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "extraposition"],
+      ["structure", "prePP"],
+      ["adposition", "tegen"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_31a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31a), ch. 6, p. 155"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is de berg op gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["de", "the"], ["berg", "mountain"], ["op", "on"],
+      ["gewandeld", "walked"]
+    ],
+    "translation": "Jan walked up the mountain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_31b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(31b), ch. 6, p. 155"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is er op gewandeld",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["er", "there"], ["op", "on"], ["gewandeld", "walked"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "op"],
+      ["object", "rWord"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_35b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(35b), ch. 6, p. 156"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan ging er vandaan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["ging", "went"], ["er", "there"], ["vandaan", "away"]
+    ],
+    "translation": "Jan went away from it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "proPP"],
+      ["adposition", "bij"],
+      ["object", "rWord"]
+    ],
+    "comment": "The R-word replaces the PP bij het vuur in the specifier.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_36a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(36a), ch. 6, p. 156"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het boek valt van de tafel af",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["boek", "book"], ["valt", "falls"], ["van", "from"], ["de", "the"],
+      ["tafel", "table"], ["af", "off"]
+    ],
+    "translation": "The book falls off the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "circumPP"],
+      ["adposition", "van"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_36b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(36b), ch. 6, p. 156"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het boek valt er af",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["boek", "book"], ["valt", "falls"], ["er", "there"], ["af", "off"]
+    ],
+    "translation": "The book falls off from it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "proPP"],
+      ["adposition", "van"],
+      ["object", "rWord"]
+    ],
+    "comment": "The R-word replaces the PP van de tafel in the specifier.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_37a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(37a), ch. 6, p. 156"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan rent naar de boom",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["rent", "runs"], ["naar", "to"], ["de", "the"], ["boom", "tree"]
+    ],
+    "translation": "Jan runs to the tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePPDir"],
+      ["adposition", "naar"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_37b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(37b), ch. 6, p. 156"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan rent er naar",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["rent", "runs"], ["er", "there"], ["naar", "to"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "postPP"],
+      ["adposition", "naar"],
+      ["object", "rWord"]
+    ],
+    "comment": "(37c) gives the structure, the R-word in the specifier of the directionality phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_38a",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(38a), ch. 6, p. 157"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan luistert naar de muziek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["luistert", "listens"], ["naar", "to"], ["de", "the"], ["muziek", "music"]
+    ],
+    "translation": "Jan listens to the music.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "prePP"],
+      ["adposition", "naar"],
+      ["object", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_38b",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(38b), ch. 6, p. 157"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan luistert er naar",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["luistert", "listens"], ["er", "there"], ["naar", "to"]
+    ],
+    "translation": "Jan listens to it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "rWordPP"],
+      ["adposition", "naar"],
+      ["object", "rWord"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "helmantel2002_6_39",
+    "source": {"bibkey": "helmantel-2002", "paperLabel": "(39), ch. 6, p. 157"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan gaat er naar toe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["gaat", "goes"], ["er", "there"], ["naar", "to"], ["toe", "to"]
+    ],
+    "translation": "Jan goes there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "licensing"],
+      ["structure", "circumRPP"],
+      ["adposition", "naar"],
+      ["object", "rWord"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

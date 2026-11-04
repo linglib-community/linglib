@@ -37,14 +37,17 @@ Harbour presupposes that the element lies in the region (`[±minimal]`) and in t
 `[+atomic]` no longer entails `[+minimal]`; Martí's revision of `[±minimal]` for that case, which
 counts only parts of nonzero numerosity, is not modelled. `[−atomic]` gives the exclusive plural.
 Whether the inclusive reading in downward-entailing contexts is a second meaning or an implicature
-is open: Martí argues for the former within Harbour's typology, and the experiments of Tieu, Bill,
-Romoli and Crain favour the latter (`Studies/TieuEtAl2020.lean`). The carrier is any
-join-semilattice, so the operators apply to events as well as individuals.
+is open: Martí argues for the former within Harbour's typology, an inclusive-only plural lacking the
+`[−atomic]` that duals and paucals are built on, and the experiments of Tieu, Bill, Romoli and Crain
+favour the latter (`Studies/TieuEtAl2020.lean`). `Number.dom` states the inclusive-only reading of
+a bundle, and competition recovers these regions from it for the singular and plural alone
+(`Number.strengthen_plural`). The operators apply to events as well as individuals.
 
 ## References
 
 * [harbour-2014] (9) and (10), p. 195; (20) and (21), p. 202; (30), p. 210
-* [marti-2020] pp. 3:30–3:31
+* [marti-2020a]
+* [marti-2020b] pp. 3:30–3:31
 * [marti-2022] (8) and (9), pp. 217–218; (40), p. 224
 * [tieu-etal-2020]
 * [link-1983]
@@ -56,7 +59,11 @@ namespace Number
 
 open Mereology (Atom CUM atomize)
 
-variable {D : Type*} [SemilatticeSup D]
+variable {D : Type*}
+
+section Additive
+
+variable [SemilatticeSup D]
 
 /-- `x` is additive in the region `Q` if `Q x` and `Q (x ⊔ y)` for every `y` with `Q y`, Harbour's
 `[+additive]`. -/
@@ -75,6 +82,10 @@ theorem additive_subregion_is_cum (Q : D → Prop) : CUM (additiveIn Q) :=
 
 instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) : Decidable (additiveIn Q x) :=
   decidable_of_iff (Q x ∧ ∀ y, Q y → Q (x ⊔ y)) Iff.rfl
+
+end Additive
+
+variable [PartialOrder D]
 
 /-- The atoms of `P` form Harbour's `[+atomic]` region, the singular. -/
 abbrev atomsOf (P : D → Prop) (x : D) : Prop := P x ∧ Atom x

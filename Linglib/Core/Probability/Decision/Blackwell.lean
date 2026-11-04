@@ -66,12 +66,6 @@ namespace ProbabilityTheory
 variable {Θ 𝓧 : Type*} {𝓧' : Type u} [mΘ : MeasurableSpace Θ]
   [m𝓧 : MeasurableSpace 𝓧] [m𝓧' : MeasurableSpace 𝓧']
 
-private lemma comp_singleton_eq_sum [Fintype 𝓧] [MeasurableSingletonClass 𝓧]
-    [MeasurableSingletonClass 𝓧']
-    (η : Kernel 𝓧 𝓧') (P : Kernel Θ 𝓧) (θ : Θ) (x' : 𝓧') :
-    (η ∘ₖ P) θ {x'} = ∑ x, η x {x'} * P θ {x} := by
-  rw [Kernel.comp_apply' η P θ (measurableSet_singleton x'), lintegral_fintype]
-
 /-- `P'` is a garbling of `P` when a Markov kernel `η` post-processes `P` into `P'`, so that
 `P' = η ∘ₖ P` and `P` is at least as informative as `P'`. -/
 def Kernel.IsGarblingOf (P' : Kernel Θ 𝓧') (P : Kernel Θ 𝓧) : Prop :=
@@ -178,7 +172,8 @@ private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
   show ((η ∘ₖ P) θ {x'}).toReal = ∑ x, (η x {x'}).toReal * (P θ {x}).toReal
   have hne : ∀ x ∈ Finset.univ, η x {x'} * P θ {x} ≠ ∞ := fun x _ =>
     ENNReal.mul_ne_top (measure_ne_top (η x) _) (measure_ne_top (P θ) _)
-  rw [comp_singleton_eq_sum, ENNReal.toReal_sum hne]
+  rw [Kernel.comp_apply' η P θ (measurableSet_singleton x'), lintegral_fintype,
+    ENNReal.toReal_sum hne]
   exact Finset.sum_congr rfl fun x _ => ENNReal.toReal_mul
 
 private theorem encode_injective {Q Q' : Kernel Θ 𝓧'}

@@ -33,7 +33,7 @@ resumption, so *pas* with an n-word reads only as a double negation.
 
 namespace DeSwartSag2002
 
-open Quantifier Quantifier.Det Quantifier.Polyadic NaturalLogic
+open Quantifier Quantifier.Det Quantifier.Polyadic
 open scoped Denotes
 
 universe u
@@ -78,7 +78,7 @@ end Readings
 
 Concord is restricted to anti-additive quantifiers such as *personne* 'no one', to the exclusion
 of the merely downward-entailing *peu* 'few'. Negation is anti-additive as well
-(`NaturalLogic.isAntiAdditive_compl`). -/
+(`isAntiAdditive_compl`). -/
 
 section AntiAdditive
 

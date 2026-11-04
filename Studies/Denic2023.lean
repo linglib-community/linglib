@@ -129,34 +129,32 @@ theorem exhIE_altOr_subset_someAre (hn : 2 ≤ n) (i : Fin 2) :
 
 theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
     (fun _ ↦ i : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
-  refine ⟨trivial, ?_⟩
-  rintro ⟨v, -, hle, hnle⟩
-  apply hnle
-  rintro a (⟨j, rfl⟩ | ⟨j, rfl⟩) hu
+  refine ⟨trivial, fun v _ hle a ⟨ha, hu⟩ ↦ ⟨ha, ?_⟩⟩
+  rcases ha with ⟨j, rfl⟩ | ⟨j, rfl⟩
   · obtain rfl : j = i := (hu ⟨0, by omega⟩).symm
     intro x
     by_contra hx
-    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v x, rfl⟩) ⟨x, rfl⟩
+    obtain ⟨y, hy⟩ := (hle ⟨Or.inr ⟨v x, rfl⟩, ⟨x, rfl⟩⟩).2
     exact hx hy.symm
   · obtain rfl : j = i := by obtain ⟨x, hx⟩ := hu; exact hx.symm
     refine ⟨⟨0, by omega⟩, ?_⟩
     by_contra hx
-    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v ⟨0, by omega⟩, rfl⟩) ⟨_, rfl⟩
+    obtain ⟨y, hy⟩ := (hle ⟨Or.inr ⟨v ⟨0, by omega⟩, rfl⟩, ⟨_, rfl⟩⟩).2
     exact hx hy.symm
 
 theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
     (fun x ↦ if x.val = 0 then i else k : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
-  refine ⟨trivial, ?_⟩
-  rintro ⟨v, -, hle, hnle⟩
-  apply hnle
+  refine ⟨trivial, fun v _ hle ↦ ?_⟩
   have hv : ∀ x, v x = i ∨ v x = k := by
     intro x
     by_contra hx
     push Not at hx
-    obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v x, rfl⟩) ⟨x, rfl⟩
+    obtain ⟨y, hy⟩ := (hle ⟨Or.inr ⟨v x, rfl⟩, ⟨x, rfl⟩⟩).2
     dsimp only at hy
     split_ifs at hy <;> simp_all
-  rintro a (⟨j, rfl⟩ | ⟨j, rfl⟩) hu
+  rintro a ⟨ha, hu⟩
+  refine ⟨ha, ?_⟩
+  rcases ha with ⟨j, rfl⟩ | ⟨j, rfl⟩
   · exfalso
     have h0 := hu ⟨0, by omega⟩
     have h1 := hu ⟨1, by omega⟩
@@ -168,11 +166,11 @@ theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
     by_contra hv'
     rcases hj with rfl | rfl
     · have hall : ∀ x, v x = k := fun x ↦ (hv x).resolve_left fun h ↦ hv' ⟨x, h⟩
-      have h0 := hle _ (Or.inl ⟨k, rfl⟩) hall ⟨0, by omega⟩
+      have h0 := (hle ⟨Or.inl ⟨k, rfl⟩, hall⟩).2 ⟨0, by omega⟩
       simp at h0
       exact hik h0
     · have hall : ∀ x, v x = i := fun x ↦ (hv x).resolve_right fun h ↦ hv' ⟨x, h⟩
-      have h1 := hle _ (Or.inl ⟨i, rfl⟩) hall ⟨1, by omega⟩
+      have h1 := (hle ⟨Or.inl ⟨i, rfl⟩, hall⟩).2 ⟨1, by omega⟩
       simp at h1
       exact hik h1.symm
 

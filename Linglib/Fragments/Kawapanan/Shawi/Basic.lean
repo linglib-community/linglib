@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 
@@ -15,14 +14,14 @@ public import Linglib.Syntax.Person.Basic
 Shawi (Chayahuita; Kawapanan, Peru) inflects the verb for the person and number of both the
 subject and the object, on a minimal/augmented number system with a clusivity contrast in the
 first person, and marks some transitive subjects with the ergative suffix *-ri* while objects
-stay unmarked. The agreement tables are those of [clem-deal-2024], compiled from [hart-1988],
+stay unmarked. The agreement tables are those of [clem-deal-2026], compiled from [hart-1988],
 [barraza-de-garcia-2005] and Ulloa's corpus work; the ergative data are [bourdeau-2015]'s.
 
 ## Main definitions
 
 * `subjectMarker`: the indicative subject agreement suffix of a person–number cell.
 * `objectMarker`: the object agreement suffix of a cell; third person has none.
-* `Case`, `Case.marker`: the two morphological cases and their exponents.
+* `ergativeMarker`: the ergative suffix.
 
 ## Implementation notes
 
@@ -34,7 +33,7 @@ absent cell are both `none`.
 
 ## References
 
-* [clem-deal-2024]
+* [clem-deal-2026]
 * [hart-1988]
 * [barraza-de-garcia-2005]
 * [bourdeau-2015]
@@ -44,7 +43,7 @@ absent cell are both `none`.
 
 namespace Kawapanan.Shawi
 
-/-- Indicative subject agreement ([clem-deal-2024] Table 1). -/
+/-- Indicative subject agreement ([clem-deal-2026] Table 1). -/
 def subjectMarker : Person → Number → Option String
   | .firstExclusive, .minimal => some "-(a)we"
   | .firstExclusive, .augmented => some "-ai"
@@ -56,7 +55,7 @@ def subjectMarker : Person → Number → Option String
   | .third, .augmented => some "-pi"
   | _, _ => none
 
-/-- Object agreement ([clem-deal-2024] Table 2); third-person objects have no exponent. -/
+/-- Object agreement ([clem-deal-2026] Table 2); third-person objects have no exponent. -/
 def objectMarker : Person → Number → Option String
   | .firstExclusive, .minimal => some "-ku"
   | .firstExclusive, .augmented => some "-kui"
@@ -66,23 +65,8 @@ def objectMarker : Person → Number → Option String
   | .second, .augmented => some "-((n)ke)ma'"
   | _, _ => none
 
-/-- The morphological cases: an unmarked nominative and the ergative *-ri* of some transitive
-    subjects ([clem-deal-2024] (4)). -/
-inductive Case where
-  /-- The nominative, unmarked. -/
-  | nom
-  /-- The ergative. -/
-  | erg
-  deriving DecidableEq, Fintype, Repr
-
-/-- The comparative value a case is named for. -/
-def Case.label : Case → _root_.Case
-  | nom => .nom
-  | erg => .erg
-
-/-- The exponent of each case, none for the unmarked nominative. -/
-def Case.marker : Case → Option String
-  | nom => none
-  | erg => some "-ri"
+/-- The ergative suffix of some transitive subjects ([clem-deal-2026] (4)); the nominative is
+    unmarked. -/
+def ergativeMarker : String := "-ri"
 
 end Kawapanan.Shawi

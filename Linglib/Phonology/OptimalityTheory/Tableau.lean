@@ -225,6 +225,16 @@ theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
 
+/-- If the constraints `U` dominate all the others, a candidate satisfying all of `U` beats a
+candidate violating any of them. -/
+theorem ofRanking_profile_lt_of_forall_dominates {U : Set ι}
+    (hU : ∀ i ∈ U, ∀ j ∉ U, r.Dominates i j) (hc : ∀ i ∈ U, con i c = 0) {i : ι} (hi : i ∈ U)
+    (hd : con i d ≠ 0) :
+    (ofRanking con r candidates).profile c < (ofRanking con r candidates).profile d := by
+  refine ofRanking_profile_lt_iff_exists_dominates.2
+    ⟨i, by rw [hc i hi]; omega, fun j hj ↦ hU i hi j fun hjU ↦ ?_⟩
+  simp [hc j hjU] at hj
+
 /-- Optimality transfers along constraint-wise bounds. Under any ranking, a candidate `d` of a
 second tableau that violates each constraint no more than a winner `c` of the first is itself a
 winner, provided that every candidate of the second tableau violates each constraint at least as
@@ -350,6 +360,20 @@ theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d
   | cons F Fs ih =>
     rw [List.cons_append, optimal_ofList_cons_of_forall_eq (h F List.mem_cons_self),
       ih fun F' hF' ↦ h F' (List.mem_cons_of_mem _ hF')]
+
+/-- If some candidate satisfies every constraint ranked above the others, so does every
+winner. -/
+theorem eq_zero_of_mem_optimal_ofList_append (hc : c ∈ (ofList s (Fs ++ Gs)).optimal)
+    (hd : d ∈ s) (h0 : ∀ F ∈ Fs, F d = 0) : ∀ F ∈ Fs, F c = 0 := by
+  induction Fs generalizing s with
+  | nil => simp
+  | cons F Fs ih =>
+    rw [List.cons_append, optimal_ofList_cons] at hc
+    have hF : F d = 0 := h0 F List.mem_cons_self
+    have hc' := (ofList (s.argmin F) (Fs ++ Gs)).optimal_subset hc
+    refine List.forall_mem_cons.2 ⟨Nat.le_zero.1 (hF ▸ (Finset.mem_argmin.1 hc').2 d hd), ih hc ?_
+      fun F' hF' ↦ h0 F' (List.mem_cons_of_mem _ hF')⟩
+    exact Finset.mem_argmin.2 ⟨hd, fun _ _ ↦ hF ▸ Nat.zero_le _⟩
 
 /-! ### Anti-faithfulness -/
 

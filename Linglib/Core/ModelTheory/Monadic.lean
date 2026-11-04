@@ -59,20 +59,11 @@ instance {ι : Type v} [Finite ι] : Finite (Language.monadic ι).Symbols := by
   unfold Symbols
   infer_instance
 
-/-- The unary type of `a` is the set of unary relation symbols that hold of it. -/
-def unaryType (a : M) : L.Relations 1 → Prop := fun R => Structure.RelMap R ![a]
-
 /-- Two tuples match when they have the same equality pattern and corresponding entries have the
 same unary type, so that they form a partial isomorphism between monadic structures. -/
 structure MonadicMatch {n : ℕ} (v : Fin n → M) (w : Fin n → N) : Prop where
   eq_iff : ∀ i j, v i = v j ↔ w i = w j
   unaryType_eq : ∀ i, L.unaryType (v i) = L.unaryType (w i)
-
-theorem unaryType_monadic_structure_eq_iff {ι : Type v} {P : ι → M → Prop} (a : M)
-    (S : (Language.monadic ι).Relations 1 → Prop) :
-    @unaryType _ M (monadic.structure P) a = S ↔ ∀ i, P i a ↔ S (.pred i) :=
-  ⟨fun h i => Iff.of_eq (congrFun h (.pred i)),
-    fun h => funext fun | .pred i => propext (h i)⟩
 
 variable {L} {n : ℕ} {v : Fin n → M} {w : Fin n → N}
 

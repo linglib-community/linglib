@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 public import Linglib.Fragments.Mayan.Chol.Agreement
 public import Linglib.Fragments.Mayan.Qanjobal.Agreement
@@ -20,9 +20,9 @@ verb able to assign it (`Nominalization`, `caseOf`). Where the requirement holds
 is base-generated in the matrix and the object, left Case-less by the intransitivized verb, is
 the highest Case-less DP; where it need not apply the subject stays inside and is that DP,
 (141). The two alignments of the summary (178) are the outputs (`caseOf_kaqchikel`,
-`caseOf_chol`, `caseOf_qanjobal`), they are the library's `Alignment.invertedErgative` and
-`Alignment.extendedErgative`; spelled out, the ergative from D as Set A and the absolutive as
-Set B, they are the marker sets the grammars record (`spellOut_kaqchikel`, `spellOut_chol`,
+`caseOf_chol`, `caseOf_qanjobal`), they are the inverted and the extended ergative
+markings (`invertedErgative`, `extendedErgative`); spelled out, the ergative from D as Set A and
+the absolutive as Set B, they are the marker sets the grammars record (`spellOut_kaqchikel`, `spellOut_chol`,
 `spellOut_qanjobal`). The typological gaps (179) and (180), an all-absolutive and an
 all-ergative alignment, are underivable (`not_all_abs`, `not_all_erg`).
 
@@ -119,6 +119,23 @@ def qanjobal : Nominalization := ⟨.optional, Mayan.absPosition Qanjobal.templa
 /-- Tojolabal, (178), has a low absolutive but is subject to the requirement, so it is
 Kaqchikel-type. -/
 def tojolabal : Nominalization := ⟨.required, .low, False⟩
+
+/-- The extended-ergative marking of the Mayan non-perfective and aspectless clause: genitive on S
+and A, from D under nominalization, absolutive on P ([coon-2013]; the label is [dixon-1994]'s). -/
+def extendedErgative : ArgumentRole → Case
+  | .S | .A => .gen
+  | .P | .R | .T => .abs
+
+/-- The inverted marking of the Kaqchikel progressive: absolutive on S and A, genitive on P, the
+object being the only Case-less DP of a nominalized clause under the unaccusative requirement. -/
+def invertedErgative : ArgumentRole → Case
+  | .S | .A | .R | .T => .abs
+  | .P => .gen
+
+-- both are accusative alignments, in genitive or absolutive rather than nominative clothing
+theorem isAccusative_extendedErgative : Alignment.IsAccusative extendedErgative := ⟨rfl, nofun⟩
+
+theorem isAccusative_invertedErgative : Alignment.IsAccusative invertedErgative := ⟨rfl, nofun⟩
 
 /-- Kaqchikel's accusative side is the library's inverted ergative alignment, (87): subjects
 absolutive, the object ergative. -/

@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.PolarityItem.Licensing
-public import Linglib.Fragments.German.TemporalConnectives
 
 /-!
 # German polarity-sensitive items
@@ -21,7 +20,7 @@ occurs only with a negative or with *nur* or *bloß* 'only'. It is a weak negati
 licensed by *höchstens eine* 'at most one' as by *keiner* 'no one' ([zwarts-1998] (3)); Büring and
 Gunlogson, and Schaebbicke, Seeliger and Repp in a rating study, find it licensed by *niemand* and
 *kein* and out in a positive polar question. *Erst* is the positive polarity *until* of Karttunen's
-chart, the connective `German.TemporalConnectives.erst`.
+chart.
 
 ## TODO
 
@@ -67,9 +66,11 @@ def brauchen : PolarityItem :=
 
 /-! ### PPI -/
 
-/-- *Erst* 'only then' is the punctual *until* of a positive clause. -/
+/-- *Erst* 'only then' is the punctual *until* of a positive clause, as in *die Prinzessin wachte
+erst um 9 Uhr auf* 'the princess did not wake up until nine', which entails a waking at nine and
+does not combine with negation. -/
 def erst : PolarityItem :=
-  { form := TemporalConnectives.erst.form
+  { form := "erst"
   , antiLicensor := some .antiMorphic }
 
 /-! ### Licensing -/

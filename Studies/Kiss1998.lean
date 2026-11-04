@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.Interval.Set.Basic
 public import Linglib.Semantics.Composition.WithAlternatives
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.Basic
 
 /-!
 # É. Kiss (1998): Identificational Focus versus Information Focus

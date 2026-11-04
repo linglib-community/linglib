@@ -1,0 +1,295 @@
+[
+  {
+    "id": "alonsoovallerouillard2023_1",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which student is leaving?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SCI"]
+    ],
+    "comment": "Answers: Ana / Ana and Blas.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_2",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which students are leaving?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PCI"]
+    ],
+    "comment": "Answers: Ana / Ana and Blas.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_3",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who is leaving?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Who are leaving?", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "BI"]
+    ],
+    "comment": "Answers: Ana / Ana and Blas. Printed Who {is\\*are} leaving?",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_4",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes marcharon?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["marcharon", "left.PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "unacceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers: Ana / Ana y Blas. Repeated as (17) and (64).",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_5",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién marchó?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["marchó", "left.SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "singular answer", "judgment": "acceptable"},
+      {"name": "plural answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answers: Ana / Ana y Blas. Repeated as (16) and (49).",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_22a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(22a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes forman un comité?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["forman", "form.PL"], ["un", "a"], ["comité", "committee"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "two-group answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers (23a) Ana y Blas, y Carlos y Dana; (23b) Los estudiante de primer año y los estudiantes de segundo año, each asserting that two groups form a different committee.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_27a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(27a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Con quién tienes que hablar?",
+    "glossedTokens": [
+      ["Con", "with"], ["quién", "whom.SG"], ["tienes", "have-to.2SG"], ["que", "que"],
+      ["hablar", "talk"]
+    ],
+    "translation": "With whom do you have to talk?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "disjunction of an atom and a plurality", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answer (27b): Con Ana o con Blas y Carlos.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_28a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(28a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Con quiénes tienes que hablar?",
+    "glossedTokens": [
+      ["Con", "with"], ["quiénes", "whom.PL"], ["tienes", "have-to.2SG"], ["que", "que"],
+      ["hablar", "talk"]
+    ],
+    "translation": "With whom do you have to talk?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "disjunction of pluralities", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answer (28b): Con Ana y Blas o con Carlos y David.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_53a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(53a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién levantó ese piano?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["levantó", "lifted"], ["ese", "that"], ["piano", "piano"]
+    ],
+    "translation": "Who lifted that piano?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "collective answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answer (53b): Ana y Blas, true of one collective lifting. Repeated as (69).",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_58a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(58a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién es grande?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["es", "is"], ["grande", "tall/big"]
+    ],
+    "translation": "Who is tall/big?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "distributive answer", "judgment": "acceptable"},
+      {"name": "group answer", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answer (58b): Ana, Blas, Carlos, y Daniel; only that each is tall.",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_59a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(59a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién habló con esos diez profesores?",
+    "glossedTokens": [
+      ["Quién", "who.SG"], ["habló", "talked"], ["con", "to"], ["esos", "these"], ["diez", "ten"],
+      ["profesores", "professors"]
+    ],
+    "translation": "Who talked to those ten professors?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "cumulative answer", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "SBI"]
+    ],
+    "comment": "Answer (59b): Ana, Blas, y Carlos. Repeated as (71).",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_66a",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(66a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Con quiénes tiene que hablar Juan?",
+    "glossedTokens": [
+      ["Con", "with"], ["quiénes", "who.PL"], ["tiene", "must"], ["que", "that"],
+      ["hablar", "talk-to"], ["Juan", "Juan"]
+    ],
+    "translation": "With whom does John have to talk?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "disjunction of pluralities", "judgment": "acceptable"},
+      {"name": "disjunction of atoms", "judgment": "unacceptable"},
+      {"name": "disjunction of an atom and a plurality", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "Answers (66b) con Ana y Blas o con Carlos y David; (68a) # con Ana o con Blas; (68b) # con Ana o con Blas y Carlos. Repeated as (73), (74).",
+    "verified": "page-image"
+  },
+  {
+    "id": "alonsoovallerouillard2023_78",
+    "source": {"bibkey": "alonso-ovalle-rouillard-2023", "paperLabel": "(78)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quiénes se juntaron ayer a la noche?",
+    "glossedTokens": [
+      ["Quiénes", "who.PL"], ["se", "REFLX"], ["juntaron", "gathered"], ["ayer", "yesterday"],
+      ["a", "at"], ["la", "the"], ["noche", "night"]
+    ],
+    "translation": "Who gathered last night?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "PBI"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

@@ -44,7 +44,7 @@ is `(μ ⁻¹' strictUpperBounds ·)`, and its anti-additivity (Fact 5) is
 
 namespace Hoeksema1983
 
-open Degree NaturalLogic Quantifier CompleteLatticeHom
+open Degree Quantifier CompleteLatticeHom
 
 variable {Entity D : Type*} [Preorder D] (μ : Entity → D)
 

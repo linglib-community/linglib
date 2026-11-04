@@ -192,6 +192,10 @@ theorem subset_segments_iff {I : Inventory} {S : Finset Segment} :
     S ⊆ I.segments ↔ ∀ x ∈ S, ∃ y ∈ I.phonemes, y.features.toSegment = x :=
   subset_image_featureMatrices_iff
 
+/-- The segment of the phoneme of `I` written `g`, if `I` has one. -/
+def segment? (I : Inventory) (g : String) : Option Segment :=
+  (I.phonemes.find? (·.glyph = g)).map (·.features.toSegment)
+
 end Data.PHOIBLE.Inventory
 
 namespace Phonology.Segment

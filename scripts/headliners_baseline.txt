@@ -23,7 +23,6 @@ AloniAnttilaYang2024
 AlonsoOvalle2009
 AlonsoOvalleMenendezBenito2010
 AlonsoOvalleMoghiseh2025a
-AlonsoOvalleMoghiseh2025b
 AlstottAravind2026
 Amato2025
 AnandNevins2004
@@ -33,7 +32,6 @@ Anttila1997
 Aremu2025b
 Arka2013
 Arnold2026
-ArnoldEtAl2000
 ArregiPietraszko2021
 ArreguiKusumoto1998
 AsherLascarides2003
@@ -71,7 +69,6 @@ BeltramaSoltBurnett2023
 Benua1997
 Benz2025
 BenzSalzmann2025
-Berent2026
 BerentEtAl2016
 BergerDellaPietraDellaPietra1996
 Bhadra2024
@@ -140,7 +137,6 @@ ChemlaSpector2011
 ChenVanDeemter2023
 Chierchia1984
 Chierchia1998
-Chierchia2006
 Chierchia2013
 Chomsky1995
 Chomsky2013
@@ -151,7 +147,6 @@ ChungMascarenhas2023
 CiardelliGuerrini2026
 CiardelliZhangChampollion2018
 Cinque2020
-ClemDeal2024
 Clements1985
 CobrerosEtAl2012
 Cohen1999
@@ -280,9 +275,7 @@ Heim1994a
 Heim1994b
 HeimKratzer1998
 HeimLasnikMay1991
-Heinamaki1974
 HeitmeierChuangBaayen2026
-Helmantel2002
 HerbstrittFranke2019
 Herce2023
 Hintikka1962
@@ -393,7 +386,6 @@ Ney2026
 Nordlinger2023
 Nouwen2024
 ODonnell2015
-Ochs1992
 Ogihara1989
 OgiharaSteinertThrelkeld2024
 Olivier2026
@@ -432,7 +424,6 @@ RitchieSchiller2024
 Roberts2012
 RobertsOzyildiz2025
 RohdeEtAl2022
-Rolle2018
 RomoliEtAl2026
 Rooth1992
 RoseWalker2004
@@ -523,11 +514,9 @@ WechslerZlatic2000
 Wilder2013
 Wood2015
 Wood2023
-Woolford1997
 Wurmbrand2014
 Xiang2022
 Yagi2025
-Yalcin2007
 YingEtAl2025
 YuAusensiSmith2023
 ZaslavskyEtAl2019

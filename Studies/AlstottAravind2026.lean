@@ -1,6 +1,5 @@
 module
 
-public import Studies.Heinamaki1974
 public import Studies.Rett2020a
 public import Linglib.Data.Examples.AlstottAravind2026
 public import Linglib.Data.Examples.Readers
@@ -52,8 +51,6 @@ to pragmatic as against semantic coercion.
 namespace AlstottAravind2026
 
 open Tense Rett2020a
-open Heinamaki1974 (when_)
-
 /-! ### The two theories (§2.1) -/
 
 variable {T : Type*} [LinearOrder T]
@@ -85,17 +82,6 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
   · intro h
     exact ⟨NonemptyInterval.pure a.snd, Set.mem_Iic.mpr ⟨a.fst_le_snd, le_rfl⟩,
       NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
-
--- §8.1
-theorem when_stative_accomplishment_iff (a b : NonemptyInterval T) :
-    when_ (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
-  simp only [when_, timeTrace_Iic, timeTrace_singleton]
-  constructor
-  · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
-    exact ⟨h1.trans h4, h3.trans h2⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨max a.fst b.fst, ⟨le_max_left _ _, max_le a.fst_le_snd h2⟩,
-      le_max_right _ _, max_le h1 b.fst_le_snd⟩
 
 /-! ### The experimental contexts (29) and (31)
 
@@ -133,8 +119,8 @@ theorem exp2_rett_asymmetric :
 distinguishes (29a) from (29b) (§8.1). -/
 theorem exp2_underspecification_symmetric :
     (weakBefore irritableA tent ∧ weakBefore irritableB tent) ∧
-      (when_ irritableA tent ∧ when_ irritableB tent) := by
-  simp only [weakBefore_stative_accomplishment_iff, when_stative_accomplishment_iff]
+      (emmaIrritableA.Overlaps hectorBuilds ∧ emmaIrritableB.Overlaps hectorBuilds) := by
+  simp only [weakBefore_stative_accomplishment_iff]
   decide
 
 /-- In Exp. 4, Rett's after-finish reading needs `inchoative` coercion in (31a) only. -/

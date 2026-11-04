@@ -1,6 +1,9 @@
 module
 
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Probe.Cyclic
+public import Linglib.Syntax.Minimalist.Probe.CyclicExpansion
 public import Studies.BejarRezac2003
 public import Linglib.Fragments.Basque.Agreement
 public import Linglib.Fragments.Georgian.Agreement
@@ -76,6 +79,23 @@ def nishnaabemwin : AgreementSystem := ⟨.addressee, fullProbe .addressee⟩
 
 /-- Mohawk and Kashmiri have the full system `[u-3-2-1]`, as in (9) and Tables 7 and 11. -/
 def kashmiri : AgreementSystem := ⟨.standard, fullProbe .standard⟩
+
+/-! ### Cyclic expansion (16) -/
+
+/-- The internal argument, the verb, v and the external argument of a transitive vP. -/
+def ia : LexicalItem.Token := ⟨.of .D [], 1⟩
+@[inherit_doc ia] def verb : LexicalItem.Token := ⟨.of .V [.D], 2⟩
+@[inherit_doc ia] def littleV : LexicalItem.Token := ⟨.of .v [.V], 3⟩
+@[inherit_doc ia] def ea : LexicalItem.Token := ⟨.of .D [], 4⟩
+
+/-- The derivation of a transitive vP (16). -/
+def transitiveVP : Derivation := ⟨verb, [.em .left ia, .em .right littleV, .em .left ea]⟩
+
+-- (16), the order `AgreementSystem.residue` and `IsDirect` take for granted
+theorem cyclicGoals_transitiveVP :
+    transitiveVP.externalize?.map (fun t ↦ ((tokenList t.val).find? (·.2 == littleV)).map fun a ↦
+      cyclicGoals .raising t (·.item.cat = .D) ∅ a.1) = some (some [ia, ea]) := by
+  decide +kernel
 
 /-! ### Person hierarchies (§2) -/
 

@@ -6,7 +6,7 @@ public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
-public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework
@@ -87,8 +87,8 @@ def alternatives : Message → List (World → Bool)
 
 /-- The exhaustified meaning, by innocent exclusion of the alternatives. -/
 def exh (u : Message) (w : World) : Bool :=
-  decide (w ∈ Exhaustification.innocent.exh (Exhaustification.altsFromPreds (alternatives u))
-    (Exhaustification.predToFinset (truth u)))
+  decide (w ∈ Exhaustification.exhIE ((fun f ↦ {w | f w = true}) '' {f | f ∈ alternatives u})
+    {w | truth u w = true})
 
 theorem exh_a : exh .a = truth .aAndNotB := by decide
 

@@ -68,7 +68,7 @@ def Licenses : Prop :=
 
 /-- A context **anti-licenses** an item when its licenser holds outright the strength that blocks
 the item. -/
-def AntiLicenses : Prop := ∃ r ∈ e.antiLicensor, L.Holds r.toSignature
+def AntiLicenses : Prop := ∃ r ∈ e.antiLicensor, L.Holds r.toProjectivitySignature
 
 /-- A context **admits** an item when it licenses the item, if the item needs licensing, and does
 not anti-license it. -/
@@ -93,7 +93,7 @@ private theorem licenses_of_carries_iff {s₀ : Negation.Strength}
 
 private theorem licenses_classical {F : OperatorFamily} {s₀ : Negation.Strength}
     (hc : L = .classical F) (hn : ¬ L.IsStrawsonUE)
-    (h : ∀ s, L.Holds s.toSignature ↔ s ≤ s₀) :
+    (h : ∀ s, L.Holds s.toProjectivitySignature ↔ s ≤ s₀) :
     L.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ s₀ := by
   refine licenses_of_carries_iff (by rw [hc]; exact id) (by rw [hc]; exact id) fun s ↦ ?_
   rw [← h, hc, carries_classical_iff, and_iff_left (hc ▸ hn)]
@@ -107,12 +107,12 @@ private theorem licenses_weak (hfc : ¬ L.LicensesFreeChoice)
   simp only [Negation.Strength.le_weak_iff, exists_eq_right, Option.mem_def]
 
 private theorem antiLicenses_classical {s₀ : Negation.Strength}
-    (h : ∀ s, L.Holds s.toSignature ↔ s ≤ s₀) :
+    (h : ∀ s, L.Holds s.toProjectivitySignature ↔ s ≤ s₀) :
     L.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ s₀ := by
   simp only [AntiLicenses, h]
 
 private theorem not_antiLicenses (h : ¬ L.Holds .anti) : ¬ L.AntiLicenses e :=
-  fun ⟨_, _, hr⟩ ↦ not_holds_toSignature h hr
+  fun ⟨_, _, hr⟩ ↦ not_holds_toProjectivitySignature h hr
 
 private theorem licenses_modal {F : ModalFamily} (hc : L = .modal F)
     (h : L.LicensesFreeChoice) : L.Licenses e ↔ e.IsFCI := by

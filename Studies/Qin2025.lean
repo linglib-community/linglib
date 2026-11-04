@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Root.Basic
 public import Linglib.Data.Wordlist.Qin2025
 public import Mathlib.Data.Nat.Choose.Basic
@@ -8,20 +9,15 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Qin (2025): Canonical and Non-Canonical Roots: The Diversity of Roots in Mandarin Chinese
 
-This file formalizes [qin-2025]'s canonical typology of roots. The base definition, a
-morphologically unanalyzable form that serves as a morphological core of word formation, is the
-substrate's `Morphology.Morph.IsCoreIn`, and the paper's *-fer* shows that the judgment is formal
-rather than semantic: *-fer* is a core of the primary word *refer* though it has no meaning of its
-own (`fer_core`). Four criteria (Table 1), boundness, positional flexibility, phonological
-richness, and meaning lexicality, span a space of sixteen cells anchored by the canonical root
-that meets all four, and Fig. 1's one way of being canonical against fifteen of being
-non-canonical is the binomial count of the tiers (`tier_card`). The case study classifies 122
-Mandarin morphemes (Appendix A): the forms carry the appendix's codes on the four criteria, its
-five groups are the number of criteria a form fails (`forms_group`), and the property of the
-distribution the paper singles out holds of every form, that a phonologically deficient
-morpheme, toneless in a tone language, is maximally non-canonical (`deficient_maximal`). The
-tiers run from the canonical 厂 *chǎng* of Table 3 through 不 *bù*, 霸 *bà*, and 性 *xìng* to the
-toneless 边 *-bian* and 个 *-ge* (`mandarin_tiers`).
+Qin defines a root as a morphologically unanalyzable form that serves as a core of word
+formation, the substrate's `Morphology.IsCore` over Bloomfield's primary words. The judgment is
+formal rather than semantic: the meaningless *-fer* is a [core of the primary word
+*refer*](##Qin2025.fer_core), and the plural *-s* of *cats* is not. Four criteria, boundness,
+positional flexibility, phonological richness and meaning lexicality, span sixteen cells,
+[$\binom{4}{k}$ of which fail $k$ criteria](##Qin2025.tier_card). Each of 122 Mandarin morphemes
+[falls in the group of the number of criteria it fails](##Qin2025.forms_group), the groups [run
+from the canonical 厂 *chǎng* to the toneless 个 *-ge*](##Qin2025.mandarin_tiers), and [a toneless
+morpheme fails all four](##Qin2025.deficient_maximal).
 
 ## Implementation notes
 
@@ -65,8 +61,18 @@ def con : Morph := .pref "con"
 *re-*, *con-*, nor *-fer* is free. -/
 def ferWords : List (List Morph) := [[re, fer], [con, fer]]
 
-/-- *-fer* is a morphological core: it occurs in the primary word *refer*. -/
-theorem fer_core : fer.IsCoreIn ferWords ferWords := by decide
+/-- *-fer* is a morphological core, since it occurs in the primary word *refer*. So is the prefix
+*re-*: the base definition tells a bound root from an affix only by the words they form. -/
+theorem fer_core : IsCore ferWords fer ∧ IsCore ferWords re := by decide
+
+/-- The English object root *cat*. -/
+def cat : Morph := .root "cat"
+
+/-- The English plural suffix *-s*. -/
+def s : Morph := .suff "s"
+
+-- §3.1
+theorem s_not_core : IsCore [[cat], [cat, s]] cat ∧ ¬ IsCore [[cat], [cat, s]] s := by decide
 
 /-! ### The four criteria and the theoretical space (§3.2, §3.3) -/
 
