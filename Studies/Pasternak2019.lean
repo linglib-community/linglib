@@ -26,7 +26,7 @@ parts.
 ## Implementation notes
 
 The reduction of a comparative to its greatest witnesses under a monotone measure is
-`Degree.maxComparative_gt_iff_of_isGreatest`; the zero-degree amendment to the than-clause set is
+`maxComparative_gt_iff_of_isGreatest`; the zero-degree amendment to the than-clause set is
 the paper's own (`thanDegreesZero`); the part-whole order on eventualities is a partial order on the
 event domain. The two-dimensional state ontology that grounds the salient part-whole relation, the
 Mandarin data, and the desire predicates are not formalized.
@@ -48,7 +48,6 @@ Mandarin data, and the desire predicates are not formalized.
 
 namespace Pasternak2019
 
-open Degree
 open ArgumentStructure (ThematicFrame)
 
 /-- A mental-state verb has a predicate on eventualities and an intensity measure, with thematic
@@ -71,7 +70,7 @@ def themed (α x : Entity) (e : E) : Prop :=
 def MentalStateVerb.holdsAtDegree (α x : Entity) (d : D) (e : E) : Prop :=
   themed v frame α x e ∧ d ≤ v.μint e
 
-/-- The intensity comparative *α V x more than β V y* is `Degree.MaxComparative .gt` with the two
+/-- The intensity comparative *α V x more than β V y* is `MaxComparative .gt` with the two
 sides differing in experiencer and theme, measured by the intensity measure (56a). -/
 def intensityComparative (α β x y : Entity) : Prop :=
   MaxComparative .gt (themed v frame α x) (themed v frame β y) v.μint

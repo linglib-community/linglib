@@ -25,7 +25,7 @@ more charitably, which it does not find.
   imprecise speakers occupying opposite quadrants (§2, note 2).
 * A persona's profile is read off its traits that are scales of [beltrama-solt-burnett-2023]
   (*articulate*, *uptight*, *laid-back*); the other five traits were not measured there.
-* A precision level is a grain width (`Degree.grain`); the ranges of p. 5 are the cells of
+* A precision level is a grain width (`grain`); the ranges of p. 5 are the cells of
   *$200* of widths ten and twenty.
 * Rejection rates are only plotted (Figures 3, 6, 8); the results are the paper's verdicts, and
   the account is tested on every table of rates agreeing with them.
@@ -47,7 +47,7 @@ more charitably, which it does not find.
 
 namespace BeltramaSchwarz2024
 
-open SocialMeaning Degree Data.Statistics
+open SocialMeaning Data.Statistics
 open BeltramaSoltBurnett2023 (Variant Factor scales contrastField)
 
 /-! ### The personas -/

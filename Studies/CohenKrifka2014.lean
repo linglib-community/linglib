@@ -289,7 +289,6 @@ grantable value ((48)). -/
 
 section Model
 
-open Degree
 
 /-- An index fixes a count of petted rabbits and what the participants' commitments leave open
 about it. -/

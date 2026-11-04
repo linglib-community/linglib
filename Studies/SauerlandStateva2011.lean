@@ -25,7 +25,7 @@ distribution](##acceptable_iff_judgment) from the scales of the terms.
 
 ## Implementation notes
 
-Granularities are the grains `Degree.grain`, identified by their widths, and the interval a term
+Granularities are the grains `grain`, identified by their widths, and the interval a term
 denotes is the cell of its degree. Cells are half-open so that they partition the scale; the
 chapter writes them closed, (12)–(13). A term is given by the endpoints of the scale it denotes a
 point on, `none` for an epistemically vague one: a numeral's scale is the order of `ℕ`, an
@@ -50,7 +50,7 @@ unblocked](##approximately_wet), which §6.4.1 calls unnatural.
 
 namespace SauerlandStateva2011
 
-open Degree English.Adjectives
+open English.Adjectives
 
 /-! ### Scalar approximators, (19), (38), (46) -/
 

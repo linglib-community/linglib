@@ -57,14 +57,13 @@ open SocialMeaning Data.Statistics
 
 /-! ### The variants -/
 
-open Degree in
 -- p. 807
 theorem underspecified_eq_representative (e : Experiment) :
     ((stimuli e .underspecified).before : ℚ) =
-        representative 10 ((stimuli e .precise).before : ℚ) ∧
+        nearestMultiple 10 ((stimuli e .precise).before : ℚ) ∧
       ((stimuli e .underspecified).after : ℚ) =
-        representative 10 ((stimuli e .precise).after : ℚ) := by
-  cases e <;> norm_num [stimuli, representative, round_eq, Int.floor_eq_iff]
+        nearestMultiple 10 ((stimuli e .precise).after : ℚ) := by
+  cases e <;> norm_num [stimuli, nearestMultiple, round_eq, Int.floor_eq_iff]
 
 /-- The numeral modifier an approximator is. -/
 def Approximator.modifier : Approximator → Numerals.NumeralModifier
@@ -73,7 +72,6 @@ def Approximator.modifier : Approximator → Numerals.NumeralModifier
 
 section Truth
 
-open Degree
 
 -- p. 807
 theorem precise_not_mem_underspecified (e : Experiment) :

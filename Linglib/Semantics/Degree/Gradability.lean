@@ -1,27 +1,17 @@
 module
 
-public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.ScalarDimension
 public import Linglib.Semantics.Degree.Antonymy
 
 /-!
 # Gradability
 
-This file defines `Degree.Gradability`, the degree semantics of a gradable predicate of any
-category: the dimension it measures, the pole it measures towards, and any lexically fixed
-standard. The scale and the positive standard are derived from these, the standard by Interpretive
-Economy unless the lexicon fixes it, so that *wet* and the verb *believe* get theirs by one
-definition. Adjectives and verbs project their entries onto it.
-
-## Main definitions
-
-* `Gradability`: a dimension, a polarity and an optional lexical standard.
-* `Gradability.boundedness`: the scale, the dimension's dualized at the negative pole.
-* `Gradability.standard`: the lexical standard, or the scale's default.
-
-## Main statements
-
-* `Gradability.complementary_standard_iff`: two poles of one dimension take contradictory standards
-  exactly when its scale has one endpoint.
+`Gradability` is the degree semantics of a gradable predicate of any category: the dimension it
+measures, the pole it measures towards, and any lexically fixed standard. The scale and the positive
+standard are derived from these, the standard by Interpretive Economy unless the lexicon fixes it,
+so that *wet* and the verb *believe* get theirs by one definition. Two poles of one dimension [take
+contradictory standards exactly when its scale has one
+endpoint](##Gradability.complementary_standard_iff).
 
 ## References
 
@@ -30,8 +20,6 @@ definition. Adjectives and verbs project their entries onto it.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-- The degree semantics of a gradable predicate is the dimension it measures, the pole it
 measures towards, and the standard its lexicon fixes, `none` taking the scale's default. -/
@@ -76,5 +64,3 @@ theorem complementary_standard_iff {g h : Gradability} (hd : g.dimension = h.dim
   exact Boundedness.complementary_defaultStandard_dual_iff
 
 end Gradability
-
-end Degree

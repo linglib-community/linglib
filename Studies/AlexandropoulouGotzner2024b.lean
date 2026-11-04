@@ -22,7 +22,7 @@ the complex forms fill. On a two-threshold scale this is exactly the observed
 profile — both negated weak forms come apart from their simple antonyms
 (`relative_like`) yet the residues are mirror images (`residues_symmetric`),
 whereas at a single threshold neither distinction exists
-(`Degree.AntonymForm.contradictoryDenotation_synonymy`).
+(`AntonymForm.contradictoryDenotation_synonymy`).
 
 ## References
 
@@ -36,7 +36,7 @@ public section
 
 namespace AlexandropoulouGotzner2024b
 
-open Degree AlexandropoulouGotzner2024a
+open AlexandropoulouGotzner2024a
 
 /-! ### Precision-level gap -/
 

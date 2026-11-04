@@ -358,13 +358,13 @@ theorem sequential_mul_le_mul (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hm
 /-- The Goldilocks effect of evaluation constrains the measure function of an evaluative base
 over a scale of excess, so that a negative evaluation grows with excess and a positive
 evaluation shrinks with it. -/
-def Goldilocks (a : Degree.GradableAdjective) (excess : S → X) (m : S → D') : Prop :=
+def Goldilocks (a : GradableAdjective) (excess : S → X) (m : S → D') : Prop :=
   match a.evaluativeValence with
   | some .negative => ∀ s t, excess s ≤ excess t → m s ≤ m t
   | some .positive => ∀ s t, excess s ≤ excess t → m t ≤ m s
   | _ => True
 
-variable {a : Degree.GradableAdjective} {excess : S → X}
+variable {a : GradableAdjective} {excess : S → X}
 
 theorem sequential_mul_le_mul_of_negative (ha : a.evaluativeValence = some .negative)
     (hm : Goldilocks a excess mD) (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t)

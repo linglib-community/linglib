@@ -28,7 +28,7 @@ decision.
   parameters.
 * A determiner is a quantifier on van Benthem's tree of numbers, a relation between the number
   of restrictor members outside its scope and the number inside it. *Every* is `NumberTree.all`,
-  a numeral is the cardinal quantifier of the interval of a `Degree.Comparison`, and a scope
+  a numeral is the cardinal quantifier of the interval of a `Comparison`, and a scope
   interpretation is a negation of the determiner (`Scope.negation`), inner for surface scope and
   outer for inverse scope. The paper tabulates the truth conditions at two and at four horses,
   and here they follow for any number.
@@ -114,9 +114,9 @@ theorem negation_inverse_all : Scope.inverse.negation NumberTree.all = NumberTre
 
 /-- A numeral is the cardinal quantifier of the interval that the comparison `c` selects at `k`.
 The comparison `.eq` gives the exact reading and `.ge` the at-least reading. -/
-def numeral (c : Degree.Comparison) (k : ℕ) : NumberTree := .cardinal (c.interval k)
+def numeral (c : Comparison) (k : ℕ) : NumberTree := .cardinal (c.interval k)
 
-instance (c : Degree.Comparison) (k : ℕ) : DecidableRel (numeral c k) :=
+instance (c : Comparison) (k : ℕ) : DecidableRel (numeral c k) :=
   inferInstanceAs (DecidableRel (NumberTree.cardinal (c.interval k)))
 
 /-- The numeral *two* on its exact reading. -/
@@ -135,7 +135,7 @@ def ext (D : NumberTree) [DecidableRel D] (n : ℕ) : Scope → Utt → Finset (
 
 section Ext
 
-variable {D : NumberTree} [DecidableRel D] {c : Degree.Comparison} {k n : ℕ} {w : World n}
+variable {D : NumberTree} [DecidableRel D] {c : Comparison} {k n : ℕ} {w : World n}
 
 theorem mem_ext {i : Scope} : w ∈ ext D n i .amb ↔ i.negation D (n - w) w := by simp [ext]
 
@@ -155,12 +155,12 @@ theorem mem_ext_every_inverse : w ∈ ext NumberTree.all n .inverse .amb ↔ w �
 -- (6)
 theorem mem_ext_numeral_surface :
     w ∈ ext (numeral c k) n .surface .amb ↔ c.Rel (n - w) k := by
-  simp only [mem_ext_surface, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
+  simp only [mem_ext_surface, numeral, NumberTree.cardinal_apply, Comparison.mem_interval]
 
 -- (6)
 theorem mem_ext_numeral_inverse :
     w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.Rel (w : ℕ) k := by
-  simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
+  simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Comparison.mem_interval]
 
 theorem ext_congr {D' : NumberTree} [DecidableRel D']
     (h : ∀ a b, a + b = n → (D a b ↔ D' a b)) (i : Scope) (u : Utt) :
@@ -174,14 +174,14 @@ theorem ext_congr {D' : NumberTree} [DecidableRel D']
 
 theorem numeral_eq_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .eq n a b ↔ NumberTree.all a b := by
-  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
-    Degree.Comparison.Rel]
+  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Comparison.mem_interval,
+    Comparison.Rel]
   omega
 
 theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .ge n a b ↔ NumberTree.all a b := by
-  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
-    Degree.Comparison.Rel]
+  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Comparison.mem_interval,
+    Comparison.Rel]
   omega
 
 -- §4.2.1

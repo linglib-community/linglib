@@ -53,7 +53,6 @@ discussions of the paper's objections section are not formalized.
 namespace Wellwood2015
 
 open ArgumentStructure (ThematicFrame)
-open Degree
 
 /-! ### The truth conditions -/
 
@@ -103,14 +102,14 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} [PartialOrder D] (role
         matrixClause role P (fun e ↦ μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
   have : thanClause role P (fun e ↦ μ (extract e)) b =
-      Degree.scopeDegrees (Quantifier.Det.some {e | role b e ∧ P e})
+      Quantifier.scopeDegrees (Quantifier.Det.some {e | role b e ∧ P e})
         (Set.Iic ∘ fun e ↦ μ (extract e)) := by
     ext
-    simp [thanClause, absDegP, Degree.mem_scopeDegrees, Quantifier.Det.some, Set.Nonempty,
+    simp [thanClause, absDegP, Quantifier.mem_scopeDegrees, Quantifier.Det.some, Set.Nonempty,
       and_assoc]
-  rw [this, Degree.scopeDegrees_some_Iic]
+  rw [this, Quantifier.scopeDegrees_some_Iic]
   simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
-    matrixDegP, Degree.Comparison.Rel, and_assoc]
+    matrixDegP, Comparison.Rel, and_assoc]
 
 end Derivation
 

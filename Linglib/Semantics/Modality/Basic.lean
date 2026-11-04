@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.UpperLower.Principal
-public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.PositiveStandard
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Bounds.Defs
@@ -156,13 +156,13 @@ theorem strictMono_standard [DenselyOrdered D] (hθ : ⊥ < θ) (hθθ' : θ < �
 /-- Possibility's standard is a minimum standard, the one existential closure above the least
 degree gives ([grano-2026]), and so one the scale fixes. -/
 theorem standard_possibility_mem :
-    standard θ θ' .possibility ∈ Degree.PositiveStandard.minEndpoint.standards D :=
+    standard θ θ' .possibility ∈ PositiveStandard.minEndpoint.standards D :=
   ⟨⊥, isBot_bot, rfl⟩
 
 /-- Weak necessity's standard is a threshold, which the scale does not fix, so that weak
 necessity, like a relative adjective, needs a comparison class ([grano-2026] §7). -/
 theorem standard_weakNecessity_mem :
-    standard θ θ' .weakNecessity ∈ Degree.PositiveStandard.contextual.standards D :=
+    standard θ θ' .weakNecessity ∈ PositiveStandard.contextual.standards D :=
   ⟨θ, .inr rfl⟩
 
 end Standard

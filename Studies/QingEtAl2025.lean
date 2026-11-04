@@ -85,23 +85,23 @@ def Trivial
 /-- A positive preferential predicate presupposes threshold significance of a question. A
 negative one triggers no such presupposition (§3.2) and presupposes only that the question has an
 answer in the comparison class. -/
-def presupposition : Degree.EvaluativeValence →
+def presupposition : EvaluativeValence →
     (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop
-  | .positive => fun μ θ x Q w ↦ Degree.ThresholdSignificant (μ x w) θ Q
+  | .positive => fun μ θ x Q w ↦ Preferential.ThresholdSignificant (μ x w) θ Q
   | .negative | .neutral => fun _ _ _ Q _ ↦ Q.Nonempty
 
 theorem trivial_positive :
     Trivial (W := W) (E := E) degreeComparison (presupposition .positive) :=
   fun μ θ x _ w h ↦ (UegakiSudo2019.hope_question_iff_significance μ θ subset_rfl x w).2 h
 
-theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeValence}
+theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : EvaluativeValence}
     (hv : v ≠ .positive) : ¬ Trivial (W := W) (E := E) degreeComparison (presupposition v) :=
   fun h ↦ by
     obtain ⟨p, -, -, hp⟩ := h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default <| by
       cases v <;> simp_all [presupposition]
     simp at hp
 
-theorem not_trivial_relational (v : Degree.EvaluativeValence) (R : E → Set (Set W) → W → Prop)
+theorem not_trivial_relational (v : EvaluativeValence) (R : E → Set (Set W) → W → Prop)
     (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
   obtain ⟨x, Q, w, hQ, hxQ⟩ := hR
@@ -141,7 +141,7 @@ def semantics (R : E → Set (Set W) → W → Prop) :
 
 /-- Canonical composition with a question is trivial, hence anti-rogative, exactly for the
 distributive positive class (Table 2). -/
-theorem trivial_iff_class [Inhabited E] [Inhabited W] (v : Degree.EvaluativeValence) (d : Bool)
+theorem trivial_iff_class [Inhabited E] [Inhabited W] (v : EvaluativeValence) (d : Bool)
     (R : E → Set (Set W) → W → Prop) (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     Trivial (semantics R d) (presupposition v) ↔
       classOf (.preferential v d) = some .distributivePositive := by
@@ -182,7 +182,7 @@ def class? (r : Datum) : Option PredicateClass :=
 
 /-- The valence of a row's predicate, or of its manner adverb or veridical preferential where
 the paper's argument turns on valence alone. -/
-def valence? (r : Datum) : Option Degree.EvaluativeValence :=
+def valence? (r : Datum) : Option EvaluativeValence :=
   match r.feature? "valence" with
   | some "positive" => some .positive
   | some "negative" => some .negative

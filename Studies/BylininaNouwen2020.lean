@@ -36,15 +36,15 @@ items that *zero* does not, while with `MAX` apart from the numeral *zero* is a 
 
 ## Implementation notes
 
-* Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate
-  on them. Kennedy's numeral is the substrate's `Degree.MaxIn {n}`, and its scope relative to a
-  modal or nominal quantifier `Q` over a count `μ` is `Degree.LowScope` or `Degree.HighScope`.
-* Pluralities, degree properties and licensing are those of `BylininaNouwen2018`: the finite sets
-  of atoms, with the empty plurality, so `plural Z` is the full lattice `×Z` and Link's `*Z` ((12))
-  its nonempty part. The lower bound (29) is `isLowerSet_countDegrees_plural`, and its failure with
-  a collective predicate (fn. 8) `countDegrees_singleton`.
-* `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher numeral, which on those
-  lower sets are the stronger alternatives of (32).
+* Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate on
+  them. Kennedy's numeral is the substrate's `Quantifier.MaxIn {n}`, and its scope relative to a
+  modal or nominal quantifier `Q` over a count `μ` is `Quantifier.LowScope` or
+  `Quantifier.HighScope`. * Pluralities, degree properties and licensing are those of
+  `BylininaNouwen2018`: the finite sets of atoms, with the empty plurality, so `plural Z` is the
+  full lattice `×Z` and Link's `*Z` ((12)) its nonempty part. The lower bound (29) is
+  `isLowerSet_countDegrees_plural`, and its failure with a collective predicate (fn. 8)
+  `countDegrees_singleton`. * `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher
+  numeral, which on those lower sets are the stronger alternatives of (32).
 
 ## TODO
 
@@ -64,7 +64,7 @@ The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not 
 @[expose] public section
 namespace BylininaNouwen2020
 
-open BylininaNouwen2018 Degree Exhaustification Numerals Quantifier Quantifier.Det
+open BylininaNouwen2018 Exhaustification Numerals Quantifier Quantifier.Det
   Quantifier Set
 
 variable {α : Type*}

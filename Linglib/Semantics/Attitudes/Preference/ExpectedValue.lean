@@ -2,7 +2,6 @@ module
 
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Probability.ConditionalProbability
-public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Expected-value desire semantics

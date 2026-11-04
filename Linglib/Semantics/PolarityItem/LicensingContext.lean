@@ -355,7 +355,7 @@ noncomputable def licenser : LicensingContext → Licenser
   | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
       fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩
   | superlative => .strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
-      fun p C ↦ Degree.superlative p.μ C p.x⟩
+      fun p C ↦ trivalentSuperlative p.μ C p.x⟩
   | conditionalAntecedent => .strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
       fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩
   | sinceTemporal => .strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩
@@ -537,7 +537,7 @@ theorem not_isStrawsonUE_adversative : ¬ adversative.licenser.IsStrawsonUE :=
     Desire.BestWorlds.not_isStrawsonUE_regret⟩
 
 theorem not_isStrawsonUE_superlative : ¬ superlative.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨Bool, Unit, ℕ, fun _ ↦ 0, true⟩, Degree.not_isStrawsonUE_superlative⟩
+  not_forall.2 ⟨⟨Bool, Unit, ℕ, fun _ ↦ 0, true⟩, not_isStrawsonUE_trivalentSuperlative⟩
 
 theorem not_isStrawsonUE_conditionalAntecedent : ¬ conditionalAntecedent.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Unit, Bool, fun _ ↦ .univ, {true}⟩,
@@ -589,10 +589,10 @@ theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
     (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
-  Degree.isStrawsonDE_superlative p.μ p.x
+  isStrawsonDE_trivalentSuperlative p.μ p.x
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  Degree.not_antitone_posSupport_superlative (ProjectivitySignature.holdsFor_anti_iff.mp
+  not_antitone_posSupport_trivalentSuperlative (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=

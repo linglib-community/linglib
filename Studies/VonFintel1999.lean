@@ -188,15 +188,15 @@ open Classical in
 /-- *The μ-est C exceeds d* presupposes a superlative individual and asserts that every such
 individual exceeds `d`. -/
 noncomputable def theSuperlativeExceeds : W → SignType :=
-  {w | ∃ a, Degree.superlative μ C a w = 1}.indicator
-    fun w ↦ SignType.ofProp (∀ a, Degree.superlative μ C a w = 1 → d < μ a)
+  {w | ∃ a, trivalentSuperlative μ C a w = 1}.indicator
+    fun w ↦ SignType.ofProp (∀ a, trivalentSuperlative μ C a w = 1 → d < μ a)
 
 /-- The definite-description superlative is not Strawson downward entailing (80). -/
 theorem not_isStrawsonDE_theSuperlativeExceeds :
     ¬ IsStrawsonDE (theSuperlativeExceeds (W := Unit) (fun b : Bool ↦ if b then 3 else 5) · 4) :=
   fun h ↦ by
     have := @h (fun _ ↦ {true}) (fun _ ↦ Set.univ) (fun _ _ _ ↦ trivial) ()
-    simp only [theSuperlativeExceeds, Degree.superlative_eq_one_iff,
+    simp only [theSuperlativeExceeds, trivalentSuperlative_eq_one_iff,
       Trivalent.indicator_apply_eq_one_iff, Set.indicator_apply_eq_zero, ne_eq,
       SignType.ofProp_eq_one_iff, SignType.ofProp_ne_zero, Set.mem_ofPred_eq,
       Set.mem_singleton_iff, Set.mem_univ] at this

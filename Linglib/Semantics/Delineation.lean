@@ -5,50 +5,17 @@ public import Linglib.Logic.Trivalent.Basic
 /-!
 # Delineation semantics
 
-In delineation semantics a gradable adjective has no degree argument. A delineation sends each
-comparison class, a set of entities the adjective is evaluated against, to a positive and a
-negative extension relative to it. The two are disjoint, and what lies in neither is the extension
-gap, the borderline cases. *a is taller than b* holds when some comparison class puts `a` in the
-positive extension and `b` in the negative one; Klein develops this analysis from Kamp's account
-of the comparative. Within a comparison class `C` the ordering this induces is a strict partial
-order as soon as no subclass of `C` reverses a ranking another subclass makes, Klein's consistency
-constraint. If moreover every subclass whose members `C` tells apart has members in both
-extensions, any two members of `C` are ranked one way or the other or are nondistinct, so the
-ordering is linear where nondistinct members are equivalent, that is, where no more determinate
-delineation tells them apart.
-
-A delineation without gaps is fixed by its positive extensions (`Delineation.ofExtension`), and
-nothing is more determinate than it, so it is complete. A measure function induces one, whose
-ordering within a class is degree comparison. Its positive extension at a class holds what
-measures above the least member of the class, so the measure embeds the comparative, not the
-threshold semantics of the positive form.
-
-## Main definitions
-
-* `Degree.Delineation`: disjoint positive and negative extensions relative to comparison classes,
-  ordered by determinacy.
-* `Degree.Delineation.ofExtension`, `Degree.Delineation.IsGapless`: the delineations without gaps.
-* `Degree.Delineation.Comparative`, `Degree.Delineation.Outranks`: Klein's comparative and the
-  ordering within a comparison class.
-* `Degree.Delineation.IsMonotoneOn`, `Degree.Delineation.IsNontrivialOn`: Klein's constraints on
-  admissible delineations.
-* `Degree.Delineation.Nondistinct`, `Degree.Delineation.Equivalent`,
-  `Degree.Delineation.IsComplete`, `Degree.Delineation.IsLinear`: no subclass tells two entities
-  apart; no more determinate admissible delineation does; the two agree at a class; they agree at
-  every class.
-* `Degree.Delineation.ofMeasure`: the delineation a measure function induces.
-* `Degree.Delineation.very`, `Degree.Delineation.fairly`: the modifiers *very* and *fairly*.
-
-## Main statements
-
-* `Degree.Delineation.IsMonotoneOn.isStrictOrder_outranks`: under the consistency constraint the
-  ordering is a strict partial order.
-* `Degree.Delineation.equivalent_or_outranks_or_outranks`: at a complete class meeting the second
-  constraint any two members are equivalent or ranked.
-* `Degree.Delineation.IsGapless.isComplete`: a delineation without gaps is complete, and
-  `Degree.Delineation.IsGapless.isStrictWeakOrder_outranks`: its ordering is a strict weak order.
-* `Degree.Delineation.outranks_ofMeasure_iff`: under a measure-induced delineation the ordering is
-  degree comparison.
+In delineation semantics a gradable adjective has no degree argument. A `Delineation` sends each
+comparison class, a set of entities the adjective is evaluated against, to disjoint positive and
+negative extensions relative to it; what lies in neither is the extension gap, the borderline cases.
+*a is taller than b* holds when some comparison class puts `a` in the positive extension and `b` in
+the negative one, Klein's development of Kamp's account of the comparative. Under Klein's
+consistency constraint [the ordering this induces is a strict partial
+order](##Delineation.IsMonotoneOn.isStrictOrder_outranks), and under his second constraint [any two
+members of a complete class are equivalent or
+ranked](##Delineation.equivalent_or_outranks_or_outranks). A delineation [without gaps is
+complete](##Delineation.IsGapless.isComplete), and a measure function induces one [whose ordering is
+degree comparison](##Delineation.outranks_ofMeasure_iff).
 
 ## Implementation notes
 
@@ -71,8 +38,6 @@ given one, which are here the delineations of an admissible family `𝒟` extend
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-- A delineation sends each comparison class to a positive and a negative extension of a
 gradable adjective relative to it, which are disjoint; what lies in neither is in the extension
@@ -441,5 +406,3 @@ theorem comparative_ofMeasure_iff {x y : E} : (ofMeasure μ).Comparative x y ↔
 end Faithfulness
 
 end Delineation
-
-end Degree

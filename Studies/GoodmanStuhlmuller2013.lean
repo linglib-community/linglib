@@ -217,7 +217,7 @@ def NumUtt.value : NumUtt → ℕ
 /-- The states at which a numeral holds of the three objects on the lower-bounded meaning of
 [horn-1972], its number or more. -/
 def NumUtt.extension (u : NumUtt) : Finset (Fin 4) :=
-  (NumberTree.cardinal (Degree.Comparison.ge.interval u.value)).row 3
+  (NumberTree.cardinal (Comparison.ge.interval u.value)).row 3
 
 theorem NumUtt.mem_extension {u : NumUtt} {s : Fin 4} : s ∈ u.extension ↔ u.value ≤ s := by
   simp [NumUtt.extension]

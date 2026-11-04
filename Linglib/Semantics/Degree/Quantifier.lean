@@ -11,34 +11,16 @@ public import Linglib.Core.Order.AntiAdditive
 /-!
 # Degree quantifiers
 
-This file defines the denotations of degree phrases as quantifiers over degrees and their scope
-relative to a quantifier over entities or worlds. A degree phrase says that the maximum of its
-degree predicate lies in an interval, `MaxIn U X`; under a quantifier `Q` it scopes low, applied
-to each entity's own degree property, or high, applied to `scopeDegrees Q P`, the degrees at which
-`Q` holds. A measure `μ` gives each entity the degrees it reaches, `Iic ∘ μ`, and under `some` the
-degree set is then the lower closure of the measures, the than-clause degree set. The
-max-quantified comparative `MaxComparative c` compares a matrix witness with its greatest measure
-by the comparison `c`.
-
-## Main definitions
-
-* `MaxIn U X`: the greatest element of `X` lies in `U`.
-* `scopeDegrees Q P`: the degrees `d` such that `Q` holds of the entities `x` with `d ∈ P x`.
-* `LowScope 𝒟 Q P`, `HighScope 𝒟 Q P`: the degree quantifier `𝒟` under and over `Q`.
-* `MaxComparative c P Q μ`: the max-quantified comparative, the equative at `c = .ge`.
-* `AbsoluteSuperlative μ C x`: `x` measures above every other member of `C`.
-
-## Main results
-
-* `highScope_maxIn_iff_lowScope`: over a monotone quantifier on a finite domain, a degree
-  quantifier at an upper set takes scope without truth-conditional effect.
-* `not_isGreatest_scopeDegrees`: under an antitone quantifier the degree set has no maximum.
-* `highScope_maxIn_singleton_every`, `highScope_maxIn_singleton_some`: the exact degree
-  quantifier over `every` names the infimum of the measures and over `some` their greatest.
-* `isGreatest_scopeDegrees_of_inf`: under a meet with an antitone quantifier the maximum is the
-  other conjunct's.
-* `maxComparative_iff_of_unique`: with unique witnesses the max-quantified comparative is direct
-  measure comparison.
+A degree phrase says that the maximum of its degree predicate lies in an interval, `Quantifier.MaxIn
+U X`. Under a quantifier `Q` it scopes low, applied to each entity's own degree property, or high,
+applied to `Quantifier.scopeDegrees Q P`, the degrees at which `Q` holds. Over a monotone quantifier
+on a finite domain, [a degree quantifier at an upper set takes scope without truth-conditional
+effect](##Quantifier.highScope_maxIn_iff_lowScope); under an antitone one [the degree set has no
+maximum](##Quantifier.not_isGreatest_scopeDegrees). The exact degree quantifier over `every` [names
+the infimum of the measures](##Quantifier.highScope_maxIn_singleton_every) and over `some` [their
+greatest](##Quantifier.highScope_maxIn_singleton_some). The max-quantified comparative
+`MaxComparative c` compares a matrix witness with the greatest measure by `c`, and [with unique
+witnesses it is direct measure comparison](##maxComparative_iff_of_unique).
 
 ## Implementation notes
 
@@ -55,16 +37,15 @@ cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization w
 * [rullmann-1995]
 * [hoeksema-1983]
 * [bhatt-pancheva-2004]
-* [heim-1999]
 -/
 
 @[expose] public section
 
-namespace Degree
-
-open Quantifier Quantifier.Det Set
+open Quantifier.Det Set
 
 variable {α D : Type*}
+
+namespace Quantifier
 
 /-! ### Degree quantifiers and their scope
 
@@ -81,11 +62,11 @@ def scopeDegrees (Q : Quantifier α) (P : α → Set D) : Set D := {d | Q {x | d
 theorem mem_scopeDegrees : d ∈ scopeDegrees Q P ↔ Q {x | d ∈ P x} := Iff.rfl
 
 /-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degree property. -/
-def LowScope (𝒟 : Set D → Prop) (Q : Quantifier α) (P : α → Set D) : Prop :=
+def LowScope (𝒟 : Quantifier D) (Q : Quantifier α) (P : α → Set D) : Prop :=
   Q {x | 𝒟 (P x)}
 
 /-- A degree quantifier `𝒟` scoping over `Q`. -/
-def HighScope (𝒟 : Set D → Prop) (Q : Quantifier α) (P : α → Set D) : Prop :=
+def HighScope (𝒟 : Quantifier D) (Q : Quantifier α) (P : α → Set D) : Prop :=
   𝒟 (scopeDegrees Q P)
 
 theorem scopeDegrees_some (R : Set α) (P : α → Set D) :
@@ -256,6 +237,8 @@ theorem isGLB_compl_scopeDegrees_iff [DenselyOrdered D] {P : α → Set D} (hQ :
 
 end LinearOrder
 
+end Quantifier
+
 /-! ### The max-quantified comparative
 
 The clausal comparative of von Stechow and Rullmann: some matrix witness stands in a comparison to
@@ -378,30 +361,6 @@ theorem maxComparative_gt_iff_gtOverSet (P Q : α → Prop) :
 
 end SetOfDegrees
 
-/-! ### Superlatives
-
-*-est* universally quantifies the comparative over a comparison class ([heim-1999]), the
-semantic reflex of [bobaljik-2012]'s containment `[[[ADJ] CMPR] SPRL]`. -/
-
-section Superlative
-variable [LinearOrder D] {μ : α → D} {C : Set α} {x y : α}
-
-/-- The absolute superlative holds of `x` when `x` is in the comparison class `C` and beats every
-other member on the comparative. -/
-def AbsoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
-  x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ y < μ x
-
-theorem absoluteSuperlative_unique (hx : AbsoluteSuperlative μ C x)
-    (hy : AbsoluteSuperlative μ C y) : x = y :=
-  by_contra fun hne ↦ lt_asymm (hx.2 y hy.1 (Ne.symm hne)) (hy.2 x hx.1 hne)
-
-theorem absoluteSuperlative_isGreatest (h : AbsoluteSuperlative μ C x) :
-    IsGreatest (μ '' C) (μ x) :=
-  ⟨mem_image_of_mem μ h.1, forall_mem_image.2 fun y hy ↦
-    (eq_or_ne y x).elim (fun e ↦ e ▸ le_rfl) fun hne ↦ (h.2 y hy hne).le⟩
-
-end Superlative
-
 /-! ### Change of scale -/
 
 section ChangeOfScale
@@ -419,5 +378,3 @@ theorem maxComparative_comp (f : D ↪o D') (c : Comparison) (P Q : α → Prop)
     exact ⟨f δ, f.strictMono.map_isGreatest.2 hδ, x, hx, (Comparison.rel_map_iff f c).2 hr⟩
 
 end ChangeOfScale
-
-end Degree

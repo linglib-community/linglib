@@ -128,7 +128,7 @@ def Sense.labels : List (String × Sense) := [("spatial", .spatial), ("other", .
 
 /-- The result adjectives by their `paperFeatures` labels, with the fragment entry of those the
 fragment has. -/
-def adjectiveLabels : List (String × Option Degree.GradableAdjective) :=
+def adjectiveLabels : List (String × Option GradableAdjective) :=
   open English.Adjectives in
   [("open", some open_), ("closed", some closed_), ("shut", some shut), ("free", some free_),
    ("loose", some loose), ("flat", some flat), ("solid", none), ("clean", none), ("bald", none),
@@ -171,7 +171,7 @@ def Frame.labels : List (String × Frame) :=
 /-- A result phrase has an adjective, recorded where the fragment has it, and the sense the
 adjective is used in. -/
 structure Result where
-  adjective : Option Degree.GradableAdjective
+  adjective : Option GradableAdjective
   sense : Sense
 
 /-- A result phrase describes a spatially instantiated state when its adjective has a spatial

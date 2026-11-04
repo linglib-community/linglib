@@ -7,7 +7,7 @@ public import Linglib.Core.ModelTheory.Semantics
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Defs.Unbundled
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
-public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Delineation
 
 /-!
 # Rudolph and Kocurek (2024): Metalinguistic Gradability
@@ -817,7 +817,7 @@ variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 /-- The delineation induced by a ranked interpretation family takes the extensions of `R` in the
 ≤-cone as the admissible comparison classes, and `x` is `R` in `C` iff `x ∈ C`; it has no gaps.
 It instantiates Klein's comparison-class parameter. -/
-def interpretationDelineation (i : I) : Degree.Delineation E :=
+def interpretationDelineation (i : I) : Delineation E :=
   .ofExtension fun C ↦ {x | (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C}
 
 theorem delineation_comparative_iff (i : I) (a b : E) :

@@ -15,8 +15,8 @@ its conjunct](##exists_conjunctionFallacy), which [no threshold on a probability
 allows](##image_Ici_ne_likely). *Certain* puts the contrast state at the top, and
 *confident* [entails it only there](##image_Ici_subset_image_Ici_iff_isMax). The comparative
 compares degrees under a measure that preserves the strict ordering, so its
-[transitivity](##Degree.MaxComparative.trans), [antisymmetry](##Degree.MaxComparative.antisymm)
-and [connectedness](##Degree.maxComparative_ge_total) hold on any background, while upward
+[transitivity](##MaxComparative.trans), [antisymmetry](##MaxComparative.antisymm)
+and [connectedness](##maxComparative_ge_total) hold on any background, while upward
 monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici_of_not_le) and
 [nothing outranks a certainty](##not_maxComparative_of_isMax) only under a monotone measure.
 
@@ -25,7 +25,7 @@ monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici
 * A holder's confidence states form a type `S` with the background preorder, and `θ : S → Set W`
   assigns themes. Orderings vary from holder to holder, so the theorems fix one holder.
 * The positive form is `p ∈ θ '' Set.Ici c` for a contrast state `c`, *certain* is
-  `p ∈ θ '' {s | IsMax s}`, and the comparative is `Degree.MaxComparative .gt (θ · = p) (θ · = q) μ`
+  `p ∈ θ '' {s | IsMax s}`, and the comparative is `MaxComparative .gt (θ · = p) (θ · = q) μ`
   for an admissible measure, `StrictMono μ`.
 * The paper takes the ordering to be a total preorder; the theorems that need totality assume it.
 * The paper states no semantics for *doubt*, so (63c) is not formalized.
@@ -34,7 +34,7 @@ monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici
 
 * §4.6 would drop Connectedness (56) by replacing the total order of confidence states with a
   partial order. Connectedness compares degrees on a linear scale and survives any background
-  (`Degree.maxComparative_ge_total`); a partial order costs the inference (53) instead
+  (`maxComparative_ge_total`); a partial order costs the inference (53) instead
   (`CarianiSantorioWellwood2023.not_mem_image_Ici_of_not_le`).
 * (40) puts the state at or above the contrast state, though its prose says "ordered higher".
   With the contrast of a proposition its negation, the corollary that no one is confident of both
@@ -62,7 +62,7 @@ public section
 
 namespace CarianiSantorioWellwood2024
 
-open Set Degree
+open Set
 open MeasureTheory
 
 variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S → D}

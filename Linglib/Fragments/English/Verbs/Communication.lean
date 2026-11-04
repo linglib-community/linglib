@@ -17,7 +17,7 @@ manner-of-speaking class, *whisper*, *shout*, *mumble* and the rest, with *speak
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Communication -/
 

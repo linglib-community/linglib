@@ -27,7 +27,7 @@ question-embedding *wonder*, *ask*, *investigate* and *depend on* with the rogat
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Factive / Semifactive -/
 

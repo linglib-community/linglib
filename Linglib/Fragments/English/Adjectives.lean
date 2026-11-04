@@ -34,7 +34,7 @@ pair's `pos` and `neg`.
 
 namespace English.Adjectives
 
-open Degree Morphology
+open Morphology
 
 /-! ### Grade -/
 

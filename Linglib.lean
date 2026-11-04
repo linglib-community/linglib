@@ -760,12 +760,7 @@ import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Measure.Dimension
-import Linglib.Semantics.Degree.Measure.Quantity
-import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.Partial
@@ -866,7 +861,6 @@ import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
-import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Syntax.Category.Numeral.Composition

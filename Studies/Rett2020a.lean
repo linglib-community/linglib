@@ -12,7 +12,7 @@ This file formalizes the paper's semantics for *before* and *after* as antonyms 
 scales. Each relates some time of its main clause to the most informative time of its embedded
 clause, the least on the *before* scale and the greatest on the *after* scale, `before` and
 `after`, with maximality relativized to the scale as in the degree domain,
-`Degree.maxOnScale`. Two aspectual coercions supply the remaining readings: a process may
+`Comparison.maxOnScale`. Two aspectual coercions supply the remaining readings: a process may
 denote the onset of its duration, `inchoative`, and a culmination its telos, `completive`, so
 that against a process an *after* clause is ambiguous between the end and the onset while a
 *before* clause is not, and against a culmination a *before* clause is ambiguous between the
@@ -64,7 +64,8 @@ default readings.
 
 namespace Rett2020a
 
-open Tense Degree Anscombe1964
+open Tense Anscombe1964
+open Comparison (maxOnScale mem_maxOnScale_gt mem_maxOnScale_lt)
 
 variable {T : Type*} [LinearOrder T]
 

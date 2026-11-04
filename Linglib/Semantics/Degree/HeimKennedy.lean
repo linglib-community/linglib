@@ -6,16 +6,16 @@ public import Mathlib.Data.Set.Defs
 # Degree movement
 
 A degree quantifier, `-er` with its differential, is a quantificational argument of the gradable
-predicate and takes scope by Quantifier Raising ([heim-2001]). The Heim–Kennedy constraint filters
+predicate and takes scope by Quantifier Raising. The Heim–Kennedy constraint filters
 the LFs this produces: if the scope of a quantificational DP contains the trace of a DegP, it also
-contains that DegP ([heim-2001], [bhatt-pancheva-2004]), so no quantifier intervenes between a
+contains that DegP, so no quantifier intervenes between a
 degree abstraction and the variable it binds, the configuration `*λd … QP … d`. Scope is the
 c-command domain, so on a scope relation `C` the constraint relates three positions, the quantifier
-`q`, the DegP `δ` and its trace `t`: `IsHeimKennedy C q δ t`. [kennedy-1999] reads the absence of
-the excluded readings as the absence of degree movement; [heim-2001] keeps the movement and the
-filter, [bhatt-pancheva-2004] merges the degree clause at the DegP's scope position so that its
+`q`, the DegP `δ` and its trace `t`: `IsHeimKennedy C q δ t`. Kennedy reads the absence of
+the excluded readings as the absence of degree movement; Heim keeps the movement and the
+filter, Bhatt and Pancheva merge the degree clause at the DegP's scope position so that its
 surface site marks the scope the filter constrains, and the than-phrase-internal scope
-generalization of [bhatt-takahashi-2011] is the constraint evaluated at the quantifier's base
+generalization of Bhatt and Takahashi is the constraint evaluated at the quantifier's base
 position.
 
 ## References
@@ -27,8 +27,6 @@ position.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 variable {Node : Type*} {C : Set (Node × Node)} {q δ t : Node}
 
@@ -45,5 +43,3 @@ theorem isHeimKennedy_of_mem (h : (q, δ) ∈ C) : IsHeimKennedy C q δ t := fun
 
 theorem not_isHeimKennedy_iff : ¬ IsHeimKennedy C q δ t ↔ (q, t) ∈ C ∧ (q, δ) ∉ C :=
   Classical.not_imp
-
-end Degree

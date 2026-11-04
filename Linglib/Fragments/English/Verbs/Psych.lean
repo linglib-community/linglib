@@ -21,7 +21,7 @@ verbs of contact and motion, *chase*, *hit*, *push*, *pull* and their kin.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Agent-experiencer verbs ([solstad-bott-2024]) -/
 

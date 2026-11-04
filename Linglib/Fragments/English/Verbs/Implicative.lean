@@ -22,7 +22,7 @@ with the entailment each carries from its complement.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Implicative / Control -/
 

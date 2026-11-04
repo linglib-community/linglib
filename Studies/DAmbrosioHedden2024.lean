@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
+public import Studies.Sassoon2013
 public import Linglib.Semantics.Aggregation.Arrow
 public import Linglib.Semantics.Aggregation.Rules
 public import Studies.Kamp1975
@@ -261,7 +261,7 @@ variable [Fintype ι] [LinearOrder K] (θ : ι → K)
 quantification over the dimensions for conjunctive adjectives (*healthy*), existential for
 disjunctive ones (*sick*), and for mixed ones (*intelligent*) counting the dimensions on which
 the thresholds `θ` are met. -/
-def sassoon : Degree.DimensionBindingType → Rule ι O K
+def sassoon : Sassoon2013.DimensionBindingType → Rule ι O K
   | .conjunctive => fun v x y ↦ ∀ i, v y i ≤ v x i
   | .disjunctive => fun v x y ↦ ∃ i, v y i ≤ v x i
   | .mixed => fun v x y ↦ #{i | θ i ≤ v y i} ≤ #{i | θ i ≤ v x i}

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Setoid.Partition
-public import Linglib.Semantics.Degree.Quotient
+public import Linglib.Semantics.Degree.CresswellDegree
 public import Linglib.Semantics.Reference.Iota
 
 /-!
@@ -238,7 +238,7 @@ theorem amount_reading [Preorder E] {P : Set E} {a : E} (ha : a ∈ P)
 
 -- (58) is Cresswell's relation on a preorder.
 example [Preorder E] :
-    Degree.cresswellSetoid ((· ≤ ·) : E → E → Prop) = AntisymmRel.setoid E (· ≤ ·) :=
-  Degree.cresswellSetoid_eq_antisymmRel _
+    cresswellSetoid ((· ≤ ·) : E → E → Prop) = AntisymmRel.setoid E (· ≤ ·) :=
+  cresswellSetoid_eq_antisymmRel _
 
 end Mendia2020

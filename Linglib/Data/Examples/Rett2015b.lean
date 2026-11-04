@@ -145,6 +145,32 @@ def question_short : Datum :=
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "negative"), ("evaluative", "true")] }
 
-def all : List Datum := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short]
+def demonstrative_tall : Datum :=
+  { id := "rett2015b_demonstrative_tall"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Doug's (about) that tall too."
+    glossedTokens := []
+    context := "A and B are looking at Adam, so his exact height is salient; acceptable after both 'Adam's really short' and 'Adam's really tall' ((17)-(18))."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "degreeDemonstrative"), ("polarity", "positive"), ("evaluative", "false")] }
+
+def demonstrative_short : Datum :=
+  { id := "rett2015b_demonstrative_short"
+    source := ⟨"rett-2015b", "Table 3.1"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Doug's (about) that short too."
+    glossedTokens := []
+    context := "A and B are looking at Adam, so his exact height is salient; acceptable after 'Adam's really short' and infelicitous after 'Adam's really tall' ((17)-(18))."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "degreeDemonstrative"), ("polarity", "negative"), ("evaluative", "true")] }
+
+def all : List Datum := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short, demonstrative_tall, demonstrative_short]
 
 end Rett2015b.Examples

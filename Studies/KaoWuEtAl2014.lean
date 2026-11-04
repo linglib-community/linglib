@@ -68,8 +68,8 @@ theorem isRound_round (p : Price) : p.round.IsRound := by cases p <;> decide
 @[simp] theorem round_round (p : Price) : p.round.round = p.round := by cases p <;> rfl
 
 theorem value_round (p : Price) :
-    (p.round.value : ℚ) = Degree.representative 10 (p.value : ℚ) := by
-  cases p <;> norm_num [round, value, Degree.representative]
+    (p.round.value : ℚ) = nearestMultiple 10 (p.value : ℚ) := by
+  cases p <;> norm_num [round, value, nearestMultiple]
 
 /-- The precision projection `f` of a goal keeps the price exact or rounds it. -/
 def project : Precision → Price → Price

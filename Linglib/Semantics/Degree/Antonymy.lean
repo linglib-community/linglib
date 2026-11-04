@@ -11,44 +11,17 @@ public import Mathlib.Order.Interval.Set.Disjoint
 /-!
 # Antonymy
 
-This file defines the vocabulary of an antonym pair of gradable adjectives, *tall* and *short*
-or *happy* and *unhappy*. Following Kennedy (2007) and Kennedy and McNally (2005), the two
-members measure the same degrees under inverse orderings, so an adjective's `Polarity` is which
-member it is, `positive` for the member measuring in the scale's increasing direction (*tall*)
-and `negative` for the inverted one (*short*). Inverting twice restores the ordering, so
-`negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
-boundedness and on comparisons through the order dual. The positive forms of the members are
-contradictory (*clean* and *dirty*) or contrary (*tall* and *short*, which leave a gap), two
-cells of the Aristotelian square in the sense of Cruse and Horn; a lexical pair is contradictory
-when its poles take complementary standards, `Degree.AntonymPair.ComplementaryStandards`.
-
-The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
-positive form true above its upper threshold and the negative form below its lower one, and
-`Degree.AntonymForm` is the quadruplet *happy*, *not happy*, *unhappy*, *not unhappy* that
-sentential negation generates from a pair, with a contradictory denotation on one threshold,
-where *not unhappy* collapses to *happy*, and a strengthened denotation on a pair, where the gap
-keeps them apart, as in Krifka's account. Evaluative valence, whether a predicate denotes a good
-or a bad property, is a second axis on which the poles differ, distinct from polarity.
-
-## Main definitions
-
-* The actions of `Polarity` on `Boundedness` and on `Comparison`, the negative polarity by the
-  order dual.
-* `EvaluativeValence`: whether a gradable predicate denotes a good, a bad or a neutral property.
-* `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
-* `AntonymForm` with `AntonymForm.contradictoryDenotation`, `AntonymForm.strengthenedDenotation` and
-  `AntonymForm.complexity`.
-
-## Main results
-
-* `AntonymForm.contradictoryDenotation_notPositive`: contradictory negation is the complement, so
-  double negation eliminates.
-* `ThresholdPair.gap_nonempty_iff`, `AntonymForm.strengthenedDenotation_notNegative_diff_positive`,
-  `AntonymForm.strengthenedDenotation_notPositive_diff_negative`: a pair leaves a gap when its lower
-  threshold does not exceed its upper one, and the gap is what each negated form adds to the
-  opposite simple form.
-* `isCompl_contradictoryDenotation`, `isContrary_strengthenedDenotation`: the two denotations
-  realize the two cells of the Aristotelian square.
+The members of an antonym pair, *tall* and *short* or *happy* and *unhappy*, measure the same
+degrees under inverse orderings, so an adjective's `Polarity` says which member it is, and `negative
+* p` is the polarity of the antonym of a `p` adjective. Polarity acts on
+[boundedness](##Boundedness.negative_smul) and on [comparisons](##Comparison.negative_smul) through
+the order dual. The positive forms of the members are
+[contradictory](##AntonymForm.isCompl_contradictoryDenotation), as *clean* and *dirty* are, or
+[contrary](##AntonymForm.isContrary_strengthenedDenotation), as *tall* and *short* are, two cells of
+the Aristotelian square. The contrary case is a `ThresholdPair` on a linearly ordered scale, and
+[its gap](##ThresholdPair.gap_nonempty_iff) keeps *not unhappy* apart from *happy* in the quadruplet
+`AntonymForm`. `EvaluativeValence`, whether a predicate denotes a good or a bad property, is a
+second axis on which the poles differ.
 
 ## References
 
@@ -62,8 +35,6 @@ or a bad property, is a second axis on which the poles differ, distinct from pol
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-! ### Polarity -/
 
@@ -248,5 +219,3 @@ theorem isContrary_strengthenedDenotation (h : tp.neg ≤ tp.pos) :
 end Denotation
 
 end AntonymForm
-
-end Degree

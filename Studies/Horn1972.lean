@@ -54,7 +54,6 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 
 namespace Horn1972
 
-open Degree
 
 variable {W : Type*} {n : ℕ}
 

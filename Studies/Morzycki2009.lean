@@ -43,7 +43,6 @@ represented, and neither are the degree heads *real*, *true*, *total* and *absol
 
 namespace Morzycki2009
 
-open Degree
 
 variable {E D S : Type*}
 
