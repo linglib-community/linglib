@@ -1,8 +1,8 @@
 [
   {
-    "id": "ogihara1989_46a",
+    "id": "ogihara1989_1_46a",
     "source": {"bibkey": "partee-1973", "paperLabel": ""},
-    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "(46a)"},
+    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "ch. 1, (46a)"},
     "language": "stan1293",
     "primaryText": "I didn't turn off the stove.",
     "discourseSegments": [],
@@ -23,9 +23,9 @@
     "verified": "page-image"
   },
   {
-    "id": "ogihara1989_47",
+    "id": "ogihara1989_1_47",
     "source": {"bibkey": "partee-1973", "paperLabel": ""},
-    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "(47)"},
+    "reportedIn": {"bibkey": "ogihara-1989", "paperLabel": "ch. 1, (47)"},
     "language": "stan1293",
     "primaryText": "Sheila had a party last Friday, and Sam got drunk.",
     "discourseSegments": [],
@@ -44,8 +44,8 @@
     "verified": "page-image"
   },
   {
-    "id": "ogihara1989_57",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": "(57)"},
+    "id": "ogihara1989_1_57",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 1, (57)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Bill: Did you see Mary? I have to talk to her. John: Yes, I saw her, but I don't know where she is now. Bill: What time did you see her? John: Sometime this morning. I don't remember exactly when.",
@@ -67,7 +67,679 @@
     "paperFeatures": [
       ["restriction", "contextual"]
     ],
-    "comment": "The readings are those of John's first answer, translated as (58). The source prints a space before the first question mark.",
+    "comment": "John's first statement is (58). The second reading is what Bill's question is hardly interpretable as.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_1a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary was ill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 72. The shifted reading is preferred with the past perfect by some speakers (note 1).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_2a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (2a)"},
+    "reportedIn": null,
+    "method": "introspection",
+    "language": "nucl1643",
+    "primaryText": "John-wa Mary-ga byookidat-ta to it-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["Mary-ga", "Mary-NOM"], ["byookidat-ta", "be.ill-PST"],
+      ["to", "COMP"], ["it-ta", "say-PST"]
+    ],
+    "translation": "John said that Mary had been ill.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 73: shifted reading only.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_2b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (2b)"},
+    "reportedIn": null,
+    "method": "introspection",
+    "language": "nucl1643",
+    "primaryText": "John-wa Mary-ga byookid-a to it-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["Mary-ga", "Mary-NOM"], ["byookid-a", "be.ill-PRES"],
+      ["to", "COMP"], ["it-ta", "say-PST"]
+    ],
+    "translation": "John said that Mary was ill.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "shifted", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 73: simultaneous reading only. Chapter 4 note 4 adds a double-access reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_25a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (25a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary is in Austin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 93: only a double-access interpretation, no purely simultaneous reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_25b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (25b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary was in Austin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 93.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_25c",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (25c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John will say that Mary is in Austin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 93.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_27",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (27)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John saw a man who was laughing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "subsequent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 96: the laughing can be prior to, simultaneous with, or subsequent to the seeing. Repeated as (46).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_28",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "subsequent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 97: the time of being sick cannot follow the saying.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_33a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (33a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Two years ago today, John met a man who would become his great supporter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "empty tense", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "pp. 103-104: the past on would is deleted, (33a'). Repeated as (42a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_33b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (33b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Two years ago today, John met a man who will become his great supporter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "empty tense", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "pp. 104-105: the becoming follows the speech time. Repeated as (42b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_34",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At the airport, John will meet a man who is holding a copy of L&P in his hand.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 105: the man holds the copy at the future time and not now; the matrix present deletes the lower present, (35). Repeated as (41b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_37",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (37)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that he would buy a fish that was still alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "pp. 106-107: the buying can follow the speech time and coincide with the fish's being alive; both lower pasts are deleted, (37'). Repeated as (71).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_47a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (47a)"},
+    "reportedIn": null,
+    "method": "introspection",
+    "language": "nucl1643",
+    "primaryText": "John-wa warat-te ir-u otoko ni at-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["warat-te", "laugh-TE"], ["ir-u", "PROG-PRES"], ["otoko", "man"],
+      ["ni", "DAT"], ["at-ta", "see-PST"]
+    ],
+    "translation": "John met a man who was laughing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 119: also John met a man who is laughing (now), the wide scope (47a').",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_47b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (47b)"},
+    "reportedIn": null,
+    "method": "introspection",
+    "language": "nucl1643",
+    "primaryText": "John-wa warat-te ir-ta otoko ni at-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["warat-te", "laugh-TE"], ["ir-ta", "PROG-PST"], ["otoko", "man"],
+      ["ni", "DAT"], ["at-ta", "see-PST"]
+    ],
+    "translation": "John met a man who was laughing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted", "judgment": "acceptable"},
+      {"name": "subsequent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 119: the laughing can be any time before the speech time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_59",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (59)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John will have claimed that he was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 129: the perfect triggers tense deletion, (59'). (25) of chapter 3 is the same sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_60b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (60b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John's earlier claim that Mary would win the prize is well-known.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "empty tense", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "pp. 131-132: the adjective earlier triggers tense deletion.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_61",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (61)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everybody is amused by John's current claim that Mary would win the prize.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "empty tense", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 132: illicit on the reading on which the winning follows the speech time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_70",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (70)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John met a man who would buy a fish which was still alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 140: unacceptable where the man will buy a living fish tomorrow, the LF (70'), though the rule generates that LF.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_97",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (97)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I told Bill that you would say that you only had three magic tricks to do, but it looks as if you have brought enough equipment to do six or seven.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 158: your having can be simultaneous with your saying, which follows the speech time. Due to Lee Baker.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_103",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (103)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I told Bill that you will say that you only had three magic tricks to do.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 162: the simultaneous reading of had disappears under will.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_104",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (104)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John promised to say that he did not know anything about the crime.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 164.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_105",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (105)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John will promise to say that he did not know anything about the crime.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 164.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_125",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (125)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary would come to Austin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the coming follows the speech time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 186: the triple-index system wrongly places the coming before the speech time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_139a",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (139a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John thought that Bill will claim that he did not know anything about the crime.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "pp. 192-193.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_139b",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (139b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John thought that Bill would claim that he did not know anything about the crime.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 193.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_2_139c",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 2, (139c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John asked Bill to claim that he did not know anything about the crime.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "p. 193: the deletion crosses the infinitive, (139c').",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_17d",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (17d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary is in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At 10 A.M. John and Bill are peeping into a room where Sue is. John, near-sighted, says Mary is in the room. Bill denies it. One minute later Sue is still in the room and Bill reports this to Kent, adding: But that's not true. The one that is in the room is Sue.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "continues"],
+      ["truthValue", "true"]
+    ],
+    "comment": "p. 287: true though Mary is in the room neither at the saying nor at the report, against Hypothesis 1.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_24_Case_1",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (24) Case 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said in June that Mary is pregnant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "On June 20th John says Mary is pregnant, and she is. On December 20th Bill verifies that she is still pregnant.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "continues"]
+    ],
+    "comment": "p. 293.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_24_Case_2",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (24) Case 2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said in June that Mary is pregnant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "On June 20th John says Mary is pregnant, and she is. On December 20th Bill learns that she has had a miscarriage.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "ends"]
+    ],
+    "comment": "p. 293: John's attitude is the same as in Case 1, against Hypothesis 2.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_27d",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (27d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary is in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "As in (17), except that Sue leaves the room before Kent joins them.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "ends"]
+    ],
+    "comment": "p. 295.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_28",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary is in the room. Yeah, he was right! She is in there now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "As in (27), except that Mary comes in just before Sue leaves.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "ends"]
+    ],
+    "comment": "p. 296: infelicitous though Mary is in the room now.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_34d",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (34d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said that Mary is in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "As in (17), except that Bill convinces John that it is Sue. One minute later Sue is still in the room.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "continues"]
+    ],
+    "comment": "p. 300, against Hypothesis 3; two consultants disagree (p. 299).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_35",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (35)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John told me, before he died, that Mary is pregnant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "continues"]
+    ],
+    "comment": "p. 300, against Hypothesis 3.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1989_4_43c",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": "ch. 4, (43c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said yesterday that Mary is standing in the room. But that's Sue, not Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "As in (27) on the first day. On the following day Sue, who went home for the night, is inside the room again.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["state", "ends"]
+    ],
+    "comment": "p. 307: two temporally discontinuous states of Sue's standing in the room.",
     "verified": "page-image"
   }
 ]
