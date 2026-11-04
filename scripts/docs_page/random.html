@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Random paper | Linglib</title>
+<script>
+// Opens a study page at one of its theorems: a paper first, so that long files do not dominate, and
+// none seen in this session while others remain.
+(() => {
+  const pool = /*POOL*/;
+  const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
+  let seen = [];
+  try { seen = JSON.parse(sessionStorage.getItem("random-seen")) || []; } catch (e) {}
+  const papers = Object.keys(pool), fresh = papers.filter((p) => !seen.includes(p));
+  const paper = pick(fresh.length ? fresh : papers);
+  try { sessionStorage.setItem("random-seen", JSON.stringify([...seen, paper].slice(-200))); } catch (e) {}
+  location.replace(`Studies/${paper}.html?t=${encodeURIComponent(pick(pool[paper]))}`);
+})();
+</script>
+</head>
+<body><p><a href="./#studies">All papers</a></p></body>
+</html>
