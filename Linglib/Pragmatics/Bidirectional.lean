@@ -52,41 +52,31 @@ variable {F : Type u} {M : Type v} {α : Type*}
 
 section Blocks
 
-variable [LT α] (f : F × M → α) (S : Set (F × M)) (p : F × M)
+variable [LT α] (e : F × M → F × M → Prop) (f : F × M → α) (S : Set (F × M)) (p : F × M)
 
-/-- `QBlocks f S p` holds when a more harmonic pair of `S` expresses `p`'s meaning. -/
-def QBlocks : Prop := ∃ q ∈ S, q.2 = p.2 ∧ f q < f p
+/-- Two pairs compete when they share a form or a meaning. -/
+abbrev Competes (q p : F × M) : Prop := q.1 = p.1 ∨ q.2 = p.2
 
-/-- `IBlocks f S p` holds when a more harmonic pair of `S` interprets `p`'s form. -/
-def IBlocks : Prop := ∃ q ∈ S, q.1 = p.1 ∧ f q < f p
+/-- `Blocks e f S p` holds when a more harmonic pair of `S` is related to `p` by `e`: `(·.2 = ·.2)`
+for the Q-principle, `(·.1 = ·.1)` for the I-principle, `Competes` for both. -/
+def Blocks : Prop := ∃ q ∈ S, e q p ∧ f q < f p
 
-/-- `Blocks f S p` holds when a more harmonic pair of `S` shares `p`'s form or meaning. -/
-def Blocks : Prop := ∃ q ∈ S, (q.1 = p.1 ∨ q.2 = p.2) ∧ f q < f p
+theorem blocks_competes_iff :
+    Blocks Competes f S p ↔ Blocks (·.1 = ·.1) f S p ∨ Blocks (·.2 = ·.2) f S p := by
+  simp only [Blocks, Competes, or_and_right, exists_or, and_or_left]
 
-theorem blocks_iff : Blocks f S p ↔ IBlocks f S p ∨ QBlocks f S p := by
-  simp only [Blocks, IBlocks, QBlocks, or_and_right, exists_or, and_or_left]
+variable {e f S p} {T : Set (F × M)}
 
-variable {f S p} {T : Set (F × M)}
-
-theorem QBlocks.mono (hST : S ⊆ T) : QBlocks f S p → QBlocks f T p :=
+theorem Blocks.mono (hST : S ⊆ T) : Blocks e f S p → Blocks e f T p :=
   fun ⟨q, hq, h⟩ ↦ ⟨q, hST hq, h⟩
 
-theorem IBlocks.mono (hST : S ⊆ T) : IBlocks f S p → IBlocks f T p :=
-  fun ⟨q, hq, h⟩ ↦ ⟨q, hST hq, h⟩
+/-- Whether `S` blocks `p` depends only on the pairs more harmonic than `p`. -/
+theorem blocks_congr (h : ∀ q, f q < f p → (q ∈ S ↔ q ∈ T)) : Blocks e f S p ↔ Blocks e f T p :=
+  exists_congr fun q ↦
+    ⟨fun ⟨a, b, c⟩ ↦ ⟨(h q c).1 a, b, c⟩, fun ⟨a, b, c⟩ ↦ ⟨(h q c).2 a, b, c⟩⟩
 
-theorem Blocks.mono (hST : S ⊆ T) : Blocks f S p → Blocks f T p :=
-  fun ⟨q, hq, h⟩ ↦ ⟨q, hST hq, h⟩
-
-variable [DecidableLT α] (f) (S : Finset (F × M)) (p)
-
-instance [DecidableEq M] : Decidable (QBlocks f ↑S p) :=
-  decidable_of_iff (∃ q ∈ S, q.2 = p.2 ∧ f q < f p) Iff.rfl
-
-instance [DecidableEq F] : Decidable (IBlocks f ↑S p) :=
-  decidable_of_iff (∃ q ∈ S, q.1 = p.1 ∧ f q < f p) Iff.rfl
-
-instance [DecidableEq F] [DecidableEq M] : Decidable (Blocks f ↑S p) :=
-  decidable_of_iff (∃ q ∈ S, (q.1 = p.1 ∨ q.2 = p.2) ∧ f q < f p) Iff.rfl
+instance [DecidableLT α] [DecidableRel e] (S : Finset (F × M)) : Decidable (Blocks e f ↑S p) :=
+  decidable_of_iff (∃ q ∈ S, e q p ∧ f q < f p) Iff.rfl
 
 end Blocks
 
@@ -94,29 +84,31 @@ end Blocks
 
 section Step
 
-variable [LT α] (pairs : Set (F × M)) (f : F × M → α) {S : Set (F × M)} {p : F × M}
+variable [LT α] (e : F × M → F × M → Prop) (pairs : Set (F × M)) (f : F × M → α) {S : Set (F × M)}
+  {p : F × M}
 
-/-- The pairs of `pairs` that `S` does not block. Antitone in `S`. -/
-def unblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ Blocks f S p}
+/-- The pairs of `pairs` that `S` does not block along `e`. Antitone in `S`. Unidirectional
+optimality compares the outputs of one input, `unblockedSet (·.1 = ·.1) pairs f pairs`. -/
+def unblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ Blocks e f S p}
 
-@[simp] theorem mem_unblockedSet : p ∈ unblockedSet pairs f S ↔ p ∈ pairs ∧ ¬ Blocks f S p :=
+@[simp] theorem mem_unblockedSet : p ∈ unblockedSet e pairs f S ↔ p ∈ pairs ∧ ¬ Blocks e f S p :=
   Iff.rfl
 
-theorem unblockedSet_subset : unblockedSet pairs f S ⊆ pairs := fun _ hp ↦ hp.1
+theorem unblockedSet_subset : unblockedSet e pairs f S ⊆ pairs := fun _ hp ↦ hp.1
 
-theorem unblockedSet_antitone : Antitone (unblockedSet pairs f) :=
+theorem unblockedSet_antitone : Antitone (unblockedSet e pairs f) :=
   fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
 
 /-- Strong bidirection keeps the pairs that no pair of `pairs` blocks. -/
-def strongOptimalSet : Set (F × M) := unblockedSet pairs f pairs
+def strongOptimalSet : Set (F × M) := unblockedSet Competes pairs f pairs
 
 /-- The square of the blocking step, monotone as the composite of two antitone maps. -/
 def unblockedSq : Set (F × M) →o Set (F × M) :=
-  ⟨unblockedSet pairs f ∘ unblockedSet pairs f,
-    (unblockedSet_antitone pairs f).comp (unblockedSet_antitone pairs f)⟩
+  ⟨unblockedSet Competes pairs f ∘ unblockedSet Competes pairs f,
+    (unblockedSet_antitone Competes pairs f).comp (unblockedSet_antitone Competes pairs f)⟩
 
 @[simp] theorem unblockedSq_apply (S : Set (F × M)) :
-    unblockedSq pairs f S = unblockedSet pairs f (unblockedSet pairs f S) := rfl
+    unblockedSq pairs f S = unblockedSet Competes pairs f (unblockedSet Competes pairs f S) := rfl
 
 /-- The super-optimal pairs, the greatest fixed point of the squared blocking step. When the
 harmonies of the generator are well-founded it is the unique fixed point of the step itself
@@ -125,56 +117,58 @@ noncomputable def superoptimalSet : Set (F × M) := (unblockedSq pairs f).gfp
 
 theorem superoptimalSet_subset : superoptimalSet pairs f ⊆ pairs := by
   rw [superoptimalSet, ← (unblockedSq pairs f).map_gfp]
-  exact unblockedSet_subset _ _
+  exact unblockedSet_subset _ _ _
 
 /-- Optimal pairs are super-optimal, since `strongOptimalSet` is a post-fixed point of the
 squared step, since the step is antitone and lands in `pairs`. -/
 theorem strongOptimalSet_subset_superoptimalSet :
     strongOptimalSet pairs f ⊆ superoptimalSet pairs f :=
-  le_gfp _ (unblockedSet_antitone pairs f (unblockedSet_subset pairs f))
+  le_gfp _ (unblockedSet_antitone Competes pairs f (unblockedSet_subset Competes pairs f))
 
 theorem unblockedSet_superoptimalSet :
-    unblockedSet pairs f (superoptimalSet pairs f) = (unblockedSq pairs f).lfp := by
+    unblockedSet Competes pairs f (superoptimalSet pairs f) = (unblockedSq pairs f).lfp := by
   have hfix : ∀ S, unblockedSq pairs f S = S →
-      unblockedSq pairs f (unblockedSet pairs f S) = unblockedSet pairs f S := fun S hS ↦ by
-    change unblockedSet pairs f (unblockedSq pairs f S) = _
+      unblockedSq pairs f (unblockedSet Competes pairs f S) = unblockedSet Competes pairs f S :=
+    fun S hS ↦ by
+    change unblockedSet Competes pairs f (unblockedSq pairs f S) = _
     rw [hS]
   refine le_antisymm ?_ (lfp_le_fixed _ (hfix _ (unblockedSq pairs f).map_gfp))
-  calc unblockedSet pairs f (superoptimalSet pairs f)
-      ≤ unblockedSet pairs f (unblockedSet pairs f (unblockedSq pairs f).lfp) :=
-        unblockedSet_antitone pairs f (le_gfp _ (hfix _ (unblockedSq pairs f).map_lfp).ge)
+  calc unblockedSet Competes pairs f (superoptimalSet pairs f)
+      ≤ unblockedSet Competes pairs f (unblockedSet Competes pairs f (unblockedSq pairs f).lfp) :=
+        unblockedSet_antitone Competes pairs f (le_gfp _ (hfix _ (unblockedSq pairs f).map_lfp).ge)
     _ = (unblockedSq pairs f).lfp := (unblockedSq pairs f).map_lfp
 
 theorem lfp_eq_superoptimalSet (h : (f '' pairs).IsWF) :
     (unblockedSq pairs f).lfp = superoptimalSet pairs f := by
   set G := superoptimalSet pairs f
   set L := (unblockedSq pairs f).lfp
-  have hGL : unblockedSet pairs f G = L := unblockedSet_superoptimalSet pairs f
-  have hLG : unblockedSet pairs f L = G := by rw [← hGL]; exact (unblockedSq pairs f).map_gfp
+  have hGL : unblockedSet Competes pairs f G = L := unblockedSet_superoptimalSet pairs f
+  have hLG : unblockedSet Competes pairs f L = G := by
+    rw [← hGL]; exact (unblockedSq pairs f).map_gfp
   refine le_antisymm (lfp_le_gfp _) (not_not.1 fun hne ↦ ?_)
   obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
     superoptimalSet_subset pairs f hx.1)).exists_forall_not_lt (s := G \ L)
       (Set.not_subset.1 hne)
-  have hp : p ∈ unblockedSet pairs f L := hLG.symm ▸ hpG
-  obtain ⟨q, hqG, hadj, hlt⟩ : Blocks f G p :=
-    not_not.1 fun hb ↦ hpL (hGL ▸ (⟨hp.1, hb⟩ : p ∈ unblockedSet pairs f G))
+  have hp : p ∈ unblockedSet Competes pairs f L := hLG.symm ▸ hpG
+  obtain ⟨q, hqG, hadj, hlt⟩ : Blocks Competes f G p :=
+    not_not.1 fun hb ↦ hpL (hGL ▸ (⟨hp.1, hb⟩ : p ∈ unblockedSet Competes pairs f G))
   exact hmin q ⟨hqG, fun hqL ↦ hp.2 ⟨q, hqL, hadj, hlt⟩⟩ hlt
 
 theorem isFixedPt_superoptimalSet (h : (f '' pairs).IsWF) :
-    IsFixedPt (unblockedSet pairs f) (superoptimalSet pairs f) := by
+    IsFixedPt (unblockedSet Competes pairs f) (superoptimalSet pairs f) := by
   rw [IsFixedPt, unblockedSet_superoptimalSet, lfp_eq_superoptimalSet pairs f h]
 
 /-- A pair is super-optimal iff it lies in the generator and no super-optimal pair blocks it,
 Jäger's reformulation of super-optimality. -/
 theorem mem_superoptimalSet (h : (f '' pairs).IsWF) :
-    p ∈ superoptimalSet pairs f ↔ p ∈ pairs ∧ ¬ Blocks f (superoptimalSet pairs f) p := by
+    p ∈ superoptimalSet pairs f ↔ p ∈ pairs ∧ ¬ Blocks Competes f (superoptimalSet pairs f) p := by
   conv_lhs => rw [← (isFixedPt_superoptimalSet pairs f h).eq]
   exact Iff.rfl
 
 theorem eq_superoptimalSet_of_isFixedPt (h : (f '' pairs).IsWF)
-    (hS : IsFixedPt (unblockedSet pairs f) S) : S = superoptimalSet pairs f := by
+    (hS : IsFixedPt (unblockedSet Competes pairs f) S) : S = superoptimalSet pairs f := by
   have hsq : unblockedSq pairs f S = S := by
-    change unblockedSet pairs f (unblockedSet pairs f S) = S
+    change unblockedSet Competes pairs f (unblockedSet Competes pairs f S) = S
     rw [hS.eq, hS.eq]
   exact le_antisymm (le_gfp _ hsq.ge)
     ((lfp_eq_superoptimalSet pairs f h).symm.trans_le (lfp_le_fixed _ hsq))
@@ -187,45 +181,29 @@ section Weak
 
 variable [LT α] (pairs : Set (F × M)) (f : F × M → α)
 
-/-- The pairs of `pairs` that `S` does not Q-block. -/
-def qUnblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ QBlocks f S p}
-
-/-- The pairs of `pairs` that `S` does not I-block. -/
-def iUnblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ IBlocks f S p}
-
-@[simp] theorem mem_qUnblockedSet {S : Set (F × M)} {p : F × M} :
-    p ∈ qUnblockedSet pairs f S ↔ p ∈ pairs ∧ ¬ QBlocks f S p := Iff.rfl
-
-@[simp] theorem mem_iUnblockedSet {S : Set (F × M)} {p : F × M} :
-    p ∈ iUnblockedSet pairs f S ↔ p ∈ pairs ∧ ¬ IBlocks f S p := Iff.rfl
-
-theorem qUnblockedSet_antitone : Antitone (qUnblockedSet pairs f) :=
-  fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
-
-theorem iUnblockedSet_antitone : Antitone (iUnblockedSet pairs f) :=
-  fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
-
 /-- In the weak version of bidirection `Q` collects the pairs no pair of `I` Q-blocks and `I` the
 pairs no pair of `Q` I-blocks. A pair of both is super-optimal when the order is transitive and the
 generator's harmonies are well-founded (`inter_eq_superoptimalSet`). -/
 def IsWeakSolution (Q I : Set (F × M)) : Prop :=
-  qUnblockedSet pairs f I = Q ∧ iUnblockedSet pairs f Q = I
+  unblockedSet (·.2 = ·.2) pairs f I = Q ∧ unblockedSet (·.1 = ·.1) pairs f Q = I
 
 theorem exists_isWeakSolution : ∃ Q I, IsWeakSolution pairs f Q I :=
   let Φ : Set (F × M) →o Set (F × M) :=
-    ⟨qUnblockedSet pairs f ∘ iUnblockedSet pairs f,
-      (qUnblockedSet_antitone pairs f).comp (iUnblockedSet_antitone pairs f)⟩
-  ⟨Φ.gfp, iUnblockedSet pairs f Φ.gfp, Φ.map_gfp, rfl⟩
+    ⟨unblockedSet (·.2 = ·.2) pairs f ∘ unblockedSet (·.1 = ·.1) pairs f,
+      (unblockedSet_antitone _ pairs f).comp (unblockedSet_antitone _ pairs f)⟩
+  ⟨Φ.gfp, unblockedSet (·.1 = ·.1) pairs f Φ.gfp, Φ.map_gfp, rfl⟩
 
 namespace IsWeakSolution
 
 variable {pairs f} {Q I Q' I' : Set (F × M)} {p : F × M}
 
-theorem mem_left (h : IsWeakSolution pairs f Q I) : p ∈ Q ↔ p ∈ pairs ∧ ¬ QBlocks f I p := by
-  rw [← h.1, mem_qUnblockedSet]
+theorem mem_left (h : IsWeakSolution pairs f Q I) :
+    p ∈ Q ↔ p ∈ pairs ∧ ¬ Blocks (·.2 = ·.2) f I p := by
+  rw [← h.1, mem_unblockedSet]
 
-theorem mem_right (h : IsWeakSolution pairs f Q I) : p ∈ I ↔ p ∈ pairs ∧ ¬ IBlocks f Q p := by
-  rw [← h.2, mem_iUnblockedSet]
+theorem mem_right (h : IsWeakSolution pairs f Q I) :
+    p ∈ I ↔ p ∈ pairs ∧ ¬ Blocks (·.1 = ·.1) f Q p := by
+  rw [← h.2, mem_unblockedSet]
 
 theorem left_subset (h : IsWeakSolution pairs f Q I) : Q ⊆ pairs := fun _ hx ↦ (h.mem_left.1 hx).1
 
@@ -233,8 +211,8 @@ theorem right_subset (h : IsWeakSolution pairs f Q I) : I ⊆ pairs := fun _ hx 
 
 theorem strongOptimalSet_subset_inter (h : IsWeakSolution pairs f Q I) :
     strongOptimalSet pairs f ⊆ Q ∩ I := fun _ hp ↦
-  ⟨h.mem_left.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inr (hb.mono h.right_subset)))⟩,
-    h.mem_right.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inl (hb.mono h.left_subset)))⟩⟩
+  ⟨h.mem_left.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_competes_iff ..).2 (.inr (hb.mono h.right_subset)))⟩,
+    h.mem_right.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_competes_iff ..).2 (.inl (hb.mono h.left_subset)))⟩⟩
 
 /-- With well-founded generator harmonies, the mutual recursion has at most one solution: a
 disagreement minimal in harmony is decided by the agreement below it. -/
@@ -250,41 +228,33 @@ theorem unique (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I)
   obtain ⟨p, hp, hmin⟩ := (hf.mono (Set.image_mono hDp)).exists_forall_not_lt hD
   have hbelow : ∀ q, f q < f p → (q ∈ Q ↔ q ∈ Q') ∧ (q ∈ I ↔ q ∈ I') :=
     fun q hq ↦ not_not.1 fun hn ↦ hmin q hn hq
-  have hQb : QBlocks f I p ↔ QBlocks f I' p := exists_congr fun q ↦
-    ⟨fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).2.1 a, b, c⟩, fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).2.2 a, b, c⟩⟩
-  have hIb : IBlocks f Q p ↔ IBlocks f Q' p := exists_congr fun q ↦
-    ⟨fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).1.1 a, b, c⟩, fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).1.2 a, b, c⟩⟩
-  exact hp ⟨by rw [h.mem_left, h'.mem_left, hQb], by rw [h.mem_right, h'.mem_right, hIb]⟩
+  exact hp ⟨by rw [h.mem_left, h'.mem_left, blocks_congr fun q hq ↦ (hbelow q hq).2],
+    by rw [h.mem_right, h'.mem_right, blocks_congr fun q hq ↦ (hbelow q hq).1]⟩
 
 variable [IsTrans α (· < ·)]
 
-/-- Along the form axis, `Q` and `Q ∩ I` block the same pairs: a blocker in `Q` minimal in harmony
-cannot itself be I-blocked by `Q`, since a blocker of a blocker is, by transitivity, a blocker. -/
-theorem iBlocks_inter_iff (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
-    IBlocks f (Q ∩ I) p ↔ IBlocks f Q p := by
-  refine ⟨.mono Set.inter_subset_left, fun hb ↦ ?_⟩
-  obtain ⟨q, ⟨hqQ, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
-    h.left_subset hx.1)).exists_forall_not_lt (s := {q ∈ Q | q.1 = p.1 ∧ f q < f p}) hb
-  refine ⟨q, ⟨hqQ, h.mem_right.2 ⟨h.left_subset hqQ, ?_⟩⟩, hq, hqp⟩
-  rintro ⟨r, hrQ, hr, hrq⟩
-  exact hmin r ⟨hrQ, hr.trans hq, _root_.trans hrq hqp⟩ hrq
-
-/-- Along the meaning axis, `I` and `Q ∩ I` block the same pairs. -/
-theorem qBlocks_inter_iff (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
-    QBlocks f (Q ∩ I) p ↔ QBlocks f I p := by
+/-- Along a transitive relation, `B` and `A ∩ B` block the same pairs, where `A` is what `B` leaves
+unblocked: a blocker in `B` minimal in harmony cannot itself be blocked by `B`, since a blocker of a
+blocker is, by transitivity, a blocker. -/
+private theorem blocks_inter_iff {e : F × M → F × M → Prop} (he : ∀ {r q p}, e r q → e q p → e r p)
+    (hf : (f '' pairs).IsWF) {A B : Set (F × M)} (hA : unblockedSet e pairs f B = A)
+    (hB : B ⊆ pairs) : Blocks e f (A ∩ B) p ↔ Blocks e f B p := by
   refine ⟨.mono Set.inter_subset_right, fun hb ↦ ?_⟩
-  obtain ⟨q, ⟨hqI, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
-    h.right_subset hx.1)).exists_forall_not_lt (s := {q ∈ I | q.2 = p.2 ∧ f q < f p}) hb
-  refine ⟨q, ⟨h.mem_left.2 ⟨h.right_subset hqI, ?_⟩, hqI⟩, hq, hqp⟩
-  rintro ⟨r, hrI, hr, hrq⟩
-  exact hmin r ⟨hrI, hr.trans hq, _root_.trans hrq hqp⟩ hrq
+  obtain ⟨q, ⟨hqB, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
+    hB hx.1)).exists_forall_not_lt (s := {q ∈ B | e q p ∧ f q < f p}) hb
+  refine ⟨q, ⟨hA ▸ ⟨hB hqB, ?_⟩, hqB⟩, hq, hqp⟩
+  rintro ⟨r, hrB, hr, hrq⟩
+  exact hmin r ⟨hrB, he hr hq, _root_.trans hrq hqp⟩ hrq
 
 /-- The pairs satisfying both principles are a fixed point of the blocking step. -/
 theorem isFixedPt_inter (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
-    IsFixedPt (unblockedSet pairs f) (Q ∩ I) := by
+    IsFixedPt (unblockedSet Competes pairs f) (Q ∩ I) := by
   ext p
-  simp only [mem_unblockedSet, Set.mem_inter_iff, h.mem_left, h.mem_right, blocks_iff, not_or,
-    h.iBlocks_inter_iff hf, h.qBlocks_inter_iff hf]
+  have hq := blocks_inter_iff (e := (·.2 = ·.2)) (p := p) Eq.trans hf h.1 h.right_subset
+  have hi := blocks_inter_iff (e := (·.1 = ·.1)) (p := p) Eq.trans hf h.2 h.left_subset
+  rw [Set.inter_comm] at hi
+  simp only [mem_unblockedSet, Set.mem_inter_iff, h.mem_left, h.mem_right, blocks_competes_iff,
+    not_or, hq, hi]
   tauto
 
 /-- For a transitive order with well-founded generator harmonies, the pairs satisfying both
@@ -477,7 +447,8 @@ open Set (univ mem_graphOn)
 variable [Preorder α] [LinearOrder F] [LinearOrder M] (pairs : Set (F × M)) {f : F × M → α}
   {S : Set (F × M)} {p : F × M}
 
-theorem blocks_iff_of_strictMono (hf : StrictMono f) : Blocks f S p ↔ Blocks id S p := by
+theorem blocks_iff_of_strictMono (hf : StrictMono f) :
+    Blocks Competes f S p ↔ Blocks Competes id S p := by
   refine exists_congr fun q ↦ and_congr_right fun _ ↦ and_congr_right fun hqp ↦
     ⟨fun hlt ↦ ?_, @hf _ _⟩
   have hcomp : q ≤ p ∨ p ≤ q := by
@@ -489,7 +460,7 @@ theorem blocks_iff_of_strictMono (hf : StrictMono f) : Blocks f S p ↔ Blocks i
     fun h ↦ absurd (hf.monotone h) hlt.not_ge
 
 theorem unblockedSet_eq_of_strictMono (hf : StrictMono f) :
-    unblockedSet pairs f = unblockedSet pairs id := by
+    unblockedSet Competes pairs f = unblockedSet Competes pairs id := by
   ext S p
   simp only [mem_unblockedSet, blocks_iff_of_strictMono hf]
 
@@ -508,7 +479,7 @@ theorem superoptimalSet_eq_graphOn (e : F ≃o M) (hf : StrictMono f) (h : pairs
   rw [superoptimalSet_eq_of_strictMono pairs hf]
   refine (eq_superoptimalSet_of_isFixedPt pairs id (by rwa [Set.image_id]) ?_).symm
   ext ⟨a, b⟩
-  change (a, b) ∈ pairs ∧ ¬ Blocks id (univ.graphOn e) (a, b) ↔ (a, b) ∈ univ.graphOn e
+  change (a, b) ∈ pairs ∧ ¬ Blocks Competes id (univ.graphOn e) (a, b) ↔ (a, b) ∈ univ.graphOn e
   refine ⟨fun ⟨_, hb⟩ ↦ mem_graphOn.2 ⟨trivial, ?_⟩, fun hab ↦ ⟨he hab, ?_⟩⟩
   · refine not_not.1 fun hne ↦ (lt_or_gt_of_ne hne).elim (fun hlt ↦ ?_) fun hlt ↦ ?_
     · exact hb ⟨(a, e a), ⟨a, trivial, rfl⟩, .inl rfl, Prod.mk_lt_mk_iff_right.2 hlt⟩
@@ -531,13 +502,14 @@ variable [LT α] [DecidableEq F] [DecidableEq M] [DecidableLT α] (pairs : Finse
   (f : F × M → α) {S : Finset (F × M)} {p : F × M}
 
 /-- The pairs of `pairs` that `S` does not block. -/
-def unblocked (S : Finset (F × M)) : Finset (F × M) := pairs.filter fun p ↦ ¬ Blocks f ↑S p
+def unblocked (S : Finset (F × M)) : Finset (F × M) := pairs.filter fun p ↦ ¬ Blocks Competes f ↑S p
 
 variable {pairs f} in
-@[simp] theorem mem_unblocked : p ∈ unblocked pairs f S ↔ p ∈ pairs ∧ ¬ Blocks f ↑S p :=
+@[simp] theorem mem_unblocked : p ∈ unblocked pairs f S ↔ p ∈ pairs ∧ ¬ Blocks Competes f ↑S p :=
   Finset.mem_filter
 
-@[simp] theorem coe_unblocked : (↑(unblocked pairs f S) : Set (F × M)) = unblockedSet ↑pairs f ↑S :=
+@[simp] theorem coe_unblocked :
+    (↑(unblocked pairs f S) : Set (F × M)) = unblockedSet Competes ↑pairs f ↑S :=
   Finset.coe_filter _ _
 
 theorem unblocked_subset : unblocked pairs f S ⊆ pairs := Finset.filter_subset _ _
@@ -550,7 +522,8 @@ theorem unblocked_antitone : Antitone (unblocked pairs f) := fun _ _ hST _ hp �
 def strongOptimal : Finset (F × M) := unblocked pairs f pairs
 
 variable {pairs f} in
-@[simp] theorem mem_strongOptimal : p ∈ strongOptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks f ↑pairs p :=
+@[simp] theorem mem_strongOptimal :
+    p ∈ strongOptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks Competes f ↑pairs p :=
   mem_unblocked
 
 theorem coe_strongOptimal : (↑(strongOptimal pairs f) : Set (F × M)) = strongOptimalSet ↑pairs f :=
@@ -649,7 +622,7 @@ end Finset
 is a preorder. -/
 theorem mem_superoptimal [Preorder α] [DecidableEq F] [DecidableEq M] [DecidableLT α]
     (pairs : Finset (F × M)) (f : F × M → α) {p : F × M} :
-    p ∈ superoptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks f ↑(superoptimal pairs f) p := by
+    p ∈ superoptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks Competes f ↑(superoptimal pairs f) p := by
   rw [← Finset.mem_coe, coe_superoptimal,
     mem_superoptimalSet _ _ (pairs.finite_toSet.image f).isWF, Finset.mem_coe]
 

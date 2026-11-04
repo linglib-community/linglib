@@ -28,6 +28,8 @@ expresses the same outcome.
 
 ## Implementation notes
 
+* Weak bidirection is the mutual recursion `IsWeakSolution`. The computations below run on its
+  fixed-point form `superoptimal`, the same set by `IsWeakSolution.inter_eq_superoptimalSet`.
 * The markedness orders on forms and situations are pulled back from the violations of F and C.
 * BeStrong compares outcomes by entailment, as sets of worlds, so the harmony of a resolution is
   its AvoidA count followed lexicographically by its outcome.
@@ -146,9 +148,7 @@ theorem marked_marked_mem_strongOptimalSet_iff (hf : StrictMono f) :
   · exact hs hq
   · exact lt_irrefl _ hlt
 
-/-- Weak bidirection derives the division of pragmatic labour (12), pairing unmarked with
-stereotypical and marked with marked. -/
-theorem weak_division_of_labour (hf : StrictMono f) :
+theorem superoptimalSet_eq_iconic (hf : StrictMono f) :
     superoptimalSet univ f = {(.unmarked, .stereotypical), (.marked, .marked)} := by
   rw [superoptimalSet_eq_graphOn _ iconicity hf finite_univ.isWF (subset_univ _)]
   ext ⟨a, b⟩
@@ -156,9 +156,16 @@ theorem weak_division_of_labour (hf : StrictMono f) :
   revert a b
   decide
 
-theorem strongOptimalSet_ssubset_superoptimalSet (hf : StrictMono f) :
-    strongOptimalSet univ f ⊂ superoptimalSet univ f := by
-  rw [strong_total_blocking hf (mem_univ _) (mem_univ _), weak_division_of_labour hf, pair_comm]
+/-- Weak bidirection derives the division of pragmatic labour (12), pairing unmarked with
+stereotypical and marked with marked. -/
+theorem weak_division_of_labour (hf : StrictMono f) {Q I : Set (Form × Situation)}
+    (h : IsWeakSolution univ f Q I) :
+    Q ∩ I = {(.unmarked, .stereotypical), (.marked, .marked)} := by
+  rw [h.inter_eq_superoptimalSet (finite_univ.image f).isWF, superoptimalSet_eq_iconic hf]
+
+theorem strongOptimalSet_ssubset_inter (hf : StrictMono f) {Q I : Set (Form × Situation)}
+    (h : IsWeakSolution univ f Q I) : strongOptimalSet univ f ⊂ Q ∩ I := by
+  rw [strong_total_blocking hf (mem_univ _) (mem_univ _), weak_division_of_labour hf h, pair_comm]
   exact ssubset_insert (by simp)
 
 /-! ### Presupposition projection
@@ -283,7 +290,8 @@ theorem accommodation_blocked :
   decide
 
 theorem accommodation_blocked_is_Q :
-    QBlocks accidentAvoidA ↑(Finset.univ : Finset (Definiteness × Unit)) (.definite, ()) := by
+    Blocks (·.2 = ·.2) accidentAvoidA ↑(Finset.univ : Finset (Definiteness × Unit))
+      (.definite, ()) := by
   decide
 
 end Blutner2000

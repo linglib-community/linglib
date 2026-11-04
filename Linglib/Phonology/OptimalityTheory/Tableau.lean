@@ -22,7 +22,8 @@ candidates of least profile.
 ## Main definitions
 
 * `ViolationProfile n`: the violation vector `Fin n → ℕ` under its lexicographic order.
-* `ViolationProfile.ofList`: a candidate's profile under a list of constraints in rank order.
+* `ViolationProfile.of`, `ViolationProfile.ofList`: a candidate's profile under constraints in rank
+  order, given as a family or as a list.
 * `Tableau C n`: a finite set of candidates and `n` constraints in rank order, position `0`
   most dominant.
 * `Tableau.profile`, `Tableau.optimal`: a candidate's violation profile, and the set of winners.
@@ -81,22 +82,28 @@ abbrev ViolationProfile (n : ℕ) := Lex (Fin n → ℕ)
 
 namespace ViolationProfile
 
-variable {C : Type*}
+variable {C : Type*} {n : ℕ}
 
-/-- The violation profile of a candidate under a list of constraints in rank order, position `0`
-most dominant. -/
-def ofList (ranking : List (Constraint C)) (c : C) : ViolationProfile ranking.length :=
-  toLex fun p ↦ ranking.get p c
+/-- The violation profile of a candidate under constraints in rank order, position `0` most
+dominant. -/
+abbrev of (cs : ConstraintSet C (Fin n)) (c : C) : ViolationProfile n := toLex fun p ↦ cs p c
 
-/-- A candidate is minimal under a ranked family of constraints iff it is minimal under the lower
-constraints among the candidates doing best on the top constraint. -/
-theorem minimalFor_toLex_iff {n : ℕ} {P : C → Prop} {g : C → Fin (n + 1) → ℕ} {c : C} :
-    MinimalFor P (fun d ↦ toLex (g d)) c ↔
-      MinimalFor (MinimalFor P (g · 0)) (fun d ↦ toLex (Fin.tail (g d))) c := by
-  simp only [minimalFor_iff_forall_lt, Pi.toLex_lt_toLex_iff_succ]
+/-- The violation profile of a candidate under a list of constraints in rank order. -/
+def ofList (ranking : List (Constraint C)) : C → ViolationProfile ranking.length := of ranking.get
+
+theorem of_lt_iff {cs : ConstraintSet C (Fin (n + 1))} {d e : C} :
+    of cs d < of cs e ↔
+      cs 0 d < cs 0 e ∨ cs 0 d = cs 0 e ∧ of (Fin.tail cs) d < of (Fin.tail cs) e :=
+  Pi.toLex_lt_toLex_iff_succ _ _
+
+/-- A candidate is minimal under ranked constraints iff it is minimal under the lower constraints
+among the candidates doing best on the top constraint. -/
+theorem minimalFor_of_iff {P : C → Prop} {cs : ConstraintSet C (Fin (n + 1))} {c : C} :
+    MinimalFor P (of cs) c ↔ MinimalFor (MinimalFor P (cs 0)) (of (Fin.tail cs)) c := by
+  simp only [minimalFor_iff_forall_lt, of_lt_iff]
   refine ⟨fun ⟨hc, hmin⟩ ↦ ⟨⟨hc, fun d hd ↦ hmin (.inl hd)⟩, fun d hd ⟨hdR, hdF⟩ ↦ ?_⟩,
     fun ⟨⟨hc, hF⟩, hmin⟩ ↦ ⟨hc, fun d hd hdR ↦ ?_⟩⟩
-  · have heq : g d 0 = g c 0 :=
+  · have heq : cs 0 d = cs 0 c :=
       (not_lt.1 fun h ↦ hdF h hc).antisymm (not_lt.1 fun h ↦ hmin (.inl h) hdR)
     exact hmin (.inr ⟨heq, hd⟩) hdR
   · rcases hd with hd | ⟨heq, hd⟩
@@ -106,7 +113,7 @@ theorem minimalFor_toLex_iff {n : ℕ} {P : C → Prop} {g : C → Fin (n + 1) �
 theorem ofList_cons_lt_iff {F : Constraint C} {Fs : List (Constraint C)} {d e : C} :
     ofList (F :: Fs) d < ofList (F :: Fs) e ↔
       F d < F e ∨ F d = F e ∧ ofList Fs d < ofList Fs e :=
-  Pi.toLex_lt_toLex_iff_succ _ _
+  of_lt_iff
 
 theorem not_ofList_nil_lt {d e : C} : ¬ ofList [] d < ofList [] e := fun ⟨i, _⟩ ↦ i.elim0
 
@@ -115,7 +122,7 @@ theorem minimalFor_ofList_nil {P : C → Prop} {c : C} : MinimalFor P (ofList []
 
 theorem minimalFor_ofList_cons {P : C → Prop} {F : Constraint C} {Fs : List (Constraint C)}
     {c : C} : MinimalFor P (ofList (F :: Fs)) c ↔ MinimalFor (MinimalFor P F) (ofList Fs) c :=
-  minimalFor_toLex_iff
+  minimalFor_of_iff
 
 /-- The profile is strictly monotone in a candidate order when every constraint is monotone and
 some constraint separates each strict pair. -/
@@ -143,7 +150,7 @@ variable {C : Type*} {n : ℕ} (t : Tableau C n) (c : C)
 
 /-- The *violation profile* of a candidate: its violations read in rank order, under the
 lexicographic order. -/
-def profile : ViolationProfile n := toLex fun p ↦ t.constraints p c
+def profile : ViolationProfile n := ViolationProfile.of t.constraints c
 
 @[simp] theorem profile_apply (p : Fin n) : t.profile c p = t.constraints p c := rfl
 
@@ -380,7 +387,7 @@ def tail (t : Tableau C (n + 1)) : Tableau C n :=
 theorem optimal_tail (t : Tableau C (n + 1)) : t.tail.optimal = t.optimal := by
   ext c
   simp only [optimal, tail, Finset.mem_argmin_iff_minimalFor]
-  exact (ViolationProfile.minimalFor_toLex_iff (g := fun d p ↦ t.constraints p d)).symm
+  exact ViolationProfile.minimalFor_of_iff.symm
 
 variable {s : Finset C} {F : Constraint C} {Fs Gs : List (Constraint C)}
 

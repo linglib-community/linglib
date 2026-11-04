@@ -36,7 +36,7 @@ like the rational ones [contains them](##ClosureConditions.superoptimalSet_mem).
 ## TODO
 
 * The rational relations as an instance of `ClosureConditions`, for Theorem 4 as printed.
-* Definition 2, Frank and Satta's Theorem 3, and the motivating examples (1)–(6).
+* Frank and Satta's Theorem 3, and the motivating examples (1)–(6).
 
 ## References
 
@@ -51,6 +51,168 @@ namespace Jaeger2002
 
 open BidirectionalOT OptimalityTheory Set
 open scoped SetRel
+
+/-! ### Well-foundedness and transitivity -/
+
+-- Lemma 2
+example {C : Type*} (ranking : List (Constraint C)) (G : Set C) :
+    (ViolationProfile.ofList ranking '' G).IsWF :=
+  IsWF.of_wellFoundedLT _
+
+/-- Three meanings, for an order that is well-founded and not transitive. -/
+inductive Meaning where
+  | first
+  | second
+  | third
+  deriving DecidableEq, Fintype
+
+/-- The position of a meaning in the chain. -/
+def Meaning.rank : Meaning → ℕ
+  | .first => 0
+  | .second => 1
+  | .third => 2
+
+/-- Each meaning is more economical than the next one only. -/
+instance : LT Meaning := ⟨fun a b ↦ a.rank + 1 = b.rank⟩
+
+instance : DecidableLT Meaning := fun a b ↦ inferInstanceAs (Decidable (a.rank + 1 = b.rank))
+
+/-- The harmony of a pair is its meaning. -/
+abbrev Meaning.harmony : Unit × Meaning → Meaning := Prod.snd
+
+instance : WellFoundedLT Meaning :=
+  ⟨(Subrelation.wf (r := InvImage (· < ·) Meaning.rank)
+    (fun {a b} (h : a.rank + 1 = b.rank) ↦ show a.rank < b.rank by omega)
+    (InvImage.wf Meaning.rank wellFounded_lt)).apply⟩
+
+theorem superoptimalSet_meaning :
+    superoptimalSet univ Meaning.harmony = {((), .first), ((), .third)} := by
+  have : superoptimal Finset.univ Meaning.harmony =
+      {((), .first), ((), .third)} := by decide
+  simpa using (coe_superoptimal Finset.univ Meaning.harmony).symm.trans
+    (congrArg _ this)
+
+theorem isWeakSolution_meaning :
+    IsWeakSolution univ Meaning.harmony univ {((), .first)} := by
+  refine ⟨Set.eq_univ_of_forall fun p ↦ ⟨trivial, ?_⟩, ?_⟩
+  · rintro ⟨q, -, hq, hlt⟩
+    have hlt : q.2.rank + 1 = p.2.rank := hlt
+    rw [show q.2 = p.2 from hq] at hlt
+    exact Nat.succ_ne_self _ hlt
+  · ext ⟨⟨⟩, m⟩
+    cases m
+    · exact ⟨fun _ ↦ rfl, fun _ ↦ ⟨trivial, fun ⟨_, _, _, hlt⟩ ↦ Nat.succ_ne_zero _ hlt⟩⟩
+    · exact ⟨fun h ↦ (h.2 ⟨((), .first), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
+    · exact ⟨fun h ↦ (h.2 ⟨((), .second), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
+
+/-- Theorem 2 needs transitivity: for a well-founded order without it, a pair can be x-optimal and
+not z-optimal. -/
+theorem exists_isWeakSolution_inter_ne_superoptimalSet :
+    ¬ IsTrans Meaning (· < ·) ∧ (Meaning.harmony '' univ).IsWF ∧
+      ∃ Q I, IsWeakSolution univ Meaning.harmony Q I ∧
+        Q ∩ I ≠ superoptimalSet univ Meaning.harmony := by
+  refine ⟨fun h ↦ absurd (h.trans .first .second .third rfl rfl) (by decide),
+    IsWF.of_wellFoundedLT _, _, _, isWeakSolution_meaning, fun h ↦ ?_⟩
+  have : ((), Meaning.third) ∈ univ ∩ ({((), Meaning.first)} : Set (Unit × Meaning)) := by
+    rw [h, superoptimalSet_meaning]
+    simp
+  simp at this
+
+/-! ### The worked example -/
+
+section WorkedExample
+
+variable {T : Type*} (v : T → ℕ)
+
+/-- The worked example's two constraints, each saying "Be small!", ranked input over output. -/
+def beSmall : T × T → ViolationProfile 2 := ViolationProfile.ofList [fun p ↦ v p.1, fun p ↦ v p.2]
+
+variable {v}
+
+theorem beSmall_lt_iff {p q : T × T} :
+    beSmall v p < beSmall v q ↔ v p.1 < v q.1 ∨ v p.1 = v q.1 ∧ v p.2 < v q.2 :=
+  ViolationProfile.ofList_cons_lt_iff.trans <| or_congr .rfl <| and_congr .rfl <|
+    ViolationProfile.ofList_cons_lt_iff.trans <|
+      or_iff_left fun ⟨_, h⟩ ↦ ViolationProfile.not_ofList_nil_lt h
+
+-- p. 441
+theorem beSmall_lt_and_not_lt :
+    beSmall (Fin.val : Fin 3 → ℕ) (0, 2) < beSmall (Fin.val : Fin 3 → ℕ) (1, 0) ∧
+      ¬ ((0, 2) : Fin 3 × Fin 3) < (1, 0) :=
+  ⟨beSmall_lt_iff.2 (.inl (by decide)), fun h ↦ by simp [Prod.lt_iff] at h⟩
+
+theorem strictMono_beSmall [PartialOrder T] (hv : StrictMono v) : StrictMono (beSmall v) := by
+  refine ViolationProfile.strictMono_ofList ?_ fun p q h ↦ ?_
+  · simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+    exact ⟨fun _ _ h ↦ hv.monotone h.1, fun _ _ h ↦ hv.monotone h.2⟩
+  · simp only [List.mem_cons, List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left]
+    exact (Prod.lt_iff.1 h).imp (fun h ↦ hv h.1) fun h ↦ hv h.2
+
+-- p. 442: each stage adds the next pair of equal cost
+theorem stage_beSmall (hv : Function.Injective v) (hlow : IsLowerSet (range v)) (n : ℕ) :
+    stage univ (beSmall v) n = {p | p.1 = p.2 ∧ v p.1 < n} := by
+  induction n with
+  | zero =>
+    rw [← bot_eq_zero', stage_bot]
+    simp
+  | succ n ih =>
+    have hrem : remaining univ {p : T × T | p.1 = p.2 ∧ v p.1 < n} =
+        {p | n ≤ v p.1 ∧ n ≤ v p.2} := by
+      ext ⟨a, b⟩
+      simp only [remaining, mem_ofPred_eq, mem_univ, true_and, Prod.forall, ne_eq, and_imp]
+      grind
+    rw [← Order.succ_eq_add_one, stage_succ, ih, stageStep, hrem]
+    ext ⟨a, b⟩
+    simp only [mem_union, mem_ofPred_eq, minimalFor_iff_forall_lt, beSmall_lt_iff, Prod.forall,
+      not_and, not_le, Order.succ_eq_add_one]
+    constructor
+    · rintro (⟨rfl, ha⟩ | ⟨⟨ha, hb⟩, hmin⟩)
+      · exact ⟨rfl, Nat.lt_succ_of_lt ha⟩
+      · obtain ⟨s, hs⟩ : n ∈ range v := hlow ha ⟨a, rfl⟩
+        have hva : v a = n := by
+          by_contra hne
+          have := @hmin s s (.inl (by omega))
+          omega
+        have hvb : v b = n := by
+          by_contra hne
+          have := @hmin s s (.inr ⟨by omega, by omega⟩)
+          omega
+        exact ⟨hv (hva.trans hvb.symm), by omega⟩
+    · rintro ⟨rfl, ha⟩
+      rcases Nat.lt_succ_iff_lt_or_eq.1 ha with h | h
+      · exact .inl ⟨rfl, h⟩
+      · refine .inr ⟨⟨h.ge, h.ge⟩, fun {c d} hlt hc ↦ ?_⟩
+        omega
+
+/-- The worked example: bidirectional optimality predicts iconicity, pairing cheap inputs with cheap
+outputs and expensive with expensive. -/
+theorem superoptimalSet_beSmall [LinearOrder T] [WellFoundedLT T] (hv : StrictMono v) :
+    superoptimalSet univ (beSmall v) = diagonal T := by
+  rw [superoptimalSet_eq_graphOn _ (OrderIso.refl T) (strictMono_beSmall hv)
+    (IsWF.of_wellFoundedLT _) (subset_univ _)]
+  ext ⟨a, b⟩
+  simp [mem_graphOn]
+
+-- pp. 441-442: three stages exhaust `{1, 2, 3} × {1, 2, 3}`
+theorem stage_three_beSmall :
+    stage univ (beSmall (Fin.val : Fin 3 → ℕ)) 3 =
+      superoptimalSet univ (beSmall (Fin.val : Fin 3 → ℕ)) := by
+  rw [stage_beSmall Fin.val_injective (by simp [Fin.range_val, isLowerSet_Iio]),
+    superoptimalSet_beSmall Fin.val_strictMono]
+  ext ⟨a, b⟩
+  simp only [mem_ofPred_eq, mem_diagonal_iff, Fin.is_lt, and_true]
+
+-- p. 450: with counting constraints no finite stage suffices
+theorem stage_ne_superoptimalSet_beSmall (n : ℕ) :
+    stage univ (beSmall (id : ℕ → ℕ)) n ≠ superoptimalSet univ (beSmall (id : ℕ → ℕ)) := by
+  rw [superoptimalSet_beSmall strictMono_id,
+    stage_beSmall Function.injective_id (by simp [isLowerSet_univ])]
+  intro h
+  have : (n, n) ∈ diagonal ℕ := rfl
+  rw [← h] at this
+  exact lt_irrefl _ this.2
+
+end WorkedExample
 
 /-! ### Conditional intersection -/
 
@@ -136,11 +298,6 @@ theorem mem_foldl_biInter_iff {ε : σ} (C : List (BinaryMarkedness σ)) (R : Se
         funext fun _ ↦ propext mem_biInter]
 
 /-! ### The number of stages -/
-
--- Lemma 2
-example {C : Type*} (ranking : List (Constraint C)) (G : Set C) :
-    (ViolationProfile.ofList ranking '' G).IsWF :=
-  IsWF.of_wellFoundedLT _
 
 -- Lemma 5, corrected: at most `2^p` harmonies, so at most `2^p` stages
 theorem stage_two_pow {F M : Type*} {G : Set (F × M)} {ranking : List (Constraint (F × M))}
@@ -269,158 +426,5 @@ theorem superoptimalSet_mem {G : SetRel σ σ} (hG : G ∈ 𝓡) {C : List (Bina
     exact b.violations_le_one p
 
 end ClosureConditions
-
-/-! ### Transitivity -/
-
-/-- Three meanings, for an order that is well-founded and not transitive. -/
-inductive Meaning where
-  | first
-  | second
-  | third
-  deriving DecidableEq, Fintype
-
-/-- The position of a meaning in the chain. -/
-def Meaning.rank : Meaning → ℕ
-  | .first => 0
-  | .second => 1
-  | .third => 2
-
-/-- Each meaning is more economical than the next one only. -/
-instance : LT Meaning := ⟨fun a b ↦ a.rank + 1 = b.rank⟩
-
-instance : DecidableLT Meaning := fun a b ↦ inferInstanceAs (Decidable (a.rank + 1 = b.rank))
-
-instance : WellFoundedLT Meaning :=
-  ⟨(Subrelation.wf (r := InvImage (· < ·) Meaning.rank)
-    (fun {a b} (h : a.rank + 1 = b.rank) ↦ show a.rank < b.rank by omega)
-    (InvImage.wf Meaning.rank wellFounded_lt)).apply⟩
-
-theorem superoptimalSet_meaning :
-    superoptimalSet univ (Prod.snd : Unit × Meaning → Meaning) = {((), .first), ((), .third)} := by
-  have : superoptimal Finset.univ (Prod.snd : Unit × Meaning → Meaning) =
-      {((), .first), ((), .third)} := by decide
-  simpa using (coe_superoptimal Finset.univ (Prod.snd : Unit × Meaning → Meaning)).symm.trans
-    (congrArg _ this)
-
-theorem isWeakSolution_meaning :
-    IsWeakSolution univ (Prod.snd : Unit × Meaning → Meaning) univ {((), .first)} := by
-  refine ⟨Set.eq_univ_of_forall fun p ↦ ⟨trivial, ?_⟩, ?_⟩
-  · rintro ⟨q, -, hq, hlt⟩
-    rw [hq] at hlt
-    exact Nat.succ_ne_self _ hlt
-  · ext ⟨⟨⟩, m⟩
-    cases m
-    · exact ⟨fun _ ↦ rfl, fun _ ↦ ⟨trivial, fun ⟨_, _, _, hlt⟩ ↦ Nat.succ_ne_zero _ hlt⟩⟩
-    · exact ⟨fun h ↦ (h.2 ⟨((), .first), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
-    · exact ⟨fun h ↦ (h.2 ⟨((), .second), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
-
-/-- Theorem 2 needs transitivity: for a well-founded order without it, a pair can be x-optimal and
-not z-optimal. -/
-theorem exists_isWeakSolution_inter_ne_superoptimalSet :
-    ¬ IsTrans Meaning (· < ·) ∧ ((Prod.snd : Unit × Meaning → Meaning) '' univ).IsWF ∧
-      ∃ Q I, IsWeakSolution univ (Prod.snd : Unit × Meaning → Meaning) Q I ∧
-        Q ∩ I ≠ superoptimalSet univ (Prod.snd : Unit × Meaning → Meaning) := by
-  refine ⟨fun h ↦ absurd (h.trans .first .second .third rfl rfl) (by decide),
-    IsWF.of_wellFoundedLT _, _, _, isWeakSolution_meaning, fun h ↦ ?_⟩
-  have : ((), Meaning.third) ∈ univ ∩ ({((), Meaning.first)} : Set (Unit × Meaning)) := by
-    rw [h, superoptimalSet_meaning]
-    simp
-  simp at this
-
-/-! ### The worked example -/
-
-section WorkedExample
-
-variable {T : Type*} (v : T → ℕ)
-
-/-- The worked example's two constraints, each saying "Be small!", ranked input over output. -/
-def beSmall : T × T → ViolationProfile 2 := ViolationProfile.ofList [fun p ↦ v p.1, fun p ↦ v p.2]
-
-variable {v}
-
-theorem beSmall_lt_iff {p q : T × T} :
-    beSmall v p < beSmall v q ↔ v p.1 < v q.1 ∨ v p.1 = v q.1 ∧ v p.2 < v q.2 :=
-  ViolationProfile.ofList_cons_lt_iff.trans <| or_congr .rfl <| and_congr .rfl <|
-    ViolationProfile.ofList_cons_lt_iff.trans <|
-      or_iff_left fun ⟨_, h⟩ ↦ ViolationProfile.not_ofList_nil_lt h
-
--- p. 441
-theorem beSmall_lt_and_not_lt :
-    beSmall (Fin.val : Fin 3 → ℕ) (0, 2) < beSmall (Fin.val : Fin 3 → ℕ) (1, 0) ∧
-      ¬ ((0, 2) : Fin 3 × Fin 3) < (1, 0) :=
-  ⟨beSmall_lt_iff.2 (.inl (by decide)), fun h ↦ by simp [Prod.lt_iff] at h⟩
-
-theorem strictMono_beSmall [PartialOrder T] (hv : StrictMono v) : StrictMono (beSmall v) := by
-  refine ViolationProfile.strictMono_ofList ?_ fun p q h ↦ ?_
-  · simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨fun _ _ h ↦ hv.monotone h.1, fun _ _ h ↦ hv.monotone h.2⟩
-  · simp only [List.mem_cons, List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left]
-    exact (Prod.lt_iff.1 h).imp (fun h ↦ hv h.1) fun h ↦ hv h.2
-
--- p. 442: each stage adds the next pair of equal cost
-theorem stage_beSmall (hv : Function.Injective v) (hlow : IsLowerSet (range v)) (n : ℕ) :
-    stage univ (beSmall v) n = {p | p.1 = p.2 ∧ v p.1 < n} := by
-  induction n with
-  | zero =>
-    rw [← bot_eq_zero', stage_bot]
-    simp
-  | succ n ih =>
-    have hrem : remaining univ {p : T × T | p.1 = p.2 ∧ v p.1 < n} =
-        {p | n ≤ v p.1 ∧ n ≤ v p.2} := by
-      ext ⟨a, b⟩
-      simp only [remaining, mem_ofPred_eq, mem_univ, true_and, Prod.forall, ne_eq, and_imp]
-      grind
-    rw [← Order.succ_eq_add_one, stage_succ, ih, stageStep, hrem]
-    ext ⟨a, b⟩
-    simp only [mem_union, mem_ofPred_eq, minimalFor_iff_forall_lt, beSmall_lt_iff, Prod.forall,
-      not_and, not_le, Order.succ_eq_add_one]
-    constructor
-    · rintro (⟨rfl, ha⟩ | ⟨⟨ha, hb⟩, hmin⟩)
-      · exact ⟨rfl, Nat.lt_succ_of_lt ha⟩
-      · obtain ⟨s, hs⟩ : n ∈ range v := hlow ha ⟨a, rfl⟩
-        have hva : v a = n := by
-          by_contra hne
-          have := @hmin s s (.inl (by omega))
-          omega
-        have hvb : v b = n := by
-          by_contra hne
-          have := @hmin s s (.inr ⟨by omega, by omega⟩)
-          omega
-        exact ⟨hv (hva.trans hvb.symm), by omega⟩
-    · rintro ⟨rfl, ha⟩
-      rcases Nat.lt_succ_iff_lt_or_eq.1 ha with h | h
-      · exact .inl ⟨rfl, h⟩
-      · refine .inr ⟨⟨h.ge, h.ge⟩, fun {c d} hlt hc ↦ ?_⟩
-        omega
-
-/-- The worked example: bidirectional optimality predicts iconicity, pairing cheap inputs with cheap
-outputs and expensive with expensive. -/
-theorem superoptimalSet_beSmall [LinearOrder T] [WellFoundedLT T] (hv : StrictMono v) :
-    superoptimalSet univ (beSmall v) = diagonal T := by
-  rw [superoptimalSet_eq_graphOn _ (OrderIso.refl T) (strictMono_beSmall hv)
-    (IsWF.of_wellFoundedLT _) (subset_univ _)]
-  ext ⟨a, b⟩
-  simp [mem_graphOn]
-
--- pp. 441-442: three stages exhaust `{1, 2, 3} × {1, 2, 3}`
-theorem stage_three_beSmall :
-    stage univ (beSmall (Fin.val : Fin 3 → ℕ)) 3 =
-      superoptimalSet univ (beSmall (Fin.val : Fin 3 → ℕ)) := by
-  rw [stage_beSmall Fin.val_injective (by simp [Fin.range_val, isLowerSet_Iio]),
-    superoptimalSet_beSmall Fin.val_strictMono]
-  ext ⟨a, b⟩
-  simp only [mem_ofPred_eq, mem_diagonal_iff, Fin.is_lt, and_true]
-
--- p. 450: with counting constraints no finite stage suffices
-theorem stage_ne_superoptimalSet_beSmall (n : ℕ) :
-    stage univ (beSmall (id : ℕ → ℕ)) n ≠ superoptimalSet univ (beSmall (id : ℕ → ℕ)) := by
-  rw [superoptimalSet_beSmall strictMono_id,
-    stage_beSmall Function.injective_id (by simp [isLowerSet_univ])]
-  intro h
-  have : (n, n) ∈ diagonal ℕ := rfl
-  rw [← h] at this
-  exact lt_irrefl _ this.2
-
-end WorkedExample
 
 end Jaeger2002

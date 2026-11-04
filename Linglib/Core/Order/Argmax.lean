@@ -117,11 +117,12 @@ theorem argmax_nonempty (hs : s.Nonempty) : (s.argmax f).Nonempty := by
   obtain ⟨a, ha, h⟩ := s.exists_maximalFor f hs
   exact ⟨a, mem_argmax.2 ⟨ha, fun b hb ↦ (total_of (· ≤ ·) (f b) (f a)).elim id (h hb)⟩⟩
 
-/-- The argmin of a total preorder is the set of minimal elements. -/
-theorem mem_argmin_iff_minimalFor : a ∈ s.argmin f ↔ MinimalFor (· ∈ s) f a := by
-  simp only [mem_argmin, MinimalFor]
+/-- In a total preorder, the argmax is the set of maximal elements. -/
+@[to_dual /-- In a total preorder, the argmin is the set of minimal elements. -/]
+theorem mem_argmax_iff_maximalFor : a ∈ s.argmax f ↔ MaximalFor (· ∈ s) f a := by
+  simp only [mem_argmax, MaximalFor]
   exact and_congr_right fun _ ↦ forall₂_congr fun b _ ↦
-    ⟨fun h _ ↦ h, fun h ↦ (Std.Total.total (r := (· ≤ ·)) (f a) (f b)).elim id h⟩
+    ⟨fun h _ ↦ h, fun h ↦ (total_of (· ≤ ·) (f b) (f a)).elim id h⟩
 
 end Total
 
