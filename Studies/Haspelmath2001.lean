@@ -1,307 +1,356 @@
 module
 
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Haspelmath2001
+public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Statistics.Haspelmath2001
+public import Linglib.Data.StructureDataset.Haspelmath2001
+public import Linglib.Fragments.Basque.Relativization
+public import Linglib.Fragments.English.Relativization
+public import Linglib.Fragments.Finnish.Comparison
+public import Linglib.Fragments.Finnish.Relativization
+public import Linglib.Fragments.German.Relativization
+public import Linglib.Fragments.HindiUrdu.Relativization
+public import Linglib.Fragments.Latin.Comparison
+public import Linglib.Fragments.Romance.French.Comparison
+public import Linglib.Fragments.Romance.French.Relativization
+public import Linglib.Fragments.Slavic.Russian.Comparison
+public import Linglib.Fragments.Slavic.Russian.Relativization
+public import Linglib.Fragments.Turkish.Relativization
+public import Linglib.Fragments.Welsh.Relativization
+public import Studies.Stassen1985
 
 /-!
 # Haspelmath (2001): The European linguistic area: Standard Average European
 
-This file formalizes the argument of [haspelmath-2001] that the core European languages form a
-linguistic area: a structural feature is a Europeanism when the great majority of the core
-languages have it while the geographically adjacent languages, the eastern Indo-European
-languages and the majority of the world's languages lack it, §1, and twelve such features are
-mapped in §2. `Language` is the sample of Maps 107.1–107.13 and `isogloss` the languages each
-map places inside the feature's line, the two gradient features being derived from the figures
-the maps print: Bossong's inversion ratios (`experiencerRatio`, Map 107.4) and the percentages
-of anticausative pairs (`anticausativePercent`, Map 107.6). `IsEuropeanism` states criteria
-(i)–(iii) over the map sample and `WorldMinority` criterion (iv) over the world-wide surveys
-the chapter cites.
-
-`clusterScore` is the cluster map of §4, the number of the nine selected features a language
-has: `nucleus_eq` derives the Charlemagne nucleus, French and German with all nine;
-`eight_eq` and `seven_eq` the next two layers; and `area_eq` the area of at least five
-features that stands out from the remaining languages. The criteria hold on the map data with
-two exceptions the chapter itself flags, `majorityOfCore_iff`: negative indefinites without
-verbal negation and strict subject agreement are not majority features of the core, and
-Armenian carries the relative-pronoun strategy on Map 107.2, `easternIELack_iff`.
+A structural feature is a Europeanism, §1 says, when the great majority of the core European
+languages have it, the adjacent and the eastern Indo-European languages lack it, and most of the
+world's languages lack it too; §2 maps twelve such features. Read literally on those maps, [the
+four criteria pass three of the twelve](##isEuropeanism_iff), while [every feature is commoner in
+the core than next door](##standsOut), the profile by which §1 recognizes a linguistic area. §4 sums
+nine of the lines: the sum [gives the number Map 107.13 prints](##clusterScore_eq_printed) for all
+languages but two and [leaves nothing between two features and five](##clusterScore_gap). Fragments
+confirm [Map 107.2](##relativePronouns_fragments) and [Map 107.9](##comparative_fragments).
 
 ## Implementation notes
 
-The feature values are read from the maps of the scanned chapter, and the readings are checked
-against the layer counts §4 states: the cluster map's isopleths reproduce exactly. "The great
-majority" of criterion (i) is read as a majority, and "lack" in (ii) as fewer than half,
-relative to the languages a feature's map covers. Map 107.5 places Hungarian inside the
-participial-passive line although §2.5 says Hungarian has no passive; the map is followed, as
-the cluster count of five for Hungarian requires. Maps 107.4, 107.6 and 107.9 cover different
-samples (Bossong's, the 1993 verb-pair survey's and Stassen's), so criteria are evaluated
-per map.
+* `StructureDataset.maps` is read from page images, each solid line checked by flood fill from
+  outside. `StructureDataset.prose` is what §2 says of the eastern Indo-European languages.
+* "The great majority" is read as three quarters, and [two thirds selects the same
+  features](##twoThirds_iff). "Lack" is literal, and the "perhaps" of Afro-Asiatic excludes it.
+
+## Errata
+
+* §2.1 denies neighbouring languages both articles; Map 107.1 encloses Breton.
+* §2.2 denies eastern Indo-European the strategy; Map 107.2 encloses Armenian, and [Hindi-Urdu has
+  it](##hindiUrdu_relativePronoun).
+* §2.5 denies Hungarian a passive and Celtic this one; Map 107.5 encloses Hungarian, Irish, Breton.
+* §2.9 prints a sample of 19, less than its own counts need (`surveys` has Stassen's 110), and 13
+  European particle comparatives where Map 107.9 encloses 12.
+* §2.10 lists Finnish and Georgian as relative-based; [Map 107.10 leaves them out](##rows_agree).
+* Map 107.4 leaves out Mari at 0.79, [against its cut of 0.8](##experiencer_side).
+* Map 107.13 prints 5 for Russian and 1 for Georgian, [where the lines sum to 6 and
+  2](##clusterScore_eq_printed).
 
 ## TODO
 
-* §4 says the languages outside the area have at most two of the nine features; on the maps
-  Maltese has four and Basque, Finnish and Estonian three, `outside_le_four`.
+* The surveys of §3.1 and §3.5, the features of §3.6, and the five origins §5 weighs.
+* Map 107.8 against the negative concord items of the polarity fragments.
 
 ## References
 
 * [haspelmath-2001]
+* [keenan-comrie-1977]
+* [stassen-1985]
 -/
 
 @[expose] public section
 
 namespace Haspelmath2001
 
-/-- The languages of Maps 107.1–107.13, by the abbreviations of §6, with the languages of
-Bossong's sample (Map 107.4) and Stassen's (Map 107.9) that the base map lacks. -/
-inductive Language where
-  | albanian | armenian | basque | breton | bulgarian | czech | dutch | english | estonian
-  | finnish | french | gaelic | georgian | german | greek | hungarian | icelandic | irish
-  | italian | komi | latin | latvian | laz | lezgian | lithuanian | maltese | mari | mordvin
-  | nenets | norwegian | polish | portuguese | romanian | russian | saami | sardinian
-  | serboCroatian | slovene | spanish | swedish | tatar | turkish | ubykh | udmurt | ukrainian
-  | welsh
-  deriving DecidableEq, Fintype, Repr
+open CLDF.StructureDataset StructureDataset
 
-/-- The genealogical groups §1 reasons with: the branches of the core, the neighbours of
-criterion (ii), and the eastern Indo-European branch of criterion (iii) present on the maps. -/
-inductive Family where
-  | romance | germanic | slavic | baltic | greek | albanian | westernUralic
-  | celtic | basque | turkic | easternUralic | kartvelian | nakhDaghestanian | abkhazAdyghean
-  | afroAsiatic | armenian | latin
+/-- The side of a map's line a language lies on. -/
+inductive Side where
+  | inside
+  | outside
   deriving DecidableEq, Repr
 
-def Language.family : Language → Family
-  | .french | .italian | .spanish | .portuguese | .sardinian | .romanian => .romance
-  | .german | .dutch | .english | .norwegian | .swedish | .icelandic => .germanic
-  | .russian | .ukrainian | .polish | .czech | .slovene | .serboCroatian | .bulgarian => .slavic
-  | .lithuanian | .latvian => .baltic
-  | .greek => .greek
-  | .albanian => .albanian
-  | .hungarian | .finnish | .estonian => .westernUralic
-  | .irish | .welsh | .breton | .gaelic => .celtic
-  | .basque => .basque
-  | .turkish | .tatar => .turkic
-  | .saami | .mari | .mordvin | .komi | .udmurt | .nenets => .easternUralic
-  | .georgian | .laz => .kartvelian
-  | .lezgian => .nakhDaghestanian
-  | .ubykh => .abkhazAdyghean
-  | .maltese => .afroAsiatic
-  | .armenian => .armenian
-  | .latin => .latin
+namespace StructureDataset.Row
 
-/-- The core European languages of §1: Romance, Germanic, Balto-Slavic, the Balkan languages,
-and the westernmost Finno-Ugrian languages. -/
-def Family.IsCore : Family → Prop
-  | .romance | .germanic | .slavic | .baltic | .greek | .albanian | .westernUralic => True
-  | _ => False
+/-- The side a language's code puts it on, `sae` being the code inside the line, if it has one. -/
+def sideOf? {C : Type*} [DecidableEq C] (sae : C) (l : List (Coded C)) : Option Side :=
+  l.head?.map fun c ↦ if c.code = sae then .inside else .outside
 
-/-- The geographically adjacent languages of criterion (ii). -/
-def Family.IsAdjacent : Family → Prop
-  | .celtic | .basque | .turkic | .easternUralic | .kartvelian | .nakhDaghestanian
-  | .abkhazAdyghean | .afroAsiatic => True
-  | _ => False
+/-- The side of the line of `f`'s map a language lies on, `none` if the map does not cover it. -/
+def side? (r : Row) : Feature → Option Side
+  | .articles => sideOf? .both r.articles
+  | .relativePronouns => sideOf? .relativePronoun r.relativeClause
+  | .havePerfect => sideOf? .havePerfect r.havePerfect
+  | .nominativeExperiencers => sideOf? .generalizing r.experiencer
+  | .participialPassive => sideOf? .participial r.participialPassive
+  | .anticausativeProminence => sideOf? .high r.anticausative
+  | .dativeExternalPossessors => sideOf? .dative r.externalPossessor
+  | .negativeIndefinitesWithoutVerbalNegation => sideOf? .withoutVerbalNegation r.negativeIndefinite
+  | .particleComparative => sideOf? .particle r.comparativeType
+  | .relativeBasedEquative => sideOf? .relativeBased r.equative
+  | .strictAgreement => sideOf? .strict r.subjectAgreement
+  | .intensifierReflexiveDifferentiation => sideOf? .differentiated r.intensifierReflexive
 
-instance : DecidablePred Family.IsCore :=
-  λ f => by unfold Family.IsCore; cases f <;> infer_instance
-instance : DecidablePred Family.IsAdjacent :=
-  λ f => by unfold Family.IsAdjacent; cases f <;> infer_instance
+/-- The language lies inside the line of `f`'s map. -/
+def Has (r : Row) (f : Feature) : Prop := r.side? f = some .inside
 
-/-! ### The twelve features of §2 -/
+/-- The map of `f` covers the language. -/
+def OnMap (r : Row) (f : Feature) : Prop := (r.side? f).isSome = true
 
-/-- The Europeanisms of §2.1–§2.12. -/
-inductive Feature where
-  | articles
-  | relativePronouns
-  | havePerfect
-  | nominativeExperiencers
-  | participialPassive
-  | anticausativeProminence
-  | dativeExternalPossessors
-  | negativeIndefinitesWithoutVerbalNegation
-  | particleComparative
-  | relativeBasedEquative
-  | strictAgreement
-  | intensifierReflexiveDifferentiation
-  deriving DecidableEq, Fintype, Repr
+instance (r : Row) : DecidablePred r.Has := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance (r : Row) : DecidablePred r.OnMap := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-open Language
-
-/-- The languages of the base map shared by Maps 107.1–3, 107.5, 107.7–8 and 107.10–13. -/
-def baseMap : Finset Language :=
-  {albanian, armenian, basque, breton, bulgarian, czech, dutch, english, estonian, finnish,
-   french, georgian, german, greek, hungarian, icelandic, irish, italian, komi, latvian,
-   lezgian, lithuanian, maltese, nenets, norwegian, polish, portuguese, romanian, russian,
-   sardinian, serboCroatian, slovene, spanish, swedish, tatar, turkish, udmurt, ukrainian,
-   welsh}
-
-/-- Bossong's ratio of inverting to generalizing experiential predicates, in hundredths, as
-Map 107.4 prints it. -/
-def experiencerRatio : Language → Option ℕ
-  | icelandic => some 229 | irish => some 221 | welsh => some 92 | norwegian => some 12
-  | swedish => some 12 | finnish => some 87 | saami => some 81 | estonian => some 83
-  | latvian => some 164 | mari => some 79 | lithuanian => some 83 | mordvin => some 116
-  | english => some 0 | dutch => some 64 | german => some 74 | czech => some 76
-  | polish => some 88 | russian => some 211 | udmurt => some 109 | breton => some 24
-  | french => some 12 | hungarian => some 22 | basque => some 10 | italian => some 48
-  | serboCroatian => some 75 | spanish => some 43 | portuguese => some 14 | romanian => some 225
-  | albanian => some 102 | bulgarian => some 48 | lezgian => some 500 | georgian => some 308
-  | maltese => some 69 | greek => some 27 | turkish => some 46
-  | _ => none
-
-/-- The percentage of anticausative inchoative–causative pairs, as Map 107.6 prints it. -/
-def anticausativePercent : Language → Option ℕ
-  | finnish => some 47 | lithuanian => some 74 | russian => some 100 | udmurt => some 46
-  | english => some 100 | german => some 100 | french => some 91 | hungarian => some 44
-  | romanian => some 96 | greek => some 100 | lezgian => some 40 | georgian => some 67
-  | turkish => some 34 | armenian => some 65
-  | _ => none
-
-/-- The languages a feature's map covers. -/
-def mapped : Feature → Finset Language
-  | .nominativeExperiencers => Finset.univ.filter (experiencerRatio · ≠ none)
-  | .anticausativeProminence => Finset.univ.filter (anticausativePercent · ≠ none)
-  | .particleComparative =>
-    {gaelic, english, dutch, french, basque, latin, finnish, latvian, hungarian, russian,
-     albanian, greek, breton, nenets, ubykh, laz, turkish}
-  | _ => baseMap
-
-/-- The languages inside a feature's isogloss: the SAE value. Map 107.4 draws the line at
-Bossong's ratio 0.8, predominant generalization below it, and Map 107.6 at 70% of
-anticausative pairs. -/
-def isogloss : Feature → Finset Language
-  | .articles =>
-    {norwegian, swedish, english, dutch, german, french, breton, basque, spanish, sardinian,
-     portuguese, italian, hungarian, romanian, albanian, greek}
-  | .relativePronouns =>
-    {icelandic, norwegian, swedish, finnish, estonian, latvian, lithuanian, polish, russian,
-     english, dutch, german, czech, french, hungarian, ukrainian, slovene, italian,
-     serboCroatian, romanian, albanian, bulgarian, greek, spanish, sardinian, portuguese,
-     georgian, armenian}
-  | .havePerfect =>
-    {icelandic, norwegian, swedish, english, dutch, german, czech, french, spanish, sardinian,
-     portuguese, italian, romanian, albanian, greek}
-  | .nominativeExperiencers =>
-    Finset.univ.filter λ l => (experiencerRatio l).any (· < 80)
-  | .participialPassive =>
-    {icelandic, irish, breton, norwegian, swedish, finnish, estonian, latvian, lithuanian,
-     polish, russian, english, dutch, german, czech, french, hungarian, ukrainian, slovene,
-     italian, serboCroatian, romanian, albanian, bulgarian, greek, spanish, sardinian,
-     portuguese, maltese}
-  | .anticausativeProminence =>
-    Finset.univ.filter λ l => (anticausativePercent l).any (70 ≤ ·)
-  | .dativeExternalPossessors =>
-    {dutch, german, czech, polish, latvian, lithuanian, russian, ukrainian, french, hungarian,
-     slovene, italian, serboCroatian, romanian, albanian, bulgarian, greek, spanish, sardinian,
-     portuguese, basque, maltese}
-  | .negativeIndefinitesWithoutVerbalNegation =>
-    {icelandic, norwegian, swedish, english, dutch, german, french, spanish, sardinian,
-     portuguese, italian, albanian, georgian}
-  | .particleComparative =>
-    {gaelic, english, dutch, french, basque, latin, finnish, latvian, hungarian, russian,
-     albanian, greek}
-  | .relativeBasedEquative =>
-    {english, dutch, german, czech, polish, latvian, lithuanian, russian, french, hungarian,
-     ukrainian, slovene, italian, serboCroatian, romanian, albanian, bulgarian, greek, spanish,
-     sardinian, portuguese, maltese}
-  | .strictAgreement => {icelandic, welsh, english, dutch, german, french, russian}
-  | .intensifierReflexiveDifferentiation =>
-    {icelandic, norwegian, swedish, finnish, estonian, latvian, lithuanian, polish, russian,
-     german, czech, french, basque, slovene, italian, serboCroatian, romanian, albanian,
-     bulgarian, greek, spanish, sardinian, portuguese, maltese, ukrainian}
+end StructureDataset.Row
 
 /-! ### The criteria of §1 -/
 
+/-- The rows of the given branches. -/
+def ofBranches (rows : List Row) (bs : List Branch) : List Row :=
+  rows.filter fun r ↦ r.branch.any (·.code ∈ bs)
+
+/-- The core European languages: Romance, Germanic, Balto-Slavic, the Balkan languages, and the
+westernmost Finno-Ugrian languages. -/
+def core : List Row :=
+  ofBranches maps [.romance, .germanic, .slavic, .baltic, .greek, .albanian, .westernUralic]
+
+/-- The adjacent languages of criterion (ii). -/
+def adjacent : List Row :=
+  ofBranches maps [.celtic, .turkic, .easternUralic, .abkhazAdyghean, .nakhDaghestanian]
+
+/-- The eastern Indo-European languages of criterion (iii), on the maps and in the prose. -/
+def easternIE : List Row := ofBranches (maps ++ prose) [.armenian, .iranian, .indic]
+
+/-- The languages of `G` that `f`'s map covers. -/
+def covered (G : List Row) (f : Feature) : List Row := G.filter (·.OnMap f)
+
+/-- The languages of `G` inside the line of `f`'s map. -/
+def inside (G : List Row) (f : Feature) : List Row := G.filter (·.Has f)
+
 variable (f : Feature)
 
-/-- The core languages a feature's map covers. -/
-def core : Finset Language := (mapped f).filter (·.family.IsCore)
+/-- Criterion (i): the great majority of the core languages on the map have the feature, read as
+at least three quarters. -/
+def GreatMajorityOfCore : Prop := 3 * (covered core f).length ≤ 4 * (inside core f).length
 
-/-- The adjacent languages a feature's map covers. -/
-def adjacent : Finset Language := (mapped f).filter (·.family.IsAdjacent)
+/-- Criterion (ii): the adjacent languages lack the feature. -/
+def AdjacentLack : Prop := ∀ r ∈ adjacent, ¬ r.Has f
 
-/-- Criterion (i): the great majority of the core European languages have the feature, read as
-a majority of the core languages on the map. -/
-def MajorityOfCore : Prop := (core f).card < 2 * (isogloss f ∩ core f).card
+/-- Criterion (iii): the eastern Indo-European languages lack the feature. -/
+def EasternIELack : Prop := ∀ r ∈ easternIE, ¬ r.Has f
 
-/-- Criterion (ii): the adjacent languages lack the feature, read as fewer than half of the
-adjacent languages on the map. -/
-def AdjacentLack : Prop := 2 * (isogloss f ∩ adjacent f).card < (adjacent f).card
+/-- Criterion (iv): the surveys cited for the feature find it in a minority of their sample. -/
+def WorldMinority : Prop := ∀ s ∈ surveys, s.feature = f → 2 * s.withFeature < s.sample
 
-/-- Criterion (iii): the eastern Indo-European languages lack the feature; Armenian is the one
-on the maps. -/
-def EasternIELack : Prop := ∀ l ∈ isogloss f, l.family ≠ .armenian
+/-- A Europeanism meets the four criteria. -/
+def IsEuropeanism : Prop :=
+  GreatMajorityOfCore f ∧ AdjacentLack f ∧ EasternIELack f ∧ WorldMinority f
 
-/-- The world-wide surveys the chapter cites for criterion (iv), as the number of languages
-with the feature out of the sample: Dryer's languages with both articles, the participle-plus-
-auxiliary passives of the 1990 survey, Kahrel's V + NI negation patterns, and Siewierska's
-strict-agreement languages. -/
-def worldSurvey : Feature → Option (ℕ × ℕ)
-  | .articles => some (31, 400)
-  | .participialPassive => some (4, 80)
-  | .negativeIndefinitesWithoutVerbalNegation => some (5, 40)
-  | .strictAgreement => some (2, 272)
-  | _ => none
+instance : Decidable (GreatMajorityOfCore f) := inferInstanceAs (Decidable (_ ≤ _))
+instance : Decidable (AdjacentLack f) := List.decidableBAll _ _
+instance : Decidable (EasternIELack f) := List.decidableBAll _ _
+instance : Decidable (WorldMinority f) := List.decidableBAll _ _
+instance : Decidable (IsEuropeanism f) := inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
-/-- Criterion (iv): the feature is not found in the majority of the world's languages. -/
-def WorldMinority : Prop := ∀ s ∈ worldSurvey f, 2 * s.1 < s.2
-
-instance : Decidable (MajorityOfCore f) := inferInstanceAs (Decidable (_ < _))
-instance : Decidable (AdjacentLack f) := inferInstanceAs (Decidable (_ < _))
-instance : Decidable (EasternIELack f) := Finset.decidableDforallFinset
-instance : Decidable (WorldMinority f) := Option.decidableForallMem _
-
-/-- A Europeanism: criteria (i)–(iii) on the map and (iv) on the surveys. -/
-structure IsEuropeanism : Prop where
-  majorityOfCore : MajorityOfCore f
-  adjacentLack : AdjacentLack f
-  easternIELack : EasternIELack f
-  worldMinority : WorldMinority f
-
-/-- Criterion (i) holds of every feature except V + NI negation (§2.8) and strict agreement (§2.11).
--/
-theorem majorityOfCore_iff :
-    MajorityOfCore f ↔
-      f ≠ .negativeIndefinitesWithoutVerbalNegation ∧ f ≠ .strictAgreement := by
+-- Articles, the `have`-perfect and experiencers reach only a majority of the core, and V + NI and
+-- strict agreement not even that.
+theorem greatMajorityOfCore_iff :
+    GreatMajorityOfCore f ↔
+      f ∉ ([.articles, .havePerfect, .nominativeExperiencers,
+        .negativeIndefinitesWithoutVerbalNegation, .strictAgreement] : List Feature) := by
   revert f; decide
 
-theorem adjacentLack : AdjacentLack f := by revert f; decide
+theorem twoThirds_iff :
+    2 * (covered core f).length ≤ 3 * (inside core f).length ↔ GreatMajorityOfCore f := by
+  revert f; decide
 
-theorem easternIELack_iff : EasternIELack f ↔ f ≠ .relativePronouns := by revert f; decide
+-- Breton, Turkish, Irish, Gaelic and Welsh are the adjacent languages inside a line.
+theorem adjacentLack_iff :
+    AdjacentLack f ↔
+      f ∉ ([.articles, .nominativeExperiencers, .participialPassive, .particleComparative,
+        .strictAgreement] : List Feature) := by
+  revert f; decide
+
+-- Armenian on Map 107.2, against §2.2; Baluchi and Maithili, as §2.5 grants; Punjabi, as §2.10
+-- grants.
+theorem easternIELack_iff :
+    EasternIELack f ↔
+      f ∉ ([.relativePronouns, .participialPassive, .relativeBasedEquative] : List Feature) := by
+  revert f; decide
 
 theorem worldMinority : WorldMinority f := by revert f; decide
 
-theorem havePerfect_isEuropeanism : IsEuropeanism .havePerfect :=
-  ⟨by decide, adjacentLack _, by decide, worldMinority _⟩
+/-- Taken literally on the chapter's own maps, the four criteria of §1 select three of the twelve
+features of §2, among them the dative external possessor that §2.7 calls a very robust example. -/
+theorem isEuropeanism_iff :
+    IsEuropeanism f ↔
+      f ∈ ([.anticausativeProminence, .dativeExternalPossessors,
+        .intensifierReflexiveDifferentiation] : List Feature) := by
+  revert f; decide
+
+/-- Every feature has a larger share of the core languages on its map than of the adjacent ones
+(cross-multiplied), the profile that makes a linguistic area stand out among the surrounding
+languages. -/
+theorem standsOut :
+    (inside adjacent f).length * (covered core f).length <
+      (inside core f).length * (covered adjacent f).length := by
+  revert f; decide
+
+-- §2: "the nuclear SAE languages are within the SAE isogloss", in each case.
+theorem nucleus_inside :
+    ∀ r ∈ maps, r.language ∈ [french, german] → r.OnMap f → r.Has f := by
+  revert f; decide
+
+/-! ### The printed numbers of Maps 107.4 and 107.6 -/
+
+-- The line of Map 107.4 follows the cut at 0.8 stated in §2.4, except at Mari.
+theorem experiencer_side :
+    ∀ r ∈ maps, ∀ d ∈ r.experiencerRatio,
+      ((r.Has .nominativeExperiencers ↔ d.code.hundredths < 80) ↔ r.language ≠ mari) := by
+  decide
+
+-- The solid line of Map 107.6 is its legend's 70%.
+theorem anticausative_side :
+    ∀ r ∈ maps ++ prose, ∀ d ∈ r.anticausativePercent,
+      (r.Has .anticausativeProminence ↔ 7000 ≤ d.code.hundredths) := by
+  decide
 
 /-! ### The cluster map of §4 -/
 
-/-- The nine features Map 107.13 combines, those with complete information. -/
+/-- The features with the fullest information: §4 combines nine of the twelve because information
+on the other three is incomplete. -/
 def clusterFeatures : Finset Feature :=
-  {.articles, .relativePronouns, .havePerfect, .participialPassive, .dativeExternalPossessors,
-   .negativeIndefinitesWithoutVerbalNegation, .relativeBasedEquative, .strictAgreement,
-   .intensifierReflexiveDifferentiation}
+  Finset.univ.filter fun f ↦ ∀ g, (covered maps g).length ≤ (covered maps f).length
 
-/-- The number of the nine features a language has: the isopleth of Map 107.13. -/
-def clusterScore (l : Language) : ℕ := (clusterFeatures.filter (l ∈ isogloss ·)).card
-
-theorem nucleus_eq : baseMap.filter (clusterScore · = 9) = {french, german} := by decide
-
-theorem eight_eq :
-    baseMap.filter (clusterScore · = 8) =
-      {dutch, spanish, portuguese, sardinian, italian, albanian} := by
+theorem clusterFeatures_eq :
+    clusterFeatures =
+      {.articles, .relativePronouns, .havePerfect, .participialPassive, .dativeExternalPossessors,
+       .negativeIndefinitesWithoutVerbalNegation, .relativeBasedEquative, .strictAgreement,
+       .intensifierReflexiveDifferentiation} := by
   decide
 
-theorem seven_eq : baseMap.filter (clusterScore · = 7) = {english, greek, romanian} := by
+/-- The number of the nine features a language has, its isopleth on Map 107.13. -/
+def clusterScore (r : Row) : ℕ := (clusterFeatures.filter r.Has).card
+
+/-- Adding up the lines of the nine maps gives the number Map 107.13 prints for every language it
+labels but two: Russian, which the maps put at 6 and §2.11's reservation about its past tense
+leaves at 5, and Georgian, which they put at 2 and the map at 1. -/
+theorem clusterScore_eq_printed :
+    ∀ r ∈ maps, ∀ d ∈ r.printedScore,
+      ((clusterScore r : ℤ) = d.code.mantissa ↔ r.language ∉ [russian, georgian]) := by
   decide
 
-theorem area_eq :
-    baseMap.filter (5 ≤ clusterScore ·) =
-      {french, german, dutch, spanish, portuguese, sardinian, italian, albanian, english,
-       greek, romanian, icelandic, norwegian, swedish, czech, russian, polish, latvian,
-       lithuanian, ukrainian, serboCroatian, slovene, hungarian, bulgarian} := by
+/-- The area with at least five features stands out from the remaining languages, which have at
+most two: no language has three or four. -/
+theorem clusterScore_gap : ∀ r ∈ maps, clusterScore r ≤ 2 ∨ 5 ≤ clusterScore r := by
   decide
 
-theorem outside_le_four : ∀ l ∈ baseMap, clusterScore l < 5 → clusterScore l ≤ 4 := by
+-- §4 (a): the nucleus is French and German.
+theorem clusterScore_eq_nine_iff :
+    ∀ r ∈ maps, clusterScore r = 9 ↔ r.language ∈ [french, german] := by
   decide
+
+-- §4 (b): the southern languages are at least as close to the nucleus as the northern ones and
+-- English, the Slavic Bulgarian excepted.
+theorem north_le_south :
+    ∀ n ∈ maps.filter (·.language ∈ [icelandic, norwegian, swedish, english]),
+      ∀ s ∈ maps.filter (·.language ∈ [spanish, portuguese, sardinian, italian, romanian, albanian,
+        greek, bulgarian]),
+        (clusterScore n ≤ clusterScore s ↔ s.language ≠ bulgarian) := by
+  decide
+
+-- §4 (b): the Balkan languages outside Slavic are more SAE than all of Slavic.
+theorem slavic_lt_balkan :
+    ∀ s ∈ ofBranches maps [.slavic], ∀ b ∈ maps.filter (·.language ∈ [romanian, albanian, greek]),
+      clusterScore s < clusterScore b := by
+  decide
+
+-- §4 (c): English stands apart from the nucleus and from Dutch.
+theorem english_lt_dutch_german :
+    ∀ e ∈ maps.filter (·.language = english), ∀ r ∈ maps.filter (·.language ∈ [dutch, german]),
+      clusterScore e < clusterScore r := by
+  decide
+
+/-! ### The maps and the rest of the library -/
+
+/-- The relative-pronoun strategy of §2.2, read off a language's relativizers: a postnominal clause
+with a relative pronoun at the relativized position. -/
+def HasRelativePronounStrategy (L : List Relativizer) : Prop :=
+  ∃ z ∈ L, z.placement = .postNominal ∧ ∃ p, Relativization.NPRel.relPronoun ∈ z.realize p
+
+instance (L : List Relativizer) : Decidable (HasRelativePronounStrategy L) :=
+  List.decidableBEx _ _
+
+/-- Map 107.2 agrees with the relativizers of every language with a fragment on it, on both sides
+of the line. -/
+theorem relativePronouns_fragments :
+    ∀ x ∈ [(english, English.Relativization.relativizers), (finnish, Finnish.relativizers),
+        (french, French.relativizers), (german, German.relativizers),
+        (russian, Russian.relativizers), (basque, Basque.relativizers),
+        (turkish, Turkish.relativizers), (welsh, Welsh.relativizers)],
+      ∀ r ∈ maps.filter (·.language = x.1),
+        (r.Has .relativePronouns ↔ HasRelativePronounStrategy x.2) := by
+  decide
+
+-- Against §2.2, Keenan and Comrie's Hindi-Urdu has the strategy the prose denies Indic, in its
+-- postnominal *jo* clause and not its correlative.
+theorem hindiUrdu_relativePronoun :
+    HasRelativePronounStrategy [HindiUrdu.relJo] ∧
+      ¬ HasRelativePronounStrategy [HindiUrdu.relCorrelative] ∧
+      ∀ r ∈ prose.filter (·.language = indic), ¬ r.Has .relativePronouns := by
+  decide
+
+-- Map 107.9 agrees with the comparatives of the fragments through Stassen's particle type, of
+-- which Finnish and Latin have one beside a fixed-case construction.
+theorem comparative_fragments :
+    ∀ x ∈ [(english, [English.Comparison.than]),
+        (finnish, [Finnish.Comparison.kuin, Finnish.Comparison.partitive]),
+        (french, [French.Comparison.que]),
+        (latin, [Latin.Comparison.quam, Latin.Comparison.ablative]),
+        (russian, [Russian.Comparison.chem]), (turkish, [Turkish.Comparison.dan])],
+      ∀ r ∈ maps.filter (·.language = x.1),
+        (r.Has .particleComparative ↔ ∃ c ∈ x.2, Stassen1985.type1985 c = some .particle) := by
+  decide
+
+/-! ### The examples -/
+
+/-- The rows' names for the twelve features. -/
+def featureNames : List (String × Feature) :=
+  [("articles", .articles), ("relativePronouns", .relativePronouns), ("havePerfect", .havePerfect),
+   ("nominativeExperiencers", .nominativeExperiencers), ("participialPassive", .participialPassive),
+   ("anticausativeProminence", .anticausativeProminence),
+   ("dativeExternalPossessors", .dativeExternalPossessors),
+   ("negativeIndefinitesWithoutVerbalNegation", .negativeIndefinitesWithoutVerbalNegation),
+   ("particleComparative", .particleComparative), ("relativeBasedEquative", .relativeBasedEquative),
+   ("strictAgreement", .strictAgreement),
+   ("intensifierReflexiveDifferentiation", .intensifierReflexiveDifferentiation)]
+
+/-- The rows' names for the type inside each line. -/
+def insideValues : List String := ["sae", "generalizing", "anticausative", "dative", "mixed"]
+
+-- An example falls on the side of the line its type says, but for the equatives §2.10 gives for
+-- Finnish and Georgian, and for the English particle relative and inverting verb, which exemplify a
+-- type beside the one that puts English inside.
+theorem rows_agree :
+    ∀ e ∈ Examples.all, ∀ r ∈ maps ++ prose, r.language.glottocode = some e.language →
+      ∀ f ∈ e.parse? "feature" featureNames, r.OnMap f →
+        ((r.Has f ↔ ∃ v ∈ e.feature? "value", v ∈ insideValues) ↔
+          e.id ∉ [Examples.equative_fi.id, Examples.equative_ka.id, Examples.relparticle_en.id,
+            Examples.invexp_en.id]) := by
+  decide
+
+/-! ### Table 107.1 -/
+
+-- §3.4: Europe has far more comitative-instrumental syncretism than the world, Oceania far less.
+theorem syncretism_extremes (a : Area) :
+    (a ≠ .europe → (table1071 a).syncreticPercent.mantissa <
+      (table1071 .europe).syncreticPercent.mantissa) ∧
+    (a ≠ .oceania → (table1071 .oceania).syncreticPercent.mantissa <
+      (table1071 a).syncreticPercent.mantissa) := by
+  revert a; decide
 
 end Haspelmath2001

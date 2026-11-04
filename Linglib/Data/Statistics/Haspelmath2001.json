@@ -1,0 +1,252 @@
+{
+ "meta": {
+  "bibkey": "haspelmath-2001",
+  "method": "typology",
+  "description": "The figures of world-wide surveys that the chapter cites for its criterion (iv), and its Table 107.1 on comitative-instrumental syncretism.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Feature",
+   "doc": "The twelve features of section 2.",
+   "levels": [
+    {
+     "name": "articles",
+     "label": "articles",
+     "doc": "definite and indefinite articles, section 2.1"
+    },
+    {
+     "name": "relativePronouns",
+     "label": "relativePronouns",
+     "doc": "relative clauses with relative pronouns, section 2.2"
+    },
+    {
+     "name": "havePerfect",
+     "label": "havePerfect",
+     "doc": "the 'have'-perfect, section 2.3"
+    },
+    {
+     "name": "nominativeExperiencers",
+     "label": "nominativeExperiencers",
+     "doc": "nominative experiencers, section 2.4"
+    },
+    {
+     "name": "participialPassive",
+     "label": "participialPassive",
+     "doc": "the participial passive, section 2.5"
+    },
+    {
+     "name": "anticausativeProminence",
+     "label": "anticausativeProminence",
+     "doc": "anticausative prominence, section 2.6"
+    },
+    {
+     "name": "dativeExternalPossessors",
+     "label": "dativeExternalPossessors",
+     "doc": "dative external possessors, section 2.7"
+    },
+    {
+     "name": "negativeIndefinitesWithoutVerbalNegation",
+     "label": "negativeIndefinitesWithoutVerbalNegation",
+     "doc": "negative pronouns and lack of verbal negation, section 2.8"
+    },
+    {
+     "name": "particleComparative",
+     "label": "particleComparative",
+     "doc": "particles in comparative constructions, section 2.9"
+    },
+    {
+     "name": "relativeBasedEquative",
+     "label": "relativeBasedEquative",
+     "doc": "relative-based equative constructions, section 2.10"
+    },
+    {
+     "name": "strictAgreement",
+     "label": "strictAgreement",
+     "doc": "subject person affixes as strict agreement markers, section 2.11"
+    },
+    {
+     "name": "intensifierReflexiveDifferentiation",
+     "label": "intensifierReflexiveDifferentiation",
+     "doc": "intensifier-reflexive differentiation, section 2.12"
+    }
+   ]
+  },
+  {
+   "name": "Area",
+   "doc": "The rows of Table 107.1.",
+   "levels": [
+    {
+     "name": "europe",
+     "label": "Europe",
+     "doc": "Europe"
+    },
+    {
+     "name": "africa",
+     "label": "Africa",
+     "doc": "Africa"
+    },
+    {
+     "name": "americas",
+     "label": "Americas",
+     "doc": "Americas"
+    },
+    {
+     "name": "asia",
+     "label": "Asia",
+     "doc": "Asia"
+    },
+    {
+     "name": "oceania",
+     "label": "Oceania",
+     "doc": "Oceania"
+    },
+    {
+     "name": "world",
+     "label": "World",
+     "doc": "World"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "surveys",
+   "structure": "Survey",
+   "doc": "a world-wide survey cited for a feature: how many languages of its sample have the feature.",
+   "locator": "section 2, pp. 1494-1500",
+   "verified": "page-image",
+   "columns": [
+    {
+     "name": "feature",
+     "type": "Feature",
+     "doc": "The feature."
+    },
+    {
+     "name": "withFeature",
+     "type": "nat",
+     "doc": "The languages of the sample with the feature."
+    },
+    {
+     "name": "sample",
+     "type": "nat",
+     "doc": "The languages of the sample."
+    }
+   ],
+   "rows": [
+    {
+     "feature": "articles",
+     "withFeature": 31,
+     "sample": 400,
+     "note": "Both articles; p. 1494 says a sample of about 400."
+    },
+    {
+     "feature": "participialPassive",
+     "withFeature": 4,
+     "sample": 80,
+     "note": "A participle plus an intransitive auxiliary, p. 1497."
+    },
+    {
+     "feature": "negativeIndefinitesWithoutVerbalNegation",
+     "withFeature": 5,
+     "sample": 40,
+     "note": "p. 1499."
+    },
+    {
+     "feature": "particleComparative",
+     "withFeature": 18,
+     "sample": 110,
+     "note": "p. 1499 prints 19 as the sample; 18 with the feature and 4 European languages without it make 22 at least, and stassen-1985, p. 10, says 110."
+    },
+    {
+     "feature": "strictAgreement",
+     "withFeature": 2,
+     "sample": 272,
+     "note": "p. 1500."
+    }
+   ]
+  },
+  {
+   "name": "table1071",
+   "structure": "Table1071Row",
+   "doc": "comitative-instrumental syncretism by area, the languages and the percentage of each type; a mixed type is left out, so the percentages do not add up to 100.",
+   "locator": "Table 107.1, p. 1503",
+   "verified": "page-image",
+   "key": [
+    "area"
+   ],
+   "columns": [
+    {
+     "name": "area",
+     "type": "Area",
+     "doc": "The area."
+    },
+    {
+     "name": "syncretic",
+     "type": "nat",
+     "doc": "The syncretic languages."
+    },
+    {
+     "name": "syncreticPercent",
+     "type": "decimal",
+     "doc": "Their percentage."
+    },
+    {
+     "name": "nonSyncretic",
+     "type": "nat",
+     "doc": "The non-syncretic languages."
+    },
+    {
+     "name": "nonSyncreticPercent",
+     "type": "decimal",
+     "doc": "Their percentage."
+    }
+   ],
+   "rows": [
+    {
+     "area": "Europe",
+     "syncretic": 25,
+     "syncreticPercent": "49",
+     "nonSyncretic": 16,
+     "nonSyncreticPercent": "31"
+    },
+    {
+     "area": "Africa",
+     "syncretic": 20,
+     "syncreticPercent": "31",
+     "nonSyncretic": 38,
+     "nonSyncreticPercent": "58"
+    },
+    {
+     "area": "Americas",
+     "syncretic": 16,
+     "syncreticPercent": "21",
+     "nonSyncretic": 54,
+     "nonSyncreticPercent": "69"
+    },
+    {
+     "area": "Asia",
+     "syncretic": 12,
+     "syncreticPercent": "18",
+     "nonSyncretic": 47,
+     "nonSyncreticPercent": "71"
+    },
+    {
+     "area": "Oceania",
+     "syncretic": 6,
+     "syncreticPercent": "10",
+     "nonSyncretic": 54,
+     "nonSyncreticPercent": "86"
+    },
+    {
+     "area": "World",
+     "syncretic": 79,
+     "syncreticPercent": "24",
+     "nonSyncretic": 209,
+     "nonSyncreticPercent": "65"
+    }
+   ]
+  }
+ ]
+}

@@ -29,7 +29,9 @@ JSON file format, the CLDF StructureDataset tables under CLDF column names:
   }
 
 Each contribution is one table of the source, and languages, parameters and codes are shared
-among them. `Glottocode` may be null, with a `comment` saying why. A parameter's `Lean` is the
+among them. `Glottocode` may be null, with a `comment` saying why. A parameter with
+`"Datatype": "decimal"` has no codes: its values give the number in `Value`, as printed, in place
+of a `Code_ID`, and its field is a list of `Coded Data.Statistics.Decimal`. A parameter's `Lean` is the
 name of its generated type, a code's `Lean` the name of its constructor, and a contribution's
 `Lean` the name of its list of rows. A parameter with `Codes` declares no codes of its own: its
 values take the codes of the parameter it names, which declares none of its own `Codes`, and its
@@ -59,13 +61,14 @@ GLOTTO_RE = re.compile(r"^[a-z0-9]{4}[0-9]{4}$")
 TYPE_RE = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 CTOR_RE = re.compile(r"^[a-z][A-Za-z0-9]*$")
 SOURCE_RE = re.compile(r"^\s*([^\[\]\s]+)\s*(?:\[(.*)\])?\s*$")
+DECIMAL_RE = re.compile(r"^(\d+)(?:\.(\d+))?$")
 KEYWORDS = {"def", "if", "then", "else", "do", "fun", "let", "in", "at", "by", "end", "match",
             "with", "where", "from", "have", "show", "open", "for", "return", "import", "true",
             "false", "theorem", "structure", "class", "instance", "section", "namespace"}
 
 TABLES = {"ContributionTable": {"ID", "Name", "Lean", "Source", "Description", "comment"},
           "LanguageTable": {"ID", "Name", "Glottocode", "Lineage", "comment"},
-          "ParameterTable": {"ID", "Name", "Lean", "Description", "Codes", "comment"},
+          "ParameterTable": {"ID", "Name", "Lean", "Description", "Codes", "Datatype", "comment"},
           "CodeTable": {"ID", "Parameter_ID", "Name", "Lean", "Description", "comment"},
           "ValueTable": {"Language_ID", "Parameter_ID", "Code_ID", "Contribution_ID", "Value",
                          "Questionable", "Optional", "Minor", "comment"}}
@@ -146,6 +149,8 @@ def emit_module(paper: str, data: dict) -> str:
         req(r, "Name", where)
         if "Codes" in r and (r["Codes"] not in params or "Codes" in params[r["Codes"]]):
             fail(f"{where}: Codes must name an earlier parameter with codes of its own")
+        if r.get("Datatype", "decimal") != "decimal" or ("Datatype" in r and "Codes" in r):
+            fail(f"{where}: Datatype must be decimal, on a parameter without Codes")
         params[pid] = {**r, "codes": []}
     owner = {pid: p.get("Codes", pid) for pid, p in params.items()}
     codes = {}
@@ -160,6 +165,8 @@ def emit_module(paper: str, data: dict) -> str:
             fail(f"{where}: parameter {pid!r} not in ParameterTable")
         if owner[pid] != pid:
             fail(f"{where}: parameter {pid!r} takes the codes of {owner[pid]!r}")
+        if "Datatype" in params[pid]:
+            fail(f"{where}: parameter {pid!r} has a Datatype and no codes")
         ctor = req(r, "Lean", where)
         if not CTOR_RE.match(ctor) or ctor in KEYWORDS:
             fail(f"{where}: Lean {ctor!r} is not a constructor name")
@@ -191,14 +198,24 @@ def emit_module(paper: str, data: dict) -> str:
     for k, r in enumerate(data.get("ValueTable") or []):
         where = f"value {k}"
         check_keys(r, "ValueTable", where)
-        lid, pid, cid, con = (req(r, x, where) for x in
-                              ("Language_ID", "Parameter_ID", "Code_ID", "Contribution_ID"))
+        lid, pid, con = (req(r, x, where) for x in
+                         ("Language_ID", "Parameter_ID", "Contribution_ID"))
         if lid not in langs:
             fail(f"{where}: language {lid!r} not in LanguageTable")
         if pid not in params:
             fail(f"{where}: parameter {pid!r} not in ParameterTable")
-        if cid not in codes or codes[cid]["Parameter_ID"] != owner[pid]:
-            fail(f"{where}: code {cid!r} is not a code of {pid!r}")
+        if "Datatype" in params[pid]:
+            if "Code_ID" in r:
+                fail(f"{where}: parameter {pid!r} has a Datatype and no codes")
+            m = DECIMAL_RE.match(req(r, "Value", where))
+            if not m:
+                fail(f"{where}: Value {r['Value']!r} is not a decimal")
+            code = f"⟨{m.group(1) + (m.group(2) or '')}, {len(m.group(2) or '')}⟩"
+        else:
+            cid = req(r, "Code_ID", where)
+            if cid not in codes or codes[cid]["Parameter_ID"] != owner[pid]:
+                fail(f"{where}: code {cid!r} is not a code of {pid!r}")
+            code = f".{codes[cid]['Lean']}"
         if con not in contribs:
             fail(f"{where}: contribution {con!r} not in ContributionTable")
         for flag in ("Questionable", "Optional", "Minor"):
@@ -206,7 +223,7 @@ def emit_module(paper: str, data: dict) -> str:
                 fail(f"{where}: {flag} must be a boolean")
         valued.add(pid)
         row = contribs[con]["rows"].setdefault(lid, {p: [] for p in params})
-        row[pid].append(f"⟨.{codes[cid]['Lean']}, {str(r.get('Questionable', False)).lower()}, "
+        row[pid].append(f"⟨{code}, {str(r.get('Questionable', False)).lower()}, "
                         f"{str(r.get('Optional', False)).lower()}, "
                         f"{str(r.get('Minor', False)).lower()}⟩")
     unused = set(langs) - {lid for c in contribs.values() for lid in c["rows"]}
@@ -217,15 +234,16 @@ def emit_module(paper: str, data: dict) -> str:
     fielded = [pid for pid in params if pid in valued or pid not in taken]
     out = []
     for p in params.values():
-        if "Codes" in p:
+        if "Codes" in p or "Datatype" in p:
             continue
         ctors = "\n".join(f"  /-- `{doc(c['Name'], c['ID'])}`: {doc(c.get('Description', ''), c['ID'])} -/\n"
                           f"  | {c['Lean']}" for c in p["codes"])
         out.append(f"/-- {p['Name']}: {doc(p.get('Description', ''), p['ID'])} -/\n"
                    f"inductive {p['Lean']} where\n{ctors}\n  deriving DecidableEq, Repr")
     fields = "\n".join(f"  /-- The codes for {params[pid]['Name']}. -/\n  "
-                       f"{lower_first(params[pid]['Lean'])} : "
-                       f"List (Coded {params[owner[pid]]['Lean']})" for pid in fielded)
+                       f"{lower_first(params[pid]['Lean'])} : List (Coded "
+                       + ("Data.Statistics.Decimal" if "Datatype" in params[pid]
+                          else params[owner[pid]]['Lean']) + ")" for pid in fielded)
     out.append(f"/-- A row of a sample: a language with its codes for each parameter. -/\n"
                f"structure Row where\n  /-- The language. -/\n  language : Language\n{fields}\n"
                f"  deriving DecidableEq, Repr")
@@ -243,7 +261,8 @@ def emit_module(paper: str, data: dict) -> str:
                    f"of the source ({c['source']}). -/\n"
                    f"def {c['Lean']} : List Row := [\n" + ",\n".join(rows) + "]")
     body = "\n\n".join(out)
-    return f"""import Linglib.Data.StructureDataset.Schema
+    decimal = "import Linglib.Data.Statistics.Schema\n" if any("Datatype" in p for p in params.values()) else ""
+    return f"""{decimal}import Linglib.Data.StructureDataset.Schema
 
 /-!
 # `{paper}`: language samples
