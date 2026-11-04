@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality

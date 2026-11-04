@@ -582,7 +582,7 @@ def ruleCase (a : Alignment.AlignmentType) (d : Derivation) (x : Arg) :
     Option (Case × Case.Mechanism) :=
   d.externalize?.bind fun t ↦
     ((assigners a).assignOn .raising t (Minimalist.complementDomain .raising t ∅) IsPhaseHead
-      (fun _ ↦ .unvalued) [subjD, objD]).valueOf (tokenOf x)
+      (fun _ ↦ .unvalued) [subjD, objD] (tokenOf x)).value?
 
 -- (1), (7a–c) [baker-2015]
 theorem rule1_overgenerates :
@@ -595,33 +595,32 @@ theorem rule1_overgenerates :
 
 /-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): of two NPs in one domain, over
 the ranking `rank`, the one c-commanding a caseless NP no higher on `rank` takes the ergative. -/
-def rule37 (rank : Person → ℕ) (s o : Nominal) : Case.Valuation Arg (Case × Case.Mechanism) :=
-  (DependentCase.Rules.ofAlignment .ergative).dependentPassBy
-    (fun p q ↦ p.1 < q.1 ∧ rank (nominals s o q.2).1 ≤ rank (nominals s o p.2).1) (fun _ ↦ True)
-    (Case.lexicalValuation (fun _ ↦ none) [.subject, .object])
+def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Case × Case.Mechanism) :=
+  (DependentCase.Rules.ofAlignment .ergative).dependent.pass
+    (fun p q ↦ p = .subject ∧ q = .object ∧ rank (nominals s o q).1 ≤ rank (nominals s o p).1)
+    {.subject, .object} (Case.lexical fun _ ↦ .unvalued)
 
 -- (37), §4.1
-theorem rule37_valueOf_iff (rank : Person → ℕ) (s o : Nominal) :
-    ((rule37 rank s o).valueOf .subject).map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
+theorem rule37_value?_iff (rank : Person → ℕ) (s o : Nominal) :
+    (rule37 rank s o .subject).value?.map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
   by_cases h : rank o.1 ≤ rank s.1 <;>
-    simp [rule37, nominals, h, DependentCase.Rules.dependentPassBy,
-      DependentCase.Rules.ofAlignment, Case.lexicalValuation, Case.slotValuation,
-      Case.Valuation.initial, Case.Valuation.caselessEntries, Case.Valuation.fill,
-      Case.Valuation.fillFrom, Case.Valuation.valueOf, Case.Valuation.offer]
+    simp [rule37, nominals, h, CaseRule.pass, FeatureSlot.caseless, DependentCase.Rules.dependent,
+      DependentCase.Rules.ofAlignment, Case.lexical, Finset.filter_insert,
+      Finset.filter_singleton]
 
 /-- Agree cannot do what (37) can: no probe yields the rule over a ranking with third person above
 second, since a probe that gets past a second person gets past a third (§4.1). -/
 theorem not_forall_iff_rule37 (g : Grammar) {rank : Person → ℕ} (h : rank .second < rank .third)
     (n : Number) : ¬ ∀ s o : Person, s.prominence ≠ o.prominence →
       (DependentCase g .v (nominals (s, n) (o, n)) (goals .v .high) ↔
-        ((rule37 rank (s, n) (o, n)).valueOf .subject).map (·.1) = some .erg) := by
+        (rule37 rank (s, n) (o, n) .subject).value?.map (·.1) = some .erg) := by
   intro hg
   have h₁ : Licit g ⟨.third, .second⟩ := (dependentCase_v_iff g (.third, n) (.second, n)).1
-    ((hg .third .second (by decide)).2 ((rule37_valueOf_iff rank (.third, n) (.second, n)).2 h.le))
+    ((hg .third .second (by decide)).2 ((rule37_value?_iff rank (.third, n) (.second, n)).2 h.le))
   have hsub : spec Person.third ⊆ spec Person.second := by decide
   have h₂ : Licit g ⟨.second, .third⟩ :=
     Licit.mono (s := ⟨.third, .second⟩) (t := ⟨.second, .third⟩) hsub hsub h₁
-  exact absurd ((rule37_valueOf_iff rank (.second, n) (.third, n)).1
+  exact absurd ((rule37_value?_iff rank (.second, n) (.third, n)).1
     ((hg .second .third (by decide)).1 ((dependentCase_v_iff g (.second, n) (.third, n)).2 h₂)))
     (not_le.2 h)
 
