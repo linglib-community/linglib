@@ -70,7 +70,8 @@ def vTV : SelStack := [.V]
 def vITV : SelStack := [.V, .N]
 
 /-- The root of the preposition of (47), (48) and [anand-hardt-mccloskey-2025]. The paper does not
-say that *to* is a root, but (49d) needs it to be for (48b): an extra functional head is no clash. -/
+say that *to* is a root, but (49d) needs it to be for (48b): an extra functional head is no clash.
+-/
 def preposition : Root := ⟨0⟩
 
 /-- A verbal structure. A head it lacks has the empty bundle. -/
@@ -92,7 +93,8 @@ structure Verb where
 
 /-- The feature bundle of a site, one part per kind of head: a Voice head, the features of a v, and
 the roots. -/
-abbrev Bundle := WithBot Head × (Flat (List LittleV) × Flat SelStack × Flat Unit) × Flat (List Root)
+abbrev Bundle :=
+  WithBot Head × (Flat (List LittleV) × Flat SelStack × Flat Unit) × Flat (List Root)
 
 namespace Verb
 
@@ -105,7 +107,8 @@ def content (σ : Verb) : Site → Bundle
   | _ => ⊥
 
 /-- The v of the structure selects an internal argument: [D] in K'iche' (43b), [v:TV] in Kaqchikel
-(57b). It is read only for a remnant in the role P; the [D] of (72b) selects an external argument. -/
+(57b). It is read only for a remnant in the role P; the [D] of (72b) selects an external argument.
+-/
 def SelectsObject (σ : Verb) : Prop := σ.d = ↑() ∨ σ.selection = ↑vTV
 
 instance (σ : Verb) : Decidable σ.SelectsObject := inferInstanceAs (Decidable (_ ∨ _))
@@ -147,7 +150,8 @@ def kaqchikelPassive : Verb := { voice := passive, selection := ↑vTV }
 /-- An active transitive of English, Italian or BCS. -/
 def active : Verb := { voice := agentive, d := ↑() }
 
-/-- *ate* in (46), on the assumption p. 18 grants conditionally, that it has no internal argument. -/
+/-- *ate* in (46), on the assumption p. 18 grants conditionally, that it has no internal argument.
+-/
 def activeIntransitive : Verb := { voice := agentive }
 
 /-- An active transitive with a preposition in situ. -/
@@ -250,8 +254,9 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     | _ => none
   pure ⟨clause, ex.judgment⟩
 
-/-- Read a row of [anand-hardt-mccloskey-2025]: a preposition without a counterpart in the antecedent,
-in situ in the argument domain if it marks an argument and in an adjunct of VoiceP if not. -/
+/-- Read a row of [anand-hardt-mccloskey-2025]: a preposition without a counterpart in the
+antecedent, in situ in the argument domain if it marks an argument and in an adjunct of VoiceP if
+not. -/
 def Row.ofStranded (ex : Datum) : Option Row := do
   let t ← ex.parse? "ppType" [("argument", activeTo), ("nonargument", activeHigh)]
   pure ⟨.ellipsis sluicing active t none, ex.judgment⟩
@@ -286,9 +291,9 @@ theorem Verb.content_eq_of_ne {σ τ : Verb} {x y : Site} (hx : x ≠ y)
   · rw [σ.content_of_notMem hc, τ.content_of_notMem hc]
 
 /-- No equivalence relation predicts the judgments, on any domain, so neither an identity condition
-such as (49a)–(49c) nor identity of any abstraction of the bundles does: a domain without Voice admits
-the English voice mismatch (69a), and on a domain with it, the Kaqchikel mismatches (51) and (52) and
-the K'iche' mismatch (1) chain the passive to the active. -/
+such as (49a)–(49c) nor identity of any abstraction of the bundles does: a domain without Voice
+admits the English voice mismatch (69a), and on a domain with it, the Kaqchikel mismatches (51) and
+(52) and the K'iche' mismatch (1) chain the passive to the active. -/
 theorem not_forall_licit_of_equivalence {R : Bundle → Bundle → Prop} (hR : Equivalence R)
     (D : Set Site) : ¬ ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit (relatedOn R D)) := by
   intro h
@@ -339,7 +344,8 @@ theorem rows_predicted_on_iff {D : Set Site} :
       exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by
         rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz), by simp⟩))
     · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-          r.clause = .ellipsis vpEllipsis inchoative causative none ∧ ¬ .marginal ≤ r.judgment := by
+          r.clause = .ellipsis vpEllipsis inchoative causative none ∧
+            ¬ .marginal ≤ r.judgment := by
         decide +kernel
       exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by
         rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz), by simp⟩))

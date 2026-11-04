@@ -35,8 +35,8 @@ with one that has it](##Minimalist.Voice.Head.compat_iff), while two values do.
   the same cell. Collins's passive Voice, which assigns no θ-role and checks Case, is an expletive
   active head that checks Case.
 * Reflexive, reciprocal and antipassive voices are not cells of their own: they are what a
-  θ-assigning head derives with its internal argument implicit, oblique or absent. A reflexive flavor
-  of Voice, in the cell of `agentive`, differs from it in `value` ([beslin-2026]).
+  θ-assigning head derives with its internal argument implicit, oblique or absent. A reflexive
+  flavor of Voice, in the cell of `agentive`, differs from it in `value` ([beslin-2026]).
 * `Params` is the binary cell, for a morpheme that spells out several heads; ellipsis compares the
   order on `Head`, where D is privative.
 * Phasehood is that of Chomsky's v*, a θ-assigning active head. A study that separates the phase
@@ -143,7 +143,8 @@ theorem IsPhasal.assignsTheta {v : Head} (h : v.IsPhasal) : v.AssignsTheta := h.
 
 /-- One head lies below another when the two share their multivalued features and the other bears
 every privative feature it does. `Bool`, ordered with `false` below `true`, is what privative
-means: a D-feature, an implicit variable or Case checking is absent or present, and never clashes. -/
+means: a D-feature, an implicit variable or Case checking is absent or present, and never
+clashes. -/
 instance : PartialOrder Head where
   le v w := v.value = w.value ∧ v.thematic = w.thematic ∧ v.hasD ≤ w.hasD ∧
     v.implicit ≤ w.implicit ∧ v.checksCase ≤ w.checksCase ∧ v.features ≤ w.features
