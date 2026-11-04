@@ -598,14 +598,14 @@ the ranking `rank`, the one c-commanding a caseless NP no higher on `rank` takes
 def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Case × Case.Mechanism) :=
   (DependentCase.Rules.ofAlignment .ergative).dependent.pass
     (fun p q ↦ p = .subject ∧ q = .object ∧ rank (nominals s o q).1 ≤ rank (nominals s o p).1)
-    {.subject, .object} (DependentCase.lexical fun _ ↦ .unvalued)
+    {.subject, .object} (Case.lexical fun _ ↦ .unvalued)
 
 -- (37), §4.1
 theorem rule37_value?_iff (rank : Person → ℕ) (s o : Nominal) :
     (rule37 rank s o .subject).value?.map (·.1) = some .erg ↔ rank o.1 ≤ rank s.1 := by
   by_cases h : rank o.1 ≤ rank s.1 <;>
     simp [rule37, nominals, h, CaseRule.pass, FeatureSlot.caseless, DependentCase.Rules.dependent,
-      DependentCase.Rules.ofAlignment, DependentCase.lexical, Finset.filter_insert,
+      DependentCase.Rules.ofAlignment, Case.lexical, Finset.filter_insert,
       Finset.filter_singleton]
 
 /-- Agree cannot do what (37) can: no probe yields the rule over a ranking with third person above

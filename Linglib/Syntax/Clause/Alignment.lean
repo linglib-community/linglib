@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -16,48 +15,27 @@ public import Linglib.Syntax.Clause.ArgumentRole
 A marking of the argument roles, by case, agreement or constituent order, is a function out of
 `ArgumentRole`, and its alignment is which of the three core roles S, A and P it identifies, the
 kernel of the marking on the core roles, as Comrie and Dixon define it. A three-element set has five
-partitions, so a marking has one of five alignments: neutral, accusative, with S marked like A,
-ergative, with S marked like P, horizontal, with A marked like P, and tripartite. The case labels a
-marking uses are a further dimension: the Mayan non-perfective pattern with Set A on every subject
-and the Kaqchikel progressive with Set A on the object are accusative alignments in genitive rather
-than nominative clothing.
-
-## Main declarations
-
-* `Alignment.IsNeutral`, `Alignment.IsAccusative`, `Alignment.IsErgative`,
-  `Alignment.IsHorizontal`, `Alignment.IsTripartite`: the five alignments of a marking, one of
-  which every marking has (`Alignment.marking_cases`).
-* `Alignment.ditransitive`, `Alignment.IsIndirective`, `Alignment.IsSecundative`: ditransitive
-  alignment, the alignment of P, T and R.
-* `Alignment.accusative`, `Alignment.ergative`, `Alignment.tripartite`,
-  `Alignment.extendedErgative`, `Alignment.invertedErgative`: the canonical case markings.
-* `Alignment.AlignmentType`: Comrie's observational classification of WALS chapters 98 to
-  100, with `AlignmentType.MarksAgent` and `AlignmentType.MarksPatient`.
-* `Alignment.AlignmentType.Classifies`: the alignment a type names, as a property of a
-  marking.
-* `Alignment.overt`, `Alignment.Fits`: the conditions under which a role of a conditioned
-  marking is overtly coded, and the fit of a conditioned marking to an order on its conditions.
+partitions, so [a marking has one of five alignments](##Alignment.marking_cases): neutral,
+accusative, with S marked like A, ergative, with S marked like P, horizontal, with A marked like P,
+and tripartite. Ditransitive alignment reads P, T and R the same way. A marking may also depend on a
+condition besides the role, and [hierarchy effects are its fit to an order on the
+conditions](##Alignment.Fits).
 
 ## Implementation notes
 
-The monotransitive alignment predicates read S, A and P only. The values a canonical marking
-gives R and T, a dative recipient in the accusative marking and the theme with the patient
-elsewhere, are placeholders with no audit trail, and no theorem reads their ditransitive
-alignment.
-`AlignmentType.active`, the split-S systems, identifies no fixed pair of roles and so is not the
-alignment of a single marking.
+The predicates classify a marking; `Alignment.AlignmentType` is Comrie's observational
+classification of languages in WALS chapters 98 to 100, which `AlignmentType.Classifies` links to
+them. The two differ on purpose: no WALS chapter has a horizontal type, and `AlignmentType.active`,
+the split-S systems, identifies no fixed pair of roles and so is not the alignment of a single
+marking.
 
 ## References
 
 * [bickel-et-al-2015]
 * [comrie-1978]
 * [comrie-2013]
-* [coon-2013]
 * [dixon-1994]
 * [haspelmath-2011]
-* [imanishi-2014]
-* [imanishi-2020]
-* [scott-2023]
 -/
 
 @[expose] public section
@@ -140,50 +118,6 @@ instance [DecidableEq κ] : Decidable (IsIndirective m) := decidable_of_iff' _ i
 
 instance [DecidableEq κ] : Decidable (IsSecundative m) := decidable_of_iff' _ isSecundative_iff
 
-/-! ### Canonical case markings -/
-
-/-- The accusative marking makes S and A nominative and P accusative. -/
-def accusative : ArgumentRole → Case
-  | .S | .A => .nom
-  | .P | .T => .acc
-  | .R => .dat
-
-/-- The ergative marking makes A ergative and S and P absolutive. -/
-def ergative : ArgumentRole → Case
-  | .A => .erg
-  | .S | .P | .R | .T => .abs
-
-/-- The tripartite marking makes A ergative, P accusative and S absolutive, as in San Juan
-Atitán Mam ([scott-2023]) and several Australian languages ([dixon-1994]). -/
-def tripartite : ArgumentRole → Case
-  | .A => .erg
-  | .S => .abs
-  | .P | .R | .T => .acc
-
-/-- The extended-ergative marking of the Mayan non-perfective and aspectless clause: genitive
-on S and A, from D under nominalization, absolutive on P ([coon-2013], [imanishi-2020]; the
-label is [dixon-1994]'s). -/
-def extendedErgative : ArgumentRole → Case
-  | .S | .A => .gen
-  | .P | .R | .T => .abs
-
-/-- The inverted marking of the Kaqchikel progressive ([imanishi-2014]): absolutive on S and
-A, genitive on P, the object being the only Case-less DP of a nominalized clause under the
-unaccusative requirement. -/
-def invertedErgative : ArgumentRole → Case
-  | .S | .A | .R | .T => .abs
-  | .P => .gen
-
-theorem isAccusative_accusative : IsAccusative accusative := ⟨rfl, nofun⟩
-
-theorem isErgative_ergative : IsErgative ergative := ⟨rfl, nofun⟩
-
-theorem isTripartite_tripartite : IsTripartite tripartite := ⟨nofun, nofun, nofun⟩
-
-theorem isAccusative_extendedErgative : IsAccusative extendedErgative := ⟨rfl, nofun⟩
-
-theorem isAccusative_invertedErgative : IsAccusative invertedErgative := ⟨rfl, nofun⟩
-
 /-! ### The observational classification -/
 
 /-- Morphosyntactic alignment type, the classification of WALS chapters 98 to 100
@@ -200,16 +134,6 @@ inductive AlignmentType where
   /-- Split-S, with S marked like A for some predicates and like P for others. -/
   | active
   deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- The type marks A apart from S. -/
-def AlignmentType.MarksAgent (a : AlignmentType) : Prop := a = .ergative ∨ a = .tripartite
-
-instance (a : AlignmentType) : Decidable a.MarksAgent := inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The type marks P apart from S. -/
-def AlignmentType.MarksPatient (a : AlignmentType) : Prop := a = .accusative ∨ a = .tripartite
-
-instance (a : AlignmentType) : Decidable a.MarksPatient := inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The alignment a type names, as a property of a marking. The split-S type names none, since
 it identifies no fixed pair of roles. -/

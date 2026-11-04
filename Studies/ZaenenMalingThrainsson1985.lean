@@ -5,7 +5,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Fragments.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Syntax.Case.Rule
+public import Linglib.Syntax.Case.Assignment
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -197,7 +197,7 @@ variable {ι : Type*} [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRel l
 /-- Default case marking, (61d), as a pass over arguments ordered by their functions: the highest
 not yet valued takes the nominative and the next the accusative. -/
 def defaultCase : ι → FeatureSlot C :=
-  (CaseRule.inOrder [P.nom, P.acc]).passGoals lt D s
+  (CaseRule.inOrder [P.nom, P.acc]).passUnvalued lt D s
 
 theorem extends_defaultCase :
     FeatureSlot.Extends {c | c ∈ [P.nom, P.acc]} s (P.defaultCase lt D s) :=

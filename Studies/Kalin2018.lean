@@ -287,7 +287,7 @@ end Economy
 def CaseValue.assigned (κ : Cat → _root_.Case) :
     CaseValue → _root_.Case × _root_.Case.Mechanism
   | .lexical c => (c, .lexical)
-  | .licenser l => (κ l.head, .agree)
+  | .licenser l => (κ l.head, .functional)
 
 theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c ∈ ds, g.rules c = {})
     (κ : Cat → _root_.Case) {ls : List Licenser}
@@ -302,14 +302,15 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
       (st : Fin n → FeatureSlot CaseValue) :
       ((L.map fun l ↦ (l.head, l.domain)).filterMap fun pr ↦
           (g.agreeCase pr.1).map fun k ↦
-            ((k, _root_.Case.Mechanism.agree), Finset.univ.filter fun x ↦ (np x).Visible c)).foldl
+            ((k, _root_.Case.Mechanism.functional),
+              Finset.univ.filter fun x ↦ (np x).Visible c)).foldl
         (fun st p ↦ Minimalist.agree (fun a b : Fin n ↦ a < b) p.1 p.2 st) (φ st) =
         φ (L.foldl (fun st l ↦ l.agree np st) st) := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : Minimalist.agree (fun a b : Fin n ↦ a < b) (κ l.head, .agree)
+      have hstep : Minimalist.agree (fun a b : Fin n ↦ a < b) (κ l.head, .functional)
           (Finset.univ.filter fun x ↦ (np x).Visible c) (φ st) = φ (l.agree np st) := by
         funext x
         simp only [φ, Licenser.agree, hdom]
@@ -327,9 +328,9 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
     exact key c _ (fun l hl ↦ by
       obtain ⟨hl, hc⟩ := mem_filter.1 hl
       exact ⟨by simpa using hc, hκ l hl⟩) st
-  have hinit : DependentCase.lexical (fun x ↦ (np x).case) = φ (initial np) := by
+  have hinit : _root_.Case.lexical (fun x ↦ (np x).case) = φ (initial np) := by
     funext x
-    simp only [DependentCase.lexical, φ, initial]
+    simp only [_root_.Case.lexical, φ, initial]
     cases (np x).case <;> rfl
   suffices ∀ ds' ⊆ ds, ∀ st : Fin n → FeatureSlot CaseValue, assignBy (ds'.map dom) (φ st) =
       φ (ds'.foldl (fun st c ↦ cycle ls c np st) st) by
@@ -583,7 +584,7 @@ theorem toyCases_eq_license :
 and the derivation crashes (Section 2.1.3). -/
 theorem dependentCase_values_banned_object (subject : Bool) :
     ((DependentCase.Rules.ofAlignment .accusative).pass (· < ·) .univ
-      (DependentCase.lexical fun j : Fin 2 ↦ (phased (transitive subject true) j).case)
+      (_root_.Case.lexical fun j : Fin 2 ↦ (phased (transitive subject true) j).case)
       1).value?.map (·.1) = some .acc ∧
     ¬ Converges domains perfective (transitive subject true) := by
   cases subject <;> decide

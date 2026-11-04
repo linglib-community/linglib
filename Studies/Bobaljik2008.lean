@@ -61,7 +61,7 @@ instance : LinearOrder CaseCategory := LinearOrder.lift' (·.ctorIdx) (by decide
 def ofMechanism : Mechanism → CaseCategory
   | .lexical => .lexical
   | .dependent => .dependent
-  | .unmarked | .agree => .unmarked
+  | .unmarked | .functional => .unmarked
 
 end CaseCategory
 

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Minimalist.Case.Assignment
 public import Linglib.Syntax.Minimalist.Locality.Transfer
 
 /-!
@@ -105,7 +105,7 @@ def CaseAssigners.probesAt (g : CaseAssigners) (U : Finset LexicalItem.Token) :
     List ((Case × Mechanism) × Finset LexicalItem.Token) :=
   (projectingHeads hd t).filterMap fun x ↦ (g.agreeCase x.2.item.cat).bind fun k ↦
     if complement x.1 ∈ transferSlice Φ D h then
-      some ((k, .agree), U.filter (ReachesAt hd t Φ D h x.1))
+      some ((k, .functional), U.filter (ReachesAt hd t Φ D h x.1))
     else none
 
 /-- The phase heads of `t` with their positions, innermost first. -/
@@ -128,6 +128,6 @@ def CaseAssigners.assignOn (g : CaseAssigners) (D : TreePath → Set TreePath)
       sees := U.filter (VisibleAt hd t Φ D x.1)
       probes := g.probesAt hd t Φ D x.1 U
       elsewhere := (g.rules x.2.item.cat).elsewhere
-      spellOut := U.filter (SpelledOutAt hd t Φ D x.1) }) (DependentCase.lexical case)
+      spellOut := U.filter (SpelledOutAt hd t Φ D x.1) }) (Case.lexical case)
 
 end Minimalist

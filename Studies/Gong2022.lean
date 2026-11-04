@@ -171,7 +171,7 @@ theorem do_gets_dependent_acc :
     ditransitiveCases.bind (· objD |>.value?) = some (.acc, .dependent) := by decide +kernel
 
 theorem subject_gets_nom_by_agree :
-    ditransitiveCases.bind (· subjD |>.value?) = some (.nom, .agree) := by decide +kernel
+    ditransitiveCases.bind (· subjD |>.value?) = some (.nom, .functional) := by decide +kernel
 
 theorem io_has_lexical_case :
     ditransitiveCases.bind (· goalD |>.value?) = some (.dat, .lexical) := by decide +kernel

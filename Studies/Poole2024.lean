@@ -24,7 +24,7 @@ with. Either way the stack assigns nothing with fewer than two caseless DPs in i
 never marks the DP that unlocked it (`stack_eq_none_of_subsingleton`, `stack_ne_unlocker`).
 
 The stack is itself a case rule: [it marks the DP with exactly one caseless DP met before
-it](##assignDep_eq_passGoals), where the low dependent rule marks every DP with one or more above
+it](##assignDep_eq_passUnvalued), where the low dependent rule marks every DP with one or more above
 it. So on a two-DP domain the stack assigns exactly what the dependent rule of the configurational
 model assigns, low or high, whatever lexical case the DPs carry (`low_eq_dependent`,
 `high_eq_dependent`); this is the paper's translation of any configurational account into an Agree
@@ -40,9 +40,8 @@ exactly when it is accessible to T and another caseless DP unlocks the stack, as
 ## Implementation notes
 
 Probes are the substrate's `Probe.search` over the goals, so minimal compliance is the removal of
-the unlocking goal. What the
-stack assigns is recorded as valued by Agree, the configurational rule as valued by a dependent
-rule, and the theorems compare the cases, which is the extensional equivalence the paper
+the unlocking goal. What the stack assigns is recorded as valued by a functional head, the
+configurational rule as valued by a dependent rule, and the theorems compare the cases, which is the extensional equivalence the paper
 argues for; the provenance is where the two models differ by design. Unmarked case, case
 discrimination below the unmarked setting, and the negative c-command rules of §6.1 are not
 formalized.
@@ -80,14 +79,14 @@ def stack (gs : List ι) : Option ι :=
 /-- The stack assigning the case `c`: the DP it finds is valued `c` by Agree, every other goal
 is left as it was. -/
 def assignDep (c : Case) (gs : List ι) : ι → FeatureSlot (Case × Mechanism) :=
-  (stack s gs).elim s (Function.update s · (.valued (c, .agree)))
+  (stack s gs).elim s (Function.update s · (.valued (c, .functional)))
 
 /-- The case an NP carries. -/
 def surface (x : ι) : Option Case := (s x).value?.map (·.1)
 
 /-- The rule of a stack: the DP with exactly one caseless DP met before it takes the case. -/
 def stackRule (c : Case) : CaseRule (Case × Mechanism) :=
-  fun a _ ↦ if a = 1 then some (c, .agree) else none
+  fun a _ ↦ if a = 1 then some (c, .functional) else none
 
 variable {s} {gs : List ι}
 
@@ -128,20 +127,20 @@ theorem stack_ne_unlocker {g j : ι} (hs : (unmarkedProbe s).search gs = some g)
 
 /-- The stack is the rule marking the DP with exactly one caseless DP met before it: the two probes
 reach the second goal in the order the head meets them. -/
-theorem assignDep_eq_passGoals (c : Case) {lt : ι → ι → Prop} [DecidableRel lt] [Std.Asymm lt]
+theorem assignDep_eq_passUnvalued (c : Case) {lt : ι → ι → Prop} [DecidableRel lt] [Std.Asymm lt]
     (hgs : gs.Pairwise lt) :
-    assignDep s c gs = (stackRule c).passGoals lt gs.toFinset s := by
+    assignDep s c gs = (stackRule c).passUnvalued lt gs.toFinset s := by
   have hnd : gs.Nodup := List.Pairwise.imp (fun {a b} (h : lt a b) ↦ by
     rintro rfl
     exact asymm h h) hgs
   set G := gs.filter (s · = .unvalued) with hG
-  have hgoals : FeatureSlot.goals gs.toFinset s = G.toFinset := by ext x; simp [hG]
+  have hgoals : FeatureSlot.unvaluedIn gs.toFinset s = G.toFinset := by ext x; simp [hG]
   funext x
   rw [assignDep, stack_eq_getElem? hnd, ← hG]
   by_cases hx : x ∈ G
   · obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hx
     have hsx : s G[i] = .unvalued := by simpa using (List.mem_filter.1 hx).2
-    rw [CaseRule.passGoals_getElem _ (hgs.filter _) hgoals i hi]
+    rw [CaseRule.passUnvalued_getElem _ (hgs.filter _) hgoals i hi]
     by_cases hi1 : i = 1
     · subst hi1
       simp [stackRule, List.getElem?_eq_getElem hi]
@@ -151,8 +150,8 @@ theorem assignDep_eq_passGoals (c : Case) {lt : ι → ι → Prop} [DecidableRe
       · simp [stackRule, hi1, hsx]
       · obtain ⟨h, rfl⟩ := List.getElem?_eq_some_iff.1 hl
         simp [stackRule, hi1, hsx, Function.update_of_ne (hne h)]
-  · have hnm : x ∉ FeatureSlot.goals gs.toFinset s := fun h ↦ hx (by simpa [hG] using h)
-    rw [CaseRule.passGoals_of_notMem hnm]
+  · have hnm : x ∉ FeatureSlot.unvaluedIn gs.toFinset s := fun h ↦ hx (by simpa [hG] using h)
+    rw [CaseRule.passUnvalued_of_notMem hnm]
     rcases hl : G[1]? with _ | g
     · rfl
     · have hne : x ≠ g := by
@@ -180,11 +179,9 @@ theorem high_eq_dependent (c : Case) (l₀ l₁ : Option Case) (x : Fin 2) :
   cases l₀ <;> cases l₁ <;> fin_cases x <;> rfl
 
 theorem stack_marks_once (c : Case) :
-    (List.ofFn fun i : Fin 3 ↦ surface (assignDep (lexical fun _ ↦ .unvalued) c [0, 1, 2]) i) =
-        [none, some c, none] ∧
-      (List.ofFn fun i : Fin 3 ↦ surface
-        (({ low := some c } : Rules).dependent.pass (· < ·) .univ (lexical fun _ ↦ .unvalued)) i) =
-        [none, some c, some c] :=
+    (stackRule c).caseArray 3 = [none, some (c, .functional), none] ∧
+      ({ low := some c } : Rules).dependent.caseArray 3 =
+        [none, some (c, .dependent), some (c, .dependent)] :=
   ⟨rfl, rfl⟩
 
 end Stack

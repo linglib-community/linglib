@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Minimalist.Case.Assignment
 public import Linglib.Syntax.Minimalist.Case.SyntacticObject
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Data.Examples.BakerVinokurova2010
@@ -476,7 +476,7 @@ instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o
 def Agrees (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
     Prop :=
   (r.feature? "agreesWith").isSome → ∀ i : Fin d.length, d[i].covert = false →
-    (out i = .valued (.nom, .agree) ↔ r.feature? "agreesWith" = d[i].slot.map Slot.key)
+    (out i = .valued (.nom, .functional) ↔ r.feature? "agreesWith" = d[i].slot.map Slot.key)
 
 instance (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
     Decidable (Agrees r d out) := by

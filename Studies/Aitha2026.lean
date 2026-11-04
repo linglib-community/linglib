@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Case.Order
+public import Linglib.Core.Data.List.Sublist
+public import Linglib.Syntax.Case.Basic
 public import Linglib.Fragments.Telugu.Case
 public import Linglib.Fragments.Telugu.Adpositions
 public import Mathlib.Data.Fintype.List
@@ -42,11 +43,19 @@ singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the p
 
 The cells of the paradigms are the cases of `Telugu.Case` and the uses of the postpositions of
 `Telugu.Adpositions`, a postposition with a value it marks, the paper's P cell being *lō*; they
-are ordered by the scoped Caha containment order on their comparative values.
+are ordered by the containment order on their comparative values, each case on the hierarchy
+containing the cases before it and a case off it comparable only to itself.
+
+The hierarchy is the start of Blake's, nominative, accusative or ergative, genitive, dative,
+locative, ablative or instrumental, along its accusative alignment and cut before the ablative and
+instrumental, which share a position. McFadden takes Blake's hierarchy as Caha updates it, and the paper caps it
+with the postpositions, which the locative stands for here. Caha's own sequences differ and are in
+`Studies/Caha2009.lean`.
 
 ## References
 
 * [aitha-2026]
+* [blake-1994]
 * [caha-2009]
 * [mcfadden-2018]
 * [kiparsky-2000]
@@ -57,8 +66,37 @@ are ordered by the scoped Caha containment order on their comparative values.
 namespace Aitha2026
 
 open DistributedMorphology Prosody
-open scoped Case.Caha
 open OptimalityTheory
+
+/-! ### The containment order -/
+
+/-- The containment hierarchy is the nominative, accusative, genitive, dative and locative, each
+containing the cases before it. -/
+def containment : List Case := [.nom, .acc, .gen, .dat, .loc]
+
+theorem nodup_containment : containment.Nodup := by decide
+
+open List in
+/-- A case is below another when it comes earlier in `containment`, and a case off the hierarchy is
+comparable only to itself. -/
+scoped instance : PartialOrder Case :=
+  haveI := nodup_containment.isStrictOrder_pair_sublist
+  partialOrderOfSO fun c₁ c₂ ↦ [c₁, c₂] <+ containment
+
+open List in
+scoped instance : DecidableLE Case := fun c₁ c₂ ↦
+  inferInstanceAs (Decidable (c₁ = c₂ ∨ [c₁, c₂] <+ containment))
+
+open List in
+scoped instance : DecidableLT Case := fun c₁ c₂ ↦
+  inferInstanceAs (Decidable ([c₁, c₂] <+ containment))
+
+/-- A case is nonnominative when its representation contains the accusative's, McFadden's natural
+class. -/
+def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
+
+instance (c : Case) : Decidable (IsNonnominative c) :=
+  inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
 /-! ### Case -/
 
@@ -90,7 +128,7 @@ inductive Feature where
 /-- The n head's bundle for root `r` in case `c`, with [ACC] in every nonnominative case, the
 natural class of the oblique ((3), [caha-2009]). -/
 def site (r : Root) (c : Case) : Finset Feature :=
-  insert (.root r) (if c.IsNonnominative then {.acc} else ∅)
+  insert (.root r) (if IsNonnominative c then {.acc} else ∅)
 
 /-- `forRoots roots e acc` lists the items inserting `e` next to each root of `roots`, in the
 context of [ACC] when `acc`. -/
@@ -135,7 +173,7 @@ instance : Preorder ParadigmCell := Preorder.lift ParadigmCell.label
 instance : DecidableLE ParadigmCell := fun a b ↦ inferInstanceAs (Decidable (a.label ≤ b.label))
 
 theorem strongN_nonnom :
-    ∀ r : Root, ∀ c : ParadigmCell, c.label.IsNonnominative →
+    ∀ r : Root, ∀ c : ParadigmCell, IsNonnominative c.label →
       strongN r c.label = strongN r .acc := by
   decide
 

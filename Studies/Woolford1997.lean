@@ -186,7 +186,7 @@ def entering (args : List (Option LexicalCase)) (j : Fin args.length) : FeatureS
 of (1a) value the highest caseless arguments with `cs` in turn, and V gives the rest accusative. -/
 def assign (cs : List AbstractCase) (args : List (Option LexicalCase)) : List AbstractCase :=
   List.ofFn fun i ↦
-    ((CaseRule.inOrder cs).passGoals (· < ·) .univ (entering args) i).value?.getD .acc
+    ((CaseRule.inOrder cs).passUnvalued (· < ·) .univ (entering args) i).value?.getD .acc
 
 @[simp] theorem entering_eq_unvalued_iff {args : List (Option LexicalCase)} {j : Fin args.length} :
     entering args j = .unvalued ↔ args[j] = none := by
@@ -217,18 +217,19 @@ theorem getElem?_assign (cs : List AbstractCase) (args : List (Option LexicalCas
     congr 1
     rcases ho : args[i] with _ | l
     · have hs : entering args ⟨i, hi⟩ = .unvalued := entering_eq_unvalued_iff.2 ho
-      have hcard : ((FeatureSlot.goals .univ (entering args)).filter
+      have hcard : ((FeatureSlot.unvaluedIn .univ (entering args)).filter
           (· < (⟨i, hi⟩ : Fin args.length))).card = (args.take i).count none := by
         rw [List.count, ← List.countP_congr (p := fun o ↦ decide (o = none)) (by simp),
           ← card_filter_lt_getElem (· = none) args i]
         congr 1
         ext j
         simp [Fin.lt_def, and_comm]
-      rw [CaseRule.passGoals_of_mem (FeatureSlot.mem_goals.2 ⟨Finset.mem_univ _, hs⟩), hcard]
+      rw [CaseRule.passUnvalued_of_mem (FeatureSlot.mem_unvaluedIn.2 ⟨Finset.mem_univ _, hs⟩),
+        hcard]
       simp only [CaseRule.inOrder, FeatureSlot.value?_offer, Option.elim_none]
       rfl
     · have hs : entering args ⟨i, hi⟩ = .valued (.lexical l) := by simp [entering, ho]
-      rw [CaseRule.passGoals_of_notMem (by simp [hs]), hs]
+      rw [CaseRule.passUnvalued_of_notMem (by simp [hs]), hs]
       rfl
   · simp [List.getElem?_eq_none_iff.2 (by omega : args.length ≤ i)]
 
@@ -794,7 +795,7 @@ def ruleValues (r : Rules) (args : List (Option LexicalCase)) :
     List (Option (Case × Case.Mechanism)) :=
   List.ofFn fun i : Fin args.length ↦
     (r.pass (· < ·) .univ
-      (lexical fun j : Fin args.length ↦ .offer (lexicalValue args[j])) i).value?
+      (Case.lexical fun j : Fin args.length ↦ .offer (lexicalValue args[j])) i).value?
 
 theorem ruleValues_accusative (args : List (Option LexicalCase)) :
     ruleValues (.ofAlignment .accusative) args =
@@ -803,12 +804,12 @@ theorem ruleValues_accusative (args : List (Option LexicalCase)) :
   rw [ruleValues, List.getElem?_ofFn, List.getElem?_map, getElem?_assign]
   split_ifs with hi
   · let s (j : Fin args.length) :=
-      lexical (fun j : Fin args.length ↦ .offer (lexicalValue args[j])) j
+      Case.lexical (fun j : Fin args.length ↦ .offer (lexicalValue args[j])) j
     have hmem (z : Fin args.length) (hz : z ∈ FeatureSlot.caseless .univ s) : args[z] = none := by
       simpa [s, lexicalValue] using hz
     rw [List.getElem?_eq_getElem hi, Option.map_some, Option.map_some]
     rcases ho : args[i] with _ | l
-    · have hs : s ⟨i, hi⟩ = .unvalued := by simp [s, lexical, lexicalValue, ho]
+    · have hs : s ⟨i, hi⟩ = .unvalued := by simp [s, Case.lexical, lexicalValue, ho]
       by_cases h : none ∈ args.take i
       · obtain ⟨j, hj, hjn⟩ := List.mem_take_iff_getElem.1 h
         have hjl : j < args.length := by omega
@@ -824,7 +825,7 @@ theorem ruleValues_accusative (args : List (Option LexicalCase)) :
             rw [List.getElem?_take_of_lt hzi, List.getElem?_eq_getElem z.2]
             exact congrArg some (hmem z hz)⟩
     · have hs : s ⟨i, hi⟩ = .valued ((AbstractCase.lexical l).label, .lexical) := by
-        simp [s, lexical, lexicalValue, ho]
+        simp [s, Case.lexical, lexicalValue, ho]
       rw [Rules.pass_of_valued hs]
       rfl
   · simp [List.getElem?_eq_none_iff.2 (by omega : args.length ≤ i)]
@@ -850,7 +851,7 @@ theorem countP_dependent_ruleValues (args : List (Option LexicalCase)) :
 -- the count alone does not single out the accusative rule: the ergative rule marks as many
 -- arguments, though not the same ones, so the theorem that says which is the stronger
 example :
-    ruleValues (.ofAlignment .ergative) [none, none, none] =
+    (Rules.ofAlignment .ergative).toCaseRule.caseArray 3 =
         [some (.erg, .dependent), some (.erg, .dependent), some (.abs, .unmarked)] ∧
       (maxAcc [none, none, none]).toNat = 2 := by
   decide
