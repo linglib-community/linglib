@@ -471,7 +471,7 @@ theorem rows_continuations :
 
 set_option synthInstance.maxSize 512 in
 private theorem rows_won_aux :
-    ∀ r ∈ Examples.all, r.feature? "won" ≠ none →
+    ∀ r ∈ Examples.all, r.features "won" ≠ [] →
       ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ l ∈ r.parseAll? "won" ranks,
         ((i ∈ l ∧ ∀ j ∈ l, s.rel i j) ↔ r.JudgedFelicitous) := by
   decide +kernel
@@ -479,7 +479,7 @@ private theorem rows_won_aux :
 /-- With bronze and silver won, *lásán* is true and *nìkan* false, so the particle is not vacuous
 (ch. 5 (57)). -/
 theorem rows_won :
-    ∀ r ∈ Examples.all, r.feature? "won" ≠ none →
+    ∀ r ∈ Examples.all, r.features "won" ≠ [] →
       ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ l ∈ r.parseAll? "won" ranks,
         (s.exclusive i {x | x ∈ l} = 1 ↔ r.JudgedFelicitous) := fun r hr hf ↦ by
   obtain ⟨s, hs, i, hi, l, hl, h⟩ := rows_won_aux r hr hf
