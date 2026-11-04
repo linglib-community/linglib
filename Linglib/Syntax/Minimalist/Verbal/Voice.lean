@@ -28,8 +28,13 @@ Agree features.
 * The passive is the thematic non-active cell, its agent implicit, with the Finnish impersonal in
   the same cell. Collins's passive Voice, which assigns no θ-role and checks Case, is an expletive
   active head that checks Case.
-* Reflexive, reciprocal and antipassive voices are not cells of their own: they are what a
-  θ-assigning head derives with its internal argument implicit or oblique.
+* Reciprocal and antipassive voices are not cells of their own: they are what a θ-assigning head
+  derives with its internal argument implicit or oblique. Antipassives also occur with no internal
+  argument at all under active Voice, and as a small vP with no Voice ([beslin-2026]).
+* Reflexive voice is not a cell of its own either, though Romance and Slavic *se* has been analyzed
+  as a reflexive flavor of Voice, which clashes with active Voice under ellipsis ([beslin-2026]). A
+  thematic head with a D-feature has the cell of `agentive`, so the cells alone cannot state that
+  clash.
 * Phasehood is that of Chomsky's v*, a θ-assigning active head. A study that separates the phase
   head v from Voice reads its own v off the Voice head below it.
 * Cuervo's inchoatives have no Voice at all, and the event structure below Voice is
@@ -39,6 +44,7 @@ Agree features.
 
 * [alexiadou-anagnostopoulou-schaefer-2015]
 * [beavers-udayana-2022]
+* [beslin-2026]
 * [chomsky-2001]
 * [collins-2005]
 * [cuervo-2003]

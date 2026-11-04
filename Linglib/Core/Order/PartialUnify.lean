@@ -365,6 +365,13 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
 
 theorem compat_self [Preorder α] (a : α) : Compat a a := .of_le le_rfl le_rfl
 
+/-- Compatible maximal elements coincide: a fully specified element has no proper extension. -/
+theorem Compat.eq_of_isMax [PartialOrder α] {a b : α} (h : Compat a b) (ha : IsMax a)
+    (hb : IsMax b) : a = b :=
+  let ⟨_, hu⟩ := h
+  let ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
+  (ha.eq_of_le hau).trans (hb.eq_of_ge hbu)
+
 theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t} :
     Compat f g ↔ ∀ t, Compat (f t) (g t) := by
   simp only [Compat, bddAbove_pi, Set.image_pair]
@@ -387,9 +394,8 @@ theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]
   · intro hc
     exact ⟨fun ha ↦ hc (ha ▸ bot_compat b), fun hb ↦ hc (hb ▸ compat_bot a),
       fun hab ↦ hc (hab ▸ compat_self a)⟩
-  · rintro ⟨ha, hb, hab⟩ ⟨u, hu⟩
-    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
-    exact hab ((le_antisymm (h a ha hau) hau).symm.trans (le_antisymm (h b hb hbu) hbu))
+  · rintro ⟨ha, hb, hab⟩ hc
+    exact hab (hc.eq_of_isMax (h a ha) (h b hb))
 
 instance [PartialOrder α] [PartialUnify α] (a b : α) : Decidable (Compat a b) :=
   decidable_of_iff _ PartialUnify.unify_ne_top_iff_bddAbove
