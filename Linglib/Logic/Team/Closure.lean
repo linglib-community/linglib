@@ -46,11 +46,6 @@ infrastructure to consumers of `IsFlat`.
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
-
-## TODO
-
-* Generalise `IsFlat` to atomistic lattices (`[SemilatticeSup L]
-  [OrderBot L] [IsAtomistic L]`) once a non-`Finset` consumer surfaces.
 -/
 
 @[expose] public section

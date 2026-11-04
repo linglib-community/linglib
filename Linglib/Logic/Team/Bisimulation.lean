@@ -174,16 +174,13 @@ theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Fins
     (fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩) fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩
 
 theorem Invariant.tensor (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
-    Invariant r (tensor P Q) (tensor P' Q') := by
-  intro s s' hs
-  constructor
-  · rintro ⟨t, ht, u, hu, rfl⟩
-    obtain ⟨t', u', hsplit, htt', huu'⟩ := hs.exists_finset_union_eq rfl
-    exact ⟨t', (h₁ htt').1 ht, u', (h₂ huu').1 hu, hsplit⟩
-  · rintro ⟨t', ht', u', hu', rfl⟩
-    obtain ⟨t, u, hsplit, htt', huu'⟩ := (Set.liftRel_swap.2 hs).exists_finset_union_eq rfl
-    rw [Set.liftRel_swap] at htt' huu'
-    exact ⟨t, (h₁ htt').2 ht', u, (h₂ huu').2 hu', hsplit⟩
+    Invariant r (tensor P Q) (tensor P' Q') := fun _ _ hs ↦
+  Set.mem_sups_congr (r := fun (s : Finset α) (s' : Finset β) ↦ Set.LiftRel r ↑s ↑s')
+    (fun h ↦ h.exists_finset_union_eq rfl)
+    (fun h ↦
+      let ⟨t, u, hsplit, htt', huu'⟩ := (Set.liftRel_swap.2 h).exists_finset_union_eq rfl
+      ⟨t, u, hsplit, Set.liftRel_swap.1 htt', Set.liftRel_swap.1 huu'⟩)
+    h₁ h₂ hs
 
 /-! ### Image modalities of dependence and inclusion logic -/
 
