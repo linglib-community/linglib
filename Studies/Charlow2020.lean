@@ -4,6 +4,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
 public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
 public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014

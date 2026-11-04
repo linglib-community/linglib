@@ -39,7 +39,7 @@ semantics is built on.
 The storing effect `Output ι α = α × ι` is a functor and not mathlib's `WriterT`, whose functor
 comes only with a monad over a monoid of logs. A single stored referent cannot be merged with
 another, which is the book's reason that this `W` is not a monad (section 5.3.4). The
-supplement effect, whose log is a monoid, is `Composition/Writer.lean`.
+supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced

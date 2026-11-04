@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Semantics.Composition.Writer
+public import Linglib.Core.Control.Monad.Writer
 public import Linglib.Logic.Modal.Defs
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Filter.Basic

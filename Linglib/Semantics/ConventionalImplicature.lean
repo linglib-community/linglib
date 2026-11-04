@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Writer
+public import Linglib.Core.Control.Monad.Writer
 public import Linglib.Logic.Trivalent.Pointwise
 
 /-!

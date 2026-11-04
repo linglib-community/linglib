@@ -13,7 +13,7 @@ as *and*, *or*, *but* and *nor*. This file defines its lexical record, the morph
 whether the coordinator is a free word or a bound clitic or affix, the gloss and the semantic
 type, and the relations that give the other uses its form has. What a coordinator denotes, an
 operation on the set of coordinands that its semantic type fixes, is `Coordinator.denote` in
-`Semantics/Composition/Coordinator.lean`.
+`Semantics/Coordinator.lean`.
 
 ## Main definitions
 

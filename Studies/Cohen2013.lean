@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Cohen2013
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
 public import Linglib.Semantics.Quantification.Basic
 public import Studies.Cohen1999
 public import Linglib.Data.Examples.Readers

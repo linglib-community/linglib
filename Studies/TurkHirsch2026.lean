@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Lattice.Image
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Questions.Polar

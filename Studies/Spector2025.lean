@@ -6,6 +6,7 @@ public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
 public import Linglib.Data.Examples.Spector2025
 
 /-!
