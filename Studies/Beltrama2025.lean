@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Order.CompleteLattice.Basic
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Beltrama (2025): Evaluation, thresholds, and practical commitments

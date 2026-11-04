@@ -272,15 +272,16 @@ end Semantics
 
 /-- The closed-range adjectives the paper names are *straight*, *empty* and *dry* ((25a)), and
     *flat*. -/
-def closedRange : List GradableAdjective :=
+def closedRange : List Adjective :=
   open English.Adjectives in [straight, empty, dry, flat]
 
 /-- The open-range adjectives the paper names are *long*, *wide* and *short* ((25b)). -/
-def openRange : List GradableAdjective :=
+def openRange : List Adjective :=
   open English.Adjectives in [long, wide, short]
 
 theorem fragment_range :
-    (∀ a ∈ closedRange, a.boundedness.HasMax) ∧ ∀ a ∈ openRange, ¬ a.boundedness.HasMax := by
+    (∀ a ∈ closedRange, ∃ b ∈ a.boundedness, b.HasMax) ∧
+      ∀ a ∈ openRange, ∃ b ∈ a.boundedness, ¬ b.HasMax := by
   decide
 
 theorem fragment_verbs :

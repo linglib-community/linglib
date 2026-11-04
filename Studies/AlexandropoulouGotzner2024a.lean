@@ -68,10 +68,10 @@ def pair : AdjectiveType → Strength → AntonymPair
   | .absolute, .weak => cleanliness
   | .absolute, .strong => pristineness
 
-theorem pair_standard_eq_extreme_iff : (pair t s).pos.standard = .extreme ↔ s = .strong := by
+theorem pair_standard_eq_extreme_iff : (pair t s).pos.standard = some .extreme ↔ s = .strong := by
   revert t s; decide
 
-theorem pair_isRelative_iff : (pair t s).pos.boundedness.IsRelative ↔ t = .relative := by
+theorem pair_isRelative_iff : (pair t s).dimension.boundedness.IsRelative ↔ t = .relative := by
   revert t s; decide
 
 theorem complementaryStandards_pair_iff :
@@ -158,7 +158,7 @@ where the negated forms have co-extensive simple antonyms, by bivalence for rela
 entailment for absolute ones, which an extreme pair with its semantic gap lacks. Negated forms
 that deviate equally get Krifka's ranges, and unequal deviations an asymmetry. -/
 def krifka (n k : ℕ) (t : AdjectiveType) (s : Strength) : Option Asymmetry :=
-  if (pair t s).pos.standard = .extreme then none
+  if (pair t s).pos.standard = some .extreme then none
   else some (if deviation n k .notPositive = deviation n k .notNegative then krifkaRanges.asymmetry
     else .asymmetric)
 
@@ -221,8 +221,8 @@ def formOf (row : Datum) : Option AntonymForm :=
 
 theorem row_factors :
     ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind lookup,
-      (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
-        (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) ∧
+      (row.feature? "strength" = some "strong" ↔ a.standard = some .extreme) ∧
+        (row.feature? "adjectiveType" = some "relative" ↔ ∃ b ∈ a.boundedness, b.IsRelative) ∧
         (row.feature? "polarity" = some "positive" ↔ a.polarity = .positive) := by
   decide
 

@@ -7,8 +7,7 @@ public import Linglib.Syntax.Category.Verb.Defs
 # Clause-embedding adjectives
 
 Adjectives that take clausal complements: *annoyed (that p)*, *sorry (that p)*, *aware (that p)*,
-*able (to VP)*. As `GradableAdjective` in `Semantics/Degree/Adjective.lean` extends the
-`Adjective` core with its degree semantics, `ClauseEmbeddingAdjective` extends it with
+*able (to VP)*. `ClauseEmbeddingAdjective` extends the `Adjective` core with
 `Clause.Embedding`, what a predicate of any word class does with a clausal complement, and with its
 valency, the diatheses of its complement with their controllers.
 

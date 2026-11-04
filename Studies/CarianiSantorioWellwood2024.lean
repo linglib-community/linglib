@@ -152,8 +152,8 @@ example :
 open English.Adjectives in
 -- Figure 3 in the fragment: *confident* and *certain* share one upper-closed scale, *certain* at
 -- its maximum and *confident* at a contextual standard.
-example : confident.dimension = certain.dimension ∧ confident.boundedness = .upperClosed ∧
-    certain.standard = .maxEndpoint ∧ confident.standard = .contextual := by
+example : confident.dimension = certain.dimension ∧ confident.boundedness = some .upperClosed ∧
+    certain.standard = some .maxEndpoint ∧ confident.standard = some .contextual := by
   decide
 
 end CarianiSantorioWellwood2024

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Semantics.Quantity.Basic
 public import Linglib.Fragments.English.Nouns
 public import Mathlib.Basic.Real.Basic

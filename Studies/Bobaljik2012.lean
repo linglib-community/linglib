@@ -658,11 +658,10 @@ theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker
 comparative on another is periphrastic, embedding the positive, so every morphological superlative
 satisfies CSG1. -/
 theorem periphrastic_of_aba :
-    ∀ e ∈ allEntries.map (·.toAdjective) ++ Latin.Adjectives.allEntries ++
-        Russian.Adjectives.allEntries,
+    ∀ e ∈ allEntries ++ Latin.Adjectives.allEntries ++ Russian.Adjectives.allEntries,
       e.comparison.comparative ≠ [] → .root e.form ∉ e.comparison.comparative →
         .root e.form ∈ e.comparison.superlative → Periphrastic e.comparison.superlative := by
-  simp only [List.mem_append, or_imp, forall_and, List.forall_mem_map]
+  simp only [List.mem_append, or_imp, forall_and]
   exact ⟨⟨by decide, by decide⟩, by decide⟩
 
 /-! ### The quantifier triples (Table 4.2)
