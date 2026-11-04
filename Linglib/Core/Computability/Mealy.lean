@@ -30,7 +30,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy.comp`: the cascade connection, computing the composite function
 * `Mealy.ofFn`: the single-state machine applying a fixed symbol map letter-wise
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
-* `Mealy.map`: transport along an equivalence on states
+* `Mealy.reindex`: an equivalence on states lifted to machines
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
 
 ## Main theorems
@@ -64,7 +64,7 @@ residuals is in `Core/Computability/Residual.lean`.
 
 ## TODO
 
-* Mealy machine homomorphisms in Holcombe's sense, with `map` at an equivalence as the
+* Mealy machine homomorphisms in Holcombe's sense, with `reindex` as the
   isomorphism case.
 * The right-scan mirror via reverse conjugation.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
@@ -260,32 +260,43 @@ theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
 
 end Flag
 
-/-! ### Transport along state equivalences -/
+/-! ### Reindexing along state equivalences -/
+
+section Reindex
 
 variable {τ : Type*}
 
-/-- Transport a Mealy machine along an equivalence on states. -/
-@[simps]
-def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
-  start := g T.start
-  step t x := g (T.step (g.symm t) x)
-  output t x := T.output (g.symm t) x
+/-- Lifts an equivalence on states to an equivalence on Mealy machines. -/
+@[simps apply_start apply_step apply_output]
+def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
+  toFun T :=
+    { start := g T.start
+      step := fun t x ↦ g (T.step (g.symm t) x)
+      output := fun t x ↦ T.output (g.symm t) x }
+  invFun T :=
+    { start := g.symm T.start
+      step := fun s x ↦ g.symm (T.step (g s) x)
+      output := fun s x ↦ T.output (g s) x }
+  left_inv T := by simp
+  right_inv T := by simp
 
-@[simp] theorem map_refl : map (Equiv.refl σ) T = T := rfl
+@[simp] theorem reindex_refl : reindex (Equiv.refl σ) T = T := rfl
 
-@[simp] theorem map_map {υ : Type*} (g : σ ≃ τ) (h : τ ≃ υ) :
-    map h (map g T) = map (g.trans h) T := rfl
+@[simp] theorem symm_reindex (g : σ ≃ τ) : (reindex (α := α) (β := β) g).symm = reindex g.symm :=
+  rfl
 
-@[simp] theorem evalFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (map g T).evalFrom t xs = g (T.evalFrom (g.symm t) xs) := by
+@[simp] theorem evalFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).evalFrom t xs = g (T.evalFrom (g.symm t) xs) := by
   induction xs generalizing t <;> simp [*]
 
-@[simp] theorem runFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (map g T).runFrom t xs = T.runFrom (g.symm t) xs := by
+@[simp] theorem runFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).runFrom t xs = T.runFrom (g.symm t) xs := by
   induction xs generalizing t <;> simp [*]
 
-@[simp] theorem run_map (g : σ ≃ τ) : (map g T).run = T.run := by
+@[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
   funext xs; simp [run]
+
+end Reindex
 
 end Mealy
 
@@ -299,7 +310,7 @@ def IsMealyComputable (f : List α → List β) : Prop :=
 universe of its state type. -/
 theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsMealyComputable T.run :=
-  ⟨Shrink σ, inferInstance, T.map (equivShrink.{0} σ), T.run_map _⟩
+  ⟨Shrink σ, inferInstance, Mealy.reindex (equivShrink.{0} σ) T, T.run_reindex _⟩
 
 /-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
 theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}
