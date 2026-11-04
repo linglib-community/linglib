@@ -286,16 +286,10 @@ theorem structureOf_isSome :
     ∀ e ∈ Examples.all, (modifierOf e).isSome → (structureOf bound e).isSome := by
   decide
 
-/-- Extraction fails when a link of the wh-phrase's chain leaves the complex NP. -/
-def CrossesIsland : Prop :=
-  ∃ h ∈ occurrences t the, Escapes .raising t what (projectionAt .raising t h)
-
-instance : Decidable (CrossesIsland t) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 /-- Extraction from a complex NP fails exactly where a chain link leaves it, under full or partial
 movement but not in situ ((11), (15), (17)). -/
 theorem island_rows : ∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
-    ∀ t ∈ structureOf bound e, (CrossesIsland t ↔ e.judgment ≠ .acceptable) := by
+    ∀ t ∈ structureOf bound e, (CrossesIsland .raising t what (· = the) ↔ e.judgment ≠ .acceptable) := by
   decide
 
 /-- Ascription predicts every modifier row: English (1), (25), (26), the experiment's (4) and
@@ -323,7 +317,7 @@ theorem attP_rows :
 /-- Covert movement mispredicts both the island fact of (11b) and the modifier fact of (4d), each
 favouring binding ([sato-ngui-2017]). -/
 theorem covert_mispredicts :
-    (∃ t ∈ structureOf covert Examples.ex11b, CrossesIsland t) ∧
+    (∃ t ∈ structureOf covert Examples.ex11b, CrossesIsland .raising t what (· = the)) ∧
       Examples.ex11b.judgment = .acceptable ∧
       (∃ m ∈ modifierOf Examples.ex4d, ∃ t ∈ structureOf covert Examples.ex4d, Licensed t m) ∧
       Examples.ex4d.judgment = .ungrammatical := by
