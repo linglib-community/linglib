@@ -14,7 +14,7 @@ public import Mathlib.Data.Finset.Erase
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Range
 public import Mathlib.Data.Finset.Union
-public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Fin
 
 /-!
 # Woolford (1997): Four-Way Case Systems: Ergative, Nominative, Objective and Accusative
@@ -27,7 +27,7 @@ Cased subject denies accusative to its highest object](##getElem?_ne_acc_of_mem_
 Settings for ergative and dative [give each language its patterns](##rows_patterns), and one
 Kalkatungu clause is [ergative in morphology, accusative in agreement and tripartite in
 Case](##kalkatungu_alignments). The accusative rule of dependent case [derives the same
-patterns](##values_rules_assign_of_mem_derivations) where objects can be nominative.
+patterns](##ruleValues_of_mem_derivations) where objects can be nominative.
 
 ## Implementation notes
 
@@ -177,28 +177,81 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 
 /-! ### Derivations -/
 
+/-- The slots of the arguments on entering the clause, valued where the verb assigns a lexical
+Case. -/
+def entering (args : List (Option LexicalCase)) (j : Fin args.length) : FeatureSlot AbstractCase :=
+  .offer (args[j].map .lexical)
+
 /-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads
 of (1a) value the highest caseless arguments with `cs` in turn, and V gives the rest accusative. -/
 def assign (cs : List AbstractCase) (args : List (Option LexicalCase)) : List AbstractCase :=
-  ((Case.Valuation.initial (fun o ↦ Case.Valuation.offer (o.map .lexical)) args).fillInOrder
-    (fun _ ↦ True) cs).values.map (·.getD .acc)
+  List.ofFn fun i ↦
+    ((CaseRule.inOrder cs).passGoals (· < ·) .univ (entering args) i).value?.getD .acc
 
-@[simp] theorem assign_nil_right (cs : List AbstractCase) : assign cs [] = [] := by
-  simp [assign, Case.Valuation.initial]
+@[simp] theorem entering_eq_unvalued_iff {args : List (Option LexicalCase)} {j : Fin args.length} :
+    entering args j = .unvalued ↔ args[j] = none := by
+  rcases h : args[j] with _ | l <;> simp [entering, h]
+
+private theorem card_filter_lt_getElem {α : Type*} (q : α → Prop) [DecidablePred q] :
+    ∀ (l : List α) (i : ℕ),
+      (Finset.univ.filter fun j : Fin l.length ↦ j.val < i ∧ q l[j]).card = (l.take i).countP (q ·)
+  | [], _ => by simp
+  | _ :: _, 0 => by simp
+  | a :: l, i + 1 => by
+    change (Finset.univ.filter fun j : Fin (l.length + 1) ↦ j.val < i + 1 ∧ q (a :: l)[j]).card = _
+    rw [Fin.card_filter_univ_succ]
+    simp only [Fin.val_zero, Nat.zero_lt_succ, true_and, Fin.val_succ, Nat.add_lt_add_iff_right,
+      Fin.getElem_fin, List.getElem_cons_zero, List.getElem_cons_succ, List.take_succ_cons,
+      List.countP_cons, decide_eq_true_eq]
+    have ih := card_filter_lt_getElem q l i
+    simp only [Fin.getElem_fin] at ih
+    rw [ih]
+    split_ifs <;> rfl
+
+theorem getElem?_assign (cs : List AbstractCase) (args : List (Option LexicalCase)) (i : ℕ) :
+    (assign cs args)[i]? = args[i]?.map
+      (Option.elim · (cs.getD ((args.take i).count none) .acc) AbstractCase.lexical) := by
+  rw [assign, List.getElem?_ofFn]
+  split_ifs with hi
+  · rw [List.getElem?_eq_getElem hi, Option.map_some]
+    congr 1
+    rcases ho : args[i] with _ | l
+    · have hs : entering args ⟨i, hi⟩ = .unvalued := entering_eq_unvalued_iff.2 ho
+      have hcard : ((FeatureSlot.goals .univ (entering args)).filter
+          (· < (⟨i, hi⟩ : Fin args.length))).card = (args.take i).count none := by
+        rw [List.count, ← List.countP_congr (p := fun o ↦ decide (o = none)) (by simp),
+          ← card_filter_lt_getElem (· = none) args i]
+        congr 1
+        ext j
+        simp [Fin.lt_def, and_comm]
+      rw [CaseRule.passGoals_of_mem (FeatureSlot.mem_goals.2 ⟨Finset.mem_univ _, hs⟩), hcard]
+      simp only [CaseRule.inOrder, FeatureSlot.value?_offer, Option.elim_none]
+      rfl
+    · have hs : entering args ⟨i, hi⟩ = .valued (.lexical l) := by simp [entering, ho]
+      rw [CaseRule.passGoals_of_notMem (by simp [hs]), hs]
+      rfl
+  · simp [List.getElem?_eq_none_iff.2 (by omega : args.length ≤ i)]
+
+@[simp] theorem assign_nil_right (cs : List AbstractCase) : assign cs [] = [] := rfl
 
 @[simp] theorem assign_some_cons (cs : List AbstractCase) (l : LexicalCase) (r : List
     (Option LexicalCase)) :
     assign cs (some l :: r) = .lexical l :: assign cs r := by
-  simp [assign, Case.Valuation.initial, Case.Valuation.fillInOrder_cons_of_not]
+  refine List.ext_getElem? fun i ↦ ?_
+  cases i <;> simp [getElem?_assign]
 
 @[simp] theorem assign_nil_none_cons (r : List (Option LexicalCase)) :
     assign [] (none :: r) = .acc :: assign [] r := by
-  simp [assign, Case.Valuation.initial]
+  refine List.ext_getElem? fun i ↦ ?_
+  cases i <;> simp [getElem?_assign]
 
 @[simp] theorem assign_cons_none_cons (c : AbstractCase) (cs : List AbstractCase) (r : List
     (Option LexicalCase)) :
     assign (c :: cs) (none :: r) = c :: assign cs r := by
-  simp [assign, Case.Valuation.initial, Case.Valuation.fillInOrder_cons_cons]
+  refine List.ext_getElem? fun i ↦ ?_
+  cases i with
+  | zero => simp [getElem?_assign]
+  | succ i => simp [getElem?_assign]
 
 theorem assign_map_some_append (cs : List AbstractCase) (ls : List LexicalCase) (r : List
     (Option LexicalCase)) :
@@ -215,13 +268,6 @@ theorem assign_congr_of_none_notMem (cs cs' : List AbstractCase) (h : none ∉ a
     cases o with
     | none => simp at h
     | some l => simp [ih fun hr ↦ h (List.mem_cons_of_mem _ hr)]
-
-theorem getElem?_assign (cs : List AbstractCase) (args : List (Option LexicalCase)) (i : ℕ) :
-    (assign cs args)[i]? = args[i]?.map
-      (Option.elim · (cs.getD ((args.take i).count none) .acc) AbstractCase.lexical) := by
-  induction args generalizing cs i with
-  | nil => simp
-  | cons o r ih => cases o <;> cases cs <;> cases i <;> simp_all
 
 theorem count_acc_assign (cs : List AbstractCase) (h : .acc ∉ cs) (args : List
     (Option LexicalCase)) :
@@ -743,48 +789,68 @@ def AbstractCase.dependentValue : AbstractCase → Option (Case × Case.Mechanis
   | .acc => some (.acc, .dependent)
   | .lexical l => some ((AbstractCase.lexical l).label, .lexical)
 
-theorem values_rules_assign (args : List (Option LexicalCase)) :
-    ((Rules.ofAlignment .accusative).assign lexicalValue args).values =
+/-- The values rules of dependent case give the arguments, with these lexical Cases as input. -/
+def ruleValues (r : Rules) (args : List (Option LexicalCase)) :
+    List (Option (Case × Case.Mechanism)) :=
+  List.ofFn fun i : Fin args.length ↦
+    (r.pass (· < ·) .univ
+      (lexical fun j : Fin args.length ↦ .offer (lexicalValue args[j])) i).value?
+
+theorem ruleValues_accusative (args : List (Option LexicalCase)) :
+    ruleValues (.ofAlignment .accusative) args =
       (assign [.nom] args).map AbstractCase.dependentValue := by
   refine List.ext_getElem? fun i ↦ ?_
-  simp only [Case.Valuation.getElem?_values, List.getElem?_map, getElem?_assign]
-  rcases hi : args[i]? with _ | _ | l
-  · simp [List.getElem?_eq_none_iff.1 hi]
-  · by_cases h : none ∈ args.take i
-    · obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (List.count_pos_iff.2 h).ne'
-      rw [Rules.assign_getElem?_low _ hi rfl h rfl rfl rfl]
-      simp [hk, AbstractCase.dependentValue]
-    · rw [Rules.assign_getElem?_unmarked _ hi rfl (c := .nom) (fun y hy hly ↦ h (by
-        simpa [show y = none by simpa [lexicalValue] using hly] using hy)) rfl rfl]
-      simp [List.count_eq_zero.2 h, AbstractCase.dependentValue]
-  · rw [Rules.assign_getElem?_of_some _ hi (c := (AbstractCase.lexical l).label) rfl]
-    rfl
+  rw [ruleValues, List.getElem?_ofFn, List.getElem?_map, getElem?_assign]
+  split_ifs with hi
+  · let s (j : Fin args.length) :=
+      lexical (fun j : Fin args.length ↦ .offer (lexicalValue args[j])) j
+    have hmem (z : Fin args.length) (hz : z ∈ FeatureSlot.caseless .univ s) : args[z] = none := by
+      simpa [s, lexicalValue] using hz
+    rw [List.getElem?_eq_getElem hi, Option.map_some, Option.map_some]
+    rcases ho : args[i] with _ | l
+    · have hs : s ⟨i, hi⟩ = .unvalued := by simp [s, lexical, lexicalValue, ho]
+      by_cases h : none ∈ args.take i
+      · obtain ⟨j, hj, hjn⟩ := List.mem_take_iff_getElem.1 h
+        have hjl : j < args.length := by omega
+        have hji : j < i := by omega
+        obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (List.count_pos_iff.2 h).ne'
+        rw [Rules.pass_low (y := ⟨j, hjl⟩) (Finset.mem_univ _) hs
+          (by simpa [s, lexicalValue] using hjn) hji (.inl rfl) rfl]
+        simp [hk, AbstractCase.dependentValue]
+      · rw [Rules.pass_unmarked (c := .nom) (Finset.mem_univ _) hs (fun z hz hzi ↦ h ?_) (.inl rfl)
+          rfl]
+        · simp [List.count_eq_zero.2 h, AbstractCase.dependentValue]
+        · exact List.mem_iff_getElem?.2 ⟨z, by
+            rw [List.getElem?_take_of_lt hzi, List.getElem?_eq_getElem z.2]
+            exact congrArg some (hmem z hz)⟩
+    · have hs : s ⟨i, hi⟩ = .valued ((AbstractCase.lexical l).label, .lexical) := by
+        simp [s, lexical, lexicalValue, ho]
+      rw [Rules.pass_of_valued hs]
+      rfl
+  · simp [List.getElem?_eq_none_iff.2 (by omega : args.length ≤ i)]
 
 -- (10), (12), (13)
 /-- Where objects can be nominative, the accusative rule of dependent case, with these lexical Cases
 as its input, derives every pattern argument by argument. -/
-theorem values_rules_assign_of_mem_derivations (hd : d ∈ derivations .obligatory .nom args) :
-    ((Rules.ofAlignment .accusative).assign lexicalValue args).values =
-      d.map AbstractCase.dependentValue := by
+theorem ruleValues_of_mem_derivations (hd : d ∈ derivations .obligatory .nom args) :
+    ruleValues (.ofAlignment .accusative) args = d.map AbstractCase.dependentValue := by
   rw [derivations_obligatory, Finset.mem_singleton] at hd
   have : highestCase .nom args = .nom := by rcases args with _ | ⟨_ | _, _⟩ <;> rfl
-  rw [hd, pattern, this, values_rules_assign]
+  rw [hd, pattern, this, ruleValues_accusative]
 
 -- p. 208 calls the formula descriptive
-theorem countP_dependent_assign (args : List (Option LexicalCase)) :
-    ((Rules.ofAlignment .accusative).assign lexicalValue args).countP
-        (fun p ↦ p.2.value?.map Prod.snd = some .dependent) = (maxAcc args).toNat := by
-  have hm := congrArg (List.countP fun v ↦ v.map Prod.snd = some Case.Mechanism.dependent)
-    (values_rules_assign args)
-  simp only [Case.Valuation.values, List.countP_map, Function.comp_def] at hm
-  rw [hm, ← count_acc_assign_singleton (c := .nom) (.inl rfl), List.count]
+theorem countP_dependent_ruleValues (args : List (Option LexicalCase)) :
+    (ruleValues (.ofAlignment .accusative) args).countP
+        (fun v ↦ v.map Prod.snd = some .dependent) = (maxAcc args).toNat := by
+  rw [ruleValues_accusative, List.countP_map, ← count_acc_assign_singleton (c := .nom) (.inl rfl),
+    List.count]
   refine List.countP_congr fun d _ ↦ ?_
   rcases d with _ | _ | _ | _ <;> simp [AbstractCase.dependentValue]
 
 -- the count alone does not single out the accusative rule: the ergative rule marks as many
 -- arguments, though not the same ones, so the theorem that says which is the stronger
 example :
-    ((Rules.ofAlignment .ergative).assign lexicalValue [none, none, none]).values =
+    ruleValues (.ofAlignment .ergative) [none, none, none] =
         [some (.erg, .dependent), some (.erg, .dependent), some (.abs, .unmarked)] ∧
       (maxAcc [none, none, none]).toNat = 2 := by
   decide
@@ -792,7 +858,7 @@ example :
 -- (5), (58): the rules give the object of an ergative subject the elsewhere case of a subject, but
 -- objective is overt and agrees as an object
 theorem objective_not_elsewhere :
-    ((Rules.ofAlignment .accusative).assign lexicalValue [some .erg, none]).values =
+    ruleValues (.ofAlignment .accusative) [some .erg, none] =
         [some (.erg, .lexical), some (.nom, .unmarked)] ∧
       exponent .nezPerce .obj ≠ exponent .nezPerce .nom ∧
       AbstractCase.obj.position ≠ AbstractCase.nom.position := by

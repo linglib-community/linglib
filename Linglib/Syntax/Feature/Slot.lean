@@ -116,6 +116,28 @@ def value? : FeatureSlot α → Option α
 
 @[simp] theorem value?_valued (v : α) : (valued v).value? = some v := rfl
 
+/-- The slot an unvalued item has once offered `o`: valued if `o` is a value, unvalued otherwise. -/
+def offer (o : Option α) : FeatureSlot α := o.elim .unvalued .valued
+
+@[simp] theorem offer_none : offer (none : Option α) = .unvalued := rfl
+
+@[simp] theorem offer_some (v : α) : offer (some v) = .valued v := rfl
+
+@[simp] theorem offer_eq_valued_iff {o : Option α} {v : α} : offer o = .valued v ↔ o = some v := by
+  cases o <;> simp
+
+@[simp] theorem offer_ne_absent (o : Option α) : offer o ≠ .absent := by
+  cases o <;> simp
+
+@[simp] theorem value?_offer (o : Option α) : (offer o).value? = o := by
+  cases o <;> rfl
+
+@[simp] theorem unvalued_le_valued (v : α) : (unvalued : FeatureSlot α) ≤ valued v :=
+  WithBot.coe_le_coe.2 bot_le
+
+theorem unvalued_le_offer (o : Option α) : (unvalued : FeatureSlot α) ≤ offer o := by
+  cases o <;> simp
+
 /-- A slot with its value, if any, sent through `g`. -/
 def map {β : Type*} (g : α → β) : FeatureSlot α → FeatureSlot β
   | .absent => .absent
@@ -133,6 +155,18 @@ def map {β : Type*} (g : α → β) : FeatureSlot α → FeatureSlot β
 @[simp] theorem map_eq_valued_iff {β : Type*} {g : α → β} {s : FeatureSlot α} {w : β} :
     s.map g = valued w ↔ ∃ v, s = valued v ∧ g v = w := by
   cases s <;> simp [map]
+
+@[simp] theorem map_eq_unvalued_iff {β : Type*} {g : α → β} {s : FeatureSlot α} :
+    s.map g = unvalued ↔ s = unvalued := by
+  cases s <;> simp [map]
+
+@[simp] theorem value?_map {β : Type*} (g : α → β) (s : FeatureSlot α) :
+    (s.map g).value? = s.value?.map g := by
+  cases s <;> rfl
+
+@[simp] theorem map_offer {β : Type*} (g : α → β) (o : Option α) :
+    (offer o).map g = offer (o.map g) := by
+  cases o <;> rfl
 
 @[simp] theorem map_map {β γ : Type*} (g : α → β) (h : β → γ) (s : FeatureSlot α) :
     (s.map g).map h = s.map (h ∘ g) := by

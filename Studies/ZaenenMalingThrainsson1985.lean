@@ -5,7 +5,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Fragments.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Syntax.Case.Valuation
+public import Linglib.Syntax.Case.Rule
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -20,7 +20,7 @@ functions SUBJ, OBJ and 2OBJ, one function to a role; the passive is an operatio
 that suppresses SUBJ and makes OBJ the SUBJ (`GF.passive`); and only afterwards does default
 case marking give the highest function without a case the nominative and the next the
 accusative (`Principles.defaultCase`), so idiosyncratic case [survives the
-passive](##mem_defaultCase_of_lexicalCase). Every association principle is universal but one
+passive](##Principles.defaultCase_of_valued). Every association principle is universal but one
 (`Principles`): Icelandic links a case-marked theme to the lowest function available
 (`Principles.icelandic`), German any case-marked role to 2OBJ (`Principles.german`).
 
@@ -44,9 +44,9 @@ argument tested is assigned SUBJ.
   *finnast*, *sakna*, *vanta*, *gefallen* and *übel sein*, whose subjects or datives are
   experiencers here, nor for *abhören*, whose roles follow *biðja*'s.
 * An association is an injective map from the arguments to the functions, functional
-  uniqueness being injectivity. Default case marking is `Case.Valuation.fillInOrder` on the
+  uniqueness being injectivity. Default case marking is `CaseRule.inOrder` on the
   arguments listed highest function first, so the persistence of idiosyncratic case is
-  `Case.Valuation.Extends`.
+  `FeatureSlot.Extends`.
 * Principle (61a) fixes no order among the objects, which gives *gefa* its two associations
   (63); it is read as giving SUBJ to the first role the language-specific principle leaves free,
   the order of the thematic structures in (58), (60) and (63).
@@ -189,30 +189,32 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
   GF.all.filterMap fun g ↦
     ((List.finRange t.length).find? fun i ↦ (a i).inVoice v = some g).map (t[·])
 
-/-- Default case marking, (61d), as a step of case valuation on arguments listed highest
-function first: the highest not yet valued takes the nominative and the next the accusative. -/
-def defaultCase {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
-  s.fillInOrder (fun _ ↦ True) [P.nom, P.acc]
+section DefaultCase
 
-theorem extends_defaultCase {α : Type*} (s : Case.Valuation α C) :
-    s.Extends (fun c ↦ c = P.nom ∨ c = P.acc) (P.defaultCase s) :=
-  Case.Valuation.extends_fillInOrder (by simp) s
+variable {ι : Type*} [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRel lt] (D : Finset ι)
+  (s : ι → FeatureSlot C)
 
-theorem mem_defaultCase_of_lexicalCase {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
-    (hc : x.lexicalCase = some c) :
-    (x, .valued c) ∈
-      P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase) xs) := by
-  obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hx
-  have h : (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase) xs)[i]? =
-      some (x, .valued c) := by
-    simp [Case.Valuation.initial_getElem?, hi, hc]
-  exact List.mem_of_getElem? ((P.extends_defaultCase _).getElem?_of_some h)
+/-- Default case marking, (61d), as a pass over arguments ordered by their functions: the highest
+not yet valued takes the nominative and the next the accusative. -/
+def defaultCase : ι → FeatureSlot C :=
+  (CaseRule.inOrder [P.nom, P.acc]).passGoals lt D s
+
+theorem extends_defaultCase :
+    FeatureSlot.Extends {c | c ∈ [P.nom, P.acc]} s (P.defaultCase lt D s) :=
+  CaseRule.extends_inOrder _ D s
+
+theorem defaultCase_of_valued {x : ι} {c : C} (hs : s x = .valued c) :
+    P.defaultCase lt D s x = .valued c :=
+  (P.extends_defaultCase lt D s).valued hs
+
+end DefaultCase
 
 /-- The case array of an association in a voice: the subject's case and then the objects' in
 the order of their functions, the immediately postverbal NP the OBJ. -/
 def caseArray (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
-  (P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase)
-    (realized t a v))).filterMap (·.2.value?)
+  let xs := realized t a v
+  (List.ofFn (P.defaultCase (· < ·) .univ fun i : Fin xs.length ↦
+    FeatureSlot.offer xs[i].lexicalCase)).filterMap (·.value?)
 
 /-- The case arrays a thematic structure yields in a voice, one per association. -/
 def arrays [DecidableEq C] (t : List (Arg C)) (v : Voice) : Finset (List C) :=

@@ -102,47 +102,49 @@ def pureChomsky : CaseAssigners where
     | .D => some .gen
     | _ => none
 
+section Modalities
+
+variable {ι : Type*} [DecidableEq ι] (U : Finset ι) (np : ι → PhasedNP) (lt : ι → ι → Prop)
+  [DecidableRel lt] (probes : List (Cat × Cat)) (order : List Cat) {x : ι} {c : Case}
+  {m : Mechanism}
+
 /-- Sakha values nothing as unmarked: an NP no rule and no head reaches stays caseless. -/
-theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {c : Case} {m : Mechanism}
-    (h : (grammar.assign np probes order xs)[i]? = some (x, .valued (c, m))) : m ≠ .unmarked := by
-  rw [CaseAssigners.assign] at h
-  refine mechanism_ne_unmarked_of_assignBy ?_ h
-  intro c _
-  cases c <;> rfl
+theorem no_elsewhere_case (h : grammar.assign U np lt probes order x = .valued (c, m)) :
+    m ≠ .unmarked := by
+  rintro rfl
+  rcases grammar.of_assign_eq_valued U np lt probes h with
+    ⟨-, hm⟩ | ⟨d, -, ⟨hm, -⟩ | ⟨-, hu⟩ | ⟨hm, -⟩⟩
+  · cases hm
+  · cases hm
+  · cases d <;> cases hu
+  · cases hm
 
 /-- The Agree-based grammar values nothing dative: a dative NP brought it from the lexicon. -/
-theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
-    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.dat, m))) :
+theorem pureChomsky_no_dative (h : pureChomsky.assign U np lt probes order x = .valued (.dat, m)) :
     (np x).case = .valued .dat := by
-  rw [CaseAssigners.assign] at h
-  cases hk : (np x).case with
-  | valued c =>
-    rw [assignBy_getElem?_of_valued (case := fun x ↦ (np x).case) hx hk] at h
-    simp only [Option.some.injEq, Prod.mk.injEq, FeatureSlot.valued_inj, true_and] at h
-    rw [h.1]
-  | absent | unvalued =>
-    rcases case_mem_of_assignBy (case := fun x ↦ (np x).case) (x := x) (by simp [hk])
-      h with ⟨_, -, hc⟩ | ⟨_, -, ⟨_, _⟩, hp, rfl⟩
-    · simp [pureChomsky, Rules.cases] at hc
-    · obtain ⟨⟨hd, d⟩, -, -, hk⟩ := pureChomsky.mem_probesIn np hp
-      revert hk; cases hd <;> simp [pureChomsky]
+  rcases pureChomsky.of_assign_eq_valued U np lt probes h with
+    ⟨hc, -⟩ | ⟨d, -, ⟨-, hd | hd⟩ | ⟨-, hd⟩ | ⟨-, ⟨hd, _⟩, -, -, hk⟩⟩
+  · exact hc
+  · cases hd
+  · cases hd
+  · cases hd
+  · revert hk; cases hd <;> simp [pureChomsky]
 
 /-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
     without one, an accusative NP brought its case from the lexicon. -/
-theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism}
-    (hlex : (np x).case.value? = none)
-    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.acc, m))) :
+theorem pureChomsky_v_of_acc (hlex : (np x).case.value? = none)
+    (h : pureChomsky.assign U np lt probes order x = .valued (.acc, m)) :
     ∃ d, (Cat.v, d) ∈ probes := by
-  rw [CaseAssigners.assign] at h
-  obtain rfl := mechanism_eq_agree_of_assignBy (rules := pureChomsky.rules)
-    (fun _ _ ↦ rfl) (case := fun x ↦ (np x).case) (x := x) hlex h
-  obtain ⟨_, -, ⟨_, _⟩, hp, rfl⟩ := exists_probe_of_assignBy h
-  obtain ⟨⟨hd, d⟩, hmem, -, hk⟩ := pureChomsky.mem_probesIn np hp
-  obtain rfl : hd = .v := by revert hk; cases hd <;> simp [pureChomsky]
-  exact ⟨d, hmem⟩
+  rcases pureChomsky.of_assign_eq_valued U np lt probes h with
+    ⟨hc, -⟩ | ⟨d, -, ⟨-, hd | hd⟩ | ⟨-, hd⟩ | ⟨-, ⟨hd, d'⟩, hmem, -, hk⟩⟩
+  · simp [hc] at hlex
+  · cases hd
+  · cases hd
+  · cases hd
+  · obtain rfl : hd = .v := by revert hk; cases hd <;> simp [pureChomsky]
+    exact ⟨d', hmem⟩
+
+end Modalities
 
 /-! ### Case read off derivations
 
@@ -219,8 +221,9 @@ def passiveClause (agent goal : Bool) : Derivation :=
 /-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
-    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
-      (fun x ↦ if x = proD then .absent else .unvalued) xs).values.map (·.map (·.1))
+    let out := grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
+      (fun x ↦ if x = proD then .absent else .unvalued) xs
+    xs.map fun x ↦ (out x).value?.map (·.1)
 
 /-! ### Positions -/
 
@@ -246,7 +249,8 @@ def domainOrder : List Cat := [.D, .v, .C]
 /-- The cases of hand-placed NPs, positionally. -/
 def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
     List (Option Case) :=
-  (g.assign id probes domainOrder nps).values.map (·.map (·.1))
+  List.ofFn fun i : Fin nps.length ↦
+    (g.assign Finset.univ (nps[·]) (· < ·) probes domainOrder i).value?.map (·.1)
 
 /-! ### The constructions -/
 
@@ -453,10 +457,10 @@ def probes (r : Datum) : List (Cat × Cat) :=
     (if yes r "headNounAgreement" then [(Cat.D, Cat.C)] else []) ++
     (if yes r "possesseeAgreement" then [(Cat.D, Cat.D)] else [])
 
-/-- The valuations of a domain's occupants. -/
+/-- The case slots of a domain's occupants. -/
 def derive (g : CaseAssigners) (r : Datum) (d : List Occupant) :
-    Valuation Occupant (Case × Mechanism) :=
-  g.assign Occupant.np (probes r) domainOrder d
+    Fin d.length → FeatureSlot (Case × Mechanism) :=
+  g.assign Finset.univ (d[·].np) (· < ·) (probes r) domainOrder
 
 /-- The Case filter requires a caseless overt NP to be pseudo-incorporated, an unshifted
     VP-internal NP adjacent to the verb. -/
@@ -469,12 +473,13 @@ instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o
 /-- T agrees with the NP it values nominative: where a row states the verb's agreement
     target, an overt NP is nominative by Agree exactly when it is that target, so default
     agreement means no NP is. -/
-def Agrees (r : Datum) (out : Valuation Occupant (Case × Mechanism)) : Prop :=
-  (r.feature? "agreesWith").isSome → ∀ p ∈ out, p.1.covert = false →
-    (p.2 = .valued (.nom, .agree) ↔ r.feature? "agreesWith" = p.1.slot.map Slot.key)
+def Agrees (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
+    Prop :=
+  (r.feature? "agreesWith").isSome → ∀ i : Fin d.length, d[i].covert = false →
+    (out i = .valued (.nom, .agree) ↔ r.feature? "agreesWith" = d[i].slot.map Slot.key)
 
-instance (r : Datum) (out : Valuation Occupant (Case × Mechanism)) :
-    Decidable (Agrees r out) := by
+instance (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
+    Decidable (Agrees r d out) := by
   unfold Agrees; infer_instance
 
 /-- A domain derives the row under a grammar: every overt NP gets the case its gloss shows,
@@ -482,9 +487,10 @@ instance (r : Datum) (out : Valuation Occupant (Case × Mechanism)) :
     and agreed with accordingly. -/
 def Derives (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :
     Prop :=
-  (∀ p ∈ derive g r d, p.1.covert = false →
-    Realizes p.2.value? p.1.observed ∧ (chomskian = true → Licensed p.1 p.2.value?)) ∧
-  (chomskian = true → Agrees r (derive g r d))
+  (∀ i : Fin d.length, d[i].covert = false →
+    Realizes (derive g r d i).value? d[i].observed ∧
+      (chomskian = true → Licensed d[i] (derive g r d i).value?)) ∧
+  (chomskian = true → Agrees r d (derive g r d))
 
 instance (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :
     Decidable (Derives g chomskian r d) := by

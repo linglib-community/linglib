@@ -73,15 +73,22 @@ theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := i
 
 /-- The controller of agreement is the highest noun phrase of the domain whose case is
 accessible. Noun phrases whose case is not accessible are invisible and do not intervene. -/
-def controller (t : CaseCategory) (domain : Valuation α (Case × Mechanism)) : Option ℕ :=
-  domain.findIdx? fun s ↦ s.2.value?.any fun v ↦ t ≤ .ofMechanism v.2
+def controller (t : CaseCategory) (xs : List α) (s : α → FeatureSlot (Case × Mechanism)) :
+    Option α :=
+  xs.find? fun x ↦ (s x).value?.any fun v ↦ t ≤ .ofMechanism v.2
+
+/-- The controller of agreement in a clause of the given alignment on the arguments `xs`, listed
+from the highest down, `lex` giving their lexical cases. -/
+def clauseController (a : Alignment.AlignmentType) (t : CaseCategory)
+    (lex : ArgumentRole → Option Case) (xs : List ArgumentRole) : Option ArgumentRole :=
+  controller t xs ((Rules.ofAlignment a).assign lex xs)
 
 /-- Whether an argument controls agreement in a clause of the given alignment, in a language
 whose least accessible category is `t`. -/
 def controls (a : Alignment.AlignmentType) (t : CaseCategory) : ArgumentRole → Bool
-  | .S => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.S]) = some 0
-  | .A => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.A, .P]) = some 0
-  | .P => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.A, .P]) = some 1
+  | .S => clauseController a t (fun _ ↦ none) [.S] = some .S
+  | .A => clauseController a t (fun _ ↦ none) [.A, .P] = some .A
+  | .P => clauseController a t (fun _ ↦ none) [.A, .P] = some .P
   | .R | .T => false
 
 /-! ### The predicted agreement alignments -/
@@ -113,15 +120,14 @@ theorem not_isErgative_controls_accusative (t : CaseCategory) :
 /-- Below a subject with lexical case, as the dative subjects of Icelandic, the verb agrees
 with the nominative object unless lexical case is itself accessible. -/
 theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
-    controller t (assignCases .accusative (fun r ↦ if r = ArgumentRole.A then some c else none)
-      [ArgumentRole.A, .P]) = some 1 := by
+    clauseController .accusative t (fun r ↦ if r = .A then some c else none) [.A, .P] =
+      some .P := by
   cases t <;> first | exact absurd rfl ht | rfl
 
 theorem hindi_controller :
-    controller .unmarked (assignCases (HindiUrdu.alignment .perfective) (fun _ ↦ none)
-      [ArgumentRole.A, .P]) = some 1 ∧
-    controller .unmarked (assignCases (HindiUrdu.alignment .imperfective) (fun _ ↦ none)
-      [ArgumentRole.A, .P]) = some 0 := by
+    clauseController (HindiUrdu.alignment .perfective) .unmarked (fun _ ↦ none) [.A, .P] = some .P ∧
+    clauseController (HindiUrdu.alignment .imperfective) .unmarked (fun _ ↦ none) [.A, .P] =
+      some .A := by
   decide
 
 end Bobaljik2008

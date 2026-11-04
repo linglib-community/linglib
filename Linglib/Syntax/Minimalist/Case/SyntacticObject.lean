@@ -100,11 +100,12 @@ def projectingHeads : List (TreePath × LexicalItem.Token) :=
     (tokenList t.val).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
 
 /-- The probes of the phase head at `h`: the heads with an Agree case whose complement it
-transfers, deepest first, each with its case and the NPs it reaches. -/
-def CaseAssigners.probesAt (g : CaseAssigners) : List (Case × (LexicalItem.Token → Bool)) :=
+transfers, deepest first, each with its case and the NPs of `U` it reaches. -/
+def CaseAssigners.probesAt (g : CaseAssigners) (U : Finset LexicalItem.Token) :
+    List ((Case × Mechanism) × Finset LexicalItem.Token) :=
   (projectingHeads hd t).filterMap fun x ↦ (g.agreeCase x.2.item.cat).bind fun k ↦
     if complement x.1 ∈ transferSlice Φ D h then
-      some (k, fun tok ↦ decide (ReachesAt hd t Φ D h x.1 tok))
+      some ((k, .agree), U.filter (ReachesAt hd t Φ D h x.1))
     else none
 
 /-- The phase heads of `t` with their positions, innermost first. -/
@@ -117,12 +118,16 @@ phase head and `case` the case slot each NP enters with. -/
 def CaseAssigners.assignOn (g : CaseAssigners) (D : TreePath → Set TreePath)
     [∀ h, DecidablePred (· ∈ D h)] (IsPhaseHead : LexicalItem.Token → Prop)
     [DecidablePred IsPhaseHead] (case : LexicalItem.Token → FeatureSlot Case)
-    (xs : List LexicalItem.Token) : Valuation LexicalItem.Token (Case × Mechanism) :=
+    (xs : List LexicalItem.Token) : LexicalItem.Token → FeatureSlot (Case × Mechanism) :=
   let ph := phaseHeads hd t IsPhaseHead
   let Φ := (ph.map (·.1)).toFinset
-  assignBy (fun x ↦ g.rules x.2.item.cat) (fun x tok ↦ VisibleAt hd t Φ D x.1 tok)
-    (fun x p q ↦ CCommandsAt hd t Φ D x.1 p.2 q.2) (fun x ↦ CCommandsAt hd t Φ D x.1)
-    (fun x ↦ g.probesAt hd t Φ D x.1) (fun x tok ↦ SpelledOutAt hd t Φ D x.1 tok) ph
-    (slotValuation case xs)
+  let U := xs.toFinset
+  assignBy (ph.map fun x ↦
+    { above := CCommandsAt hd t Φ D x.1
+      dependent := (g.rules x.2.item.cat).dependent
+      sees := U.filter (VisibleAt hd t Φ D x.1)
+      probes := g.probesAt hd t Φ D x.1 U
+      elsewhere := (g.rules x.2.item.cat).elsewhere
+      spellOut := U.filter (SpelledOutAt hd t Φ D x.1) }) (DependentCase.lexical case)
 
 end Minimalist
