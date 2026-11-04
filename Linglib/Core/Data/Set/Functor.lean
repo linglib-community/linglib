@@ -35,6 +35,8 @@ counterpart of `Computation.LiftRel`, and at a homogeneous relation the functor-
 * `Set.liftRel_iff_image_eq`: the lifting of equality along two maps is equality of their images.
 * `Set.LiftRel.union`, `Set.LiftRel.biUnion`: closure under unions, and under the indexed unions
   of related families, the `bind` of `Computation.liftRel_bind`.
+* `Set.LiftRel.image`, `Set.LiftRel.seq`, `Set.LiftRel.sUnion`: the lifting respects the functor's
+  map, application and join.
 * The lifting of a reflexive, symmetric or transitive relation is reflexive, symmetric or
   transitive, and `Set.LiftRel.equiv` for equivalences.
 
@@ -194,5 +196,21 @@ theorem LiftRel.biUnion {q : γ → δ → Prop} {f : α → Set γ} {g : β →
     obtain ⟨a, ha, hab⟩ := h.2 b hb
     obtain ⟨c, hc, hcd⟩ := (H a ha b hb hab).2 d hd
     exact ⟨c, Set.mem_iUnion₂.2 ⟨a, ha, hc⟩, hcd⟩
+
+theorem LiftRel.image {q : γ → δ → Prop} {f : α → γ} {g : β → δ} (h : LiftRel r s t)
+    (H : Relator.LiftFun r q f g) : LiftRel q (f '' s) (g '' t) :=
+  ⟨forall_mem_image.2 fun a ha ↦ let ⟨b, hb, hab⟩ := h.1 a ha; ⟨g b, mem_image_of_mem g hb, H hab⟩,
+    forall_mem_image.2 fun b hb ↦ let ⟨a, ha, hab⟩ := h.2 b hb; ⟨f a, mem_image_of_mem f ha, H hab⟩⟩
+
+theorem LiftRel.seq {q : γ → δ → Prop} {F : Set (α → γ)} {G : Set (β → δ)}
+    (hF : LiftRel (Relator.LiftFun r q) F G) (h : LiftRel r s t) :
+    LiftRel q (Set.seq F s) (Set.seq G t) := by
+  rw [Set.seq_def, Set.seq_def]
+  exact hF.biUnion fun _ _ _ _ hfg ↦ h.image hfg
+
+theorem LiftRel.sUnion {S : Set (Set α)} {T : Set (Set β)} (h : LiftRel (LiftRel r) S T) :
+    LiftRel r (⋃₀ S) (⋃₀ T) := by
+  rw [sUnion_eq_biUnion, sUnion_eq_biUnion]
+  exact h.biUnion fun _ _ _ _ ↦ id
 
 end Set
