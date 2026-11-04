@@ -21,10 +21,10 @@ weaker than its role as direct argument. The affectedness entailments are the co
 Affectedness Hierarchy, with the scalar relation read, as the paper reads it, as possibly ending at
 some goal. A variant's logical form says where the participant ends up, at the goal the predicate
 supplies, at some goal, or possibly so, and [the role it lexically assigns is the degree that
-result names](##mem_lexicalRole). [Every attested alternation is then a minimal
-contrast](##lexicalRole_wcovBy_of_mem_attested), as is [a conative that embeds the object's result
-under a modality, unless that result is the predicate's goal](##degree_possibly_wcovBy_iff), and
-[the judgments of the conatives and of the *load* locative under diagnostics of change
+result names](##mem_lexicalRole). [Each alternation the paper assigns roles to is then a
+minimal contrast](##lexicalRole_wcovBy_of_mem_attested), as is [a conative that embeds the object's
+result under a modality, unless that result is the predicate's goal](##degree_possibly_wcovBy_iff),
+and [the judgments of the conatives and of the *load* locative under diagnostics of change
 follow](##diagnosed_rows). The double modality of *hit at* leaves it unspecified for change [only
 along a modal base that is not transitive](##holds_potential_possibly_of_isTrans). Total traversal
 of a path is quantized change read of the scale, and the dative alternation runs on a chain of
@@ -347,7 +347,7 @@ theorem card_entailments_lt_card_iff {o d : AffectednessDegree} :
 example : ∃ p q : EntailmentProfile, EntailmentProfile.DirectObjectOver p q ∧ ¬ q ⊆ p :=
   ⟨{.changeOfState, .incrementalTheme}, {.stationary}, by decide, by decide⟩
 
-/-! ### The attested alternations (Tables 3–4, (75)) -/
+/-! ### The attested alternations ((24), Tables 3–4, (75)) -/
 
 /-- An alternation: examples of a participant as direct argument and as oblique, the verb's class
 and the section of Levin's catalogue the alternation falls under, if any, with what each variant's
@@ -414,8 +414,10 @@ def attested : List Alternation :=
   [eat, cut, hit, loadLocation, loadTheme, cutLocation, cutTheme, clearLocation, clearTheme,
     hitLocation, hitTheme]
 
-/-- Every attested alternation satisfies the MAP: the participant's lexical role as oblique is
-minimally weaker than its lexical role as direct argument. -/
+/-- Each alternation the paper assigns roles to satisfies the MAP: the participant's lexical role as
+oblique is minimally weaker than its role as direct argument, one step down the hierarchy in the
+conatives and the *load* and *cut* locatives, and the same role in the *clear* and *hit* locatives,
+as (68) allows. Alternations left without roles, as the *gnaw* conative (26), are not listed. -/
 theorem lexicalRole_wcovBy_of_mem_attested :
     ∀ a ∈ attested, a.oblique.lexicalRole ⩿ a.direct.lexicalRole := by
   simp only [lexicalRole_eq, entailments_wcovBy_entailments_iff]
