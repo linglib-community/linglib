@@ -299,11 +299,8 @@ theorem exhIE_singleton_self : exhIE {φ} φ = φ :=
 
 theorem exhIE_pair_sdiff {d : Set World} (hne : (φ \ d).Nonempty) : exhIE {φ, d} φ = φ \ d := by
   have hexh : exh {φ, d} φ = φ \ d := by
-    obtain ⟨w, hw, hwd⟩ := hne
-    ext u
-    simp only [mem_exh, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, mem_sdiff]
-    exact and_congr_right fun _ ↦ ⟨fun h hud ↦ hwd (h.2 hud hw), fun hud ↦
-      ⟨fun _ ↦ subset_rfl, fun h ↦ (hud h).elim⟩⟩
+    rw [exh_insert_of_subset subset_rfl,
+      exh_singleton_of_not_subset fun h ↦ let ⟨_, hw, hwd⟩ := hne; hwd (h hw)]
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ hne), hexh]
 
 theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Set World}
