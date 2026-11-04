@@ -51,6 +51,10 @@ def π [Min α] (P : α) (R : ι → α) : ι → α := fun x ↦ P ⊓ R x
 
 theorem π_apply [Min α] (P : α) (R : ι → α) (x : ι) : π P R x = P ⊓ R x := rfl
 
+theorem π_apply₂ {σ : Type*} (P : σ → κ → Prop) (R : ι → σ → κ → Prop) (x : ι) (s : σ) (y : κ) :
+    π P R x s y ↔ P s y ∧ R x s y :=
+  Iff.rfl
+
 @[simp] theorem π_top [SemilatticeInf α] [OrderTop α] (R : ι → α) : π ⊤ R = R :=
   funext fun _ ↦ top_inf_eq _
 

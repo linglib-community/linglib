@@ -33,6 +33,7 @@ disjoint from every singleton argument is irreflexivity.
 
 ## Main results
 
+* `Modifier.isIntersective_iff_map_inf`: the intersective modifiers are those commuting with meets.
 * `Modifier.isExtensive_pointwise_iff`, `isSubsective_pointwise_iff`: the classes of a
   pointwise modifier, read off its map.
 * `Modifier.isPrivative_pointwise_iff`: a pointwise modifier is privative only when its
@@ -95,6 +96,12 @@ theorem intersective_comm (q r : α) : intersective q r = intersective r q :=
 
 theorem intersective_isIntersective (q : α) : IsIntersective (intersective q) :=
   ⟨q, fun _ ↦ rfl⟩
+
+/-- A modifier is intersective exactly when meeting its argument with `q` meets its value with `q`,
+and it is then the meet with its value at `⊤`. -/
+theorem isIntersective_iff_map_inf [OrderTop α] {m : Modifier α} :
+    IsIntersective m ↔ ∀ x q, m (x ⊓ q) = m x ⊓ q :=
+  ⟨fun ⟨r, hr⟩ x q ↦ by simp only [hr, inf_assoc], fun h ↦ ⟨m ⊤, fun x ↦ by simpa using h ⊤ x⟩⟩
 
 end SemilatticeInf
 

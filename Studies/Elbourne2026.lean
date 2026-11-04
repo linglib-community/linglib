@@ -94,27 +94,15 @@ theorem fido_is_a_dog (R : I → I → Prop) (dog : I → E → Prop) (o : E) (t
 
 /-! ### Non-subsective adjectives -/
 
-/-- *former* (44), (60) denotes `λf⟨e,it⟩.λx.λt.∃t'(<(t')(t) & f(x)(t') & ¬f(x)(t))`, asserting
-both the positive and the negative condition. -/
-def former [LT I] : Modifier (I → E → Prop) :=
-  fun N t x ↦ (∃ t' < t, N t' x) ∧ ¬ N t x
-
-/-- *John was a former judge* (45)–(46) means
+/-- *former* (44), (60), `Modifier.former`, denotes
+`λf⟨e,it⟩.λx.λt.∃t'(<(t')(t) & f(x)(t') & ¬f(x)(t))`, asserting both the positive and the negative
+condition, so *John was a former judge* (45)–(46) means
 `λt.∃t'(<(t')(t) & ∃t''(<(t'')(t') & judge(j)(t'') & ¬judge(j)(t')))`. -/
 theorem john_was_a_former_judge [LT I] (judge : I → E → Prop) (j : E) (t : I) :
     copula (· < ·) (Modifier.intersective (former judge)) t j ↔
       ∃ t' < t, (∃ t'' < t', judge t'' j) ∧ ¬ judge t' j := by
   rw [copula_intersective]
   exact Iff.rfl
-
-/-- A former N at `t` is not an N at `t` (§3.4), so *former* is privative in Kamp's sense. -/
-theorem former_isPrivative [LT I] : Modifier.IsPrivative (former : Modifier (I → E → Prop)) :=
-  Modifier.isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
-
-theorem former_not_isSubsective [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
-    ¬ Modifier.IsSubsective (former : Modifier (I → E → Prop)) :=
-  Modifier.IsPrivative.not_isSubsective former_isPrivative
-    ⟨fun s _ ↦ s = t', t, Classical.arbitrary E, ⟨t', h, rfl⟩, h.ne'⟩
 
 /-- No property combined intersectively with a noun gives the meaning of *former* (§3.3–3.4). -/
 theorem intersective_ne_former [Preorder I] {t' t : I} (h : t' < t) [Nonempty E]
