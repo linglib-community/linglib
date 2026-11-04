@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Partial
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Linglib.Data.Examples.Readers
 

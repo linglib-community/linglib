@@ -82,7 +82,7 @@ def WithAlternatives.focused {α : Type*} (x : α) : WithAlternatives α :=
 @[simp] theorem WithAlternatives.focused_alternatives {α : Type*} (x : α) :
     (WithAlternatives.focused x).alternatives = Set.univ := rfl
 
-/-! ### The composition engine
+/-! ### Composition
 
 Alternative semantics composes pointwise: the ordinary values apply to each other while the
 alternatives collect applications of alternative functions to alternative arguments (Hamblin

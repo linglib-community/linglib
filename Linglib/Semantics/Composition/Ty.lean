@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
@@ -123,7 +122,7 @@ abbrev Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 the eventualities, which are empty unless a model supplies them. -/
 structure Sorts where
   /-- The scale of degrees. -/
-  degree : Type := ℝ
+  degree : Type := Empty
   /-- The eventualities. -/
   eventuality : Type := Empty
 

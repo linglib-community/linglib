@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Modification.Basic
-public import Linglib.Semantics.Composition.Extensional
 
 /-!
 # Composition modes
@@ -18,8 +17,7 @@ Join flattens a result with two layers of one effect. A pair of types may then c
 ways, and [the mode their types select is always basic](##Ty.isBasic_of_mode?_eq_some). Under the
 reader of worlds, von Fintel and Heim's intensional application is application mapped over the
 function's reader, which gives the function its argument's whole intension, while Unit Right gives
-it the constant intension of the argument's value; [the two agree on every argument exactly when
-the function is extensional](##forall_eval_mapLeft_eq_eval_unitRight_iff).
+it the constant intension of the argument's value.
 
 ## Main definitions
 
@@ -232,17 +230,6 @@ def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (
 
 @[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
     m.evalM (M := Id) a b = m.eval a b := rfl
-
-/-- Application mapped over the reader of worlds gives the function at `w` its argument's whole
-intension ([von-fintel-heim-2011]'s Intensional Functional Application), and Unit Right gives it
-the constant intension of the argument's value at `w`; the two agree at `w` on every argument
-exactly when the function, read as an operator on intensions, is extensional at `w`. -/
-theorem forall_eval_mapLeft_eq_eval_unitRight_iff {σ τ : Ty}
-    {f : W → (W → Ty.Domain E W σ S) → Ty.Domain E W τ S} {w : W} :
-    (∀ a, (mapLeft (f := .reader .s) (functionalLeft (σ := .comp (.reader .s) σ) (τ := τ))).eval
-        f a w = (unitRight (f := .reader .s) (functionalLeft (σ := σ) (τ := τ))).eval (f w) (a w)) ↔
-      IsExtensionalAt (fun a w' ↦ f w' a) w :=
-  isExtensionalAt_iff_forall_const.symm
 
 /-! ### Composition in a family of values -/
 

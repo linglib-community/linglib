@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Composition.Coordinator
+public import Linglib.Semantics.Coordinator
 public import Linglib.Data.Examples.MitrovicSauerland2016
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Fragments.English.FocusParticles

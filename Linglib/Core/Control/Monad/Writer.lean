@@ -3,14 +3,12 @@ module
 public import Mathlib.Control.Monad.Writer
 
 /-!
-# Writer monads for side-issue meaning
+# Writer monads
 
-A computation of the writer monad `Writer ω` yields a value and logs output in `ω`. Giorgolo and
-Asudeh model conventional implicature this way, in Shan's monadic program: the value of an
-expression is its at-issue content, the log collects the side-issue propositions of its parts,
-`pure` logs nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad
-morphism to `Id`, and [`bind` only extends the log](##log_prefix_bind), so content flows from the
-at-issue dimension into the side-issue one and never back.
+A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
+nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
+and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
+log never feeds a value.
 
 ## Main definitions
 
@@ -23,15 +21,6 @@ at-issue dimension into the side-issue one and never back.
   `[EmptyCollection ω] [Append ω]`, are both `WriterT.monad empty append`; the projection lemmas
   are stated for that monad, as mathlib states `WriterT.run_bind`, and apply under either.
 * Mathlib proves the monad laws for monoid logs only, and lists are not a monoid there.
-* Giorgolo and Asudeh take the log to be a monoid of propositions and fix it to sets under union.
-  They require the arrows to be isotone in the log for the preorder `x ≤ y ↔ ∃ z, x * z = y`,
-  which is `x ∣ y` in mathlib. The consumers here log lists, the free monoid, on which this
-  preorder is the prefix order.
-
-## References
-
-* [giorgolo-asudeh-2012]
-* [shan-2001]
 -/
 
 @[expose] public section

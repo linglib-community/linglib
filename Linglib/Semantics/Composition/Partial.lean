@@ -447,9 +447,9 @@ a binder the partial function abstracting over its index in the body. -/
 def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
     Option (PDenotation E W S) :=
   (translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
-    ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
+    ⟨d.1, d.2.evalPartial (Γ := individualIndices) (fun c ↦ c) g⟩
 
-private theorem map_bind_combine (g : Assignment E)
+private theorem map_bind_combine (g : ∀ n, Ty.PDomain E W (individualIndices n) S)
     (t₁ t₂ : Option (Σ ty, Term individualIndices (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
         (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
@@ -542,7 +542,7 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   obtain ⟨⟨τ, u'⟩, ht', rfl⟩ := Option.map_eq_some_iff.1 h
   obtain ⟨u, hu, hr⟩ := translate_rel lex hrel t ht'
   obtain ⟨z, hz, hl⟩ := hr.lifts (g := g) (g' := g) fun _ ↦ rfl
-  refine ⟨⟨τ, u.eval (fun c ↦ c) g⟩, ?_, ?_⟩
+  refine ⟨⟨τ, u.eval (Γ := individualIndices) (fun c ↦ c) g⟩, ?_, ?_⟩
   · simp [Tree.interp, hu, evalAt]; rfl
   · simp only [hz]
     exact .mk hl

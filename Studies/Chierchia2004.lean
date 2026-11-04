@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Card
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Exhaustification.Basic
 public import Studies.KadmonLandman1993
 public import Linglib.Data.Examples.Chierchia2004

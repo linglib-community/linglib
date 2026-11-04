@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Model
+public import Mathlib.ModelTheory.Basic
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Core.ModelTheory.Binders
 public import Linglib.Semantics.Quantification.Basic
@@ -19,6 +19,7 @@ conditions, [soundly](##Term.realizes_readback). So
 
 ## Main definitions
 
+* `Model`: an entity domain, worlds, and a first-order structure at each world.
 * `FirstOrderConstant`, `FirstOrderConstant.interp`: the first-order constants and their
   denotations in a composition model at a world; `Model.lexicon` interprets the words of a
   fragment through them.
@@ -49,6 +50,43 @@ universe u v w
 namespace Montague
 
 open FirstOrder Language
+
+/-! ### Composition models -/
+
+section Models
+
+/-- A composition model has a constant entity domain `E`, as a constant-domain Kripke model does, a
+world set `W`, and at each world a first-order `L`-structure interpreting the content signature.
+The structure is a term rather than an instance, since instance search cannot find a family of
+structures on one carrier indexed by worlds. -/
+structure Model (L : Language.{u, v}) where
+  /-- The entity domain is shared by all worlds. -/
+  E : Type
+  /-- The worlds index the interpretations. -/
+  W : Type
+  /-- At each world a structure interprets the signature. -/
+  interp : W → L.Structure E
+
+variable {L : Language.{u, v}}
+
+/-- The interpretation of a constant at world `w` is the entity the structure there assigns
+it. -/
+def Model.const (m : Model L) (c : L.Constants) (w : m.W) : Ty.Domain m.E m.W .e :=
+  (m.interp w).funMap c default
+
+/-- The denotation `e ⇒ t` of a unary symbol at world `w` holds of the entities the structure
+there relates by it. -/
+def Model.pred₁ (m : Model L) (R : L.Relations 1) (w : m.W) :
+    Ty.Domain m.E m.W (.e ⇒ .t) :=
+  fun x ↦ (m.interp w).RelMap R (fun _ ↦ x)
+
+/-- The denotation `e ⇒ e ⇒ t` of a binary symbol at world `w` takes the object first and the
+subject second, as transitive verbs do. -/
+def Model.pred₂ (m : Model L) (R : L.Relations 2) (w : m.W) :
+    Ty.Domain m.E m.W (.e ⇒ .e ⇒ .t) :=
+  fun y x ↦ (m.interp w).RelMap R (fun i ↦ if i = 0 then x else y)
+
+end Models
 
 /-! ### First-order constants -/
 

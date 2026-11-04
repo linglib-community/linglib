@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Extensional
 public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.FirstOrder
 public import Mathlib.Tactic.DeriveFintype
@@ -926,6 +928,18 @@ theorem translations_lexiconAt_maryBelievesJanIsLoyal (w : W) (g : Assignment E)
   simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexiconAt, lexicon, Ty.modes,
     Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
     Mode.eventIdentification?, Eff.pure, Mode.join?]
+
+/-- Application mapped over the reader of worlds gives the function at `w` its argument's whole
+intension, and Unit Right gives it the constant intension of the argument's value at `w`; the two
+agree at `w` on every argument exactly when the function, read as an operator on intensions, is
+extensional at `w`. -/
+theorem forall_eval_mapLeft_eq_eval_unitRight_iff {S : Sorts} {σ τ : Ty}
+    {f : W → (W → Ty.Domain E W σ S) → Ty.Domain E W τ S} {w : W} :
+    (∀ a, (Mode.mapLeft (f := .reader .s)
+        (.functionalLeft (σ := .comp (.reader .s) σ) (τ := τ))).eval f a w =
+        (Mode.unitRight (f := .reader .s) (.functionalLeft (σ := σ) (τ := τ))).eval (f w) (a w)) ↔
+      Montague.IsExtensionalAt (fun a w' ↦ f w' a) w :=
+  Montague.isExtensionalAt_iff_forall_const.symm
 
 /-- An attitude verb's complement is a nonextensional context at `w` exactly when the subject's
 attitude at `w` leaves open a world other than `w`, so the truth value of the complement fixes the
