@@ -13,7 +13,12 @@ updates of sets of worlds (`CCP.Partial`), whose domain condition is the presupp
 Karttunen's satisfaction law for conjunction is the domain condition of composition and holds by
 construction. A trivalent proposition gives the update defined on the contexts where it is
 defined throughout, and under this update the filtering connectives, Peters' Middle Kleene
-connectives, are the admittance conditions of the dynamic connectives.
+connectives, are the admittance conditions of the dynamic connectives. More strongly, the update
+map is an isomorphism from trivalent propositions to the updates it reaches, carrying the constant
+truth, Peters' conjunction and the Weak Kleene difference, disjunction and conjunction to the null
+update, sequencing, difference, union and intersection ([george-2014] §2). Every update built
+from these operations out of trivalentisable ones is therefore trivalentisable, and Heim's
+connectives are Peters'.
 
 ## Main definitions
 
@@ -24,6 +29,10 @@ connectives, are the admittance conditions of the dynamic connectives.
 * `CCP.Partial.ofTrivalent`: the update of a trivalent proposition.
 * `CCP.Partial.neg`, `CCP.Partial.cond`, `CCP.Partial.disj`: Heim's negation and conditional,
   and the disjunction that updates its second disjunct with the negation of the first.
+* `CCP.Partial.diff`, `CCP.Partial.union`, `CCP.Partial.inter`: the difference, union and
+  intersection of updates, defined where both updates are.
+* `CCP.Partial.IsTrivalentisable`: an update given by a trivalent proposition.
+* `CCP.Partial.ofTrivalentEquiv`: trivalent propositions are the trivalentisable updates.
 
 ## Main results
 
@@ -34,6 +43,13 @@ connectives, are the admittance conditions of the dynamic connectives.
   conditionalised on the first.
 * `CCP.Partial.admits_seq_ofTrivalent`, `CCP.Partial.admits_cond_ofTrivalent`,
   `CCP.Partial.admits_disj_ofTrivalent`: the filtering connectives, derived.
+* `CCP.Partial.ofTrivalent_injective`, `CCP.Partial.ofTrivalent_one`,
+  `CCP.Partial.ofTrivalent_meetMiddle`, `CCP.Partial.ofTrivalent_diff`,
+  `CCP.Partial.ofTrivalent_joinWeak`, `CCP.Partial.ofTrivalent_meetWeak`: the update map is an
+  isomorphism of the trivalent operations onto the operations on updates.
+* `CCP.Partial.ofTrivalent_neg`, `CCP.Partial.ofTrivalent_cond`,
+  `CCP.Partial.ofTrivalent_joinMiddle`, `CCP.Partial.ofTrivalent_joinMiddle_eq_neg_seq_neg`:
+  Heim's connectives, and both Beaver's disjunction and its De Morgan form, are Peters'.
 
 ## Implementation notes
 
@@ -41,7 +57,9 @@ The partiality is of the update and not of the points. The partial assignments o
 `Dynamic/State.lean` encode referential growth rather than presupposition, the sense of partial
 dynamic semantics in Haug's work, and the two kinds compose in `Dynamic/FileChange.lean`. Heim
 gives context change potentials for negation, conjunction and the conditional only, and the
-disjunction follows Beaver.
+disjunction follows Beaver. [george-2014]'s error context `#` is the undefinedness of a `Part`, so
+every update sends `#` to `#`; updates that recover from `#`, such as his (6a), are not
+representable, but every trivalentisable update is of this kind.
 
 ## References
 
@@ -57,6 +75,7 @@ disjunction follows Beaver.
 * [moggi-1991]
 * [shan-2001]
 * [haug-2014]
+* [george-2014]
 -/
 
 @[expose] public section
@@ -260,6 +279,38 @@ second disjunct in the ¬φ local context. -/
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
   fun s ↦ (φ s).bind fun sφ ↦ (ψ (s \ sφ)).map fun sψ ↦ sφ ∪ sψ
 
+/-- The difference of updates is `s[φ \ ψ] = s[φ] \ s[ψ]`, defined iff both updates are
+([george-2014], Definition 7). -/
+def diff (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s \ ψ s
+
+/-- The union of updates is `s[φ ∪ ψ] = s[φ] ∪ s[ψ]`, defined iff both updates are
+([george-2014], Definition 7). -/
+def union (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∪ ψ s
+
+/-- The intersection of updates is `s[φ ∩ ψ] = s[φ] ∩ s[ψ]`, defined iff both updates are
+([george-2014], Definition 7). -/
+def inter (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∩ ψ s
+
+theorem admits_diff (φ ψ : CCP.Partial P) (s : Set P) :
+    (diff φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
+
+theorem admits_union (φ ψ : CCP.Partial P) (s : Set P) :
+    (union φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
+
+theorem admits_inter (φ ψ : CCP.Partial P) (s : Set P) :
+    (inter φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
+
+/-- Heim negation is the difference from the null update ([george-2014], Definition 8). -/
+theorem neg_eq_diff (φ : CCP.Partial P) : neg φ = diff (PFun.id _) φ :=
+  funext fun s ↦ (Part.bind_some s _).symm
+
+/-- The Heim conditional is `ε \ (φ \ (φ; ψ))` ([george-2014], Definition 8). -/
+theorem cond_eq_diff (φ ψ : CCP.Partial P) :
+    cond φ ψ = diff (PFun.id _) (diff φ (PartialUpdate.seq φ ψ)) := by
+  funext s
+  refine Part.ext' ?_ fun _ _ ↦ rfl
+  exact ⟨fun ⟨h, h'⟩ ↦ ⟨trivial, h, h, h'⟩, fun ⟨_, h, _, h'⟩ ↦ ⟨h, h'⟩⟩
+
 theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
     cond φ ψ = neg (PartialUpdate.seq φ (neg ψ)) := by
   funext s
@@ -347,6 +398,202 @@ theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
   (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_support_joinMiddle_iff.symm
+
+/-! ### The update isomorphism
+
+[george-2014]'s Proposition 1: the update map is injective (Remark 1) and carries the constant
+truth, Peters' conjunction and the Weak Kleene difference `meetWeak p (-q)`, disjunction and
+conjunction to the null update, sequencing, difference, union and intersection. The
+trivalentisable updates are therefore closed under these operations (Corollary 1), and reading
+Heim's connectives off their isomorphic images shows that they are Peters' (footnote 15). -/
+
+/-- An update is trivalentisable when it is the update of a trivalent proposition
+([george-2014], Definition 11). -/
+def IsTrivalentisable (φ : CCP.Partial W) : Prop := φ ∈ Set.range ofTrivalent
+
+theorem isTrivalentisable_ofTrivalent (p : W → SignType) : IsTrivalentisable (ofTrivalent p) :=
+  ⟨p, rfl⟩
+
+/-- Distinct trivalent propositions give distinct updates, as the update of a singleton context
+recovers the value at its world ([george-2014], Remark 1). -/
+theorem ofTrivalent_injective :
+    Function.Injective (ofTrivalent : (W → SignType) → CCP.Partial W) := by
+  intro p q h
+  funext w
+  have h₀ : ∀ r : W → SignType, (ofTrivalent r {w}).Dom ↔ ¬ r w = 0 := fun r ↦ by
+    simp [ofTrivalent, Function.mem_support]
+  have h₁ : ∀ r : W → SignType, {w} ∈ ofTrivalent r {w} ↔ r w = 1 := fun r ↦ by
+    simp [mem_ofTrivalent_self]
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
+  · rw [← not_iff_not, ← h₀, ← h₀, h]
+  · rw [← h₁, ← h₁, h]
+
+/-- The constant truth gives the null update. -/
+@[simp] theorem ofTrivalent_one : ofTrivalent (1 : W → SignType) = PFun.id (Set W) := by
+  funext s
+  exact Part.ext' (iff_of_true (fun w _ ↦ by simp) trivial) fun _ _ ↦ by simp [ofTrivalent]
+
+/-- Peters' conjunction gives sequencing. -/
+theorem ofTrivalent_meetMiddle (p q : W → SignType) :
+    ofTrivalent (fun w ↦ (p w).meetMiddle (q w)) =
+      PartialUpdate.seq (ofTrivalent p) (ofTrivalent q) := by
+  funext s
+  refine Part.ext' (admits_seq_ofTrivalent p q s).symm fun _ _ ↦ ?_
+  show {w ∈ s | _} = {w ∈ {w ∈ s | p w = 1} | q w = 1}
+  ext w
+  simp [and_assoc]
+
+/-- An update of a pointwise Weak Kleene operation is defined where both operands' updates are. -/
+theorem admits_ofTrivalent_weak {f : SignType → SignType → SignType}
+    (hf : ∀ a b, f a b ≠ 0 ↔ a ≠ 0 ∧ b ≠ 0) (p q : W → SignType) (s : Set W) :
+    (ofTrivalent fun w ↦ f (p w) (q w)).Admits s ↔
+      (ofTrivalent p).Admits s ∧ (ofTrivalent q).Admits s := by
+  simp only [admits_ofTrivalent, Set.subset_def, Function.mem_support, hf]
+  exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
+    fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
+
+/-- The Weak Kleene difference gives the difference of updates. -/
+theorem ofTrivalent_diff (p q : W → SignType) :
+    ofTrivalent (fun w ↦ SignType.meetWeak (p w) (-q w)) =
+      diff (ofTrivalent p) (ofTrivalent q) := by
+  funext s
+  refine Part.ext' ((admits_ofTrivalent_weak (f := fun a b ↦ SignType.meetWeak a (-b))
+    (by decide) p q s).trans (admits_diff _ _ s).symm) fun h _ ↦ ?_
+  simp only [diff, Part.sdiff_get_eq, ofTrivalent_get]
+  ext w
+  by_cases hw : w ∈ s
+  · have hd : SignType.meetWeak (p w) (-q w) ≠ 0 := h hw
+    simp only [Set.mem_ofPred_eq, Set.mem_sdiff, hw, true_and]
+    revert hd; generalize p w = a; generalize q w = b
+    cases a <;> cases b <;> decide
+  · simp [hw]
+
+/-- Weak Kleene disjunction gives the union of updates. -/
+theorem ofTrivalent_joinWeak (p q : W → SignType) :
+    ofTrivalent (fun w ↦ SignType.joinWeak (p w) (q w)) =
+      union (ofTrivalent p) (ofTrivalent q) := by
+  funext s
+  refine Part.ext' ((admits_ofTrivalent_weak (f := SignType.joinWeak) (by decide) p q s).trans
+    (admits_union _ _ s).symm) fun h _ ↦ ?_
+  simp only [union, Part.union_get_eq, ofTrivalent_get]
+  ext w
+  by_cases hw : w ∈ s
+  · have hd : SignType.joinWeak (p w) (q w) ≠ 0 := h hw
+    simp only [Set.mem_ofPred_eq, Set.mem_union, hw, true_and]
+    revert hd; generalize p w = a; generalize q w = b
+    cases a <;> cases b <;> decide
+  · simp [hw]
+
+/-- Weak Kleene conjunction gives the intersection of updates. -/
+theorem ofTrivalent_meetWeak (p q : W → SignType) :
+    ofTrivalent (fun w ↦ SignType.meetWeak (p w) (q w)) =
+      inter (ofTrivalent p) (ofTrivalent q) := by
+  funext s
+  refine Part.ext' ((admits_ofTrivalent_weak (f := SignType.meetWeak) (by decide) p q s).trans
+    (admits_inter _ _ s).symm) fun _ _ ↦ ?_
+  simp only [inter, Part.inter_get_eq, ofTrivalent_get]
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_sep_iff, SignType.meetWeak_eq_one_iff]
+  tauto
+
+/-- Heim negation is Kleene negation, read off the isomorphic images of `ε \ φ`
+([george-2014], footnote 15). -/
+theorem ofTrivalent_neg (p : W → SignType) :
+    ofTrivalent (fun w ↦ -p w) = neg (ofTrivalent p) := by
+  rw [neg_eq_diff, ← ofTrivalent_one, ← ofTrivalent_diff]
+  simp only [Pi.one_apply, SignType.meetWeak_one_left]
+
+/-- The Heim conditional is Peters' conditional, read off the isomorphic images of
+`ε \ (φ \ (φ; ψ))` ([george-2014], footnote 15). -/
+theorem ofTrivalent_cond (p q : W → SignType) :
+    ofTrivalent (fun w ↦ (-p w).joinMiddle (q w)) = cond (ofTrivalent p) (ofTrivalent q) := by
+  rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_one,
+    ← ofTrivalent_diff]
+  congr 1; funext w
+  simp only [Pi.one_apply]
+  generalize p w = a; generalize q w = b
+  cases a <;> cases b <;> rfl
+
+/-- Beaver's disjunction is Peters' disjunction. It is not built from the toolbox, so this is
+proved directly; `ofTrivalent_joinMiddle_eq_neg_seq_neg` reads off the De Morgan form. -/
+theorem ofTrivalent_joinMiddle (p q : W → SignType) :
+    ofTrivalent (fun w ↦ (p w).joinMiddle (q w)) = disj (ofTrivalent p) (ofTrivalent q) := by
+  funext s
+  refine Part.ext' (admits_disj_ofTrivalent p q s).symm fun h _ ↦ ?_
+  show {w ∈ s | _} = {w ∈ s | p w = 1} ∪ {w ∈ s \ {w ∈ s | p w = 1} | q w = 1}
+  ext w
+  by_cases hw : w ∈ s
+  · have hd : (p w).joinMiddle (q w) ≠ 0 := h hw
+    simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_sdiff, hw, true_and]
+    revert hd; generalize p w = a; generalize q w = b
+    cases a <;> cases b <;> decide
+  · simp [hw]
+
+/-- [george-2014]'s disjunction `¬(¬φ; ¬ψ)` (Definition 9) is Peters' disjunction, read off the
+isomorphic images (footnote 15). -/
+theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → SignType) :
+    ofTrivalent (fun w ↦ (p w).joinMiddle (q w)) =
+      neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
+  rw [← ofTrivalent_neg, ← ofTrivalent_neg, ← ofTrivalent_meetMiddle, ← ofTrivalent_neg]
+  congr 1; funext w
+  generalize p w = a; generalize q w = b
+  cases a <;> cases b <;> rfl
+
+/-- On trivalentisable updates Beaver's disjunction is the De Morgan disjunction of
+[george-2014]'s Definition 9; on arbitrary updates the two differ. -/
+theorem disj_ofTrivalent (p q : W → SignType) :
+    disj (ofTrivalent p) (ofTrivalent q) =
+      neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
+  rw [← ofTrivalent_joinMiddle, ofTrivalent_joinMiddle_eq_neg_seq_neg]
+
+/-- Trivalent propositions are the trivalentisable updates. -/
+noncomputable def ofTrivalentEquiv : (W → SignType) ≃ Set.range (ofTrivalent (W := W)) :=
+  Equiv.ofInjective _ ofTrivalent_injective
+
+section Closure
+
+/-! The trivalentisable updates contain the null update and are closed under the operations of
+the toolbox ([george-2014], Corollary 1) and Heim's connectives (Proposition 2). -/
+
+variable {φ ψ : CCP.Partial W}
+
+theorem isTrivalentisable_id : IsTrivalentisable (PFun.id (Set W)) := ⟨1, ofTrivalent_one⟩
+
+theorem IsTrivalentisable.seq (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (PartialUpdate.seq φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_meetMiddle p q⟩
+
+theorem IsTrivalentisable.diff (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (diff φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_diff p q⟩
+
+theorem IsTrivalentisable.union (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (union φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_joinWeak p q⟩
+
+theorem IsTrivalentisable.inter (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (inter φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_meetWeak p q⟩
+
+theorem IsTrivalentisable.neg (hφ : IsTrivalentisable φ) : IsTrivalentisable (neg φ) := by
+  obtain ⟨p, rfl⟩ := hφ
+  exact ⟨_, ofTrivalent_neg p⟩
+
+theorem IsTrivalentisable.cond (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (cond φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_cond p q⟩
+
+theorem IsTrivalentisable.disj (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
+    IsTrivalentisable (disj φ ψ) := by
+  obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
+  exact ⟨_, ofTrivalent_joinMiddle p q⟩
+
+end Closure
 
 /-! ### Presupposition -/
 
