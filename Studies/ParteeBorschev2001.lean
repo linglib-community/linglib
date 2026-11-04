@@ -10,38 +10,33 @@ public import Linglib.Semantics.Possession.Relationalizer
 # Partee and Borschev (2001): Some Puzzles of Predicate Possessives
 
 Jensen and Vikner make every genitive the argument of a relational noun, coercing a plain noun to
-one, while Partee makes the genitive of a plain noun an intersective modifier with a free relation.
-The two [assemble one predicate](##intersective_eq_π), and where the relation enters is
-[detectable exactly under a non-intersective modifier](##position_undetectable_iff): under *former*,
-coercion derives both readings of *Mary's former mansion* and
-[the modifier only one](##readingB_ne_π). English predicate possessives settle little, since
-[a ban on shifting a noun away and back](##no_shift_back_fits) fits data that
-[refute the verdict of a free relation alone](##freeRelationOnly_refuted). But in Russian and Polish
-[a pronoun has an argument reading exactly where the full NP is
-grammatical](##argument_reading_iff_fullNP), in German
-[exactly where it agrees](##argument_reading_iff_agreeing), and a Russian possessive inside an NP
+one; Partee makes a plain noun's genitive an intersective modifier with a free relation. Where the
+relation enters is
+[detectable exactly under a non-intersective modifier](##position_undetectable_iff), and under
+*former* [the modifier derives only one reading](##readingB_ne_π) of *Mary's former
+mansion*. Predicate possessives point the other way. English [settles little](##no_shift_back_fits),
+but a Russian or Polish pronoun [has an argument reading exactly where the full NP is
+grammatical](##argument_reading_iff_fullNP), and a Russian possessive inside an NP
 [does not reach a relational noun's relation](##ubijca_fits).
 
 ## Implementation notes
 
-* Locators are to the final manuscript of May 2000, the copy at hand, not to the printed volume.
-* The paper does not say how a modifier combines with a relational noun. Its types
-  [leave no mode](##possessive_modes), so the possessor slot is closed first, with `⨆`.
+* Locators are to the May 2000 manuscript, the copy at hand, not to the printed volume.
+* A modifier has [no mode with a relational noun](##possessive_modes), so the possessor slot is
+  closed first, with `⨆`.
 
 ## Errata
 
-* (8), (9) and (15) apply a relation to the possessee first and (10) and (14) to the possessor
-  first; the study follows (10).
-* (34b) translates a full NP as 'mine', where the parallel (32b) has 'my country'.
-* The instrumental pronoun on *portret* [has no possession reading](##not_instrumental_possession)
-  (footnote 13), though an elliptical NP should have one; the authors offer no explanation.
+* (8), (9) and (15) apply a relation to the possessee first; (10) and (14), as here, to the
+  possessor.
+* (34b) translates a full NP as 'mine'; the parallel (32b) has 'my country'.
+* *portret* with an instrumental pronoun
+  [lacks the possession reading](##not_instrumental_possession) (footnote 13), which the authors
+  cannot explain.
 
 ## TODO
 
-* Encode (18)–(22), the English candidates for each structure, and the Russian *ničej* of
-  footnote 16.
-* The German test of footnote 11, ellipsis of the head noun alone, would give German the
-  independent diagnostic that the full NP gives Russian and Polish.
+* (18)–(22), *ničej* (footnote 16) and the German adjective test (footnote 11) are not encoded.
 
 ## References
 
