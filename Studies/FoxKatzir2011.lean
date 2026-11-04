@@ -16,11 +16,10 @@ This file formalizes [fox-katzir-2011]'s argument that the alternatives of scala
 and of association with focus are one set, [katzir-2007]'s structural alternatives extended by
 the salient constituents of the context (`formalAlternatives`), and that symmetry among
 alternatives is broken only there: contextual restriction never keeps one of two alternatives
-that partition the assertion while pruning the other. The implicature and *only* operators
-`SM` and `Exhaustification.exh` negate the strictly stronger and the non-entailed
-alternatives; on symmetric
-alternatives both are contradictory (`SM_eq_empty_of_isSymmetric`), a universal operator above
-the assertion removes the symmetry and both inferences arise (`mem_SM_nec`), innocent exclusion
+that partition the assertion while pruning the other. The implicature and *only* operators are
+`Exhaustification.exh` against the strictly stronger and against all the alternatives; on symmetric
+alternatives both are contradictory (`dominated_of_isSymmetric`), a universal operator above
+the assertion removes the symmetry and both inferences arise (`mem_exh_nec`), innocent exclusion
 negates neither symmetric alternative (`exhIE_eq_self_of_isSymmetric`), and a contextual set
 closed under negation and conjunction keeps both or neither
 (`Alternatives.IsSymmetric.mem_of_mem`). The paper's stronger condition, allowable restriction
@@ -87,53 +86,17 @@ theorem someButNotAll_mem_formalAlternatives :
 
 end Formal
 
-/-! ### The operators -/
-
-section Operators
-
-variable (A : Set (Set W)) (S : Set W)
-
-/-- Scalar implicature negates the strictly stronger alternatives. -/
-def nSI : Set (Set W) := {p ∈ A | p ⊂ S}
-
-/-- The scalar implicature is the conjunction of the negations of the strictly stronger
-alternatives. -/
-def SI : Set W := ⋂ p ∈ nSI A S, pᶜ
-
-/-- The strengthened meaning. -/
-def SM : Set W := S ∩ SI A S
-
-variable {A S}
-
-theorem mem_SM {w : W} : w ∈ SM A S ↔ w ∈ S ∧ ∀ p ∈ A, p ⊂ S → w ∉ p := by
-  simp only [SM, SI, nSI, mem_inter_iff, mem_iInter₂, mem_ofPred_eq, mem_compl_iff]
-  exact and_congr_right fun _ ↦
-    ⟨fun h p hp hps ↦ h p ⟨hp, hps⟩, fun h p ⟨hp, hps⟩ ↦ h p hp hps⟩
-
-theorem exh_subset_SM : exh A S ⊆ SM A S := fun _ hw ↦
-  mem_SM.2 ⟨hw.1, fun p hp hps hwp ↦ (ssubset_def ▸ hps).2 (hw.2 p hp hwp)⟩
-
-end Operators
-
 /-! ### Symmetry -/
 
 section Symmetry
 
 variable {A : Set (Set W)} {S S₁ S₂ : Set W}
 
-theorem SM_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
-    (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : SM A S = ∅ := by
-  ext w
-  simp only [mem_SM, mem_empty_iff_false, iff_false, not_and]
-  intro hw hall
-  have hw' : w ∈ S₁ ∪ S₂ := h.union ▸ hw
-  rcases hw' with hw₁ | hw₂
-  · exact hall S₁ h₁ (h.ssubset_left hne₂) hw₁
-  · exact hall S₂ h₂ (h.symm.ssubset_left hne₁) hw₂
-
-theorem exh_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
-    (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : exh A S = ∅ :=
-  subset_empty_iff.1 ((SM_eq_empty_of_isSymmetric h h₁ h₂ hne₁ hne₂) ▸ exh_subset_SM)
+theorem dominated_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
+    (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : Dominated A S :=
+  h.union ▸ dominated_union h₁ h₂
+    (fun hs ↦ let ⟨w, hw⟩ := hne₁; disjoint_left.1 h.disjoint hw (hs hw))
+    (fun hs ↦ let ⟨w, hw⟩ := hne₂; disjoint_left.1 h.disjoint (hs hw) hw)
 
 theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
     (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ :=
@@ -177,15 +140,6 @@ theorem not_isSymmetric_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core 
     (hx₂ : x ∉ R.core S₂) : ¬ IsSymmetric (R.core S) (R.core S₁) (R.core S₂) := fun h ↦ by
   have : x ∈ R.core S₁ ∪ R.core S₂ := h.union ▸ hx
   exact this.elim hx₁ hx₂
-
-theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
-    x ∈ SM {R.core S, R.core S₁, R.core S₂} (R.core S) := by
-  refine mem_SM.2 ⟨hx, fun p hp hps ↦ ?_⟩
-  simp only [mem_insert_iff, mem_singleton_iff] at hp
-  obtain h1 | h1 | h1 := hp <;> subst p
-  · exact (ssubset_irrefl _ hps).elim
-  · exact hx₁
-  · exact hx₂
 
 theorem mem_exh_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
     x ∈ exh {R.core S, R.core S₁, R.core S₂} (R.core S) := by

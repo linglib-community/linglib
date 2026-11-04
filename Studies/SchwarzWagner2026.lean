@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.SchwarzWagner2026
 public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Quantification.Basic
 public import Studies.Fox2007
 public import Studies.Katzir2007
@@ -13,7 +14,7 @@ public import Studies.TrinhHaida2015
 Katzir and Fox let an implicature negate only alternatives no more complex than the assertion.
 Schwarz and Wagner let it negate anything and constrain the output: a strengthening is [blocked
 when it entails a simplex meaning stronger than the assertion](##blocked_iff), so the assertion
-must be [a strongest simplex meaning it entails](##not_blocked_iff_minimal). The two constraints
+must be [a strongest simplex meaning it entails](##minimalFor_iff_not_blocked). The two constraints
 are [the conjuncts of Sauerland's secondary implicature](##isSecondaryImplicature_iff_not_blocked),
 and blocking is [Katzir's own principle](##blocked_iff_katzir_blocked) read at the strengthened
 meaning. The examples are corners of a square of opposition, differing in which corners are lexical:
@@ -88,14 +89,6 @@ theorem blocked_iff : Blocked F s p ↔ ∃ q ∈ F, s ≤ q ∧ q < p := by
   exact exists_congr fun q ↦ ⟨fun ⟨⟨h₁, h₂⟩, h₃⟩ ↦ ⟨h₁, h₃, h₂⟩, fun ⟨h₁, h₃, h₂⟩ ↦ ⟨⟨h₁, h₂⟩, h₃⟩⟩
 
 -- Section 1.3
-theorem not_blocked_iff_minimal (hp : p ∈ F) (hs : s ≤ p) :
-    ¬ Blocked F s p ↔ Minimal (fun q ↦ q ∈ F ∧ s ≤ q) p := by
-  rw [blocked_iff]
-  push Not
-  exact ⟨fun h ↦ ⟨⟨hp, hs⟩, fun q ⟨hq, hsq⟩ hqp ↦
-      by_contra fun hn ↦ h q hq hsq (hqp.lt_of_not_ge hn)⟩,
-    fun h q hq hsq hqp ↦ hqp.not_ge (h.2 ⟨hq, hsq⟩ hqp.le)⟩
-
 end Order
 
 /-! ### Blocking and its precursors -/
@@ -104,12 +97,22 @@ section Sets
 
 variable {W : Type*} {F : Set (Set W)} {p s a b : Set W}
 
+/-- A strengthening is unblocked when the assertion is a strongest simplex meaning it entails: the
+"maximize basic meaning" of Section 1.3 is Maximize Presupposition read at the strengthened
+meaning. -/
+theorem minimalFor_iff_not_blocked {S : Type*} {alts : S → Set S} {content : S → Set W} {φ : S} :
+    MinimalFor (· ∈ insert φ (alts φ) ∩ content ⁻¹' Ici s) content φ ↔
+      s ⊆ content φ ∧ ¬ Blocked (content '' alts φ) s (content φ) := by
+  rw [Presupposition.minimalFor_preimage_Ici_iff, blocked_iff]
+  simp only [mem_image, not_exists, not_and, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+  exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦ ⟨fun h hs hss ↦ h hss hs, fun h hss hs ↦ h hs hss⟩
+
 theorem exh_compl_singleton (hs : s.Nonempty) (h : s ⊆ p) : exh {sᶜ} p = s := by
   have hnot : ¬ p ⊆ sᶜ := fun hp ↦ let ⟨w, hw⟩ := hs; hp (h hw) hw
   rw [exh_singleton_of_not_subset hnot, sdiff_compl, inter_eq_right.2 h]
 
 theorem not_blocked_iff_mem_primaryImplicatures :
-    ¬ Blocked F s p ↔ s ∈ primaryImplicatures p F := by
+    ¬ Blocked F s p ↔ s ∈ primaryImplicatures F p := by
   rw [blocked_iff, mem_primaryImplicatures]
   push Not
   exact forall₂_congr fun q _ ↦ ⟨fun h hq hs ↦ h hs hq, fun h hs hq ↦ h hq hs⟩
@@ -118,7 +121,7 @@ theorem not_blocked_iff_mem_primaryImplicatures :
 implicature (43), for an alternative stronger than the assertion: the proposal keeps the second and
 drops the first. -/
 theorem isSecondaryImplicature_iff_not_blocked :
-    IsSecondaryImplicature p F a ↔ a ∈ F ∧ a ⊂ p ∧ ¬ Blocked F (p \ a) p := by
+    IsSecondaryImplicature F p a ↔ a ∈ F ∧ a ⊂ p ∧ ¬ Blocked F (p \ a) p := by
   rw [not_blocked_iff_mem_primaryImplicatures, isSecondaryImplicature_iff, mem_primaryImplicatures]
 
 -- Section 4, (68)
@@ -131,8 +134,7 @@ theorem IsSymmetric.blocked_sdiff_iff (h : IsSymmetric p a b) :
   rw [Blocked, h.sdiff_eq, mem_lowerClosure]
   exact ⟨fun ⟨q, ⟨hq, hp⟩, hb⟩ ↦ ⟨q, hq, hb, hp⟩, fun ⟨q, hq, hb, hp⟩ ↦ ⟨q, ⟨hq, hp⟩, hb⟩⟩
 
-/-- Against Section 4.1: `a` is simplex and `b` complex, so the filter breaks the symmetry, and yet
-blocking prohibits both exclusions. -/
+-- Section 4.1
 theorem exists_isSymmetric_blocked : ∃ (F : Set (Set (Fin 4))) (p a b : Set (Fin 4)),
     IsSymmetric p a b ∧ a ∈ F ∧ b ∉ F ∧ Blocked F (p \ a) p ∧ Blocked F (p \ b) p := by
   refine ⟨{{0, 3}, {1, 2, 3}, univ}, univ, {0, 3}, {1, 2}, ⟨?_, ?_⟩, by simp, ?_, ?_, ?_⟩
