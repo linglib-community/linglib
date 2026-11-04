@@ -574,6 +574,16 @@ theorem _root_.Quantifier.Det.iff_of_ncard_eq [Finite α] (hC : d.Conservative)
   · rw [Set.union_eq_left.2 Set.inter_subset_left, Set.union_eq_left.2 Set.inter_subset_left]
     omega
 
+/-- A quantity-invariant quantifier on a finite universe holds of sets of the same size alike. -/
+theorem _root_.Quantifier.QuantityInvariant.iff_of_ncard_eq [Finite α] {Q : Quantifier α}
+    (hQ : Q.QuantityInvariant) {B B' : Set α} (h : B.ncard = B'.ncard) : Q B ↔ Q B' := by
+  have hd : Det.QuantityInvariant (fun _ B ↦ Q B : Det α) := fun σ _ B ↦ hQ σ B
+  refine hd.quantity Set.univ B Set.univ B' (by simpa) ?_ (by simp) (by simp)
+  have := Set.ncard_add_ncard_compl B
+  have := Set.ncard_add_ncard_compl B'
+  rw [← Set.compl_eq_univ_sdiff, ← Set.compl_eq_univ_sdiff]
+  omega
+
 /-- A conservative permutation-invariant determiner denotation that is asymmetric fails of `A`
 and `B` when `A \ B` and `B \ A` have the same size, since swapping them carries `(A, B)` to
 `(B, A)`. -/
