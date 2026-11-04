@@ -187,7 +187,8 @@ theorem extends_assignBy (order : List ι) (s : Valuation α (Case × Mechanism)
   have hrules : ∀ v ∈ (rules i).valuations, v ∈ valuationsBy rules probes order :=
     fun v hv ↦ .inl ⟨i, hi, hv⟩
   refine (((rules i).extends_dependentPassBy _ _ st).mono hrules).trans <|
-    (Valuation.Extends.foldl (F := fun p st ↦ Valuation.fillClosest (closer i) (p.2 ·) (p.1, .agree) st)
+    (Valuation.Extends.foldl
+        (F := fun p st ↦ Valuation.fillClosest (closer i) (p.2 ·) (p.1, .agree) st)
       _ (fun p hp st ↦ Valuation.extends_fillFirst (.inr ⟨rfl, i, hi, p, hp, rfl⟩) st) _).trans <|
     ((rules i).extends_unmarkedPass _ _).mono hrules
 

@@ -158,7 +158,8 @@ theorem agree_cons_valued (np : PhasedNP) (v : CaseValue) (s : Valuation PhasedN
 theorem extends_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
     (initial nps).Extends (fun v ↦ ∀ l, v = .licenser l → l ∈ ls) (license ds ls nps) :=
   Valuation.Extends.foldl _ (fun c _ st ↦ Valuation.Extends.foldl _
-    (fun l hl st ↦ Valuation.extends_fillFirst (fun _ h ↦ by cases h; exact mem_of_mem_filter hl) st) st) _
+    (fun l hl st ↦ Valuation.extends_fillFirst
+      (fun _ h ↦ by cases h; exact mem_of_mem_filter hl) st) st) _
 
 @[simp]
 theorem length_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :

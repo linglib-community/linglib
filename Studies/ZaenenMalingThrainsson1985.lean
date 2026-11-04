@@ -44,8 +44,8 @@ argument tested is assigned SUBJ.
   *finnast*, *sakna*, *vanta*, *gefallen* and *übel sein*, whose subjects or datives are
   experiencers here, nor for *abhören*, whose roles follow *biðja*'s.
 * An association is an injective map from the arguments to the functions, functional
-  uniqueness being injectivity. Default case marking is `Case.Valuation.fillInOrder` on the arguments
-  listed highest function first, so the persistence of idiosyncratic case is
+  uniqueness being injectivity. Default case marking is `Case.Valuation.fillInOrder` on the
+  arguments listed highest function first, so the persistence of idiosyncratic case is
   `Case.Valuation.Extends`.
 * Principle (61a) fixes no order among the objects, which gives *gefa* its two associations
   (63); it is read as giving SUBJ to the first role the language-specific principle leaves free,
