@@ -43,6 +43,8 @@ domain.
 * `Rules.length_assign`: the algorithm is total.
 * `Rules.assign_getElem?_of_some`: lexical case is kept, so it bleeds the dependent rules.
 * `Rules.case_mem_cases`: a caseless NP is valued only with a case the rules mention.
+* `Rules.assign_getElem?_low`, `Rules.assign_getElem?_unmarked`: without a high case, in a domain of
+  any size, every caseless NP but the highest takes the low case and the highest the elsewhere case.
 * `Rules.assign_singleton`, `Rules.assign_pair`: the algorithm in closed form on domains of one
   and two NPs.
 * `Rules.classifies_marking_ofAlignment`: the rules of an alignment mark S, A and P with that
@@ -124,12 +126,24 @@ theorem lexicalValuation_getElem? {lexicalCase : α → Option Case} {xs : List 
   obtain ⟨hc, hm⟩ := slotValuation_getElem? h
   exact ⟨Valuation.offer_eq_valued_iff.1 hc, hm⟩
 
+theorem lexicalValuation_getElem?_of_none (lexicalCase : α → Option Case) {xs : List α} {i : ℕ}
+    {x : α} (hx : xs[i]? = some x) (hc : lexicalCase x = none) :
+    (lexicalValuation lexicalCase xs)[i]? = some (x, .unvalued) := by
+  simp [lexicalValuation, slotValuation, Valuation.initial_getElem?, hx, hc]
+
+/-- The lexical valuation leaves caseless the NPs without lexical case. -/
+theorem mem_caseless_lexicalValuation {lexicalCase : α → Option Case} {xs : List α} {j : ℕ}
+    {P : α → Prop} [DecidablePred P] :
+    j ∈ (lexicalValuation lexicalCase xs).caseless P ↔
+      ∃ y, xs[j]? = some y ∧ lexicalCase y = none ∧ P y := by
+  simp [Valuation.mem_caseless, lexicalValuation, slotValuation, Valuation.initial_getElem?]
+
 end Case
 
 namespace DependentCase
 
 open Case (Mechanism Valuation lexicalValuation slotValuation lexicalValuation_getElem?_of_some
-  lexicalValuation_getElem?)
+  lexicalValuation_getElem? lexicalValuation_getElem?_of_none mem_caseless_lexicalValuation)
 
 variable {α : Type*}
 
@@ -358,6 +372,41 @@ theorem Rules.dependentPass_of_none (r : Rules) (P : α → Prop) [DecidablePred
     (hh : r.high = none)
     (hl : r.low = none) (s : Valuation α (Case × Mechanism)) : r.dependentPass P s = s :=
   r.dependentPassBy_of_none _ P hh hl s
+
+/-! ### Domains of any size without a high case -/
+
+/-- Without a high case, a caseless NP with no caseless NP above it is untouched by the dependent
+rules. -/
+theorem Rules.dependentPass_of_forall_le (r : Rules) (P : α → Prop) [DecidablePred P]
+    {s : Valuation α (Case × Mechanism)} {i : ℕ} {x : α} (hx : s[i]? = some (x, .unvalued))
+    (hi : ∀ k ∈ s.caseless P, i ≤ k) (hh : r.high = none) :
+    (r.dependentPass P s)[i]? = some (x, .unvalued) := by
+  have hno : ¬ ∃ k ∈ s.caseless P, k < i := fun ⟨k, hk, hki⟩ ↦ absurd (hi k hk) (by omega)
+  simp [Rules.dependentPass_eq, Valuation.fill_getElem?_of_unvalued hx, hh, hno]
+
+/-- Without a high case, a caseless NP below another caseless NP takes the low case. -/
+theorem Rules.assign_getElem?_low (r : Rules) {lex : α → Option Case} {xs : List α} {i : ℕ}
+    {x y : α} {c : Case} (hx : xs[i]? = some x) (hlx : lex x = none) (hy : y ∈ xs.take i)
+    (hly : lex y = none) (hh : r.high = none) (hc : r.low = some c) :
+    (r.assign lex xs)[i]? = some (x, .valued (c, .dependent)) := by
+  obtain ⟨j, hj, rfl⟩ := List.mem_take_iff_getElem.1 hy
+  exact (r.extends_unmarkedPass _ _).getElem?_of_some <|
+    r.dependentPass_low _ (lexicalValuation_getElem?_of_none lex hx hlx) trivial
+      (mem_caseless_lexicalValuation.2 ⟨_, List.getElem?_eq_getElem _, hly, trivial⟩)
+      (by omega) (.inl hh) hc
+
+/-- Without a high case, the highest caseless NP takes the elsewhere case. -/
+theorem Rules.assign_getElem?_unmarked (r : Rules) {lex : α → Option Case} {xs : List α} {i : ℕ}
+    {x : α} {c : Case} (hx : xs[i]? = some x) (hlx : lex x = none)
+    (hi : ∀ y ∈ xs.take i, lex y ≠ none) (hh : r.high = none) (hc : r.unmarked = some c) :
+    (r.assign lex xs)[i]? = some (x, .valued (c, .unmarked)) := by
+  have hd := r.dependentPass_of_forall_le (fun _ ↦ True)
+    (lexicalValuation_getElem?_of_none lex hx hlx) (fun k hk ↦ by
+      obtain ⟨y, hy, hly, -⟩ := mem_caseless_lexicalValuation.1 hk
+      by_contra hki
+      refine hi y (List.mem_iff_getElem?.2 ⟨k, ?_⟩) hly
+      simpa [List.getElem?_take, not_le.1 hki] using hy) hh
+  simp [Rules.assign, Rules.unmarkedPass, Valuation.fill_getElem?_of_unvalued hd, hc]
 
 /-! ### Domains of one and two NPs -/
 

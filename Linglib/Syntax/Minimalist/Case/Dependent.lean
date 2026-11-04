@@ -24,7 +24,6 @@ and listed from the highest down, and `Case/SyntacticObject.lean` reads them off
 
 ## Main definitions
 
-* `agreeValue`, `agreeValueOn`: Agree on the highest caseless NP of a domain, or the closest.
 * `PhasedNP`: an NP placed by hand: the case slot it enters with, absent for PRO, its phase, and
   the phase it shifts into.
 * `CaseAssigners`: the rules of each phase head's domain and the case each head values.
@@ -32,7 +31,8 @@ and listed from the highest down, and `Case/SyntacticObject.lean` reads them off
 
 ## Main results
 
-* `agreeValue_eq_self_iff`, `agreeValue_eq_map`: Agree values the goal a probe finds, if any.
+* `agreeList_relativized_eq_fillFirst`: Agree on a valuation is `Case.Valuation.fillFirst`.
+* `fillFirst_eq_self_iff`, `fillFirst_eq_map`: it values the goal a probe finds, if any.
 * `extends_assignBy`: assignment extends the valuation by what the rules and the probes value.
 * `case_mem_of_assignBy`, `mechanism_ne_unmarked_of_assignBy`, `exists_probe_of_assignBy`,
   `mechanism_eq_agree_of_assignBy`: what values a case.
@@ -66,29 +66,26 @@ open DependentCase
 section Agree
 
 variable {α β : Type*} [DecidableEq β] {P : α → Prop} [DecidablePred P] {v : β}
-  {s t : Valuation α β}
+  {s : Valuation α β}
 
-/-- Agree into the domain `P` values `v` on the highest NP that `P` selects whose case is still
-    unvalued, the activity condition of [chomsky-2000]: the probe relativized to those NPs, over the
-    valuation as its own list of goals, copying by valuation of the goal's case slot. -/
-def agreeValue (P : α → Prop) [DecidablePred P] (v : β) : Valuation α β → Valuation α β :=
-  (Probe.relativized fun q : α × FeatureSlot β ↦ q.2 = .unvalued ∧ P q.1).agreeList
-    fun q ↦ (q.1, (q.2.valueWith v).untopD q.2)
+/-- Agree into the domain `P` is `Valuation.fillFirst`: the probe relativized to the NPs that `P`
+selects whose case is still unvalued, the activity condition of [chomsky-2000], over the valuation
+as its own list of goals, copying by valuation of the goal's case slot. -/
+theorem agreeList_relativized_eq_fillFirst (s : Valuation α β) :
+    (Probe.relativized fun q : α × FeatureSlot β ↦ q.2 = .unvalued ∧ P q.1).agreeList
+      (fun q ↦ (q.1, (q.2.valueWith v).untopD q.2)) s = s.fillFirst P v := by
+  induction s with
+  | nil => rfl
+  | cons p s ih =>
+    rw [Probe.agreeList_cons, Valuation.fillFirst_cons]
+    by_cases h : p.2 = .unvalued ∧ P p.1
+    · simp only [Probe.relativized_int, Probe.relativized_sat, h, and_self, ↓reduceIte,
+        FeatureSlot.valueWith_unvalued, WithTop.untopD_coe]
+    · simp only [Probe.relativized_int, Probe.relativized_sat, h, ↓reduceIte, ih]
 
-@[simp] theorem agreeValue_nil : agreeValue P v [] = [] := rfl
-
-@[simp] theorem agreeValue_cons (p : α × FeatureSlot β) (s : Valuation α β) :
-    agreeValue P v (p :: s) =
-      if p.2 = .unvalued ∧ P p.1 then (p.1, .valued v) :: s else p :: agreeValue P v s := by
-  rw [agreeValue, Probe.agreeList_cons]
-  by_cases h : p.2 = .unvalued ∧ P p.1
-  · simp only [Probe.relativized_int, Probe.relativized_sat, h, and_self, ↓reduceIte,
-      FeatureSlot.valueWith_unvalued, WithTop.untopD_coe]
-  · simp only [Probe.relativized_int, Probe.relativized_sat, h, ↓reduceIte]
-
-/-- Agree values nothing iff the probe seeking an unvalued NP in its domain finds no goal, the
-    failed Agree of [preminger-2014]. -/
-theorem agreeValue_eq_self_iff : agreeValue P v s = s ↔
+/-- `fillFirst` values nothing iff the probe seeking an unvalued NP in its domain finds no goal, the
+failed Agree of [preminger-2014]. -/
+theorem fillFirst_eq_self_iff : s.fillFirst P v = s ↔
     (Probe.relativized fun p : α × FeatureSlot β ↦ p.2 = .unvalued ∧ P p.1).search s = none := by
   induction s with
   | nil => simp [Probe.search]
@@ -96,10 +93,10 @@ theorem agreeValue_eq_self_iff : agreeValue P v s = s ↔
     obtain ⟨x, k⟩ := p
     cases k <;> by_cases hx : P x <;> simp_all [Probe.search]
 
-/-- Agree values the NP that the probe seeking an unvalued NP in its domain finds, its goal
+/-- `fillFirst` values the NP that the probe seeking an unvalued NP in its domain finds, its goal
 (`Probe.search_eq_some_iff_finds`), and leaves the others as they are. -/
-theorem agreeValue_eq_map [DecidableEq α] (hs : s.Nodup) :
-    agreeValue P v s = s.map fun p ↦
+theorem fillFirst_eq_map [DecidableEq α] (hs : s.Nodup) :
+    s.fillFirst P v = s.map fun p ↦
       if (Probe.relativized fun q : α × FeatureSlot β ↦ q.2 = .unvalued ∧ P q.1).search s =
           some p then (p.1, .valued v) else p := by
   induction s with
@@ -107,93 +104,14 @@ theorem agreeValue_eq_map [DecidableEq α] (hs : s.Nodup) :
   | cons q s ih =>
     obtain ⟨hq, hs⟩ := List.nodup_cons.mp hs
     by_cases h : q.2 = .unvalued ∧ P q.1
-    · rw [agreeValue_cons, ite_eq_left h, Probe.search, List.find?_cons_of_pos (by simpa using h),
-        List.map_cons, ite_eq_left rfl]
+    · rw [Valuation.fillFirst_cons, ite_eq_left h, Probe.search,
+        List.find?_cons_of_pos (by simpa using h), List.map_cons, ite_eq_left rfl]
       congr 1
       refine ((List.map_congr_left fun r hr ↦ ?_).trans (List.map_id' s)).symm
       rw [ite_eq_right (by rintro ⟨⟩; exact hq hr)]
-    · rw [agreeValue_cons, ite_eq_right h, Probe.search,
+    · rw [Valuation.fillFirst_cons, ite_eq_right h, Probe.search,
         List.find?_cons_of_neg (by simpa using h), List.map_cons, ← Probe.search, ih hs,
         ite_eq_right fun he ↦ hq (Probe.mem_of_search_eq_some he)]
-
-/-- Agree extends the valuation by its value. -/
-theorem extends_agreeValue {p : β → Prop} (hv : p v) :
-    ∀ s : Valuation α β, s.Extends p (agreeValue P v s)
-  | [] => .nil
-  | (x, .unvalued) :: s => by
-    by_cases hx : P x <;> simp only [agreeValue_cons, hx, and_true, and_false, ↓reduceIte]
-    · exact .cons ⟨rfl, .inr ⟨rfl, v, rfl, hv⟩⟩ (Case.Valuation.Extends.refl s)
-    · exact .cons ⟨rfl, .inl rfl⟩ (extends_agreeValue hv s)
-  | (x, .absent) :: s => by
-    simp only [agreeValue_cons, FeatureSlot.absent_ne_unvalued, false_and, ↓reduceIte]
-    exact .cons ⟨rfl, .inl rfl⟩ (extends_agreeValue hv s)
-  | (x, .valued w) :: s => by
-    simp only [agreeValue_cons, FeatureSlot.valued_ne_unvalued, false_and, ↓reduceIte]
-    exact .cons ⟨rfl, .inl rfl⟩ (extends_agreeValue hv s)
-
-@[simp] theorem map_fst_agreeValue : (agreeValue P v s).map Prod.fst = s.map Prod.fst := by
-  induction s with
-  | nil => rfl
-  | cons p s ih =>
-    rw [agreeValue_cons]
-    split_ifs <;> simp [ih]
-
-/-- Agree reads its domain only on the NPs listed. -/
-theorem agreeValue_congr_of_mem {Q : α → Prop} [DecidablePred Q] (h : ∀ p ∈ s, P p.1 ↔ Q p.1) :
-    agreeValue P v s = agreeValue Q v s := by
-  induction s with
-  | nil => rfl
-  | cons p s ih =>
-    simp only [agreeValue_cons, h p List.mem_cons_self,
-      ih fun q hq ↦ h q (List.mem_cons_of_mem _ hq)]
-
-@[simp] theorem length_agreeValue : (agreeValue P v s).length = s.length :=
-  ((extends_agreeValue (p := fun _ ↦ True) trivial s).length_eq).symm
-
-theorem valuedLE_agreeValue (s : Valuation α β) : s.ValuedLE (agreeValue P v s) :=
-  (extends_agreeValue (p := fun _ ↦ True) trivial s).valuedLE
-
-/-- Agree preserves which of two derivations values more nominals. -/
-theorem _root_.Case.Valuation.ValuedLE.agreeValue (h : s.ValuedLE t) :
-    (agreeValue P v s).ValuedLE (agreeValue P v t) := by
-  induction h with
-  | nil => exact .nil
-  | @cons p q s t hpq hst ih =>
-    obtain ⟨x, a⟩ := p
-    obtain ⟨y, b⟩ := q
-    obtain ⟨rfl, hab⟩ := hpq
-    cases a <;> cases b <;> by_cases hx : P x <;>
-      simp only [agreeValue_cons, hx, and_true, and_false, ↓reduceIte,
-        FeatureSlot.absent_ne_unvalued, FeatureSlot.valued_ne_unvalued] <;>
-      first
-      | exact .cons ⟨rfl, by simp_all⟩ hst
-      | exact .cons ⟨rfl, by simp_all⟩ ih
-      | exact .cons ⟨rfl, by simp_all⟩ (Case.Valuation.ValuedLE.trans hst (valuedLE_agreeValue t))
-      | simp_all
-
-theorem agreeValue_map {α' β' : Type*} [DecidableEq β'] {P' : α' → Prop} [DecidablePred P']
-    {v' : β'} (f : α → α') (g : β → β') (hP : ∀ x, P' (f x) ↔ P x) (hv : g v = v')
-    (s : Valuation α β) :
-    agreeValue P' v' (s.map (Prod.map f (FeatureSlot.map g))) =
-      (agreeValue P v s).map (Prod.map f (FeatureSlot.map g)) := by
-  induction s with
-  | nil => rfl
-  | cons p s ih =>
-    obtain ⟨x, k⟩ := p
-    cases k
-    · simp [ih]
-    · by_cases hx : P x <;> simp [hx, hP, hv, ih]
-    · simp [ih]
-
-/-- Agree with closeness `lt`, `lt y x` saying `y` is closer to the probe than `x`: the unvalued
-    NP of the domain that no other is closer than, the first of them if several are. -/
-def agreeValueOn (lt : α → α → Prop) [DecidableRel lt] (P : α → Prop) [DecidablePred P] (v : β)
-    (s : Valuation α β) : Valuation α β :=
-  agreeValue (fun x ↦ P x ∧ ¬ ∃ q ∈ s, q.2 = .unvalued ∧ P q.1 ∧ lt q.1 x) v s
-
-/-- With no NP closer than another, Agree with closeness values the first, as the list does. -/
-@[simp] theorem agreeValueOn_false : agreeValueOn (fun _ _ ↦ False) P v s = agreeValue P v s :=
-  agreeValue_congr_of_mem fun _ _ ↦ by simp
 
 end Agree
 
@@ -247,7 +165,7 @@ variable {α ι : Type*} (rules : ι → Rules) (visible : ι → α → Prop)
     bears no case is passed over by all three. -/
 def domainPassBy (i : ι) (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
   (rules i).unmarkedPass (spellOut i) <|
-    (probes i).foldl (fun st p ↦ agreeValueOn (closer i) (p.2 ·) (p.1, .agree) st)
+    (probes i).foldl (fun st p ↦ Valuation.fillClosest (closer i) (p.2 ·) (p.1, .agree) st)
       ((rules i).dependentPassBy (above i) (visible i) s)
 
 /-- The domains in the order `order`, innermost first. -/
@@ -269,8 +187,9 @@ theorem extends_assignBy (order : List ι) (s : Valuation α (Case × Mechanism)
   have hrules : ∀ v ∈ (rules i).valuations, v ∈ valuationsBy rules probes order :=
     fun v hv ↦ .inl ⟨i, hi, hv⟩
   refine (((rules i).extends_dependentPassBy _ _ st).mono hrules).trans <|
-    (Valuation.Extends.foldl (F := fun p st ↦ agreeValueOn (closer i) (p.2 ·) (p.1, .agree) st)
-      _ (fun p hp st ↦ extends_agreeValue (.inr ⟨rfl, i, hi, p, hp, rfl⟩) st) _).trans <|
+    (Valuation.Extends.foldl
+        (F := fun p st ↦ Valuation.fillClosest (closer i) (p.2 ·) (p.1, .agree) st)
+      _ (fun p hp st ↦ Valuation.extends_fillFirst (.inr ⟨rfl, i, hi, p, hp, rfl⟩) st) _).trans <|
     ((rules i).extends_unmarkedPass _ _).mono hrules
 
 variable {rules visible above closer probes spellOut} {order : List ι}

@@ -33,7 +33,7 @@ The theory is formalized first. Every nominal bears a Case feature, unvalued unl
 head has valued it, so every nominal is visible to a licenser; only some bear *uninterpretable*
 Case ([pesetsky-torrego-2007]), and those alone crash the derivation when it goes unvalued. A
 licenser is a head with a φ-probe that Agrees with the highest nominal in the phase domain it
-probes whose Case is unvalued, the Agree of `Minimalist.agreeValue`, and a secondary licenser
+probes whose Case is unvalued, the Agree of `Case.Valuation.fillFirst`, and a secondary licenser
 merges only as a last resort ([rezac-2011]). The derivation never sees which nominals need
 licensing, since it runs on positions alone, and needs are read only by convergence. Licensing
 is monotone in the licensers (`license_mono`), so the Licensing Economy Principle stated for each
@@ -112,7 +112,7 @@ def initial (nps : List PhasedNP) : Valuation PhasedNP CaseValue :=
 
 /-- The Agree of licenser `l`. -/
 def Licenser.agree (l : Licenser) : Valuation PhasedNP CaseValue → Valuation PhasedNP CaseValue :=
-  agreeValue (·.visible l.domain) (.licenser l)
+  Valuation.fillFirst (·.visible l.domain) (.licenser l)
 
 /-- The licensers probing the domain of `c` merge, the lowest first. -/
 def cycle (ls : List Licenser) (c : Cat) (st : Valuation PhasedNP CaseValue) :
@@ -158,7 +158,8 @@ theorem agree_cons_valued (np : PhasedNP) (v : CaseValue) (s : Valuation PhasedN
 theorem extends_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
     (initial nps).Extends (fun v ↦ ∀ l, v = .licenser l → l ∈ ls) (license ds ls nps) :=
   Valuation.Extends.foldl _ (fun c _ st ↦ Valuation.Extends.foldl _
-    (fun l hl st ↦ extends_agreeValue (fun _ h ↦ by cases h; exact mem_of_mem_filter hl) st) st) _
+    (fun l hl st ↦ Valuation.extends_fillFirst
+      (fun _ h ↦ by cases h; exact mem_of_mem_filter hl) st) st) _
 
 @[simp]
 theorem length_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
@@ -185,8 +186,8 @@ private theorem valuedLE_foldl_agree :
       (L.foldl (fun st l ↦ l.agree st) s).ValuedLE (L'.foldl (fun st l ↦ l.agree st) t)
   | _, _, .slnil, _, _, h => h
   | _, _, .cons l hL, _, _, h =>
-    valuedLE_foldl_agree hL (h.trans (valuedLE_agreeValue _))
-  | _, _, .cons_cons l hL, _, _, h => valuedLE_foldl_agree hL h.agreeValue
+    valuedLE_foldl_agree hL (h.trans (Valuation.valuedLE_fillFirst _))
+  | _, _, .cons_cons l hL, _, _, h => valuedLE_foldl_agree hL h.fillFirst
 
 theorem license_mono (h : ls <+ ls') (ds : List Cat) (nps : List PhasedNP) :
     (license ds ls nps).ValuedLE (license ds ls' nps) := by
@@ -299,20 +300,20 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
       (st : Valuation PhasedNP CaseValue) :
       ((L.map fun l ↦ (l.head, l.domain)).filterMap fun hp ↦
           (g.agreeCase hp.1).map (·, fun x ↦ decide ((id x).visible c))).foldl
-        (fun st p ↦ agreeValueOn (fun _ _ ↦ False) (p.2 ·) (p.1, .agree) st) (st.map φ) =
+        (fun st p ↦ Valuation.fillClosest (fun _ _ ↦ False) (p.2 ·) (p.1, .agree) st) (st.map φ) =
         (L.foldl (fun st l ↦ l.agree st) st).map φ := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : agreeValue (fun x ↦ decide ((id x).visible c) = true)
+      have hstep : Valuation.fillFirst (fun x ↦ decide ((id x).visible c) = true)
           (κ l.head, .agree) (st.map φ) = (l.agree st).map φ := by
-        rw [agreeValue_congr_of_mem (Q := fun x ↦ (id x).visible c) fun _ _ ↦ by simp]
+        rw [Valuation.fillFirst_congr_of_mem (Q := fun x ↦ (id x).visible c) fun _ _ ↦ by simp]
         simp only [Licenser.agree, hdom]
-        exact agreeValue_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
+        exact Valuation.fillFirst_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
           id (CaseValue.assigned κ) (fun _ ↦ Iff.rfl) rfl st
       rw [map_cons, filterMap_cons, hcase, Option.map_some, foldl_cons, foldl_cons,
-        agreeValueOn_false, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
+        Valuation.fillClosest_false, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
   have hcycle (c : Cat) (hc : c ∈ ds) (st : Valuation PhasedNP CaseValue) :
       domainPassBy g.rules (fun c x ↦ (id x).visible c) (fun _ p q ↦ p.1 < q.1)
           (fun _ _ _ ↦ False) (g.probesIn id (ls.map fun l ↦ (l.head, l.domain)))

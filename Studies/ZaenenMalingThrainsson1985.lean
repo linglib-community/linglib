@@ -44,7 +44,7 @@ argument tested is assigned SUBJ.
   *finnast*, *sakna*, *vanta*, *gefallen* and *übel sein*, whose subjects or datives are
   experiencers here, nor for *abhören*, whose roles follow *biðja*'s.
 * An association is an injective map from the arguments to the functions, functional
-  uniqueness being injectivity. Default case marking is a step of `Case.Valuation` on the
+  uniqueness being injectivity. Default case marking is `Case.Valuation.fillInOrder` on the
   arguments listed highest function first, so the persistence of idiosyncratic case is
   `Case.Valuation.Extends`.
 * Principle (61a) fixes no order among the objects, which gives *gefa* its two associations
@@ -192,15 +192,11 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 /-- Default case marking, (61d), as a step of case valuation on arguments listed highest
 function first: the highest not yet valued takes the nominative and the next the accusative. -/
 def defaultCase {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
-  s.fill fun i _ ↦
-    match (s.caseless fun _ ↦ True).idxOf i with
-    | 0 => some P.nom
-    | 1 => some P.acc
-    | _ => none
+  s.fillInOrder (fun _ ↦ True) [P.nom, P.acc]
 
 theorem extends_defaultCase {α : Type*} (s : Case.Valuation α C) :
     s.Extends (fun c ↦ c = P.nom ∨ c = P.acc) (P.defaultCase s) :=
-  Case.Valuation.extends_fill (fun _ _ c h ↦ by split at h <;> simp_all) s
+  Case.Valuation.extends_fillInOrder (by simp) s
 
 theorem mem_defaultCase_of_lexicalCase {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
     (hc : x.lexicalCase = some c) :

@@ -89,7 +89,7 @@ def assignDep (c : Case) (goals : Valuation α (Case × Mechanism)) :
 
 /-- The cases a list of valued NPs carries. -/
 def surface (out : Valuation α (Case × Mechanism)) : List (Option Case) :=
-  out.map (·.2.value?.map (·.1))
+  out.values.map (·.map (·.1))
 
 theorem stack_eq_none_of_subsingleton {goals : Valuation α (Case × Mechanism)}
     (h : ∀ i j, ∀ g ∈ goals.zipIdx, ∀ g' ∈ goals.zipIdx, g.2 = i → g'.2 = j →

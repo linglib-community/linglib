@@ -32,11 +32,13 @@ in which adding an assigner may change what values a nominal but never leaves on
 ## Main definitions
 
 * `Case.Valuation`: nominals, from the highest down, each with the value of its case.
-* `Case.Valuation.initial`, `Case.Valuation.fill`, `Case.Valuation.caseless`: the valuation with
-  given slots, the simultaneous valuation of the unvalued nominals, and the positions of the
-  caseless ones.
-* `Case.Valuation.valueOf`: the value of a nominal, the nominals being identified by their own
-  type rather than by a label.
+* `Case.Valuation.initial`, `Case.Valuation.caseless`: the valuation with given slots, and the
+  positions of the caseless nominals.
+* `Case.Valuation.fill`, `Case.Valuation.fillFirst`, `Case.Valuation.fillInOrder`,
+  `Case.Valuation.fillClosest`: the steps, valuing the unvalued nominals at once, the highest,
+  the highest in turn, or the closest.
+* `Case.Valuation.valueOf`, `Case.Valuation.values`: the value of a nominal, the nominals being
+  identified by their own type rather than by a label, and the values of them all.
 * `Case.Valuation.Extends`: one valuation extends another by values satisfying a predicate.
 * `Case.Valuation.ValuedLE`: one valuation values every nominal another does.
 
@@ -91,6 +93,9 @@ def offer (o : Option β) : FeatureSlot β := o.elim .unvalued .valued
 @[simp] theorem offer_ne_absent (o : Option β) : offer o ≠ .absent := by
   cases o <;> simp
 
+@[simp] theorem value?_offer (o : Option β) : (offer o).value? = o := by
+  cases o <;> rfl
+
 @[simp] theorem map_offer {γ : Type*} (g : β → γ) (o : Option β) :
     (offer o).map g = offer (o.map g) := by
   cases o <;> rfl
@@ -103,6 +108,25 @@ def fillFrom (f : ℕ → α → Option β) : ℕ → Valuation α β → Valuat
 
 /-- Value every unvalued nominal with what `f` proposes for its position, simultaneously. -/
 def fill (f : ℕ → α → Option β) (s : Valuation α β) : Valuation α β := fillFrom f 0 s
+
+/-- Value the highest unvalued nominal that `P` selects with `v`, leaving the others as they are. -/
+def fillFirst (P : α → Prop) [DecidablePred P] (v : β) : Valuation α β → Valuation α β
+  | [] => []
+  | (x, .unvalued) :: s =>
+    if P x then (x, .valued v) :: s else (x, .unvalued) :: fillFirst P v s
+  | p :: s => p :: fillFirst P v s
+
+/-- Value the highest unvalued nominals that `P` selects with `vs` in turn: the first takes the
+first value, the next the second. -/
+def fillInOrder (P : α → Prop) [DecidablePred P] (vs : List β) (s : Valuation α β) :
+    Valuation α β :=
+  vs.foldl (fun st v ↦ fillFirst P v st) s
+
+/-- `fillFirst` under a closeness relation, `lt y x` saying `y` is closer than `x`: the unvalued
+nominal that `P` selects and no other is closer than, the first of them if several are. -/
+def fillClosest [DecidableEq β] (lt : α → α → Prop) [DecidableRel lt] (P : α → Prop)
+    [DecidablePred P] (v : β) (s : Valuation α β) : Valuation α β :=
+  fillFirst (fun x ↦ P x ∧ ¬ ∃ q ∈ s, q.2 = .unvalued ∧ P q.1 ∧ lt q.1 x) v s
 
 /-- The value of nominal `a`, if it has one. -/
 def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β :=
@@ -164,6 +188,19 @@ theorem mem_caseless {P : α → Prop} [DecidablePred P] {s : Valuation α β} {
     i ∈ caseless P s ↔ ∃ x k, s[i]? = some (x, k) ∧ k.value? = none ∧ P x := by
   simp only [caseless, mem_map, Prod.exists, exists_and_right, exists_eq_right]
   exact exists_congr fun _ ↦ mem_caselessEntries
+
+/-- The values of the nominals, from the highest down, `none` for a nominal without one. -/
+def values (s : Valuation α β) : List (Option β) := s.map (·.2.value?)
+
+@[simp] theorem values_nil : values ([] : Valuation α β) = [] := rfl
+
+@[simp] theorem values_cons (p : α × FeatureSlot β) (s : Valuation α β) :
+    values (p :: s) = p.2.value? :: values s := rfl
+
+@[simp] theorem length_values (s : Valuation α β) : (values s).length = s.length := length_map ..
+
+theorem getElem?_values (s : Valuation α β) (i : ℕ) :
+    (values s)[i]? = s[i]?.map (·.2.value?) := getElem?_map ..
 
 /-! ### Extension -/
 
@@ -272,6 +309,136 @@ theorem Extends.valuedLE (h : Extends p s t) : ValuedLE s t :=
     rcases h₂ with e | ⟨hn, v, hv, -⟩
     · exact ⟨h₁, e ▸ Iff.rfl, e ▸ id⟩
     · simp [h₁, hn, hv]
+
+/-! ### Filling the first -/
+
+section FillFirst
+
+variable {P : α → Prop} [DecidablePred P] {v : β}
+
+@[simp] theorem fillFirst_nil : fillFirst P v [] = [] := rfl
+
+@[simp] theorem fillFirst_unvalued_cons (x : α) (s : Valuation α β) :
+    fillFirst P v ((x, .unvalued) :: s) =
+      if P x then (x, .valued v) :: s else (x, .unvalued) :: fillFirst P v s := rfl
+
+@[simp] theorem fillFirst_absent_cons (x : α) (s : Valuation α β) :
+    fillFirst P v ((x, .absent) :: s) = (x, .absent) :: fillFirst P v s := rfl
+
+@[simp] theorem fillFirst_valued_cons (x : α) (w : β) (s : Valuation α β) :
+    fillFirst P v ((x, .valued w) :: s) = (x, .valued w) :: fillFirst P v s := rfl
+
+theorem fillFirst_cons [DecidableEq β] (p : α × FeatureSlot β) (s : Valuation α β) :
+    fillFirst P v (p :: s) =
+      if p.2 = .unvalued ∧ P p.1 then (p.1, .valued v) :: s else p :: fillFirst P v s := by
+  obtain ⟨x, k⟩ := p
+  cases k <;> simp
+
+/-- Filling the first extends the valuation by its value. -/
+theorem extends_fillFirst {p : β → Prop} (hv : p v) :
+    ∀ s : Valuation α β, Extends p s (fillFirst P v s)
+  | [] => .nil
+  | (x, .unvalued) :: s => by
+    by_cases hx : P x <;> simp only [fillFirst_unvalued_cons, hx, ↓reduceIte]
+    · exact .cons ⟨rfl, .inr ⟨rfl, v, rfl, hv⟩⟩ (Extends.refl s)
+    · exact .cons ⟨rfl, .inl rfl⟩ (extends_fillFirst hv s)
+  | (_, .absent) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFirst hv s)
+  | (_, .valued _) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFirst hv s)
+
+@[simp] theorem map_fst_fillFirst (s : Valuation α β) :
+    (fillFirst P v s).map Prod.fst = s.map Prod.fst := by
+  induction s with
+  | nil => rfl
+  | cons p s ih =>
+    obtain ⟨x, k⟩ := p
+    cases k <;> [skip; by_cases hx : P x; skip] <;> simp [*]
+
+/-- Filling the first reads `P` only on the nominals listed. -/
+theorem fillFirst_congr_of_mem {s : Valuation α β} {Q : α → Prop} [DecidablePred Q]
+    (h : ∀ p ∈ s, P p.1 ↔ Q p.1) : fillFirst P v s = fillFirst Q v s := by
+  induction s with
+  | nil => rfl
+  | cons p s ih =>
+    obtain ⟨x, k⟩ := p
+    have hs := ih fun q hq ↦ h q (mem_cons_of_mem _ hq)
+    have hx : P x ↔ Q x := h _ mem_cons_self
+    cases k <;> simp [hs, hx]
+
+@[simp] theorem length_fillFirst (s : Valuation α β) : (fillFirst P v s).length = s.length :=
+  ((extends_fillFirst (p := fun _ ↦ True) trivial s).length_eq).symm
+
+theorem valuedLE_fillFirst (s : Valuation α β) : ValuedLE s (fillFirst P v s) :=
+  (extends_fillFirst (p := fun _ ↦ True) trivial s).valuedLE
+
+/-- Filling the first preserves which of two derivations values more nominals. -/
+theorem ValuedLE.fillFirst (h : ValuedLE s t) :
+    ValuedLE (Valuation.fillFirst P v s) (Valuation.fillFirst P v t) := by
+  induction h with
+  | nil => exact .nil
+  | @cons p q s t hpq hst ih =>
+    obtain ⟨x, a⟩ := p
+    obtain ⟨y, b⟩ := q
+    obtain ⟨rfl, hab⟩ := hpq
+    cases a <;> cases b <;> by_cases hx : P x <;>
+      simp only [fillFirst_unvalued_cons, fillFirst_absent_cons, fillFirst_valued_cons, hx,
+        ↓reduceIte] <;>
+      first
+      | exact .cons ⟨rfl, by simp_all⟩ hst
+      | exact .cons ⟨rfl, by simp_all⟩ ih
+      | exact .cons ⟨rfl, by simp_all⟩ (ValuedLE.trans hst (valuedLE_fillFirst t))
+      | simp_all
+
+theorem fillFirst_map {α' β' : Type*} {P' : α' → Prop} [DecidablePred P'] {v' : β'} (f : α → α')
+    (g : β → β') (hP : ∀ x, P' (f x) ↔ P x) (hv : g v = v') (s : Valuation α β) :
+    fillFirst P' v' (s.map (Prod.map f (FeatureSlot.map g))) =
+      (fillFirst P v s).map (Prod.map f (FeatureSlot.map g)) := by
+  induction s with
+  | nil => rfl
+  | cons p s ih =>
+    obtain ⟨x, k⟩ := p
+    cases k
+    · simp [ih]
+    · by_cases hx : P x <;> simp [hx, hP, hv, ih]
+    · simp [ih]
+
+/-- With no nominal closer than another, `fillClosest` fills the first, as the list does. -/
+@[simp] theorem fillClosest_false [DecidableEq β] (s : Valuation α β) :
+    fillClosest (fun _ _ ↦ False) P v s = fillFirst P v s :=
+  fillFirst_congr_of_mem fun _ _ ↦ by simp
+
+@[simp] theorem fillInOrder_nil (s : Valuation α β) : fillInOrder P [] s = s := rfl
+
+@[simp] theorem fillInOrder_nil_right (vs : List β) : fillInOrder P vs [] = [] := by
+  induction vs <;> simp_all [fillInOrder]
+
+theorem fillInOrder_cons_of_not {p : α × FeatureSlot β} (hp : ¬ (p.2 = .unvalued ∧ P p.1))
+    (vs : List β) (s : Valuation α β) : fillInOrder P vs (p :: s) = p :: fillInOrder P vs s := by
+  obtain ⟨x, k⟩ := p
+  induction vs generalizing s with
+  | nil => rfl
+  | cons v vs ih =>
+    have hstep : fillFirst P v ((x, k) :: s) = (x, k) :: fillFirst P v s := by
+      cases k with
+      | absent => rfl
+      | valued w => rfl
+      | unvalued => simpa using fun hx ↦ absurd ⟨rfl, hx⟩ hp
+    simpa [fillInOrder, hstep] using ih (fillFirst P v s)
+
+theorem fillInOrder_cons_cons {p : α × FeatureSlot β} (hp : p.2 = .unvalued ∧ P p.1) (v : β)
+    (vs : List β) (s : Valuation α β) :
+    fillInOrder P (v :: vs) (p :: s) = (p.1, .valued v) :: fillInOrder P vs s := by
+  obtain ⟨x, k⟩ := p
+  obtain ⟨rfl, hx⟩ := hp
+  have h : fillInOrder P (v :: vs) ((x, .unvalued) :: s) =
+      fillInOrder P vs ((x, .valued v) :: s) := by
+    simp [fillInOrder, show P x from hx]
+  exact h.trans (fillInOrder_cons_of_not (by simp) vs s)
+
+theorem extends_fillInOrder {p : β → Prop} {vs : List β} (hv : ∀ v ∈ vs, p v)
+    (s : Valuation α β) : Extends p s (fillInOrder P vs s) :=
+  Extends.foldl vs (fun v hm st ↦ extends_fillFirst (hv v hm) st) s
+
+end FillFirst
 
 end Valuation
 

@@ -31,8 +31,8 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
 This is the one Agree of the library. A theory of Agree supplies a probe, which fixes what the
 search finds, and a copying operation, which fixes what Agree does to the state: valuation of
 feature bundles (`Minimalist.FeatureState.value`), the value of a case
-(`Minimalist.agreeValue`), or the features a probe accumulates (`Probe.Spec.agree`). When the
-state is the list of goals itself, Agree replaces each entry it interacts with (`Probe.agreeList`).
+(`Minimalist.agreeList_relativized_eq_fillFirst`), or the features a probe accumulates
+(`Probe.Spec.agree`). When the state is the list of goals itself, Agree replaces each entry it interacts with (`Probe.agreeList`).
 When copying joins the state with what each goal contributes, the order of the goals does not
 matter: [Agree joins the initial state with the contributions of the goals it flags](##Minimalist.Probe.agree_sup_state).
 

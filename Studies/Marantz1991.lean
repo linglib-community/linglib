@@ -116,12 +116,12 @@ def chains : List (Option Case) :=
     | .unfilled => if v then [none] else []
 
 /-- The case of the subject's chain, with what valued it. -/
-def subject : Option (Case × Mechanism) := ((r.assign id (c.chains v)).map (·.2.value?)).headD none
+def subject : Option (Case × Mechanism) := (r.assign id (c.chains v)).values.headD none
 
 /-- The case of the object's chain, with what valued it, where there is one. -/
 def object? : Option (Case × Mechanism) :=
   match c.object with
-  | .chain _ => ((r.assign id (c.chains v)).map (·.2.value?)).getD 1 none
+  | .chain _ => (r.assign id (c.chains v)).values.getD 1 none
   | .trace | .unfilled => none
 
 theorem subject_of_lexical {l : Case} (h : c.subjectCase = some l) :
