@@ -9,6 +9,9 @@ public import Studies.Merchant2013
 public import Linglib.Data.Examples.AnandHardtMcCloskey2025
 public import Linglib.Data.Examples.Beslin2026
 public import Linglib.Data.Examples.Languages
+public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Fragments.Mayan.Kaqchikel.Voice
+public import Linglib.Fragments.Mayan.Kiche.Voice
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
@@ -17,13 +20,14 @@ public import Linglib.Syntax.Minimalist.Verbal.LittleV
 # Bešlin (2026): Apparent voice mismatches in K'iche' ellipsis
 
 The antecedent of a TP ellipsis in K'iche' can contain an antipassive where the elided verb must be
-active transitive. Bešlin analyses the antipassive as the active without an internal argument, so
-that [it lacks features of the transitive where the Kaqchikel antipassive
-clashes](##antipassive_split), and concludes that identity on ellipsis must be nondistinctness, the
-absence of a feature clash, which [predicts the judgments](##rows_predicted) as [no equivalence
-relation does, on any domain](##not_forall_licit_of_equivalence). With the stranded prepositions of
-Anand, Hardt and McCloskey the judgments [fix the domain](##rows_predicted_on_iff), which reaches
-Voice and stops below T. Nondistinctness [rules out nothing exactly when every feature is
+active transitive. Bešlin analyses the antipassive as the active without an internal argument and
+concludes that identity on ellipsis must be nondistinctness, the absence of a feature clash. An
+analysis here gives each surface voice of each language a structure. The paper's [predicts the
+judgments](##rows_predicted), while [no analysis does under identity, on any
+domain](##not_predicts_eq), and [none does uniformly across languages](##not_predicts_uniform), one
+label covering different structures. With the stranded prepositions of Anand, Hardt and McCloskey
+the judgments [fix the domain](##predicts_on_iff), which reaches Voice and stops below T.
+Nondistinctness [rules out nothing exactly when every feature is
 privative](##forall_nondistinct_iff_subsingleton).
 
 ## Implementation notes
@@ -34,9 +38,13 @@ privative](##forall_nondistinct_iff_subsingleton).
 ## Errata
 
 * P. 27 takes (65) as causativization, but its source, [burukina-polinsky-2025] footnote 14, gives
-  it as no causative.
+  it as no causative; it is [all that separates the paper's analysis from
+  Ranero's](##ranero_mispredicts_iff).
 * P. 25 needs a clash between [v:TV] and [v:ITV] only for (53), which that source did not replicate
-  (its p. 717); its own selection, read privatively, [has none](##antipassive_split).
+  (its p. 717); its own selection, read privatively, [mispredicts nothing
+  else](##table_mispredicts_iff).
+* The conclusion that one label covers different structures rests on these two rows alone: [one
+  analysis of all the languages mispredicts nothing else](##uniform_mispredicts_iff).
 * Misprints: (11) lacks the star p. 6 implies, footnote 2 reverses its direction, p. 25 prints vITV
   for vTV, (12) glosses 'I' as ABS3SG, and (53) glosses 'sell' as 'buy'.
 
@@ -69,11 +77,6 @@ def vTV : SelStack := [.V]
 /-- The selection of the [v:ITV] of (57a), S:V,N. -/
 def vITV : SelStack := [.V, .N]
 
-/-- The root of the preposition of (47), (48) and [anand-hardt-mccloskey-2025]. The paper does not
-say that *to* is a root, but (49d) needs it to be for (48b): an extra functional head is no clash.
--/
-def preposition : Root := ⟨0⟩
-
 /-- A verbal structure. A head it lacks has the empty bundle. -/
 structure Verb where
   /-- The Voice head, `⊥` if the structure projects none. -/
@@ -84,36 +87,14 @@ structure Verb where
   selection : Flat SelStack := ⊥
   /-- The selectional [D] of v. -/
   d : Flat Unit := ⊥
-  /-- The roots in situ beside the verb. Having none differs from having one, the second clause of
-  (49d), and a movement tail leaves them unspecified, so a tail matches anything. -/
-  roots : Flat (List Root) := ↑([] : List Root)
-  /-- The roots in an adjunct of VoiceP. -/
-  high : Flat (List Root) := ↑([] : List Root)
   deriving DecidableEq
 
-/-- The feature bundle of a site, one part per kind of head: a Voice head, the features of a v, and
-the roots. -/
-abbrev Bundle :=
-  WithBot Head × (Flat (List LittleV) × Flat SelStack × Flat Unit) × Flat (List Root)
-
-namespace Verb
-
-/-- The bundle a structure gives each site. A head it lacks has the empty bundle. -/
-def content (σ : Verb) : Site → Bundle
-  | .head .Voice => (σ.voice, ⊥, ⊥)
-  | .head .v => (⊥, (σ.events, σ.selection, σ.d), ⊥)
-  | .head .V => (⊥, ⊥, σ.roots)
-  | .adjunct .Voice => (⊥, ⊥, σ.high)
-  | _ => ⊥
-
 /-- The v of the structure selects an internal argument: [D] in K'iche' (43b), [v:TV] in Kaqchikel
-(57b). It is read only for a remnant in the role P; the [D] of (72b) selects an external argument.
--/
-def SelectsObject (σ : Verb) : Prop := σ.d = ↑() ∨ σ.selection = ↑vTV
+(57b). It is read only for a remnant in the role P; the [D] of (72b) selects an external
+argument. -/
+def Verb.SelectsObject (σ : Verb) : Prop := σ.d = ↑() ∨ σ.selection = ↑vTV
 
 instance (σ : Verb) : Decidable σ.SelectsObject := inferInstanceAs (Decidable (_ ∨ _))
-
-end Verb
 
 /-- Active Voice with the [ERG] that licenses ergative case on the external argument. -/
 def voiceErg : Head := { agentive with features := .single .case .erg }
@@ -127,11 +108,8 @@ def kicheTransitive : Verb := { voice := voiceErg, d := ↑() }
 /-- K'iche' agent focus, without Voice as footnote 4 suggests. -/
 def kicheAgentFocus : Verb := { d := ↑() }
 
-/-- A K'iche' passive, which the paper does not draw, with the v of the transitive. -/
-def kichePassive : Verb := { voice := passive, d := ↑() }
-
-/-- An inherent intransitive, a small vP. -/
-def intransitive : Verb := {}
+/-- A passive, which the paper does not draw, with the v of the K'iche' or English transitive. -/
+def passiveD : Verb := { voice := passive, d := ↑() }
 
 /-- The Kaqchikel antipassive (57a), a small vP with [v:ITV]. -/
 def kaqchikelAntipassive : Verb := { selection := ↑vITV }
@@ -141,30 +119,18 @@ the [D] of (43), and [v:TV]. -/
 def kaqchikelTransitive : Verb := { voice := voiceErg, selection := ↑vTV }
 
 /-- Kaqchikel agent focus: no Voice ([ranero-2021]), and a v that can only be [v:TV] or unspecified
-(`selection_le_of_nondistinct`). -/
+(`selection_le_of_predicts`). -/
 def kaqchikelAgentFocus : Verb := { selection := ↑vTV }
 
-/-- A Kaqchikel passive. -/
+/-- A Kaqchikel passive, which the paper does not draw, with the v of the transitive. -/
 def kaqchikelPassive : Verb := { voice := passive, selection := ↑vTV }
 
 /-- An active transitive of English, Italian or BCS. -/
-def active : Verb := { voice := agentive, d := ↑() }
+def activeD : Verb := { voice := agentive, d := ↑() }
 
-/-- *ate* in (46), on the assumption p. 18 grants conditionally, that it has no internal argument.
--/
-def activeIntransitive : Verb := { voice := agentive }
-
-/-- An active transitive with a preposition in situ. -/
-def activeTo : Verb := { active with roots := ↑[preposition] }
-
-/-- An active transitive with a preposition in a movement tail. -/
-def activeTail : Verb := { active with roots := ⊥ }
-
-/-- An active transitive with a preposition in situ in an adjunct of VoiceP. -/
-def activeHigh : Verb := { active with high := ↑[preposition] }
-
-/-- An English passive. -/
-def englishPassive : Verb := { voice := passive, d := ↑() }
+/-- *ate* in (46), on the assumption p. 18 grants conditionally, that it has no internal
+argument. -/
+def activeImplicit : Verb := { voice := agentive }
 
 /-- The inchoative of (72a), v[BECOME], as a `LittleV` event structure: change over a state. -/
 def inchoative : Verb := { events := ↑[LittleV.vGO, .vBE] }
@@ -176,40 +142,114 @@ def causative : Verb := { events := ↑[LittleV.vDO, .vBE], d := ↑() }
 /-- A *se*-reflexive of Italian or BCS, on VoiceREFL. -/
 def seReflexive : Verb := { voice := reflexive }
 
+/-! ### Analyses -/
+
+/-- The voice of an inherently intransitive verb, a small vP in (58)–(61). -/
+abbrev intransitiveVoice : _root_.Voice := _root_.Voice.refl .intransitive
+
+/-- The voice of *ate* in (46). -/
+abbrev implicitVoice : _root_.Voice := _root_.Voice.leaveImplicit .np 0
+
+/-- A form of an example: a surface voice of a language, that of a radical verb in the Mayan
+languages, and the roots in situ beside the verb and in an adjunct of VoiceP. Having no root differs
+from having one, the second clause of (49d), and a movement tail leaves them unspecified, so a tail
+matches anything. -/
+structure Form where
+  /-- The language. -/
+  language : Glottocode
+  /-- The surface voice. -/
+  voice : _root_.Voice
+  /-- The roots in situ beside the verb. -/
+  roots : Flat (List Root) := ↑([] : List Root)
+  /-- The roots in situ in an adjunct of VoiceP. -/
+  high : Flat (List Root) := ↑([] : List Root)
+  deriving DecidableEq
+
+/-- The root of the preposition of (47), (48) and [anand-hardt-mccloskey-2025]. The paper does not
+say that *to* is a root, but (49d) needs it to be for (48b): an extra functional head is no
+clash. -/
+def preposition : Root := ⟨0⟩
+
+/-- An analysis gives each surface voice of each language a structure. -/
+abbrev Analysis := Glottocode → _root_.Voice → Verb
+
+/-- The feature bundle of a site, one part per kind of head: a Voice head, the features of a v, and
+the roots. -/
+abbrev Bundle :=
+  WithBot Head × (Flat (List LittleV) × Flat SelStack × Flat Unit) × Flat (List Root)
+
+instance (a b : Bundle) : Decidable (a = b) := decidable_of_iff _ Prod.ext_iff.symm
+
+namespace Analysis
+
+/-- The structure an analysis gives a form. -/
+def verb (f : Analysis) (x : Form) : Verb := f x.language x.voice
+
+/-- The bundle an analysis gives each site of a form. -/
+def content (f : Analysis) (x : Form) : Site → Bundle
+  | .head .Voice => ((f.verb x).voice, ⊥, ⊥)
+  | .head .v => (⊥, ((f.verb x).events, (f.verb x).selection, (f.verb x).d), ⊥)
+  | .head .V => (⊥, ⊥, x.roots)
+  | .adjunct .Voice => (⊥, ⊥, x.high)
+  | _ => ⊥
+
+end Analysis
+
+/-- The structures the paper gives the voices of each language. -/
+def structures : List (Glottocode × List (_root_.Voice × Verb)) :=
+  [(.kiche, [(Kiche.active .radical, kicheTransitive),
+      (Kiche.absolutiveAntipassive .radical, kicheAntipassive),
+      (Kiche.agentFocus .radical, kicheAgentFocus), (Kiche.simplePassive .radical, passiveD),
+      (intransitiveVoice, {})]),
+    (.kaqchikel, [(Kaqchikel.active, kaqchikelTransitive),
+      (Kaqchikel.antipassive, kaqchikelAntipassive),
+      (Kaqchikel.agentFocus .radical, kaqchikelAgentFocus), (Kaqchikel.passive, kaqchikelPassive),
+      (intransitiveVoice, {})]),
+    (.english, [(_root_.Voice.active, activeD), (implicitVoice, activeImplicit),
+      (_root_.Voice.passive, passiveD), (_root_.Voice.anticausative, inchoative),
+      (_root_.Voice.causative, causative)]),
+    (.italian, [(_root_.Voice.active, activeD), (_root_.Voice.reflexive, seReflexive)]),
+    (.serbianCroatianBosnian, [(_root_.Voice.active, activeD),
+      (_root_.Voice.reflexive, seReflexive)])]
+
+/-- The paper's analysis. -/
+def paper : Analysis := fun l v ↦ ((structures.lookup l).bind (List.lookup v)).getD {}
+
 /-! ### The conditions of (49) -/
 
-/-- A Syntactic Identity Condition: when the elided structure may stand to its antecedent under an
-ellipsis. -/
-abbrev SIC := Ellipsis clausalSpine → Verb → Verb → Prop
+/-- A Syntactic Identity Condition on the bundles of the antecedent and the elided clause. -/
+abbrev SIC := Ellipsis clausalSpine → (Site → Bundle) → (Site → Bundle) → Prop
 
 /-- Nondistinctness, on the argument domain, which leaves out T and polarity. -/
-def nondistinct : SIC := fun e a t ↦ e.Nondistinct a.content t.content
+def nondistinct : SIC := fun e a t ↦ e.Nondistinct a t
 
-instance (e : Ellipsis clausalSpine) (a t : Verb) : Decidable (nondistinct e a t) :=
+instance (e : Ellipsis clausalSpine) (a t : Site → Bundle) : Decidable (nondistinct e a t) :=
   inferInstanceAs (Decidable (e.Nondistinct _ _))
 
 /-- The grid of (49): the two clauses stand in `R` at the sites of `D` inside the deletion domain.
 (49a) is `Eq` on the verbal spine, (49b) and (49c) are `Eq` on an argument structure and an eventive
 core, and (49d) as printed is `Compat` on everything. -/
 def relatedOn (R : Bundle → Bundle → Prop) (D : Set Site) : SIC :=
-  fun e a t ↦ ∀ x ∈ D ∩ e.domain, R (a.content x) (t.content x)
+  fun e a t ↦ ∀ x ∈ D ∩ e.domain, R (a x) (t x)
 
 /-! ### The rows -/
 
-/-- An example: an ellipsis with its antecedent, elided structure and the role of its remnant, if a
-core one, or a causative with the structure its vCAUS merges on. -/
+/-- An example: an ellipsis with its antecedent, elided form and the role of its remnant, if a core
+one, or a causative with the form its vCAUS merges on. -/
 inductive Clause
-  | ellipsis (e : Ellipsis clausalSpine) (a t : Verb) (ρ : Option ArgumentRole)
-  | causative (base : Verb)
+  | ellipsis (e : Ellipsis clausalSpine) (a t : Form) (ρ : Option ArgumentRole)
+  | causative (base : Form)
   deriving DecidableEq
 
-/-- The example is licit under a condition: an ellipsis meets it and a remnant in the role P has a
-source in the site, and vCAUS merges on a vP, not a VoiceP (p. 26), as its selection requires. -/
-def Clause.Licit (C : SIC) : Clause → Prop
-  | .ellipsis e a t ρ => C e a t ∧ (ρ = some .P → t.SelectsObject)
-  | .causative base => base.voice = ⊥
+/-- The example is licit under a condition and an analysis: an ellipsis meets the condition and a
+remnant in the role P has a source in the site, and vCAUS merges on a vP, not a VoiceP (p. 26), as
+its selection requires. -/
+def Clause.Licit (C : SIC) (f : Analysis) : Clause → Prop
+  | .ellipsis e a t ρ =>
+    C e (f.content a) (f.content t) ∧ (ρ = some .P → (f.verb t).SelectsObject)
+  | .causative b => (f.verb b).voice = ⊥
 
-instance : DecidablePred (Clause.Licit nondistinct)
+instance (f : Analysis) : DecidablePred (Clause.Licit nondistinct f)
   | .ellipsis _ _ _ _ => inferInstanceAs (Decidable (_ ∧ _))
   | .causative _ => inferInstanceAs (Decidable (_ = _))
 
@@ -220,18 +260,39 @@ structure Row where
   /-- Its judgment. -/
   judgment : Judgment
 
-/-- The structures of the forms of a language. -/
-def formsOf : List (Glottocode × List (String × Verb)) :=
-  [(.kiche, [("antipassive", kicheAntipassive), ("transitive", kicheTransitive),
-      ("agentFocus", kicheAgentFocus), ("passive", kichePassive),
-      ("intransitive", intransitive)]),
-    (.kaqchikel, [("antipassive", kaqchikelAntipassive), ("transitive", kaqchikelTransitive),
-      ("agentFocus", kaqchikelAgentFocus), ("passive", kaqchikelPassive)]),
-    (.english, [("transitive", active), ("transitiveTo", activeTo),
-      ("transitiveTail", activeTail), ("intransitive", activeIntransitive), ("active", active),
-      ("passive", englishPassive), ("inchoative", inchoative), ("causative", causative)]),
-    (.italian, [("active", active), ("reflexive", seReflexive)]),
-    (.serbianCroatianBosnian, [("active", active), ("reflexive", seReflexive)])]
+/-- The English active with a preposition in situ. -/
+def activeTo : Form :=
+  { language := .english, voice := _root_.Voice.active, roots := ↑[preposition] }
+
+/-- The English active with a preposition in a movement tail. -/
+def activeTail : Form := { language := .english, voice := _root_.Voice.active, roots := ⊥ }
+
+/-- The English active with a preposition in situ in an adjunct of VoiceP. -/
+def activeHigh : Form :=
+  { language := .english, voice := _root_.Voice.active, high := ↑[preposition] }
+
+/-- The forms of a row, by the name its features give them. -/
+def formsOf : List (Glottocode × List (String × Form)) :=
+  let of (l : Glottocode) (v : _root_.Voice) : Form := { language := l, voice := v }
+  [(.kiche, [("antipassive", of .kiche (Kiche.absolutiveAntipassive .radical)),
+      ("transitive", of .kiche (Kiche.active .radical)),
+      ("agentFocus", of .kiche (Kiche.agentFocus .radical)),
+      ("passive", of .kiche (Kiche.simplePassive .radical)),
+      ("intransitive", of .kiche intransitiveVoice)]),
+    (.kaqchikel, [("antipassive", of .kaqchikel Kaqchikel.antipassive),
+      ("transitive", of .kaqchikel Kaqchikel.active),
+      ("agentFocus", of .kaqchikel (Kaqchikel.agentFocus .radical)),
+      ("passive", of .kaqchikel Kaqchikel.passive),
+      ("intransitive", of .kaqchikel intransitiveVoice)]),
+    (.english, [("transitive", of .english _root_.Voice.active), ("transitiveTo", activeTo),
+      ("transitiveTail", activeTail), ("intransitive", of .english implicitVoice),
+      ("active", of .english _root_.Voice.active), ("passive", of .english _root_.Voice.passive),
+      ("inchoative", of .english _root_.Voice.anticausative),
+      ("causative", of .english _root_.Voice.causative)]),
+    (.italian, [("active", of .italian _root_.Voice.active),
+      ("reflexive", of .italian _root_.Voice.reflexive)]),
+    (.serbianCroatianBosnian, [("active", of .serbianCroatianBosnian _root_.Voice.active),
+      ("reflexive", of .serbianCroatianBosnian _root_.Voice.reflexive)])]
 
 /-- Read a row. In the order `causThenBase` the antipassive is formed on a causative, whose vCAUS
 merges on an intransitive. -/
@@ -246,10 +307,10 @@ def Row.ofDatum (ex : Datum) : Option Row := do
         ("oblique", none), ("none", none)]
       pure (Clause.ellipsis e a t ρ)
     | some "causative" => do
-      let base ← ex.parse? "base" forms
       match ex.feature? "order" with
-      | some "caus" => pure (Clause.causative base)
-      | some "causThenBase" => pure (Clause.causative intransitive)
+      | some "caus" => pure (Clause.causative (← ex.parse? "base" forms))
+      | some "causThenBase" =>
+        pure (Clause.causative { language := ex.language, voice := intransitiveVoice })
       | _ => none
     | _ => none
   pure ⟨clause, ex.judgment⟩
@@ -259,7 +320,8 @@ antecedent, in situ in the argument domain if it marks an argument and in an adj
 not. -/
 def Row.ofStranded (ex : Datum) : Option Row := do
   let t ← ex.parse? "ppType" [("argument", activeTo), ("nonargument", activeHigh)]
-  pure ⟨.ellipsis sluicing active t none, ex.judgment⟩
+  pure ⟨.ellipsis sluicing { language := .english, voice := _root_.Voice.active } t none,
+    ex.judgment⟩
 
 /-- The paper's examples and the stranded prepositions of [anand-hardt-mccloskey-2025]. -/
 def rows : List Row :=
@@ -270,93 +332,124 @@ theorem length_rows :
     rows.length = Examples.all.length + AnandHardtMcCloskey2025.Examples.all.length := by
   decide +kernel
 
-/-- Nondistinctness on the argument domain predicts the judgments: the K'iche' mismatch, its absence
-in Kaqchikel, the English voice and transitivity alternations, the stranded prepositions and the
-reflexives of Italian and BCS. -/
-theorem rows_predicted : ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit nondistinct) := by
+/-- A condition and an analysis predict the judgments. -/
+def Predicts (C : SIC) (f : Analysis) : Prop :=
+  ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit C f)
+
+/-- Nondistinctness on the argument domain, with the paper's analysis, predicts the judgments: the
+K'iche' mismatch, its absence in Kaqchikel, the English voice and transitivity alternations, the
+stranded prepositions and the reflexives of Italian and BCS. -/
+theorem rows_predicted : Predicts nondistinct paper := by
+  unfold Predicts
   decide +kernel
 
 /-! ### Identity and the domain -/
 
-/-- The sites the structures give features to. -/
-def contentful : Set Site := {.head .V, .head .v, .head .Voice, .adjunct .Voice}
+/-- The K'iche' antipassive and active as forms. -/
+abbrev kAP : Form := { language := .kiche, voice := Kiche.absolutiveAntipassive .radical }
 
-theorem Verb.content_of_notMem (σ : Verb) {x : Site} (hx : x ∉ contentful) : σ.content x = ⊥ := by
-  fun_cases Verb.content σ x <;> simp_all [contentful]
+/-- The K'iche' active. -/
+abbrev kTV : Form := { language := .kiche, voice := Kiche.active .radical }
 
-theorem Verb.content_eq_of_ne {σ τ : Verb} {x y : Site} (hx : x ≠ y)
-    (h : ∀ z ∈ contentful, z ≠ y → σ.content z = τ.content z) : σ.content x = τ.content x := by
-  by_cases hc : x ∈ contentful
-  · exact h x hc hx
-  · rw [σ.content_of_notMem hc, τ.content_of_notMem hc]
-
-/-- No equivalence relation predicts the judgments, on any domain, so neither an identity condition
-such as (49a)–(49c) nor identity of any abstraction of the bundles does: a domain without Voice
-admits the English voice mismatch (69a), and on a domain with it, the Kaqchikel mismatches (51) and
-(52) and the K'iche' mismatch (1) chain the passive to the active. -/
-theorem not_forall_licit_of_equivalence {R : Bundle → Bundle → Prop} (hR : Equivalence R)
-    (D : Set Site) : ¬ ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit (relatedOn R D)) := by
+/-- No analysis makes identity predict the judgments, on any domain: the English alternation (70b)
+puts v in the domain, and (1) then needs the antipassive and the transitive to agree at v, though
+only the transitive can be the source of an object remnant. -/
+theorem not_predicts_eq (D : Set Site) (f : Analysis) : ¬ Predicts (relatedOn Eq D) f := by
   intro h
-  have licit : ∀ {a t : Verb} {ρ : Option ArgumentRole},
-      (∃ r ∈ rows, r.clause = .ellipsis sluicing a t ρ ∧ .marginal ≤ r.judgment) →
-        Site.head .Voice ∈ D → R (a.content (.head .Voice)) (t.content (.head .Voice)) := by
-    rintro a t ρ ⟨r, hr, hc, hj⟩ hD
-    have hl := (h r hr).1 hj
-    rw [hc] at hl
-    exact hl.1 _ ⟨hD, mem_domain.2 (by decide)⟩
-  obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-      r.clause = .ellipsis sluicing englishPassive active (some .A) ∧ ¬ .marginal ≤ r.judgment := by
+  have hv : Site.head .v ∈ D := by
+    by_contra hD
+    obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis vpEllipsis
+        { language := .english, voice := _root_.Voice.anticausative }
+        { language := .english, voice := _root_.Voice.causative } none ∧
+        ¬ .marginal ≤ r.judgment := by
+      decide +kernel
+    refine hj ((h r hr).2 (hc ▸ ⟨fun x hx ↦ ?_, by simp⟩))
+    have hx' : ∀ y ∈ clausalSpine.sites, vpEllipsis.Deletes y →
+        y = .head .V ∨ y = .adjunct .V ∨ y = .head .v := by
+      decide +kernel
+    rcases hx' x (ClauseSpine.Deletes.mem_sites hx.2) hx.2 with rfl | rfl | rfl
+    · rfl
+    · rfl
+    · exact absurd hx.1 hD
+  obtain ⟨r₁, hr₁, hc₁, hj₁⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing kAP kTV (some .P) ∧
+      .marginal ≤ r.judgment := by
     decide +kernel
-  refine hj ((h r hr).2 ?_)
-  rw [hc]
-  refine ⟨fun x hx ↦ ?_, by simp⟩
-  by_cases hV : x = .head .Voice
-  · subst hV
-    have h₁ := licit (a := kaqchikelPassive) (t := kaqchikelAgentFocus) (ρ := some .A)
-      (by decide +kernel) hx.1
-    have h₂ := licit (a := kaqchikelAgentFocus) (t := kaqchikelTransitive) (ρ := some .P)
-      (by decide +kernel) hx.1
-    have h₃ := licit (a := kicheAntipassive) (t := kicheTransitive) (ρ := some .P)
-      (by decide +kernel) hx.1
-    exact hR.trans (hR.trans h₁ h₂) (hR.symm h₃)
-  · rw [Verb.content_eq_of_ne (τ := active) hV (by
-      rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz)]
-    exact hR.refl _
+  obtain ⟨r₂, hr₂, hc₂, hj₂⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing kAP kAP (some .P) ∧
+      ¬ .marginal ≤ r.judgment := by
+    decide +kernel
+  have hl := (h r₁ hr₁).1 hj₁
+  rw [hc₁] at hl
+  obtain ⟨he, hs⟩ := hl
+  have hat := he (.head .v) ⟨hv, mem_domain.2 (by decide)⟩
+  simp only [Analysis.content, Prod.mk.injEq, true_and, and_true] at hat
+  refine hj₂ ((h r₂ hr₂).2 (hc₂ ▸ ⟨fun _ _ ↦ rfl, fun _ ↦ ?_⟩))
+  rcases hs rfl with hd | hsel
+  · exact .inl (hat.2.2.trans hd)
+  · exact .inr (hat.2.1.trans hsel)
+
+/-- No analysis predicts the judgments uniformly across languages, under any condition, one label
+covering different structures: the K'iche' and the Kaqchikel antipassive are the same surface voice,
+and only the K'iche' one (55) can antecede an active in the ellipsis site (53). -/
+theorem not_predicts_uniform (C : SIC) (g : _root_.Voice → Verb) :
+    ¬ Predicts C (fun _ ↦ g) := by
+  intro h
+  obtain ⟨r₁, hr₁, hc₁, hj₁⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing kAP kTV (some .P) ∧
+      .marginal ≤ r.judgment := by
+    decide +kernel
+  obtain ⟨r₂, hr₂, hc₂, hj₂⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+      { language := .kaqchikel, voice := Kaqchikel.antipassive }
+      { language := .kaqchikel, voice := Kaqchikel.active } (some .P) ∧
+      ¬ .marginal ≤ r.judgment := by
+    decide +kernel
+  have hl := (h r₁ hr₁).1 hj₁
+  rw [hc₁] at hl
+  exact hj₂ ((h r₂ hr₂).2 (hc₂ ▸ hl))
+
+/-- The sites an analysis can give a nonempty bundle. -/
+def contentful : List Site := [.head .V, .head .v, .head .Voice, .adjunct .Voice]
+
+theorem Analysis.content_of_notMem (f : Analysis) (a : Form) {x : Site} (hx : x ∉ contentful) :
+    f.content a x = ⊥ := by
+  fun_cases Analysis.content f a x <;> simp_all [contentful]
 
 theorem relatedOn_compat_of_ne {D : Set Site} {y : Site} (hy : y ∉ D) {e : Ellipsis clausalSpine}
-    {a t : Verb} (h : ∀ z ∈ contentful, z ≠ y → a.content z = t.content z) :
-    relatedOn Compat D e a t :=
-  fun x hx ↦ by
-    rw [Verb.content_eq_of_ne (ne_of_mem_of_not_mem hx.1 hy) h]
-    exact compat_self _
+    {f : Analysis} {a t : Form}
+    (h : ∀ x ∈ contentful, x ≠ y → Compat (f.content a x) (f.content t x)) :
+    relatedOn Compat D e (f.content a) (f.content t) := fun x hx ↦ by
+  by_cases hc : x ∈ contentful
+  · exact h x hc (ne_of_mem_of_not_mem hx.1 hy)
+  · rw [f.content_of_notMem a hc]
+    exact bot_compat _
 
-/-- The judgments fix the domain of nondistinctness: they are predicted exactly on the sets of sites
-containing V (48b), v (70b) and Voice (69a) and not the adjunction site of VoiceP (13a). -/
-theorem rows_predicted_on_iff {D : Set Site} :
-    (∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit (relatedOn Compat D))) ↔
+/-- The judgments fix the domain of nondistinctness: with the paper's analysis they are predicted
+exactly on the sets of sites containing V (48b), v (70b) and Voice (69a) and not the adjunction site
+of VoiceP (13a). -/
+theorem predicts_on_iff {D : Set Site} :
+    Predicts (relatedOn Compat D) paper ↔
       ({.head .V, .head .v, .head .Voice} : Set Site) ⊆ D ∧ .adjunct .Voice ∉ D := by
   refine ⟨fun h ↦ ⟨fun x hx ↦ by_contra fun hxD ↦ ?_, fun hD ↦ ?_⟩,
     fun ⟨hD, hA⟩ r hr ↦ (rows_predicted r hr).trans ?_⟩
   · rcases hx with rfl | rfl | rfl
-    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-          r.clause = .ellipsis sluicing active activeTo none ∧ ¬ .marginal ≤ r.judgment := by
+    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+          { language := .english, voice := _root_.Voice.active } activeTo none ∧
+          ¬ .marginal ≤ r.judgment := by
         decide +kernel
-      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by
-        rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz), by simp⟩))
-    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-          r.clause = .ellipsis vpEllipsis inchoative causative none ∧
-            ¬ .marginal ≤ r.judgment := by
+      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by decide +kernel), by simp⟩))
+    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis vpEllipsis
+          { language := .english, voice := _root_.Voice.anticausative }
+          { language := .english, voice := _root_.Voice.causative } none ∧
+          ¬ .marginal ≤ r.judgment := by
         decide +kernel
-      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by
-        rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz), by simp⟩))
-    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-          r.clause = .ellipsis sluicing englishPassive active (some .A) ∧
-            ¬ .marginal ≤ r.judgment := by
+      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by decide +kernel), by simp⟩))
+    · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+          { language := .english, voice := _root_.Voice.passive }
+          { language := .english, voice := _root_.Voice.active } (some .A) ∧
+          ¬ .marginal ≤ r.judgment := by
         decide +kernel
-      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by
-        rintro z (rfl | rfl | rfl | rfl) hz <;> first | rfl | exact absurd rfl hz), by simp⟩))
-  · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows,
-        r.clause = .ellipsis sluicing active activeHigh none ∧ .marginal ≤ r.judgment := by
+      exact hj ((h r hr).2 (hc ▸ ⟨relatedOn_compat_of_ne hxD (by decide +kernel), by simp⟩))
+  · obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+        { language := .english, voice := _root_.Voice.active } activeHigh none ∧
+        .marginal ≤ r.judgment := by
       decide +kernel
     have hl := (h r hr).1 hj
     rw [hc] at hl
@@ -364,28 +457,74 @@ theorem rows_predicted_on_iff {D : Set Site} :
   · rcases r.clause with ⟨e, a, t, ρ⟩ | base
     · refine and_congr_left' ⟨fun h x hx ↦ ?_, fun h x hx ↦ ?_⟩
       · by_cases hc : x ∈ contentful
-        · rcases hc with rfl | rfl | rfl | rfl
+        · simp only [contentful, List.mem_cons, List.not_mem_nil, or_false] at hc
+          rcases hc with rfl | rfl | rfl | rfl
           · exact h ⟨hx.2, by decide⟩
           · exact h ⟨hx.2, by decide⟩
           · exact h ⟨hx.2, by decide⟩
           · exact absurd hx.1 hA
-        · rw [a.content_of_notMem hc]
+        · rw [paper.content_of_notMem a hc]
           exact bot_compat _
       · by_cases hc : x ∈ contentful
-        · rcases hc with rfl | rfl | rfl | rfl
+        · simp only [contentful, List.mem_cons, List.not_mem_nil, or_false] at hc
+          rcases hc with rfl | rfl | rfl | rfl
           · exact h _ ⟨hD (by simp), hx.1⟩
           · exact h _ ⟨hD (by simp), hx.1⟩
           · exact h _ ⟨hD (by simp), hx.1⟩
           · exact absurd hx.2 (by decide)
-        · rw [a.content_of_notMem hc]
+        · rw [paper.content_of_notMem a hc]
           exact bot_compat _
     · rfl
 
 -- [anand-hardt-mccloskey-2025]
-theorem T_notMem_of_lowerSet {D : Set Site}
-    (h : ∀ r ∈ rows, (.marginal ≤ r.judgment ↔ r.clause.Licit (relatedOn Compat D)))
+theorem T_notMem_of_lowerSet {D : Set Site} (h : Predicts (relatedOn Compat D) paper)
     (hD : ∀ x y, clausalSpine.rank x ≤ clausalSpine.rank y → y ∈ D → x ∈ D) : .head .T ∉ D :=
-  fun hT ↦ (rows_predicted_on_iff.1 h).2 (hD _ _ (by decide) hT)
+  fun hT ↦ (predicts_on_iff.1 h).2 (hD _ _ (by decide) hT)
+
+-- (52), (51), (1), (69a), footnote 18
+theorem not_predicts_paper_of_equivalence {R : Bundle → Bundle → Prop} (hR : Equivalence R)
+    (D : Set Site) : ¬ Predicts (relatedOn R D) paper := by
+  intro h
+  have licit : ∀ {a t : Form} {ρ : Option ArgumentRole},
+      (∃ r ∈ rows, r.clause = .ellipsis sluicing a t ρ ∧ .marginal ≤ r.judgment) →
+        Site.head .Voice ∈ D →
+          R (paper.content a (.head .Voice)) (paper.content t (.head .Voice)) := by
+    rintro a t ρ ⟨r, hr, hc, hj⟩ hD
+    have hl := (h r hr).1 hj
+    rw [hc] at hl
+    exact hl.1 _ ⟨hD, mem_domain.2 (by decide)⟩
+  obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+      { language := .english, voice := _root_.Voice.passive }
+      { language := .english, voice := _root_.Voice.active } (some .A) ∧
+      ¬ .marginal ≤ r.judgment := by
+    decide +kernel
+  refine hj ((h r hr).2 (hc ▸ ⟨fun x hx ↦ ?_, by simp⟩))
+  by_cases hV : x = .head .Voice
+  · subst hV
+    have h₁ := licit (a := { language := .kaqchikel, voice := Kaqchikel.passive })
+      (t := { language := .kaqchikel, voice := Kaqchikel.agentFocus .radical }) (ρ := some .A)
+      (by decide +kernel) hx.1
+    have h₂ := licit (a := { language := .kaqchikel, voice := Kaqchikel.agentFocus .radical })
+      (t := { language := .kaqchikel, voice := Kaqchikel.active }) (ρ := some .P)
+      (by decide +kernel) hx.1
+    have h₃ := licit (a := kAP) (t := kTV) (ρ := some .P) (by decide +kernel) hx.1
+    have e₁ : paper.content { language := .english, voice := _root_.Voice.passive } (.head .Voice) =
+        paper.content { language := .kaqchikel, voice := Kaqchikel.passive } (.head .Voice) := by
+      decide +kernel
+    have e₂ : paper.content { language := .english, voice := _root_.Voice.active } (.head .Voice) =
+        paper.content kAP (.head .Voice) := by
+      decide +kernel
+    rw [e₁, e₂]
+    exact hR.trans (hR.trans h₁ h₂) (hR.symm h₃)
+  · have he : ∀ y ∈ contentful, y ≠ .head .Voice →
+        paper.content { language := .english, voice := _root_.Voice.passive } y =
+          paper.content { language := .english, voice := _root_.Voice.active } y := by
+      decide +kernel
+    by_cases hc : x ∈ contentful
+    · rw [he x hc hV]
+      exact hR.refl _
+    · rw [paper.content_of_notMem _ hc, paper.content_of_notMem _ hc]
+      exact hR.refl _
 
 -- [merchant-2013]
 theorem merchant_rows_predicted : ∀ r ∈ Merchant2013.rows,
@@ -403,72 +542,153 @@ theorem merchant_rows_predicted : ∀ r ∈ Merchant2013.rows,
     rcases hm with rfl | rfl <;> decide
   · exact r.clause.antecedent_eq_target hm
 
-/-! ### K'iche' and Kaqchikel -/
+/-! ### What the rows force, and what rests on one row -/
 
--- (43)
-theorem kicheAntipassive_le : kicheAntipassive.content ≤ kicheTransitive.content := fun x ↦ by
-  by_cases hx : x ∈ contentful
-  · rcases hx with rfl | rfl | rfl | rfl
-    · exact le_rfl
-    · exact ⟨le_rfl, ⟨le_rfl, le_rfl, bot_le⟩, le_rfl⟩
-    · exact ⟨WithBot.coe_le_coe.2 ⟨rfl, rfl, le_rfl, le_rfl, le_rfl, bot_le⟩, le_rfl, le_rfl⟩
-    · exact le_rfl
-  · simp [Verb.content_of_notMem _ hx]
+-- (69a), (71)
+theorem voice_clash_of_predicts {f : Analysis} (h : Predicts nondistinct f) :
+    ¬ Compat (f .english _root_.Voice.passive).voice (f .english _root_.Voice.active).voice := by
+  intro hc
+  obtain ⟨r₁, hr₁, hc₁, hj₁⟩ : ∃ r ∈ rows, r.clause = .ellipsis vpEllipsis
+      { language := .english, voice := _root_.Voice.passive }
+      { language := .english, voice := _root_.Voice.active } none ∧
+      .marginal ≤ r.judgment := by
+    decide +kernel
+  obtain ⟨r₂, hr₂, hc₂, hj₂⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+      { language := .english, voice := _root_.Voice.passive }
+      { language := .english, voice := _root_.Voice.active } (some .A) ∧
+      ¬ .marginal ≤ r.judgment := by
+    decide +kernel
+  have hl := (h r₁ hr₁).1 hj₁
+  rw [hc₁] at hl
+  refine hj₂ ((h r₂ hr₂).2 (hc₂ ▸ ⟨fun x hx ↦ ?_, by simp⟩))
+  by_cases hm : x ∈ contentful
+  · simp only [contentful, List.mem_cons, List.not_mem_nil, or_false] at hm
+    rcases hm with rfl | rfl | rfl | rfl
+    · exact compat_self _
+    · exact hl.1 ⟨by decide, by decide⟩
+    · exact compat_prod_iff.2 ⟨hc, compat_self _⟩
+    · exact absurd hx.2 (by decide)
+  · rw [f.content_of_notMem _ hm]
+    exact bot_compat _
 
--- `Merchant2013.deletes_v`
-theorem kiche_alternation_survives :
-    sluicing.Deletes (.head .v) ∧ kicheAntipassive.d ≠ kicheTransitive.d ∧
-      nondistinct sluicing kicheAntipassive kicheTransitive :=
-  ⟨by decide, by decide, nondistinct_of_le kicheAntipassive_le⟩
+-- (63), (65)
+theorem antipassive_voice_of_predicts {C : SIC} {f : Analysis} (h : Predicts C f) :
+    (f .kiche (Kiche.absolutiveAntipassive .radical)).voice ≠ ⊥ ∧
+      (f .kaqchikel Kaqchikel.antipassive).voice = ⊥ := by
+  obtain ⟨r₁, hr₁, hc₁, hj₁⟩ : ∃ r ∈ rows, r.clause = .causative kAP ∧
+      ¬ .marginal ≤ r.judgment := by
+    decide +kernel
+  obtain ⟨r₂, hr₂, hc₂, hj₂⟩ : ∃ r ∈ rows, r.clause =
+      .causative { language := .kaqchikel, voice := Kaqchikel.antipassive } ∧
+      .marginal ≤ r.judgment := by
+    decide +kernel
+  have hl := (h r₂ hr₂).1 hj₂
+  rw [hc₂] at hl
+  exact ⟨fun hv ↦ hj₁ ((h r₁ hr₁).2 (hc₁ ▸ hv)), hl⟩
 
-/-- [burukina-polinsky-2025]'s Kaqchikel antipassive, in the terms of their Table 3: vITV, which
-selects a nominal, and no Voice. -/
-def tableAntipassive : Verb := { d := ↑() }
+-- (51)
+theorem selection_le_of_predicts {f : Analysis} (h : Predicts nondistinct f)
+    (hTV : (f .kaqchikel Kaqchikel.active).selection = ↑vTV) :
+    (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection ≤ (↑vTV : Flat SelStack) := by
+  obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
+      { language := .kaqchikel, voice := Kaqchikel.agentFocus .radical }
+      { language := .kaqchikel, voice := Kaqchikel.active } (some .P) ∧
+      .marginal ≤ r.judgment := by
+    decide +kernel
+  have hl := (h r hr).1 hj
+  rw [hc] at hl
+  have hb := (compat_prod_iff.1 (compat_prod_iff.1 (compat_prod_iff.1
+    (hl.1 (x := .head .v) ⟨by decide, by decide⟩)).2).1).2
+  have hs : Compat (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection
+      (↑vTV : Flat SelStack) :=
+    hTV ▸ (compat_prod_iff.1 hb).1
+  rcases eq_or_ne (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection ⊥ with hb' | hb'
+  · exact hb' ▸ bot_le
+  · obtain ⟨σ, hσ⟩ := Flat.ne_bot_iff_exists.1 hb'
+    rw [hσ] at hs ⊢
+    rw [Flat.compat_coe_coe.1 hs]
 
-/-- [burukina-polinsky-2025]'s Kaqchikel transitive: vTV, which selects no nominal, and VoiceTV,
-which selects one and bears [ERG]. -/
-def tableTransitive : Verb := { voice := voiceErg }
-
-/-- The two antipassives split: the K'iche' one only lacks features of its transitive, and the
-Kaqchikel one, on the paper's structures, clashes with its transitive. The Kaqchikel half rests on
-Ranero's judgment (53): read privatively, as they read it, the selection in the inventory of
-[burukina-polinsky-2025] gives no clash, as they report for their own consultants. -/
-theorem antipassive_split :
-    kicheAntipassive.content ≤ kicheTransitive.content ∧
-      ¬ nondistinct sluicing kaqchikelAntipassive kaqchikelTransitive ∧
-      nondistinct sluicing tableAntipassive tableTransitive :=
-  ⟨kicheAntipassive_le, by decide +kernel, by decide +kernel⟩
-
--- (51), (52)
-theorem selection_le_of_nondistinct {σ : Verb}
-    (h : nondistinct sluicing σ kaqchikelTransitive) :
-    σ.selection ≤ (↑vTV : Flat SelStack) := by
-  have hc : Compat σ.selection (↑vTV : Flat SelStack) :=
-    (compat_prod_iff.1 (compat_prod_iff.1 (compat_prod_iff.1 (compat_prod_iff.1
-      (h (x := .head .v) ⟨by decide, by decide⟩)).2).1).2).1
-  rcases eq_or_ne σ.selection ⊥ with hb | hb
-  · exact hb ▸ bot_le
-  · obtain ⟨f, hf⟩ := Flat.ne_bot_iff_exists.1 hb
-    rw [hf] at hc ⊢
-    rw [Flat.compat_coe_coe.1 hc]
-
-/-- [ranero-2021]'s Kaqchikel antipassive (56a): Voice[AP] over the v of a transitive. -/
+/-- Ranero's Kaqchikel antipassive (56a): Voice[AP] over the v of a transitive. -/
 def raneroAntipassive : Verb :=
   { voice := ({ agentive with value := .antipassive } : Head), selection := ↑vTV }
 
--- (53), (56), (57)
-theorem ranero_clashes_only_at_voice :
-    ¬ nondistinct sluicing raneroAntipassive kaqchikelTransitive ∧
-      nondistinct vpEllipsis raneroAntipassive kaqchikelTransitive ∧
-      ¬ nondistinct vpEllipsis kaqchikelAntipassive kaqchikelTransitive := by
+/-- The paper's analysis with Ranero's antipassive. -/
+def ranero : Analysis := fun l v ↦
+  if l = .kaqchikel ∧ v = Kaqchikel.antipassive then raneroAntipassive else paper l v
+
+-- (56), (57), (65)
+theorem ranero_mispredicts_iff : ∀ r ∈ rows,
+    ((.marginal ≤ r.judgment ↔ r.clause.Licit nondistinct ranero) ↔
+      r.clause ≠ .causative { language := .kaqchikel, voice := Kaqchikel.antipassive }) := by
   decide +kernel
+
+/-- The structures of [burukina-polinsky-2025]'s Table 3, with its selection read privatively: vITV
+and vAF select a nominal, vTV selects none, and VoiceTV selects one and bears [ERG]. -/
+def table : Analysis := fun l v ↦
+  if l = .kaqchikel then
+    if v = Kaqchikel.active then { voice := voiceErg, selection := ↑vTV }
+    else if v = Kaqchikel.antipassive ∨ v = Kaqchikel.agentFocus .radical then { d := ↑() }
+    else paper l v
+  else paper l v
+
+-- (53), p. 717 of [burukina-polinsky-2025]
+theorem table_mispredicts_iff : ∀ r ∈ rows,
+    ((.marginal ≤ r.judgment ↔ r.clause.Licit nondistinct table) ↔
+      r.clause ≠ .ellipsis sluicing { language := .kaqchikel, voice := Kaqchikel.antipassive }
+        { language := .kaqchikel, voice := Kaqchikel.active } (some .P)) := by
+  decide +kernel
+
+/-- One analysis of all the languages: the K'iche' structures, wherever a surface voice has them. -/
+def uniform : _root_.Voice → Verb := fun v ↦
+  (List.lookup v [(Kiche.active .radical, kicheTransitive),
+    (Kiche.absolutiveAntipassive .radical, kicheAntipassive),
+    (Kiche.agentFocus .radical, kicheAgentFocus), (Kiche.simplePassive .radical, passiveD),
+    (Kaqchikel.agentFocus .radical, kicheAgentFocus), (Kaqchikel.passive, passiveD),
+    (implicitVoice, activeImplicit), (_root_.Voice.anticausative, inchoative),
+    (_root_.Voice.causative, causative), (_root_.Voice.reflexive, seReflexive)]).getD {}
+
+-- (53), (65), p. 28
+theorem uniform_mispredicts_iff : ∀ r ∈ rows,
+    ((.marginal ≤ r.judgment ↔ r.clause.Licit nondistinct fun _ ↦ uniform) ↔
+      r.clause ≠ .ellipsis sluicing { language := .kaqchikel, voice := Kaqchikel.antipassive }
+        { language := .kaqchikel, voice := Kaqchikel.active } (some .P) ∧
+      r.clause ≠ .causative { language := .kaqchikel, voice := Kaqchikel.antipassive }) := by
+  decide +kernel
+
+/-- The paper's analysis without [ERG]. -/
+def withoutErg : Analysis := fun l v ↦
+  if (paper l v).voice = ↑voiceErg then { paper l v with voice := agentive } else paper l v
+
+-- (43), which no row tests
+theorem predicts_withoutErg : Predicts nondistinct withoutErg := by
+  unfold Predicts
+  decide +kernel
+
+-- (43)
+theorem kicheAntipassive_le : paper.content kAP ≤ paper.content kTV := fun x ↦ by
+  have ha : paper.verb kAP = kicheAntipassive := by decide +kernel
+  have ht : paper.verb kTV = kicheTransitive := by decide +kernel
+  by_cases hx : x ∈ contentful
+  · simp only [contentful, List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl
+    · exact le_rfl
+    · simp only [Analysis.content, ha, ht]
+      exact ⟨le_rfl, ⟨le_rfl, le_rfl, bot_le⟩, le_rfl⟩
+    · simp only [Analysis.content, ha, ht]
+      exact ⟨WithBot.coe_le_coe.2 ⟨rfl, rfl, le_rfl, le_rfl, le_rfl, bot_le⟩, le_rfl, le_rfl⟩
+    · exact le_rfl
+  · simp [Analysis.content_of_notMem _ _ hx]
+
+-- `Merchant2013.deletes_v`
+theorem kiche_alternation_survives :
+    sluicing.Deletes (.head .v) ∧ (paper.verb kAP).d ≠ (paper.verb kTV).d ∧
+      nondistinct sluicing (paper.content kAP) (paper.content kTV) :=
+  ⟨by decide, by decide +kernel, nondistinct_of_le kicheAntipassive_le⟩
 
 -- pp. 30–31, (70b)
-theorem d_alternant_overgenerates : nondistinct vpEllipsis {} { d := ↑() } := by
-  decide +kernel
-
--- footnote 4
-example : nondistinct sluicing kicheAntipassive kicheAgentFocus := by
+theorem d_alternant_overgenerates :
+    nondistinct vpEllipsis (Analysis.content (fun _ _ ↦ {}) kAP)
+      (Analysis.content (fun _ _ ↦ { d := ↑() }) kAP) := by
   decide +kernel
 
 /-! ### Theories of features -/
