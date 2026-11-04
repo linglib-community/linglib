@@ -23,6 +23,7 @@ classification descends from Parsons and Kamp through Kamp and Partee; the label
 * `Modifier.IsIntersective.isExtensional`: intersective modifiers are extensional.
 * `Modifier.IsPrivative.not_isSubsective`: a privative modifier that holds of something is not
   subsective.
+* `Modifier.former_isPrivative`: *former*, over properties of times, is privative.
 
 ## Implementation notes
 
@@ -71,5 +72,25 @@ theorem IsPrivative.not_isSubsective (hp : IsPrivative adj) (hne : ∃ N w x, ad
   intro hs
   obtain ⟨N, w, x, hadj⟩ := hne
   exact isPrivative_iff_forall.mp hp N w x hadj (hs N w x hadj)
+
+/-! ### *former* -/
+
+section Former
+
+variable {I : Type*}
+
+/-- *former N* holds at `t` of what was an `N` at some earlier time and is not an `N` at `t`. -/
+@[expose] def former [LT I] : Modifier (I → E → Prop) :=
+  fun N t x ↦ (∃ t' < t, N t' x) ∧ ¬ N t x
+
+theorem former_isPrivative [LT I] : IsPrivative (former : Modifier (I → E → Prop)) :=
+  isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
+
+theorem former_not_isSubsective [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
+    ¬ IsSubsective (former : Modifier (I → E → Prop)) :=
+  former_isPrivative.not_isSubsective
+    ⟨fun s _ ↦ s = t', t, Classical.arbitrary E, ⟨t', h, rfl⟩, h.ne'⟩
+
+end Former
 
 end Modifier

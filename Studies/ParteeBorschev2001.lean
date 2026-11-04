@@ -1,25 +1,47 @@
 module
 
+public import Linglib.Data.Examples.ParteeBorschev2001
+public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Modification.Classification
 public import Linglib.Semantics.Possession.Relationalizer
 
 /-!
-# Partee & Borschev 2001: Some puzzles of predicate possessives
+# Partee and Borschev (2001): Some Puzzles of Predicate Possessives
 
-Do predicate possessives (*that team is John's*) refute Jensen and Vikner's uniform analysis of
-the genitive, on which every genitive is the argument of a relational noun, a plain noun being
-coerced to a relation first? A bare *John's* in predicate position is one of two things. Either
-it is an elliptical NP with an understood relational noun: *that teacher is John's* is *John's
-teacher* (17c), so the earlier verdict of Stockwell, Schachter and Partee that predicate
-possessives take only a free relation (Partee's (c) examples, repeated as (1)–(3)) is withdrawn,
-the oddness of *that father is John's* being charged to the demonstrative subject (17a). Or it
-is a genuine ⟨e,t⟩ predicate `λx[R_POSS(John)(x)]` (31), whose relation of possession or control
-comes from the possessive form and not from any noun; inside an NP such a possessive is an
-intersective modifier, the modifier genitive (6) being the noun conjoined with it
-(`Possession.π_apply`). German non-agreeing *mein* and Russian and Polish nominative predicate
-pronouns are bare predicates with the possession reading only; the agreeing and instrumental
-forms are elliptical NPs and admit the noun's relation as well ((28)–(30), (32)–(35)). Russian
-marks the split in form, postnominal genitive an argument and prenominal possessive a modifier,
-and on a relational noun the two constructions come apart (25).
+Jensen and Vikner make every genitive the argument of a relational noun, coercing a plain noun to
+one, while Partee makes the genitive of a plain noun an intersective modifier with a free relation.
+The two [assemble one predicate](##intersective_eq_π), and where the relation enters is
+[detectable exactly under a non-intersective modifier](##position_undetectable_iff): under *former*,
+coercion derives both readings of *Mary's former mansion* and
+[the modifier only one](##readingB_ne_π). English predicate possessives settle little, since
+[a ban on shifting a noun away and back](##no_shift_back_fits) fits data that
+[refute the verdict of a free relation alone](##freeRelationOnly_refuted). But in Russian and Polish
+[a pronoun has an argument reading exactly where the full NP is
+grammatical](##argument_reading_iff_fullNP), in German
+[exactly where it agrees](##argument_reading_iff_agreeing), and a Russian possessive inside an NP
+[does not reach a relational noun's relation](##ubijca_fits).
+
+## Implementation notes
+
+* Locators are to the final manuscript of May 2000, the copy at hand, not to the printed volume.
+* The paper does not say how a modifier combines with a relational noun. Its types
+  [leave no mode](##possessive_modes), so the possessor slot is closed first, with `⨆`.
+
+## Errata
+
+* (8), (9) and (15) apply a relation to the possessee first and (10) and (14) to the possessor
+  first; the study follows (10).
+* (34b) translates a full NP as 'mine', where the parallel (32b) has 'my country'.
+* The instrumental pronoun on *portret* [has no possession reading](##not_instrumental_possession)
+  (footnote 13), though an elliptical NP should have one; the authors offer no explanation.
+
+## TODO
+
+* Encode (18)–(22), the English candidates for each structure, and the Russian *ničej* of
+  footnote 16.
+* The German test of footnote 11, ellipsis of the head noun alone, would give German the
+  independent diagnostic that the full NP gives Russian and Polish.
 
 ## References
 
@@ -33,56 +55,159 @@ and on a relational noun the two constructions come apart (25).
 
 namespace ParteeBorschev2001
 
-open Possession
+open Modifier Montague Possession
 
-variable {E S : Type*}
+variable {ι α I E : Type*}
 
-/-! ### Elliptical NPs and bare predicates (§2.3–2.4) -/
+/-! ### The two analyses (§1.2) -/
 
-/-- For an `x` that is a `P`, the elliptical *[John's P]* on its possession reading agrees with the
-bare predicate possessive (31). -/
-theorem elliptical_iff_bare {P : E → S → Prop} {x : E} {s : S} (possessor : E)
-    (R : E → E → S → Prop) (hP : P x s) :
-    π P R possessor x s ↔ R possessor x s :=
-  and_iff_right hP
+section Position
 
-/-! ### Russian genitive vs prenominal possessive (§2.2)
+variable [SemilatticeInf α]
 
-*stul Peti* and *Petin stul* (23)–(24) describe the same range of cases: with a plain noun the
-argument genitive over the coerced noun and the modifier possessive assemble the same term
-`π stul R petja`. On a relational noun they part: *ubijca Peti* is 'murderer of Petja', while
-*Petin ubijca* is only 'a murderer Petja has hired' (25). Model: Petja `0`, the killer `1` who
-murdered Petja, a hireling `2` who murdered the killer and whom Petja controls. -/
+-- (10), (11)
+theorem intersective_eq_π (N : α) (R : ι → α) (y : ι) : intersective (R y) N = π N R y :=
+  inf_comm ..
 
-/-- The entities are Petja, the killer and the hireling. -/
-abbrev Ent := Fin 3
-/-- Petja. -/
-abbrev petja : Ent := 0
-/-- The one who murdered Petja. -/
-abbrev killer : Ent := 1
-/-- The murderer in Petja's employ. -/
-abbrev hireling : Ent := 2
+/-- A modifier cannot tell whether the free relation entered inside or outside its scope exactly
+when it is intersective, which answers in general whether the position ever makes a detectable
+difference (p. 6). -/
+theorem position_undetectable_iff [OrderTop α] [Nonempty ι] {m : Modifier α} :
+    (∀ (N : α) (R : ι → α) (y : ι), m (π N R y) = π (m N) R y) ↔ m.IsIntersective :=
+  ⟨fun h ↦ isIntersective_iff_map_inf.2 fun x q ↦ h x (fun _ ↦ q) (Classical.arbitrary ι),
+    fun h N R y ↦ isIntersective_iff_map_inf.1 h N (R y)⟩
 
-/-- *ubijca*, where `murderer v y` holds iff `y` murdered `v`. -/
-def murderer : Ent → Ent → Unit → Prop := fun v y _ ↦
-  v = petja ∧ y = killer ∨ v = killer ∧ y = hireling
+end Position
 
-/-- `R_POSS` holds of Petja and the hireling, whom Petja controls. -/
-def rPoss : Ent → Ent → Unit → Prop := fun p y _ ↦ p = petja ∧ y = hireling
+/-! ### *Mary's former mansion* (12)–(16) -/
 
--- (25a)
-theorem ubijcaPeti_iff (y : Ent) : murderer petja y () ↔ y = killer := by
-  unfold murderer; decide +revert
+section Former
 
-/-- *Petin ubijca* (25b), the modifier possessive over the noun with its possessor slot closed,
-is a murderer Petja controls, the hireling, never Petja's own murderer. -/
-theorem petinUbijca_iff (y : Ent) :
-    π (⨆ v, murderer v) rPoss petja y () ↔ y = hireling := by
-  simp only [π_apply, Pi.inf_apply, iSup_apply, iSup_Prop_eq, inf_Prop_eq, murderer, rPoss]
-  decide +revert
+variable [LT I] {N : I → E → Prop} {R : E → I → E → Prop} {y x : E} {t : I}
 
-/-- The genitive and the prenominal possessive are distinct predicates on a relational noun. -/
-theorem ubijcaPeti_ne_petinUbijca : murderer petja ≠ π (⨆ v, murderer v) rPoss petja :=
-  fun h ↦ absurd ((ubijcaPeti_iff killer).2 rfl) (by rw [h, petinUbijca_iff]; decide)
+-- Reading A is `π (former N) R y` (14) and Reading B is `former (π N R y)` (15).
+theorem readingB_not_readingA_iff :
+    former (π N R y) t x ∧ ¬ π (former N) R y t x ↔
+      (∃ t' < t, N t' x ∧ R y t' x) ∧ ¬ R y t x := by
+  simp only [former, π_apply, Pi.inf_apply, inf_Prop_eq]
+  grind
+
+theorem readingA_not_readingB_iff :
+    π (former N) R y t x ∧ ¬ former (π N R y) t x ↔
+      (∃ t' < t, N t' x) ∧ ¬ N t x ∧ R y t x ∧ ∀ t' < t, N t' x → ¬ R y t' x := by
+  simp only [former, π_apply, Pi.inf_apply, inf_Prop_eq]
+  grind
+
+/-- Partee's modifier cannot derive Reading B (p. 6), whatever noun it meets, since its value
+entails the free relation now and something once `y`'s `N` that is no longer `y`'s has Reading B
+without it. -/
+theorem readingB_ne_π {t' : I} (ht : t' < t) (hN : N t' x) (hR : R y t' x) (hR' : ¬ R y t x)
+    (M : I → E → Prop) : former (π N R y) ≠ π M R y := fun e ↦
+  have h : former (π N R y) t x := ⟨⟨t', ht, hN, hR⟩, fun h ↦ hR' h.2⟩
+  hR' (e ▸ h : π M R y t x).2
+
+end Former
+
+/-! ### Predicate possessives in English (§2.1) -/
+
+/-- The type of a plain noun, a CN. -/
+abbrev cn : Ty := .e ⇒ .t
+
+/-- The type of a relational noun, a TCN. -/
+abbrev tcn : Ty := .e ⇒ .e ⇒ .t
+
+/-- The types a noun has lexically: *teacher* has both (p. 10). -/
+def lexicalTypes : List (String × List Ty) :=
+  [("team", [cn]), ("brother", [tcn]), ("father", [tcn]), ("favorite movie", [tcn]),
+    ("teacher", [cn, tcn])]
+
+/-- The type a subject wants of its noun: a demonstrative a CN (p. 9), a possessive a TCN. -/
+def subjectType : List (String × Ty) := [("demonstrative", cn), ("possessive", tcn)]
+
+/-- A row's noun, by its lexical types, and the type its subject wants. -/
+def clause? (e : Datum) : Option (List Ty × Ty) :=
+  (e.parse? "noun" lexicalTypes).bind fun ts ↦ (e.parse? "subject" subjectType).map (ts, ·)
+
+/-- A sentence shifts its noun away from its basic meaning and back (p. 10) when the subject wants a
+type the noun lacks while the elliptical or full predicate wants the TCN it has. -/
+def ShiftsAwayAndBack (c : List Ty × Ty) : Prop := c.2 ∉ c.1 ∧ tcn ∈ c.1
+
+instance : DecidablePred ShiftsAwayAndBack := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A ban on shifting a noun away and back fits (1c)–(3c) and (17): the fault in (17a,b,f) lies
+with the subject, not with the predicate possessive. -/
+theorem no_shift_back_fits :
+    Datum.Checks clause? (fun c ↦ .ofProp (¬ ShiftsAwayAndBack c)) Examples.all 9 := by
+  decide
+
+-- p. 9. The verdict of a free relation alone, so of a plain noun alone, fits the data it came from;
+-- (17c,d,e) refute it.
+theorem freeRelationOnly_refuted :
+    Datum.Checks clause? (fun c ↦ .ofProp (tcn ∉ c.1))
+        [Examples.ex1c, Examples.ex2c, Examples.ex3c] 3 ∧
+      ∀ e ∈ [Examples.ex17c, Examples.ex17d, Examples.ex17e],
+        ¬ e.Fits clause? (fun c ↦ .ofProp (tcn ∉ c.1)) := by
+  decide
+
+/-! ### Russian prenominal possessives and genitives (§2.2) -/
+
+-- A possessive of type ⟨e,t⟩ composes with a CN by predicate modification and with a TCN not at
+-- all, while a TCN takes its possessor by application.
+theorem possessive_modes :
+    cn.mode? cn = some ⟨_, .predicateModification⟩ ∧ cn.mode? tcn = none ∧
+      tcn.mode? .e = some ⟨_, .functionalLeft⟩ :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- On a relational noun the two constructions come apart (25): the genitive holds of Petja's
+murderer, and the possessive, the noun with its possessor slot closed met with `R_POSS`, does not
+unless being Petja's murderer is a way of standing in `R_POSS` to Petja. -/
+theorem ubijca_fits {N R : ι → E → Prop} {p : ι} {x : E} (hN : N p x) (hR : ¬ R p x) :
+    (N p x ↔ Examples.ex25a.readings.lookup "murderer of Petja" = some .acceptable) ∧
+      (π (⨆ v, N v) R p x ↔
+        Examples.ex25b.readings.lookup "murderer of Petja" = some .acceptable) := by
+  simp only [hN, π_apply, Pi.inf_apply, inf_Prop_eq, hR, and_false]
+  decide
+
+-- (25b) holds of a murderer of anyone who stands in `R_POSS` to Petja, 'a murderer Petja has
+-- hired'.
+theorem hired_fits {N R : ι → E → Prop} {p v : ι} {x : E} (hN : N v x) (hR : R p x) :
+    π (⨆ v, N v) R p x ↔
+      Examples.ex25b.readings.lookup "a murderer Petja has hired" = some .acceptable := by
+  simpa [π_apply, hR] using ⟨fun _ ↦ by decide, fun _ ↦ ⟨v, hN⟩⟩
+
+/-! ### Possessive pronouns in German, Russian and Polish (§2.3–2.4) -/
+
+-- p. 15. On a subject that is a `P`, the elliptical NP on its possession reading is the bare
+-- predicate (31).
+theorem elliptical_eq_bare [SemilatticeInf α] (P : α) (R : ι → α) (p : ι) :
+    P ⊓ π P R p = P ⊓ R p :=
+  inf_left_idem ..
+
+-- p. 13. The form without agreement, like a predicate adjective (26), has possession alone.
+theorem argument_reading_iff_agreeing :
+    Datum.ReadCount (·.feature? "agreement") Examples.all 6 ∧
+      ∀ e ∈ Examples.all, ∀ a ∈ e.feature? "agreement",
+        e.readings.lookup "possession" = some .acceptable ∧
+          (e.readings.lookup "argument" = some .acceptable ↔ a = "agreeing") := by
+  decide
+
+/-- Each Russian and Polish pronoun with the full predicate NP of its frame. -/
+def frames : List (Datum × Datum) :=
+  [(Examples.ex32a, Examples.ex32b), (Examples.ex33a, Examples.ex33b),
+    (Examples.ex34a, Examples.ex34b), (Examples.ex35a, Examples.ex35b)]
+
+/-- A predicate possessive pronoun has an argument reading exactly where the full NP is grammatical
+in its frame, so it is then the remnant of an elliptical NP, and otherwise a bare predicate with
+possession alone (p. 15). -/
+theorem argument_reading_iff_fullNP :
+    ∀ f ∈ frames, f.1.readings.lookup "possession" = some .acceptable ∧
+      (f.1.readings.lookup "argument" = some .acceptable ↔ f.2.judgment = .acceptable) := by
+  decide
+
+-- footnote 13
+theorem not_instrumental_possession :
+    ¬ ∀ e ∈ Examples.all, e.feature? "case" = some "instrumental" →
+      e.readings.lookup "possession" = some .acceptable := by
+  decide
 
 end ParteeBorschev2001

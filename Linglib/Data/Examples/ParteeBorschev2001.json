@@ -1,0 +1,781 @@
+[
+  {
+    "id": "parteeborschev2001_ex1c",
+    "source": {"bibkey": "partee-1997", "paperLabel": "p. 464"},
+    "reportedIn": {"bibkey": "partee-borschev-2001", "paperLabel": "(1c)"},
+    "language": "stan1293",
+    "primaryText": "That team is John's",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "team"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex2c",
+    "source": {"bibkey": "partee-1997", "paperLabel": "p. 464"},
+    "reportedIn": {"bibkey": "partee-borschev-2001", "paperLabel": "(2c)"},
+    "language": "stan1293",
+    "primaryText": "That brother is John's",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "brother"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "The mark is printed in parentheses, (#).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex3c",
+    "source": {"bibkey": "partee-1997", "paperLabel": "p. 464"},
+    "reportedIn": {"bibkey": "partee-borschev-2001", "paperLabel": "(3c)"},
+    "language": "stan1293",
+    "primaryText": "That favorite movie is John's",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "favorite movie"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "The mark is printed in parentheses, (#).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "That father is John's.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "father"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "Footnote 8: well formed on a one-place father with a strong context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "That favorite movie is John's.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "favorite movie"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17c",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17c)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1293",
+    "primaryText": "That teacher is John's.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "teacher"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "From Ash Asudeh (p.c.).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17d",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17d)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1293",
+    "primaryText": "His father is also John's.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "pointing",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "father"],
+      ["subject", "possessive"]
+    ],
+    "comment": "From Ekaterina Rakhilina (p.c.); printed His [pointing] father.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17e",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17e)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1293",
+    "primaryText": "Dad's favorite movie is also mine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "favorite movie"],
+      ["subject", "possessive"]
+    ],
+    "comment": "From Ekaterina Rakhilina (p.c.).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex17f",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(17f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "That father is John's father.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "father"],
+      ["subject", "demonstrative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex23a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(23a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Petin stul",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Petin", "Petja-POSS-M.SG."], ["stul", "chair-M.SG."]
+    ],
+    "translation": "Petja's chair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "possessive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex23b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(23b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Mamin portret",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mamin", "Mama-POSS-M.SG."], ["portret", "portrait-M.SG."]
+    ],
+    "translation": "Mama's portrait.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "possessive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex24a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(24a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "stul Peti",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["stul", "chair-M.SG."], ["Peti", "Petja-GEN.SG."]
+    ],
+    "translation": "Petja's chair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "genitive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex24b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(24b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "portret mamy",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["portret", "portrait-M.SG."], ["mamy", "Mama-GEN.SG."]
+    ],
+    "translation": "Mama's portrait.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "genitive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex25a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(25a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "ubijca Peti",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ubijca", "murderer-M.SG."], ["Peti", "Petja-GEN.SG."]
+    ],
+    "translation": "Petja's murderer (murderer of Petja)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "murderer of Petja", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "genitive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex25b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(25b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Petin ubijca",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Petin", "Petja-POSS-M.SG."], ["ubijca", "murderer-M.SG."]
+    ],
+    "translation": "# 'Petja's murderer' [ok only as e.g. 'a murderer Petja has hired']",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "murderer of Petja", "judgment": "unacceptable"},
+      {"name": "a murderer Petja has hired", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "possessive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex26",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Diese Bücher sind alt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Diese", "These-N.PL"], ["Bücher", "books-N.PL"], ["sind", "are"], ["alt", "old"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Diese Bücher sind alte.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Observed by Sten Vikner (p.c.).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex27",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Diese Bücher sind meine.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Diese", "These-N.PL"], ["Bücher", "books"], ["sind", "are"], ["meine", "mine-PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Diese Bücher sind mein.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The alternative is printed *?mein. Observed by Sten Vikner (p.c.).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex28a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(28a)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Diese Bücher sind meine.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Diese", "These-N.PL"], ["Bücher", "books-N.PL"], ["sind", "are"], ["meine", "mine-PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "agreeing"]
+    ],
+    "comment": "Can be any relation; authorship is the typical argument relation (p. 13).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex28b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(28b)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Diese Bücher sind mein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Diese", "These-N.PL"], ["Bücher", "books-N.PL"], ["sind", "are"], ["mein", "mine"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "nonagreeing"]
+    ],
+    "comment": "Archaic; standard, not colloquial, German, from Hans Kamp (p.c.) and others.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex29a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(29a)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Das Land ist (jetzt) meins.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "The-N.SG"], ["Land", "land-N.SG"], ["ist", "is"], ["(jetzt)", "(now)"],
+      ["meins", "mine-N.SG"]
+    ],
+    "translation": "",
+    "context": "A newly naturalized citizen speaks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "agreeing"]
+    ],
+    "comment": "Citizenship is the typical argument relation (p. 13).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex29b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(29b)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Das Land ist jetzt mein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "The-N.SG"], ["Land", "land-N.SG"], ["ist", "is"], ["jetzt", "now"],
+      ["mein", "mine"]
+    ],
+    "translation": "",
+    "context": "A conqueror speaks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "nonagreeing"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex30a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Die Kinder sind meine.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "The"], ["Kinder", "children"], ["sind", "are"], ["meine", "mine-PL"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "agreeing"]
+    ],
+    "comment": "Any relation, most likely parent and child.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex30b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "stan1295",
+    "primaryText": "Die Kinder sind mein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "The"], ["Kinder", "children"], ["sind", "are"], ["mein", "mine"]
+    ],
+    "translation": "",
+    "context": "A custody fight.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["agreement", "nonagreeing"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex32a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(32a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Éta strana byla kogda-to moej",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Éta", "That-F.NOM.SG"], ["strana", "country-F.NOM.SG"], ["byla", "was-F.SG"],
+      ["kogda-to", "once"], ["moej", "my-F.INSTR.SG"]
+    ],
+    "translation": "That country was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "instrumental"]
+    ],
+    "comment": "'possession' or citizenship",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex32b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(32b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Éta strana byla kogda-to moej stranoj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Éta", "That-F.NOM.SG"], ["strana", "country-F.NOM.SG"], ["byla", "was-F.SG"],
+      ["kogda-to", "once"], ["moej", "my-F.INSTR.SG"], ["stranoj", "country-F.INSTR.SG"]
+    ],
+    "translation": "That country was once my country",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "instrumental"]
+    ],
+    "comment": "'possession' or citizenship",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex33a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(33a)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Éta strana byla kogda-to moja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Éta", "That-F.NOM.SG"], ["strana", "country-F.NOM.SG"], ["byla", "was-F.SG"],
+      ["kogda-to", "once"], ["moja", "my-F.NOM.SG"]
+    ],
+    "translation": "That country was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "'possession' only",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex33b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(33b)"},
+    "reportedIn": null,
+    "language": "russ1263",
+    "primaryText": "Éta strana byla kogda-to moja strana",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Éta", "That-F.NOM.SG"], ["strana", "country-F.NOM.SG"], ["byla", "was-F.SG"],
+      ["kogda-to", "once"], ["moja", "my-F.NOM.SG"], ["strana", "country-F.NOM.SG"]
+    ],
+    "translation": "That country was once my country",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex34a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(34a)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten kraj był kiedyś moim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ten", "That-M.NOM.SG"], ["kraj", "country-M.NOM.SG"], ["był", "was-M.SG"],
+      ["kiedyś", "once"], ["moim", "my-M.INSTR.SG"]
+    ],
+    "translation": "That country was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "instrumental"]
+    ],
+    "comment": "'possession' or citizenship. Judgments from Ania Łubowicz and Anita Nowak (fn. 13).",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex34b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(34b)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten kraj był kiedyś moim krajem.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ten", "That-M.NOM.SG"], ["kraj", "country-M.NOM.SG"], ["był", "was-M.SG"],
+      ["kiedyś", "once"], ["moim", "my-M.INSTR.SG"], ["krajem", "country-M.INSTR.SG"]
+    ],
+    "translation": "That country was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "instrumental"]
+    ],
+    "comment": "'possession' or citizenship; citizenship preferred.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex35a",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(35a)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten kraj był kiedyś mój.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ten", "That-M.NOM.SG"], ["kraj", "country-M.NOM.SG"], ["był", "was-M.SG"],
+      ["kiedyś", "once"], ["mój", "my-M.NOM.SG"]
+    ],
+    "translation": "That country was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "'possession' only",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex35b",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(35b)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten kraj był kiedyś mój kraj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ten", "That-M.NOM.SG"], ["kraj", "country-M.NOM.SG"], ["był", "was-M.SG"],
+      ["kiedyś", "once"], ["mój", "my-M.NOM.SG"], ["kraj", "country-M.SG"]
+    ],
+    "translation": "That country was once my country",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_ex35c",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "(35c)"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten kraj to był kiedyś mój kraj.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ten", "That-M.NOM.SG"], ["kraj", "country-M.NOM.SG"], ["to", "PRT"], ["był", "was-M.SG"],
+      ["kiedyś", "once"], ["mój", "my-M.NOM.SG"], ["kraj", "country-M.SG"]
+    ],
+    "translation": "That country was once my country",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "'possession' or citizenship. Footnote 14 leaves its structure for further study.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_exfn13nom",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "fn. 13"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten portret był kiedyś mój.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That portrait was once mine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "nominative"]
+    ],
+    "comment": "The frame of (35a) with the noun portret; the footnote prints only the noun and the pronoun. From Bożena Rozwadowska.",
+    "verified": "page-image"
+  },
+  {
+    "id": "parteeborschev2001_exfn13instr",
+    "source": {"bibkey": "partee-borschev-2001", "paperLabel": "fn. 13"},
+    "reportedIn": null,
+    "method": "elicitation",
+    "language": "poli1260",
+    "primaryText": "Ten portret był kiedyś moim.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possession", "judgment": "unacceptable"},
+      {"name": "argument", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "instrumental"]
+    ],
+    "comment": "The frame of (34a) with the noun portret; the footnote prints only the noun and the pronoun. 'That the person in the portrait was me some time ago but that now it is somebody else.' From Bożena Rozwadowska.",
+    "verified": "page-image"
+  }
+]
