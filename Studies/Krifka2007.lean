@@ -81,13 +81,14 @@ def approximateInterpretation : Form × Reading → ℕ
 /-- The superoptimal pairs of the earlier account read the simple form approximately and the
 complex form precisely, the division of pragmatic labour. -/
 theorem division_of_labour :
-    superoptimal Finset.univ (profile [simpleExpression, approximateInterpretation]) =
+    superoptimal Finset.univ
+        (ViolationProfile.ofList [simpleExpression, approximateInterpretation]) =
       {(.simple, .approximate), (.complex, .precise)} := by
   decide
 
 theorem division_of_labour_without_simple_precise :
     superoptimal (Finset.univ.erase (.simple, .precise))
-      (profile [simpleExpression, approximateInterpretation]) =
+      (ViolationProfile.ofList [simpleExpression, approximateInterpretation]) =
       {(.simple, .approximate), (.complex, .precise)} := by
   decide
 

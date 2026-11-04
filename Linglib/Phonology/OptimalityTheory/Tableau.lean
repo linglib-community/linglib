@@ -22,6 +22,7 @@ candidates of least profile.
 ## Main definitions
 
 * `ViolationProfile n`: the violation vector `Fin n → ℕ` under its lexicographic order.
+* `ViolationProfile.ofList`: a candidate's profile under a list of constraints in rank order.
 * `Tableau C n`: a finite set of candidates and `n` constraints in rank order, position `0`
   most dominant.
 * `Tableau.profile`, `Tableau.optimal`: a candidate's violation profile, and the set of winners.
@@ -77,6 +78,56 @@ namespace OptimalityTheory
 /-- A fixed-length violation profile, the violation vector `Fin n → ℕ` under its lexicographic
 order. -/
 abbrev ViolationProfile (n : ℕ) := Lex (Fin n → ℕ)
+
+namespace ViolationProfile
+
+variable {C : Type*}
+
+/-- The violation profile of a candidate under a list of constraints in rank order, position `0`
+most dominant. -/
+def ofList (ranking : List (Constraint C)) (c : C) : ViolationProfile ranking.length :=
+  toLex fun p ↦ ranking.get p c
+
+/-- A candidate is minimal under a ranked family of constraints iff it is minimal under the lower
+constraints among the candidates doing best on the top constraint. -/
+theorem minimalFor_toLex_iff {n : ℕ} {P : C → Prop} {g : C → Fin (n + 1) → ℕ} {c : C} :
+    MinimalFor P (fun d ↦ toLex (g d)) c ↔
+      MinimalFor (MinimalFor P (g · 0)) (fun d ↦ toLex (Fin.tail (g d))) c := by
+  simp only [minimalFor_iff_forall_lt, Pi.toLex_lt_toLex_iff_succ]
+  refine ⟨fun ⟨hc, hmin⟩ ↦ ⟨⟨hc, fun d hd ↦ hmin (.inl hd)⟩, fun d hd ⟨hdR, hdF⟩ ↦ ?_⟩,
+    fun ⟨⟨hc, hF⟩, hmin⟩ ↦ ⟨hc, fun d hd hdR ↦ ?_⟩⟩
+  · have heq : g d 0 = g c 0 :=
+      (not_lt.1 fun h ↦ hdF h hc).antisymm (not_lt.1 fun h ↦ hmin (.inl h) hdR)
+    exact hmin (.inr ⟨heq, hd⟩) hdR
+  · rcases hd with hd | ⟨heq, hd⟩
+    · exact hF hd hdR
+    · exact hmin hd ⟨hdR, fun e he ↦ hF (heq ▸ he)⟩
+
+theorem ofList_cons_lt_iff {F : Constraint C} {Fs : List (Constraint C)} {d e : C} :
+    ofList (F :: Fs) d < ofList (F :: Fs) e ↔
+      F d < F e ∨ F d = F e ∧ ofList Fs d < ofList Fs e :=
+  Pi.toLex_lt_toLex_iff_succ _ _
+
+theorem not_ofList_nil_lt {d e : C} : ¬ ofList [] d < ofList [] e := fun ⟨i, _⟩ ↦ i.elim0
+
+theorem minimalFor_ofList_nil {P : C → Prop} {c : C} : MinimalFor P (ofList []) c ↔ P c :=
+  ⟨(·.1), fun h ↦ minimalFor_iff_forall_lt.2 ⟨h, fun _ hd ↦ absurd hd not_ofList_nil_lt⟩⟩
+
+theorem minimalFor_ofList_cons {P : C → Prop} {F : Constraint C} {Fs : List (Constraint C)}
+    {c : C} : MinimalFor P (ofList (F :: Fs)) c ↔ MinimalFor (MinimalFor P F) (ofList Fs) c :=
+  minimalFor_toLex_iff
+
+/-- The profile is strictly monotone in a candidate order when every constraint is monotone and
+some constraint separates each strict pair. -/
+theorem strictMono_ofList [Preorder C] {ranking : List (Constraint C)}
+    (hmono : ∀ c ∈ ranking, Monotone c) (hsep : ∀ ⦃p q⦄, p < q → ∃ c ∈ ranking, c p < c q) :
+    StrictMono (ofList ranking) := fun p q hpq ↦ by
+  refine Pi.toLex_strictMono (Pi.lt_def.2 ⟨fun i ↦ hmono _ (List.get_mem ..) hpq.le, ?_⟩)
+  obtain ⟨c, hc, hlt⟩ := hsep hpq
+  obtain ⟨i, rfl⟩ := List.mem_iff_get.1 hc
+  exact ⟨i, hlt⟩
+
+end ViolationProfile
 
 /-- An *Optimality-theoretic tableau*: a finite set of candidates and the constraints that
 evaluate them, in rank order. -/
@@ -182,6 +233,9 @@ def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) ca
 @[simp] theorem ofList_candidates : (ofList candidates ranking).candidates = candidates := rfl
 
 @[simp] theorem ofList_constraints : (ofList candidates ranking).constraints = ranking.get := rfl
+
+@[simp] theorem profile_ofList :
+    (ofList candidates ranking).profile = ViolationProfile.ofList ranking := rfl
 
 variable {con r candidates}
 
@@ -325,14 +379,8 @@ def tail (t : Tableau C (n + 1)) : Tableau C n :=
 /-- The winners of a tableau are the winners of its tail. -/
 theorem optimal_tail (t : Tableau C (n + 1)) : t.tail.optimal = t.optimal := by
   ext c
-  simp only [mem_optimal_iff, tail, Finset.mem_argmin, profile, Pi.toLex_le_toLex_iff_succ]
-  refine ⟨fun ⟨⟨hc, hmin⟩, htail⟩ ↦ ⟨hc, fun d hd ↦ ?_⟩, fun h ↦ ⟨⟨h.1, fun d hd ↦ ?_⟩,
-    fun d hd ↦ ?_⟩⟩
-  · exact (hmin d hd).lt_or_eq.imp id fun h0 ↦ ⟨h0, htail d ⟨hd, fun e he ↦ h0 ▸ hmin e he⟩⟩
-  · rcases h.2 d hd with h0 | ⟨h0, -⟩
-    exacts [h0.le, h0.le]
-  · rcases h.2 d hd.1 with h0 | ⟨-, ht⟩
-    exacts [absurd (hd.2 c h.1) (not_le.2 h0), ht]
+  simp only [optimal, tail, Finset.mem_argmin_iff_minimalFor]
+  exact (ViolationProfile.minimalFor_toLex_iff (g := fun d p ↦ t.constraints p d)).symm
 
 variable {s : Finset C} {F : Constraint C} {Fs Gs : List (Constraint C)}
 

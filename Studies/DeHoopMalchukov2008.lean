@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Pragmatics.Bidirectional
 
 /-!
@@ -110,19 +110,19 @@ def asymmetrical : Finset (Option Unit × Strength) :=
 
 -- (18), (31), (39)
 theorem identify_marks_strong :
-    superoptimal asymmetrical (profile [identify () .strong, economy]) =
+    superoptimal asymmetrical (ViolationProfile.ofList [identify () .strong, economy]) =
       {(some (), .strong), (none, .weak)} := by
   decide
 
 -- (21), (26), (32), (35)
 theorem distinguish_marks_confusable (pos : Position) :
-    superoptimal asymmetrical (profile [distinguish pos.confusable, economy]) =
+    superoptimal asymmetrical (ViolationProfile.ofList [distinguish pos.confusable, economy]) =
       {(some (), pos.confusable), (none, pos.confusable.opposite)} := by
   cases pos <;> decide
 
 theorem converge_iff (pos : Position) :
-    superoptimal asymmetrical (profile [identify () .strong, economy]) =
-        superoptimal asymmetrical (profile [distinguish pos.confusable, economy]) ↔
+    superoptimal asymmetrical (ViolationProfile.ofList [identify () .strong, economy]) =
+        superoptimal asymmetrical (ViolationProfile.ofList [distinguish pos.confusable, economy]) ↔
       pos = .object := by
   cases pos <;> decide
 
@@ -144,7 +144,7 @@ def symmetrical : Finset (Option Overt × Strength) :=
 
 -- (24), (29)
 theorem symmetrical_identify :
-    superoptimal symmetrical (profile [identify .identifying .strong, economy]) =
+    superoptimal symmetrical (ViolationProfile.ofList [identify .identifying .strong, economy]) =
       {(some .identifying, .strong), (some .other, .weak)} := by
   decide
 
@@ -152,7 +152,7 @@ theorem distinguish_symmetrical (m : Strength) : ∀ p ∈ symmetrical, distingu
   cases m <;> decide
 
 theorem symmetrical_distinguish (m : Strength) :
-    superoptimal symmetrical (profile [distinguish m, economy]) = symmetrical := by
+    superoptimal symmetrical (ViolationProfile.ofList [distinguish m, economy]) = symmetrical := by
   cases m <;> decide
 
 /-! ### Both strategies at once -/
@@ -175,7 +175,7 @@ the ergative by IDENTIFY and the intermediate types stay caseless; the paper's e
 inanimate is blocked by the first person's, see the module's TODO. -/
 theorem aranda :
     superoptimal arandaSubjects
-        (profile [distinguish .inanimate, identify () .firstPerson, economy]) =
+        (ViolationProfile.ofList [distinguish .inanimate, identify () .firstPerson, economy]) =
       {(some (), .firstPerson), (none, .intermediate)} := by
   decide
 

@@ -1,53 +1,33 @@
 module
 
-public import Mathlib.Data.List.Lex
+public import Mathlib.Data.Set.Card
 public import Mathlib.Order.FixedPoints
+public import Mathlib.Order.TransfiniteIteration
+public import Mathlib.SetTheory.Ordinal.Family
 public import Linglib.Core.Order.WellFoundedSet
 
 /-!
 # Bidirectional Optimality Theory
 
-Bidirectional optimality theory evaluates a form-meaning pair of a generator from the speaker's
-and the hearer's side at once. Another pair blocks it when it is more harmonic and shares its
-meaning (the Q-principle, production) or its form (the I-principle, comprehension). Under strong
-bidirection a pair is optimal when no pair of the generator blocks it; under weak bidirection it
-is super-optimal when no super-optimal pair blocks it, a fixed point of the blocking step.
-
-## Main definitions
-
-* `profile`: the violation profile of a ranking, compared lexicographically.
-* `QBlocks`, `IBlocks`, `Blocks`: a set of pairs blocks a pair along the meaning axis, the form
-  axis, or either.
-* `unblockedSet pairs f S`: the pairs of `pairs` that `S` does not block, an antitone step;
-  `strongOptimalSet` is its value at `pairs`.
-* `superoptimalSet`: the greatest fixed point of the square of the step.
-* `IsWeakSolution`: a solution of Blutner's mutual recursion of the two principles.
-* `unblocked`, `strongOptimal`, `superoptimal`: the computable `Finset` forms.
-
-## Main results
-
-* `mem_superoptimalSet`: when the harmonies of the generator are well-founded, a pair is
-  super-optimal iff it lies in the generator and no super-optimal pair blocks it, and
-  `superoptimalSet` is the only such set.
-* `strongOptimalSet_subset_superoptimalSet`: optimal pairs are super-optimal.
-* `superoptimalSet_eq_graphOn`: the division of pragmatic labour. On a generator containing the
-  graph of an isomorphism between the markedness orders of forms and of meanings, the
-  super-optimal pairs are that graph, under every harmony strictly monotone in markedness.
-* `coe_superoptimal`: the `Finset` iteration computes `superoptimalSet`.
+Bidirectional optimality theory evaluates a form-meaning pair of a generator from the speaker's and
+the hearer's side at once: a more harmonic pair blocks it when it shares its meaning (the
+Q-principle) or its form (the I-principle). Strong bidirection keeps the pairs no pair of the
+generator blocks. Weak bidirection keeps those no surviving pair blocks, as a mutual recursion of
+the two principles, `IsWeakSolution`, or as a fixed point, `superoptimalSet`. Well-founded harmonies
+make [the first](##IsWeakSolution.unique) and [the second](##eq_superoptimalSet_of_isFixedPt)
+unique, and [transitivity makes them coincide](##IsWeakSolution.inter_eq_superoptimalSet). The fixed
+point is [built in stages](##iUnion_stage), [finitely many](##stage_eq_superoptimalSet_of_encard_le)
+for finitely many harmonies, and on a generator containing the graph of an isomorphism of markedness
+orders it [is that graph](##superoptimalSet_eq_graphOn), the division of pragmatic labour.
 
 ## Implementation notes
 
-* The harmony is any preorder reached through `f`, such as `profile` into the lexicographic
-  order on `List ℕ`. The principles' "other pair" clause is dropped, since `f q < f p` already
-  forces `q ≠ p`.
-* The step is antitone, so its square has a greatest fixed point without further hypotheses, and
-  the step exchanges it with the least one. The two coincide by descent along a minimal pair of
-  their difference when the harmonies of the generator are well-founded, Jäger's hypothesis,
-  which every finite generator meets (`Set.Finite.isWF`).
+* Harmony is any `LT` reached through `f`, with transitivity and totality assumed only where a
+  theorem uses them. An OT system's harmony is `OptimalityTheory.ViolationProfile.ofList`, whose
+  order is well-founded on any generator. The principles' "other pair" clause is dropped when
+  `f q < f p` forces `q ≠ p`.
 * The `Finset` form iterates the squared step from `pairs` with `pairs.card` as fuel and an early
   exit, so it needs no convergence hypothesis and `decide` stays shallow.
-* Jäger's uniqueness of weak solutions and their agreement with `superoptimalSet` are proved in
-  `Studies/Jaeger2002.lean`.
 
 ## References
 
@@ -64,36 +44,15 @@ namespace BidirectionalOT
 open Function
 open OrderHom hiding id
 
-variable {F M α : Type*} [Preorder α]
+universe u v
 
-/-- The violation profile of a ranking lists a pair's violations from the dominant constraint
-down, to be compared lexicographically. -/
-def profile (ranking : List (F × M → ℕ)) (p : F × M) : List ℕ := ranking.map (· p)
-
-private theorem map_lt_map {β : Type*} {ranking : List (β → ℕ)} {p q : β}
-    (hle : ∀ c ∈ ranking, c p ≤ c q) (hlt : ∃ c ∈ ranking, c p < c q) :
-    ranking.map (· p) < ranking.map (· q) := by
-  induction ranking with
-  | nil => simp at hlt
-  | cons d ds ih =>
-    rw [List.map_cons, List.map_cons, List.cons_lt_cons_iff]
-    refine (hle d List.mem_cons_self).lt_or_eq.imp id fun h ↦
-      ⟨h, ih (fun c hc ↦ hle c (List.mem_cons_of_mem _ hc)) ?_⟩
-    obtain ⟨c, hc, hlt⟩ := hlt
-    rcases List.mem_cons.1 hc with rfl | hc
-    · exact absurd h hlt.ne
-    · exact ⟨c, hc, hlt⟩
-
-theorem strictMono_profile [Preorder F] [Preorder M] {ranking : List (F × M → ℕ)}
-    (hmono : ∀ c ∈ ranking, Monotone c) (hsep : ∀ ⦃p q⦄, p < q → ∃ c ∈ ranking, c p < c q) :
-    StrictMono (profile ranking) :=
-  fun _ _ hpq ↦ map_lt_map (fun c hc ↦ hmono c hc hpq.le) (hsep hpq)
+variable {F : Type u} {M : Type v} {α : Type*}
 
 /-! ### Blocking -/
 
 section Blocks
 
-variable (f : F × M → α) (S : Set (F × M)) (p : F × M)
+variable [LT α] (f : F × M → α) (S : Set (F × M)) (p : F × M)
 
 /-- `QBlocks f S p` holds when a more harmonic pair of `S` expresses `p`'s meaning. -/
 def QBlocks : Prop := ∃ q ∈ S, q.2 = p.2 ∧ f q < f p
@@ -135,7 +94,7 @@ end Blocks
 
 section Step
 
-variable (pairs : Set (F × M)) (f : F × M → α) {S : Set (F × M)} {p : F × M}
+variable [LT α] (pairs : Set (F × M)) (f : F × M → α) {S : Set (F × M)} {p : F × M}
 
 /-- The pairs of `pairs` that `S` does not block. Antitone in `S`. -/
 def unblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ Blocks f S p}
@@ -194,11 +153,12 @@ theorem lfp_eq_superoptimalSet (h : (f '' pairs).IsWF) :
   have hLG : unblockedSet pairs f L = G := by rw [← hGL]; exact (unblockedSq pairs f).map_gfp
   refine le_antisymm (lfp_le_gfp _) (not_not.1 fun hne ↦ ?_)
   obtain ⟨p, ⟨hpG, hpL⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
-    superoptimalSet_subset pairs f hx.1)).exists_minimalFor f (G \ L) (Set.not_subset.1 hne)
+    superoptimalSet_subset pairs f hx.1)).exists_forall_not_lt (s := G \ L)
+      (Set.not_subset.1 hne)
   have hp : p ∈ unblockedSet pairs f L := hLG.symm ▸ hpG
   obtain ⟨q, hqG, hadj, hlt⟩ : Blocks f G p :=
     not_not.1 fun hb ↦ hpL (hGL ▸ (⟨hp.1, hb⟩ : p ∈ unblockedSet pairs f G))
-  exact hlt.not_ge (hmin ⟨hqG, fun hqL ↦ hp.2 ⟨q, hqL, hadj, hlt⟩⟩ hlt.le)
+  exact hmin q ⟨hqG, fun hqL ↦ hp.2 ⟨q, hqL, hadj, hlt⟩⟩ hlt
 
 theorem isFixedPt_superoptimalSet (h : (f '' pairs).IsWF) :
     IsFixedPt (unblockedSet pairs f) (superoptimalSet pairs f) := by
@@ -225,7 +185,7 @@ end Step
 
 section Weak
 
-variable (pairs : Set (F × M)) (f : F × M → α)
+variable [LT α] (pairs : Set (F × M)) (f : F × M → α)
 
 /-- The pairs of `pairs` that `S` does not Q-block. -/
 def qUnblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ QBlocks f S p}
@@ -233,21 +193,21 @@ def qUnblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ QBlocks
 /-- The pairs of `pairs` that `S` does not I-block. -/
 def iUnblockedSet (S : Set (F × M)) : Set (F × M) := {p ∈ pairs | ¬ IBlocks f S p}
 
+@[simp] theorem mem_qUnblockedSet {S : Set (F × M)} {p : F × M} :
+    p ∈ qUnblockedSet pairs f S ↔ p ∈ pairs ∧ ¬ QBlocks f S p := Iff.rfl
+
+@[simp] theorem mem_iUnblockedSet {S : Set (F × M)} {p : F × M} :
+    p ∈ iUnblockedSet pairs f S ↔ p ∈ pairs ∧ ¬ IBlocks f S p := Iff.rfl
+
 theorem qUnblockedSet_antitone : Antitone (qUnblockedSet pairs f) :=
   fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
 
 theorem iUnblockedSet_antitone : Antitone (iUnblockedSet pairs f) :=
   fun _ _ hST _ hp ↦ ⟨hp.1, fun hb ↦ hp.2 (hb.mono hST)⟩
 
-theorem unblockedSet_eq_inter (S : Set (F × M)) :
-    unblockedSet pairs f S = qUnblockedSet pairs f S ∩ iUnblockedSet pairs f S := by
-  ext p
-  simp only [mem_unblockedSet, blocks_iff, qUnblockedSet, iUnblockedSet, Set.mem_inter_iff,
-    Set.mem_sep_iff, not_or]
-  tauto
-
-/-- In the weak version of bidirection `Q` collects the pairs no pair of `I` Q-blocks and `I`
-the pairs no pair of `Q` I-blocks. A pair of both is super-optimal. -/
+/-- In the weak version of bidirection `Q` collects the pairs no pair of `I` Q-blocks and `I` the
+pairs no pair of `Q` I-blocks. A pair of both is super-optimal when the order is transitive and the
+generator's harmonies are well-founded (`inter_eq_superoptimalSet`). -/
 def IsWeakSolution (Q I : Set (F × M)) : Prop :=
   qUnblockedSet pairs f I = Q ∧ iUnblockedSet pairs f Q = I
 
@@ -257,18 +217,256 @@ theorem exists_isWeakSolution : ∃ Q I, IsWeakSolution pairs f Q I :=
       (qUnblockedSet_antitone pairs f).comp (iUnblockedSet_antitone pairs f)⟩
   ⟨Φ.gfp, iUnblockedSet pairs f Φ.gfp, Φ.map_gfp, rfl⟩
 
-theorem strongOptimalSet_subset_inter {Q I : Set (F × M)} (h : IsWeakSolution pairs f Q I) :
-    strongOptimalSet pairs f ⊆ Q ∩ I := fun p hp ↦ by
-  obtain ⟨hQ, hI⟩ := h
-  have hQp : Q ⊆ pairs := hQ ▸ fun _ hx ↦ hx.1
-  have hIp : I ⊆ pairs := hI ▸ fun _ hx ↦ hx.1
-  have hpQ : p ∈ qUnblockedSet pairs f I :=
-    ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inr (hb.mono hIp)))⟩
-  have hpI : p ∈ iUnblockedSet pairs f Q :=
-    ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inl (hb.mono hQp)))⟩
-  exact ⟨hQ ▸ hpQ, hI ▸ hpI⟩
+namespace IsWeakSolution
+
+variable {pairs f} {Q I Q' I' : Set (F × M)} {p : F × M}
+
+theorem mem_left (h : IsWeakSolution pairs f Q I) : p ∈ Q ↔ p ∈ pairs ∧ ¬ QBlocks f I p := by
+  rw [← h.1, mem_qUnblockedSet]
+
+theorem mem_right (h : IsWeakSolution pairs f Q I) : p ∈ I ↔ p ∈ pairs ∧ ¬ IBlocks f Q p := by
+  rw [← h.2, mem_iUnblockedSet]
+
+theorem left_subset (h : IsWeakSolution pairs f Q I) : Q ⊆ pairs := fun _ hx ↦ (h.mem_left.1 hx).1
+
+theorem right_subset (h : IsWeakSolution pairs f Q I) : I ⊆ pairs := fun _ hx ↦ (h.mem_right.1 hx).1
+
+theorem strongOptimalSet_subset_inter (h : IsWeakSolution pairs f Q I) :
+    strongOptimalSet pairs f ⊆ Q ∩ I := fun _ hp ↦
+  ⟨h.mem_left.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inr (hb.mono h.right_subset)))⟩,
+    h.mem_right.2 ⟨hp.1, fun hb ↦ hp.2 ((blocks_iff ..).2 (.inl (hb.mono h.left_subset)))⟩⟩
+
+/-- With well-founded generator harmonies, the mutual recursion has at most one solution: a
+disagreement minimal in harmony is decided by the agreement below it. -/
+theorem unique (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I)
+    (h' : IsWeakSolution pairs f Q' I') : Q = Q' ∧ I = I' := by
+  suffices hall : ∀ p, (p ∈ Q ↔ p ∈ Q') ∧ (p ∈ I ↔ p ∈ I') from
+    ⟨Set.ext fun p ↦ (hall p).1, Set.ext fun p ↦ (hall p).2⟩
+  by_contra hne
+  have hD : {p | ¬ ((p ∈ Q ↔ p ∈ Q') ∧ (p ∈ I ↔ p ∈ I'))}.Nonempty := not_forall.1 hne
+  have hDp : {p | ¬ ((p ∈ Q ↔ p ∈ Q') ∧ (p ∈ I ↔ p ∈ I'))} ⊆ pairs := fun p hp ↦
+    by_contra fun hpG ↦ hp ⟨by simp [h.mem_left, h'.mem_left, hpG],
+      by simp [h.mem_right, h'.mem_right, hpG]⟩
+  obtain ⟨p, hp, hmin⟩ := (hf.mono (Set.image_mono hDp)).exists_forall_not_lt hD
+  have hbelow : ∀ q, f q < f p → (q ∈ Q ↔ q ∈ Q') ∧ (q ∈ I ↔ q ∈ I') :=
+    fun q hq ↦ not_not.1 fun hn ↦ hmin q hn hq
+  have hQb : QBlocks f I p ↔ QBlocks f I' p := exists_congr fun q ↦
+    ⟨fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).2.1 a, b, c⟩, fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).2.2 a, b, c⟩⟩
+  have hIb : IBlocks f Q p ↔ IBlocks f Q' p := exists_congr fun q ↦
+    ⟨fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).1.1 a, b, c⟩, fun ⟨a, b, c⟩ ↦ ⟨(hbelow q c).1.2 a, b, c⟩⟩
+  exact hp ⟨by rw [h.mem_left, h'.mem_left, hQb], by rw [h.mem_right, h'.mem_right, hIb]⟩
+
+variable [IsTrans α (· < ·)]
+
+/-- Along the form axis, `Q` and `Q ∩ I` block the same pairs: a blocker in `Q` minimal in harmony
+cannot itself be I-blocked by `Q`, since a blocker of a blocker is, by transitivity, a blocker. -/
+theorem iBlocks_inter_iff (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
+    IBlocks f (Q ∩ I) p ↔ IBlocks f Q p := by
+  refine ⟨.mono Set.inter_subset_left, fun hb ↦ ?_⟩
+  obtain ⟨q, ⟨hqQ, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
+    h.left_subset hx.1)).exists_forall_not_lt (s := {q ∈ Q | q.1 = p.1 ∧ f q < f p}) hb
+  refine ⟨q, ⟨hqQ, h.mem_right.2 ⟨h.left_subset hqQ, ?_⟩⟩, hq, hqp⟩
+  rintro ⟨r, hrQ, hr, hrq⟩
+  exact hmin r ⟨hrQ, hr.trans hq, _root_.trans hrq hqp⟩ hrq
+
+/-- Along the meaning axis, `I` and `Q ∩ I` block the same pairs. -/
+theorem qBlocks_inter_iff (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
+    QBlocks f (Q ∩ I) p ↔ QBlocks f I p := by
+  refine ⟨.mono Set.inter_subset_right, fun hb ↦ ?_⟩
+  obtain ⟨q, ⟨hqI, hq, hqp⟩, hmin⟩ := (hf.mono (Set.image_mono fun _ hx ↦
+    h.right_subset hx.1)).exists_forall_not_lt (s := {q ∈ I | q.2 = p.2 ∧ f q < f p}) hb
+  refine ⟨q, ⟨h.mem_left.2 ⟨h.right_subset hqI, ?_⟩, hqI⟩, hq, hqp⟩
+  rintro ⟨r, hrI, hr, hrq⟩
+  exact hmin r ⟨hrI, hr.trans hq, _root_.trans hrq hqp⟩ hrq
+
+/-- The pairs satisfying both principles are a fixed point of the blocking step. -/
+theorem isFixedPt_inter (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
+    IsFixedPt (unblockedSet pairs f) (Q ∩ I) := by
+  ext p
+  simp only [mem_unblockedSet, Set.mem_inter_iff, h.mem_left, h.mem_right, blocks_iff, not_or,
+    h.iBlocks_inter_iff hf, h.qBlocks_inter_iff hf]
+  tauto
+
+/-- For a transitive order with well-founded generator harmonies, the pairs satisfying both
+principles of the mutual recursion are exactly the super-optimal pairs. -/
+theorem inter_eq_superoptimalSet (hf : (f '' pairs).IsWF) (h : IsWeakSolution pairs f Q I) :
+    Q ∩ I = superoptimalSet pairs f :=
+  eq_superoptimalSet_of_isFixedPt pairs f hf (h.isFixedPt_inter hf)
+
+end IsWeakSolution
 
 end Weak
+
+/-! ### Stages
+
+The cumulative construction of the super-optimal pairs, the `transfiniteIterate` of a step adding
+the most harmonic of the remaining pairs. The step is not monotone, so `OrdinalApprox` does not
+apply to it. -/
+
+section Stages
+
+section Defs
+
+variable (pairs : Set (F × M))
+
+/-- The pairs of `pairs` sharing no component with a pair of `X`. -/
+def remaining (X : Set (F × M)) : Set (F × M) := {p ∈ pairs | ∀ q ∈ X, q.1 ≠ p.1 ∧ q.2 ≠ p.2}
+
+theorem remaining_antitone : Antitone (remaining pairs) :=
+  fun _ _ hXY _ hp ↦ ⟨hp.1, fun q hq ↦ hp.2 q (hXY hq)⟩
+
+variable {pairs} in
+theorem notMem_of_mem_remaining {X : Set (F × M)} {p : F × M} (hp : p ∈ remaining pairs X) :
+    p ∉ X := fun hpX ↦ (hp.2 p hpX).1 rfl
+
+variable [LE α] (f : F × M → α)
+
+/-- One stage: add the most harmonic of the remaining pairs. -/
+def stageStep (X : Set (F × M)) : Set (F × M) :=
+  X ∪ {p | MinimalFor (· ∈ remaining pairs X) f p}
+
+variable {J : Type*} [LinearOrder J] [SuccOrder J] [WellFoundedLT J]
+
+/-- The stages of the construction, indexed by any well-order: empty at the bottom (`stage_bot`),
+one step further at a successor (`stage_succ`), the union of the earlier stages at a limit
+(`stage_of_isSuccLimit`). -/
+noncomputable def stage (j : J) : Set (F × M) := transfiniteIterate (stageStep pairs f) j ∅
+
+@[simp] theorem stage_bot [OrderBot J] : stage pairs f (⊥ : J) = ∅ := transfiniteIterate_bot _ _
+
+theorem stage_succ [NoMaxOrder J] (j : J) :
+    stage pairs f (Order.succ j) = stageStep pairs f (stage pairs f j) :=
+  transfiniteIterate_succ _ _ j (not_isMax j)
+
+theorem stage_mono [OrderBot J] : Monotone (stage pairs f : J → _) :=
+  monotone_transfiniteIterate _ _ fun _ ↦ Set.subset_union_left
+
+theorem stage_of_isSuccLimit {a : J} (ha : Order.IsSuccLimit a) :
+    stage pairs f a = ⋃ b < a, stage pairs f b := by
+  rw [stage, transfiniteIterate_limit _ _ _ ha]
+  ext x
+  simp [stage]
+
+end Defs
+
+variable [LinearOrder α] {pairs : Set (F × M)} {f : F × M → α}
+
+/-- The two invariants of the stages against the super-optimal pairs, preserved by one stage. -/
+private theorem stageStep_invariant (hf : (f '' pairs).IsWF) {X : Set (F × M)}
+    (hX : X ⊆ superoptimalSet pairs f)
+    (hr : superoptimalSet pairs f \ X ⊆ remaining pairs X) :
+    stageStep pairs f X ⊆ superoptimalSet pairs f ∧
+      superoptimalSet pairs f \ stageStep pairs f X ⊆ remaining pairs (stageStep pairs f X) := by
+  have hmin : ∀ p, MinimalFor (· ∈ remaining pairs X) f p → p ∈ superoptimalSet pairs f :=
+    fun p hp ↦ (mem_superoptimalSet pairs f hf).2 ⟨hp.1.1, fun ⟨e, he, hadj, hlt⟩ ↦ by
+      by_cases heX : e ∈ X
+      · exact hadj.elim (hp.1.2 e heX).1 (hp.1.2 e heX).2
+      · exact hp.not_prop_of_lt hlt (hr ⟨he, heX⟩)⟩
+  refine ⟨Set.union_subset hX hmin, fun p ⟨hpO, hpS⟩ ↦ ?_⟩
+  have hp0 : p ∈ remaining pairs X := hr ⟨hpO, fun hpX ↦ hpS (.inl hpX)⟩
+  refine ⟨hp0.1, fun q hq ↦ ?_⟩
+  obtain hq | hq := hq
+  · exact hp0.2 q hq
+  · by_contra hshare
+    have hadj : q.1 = p.1 ∨ q.2 = p.2 := by grind
+    have hqO := hmin q hq
+    have h1 : ¬ f q < f p := fun hlt ↦
+      ((mem_superoptimalSet pairs f hf).1 hpO).2 ⟨q, hqO, hadj, hlt⟩
+    have h2 : ¬ f p < f q := fun hlt ↦ ((mem_superoptimalSet pairs f hf).1 hqO).2
+      ⟨p, hpO, hadj.imp Eq.symm Eq.symm, hlt⟩
+    have heq : f p = f q := (not_lt.1 h1).antisymm (not_lt.1 h2)
+    exact hpS (.inr (minimalFor_iff_forall_lt.2 ⟨hp0, fun j hj ↦ hq.not_prop_of_lt (heq ▸ hj)⟩))
+
+section Index
+
+variable {J : Type*} [LinearOrder J] [OrderBot J] [SuccOrder J] [WellFoundedLT J] [NoMaxOrder J]
+
+private theorem stage_invariant (hf : (f '' pairs).IsWF) (a : J) :
+    stage pairs f a ⊆ superoptimalSet pairs f ∧
+      superoptimalSet pairs f \ stage pairs f a ⊆ remaining pairs (stage pairs f a) := by
+  induction a using SuccOrder.limitRecOn with
+  | isMin a ha =>
+    rw [ha.eq_bot, stage_bot]
+    exact ⟨Set.empty_subset _, fun p hp ↦ ⟨superoptimalSet_subset pairs f hp.1, by simp⟩⟩
+  | succ a _ ih =>
+    rw [stage_succ]
+    exact stageStep_invariant hf ih.1 ih.2
+  | isSuccLimit a ha ih =>
+    rw [stage_of_isSuccLimit pairs f ha]
+    refine ⟨Set.iUnion₂_subset fun b hb ↦ (ih b hb).1, fun p ⟨hpO, hpS⟩ ↦
+      ⟨superoptimalSet_subset pairs f hpO, fun q hq ↦ ?_⟩⟩
+    obtain ⟨b, hb, hq⟩ := Set.mem_iUnion₂.1 hq
+    exact ((ih b hb).2 ⟨hpO, fun hp ↦ hpS (Set.mem_iUnion₂.2 ⟨b, hb, hp⟩)⟩).2 q hq
+
+/-- Every stage consists of super-optimal pairs. -/
+theorem stage_subset_superoptimalSet (hf : (f '' pairs).IsWF) (a : J) :
+    stage pairs f a ⊆ superoptimalSet pairs f :=
+  (stage_invariant hf a).1
+
+/-- A super-optimal pair outside a stage shares no component with it. -/
+theorem superoptimalSet_diff_stage_subset_remaining (hf : (f '' pairs).IsWF) (a : J) :
+    superoptimalSet pairs f \ stage pairs f a ⊆ remaining pairs (stage pairs f a) :=
+  (stage_invariant hf a).2
+
+/-- A stage leaving no pair remaining is the set of super-optimal pairs. -/
+theorem stage_eq_of_remaining_eq_empty (hf : (f '' pairs).IsWF) {a : J}
+    (ha : remaining pairs (stage pairs f a) = ∅) : stage pairs f a = superoptimalSet pairs f :=
+  (stage_subset_superoptimalSet hf a).antisymm fun p hp ↦ by_contra fun hpS ↦
+    Set.notMem_empty p (ha ▸ superoptimalSet_diff_stage_subset_remaining hf a ⟨hp, hpS⟩)
+
+end Index
+
+/-- Some stage leaves no pair remaining: otherwise the stages would be strictly increasing, an
+injection of the ordinals into a set. -/
+theorem exists_remaining_stage_eq_empty (hf : (f '' pairs).IsWF) :
+    ∃ a : Ordinal.{max u v}, remaining pairs (stage pairs f a) = ∅ := by
+  by_contra! hne
+  refine not_injective_of_ordinal.{max u v} (stage pairs f : Ordinal.{max u v} → Set (F × M))
+    (.of_lt_imp_ne fun a b hab heq ↦ ?_)
+  obtain ⟨p, hp⟩ := Set.IsPWO.exists_minimalFor f _
+    (hf.mono (Set.image_mono fun _ hx ↦ hx.1)).isPWO (hne a)
+  refine notMem_of_mem_remaining hp.prop (heq ▸ stage_mono pairs f (Order.succ_le_of_lt hab) ?_)
+  rw [stage_succ]
+  exact .inr hp
+
+/-- The stages exhaust the super-optimal pairs. -/
+theorem iUnion_stage (hf : (f '' pairs).IsWF) :
+    ⋃ a : Ordinal.{max u v}, stage pairs f a = superoptimalSet pairs f := by
+  obtain ⟨a, ha⟩ := exists_remaining_stage_eq_empty hf
+  exact (Set.iUnion_subset fun b ↦ stage_subset_superoptimalSet hf b).antisymm
+    ((stage_eq_of_remaining_eq_empty hf ha).symm.subset.trans (Set.subset_iUnion _ a))
+
+/-- A pair remaining after stage `n` has at least `n` harmonies below its own. -/
+private theorem le_ncard_lt (hV : (f '' pairs).Finite) (n : ℕ) {p : F × M}
+    (hp : p ∈ remaining pairs (stage pairs f n)) :
+    n ≤ {v ∈ f '' pairs | v < f p}.ncard := by
+  induction n generalizing p with
+  | zero => exact Nat.zero_le _
+  | succ n ih =>
+    rw [← Order.succ_eq_add_one, stage_succ] at hp
+    have hp0 := remaining_antitone pairs Set.subset_union_left hp
+    obtain ⟨q, hq, hqp⟩ : ∃ q ∈ remaining pairs (stage pairs f n), f q < f p := by
+      by_contra! hmin
+      exact notMem_of_mem_remaining hp (.inr (minimalFor_iff_forall_lt.2
+        ⟨hp0, fun j hj hmem ↦ absurd hj (not_lt.2 (hmin j hmem))⟩))
+    calc n + 1 ≤ {v ∈ f '' pairs | v < f q}.ncard + 1 := Nat.succ_le_succ (ih hq)
+      _ = (insert (f q) {v ∈ f '' pairs | v < f q}).ncard :=
+        (Set.ncard_insert_of_notMem (fun h ↦ lt_irrefl _ h.2) (hV.subset (Set.sep_subset _ _))).symm
+      _ ≤ {v ∈ f '' pairs | v < f p}.ncard := Set.ncard_le_ncard
+        (Set.insert_subset ⟨⟨q, hq.1, rfl⟩, hqp⟩ fun _ hv ↦ ⟨hv.1, hv.2.trans hqp⟩)
+        (hV.subset (Set.sep_subset _ _))
+
+/-- When the generator has at most `n` harmonies, stage `n` is the set of super-optimal pairs. -/
+theorem stage_eq_superoptimalSet_of_encard_le {n : ℕ} (hn : (f '' pairs).encard ≤ n) :
+    stage pairs f n = superoptimalSet pairs f := by
+  obtain ⟨hV, hn⟩ := Set.encard_le_coe_iff_finite_ncard_le.1 hn
+  refine stage_eq_of_remaining_eq_empty hV.isWF (Set.eq_empty_of_forall_notMem fun p hp ↦ ?_)
+  have hlt : {v ∈ f '' pairs | v < f p}.ncard < (f '' pairs).ncard := Set.ncard_lt_ncard
+    ⟨Set.sep_subset _ _, fun h ↦ lt_irrefl _ (h ⟨p, hp.1, rfl⟩).2⟩ hV
+  have := le_ncard_lt hV n hp
+  omega
+
+end Stages
 
 /-! ### Markedness and the division of labour -/
 
@@ -276,7 +474,7 @@ section Markedness
 
 open Set (univ mem_graphOn)
 
-variable [LinearOrder F] [LinearOrder M] (pairs : Set (F × M)) {f : F × M → α}
+variable [Preorder α] [LinearOrder F] [LinearOrder M] (pairs : Set (F × M)) {f : F × M → α}
   {S : Set (F × M)} {p : F × M}
 
 theorem blocks_iff_of_strictMono (hf : StrictMono f) : Blocks f S p ↔ Blocks id S p := by
@@ -329,7 +527,7 @@ end Markedness
 
 section Finset
 
-variable [DecidableEq F] [DecidableEq M] [DecidableLT α] (pairs : Finset (F × M))
+variable [LT α] [DecidableEq F] [DecidableEq M] [DecidableLT α] (pairs : Finset (F × M))
   (f : F × M → α) {S : Finset (F × M)} {p : F × M}
 
 /-- The pairs of `pairs` that `S` does not block. -/
@@ -437,19 +635,22 @@ theorem coe_superoptimal : (↑(superoptimal pairs f) : Set (F × M)) = superopt
   rw [superoptimal, hT, hcoe]
   exact hle k
 
-/-- The footnote's recursion, computably. -/
-theorem mem_superoptimal :
-    p ∈ superoptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks f ↑(superoptimal pairs f) p := by
-  rw [← Finset.mem_coe, coe_superoptimal,
-    mem_superoptimalSet _ _ (pairs.finite_toSet.image f).isWF, Finset.mem_coe]
-
-theorem superoptimal_subset : superoptimal pairs f ⊆ pairs :=
-  fun _ hp ↦ ((mem_superoptimal pairs f).1 hp).1
+theorem superoptimal_subset : superoptimal pairs f ⊆ pairs := by
+  rw [← Finset.coe_subset, coe_superoptimal]
+  exact superoptimalSet_subset _ _
 
 theorem strongOptimal_subset_superoptimal : strongOptimal pairs f ⊆ superoptimal pairs f := by
   rw [← Finset.coe_subset, coe_strongOptimal, coe_superoptimal]
   exact strongOptimalSet_subset_superoptimalSet _ _
 
 end Finset
+
+/-- The fixed-point equation, computably. A finite set of harmonies is well-founded once the order
+is a preorder. -/
+theorem mem_superoptimal [Preorder α] [DecidableEq F] [DecidableEq M] [DecidableLT α]
+    (pairs : Finset (F × M)) (f : F × M → α) {p : F × M} :
+    p ∈ superoptimal pairs f ↔ p ∈ pairs ∧ ¬ Blocks f ↑(superoptimal pairs f) p := by
+  rw [← Finset.mem_coe, coe_superoptimal,
+    mem_superoptimalSet _ _ (pairs.finite_toSet.image f).isWF, Finset.mem_coe]
 
 end BidirectionalOT

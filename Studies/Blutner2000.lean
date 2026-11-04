@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Pragmatics.Bidirectional
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
@@ -53,6 +54,7 @@ expresses the same outcome.
 namespace Blutner2000
 
 open BidirectionalOT Set
+open OptimalityTheory (ViolationProfile)
 
 /-! ### Total blocking and the division of pragmatic labour
 
@@ -86,9 +88,12 @@ instance : LinearOrder Form := LinearOrder.lift' Form.markedness (by decide)
 instance : LinearOrder Situation := LinearOrder.lift' Situation.markedness (by decide)
 
 theorem strictMono_profile_markedness :
-    StrictMono (profile [(·.1.markedness), (·.2.markedness)] : Form × Situation → List ℕ) ∧
-      StrictMono (profile [(·.2.markedness), (·.1.markedness)] : Form × Situation → List ℕ) := by
-  refine ⟨strictMono_profile ?_ fun p q h ↦ ?_, strictMono_profile ?_ fun p q h ↦ ?_⟩ <;>
+    StrictMono (ViolationProfile.ofList [(·.1.markedness), (·.2.markedness)] :
+        Form × Situation → _) ∧
+      StrictMono (ViolationProfile.ofList [(·.2.markedness), (·.1.markedness)] :
+        Form × Situation → _) := by
+  refine ⟨ViolationProfile.strictMono_ofList ?_ fun p q h ↦ ?_,
+    ViolationProfile.strictMono_ofList ?_ fun p q h ↦ ?_⟩ <;>
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
       exists_eq_or_imp, exists_eq_left]
   · exact ⟨fun _ _ h ↦ h.1, fun _ _ h ↦ h.2⟩
@@ -256,7 +261,8 @@ def ProjectionSite.depth : ProjectionSite → ℕ
 preference selects the intermediate one. -/
 theorem strength_local_height_intermediate :
     superoptimal boundSites (harmony (fun _ ↦ 1) .univ) = {((), .local)} ∧
-      superoptimal boundSites (profile [fun _ ↦ 1, (·.2.depth)]) = {((), .intermediate)} := by
+      superoptimal boundSites (ViolationProfile.ofList [fun _ ↦ 1, (·.2.depth)]) =
+        {((), .intermediate)} := by
   decide
 
 /-! ### Accommodation blocked by the Q-principle (22)
