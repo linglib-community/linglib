@@ -87,7 +87,7 @@ reverse conjugate maps `ba` to `aa`, which does not extend its output `b` on `b`
 
 namespace Subregular
 
-open SubsequentialTransducer Function
+open Function
 
 variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
 

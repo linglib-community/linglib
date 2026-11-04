@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.Fintype.List
 public import Linglib.Core.Data.List.DropRight
 public import Linglib.Core.Computability.Subsequential
 public import Linglib.Core.Computability.Residual
@@ -72,6 +73,62 @@ namespace Subregular
 open SubsequentialTransducer Function
 
 variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
+
+/-! ### Window transducers -/
+
+section Window
+
+variable {γ : Type*}
+
+/-- The transducer whose state is a window of the last `n` accumulated symbols. `out`
+emits from the window and the current symbol, and `upd` chooses what the window accumulates
+(`fun _ x ↦ [x]` for the input of ISL, `out` for the output of OSL). -/
+@[simps]
+def ofWindow (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
+    SubsequentialTransducer {l : List γ // l.length ≤ n} α β where
+  start := ⟨[], Nat.zero_le _⟩
+  step w x := ⟨(w.val ++ upd w.val x).rtake n, List.length_rtake_le _ _⟩
+  output w x := out w.val x
+  finalOutput _ := []
+
+/-- The window recursion computed by `ofWindow`, each step of which emits `out` and extends the
+window by `upd`, truncated to length `n`. -/
+def windowRun (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
+    List γ → List α → List β
+  | _, [] => []
+  | w, x :: xs => out w x ++ windowRun n out upd ((w ++ upd w x).rtake n) xs
+
+variable {n : ℕ} {out : List γ → α → List β} {upd : List γ → α → List γ}
+
+theorem runFrom_ofWindow (w : {l : List γ // l.length ≤ n}) (xs : List α) :
+    (ofWindow n out upd).runFrom w xs = windowRun n out upd w.val xs := by
+  induction xs generalizing w with
+  | nil => simp [windowRun]
+  | cons x xs ih => rw [runFrom_cons, windowRun]; exact congrArg _ (ih _)
+
+theorem run_ofWindow : (ofWindow n out upd).run = windowRun n out upd [] :=
+  funext fun xs ↦ runFrom_ofWindow ⟨[], Nat.zero_le _⟩ xs
+
+theorem windowRun_append_singleton {w : List γ} (hw : w.length ≤ n) (u : List α) (x : α) :
+    windowRun n out upd w (u ++ [x]) =
+      windowRun n out upd w u ++ out ((w ++ windowRun n upd upd w u).rtake n) x := by
+  induction u generalizing w with
+  | nil => simp [windowRun, List.rtake_of_length_le hw]
+  | cons y ys ih =>
+    simp only [List.cons_append, windowRun, List.append_assoc, ih (List.length_rtake_le _ _),
+      List.rtake_append_rtake]
+
+theorem isLeftSubsequential_windowRun [Fintype γ] (n : ℕ) (out : List γ → α → List β)
+    (upd : List γ → α → List γ) : IsLeftSubsequential (windowRun n out upd []) :=
+  run_ofWindow (n := n) (out := out) (upd := upd) ▸ (ofWindow n out upd).isLeftSubsequential
+
+theorem isMealyComputable_windowRun [Fintype γ] (n : ℕ) (out : List γ → α → List β)
+    (upd : List γ → α → List γ) (hs : ∀ w x, (out w x).length = 1) :
+    IsMealyComputable (windowRun n out upd []) :=
+  run_ofWindow (n := n) (out := out) (upd := upd) ▸
+    (ofWindow n out upd).isMealyComputable_run (fun w x ↦ hs w.val x) fun _ ↦ rfl
+
+end Window
 
 /-- A **`k`-input strictly local rule** emits, for each input symbol, a block of output symbols
 computed from the last `k - 1` input symbols and the symbol itself. -/
