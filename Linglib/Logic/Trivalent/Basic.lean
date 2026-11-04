@@ -67,6 +67,7 @@ pattern-matched definition, so that `rfl` and `decide` evaluate it.
 * [beaver-1992]
 * [beaver-krahmer-2001]
 * [van-fraassen-1966]
+* [george-2014]
 -/
 
 @[expose] public section
@@ -387,7 +388,10 @@ theorem sup_zero_ne_neg_one (a : SignType) : a ⊔ 0 ≠ -1 := by cases a <;> de
 
 The Middle Kleene connectives of [peters-1979] read their operands from left to right. An
 undefined first operand absorbs, and a defined one proceeds by Strong Kleene, the three-valued
-counterpart of Karttunen's filtering ([beaver-krahmer-2001]). -/
+counterpart of Karttunen's filtering ([beaver-krahmer-2001]). Peters stipulates the tables, and
+[george-2014] derives them as the Peters-Kleene deployments of the classical connectives
+(`Trivalent.deploy₂_and`, `Trivalent.deploy₂_or`, `Trivalent.deploy₂_imp` in
+`Linglib.Logic.Trivalent.Deployment`). -/
 
 /-- In Middle Kleene conjunction a left undefined operand absorbs and a defined one proceeds by
 Strong Kleene, so `meetMiddle (-1) 0 = -1` but `meetMiddle 0 (-1) = 0`. -/
