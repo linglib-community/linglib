@@ -45,8 +45,8 @@ context, and local entailment.
 ⋆ is undefinedness of the partial function. The typed drefs are two register sorts rather than one
 register carrier, since a `RegisterStructure` has one value type. The relative variable update is
 Hofmann's biconditional form; Stone's has only the implication from `φ`-worlds to referents.
-Maximization over a propositional dref is `Update.maxInput`, since the dref is introduced outside
-the operator (`Studies/Hofmann2025.lean`).
+Maximization over a propositional dref is not defined here, since the paper's definition is vacuous
+where its dref is introduced outside the operator (`Studies/Hofmann2025.lean`).
 
 ## References
 
@@ -83,9 +83,10 @@ def sat (R : E → W → Prop) (e : W →. E) : Set W := {w | ∃ a ∈ e w, R a
 theorem sat_subset_dom (R : E → W → Prop) (e : W →. E) : sat R e ⊆ e.Dom :=
   fun _ ⟨_, ha, _⟩ ↦ Part.dom_iff_mem.2 ⟨_, ha⟩
 
-@[simp] theorem sat_const (R : E → W → Prop) (a : E) :
-    sat R (fun _ ↦ Part.some a : W →. E) = {w | R a w} := by
-  simp [sat]
+@[simp] theorem sat_lift_const (R : E → W → Prop) (a : E) :
+    sat R (PFun.lift fun _ : W ↦ a) = {w | R a w} := by
+  ext w
+  simp [sat, PFun.lift]
 
 /-- A discourse state assigns an individual concept to each individual dref and a proposition to
 each propositional dref. -/
@@ -133,6 +134,13 @@ def updateProp (g : State W E) (p : PVar) (s : Set W) : State W E :=
 @[simp] theorem updateIndiv_indiv_of_ne (g : State W E) {v u : IVar} (h : u ≠ v)
     (e : W →. E) : (g.updateIndiv v e).indiv u = g.indiv u := by
   simp [updateIndiv, Function.update_of_ne h]
+
+theorem updateProp_comm (g : State W E) {p q : PVar} (h : p ≠ q) (s t : Set W) :
+    (g.updateProp p s).updateProp q t = (g.updateProp q t).updateProp p s := by
+  simp [updateProp, Function.update_comm h]
+
+theorem updateProp_updateIndiv (g : State W E) (p : PVar) (s : Set W) (v : IVar) (e : W →. E) :
+    (g.updateProp p s).updateIndiv v e = (g.updateIndiv v e).updateProp p s := rfl
 
 /-- The null assignment holds no information: no dref has a referent and every proposition is the
 trivial one ([hofmann-2025] (32)). -/

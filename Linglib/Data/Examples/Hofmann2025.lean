@@ -26,7 +26,7 @@ def ex1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex1b : Datum :=
   { id := "hofmann2025_ex1b"
@@ -39,7 +39,7 @@ def ex1b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex2a : Datum :=
   { id := "hofmann2025_ex2a"
@@ -52,7 +52,7 @@ def ex2a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+    paperFeatures := [] }
 
 def ex2b : Datum :=
   { id := "hofmann2025_ex2b"
@@ -65,7 +65,7 @@ def ex2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex2c : Datum :=
   { id := "hofmann2025_ex2c"
@@ -78,7 +78,7 @@ def ex2c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
+    paperFeatures := [] }
 
 def ex2d : Datum :=
   { id := "hofmann2025_ex2d"
@@ -91,7 +91,7 @@ def ex2d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex5a : Datum :=
   { id := "hofmann2025_ex5a"
@@ -104,7 +104,7 @@ def ex5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex5b : Datum :=
   { id := "hofmann2025_ex5b"
@@ -117,7 +117,7 @@ def ex5b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex6a : Datum :=
   { id := "hofmann2025_ex6a"
@@ -130,7 +130,7 @@ def ex6a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex6b : Datum :=
   { id := "hofmann2025_ex6b"
@@ -143,7 +143,7 @@ def ex6b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex6c : Datum :=
   { id := "hofmann2025_ex6c"
@@ -156,7 +156,7 @@ def ex6c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex8a : Datum :=
   { id := "hofmann2025_ex8a"
@@ -169,7 +169,7 @@ def ex8a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex8b : Datum :=
   { id := "hofmann2025_ex8b"
@@ -182,7 +182,7 @@ def ex8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex9 : Datum :=
   { id := "hofmann2025_ex9"
@@ -195,7 +195,7 @@ def ex9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+    paperFeatures := [] }
 
 def ex10 : Datum :=
   { id := "hofmann2025_ex10"
@@ -208,7 +208,7 @@ def ex10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex11 : Datum :=
   { id := "hofmann2025_ex11"
@@ -221,7 +221,7 @@ def ex11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex12 : Datum :=
   { id := "hofmann2025_ex12"
@@ -234,7 +234,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
+    paperFeatures := [] }
 
 def ex13a : Datum :=
   { id := "hofmann2025_ex13a"
@@ -247,7 +247,7 @@ def ex13a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex13b : Datum :=
   { id := "hofmann2025_ex13b"
@@ -260,7 +260,7 @@ def ex13b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex15 : Datum :=
   { id := "hofmann2025_ex15"
@@ -273,7 +273,7 @@ def ex15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex18ac : Datum :=
   { id := "hofmann2025_ex18ac"
@@ -286,7 +286,7 @@ def ex18ac : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex18bc : Datum :=
   { id := "hofmann2025_ex18bc"
@@ -299,7 +299,7 @@ def ex18bc : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex26 : Datum :=
   { id := "hofmann2025_ex26"
@@ -312,7 +312,7 @@ def ex26 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex42a : Datum :=
   { id := "hofmann2025_ex42a"
@@ -325,7 +325,7 @@ def ex42a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.1"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+    paperFeatures := [] }
 
 def ex42b : Datum :=
   { id := "hofmann2025_ex42b"
@@ -338,7 +338,7 @@ def ex42b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex42c : Datum :=
   { id := "hofmann2025_ex42c"
@@ -351,7 +351,7 @@ def ex42c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.3"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
+    paperFeatures := [] }
 
 def ex42d : Datum :=
   { id := "hofmann2025_ex42d"
@@ -364,7 +364,7 @@ def ex42d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex45 : Datum :=
   { id := "hofmann2025_ex45"
@@ -377,7 +377,7 @@ def ex45 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("case", "inclusive disjunction")] }
+    paperFeatures := [] }
 
 def ex49 : Datum :=
   { id := "hofmann2025_ex49"
@@ -390,7 +390,7 @@ def ex49 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex51 : Datum :=
   { id := "hofmann2025_ex51"
@@ -403,7 +403,7 @@ def ex51 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8a, ex8b, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex18ac, ex18bc, ex26, ex42a, ex42b, ex42c, ex42d, ex45, ex49, ex51]
 

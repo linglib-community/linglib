@@ -6,7 +6,6 @@ public import Mathlib.Data.Finset.NoncommProd
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Set.Function
-public import Mathlib.Order.Minimal
 
 /-!
 # Register structures
@@ -39,8 +38,6 @@ cylindrification is the weakest precondition of `[r]`.
   where the cylindrification of its scope's truth set is.
 * `Update.commute_test_randomAssign_iff`: a test commutes with `[r]` exactly when `r` is outside
   the dimension set of its condition.
-* `Update.randomAssign_comp_maxInput`: maximization over a register's input value, with the register
-  introduced in front, is maximization over the outputs of the register's introduction.
 * `Update.box_comp_box`: two boxes in sequence are one box over the union of their registers
   when the second's registers lie outside the dimension set of the first's condition (Muskens's
   Merging Lemma).
@@ -67,9 +64,6 @@ and AX3, that distinct referents denote distinct registers, is a hypothesis wher
 * [J. Groenendijk and M. Stokhof, *Dynamic predicate logic* (1991)][groenendijk-stokhof-1991]
 * [L. Henkin, J. D. Monk and A. Tarski, *Cylindric algebras, part I*
   (1971)][henkin-monk-tarski-1971]
-* [A. Brasoveanu, *Structured nominal and modal reference* (2007)][brasoveanu-2007]
-* [A. Brasoveanu, *Decomposing modal quantification* (2010)][brasoveanu-2010]
-* [L. Hofmann, *Anaphoric accessibility with flat update* (2025)][hofmann-2025]
 -/
 
 @[expose] public section
@@ -191,7 +185,6 @@ namespace Update
 open SetRel RegisterStructure CylindricAlgebra
 
 variable {R S E : Type*} [RegisterStructure R S E] {r r' : R} {i j : S} {C t : Condition S}
-  {D : Update S}
 
 /-- Random assignment `[r]` gives the register `r` an arbitrary value. -/
 def randomAssign (r : R) : Update S :=
@@ -301,47 +294,6 @@ theorem Fixes.maxBy {α : Type*} [Preorder α] {f : S → α} {D : Update S} (h 
 
 theorem maxAt_eq_of_fixes [Preorder E] {D : Update S} (h : Fixes r D) : maxAt r D = D :=
   maxBy_eq_self h
-
-/-- Maximization over the value of a register on input runs `D` at the inputs whose value of `r` is
-maximal among the values at which `D` succeeds, so that `r` can be introduced outside the operator,
-as in [hofmann-2025] (41). `maxAt` over such a `D` is vacuous (`maxAt_eq_of_fixes`). -/
-def maxInput [Preorder E] (r : R) (D : Update S) : Update S :=
-  test {i | Maximal (fun e ↦ extend i r e ∈ D.dom) (val r i)} ○ D
-
-theorem mem_maxInput [Preorder E] :
-    i ~[maxInput r D] j ↔ Maximal (fun e ↦ extend i r e ∈ D.dom) (val r i) ∧ i ~[D] j :=
-  mem_test_comp
-
-theorem maxInput_subset [Preorder E] (r : R) (D : Update S) : maxInput r D ⊆ D :=
-  fun _ h ↦ (mem_maxInput.mp h).2
-
-/-- Where `D` fixes `r`, prefixing the variable update `[r]` gives the maximization of
-[brasoveanu-2010] (69), p. 466, which introduces the register under the operator and keeps its local
-maxima. [brasoveanu-2007] (40), p. 148, asks for a greatest value instead. -/
-theorem randomAssign_comp_maxInput [Preorder E] (h : Fixes r D) :
-    randomAssign r ○ maxInput r D = maxAt r (randomAssign r ○ D) := by
-  have hv {i k : S} {e : E} (hk : extend i r e ~[D] k) : val r k = e := by
-    rw [h _ _ hk, val_extend_self]
-  have hk {i k : S} : i ~[randomAssign r ○ D] k ↔ extend i r (val r k) ~[D] k :=
-    ⟨fun ⟨_, ⟨e, he⟩, hk⟩ ↦ by subst he; rwa [hv hk], fun hk ↦ ⟨_, ⟨_, rfl⟩, hk⟩⟩
-  ext ⟨i, j⟩
-  rw [mem_maxBy, MaximalFor]
-  simp only [hk]
-  constructor
-  · rintro ⟨_, ⟨e, rfl⟩, hj⟩
-    obtain ⟨hm, hj⟩ := mem_maxInput.mp hj
-    obtain rfl := hv hj
-    simp only [extend_idem, val_extend_self] at hm
-    exact ⟨hj, fun k hk' hle ↦ hm.le_of_ge (y := val r k) ⟨k, hk'⟩ hle⟩
-  · rintro ⟨hj, hm⟩
-    refine ⟨_, ⟨val r j, rfl⟩, mem_maxInput.mpr ?_⟩
-    simp only [extend_idem, val_extend_self]
-    exact ⟨⟨⟨j, hj⟩, fun e ⟨k, hk'⟩ hle ↦ (hv hk') ▸ hm (hv hk' ▸ hk') (hv hk' ▸ hle)⟩, hj⟩
-
-theorem mem_maxInput_of_isGreatest [PartialOrder E] {T : E}
-    (h : IsGreatest {e | extend i r e ∈ D.dom} T) :
-    i ~[maxInput r D] j ↔ val r i = T ∧ i ~[D] j :=
-  mem_maxInput.trans (and_congr_left' h.maximal_iff)
 
 /-! ### Boxes -/
 

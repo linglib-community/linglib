@@ -11,12 +11,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "A veridical antecedent and a veridical anaphor.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -31,12 +27,8 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "The paper prints # on the second sentence only. An unspecific negated indefinite cannot antecede a veridical anaphor.",
+    "paperFeatures": [],
+    "comment": "The paper prints # on the second sentence only.",
     "verified": "page-image"
   },
   {
@@ -52,13 +44,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"],
-      ["case", "double negation"]
-    ],
-    "comment": "Doubly negated antecedent; the indefinite is in a veridical context.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -74,12 +61,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1"],
-      ["antecedent", "hypothetical"],
-      ["anaphor", "nonveridical"],
-      ["case", "bathroom disjunction"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -95,13 +77,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"],
-      ["case", "disagreement"]
-    ],
-    "comment": "The anaphor is in a nonveridical discourse relation to its antecedent; from Hofmann (2019): (2d).",
+    "paperFeatures": [],
+    "comment": "From Hofmann (2019): (2d).",
     "verified": "page-image"
   },
   {
@@ -117,12 +94,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"],
-      ["case", "modal subordination"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -138,12 +110,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "A factive under negation keeps its complement veridical; based on Karttunen (1976).",
+    "paperFeatures": [],
+    "comment": "Based on Karttunen (1976).",
     "verified": "page-image"
   },
   {
@@ -158,12 +126,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "A negative implicative under negation; based on Karttunen (1976).",
+    "paperFeatures": [],
+    "comment": "Based on Karttunen (1976).",
     "verified": "page-image"
   },
   {
@@ -178,11 +142,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper prints # on the continuation (6a) only.",
     "verified": "page-image"
   },
@@ -198,12 +158,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"]
-    ],
-    "comment": "The same antecedent with a modal anaphor: the anaphor's context decides.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -218,12 +174,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"]
-    ],
-    "comment": "A nonveridical attitude embeds the anaphor.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -239,11 +191,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "hypothetical"],
-      ["anaphor", "veridical"]
-    ],
+    "paperFeatures": [],
     "comment": "Available once the scalar implicature of might is cancelled, (55).",
     "verified": "page-image"
   },
@@ -260,11 +208,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "hypothetical"],
-      ["anaphor", "nonveridical"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -280,12 +224,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"],
-      ["case", "double negation"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -301,12 +240,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "hypothetical"],
-      ["anaphor", "nonveridical"],
-      ["case", "bathroom disjunction"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -322,12 +256,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"],
-      ["case", "modal subordination"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -343,12 +272,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "1.2"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"],
-      ["case", "disagreement"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -364,11 +288,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "2"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -384,12 +304,8 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "2"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "The paper prints # on the continuation (13b) only. A factive embeds the anaphor veridically, so the speaker would be committed to the car's existence.",
+    "paperFeatures": [],
+    "comment": "The paper prints # on the continuation (13b) only.",
     "verified": "page-image"
   },
   {
@@ -404,12 +320,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "2.1"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"]
-    ],
-    "comment": "Anaphora between two negative environments, which Heim's negation cannot admit; Kibble (1994), attributed to Paul Dekker.",
+    "paperFeatures": [],
+    "comment": "Kibble (1994), attributed to Paul Dekker.",
     "verified": "page-image"
   },
   {
@@ -424,12 +336,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "3"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "The contrast that section 3 derives.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -444,12 +352,8 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "3"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "The contrast that section 3 derives; the judgment is stated in the lead-in to (18).",
+    "paperFeatures": [],
+    "comment": "The judgment is stated in the lead-in to (18).",
     "verified": "page-image"
   },
   {
@@ -464,12 +368,8 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "3.2"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"]
-    ],
-    "comment": "Ruled out because the first utterance is inconsistent with the global existence of a referent.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -484,12 +384,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.1"],
-      ["antecedent", "veridical"],
-      ["anaphor", "veridical"],
-      ["case", "double negation"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -505,12 +400,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.2"],
-      ["antecedent", "hypothetical"],
-      ["anaphor", "nonveridical"],
-      ["case", "bathroom disjunction"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -526,12 +416,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.3"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "veridical"],
-      ["case", "disagreement"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -547,12 +432,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.4"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"],
-      ["case", "modal subordination"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -568,11 +448,8 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.2"],
-      ["case", "inclusive disjunction"]
-    ],
-    "comment": "The second disjunct contextually entails the first; Hurford's constraint.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -587,13 +464,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.4"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"],
-      ["case", "modal subordination"]
-    ],
-    "comment": "Anaphora under a nonveridical doxastic attitude.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -608,13 +480,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["section", "4.4"],
-      ["antecedent", "counterfactual"],
-      ["anaphor", "nonveridical"],
-      ["case", "modal subordination"]
-    ],
-    "comment": "Derived in section 4.4 on the model of Table 4.",
+    "paperFeatures": [],
+    "comment": "",
     "verified": "page-image"
   }
 ]
