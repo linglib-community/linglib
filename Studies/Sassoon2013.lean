@@ -21,7 +21,7 @@ dimensions into an existential (`DimensionBindingType.negate`); the
 clearly conjunctive adjectives are all judged positive and the clearly disjunctive ones
 negative (`polarity_predicts_binding`), and within an antonym pair the two are never both
 clearly bound the same way (`antonyms_negate`). Standard type: total adjectives should be
-conjunctive and partial ones disjunctive, the mechanism being the substrate's
+conjunctive and partial ones disjunctive, the mechanism being
 `predictedBinding`; by the inference tests no total adjective is disjunctive, but partial
 adjectives include conjunctive ones, so the biconditional fails and the paper reports only a
 correlation with modifier-based totality (`total_not_disjunctive`,
@@ -47,7 +47,33 @@ normalized conjunctivity and between totality and conjunctivity are not formaliz
 
 namespace Sassoon2013
 
-open Degree
+/-- A multidimensional adjective binds its dimensions conjunctively, disjunctively, or either way
+depending on context. -/
+inductive DimensionBindingType where
+  /-- The entity meets the standard in every dimension, as for *healthy*. -/
+  | conjunctive
+  /-- The entity meets the standard in some dimension, as for *sick*. -/
+  | disjunctive
+  /-- Context decides between the two, as for *intelligent*. -/
+  | mixed
+  deriving Repr, DecidableEq
+
+/-- `b.negate` is the binding type predicted for a negative antonym whose positive counterpart
+binds by `b`, by De Morgan's laws under the negation theory of antonymy. -/
+def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
+  | .conjunctive => .disjunctive
+  | .disjunctive => .conjunctive
+  | .mixed => .mixed
+
+/-- The binding type a standard predicts is conjunctive for the maximum standard of a total
+adjective, disjunctive for the minimum standard of a partial one, and mixed for a contextual
+standard (Hypothesis set 3, (23)). Necessity and extreme standards, which the paper does not treat,
+are context-dependent like contextual ones. -/
+def predictedBinding : PositiveStandard → DimensionBindingType
+  | .maxEndpoint => .conjunctive
+  | .minEndpoint => .disjunctive
+  | .contextual | .necessity | .extreme => .mixed
+
 
 /-- An adjective is conjunctive when its dimensional uses in positive contexts are at least three
 times those in negated contexts, disjunctive in the converse case, and mixed otherwise. -/

@@ -48,7 +48,7 @@ against the rows rather than presupposed by their coding.
 
 namespace BhattTakahashi2011
 
-open Core.Order Degree PhraseStructure
+open Core.Order PhraseStructure
 open PhraseStructure.Tree
 open RoseTree (cCommand CCommands)
 

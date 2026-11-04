@@ -23,7 +23,7 @@ no degree-based negative islands — and its scope argument.
 
 * `er`: the comparative morpheme on degree sets, `max D₂ > max D₁`.
 * `pos`: the positive form at a standard `c`; the contextual comparative is
-  `Degree.MaxIn (Set.Ioi c)`.
+  `Quantifier.MaxIn (Set.Ioi c)`.
 * `theC`: the Fregean definite over a contextual domain, the denotation of a *yori*-clause.
 * `erJ`: the comparative that combines directly with the adjective meaning.
 
@@ -46,7 +46,7 @@ Example numbers follow the journal article; the examples are typed in
 
 namespace BeckOdaSugisaki2004
 
-open Degree Quantifier Quantifier.Det
+open Quantifier Quantifier.Det
 
 variable {Entity D : Type*} [LinearOrder D]
 

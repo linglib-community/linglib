@@ -51,7 +51,7 @@ agrees with Lassiter's θ_might < θ_likely < θ_must < θ_certain (p. 152), wea
 
 namespace YingEtAl2025
 
-open MeasureTheory ProbabilityTheory Degree English.Auxiliaries Modality
+open MeasureTheory ProbabilityTheory English.Auxiliaries Modality
 open scoped ENNReal
 
 variable {E W X : Type*} [MeasurableSpace E] [MeasurableSpace W]

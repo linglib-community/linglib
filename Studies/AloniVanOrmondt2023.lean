@@ -45,7 +45,7 @@ disjuncts split over individuals, [obviating the ignorance](##obviation).
 
 namespace AloniVanOrmondt2023
 
-open QBSML Degree
+open QBSML
 
 inductive Var
   | x

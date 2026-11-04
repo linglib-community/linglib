@@ -39,7 +39,7 @@ where it is merged](##rows_ellipsis).
   paper's simplified LFs; the noun phrase *fewer papers* stays under *required*.
 * Condition C bleeding is `Minimalist.LateMergerBleeds`, with the merger sites that Trace
   Conversion admits on the chain of the degree head.
-* `Degree.IsHeimKennedy` is evaluated on the order of heights for the extraposition rows and on
+* `IsHeimKennedy` is evaluated on the order of heights for the extraposition rows and on
   c-command for the LF trees, which are category-free at the paper's bracketing, with
   non-branching and elided material written as one leaf. Of the readings the paper excludes by
   the constraint, those whose clause is merged under the *before*-clause are also excluded by its
@@ -74,7 +74,7 @@ where it is merged](##rows_ellipsis).
 
 namespace BhattPancheva2004
 
-open Core.Order Degree Quantifier Quantifier.Det Set PhraseStructure PhraseStructure.Tree
+open Core.Order Quantifier Quantifier.Det Set PhraseStructure PhraseStructure.Tree
 open RoseTree (cCommand)
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/

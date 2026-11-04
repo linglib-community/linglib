@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.IntervalOrder
-public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Delineation
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Comparable
 public import Mathlib.Tactic.Linarith
@@ -55,7 +55,7 @@ margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
 
 namespace Bochnak2015
 
-open Degree Delineation
+open Delineation
 
 variable {E D : Type*}
 

@@ -22,7 +22,7 @@ The English periphrastic causatives are *cause*, *make*, *let*, *have*, *get*, *
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Causative (Periphrastic) -/
 

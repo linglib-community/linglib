@@ -23,9 +23,9 @@ bounded](##bddAbove_extent_iff).
 
 Extents are the rays `Set.Iic` and `Set.Ici`, closed at the measure as in (30) and (31). The
 embedding of measure functions into Klein's degree-free semantics is
-`Degree.Delineation.ofMeasure`, whose ordering is degree comparison
-(`Degree.Delineation.outranks_ofMeasure_iff`). The scale and sort of an example are read from
-`English.Adjectives` and `English.MeasurePhrases`: `Degree.ScalarDimension.comparisonScale` merges
+`Delineation.ofMeasure`, whose ordering is degree comparison
+(`Delineation.outranks_ofMeasure_iff`). The scale and sort of an example are read from
+`English.Adjectives` and `English.MeasurePhrases`: `ScalarDimension.comparisonScale` merges
 *long*, *wide*, *tall* and *high* as "some notion of linear extent" (pp. 16-17).
 
 ## TODO
@@ -107,9 +107,9 @@ end Sorts
 /-- An example with the directed scales of its matrix and its standard. -/
 structure Compared where
   /-- The directed scale of the matrix adjective. -/
-  matrix : Option Degree.DirectedScale
+  matrix : Option DirectedScale
   /-- The directed scale of the standard, an adjective or a measure phrase. -/
-  standard : Option Degree.DirectedScale
+  standard : Option DirectedScale
   /-- The example. -/
   row : Datum
 
@@ -118,7 +118,7 @@ section Rows
 open English.Adjectives English.MeasurePhrases Examples
 
 /-- The directed scale of *mph*, a positive speed. -/
-def mph : Degree.DirectedScale := (.inl (mile.dimension / hour.dimension), .positive)
+def mph : DirectedScale := (.inl (mile.dimension / hour.dimension), .positive)
 
 -- UNVERIFIED: the labels of `mp_*`, see the module's TODO.
 /-- The examples, with the scale of each read from its words. The standard of (73), *shorter than

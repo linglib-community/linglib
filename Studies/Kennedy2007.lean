@@ -25,7 +25,6 @@ the preimages of `Set.Ioi θ`, `Set.Ioi ⊥` and `Set.Ici ⊤` under the measure
 
 namespace Kennedy2007
 
-open Degree
 
 variable {Entity D : Type*} [LinearOrder D]
 

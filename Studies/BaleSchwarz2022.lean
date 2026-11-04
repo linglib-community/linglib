@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Measure.Quantity
+public import Linglib.Semantics.Quantity.Basic
 public import Linglib.Fragments.English.MeasurePhrases
 public import Linglib.Data.Examples.BaleSchwarz2022
 public import Mathlib.Data.PFun
@@ -47,7 +47,7 @@ measure terms.
 
 namespace BaleSchwarz2022
 
-open Degree Quantity English.MeasurePhrases
+open Quantity English.MeasurePhrases
 
 noncomputable section
 

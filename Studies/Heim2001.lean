@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.Data.Fin.VecNotation
 
@@ -9,12 +9,12 @@ public import Mathlib.Data.Fin.VecNotation
 
 Heim asks how far a degree phrase moves at LF, given the max semantics of the comparative, on
 which *-er than t* says that the greatest degree of its
-argument exceeds *t*, `Degree.MaxIn (Ioi t)`, and a DegP scopes under a quantifier or over it,
-`Degree.LowScope` and `Degree.HighScope`. Over a monotone increasing quantifier on a finite
+argument exceeds *t*, `Quantifier.MaxIn (Ioi t)`, and a DegP scopes under a quantifier or over it,
+`Quantifier.LowScope` and `Quantifier.HighScope`. Over a monotone increasing quantifier on a finite
 domain the two scopes coincide and under a monotone decreasing one the maximum is undefined,
 so the *exactly*-differential and *less*, whose intervals are not upper sets, are the
 diagnostic cases: under *every girl* their high scope is a weaker reading the sentence lacks,
-which Kennedy's generalization, the Heim–Kennedy constraint `Degree.IsHeimKennedy`,
+which Kennedy's generalization, the Heim–Kennedy constraint `IsHeimKennedy`,
 excludes, while over the intensional verbs both scopes are attested. For the neg-raising verbs
 the maximum redefined as the greatest lower bound of the false degrees collapses the scopes
 (`negRaising_collapse`), and *-est*, using its complement twice, is the absolute superlative
@@ -41,7 +41,7 @@ the maximum redefined as the greatest lower bound of the false degrees collapses
 
 namespace Heim2001
 
-open Degree Quantifier Quantifier.Det Set
+open Quantifier Quantifier.Det Set
 
 variable {Entity W D : Type*} [LinearOrder D]
 

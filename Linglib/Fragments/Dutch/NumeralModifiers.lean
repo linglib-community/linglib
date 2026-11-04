@@ -27,7 +27,7 @@ bound. The reading recorded here is truth-conditional content, the upper bound i
 
 namespace Dutch.NumeralModifiers
 
-open Degree Numerals
+open Numerals
 
 /-- *tot* 'up to', a directional preposition, bounds the amount from above. -/
 def tot : NumeralModifier := .ofComparison "tot" (some .directional) .le

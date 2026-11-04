@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Reference.Rigidity
-public import Linglib.Semantics.Degree.MeasurePhrase
-public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Degree.Measurement
+public import Linglib.Semantics.Delineation
 public import Linglib.Data.Examples.VonStechow1984
 public import Mathlib.Tactic.Linarith
 
@@ -35,7 +35,6 @@ paper's examples are the rows of `Data.Examples.VonStechow1984`.
 
 namespace VonStechow1984
 
-open Degree
 
 variable {W Entity D : Type*} [LinearOrder D]
 

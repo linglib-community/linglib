@@ -27,7 +27,7 @@ carries the common ground, the construals, and the speaker's Quality and Relevan
 as primitives, with the paper's requirements that every construal cover the common ground
 and that any two construals be comparable by width, which is what makes the optimal construal
 unique. Partition construals are `Question.fromSetoid`, so refinement is the order on
-`Setoid`. Grains are `Degree.grain`, whose cells are centred on the multiples of
+`Setoid`. Grains are `grain`, whose cells are centred on the multiples of
 the width, so that a measure phrase denotes the cell it lies at the centre of, (24); Figure 1's
 year and half-year grains are `grain 1` and `grain (1 / 2)` on `ℝ`. Worlds for the constituent
 question of §4.1 are the extensions of its predicate. The exhaustive interpretation of the
@@ -204,7 +204,6 @@ theorem widerThan_fromSetoid {r s : Setoid W} (h : r < s) :
 
 section Grain
 
-open Degree
 
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
 

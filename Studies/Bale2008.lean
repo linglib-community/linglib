@@ -24,11 +24,11 @@ not taller for a man than he is wide for a man.
 
 ## Implementation notes
 
-* Universal degrees are `Degree.universalDegree`: an adjective's quasi-order is given by a
+* Universal degrees are `universalDegree`: an adjective's quasi-order is given by a
   measure into a linear order, and a comparison class by a finite set, which restricts the
   quasi-order as Klein's comparison classes do.
 * The comparative is Kennedy's, as in the paper: MORE applied to the greatest degree the
-  than-clause reaches is `Degree.MaxComparative .gt` over the two measures (`more_iff`), stated as
+  than-clause reaches is `MaxComparative .gt` over the two measures (`more_iff`), stated as
   the point comparison `μ ⁻¹' Set.Ioi n`.
 * Universal degrees are rationals: the paper's universal scale is the rationals from zero to one.
 * The paper sets this against analyses that take indirect comparisons to be metaphorical extensions
@@ -49,7 +49,7 @@ not taller for a man than he is wide for a man.
 
 namespace Bale2008
 
-open Finset Degree
+open Finset
 
 /-! ### The comparative -/
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Hom.CompleteLattice
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Degree.Quotient
+public import Linglib.Semantics.Degree.CresswellDegree
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -29,7 +29,7 @@ NP-comparative need neither of the paper's conditions on grading relations (Defi
 so `μ` takes values in a preorder. The homomorphism preserves arbitrary unions and intersections,
 which Fact 2 needs on infinite domains (the paper's footnote 11). The S-comparative of Definition 8
 is `(μ ⁻¹' strictUpperBounds ·)`, and its anti-additivity (Fact 5) is
-`Degree.gtOverSet_isAntiAdditive`; on a disjunction this is what Cresswell's footnote 10 notes,
+`gtOverSet_isAntiAdditive`; on a disjunction this is what Cresswell's footnote 10 notes,
 `Cresswell1976.erThan_union`.
 
 ## References
@@ -44,7 +44,7 @@ is `(μ ⁻¹' strictUpperBounds ·)`, and its anti-additivity (Fact 5) is
 
 namespace Hoeksema1983
 
-open Degree Quantifier CompleteLatticeHom
+open Quantifier CompleteLatticeHom
 
 variable {Entity D : Type*} [Preorder D] (μ : Entity → D)
 

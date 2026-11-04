@@ -19,7 +19,7 @@ that argument left unexpressed (`ArgumentFrame.leaveImplicit`).
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Verbs without the prepositional frame -/
 

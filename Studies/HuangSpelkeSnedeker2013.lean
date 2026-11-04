@@ -36,7 +36,7 @@ developmental strategy of Musolino.
 
 namespace HuangSpelkeSnedeker2013
 
-open Numerals Degree Exhaustification
+open Numerals Exhaustification
 
 /-! ### The covered-box task -/
 

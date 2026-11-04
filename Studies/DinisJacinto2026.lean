@@ -21,7 +21,7 @@ extension must have become smaller on the scale.
 
 ## Implementation notes
 
-* ML scales are `Degree.MarginalScale`, whose five axioms are those of Figure 1 with largely
+* ML scales are `MarginalScale`, whose five axioms are those of Figure 1 with largely
   smaller than unfolded.
 * A measure function takes a circumstance of evaluation and an object to a degree. The context
   enters only through the standard of comparison and the scale, which are held fixed.
@@ -42,7 +42,7 @@ extension must have become smaller on the scale.
 
 namespace DinisJacinto2026
 
-open Degree MarginalScale
+open MarginalScale
 
 variable {α : Type*} [LinearOrder α] {ml : MarginalScale α}
 

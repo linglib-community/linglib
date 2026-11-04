@@ -24,7 +24,7 @@ in a downward-entailing environment. Exhaustifying under *whenever*, above a req
 
 ## Implementation notes
 
-* A numeral's readings are the intervals `Degree.Comparison.interval` of a count or a degree, and
+* A numeral's readings are the intervals `Comparison.interval` of a count or a degree, and
   the lexical entries reach them on the count of `P ∩ Q` in a finite domain.
 * A modal environment is the set `A` of values its base allows: a requirement holds when every
   allowed value lies in the reading, `A ⊆ I`, and a permission when one does, `(A ∩ I).Nonempty`.
@@ -53,7 +53,7 @@ in a downward-entailing environment. Exhaustifying under *whenever*, above a req
 
 namespace Spector2013
 
-open Degree Exhaustification Numerals Quantifier Set
+open Exhaustification Numerals Quantifier Set
 
 /-! ### Lexical entries (Sections 2.1, 4 and 6.1) -/
 

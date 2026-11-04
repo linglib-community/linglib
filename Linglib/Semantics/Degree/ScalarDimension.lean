@@ -1,69 +1,43 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.PositiveStandard
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.Degree.Measure.Dimension
+public import Linglib.Semantics.Quantity.Dimension
 
 /-!
 # Scalar dimensions
 
-This file defines `Degree.ScalarDimension`, the dimensions along which gradable adjectives and
-degree achievements measure, such as height, temperature and fullness. A dimension has the
-shape of its scale in its increasing direction and, when it is a dimension of physical
-measurement, the physical dimension its degrees are measured in. Evaluative and psychological
-scales have none, which is why they reject measure phrases (*six feet tall* but not *six feet
-happy*), and speed is a primitive lexical scale although physically a quotient, in line with
-Bale and Schwarz's hypothesis that semantic composition has no quantity division. The degrees of
-a dimension are the canonical linear order of its scale's shape, and the default Vendler class of
-a degree achievement is read off that shape.
-
-## Main definitions
-
-* `ScalarDimension`: the dimensions of gradable predicates.
-* `ScalarDimension.boundedness`: the shape of a dimension's scale.
-* `ScalarDimension.dimension?`: the physical dimension of a dimension, if it has one.
-* `ComparisonScale`, `ScalarDimension.comparisonScale`: what two adjectives must share to compare.
-* `ScalarDimension.degree`: the degrees of a dimension.
-* `Boundedness.defaultVendlerClass`: the default Vendler class of a degree achievement on a scale.
-
-## Main results
-
-* `ScalarDimension.defaultTelicity_telic_iff_hasGreatest`: a degree achievement is telic by default
-  exactly when the degrees of its scale have a greatest element.
+`ScalarDimension` lists the dimensions along which gradable adjectives and degree achievements
+measure, such as height, temperature and fullness. A dimension has the shape of its scale and, when
+it is a dimension of physical measurement, the physical dimension its degrees are measured in.
+Evaluative and psychological scales have none, which is why they reject measure phrases (*six feet
+tall* but not *six feet happy*). The degrees of a dimension are the canonical linear order of its
+scale's shape, and [a degree achievement is telic by default exactly when they have a greatest
+element](##ScalarDimension.defaultTelicity_telic_iff_hasGreatest).
 
 ## Implementation notes
 
-The degrees of a dimension are the integers with the endpoints of its scale adjoined
-(`Boundedness.DegreeShape`), where Kennedy and McNally take degrees isomorphic to the real
-numbers between 0 and 1. The results here and in `Semantics/Degree/Boundedness.lean` use only
-which endpoints a scale has and that an automorphism carries any degree between them to any
-other, which the integers, the rationals and the reals all provide; none of them depends on
+Speed is a primitive lexical scale although physically a quotient, in line with Bale and Schwarz's
+hypothesis that semantic composition has no quantity division. Degrees are the integers with the
+endpoints of the scale adjoined (`Boundedness.DegreeShape`), where Kennedy and McNally take the
+reals between 0 and 1; nothing here or in `Semantics/Degree/PositiveStandard.lean` depends on
 density, which Fox and Hackl's Universal Density of Measurement asserts of every scale.
 
 ## References
 
-* [M. J. Cresswell, *The Semantics of Degree* (1976)][cresswell-1976]
-* [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
-  Predicates* (2005)][kennedy-mcnally-2005]
-* [C. Kennedy, *Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives*
-  (2007)][kennedy-2007]
-* [C. Kennedy and B. Levin, *Measure of Change: The Adjectival Core of Degree Achievements*
-  (2008)][kennedy-levin-2008]
-* [D. Lassiter, *Graded Modality: Qualitative and Quantitative Perspectives*
-  (2017)][lassiter-2017]
-* [A. Bale and B. Schwarz, *Natural language and external conventions: re-examining per*
-  (2026)][bale-schwarz-2026]
-* [D. Fox and M. Hackl, *The Universal Density of Measurement* (2006)][fox-hackl-2006]
+* [cresswell-1976]
+* [kennedy-mcnally-2005]
+* [kennedy-2007]
+* [kennedy-levin-2008]
+* [lassiter-2017]
+* [bale-schwarz-2026]
+* [fox-hackl-2006]
 -/
 
 @[expose] public section
 
-namespace Degree
-
 open Aspect
-
-open Degree (Boundedness)
 
 /-- A scalar dimension is what a gradable adjective or a degree achievement measures along. -/
 inductive ScalarDimension
@@ -113,7 +87,7 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
     quantity counts, so it has dimension `1`; and *fast* lexicalizes speed, the quotient of length
     by time, as a primitive scale. Evaluative, psychological and state scales, which reject ratio
     measure phrases, have none. -/
-def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimension
+def ScalarDimension.dimension? : ScalarDimension → Option QuantityDimension
   | .height | .width | .length | .depth | .thickness => some (.of .length)
   | .weight => some (.of .mass)
   | .age => some (.of .time)
@@ -187,5 +161,3 @@ theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimensi
     d.defaultVendlerClass.dynamicity = .dynamic := by
   unfold defaultVendlerClass Boundedness.defaultVendlerClass; cases d.boundedness <;> rfl
 
-
-end Degree

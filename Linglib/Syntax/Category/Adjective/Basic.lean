@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Antonymy
-public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.ScalarDimension
 public import Linglib.Morphology.Morph
 
 /-!
@@ -25,7 +25,7 @@ without one. The degree semantics, with the positive standard and the Kennedy cl
 
 @[expose] public section
 
-open Degree Morphology
+open Morphology
 
 /-! ### Comparison morphology -/
 
@@ -53,7 +53,7 @@ structure Adjective where
   form : String
   /-- Native script form, when distinct. -/
   script : Option String := none
-  /-- The scalar dimension measured, as a `Degree.ScalarDimension` key.
+  /-- The scalar dimension measured, as a `ScalarDimension` key.
       `none` for classifying/relational adjectives (*wooden*, *former*, *medical*)
       and other non-gradables. -/
   dimension : Option ScalarDimension := none

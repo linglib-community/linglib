@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Adjective.Basic
 /-!
 # Gradable adjectives
 
-This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
+This file defines `GradableAdjective`, a syntactic adjective together with its degree
 semantics. The scale an adjective measures on and its positive standard, whose kind is Kennedy's
-class of the adjective, are read off its `Degree.Gradability`, its dimension, polarity and any
+class of the adjective, are read off its `Gradability`, its dimension, polarity and any
 lexically fixed standard, so that *wet* and *dry* share one scale and differ only in pole. The
-file also defines antonym pairs and the ways a multidimensional adjective binds its dimensions.
+file also defines antonym pairs.
 
 An antonym pair is contradictory when its poles take complementary standards, the minimum and the
 maximum of one scale, as Kennedy and McNally explain for *open* and *closed*. A pair of extreme
@@ -29,7 +29,6 @@ relative to a contextual range, is left to the studies.
   contradictory, where any other pair leaves a gap and is contrary; without lexical standards
   this holds exactly on a half-closed scale
   (`AntonymPair.complementaryStandards_iff_of_lexicalStandard_none`).
-* `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
 * `DirectedScale`, `GradableAdjective.directedScale?`: the ordered set an adjective's degrees
   belong to.
 
@@ -43,7 +42,6 @@ relative to a contextual range, is left to the studies.
   Negation* (2024)][alexandropoulou-gotzner-2024a]
 * [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
   (2012)][morzycki-2012]
-* [G. W. Sassoon, *A Typology of Multidimensional Adjectives* (2013)][sassoon-2013]
 * [M. J. Cresswell, *The Semantics of Degree* (1976)][cresswell-1976]
 * [C. Kennedy, *Projecting the Adjective* (1999)][kennedy-1999]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
@@ -55,10 +53,6 @@ relative to a contextual range, is left to the studies.
 -/
 
 @[expose] public section
-
-namespace Degree
-
-/-! ### Kennedy's adjective classes -/
 
 /-! ### The gradable adjective -/
 
@@ -200,38 +194,3 @@ theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     (h := ⟨p.dimension, .negative, p.negLexicalStandard⟩) rfl rfl rfl hp hn
 
 end AntonymPair
-
-/-! ### Multidimensional adjectives ([sassoon-2013]) -/
-
-/-- A multidimensional adjective binds its dimensions conjunctively, disjunctively, or either way
-depending on context ([sassoon-2013]). -/
-inductive DimensionBindingType where
-  /-- The entity meets the standard in every dimension, as for *healthy*. -/
-  | conjunctive
-  /-- The entity meets the standard in some dimension, as for *sick*. -/
-  | disjunctive
-  /-- Context decides between the two, as for *intelligent*. -/
-  | mixed
-  deriving Repr, DecidableEq
-
-/-- `b.negate` is the binding type predicted for a negative antonym whose positive counterpart
-    binds by `b`, by De Morgan's laws under the negation theory of antonymy. -/
-def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
-  | .conjunctive => .disjunctive
-  | .disjunctive => .conjunctive
-  | .mixed       => .mixed
-
-theorem negate_involutive (b : DimensionBindingType) :
-    b.negate.negate = b := by cases b <;> rfl
-
-/-- The binding type a standard predicts is conjunctive for the maximum standard of a total
-    adjective, disjunctive for the minimum standard of a partial one, and mixed for a contextual
-    standard ([sassoon-2013], Hypothesis set 3, (23)). -/
-def predictedBinding : Degree.PositiveStandard → DimensionBindingType
-  | .maxEndpoint => .conjunctive
-  | .minEndpoint => .disjunctive
-  | .contextual  => .mixed
-  | .necessity   => .mixed   -- evaluative; context-dependent like contextual
-  | .extreme     => .mixed   -- context-dependent like contextual
-
-end Degree

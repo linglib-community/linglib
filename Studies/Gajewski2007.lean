@@ -382,7 +382,7 @@ def Env.AntiAdditive : Env → Prop
   | .conditional => ∀ (W : Type) (horizon : W → Set W) (q : Set W),
       IsAntiAdditive fun p ↦ posSupport (Conditional.horizonCounterfactual horizon p q)
   | .superlative => ∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-      IsAntiAdditive fun C : W → Set ι ↦ posSupport (Degree.superlative μ C a)
+      IsAntiAdditive fun C : W → Set ι ↦ posSupport (trivalentSuperlative μ C a)
 
 private theorem not_isAntiAdditive_id : ¬ IsAntiAdditive (id : Set Bool → Set Bool) := by
   rw [isAntiAdditive_iff_mem]
@@ -416,7 +416,8 @@ theorem Env.antiAdditive_iff (e : Env) :
       (by decide)
   | superlative =>
     exact iff_of_false
-      (fun h ↦ Degree.not_antitone_posSupport_superlative (h Unit Unit ℕ _ _).antitone) (by decide)
+      (fun h ↦ not_antitone_posSupport_trivalentSuperlative (h Unit Unit ℕ _ _).antitone)
+      (by decide)
 
 instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.antiAdditive_iff.symm
 
@@ -430,11 +431,11 @@ theorem strawsonAntiAdditive_not_sufficient :
       (∀ (W : Type) (horizon : W → Set W) (q : Set W),
         IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
       (∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-        IsStrawsonAntiAdditive (Degree.superlative (W := W) μ · a)) ∧
+        IsStrawsonAntiAdditive (trivalentSuperlative (W := W) μ · a)) ∧
       ∀ e ∈ [Env.only, .adversative, .conditional, .superlative], ¬ e.AntiAdditive :=
   ⟨fun _ _ ↦ Focus.isStrawsonAntiAdditive_only_eq, fun _ ↦ isStrawsonAntiAdditive_regret,
     fun _ ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
-    fun _ _ _ _ ↦ Degree.isStrawsonAntiAdditive_superlative,
+    fun _ _ _ _ ↦ isStrawsonAntiAdditive_trivalentSuperlative,
     by decide⟩
 
 /-! ### The paper's judgments -/

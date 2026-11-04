@@ -22,7 +22,7 @@ the frames of its causative and anticausative uses.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Physical disturbance change-of-state verbs ([tham-2025]) -/
 

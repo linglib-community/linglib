@@ -46,7 +46,7 @@ complement set salient, following Blok.
 
 namespace ClausWalch2024
 
-open Data.Statistics Degree English.NumeralModifiers German.NumeralModifiers Set
+open Data.Statistics English.NumeralModifiers German.NumeralModifiers Set
 open scoped Denotes
 
 variable {N p q n : ℕ}

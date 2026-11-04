@@ -63,7 +63,7 @@ for reasons beyond convexity, which the paper leaves open.
 
 namespace SoltWaldon2019
 
-open Set Degree
+open Set
 
 variable {W ι : Type*} [Preorder ι]
 

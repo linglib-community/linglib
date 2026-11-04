@@ -16,7 +16,7 @@ place it near the numeral, and *almost* and *nearly* place it near the numeral a
 
 Each modifier is a `Numerals.NumeralModifier`, denoting the set of readings the literature makes
 available for it, each a modifier of sets of amounts. A bound-setting modifier and an exactifier
-have the one reading of the comparison they express, `Degree.Comparison.modifier`, so a modifier of
+have the one reading of the comparison they express, `Comparison.modifier`, so a modifier of
 one class and its counterpart of the other differ in whether the interval keeps the number. An
 approximator has a reading for each value of a tolerance the context supplies: Égré, Spector,
 Mortier and Verheyen give *around n* the amounts within the tolerance of `n` on either side, and on
@@ -66,7 +66,7 @@ to the study of that paper.
 
 namespace English.NumeralModifiers
 
-open Degree Numerals
+open Numerals
 open scoped Denotes
 
 /-! ### Bounds and exactifiers -/

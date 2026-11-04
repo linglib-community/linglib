@@ -9,13 +9,12 @@ public import Mathlib.Order.Setoid.Basic
 
 Cresswell builds degrees from a comparison instead of assuming them. Two things are
 indistinguishable under a comparison $φ$ when they stand in $φ$ to the same things on both sides,
-the degrees are the classes of indistinguishable things, and $φ$ induces a
-[well-defined comparison](##Degree.CresswellDegree.mk_lt_mk) on them. The degrees form a scale, a
-strict total order, [exactly when $φ$ is a strict weak order](##Degree.isStrictTotalOrder_lt_iff),
-and then being indistinguishable is [being incomparable](##Degree.cresswellSetoid_iff_incompRel).
-On a preorder the construction is
-[mathlib's antisymmetrization](##Degree.cresswellSetoid_eq_antisymmRel), and a connected preorder
-and its strict part [give the same degrees](##Degree.cresswellSetoid_lt_eq_le).
+the degrees are the classes of indistinguishable things, and $φ$ induces a [well-defined
+comparison](##CresswellDegree.mk_lt_mk) on them. The degrees form a scale, a strict total order,
+[exactly when $φ$ is a strict weak order](##CresswellDegree.isStrictTotalOrder_lt_iff), and then
+being indistinguishable is [being incomparable](##cresswellSetoid_iff_incompRel). On a preorder the
+construction is [mathlib's antisymmetrization](##cresswellSetoid_eq_antisymmRel), and a connected
+preorder and its strict part [give the same degrees](##cresswellSetoid_lt_eq_le).
 
 ## Implementation notes
 
@@ -31,8 +30,6 @@ and a reflexive $φ$ is better served by mathlib's order on `Antisymmetrization`
 -/
 
 @[expose] public section
-
-namespace Degree
 
 variable {E : Type*} {φ : E → E → Prop} {a b : E}
 
@@ -75,7 +72,7 @@ theorem cresswellSetoid_iff_incompRel [IsStrictWeakOrder E φ] :
       neg_trans hcb hba hca, fun hcb ↦ by_contra fun hca ↦ neg_trans hca hab hcb⟩⟩⟩
 
 /-- The degrees of a comparison form a scale exactly when the comparison is a strict weak order. -/
-theorem isStrictTotalOrder_lt_iff :
+theorem CresswellDegree.isStrictTotalOrder_lt_iff :
     IsStrictTotalOrder (CresswellDegree φ) (· < ·) ↔ IsStrictWeakOrder E φ := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · have hirr (x : E) : ¬ φ x x := irrefl_of (· < ·) (⟦x⟧ : CresswellDegree φ)
@@ -102,7 +99,7 @@ instance [DecidableRel φ] : DecidableRel ((· < ·) : CresswellDegree φ → Cr
 /-- On a strict weak order the degrees are linearly ordered, as mathlib's `Antisymmetrization` is
 on a total preorder. -/
 instance [IsStrictWeakOrder E φ] [DecidableRel φ] : LinearOrder (CresswellDegree φ) :=
-  have := isStrictTotalOrder_lt_iff.2 ‹IsStrictWeakOrder E φ›
+  have := CresswellDegree.isStrictTotalOrder_lt_iff.2 ‹IsStrictWeakOrder E φ›
   linearOrderOfSTO (· < ·)
 
 /-! ### Preorders -/
@@ -150,5 +147,3 @@ theorem cresswellSetoid_le_measure (μ : E → D) :
     (ker_le_cresswellSetoid (· ≥ ·) μ)
 
 end Measure
-
-end Degree

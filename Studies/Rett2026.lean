@@ -57,7 +57,8 @@ and note 16 of the January text, while `tallerNeg` already reads the bound throu
 
 namespace Rett2026
 
-open Degree Tense Rett2020a
+open Tense Rett2020a
+open Comparison (maxOnScale mem_maxOnScale_lt)
 
 /-! ### Ambivalence -/
 

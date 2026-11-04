@@ -324,5 +324,71 @@
     ],
     "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
     "verified": "page-image"
+  },
+  {
+    "id": "rett2015b_demonstrative_tall",
+    "source": {
+      "bibkey": "rett-2015b",
+      "paperLabel": "Table 3.1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Doug's (about) that tall too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B are looking at Adam, so his exact height is salient; acceptable after both 'Adam's really short' and 'Adam's really tall' ((17)-(18)).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "degreeDemonstrative"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "evaluative",
+        "false"
+      ]
+    ],
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
+    "verified": "page-image"
+  },
+  {
+    "id": "rett2015b_demonstrative_short",
+    "source": {
+      "bibkey": "rett-2015b",
+      "paperLabel": "Table 3.1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Doug's (about) that short too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B are looking at Adam, so his exact height is salient; acceptable after 'Adam's really short' and infelicitous after 'Adam's really tall' ((17)-(18)).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "degreeDemonstrative"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "evaluative",
+        "true"
+      ]
+    ],
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
+    "verified": "page-image"
   }
 ]

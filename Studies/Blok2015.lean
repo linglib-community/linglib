@@ -231,7 +231,7 @@ def upperBounded (l : Glottocode) : List Numerals.NumeralModifier :=
 open scoped Denotes in
 theorem mem_upperBounded {l : Glottocode} {w : Numerals.NumeralModifier}
     (h : w ∈ upperBounded l) :
-    ⟦w⟧ = {Degree.Comparison.le.modifier} ∧ w.modifierClass = some .classB := by
+    ⟦w⟧ = {Comparison.le.modifier} ∧ w.modifierClass = some .classB := by
   unfold upperBounded at h
   simp only [List.lookup] at h
   split at h

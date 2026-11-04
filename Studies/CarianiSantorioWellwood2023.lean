@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Algebra.Order.Group.Indicator
-public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Delineation
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Fragments.English.Adjectives
 
@@ -30,7 +30,7 @@ the authors' degree-based variant, iff the measure reflects the background.
   sends each state to its holder. The presupposition that a state lies in the domain of the
   background is membership in `S`.
 * The positive form of `x` is `x ∈ holder '' T` for a threshold `T` with `IsUpperSet T`, and the
-  comparative of `a` over `b` is `Degree.MaxComparative .gt (holder · = a) (holder · = b) μ`, the
+  comparative of `a` over `b` is `MaxComparative .gt (holder · = a) (holder · = b) μ`, the
   standard degree being the greatest measure of `b`'s states. An admissible measure is
   `StrictMono μ`, Schwarzschild's monotonicity.
 * `holder` need not be injective, since the standard's maximum ranges over several states. The
@@ -70,7 +70,7 @@ public section
 
 namespace CarianiSantorioWellwood2023
 
-open Set Degree
+open Set
 
 variable {S X D : Type*} [Preorder S] [Preorder D] {holder : S → X} {μ : S → D} {T : Set S}
 

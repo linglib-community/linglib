@@ -13,10 +13,10 @@ is a quantifier over degree properties, true of a property when its greatest deg
 the numeral's relation to the number, `max{n | D(n)} = m` for the bare numeral ((29)), `> m` and
 `< m` for the Class A modifiers *more than* and *fewer than* ((41)), `≥ m` and `≤ m` for the
 Class B modifiers *at least* and *at most* ((42)); this is the substrate's degree quantifier
-`Degree.MaxIn` at the comparison's interval. Applied to the degrees a count reaches it is the
+`Quantifier.MaxIn` at the comparison's interval. Applied to the degrees a count reaches it is the
 comparison of the count, so bare numerals are two-sided without a Horn scale
 (`maxIn_interval_Iic`), and the one-sided readings of numerals under root modals ((31)–(34)) are
-matters of scope, `Degree.HighScope`: a bare numeral scoping over a necessity modal names the
+matters of scope, `Quantifier.HighScope`: a bare numeral scoping over a necessity modal names the
 least count the modal requires and over a possibility modal the greatest it allows
 (`necessity_wide_iff`, `possibility_wide_iff`).
 
@@ -39,12 +39,11 @@ Class A forms are entailed by no alternative at all and have no primary implicat
 ## Implementation notes
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
-the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
-neo-Gricean operators are `NeoGricean.primaryImplicatures` and
-`NeoGricean.IsSecondaryImplicature`. A root modal is the quantifier `every R` or `Det.some R` over
-its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` and
-`Degree.HighScope` of `MaxIn {m}` over it. The interactions of Class B modifiers with root modals
-(Section 4.2) are not formalized.
+the alternatives are the five forms of the numeral, one for each `Comparison`, and the neo-Gricean
+operators are `NeoGricean.primaryImplicatures` and `NeoGricean.IsSecondaryImplicature`. A root modal
+is the quantifier `every R` or `Det.some R` over its accessible worlds `R`, and the numeral's two
+scopes are `Quantifier.LowScope` and `Quantifier.HighScope` of `MaxIn {m}` over it. The interactions
+of Class B modifiers with root modals (Section 4.2) are not formalized.
 
 ## References
 
@@ -57,7 +56,7 @@ its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` an
 
 namespace Kennedy2015
 
-open Degree Numerals NeoGricean Quantifier Quantifier.Det Set
+open Numerals NeoGricean Quantifier Quantifier.Det Set
 
 /-! ### The de-Fregean semantics (Section 3)
 

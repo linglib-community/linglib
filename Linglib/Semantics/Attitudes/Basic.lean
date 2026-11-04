@@ -60,7 +60,7 @@ clausally distributive in the sense of `Distributivity.IsDistributive`, as the d
 are (`Preferential.isDistributive_degreeComparison`) and *worry* is not. -/
 inductive Attitude
   | doxastic (alternatives : Doxastic.Alternatives)
-  | preferential (valence : Degree.EvaluativeValence) (distributive : Bool)
+  | preferential (valence : EvaluativeValence) (distributive : Bool)
   deriving DecidableEq, Repr
 
 namespace Attitude
@@ -86,7 +86,7 @@ instance : DecidablePred IsPreferential
   | .preferential _ _ => isTrue trivial
 
 /-- The valence of a preferential predicate. -/
-def valence : Attitude → Option Degree.EvaluativeValence
+def valence : Attitude → Option EvaluativeValence
   | .doxastic _ => none
   | .preferential v _ => some v
 

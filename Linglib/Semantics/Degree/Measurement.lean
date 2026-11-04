@@ -6,41 +6,23 @@ public import Mathlib.Algebra.Order.Ring.Defs
 import Mathlib.Tactic.Linarith
 
 /-!
-# Measure phrases and the changes of scale they survive
+# Scales of measurement
 
 A *differential comparative* (*3 inches taller*) says that two measures differ by a given amount,
 and a *factor equative* (*twice as tall*) that one measure is a given multiple of another. A
 statement about measures is meaningful when every admissible change of scale preserves it: every
 strictly increasing map on an ordinal scale, every positive affine map on an interval scale, every
-positive scaling on a ratio scale. A differential needs differences but no zero, and an affine
-change of scale carries it to the differential whose amount is the image under the change's linear
-part. A factor equative needs a zero, so *twice as hot* is meaningless in degrees Celsius. On an
-ordinal scale only the zero differential and the factor $1$ survive.
-
-## Main definitions
-
-* `Degree.DifferentialComparative`: two measures differ by a given amount.
-* `Degree.FactorEquative`: one measure is a given multiple of another.
-
-## Main statements
-
-* `Degree.differentialComparative_comp_affineMap`: an affine change of scale acts on the amount of a
-  differential by its linear part.
-* `Degree.differentialComparative_const_sub`: reversing a scale about a point reverses every
-  differential.
-* `Degree.differentialComparative_comp_strictMono_iff`: only the zero differential survives every
-  strictly increasing change of scale.
-* `Degree.factorEquative_add_const_iff`: a translation carries a factor equative to a factor
-  equative only when the factor fixes the translation.
-* `Degree.factorEquative_comp_strictMono_iff`: only the factor $1$ survives every strictly
-  increasing change of scale.
+positive scaling on a ratio scale. A differential needs differences but no zero, and [an affine
+change of scale acts on its amount by its linear part](##differentialComparative_comp_affineMap). A
+factor equative needs a zero, since [a translation preserves it only when the factor fixes the
+translation](##factorEquative_add_const_iff), so *twice as hot* is meaningless in degrees Celsius.
+On an ordinal scale [only the zero differential](##differentialComparative_comp_strictMono_iff) and
+[the factor $1$](##factorEquative_comp_strictMono_iff) survive.
 
 ## Implementation notes
 
 A differential takes degrees in an additive torsor and amounts in its group, so dates or degrees
-Celsius need no origin; a factor multiplies degrees and so needs a ring. A change of scale
-carries one statement to another when it semiconjugates adding the first amount, or multiplying by
-the first factor, to the second.
+Celsius need no origin; a factor multiplies degrees and so needs a ring.
 
 ## Errata
 
@@ -56,8 +38,6 @@ the first factor, to the second.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 open Function
 
@@ -213,5 +193,3 @@ theorem factorEquative_comp_strictMono_iff [Ring D] [LinearOrder D] [IsStrictOrd
     exact ⟨1, fun μ a b ↦ by simp [FactorEquative, hg.injective.eq_iff]⟩
 
 end Factor
-
-end Degree

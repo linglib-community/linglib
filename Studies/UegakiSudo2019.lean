@@ -21,11 +21,11 @@ believed, the meaning stays contingent.
 ## Implementation notes
 
 The non-veridical predicates are the substrate's degree-comparison predicates,
-`Preferential.degreeComparison`, and Threshold Significance is `Degree.ThresholdSignificant`. A
-veridical predicate is the same degree comparison applied to the answers that are true and
-believed, (26), with belief a predicate parameter. The concrete models measure preference in
-the reals. Anand and Hacquard's doxastic condition, (39), the selective focus sensitivity
-and exhaustivity refinements of section 4, and the *about*-nominalization of section 5 are not
+`Preferential.degreeComparison`, and Threshold Significance is `Preferential.ThresholdSignificant`.
+A veridical predicate is the same degree comparison applied to the answers that are true and
+believed, (26), with belief a predicate parameter. The concrete models measure preference in the
+reals. Anand and Hacquard's doxastic condition, (39), the selective focus sensitivity and
+exhaustivity refinements of section 4, and the *about*-nominalization of section 5 are not
 formalized. The examples are the rows of `Data.Examples.UegakiSudo2019`.
 
 ## References
@@ -49,20 +49,20 @@ variable {W E D : Type*} [LinearOrder D] (μ : E → W → Set W → D) (θ : Se
 
 -- (30), (36)
 theorem significance_entails_hope_question {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W)
-    (h : Degree.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
+    (h : Preferential.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
   (degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h
 
 /-- With the comparison class inside the question, the assertion of *hope* with a question is its
 presupposition, so the meaning is true whenever defined. This is [gajewski-2002]'s L-analyticity,
 which makes *hope* anti-rogative. -/
 theorem hope_question_iff_significance {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W) :
-    degreeComparison μ θ C x Q w ↔ Degree.ThresholdSignificant (μ x w) θ C :=
+    degreeComparison μ θ C x Q w ↔ Preferential.ThresholdSignificant (μ x w) θ C :=
   degreeComparison_iff_thresholdSignificant μ θ C hCQ x w
 
 /-- *Hope* with a declarative is not trivial (35). -/
 theorem exists_significance_not_hope_declarative :
     ∃ (μ : Unit → Bool → Set Bool → ℝ) (θ : Set (Set Bool) → ℝ) (C : Set (Set Bool))
-      (A : Set Bool), A ∈ C ∧ Degree.ThresholdSignificant (μ () true) θ C ∧
+      (A : Set Bool), A ∈ C ∧ Preferential.ThresholdSignificant (μ () true) θ C ∧
         ¬ degreeComparison μ θ C () {A} true := by
   classical
   refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, {{true}, {false}}, {false},
@@ -97,7 +97,7 @@ the dispreferred world. -/
 theorem veridicality_breaks_triviality :
     ∃ (μ : Unit → Bool → Set Bool → ℝ) (θ : Set (Set Bool) → ℝ)
       (believes : Unit → Set Bool → Bool → Prop) (Q : Set (Set Bool)),
-      Degree.ThresholdSignificant (μ () false) θ Q ∧ degreeComparison μ θ Q () Q false ∧
+      Preferential.ThresholdSignificant (μ () false) θ Q ∧ degreeComparison μ θ Q () Q false ∧
         ¬ veridical μ θ believes Q () Q false := by
   classical
   refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, fun _ _ _ ↦ True,

@@ -40,7 +40,7 @@ open Morphology
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### The entry type -/
 

@@ -48,7 +48,7 @@ yields Krifka's assignment.
 
 namespace Krifka2007b
 
-open Degree BidirectionalOT
+open BidirectionalOT
 
 variable {D : Type*} [LinearOrder D]
 

@@ -53,7 +53,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b English.Adjectives Data.Statistics
+open Krifka2007b English.Adjectives Data.Statistics
 open AntonymForm (strengthenedDenotation strengthenedDenotation_notNegative_diff_positive)
 
 variable {t : AdjectiveType} {s : Strength}

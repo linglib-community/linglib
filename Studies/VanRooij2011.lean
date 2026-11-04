@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aggregation.Rules
-public import Linglib.Semantics.Degree.MeasurePhrase
+public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.UniversalScale
 
 /-!
@@ -42,7 +42,7 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 namespace VanRooij2011
 
-open Degree Aggregation Finset
+open Aggregation Finset
 
 variable {X Ad K : Type*}
 

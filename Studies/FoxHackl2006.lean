@@ -44,7 +44,6 @@ namespace FoxHackl2006
 
 open Question ModalLogic OrderDual Set
 open SetRel
-open Degree
 
 variable {D W : Type*} [LinearOrder D]
 

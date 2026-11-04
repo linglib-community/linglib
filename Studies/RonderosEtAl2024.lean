@@ -162,7 +162,7 @@ instance : DecidablePred Informative
 /-- The standard of an adjective type: scalar adjectives are relative gradable, with a
 contextual standard, and colour and material adjectives are non-gradable, with none
 ([kennedy-2007]). -/
-def AdjType.standard : AdjType → Option Degree.PositiveStandard
+def AdjType.standard : AdjType → Option PositiveStandard
   | .scalar => some .contextual
   | .color | .material => none
 
