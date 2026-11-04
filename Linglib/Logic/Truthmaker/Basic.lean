@@ -39,6 +39,8 @@ pooled inexact verifiers of `s` and `t`.
   when conjoining `t` leaves it unchanged.
 * `Truthmaker.isClosed_regularClosure_iff`: the regular propositions are those closed under
   nonempty fusions and convex.
+* `Truthmaker.isClosed_regularClosure_iff_of_finite`: in a finite lattice, the regular propositions
+  are the convex sup-closed sets.
 * `Truthmaker.isConjunctivePart_regularClosure_iff`: regular closure does not change containment.
 * `Truthmaker.regularClosure_eq_iff`: a regular proposition is determined by its inexact verifiers
   and its subject-matter.
@@ -265,6 +267,13 @@ theorem supClosed_of_isClosed_regularClosure (hs : regularClosure.IsClosed s) : 
 theorem ordConnected_of_isClosed_regularClosure (hs : regularClosure.IsClosed s) :
     s.OrdConnected :=
   (isClosed_regularClosure_iff.1 hs).2
+
+/-- In a finite lattice, the regular propositions are the convex sup-closed sets. -/
+theorem isClosed_regularClosure_iff_of_finite [Finite S] :
+    regularClosure.IsClosed s ↔ SupClosed s ∧ s.OrdConnected :=
+  ⟨fun h ↦ ⟨supClosed_of_isClosed_regularClosure h, ordConnected_of_isClosed_regularClosure h⟩,
+    fun ⟨hc, ho⟩ ↦ isClosed_regularClosure_iff.2
+      ⟨fun _ hts ht ↦ hc.sSup_mem_of_nonempty (Set.toFinite _) ht hts, ho⟩⟩
 
 /-- Regular closure preserves containment. -/
 theorem IsConjunctivePart.regularClosure (h : IsConjunctivePart t s) :
