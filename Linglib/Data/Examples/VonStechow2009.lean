@@ -160,8 +160,8 @@ def ex_60 : Datum :=
 
 def ex_62 : Datum :=
   { id := "vonstechow2009_62"
-    source := ⟨"ogihara-1989", ""⟩
-    reportedIn := some ⟨"von-stechow-2009", "(62)"⟩
+    source := ⟨"von-stechow-2009", "(62)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Mary will buy a fish that is alive."
     glossedTokens := []
@@ -173,8 +173,8 @@ def ex_62 : Datum :=
 
 def ex_63 : Datum :=
   { id := "vonstechow2009_63"
-    source := ⟨"ogihara-1989", ""⟩
-    reportedIn := some ⟨"von-stechow-2009", "(63)"⟩
+    source := ⟨"von-stechow-2009", "(63)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Mary will buy a fish that has been alive."
     glossedTokens := []
@@ -186,8 +186,8 @@ def ex_63 : Datum :=
 
 def ex_64 : Datum :=
   { id := "vonstechow2009_64"
-    source := ⟨"ogihara-1989", ""⟩
-    reportedIn := some ⟨"von-stechow-2009", "(64)"⟩
+    source := ⟨"von-stechow-2009", "(64)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Mary will buy a fish that was alive."
     glossedTokens := []
@@ -225,8 +225,8 @@ def ex_69 : Datum :=
 
 def ex_70 : Datum :=
   { id := "vonstechow2009_70"
-    source := ⟨"ogihara-1989", ""⟩
-    reportedIn := some ⟨"von-stechow-2009", "(70)"⟩
+    source := ⟨"von-stechow-2009", "(70)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Hillary married a man who became the president."
     glossedTokens := []
@@ -238,8 +238,8 @@ def ex_70 : Datum :=
 
 def ex_71 : Datum :=
   { id := "vonstechow2009_71"
-    source := ⟨"ogihara-1989", ""⟩
-    reportedIn := some ⟨"von-stechow-2009", "(71)"⟩
+    source := ⟨"von-stechow-2009", "(71)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "John thought that he would buy a fish that was still alive."
     glossedTokens := []
