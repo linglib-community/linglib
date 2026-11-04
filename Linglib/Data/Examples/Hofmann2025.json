@@ -1,10 +1,7 @@
 [
   {
     "id": "hofmann2025_ex1a",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(1a)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(1a)"},
     "language": "stan1293",
     "primaryText": "Mary owns a car. It is red.",
     "discourseSegments": [],
@@ -15,28 +12,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "veridical"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"]
     ],
     "comment": "A veridical antecedent and a veridical anaphor.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex1b",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(1b)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(1b)"},
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car. It is red.",
     "discourseSegments": [],
@@ -47,28 +32,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"]
     ],
     "comment": "The paper prints # on the second sentence only. An unspecific negated indefinite cannot antecede a veridical anaphor.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex2a",
-    "source": {
-      "bibkey": "krahmer-muskens-1995",
-      "paperLabel": "(5)"
-    },
+    "source": {"bibkey": "krahmer-muskens-1995", "paperLabel": "(5)"},
+    "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(2a)"},
     "language": "stan1293",
     "primaryText": "It's not true that John didn't bring an umbrella. It was purple and stood in the hallway.",
     "discourseSegments": [],
@@ -79,36 +53,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "veridical"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ],
-      [
-        "case",
-        "double negation"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"],
+      ["case", "double negation"]
     ],
     "comment": "Doubly negated antecedent; the indefinite is in a veridical context.",
-    "reportedIn": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(2a)"
-    },
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex2b",
-    "source": {
-      "bibkey": "roberts-1989",
-      "paperLabel": "(12)"
-    },
+    "source": {"bibkey": "roberts-1989", "paperLabel": "(12)"},
+    "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(2b)"},
     "language": "stan1293",
     "primaryText": "Either there isn't a bathroom in this house or it's in a funny place.",
     "discourseSegments": [],
@@ -119,36 +75,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "bathroom disjunction"
-      ]
+      ["section", "1"],
+      ["antecedent", "hypothetical"],
+      ["anaphor", "nonveridical"],
+      ["case", "bathroom disjunction"]
     ],
     "comment": "",
-    "reportedIn": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(2b)"
-    },
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex2c",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(2c)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(2c)"},
     "language": "stan1293",
     "primaryText": "A: There isn't a bathroom in this house. B: (What are you talking about?) It is just in a weird place.",
     "discourseSegments": [],
@@ -159,32 +96,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "disagreement"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"],
+      ["case", "disagreement"]
     ],
     "comment": "The anaphor is in a nonveridical discourse relation to its antecedent; from Hofmann (2019): (2d).",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex2d",
-    "source": {
-      "bibkey": "frank-1996",
-      "paperLabel": "(8a)"
-    },
+    "source": {"bibkey": "frank-1996", "paperLabel": "(8a)"},
+    "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(2d)"},
     "language": "stan1293",
     "primaryText": "Fred didn't buy a microwave oven. He wouldn't know what to do with it.",
     "discourseSegments": [],
@@ -195,36 +118,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "modal subordination"
-      ]
+      ["section", "1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"],
+      ["case", "modal subordination"]
     ],
     "comment": "",
-    "reportedIn": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(2d)"
-    },
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex5a",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(5a)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(5a)"},
     "language": "stan1293",
     "primaryText": "Bill didn't realize that he had a dime. It was in his pocket.",
     "discourseSegments": [],
@@ -235,28 +139,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "veridical"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"]
     ],
     "comment": "A factive under negation keeps its complement veridical; based on Karttunen (1976).",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex5b",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(5b)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(5b)"},
     "language": "stan1293",
     "primaryText": "John forgot not to bring an umbrella, but we had no room for it.",
     "discourseSegments": [],
@@ -267,28 +159,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "veridical"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"]
     ],
     "comment": "A negative implicative under negation; based on Karttunen (1976).",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex6a",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(6a)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(6a)"},
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car. It is parked outside.",
     "discourseSegments": [],
@@ -299,28 +179,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"]
     ],
     "comment": "The paper prints # on the continuation (6a) only.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex6b",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(6b)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(6b)"},
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car. It would be parked outside.",
     "discourseSegments": [],
@@ -331,28 +199,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"]
     ],
     "comment": "The same antecedent with a modal anaphor: the anaphor's context decides.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex6c",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(6c)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(6c)"},
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car, even though Cole said that it's red.",
     "discourseSegments": [],
@@ -363,30 +219,40 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ]
+      ["section", "1.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"]
     ],
     "comment": "A nonveridical attitude embeds the anaphor.",
     "verified": "page-image"
   },
   {
-    "id": "hofmann2025_ex8",
-    "source": {
-      "bibkey": "roberts-1989",
-      "paperLabel": "(11)"
-    },
+    "id": "hofmann2025_ex8a",
+    "source": {"bibkey": "roberts-1989", "paperLabel": "(11)"},
+    "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(8a)"},
     "language": "stan1293",
-    "primaryText": "A wolf might walk in.",
+    "primaryText": "A wolf might walk in. It is gray.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"],
+      ["antecedent", "hypothetical"],
+      ["anaphor", "veridical"]
+    ],
+    "comment": "Available once the scalar implicature of might is cancelled, (55).",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex8b",
+    "source": {"bibkey": "roberts-1989", "paperLabel": "(11)"},
+    "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(8b)"},
+    "language": "stan1293",
+    "primaryText": "A wolf might walk in. It would eat you first.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -395,28 +261,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.2"
-      ],
-      [
-        "antecedent",
-        "hypothetical"
-      ]
+      ["section", "1.2"],
+      ["antecedent", "hypothetical"],
+      ["anaphor", "nonveridical"]
     ],
-    "comment": "The modalized indefinite introduces a hypothetical dref that exists in all worlds of the modal prejacent.",
-    "reportedIn": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(8)"
-    },
+    "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex9",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(9)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(9)"},
     "language": "stan1293",
     "primaryText": "It's not true that there isn't a bathroom in this house. It's upstairs.",
     "discourseSegments": [],
@@ -427,32 +281,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.2"
-      ],
-      [
-        "antecedent",
-        "veridical"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ],
-      [
-        "case",
-        "double negation"
-      ]
+      ["section", "1.2"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"],
+      ["case", "double negation"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex10",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(10)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(10)"},
     "language": "stan1293",
     "primaryText": "Either there isn't a bathroom in this house or it's in a weird place.",
     "discourseSegments": [],
@@ -463,32 +302,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "bathroom disjunction"
-      ]
+      ["section", "1.2"],
+      ["antecedent", "hypothetical"],
+      ["anaphor", "nonveridical"],
+      ["case", "bathroom disjunction"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex11",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(11)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(11)"},
     "language": "stan1293",
     "primaryText": "There isn't a bathroom in this house. It would be easier to find.",
     "discourseSegments": [],
@@ -499,32 +323,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "modal subordination"
-      ]
+      ["section", "1.2"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"],
+      ["case", "modal subordination"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex12",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(12)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(12)"},
     "language": "stan1293",
     "primaryText": "A: There isn't a bathroom in this house. B: (What are you talking about?) It's upstairs.",
     "discourseSegments": [],
@@ -535,32 +344,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "1.2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "disagreement"
-      ]
+      ["section", "1.2"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"],
+      ["case", "disagreement"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex13a",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(13a)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(13a)"},
     "language": "stan1293",
     "primaryText": "S: Mary doesn't own a car, even though Cole said that it's red.",
     "discourseSegments": [],
@@ -571,28 +365,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ]
+      ["section", "2"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex13b",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(13b)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(13b)"},
     "language": "stan1293",
     "primaryText": "S: Mary doesn't own a car, even though Cole knows that it's red.",
     "discourseSegments": [],
@@ -603,28 +385,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "2"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"]
     ],
     "comment": "The paper prints # on the continuation (13b) only. A factive embeds the anaphor veridically, so the speaker would be committed to the car's existence.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex15",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(15)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(15)"},
     "language": "stan1293",
     "primaryText": "John doesn't have a car, so he doesn't have to wash it.",
     "discourseSegments": [],
@@ -635,28 +405,56 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "2.1"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ]
+      ["section", "2.1"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"]
     ],
     "comment": "Anaphora between two negative environments, which Heim's negation cannot admit; Kibble (1994), attributed to Paul Dekker.",
     "verified": "page-image"
   },
   {
+    "id": "hofmann2025_ex18ac",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(18a), (18c)"},
+    "language": "stan1293",
+    "primaryText": "There is a bathroom here. It is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"]
+    ],
+    "comment": "The contrast that section 3 derives.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex18bc",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(18b), (18c)"},
+    "language": "stan1293",
+    "primaryText": "There isn't a bathroom here. It is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"]
+    ],
+    "comment": "The contrast that section 3 derives; the judgment is stated in the lead-in to (18).",
+    "verified": "page-image"
+  },
+  {
     "id": "hofmann2025_ex26",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(26)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(26)"},
     "language": "stan1293",
     "primaryText": "There isn't a bathroom. It is upstairs.",
     "discourseSegments": [],
@@ -667,28 +465,100 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "veridical"
-      ]
+      ["section", "3.2"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"]
     ],
     "comment": "Ruled out because the first utterance is inconsistent with the global existence of a referent.",
     "verified": "page-image"
   },
   {
+    "id": "hofmann2025_ex42a",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(42a)"},
+    "language": "stan1293",
+    "primaryText": "It's not the case that there isn't a bathroom. It is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.1"],
+      ["antecedent", "veridical"],
+      ["anaphor", "veridical"],
+      ["case", "double negation"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex42b",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(42b)"},
+    "language": "stan1293",
+    "primaryText": "Either there isn't a bathroom, or it is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["antecedent", "hypothetical"],
+      ["anaphor", "nonveridical"],
+      ["case", "bathroom disjunction"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex42c",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(42c)"},
+    "language": "stan1293",
+    "primaryText": "A: There isn't a bathroom. B: It is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "veridical"],
+      ["case", "disagreement"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex42d",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(42d)"},
+    "language": "stan1293",
+    "primaryText": "There isn't a bathroom. It would be upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"],
+      ["case", "modal subordination"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "hofmann2025_ex45",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(45)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(45)"},
     "language": "stan1293",
     "primaryText": "Either there is a bathroom in this house, or it's upstairs.",
     "discourseSegments": [],
@@ -699,24 +569,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "4.2"
-      ],
-      [
-        "case",
-        "bathroom disjunction"
-      ]
+      ["section", "4.2"],
+      ["case", "inclusive disjunction"]
     ],
     "comment": "The second disjunct contextually entails the first; Hurford's constraint.",
     "verified": "page-image"
   },
   {
     "id": "hofmann2025_ex49",
-    "source": {
-      "bibkey": "hofmann-2025",
-      "paperLabel": "(49)"
-    },
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(49)"},
     "language": "stan1293",
     "primaryText": "There isn't a bathroom in this house, but Sue still hopes/believes it's upstairs.",
     "discourseSegments": [],
@@ -727,24 +588,33 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "section",
-        "4.4"
-      ],
-      [
-        "antecedent",
-        "counterfactual"
-      ],
-      [
-        "anaphor",
-        "nonveridical"
-      ],
-      [
-        "case",
-        "modal subordination"
-      ]
+      ["section", "4.4"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"],
+      ["case", "modal subordination"]
     ],
     "comment": "Anaphora under a nonveridical doxastic attitude.",
+    "verified": "page-image"
+  },
+  {
+    "id": "hofmann2025_ex51",
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(51)"},
+    "language": "stan1293",
+    "primaryText": "There isn't a bathroom. Sue believes it's upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["antecedent", "counterfactual"],
+      ["anaphor", "nonveridical"],
+      ["case", "modal subordination"]
+    ],
+    "comment": "Derived in section 4.4 on the model of Table 4.",
     "verified": "page-image"
   }
 ]

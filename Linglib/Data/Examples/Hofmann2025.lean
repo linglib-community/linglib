@@ -65,7 +65,7 @@ def ex2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [("section", "1"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
 
 def ex2c : Datum :=
   { id := "hofmann2025_ex2c"
@@ -78,7 +78,7 @@ def ex2c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
+    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
 
 def ex2d : Datum :=
   { id := "hofmann2025_ex2d"
@@ -158,18 +158,31 @@ def ex6c : Datum :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
-def ex8 : Datum :=
-  { id := "hofmann2025_ex8"
+def ex8a : Datum :=
+  { id := "hofmann2025_ex8a"
     source := ⟨"roberts-1989", "(11)"⟩
-    reportedIn := some ⟨"hofmann-2025", "(8)"⟩
+    reportedIn := some ⟨"hofmann-2025", "(8a)"⟩
     language := "stan1293"
-    primaryText := "A wolf might walk in."
+    primaryText := "A wolf might walk in. It is gray."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "veridical")] }
+
+def ex8b : Datum :=
+  { id := "hofmann2025_ex8b"
+    source := ⟨"roberts-1989", "(11)"⟩
+    reportedIn := some ⟨"hofmann-2025", "(8b)"⟩
+    language := "stan1293"
+    primaryText := "A wolf might walk in. It would eat you first."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical")] }
+    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical")] }
 
 def ex9 : Datum :=
   { id := "hofmann2025_ex9"
@@ -195,7 +208,7 @@ def ex10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
 
 def ex11 : Datum :=
   { id := "hofmann2025_ex11"
@@ -221,7 +234,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
+    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
 
 def ex13a : Datum :=
   { id := "hofmann2025_ex13a"
@@ -262,6 +275,32 @@ def ex15 : Datum :=
     readings := []
     paperFeatures := [("section", "2.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
+def ex18ac : Datum :=
+  { id := "hofmann2025_ex18ac"
+    source := ⟨"hofmann-2025", "(18a), (18c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There is a bathroom here. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+
+def ex18bc : Datum :=
+  { id := "hofmann2025_ex18bc"
+    source := ⟨"hofmann-2025", "(18b), (18c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom here. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+
 def ex26 : Datum :=
   { id := "hofmann2025_ex26"
     source := ⟨"hofmann-2025", "(26)"⟩
@@ -275,6 +314,58 @@ def ex26 : Datum :=
     readings := []
     paperFeatures := [("section", "3.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
 
+def ex42a : Datum :=
+  { id := "hofmann2025_ex42a"
+    source := ⟨"hofmann-2025", "(42a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It's not the case that there isn't a bathroom. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4.1"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+
+def ex42b : Datum :=
+  { id := "hofmann2025_ex42b"
+    source := ⟨"hofmann-2025", "(42b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Either there isn't a bathroom, or it is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4.2"), ("antecedent", "hypothetical"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+
+def ex42c : Datum :=
+  { id := "hofmann2025_ex42c"
+    source := ⟨"hofmann-2025", "(42c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A: There isn't a bathroom. B: It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4.3"), ("antecedent", "counterfactual"), ("anaphor", "veridical"), ("case", "disagreement")] }
+
+def ex42d : Datum :=
+  { id := "hofmann2025_ex42d"
+    source := ⟨"hofmann-2025", "(42d)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom. It would be upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+
 def ex45 : Datum :=
   { id := "hofmann2025_ex45"
     source := ⟨"hofmann-2025", "(45)"⟩
@@ -286,7 +377,7 @@ def ex45 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("case", "bathroom disjunction")] }
+    paperFeatures := [("section", "4.2"), ("case", "inclusive disjunction")] }
 
 def ex49 : Datum :=
   { id := "hofmann2025_ex49"
@@ -301,6 +392,19 @@ def ex49 : Datum :=
     readings := []
     paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
 
-def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex26, ex45, ex49]
+def ex51 : Datum :=
+  { id := "hofmann2025_ex51"
+    source := ⟨"hofmann-2025", "(51)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom. Sue believes it's upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8a, ex8b, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex18ac, ex18bc, ex26, ex42a, ex42b, ex42c, ex42d, ex45, ex49, ex51]
 
 end Hofmann2025.Examples
