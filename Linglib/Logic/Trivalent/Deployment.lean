@@ -34,6 +34,8 @@ behaviour follows from its classical meaning and the order of its arguments.
 * `Trivalent.pkReduce`: the Peters-Kleene reduction `f///X` by a set of classical values
   (Definition 13).
 * `Trivalent.deploy`: the Peters-Kleene deployment `f[x₁, …, xₙ]` (Definition 15).
+* `Trivalent.deployWith`: deployment on arguments of any type with repair sets, read off
+  Definition 13 literally.
 * `Trivalent.deploy₁`, `Trivalent.deploy₂`: deployment of unary and binary truth functions.
 
 ## Main results
@@ -43,6 +45,8 @@ behaviour follows from its classical meaning and the order of its arguments.
 * `Trivalent.deploy_ofProp`: on classical arguments, deployment is application (Remark 8).
 * `Trivalent.deploy_eq_zero_of_reduceFirst_ne`: an undefined argument in a position that matters
   makes the deployment undefined (generalising Remarks 9 and 10).
+* `Trivalent.deploy_eq_deployWith`: on truth values, deployment with the repair sets `toFinset`
+  is `deploy`.
 * `Trivalent.toFinset_deploy₁`: unary deployment is the Strong Kleene lift.
 * `Trivalent.deploy₂_ofProp_left`, `Trivalent.deploy₂_zero_left`: binary deployment is unary
   deployment after its first argument.
@@ -56,9 +60,9 @@ behaviour follows from its classical meaning and the order of its arguments.
 An `n`-ary truth function is a function on `Fin n → Bool`, and a `0`-ary one is identified with
 its value. A failed reduction is `none` rather than George's constant function to the failure
 value, which deployment then sends to `0`. The repair set of a value (Definition 14) is
-`SignType.toFinset`. Choosing `true` or `false` as the member to reduce by is specific to `Bool`;
-repair sets of predicates over an infinite domain ([george-2014] §4) will need George's
-existential formulation of Definition 13.
+`SignType.toFinset`. Choosing `true` or `false` as the member to reduce by is specific to `Bool`
+and keeps `deploy` computable. Repair sets of predicates over an infinite domain ([george-2014]
+§4) need George's existential formulation of Definition 13, which `deployWith` follows.
 
 ## References
 
@@ -76,13 +80,13 @@ open SignType
 
 variable {n : ℕ}
 
-/-- The reduction `f/x` of an `n + 1`-ary truth function by a classical value fills its first
-argument position. -/
-def reduceFirst (f : (Fin (n + 1) → Bool) → Bool) (x : Bool) : (Fin n → Bool) → Bool :=
+/-- The reduction `f/x` of an `n + 1`-ary function into truth values by an argument fills its
+first argument position. -/
+def reduceFirst {α : Type*} (f : (Fin (n + 1) → α) → Bool) (x : α) : (Fin n → α) → Bool :=
   fun ys ↦ f (Fin.cons x ys)
 
-@[simp] theorem reduceFirst_apply (f : (Fin (n + 1) → Bool) → Bool) (x : Bool) (ys : Fin n → Bool) :
-    reduceFirst f x ys = f (Fin.cons x ys) := rfl
+@[simp] theorem reduceFirst_apply {α : Type*} (f : (Fin (n + 1) → α) → Bool) (x : α)
+    (ys : Fin n → α) : reduceFirst f x ys = f (Fin.cons x ys) := rfl
 
 /-- On a unary function, reduction is application (Remark 6). -/
 theorem reduceFirst_unary (f : (Fin 1 → Bool) → Bool) (x : Bool) : reduceFirst f x ![] = f ![x] :=
@@ -148,6 +152,81 @@ theorem deploy_eq_zero_of_reduceFirst_ne {f : (Fin (n + 1) → Bool) → Bool}
     (h : reduceFirst f true ≠ reduceFirst f false) {x : Fin (n + 1) → SignType} (hx : x 0 = 0) :
     deploy f x = 0 := by
   simp only [deploy, hx, pkReduce_toFinset_zero, h, ite_false]
+
+/-! ### Deployment over arbitrary repair sets
+
+Deployment needs only a repair set for each argument, so it applies to any function into truth
+values once its arguments have repairs ([george-2014] §4.1). `deployWith rep` deploys a function
+of arguments in `α` on arguments in `β`, with repair sets given by `rep`, reading Definition 13
+literally: the reduction by a nonempty repair set succeeds when one function is the reduction by
+every member. On truth values with `toFinset` as the repair set it is `deploy`
+(`deploy_eq_deployWith`). All argument positions share one type, which covers the quantifiers
+and determiners of [george-2014] but not a function mixing predicates and truth values. -/
+
+section DeployWith
+
+variable {α β : Type*} (rep : β → Set α)
+
+open Classical in
+/-- The Peters-Kleene deployment of a function of arguments in `α` on arguments in `β`, with
+repair sets given by `rep`. An empty repair set makes the deployment undefined, which Definition 13
+leaves open since George's repair sets are never empty. -/
+noncomputable def deployWith : {n : ℕ} → ((Fin n → α) → Bool) → (Fin n → β) → SignType
+  | 0, f, _ => ofProp (f ![])
+  | _ + 1, f, x =>
+    if h : ∃ g, (rep (x 0)).Nonempty ∧ ∀ a ∈ rep (x 0), reduceFirst f a = g then
+      deployWith h.choose (Fin.tail x)
+    else 0
+
+variable {rep}
+
+theorem deployWith_zero (f : (Fin 0 → α) → Bool) (x : Fin 0 → β) :
+    deployWith rep f x = ofProp (f ![]) := by
+  rw [deployWith]
+
+/-- If every member of a nonempty repair set of the first argument gives the same reduction, the
+deployment continues with that reduction. -/
+theorem deployWith_succ_of_forall {f : (Fin (n + 1) → α) → Bool} {x : Fin (n + 1) → β}
+    {g : (Fin n → α) → Bool} (hne : (rep (x 0)).Nonempty)
+    (h : ∀ a ∈ rep (x 0), reduceFirst f a = g) :
+    deployWith rep f x = deployWith rep g (Fin.tail x) := by
+  have hex : ∃ g, (rep (x 0)).Nonempty ∧ ∀ a ∈ rep (x 0), reduceFirst f a = g := ⟨g, hne, h⟩
+  obtain ⟨a, ha⟩ := hne
+  rw [deployWith, dite_eq_left_of_eq_true (eq_true hex), ← h a ha,
+    (Classical.choose_spec hex).2 a ha]
+
+/-- If two repairs of the first argument give different reductions, the deployment is
+undefined. -/
+theorem deployWith_succ_of_ne {f : (Fin (n + 1) → α) → Bool} {x : Fin (n + 1) → β} {a b : α}
+    (ha : a ∈ rep (x 0)) (hb : b ∈ rep (x 0)) (hab : reduceFirst f a ≠ reduceFirst f b) :
+    deployWith rep f x = 0 := by
+  rw [deployWith, dite_eq_right_of_eq_false (eq_false ?_)]
+  rintro ⟨g, -, h⟩
+  exact hab ((h a ha).trans (h b hb).symm)
+
+/-- On truth values, deployment by `toFinset` is `deploy`. -/
+theorem deploy_eq_deployWith (f : (Fin n → Bool) → Bool) (x : Fin n → SignType) :
+    deploy f x = deployWith (fun s ↦ ↑(toFinset s)) f x := by
+  induction n with
+  | zero => rw [deploy, deployWith_zero]
+  | succ n ih =>
+    rw [← Fin.cons_self_tail x]
+    generalize x 0 = s, Fin.tail x = y
+    have hs : ∀ b : Bool, s = ofProp b → deploy f (Fin.cons s y) =
+        deployWith (fun s ↦ ↑(toFinset s)) f (Fin.cons s y) := by
+      rintro b rfl
+      rw [deploy_cons_ofProp, ih, deployWith_succ_of_forall (g := reduceFirst f b)
+        (by cases b <;> simp) fun a ha ↦ by cases b <;> simp_all, Fin.tail_cons]
+    cases s
+    · rw [show SignType.zero = 0 from rfl, deploy_cons_zero]
+      split_ifs with h
+      · rw [ih, deployWith_succ_of_forall (g := reduceFirst f true) (by simp) fun a ha ↦ by
+          cases a <;> simp_all, Fin.tail_cons]
+      · rw [deployWith_succ_of_ne (a := true) (b := false) (by simp) (by simp) h]
+    · exact hs false rfl
+    · exact hs true rfl
+
+end DeployWith
 
 /-! ### Unary and binary deployment -/
 
