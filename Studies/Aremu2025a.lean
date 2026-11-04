@@ -27,7 +27,9 @@ a modal that its associate scopes below](##split_scope).
 * Anti-locality applies to every link, so derivations keep the AspP of ch. 1 (27), and it covers
   the gap of (203), which p. 115 calls a *that*-trace effect.
 * A contextual scale is the entry ch. 5 (50) over [cumulative
-  alternatives](##exclusive_contextual_eq), our reading of p. 170.
+  alternatives](##exclusive_reaches_eq), our reading of p. 170.
+* Resumption as a last resort (p. 115) is applied to the local subject too, which p. 108 argues
+  from islands.
 
 ## Errata
 
@@ -156,6 +158,10 @@ def Derivable (t : LinearizedSyntacticObject) : Prop :=
 instance (t : LinearizedSyntacticObject) : Decidable (Derivable t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- Resumption is the last resort where a gap is prohibited (p. 115). -/
+def siteOf (d : Domain) (a : Associate) : Site :=
+  if Derivable (sentence d a .gap) then .gap else .pronoun
+
 -- (182), (183) [erlewine-2016]
 theorem subject_too_close :
     ¬ ObeysAntiLocality .raising (sentence .matrix .subject .gap) ∧
@@ -207,6 +213,16 @@ def positionNames : List (String × TreePath) :=
 def clausePhrases : List TreePath :=
   prominent (.node .v [xp .D "S", .node .V [.terminal .V "V", xp .D "O", xp .P "A"]]) []
 
+/-- A subject, or a non-subject, whose focus behaves alike (p. 110). -/
+def Associate.ofPosition (m : TreePath) : Associate :=
+  if m = Aremu2025a.subject then .subject else .object
+
+theorem siteOf_ofPosition_eq_pronoun_iff {m : TreePath} :
+    siteOf .matrix (.ofPosition m) = .pronoun ↔ m = subject := by
+  by_cases hm : m = subject
+  · subst hm; exact iff_of_true (by decide +kernel) rfl
+  · simpa [Associate.ofPosition, hm] using (by decide +kernel : siteOf .matrix .object ≠ .pronoun)
+
 /-- An answer to a question. -/
 structure Answer where
   /-- The logical focus. -/
@@ -220,17 +236,21 @@ variable {a : Answer} {m : TreePath}
 
 namespace Answer
 
+/-- The pronoun that would resume the focus, in the past or present sentences of the rows. -/
+def pronoun (a : Answer) : Option PersonalPronoun :=
+  Yoruba.Pronouns.pastPresentSubject .third a.number
+
 /-- The resumptive of a fronted subject. -/
 def resumptive (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
-  ((Yoruba.Pronouns.subject .third a.number).map fun r ↦
-    .morpheme (toDual subject) [.free r.form]).toFinset
+  (a.pronoun.map fun r ↦ .morpheme (toDual subject) [.free r.form]).toFinset
 
-/-- A fronted constituent is followed by *ni*; a subject is resumed and any other displaced. -/
+/-- A fronted constituent is followed by *ni*, and resumed where a gap is out or else displaced. -/
 def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
   match a.fronted with
   | none => ∅
   | some m => {.morpheme (toDual m) [.free Yoruba.ni.form]} ∪
-      if m = subject then a.resumptive else {.displacement (toDual m)}
+      if siteOf .matrix (.ofPosition m) = .pronoun then a.resumptive
+      else {.displacement (toDual m)}
 
 theorem reflexes_eq_empty (h : a.fronted = none) : a.reflexes = ∅ := by
   simp [reflexes, h]
@@ -238,7 +258,8 @@ theorem reflexes_eq_empty (h : a.fronted = none) : a.reflexes = ∅ := by
 theorem exactlyTargets_reflexes (h : a.fronted = some m) :
     ExactlyTargets a.reflexes (toDual m) := by
   intro ρ hρ
-  simp only [reflexes, h, Finset.mem_union, Finset.mem_singleton] at hρ
+  simp only [reflexes, h, siteOf_ofPosition_eq_pronoun_iff, Finset.mem_union,
+    Finset.mem_singleton] at hρ
   obtain rfl | hρ := hρ
   · rfl
   · split_ifs at hρ with hm
@@ -250,12 +271,24 @@ theorem exactlyTargets_reflexes (h : a.fronted = some m) :
 theorem reflexes_nonempty (h : a.fronted = some m) : a.reflexes.Nonempty :=
   ⟨.morpheme (toDual m) [.free Yoruba.ni.form], by simp [reflexes, h]⟩
 
--- p. 108: the subject is merged where it surfaces.
+-- p. 108: the displacement reflex is what the chain of the focus shows.
 theorem displacement_mem_reflexes_iff (h : a.fronted = some m) :
-    .displacement (toDual m) ∈ a.reflexes ↔ m ≠ subject := by
+    .displacement (toDual m) ∈ a.reflexes ↔
+      links .raising (sentence .matrix (.ofPosition m) (siteOf .matrix (.ofPosition m))) focusDP
+        ≠ [] := by
   by_cases hm : m = subject
-  · simp [reflexes, h, hm, resumptive]
-  · simp [reflexes, h, hm]
+  · have : siteOf .matrix (.ofPosition m) = .pronoun := siteOf_ofPosition_eq_pronoun_iff.2 hm
+    subst hm
+    simp only [reflexes, h, this, resumptive, ite_true, Finset.mem_union, Finset.mem_singleton,
+      Option.mem_toFinset, Option.mem_def, Option.map_eq_some_iff]
+    exact iff_of_false (by simp) (by decide +kernel)
+  · have h₁ : siteOf .matrix (.ofPosition m) ≠ .pronoun :=
+      fun e ↦ hm (siteOf_ofPosition_eq_pronoun_iff.1 e)
+    have h₂ : Associate.ofPosition m = .object := by simp [Associate.ofPosition, hm]
+    simp only [reflexes, h, h₁, ite_false, Finset.mem_union, Finset.mem_singleton, or_true,
+      true_iff]
+    rw [h₂]
+    decide +kernel
 
 -- (217-a)
 theorem antiPiedPipes_iff :
@@ -330,7 +363,7 @@ theorem gap_mem_relTi_realize_iff {p : Relativization.Position} (ha : a.fronted 
     .gap ∈ Yoruba.relTi.realize p ↔ .displacement (toDual m) ∈ a.reflexes := by
   rw [Answer.displacement_mem_reflexes_iff ha]
   unfold relativePosition? at h
-  split_ifs at h with h₁ h₂ h₃ <;> cases h <;> subst_vars <;> decide
+  split_ifs at h with h₁ h₂ h₃ <;> cases h <;> subst_vars <;> decide +kernel
 
 /-! ### One exclusive operator
 
@@ -345,106 +378,131 @@ def holds {W : Type*} [Membership ι W] (i : ι) : Set W := {w | i ∈ w}
 
 @[simp] theorem mem_holds {W : Type*} [Membership ι W] {w : W} : w ∈ holds i ↔ i ∈ w := .rfl
 
-/-- The entry ch. 5 (50), over the alternatives `P`. -/
-noncomputable abbrev entry {W : Type*} (P : ι → Set W) (i : ι) : W → SignType :=
+/-- The entry ch. 5 (50), *kàn* or silent, over the alternatives `P`. -/
+noncomputable abbrev exclusive {W : Type*} (P : ι → Set W) (i : ι) : W → SignType :=
   only (· ⊆ ·) (range P) id (P i)
 
-/-- The order a particle ranks alternatives by, ch. 5 (66). -/
+theorem exclusive_eq_one_iff {W : Type*} {P : ι → Set W} {w : W} (hP : ∀ j, P i ⊆ P j → j = i) :
+    exclusive P i w = 1 ↔ w ∈ P i ∧ ∀ j, j ≠ i → w ∉ P j := by
+  rw [exclusive, ← only_eq_eq_only_subset_range hP, only_eq_eq_one_iff (mem_univ i)]
+  simp
+
+theorem holds_subset_holds {j : ι} (h : holds i ⊆ (holds j : Set (Set ι))) : j = i := by
+  simpa using h (mem_singleton i)
+
+/-- Something at or above `i` holds. -/
+def reaches [Preorder ι] (i : ι) : Set (Set ι) := {w | ∃ j ∈ w, i ≤ j}
+
+-- ch. 5 (56): cumulative alternatives give Coppock and Beaver's strength parameter.
+theorem exclusive_reaches_eq [PartialOrder ι] :
+    exclusive reaches i = only (· ≥ ·) univ holds i := by
+  have hc (j k : ι) : reaches k ⊆ reaches j ↔ j ≤ k :=
+    ⟨fun h ↦ by simpa [reaches] using h (show ({k} : Set ι) ∈ reaches k from ⟨k, rfl, le_rfl⟩),
+      fun hjk _ ⟨m, hm, hkm⟩ ↦ ⟨m, hm, hjk.trans hkm⟩⟩
+  have hL : atLeast (· ⊆ ·) (range reaches) id (reaches i) = atLeast (· ≥ ·) univ holds i := by
+    refine Set.ext fun w ↦ ⟨?_, fun ⟨j, _, hw, hij⟩ ↦
+      ⟨_, mem_range_self i, ⟨j, hw, hij⟩, subset_rfl⟩⟩
+    rintro ⟨_, ⟨k, rfl⟩, hw, hk⟩
+    obtain ⟨j, hj, hij⟩ := hk hw
+    exact ⟨j, mem_univ j, hj, hij⟩
+  have hM : atMost (· ⊆ ·) (range reaches) id (reaches i) = atMost (· ≥ ·) univ holds i := by
+    refine Set.ext fun w ↦ ⟨fun h j _ hj ↦ (hc j i).1 (h _ (mem_range_self j) ⟨j, hj, le_rfl⟩), ?_⟩
+    rintro h _ ⟨j, rfl⟩ ⟨k, hk, hjk⟩
+    exact (hc j i).2 (hjk.trans (h k (mem_univ k) hk))
+  rw [exclusive, only, only, hL, hM]
+
+/-- The scale a particle sets, ch. 5 (66). -/
 inductive Scale
   | entailment | contextual
   deriving DecidableEq, Repr
 
 variable [PartialOrder ι] {s : Scale} {w : Set ι}
 
-/-- The strength relation of a scale. -/
-def Scale.rel : Scale → ι → ι → Prop
-  | .entailment => (· = ·)
-  | .contextual => (· ≥ ·)
+/-- The alternatives of a scale: atomic under entailment, cumulative on a contextual scale. -/
+def Scale.alternative : Scale → ι → Set (Set ι)
+  | .entailment => holds
+  | .contextual => reaches
 
-instance [DecidableEq ι] [DecidableLE ι] : ∀ (s : Scale) (i j : ι), Decidable (s.rel i j)
-  | .entailment, i, j => inferInstanceAs (Decidable (i = j))
+/-- What the exclusive over a scale lets hold along with the prejacent `i`. -/
+def Scale.Allows : Scale → ι → ι → Prop
+  | .entailment, i, j => j = i
+  | .contextual, i, j => j ≤ i
+
+instance [DecidableEq ι] [DecidableLE ι] : ∀ (s : Scale) (i j : ι), Decidable (s.Allows i j)
+  | .entailment, i, j => inferInstanceAs (Decidable (j = i))
   | .contextual, i, j => inferInstanceAs (Decidable (j ≤ i))
 
-theorem Scale.rel_refl (s : Scale) (i : ι) : s.rel i i := by cases s <;> simp [Scale.rel]
+theorem Scale.allows_refl (s : Scale) (i : ι) : s.Allows i i := by cases s <;> simp [Scale.Allows]
 
-/-- The exclusive operator, *kàn* or silent, over a scale. -/
-noncomputable def Scale.exclusive (s : Scale) (i : ι) : Set ι → SignType :=
-  only s.rel univ holds i
-
-theorem exclusive_eq_one_iff : s.exclusive i w = 1 ↔ i ∈ w ∧ ∀ j ∈ w, s.rel i j := by
+theorem exclusive_alternative_eq_one_iff :
+    exclusive s.alternative i w = 1 ↔ i ∈ w ∧ ∀ j ∈ w, s.Allows i j := by
   cases s
-  · simp only [Scale.exclusive, Scale.rel, only_eq_eq_one_iff (mem_univ i), mem_holds, mem_univ,
-      true_implies]
+  · rw [Scale.alternative, exclusive_eq_one_iff fun _ ↦ holds_subset_holds]
+    simp only [mem_holds, Scale.Allows]
     grind
-  · refine only_ge_eq_one_iff.trans ?_
-    simp [IsGreatest, upperBounds, Scale.rel]
+  · rw [Scale.alternative, exclusive_reaches_eq]
+    refine only_ge_eq_one_iff.trans ?_
+    simp [IsGreatest, upperBounds, Scale.Allows]
 
--- ch. 5 (50), (55): *nìkan*'s scale is the entry over atomic alternatives.
-theorem exclusive_entailment_eq :
-    Scale.entailment.exclusive i = entry (holds : ι → Set (Set ι)) i :=
-  only_eq_eq_only_subset_range fun _ h ↦ by simpa using h (mem_singleton _)
-
-/-- Something at or above `i` holds. -/
-def reaches (i : ι) : Set (Set ι) := {w | ∃ j ∈ w, i ≤ j}
-
--- ch. 5 (56): a contextual scale is the same entry over cumulative alternatives.
-theorem exclusive_contextual_eq : Scale.contextual.exclusive i = entry reaches i := by
-  have hc (j k : ι) : reaches k ⊆ reaches j ↔ j ≤ k :=
-    ⟨fun h ↦ by simpa [reaches] using h (show ({k} : Set ι) ∈ reaches k from ⟨k, rfl, le_rfl⟩),
-      fun hjk _ ⟨m, hm, hkm⟩ ↦ ⟨m, hm, hjk.trans hkm⟩⟩
-  have hL : atLeast (· ≥ ·) univ holds i = atLeast (· ⊆ ·) (range reaches) id (reaches i) := by
-    refine Set.ext fun w ↦
-      ⟨fun ⟨j, _, hw, hij⟩ ↦ ⟨_, mem_range_self i, ⟨j, hw, hij⟩, subset_rfl⟩, ?_⟩
-    rintro ⟨_, ⟨k, rfl⟩, hw, hk⟩
-    obtain ⟨j, hj, hij⟩ := hk hw
-    exact ⟨j, mem_univ j, hj, hij⟩
-  have hM : atMost (· ≥ ·) univ holds i = atMost (· ⊆ ·) (range reaches) id (reaches i) := by
-    refine Set.ext fun w ↦ ⟨?_, fun h j _ hj ↦ (hc j i).1 (h _ (mem_range_self j) ⟨j, hj, le_rfl⟩)⟩
-    rintro h _ ⟨j, rfl⟩ ⟨k, hk, hjk⟩
-    exact (hc j i).2 (hjk.trans (h k (mem_univ k) hk))
-  change only (· ≥ ·) univ holds i = _
-  rw [only, entry, only, hL, hM]
-
-/-- *He is only ... He is also ...* can hold together in some world. -/
+/-- *He is only `i`. He is also `c`*, of another `c`, can hold together. -/
 def Scale.Compatible (s : Scale) (i c : ι) : Prop :=
-  ∃ w, s.exclusive i w = 1 ∧ additive (· = ·) univ holds c w = 1
+  c ≠ i ∧ ∃ w, exclusive s.alternative i w = 1 ∧ additive (· = ·) univ holds c w = 1
 
-theorem compatible_iff (hc : c ≠ i) : s.Compatible i c ↔ s.rel i c := by
-  constructor
+theorem compatible_iff : s.Compatible i c ↔ c ≠ i ∧ s.Allows i c := by
+  refine and_congr_right fun hc ↦ ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨w, h₁, h₂⟩
-    exact (exclusive_eq_one_iff.1 h₁).2 c (additive_eq_one_iff.1 h₂).2
-  · intro h
-    refine ⟨{c, i}, exclusive_eq_one_iff.2 ⟨by simp, ?_⟩, additive_eq_one_iff.2 ⟨?_, by simp⟩⟩
-    · rintro j (rfl | rfl)
-      exacts [h, s.rel_refl _]
-    · exact ⟨i, mem_univ _, by simp, hc⟩
+    exact (exclusive_alternative_eq_one_iff.1 h₁).2 c (additive_eq_one_iff.1 h₂).2
+  · refine ⟨{c, i}, exclusive_alternative_eq_one_iff.2 ⟨by simp, ?_⟩,
+      additive_eq_one_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
+    rintro j (rfl | rfl)
+    exacts [h, s.allows_refl _]
+
+instance [DecidableEq ι] [DecidableLE ι] : Decidable (s.Compatible i c) :=
+  decidable_of_iff _ compatible_iff.symm
+
+/-- The exclusive is true where just the alternatives in `l` hold. -/
+def Scale.TrueOf (s : Scale) (i : ι) (l : List ι) : Prop :=
+  exclusive s.alternative i {x | x ∈ l} = 1
+
+theorem trueOf_iff {l : List ι} : s.TrueOf i l ↔ i ∈ l ∧ ∀ j ∈ l, s.Allows i j :=
+  exclusive_alternative_eq_one_iff.trans (by simp)
+
+instance [DecidableEq ι] [DecidableLE ι] {l : List ι} : Decidable (s.TrueOf i l) :=
+  decidable_of_iff _ trueOf_iff.symm
 
 -- (158), p. 99: exhaustivity is what rules out the additive continuation of a bare answer.
 theorem exists_additive_iff (hc : c ≠ i) :
-    (∃ w : Set ι, (if a.Exhaustive then Scale.entailment.exclusive i w = 1 else i ∈ w) ∧
+    (∃ w : Set ι, (if a.Exhaustive then exclusive holds i w = 1 else i ∈ w) ∧
       additive (· = ·) univ holds c w = 1) ↔ ¬ a.Exhaustive := by
   by_cases h : a.Exhaustive
   · simp only [h, ite_true, not_true_eq_false, iff_false]
-    rintro ⟨w, h₁, h₂⟩
-    exact hc (compatible_iff hc |>.1 ⟨w, h₁, h₂⟩).symm
+    exact fun ⟨w, h₁, h₂⟩ ↦ hc (compatible_iff (s := .entailment) |>.1 ⟨hc, w, h₁, h₂⟩).2
   · simp only [h, ite_false, not_false_eq_true, iff_true]
     exact ⟨{c, i}, by simp, additive_eq_one_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
 
--- ch. 5 (58): under negation the prejacent survives.
-theorem exclusive_entailment_eq_neg_one_iff :
-    Scale.entailment.exclusive i w = -1 ↔ i ∈ w ∧ ∃ j ∈ w, j ≠ i := by
-  simp only [Scale.exclusive, Scale.rel, only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ,
-    true_and, mem_holds, true_implies]
-  grind
-
 end Exclusive
 
+section Negation
+
+variable {ι : Type*} {i : ι} {w : Set ι}
+
+-- ch. 5 (58): under negation the prejacent survives.
+theorem exclusive_holds_eq_neg_one_iff :
+    exclusive holds i w = -1 ↔ i ∈ w ∧ ∃ j ∈ w, j ≠ i := by
+  rw [exclusive, ← only_eq_eq_only_subset_range fun _ ↦ holds_subset_holds]
+  simp only [only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
+    true_implies]
+  grind
+
 -- ch. 5 (59): under negation only something higher holds, not the prejacent.
-theorem exclusive_contextual_eq_neg_one_iff {ι : Type*} [LinearOrder ι] {i : ι} {w : Set ι} :
-    Scale.contextual.exclusive i w = -1 ↔ ∃ j ∈ w, i < j := by
-  simp only [Scale.exclusive, Scale.rel, only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ,
-    true_and, mem_holds, true_implies, not_forall, exists_prop, ge_iff_le, not_le]
+theorem exclusive_reaches_eq_neg_one_iff [LinearOrder ι] :
+    exclusive reaches i w = -1 ↔ ∃ j ∈ w, i < j := by
+  rw [exclusive_reaches_eq]
+  simp only [only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
+    true_implies, not_forall, exists_prop, ge_iff_le, not_le]
   exact ⟨fun ⟨_, h⟩ ↦ h, fun ⟨j, hj, hij⟩ ↦ ⟨⟨j, hj, hij.le⟩, j, hj, hij⟩⟩
+
+end Negation
 
 /-- The scale of a particle. -/
 def scaleOf? (r : Datum) : Option Scale :=
@@ -454,26 +512,12 @@ def scaleOf? (r : Datum) : Option Scale :=
 def ranks : List (String × Fin 3) :=
   [("bronze", 0), ("silver", 1), ("gold", 2), ("cleaner", 0), ("student", 1), ("professor", 2)]
 
-private theorem rows_continuations_aux :
-    ∀ r ∈ Examples.all, r.feature? "also" ≠ none →
-      ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ c ∈ r.parse? "also" ranks,
-        c ≠ i ∧ (s.rel i c ↔ r.JudgedFelicitous) := by
-  decide +kernel
-
 /-- Each particle's scale predicts its continuations: none after *nìkan*, and after *lásán* one
 that ranks lower (ch. 5 (52), (53)). -/
 theorem rows_continuations :
     ∀ r ∈ Examples.all, r.feature? "also" ≠ none →
       ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ c ∈ r.parse? "also" ranks,
-        (s.Compatible i c ↔ r.JudgedFelicitous) := fun r hr hf ↦ by
-  obtain ⟨s, hs, i, hi, c, hc, hne, h⟩ := rows_continuations_aux r hr hf
-  exact ⟨s, hs, i, hi, c, hc, (compatible_iff hne).trans h⟩
-
-set_option synthInstance.maxSize 512 in
-private theorem rows_won_aux :
-    ∀ r ∈ Examples.all, r.features "won" ≠ [] →
-      ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ l ∈ r.parseAll? "won" ranks,
-        ((i ∈ l ∧ ∀ j ∈ l, s.rel i j) ↔ r.JudgedFelicitous) := by
+        (s.Compatible i c ↔ r.JudgedFelicitous) := by
   decide +kernel
 
 /-- With bronze and silver won, *lásán* is true and *nìkan* false, so the particle is not vacuous
@@ -481,9 +525,8 @@ private theorem rows_won_aux :
 theorem rows_won :
     ∀ r ∈ Examples.all, r.features "won" ≠ [] →
       ∃ s ∈ scaleOf? r, ∃ i ∈ r.parse? "prejacent" ranks, ∃ l ∈ r.parseAll? "won" ranks,
-        (s.exclusive i {x | x ∈ l} = 1 ↔ r.JudgedFelicitous) := fun r hr hf ↦ by
-  obtain ⟨s, hs, i, hi, l, hl, h⟩ := rows_won_aux r hr hf
-  exact ⟨s, hs, i, hi, l, hl, exclusive_eq_one_iff.trans (by simpa using h)⟩
+        (s.TrueOf i l ↔ r.JudgedFelicitous) := by
+  decide +kernel
 
 -- ch. 4 (60)–(64), p. 178: *lásán* and *péré* need a prejacent below the standard, *nìkan* does
 -- not. (60-c) rejects only an evaluative reading, and in (62-d) six is not an alternative.
@@ -529,9 +572,9 @@ theorem mem_numeral_core {n : ℕ} {w : World} :
 both scopes of a quantifier of the two with an individual trace, (31), (32) [hirsch-2017]. -/
 theorem split_scope (w : World) :
     (Examples.ch5_30c.JudgedFelicitous ↔
-      entry (fun n ↦ required.core (numeral slaughter n)) 2 w = 1) ∧
-    w ∉ required.core {v | entry (numeral slaughter) 2 v = 1} ∧
-    entry (numeral fun x ↦ required.core (slaughter x)) 2 w ≠ 1 := by
+      exclusive (fun n ↦ required.core (numeral slaughter n)) 2 w = 1) ∧
+    w ∉ required.core {v | exclusive (numeral slaughter) 2 v = 1} ∧
+    exclusive (numeral fun x ↦ required.core (slaughter x)) 2 w ≠ 1 := by
   refine ⟨iff_of_true (by decide) (only_eq_one_iff.2 ⟨⟨_, ⟨2, rfl⟩, mem_core_numeral.2 le_rfl,
     subset_rfl⟩, ?_⟩), fun h ↦ ?_, fun h ↦ ?_⟩
   · rintro _ ⟨n, rfl⟩ hw v -
@@ -551,24 +594,42 @@ variable {α β : Type*} {a : α} {b : β} {w : Set (α × β)}
 
 /-- One operator over the pairs, ch. 5 (47). -/
 noncomputable def concord (a : α) (b : β) : Set (α × β) → SignType :=
-  only (· = ·) univ holds (a, b)
+  exclusive holds (a, b)
 
 /-- Two operators, ch. 5 (49). -/
 noncomputable def double (a : α) (b : β) : Set (α × β) → SignType :=
-  only (· = ·) univ (fun x ↦ {w | only (· = ·) univ (fun y ↦ holds (x, y)) b w = 1}) a
+  exclusive (fun x ↦ {w | exclusive (fun y ↦ holds (x, y)) b w = 1}) a
+
+private theorem only_b_eq_one_iff {x : α} :
+    exclusive (fun y ↦ holds (x, y)) b w = 1 ↔ (x, b) ∈ w ∧ ∀ y, y ≠ b → (x, y) ∉ w :=
+  exclusive_eq_one_iff fun j h ↦ by
+    simpa using h (show ({(x, b)} : Set (α × β)) ∈ holds (x, b) from rfl)
+
+theorem concord_eq_one_iff : concord a b w = 1 ↔ w = {(a, b)} := by
+  rw [concord, exclusive_eq_one_iff fun _ ↦ holds_subset_holds, eq_singleton_iff_unique_mem]
+  simp only [mem_holds, ne_eq, not_imp_not]
+
+theorem double_eq_one_iff :
+    double a b w = 1 ↔ ((a, b) ∈ w ∧ ∀ y, y ≠ b → (a, y) ∉ w) ∧
+      ∀ x, x ≠ a → ¬ ((x, b) ∈ w ∧ ∀ y, y ≠ b → (x, y) ∉ w) := by
+  rw [double, exclusive_eq_one_iff fun j h ↦ ?_]
+  · simp only [mem_ofPred_eq, only_b_eq_one_iff]
+  · have h₀ := only_b_eq_one_iff.1 (h (a := {(a, b)}) (only_b_eq_one_iff.2 (by simp)))
+    simpa using h₀.1
 
 /-- The concord reading entails the double one (ch. 5 (46-c), (120)). -/
 theorem double_of_concord (h : concord a b w = 1) : double a b w = 1 := by
-  simp only [concord, double, only_eq_eq_one_iff (mem_univ _), mem_holds, mem_univ, true_implies,
-    Set.mem_ofPred_eq] at h ⊢
-  grind
+  obtain rfl := concord_eq_one_iff.1 h
+  simp [double_eq_one_iff]
 
 -- ch. 5 p. 168: `a` alone ate only `b`, and `c` ate `b` and `d`.
 theorem not_concord_of_double {c : α} {d : β} (hc : c ≠ a) (hd : d ≠ b) :
     double a b {(a, b), (c, b), (c, d)} = 1 ∧ concord a b {(a, b), (c, b), (c, d)} ≠ 1 := by
-  simp only [concord, double, only_eq_eq_one_iff (mem_univ _), mem_holds, mem_univ, true_implies,
-    Set.mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, Prod.mk.injEq, ne_eq]
-  grind
+  refine ⟨double_eq_one_iff.2 ?_, fun h ↦ ?_⟩
+  · simp only [mem_insert_iff, mem_singleton_iff, Prod.mk.injEq]
+    grind
+  · have := (eq_singleton_iff_unique_mem.1 (concord_eq_one_iff.1 h)).2 (c, b) (by simp)
+    simp_all
 
 end Concord
 
@@ -580,16 +641,16 @@ def Answer.ofRow? (r : Datum) : Option Answer :=
     { focus, fronted := r.parse? "fronted" positionNames
       number := (r.parse? "number" [("plural", Number.plural)]).getD .singular }
 
-/-- The gloss of the word after *ni*. -/
+/-- The word after *ni*. -/
 def afterNi (r : Datum) : Option String :=
-  ((r.glossLine.dropWhile (· != "FOC")).drop 1).head?
+  ((r.surfaceTokens.dropWhile (· != Yoruba.ni.form)).drop 1).head?
 
 /-- The model accepts a licensed answer with *ni* exactly when it fronts, an additive only when it
-is not exhaustive, and an agreeing pronoun after *ni* exactly when it fronts the subject. -/
+is not exhaustive, and its pronoun after *ni* exactly when it fronts the subject. -/
 def Accepts (a : Answer) (r : Datum) : Prop :=
-  a.Licensed ∧ ((Yoruba.ni.form, "FOC") ∈ r.glossedTokens ↔ a.fronted ≠ none) ∧
+  a.Licensed ∧ (Yoruba.ni.form ∈ r.surfaceTokens ↔ a.fronted ≠ none) ∧
     (r.feature? "continuation" = some "additive" → ¬ a.Exhaustive) ∧
-    (afterNi r = some (if a.number = .plural then "3PL" else "3SG") ↔ a.fronted = some subject)
+    (afterNi r = a.pronoun.map (·.form) ↔ a.fronted = some subject)
 
 instance (a : Answer) (r : Datum) : Decidable (Accepts a r) :=
   inferInstanceAs (Decidable (_ ∧ _))
