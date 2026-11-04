@@ -2,7 +2,7 @@
  "meta": {
   "bibkey": "haspelmath-2001",
   "method": "typology",
-  "description": "The figures of world-wide surveys that the chapter cites for its criterion (iv), and its Table 107.1 on comitative-instrumental syncretism.",
+  "description": "The figures of world-wide surveys that the chapter cites for its criterion (iv).",
   "rawData": []
  },
  "types": [
@@ -71,42 +71,6 @@
      "doc": "intensifier-reflexive differentiation, section 2.12"
     }
    ]
-  },
-  {
-   "name": "Area",
-   "doc": "The rows of Table 107.1.",
-   "levels": [
-    {
-     "name": "europe",
-     "label": "Europe",
-     "doc": "Europe"
-    },
-    {
-     "name": "africa",
-     "label": "Africa",
-     "doc": "Africa"
-    },
-    {
-     "name": "americas",
-     "label": "Americas",
-     "doc": "Americas"
-    },
-    {
-     "name": "asia",
-     "label": "Asia",
-     "doc": "Asia"
-    },
-    {
-     "name": "oceania",
-     "label": "Oceania",
-     "doc": "Oceania"
-    },
-    {
-     "name": "world",
-     "label": "World",
-     "doc": "World"
-    }
-   ]
   }
  ],
  "constants": [],
@@ -164,87 +128,6 @@
      "withFeature": 2,
      "sample": 272,
      "note": "p. 1500."
-    }
-   ]
-  },
-  {
-   "name": "table1071",
-   "structure": "Table1071Row",
-   "doc": "comitative-instrumental syncretism by area, the languages and the percentage of each type; a mixed type is left out, so the percentages do not add up to 100.",
-   "locator": "Table 107.1, p. 1503",
-   "verified": "page-image",
-   "key": [
-    "area"
-   ],
-   "columns": [
-    {
-     "name": "area",
-     "type": "Area",
-     "doc": "The area."
-    },
-    {
-     "name": "syncretic",
-     "type": "nat",
-     "doc": "The syncretic languages."
-    },
-    {
-     "name": "syncreticPercent",
-     "type": "decimal",
-     "doc": "Their percentage."
-    },
-    {
-     "name": "nonSyncretic",
-     "type": "nat",
-     "doc": "The non-syncretic languages."
-    },
-    {
-     "name": "nonSyncreticPercent",
-     "type": "decimal",
-     "doc": "Their percentage."
-    }
-   ],
-   "rows": [
-    {
-     "area": "Europe",
-     "syncretic": 25,
-     "syncreticPercent": "49",
-     "nonSyncretic": 16,
-     "nonSyncreticPercent": "31"
-    },
-    {
-     "area": "Africa",
-     "syncretic": 20,
-     "syncreticPercent": "31",
-     "nonSyncretic": 38,
-     "nonSyncreticPercent": "58"
-    },
-    {
-     "area": "Americas",
-     "syncretic": 16,
-     "syncreticPercent": "21",
-     "nonSyncretic": 54,
-     "nonSyncreticPercent": "69"
-    },
-    {
-     "area": "Asia",
-     "syncretic": 12,
-     "syncreticPercent": "18",
-     "nonSyncretic": 47,
-     "nonSyncreticPercent": "71"
-    },
-    {
-     "area": "Oceania",
-     "syncretic": 6,
-     "syncreticPercent": "10",
-     "nonSyncretic": 54,
-     "nonSyncreticPercent": "86"
-    },
-    {
-     "area": "World",
-     "syncretic": 79,
-     "syncreticPercent": "24",
-     "nonSyncretic": 209,
-     "nonSyncreticPercent": "65"
     }
    ]
   }

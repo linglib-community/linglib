@@ -8,8 +8,7 @@ public import Linglib.Data.Statistics.Schema
 Auto-generated from `Linglib/Data/Statistics/Haspelmath2001.json` by `scripts/gen_statistics.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
-The figures of world-wide surveys that the chapter cites for its criterion (iv), and its Table 107.1
-on comitative-instrumental syncretism.
+The figures of world-wide surveys that the chapter cites for its criterion (iv).
 
 ## References
 
@@ -51,22 +50,6 @@ inductive Feature where
   | intensifierReflexiveDifferentiation
   deriving DecidableEq, Repr, Fintype
 
-/-- The rows of Table 107.1. -/
-inductive Area where
-  /-- Europe: Europe -/
-  | europe
-  /-- Africa: Africa -/
-  | africa
-  /-- Americas: Americas -/
-  | americas
-  /-- Asia: Asia -/
-  | asia
-  /-- Oceania: Oceania -/
-  | oceania
-  /-- World: World -/
-  | world
-  deriving DecidableEq, Repr, Fintype
-
 /-- A row of section 2, pp. 1494-1500: a world-wide survey cited for a feature: how many
 languages of its sample have the feature. -/
 structure Survey where
@@ -88,29 +71,5 @@ def surveys : List Survey :=
      18,
      110⟩,
    ⟨.strictAgreement, 2, 272⟩]  -- p. 1500.
-
-/-- A row of Table 107.1, p. 1503: comitative-instrumental syncretism by area, the languages and
-the percentage of each type; a mixed type is left out, so the percentages do not add up to
-100. -/
-structure Table1071Row where
-  /-- The syncretic languages. -/
-  syncretic : ℕ
-  /-- Their percentage. -/
-  syncreticPercent : Decimal
-  /-- The non-syncretic languages. -/
-  nonSyncretic : ℕ
-  /-- Their percentage. -/
-  nonSyncreticPercent : Decimal
-  deriving DecidableEq, Repr
-
-/-- The cells of Table 107.1, p. 1503, by area; from a sample of languages coded from their
-descriptions; checked against the page images. -/
-def table1071 : Area → Table1071Row
-  | .europe => ⟨25, ⟨49, 0⟩, 16, ⟨31, 0⟩⟩
-  | .africa => ⟨20, ⟨31, 0⟩, 38, ⟨58, 0⟩⟩
-  | .americas => ⟨16, ⟨21, 0⟩, 54, ⟨69, 0⟩⟩
-  | .asia => ⟨12, ⟨18, 0⟩, 47, ⟨71, 0⟩⟩
-  | .oceania => ⟨6, ⟨10, 0⟩, 54, ⟨86, 0⟩⟩
-  | .world => ⟨79, ⟨24, 0⟩, 209, ⟨65, 0⟩⟩
 
 end Haspelmath2001

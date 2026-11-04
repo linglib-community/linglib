@@ -32,8 +32,6 @@ parameters, their codes and the rows of a sample are generated per paper.
   type and no field. The values, long
   in the JSON as CLDF has them, are emitted as one row per language with a field for each
   parameter, so a theorem about the sample reads each language once.
-* A parameter whose values are numbers a source prints, as a ratio beside a language on a map, has
-  no codes: its `Coded` values hold a `Data.Statistics.Decimal`.
 * Each table of a paper is a contribution with its own list of rows. Languages, parameters and
   codes are shared, so a language two tables list is one `Language` with a row in each.
 * A language may take several codes for a parameter, or none: a row's field is a list.
