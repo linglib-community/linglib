@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.Monotone.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Presupposition.Strawson
@@ -18,9 +19,10 @@ and von Fintel's *only x is P* over individuals on the identity scale; the two
 [agree](##Focus.only_eq_eq_only_subset_range) unless two individuals share a predication. An
 additive asserts its prejacent and presupposes what *only* asserts to be false, and the
 presupposition of *even*, after Karttunen and Peters, is that the prejacent is less likely than
-every alternative. On a scale refining entailment *only* is [Strawson downward
-entailing](##Focus.isStrawsonDE_only) in its prejacent, and over individuals [in its
-predicate](##Focus.isStrawsonDE_only_eq).
+every alternative. On a partial order of alternatives, *only* says that the prejacent is [the
+strongest true alternative](##Focus.only_ge_eq_one_iff). On a scale refining entailment *only* is
+[Strawson downward entailing](##Focus.isStrawsonDE_only) in its prejacent, and over individuals
+[in its predicate](##Focus.isStrawsonDE_only_eq).
 
 ## Implementation notes
 
@@ -106,6 +108,15 @@ prejacent strengthens the assertion. -/
 theorem antitone_atMost {S : Set W → Set W → Prop} {C : Set (Set W)}
     (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) : Antitone (atMost S C id) :=
   fun _ _ hpq _ hw r hr hwr ↦ hS hpq (hw r hr hwr)
+
+/-! #### Ordered alternatives -/
+
+/-- With the stronger alternatives above, *only* is true exactly where the prejacent is the greatest
+true alternative. -/
+theorem only_ge_eq_one_iff [PartialOrder ι] :
+    only (· ≥ ·) C P i w = 1 ↔ IsGreatest {j ∈ C | w ∈ P j} i := by
+  simp only [only_eq_one_iff, mem_atLeast, mem_atMost, IsGreatest, upperBounds]
+  grind
 
 /-! #### The entailment scale -/
 

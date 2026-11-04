@@ -21,6 +21,7 @@ complement of a phase head no way out, so that a phase head cannot be stranded.
 * `Minimalist.crossed`: the maximal projections a link of a chain crosses.
 * `Minimalist.SpecToSpec`, `Minimalist.CompToSpec`: links too short in Erlewine's and in Abels's
   sense.
+* `Minimalist.ObeysAntiLocality`: no link of any chain is too short in Erlewine's sense.
 
 ## Main results
 
@@ -68,6 +69,12 @@ def SpecToSpec (x : TreePath × TreePath) : Prop :=
 
 instance (x : TreePath × TreePath) : Decidable (SpecToSpec hd t x) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- No link of any chain moves a specifier across no maximal projection but its own. -/
+def ObeysAntiLocality : Prop :=
+  ∀ y ∈ tokenList t.val, ∀ l ∈ links hd t y.2, ¬ SpecToSpec hd t l
+
+instance : Decidable (ObeysAntiLocality hd t) := by unfold ObeysAntiLocality; infer_instance
 
 /-- A link moves the complement of a head to a specifier of the head's phrase, which
 [abels-2003]'s anti-locality bans. -/
