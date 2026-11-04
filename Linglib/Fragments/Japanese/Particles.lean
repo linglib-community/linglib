@@ -13,18 +13,21 @@ occurs only in matrix questions and quotations, and the conjectural *darō*, whi
 declaratives and questions alike. The colloquial polarity particles *un* 'yes' and *uun* 'no' are
 `Japanese.PolarityParticles`. In Holmberg's truth-based system *un* confirms the negative
 alternative of a negative question, *Kimi tukarete nai? — Un (tukarete nai)* 'Are you not
-tired? — Yes (I'm not tired)'.
+tired? — Yes (I'm not tired)'. The sentence-final *ze* and *wa* are `Japanese.Particles.ze` and
+`Japanese.Particles.wa`.
 
 ## Main definitions
 
 * `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo`: the clause-typing particles with their
   embedding distributions.
+* `Japanese.Particles.ze`, `wa`: two sentence-final particles.
 * `Japanese.PolarityParticles.un`, `uun`, `all`: the polarity particles.
 
 ## References
 
 * [dayal-2025]
 * [holmberg-2016]
+* [ochs-1992]
 * [roelofsen-uegaki-2021]
 * [sauerland-yatsushiro-2017]
 * [uegaki-roelofsen-2018]
@@ -116,6 +119,18 @@ def daroo : Particle where
       | .quasiSubordinated => some .optional
       | .quotation | .insubordinated => none
     | _ => none
+
+/-- *ze* ぜ, a sentence-final particle ([ochs-1992]). -/
+def ze : Particle where
+  form := "ze"
+  script := some "ぜ"
+  position := some .clauseFinal
+
+/-- *wa* わ, a sentence-final particle ([ochs-1992]), distinct from the topic marker *wa* は. -/
+def wa : Particle where
+  form := "wa"
+  script := some "わ"
+  position := some .clauseFinal
 
 end Japanese.Particles
 

@@ -231,13 +231,11 @@ theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
 
 theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
   obtain ⟨rfl, -, hn, ⟨a, has, han⟩, -⟩ := h
+  have hsn : ¬ s ⊆ n := fun h ↦ han (h has)
   have hexh : exh {s ∪ n, s, n, e} s = s \ n := by
-    ext u
-    simp only [mem_exh, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
-      mem_sdiff]
-    refine and_congr_right fun _ ↦ ⟨fun h' hun ↦ han (h'.2.2.1 hun has), fun hun ↦
-      ⟨fun _ ↦ subset_union_left, fun _ ↦ subset_rfl, fun h' ↦ (hun h').elim,
-        fun h' ↦ (hun (hn h')).elim⟩⟩
+    rw [exh_insert_of_subset subset_union_left, exh_insert_of_subset subset_rfl,
+      exh_insert_of_not_subset hsn, exh_singleton_of_not_subset (hsn <| ·.trans hn),
+      sdiff_sdiff_left, sup_eq_right.2 hn]
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨a, has, han⟩), hexh]
 
 theorem exhIE_n : exhIE {w, s, n, e} n = n \ s := by
