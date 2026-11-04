@@ -180,7 +180,7 @@ def ex_2_33a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("empty tense", .acceptable)]
+    readings := [("before the speech time", .acceptable)]
     paperFeatures := [] }
 
 def ex_2_33b : Datum :=
@@ -194,7 +194,7 @@ def ex_2_33b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("empty tense", .unacceptable)]
+    readings := [("before the speech time", .unacceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
 def ex_2_34 : Datum :=
@@ -222,7 +222,7 @@ def ex_2_37 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("simultaneous", .acceptable)]
+    readings := [("simultaneous", .acceptable), ("after the speech time", .acceptable)]
     paperFeatures := [] }
 
 def ex_2_47a : Datum :=
@@ -236,7 +236,7 @@ def ex_2_47a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("simultaneous", .acceptable)]
+    readings := [("simultaneous", .acceptable), ("subsequent", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [] }
 
 def ex_2_47b : Datum :=
@@ -278,7 +278,7 @@ def ex_2_60b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("empty tense", .acceptable)]
+    readings := []
     paperFeatures := [] }
 
 def ex_2_61 : Datum :=
@@ -289,10 +289,10 @@ def ex_2_61 : Datum :=
     language := "stan1293"
     primaryText := "Everybody is amused by John's current claim that Mary would win the prize."
     glossedTokens := []
-    context := ""
-    judgment := .acceptable
+    context := "On the intended reading, the winning follows the speech time."
+    judgment := .unacceptable
     alternatives := []
-    readings := [("empty tense", .unacceptable)]
+    readings := []
     paperFeatures := [] }
 
 def ex_2_70 : Datum :=
@@ -331,8 +331,8 @@ def ex_2_103 : Datum :=
     language := "stan1293"
     primaryText := "I told Bill that you will say that you only had three magic tricks to do."
     glossedTokens := []
-    context := ""
-    judgment := .acceptable
+    context := "On the reading on which your having is simultaneous with your saying."
+    judgment := .unacceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable)]
     paperFeatures := [] }
@@ -376,7 +376,7 @@ def ex_2_125 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("the coming follows the speech time", .acceptable)]
+    readings := [("after the speech time", .acceptable)]
     paperFeatures := [] }
 
 def ex_2_139a : Datum :=
@@ -433,7 +433,7 @@ def ex_4_17d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "continues"), ("truthValue", "true")] }
+    paperFeatures := [("truthValue", "true")] }
 
 def ex_4_24_Case_1 : Datum :=
   { id := "ogihara1989_4_24_Case_1"
@@ -447,7 +447,7 @@ def ex_4_24_Case_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "continues")] }
+    paperFeatures := [] }
 
 def ex_4_24_Case_2 : Datum :=
   { id := "ogihara1989_4_24_Case_2"
@@ -461,7 +461,7 @@ def ex_4_24_Case_2 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "ends")] }
+    paperFeatures := [] }
 
 def ex_4_27d : Datum :=
   { id := "ogihara1989_4_27d"
@@ -475,7 +475,7 @@ def ex_4_27d : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "ends")] }
+    paperFeatures := [] }
 
 def ex_4_28 : Datum :=
   { id := "ogihara1989_4_28"
@@ -489,7 +489,7 @@ def ex_4_28 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "ends")] }
+    paperFeatures := [] }
 
 def ex_4_34d : Datum :=
   { id := "ogihara1989_4_34d"
@@ -503,7 +503,7 @@ def ex_4_34d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "continues")] }
+    paperFeatures := [] }
 
 def ex_4_35 : Datum :=
   { id := "ogihara1989_4_35"
@@ -517,7 +517,7 @@ def ex_4_35 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "continues")] }
+    paperFeatures := [] }
 
 def ex_4_43c : Datum :=
   { id := "ogihara1989_4_43c"
@@ -531,7 +531,7 @@ def ex_4_43c : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("state", "ends")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_1_46a, ex_1_47, ex_1_57, ex_2_1a, ex_2_2a, ex_2_2b, ex_2_25a, ex_2_25b, ex_2_25c, ex_2_27, ex_2_28, ex_2_33a, ex_2_33b, ex_2_34, ex_2_37, ex_2_47a, ex_2_47b, ex_2_59, ex_2_60b, ex_2_61, ex_2_70, ex_2_97, ex_2_103, ex_2_104, ex_2_105, ex_2_125, ex_2_139a, ex_2_139b, ex_2_139c, ex_4_17d, ex_4_24_Case_1, ex_4_24_Case_2, ex_4_27d, ex_4_28, ex_4_34d, ex_4_35, ex_4_43c]
 

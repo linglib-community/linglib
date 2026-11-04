@@ -250,10 +250,10 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "empty tense", "judgment": "acceptable"}
+      {"name": "before the speech time", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "pp. 103-104: the past on would is deleted, (33a'). Repeated as (42a).",
+    "comment": "pp. 103-104: the becoming follows the meeting and not necessarily the speech time; the past on would is deleted, (33a'). Repeated as (42a).",
     "verified": "page-image"
   },
   {
@@ -269,10 +269,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "empty tense", "judgment": "unacceptable"}
+      {"name": "before the speech time", "judgment": "unacceptable"},
+      {"name": "after the speech time", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "pp. 104-105: the becoming follows the speech time. Repeated as (42b).",
+    "comment": "pp. 103-105: the becoming follows the speech time. Repeated as (42b).",
     "verified": "page-image"
   },
   {
@@ -307,7 +308,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"}
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "after the speech time", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
     "comment": "pp. 106-107: the buying can follow the speech time and coincide with the fish's being alive; both lower pasts are deleted, (37'). Repeated as (71).",
@@ -330,10 +332,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"}
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "subsequent", "judgment": "acceptable"},
+      {"name": "shifted", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "p. 119: also John met a man who is laughing (now), the wide scope (47a').",
+    "comment": "p. 119: ambiguous between two readings, simultaneous with the meeting, (47a''), and at the speech time, (47a'); the shifted judgment is inferred from that.",
     "verified": "page-image"
   },
   {
@@ -391,11 +395,9 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "empty tense", "judgment": "acceptable"}
-    ],
+    "readings": [],
     "paperFeatures": [],
-    "comment": "pp. 131-132: the adjective earlier triggers tense deletion.",
+    "comment": "pp. 131-132: the winning follows the claiming, and the adjective earlier triggers tense deletion.",
     "verified": "page-image"
   },
   {
@@ -407,14 +409,12 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
-    "judgment": "acceptable",
+    "context": "On the intended reading, the winning follows the speech time.",
+    "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "empty tense", "judgment": "unacceptable"}
-    ],
+    "readings": [],
     "paperFeatures": [],
-    "comment": "p. 132: illicit on the reading on which the winning follows the speech time.",
+    "comment": "p. 132.",
     "verified": "page-image"
   },
   {
@@ -464,8 +464,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
-    "judgment": "acceptable",
+    "context": "On the reading on which your having is simultaneous with your saying.",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"}
@@ -525,7 +525,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "the coming follows the speech time", "judgment": "acceptable"}
+      {"name": "after the speech time", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
     "comment": "p. 186: the triple-index system wrongly places the coming before the speech time.",
@@ -603,7 +603,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["state", "continues"],
       ["truthValue", "true"]
     ],
     "comment": "p. 287: true though Mary is in the room neither at the saying nor at the report, against Hypothesis 1.",
@@ -622,9 +621,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "continues"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 293.",
     "verified": "page-image"
   },
@@ -641,9 +638,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "ends"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 293: John's attitude is the same as in Case 1, against Hypothesis 2.",
     "verified": "page-image"
   },
@@ -660,9 +655,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "ends"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 295.",
     "verified": "page-image"
   },
@@ -679,9 +672,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "ends"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 296: infelicitous though Mary is in the room now.",
     "verified": "page-image"
   },
@@ -698,9 +689,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "continues"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 300, against Hypothesis 3; two consultants disagree (p. 299).",
     "verified": "page-image"
   },
@@ -717,10 +706,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "continues"]
-    ],
-    "comment": "p. 300, against Hypothesis 3.",
+    "paperFeatures": [],
+    "comment": "p. 300, against Hypothesis 3. The source gives no scenario for the state.",
     "verified": "page-image"
   },
   {
@@ -736,9 +723,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["state", "ends"]
-    ],
+    "paperFeatures": [],
     "comment": "p. 307: two temporally discontinuous states of Sue's standing in the room.",
     "verified": "page-image"
   }
