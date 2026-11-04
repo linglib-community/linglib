@@ -30,7 +30,7 @@ def ex01 : Datum :=
 
 def ex02 : Datum :=
   { id := "kratzer1998_ex02"
-    source := ⟨"ogihara-1989", "dissertation SOT example"⟩
+    source := ⟨"ogihara-1989", "ch. 2, (37)"⟩
     reportedIn := some ⟨"kratzer-1998", "(2)"⟩
     language := "stan1293"
     primaryText := "John said he would buy a fish that was still alive."

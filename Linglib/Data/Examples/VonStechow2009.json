@@ -240,8 +240,8 @@
   },
   {
     "id": "vonstechow2009_62",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(62)"},
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(62)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary will buy a fish that is alive.",
     "discourseSegments": [],
@@ -258,13 +258,13 @@
       ["clause", "relative"],
       ["tense", "present under future"]
     ],
-    "comment": "The present form under will cannot be the deictic Present on the simultaneous reading.",
+    "comment": "The present form under will cannot be the deictic Present on the simultaneous reading. The sentence is not printed in Ogihara (1989), to which von Stechow credits the observation.",
     "verified": "page-image"
   },
   {
     "id": "vonstechow2009_63",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(63)"},
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(63)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary will buy a fish that has been alive.",
     "discourseSegments": [],
@@ -281,13 +281,13 @@
       ["clause", "relative"],
       ["tense", "perfect under future"]
     ],
-    "comment": "",
+    "comment": "The sentence is not printed in Ogihara (1989), to which von Stechow credits the observation of (62).",
     "verified": "page-image"
   },
   {
     "id": "vonstechow2009_64",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(64)"},
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(64)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary will buy a fish that was alive.",
     "discourseSegments": [],
@@ -310,7 +310,7 @@
       ["clause", "relative"],
       ["tense", "past under future"]
     ],
-    "comment": "",
+    "comment": "The sentence is not printed in Ogihara (1989), to which von Stechow credits the observation of (62).",
     "verified": "page-image"
   },
   {
@@ -368,8 +368,8 @@
   },
   {
     "id": "vonstechow2009_70",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(70)"},
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(70)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Hillary married a man who became the president.",
     "discourseSegments": [],
@@ -385,13 +385,13 @@
       ["clause", "relative"],
       ["tense", "past under past"]
     ],
-    "comment": "",
+    "comment": "Von Stechow says the sentence is due to Ogihara; Ogihara (1989) does not print it.",
     "verified": "page-image"
   },
   {
     "id": "vonstechow2009_71",
-    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
-    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(71)"},
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(71)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "John thought that he would buy a fish that was still alive.",
     "discourseSegments": [],
@@ -407,7 +407,7 @@
       ["clause", "relative under attitude"],
       ["tense", "bound"]
     ],
-    "comment": "The relative-clause event is not before the speech time, so a referential analysis is impossible.",
+    "comment": "The relative-clause event is not before the speech time, so a referential analysis is impossible. Von Stechow credits the sentence to Ogihara; Ogihara (1989), ch. 2, (37), has said where this has thought.",
     "verified": "page-image"
   },
   {

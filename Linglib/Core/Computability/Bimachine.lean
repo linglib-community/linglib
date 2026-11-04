@@ -162,42 +162,52 @@ theorem getElem?_run (w : B.LetterToLetter) (x : List α) (i : ℕ) :
 
 end LetterToLetter
 
-/-! ### Transport along state equivalences -/
+/-! ### Reindexing along state equivalences -/
 
 variable {L' R' : Type*}
 
-/-- Transport a bimachine along equivalences on the two state spaces. -/
-@[simps]
-def map (eL : L ≃ L') (eR : R ≃ R') (B : Bimachine L R α β) : Bimachine L' R' α β where
-  lInit := eL B.lInit
-  lStep l a := eL (B.lStep (eL.symm l) a)
-  rInit := eR B.rInit
-  rStep r a := eR (B.rStep (eR.symm r) a)
-  output l a r := B.output (eL.symm l) a (eR.symm r)
+/-- Lifts equivalences on the two state spaces to an equivalence on bimachines. -/
+@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_output]
+def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
+  toFun B :=
+    { lInit := eL B.lInit
+      lStep := fun l a ↦ eL (B.lStep (eL.symm l) a)
+      rInit := eR B.rInit
+      rStep := fun r a ↦ eR (B.rStep (eR.symm r) a)
+      output := fun l a r ↦ B.output (eL.symm l) a (eR.symm r) }
+  invFun B :=
+    { lInit := eL.symm B.lInit
+      lStep := fun l a ↦ eL.symm (B.lStep (eL l) a)
+      rInit := eR.symm B.rInit
+      rStep := fun r a ↦ eR.symm (B.rStep (eR r) a)
+      output := fun l a r ↦ B.output (eL l) a (eR r) }
+  left_inv B := by simp
+  right_inv B := by simp
 
-@[simp] theorem map_refl : map (Equiv.refl L) (Equiv.refl R) B = B := rfl
+@[simp] theorem reindex_refl : reindex (Equiv.refl L) (Equiv.refl R) B = B := rfl
 
-@[simp] theorem map_map {L'' R'' : Type*} (eL : L ≃ L') (eR : R ≃ R') (eL' : L' ≃ L'')
-    (eR' : R' ≃ R'') : map eL' eR' (map eL eR B) = map (eL.trans eL') (eR.trans eR') B := rfl
+@[simp] theorem symm_reindex (eL : L ≃ L') (eR : R ≃ R') :
+    (reindex (α := α) (β := β) eL eR).symm = reindex eL.symm eR.symm :=
+  rfl
 
-@[simp] theorem lStateAfter_map (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
-    (map eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
+@[simp] theorem lStateAfter_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
+    (reindex eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
   induction pre generalizing l' <;> simp [*]
 
-@[simp] theorem lState_map (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
-    (map eL eR B).lState pre = eL (B.lState pre) := by
+@[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
+    (reindex eL eR B).lState pre = eL (B.lState pre) := by
   simp [lState]
 
-@[simp] theorem rState_map (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
-    (map eL eR B).rState suf = eR (B.rState suf) :=
+@[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
+    (reindex eL eR B).rState suf = eR (B.rState suf) :=
   List.foldr_hom eR fun x y ↦ by simp
 
-@[simp] theorem runFrom_map (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
-    (map eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
+@[simp] theorem runFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
+    (reindex eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
   induction xs generalizing l' <;> simp [*]
 
-@[simp] theorem run_map (eL : L ≃ L') (eR : R ≃ R') :
-    (map eL eR B).run = B.run := by
+@[simp] theorem run_reindex (eL : L ≃ L') (eR : R ≃ R') :
+    (reindex eL eR B).run = B.run := by
   funext xs; simp [run]
 
 theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
@@ -206,8 +216,8 @@ theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
   rw [w.output_eq, w.output_eq]; simp
 
 /-- Letter-to-letter-ness transports along state reindexing. -/
-def LetterToLetter.map {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
-    (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.map eL eR B).LetterToLetter :=
+def LetterToLetter.reindex {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
+    (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.reindex eL eR B).LetterToLetter :=
   ⟨fun l a r ↦ w.cell (eL.symm l) a (eR.symm r), fun _ _ _ ↦ w.output_eq _ _ _⟩
 
 /-! ### Reversal
@@ -335,8 +345,8 @@ def IsBimachineComputable (f : List α → List β) : Prop :=
 
 theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
-  ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
-    B.run_map _ _⟩
+  ⟨Shrink L, inferInstance, Shrink R, inferInstance,
+    Bimachine.reindex (equivShrink.{0} L) (equivShrink.{0} R) B, B.run_reindex _ _⟩
 
 /-- The reverse conjugate of a bimachine-computable function is bimachine-computable. -/
 protected theorem IsBimachineComputable.revConj {f : List α → List β}
@@ -358,8 +368,8 @@ theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L
     [Fintype R] (B : Bimachine L R α β) (h : B.IsLetterToLetter) :
     IsLengthPreservingBimachineComputable B.run :=
   have ⟨w⟩ := h
-  ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
-    ⟨w.map _ _⟩, B.run_map _ _⟩
+  ⟨Shrink L, inferInstance, Shrink R, inferInstance,
+    Bimachine.reindex (equivShrink.{0} L) (equivShrink.{0} R) B, ⟨w.reindex _ _⟩, B.run_reindex _ _⟩
 
 theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
     (h : IsLengthPreservingBimachineComputable f) : IsBimachineComputable f :=

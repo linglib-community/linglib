@@ -33,8 +33,9 @@ a world is the total semantics of a lexicon whose worldly words have such types.
 ## Implementation notes
 
 The structure follows mathlib's `FirstOrder.Language.Term.realize`, defined once over any
-`L.Structure`: each semantics is an interpretation rather than its own evaluator, and the lemma
-relating two of them is the fundamental lemma of logical relations. Variables are named by the
+`L.Structure`: each semantics is an interpretation rather than its own evaluator, and `Rel.realize`
+relates two of them by induction on terms; the fundamental lemma of logical relations is its case
+in `Composition/LogicalRelation.lean`. Variables are named by the
 trace indices, so a binder with index `n` translates to the abstraction over the variable `n`, and
 translation needs no fresh names. The typing `Γ : ℕ → Ty` is a parameter of the terms, so an
 assignment is a dependent function giving each index a value of its type; under
@@ -209,10 +210,9 @@ theorem realize_map (A : Interpretation.{u', v, w} K') (f : ∀ {ty : Ty}, K ty 
   | lam n b ih => exact congrArg A.lam (funext fun x ↦ ih _)
   | comp m l r ihl ihr => exact congrArg₂ (A.mode m) (ihl g) (ihr g)
 
-/-- The fundamental lemma of logical relations: a relation between the values of two
-interpretations that holds of the constants the terms relate and of the variables the assignments
-relate, and that abstraction and every mode preserve, holds of the values of two related
-terms. -/
+/-- A relation between the values of two interpretations that holds of the constants the terms
+relate and of the variables the assignments relate, and that abstraction and every mode preserve,
+holds of the values of two related terms. -/
 theorem Rel.realize {Rc : ∀ ty : Ty, K ty → K' ty → Prop} {A : Interpretation.{u, v, w} K}
     {B : Interpretation.{u', v', w'} K'} (R : ∀ ty : Ty, A.D ty → B.D ty → Prop)
     (RV : ∀ σ : Ty, A.Val σ → B.Val σ → Prop)
@@ -243,8 +243,8 @@ theorem Rel.refl_eq {ty : Ty} (t : Term Γ K ty) : Rel (fun _ c c' ↦ c = c') t
   | lam n b ih => exact .lam n ih
   | comp m l r ihl ihr => exact .comp m ihl ihr
 
-/-- The fundamental lemma for one term in two interpretations. -/
-theorem realize_rel {A : Interpretation.{u, v, w} K} {B : Interpretation.{u, v', w'} K}
+/-- `Rel.realize` for one term in two interpretations. -/
+theorem rel_realize {A : Interpretation.{u, v, w} K} {B : Interpretation.{u, v', w'} K}
     (R : ∀ ty : Ty, A.D ty → B.D ty → Prop) (RV : ∀ σ : Ty, A.Val σ → B.Val σ → Prop)
     (hc : ∀ {ty : Ty} (c : K ty), R ty (A.const c) (B.const c))
     (hv : ∀ {σ : Ty} x y, RV σ x y → R σ (A.var x) (B.var y))

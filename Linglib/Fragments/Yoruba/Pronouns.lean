@@ -15,6 +15,7 @@ where a third person subject would leave *ó*.
 ## Main definitions
 
 * `Yoruba.Pronouns.subject`: the subject pronoun of each person and number.
+* `Yoruba.Pronouns.pastPresentSubject`: its form in a past or present sentence.
 
 ## References
 
@@ -51,8 +52,7 @@ def «ẹ» : PersonalPronoun :=
   { form := "ẹ", person := some .second, number := some .plural, cases := {.nom},
     strength := some .weak }
 
-/-- The third person plural subject *wọn*, as Awobuluyi's table gives it; Aremu prints the
-resumptive of a plural focus *wọ́n*. -/
+/-- The third person plural subject *wọn*. -/
 def «wọn» : PersonalPronoun :=
   { form := "wọn", person := some .third, number := some .plural, cases := {.nom},
     strength := some .weak }
@@ -66,5 +66,15 @@ def subject : Person → Number → Option PersonalPronoun
   | .second, .plural => some «ẹ»
   | .third, .plural => some «wọn»
   | _, _ => none
+
+/-- *wọn* with the high-tone adverb of past or present action, which for many speakers replaces its
+last sound: *Wọ́n lọ* 'They went'. -/
+def «wọ́n» : PersonalPronoun := { «wọn» with form := "wọ́n" }
+
+/-- The subject pronoun of a past or present sentence: the adverb is understood after *mo, o, a, ẹ*
+and merges with *ó*. -/
+def pastPresentSubject : Person → Number → Option PersonalPronoun
+  | .third, .plural => some «wọ́n»
+  | p, n => subject p n
 
 end Yoruba.Pronouns

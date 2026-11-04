@@ -1,7 +1,7 @@
 [
   {
-    "id": "aremu2025a_157b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-b)"},
+    "id": "aremu2025a_ch3_157b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (157-b)"},
     "language": "yoru1245",
     "primaryText": "Adé ra bàtà",
     "discourseSegments": [],
@@ -20,8 +20,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_157b_ni",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-b)"},
+    "id": "aremu2025a_ch3_157b_ni",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (157-b)"},
     "language": "yoru1245",
     "primaryText": "Adé ra bàtà ni",
     "discourseSegments": [],
@@ -40,8 +40,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_157c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(157-c)"},
+    "id": "aremu2025a_ch3_157c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (157-c)"},
     "language": "yoru1245",
     "primaryText": "Bàtà ni Adé rà",
     "discourseSegments": [],
@@ -55,14 +55,17 @@
     "readings": [],
     "paperFeatures": [
       ["focus", "object"],
-      ["fronted", "object"]
+      ["fronted", "object"],
+      ["domain", "matrix"],
+      ["associate", "object"],
+      ["site", "gap"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_158b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(158-b)"},
+    "id": "aremu2025a_ch3_158b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (158-b)"},
     "language": "yoru1245",
     "primaryText": "Adé ra bàtà. Ó ra aṣọ pẹ̀lu.",
     "discourseSegments": [
@@ -86,8 +89,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_158c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(158-c)"},
+    "id": "aremu2025a_ch3_158c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (158-c)"},
     "language": "yoru1245",
     "primaryText": "Bàtà ni Adé rà. Ó ra aṣọ pẹ̀lu.",
     "discourseSegments": [
@@ -112,8 +115,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_159b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(159-b)"},
+    "id": "aremu2025a_ch3_159b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (159-b)"},
     "language": "yoru1245",
     "primaryText": "Adé rà bàtà ní àná",
     "discourseSegments": [],
@@ -132,8 +135,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_159c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(159-c)"},
+    "id": "aremu2025a_ch3_159c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (159-c)"},
     "language": "yoru1245",
     "primaryText": "Àná ni Adé rà bàtà",
     "discourseSegments": [],
@@ -153,8 +156,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_160b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(160-b)"},
+    "id": "aremu2025a_ch3_160b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (160-b)"},
     "language": "yoru1245",
     "primaryText": "Ó fọ́ o",
     "discourseSegments": [],
@@ -173,8 +176,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_161",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(161)"},
+    "id": "aremu2025a_ch3_161",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (161)"},
     "language": "yoru1245",
     "primaryText": "Fífọ́ ni Adé fọ́ fèrèsé",
     "discourseSegments": [],
@@ -195,8 +198,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_162b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(162-b)"},
+    "id": "aremu2025a_ch3_162b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (162-b)"},
     "language": "yoru1245",
     "primaryText": "Adé fọ́ fèrèsé",
     "discourseSegments": [],
@@ -215,8 +218,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_162c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(162-c)"},
+    "id": "aremu2025a_ch3_162c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (162-c)"},
     "language": "yoru1245",
     "primaryText": "Fífọ́ fèrèsé ni Adé fọ́ fèrèsé",
     "discourseSegments": [],
@@ -237,8 +240,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_163b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(163-b)"},
+    "id": "aremu2025a_ch3_163b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (163-b)"},
     "language": "yoru1245",
     "primaryText": "Adé ni ó rà bàtà",
     "discourseSegments": [],
@@ -252,14 +255,17 @@
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
-      ["fronted", "subject"]
+      ["fronted", "subject"],
+      ["domain", "matrix"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_163c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(163-c)"},
+    "id": "aremu2025a_ch3_163c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (163-c)"},
     "language": "yoru1245",
     "primaryText": "Adé rà bàtà",
     "discourseSegments": [],
@@ -278,8 +284,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_165b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(165-b)"},
+    "id": "aremu2025a_ch3_165b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (165-b)"},
     "language": "yoru1245",
     "primaryText": "Tolú ni ó jẹ iṣu",
     "discourseSegments": [],
@@ -299,8 +305,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_165c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(165-c)"},
+    "id": "aremu2025a_ch3_165c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (165-c)"},
     "language": "yoru1245",
     "primaryText": "Tolú jẹ iṣu",
     "discourseSegments": [],
@@ -319,8 +325,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_166b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(166-b)"},
+    "id": "aremu2025a_ch3_166b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (166-b)"},
     "language": "yoru1245",
     "primaryText": "Tolú pa eku",
     "discourseSegments": [],
@@ -339,8 +345,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_166c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(166-c)"},
+    "id": "aremu2025a_ch3_166c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (166-c)"},
     "language": "yoru1245",
     "primaryText": "Eku ni Tolú pa",
     "discourseSegments": [],
@@ -360,8 +366,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_167b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(167-b)"},
+    "id": "aremu2025a_ch3_167b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (167-b)"},
     "language": "yoru1245",
     "primaryText": "Tolú ni ó subú",
     "discourseSegments": [],
@@ -381,8 +387,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_167c",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(167-c)"},
+    "id": "aremu2025a_ch3_167c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (167-c)"},
     "language": "yoru1245",
     "primaryText": "Tolú ni ó sùn",
     "discourseSegments": [],
@@ -402,8 +408,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_168",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(168)"},
+    "id": "aremu2025a_ch3_168",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (168)"},
     "language": "yoru1245",
     "primaryText": "Enikan ni ó jí ọkọ̀",
     "discourseSegments": [],
@@ -423,8 +429,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_169",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(169)"},
+    "id": "aremu2025a_ch3_169",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (169)"},
     "language": "yoru1245",
     "primaryText": "Pípa eku ni Tolú pa eku",
     "discourseSegments": [],
@@ -445,8 +451,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_188a",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(188-a)"},
+    "id": "aremu2025a_ch3_188a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (188-a)"},
     "language": "yoru1245",
     "primaryText": "Àwọn ọmọ ni wọ́n ra bàtà",
     "discourseSegments": [],
@@ -468,8 +474,8 @@
     "verified": "page-image"
   },
   {
-    "id": "aremu2025a_188b",
-    "source": {"bibkey": "aremu-2025a", "paperLabel": "(188-b)"},
+    "id": "aremu2025a_ch3_188b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (188-b)"},
     "language": "yoru1245",
     "primaryText": "Adé ni ó ra bàtà",
     "discourseSegments": [],
@@ -483,7 +489,930 @@
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
-      ["fronted", "subject"]
+      ["fronted", "subject"],
+      ["domain", "matrix"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_175b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (175-b)"},
+    "language": "yoru1245",
+    "primaryText": "Bàtà ni Tolú rí obìnrin tí ó rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bàtà", "shoe"], ["ni", "FOC"], ["Tolú", "Tolú"], ["rí", "see"], ["obìnrin", "woman"],
+      ["tí", "REL"], ["ó", "3SG"], ["rà", "buy"]
+    ],
+    "translation": "Tolú saw the woman who bought A SHOE.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "relative"],
+      ["associate", "object"],
+      ["site", "gap"]
+    ],
+    "comment": "A fronted object cannot leave a relative clause, which is an island.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_176b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (176-b)"},
+    "language": "yoru1245",
+    "primaryText": "Bàtà ni Adé mọ̀ wípé Tolú ni ó ra",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bàtà", "shoe"], ["ni", "FOC"], ["Adé", "Adé"], ["mọ̀", "know"], ["wípé", "COMP"],
+      ["Tolú", "Tolú"], ["ni", "FOC"], ["ó", "3SG"], ["ra", "buy"]
+    ],
+    "translation": "Adé knows that TOLÚ bought a SHOE.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "focusClause"],
+      ["associate", "object"],
+      ["site", "gap"]
+    ],
+    "comment": "Extraction out of a clause with ni, impossible if ni introduces a relative clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_184b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (184-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni àti Bọ́lá jẹ iṣu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["àti", "CONJ"], ["Bọ́lá", "Bọ́lá"], ["jẹ", "eat"],
+      ["iṣu", "yam"]
+    ],
+    "translation": "ADÉ and Bọ́lá ate yam.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "coordinate"],
+      ["associate", "subject"],
+      ["site", "gap"]
+    ],
+    "comment": "Coordinate Structure Constraint, with a gap for the first conjunct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_184c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (184-c)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni òun àti Bọ́lá jẹ iṣu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["òun", "3SG"], ["àti", "CONJ"], ["Bọ́lá", "Bọ́lá"],
+      ["jẹ", "eat"], ["iṣu", "yam"]
+    ],
+    "translation": "ADÉ and Bọ́lá ate yam.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "coordinate"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_185b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (185-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Tolú parí iṣu kí tó rà omi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Tolú", "Tolú"], ["parí", "finish"], ["iṣu", "yam"],
+      ["kí", "before"], ["tó", "able"], ["rà", "buy"], ["omi", "water"]
+    ],
+    "translation": "It was Adé that Tolú finished (eating) yam before he bought water.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "adjunct"],
+      ["associate", "subject"],
+      ["site", "gap"]
+    ],
+    "comment": "The translation is printed as literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_185c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (185-c)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Tolú parí iṣu kí ó tó rà omi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Tolú", "Tolú"], ["parí", "finish"], ["iṣu", "yam"],
+      ["kí", "before"], ["ó", "3SG"], ["tó", "able"], ["rà", "buy"], ["omi", "water"]
+    ],
+    "translation": "It was Adé that Tolú finished (eating) yam before he bought water.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "adjunct"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "The translation is printed as literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_186b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (186-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Tolú jẹ oúnjẹ tí ó rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Tolú", "Tolú"], ["jẹ", "eat"], ["oúnjẹ", "food"],
+      ["tí", "REL"], ["ó", "3SG"], ["rà", "buy"]
+    ],
+    "translation": "It was Adé that Tolú ate the food that he bought.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "relative"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "The translation is printed as literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_186b_gap",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (186-b)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Tolú jẹ oúnjẹ tí rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Tolú", "Tolú"], ["jẹ", "eat"], ["oúnjẹ", "food"],
+      ["tí", "REL"], ["rà", "buy"]
+    ],
+    "translation": "It was Adé that Tolú ate the food that he bought.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "relative"],
+      ["associate", "subject"],
+      ["site", "gap"]
+    ],
+    "comment": "The variant of (186-b) marked *(ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_191b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (191-b)"},
+    "language": "yoru1245",
+    "primaryText": "Iṣu ni Tolú rí ọmọ tí ó jẹ ẹ́",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Iṣu", "yam"], ["ni", "FOC"], ["Tolú", "Tolú"], ["rí", "see"], ["ọmọ", "child"],
+      ["tí", "REL"], ["ó", "3SG"], ["jẹ", "eat"], ["ẹ́", "3SG"]
+    ],
+    "translation": "It was yam that Tolú saw the child who ate.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "relative"],
+      ["associate", "object"],
+      ["site", "pronoun"]
+    ],
+    "comment": "Printed with (ẹ́) optional and starred either way; resumption does not repair an object.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_192b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (192-b)"},
+    "language": "yoru1245",
+    "primaryText": "Omi ni Tolú jẹ iṣu kí Adé tó rà á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Omi", "water"], ["ni", "FOC"], ["Tolú", "Tolú"], ["jẹ", "eat"], ["iṣu", "yam"],
+      ["kí", "before"], ["Adé", "Adé"], ["tó", "TO"], ["rà", "buy"], ["á", "3SG"]
+    ],
+    "translation": "It was Water that Tolú ate yam before Adé bought.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "adjunct"],
+      ["associate", "object"],
+      ["site", "pronoun"]
+    ],
+    "comment": "Printed with (á) optional and starred either way.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_194b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (194-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rí ọmọ tí ó jẹ iṣu láàná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rí", "see"], ["ọmọ", "child"], ["tí", "REL"], ["ó", "3SG"],
+      ["jẹ", "eat"], ["iṣu", "yam"], ["láàná", "yesterday"]
+    ],
+    "translation": "Tolú saw the child who ate yam yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "relative"],
+      ["associate", "object"],
+      ["site", "inSitu"]
+    ],
+    "comment": "In-situ focus inside a relative clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_195b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (195-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú jẹ iṣu kí Adé tó ra omi láàná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["jẹ", "eat"], ["iṣu", "yam"], ["kí", "before"], ["Adé", "Adé"],
+      ["tó", "TO"], ["ra", "buy"], ["omi", "water"], ["láàná", "yesterday"]
+    ],
+    "translation": "Tolú ate yam before Adé bought water yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "adjunct"],
+      ["associate", "object"],
+      ["site", "inSitu"]
+    ],
+    "comment": "In-situ focus inside an adjunct clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_196c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (196-c)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ra iṣu àti ẹ̀wà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ra", "buy"], ["iṣu", "yam"], ["àti", "CONJ"], ["ẹ̀wà", "beans"]
+    ],
+    "translation": "Tolú bought yam and beans.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "coordinate"],
+      ["associate", "object"],
+      ["site", "inSitu"]
+    ],
+    "comment": "In-situ focus on a conjunct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_203a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (203-a)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Bọ́lá rò wípé ó rà bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Bọ́lá", "Bọ́lá"], ["rò", "think"], ["wípé", "COMP"],
+      ["ó", "3SG"], ["rà", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "Bọ́lá thinks that ADÉ bought a shoe.",
+    "context": "QUD: Who does Bọ́lá think bought a shoe?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "complement"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch3_203a_gap",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 3 (203-a)"},
+    "language": "yoru1245",
+    "primaryText": "Adé ni Bọ́lá rò wípé rà bàtà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adé", "Adé"], ["ni", "FOC"], ["Bọ́lá", "Bọ́lá"], ["rò", "think"], ["wípé", "COMP"],
+      ["rà", "buy"], ["bàtà", "shoe"]
+    ],
+    "translation": "Bọ́lá thinks that ADÉ bought a shoe.",
+    "context": "QUD: Who does Bọ́lá think bought a shoe?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["domain", "complement"],
+      ["associate", "subject"],
+      ["site", "gap"]
+    ],
+    "comment": "The variant of (203-a) marked *(ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_30c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (30-c)"},
+    "language": "yoru1245",
+    "primaryText": "Adam ní lati pa adìẹ méjì nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Adam", "Adam"], ["ní", "has"], ["lati", "to"], ["pa", "kill"], ["adìẹ", "fowl"],
+      ["méjì", "two"], ["nìkan", "only_adf"]
+    ],
+    "translation": "Adam is required to slaughter only TWO fowls.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The printed meaning: 'Adam only has to slaughter (any) TWO fowls (but could slaughter more if he wishes).'",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_46c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (46-c)"},
+    "language": "yoru1245",
+    "primaryText": "Ádáàmù nìkan ni ó jẹ ìrẹsì nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ádáàmù", "Adam"], ["nìkan", "only"], ["ni", "FOC"], ["ó", "3SG"], ["jẹ", "eat"],
+      ["ìrẹsì", "rice"], ["nìkan", "only"]
+    ],
+    "translation": "The pair <Adam, rice> is the only alternative that satisfies the eating relation.",
+    "context": "Who ate what?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["domain", "matrix"],
+      ["associate", "subject"],
+      ["site", "pronoun"]
+    ],
+    "comment": "The translation is the printed meaning of the concord reading. The object is focused too; the row records the subject.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_46c_gap",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (46-c)"},
+    "language": "yoru1245",
+    "primaryText": "Ádáàmù nìkan ni jẹ ìrẹsì nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ádáàmù", "Adam"], ["nìkan", "only"], ["ni", "FOC"], ["jẹ", "eat"], ["ìrẹsì", "rice"],
+      ["nìkan", "only"]
+    ],
+    "translation": "The pair <Adam, rice> is the only alternative that satisfies the eating relation.",
+    "context": "Who ate what?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["focus", "subject"],
+      ["fronted", "subject"],
+      ["domain", "matrix"],
+      ["associate", "subject"],
+      ["site", "gap"]
+    ],
+    "comment": "The variant of (46-c) marked *(ó).",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_52bi",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (52-b-i)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn jẹ́ akẹ́kọ̀ọ́ nìkan. Ó tún jẹ́ agbálẹ̀",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["jẹ́", "COP"], ["akẹ́kọ̀ọ́", "student"],
+      ["nìkan", "only"], ["Ó", "3SG"], ["tún", "also"], ["jẹ́", "COP"], ["agbálẹ̀", "cleaner"]
+    ],
+    "translation": "Tolú is only A STUDENT. He is also a cleaner.",
+    "context": "Several people in the meeting are discussing what they do.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["prejacent", "student"],
+      ["also", "cleaner"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_52bii",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (52-b-ii)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn jẹ́ akẹ́kọ̀ọ́ nìkan. Ó tún jẹ́ ọ̀jọ̀gbọ́n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["jẹ́", "COP"], ["akẹ́kọ̀ọ́", "student"],
+      ["nìkan", "only"], ["Ó", "3SG"], ["tún", "also"], ["jẹ́", "COP"],
+      ["ọ̀jọ̀gbọ́n", "professor"]
+    ],
+    "translation": "Tolú is only A STUDENT. He is also a professor.",
+    "context": "Several people in the meeting are discussing what they do.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["prejacent", "student"],
+      ["also", "professor"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_53bi",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (53-b-i)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà nìkan. Ó tún gba mẹ́dàlì ide",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["nìkan", "only"], ["Ó", "3SG"], ["tún", "also"], ["gba", "collect"],
+      ["mẹ́dàlì", "medal"], ["ide", "bronze"]
+    ],
+    "translation": "Tolú only won a SILVER medal. He also won a bronze medal.",
+    "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["prejacent", "silver"],
+      ["also", "bronze"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_53bii",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (53-b-ii)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà nìkan. Ó tún gba mẹ́dàlì wúrà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["nìkan", "only"], ["Ó", "3SG"], ["tún", "also"], ["gba", "collect"],
+      ["mẹ́dàlì", "medal"], ["wúrà", "gold"]
+    ],
+    "translation": "Tolú only won a SILVER medal. He also won a gold medal.",
+    "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["prejacent", "silver"],
+      ["also", "gold"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_52ci",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (52-c-i)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn jẹ́ akẹ́kọ̀ọ́ lásán. Ó tún jẹ́ agbálẹ̀",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["jẹ́", "COP"], ["akẹ́kọ̀ọ́", "student"],
+      ["lásán", "only"], ["Ó", "3SG"], ["tún", "also"], ["jẹ́", "COP"], ["agbálẹ̀", "cleaner"]
+    ],
+    "translation": "Tolú is just A STUDENT. He is also a cleaner.",
+    "context": "Several people in the meeting are discussing what they do.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["prejacent", "student"],
+      ["also", "cleaner"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_52cii",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (52-c-ii)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn jẹ́ akẹ́kọ̀ọ́ lásán. Ó tún jẹ́ ọ̀jọ̀gbọ́n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["jẹ́", "COP"], ["akẹ́kọ̀ọ́", "student"],
+      ["lásán", "only"], ["Ó", "3SG"], ["tún", "also"], ["jẹ́", "COP"],
+      ["ọ̀jọ̀gbọ́n", "professor"]
+    ],
+    "translation": "Tolú is just A STUDENT. He is also a professor.",
+    "context": "Several people in the meeting are discussing what they do.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["prejacent", "student"],
+      ["also", "professor"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_53ci",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (53-c-i)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà lásán. Ó tún gba mẹ́dàlì ide",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["lásán", "only"], ["Ó", "3SG"], ["tún", "also"], ["gba", "collect"],
+      ["mẹ́dàlì", "medal"], ["ide", "bronze"]
+    ],
+    "translation": "Tolú only won a SILVER medal. He also won a bronze medal.",
+    "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["prejacent", "silver"],
+      ["also", "bronze"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_53cii",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (53-c-ii)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà lásán. Ó tún gba mẹ́dàlì wúrà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["lásán", "only"], ["Ó", "3SG"], ["tún", "also"], ["gba", "collect"],
+      ["mẹ́dàlì", "medal"], ["wúrà", "gold"]
+    ],
+    "translation": "Tolú only won a SILVER medal. He also won a gold medal.",
+    "context": "The competition is over, and the medals have been awarded to the participants. Q: What did Tolú win?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["prejacent", "silver"],
+      ["also", "gold"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_57a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (57-a)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["lásán", "only"]
+    ],
+    "translation": "Tolú just won a SILVER medal. (He did not win anything more than a silver medal)",
+    "context": "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["prejacent", "silver"],
+      ["won", "bronze"],
+      ["won", "silver"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch5_57b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 5 (57-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn gba mẹ́dàlì fàdákà nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["gba", "collect"], ["mẹ́dàlì", "medal"],
+      ["fàdákà", "silver"], ["nìkan", "only"]
+    ],
+    "translation": "Tolú only won a SILVER medal. (He did not win anything other than a silver medal)",
+    "context": "Tolú won 1 bronze medal and 1 silver medal, while Ámúsàn won 2 gold medals. Yet, Ámúsàn remains humble, but Tolú displays pride. So, you say the following.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["prejacent", "silver"],
+      ["won", "bronze"],
+      ["won", "silver"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_60a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (60-a)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn rà ẹja méjì péré",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["rà", "buy"], ["ẹja", "fish"], ["méjì", "two"],
+      ["péré", "only_lit"]
+    ],
+    "translation": "Tolú bought only TWO fish.",
+    "context": "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "péré"],
+      ["value", "2"],
+      ["standard", "5"]
+    ],
+    "comment": "kàn is printed optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_60b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (60-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú kàn rà ẹja méjì lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["kàn", "only"], ["rà", "buy"], ["ẹja", "fish"], ["méjì", "two"],
+      ["lásán", "only_lit/bad"]
+    ],
+    "translation": "Tolú bought only TWO fish.",
+    "context": "Tolú promised his wife to buy five fish on his way home. So, his wife was expecting five fish. However, he only got two fish.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["value", "2"],
+      ["standard", "5"]
+    ],
+    "comment": "kàn is printed optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_61a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (61-a)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rà ẹja méjì péré",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rà", "buy"], ["ẹja", "fish"], ["méjì", "two"], ["péré", "only_lit"]
+    ],
+    "translation": "Tolú bought only TWO fish.",
+    "context": "Tolú promised his wife to buy two fish on his way home.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "péré"],
+      ["value", "2"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_61b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (61-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rà ẹja méjì lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rà", "buy"], ["ẹja", "fish"], ["méjì", "two"], ["lásán", "only_lit/bad"]
+    ],
+    "translation": "Tolú bought only TWO fish.",
+    "context": "Tolú promised his wife to buy two fish on his way home.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["value", "2"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_61c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (61-c)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rà ẹja méjì nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rà", "buy"], ["ẹja", "fish"], ["méjì", "two"], ["nìkan", "only_lit"]
+    ],
+    "translation": "Tolú bought only TWO fish.",
+    "context": "Tolú promised his wife to buy two fish on his way home.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["value", "2"],
+      ["standard", "2"]
+    ],
+    "comment": "nìkan is glossed only_lit in this example.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_62b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (62-b)"},
+    "language": "yoru1245",
+    "primaryText": "Sùgbọ́n, ó ra ẹja mẹ́fà péré",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sùgbọ́n", "but"], ["ó", "3SG"], ["ra", "buy"], ["ẹja", "fish"], ["mẹ́fà", "six"],
+      ["péré", "only"]
+    ],
+    "translation": "But he bought only SIX fish.",
+    "context": "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "péré"],
+      ["value", "6"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_62c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (62-c)"},
+    "language": "yoru1245",
+    "primaryText": "Sùgbọ́n, ó ra ẹja mẹ́fà lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sùgbọ́n", "but"], ["ó", "3SG"], ["ra", "buy"], ["ẹja", "fish"], ["mẹ́fà", "six"],
+      ["lásán", "only"]
+    ],
+    "translation": "But he bought only SIX fish.",
+    "context": "Tolú sọ wípé òun máa ra ẹja méjì. 'Tolú said that he will buy two fish.'",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["value", "6"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_63a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (63-a)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rà ẹja mẹ́ta péré",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rà", "buy"], ["ẹja", "fish"], ["mẹ́ta", "three"], ["péré", "only_lit"]
+    ],
+    "translation": "Tolú bought only THREE fish.",
+    "context": "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "péré"],
+      ["value", "3"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_63b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (63-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú rà ẹja mẹ́ta lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["rà", "buy"], ["ẹja", "fish"], ["mẹ́ta", "three"],
+      ["lásán", "only_lit/bad"]
+    ],
+    "translation": "Tolú bought only THREE fish.",
+    "context": "Tolú always buys two fish on his way home. But today, he wanted to surprise his wife. So, he bought three fish.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["value", "3"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_64a",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (64-a)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ka ìwé mẹ̀ta nìkan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ka", "read"], ["ìwé", "book"], ["mẹ̀ta", "three"], ["nìkan", "only"]
+    ],
+    "translation": "Tolú only read THREE books (#but this is not little).",
+    "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "nìkan"],
+      ["value", "3"],
+      ["standard", "2"]
+    ],
+    "comment": "The parenthesis marks a continuation, though p. 143 says three is not little here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_64b",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (64-b)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ka ìwé mẹ̀ta péré",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ka", "read"], ["ìwé", "book"], ["mẹ̀ta", "three"], ["péré", "only"]
+    ],
+    "translation": "Tolú only read THREE books (and this is little).",
+    "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "péré"],
+      ["value", "3"],
+      ["standard", "2"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "aremu2025a_ch4_64c",
+    "source": {"bibkey": "aremu-2025a", "paperLabel": "ch. 4 (64-c)"},
+    "language": "yoru1245",
+    "primaryText": "Tolú ka ìwé mẹ̀ta lásán",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tolú", "Tolú"], ["ka", "read"], ["ìwé", "book"], ["mẹ̀ta", "three"], ["lásán", "only"]
+    ],
+    "translation": "Tolú only read THREE books (and this is little/bad).",
+    "context": "Reading two books is already a lot, but Tolú said he wanted to read four. But in the end, he only read three.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "lásán"],
+      ["value", "3"],
+      ["standard", "2"]
     ],
     "comment": "",
     "verified": "page-image"

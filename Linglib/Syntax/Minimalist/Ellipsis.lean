@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Anaphora.Basic
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Mathlib.Data.List.Basic
@@ -23,7 +24,11 @@ VP-ellipsis puts [E] on Voice and deletes vP, sluicing puts it on C and deletes 
 VP-ellipsis puts it on v and deletes VP alone. Ordering ellipses by the height of [E], the deletion
 domain is monotone, which is Sailor's generalization. The identity condition requires the elided
 phrase to agree with its antecedent at every deleted site, so a mismatch at a site is tolerated
-exactly when the ellipsis spares it. The two readings of *again* place [E] on Voice or on v.
+exactly when the ellipsis spares it. Ranero's nondistinctness condition weakens agreement to the
+absence of a clash, a common extension of the two bundles at a site, and compares the two phrases
+only in the argument domain of Anand, Hardt and McCloskey, the deleted sites up to Voice; [on fully
+specified content it is identity there](##Minimalist.Ellipsis.nondistinct_iff_eqOn).
+The two readings of *again* place [E] on Voice or on v.
 [E]-deletion is one model of Hankamer and Sag's depth: the null sites of a spine are the
 complements [E] silences and the null pro-forms.
 
@@ -33,7 +38,9 @@ complements [E] silences and the null pro-forms.
   interleaved order.
 * `Minimalist.ClauseSpine.Deletes`: the initial segment of sites [E] on a head deletes.
 * `Minimalist.Ellipsis`: an [E] feature on a head of a spine, ordered by height, with its
-  `Minimalist.Ellipsis.domain` and the identity condition `Minimalist.Ellipsis.Identical`.
+  `Minimalist.Ellipsis.domain`, the identity condition `Minimalist.Ellipsis.Identical`, the
+  `Minimalist.Ellipsis.argumentDomain` and the nondistinctness condition
+  `Minimalist.Ellipsis.Nondistinct`.
 * `Minimalist.AgainReading`: the two readings of *again* and their adjunction sites.
 * `Minimalist.NullSite`: a null site of a spine, an [E] deletion domain or a null pro-form, with
   its `Anaphor.DepthModel` instance.
@@ -42,8 +49,9 @@ complements [E] silences and the null pro-forms.
 
 * `Minimalist.Ellipsis.domain_mono`: Sailor's generalization, the deletion domain grows with the
   height of [E].
-* `Minimalist.Ellipsis.identical_update_iff`: a mismatch at a single site is tolerated exactly
-  when the ellipsis spares that site.
+* `Minimalist.Ellipsis.identical_update_iff`, `Minimalist.Ellipsis.nondistinct_update_iff`: a
+  mismatch at a single site is tolerated exactly when the ellipsis spares that site, or, under
+  nondistinctness, when the mismatch is no clash or the site lies outside the argument domain.
 * `Minimalist.Ellipsis.eq_vpEllipsis_iff`, `Minimalist.Ellipsis.eq_vStrandingVPE_iff`,
   `Minimalist.Ellipsis.eq_vpEllipsis_iff_spares_voice`: the *again* test and the voice test, which
   place [E] on Voice or on v.
@@ -68,6 +76,8 @@ for.
 
 * [merchant-2001]
 * [merchant-2013]
+* [ranero-2021]
+* [anand-hardt-mccloskey-2025]
 * [kalyakin-2026]
 * [sailor-2014]
 * [liptak-saab-2014]
@@ -107,6 +117,15 @@ instance (s : ClauseSpine) (p : Cat) (x : Site) : Decidable (s.Deletes p x) :=
 has moved to the [E]-bearing position is pronounced while its base position is deleted. -/
 theorem not_deletes_head_self (s : ClauseSpine) (p : Cat) : ¬ s.Deletes p (.head p) := by
   simp [Deletes]
+
+/-- The sites of a spine, its heads and the adjunction sites of the phrases they project. -/
+def sites (s : ClauseSpine) : List Site := s.heads.flatMap fun c ↦ [.head c, .adjunct c]
+
+/-- A deletion domain lies among the sites of the spine. -/
+theorem Deletes.mem_sites (h : s.Deletes p x) : x ∈ s.sites := by
+  have hp : s.heads.idxOf p ≤ s.heads.length := List.idxOf_le_length
+  rcases x with c | c <;> simp only [Deletes, rank] at h <;>
+    exact List.mem_flatMap.2 ⟨c, List.idxOf_lt_length_iff.1 (by omega), by simp⟩
 
 /-- A deletion domain is closed downward. -/
 theorem Deletes.of_rank_le (h : s.Deletes p x) (hy : s.rank y ≤ s.rank x) : s.Deletes p y := by
@@ -195,7 +214,7 @@ theorem Identical.of_le {α : Type*} {a t : Site → α} (h : e.Identical a t) (
   h.mono (domain_mono hle)
 
 /-- A mismatch at a single site is tolerated exactly when the ellipsis spares that site. -/
-theorem identical_update_iff {α : Type*} [DecidableEq α] (a : Site → α) (x : Site) (v : α) :
+theorem identical_update_iff {α : Type*} (a : Site → α) (x : Site) (v : α) :
     e.Identical a (Function.update a x v) ↔ a x = v ∨ e.Spares x := by
   refine ⟨fun h ↦ or_iff_not_imp_right.2 fun hx ↦ ?_, ?_⟩
   · simpa using h (not_not.1 hx)
@@ -204,6 +223,68 @@ theorem identical_update_iff {α : Type*} [DecidableEq α] (a : Site → α) (x 
     · refine (Function.update_of_ne (fun hyx : y = x ↦ hx ?_) _ _).symm
       rw [← hyx]
       exact hy
+
+instance {α : Type*} [DecidableEq α] (a t : Site → α) : Decidable (e.Identical a t) :=
+  decidable_of_iff (∀ x ∈ s.sites, e.Deletes x → a x = t x)
+    ⟨fun h _ hx ↦ h _ (ClauseSpine.Deletes.mem_sites hx) hx, fun h _ _ hx ↦ h hx⟩
+
+/-! ### Nondistinctness -/
+
+/-- The argument domain of an ellipsis ([anand-hardt-mccloskey-2025]): the deleted sites up to
+Voice, the head of the most inclusive projection that denotes a property of eventualities. A head
+the spine lacks ranks above its sites, so on a spine without Voice this is the whole deletion
+domain. -/
+def argumentDomain (e : Ellipsis s) : Set Site :=
+  {x | e.Deletes x ∧ s.rank x ≤ s.rank (.head .Voice)}
+
+@[simp] theorem mem_argumentDomain :
+    x ∈ e.argumentDomain ↔ e.Deletes x ∧ s.rank x ≤ s.rank (.head .Voice) := .rfl
+
+section Nondistinct
+
+variable {α : Type*} [Preorder α] {a t : Site → α}
+
+/-- The nondistinctness condition ([ranero-2021]): the antecedent and the elided phrase, each an
+assignment of a feature bundle to the sites of the spine, do not clash anywhere in the argument
+domain. A feature one of them lacks is no clash. -/
+def Nondistinct (e : Ellipsis s) (a t : Site → α) : Prop :=
+  ∀ ⦃x⦄, x ∈ e.argumentDomain → Compat (a x) (t x)
+
+theorem Identical.nondistinct (h : e.Identical a t) : e.Nondistinct a t := fun _ hx ↦
+  h hx.1 ▸ compat_self _
+
+/-- A phrase that only lacks features of the other is nondistinct from it. -/
+theorem nondistinct_of_le (h : a ≤ t) : e.Nondistinct a t := fun _ _ ↦ .of_le (h _) le_rfl
+
+/-- A mismatch at a single site is tolerated exactly when the two bundles there do not clash or
+the site lies outside the argument domain. -/
+theorem nondistinct_update_iff (a : Site → α) (x : Site) (v : α) :
+    e.Nondistinct a (Function.update a x v) ↔ Compat (a x) v ∨ x ∉ e.argumentDomain := by
+  grind [Nondistinct, compat_self]
+
+instance [DecidableRel (α := α) Compat] (a t : Site → α) : Decidable (e.Nondistinct a t) :=
+  decidable_of_iff
+    (∀ x ∈ s.sites, e.Deletes x → s.rank x ≤ s.rank (.head .Voice) → Compat (a x) (t x))
+    ⟨fun h _ hx ↦ h _ (ClauseSpine.Deletes.mem_sites hx.1) hx.1 hx.2,
+      fun h _ _ hd hr ↦ h ⟨hd, hr⟩⟩
+
+end Nondistinct
+
+/-- On fully specified content, where every site of the argument domain has a maximal bundle,
+nondistinctness is identity there: only a bundle with a proper extension can differ without
+clashing. -/
+theorem nondistinct_iff_eqOn {α : Type*} [PartialOrder α] {a t : Site → α}
+    (ha : ∀ x ∈ e.argumentDomain, IsMax (a x)) (ht : ∀ x ∈ e.argumentDomain, IsMax (t x)) :
+    e.Nondistinct a t ↔ Set.EqOn a t e.argumentDomain :=
+  ⟨fun h _ hx ↦ (h hx).eq_of_isMax (ha _ hx) (ht _ hx), fun h _ hx ↦ h hx ▸ compat_self _⟩
+
+/-- A head whose content is one value of a multivalued feature has no proper extension, so with
+content of that kind nondistinctness is identity in the argument domain. -/
+theorem nondistinct_coe_iff {α : Type*} {a t : Site → α} :
+    e.Nondistinct (fun x ↦ (a x : Flat α)) (fun x ↦ (t x : Flat α)) ↔
+      Set.EqOn a t e.argumentDomain :=
+  (nondistinct_iff_eqOn (fun _ _ ↦ Flat.isMax_coe _) fun _ _ ↦ Flat.isMax_coe _).trans <|
+    forall₂_congr fun _ _ ↦ Flat.coe_inj
 
 end Ellipsis
 

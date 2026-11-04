@@ -99,16 +99,6 @@ def Clause.build (c : Clause) (k : Comp) : LinearizedSyntacticObject :=
       x * ((if k = .that then that else nullC) * tP')
   x * (matrixV * (say * edge))
 
-/-! ### Anti-locality -/
-
-/-- No link of any chain moves a specifier across no maximal projection but its own: Spec-to-Spec
-Anti-Locality (2). -/
-def ObeysAntiLocality (t : LinearizedSyntacticObject) : Prop :=
-  ∀ y ∈ tokenList t.val, ∀ l ∈ links .raising t y.2, ¬ SpecToSpec .raising t l
-
-instance (t : LinearizedSyntacticObject) : Decidable (ObeysAntiLocality t) := by
-  unfold ObeysAntiLocality; infer_instance
-
 /-- The complementizers a sentence allows: *that* is a split C, and without it C is null or
 bundled with T. -/
 def comps (d : Datum) : List Comp :=
@@ -116,7 +106,7 @@ def comps (d : Datum) : List Comp :=
 
 /-- A sentence is derived when the clause, built with a complementizer it allows, obeys
 anti-locality. -/
-def Derived (d : Datum) (c : Clause) : Prop := ∃ k ∈ comps d, ObeysAntiLocality (c.build k)
+def Derived (d : Datum) (c : Clause) : Prop := ∃ k ∈ comps d, ObeysAntiLocality .raising (c.build k)
 
 instance (d : Datum) (c : Clause) : Decidable (Derived d c) := by unfold Derived; infer_instance
 
@@ -142,7 +132,7 @@ theorem ex6 : (Examples.ex6a.judgment = .acceptable ↔ Derived Examples.ex6a su
   decide +kernel
 
 theorem subject_needs_bundling (k : Comp) :
-    ObeysAntiLocality (subjectHid.build k) ↔ k = .bundled := by
+    ObeysAntiLocality .raising (subjectHid.build k) ↔ k = .bundled := by
   cases k <;> decide +kernel
 
 /-! ### Skipping Spec,TP (12) -/

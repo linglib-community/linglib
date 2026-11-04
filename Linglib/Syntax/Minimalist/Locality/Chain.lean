@@ -24,6 +24,7 @@ the complement of the unordered phase (`withinComplement_iff_exists_mem_cCommand
 
 * `Minimalist.Crosses`, `Minimalist.Escapes`: a link leaving a phase from its interior, and a
   link leaving a domain.
+* `Minimalist.CrossesIsland`: a link leaving the projection of an island head.
 
 ## Main statements
 
@@ -83,6 +84,14 @@ as movement out of an island does. -/
 def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
 
 instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A link of the chain of `tok` leaves the projection of a head that `P` holds of. -/
+def CrossesIsland (P : LexicalItem.Token → Prop) [DecidablePred P] : Prop :=
+  ∃ p ∈ occurrencesWith t P, Escapes hd t tok (projectionAt hd t p)
+
+instance (P : LexicalItem.Token → Prop) [DecidablePred P] :
+    Decidable (CrossesIsland hd t tok P) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (p : TreePath) :
     ¬ Crosses hd t tok p := by
