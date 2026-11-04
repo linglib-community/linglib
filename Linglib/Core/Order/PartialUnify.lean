@@ -30,6 +30,7 @@ join.
   `PartialUnify.bot_unify`, `PartialUnify.unify_mono`: the unification laws.
 * `Compat`: the consistency relation, a common upper bound.
 * The Pi instance: pointwise unification over a `Fintype` index.
+* The product instance: componentwise unification.
 * The `WithBot` instance: an adjoined `⊥` unifies with everything.
 * The instance on nonempty finite sets ordered by reverse inclusion: unification is intersection.
 
@@ -248,6 +249,31 @@ theorem unify_update_bot [∀ t, OrderBot (S t)] [DecidableEq F] (f : (t : F) �
 
 end Pi
 
+/-! ### Componentwise unification on products -/
+
+section Prod
+
+variable {β : Type*} [PartialOrder β] [PartialUnify β]
+
+/-- Unification is componentwise, so a pair unifies when both components do. -/
+instance : PartialUnify (α × β) where
+  unify a b := WithTop.map₂ Prod.mk (unify a.1 b.1) (unify a.2 b.2)
+  isLUB_of_unify_eq_coe {a b c} h := by
+    cases h₁ : unify a.1 b.1 with
+    | top => simp [h₁] at h
+    | coe x =>
+      cases h₂ : unify a.2 b.2 with
+      | top => simp [h₁, h₂] at h
+      | coe y =>
+        obtain rfl : (x, y) = c := WithTop.coe_inj.1 (by simpa [h₁, h₂] using h)
+        rw [isLUB_prod, Set.image_pair, Set.image_pair]
+        exact ⟨isLUB_of_unify_eq_coe h₁, isLUB_of_unify_eq_coe h₂⟩
+  unify_ne_top_of_bddAbove h := by
+    simp only [bddAbove_prod, Set.image_pair] at h
+    simp [WithTop.map₂_eq_top_iff, unify_ne_top_of_bddAbove h.1, unify_ne_top_of_bddAbove h.2]
+
+end Prod
+
 /-! ### Adjoining a bottom -/
 
 section WithBot
@@ -365,6 +391,13 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
 
 theorem compat_self [Preorder α] (a : α) : Compat a a := .of_le le_rfl le_rfl
 
+/-- Compatible maximal elements coincide: a fully specified element has no proper extension. -/
+theorem Compat.eq_of_isMax [PartialOrder α] {a b : α} (h : Compat a b) (ha : IsMax a)
+    (hb : IsMax b) : a = b :=
+  let ⟨_, hu⟩ := h
+  let ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
+  (ha.eq_of_le hau).trans (hb.eq_of_ge hbu)
+
 theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t} :
     Compat f g ↔ ∀ t, Compat (f t) (g t) := by
   simp only [Compat, bddAbove_pi, Set.image_pair]
@@ -387,9 +420,8 @@ theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]
   · intro hc
     exact ⟨fun ha ↦ hc (ha ▸ bot_compat b), fun hb ↦ hc (hb ▸ compat_bot a),
       fun hab ↦ hc (hab ▸ compat_self a)⟩
-  · rintro ⟨ha, hb, hab⟩ ⟨u, hu⟩
-    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
-    exact hab ((le_antisymm (h a ha hau) hau).symm.trans (le_antisymm (h b hb hbu) hbu))
+  · rintro ⟨ha, hb, hab⟩ hc
+    exact hab (hc.eq_of_isMax (h a ha) (h b hb))
 
 instance [PartialOrder α] [PartialUnify α] (a b : α) : Decidable (Compat a b) :=
   decidable_of_iff _ PartialUnify.unify_ne_top_iff_bddAbove

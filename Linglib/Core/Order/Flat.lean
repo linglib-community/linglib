@@ -354,6 +354,10 @@ theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑
     obtain rfl := h a rfl b rfl
     exact compat_self _
 
+/-- Over a subsingleton a slot is present or absent, and no two slots clash. -/
+theorem compat_of_subsingleton [Subsingleton α] : Compat x y :=
+  compat_iff.2 fun _ _ _ _ ↦ Subsingleton.elim _ _
+
 theorem le_or_right (h : Compat x y) : y ≤ x.or y := by
   cases x with
   | bot => exact le_rfl

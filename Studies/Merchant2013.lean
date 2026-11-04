@@ -21,9 +21,9 @@ survives any ellipsis](##deletes_v).
 ## Implementation notes
 
 * An example records the voice of its antecedent and of its elided clause, as the paper's
-  headings state them, or the v heads of the two when they alternate in argument structure; where
-  they differ is computed, and an ellipsis tolerates the difference when it spares the head
-  (`Minimalist.Ellipsis.identical_update_iff`).
+  headings state them, or the v heads of the two when they alternate in argument structure; the
+  example is licit when the two clauses meet the substrate's identity condition,
+  `Minimalist.Ellipsis.Identical`, so an ellipsis tolerates a difference when it spares the head.
 * An analysis gives each kind of ellipsis the head bearing [E] on the clausal spine of
   `Minimalist.Ellipsis`. In `analysis`, Merchant's own, VP-ellipsis puts [E] on Voice (21),
   sluicing and fragment answers on C (17), and pseudogapping on T, eliding a node that is or
@@ -93,19 +93,44 @@ structure Clause where
   v : Option (Alternant × Alternant)
   again : Option AgainReading
 
+/-- The head of the antecedent at a site, a Voice head or a v head, where the example records
+one. -/
+def Clause.antecedent (c : Clause) : Site → Option (Voice.Head ⊕ Alternant)
+  | .head .Voice => c.voice.map fun p ↦ .inl p.1
+  | .head .v => c.v.map fun p ↦ .inr p.1
+  | _ => none
+
+/-- The head of the elided clause at a site. -/
+def Clause.target (c : Clause) : Site → Option (Voice.Head ⊕ Alternant)
+  | .head .Voice => c.voice.map fun p ↦ .inl p.2
+  | .head .v => c.v.map fun p ↦ .inr p.2
+  | _ => none
+
+/-- The example is licit under the analysis `f` when its elided clause is identical to its
+antecedent and its ellipsis spares a pronounced *again*. -/
+def Licit (f : Kind → Ellipsis clausalSpine) (c : Clause) : Prop :=
+  ∀ k ∈ c.ellipsis, (f k).Identical c.antecedent c.target ∧ ∀ r ∈ c.again, (f k).Spares r.site
+
+instance (f : Kind → Ellipsis clausalSpine) : DecidablePred (Licit f) :=
+  fun _ ↦ inferInstanceAs (Decidable (∀ k ∈ _, _))
+
 /-- The sites the elided clause must spare: the heads at which it differs from its antecedent,
 and the adjunction site of a pronounced *again*. -/
 def Clause.sites (c : Clause) : List Site :=
-  (match c.voice with | some (a, t) => if a = t then [] else [.head .Voice] | none => []) ++
-    (match c.v with | some (a, t) => if a = t then [] else [.head .v] | none => []) ++
+  [.head .Voice, .head .v].filter (fun x ↦ c.antecedent x ≠ c.target x) ++
     c.again.toList.map AgainReading.site
 
-/-- The example is licit under the analysis `f` when its ellipsis spares every site it must. -/
-def Licit (f : Kind → Ellipsis clausalSpine) (c : Clause) : Prop :=
-  ∀ k ∈ c.ellipsis, ∀ x ∈ c.sites, (f k).Spares x
+theorem Clause.antecedent_eq_target (c : Clause) {x : Site}
+    (hx : x ∉ [Site.head .Voice, .head .v]) : c.antecedent x = c.target x := by
+  fun_cases Clause.antecedent c x <;> simp_all [Clause.target]
 
-instance (f : Kind → Ellipsis clausalSpine) : DecidablePred (Licit f) := fun c ↦ by
-  unfold Licit; infer_instance
+theorem licit_iff_forall_sites {f : Kind → Ellipsis clausalSpine} {c : Clause} :
+    Licit f c ↔ ∀ k ∈ c.ellipsis, ∀ x ∈ c.sites, (f k).Spares x := by
+  refine forall₂_congr fun k _ ↦ ?_
+  simp only [Clause.sites, List.mem_append, List.mem_filter, decide_eq_true_eq, or_imp, forall_and]
+  refine and_congr ⟨fun h x hx hd ↦ hx.2 (h hd), fun h x hx ↦ by_contra fun hne ↦ ?_⟩
+    (by cases c.again <;> simp)
+  exact h x ⟨not_imp_comm.1 c.antecedent_eq_target hne, hne⟩ hx
 
 /-- An example of the paper with its judgment. -/
 structure Row where
@@ -149,19 +174,15 @@ theorem analysis_voiceSplit : VoiceSplit analysis := ⟨rfl, by decide⟩
 
 theorem rank_le_of_mem_sites {c : Clause} {x : Site} (hx : x ∈ c.sites) :
     clausalSpine.rank x ≤ clausalSpine.rank (.head .Voice) := by
-  obtain ⟨_, voice, v, again⟩ := c
-  simp only [Clause.sites, List.mem_append] at hx
-  rcases hx with (hx | hx) | hx
-  · rcases voice with _ | ⟨a, t⟩ <;> simp at hx
-    rw [hx.2]
-  · rcases v with _ | ⟨a, t⟩ <;> simp at hx
-    rw [hx.2]
-    decide
-  · rcases again with _ | r <;> simp at hx
-    subst hx; cases r <;> decide
+  simp only [Clause.sites, List.mem_append, List.mem_filter, List.mem_map, Option.mem_toList] at hx
+  rcases hx with ⟨hx, -⟩ | ⟨r, -, rfl⟩
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl <;> decide
+  · cases r <;> decide
 
 theorem licit_iff_of_voiceSplit {f g : Kind → Ellipsis clausalSpine} (hf : VoiceSplit f)
     (hg : VoiceSplit g) (c : Clause) : Licit f c ↔ Licit g c := by
+  rw [licit_iff_forall_sites, licit_iff_forall_sites]
   refine forall₂_congr fun k _ ↦ forall₂_congr fun x hx ↦ ?_
   by_cases hk : k = .vpEllipsis
   · rw [hk, hf.1, hg.1]
@@ -170,7 +191,7 @@ theorem licit_iff_of_voiceSplit {f g : Kind → Ellipsis clausalSpine} (hf : Voi
 
 theorem licit_iff_spares {f : Kind → Ellipsis clausalSpine} {c : Clause} {k : Kind} {x : Site}
     (hk : c.ellipsis = some k) (hx : c.sites = [x]) : Licit f c ↔ (f k).Spares x := by
-  simp [Licit, hk, hx]
+  simp [licit_iff_forall_sites, hk, hx]
 
 /-- The judgments admit exactly the analyses on which VP-ellipsis puts [E] on Voice and every
 other ellipsis deletes Voice: VP-ellipsis tolerates a voice mismatch (1), (2) but not a mismatch
