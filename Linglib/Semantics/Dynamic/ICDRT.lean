@@ -1,52 +1,32 @@
 module
 
-public import Linglib.Semantics.Dynamic.RegisterStructure
+public import Linglib.Core.Data.Set.Monad
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Dynamic.Update
 public import Mathlib.Data.PFun
+public import Mathlib.Order.Minimal
 
 /-!
 # Intensional CDRT
 
-Muskens's compositional DRT with intensional discourse referents. An individual dref is
-an individual concept, a partial function from worlds to individuals that is undefined where the
-paper's universal falsifier ⋆ would be its value (type `s(we)`); a propositional dref is a set of
-worlds (type `s(wt)`) and stores the local context of some embedded content. This is the flat update
-of Stone and Brasoveanu in Hofmann's formulation: a discourse state is a single assignment, updated
-relationally, and an individual dref has a referent only at the worlds of its local context.
-
-A state has two sorts of registers, `IVar` and `PVar`, each with its `RegisterStructure`, so
-the variable update `[δ]` is CDRT's `Update.randomAssign` at either sort and a DRS
-`[δ | C]` is `Update.box {δ} C`. Over these sit the relative variable update `[φ : υ]`,
-after which `υ` has a referent at exactly the `φ`-worlds, predication relative to a local
-context, and local entailment.
-
-## Main definitions
-
-* `ICDRT.State`: individual concepts for `IVar`s and propositions for `PVar`s.
-* `ICDRT.sat`: the worlds where the referent of an individual concept satisfies a relation.
-* `ICDRT.relUpdate`: relative variable update `[φ : υ]`.
-* `ICDRT.predication`: predication `R_φ(υ)` relative to a local context.
-* `ICDRT.incl`, `ICDRT.eqCompl`: the conditions `φ₁ ⋐ φ₂` and `φ₁ ≡ φ̄₂`.
-* `ICDRT.localEntailment`: `υ` has a referent throughout `φ`.
-* `ICDRT.IsWitness`: a possible value of the dref of an indefinite in a local context.
-
-## Main results
-
-* `ICDRT.mem_randomAssign_indiv`, `ICDRT.mem_randomAssign_prop`: a variable update changes one
-  register of one sort and nothing else.
-* `ICDRT.mem_localEntailment_of_mem_predication`: predication entails local entailment, since ⋆
-  satisfies no relation.
-* `ICDRT.mem_localEntailment_iff`: where `υ` has a referent at exactly the `φ`-worlds, it is
-  entailed in a local context exactly when that context lies within `φ`.
-* `ICDRT.exists_isWitness_sat`: a witness can choose an `S` wherever its context has an `R` that is
-  one.
+Muskens's compositional DRT with intensional discourse referents, in Hofmann's formulation of the
+flat update of Stone and Brasoveanu. An individual dref is an individual concept, a partial function
+from worlds to individuals that has a referent only at the worlds of its local context. A clause is
+a computation in `StateT (Assignment (W →. E)) Set` that returns its local context: from an input
+assignment, the pairs of a context in which it holds and an output assignment. Maximization keeps
+the runs whose context is maximal, so the truth conditions of the operators compose
+(`Clause.HasTruthSet`). Flat update is the theorem that [negation keeps the drefs of its
+prejacent](##ICDRT.Clause.Introduces.not), which gives [one law for any antecedent followed by any
+update](##ICDRT.Clause.Introduces.mem_comp).
 
 ## Implementation notes
 
-⋆ is undefinedness of the partial function. The typed drefs are two register sorts rather than one
-register carrier, since a `RegisterStructure` has one value type. The relative variable update is
-Hofmann's biconditional form; Stone's has only the implication from `φ`-worlds to referents.
-Maximization over a propositional dref is not defined here, since the paper's definition is vacuous
-where its dref is introduced outside the operator (`Studies/Hofmann2025.lean`).
+The universal falsifier ⋆ is undefinedness of the partial function. Hofmann's fragment stores each
+context in a propositional dref, read only in the scope of the operator introducing it; here the
+scope returns it to that operator as a value, so the state holds just the individual drefs and an
+assertion takes its commitment set as an argument. `IsWitness` has Hofmann's biconditional relative
+update; Stone's has only the implication from the context to a referent. `W` and `E` share a
+universe in `Clause`, as `StateT` requires.
 
 ## References
 
@@ -58,26 +38,24 @@ where its dref is introduced outside the operator (`Studies/Hofmann2025.lean`).
 
 @[expose] public section
 
+attribute [local instance] Set.monad
+
+universe u
+
 namespace ICDRT
 
-open DynamicSemantics Update SetRel
+open DynamicSemantics SetRel
+open scoped Assignment
 
-/-- A propositional variable, the name of a propositional dref. -/
-structure PVar where
-  /-- The index of the variable. -/
-  idx : ℕ
-  deriving DecidableEq, Repr
+/-! ### Individual concepts and witnesses -/
 
-/-- An individual variable, the name of an individual dref. -/
-structure IVar where
-  /-- The index of the variable. -/
-  idx : ℕ
-  deriving DecidableEq, Repr
+section Witnesses
 
-variable {W E : Type*}
+variable {W E : Type*} {R S : E → W → Prop} {s : Set W} {e : W →. E}
 
 /-- The worlds where the referent of an individual concept satisfies `R`. ⋆ satisfies no relation
-([hofmann-2025] fn. 9). -/
+([hofmann-2025] fn. 9), so predication entails that the referent exists ((28), (29)):
+`sat_subset_dom`. -/
 def sat (R : E → W → Prop) (e : W →. E) : Set W := {w | ∃ a ∈ e w, R a w}
 
 theorem sat_subset_dom (R : E → W → Prop) (e : W →. E) : sat R e ⊆ e.Dom :=
@@ -87,188 +65,6 @@ theorem sat_subset_dom (R : E → W → Prop) (e : W →. E) : sat R e ⊆ e.Dom
     sat R (PFun.lift fun _ : W ↦ a) = {w | R a w} := by
   ext w
   simp [sat, PFun.lift]
-
-/-- A discourse state assigns an individual concept to each individual dref and a proposition to
-each propositional dref. -/
-@[ext] structure State (W E : Type*) where
-  /-- The individual concept of an individual dref. -/
-  indiv : IVar → W →. E
-  /-- The proposition of a propositional dref. -/
-  prop : PVar → Set W
-
-namespace State
-
-/-- Reassign an individual dref. -/
-def updateIndiv (g : State W E) (v : IVar) (e : W →. E) : State W E :=
-  { g with indiv := Function.update g.indiv v e }
-
-/-- Reassign a propositional dref. -/
-def updateProp (g : State W E) (p : PVar) (s : Set W) : State W E :=
-  { g with prop := Function.update g.prop p s }
-
-@[simp] theorem updateProp_prop_self (g : State W E) (p : PVar) (s : Set W) :
-    (g.updateProp p s).prop p = s := by
-  simp [updateProp]
-
-@[simp] theorem updateProp_prop_of_ne (g : State W E) {p q : PVar} (h : q ≠ p) (s : Set W) :
-    (g.updateProp p s).prop q = g.prop q := by
-  simp [updateProp, Function.update_of_ne h]
-
-@[simp] theorem updateProp_indiv (g : State W E) (p : PVar) (s : Set W) :
-    (g.updateProp p s).indiv = g.indiv := rfl
-
-@[simp] theorem updateProp_self (g : State W E) (p : PVar) : g.updateProp p (g.prop p) = g := by
-  simp [updateProp]
-
-@[simp] theorem updateProp_updateProp_self (g : State W E) (p : PVar) (s t : Set W) :
-    (g.updateProp p s).updateProp p t = g.updateProp p t := by
-  simp [updateProp]
-
-@[simp] theorem updateIndiv_prop (g : State W E) (v : IVar) (e : W →. E) :
-    (g.updateIndiv v e).prop = g.prop := rfl
-
-@[simp] theorem updateIndiv_indiv_self (g : State W E) (v : IVar) (e : W →. E) :
-    (g.updateIndiv v e).indiv v = e := by
-  simp [updateIndiv]
-
-@[simp] theorem updateIndiv_indiv_of_ne (g : State W E) {v u : IVar} (h : u ≠ v)
-    (e : W →. E) : (g.updateIndiv v e).indiv u = g.indiv u := by
-  simp [updateIndiv, Function.update_of_ne h]
-
-theorem updateProp_comm (g : State W E) {p q : PVar} (h : p ≠ q) (s t : Set W) :
-    (g.updateProp p s).updateProp q t = (g.updateProp q t).updateProp p s := by
-  simp [updateProp, Function.update_comm h]
-
-theorem updateProp_updateIndiv (g : State W E) (p : PVar) (s : Set W) (v : IVar) (e : W →. E) :
-    (g.updateProp p s).updateIndiv v e = (g.updateIndiv v e).updateProp p s := rfl
-
-/-- The null assignment holds no information: no dref has a referent and every proposition is the
-trivial one ([hofmann-2025] (32)). -/
-def null : State W E := ⟨fun _ _ ↦ Part.none, fun _ ↦ Set.univ⟩
-
-end State
-
-/-! ### Registers and variable update -/
-
-/-- Individual drefs are registers holding individual concepts. -/
-instance : RegisterStructure IVar (State W E) (W →. E) where
-  val v i := i.indiv v
-  extend i v e := i.updateIndiv v e
-  val_extend_self _ _ _ := State.updateIndiv_indiv_self ..
-  val_extend_of_ne _ _ _ _ h := State.updateIndiv_indiv_of_ne _ h _
-  extend_eq_self _ _ := by simp [State.updateIndiv]
-  extend_idem _ _ _ _ := by simp [State.updateIndiv]
-  extend_comm _ _ _ h _ _ := by simp [State.updateIndiv, Function.update_comm h]
-
-/-- Propositional drefs are registers holding propositions. -/
-instance : RegisterStructure PVar (State W E) (Set W) where
-  val p i := i.prop p
-  extend i p s := i.updateProp p s
-  val_extend_self _ _ _ := State.updateProp_prop_self ..
-  val_extend_of_ne _ _ _ _ h := State.updateProp_prop_of_ne _ h _
-  extend_eq_self _ _ := by simp [State.updateProp]
-  extend_idem _ _ _ _ := by simp [State.updateProp]
-  extend_comm _ _ _ h _ _ := by simp [State.updateProp, Function.update_comm h]
-
-variable {i j : State W E} {v u : IVar} {φ φ' ψ : PVar}
-@[simp] theorem val_ivar (i : State W E) (v : IVar) : RegisterStructure.val v i = i.indiv v := rfl
-
-@[simp] theorem val_pvar (i : State W E) (p : PVar) : RegisterStructure.val p i = i.prop p := rfl
-
-@[simp] theorem extend_ivar (i : State W E) (v : IVar) (e : W →. E) :
-    RegisterStructure.extend i v e = i.updateIndiv v e := rfl
-
-@[simp] theorem extend_pvar (i : State W E) (p : PVar) (s : Set W) :
-    RegisterStructure.extend i p s = i.updateProp p s := rfl
-
-/-- The update `[υ]` relates `i` to the states `j` that differ from it at most in the value of
-`υ` ([hofmann-2025] App. B (9a)). -/
-theorem mem_randomAssign_indiv :
-    i ~[randomAssign v] j ↔ (∀ p, j.prop p = i.prop p) ∧ ∀ u, u ≠ v → j.indiv u = i.indiv u := by
-  refine ⟨?_, fun ⟨hp, hu⟩ ↦ ⟨j.indiv v, ?_⟩⟩
-  · rintro ⟨e, rfl⟩
-    exact ⟨fun _ ↦ rfl, fun _ hu ↦ State.updateIndiv_indiv_of_ne _ hu _⟩
-  · exact State.ext (Function.update_eq_iff.2 ⟨rfl, fun u h ↦ (hu u h).symm⟩).symm (funext hp)
-
-/-- The update `[φ]` relates `i` to the states `j` that differ from it at most in the value of
-`φ` ([hofmann-2025] App. B (9a)). -/
-theorem mem_randomAssign_prop :
-    i ~[randomAssign φ] j ↔ (∀ q, q ≠ φ → j.prop q = i.prop q) ∧ ∀ u, j.indiv u = i.indiv u := by
-  refine ⟨?_, fun ⟨hq, hu⟩ ↦ ⟨j.prop φ, ?_⟩⟩
-  · rintro ⟨s, rfl⟩
-    exact ⟨fun _ hq ↦ State.updateProp_prop_of_ne _ hq _, fun _ ↦ rfl⟩
-  · exact State.ext (funext hu) (Function.update_eq_iff.2 ⟨rfl, fun q h ↦ (hq q h).symm⟩).symm
-
-theorem mem_box_pair_comp {C : Condition (State W E)} {D : Update (State W E)} :
-    i ~[box {φ, ψ} C ○ D] j ↔ ∃ s t, (i.updateProp φ s).updateProp ψ t ∈ C ∧
-      (i.updateProp φ s).updateProp ψ t ~[D] j := by
-  rw [box_insert, comp_assoc, ← dexists, mem_dexists]
-  simp only [Update.mem_box_singleton_comp, extend_pvar]
-
-/-! ### Relative variable update -/
-
-/-- The relative variable update `[φ : υ]` ([hofmann-2025] (25), App. B (9b)) updates `υ` so
-that it has a referent at all and only the `φ`-worlds. -/
-def relUpdate (φ : PVar) (v : IVar) : Update (State W E) :=
-  box {v} {j | j.prop φ = (j.indiv v).Dom}
-
-theorem mem_relUpdate :
-    i ~[relUpdate φ v] j ↔ i ~[randomAssign v] j ∧ j.prop φ = (j.indiv v).Dom :=
-  mem_box_singleton
-
-theorem updateIndiv_mem_relUpdate {e : W →. E} (h : i.prop φ = e.Dom) :
-    i ~[relUpdate φ v] i.updateIndiv v e :=
-  mem_relUpdate.mpr ⟨⟨e, rfl⟩, by simpa using h⟩
-
-theorem fixes_relUpdate (ψ φ : PVar) (v : IVar) : Fixes ψ (relUpdate (W := W) (E := E) φ v) :=
-  fun _ _ h ↦ by
-    obtain ⟨⟨e, rfl⟩, -⟩ := mem_relUpdate.mp h
-    rfl
-
-/-! ### Conditions -/
-
-/-- Predication `R_φ(υ)` ([hofmann-2025] (27), App. B (7a)) holds if `R` holds of `υ`'s
-referent at every world of the local context `φ`; ⋆ satisfies no relation. -/
-def predication (R : E → W → Prop) (φ : PVar) (v : IVar) : Condition (State W E) :=
-  {i | i.prop φ ⊆ sat R (i.indiv v)}
-
-/-- Inclusion `φ₁ ⋐ φ₂` (App. B (7c)). -/
-def incl (φ₁ φ₂ : PVar) : Condition (State W E) := {i | i.prop φ₁ ⊆ i.prop φ₂}
-
-/-- `φ₁ ≡ φ̄₂` (App. B (7b), (8a)), the condition negation places on its context. -/
-def eqCompl (φ₁ φ₂ : PVar) : Condition (State W E) := {i | i.prop φ₁ = (i.prop φ₂)ᶜ}
-
-/-- A dref `υ` is entailed in the local context `φ` ([hofmann-2025] (28)) if it has a referent
-at every `φ`-world. -/
-def localEntailment (φ : PVar) (v : IVar) : Condition (State W E) :=
-  {i | i.prop φ ⊆ (i.indiv v).Dom}
-
-@[simp] theorem mem_predication {R : E → W → Prop} :
-    i ∈ predication R φ v ↔ i.prop φ ⊆ sat R (i.indiv v) := Iff.rfl
-
-@[simp] theorem mem_incl : i ∈ incl φ φ' ↔ i.prop φ ⊆ i.prop φ' := Iff.rfl
-
-@[simp] theorem mem_eqCompl : i ∈ eqCompl φ φ' ↔ i.prop φ = (i.prop φ')ᶜ := Iff.rfl
-
-@[simp] theorem mem_localEntailment : i ∈ localEntailment φ v ↔ i.prop φ ⊆ (i.indiv v).Dom :=
-  Iff.rfl
-
-/-- Predication entails local entailment ((29)), since a referent satisfying `R` is not ⋆. -/
-theorem mem_localEntailment_of_mem_predication {R : E → W → Prop}
-    (h : i ∈ predication R φ v) :
-    i ∈ localEntailment φ v :=
-  Set.Subset.trans h (sat_subset_dom R _)
-
-/-- Where `υ` has a referent at exactly the `φ`-worlds, as after `[φ : υ]`, it is entailed in a
-local context exactly when the context lies within `φ`, the subset requirement of
-[hofmann-2025] (39). -/
-theorem mem_localEntailment_iff (h : j.prop φ = (j.indiv v).Dom) :
-    j ∈ localEntailment ψ v ↔ j.prop ψ ⊆ j.prop φ := by
-  rw [mem_localEntailment, h]
-
-/-! ### Witnesses -/
-
-variable {R S : E → W → Prop}
 
 /-- The worlds where some individual satisfies `R`. -/
 def witnessed (R : E → W → Prop) : Set W := {w | ∃ a, R a w}
@@ -281,38 +77,248 @@ def IsWitness (R : E → W → Prop) (s : Set W) (e : W →. E) : Prop :=
 theorem witnessed_inf_subset_left : witnessed (R ⊓ S) ⊆ witnessed R :=
   fun _ ⟨a, hR, _⟩ ↦ ⟨a, hR⟩
 
-theorem IsWitness.subset_witnessed {s : Set W} {e : W →. E} (h : IsWitness R s e) :
-    s ⊆ witnessed R :=
+theorem IsWitness.subset_witnessed (h : IsWitness R s e) : s ⊆ witnessed R :=
   fun _ hw ↦ let ⟨a, _, hR⟩ := h.2 hw; ⟨a, hR⟩
 
-theorem IsWitness.sat_subset {s : Set W} {e : W →. E} (h : IsWitness R s e) :
-    sat S e ⊆ s ∩ witnessed (R ⊓ S) := by
-  rintro w ⟨a, ha, hS⟩
-  have hs : w ∈ s := h.1 ▸ sat_subset_dom S e ⟨a, ha, hS⟩
-  obtain ⟨b, hb, hR⟩ := h.2 hs
-  obtain rfl : a = b := Part.mem_unique ha hb
-  exact ⟨hs, a, hR, hS⟩
+theorem IsWitness.rel {w : W} {a : E} (h : IsWitness R s e) (ha : a ∈ e w) : R a w :=
+  let ⟨_, hb, hR⟩ := h.2 (h.1 ▸ Part.dom_iff_mem.2 ⟨a, ha⟩)
+  Part.mem_unique ha hb ▸ hR
 
-/-- A witness can choose an `S` wherever the context has an `R` that is one. -/
-theorem exists_isWitness_sat {s : Set W} (hs : s ⊆ witnessed R) (S : E → W → Prop) :
-    ∃ e, IsWitness R s e ∧ sat S e = s ∩ witnessed (R ⊓ S) := by
-  have h (w : W) (hw : w ∈ s) : ∃ a, R a w ∧ (w ∈ witnessed (R ⊓ S) → S a w) := by
-    by_cases hc : w ∈ witnessed (R ⊓ S)
-    · exact hc.imp fun a ha ↦ ⟨ha.1, fun _ ↦ ha.2⟩
-    · exact (hs hw).imp fun a ha ↦ ⟨ha, hc.elim⟩
-  choose f hR hS using h
-  have hW : IsWitness R s (fun w ↦ ⟨w ∈ s, f w⟩) := ⟨rfl, fun w hw ↦ ⟨_, ⟨hw, rfl⟩, hR w hw⟩⟩
-  exact ⟨_, hW, hW.sat_subset.antisymm fun w ⟨hw, hc⟩ ↦ ⟨_, ⟨hw, rfl⟩, hS w hw hc⟩⟩
+theorem IsWitness.sat_subset (h : IsWitness R s e) :
+    sat S e ⊆ s ∩ witnessed (R ⊓ S) :=
+  fun _ ⟨a, ha, hS⟩ ↦ ⟨h.1 ▸ sat_subset_dom S e ⟨a, ha, hS⟩, a, h.rel ha, hS⟩
 
+/-- A witness can choose an `S` wherever some `R` is one. -/
 theorem exists_isWitness_sat_eq (R S : E → W → Prop) :
     ∃ e, IsWitness R (witnessed R) e ∧ sat S e = witnessed (R ⊓ S) := by
-  obtain ⟨e, he, hs⟩ := exists_isWitness_sat (subset_refl (witnessed R)) S
-  exact ⟨e, he, by rw [hs, Set.inter_eq_right.mpr witnessed_inf_subset_left]⟩
+  have h (w : W) (hw : w ∈ witnessed R) : ∃ a, R a w ∧ (w ∈ witnessed (R ⊓ S) → S a w) := by
+    by_cases hc : w ∈ witnessed (R ⊓ S)
+    · exact hc.imp fun a ha ↦ ⟨ha.1, fun _ ↦ ha.2⟩
+    · exact hw.imp fun a ha ↦ ⟨ha, hc.elim⟩
+  choose f hR hS using h
+  have hW : IsWitness R (witnessed R) fun w ↦ ⟨w ∈ witnessed R, f w⟩ :=
+    ⟨rfl, fun w hw ↦ ⟨_, ⟨hw, rfl⟩, hR w hw⟩⟩
+  exact ⟨_, hW, (hW.sat_subset.trans Set.inter_subset_right).antisymm fun w hc ↦
+    ⟨_, ⟨witnessed_inf_subset_left hc, rfl⟩, hS w _ hc⟩⟩
 
-theorem exists_isWitness_subset_sat_iff {s : Set W} :
+theorem exists_isWitness_subset_sat_iff :
     (∃ e, IsWitness R (witnessed R) e ∧ s ⊆ sat S e) ↔ s ⊆ witnessed (R ⊓ S) := by
   refine ⟨fun ⟨e, he, hs⟩ ↦ hs.trans (he.sat_subset.trans Set.inter_subset_right), fun hs ↦ ?_⟩
   obtain ⟨e, he, h⟩ := exists_isWitness_sat_eq R S
   exact ⟨e, he, h ▸ hs⟩
+
+end Witnesses
+
+variable {W E : Type u} {g h : Assignment (W →. E)} {s dc dc' A : Set W} {R S : E → W → Prop}
+  {v v' : ℕ} {a : E} {dox : E → W → Set W}
+
+/-! ### Clauses -/
+
+/-- A clause, of type `wt`, computes its local context: from an input assignment, the pairs of a
+context in which it holds and an output assignment. -/
+abbrev Clause (W E : Type u) := StateT (Assignment (W →. E)) Set (Set W)
+
+/-- Any context that entails `c`, with no change of assignment. -/
+def within (c : Set W) : Clause W E := fun g ↦ {p | p.1 ⊆ c ∧ p.2 = g}
+
+/-- A common noun or intransitive verb holds in a context where its argument satisfies it
+([hofmann-2025] App. C (15)). -/
+def commonNoun (R : E → W → Prop) (v : ℕ) : Clause W E := fun g ↦ within (sat R (g v)) g
+
+/-- The indefinite introduces its dref with a referent at exactly the worlds of the context, in
+which its restrictor and its scope hold ([hofmann-2025] App. C (16)). -/
+def indefinite (v : ℕ) (P P' : ℕ → Clause W E) : Clause W E :=
+  fun g ↦ {p | ∃ e k, p.1 = e.Dom ∧ (p.1, k) ∈ P v g[v ↦ e] ∧ p ∈ P' v k}
+
+/-- A proper name introduces a dref equal to its constant ([hofmann-2025] App. C (14)). -/
+def properName (a : E) (v : ℕ) (P : ℕ → Clause W E) : Clause W E :=
+  fun g ↦ P v g[v ↦ PFun.lift fun _ ↦ a]
+
+/-- *There is an `R`* ([hofmann-2025] (24)) is the indefinite with a vacuous scope (fn. 8). -/
+def existential (R : E → W → Prop) (v : ℕ) : Clause W E :=
+  indefinite v (commonNoun R) fun _ ↦ within Set.univ
+
+/-- *It is `S`* ([hofmann-2025] (30)) is the predicate at the pronoun's index (App. C (17)). -/
+def it (S : E → W → Prop) (v : ℕ) : Clause W E := commonNoun S v
+
+namespace Clause
+
+/-- Maximization keeps the runs whose context is maximal among the contexts of the clause. -/
+def maximal (P : Clause W E) : Clause W E :=
+  fun g ↦ {p ∈ P g | Maximal (· ∈ SetRel.dom (P g)) p.1}
+
+/-- Negation returns the complement of the prejacent's context ([hofmann-2025] App. C (18a)). -/
+def not (P : Clause W E) : Clause W E := (compl <$> P.maximal : StateT _ Set _)
+
+/-- A binary connective relates its context to those of its operands by the static function `f`
+([hofmann-2025] App. C (18b), (18c)). -/
+def connective (f : Set W → Set W → Set W) (P Q : Clause W E) : Clause W E :=
+  (f <$> P.maximal <*> Q.maximal : StateT _ Set _)
+
+/-- Disjunction's context is the union of the contexts of its disjuncts (App. C (18b)). -/
+abbrev or (P Q : Clause W E) : Clause W E := connective (· ∪ ·) P Q
+
+/-- The conditional's context is the union of the antecedent's complement and the consequent's
+context (App. C (18c)). -/
+abbrev ifThen (P Q : Clause W E) : Clause W E := connective (fun s t ↦ sᶜ ∪ t) P Q
+
+/-- An attitude verb holds where the subject's doxastic state entails its complement's context
+([hofmann-2025] App. C (18e), fn. 14). -/
+def believed (dox : E → W → Set W) (P : Clause W E) (v : ℕ) : Clause W E :=
+  fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal g ∧ p.1 ⊆ sat (fun a w ↦ dox a w ⊆ t) (g v)}
+
+/-- A veridical attitude's context, moreover, entails its complement's ([hofmann-2025] §2.4). -/
+def knows (dox : E → W → Set W) (P : Clause W E) (v : ℕ) : Clause W E :=
+  fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal g ∧ p.1 ⊆ t ∩ sat (fun a w ↦ dox a w ⊆ t) (g v)}
+
+/-- The declarative takes the maximal context of the clause, which the speaker's commitments `dc`
+entail ([hofmann-2025] (20a), App. C (19)). -/
+def dec (P : Clause W E) (dc : Set W) : Update (Assignment (W →. E)) :=
+  {p | ∃ s, (s, p.2) ∈ P.maximal p.1 ∧ dc ⊆ s}
+
+/-- A clause has truth set `T` if `T` is its greatest context. -/
+def HasTruthSet (P : Clause W E) (T : Assignment (W →. E) → Set W) : Prop :=
+  ∀ g, IsGreatest (SetRel.dom (P g)) (T g)
+
+/-- Flat update: at its truth set `A`, the clause has assigned `v` a witness of `R`, however deeply
+the indefinite is embedded. -/
+structure Introduces (P : Clause W E) (R : E → W → Prop) (v : ℕ) (A : Set W) : Prop where
+  /-- The clause's greatest context is `A`. -/
+  hasTruthSet : P.HasTruthSet fun _ ↦ A
+  /-- The runs at `A` are the witnesses for `v`. -/
+  mem_iff {g h : Assignment (W →. E)} :
+    (A, h) ∈ P g ↔ ∃ e, IsWitness R (witnessed R) e ∧ h = g[v ↦ e]
+
+end Clause
+
+/-! ### Runs of the operators -/
+
+variable {P Q : Clause W E} {T : Assignment (W →. E) → Set W} {f : Set W → Set W → Set W}
+
+theorem mem_it : (s, h) ∈ it S v g ↔ s ⊆ sat S (g v) ∧ h = g := Iff.rfl
+
+theorem mem_existential :
+    (s, h) ∈ existential R v g ↔ ∃ e, IsWitness R s e ∧ h = g[v ↦ e] := by
+  simp [existential, indefinite, commonNoun, within, IsWitness]
+  grind
+
+theorem Clause.mem_dec : g ~[P.dec dc] h ↔ ∃ s, (s, h) ∈ P.maximal g ∧ dc ⊆ s := Iff.rfl
+
+/-! ### Truth sets -/
+
+theorem Clause.HasTruthSet.mem_maximal (hP : P.HasTruthSet T) :
+    (s, h) ∈ P.maximal g ↔ s = T g ∧ (T g, h) ∈ P g := by
+  simp only [Clause.maximal, Set.mem_ofPred_eq, (hP g).maximal_iff]
+  grind
+
+theorem Clause.HasTruthSet.mem_dec (hP : P.HasTruthSet T) :
+    g ~[P.dec dc] h ↔ dc ⊆ T g ∧ (T g, h) ∈ P g := by
+  simp [Clause.mem_dec, hP.mem_maximal, and_comm]
+
+theorem Clause.HasTruthSet.mem_dom_dec (hP : P.HasTruthSet T) :
+    g ∈ (P.dec dc).dom ↔ dc ⊆ T g := by
+  simpa [SetRel.mem_dom, hP.mem_dec] using fun _ ↦ (hP g).1
+
+theorem Clause.HasTruthSet.mem_not (hP : P.HasTruthSet T) :
+    (s, h) ∈ P.not g ↔ s = (T g)ᶜ ∧ (T g, h) ∈ P g := by
+  simp [Clause.not, hP.mem_maximal, and_comm]
+
+theorem Clause.HasTruthSet.not (hP : P.HasTruthSet T) : P.not.HasTruthSet fun g ↦ (T g)ᶜ := fun g ↦
+  let ⟨k, hk⟩ := (hP g).1
+  ⟨⟨k, hP.mem_not.2 ⟨rfl, hk⟩⟩, fun _ ⟨_, hk⟩ ↦ (hP.mem_not.1 hk).1.le⟩
+
+theorem hasTruthSet_it : (it S v).HasTruthSet fun g ↦ sat S (g v) := fun g ↦
+  ⟨⟨g, subset_rfl, rfl⟩, fun _ ⟨_, h, _⟩ ↦ h⟩
+
+theorem mem_maximal_it : (s, h) ∈ (it S v).maximal g ↔ s = sat S (g v) ∧ h = g := by
+  simp [hasTruthSet_it.mem_maximal, mem_it]
+
+theorem mem_dec_it : g ~[(it S v).dec dc] h ↔ dc ⊆ sat S (g v) ∧ h = g := by
+  simp [hasTruthSet_it.mem_dec, mem_it]
+
+theorem hasTruthSet_existential : (existential R v).HasTruthSet fun _ ↦ witnessed R := fun _ ↦
+  let ⟨e, he, _⟩ := exists_isWitness_sat_eq R ⊤
+  ⟨⟨_, mem_existential.2 ⟨e, he, rfl⟩⟩, fun _ ⟨_, hh⟩ ↦
+    let ⟨_, he, _⟩ := mem_existential.1 hh; he.subset_witnessed⟩
+
+/-! ### Flat update -/
+
+theorem introduces_existential : (existential R v).Introduces R v (witnessed R) :=
+  ⟨hasTruthSet_existential, mem_existential⟩
+
+/-- Flat update: negation keeps the drefs of its prejacent and complements its context. -/
+theorem Clause.Introduces.not (hP : P.Introduces R v A) : P.not.Introduces R v Aᶜ :=
+  ⟨hP.1.not, hP.1.mem_not.trans (and_iff_right rfl) |>.trans hP.2⟩
+
+theorem Clause.Introduces.not_not (hP : P.Introduces R v A) : P.not.not.Introduces R v A := by
+  simpa using hP.not.not
+
+theorem Clause.Introduces.mem_dec (hP : P.Introduces R v A) :
+    g ~[P.dec dc] h ↔ dc ⊆ A ∧ ∃ e, IsWitness R (witnessed R) e ∧ h = g[v ↦ e] :=
+  hP.1.mem_dec.trans (and_congr_right' hP.2)
+
+/-- The one law of flat update: an antecedent, under any number of negations, followed by any update
+runs that update from a witness for the antecedent's dref. -/
+theorem Clause.Introduces.mem_comp {D : Update (Assignment (W →. E))} (hP : P.Introduces R v A) :
+    g ~[P.dec dc ○ D] h ↔ dc ⊆ A ∧ ∃ e, IsWitness R (witnessed R) e ∧ g[v ↦ e] ~[D] h := by
+  simp only [SetRel.mem_comp, hP.mem_dec]
+  grind
+
+/-- Any antecedent, under any number of negations, followed by any clause with a truth set: the
+speakers commit to their contexts, the second at a witness for the antecedent's dref. -/
+theorem Clause.Introduces.mem_dom_comp (hP : P.Introduces R v A) (hQ : Q.HasTruthSet T) :
+    g ∈ (P.dec dc ○ Q.dec dc').dom ↔
+      dc ⊆ A ∧ ∃ e, IsWitness R (witnessed R) e ∧ dc' ⊆ T g[v ↦ e] := by
+  simp only [SetRel.mem_dom, hP.mem_comp, ← hQ.mem_dom_dec, exists_and_left]
+  rw [exists_comm]
+  simp only [exists_and_left]
+
+theorem Clause.Introduces.mem_dom_comp_it (hP : P.Introduces R v A) :
+    g ∈ (P.dec dc ○ (it S v).dec dc').dom ↔ dc ⊆ A ∧ dc' ⊆ witnessed (R ⊓ S) := by
+  simp [hP.mem_dom_comp hasTruthSet_it, exists_isWitness_subset_sat_iff]
+
+/-! ### Connectives over a pronoun -/
+
+theorem Clause.Introduces.mem_connective_it (hP : P.Introduces R v A) :
+    (s, h) ∈ Clause.connective f P (it S v) g ↔
+      ∃ e, IsWitness R (witnessed R) e ∧ s = f A (sat S e) ∧ h = g[v ↦ e] := by
+  simp only [Clause.connective, Set.mk_mem_stateT_map_seq, hP.1.mem_maximal, hP.2, mem_maximal_it]
+  constructor
+  · rintro ⟨_, _, ⟨rfl, e, he, rfl⟩, _, ⟨rfl, rfl⟩, rfl⟩
+    exact ⟨e, he, by simp, rfl⟩
+  · rintro ⟨e, he, rfl, rfl⟩
+    exact ⟨_, _, ⟨rfl, e, he, rfl⟩, _, ⟨by simp, rfl⟩, rfl⟩
+
+theorem Clause.Introduces.hasTruthSet_connective_it (hP : P.Introduces R v A)
+    (hf : Monotone (f A)) :
+    (Clause.connective f P (it S v)).HasTruthSet fun _ ↦ f A (witnessed (R ⊓ S)) := fun g ↦ by
+  refine ⟨?_, fun s ⟨j, hj⟩ ↦ ?_⟩
+  · obtain ⟨e, he, h⟩ := exists_isWitness_sat_eq R S
+    exact ⟨_, hP.mem_connective_it.mpr ⟨e, he, by rw [h], rfl⟩⟩
+  · obtain ⟨e, he, rfl, -⟩ := hP.mem_connective_it.mp hj
+    exact hf (he.sat_subset.trans Set.inter_subset_right)
+
+theorem Clause.Introduces.hasTruthSet_or_it (hP : P.Introduces R v A) :
+    (P.or (it S v)).HasTruthSet fun _ ↦ A ∪ witnessed (R ⊓ S) :=
+  hP.hasTruthSet_connective_it fun _ _ h ↦ Set.union_subset_union_right _ h
+
+/-! ### Attitudes -/
+
+/-- *`a` believes it is `S`* ([hofmann-2025] (52)): a proper name, and the attitude over a pronoun.
+-/
+abbrev believes (a : E) (dox : E → W → Set W) (S : E → W → Prop) (v v' : ℕ) : Clause W E :=
+  properName a v' (Clause.believed dox (it S v))
+
+theorem mem_believes (hv : v ≠ v') : (s, h) ∈ believes a dox S v v' g ↔
+    s ⊆ {w | dox a w ⊆ sat S (g v)} ∧ h = g[v' ↦ PFun.lift fun _ ↦ a] := by
+  simp [properName, Clause.believed, mem_maximal_it, Function.update_of_ne hv, and_comm]
+
+theorem hasTruthSet_believes (hv : v ≠ v') :
+    (believes a dox S v v').HasTruthSet fun g ↦ {w | dox a w ⊆ sat S (g v)} := fun _ ↦
+  ⟨⟨_, (mem_believes hv).mpr ⟨subset_rfl, rfl⟩⟩, fun _ ⟨_, h⟩ ↦ ((mem_believes hv).mp h).1⟩
+
+theorem mem_dec_believes (hv : v ≠ v') : g ~[(believes a dox S v v').dec dc] h ↔
+    dc ⊆ {w | dox a w ⊆ sat S (g v)} ∧ h = g[v' ↦ PFun.lift fun _ ↦ a] := by
+  simp [(hasTruthSet_believes hv).mem_dec, mem_believes hv]
 
 end ICDRT

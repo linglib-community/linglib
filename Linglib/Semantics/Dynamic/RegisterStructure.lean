@@ -54,9 +54,9 @@ cylindrification is the weakest precondition of `[r]`.
 Muskens defines `i[r]j` as agreement on every register other than `r` and asserts that enough
 states exist (AX1). Here `[r]` is the graph of `extend · r e`, which agrees with his relation when
 a state is determined by its registers, as in every instance; it also serves states carrying
-several sorts of registers (`Semantics/Dynamic/ICDRT.lean`), and its uniqueness gives the diagonal
-axioms of the cylindric algebra. Constant registers (AX4) are constant functions of the state,
-and AX3, that distinct referents denote distinct registers, is a hypothesis where it is used.
+several sorts of registers, and its uniqueness gives the diagonal axioms of the cylindric algebra.
+Constant registers (AX4) are constant functions of the state, and AX3, that distinct referents
+denote distinct registers, is a hypothesis where it is used.
 
 ## References
 
