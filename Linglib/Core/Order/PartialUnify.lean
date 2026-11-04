@@ -30,6 +30,7 @@ join.
   `PartialUnify.bot_unify`, `PartialUnify.unify_mono`: the unification laws.
 * `Compat`: the consistency relation, a common upper bound.
 * The Pi instance: pointwise unification over a `Fintype` index.
+* The product instance: componentwise unification.
 * The `WithBot` instance: an adjoined `⊥` unifies with everything.
 * The instance on nonempty finite sets ordered by reverse inclusion: unification is intersection.
 
@@ -247,6 +248,31 @@ theorem unify_update_bot [∀ t, OrderBot (S t)] [DecidableEq F] (f : (t : F) �
       exact unify_eq_left.2 bot_le
 
 end Pi
+
+/-! ### Componentwise unification on products -/
+
+section Prod
+
+variable {β : Type*} [PartialOrder β] [PartialUnify β]
+
+/-- Unification is componentwise, so a pair unifies when both components do. -/
+instance : PartialUnify (α × β) where
+  unify a b := WithTop.map₂ Prod.mk (unify a.1 b.1) (unify a.2 b.2)
+  isLUB_of_unify_eq_coe {a b c} h := by
+    cases h₁ : unify a.1 b.1 with
+    | top => simp [h₁] at h
+    | coe x =>
+      cases h₂ : unify a.2 b.2 with
+      | top => simp [h₁, h₂] at h
+      | coe y =>
+        obtain rfl : (x, y) = c := WithTop.coe_inj.1 (by simpa [h₁, h₂] using h)
+        rw [isLUB_prod, Set.image_pair, Set.image_pair]
+        exact ⟨isLUB_of_unify_eq_coe h₁, isLUB_of_unify_eq_coe h₂⟩
+  unify_ne_top_of_bddAbove h := by
+    simp only [bddAbove_prod, Set.image_pair] at h
+    simp [WithTop.map₂_eq_top_iff, unify_ne_top_of_bddAbove h.1, unify_ne_top_of_bddAbove h.2]
+
+end Prod
 
 /-! ### Adjoining a bottom -/
 
