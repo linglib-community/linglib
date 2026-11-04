@@ -5,7 +5,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Fragments.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Case.Valuation
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -44,9 +44,9 @@ argument tested is assigned SUBJ.
   *finnast*, *sakna*, *vanta*, *gefallen* and *übel sein*, whose subjects or datives are
   experiencers here, nor for *abhören*, whose roles follow *biðja*'s.
 * An association is an injective map from the arguments to the functions, functional
-  uniqueness being injectivity. Default case marking is `Minimalist.agreeValueList` on the arguments
-  listed highest function first, with which it agrees extensionally, so the persistence of
-  idiosyncratic case is `Case.Valuation.Extends`.
+  uniqueness being injectivity. Default case marking is `Case.Valuation.fillInOrder` on the arguments
+  listed highest function first, so the persistence of idiosyncratic case is
+  `Case.Valuation.Extends`.
 * Principle (61a) fixes no order among the objects, which gives *gefa* its two associations
   (63); it is read as giving SUBJ to the first role the language-specific principle leaves free,
   the order of the thematic structures in (58), (60) and (63).
@@ -191,14 +191,14 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 
 /-- Default case marking, (61d), as a step of case valuation on arguments listed highest
 function first: the highest not yet valued takes the nominative and the next the accusative. -/
-def defaultCase [DecidableEq C] {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
-  Minimalist.agreeValueList (fun _ ↦ True) [P.nom, P.acc] s
+def defaultCase {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
+  s.fillInOrder (fun _ ↦ True) [P.nom, P.acc]
 
-theorem extends_defaultCase [DecidableEq C] {α : Type*} (s : Case.Valuation α C) :
+theorem extends_defaultCase {α : Type*} (s : Case.Valuation α C) :
     s.Extends (fun c ↦ c = P.nom ∨ c = P.acc) (P.defaultCase s) :=
-  Minimalist.extends_agreeValueList (by simp) s
+  Case.Valuation.extends_fillInOrder (by simp) s
 
-theorem mem_defaultCase_of_lexicalCase [DecidableEq C] {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
+theorem mem_defaultCase_of_lexicalCase {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
     (hc : x.lexicalCase = some c) :
     (x, .valued c) ∈
       P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase) xs) := by
@@ -210,7 +210,7 @@ theorem mem_defaultCase_of_lexicalCase [DecidableEq C] {xs : List (Arg C)} {x : 
 
 /-- The case array of an association in a voice: the subject's case and then the objects' in
 the order of their functions, the immediately postverbal NP the OBJ. -/
-def caseArray [DecidableEq C] (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
+def caseArray (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
   (P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase)
     (realized t a v))).filterMap (·.2.value?)
 

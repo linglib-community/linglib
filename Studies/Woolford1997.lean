@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Woolford1997
 public import Linglib.Fragments.NezPerce.Case
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 public import Mathlib.Data.Finset.Dedup
@@ -180,9 +180,8 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 /-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads
 of (1a) value the highest caseless arguments with `cs` in turn, and V gives the rest accusative. -/
 def assign (cs : List AbstractCase) (args : List (Option LexicalCase)) : List AbstractCase :=
-  (Minimalist.agreeValueList (fun _ ↦ True) cs
-    (Case.Valuation.initial (fun o ↦ Case.Valuation.offer (o.map .lexical))
-      args)).values.map (·.getD .acc)
+  ((Case.Valuation.initial (fun o ↦ Case.Valuation.offer (o.map .lexical)) args).fillInOrder
+    (fun _ ↦ True) cs).values.map (·.getD .acc)
 
 @[simp] theorem assign_nil_right (cs : List AbstractCase) : assign cs [] = [] := by
   simp [assign, Case.Valuation.initial]
@@ -190,7 +189,7 @@ def assign (cs : List AbstractCase) (args : List (Option LexicalCase)) : List Ab
 @[simp] theorem assign_some_cons (cs : List AbstractCase) (l : LexicalCase) (r : List
     (Option LexicalCase)) :
     assign cs (some l :: r) = .lexical l :: assign cs r := by
-  simp [assign, Case.Valuation.initial, Minimalist.agreeValueList_cons_right_of_not]
+  simp [assign, Case.Valuation.initial, Case.Valuation.fillInOrder_cons_of_not]
 
 @[simp] theorem assign_nil_none_cons (r : List (Option LexicalCase)) :
     assign [] (none :: r) = .acc :: assign [] r := by
@@ -199,7 +198,7 @@ def assign (cs : List AbstractCase) (args : List (Option LexicalCase)) : List Ab
 @[simp] theorem assign_cons_none_cons (c : AbstractCase) (cs : List AbstractCase) (r : List
     (Option LexicalCase)) :
     assign (c :: cs) (none :: r) = c :: assign cs r := by
-  simp [assign, Case.Valuation.initial, Minimalist.agreeValueList_cons_cons]
+  simp [assign, Case.Valuation.initial, Case.Valuation.fillInOrder_cons_cons]
 
 theorem assign_map_some_append (cs : List AbstractCase) (ls : List LexicalCase) (r : List
     (Option LexicalCase)) :
