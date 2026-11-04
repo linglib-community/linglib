@@ -34,6 +34,12 @@ four-way world types; trees the paper does not interpret denote the contradictio
 never witnesses the principle. Determiners inside the noun phrases are omitted from the trees,
 and the symmetric alternative places the conjunction of quantifiers at the determiner.
 
+## Errata
+
+The final substitution source (41) holds the tree itself, so under (19) a tree can replace its own
+constituent: [*tall (tall man)* is at most as complex as *tall man*](##tallTallMan_mem_alternatives)
+and conversely. The relation bounds no size, and every *tall*ⁿ *man* has one complexity.
+
 ## References
 
 * [katzir-2007]
@@ -220,6 +226,16 @@ theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon ta
   Relation.ReflTransGen.single (StructuralOp.delete ⟨0, by simp⟩)
 
 /-! ### The subtrees of the sentence as substitution source (Section 5) -/
+
+/-- *a tall tall man*, without its determiner. -/
+def tallTallMan : Tree Cat Word := .node .N [.terminal .Adj .tall, tallMan]
+
+-- (41)
+theorem tallTallMan_mem_alternatives : tallTallMan ∈ structuralAlternatives lexicon tallMan :=
+  Relation.ReflTransGen.single (StructuralOp.inChild ⟨1, by simp⟩
+    (StructuralOp.subst (ψ := tallMan) rfl
+      (Set.mem_union_right _ (by simp [tallMan, RoseTree.subtrees_node]))))
+
 
 /-- *a little bit more than warm*, an adjective phrase. -/
 def moreThanWarm : Tree Cat Word :=

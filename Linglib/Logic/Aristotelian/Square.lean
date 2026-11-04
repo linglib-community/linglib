@@ -69,6 +69,10 @@ inductive Triangle where
   | A
   deriving DecidableEq, Repr, Fintype
 
+/-- The inner negation of a square negates what its corners quantify over, exchanging `A` with `E`
+and `I` with `O`: *not every* is *some* over the negated scope. -/
+def Square.inner {α : Type*} (sq : Square α) : Square α := ⟨sq.E, sq.A, sq.O, sq.I⟩
+
 /-- The element of a square at a vertex of its triangle. -/
 def Square.triangle {α : Type*} [BooleanAlgebra α] (sq : Square α) : Triangle → α
   | .E => sq.E
@@ -150,6 +154,10 @@ theorem subalternEO (h : SquareRelations sq) : sq.E ≤ sq.O := by
 theorem subcontrIO (h : SquareRelations sq) : Codisjoint sq.I sq.O := by
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, codisjoint_iff, ← compl_inf,
     disjoint_iff.mp h.contraryAE.symm, compl_bot]
+
+/-- The relations of the square survive inner negation. -/
+theorem inner (h : SquareRelations sq) : SquareRelations sq.inner :=
+  ⟨h.contradEI, h.contradAO, h.contraryAE.symm⟩
 
 theorem of_disjoint (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq.A sq.E) :
     SquareRelations sq :=

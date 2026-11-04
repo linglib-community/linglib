@@ -141,18 +141,9 @@ theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
-    (hne₂ : S₂.Nonempty) : exhIE {S, S₁, S₂} S = S := by
-  ext w
-  rw [mem_exhIE_iff]
-  refine ⟨fun hw ↦ hw.1, fun hw ↦ ⟨hw, fun q hq ↦ ?_⟩⟩
-  have hq1 := hq.1
-  simp only [mem_insert_iff, mem_singleton_iff] at hq1
-  obtain h1 | h1 | h1 := hq1 <;> subst q
-  · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨w, hw⟩ subset_rfl hq).elim
-  · exact (not_isInnocentlyExcludable_of_isSymmetric h hne₁ hq).elim
-  · have := not_isInnocentlyExcludable_of_isSymmetric h.symm hne₂
-    rw [pair_comm S₂ S₁] at this
-    exact (this hq).elim
+    (hne₂ : S₂.Nonempty) : exhIE {S, S₁, S₂} S = S :=
+  exhIE_eq_self_of_subset_union h.union.symm.subset (h.sdiff_eq.symm ▸ hne₂)
+    (h.symm.sdiff_eq.symm ▸ hne₁)
 
 theorem exhIE_pair_eq_sdiff (h : IsSymmetric S S₁ S₂) (hne₂ : S₂.Nonempty) :
     exhIE {S, S₁} S = S₂ := by
