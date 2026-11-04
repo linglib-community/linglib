@@ -10,21 +10,20 @@ public import Mathlib.Order.WellFoundedSet
 /-!
 # Minimal elements of well-founded images
 
-`Set.IsWF.exists_minimalFor`, the well-founded companion of mathlib's
-`Set.IsPWO.exists_minimalFor`: if the image of a nonempty set under `f` is well-founded, some
-element of the set is minimal for `f`.
+`Set.IsWF.exists_forall_not_lt`: if the image of a nonempty set under `f` is well-founded, some
+element of the set has no element below it. This needs no order on the codomain beyond `<`, where
+mathlib's `Set.IsPWO.exists_minimalFor` assumes a preorder.
 -/
 
 public section
 
 namespace Set
 
-variable {ι β : Type*} [Preorder β]
+variable {ι β : Type*} [LT β] {f : ι → β} {s : Set ι}
 
-theorem IsWF.exists_minimalFor (f : ι → β) (s : Set ι) (h : (f '' s).IsWF) (hs : s.Nonempty) :
-    ∃ i, MinimalFor (· ∈ s) f i := by
-  obtain ⟨i, hi, hfi⟩ := h.min_mem (hs.image f)
-  refine ⟨i, hi, fun j hj hle ↦ not_lt_iff_le_imp_ge.1 ?_ hle⟩
-  exact hfi ▸ h.not_lt_min (hs.image f) (mem_image_of_mem f hj)
+theorem IsWF.exists_forall_not_lt (h : (f '' s).IsWF) (hs : s.Nonempty) :
+    ∃ i ∈ s, ∀ j ∈ s, ¬ f j < f i := by
+  obtain ⟨i, hi, hmin⟩ := (wellFoundedOn_iff.1 (wellFoundedOn_image.1 h)).has_min s hs
+  exact ⟨i, hi, fun j hj hlt ↦ hmin j hj ⟨hlt, hj, hi⟩⟩
 
 end Set

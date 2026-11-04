@@ -1,165 +1,430 @@
 module
 
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Pragmatics.Bidirectional
-public import Mathlib.Basic.Finite.Prod
+public import Mathlib.Basic.Rel
+public import Mathlib.Data.DFinsupp.WellFounded
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Jäger (2002): Some notes on the formal properties of bidirectional optimality theory
 
-Jäger asks when Blutner's weak bidirection is well defined. The paper's Definition 1 is
-Blutner's mutual recursion between the Q- and the I-principle (`BidirectionalOT.IsWeakSolution`),
-which it calls z-optimality after the zigzag of its evaluation; Lemma 1 shows by the recursion
-theorem that a well-founded harmony ordering makes the solution unique. Definition 3 is the
-paper's own x-optimality: a pair is x-optimal iff it lies in the generator and no x-optimal pair
-blocks it along either axis, the fixed point of `BidirectionalOT.unblockedSet`. Theorem 2 shows
-that for a transitive well-founded ordering the x-optimality relation is unique and coincides
-with z-optimality. The worked example opening the paper's transducer construction shows that
-bidirectional optimality predicts iconicity.
+Jäger replaces Blutner's mutual recursion of the Q- and the I-principle, z-optimality, by a single
+fixed point, x-optimality. That the two are unique and coincide belongs to `BidirectionalOT`;
+[without transitivity they come apart](##exists_isWeakSolution_inter_ne_superoptimalSet). For binary
+markedness constraints he builds the x-optimal pairs in stages from
+[bidirectional conditional intersection](##mem_foldl_biInter_iff), so any class of relations closed
+like the rational ones [contains them](##ClosureConditions.superoptimalSet_mem). His worked example
+[pairs cheap with cheap and expensive with expensive](##superoptimalSet_beSmall).
 
-This file proves Lemma 1 and Theorem 2 under the paper's hypotheses: the harmonies of the
-generator are well-founded, and the ordering is transitive because it is a preorder. The
-paper's Lemma 1 gives existence and uniqueness together by the recursion theorem; here
-existence is the substrate's hypothesis-free `BidirectionalOT.exists_isWeakSolution` and only
-uniqueness needs the descent. The first part of Theorem 2 uses minimality alone; the second
-part uses transitivity, as the paper does, where a form-axis blocker of a blocker is turned
-into a blocker.
+## Implementation notes
+
+* A binary markedness constraint is the language it keeps; strings on both sides share one type.
+* Lemma 2 is mathlib's `Function.Lex.wellFoundedLT`, an instance on `ViolationProfile`.
+
+## Errata
+
+* p. 447: Lemma 5's `X = X_{2^(p-1)}` is [false](##stage_two_pow_pred_ne), since its induction takes
+  a witness to be blocked that may be optimal; the bound is [`2^p`](##stage_two_pow).
+* p. 441: the worked example's order is printed as the product order where Definition 4 makes it
+  [lexicographic](##beSmall_lt_and_not_lt); the two agree on pairs sharing a component.
+* p. 435: no "largest subrelation" of `GEN` obeys the constraint: for `a < b` sharing a component,
+  `{a}` and `{b}` both do.
+* p. 449: Figure 4 lists intersection and union of languages, which
+  [the construction never uses](##ClosureConditions), and omits the language `{ε}`, which it does.
 
 ## TODO
 
-* The paper's second part, bidirectional optimization by finite-state transducers, is
-  formalized only in its opening example.
+* The rational relations as an instance of `ClosureConditions`, for Theorem 4 as printed.
+* Frank and Satta's Theorem 3, and the motivating examples (1)–(6).
 
 ## References
 
 * [jaeger-2002]
 * [blutner-2000]
+* [frank-satta-1998]
 -/
 
-public section
+@[expose] public section
 
 namespace Jaeger2002
 
-open BidirectionalOT Function
-open scoped symmDiff
+open BidirectionalOT OptimalityTheory Set
+open scoped SetRel
 
-variable {F M α : Type*} [Preorder α] {pairs : Set (F × M)} {f : F × M → α}
+/-! ### Well-foundedness and transitivity -/
 
-/-! ### Lemma 1: uniqueness of the weak solution -/
+-- Lemma 2
+example {C : Type*} (ranking : List (Constraint C)) (G : Set C) :
+    (ViolationProfile.ofList ranking '' G).IsWF :=
+  IsWF.of_wellFoundedLT _
 
-private theorem exists_lt_of_qUnblocked {I I' : Set (F × M)} {p : F × M}
-    (hp : p ∈ qUnblockedSet pairs f I) (hp' : p ∉ qUnblockedSet pairs f I') :
-    ∃ q ∈ I' \ I, f q < f p := by
-  obtain ⟨q, hqI', hq, hlt⟩ : QBlocks f I' p := not_not.1 fun hb ↦ hp' ⟨hp.1, hb⟩
-  exact ⟨q, ⟨hqI', fun hqI ↦ hp.2 ⟨q, hqI, hq, hlt⟩⟩, hlt⟩
+/-- Three meanings, for an order that is well-founded and not transitive. -/
+inductive Meaning where
+  | first
+  | second
+  | third
+  deriving DecidableEq, Fintype
 
-private theorem exists_lt_of_iUnblocked {Q Q' : Set (F × M)} {p : F × M}
-    (hp : p ∈ iUnblockedSet pairs f Q) (hp' : p ∉ iUnblockedSet pairs f Q') :
-    ∃ q ∈ Q' \ Q, f q < f p := by
-  obtain ⟨q, hqQ', hq, hlt⟩ : IBlocks f Q' p := not_not.1 fun hb ↦ hp' ⟨hp.1, hb⟩
-  exact ⟨q, ⟨hqQ', fun hqQ ↦ hp.2 ⟨q, hqQ, hq, hlt⟩⟩, hlt⟩
+/-- The position of a meaning in the chain. -/
+def Meaning.rank : Meaning → ℕ
+  | .first => 0
+  | .second => 1
+  | .third => 2
 
-/-- With well-founded generator harmonies, the weak version has at most one solution (Lemma 1). -/
-theorem isWeakSolution_unique (h : (f '' pairs).IsWF) {Q I Q' I' : Set (F × M)}
-    (hQI : IsWeakSolution pairs f Q I) (hQI' : IsWeakSolution pairs f Q' I') :
-    Q = Q' ∧ I = I' := by
-  obtain ⟨hQ, hI⟩ := hQI
-  obtain ⟨hQ', hI'⟩ := hQI'
-  by_contra hne
-  have hDne : ((Q ∆ Q') ∪ (I ∆ I')).Nonempty := Set.nonempty_iff_ne_empty.2 fun hD ↦ hne <| by
-    rwa [Set.union_empty_iff, ← Set.bot_eq_empty, symmDiff_eq_bot, symmDiff_eq_bot] at hD
-  have hsub : ∀ {S T : Set (F × M)}, T = S → S ⊆ pairs → T ⊆ pairs := fun hTS hS ↦ hTS ▸ hS
-  have hDwf : (f '' ((Q ∆ Q') ∪ (I ∆ I'))).IsWF := h.mono <| Set.image_mono <| Set.union_subset
-    (symmDiff_le_sup.trans (Set.union_subset (hsub hQ.symm fun _ hx ↦ hx.1)
-      (hsub hQ'.symm fun _ hx ↦ hx.1)))
-    (symmDiff_le_sup.trans (Set.union_subset (hsub hI.symm fun _ hx ↦ hx.1)
-      (hsub hI'.symm fun _ hx ↦ hx.1)))
-  obtain ⟨p, hpD, hmin⟩ := hDwf.exists_minimalFor f _ hDne
-  rcases hpD with hp | hp <;> rcases Set.mem_symmDiff.1 hp with ⟨hp, hp'⟩ | ⟨hp, hp'⟩
-  · rw [← hQ] at hp; rw [← hQ'] at hp'
-    obtain ⟨q, hq, hlt⟩ := exists_lt_of_qUnblocked hp hp'
-    exact hlt.not_ge (hmin (.inr (Set.mem_symmDiff.2 (.inr hq))) hlt.le)
-  · rw [← hQ'] at hp; rw [← hQ] at hp'
-    obtain ⟨q, hq, hlt⟩ := exists_lt_of_qUnblocked hp hp'
-    exact hlt.not_ge (hmin (.inr (Set.mem_symmDiff.2 (.inl hq))) hlt.le)
-  · rw [← hI] at hp; rw [← hI'] at hp'
-    obtain ⟨q, hq, hlt⟩ := exists_lt_of_iUnblocked hp hp'
-    exact hlt.not_ge (hmin (.inl (Set.mem_symmDiff.2 (.inr hq))) hlt.le)
-  · rw [← hI'] at hp; rw [← hI] at hp'
-    obtain ⟨q, hq, hlt⟩ := exists_lt_of_iUnblocked hp hp'
-    exact hlt.not_ge (hmin (.inl (Set.mem_symmDiff.2 (.inl hq))) hlt.le)
+/-- Each meaning is more economical than the next one only. -/
+instance : LT Meaning := ⟨fun a b ↦ a.rank + 1 = b.rank⟩
 
-/-! ### Theorem 2: x-optimality is unique and is z-optimality -/
+instance : DecidableLT Meaning := fun a b ↦ inferInstanceAs (Decidable (a.rank + 1 = b.rank))
 
-/-- When the harmonies of the generator are well-founded there is exactly one x-optimality
-relation, the substrate's `superoptimalSet` (Theorem 2, first part). -/
-theorem existsUnique_isFixedPt (h : (f '' pairs).IsWF) :
-    ∃! S : Set (F × M), IsFixedPt (unblockedSet pairs f) S :=
-  ⟨superoptimalSet pairs f, (isFixedPt_superoptimalSet pairs f h).eq,
-    fun _ hS ↦ eq_superoptimalSet_of_isFixedPt pairs f h hS⟩
+/-- The harmony of a pair is its meaning. -/
+abbrev Meaning.harmony : Unit × Meaning → Meaning := Prod.snd
 
-private theorem superoptimalSet_subset_right (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
-    (hQI : IsWeakSolution pairs f Q I) : superoptimalSet pairs f ⊆ I := by
-  obtain ⟨hQ, hI⟩ := hQI
-  have hX := (isFixedPt_superoptimalSet pairs f h).eq
-  by_contra hne
-  obtain ⟨p, ⟨hpX, hpI⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
-    superoptimalSet_subset pairs f hx.1)).exists_minimalFor f _ (Set.not_subset.1 hne)
-  have hp : p ∈ unblockedSet pairs f (superoptimalSet pairs f) := hX.symm ▸ hpX
-  rw [← hI] at hpI
-  obtain ⟨q, hqQ, hq, hqp⟩ : IBlocks f Q p := not_not.1 fun hb ↦ hpI ⟨hp.1, hb⟩
-  rw [← hQ] at hqQ
-  have hqX : q ∉ superoptimalSet pairs f := fun hqX ↦ hp.2 ⟨q, hqX, .inl hq, hqp⟩
-  obtain ⟨r, hrX, hr, hrq⟩ : Blocks f (superoptimalSet pairs f) q :=
-    not_not.1 fun hb ↦ hqX (hX ▸ (⟨hqQ.1, hb⟩ : q ∈ unblockedSet pairs f (superoptimalSet pairs f)))
-  rcases hr with hr | hr
-  · exact hp.2 ⟨r, hrX, .inl (hr.trans hq), hrq.trans hqp⟩
-  · exact (hrq.trans hqp).not_ge
-      (hmin ⟨hrX, fun hrI ↦ hqQ.2 ⟨r, hrI, hr, hrq⟩⟩ (hrq.trans hqp).le)
+instance : WellFoundedLT Meaning :=
+  ⟨(Subrelation.wf (r := InvImage (· < ·) Meaning.rank)
+    (fun {a b} (h : a.rank + 1 = b.rank) ↦ show a.rank < b.rank by omega)
+    (InvImage.wf Meaning.rank wellFounded_lt)).apply⟩
 
-private theorem superoptimalSet_subset_left (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
-    (hQI : IsWeakSolution pairs f Q I) : superoptimalSet pairs f ⊆ Q := by
-  obtain ⟨hQ, hI⟩ := hQI
-  have hX := (isFixedPt_superoptimalSet pairs f h).eq
-  by_contra hne
-  obtain ⟨p, ⟨hpX, hpQ⟩, hmin⟩ := (h.mono (Set.image_mono fun x hx ↦
-    superoptimalSet_subset pairs f hx.1)).exists_minimalFor f _ (Set.not_subset.1 hne)
-  have hp : p ∈ unblockedSet pairs f (superoptimalSet pairs f) := hX.symm ▸ hpX
-  rw [← hQ] at hpQ
-  obtain ⟨q, hqI, hq, hqp⟩ : QBlocks f I p := not_not.1 fun hb ↦ hpQ ⟨hp.1, hb⟩
-  rw [← hI] at hqI
-  have hqX : q ∉ superoptimalSet pairs f := fun hqX ↦ hp.2 ⟨q, hqX, .inr hq, hqp⟩
-  obtain ⟨r, hrX, hr, hrq⟩ : Blocks f (superoptimalSet pairs f) q :=
-    not_not.1 fun hb ↦ hqX (hX ▸ (⟨hqI.1, hb⟩ : q ∈ unblockedSet pairs f (superoptimalSet pairs f)))
-  rcases hr with hr | hr
-  · exact (hrq.trans hqp).not_ge
-      (hmin ⟨hrX, fun hrQ ↦ hqI.2 ⟨r, hrQ, hr, hrq⟩⟩ (hrq.trans hqp).le)
-  · exact hp.2 ⟨r, hrX, .inr (hr.trans hq), hrq.trans hqp⟩
+theorem superoptimalSet_meaning :
+    superoptimalSet univ Meaning.harmony = {((), .first), ((), .third)} := by
+  have : superoptimal Finset.univ Meaning.harmony =
+      {((), .first), ((), .third)} := by decide
+  simpa using (coe_superoptimal Finset.univ Meaning.harmony).symm.trans
+    (congrArg _ this)
 
-/-- The pairs satisfying both principles of a weak solution are the x-optimal pairs (Theorem 2,
-second part). -/
-theorem inter_eq_superoptimalSet (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
-    (hQI : IsWeakSolution pairs f Q I) : Q ∩ I = superoptimalSet pairs f := by
-  refine Set.Subset.antisymm (fun p ⟨hpQ, hpI⟩ ↦ not_not.1 fun hpX ↦ ?_) (Set.subset_inter
-    (superoptimalSet_subset_left h hQI) (superoptimalSet_subset_right h hQI))
-  obtain ⟨hQ, hI⟩ := hQI
-  have hX := (isFixedPt_superoptimalSet pairs f h).eq
-  rw [← hQ] at hpQ
-  rw [← hI] at hpI
-  obtain ⟨q, hqX, hq, hqp⟩ : Blocks f (superoptimalSet pairs f) p :=
-    not_not.1 fun hb ↦ hpX (hX ▸ (⟨hpQ.1, hb⟩ : p ∈ unblockedSet pairs f (superoptimalSet pairs f)))
-  rcases hq with hq | hq
-  · exact hpI.2 ⟨q, superoptimalSet_subset_left h ⟨hQ, hI⟩ hqX, hq, hqp⟩
-  · exact hpQ.2 ⟨q, superoptimalSet_subset_right h ⟨hQ, hI⟩ hqX, hq, hqp⟩
+theorem isWeakSolution_meaning :
+    IsWeakSolution univ Meaning.harmony univ {((), .first)} := by
+  refine ⟨Set.eq_univ_of_forall fun p ↦ ⟨trivial, ?_⟩, ?_⟩
+  · rintro ⟨q, -, hq, hlt⟩
+    have hlt : q.2.rank + 1 = p.2.rank := hlt
+    rw [show q.2 = p.2 from hq] at hlt
+    exact Nat.succ_ne_self _ hlt
+  · ext ⟨⟨⟩, m⟩
+    cases m
+    · exact ⟨fun _ ↦ rfl, fun _ ↦ ⟨trivial, fun ⟨_, _, _, hlt⟩ ↦ Nat.succ_ne_zero _ hlt⟩⟩
+    · exact ⟨fun h ↦ (h.2 ⟨((), .first), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
+    · exact ⟨fun h ↦ (h.2 ⟨((), .second), trivial, rfl, rfl⟩).elim, fun h ↦ by simp at h⟩
 
-/-! ### Iconicity
+/-- Theorem 2 needs transitivity: for a well-founded order without it, a pair can be x-optimal and
+not z-optimal. -/
+theorem exists_isWeakSolution_inter_ne_superoptimalSet :
+    ¬ IsTrans Meaning (· < ·) ∧ (Meaning.harmony '' univ).IsWF ∧
+      ∃ Q I, IsWeakSolution univ Meaning.harmony Q I ∧
+        Q ∩ I ≠ superoptimalSet univ Meaning.harmony := by
+  refine ⟨fun h ↦ absurd (h.trans .first .second .third rfl rfl) (by decide),
+    IsWF.of_wellFoundedLT _, _, _, isWeakSolution_meaning, fun h ↦ ?_⟩
+  have : ((), Meaning.third) ∈ univ ∩ ({((), Meaning.first)} : Set (Unit × Meaning)) := by
+    rw [h, superoptimalSet_meaning]
+    simp
+  simp at this
 
-The worked example opening the paper's transducer construction: three inputs and three outputs
-ordered by cost, with the constraint "be small" on each side. -/
+/-! ### The worked example -/
 
-theorem superoptimalSet_eq_diagonal {g : Fin 3 × Fin 3 → α} (hg : StrictMono g) :
-    superoptimalSet Set.univ g = Set.diagonal (Fin 3) := by
-  rw [superoptimalSet_eq_graphOn _ (OrderIso.refl _) hg Set.finite_univ.isWF (Set.subset_univ _)]
+section WorkedExample
+
+variable {T : Type*} (v : T → ℕ)
+
+/-- The worked example's two constraints, each saying "Be small!", ranked input over output. -/
+def beSmall : T × T → ViolationProfile 2 := ViolationProfile.ofList [fun p ↦ v p.1, fun p ↦ v p.2]
+
+variable {v}
+
+theorem beSmall_lt_iff {p q : T × T} :
+    beSmall v p < beSmall v q ↔ v p.1 < v q.1 ∨ v p.1 = v q.1 ∧ v p.2 < v q.2 :=
+  ViolationProfile.ofList_cons_lt_iff.trans <| or_congr .rfl <| and_congr .rfl <|
+    ViolationProfile.ofList_cons_lt_iff.trans <|
+      or_iff_left fun ⟨_, h⟩ ↦ ViolationProfile.not_ofList_nil_lt h
+
+-- p. 441
+theorem beSmall_lt_and_not_lt :
+    beSmall (Fin.val : Fin 3 → ℕ) (0, 2) < beSmall (Fin.val : Fin 3 → ℕ) (1, 0) ∧
+      ¬ ((0, 2) : Fin 3 × Fin 3) < (1, 0) :=
+  ⟨beSmall_lt_iff.2 (.inl (by decide)), fun h ↦ by simp [Prod.lt_iff] at h⟩
+
+theorem strictMono_beSmall [PartialOrder T] (hv : StrictMono v) : StrictMono (beSmall v) := by
+  refine ViolationProfile.strictMono_ofList ?_ fun p q h ↦ ?_
+  · simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+    exact ⟨fun _ _ h ↦ hv.monotone h.1, fun _ _ h ↦ hv.monotone h.2⟩
+  · simp only [List.mem_cons, List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left]
+    exact (Prod.lt_iff.1 h).imp (fun h ↦ hv h.1) fun h ↦ hv h.2
+
+-- p. 442: each stage adds the next pair of equal cost
+theorem stage_beSmall (hv : Function.Injective v) (hlow : IsLowerSet (range v)) (n : ℕ) :
+    stage univ (beSmall v) n = {p | p.1 = p.2 ∧ v p.1 < n} := by
+  induction n with
+  | zero =>
+    rw [← bot_eq_zero', stage_bot]
+    simp
+  | succ n ih =>
+    have hrem : remaining univ {p : T × T | p.1 = p.2 ∧ v p.1 < n} =
+        {p | n ≤ v p.1 ∧ n ≤ v p.2} := by
+      ext ⟨a, b⟩
+      simp only [remaining, mem_ofPred_eq, mem_univ, true_and, Prod.forall, ne_eq, and_imp]
+      grind
+    rw [← Order.succ_eq_add_one, stage_succ, ih, stageStep, hrem]
+    ext ⟨a, b⟩
+    simp only [mem_union, mem_ofPred_eq, minimalFor_iff_forall_lt, beSmall_lt_iff, Prod.forall,
+      not_and, not_le, Order.succ_eq_add_one]
+    constructor
+    · rintro (⟨rfl, ha⟩ | ⟨⟨ha, hb⟩, hmin⟩)
+      · exact ⟨rfl, Nat.lt_succ_of_lt ha⟩
+      · obtain ⟨s, hs⟩ : n ∈ range v := hlow ha ⟨a, rfl⟩
+        have hva : v a = n := by
+          by_contra hne
+          have := @hmin s s (.inl (by omega))
+          omega
+        have hvb : v b = n := by
+          by_contra hne
+          have := @hmin s s (.inr ⟨by omega, by omega⟩)
+          omega
+        exact ⟨hv (hva.trans hvb.symm), by omega⟩
+    · rintro ⟨rfl, ha⟩
+      rcases Nat.lt_succ_iff_lt_or_eq.1 ha with h | h
+      · exact .inl ⟨rfl, h⟩
+      · refine .inr ⟨⟨h.ge, h.ge⟩, fun {c d} hlt hc ↦ ?_⟩
+        omega
+
+/-- The worked example: bidirectional optimality predicts iconicity, pairing cheap inputs with cheap
+outputs and expensive with expensive. -/
+theorem superoptimalSet_beSmall [LinearOrder T] [WellFoundedLT T] (hv : StrictMono v) :
+    superoptimalSet univ (beSmall v) = diagonal T := by
+  rw [superoptimalSet_eq_graphOn _ (OrderIso.refl T) (strictMono_beSmall hv)
+    (IsWF.of_wellFoundedLT _) (subset_univ _)]
   ext ⟨a, b⟩
-  simp [Set.mem_graphOn]
+  simp [mem_graphOn]
+
+-- pp. 441-442: three stages exhaust `{1, 2, 3} × {1, 2, 3}`
+theorem stage_three_beSmall :
+    stage univ (beSmall (Fin.val : Fin 3 → ℕ)) 3 =
+      superoptimalSet univ (beSmall (Fin.val : Fin 3 → ℕ)) := by
+  rw [stage_beSmall Fin.val_injective (by simp [Fin.range_val, isLowerSet_Iio]),
+    superoptimalSet_beSmall Fin.val_strictMono]
+  ext ⟨a, b⟩
+  simp only [mem_ofPred_eq, mem_diagonal_iff, Fin.is_lt, and_true]
+
+-- p. 450: with counting constraints no finite stage suffices
+theorem stage_ne_superoptimalSet_beSmall (n : ℕ) :
+    stage univ (beSmall (id : ℕ → ℕ)) n ≠ superoptimalSet univ (beSmall (id : ℕ → ℕ)) := by
+  rw [superoptimalSet_beSmall strictMono_id,
+    stage_beSmall Function.injective_id (by simp [isLowerSet_univ])]
+  intro h
+  have : (n, n) ∈ diagonal ℕ := rfl
+  rw [← h] at this
+  exact lt_irrefl _ this.2
+
+end WorkedExample
+
+/-! ### Conditional intersection -/
+
+section Conditional
+
+variable {β γ : Type*}
+
+/-- Definition 10: the conditional intersection of [frank-satta-1998]. -/
+def condInter (R : SetRel β γ) (L : Set γ) : SetRel β γ :=
+  (R ○ L.graphOn id) ∪ ((R.dom \ (R ○ L.graphOn id).dom).graphOn id ○ R)
+
+/-- The backward conditional intersection, the mirror image of `condInter`. -/
+def backInter (R : SetRel β γ) (L : Set β) : SetRel β γ :=
+  (L.graphOn id ○ R) ∪ (R ○ (R.cod \ (L.graphOn id ○ R).cod).graphOn id)
+
+-- p. 441
+theorem mem_condInter {R : SetRel β γ} {L : Set γ} {x : β} {y : γ} :
+    (x, y) ∈ condInter R L ↔ (x, y) ∈ R ∧ (y ∈ L ∨ ∀ z ∈ L, (x, z) ∉ R) := by
+  simp only [condInter, mem_union, SetRel.mem_comp, mem_graphOn, mem_sdiff, SetRel.mem_dom, id]
+  grind
+
+theorem mem_backInter {R : SetRel β γ} {L : Set β} {x : β} {y : γ} :
+    (x, y) ∈ backInter R L ↔ (x, y) ∈ R ∧ (x ∈ L ∨ ∀ z ∈ L, (z, y) ∉ R) := by
+  simp only [backInter, mem_union, SetRel.mem_comp, mem_graphOn, mem_sdiff, SetRel.mem_cod, id]
+  grind
+
+end Conditional
+
+variable {σ : Type*}
+
+/-- A binary markedness constraint given by the language it keeps, on the input or the output. -/
+inductive BinaryMarkedness (σ : Type*) where
+  | input (L : Set σ)
+  | output (L : Set σ)
+
+/-- The language a binary markedness constraint keeps. -/
+def BinaryMarkedness.language : BinaryMarkedness σ → Set σ
+  | .input L | .output L => L
+
+open Classical in
+/-- A pair violates a binary markedness constraint once when its input or output leaves the
+language. -/
+noncomputable def BinaryMarkedness.violations : BinaryMarkedness σ → Constraint (σ × σ)
+  | .input L => Constraint.binary (·.1 ∉ L)
+  | .output L => Constraint.binary (·.2 ∉ L)
+
+theorem BinaryMarkedness.violations_le_one (c : BinaryMarkedness σ) (p : σ × σ) :
+    c.violations p ≤ 1 := by
+  classical
+  cases c <;> simp only [violations] <;> exact Constraint.binary_le_one ..
+
+/-- Definition 12: bidirectional conditional intersection, which keeps the pairs of `R` that are
+optimal for the constraint globally, where `condInter` compares only the outputs of each input. -/
+def biInter (ε : σ) (R : SetRel σ σ) : BinaryMarkedness σ → SetRel σ σ
+  | .input L => (backInter (R.dom ×ˢ {ε}) L).dom.graphOn id ○ R
+  | .output L => R ○ (condInter ({ε} ×ˢ R.cod) L).cod.graphOn id
+
+theorem mem_biInter {ε : σ} {R : SetRel σ σ} {c : BinaryMarkedness σ} {p : σ × σ} :
+    p ∈ biInter ε R c ↔ MinimalFor (· ∈ R) c.violations p := by
+  obtain ⟨x, y⟩ := p
+  cases c with
+  | input L =>
+    simp only [biInter, SetRel.mem_comp, mem_graphOn, SetRel.mem_dom, mem_backInter, mem_prod,
+      mem_singleton_iff, id, minimalFor_iff_forall_lt, BinaryMarkedness.violations,
+      Constraint.binary_apply]
+    grind
+  | output L =>
+    simp only [biInter, SetRel.mem_comp, mem_graphOn, SetRel.mem_cod, mem_condInter, mem_prod,
+      mem_singleton_iff, id, minimalFor_iff_forall_lt, BinaryMarkedness.violations,
+      Constraint.binary_apply]
+    grind
+
+/-- Lemma 3: successive bidirectional conditional intersection keeps the pairs of `R` that have no
+better alternative whatsoever. -/
+theorem mem_foldl_biInter_iff {ε : σ} (C : List (BinaryMarkedness σ)) (R : SetRel σ σ) {p : σ × σ} :
+    p ∈ C.foldl (biInter ε) R ↔
+      MinimalFor (· ∈ R) (ViolationProfile.ofList (C.map BinaryMarkedness.violations)) p := by
+  induction C generalizing R with
+  | nil => exact ViolationProfile.minimalFor_ofList_nil.symm
+  | cons c C ih =>
+    rw [List.foldl_cons, ih, List.map_cons, ViolationProfile.minimalFor_ofList_cons,
+      show (· ∈ biInter ε R c) = MinimalFor (· ∈ R) c.violations from
+        funext fun _ ↦ propext mem_biInter]
+
+/-! ### The number of stages -/
+
+-- Lemma 5, corrected: at most `2^p` harmonies, so at most `2^p` stages
+theorem stage_two_pow {F M : Type*} {G : Set (F × M)} {ranking : List (Constraint (F × M))}
+    (hbin : ∀ c ∈ ranking, ∀ p ∈ G, c p ≤ 1) :
+    stage G (ViolationProfile.ofList ranking) (2 ^ ranking.length : ℕ) =
+      superoptimalSet G (ViolationProfile.ofList ranking) := by
+  refine stage_eq_superoptimalSet_of_encard_le (encard_le_coe_iff_finite_ncard_le.2 ?_)
+  have hsub : ViolationProfile.ofList ranking '' G ⊆
+      range fun b : Fin ranking.length → Fin 2 ↦ toLex fun i ↦ (b i : ℕ) := by
+    rintro _ ⟨p, hp, rfl⟩
+    exact ⟨fun i ↦ ⟨ranking.get i p, Nat.lt_succ_of_le (hbin _ (List.get_mem ..) p hp)⟩, rfl⟩
+  refine ⟨(finite_range _).subset hsub, (ncard_le_ncard hsub (finite_range _)).trans ?_⟩
+  rw [← image_univ]
+  exact (ncard_image_le finite_univ).trans (by simp)
+
+/-- Two pairs sharing no component. -/
+def twoPairs : Finset (Fin 2 × Fin 2) := {(0, 0), (1, 1)}
+
+/-- One binary constraint telling the two pairs of `twoPairs` apart. -/
+def oneConstraint : Constraint (Fin 2 × Fin 2) := Constraint.binary (·.2 = 1)
+
+/-- Lemma 5 is false as printed: with one binary constraint it puts every x-optimal pair in the
+first stage, which holds only the pair the constraint prefers. -/
+theorem stage_two_pow_pred_ne :
+    stage (twoPairs : Set _) (ViolationProfile.ofList [oneConstraint])
+        (2 ^ ([oneConstraint].length - 1) : ℕ) ≠
+      superoptimalSet (twoPairs : Set _) (ViolationProfile.ofList [oneConstraint]) := by
+  intro heq
+  have hX : ((1, 1) : Fin 2 × Fin 2) ∈
+      superoptimalSet (twoPairs : Set _) (ViolationProfile.ofList [oneConstraint]) := by
+    rw [← coe_superoptimal]
+    exact Finset.mem_coe.2 (by decide)
+  rw [← heq, show (2 ^ ([oneConstraint].length - 1) : ℕ) = Order.succ ⊥ from rfl, stage_succ,
+    stage_bot] at hX
+  obtain h | h := hX
+  · exact h
+  · exact h.not_prop_of_lt (j := (0, 0)) (by decide) ⟨by decide, fun _ hq ↦ hq.elim⟩
+
+/-! ### Theorem 4 -/
+
+/-- The closure conditions of Figure 4 that the construction uses. -/
+structure ClosureConditions (ε : σ) (𝓛 : Set (Set σ)) (𝓡 : Set (SetRel σ σ)) : Prop where
+  /-- The language holding only the empty string, a finite language. -/
+  singleton_mem : {ε} ∈ 𝓛
+  /-- Languages are closed under difference. -/
+  diff_mem {L L' : Set σ} : L ∈ 𝓛 → L' ∈ 𝓛 → L \ L' ∈ 𝓛
+  /-- Relations are closed under union. -/
+  union_mem {R S : SetRel σ σ} : R ∈ 𝓡 → S ∈ 𝓡 → R ∪ S ∈ 𝓡
+  /-- Relations are closed under composition. -/
+  comp_mem {R S : SetRel σ σ} : R ∈ 𝓡 → S ∈ 𝓡 → R ○ S ∈ 𝓡
+  /-- The domain of a relation is a language. -/
+  dom_mem {R : SetRel σ σ} : R ∈ 𝓡 → R.dom ∈ 𝓛
+  /-- The range of a relation is a language. -/
+  cod_mem {R : SetRel σ σ} : R ∈ 𝓡 → R.cod ∈ 𝓛
+  /-- The Cartesian product of two languages is a relation. -/
+  prod_mem {L L' : Set σ} : L ∈ 𝓛 → L' ∈ 𝓛 → L ×ˢ L' ∈ 𝓡
+  /-- The identity on a language is a relation. -/
+  graphOn_id_mem {L : Set σ} : L ∈ 𝓛 → L.graphOn id ∈ 𝓡
+
+namespace ClosureConditions
+
+variable {ε : σ} {𝓛 : Set (Set σ)} {𝓡 : Set (SetRel σ σ)} (hc : ClosureConditions ε 𝓛 𝓡)
+  {R : SetRel σ σ} {L : Set σ}
+
+include hc
+
+theorem condInter_mem (hR : R ∈ 𝓡) (hL : L ∈ 𝓛) : condInter R L ∈ 𝓡 :=
+  have h := hc.comp_mem hR (hc.graphOn_id_mem hL)
+  hc.union_mem h (hc.comp_mem (hc.graphOn_id_mem (hc.diff_mem (hc.dom_mem hR) (hc.dom_mem h))) hR)
+
+theorem backInter_mem (hR : R ∈ 𝓡) (hL : L ∈ 𝓛) : backInter R L ∈ 𝓡 :=
+  have h := hc.comp_mem (hc.graphOn_id_mem hL) hR
+  hc.union_mem h (hc.comp_mem hR (hc.graphOn_id_mem (hc.diff_mem (hc.cod_mem hR) (hc.cod_mem h))))
+
+theorem biInter_mem (hR : R ∈ 𝓡) {c : BinaryMarkedness σ} (hcL : c.language ∈ 𝓛) :
+    biInter ε R c ∈ 𝓡 := by
+  cases c with
+  | input L =>
+    exact hc.comp_mem (hc.graphOn_id_mem (hc.dom_mem (hc.backInter_mem
+      (hc.prod_mem (hc.dom_mem hR) hc.singleton_mem) hcL))) hR
+  | output L =>
+    exact hc.comp_mem hR (hc.graphOn_id_mem (hc.cod_mem (hc.condInter_mem
+      (hc.prod_mem hc.singleton_mem (hc.cod_mem hR)) hcL)))
+
+theorem foldl_biInter_mem (hR : R ∈ 𝓡) {C : List (BinaryMarkedness σ)}
+    (hC : ∀ c ∈ C, c.language ∈ 𝓛) : C.foldl (biInter ε) R ∈ 𝓡 := by
+  induction C generalizing R with
+  | nil => exact hR
+  | cons c C ih =>
+    exact ih (hc.biInter_mem hR (hC c List.mem_cons_self))
+      fun d hd ↦ hC d (List.mem_cons_of_mem _ hd)
+
+theorem remaining_mem {G X : SetRel σ σ} (hG : G ∈ 𝓡) (hX : X ∈ 𝓡) : remaining G X ∈ 𝓡 := by
+  have : remaining G X = (G.dom \ X.dom).graphOn id ○ G ○ (G.cod \ X.cod).graphOn id := by
+    ext ⟨x, y⟩
+    simp only [remaining, mem_ofPred_eq, SetRel.mem_comp, mem_graphOn, mem_sdiff, SetRel.mem_dom,
+      SetRel.mem_cod, id, Prod.forall, ne_eq]
+    grind
+  rw [this]
+  exact hc.comp_mem
+    (hc.comp_mem (hc.graphOn_id_mem (hc.diff_mem (hc.dom_mem hG) (hc.dom_mem hX))) hG)
+    (hc.graphOn_id_mem (hc.diff_mem (hc.cod_mem hG) (hc.cod_mem hX)))
+
+/-- Theorem 4 in the generality of p. 449: if the generator and the languages of its binary
+markedness constraints belong to a class with the closure properties of Figure 4, so does the set
+of x-optimal pairs. -/
+theorem superoptimalSet_mem {G : SetRel σ σ} (hG : G ∈ 𝓡) {C : List (BinaryMarkedness σ)}
+    (hC : ∀ c ∈ C, c.language ∈ 𝓛) :
+    superoptimalSet G (ViolationProfile.ofList (C.map BinaryMarkedness.violations)) ∈ 𝓡 := by
+  set f := ViolationProfile.ofList (C.map BinaryMarkedness.violations)
+  have hstage : ∀ n : ℕ, stage G f n ∈ 𝓡 := fun n ↦ by
+    induction n with
+    | zero =>
+      have hE : (∅ : Set σ) ∈ 𝓛 := by simpa using hc.diff_mem hc.singleton_mem hc.singleton_mem
+      rw [← bot_eq_zero', stage_bot]
+      simpa using hc.prod_mem hE hE
+    | succ n ih =>
+      rw [← Order.succ_eq_add_one, stage_succ, stageStep,
+        show {p | MinimalFor (· ∈ remaining G (stage G f n)) f p} =
+          C.foldl (biInter ε) (remaining G (stage G f n)) from
+        Set.ext fun _ ↦ (mem_foldl_biInter_iff C _).symm]
+      exact hc.union_mem ih (hc.foldl_biInter_mem (hc.remaining_mem hG ih) hC)
+  rw [← stage_two_pow fun c hc' p _ ↦ ?_]
+  · exact hstage _
+  · obtain ⟨b, -, rfl⟩ := List.mem_map.1 hc'
+    exact b.violations_le_one p
+
+end ClosureConditions
 
 end Jaeger2002
