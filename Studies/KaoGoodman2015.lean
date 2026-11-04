@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
 
 /-!
@@ -82,8 +83,8 @@ instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × QUD) : IsFiniteMeasur
 
 /-- The pragmatic listener over meaning and question inverts the speaker against the product of
 the meaning prior and the question prior; its first marginal is the meaning listener. -/
-noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
-    [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
+noncomputable def L1 (μ : Measure Meaning) (ν : Measure QUD) (α : ℝ) :
+    Kernel Weather (Meaning × QUD) :=
   listener (μ.prod ν) (S1 μ α)
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
@@ -92,11 +93,9 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1]
-  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff hα 0 (L0 μ) project μ ν
-    u m).trans ?_
-  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
-  rfl
+  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
+    Set.mem_ofPred_eq]
 
 /-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 valence, through the negative valence of terrible weather. -/

@@ -63,8 +63,7 @@ theorem juncture_of_obstruent :
 -- pp. 9–10
 theorem juncture_head_agrees :
     ∀ x ∈ consonants, x.IsConsonant → x.IsObstruent → x ≠ s →
-      ∀ N ∈ (juncture x).head?, N.IsNasal ∧
-        ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
+      ∀ N ∈ (juncture x).head?, N.IsNasal ∧ N.Homorganic x := by
   decide +kernel
 
 /-- The fused nasals are phonemes, the nasal of the place of each stop and the palatal for
@@ -83,21 +82,12 @@ def junctureRetained (x : Segment) : List Segment :=
 theorem junctureRetained_s : junctureRetained s = [n, s] := by
   decide +kernel
 
-theorem placeAssimilation_s :
-    (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
-        = [n.setFeature .strident true, s] ∧
-      assimilate [ng, s] = [n, s] := by
-  decide +kernel
-
 /-! ### The forms -/
 
-/-- The segment of a glyph of PHOIBLE's Standard Indonesian inventory. -/
-def ofGlyph (g : String) : Option Segment :=
-  (Data.PHOIBLE.Inventories.Indonesian.ind.phonemes.find? (·.glyph = g)).map
-    (Segment.ofChart ·.features)
-
-/-- The segments of a form, each read through its PHOIBLE glyph. -/
-def segmentsOf (w : Form Cell) : Option (List Segment) := w.segments.mapM ofGlyph
+/-- The segments of a form, each read through its glyph in PHOIBLE's Standard Indonesian
+inventory. -/
+def segmentsOf (w : Form Cell) : Option (List Segment) :=
+  w.segments.mapM Data.PHOIBLE.Inventories.Indonesian.ind.segment?
 
 /-- A relation of the table attaches *meN-*, *peN-*, or *meN-* with *per-* to a base, and after
 *meN-* "the initial *p* of *per-* is not lost" (p. 11). -/

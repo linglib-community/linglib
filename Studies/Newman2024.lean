@@ -478,10 +478,7 @@ def caseOf (es : List Transitive) (a : Transitive) : Option Case :=
   let dom := match es with
     | s :: _ => if s = .obj then [Transitive.obj] else [s, .obj]
     | [] => [.obj]
-  match ((r.unmarkedPass (fun _ ↦ true) <| r.dependentPass (fun _ ↦ true) <|
-      Case.lexicalValuation (fun _ ↦ none) dom).lookup a) with
-  | some k => k.value?.map (·.1)
-  | none => r.unmarked
+  if a ∈ dom then (r.assign (fun _ ↦ none) dom a).value?.map (·.1) else r.unmarked
 
 /-- Voice's φ-probe, spelled out as Set A, agrees with the closest argument. -/
 def setA (es : List Transitive) : Option Transitive := (heightOrder es).head?

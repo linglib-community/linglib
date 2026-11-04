@@ -32,6 +32,7 @@ versions that do not require membership.
 * [kennedy-2007]
 * [nouwen-2010]
 * [geurts-nouwen-2007]
+* [rett-2015a]
 * [rett-2020a]
 * [rett-2026]
 * [uegaki-sudo-2019]
@@ -42,7 +43,8 @@ versions that do not require membership.
 namespace Degree
 
 /-- A comparison is the ordering relation a degree modifier draws between a measured value and a
-threshold. The bare and modified numerals of [kennedy-2015] differ only in this relation (73). -/
+threshold. The bare and modified numerals of [kennedy-2015] differ only in this relation (73), as
+the comparative and equative of [rett-2015a] (33) do. -/
 inductive Comparison where
   /-- The relation `μ x = n` of a bare numeral (73a). -/
   | eq
@@ -61,9 +63,9 @@ namespace Comparison
 variable {α β : Type*}
 
 /-- A comparison is strict when it excludes its threshold, as `>` and `<` do. [kennedy-2015] (4)
-takes strictness to separate the Class A modifiers of [nouwen-2010] from Class B. [nouwen-2010] and
-[geurts-nouwen-2007] reject this reading of the modifiers as the naive view, the latter giving
-*at least* and *at most* a modal meaning. -/
+and [rett-2015a] take strictness to separate the Class A modifiers of [nouwen-2010] from Class B,
+Rett setting the superlatives aside. [nouwen-2010] and [geurts-nouwen-2007] reject this reading of
+the modifiers as the naive view, the latter giving *at least* and *at most* a modal meaning. -/
 def IsStrict : Comparison → Prop
   | .gt | .lt => True
   | _         => False
@@ -279,8 +281,9 @@ section Maximality
 
 variable [Preorder α] {X : Set α} {x : α}
 
-/-- Scale-sensitive maximality, [rett-2020a] (17) and [rett-2026] (44), picks the members of `X`
-that stand in `c` to every other member. Both papers let the relation range over `>` and `<`. -/
+/-- Scale-sensitive maximality, [rett-2015a] (32), [rett-2020a] (17) and [rett-2026] (44), picks
+the members of `X` that stand in `c` to every other member. The papers let the relation range over
+`>` and `<`. -/
 def maxOnScale (c : Comparison) (X : Set α) : Set α :=
   {x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.Rel x x'}
 

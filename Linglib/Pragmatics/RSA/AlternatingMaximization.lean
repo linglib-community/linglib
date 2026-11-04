@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.Recursion
 
 /-!
 # The RSA recursion as alternating maximization
@@ -13,7 +13,10 @@ the utterance given the observation plus the rationality times the expected util
 listener's log-probability of the state less the cost of the utterance. The two agents of the
 Rational Speech Act recursion are its two partial maximizers. Against a fixed listener the
 speaker of `RSA.speaker` at the Bayesian belief maximizes it, and against a fixed speaker the
-Bayesian listener does, so a round of the recursion never lowers it.
+Bayesian listener does, so going up a level of the recursion never lowers it, and along the
+recursion it
+[rises](##RSA.monotone_freeEnergy_iterate_recurse) and
+[converges](##RSA.exists_tendsto_freeEnergy_iterate_recurse).
 
 ## Main definitions
 
@@ -32,7 +35,7 @@ Bayesian listener does, so a round of the recursion never lowers it.
 * `RSA.freeEnergy_le_freeEnergy_listener`: against a fixed speaker her Bayesian listener
   maximizes the free energy.
 * `RSA.freeEnergy_speaker_le_freeEnergy_listener`,
-  `RSA.freeEnergy_listener_le_freeEnergy_speaker`: in a round of the recursion the
+  `RSA.freeEnergy_listener_le_freeEnergy_speaker`: at each level of the recursion the
   listener's update and the speaker's update each raise the free energy, with no condition on
   the supports.
 
@@ -61,7 +64,7 @@ Bayesian listener does, so a round of the recursion never lowers it.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory InformationTheory Real
+open MeasureTheory ProbabilityTheory InformationTheory Real Filter Topology
 open scoped ENNReal
 
 namespace RSA
@@ -101,6 +104,7 @@ variable [Fintype W] [Fintype U] [MeasurableSingletonClass U] [Countable O]
 
 theorem isProbabilityMeasure_speaker_of_absolutelyContinuous (hα : 0 ≤ α)
     (hq : q ≪ speaker α C L b o) : IsProbabilityMeasure (speaker α C L b o) := by
+  rw [speaker_eq_ofWeights] at hq ⊢
   refine Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous (fun _ ↦ ?_) hq
   exact ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα
     (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _)) ENNReal.ofReal_ne_top
@@ -129,7 +133,9 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
     ring
   have key := toReal_klDiv_ofWeights_add_measureEntropy (μ := q) (i := o)
     (w := fun o u ↦ (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (exp (-(α * C u))))
-    (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top) hq
+    (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top)
+    (by rwa [speaker_eq_ofWeights] at hq)
+  rw [← speaker_eq_ofWeights] at key
   simp only [hterm, ← Finset.mul_sum] at key
   simp only [ENNReal.toReal_mul, ENNReal.toReal_ofReal (exp_pos _).le] at key
   rw [integral_fintype .of_finite]
@@ -354,7 +360,7 @@ theorem freeEnergy_le_freeEnergy_listener (hα : 0 ≤ α) :
 
 end Listener
 
-/-! ### A round of the recursion
+/-! ### A level of the recursion
 
 The side conditions of the two steps hold of themselves along the recursion: the speaker who
 answers a listener uses no utterance whose listener rules out a state she entertains, and the
@@ -384,7 +390,7 @@ private theorem ne_zero_of_belief_apply_singleton_ne_zero [IsFiniteMeasure (b o)
 
 end Belief
 
-section Round
+section Recursion
 
 variable [Fintype W] [Fintype O] [Fintype U] [MeasurableSingletonClass W]
   [MeasurableSingletonClass O] [MeasurableSingletonClass U] {μ κ C α}
@@ -415,24 +421,52 @@ theorem freeEnergy_listener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKern
     Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
       speaker_listener_apply_singleton_ne_zero hb hα ho hS hu
 
+theorem isMarkovKernel_speaker_iterate_recurse (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) (L : Kernel U W)
+    [IsMarkovKernel (speaker α C L b)] (n : ℕ) :
+    IsMarkovKernel (speaker α C ((recurse μ κ b α C)^[n] L) b) := by
+  induction n with
+  | zero => assumption
+  | succ n ih =>
+    rw [Function.iterate_succ_apply']
+    exact isMarkovKernel_speaker_listener hb hα hκ _
+
 variable [Nonempty W]
 
 /-- The listener's update to the speaker who answers her raises the free energy. -/
 theorem freeEnergy_speaker_le_freeEnergy_listener (L : Kernel U W)
     [∀ u, IsZeroOrProbabilityMeasure (L u)] [IsMarkovKernel (speaker α C L b)] :
     freeEnergy μ κ C α (speaker α C L b) L ≤
-      freeEnergy μ κ C α (speaker α C L b) (listener μ (speaker α C L b ∘ₖ κ)) := by
+      freeEnergy μ κ C α (speaker α C L b) (recurse μ κ b α C L) := by
   rcases hα.eq_or_lt with rfl | hα'
   · simp [freeEnergy]
-  refine freeEnergy_le_freeEnergy_listener μ κ C α _ L (fun u _ ↦
-    Measure.absolutelyContinuous_of_forall_singleton fun w hL ↦ of_not_not fun hlis ↦ ?_) hα
-  obtain ⟨hμw, hSw⟩ := ne_zero_of_listener_apply_singleton_ne_zero hlis
-  rw [Kernel.comp_apply_singleton] at hSw
-  obtain ⟨o, -, ho⟩ := Finset.exists_ne_zero_of_sum_ne_zero hSw
-  exact right_ne_zero_of_mul ho ((speaker_apply_singleton_eq_zero_iff hα').2
-    ⟨w, belief_apply_singleton_ne_zero hb hμw (left_ne_zero_of_mul ho), hL⟩)
+  exact freeEnergy_le_freeEnergy_listener μ κ C α _ L (fun u _ ↦
+    Measure.absolutelyContinuous_of_forall_singleton fun w hL ↦ recurse_apply_singleton_eq_zero hα'
+      (fun _ hμ hκ ↦ belief_apply_singleton_ne_zero hb hμ hκ) hL) hα
 
-end Round
+variable (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) (L : Kernel U W) [∀ u, IsZeroOrProbabilityMeasure (L u)]
+  [IsMarkovKernel (speaker α C L b)]
+include hκ
+
+/-- The free energy rises along the recursion. -/
+theorem monotone_freeEnergy_iterate_recurse : Monotone fun n ↦
+    freeEnergy μ κ C α (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L) :=
+  monotone_nat_of_le_succ fun n ↦ by
+    have := isMarkovKernel_speaker_iterate_recurse (C := C) hb hα hκ L n
+    rw [Function.iterate_succ_apply']
+    exact (freeEnergy_speaker_le_freeEnergy_listener hb hα _).trans
+      (freeEnergy_listener_le_freeEnergy_speaker hb hα _)
+
+/-- The free energy converges along the recursion, being monotone and bounded above. -/
+theorem exists_tendsto_freeEnergy_iterate_recurse : ∃ g, Tendsto (fun n ↦
+    freeEnergy μ κ C α (speaker α C ((recurse μ κ b α C)^[n] L) b) ((recurse μ κ b α C)^[n] L))
+      atTop (𝓝 g) :=
+  ⟨_, tendsto_atTop_ciSup (monotone_freeEnergy_iterate_recurse hb hα hκ L)
+    ⟨log (Fintype.card U) + α * ∑ u, |C u|, by
+      rintro _ ⟨n, rfl⟩
+      have := isMarkovKernel_speaker_iterate_recurse (C := C) hb hα hκ L n
+      exact freeEnergy_le μ κ C hα _ _⟩⟩
+
+end Recursion
 
 /-! ### The speaker who knows the state -/
 

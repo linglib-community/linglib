@@ -86,14 +86,6 @@ def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
 
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
-/-- The cell of a world under a question holds the worlds giving the same answer. -/
-def cell (q : Question) (w : World) : Finset World :=
-  Finset.univ.filter fun w' ↦ q.answer w' = q.answer w
-
-theorem cell_preimage (q : Question) (w : World) : q.answer ⁻¹' {q.answer w} = ↑(cell q w) := by
-  ext w'
-  simp [cell]
-
 /-! ### The literal listener within an assumption set (5) -/
 
 /-- The literal listener within an assumption set (5) samples a world of the set at which the
@@ -107,16 +99,13 @@ instance (A : Finset World) (q : Question) : IsFiniteKernel (L0 A q) :=
 /-- The literal listener counts the worlds of the assumption set at which the utterance is true
 and the question's answer is the world's, over those at which the utterance is true. -/
 def l0 (A : Finset World) (q : Question) (u : Utt) (w : World) : ℕ × ℕ :=
-  (((A ∩ sem u).filter (· ∈ cell q w)).card, (A ∩ sem u).card)
+  (((A ∩ sem u).filter (q.answer · = q.answer w)).card, (A ∩ sem u).card)
 
 theorem L0_apply (A : Finset World) (q : Question) (u : Utt) (w : World) :
     L0 A q u {q.answer w} = ((l0 A q u w).1 : ℝ≥0∞) / (l0 A q u w).2 := by
-  have e1 : (↑(sem u) : Set World) ∩ ↑A = ↑(A ∩ sem u) := by ext; simp [and_comm]
-  have e2 : (↑(sem u) : Set World) ∩ ↑(cell q w) ∩ ↑A = ↑((A ∩ sem u).filter (· ∈ cell q w)) := by
-    ext; simp; tauto
-  rw [L0, listener_truthful_map_apply_singleton, cell_preimage,
-    Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,
-    Measure.count_apply_finset, Measure.count_apply_finset, l0]
+  rw [L0, listener_restrict_truthful_map_apply_singleton, Measure.count_apply_finset,
+    Measure.count_apply_finset, l0]
+  simp only [Finset.mem_coe, Finset.filter_mem_eq_inter]
 
 theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) :
     L0 A q .knowNeg = L0 A q .thinkNeg := by
@@ -151,7 +140,7 @@ theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : Wor
     obtain ⟨b₀, c₀⟩ := w
     simp only [World.believes] at hb
     subst hb
-    simp only [cell, Question.answer, Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [Question.answer]
     revert hc hl
     cases b <;> cases c <;> cases c₀ <;> decide
 
@@ -213,7 +202,7 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
   norm_num
 
 /-- Under the belief question the speaker's choice depends on the world only through Cole's
-belief, as the question's cells do. -/
+belief, as the question's answer does. -/
 theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
     S1 α k A .belief w = S1 α k A .belief w' := by
   rw [S1, S1, show Question.answer .belief w = Question.answer .belief w' from h]

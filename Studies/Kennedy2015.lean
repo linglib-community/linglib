@@ -75,8 +75,9 @@ section Classes
 open English.NumeralModifiers
 open scoped Denotes
 
-attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo from_
-  exactly precisely about around approximately roughly almost nearly approximator shortOf
+attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo
+  from_ asManyAs exactly precisely about around approximately roughly almost nearly approximator
+  shortOf
 
 /-- Each reading of a Class A modifier (4a) is disjoint from the two-sided meaning of its number. -/
 theorem classA_exclusive : ∀ w ∈ inventory, w.modifierClass = some .classA →

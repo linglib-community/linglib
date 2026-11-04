@@ -7,10 +7,11 @@ public import Linglib.Semantics.Tense.Connective
 
 Lexical entries for the Finnish temporal connectives: *ennen* and *ennen kuin* 'before',
 *jälkeen* 'after', *kun* 'when' with its compounds *sillä aikaa kun* 'while', *aina kun*
-'whenever' and *heti kun* 'as soon as', the durative *kunnes* and *saakka* 'until', and *vasta*
-'only then'. Finnish separates Karttunen's two *until*s and, uniquely in his sample, has both
-polarities of the punctual one: the negated *ennen kuin*, whose form is that of *before*, and the
-positive polarity item *vasta*, the twin of German *erst* (his (37) and (39)).
+'whenever' and *heti kun* 'as soon as', and the durative *kunnes* and *saakka* 'until'. Finnish
+separates Karttunen's two *until*s and, uniquely in his sample, has both polarities of the
+punctual one: the negated *ennen kuin*, whose form is that of *before*, and the positive polarity
+item *vasta* 'only then', the twin of German *erst* (his (37) and (39)), which is a focus particle
+rather than a connective and is entered in `Finnish.PolarityItems`.
 
 ## References
 
@@ -45,17 +46,12 @@ def silläAikaaKun : Connective := { form := "sillä aikaa kun", relation := .wh
 def ainaKun : Connective := { form := "aina kun", relation := .whenever }
 
 /-- *heti kun* 'as soon as', literally 'immediately when'. -/
-def hetiKun : Connective := { form := "heti kun", relation := .after }
+def hetiKun : Connective := { form := "heti kun", relation := .asSoonAs }
 
 /-- *kunnes*, the durative 'until', the conjunction. -/
 def kunnes : Connective := { form := "kunnes", relation := .until_ }
 
 /-- *saakka*, the durative 'until', the postposition. -/
 def saakka : Connective := { form := "saakka", relation := .until_ }
-
-/-- *vasta* 'only then' is the punctual 'until' of a positive clause, as in *prinsessa heräsi
-vasta yhdeksältä* 'the princess did not wake up until nine', with the same commitment to a waking
-at nine and the same suggestion of lateness as the negated *ennen kuin*. -/
-def vasta : Connective := { form := "vasta", relation := .until_ }
 
 end Finnish.TemporalConnectives

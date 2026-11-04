@@ -14,15 +14,10 @@ Deo and Thomas analyse English *just* as a domain-widening strategy. Besides the
 with *only*, *just* has emphatic, precisifying, minimal-sufficiency, unexplanatory, unelaboratory
 and counterexpectational uses, in some of which its prejacent answers no standard construal of the
 current question. The account replaces the current question by an underspecified question, the
-set of a question's construals at a context, and compares construals by width, which is weaker
-than question entailment. *Just* presupposes that the current question is the widest construal
-that the speaker can answer truthfully and relevantly, and asserts its prejacent.
-
-## Main definitions
-
-* `DeoThomas2025.WiderThan`: the width order on construals, (32).
-* `DeoThomas2025.Context.IsOptimal`: the widest answerable construal, (35).
-* `DeoThomas2025.just`: the lexical entry, (36).
+set of a question's construals at a context, and compares construals [by width](##WiderThan),
+which is weaker than question entailment. [*Just*](##just) presupposes that the current question
+is [the widest construal that the speaker can answer truthfully and
+relevantly](##Context.IsOptimal), and asserts its prejacent.
 
 ## Implementation notes
 
@@ -217,16 +212,14 @@ variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [Floo
 theorem widerThan_grain {ε₁ ε₂ : α} (h₁ : 0 < ε₁) (h : ε₁ < ε₂) :
     WiderThan (fromSetoid (grain ε₁)) (fromSetoid (grain ε₂)) := by
   have h₂ := h₁.trans h
-  have h0 {ε : α} (hε : 0 < ε) : (grain ε).cell 0 = Set.Ico (-(ε / 2)) (ε / 2) := by
-    rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne' (zero_mem _), zero_sub,
-      zero_add]
   refine ⟨by rw [info_fromSetoid, info_fromSetoid], ?_, (grain ε₁).cell 0,
     mem_alt_fromSetoid_of_mem_classes _ ((grain ε₁).cell_mem_classes 0), (grain ε₂).cell 0,
     mem_alt_fromSetoid_of_mem_classes _ ((grain ε₂).cell_mem_classes 0), ?_⟩
   · rw [alt_fromSetoid, alt_fromSetoid]
     rintro _ ⟨y, rfl⟩ _ ⟨z, rfl⟩ hlt
     exact (isGranularity_cell h₁).not_subset (isGranularity_cell h₂) h z y hlt.1
-  · rw [h0 h₁, h0 h₂, Set.ssubset_iff_of_subset (Set.Ico_subset_Ico (by linarith) (by linarith))]
+  · rw [cell_grain_zero h₁, cell_grain_zero h₂,
+      Set.ssubset_iff_of_subset (Set.Ico_subset_Ico (by linarith) (by linarith))]
     exact ⟨ε₁ / 2, ⟨by linarith, by linarith⟩, fun hx ↦ lt_irrefl _ hx.2⟩
 
 /-- In Figure 1, the half-year grain is wider than the year grain without refining it, so width is

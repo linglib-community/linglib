@@ -478,26 +478,6 @@ def silesian_plain_prs : Form Cell :=
       ⟨"stojkovic-2026", "Table 1"⟩
     ] }
 
-def slovak_plain_lform : Form Cell :=
-  { id := "stojkovic2026_slovak_plain_lform"
-    lexeme := Lexemes.battle_slovak
-    cell := l_form_f_sg
-    form := "bojovala"
-    morphs := ["boj", "ov", "a", "l", "a"]
-    source := [
-      ⟨"stojkovic-2026", "Table 1"⟩
-    ] }
-
-def slovak_plain_prs : Form Cell :=
-  { id := "stojkovic2026_slovak_plain_prs"
-    lexeme := Lexemes.battle_slovak
-    cell := prs_2sg
-    form := "bojujeʃ"
-    morphs := ["boj", "u", "je", "ʃ"]
-    source := [
-      ⟨"stojkovic-2026", "Table 1"⟩
-    ] }
-
 def slovenian_plain_lform : Form Cell :=
   { id := "stojkovic2026_slovenian_plain_lform"
     lexeme := Lexemes.travel_slovenian
@@ -725,6 +705,7 @@ def slovak_palatal_lform : Form Cell :=
     form := "bojovala"
     morphs := ["boj", "ov", "a", "l", "a"]
     source := [
+      ⟨"stojkovic-2026", "Table 1"⟩,
       ⟨"stojkovic-2026", "Table 2"⟩
     ] }
 
@@ -735,6 +716,7 @@ def slovak_palatal_prs : Form Cell :=
     form := "bojujeʃ"
     morphs := ["boj", "u", "je", "ʃ"]
     source := [
+      ⟨"stojkovic-2026", "Table 1"⟩,
       ⟨"stojkovic-2026", "Table 2"⟩
     ] }
 
@@ -944,14 +926,15 @@ structure Analysis where
   form : Form Cell
   /-- The `Root` column, the root class the paper assigns. -/
   root : Root
-  /-- The `Verbalizer` column. -/
+  /-- The `Verbalizer` column, the verbalizer the paper takes a form to write, where the form writes
+  another. -/
   verbalizer : Option String := none
   deriving DecidableEq, Repr
 
 def belarusian_plain_lform.analysis : Analysis :=
   { form := belarusian_plain_lform,
     root := Root.plain,
-    verbalizer := some "orthographic" }
+    verbalizer := some "ov" }
 
 def belarusian_plain_prs.analysis : Analysis :=
   { form := belarusian_plain_prs,
@@ -1055,8 +1038,7 @@ def polish_plain_prs.analysis : Analysis :=
 
 def russian_plain_lform.analysis : Analysis :=
   { form := russian_plain_lform,
-    root := Root.plain,
-    verbalizer := some "orthographic" }
+    root := Root.plain }
 
 def russian_plain_prs.analysis : Analysis :=
   { form := russian_plain_prs,
@@ -1068,14 +1050,6 @@ def silesian_plain_lform.analysis : Analysis :=
 
 def silesian_plain_prs.analysis : Analysis :=
   { form := silesian_plain_prs,
-    root := Root.plain }
-
-def slovak_plain_lform.analysis : Analysis :=
-  { form := slovak_plain_lform,
-    root := Root.plain }
-
-def slovak_plain_prs.analysis : Analysis :=
-  { form := slovak_plain_prs,
     root := Root.plain }
 
 def slovenian_plain_lform.analysis : Analysis :=
@@ -1105,7 +1079,7 @@ def upper_sorbian_plain_prs.analysis : Analysis :=
 def belarusian_palatal_lform.analysis : Analysis :=
   { form := belarusian_palatal_lform,
     root := Root.palatal,
-    verbalizer := some "orthographic" }
+    verbalizer := some "ov" }
 
 def belarusian_palatal_prs.analysis : Analysis :=
   { form := belarusian_palatal_prs,
@@ -1209,8 +1183,7 @@ def carpathian_rusyn_palatal_prs.analysis : Analysis :=
 
 def russian_palatal_lform.analysis : Analysis :=
   { form := russian_palatal_lform,
-    root := Root.palatal,
-    verbalizer := some "orthographic" }
+    root := Root.palatal }
 
 def russian_palatal_prs.analysis : Analysis :=
   { form := russian_palatal_prs,
@@ -1280,11 +1253,11 @@ def all : List (Form Cell) := [belarusian_plain_lform, belarusian_plain_prs,
   lower_sorbian_plain_prs, macedonian_plain_lform, macedonian_plain_prs,
   pannonian_rusyn_plain_lform, pannonian_rusyn_plain_prs, podlachian_plain_lform,
   podlachian_plain_prs, polish_plain_lform, polish_plain_prs, russian_plain_lform,
-  russian_plain_prs, silesian_plain_lform, silesian_plain_prs, slovak_plain_lform, slovak_plain_prs,
-  slovenian_plain_lform, slovenian_plain_prs, ukrainian_plain_lform, ukrainian_plain_prs,
-  upper_sorbian_plain_lform, upper_sorbian_plain_prs, belarusian_palatal_lform,
-  belarusian_palatal_prs, bunyev_ac_palatal_lform, bunyev_ac_palatal_prs, czech_palatal_lform,
-  czech_palatal_prs, kashubian_palatal_lform, kashubian_palatal_prs, lower_sorbian_palatal_lform,
+  russian_plain_prs, silesian_plain_lform, silesian_plain_prs, slovenian_plain_lform,
+  slovenian_plain_prs, ukrainian_plain_lform, ukrainian_plain_prs, upper_sorbian_plain_lform,
+  upper_sorbian_plain_prs, belarusian_palatal_lform, belarusian_palatal_prs,
+  bunyev_ac_palatal_lform, bunyev_ac_palatal_prs, czech_palatal_lform, czech_palatal_prs,
+  kashubian_palatal_lform, kashubian_palatal_prs, lower_sorbian_palatal_lform,
   lower_sorbian_palatal_prs, pannonian_rusyn_palatal_lform, pannonian_rusyn_palatal_prs,
   podlachian_palatal_lform, podlachian_palatal_prs, polish_palatal_lform, polish_palatal_prs,
   slovak_palatal_lform, slovak_palatal_prs, silesian_palatal_lform, silesian_palatal_prs,
@@ -1313,23 +1286,22 @@ def analyses : List Analysis := [belarusian_plain_lform.analysis, belarusian_pla
   pannonian_rusyn_plain_lform.analysis, pannonian_rusyn_plain_prs.analysis,
   podlachian_plain_lform.analysis, podlachian_plain_prs.analysis, polish_plain_lform.analysis,
   polish_plain_prs.analysis, russian_plain_lform.analysis, russian_plain_prs.analysis,
-  silesian_plain_lform.analysis, silesian_plain_prs.analysis, slovak_plain_lform.analysis,
-  slovak_plain_prs.analysis, slovenian_plain_lform.analysis, slovenian_plain_prs.analysis,
-  ukrainian_plain_lform.analysis, ukrainian_plain_prs.analysis, upper_sorbian_plain_lform.analysis,
-  upper_sorbian_plain_prs.analysis, belarusian_palatal_lform.analysis,
-  belarusian_palatal_prs.analysis, bunyev_ac_palatal_lform.analysis, bunyev_ac_palatal_prs.analysis,
-  czech_palatal_lform.analysis, czech_palatal_prs.analysis, kashubian_palatal_lform.analysis,
-  kashubian_palatal_prs.analysis, lower_sorbian_palatal_lform.analysis,
-  lower_sorbian_palatal_prs.analysis, pannonian_rusyn_palatal_lform.analysis,
-  pannonian_rusyn_palatal_prs.analysis, podlachian_palatal_lform.analysis,
-  podlachian_palatal_prs.analysis, polish_palatal_lform.analysis, polish_palatal_prs.analysis,
-  slovak_palatal_lform.analysis, slovak_palatal_prs.analysis, silesian_palatal_lform.analysis,
-  silesian_palatal_prs.analysis, upper_sorbian_palatal_lform.analysis,
-  upper_sorbian_palatal_prs.analysis, bos_cro_mon_ser_palatal_lform.analysis,
-  bos_cro_mon_ser_palatal_prs.analysis, carpathian_rusyn_palatal_lform.analysis,
-  carpathian_rusyn_palatal_prs.analysis, russian_palatal_lform.analysis,
-  russian_palatal_prs.analysis, slovenian_palatal_lform.analysis, slovenian_palatal_prs.analysis,
-  bulgarian_palatal_lform.analysis, bulgarian_palatal_prs.analysis,
+  silesian_plain_lform.analysis, silesian_plain_prs.analysis, slovenian_plain_lform.analysis,
+  slovenian_plain_prs.analysis, ukrainian_plain_lform.analysis, ukrainian_plain_prs.analysis,
+  upper_sorbian_plain_lform.analysis, upper_sorbian_plain_prs.analysis,
+  belarusian_palatal_lform.analysis, belarusian_palatal_prs.analysis,
+  bunyev_ac_palatal_lform.analysis, bunyev_ac_palatal_prs.analysis, czech_palatal_lform.analysis,
+  czech_palatal_prs.analysis, kashubian_palatal_lform.analysis, kashubian_palatal_prs.analysis,
+  lower_sorbian_palatal_lform.analysis, lower_sorbian_palatal_prs.analysis,
+  pannonian_rusyn_palatal_lform.analysis, pannonian_rusyn_palatal_prs.analysis,
+  podlachian_palatal_lform.analysis, podlachian_palatal_prs.analysis, polish_palatal_lform.analysis,
+  polish_palatal_prs.analysis, slovak_palatal_lform.analysis, slovak_palatal_prs.analysis,
+  silesian_palatal_lform.analysis, silesian_palatal_prs.analysis,
+  upper_sorbian_palatal_lform.analysis, upper_sorbian_palatal_prs.analysis,
+  bos_cro_mon_ser_palatal_lform.analysis, bos_cro_mon_ser_palatal_prs.analysis,
+  carpathian_rusyn_palatal_lform.analysis, carpathian_rusyn_palatal_prs.analysis,
+  russian_palatal_lform.analysis, russian_palatal_prs.analysis, slovenian_palatal_lform.analysis,
+  slovenian_palatal_prs.analysis, bulgarian_palatal_lform.analysis, bulgarian_palatal_prs.analysis,
   lemko_rusyn_palatal_lform.analysis, lemko_rusyn_palatal_prs.analysis,
   macedonian_palatal_lform.analysis, macedonian_palatal_prs.analysis,
   ukrainian_palatal_lform.analysis, ukrainian_palatal_prs.analysis]

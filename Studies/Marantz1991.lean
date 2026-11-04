@@ -84,6 +84,12 @@ structure Clause where
   object : ObjectPosition
   deriving DecidableEq, Repr
 
+/-- The positions the verb and its inflection govern. -/
+inductive Position where
+  | subject
+  | object
+  deriving DecidableEq, Repr
+
 namespace Clause
 
 /-- A transitive clause. -/
@@ -105,33 +111,54 @@ def raising : Clause := ⟨false, none, .chain none⟩
 
 variable (c : Clause) (r : Rules) (v : Bool)
 
-/-- The chains with a link in a position the verb and its inflection govern, highest first, each
-given by the case a lexical head has valued on it, if any.
-An unfilled object position is listed when the language sees it. -/
-def chains : List (Option Case) :=
-  c.subjectCase ::
+/-- The case a lexical head has valued on the chain in a position, if any. -/
+def lexicalCase : Position → Option Case
+  | .subject => c.subjectCase
+  | .object =>
     match c.object with
-    | .chain l => [l]
+    | .chain l => l
+    | .trace | .unfilled => none
+
+/-- The positions the verb and its inflection govern that hold a chain, highest first. An unfilled
+object position is listed when the language sees it. -/
+def chains : List Position :=
+  .subject ::
+    match c.object with
+    | .chain _ => [.object]
     | .trace => []
-    | .unfilled => if v then [none] else []
+    | .unfilled => if v then [.object] else []
 
 /-- The case of the subject's chain, with what valued it. -/
-def subject : Option (Case × Mechanism) := ((r.assign id (c.chains v)).map (·.2.value?)).headD none
+def subject : Option (Case × Mechanism) := (r.assign c.lexicalCase (c.chains v) .subject).value?
 
 /-- The case of the object's chain, with what valued it, where there is one. -/
 def object? : Option (Case × Mechanism) :=
   match c.object with
-  | .chain _ => ((r.assign id (c.chains v)).map (·.2.value?)).getD 1 none
+  | .chain _ => (r.assign c.lexicalCase (c.chains v) .object).value?
   | .trace | .unfilled => none
+
+private theorem assign_subject (lex : Position → Option Case) :
+    r.assign lex [.subject, .object] .subject =
+      .offer (if lex .subject = none ∧ lex .object = none
+        then (r.high.map (·, .dependent)).or (r.alone (lex .subject))
+        else r.alone (lex .subject)) :=
+  (r.assign_pair lex (by decide)).1
+
+private theorem assign_object (lex : Position → Option Case) :
+    r.assign lex [.subject, .object] .object =
+      .offer (if lex .subject = none ∧ lex .object = none
+        then (r.low.map (·, .dependent)).or (r.alone (lex .object)) else r.alone (lex .object)) :=
+  (r.assign_pair lex (by decide)).2
 
 theorem subject_of_lexical {l : Case} (h : c.subjectCase = some l) :
     c.subject r v = some (l, .lexical) := by
   obtain ⟨t, s, o⟩ := c
   subst h
   rcases o with l' | _ | _
-  · simp [subject, chains, Rules.assign_pair, Rules.elsewhere]
-  · simp [subject, chains, Rules.assign_singleton, Rules.elsewhere]
-  · cases v <;> simp [subject, chains, Rules.assign_pair, Rules.assign_singleton, Rules.elsewhere]
+  · simp [subject, chains, lexicalCase, assign_subject, Rules.alone]
+  · simp [subject, chains, lexicalCase, Rules.assign_singleton, Rules.alone]
+  · cases v <;>
+      simp [subject, chains, lexicalCase, assign_subject, Rules.assign_singleton, Rules.alone]
 
 /-- The subject has dependent case exactly when no lexical head has marked it, the rules assign
 a dependent case upward, and the object position holds a distinct unmarked chain or is unfilled
@@ -142,7 +169,7 @@ theorem subject_dependent_iff :
         (c.object = .chain none ∨ c.object = .unfilled ∧ v = true) := by
   obtain ⟨t, _ | s, (_ | l') | _ | _⟩ := c <;> obtain ⟨_ | hi, lo, _ | un⟩ := r <;>
     cases v <;>
-    simp [subject, chains, Rules.assign_pair, Rules.assign_singleton, Rules.elsewhere]
+    simp [subject, chains, lexicalCase, assign_subject, Rules.assign_singleton, Rules.alone]
 
 /-- The object has dependent case exactly when it is a distinct chain no lexical head has
 marked, the subject's chain is unmarked too, and the rules assign a dependent case downward. -/
@@ -150,7 +177,7 @@ theorem object_dependent_iff :
     (c.object? r v).map (·.2) = some .dependent ↔
       c.subjectCase = none ∧ c.object = .chain none ∧ r.low.isSome := by
   obtain ⟨t, _ | s, (_ | l') | _ | _⟩ := c <;> obtain ⟨hi, _ | lo, _ | un⟩ := r <;>
-    simp [object?, chains, Rules.assign_pair, Rules.elsewhere]
+    simp [object?, chains, lexicalCase, assign_object, Rules.alone]
 
 /-- The ergative generalization holds under any rules, since a subject moved from the object
 position has no dependent case. -/
@@ -298,12 +325,6 @@ theorem georgian_object_eq_pattern : ∀ v ∈ [Georgian.VerbClass.transitive, .
 
 /-! ### Agreement across the split -/
 
-/-- The positions the verb and its inflection govern. -/
-inductive Position where
-  | subject
-  | object
-  deriving DecidableEq, Repr
-
 /-- The position the agreement of the paper's (31) takes its features from, or `none` for the
 default third person singular. Dependent agreement upward and unmarked agreement both pass over
 a chain a lexical head has marked, so the agreement goes to the subject unless it is so marked,
@@ -334,13 +355,13 @@ against the embedded subject, so an accusative does not depend on a nominative h
 assigned in its clause. -/
 theorem ecm :
     let r := Rules.ofAlignment .accusative
-    ((r.unmarkedPass (fun _ ↦ true) <|
-      r.dependentPass (fun x ↦ x ≠ .embeddedObject) <|
-      r.dependentPass (fun x ↦ x ≠ .matrixSubject) <|
-      lexicalValuation (fun _ ↦ none)
-        [ECMArgument.matrixSubject, .embeddedSubject, .embeddedObject]).map
-          (·.2.value?.map (·.1))) =
-      [some .nom, some .acc, some .acc] := by
+    let xs := [ECMArgument.matrixSubject, .embeddedSubject, .embeddedObject]
+    let lt := xs.idxOf ⁻¹'o (· < ·)
+    let st := r.elsewhere.pass lt xs.toFinset <|
+      r.dependent.pass lt (xs.toFinset.erase .embeddedObject) <|
+      r.dependent.pass lt (xs.toFinset.erase .matrixSubject) <|
+      lexical fun _ ↦ .unvalued
+    xs.map (fun x ↦ (st x).value?.map (·.1)) = [some .nom, some .acc, some .acc] := by
   decide
 
 end Marantz1991

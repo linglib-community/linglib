@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -35,7 +35,7 @@ Gajewski's cross-categorial definition at type `t`.
 
 namespace Presupposition
 
-open NaturalLogic Trivalent
+open Trivalent
 
 variable {α W : Type*}
 

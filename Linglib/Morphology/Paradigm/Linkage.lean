@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Inflection
 public import Linglib.Morphology.Realization
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Prod
@@ -29,10 +30,13 @@ takes the lexeme's root.
 * `Linkage.ofFun`, `Linkage.canonical`: the linkage of a stem-choice function.
 * `Linkage.ofRules`: the linkage of rules of paradigm linkage, each cell taking the stem its
   lexeme's rules realize over the lexeme's root.
+* `Linkage.toInflectionalParadigm`: the inflectional paradigm of a linkage's form
+  correspondents.
 
 ## Main results
 
-* `Linkage.IsHeteroclite.isSuppletive`: heteroclisis entails suppletion.
+* `Linkage.IsHeteroclite.isSuppletive`, `Linkage.IsHeteroclite.not_isClassDetermined`: heteroclisis
+  entails suppletion, the stems of a heteroclite lexeme being determined by no one class.
 * `Linkage.realized_eq_of_corr_eq`: equal correspondent sets force equal realizations.
 * `Linkage.ofFun_isCanonical_iff`: under an injective identification, the linkage of a stem
   choice is canonical exactly when each lexeme's stem is constant.
@@ -198,6 +202,14 @@ theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSupplet
   let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
   ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
 
+/-- When each pattern draws its stems from one class, a heteroclite lexeme's stems are not
+class-determined, so their alternation is suppletion in [stump-2016]'s sense. -/
+theorem IsHeteroclite.not_isClassDetermined {A : Set (S → Z)}
+    (hA : ∀ p ∈ A, ∀ σ σ', cls (p σ) = cls (p σ')) (h : ℓ.IsHeteroclite cls l) :
+    ¬ ℓ.IsClassDetermined A l := fun ⟨p, hp, hl⟩ ↦
+  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
+  hne (by rw [hl σ z hz, hl σ' z' hz']; exact hA p hp σ σ')
+
 /-! ### Decidability
 
 Each instance is `inferInstanceAs` on the definition's body, so that `decide` reduces in the
@@ -260,6 +272,39 @@ theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : S} (h : ℓ.corr l
   rw [realized_eq_image_corr, realized_eq_image_corr, h]
 
 end Realized
+
+/-! ### The inflectional paradigm of a linkage -/
+
+/-- The inflectional paradigm of a linkage with realization rules `rf` builds the forms of each
+content cell from its form correspondents. -/
+def toInflectionalParadigm (rf : Z → M → W) : InflectionalParadigm L S Z M W := ⟨⟨ℓ.corr⟩, rf⟩
+
+section ToInflectionalParadigm
+
+variable (rf : Z → M → W)
+
+/-- The stems of a linkage's inflectional paradigm are the stems it selects. -/
+theorem toInflectionalParadigm_stem [DecidableEq Z] :
+    (ℓ.toInflectionalParadigm rf).stem = ℓ.toRealization := by
+  show (⟨fun l σ ↦ (ℓ.corr l σ).image Prod.fst⟩ : Realization L S Z) = ⟨ℓ.realize⟩
+  congr 1
+  funext l σ
+  ext z
+  simp
+
+/-- A linkage is stem-invariant exactly when its inflectional paradigm's stems are invariant, the
+lexical row of canonical inflection. -/
+theorem isStemInvariant_iff_stem_isInvariant [DecidableEq Z] :
+    ℓ.IsStemInvariant ↔ ∀ l, (ℓ.toInflectionalParadigm rf).stem.IsInvariant l := by
+  rw [toInflectionalParadigm_stem]; rfl
+
+theorem toInflectionalParadigm_realization_realize [DecidableEq W] (l : L) (σ : S) :
+    (ℓ.toInflectionalParadigm rf).realization.realize l σ =
+      (ℓ.realize l σ).image fun z ↦ rf z (ℓ.pm l σ) := by
+  ext w
+  simp [InflectionalParadigm.realization, toInflectionalParadigm]
+
+end ToInflectionalParadigm
 
 /-! ### Linkages of stem-choice functions -/
 

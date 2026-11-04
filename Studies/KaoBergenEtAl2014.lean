@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
 
 /-!
@@ -85,8 +86,8 @@ instance (μ : Measure Meaning) (α : ℝ) (p : Meaning × Goal) : IsFiniteMeasu
 
 /-- The pragmatic listener over meaning and goal inverts the speaker against the product of
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
-noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
-    [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
+noncomputable def L1 (μ : Measure Meaning) (ν : Measure Goal) (α : ℝ) :
+    Kernel Cat (Meaning × Goal) :=
   listener (μ.prod ν) (S1 μ α)
 
 section Speaker
@@ -121,12 +122,10 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
 
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
-      ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1]
-  refine (listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff hα 0 (L0 μ) project μ ν
-    u m).trans ?_
-  simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
-  rfl
+      ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
+  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
+  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff hα, sem,
+    Set.mem_ofPred_eq]
 
 /-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
 name whenever some animal of positive prior shares the value. -/
@@ -136,22 +135,15 @@ theorem nonliteral (hα : 0 < α) {g : Goal} (hν : ν {g} ≠ 0) {f f' : Featur
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hp, g, hν, (.animal, f'), hf, rfl, ha⟩
 
+omit [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] in
 /-- Category inference is prior-driven. Since a goal projects the category away, the speaker
 behaves alike at the animal and at the person with the same features, and the listener's
 posterior odds between the two categories at a feature vector are their prior odds. -/
 theorem category_odds (u : Cat) (c c' : Cat) (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
-  have key : ∀ c, (L1 μ ν α u).fst {(c, f)}
-      = μ {(c, f)} * ∑ g, ν {g} *
-          (S1 μ α ((.person, f), g) {u} / ∑ p, S1 μ α p {u} * (μ.prod ν) {p}) :=
-    fun c ↦ by
-      rw [L1, Measure.fst_apply_singleton, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun g _ ↦ ?_
-      rw [listener_apply_singleton, ← Set.singleton_prod_singleton, Measure.prod_prod,
-        show S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) from rfl, mul_comm, mul_div_assoc,
-        mul_assoc]
-  rw [key c, key c']
-  ring
+  change (L1 μ ν α).fst u _ * _ = (L1 μ ν α).fst u _ * _
+  rw [L1, listener_prod_fst]
+  exact listener_apply_singleton_mul_eq_of_apply_eq _ _ rfl
 
 end Listener
 

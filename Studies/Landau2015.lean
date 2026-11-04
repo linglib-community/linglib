@@ -5,7 +5,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Syntax.Control.Head
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control

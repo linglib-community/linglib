@@ -2,6 +2,7 @@
   {
     "id": "haspelmath2025a_ex1",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(1)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Lee is a baker.",
     "discourseSegments": [],
@@ -20,6 +21,7 @@
   {
     "id": "haspelmath2025a_ex2",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(2)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Kim is my mother.",
     "discourseSegments": [],
@@ -38,6 +40,7 @@
   {
     "id": "haspelmath2025a_ex3",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(3)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "The bird is small.",
     "discourseSegments": [],
@@ -56,6 +59,7 @@
   {
     "id": "haspelmath2025a_ex4",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(4)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "The bird is on the roof.",
     "discourseSegments": [],
@@ -74,6 +78,7 @@
   {
     "id": "haspelmath2025a_ex5",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(5)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "There is a bird on the roof.",
     "discourseSegments": [],
@@ -92,6 +97,7 @@
   {
     "id": "haspelmath2025a_ex6",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(6)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "I have a boat.",
     "discourseSegments": [],
@@ -110,6 +116,7 @@
   {
     "id": "haspelmath2025a_ex7",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(7)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "The boat belongs to me.",
     "discourseSegments": [],
@@ -261,6 +268,7 @@
   {
     "id": "haspelmath2025a_ex23",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(23)"},
+    "method": "introspection",
     "language": "west2369",
     "primaryText": "Man pul ziyâde dâram.",
     "discourseSegments": [],
@@ -328,6 +336,7 @@
   {
     "id": "haspelmath2025a_ex26",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(26)"},
+    "method": "introspection",
     "language": "russ1263",
     "primaryText": "Mašin-a prinadležit Miš-e.",
     "discourseSegments": [],
@@ -393,6 +402,7 @@
   {
     "id": "haspelmath2025a_ex33",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(33)"},
+    "method": "introspection",
     "language": "stan1288",
     "primaryText": "Hay mucha gente afuera.",
     "discourseSegments": [],
@@ -460,6 +470,7 @@
   {
     "id": "haspelmath2025a_ex52",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(52)"},
+    "method": "introspection",
     "language": "ital1282",
     "primaryText": "Ci sono molte montagne in Svizzera.",
     "discourseSegments": [],
@@ -485,6 +496,7 @@
   {
     "id": "haspelmath2025a_ex53",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(53)"},
+    "method": "introspection",
     "language": "finn1318",
     "primaryText": "Kato-lla on lintu.",
     "discourseSegments": [],
@@ -507,6 +519,7 @@
   {
     "id": "haspelmath2025a_ex53cf",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(53)"},
+    "method": "introspection",
     "language": "finn1318",
     "primaryText": "Lintu on katolla.",
     "discourseSegments": [],
@@ -546,8 +559,31 @@
     "verified": "page-image"
   },
   {
+    "id": "haspelmath2025a_ex61",
+    "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(61)"},
+    "language": "hame1242",
+    "primaryText": "Noqó dá-u?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Noqó", "water"], ["dá-u", "EXV-Q"]
+    ],
+    "translation": "Is there water?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "existential"],
+      ["bold", "dá-u"],
+      ["boldGloss", "EXV-Q"]
+    ],
+    "comment": "The source cites (Petrollino 2019: 11) and gives the example as an existential clause with no locative phrase.",
+    "verified": "page-image"
+  },
+  {
     "id": "haspelmath2025a_ex64",
     "source": {"bibkey": "haspelmath-2025a", "paperLabel": "(64)"},
+    "method": "corpus",
     "language": "lati1261",
     "primaryText": "Cogito, ergo sum.",
     "discourseSegments": [],

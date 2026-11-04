@@ -22,7 +22,7 @@ and nominalized with the say-root `[… V-TENSE g-ɘːš-CASE]`.
 - `Buryat.hanaxa`, `Buryat.medexe`, `Buryat.xelexe`, `Buryat.duulaxa` —
   clause-embedding verbs; all four alternate between the finite-CP and
   nominalized frames (ex. 35–36, 50–51). *hanaxa*'s frame-conditioned
-  think~remember readings ride on `Verb.Reading` rows keyed to
+  think~remember readings ride on `Clause.Embedding.Reading` rows keyed to
   `Buryat.nominalizedFrame`
 
 ## Implementation notes

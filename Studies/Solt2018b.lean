@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Measure.Basic
-public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Solt (2018): Proportional Comparatives and Relative Scales
@@ -40,8 +39,6 @@ Solt's other 2018 paper, the multidimensionality chapter, is formalized in
 @[expose] public section
 
 namespace Solt2018b
-
-open Degree
 
 variable {α : Type*} (μ : α → ℚ)
 

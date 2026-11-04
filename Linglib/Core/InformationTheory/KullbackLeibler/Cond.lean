@@ -59,19 +59,6 @@ theorem klDiv_cond_cond (hs : MeasurableSet s) (ht : MeasurableSet t) (hs0 : μ 
     ENNReal.toReal_mul, ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, inv_mul_eq_div,
     ← Real.log_inv, inv_div]
 
-theorem klDiv_cond_cond_lt_iff {t' : Set Ω} (hs : MeasurableSet s) (ht : MeasurableSet t)
-    (ht' : MeasurableSet t') (hs0 : μ s ≠ 0) (hst : s ≤ᵐ[μ] t) (hst' : s ≤ᵐ[μ] t') :
-    klDiv μ[|s] μ[|t] < klDiv μ[|s] μ[|t'] ↔ μ t < μ t' := by
-  have hpos : 0 < μ.real s := ENNReal.toReal_pos hs0 (measure_ne_top _ _)
-  have hle {v : Set Ω} (hv : s ≤ᵐ[μ] v) : μ.real s ≤ μ.real v :=
-    ENNReal.toReal_mono (measure_ne_top _ _) (measure_mono_ae hv)
-  rw [klDiv_cond_cond hs ht hs0 hst, klDiv_cond_cond hs ht' hs0 hst',
-    ENNReal.ofReal_lt_ofReal_iff_of_nonneg (Real.log_nonneg ((one_le_div hpos).2 (hle hst))),
-    Real.log_lt_log_iff (div_pos (hpos.trans_le (hle hst)) hpos)
-      (div_pos (hpos.trans_le (hle hst')) hpos),
-    div_lt_div_iff_of_pos_right hpos, measureReal_def, measureReal_def,
-    ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
-
 theorem klDiv_cond_cond_eq_top_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
     klDiv μ[|s] μ[|t] = ∞ ↔ ¬ s ≤ᵐ[μ] t := by
   refine ⟨fun h hst ↦ ?_, fun h ↦

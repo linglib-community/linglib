@@ -32,7 +32,7 @@ counterparts are fine (`judgments_10`, `judgments_13`).
 
 A plurality is the domain of Bar-Lev's existential pluralization, the disjunction of its atoms,
 and the alternatives are his subdomain alternatives, the sub-disjunctions, all of which are
-innocently includable (`Exhaustification.II_eq_self_of_subset_supClosure`).
+innocently includable (`Exhaustification.isInnocentlyIncludable_iff_of_subset_supClosure`).
 The common ground is a set of worlds and accommodation intersects it with the presupposition.
 The higher `pex` of (24) and (27) does not change the truth conditions of a negated plural and
 is not modelled.
@@ -74,8 +74,15 @@ noncomputable abbrev pexPlural (R : Set (Set W)) : W → SignType :=
 theorem pexPlural_ne_zero_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
     pexPlural D x P R w ≠ 0 ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
-  rw [pexIEII_ne_zero_iff,
-    II_eq_self_of_subset_supClosure (p := atom P) le_rfl hsplit_supClosure h.single hne h.all]
+  have hset : {a ∈ R | IsInnocentlyIncludable (supClosure (atom P '' ↑(x ∩ D)))
+      (⋃ b ∈ x ∩ D, atom P b) a ∧ a ≠ ⋃ b ∈ x ∩ D, atom P b} =
+        supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b} ∩ R := by
+    ext a
+    rw [Set.mem_sep_iff, isInnocentlyIncludable_iff_of_subset_supClosure (p := atom P) le_rfl
+      hsplit_supClosure h.single hne h.all]
+    simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff]
+    tauto
+  rw [pexIEII_ne_zero_iff, hset]
   exact and_iff_right fun ψ hψ ↦
     absurd hψ (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
 
@@ -121,7 +128,7 @@ theorem pexPlural_eq_neg_one_iff : pexPlural D x P R w = -1 ↔ ∀ a ∈ x, a �
     exact hnone c (Finset.mem_inter.1 (hS hc)).1 (Finset.mem_inter.1 (hS hc)).2 hPc
   rw [pexIEII_eq_neg_one_iff, pexIEII_ne_zero_iff]
   refine ⟨fun ⟨_, hna⟩ a hax haD hPa ↦ hna (Set.mem_biUnion (Finset.mem_inter.2 ⟨hax, haD⟩) hPa),
-    fun hnone ↦ ⟨⟨fun ψ hψ _ ↦ hout hnone ψ hψ.1, .inr fun α hα ↦ hout hnone α hα.1.1.1⟩,
+    fun hnone ↦ ⟨⟨fun ψ hψ _ ↦ hout hnone ψ hψ.1, .inr fun α hα ↦ hout hnone α hα.2.1.1⟩,
       fun hw ↦ ?_⟩⟩
   obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
   exact hnone a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2 hPa

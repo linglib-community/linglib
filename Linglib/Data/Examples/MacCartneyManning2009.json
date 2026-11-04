@@ -1,0 +1,458 @@
+[
+  {
+    "id": "maccartneymanning2009_manage",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, +/−"
+    },
+    "language": "stan1293",
+    "primaryText": "he managed to escape",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "+/−"
+      ],
+      [
+        "deletion",
+        "≡"
+      ],
+      [
+        "insertion",
+        "≡"
+      ],
+      [
+        "hypothesis",
+        "he escaped"
+      ],
+      [
+        "monotonicity",
+        "up"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_force",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, +/◦"
+    },
+    "language": "stan1293",
+    "primaryText": "he was forced to sell",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "+/◦"
+      ],
+      [
+        "deletion",
+        "⊏"
+      ],
+      [
+        "insertion",
+        "⊐"
+      ],
+      [
+        "hypothesis",
+        "he sold"
+      ],
+      [
+        "monotonicity",
+        "up"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_permit",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, ◦/−"
+    },
+    "language": "stan1293",
+    "primaryText": "he was permitted to live",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "◦/−"
+      ],
+      [
+        "deletion",
+        "⊐"
+      ],
+      [
+        "insertion",
+        "⊏"
+      ],
+      [
+        "hypothesis",
+        "he lived"
+      ],
+      [
+        "monotonicity",
+        "up"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_forget",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, −/+"
+    },
+    "language": "stan1293",
+    "primaryText": "he forgot to pay",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "−/+"
+      ],
+      [
+        "deletion",
+        "^"
+      ],
+      [
+        "insertion",
+        "^"
+      ],
+      [
+        "hypothesis",
+        "he paid"
+      ],
+      [
+        "monotonicity",
+        "down"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_refuse",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, −/◦"
+    },
+    "language": "stan1293",
+    "primaryText": "he refused to fight",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "−/◦"
+      ],
+      [
+        "deletion",
+        "|"
+      ],
+      [
+        "insertion",
+        "|"
+      ],
+      [
+        "hypothesis",
+        "he fought"
+      ],
+      [
+        "monotonicity",
+        "down"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_hesitate",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, ◦/+"
+    },
+    "language": "stan1293",
+    "primaryText": "he hesitated to ask",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "◦/+"
+      ],
+      [
+        "deletion",
+        "⌣"
+      ],
+      [
+        "insertion",
+        "⌣"
+      ],
+      [
+        "hypothesis",
+        "he asked"
+      ],
+      [
+        "monotonicity",
+        "down"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_admit",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, +/+"
+    },
+    "language": "stan1293",
+    "primaryText": "he admitted that he knew",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "+/+"
+      ],
+      [
+        "deletion",
+        "⊏"
+      ],
+      [
+        "insertion",
+        "⊐"
+      ],
+      [
+        "hypothesis",
+        "he knew"
+      ],
+      [
+        "monotonicity",
+        "non"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_pretend",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, −/−"
+    },
+    "language": "stan1293",
+    "primaryText": "he pretended he was sick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "−/−"
+      ],
+      [
+        "deletion",
+        "|"
+      ],
+      [
+        "insertion",
+        "|"
+      ],
+      [
+        "hypothesis",
+        "he was sick"
+      ],
+      [
+        "monotonicity",
+        "non"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_want",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6 table, ◦/◦"
+    },
+    "language": "stan1293",
+    "primaryText": "he wanted to fly",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "◦/◦"
+      ],
+      [
+        "deletion",
+        "#"
+      ],
+      [
+        "insertion",
+        "#"
+      ],
+      [
+        "hypothesis",
+        "he flew"
+      ],
+      [
+        "monotonicity",
+        "non"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_permit_neg",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6, second observation"
+    },
+    "language": "stan1293",
+    "primaryText": "he wasn't permitted to live",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "◦/−"
+      ],
+      [
+        "relation",
+        "⊏"
+      ],
+      [
+        "hypothesis",
+        "he didn't live"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_hesitate_neg",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6, second observation"
+    },
+    "language": "stan1293",
+    "primaryText": "he didn't hesitate to ask",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "◦/+"
+      ],
+      [
+        "relation",
+        "|"
+      ],
+      [
+        "hypothesis",
+        "he didn't ask"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maccartneymanning2009_admit_neg",
+    "source": {
+      "bibkey": "maccartney-manning-2009",
+      "paperLabel": "Section 6, third observation"
+    },
+    "language": "stan1293",
+    "primaryText": "he didn't admit that he knew",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "signature",
+        "+/+"
+      ],
+      [
+        "relation",
+        "|"
+      ],
+      [
+        "hypothesis",
+        "he didn't know"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

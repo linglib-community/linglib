@@ -64,6 +64,15 @@ theorem OrderEmbedding.isLeftLinear {M N : Type*} [PartialOrder M] [PartialOrder
   ⟨fun _ _ _ ha hb ↦ (IsLeftLinear.comparable_of_le_common (f.monotone ha)
     (f.monotone hb)).imp f.le_iff_le.1 f.le_iff_le.1⟩
 
+/-- The order dual of a partial order is left-linear exactly when the successors of every element
+are pairwise comparable, so that it never branches forward. -/
+theorem isLeftLinear_orderDual_iff {M : Type*} [PartialOrder M] :
+    IsLeftLinear Mᵒᵈ ↔ ∀ ⦃a b c : M⦄, c ≤ a → c ≤ b → a ≤ b ∨ b ≤ a :=
+  ⟨fun h a b c ha hb ↦ (h.comparable_of_le_common (a := OrderDual.toDual a)
+      (b := OrderDual.toDual b) (c := OrderDual.toDual c) ha hb).symm,
+    fun h ↦ ⟨fun a b c ha hb ↦ (h (a := OrderDual.ofDual a) (b := OrderDual.ofDual b)
+      (c := OrderDual.ofDual c) ha hb).symm⟩⟩
+
 namespace IsLeftLinear
 
 variable {M : Type*} [PartialOrder M] [IsLeftLinear M]
@@ -96,6 +105,14 @@ variable {M : Type*} [PartialOrder M]
 
 /-- A node is branching when it has at least two covers. -/
 def IsBranching (x : M) : Prop := {a | x ⋖ a}.Nontrivial
+
+/-- An order with a branching element is not left-linear in its order dual. -/
+theorem IsBranching.not_isLeftLinear_orderDual {x : M} (hx : IsBranching x) : ¬ IsLeftLinear Mᵒᵈ :=
+  fun h ↦ by
+    obtain ⟨a, ha, b, hb, hab⟩ := hx
+    rcases isLeftLinear_orderDual_iff.1 h ha.le hb.le with hle | hle
+    · exact hab ((hb.eq_or_eq ha.le hle).resolve_left ha.ne')
+    · exact hab ((ha.eq_or_eq hb.le hle).resolve_left hb.ne').symm
 
 /-- In a finite order in which every non-maximal node branches, a non-maximal node yields a node
 covered by two distinct maximal ones. -/

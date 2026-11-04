@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Morphology.Morph
 
 /-!
@@ -27,7 +28,7 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 * `Dargwa.Tanti.Case.builtOnOblique_iff`: the ergative, dative and comitative are the cases built
   on the oblique stem
-* `Dargwa.Tanti.label_comp_marking`: the marking is the ergative alignment
+* `Dargwa.Tanti.isErgative_marking`: the marking is the ergative alignment
 
 ## Implementation notes
 
@@ -108,7 +109,7 @@ def marking : ArgumentRole → Case
   | .S | .P | .R | .T => .abs
 
 /-- The marking is the ergative alignment. -/
-theorem label_comp_marking : Case.label ∘ marking = Alignment.ergative := by
-  funext r; cases r <;> rfl
+theorem isErgative_marking : Alignment.IsErgative (Case.label ∘ marking) := by
+  decide
 
 end Dargwa.Tanti

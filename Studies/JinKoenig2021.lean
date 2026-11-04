@@ -57,7 +57,7 @@ def DualInference {X : Type*} (p : X → Prop) : Prop := (∃ x, p x) ∧ ∃ y,
 
 /-! ### Temporal operators (Section 6.2) -/
 
-open Tense Anscombe1964 Karttunen1974 in
+open Tense in
 /-- *q before p* says that *p* holds at some time and fails at the time of *q*, which precedes
 every time of *p*, (13b). -/
 theorem before_dual {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)}

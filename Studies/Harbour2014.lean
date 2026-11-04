@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
-public import Linglib.Semantics.Plurality.Number
+public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Core.Order.Concept
 public import Studies.Corbett2000
 public import Linglib.Data.Examples.Readers
@@ -20,8 +20,7 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 
 ## Main definitions
 
-* `Setting`, `Bundle`, `Convention`: parameter settings, feature bundles, and the placement of
-  the cuts.
+* `Setting`, `Convention`: parameter settings and the placement of the cuts.
 * `Setting.cell`: the region of a person lattice a bundle denotes in a setting.
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
@@ -31,9 +30,9 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 
 ## Implementation notes
 
-* A bundle is a `Finset` of signed features, so the axiom of extension (27) is built in, and it
-  is interpreted in the order (28); its cell is its denotation less the more specific bundles',
-  as the plural of Figure 7 is `Q+ \ Q′`.
+* A `Number.Bundle` is a `Finset` of signed features, so the axiom of extension (27) is built in,
+  and it is interpreted in the order (28); its cell is its denotation less the more specific
+  bundles', as the plural of Figure 7 is `Q+ \ Q′`.
 * `card` carries the features from a person lattice to its strata, where `[±atomic]` and
   `[±minimal]` leave one stratum or every stratum from one up (`Strata`) and `[±additive]` cuts
   horizontally. The strata above four only matter through the cuts, so `collapse` reduces every
@@ -57,7 +56,7 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 namespace Harbour2014
 
 open Mereology
-open Number (additiveIn atomsOf nonAtomsOf nonMinimalOf)
+open Number (Bundle Feature additiveIn atomsOf nonAtomsOf nonMinimalOf)
 
 /-! ### Person lattices and their strata (§2, (12)) -/
 
@@ -97,12 +96,15 @@ theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
 
 variable [DecidableEq α]
 
+omit [DecidableEq α] in
 theorem atomsOf_region : atomsOf (region B S) = region B (atomsOf S) := by
   ext s; simp only [atomsOf, region, atom_iff_card, and_assoc]
 
+omit [DecidableEq α] in
 theorem nonAtomsOf_region : nonAtomsOf (region B S) = region B (nonAtomsOf S) := by
   ext s; simp only [nonAtomsOf, region, atom_iff_card, and_assoc]
 
+omit [DecidableEq α] in
 theorem nonMinimalOf_region (hS : ∀ k, S k → B.card ≤ k) :
     nonMinimalOf (region B S) = region B (nonMinimalOf S) := by
   ext s; simp only [nonMinimalOf, atomize_region hS, region]; tauto
@@ -126,6 +128,7 @@ private theorem nonMinimalOf_iterate (n : ℕ) : nonMinimalOf^[n] (2 ≤ ·) = (
     rw [Function.iterate_succ_apply', ih]
     ext j; simp only [nonMinimalOf, atomize_le]; omega
 
+omit [DecidableEq α] in
 private theorem nonMinimalOf_iterate_region (n : ℕ) (S : ℕ → Prop) :
     nonMinimalOf^[n] (region (∅ : Finset α) S) = region ∅ (nonMinimalOf^[n] S) := by
   induction n with
@@ -137,6 +140,7 @@ omit [DecidableEq α] in
 private theorem nonempty_eq_region : (Finset.Nonempty : Finset α → Prop) = region ∅ (1 ≤ ·) := by
   ext t; simp [region, Finset.one_le_card]
 
+omit [DecidableEq α] in
 /-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms (31), the dual of
 (30) at `n = 0` and the trial at `n = 1`. -/
 theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
@@ -148,6 +152,7 @@ theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
   simp [region]
 
 -- (30)
+omit [DecidableEq α] in
 theorem atomize_atomsOf (s : Finset α) :
     atomize (atomsOf Finset.Nonempty) s ↔ s.card = 1 := by
   have ha : atomsOf (1 ≤ ·) = ((· = 1) : ℕ → Prop) := by
@@ -300,13 +305,6 @@ end Convexity
 
 /-! ### Parameters (§§4.1–4.3) -/
 
-/-- Harbour's number features are `[±atomic]`, `[±minimal]` and `[±additive]`. -/
-inductive Feature where
-  | atomic
-  | minimal
-  | additive
-  deriving DecidableEq, Fintype, Repr
-
 /-- A feature on Number⁰ is inactive, active (22), or recursive, its two values allowed to
 cooccur (23), written `[±F]*`. -/
 inductive Activation where
@@ -331,9 +329,6 @@ structure Setting where
   /-- The activation of `[±additive]`. -/
   additive : Activation
   deriving DecidableEq, Fintype, Repr
-
-/-- A feature bundle is the set of its signed features, `(F, true)` standing for `+F` (§2.3). -/
-abbrev Bundle := Finset (Feature × Bool)
 
 namespace Setting
 
@@ -480,16 +475,6 @@ theorem mem_iff_of_bound_le {s : Strata} (hs : s.bound ≤ 4) {k : ℕ} (hk : 4 
 
 end Strata
 
-/-- `b.step v f` applies `f` when the bundle `b` carries the signed feature `v`. -/
-def Bundle.step {X : Type*} (b : Bundle) (v : Feature × Bool) (f : X → X) (x : X) : X :=
-  if v ∈ b then f x else x
-
-/-- The region a bundle's `[±atomic]` and `[±minimal]` values select from `P`, in the order
-(28). -/
-def Bundle.exact {D : Type*} [SemilatticeSup D] (b : Bundle) (P : D → Prop) : D → Prop :=
-  b.step (.minimal, true) atomize <| b.step (.minimal, false) nonMinimalOf <|
-    b.step (.atomic, true) atomsOf <| b.step (.atomic, false) nonAtomsOf P
-
 /-- The strata a bundle's `[±atomic]` and `[±minimal]` values select from `s`, in the order
 (28). -/
 def Bundle.strata (b : Bundle) (s : Strata) : Strata :=
@@ -499,28 +484,20 @@ def Bundle.strata (b : Bundle) (s : Strata) : Strata :=
 private theorem Bundle.step_map {X Y : Type*} (b : Bundle) (v : Feature × Bool) {f : X → X}
     {g : Y → Y} {φ : X → Y} (h : ∀ x, φ (f x) = g (φ x)) (x : X) :
     φ (b.step v f x) = b.step v g (φ x) := by
-  unfold step; split_ifs <;> simp [h]
+  unfold Bundle.step; split_ifs <;> simp [h]
 
-theorem Bundle.exact_mem (b : Bundle) (s : Strata) : b.exact s.Mem = (b.strata s).Mem := by
-  simp only [exact, strata]
-  rw [b.step_map _ fun s ↦ (Strata.atomize_mem s).symm,
-    b.step_map _ fun s ↦ (Strata.nonMinimalOf_mem s).symm,
-    b.step_map _ fun s ↦ (Strata.atomsOf_mem s).symm,
-    b.step_map _ fun s ↦ (Strata.nonAtomsOf_mem s).symm]
+theorem Bundle.exact_mem (b : Bundle) (s : Strata) : b.exact s.Mem = (Bundle.strata b s).Mem := by
+  simp only [Bundle.exact, Bundle.strata]
+  rw [Bundle.step_map b _ fun s ↦ (Strata.atomize_mem s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.nonMinimalOf_mem s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.atomsOf_mem s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.nonAtomsOf_mem s).symm]
 
-theorem Bundle.exact_le {D : Type*} [SemilatticeSup D] (b : Bundle) (P : D → Prop) {x : D}
-    (h : b.exact P x) : P x := by
-  have step_le : ∀ v (f : (D → Prop) → D → Prop), (∀ P x, f P x → P x) →
-      ∀ P x, b.step v f P x → P x := by
-    intro v f hf P x h; unfold step at h; split_ifs at h; exacts [hf _ _ h, h]
-  exact step_le _ _ (fun _ _ h ↦ h.1) _ _ <| step_le _ _ (fun _ _ h ↦ h.1) _ _ <|
-    step_le _ _ (fun _ _ h ↦ h.1) _ _ <| step_le _ _ (fun _ _ h ↦ h.1) _ _ h
-
-theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (b.strata (.ray p)).bound ≤ 4 := by decide
+theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (Bundle.strata b (.ray p)).bound ≤ 4 := by decide
 
 -- §4.2
 theorem le_three_of_strata_eq_point (b : Bundle) {p : ℕ} (hp : p ≤ 2) {n : ℕ}
-    (h : b.strata (.ray p) = .point n) : n ≤ 3 := by
+    (h : Bundle.strata b (.ray p) = .point n) : n ≤ 3 := by
   have := bound_strata_le b p hp
   rw [h, Strata.bound] at this
   omega
@@ -541,8 +518,9 @@ private theorem step_mem (b : Bundle) (v : Feature × Bool) {g : Strata → Stra
     (h : (b.step v g s).Mem k) : s.Mem k := by
   unfold Bundle.step at h; split_ifs at h; exacts [hg h, h]
 
+omit [DecidableEq α] in
 theorem Bundle.exact_region (b : Bundle) {s : Strata} (hs : ∀ k, s.Mem k → B.card ≤ k) :
-    b.exact (region B s.Mem) = region B (b.strata s).Mem := by
+    b.exact (region B s.Mem) = region B (Bundle.strata b s).Mem := by
   have h₁ : ∀ {k}, (b.step (.atomic, false) Strata.nonAtomic s).Mem k → s.Mem k :=
     step_mem b _ fun {t k} h ↦ (t.nonAtomsOf_mem ▸ h : nonAtomsOf t.Mem k).1
   have h₂ : ∀ {t k}, (b.step (.atomic, true) Strata.atomic t).Mem k → t.Mem k :=
@@ -561,30 +539,30 @@ end Region
 
 /-! ### Cells and number systems (§5.1) -/
 
-/-- `b.Cut lo hi k` holds when the stratum `k` survives the cuts the `[±additive]` values of `b`
-make at `lo` and `hi`, lying below the first for `[−additive]`, at or above it for `[+additive]`,
-and between the two for both (§3.3). -/
+/-- `Bundle.Cut lo hi b k` holds when the stratum `k` survives the cuts the `[±additive]` values of
+`b` make at `lo` and `hi`, lying below the first for `[−additive]`, at or above it for
+`[+additive]`, and between the two for both (§3.3). -/
 def Bundle.Cut (lo hi : ℕ) (b : Bundle) (k : ℕ) : Prop :=
   ((.additive, true) ∈ b → lo ≤ k) ∧
     ((.additive, false) ∈ b → k < if (.additive, true) ∈ b then hi else lo)
 
-instance (lo hi : ℕ) (b : Bundle) : DecidablePred (b.Cut lo hi) := fun _ ↦ by
+instance (lo hi : ℕ) (b : Bundle) : DecidablePred (Bundle.Cut lo hi b) := fun _ ↦ by
   unfold Bundle.Cut; infer_instance
 
 /-- A bundle denotes the elements of its exact region that survive its cuts, graded by `g`. -/
 def Bundle.denote {D : Type*} [SemilatticeSup D] (g : D → ℕ) (lo hi : ℕ) (b : Bundle)
     (P : D → Prop) (x : D) : Prop :=
-  b.exact P x ∧ b.Cut lo hi (g x)
+  b.exact P x ∧ Bundle.Cut lo hi b (g x)
 
 /-- The cell of a bundle in a setting is its denotation less those of the more specific bundles,
 as the plural of Figure 7 is `Q+ \ Q′`. -/
 def Setting.cell {D : Type*} [SemilatticeSup D] (σ : Setting) (g : D → ℕ) (lo hi : ℕ)
     (P : D → Prop) (b : Bundle) (x : D) : Prop :=
-  b.denote g lo hi P x ∧ ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ b'.denote g lo hi P x
+  Bundle.denote g lo hi b P x ∧ ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ Bundle.denote g lo hi b' P x
 
 theorem Setting.cell_strata_iff (σ : Setting) (lo hi : ℕ) (s : Strata) (b : Bundle) (k : ℕ) :
-    σ.cell id lo hi s.Mem b k ↔ ((b.strata s).Mem k ∧ b.Cut lo hi k) ∧
-      ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ ((b'.strata s).Mem k ∧ b'.Cut lo hi k) := by
+    σ.cell id lo hi s.Mem b k ↔ ((Bundle.strata b s).Mem k ∧ Bundle.Cut lo hi b k) ∧
+      ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ ((Bundle.strata b' s).Mem k ∧ Bundle.Cut lo hi b' k) := by
   simp only [Setting.cell, Bundle.denote, Bundle.exact_mem, id]
 
 instance (σ : Setting) (lo hi : ℕ) (s : Strata) (b : Bundle) :
@@ -597,14 +575,14 @@ def collapse (lo hi k : ℕ) : ℕ :=
   if k ≤ 4 then k else if k < lo then 4 else if k < hi then 5 else 6
 
 theorem cut_collapse {lo hi : ℕ} (h : 4 < lo) (b : Bundle) (k : ℕ) :
-    b.Cut lo hi k ↔ b.Cut 5 6 (collapse lo hi k) := by
+    Bundle.Cut lo hi b k ↔ Bundle.Cut 5 6 b (collapse lo hi k) := by
   unfold Bundle.Cut collapse
   by_cases ha : (.additive, true) ∈ b <;> by_cases hb : (.additive, false) ∈ b <;>
     simp only [ha, hb, ite_true, ite_false, forall_const, false_implies, and_true, true_and] <;>
     split_ifs <;> omega
 
 theorem mem_strata_collapse {lo hi p : ℕ} (hp : p ≤ 2) (b : Bundle) (k : ℕ) :
-    (b.strata (.ray p)).Mem k ↔ (b.strata (.ray p)).Mem (collapse lo hi k) := by
+    (Bundle.strata b (.ray p)).Mem k ↔ (Bundle.strata b (.ray p)).Mem (collapse lo hi k) := by
   have h4 := fun j (hj : 4 ≤ j) ↦ Strata.mem_iff_of_bound_le (bound_strata_le b p hp) hj
   unfold collapse
   split_ifs
@@ -912,7 +890,7 @@ end Table3
 -- (38), (40), (44), (45)
 theorem yimas_system :
     (((⟨.active, .active, .active⟩ : Setting).system 0).map
-      fun b ↦ (b.label (.one .low), b)).Perm
+      fun b ↦ (Bundle.label (.one .low) b, b)).Perm
     [(.singular, {(.atomic, true), (.minimal, true), (.additive, false)}),
      (.dual, {(.atomic, false), (.minimal, true), (.additive, false)}),
      (.paucal, {(.atomic, false), (.minimal, false), (.additive, false)}),
@@ -924,7 +902,7 @@ abbrev meleFila : Setting := ⟨.active, .active, .recursive⟩
 
 -- Table 4
 theorem meleFila_system :
-    ((meleFila.system 0).map fun b ↦ (b.label (.two .high), b)).Perm
+    ((meleFila.system 0).map fun b ↦ (Bundle.label (.two .high) b, b)).Perm
     [(.singular, {(.atomic, true), (.minimal, true), (.additive, false)}),
      (.dual, {(.atomic, false), (.minimal, true), (.additive, false)}),
      (.paucal, {(.atomic, false), (.minimal, false), (.additive, false)}),

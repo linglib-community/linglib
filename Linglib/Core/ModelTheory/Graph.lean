@@ -16,16 +16,6 @@ relations that relabelling along a bijection preserves (`LindstromQuantifier.ofG
 Its relativization to a set `A` asks it of `A` with the relation restricted to `A`
 (`inducedGraph`).
 
-## Main definitions
-
-* `FirstOrder.Language.graphStructure r`: the structure in the language of graphs whose adjacency
-  relation is `r`.
-* `FirstOrder.Language.graphStructureEquiv`: a bijection carrying one relation to another is an
-  isomorphism of these structures.
-* `FirstOrder.Language.inducedGraph r A`: the set `A` with `r` restricted to it.
-* `FirstOrder.Language.LindstromQuantifier.ofGraphProperty`: the type `⟨2⟩` quantifier of a
-  graph property, a property of relations invariant under relabelling.
-
 ## References
 
 * [peters-westerstahl-2006]
@@ -67,9 +57,8 @@ namespace LindstromQuantifier
 relation has `P`; relabelling along a bijection preserves `P`. -/
 def ofGraphProperty (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
     (hP : ∀ {M N : Type u} (e : M ≃ N) (s : N → N → Prop), P (fun x y ↦ s (e x) (e y)) ↔ P s) :
-    LindstromQuantifier.{0, 0, u} Language.graph where
-  holds := {M | P fun x y : M ↦ RelMap adj ![x, y]}
-  iso_inv := fun {M N} ⟨e⟩ ↦ by
+    LindstromQuantifier.{0, 0, u} Language.graph :=
+  {q | q.liftOn (fun M ↦ P fun x y : M ↦ RelMap adj ![x, y]) fun M N ⟨e⟩ ↦ propext <| by
     have hv (x y : M) : ⇑e ∘ ![x, y] = ![e x, e y] := by
       ext i
       fin_cases i <;> rfl
@@ -77,11 +66,7 @@ def ofGraphProperty (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
       funext₂ fun x y ↦ propext (by rw [← hv]; exact (e.map_rel adj ![x, y]).symm)
     show @P M _ ↔ @P N _
     rw [this]
-    exact hP e.toEquiv fun x y : N ↦ RelMap adj ![x, y]
-
-theorem mem_holds_ofGraphProperty {P : ∀ {M : Type u}, (M → M → Prop) → Prop} {hP}
-    {M : CategoryTheory.Bundled.{u} Language.graph.Structure} :
-    M ∈ (ofGraphProperty P hP).holds ↔ P fun x y : M ↦ RelMap adj ![x, y] := Iff.rfl
+    exact hP e.toEquiv fun x y : N ↦ RelMap adj ![x, y]}
 
 end LindstromQuantifier
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Statistics.DegenTonhauser2022
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Verbs.Copular
-public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Syntax.Category.Verb.Defs
 public import Mathlib.Data.Set.Finite.Lemmas
 
 /-!
@@ -87,6 +87,13 @@ theorem isFactive_iff {p : Predicate} :
 
 theorem isTrigger_iff {p : Predicate} : (entry p).IsTrigger ↔ (entry p).IsFactive := by
   cases p <;> decide
+
+open English.Verbs.Copular in
+/-- An adjective is factive or a trigger on its own entry, and its copular verb agrees with it. -/
+example : annoyed.IsFactive ∧ ¬ right.IsFactive ∧ able.IsTrigger ∧ ¬ right.IsTrigger := by decide
+
+example (a : ClauseEmbeddingAdjective) (c : String) : (a.toVerb c).IsFactive ↔ a.IsFactive :=
+  Iff.rfl
 
 /-! ### Categorical distinctions -/
 

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
 public import Studies.VonFintel1993
 public import Linglib.Core.GroupTheory.GroupAction.Blocks

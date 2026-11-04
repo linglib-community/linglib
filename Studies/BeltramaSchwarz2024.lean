@@ -68,7 +68,7 @@ def Descriptor.dimension? (x : Descriptor) : Option Dimension :=
 
 /-- A persona's profile is positive on each dimension one of its traits measures. -/
 def profile : AssociationField Persona Dimension SignType :=
-  .of fun p d ↦ if ∃ x ∈ (descriptors p).traits, x.dimension? = some d then 1 else 0
+  fun p d ↦ if ∃ x ∈ (descriptors p).traits, x.dimension? = some d then 1 else 0
 
 /-- The precision variant whose speakers a persona embodies. -/
 def Persona.variant : Persona → Variant
@@ -128,11 +128,6 @@ end Level
 /-- The width of a range. -/
 def RangeRow.width (r : RangeRow) : ℕ := r.upper - r.lower
 
-private theorem cell_grain_200 (k : ℤ) {ε : ℝ} (hk : k * ε = 200) (hε : 0 < ε) :
-    (grain ε).cell 200 = Set.Ico (200 - ε / 2) (200 + ε / 2) := by
-  rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'
-    (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]
-
 /-- The Imprecise screen of Figure 1 is rejected at the narrow range of p. 5 and accepted at the
 wide one. -/
 theorem rejects_imprecise_iff (r : Range) (hr : r ≠ .exact) :
@@ -142,14 +137,14 @@ theorem rejects_imprecise_iff (r : Range) (hr : r ≠ .exact) :
   | exact => exact absurd rfl hr
   | narrow =>
     simp only [Rejects, RangeRow.width, ranges, uttered, screens, Decimal.toRat, iff_true]
-    rw [show ((205 - 195 : ℕ) : ℝ) = 10 by norm_num, Nat.cast_ofNat,
-      cell_grain_200 20 (by norm_num) (by norm_num)]
+    rw [show ((205 - 195 : ℕ) : ℝ) = 10 by norm_num, Nat.cast_ofNat, cell_grain_of_mem_zmultiples
+      (by norm_num) (AddSubgroup.mem_zmultiples_iff.2 ⟨20, by norm_num⟩)]
     norm_num
   | wide =>
     simp only [Rejects, RangeRow.width, ranges, uttered, screens, Decimal.toRat, reduceCtorEq,
       iff_false, not_not]
-    rw [show ((210 - 190 : ℕ) : ℝ) = 20 by norm_num, Nat.cast_ofNat,
-      cell_grain_200 10 (by norm_num) (by norm_num)]
+    rw [show ((210 - 190 : ℕ) : ℝ) = 20 by norm_num, Nat.cast_ofNat, cell_grain_of_mem_zmultiples
+      (by norm_num) (AddSubgroup.mem_zmultiples_iff.2 ⟨10, by norm_num⟩)]
     norm_num
 
 theorem exact_rejects {γ : ℝ → Set ℝ} (hγ : IsGranularity γ 0) (f : ScreenFit) :

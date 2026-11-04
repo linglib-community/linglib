@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Exhaustification.Alternatives
+public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Studies.Spector2007
 
 /-!
@@ -268,11 +268,13 @@ open Exhaustification in
 propositions that the question-property holds of each individual ((83)). -/
 theorem exh_ltDefault :
     exh P T (ltDefault P) = exhMW (range fun x ↦ {w | x ∈ P w}) {w | T (P w)} := by
-  have h : ∀ v w, (v <[range fun x ↦ {w | x ∈ P w}] w) ↔ ltDefault P v w := fun v w ↦ by
-    simp only [ltALT_iff, leALT_iff, forall_mem_range, ltDefault, ssubset_def, subset_def]
-    rfl
+  have h : ∀ v w, Preorder.satisfied (· ∈ ·) (range fun x ↦ {w | x ∈ P w}) v ⊆
+      Preorder.satisfied (· ∈ ·) (range fun x ↦ {w | x ∈ P w}) w ↔ P v ⊆ P w := fun v w ↦ by
+    simp only [subset_def, Preorder.mem_satisfied, mem_range, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff, exists_apply_eq_apply, true_and, mem_ofPred_eq]
   ext w
-  simp only [exh, mem_exhMW, mem_ofPred_eq, h]
+  simp only [exh, mem_exhMW, MinimalFor, mem_ofPred_eq, h, ltDefault, ssubset_def, not_exists,
+    not_and, not_not]
 
 -- p. 70: the hybrid order is antisymmetric
 theorem ltHybrid_asymm {v w : W} (h : ltHybrid P T v w) : ¬ ltHybrid P T w v :=

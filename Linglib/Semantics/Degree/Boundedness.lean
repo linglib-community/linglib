@@ -1,12 +1,13 @@
 module
 
-public import Linglib.Core.Order.Interval.Set.ProjIcc
 public import Linglib.Core.Order.UpperLower.Principal
 public import Mathlib.Algebra.Order.Group.OrderIso
 public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Order.Directed
 public import Mathlib.Order.Hom.WithTopBot
 public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.Interval.Set.ProjIcc
+public import Mathlib.Order.LatticeIntervals
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.UpperLower.Principal
 public import Mathlib.Order.WithBot
@@ -577,14 +578,16 @@ variable {α D : Type*} [LinearOrder D] {μ : α → D} {d : D}
 /-- The positive form of a difference function at the minimum standard is the comparative with
 standard `d` ([kennedy-mcnally-2005], [kennedy-levin-2008] (24)). -/
 theorem preimage_projIci_comp_Ioi_bot : (Set.projIci d ∘ μ) ⁻¹' Set.Ioi ⊥ = μ ⁻¹' Set.Ioi d :=
-  Set.ext fun _ ↦ Set.bot_lt_projIci
+  Set.ext fun _ ↦ show ⊥ < Set.projIci d _ ↔ d < _ from
+    bot_lt_iff_ne_bot.trans (Set.projIci_eq_self.not.trans not_le)
 
 /-- Unless `d` is the greatest degree, the positive form of a difference function at the maximum
 standard is that of `μ` itself ([kennedy-levin-2008] fn. 16). -/
 theorem preimage_projIci_comp_Ici_top [OrderTop D] (hd : d ≠ ⊤) :
     (Set.projIci d ∘ μ) ⁻¹' Set.Ici ⊤ = μ ⁻¹' Set.Ici ⊤ := by
   ext x
-  simp [Set.projIci_eq_top, hd]
+  simp only [Set.mem_preimage, Function.comp_apply, Set.mem_Ici, top_le_iff, Subtype.ext_iff,
+    Set.coe_projIci, Set.Ici.coe_top, max_eq_top, hd, false_or]
 
 end Difference
 

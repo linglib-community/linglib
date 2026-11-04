@@ -63,11 +63,6 @@ theorem update_smul_one (η : ℝ) :
     update (η • 1) 1 x y W = W + η • vecMulVec x (y - x ᵥ* W) := by
   rw [update, smul_mul_assoc, one_mul, mul_one, smul_vecMulVec]
 
-theorem update_smul_one_smul_one (a b : ℝ) :
-    update (a • 1) (b • 1) x y W = update ((a * b) • 1) 1 x y W := by
-  rw [update_smul_one, update, smul_mul_assoc, one_mul, mul_smul_comm, mul_one, smul_vecMulVec,
-    vecMulVec_smul, smul_smul]
-
 theorem update_indicator_apply (s : Finset ι) (t : Set κ) (lam : κ → ℝ) (i : ι) (j : κ) :
     update α β ((s : Set ι).indicator 1) (t.indicator lam) W i j =
       W i j + (s : Set ι).indicator α i * β j * (t.indicator lam j - ∑ i' ∈ s, W i' j) := by

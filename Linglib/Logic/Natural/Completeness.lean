@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Projection
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Pi
@@ -14,7 +14,7 @@ public import Mathlib.Order.Bounds.Basic
 /-!
 # Completeness of the projectivity calculus
 
-This file proves the converses to `Logic/Natural/Soundness.lean`: the
+This file proves the converses to `Logic/Natural/Projection.lean`: the
 join and projection tables are tight, the seven relations are exactly
 the nondegenerately realizable conjunctions of constraint atoms, and
 the refinement order on signatures coincides with inclusion of
@@ -38,14 +38,14 @@ every bounded lattice.
 * `Relation.exists_isLeast_holds`: [icard-2012]'s Lemma 1.3 — any
   nondegenerate pair stands in a strongest relation — on any bounded
   lattice.
-* `Signature.isLeast_project`: each projection cell is the least
+* `ProjectivitySignature.isLeast_project`: each projection cell is the least
   relation sound for the signature's function class ([icard-2012]
   Definition 2.3), with countermodels on the two-element Boolean
   algebra.
-* `Signature.le_iff_holdsFor`: the refinement order is inclusion of
+* `ProjectivitySignature.le_iff_holdsFor`: the refinement order is inclusion of
   function classes — [icard-2012]'s semantic definition of ≼,
   recovered.
-* `Signature.isLeast_compose`: composition is the least signature
+* `ProjectivitySignature.isLeast_compose`: composition is the least signature
   covering composites ([icard-2012] Definition 2.6).
 
 ## Implementation notes
@@ -146,14 +146,14 @@ theorem Relation.exists_isLeast_holds {α : Type*} [Lattice α] [BoundedOrder α
 set_option synthInstance.maxSize 400 in
 /-- `project R σ` is the least relation to which every σ-function sends `R`-pairs, so [icard-2012]'s
 Lemma 2.4 is an equality (Definition 2.3). -/
-theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
+theorem ProjectivitySignature.isLeast_project (R : Relation) (σ : ProjectivitySignature) :
     IsLeast {T : Relation | ∀ f : Finset (Fin 1) → Finset (Fin 1),
       σ.HoldsFor f → ∀ x y, R.Holds x y → T.Holds (f x) (f y)}
-      (Signature.project R σ) := by
+      (ProjectivitySignature.project R σ) := by
   refine ⟨λ f hf x y hR => σ.soundFor_of_holdsFor hf R x y hR, λ T hT => ?_⟩
   by_contra hle
-  have counter : ∀ (R : Relation) (σ : Signature) (T : Relation),
-      ¬ Signature.project R σ ≤ T →
+  have counter : ∀ (R : Relation) (σ : ProjectivitySignature) (T : Relation),
+      ¬ ProjectivitySignature.project R σ ≤ T →
       ∃ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f ∧
         ∃ x y, R.Holds x y ∧ ¬ T.Holds (f x) (f y) := by decide
   obtain ⟨f, hf, x, y, hR, hT'⟩ := counter R σ T hle
@@ -161,12 +161,12 @@ theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
 
 /-- The refinement order on signatures is inclusion of function classes, which is [icard-2012]'s
 semantic definition of ≼ (§2.2). -/
-theorem Signature.le_iff_holdsFor {σ τ : Signature} :
+theorem ProjectivitySignature.le_iff_holdsFor {σ τ : ProjectivitySignature} :
     σ ≤ τ ↔
       ∀ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f → τ.HoldsFor f := by
   refine ⟨λ h f hf => hf.of_le h, λ h => ?_⟩
   by_contra hle
-  have counter : ∀ σ τ : Signature, ¬ σ ≤ τ →
+  have counter : ∀ σ τ : ProjectivitySignature, ¬ σ ≤ τ →
       ∃ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f ∧ ¬ τ.HoldsFor f := by
     decide
   obtain ⟨f, hσ, hτ⟩ := counter σ τ hle
@@ -179,13 +179,13 @@ set_option synthInstance.maxSize 400 in
 Definition 2.6): `ψ * φ` is the least signature whose class contains
 every composite of a ψ-function after a φ-function, already on the
 two-element Boolean algebra; it contains them on every bounded lattice
-(`Signature.HoldsFor.comp`). -/
-theorem Signature.isLeast_compose (ψ φ : Signature) :
-    IsLeast {χ : Signature | ∀ f g : Finset (Fin 1) → Finset (Fin 1),
+(`ProjectivitySignature.HoldsFor.comp`). -/
+theorem ProjectivitySignature.isLeast_compose (ψ φ : ProjectivitySignature) :
+    IsLeast {χ : ProjectivitySignature | ∀ f g : Finset (Fin 1) → Finset (Fin 1),
       ψ.HoldsFor f → φ.HoldsFor g → χ.HoldsFor (f ∘ g)} (ψ * φ) := by
   refine ⟨fun f g hf hg ↦ hf.comp hg, fun χ hχ ↦ ?_⟩
   by_contra hle
-  have counter : ∀ ψ φ χ : Signature, ¬ ψ * φ ≤ χ →
+  have counter : ∀ ψ φ χ : ProjectivitySignature, ¬ ψ * φ ≤ χ →
       ∃ f g : Finset (Fin 1) → Finset (Fin 1),
         ψ.HoldsFor f ∧ φ.HoldsFor g ∧ ¬ χ.HoldsFor (f ∘ g) := by decide
   obtain ⟨f, g, hf, hg, hχ'⟩ := counter ψ φ χ hle

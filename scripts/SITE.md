@@ -5,7 +5,8 @@ The home page, `/eval/` and `/bibliography/` are written by `gen_home_page.py`,
 and `site_shell.py` for the header, menu, footer and theme toggle, which it fills into the
 placeholders of each template. A new page uses `site_shell.render` and adds itself to `MENU`; it
 does not copy the header or bring its own stylesheet. The API docs under `/docs/` are doc-gen4's,
-except the study pages at `/docs/Studies/`, which `gen_docs_pages.py` writes over doc-gen4's.
+except the landing page and the study and theory pages, which `gen_docs_pages.py` writes over
+doc-gen4's.
 
 The look is that of Hugo's PaperMod theme, which the site began on:
 
@@ -23,23 +24,46 @@ wide, in light and dark mode, before opening a PR.
 
 ## The docs pages
 
-`gen_docs_pages.py` rebuilds doc-gen4's study pages from its output (read by `docgen_index.py`)
-and writes them over doc-gen4's at `/docs/Studies/`, so links to a study page keep landing.
-`/docs-new/`, where they were previewed, forwards to them. They depart from the rules above where a
-reference page needs it:
+`gen_docs_pages.py` rebuilds doc-gen4's study and theory pages from its output (read by
+`docgen_index.py`) and writes them over doc-gen4's at the same addresses, `/docs/Studies/` and
+`/docs/Linglib/{Semantics,Syntax,Pragmatics,Morphology,Phonology,Processing,Discourse,Logic}/`, so
+links to a page keep landing. Core, Data and Fragments stay doc-gen4's. `/docs-new/`, where the study
+pages were previewed, forwards to them. They depart from the rules above where a reference page
+needs it:
 
 - Three columns up to 1340px wide, prose still at 720px: the file's map at left, the declarations
   in the middle, where the file sits in the library at right. Readers scan and jump.
-- A study's headline theorems, the theorems with a docstring, are open cards. Every other
-  declaration is a one-line row that opens in place.
+- A page's headline declarations are open cards. Every other declaration is a one-line row that
+  opens in place. A study's headlines are its theorems with a docstring. A theory file's are the
+  declarations its module docstring links to outside `Implementation notes`, `TODO`, `Errata`,
+  `Notation` and `References`, as a mathlib header names a file's main definitions and results; a
+  docstring linking to none falls back on the theorems with a docstring.
+- A theory page's title is its docstring's first heading, with the `import` and the namespace under
+  it, and its names print without that namespace. Its crumbs fold open the page's directory on the
+  landing page.
+- The graph has the same nodes on both kinds of page. On a study page, theory above, papers on a year
+  axis with the study among them, languages below. On a theory page the file is in the middle,
+  with the theory it builds on above it and what uses it below, down through the theory, the papers
+  on their axis and the languages. Its right column lists the same, with the names each one uses,
+  then the rest of the file's directory, then every import and importer.
 - Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
   or proved against not yet, the same vocabulary as the bibliography's roles.
 - Every entry of a References list links to its bibliography entry, the study's own paper too;
   a paper another study formalizes adds a "formalized" link to that study.
-- A definition's docstring that opens with a paper locator shows it as a tag naming the paper on
-  hover. A bare number is a numbered example; any other display names its kind (`Eq. (12)`).
+- A study's definition's docstring that opens with a paper locator shows it as a tag naming the paper
+  on hover. A bare number is a numbered example; any other display names its kind (`Eq. (12)`).
 - The page's own styles and script are the shared files `docs_page/docs.css` and `docs.js`, since
-  a thousand pages carry them.
+  two thousand pages carry them.
+
+Addresses are per page, relative to its depth under `/docs/`. A docstring's path to a file, which
+doc-gen4 links from the site's root, is resolved to the file if there is one and left as text if
+not; a page's links to mathlib and its dependencies, which the site does not carry, go to mathlib's
+docs.
+
+The landing page at `/docs/` (`docs_page/index.html`, where `/docs/Studies/` forwards) is the
+page's title, one box that filters the page as you type and sends Enter to doc-gen4's search, and
+every module in folds: theory by area, studies by decade, then fragments, data and core.
 
 Every declaration doc-gen4 indexes keeps its anchor on the rebuilt page, so search and `find/`
-links still land; `--check` confirms it, and a lost anchor fails the deploy.
+links still land. `--check` confirms it, and that every relative link on a rebuilt page lands on a
+file; either failing fails the deploy.

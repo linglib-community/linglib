@@ -30,7 +30,7 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 ## Main definitions
 
 * `Morphology.Realization`: indices realized in context, with `IsLicensed`, `Realizes`,
-  `exponents`, `IsTotal` and `IsUnivalent`.
+  `exponents`, `IsTotal`, `IsUnivalent` and `IsCrossCategorial`.
 * `Morphology.IsConstantIn`, `Morphology.IsVariantIn`: constancy and variance of a contextual map
   at an index, which give `IsInvariant` and `IsSuppletive` for forms and `IsIntrinsic` and
   `IsAllosemous` for readings.
@@ -72,6 +72,9 @@ roots, are mergers at the lax tier, which include forms and readings rather than
 * [lohndal-2020]
 * [blevins-2016]
 * [arad-2005]
+* [gouskova-bobaljik-2020]
+* [corbett-2007]
+* [stump-2016]
 -/
 
 @[expose] public section
@@ -94,6 +97,10 @@ theorem not_isConstantIn_of_isVariantIn {g : R → Ctx → Finset X} {r : R}
     (h : IsVariantIn g r) : ¬ IsConstantIn g r := by
   obtain ⟨c, c', x, hx, x', hx', hne⟩ := h
   exact fun hc => hne (hc x hx x' hx')
+
+theorem isConstantIn_iff_not_isVariantIn {g : R → Ctx → Finset X} {r : R} :
+    IsConstantIn g r ↔ ¬ IsVariantIn g r := by
+  simp only [IsConstantIn, IsVariantIn, not_exists, not_and, not_not]
 
 theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
     IsConstantIn g r ↔ {x | ∃ c, x ∈ g r c}.Subsingleton := by
@@ -141,7 +148,11 @@ def IsInvariant (r : R) : Prop := IsConstantIn S.realize r
 
 /-- `IsSuppletive r` says `r` has two distinct forms, in contexts that need not
 differ, as √GO has *go* and *went*, the case behind [harley-2014]'s argument
-that indices, not forms, individuate. -/
+that indices, not forms, individuate. When the forms are competing Vocabulary
+Items this is suppletive allomorphy, of a root or of an affix alike
+([gouskova-bobaljik-2020]); when they are stems it is variance in [corbett-2007]'s
+lexical material, which is suppletion in [stump-2016]'s sense where no inflection
+class determines it (`IsClassDetermined`). -/
 def IsSuppletive (r : R) : Prop := IsVariantIn S.realize r
 
 theorem not_isInvariant_of_isSuppletive {r : R} (h : S.IsSuppletive r) :
@@ -191,6 +202,29 @@ def RealizeEq (r r' : R) : Prop := ∀ c, S.realize r c = S.realize r' c
 theorem RealizeEq.symm {r r' : R} (h : S.RealizeEq r r') :
     S.RealizeEq r' r := fun c => (h c).symm
 
+/-- `r` is **cross-categorial** when it is licensed in two contexts whose categories `k` differ,
+as a category-free root is ([marantz-1997], [arad-2005]). -/
+def IsCrossCategorial {K : Type*} (k : Ctx → K) (r : R) : Prop :=
+  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
+
+/-- The forms of `r` are **class-determined** by the patterns `A`, the paradigms of stems that the
+inflection classes of a language generate, when they are drawn from one pattern, so that they
+alternate as kindred stems; an alternation between stems no pattern determines is suppletive
+([stump-2016]). -/
+def IsClassDetermined (A : Set (Ctx → F)) (r : R) : Prop :=
+  ∃ p ∈ A, ∀ c, ∀ f ∈ S.realize r c, f = p c
+
+/-- Where every pattern is constant, the class-determined forms are the invariant ones, so
+suppletion is any variance. -/
+theorem isClassDetermined_range_const_iff [Nonempty F] {r : R} :
+    S.IsClassDetermined (Set.range (Function.const Ctx)) r ↔ S.IsInvariant r := by
+  refine ⟨fun ⟨_, ⟨b, hb⟩, h⟩ c c' x hx x' hx' ↦ ?_, fun h ↦ ?_⟩
+  · subst hb; exact (h c x hx).trans (h c' x' hx').symm
+  by_cases hex : ∃ c, ∃ f, f ∈ S.realize r c
+  · obtain ⟨c₀, f₀, hf₀⟩ := hex
+    exact ⟨_, ⟨f₀, rfl⟩, fun c f hf ↦ h f hf f₀ hf₀⟩
+  · exact ⟨_, ⟨Classical.arbitrary F, rfl⟩, fun c f hf ↦ absurd ⟨c, f, hf⟩ hex⟩
+
 /-- `IsHomophonous r r'` says the distinct indices `r` and `r'` share every
 realization, as *bank₁* and *bank₂* do; spellout is nowhere required to be
 injective. -/
@@ -228,6 +262,10 @@ instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
 instance (r r' : R) : Decidable (S.RealizeEq r r') :=
   inferInstanceAs (Decidable (∀ c : Ctx, S.realize r c = S.realize r' c))
 
+instance {K : Type*} [DecidableEq K] (k : Ctx → K) (r : R) :
+    Decidable (S.IsCrossCategorial k r) :=
+  inferInstanceAs (Decidable (∃ _ _, _ ∧ _ ∧ _))
+
 instance [DecidableEq R] (r r' : R) : Decidable (S.IsHomophonous r r') :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -240,6 +278,23 @@ instance : Decidable S.IsUnivalent :=
   inferInstanceAs (Decidable (∀ r c, (S.realize r c).card ≤ 1))
 
 end Decidable
+
+/-- The transpose of `S` realizes each context at each index as `S` realizes the index in the
+context, so that comparing one context across indices is comparing one index of the transpose
+across contexts. -/
+def transpose (S : Realization R Ctx F) : Realization Ctx R F := ⟨Function.swap S.realize⟩
+
+@[simp] theorem transpose_realize (c : Ctx) (r : R) : S.transpose.realize c r = S.realize r c :=
+  rfl
+
+@[simp] theorem transpose_transpose : S.transpose.transpose = S := rfl
+
+/-- The image of `S` under a map of forms. -/
+def map {G : Type*} [DecidableEq G] (g : F → G) (S : Realization R Ctx F) : Realization R Ctx G :=
+  ⟨fun r c ↦ (S.realize r c).image g⟩
+
+@[simp] theorem map_realize {G : Type*} [DecidableEq G] (g : F → G) (r : R) (c : Ctx) :
+    (S.map g).realize r c = (S.realize r c).image g := rfl
 
 /-- The pipeline composition `S.comp T` realizes through an intermediate
 inventory, the Kleisli composition of `Finset` over a shared context.
@@ -415,6 +470,9 @@ end Hom
 equal realization and interpretation profiles. -/
 def ProfileEq (r r' : R) : Prop :=
   (∀ c, S.realize r c = S.realize r' c) ∧ (∀ c, S.interp r c = S.interp r' c)
+
+instance [Fintype Ctx] [DecidableEq F] [DecidableEq M] (r r' : R) : Decidable (S.ProfileEq r r') :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `profileSetoid` is profile equality as a setoid. -/
 def profileSetoid : Setoid R where

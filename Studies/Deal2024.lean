@@ -56,24 +56,79 @@ structure Grammar where
   dynamic : Finset PersonSegment
   deriving DecidableEq, Fintype
 
-/-- The run of grammar `g`'s probe over goals paired with their positions. The state is the
+/-- The run of grammar `g`'s probe over goals, each reading as a person. The state is the
 interaction condition, the features copied into it so far, starting from [φ]. A goal is visible
 when it bears them all; interacting with it copies its dynamic features into the condition, (44)
 and (45); and only a visible goal bearing the satisfaction feature satisfies the probe, (8b). -/
-def run (g : Grammar) (goals : List Person) :
-    Probe.Result (Person × ℕ) (Finset PersonSegment) :=
+def run {α : Type*} (g : Grammar) (person : α → Person) (goals : List α) :
+    Probe.Result α (Finset PersonSegment) :=
   Probe.Dynamic.agree
-    (fun int ↦ ⟨fun t ↦ decide (int ⊆ spec t.1),
-      fun t ↦ decide (int ⊆ spec t.1) && g.satisfaction.any (· ∈ spec t.1)⟩)
-    (fun t int ↦ int ∪ g.dynamic ∩ spec t.1) (fun _ int ↦ int) {.pi} goals.zipIdx
+    (fun int ↦ ⟨fun a ↦ decide (int ⊆ spec (person a)),
+      fun a ↦ decide (int ⊆ spec (person a)) && g.satisfaction.any (· ∈ spec (person a))⟩)
+    (fun a int ↦ int ∪ g.dynamic ∩ spec (person a)) (fun _ int ↦ int) {.pi} goals
 
 /-- A clitic combination ⟨IO, DO⟩ is licit when the probe, meeting the direct object first,
 interacts with both objects, section 3.1; the reverse PCC of section 6.2, where the probe meets
-the indirect object first, is licitness of the swapped pair. -/
+the indirect object first, is licitness of the swapped pair. The positions keep two objects of one
+person apart. -/
 def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  (run g [s.low, s.high]).interacted.map (·.2) = [0, 1]
+  (run g Prod.fst [s.low, s.high].zipIdx).interacted.map (·.2) = [0, 1]
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+private theorem interacted_run_pair_aux {α : Type*} (g : Grammar) (person : α → Person) (a b : α) :
+    (run g person [a, b]).interacted =
+      a :: if (∀ x ∈ g.satisfaction, x ∉ spec (person a)) ∧
+          g.dynamic ∩ spec (person a) ⊆ spec (person b) then [b] else [] := by
+  obtain ⟨_ | x, dyn⟩ := g
+  · simp [run, Probe.Dynamic.agree_cons, Finset.insert_subset_iff]
+  · by_cases hx : x ∈ spec (person a)
+    · simp [run, Probe.Dynamic.agree_cons, hx]
+    · simp only [run, Probe.Dynamic.agree_cons]
+      simp [hx, Finset.insert_subset_iff]
+      split_ifs <;> simp_all
+
+/-- A combination is licit exactly when the direct object does not satisfy the probe and the
+indirect object bears the dynamic features of the direct object. -/
+theorem licit_iff (g : Grammar) (s : Scenario Person) :
+    Licit g s ↔ (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ g.dynamic ∩ spec s.low ⊆ spec s.high := by
+  have h := interacted_run_pair_aux g Prod.fst (s.low, 0) (s.high, 1)
+  change (run g Prod.fst [(s.low, 0), (s.high, 1)]).interacted.map (·.2) = [0, 1] ↔ _
+  rw [h]
+  dsimp only
+  split_ifs with hc
+  · exact iff_of_true rfl hc
+  · exact iff_of_false (by simp) hc
+
+/-- A probe meeting two goals Agrees with the first, and with the second exactly when the pair is
+licit with the second over the first. -/
+theorem interacted_run_pair {α : Type*} (g : Grammar) (person : α → Person) (a b : α) :
+    (run g person [a, b]).interacted =
+      a :: if Licit g ⟨person b, person a⟩ then [b] else [] := by
+  rw [interacted_run_pair_aux]
+  exact congrArg (a :: ·) (if_congr (licit_iff g ⟨person b, person a⟩).symm rfl rfl)
+
+/-- Licitness is antitone in the direct object and monotone in the indirect object. -/
+theorem Licit.mono {g : Grammar} {s t : Scenario Person} (hl : spec t.low ⊆ spec s.low)
+    (hh : spec s.high ⊆ spec t.high) (h : Licit g s) : Licit g t := by
+  rw [licit_iff] at h ⊢
+  exact ⟨fun x hx hxt ↦ h.1 x hx (hl hxt),
+    (Finset.inter_subset_inter_left hl).trans (h.2.trans hh)⟩
+
+/-- A grammar licensing anything licenses a third-person direct object under any indirect object,
+since the third person bears only the root. -/
+theorem Licit.third {g : Grammar} {s : Scenario Person} (h : Licit g s) (p : Person) :
+    Licit g ⟨p, .third⟩ := by
+  have hthird : spec Person.third = {pi} := by decide
+  rw [licit_iff] at h ⊢
+  refine ⟨fun x hx hxt ↦ h.1 x hx ?_, fun x hx ↦ ?_⟩
+  · dsimp only at hxt
+    rw [hthird, Finset.mem_singleton] at hxt
+    exact hxt ▸ pi_mem_spec _
+  · rw [Finset.mem_inter] at hx
+    dsimp only at hx
+    rw [hthird, Finset.mem_singleton] at hx
+    exact hx.2 ▸ pi_mem_spec _
 
 /-! ### The grammars -/
 

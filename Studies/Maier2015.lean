@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Accessibility
+public import Linglib.Semantics.Dynamic.DRT.Accessibility
 public import Linglib.Data.Examples.Maier2015
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Data.Examples.Readers
@@ -26,7 +26,7 @@ first (`filtering_iff_doxastic_first`).
 ## Implementation notes
 
 The compartment labels are structural, not intensional operators, so parasitism is the
-standard accessibility of the DRS core in `Semantics/Dynamic/DRS`, a compartment being a
+standard accessibility of the DRS core in `Semantics/Dynamic/DRT`, a compartment being a
 subordinate box; the core's negation is the subordination device, its truth conditions
 playing no role. The general accessibility lemmas assume the belief layer and the
 compartments hold atomic conditions, as every description in the paper does.

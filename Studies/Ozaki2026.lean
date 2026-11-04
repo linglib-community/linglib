@@ -103,24 +103,24 @@ def ablVariant : Participant → Option Case
   | .source => some .abl
 
 /-- The cases of a variant. -/
-def cases (lex : Participant → Option Case) : Valuation Participant (Case × Mechanism) :=
-  assignCases .accusative lex [.leaver, .source]
+def cases (lex : Participant → Option Case) : Participant → FeatureSlot (Case × Mechanism) :=
+  (Rules.ofAlignment .accusative).assign lex [.leaver, .source]
 
 /-- In the accusative variant the source receives dependent accusative by (27) and the
 leaver unmarked nominative. -/
 theorem acc_variant :
-    (cases accVariant).valueOf .source = some (.acc, .dependent) ∧
-      (cases accVariant).valueOf .leaver = some (.nom, .unmarked) := by
+    cases accVariant .source = .valued (.acc, .dependent) ∧
+      cases accVariant .leaver = .valued (.nom, .unmarked) := by
   decide
 
 theorem abl_variant :
-    (cases ablVariant).valueOf .source = some (.abl, .lexical) ∧
-      (cases ablVariant).valueOf .leaver = some (.nom, .unmarked) := by
+    cases ablVariant .source = .valued (.abl, .lexical) ∧
+      cases ablVariant .leaver = .valued (.nom, .unmarked) := by
   decide
 
 theorem accusative_without_voice :
     ¬ anticausative.AssignsTheta ∧
-      ((cases accVariant).valueOf .source).map (·.2) = some .dependent := by
+      (cases accVariant .source).value?.map (·.2) = some .dependent := by
   decide
 
 end Ozaki2026

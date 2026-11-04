@@ -15,8 +15,8 @@ after an utterance exactly when it has positive prior and some lexicon of positi
 speaker produce the utterance there
 ([the union of the lexica's supports](##listener_prod_fst_apply_singleton_ne_zero_iff)).
 
-Nothing requires the latent to be a lexicon: a threshold, a comparison class or a scope reading
-that the speaker knows and the listener does not enters the same way.
+Nothing requires the latent to be a lexicon: a threshold, a comparison class, a scope reading or
+a question under discussion that the speaker knows and the listener does not enters the same way.
 
 ## Main statements
 

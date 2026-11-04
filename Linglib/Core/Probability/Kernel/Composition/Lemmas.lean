@@ -210,6 +210,11 @@ theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     (η ∘ₖ κ) a {c} = ∑ b, κ a {b} * η b {c} := by
   rw [comp_apply, Measure.comp_apply_singleton]
 
+theorem comp_apply_singleton_ne_zero_iff [Fintype β] [MeasurableSingletonClass β]
+    [MeasurableSingletonClass γ] (η : Kernel β γ) (κ : Kernel α β) {a : α} {c : γ} :
+    (η ∘ₖ κ) a {c} ≠ 0 ↔ ∃ b, κ a {b} ≠ 0 ∧ η b {c} ≠ 0 := by
+  rw [comp_apply, Measure.comp_apply_singleton_ne_zero_iff]
+
 theorem comp_real_singleton [Fintype β] [MeasurableSingletonClass β]
     [MeasurableSingletonClass γ] (η : Kernel β γ) [IsFiniteKernel η] (κ : Kernel α β)
     [IsFiniteKernel κ] (a : α) (c : γ) :

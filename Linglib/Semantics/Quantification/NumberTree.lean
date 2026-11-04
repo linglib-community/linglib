@@ -48,6 +48,7 @@ relativization are decided by the same tree.
   `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
   `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
+* `Quantifier.NumberTree.MaturityLevel`: a line of the tree below which truth values settle.
 * `Quantifier.NumberTree.ofSizes`: the tree of a relation between `|A ∩ B|` and `|A|`.
 * `Quantifier.NumberTree.ofDet`, `Quantifier.NumberTree.toDet`: the tree of a determiner
   denotation on a finite universe, and the determiner denotation of a tree, counting with
@@ -442,6 +443,52 @@ theorem not_uniform_two_le : ¬ Uniform fun _ b ↦ 2 ≤ b := fun h ↦ by
     (by simp [compl_apply])).2
   simp [compl_apply] at this
 
+/-! ### Maturity levels -/
+
+/-- The line `a + b = 2 * n` is a maturity level of a tree when the value at `(n, n)` determines
+its generated downward triangle, the values at `(n + k, n - k)` determine their downward left lines,
+and the values at `(n - k, n + k)` determine their downward right lines ([van-benthem-1984]). -/
+def MaturityLevel (q : NumberTree) (n : ℕ) : Prop :=
+  (∀ a b, n ≤ a → n ≤ b → (q a b ↔ q n n)) ∧
+    (∀ k a, k ≤ n → n + k ≤ a → (q a (n - k) ↔ q (n + k) (n - k))) ∧
+    ∀ k b, k ≤ n → n + k ≤ b → (q (n - k) b ↔ q (n - k) (n + k))
+
+/-- A tree reaches a maturity level exactly when, past some threshold, its values depend on the two
+counts only up to that threshold. -/
+theorem exists_maturityLevel_iff :
+    (∃ n, q.MaturityLevel n) ↔
+      ∃ n, ∀ a b a' b', min n a = min n a' → min n b = min n b' → (q a b ↔ q a' b') := by
+  constructor
+  · rintro ⟨n, h₁, h₂, h₃⟩
+    have stepA (a a' b : ℕ) (ha : 2 * n ≤ a) (ha' : 2 * n ≤ a') : q a b ↔ q a' b := by
+      by_cases hb : n ≤ b
+      · exact (h₁ a b (by omega) hb).trans (h₁ a' b (by omega) hb).symm
+      · have e : n - (n - b) = b := by omega
+        have h := h₂ (n - b) a (by omega) (by omega)
+        have h' := h₂ (n - b) a' (by omega) (by omega)
+        rw [e] at h h'
+        exact h.trans h'.symm
+    have stepB (a b b' : ℕ) (hb : 2 * n ≤ b) (hb' : 2 * n ≤ b') : q a b ↔ q a b' := by
+      by_cases ha : n ≤ a
+      · exact (h₁ a b ha (by omega)).trans (h₁ a b' ha (by omega)).symm
+      · have e : n - (n - a) = a := by omega
+        have h := h₃ (n - a) b (by omega) (by omega)
+        have h' := h₃ (n - a) b' (by omega) (by omega)
+        rw [e] at h h'
+        exact h.trans h'.symm
+    refine ⟨2 * n, fun a b a' b' ha hb ↦ Iff.trans (b := q a' b) ?_ ?_⟩
+    · by_cases h : 2 * n ≤ a
+      · exact stepA a a' b h (by omega)
+      · obtain rfl : a = a' := by omega
+        exact .rfl
+    · by_cases h : 2 * n ≤ b
+      · exact stepB a' b b' h (by omega)
+      · obtain rfl : b = b' := by omega
+        exact .rfl
+  · rintro ⟨n, h⟩
+    exact ⟨n, fun _ _ _ _ ↦ h _ _ _ _ (by omega) (by omega), fun _ _ _ _ ↦ h _ _ _ _ (by omega) rfl,
+      fun _ _ _ _ ↦ h _ _ _ _ rfl (by omega)⟩
+
 /-! ### Additivity -/
 
 /-- A quantifier is additive when its points are closed under coordinatewise addition. -/
@@ -691,27 +738,30 @@ the range of the embedding. -/
 theorem constant_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Constant :=
   fun _ _ _ _ f _ B hA _ ↦ toDet_preimage f.injective B hA q
 
-/-- Some universe realizes any three sizes as `|X \ Y|`, `|X ∩ Y|` and `|Y \ X|`. -/
+/-- Some universe realizes any three sizes as `|X \ Y|`, `|X ∩ Y|` and `|Y \ X|`, with nothing
+outside `X` and `Y`. -/
 theorem exists_ncard_eq (a b c : ℕ) : ∃ (γ : Type u) (_ : Finite γ) (X Y : Set γ),
-    (X \ Y).ncard = a ∧ (X ∩ Y).ncard = b ∧ (Y \ X).ncard = c := by
+    (X \ Y).ncard = a ∧ (X ∩ Y).ncard = b ∧ (Y \ X).ncard = c ∧ (X ∪ Y)ᶜ = ∅ := by
   let e₁ : Fin a → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inl i⟩
   let e₂ : Fin b → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inl i)⟩
   let e₃ : Fin c → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inr i)⟩
   have card {n : ℕ} {e : Fin n → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c)} (he : e.Injective) :
       (Set.range e).ncard = n := by
     rw [Set.ncard_range_of_injective he, Nat.card_eq_fintype_card, Fintype.card_fin]
-  refine ⟨_, inferInstance, Set.range e₁ ∪ Set.range e₂, Set.range e₂ ∪ Set.range e₃, ?_, ?_, ?_⟩
+  refine ⟨_, inferInstance, Set.range e₁ ∪ Set.range e₂, Set.range e₂ ∪ Set.range e₃, ?_, ?_, ?_,
+    ?_⟩
   · convert card (e := e₁) fun i j h ↦ by simpa [e₁] using h using 2
     ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
   · convert card (e := e₂) fun i j h ↦ by simpa [e₂] using h using 2
     ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
   · convert card (e := e₃) fun i j h ↦ by simpa [e₃] using h using 2
     ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
+  · ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
 
 theorem ofFamily_toFamily (q : NumberTree) : ofFamily (q.toFamily : Det.Family.{u}) = q := by
   funext a b
   refine propext ⟨fun ⟨_, _, _, _, ha, hb, h⟩ ↦ ha ▸ hb ▸ h, fun h ↦ ?_⟩
-  obtain ⟨γ, _, X, Y, ha, hb, -⟩ := exists_ncard_eq.{u} a b 0
+  obtain ⟨γ, _, X, Y, ha, hb, -, -⟩ := exists_ncard_eq.{u} a b 0
   exact ⟨γ, inferInstance, X, Y, ha, hb, by rwa [toFamily, toDet_apply, ha, hb]⟩
 
 theorem toFamily_ofFamily (hC : Q.Conservative) (hK : Q.Constant) :
@@ -722,7 +772,7 @@ theorem toFamily_ofFamily (hC : Q.Conservative) (hK : Q.Constant) :
 theorem toFamily_le_toFamily_iff {q r : NumberTree} :
     (q.toFamily : Det.Family.{u}) ≤ r.toFamily ↔ q ≤ r := by
   refine ⟨fun h a b hq ↦ ?_, fun h _ _ _ _ ↦ h _ _⟩
-  obtain ⟨γ, _, X, Y, ha, hb, -⟩ := exists_ncard_eq.{u} a b 0
+  obtain ⟨γ, _, X, Y, ha, hb, -, -⟩ := exists_ncard_eq.{u} a b 0
   have : r.toDet X Y := h γ ⟨inferInstance⟩ X Y (show q.toDet X Y by rwa [toDet_apply, ha, hb])
   rwa [toDet_apply, ha, hb] at this
 
@@ -745,7 +795,7 @@ asymmetric. -/
 theorem asymmetric_ofFamily (hC : Q.Conservative) (hK : Q.Constant)
     (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) : (ofFamily Q).Asymmetric := by
   intro a c b hac hbc
-  obtain ⟨γ, _, X, Y, ha, hb, hc⟩ := exists_ncard_eq.{u} a b c
+  obtain ⟨γ, _, X, Y, ha, hb, hc, -⟩ := exists_ncard_eq.{u} a b c
   have hXY := (ofFamily_iff hC hK γ X Y).1 (by rwa [ha, hb])
   have hYX := (ofFamily_iff hC hK γ Y X).1 (by rwa [hc, Set.inter_comm, hb])
   exact Std.Asymm.asymm X Y hXY hYX

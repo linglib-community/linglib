@@ -192,16 +192,15 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
 theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
   ext u
-  change (u ∈ s ∪ n ∧ ¬ ∃ v, v ∈ s ∪ n ∧ (v <[{s ∪ n, s, n, e}] u)) ↔ _
-  simp only [ltALT, leALT, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
-    Set.mem_symmDiff, mem_union]
-  refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ hmin ⟨a, Or.inl has, ⟨fun _ ↦ hu, fun _ ↦ by tauto,
-    fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩, fun h' ↦ han (h'.2.2.1 (by tauto))⟩, ?_⟩
+  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff, Preorder.ofCriteria_le_iff,
+    mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_symmDiff, mem_union]
+  refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ han ((hmin (Or.inl has) ⟨fun _ ↦ hu,
+    fun _ ↦ by tauto, fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩).2.2.1 (by tauto)), ?_⟩
   rintro (⟨hus, hun⟩ | ⟨hun, hus⟩)
-  · refine ⟨Or.inl hus, fun ⟨v, hv, hvu, huv⟩ ↦ huv ⟨fun _ ↦ hv, fun _ ↦ ?_,
+  · refine ⟨Or.inl hus, fun v hv hvu ↦ ⟨fun _ ↦ hv, fun _ ↦ ?_,
       fun h' ↦ (hun h').elim, fun h' ↦ (hun (hn h')).elim⟩⟩
     exact hv.resolve_right fun hvn ↦ hun (hvu.2.2.1 hvn)
-  · refine ⟨Or.inr hun, fun ⟨v, hv, hvu, huv⟩ ↦ huv ⟨fun _ ↦ hv, fun h' ↦ (hus h').elim,
+  · refine ⟨Or.inr hun, fun v hv hvu ↦ ⟨fun _ ↦ hv, fun h' ↦ (hus h').elim,
       fun _ ↦ ?_, fun h' ↦ (hus (hs h')).elim⟩⟩
     exact hv.resolve_left fun hvs ↦ hus (hvu.2.1 hvs)
 
@@ -232,13 +231,11 @@ theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
 
 theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
   obtain ⟨rfl, -, hn, ⟨a, has, han⟩, -⟩ := h
+  have hsn : ¬ s ⊆ n := fun h ↦ han (h has)
   have hexh : exh {s ∪ n, s, n, e} s = s \ n := by
-    ext u
-    simp only [mem_exh, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
-      mem_sdiff]
-    refine and_congr_right fun _ ↦ ⟨fun h' hun ↦ han (h'.2.2.1 hun has), fun hun ↦
-      ⟨fun _ ↦ subset_union_left, fun _ ↦ subset_rfl, fun h' ↦ (hun h').elim,
-        fun h' ↦ (hun (hn h')).elim⟩⟩
+    rw [exh_insert_of_subset subset_union_left, exh_insert_of_subset subset_rfl,
+      exh_insert_of_not_subset hsn, exh_singleton_of_not_subset (hsn <| ·.trans hn),
+      sdiff_sdiff_left, sup_eq_right.2 hn]
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨a, has, han⟩), hexh]
 
 theorem exhIE_n : exhIE {w, s, n, e} n = n \ s := by
@@ -403,17 +400,17 @@ theorem isMinimalCover_hornAlt {x y : W} (hx : x ∈ O a \ (O b ∪ O' (a ⊔ b)
   · rintro v (rfl | rfl)
     exacts [hO le_sup_left hx.1, hO le_sup_right hy.1]
   · rcases hab hw with hwa | hwb
-    · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
+    · refine ⟨x, Or.inl rfl, fun c ⟨hc, hxc⟩ ↦ ⟨hc, ?_⟩⟩
       rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
       exacts [hw, hwa, (hx.2 (Or.inl hxc)).elim, (hxK (hcK hxc)).elim]
-    · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
+    · refine ⟨y, Or.inr rfl, fun c ⟨hc, hyc⟩ ↦ ⟨hc, ?_⟩⟩
       rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
       exacts [hw, (hy.2 (Or.inl hyc)).elim, hwb, (hyK (hcK hyc)).elim]
   · rintro v (rfl | rfl) u (rfl | rfl) huv
-    · exact leALT_refl _ _
-    · exact (hx.2 (Or.inl (huv (O b) (by simp [hornAlt]) hy.1))).elim
-    · exact (hy.2 (Or.inl (huv (O a) (by simp [hornAlt]) hx.1))).elim
-    · exact leALT_refl _ _
+    · exact subset_rfl
+    · exact (hx.2 (Or.inl (huv ⟨by simp [hornAlt], hy.1⟩).2)).elim
+    · exact (hy.2 (Or.inl (huv ⟨by simp [hornAlt], hx.1⟩).2)).elim
+    · exact subset_rfl
 
 variable (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) (hb : (O b \ (O a ∪ O' (a ⊔ b))).Nonempty)
 include ha hb
@@ -706,19 +703,19 @@ theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).N
     · rintro v (rfl | rfl)
       exacts [Or.inr hxs, Or.inl hyr]
     · rcases hw with hwr | hws
-      · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
+      · refine ⟨y, Or.inr rfl, fun c ⟨hc, hyc⟩ ↦ ⟨hc, ?_⟩⟩
         rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inl hwr, hwr, (hys hyc).elim, (hys hyc.2).elim, Or.inl hwr, hwr,
           (hys (hah hyc)).elim, (hys (hah hyc.2)).elim]
-      · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
+      · refine ⟨x, Or.inl rfl, fun c ⟨hc, hxc⟩ ↦ ⟨hc, ?_⟩⟩
         rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inr hws, (hx (Or.inl hxc)).elim, hws, (hx (Or.inl hxc.1)).elim,
           (hx hxc).elim, (hx (Or.inl hxc)).elim, (hx (Or.inr hxc)).elim, (hx (Or.inl hxc.1)).elim]
     · rintro v (rfl | rfl) u (rfl | rfl) huv
-      · exact leALT_refl _ _
-      · exact (hx (Or.inl (huv r (by simp) hyr))).elim
-      · exact (hys (huv sh (by simp) hxs)).elim
-      · exact leALT_refl _ _
+      · exact subset_rfl
+      · exact (hx (Or.inl (huv ⟨by simp, hyr⟩).2)).elim
+      · exact (hys (huv ⟨by simp, hxs⟩).2).elim
+      · exact subset_rfl
   rw [hM.exhIE_eq]
   ext u
   simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
@@ -806,11 +803,12 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
   have hmem (k : ι) : a k ∈ infClosure (range a) := subset_infClosure (mem_range_self k)
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
   refine fun h ↦ h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
-  rintro ⟨v, hv, hvu, hnuv⟩
+  intro v hv hvu
   obtain ⟨k, hkv⟩ := mem_iUnion.1 hv
-  have hki : k = i := by_contra fun hki ↦ hu k hki (hvu _ (hmem k) hkv)
+  have hki : k = i := by_contra fun hki ↦ hu k hki (hvu ⟨hmem k, hkv⟩).2
   subst k
-  refine hnuv fun c hc huc ↦ ?_
+  rintro c ⟨hc, huc⟩
+  refine ⟨hc, ?_⟩
   obtain ⟨T, -, rfl⟩ := mem_infClosure_range.1 hc
   refine mem_iInter₂.2 fun m hm ↦ ?_
   have hmi : m = i := by_contra fun hmi ↦ hu m hmi (mem_iInter₂.1 huc m hm)

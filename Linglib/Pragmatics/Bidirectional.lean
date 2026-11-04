@@ -3,7 +3,6 @@ module
 public import Mathlib.Data.List.Lex
 public import Mathlib.Order.FixedPoints
 public import Linglib.Core.Order.WellFoundedSet
-public import Linglib.Pragmatics.Competition
 
 /-!
 # Bidirectional Optimality Theory
@@ -104,10 +103,6 @@ def IBlocks : Prop := ∃ q ∈ S, q.1 = p.1 ∧ f q < f p
 
 /-- `Blocks f S p` holds when a more harmonic pair of `S` shares `p`'s form or meaning. -/
 def Blocks : Prop := ∃ q ∈ S, (q.1 = p.1 ∨ q.2 = p.2) ∧ f q < f p
-
-theorem blocks_iff_blocked :
-    Blocks f S p ↔ Competition.Blocked (fun p ↦ {q ∈ S | q.1 = p.1 ∨ q.2 = p.2}) f p :=
-  ⟨fun ⟨q, hq, h, hlt⟩ ↦ ⟨q, ⟨hq, h⟩, hlt⟩, fun ⟨q, ⟨hq, h⟩, hlt⟩ ↦ ⟨q, hq, h, hlt⟩⟩
 
 theorem blocks_iff : Blocks f S p ↔ IBlocks f S p ∨ QBlocks f S p := by
   simp only [Blocks, IBlocks, QBlocks, or_and_right, exists_or, and_or_left]

@@ -154,12 +154,7 @@ variable {P cell sem C q} [∀ u, DecidablePred (· ∈ sem u)] [DiscreteMeasura
 theorem L0_apply (h : w ∈ sem u) :
     L0 P cell sem C q u {cell q w}
       = ((weight P cell sem C q u w).1 : ℝ≥0∞) / (weight P cell sem C q u w).2 := by
-  have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
-  have e2 : sem u ∩ cell q ⁻¹' {cell q w} ∩ ↑C
-      = ↑((C.filter (· ∈ sem u)).filter fun v ↦ cell q v = cell q w) := by
-    ext; simp; tauto
-  rw [L0, listener_truthful_map_apply_singleton, Measure.restrict_apply .of_discrete,
-    Measure.restrict_apply .of_discrete, e1, e2, Measure.ofWeights_apply_finset,
+  rw [L0, listener_restrict_truthful_map_apply_singleton, Measure.ofWeights_apply_finset,
     Measure.ofWeights_apply_finset]
   simp only [weight, ite_eq_left h, Nat.cast_sum]
 

@@ -10,17 +10,17 @@ Many Austronesian languages have prefixes that end in a nasal. Before a stem-ini
 nasal takes the consonant's place, and under nasal substitution the consonant is in addition not
 realized, as in Tagalog *mamigáj* from *maŋ-* and *bigáj*. Following Donohue, both outcomes have
 the same nasal: [the assimilated cluster is the substituted nasal followed by the
-consonant](##assimilate_pair). [That nasal has the consonant's
-place](##substitute_apply_of_mem_place), and before a consonant with no oral articulator, such as
-the glottal stop, [it is the prefix nasal unchanged](##substitute_eq_of_placeless). A language
-fixes which consonants trigger assimilation and which substitute.
+consonant](##assimilate_pair). That nasal is [the nasal of the language homorganic with the
+consonant](##substitute_mem_homorganicNasals), and where the language has none, as before the
+glottal stop, [the prefix nasal is unchanged](##substitute_of_card_ne_one). A language fixes
+which consonants trigger assimilation and which substitute.
 
 ## Implementation notes
 
-Assimilation copies the whole place class, as Hayes's rule does, and the class contains [strident]
-and [lateral]. A nasal assimilated to a sibilant or a lateral therefore copies `+` for them, and a
-nasal assimilated to a consonant with no oral articulator loses its place. `repair` resets the
-first two and restores the place, segment by segment, since it reads no context.
+Assimilation spreads the major articulator features, Hayes's rule with a smaller class, and the
+result is realized as a nasal of the language's inventory. Spreading Hayes's whole place class
+copies features such as [strident], [lateral] and [labiodental] that no nasal of the inventory
+bears, so the result is identified with a phoneme by its major articulators.
 
 Pater analyses substitution as fusion, one nasal that corresponds to both input segments, rather
 than as the loss of the consonant. The two give the same string, and only strings are computed here.
@@ -46,122 +46,122 @@ namespace Phonology.NasalSubstitution
 
 open Subregular.LocalRewrite
 
-/-- A nasal takes every place feature value of a following segment of the class `trigger`. This
-is Hayes's /n/ Assimilation with its target widened from /n/ to every nasal and its [−syllabic]
-trigger made a parameter ([hayes-2009] p. 89). -/
+/-- A nasal takes the major articulator values of a following segment of the class `trigger`.
+This is Hayes's /n/ Assimilation with its target widened from /n/ to every nasal, its
+[−syllabic] trigger made a parameter, and its class the major articulators rather than every
+place feature ([hayes-2009] p. 89). -/
 def placeAssimilation (trigger : Segment) : Rule where
   target := Segment.ofSpecs [(.nasal, true)]
-  effect := .copyRight FeatureClass.place
+  effect := .copyRight Feature.majorArticulators
   rightContext := [.seg trigger]
 
-/-- `repair N s` keeps a nasal a possible nasal: a nasal with no oral articulator is the nasal
-`N`, and otherwise a nasal is neither strident nor lateral. Other segments are unchanged. -/
-def repair (N s : Segment) : Segment :=
+/-- The nasals of the inventory `I` homorganic with `s`. -/
+def homorganicNasals (I : Finset Segment) (s : Segment) : Finset Segment :=
+  I.filter fun y ↦ y.IsNasal ∧ y.Homorganic s
+
+/-- `realize I N s` is the nasal `s` as a phoneme of the inventory `I`: the nasal of `I`
+homorganic with it if there is exactly one, and the nasal `N` otherwise. Other segments are
+unchanged. -/
+def realize (I : Finset Segment) (N s : Segment) : Segment :=
   if s.HasValue .nasal true then
-    if s.HasValue .labial false ∧ s.HasValue .coronal false ∧ s.HasValue .dorsal false then N
-    else
-      let s' := if s.HasValue .strident true then s.setFeature .strident false else s
-      if s.HasValue .lateral true then s'.setFeature .lateral false else s'
+    if h : (homorganicNasals I s).card = 1 then
+      (homorganicNasals I s).choose (fun _ ↦ True) <| by
+        obtain ⟨y, hy⟩ := Finset.card_eq_one.1 h
+        exact ⟨y, by simp [hy], fun z hz ↦ by simpa [hy] using hz.1⟩
+    else N
   else s
 
-/-- `assimilate trigger N w` is the word `w` with each nasal assimilated to a following segment
-of the class `trigger`, the nasal `N` standing in for one left with no place. -/
-def assimilate (trigger N : Segment) (w : List Segment) : List Segment :=
-  ((placeAssimilation trigger).apply w).map (repair N)
+/-- `assimilate I trigger N w` is the word `w` with each nasal assimilated to a following segment
+of the class `trigger` and realized as a nasal of the inventory `I`, the nasal `N` standing in
+where `I` has no single one. -/
+def assimilate (I : Finset Segment) (trigger N : Segment) (w : List Segment) : List Segment :=
+  ((placeAssimilation trigger).apply w).map (realize I N)
 
 /-- Assimilation neither deletes nor inserts a segment. -/
-theorem length_assimilate (trigger N : Segment) (w : List Segment) :
-    (assimilate trigger N w).length = w.length := by
+theorem length_assimilate (I : Finset Segment) (trigger N : Segment) (w : List Segment) :
+    (assimilate I trigger N w).length = w.length := by
   simp [assimilate, Rule.length_apply (r := placeAssimilation trigger) nofun]
 
-/-- `substitute trigger N x` is the nasal that `N` and a following `x` surface as under nasal
+/-- `substitute I trigger N x` is the nasal that `N` and a following `x` surface as under nasal
 substitution, which is the nasal that `N` assimilates to before `x`. -/
-def substitute (trigger N x : Segment) : Segment :=
-  (assimilate trigger N [N, x]).head (List.ne_nil_of_length_pos (by simp [length_assimilate]))
+def substitute (I : Finset Segment) (trigger N x : Segment) : Segment :=
+  (assimilate I trigger N [N, x]).head (List.ne_nil_of_length_pos (by simp [length_assimilate]))
 
-variable {trigger N s x : Segment}
+variable {I : Finset Segment} {trigger N s x : Segment}
 
-/-! ### Repair -/
+/-! ### Realization -/
 
-theorem repair_of_not_hasValue_nasal (h : ¬ s.HasValue .nasal true) : repair N s = s := by
-  simp [repair, h]
+@[simp] theorem mem_homorganicNasals {y : Segment} :
+    y ∈ homorganicNasals I s ↔ y ∈ I ∧ y.IsNasal ∧ y.Homorganic s :=
+  Finset.mem_filter
 
-theorem repair_of_placeless (h : s.HasValue .nasal true) (hl : s.HasValue .labial false)
-    (hc : s.HasValue .coronal false) (hd : s.HasValue .dorsal false) : repair N s = N := by
-  simp [repair, h, hl, hc, hd]
+theorem realize_of_not_hasValue_nasal (h : ¬ s.HasValue .nasal true) : realize I N s = s := by
+  simp [realize, h]
 
-theorem repair_apply_of_ne (h : ¬ (s.HasValue .labial false ∧ s.HasValue .coronal false ∧
-      s.HasValue .dorsal false)) {f : Feature} (hs : f ≠ .strident) (hl : f ≠ .lateral) :
-    repair N s f = s f := by
-  unfold repair
-  split_ifs <;> simp_all [Segment.setFeature_apply_of_ne, Ne.symm]
+theorem realize_mem_homorganicNasals (h : s.HasValue .nasal true)
+    (h₁ : (homorganicNasals I s).card = 1) : realize I N s ∈ homorganicNasals I s := by
+  simp only [realize, h, ↓reduceIte, h₁, ↓reduceDIte]
+  exact Finset.choose_mem _ _ _
 
-theorem repair_hasValue_nasal (hN : N.HasValue .nasal true) (h : s.HasValue .nasal true) :
-    (repair N s).HasValue .nasal true := by
-  unfold repair
-  split_ifs <;> simp_all [Segment.HasValue, Segment.setFeature_apply_of_ne]
+theorem realize_of_card_ne_one (h : s.HasValue .nasal true)
+    (h₁ : (homorganicNasals I s).card ≠ 1) : realize I N s = N := by
+  simp [realize, h, h₁]
+
+/-- Spreading the major articulators of `x` makes a segment homorganic with exactly the segments
+`x` is homorganic with. -/
+theorem homorganicNasals_piecewise :
+    homorganicNasals I (Feature.majorArticulators.piecewise x N) = homorganicNasals I x := by
+  ext y
+  simp only [mem_homorganicNasals, Segment.Homorganic]
+  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
+  refine ⟨fun h f hf ↦ ?_, fun h f hf ↦ ?_⟩
+  · rw [h hf, Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_coe.1 hf)]
+  · rw [h hf, Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_coe.1 hf)]
 
 /-! ### Substitution -/
 
-/-- Before a second segment `x`, a nasal takes the place of `x` when `x` is a trigger, and `x`
-itself is unchanged. -/
+/-- Before a second segment `x`, a nasal takes the major articulators of `x` when `x` is a
+trigger, and `x` itself is unchanged. -/
 theorem placeAssimilation_apply_pair (y : Segment) :
     (placeAssimilation trigger).apply [y, x] =
-      [if y.HasValue .nasal true ∧ trigger ≤ x then FeatureClass.place.piecewise x y else y,
-        x] := by
+      [if y.HasValue .nasal true ∧ trigger ≤ x then Feature.majorArticulators.piecewise x y
+        else y, x] := by
   rw [Rule.apply_cons_of_leftReach_eq_zero rfl, Rule.apply_cons_of_leftReach_eq_zero rfl]
   by_cases h : y.HasValue .nasal true ∧ trigger ≤ x <;>
     simp [h, Rule.verdict, placeAssimilation, MatchesLeft, MatchesRight, Effect.apply,
       ← Segment.hasValue_iff_ofSpecs_le]
 
-theorem substitute_eq : substitute trigger N x =
-    repair N (if N.HasValue .nasal true ∧ trigger ≤ x then FeatureClass.place.piecewise x N
-      else N) := by
+theorem substitute_eq : substitute I trigger N x =
+    realize I N (if N.HasValue .nasal true ∧ trigger ≤ x then
+      Feature.majorArticulators.piecewise x N else N) := by
   simp only [substitute, assimilate, placeAssimilation_apply_pair, List.map_cons, List.head_cons]
 
 /-- Substitution is assimilation together with the loss of the consonant: the nasal `N` and a
 following `x` that is not a nasal assimilate to the substituted nasal followed by `x`
 ([donohue-2024] p. 719). -/
 theorem assimilate_pair (hx : ¬ x.HasValue .nasal true) :
-    assimilate trigger N [N, x] = [substitute trigger N x, x] := by
+    assimilate I trigger N [N, x] = [substitute I trigger N x, x] := by
   simp only [substitute, assimilate, placeAssimilation_apply_pair, List.map_cons, List.map_nil,
-    List.head_cons, repair_of_not_hasValue_nasal hx]
+    List.head_cons, realize_of_not_hasValue_nasal hx]
 
-/-- The substituted segment of a nasal is a nasal. -/
-theorem substitute_hasValue_nasal (hN : N.HasValue .nasal true) :
-    (substitute trigger N x).HasValue .nasal true := by
-  rw [substitute_eq]
-  refine repair_hasValue_nasal hN ?_
-  split_ifs
-  · rwa [Segment.HasValue, Finset.piecewise_eq_of_notMem _ _ _ (by decide)]
-  · exact hN
+private theorem hasValue_nasal_piecewise (hN : N.HasValue .nasal true) :
+    Segment.HasValue (Feature.majorArticulators.piecewise x N) .nasal true := by
+  rwa [Segment.HasValue, Finset.piecewise_eq_of_notMem _ _ _ (by decide)]
 
-/-- The substituted nasal is homorganic with a consonant that has an oral articulator: it agrees
-with the consonant on every place feature but [strident] and [lateral]. -/
-theorem substitute_apply_of_mem_place (hN : N.HasValue .nasal true) (hx : trigger ≤ x)
-    (ha : x.articulators.Nonempty) {f : Feature} (hf : f ∈ FeatureClass.place)
-    (hs : f ≠ .strident) (hl : f ≠ .lateral) : substitute trigger N x f = x f := by
-  obtain ⟨a, ha⟩ := ha
-  simp only [Segment.articulators, Finset.mem_filter, Finset.mem_insert,
-    Finset.mem_singleton] at ha
-  obtain ⟨hmem, ha⟩ := ha
-  rw [substitute_eq, ite_eq_left ⟨hN, hx⟩, repair_apply_of_ne _ hs hl,
-    Finset.piecewise_eq_of_mem _ _ _ hf]
-  rintro ⟨hl, hc, hd⟩
-  have hpa : a ∈ FeatureClass.place := by rcases hmem with rfl | rfl | rfl <;> decide
-  have h : Segment.HasValue (FeatureClass.place.piecewise x N) a false := by
-    rcases hmem with rfl | rfl | rfl <;> assumption
-  rw [Segment.HasValue, Finset.piecewise_eq_of_mem _ _ _ hpa] at h
-  cases h.symm.trans ha
+/-- The substituted nasal is the nasal of the inventory homorganic with the consonant, when the
+inventory has exactly one. -/
+theorem substitute_mem_homorganicNasals (hN : N.HasValue .nasal true) (hx : trigger ≤ x)
+    (h : (homorganicNasals I x).card = 1) :
+    substitute I trigger N x ∈ homorganicNasals I x := by
+  have hp := homorganicNasals_piecewise (I := I) (x := x) (N := N)
+  rw [substitute_eq, ite_eq_left ⟨hN, hx⟩, ← hp]
+  exact realize_mem_homorganicNasals (hasValue_nasal_piecewise hN) (by rwa [hp])
 
-/-- A consonant with no oral articulator, such as the glottal stop, leaves the place of the nasal
-unchanged: the two substitute to the nasal `N` itself. -/
-theorem substitute_eq_of_placeless (hN : N.HasValue .nasal true) (hx : trigger ≤ x)
-    (hl : x.HasValue .labial false) (hc : x.HasValue .coronal false)
-    (hd : x.HasValue .dorsal false) : substitute trigger N x = N := by
+/-- Where the inventory has no single nasal homorganic with the consonant, as before a glottal
+stop, the nasal `N` is unchanged. -/
+theorem substitute_of_card_ne_one (hN : N.HasValue .nasal true) (hx : trigger ≤ x)
+    (h : (homorganicNasals I x).card ≠ 1) : substitute I trigger N x = N := by
   rw [substitute_eq, ite_eq_left ⟨hN, hx⟩]
-  apply repair_of_placeless <;>
-    simpa [Segment.HasValue, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem,
-      FeatureClass.mem_place, Feature.featureClass?]
+  exact realize_of_card_ne_one (hasValue_nasal_piecewise hN) (by rwa [homorganicNasals_piecewise])
 
 end Phonology.NasalSubstitution

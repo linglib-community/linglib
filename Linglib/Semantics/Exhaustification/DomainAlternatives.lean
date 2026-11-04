@@ -6,19 +6,21 @@ public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Linglib.Semantics.Exhaustification.Antiexhaustive
 
 /-!
 # Domain alternatives of a modalized existential
 
 This file defines the modal profile of an existential claim `∃ x ∈ D, Q x` evaluated under
 an accessibility relation from an index, a world or an event, to worlds, and the subdomain
-alternatives whose exhaustification strengthens it. `FreeChoice` holds when every member of the domain is a witness in some
-accessible world and `ModalVariation` when the witnesses vary across the accessible worlds;
-`subdomainAlternatives` lists the subdomains an item competes with — every nonempty proper subdomain
-for a domain widener, the singletons for an anti-singleton item — and `AntiExhaustivity S`
-is the negation of the pre-exhaustified alternative for `S`: if `S` is possible, so is the
-rest of the domain. Negating the pre-exhaustified singleton alternatives yields Modal
-Variation and negating all proper ones yields Free Choice.
+alternatives whose exhaustification strengthens it. `FreeChoice` holds when every member of the
+domain is a witness in some accessible world and `ModalVariation` when the witnesses vary across
+the accessible worlds; `subdomainAlternatives` lists the subdomains an item competes with — every
+nonempty proper subdomain for a domain widener, the singletons for an anti-singleton item — and
+`AntiExhaustivity S` is the negation of the pre-exhaustified alternative for `S`: if `S` is
+possible, so is the rest of the domain. Negating the pre-exhaustified singleton alternatives
+yields Modal Variation, and negating all proper ones is Free Choice, Chierchia's antiexhaustive
+enrichment of the possibility of the claim.
 
 ## Main definitions
 
@@ -39,11 +41,14 @@ Variation and negating all proper ones yields Free Choice.
   against every subdomain alternative, in a model realizing every set of witnesses.
 * `exh_subdomain_eq_empty` — without innocent exclusion that pre-exhaustification is
   contradictory.
+* `freeChoice_iff_forall_antiExhaustivity` — where the claim is possible, Free Choice is
+  anti-exhaustivity for every proper subdomain.
 * `exhIEII_singletons_eq_freeChoice` — innocent exclusion and inclusion yields free choice.
 
 ## References
 
 * [kratzer-shimoyama-2002]
+* [chierchia-2006]
 * [alonso-ovalle-menendez-benito-2010]
 * [chierchia-2013]
 * [fox-2007]
@@ -253,23 +258,6 @@ theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, w ~[R] v
   exact ⟨v, hv, v', hv', fun h =>
     hna (Finset.mem_filter.1 (h ▸ Finset.mem_filter.2 ⟨ha, hqa⟩ : a ∈ witnesses D Q v')).2⟩
 
-theorem freeChoice_of_proper (h : ◇[R] (claim Q D) w)
-    (hs : ∀ S ∈ subdomainAlternatives .proper D, AntiExhaustivity R w D Q S) :
-    FreeChoice R w D Q := by
-  intro a ha
-  by_contra hna
-  obtain ⟨v, hv, x, hx, hqx⟩ := h
-  have hxa : x ≠ a := fun h => hna ⟨v, hv, h ▸ hqx⟩
-  have hS : D.erase a ∈ subdomainAlternatives .proper D := by
-    exact Finset.mem_Ioo.2 ⟨Finset.empty_ssubset.2 ⟨x, Finset.mem_erase.2 ⟨hxa, hx⟩⟩,
-      Finset.erase_ssubset ha⟩
-  obtain ⟨v', hv', y, hy, hqy⟩ := hs _ hS ⟨v, hv, x, Finset.mem_erase.2 ⟨hxa, hx⟩, hqx⟩
-  obtain ⟨-, hy'⟩ := Finset.mem_sdiff.1 hy
-  have : y = a := by
-    by_contra hya
-    exact hy' (Finset.mem_erase.2 ⟨hya, (Finset.mem_sdiff.1 hy).1⟩)
-  exact hna ⟨v', hv', this ▸ hqy⟩
-
 /-! ### Pre-exhaustified subdomain alternatives
 
 Innocently pre-exhaustifying the possibility of a subdomain against every subdomain alternative
@@ -351,6 +339,18 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     exact ⟨z, hzT, not_not.1 fun hz ↦
       hw (diamond_claim_iff.2 ⟨z, Finset.mem_sdiff.2 ⟨hP hT hzT, hz⟩, hzw⟩)⟩
 
+/-- Where the claim is possible, Free Choice is anti-exhaustivity for every proper subdomain, since
+both are the antiexhaustive enrichment of the possibility of the claim. -/
+theorem freeChoice_iff_forall_antiExhaustivity (h : ◇[R] (claim Q D) w) :
+    FreeChoice R w D Q ↔ ∀ S ∈ subdomainAlternatives .proper D, AntiExhaustivity R w D Q S := by
+  have key := mem_antiExh_biUnion_iff (fun x ↦ {v | ◇[R] (Q · x) v}) (D := D) (w := w)
+  rw [antiExh_biUnion _ (let ⟨_, _, x, hx, _⟩ := h; ⟨x, hx⟩)] at key
+  simp only [Set.mem_iInter₂, Set.mem_iUnion₂, Set.mem_ofPred_eq, exists_prop,
+    ← diamond_claim_iff, h, true_and] at key
+  rw [FreeChoice, key]
+  exact forall_congr' fun S ↦ by
+    rw [mem_subdomainAlternatives_proper, Finset.ssubset_iff_subset_ne, AntiExhaustivity]; tauto
+
 /-- Negating the innocent pre-exhaustification of a proper subdomain is its anti-exhaustivity,
 in a model realizing every set of witnesses. -/
 theorem notMem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
@@ -366,7 +366,8 @@ theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
       w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S) v}) :
     FreeChoice R w D Q :=
-  freeChoice_of_proper R w D Q hw fun S hS ↦ (notMem_exhIE_subdomain_iff h hS).1 (hs S hS)
+  (freeChoice_iff_forall_antiExhaustivity hw).2 fun S hS ↦
+    (notMem_exhIE_subdomain_iff h hS).1 (hs S hS)
 
 /-- Exhaustifying the possibility of a subdomain with two members against every subdomain
 alternative without innocent exclusion is contradictory, in a model realizing every set of

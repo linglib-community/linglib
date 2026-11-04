@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Pragmatics.Competition
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -13,8 +12,7 @@ are the trees obtainable from it by deletion, contraction, and substitution of c
 same-category items of the substitution source, the lexicon together with the sentence's own
 subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives`).
 The conversational principle (21) then forbids asserting a sentence when a structural
-alternative is strictly stronger and weakly assertable, the substrate's `Competition.Blocked`
-over the weakly assertable structural alternatives.
+alternative is strictly stronger and weakly assertable (`Blocked`).
 
 The examples are the paper's Section 4 and 5 sentences over a small lexicon. For (25),
 *all of the cake* is an alternative of the same complexity as *some of the cake*
@@ -44,7 +42,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 
 @[expose] public section
 
-open PhraseStructure Tree Competition
+open PhraseStructure Tree
 
 namespace Katzir2007
 
@@ -126,8 +124,13 @@ def cakeMeaning (t : Tree Cat Word) : Set Cake :=
 def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
   {t' ∈ structuralAlternatives lexicon t | wa t'}
 
+/-- Principle (21) forbids a sentence with a strictly stronger, weakly assertable alternative. -/
+def Blocked {M : Type*} (wa : Tree Cat Word → Prop) (m : Tree Cat Word → Set M)
+    (t : Tree Cat Word) : Prop :=
+  ∃ t' ∈ assertableAlts wa t, m t' ⊂ m t
+
 theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
-    Blocked (assertableAlts wa) cakeMeaning someSentence :=
+    Blocked wa cakeMeaning someSentence :=
   ⟨allSentence, ⟨all_mem_alternatives, h⟩, LE.le.ssubset_of_not_superset
     (fun c hc ↦ by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence])
     (Set.not_subset.2 ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence,
@@ -136,7 +139,7 @@ theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa al
 /-- In the primary implicature of (25a), a speaker who obeys the principle has *all* not weakly
 assertable; the symmetric alternative, being no alternative, licenses nothing. -/
 theorem primary_implicature_some {wa : Tree Cat Word → Prop}
-    (h : ¬ Blocked (assertableAlts wa) cakeMeaning someSentence) : ¬ wa allSentence :=
+    (h : ¬ Blocked wa cakeMeaning someSentence) : ¬ wa allSentence :=
   fun hwa ↦ h (blocked_of_weaklyAssertable_all hwa)
 
 /-! ### Disjunction (Section 4.2) -/
@@ -193,7 +196,7 @@ def fruitMeaning (t : Tree Cat Word) : Set Fruits :=
 /-- In the primary inferences (28), a speaker of the disjunction who obeys the principle has the
 conjunction and each disjunct not weakly assertable. -/
 theorem primary_inferences_or {wa : Tree Cat Word → Prop}
-    (h : ¬ Blocked (assertableAlts wa) fruitMeaning orSentence) :
+    (h : ¬ Blocked wa fruitMeaning orSentence) :
     ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct := by
   refine ⟨fun hwa ↦ h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩,
       LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩,

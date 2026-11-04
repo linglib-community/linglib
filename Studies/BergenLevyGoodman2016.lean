@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.LexicalUncertainty
+public import Linglib.Pragmatics.RSA.Recursion
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.Calculus.Deriv.Inv
@@ -9,16 +10,19 @@ public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 /-!
 # Bergen, Levy and Goodman (2016): Pragmatic reasoning through semantic inference
 
-An M-implicature pairs the costlier of two synonymous utterances with the less probable meaning:
-*John has the ability to finish the homework* suggests he will not. In the Horn game a cheap and
-a costly utterance are both true of a frequent and a rare meaning. The Rational Speech Act model
-cannot pair them with meanings: [two utterances its literal listener reads alike are read alike
-at every level of the recursion](##step_iterate_short_eq_long), whatever their costs. Under
-lexical uncertainty the speaker uses one of the lexica that refine each utterance's meaning, and
-the listener, unsure which, inverts the speaker of each. [She then finds the rare meaning
-likelier after the costly utterance than after the cheap one](##L1_fst_rare_lt), and so
-associates each form with the meaning of its markedness, [the pairs weak bidirection takes to be
-super-optimal](##setOf_associates_eq_superoptimalSet).
+The recursion strengthens *some* toward *some but not all*: at rationality one under a uniform
+prior, [the probability that *some* means *all* is `1 / (2 (n + 1))` at level
+`n`](##scalarListener_some_all), [zero in the limit](##tendsto_scalarListener_some_all) and at no
+level before it. An M-implicature pairs the costlier of two synonymous utterances with the less
+probable meaning: *John has the ability to finish the homework* suggests he will not. In the Horn
+game a cheap and a costly utterance are both true of a frequent and a rare meaning. The Rational
+Speech Act model cannot pair them with meanings: [two utterances its literal listener reads alike
+are read alike at every level of the recursion](##iterate_recurse_short_eq_long), whatever their
+costs. Under lexical uncertainty the speaker uses one of the lexica that refine each utterance's
+meaning, and the listener, unsure which, inverts the speaker of each.
+[She then finds the rare meaning likelier after the costly utterance than after the cheap
+one](##L1_fst_rare_lt), and so associates each form with the meaning of its markedness, [the pairs
+weak bidirection takes to be super-optimal](##setOf_associates_eq_superoptimalSet).
 
 ## Implementation notes
 
@@ -56,6 +60,167 @@ meaning's prior rises.
 namespace BergenLevyGoodman2016
 
 open MeasureTheory ProbabilityTheory RSA
+
+/-! ### The specificity implicature
+
+The paper's first example has *all* true of one world and *some* true of both, under a uniform
+prior and no cost. -/
+
+section Specificity
+
+/-- The world in which all are so, and the world in which some but not all are. -/
+inductive ScalarWorld where
+  | all
+  | someNotAll
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace ScalarWorld := ⊤
+instance : DiscreteMeasurableSpace ScalarWorld := ⟨fun _ ↦ trivial⟩
+
+/-- The specific utterance and the general one. -/
+inductive ScalarUtt where
+  | all
+  | some
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace ScalarUtt := ⊤
+instance : DiscreteMeasurableSpace ScalarUtt := ⟨fun _ ↦ trivial⟩
+
+/-- *All* is true of its world, *some* of both. -/
+def scalarSem : ScalarUtt → Set ScalarWorld
+  | .all => {.all}
+  | .some => Set.univ
+
+/-- The listener at recursion level `n`. -/
+noncomputable abbrev scalarListener (α : ℝ) (n : ℕ) : Kernel ScalarUtt ScalarWorld :=
+  (recurse (uniformOn Set.univ) Kernel.id Measure.dirac α 0)^[n]
+    (listener (uniformOn Set.univ) (truthful scalarSem))
+
+private theorem sum_world (f : ScalarWorld → ℝ) : ∑ w, f w = f .all + f .someNotAll :=
+  Fintype.sum_eq_add _ _ (by decide) (by rintro (_ | _) h <;> simp at h)
+
+private theorem sum_utt (f : ScalarUtt → ℝ) : ∑ u, f u = f .all + f .some :=
+  Fintype.sum_eq_add _ _ (by decide) (by rintro (_ | _) h <;> simp at h)
+
+private theorem uniform_ne_zero (w : ScalarWorld) :
+    uniformOn (Set.univ : Set ScalarWorld) {w} ≠ 0 :=
+  uniformOn_univ_singleton_ne_zero w
+
+variable {α : ℝ} (hα : 0 < α) (n : ℕ)
+include hα
+
+private theorem all_someNotAll_eq_zero : scalarListener α n .all {.someNotAll} = 0 :=
+  not_not.1 fun h ↦ by
+    simpa [scalarSem] using (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).1 h
+
+private theorem all_someNotAll_real : (scalarListener α n .all).real {.someNotAll} = 0 := by
+  rw [measureReal_def, all_someNotAll_eq_zero hα n, ENNReal.toReal_zero]
+
+private theorem some_ne_zero (w : ScalarWorld) : scalarListener α n .some {w} ≠ 0 :=
+  (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).2
+    ⟨Set.mem_univ w, uniform_ne_zero w⟩
+
+private theorem isProbabilityMeasure_some : IsProbabilityMeasure (scalarListener α n .some) :=
+  (eq_zero_or_isProbabilityMeasure _).resolve_left fun h ↦
+    some_ne_zero hα n .all (by rw [h]; rfl)
+
+private theorem some_someNotAll : (scalarListener α n .some).real {.someNotAll} =
+    1 - (scalarListener α n .some).real {.all} := by
+  have := isProbabilityMeasure_some hα n
+  have h := sum_measureReal_singleton_eq_one (scalarListener α n .some)
+  rw [sum_world] at h
+  linarith
+
+private theorem some_all_pos : 0 < (scalarListener α n .some).real {.all} :=
+  ENNReal.toReal_pos (some_ne_zero hα n .all) (measure_ne_top _ _)
+
+private theorem some_all_lt_one : (scalarListener α n .some).real {.all} < 1 := by
+  have := ENNReal.toReal_pos (some_ne_zero hα n .someNotAll) (measure_ne_top _ _)
+  rw [← measureReal_def, some_someNotAll hα n] at this
+  linarith
+
+private theorem all_all : (scalarListener α n .all).real {.all} = 1 := by
+  have : IsProbabilityMeasure (scalarListener α n .all) :=
+    (eq_zero_or_isProbabilityMeasure _).resolve_left fun h ↦
+      (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
+        (u := .all) (w := .all) hα n).2 ⟨rfl, uniform_ne_zero _⟩ (by rw [h]; rfl)
+  have h := sum_measureReal_singleton_eq_one (scalarListener α n .all)
+  rwa [sum_world, all_someNotAll_real hα n, add_zero] at h
+
+-- the table of (8)–(11), p. 20:16, at any rationality
+theorem scalarListener_succ_some_all :
+    (scalarListener α (n + 1) .some).real {.all} =
+      (scalarListener α n .some).real {.all} ^ α /
+        (2 * (scalarListener α n .some).real {.all} ^ α + 1) := by
+  have hp := some_all_pos hα n
+  have hp1 := some_all_lt_one hα n
+  have hx := Real.rpow_pos_of_pos hp α
+  have hq : 0 < 1 - (scalarListener α n .some).real {.all} := by linarith
+  have hy := Real.rpow_pos_of_pos hq α
+  have hL (u : ScalarUtt) (w : ScalarWorld) : (scalarListener α n u {w} ^ α).toReal =
+      (scalarListener α n u).real {w} ^ α := by rw [← ENNReal.toReal_rpow, measureReal_def]
+  have hs₁ : (speaker α 0 (scalarListener α n) Measure.dirac ScalarWorld.all).real {.some} =
+      (scalarListener α n .some).real {.all} ^ α /
+        (1 + (scalarListener α n .some).real {.all} ^ α) := by
+    rw [speaker_dirac_zero_real_singleton hα.le, sum_utt]
+    simp only [hL, all_all hα n, Real.one_rpow]
+  have hs₂ : (speaker α 0 (scalarListener α n) Measure.dirac ScalarWorld.someNotAll).real {.some} =
+      1 := by
+    rw [speaker_dirac_zero_real_singleton hα.le, sum_utt]
+    simp only [hL, all_someNotAll_real hα n, some_someNotAll hα n]
+    rw [Real.zero_rpow hα.ne', zero_add, div_self hy.ne']
+  rw [show scalarListener α (n + 1) = _ from Function.iterate_succ_apply' _ _ _, recurse_id_dirac,
+    listener_real_singleton, sum_world, uniformOn_univ_real_singleton,
+    uniformOn_univ_real_singleton, hs₁, hs₂]
+  rw [show Fintype.card ScalarWorld = 2 from rfl]
+  field_simp
+  ring
+
+omit hα in
+private theorem scalarListener_zero_some_all : (scalarListener α 0 .some).real {.all} = 1 / 2 := by
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set ScalarWorld)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ ⟨.all, trivial⟩
+  rw [show scalarListener α 0 = listener (uniformOn Set.univ) (truthful scalarSem) from rfl,
+    listener_truthful_real_singleton (uniformOn Set.univ) scalarSem (u := .some) (w := .all)
+      (Set.mem_univ _), uniformOn_univ_real_singleton, show scalarSem .some = Set.univ from rfl,
+    probReal_univ, show Fintype.card ScalarWorld = 2 from rfl]
+  norm_num
+
+-- Figure 2
+theorem scalarListener_one_some_all :
+    (scalarListener α 1 .some).real {.all} = (1 / 2 : ℝ) ^ α / (2 * (1 / 2 : ℝ) ^ α + 1) := by
+  rw [scalarListener_succ_some_all hα 0, scalarListener_zero_some_all]
+
+omit hα in
+/-- At rationality one the probability that *some* means *all* is `1 / (2 * (n + 1))` at recursion
+level `n`. -/
+theorem scalarListener_some_all : (scalarListener 1 n .some).real {.all} = 1 / (2 * (n + 1)) := by
+  induction n with
+  | zero => simpa using scalarListener_zero_some_all
+  | succ n ih =>
+    rw [scalarListener_succ_some_all one_pos, ih, Real.rpow_one]
+    push_cast
+    field_simp
+    ring
+
+omit hα in
+-- the inequality closing the table of (8)–(11), p. 20:16
+theorem scalarListener_succ_some_all_lt :
+    (scalarListener 1 (n + 1) .some).real {.all} < (scalarListener 1 n .some).real {.all} := by
+  rw [scalarListener_some_all, scalarListener_some_all]
+  push_cast
+  exact one_div_lt_one_div_of_lt (by positivity) (by linarith)
+
+omit hα in
+open Filter Topology in
+/-- The specificity implicature is categorical only in the limit: at rationality one the probability
+that *some* means *all* tends to zero with the level, and reaches it at no level. -/
+theorem tendsto_scalarListener_some_all :
+    Tendsto (fun n ↦ (scalarListener 1 n .some).real {.all}) atTop (𝓝 0) := by
+  simp_rw [scalarListener_some_all, one_div, mul_inv]
+  simpa [one_div] using (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul (2⁻¹ : ℝ)
+
+end Specificity
 
 /-! ### The Horn game -/
 
@@ -144,25 +309,15 @@ prior over meanings and a uniform prior over the lexica. -/
 noncomputable def L1 : Kernel Utterance (Meaning × Lexicon) :=
   listener (μ.prod (uniformOn Set.univ)) fun p ↦ S1 α C μ p.2 p.1
 
-/-- A round of the recursion without lexical uncertainty (6)–(7): the listener of the speaker
-who addresses `L`. -/
-noncomputable def step (L : Kernel Utterance Meaning) : Kernel Utterance Meaning :=
-  listener μ (speaker α C L Measure.dirac)
-
 /-! ### Without lexical uncertainty -/
 
 /-- **Lemma 2.** Without lexical uncertainty the cheap and the costly utterance are interpreted
 alike at every level of the recursion, whatever their costs, the rationality and the prior. -/
-theorem step_iterate_short_eq_long (n : ℕ) :
-    (step α C μ)^[n] (L0 μ base) .short = (step α C μ)^[n] (L0 μ base) .long := by
-  induction n with
-  | zero =>
-    refine (listener_apply_eq_of_apply_singleton_eq_mul one_ne_zero ENNReal.one_ne_top
-      fun w ↦ ?_).symm
-    simp [truthful_apply_singleton, sem, base, Refinement.den]
-  | succ n ih =>
-    rw [Function.iterate_succ_apply', step]
-    exact (listener_speaker_apply_congr μ ih).symm
+theorem iterate_recurse_short_eq_long (n : ℕ) :
+    (RSA.recurse μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .short =
+      (RSA.recurse μ Kernel.id Measure.dirac α C)^[n] (L0 μ base) .long :=
+  iterate_recurse_apply_eq_of_apply_eq (listener_apply_eq_of_apply_singleton_eq_mul one_ne_zero
+    ENNReal.one_ne_top fun w ↦ by simp [truthful_apply_singleton, sem, base, Refinement.den]) n
 
 /-! ### Under lexical uncertainty -/
 

@@ -164,7 +164,7 @@ def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabi
 /-! ### Nasal assimilation -/
 
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following obstruent. -/
-def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ng
+def assimilate : List Segment → List Segment := NasalSubstitution.assimilate consonants trigger ng
 
 /-! ### Nasal substitution -/
 
@@ -174,7 +174,7 @@ def substituting : Finset Segment := {p, t, k, s}
 /-- What the prefix nasal and a root-initial `x` fuse into, which is the assimilated nasal,
 except that with `s` it is the palatal `ny`. -/
 def fuse (x : Segment) : Segment :=
-  if x = s then ny else NasalSubstitution.substitute trigger ng x
+  if x = s then ny else NasalSubstitution.substitute consonants trigger ng x
 
 /-- What the prefix nasal and the base-initial segment `x` surface as. A substituting
 consonant fuses with the nasal, the nasal is lost before a sonorant consonant, and otherwise it

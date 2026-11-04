@@ -31,7 +31,8 @@ AloniVanOrmondt2023,unclassified
 AlonsoOvalle2009,unclassified
 AlonsoOvalleMenendezBenito2010,unclassified
 AlonsoOvalleMoghiseh2025a,unclassified
-AlonsoOvalleMoghiseh2025b,unclassified
+AlonsoOvalleMoghiseh2025b,elicitation
+AlonsoOvalleRouillard2023,unclassified
 AlonsoOvalleRoyer2024,unclassified
 Alsop2024,unclassified
 AlstottAravind2026,unclassified
@@ -50,7 +51,7 @@ Aremu2025b,unclassified
 Ariel2001,corpus
 Arka2013,unclassified
 Arnold2026,unclassified
-ArnoldEtAl2000,unclassified
+ArnoldEtAl2000,corpus
 ArregiPietraszko2021,unclassified
 ArreguiKusumoto1998,unclassified
 AsherLascarides2003,unclassified
@@ -95,6 +96,7 @@ Beltrama2025,unclassified
 BeltramaSchwarz2024,unclassified
 Benmamoun2000,unclassified
 Benz2025,unclassified
+Berent2026,experiment
 BergenGoodman2015,unclassified
 BhattPancheva2004,unclassified
 BhattTakahashi2011,unclassified
@@ -136,6 +138,7 @@ Chomsky2013,unclassified
 Chomsky2015,unclassified
 ChungMascarenhas2023,unclassified
 CiardelliGuerrini2026,unclassified
+ClemDeal2026,description
 Cohen2013,unclassified
 CohenErteschikShir2002,unclassified
 Cole1982,unclassified
@@ -199,6 +202,7 @@ ElkinsTorrenceBrown2026,unclassified
 Elliott2020,unclassified
 Elliott2023,unclassified
 Elliott2025,unclassified
+ElliottNicolaeSauerland2022,unclassified
 ElliottSudo2025,unclassified
 Embick2004,unclassified
 Embick2010,unclassified
@@ -240,6 +244,7 @@ GartnerGyuris2017,unclassified
 Gasparri2025,unclassified
 George2011,unclassified
 Geurts2005,unclassified
+Geurts2010,introspection
 GeurtsPouscoulous2009,unclassified
 Giannakidou2002,unclassified
 GilesEtAl2026,unclassified
@@ -291,7 +296,7 @@ Haspelmath1997,unclassified
 Haspelmath2001,unclassified
 Haspelmath2007,unclassified
 Haspelmath2021,unclassified
-Haspelmath2025a,unclassified
+Haspelmath2025a,description
 Haspelmath2025b,unclassified
 HaugDalrymple2020,unclassified
 HawkinsEtAl2025,unclassified
@@ -309,7 +314,9 @@ Heim1994b,unclassified
 Heim2001,unclassified
 HeimKratzer1998,unclassified
 HeimLasnikMay1991,unclassified
+Heinamaki1974,introspection
 Heine1997,unclassified
+Helmantel2002,introspection
 HendersonCoon2018,unclassified
 HerbstrittFranke2019,unclassified
 Herce2023,unclassified
@@ -373,6 +380,7 @@ KnickSharf2026,introspection
 Koev2026,unclassified
 KonnellyCowper2020,unclassified
 Krapova2010,unclassified
+Kratzer1981,introspection
 Kratzer1998,unclassified
 KratzerShimoyama2002,unclassified
 Krifka1998,unclassified
@@ -380,6 +388,7 @@ Krifka2013,unclassified
 Krifka2026,unclassified
 KrizChemla2015,unclassified
 Kubota2026,unclassified
+Ladusaw1979,introspection
 Lahiri1998,unclassified
 Landau2024a,unclassified
 Landau2024b,unclassified
@@ -397,6 +406,7 @@ LiuRotter2025,unclassified
 LoGuercio2025,unclassified
 Longobardi2001,unclassified
 LuPanDegen2025,unclassified
+MacCartneyManning2009,unclassified
 Magri2009,unclassified
 Maier2015,unclassified
 Major2024,unclassified
@@ -421,6 +431,7 @@ Myler2016,unclassified
 Nadathur2023,unclassified
 NapoliNespor1976,unclassified
 Noonan2007,unclassified
+Ochs1992,description
 Ogihara1989,unclassified
 Ogihara1996,unclassified
 OgiharaSteinertThrelkeld2024,unclassified
@@ -448,7 +459,8 @@ RamchandSvenonius2014,unclassified
 RappaportHovavLevin2024,unclassified
 Reichenbach1947,unclassified
 Reinhart1976,unclassified
-Rett2015,unclassified
+Rett2015a,introspection
+Rett2015b,unclassified
 Rett2020a,unclassified
 Rett2020b,unclassified
 Rett2026,unclassified
@@ -474,6 +486,7 @@ Sag2010,unclassified
 SagWasowBender2003,unclassified
 SandeClemDabkowski2026,unclassified
 Sassoon2013,unclassified
+SauerlandStateva2011,introspection
 Schlenker2004a,unclassified
 SchlenkerEtAl2026,unclassified
 Schoter1996a,unclassified
@@ -563,7 +576,7 @@ Wilson1976,unclassified
 Winter2018,unclassified
 Wood2015,unclassified
 Wood2023,unclassified
-Woolford1997,unclassified
+Woolford1997,description
 Wurmbrand2014,unclassified
 Xiang2022,unclassified
 XuEtAl2024,unclassified
@@ -580,5 +593,5 @@ Zeijlstra2012,unclassified
 Zheng2025,unclassified
 Zimmermann2008,unclassified
 Zimmermann2026,unclassified
-Zwarts2005,unclassified
+Zwarts2005,introspection
 ZwickyPullum1983,unclassified

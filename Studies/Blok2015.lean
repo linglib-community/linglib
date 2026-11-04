@@ -194,11 +194,12 @@ theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
   constructor
   · rintro ⟨h, -⟩
     by_contra hr
-    have hf := (Signature.holdsFor_antiAdd_iff.1 ((h.toSignature_of_le (s := .antiAdditive)
+    have hf := (ProjectivitySignature.holdsFor_antiAdd_iff.1
+      ((h.toProjectivitySignature_of_le (s := .antiAdditive)
       (by revert hr; cases r <;> decide)) ⟨⟨Unit, ∅⟩⟩)).2
     exact (eq_iff_iff.1 hf).1 (by simp [NumberTree.toDet_apply, sUnion_atMost])
   · rintro rfl
-    refine ⟨fun p ↦ Signature.holdsFor_anti_iff.2 ?_, fun hm ↦ ?_⟩
+    refine ⟨fun p ↦ ProjectivitySignature.holdsFor_anti_iff.2 ?_, fun hm ↦ ?_⟩
     · show Antitone ((NumberTree.cardinal (⋃₀ atMost n)).toDet p.A)
       rw [toDet_sUnion_atMost]; exact Det.scopeAntitone_atMost n p.A
     · have := hm ⟨⟨Fin (n + 1), univ⟩⟩ (empty_subset (univ : Set (Fin (n + 1))))

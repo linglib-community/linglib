@@ -29,6 +29,8 @@ both ranks the points and says which of them are available.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
   of one is the logistic function of the score difference.
+* `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_atTop`: at a growing rationality the
+  rule concentrates on the strict maximizer of the utility.
 * `ProbabilityTheory.Kernel.softmax_eq_tilted`,
   `ProbabilityTheory.Kernel.isGreatest_freeEnergy_softmax`: a row is the uniform measure on the
   available points tilted by the score, and so maximizes the expected score less the divergence
@@ -39,6 +41,26 @@ both ranks the points and says which of them are available.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+namespace EReal
+
+/-- Scaling by a real distributes over subtracting a real, at any sign and at `⊥` and `⊤`. -/
+theorem coe_mul_sub_coe (r c : ℝ) (x : EReal) :
+    (r : EReal) * (x - c) = r * x - ((r * c : ℝ) : EReal) := by
+  induction x with
+  | bot =>
+    rcases lt_trichotomy r 0 with h | rfl | h
+    · rw [bot_sub, coe_mul_bot_of_neg h, top_sub_coe]
+    · simp
+    · rw [bot_sub, coe_mul_bot_of_pos h, bot_sub]
+  | top =>
+    rcases lt_trichotomy r 0 with h | rfl | h
+    · rw [top_sub_coe, coe_mul_top_of_neg h, bot_sub]
+    · simp
+    · rw [top_sub_coe, coe_mul_top_of_pos h, top_sub_coe]
+  | coe x => norm_cast; ring_nf
+
+end EReal
 
 namespace ProbabilityTheory.Kernel
 
@@ -126,6 +148,62 @@ theorem softmax_real_singleton_of_pair {w : α} {u u' : β} (huu' : u ≠ u')
     EReal.toReal_coe]
 
 end Softmax
+
+/-! ### The rule at a growing rationality -/
+
+section Limit
+
+open Filter Topology
+
+variable [Countable α] [MeasurableSingletonClass α] [Fintype β] [MeasurableSingletonClass β]
+
+omit [MeasurableSpace β] [MeasurableSingletonClass β] in
+private theorem tendsto_rpow_div_sum_rpow_atTop {m : β → ℝ} {u : β} (hm0 : ∀ v, 0 ≤ m v)
+    (hu : 0 < m u) (hmax : ∀ v ≠ u, m v < m u) :
+    Tendsto (fun r : ℝ ↦ m u ^ r / ∑ v, m v ^ r) atTop (𝓝 1) := by
+  classical
+  have hform : ∀ᶠ r : ℝ in atTop, (∑ v, (m v / m u) ^ r)⁻¹ = m u ^ r / ∑ v, m v ^ r := by
+    filter_upwards with r
+    have hsum : ∑ v, (m v / m u) ^ r = (∑ v, m v ^ r) / m u ^ r := by
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun v _ ↦ Real.div_rpow (hm0 v) hu.le r
+    rw [hsum, inv_div]
+  have hlim : Tendsto (fun r : ℝ ↦ ∑ v, (m v / m u) ^ r) atTop
+      (𝓝 (∑ v, if v = u then (1 : ℝ) else 0)) := by
+    refine tendsto_finsetSum _ fun v _ ↦ ?_
+    by_cases hv : v = u
+    · subst hv
+      have h1 : HPow.hPow (m v / m v) = fun _ : ℝ ↦ (1 : ℝ) :=
+        funext fun r ↦ by rw [div_self hu.ne', Real.one_rpow]
+      rw [h1]; simp
+    · have hlt : m v / m u < 1 := (div_lt_one hu).2 (hmax v hv)
+      simpa only [hv, ite_false] using
+        tendsto_rpow_atTop_of_base_lt_one _ (by linarith [div_nonneg (hm0 v) hu.le]) hlt
+  rw [Finset.sum_ite_eq' Finset.univ u, ite_eq_left (Finset.mem_univ u)] at hlim
+  simpa using (hlim.inv₀ one_ne_zero).congr' hform
+
+/-- As the rationality grows, the rule puts all its mass on the strict maximizer of the utility. -/
+theorem tendsto_softmax_mul_real_singleton_atTop {V : α → β → EReal} {w : α} {u : β}
+    (hu : V w u ≠ ⊥) (hutop : V w u ≠ ⊤) (hmax : ∀ v ≠ u, V w v < V w u) :
+    Tendsto (fun r : ℝ ↦ (softmax (fun x a ↦ (r : EReal) * V x a) w).real {u}) atTop (𝓝 1) := by
+  have htop (v : β) : EReal.exp (V w v) ≠ ∞ := by
+    refine mt EReal.exp_eq_top_iff.1 fun h ↦ ?_
+    by_cases hv : v = u
+    · exact hutop (hv ▸ h)
+    · exact not_top_lt (h ▸ hmax v hv)
+  have hu0 : 0 < (EReal.exp (V w u)).toReal :=
+    ENNReal.toReal_pos (mt EReal.exp_eq_zero_iff.1 hu) (htop u)
+  refine (tendsto_rpow_div_sum_rpow_atTop (m := fun v ↦ (EReal.exp (V w v)).toReal)
+    (fun _ ↦ ENNReal.toReal_nonneg) hu0 fun v hv ↦ ?_).congr' ?_
+  · exact (ENNReal.toReal_lt_toReal (htop v) (htop u)).2 (EReal.exp_lt_exp_iff.2 (hmax v hv))
+  · filter_upwards [eventually_ge_atTop 0] with r hr
+    have hexp (v : β) : EReal.exp ((r : EReal) * V w v) = EReal.exp (V w v) ^ r := by
+      rw [mul_comm, EReal.exp_mul]
+    rw [softmax, ofWeights_real_singleton _ _ fun v ↦
+      hexp v ▸ ENNReal.rpow_ne_top_of_nonneg hr (htop v)]
+    simp only [hexp, ENNReal.toReal_rpow]
+
+end Limit
 
 /-! ### The softmax row as a Gibbs measure -/
 

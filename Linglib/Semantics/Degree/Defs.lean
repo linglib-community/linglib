@@ -5,7 +5,7 @@ module
 
 This file defines `Degree.Construction`, the surface forms a gradable
 predicate can appear in — bare positive, comparative, equative, measure
-phrase, and degree question ([beck-2011], [rett-2015]). The Deg⁰ head
+phrase, and degree question ([beck-2011], [rett-2015b]). The Deg⁰ head
 inventory is defined in `Linglib/Syntax/Category/Degree/Basic.lean`.
 -/
 

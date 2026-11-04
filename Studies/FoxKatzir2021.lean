@@ -422,17 +422,16 @@ theorem exhIEII_or {S : Finset ι} (hS : S.Nonempty) :
     · rintro _ ⟨i, hi, rfl⟩
       exact (hφ _).2 ⟨i, hi, mem_singleton_self i⟩
     · obtain ⟨i, hi, hiw⟩ := (hφ w).1 hw
-      refine ⟨{i}, ⟨i, hi, rfl⟩, fun a ha hai ↦ ?_⟩
+      refine ⟨{i}, ⟨i, hi, rfl⟩, fun a ⟨ha, hai⟩ ↦ ⟨ha, ?_⟩⟩
       obtain ⟨T, -, rfl⟩ := hALT.1 ha
       obtain ⟨j, hj, hji⟩ := hai
       rw [mem_singleton] at hji
       exact ⟨j, hj, hji ▸ hiw⟩
     · rintro _ ⟨i, -, rfl⟩ _ ⟨j, -, rfl⟩ h
-      obtain ⟨k, hk, hki⟩ := h _ (hALT.2 ⟨{j}, singleton_nonempty j, rfl⟩)
-        ⟨j, mem_singleton_self j, mem_singleton_self j⟩
+      obtain ⟨k, hk, hki⟩ := (h ⟨hALT.2 ⟨{j}, singleton_nonempty j, rfl⟩,
+        ⟨j, mem_singleton_self j, mem_singleton_self j⟩⟩).2
       rw [mem_singleton] at hk hki
       rw [← hki, hk]
-      exact fun _ _ h ↦ h
   rw [hM.exhIEII_eq ⟨S, (hφ S).2 (hS.imp fun i hi ↦ ⟨hi, hi⟩), fun q hq ↦ ?_⟩]
   · ext w
     simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]

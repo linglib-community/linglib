@@ -164,18 +164,6 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
   exact exists_congr fun i ↦ and_congr_right fun _ ↦
     ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
-theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
-    (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (infClosure (range a)) w := by
-  classical
-  obtain ⟨i, hi⟩ := hw
-  let T : Finset ι := Finset.univ.filter (fun i ↦ w ∈ a i)
-  have hT : ∀ i, i ∈ T ↔ w ∈ a i := fun i ↦ by simp [T]
-  refine ⟨(⋂ i ∈ T, a i), ⟨mem_infClosure_range.2 ⟨T, ⟨i, (hT i).2 hi⟩, rfl⟩,
-    mem_iInter₂.2 fun i hi ↦ (hT i).1 hi⟩, ?_⟩
-  rintro _ ⟨hq, hwS⟩ v hv
-  obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
-  exact mem_iInter₂.2 fun j hj ↦ mem_iInter₂.1 hv j ((hT j).2 (mem_iInter₂.1 hwS j hj))
-
 /-! ### Negative islands -/
 
 /-- A question containing the disjunction of two members neither of which entails the other fails
@@ -217,10 +205,10 @@ theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell
   · intro hv q hq
     by_cases hIE : IsInnocentlyExcludable H p q
     · exact ⟨fun hwq ↦ (hw.2.1 q hIE hwq).elim, fun hvq ↦ (hv.2.1 q hIE hvq).elim⟩
-    · exact ⟨fun _ ↦ hv.2.2 q ⟨hq, hIE⟩, fun _ ↦ hw.2.2 q ⟨hq, hIE⟩⟩
+    · exact ⟨fun _ ↦ hv.2.2 q hq hIE, fun _ ↦ hw.2.2 q hq hIE⟩
   · intro hv
     exact ⟨(hv p hp).1 hw.1, fun q hIE hvq ↦ hw.2.1 q hIE ((hv q hIE.1).2 hvq),
-      fun r hr ↦ (hv r hr.1).1 (hw.2.2 r hr)⟩
+      fun r hr hnr ↦ (hv r hr).1 (hw.2.2 r hr hnr)⟩
 
 theorem isCellValued_cell : IsCellValued (cell H) H := fun _ hp _ hw ↦ cell_eq_strongAnswer hp hw
 
@@ -289,21 +277,27 @@ theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w =
   rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
-theorem leALT_infClosure_range_iff {u v : W} :
-    (u ≤[infClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
+theorem satisfied_infClosure_range_subset_iff {u v : W} :
+    Preorder.satisfied (· ∈ ·) (infClosure (range a)) u ⊆
+      Preorder.satisfied (· ∈ ·) (infClosure (range a)) v ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (subset_infClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
-  · rintro h _ hq hu
+    exact mem_satisfied_iff.2
+      (h ⟨subset_infClosure (mem_range_self i), mem_satisfied_iff.1 hi⟩).2
+  · rintro h q ⟨hq, hu⟩
+    refine ⟨hq, ?_⟩
     obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
     exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
-theorem leALT_supClosure_range_iff {u v : W} :
-    (u ≤[supClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
+theorem satisfied_supClosure_range_subset_iff {u v : W} :
+    Preorder.satisfied (· ∈ ·) (supClosure (range a)) u ⊆
+      Preorder.satisfied (· ∈ ·) (supClosure (range a)) v ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (subset_supClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
-  · rintro h _ hq hu
+    exact mem_satisfied_iff.2
+      (h ⟨subset_supClosure (mem_range_self i), mem_satisfied_iff.1 hi⟩).2
+  · rintro h q ⟨hq, hu⟩
+    refine ⟨hq, ?_⟩
     obtain ⟨S, -, rfl⟩ := mem_supClosure_range.1 hq
     obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
     exact mem_biUnion hi (mem_satisfied_iff.1 (h (mem_satisfied_iff.2 hui)))
@@ -368,25 +362,23 @@ theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
   · rintro ⟨hu, hmin⟩
     obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
-    have hvu : v ≤[supClosure (range a)] u := leALT_supClosure_range_iff.2 (by
+    have hvu := (satisfied_supClosure_range_subset_iff (u := v) (v := u)).2 (by
       rw [hv, Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui))
-    have huv : u ≤[supClosure (range a)] v :=
-      by_contra fun h ↦ hmin ⟨v, mem_biUnion hi (hsing hv), hvu, h⟩
+    have huv := hmin (mem_biUnion hi (hsing hv)) hvu
     refine ⟨i, hi, subset_antisymm ?_ ?_⟩
     · rw [← hv]
-      exact leALT_supClosure_range_iff.1 huv
+      exact satisfied_supClosure_range_subset_iff.1 huv
     · rw [Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui)
   · rintro ⟨i, hi, hu⟩
-    refine ⟨mem_biUnion hi (hsing hu), ?_⟩
-    rintro ⟨v, hv, hvu, hnuv⟩
+    refine ⟨mem_biUnion hi (hsing hu), fun v hv hvu ↦ ?_⟩
     obtain ⟨j, -, hvj⟩ := mem_iUnion₂.1 hv
     have hj : j ∈ atoms v := mem_satisfied_iff.2 hvj
-    have hji : j ∈ atoms u := leALT_supClosure_range_iff.1 hvu hj
+    have hji : j ∈ atoms u := satisfied_supClosure_range_subset_iff.1 hvu hj
     rw [hu, Finset.coe_singleton, mem_singleton_iff] at hji
     subst hji
-    refine hnuv (leALT_supClosure_range_iff.2 ?_)
+    refine satisfied_supClosure_range_subset_iff.2 ?_
     rw [hu, Finset.coe_singleton]
     exact singleton_subset_iff.2 hj
 
