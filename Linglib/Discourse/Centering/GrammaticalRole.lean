@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Voice.TermRole
 
 /-!

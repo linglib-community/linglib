@@ -243,7 +243,7 @@ def residue (E : Finset Relation) : Finset Cell := E.inf Relation.cells
 
 /-- The relations a row records under a key, if every label names one. -/
 def relationsOf? (e : Datum) (key : String) : Option (List Relation) :=
-  (e.features key).mapM (List.lookup · Relation.labels)
+  e.parseAll? key Relation.labels
 
 /-- The predication a row records. Adjuncts are not arguments. -/
 abbrev Predication.ofRow? (e : Datum) : Option Predication := relationsOf? e "arg"

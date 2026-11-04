@@ -68,6 +68,9 @@ def Meets : Prop := ¬ Disjoint (F.indexes v) π
 /-- A persona is compatible with a variant when it has every property the variant indexes. -/
 def Compatible : Prop := F.indexes v ⊆ π
 
+variable {F v π} in
+theorem meets_iff : F.Meets v π ↔ ∃ p ∈ F.indexes v, p ∈ π := Finset.not_disjoint_iff
+
 instance [DecidableEq P] : Decidable (F.Meets v π) :=
   inferInstanceAs (Decidable (¬ Disjoint _ _))
 

@@ -68,7 +68,7 @@ def Descriptor.dimension? (x : Descriptor) : Option Dimension :=
 
 /-- A persona's profile is positive on each dimension one of its traits measures. -/
 def profile : AssociationField Persona Dimension SignType :=
-  .of fun p d ↦ if ∃ x ∈ (descriptors p).traits, x.dimension? = some d then 1 else 0
+  fun p d ↦ if ∃ x ∈ (descriptors p).traits, x.dimension? = some d then 1 else 0
 
 /-- The precision variant whose speakers a persona embodies. -/
 def Persona.variant : Persona → Variant

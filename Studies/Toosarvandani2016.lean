@@ -336,7 +336,7 @@ def config (e : Datum) : Option Config := do
   let a ← e.parse? "aspect" aspects
   let b ← e.parse? "unmarkedAspect" aspects
   let u ← e.parse? "unmarkedEvent" events
-  let ms ← (e.features "markedEvent").mapM (List.lookup · events)
+  let ms ← e.parseAll? "markedEvent" events
   pure ⟨s, a, ms, b, u⟩
 
 /-- The predicted verdict: each marked event and the unmarked event meet the truth condition. -/

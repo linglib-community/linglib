@@ -276,7 +276,6 @@ Heim1994b
 HeimKratzer1998
 HeimLasnikMay1991
 HeitmeierChuangBaayen2026
-Helmantel2002
 HerbstrittFranke2019
 Herce2023
 Hintikka1962
@@ -387,7 +386,6 @@ Ney2026
 Nordlinger2023
 Nouwen2024
 ODonnell2015
-Ochs1992
 Ogihara1989
 OgiharaSteinertThrelkeld2024
 Olivier2026
@@ -516,7 +514,6 @@ WechslerZlatic2000
 Wilder2013
 Wood2015
 Wood2023
-Woolford1997
 Wurmbrand2014
 Xiang2022
 Yagi2025

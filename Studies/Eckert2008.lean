@@ -1,6 +1,8 @@
 module
 
+public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Closure
 public import Mathlib.Order.Iterate
@@ -17,7 +19,8 @@ reconstrual creates, any of which a situated use may activate. An ideological fi
 what each meaning is available to be construed as (`IdeologicalField`), a reconstrual adds
 those construals to a set of meanings, and the indexical field of a first-order index is its
 closure under reconstrual, a closure operator whose closed sets are the sets no reconstrual
-extends.
+extends, and [what iterating a kernel with those links as its support
+reaches](##IdeologicalField.mem_indexicalField_iff_exists_indexes_pow).
 
 The examples are the paper's. [labov-1963]'s Martha's Vineyard (ay) is an indicator become a
 marker. The (ING) field of Figure 3, after [campbell-kibler-2007], holds favourable and
@@ -30,7 +33,8 @@ girls alone are among the leaders of every variable.
 ## Implementation notes
 
 Figures 3 and 4 are recorded as printed and the ideological links as the text states them; the
-graded strengths of `SocialMeaning.AssociationField` are not in the paper. `Leads` marks a group
+graded strengths of `SocialMeaning.AssociationField` are not in the paper, and only the support of
+`IdeologicalField.kernel` is read. `Leads` marks a group
 among the greatest or second-greatest users of Figure 1 and is derived from the text's two
 generalizations, that girls lead the older changes and burnouts the newer. The burned-out
 burnout girls, the Beijing variables of Figure 2 from [zhang-2005], Podesva's release-rate
@@ -51,7 +55,9 @@ measurements and the (DH) discussion are not represented.
 
 namespace Eckert2008
 
+open MeasureTheory ProbabilityTheory
 open Relation.ReflTransGen (closeStep mem_closeStep subset_closeStep monotone_closeStep)
+open SocialMeaning.AssociationField (indexes_ofKernel indexes_ofKernel_comp ofKernel)
 
 /-! ### Indexical order and the indexical field -/
 
@@ -120,6 +126,44 @@ theorem indexicalField_eq_iterate {n : ℕ}
     (subset_closeStep S) (Nat.zero_le n))).trans (I.isClosed_iff.2 h).closure_eq.le).antisymm
     (I.iterate_closeStep_subset_indexicalField n S)
 
+variable [MeasurableSpace T] [MeasurableSingletonClass T]
+
+/-- A kernel with the ideological links as its support, a meaning being taken up for a further
+meaning it is available to be construed as. -/
+noncomputable def kernel : Kernel T T := Kernel.ofWeights fun t s ↦ if t ∈ I s then 1 else 0
+
+theorem indexes_kernel {s : T} : (ofKernel I.kernel).Indexes s t ↔ t ∈ I s := by
+  rw [indexes_ofKernel]
+  by_cases h : t ∈ I s
+  · exact iff_of_true
+      (Kernel.ofWeights_apply_singleton_ne_zero (by simp [h]) fun _ ↦ by split <;> simp) h
+  · exact iff_of_false (not_not.2 (Kernel.ofWeights_apply_singleton_eq_zero (by simp [h]))) h
+
+omit [Fintype T] in
+private theorem indexes_one {s : T} : (ofKernel (1 : Kernel T T)).Indexes s t ↔ t = s := by
+  rw [indexes_ofKernel, Kernel.one_def, Kernel.id_apply, Measure.dirac_apply' _ (.singleton s)]
+  by_cases h : t = s <;> simp [h]
+
+-- The n-th reconstrual of a meaning is what the n-th power of the kernel takes it to.
+theorem mem_indexicalField_iff_exists_indexes_pow :
+    t ∈ I.indexicalField S ↔ ∃ s ∈ S, ∃ n, (ofKernel (I.kernel ^ n)).Indexes s t := by
+  rw [mem_indexicalField]
+  refine exists_congr fun s ↦ and_congr_right fun _ ↦ ⟨fun h ↦ ?_, ?_⟩
+  · induction h with
+    | refl => exact ⟨0, by rw [pow_zero]; exact indexes_one.2 rfl⟩
+    | tail _ hbc ih =>
+      obtain ⟨n, hn⟩ := ih
+      refine ⟨n + 1, ?_⟩
+      rw [pow_succ, Kernel.mul_def, indexes_ofKernel_comp]
+      exact ⟨_, hn, I.indexes_kernel.2 hbc⟩
+  · rintro ⟨n, h⟩
+    induction n generalizing t with
+    | zero => exact (indexes_one.1 (by rwa [pow_zero] at h)) ▸ .refl
+    | succ n ih =>
+      rw [pow_succ, Kernel.mul_def, indexes_ofKernel_comp] at h
+      obtain ⟨m, hm, hmt⟩ := h
+      exact (ih hm).tail (I.indexes_kernel.1 hmt)
+
 end IdeologicalField
 
 /-! ### Martha's Vineyard (ay) -/
@@ -151,6 +195,21 @@ theorem indexicalField_centralizedAy :
     vineyardIdeology.indexicalField centralizedAy =
       {.vineyarder, .localAuthenticity, .oppositionToMainland} :=
   vineyardIdeology.indexicalField_eq_iterate (n := 1) (by decide)
+
+instance : MeasurableSpace VineyardMeaning := ⊤
+instance : MeasurableSingletonClass VineyardMeaning := ⟨fun _ ↦ trivial⟩
+
+-- Local authenticity is a reconstrual of membership among Vineyarders, and not the reverse.
+example : (∃ n, (ofKernel (vineyardIdeology.kernel ^ n)).Indexes .vineyarder .localAuthenticity) ∧
+    ¬ ∃ n, (ofKernel (vineyardIdeology.kernel ^ n)).Indexes .localAuthenticity .vineyarder := by
+  have key (s t : VineyardMeaning) :
+      (∃ n, (ofKernel (vineyardIdeology.kernel ^ n)).Indexes s t) ↔
+        t ∈ vineyardIdeology.indexicalField {s} := by
+    rw [IdeologicalField.mem_indexicalField_iff_exists_indexes_pow]
+    simp
+  rw [key, key, show vineyardIdeology.indexicalField {.vineyarder} = _ from
+    indexicalField_centralizedAy, vineyardIdeology.indexicalField_eq_iterate (n := 0) (by decide)]
+  decide
 
 /-! ### The (ING) field, Figure 3 -/
 

@@ -859,9 +859,7 @@ import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
-import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
@@ -999,7 +997,6 @@ import Linglib.Data.Examples.Asudeh2022
 import Linglib.Data.Examples.AugurzkyEtAl2023
 import Linglib.Data.Examples.Baker2015
 import Linglib.Data.Examples.BakerVinokurova2010
-import Linglib.Syntax.Minimalist.Case.Dependent
 import Linglib.Data.Examples.Bale2008
 import Linglib.Data.Examples.BaleKhanjian2014
 import Linglib.Data.Examples.BaleSchwarz2026
