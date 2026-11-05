@@ -83,9 +83,12 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   `UnorderedTree.contractUnary`, `ConnesKreimer.cutSummandsDN`, `ConnesKreimer.comulDAlgHomN`,
   `ConnesKreimer.eraseTraces_comulCAlgHomN`, `contractUnary_eraseTraces_comulCAlgHomN`.
 * Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with the book's `mergeOp`
-  at `Δ^d` and `mergeOpC` at `Δ^c`; (1.3.10): `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN`,
-  and on objects without unary vertices `mergeOp_eq_rename_contractUnary_comp`; (1.3.11):
+  at `Δ^d` and `mergeOpC` at `Δ^c`; (1.3.10): `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN` and
+  `mergeOp_eq_comp_comulCAlgHomN`, and on objects without unary vertices
+  `mergeOp_eq_rename_contractUnary_comp` and `mergeOp_eq_comp_mergeOpC`; (1.3.11):
   `Minimalist.Merge.mergeOpG_apply_of'`.
+* `T/d T₂ = Π_{d,c}(T/c T₂)` of §1.4.4 and p. 82, for the first stage of Internal Merge:
+  `Minimalist.Merge.mergeOpUnit_eq_comp_mergeOpUnitC`.
 * Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`, with the residual
   workspace passing through by `mergeOpG_of'_mul`.
 * Proposition 1.4.2: `Minimalist.Merge.mergeOpG_im_composition`, at `Δ^d`
@@ -160,16 +163,27 @@ supplies `X₁ = x` as an initial condition, but `𝔐(X, X)` has no degree-one 
 Definition 1.16.1 takes `k ≥ 3` and the domain `V(𝔉_{SO₀})` of workspaces of syntactic objects;
 `map_formSet_le` is stated on that domain, with the bare root label of the syntactic objects.
 
-The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its recursion gives
-`𝔐(X₁, X₃) + 𝔐(X₂, X₂) + 𝔐(X₃, X₁) = 4{x{x{xx}}} + {{xx}{xx}}` (`planarSum_four`), and four is
-the number of planar embeddings that the proof says the coefficient counts: the five planar binary
-trees with four leaves split as four and one.
-
 Definition 3.1.2's weight `-1` semiring identity
 `R(a) ⊙ R(b) ⊡ R(a ⊙ b) = R(a ⊙ R(b)) ⊡ R(R(a) ⊙ b)` is not the `IsRotaBaxter` identity at any
 weight, and Remark 3.2.2 and Lemma 3.2.7 use `R = id` at that weight on the tropical semiring. On
 `Consistency` the identity has weight `+1` as well, since disjunction is idempotent, and the
 consistency maps use it at that weight.
+
+## Errata
+
+The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its recursion gives
+`𝔐(X₁, X₃) + 𝔐(X₂, X₂) + 𝔐(X₃, X₁) = 4{x{x{xx}}} + {{xx}{xx}}` (`planarSum_four`), and four is
+the number of planar embeddings that the proof says the coefficient counts: the five planar binary
+trees with four leaves split as four and one.
+
+The paragraph before (1.3.10) announces the projections as `Π_{ρ,d}`, `Π_{c,ρ}` and `Π_{c,d}`, and
+the bullets under it define `Π_{d,ρ}`, `Π_{ρ,c}` and `Π_{d,c}`, the notation of the rest of the book
+(p. 44).
+
+Page 82 prints `T/d T_v = Π_{d,ρ}(T/ρ T_v) = Π_{ρ,c}(T/c T_v)`. The last projection must be
+`Π_{d,c}`, as earlier on that page and in the display of §1.4.4 (p. 53), since `Π_{ρ,c}(T/c T_v)` is
+`T/ρ T_v`, which keeps the vertex the cut leaves unary. On the example of §1.4.4 the printed
+equation fails.
 
 ## TODO
 
@@ -243,6 +257,44 @@ example :
       = of' ({theApple.val, wasEatenTrace.val} : Forest (UnorderedTree Vertex)) := by
   rw [mergeOpUnitC_current (by decide) (by decide) (by decide),
     show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
+
+/-- The deletion quotient `T/d T₂ = {was, eaten}` that §1.4.4 displays. -/
+private def wasEaten : SyntacticObject :=
+  (LinearizedSyntacticObject.merge (.leaf ⟨.of .T [.V] "was", 2⟩)
+    (.leaf ⟨.of .V [.D] "eaten", 3⟩)).toSyntacticObject
+
+/-- A syntactic object with its traces erased, on the labels of the trees without traces. -/
+private def erased (T : SyntacticObject) : UnorderedTree (Option LexicalItem.Token) :=
+  (T.val.filterMap Sum.getLeft?).getD (.leaf none)
+
+/-- The projection `Π_{d,c}` takes `T/c T₂` to `T/d T₂`, as §1.4.4 displays. -/
+example : (wasEatenTrace.val.filterMap Sum.getLeft?).map UnorderedTree.contractUnary =
+    some (erased wasEaten) := by decide
+
+/-- The projection `Π_{ρ,c}` alone leaves *eaten* under a unary vertex, so it does not reach
+    `T/d T₂`, against the equation printed on p. 82. -/
+example : wasEatenTrace.val.filterMap Sum.getLeft? ≠ some (erased wasEaten) := by decide
+
+/-- The first stage at the deletion cuts leaves `T₂` beside `T/d T₂`: projecting the stage at the
+    trace cuts by `Π_{d,c}` gives the workspace that §1.4.4 displays. -/
+example :
+    Merge.mergeOpUnit (R := ℤ) (erased theApple)
+        (of' ({erased wasEatenTheApple} : Forest (UnorderedTree (Option LexicalItem.Token))))
+      = of' ({erased theApple, erased wasEaten} :
+          Forest (UnorderedTree (Option LexicalItem.Token))) := by
+  have h₁ : (erased theApple).map Sum.inl = theApple.val := by decide
+  have h₂ : (erased wasEatenTheApple).map Sum.inl = wasEatenTheApple.val := by decide
+  rw [Merge.mergeOpUnit_eq_comp_mergeOpUnitC traceEncoder (by decide)]
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, rename_of', Multiset.map_singleton, h₁,
+    h₂]
+  rw [mergeOpUnitC_current (by decide) (by decide) (by decide),
+    show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
+  have h₃ : theApple.val.filterMap Sum.getLeft? = some (erased theApple) := by decide
+  have h₄ : wasEatenTrace.val.filterMap Sum.getLeft? = some (erased wasEatenTrace) := by decide
+  have h₅ : (erased theApple).contractUnary = erased theApple := by decide
+  have h₆ : (erased wasEatenTrace).contractUnary = erased wasEaten := by decide
+  simp only [AlgHom.comp_apply, Multiset.insert_eq_cons, ← Multiset.singleton_add, of'_add,
+    of'_singleton, map_mul, eraseTraces_ofTree, h₃, h₄, Option.elim_some, rename_ofTree, h₅, h₆]
 
 /-- The composite `M_{T/T₂,T₂} ∘ M_{T₂,1}` is Internal Merge of *the apple*: it merges `T₂` with the
     quotient `T/T₂` (Proposition 1.4.2). -/

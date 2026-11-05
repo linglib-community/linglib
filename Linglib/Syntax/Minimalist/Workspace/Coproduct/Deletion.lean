@@ -7,7 +7,8 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-public import Linglib.Syntax.Minimalist.Workspace.Coproduct.CutFilterMap
+public import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
+public import Linglib.Core.Data.UnorderedTree.FilterMap
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
 
 /-!
@@ -19,27 +20,11 @@ term to a trace leaf, `Δ^ρ` leaves the remainder of the admissible cut, and `�
 term and contracts the vertices left with a single child. They relate the three by projections
 of the right channel: `Π_{ρ,c}` deletes the trace leaves, `Π_{d,ρ}` contracts the non-branching
 vertices, and `Δ^d = (id ⊗ Π_{d,ρ}) ∘ Δ^ρ = (id ⊗ Π_{d,ρ} ∘ Π_{ρ,c}) ∘ Δ^c`, displayed before
-their (1.3.10). Here `Δ^d` is defined by the first expression, and the second is proved for trees
-without traces.
-
-## Main definitions
-
-* `ConnesKreimer.eraseTraces`: the projection that deletes every trace vertex.
-* `ConnesKreimer.cutSummandsDN`: the deletion cuts, the pruning cuts with the unary vertices of
-  each trunk contracted.
-* `ConnesKreimer.comulDAlgHomN`: the deletion coproduct, which sums them
-  (`comulDAlgHomN_apply_ofTree`, `comulAlgHomNG_cutSummandsDN`).
-
-## Main results
-
-* `ConnesKreimer.eraseTraces_comp_rename_inl`: erasure is a retraction of the embedding of the
-  trees without traces.
-* `ConnesKreimer.eraseTraces_comulCAlgHomN`: on trees without traces, erasing the traces that the
-  trace coproduct leaves gives the pruning coproduct.
-* `ConnesKreimer.contractUnary_eraseTraces_comulCAlgHomN`: erasing them and contracting the unary
-  vertices gives the deletion coproduct.
-* `ConnesKreimer.cutSummandsDN_numEdges`: in a full binary tree, deleting one accessible term
-  costs two accessible terms besides its own, the book's (1.6.7).
+their (1.3.10). Here `Δ^d` is defined by the first expression. The second is
+[proved for trees without traces](##contractUnary_eraseTraces_comulCAlgHomN), from
+[the same relation between `Δ^c` and `Δ^ρ`](##eraseTraces_comulCAlgHomN). In a full binary tree,
+[deleting one accessible term costs two accessible terms besides its own](##cutSummandsDN_numEdges),
+the book's (1.6.7). `Merge/Basic.lean` carries the relations over to Merge.
 
 ## Implementation notes
 
@@ -87,6 +72,19 @@ theorem eraseTraces_comp_rename_inl :
       AlgHom.id R (ConnesKreimer R (UnorderedTree α)) := by
   ext T
   simp
+
+/-- The trace cuts of a tree without traces are its pruning cuts with a trace leaf left at each
+    cut site: the crowns agree, and erasing the trace leaves of a trunk gives the pruning trunk. -/
+theorem cutSummandsCN_map_inl (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree α) :
+    (cutSummandsCN τ (T.map Sum.inl)).map (Prod.map id (UnorderedTree.filterMap Sum.getLeft?)) =
+      (cutSummandsN T).map (Prod.map (Multiset.map (UnorderedTree.map Sum.inl)) some) :=
+  Quotient.inductionOn T fun t ↦ by
+    have h := map_cutSummandsG_map (E := extractC (τ ∘ UnorderedTree.mk)) (E' := pruning)
+      (g := Sum.inl) (f := Sum.getLeft?) (fun t ↦ by cases t; simp [pruning, traceLeaf]) t
+    have h' := congrArg
+      (Multiset.map (Prod.map (Multiset.map UnorderedTree.mk) (Option.map UnorderedTree.mk))) h
+    simpa [UnorderedTree.map_mk, projSummand, Multiset.map_map, Function.comp_def,
+      Prod.map_apply'] using h'
 
 /-- On trees without traces, erasing the traces that `Δ^c` leaves in the right channel gives the
     pruning coproduct `Δ^ρ`. -/

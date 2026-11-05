@@ -242,7 +242,7 @@ theorem cutSummandsCN_value_isLeft_of_mem_crown (T : UnorderedTree (α ⊕ β)) 
 theorem cutSummandsCN_trunk_value (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, p.2.value = T.value :=
   Quotient.inductionOn T fun ⟨a, cs⟩ p hp ↦ by
-    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsCN_mk, cutSummandsCP_node,
+    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsCN_mk, cutSummandsG_node,
       Multiset.map_map] at hp
     obtain ⟨q, -, rfl⟩ := Multiset.mem_map.mp hp
     rfl

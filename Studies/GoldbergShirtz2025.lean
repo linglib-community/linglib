@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Syntax.ConstructionGrammar.Licensing
+public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.GoldbergShirtz2025
 public import Linglib.Data.Examples.Readers
@@ -203,12 +204,7 @@ def figure5 : Constructicon Figure5 Unit where
     | .pal => [(.mustV, none), (.dontMe, none)]
     | _ => []
 
-/-- The depth of a construction below those it inherits from. -/
-def Figure5.rank : Figure5 → ℕ
-  | .palN => 1
-  | _ => 0
-
-instance : PartialOrder Figure5 := figure5.partialOrder Figure5.rank (by decide)
+instance : PartialOrder Figure5 := figure5.partialOrder (by decide)
 
 instance : DecidableLE Figure5 := figure5.decidableLE [.nnCompound, .adjN] (by decide)
 

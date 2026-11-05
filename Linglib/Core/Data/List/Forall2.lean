@@ -19,7 +19,8 @@ pointwise order on lists of equal length, which the lexicographic order refines
 (`List.Forall₂.le`, `List.Forall₂.lt_of_ne`), as `Pi.toLex_monotone` and `Pi.toLex_strictMono`
 say of `Pi.Lex`; the pointwise witnesses of `Phonology/Tone/Register.lean` lift to the
 lexicographic order this way. [UPSTREAM] candidates for that file, beside
-`List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`.
+`List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`; so are
+`List.sublistForall₂_cons_cons_iff` and `List.decidableSublistForall₂` below.
 
 ## Main results
 
@@ -29,7 +30,8 @@ lexicographic order this way. [UPSTREAM] candidates for that file, beside
   instances on `Forall₂ R`.
 * `List.Forall₂.le`, `List.Forall₂.lt_of_ne`: lists ordered pointwise are ordered
   lexicographically.
-* `List.decidableForall₂`: a `Decidable (Forall₂ R l₁ l₂)` instance that `decide` can evaluate.
+* `List.decidableForall₂`, `List.decidableSublistForall₂`: `Decidable` instances for `Forall₂ R`
+  and `SublistForall₂ R` that `decide` can evaluate.
 
 ## Implementation notes
 
@@ -90,6 +92,30 @@ instance (priority := high) decidableForall₂ {R : α → β → Prop} [∀ a b
   | a :: l₁, b :: l₂ =>
     haveI := decidableForall₂ (R := R) l₁ l₂
     decidable_of_iff (R a b ∧ Forall₂ R l₁ l₂) forall₂_cons.symm
+
+/-- A `SublistForall₂` into a cons either relates the heads or skips the target's head. -/
+theorem sublistForall₂_cons_cons_iff {R : α → β → Prop} {a : α} {b : β} {l₁ : List α}
+    {l₂ : List β} :
+    SublistForall₂ R (a :: l₁) (b :: l₂) ↔
+      R a b ∧ SublistForall₂ R l₁ l₂ ∨ SublistForall₂ R (a :: l₁) l₂ := by
+  constructor
+  · intro h
+    cases h with
+    | cons h t => exact .inl ⟨h, t⟩
+    | cons_right t => exact .inr t
+  · rintro (⟨h, t⟩ | h)
+    exacts [.cons h t, .cons_right h]
+
+/-- `SublistForall₂ R` decided by structural recursion, so that `decide` evaluates it. -/
+instance decidableSublistForall₂ {R : α → β → Prop} [∀ a b, Decidable (R a b)] :
+    ∀ l₁ l₂, Decidable (SublistForall₂ R l₁ l₂)
+  | [], _ => isTrue .nil
+  | _ :: _, [] => isFalse nofun
+  | a :: l₁, b :: l₂ =>
+    haveI := decidableSublistForall₂ (R := R) l₁ l₂
+    haveI := decidableSublistForall₂ (R := R) (a :: l₁) l₂
+    decidable_of_iff (R a b ∧ SublistForall₂ R l₁ l₂ ∨ SublistForall₂ R (a :: l₁) l₂)
+      sublistForall₂_cons_cons_iff.symm
 
 /-! ### The lexicographic order refines the pointwise order -/
 
