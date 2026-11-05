@@ -89,11 +89,11 @@ variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Se
 `Want P a p w` is (69): `p` is a maximal element of the structure `P a w` that a preferential
 background assigns to `a` at `w`, (68); the effective preference structure is the consistent
 and realistic one that guides action, (66) and (67), realism derivable from consistency,
-`PreferenceStructure.Consistent.realistic`, footnote 30. `WantSufficient` and `WantNecessary`
-are the success-oriented and Quine–Hintikka alternatives of (71), after [zimmermann-2006],
-downward and upward entailing, `WantSufficient.anti` and `WantNecessary.mono`. The
-mere-desire and effective readings that [hare-1971] and [levinson-2003] observe are two
-backgrounds for one predicate. -/
+`PreferenceStructure.Consistent.realistic`, footnote 30. `WantSuccessOriented` and
+`WantQuineHintikka` are the success-oriented and Quine–Hintikka alternatives of (71), after
+[zimmermann-2006], downward and upward entailing, `antitone_wantSuccessOriented` and
+`monotone_wantQuineHintikka`. The mere-desire and effective readings that [hare-1971] and
+[levinson-2003] observe are two backgrounds for one predicate. -/
 
 -- (71c), §5.5
 theorem not_monotone_want [Nontrivial W] :
@@ -113,7 +113,7 @@ theorem want_both (p q : Set W) :
 -- (56), (58), §5.2
 theorem no_third_effective {r : Set W} (hC : (P a w).Consistent (B w)) (hp : Want P a p w)
     (hq : Want P a q w) (hr : Want P a r w) : (B w ∩ (p ∩ q ∩ r)).Nonempty :=
-  hC.inter_sInter_maxElts_nonempty.mono <| Set.inter_subset_inter_right _ <|
+  hC.inter_sInter_maximals_nonempty.mono <| Set.inter_subset_inter_right _ <|
     Set.subset_inter (Set.subset_inter (Set.sInter_subset_of_mem hp) (Set.sInter_subset_of_mem hq))
       (Set.sInter_subset_of_mem hr)
 
@@ -130,7 +130,7 @@ theorem threeWay_pairwise_not_consistent :
   · rintro _ (rfl | rfl | rfl) _ (rfl | rfl | rfl) <;> exact Set.nonempty_def.2 (by decide)
   · obtain ⟨_, _, _, _, h⟩ := h threeWay.prefs subset_rfl (by
       ext w
-      fin_cases w <;> simp [threeWay, PreferenceStructure.discrete])
+      fin_cases w <;> simp [threeWay])
     exact h
 
 /-! ### Previous approaches -/
@@ -162,17 +162,17 @@ theorem single_modal_strengthening {f g : Background W} {α β γ : W → Prop}
 /-- On its teleological construal, §7.1, the priority modal is ordered at each world `v` by the
 maximal preferences of `P a v`, so that `orderingSource EP a` is the paper's `g_epA`. -/
 def orderingSource (P : A → W → PreferenceStructure W) (a : A) : Background W :=
-  fun v ↦ (P a v).maxElts
+  fun v ↦ (P a v).maximals
 
 -- §2.3
 theorem bestWorlds_orderingSource {f : Background W} {v : W}
     (hC : (P a v).Consistent (f.accessibleWorlds v)) :
-    bestWorlds f (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts := by
+    bestWorlds f (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
   have h : (f ⊔ orderingSource P a).accessibleWorlds v =
-      f.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts := by
+      f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
     rw [Background.accessibleWorlds_sup]
     rfl
-  rw [bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maxElts_nonempty), h]
+  rw [bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maximals_nonempty), h]
 
 private theorem mem_bestWorlds_bot_restrict {α : W → Prop} {v : W} (hα : α v) :
     v ∈ bestWorlds ((⊥ : Background W).restrict α) ⊥ w := by
@@ -183,7 +183,7 @@ private theorem mem_bestWorlds_bot_restrict {α : W → Prop} {v : W} (hα : α 
 theorem want_disjoint (hC : ∀ w, (P a w).Consistent (B w)) (h : ∀ w, B w ∩ (p ∩ q) = ∅) :
     Disjoint {w | Want P a p w} {w | Want P a q w} :=
   Set.disjoint_left.2 fun w hp hq ↦
-    ((hC w).inter_inter_nonempty_of_mem_maxElts hp hq).ne_empty (h w)
+    ((hC w).inter_inter_nonempty_of_mem_maximals hp hq).ne_empty (h w)
 
 -- §7.1.1
 theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consistent (B w))
@@ -197,7 +197,7 @@ theorem conditionalNecessity_orderingSource_iff {f₁ g₁ f₂ : Background W} 
     (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v))
     (hlim : LimitAssumption (f₁.restrict α) g₁ w) :
     conditionalNecessity f₁ g₁ α (necessity f₂ (orderingSource P a) (· ∈ q)) w ↔
-      ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts ⊆ q := by
+      ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maximals ⊆ q := by
   simp only [conditionalNecessity_iff_necessity hlim, necessity_iff]
   refine forall₂_congr fun v hv ↦ ?_
   rw [bestWorlds_orderingSource (hC v hv)]
@@ -279,13 +279,13 @@ private theorem mem_fHist {u v : World} :
   simp [fHist]
 
 theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds v) := by
-  refine PreferenceStructure.consistent_single ?_
+  refine PreferenceStructure.consistent_single_iff.2 ?_
   obtain ⟨g, t, h⟩ := v
   cases g <;> cases h
-  exacts [⟨⟨.harlem, .aTrain, .aTrain⟩, rfl, mem_fHist.2 ⟨rfl, rfl⟩⟩,
-    ⟨⟨.harlem, .path, .path⟩, rfl, mem_fHist.2 ⟨rfl, rfl⟩⟩,
-    ⟨⟨.hoboken, .path, .aTrain⟩, nofun, mem_fHist.2 ⟨rfl, rfl⟩⟩,
-    ⟨⟨.hoboken, .aTrain, .path⟩, nofun, mem_fHist.2 ⟨rfl, rfl⟩⟩]
+  exacts [⟨⟨.harlem, .aTrain, .aTrain⟩, mem_fHist.2 ⟨rfl, rfl⟩, rfl⟩,
+    ⟨⟨.harlem, .path, .path⟩, mem_fHist.2 ⟨rfl, rfl⟩, rfl⟩,
+    ⟨⟨.hoboken, .path, .aTrain⟩, mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩,
+    ⟨⟨.hoboken, .aTrain, .path⟩, mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩]
 
 theorem bestWorlds_fHist (v : World) :
     bestWorlds fHist (orderingSource ep ()) v = fHist.accessibleWorlds v ∩ v.goal.dest := by
@@ -410,14 +410,13 @@ theorem comfort_ne_cheap : comfort ≠ cheap :=
 /-- The addressee's preferences. -/
 def prefs : Set (Set World) := {vladivostok, comfort, cheap}
 
-theorem not_consistent_discrete : ¬ (PreferenceStructure.discrete prefs).Consistent Set.univ :=
-  fun h ↦ by
-    obtain ⟨u, -, hu⟩ := h.inter_sInter_maxElts_nonempty
-    rw [PreferenceStructure.maxElts_discrete] at hu
-    have h₁ : u ∈ vladivostok := hu _ (.inl rfl)
-    have h₂ : u ∈ comfort := hu _ (.inr (.inl rfl))
-    have h₃ : u ∈ cheap := hu _ (.inr (.inr rfl))
-    cases u <;> simp_all [vladivostok, comfort, cheap]
+theorem not_consistent_discrete : ¬ (PreferenceStructure.discrete prefs).Consistent Set.univ := by
+  rw [PreferenceStructure.consistent_discrete_iff]
+  rintro ⟨u, -, hu⟩
+  have h₁ : u ∈ vladivostok := hu _ (.inl rfl)
+  have h₂ : u ∈ comfort := hu _ (.inr (.inl rfl))
+  have h₃ : u ∈ cheap := hu _ (.inr (.inr rfl))
+  cases u <;> simp_all [vladivostok, comfort, cheap]
 
 /-- The effective preferences when comfort outranks cost. -/
 def comfortFirst (_ : Unit) (_ : World) : PreferenceStructure World :=
@@ -427,11 +426,11 @@ def comfortFirst (_ : Unit) (_ : World) : PreferenceStructure World :=
 def costFirst (_ : Unit) (_ : World) : PreferenceStructure World :=
   .rankBelow prefs comfort_ne_cheap
 
-private theorem maxElts_comfortFirst : (comfortFirst () w).maxElts = prefs \ {cheap} :=
-  PreferenceStructure.maxElts_rankBelow _ (show comfort ∈ prefs from .inr (.inl rfl))
+private theorem maximals_comfortFirst : (comfortFirst () w).maximals = prefs \ {cheap} :=
+  PreferenceStructure.maximals_rankBelow _ (show comfort ∈ prefs from .inr (.inl rfl))
 
-private theorem maxElts_costFirst : (costFirst () w).maxElts = prefs \ {comfort} :=
-  PreferenceStructure.maxElts_rankBelow _ (show cheap ∈ prefs from .inr (.inr rfl))
+private theorem maximals_costFirst : (costFirst () w).maximals = prefs \ {comfort} :=
+  PreferenceStructure.maximals_rankBelow _ (show cheap ∈ prefs from .inr (.inr rfl))
 
 private theorem chinese_mem : World.chinese ∈ ⋂₀ (prefs \ {cheap}) := by
   rintro _ ⟨ht | ht | ht, htc⟩
@@ -444,14 +443,14 @@ private theorem russian_mem : World.russian ∈ ⋂₀ (prefs \ {comfort}) := by
 private theorem consistent_comfortFirst (v : World) :
     (comfortFirst () w).Consistent ((⊥ : Background World).accessibleWorlds v) := by
   rw [Background.accessibleWorlds_bot]
-  exact PreferenceStructure.consistent_rankBelow _ ⟨_, trivial, chinese_mem⟩
-    ⟨_, trivial, russian_mem⟩
+  exact (PreferenceStructure.consistent_rankBelow_iff _).2
+    ⟨⟨_, trivial, chinese_mem⟩, ⟨_, trivial, russian_mem⟩⟩
 
 private theorem consistent_costFirst (v : World) :
     (costFirst () w).Consistent ((⊥ : Background World).accessibleWorlds v) := by
   rw [Background.accessibleWorlds_bot]
-  exact PreferenceStructure.consistent_rankBelow _ ⟨_, trivial, russian_mem⟩
-    ⟨_, trivial, chinese_mem⟩
+  exact (PreferenceStructure.consistent_rankBelow_iff _).2
+    ⟨⟨_, trivial, russian_mem⟩, ⟨_, trivial, chinese_mem⟩⟩
 
 /-- With comfort ranked over cost, (92) is true: the only comfortable way to Vladivostok is the
 Chinese train. -/
@@ -461,7 +460,7 @@ theorem haveTo_chinese_comfortFirst :
   refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_comfortFirst v)
     (.bot _ _)).2
     fun _ _ u ⟨_, hu⟩ ↦ ?_
-  rw [maxElts_comfortFirst] at hu
+  rw [maximals_comfortFirst] at hu
   have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_cheap⟩
   have h₂ : u ∈ comfort := hu _ ⟨.inr (.inl rfl), comfort_ne_cheap⟩
   cases u <;> simp_all [vladivostok, comfort, takeChinese]
@@ -471,7 +470,7 @@ theorem haveTo_russian_costFirst :
       (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeRussian)) w := by
   refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_costFirst v) (.bot _ _)).2
     fun _ _ u ⟨_, hu⟩ ↦ ?_
-  rw [maxElts_costFirst] at hu
+  rw [maximals_costFirst] at hu
   have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_comfort⟩
   have h₃ : u ∈ cheap := hu _ ⟨.inr (.inr rfl), comfort_ne_cheap.symm⟩
   cases u <;> simp_all [vladivostok, cheap, takeRussian]
@@ -481,11 +480,11 @@ theorem not_haveTo_chinese_costFirst :
     ¬ conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
       (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeChinese)) w := fun h ↦ by
   have hw : Want costFirst () vladivostok w := by
-    rw [Want, maxElts_costFirst]
+    rw [Want, maximals_costFirst]
     exact ⟨.inl rfl, vladivostok_ne_comfort⟩
   have := (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_costFirst v)
     (.bot _ _)).1 h w
-    (mem_bestWorlds_bot_restrict hw) ⟨by simp, maxElts_costFirst (w := w) ▸ russian_mem⟩
+    (mem_bestWorlds_bot_restrict hw) ⟨by simp, maximals_costFirst (w := w) ▸ russian_mem⟩
   exact nomatch this
 
 end VladivostokScenario
@@ -539,7 +538,7 @@ theorem should_vaccine :
     conditionalNecessity ⊥ ⊥ (Want ep () travel)
       (necessity ⊥ (orderingSource ep ()) (· ∈ vaccinated)) w := by
   refine (conditionalNecessity_orderingSource_iff (fun _ _ ↦
-    PreferenceStructure.consistent_discrete ⟨⟨.go, .vaccine⟩, by simp, ?_⟩) (.bot _ _)).2
+    PreferenceStructure.consistent_discrete_iff.2 ⟨⟨.go, .vaccine⟩, by simp, ?_⟩) (.bot _ _)).2
       fun _ _ u ⟨_, hu⟩ ↦ ?_
   · rintro _ (rfl | rfl)
     exacts [rfl, fun _ ↦ rfl]
@@ -554,8 +553,8 @@ theorem not_should_vaccine_strong :
     ⟨.go, .none⟩
     (by
       rw [mem_bestAccessible, bestWorlds_orderingSource
-        (PreferenceStructure.consistent_single (p := travel)
-          (B := (⊥ : Background World).accessibleWorlds w) ⟨⟨.go, .none⟩, rfl, by simp⟩)]
+        ((PreferenceStructure.consistent_single_iff (p := travel)
+          (B := (⊥ : Background World).accessibleWorlds w)).2 ⟨⟨.go, .none⟩, by simp, rfl⟩)]
       exact ⟨by simp, by simp [strong, travel]⟩)
 
 end VaccineScenario
@@ -618,11 +617,11 @@ private theorem mem_fHist {u v : World} :
   simp [fHist]
 
 private theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds v) := by
-  refine PreferenceStructure.consistent_single ?_
+  refine PreferenceStructure.consistent_single_iff.2 ?_
   obtain ⟨t, _⟩ := v
   cases t
-  exacts [⟨⟨.clear, .train⟩, .inr ⟨rfl, rfl⟩, mem_fHist.2 ⟨rfl, nofun⟩⟩,
-    ⟨⟨.repairs, .ride⟩, .inl rfl, mem_fHist.2 ⟨rfl, nofun⟩⟩]
+  exacts [⟨⟨.clear, .train⟩, mem_fHist.2 ⟨rfl, nofun⟩, .inr ⟨rfl, rfl⟩⟩,
+    ⟨⟨.repairs, .ride⟩, mem_fHist.2 ⟨rfl, nofun⟩, .inl rfl⟩]
 
 /-- The conditional (83a) is true, since in the typical worlds the train is the only way to be there
 by noon. -/
@@ -663,8 +662,8 @@ theorem not_single_modal :
     (Filter.mem_of_superset h₂ fun _ hr ht ↦ nomatch hr.symm.trans ht)
     ⟨.repairs, .ride⟩ ?_ rfl
   rw [bestWorlds_orderingSource
-    (PreferenceStructure.consistent_single ⟨⟨.repairs, .ride⟩, .inl rfl,
-      Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩⟩)]
+    (PreferenceStructure.consistent_single_iff.2 ⟨⟨.repairs, .ride⟩,
+      Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩, .inl rfl⟩)]
   exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩,
     fun _ ht ↦ ht.1 ▸ .inl rfl⟩
 

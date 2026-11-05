@@ -1,50 +1,24 @@
 module
 
-public import Mathlib.Order.Defs.Unbundled
-public import Mathlib.Order.Preorder.Chain
+public import Mathlib.Order.Antichain
 public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Preference structures
 
-A preference structure, in the sense of Condoravdi and Lauer, is a set of propositions with a
-strict ranking by importance. A structure is consistent with an information state when any family
-of its preferences that the information rules out jointly contains a strictly ranked pair, and
-realistic when each preference is compatible with the information. Consistency entails realism and
-makes the maximal preferences jointly realizable.
-
-*Want* relates an agent to the maximal elements of the effective preference structure its context
-supplies, which plays the role of a Kratzerian conversational background. Its readings differ in
-how a maximal preference relates to the complement: identity is the exact-match reading, a
-preference the complement entails gives the success-oriented reading, downward entailing in the
-complement, and a preference that entails the complement gives the Quine–Hintikka reading, upward
-entailing. Over a consistent background, *want φ* and *want ¬φ* do not hold together on the
-exact-match reading.
-
-## Main definitions
-
-* `PreferenceStructure`, with `maxElts`, `Consistent` and `Realistic`.
-* `PreferenceStructure.discrete`, `PreferenceStructure.rankBelow`: the unranked structure on a
-  set of preferences, and the one that ranks a single preference below another.
-* `Desire.Preferential.Want`, `Desire.Preferential.WantSufficient`,
-  `Desire.Preferential.WantNecessary`: the exact-match, success-oriented and Quine–Hintikka
-  readings of *want*.
-
-## Main statements
-
-* `PreferenceStructure.Consistent.realistic`: consistency entails realism.
-* `PreferenceStructure.Consistent.inter_sInter_maxElts_nonempty`: the maximal preferences of a
-  consistent structure are jointly compatible with the information.
-* `PreferenceStructure.consistent_of_realistic_of_isChain`: a realistic chain is consistent.
-* `Desire.Preferential.WantSufficient.anti`, `Desire.Preferential.WantNecessary.mono`: the
-  success-oriented reading is downward and the Quine–Hintikka reading upward entailing.
-* `Desire.Preferential.Want.not_compl`: over a consistent background, a proposition and its
-  negation are not both wanted.
+A preference structure is a set of propositions strictly ranked by importance. It is consistent
+with an information state when [every family of mutually unranked preferences is jointly
+realizable](##PreferenceStructure.consistent_iff_forall_isAntichain), in particular [the maximal
+ones](##PreferenceStructure.Consistent.inter_sInter_maximals_nonempty). For an unranked structure
+consistency is [joint realizability](##PreferenceStructure.consistent_discrete_iff), and for a
+totally ranked one [realism over a nonempty information
+state](##PreferenceStructure.consistent_iff_realistic_and_nonempty_of_isChain). *Want* relates an
+agent to the maximal preferences of the structure its context supplies.
 
 ## Implementation notes
 
-The ranking is a strict order on all of `Set W`, of which only its restriction to the preferences
-is observed.
+The ranking is a strict order on all of `Set W` of which only the restriction to the preferences is
+observed, as with mathlib's `IsChain r s` and `IsAntichain r s`.
 
 ## References
 
@@ -53,7 +27,7 @@ is observed.
 * [condoravdi-lauer-2016]
 * [lauer-2013]
 * [lauer-condoravdi-2014]
-* [kratzer-1981]
+* [zimmermann-2006]
 -/
 
 @[expose] public section
@@ -61,14 +35,13 @@ is observed.
 variable {W : Type*}
 
 /-- A preference structure is a set of propositions `prefs` with a strict ranking `prec`, where
-`prec p q` reads "`q` is strictly preferred to `p`". The ranking is a relation on all of `Set W`,
-and only its restriction to `prefs` is ever observed. -/
+`prec p q` reads "`q` is strictly preferred to `p`". -/
 structure PreferenceStructure (W : Type*) where
   /-- The propositions the agent has preferences over. -/
   prefs : Set (Set W)
   /-- The strict ranking, where `prec p q` reads "`q` is strictly preferred to `p`". -/
   prec : Set W → Set W → Prop
-  /-- The strict-partial-order axioms, packaged as a mathlib typeclass. -/
+  /-- The ranking is a strict partial order. -/
   isStrictOrder : IsStrictOrder (Set W) prec
 
 namespace PreferenceStructure
@@ -77,114 +50,116 @@ variable (P : PreferenceStructure W)
 
 instance : IsStrictOrder (Set W) P.prec := P.isStrictOrder
 
-/-- The maximal elements of the preference structure are the preferences with nothing in `prefs`
-strictly above them. -/
-def maxElts : Set (Set W) :=
+/-- The maximal preferences are those with no preference strictly above them. -/
+def maximals : Set (Set W) :=
   {p ∈ P.prefs | ∀ q ∈ P.prefs, ¬ P.prec p q}
 
-@[simp] theorem mem_maxElts {φ : Set W} :
-    φ ∈ P.maxElts ↔ φ ∈ P.prefs ∧ ∀ q ∈ P.prefs, ¬ P.prec φ q :=
+@[simp] theorem mem_maximals {φ : Set W} :
+    φ ∈ P.maximals ↔ φ ∈ P.prefs ∧ ∀ q ∈ P.prefs, ¬ P.prec φ q :=
   Iff.rfl
 
-theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := fun _ h ↦ h.1
+theorem maximals_subset_prefs : P.maximals ⊆ P.prefs := fun _ h ↦ h.1
 
-/-- A preference structure is consistent with respect to an information state `B` when any subfamily
-of preferences whose joint realization is incompatible with `B` contains a strictly ranked pair. -/
+theorem isAntichain_maximals : IsAntichain P.prec P.maximals :=
+  fun _ hp _ hq _ h ↦ hp.2 _ hq.1 h
+
+/-- A preference structure is consistent with an information state `B` when every family of
+preferences whose joint realization `B` rules out contains a strictly ranked pair. -/
 def Consistent (B : Set W) : Prop :=
   ∀ X ⊆ P.prefs, B ∩ ⋂₀ X = ∅ → ∃ p ∈ X, ∃ q ∈ X, P.prec p q
 
 /-- A preference structure is realistic with respect to an information state when every preference
 is compatible with it. -/
 def Realistic (B : Set W) : Prop :=
-  ∀ p ∈ P.prefs, p ∩ B ≠ ∅
+  ∀ p ∈ P.prefs, (B ∩ p).Nonempty
 
 section Consistent
 
 variable {P} {B : Set W}
 
+/-- A structure is consistent exactly when every family of mutually unranked preferences is
+jointly realizable. -/
+theorem consistent_iff_forall_isAntichain :
+    P.Consistent B ↔ ∀ X ⊆ P.prefs, IsAntichain P.prec X → (B ∩ ⋂₀ X).Nonempty := by
+  refine forall₂_congr fun X _ ↦ ⟨fun h hX ↦ Set.nonempty_iff_ne_empty.2 fun hB ↦ ?_, fun h hB ↦ ?_⟩
+  · obtain ⟨p, hp, q, hq, hpq⟩ := h hB
+    exact hX hp hq (ne_of_irrefl hpq) hpq
+  · by_contra! hn
+    exact (h fun p hp q hq _ ↦ hn p hp q hq).ne_empty hB
+
 /-- Consistency relative to an information state persists to any weaker one. -/
 theorem Consistent.mono {H : Set W} (hC : P.Consistent B) (h : B ⊆ H) : P.Consistent H :=
   fun X hX hXH ↦ hC X hX (Set.subset_eq_empty (Set.inter_subset_inter_left _ h) hXH)
 
-/-- Consistency entails realism, by the singleton subfamilies and irreflexivity. -/
-theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
-  intro p hp hpB
-  obtain ⟨_, rfl, _, rfl, hqr⟩ := hC {p} (Set.singleton_subset_iff.2 hp)
-    (by rw [Set.sInter_singleton, Set.inter_comm]; exact hpB)
-  exact irrefl_of P.prec _ hqr
+/-- Consistency entails realism. -/
+theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := fun p hp ↦ by
+  simpa using consistent_iff_forall_isAntichain.1 hC {p} (by simpa) .singleton
 
-theorem Consistent.nonempty (hC : P.Consistent B) : B.Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun h ↦
-    let ⟨_, hp, _⟩ := hC ∅ (Set.empty_subset _) (by rw [Set.sInter_empty, Set.inter_univ]; exact h)
-    hp
+/-- No structure is consistent with the empty information state. -/
+theorem Consistent.nonempty (hC : P.Consistent B) : B.Nonempty := by
+  simpa using consistent_iff_forall_isAntichain.1 hC ∅ (Set.empty_subset _) .empty
 
-/-- A preference incompatible with a maximal one is ranked strictly below it. -/
-theorem Consistent.prec_of_mem_maxElts (hC : P.Consistent B) {p q : Set W} (hp : p ∈ P.maxElts)
-    (hq : q ∈ P.prefs) (h : B ∩ (p ∩ q) = ∅) : P.prec q p := by
-  obtain ⟨x, hx, y, hy, hxy⟩ := hC {p, q}
-    (Set.insert_subset hp.1 (Set.singleton_subset_iff.2 hq)) (by rwa [Set.sInter_pair])
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
-  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl
-  exacts [absurd hxy (irrefl_of P.prec _), absurd hxy (hp.2 _ hq), hxy,
-    absurd hxy (irrefl_of P.prec _)]
+/-- The maximal preferences of a consistent structure are jointly realizable. -/
+theorem Consistent.inter_sInter_maximals_nonempty (hC : P.Consistent B) :
+    (B ∩ ⋂₀ P.maximals).Nonempty :=
+  consistent_iff_forall_isAntichain.1 hC _ P.maximals_subset_prefs P.isAntichain_maximals
 
-/-- The maximal preferences of a consistent structure are jointly belief-compatible. -/
-theorem Consistent.inter_sInter_maxElts_nonempty (hC : P.Consistent B) :
-    (B ∩ ⋂₀ P.maxElts).Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun h ↦
-    let ⟨_, hp, _, hq, hpq⟩ := hC _ P.maxElts_subset_prefs h
-    hp.2 _ hq.1 hpq
-
-/-- Two maximal preferences of a consistent structure are jointly belief-compatible, which blocks
+/-- Two maximal preferences of a consistent structure are jointly realizable, which blocks
 conflicting desires. -/
-theorem Consistent.inter_inter_nonempty_of_mem_maxElts (hC : P.Consistent B) {φ ψ : Set W}
-    (hφ : φ ∈ P.maxElts) (hψ : ψ ∈ P.maxElts) : (B ∩ (φ ∩ ψ)).Nonempty :=
-  hC.inter_sInter_maxElts_nonempty.mono <| Set.inter_subset_inter_right _ <|
+theorem Consistent.inter_inter_nonempty_of_mem_maximals (hC : P.Consistent B) {φ ψ : Set W}
+    (hφ : φ ∈ P.maximals) (hψ : ψ ∈ P.maximals) : (B ∩ (φ ∩ ψ)).Nonempty :=
+  hC.inter_sInter_maximals_nonempty.mono <| Set.inter_subset_inter_right _ <|
     Set.subset_inter (Set.sInter_subset_of_mem hφ) (Set.sInter_subset_of_mem hψ)
 
-/-- A chain of realistic preferences is consistent. -/
-theorem consistent_of_realistic_of_isChain (hR : P.Realistic B) (hc : IsChain P.prec P.prefs)
-    (hB : B.Nonempty) : P.Consistent B := by
-  intro X hX hXB
-  by_contra h
-  have hs : X.Subsingleton := fun p hp q hq ↦
-    by_contra fun hne ↦ (hc (hX hp) (hX hq) hne).elim (fun hpq ↦ h ⟨p, hp, q, hq, hpq⟩)
-      (fun hqp ↦ h ⟨q, hq, p, hp, hqp⟩)
-  rcases hs.eq_empty_or_singleton with rfl | ⟨p, rfl⟩
-  · rw [Set.sInter_empty, Set.inter_univ] at hXB
-    exact hB.ne_empty hXB
-  · rw [Set.sInter_singleton, Set.inter_comm] at hXB
-    exact hR p (hX (Set.mem_singleton p)) hXB
+/-- A preference that the information rules out together with a maximal one is ranked strictly
+below it. -/
+theorem Consistent.prec_of_mem_maximals (hC : P.Consistent B) {p q : Set W}
+    (hp : p ∈ P.maximals) (hq : q ∈ P.prefs) (h : B ∩ (p ∩ q) = ∅) : P.prec q p := by
+  by_contra hqp
+  refine (consistent_iff_forall_isAntichain.1 hC {p, q} (Set.pair_subset hp.1 hq) ?_).ne_empty
+    (by rwa [Set.sInter_pair])
+  exact isAntichain_insert.2 ⟨.singleton, by rintro _ rfl -; exact ⟨hp.2 _ hq, hqp⟩⟩
+
+/-- Under a total ranking, consistency is realism with respect to a nonempty information state. -/
+theorem consistent_iff_realistic_and_nonempty_of_isChain (hc : IsChain P.prec P.prefs) :
+    P.Consistent B ↔ P.Realistic B ∧ B.Nonempty := by
+  refine ⟨fun hC ↦ ⟨hC.realistic, hC.nonempty⟩, fun ⟨hR, hB⟩ ↦
+    consistent_iff_forall_isAntichain.2 fun X hX hXa ↦ ?_⟩
+  rcases (subsingleton_of_isChain_of_isAntichain (hc.mono hX) hXa).eq_empty_or_singleton with
+    rfl | ⟨p, rfl⟩
+  · simpa using hB
+  · simpa using hR p (hX rfl)
 
 end Consistent
 
 /-! ### Unranked preferences -/
 
 /-- The discrete structure has the preferences `S` and no ranking, so all of them are maximal. -/
+@[simps]
 def discrete (S : Set (Set W)) : PreferenceStructure W where
   prefs := S
   prec _ _ := False
   isStrictOrder := { irrefl := fun _ h ↦ h, trans := fun _ _ _ h _ ↦ h }
 
-@[simp] theorem maxElts_discrete (S : Set (Set W)) : (discrete S).maxElts = S :=
+@[simp] theorem maximals_discrete (S : Set (Set W)) : (discrete S).maximals = S :=
   Set.ext fun _ ↦ ⟨And.left, fun h ↦ ⟨h, fun _ _ h ↦ h⟩⟩
 
-/-- Unranked preferences are consistent when jointly belief-compatible. -/
-theorem consistent_discrete {S : Set (Set W)} {B : Set W} (h : (B ∩ ⋂₀ S).Nonempty) :
-    (discrete S).Consistent B := fun _ hX hXB ↦
-  absurd hXB (h.mono (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hX))).ne_empty
+/-- Unranked preferences are consistent exactly when they are jointly realizable. -/
+theorem consistent_discrete_iff {S : Set (Set W)} {B : Set W} :
+    (discrete S).Consistent B ↔ (B ∩ ⋂₀ S).Nonempty :=
+  consistent_iff_forall_isAntichain.trans ⟨fun h ↦ h S subset_rfl fun _ _ _ _ _ h ↦ h,
+    fun h _ hX _ ↦ h.mono (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hX))⟩
 
 /-- The structure with the single preference `p`. -/
 abbrev single (p : Set W) : PreferenceStructure W := discrete {p}
 
-@[simp] theorem maxElts_single (p : Set W) : (single p).maxElts = {p} := maxElts_discrete _
-
-theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Consistent B :=
-  consistent_discrete (by rwa [Set.sInter_singleton, Set.inter_comm])
+theorem consistent_single_iff {p B : Set W} : (single p).Consistent B ↔ (B ∩ p).Nonempty := by
+  rw [consistent_discrete_iff, Set.sInter_singleton]
 
 /-! ### Ranking one preference below another -/
 
 /-- The structure on `S` that ranks `p` strictly below `q` and leaves the rest unranked. -/
+@[simps]
 def rankBelow (S : Set (Set W)) {p q : Set W} (h : p ≠ q) : PreferenceStructure W where
   prefs := S
   prec r s := r = p ∧ s = q
@@ -192,23 +167,30 @@ def rankBelow (S : Set (Set W)) {p q : Set W} (h : p ≠ q) : PreferenceStructur
     { irrefl := fun _ hr ↦ h (hr.1.symm.trans hr.2)
       trans := fun _ _ _ hr hs ↦ absurd (hr.2.symm.trans hs.1) h.symm }
 
+section rankBelow
+
 variable {S : Set (Set W)} {p q : Set W} (h : p ≠ q)
 
 /-- Once `q` is a preference, everything but `p` is maximal. -/
-theorem maxElts_rankBelow (hq : q ∈ S) : (rankBelow S h).maxElts = S \ {p} :=
+theorem maximals_rankBelow (hq : q ∈ S) : (rankBelow S h).maximals = S \ {p} :=
   Set.ext fun _ ↦ ⟨fun hr ↦ ⟨hr.1, fun hrp ↦ hr.2 q hq ⟨hrp, rfl⟩⟩,
     fun hr ↦ ⟨hr.1, fun _ _ hs ↦ hr.2 hs.1⟩⟩
 
-/-- Ranking `p` below `q` resolves every conflict when the preferences without `p` and those
-without `q` are each jointly compatible with the information. -/
-theorem consistent_rankBelow {B : Set W} (hp : (B ∩ ⋂₀ (S \ {p})).Nonempty)
-    (hq : (B ∩ ⋂₀ (S \ {q})).Nonempty) : (rankBelow S h).Consistent B := by
-  intro X hX hXB
-  have mem {r : Set W} (hr : (B ∩ ⋂₀ (S \ {r})).Nonempty) : r ∈ X := by
-    by_contra hrX
-    refine hr.ne_empty (Set.subset_eq_empty (Set.inter_subset_inter_right _ ?_) hXB)
-    exact Set.sInter_subset_sInter fun x hx ↦ ⟨hX hx, fun hxr ↦ hrX (hxr ▸ hx)⟩
-  exact ⟨p, mem hp, q, mem hq, rfl, rfl⟩
+/-- Ranking `p` below `q` makes the structure consistent exactly when the preferences without `p`
+and those without `q` are each jointly realizable. -/
+theorem consistent_rankBelow_iff {B : Set W} :
+    (rankBelow S h).Consistent B ↔
+      (B ∩ ⋂₀ (S \ {p})).Nonempty ∧ (B ∩ ⋂₀ (S \ {q})).Nonempty := by
+  rw [consistent_iff_forall_isAntichain]
+  refine ⟨fun hC ↦ ⟨hC _ Set.sdiff_subset fun _ hr _ _ _ hrs ↦ hr.2 hrs.1,
+    hC _ Set.sdiff_subset fun _ _ _ hs _ hrs ↦ hs.2 hrs.2⟩, fun ⟨hp, hq⟩ X hX hXa ↦ ?_⟩
+  have sub {r : Set W} (hr : r ∉ X) : B ∩ ⋂₀ (S \ {r}) ⊆ B ∩ ⋂₀ X :=
+    Set.inter_subset_inter_right _ <| Set.sInter_subset_sInter fun x hx ↦
+      ⟨hX hx, fun hxr ↦ hr (hxr ▸ hx)⟩
+  by_cases hpX : p ∈ X
+  exacts [hq.mono (sub fun hqX ↦ hXa hpX hqX h ⟨rfl, rfl⟩), hp.mono (sub hpX)]
+
+end rankBelow
 
 end PreferenceStructure
 
@@ -216,39 +198,40 @@ end PreferenceStructure
 
 namespace Desire.Preferential
 
-variable {Agent W : Type*} (P : Agent → W → PreferenceStructure W) (a : Agent) (φ : Set W)
-  (w : W)
+variable {Agent : Type*} (P : Agent → W → PreferenceStructure W) (a : Agent) (φ : Set W) (w : W)
 
 /-- On the exact-match reading, `a` wants `φ` at `w` when `φ` is itself a maximal preference of
-the background `P a w`. -/
-def Want : Prop := φ ∈ (P a w).maxElts
+the structure `P a w`. -/
+def Want : Prop := φ ∈ (P a w).maximals
 
 /-- On the success-oriented reading, `a` wants `φ` when `φ` entails a maximal preference, which
 `φ` then satisfies. -/
-def WantSufficient : Prop := ∃ p ∈ (P a w).maxElts, φ ⊆ p
+def WantSuccessOriented : Prop := ∃ p ∈ (P a w).maximals, φ ⊆ p
 
 /-- On the Quine–Hintikka reading, `a` wants `φ` when a maximal preference entails `φ`, so that the
 preference is satisfied only if `φ` holds. -/
-def WantNecessary : Prop := ∃ p ∈ (P a w).maxElts, p ⊆ φ
+def WantQuineHintikka : Prop := ∃ p ∈ (P a w).maximals, p ⊆ φ
 
 variable {P a φ w}
 
-theorem Want.wantSufficient (h : Want P a φ w) : WantSufficient P a φ w := ⟨φ, h, subset_rfl⟩
+theorem Want.wantSuccessOriented (h : Want P a φ w) : WantSuccessOriented P a φ w :=
+  ⟨φ, h, subset_rfl⟩
 
-theorem Want.wantNecessary (h : Want P a φ w) : WantNecessary P a φ w := ⟨φ, h, subset_rfl⟩
+theorem Want.wantQuineHintikka (h : Want P a φ w) : WantQuineHintikka P a φ w :=
+  ⟨φ, h, subset_rfl⟩
 
 /-- Over a consistent background a proposition and its negation are not both wanted. -/
 theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ w) :
     ¬ Want P a φᶜ w := fun hn ↦
-  (hC.inter_inter_nonempty_of_mem_maxElts h hn).ne_empty <| by
+  (hC.inter_inter_nonempty_of_mem_maximals h hn).ne_empty <| by
     rw [Set.inter_compl_self, Set.inter_empty]
 
-theorem WantSufficient.anti {ψ : Set W} (hφψ : φ ⊆ ψ) (h : WantSufficient P a ψ w) :
-    WantSufficient P a φ w :=
-  let ⟨p, hp, hψp⟩ := h; ⟨p, hp, hφψ.trans hψp⟩
+/-- The success-oriented reading is downward entailing. -/
+theorem antitone_wantSuccessOriented : Antitone (WantSuccessOriented P a · w) :=
+  fun _ _ hφψ ⟨p, hp, hψp⟩ ↦ ⟨p, hp, hφψ.trans hψp⟩
 
-theorem WantNecessary.mono {ψ : Set W} (hφψ : φ ⊆ ψ) (h : WantNecessary P a φ w) :
-    WantNecessary P a ψ w :=
-  let ⟨p, hp, hpφ⟩ := h; ⟨p, hp, hpφ.trans hφψ⟩
+/-- The Quine–Hintikka reading is upward entailing. -/
+theorem monotone_wantQuineHintikka : Monotone (WantQuineHintikka P a · w) :=
+  fun _ _ hφψ ⟨p, hp, hpφ⟩ ↦ ⟨p, hp, hpφ.trans hφψ⟩
 
 end Desire.Preferential

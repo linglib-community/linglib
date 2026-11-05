@@ -200,14 +200,13 @@ theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
 theorem not_felicitous_of_isSource (benefits : Set W → Role → Prop) (g : Set W) (f : Force)
     (hC : (P .speaker w).Consistent B) (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     ¬ Felicitous P K B benefits g p f w :=
-  fun hf ↦ hC.realistic _ (want_uptake_of_sincere hf.1).1
-    (by rw [Set.inter_comm]; exact inter_uptake_eq_empty h)
+  fun hf ↦ (hC.realistic _ (want_uptake_of_sincere hf.1).1).ne_empty (inter_uptake_eq_empty h)
 
 -- (11a), §3.4
 theorem not_felicitous_of_defers (benefits : Set W → Role → Prop) (g : Set W)
     (hC : (P .speaker w).Consistent B) (h : Defers P K p f w) :
     ¬ Felicitous P K B benefits g p f w :=
-  fun hf ↦ (hC.inter_inter_nonempty_of_mem_maxElts (want_uptake_of_sincere hf.1) h).ne_empty
+  fun hf ↦ (hC.inter_inter_nonempty_of_mem_maximals (want_uptake_of_sincere hf.1) h).ne_empty
     (by rw [Set.inter_compl_self, Set.inter_empty])
 
 -- §3.4, (10), (11d)
