@@ -83,7 +83,7 @@ the Greek (93), with the comparative root *xud-* that §6.4.4 identifies in
 
 namespace Bobaljik2012
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology Morphology.Containment
 open English.Adjectives
 
 /-! ### Merger -/

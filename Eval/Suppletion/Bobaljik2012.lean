@@ -60,7 +60,7 @@ analyses of §3.4, four stipulations (`verdict_syntheticSuperlatives_naive`,
 
 namespace Eval.Suppletion.Bobaljik2012
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology Morphology.Containment
 open CLDF.Wordlist (RootClasses)
 open _root_.Bobaljik2012 (rootPattern positiveEmbedding)
 open _root_.Bobaljik2012.Wordlist

@@ -56,7 +56,7 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 
 namespace Graf2019
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology Morphology.Containment
 
 /-! ### Feasible monotonicity -/
 

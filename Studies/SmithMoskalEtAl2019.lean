@@ -66,7 +66,7 @@ containment of section 4.1.
 
 namespace SmithMoskalEtAl2019
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology Morphology.Containment
 
 /-! ### Paradigms from the form table -/
 

@@ -129,7 +129,7 @@ theorem depon_vs_regular (σ : Cell) (h : σ.voice = .active) :
 
 section Kashmiri
 
-open Morphology.Exponence Morphology.PFM
+open Morphology Morphology.PFM
 
 /-- `KVerb` has the two intransitive verbs `WUP` 'burn inside' (Conj II) and `WUPH` 'fly'
 (Conj III). -/

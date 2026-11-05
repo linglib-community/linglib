@@ -44,7 +44,6 @@ its threshold.
 
 namespace Morphology.Containment
 
-open Exponence
 
 variable {n : ℕ} {F : Type*} {g g' : Fin n} {φ : F}
 

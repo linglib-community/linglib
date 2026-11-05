@@ -44,7 +44,7 @@ instance {α β : Type*} [PartialOrder α] [PartialOrder β] [GradeOrder ℕ α]
     · have := Order.covBy_iff_add_one_eq.1 (hc.grade ℕ)
       omega
 
-namespace Morphology.Exponence
+namespace Morphology
 
 /-- A rule of exponence specified for `features` in an ordered type: by the Subset Principle
 ([halle-1997]) it applies in the contexts extending them. -/
@@ -63,11 +63,11 @@ section LE
 
 variable [LE P] {r : SubsetRule P E} {c : P}
 
-instance : Rule (SubsetRule P E) P E := ⟨exponent, fun r c ↦ r.features ≤ c⟩
+instance : ExponenceRule (SubsetRule P E) P E := ⟨exponent, fun r c ↦ r.features ≤ c⟩
 
 @[simp] theorem applies_iff : Applies r c ↔ r.features ≤ c := Iff.rfl
 
-@[simp] theorem rule_exponent : Rule.exponent r = r.exponent := rfl
+@[simp] theorem rule_exponent : ExponenceRule.exponent r = r.exponent := rfl
 
 instance [DecidableLE P] : DecidableRel (Applies : SubsetRule P E → P → Prop) :=
   fun r c ↦ inferInstanceAs (Decidable (r.features ≤ c))
@@ -197,4 +197,4 @@ end Grade
 
 end SubsetRule
 
-end Morphology.Exponence
+end Morphology

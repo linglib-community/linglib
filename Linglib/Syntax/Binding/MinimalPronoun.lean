@@ -77,7 +77,7 @@ inductive Form where
 pronoun in binding contexts and the elsewhere form, which realizes it where no item applies. -/
 structure Vocabulary (E : Type*) where
   /-- The items, each conditioned on binding contexts. -/
-  items : Morphology.Exponence.RuleSet (VocabularyItem Context E)
+  items : Morphology.RuleSet (VocabularyItem Context E)
   /-- The elsewhere form, the shape of the referential pronoun. -/
   elsewhere : E
 
@@ -107,27 +107,27 @@ theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.el
 selecting among the items followed by the item of empty site. -/
 theorem some_realize (c : Context) :
     some (v.realize c) = subsetPrinciple (v.items ++ [∅ ⟷ v.elsewhere]) (.ofBundle {c}) := by
-  have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [∅ ⟷ v.elsewhere])
+  have happ : Morphology.RuleSet.applicable (v.items ++ [∅ ⟷ v.elsewhere])
       (.ofBundle {c} : Neighborhood (Finset Context)) =
       v.items.applicable (.ofBundle {c}) ++ [∅ ⟷ v.elsewhere] := by
-    simp [Morphology.Exponence.RuleSet.applicable, List.filter_append,
+    simp [Morphology.RuleSet.applicable, List.filter_append,
       VocabularyItem.applies_iff]
-  simp only [realize, subsetPrinciple, Morphology.Exponence.RuleSet.realize,
-    Morphology.Exponence.RuleSet.selectBy, happ, List.argmax_concat]
+  simp only [realize, subsetPrinciple, Morphology.RuleSet.realize,
+    Morphology.RuleSet.selectBy, happ, List.argmax_concat]
   cases (v.items.applicable (.ofBundle {c})).argmax VocabularyItem.specificity with
   | none => rfl
   | some i => simp
 
 /-- A context that no item applies to gets the elsewhere form. -/
-theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.Applies i (.ofBundle {c})) :
+theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Applies i (.ofBundle {c})) :
     v.realize c = v.elsewhere := by
   have : subsetPrinciple v.items (.ofBundle {c}) = none :=
-    Morphology.Exponence.RuleSet.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
+    Morphology.RuleSet.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
       simpa using h i hi
   simp [realize, this]
 
 theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
-    ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {c}) ∧ i.exponent = v.realize c := by
+    ∃ i ∈ v.items, Morphology.Applies i (.ofBundle {c}) ∧ i.exponent = v.realize c := by
   cases hs : subsetPrinciple v.items (.ofBundle {c}) with
   | none => exact absurd (by simp [realize, hs]) h
   | some e =>
@@ -138,7 +138,7 @@ theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
 null only through an item for that context whose exponent is null. -/
 theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
     (he : v.elsewhere ≠ .null) (h : v.controlForm = .null) :
-    ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {.controlledSubject}) ∧
+    ∃ i ∈ v.items, Morphology.Applies i (.ofBundle {.controlledSubject}) ∧
       i.exponent = .null := by
   obtain ⟨i, hi, hs, hx⟩ := exists_item_of_realize_ne (h ▸ he.symm : v.controlForm ≠ _)
   exact ⟨i, hi, hs, hx.trans h⟩

@@ -44,7 +44,7 @@ in opposite directions.
 
 namespace Morphology.Containment
 
-open Morphology.Exponence
+open Morphology
 
 variable {n : ℕ} {F : Type*}
 
@@ -69,7 +69,7 @@ def SpanRule.threshold (it : SpanRule n F) : Fin n :=
   max it.spans (it.context.getD it.spans)
 
 /-- A rule applies at the grades from its threshold up. -/
-instance : Rule (SpanRule n F) (Fin n) F :=
+instance : ExponenceRule (SpanRule n F) (Fin n) F :=
   ⟨SpanRule.exponent, fun it g ↦ it.threshold ≤ g⟩
 
 instance : DecidableRel (Applies : SpanRule n F → Fin n → Prop) :=
@@ -81,7 +81,7 @@ variable {it jt : SpanRule n F} {g : Fin n}
 
 @[simp] theorem applies_iff : Applies it g ↔ it.threshold ≤ g := Iff.rfl
 
-@[simp] theorem exponent_eq : Rule.exponent it = it.exponent := rfl
+@[simp] theorem exponent_eq : ExponenceRule.exponent it = it.exponent := rfl
 
 /-- Over a linear hierarchy the applicability sets are nested, so specificity is the reverse of
 threshold order and the Elsewhere ordering ([kiparsky-1973]) is total. -/
@@ -163,7 +163,7 @@ structure SupersetRule (n : ℕ) (F : Type*) where
 
 /-- An entry spells out every grade its stored constituent contains, the Superset Principle
 ([starke-2009]). -/
-instance : Rule (SupersetRule n F) (Fin n) F :=
+instance : ExponenceRule (SupersetRule n F) (Fin n) F :=
   ⟨SupersetRule.exponent, fun e g ↦ g ≤ e.spans⟩
 
 instance : DecidableRel (Applies : SupersetRule n F → Fin n → Prop) :=
@@ -175,7 +175,7 @@ variable {e e' : SupersetRule n F} {g : Fin n}
 
 @[simp] theorem applies_iff : Applies e g ↔ g ≤ e.spans := Iff.rfl
 
-@[simp] theorem exponent_eq : Rule.exponent e = e.exponent := rfl
+@[simp] theorem exponent_eq : ExponenceRule.exponent e = e.exponent := rfl
 
 /-- An entry is more specific than another iff it stores the smaller constituent, the nanosyntax
 principle Minimize Junk. -/

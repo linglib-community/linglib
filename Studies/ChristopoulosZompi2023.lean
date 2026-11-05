@@ -66,7 +66,7 @@ dative outside the accusative.
 
 namespace ChristopoulosZompi2023
 
-open Morphology Exponence
+open Morphology
 open SubsetRule (card)
 
 /-- The privative case features k₀–k₃ across the three decompositions. -/

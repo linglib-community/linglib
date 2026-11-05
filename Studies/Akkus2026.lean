@@ -38,7 +38,7 @@ the syntax, so no assignment of forms to roots derives *vuite* ~ *tenne* (`no_ea
 
 namespace Akkus2026
 
-open Minimalist DistributedMorphology Morphology.Exponence
+open Minimalist DistributedMorphology Morphology
 open Clause.Arguments (unaccusative)
 
 /-- The internal argument, a silent D head bearing `n`. -/

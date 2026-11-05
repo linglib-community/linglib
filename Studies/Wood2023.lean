@@ -76,9 +76,9 @@ preposition and the root are read off its attachment. The event-modifier account
 
 namespace Wood2023
 
-open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns Morphology.Exponence
+open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns
+open Morphology hiding Feature
 open Wood2023.Examples
-open Morphology (Morph)
 
 /-! ### Vocabulary Insertion at v and n -/
 

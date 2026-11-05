@@ -41,7 +41,7 @@ token computes, and contextual allomorphy is precisely what such a vocabulary ca
 
 namespace DistributedMorphology
 
-open Morphology.Exponence Minimalist
+open Morphology Minimalist
 
 variable {Bundle : Type*}
 

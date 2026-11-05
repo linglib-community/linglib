@@ -36,7 +36,7 @@ not formalized.
 
 namespace TaraldsenEtAl2018
 
-open Morphology.Nanosyntax Morphology.Exponence RoseTree
+open Morphology.Nanosyntax Morphology RoseTree
 
 /-! ### Features and entries -/
 

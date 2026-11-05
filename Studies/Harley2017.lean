@@ -47,7 +47,7 @@ causatives follows by Vocabulary Insertion over these heads.
 
 namespace Harley2017
 
-open DistributedMorphology Morphology.Exponence
+open DistributedMorphology Morphology
 
 /-! ### The hierarchy (49) and its patterns -/
 

@@ -66,9 +66,9 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 
 @[expose] public section
 
-namespace Morphology.Exponence.RuleSet
+namespace Morphology.RuleSet
 
-variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
+variable {Ctx E : Type*} {R : Type*} [ExponenceRule R Ctx E]
 variable [DecidableRel (Applies : R → Ctx → Prop)]
 variable {v : RuleSet R} {c c' : Ctx} {r s : R} {φ : E}
 
@@ -210,7 +210,7 @@ theorem realize_filter_eq_some (hv : v.Antihomophonous) {p : R → Bool}
 
 section Map
 
-variable {R' Ctx' E' : Type*} [Rule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
+variable {R' Ctx' E' : Type*} [ExponenceRule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
   {β : Type*} [LinearOrder β] {f' : R' → β} {g : R → R'} {c' : Ctx'}
 
 /-- Selection commutes with a map of rules that preserves applicability and the comparison of
@@ -513,4 +513,4 @@ theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : v.Coherent key)
     v.realizeMinimalD key fallback c = exponent r := by
   rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hc hr, Option.getD_some]
 
-end Morphology.Exponence.RuleSet
+end Morphology.RuleSet

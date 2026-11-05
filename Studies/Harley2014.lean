@@ -60,7 +60,7 @@ namespace Harley2014
 
 open DistributedMorphology
 open DistributedMorphology.Allosemy (toInterpreted embedding)
-open Morphology.Exponence
+open Morphology
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive empty)
 

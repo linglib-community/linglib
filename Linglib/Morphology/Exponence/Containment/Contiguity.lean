@@ -43,7 +43,6 @@ portmanteau.
 
 namespace Morphology.Containment
 
-open Exponence
 
 variable {n : ℕ} {F : Type*}
 

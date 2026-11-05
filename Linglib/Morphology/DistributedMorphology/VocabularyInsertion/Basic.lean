@@ -114,13 +114,13 @@ end DistributedMorphology
 
 namespace DistributedMorphology.VocabularyItem
 
-open Morphology.Exponence
+open Morphology
 
 variable {F E : Type*} {i j : VocabularyItem F E} {n : Neighborhood (Finset F)}
 
 /-- A Vocabulary Item is a rule of exponence whose contexts are neighborhoods, applying in those
 that bear every positioned feature of its site. -/
-instance : Rule (VocabularyItem F E) (Neighborhood (Finset F)) E :=
+instance : ExponenceRule (VocabularyItem F E) (Neighborhood (Finset F)) E :=
   ⟨exponent, fun i n ↦ ∀ x ∈ i.site, x ∈ n⟩
 
 theorem applies_iff : Applies i n ↔ ∀ x ∈ i.site, x ∈ n := Iff.rfl
@@ -188,7 +188,7 @@ end DistributedMorphology.VocabularyItem
 
 namespace DistributedMorphology
 
-open Morphology.Exponence
+open Morphology
 
 /-! ### The Subset Principle -/
 

@@ -75,7 +75,7 @@ kind, is respected in the choice of derivation rather than derived.
 
 namespace AdamsonAnagnostopoulou2025
 
-open Minimalist.DualFeature DistributedMorphology Morphology.Exponence
+open Minimalist.DualFeature DistributedMorphology Morphology
 
 /-- The privative gender nodes of the three geometries. -/
 inductive Node where

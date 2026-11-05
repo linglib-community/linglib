@@ -535,9 +535,9 @@ end Witness
 define distributions over the forms they generate, so a rule whose support properly includes
 another's must assign lower probability to each of those forms, on average, and conditioning on a
 form preserves the preference. The book quotes [kiparsky-1973]'s formulation, preferring `r₂` when
-`Inputs(r₂) ⊂ Inputs(r₁)`, which is `Morphology.Exponence.Rule`'s specificity order.
+`Inputs(r₂) ⊂ Inputs(r₁)`, which is `Morphology.ExponenceRule`'s specificity order.
 
-A rule's support is the domain of an `Exponence.DomainRule`, and when each rule generates its
+A rule's support is the domain of an `DomainRule`, and when each rule generates its
 domain uniformly the preference holds at every shared form, not only on average: a properly
 narrower domain gives each of its forms more probability
 (`MeasureTheory.uniformOn_finset_real_singleton_lt_of_ssubset`). A rule maximizing the
@@ -546,7 +546,7 @@ probability is a smaller domain and a smaller domain contained in another is equ
 
 section ProbabilisticElsewhere
 
-open Morphology Morphology.Exponence MeasureTheory
+open Morphology MeasureTheory
 
 variable {Ctx F : Type*} [DecidableEq Ctx]
 

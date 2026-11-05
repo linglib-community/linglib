@@ -87,7 +87,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology.Exponence Phi
+open Minimalist Minimalist.CyclicAgree Morphology Phi
 
 /-! ### Goals and their visible geometries -/
 
@@ -413,7 +413,7 @@ section RuleSet
 variable {σ : Type*} [DecidableEq σ]
 
 /-- An item applies to a value when its specification is a subset of the value. -/
-instance : Rule (VI σ) (List σ) String where
+instance : ExponenceRule (VI σ) (List σ) String where
   exponent := VI.exponent
   Applies vi value := vi.spec ⊆ value
 

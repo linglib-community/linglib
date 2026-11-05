@@ -44,7 +44,8 @@ noun phrase.
 
 namespace ChengCheng2026
 
-open DistributedMorphology DistributedMorphology.RootCategorization Morphology.Exponence
+open DistributedMorphology DistributedMorphology.RootCategorization
+open Morphology hiding Feature
 open Harley2017 (Feature)
 open PhraseStructure Core.Order
 
