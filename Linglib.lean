@@ -14,8 +14,6 @@ import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra

@@ -13,17 +13,17 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 public import Mathlib.RingTheory.Coalgebra.Convolution
 
 /-!
-# Duality of the Grossman–Larson product and the pruning coproduct
+# Duality of the Grossman–Larson product and the Connes–Kreimer coproduct
 
-Under the symmetry-weighted pairing, the Grossman–Larson product is the transpose of the pruning
-coproduct `Δ^ρ`: `⟨x ⋆ y, z⟩ = ⟨y ⊗ x, Δ^ρ z⟩`. So the pairing turns the Grossman–Larson product
-into the convolution product of linear functionals on the Connes–Kreimer bialgebra, in the
-opposite order. Hoffman states the duality in this form, as a map of the Grossman–Larson algebra
-to the graded dual.
+Under the symmetry-weighted pairing, the Grossman–Larson product is the transpose of the
+Connes–Kreimer coproduct `Δ^ρ`: `⟨x ⋆ y, z⟩ = ⟨y ⊗ x, Δ^ρ z⟩`. So the pairing turns the
+Grossman–Larson product into the convolution product of linear functionals on the Connes–Kreimer
+bialgebra, in the opposite order. Hoffman states the duality in this form, as a map of the
+Grossman–Larson algebra to the graded dual.
 
 ## Main results
 
-* `ConnesKreimer.pairing_gl_eq_pairing_coproduct_Rho`: the duality
+* `ConnesKreimer.pairing_gl_eq_pairing_coproduct`: the duality
   `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`.
 * `ConnesKreimer.toConv_pairing_product`: `⟨x ⋆ y, ·⟩ = ⟨y, ·⟩ * ⟨x, ·⟩` in the convolution
   algebra of linear functionals.
@@ -100,7 +100,7 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
 /-- The duality on a basis forest, by recursion on its number of vertices. -/
 private theorem pairing_gl_of' (C : Forest (UnorderedTree α))
     (x y : ConnesKreimer R (UnorderedTree α)) :
-    pairing (product x y) (of' C) = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (of' C)) := by
+    pairing (product x y) (of' C) = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHom (of' C)) := by
   rcases Multiset.empty_or_exists_mem C with rfl | ⟨T, hT⟩
   · -- No trees: both sides are counits.
     simp [Algebra.TensorProduct.one_def, pairing_one_right, counit_product, mul_comm]
@@ -109,14 +109,14 @@ private theorem pairing_gl_of' (C : Forest (UnorderedTree α))
   · -- One tree `B⁺_a W`: the `B⁻` recurrence on the left, the cocycle on the right.
     obtain ⟨a, W, rfl⟩ : ∃ a W, T = UnorderedTree.node a W := ⟨_, _, (node_eta T).symm⟩
     rw [Multiset.cons_zero, of'_singleton, ← bPlus_of', pairing_product_bPlus,
-      comulAlgHomN_bPlus_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlus,
+      comulAlgHom_bPlus_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlus,
       ← pairing_gl_of' W, ← pairing_bMinus, pairing_one_right]
     ring
   · -- Several trees `T ::ₘ C'`: both sides are bilinear in `(x, y)`, so split off `T` on basis
     -- forests.
     have h : (product (R := R)).compr₂ (pairing.flip (of' (T ::ₘ C'))) =
         (TensorProduct.mk R _ _).flip.compr₂
-          (pairing₂.flip (comulAlgHomN (R := R) (of' (T ::ₘ C')))) :=
+          (pairing₂.flip (comulAlgHom (R := R) (of' (T ::ₘ C')))) :=
       lhom_ext' fun A ↦ lhom_ext' fun B ↦ by
         simp only [LinearMap.compr₂_apply, LinearMap.flip_apply, TensorProduct.mk_apply]
         rw [← Multiset.singleton_add, of'_add, pairing_product_of'_mul_of', map_mul,
@@ -134,13 +134,13 @@ decreasing_by
   · have := UnorderedTree.numNodes_pos T
     omega
 
-/-- The Grossman–Larson product is the transpose of the pruning coproduct under the
+/-- The Grossman–Larson product is the transpose of the Connes–Kreimer coproduct under the
 symmetry-weighted pairing, `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`. The tensor slots are crossed:
 the grafted factor `y` pairs against the pruned crowns and the host `x` against the trunks. -/
-theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedTree α)) :
-    pairing (product x y) z = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) z) :=
+theorem pairing_gl_eq_pairing_coproduct (x y z : ConnesKreimer R (UnorderedTree α)) :
+    pairing (product x y) z = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHom (R := R) z) :=
   LinearMap.congr_fun (lhom_ext' (f := pairing (product x y))
-    (g := (pairing₂ (y ⊗ₜ[R] x)).comp (comulAlgHomN (R := R)).toLinearMap)
+    (g := (pairing₂ (y ⊗ₜ[R] x)).comp (comulAlgHom (R := R)).toLinearMap)
     fun C ↦ pairing_gl_of' C x y) z
 
 /-! ### The pairing as a map to the convolution algebra -/
@@ -152,7 +152,7 @@ theorem toConv_pairing_product (x y : ConnesKreimer R (UnorderedTree α)) :
   ext z
   have h : LinearMap.mul' R R ∘ₗ TensorProduct.map (pairing (R := R) y) (pairing x) =
       pairing₂ (y ⊗ₜ[R] x) := TensorProduct.ext' fun _ _ ↦ rfl
-  exact (pairing_gl_eq_pairing_coproduct_Rho x y (ConnesKreimer.of' z)).trans
+  exact (pairing_gl_eq_pairing_coproduct x y (ConnesKreimer.of' z)).trans
     (LinearMap.congr_fun h _).symm
 
 /-- The two triple Grossman–Larson products pair equally against everything, since the

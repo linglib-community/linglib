@@ -23,7 +23,7 @@ of the symmetric algebra on the trees, unlike the admissible-cut coproducts of t
 
 * `ConnesKreimer.comulPrim`: the primitive coproduct, as an algebra homomorphism.
 * `ConnesKreimer.comulPrim_of'`: `Δ_P(F) = ∑_{A + B = F} A ⊗ B`.
-* `ConnesKreimer.comulAlgHomNG_emptyCuts`: `Δ_P` is the admissible-cut coproduct whose only cut
+* `ConnesKreimer.comulOfCuts_emptyCuts`: `Δ_P` is the admissible-cut coproduct whose only cut
   is the empty one.
 * `ConnesKreimer.rTensor_homogeneousComponent_comulPrim_of'`: the terms whose left factor has
   `k` trees are indexed by the `k`-tree subforests.
@@ -35,8 +35,8 @@ of the symmetric algebra on the trees, unlike the admissible-cut coproducts of t
 
 ## Implementation notes
 
-`Δ_P` is not a `Bialgebra` instance: on trees the carrier already carries the pruning
-`Bialgebra` (`ConnesKreimer.instBialgebraRho`), so `Δ_P` is an algebra homomorphism with its laws
+`Δ_P` is not a `Bialgebra` instance: on trees the carrier already carries the Connes–Kreimer
+`Bialgebra` (`ConnesKreimer.instBialgebra`), so `Δ_P` is an algebra homomorphism with its laws
 stated separately.
 
 ## References
@@ -71,9 +71,9 @@ theorem comulPrim_unique
   algHom_ext_ofTree fun t ↦ by rw [h, comulPrim_ofTree]
 
 /-- The admissible-cut coproduct at the empty-cut enumeration is primitive. -/
-theorem comulAlgHomNG_emptyCuts {α : Type*} :
-    comulAlgHomNG (R := R) (α := α) emptyCuts = comulPrim :=
-  comulPrim_unique _ fun t ↦ by simp [comulTreeNG, emptyCuts]
+theorem comulOfCuts_emptyCuts {α : Type*} :
+    comulOfCuts (R := R) (α := α) emptyCuts = comulPrim :=
+  comulPrim_unique _ fun t ↦ by simp [comulTreeOfCuts, emptyCuts]
 
 /-- `Δ_P` sums `A ⊗ B` over the splittings `F = A + B`, counted with multiplicity. -/
 theorem comulPrim_of' (F : Forest T) :

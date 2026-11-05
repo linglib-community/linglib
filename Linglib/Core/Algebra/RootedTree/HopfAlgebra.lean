@@ -11,9 +11,9 @@ public import Linglib.Core.RingTheory.HopfAlgebra.Convolution
 /-!
 # The Connes–Kreimer Hopf algebra of nonplanar rooted trees
 
-The pruning bialgebra on `ConnesKreimer R (UnorderedTree α)` (`Coproduct/Pruning.lean`) is a Hopf
-algebra over any commutative ring: the Connes–Kreimer Hopf algebra of nonplanar, not necessarily
-binary, rooted trees.
+The Connes–Kreimer bialgebra on `ConnesKreimer R (UnorderedTree α)` (`Coproduct/AdmissibleCut.lean`)
+is a Hopf algebra over any commutative ring: the Connes–Kreimer Hopf algebra of nonplanar, not
+necessarily binary, rooted trees.
 
 The antipode is the inductive formula `S(x) = −x − Σ S(x′) · x″` of a graded connected bialgebra
 (Foissy's notes, §1.3, Lemma 2). As the algebra is commutative, the antipode is an algebra map,
@@ -45,7 +45,7 @@ The construction needs only a commutative ring (for the negation), and the bialg
 commutative semiring.
 
 The recursion descends on `UnorderedTree.numNodes`, the grading by weight: every crown tree has
-fewer vertices than `T` (`cutSummandsN_crown_numNodes_lt`). The recursion makes `S` a left
+fewer vertices than `T` (`admissibleCuts_crown_numNodes_lt`). The recursion makes `S` a left
 convolution inverse of the identity. Foissy's proof also takes a right antipode, realized here by
 the recursion `R(T) = −T − Σ_{F ≠ 0} F · R(T')` on the trunk; the two agree by
 `left_inv_eq_right_inv` in the convolution monoid `WithConv (H →ₐ[R] H)`.
@@ -87,16 +87,16 @@ theorem antipodeAlgHomN_convMul_id :
 `R(T) = −T − Σ_{(F, T'), F ≠ 0} F · R(T')`. -/
 private noncomputable def antipodeRightTreeN (T : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) :=
-  -ofTree T - (((cutSummandsN T).filter (¬ ·.1.card = 0)).attach.map fun p ↦
+  -ofTree T - (((admissibleCuts T).filter (¬ ·.1.card = 0)).attach.map fun p ↦
     of' p.1.1 * antipodeRightTreeN p.1.2).sum
 termination_by T.numNodes
 decreasing_by
   obtain ⟨hp, h⟩ := Multiset.mem_filter.1 p.2
-  exact cutSummandsN_trunk_numNodes_lt hp (Multiset.card_eq_zero.not.1 h)
+  exact admissibleCuts_trunk_numNodes_lt hp (Multiset.card_eq_zero.not.1 h)
 
 private theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
     antipodeRightTreeN (R := R) T = -ofTree T -
-      (((cutSummandsN T).filter (¬ ·.1.card = 0)).map fun p ↦
+      (((admissibleCuts T).filter (¬ ·.1.card = 0)).map fun p ↦
         of' p.1 * antipodeRightTreeN p.2).sum := by
   rw [antipodeRightTreeN]
   exact congrArg (fun s ↦ -ofTree T - s.sum) (Multiset.attach_map_val' _
@@ -105,11 +105,11 @@ private theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
 private theorem id_convMul_aeval_antipodeRightTreeN :
     toConv (AlgHom.id R _) * toConv (aeval (antipodeRightTreeN (R := R) (α := α))) = 1 := by
   refine ofConv_injective (algHom_ext_ofTree fun T ↦ ?_)
-  simp only [AlgHom.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN,
-    comulTreeNG, map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
+  simp only [AlgHom.convMul_apply, coalgebra_comul_apply, comulAlgHom_apply_ofTree,
+    comulTreeOfCuts, map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
     Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, map_one, mul_one, aeval_ofTree]
-  rw [← Multiset.filter_add_not (·.1.card = 0) (cutSummandsN T), Multiset.map_add,
-    Multiset.sum_add, cutSummandsN_filter_empty, Multiset.map_singleton, Multiset.sum_singleton,
+  rw [← Multiset.filter_add_not (·.1.card = 0) (admissibleCuts T), Multiset.map_add,
+    Multiset.sum_add, admissibleCuts_filter_empty, Multiset.map_singleton, Multiset.sum_singleton,
     of'_zero, one_mul, antipodeRightTreeN_unfold T, AlgHom.convOne_apply, coalgebra_counit_apply,
     counit_ofTree, map_zero]
   abel
@@ -130,12 +130,12 @@ theorem antipodeAlgHom_eq_antipodeAlgHomN :
     HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α)) = antipodeAlgHomN :=
   rfl
 
-/-- The antipode on a tree, `S(T) = −Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} S(t)) · T'`. -/
+/-- The antipode on a tree, `S(T) = −Σ_{(F, T') ∈ admissibleCuts T} (Π_{t ∈ F} S(t)) · T'`. -/
 theorem antipode_ofTree (T : UnorderedTree α) :
     HopfAlgebra.antipode R (ofTree T : ConnesKreimer R (UnorderedTree α)) =
-      -((cutSummandsN T).map fun p ↦
+      -((admissibleCuts T).map fun p ↦
         (p.1.map fun t ↦ HopfAlgebra.antipode R (ofTree t)).prod * ofTree p.2).sum := by
-  change antipodeAlgHomN (R := R) (ofTree T) = -((cutSummandsN T).map fun p ↦
+  change antipodeAlgHomN (R := R) (ofTree T) = -((admissibleCuts T).map fun p ↦
     (p.1.map fun t ↦ antipodeAlgHomN (ofTree t)).prod * ofTree p.2).sum
   rw [antipodeAlgHomN, birkhoffMinus_apply_ofTree, birkhoffMinusTree_eq, birkhoffPrepTree]
   simp only [birkhoffMinus_apply_ofTree, AddMonoidHom.neg_apply, AddMonoidHom.id_apply,

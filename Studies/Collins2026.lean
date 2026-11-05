@@ -249,9 +249,9 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     let τ := termTrace SyntacticObject.selHead
     let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val
     ({UnorderedTree.mk everyPlayer.val}, UnorderedTree.mk c.current.contract.val) ∈
-        cutSummandsCN τ C ∧
-      ({UnorderedTree.mk everyPlayer.val}, lowReading) ∈ cutSummandsDN C ∧
-      ∀ F, (F, lowReading) ∉ cutSummandsCN τ C := by
+        traceCuts τ C ∧
+      ({UnorderedTree.mk everyPlayer.val}, lowReading) ∈ deletionCuts C ∧
+      ∀ F, (F, lowReading) ∉ traceCuts τ C := by
   have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
       c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
       c.current.cutForest ∅ = {everyPlayer.val} ∧
@@ -267,9 +267,9 @@ theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
     (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)
   obtain ⟨hroot, hτ, hhigh, hlow, hall, hC, hL, hne⟩ := h c hc
   refine ⟨c, hc, ?_, ?_, fun F hF ↦ hne (congrArg Prod.snd
-    (eq_zero_of_mem_cutSummandsCN _ hC hF hL))⟩
-  · simpa [hhigh] using mem_cutSummandsCN_contract c.current hroot hτ
-  · simpa [hlow] using mem_cutSummandsDN_lf c.current _ hall
+    (eq_zero_of_mem_traceCuts _ hC hF hL))⟩
+  · simpa [hhigh] using mem_traceCuts_contract c.current hroot hτ
+  · simpa [hlow] using mem_deletionCuts_lf c.current _ hall
 
 /-! ### No Tampering -/
 

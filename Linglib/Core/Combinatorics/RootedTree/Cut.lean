@@ -30,35 +30,40 @@ extraction policy `extract : RoseTree α → Option (List (RoseTree α))`, calle
 - `extract t = some rs` removes it and leaves the replacement trees `rs` in its slot.
 
 The cut bookkeeping is shared by every policy; only the remainder left at a cut varies. The
-policy `pruning`, which always leaves nothing, gives the cuts of the Connes–Kreimer coproduct.
+policy `leaveNothing`, which always leaves nothing, gives the cuts of the Connes–Kreimer coproduct.
 
 ## Main definitions
 
-* `ConnesKreimer.cutSummandsG extract`: the enumeration of the pairs of a crown and a trunk.
+* `ConnesKreimer.rootCuts extract`: the enumeration of the pairs of a crown and a trunk.
 * `ConnesKreimer.ExtractInvariant`: the policies that descend along `RoseTree.Perm`.
-* `ConnesKreimer.pruning`, `ConnesKreimer.cutSummandsN`: the pruning policy and its cuts on
-  `UnorderedTree`.
+* `ConnesKreimer.leaveNothing`, `ConnesKreimer.admissibleCuts`: the policy that leaves nothing and
+  its cuts on `UnorderedTree`.
 * `ConnesKreimer.emptyCuts`: the enumeration with only the empty cut.
-* `ConnesKreimer.CutChoice`, `ConnesKreimer.forestCutChoicesG cuts F`: a cut chosen for each tree
+* `ConnesKreimer.CutChoice`, `ConnesKreimer.forestCutChoices cuts F`: a cut chosen for each tree
   of a forest, with its crown, its trunk and the number of trees it takes whole.
 * `ConnesKreimer.CutChoice.HasExtractionCost`: each tree the choice cuts measures its crown and its
   trunk and a fixed amount for each tree extracted.
-* `ConnesKreimer.countSingleCutsRho`: the number of single cuts with given crown and trunk.
+* `ConnesKreimer.countSingleCuts`: the number of single cuts with given crown and trunk.
 
 ## Main results
 
-* `ConnesKreimer.cutListSummandsG_induction`: a relation between a list of children and its cuts
+* `ConnesKreimer.childrenCuts_induction`: a relation between a list of children and its cuts
   holds of every cut once it holds of the empty list, of a cut at a child, of a cut inside a
   child, and of adding a child.
-* `ConnesKreimer.cutSummandsG_proj_perm`: the projected enumeration is `Perm`-invariant for an
+* `ConnesKreimer.rootCuts_proj_perm`: the projected enumeration is `Perm`-invariant for an
   invariant policy.
-* `ConnesKreimer.cutSummandsG_filter_empty`: the empty cut is the unique cut with empty crown.
-* `ConnesKreimer.cutSummandsN_node`: the pruning cuts of a node are the cut convolution over its
-  children.
+* `ConnesKreimer.rootCuts_filter_empty`: the empty cut is the unique cut with empty crown.
+* `ConnesKreimer.admissibleCuts_node`: the admissible cuts of a node are the cut convolution over
+  its children.
 * `ConnesKreimer.CutChoice.HasExtractionCost.sum_map_add_mul_numWhole`: a choice of cuts keeps
   the measure of the forest up to its extraction cost.
 
 `[UPSTREAM]` candidate.
+
+## Implementation notes
+
+`crown` is this library's word for the forest a cut removes, which none of its sources names. The
+book writes it `π_C(T)`, and Connes and Kreimer speak of cut branches and a trunk.
 
 ## References
 
@@ -78,87 +83,87 @@ variable {α : Type*}
 
 mutual
 /-- The cuts of a tree under the policy `extract`, as pairs of a crown and a trunk. -/
-def cutSummandsG (extract : RoseTree α → Option (List (RoseTree α))) :
+def rootCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     RoseTree α → Multiset (Multiset (RoseTree α) × RoseTree α)
-  | .node a cs => (cutListSummandsG extract cs).map fun p ↦ (p.1, .node a p.2)
+  | .node a cs => (childrenCuts extract cs).map fun p ↦ (p.1, .node a p.2)
 /-- The cuts of a list of children, as pairs of a crown and the list of what remains. A surviving
     child contributes its trunk and a cut child contributes `extract` of it. -/
-def cutListSummandsG (extract : RoseTree α → Option (List (RoseTree α))) :
+def childrenCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     List (RoseTree α) → Multiset (Multiset (RoseTree α) × List (RoseTree α))
   | [] => {((0 : Multiset (RoseTree α)), ([] : List (RoseTree α)))}
   | t :: ts =>
-      ((augActionG extract t ×ˢ cutListSummandsG extract ts) : Multiset _).map
+      ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2)
 /-- The choices at one child `t` are to cut `t` itself, with crown `{t}` and remainder
     `extract t` when the policy allows it, or to cut inside `t`. -/
-def augActionG (extract : RoseTree α → Option (List (RoseTree α))) :
+def childCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     RoseTree α → Multiset (Multiset (RoseTree α) × List (RoseTree α))
   | t =>
       (match extract t with
        | none => (0 : Multiset _)
        | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (cutSummandsG extract t).map fun p ↦ (p.1, [p.2])
+      + (rootCuts extract t).map fun p ↦ (p.1, [p.2])
 end
 
 variable (extract : RoseTree α → Option (List (RoseTree α)))
 
-@[simp] theorem cutSummandsG_node (a : α) (cs : List (RoseTree α)) :
-    cutSummandsG extract (RoseTree.node a cs) =
-      (cutListSummandsG extract cs).map fun p ↦ (p.1, .node a p.2) := by
-  unfold cutSummandsG; rfl
+@[simp] theorem rootCuts_node (a : α) (cs : List (RoseTree α)) :
+    rootCuts extract (RoseTree.node a cs) =
+      (childrenCuts extract cs).map fun p ↦ (p.1, .node a p.2) := by
+  unfold rootCuts; rfl
 
-@[simp] theorem cutListSummandsG_nil :
-    cutListSummandsG extract ([] : List (RoseTree α)) =
+@[simp] theorem childrenCuts_nil :
+    childrenCuts extract ([] : List (RoseTree α)) =
       {((0 : Multiset (RoseTree α)), ([] : List (RoseTree α)))} := by
-  unfold cutListSummandsG; rfl
+  unfold childrenCuts; rfl
 
-@[simp] theorem cutListSummandsG_cons (t : RoseTree α) (ts : List (RoseTree α)) :
-    cutListSummandsG extract (t :: ts) =
-      ((augActionG extract t ×ˢ cutListSummandsG extract ts) : Multiset _).map
+@[simp] theorem childrenCuts_cons (t : RoseTree α) (ts : List (RoseTree α)) :
+    childrenCuts extract (t :: ts) =
+      ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
-  conv_lhs => unfold cutListSummandsG
+  conv_lhs => unfold childrenCuts
 
-@[simp] theorem augActionG_eq (t : RoseTree α) :
-    augActionG extract t =
+@[simp] theorem childCuts_eq (t : RoseTree α) :
+    childCuts extract t =
       (match extract t with
        | none => (0 : Multiset _)
        | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (cutSummandsG extract t).map fun p ↦ (p.1, [p.2]) := by
-  conv_lhs => unfold augActionG
+      + (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
+  conv_lhs => unfold childCuts
 
-theorem augActionG_eq_none (t : RoseTree α) (h : extract t = none) :
-    augActionG extract t = (cutSummandsG extract t).map fun p ↦ (p.1, [p.2]) := by
-  rw [augActionG_eq, h]
+theorem childCuts_eq_none (t : RoseTree α) (h : extract t = none) :
+    childCuts extract t = (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
+  rw [childCuts_eq, h]
   simp
 
-theorem augActionG_eq_some (t : RoseTree α) (r : List (RoseTree α)) (h : extract t = some r) :
-    augActionG extract t =
+theorem childCuts_eq_some (t : RoseTree α) (r : List (RoseTree α)) (h : extract t = some r) :
+    childCuts extract t =
       (({t} : Multiset (RoseTree α)), r) ::ₘ
-        (cutSummandsG extract t).map fun p ↦ (p.1, [p.2]) := by
-  rw [augActionG_eq, h, Multiset.singleton_add]
+        (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
+  rw [childCuts_eq, h, Multiset.singleton_add]
 
-example (a : α) : cutSummandsG extract (RoseTree.leaf a) = {(0, RoseTree.leaf a)} := by
-  rw [RoseTree.leaf, cutSummandsG_node, cutListSummandsG_nil]
+example (a : α) : rootCuts extract (RoseTree.leaf a) = {(0, RoseTree.leaf a)} := by
+  rw [RoseTree.leaf, rootCuts_node, childrenCuts_nil]
   rfl
 
-@[simp] theorem cutListSummandsG_singleton (t : RoseTree α) :
-    cutListSummandsG extract [t] = augActionG extract t := by
-  rw [cutListSummandsG_cons, cutListSummandsG_nil, ← Multiset.cons_zero, Multiset.product_cons,
+@[simp] theorem childrenCuts_singleton (t : RoseTree α) :
+    childrenCuts extract [t] = childCuts extract t := by
+  rw [childrenCuts_cons, childrenCuts_nil, ← Multiset.cons_zero, Multiset.product_cons,
     Multiset.product_zero, add_zero, Multiset.map_map]
   exact (Multiset.map_congr rfl fun _ _ ↦ by simp).trans (Multiset.map_id _)
 
-theorem cutListSummandsG_append (l₁ l₂ : List (RoseTree α)) :
-    cutListSummandsG extract (l₁ ++ l₂) =
-      ((cutListSummandsG extract l₁ ×ˢ cutListSummandsG extract l₂) : Multiset _).map
+theorem childrenCuts_append (l₁ l₂ : List (RoseTree α)) :
+    childrenCuts extract (l₁ ++ l₂) =
+      ((childrenCuts extract l₁ ×ˢ childrenCuts extract l₂) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
   change _ = Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _ _
   induction l₁ with
   | nil =>
-    rw [List.nil_append, cutListSummandsG_nil]
+    rw [List.nil_append, childrenCuts_nil]
     exact (Multiset.singleton_zero_conv
       (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _).symm
   | cons t ts ih =>
-    rw [List.cons_append, cutListSummandsG_cons, cutListSummandsG_cons]
+    rw [List.cons_append, childrenCuts_cons, childrenCuts_cons]
     exact (congrArg (Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _)
       ih).trans (Multiset.conv_assoc _ _ _).symm
 
@@ -174,35 +179,35 @@ variable {P : List (RoseTree α) → Multiset (RoseTree α) × List (RoseTree α
 
 mutual
 
-theorem cutListSummandsG_induction (nil : P [] (0, []))
+theorem childrenCuts_induction (nil : P [] (0, []))
     (cut : ∀ t r, extract t = some r → P [t] ({t}, r))
-    (node : ∀ a cs q, q ∈ cutListSummandsG extract cs → P cs q →
+    (node : ∀ a cs q, q ∈ childrenCuts extract cs → P cs q →
       P [.node a cs] (q.1, [.node a q.2]))
-    (cons : ∀ t ts a b, a ∈ augActionG extract t → b ∈ cutListSummandsG extract ts → P [t] a →
+    (cons : ∀ t ts a b, a ∈ childCuts extract t → b ∈ childrenCuts extract ts → P [t] a →
       P ts b → P (t :: ts) (a.1 + b.1, a.2 ++ b.2)) :
-    ∀ cs, ∀ q ∈ cutListSummandsG extract cs, P cs q
+    ∀ cs, ∀ q ∈ childrenCuts extract cs, P cs q
   | [] => by
     intro q hq
-    rw [cutListSummandsG_nil, Multiset.mem_singleton] at hq
+    rw [childrenCuts_nil, Multiset.mem_singleton] at hq
     exact hq ▸ nil
   | t :: ts => by
     intro q hq
-    rw [cutListSummandsG_cons] at hq
+    rw [childrenCuts_cons] at hq
     obtain ⟨⟨a, b⟩, hab, rfl⟩ := Multiset.mem_map.mp hq
     obtain ⟨ha, hb⟩ := Multiset.mem_product.mp hab
-    exact cons t ts a b ha hb (augActionG_induction nil cut node cons t a ha)
-      (cutListSummandsG_induction nil cut node cons ts b hb)
+    exact cons t ts a b ha hb (childCuts_induction nil cut node cons t a ha)
+      (childrenCuts_induction nil cut node cons ts b hb)
 
-theorem augActionG_induction (nil : P [] (0, []))
+theorem childCuts_induction (nil : P [] (0, []))
     (cut : ∀ t r, extract t = some r → P [t] ({t}, r))
-    (node : ∀ a cs q, q ∈ cutListSummandsG extract cs → P cs q →
+    (node : ∀ a cs q, q ∈ childrenCuts extract cs → P cs q →
       P [.node a cs] (q.1, [.node a q.2]))
-    (cons : ∀ t ts a b, a ∈ augActionG extract t → b ∈ cutListSummandsG extract ts → P [t] a →
+    (cons : ∀ t ts a b, a ∈ childCuts extract t → b ∈ childrenCuts extract ts → P [t] a →
       P ts b → P (t :: ts) (a.1 + b.1, a.2 ++ b.2)) :
-    ∀ t, ∀ a ∈ augActionG extract t, P [t] a
+    ∀ t, ∀ a ∈ childCuts extract t, P [t] a
   | .node x cs => by
     intro a ha
-    rw [augActionG_eq] at ha
+    rw [childCuts_eq] at ha
     rcases Multiset.mem_add.mp ha with h | h
     · cases hE : extract (.node x cs) with
       | none => rw [hE] at h; exact absurd h (Multiset.notMem_zero a)
@@ -210,38 +215,38 @@ theorem augActionG_induction (nil : P [] (0, []))
         rw [hE, Multiset.mem_singleton] at h
         exact h ▸ cut _ r hE
     · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      rw [cutSummandsG_node] at hp
+      rw [rootCuts_node] at hp
       obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-      exact node x cs q hq (cutListSummandsG_induction nil cut node cons cs q hq)
+      exact node x cs q hq (childrenCuts_induction nil cut node cons cs q hq)
 
 end
 
-theorem cutSummandsG_induction (nil : P [] (0, []))
+theorem rootCuts_induction (nil : P [] (0, []))
     (cut : ∀ t r, extract t = some r → P [t] ({t}, r))
-    (node : ∀ a cs q, q ∈ cutListSummandsG extract cs → P cs q →
+    (node : ∀ a cs q, q ∈ childrenCuts extract cs → P cs q →
       P [.node a cs] (q.1, [.node a q.2]))
-    (cons : ∀ t ts a b, a ∈ augActionG extract t → b ∈ cutListSummandsG extract ts → P [t] a →
+    (cons : ∀ t ts a b, a ∈ childCuts extract t → b ∈ childrenCuts extract ts → P [t] a →
       P ts b → P (t :: ts) (a.1 + b.1, a.2 ++ b.2)) :
-    ∀ t, ∀ p ∈ cutSummandsG extract t, P [t] (p.1, [p.2])
+    ∀ t, ∀ p ∈ rootCuts extract t, P [t] (p.1, [p.2])
   | .node a cs => by
     intro p hp
-    rw [cutSummandsG_node] at hp
+    rw [rootCuts_node] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    exact node a cs q hq (cutListSummandsG_induction extract nil cut node cons cs q hq)
+    exact node a cs q hq (childrenCuts_induction extract nil cut node cons cs q hq)
 
 end Induction
 
 /-! ### Vertex conservation
 
 When every remainder the policy leaves has `k` vertices in total, a cut conserves vertices up to
-`k` per crown component. Pruning has `k = 0` and a policy leaving one leaf has `k = 1`. -/
+`k` per crown component. `leaveNothing` has `k = 0` and a policy leaving one leaf has `k = 1`. -/
 
-theorem cutSummandsG_numNodes {k : ℕ}
+theorem rootCuts_numNodes {k : ℕ}
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = k) :
-    ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t,
+    ∀ (t : RoseTree α), ∀ p ∈ rootCuts extract t,
       (Multiset.map RoseTree.numNodes p.1).sum + RoseTree.numNodes p.2 =
         RoseTree.numNodes t + k * Multiset.card p.1 := fun t p hp ↦ by
-  simpa using cutSummandsG_induction extract
+  simpa using rootCuts_induction extract
     (P := fun cs q ↦ (q.1.map RoseTree.numNodes).sum + (q.2.map RoseTree.numNodes).sum =
       (cs.map RoseTree.numNodes).sum + k * Multiset.card q.1)
     (by simp) (fun t r h ↦ by simp [hext t r h])
@@ -261,30 +266,31 @@ becomes a multiset, and the combination of the cuts of two children becomes thei
 `Multiset.conv`. -/
 
 /-- Project the crown and the trunk of a cut to unordered trees. -/
-def projSummand (p : Multiset (RoseTree α) × RoseTree α) :
+def projCut (p : Multiset (RoseTree α) × RoseTree α) :
     Multiset (UnorderedTree α) × UnorderedTree α :=
   (p.1.map UnorderedTree.mk, UnorderedTree.mk p.2)
 
 /-- Project the crown and the remainder list of a cut of a list of children. -/
-def projForest (p : Multiset (RoseTree α) × List (RoseTree α)) :
+def projChildrenCut (p : Multiset (RoseTree α) × List (RoseTree α)) :
     Multiset (UnorderedTree α) × Multiset (UnorderedTree α) :=
   (p.1.map UnorderedTree.mk, Multiset.ofList (p.2.map UnorderedTree.mk))
 
-theorem projSummand_node (a : α) (p : Multiset (RoseTree α) × List (RoseTree α)) :
-    projSummand (p.1, .node a p.2) = ((projForest p).1, UnorderedTree.node a (projForest p).2) :=
+theorem projCut_node (a : α) (p : Multiset (RoseTree α) × List (RoseTree α)) :
+    projCut (p.1, .node a p.2) =
+      ((projChildrenCut p).1, UnorderedTree.node a (projChildrenCut p).2) :=
   Prod.ext rfl (UnorderedTree.node_mk_tree_list a p.2).symm
 
-private theorem projForest_combine
+private theorem projChildrenCut_combine
     (p q : Multiset (RoseTree α) × List (RoseTree α)) :
-    projForest (p.1 + q.1, p.2 ++ q.2) = projForest p + projForest q := by
-  simp [projForest]
+    projChildrenCut (p.1 + q.1, p.2 ++ q.2) = projChildrenCut p + projChildrenCut q := by
+  simp [projChildrenCut]
 
-private theorem cutListSummandsG_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
-    (cutListSummandsG extract (t :: ts)).map projForest =
-      ((augActionG extract t).map projForest).conv
-        ((cutListSummandsG extract ts).map projForest) := by
-  rw [cutListSummandsG_cons]
-  exact Multiset.map_map_product_distrib projForest_combine _ _
+private theorem childrenCuts_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
+    (childrenCuts extract (t :: ts)).map projChildrenCut =
+      ((childCuts extract t).map projChildrenCut).conv
+        ((childrenCuts extract ts).map projChildrenCut) := by
+  rw [childrenCuts_cons]
+  exact Multiset.map_map_product_distrib projChildrenCut_combine _ _
 
 /-! ### Policies that descend to unordered trees -/
 
@@ -297,66 +303,66 @@ def ExtractInvariant (extract : RoseTree α → Option (List (RoseTree α))) : P
 
 variable {extract}
 
-private theorem augActionG_proj_congr (hExt : ExtractInvariant extract) {t s : RoseTree α}
+private theorem childCuts_proj_congr (hExt : ExtractInvariant extract) {t s : RoseTree α}
     (hmk : UnorderedTree.mk t = UnorderedTree.mk s)
-    (h : (cutSummandsG extract t).map projSummand = (cutSummandsG extract s).map projSummand) :
-    (augActionG extract t).map projForest = (augActionG extract s).map projForest := by
-  rw [augActionG_eq, augActionG_eq, Multiset.map_add, Multiset.map_add]
+    (h : (rootCuts extract t).map projCut = (rootCuts extract s).map projCut) :
+    (childCuts extract t).map projChildrenCut = (childCuts extract s).map projChildrenCut := by
+  rw [childCuts_eq, childCuts_eq, Multiset.map_add, Multiset.map_add]
   congr 1
   · have hE := hExt t s hmk
-    cases ht : extract t <;> cases hs : extract s <;> simp_all [projForest]
+    cases ht : extract t <;> cases hs : extract s <;> simp_all [projChildrenCut]
   · have h' := congrArg (Multiset.map fun q : Multiset (UnorderedTree α) × UnorderedTree α ↦
       (q.1, ({q.2} : Multiset (UnorderedTree α)))) h
-    simpa [Multiset.map_map, Function.comp_def, projForest, projSummand] using h'
+    simpa [Multiset.map_map, Function.comp_def, projChildrenCut, projCut] using h'
 
-private theorem cutListSummandsG_proj_perm (extract : RoseTree α → Option (List (RoseTree α)))
+private theorem childrenCuts_proj_perm (extract : RoseTree α → Option (List (RoseTree α)))
     {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
-    (cutListSummandsG extract cs).map projForest =
-      (cutListSummandsG extract ds).map projForest := by
+    (childrenCuts extract cs).map projChildrenCut =
+      (childrenCuts extract ds).map projChildrenCut := by
   induction h with
   | nil => rfl
-  | cons c _ ih => rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj, ih]
+  | cons c _ ih => rw [childrenCuts_cons_proj, childrenCuts_cons_proj, ih]
   | swap c d cs =>
-    simp only [cutListSummandsG_cons_proj]
+    simp only [childrenCuts_cons_proj]
     exact (Multiset.conv_left_comm _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
 mutual
 /-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
-theorem cutSummandsG_proj_perm (hExt : ExtractInvariant extract) :
+theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) :
     ∀ {t s : RoseTree α}, RoseTree.Perm t s →
-      (cutSummandsG extract t).map projSummand = (cutSummandsG extract s).map projSummand
+      (rootCuts extract t).map projCut = (rootCuts extract s).map projCut
   | _, _, @RoseTree.Perm.node _ a cs ds h => by
     have hL := congrArg (Multiset.map fun pf : Multiset (UnorderedTree α) ×
       Multiset (UnorderedTree α) ↦ (pf.1, UnorderedTree.node a pf.2))
-      (cutListSummandsG_proj_permList hExt h)
-    simpa [Multiset.map_map, Function.comp_def, projSummand_node] using hL
+      (childrenCuts_proj_permList hExt h)
+    simpa [Multiset.map_map, Function.comp_def, projCut_node] using hL
   | _, _, .trans h₁ h₂ =>
-    (cutSummandsG_proj_perm hExt h₁).trans (cutSummandsG_proj_perm hExt h₂)
+    (rootCuts_proj_perm hExt h₁).trans (rootCuts_proj_perm hExt h₂)
 
-private theorem cutListSummandsG_proj_permList (hExt : ExtractInvariant extract) :
+private theorem childrenCuts_proj_permList (hExt : ExtractInvariant extract) :
     ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
-      (cutListSummandsG extract cs).map projForest = (cutListSummandsG extract ds).map projForest
+      (childrenCuts extract cs).map projChildrenCut = (childrenCuts extract ds).map projChildrenCut
   | _, _, .nil => rfl
   | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj,
-      augActionG_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd)
-        (cutSummandsG_proj_perm hExt hcd),
-      cutListSummandsG_proj_permList hExt hs]
-  | _, _, .swap c d cs => cutListSummandsG_proj_perm extract (List.Perm.swap c d cs)
+    rw [childrenCuts_cons_proj, childrenCuts_cons_proj,
+      childCuts_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd)
+        (rootCuts_proj_perm hExt hcd),
+      childrenCuts_proj_permList hExt hs]
+  | _, _, .swap c d cs => childrenCuts_proj_perm extract (List.Perm.swap c d cs)
   | _, _, .trans h₁ h₂ =>
-    (cutListSummandsG_proj_permList hExt h₁).trans (cutListSummandsG_proj_permList hExt h₂)
+    (childrenCuts_proj_permList hExt h₁).trans (childrenCuts_proj_permList hExt h₂)
 end
 
 variable (extract)
 
 /-! ### Cut convolution
 
-`treeCutsG cuts t` lists the cuts of the tree `t` as a forest, including the cut that takes all
-of `t`, and `forestCutsG cuts F` combines them over the trees of a forest. Nothing here reads a
+`treeCuts cuts t` lists the cuts of the tree `t` as a forest, including the cut that takes all
+of `t`, and `forestCuts cuts F` combines them over the trees of a forest. Nothing here reads a
 tree, so rose trees and unordered trees share these definitions, and
-[a map between the enumerations carries the cuts along](##forestCutsG_map). The admissible-cut
-coproduct is a sum over these (`comulForestNG_eq_sum` in `Coproduct/WithCuts.lean`). -/
+[a map between the enumerations carries the cuts along](##forestCuts_map). The admissible-cut
+coproduct is a sum over these (`comulForestOfCuts_eq_sum` in `Coproduct/WithCuts.lean`). -/
 
 section Convolution
 
@@ -364,53 +370,53 @@ variable {γ δ : Type*} (cuts : γ → Multiset (Multiset γ × γ))
 
 /-- All the cuts of a tree with the trunk as a forest. They are the cut taking the whole tree,
     with crown `{t}` and empty trunk, and each cut in `cuts t` with a one-tree trunk. -/
-def treeCutsG (t : γ) : Multiset (Multiset γ × Multiset γ) :=
+def treeCuts (t : γ) : Multiset (Multiset γ × Multiset γ) :=
   ({t}, 0) ::ₘ (cuts t).map fun p ↦ (p.1, {p.2})
 
-/-- The cuts of a forest combine one choice from `treeCutsG cuts t` for each tree `t`. -/
-def forestCutsG (F : Multiset γ) : Multiset (Multiset γ × Multiset γ) :=
-  (F.map (treeCutsG cuts)).foldr Multiset.conv {(0, 0)}
+/-- The cuts of a forest combine one choice from `treeCuts cuts t` for each tree `t`. -/
+def forestCuts (F : Multiset γ) : Multiset (Multiset γ × Multiset γ) :=
+  (F.map (treeCuts cuts)).foldr Multiset.conv {(0, 0)}
 
-theorem forestCutsG_zero : forestCutsG cuts (0 : Multiset γ) = {(0, 0)} := by
-  simp [forestCutsG]
+theorem forestCuts_zero : forestCuts cuts (0 : Multiset γ) = {(0, 0)} := by
+  simp [forestCuts]
 
-theorem forestCutsG_cons (t : γ) (F : Multiset γ) :
-    forestCutsG cuts (t ::ₘ F) = (treeCutsG cuts t).conv (forestCutsG cuts F) := by
-  rw [forestCutsG, Multiset.map_cons, Multiset.foldr_cons, forestCutsG]
+theorem forestCuts_cons (t : γ) (F : Multiset γ) :
+    forestCuts cuts (t ::ₘ F) = (treeCuts cuts t).conv (forestCuts cuts F) := by
+  rw [forestCuts, Multiset.map_cons, Multiset.foldr_cons, forestCuts]
 
-theorem forestCutsG_singleton (t : γ) : forestCutsG cuts {t} = treeCutsG cuts t := by
-  rw [← Multiset.cons_zero, forestCutsG_cons, forestCutsG_zero]
+theorem forestCuts_singleton (t : γ) : forestCuts cuts {t} = treeCuts cuts t := by
+  rw [← Multiset.cons_zero, forestCuts_cons, forestCuts_zero]
   exact Multiset.conv_singleton_zero _
 
-theorem forestCutsG_pair (t t' : γ) :
-    forestCutsG cuts {t, t'} = (treeCutsG cuts t).conv (treeCutsG cuts t') := by
-  rw [Multiset.insert_eq_cons, forestCutsG_cons, forestCutsG_singleton]
+theorem forestCuts_pair (t t' : γ) :
+    forestCuts cuts {t, t'} = (treeCuts cuts t).conv (treeCuts cuts t') := by
+  rw [Multiset.insert_eq_cons, forestCuts_cons, forestCuts_singleton]
 
-theorem forestCutsG_add (F G : Multiset γ) :
-    forestCutsG cuts (F + G) = (forestCutsG cuts F).conv (forestCutsG cuts G) := by
+theorem forestCuts_add (F G : Multiset γ) :
+    forestCuts cuts (F + G) = (forestCuts cuts F).conv (forestCuts cuts G) := by
   induction F using Multiset.induction with
-  | empty => rw [zero_add, forestCutsG_zero]; exact (Multiset.singleton_zero_conv _).symm
+  | empty => rw [zero_add, forestCuts_zero]; exact (Multiset.singleton_zero_conv _).symm
   | cons t F ih =>
-    rw [Multiset.cons_add, forestCutsG_cons, forestCutsG_cons, ih]
+    rw [Multiset.cons_add, forestCuts_cons, forestCuts_cons, ih]
     exact (Multiset.conv_assoc _ _ _).symm
 
 variable {cuts} {cuts' : δ → Multiset (Multiset δ × δ)} {f : γ → δ}
 
 /-- A map carrying one enumeration to another carries the cuts of a tree along. -/
-theorem treeCutsG_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f)) (t : γ) :
-    treeCutsG cuts' (f t) =
-      (treeCutsG cuts t).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
-  simp [treeCutsG, h, Multiset.map_map]
+theorem treeCuts_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f)) (t : γ) :
+    treeCuts cuts' (f t) =
+      (treeCuts cuts t).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
+  simp [treeCuts, h, Multiset.map_map]
 
 /-- A map carrying one enumeration to another carries the cuts of a forest along. -/
-theorem forestCutsG_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f))
+theorem forestCuts_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f))
     (F : Multiset γ) :
-    forestCutsG cuts' (F.map f) =
-      (forestCutsG cuts F).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
+    forestCuts cuts' (F.map f) =
+      (forestCuts cuts F).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
   induction F using Multiset.induction with
-  | empty => simp [forestCutsG_zero]
+  | empty => simp [forestCuts_zero]
   | cons t F ih =>
-    rw [Multiset.map_cons, forestCutsG_cons, treeCutsG_map h, ih, forestCutsG_cons]
+    rw [Multiset.map_cons, forestCuts_cons, treeCuts_map h, ih, forestCuts_cons]
     exact (Multiset.map_conv _ _ fun _ _ ↦
       Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)).symm
 
@@ -419,8 +425,8 @@ end Convolution
 /-! ### Cuts chosen tree by tree
 
 A `CutChoice` records, for each tree of a forest, the crown and trunk of the cut chosen for it
-beside the tree, and `forestCutChoicesG cuts F` lists the choices for `F`. Gathering the crowns and
-the trunks of a choice gives a forest cut of `F` (`forestCutsG_eq_map_forestCutChoicesG`), and the
+beside the tree, and `forestCutChoices cuts F` lists the choices for `F`. Gathering the crowns and
+the trunks of a choice gives a forest cut of `F` (`forestCuts_eq_map_forestCutChoices`), and the
 record says where each tree went: into the crown whole, or cut and left as a trunk. -/
 
 /-- A choice of cuts for the trees of a forest, each tree beside the crown and the trunk of the
@@ -501,84 +507,84 @@ open CutChoice
 
 section CutChoices
 
-/-- The ways of choosing one cut of `treeCutsG cuts T` for each tree `T` of a forest. -/
-def forestCutChoicesG
+/-- The ways of choosing one cut of `treeCuts cuts T` for each tree `T` of a forest. -/
+def forestCutChoices
     (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
     (F : Multiset (UnorderedTree α)) : Multiset (CutChoice α) :=
-  Multiset.Sections (F.map fun T ↦ (treeCutsG cuts T).map (Prod.mk T))
+  Multiset.Sections (F.map fun T ↦ (treeCuts cuts T).map (Prod.mk T))
 
 variable (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
 
-theorem forestCutChoicesG_zero : forestCutChoicesG cuts 0 = {0} := by
-  simp [forestCutChoicesG, Multiset.sections_zero]
+theorem forestCutChoices_zero : forestCutChoices cuts 0 = {0} := by
+  simp [forestCutChoices, Multiset.sections_zero]
 
-theorem forestCutChoicesG_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
-    forestCutChoicesG cuts (T ::ₘ F) =
-      (treeCutsG cuts T).bind fun a ↦ (forestCutChoicesG cuts F).map ((T, a) ::ₘ ·) := by
-  rw [forestCutChoicesG, Multiset.map_cons, Multiset.sections_cons, Multiset.bind_map]
+theorem forestCutChoices_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
+    forestCutChoices cuts (T ::ₘ F) =
+      (treeCuts cuts T).bind fun a ↦ (forestCutChoices cuts F).map ((T, a) ::ₘ ·) := by
+  rw [forestCutChoices, Multiset.map_cons, Multiset.sections_cons, Multiset.bind_map]
   rfl
 
-theorem forestCutsG_eq_map_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
-    forestCutsG cuts F = (forestCutChoicesG cuts F).map fun s ↦ (s.crown, s.trunk) := by
-  change _ = (forestCutChoicesG cuts F).map fun s ↦ (s.map Prod.snd).sum
+theorem forestCuts_eq_map_forestCutChoices (F : Multiset (UnorderedTree α)) :
+    forestCuts cuts F = (forestCutChoices cuts F).map fun s ↦ (s.crown, s.trunk) := by
+  change _ = (forestCutChoices cuts F).map fun s ↦ (s.map Prod.snd).sum
   induction F using Multiset.induction with
-  | empty => simp [forestCutsG_zero, forestCutChoicesG_zero]
+  | empty => simp [forestCuts_zero, forestCutChoices_zero]
   | cons T F ih =>
-    rw [forestCutsG_cons, ih, forestCutChoicesG_cons, Multiset.map_bind, Multiset.conv_eq_bind]
+    rw [forestCuts_cons, ih, forestCutChoices_cons, Multiset.map_bind, Multiset.conv_eq_bind]
     simp only [Multiset.map_map, Function.comp_def, Multiset.map_cons, Multiset.sum_cons]
 
 variable {cuts} {F G : Multiset (UnorderedTree α)} {s t : CutChoice α}
   {x : UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))}
 
-theorem mem_treeCutsG {T : UnorderedTree α}
+theorem mem_treeCuts {T : UnorderedTree α}
     {a : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)} :
-    a ∈ treeCutsG cuts T ↔ a = ({T}, 0) ∨ ∃ p ∈ cuts T, (p.1, {p.2}) = a := by
-  simp [treeCutsG]
+    a ∈ treeCuts cuts T ↔ a = ({T}, 0) ∨ ∃ p ∈ cuts T, (p.1, {p.2}) = a := by
+  simp [treeCuts]
 
-theorem map_fst_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F) :
+theorem map_fst_of_mem_forestCutChoices (hs : s ∈ forestCutChoices cuts F) :
     s.map Prod.fst = F := by
   induction F using Multiset.induction generalizing s with
-  | empty => rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs; rw [hs, Multiset.map_zero]
+  | empty => rw [forestCutChoices_zero, Multiset.mem_singleton] at hs; rw [hs, Multiset.map_zero]
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    rw [forestCutChoices_cons, Multiset.mem_bind] at hs
     obtain ⟨a, -, hs⟩ := hs
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
     rw [Multiset.map_cons, ih hs']
 
-theorem fst_mem_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s) :
+theorem fst_mem_of_mem_forestCutChoices (hs : s ∈ forestCutChoices cuts F) (hx : x ∈ s) :
     x.1 ∈ F :=
-  map_fst_of_mem_forestCutChoicesG hs ▸ Multiset.mem_map_of_mem Prod.fst hx
+  map_fst_of_mem_forestCutChoices hs ▸ Multiset.mem_map_of_mem Prod.fst hx
 
-theorem mem_treeCutsG_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s) :
-    x.2 ∈ treeCutsG cuts x.1 := by
+theorem mem_treeCuts_of_mem_forestCutChoices (hs : s ∈ forestCutChoices cuts F) (hx : x ∈ s) :
+    x.2 ∈ treeCuts cuts x.1 := by
   induction F using Multiset.induction generalizing s with
   | empty =>
-    rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs
+    rw [forestCutChoices_zero, Multiset.mem_singleton] at hs
     exact absurd (hs ▸ hx) (Multiset.notMem_zero x)
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    rw [forestCutChoices_cons, Multiset.mem_bind] at hs
     obtain ⟨a, ha, hs⟩ := hs
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
     rcases Multiset.mem_cons.mp hx with rfl | hx
     exacts [ha, ih hs' hx]
 
-theorem snd_eq_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s)
+theorem snd_eq_of_mem_forestCutChoices (hs : s ∈ forestCutChoices cuts F) (hx : x ∈ s)
     (h : x.2.2 = 0) : x.2 = ({x.1}, 0) := by
-  rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h' | ⟨p, -, h'⟩
+  rcases mem_treeCuts.mp (mem_treeCuts_of_mem_forestCutChoices hs hx) with h' | ⟨p, -, h'⟩
   · exact h'
   · rw [← h'] at h; exact absurd h (Multiset.singleton_ne_zero _)
 
-theorem CutChoice.fst_mem_crown (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s)
+theorem CutChoice.fst_mem_crown (hs : s ∈ forestCutChoices cuts F) (hx : x ∈ s)
     (h : x.2.2 = 0) : x.1 ∈ s.crown :=
-  mem_crown.mpr ⟨x, hx, by simp [snd_eq_of_mem_forestCutChoicesG hs hx h]⟩
+  mem_crown.mpr ⟨x, hx, by simp [snd_eq_of_mem_forestCutChoices hs hx h]⟩
 
-theorem CutChoice.HasExtractionCost.of_mem_forestCutChoicesG {μ : UnorderedTree α → ℕ} {k : ℕ}
-    (hs : s ∈ forestCutChoicesG cuts F)
+theorem CutChoice.HasExtractionCost.of_mem_forestCutChoices {μ : UnorderedTree α → ℕ} {k : ℕ}
+    (hs : s ∈ forestCutChoices cuts F)
     (h : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
       μ x.1 = (p.1.map μ).sum + μ p.2 + k * Multiset.card p.1) :
     s.HasExtractionCost μ k := by
   intro x hx h0
-  rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h2 | ⟨p, hp, h2⟩
+  rcases mem_treeCuts.mp (mem_treeCuts_of_mem_forestCutChoices hs hx) with h2 | ⟨p, hp, h2⟩
   · exact absurd (by rw [h2]) h0
   · rw [← h2]
     simpa using h x hx p hp h2
@@ -587,22 +593,22 @@ section DecidableEq
 
 variable [DecidableEq (UnorderedTree α)]
 
-theorem CutChoice.card_trunk_add_numWhole (hs : s ∈ forestCutChoicesG cuts F) :
+theorem CutChoice.card_trunk_add_numWhole (hs : s ∈ forestCutChoices cuts F) :
     Multiset.card s.trunk + s.numWhole = Multiset.card F := by
   induction F using Multiset.induction generalizing s with
-  | empty => rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs; simp [hs]
+  | empty => rw [forestCutChoices_zero, Multiset.mem_singleton] at hs; simp [hs]
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    rw [forestCutChoices_cons, Multiset.mem_bind] at hs
     obtain ⟨a, ha, hs⟩ := hs
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
     have := ih hs'
-    rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
+    rcases mem_treeCuts.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
 
-theorem CutChoice.card_add_numWhole_le_card_crown (hs : s ∈ forestCutChoicesG cuts F)
+theorem CutChoice.card_add_numWhole_le_card_crown (hs : s ∈ forestCutChoices cuts F)
     (hx : x ∈ s) (h : x.2.2 ≠ 0) : Multiset.card x.2.1 + s.numWhole ≤ Multiset.card s.crown := by
   obtain ⟨t, rfl⟩ := Multiset.exists_cons_of_mem hx
   have ht : ∀ y ∈ t, y.2.2 = 0 → y.2 = ({y.1}, 0) := fun y hy ↦
-    snd_eq_of_mem_forestCutChoicesG hs (Multiset.mem_cons_of_mem hy)
+    snd_eq_of_mem_forestCutChoices hs (Multiset.mem_cons_of_mem hy)
   simp only [numWhole_cons, h, ite_false, add_zero, crown_cons, Multiset.card_add,
     add_le_add_iff_left]
   clear hs hx
@@ -620,18 +626,18 @@ theorem CutChoice.card_add_numWhole_le_card_crown (hs : s ∈ forestCutChoicesG 
 /-- A choice of cuts with extraction cost `k` in `μ` keeps the measure of the forest, counting
     `k` for each tree it extracts and each tree it takes whole as extracting itself. -/
 theorem CutChoice.HasExtractionCost.sum_map_add_mul_numWhole {μ : UnorderedTree α → ℕ} {k : ℕ}
-    (hs : s ∈ forestCutChoicesG cuts F) (hc : s.HasExtractionCost μ k) :
+    (hs : s ∈ forestCutChoices cuts F) (hc : s.HasExtractionCost μ k) :
     (F.map μ).sum + k * s.numWhole =
       (s.crown.map μ).sum + (s.trunk.map μ).sum + k * Multiset.card s.crown := by
   induction F using Multiset.induction generalizing s with
-  | empty => rw [forestCutChoicesG_zero, Multiset.mem_singleton] at hs; simp [hs]
+  | empty => rw [forestCutChoices_zero, Multiset.mem_singleton] at hs; simp [hs]
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.mem_bind] at hs
+    rw [forestCutChoices_cons, Multiset.mem_bind] at hs
     obtain ⟨a, ha, hs⟩ := hs
     obtain ⟨s', hs', rfl⟩ := Multiset.mem_map.mp hs
     have := ih hs' fun x hx ↦ hc x (Multiset.mem_cons_of_mem hx)
     have e : (fun x ↦ μ x) = μ := rfl
-    rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩
+    rcases mem_treeCuts.mp ha with rfl | ⟨p, -, rfl⟩
     · simp only [Multiset.map_cons, Multiset.sum_cons, numWhole_cons, crown_cons, trunk_cons,
         ite_true, Multiset.map_add, Multiset.sum_add, Multiset.card_add, Multiset.map_singleton,
         Multiset.sum_singleton, Multiset.card_singleton, Multiset.map_zero, Multiset.sum_zero,
@@ -646,26 +652,26 @@ theorem CutChoice.HasExtractionCost.sum_map_add_mul_numWhole {μ : UnorderedTree
 
 end DecidableEq
 
-theorem add_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F)
-    (ht : t ∈ forestCutChoicesG cuts G) : s + t ∈ forestCutChoicesG cuts (F + G) := by
-  rw [forestCutChoicesG, Multiset.map_add, Multiset.sections_add]
+theorem add_mem_forestCutChoices (hs : s ∈ forestCutChoices cuts F)
+    (ht : t ∈ forestCutChoices cuts G) : s + t ∈ forestCutChoices cuts (F + G) := by
+  rw [forestCutChoices, Multiset.map_add, Multiset.sections_add]
   exact Multiset.mem_bind.mpr ⟨s, hs, Multiset.mem_map.mpr ⟨t, ht, rfl⟩⟩
 
-theorem map_whole_mem_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
-    F.map (fun T ↦ (T, ({T}, 0))) ∈ forestCutChoicesG cuts F := by
+theorem map_whole_mem_forestCutChoices (F : Multiset (UnorderedTree α)) :
+    F.map (fun T ↦ (T, ({T}, 0))) ∈ forestCutChoices cuts F := by
   induction F using Multiset.induction with
-  | empty => simp [forestCutChoicesG_zero]
+  | empty => simp [forestCutChoices_zero]
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.map_cons]
+    rw [forestCutChoices_cons, Multiset.map_cons]
     exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_self _ _, Multiset.mem_map.mpr ⟨_, ih, rfl⟩⟩
 
-theorem map_uncut_mem_forestCutChoicesG
+theorem map_uncut_mem_forestCutChoices
     (h : ∀ T ∈ F, ((0 : Multiset (UnorderedTree α)), T) ∈ cuts T) :
-    F.map (fun T ↦ (T, (0, {T}))) ∈ forestCutChoicesG cuts F := by
+    F.map (fun T ↦ (T, (0, {T}))) ∈ forestCutChoices cuts F := by
   induction F using Multiset.induction with
-  | empty => simp [forestCutChoicesG_zero]
+  | empty => simp [forestCutChoices_zero]
   | cons T F ih =>
-    rw [forestCutChoicesG_cons, Multiset.map_cons]
+    rw [forestCutChoices_cons, Multiset.map_cons]
     exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_of_mem
       (Multiset.mem_map_of_mem (fun p ↦ (p.1, {p.2})) (h T (Multiset.mem_cons_self _ _))),
       Multiset.mem_map.mpr ⟨_, ih fun U hU ↦ h U (Multiset.mem_cons_of_mem hU), rfl⟩⟩
@@ -705,124 +711,125 @@ end CutChoice
 mutual
 
 /-- The empty cut is the unique cut with empty crown. -/
-theorem cutSummandsG_filter_empty :
+theorem rootCuts_filter_empty :
     ∀ (T : RoseTree α),
-      (cutSummandsG extract T).filter (fun p ↦ p.1.card = 0) =
+      (rootCuts extract T).filter (fun p ↦ p.1.card = 0) =
         ({((0 : Multiset (RoseTree α)), T)} : Multiset _)
   | .node a cs => by
-    rw [cutSummandsG_node, Multiset.filter_map]
+    rw [rootCuts_node, Multiset.filter_map]
     simp only [Function.comp_def]
-    rw [cutListSummandsG_filter_empty cs, Multiset.map_singleton]
+    rw [childrenCuts_filter_empty cs, Multiset.map_singleton]
 
-theorem cutListSummandsG_filter_empty :
+theorem childrenCuts_filter_empty :
     ∀ (cs : List (RoseTree α)),
-      (cutListSummandsG extract cs).filter (fun p ↦ p.1.card = 0) =
+      (childrenCuts extract cs).filter (fun p ↦ p.1.card = 0) =
         ({((0 : Multiset (RoseTree α)), cs)} : Multiset _)
   | [] => by simp
   | t :: ts => by
-    rw [cutListSummandsG_cons, Multiset.filter_map,
+    rw [childrenCuts_cons, Multiset.filter_map,
       Multiset.filter_congr (q := fun x ↦ x.1.1.card = 0 ∧ x.2.1.card = 0) fun x _ ↦ by
         simp only [Function.comp_apply, Multiset.card_add, Nat.add_eq_zero_iff],
       Multiset.filter_product
         (fun x : Multiset (RoseTree α) × List (RoseTree α) ↦ x.1.card = 0)
         (fun x : Multiset (RoseTree α) × List (RoseTree α) ↦ x.1.card = 0),
-      augActionG_filter_empty t, cutListSummandsG_filter_empty ts]
+      childCuts_filter_empty t, childrenCuts_filter_empty ts]
     rfl
 
-theorem augActionG_filter_empty :
+theorem childCuts_filter_empty :
     ∀ (t : RoseTree α),
-      (augActionG extract t).filter (fun p ↦ p.1.card = 0) =
+      (childCuts extract t).filter (fun p ↦ p.1.card = 0) =
         ({((0 : Multiset (RoseTree α)), [t])} : Multiset _)
   | t => by
-    have h : ((cutSummandsG extract t).map fun p ↦ (p.1, [p.2])).filter (fun p ↦ p.1.card = 0) =
+    have h : ((rootCuts extract t).map fun p ↦ (p.1, [p.2])).filter (fun p ↦ p.1.card = 0) =
         {((0 : Multiset (RoseTree α)), [t])} := by
       rw [Multiset.filter_map]
       simp only [Function.comp_def]
-      rw [cutSummandsG_filter_empty t, Multiset.map_singleton]
+      rw [rootCuts_filter_empty t, Multiset.map_singleton]
     cases hx : extract t with
-    | none => rw [augActionG_eq_none extract t hx, h]
+    | none => rw [childCuts_eq_none extract t hx, h]
     | some r =>
-      rw [augActionG_eq_some extract t r hx, Multiset.filter_cons_of_neg _ (by simp), h]
+      rw [childCuts_eq_some extract t r hx, Multiset.filter_cons_of_neg _ (by simp), h]
 
 end
 
-/-! ### Pruning cuts
+/-! ### Admissible cuts
 
 The policy that leaves nothing at a cut gives the admissible cuts of the Connes–Kreimer
 coproduct. It is invariant, so its cuts descend to `UnorderedTree`, where the cuts of a node are
 the cut convolution over its children. -/
 
-/-- The pruning policy cuts anywhere and leaves nothing in place of the cut subtree. -/
-def pruning : RoseTree α → Option (List (RoseTree α)) := fun _ ↦ some []
+/-- The policy `leaveNothing` cuts anywhere and leaves nothing in place of the cut subtree. -/
+def leaveNothing : RoseTree α → Option (List (RoseTree α)) := fun _ ↦ some []
 
-theorem extractInvariant_pruning : ExtractInvariant (pruning (α := α)) := fun _ _ _ ↦ rfl
+theorem extractInvariant_leaveNothing : ExtractInvariant (leaveNothing (α := α)) := fun _ _ _ ↦ rfl
 
-/-- The pruning cuts of an unordered tree, as pairs of a crown and a trunk. -/
-def cutSummandsN : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
-  Quotient.lift (fun T ↦ (cutSummandsG pruning T).map projSummand)
-    fun _ _ h ↦ cutSummandsG_proj_perm extractInvariant_pruning h
+/-- The admissible cuts of an unordered tree, as pairs of a crown and a trunk. -/
+def admissibleCuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
+  Quotient.lift (fun T ↦ (rootCuts leaveNothing T).map projCut)
+    fun _ _ h ↦ rootCuts_proj_perm extractInvariant_leaveNothing h
 
-@[simp] theorem cutSummandsN_mk (T : RoseTree α) :
-    cutSummandsN (UnorderedTree.mk T) = (cutSummandsG pruning T).map projSummand := rfl
+@[simp] theorem admissibleCuts_mk (T : RoseTree α) :
+    admissibleCuts (UnorderedTree.mk T) = (rootCuts leaveNothing T).map projCut := rfl
 
-theorem cutSummandsN_leaf (a : α) :
-    cutSummandsN (UnorderedTree.leaf a : UnorderedTree α) =
+theorem admissibleCuts_leaf (a : α) :
+    admissibleCuts (UnorderedTree.leaf a : UnorderedTree α) =
       ({((0 : Multiset (UnorderedTree α)), UnorderedTree.leaf a)} : Multiset _) := by
-  rw [UnorderedTree.leaf, RoseTree.leaf, cutSummandsN_mk, cutSummandsG_node, cutListSummandsG_nil]
+  rw [UnorderedTree.leaf, RoseTree.leaf, admissibleCuts_mk, rootCuts_node, childrenCuts_nil]
   rfl
 
-/-- The number of pruning cut summands of `T` whose crown is `{T₁}` and whose trunk is
+/-- The number of admissible cuts of `T` whose crown is `{T₁}` and whose trunk is
     `T₂`. -/
-def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : UnorderedTree α) : ℕ :=
-  (cutSummandsN T).countP fun p ↦ p.1 = ({T₁} : Multiset (UnorderedTree α)) ∧ p.2 = T₂
+def countSingleCuts [DecidableEq α] (T T₁ T₂ : UnorderedTree α) : ℕ :=
+  (admissibleCuts T).countP fun p ↦ p.1 = ({T₁} : Multiset (UnorderedTree α)) ∧ p.2 = T₂
 
-private theorem treeCutsG_cutSummandsN_mk (t : RoseTree α) :
-    treeCutsG cutSummandsN (UnorderedTree.mk t) = (augActionG pruning t).map projForest := by
-  rw [augActionG_eq_some pruning t [] rfl, Multiset.map_cons, treeCutsG, cutSummandsN_mk,
+private theorem treeCuts_admissibleCuts_mk (t : RoseTree α) :
+    treeCuts admissibleCuts (UnorderedTree.mk t) =
+      (childCuts leaveNothing t).map projChildrenCut := by
+  rw [childCuts_eq_some leaveNothing t [] rfl, Multiset.map_cons, treeCuts, admissibleCuts_mk,
     Multiset.map_map, Multiset.map_map]
   rfl
 
-private theorem forestCutsG_cutSummandsN_coe (ps : List (RoseTree α)) :
-    forestCutsG cutSummandsN (Multiset.ofList (ps.map UnorderedTree.mk)) =
-      (cutListSummandsG pruning ps).map projForest := by
+private theorem forestCuts_admissibleCuts_coe (ps : List (RoseTree α)) :
+    forestCuts admissibleCuts (Multiset.ofList (ps.map UnorderedTree.mk)) =
+      (childrenCuts leaveNothing ps).map projChildrenCut := by
   induction ps with
-  | nil => rw [cutListSummandsG_nil, Multiset.map_singleton]; exact forestCutsG_zero _
+  | nil => rw [childrenCuts_nil, Multiset.map_singleton]; exact forestCuts_zero _
   | cons p ps ih =>
-    rw [List.map_cons, ← Multiset.cons_coe, forestCutsG_cons, ih, treeCutsG_cutSummandsN_mk,
-      cutListSummandsG_cons_proj]
+    rw [List.map_cons, ← Multiset.cons_coe, forestCuts_cons, ih, treeCuts_admissibleCuts_mk,
+      childrenCuts_cons_proj]
 
-/-- The pruning cuts of a node choose, for each child, to cut it whole or to cut inside it. -/
-@[simp] theorem cutSummandsN_node (a : α) (F : Multiset (UnorderedTree α)) :
-    cutSummandsN (UnorderedTree.node a F) =
-      (forestCutsG cutSummandsN F).map fun pf ↦ (pf.1, UnorderedTree.node a pf.2) := by
+/-- The admissible cuts of a node choose, for each child, to cut it whole or to cut inside it. -/
+@[simp] theorem admissibleCuts_node (a : α) (F : Multiset (UnorderedTree α)) :
+    admissibleCuts (UnorderedTree.node a F) =
+      (forestCuts admissibleCuts F).map fun pf ↦ (pf.1, UnorderedTree.node a pf.2) := by
   induction F using UnorderedTree.forest_inductionOn with
   | h ps =>
-    rw [forestCutsG_cutSummandsN_coe, UnorderedTree.node_mk_tree_list, cutSummandsN_mk,
-      cutSummandsG_node, Multiset.map_map, Multiset.map_map]
-    exact Multiset.map_congr rfl fun p _ ↦ projSummand_node a p
+    rw [forestCuts_admissibleCuts_coe, UnorderedTree.node_mk_tree_list, admissibleCuts_mk,
+      rootCuts_node, Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl fun p _ ↦ projCut_node a p
 
 /-- The enumeration whose only cut is the empty cut. Its coproduct makes every tree primitive. -/
 def emptyCuts (T : UnorderedTree α) : Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
   {(0, T)}
 
-theorem forestCutsG_emptyCuts (F : Multiset (UnorderedTree α)) :
-    forestCutsG emptyCuts F = Multiset.antidiagonal F := by
+theorem forestCuts_emptyCuts (F : Multiset (UnorderedTree α)) :
+    forestCuts emptyCuts F = Multiset.antidiagonal F := by
   induction F using Multiset.induction with
-  | empty => rw [forestCutsG_zero, Multiset.antidiagonal_zero]
+  | empty => rw [forestCuts_zero, Multiset.antidiagonal_zero]
   | cons T F ih =>
-    rw [forestCutsG_cons, ih, Multiset.antidiagonal_cons, treeCutsG, emptyCuts, Multiset.conv,
+    rw [forestCuts_cons, ih, Multiset.antidiagonal_cons, treeCuts, emptyCuts, Multiset.conv,
       Multiset.map_singleton, ← Multiset.cons_zero (0, _), Multiset.cons_product,
       Multiset.cons_product, Multiset.zero_product, add_zero, Multiset.map_add, Multiset.map_map,
       Multiset.map_map, add_comm]
     congr 1 <;> exact Multiset.map_congr rfl fun x _ ↦ by
       simp [Prod.ext_iff, Prod.map, Multiset.singleton_add]
 
-theorem cutSummandsN_filter_empty (T : UnorderedTree α) :
-    (cutSummandsN T).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (UnorderedTree α)), T)} :=
+theorem admissibleCuts_filter_empty (T : UnorderedTree α) :
+    (admissibleCuts T).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (UnorderedTree α)), T)} :=
   Quotient.inductionOn T fun t ↦ by
-    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsN_mk, Multiset.filter_map]
-    simp only [Function.comp_def, projSummand, Multiset.card_map]
-    rw [cutSummandsG_filter_empty pruning t, Multiset.map_singleton]
+    rw [UnorderedTree.quot_mk_eq_mk, admissibleCuts_mk, Multiset.filter_map]
+    simp only [Function.comp_def, projCut, Multiset.card_map]
+    rw [rootCuts_filter_empty leaveNothing t, Multiset.map_singleton]
     rfl
 
 end ConnesKreimer

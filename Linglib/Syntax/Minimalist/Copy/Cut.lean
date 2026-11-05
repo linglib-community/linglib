@@ -14,10 +14,10 @@ public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Deletion
 This file relates the readings of a marked object to the coproducts on trees. A reading cuts a
 forest from the copy object: the lower copies of the chains read high, each leaving its trace, and
 the higher copies of the chains read low, each leaving nothing, with the unary vertex that leaves
-contracted. With [no chain read low](##mem_cutSummandsCN_contract) the reading is a term of the
-coproduct $\Delta^c$, and with [every chain read low](##mem_cutSummandsDN_lf) a term of the deletion
+contracted. With [no chain read low](##mem_traceCuts_contract) the reading is a term of the
+coproduct $\Delta^c$, and with [every chain read low](##mem_deletionCuts_lf) a term of the deletion
 coproduct $\Delta^d$. A reading with chains of both kinds is [a cut under a policy of its
-own](##exists_mem_cutSummandsG_lf), which `pruning` follows on some trees and `extractC` on the
+own](##exists_mem_rootCuts_lf), which `leaveNothing` follows on some trees and `leaveTrace` on the
 rest.
 
 ## Implementation notes
@@ -56,46 +56,46 @@ section Mem
 
 variable {α : Type*} {e : RoseTree α → Option (List (RoseTree α))}
 
-private theorem mem_augActionG_self {t : RoseTree α} {r : List (RoseTree α)} (h : e t = some r) :
-    (({t} : Multiset (RoseTree α)), r) ∈ augActionG e t := by
-  rw [augActionG_eq_some e t r h]
+private theorem mem_childCuts_self {t : RoseTree α} {r : List (RoseTree α)} (h : e t = some r) :
+    (({t} : Multiset (RoseTree α)), r) ∈ childCuts e t := by
+  rw [childCuts_eq_some e t r h]
   exact Multiset.mem_cons_self _ _
 
-private theorem mem_augActionG_of_mem {t : RoseTree α} {p : Multiset (RoseTree α) × RoseTree α}
-    (h : p ∈ cutSummandsG e t) : (p.1, [p.2]) ∈ augActionG e t := by
-  rw [augActionG_eq]
+private theorem mem_childCuts_of_mem {t : RoseTree α} {p : Multiset (RoseTree α) × RoseTree α}
+    (h : p ∈ rootCuts e t) : (p.1, [p.2]) ∈ childCuts e t := by
+  rw [childCuts_eq]
   exact Multiset.mem_add.2 (Or.inr (Multiset.mem_map.2 ⟨p, h, rfl⟩))
 
-private theorem mem_cutListSummandsG_cons {t : RoseTree α} {ts : List (RoseTree α)}
-    {a b : Multiset (RoseTree α) × List (RoseTree α)} (ha : a ∈ augActionG e t)
-    (hb : b ∈ cutListSummandsG e ts) :
-    (a.1 + b.1, a.2 ++ b.2) ∈ cutListSummandsG e (t :: ts) := by
-  rw [cutListSummandsG_cons]
+private theorem mem_childrenCuts_cons {t : RoseTree α} {ts : List (RoseTree α)}
+    {a b : Multiset (RoseTree α) × List (RoseTree α)} (ha : a ∈ childCuts e t)
+    (hb : b ∈ childrenCuts e ts) :
+    (a.1 + b.1, a.2 ++ b.2) ∈ childrenCuts e (t :: ts) := by
+  rw [childrenCuts_cons]
   exact Multiset.mem_map.2 ⟨(a, b), Multiset.mem_product.2 ⟨ha, hb⟩, rfl⟩
 
-private theorem mem_cutSummandsG_node {a : α} {cs : List (RoseTree α)}
-    {p : Multiset (RoseTree α) × List (RoseTree α)} (h : p ∈ cutListSummandsG e cs) :
-    (p.1, RoseTree.node a p.2) ∈ cutSummandsG e (.node a cs) := by
-  rw [cutSummandsG_node]
+private theorem mem_rootCuts_node {a : α} {cs : List (RoseTree α)}
+    {p : Multiset (RoseTree α) × List (RoseTree α)} (h : p ∈ childrenCuts e cs) :
+    (p.1, RoseTree.node a p.2) ∈ rootCuts e (.node a cs) := by
+  rw [rootCuts_node]
   exact Multiset.mem_map.2 ⟨p, h, rfl⟩
 
-private theorem mem_cutListSummandsG_pair {x y : RoseTree α}
+private theorem mem_childrenCuts_pair {x y : RoseTree α}
     {a b : Multiset (RoseTree α) × List (RoseTree α)}
-    (ha : a ∈ augActionG e x) (hb : b ∈ augActionG e y) :
-    (a.1 + b.1, a.2 ++ b.2) ∈ cutListSummandsG e [x, y] := by
-  have h := mem_cutListSummandsG_cons ha (mem_cutListSummandsG_cons hb
-    (by rw [cutListSummandsG_nil]; exact Multiset.mem_singleton_self _))
+    (ha : a ∈ childCuts e x) (hb : b ∈ childCuts e y) :
+    (a.1 + b.1, a.2 ++ b.2) ∈ childrenCuts e [x, y] := by
+  have h := mem_childrenCuts_cons ha (mem_childrenCuts_cons hb
+    (by rw [childrenCuts_nil]; exact Multiset.mem_singleton_self _))
   simpa using h
 
-private theorem mem_cutListSummandsG_map {β : Type*}
+private theorem mem_childrenCuts_map {β : Type*}
     {f : β → Multiset (RoseTree α) × List (RoseTree α)} {g : β → RoseTree α} (cs : List β)
-    (h : ∀ c ∈ cs, f c ∈ augActionG e (g c)) :
+    (h : ∀ c ∈ cs, f c ∈ childCuts e (g c)) :
     (((cs.map f).map Prod.fst).sum, (cs.map f).flatMap Prod.snd) ∈
-      cutListSummandsG e (cs.map g) := by
+      childrenCuts e (cs.map g) := by
   induction cs with
-  | nil => rw [List.map_nil, cutListSummandsG_nil]; exact Multiset.mem_singleton_self _
+  | nil => rw [List.map_nil, childrenCuts_nil]; exact Multiset.mem_singleton_self _
   | cons c cs ih =>
-    have := mem_cutListSummandsG_cons (h c (by simp)) (ih fun d hd ↦ h d (by simp [hd]))
+    have := mem_childrenCuts_cons (h c (by simp)) (ih fun d hd ↦ h d (by simp [hd]))
     simpa using this
 
 end Mem
@@ -139,26 +139,26 @@ private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark �
   · exact .inl ⟨reading_of_length_ne _ _ _ _ _ a hlen, lfBy_of_length_ne _ a hlen⟩
 
 /-- An unmarked node reads as one cut of the copy object, with its root as the root of the trunk. -/
-private theorem exists_mem_cutSummandsG_none {a : Vertex}
+private theorem exists_mem_rootCuts_none {a : Vertex}
     {cs : List (RoseTree (CopyMark × Vertex))}
-    (ih : ∀ c ∈ cs, readCut low c ∈ augActionG e (c.map Prod.snd))
+    (ih : ∀ c ∈ cs, readCut low c ∈ childCuts e (c.map Prod.snd))
     (hl : ∀ c ∈ cs, low c → e (c.map Prod.snd) = some []) :
     ∃ T, (readCut low (.node (none, a) cs)).2 = [T] ∧
       ((readCut low (.node (none, a) cs)).1, T) ∈
-        cutSummandsG e (.node a (cs.map (·.map Prod.snd))) := by
+        rootCuts e (.node a (cs.map (·.map Prod.snd))) := by
   rcases readCut_none_cases low a cs with ⟨h, -⟩ | ⟨x, y, hc, hx, h, -⟩
   · rw [h]
-    exact ⟨_, rfl, mem_cutSummandsG_node
-      (mem_cutListSummandsG_map (f := readCut low) (g := (·.map Prod.snd)) cs ih)⟩
+    exact ⟨_, rfl, mem_rootCuts_node
+      (mem_childrenCuts_map (f := readCut low) (g := (·.map Prod.snd)) cs ih)⟩
   · rw [h]
     refine ⟨_, rfl, ?_⟩
     have hxm : x ∈ cs := by rcases hc with rfl | rfl <;> simp
     have hym : y ∈ cs := by rcases hc with rfl | rfl <;> simp
-    have ax := mem_augActionG_self (hl x hxm hx)
+    have ax := mem_childCuts_self (hl x hxm hx)
     have ay := ih y hym
     rcases hc with rfl | rfl
-    · simpa using mem_cutSummandsG_node (a := a) (mem_cutListSummandsG_pair ax ay)
-    · have h := mem_cutSummandsG_node (a := a) (mem_cutListSummandsG_pair ay ax)
+    · simpa using mem_rootCuts_node (a := a) (mem_childrenCuts_pair ax ay)
+    · have h := mem_rootCuts_node (a := a) (mem_childrenCuts_pair ay ax)
       simp only [List.append_nil] at h
       rwa [Multiset.add_comm, Multiset.singleton_add] at h
 
@@ -171,44 +171,44 @@ variable {low e} {s : RoseTree (CopyMark × Vertex)}
 
 /-- A copy's part in a reading is one of the choices a cut has at it, when the policy cuts a lower
 copy of a chain read high leaving its trace and a copy of a chain read low leaving nothing. -/
-theorem readCut_mem_augActionG
+theorem readCut_mem_childCuts
     (hh : ∀ r ∈ s.subtrees, ∀ l, r.value.1 = some l → ¬ low r →
       e (r.map Prod.snd) = some [.node (.inr l) []])
     (hl : ∀ r ∈ s.subtrees, low r → e (r.map Prod.snd) = some []) :
-    readCut low s ∈ augActionG e (s.map Prod.snd) := by
+    readCut low s ∈ childCuts e (s.map Prod.snd) := by
   induction s with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
-    have ih' : ∀ c ∈ cs, readCut low c ∈ augActionG e (c.map Prod.snd) := fun c hc ↦
+    have ih' : ∀ c ∈ cs, readCut low c ∈ childCuts e (c.map Prod.snd) := fun c hc ↦
       ih c hc (fun r hr ↦ hh r (subtrees_subset hc hr)) fun r hr ↦ hl r (subtrees_subset hc hr)
     have hl' : ∀ c ∈ cs, low c → e (c.map Prod.snd) = some [] := fun c hc ↦
       hl c (subtrees_subset hc (self_mem_subtrees c))
-    obtain ⟨T, hT, hm⟩ := exists_mem_cutSummandsG_none low e (a := a) ih' hl'
+    obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_none low e (a := a) ih' hl'
     have hnone : readCut low (.node (none, a) cs) ∈
-        augActionG e (RoseTree.node a (cs.map (·.map Prod.snd))) := by
-      have := mem_augActionG_of_mem hm
+        childCuts e (RoseTree.node a (cs.map (·.map Prod.snd))) := by
+      have := mem_childCuts_of_mem hm
       rwa [← hT] at this
     rcases k with _ | l
     · simpa [map_node] using hnone
     · rw [readCut_some]
       split_ifs with hlow
       · simpa [map_node] using hnone
-      · exact mem_augActionG_self (hh _ (self_mem_subtrees _) l rfl hlow)
+      · exact mem_childCuts_self (hh _ (self_mem_subtrees _) l rfl hlow)
 
 /-- A tree whose root is not a lower copy of a chain read high reads as one cut of it, with what
 stays in place a single tree. -/
-theorem exists_mem_cutSummandsG_readCut (hroot : ∀ l, s.value.1 = some l → low s)
+theorem exists_mem_rootCuts_readCut (hroot : ∀ l, s.value.1 = some l → low s)
     (hh : ∀ r ∈ s.subtrees, ∀ l, r.value.1 = some l → ¬ low r →
       e (r.map Prod.snd) = some [.node (.inr l) []])
     (hl : ∀ r ∈ s.subtrees, low r → e (r.map Prod.snd) = some []) :
-    ∃ T, (readCut low s).2 = [T] ∧ ((readCut low s).1, T) ∈ cutSummandsG e (s.map Prod.snd) := by
+    ∃ T, (readCut low s).2 = [T] ∧ ((readCut low s).1, T) ∈ rootCuts e (s.map Prod.snd) := by
   obtain ⟨⟨k, a⟩, cs⟩ := s
-  have ih' : ∀ c ∈ cs, readCut low c ∈ augActionG e (c.map Prod.snd) := fun c hc ↦
-    readCut_mem_augActionG (fun r hr ↦ hh r (subtrees_subset hc hr))
+  have ih' : ∀ c ∈ cs, readCut low c ∈ childCuts e (c.map Prod.snd) := fun c hc ↦
+    readCut_mem_childCuts (fun r hr ↦ hh r (subtrees_subset hc hr))
       fun r hr ↦ hl r (subtrees_subset hc hr)
   have hl' : ∀ c ∈ cs, low c → e (c.map Prod.snd) = some [] := fun c hc ↦
     hl c (subtrees_subset hc (self_mem_subtrees c))
-  have hnone := exists_mem_cutSummandsG_none low e (a := a) ih' hl'
+  have hnone := exists_mem_rootCuts_none low e (a := a) ih' hl'
   rcases k with _ | l
   · simpa [map_node] using hnone
   · rw [readCut_some, ite_eq_left (hroot l rfl)]
@@ -283,10 +283,10 @@ def termTrace (σ : SyntacticObject → Option LexicalItem.Token) (u : Unordered
   if h : IsSyntacticObject u then σ ⟨u, h⟩ else none
 
 /-- The policy of a reading: a copy of a chain read low leaves nothing when it is cut, as under
-`pruning`, and any other subtree its trace, as under `extractC`. -/
+`leaveNothing`, and any other subtree its trace, as under `leaveTrace`. -/
 def extractReading (low : Finset SyntacticObject) (τ : RoseTree Vertex → Option LexicalItem.Token) :
     RoseTree Vertex → Option (List (RoseTree Vertex)) := fun r ↦
-  if ∃ m ∈ low, m.val = UnorderedTree.mk r then pruning r else extractC τ r
+  if ∃ m ∈ low, m.val = UnorderedTree.mk r then leaveNothing r else leaveTrace τ r
 
 variable {τ} (t : Marked) (low : Finset SyntacticObject)
 
@@ -294,23 +294,23 @@ variable {τ} (t : Marked) (low : Finset SyntacticObject)
 the higher copies of the chains read low, each outermost. -/
 def cutForest : Multiset (RoseTree Vertex) := (readCut (ReadLow low) t.val).1
 
-private theorem extractC_map_snd {r : RoseTree (CopyMark × Vertex)} {l : Option LexicalItem.Token}
+private theorem leaveTrace_map_snd {r : RoseTree (CopyMark × Vertex)} {l : Option LexicalItem.Token}
     (hτ : r.value.2.isLeft ∧ r.value.1 = some (τ (termOf r))) (hl : r.value.1 = some l) :
-    extractC (τ ∘ UnorderedTree.mk) (r.map Prod.snd) = some [.node (.inr l) []] := by
+    leaveTrace (τ ∘ UnorderedTree.mk) (r.map Prod.snd) = some [.node (.inr l) []] := by
   obtain ⟨⟨k, a⟩, cs⟩ := r
   obtain ⟨ha, hk⟩ := hτ
   obtain rfl : τ (termOf (.node (k, a) cs)) = l := Option.some.inj (hk.symm.trans hl)
   rcases a with a | b
   · rw [map_node]
     dsimp only
-    rw [extractC_inl, termOf, map_node]
+    rw [leaveTrace_inl, termOf, map_node]
     rfl
   · exact absurd ha (by simp [value])
 
 private theorem extractReading_of_not_low {low : Finset SyntacticObject}
     {τ : RoseTree Vertex → Option LexicalItem.Token} {r : RoseTree (CopyMark × Vertex)}
     (h : ¬ ReadLow low r) :
-    extractReading low τ (r.map Prod.snd) = extractC τ (r.map Prod.snd) :=
+    extractReading low τ (r.map Prod.snd) = leaveTrace τ (r.map Prod.snd) :=
   ite_eq_right h
 
 private theorem extractReading_of_low {low : Finset SyntacticObject}
@@ -319,15 +319,15 @@ private theorem extractReading_of_low {low : Finset SyntacticObject}
   ite_eq_left h
 
 /-- A reading gives a cut of the copy object under its policy, its unary vertices contracted. -/
-theorem exists_mem_cutSummandsG_lf (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
+theorem exists_mem_rootCuts_lf (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
     ∃ T, (t.cutForest low, T) ∈
-        cutSummandsG (extractReading low (τ ∘ UnorderedTree.mk)) t.unmark.val ∧
+        rootCuts (extractReading low (τ ∘ UnorderedTree.mk)) t.unmark.val ∧
       contractUnary T = (t.lf low).val := by
-  obtain ⟨T, hT, hm⟩ := exists_mem_cutSummandsG_readCut (low := ReadLow low)
+  obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow low)
     (e := extractReading low (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
     (fun r hr l hl hn ↦ (extractReading_of_not_low hn).trans
-      (extractC_map_snd (hτ r hr (by simp [hl])) hl))
+      (leaveTrace_map_snd (hτ r hr (by simp [hl])) hl))
     (fun r _ hr ↦ extractReading_of_low hr)
   refine ⟨T, hm, ?_⟩
   have h := map_contractUnary_readCut (low := ReadLow low) t.2
@@ -336,36 +336,36 @@ theorem exists_mem_cutSummandsG_lf (hroot : t.val.value.1 = none) (hτ : MarkedB
 
 /-- With no chain read low, a reading is the contraction, a term of the coproduct `Δ^c`: the lower
 copies are an admissible cut of the copy object. -/
-theorem mem_cutSummandsCN_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
+theorem mem_traceCuts_contract (hroot : t.val.value.1 = none) (hτ : MarkedBy τ t.val) :
     ((t.cutForest ∅).map UnorderedTree.mk, UnorderedTree.mk t.contract.val) ∈
-      cutSummandsCN τ (UnorderedTree.mk t.unmark.val) := by
-  obtain ⟨T, hT, hm⟩ := exists_mem_cutSummandsG_readCut (low := ReadLow ∅)
-    (e := extractC (τ ∘ UnorderedTree.mk)) (s := t.val)
+      traceCuts τ (UnorderedTree.mk t.unmark.val) := by
+  obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow ∅)
+    (e := leaveTrace (τ ∘ UnorderedTree.mk)) (s := t.val)
     (fun l hl ↦ by simp [hroot] at hl)
-    (fun r hr l hl _ ↦ extractC_map_snd (hτ r hr (by simp [hl])) hl)
+    (fun r hr l hl _ ↦ leaveTrace_map_snd (hτ r hr (by simp [hl])) hl)
     (fun r _ hr ↦ absurd hr (not_readLow_empty r))
   obtain rfl : T = contractTree t.val := by
     have := readCut_readLow_empty t.val
     rw [hT] at this
     simpa using this
-  rw [cutSummandsCN_mk]
+  rw [traceCuts_mk]
   exact Multiset.mem_map.2 ⟨_, hm, rfl⟩
 
 /-- With every chain read low, a reading is a term of the deletion coproduct `Δ^d`: the higher
 copies are an admissible cut of the copy object. -/
-theorem mem_cutSummandsDN_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r) :
+theorem mem_deletionCuts_lf (hlow : ∀ r ∈ t.val.subtrees, r.value.1.isSome → ReadLow low r) :
     ((t.cutForest low).map UnorderedTree.mk, UnorderedTree.mk (t.lf low).val) ∈
-      cutSummandsDN (UnorderedTree.mk t.unmark.val) := by
-  obtain ⟨T, hT, hm⟩ := exists_mem_cutSummandsG_readCut (low := ReadLow low) (e := pruning)
+      deletionCuts (UnorderedTree.mk t.unmark.val) := by
+  obtain ⟨T, hT, hm⟩ := exists_mem_rootCuts_readCut (low := ReadLow low) (e := leaveNothing)
     (s := t.val)
     (fun l hl ↦ hlow _ (self_mem_subtrees _) (by simp [hl]))
     (fun r hr l hl hn ↦ absurd (hlow r hr (by simp [hl])) hn)
     (fun _ _ _ ↦ rfl)
   have h := map_contractUnary_readCut (low := ReadLow low) t.2
   rw [hT, List.map_singleton, List.cons.injEq] at h
-  rw [cutSummandsDN, cutSummandsN_mk, Multiset.map_map]
+  rw [deletionCuts, admissibleCuts_mk, Multiset.map_map]
   refine Multiset.mem_map.2 ⟨_, hm, ?_⟩
-  simp only [Function.comp_apply, projSummand, UnorderedTree.contractUnary_mk]
+  simp only [Function.comp_apply, projCut, UnorderedTree.contractUnary_mk]
   exact congrArg₂ Prod.mk rfl (congrArg UnorderedTree.mk h.1)
 
 end Minimalist.LinearizedSyntacticObject.Marked

@@ -11,11 +11,11 @@ public import Linglib.Core.Data.RoseTree.FilterMap
 /-!
 # Cuts under a partial relabelling
 
-The cut enumeration `cutSummandsG` is natural in its policy. Let `g` relabel trees and let `f`
+The cut enumeration `rootCuts` is natural in its policy. Let `g` relabel trees and let `f`
 relabel them partially, dropping the subtrees whose root it sends to `none`. When a policy `E` at
 the relabelled trees and a policy `E'` at the original trees leave the same remainders after `f`,
 [the cuts of a relabelled tree under `E` are the relabelled cuts under
-`E'`](##map_cutSummandsG_map), the trunks compared after `f`. Policies that differ only in what `f`
+`E'`](##map_rootCuts_map), the trunks compared after `f`. Policies that differ only in what `f`
 drops therefore differ only in the trunks of their cuts.
 
 ## References
@@ -40,41 +40,41 @@ mutual
 
 /-- Cuts of a relabelled tree are the relabelled cuts, when the two policies leave the same
     remainders after `f`. The trunks are compared after `f`. -/
-theorem map_cutSummandsG_map
+theorem map_rootCuts_map
     (hE : ∀ t, (E (t.map g)).map (List.filterMap (filterMap f)) =
       (E' t).map (List.filterMap (filterMap f ∘ map g))) :
-    ∀ t : RoseTree α, (cutSummandsG E (t.map g)).map (Prod.map id (filterMap f)) =
-      (cutSummandsG E' t).map (Prod.map (Multiset.map (map g)) (filterMap f ∘ map g))
+    ∀ t : RoseTree α, (rootCuts E (t.map g)).map (Prod.map id (filterMap f)) =
+      (rootCuts E' t).map (Prod.map (Multiset.map (map g)) (filterMap f ∘ map g))
   | .node a cs => by
     have h := congrArg (Multiset.map fun q : Multiset (RoseTree γ) × List (RoseTree δ) ↦
-      (q.1, (f (g a)).map fun b ↦ node b q.2)) (map_cutListSummandsG_map hE cs)
+      (q.1, (f (g a)).map fun b ↦ node b q.2)) (map_childrenCuts_map hE cs)
     simpa [Multiset.map_map, Function.comp_def, List.filterMap_map] using h
 
-private theorem map_cutListSummandsG_map
+private theorem map_childrenCuts_map
     (hE : ∀ t, (E (t.map g)).map (List.filterMap (filterMap f)) =
       (E' t).map (List.filterMap (filterMap f ∘ map g))) :
     ∀ cs : List (RoseTree α),
-      (cutListSummandsG E (cs.map (map g))).map (Prod.map id (List.filterMap (filterMap f))) =
-        (cutListSummandsG E' cs).map
+      (childrenCuts E (cs.map (map g))).map (Prod.map id (List.filterMap (filterMap f))) =
+        (childrenCuts E' cs).map
           (Prod.map (Multiset.map (map g)) (List.filterMap (filterMap f ∘ map g)))
   | [] => by simp
   | c :: cs => by
-    rw [List.map_cons, cutListSummandsG_cons, cutListSummandsG_cons,
+    rw [List.map_cons, childrenCuts_cons, childrenCuts_cons,
       Multiset.map_map_product_distrib (f' := fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
         (g₁ := Prod.map id (List.filterMap (filterMap f)))
         (g₂ := Prod.map id (List.filterMap (filterMap f))) (by simp),
-      map_augActionG_map hE c, map_cutListSummandsG_map hE cs]
+      map_childCuts_map hE c, map_childrenCuts_map hE cs]
     exact (Multiset.map_map_product_distrib (by simp) _ _).symm
 
-private theorem map_augActionG_map
+private theorem map_childCuts_map
     (hE : ∀ t, (E (t.map g)).map (List.filterMap (filterMap f)) =
       (E' t).map (List.filterMap (filterMap f ∘ map g))) (t : RoseTree α) :
-    (augActionG E (t.map g)).map (Prod.map id (List.filterMap (filterMap f))) =
-      (augActionG E' t).map
+    (childCuts E (t.map g)).map (Prod.map id (List.filterMap (filterMap f))) =
+      (childCuts E' t).map
         (Prod.map (Multiset.map (map g)) (List.filterMap (filterMap f ∘ map g))) := by
   have h := congrArg (Multiset.map fun q : Multiset (RoseTree γ) × Option (RoseTree δ) ↦
-    (q.1, q.2.toList)) (map_cutSummandsG_map hE t)
-  rw [augActionG_eq, augActionG_eq, Multiset.map_add, Multiset.map_add]
+    (q.1, q.2.toList)) (map_rootCuts_map hE t)
+  rw [childCuts_eq, childCuts_eq, Multiset.map_add, Multiset.map_add]
   congr 1
   · have := hE t
     cases h₁ : E (t.map g) <;> cases h₂ : E' t <;> simp_all
