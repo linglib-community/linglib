@@ -300,8 +300,8 @@ itself, and the separation refutes the tail condition of [chandlee-eyraud-heinz-
 fails as a corollary. -/
 
 private theorem rtake_cons_replicate (n : ℕ) (x y : α) :
-    (x :: List.replicate n y).rtake n = List.replicate n y := by
-  simp [List.rtake]
+    (x :: List.replicate n y).rtake n = List.replicate n y :=
+  List.rtake_cons_of_length_eq (by simp)
 
 /-- The prefix function vanishes where two continuations begin with different symbols. -/
 private theorem prefixFunction_eq_nil {f : List α → List β} {u v w : List α} {x y : β}

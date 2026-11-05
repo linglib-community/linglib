@@ -75,6 +75,12 @@ theorem rtake_append_of_le_length (h : n ≤ l₂.length) : (l₁ ++ l₂).rtake
 theorem rtake_rtake_append : (l₁.rtake n ++ l₂).rtake n = (l₁ ++ l₂).rtake n := by
   simp [rtake_append, rtake_rtake]
 
+theorem rtake_cons_of_length_eq {a : α} (h : l.length = n) : (a :: l).rtake n = l := by
+  simp [rtake, ← h]
+
+theorem rdrop_cons_of_length_eq {a : α} (h : l.length = n) : (a :: l).rdrop n = [a] := by
+  simp [rdrop, ← h]
+
 theorem rdrop_append : (l₁ ++ l₂).rdrop n = l₁.rdrop (n - l₂.length) ++ l₂.rdrop n := by
   simp [rdrop_eq_reverse_drop_reverse, drop_append]
 

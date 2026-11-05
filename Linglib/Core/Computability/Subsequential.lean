@@ -395,9 +395,9 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     ∃ N : ℕ, ∀ u v i, i + N < (f u).length → (f u)[i]? = (f (u ++ v))[i]? := by
   obtain ⟨N, hN⟩ := hf.bounded_delay
   refine ⟨N, fun u v i hi ↦ ?_⟩
-  rw [List.prefix_iff_getElem?.mp (hN u v) i (by simp; omega),
-    List.getElem?_eq_getElem (by omega)]
-  simp [List.rdrop]
+  have hi' : i < ((f u).rdrop N).length := by simp; omega
+  exact (List.prefix_iff_getElem?.mp (List.rdrop_prefix _ N) i hi').trans
+    (List.prefix_iff_getElem?.mp (hN u v) i hi').symm
 
 theorem IsLeftSubsequential.exists_getElem?_take_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :

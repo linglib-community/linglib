@@ -460,8 +460,7 @@ theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
         List.exists_cons_of_ne_nil (by simp)
       have hrest : rest.length = r.rightReach := by
         have hl := congrArg List.length hb; simp at hl; omega
-      rw [hb, show (b :: rest).rdrop r.rightReach = [b] by simp [List.rdrop, hrest],
-        show (b :: rest).rtake r.rightReach = rest by simp [List.rtake, hrest],
+      rw [hb, List.rdrop_cons_of_length_eq hrest, List.rtake_cons_of_length_eq hrest,
         List.cons_append, Rule.scan, r.verdict_append w b rest xs hrest.ge]
       simp
 

@@ -19,24 +19,12 @@ public import Mathlib.Data.Set.Finite.List
 This file defines the definite languages and their relatives. A language `L` is *`k`-definite*
 when membership of a word is decided by its last `k` letters: any two words with the same
 length-`k` suffix are both in `L` or both outside it. Perles, Rabin and Shamir develop the theory
-of these languages; *reverse `k`-definite* languages are the mirror image through the length-`k`
-prefix, and *generalized `k`-definite* languages are decided by the prefix and suffix together.
-
-## Main definitions
-
-* `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`: membership
-  factors through the suffix, the prefix, and both.
-* `Language.IsFiniteOrCofinite`: `L` or its complement is finite.
-
-## Main results
-
-* `Language.IsDefinite.toIsGeneralizedDefinite`,
-  `Language.IsReverseDefinite.toIsGeneralizedDefinite`: definite and reverse definite languages are
-  generalized definite.
-* `Language.IsDefinite.isRegular`, `Language.IsReverseDefinite.isRegular`,
-  `Language.IsGeneralizedDefinite.isRegular`: over a finite alphabet all three are regular.
-* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a finite
-  alphabet, a language is finite or cofinite exactly when it is both definite and reverse definite.
+of these languages; *reverse `k`-definite* languages are [the mirror
+image](##Language.isReverseDefinite_iff_isDefinite_reverse) through the length-`k` prefix, and
+*generalized `k`-definite* languages are decided by the prefix and suffix together. Over a finite
+alphabet a language is [finite or
+cofinite](##Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite) exactly when
+it is both definite and reverse definite.
 
 ## References
 
@@ -91,12 +79,6 @@ lemma isDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
     L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
   unfold IsDefinite
   rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.right.takeAt_idem k a)]
-  simp only [eq_iff_iff]
-
-lemma isReverseDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
-    L.IsReverseDefinite k ↔ ∀ w, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
-  unfold IsReverseDefinite
-  rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.left.takeAt_idem k a)]
   simp only [eq_iff_iff]
 
 /-- A language is *finite or cofinite* when it or its complement is finite. -/
