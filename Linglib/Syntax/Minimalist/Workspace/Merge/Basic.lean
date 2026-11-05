@@ -44,11 +44,15 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 * `Minimalist.Merge.mergeOpG_apply_of'`, `mergeOpG_apply_of'_eq_sum`: Merge on a workspace is a sum
   over its forest cuts, or over a choice of cut for each of its trees.
 * `Minimalist.Merge.mergeOpG_comm`: Merge does not depend on the order of the pair.
-* `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN`: Merge at `Δ^d` through the pruning coproduct,
-  the book's (1.3.10).
+* `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN`, `mergeOp_eq_comp_comulCAlgHomN`: Merge at `Δ^d`
+  through the pruning coproduct and through the trace coproduct, the two expressions of the book's
+  (1.3.10).
 * `Minimalist.Merge.mergeOp_eq_rename_contractUnary_comp`,
   `mergeOpUnit_eq_rename_contractUnary_comp`: on objects without unary vertices, Merge at the
   deletion cuts is Merge at the pruning cuts followed by contracting unary vertices.
+* `Minimalist.Merge.eraseTraces_comp_mergeOpC`, `mergeOp_eq_comp_mergeOpC`,
+  `mergeOpUnit_eq_comp_mergeOpUnitC`: on trees without traces, erasing the traces of Merge at the
+  trace cuts gives Merge at the pruning cuts, and contracting too gives Merge at the deletion cuts.
 
 ## Implementation notes
 
@@ -546,5 +550,187 @@ noncomputable def mergeOpUnitC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ 
     (τ : UnorderedTree (α ⊕ β) → β) (S : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpUnitG (R := R) (cutSummandsCN τ) S
+
+/-! ### Erasing the traces of Merge
+
+An injective relabelling commutes with matching and grafting, and the embedding of the trees
+without traces is a section of the erasure `eraseTraces`. So erasure carries the chain of Merge at
+an embedded pair to the chain at the pair, and the relations between the coproducts pass to
+Merge. -/
+
+section Relabel
+
+variable {γ : Type*} [DecidableEq (UnorderedTree α)] [DecidableEq (UnorderedTree γ)]
+  {g : α → γ} (hg : Function.Injective g)
+include hg
+
+/-- An injective relabelling commutes with the projection onto a forest. -/
+theorem forestProj_rename (F₀ : Forest (UnorderedTree α))
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    forestProj (F₀.map (UnorderedTree.map g)) (rename (UnorderedTree.map g) x) =
+      rename (UnorderedTree.map g) (forestProj F₀ x) := by
+  induction x using ConnesKreimer.induction_linear with
+  | zero => simp only [map_zero]
+  | add x y hx hy => simp only [map_add, hx, hy]
+  | single F r =>
+    rw [← smul_of']
+    by_cases h : F = F₀
+    · subst h; simp [forestProj_apply_of']
+    · simp [forestProj_apply_of', h,
+        (Multiset.map_injective (UnorderedTree.map_injective hg)).ne h]
+
+/-- An injective relabelling commutes with grafting. -/
+theorem graftBinaryAt_rename (lbl : α) (S S' : UnorderedTree α)
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    graftBinaryAt (g lbl) (S.map g) (S'.map g) (rename (UnorderedTree.map g) x) =
+      rename (UnorderedTree.map g) (graftBinaryAt lbl S S' x) := by
+  induction x using ConnesKreimer.induction_linear with
+  | zero => simp only [map_zero]
+  | add x y hx hy => simp only [map_add, hx, hy]
+  | single F r =>
+    have hpair : ({S.map g, S'.map g} : Forest (UnorderedTree γ)) =
+        ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map g) := by simp
+    rw [← smul_of', map_smul, map_smul, map_smul, rename_of', graftBinaryAt_apply_singleton,
+      graftBinaryAt_apply_singleton, hpair]
+    by_cases h : F = {S, S'}
+    · subst h; simp [UnorderedTree.map_node]
+    · rw [ite_eq_right h,
+        ite_eq_right ((Multiset.map_injective (UnorderedTree.map_injective hg)).ne h),
+        smul_zero, smul_zero, map_zero]
+
+end Relabel
+
+section Erasure
+
+variable {β : Type*} (τ : UnorderedTree (α ⊕ β) → β)
+
+/-- The embedding of the trees without traces into the trees with traces. -/
+local notation "ι" => rename (R := R) (UnorderedTree.map (Sum.inl : α → α ⊕ β))
+
+/-- The projection `Π_{d,c}`: erase the traces, then contract the unary vertices. -/
+local notation "Π_dc" => AlgHom.comp (rename (R := R) (UnorderedTree.contractUnary (α := α)))
+  (eraseTraces (R := R) (α := α) (β := β))
+
+/-- A left channel that absorbs the embedding absorbs it in a pair of channels. -/
+private theorem mul'_map_rename_inl {L : ConnesKreimer R (UnorderedTree α) →ₗ[R]
+      ConnesKreimer R (UnorderedTree α)}
+    {L' : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
+    (hL : ∀ x, L' (ι x) = L x)
+    (y : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+    LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id
+      (Algebra.TensorProduct.map ι (.id R _) y)) =
+      LinearMap.mul' R _ (TensorProduct.map L LinearMap.id y) := by
+  induction y using TensorProduct.inductionOn with
+  | tmul a b => simp [hL]
+  | add y z hy hz => simp only [map_add, hy, hz]
+
+/-- Erasing the product of the two channels of `Δ^c` on an embedded tree gives the product of the
+    two channels of `Δ^ρ`, for a left channel that erasure carries to `L`. -/
+private theorem eraseTraces_mul'_comulCAlgHomN
+    {L : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
+    {L' : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β))}
+    (hL : ∀ x, eraseTraces (R := R) (L' (ι x)) = L x) (x : ConnesKreimer R (UnorderedTree α)) :
+    eraseTraces (R := R) (LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id
+      (comulCAlgHomN τ (ι x)))) =
+      LinearMap.mul' R _ (TensorProduct.map L LinearMap.id (comulAlgHomN x)) := by
+  have hmul (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
+      ConnesKreimer R (UnorderedTree (α ⊕ β))) :
+      eraseTraces (R := R) (LinearMap.mul' R _ (TensorProduct.map L' LinearMap.id z)) =
+        LinearMap.mul' R _ (TensorProduct.map (eraseTraces.toLinearMap ∘ₗ L') LinearMap.id
+          (Algebra.TensorProduct.map (.id R _) eraseTraces z)) := by
+    induction z using TensorProduct.inductionOn with
+    | tmul a b => simp
+    | add y z hy hz => simp only [map_add, hy, hz]
+  have h := DFunLike.congr_fun (eraseTraces_comulCAlgHomN (R := R) τ) x
+  simp only [AlgHom.comp_apply] at h
+  rw [hmul, h]
+  exact mul'_map_rename_inl (L' := eraseTraces.toLinearMap ∘ₗ L') hL _
+
+variable [DecidableEq (UnorderedTree α)] [DecidableEq (UnorderedTree (α ⊕ β))]
+
+omit τ in
+private theorem eraseTraces_graft_gamma_rename_inl (lbl : α) (S S' : UnorderedTree α)
+    (x : ConnesKreimer R (UnorderedTree α)) :
+    (eraseTraces.toLinearMap ∘ₗ
+        graftBinaryAt (R := R) (Sum.inl lbl : α ⊕ β) (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ
+        gammaMatch (S.map Sum.inl) (S'.map Sum.inl)) (ι x) =
+      (graftBinaryAt lbl S S' ∘ₗ gammaMatch S S') x := by
+  have hpair : ({S.map Sum.inl, S'.map Sum.inl} : Forest (UnorderedTree (α ⊕ β))) =
+      ({S, S'} : Forest (UnorderedTree α)).map (UnorderedTree.map Sum.inl) := by simp
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  rw [gammaMatch, gammaMatch, hpair, forestProj_rename Sum.inl_injective,
+    graftBinaryAt_rename Sum.inl_injective]
+  exact DFunLike.congr_fun (eraseTraces_comp_rename_inl (R := R) (β := β)) _
+
+/-- Erasing the traces of Merge at the trace cuts gives Merge at the pruning cuts, on trees without
+    traces. -/
+theorem eraseTraces_comp_mergeOpC (lbl : α) (S S' : UnorderedTree α) :
+    eraseTraces.toLinearMap ∘ₗ
+        mergeOpC (R := R) τ (Sum.inl lbl) (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (ι).toLinearMap =
+      mergeOpG cutSummandsN lbl S S' := by
+  refine LinearMap.ext fun x ↦ ?_
+  simp only [LinearMap.comp_apply, mergeOpC, mergeOpG, AlgHom.toLinearMap_apply, mergePost_eq]
+  exact eraseTraces_mul'_comulCAlgHomN τ (eraseTraces_graft_gamma_rename_inl lbl S S') x
+
+/-- Erasing the traces of the unit stage at the trace cuts gives the unit stage at the pruning cuts,
+    on trees without traces. -/
+theorem eraseTraces_comp_mergeOpUnitC (S : UnorderedTree α) :
+    eraseTraces.toLinearMap ∘ₗ mergeOpUnitC (R := R) τ (S.map Sum.inl) ∘ₗ (ι).toLinearMap =
+      mergeOpUnitG cutSummandsN S := by
+  refine LinearMap.ext fun x ↦ eraseTraces_mul'_comulCAlgHomN τ (L := gammaMatchSingle S)
+    (L' := gammaMatchSingle (S.map Sum.inl)) (fun y ↦ ?_) x
+  rw [gammaMatchSingle, gammaMatchSingle, ← Multiset.map_singleton,
+    forestProj_rename Sum.inl_injective]
+  exact DFunLike.congr_fun (eraseTraces_comp_rename_inl (R := R) (β := β)) _
+
+/-- Merge at `Δ^d` through the trace coproduct, the second expression of
+    [marcolli-chomsky-berwick-2025] (1.3.10): `⊔ ∘ (B ⊗ id) ∘ (id ⊗ Π_{d,c}) ∘ δ_{S,S'} ∘ Δ^c`. The
+    chain runs on the embedded tree, and `B` lands in the trees without traces through erasure. -/
+theorem mergeOp_eq_comp_comulCAlgHomN (lbl : α) (S S' : UnorderedTree α) :
+    mergeOp (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
+      TensorProduct.map
+        (eraseTraces.toLinearMap ∘ₗ graftBinaryAt (Sum.inl lbl) (S.map Sum.inl) (S'.map Sum.inl))
+        LinearMap.id ∘ₗ
+      TensorProduct.map LinearMap.id (Π_dc).toLinearMap ∘ₗ
+      deltaMatch (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (comulCAlgHomN τ).toLinearMap ∘ₗ
+      (ι).toLinearMap := by
+  refine LinearMap.ext fun x ↦ ?_
+  have h := DFunLike.congr_fun (contractUnary_eraseTraces_comulCAlgHomN (R := R) τ) x
+  simp only [AlgHom.comp_apply] at h
+  have hchain {L : ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree α)}
+      (z : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
+        ConnesKreimer R (UnorderedTree (α ⊕ β))) :
+      TensorProduct.map L LinearMap.id (TensorProduct.map LinearMap.id (Π_dc).toLinearMap
+          (deltaMatch (S.map Sum.inl) (S'.map Sum.inl) z)) =
+        TensorProduct.map (L ∘ₗ gammaMatch (S.map Sum.inl) (S'.map Sum.inl)) LinearMap.id
+          (Algebra.TensorProduct.map (.id R _) Π_dc z) := by
+    induction z using TensorProduct.inductionOn with
+    | tmul a b => simp [deltaMatch]
+    | add y z hy hz => simp only [map_add, hy, hz]
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply, mergeOp, mergeOpG, mergePost_eq]
+  rw [hchain, h, comulAlgHomNG_cutSummandsDN]
+  exact (mul'_map_rename_inl (eraseTraces_graft_gamma_rename_inl (R := R) (β := β) lbl S S')
+    (comulDAlgHomN x)).symm
+
+/-- On objects without unary vertices, Merge at the deletion cuts is the projection `Π_{d,c}` of
+    Merge at the trace cuts. -/
+theorem mergeOp_eq_comp_mergeOpC (lbl : α) {S S' : UnorderedTree α} (hS : S.numUnary = 0)
+    (hS' : S'.numUnary = 0) :
+    mergeOp (R := R) lbl S S' = (Π_dc).toLinearMap ∘ₗ
+      mergeOpC τ (Sum.inl lbl : α ⊕ β) (S.map Sum.inl) (S'.map Sum.inl) ∘ₗ (ι).toLinearMap := by
+  rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', ← eraseTraces_comp_mergeOpC τ]
+  rfl
+
+/-- On a tree without unary vertices, the unit stage at the deletion cuts is the projection
+    `Π_{d,c}` of the unit stage at the trace cuts: the remainder `T/d T_v` that the book sends to
+    Externalization is `Π_{d,c}` of the remainder `T/c T_v` that it sends to semantic interpretation
+    ([marcolli-chomsky-berwick-2025] p. 82). -/
+theorem mergeOpUnit_eq_comp_mergeOpUnitC {S : UnorderedTree α} (hS : S.numUnary = 0) :
+    mergeOpUnit (R := R) S =
+      (Π_dc).toLinearMap ∘ₗ mergeOpUnitC τ (S.map Sum.inl) ∘ₗ (ι).toLinearMap := by
+  rw [mergeOpUnit_eq_rename_contractUnary_comp hS, ← eraseTraces_comp_mergeOpUnitC τ]
+  rfl
+
+end Erasure
 
 end Minimalist.Merge

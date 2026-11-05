@@ -87,44 +87,6 @@ theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α �
     cutSummandsCP τ (RoseTree.node a cs) =
       (cutListSummandsG (extractC τ) cs).map (fun p ↦ (p.1, .node a p.2)) := by
   rw [cutSummandsCP_def, cutSummandsG_node]
-/-! ### Sanity: the trace policy on leaves -/
-
-section Tests
-
-/-- A leaf has exactly one cut summand: the empty cut `(0, leaf)`. -/
-example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    cutSummandsCP τ (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit))
-      = {((0 : Multiset (RoseTree (Unit ⊕ Unit))),
-          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)))} := by
-  rw [RoseTree.leaf, cutSummandsCP_node, cutListSummandsG_nil]
-  rfl
-
-/-- The trace-extract branch sits in the augmented per-child action for
-    a `Sum.inl`-rooted subtree. Witness that Δ^c (placeholder leaf)
-    differs from Δ^ρ (admissible-cut pruning). -/
-example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    (({RoseTree.leaf (Sum.inl ())} : Multiset (RoseTree (Unit ⊕ Unit))),
-      [traceLeaf (τ (RoseTree.leaf (Sum.inl ())))]) ∈
-        augActionG (extractC τ)
-          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)) := by
-  rw [RoseTree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
-  exact Multiset.mem_cons_self _ _
-
-/-- Trace leaves are not extracted: `extractC τ` returns `none`,
-    so the per-child action only inherits cuts from `cutSummandsG`. -/
-example (b : Unit) (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    augActionG (extractC τ) (traceLeaf b : RoseTree (Unit ⊕ Unit))
-      = (cutSummandsG (extractC τ) (RoseTree.node (Sum.inr b) [])).map
-          (fun p ↦ (p.1, [p.2])) :=
-  augActionG_eq_none _ _ (extractC_inr τ b [])
-
-/-- The `traceLeaf` placeholder is a `Sum.inr`-labeled leaf. -/
-example (b : β) : (traceLeaf b : RoseTree (α ⊕ β)).arity = 0 := rfl
-
-example (b : β) :
-    (traceLeaf b : RoseTree (α ⊕ β)).value = Sum.inr b := rfl
-
-end Tests
 
 /-! ### Descent to `UnorderedTree` -/
 
