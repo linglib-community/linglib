@@ -278,6 +278,7 @@ right-to-left one, and a bimachine computes such a composite. -/
 theorem tutrugbu_isBimachineComputable : IsBimachineComputable tutrugbu.map := by
   rw [show tutrugbu.map = resolveLeft.run ∘ markRight.runRight from
     funext tutrugbu_map_eq_resolve_mark]
-  exact resolveLeft.isBimachineComputable_run_comp_runRight markRight
+  exact resolveLeft.isLeftSubsequential.isBimachineComputable.comp
+    markRight.isRightSubsequential.isBimachineComputable
 
 end McCollumEtAl2020

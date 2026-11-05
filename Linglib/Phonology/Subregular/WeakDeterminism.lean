@@ -12,23 +12,11 @@ public import Linglib.Core.Computability.ElgotMezei
 
 A function on strings over one alphabet is weakly deterministic, in Heinz and Lai's sense, when it
 is a right-subsequential function after a left-subsequential one that never lengthens its input.
-The length bound keeps the first pass from marking up its output: Elgot and Mezei's decomposition
-of an arbitrary regular function needs new symbols in between, and over an alphabet of two or more
-letters new symbols can be coded as longer strings. Subsequential functions that do not lengthen
-their input are weakly deterministic, and a weakly deterministic function that preserves the empty
-word is regular.
-
-## Main definitions
-
-* `IsWeaklyDeterministic f`: `f` is a right-subsequential function after a left-subsequential one
-  that does not lengthen its input
-
-## Main results
-
-* `IsRightSubsequential.isWeaklyDeterministic`, `IsLeftSubsequential.isWeaklyDeterministic`:
-  subsequential functions that do not lengthen their input are weakly deterministic
-* `IsWeaklyDeterministic.isBimachineComputable`: weakly deterministic functions preserving the
-  empty word are regular
+The length bound keeps the first pass from marking up its output: [every regular function factors
+into the two scans](##isBimachineComputable_iff_exists_comp), but through new symbols in between,
+and over an alphabet of two or more letters new symbols can be coded as longer strings.
+Subsequential functions that do not lengthen their input are weakly deterministic, and [a weakly
+deterministic function is regular](##IsWeaklyDeterministic.isBimachineComputable).
 
 ## Implementation notes
 
@@ -63,8 +51,8 @@ theorem IsLeftSubsequential.isWeaklyDeterministic (hf : IsLeftSubsequential f)
     (hlen : ∀ x, (f x).length ≤ x.length) : IsWeaklyDeterministic f :=
   ⟨f, id, hf, hlen, isRightSubsequential_id, rfl⟩
 
-/-- A weakly deterministic function that preserves the empty word is computed by a bimachine. -/
-theorem IsWeaklyDeterministic.isBimachineComputable (hf : IsWeaklyDeterministic f)
-    (hnil : f [] = []) : IsBimachineComputable f := by
+/-- A weakly deterministic function is computed by a bimachine. -/
+theorem IsWeaklyDeterministic.isBimachineComputable (hf : IsWeaklyDeterministic f) :
+    IsBimachineComputable f := by
   obtain ⟨L, R, hL, -, hR, rfl⟩ := hf
-  exact hR.isBimachineComputable_comp hL hnil
+  exact hR.isBimachineComputable.comp hL.isBimachineComputable

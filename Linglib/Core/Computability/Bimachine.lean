@@ -5,51 +5,48 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.Mealy
-public import Linglib.Core.Computability.Edge
+public import Linglib.Core.Computability.Subsequential
 public import Mathlib.Data.Fintype.Shrink
 
 /-!
 # Bimachines
 
-A `Bimachine`, in the sense of Schützenberger and Eilenberg, reads its input in both
-directions: a left automaton scans `→`, a right automaton scans `←`, and output `i` is
-`output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. By the theorem of Elgot and Mezei,
-word-output bimachines compute exactly the rational functions; they are the transducers of
-Schützenberger's semi-monomial representations, as Sakarovitch presents them. The
-letter-to-letter machines here compute the total length-preserving ones.
-
-## Main definitions
-
-* `Bimachine L R α β`: machine with left states `L`, right states `R`, alphabets `α`, `β`
-* `Bimachine.run`: the computed function
-* `Bimachine.reverse`: the mirror machine, the two automata trading sides
-* `IsBimachineComputable f`: `f` is computed by some finite bimachine
-
-## Main theorems
-
-* `Bimachine.LetterToLetter.getElem?_run`: output `i` is
-  `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`
-* `Bimachine.run_reverse`: the mirror machine computes the reverse conjugate
-* `IsBimachineComputable.revConj`: the class is closed under reverse conjugation
+A `Bimachine` reads its input in both directions: a left automaton scans `→`, a right automaton
+scans `←`, each cell emits a word from the two states around it, and two final functions emit a
+block at either end of the output. [A single right state gives a subsequential
+transducer](##SubsequentialTransducer.run_toBimachine), and the functions computed by finite
+bimachines are the total rational functions. [Reversing a
+machine](##Bimachine.run_reverse) exchanges the two automata and computes the reverse conjugate,
+and [a letter-to-letter machine](##Bimachine.LetterToLetter.getElem?_run) computes a
+length-preserving function whose output `i` reads the two states around letter `i`. Composition is
+in `ElgotMezei.lean`.
 
 ## Implementation notes
 
-Only the left state is threaded through the run (`Bimachine.runFrom`); the recursion
-reads each tail's right state on the spot. The class existentials pin state types at
-`Type`, as `Language.IsRegular` does; `Bimachine.isBimachineComputable` reaches the class from
-state types in any universes through `Shrink`. The identification of `IsBimachineComputable`
-with the total rational functions preserving the empty word is classical and not formalized
-here; `ElgotMezei.lean` proves the composition half.
+The definition is that of Reutenauer and Schützenberger, whose final functions give the empty word
+an arbitrary image and make the subsequential transducers the case of one right state. Eilenberg's
+machines are those with empty final functions, which compute exactly the total rational functions
+preserving the empty word: his *generalized bimachine* is the word-output case, and his *bimachine*
+the letter-to-letter one. They are the transducers of Schützenberger's semi-monomial
+representations, as Sakarovitch observes.
+
+The class existentials pin state types at `Type`, as `Language.IsRegular` does;
+`Bimachine.isBimachineComputable` reaches the class from state types in any universes through
+`Shrink`.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
+
+## TODO
+
+* Every rational function is computed by a finite bimachine, which needs Schützenberger's
+  semi-monomial construction and rational relations as objects.
 
 ## References
 
 * [schutzenberger-1961]
 * [eilenberg-1974]
-* [elgot-mezei-1965]
 * [schutzenberger-1976]
+* [reutenauer-schutzenberger-1991]
 * [sakarovitch-2009]
 -/
 
@@ -57,8 +54,9 @@ here; `ElgotMezei.lean` proves the composition half.
 
 variable {L R α β : Type*}
 
-/-- A bimachine is a left automaton scanning left to right, a right automaton scanning
-right to left, and a cell output reading both context states and the current symbol. -/
+/-- A bimachine is a left automaton scanning left to right, a right automaton scanning right to
+left, a cell output reading both context states and the current symbol, and two final functions
+for the ends of the output. -/
 structure Bimachine (L R α β : Type*) where
   /-- The left automaton starts in this state. -/
   lInit : L
@@ -70,60 +68,79 @@ structure Bimachine (L R α β : Type*) where
   rStep : R → α → R
   /-- A cell emits a word from the two context states and the current input symbol. -/
   output : L → α → R → List β
+  /-- The final left function emits the first block, from the right state over the whole word. -/
+  finalLeft : R → List β := fun _ ↦ []
+  /-- The final right function emits the last block, from the left state over the whole word. -/
+  finalRight : L → List β := fun _ ↦ []
 
 instance [Inhabited L] [Inhabited R] : Inhabited (Bimachine L R α β) :=
-  ⟨⟨default, fun _ _ ↦ default, default, fun _ _ ↦ default, fun _ _ _ ↦ []⟩⟩
+  ⟨{ lInit := default, lStep := fun _ _ ↦ default, rInit := default, rStep := fun _ _ ↦ default,
+     output := fun _ _ _ ↦ [] }⟩
 
 namespace Bimachine
 
 variable (B : Bimachine L R α β)
 
-/-- `B.lStateAfter l pre` is the left state reached from `l` after scanning `pre`. -/
-def lStateAfter (l : L) : List α → L := List.foldl B.lStep l
+/-- `B.lStateFrom l xs` is the left state reached from `l` after scanning `xs`. -/
+def lStateFrom (l : L) : List α → L := List.foldl B.lStep l
 
-/-- `B.lState pre` is the left state after scanning `pre` left to right from the start. -/
-def lState : List α → L := B.lStateAfter B.lInit
+/-- `B.lState xs` is the left state after scanning `xs` left to right from the start. -/
+def lState : List α → L := B.lStateFrom B.lInit
 
-/-- `B.rState suf` is the right state after scanning `suf` right to left. -/
-def rState (suf : List α) : R := suf.foldr (fun a r ↦ B.rStep r a) B.rInit
+/-- `B.rStateFrom r xs` is the right state reached from `r` after scanning `xs` right to left. -/
+def rStateFrom (r : R) (xs : List α) : R := xs.foldr (fun a r ↦ B.rStep r a) r
 
-/-- `B.runFrom l x` runs `B` on `x` threading the left state from `l`; each tail's
-right state is read on the spot. -/
-def runFrom : L → List α → List β
-  | _, [] => []
-  | l, x :: xs => B.output l x (B.rState xs) ++ runFrom (B.lStep l x) xs
+/-- `B.rState xs` is the right state after scanning `xs` right to left from the start. -/
+def rState : List α → R := B.rStateFrom B.rInit
 
-/-- `B.run` is the function `B` computes. -/
-def run : List α → List β := B.runFrom B.lInit
+/-- `B.emitted l xs r` is the output over `xs` between the left state `l` and the right state `r`,
+the extension of the cell output to words ([eilenberg-1974] (7.4) to (7.7),
+[reutenauer-schutzenberger-1991] (5)). -/
+def emitted : L → List α → R → List β
+  | _, [], _ => []
+  | l, x :: xs, r => B.output l x (B.rStateFrom r xs) ++ emitted (B.lStep l x) xs r
+
+/-- `B.run` is the function `B` computes: the final left block, the cells, the final right block
+([reutenauer-schutzenberger-1991] (6)). -/
+def run (xs : List α) : List β :=
+  B.finalLeft (B.rState xs) ++ B.emitted B.lInit xs B.rInit ++ B.finalRight (B.lState xs)
 
 section
-variable (l : L) (x : α) (xs : List α)
+variable (l : L) (r : R) (x : α) (xs ys : List α)
 
-@[simp] theorem lStateAfter_nil : B.lStateAfter l [] = l := rfl
-@[simp] theorem lStateAfter_cons : B.lStateAfter l (x :: xs) = B.lStateAfter (B.lStep l x) xs :=
-  rfl
+@[simp] theorem lStateFrom_nil : B.lStateFrom l [] = l := rfl
+@[simp] theorem lStateFrom_cons : B.lStateFrom l (x :: xs) = B.lStateFrom (B.lStep l x) xs := rfl
 @[simp] theorem lState_nil : B.lState [] = B.lInit := rfl
+@[simp] theorem rStateFrom_nil : B.rStateFrom r [] = r := rfl
+@[simp] theorem rStateFrom_cons : B.rStateFrom r (x :: xs) = B.rStep (B.rStateFrom r xs) x := rfl
 @[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
 @[simp] theorem rState_cons : B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
 
-theorem lState_append (ys : List α) : B.lState (xs ++ ys) = B.lStateAfter (B.lState xs) ys :=
+theorem lStateFrom_append : B.lStateFrom l (xs ++ ys) = B.lStateFrom (B.lStateFrom l xs) ys :=
   List.foldl_append
 
-theorem rState_append (ys : List α) :
-    B.rState (xs ++ ys) = rState {B with rInit := B.rState ys} xs :=
+theorem rStateFrom_append : B.rStateFrom r (xs ++ ys) = B.rStateFrom (B.rStateFrom r ys) xs :=
   List.foldr_append
 
-@[simp] theorem runFrom_nil : B.runFrom l [] = [] := rfl
-@[simp] theorem runFrom_cons :
-    B.runFrom l (x :: xs) = B.output l x (B.rState xs) ++ B.runFrom (B.lStep l x) xs := rfl
+theorem lState_append : B.lState (xs ++ ys) = B.lStateFrom (B.lState xs) ys :=
+  B.lStateFrom_append _ xs ys
+
+@[simp] theorem emitted_nil : B.emitted l [] r = [] := rfl
+@[simp] theorem emitted_cons :
+    B.emitted l (x :: xs) r = B.output l x (B.rStateFrom r xs) ++ B.emitted (B.lStep l x) xs r :=
+  rfl
+
+theorem emitted_append : B.emitted l (xs ++ ys) r =
+    B.emitted l xs (B.rStateFrom r ys) ++ B.emitted (B.lStateFrom l xs) ys r := by
+  induction xs generalizing l <;> simp [rStateFrom_append, *]
 
 end
 
 /-! ### Letter-to-letter bimachines
 
-A cell of a general bimachine emits a word, so the run is a concatenation and output
-positions need not track input positions. A **letter-to-letter** bimachine emits exactly
-one symbol per cell ([sakarovitch-2009] §IV.6); the function it computes is then
+A cell of a general bimachine emits a word, so the run is a concatenation and output positions need
+not track input positions. A **letter-to-letter** bimachine emits exactly one symbol per cell and
+nothing at either end ([sakarovitch-2009] §IV.6); the function it computes is then
 *length-preserving*, and the positional description below holds. -/
 
 /-- A witness that `B` is *letter-to-letter* names, by `cell`, the one symbol every cell
@@ -133,6 +150,10 @@ structure LetterToLetter (B : Bimachine L R α β) where
   cell : L → α → R → β
   /-- Every cell emits exactly that one symbol. -/
   output_eq : ∀ l a r, B.output l a r = [cell l a r]
+  /-- The final left function emits nothing. -/
+  finalLeft_eq : ∀ r, B.finalLeft r = [] := by intro; rfl
+  /-- The final right function emits nothing. -/
+  finalRight_eq : ∀ l, B.finalRight l = [] := by intro; rfl
 
 /-- `B` is letter-to-letter when it admits a `LetterToLetter` witness. -/
 def IsLetterToLetter (B : Bimachine L R α β) : Prop := Nonempty B.LetterToLetter
@@ -141,24 +162,29 @@ namespace LetterToLetter
 
 variable {B}
 
-@[simp] theorem length_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) :
-    (B.runFrom l xs).length = xs.length := by
+/-- A letter-to-letter machine computes its cells alone. -/
+theorem run_eq (w : B.LetterToLetter) (xs : List α) : B.run xs = B.emitted B.lInit xs B.rInit := by
+  simp [run, w.finalLeft_eq, w.finalRight_eq]
+
+@[simp] theorem length_emitted (w : B.LetterToLetter) (l : L) (xs : List α) (r : R) :
+    (B.emitted l xs r).length = xs.length := by
   induction xs generalizing l <;> simp [w.output_eq, *]
 
 @[simp] theorem length_run (w : B.LetterToLetter) (xs : List α) :
-    (B.run xs).length = xs.length :=
-  w.length_runFrom B.lInit xs
+    (B.run xs).length = xs.length := by
+  rw [w.run_eq, w.length_emitted]
 
-theorem getElem?_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) (i : ℕ) :
-    (B.runFrom l xs)[i]? = xs[i]?.map fun a ↦
-      w.cell (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
+theorem getElem?_emitted (w : B.LetterToLetter) (l : L) (xs : List α) (r : R) (i : ℕ) :
+    (B.emitted l xs r)[i]? = xs[i]?.map fun a ↦
+      w.cell (B.lStateFrom l (xs.take i)) a (B.rStateFrom r (xs.drop (i + 1))) := by
   induction xs generalizing l i <;> cases i <;> simp [w.output_eq, *]
 
 /-- Output `i` is `cell (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
 theorem getElem?_run (w : B.LetterToLetter) (x : List α) (i : ℕ) :
     (B.run x)[i]? = x[i]?.map fun a ↦
-      w.cell (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
-  w.getElem?_runFrom B.lInit x i
+      w.cell (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) := by
+  rw [w.run_eq, w.getElem?_emitted]
+  rfl
 
 end LetterToLetter
 
@@ -167,20 +193,25 @@ end LetterToLetter
 variable {L' R' : Type*}
 
 /-- Lifts equivalences on the two state spaces to an equivalence on bimachines. -/
-@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_output]
+@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_output apply_finalLeft
+  apply_finalRight]
 def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
   toFun B :=
     { lInit := eL B.lInit
       lStep := fun l a ↦ eL (B.lStep (eL.symm l) a)
       rInit := eR B.rInit
       rStep := fun r a ↦ eR (B.rStep (eR.symm r) a)
-      output := fun l a r ↦ B.output (eL.symm l) a (eR.symm r) }
+      output := fun l a r ↦ B.output (eL.symm l) a (eR.symm r)
+      finalLeft := fun r ↦ B.finalLeft (eR.symm r)
+      finalRight := fun l ↦ B.finalRight (eL.symm l) }
   invFun B :=
     { lInit := eL.symm B.lInit
       lStep := fun l a ↦ eL.symm (B.lStep (eL l) a)
       rInit := eR.symm B.rInit
       rStep := fun r a ↦ eR.symm (B.rStep (eR r) a)
-      output := fun l a r ↦ B.output (eL l) a (eR r) }
+      output := fun l a r ↦ B.output (eL l) a (eR r)
+      finalLeft := fun r ↦ B.finalLeft (eR r)
+      finalRight := fun l ↦ B.finalRight (eL l) }
   left_inv B := by simp
   right_inv B := by simp
 
@@ -190,20 +221,24 @@ def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine 
     (reindex (α := α) (β := β) eL eR).symm = reindex eL.symm eR.symm :=
   rfl
 
-@[simp] theorem lStateAfter_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
-    (reindex eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
-  induction pre generalizing l' <;> simp [*]
+@[simp] theorem lStateFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
+    (reindex eL eR B).lStateFrom l' xs = eL (B.lStateFrom (eL.symm l') xs) := by
+  induction xs generalizing l' <;> simp [*]
 
-@[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
-    (reindex eL eR B).lState pre = eL (B.lState pre) := by
+@[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (xs : List α) :
+    (reindex eL eR B).lState xs = eL (B.lState xs) := by
   simp [lState]
 
-@[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
-    (reindex eL eR B).rState suf = eR (B.rState suf) :=
-  List.foldr_hom eR fun x y ↦ by simp
+@[simp] theorem rStateFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (r' : R') (xs : List α) :
+    (reindex eL eR B).rStateFrom r' xs = eR (B.rStateFrom (eR.symm r') xs) := by
+  induction xs <;> simp [*]
 
-@[simp] theorem runFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
-    (reindex eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
+@[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (xs : List α) :
+    (reindex eL eR B).rState xs = eR (B.rState xs) := by
+  simp [rState]
+
+@[simp] theorem emitted_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) (r' : R') :
+    (reindex eL eR B).emitted l' xs r' = B.emitted (eL.symm l') xs (eR.symm r') := by
   induction xs generalizing l' <;> simp [*]
 
 @[simp] theorem run_reindex (eL : L ≃ L') (eR : R ≃ R') :
@@ -218,16 +253,17 @@ theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
 /-- Letter-to-letter-ness transports along state reindexing. -/
 def LetterToLetter.reindex {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
     (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.reindex eL eR B).LetterToLetter :=
-  ⟨fun l a r ↦ w.cell (eL.symm l) a (eR.symm r), fun _ _ _ ↦ w.output_eq _ _ _⟩
+  ⟨fun l a r ↦ w.cell (eL.symm l) a (eR.symm r), fun _ _ _ ↦ w.output_eq _ _ _,
+    fun _ ↦ w.finalLeft_eq _, fun _ ↦ w.finalRight_eq _⟩
 
 /-! ### Reversal
 
-Read backwards, a bimachine is again a bimachine: the two automata trade sides and every
-cell emits its word reversed. The mirror computes the reverse conjugate, so the
+Read backwards, a bimachine is again a bimachine: the two automata trade sides, as do the two final
+functions, and everything emitted is reversed. The mirror computes the reverse conjugate, so the
 bimachine-computable functions are closed under `List.revConj`. -/
 
-/-- In the mirror image of `B` the right automaton scans left to right, the left one right to
-left, and each cell emits its word reversed. -/
+/-- In the mirror image of `B` the right automaton scans left to right, the left one right to left,
+and each block is emitted reversed. -/
 @[simps]
 def reverse : Bimachine R L α β where
   lInit := B.rInit
@@ -235,34 +271,33 @@ def reverse : Bimachine R L α β where
   rInit := B.lInit
   rStep := B.lStep
   output r a l := (B.output l a r).reverse
+  finalLeft l := (B.finalRight l).reverse
+  finalRight r := (B.finalLeft r).reverse
 
 @[simp] theorem reverse_reverse : B.reverse.reverse = B := by
   simp [reverse]
 
-private theorem runFrom_append_singleton (l : L) (xs : List α) (a : α) :
-    B.runFrom l (xs ++ [a]) =
-      ({ B with rInit := B.rStep B.rInit a } : Bimachine L R α β).runFrom l xs
-        ++ B.output (B.lStateAfter l xs) a B.rInit := by
-  induction xs generalizing l with
-  | nil => simp [runFrom]
-  | cons y ys ih =>
-    simp only [List.cons_append, runFrom_cons, ih, List.append_assoc, lStateAfter_cons]
-    congr 2
-    simp [rState, List.foldr_append]
+@[simp] theorem lStateFrom_reverse (r : R) (xs : List α) :
+    B.reverse.lStateFrom r xs = B.rStateFrom r xs.reverse := by
+  induction xs generalizing r <;> simp [rStateFrom_append, *]
 
-private theorem reverse_runFrom (r : R) (xs : List α) :
-    B.reverse.runFrom r xs =
-      (({ B with rInit := r } : Bimachine L R α β).runFrom B.lInit xs.reverse).reverse := by
-  induction xs generalizing r with
-  | nil => rfl
-  | cons a xs ih =>
-    rw [runFrom_cons, ih, List.reverse_cons, runFrom_append_singleton, List.reverse_append]
-    congr 1
-    simp [rState, lStateAfter]
+@[simp] theorem rStateFrom_reverse (l : L) (xs : List α) :
+    B.reverse.rStateFrom l xs = B.lStateFrom l xs.reverse := by
+  induction xs <;> simp [lStateFrom_append, *]
+
+@[simp] theorem emitted_reverse (r : R) (xs : List α) (l : L) :
+    B.reverse.emitted r xs l = (B.emitted l xs.reverse r).reverse := by
+  induction xs generalizing r <;> simp [emitted_append, *]
 
 /-- The mirror bimachine computes the reverse conjugate. -/
 @[simp] theorem run_reverse : B.reverse.run = List.revConj B.run :=
-  funext fun xs ↦ B.reverse_runFrom B.rInit xs
+  funext fun xs ↦ by simp [run, rState, lState, List.revConj, List.append_assoc]
+
+/-- The mirror of a letter-to-letter machine is letter-to-letter. -/
+def LetterToLetter.reverse {B : Bimachine L R α β} (w : B.LetterToLetter) :
+    B.reverse.LetterToLetter :=
+  ⟨fun r a l ↦ w.cell l a r, fun _ _ _ ↦ by simp [w.output_eq], fun _ ↦ by simp [w.finalRight_eq],
+    fun _ ↦ by simp [w.finalLeft_eq]⟩
 
 /-! ### Flag bimachines
 
@@ -291,10 +326,12 @@ def ofFlags : Bimachine Bool Bool α β where
     (ofFlags pL pR out).output l a r = [out l a r] := rfl
 
 /-- A flag bimachine is letter-to-letter, with `out` as its cell. -/
-def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter := ⟨out, fun _ _ _ ↦ rfl⟩
+def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter where
+  cell := out
+  output_eq _ _ _ := rfl
 
-@[simp] theorem ofFlags_lStateAfter (l : Bool) (xs : List α) :
-    (ofFlags pL pR out).lStateAfter l xs = (l || xs.any pL) := by
+@[simp] theorem ofFlags_lStateFrom (l : Bool) (xs : List α) :
+    (ofFlags pL pR out).lStateFrom l xs = (l || xs.any pL) := by
   induction xs generalizing l <;> simp [*, Bool.or_assoc]
 
 @[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
@@ -310,35 +347,56 @@ theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
 
 end Bimachine
 
-/-! ### Sequential machines as bimachines -/
+/-! ### Subsequential transducers as bimachines -/
 
-section ToBimachine
+namespace SubsequentialTransducer
 
-variable {σ : Type*} (T : Mealy σ α β)
+variable {σ : Type*} (T : SubsequentialTransducer σ α β)
 
-/-- A sequential machine as the bimachine whose left automaton does all the work and
-whose right automaton is trivial. -/
+/-- A subsequential transducer is the bimachine with one right state
+([reutenauer-schutzenberger-1991] §4). -/
 @[simps]
-def Mealy.toBimachine : Bimachine σ Unit α β where
+def toBimachine : Bimachine σ Unit α β where
   lInit := T.start
   lStep := T.step
   rInit := ()
   rStep _ _ := ()
-  output l a _ := [T.output l a]
+  output s a _ := T.output s a
+  finalRight := T.finalOutput
 
-@[simp] theorem Mealy.toBimachine_runFrom (s : σ) (xs : List α) :
-    T.toBimachine.runFrom s xs = T.runFrom s xs := by
+@[simp] theorem emitted_toBimachine (s : σ) (xs : List α) (r : Unit) :
+    T.toBimachine.emitted s xs r = T.emitted s xs := by
   induction xs generalizing s <;> simp [*]
 
-@[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run :=
-  funext fun xs ↦ T.toBimachine_runFrom T.start xs
+@[simp] theorem lStateFrom_toBimachine (s : σ) (xs : List α) :
+    T.toBimachine.lStateFrom s xs = T.evalFrom s xs := rfl
 
-end ToBimachine
+@[simp] theorem run_toBimachine : T.toBimachine.run = T.run :=
+  funext fun xs ↦ by simp [Bimachine.run, Bimachine.lState, run, runFrom]
+
+end SubsequentialTransducer
+
+section Mealy
+
+variable {σ : Type*} (T : Mealy σ α β)
+
+/-- A sequential machine is the bimachine of its block transducer, whose left automaton does all
+the work. -/
+def Mealy.toBimachine : Bimachine σ Unit α β := T.toSubsequentialTransducer.toBimachine
+
+@[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run := by
+  simp [Mealy.toBimachine]
+
+/-- A sequential machine is a letter-to-letter bimachine. -/
+def Mealy.toBimachine_letterToLetter : T.toBimachine.LetterToLetter where
+  cell l a _ := T.output l a
+  output_eq _ _ _ := rfl
+
+end Mealy
 
 /-! ### The bimachine-computable class -/
 
-/-- Computability by a finite bimachine — classically, the total rational functions
-preserving the empty word. -/
+/-- Computability by a finite bimachine — classically, the total rational functions. -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.run = f
@@ -358,30 +416,54 @@ protected theorem IsBimachineComputable.revConj {f : List α → List β}
     IsBimachineComputable (List.revConj f) ↔ IsBimachineComputable f :=
   ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, .revConj⟩
 
-/-- `f` is computed by a finite **letter-to-letter** bimachine. These are the total
-length-preserving rational functions. -/
-def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
+/-- `f` is computed by a finite **letter-to-letter** bimachine, and so preserves length. Over a
+finite alphabet these are the length-preserving bimachine-computable functions ([eilenberg-1974]
+Th. XI.7.1); over an infinite one they are fewer. -/
+def IsLetterToLetterBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.IsLetterToLetter ∧ B.run = f
 
-theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L]
+theorem Bimachine.isLetterToLetterBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α β) (h : B.IsLetterToLetter) :
-    IsLengthPreservingBimachineComputable B.run :=
+    IsLetterToLetterBimachineComputable B.run :=
   have ⟨w⟩ := h
   ⟨Shrink L, inferInstance, Shrink R, inferInstance,
     Bimachine.reindex (equivShrink.{0} L) (equivShrink.{0} R) B, ⟨w.reindex _ _⟩, B.run_reindex _ _⟩
 
-theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
-    (h : IsLengthPreservingBimachineComputable f) : IsBimachineComputable f :=
+theorem IsBimachineComputable.of_letterToLetter {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) : IsBimachineComputable f :=
   have ⟨L, _, R, _, B, _, hB⟩ := h
   ⟨L, ‹_›, R, ‹_›, B, hB⟩
 
-theorem IsLengthPreservingBimachineComputable.length_eq {f : List α → List β}
-    (h : IsLengthPreservingBimachineComputable f) (x : List α) : (f x).length = x.length :=
+theorem IsLetterToLetterBimachineComputable.length_eq {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) (x : List α) : (f x).length = x.length :=
   have ⟨_, _, _, _, _, ⟨w⟩, hB⟩ := h
   hB ▸ w.length_run x
 
+theorem IsLetterToLetterBimachineComputable.of_mealyComputable {f : List α → List β}
+    (h : IsMealyComputable f) : IsLetterToLetterBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := h
+  hT ▸ T.toBimachine_run ▸
+    T.toBimachine.isLetterToLetterBimachineComputable ⟨T.toBimachine_letterToLetter⟩
+
+/-- The reverse conjugate of a function computed by a letter-to-letter bimachine is one too. -/
+protected theorem IsLetterToLetterBimachineComputable.revConj {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) :
+    IsLetterToLetterBimachineComputable (List.revConj f) :=
+  have ⟨L, _, R, _, B, ⟨w⟩, hB⟩ := h
+  ⟨R, ‹_›, L, ‹_›, B.reverse, ⟨w.reverse⟩, hB ▸ B.run_reverse⟩
+
 theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
     (h : IsMealyComputable f) : IsBimachineComputable f :=
-  have ⟨_, _, T, hT⟩ := h
-  hT ▸ T.toBimachine_run ▸ T.toBimachine.isBimachineComputable
+  .of_letterToLetter (.of_mealyComputable h)
+
+/-- A left-subsequential function is bimachine-computable, by a machine with one right state. -/
+theorem IsLeftSubsequential.isBimachineComputable {f : List α → List β}
+    (hf : IsLeftSubsequential f) : IsBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := hf
+  hT ▸ T.run_toBimachine ▸ T.toBimachine.isBimachineComputable
+
+/-- A right-subsequential function is bimachine-computable. -/
+theorem IsRightSubsequential.isBimachineComputable {f : List α → List β}
+    (hf : IsRightSubsequential f) : IsBimachineComputable f :=
+  isBimachineComputable_revConj_iff.mp (IsLeftSubsequential.isBimachineComputable hf)
