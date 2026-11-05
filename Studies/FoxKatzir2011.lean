@@ -95,8 +95,8 @@ variable {A : Set (Set W)} {S S₁ S₂ : Set W}
 theorem dominated_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
     (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : Dominated A S :=
   h.union ▸ dominated_union h₁ h₂
-    (fun hs ↦ let ⟨w, hw⟩ := hne₁; disjoint_left.1 h.disjoint hw (hs hw))
-    (fun hs ↦ let ⟨w, hw⟩ := hne₂; disjoint_left.1 h.disjoint (hs hw) hw)
+    (fun hs ↦ let ⟨_, hw⟩ := hne₁; disjoint_left.1 h.disjoint hw (hs hw))
+    (fun hs ↦ let ⟨_, hw⟩ := hne₂; disjoint_left.1 h.disjoint (hs hw) hw)
 
 theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
     (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ :=

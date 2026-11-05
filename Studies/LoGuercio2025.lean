@@ -24,7 +24,7 @@ that John is no bastard, because *that bastard John arrived first* is not a form
 alternative: the epithet construction is a determiner phrase with three daughters, which no
 chain of deletions, contractions, and substitutions from a source of lexical items and
 one-daughter phrases can build (`outOfBlue_no_ACI`, through
-`Tree.subtree_preservation`). Once *that bastard Pedro* has been
+`no_wideDP_outOfBlue`). Once *that bastard Pedro* has been
 mentioned, its phrase enters the substitution source, the epithet alternative is derived by
 substituting it for the subject and then *John* for *Pedro*, the paper's derivation (24)
 (`epithet_alternative_priorMention`), and the inference arises (`priorMention_yes_ACI`): the
@@ -124,12 +124,20 @@ def HasEpithet (φ : Tree Cat EWord) : Prop := ∃ s ∈ φ.subtrees, IsEpithet 
 instance : DecidablePred HasEpithet := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
-    (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
-  subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
-    (fun _ cs i _ h ⟨h1, h2⟩ ↦ h ⟨h1, by
-      simp only [RoseTree.children_node, List.length_eraseIdx, i.2, ite_true] at h2 ⊢; omega⟩)
-    (fun _ cs _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa [List.length_set] using h2⟩)
-    (fun _ _ _ _ _ ⟨_, h2⟩ ↦ by simp at h2) (by decide) h
+    (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t := by
+  have key {t : Tree Cat EWord} :
+      t.Licensed (fun l ks ↦ ¬ (Label.cat l = Cat.Det ∧ 2 ≤ ks.length)) ↔
+        ∀ s ∈ t.subtrees, ¬ WideDP s :=
+    RoseTree.licensed_iff_forall_mem_subtrees.trans
+      (forall₂_congr fun _ _ ↦ by simp [WideDP, Tree.cat])
+  refine key.1 (licensed_of_atMostAsComplex (fun s hs ↦ key.2 ?_)
+    (fun _ ks i _ h ⟨h1, h2⟩ ↦ h ⟨h1, ?_⟩)
+    (fun _ _ _ _ _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa using h2⟩)
+    (fun _ _ _ _ _ _ ⟨_, h2⟩ ↦ by simp at h2) (key.2 (by decide)) h)
+  · revert s hs
+    exact forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
+  · have := List.length_eraseIdx_le ks i
+    omega
 
 theorem epithet_not_alternative_outOfBlue :
     bastardJohnArrived ∉ structuralAlternatives epithetLex johnArrived :=
