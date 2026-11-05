@@ -299,12 +299,12 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)
     rw [Function.update_eq_self] at hg
-    simp only [interp_bind, hg, Option.bind_some]
+    simp only [interp_bind, hg, Option.map_some]
     show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ (F (g n)) (interp lex (g[n ↦ x]) body)⟩ :
       Option (Denotation E W)) = _
     congr 2
     funext x
-    simp [ih x, valueAt]
+    simp [ih x]
 
 theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
@@ -444,7 +444,7 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
     rw [interpPartial_bind, hg, Option.map_some]
     congr 3
     funext x
-    simp [ih x, valueAtPartial]
+    simp [ih x]
 
 theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=

@@ -202,12 +202,6 @@ theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.
         (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b⟩ := by
   rw [Mode.combine?_eventIdentificationLeft]; simp [Mode.evalPartial]
 
-/-- The value of an interpreted daughter at the type `τ`, which is undefined where the daughter
-is uninterpretable or of another type. -/
-def valueAtPartial (τ : Ty) : Option (PDenotation E W S) → Part (Ty.PDomain E W τ S)
-  | some ⟨ty, v⟩ => if h : ty = τ then h ▸ v else Part.none
-  | none => Part.none
-
 end Composition
 
 /-! ### Total lexica
@@ -446,25 +440,13 @@ binary node what the mode its daughters' types select composes, a trace the valu
 a binder the partial function abstracting over its index in the body. -/
 def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
     Option (PDenotation E W S) :=
-  (translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
-    ⟨d.1, d.2.evalPartial (Γ := individualIndices) (fun c ↦ c) g⟩
-
-private theorem map_bind_combine (g : ∀ n, Ty.PDomain E W (individualIndices n) S)
-    (t₁ t₂ : Option (Σ ty, Term individualIndices (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
-    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
-      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
-        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
-          Mode.combine? Mode.evalPartial d₁ d₂ := by
-  rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
-  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
-  rfl
+  realize (.partial (K := fun ty ↦ Part (Ty.PDomain E W ty S)) fun c ↦ c) individualIndices lex g t
 
 variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 
 @[simp] theorem interpPartial_terminal (c : C) (w : L) :
     interpPartial lex g (.terminal c w : Tree C L) = lex w := by
-  simp only [interpPartial, translate_terminal, Option.map_map]
+  simp only [interpPartial, realize_terminal]
   cases lex w <;> rfl
 
 @[simp] theorem interpPartial_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
@@ -473,24 +455,20 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 @[simp] theorem interpPartial_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
     interpPartial lex g (.phrase c k (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
       (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
-  map_bind_combine g _ _
+  realize_phrase_binary ..
 
 @[simp] theorem interpPartial_trace (n : ℕ) (c : C) :
     interpPartial lex g (.trace n c : Tree C L) = some ⟨.e, Part.some (g n)⟩ := rfl
 
 @[simp] theorem interpPartial_bind (n : ℕ) (c : C) (body : Tree C L) :
     interpPartial lex g (.bind n c body) = (interpPartial lex g body).map fun d ↦
-      ⟨.fn .e d.1, Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) body)⟩ := by
-  simp only [interpPartial, translate_bind, Option.map_map]
-  rcases translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with
-    _ | ⟨τ, b⟩
-  · rfl
-  · simp [valueAtPartial]
+      ⟨.fn .e d.1, Part.some fun x ↦ valueAt d.1 d.2 (interpPartial lex (g[n ↦ x]) body)⟩ :=
+  realize_bind ..
 
 theorem interpPartial_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    interpPartial lex g (RoseTree.node l cs) = none := by
-  simp only [interpPartial, translate_junk _ h, Option.map_none]
+    interpPartial lex g (RoseTree.node l cs) = none :=
+  realize_junk _ _ _ _ h
 
 /-! ### Uninterpretability and presupposition failure -/
 
@@ -510,9 +488,11 @@ theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
 
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))
     (t : Tree C L) :
-    (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) := by
-  simp only [interpPartial, Option.map_map, Function.comp_def]
-  exact translate_map_fst lex h t
+    (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) :=
+  (realize_map_fst (K := fun ty ↦ Part (Ty.PDomain E W ty S)) (.partial fun c ↦ c)
+    individualIndices lex g t).trans ((translate_map_fst lex h t).trans
+      (realize_map_fst (K := fun ty ↦ Part (Ty.PDomain E W ty S)) (.partial fun c ↦ c)
+        individualIndices lex' g' t).symm)
 
 /-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
@@ -543,8 +523,9 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   obtain ⟨u, hu, hr⟩ := translate_rel lex hrel t ht'
   obtain ⟨z, hz, hl⟩ := hr.lifts (g := g) (g' := g) fun _ ↦ rfl
   refine ⟨⟨τ, u.eval (Γ := individualIndices) (fun c ↦ c) g⟩, ?_, ?_⟩
-  · simp [Tree.interp, hu, evalAt]; rfl
-  · simp only [hz]
+  · simp [Tree.interp, Tree.interpWith, Tree.realize, hu]; rfl
+  · show Denotation.Lifts _ ⟨τ, u'.evalPartial (Γ := individualIndices) (fun c ↦ c) g⟩
+    rw [hz]
     exact .mk hl
 
 /-- A lexicon lifting a total one has no presupposition failures. -/

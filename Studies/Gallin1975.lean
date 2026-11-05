@@ -17,6 +17,12 @@ semantics](##eval_toTy2): the value of a term at an index is the value of its tr
 index variable sent to that index, so [a formula is valid in IL exactly when its translate is valid
 in Ty₂](##valid_iff_valid_toTy2).
 
+λ-conversion holds in Ty₂ wherever the argument is free for the variable, and in IL only where in
+addition the variable is free in no scope of `^` or the argument is modally closed. Since `^`
+translates to an abstraction over the index variable, and [a term is modally closed exactly when its
+translate does not read that variable](##modallyClosed_iff),
+[IL's law is Ty₂'s, pulled back along the translation](##value_app_lam).
+
 ## Implementation notes
 
 The types of IL are the composition engine's types, the intension type $⟨s,α⟩$ being
@@ -169,5 +175,225 @@ theorem valid_iff_valid_toTy2 (A : IL.Term Γ K .t) :
     exact h E W m _ _
   · have := h E W m fun | 0 => i | n + 1 => g n
     rwa [eval_toTy2] at this
+
+/-! ### λ-conversion -/
+
+section Conversion
+
+open Function
+
+/-- The variables free in a term. -/
+def IL.Term.freeVars : {α : Ty} → IL.Term Γ K α → Finset ℕ
+  | _, .var n => {n}
+  | _, .const _ => ∅
+  | _, .app f a => f.freeVars ∪ a.freeVars
+  | _, .lam n b => b.freeVars.erase n
+  | _, .ident a b => a.freeVars ∪ b.freeVars
+  | _, .up a => a.freeVars
+  | _, .down a => a.freeVars
+
+/-- p. 14: the modally closed terms, the smallest class holding the variables and every `^A`, and
+closed under application, identity and abstraction. -/
+def IL.Term.ModallyClosed : {α : Ty} → IL.Term Γ K α → Prop
+  | _, .var _ | _, .up _ => True
+  | _, .const _ | _, .down _ => False
+  | _, .app f a => f.ModallyClosed ∧ a.ModallyClosed
+  | _, .lam _ b => b.ModallyClosed
+  | _, .ident a b => a.ModallyClosed ∧ b.ModallyClosed
+
+/-- The term with each free variable `n` replaced by `σ n`. -/
+def IL.Term.subst : {α : Ty} → IL.Term Γ K α → (∀ n, IL.Term Γ K (Γ n)) → IL.Term Γ K α
+  | _, .var n, σ => σ n
+  | _, .const c, _ => .const c
+  | _, .app f a, σ => .app (f.subst σ) (a.subst σ)
+  | _, .lam n b, σ => .lam n (b.subst (update σ n (.var n)))
+  | _, .ident a b, σ => .ident (a.subst σ) (b.subst σ)
+  | _, .up a, σ => .up (a.subst σ)
+  | _, .down a, σ => .down (a.subst σ)
+
+/-- p. 19, condition (i) of AS4: no free occurrence of `x` lies within a part `λy C` where `y` is
+free in `B`. -/
+def IL.Term.FreeFor : {α : Ty} → IL.Term Γ K α → (x : ℕ) → IL.Term Γ K (Γ x) → Prop
+  | _, .var _, _, _ | _, .const _, _, _ => True
+  | _, .app f a, x, B => f.FreeFor x B ∧ a.FreeFor x B
+  | _, .lam y b, x, B => y = x ∨ ((x ∈ b.freeVars → y ∉ B.freeVars) ∧ b.FreeFor x B)
+  | _, .ident a b, x, B => a.FreeFor x B ∧ b.FreeFor x B
+  | _, .up a, x, B => a.FreeFor x B
+  | _, .down a, x, B => a.FreeFor x B
+
+/-- p. 19, the negation of condition (ii) of AS4: a free occurrence of `x` lies within the scope of
+`^`. -/
+def IL.Term.FreeInUp (x : ℕ) : {α : Ty} → IL.Term Γ K α → Prop
+  | _, .var _ | _, .const _ => False
+  | _, .app f a => f.FreeInUp x ∨ a.FreeInUp x
+  | _, .lam y b => y ≠ x ∧ b.FreeInUp x
+  | _, .ident a b => a.FreeInUp x ∨ b.FreeInUp x
+  | _, .up a => x ∈ a.freeVars
+  | _, .down a => a.FreeInUp x
+
+theorem IL.Term.FreeInUp.mem_freeVars {x : ℕ} {α : Ty} {A : IL.Term Γ K α} (h : A.FreeInUp x) :
+    x ∈ A.freeVars := by
+  induction A <;> simp_all [IL.Term.FreeInUp, IL.Term.freeVars] <;> tauto
+
+theorem succ_mem_freeVars_toTy2 {k : ℕ} {α : Ty} (A : IL.Term Γ K α) :
+    k + 1 ∈ A.toTy2.freeVars ↔ k ∈ A.freeVars := by
+  induction A <;> simp_all [IL.Term.toTy2, IL.Term.freeVars, Montague.Term.freeVars]
+
+/-- A term is modally closed exactly when its translate does not read the index variable. -/
+theorem modallyClosed_iff {α : Ty} (A : IL.Term Γ K α) :
+    A.ModallyClosed ↔ 0 ∉ A.toTy2.freeVars := by
+  induction A <;> simp_all [IL.Term.ModallyClosed, IL.Term.toTy2, Montague.Term.freeVars]
+
+-- p. 14: the value of a modally closed term is independent of the index
+theorem value_eq_of_modallyClosed (m : ∀ {α : Ty}, K α → W → Ty.Domain E W α S)
+    (g : ∀ n, Ty.Domain E W (Γ n) S) (i j : W) {α : Ty} {A : IL.Term Γ K α}
+    (h : A.ModallyClosed) : A.value m g i = A.value m g j := by
+  have e := fun v : W ↦ eval_toTy2 m (fun | 0 => v | n + 1 => g n) A
+  refine (e i).symm.trans (.trans ?_ (e j))
+  refine Montague.Term.realize_congr_of_agree _ _ fun n hn ↦ ?_
+  cases n with
+  | zero => exact absurd hn ((modallyClosed_iff A).1 h)
+  | succ n => rfl
+
+/-- The replacements of the translate that correspond to replacements in a term of IL: the index
+variable stays. -/
+def lift (σ : ∀ n, IL.Term Γ K (Γ n)) : ∀ n, Montague.Term (typing Γ) (Constant K) (typing Γ n)
+  | 0 => .var 0
+  | n + 1 => (σ n).toTy2
+
+theorem toTy2_subst {α : Ty} (A : IL.Term Γ K α) (σ : ∀ n, IL.Term Γ K (Γ n)) :
+    (A.subst σ).toTy2 = A.toTy2.subst (lift σ) := by
+  induction A generalizing σ with
+  | var n => rfl
+  | const c => rfl
+  | app f a ihf iha => simp only [IL.Term.subst, IL.Term.toTy2, Montague.Term.subst, ihf, iha]
+  | lam n b ih =>
+    simp only [IL.Term.subst, IL.Term.toTy2, Montague.Term.subst, ih]
+    congr 2
+    funext k
+    cases k with
+    | zero => simp [lift]
+    | succ k =>
+      obtain rfl | hk := eq_or_ne k n
+      · simp [lift, IL.Term.toTy2]
+      · have hk' : k + 1 ≠ n + 1 := by omega
+        simp [lift, update_of_ne hk, update_of_ne hk']
+  | ident a b iha ihb => simp only [IL.Term.subst, IL.Term.toTy2, Montague.Term.subst, iha, ihb]
+  | up a ih =>
+    simp only [IL.Term.subst, IL.Term.toTy2, Montague.Term.subst, ih]
+    congr 2
+    funext k
+    cases k <;> simp [lift]
+  | down a ih => simp only [IL.Term.subst, IL.Term.toTy2, Montague.Term.subst, ih]; rfl
+
+/-- The replacement of the translate's variable `x + 1` by the translate of `B`. -/
+abbrev replacement (x : ℕ) (B : IL.Term Γ K (Γ x)) :
+    ∀ n, Montague.Term (typing Γ) (Constant K) (typing Γ n) :=
+  update (fun k ↦ .var k) (x + 1) B.toTy2
+
+theorem lift_update_var (x : ℕ) (B : IL.Term Γ K (Γ x)) :
+    lift (update (fun k ↦ .var k) x B) = replacement x B := by
+  funext k
+  cases k with
+  | zero => simp [lift]
+  | succ k =>
+    obtain rfl | hk := eq_or_ne k x
+    · simp [lift]
+    · have hk' : k + 1 ≠ x + 1 := by omega
+      simp [lift, update_of_ne hk, update_of_ne hk', IL.Term.toTy2]
+
+theorem replacement_self (x : ℕ) (B : IL.Term Γ K (Γ x)) :
+    replacement x B (x + 1) = B.toTy2 :=
+  update_self ..
+
+theorem replacement_of_ne {x m : ℕ} (hm : m ≠ x + 1) (B : IL.Term Γ K (Γ x)) :
+    replacement x B m = .var m :=
+  update_of_ne hm ..
+
+theorem update_replacement {x y : ℕ} (hy : y ≠ x + 1) (B : IL.Term Γ K (Γ x)) :
+    update (replacement x B) y (.var y) = replacement x B := by
+  funext k
+  obtain rfl | hk := eq_or_ne k y
+  · simp [update_of_ne hy]
+  · simp [update_of_ne hk]
+
+/-- Conditions (i), and (ii) or (ii'), of AS4 say that `B` is free for `x` in the translate. -/
+theorem freeFor_toTy2 {x : ℕ} {B : IL.Term Γ K (Γ x)} {α : Ty} {A : IL.Term Γ K α}
+    (h₁ : A.FreeFor x B) (h₂ : ¬ A.FreeInUp x ∨ B.ModallyClosed) :
+    A.toTy2.FreeFor (replacement x B) := by
+  induction A with
+  | var n => trivial
+  | const c => exact ⟨trivial, trivial⟩
+  | app f a ihf iha =>
+    simp only [IL.Term.FreeFor] at h₁
+    exact ⟨ihf h₁.1 (h₂.imp (fun h h' ↦ h (Or.inl h')) id),
+      iha h₁.2 (h₂.imp (fun h h' ↦ h (Or.inr h')) id)⟩
+  | lam y b ih =>
+    simp only [IL.Term.FreeFor] at h₁
+    simp only [IL.Term.toTy2, Montague.Term.FreeFor]
+    obtain rfl | hyx := eq_or_ne y x
+    · refine ⟨fun m _ hm h ↦ ?_, ?_⟩
+      · rw [replacement_of_ne hm] at h
+        exact hm (Finset.mem_singleton.1 h).symm
+      · rw [replacement, update_idem, update_eq_self_iff.2 rfl]
+        exact Montague.Term.freeFor_var _
+    · have hne : y + 1 ≠ x + 1 := by omega
+      obtain ⟨hcap, hb⟩ := h₁.resolve_left hyx
+      refine ⟨fun m hm hmy h ↦ ?_, ?_⟩
+      · obtain rfl | hmx := eq_or_ne m (x + 1)
+        · rw [replacement_self] at h
+          exact hcap ((succ_mem_freeVars_toTy2 b).1 hm) ((succ_mem_freeVars_toTy2 B).1 h)
+        · rw [replacement_of_ne hmx] at h
+          exact hmy (Finset.mem_singleton.1 h).symm
+      · rw [update_replacement hne]
+        exact ih hb (h₂.imp (fun h h' ↦ h ⟨hyx, h'⟩) id)
+  | ident a b iha ihb =>
+    simp only [IL.Term.FreeFor] at h₁
+    exact ⟨⟨trivial, iha h₁.1 (h₂.imp (fun h h' ↦ h (Or.inl h')) id)⟩,
+      ihb h₁.2 (h₂.imp (fun h h' ↦ h (Or.inr h')) id)⟩
+  | up a ih =>
+    simp only [IL.Term.FreeFor] at h₁
+    simp only [IL.Term.toTy2, Montague.Term.FreeFor]
+    refine ⟨fun m hm hm0 h ↦ ?_, ?_⟩
+    · obtain rfl | hmx := eq_or_ne m (x + 1)
+      · rw [replacement_self] at h
+        obtain h' | h' := h₂
+        · exact h' ((succ_mem_freeVars_toTy2 a).1 hm)
+        · exact (modallyClosed_iff B).1 h' h
+      · rw [replacement_of_ne hmx] at h
+        exact hm0 (Finset.mem_singleton.1 h).symm
+    · rw [update_replacement (by omega)]
+      exact ih h₁ (h₂.imp (fun h h' ↦ h h'.mem_freeVars) id)
+  | down a ih =>
+    simp only [IL.Term.FreeFor] at h₁
+    exact ⟨ih h₁ h₂, trivial⟩
+
+/-- p. 19, AS4 of IL: λ-conversion, where `B` is free for `x` in `A` and either no free occurrence
+of `x` lies within the scope of `^` or `B` is modally closed. It is AS4 of Ty₂ (p. 60), pulled back
+along the translation. -/
+theorem value_app_lam (m : ∀ {α : Ty}, K α → W → Ty.Domain E W α S)
+    (g : ∀ n, Ty.Domain E W (Γ n) S) (i : W) {x : ℕ} {β : Ty} {A : IL.Term Γ K β}
+    {B : IL.Term Γ K (Γ x)} (h₁ : A.FreeFor x B) (h₂ : ¬ A.FreeInUp x ∨ B.ModallyClosed) :
+    (IL.Term.app (.lam x A) B).value m g i =
+      (A.subst (update (fun k ↦ .var k) x B)).value m g i := by
+  have e := Montague.Term.eval_beta (freeFor_toTy2 h₁ h₂) (Constant.interp m)
+    (fun | 0 => i | n + 1 => g n)
+  have hs : A.toTy2.subst (replacement x B) = (A.subst (update (fun k ↦ .var k) x B)).toTy2 := by
+    rw [toTy2_subst, lift_update_var]
+  exact (eval_toTy2 m _ (.app (.lam x A) B)).symm.trans
+    (e.trans ((congrArg _ hs).trans (eval_toTy2 m _ _)))
+
+-- p. 16: unrestricted, the law fails: `(λx. ^x)(ˇc)` differs from `^ˇc` where `ˇc` is not rigid
+theorem value_app_lam_ne :
+    IL.Term.value (E := Bool) (S := {}) (fun | Concept.c => fun i _ ↦ i) (fun _ ↦ false) true
+        (.app (.lam 0 (.up (.var 0))) (.down (.const Concept.c)) :
+          IL.Term (fun _ ↦ .e) Concept _) ≠
+      IL.Term.value (E := Bool) (S := {}) (fun | Concept.c => fun i _ ↦ i) (fun _ ↦ false) true
+        ((.up (.var 0) : IL.Term (fun _ ↦ .e) Concept _).subst
+          (update (fun k ↦ .var k) 0 (.down (.const Concept.c)))) := by
+  intro h
+  simpa [IL.Term.value, IL.Term.subst] using congrFun h false
+
+end Conversion
 
 end Gallin1975

@@ -35,7 +35,7 @@ variable {C : Type} {L : Type*} {E W : Type} {S : Sorts} {M : Type → Type} [Ap
 
 theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : L → L')
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
-  simp only [interp, translate_map]
+  simp only [interp, interpWith, realize, translate_map]
 
 variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
@@ -57,7 +57,7 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)}
     exact ⟨.terminal c ⟨(w, d), h⟩, rfl, by rw [interp_terminal]⟩
   | phrase c k cs ih =>
     match cs with
-    | [] => exact absurd h (by simp [interp, translate])
+    | [] => exact absurd h (by simp [interp, interpWith, realize, translate])
     | [t] =>
       obtain ⟨r, hr, hd⟩ := ih t (by simp) h
       exact ⟨.phrase c k (r :: []), by simp [hr], hd⟩
@@ -69,18 +69,18 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)}
       obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
       exact ⟨.phrase c k (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
         by rw [interp_phrase_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
-    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp, translate])
+    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp, interpWith, realize, translate])
   | trace n c => exact ⟨.trace n c, rfl, h⟩
   | bind n c body ih =>
     rw [interp_bind] at h
-    obtain ⟨⟨τ, probe⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨τ, probe⟩, hb, h⟩ := Option.map_eq_some_iff.mp h
     obtain ⟨r, hr, hd⟩ := ih hb
     have hres : ∀ g', interp choice g' body = interp (fun p ↦ some p.1.2) g' r := fun g' ↦ by
       rw [← hr, interp_map]
       exact congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g') r
     refine ⟨.bind n c r, by simp [hr], ?_⟩
-    rw [interp_bind, hd, Option.bind_some]
-    simpa only [hres] using h
+    rw [interp_bind, hd, Option.map_some]
+    exact congrArg some (by simpa only [hres] using h)
   | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
 theorem interp_mem_readings {choice : L → Option (Denotation E W M S)}
@@ -168,7 +168,7 @@ theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM
     ∃ X, interp lex g t = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run := by
   obtain ⟨r, rfl, hr⟩ := hd
   rw [interp_map]
-  simp only [interp] at hr ⊢
+  simp only [interp, interpWith, realize] at hr ⊢
   obtain ⟨⟨τ, u⟩, hu, hev⟩ := Option.map_eq_some_iff.1 hr
   have hrel : ∀ (p : {p : L × Denotation E W Id S //
       p.2 ∈ wordReadings lex p.1}) d',
@@ -191,9 +191,8 @@ theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM
   obtain ⟨-, hu₀⟩ := hu₀
   obtain rfl := eq_of_heq hu₀
   have hmem := hR.mem_run_evalM g
-  simp only [evalAt, Term.evalM_id] at hev
   subst hev
-  exact ⟨_, by rw [hu', Option.map_some], hmem⟩
+  exact ⟨_, by rw [hu', Option.map_some]; rfl, hmem⟩
 
 end SetEffect
 

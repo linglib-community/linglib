@@ -22,6 +22,7 @@ it are a trace and a binder whose index has type $s$.
 * `Montague.Lexicon`: a lexicon of effectful denotations, keyed by strings.
 * `PhraseStructure.Tree.translate`: the term a tree translates to.
 * `PhraseStructure.Tree.translations`: every term a tree translates to, one per derivation.
+* `PhraseStructure.Tree.realize`: the value of a tree in an interpretation.
 * `PhraseStructure.Tree.interp`: the denotation of a tree under an assignment of individuals.
 * `PhraseStructure.Tree.interpWith`: the denotation under a typing of the indices.
 * `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its words alone.
@@ -31,9 +32,10 @@ it are a trace and a binder whose index has type $s$.
 ## Implementation notes
 
 The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
-`interp` is `interpWith` at `individualIndices` (`interp_eq_interpWith`), as mathlib's
-`Formula.Realize` is `BoundedFormula.Realize` with no bound variables, since the typing cannot be
-inferred from an assignment of individuals.
+`interp` is `interpWith` at `individualIndices`, as mathlib's `Formula.Realize` is
+`BoundedFormula.Realize` with no bound variables, since the typing cannot be inferred from an
+assignment of individuals. Both, and the partial engine's `interpPartial`, are `realize` at an
+interpretation, and their reduction lemmas are its, specialized.
 Translation is the only type-driven step and the only recursion on trees the semantics needs: the
 type of a tree is the type of its term, and the dependence of a denotation on the assignment and on
 the words is the term's (`freeVars_translate`, `translate_map`). Translation respects renaming and
@@ -75,33 +77,16 @@ are `simp` lemmas in this namespace only, since they identify `Id α` with `α`.
 
 @[scoped simp] theorem pure_eq {α : Type} (a : α) : (pure a : Id α) = a := rfl
 
-/-- The value of an interpreted daughter at the type `τ`, with the default `v` where the
-daughter is uninterpretable or of another type. Types do not depend on the assignment
-(`interp_map_fst_congr`), so under Predicate Abstraction the default is never reached
-(`valueAt_of_map_fst`). -/
-def valueAt {E W : Type} {S : Sorts} {M : Type → Type} (τ : Ty) (v : M (Ty.Domain E W τ S)) :
-    Option (Denotation E W M S) → M (Ty.Domain E W τ S)
+/-- The value at the type `τ` of a possibly absent value of some type, with the default `v` where
+it is absent or of another type. A tree's type does not depend on the assignment
+(`Tree.realize_map_fst`), so under Predicate Abstraction the default is never reached. -/
+def valueAt {V : Ty → Type*} (τ : Ty) (v : V τ) : Option (Σ ty, V ty) → V τ
   | some ⟨ty, val⟩ => if h : ty = τ then h ▸ val else v
   | none => v
 
-@[simp] theorem valueAt_some {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty}
-    (v x : M (Ty.Domain E W τ S)) :
-    valueAt τ v (some ⟨τ, x⟩ : Option (Denotation E W M S)) = x := by
+@[simp] theorem valueAt_some {V : Ty → Type*} {τ : Ty} (v x : V τ) :
+    valueAt τ v (some ⟨τ, x⟩) = x := by
   simp [valueAt]
-
-theorem valueAt_of_map_fst {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty}
-    {v v' : M (Ty.Domain E W τ S)} {d : Option (Denotation E W M S)}
-    (h : d.map (·.1) = some τ) : valueAt τ v d = valueAt τ v' d := by
-  obtain _ | ⟨ty, val⟩ := d
-  · simp at h
-  · simp only [Option.map_some, Option.some.injEq] at h
-    subst h; simp [valueAt]
-
-/-- The denotation of a term whose constants are denotations, at its type. -/
-abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
-    {Γ : ℕ → Ty} (g : ∀ n, Ty.Domain E W (Γ n) S)
-    (d : Σ ty, Term Γ (fun ty ↦ M (Ty.Domain E W ty S)) ty) : Denotation E W M S :=
-  ⟨d.1, d.2.evalM (fun c ↦ c) g⟩
 
 end Montague
 
@@ -329,11 +314,82 @@ theorem translate_map {L' : Type*} (lex : L' → Option (Σ ty, K ty)) (f : L �
 
 end Translate
 
+/-! ### The value of a tree -/
+
+section Realize
+
+universe u v w
+
+variable {C : Type} {K : Ty → Type u} {L : Type*} (A : Interpretation.{u, v, w} K) (Γ : ℕ → Ty)
+  (lex : L → Option (Σ ty, K ty)) (g : ∀ n, A.Val (Γ n))
+
+/-- The value of a tree in an interpretation is the value of the term it translates to. -/
+def realize (t : Tree C L) : Option (Σ ty, A.D ty) :=
+  (translate Γ lex t).map fun d ↦ ⟨d.1, d.2.realize A g⟩
+
+@[simp] theorem realize_terminal (c : C) (w : L) :
+    realize A Γ lex g (.terminal c w : Tree C L) = (lex w).map fun d ↦ ⟨d.1, A.const d.2⟩ := by
+  simp only [realize, translate_terminal, Option.map_map]; rfl
+
+@[simp] theorem realize_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    realize A Γ lex g (.phrase c k (t :: [])) = realize A Γ lex g t := rfl
+
+@[simp] theorem realize_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    realize A Γ lex g (.phrase c k (t₁ :: t₂ :: [])) =
+      (realize A Γ lex g t₁).bind fun d₁ ↦ (realize A Γ lex g t₂).bind fun d₂ ↦
+        Mode.combine? A.mode d₁ d₂ := by
+  simp only [realize, translate_phrase_binary]
+  rcases translate Γ lex t₁ with _ | ⟨τ₁, u₁⟩
+  · rfl
+  rcases translate Γ lex t₂ with _ | ⟨τ₂, u₂⟩
+  · rfl
+  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
+  rfl
+
+@[simp] theorem realize_trace (n : ℕ) (c : C) :
+    realize A Γ lex g (.trace n c : Tree C L) = some ⟨Γ n, A.var (g n)⟩ := rfl
+
+@[simp] theorem realize_bind (n : ℕ) (c : C) (body : Tree C L) :
+    realize A Γ lex g (.bind n c body) = (realize A Γ lex g body).map fun d ↦
+      ⟨Γ n ⇒ d.1, A.lam fun x ↦ valueAt d.1 d.2 (realize A Γ lex (g[n ↦ x]) body)⟩ := by
+  simp only [realize, translate_bind, Option.map_map]
+  rcases translate Γ lex body with _ | ⟨τ, b⟩
+  · rfl
+  · simp
+
+theorem realize_junk {l : Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    realize A Γ lex g (RoseTree.node l cs) = none := by
+  simp only [realize, translate_junk _ h, Option.map_none]
+
+/-- The type of a tree's value depends on neither the interpretation nor the assignment. -/
+theorem realize_map_fst (t : Tree C L) :
+    (realize A Γ lex g t).map (·.1) = (translate Γ lex t).map (·.1) := by
+  simp [realize, Option.map_map, Function.comp_def]
+
+/-- Assignments agreeing on the traces free in a tree give it the same value, the coincidence
+theorem ([heim-kratzer-1998] §5.4.2). -/
+theorem realize_congr_of_agree {g g' : ∀ n, A.Val (Γ n)} {t : Tree C L}
+    (h : ∀ i ∈ t.freeIndices, g i = g' i) : realize A Γ lex g t = realize A Γ lex g' t := by
+  rcases ht : translate Γ lex t with _ | ⟨τ, u⟩
+  · simp [realize, ht]
+  · simp only [realize, ht, Option.map_some]
+    rw [u.realize_congr_of_agree A fun n hn ↦ h n (freeVars_translate lex ht hn)]
+
+end Realize
+
 /-! ### Tree interpretation -/
 
 section TreeInterp
 
 variable {C : Type}
+
+/-- The denotation of a tree under a typing `Γ` of its indices and an assignment of values of
+those types: a trace or binder of index `n` is a variable of type `Γ n`. -/
+def interpWith {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
+    {L : Type*} (Γ : ℕ → Ty) (lex : L → Option (Denotation E W M S))
+    (g : ∀ n, Ty.Domain E W (Γ n) S) (t : Tree C L) : Option (Denotation E W M S) :=
+  realize (.effectful (K := fun ty ↦ M (Ty.Domain E W ty S)) fun c ↦ c) Γ lex g t
 
 /-- The denotation of a tree under an assignment, by the composition principles of
 [heim-kratzer-1998]. A terminal denotes its leaf interpretation, a non-branching node its
@@ -344,19 +400,7 @@ its constant. -/
 def interp {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
     {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E) (t : Tree C L) :
     Option (Denotation E W M S) :=
-  (translate individualIndices (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).map
-    (evalAt (Γ := individualIndices) g)
-
-/-- The denotation of a tree under a typing `Γ` of its indices and an assignment of values of
-those types: a trace or binder of index `n` is a variable of type `Γ n`. -/
-def interpWith {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
-    {L : Type*} (Γ : ℕ → Ty) (lex : L → Option (Denotation E W M S))
-    (g : ∀ n, Ty.Domain E W (Γ n) S) (t : Tree C L) : Option (Denotation E W M S) :=
-  (translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).map (evalAt g)
-
-theorem interp_eq_interpWith {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts}
-    [Distributive M] {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E)
-    (t : Tree C L) : interp lex g t = interpWith individualIndices lex g t := rfl
+  interpWith individualIndices lex g t
 
 end TreeInterp
 
@@ -368,27 +412,37 @@ composed denotation. -/
 section Reduction
 
 variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
-  {L : Type*}
+  {L : Type*} (lex : L → Option (Denotation E W M S))
 
-private theorem map_evalAt_combine (g : ∀ n, Ty.Domain E W (individualIndices n) S)
-    (t₁ t₂ : Option (Σ ty, Term individualIndices (fun ty ↦ M (Ty.Domain E W ty S)) ty)) :
-    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (evalAt g) =
-      (t₁.map (evalAt g)).bind fun d₁ ↦ (t₂.map (evalAt g)).bind fun d₂ ↦
-        Mode.combine? Mode.evalM d₁ d₂ := by
-  rcases t₁ with _ | ⟨τ₁, u₁⟩
-  · rfl
-  rcases t₂ with _ | ⟨τ₂, u₂⟩
-  · rfl
-  simp only [Option.bind_some, Option.map_some, Mode.combine?]
-  rcases τ₁.mode? τ₂ with _ | ⟨τ, m⟩ <;> rfl
+section With
 
-variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
+variable (Γ : ℕ → Ty) (g' : ∀ n, Ty.Domain E W (Γ n) S)
+
+@[simp] theorem interpWith_terminal (c : C) (w : L) :
+    interpWith Γ lex g' (.terminal c w : Tree C L) = lex w := by
+  simp only [interpWith, realize_terminal]
+  cases lex w <;> rfl
+
+@[simp] theorem interpWith_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    interpWith Γ lex g' (.phrase c k (t₁ :: t₂ :: [])) = (interpWith Γ lex g' t₁).bind fun d₁ ↦
+      (interpWith Γ lex g' t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂ :=
+  realize_phrase_binary ..
+
+@[simp] theorem interpWith_trace (n : ℕ) (c : C) :
+    interpWith Γ lex g' (.trace n c : Tree C L) = some ⟨Γ n, pure (g' n)⟩ := rfl
+
+@[simp] theorem interpWith_bind (n : ℕ) (c : C) (body : Tree C L) :
+    interpWith Γ lex g' (.bind n c body) = (interpWith Γ lex g' body).map fun d ↦
+      ⟨Γ n ⇒ d.1, distribute fun x ↦ valueAt d.1 d.2 (interpWith Γ lex (g'[n ↦ x]) body)⟩ :=
+  realize_bind ..
+
+end With
+
+variable (g : Assignment E)
 
 @[simp] theorem interp_terminal (c : C) (w : L) :
-    interp lex g (.terminal c w : Tree C L) = lex w := by
-  simp only [interp, translate_terminal]
-  cases lex w <;> rfl
+    interp lex g (.terminal c w : Tree C L) = lex w :=
+  interpWith_terminal ..
 
 @[simp] theorem interp_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
     interp lex g (.phrase c k (t :: [])) = interp lex g t := rfl
@@ -396,7 +450,20 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
 @[simp] theorem interp_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
     interp lex g (.phrase c k (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
       (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  map_evalAt_combine g _ _
+  interpWith_phrase_binary ..
+
+@[simp] theorem interp_trace (n : ℕ) (c : C) :
+    interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
+
+@[simp] theorem interp_bind (n : ℕ) (c : C) (body : Tree C L) :
+    interp lex g (.bind n c body) = (interp lex g body).map fun d ↦
+      ⟨.fn .e d.1, distribute fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) body)⟩ :=
+  interpWith_bind ..
+
+theorem interp_junk {l : Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    interp lex g (RoseTree.node l cs) = none :=
+  realize_junk _ _ _ _ h
 
 /-- Every denotation of a licensed tree lies in a family indexed by categories and closed under the
 local trees the relation admits: the semantic counterpart of a grammar, which a study states as a
@@ -432,54 +499,6 @@ theorem interp_mem_of_licensed {R : Label C L → List (Label C L) → Prop}
   | trace n c => exact absurd hr (hne n c _).1
   | bind n c => exact absurd hr (hne n c _).2
 
-@[simp] theorem interp_trace (n : ℕ) (c : C) :
-    interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
-
-@[simp] theorem interp_bind (n : ℕ) (c : C) (body : Tree C L) :
-    interp lex g (.bind n c body) =
-      (interp lex g body).bind fun d ↦
-        some ⟨.fn .e d.1, distribute fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) body)⟩ := by
-  simp only [interp, translate_bind]
-  rcases translate individualIndices (K := fun ty ↦ M (Ty.Domain E W ty S)) lex body with _ | ⟨τ, b⟩
-  · rfl
-  · simp [evalAt, valueAt]
-
-variable (Γ : ℕ → Ty) (g' : ∀ n, Ty.Domain E W (Γ n) S)
-
-@[simp] theorem interpWith_trace (n : ℕ) (c : C) :
-    interpWith Γ lex g' (.trace n c : Tree C L) = some ⟨Γ n, pure (g' n)⟩ := rfl
-
-@[simp] theorem interpWith_terminal (c : C) (w : L) :
-    interpWith Γ lex g' (.terminal c w : Tree C L) = lex w := by
-  simp only [interpWith, translate_terminal, Option.map_map]
-  cases lex w <;> rfl
-
-@[simp] theorem interpWith_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
-    interpWith Γ lex g' (.phrase c k (t₁ :: t₂ :: [])) = (interpWith Γ lex g' t₁).bind fun d₁ ↦
-      (interpWith Γ lex g' t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂ := by
-  simp only [interpWith, translate_phrase_binary]
-  rcases translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t₁ with _ | ⟨τ₁, u₁⟩
-  · rfl
-  rcases translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t₂ with _ | ⟨τ₂, u₂⟩
-  · rfl
-  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
-  rfl
-
-@[simp] theorem interpWith_bind (n : ℕ) (c : C) (body : Tree C L) :
-    interpWith Γ lex g' (.bind n c body) =
-      (interpWith Γ lex g' body).bind fun d ↦
-        some ⟨Γ n ⇒ d.1,
-          distribute fun x ↦ valueAt d.1 d.2 (interpWith Γ lex (g'[n ↦ x]) body)⟩ := by
-  simp only [interpWith, translate_bind]
-  rcases translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex body with _ | ⟨τ, b⟩
-  · rfl
-  · simp [evalAt, valueAt]
-
-theorem interp_junk {l : Tree.Label C L} {cs : List (Tree C L)}
-    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    interp lex g (RoseTree.node l cs) = none := by
-  simp only [interp, translate_junk _ h, Option.map_none]
-
 end Reduction
 
 /-! ### The type of a tree
@@ -505,7 +524,8 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     (t : Tree C L) :
     (interp lex g t).map (·.1) =
       ty? individualIndices lexTy t := by
-  rw [interp, Option.map_map]
+  refine (realize_map_fst (K := fun ty ↦ M (Ty.Domain E W ty S)) (.effectful fun c ↦ c)
+    individualIndices lex g t).trans ?_
   exact translate_map_fst lex (fun w ↦ by simp [← h w, Option.map_map, Function.comp_def]) t
 
 theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
@@ -537,13 +557,8 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
 /-- Assignments agreeing on the traces free in a tree give it the same denotation, the
 coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
 theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
-    (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
-  rcases ht : translate individualIndices (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t with
-    _ | ⟨τ, u⟩
-  · simp [interp, ht]
-  · simp only [interp, ht, Option.map_some]
-    exact congrArg (fun v ↦ some (⟨τ, v⟩ : Denotation E W M S))
-      (Term.evalM_congr_of_agree (fun c ↦ c) u fun n hn ↦ h n (freeVars_translate lex ht hn))
+    (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t :=
+  realize_congr_of_agree _ _ _ h
 
 /-- By [heim-kratzer-1998]'s (9), a tree with no free trace at index `i` denotes alike under an
 assignment and its modification at `i`. -/
@@ -573,10 +588,12 @@ theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S
     interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
       (translate individualIndices lex t).map fun d ↦
         ⟨d.1, d.2.eval (Γ := individualIndices) I g⟩ := by
-  simp only [interp, translate_map_const]
+  simp only [interp, interpWith, realize, translate_map_const]
   cases translate individualIndices lex t with
   | none => rfl
-  | some d => simp [evalAt, Term.eval_map]
+  | some d =>
+    exact congrArg (fun v ↦ some (⟨d.1, v⟩ : Denotation E W Id S))
+      (Term.eval_map (Γ := individualIndices) (fun c ↦ c) I g d.2)
 
 end Translation
 
