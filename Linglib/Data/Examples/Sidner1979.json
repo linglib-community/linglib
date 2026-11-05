@@ -233,6 +233,38 @@
     "verified": "page-image"
   },
   {
+    "id": "sidner1979_d10",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D10 (chapter 4), 2a"
+    },
+    "language": "stan1293",
+    "primaryText": "John called up Mike yesterday. He wanted to discuss his physics homework.",
+    "discourseSegments": [
+      "John called up Mike yesterday.",
+      "He wanted to discuss his physics homework."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he = John",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "agentPronoun"
+      ]
+    ],
+    "comment": "The discourse focus, Mike, and the actor focus, John, are animate, agree with the pronoun, and were established in the same sentence, so the discourse focus takes no precedence: the pronoun in agent position co-specifies the actor focus, a preference the paper calls not a strong one.",
+    "verified": "page-image"
+  },
+  {
     "id": "sidner1979_d14a",
     "source": {
       "bibkey": "sidner-1979",
@@ -326,6 +358,45 @@
       ]
     ],
     "comment": "A there-insertion sentence whose subject, some strawberries, is the expected focus; the pronoun of the second sentence co-specifies it and the focus is retained at step 4 of the focusing algorithm.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sidner1979_d31",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D31 (chapter 2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Wilbur is a fine scientist and a thoughtful guy. He gave me a book a while back which I really liked. It was on relativity theory. It talks about quarks. They are hard to imagine, because they indicate the need for elementary field theories of a complex nature. These theories are absolutely essential to all relativity research. Anyway, I got it while I was working on the initial part of my research. He's really a helpful colleague to have thought of giving it to me.",
+    "discourseSegments": [
+      "Wilbur is a fine scientist and a thoughtful guy.",
+      "He gave me a book a while back which I really liked.",
+      "It was on relativity theory.",
+      "It talks about quarks.",
+      "They are hard to imagine,",
+      "because they indicate the need for elementary field theories of a complex nature.",
+      "These theories are absolutely essential to all relativity research.",
+      "Anyway, I got it while I was working on the initial part of my research.",
+      "He's really a helpful colleague to have thought of giving it to me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it in the eighth sentence = the book",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "focusPopping"
+      ]
+    ],
+    "comment": "The focus moves from Wilbur to the book, to relativity theory, to quarks, and to elementary field theories; the it of the eighth sentence co-specifies the stacked book and the focus pops back to it, discarding the intervening foci, after which Wilbur is easily co-specified by he.",
     "verified": "page-image"
   },
   {
