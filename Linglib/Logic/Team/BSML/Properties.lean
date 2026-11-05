@@ -14,7 +14,7 @@ complete (`BSML/ExpressiveCompleteness.lean`).
 ## Main results
 
 * `den_induction`: every support and anti-support set lies in the closure of the flat
-  properties, `NE` and `{∅}` under `∩` and tensor.
+  properties, `NE` and `{∅}` under `∩` and `⊻`.
 * `supClosed_support`: support is union-closed.
 * `ordConnected_support`: support is order-convex.
 * `isFlat_support_of_neFree`: an `NE`-free formula is flat.
@@ -40,6 +40,8 @@ needs no normal form.
 
 public section
 
+open scoped SetFamily
+
 namespace BSML
 
 open ModalLogic (KripkeModel)
@@ -51,33 +53,33 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*}
 /-! ### Union closure and convexity -/
 
 /-- The support and anti-support sets of every formula lie in the closure of the flat team
-properties, `NE` and `{∅}` under `∩` and tensor. -/
+properties, `NE` and `{∅}` under `∩` and `⊻`. -/
 theorem den_induction {C : TeamProperty W → Prop} (flat : ∀ p, C (Team.flat p))
     (ne : C Team.ne) (empty : C {∅}) (inter : ∀ {P Q}, C P → C Q → C (P ∩ Q))
-    (tensor : ∀ {P Q}, C P → C Q → C (Team.tensor P Q)) (M : KripkeModel W Atom)
+    (sups : ∀ {P Q}, C P → C Q → C (P ⊻ Q)) (M : KripkeModel W Atom)
     (φ : Formula Atom) : C (φ.den M).ver ∧ C (φ.den M).fal := by
   induction φ with
   | atom p => exact ⟨flat _, flat _⟩
   | ne => exact ⟨ne, empty⟩
   | neg ψ ih => exact ih.symm
-  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨inter ih₁.1 ih₂.1, tensor ih₁.2 ih₂.2⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨tensor ih₁.1 ih₂.1, inter ih₁.2 ih₂.2⟩
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨inter ih₁.1 ih₂.1, sups ih₁.2 ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨sups ih₁.1 ih₂.1, inter ih₁.2 ih₂.2⟩
   | poss ψ _ => exact ⟨flat _, flat _⟩
 
 /-- BSML support is union-closed ([anttila-2021] Proposition 2.2.8). -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed {t | support M φ t} :=
-  (den_induction supClosed_flat supClosed_ne supClosed_singleton_empty .inter .tensor M φ).1
+  (den_induction supClosed_flat supClosed_ne supClosed_singleton_empty .inter .sups M φ).1
 
 /-- BSML support is order-convex, `NE` included ([anttila-2025] Proposition 3.3.6 and the remark
 after Theorem 3.3.7, pp. 82–83). -/
 theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     {t | support M φ t}.OrdConnected :=
-  (den_induction (C := fun P ↦ P.OrdConnected ∧ SupClosed P)
+  (den_induction (C := fun P : TeamProperty W ↦ P.OrdConnected ∧ SupClosed P)
     (fun p ↦ ⟨ordConnected_flat p, supClosed_flat p⟩) ⟨ordConnected_ne, supClosed_ne⟩
     ⟨ordConnected_singleton_empty, supClosed_singleton_empty⟩
     (fun h₁ h₂ ↦ ⟨h₁.1.inter h₂.1, h₁.2.inter h₂.2⟩)
-    (fun h₁ h₂ ↦ ⟨h₁.1.tensor h₂.1 h₁.2 h₂.2, h₁.2.tensor h₂.2⟩) M φ).1.1
+    (fun h₁ h₂ ↦ ⟨h₁.1.sups h₂.1 h₁.2 h₂.2, h₁.2.sups h₂.2⟩) M φ).1.1
 
 /-! ### The `NE`-free fragment -/
 
@@ -117,10 +119,10 @@ theorem invariant_den {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
   | neg ψ ih => exact (ih hd).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.tensor (ih₂ hd₂).2⟩
+    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.sups (ih₂ hd₂).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact ⟨(ih₁ hd₁).1.tensor (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
+    exact ⟨(ih₁ hd₁).1.sups (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)

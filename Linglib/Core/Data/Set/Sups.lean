@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Sups
+public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.UpperLower.CompleteLattice
@@ -21,8 +22,9 @@ in any semilattice, and their sups with `univ` are the upper closure. They prese
 closure and, given sup-closure, order-convexity in a distributive semilattice, and preserving
 downward closure characterizes distributivity. They respect any relation along which splits
 transport both ways. In a complete lattice, the supremum of `s ⊻ t` is the join of the suprema of
-two nonempty sets. The indexed form of `s ⊻ t` is `Set.iSups s`, the set of suprema of choices of
-an element from each member of a family `s`. [UPSTREAM]
+two nonempty sets. Membership in `s ⊻ t` is decidable over a finite carrier. The indexed form of
+`s ⊻ t` is `Set.iSups s`, the set of suprema of choices of an element from each member of a
+family `s`. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -42,6 +44,10 @@ theorem SupClosed.sups (hs : SupClosed s) (ht : SupClosed t) : SupClosed (s ⊻ 
   obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_sups.mp hx
   obtain ⟨c, hc, d, hd, rfl⟩ := Set.mem_sups.mp hy
   exact Set.mem_sups.mpr ⟨a ⊔ c, hs ha hc, b ⊔ d, ht hb hd, (sup_sup_sup_comm a b c d).symm⟩
+
+instance Set.decidableMemSups [Fintype α] [DecidableEq α] (s t : Set α) [DecidablePred (· ∈ s)]
+    [DecidablePred (· ∈ t)] (a : α) : Decidable (a ∈ s ⊻ t) :=
+  inferInstanceAs (Decidable (∃ b ∈ s, ∃ c ∈ t, b ⊔ c = a))
 
 theorem Set.bot_mem_sups [OrderBot α] (hs : ⊥ ∈ s) (ht : ⊥ ∈ t) : ⊥ ∈ s ⊻ t :=
   Set.mem_sups.mpr ⟨⊥, hs, ⊥, ht, bot_sup_eq ⊥⟩

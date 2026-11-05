@@ -31,6 +31,8 @@ and the natural-deduction systems of §4 are not formalized here; the BSML syste
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace AloniAnttilaYang2024
 
 variable {W W' : Type*} [DecidableEq W] [DecidableEq W'] {Atom : Type*}
@@ -116,8 +118,8 @@ def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
   | .bot => ⟨{∅}, .univ⟩
   | .ne => ⟨Team.ne, {∅}⟩
   | .neg φ => -φ.den M
-  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, Team.tensor (φ.den M).fal (ψ.den M).fal⟩
-  | .disj φ ψ => ⟨Team.tensor (φ.den M).ver (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
+  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, (φ.den M).fal ⊻ (ψ.den M).fal⟩
+  | .disj φ ψ => ⟨(φ.den M).ver ⊻ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
   | .gdisj φ ψ => ⟨(φ.den M).ver ∪ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
   | .empt φ => ⟨(φ.den M).ver ∪ {∅}, (φ.den M).fal⟩
   | .poss φ => ⟨Team.poss M.access (φ.den M).ver, Team.nec M.access (φ.den M).fal⟩
@@ -166,23 +168,8 @@ theorem support_disj_gdisj :
 /-- The diamond converts global to tensor disjunction, `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`, so the rule Conv◇⨼∨ of
 Theorem 4.3 is sound. -/
 theorem support_poss_gdisj :
-    support M (.poss (.gdisj φ ψ)) t ↔ support M (.disj (.poss φ) (.poss ψ)) t := by
-  classical
-  constructor
-  · intro h
-    refine ⟨t.filter fun w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M φ s, ?_,
-      t.filter fun w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M ψ s, ?_, ?_⟩
-    · intro w hw; exact (Finset.mem_filter.mp hw).2
-    · intro w hw; exact (Finset.mem_filter.mp hw).2
-    · ext w
-      simp only [Finset.mem_union, Finset.mem_filter]
-      refine ⟨fun h' ↦ h'.elim And.left And.left, fun hw ↦ ?_⟩
-      obtain ⟨s, hs, hne, hφ | hψ⟩ := h w hw
-      exacts [Or.inl ⟨hw, s, hs, hne, hφ⟩, Or.inr ⟨hw, s, hs, hne, hψ⟩]
-  · rintro ⟨t₁, h₁, t₂, h₂, h⟩ w hw
-    rcases Finset.mem_union.mp (h ▸ hw) with hw | hw
-    · obtain ⟨s, hs, hne, hφ⟩ := h₁ w hw; exact ⟨s, hs, hne, Or.inl hφ⟩
-    · obtain ⟨s, hs, hne, hψ⟩ := h₂ w hw; exact ⟨s, hs, hne, Or.inr hψ⟩
+    support M (.poss (.gdisj φ ψ)) t ↔ support M (.disj (.poss φ) (.poss ψ)) t :=
+  .of_eq (congrArg (t ∈ ·) (Team.poss_union M.access _ _))
 
 /-! ### Closure properties (Fact 2.7) -/
 
@@ -194,9 +181,9 @@ private theorem empty_mem_den_of_neFree (hNE : φ.NEFree) :
   | ne => exact hNE.elim
   | neg ψ ih => exact (ih hNE).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨⟨(ih₁ hNE.1).1, (ih₂ hNE.2).1⟩, Team.empty_mem_tensor (ih₁ hNE.1).2 (ih₂ hNE.2).2⟩
+    exact ⟨⟨(ih₁ hNE.1).1, (ih₂ hNE.2).1⟩, Set.bot_mem_sups (ih₁ hNE.1).2 (ih₂ hNE.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨Team.empty_mem_tensor (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
+    exact ⟨Set.bot_mem_sups (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Or.inl (ih₁ hNE.1).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | empt ψ ih => exact ⟨Or.inr rfl, (ih hNE).2⟩
   | poss ψ _ => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
@@ -217,9 +204,9 @@ private theorem isLowerSet_den_of_neFree (hNE : φ.NEFree) :
   | ne => exact hNE.elim
   | neg ψ ih => exact (ih hNE).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨(ih₁ hNE.1).1.inter (ih₂ hNE.2).1, (ih₁ hNE.1).2.tensor (ih₂ hNE.2).2⟩
+    exact ⟨(ih₁ hNE.1).1.inter (ih₂ hNE.2).1, (ih₁ hNE.1).2.sups (ih₂ hNE.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨(ih₁ hNE.1).1.tensor (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
+    exact ⟨(ih₁ hNE.1).1.sups (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
     exact ⟨(ih₁ hNE.1).1.union (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | empt ψ ih => exact ⟨(ih hNE).1.union Team.isLowerSet_singleton_empty, (ih hNE).2⟩
@@ -238,9 +225,9 @@ private theorem supClosed_den_of_gdFree (hGD : φ.GDFree) :
   | ne => exact ⟨Team.supClosed_ne, Team.supClosed_singleton_empty⟩
   | neg ψ ih => exact (ih hGD).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨(ih₁ hGD.1).1.inter (ih₂ hGD.2).1, (ih₁ hGD.1).2.tensor (ih₂ hGD.2).2⟩
+    exact ⟨(ih₁ hGD.1).1.inter (ih₂ hGD.2).1, (ih₁ hGD.1).2.sups (ih₂ hGD.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨(ih₁ hGD.1).1.tensor (ih₂ hGD.2).1, (ih₁ hGD.1).2.inter (ih₂ hGD.2).2⟩
+    exact ⟨(ih₁ hGD.1).1.sups (ih₂ hGD.2).1, (ih₁ hGD.1).2.inter (ih₂ hGD.2).2⟩
   | gdisj => exact hGD.elim
   | empt ψ ih =>
     refine ⟨fun s hs t ht ↦ ?_, (ih hGD).2⟩
@@ -402,10 +389,10 @@ theorem invariant_den {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : �
   | neg ψ ih => exact (ih hd).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.tensor (ih₂ hd₂).2⟩
+    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.sups (ih₂ hd₂).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact ⟨(ih₁ hd₁).1.tensor (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
+    exact ⟨(ih₁ hd₁).1.sups (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
     exact ⟨(ih₁ hd₁).1.union (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩

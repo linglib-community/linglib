@@ -33,7 +33,7 @@ definitions, as Aloni and Anttila observe.
 `Realize` is total: `NE` is true at every world, since singletons are non-empty, so the
 equations of Proposition 2.2.16 are stated for `NE`-free formulas only, as in the sources.
 The proposition is one induction proving an equation of meanings, with the split clauses
-discharged by `Team.mem_tensor_flat` and the `◇`-support clause by
+discharged by `Team.mem_flat_sups_flat` and the `◇`-support clause by
 `Team.exists_nonempty_subset_forall_iff`. The sources derive the proposition from the flatness
 of the `NE`-free fragment; here flatness is derived from it (`isFlat_support_of_neFree`).
 
@@ -113,12 +113,12 @@ theorem den_of_neFree (hNE : φ.NEFree) :
     ext t
     · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and]
     · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
-      refine Team.mem_tensor_flat.trans ?_
+      refine Team.mem_flat_sups_flat.trans ?_
       simp [imp_iff_not_or]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     ext t
     · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
-      exact Team.mem_tensor_flat
+      exact Team.mem_flat_sups_flat
     · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and, not_or]
   | poss ψ ih =>
     ext t

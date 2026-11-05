@@ -38,6 +38,8 @@ clause applies an operation of `Team/Operations.lean`, so the closure properties
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace BSML
 
 open ModalLogic (KripkeModel)
@@ -134,13 +136,13 @@ variable {W : Type*} [DecidableEq W]
 
 /-- The meaning of a formula in a model is the bilateral proposition whose verifiers are the
     teams that support it and whose falsifiers are the teams that anti-support it
-    ([aloni-2022] Definition 2). The split clauses are `Team.tensor`. -/
+    ([aloni-2022] Definition 2). The split clauses are the pointwise sups `⊻` of teams. -/
 def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
   | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
   | .ne => ⟨Team.ne, {∅}⟩
   | .neg φ => -φ.den M
-  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, Team.tensor (φ.den M).fal (ψ.den M).fal⟩
-  | .disj φ ψ => ⟨Team.tensor (φ.den M).ver (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
+  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, (φ.den M).fal ⊻ (ψ.den M).fal⟩
+  | .disj φ ψ => ⟨(φ.den M).ver ⊻ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
   | .poss φ => ⟨Team.poss M.access (φ.den M).ver, Team.nec M.access (φ.den M).fal⟩
 
 /-- A team supports `φ`, `M, t ⊨ φ`, when it is a verifier of the meaning of `φ`. -/
@@ -174,7 +176,7 @@ theorem Formula.den_falsum [Inhabited Atom] :
   refine BilProp.ext (Set.ext fun t ↦ ⟨fun ⟨h₁, h₂⟩ ↦ ?_, ?_⟩) ?_
   · exact Finset.eq_empty_iff_forall_notMem.mpr fun w hw ↦ h₂ w hw (h₁ w hw)
   · rintro rfl; exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
-  · exact Set.eq_univ_of_forall fun t ↦ Team.mem_tensor_flat.mpr fun w _ ↦ (em' _)
+  · exact Set.eq_univ_of_forall fun t ↦ Team.mem_flat_sups_flat.mpr fun w _ ↦ (em' _)
 
 /-- The strong contradiction is supported by no team and anti-supported by every team. -/
 theorem Formula.den_strongFalsum [Inhabited Atom] :
@@ -237,11 +239,11 @@ def Formula.decidableMemDen [Fintype W] [DecidableRel M.val] :
     letI := (φ.decidableMemDen).1; letI := (ψ.decidableMemDen).1
     letI := (φ.decidableMemDen).2; letI := (ψ.decidableMemDen).2
     (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).ver ∩ (ψ.den M).ver)),
-      fun t ↦ inferInstanceAs (Decidable (t ∈ Team.tensor (φ.den M).fal (ψ.den M).fal)))
+      fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).fal ⊻ (ψ.den M).fal)))
   | .disj φ ψ =>
     letI := (φ.decidableMemDen).1; letI := (ψ.decidableMemDen).1
     letI := (φ.decidableMemDen).2; letI := (ψ.decidableMemDen).2
-    (fun t ↦ inferInstanceAs (Decidable (t ∈ Team.tensor (φ.den M).ver (ψ.den M).ver)),
+    (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).ver ⊻ (ψ.den M).ver)),
       fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).fal ∩ (ψ.den M).fal)))
   | .poss φ =>
     letI := (φ.decidableMemDen).1; letI := (φ.decidableMemDen).2

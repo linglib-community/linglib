@@ -64,6 +64,8 @@ pointwise clause, where the source restricts it to classical formulas.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace ModalLogic.Inclusion
 
 variable {W : Type*} {Atom : Type*}
@@ -163,7 +165,7 @@ def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
       (t : Set W) ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
   | .neg ψ,         t => t ∈ Team.flat fun w ↦ ¬ eval M ψ {w}
   | .conj ψ₁ ψ₂,    t => eval M ψ₁ t ∧ eval M ψ₂ t
-  | .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M ψ₁ s} {s | eval M ψ₂ s}
+  | .disj ψ₁ ψ₂,    t => t ∈ {s | eval M ψ₁ s} ⊻ {s | eval M ψ₂ s}
   | .poss ψ,        t => t ∈ Team.possLax M.access {s | eval M ψ s}
   | .nec ψ,         t => t ∈ Team.necImage M.access {s | eval M ψ s}
 
@@ -225,7 +227,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     exact Team.supClosed_incl _ _ hs ht
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.tensor ih₂
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.sups ih₂
   | poss ψ ih => exact ih.possLax
   | nec ψ ih => exact ih.necImage
 
@@ -241,7 +243,7 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     exact Team.empty_mem_incl _ _
   | neg ψ _ => exact Team.empty_mem_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact Team.empty_mem_tensor ih₁ ih₂
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact Set.bot_mem_sups ih₁ ih₂
   | poss ψ ih => exact Team.empty_mem_possLax ih
   | nec ψ ih => exact Team.empty_mem_necImage ih
 
@@ -285,7 +287,7 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
     exact (ih₁ hd₁).inter (ih₂ hd₂)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact (ih₁ hd₁).tensor (ih₂ hd₂)
+    exact (ih₁ hd₁).sups (ih₂ hd₂)
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
@@ -322,7 +324,7 @@ theorem support_iff_forall_realize (hI : φ.InclTrivial) (t : Finset W) :
   | conj ψ₁ ψ₂ ih₁ ih₂ => simp [support, eval, ih₁ hI.1, ih₂ hI.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     simp only [support, eval, ih₁ hI.1, ih₂ hI.2]
-    exact Team.mem_tensor_flat.trans (by simp [Realize])
+    exact Team.mem_flat_sups_flat.trans (by simp [Realize])
   | poss ψ ih =>
     simp only [support, eval, ih hI]
     exact Team.mem_possLax_flat.trans (by simp [realize_poss])

@@ -412,10 +412,12 @@ theorem derives_of_support (he : Function.Injective e) :
     have ih₁ := derives_of_support he ψ₁ (max_le_iff.mp hk).1 hA.1
     have ih₂ := derives_of_support he ψ₂ (max_le_iff.mp hk).2 hA.2
     refine ⟨fun ⟨h₁, h₂⟩ ↦ ((ih₁ T).1 h₁).conj ((ih₂ T).1 h₂), ?_⟩
-    rintro ⟨t₁, h₁, t₂, h₂, ht⟩
-    obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_left)
-    obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_right)
-    rw [← Finset.image_union, (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
+    intro h
+    obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := Set.mem_sups.1 h
+    obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_left.trans_eq ht)
+    obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_right.trans_eq ht)
+    rw [Finset.sup_eq_union, ← Finset.image_union,
+      (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
     subst ht
     exact (((strongHintikka_union_derives T₁ T₂).disjMonLeft ((ih₁ T₁).2 h₁)).disjMon'
       ((ih₂ T₂).2 h₂)).dmConjI
@@ -423,10 +425,12 @@ theorem derives_of_support (he : Function.Injective e) :
     have ih₁ := derives_of_support he ψ₁ (max_le_iff.mp hk).1 hA.1
     have ih₂ := derives_of_support he ψ₂ (max_le_iff.mp hk).2 hA.2
     refine ⟨?_, fun ⟨h₁, h₂⟩ ↦ (((ih₁ T).2 h₁).conj ((ih₂ T).2 h₂)).dmDisjI⟩
-    rintro ⟨t₁, h₁, t₂, h₂, ht⟩
-    obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_left)
-    obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_right)
-    rw [← Finset.image_union, (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
+    intro h
+    obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := Set.mem_sups.1 h
+    obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_left.trans_eq ht)
+    obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_right.trans_eq ht)
+    rw [Finset.sup_eq_union, ← Finset.image_union,
+      (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
     subst ht
     exact ((strongHintikka_union_derives T₁ T₂).disjMonLeft ((ih₁ T₁).1 h₁)).disjMon'
       ((ih₂ T₂).1 h₂)
@@ -436,7 +440,7 @@ theorem derives_of_support (he : Function.Injective e) :
     refine ⟨fun h ↦ (Derives.single _).strongHintikka_elim (fun τ hτ ↦ ?_)
       (Derives.single _).poss_of_falsum, fun h ↦ (Derives.single _).strongHintikka_elim
       (fun τ hτ ↦ ?_) (Derives.single _).nec_of_falsum.interI⟩
-    · obtain ⟨s, hs, hne, hψ⟩ := h (world (k + 1) τ) (Finset.mem_image_of_mem _ hτ)
+    · obtain ⟨s, ⟨hψ, hne⟩, hs⟩ := h (world (k + 1) τ) (Finset.mem_image_of_mem _ hτ)
       rw [univModel_access_succ] at hs
       obtain ⟨U, hU, rfl⟩ := Finset.subset_image_iff.mp hs
       refine ((Derives.single _).conjE₁.trans ?_).possMon' ((ih U).1 hψ)
@@ -1077,7 +1081,7 @@ theorem splits_fill (he : Function.Injective e) (hd : default ∈ Set.range e) :
               (Finset.mem_toList.mpr (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩)))
             intro w hw
             rw [Finset.mem_singleton.mp hw]
-            refine ⟨U.image (world k), ?_, hUne.image _, hU⟩
+            refine ⟨U.image (world k), ⟨hU, hUne.image _⟩, ?_⟩
             rw [univModel_access_succ]; exact Finset.image_subset_image hUτ
         · rw [hσ]; exact (Derives.single _).of_falsum (neFree_bigDisj _ (hcl _))
       refine splits_of_derives_bigDisj (P := {T | support (univModel e) (.poss ψ)

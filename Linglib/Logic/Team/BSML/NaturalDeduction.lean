@@ -51,6 +51,8 @@ Result numbers and pages follow arXiv:2305.11777v3.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace BSML
 
 open ModalLogic (KripkeModel)
@@ -110,13 +112,11 @@ theorem ver_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Ato
     change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
     rw [ver_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
   | disjLeft C θ, hC => by
-    change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [ver_den_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
-      Set.sups_union_left]
+    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
+    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_left]
   | disjRight θ C, hC => by
-    change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [ver_den_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
-      Set.sups_union_right]
+    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
+    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_right]
   | poss _, hC | nec _, hC => hC.elim
 
 end Formula.Context
@@ -281,36 +281,34 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     · exact isLowerSet_support_of_neFree (hΔ γ hγ) M Finset.subset_union_right (hΓ γ (.inr hγ))
   | falsumE _ ih =>
     intro s hΓ
-    obtain ⟨t₁, h₁, t₂, h₂, rfl⟩ := ih s hΓ
-    rwa [(support_falsum M t₁).mp h₁, Finset.empty_union]
+    obtain ⟨t₁, h₁, t₂, h₂, rfl⟩ := Set.mem_sups.1 (ih s hΓ)
+    rwa [(support_falsum M t₁).mp h₁, Finset.sup_eq_union, Finset.empty_union]
   | strongFalsumCtr _ _ ih =>
     intro s hΓ
     obtain ⟨t₁, h₁, -⟩ := ih s hΓ
     exact absurd h₁ (not_support_strongFalsum M t₁)
   | possMon _ _ ihD ihPoss =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, hne, hφ⟩ := ihPoss s hΓ w hw
-    exact ⟨t, hsub, hne, ihD t fun γ hγ ↦ hγ ▸ hφ⟩
+    obtain ⟨t, ⟨hφ, hne⟩, hsub⟩ := ihPoss s hΓ w hw
+    exact ⟨t, ⟨ihD t fun γ hγ ↦ hγ ▸ hφ, hne⟩, hsub⟩
   | necMon _ _ _ ihD ihboxes => exact fun s hΓ w hw ↦ ihD _ fun δ hδ ↦ ihboxes δ hδ s hΓ w hw
   | possSep _ ih =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, _, t₁, -, t₂, ⟨hψ, hne⟩, rfl⟩ := ih s hΓ w hw
-    exact ⟨t₂, Finset.subset_union_right.trans hsub, hne, hψ⟩
+    obtain ⟨_, ⟨⟨t₁, -, t₂, ⟨hψ, hne⟩, rfl⟩, -⟩, hsub⟩ := ih s hΓ w hw
+    exact ⟨t₂, ⟨hψ, hne⟩, le_sup_right.trans hsub⟩
   | possJoin _ _ ih₁ ih₂ =>
     intro s hΓ w hw
-    obtain ⟨t₁, hsub₁, hne₁, hφ⟩ := ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw
-    obtain ⟨t₂, hsub₂, -, hψ⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
-    exact ⟨t₁ ∪ t₂, Finset.union_subset hsub₁ hsub₂, hne₁.mono Finset.subset_union_left,
-      t₁, hφ, t₂, hψ, rfl⟩
+    obtain ⟨t₁, ⟨hφ, hne₁⟩, hsub₁⟩ := ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw
+    obtain ⟨t₂, ⟨hψ, -⟩, hsub₂⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
+    exact ⟨t₁ ⊔ t₂, ⟨⟨t₁, hφ, t₂, hψ, rfl⟩, hne₁.mono le_sup_left⟩, sup_le hsub₁ hsub₂⟩
   | necInst _ ih =>
     intro s hΓ w hw
     obtain ⟨hφ, hne⟩ := ih s hΓ w hw
-    exact ⟨M.access w, subset_rfl, hne, hφ⟩
+    exact ⟨M.access w, ⟨hφ, hne⟩, le_rfl⟩
   | necPossJoin _ _ ih₁ ih₂ =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, -, hψ⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
-    exact ⟨M.access w, ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw, t, hψ,
-      Finset.union_eq_left.mpr hsub⟩
+    obtain ⟨t, ⟨hψ, -⟩, hsub⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
+    exact ⟨M.access w, ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw, t, hψ, sup_eq_left.mpr hsub⟩
   | @neTrs Γ Δ₁ Δ₂ ψ χ C hC _ _ _ ih ih₁ ih₂ =>
     intro s hΓ
     have h : s ∈ ((C.fill ψ).den M).ver := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
@@ -444,9 +442,9 @@ theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ {()}, fun r _ ↦ r = q⟩
   have h := soundness hd M {()} fun γ hγ ↦ hγ ▸ fun _ _ ↦
-    ⟨{()}, subset_rfl, Finset.singleton_nonempty _, ∅, empty_supports_atom M p, {()},
-      fun _ _ ↦ by simp [M], by simp⟩
-  obtain ⟨s, hs, ⟨⟨⟩, hu⟩, hp⟩ := h.1 () (Finset.mem_singleton_self _)
+    ⟨{()}, ⟨⟨∅, empty_supports_atom M p, {()}, fun _ _ ↦ by simp [M], by simp⟩,
+      Finset.singleton_nonempty _⟩, le_rfl⟩
+  obtain ⟨s, ⟨hp, ⟨⟨⟩, hu⟩⟩, hs⟩ := h.1 () (Finset.mem_singleton_self _)
   exact hpq (by simpa [M] using hp () hu)
 
 end BSML

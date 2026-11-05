@@ -100,7 +100,7 @@ theorem disjoint_of_support_of_antiSupport (hs : support M φ s) (ht : antiSuppo
     exact Finset.disjoint_union_left.mpr ⟨ih₁ h₁ ht.1, ih₂ h₂ ht.2⟩
   | poss ψ ih =>
     refine Finset.disjoint_left.mpr fun w hw hw' ↦ ?_
-    obtain ⟨u, hu, ⟨v, hv⟩, hsu⟩ := hs w hw
+    obtain ⟨u, ⟨hsu, v, hv⟩, hu⟩ := hs w hw
     exact Finset.disjoint_left.mp (ih hsu (ht w hw')) hv (hu hv)
 
 /-- A team that supports and anti-supports `φ` is empty ([anttila-2021] Proposition 3.3.9). -/

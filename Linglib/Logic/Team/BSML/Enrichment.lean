@@ -49,6 +49,8 @@ keeps the modal clauses of BSML, under which `R[w]` may still be empty.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace BSML
 
 open ModalLogic (KripkeModel)
@@ -107,7 +109,7 @@ theorem den_enrich_subset (hNE : φ.NEFree) :
     · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
       exact ⟨(ih₁ hNE.1).2 h₁, (ih₂ hNE.2).2 h₂⟩
   | poss ψ ih =>
-    exact ⟨fun _ h w hw ↦ (h.1 w hw).imp fun _ ⟨hs, hne, h'⟩ ↦ ⟨hs, hne, (ih hNE).1 h'⟩,
+    exact ⟨fun _ h w hw ↦ (h.1 w hw).imp fun _ ⟨⟨h', hne⟩, hs⟩ ↦ ⟨⟨(ih hNE).1 h', hne⟩, hs⟩,
       fun t h w hw ↦ (ih hNE).2 ((antiSupport_conj_ne M _ t).mp h w hw)⟩
 
 /-- `[α]⁺ ⊨ α` for `NE`-free `α`, the support half of Fact 1. -/
@@ -174,8 +176,8 @@ def Formula.denStar (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset 
   | .ne => ⟨Team.ne, {∅}⟩
   | .neg φ => -φ.denStar M
   | .conj φ ψ => ⟨(φ.denStar M).ver ∩ (ψ.denStar M).ver,
-      Team.tensor ((φ.denStar M).fal ∩ Team.ne) ((ψ.denStar M).fal ∩ Team.ne)⟩
-  | .disj φ ψ => ⟨Team.tensor ((φ.denStar M).ver ∩ Team.ne) ((ψ.denStar M).ver ∩ Team.ne),
+      ((φ.denStar M).fal ∩ Team.ne) ⊻ ((ψ.denStar M).fal ∩ Team.ne)⟩
+  | .disj φ ψ => ⟨((φ.denStar M).ver ∩ Team.ne) ⊻ ((ψ.denStar M).ver ∩ Team.ne),
       (φ.denStar M).fal ∩ (ψ.denStar M).fal⟩
   | .poss φ => ⟨Team.poss M.access (φ.denStar M).ver, Team.nec M.access (φ.denStar M).fal⟩
 
@@ -204,15 +206,15 @@ theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
       Set.ext fun _ ↦ ih₁ hNE.1 hPos.1
     have e₂ : ((enrich ψ₂).den M).ver = (ψ₂.denStar M).ver ∩ Team.ne :=
       Set.ext fun _ ↦ ih₂ hNE.2 hPos.2
-    change t ∈ Team.tensor _ _ ∧ t.Nonempty ↔ _
+    change t ∈ _ ⊻ _ ∧ t.Nonempty ↔ _
     rw [e₁, e₂]
     exact Iff.rfl
   | poss ψ ih =>
     have ih := fun s ↦ ih (t := s) hNE hPos
-    exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
-          ⟨hs, hs', ((ih _).mp h').1⟩, hne⟩,
-      fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
-          ⟨hs, hs', (ih _).mpr ⟨h', hs'⟩⟩, hne⟩⟩
+    exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨⟨h', hs'⟩, hs⟩ ↦
+          ⟨⟨((ih _).mp h').1, hs'⟩, hs⟩, hne⟩,
+      fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨⟨h', hs'⟩, hs⟩ ↦
+          ⟨⟨(ih _).mpr ⟨h', hs'⟩, hs'⟩, hs⟩, hne⟩⟩
 
 /-- BSML* and BSML⁺ consequence coincide on classical positive formulas (Fact 13). Excluding
 the empty team from the states and excluding it syntactically through `[·]⁺` agree. -/
@@ -230,8 +232,8 @@ theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positiv
 theorem negativeFC_star_poss (α β : Formula Atom) :
     ConsequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
   fun _ _ _ h w hw ↦
-    have ⟨_, hs, _, s₁, ⟨h₁, hne₁⟩, _, _, hu⟩ := h w hw
-    ⟨s₁, (hu ▸ Finset.subset_union_left).trans hs, hne₁, h₁⟩
+    have ⟨_, ⟨⟨s₁, ⟨h₁, hne₁⟩, _, _, hu⟩, _⟩, hs⟩ := h w hw
+    ⟨s₁, ⟨h₁, hne₁⟩, (le_sup_left.trans_eq hu).trans hs⟩
 
 /-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
 duality `□φ := ¬◇¬φ`. -/
