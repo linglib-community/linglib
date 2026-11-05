@@ -322,6 +322,8 @@ theorem Mealy.isLeftSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β)
     IsLeftSubsequential T.run :=
   T.isMealyComputable.isLeftSubsequential
 
+theorem Mealy.runRight_eq_revConj_run (T : Mealy σ α β) : T.runRight = List.revConj T.run := rfl
+
 theorem Mealy.isRightSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsRightSubsequential T.runRight :=
   T.isLeftSubsequential.revConj

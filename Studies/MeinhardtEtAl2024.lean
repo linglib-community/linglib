@@ -319,7 +319,7 @@ such machine is non-interacting. So the condition on machines is one on function
 identification of semiambience with weak determinism the paper states (p. 1202). -/
 theorem isNonInteractingBimachineComputable_iff {f : List α → List α} :
     IsNonInteractingBimachineComputable f ↔
-      IsLengthPreservingBimachineComputable f ∧ IsSemiambient f := by
+      IsLetterToLetterBimachineComputable f ∧ IsSemiambient f := by
   constructor
   · rintro ⟨L, _, R, _, B, ⟨w⟩, hB, rfl⟩
     refine ⟨⟨L, ‹_›, R, ‹_›, B, ⟨w⟩, rfl⟩, fun p a s hc ↦ ?_⟩

@@ -8,7 +8,6 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Pi
 public import Linglib.Core.Computability.Bimachine
-public import Linglib.Core.Computability.Subsequential
 
 /-!
 # Elgot–Mezei composition and decomposition
@@ -19,7 +18,7 @@ the image of the suffix. Conversely, [every bimachine is a right-to-left pass af
 one](##Bimachine.run_eq_comp), the first marking each letter with its left state. So the
 bimachine-computable functions are [closed under composition](##IsBimachineComputable.comp) and are
 [the composites of the two scans](##isBimachineComputable_iff_exists_comp), and [those of
-letter-to-letter machines](##isLengthPreservingBimachineComputable_iff_exists_comp) are the
+letter-to-letter machines](##isLetterToLetterBimachineComputable_iff_exists_comp) are the
 composites of two Mealy passes.
 
 ## Implementation notes
@@ -34,8 +33,10 @@ second pass then remembers whether it has read anything, for the final right blo
 
 ## TODO
 
-* A length-preserving bimachine-computable function is computed by a letter-to-letter machine, the
-  resynchronization half of Eilenberg's Theorem XI.7.1.
+* Over a finite alphabet, a length-preserving bimachine-computable function is computed by a
+  letter-to-letter machine, the resynchronization half of Eilenberg's Theorem XI.7.1. The
+  finiteness is needed: over `ℕ` the shift `x :: xs ↦ xs ++ [0]` is length-preserving and
+  bimachine-computable, but a letter-to-letter machine would have to remember the second letter.
 
 ## References
 
@@ -51,33 +52,6 @@ second pass then remembers whether it has read anything, for the final right blo
 universe u v
 
 variable {L R σ α β γ : Type*}
-
-namespace SubsequentialTransducer
-
-variable (T : SubsequentialTransducer σ α β)
-
-/-- A subsequential transducer is the bimachine with one right state
-([reutenauer-schutzenberger-1991] §4). -/
-@[simps]
-def toBimachine : Bimachine σ Unit α β where
-  lInit := T.start
-  lStep := T.step
-  rInit := ()
-  rStep _ _ := ()
-  output s a _ := T.output s a
-  finalRight := T.finalOutput
-
-@[simp] theorem emitted_toBimachine (s : σ) (xs : List α) (r : Unit) :
-    T.toBimachine.emitted s xs r = T.emitted s xs := by
-  induction xs generalizing s <;> simp [*]
-
-@[simp] theorem lStateFrom_toBimachine (s : σ) (xs : List α) :
-    T.toBimachine.lStateFrom s xs = T.evalFrom s xs := rfl
-
-@[simp] theorem run_toBimachine : T.toBimachine.run = T.run :=
-  funext fun xs ↦ by simp [Bimachine.run, Bimachine.lState, run, runFrom]
-
-end SubsequentialTransducer
 
 namespace Bimachine
 
@@ -194,17 +168,6 @@ section Classes
 
 variable {f : List α → List β} {g : List β → List γ}
 
-/-- A left-subsequential function is bimachine-computable, by a machine with one right state. -/
-theorem IsLeftSubsequential.isBimachineComputable (hf : IsLeftSubsequential f) :
-    IsBimachineComputable f :=
-  have ⟨_, _, T, hT⟩ := hf
-  hT ▸ T.run_toBimachine ▸ T.toBimachine.isBimachineComputable
-
-/-- A right-subsequential function is bimachine-computable. -/
-theorem IsRightSubsequential.isBimachineComputable (hf : IsRightSubsequential f) :
-    IsBimachineComputable f :=
-  isBimachineComputable_revConj_iff.mp (IsLeftSubsequential.isBimachineComputable hf)
-
 /-- A bimachine-computable function after a left-subsequential one is bimachine-computable. -/
 theorem IsBimachineComputable.comp_isLeftSubsequential (hg : IsBimachineComputable g)
     (hf : IsLeftSubsequential f) : IsBimachineComputable (g ∘ f) := by
@@ -238,44 +201,44 @@ theorem isBimachineComputable_iff_exists_comp {α : Type u} {β : Type v} {f : L
       B.rightPass.isRightSubsequential, hB ▸ B.run_eq_comp.symm⟩,
     fun ⟨_, _, _, hh, hk, e⟩ ↦ e ▸ hk.isBimachineComputable.comp hh.isBimachineComputable⟩
 
-/-- A length-preserving bimachine-computable function after a Mealy-computable one is
-length-preserving bimachine-computable. -/
-theorem IsLengthPreservingBimachineComputable.comp_isMealyComputable
-    (hg : IsLengthPreservingBimachineComputable g) (hf : IsMealyComputable f) :
-    IsLengthPreservingBimachineComputable (g ∘ f) := by
+/-- A function of a letter-to-letter bimachine after a Mealy-computable one is the function of a
+letter-to-letter bimachine. -/
+theorem IsLetterToLetterBimachineComputable.comp_isMealyComputable
+    (hg : IsLetterToLetterBimachineComputable g) (hf : IsMealyComputable f) :
+    IsLetterToLetterBimachineComputable (g ∘ f) := by
   classical
   obtain ⟨_, _, _, _, B, ⟨w⟩, rfl⟩ := hg
   obtain ⟨_, _, T, rfl⟩ := hf
   refine ⟨_, inferInstance, _, inferInstance, B.comp T.toSubsequentialTransducer, ⟨w.comp T⟩, ?_⟩
   rw [B.run_comp, T.run_toSubsequentialTransducer]
 
-/-- A length-preserving bimachine-computable function after the mirror image of a Mealy-computable
-one is length-preserving bimachine-computable. -/
-theorem IsLengthPreservingBimachineComputable.comp_of_isMealyComputable_revConj
-    (hg : IsLengthPreservingBimachineComputable g) (hf : IsMealyComputable (List.revConj f)) :
-    IsLengthPreservingBimachineComputable (g ∘ f) := by
+/-- A function of a letter-to-letter bimachine after the mirror image of a Mealy-computable one is
+the function of a letter-to-letter bimachine. -/
+theorem IsLetterToLetterBimachineComputable.comp_of_isMealyComputable_revConj
+    (hg : IsLetterToLetterBimachineComputable g) (hf : IsMealyComputable (List.revConj f)) :
+    IsLetterToLetterBimachineComputable (g ∘ f) := by
   have h := (hg.revConj.comp_isMealyComputable hf).revConj
   rwa [← List.revConj_comp, List.revConj_revConj] at h
 
 /-- A function is computed by a letter-to-letter bimachine exactly when it is a right-to-left Mealy
 pass after a left-to-right one, over some intermediate alphabet. -/
-theorem isLengthPreservingBimachineComputable_iff_exists_comp {α : Type u} {β : Type v}
+theorem isLetterToLetterBimachineComputable_iff_exists_comp {α : Type u} {β : Type v}
     {f : List α → List β} :
-    IsLengthPreservingBimachineComputable f ↔ ∃ (Z : Type u) (h : List α → List Z)
+    IsLetterToLetterBimachineComputable f ↔ ∃ (Z : Type u) (h : List α → List Z)
       (k : List Z → List β), IsMealyComputable h ∧ IsMealyComputable (List.revConj k) ∧ k ∘ h = f :=
   ⟨fun ⟨_, _, _, _, B, ⟨w⟩, hB⟩ ↦ ⟨_, _, _, B.leftPass.isMealyComputable,
       (List.revConj_revConj B.rightPass.run).symm ▸ w.isMealyComputable_rightPass,
       hB ▸ B.run_eq_comp.symm⟩,
     fun ⟨_, _, k, hh, hk, e⟩ ↦ e ▸
       (List.revConj_revConj k ▸
-        (IsLengthPreservingBimachineComputable.of_mealyComputable hk).revConj :
-        IsLengthPreservingBimachineComputable k).comp_isMealyComputable hh⟩
+        (IsLetterToLetterBimachineComputable.of_mealyComputable hk).revConj :
+        IsLetterToLetterBimachineComputable k).comp_isMealyComputable hh⟩
 
-/-- Length-preserving bimachine-computable functions are closed under composition. -/
-theorem IsLengthPreservingBimachineComputable.comp (hg : IsLengthPreservingBimachineComputable g)
-    (hf : IsLengthPreservingBimachineComputable f) :
-    IsLengthPreservingBimachineComputable (g ∘ f) := by
-  obtain ⟨_, h, k, hh, hk, rfl⟩ := isLengthPreservingBimachineComputable_iff_exists_comp.mp hf
+/-- The functions of letter-to-letter bimachines are closed under composition. -/
+theorem IsLetterToLetterBimachineComputable.comp (hg : IsLetterToLetterBimachineComputable g)
+    (hf : IsLetterToLetterBimachineComputable f) :
+    IsLetterToLetterBimachineComputable (g ∘ f) := by
+  obtain ⟨_, h, k, hh, hk, rfl⟩ := isLetterToLetterBimachineComputable_iff_exists_comp.mp hf
   rw [← Function.comp_assoc]
   exact (hg.comp_of_isMealyComputable_revConj hk).comp_isMealyComputable hh
 

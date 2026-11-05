@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.Mealy
-public import Linglib.Core.Computability.Edge
+public import Linglib.Core.Computability.Subsequential
 public import Mathlib.Data.Fintype.Shrink
 
 /-!
@@ -14,8 +13,9 @@ public import Mathlib.Data.Fintype.Shrink
 
 A `Bimachine` reads its input in both directions: a left automaton scans `→`, a right automaton
 scans `←`, each cell emits a word from the two states around it, and two final functions emit a
-block at either end of the output. A single right state gives a subsequential transducer, and the
-functions computed by finite bimachines are the total rational functions. [Reversing a
+block at either end of the output. [A single right state gives a subsequential
+transducer](##SubsequentialTransducer.run_toBimachine), and the functions computed by finite
+bimachines are the total rational functions. [Reversing a
 machine](##Bimachine.run_reverse) exchanges the two automata and computes the reverse conjugate,
 and [a letter-to-letter machine](##Bimachine.LetterToLetter.getElem?_run) computes a
 length-preserving function whose output `i` reads the two states around letter `i`. Composition is
@@ -347,35 +347,52 @@ theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
 
 end Bimachine
 
-/-! ### Sequential machines as bimachines -/
+/-! ### Subsequential transducers as bimachines -/
 
-section ToBimachine
+namespace SubsequentialTransducer
 
-variable {σ : Type*} (T : Mealy σ α β)
+variable {σ : Type*} (T : SubsequentialTransducer σ α β)
 
-/-- A sequential machine as the bimachine whose left automaton does all the work and
-whose right automaton is trivial. -/
+/-- A subsequential transducer is the bimachine with one right state
+([reutenauer-schutzenberger-1991] §4). -/
 @[simps]
-def Mealy.toBimachine : Bimachine σ Unit α β where
+def toBimachine : Bimachine σ Unit α β where
   lInit := T.start
   lStep := T.step
   rInit := ()
   rStep _ _ := ()
-  output l a _ := [T.output l a]
+  output s a _ := T.output s a
+  finalRight := T.finalOutput
 
-@[simp] theorem Mealy.emitted_toBimachine (s : σ) (xs : List α) (r : Unit) :
-    T.toBimachine.emitted s xs r = T.runFrom s xs := by
+@[simp] theorem emitted_toBimachine (s : σ) (xs : List α) (r : Unit) :
+    T.toBimachine.emitted s xs r = T.emitted s xs := by
   induction xs generalizing s <;> simp [*]
 
-@[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run :=
-  funext fun xs ↦ by simp [Bimachine.run, run]
+@[simp] theorem lStateFrom_toBimachine (s : σ) (xs : List α) :
+    T.toBimachine.lStateFrom s xs = T.evalFrom s xs := rfl
+
+@[simp] theorem run_toBimachine : T.toBimachine.run = T.run :=
+  funext fun xs ↦ by simp [Bimachine.run, Bimachine.lState, run, runFrom]
+
+end SubsequentialTransducer
+
+section Mealy
+
+variable {σ : Type*} (T : Mealy σ α β)
+
+/-- A sequential machine is the bimachine of its block transducer, whose left automaton does all
+the work. -/
+def Mealy.toBimachine : Bimachine σ Unit α β := T.toSubsequentialTransducer.toBimachine
+
+@[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run := by
+  simp [Mealy.toBimachine]
 
 /-- A sequential machine is a letter-to-letter bimachine. -/
 def Mealy.toBimachine_letterToLetter : T.toBimachine.LetterToLetter where
   cell l a _ := T.output l a
   output_eq _ _ _ := rfl
 
-end ToBimachine
+end Mealy
 
 /-! ### The bimachine-computable class -/
 
@@ -399,42 +416,54 @@ protected theorem IsBimachineComputable.revConj {f : List α → List β}
     IsBimachineComputable (List.revConj f) ↔ IsBimachineComputable f :=
   ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, .revConj⟩
 
-/-- `f` is computed by a finite **letter-to-letter** bimachine. These are the total
-length-preserving rational functions ([eilenberg-1974], Theorem XI.7.1). -/
-def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
+/-- `f` is computed by a finite **letter-to-letter** bimachine, and so preserves length. Over a
+finite alphabet these are the length-preserving bimachine-computable functions ([eilenberg-1974]
+Th. XI.7.1); over an infinite one they are fewer. -/
+def IsLetterToLetterBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.IsLetterToLetter ∧ B.run = f
 
-theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L]
+theorem Bimachine.isLetterToLetterBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α β) (h : B.IsLetterToLetter) :
-    IsLengthPreservingBimachineComputable B.run :=
+    IsLetterToLetterBimachineComputable B.run :=
   have ⟨w⟩ := h
   ⟨Shrink L, inferInstance, Shrink R, inferInstance,
     Bimachine.reindex (equivShrink.{0} L) (equivShrink.{0} R) B, ⟨w.reindex _ _⟩, B.run_reindex _ _⟩
 
-theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
-    (h : IsLengthPreservingBimachineComputable f) : IsBimachineComputable f :=
+theorem IsBimachineComputable.of_letterToLetter {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) : IsBimachineComputable f :=
   have ⟨L, _, R, _, B, _, hB⟩ := h
   ⟨L, ‹_›, R, ‹_›, B, hB⟩
 
-theorem IsLengthPreservingBimachineComputable.length_eq {f : List α → List β}
-    (h : IsLengthPreservingBimachineComputable f) (x : List α) : (f x).length = x.length :=
+theorem IsLetterToLetterBimachineComputable.length_eq {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) (x : List α) : (f x).length = x.length :=
   have ⟨_, _, _, _, _, ⟨w⟩, hB⟩ := h
   hB ▸ w.length_run x
 
-theorem IsLengthPreservingBimachineComputable.of_mealyComputable {f : List α → List β}
-    (h : IsMealyComputable f) : IsLengthPreservingBimachineComputable f :=
+theorem IsLetterToLetterBimachineComputable.of_mealyComputable {f : List α → List β}
+    (h : IsMealyComputable f) : IsLetterToLetterBimachineComputable f :=
   have ⟨_, _, T, hT⟩ := h
   hT ▸ T.toBimachine_run ▸
-    T.toBimachine.isLengthPreservingBimachineComputable ⟨T.toBimachine_letterToLetter⟩
+    T.toBimachine.isLetterToLetterBimachineComputable ⟨T.toBimachine_letterToLetter⟩
 
-/-- The reverse conjugate of a length-preserving bimachine-computable function is one too. -/
-protected theorem IsLengthPreservingBimachineComputable.revConj {f : List α → List β}
-    (h : IsLengthPreservingBimachineComputable f) :
-    IsLengthPreservingBimachineComputable (List.revConj f) :=
+/-- The reverse conjugate of a function computed by a letter-to-letter bimachine is one too. -/
+protected theorem IsLetterToLetterBimachineComputable.revConj {f : List α → List β}
+    (h : IsLetterToLetterBimachineComputable f) :
+    IsLetterToLetterBimachineComputable (List.revConj f) :=
   have ⟨L, _, R, _, B, ⟨w⟩, hB⟩ := h
   ⟨R, ‹_›, L, ‹_›, B.reverse, ⟨w.reverse⟩, hB ▸ B.run_reverse⟩
 
 theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
     (h : IsMealyComputable f) : IsBimachineComputable f :=
-  .of_lengthPreserving (.of_mealyComputable h)
+  .of_letterToLetter (.of_mealyComputable h)
+
+/-- A left-subsequential function is bimachine-computable, by a machine with one right state. -/
+theorem IsLeftSubsequential.isBimachineComputable {f : List α → List β}
+    (hf : IsLeftSubsequential f) : IsBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := hf
+  hT ▸ T.run_toBimachine ▸ T.toBimachine.isBimachineComputable
+
+/-- A right-subsequential function is bimachine-computable. -/
+theorem IsRightSubsequential.isBimachineComputable {f : List α → List β}
+    (hf : IsRightSubsequential f) : IsBimachineComputable f :=
+  isBimachineComputable_revConj_iff.mp (IsLeftSubsequential.isBimachineComputable hf)
