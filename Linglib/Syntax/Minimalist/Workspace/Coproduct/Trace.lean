@@ -120,9 +120,9 @@ theorem traceCoherent_const (b : β) :
 
 /-! ### Enumerating pairs of nested cuts
 
-Both `(Δ^c ⊗ id) ∘ Δ^c` and `(id ⊗ Δ^c) ∘ Δ^c` sum over pairs of nested admissible cuts of a tree.
-This section writes `Δ^c` as a sum over cut enumerators (`treeCutsN`, `forestCutsN`) and each
-composite as a sum over a double-cut enumerator (`dcLHS`, `dcRHS`). -/
+Both `(Δ^c ⊗ id) ∘ Δ^c` and `(id ⊗ Δ^c) ∘ Δ^c` sum over pairs of nested admissible cuts of a tree:
+each composite is a sum over a double-cut enumeration (`DoubleCut.dcLHS`, `DoubleCut.dcRHS`) at the
+trace cuts. -/
 
 section DoubleCut
 variable {R : Type*} [CommSemiring R] {α β : Type*}
@@ -136,70 +136,22 @@ private noncomputable def tripleTensor
   ConnesKreimer.of' (R := R) q.1 ⊗ₜ[R]
     (ConnesKreimer.of' q.2.1 ⊗ₜ[R] ConnesKreimer.of' q.2.2)
 
-/-- `treeCutsN τ T` lists the cut summands of `T` as pairs of a crown forest and a trunk forest,
-namely the full cut `({T}, ∅)` and each proper or empty cut with its one-tree trunk. -/
-private noncomputable def treeCutsN (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) :
-    Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β))) :=
-  treeCutsG (cutSummandsCN τ) T
-
-/-- `comulCTreeN` is a sum over `treeCutsN`. -/
-private theorem comulCTreeN_eq_sum (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) :
-    comulCTreeN (R := R) τ T = ((treeCutsN τ T).map (cutTensor (R := R))).sum :=
-  comulTreeNG_eq_sum _ T
-
-/-- `forestCutsN τ F` lists the cut summands of the forest `F`. -/
-private noncomputable def forestCutsN (τ : UnorderedTree (α ⊕ β) → β)
-    (F : Forest (UnorderedTree (α ⊕ β))) :
-    Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β))) :=
-  forestCutsG (cutSummandsCN τ) F
-
-private theorem forestCutsN_zero (τ : UnorderedTree (α ⊕ β) → β) :
-    forestCutsN τ (0 : Forest (UnorderedTree (α ⊕ β))) = {(0, 0)} :=
-  forestCutsG_zero _
-
-private theorem forestCutsN_cons (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) (F : Forest (UnorderedTree (α ⊕ β))) :
-    forestCutsN τ (T ::ₘ F) = (treeCutsN τ T).conv (forestCutsN τ F) :=
-  forestCutsG_cons _ T F
-
-/-- `comulCForestN` is a sum over `forestCutsN`. -/
-private theorem comulCForestN_eq_sum (τ : UnorderedTree (α ⊕ β) → β)
-    (F : Forest (UnorderedTree (α ⊕ β))) :
-    comulCForestN (R := R) τ F = ((forestCutsN τ F).map (cutTensor (R := R))).sum :=
-  comulForestNG_eq_sum _ F
-
-/-- `dcLHS τ T` cuts `T` and then cuts the crown again. -/
-private noncomputable def dcLHS (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
-    Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β)) ×
-              Forest (UnorderedTree (α ⊕ β))) :=
-  (treeCutsN τ T).bind (fun AB =>
-    (forestCutsN τ AB.1).map (fun A12 => (A12.1, A12.2, AB.2)))
-
-/-- `dcRHS τ T` cuts `T` and then cuts the trunk again. -/
-private noncomputable def dcRHS (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
-    Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β)) ×
-              Forest (UnorderedTree (α ⊕ β))) :=
-  (treeCutsN τ T).bind (fun AB =>
-    (forestCutsN τ AB.2).map (fun B12 => (AB.1, B12.1, B12.2)))
-
 /-- Cutting the crown of one cut pair again enumerates the crown's forest cuts. -/
 private theorem lhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
     (A B : Forest (UnorderedTree (α ⊕ β))) :
     (TensorProduct.assoc R (ConnesKreimer R (UnorderedTree (α ⊕ β)))
         (ConnesKreimer R (UnorderedTree (α ⊕ β))) (ConnesKreimer R (UnorderedTree (α ⊕ β))))
         (comulCForestN (R := R) τ A ⊗ₜ[R] ConnesKreimer.of' B) =
-      ((forestCutsN τ A).map
+      ((forestCutsG (cutSummandsCN τ) A).map
         (fun A12 => tripleTensor (R := R) (A12.1, A12.2, B))).sum := by
-  rw [comulCForestN_eq_sum]
+  rw [comulCForestN, comulForestNG_eq_sum]
   let φ : (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R] ConnesKreimer R (UnorderedTree (α ⊕ β)))
             →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
               (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
                 ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
     (TensorProduct.assoc R _ _ _).toLinearMap ∘ₗ
       ((TensorProduct.mk R _ _).flip (ConnesKreimer.of' B))
-  show φ ((Multiset.map (cutTensor (R := R)) (forestCutsN τ A)).sum) = _
+  show φ ((Multiset.map (cutTensor (R := R)) (forestCutsG (cutSummandsCN τ) A)).sum) = _
   rw [map_multiset_sum, Multiset.map_map]
   apply congrArg Multiset.sum
   apply Multiset.map_congr rfl
@@ -214,15 +166,15 @@ private theorem lhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
 private theorem rhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
     (A B : Forest (UnorderedTree (α ⊕ β))) :
     ConnesKreimer.of' (R := R) A ⊗ₜ[R] comulCForestN (R := R) τ B =
-      ((forestCutsN τ B).map
+      ((forestCutsG (cutSummandsCN τ) B).map
         (fun B12 => tripleTensor (R := R) (A, B12.1, B12.2))).sum := by
-  rw [comulCForestN_eq_sum]
+  rw [comulCForestN, comulForestNG_eq_sum]
   let ψ : (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R] ConnesKreimer R (UnorderedTree (α ⊕ β)))
             →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
               (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
                 ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
     (TensorProduct.mk R _ _) (ConnesKreimer.of' A)
-  show ψ ((Multiset.map (cutTensor (R := R)) (forestCutsN τ B)).sum) = _
+  show ψ ((Multiset.map (cutTensor (R := R)) (forestCutsG (cutSummandsCN τ) B)).sum) = _
   rw [map_multiset_sum, Multiset.map_map]
   apply congrArg Multiset.sum
   apply Multiset.map_congr rfl
@@ -235,23 +187,23 @@ private theorem lhsExpand (τ : UnorderedTree (α ⊕ β) → β) (T : Unordered
     (TensorProduct.assoc R (ConnesKreimer R (UnorderedTree (α ⊕ β)))
         (ConnesKreimer R (UnorderedTree (α ⊕ β))) (ConnesKreimer R (UnorderedTree (α ⊕ β))))
         ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _ (comulCTreeN τ T)) =
-      ((dcLHS τ T).map (tripleTensor (R := R))).sum := by
-  rw [comulCTreeN_eq_sum]
+      ((DoubleCut.dcLHS (cutSummandsCN τ) T).map (tripleTensor (R := R))).sum := by
+  rw [comulCTreeN, comulTreeNG_eq_sum]
   let Λ := (TensorProduct.assoc R (ConnesKreimer R (UnorderedTree (α ⊕ β)))
         (ConnesKreimer R (UnorderedTree (α ⊕ β)))
         (ConnesKreimer R (UnorderedTree (α ⊕ β)))).toLinearMap ∘ₗ
       (comulCAlgHomN (R := R) τ).toLinearMap.rTensor
         (ConnesKreimer R (UnorderedTree (α ⊕ β)))
-  show Λ ((Multiset.map (cutTensor (R := R)) (treeCutsN τ T)).sum) = _
+  show Λ ((Multiset.map (cutTensor (R := R)) (treeCutsG (cutSummandsCN τ) T)).sum) = _
   rw [map_multiset_sum, Multiset.map_map]
-  unfold dcLHS
+  unfold DoubleCut.dcLHS
   rw [Multiset.map_bind, Multiset.sum_bind]
   apply congrArg Multiset.sum
   apply Multiset.map_congr rfl
   rintro ⟨A, B⟩ _
   show Λ (cutTensor (R := R) (A, B)) =
     (Multiset.map (tripleTensor (R := R))
-      ((forestCutsN τ A).map (fun A12 => (A12.1, A12.2, B)))).sum
+      ((forestCutsG (cutSummandsCN τ) A).map (fun A12 => (A12.1, A12.2, B)))).sum
   rw [Multiset.map_map]
   show (TensorProduct.assoc R _ _ _)
       ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _
@@ -263,19 +215,19 @@ private theorem lhsExpand (τ : UnorderedTree (α ⊕ β) → β) (T : Unordered
 /-- The composite `(id ⊗ Δ^c) ∘ Δ^c` on a tree sums the `dcRHS` enumeration. -/
 private theorem rhsExpand (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
     (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ (comulCTreeN τ T) =
-      ((dcRHS τ T).map (tripleTensor (R := R))).sum := by
-  rw [comulCTreeN_eq_sum]
+      ((DoubleCut.dcRHS (cutSummandsCN τ) T).map (tripleTensor (R := R))).sum := by
+  rw [comulCTreeN, comulTreeNG_eq_sum]
   show (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _
-        ((Multiset.map (cutTensor (R := R)) (treeCutsN τ T)).sum) = _
+        ((Multiset.map (cutTensor (R := R)) (treeCutsG (cutSummandsCN τ) T)).sum) = _
   rw [map_multiset_sum, Multiset.map_map]
-  unfold dcRHS
+  unfold DoubleCut.dcRHS
   rw [Multiset.map_bind, Multiset.sum_bind]
   apply congrArg Multiset.sum
   apply Multiset.map_congr rfl
   rintro ⟨A, B⟩ _
   show (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ (cutTensor (R := R) (A, B)) =
     (Multiset.map (tripleTensor (R := R))
-      ((forestCutsN τ B).map (fun B12 => (A, B12.1, B12.2)))).sum
+      ((forestCutsG (cutSummandsCN τ) B).map (fun B12 => (A, B12.1, B12.2)))).sum
   rw [Multiset.map_map]
   show (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _
         ((ConnesKreimer.of' (R := R) A) ⊗ₜ[R] ConnesKreimer.of' B) = _
@@ -283,61 +235,10 @@ private theorem rhsExpand (τ : UnorderedTree (α ⊕ β) → β) (T : Unordered
       rhs_per_pair]
   rfl
 
-/-! ### Descent of the double-cut enumerators
+/-! ### Descent of the double-cut enumerations
 
-The enumerators `dcLHS` and `dcRHS` are the images under `UnorderedTree.mk` of the planar
-`DoubleCut.dcLHSP` and `DoubleCut.dcRHSP`, which `DoubleCut.coassT` identifies. -/
-
-/-- Project a tree-level (crown, trunk) pair to UnorderedTree. -/
-private def projPair (p : Forest (RoseTree (α ⊕ β)) × Forest (RoseTree (α ⊕ β))) :
-    Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β)) :=
-  (p.1.map UnorderedTree.mk, p.2.map UnorderedTree.mk)
-
-private theorem treeCutsN_mk (τ : UnorderedTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
-    treeCutsN τ (UnorderedTree.mk t)
-      = (DoubleCut.treeCutsP (τ ∘ UnorderedTree.mk) t).map projPair := by
-  unfold treeCutsN treeCutsG DoubleCut.treeCutsP
-  rw [cutSummandsCN_mk, Multiset.map_cons, Multiset.map_map, Multiset.map_map]
-  congr 1
-
-private theorem forestCutsN_mk (τ : UnorderedTree (α ⊕ β) → β)
-    (F : Forest (RoseTree (α ⊕ β))) :
-    forestCutsN τ (F.map UnorderedTree.mk)
-      = (DoubleCut.forestCutsP (τ ∘ UnorderedTree.mk) F).map projPair := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [Multiset.map_zero, forestCutsN_zero, DoubleCut.forestCutsP_zero,
-        Multiset.map_singleton]; rfl
-  | cons t F ih =>
-    rw [Multiset.map_cons, forestCutsN_cons, treeCutsN_mk, ih, DoubleCut.forestCutsP_cons]
-    exact (Multiset.map_conv _ _ fun _ _ ↦
-      Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)).symm
-
-private theorem dcLHS_mk (τ : UnorderedTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
-    dcLHS τ (UnorderedTree.mk t) = (DoubleCut.dcLHSP
-      (τ ∘ UnorderedTree.mk) t).map DoubleCut.proj3 := by
-  unfold dcLHS DoubleCut.dcLHSP
-  rw [treeCutsN_mk, Multiset.bind_map, Multiset.map_bind]
-  apply Multiset.bind_congr; rintro ⟨F, G⟩ _
-  show (forestCutsN τ (F.map UnorderedTree.mk)).map (fun A12 => (A12.1, A12.2,
-    G.map UnorderedTree.mk))
-      = ((DoubleCut.forestCutsP (τ ∘ UnorderedTree.mk) F).map
-          (fun A12 => (A12.1, A12.2, G))).map DoubleCut.proj3
-  rw [forestCutsN_mk, Multiset.map_map, Multiset.map_map]
-  apply Multiset.map_congr rfl; rintro ⟨A1, A2⟩ _; rfl
-
-private theorem dcRHS_mk (τ : UnorderedTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
-    dcRHS τ (UnorderedTree.mk t) = (DoubleCut.dcRHSP
-      (τ ∘ UnorderedTree.mk) t).map DoubleCut.proj3 := by
-  unfold dcRHS DoubleCut.dcRHSP
-  rw [treeCutsN_mk, Multiset.bind_map, Multiset.map_bind]
-  apply Multiset.bind_congr; rintro ⟨F, G⟩ _
-  show (forestCutsN τ (G.map UnorderedTree.mk)).map (fun B12 => (F.map UnorderedTree.mk, B12.1,
-    B12.2))
-      = ((DoubleCut.forestCutsP (τ ∘ UnorderedTree.mk) G).map
-          (fun B12 => (F, B12.1, B12.2))).map DoubleCut.proj3
-  rw [forestCutsN_mk, Multiset.map_map, Multiset.map_map]
-  apply Multiset.map_congr rfl; rintro ⟨B1, B2⟩ _; rfl
+The enumerations at the trace cuts are the images under `UnorderedTree.mk` of the enumerations on
+rose trees, which `DoubleCut.coassT` identifies. -/
 
 /-- The tree-level trace coherence descends from the UnorderedTree one. -/
 private theorem traceCoherentP_of_coherent (τ : UnorderedTree (α ⊕ β) → β)
@@ -347,16 +248,17 @@ private theorem traceCoherentP_of_coherent (τ : UnorderedTree (α ⊕ β) → �
     rw [cutSummandsCN_mk]; exact Multiset.mem_map.mpr ⟨p, hp, rfl⟩
   exact hτ (UnorderedTree.mk t) (ConnesKreimer.projSummand p) hmem
 
-/-- Under trace coherence the two double-cut enumerators of a tree agree, the combinatorial core
+/-- Under trace coherence the two double-cut enumerations of a tree agree, the combinatorial core
 of Marcolli, Chomsky and Berwick's Lemma 1.2.10. -/
 private theorem doubleCut_eq (τ : UnorderedTree (α ⊕ β) → β)
     (hτ : TraceCoherent τ) (T : UnorderedTree (α ⊕ β)) :
-    dcLHS τ T = dcRHS τ T := by
-  induction T using Quotient.inductionOn with
-  | _ t =>
-    show dcLHS τ (UnorderedTree.mk t) = dcRHS τ (UnorderedTree.mk t)
-    rw [dcLHS_mk, dcRHS_mk,
-        DoubleCut.coassT (τ ∘ UnorderedTree.mk) (traceCoherentP_of_coherent τ hτ) t]
+    DoubleCut.dcLHS (cutSummandsCN τ) T = DoubleCut.dcRHS (cutSummandsCN τ) T :=
+  Quotient.inductionOn T fun t ↦ by
+    have h (t : RoseTree (α ⊕ β)) : cutSummandsCN τ (UnorderedTree.mk t) =
+        (cutSummandsG (extractC (τ ∘ UnorderedTree.mk)) t).map
+          (Prod.map (Multiset.map UnorderedTree.mk) UnorderedTree.mk) := rfl
+    exact (DoubleCut.dcLHS_map h t).trans <| (DoubleCut.coassT _
+      (traceCoherentP_of_coherent τ hτ) t).trans (DoubleCut.dcRHS_map h t).symm
 
 end DoubleCut
 

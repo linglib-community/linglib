@@ -14,6 +14,7 @@ public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Multiset.Antidiagonal
 public import Mathlib.Data.Multiset.Sections
+import Mathlib.Algebra.FreeMonoid.Basic
 
 /-!
 # Admissible-cut enumeration on rose trees
@@ -145,6 +146,21 @@ example (a : α) : cutSummandsG extract (RoseTree.leaf a) = {(0, RoseTree.leaf a
   rw [cutListSummandsG_cons, cutListSummandsG_nil, ← Multiset.cons_zero, Multiset.product_cons,
     Multiset.product_zero, add_zero, Multiset.map_map]
   exact (Multiset.map_congr rfl fun _ _ ↦ by simp).trans (Multiset.map_id _)
+
+theorem cutListSummandsG_append (l₁ l₂ : List (RoseTree α)) :
+    cutListSummandsG extract (l₁ ++ l₂) =
+      ((cutListSummandsG extract l₁ ×ˢ cutListSummandsG extract l₂) : Multiset _).map
+        fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
+  change _ = Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _ _
+  induction l₁ with
+  | nil =>
+    rw [List.nil_append, cutListSummandsG_nil]
+    exact (Multiset.singleton_zero_conv
+      (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _).symm
+  | cons t ts ih =>
+    rw [List.cons_append, cutListSummandsG_cons, cutListSummandsG_cons]
+    exact (congrArg (Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _)
+      ih).trans (Multiset.conv_assoc _ _ _).symm
 
 /-! ### Induction over cuts
 
@@ -336,44 +352,69 @@ variable (extract)
 
 /-! ### Cut convolution
 
-`treeCutsG cuts T` lists the cuts of the tree `T` as a forest, including the cut that takes all
-of `T`, and `forestCutsG cuts F` combines them over the trees of a forest. The admissible-cut
+`treeCutsG cuts t` lists the cuts of the tree `t` as a forest, including the cut that takes all
+of `t`, and `forestCutsG cuts F` combines them over the trees of a forest. Nothing here reads a
+tree, so rose trees and unordered trees share these definitions, and
+[a map between the enumerations carries the cuts along](##forestCutsG_map). The admissible-cut
 coproduct is a sum over these (`comulForestNG_eq_sum` in `Coproduct/WithCuts.lean`). -/
 
-/-- All the cuts of a tree with the trunk as a forest. They are the cut taking the whole tree,
-    with crown `{T}` and empty trunk, and each cut in `cuts T` with a one-tree trunk. -/
-def treeCutsG (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
-  ({T}, 0) ::ₘ (cuts T).map fun p ↦ (p.1, {p.2})
+section Convolution
 
-/-- The cuts of a forest combine one choice from `treeCutsG cuts T` for each tree `T`. -/
-def forestCutsG (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-    (F : Multiset (UnorderedTree α)) :
-    Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
+variable {γ δ : Type*} (cuts : γ → Multiset (Multiset γ × γ))
+
+/-- All the cuts of a tree with the trunk as a forest. They are the cut taking the whole tree,
+    with crown `{t}` and empty trunk, and each cut in `cuts t` with a one-tree trunk. -/
+def treeCutsG (t : γ) : Multiset (Multiset γ × Multiset γ) :=
+  ({t}, 0) ::ₘ (cuts t).map fun p ↦ (p.1, {p.2})
+
+/-- The cuts of a forest combine one choice from `treeCutsG cuts t` for each tree `t`. -/
+def forestCutsG (F : Multiset γ) : Multiset (Multiset γ × Multiset γ) :=
   (F.map (treeCutsG cuts)).foldr Multiset.conv {(0, 0)}
 
-theorem forestCutsG_zero
-    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α)) :
-    forestCutsG cuts (0 : Multiset (UnorderedTree α)) = {(0, 0)} := by
+theorem forestCutsG_zero : forestCutsG cuts (0 : Multiset γ) = {(0, 0)} := by
   simp [forestCutsG]
 
-theorem forestCutsG_cons
-    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
-    forestCutsG cuts (T ::ₘ F) = (treeCutsG cuts T).conv (forestCutsG cuts F) := by
+theorem forestCutsG_cons (t : γ) (F : Multiset γ) :
+    forestCutsG cuts (t ::ₘ F) = (treeCutsG cuts t).conv (forestCutsG cuts F) := by
   rw [forestCutsG, Multiset.map_cons, Multiset.foldr_cons, forestCutsG]
 
-theorem forestCutsG_singleton
-    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-    (T : UnorderedTree α) : forestCutsG cuts {T} = treeCutsG cuts T := by
+theorem forestCutsG_singleton (t : γ) : forestCutsG cuts {t} = treeCutsG cuts t := by
   rw [← Multiset.cons_zero, forestCutsG_cons, forestCutsG_zero]
   exact Multiset.conv_singleton_zero _
 
-theorem forestCutsG_pair
-    (cuts : UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α))
-    (T T' : UnorderedTree α) :
-    forestCutsG cuts {T, T'} = (treeCutsG cuts T).conv (treeCutsG cuts T') := by
+theorem forestCutsG_pair (t t' : γ) :
+    forestCutsG cuts {t, t'} = (treeCutsG cuts t).conv (treeCutsG cuts t') := by
   rw [Multiset.insert_eq_cons, forestCutsG_cons, forestCutsG_singleton]
+
+theorem forestCutsG_add (F G : Multiset γ) :
+    forestCutsG cuts (F + G) = (forestCutsG cuts F).conv (forestCutsG cuts G) := by
+  induction F using Multiset.induction with
+  | empty => rw [zero_add, forestCutsG_zero]; exact (Multiset.singleton_zero_conv _).symm
+  | cons t F ih =>
+    rw [Multiset.cons_add, forestCutsG_cons, forestCutsG_cons, ih]
+    exact (Multiset.conv_assoc _ _ _).symm
+
+variable {cuts} {cuts' : δ → Multiset (Multiset δ × δ)} {f : γ → δ}
+
+/-- A map carrying one enumeration to another carries the cuts of a tree along. -/
+theorem treeCutsG_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f)) (t : γ) :
+    treeCutsG cuts' (f t) =
+      (treeCutsG cuts t).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
+  simp [treeCutsG, h, Multiset.map_map]
+
+/-- A map carrying one enumeration to another carries the cuts of a forest along. -/
+theorem forestCutsG_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multiset.map f) f))
+    (F : Multiset γ) :
+    forestCutsG cuts' (F.map f) =
+      (forestCutsG cuts F).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
+  induction F using Multiset.induction with
+  | empty => simp [forestCutsG_zero]
+  | cons t F ih =>
+    rw [Multiset.map_cons, forestCutsG_cons, treeCutsG_map h, ih, forestCutsG_cons]
+    exact (Multiset.map_conv _ _ fun _ _ ↦
+      Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)).symm
+
+end Convolution
 
 /-! ### Cuts chosen tree by tree
 
