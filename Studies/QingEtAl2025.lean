@@ -22,8 +22,8 @@ Threshold Significance. Neither holds in general: *worry* and Mandarin *qidai* r
 to the question rather than to an answer, and negative predicates such as *fear* lack the
 presupposition. Composition with a question is therefore
 [L-analytic, and the predicate anti-rogative, exactly for the distributive positive
-class](##QingEtAl2025.isLAnalytic_iff_class). Of distributivity, the derivation
-[uses only the inference from an answer to the question](##QingEtAl2025.trueWhereDefined_positive_iff).
+class](##QingEtAl2025.isLAnalytic_iff_class). Of distributivity, the derivation uses
+[only the inference from an answer to the question](##QingEtAl2025.trueWhereDefined_positive_iff).
 Apparent uses of *hope* with a polar question are non-canonical, and the asymmetry between hoping
 for the radical and for its negation follows from the goals of a hopeful wondering.
 
@@ -36,7 +36,8 @@ to lack threshold significance. The pragmatic derivation compares coming to beli
 not by Kratzer's ordering with the event's goals as ordering source; the event summation of the
 adjunction analysis is not formalized. Rows carry the paper's truth values where it gives them and
 its felicity judgments otherwise; the attested *hope whether* examples are recorded as marginal, and
-*temer* with a polar question and *haipa* with a constituent question are recorded but not predicted.
+*temer* with a polar question and *haipa* with a constituent question are recorded but not
+predicted.
 
 ## Errata
 
@@ -106,7 +107,8 @@ theorem trueWhereDefined_positive_iff {V : Family} (hV : ComparesDegrees V) :
   obtain ⟨hpC, hlt⟩ := (hV ..).1 hVp
   exact h μ θ C x Q' w hCQ hQ ⟨p, hpC, hlt⟩
 
-theorem comparesDegrees_degreeComparison : ComparesDegrees (D := D) (W := W) (E := E) degreeComparison :=
+theorem comparesDegrees_degreeComparison :
+    ComparesDegrees (D := D) (W := W) (E := E) degreeComparison :=
   degreeComparison_singleton
 
 -- Class 3, §3.3: Uegaki and Sudo's derivation
@@ -187,9 +189,8 @@ theorem isLAnalytic_degreeComparisonOr (hR : ∀ x p w, ¬ R x {p} w) {x : E} {Q
       ∀ (a : D) C, ¬ IsQToPEntailing {Q} (degreeComparisonOr R (fun _ _ _ ↦ a) (fun _ ↦ a) C) := by
   refine ⟨fun μ θ C x p w ↦ by simp [degreeComparisonOr, hR], TrueWhereDefined.isLAnalytic ?_,
     fun a C h ↦ ?_⟩
-  · exact fun μ θ C x Q w hCQ hQ hπ ↦ .inl <| trueWhereDefined_of_isClausallyDistributive
-      comparesDegrees_degreeComparison (fun μ θ C ↦ isClausallyDistributive_degreeComparison μ θ C _)
-      μ θ C x Q w hCQ hQ hπ
+  · exact fun μ θ C x Q w hCQ _ h ↦
+      .inl ((degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h)
   · obtain ⟨p, -, hp⟩ := h Q rfl x w (.inr hRQ)
     obtain ⟨q, -, -, hq⟩ | hp := hp
     · exact lt_irrefl a hq
@@ -361,12 +362,6 @@ theorem turkish_forms :
 theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 
 /-! ### Non-canonical composition (§4) -/
-
--- (70), §4.2
-theorem highlighted_eq_declarative {D : Type*} [LinearOrder D] (μ : E → W → Set W → D)
-    (θ : Set (Set W) → D) (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
-    degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w :=
-  degreeComparison_singleton μ θ C x p w
 
 section Asymmetry
 
