@@ -1,10 +1,7 @@
 [
   {
     "id": "haspelmath2001_articles_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.1"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.1"},
     "language": "stan1293",
     "primaryText": "the book / a book",
     "discourseSegments": [],
@@ -15,24 +12,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "articles"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "articles"],
+      ["value", "sae"]
     ],
     "comment": "Both a definite and an indefinite article.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_relpro_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.2"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.2"},
     "language": "stan1293",
     "primaryText": "the suspicious woman whom I described",
     "discourseSegments": [],
@@ -43,24 +31,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativePronouns"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativePronouns"],
+      ["value", "sae"]
     ],
     "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_relparticle_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.2"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.2"},
     "language": "stan1293",
     "primaryText": "the radio that I bought",
     "discourseSegments": [],
@@ -71,24 +50,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativePronouns"
-      ],
-      [
-        "value",
-        "particle"
-      ]
+      ["feature", "relativePronouns"],
+      ["value", "particle"]
     ],
     "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.3"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.3"},
     "language": "stan1293",
     "primaryText": "I have written",
     "discourseSegments": [],
@@ -99,24 +69,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "havePerfect"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "havePerfect"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_sv",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.3"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.3"},
     "language": "swed1254",
     "primaryText": "jag har skrivit",
     "discourseSegments": [],
@@ -127,24 +88,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "havePerfect"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "havePerfect"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_haveperf_es",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.3"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.3"},
     "language": "stan1288",
     "primaryText": "he escrito",
     "discourseSegments": [],
@@ -155,52 +107,36 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "havePerfect"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "havePerfect"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_perf_fi",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.3"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.3"},
     "language": "finn1318",
     "primaryText": "ole-n saa-nut",
     "discourseSegments": [],
-    "glossedTokens": [["ole-n", "be-1SG"], ["saa-nut", "receive-PTCP"]],
+    "glossedTokens": [
+      ["ole-n", "be-1SG"], ["saa-nut", "receive-PTCP"]
+    ],
     "translation": "I have received",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "havePerfect"
-      ],
-      [
-        "value",
-        "participialCopula"
-      ]
+      ["feature", "havePerfect"],
+      ["value", "participialCopula"]
     ],
     "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_perf_cy",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.3"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.3"},
     "language": "wels1247",
     "primaryText": "wedi",
     "discourseSegments": [],
@@ -211,24 +147,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "havePerfect"
-      ],
-      [
-        "value",
-        "prepositional"
-      ]
+      ["feature", "havePerfect"],
+      ["value", "prepositional"]
     ],
     "comment": "The Welsh perfect is formed with the preposition 'after'.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nomexp_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.4"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.4"},
     "language": "stan1293",
     "primaryText": "I like it",
     "discourseSegments": [],
@@ -239,24 +166,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "nominativeExperiencers"
-      ],
-      [
-        "value",
-        "generalizing"
-      ]
+      ["feature", "nominativeExperiencers"],
+      ["value", "generalizing"]
     ],
     "comment": "The experiencer coded as a nominative subject.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_invexp_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.4"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.4"},
     "language": "stan1293",
     "primaryText": "It pleases me",
     "discourseSegments": [],
@@ -267,24 +185,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "nominativeExperiencers"
-      ],
-      [
-        "value",
-        "inverting"
-      ]
+      ["feature", "nominativeExperiencers"],
+      ["value", "inverting"]
     ],
     "comment": "The stimulus coded as the nominative subject.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_getpass_cy",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.5"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.5"},
     "language": "wels1247",
     "primaryText": "Terry got his hitting by a snowball",
     "discourseSegments": [],
@@ -295,24 +204,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "participialPassive"
-      ],
-      [
-        "value",
-        "getPassive"
-      ]
+      ["feature", "participialPassive"],
+      ["value", "getPassive"]
     ],
     "comment": "The Welsh 'get'-passive rendered word for word.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_caus_mn",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.6"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.6"},
     "language": "halh1238",
     "primaryText": "xajl-uul-",
     "discourseSegments": [],
@@ -323,24 +223,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "anticausativeProminence"
-      ],
-      [
-        "value",
-        "causative"
-      ]
+      ["feature", "anticausativeProminence"],
+      ["value", "causative"]
     ],
     "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_anticaus_ru",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.6"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.6"},
     "language": "russ1263",
     "primaryText": "izmenit'-sja",
     "discourseSegments": [],
@@ -351,24 +242,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "anticausativeProminence"
-      ],
-      [
-        "value",
-        "anticausative"
-      ]
+      ["feature", "anticausativeProminence"],
+      ["value", "anticausative"]
     ],
     "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_datposs_de",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.7"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.7"},
     "language": "stan1295",
     "primaryText": "Die Mutter wäscht dem Kind die Haare.",
     "discourseSegments": [],
@@ -379,24 +261,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "dativeExternalPossessors"
-      ],
-      [
-        "value",
-        "dative"
-      ]
+      ["feature", "dativeExternalPossessors"],
+      ["value", "dative"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_locposs_sv",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.7"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.7"},
     "language": "swed1254",
     "primaryText": "Någon bröt armen på honom.",
     "discourseSegments": [],
@@ -407,24 +280,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "dativeExternalPossessors"
-      ],
-      [
-        "value",
-        "locative"
-      ]
+      ["feature", "dativeExternalPossessors"],
+      ["value", "locative"]
     ],
     "comment": "The North Germanic and Balto-Finnic locative external possessor.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_vni_de",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.8"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.8"},
     "language": "stan1295",
     "primaryText": "Niemand kommt.",
     "discourseSegments": [],
@@ -435,24 +299,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "negativeIndefinitesWithoutVerbalNegation"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "negativeIndefinitesWithoutVerbalNegation"],
+      ["value", "sae"]
     ],
     "comment": "V + NI: the negative indefinite without verbal negation.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nvni_el",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.8"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.8"},
     "language": "mode1248",
     "primaryText": "Kanénas dhen érxete.",
     "discourseSegments": [],
@@ -463,24 +318,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "negativeIndefinitesWithoutVerbalNegation"
-      ],
-      [
-        "value",
-        "negatedVerb"
-      ]
+      ["feature", "negativeIndefinitesWithoutVerbalNegation"],
+      ["value", "negatedVerb"]
     ],
     "comment": "NV + NI: the negated verb with the negative indefinite.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_mixed_it_pre",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.8"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.8"},
     "language": "ital1282",
     "primaryText": "Nessuno viene.",
     "discourseSegments": [],
@@ -491,24 +337,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "negativeIndefinitesWithoutVerbalNegation"
-      ],
-      [
-        "value",
-        "mixed"
-      ]
+      ["feature", "negativeIndefinitesWithoutVerbalNegation"],
+      ["value", "mixed"]
     ],
     "comment": "The preverbal negative indefinite takes no verbal negation.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_mixed_it_post",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.8"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.8"},
     "language": "ital1282",
     "primaryText": "Non ho visto nessuno.",
     "discourseSegments": [],
@@ -519,24 +356,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "negativeIndefinitesWithoutVerbalNegation"
-      ],
-      [
-        "value",
-        "mixed"
-      ]
+      ["feature", "negativeIndefinitesWithoutVerbalNegation"],
+      ["value", "mixed"]
     ],
     "comment": "The postverbal negative indefinite cooccurs with verbal negation.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ca",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "stan1289",
     "primaryText": "tan Z com X",
     "discourseSegments": [],
@@ -547,24 +375,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_pt",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "port1283",
     "primaryText": "tão Z como X",
     "discourseSegments": [],
@@ -575,24 +394,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_de",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "stan1295",
     "primaryText": "so Z wie X",
     "discourseSegments": [],
@@ -603,24 +413,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ru",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "russ1263",
     "primaryText": "tak(oj) že Z kak X",
     "discourseSegments": [],
@@ -631,24 +432,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_hu",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "hung1274",
     "primaryText": "olyan Z mint X",
     "discourseSegments": [],
@@ -659,24 +451,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_fi",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "finn1318",
     "primaryText": "niin Z kuin X",
     "discourseSegments": [],
@@ -687,24 +470,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
-    "comment": "",
+    "comment": "Listed in §2.10 although Map 107.10 leaves Finnish outside the isogloss.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ka",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "nucl1302",
     "primaryText": "isetive Z rogorc X",
     "discourseSegments": [],
@@ -715,24 +489,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_bg",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "bulg1262",
     "primaryText": "xubava kato tebe",
     "discourseSegments": [],
@@ -743,24 +508,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "sae"]
     ],
     "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_ga",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "iris1253",
     "primaryText": "chomh Z le X",
     "discourseSegments": [],
@@ -771,24 +527,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "special"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "special"]
     ],
     "comment": "The Celtic special marker on the adjective.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_equative_sv",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.10"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.10"},
     "language": "swed1254",
     "primaryText": "lika Z som X",
     "discourseSegments": [],
@@ -799,24 +546,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "relativeBasedEquative"
-      ],
-      [
-        "value",
-        "equally"
-      ]
+      ["feature", "relativeBasedEquative"],
+      ["value", "equally"]
     ],
     "comment": "The Scandinavian 'equally' on the adjective.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_agr_bg",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.11"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.11"},
     "language": "bulg1262",
     "primaryText": "vie rabotite / rabotite",
     "discourseSegments": [],
@@ -827,24 +565,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "strictAgreement"
-      ],
-      [
-        "value",
-        "referential"
-      ]
+      ["feature", "strictAgreement"],
+      ["value", "referential"]
     ],
     "comment": "The subject suffix can have a referential function on its own.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_agr_de",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.11"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.11"},
     "language": "stan1295",
     "primaryText": "ihr arbeit-et",
     "discourseSegments": [],
@@ -855,24 +584,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "strictAgreement"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "strictAgreement"],
+      ["value", "sae"]
     ],
     "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_nopro_sv",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.11"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.11"},
     "language": "swed1254",
     "primaryText": "jag biter / du biter / han biter",
     "discourseSegments": [],
@@ -883,24 +603,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "strictAgreement"
-      ],
-      [
-        "value",
-        "obligatoryPronouns"
-      ]
+      ["feature", "strictAgreement"],
+      ["value", "obligatoryPronouns"]
     ],
     "comment": "Obligatory subject pronouns with no agreement distinctions on the verb.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_de",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.12"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.12"},
     "language": "stan1295",
     "primaryText": "sich / selbst",
     "discourseSegments": [],
@@ -911,24 +622,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "intensifierReflexiveDifferentiation"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "intensifierReflexiveDifferentiation"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_ru",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.12"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.12"},
     "language": "russ1263",
     "primaryText": "sebja / sam",
     "discourseSegments": [],
@@ -939,24 +641,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "intensifierReflexiveDifferentiation"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "intensifierReflexiveDifferentiation"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_it",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.12"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.12"},
     "language": "ital1282",
     "primaryText": "si / stesso",
     "discourseSegments": [],
@@ -967,24 +660,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "intensifierReflexiveDifferentiation"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "intensifierReflexiveDifferentiation"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_el",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.12"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.12"},
     "language": "mode1248",
     "primaryText": "eaftó / ídhjos",
     "discourseSegments": [],
@@ -995,80 +679,57 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "intensifierReflexiveDifferentiation"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "intensifierReflexiveDifferentiation"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_intref_fa",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§2.12"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§2.12"},
     "language": "west2369",
     "primaryText": "Hušang xodaš-rā did",
     "discourseSegments": [],
-    "glossedTokens": [["Hušang", "Hushang"], ["xodaš-rā", "self-ACC"], ["did", "saw"]],
+    "glossedTokens": [
+      ["Hušang", "Hushang"], ["xodaš-rā", "self-ACC"], ["did", "saw"]
+    ],
     "translation": "Hushang saw himself",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "intensifierReflexiveDifferentiation"
-      ],
-      [
-        "value",
-        "undifferentiated"
-      ]
+      ["feature", "intensifierReflexiveDifferentiation"],
+      ["value", "undifferentiated"]
     ],
     "comment": "The intensifier xod-aš 'himself' doubles as the reflexive.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_comparative_ja",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§3.2"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§3.2"},
     "language": "nucl1643",
     "primaryText": "inu-ga neko yori ookii",
     "discourseSegments": [],
-    "glossedTokens": [["inu-ga", "dog-SUBJ"], ["neko", "cat"], ["yori", "from"], ["ookii", "big"]],
+    "glossedTokens": [
+      ["inu-ga", "dog-SUBJ"], ["neko", "cat"], ["yori", "from"], ["ookii", "big"]
+    ],
     "translation": "the dog is bigger than the cat",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "comparativeMarking"
-      ],
-      [
-        "value",
-        "standardMarkerOnly"
-      ]
+      ["feature", "comparativeMarking"],
+      ["value", "standardMarkerOnly"]
     ],
     "comment": "The comparative semantics carried by the standard marker alone.",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_with_en",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§3.4"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§3.4"},
     "language": "stan1293",
     "primaryText": "with her husband / with the hammer",
     "discourseSegments": [],
@@ -1079,24 +740,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "comitativeInstrumentalSyncretism"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "comitativeInstrumentalSyncretism"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "haspelmath2001_negcoord_nl",
-    "source": {
-      "bibkey": "haspelmath-2001",
-      "paperLabel": "§3.6"
-    },
+    "source": {"bibkey": "haspelmath-2001", "paperLabel": "§3.6"},
     "language": "dutc1256",
     "primaryText": "noch A noch B",
     "discourseSegments": [],
@@ -1107,14 +759,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "feature",
-        "negativeCoordination"
-      ],
-      [
-        "value",
-        "sae"
-      ]
+      ["feature", "negativeCoordination"],
+      ["value", "sae"]
     ],
     "comment": "",
     "verified": "page-image"
