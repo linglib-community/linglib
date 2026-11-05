@@ -8,44 +8,40 @@ import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 /-!
 # Sidner (1979): Towards a Computational Theory of Definite Anaphora Comprehension
 
-This file formalizes the focusing theory of [sidner-1979], whose chapters on the discourse
-focus and on pronouns are reprinted as [sidner-1983]. A discourse has a discourse focus and an
-actor focus, each with an ordered list of alternates and a stack of rejected foci. The expected
-focus algorithm predicts the discourse focus from the first sentence: the subject of an is-a or
-there-insertion sentence, otherwise the first member of the default expected focus list, the
-phrases ordered theme first, then the other thematic positions with the agent last, then the
-verb phrase (`Sentence.expectedFocus`, `Sentence.expectedFocus_le`). The focusing algorithm
-confirms or rejects the current focus by the anaphora of each later sentence, retaining it
-when an anaphor co-specifies it and otherwise moving it to a co-specified alternate or stack
-member and stacking the rejected focus (`State.confirm`, `State.step`); the actor focus is the
-agent of the current sentence (`State.updateActor`). A pronoun is interpreted against the
-state: the discourse focus is preferred for a pronoun outside agent position and the actor
-focus for one in agent position, the alternates following, except that a discourse focus
-established in an earlier sentence than the actor focus takes precedence even in agent position
-(`State.candidates`, `State.cospecify`, `State.cospecify_agent_of_precedence`). The examples
-run through the pipeline: the three sentences illustrating the expected focus algorithm, the
-recency rule in D2, the confirmation in D25 and the movement in D35, the reversed
-co-specifications of D14, and D9, in which every *he* co-specifies Jeff while the actor focus
-moves from the speaker to Carl to Oscar (`D9.he_jeff`).
+This file formalizes the focusing theory of [sidner-1979], reprinted in part as [sidner-1983].
+The expected focus algorithm predicts a first sentence's discourse focus: the subject of an is-a
+or there-insertion sentence, otherwise [the first phrase of the default
+ordering](##Sentence.expectedFocus_le), the theme first and the agent last. A later sentence's
+anaphora confirm the focus, move it to a co-specified alternate, or [pop the focus
+stack](##D31.popped); the actor focus follows the agent. A pronoun prefers the discourse focus
+outside agent position and the actor focus in it, unless [an earlier-established discourse focus
+takes precedence](##State.cospecify_agent_of_precedence): [every *he* of D9 co-specifies
+Jeff](##D9.he_jeff), and [the focus of D35 moves](##D35.movement) to the ice cream cones.
 
 ## Implementation notes
 
 * A sentence is its form, which names the subject of an is-a or there-insertion sentence, and
   its phrases in surface order, each with the entity it specifies (for a pronoun its
   co-specification), its thematic relation at the granularity of the default expected focus
-  list, whether it is a pronoun, and whether it is animate; agent position is the agent
-  relation, and the verb phrase is a phrase with the relation `verbPhrase`, which the examples
-  omit.
+  list, whether it is a pronoun, and whether it is animate; the verb phrase, which the examples
+  omit, is a phrase with the relation `verbPhrase`.
 * The pipeline processes interpreted sentences: the focusing algorithm consults the
-  co-specifications of the anaphora, and the pronoun rules order the candidates from which a
-  predicate standing for the syntactic anaphoric filters and the inference mechanism selects
-  the first. Anaphora in agent position are not consulted by the focusing algorithm when
-  others occur.
-* Only pronominal anaphora are modelled, so the steps of the focusing algorithm on
-  do-anaphora, focus sets, implicit specification and nominalization are omitted, and the
-  clause of step 3 on a definite noun phrase mentioning the focus is vacuous. A focus moved to
-  a stack member stacks the rejected focus above the remaining members. Possessives, plural
-  pronouns and the potential actor ambiguity condition are outside the model.
+  co-specifications of the anaphora, those in agent position only when no others occur, and the
+  pronoun rules order the candidates from which a predicate standing for the syntactic anaphoric
+  filters and the inference mechanism selects the first.
+* Only pronominal anaphora are modelled, so the steps of the focusing algorithm on do-anaphora,
+  focus sets, implicit specification and nominalization are omitted, and the clause of step 3 on
+  a definite noun phrase mentioning the focus is vacuous. Possessives, plural pronouns and the
+  potential actor ambiguity condition are outside the model.
+
+## Errata
+
+* The trace of the focusing algorithm at D35-2 prints the alternate focus list as just the verb
+  phrase, dropping the agent, although the algorithm initializes the list to the default
+  expected focus list and the traces of D26 and D14 keep their agents.
+* The traces' step numbers disagree with the algorithm and each other: retention is reported at
+  step 4 for D25-2 but at step 3 for D35-2, and the movement at D14-2a at step 5 in the figure
+  but at step 3 in the facing prose.
 
 ## References
 
@@ -102,11 +98,11 @@ namespace Phrase
 def Precedes (p q : Phrase E) : Prop := p.thematic ≤ q.thematic
 
 instance : DecidableRel (Precedes (E := E)) :=
-  λ p q => inferInstanceAs (Decidable (p.thematic ≤ q.thematic))
+  fun p q => inferInstanceAs (Decidable (p.thematic ≤ q.thematic))
 
-instance : Std.Total (Precedes (E := E)) := ⟨λ p q => le_total p.thematic q.thematic⟩
+instance : Std.Total (Precedes (E := E)) := ⟨fun p q => le_total p.thematic q.thematic⟩
 
-instance : IsTrans (Phrase E) Precedes := ⟨λ _ _ _ => le_trans⟩
+instance : IsTrans (Phrase E) Precedes := ⟨fun _ _ _ => le_trans⟩
 
 end Phrase
 
@@ -126,23 +122,25 @@ def expectedFocus : Option E :=
   | .isA e | .thereInsertion e => some e
 
 /-- The agent of the sentence, the phrase in agent position. -/
-def agent : Option E := (s.phrases.find? λ p => decide (p.thematic = .agent)).map (·.entity)
+def agent : Option E := (s.phrases.find? fun p => decide (p.thematic = .agent)).map (·.entity)
 
 /-- The potential actors: the animate phrases outside agent position. -/
 def potentialActors : List E :=
-  (s.phrases.filter λ p => p.animate && decide (p.thematic ≠ .agent)).map (·.entity)
+  (s.phrases.filter fun p => p.animate && decide (p.thematic ≠ .agent)).map (·.entity)
 
 /-- The potential focus list given the focus: the phrases outside agent position not
 co-specifying the focus, in the order of the default expected focus list. -/
 def potentialFoci [DecidableEq E] (focus : Option E) : List E :=
-  (s.defList.filter λ p => decide (p.thematic ≠ .agent ∧ some p.entity ≠ focus)).map (·.entity)
+  (s.defList.filter fun p => decide (p.thematic ≠ .agent ∧ some p.entity ≠ focus)).map (·.entity)
 
 /-- The anaphora the focusing algorithm consults: the pronouns outside agent position, or all
 the pronouns when none is outside agent position. -/
 def anaphora : List E :=
-  let nonAgent := s.phrases.filter λ p => p.pronoun && decide (p.thematic ≠ .agent)
+  let nonAgent := s.phrases.filter fun p => p.pronoun && decide (p.thematic ≠ .agent)
   ((if nonAgent.isEmpty then s.phrases.filter (·.pronoun) else nonAgent).map (·.entity))
 
+/-- The expected focus of a plain sentence is a phrase no later in the default expected focus
+ordering than any other phrase of the sentence. -/
 theorem expectedFocus_le {e : E} (hs : s.form = .plain) (h : s.expectedFocus = some e) :
     ∃ p ∈ s.phrases, p.entity = e ∧ ∀ q ∈ s.phrases, p.thematic ≤ q.thematic := by
   simp only [expectedFocus, hs] at h
@@ -151,7 +149,7 @@ theorem expectedFocus_le {e : E} (hs : s.form = .plain) (h : s.expectedFocus = s
   have hsort := List.pairwise_insertionSort Phrase.Precedes s.phrases
   rw [← defList, hl, List.pairwise_cons] at hsort
   refine ⟨p, (List.mem_insertionSort _).1 (by rw [← defList, hl]; exact List.mem_cons_self), rfl,
-    λ q hq => ?_⟩
+    fun q hq => ?_⟩
   have hq' : q ∈ p :: l := by rw [← hl]; exact (List.mem_insertionSort _).2 hq
   rcases List.mem_cons.1 hq' with h | hq'
   · exact h ▸ le_rfl
@@ -195,19 +193,20 @@ variable [DecidableEq E] (st : State E)
 
 /-- The confirmation of the current focus at sentence `t` by the anaphora `a` of the sentence:
 the focus is retained when an anaphor co-specifies it (step 4), moved to the first
-co-specified alternate (step 5) or else to a co-specified stack member (step 6) with the
-rejected focus stacked, and retained when no anaphor co-specifies any focus (step 10). -/
+co-specified alternate (step 5) or else to a co-specified stack member by popping the stack,
+the members above it discarded (step 6), the rejected focus stacked on a move, and retained
+when no anaphor co-specifies any focus (step 10). -/
 def confirm (t : ℕ) (a : List E) : State E :=
   match st.discourse with
   | none => st
   | some cf =>
     if cf.entity ∈ a then st
-    else match st.alternates.find? λ e => decide (e ∈ a) with
+    else match st.alternates.find? fun e => decide (e ∈ a) with
       | some e => { st with discourse := some ⟨e, t⟩, stack := cf.entity :: st.stack }
       | none =>
-        match st.stack.find? λ e => decide (e ∈ a) with
-        | some e => { st with discourse := some ⟨e, t⟩, stack := cf.entity :: st.stack.erase e }
-        | none => st
+        match st.stack.dropWhile fun e => decide (e ∉ a) with
+        | e :: rest => { st with discourse := some ⟨e, t⟩, stack := cf.entity :: rest }
+        | [] => st
 
 /-- The actor focus at sentence `t` is the agent of the sentence when it has one, the previous
 actor focus being stacked when it changes. -/
@@ -225,13 +224,13 @@ or rejects the discourse focus by its anaphora and sets the alternates to its po
 Both update the actor focus, the potential actors, and the last constituent. -/
 def step (s : Sentence E) : State E :=
   let t := st.time + 1
-  let st' := if st.time = 0 then { st with discourse := s.expectedFocus.map λ e => ⟨e, t⟩ }
+  let st' := if st.time = 0 then { st with discourse := s.expectedFocus.map fun e => ⟨e, t⟩ }
     else st.confirm t s.anaphora
   let focus := st'.discourse.map (·.entity)
   { st'.updateActor t s.agent with
     time := t
     alternates := if st.time = 0 then
-        (s.defList.map (·.entity)).filter λ e => decide (some e ≠ focus)
+        (s.defList.map (·.entity)).filter fun e => decide (some e ≠ focus)
       else s.potentialFoci focus
     potentialActors := s.potentialActors
     last := s.phrases.getLast?.map (·.entity) }
@@ -270,7 +269,7 @@ def candidates (pos : Position) : List E :=
 /-- The co-specification of a pronoun: the first candidate that the syntactic anaphoric filters
 and the inference mechanism, `ok`, accept. -/
 def cospecify (pos : Position) (ok : E → Prop) [DecidablePred ok] : Option E :=
-  (st.candidates pos).find? λ e => decide (ok e)
+  (st.candidates pos).find? fun e => decide (ok e)
 
 variable {st} {t : ℕ} {a : List E} {cf : Focus E}
 
@@ -285,21 +284,35 @@ theorem confirm_of_not_mem (h : st.discourse = some cf) (ha : cf.entity ∉ a)
   obtain ⟨e, he, hea⟩ := halt
   obtain ⟨e', he'⟩ := Option.isSome_iff_exists.1
     (List.find?_isSome.2 ⟨e, he, by simpa using hea⟩ :
-      (st.alternates.find? λ e => decide (e ∈ a)).isSome)
+      (st.alternates.find? fun e => decide (e ∈ a)).isSome)
   exact ⟨e', List.mem_of_find?_eq_some he', by simpa using List.find?_some he',
     by simp [confirm, h, ha, he'], by simp [confirm, h, ha, he']⟩
+
+theorem confirm_of_mem_stack (h : st.discourse = some cf) (ha : cf.entity ∉ a)
+    (halt : ∀ e ∈ st.alternates, e ∉ a) {p q : List E} {e : E}
+    (hs : st.stack = p ++ e :: q) (hp : ∀ x ∈ p, x ∉ a) (he : e ∈ a) :
+    (st.confirm t a).discourse = some ⟨e, t⟩ ∧ (st.confirm t a).stack = cf.entity :: q := by
+  have hfind : st.alternates.find? (fun e => decide (e ∈ a)) = none :=
+    List.find?_eq_none.2 fun x hx => by simpa using halt x hx
+  have hdrop : st.stack.dropWhile (fun x => !decide (x ∈ a)) = e :: q := by
+    rw [hs, List.dropWhile_append_of_pos fun x hx => by simpa using hp x hx]
+    simp [he]
+  constructor <;> simp [confirm, h, ha, hfind, hdrop]
 
 variable {pos : Position} {ok : E → Prop} [DecidablePred ok] {e : E}
 
 theorem cospecify_spec (h : st.cospecify pos ok = some e) : ok e ∧ e ∈ st.candidates pos :=
   ⟨by simpa using List.find?_some h, List.mem_of_find?_eq_some h⟩
 
+/-- The precedence clause of the animate discourse focus rule: a discourse focus established in
+an earlier sentence than the actor focus and accepted by the filters co-specifies a pronoun
+even in agent position. -/
 theorem cospecify_agent_of_precedence {d af : Focus E} (hd : st.discourse = some d)
     (haf : st.actor = some af) (hlt : d.since < af.since) (hok : ok d.entity)
     (hrec : ∀ e ∈ st.recency .agent, ¬ ok e) : st.cospecify .agent ok = some d.entity := by
   have hp : st.precedence = [d.entity] := by simp [precedence, hd, haf, hlt]
-  have hr : (st.recency .agent).find? (λ e => decide (ok e)) = none :=
-    List.find?_eq_none.2 λ e he => by simpa using hrec e he
+  have hr : (st.recency .agent).find? (fun e => decide (ok e)) = none :=
+    List.find?_eq_none.2 fun e he => by simpa using hrec e he
   simp [cospecify, candidates, hp, List.find?_append, hr, hok]
 
 end State
@@ -307,7 +320,7 @@ end State
 /-! ### The examples
 
 The entities of the sentences illustrating the expected focus algorithm and of the discourses
-D2, D7, D8, D9 and D14 of chapter 4 and D25 and D35 of chapter 2. -/
+D2, D7, D8, D9, D10 and D14 of chapter 4 and D25, D31 and D35 of chapter 2. -/
 
 /-- The entities of the examples. -/
 inductive Entity
@@ -316,9 +329,11 @@ inductive Entity
   | necklace | office | yesterday | grandmother
   | max | bloomingdales | ned | winston | trip | sneakers | mother
   | jeff | days | carl | exams | oscar | cape
+  | john | mike
   | myDog | theVet | hand | medicine
   | lastWeek | strawberries | refrigerator | foodCoop
   | alfredZohar | baseball | school | dinner | iceCreamCones
+  | wilbur | book | relativityTheory | quarks | fieldTheories | research
   deriving DecidableEq
 
 open Entity
@@ -352,8 +367,11 @@ namespace D2
 /-- (D2-1) Mary is giving a surprise party at Hilda's house. -/
 def a : Sentence Entity := ⟨.plain, [np mary .agent true, np party .theme, np hildasHouse .other]⟩
 
+-- The recency rule: *it* co-specifies Hilda's house, the last constituent of (D2-1), before
+-- the expected focus, the party.
 theorem it_hildasHouse :
-    (State.initial.step a).cospecify .subject (· ∈ [party, hildasHouse]) = some hildasHouse := by
+    ((State.initial.step a).cospecify .subject (· ∈ [party, hildasHouse]) = some hildasHouse) ↔
+      Examples.d2.judgment = .acceptable := by
   decide
 
 end D2
@@ -368,9 +386,12 @@ def a : Sentence Entity :=
 def b : Sentence Entity :=
   ⟨.plain, [pron speaker .agent, pron necklace .theme false, np grandmother .other true]⟩
 
+-- Both *it* co-specify the discourse focus, the necklace; the alternate office is never
+-- considered.
 theorem it_necklace :
-    (State.initial.step a).cospecify .other (· ∈ [necklace, office]) = some necklace ∧
-      (State.initial.run [a, b]).cospecify .subject (· ∈ [necklace, office]) = some necklace := by
+    ((State.initial.step a).cospecify .other (· ∈ [necklace, office]) = some necklace ∧
+      (State.initial.run [a, b]).cospecify .subject (· ∈ [necklace, office]) = some necklace) ↔
+      Examples.d7.judgment = .acceptable := by
   decide
 
 end D7
@@ -382,7 +403,11 @@ def a : Sentence Entity :=
   ⟨.plain, [np yesterday .other, np max .agent true, np bloomingdales .theme, np ned .other true,
     np winston .other true, np trip .other]⟩
 
-theorem he_max : (State.initial.step a).cospecify .agent (· ∈ [max, ned, winston]) = some max := by
+-- *He* co-specifies the actor focus: the discourse focus was established in the same sentence
+-- and takes no precedence.
+theorem he_max :
+    ((State.initial.step a).cospecify .agent (· ∈ [max, ned, winston]) = some max) ↔
+      Examples.d8.judgment = .acceptable := by
   decide
 
 end D8
@@ -396,8 +421,8 @@ def a : Sentence Entity := ⟨.plain, [pron speaker .agent, np jeff .theme true,
 complement co-specifying Jeff. -/
 def b : Sentence Entity := ⟨.plain, [np carl .agent true, pron jeff .agent, np exams .other]⟩
 
-/-- (D9-3) Oscar says he is sick. -/
-def c : Sentence Entity := ⟨.plain, [np oscar .agent true, pron jeff .theme]⟩
+/-- (D9-3) Oscar says he is sick, the pronoun again in agent position. -/
+def c : Sentence Entity := ⟨.plain, [np oscar .agent true, pron jeff .agent]⟩
 
 /-- The state after (D9-2). -/
 def afterB : State Entity := State.initial.run [a, b]
@@ -405,17 +430,39 @@ def afterB : State Entity := State.initial.run [a, b]
 /-- The state after (D9-3). -/
 def afterC : State Entity := afterB.step c
 
+-- The discourse focus stays Jeff while the actor focus moves from the speaker to Carl to
+-- Oscar.
 theorem foci : afterB.discourse = some ⟨jeff, 1⟩ ∧ afterB.actor = some ⟨carl, 2⟩ ∧
     afterC.discourse = some ⟨jeff, 1⟩ ∧ afterC.actor = some ⟨oscar, 3⟩ := by
   decide
 
+/-- Every *he* of D9 co-specifies Jeff: the discourse focus was established before any other
+phrase satisfying person, number and gender, so it takes precedence over each actor focus even
+in agent position. -/
 theorem he_jeff :
-    (State.initial.step a).cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff ∧
+    ((State.initial.step a).cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff ∧
       afterB.cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff ∧
-        afterC.cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff := by
+        afterC.cospecify .agent (· ∈ [jeff, carl, oscar]) = some jeff) ↔
+      Examples.d9.judgment = .acceptable := by
   decide
 
 end D9
+
+namespace D10
+
+/-- (D10-1) John called up Mike yesterday. -/
+def a : Sentence Entity :=
+  ⟨.plain, [np john .agent true, np mike .theme true, np yesterday .other]⟩
+
+-- (D10-2a): the discourse focus, Mike, and the actor focus, John, were established in the
+-- same sentence, so the discourse focus takes no precedence and *he* co-specifies the actor
+-- focus.
+theorem he_john :
+    ((State.initial.step a).cospecify .agent (· ∈ [john, mike]) = some john) ↔
+      Examples.d10.judgment = .acceptable := by
+  decide
+
+end D10
 
 namespace D14
 
@@ -434,15 +481,30 @@ def b' : Sentence Entity :=
 /-- The state after (D14-1). -/
 def afterA : State Entity := State.initial.step a
 
-theorem he : afterA.cospecify .agent (· ∈ [myDog, theVet]) = some myDog ∧
-    afterA.cospecify .agent (· ∈ [theVet]) = some theVet := by
+-- Fig. 18: the actor focus, the speaker, fails the filters for *he*, so the first potential
+-- actor, my dog, co-specifies it; the discourse focus, my dog, is rejected for *him* by
+-- inference, dogs having no hands, so the first alternate, the vet, co-specifies it.
+theorem cospecifications_a :
+    (afterA.cospecify .agent (· ∈ [myDog, theVet]) = some myDog ∧
+      afterA.cospecify .other (· ∈ [theVet]) = some theVet) ↔
+      Examples.d14a.judgment = .acceptable := by
   decide
 
-theorem him : afterA.cospecify .other (· ∈ [myDog, theVet]) = some myDog ∧
-    afterA.cospecify .other (· ∈ [theVet]) = some theVet := by
+-- Fig. 20: the discourse focus, my dog, is retained for *him*, a dog being injectable, while
+-- for *he* the actor focus and my dog are rejected, dogs giving no injections, and the vet
+-- co-specifies it.
+theorem cospecifications_b :
+    (afterA.cospecify .agent (· ∈ [theVet]) = some theVet ∧
+      afterA.cospecify .other (· ∈ [myDog, theVet]) = some myDog) ↔
+      Examples.d14b.judgment = .acceptable := by
   decide
 
-theorem foci : (afterA.step b).discourse = some ⟨theVet, 2⟩ ∧ (afterA.step b).stack = [myDog] ∧
+-- Fig. 19: the alternates after (D14-1) are the vet, yesterday and the speaker in the printed
+-- order; after (D14-2a) the discourse focus moves to the vet with my dog stacked and the
+-- actor focus to my dog with the speaker stacked; after (D14-2b) my dog is retained and the
+-- vet is the actor focus.
+theorem foci : afterA.alternates = [theVet, yesterday, speaker] ∧
+    (afterA.step b).discourse = some ⟨theVet, 2⟩ ∧ (afterA.step b).stack = [myDog] ∧
     (afterA.step b).actor = some ⟨myDog, 2⟩ ∧ (afterA.step b).actorStack = [speaker] ∧
       (afterA.step b').discourse = some ⟨myDog, 1⟩ ∧ (afterA.step b').actor = some ⟨theVet, 2⟩ := by
   decide
@@ -459,11 +521,41 @@ def a : Sentence Entity :=
 /-- (D25-2) They came from our food co-op and were unusually fresh. -/
 def b : Sentence Entity := ⟨.plain, [pron strawberries .theme false, np foodCoop .other]⟩
 
-theorem retained : (State.initial.run [a, b]).discourse = some ⟨strawberries, 1⟩ ∧
-    (State.initial.run [a, b]).stack = [] := by
+-- Fig. 8: *they* co-specifies the strawberries, the current focus, past the recency candidate,
+-- the refrigerator, which fails number agreement; step 4 retains the focus.
+theorem retained :
+    ((State.initial.step a).cospecify .subject (· ∈ [strawberries]) = some strawberries ∧
+      (State.initial.run [a, b]).discourse = some ⟨strawberries, 1⟩ ∧
+        (State.initial.run [a, b]).stack = []) ↔
+      Examples.d25.judgment = .acceptable := by
   decide
 
 end D25
+
+namespace D31
+
+/-- (D31-8) Anyway, I got it while I was working on the initial part of my research, *it* the
+book. -/
+def h : Sentence Entity :=
+  ⟨.plain, [pron speaker .agent, pron book .theme false, np research .other]⟩
+
+/-- The state when (D31-8) is processed: the discourse focus is the elementary field theories
+over the stack of Fig. 10, *quarks*, relativity theory, the book and Wilbur, with the
+alternates the potential foci of (D31-7) and the actor focus Wilbur, the agent of (D31-2). -/
+def beforeH : State Entity :=
+  ⟨7, some ⟨fieldTheories, 6⟩, some ⟨wilbur, 2⟩, [research], [], some research,
+    [quarks, relativityTheory, book, wilbur], []⟩
+
+/-- Processing (D31-8) pops the focus stack: *it* co-specifies the stacked book past the focus
+and the alternates, the intervening *quarks* and relativity theory are discarded, and the
+rejected field theories are stacked, leaving Wilbur one position down. -/
+theorem popped :
+    ((beforeH.step h).discourse = some ⟨book, 8⟩ ∧
+      (beforeH.step h).stack = [fieldTheories, wilbur]) ↔
+      Examples.d31.judgment = .acceptable := by
+  decide
+
+end D31
 
 namespace D35
 
@@ -482,10 +574,18 @@ def c : Sentence Entity :=
 /-- (D35-4) They tasted really good. -/
 def d : Sentence Entity := ⟨.plain, [pron iceCreamCones .theme false]⟩
 
-theorem movement : (State.initial.run [a, b, c]).discourse = some ⟨baseball, 1⟩ ∧
-    (State.initial.run [a, b, c]).alternates = [iceCreamCones] ∧
+/-- The movement of the discourse focus in D35: the baseball established from the verb
+complement of (D35-1) is confirmed through (D35-3); the *they* of (D35-4) co-specifies the
+alternate ice cream cones by the recency rule, the focus moves there and the baseball is
+stacked. -/
+theorem movement :
+    ((State.initial.run [a, b, c]).discourse = some ⟨baseball, 1⟩ ∧
+      (State.initial.run [a, b, c]).alternates = [iceCreamCones] ∧
+        (State.initial.run [a, b, c]).cospecify .subject
+          (· ∈ [alfredZohar, iceCreamCones]) = some iceCreamCones ∧
       (State.initial.run [a, b, c, d]).discourse = some ⟨iceCreamCones, 4⟩ ∧
-        (State.initial.run [a, b, c, d]).stack = [baseball] := by
+        (State.initial.run [a, b, c, d]).stack = [baseball]) ↔
+      Examples.d35.judgment = .acceptable := by
   decide
 
 end D35
