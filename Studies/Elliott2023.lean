@@ -96,9 +96,7 @@ theorem firstPart_donkey (hx : State.Novel s x) :
   · simp [update, negative_pred1_of_novel U hn] at hp
   · simp [update, positive_pred1_of_novel U hn] at hp
 
-/-- The updates of `U(x)` need not cover their input, as (31) is justified by: a point that does
-not define `x` lies below a point of the same world that does, so it subsists in the positive
-update and is in none of the three. -/
+-- §2.4.3, before (31)
 theorem not_cover_pred1 :
     ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
       (pred1 (fun _ _ ↦ True) 0).positive s ∪ (pred1 (fun _ _ ↦ True) 0).negative s ∪
@@ -357,8 +355,7 @@ theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set
     exact (mem_lowerClosure_pred2_randomAssign hs hx hyx (fun e a w ↦ ¬ R e a w) hp).2
       ⟨a, ha, e, h e⟩
 
-/-- Without uniformity the presupposition of `y` need not project: a point that does not define
-`y` survives the denial of `∃x R(x, y)` by lying below a point of the same world that does. -/
+-- (23)
 theorem not_negative_exists_pred2 :
     ∃ (W E : Type) (x y : ℕ) (R : E → E → W → Prop) (s : Set (Possibility W ℕ (Flat E))),
       (exists_ x (pred2 R x y)).negative s ≠
@@ -400,8 +397,7 @@ theorem not_egli_negative :
 
 /-! ### Assertion (§2.4.1) -/
 
-/-- Assertability does not make a variable familiar: a state with a point that defines `x` and a
-point of the same world that does not makes `P(x)` assertable. -/
+-- §2.4.1, before (26)
 theorem assertable_not_familiar :
     ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
       (pred1 (fun _ _ ↦ True) 0).Assertable s ∧ ¬ State.Familiar s 0 := by
