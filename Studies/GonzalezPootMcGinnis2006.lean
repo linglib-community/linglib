@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Agreement.Geometry
 public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 public import Linglib.Data.Examples.Readers
 
@@ -22,10 +23,9 @@ ergative person onto the auxiliary and number onto the verb, (39), crosses a wor
 first-person number is a person distinction, (42), so the auxiliary and prefix Vocabularies (43)
 and (44) recover every row (`aux_prefix_rows`) and derive the paradigm (39) that the paper aligns
 with Hebrew, Basque, and Georgian (`ergative_paradigm`, `first_person_paradigm`). The appendix's
-privative implementation over Harley and Ritter's features, (A1) to (A4), recovers the
-auxiliary and the prefix (`privative_aux_prefix`) but not the suffixes: without negative values,
-the nominative residue of a second-person plural object still matches *-en*, so (A4)
-over-generates on (20) (`privative_suffixes`).
+privative implementation over Harley and Ritter's geometry, (A1) to (A4), recovers the auxiliary
+and the prefix (`privative_aux_prefix`) and, with one item of (A4) moved, the suffixes
+(`privative_suffixes`).
 
 ## Implementation notes
 
@@ -35,6 +35,19 @@ first-person plural to carry [+PSE] and the singular not to, the reverse of the 
 gives the ergative auxiliary; the paper does not reconcile the two, so `matrix` follows (27) for
 nominative first person and (42) otherwise. The elsewhere *-Ø* is inserted but not counted among
 a row's overt suffixes.
+
+The appendix calls [Speaker] and [Addressee] dependents of [Participant] and "therefore more
+specific", so an item or argument mentioning a node here bears the nodes it depends on (`nodes`),
+and that specificity, not the listing of (A2) and (A3), decides between their items. The paper
+works no derivation through (A4). We read discharge the same way: an item that discharges
+[Addressee] discharges [Participant] with it. Were [Participant] left behind, the residue of a
+second-person plural object would match *-en*, which (20) lacks.
+
+## Errata
+
+(A4) lists *-éːš* above *-oʔon*, so strict scansion gives *-éːš -oʔon* where (19) has
+*-oʔon -éːš*. (27) lists them the other way round, and (A4) can too without disturbing the order
+the appendix requires of *-éːš* over *-etš*.
 
 ## References
 
@@ -49,7 +62,7 @@ a row's overt suffixes.
 
 namespace GonzalezPootMcGinnis2006
 
-open DistributedMorphology
+open DistributedMorphology Phi.Geometry
 open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 
@@ -203,40 +216,47 @@ theorem first_person_paradigm :
 
 /-! ### The appendix: a privative implementation -/
 
-/-- [harley-ritter-2002]'s privative features, with the case feature the appendix adds. -/
+/-- The nodes of [harley-ritter-2002]'s geometry, with the case feature the appendix adds. -/
 inductive Privative where
-  | participant
-  | speaker
-  | addressee
-  | group
+  | node (n : Node)
   | nom
   deriving DecidableEq, Repr
 
+/-- The features of the nodes `ns`: a dependent brings what it depends on. -/
+def nodes (ns : List Node) : Finset Privative := ((ns.flatMap Node.below).map .node).toFinset
+
 /-- The specifications (A1), with nominative case on a nominative argument. -/
 def privMatrix (p : Person) (n : numberSystem.values) (c : Case) : Finset Privative :=
-  let person : Finset Privative := match p with
-    | .first => numberSystem.elim {.participant} {.participant, .speaker} (n := n)
-    | .second =>
-      numberSystem.elim {.participant, .addressee} {.participant, .addressee, .group} (n := n)
-    | _ => numberSystem.elim ∅ {.group} (n := n)
-  person ∪ if c = .nom then {.nom} else ∅
+  let person : List Node := match p with
+    | .first => numberSystem.elim [.participant] [.speaker] (n := n)
+    | .second => numberSystem.elim [.addressee] [.addressee, .group] (n := n)
+    | _ => numberSystem.elim [] [.group] (n := n)
+  nodes person ∪ if c = .nom then {.nom} else ∅
 
 /-- The Agr1 Vocabulary Items (A2). -/
 def agr1' : List (VocabularyItem Privative String) :=
-  [{.speaker} ⟷ "k", {.addressee} ⟷ "a", {.participant} ⟷ "in", ∅ ⟷ "u"]
+  [nodes [.speaker] ⟷ "k", nodes [.addressee] ⟷ "a", nodes [.participant] ⟷ "in", ∅ ⟷ "u"]
 
 /-- The Agr2 Vocabulary Items (A3). -/
 def agr2' : List (VocabularyItem Privative String) :=
-  [{.speaker} ⟷ "", {.participant} ⟷ "w", ∅ ⟷ "j"]
+  [nodes [.speaker] ⟷ "", nodes [.participant] ⟷ "w", ∅ ⟷ "j"]
 
 /-- The Agr3 Vocabulary Items (A4). -/
 def agr3' : List (VocabularyItem Privative String) :=
-  [{.addressee, .group} ⟷ "éːš", {.addressee, .nom} ⟷ "etš", {.speaker, .nom} ⟷ "oʔon",
-    {.participant, .nom} ⟷ "en", {.group} ⟷ "oʔob", ∅ ⟷ "Ø"]
+  [nodes [.addressee, .group] ⟷ "éːš", insert .nom (nodes [.addressee]) ⟷ "etš",
+    insert .nom (nodes [.speaker]) ⟷ "oʔon", insert .nom (nodes [.participant]) ⟷ "en",
+    nodes [.group] ⟷ "oʔob", ∅ ⟷ "Ø"]
 
-/-- The overt verbal suffixes under (A4). -/
-def suffixes' (subj : Argument) (obj : Option Argument) : List String :=
-  (scansion agr3' ∅
+/-- (A4) with *-oʔon* moved to the top, as in (27). -/
+def agr3'' : List (VocabularyItem Privative String) :=
+  [insert .nom (nodes [.speaker]) ⟷ "oʔon", nodes [.addressee, .group] ⟷ "éːš",
+    insert .nom (nodes [.addressee]) ⟷ "etš", insert .nom (nodes [.participant]) ⟷ "en",
+    nodes [.group] ⟷ "oʔob", ∅ ⟷ "Ø"]
+
+/-- The overt verbal suffixes under a privative Agr3 list. -/
+def suffixes' (items : List (VocabularyItem Privative String)) (subj : Argument)
+    (obj : Option Argument) : List String :=
+  (scansion items ∅
     (privMatrix subj.1 subj.2 .erg :: (obj.map fun o ↦ [privMatrix o.1 o.2 .nom]).getD []))
     |>.filter (· ≠ "Ø")
 
@@ -245,12 +265,12 @@ theorem privative_aux_prefix :
       subsetPrinciple agr2' (privMatrix r.subj.1 r.subj.2 .erg) = verbPrefix r.subj := by
   decide
 
-/-- The privative Agr3 list (A4) wrongly inserts *-en* in the grammatical (20), which the binary
-[−Auth] of (27) blocks. -/
+/-- The printed (A4) misorders the suffixes of (19), and with *-oʔon* moved to the top it recovers
+every row as (27) does. -/
 theorem privative_suffixes :
-    suffixes' (.third, numberSystem.value .plural) (some (.second, numberSystem.value .plural)) =
-      ["éːš", "en", "oʔob"] ∧
-      ∃ r ∈ rows, r.judgment = .acceptable ∧ suffixes' r.subj r.obj ≠ r.suffixes := by
+    suffixes' agr3' (.second, numberSystem.value .plural)
+        (some (.first, numberSystem.value .plural)) = ["éːš", "oʔon"] ∧
+      ∀ r ∈ rows, r.judgment = .acceptable ↔ suffixes' agr3'' r.subj r.obj = r.suffixes := by
   decide
 
 end GonzalezPootMcGinnis2006
