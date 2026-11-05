@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
+public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -329,14 +330,28 @@ theorem mem_frames :
 
 /-! ### The network (§3.3) -/
 
+/-- The *drive*-crazy construction, the special sense of *drive* that occurs only in the
+resultative and "constrains the result-goal argument to mean 'crazy'" (p. 79, (2); Fig. 3.4): a
+partially lexically filled instance of the resultative, its verb slot filled by *drive* and its
+result slot by *crazy*. The constraint on the result-goal is semantic, which `Sem` does not
+represent. -/
+def driveCrazy : Construction Sem :=
+  { resultative with
+    form := (resultative.form.modify 1 fun s ↦ { s with filler := .fixed "drive" }).modify 3
+      fun s ↦ { s with filler := .fixed "crazy" } }
+
+example : driveCrazy.form.map (·.filler) =
+    [.open_ .NOUN, .fixed "drive", .open_ .NOUN, .fixed "crazy"] := by decide
+
 /-- `Node` enumerates the constructions of the book's network, the ditransitive in each of its
-senses and the other argument structure constructions. -/
+senses, the other argument structure constructions and the *drive*-crazy lexical construction. -/
 inductive Node where
   | ditransitive (m : TransferModality)
   | causedMotion
   | intransitiveMotion
   | resultative
   | conative
+  | driveCrazy
   deriving DecidableEq, Fintype
 
 /-- `construction n` is the construction at the node `n`; the senses of the ditransitive share its
@@ -347,6 +362,7 @@ def construction : Node → Construction Sem
   | .intransitiveMotion => intransitiveMotion
   | .resultative => resultative
   | .conative => conative
+  | .driveCrazy => driveCrazy
 
 theorem obligatory_ne_nil (n : Node) : (construction n).meaning.link.obligatory ≠ [] := by
   revert n; decide
@@ -367,8 +383,9 @@ theorem ditransitive_meaning_ne {m : TransferModality} (hm : m ≠ .actual) :
 forming a lattice, with individual constructions related by specific types of asymmetric normal
 mode inheritance links" (§3.7, p. 99). Each extension of the ditransitive inherits from the
 central sense by a polysemy link (pp. 75–77), intransitive motion from caused motion by a subpart
-link (p. 78), and the resultative from caused motion by a metaphorical link, change of state as
-change of location (pp. 81–84). The conative is in the book's inventory (p. 4) but in no link. -/
+link (p. 78), the resultative from caused motion by a metaphorical link, change of state as
+change of location (pp. 81–84), and *drive*-crazy from the resultative by an instance link
+(p. 79, Fig. 3.4). The conative is in the book's inventory (p. 4) but in no link. -/
 def network : Constructicon Node Sem where
   cxn := construction
   mothers
@@ -376,21 +393,34 @@ def network : Constructicon Node Sem where
     | .ditransitive _ => [(.ditransitive .actual, some .polysemy)]
     | .intransitiveMotion => [(.causedMotion, some .subpart)]
     | .resultative => [(.causedMotion, some .metaphorical)]
+    | .driveCrazy => [(.resultative, some .instance)]
     | _ => []
 
-/-- `Node.rank n` is the depth of `n` below the constructions it inherits from. -/
-def Node.rank : Node → ℕ
-  | .ditransitive .actual | .causedMotion | .conative => 0
-  | _ => 1
-
-instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
+instance : PartialOrder Node := network.partialOrder (by decide)
 
 instance : DecidableLE Node :=
-  network.decidableLE [.ditransitive .actual, .causedMotion] (by decide)
+  network.decidableLE [.ditransitive .actual, .causedMotion, .resultative] (by decide)
 
-/-- Every link respects its type: the extensions of the ditransitive have its form, and
-intransitive motion is a proper subpart of caused motion. -/
+/-- Every link respects its type: the extensions of the ditransitive have its form, intransitive
+motion is a proper subpart of caused motion, and *drive*-crazy refines the resultative slot for
+slot. -/
 theorem network_wellTyped : network.WellTyped := by decide
+
+/-- "The resultative construction is a subpart of the *drive* lexical construction" (p. 80,
+Fig. 3.5): the instance link entails the inverse subpart link, so the two constructions dominate
+each other, and the book's diagrams draw only the instance link. -/
+theorem resultative_subpart_driveCrazy :
+    LinkType.subpart.Admits resultative.form driveCrazy.form :=
+  LinkType.Admits.inverse_subpart <|
+    network_wellTyped .driveCrazy (.resultative, some .instance) (by decide) .instance rfl
+
+-- The links are asymmetric and proper: an open slot is not an instance of a filled one, the
+-- whole is not a subpart of its part, and no construction is a proper instance or proper
+-- subpart of itself.
+example : ¬ LinkType.instance.Admits resultative.form driveCrazy.form ∧
+    ¬ LinkType.subpart.Admits driveCrazy.form resultative.form ∧
+    ¬ LinkType.instance.Admits resultative.form resultative.form ∧
+    ¬ LinkType.subpart.Admits resultative.form resultative.form := by decide
 
 theorem isMother_resultative_iff (n : Node) :
     network.IsMother .resultative n ↔ n = .causedMotion := by

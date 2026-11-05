@@ -57,7 +57,7 @@ longer defeasible paths, floating conclusions and zombie arguments, do not arise
 compete when they are values of one attribute. [hudson-2010] also lets links compete when one
 link isA the other, and relations compete when they belong to one choice set. Neither kind of
 competition is modelled here. The taxonomy is a partial order rather than a preorder because isA
-is acyclic. The node types of the consumers are finite, and `partialOrderOfCovers` builds their
+is acyclic. The node types of the consumers are finite, and `partialOrderOfAcyclic` builds their
 orders from immediate isA edges.
 
 ## References

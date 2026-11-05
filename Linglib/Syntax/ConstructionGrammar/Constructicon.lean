@@ -8,48 +8,38 @@ module
 public import Linglib.Syntax.ConstructionGrammar.Basic
 public import Linglib.Core.Data.List.Forall2
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Logic.Nonmonotonic.Inheritance
 
 /-!
 # The constructicon
 
-A constructicon is a network of constructions ([goldberg-1995] §3.3; [diessel-2023]). Each node of
-a `Constructicon ι Sem` carries a construction. Its inheritance links run up from a construction
-to the constructions it inherits from, its mothers, and its horizontal links relate it to
-constructions at its own level of abstraction, which motivate it without passing information
-down: the links between syntactic alternates of [ten-wolde-2023], the motivation links of
-[goldberg-shirtz-2025].
-
-Inheritance is in the normal mode of [goldberg-1995] §3.3.1: "information is inherited from
-dominant nodes transitively as long as that information does not conflict with information
-specified by nodes lower in the inheritance hierarchy" (p. 73). That is default inheritance over
-the order the inheritance links generate (`DefaultInheritance.inherited`): a construction takes
-each property from the most specific constructions above it that specify one. A construction
-whose mothers conflict on a property inherits both values unless it specifies its own, which is
-why normal mode, unlike complete mode, admits several mothers. A study puts the order on its node
-type with `Constructicon.partialOrder`, from a rank that every inheritance link decreases, so the
-network is the directed acyclic graph the book requires (p. 73).
-
-The relation an inheritance link records constrains the forms it joins (§3.3.2): "the syntactic
-specifications of the central sense are inherited by the extensions" of a polysemy link (p. 75),
-a subpart is "a proper subpart of another construction" (p. 78), and an instance link exists
-"iff one construction is a more fully specified version of the other" (p. 79).
-`Constructicon.WellTyped` checks every inheritance link against its relation.
+This file defines the constructicon, the network in which construction grammar stores
+grammatical knowledge. Each node of a `Constructicon ι Sem` carries a construction; its
+inheritance links run up to the constructions it inherits from, its mothers, and its horizontal
+links relate it to constructions at its own level of abstraction, which motivate it without
+passing information down. The inheritance links of an acyclic network generate a partial order,
+Goldberg's directed acyclic graph of dominance, and default inheritance over that order is her
+normal mode. A link may record one of her four relations, each of which constrains the forms it
+joins, and a network is well typed when every inheritance link respects its relation.
 
 ## Main definitions
 
 * `LinkType`, `LinkType.Admits`: the relations an inheritance link records, and what each
   requires of the forms it joins
+* `Slot.Refines`: a slot specializes a slot of the construction it instantiates
 * `Constructicon`: constructions at nodes, with inheritance and horizontal links
 * `Constructicon.IsMother`, `Constructicon.partialOrder`, `Constructicon.decidableLE`: the
-  inheritance order
-* `Constructicon.WellTyped`: every inheritance link respects its relation
+  inheritance order of an acyclic network
+* `Constructicon.WellTyped`: every inheritance link respects the relation it records
+
+## Main results
+
+* `LinkType.Admits.inverse_subpart`: an instance link entails an inverse subpart link
 
 ## Implementation notes
 
-A slot of an instance refines the corresponding slot of the construction it instantiates when the
-two are equal or the latter is open; the categories of fixed lexemes are not checked. A
-metaphorical extension may change its form, so the relation places no constraint on forms.
+Every node carries its construction in full, Goldberg's real copying, so a link's constraint
+compares materialized forms; a horizontal link records a relation without being constrained by
+it, since motivation passes no information.
 
 ## References
 
@@ -65,7 +55,7 @@ namespace ConstructionGrammar
 
 /-! ### Link types -/
 
-/-- The semantic relation an inheritance link records: [goldberg-1995]'s four major link types
+/-- The relation an inheritance link records: [goldberg-1995]'s four major link types
 (§3.3.2, p. 75). -/
 inductive LinkType where
   /-- I_P: from a central sense to an extension, which inherits the syntax but differs in meaning
@@ -84,26 +74,42 @@ inductive LinkType where
 
 variable {Lex : Type*}
 
-/-- A slot refines another when the two are equal or the other is open: the lexically filled
-slots of an instance fill open slots of the construction it instantiates. -/
-def Slot.Refines (s t : Slot Lex) : Prop := s = t ∨ t.filler.IsOpen
+/-- A slot refines a slot of the construction it instantiates when the two are equal, or the
+latter is open and they differ at most in their fillers: an instance is a "partially lexically
+filled" version of its construction ([goldberg-1995] p. 79), so refinement only fills open
+fillers, keeping headedness, function and constraints; the category of the filling lexeme is not
+checked. -/
+def Slot.Refines (s t : Slot Lex) : Prop :=
+  s = t ∨ (t.filler.IsOpen ∧ { s with filler := t.filler } = t)
 
 instance [DecidableEq Lex] (s t : Slot Lex) : Decidable (s.Refines t) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- What a link type requires of the form `c` of the linked construction, given the form `m` of
-the construction it inherits from. -/
+the construction it inherits from: a polysemous extension keeps the central sense's form, a
+metaphorical extension may change its form freely, a subpart's slots sit inside the whole's up
+to refinement, and an instance refines its construction's slots one for one. -/
 def LinkType.Admits : LinkType → TypedForm Lex → TypedForm Lex → Prop
   | .polysemy, c, m => c = m
   | .metaphorical, _, _ => True
-  | .subpart, c, m => c.Sublist m ∧ c ≠ m
+  | .subpart, c, m => List.SublistForall₂ (fun s t ↦ Slot.Refines t s) c m ∧ c ≠ m
   | .instance, c, m => List.Forall₂ Slot.Refines c m ∧ c ≠ m
 
 instance [DecidableEq Lex] : ∀ (t : LinkType) (c m : TypedForm Lex), Decidable (t.Admits c m)
   | .polysemy, c, m => inferInstanceAs (Decidable (c = m))
   | .metaphorical, _, _ => .isTrue trivial
-  | .subpart, c, m => inferInstanceAs (Decidable (c.Sublist m ∧ c ≠ m))
+  | .subpart, c, m =>
+    inferInstanceAs (Decidable (List.SublistForall₂ (fun s t ↦ Slot.Refines t s) c m ∧ c ≠ m))
   | .instance, c, m => inferInstanceAs (Decidable (List.Forall₂ Slot.Refines c m ∧ c ≠ m))
+
+/-- "Because an instance link always entails an inverse subpart link, only instance links will
+be represented in the diagrams that follow" ([goldberg-1995] pp. 80–81): a form that refines
+another slot for slot contains it as a proper subpart, so an instance and its construction
+dominate each other, as Figure 3.5 draws *drive*-crazy and the resultative. The inverse link is
+derived rather than listed among a network's `mothers`, which keeps the network acyclic. -/
+theorem LinkType.Admits.inverse_subpart {c m : TypedForm Lex}
+    (h : LinkType.instance.Admits c m) : LinkType.subpart.Admits m c :=
+  ⟨List.sublistForall₂_iff.2 ⟨c, h.1.flip, List.Sublist.refl c⟩, h.2.symm⟩
 
 /-! ### The network -/
 
@@ -128,11 +134,13 @@ def IsMother (c m : ι) : Prop := m ∈ (N.mothers c).map Prod.fst
 instance [DecidableEq ι] : DecidableRel N.IsMother :=
   fun c m ↦ inferInstanceAs (Decidable (m ∈ (N.mothers c).map Prod.fst))
 
-/-- The inheritance order: `c ≤ m` when `c` inherits from `m` through a chain of links. A rank
-that every link decreases makes it antisymmetric. -/
-abbrev partialOrder (rank : ι → ℕ) (h : ∀ c m, N.IsMother c m → rank m < rank c) :
-    PartialOrder ι :=
-  partialOrderOfCovers N.IsMother rank h
+/-- The inheritance order of an acyclic network: `c ≤ m` when `c` inherits from `m` through a
+chain of links. Acyclicity is [goldberg-1995]'s own condition on the network, a directed acyclic
+graph of dominance (p. 73), and default inheritance over this order is her normal mode: a node
+takes each property from the most specific nodes above it that specify one
+(`DefaultInheritance.inherited`). -/
+abbrev partialOrder (h : ∀ c, ¬ Relation.TransGen N.IsMother c c) : PartialOrder ι :=
+  partialOrderOfAcyclic N.IsMother h
 
 /-- The inheritance order is decidable given a list of every mother. -/
 abbrev decidableLE [DecidableEq ι] (nodes : List ι) (h : ∀ c m, N.IsMother c m → m ∈ nodes)
