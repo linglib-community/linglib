@@ -4,6 +4,7 @@ public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Functor
 
 /-!
 # Composition modes
@@ -249,6 +250,9 @@ class FlattenAlternatives (M : Type → Type) where
 
 /-- A set of alternative values is its own flattening. -/
 @[reducible] def pureFlatten : FlattenAlternatives (fun α : Type ↦ α) := ⟨fun s ↦ s⟩
+
+/-- A set of sets of alternatives flattens to their union. -/
+instance : FlattenAlternatives SetM := ⟨fun y ↦ {z | ∃ s ∈ y.run, z ∈ s}⟩
 
 section Kleisli
 

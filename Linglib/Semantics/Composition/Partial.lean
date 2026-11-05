@@ -100,17 +100,13 @@ theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (T
 
 open scoped Assignment
 
-/-- The partial interpretation: a term's value is a possibly undefined partial denotation, an
-abstraction is the partial function undefined wherever its body is, and a composition is defined
-where its daughters are and the function among them is defined at its argument. -/
-def Interpretation.partial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) :
-    Interpretation K where
-  D ty := Part (Ty.PDomain E W ty S)
-  Val ty := Ty.PDomain E W ty S
-  const := I
-  var x := Part.some x
-  lam f := Part.some f
-  mode m := m.evalPartial
+/-- The partial interpretation, call-by-value at `Part`: a term's value is a possibly undefined
+partial denotation, an abstraction is the partial function undefined wherever its body is, and a
+composition is defined where its daughters are and the function among them is defined at its
+argument. -/
+abbrev Interpretation.partial {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) : Interpretation K :=
+  .kleisli Part I
 
 /-- The partial denotation of a term under a partial interpretation of the constants and an
 assignment. -/

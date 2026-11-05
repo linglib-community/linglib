@@ -46,7 +46,9 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   gloss of (69) needs and leaves implicit.
 * `Si.abstractChoice` is the first line of (74); the composition engine's set effect abstracts by
   the second, and resolving words before interpretation gives the layering of (80) and (81) for
-  lexical alternatives that do not depend on the assignment.
+  lexical alternatives that do not depend on the assignment. The engine's call-by-value
+  interpretation at the set monad abstracts by (73), and there the closure sits in the lexical
+  entry of the quantifier rather than in abstraction.
 
 ## Errata
 
@@ -67,6 +69,8 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 * (46), and point-wise composition with a closure inside the island (45) on (46) and (47).
 * (78), whose `wrote x y` puts the paper second where (69) and (82) put it first.
 * (79) and (82) on the composition engine, (88), and Appendix B.
+* The case against closure: with (51) or (79) at the set monad, an indefinite bound into an island
+  by a closing quantifier has no reading wider than the quantifier.
 
 ## References
 
@@ -782,6 +786,53 @@ theorem sSup_readings_nobodyMet_iff (g : Assignment E) :
   exact ⟨fun ⟨_, ⟨y, hy, hb⟩, h⟩ ↦ ⟨y, hy, hb.mpr h⟩, fun ⟨y, hy, h⟩ ↦ ⟨_, ⟨y, hy, rfl⟩, h⟩⟩
 
 end Engine
+
+/-! #### Abstraction into sets
+
+The abstraction of (73) takes a set of alternatives to a set of functions into sets, as the
+engine's call-by-value interpretation at the set monad abstracts, and the paper notes that such a
+result cannot compose point-wise with a quantifier over properties. A quantifier over properties
+whose values are sets of alternatives can instead flatten each value by quantifying over its
+alternatives, the closure the paper sets aside because binding into an island would then end the
+percolation of alternatives out of it; (77) then has its narrow-scope reading. -/
+
+section Closure
+
+open PhraseStructure
+
+variable (human phon : Set E) (met : E → E → Prop)
+
+/-- The lexicon of (77) at the set monad: *nobody* takes a property whose values are sets of
+alternatives, and quantifies over each value's alternatives. -/
+def closureLexicon : Word → Option (Σ ty, SetM (Ty.DomainM SetM E Unit ty))
+  | .nobody => some ⟨(.e ⇒ .t) ⇒ .t, pure fun P ↦ pure (¬ ∃ x ∈ human, True ∈ (P x).run)⟩
+  | .met => some ⟨.e ⇒ .e ⇒ .t, pure fun y ↦ pure fun x ↦ pure (met y x)⟩
+  | .aPhonologist => some ⟨.e, (phon : SetM E)⟩
+
+/-- (77) composes under the abstraction of (73) with no choice function, and flattening each
+value of the abstract by quantifying over its alternatives gives the narrow-scope reading. -/
+theorem realize_closure_nobodyMet (g : Assignment E) :
+    Tree.realize (.kleisli SetM (K := fun ty ↦ SetM (Ty.DomainM SetM E Unit ty)) fun c ↦ c)
+      individualIndices (closureLexicon human phon met) g nobodyMet =
+      some ⟨.t, (pure (¬ ∃ x ∈ human, ∃ y ∈ phon, met y x) : SetM Prop)⟩ := by
+  have ht : Tree.translate individualIndices (closureLexicon human phon met) nobodyMet =
+      some ⟨.t, .comp .functionalLeft
+        (.const (ty := (.e ⇒ .t) ⇒ .t) (pure fun P ↦ pure (¬ ∃ x ∈ human, True ∈ (P x).run)))
+        (.lam 0 (.comp .functionalRight (.var 0)
+          (.comp .functionalLeft
+            (.const (ty := .e ⇒ .e ⇒ .t) (pure fun y ↦ pure fun x ↦ pure (met y x)))
+            (.const (ty := .e) (phon : SetM E)))))⟩ := rfl
+  simp only [Tree.realize, ht, Option.map_some]
+  congr 2
+  simp only [Term.realize, Interpretation.kleisli, Mode.evalKleisli, pure_bind]
+  congr 1
+  refine propext (not_congr (exists_congr fun x ↦ and_congr_right fun _ ↦ ?_))
+  simp only [Function.update_self]
+  change True ∈ ⋃ fv ∈ (⋃ y ∈ phon, ({fun x ↦ ({met y x} : Set Prop)} : Set (E → Set Prop))),
+    fv x ↔ _
+  simp
+
+end Closure
 
 end Si
 
