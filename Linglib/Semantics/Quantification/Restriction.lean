@@ -128,6 +128,15 @@ theorem positiveRestriction_subset_restriction : Q.positiveRestriction ⊆ Q.res
 theorem negativeRestriction_subset_restriction : Q.negativeRestriction ⊆ Q.restriction :=
   Q.positiveRestriction_union_negativeRestriction ▸ subset_union_right
 
+theorem positiveRestriction_subset_sUnion : Q.positiveRestriction ⊆ ⋃₀ {S | Q S} := fun x hx ↦
+  let ⟨S, hS, hSx⟩ := mem_positiveRestriction_iff.1 hx
+  mem_sUnion.2 ⟨S, hS, by_contra fun h ↦ hSx (by rwa [sdiff_singleton_eq_self h])⟩
+
+/-- The members of a minimal set of a quantifier are in its positive restriction. -/
+theorem subset_positiveRestriction_of_minimal {S : Set α} (h : Minimal Q S) :
+    S ⊆ Q.positiveRestriction := fun x hx ↦
+  mem_positiveRestriction_iff.2 ⟨S, h.prop, fun h' ↦ (h.2 h' sdiff_subset hx).2 (mem_singleton x)⟩
+
 theorem negativeRestriction_eq_empty_of_monotone (hQ : Monotone Q) :
     Q.negativeRestriction = ∅ :=
   eq_empty_of_forall_notMem fun _ ⟨_, hS, h⟩ ↦ hS (hQ sdiff_subset h)

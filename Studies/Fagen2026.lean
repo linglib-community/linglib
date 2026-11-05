@@ -8,29 +8,25 @@ public import Studies.Spector2007
 # Fagen (2026): Order selection: the logical foundations of exhaustivity
 
 Fagen derives the exhaustive interpretation of an answer from its meaning and the question, with
-no theory of alternative sentences: following Schulz and van Rooij, an answer holds in the best
-worlds where it is true, and what varies is the order that ranks the worlds. The default order
-minimizes the question-property, which gives a positive answer such as *Agnes* its negative
-direction and unrestricted extent; under it exhaustive interpretation is [the minimal-worlds
-exhaustifier over the question's propositions](##Fagen2026.exh_ltDefault). A negative or mixed
-answer is only about its restriction, the intersection of the sets it lives on, which [the
-positive and negative restrictions make
-up](##Quantifier.positiveRestriction_union_negativeRestriction); the hybrid order minimizes the
-question-property within the first and maximizes it within the second, so that [nothing outside
-the restriction is concluded](##Fagen2026.mem_exh_ltHybrid_iff_of_inter).
-Positive skew, a restriction equal to the positive restriction, selects the default order. *Some
-of the linguists but not all of the computer scientists* is not positively skewed, and the hybrid
-order [makes exactly one linguist and all but one computer scientist
-attend](##Fagen2026.exh_selectedOrder_someButNotAll). Positive skew is exactly [Spector's
-quasi-positivity](##Fagen2026.quasiPositive_iff_positivelySkewed), which Spector stated over
-formulae of a propositional language.
+no alternative sentences: an answer holds in the best worlds where it is true, and what varies is
+the order that ranks them. The default order minimizes the question-property, as [the
+minimal-worlds exhaustifier](##Fagen2026.exh_ltDefault) does; the hybrid order minimizes it within
+an answer's positive restriction and maximizes it within the negative one, [concluding nothing
+outside](##Fagen2026.mem_exh_ltHybrid_iff_of_inter), so that *some of the linguists but not all
+of the computer scientists* [says that exactly one linguist and all but one computer scientist
+attended](##Fagen2026.exh_selectedOrder_someButNotAll). Fagen selects the default order by
+positive skew, [Spector's quasi-positivity](##Fagen2026.quasiPositive_iff_positivelySkewed), and
+derives the choice from Preserve Restriction; yet when something lies outside an answer's
+restriction, the default order preserves it [exactly when the answer's minimal sets cover
+it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does not ensure.
 
 ## Implementation notes
 
 * An answer is a quantifier `T` over individuals and the question a property `P : W → Set E` of
   worlds; exhaustive interpretation `exh P T r` takes the order `r` as a parameter, as (29) does.
 * The worked examples take the worlds to be all extensions of the question-property, as Fagen's
-  diagrams do.
+  diagrams do. There the restriction operators over property intensions that Preserve Restriction
+  applies to an exhaustified answer (25) are those of `exh id T r` as a quantifier.
 * A proposition of Spector's question-relative language, a set of valuations of the atoms, is a
   quantifier over the atoms, `quantifierOf`.
 
@@ -45,12 +41,27 @@ formulae of a propositional language.
   countable family of live-on sets; it holds only for finitely many, and fails for the cofinite
   sets of numbers (`not_livesOn_restriction_cofinite`). The appendix assumes a finite model, where
   the result holds (`Quantifier.livesOn_restriction`).
+* Order selection (12) gives every positively skewed answer the default order, and §3.2 derives
+  it from Preserve Restriction (26), but positive skew does not ensure that the default order
+  preserves the restriction. *All or none of the linguists* is positively skewed, (12) makes it say
+  that nobody attended (`exh_selectedOrder_allOrNone`), and once anyone else is present the
+  default order fails (26) for it (`not_preservesRestriction_allOrNone`), while the hybrid order
+  leaves it as it is (`exh_ltHybrid_allOrNone`). Fagen notes one exception, (31), and finds no
+  natural extensional answer that expresses it.
+* The orders distinguish exact quantities, so the default order makes *some of the cats* say that
+  exactly one cat, and nothing else, has the property (`exh_ltDefault_some`), the reading §1.1.5
+  calls impossible. Table 3.2 gives *some but not all of the cats* instead, and its entries for
+  *many*, *not all* and *not many* rest on the same coarser granularity, which the orders do not
+  provide; its default entry for *many cats* also omits that no non-cat has the property.
+* §3.1.2 states that a nonmonotonic quantifier is skewed both ways or not at all, but *Charmian and
+  exactly one of Agnes and Beatrice* is skewed positively and not negatively
+  (`positivelySkewed_not_negativelySkewed_oneOf`).
 
 ## TODO
 
-* Preserve Restriction (26), from which §3.2 derives order selection (12), is not formalized; nor
-  are answers to second-order questions (§2.4) or the conditions under which the dual order is
-  chosen (§3.3).
+* Reduce Markedness, and the choice of an order that preserves the restriction in any domain the
+  participants might assume (§3.2.1), are not formalized; nor are answers to second-order
+  questions (§2.4) or the conditions under which the dual order is chosen (§3.3).
 * The answers of Table 3.1 are not recorded as data.
 
 ## References
@@ -184,7 +195,68 @@ theorem mem_exh_ltHybrid_iff_of_inter [Finite E] {w w' : W}
       inter_comm]
   simp only [exh, mem_ofPred_eq, hT, ltHybrid_iff_of_inter_eq rfl h]
 
+theorem not_ltHybrid_of_eq (h : T.positiveRestriction = T.negativeRestriction) (v w : W) :
+    ¬ ltHybrid P T v w := fun ⟨hvw, hwv⟩ ↦ hwv <| by
+  simp only [leHybrid, ltPos, ltNeg, h] at hvw ⊢
+  exact hvw.symm
+
+-- p. 104: the hybrid order leaves an answer with equal restrictions as it is
+theorem exh_ltHybrid_of_eq (h : T.positiveRestriction = T.negativeRestriction) :
+    exh P T (ltHybrid P T) = {w | T (P w)} := by
+  ext w
+  simp [exh, not_ltHybrid_of_eq h]
+
 end Orders
+
+/-! ### Preserve Restriction (§3.2) -/
+
+section Preserve
+
+variable {T : Quantifier E} {S : Set E}
+
+variable (T) in
+/-- (26): an order preserves an answer's restriction when the restriction, the positive
+restriction or the negative restriction of the exhaustified answer is the answer's restriction. -/
+def PreservesRestriction (r : Set E → Set E → Prop) : Prop :=
+  restriction (· ∈ exh id T r) = T.restriction ∨
+    positiveRestriction (· ∈ exh id T r) = T.restriction ∨
+    negativeRestriction (· ∈ exh id T r) = T.restriction
+
+theorem mem_exh_ltDefault_id : S ∈ exh id T (ltDefault id) ↔ Minimal T S := by
+  simp only [exh, mem_ofPred_eq, ltDefault, id, ssubset_def, not_exists, not_and, not_not, Minimal]
+
+/-- When something lies outside an answer's restriction, the default order preserves the
+restriction exactly when the answer's minimal sets cover it. -/
+theorem preservesRestriction_ltDefault_iff [Finite E] (h : T.restriction ≠ univ) :
+    PreservesRestriction T (ltDefault id) ↔ ⋃₀ {S | Minimal T S} = T.restriction := by
+  have hexh : (· ∈ exh id T (ltDefault id)) = (Minimal T ·) :=
+    funext fun _ ↦ propext mem_exh_ltDefault_id
+  have hpos : positiveRestriction (Minimal T ·) = ⋃₀ {S | Minimal T S} :=
+    positiveRestriction_subset_sUnion.antisymm fun x hx ↦
+      let ⟨M, hM, hxM⟩ := mem_sUnion.1 hx
+      subset_positiveRestriction_of_minimal (Q := (Minimal T ·))
+        ⟨hM, fun _ hS hSM ↦ hM.2 hS.1 hSM⟩ hxM
+  rw [PreservesRestriction, hexh, hpos]
+  refine ⟨fun hP ↦ ?_, fun hU ↦ .inr (.inl hU)⟩
+  obtain ⟨y, hy⟩ := (ne_univ_iff_exists_notMem _).1 h
+  by_cases hA : ∃ M, Minimal T M
+  · obtain ⟨M, hM⟩ := hA
+    have hyM : y ∉ M := fun hyM ↦
+      hy (positiveRestriction_subset_restriction (subset_positiveRestriction_of_minimal hM hyM))
+    have hyN : y ∈ negativeRestriction (Minimal T ·) := mem_negativeRestriction_iff.2
+      ⟨M, hM, fun h' ↦ hyM (h'.2 hM.1 (subset_insert y M) (mem_insert y M))⟩
+    rcases hP with hP | hP | hP
+    · exact (hy (hP ▸ negativeRestriction_subset_restriction hyN)).elim
+    · exact hP
+    · exact (hy (hP ▸ hyN)).elim
+  · have hT : ∀ S, ¬ T S := fun S hS ↦
+      hA (let ⟨M, _, hM⟩ := exists_minimal_le_of_wellFoundedLT T S hS; ⟨M, hM⟩)
+    have hU : ⋃₀ {S | Minimal T S} = ∅ := sUnion_eq_empty.2 fun S hS ↦ absurd ⟨S, hS⟩ hA
+    rw [hU, eq_comm, ← positiveRestriction_union_negativeRestriction, union_empty_iff]
+    exact ⟨eq_empty_of_forall_notMem fun _ ⟨_, _, hS⟩ ↦ hT _ hS,
+      eq_empty_of_forall_notMem fun _ ⟨_, _, hS⟩ ↦ hT _ hS⟩
+
+end Preserve
 
 /-! ### Worked examples (§2.1.2, §2.3) -/
 
@@ -337,6 +409,99 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
           have : z ∈ C \ S := ⟨hzC, hzS⟩
           rwa [hc] at this
         exact hzc ▸ hyc ▸ hyv
+
+-- Table 3.2: under the default order *some of the `L`* says that exactly one `L` has the property
+theorem exh_ltDefault_some :
+    exh id (fun S ↦ (S ∩ L).Nonempty) (ltDefault id) = {S | ∃ l ∈ L, S = {l}} := by
+  ext S
+  rw [mem_exh_ltDefault_id]
+  constructor
+  · rintro ⟨⟨l, hlS, hlL⟩, hmin⟩
+    exact ⟨l, hlL, (hmin ⟨l, mem_singleton l, hlL⟩ (singleton_subset_iff.2 hlS)).antisymm
+      (singleton_subset_iff.2 hlS)⟩
+  · rintro ⟨l, hlL, rfl⟩
+    refine ⟨⟨l, mem_singleton l, hlL⟩, fun y ⟨z, hzy, _⟩ hy ↦ ?_⟩
+    obtain rfl : z = l := hy hzy
+    exact singleton_subset_iff.2 hzy
+
+/-- *All or none of the `L`*. -/
+def allOrNone (L : Set E) : Quantifier E := fun S ↦ L ⊆ S ∨ Disjoint S L
+
+theorem allOrNone_livesOn : (allOrNone L).LivesOn L := fun B ↦ by
+  simp only [allOrNone, subset_inter_iff, subset_rfl, true_and]
+  exact or_congr_right ⟨fun h ↦ h.mono_left inter_subset_right,
+    fun h ↦ disjoint_left.2 fun z hzB hzL ↦ disjoint_left.1 h ⟨hzL, hzB⟩ hzL⟩
+
+theorem positiveRestriction_allOrNone (hL : L.Nontrivial) :
+    (allOrNone L).positiveRestriction = L := by
+  refine (positiveRestriction_subset_restriction.trans
+    allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
+  obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
+  refine ⟨L \ {x}, fun h ↦ h.elim (fun h ↦ (h hx).2 (mem_singleton x))
+    fun h ↦ disjoint_left.1 h ⟨hzL, hzx⟩ hzL, .inl ?_⟩
+  rw [insert_sdiff_singleton]
+  exact subset_insert x L
+
+theorem negativeRestriction_allOrNone (hL : L.Nontrivial) :
+    (allOrNone L).negativeRestriction = L := by
+  refine (negativeRestriction_subset_restriction.trans
+    allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
+  obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
+  refine ⟨{x}, fun h ↦ h.elim (fun h ↦ hzx (h hzL)) fun h ↦ disjoint_left.1 h (mem_singleton x) hx,
+    .inr ?_⟩
+  rw [sdiff_self]
+  exact empty_disjoint L
+
+theorem positivelySkewed_allOrNone (hL : L.Nontrivial) : PositivelySkewed (allOrNone L) :=
+  positivelySkewed_iff.2
+    ((negativeRestriction_allOrNone hL).trans (positiveRestriction_allOrNone hL).symm).subset
+
+theorem minimal_allOrNone_iff {S : Set E} : Minimal (allOrNone L) S ↔ S = ∅ :=
+  ⟨fun h ↦ subset_empty_iff.1 (h.2 (.inr (empty_disjoint L)) (empty_subset S)),
+    by rintro rfl; exact ⟨.inr (empty_disjoint L), fun _ _ _ ↦ empty_subset _⟩⟩
+
+-- (12): *all or none of the `L`* takes the default order and says that nothing has the property
+theorem exh_selectedOrder_allOrNone (hL : L.Nontrivial) :
+    exh id (allOrNone L) (selectedOrder id (allOrNone L)) = {∅} := by
+  simp only [selectedOrder, positivelySkewed_allOrNone hL, ↓reduceIte]
+  ext S
+  rw [mem_exh_ltDefault_id, minimal_allOrNone_iff, mem_singleton_iff]
+
+-- (26): the default order does not preserve the restriction of *all or none of the `L`*
+theorem not_preservesRestriction_allOrNone [Finite E] {y : E} (hL : L.Nontrivial) (hy : y ∉ L) :
+    ¬ PreservesRestriction (allOrNone L) (ltDefault id) := by
+  have hR : (allOrNone L).restriction = L := allOrNone_livesOn.restriction_subset.antisymm
+    ((positiveRestriction_allOrNone hL).symm.subset.trans positiveRestriction_subset_restriction)
+  rw [preservesRestriction_ltDefault_iff
+    (by rw [hR]; exact (ne_univ_iff_exists_notMem L).2 ⟨y, hy⟩), hR]
+  simp only [minimal_allOrNone_iff, ofPred_eq_eq_singleton, sUnion_singleton]
+  exact hL.nonempty.ne_empty.symm
+
+-- (26): the hybrid order leaves *all or none of the `L`* as it is
+theorem exh_ltHybrid_allOrNone (hL : L.Nontrivial) :
+    exh id (allOrNone L) (ltHybrid id (allOrNone L)) = {S | allOrNone L S} :=
+  exh_ltHybrid_of_eq
+    ((positiveRestriction_allOrNone hL).trans (negativeRestriction_allOrNone hL).symm)
+
+-- §3.1.2: *Charmian and exactly one of Agnes and Beatrice* is skewed only positively
+theorem positivelySkewed_not_negativelySkewed_oneOf {a b c : E} (hab : a ≠ b) (hca : c ≠ a)
+    (hcb : c ≠ b) :
+    let T : Quantifier E := fun S ↦ c ∈ S ∧ (a ∈ S ↔ b ∉ S)
+    ¬ Monotone T ∧ ¬ Antitone T ∧ PositivelySkewed T ∧ ¬ NegativelySkewed T := by
+  intro T
+  have hT : T {a, c} := by simp [T, hab.symm, hcb.symm]
+  have hc : ¬ T {c} := by simp [T, hca.symm, hcb.symm]
+  have hpos : {a, b, c} ⊆ T.positiveRestriction :=
+    insert_subset_iff.2 ⟨⟨{c}, hc, hT⟩, insert_subset_iff.2 ⟨⟨{c}, hc, by simp [T, hab, hca.symm]⟩,
+      singleton_subset_iff.2 ⟨{a}, by simp [T, hca], by simp [T, hab.symm, hcb.symm]⟩⟩⟩
+  have hlive : T.LivesOn {a, b, c} := fun B ↦ by simp [T]
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_, positivelySkewed_iff.2
+    (negativeRestriction_subset_restriction.trans (hlive.restriction_subset.trans hpos)),
+    fun h ↦ ?_⟩
+  · simpa [T] using h (show ({a, c} : Set E) ⊆ {a, b, c} by simp [insert_subset_iff]) hT
+  · simpa [T] using h (empty_subset {a, c}) hT
+  · obtain ⟨S, -, hS⟩ := negativelySkewed_iff.1 h (hpos (show c ∈ ({a, b, c} : Set E) by simp))
+    exact hS.1.2 (mem_singleton c)
 
 -- p. 70: the hybrid order is not transitive with three linguists and three computer scientists
 theorem not_transitive_ltHybrid :
