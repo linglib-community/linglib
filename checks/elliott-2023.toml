@@ -112,6 +112,20 @@ unknown update to be empty, and `Assertable` follows the prose (study erratum).
 """
 
 [[item]]
+id       = "sec-2-4-1-familiarity"
+kind     = "result"
+label    = "§2.4.1, before (26)"
+decls    = ["Elliott2023.assertable_not_familiar"]
+relation = "refutes"
+notes    = """
+The paper says Heimian familiarity follows from (26): for a sentence with a free `x` to be
+assertable at `c`, `x` must be defined at every point of `c`. The Lean gives a state with a point
+of a world `w` that defines `x` and a point of `w` that does not, at which `P(x)`, with `P` true of
+everything, is assertable but `x` is not familiar: the point without `x` lies below the one with
+it, so it subsists in the positive update and the unknown update is empty.
+"""
+
+[[item]]
 id       = "ex-27"
 kind     = "definition"
 label    = "(27)"
@@ -181,6 +195,20 @@ nonempty domain.
 """
 
 [[item]]
+id       = "sec-2-3-projection"
+kind     = "result"
+label    = "§2.3, before (23)"
+decls    = ["Elliott2023.not_negative_exists_pred2"]
+relation = "refutes"
+notes    = """
+The paper says the denial of `∃x R(x, y)` keeps a point only if it already defines `y`, and that
+(23a) equals (23b) in general. The Lean gives a state with a point of a world `w` that defines `y`
+and a point of `w` that does not, with `R` empty: the point without `y` lies below an extension of
+the other, so it subsists in the negative update of the scope and (23a) keeps it, while (23b)
+does not. The equation holds at uniform states (ex-23).
+"""
+
+[[item]]
 id       = "ex-24"
 kind     = "datum"
 label    = "(24)"
@@ -209,9 +237,21 @@ decls    = ["Elliott2023.firstPart_donkey"]
 relation = "specializes"
 notes    = """
 Assumes `x` novel at `s`. States the first equality; the second is (22). The paper justifies the
-first by the updates of `U(x)` partitioning their input; that fails where points of one world
-differ in whether they define `x` (the undefined one subsists below the defined one, so is in no
-part), and novelty rules this out.
+first by the updates of `U(x)` partitioning their input, which fails in general
+(sec-2-4-3-partition) but holds where `x` is novel.
+"""
+
+[[item]]
+id       = "sec-2-4-3-partition"
+kind     = "result"
+label    = "§2.4.3, before (31)"
+decls    = ["Elliott2023.not_cover_pred1"]
+relation = "refutes"
+notes    = """
+The paper says the positive, negative and unknown updates of `U(x)` partition their input. The
+Lean gives a state with a point of a world `w` that defines `x` and a point of `w` that does not,
+with `U` true of everything: the point without `x` lies below the one with it, so it subsists in
+the positive update and is not in the unknown update, and it is in neither of the other two.
 """
 
 [[item]]
