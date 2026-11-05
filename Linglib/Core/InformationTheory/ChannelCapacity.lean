@@ -93,22 +93,12 @@ noncomputable def blahutArimoto [Nonempty C] (κ : Kernel C W) [IsFiniteKernel �
     [IsFiniteMeasure μ] : Measure C :=
   Kernel.ofWeights (fun (_ : Unit) c ↦ (κ c).geomMean fun w ↦ (κ†μ) w {c}) ()
 
-private theorem comp_absolutelyContinuous (κ : Kernel C W) (μ : Measure C) {q : Measure W}
-    (hq : ∀ c, μ {c} ≠ 0 → κ c ≪ q) : κ ∘ₘ μ ≪ q :=
-  Measure.absolutelyContinuous_of_forall_singleton fun w hw ↦ by
-    rw [Measure.comp_apply_singleton]
-    refine Finset.sum_eq_zero fun c _ ↦ ?_
-    obtain hc | hc := eq_or_ne (μ {c}) 0
-    · rw [hc, zero_mul]
-    · rw [hq c hc hw, mul_zero]
-
 private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilityMeasure ν]
     (f : C → ℝ) : (uniformOn Set.univ).freeEnergy f ν
       = ∑ c, ν.real {c} * (f c - log (ν.real {c})) - log (Fintype.card C) := by
-  have hac : ν ≪ uniformOn Set.univ := Measure.absolutelyContinuous_of_forall_singleton
-    fun c h ↦ absurd h (uniformOn_univ_singleton_ne_zero c)
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
-  rw [Measure.freeEnergy, integral_fintype .of_finite, toReal_klDiv_eq_sum_log_div hac,
+  rw [Measure.freeEnergy, integral_fintype .of_finite,
+    toReal_klDiv_eq_sum_log_div (absolutelyContinuous_uniformOn_univ ν),
     show log (Fintype.card C : ℝ) = ∑ c, ν.real {c} * log (Fintype.card C) by
       rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
     ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
@@ -169,8 +159,12 @@ theorem sum_mul_toReal_klDiv (q : Measure W) [IsProbabilityMeasure q]
         (fun _ _ ↦ by positivity) (Finset.mem_univ c)
     rw [← div_mul_div_cancel₀ hr, log_mul (div_ne_zero hk hr) (div_ne_zero hr hq)]
     ring
-  rw [measureMutualInfo_compProd_eq_sum,
-    toReal_klDiv_eq_sum_log_div (comp_absolutelyContinuous κ μ hq)]
+  have hac : κ ∘ₘ μ ≪ q := by
+    refine (Measure.AbsolutelyContinuous.comp_left (η := Kernel.const C q) μ
+      (ae_iff_of_countable.2 hq)).trans ?_
+    rw [Measure.const_comp]
+    exact Measure.smul_absolutelyContinuous
+  rw [measureMutualInfo_compProd_eq_sum, toReal_klDiv_eq_sum_log_div hac]
   calc ∑ c, μ.real {c} * (klDiv (κ c) q).toReal
       = ∑ c, ∑ w, μ.real {c} * ((κ c).real {w} * log ((κ c).real {w} / q.real {w})) := by
         refine Finset.sum_congr rfl fun c _ ↦ ?_
@@ -370,11 +364,9 @@ theorem eq_channelCapacity_iff_eq_tilted :
       rw [freeEnergy_uniformOn, measureMutualInfo_compProd_eq_sum_log, sub_add_cancel]
     have : IsProbabilityMeasure ((uniformOn Set.univ).tilted
         fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) := isProbabilityMeasure_tilted .of_finite
-    refine eq_tilted_of_freeEnergy_eq_cgf _ _ (Measure.absolutelyContinuous_of_forall_singleton
-      fun c h ↦ absurd h (uniformOn_univ_singleton_ne_zero c)) .of_finite .of_finite .of_finite
-      (le_antisymm (freeEnergy_le_cgf _ _ (Measure.absolutelyContinuous_of_forall_singleton
-        fun c h ↦ absurd h (uniformOn_univ_singleton_ne_zero c)) .of_finite .of_finite
-        .of_finite) ?_)
+    refine eq_tilted_of_freeEnergy_eq_cgf _ _ (absolutelyContinuous_uniformOn_univ μ) .of_finite
+      .of_finite .of_finite (le_antisymm (freeEnergy_le_cgf _ _
+        (absolutelyContinuous_uniformOn_univ μ) .of_finite .of_finite .of_finite) ?_)
     rw [← freeEnergy_tilted (uniformOn Set.univ) .of_finite .of_finite .of_finite]
     linarith [hfe ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)),
       measureMutualInfo_compProd_le_channelCapacity κ
