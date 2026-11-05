@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
-public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Reference.ReferentialSupport
 
 /-!
 # Paape and Vasishth (2026): Context Ameliorates but Does Not Eliminate Garden-Pathing
@@ -15,8 +15,7 @@ effect of context on attachment from an effect on reanalysis cost.
 
 ## Main definitions
 
-* `ReferentialContext.Supports`: a context supports an analysis when its definite refers and,
-  for a relative clause, the bare definite does not.
+* `Condition.IsMatch`: the context referentially supports the analysis's definite.
 * `tree`: the tree of Fig. 1, as a measure on routes.
 * `Costs.disambiguating`, `Costs.spillover`: the cost a route pays at each region.
 
@@ -73,6 +72,13 @@ inductive Referent where
   | otherWoman
   deriving DecidableEq, Fintype
 
+/-- The modifier of the definite under an analysis: under a relative-clause analysis the clause
+*that he'd risked his life for*, which holds of the woman the fireman rescued, and under the
+complement-clause analysis none. -/
+def Disambiguation.modifier : Disambiguation → Option (Referent → Prop)
+  | .complementClause => none
+  | .relativeClause | .unambiguousRelativeClause => some (· = .rescued)
+
 /-- A discourse introduces one woman, with a man, or two women. -/
 inductive ReferentialContext where
   /-- *An off-duty fireman was talking to a man and a woman.* -/
@@ -88,20 +94,6 @@ def Woman : ReferentialContext → Referent → Prop
   | .uniqueReferent, r => r = .rescued
   | .nonUniqueReferents, r => r ≠ .man
 
-/-- The restrictor of the definite is *woman* under the complement-clause analysis and *woman
-that he'd risked his life for* under a relative-clause analysis. -/
-def restrictor (c : ReferentialContext) : Disambiguation → Referent → Prop
-  | .complementClause => c.Woman
-  | .relativeClause | .unambiguousRelativeClause => fun r ↦ c.Woman r ∧ r = .rescued
-
-@[simp] theorem restrictor_complementClause (c : ReferentialContext) :
-    c.restrictor .complementClause = c.Woman := rfl
-
-/-- A context supports an analysis when the analysis's definite refers and, for a relative
-clause, the bare definite does not. -/
-def Supports (c : ReferentialContext) (d : Disambiguation) : Prop :=
-  (iota (c.restrictor d)).isSome ∧ (d.IsRelative → iota c.Woman = none)
-
 theorem iota_woman_isSome_iff (c : ReferentialContext) :
     (iota c.Woman).isSome ↔ c = .uniqueReferent := by
   rw [iota_isSome_iff]
@@ -113,12 +105,11 @@ theorem iota_woman_eq_none_iff (c : ReferentialContext) :
   rw [← Option.not_isSome_iff_eq_none, iota_woman_isSome_iff]
   cases c <;> simp
 
-theorem iota_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
-    (hd : d.IsRelative) : (iota (c.restrictor d)).isSome := by
+theorem iota_relativeClause_isSome (c : ReferentialContext) :
+    (iota (Modifier.intersective (· = .rescued) c.Woman)).isSome := by
   have hw : c.Woman .rescued := by cases c <;> simp [Woman]
   rw [iota_isSome_iff]
-  cases d <;> simp only [Disambiguation.IsRelative] at hd <;>
-    exact ⟨.rescued, ⟨hw, rfl⟩, fun _ h ↦ h.2⟩
+  exact ⟨.rescued, ⟨rfl, hw⟩, fun _ h ↦ h.1⟩
 
 end ReferentialContext
 
@@ -130,18 +121,20 @@ structure Condition where
   context : ReferentialContext
   deriving DecidableEq
 
-/-- A condition matches when its context supports its disambiguation. -/
-def Condition.IsMatch (c : Condition) : Prop := c.context.Supports c.disambiguation
+/-- A condition matches when its context referentially supports the definite *the woman* with the
+modifier of its disambiguation. -/
+def Condition.IsMatch (c : Condition) : Prop :=
+  ReferentiallySupported c.context.Woman c.disambiguation.modifier
 
 /-- A condition matches exactly when its context has two women and its disambiguation is a
 relative clause, or one woman and a complement clause. -/
 theorem Condition.isMatch_iff (c : Condition) :
     c.IsMatch ↔ (c.context = .nonUniqueReferents ↔ c.disambiguation.IsRelative) := by
   obtain ⟨d, x⟩ := c
-  cases d <;> cases x <;> simp [Condition.IsMatch, ReferentialContext.Supports,
-    Disambiguation.IsRelative, ReferentialContext.iota_woman_isSome_iff,
-    ReferentialContext.iota_woman_eq_none_iff,
-    ReferentialContext.iota_restrictor_isSome]
+  cases d <;> cases x <;> simp [Condition.IsMatch, ReferentiallySupported,
+    Disambiguation.modifier, Disambiguation.IsRelative,
+    ReferentialContext.iota_woman_isSome_iff, ReferentialContext.iota_woman_eq_none_iff,
+    ReferentialContext.iota_relativeClause_isSome]
 
 /-! ### The processing tree -/
 
