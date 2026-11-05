@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.EngelhardtEtAl2006
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Statistics.EngelhardtEtAl2006
 public import Linglib.Fragments.English.Adpositions
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.ReferentialSupport
@@ -13,28 +14,24 @@ public import Mathlib.Data.Fin.VecNotation
 
 This file formalizes the maxim of Quantity for the definite descriptions in Engelhardt, Bailey and
 Ferreira's instructions. A description under-describes an object when *the* with it does not pick
-the object out, and over-describes it when it has a modifier its bare noun does not need. With one
-apple only *put the apple in the box* [observes the maxim](##observesQuantity_instructions), and
-[with *the other towel* for *the towel*](##observesQuantity_instructions2b) the instructions
-differ only in over-describing the apple. [*The towel* is undefined](##identifies_towel) in the
-display, not among the places the apple can be moved to. [Referential support is the
-maxim](##referentiallySupported_iff_exists_observesQuantity), so with one apple it [takes *on the
-towel* as the destination](##supports_oneReferent_iff).
+the object out, and over-describes it when it has a modifier its bare noun does not need. Speakers
+[over-describe but do not under-describe](##speakers_overDescribe), and listeners [rate only the
+under-descriptions significantly lower](##listeners_penalize_underDescription). [*The towel* is
+undefined](##identifies_towel) in the display, not among the places the apple can be moved to.
+[Referential support is the maxim](##referentiallySupported_iff_exists_observesQuantity), so with
+one apple it [takes *on the towel* as the destination](##supports_oneReferent_iff).
 
 ## Implementation notes
 
 * *The towel* in *on the towel* is read as some towel, since every display has two.
-* The production rates, ratings and fixations are not formalized.
+* The fixations of Experiment 3 are not formalized.
 
 ## Errata
 
 * p. 561 places the over-descriptions in "the former", two-referent, condition; [they are in the
   one-referent display](##observesQuantity_instructions).
-
-## TODO
-
-* Pair the ratings of Experiments 2 and 2b with `Instruction.ObservesQuantity` from a
-  `Data/Statistics` table.
+* pp. 554 and 570 say listeners did not rate over-descriptions worse, but Experiment 2 [rated (6)
+  below (4) beyond the interval](##overDescribes_rated_lower_exp2) (p. 563).
 
 ## References
 
@@ -172,9 +169,14 @@ structure Instruction where
   destination : Description
   deriving DecidableEq
 
+/-- The target description of an instruction type, *the apple* or *the apple on the towel*. -/
+def InstructionType.target : InstructionType → Description
+  | .bare => ⟨.apple, none⟩
+  | .modified => ⟨.apple, some (.pp English.Adpositions.on .towel)⟩
+
 /-- The target descriptions as named in the rows. -/
 def targetTable : List (String × Description) :=
-  [("bare", ⟨.apple, none⟩), ("modified", ⟨.apple, some (.pp English.Adpositions.on .towel)⟩)]
+  [("bare", InstructionType.bare.target), ("modified", InstructionType.modified.target)]
 
 /-- The destination descriptions as named in the rows. -/
 def destinationTable : List (String × Description) :=
@@ -211,23 +213,81 @@ def Instruction.ObservesQuantity (D : Display) (ins : Instruction) : Prop :=
 instance (D : Display) (ins : Instruction) : Decidable (ins.ObservesQuantity D) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Of the instructions of Table 1, only *put the apple in the box* observes the maxim in the
-one-referent display, and in the two-referent display those with a modified target do (p. 561). -/
+-- Table 1, p. 561
 theorem observesQuantity_instructions :
     ∀ ins ∈ instructions,
       (ins.ObservesQuantity oneReferent ↔ ins = ⟨⟨.apple, none⟩, ⟨.box, none⟩⟩) ∧
         (ins.ObservesQuantity twoReferent ↔ ins.target.modifier.isSome) := by
   decide
 
-/-- In the one-referent display each instruction of Experiment 2b identifies its target and
-observes the maxim for its destination, and it over-describes the target exactly when the target
-is modified (p. 564). -/
+-- p. 564
 theorem observesQuantity_instructions2b :
     ∀ ins ∈ instructions2b,
       Identifies oneReferent univ 0 ins.target ∧
         ObservesQuantity oneReferent univ ins.goal ins.destination ∧
           (OverDescribes oneReferent univ 0 ins.target ↔ ins.target.modifier.isSome) := by
   decide
+
+/-! ### The findings -/
+
+/-- A test finds its effect when it prints p-values below .05 by subjects, by items and for
+min F'. -/
+def Test.Found (t : Test) : Prop :=
+  (∃ p ∈ t.p1, p.Significant (1 / 20)) ∧ (∃ p ∈ t.p2, p.Significant (1 / 20)) ∧
+    ∃ p ∈ t.pMin, p.Significant (1 / 20)
+
+instance : DecidablePred Test.Found := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The paper finds an effect in an experiment, in a context type or over both, when it prints a
+test of the effect that finds it. -/
+def Found (x : Experiment) (e : Effect) (c : Option ContextType) : Prop :=
+  ∃ t ∈ tests, t.experiment = x ∧ t.effect = e ∧ t.context = c ∧ t.Found
+
+instance (x : Experiment) (e : Effect) (c : Option ContextType) : Decidable (Found x e c) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A comparison's difference of Experiment 2's mean ratings exceeds its confidence interval. -/
+def Comparison.Exceeds (c : Comparison) : Prop :=
+  (exp2Ratings c.lowerInstruction c.lowerLocation).mean.toRat + c.interval.toRat <
+    (exp2Ratings c.higherInstruction c.higherLocation).mean.toRat
+
+instance (c : Comparison) : Decidable c.Exceeds := inferInstanceAs (Decidable (_ < _))
+
+/-- The modified target over-describes the apple in the one-referent display, and Experiment 1's
+speakers produced it on 30% of the trials there, significantly more than none; the bare target
+under-describes the apple in the two-referent display, where they produced the modified target
+significantly more often, on 98% (p. 560). -/
+theorem speakers_overDescribe :
+    OverDescribes oneReferent univ 0 InstructionType.modified.target ∧
+      0 < (production .oneReferent).modifiedTarget.toRat ∧
+      Found .exp1 .aboveZero (some .oneReferent) ∧
+      ¬ Identifies twoReferent univ 0 InstructionType.bare.target ∧
+      (production .oneReferent).modifiedTarget.toRat <
+        (production .twoReferent).modifiedTarget.toRat ∧
+      Found .exp1 .context none := by
+  decide +kernel
+
+/-- Experiment 2's listeners rated the bare target, which under-describes the apple in the
+two-referent display, significantly below the modified one there; Experiment 2b's listeners rated
+each instruction whose target over-describes the apple in the one-referent display below the
+instruction with the bare target and the same location type, but not significantly (pp. 563–564,
+Table 4). -/
+theorem listeners_penalize_underDescription :
+    ¬ Identifies twoReferent univ 0 InstructionType.bare.target ∧
+      (exp2TwoReferentRatings .bare).mean.toRat < (exp2TwoReferentRatings .modified).mean.toRat ∧
+      Found .exp2 .instruction (some .twoReferent) ∧
+      (∀ ins ∈ instructions2b, ¬ ins.ObservesQuantity oneReferent ↔
+        OverDescribes oneReferent univ 0 ins.target) ∧
+      (∀ l, (exp2bRatings .modified l).mean.toRat < (exp2bRatings .bare l).mean.toRat) ∧
+      ¬ Found .exp2b .instruction (some .oneReferent) := by
+  decide +kernel
+
+-- p. 563; see Errata
+theorem overDescribes_rated_lower_exp2 :
+    OverDescribes oneReferent univ 0 InstructionType.modified.target ∧
+      ∃ c ∈ comparisons, c.higherInstruction = .bare ∧ c.higherLocation = .different ∧
+        c.lowerInstruction = .modified ∧ c.lowerLocation = .different ∧ c.Exceeds := by
+  decide +kernel
 
 /-! ### The Referential Model -/
 
@@ -255,8 +315,8 @@ inductive Attachment
 
 /-- The description of the target under an analysis. -/
 def Attachment.target : Attachment → Description
-  | .location => ⟨.apple, none⟩
-  | .modifier => ⟨.apple, some (.pp English.Adpositions.on .towel)⟩
+  | .location => InstructionType.bare.target
+  | .modifier => InstructionType.modified.target
 
 /-- The Referential Model takes *on the towel* as the location in the one-referent display
 (pp. 555–556). -/
