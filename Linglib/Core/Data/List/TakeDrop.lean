@@ -15,8 +15,7 @@ element of a prefix or suffix is an entry of the original list at an index on th
 the cut. Two lists have the same `take n` exactly when they agree at every index below `n`
 (`List.take_eq_take_iff_getElem?`), and the same `drop n` exactly when they agree from `n` on
 (`List.drop_eq_drop_iff_getElem?`); the extensionality lemmas `List.ext_take_getElem?` and
-`List.ext_drop_getElem?` are their reverse directions. Also `List.take_append_take`: truncating
-the right operand before taking a prefix is a no-op. [UPSTREAM] candidates for
+`List.ext_drop_getElem?` are their reverse directions. [UPSTREAM] candidates for
 `Init/Data/List/Nat/TakeDrop.lean`, beside their `getElem` counterparts and `List.ext_getElem?`.
 -/
 
@@ -58,10 +57,6 @@ theorem take_eq_take_of_le {m : ℕ} (h : l₁.take m = l₂.take m) (hnm : n �
 theorem drop_eq_drop_of_le {m : ℕ} (h : l₁.drop m = l₂.drop m) (hmn : m ≤ n) :
     l₁.drop n = l₂.drop n := by
   rw [← Nat.add_sub_cancel' hmn, ← drop_drop, h, drop_drop]
-
-theorem take_append_take (n : ℕ) (l₁ l₂ : List α) :
-    (l₁ ++ l₂.take n).take n = (l₁ ++ l₂).take n := by
-  simp [take_append, take_take]
 
 theorem lt_length_of_mem_drop (h : a ∈ l.drop n) : n < l.length :=
   Nat.not_le.mp (drop_eq_nil_iff.not.mp (ne_nil_of_mem h))

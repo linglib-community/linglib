@@ -40,10 +40,12 @@ conversational principles.
 ## Implementation notes
 
 `atMostAsComplex` is the paper's (19), reachability by finitely many operations, over a source
-given as an argument. The paper draws the replacements that make `ψ` at most as complex as `φ` from
-the substitution source of `φ`, so its equal complexity uses each tree's own source for one
-direction, where `equalComplexity` uses one source for both. The `inBind` constructor extends the
-operations into the body of a binder, which the paper's trees lack.
+given as an argument. Over `substitutionSource`, which holds the tree itself, it bounds no size: a
+tree with a same-category constituent can replace that constituent by the whole. The paper draws
+the replacements that make `ψ` at most as complex as `φ` from the substitution source of `φ`, so
+its equal complexity uses each tree's own source for one direction, where `equalComplexity` uses
+one source for both. The `inBind` constructor extends the operations into the body of a binder,
+which the paper's trees lack.
 
 ## References
 

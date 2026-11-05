@@ -204,9 +204,8 @@ variable {m : Meaning (Set W)} {w : W}
 @[simp]
 theorem mem_strengthen_strong :
     w ∈ m.strengthen.strong ↔ w ∈ m.strong ∧ ∀ a ∈ m.alternatives, a ⊂ m.ordinary → w ∉ a := by
-  simp only [strengthen, mem_inter_iff, mem_excludes, mem_Iio, and_imp]
-  exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦ forall_congr' fun ha ↦
-    ⟨fun h hw ↦ ha.not_ge (h hw), fun h hw ↦ (h hw).elim⟩
+  simp only [strengthen, mem_inter_iff]
+  exact and_congr_right fun _ ↦ Exhaustification.mem_excludes_inter_Iio
 
 theorem strengthen_strong_ssubset (hsc : m.strong ⊆ m.ordinary)
     (h : ∃ a ∈ m.alternatives, a ⊂ m.ordinary ∧ a.Nonempty) :

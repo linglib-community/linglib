@@ -57,8 +57,9 @@ members regenerate it (`Language.isStrictlyLocal_iff_language_image`).
 
 Grammars are arbitrary sets over an arbitrary alphabet rather than finite sets over a finite one.
 Only star-freeness assumes a finite alphabet (`Language.IsStrictlyLocal.isStarFree`). Learning from
-positive data needs finite grammars: at a fixed width the languages of arbitrary grammars are identifiable in the limit
-only over a finite alphabet (`HeinzKasprzikKotzing2012.identifiable_isStrictlyLocal_iff`).
+positive data needs finite grammars: at a fixed width the languages of arbitrary grammars are
+identifiable in the limit only over a finite alphabet
+(`HeinzKasprzikKotzing2012.identifiable_isStrictlyLocal_iff`).
 
 ## References
 

@@ -189,8 +189,7 @@ theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
   have key : [Syl.unstressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈
       stressFinalCulminative ↔
       [Syl.stressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈ stressFinalCulminative :=
-    iff_of_eq (h (by rw [Edge.takeAt_right_append_of_le_length _ _ hlen,
-      Edge.takeAt_right_append_of_le_length _ _ hlen]))
+    iff_of_eq (h ((rtake_append_of_le_length hlen).trans (rtake_append_of_le_length hlen).symm))
   have ha : [Syl.unstressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈
       stressFinalCulminative :=
     ⟨(suffix_append (replicate k Syl.unstressed) [Syl.stressed]).trans

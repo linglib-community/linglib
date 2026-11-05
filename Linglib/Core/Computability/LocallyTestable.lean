@@ -74,16 +74,10 @@ private theorem infix_append_of_kTestVector_eq (hu : u.kTestVector k = u'.kTestV
   · exact ((hvf f).1 ⟨h, hk⟩).1.trans (suffix_append _ _).isInfix
   · have := length_pos_iff.2 h₁
     have := length_pos_iff.2 h₂
-    have := h₃.length_le
-    have := h₄.length_le
     rw [length_append] at hk
-    refine infix_append_iff.2 (.inr (.inr ⟨l₁, l₂, rfl, ?_, ?_⟩))
-    · have h : l₁ <:+ u.rtake (k - 1) :=
-        suffix_of_suffix_length_le h₃ (rtake_suffix _ _) (by simp only [length_rtake]; omega)
-      exact (hur ▸ h).trans (rtake_suffix _ _)
-    · have h : l₂ <+: v.take (k - 1) :=
-        prefix_of_prefix_length_le h₄ (take_prefix _ _) (by simp only [length_take]; omega)
-      exact (hvl ▸ h).trans (take_prefix _ _)
+    exact infix_append_iff.2 (.inr (.inr ⟨l₁, l₂, rfl,
+      (suffix_rtake_iff.1 (hur ▸ suffix_rtake_iff.2 ⟨h₃, by omega⟩)).1,
+      (prefix_take_iff.1 (hvl ▸ prefix_take_iff.2 ⟨h₄, by omega⟩)).1⟩))
 
 /-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector. -/
 theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.List.DropRight
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -160,7 +161,7 @@ def divisions (c : Choices) : List Number :=
 
 /-- The facultative values are the last choices. -/
 def facultativeValues (c : Choices) : List Number :=
-  c.divisions.drop (c.divisions.length - c.facultative)
+  c.divisions.rtake c.facultative
 
 /-- The substrate's system. -/
 def toSystem (c : Choices) : Number.System :=
@@ -168,7 +169,7 @@ def toSystem (c : Choices) : Number.System :=
     facultative := c.facultativeValues.toFinset }
 
 theorem facultativeValues_suffix (c : Choices) : c.facultativeValues <:+ c.divisions :=
-  List.drop_suffix _ _
+  List.rtake_suffix _ _
 
 theorem toSystem_determinateInitial (c : Choices) : c.toSystem.DeterminateInitial := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c

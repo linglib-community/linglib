@@ -28,8 +28,8 @@ decides it](##initialIdentity_not_factorsThrough). English speakers carry doubli
 * The ban is the paper's generalization over the first two consonants of a root. In
   [mccarthy-1981]'s analysis it follows from the OCP on the root tier, which makes *smm* a
   biliteral root, and rightward spreading (`McCarthy1981.consonantism_biliteral`).
-* The model of token co-occurrence counts the 2-factors of a form among those of a lexicon,
-  without word boundaries, so that every factor of *kathath* and *thathak* contains /θ/; with
+* The model of token co-occurrence counts the adjacent pairs of a form among those of a lexicon,
+  without word boundaries, so that every pair of *kathath* and *thathak* contains /θ/; with
   boundaries it could still separate them by the position of the attested /k/. The paper adds that
   the place feature of /θ/, a wide tongue-tip constriction, is unattested in Hebrew too. The
   PHOIBLE features lack it, but `pairCount_eq_zero` holds for tokens of any type.
