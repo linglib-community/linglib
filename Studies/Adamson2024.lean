@@ -190,27 +190,34 @@ theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = .teop →
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
-/-- The features of the article, copied from DP by concord. -/
+/-- The features the article is sensitive to: [animate] and [pl], which it has from DP by concord,
+and [proper], which it reads on the noun. -/
 inductive ArticleFeature where
   | animate
   | pl
   | proper
   deriving DecidableEq, Repr
 
-/-- The article vocabulary (32). -/
+/-- The article vocabulary (32). The proprial item reads [proper] as context, which (32) gives no
+position; the article is prenominal, so the position is the terminal to its right. -/
 def articles : List (VocabularyItem ArticleFeature Article) :=
-  [{.animate, .pl} ⟷ .o, {.pl} ⟷ .a, {.animate, .proper} ⟷ .e, {.animate} ⟷ .a, ∅ ⟷ .o]
+  [{.animate, .pl} ⟷ .o, {.pl} ⟷ .a, ⟨{(0, .animate), (1, .proper)}, .e⟩,
+    {.animate} ⟷ .a, ∅ ⟷ .o]
 
-/-- The article features of each class. Gender I-E is gender I with [proper]. -/
+/-- The features an article has by concord with each class. Gender I-E is gender I. -/
 def classFeatures : NounClass → Finset ArticleFeature
-  | .e => {.animate, .proper}
-  | .a => {.animate}
+  | .e | .a => {.animate}
   | .o => ∅
+
+/-- The features the article reads on the noun. A gender I-E noun is proprial. -/
+def nounFeatures : NounClass → Finset ArticleFeature
+  | .e => {.proper}
+  | _ => ∅
 
 /-- The article inserted by the Subset Principle, by class and number. -/
 def article (c : NounClass) (n : numberSystem.values) : Option Article :=
   subsetPrinciple articles
-    (classFeatures c ∪ numberSystem.elim ∅ {.pl} (n := n) : Finset ArticleFeature)
+    ⟨classFeatures c ∪ numberSystem.elim ∅ {.pl} (n := n), [], [nounFeatures c]⟩
 
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
 
@@ -223,10 +230,8 @@ theorem agreementClasses_targetArticle :
 
 -- (50), (51)
 theorem kinship (r : Root) :
-    subsetPrinciple articles (insert .proper (classFeatures (classOf r ipossessed)) :
-        Finset ArticleFeature) = some .e ∧
-      subsetPrinciple articles (insert .proper (classFeatures (classOf r free)) :
-        Finset ArticleFeature) = some .o := by
+    subsetPrinciple articles ⟨classFeatures (classOf r ipossessed), [], [{.proper}]⟩ = some .e ∧
+      subsetPrinciple articles ⟨classFeatures (classOf r free), [], [{.proper}]⟩ = some .o := by
   simp only [classOf, ComplexHead.lastCycle]
   decide
 
