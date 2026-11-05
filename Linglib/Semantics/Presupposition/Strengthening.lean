@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Set.Lattice.Indexed
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Order.Minimal
@@ -32,22 +33,21 @@ namespace Presupposition
 
 variable {S W : Type*} {alts : S → Set S} {content : S → Set W} {φ ψ : S} {c : Set W} {w : W}
 
-/-- The strengthening of `φ`'s presupposition by its alternatives: the presupposition less those of
-the strictly stronger alternatives. -/
+/-- The strengthening of `φ`'s presupposition by its alternatives: exhaustification against the
+strictly stronger ones. -/
 def strengthen (alts : S → Set S) (content : S → Set W) (φ : S) : Set W :=
-  content φ \ ⋃₀ (content '' alts φ ∩ Set.Iio (content φ))
+  Exhaustification.exh (content '' alts φ ∩ Set.Iio (content φ)) (content φ)
 
 theorem mem_strengthen_iff :
     w ∈ strengthen alts content φ ↔
       w ∈ content φ ∧ ∀ ψ ∈ alts φ, w ∈ content ψ → ¬ content ψ ⊂ content φ := by
-  refine ⟨fun ⟨hw, hn⟩ ↦ ⟨hw, fun ψ hψ hwψ hss ↦ hn ⟨_, ⟨⟨ψ, hψ, rfl⟩, hss⟩, hwψ⟩⟩,
-    fun ⟨hw, h⟩ ↦ ⟨hw, ?_⟩⟩
-  rintro ⟨_, ⟨⟨ψ, hψ, rfl⟩, hss⟩, hwψ⟩
-  exact h ψ hψ hwψ hss
+  refine Exhaustification.mem_exh_inter_Iio.trans (and_congr_right fun _ ↦ ?_)
+  simp only [Set.forall_mem_image]
+  exact forall₂_congr fun _ _ ↦ ⟨fun h hw hss ↦ h hss hw, fun h hss hw ↦ h hw hss⟩
 
 theorem strengthen_subset (alts : S → Set S) (content : S → Set W) (φ : S) :
     strengthen alts content φ ⊆ content φ :=
-  sdiff_le
+  Exhaustification.exh_subset _ _
 
 /-- Maximize Presupposition in a context: `φ` is a strongest alternative defined throughout `c`. -/
 theorem minimalFor_preimage_Ici_iff :
@@ -87,7 +87,7 @@ theorem mem_strengthen_Iic_iff :
 
 theorem strengthen_eq_self (h : ∀ ψ ∈ alts φ, ¬ content ψ ⊂ content φ) :
     strengthen alts content φ = content φ :=
-  sdiff_eq_left.2 <| Set.disjoint_left.2 fun _ _ ⟨_, ⟨⟨ψ, hψ, rfl⟩, hss⟩, _⟩ ↦ h ψ hψ hss
+  Set.ext fun _ ↦ mem_strengthen_iff.trans ⟨And.left, fun hw ↦ ⟨hw, fun ψ hψ _ ↦ h ψ hψ⟩⟩
 
 /-- With one strictly stronger alternative containing the others, strengthening removes exactly its
 presupposition. -/
@@ -102,7 +102,6 @@ theorem strengthen_eq_sdiff (hψ : ψ ∈ alts φ) (hss : content ψ ⊂ content
 /-- A strictly stronger alternative's presupposition is disjoint from the strengthening. -/
 theorem disjoint_strengthen_of_ssubset (hψ : ψ ∈ alts φ) (h : content ψ ⊂ content φ) :
     Disjoint (content ψ) (strengthen alts content φ) :=
-  disjoint_sdiff_self_right.mono_left
-    (le_sSup (s := content '' alts φ ∩ Set.Iio (content φ)) ⟨⟨ψ, hψ, rfl⟩, h⟩)
+  Set.disjoint_left.2 fun _ hw hs ↦ (mem_strengthen_iff.1 hs).2 ψ hψ hw h
 
 end Presupposition

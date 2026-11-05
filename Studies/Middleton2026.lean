@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.List.DropRight
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Syntax.Minimalist.Feature.Basic
@@ -1203,7 +1204,7 @@ def tone (c : Taos.Cell) (nargs : ℕ) (morphs : List String) (fixed : Bool) : S
   let s := concat morphs
   if fixed then s else
   let hasMo := morphs.getLast? == some "mo" && morphs.length > 1
-  let chars := if hasMo then s.toList.take (s.toList.length - 2) else s.toList
+  let chars := if hasMo then s.toList.rdrop 2 else s.toList
   let syl := syllables chars 0
   match syl.getLast? with
   | none => s

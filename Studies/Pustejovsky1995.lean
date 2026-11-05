@@ -13,7 +13,7 @@ directly, when the argument has the selected type, or through one of the shiftin
 available to the argument, and otherwise produces a type error (`Shifter`, `Applies`). The
 available operators are of two kinds. Subtype coercion (23) follows the inferences of a
 single type lattice, the one of Figure 6.1 extended by the chains of §7.1.2, so that *drive*
-accepts *a Honda* through Honda ≤ car ≤ vehicle (`SemType`, `subtype_readings`,
+accepts *a Honda* through Honda ≤ car ≤ vehicle (`SemType`, `applies_subtype_iff`,
 `subtype_within_lattice`). True complement coercion (§7.1.3) instead
 reaches through the qualia: *begin* selects an event, *a book* is a dot object of
 information and physical object whose telic and agentive qualia name reading and writing
@@ -44,7 +44,8 @@ namespace Pustejovsky1995
 /-! ### The type lattice (Figure 6.1, §7.1.2) -/
 
 /-- The types of Figure 6.1 and of the examples of §7.1: the top `nomrqs` above entity, event,
-and proposition; abstract, physical object, and information below entity; the chains of
+and proposition; abstract and physical object below entity and information below proposition; the
+chains of
 (19), vehicle above car above Honda and text above book above the *Tractatus*, book being a
 dot object of information and physical object; and rock, a plain physical object. -/
 inductive SemType where
@@ -72,13 +73,13 @@ def SemType.ancestors : SemType → List SemType
   | .proposition => [.proposition, .nomrqs]
   | .abstract => [.abstract, .entity, .nomrqs]
   | .physObj => [.physObj, .entity, .nomrqs]
-  | .information => [.information, .entity, .nomrqs]
+  | .information => [.information, .proposition, .nomrqs]
   | .vehicle => [.vehicle, .physObj, .entity, .nomrqs]
   | .car => [.car, .vehicle, .physObj, .entity, .nomrqs]
   | .honda => [.honda, .car, .vehicle, .physObj, .entity, .nomrqs]
-  | .text => [.text, .information, .entity, .nomrqs]
-  | .book => [.book, .text, .information, .physObj, .entity, .nomrqs]
-  | .tractatus => [.tractatus, .book, .text, .information, .physObj, .entity, .nomrqs]
+  | .text => [.text, .information, .proposition, .nomrqs]
+  | .book => [.book, .text, .information, .proposition, .physObj, .entity, .nomrqs]
+  | .tractatus => [.tractatus, .book, .text, .information, .proposition, .physObj, .entity, .nomrqs]
   | .rock => [.rock, .physObj, .entity, .nomrqs]
 
 /-- Subtyping: `a ≤ b` when `b` is an ancestor of `a`. -/
@@ -91,10 +92,10 @@ instance : PartialOrder SemType where
 instance : DecidableRel (α := SemType) (· ≤ ·) :=
   λ a b => inferInstanceAs (Decidable (b ∈ a.ancestors))
 
--- (19), (24)
+-- (19), (24), and p. 119's book ≤ text ≤ prop
 theorem chains :
     SemType.honda ≤ .car ∧ SemType.car ≤ .vehicle ∧ SemType.honda ≤ .vehicle ∧
-      SemType.tractatus ≤ .book ∧ SemType.book ≤ .text := by
+      SemType.tractatus ≤ .book ∧ SemType.book ≤ .text ∧ SemType.text ≤ .proposition := by
   decide
 
 /-! ### Qualia and shifting operators -/
@@ -176,16 +177,34 @@ def read : SemType × SemType := (.text, .proposition)
 /-- *begin* selects an event (28). -/
 def begin : SemType × SemType := (.event, .proposition)
 
-/-- (19) and (24): *drive a Honda* and *read the Tractatus* have exactly one reading each, the
-subtype coercion along the chain. -/
+/-- A function selecting a type accepts any argument of a subtype of it, through the subtype
+coercion to the selected type (p. 113). -/
+theorem applies_subtype_iff (f : SemType × SemType) (α : Entry) :
+    Applies f α (some (.subtype f.1)) ↔ α.type ≤ f.1 := by
+  by_cases h : α.type ≤ f.1 <;> simp [Applies, Shifter.result, h]
+
+/-- An argument strictly below the selected type, with no quale projecting that type, reaches the
+function by the subtype coercion to that type and by no other shifter of this file. -/
+theorem applies_iff_subtype {f : SemType × SemType} {α : Entry} (hle : α.type ≤ f.1)
+    (hne : α.type ≠ f.1) (hq : ∀ r, α.quale r ≠ some f.1) (σ : Option Shifter) :
+    Applies f α σ ↔ σ = some (.subtype f.1) := by
+  cases σ with
+  | none => simpa [Applies] using hne
+  | some σ => cases σ with
+    | subtype t =>
+      by_cases h : α.type ≤ t
+      · simp [Applies, Shifter.result, h]
+      · have : t ≠ f.1 := fun e ↦ h (e ▸ hle)
+        simp [Applies, Shifter.result, h, this]
+    | quale r => simpa [Applies, Shifter.result] using hq r
+
+/-- (19): among this file's shifters, only the subtype coercion to the selected type lets *drive*
+take *a Honda* and *read* take *the Tractatus*. The book counts no readings here. -/
 theorem subtype_readings :
     (∀ σ, Applies drive honda σ ↔ σ = some (.subtype .vehicle)) ∧
-      ∀ σ, Applies read tractatus σ ↔ σ = some (.subtype .text) := by
-  refine ⟨λ σ => ?_, λ σ => ?_⟩ <;> cases σ with
-  | none => decide
-  | some σ => cases σ with
-    | subtype t => cases t <;> decide
-    | quale r => cases r <;> decide
+      ∀ σ, Applies read tractatus σ ↔ σ = some (.subtype .text) :=
+  ⟨applies_iff_subtype (by decide) (by decide) (by rintro (_ | _ | _ | _) <;> decide),
+    applies_iff_subtype (by decide) (by decide) (by rintro (_ | _ | _ | _) <;> decide)⟩
 
 /-- *John began a book* has exactly two readings, the telic and agentive qualia of *book* ((27),
 (29)). -/

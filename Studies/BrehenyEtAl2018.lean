@@ -38,10 +38,10 @@ neither can be innocently excluded, since negating both contradicts the assertio
   both leaves exhaustification vacuous, footnote 20 (`exhIE_adjectiveAlts_eq_self`), and (38)
   shows the modifier route overgenerating for *safe*, *tall*, and *transparent*, adjectives of
   every scale structure in [kennedy-2007]'s sense.
-* Lexicalised symmetric partners, (44)–(45), after [swanson-2010]: *required* and *optional*
-  partition *permitted* and are lexical items of the same complexity, so both are formal
-  alternatives, every domain holding one holds the other, and exhaustification is vacuous
-  (`exhIE_permitted_eq_self`).
+* Lexicalised symmetric partners, (44)–(45), after [swanson-2010]: on that paper's entries, for
+  which footnote 23 reports evidence each way, *required* and *optional* partition *permitted* and
+  are lexical items of the same complexity, so both are formal alternatives, every domain holding
+  one holds the other, and exhaustification is vacuous (`exhIE_permitted_eq_self`).
 
 Section 4.1's problem of too few lexical alternatives, the Japanese deontic paradigm
 (41)–(43) in which necessity is a negated verbal stem or an existential construction and yet
@@ -255,8 +255,8 @@ section Lexicalised
 
 variable {permitted required optional : Set W}
 
-/-- Since *required* and *optional* partition *permitted* in (44), exhaustifying *permitted* is
-vacuous on every domain, so neither (44b) nor (44c) arises. -/
+/-- If *required* and *optional* partition *permitted*, as [swanson-2010] takes them to in (44),
+exhaustifying *permitted* is vacuous on every domain, so neither (44b) nor (44c) arises. -/
 theorem exhIE_permitted_eq_self {C : Set (Set W)} (h : IsSymmetric permitted required optional)
     (hC : IsDomain {permitted, required, optional} permitted C) (h₁ : required.Nonempty)
     (h₂ : optional.Nonempty) : exhIE C permitted = permitted := by

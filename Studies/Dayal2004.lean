@@ -299,8 +299,10 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 theorem ofDatum_isSome : ∀ d ∈ Examples.all, (Row.ofDatum d).isSome := by
   decide
 
-/-- Each kind term is judged acceptable exactly where its language's lexicalization licenses its
-form ((6a), (14), (16), (46), (78), (86), (87a)). -/
+/-- Each kind term of (6a), (14) to (16), (46), (78), (86) and (87a) is judged acceptable exactly
+where its language's lexicalization licenses its form. These are the core cases of fn. 49,
+unmodified and without an antecedent; English also allows a definite mass term anaphoric to an
+antecedent, fn. 43, and a definite plural over sub-kinds, (51). -/
 theorem rows_agree :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.lexicalization.Licit r.num r.form) := by
   decide

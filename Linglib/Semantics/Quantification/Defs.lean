@@ -31,7 +31,7 @@ nothing.
 * `Quantifier`, `Quantifier.Det`, `Quantifier.Det.Family`: quantifiers, determiner
   denotations, and determiner denotations on every finite universe.
 * `Det.Conservative`, `Det.ScopeMonotone`, `Det.RestrictorMonotone`, `Det.Intersective`,
-  `Det.Existential`, `Det.PositiveStrong`: the properties of determiner denotations.
+  `Det.CoIntersective`, `Det.PositiveStrong`: the properties of determiner denotations.
 * `Det.UpSEMon`, `Det.Smooth`, `Det.LeftAntiAdditive`: the left monotonicities.
 * `Det.QuasiReflexive`, `Det.Filtrating`, `Det.QuantityInvariant`: relational properties and
   permutation invariance.
@@ -71,6 +71,7 @@ universes, such as the Montague lift of a fixed individual, have no counterpart 
 * [van-benthem-1984]
 * [van-benthem-1986]
 * [westerstahl-2024]
+* [zuber-keenan-2019]
 * [zwarts-1998]
 -/
 
@@ -127,9 +128,22 @@ def RestrictorMonotone (d : Det α) : Prop := ∀ B, Monotone (d · B)
 `Antitone` for every scope `B`. -/
 def RestrictorAntitone (d : Det α) : Prop := ∀ B, Antitone (d · B)
 
-/-- A determiner denotation is intersective when `d A B` depends only on `A ∩ B`. -/
+/-- A determiner denotation is intersective when `d A B` depends only on `A ∩ B`. Equivalently
+`d A B ↔ d (A ∩ B) univ`, [keenan-1987]'s characterization of the determiners that occur in
+*there*-sentences, which [keenan-stavi-1986] call existential. -/
 def Intersective (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, A ∩ B = A' ∩ B' → (d A B ↔ d A' B')
+
+/-- A determiner denotation is co-intersective when `d A B` depends only on `A \ B`, as for *every*
+and *all but n*. -/
+def CoIntersective (d : Det α) : Prop :=
+  ∀ A B A' B' : Set α, A \ B = A' \ B' → (d A B ↔ d A' B')
+
+/-- A determiner denotation satisfies the intersection condition of [barwise-cooper-1981] when
+`d A B ↔ d (A ∩ B) B`, which [zuber-keenan-2019] call conservativity on the first argument. It is
+not intersectivity, on which `d A B` depends on `A ∩ B` alone; for a conservative determiner
+denotation the two coincide. -/
+def IntersectionCondition (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
 
 /-! ### Strength -/
 
@@ -140,10 +154,6 @@ def PositiveStrong (d : Det α) : Prop := ∀ A, d A A
 /-- A determiner denotation is negative strong when `d A A` fails for every `A`, as for
 *neither*. -/
 def NegativeStrong (d : Det α) : Prop := ∀ A, ¬ d A A
-
-/-- A determiner denotation is existential when `d A B ↔ d (A ∩ B) univ`, [keenan-1987]'s
-characterization of the determiners that occur in *there*-sentences. -/
-def Existential (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) Set.univ
 
 /-! ### Left monotonicity and smoothness
 

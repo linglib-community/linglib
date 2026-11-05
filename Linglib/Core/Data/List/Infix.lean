@@ -8,31 +8,23 @@ module
 public import Mathlib.Data.List.Infix
 
 /-!
-# Short infixes of a three-part concatenation, and common prefixes
+# Infixes of a three-part concatenation, and common prefixes
 
-An infix of `u ++ m ++ v` no longer than `m` cannot contain both an element that occurs only in
-`u` and an element that occurs only in `v`: this is the fact about short windows that pumping
-arguments use, when `m` is a block of the pumped word that separates two others.
+[An infix of `u ++ m ++ v` at most one longer than `m` lies in `u ++ m` or in
+`m ++ v`](##infix_append_append_iff): this is the fact about short windows behind pumping arguments,
+where `m` is a block of the pumped word that separates two others, and behind suffix substitution
+in strictly local languages, where `m` is the shared `k - 1` letters.
 
 The longest common prefix `List.commonPrefix l₁ l₂`, the greatest list that is a prefix of both,
 is the meet of the prefix order.
-
-## Main definitions
-
-* `List.commonPrefix`: the longest common prefix of two lists.
-
-## Main results
-
-* `List.IsInfix.notMem_or_notMem_of_length_le`: an infix of `u ++ m ++ v` no longer than `m` misses
-  every element occurring only in `u` or every element occurring only in `v`.
 
 ## Implementation notes
 
 Each declaration fills a gap. Neither core, Batteries nor mathlib defines a longest common prefix
 of lists, and mathlib's `RootedTree` takes its meet as a `SemilatticeInf` instance rather than
 deriving it, so `List.commonPrefix` is an [UPSTREAM] candidate for Batteries beside
-`List.inits`. The short-window lemma, proved from core's `List.infix_append_iff`, would go up only
-with a pumping lemma for context-free languages, which mathlib lacks.
+`List.inits`. The short-window lemma refines core's `List.infix_append_iff`, which leaves the
+overlap with `m` to the caller.
 -/
 
 @[expose] public section
@@ -41,19 +33,28 @@ namespace List
 
 variable {α : Type*} {l u m v : List α} {x y : α}
 
+/-- An infix of `u ++ m ++ v` at most one longer than `m` lies in `u ++ m` or in `m ++ v`. -/
+theorem infix_append_append_iff (hl : l.length ≤ m.length + 1) :
+    l <:+: u ++ m ++ v ↔ l <:+: u ++ m ∨ l <:+: m ++ v := by
+  refine ⟨fun ⟨s, t, h⟩ ↦ ?_, ?_⟩
+  · have hlen := congrArg length h
+    simp only [length_append] at hlen
+    rcases le_or_gt (s.length + l.length) (u.length + m.length) with hle | hle
+    · exact .inl ((suffix_append s l).isInfix.trans (prefix_of_prefix_length_le ⟨t, h⟩
+        (prefix_append _ _) (by simpa)).isInfix)
+    · exact .inr ((prefix_append l t).isInfix.trans (suffix_of_suffix_length_le
+        ⟨s, by simpa [append_assoc] using h⟩ ⟨u, by simp⟩
+        (by simp only [length_append]; omega)).isInfix)
+  · rintro (h | h)
+    · exact h.trans (prefix_append _ _).isInfix
+    · exact h.trans ⟨u, [], by simp [append_assoc]⟩
+
 /-- An infix of `u ++ m ++ v` no longer than `m` misses an element that occurs only in `u` or an
 element that occurs only in `v`. -/
 theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
-    (hlen : l.length ≤ m.length) (hx : x ∉ m ++ v) (hy : y ∉ u ++ m) : x ∉ l ∨ y ∉ l := by
-  rcases infix_append_iff.1 hl with h | h | ⟨l₁, l₂, rfl, h₁, h₂⟩
-  · exact .inr fun hy' ↦ hy (h.subset hy')
-  · exact .inl fun hx' ↦ hx (mem_append_right m (h.subset hx'))
-  · refine .inl fun hx' ↦ hx ?_
-    rw [length_append] at hlen
-    rcases mem_append.1 hx' with hx' | hx'
-    · exact mem_append_left v
-        ((suffix_of_suffix_length_le h₁ (suffix_append u m) (by omega)).subset hx')
-    · exact mem_append_right m (h₂.subset hx')
+    (hlen : l.length ≤ m.length) (hx : x ∉ m ++ v) (hy : y ∉ u ++ m) : x ∉ l ∨ y ∉ l :=
+  ((infix_append_append_iff (by omega)).1 hl).symm.imp
+    (fun h hx' ↦ hx (h.subset hx')) fun h hy' ↦ hy (h.subset hy')
 
 section DecidableEq
 

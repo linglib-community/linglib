@@ -19,8 +19,8 @@ the first conjunct's word order. Applied to a branch pointing to multidominated 
 is forced, since the structure could not otherwise be linearized without crossing branches;
 applied to a branch with a counterpart of its own, it leaves an orphan that goes unrealized, which
 is ellipsis. Forced pruning comes first, so a constituent elided in the first conjunct can contain
-a multidominated pivot only at its right edge, and a finite pivot, which ellipsis cannot create,
-contains no further pivot.
+a multidominated pivot [only at its right edge](##Derivation.Licensed.not_precedes), and a finite
+pivot, which ellipsis cannot create, contains no further pivot.
 
 ## Implementation notes
 
@@ -121,6 +121,36 @@ def pivotOnset : Option String :=
   d.forced.head?.bind fun pq ↦ d.input.val[pq.2]?.bind fun s ↦
     ((tokenList s).filterMap (·.2.item.phonForm?)).head?
 
+/-- No material of an elided pivot follows a multidominated pivot (49), since forced pruning comes
+first, while that material still stands in the first conjunct (100). -/
+theorem Licensed.not_precedes {d : Derivation} (hd : d.Licensed)
+    {pq rs : TreePath × TreePath} (hpq : pq ∈ d.forced) (hrs : rs ∈ d.free)
+    {x : TreePath × LexicalItem.Token} (hx : x ∈ tokenList d.input.val) (hrx : rs.1 ≤ x.1)
+    (hphon : x.2.item.phonForm?.isSome) (hnf : ∀ ab ∈ d.forced, ¬ ab.1 ≤ x.1) :
+    ¬ Precedes pq.1 x.1 := by
+  have hrule : ∀ ab i, d.prunings[i]? = some ab → MayPrune d.input (d.prunings.take i) ab.1 ab.2 :=
+    fun ab i h ↦ hd.1 (ab, i) (List.mem_zipIdx_iff_getElem?.2 h)
+  obtain ⟨j, hj⟩ := List.getElem?_of_mem (List.mem_append_right d.forced hrs)
+  obtain ⟨t, ht⟩ := hrx
+  obtain ⟨r₀, hr₀⟩ := List.head?_eq_some_iff.1 (hrule rs j hj).1
+  have hx0 : x.1.toList.head? = some 0 := by rw [← ht, hr₀]; rfl
+  obtain ⟨i, hi, hpqi⟩ := List.getElem_of_mem hpq
+  have hm := hrule pq i (by
+    rw [prunings, List.getElem?_append_left hi, List.getElem?_eq_getElem hi, hpqi])
+  have hreal : realizedAt (d.prunings.take i) x.1 = x.1 := by
+    have : (d.prunings.take i).find? (decide <| ·.1 ≤ x.1) = none := by
+      rw [List.find?_eq_none]
+      intro ab hab
+      rw [prunings, List.take_append_of_le_length hi.le] at hab
+      simpa using hnf ab (List.mem_of_mem_take hab)
+    simp [realizedAt, this]
+  intro hprec
+  have hlt := (hm.2.2.2.2 x hx hx0 (hnf pq hpq) hphon).2 hprec
+  rw [hreal] at hlt
+  obtain ⟨q₀, hq₀⟩ := List.head?_eq_some_iff.1 hm.2.2.1
+  obtain ⟨x₀, hx₀⟩ := List.head?_eq_some_iff.1 hx0
+  simp [Precedes, hq₀, hx₀, List.cons_lt_cons_iff] at hlt
+
 end Derivation
 
 /-! ### Multidominance and ellipsis (§§1, 7) -/
@@ -212,7 +242,7 @@ def willSoon : LexicalItem.Token := ⟨.of .T [.V] "will soon", 21⟩
 /-- *Show*, and a second token of it. -/
 def showV : LexicalItem.Token := ⟨.of .V [.D, .D] "show", 22⟩
 def showV' : LexicalItem.Token := ⟨.of .V [.D, .D] "show", 23⟩
-/-- The objects of (58), *Ava's supervisor* and *the same paper*, and of (61), *the same person*
+/-- The objects of (58), *Ava's supervisor* and *the same paper*, and of (60), *the same person*
 and *Ava's paper*, each with a second token. -/
 def supervisor : LexicalItem.Token := ⟨.of .D [] "Ava's supervisor", 24⟩
 def supervisor' : LexicalItem.Token := ⟨.of .D [] "Ava's supervisor", 25⟩
@@ -221,7 +251,7 @@ def samePerson : LexicalItem.Token := ⟨.of .D [] "the same person", 42⟩
 def avasPaper : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 43⟩
 def avasPaper' : LexicalItem.Token := ⟨.of .D [] "Ava's paper", 44⟩
 
-/-- `[she [is going to [show [x y]]]] and [Ryo [will soon [show [x' y']]]]` (58), (61). -/
+/-- `[she [is going to [show [x y]]]] and [Ryo [will soon [show [x' y']]]]` (58), (60). -/
 def showVP (x y x' y' : LexicalItem.Token) : LinearizedSyntacticObject :=
   (she * (isGoingTo * (showV * (x * y)))) * (ryo * (willSoon * (showV' * (x' * y'))))
 
@@ -230,7 +260,7 @@ the direct object at its right edge a multidominated pivot. -/
 def pieBeforePim : Derivation :=
   ⟨showVP supervisor samePaper supervisor' samePaper,
     [(⟨[0, 1, 1, 1, 1]⟩, ⟨[1, 1, 1, 1, 1]⟩)], [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)]⟩
-/-- In (61) the multidominated pivot, the indirect object, precedes the elided direct object. -/
+/-- In (60) the multidominated pivot, the indirect object, precedes the elided direct object. -/
 def pimBeforePie : Derivation :=
   ⟨showVP samePerson avasPaper samePerson avasPaper',
     [(⟨[0, 1, 1, 1, 0]⟩, ⟨[1, 1, 1, 1, 0]⟩)], [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩)]⟩
@@ -248,7 +278,8 @@ theorem licensed_pieBeforePim :
 object still follows the indirect one in the first conjunct. -/
 theorem not_licensed_pimBeforePie :
     ¬ pimBeforePie.Licensed ∧
-      ¬ MayPrune pimBeforePie.input [] ⟨[0, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1, 0]⟩ := by
+      ¬ MayPrune pimBeforePie.input [] ⟨[0, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1, 0]⟩ ∧
+      MayPrune pimBeforePie.input pimBeforePie.free ⟨[0, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1, 0]⟩ := by
   decide
 
 /-! ### Finite and nonfinite pivots (§5) -/

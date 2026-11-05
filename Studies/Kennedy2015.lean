@@ -146,7 +146,7 @@ theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
 /-- (47a): the primary implicatures of *at least m* are that the speaker knows neither that
 exactly `m` nor that more than `m`. -/
 theorem primaryImplicatures_ge {m : ℕ} (hm : 0 < m) :
-    primaryImplicatures (Comparison.ge.interval m) (alternatives m) =
+    primaryImplicatures (alternatives m) (Comparison.ge.interval m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.gt.interval m))ᶜ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
@@ -157,7 +157,7 @@ theorem primaryImplicatures_ge {m : ℕ} (hm : 0 < m) :
 /-- (47b): the primary implicatures of *at most m* are that the speaker knows neither that
 exactly `m` nor that fewer than `m`. -/
 theorem primaryImplicatures_le {m : ℕ} (hm : 0 < m) :
-    primaryImplicatures (Comparison.le.interval m) (alternatives m) =
+    primaryImplicatures (alternatives m) (Comparison.le.interval m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.lt.interval m))ᶜ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
@@ -168,7 +168,7 @@ theorem primaryImplicatures_le {m : ℕ} (hm : 0 < m) :
 /-- No alternative entails the bare numeral or a Class A form, so they have no primary
 implicatures. -/
 theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
-    (hc : c = .eq ∨ c.IsStrict) : primaryImplicatures (c.interval m) (alternatives m) = univ := by
+    (hc : c = .eq ∨ c.IsStrict) : primaryImplicatures (alternatives m) (c.interval m) = univ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
     mem_univ, iff_true]
@@ -179,11 +179,11 @@ theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
 -- (2), (3). Only the second has primary implicatures, so the contrast lies in the comparison.
 theorem interval_lt_succ_eq_le_and_primaryImplicatures {m : ℕ} (hm : 0 < m) :
     Comparison.lt.interval (m + 1) = Comparison.le.interval m ∧
-      primaryImplicatures (Comparison.lt.interval (m + 1)) (alternatives (m + 1)) = univ ∧
-      primaryImplicatures (Comparison.le.interval m) (alternatives m) ≠ univ := by
+      primaryImplicatures (alternatives (m + 1)) (Comparison.lt.interval (m + 1)) = univ ∧
+      primaryImplicatures (alternatives m) (Comparison.le.interval m) ≠ univ := by
   refine ⟨Set.ext fun _ ↦ Nat.lt_succ_iff, primaryImplicatures_eq_univ m.succ_pos (.inr trivial),
     fun h ↦ ?_⟩
-  have hempty : (∅ : Set ℕ) ∈ primaryImplicatures (Comparison.le.interval m) (alternatives m) :=
+  have hempty : (∅ : Set ℕ) ∈ primaryImplicatures (alternatives m) (Comparison.le.interval m) :=
     h ▸ mem_univ _
   rw [primaryImplicatures_le hm] at hempty
   exact hempty.1 (empty_subset _)
@@ -192,7 +192,7 @@ theorem interval_lt_succ_eq_le_and_primaryImplicatures {m : ℕ} (hm : 0 < m) :
 alternative, and either primary implicature of a Class B form strengthened contradicts the
 assertion together with the other. -/
 theorem not_isSecondaryImplicature {m : ℕ} (hm : 0 < m) (c : Comparison) (ψ : Set ℕ) :
-    ¬ IsSecondaryImplicature (c.interval m) (alternatives m) ψ := by
+    ¬ IsSecondaryImplicature (alternatives m) (c.interval m) ψ := by
   rw [isSecondaryImplicature_iff]
   rintro ⟨⟨c', rfl⟩, hψ, h⟩
   have block : ∀ c₁ : Comparison, (c₁, c) ∈
