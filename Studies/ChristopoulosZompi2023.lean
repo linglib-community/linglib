@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Concept
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Fragments.Latvian.Pronouns
 public import Mathlib.Data.Finset.Powerset
@@ -10,16 +11,16 @@ public import Mathlib.Tactic.DeriveFintype
 # Christopoulos and Zompì (2023): Weak Case Containment
 
 Three featural decompositions of the nominative, accusative and dative are compared under the
-Subset Principle. Strong Case Containment nests them in a chain. It excludes ABA, but
+Subset Principle, and what separates them is their natural classes, the sets of cases some
+specification picks out: Strong Case Containment has fewer than Weak Case Containment and Weak fewer
+than No Case Containment, [each inside the next](##naturalClasses_ssubset). A decomposition derives
+ABA [exactly when](##forall_isContiguous_iff_not_isNaturalClass) the accusative alone, or the
+nominative and dative together, form a natural class, as they do under No Case Containment. Strong
+Case Containment excludes ABA, but
 [a rule winning an accusative over another applies in no nominative](##scc_prediction), so it
 [cannot derive](##latvian_not_scc) the Latvian stems that Weak Case Containment
-[derives](##latvian_stems). No Case Containment makes them incomparable and
-[derives ABA](##ncc_aba_generable). A decomposition derives ABA
-[exactly when](##excludesABA_iff_not_isNaturalClass) the accusative alone, or the nominative and
-dative together, form a natural class; ruling those out while keeping the natural classes the data
-ask for is [equivalent to the shape of Weak Case Containment](##isWeak_iff): the accusative properly
-inside the dative, nominative and accusative incomparable, and nothing shared by nominative and
-dative outside the accusative.
+[derives](##latvian_stems). Weak Case Containment is, up to its mirror image,
+[the most expressive decomposition excluding ABA](##naturalClasses_subset_of_forall_isContiguous).
 
 ## Implementation notes
 
@@ -30,10 +31,14 @@ dative outside the accusative.
   `IsElsewhereWinner` under that count, which leaves two winners at a tie; `realize` breaks ties by
   the order of the rule set, and [the two agree on a derivation](##realize_of_isDerivation). Rule
   sets here list the least specific rule first, so that no result leans on that order.
-* That the decomposition is forced is this file's reading: the paper argues that Weak Case
-  Containment suffices. Rule sets are antihomophonous where fn. 9 says "barring accidental
-  homophony"; a homophonous pair is the disjunctive rule (4), with which Strong Case Containment
+* Natural classes are extents in the sense of formal concept analysis, `Order.IsExtent`, the
+  construction of [broe-1993] for segment inventories. That Weak Case Containment is maximal among
+  them is this file's reading: the paper argues that it suffices.
+* Rule sets are antihomophonous where fn. 9 says "barring accidental homophony"; a homophonous pair
+  is the disjunctive rule (4), with which Strong Case Containment
   [does derive the stems](##latvian_scc_of_disjunctive).
+* Features matter beyond the natural classes only for counting. `{k₂}` and `{k₁, k₂}` pick out one
+  class, and Table 25 writes `{(k₁,) k₂}` except where `{k₂}` would tie.
 * A row of a table gives each case's winner, two alternatives where the table parenthesizes a
   feature, so its rules A, B, C are its distinct winners.
 
@@ -55,6 +60,7 @@ dative outside the accusative.
 ## References
 
 * [bobaljik-2012]
+* [broe-1993]
 * [caha-2009]
 * [christopoulos-zompi-2023]
 * [halle-1997]
@@ -97,34 +103,30 @@ variable {F : Type*}
 
 /-! ### *ABA -/
 
-/-- A decomposition excludes ABA when every antihomophonous rule set realizes a contiguous paradigm
-over it. -/
-def ExcludesABA (F : Type*) (D : Paradigm 3 (Finset K)) : Prop :=
-  ∀ v : RuleSet (SubsetRule (Finset K) F), v.Antihomophonous →
-    IsContiguous fun c ↦ v.realize card (D c)
+/-- The cases `S` are a natural class of a decomposition when they are an extent of the relation
+between cases and the features they bear: the cases bearing all the features of a specification. -/
+abbrev IsNaturalClass (D : Paradigm 3 (Finset K)) (S : Finset (Fin 3)) : Prop :=
+  Order.IsExtent (fun c k ↦ k ∈ D c) (S : Set (Fin 3))
 
-theorem excludesABA_iff [Nontrivial F] {D : Paradigm 3 (Finset K)} :
-    ExcludesABA F D ↔ D nom ∩ D dat ⊆ D acc ∧ (D acc ⊆ D nom ∨ D acc ⊆ D dat) :=
-  (forall₂_congr fun _ _ ↦ isContiguous_fin_three_iff _).trans
-    (SubsetRule.forall_realize_eq_iff grade_strictMono)
+instance (D : Paradigm 3 (Finset K)) : DecidablePred (IsNaturalClass D) :=
+  fun _ ↦ inferInstanceAs (Decidable (Order.IsExtent _ _))
 
-theorem excludesABA_scc : ExcludesABA F scc := fun _ hv ↦ (isContiguous_fin_three_iff _).2
-  (SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide))
+theorem isNaturalClass_iff {D : Paradigm 3 (Finset K)} {S : Finset (Fin 3)} :
+    IsNaturalClass D S ↔ ∃ s : Finset K, ∀ c, s ⊆ D c ↔ c ∈ S := by
+  classical
+  constructor
+  · rintro ⟨t, ht⟩
+    refine ⟨t.toFinset, fun c ↦ ?_⟩
+    rw [← Finset.mem_coe, ← ht]
+    simp [mem_lowerPolar_iff, Finset.subset_iff]
+  · rintro ⟨s, hs⟩
+    refine ⟨(s : Set K), Set.ext fun c ↦ ?_⟩
+    simp [mem_lowerPolar_iff, ← hs c, Finset.subset_iff]
 
-theorem excludesABA_wcc : ExcludesABA F wcc := fun _ hv ↦ (isContiguous_fin_three_iff _).2
-  (SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide))
-
-/-- The cases `S` are a natural class of a decomposition when some specification applies in exactly
-those cases. -/
-def IsNaturalClass (D : Paradigm 3 (Finset K)) (S : Finset (Fin 3)) : Prop :=
-  ∃ s : Finset K, ∀ c, s ⊆ D c ↔ c ∈ S
-
-/-- **ABA is a question of natural classes.** A decomposition derives ABA exactly when the
-accusative alone, or the nominative and dative together, form a natural class, as the paper has it
-of the accusative-specific set of No Case Containment (p. 885). -/
-theorem excludesABA_iff_not_isNaturalClass [Nontrivial F] {D : Paradigm 3 (Finset K)} :
-    ExcludesABA F D ↔ ¬ IsNaturalClass D {acc} ∧ ¬ IsNaturalClass D {nom, dat} := by
-  rw [excludesABA_iff]
+theorem inter_subset_and_iff_not_isNaturalClass {D : Paradigm 3 (Finset K)} :
+    D nom ∩ D dat ⊆ D acc ∧ (D acc ⊆ D nom ∨ D acc ⊆ D dat) ↔
+      ¬ IsNaturalClass D {acc} ∧ ¬ IsNaturalClass D {nom, dat} := by
+  simp only [isNaturalClass_iff]
   constructor
   · rintro ⟨hi, hy⟩
     refine ⟨fun ⟨s, h⟩ ↦ ?_, fun ⟨s, h⟩ ↦ ?_⟩
@@ -147,6 +149,27 @@ theorem excludesABA_iff_not_isNaturalClass [Nontrivial F] {D : Paradigm 3 (Finse
       · exact iff_of_false h₀ (by decide)
       · exact iff_of_true subset_rfl (by decide)
       · exact iff_of_false h₂ (by decide)
+
+/-- **ABA is a question of natural classes.** A decomposition derives ABA exactly when the
+accusative alone, or the nominative and dative together, form a natural class, as the paper has it
+of the accusative-specific set of No Case Containment (p. 885). -/
+theorem forall_isContiguous_iff_not_isNaturalClass [Nontrivial F] {D : Paradigm 3 (Finset K)} :
+    (∀ v : RuleSet (SubsetRule (Finset K) F), v.Antihomophonous →
+        IsContiguous fun c ↦ v.realize card (D c)) ↔
+      ¬ IsNaturalClass D {acc} ∧ ¬ IsNaturalClass D {nom, dat} := by
+  rw [← inter_subset_and_iff_not_isNaturalClass]
+  exact (forall₂_congr fun _ _ ↦ isContiguous_fin_three_iff _).trans
+    (SubsetRule.forall_realize_eq_iff grade_strictMono)
+
+theorem isContiguous_scc {v : RuleSet (SubsetRule (Finset K) F)} (hv : v.Antihomophonous) :
+    IsContiguous fun c ↦ v.realize card (scc c) :=
+  (isContiguous_fin_three_iff _).2 <|
+    SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide)
+
+theorem isContiguous_wcc {v : RuleSet (SubsetRule (Finset K) F)} (hv : v.Antihomophonous) :
+    IsContiguous fun c ↦ v.realize card (wcc c) :=
+  (isContiguous_fin_three_iff _).2 <|
+    SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide)
 
 -- Table 11, row 2: an elsewhere rule beside a rule for the accusative-specific set {k₁, k₃}
 theorem ncc_aba_generable :
@@ -330,7 +353,7 @@ def table20stem (c : Fin 3 × LNum × LGen) : Option String :=
   (Latvian.Pronouns.pats (toLatvian c.1) c.2.1.toNumber c.2.2.toUD).bind
     fun ms ↦ (ms.find? (·.kind = .root)).map (·.form)
 
-/-- Rules (7) generate Table 20's stem distribution under Weak Case Containment. -/
+-- (7), Table 20
 theorem latvian_stems :
     ∀ c, latvianRules.realize card (latvian wcc c) = table20stem c := by
   decide
@@ -423,45 +446,54 @@ theorem undz_needs_k1 :
         ⟨({.k0}, {.sg}), "ix"⟩, ⟨(∅, {.pl}), "undz"⟩] card (yiddish (nom, .pl)) = some "undz" := by
   decide
 
-/-! ### The shape the argument forces -/
+/-! ### The natural classes -/
 
-/-- The shape of Weak Case Containment: the accusative properly inside the dative, nominative and
-accusative incomparable (p. 894), and nothing shared by nominative and dative outside the
-accusative. -/
-def IsWeak (D : Paradigm 3 (Finset K)) : Prop :=
-  D acc ⊂ D dat ∧ D nom ∩ D dat ⊆ D acc ∧ ¬ D nom ⊆ D acc ∧ ¬ D acc ⊆ D nom
+/-- The natural classes of a decomposition. -/
+def naturalClasses (D : Paradigm 3 (Finset K)) : Finset (Finset (Fin 3)) :=
+  Finset.univ.filter (IsNaturalClass D)
 
-instance : DecidablePred IsWeak := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+theorem mem_naturalClasses {D : Paradigm 3 (Finset K)} {S : Finset (Fin 3)} :
+    S ∈ naturalClasses D ↔ IsNaturalClass D S := by
+  simp [naturalClasses]
 
-/-- **The demands fix the shape.** A decomposition excludes ABA and makes natural classes of the
-nominative (a non-elsewhere nominative stem, p. 881), of accusative and dative (the *undz* rule of
-fn. 25), and of the dative (rule C of an ABC, p. 901) exactly when it has the shape of Weak Case
-Containment. Table 24 has that shape; Tables 1 and 2 do not. -/
-theorem isWeak_iff [Nontrivial F] {D : Paradigm 3 (Finset K)} :
-    IsWeak D ↔ ExcludesABA F D ∧ IsNaturalClass D {nom} ∧ IsNaturalClass D {acc, dat} ∧
-      IsNaturalClass D {dat} := by
-  rw [excludesABA_iff]
-  constructor
-  · rintro ⟨hs, hi, hn, ha⟩
-    have hnd : ¬ D nom ⊆ D dat := fun h ↦ hn fun _ hk ↦ hi (Finset.mem_inter.2 ⟨hk, h hk⟩)
-    have hdn : ¬ D dat ⊆ D nom := fun h ↦ ha (hs.subset.trans h)
-    refine ⟨⟨hi, .inr hs.subset⟩, ⟨D nom, ?_⟩, ⟨D acc, ?_⟩, ⟨D dat, ?_⟩⟩ <;> intro c <;>
-      fin_cases c <;> simp [hn, ha, hnd, hdn, hs.subset, hs.not_subset] <;> decide
-  · rintro ⟨⟨hi, hy⟩, ⟨s₁, h₁⟩, ⟨s₂, h₂⟩, ⟨s₃, h₃⟩⟩
-    have hn₁ := (h₁ nom).2 (by decide)
-    have hn₂ := (h₂ acc).2 (by decide)
-    have hd₃ := (h₃ dat).2 (by decide)
-    have ha₁ : ¬ s₁ ⊆ D acc := fun h ↦ absurd ((h₁ acc).1 h) (by decide)
-    have hn₂' : ¬ s₂ ⊆ D nom := fun h ↦ absurd ((h₂ nom).1 h) (by decide)
-    have ha₃ : ¬ s₃ ⊆ D acc := fun h ↦ absurd ((h₃ acc).1 h) (by decide)
-    have hsub : D acc ⊆ D dat := hy.resolve_left fun h ↦ hn₂' (hn₂.trans h)
-    exact ⟨⟨hsub, fun h ↦ ha₃ (hd₃.trans h)⟩, hi, fun h ↦ ha₁ (hn₁.trans h),
-      fun h ↦ hn₂' (hn₂.trans h)⟩
+/-- A closure system on the three cases: a family with all of them, closed under intersection. -/
+def IsClosureSystem (F : Finset (Finset (Fin 3))) : Prop :=
+  Finset.univ ∈ F ∧ ∀ S ∈ F, ∀ T ∈ F, S ∩ T ∈ F
 
-theorem isWeak_wcc : IsWeak wcc := by decide
+instance : DecidablePred IsClosureSystem := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem not_isWeak_scc : ¬ IsWeak scc := by decide
+theorem isClosureSystem_naturalClasses (D : Paradigm 3 (Finset K)) :
+    IsClosureSystem (naturalClasses D) :=
+  ⟨mem_naturalClasses.2 (by simp [IsNaturalClass]), fun _ hS _ hT ↦ mem_naturalClasses.2 (by
+    simpa [IsNaturalClass] using (mem_naturalClasses.1 hS).inter (mem_naturalClasses.1 hT))⟩
 
-theorem not_isWeak_ncc : ¬ IsWeak ncc := by decide
+-- Tables 1, 24 and 2 by what their rules can pick out
+theorem naturalClasses_values :
+    naturalClasses scc = {∅, {dat}, {acc, dat}, Finset.univ} ∧
+      naturalClasses wcc = {∅, {nom}, {dat}, {acc, dat}, Finset.univ} ∧
+        naturalClasses ncc = {∅, {nom}, {acc}, {dat}, {nom, acc}, {acc, dat}, Finset.univ} := by
+  decide +kernel
+
+/-- The "midway" of p. 895 is literal: the natural classes of the three decompositions are
+nested. -/
+theorem naturalClasses_ssubset :
+    naturalClasses scc ⊂ naturalClasses wcc ∧ naturalClasses wcc ⊂ naturalClasses ncc := by
+  decide +kernel
+
+private theorem subset_or_subset_of_not_mem :
+    ∀ F : Finset (Finset (Fin 3)), IsClosureSystem F → {acc} ∉ F → {nom, dat} ∉ F →
+      F ⊆ naturalClasses wcc ∨ F ⊆ naturalClasses (wcc ∘ Fin.rev) := by
+  decide +kernel
+
+/-- **Weak Case Containment is the most expressive decomposition that excludes ABA.** The natural
+classes of any decomposition excluding ABA lie inside those of Weak Case Containment, or of its
+mirror image, the accusative inside the nominative, which it attains. -/
+theorem naturalClasses_subset_of_forall_isContiguous [Nontrivial F] {D : Paradigm 3 (Finset K)}
+    (h : ∀ v : RuleSet (SubsetRule (Finset K) F), v.Antihomophonous →
+      IsContiguous fun c ↦ v.realize card (D c)) :
+    naturalClasses D ⊆ naturalClasses wcc ∨ naturalClasses D ⊆ naturalClasses (wcc ∘ Fin.rev) := by
+  obtain ⟨h₁, h₂⟩ := forall_isContiguous_iff_not_isNaturalClass.1 h
+  exact subset_or_subset_of_not_mem _ (isClosureSystem_naturalClasses D)
+    (fun hm ↦ h₁ (mem_naturalClasses.1 hm)) fun hm ↦ h₂ (mem_naturalClasses.1 hm)
 
 end ChristopoulosZompi2023
