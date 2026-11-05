@@ -4,6 +4,7 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Data.Fintype.Sum
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
+public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Studies.Traugott2010
 
 /-!
@@ -322,12 +323,7 @@ def network : Constructicon Node Unit where
     | .stage binominalIntensifier => [(.adjectivePhrase, some .polysemy)]
     | _ => []
 
-/-- The depth of a node below the N+PP mother node. -/
-def Node.rank : Node → ℕ
-  | .stage .nPP | .simpleNP | .adjectivePhrase => 0
-  | .stage _ => 1
-
-instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
+instance : PartialOrder Node := network.partialOrder (by decide)
 
 instance : DecidableLE Node := network.decidableLE [.stage .nPP] (by decide)
 
