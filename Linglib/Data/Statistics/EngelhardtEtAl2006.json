@@ -1,0 +1,462 @@
+{
+  "meta": {
+    "bibkey": "engelhardt-etal-2006",
+    "method": "experiment",
+    "description": "Three experiments on the Gricean maxim of Quantity with displays of an apple on a towel, an empty towel, an empty box and either a frog or a second apple. In Experiment 1 speakers instruct a confederate to move the apple, and the first instruction of each trial is coded for a modified target; in Experiments 2 and 2b listeners rate instructions from 1 (incorrect) to 5 (perfect), Experiment 2b replacing *put the apple on the towel* by *put the apple on the other towel*; Experiment 3 records eye movements, not tabled here. Tests are printed by subjects (F1), by items (F2) and as min F'; their degrees of freedom are in the notes. Pairwise comparisons of condition means are read against the 95% confidence interval of their difference. The speech files were offered at a lab address that no longer resolves; no data were released.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The experiment.",
+      "levels": [
+        {
+          "name": "exp1",
+          "label": "Experiment 1",
+          "doc": "production"
+        },
+        {
+          "name": "exp2",
+          "label": "Experiment 2",
+          "doc": "listener judgments of the instructions of Table 1"
+        },
+        {
+          "name": "exp2b",
+          "label": "Experiment 2b",
+          "doc": "Experiment 2 with *put the apple on the other towel* for *put the apple on the towel*"
+        }
+      ]
+    },
+    {
+      "name": "ContextType",
+      "doc": "The visual context, by the number of objects of the target's kind.",
+      "levels": [
+        {
+          "name": "oneReferent",
+          "label": "One-referent",
+          "doc": "one apple and a frog"
+        },
+        {
+          "name": "twoReferent",
+          "label": "Two-referent",
+          "doc": "two apples"
+        }
+      ]
+    },
+    {
+      "name": "InstructionType",
+      "doc": "Whether the target carries the prepositional-phrase modifier.",
+      "levels": [
+        {
+          "name": "bare",
+          "label": "Bare target",
+          "doc": "*the apple*"
+        },
+        {
+          "name": "modified",
+          "label": "Modified target",
+          "doc": "*the apple on the towel*"
+        }
+      ]
+    },
+    {
+      "name": "LocationType",
+      "doc": "Whether the destination is of the kind of the target's current location.",
+      "levels": [
+        {
+          "name": "matching",
+          "label": "Matching location",
+          "doc": "towel to towel"
+        },
+        {
+          "name": "different",
+          "label": "Different location",
+          "doc": "towel to box"
+        }
+      ]
+    },
+    {
+      "name": "Effect",
+      "doc": "The effect a test bears on.",
+      "levels": [
+        {
+          "name": "context",
+          "label": "Context type",
+          "doc": "the effect of the context type"
+        },
+        {
+          "name": "aboveZero",
+          "label": "Above zero",
+          "doc": "a rate above zero, by a one-sample test"
+        },
+        {
+          "name": "instruction",
+          "label": "Instruction type",
+          "doc": "the main effect of the instruction type"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "production",
+      "structure": "Production",
+      "doc": "the percentage of first instructions with a modified target, by context type.",
+      "locator": "p. 560",
+      "verified": "page-image",
+      "method": "experiment",
+      "key": [
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "context",
+          "type": "ContextType",
+          "doc": "The context type."
+        },
+        {
+          "name": "modifiedTarget",
+          "type": "decimal",
+          "doc": "The percentage of first instructions with a modified target."
+        }
+      ],
+      "rows": [
+        {
+          "context": "One-referent",
+          "modifiedTarget": "30"
+        },
+        {
+          "context": "Two-referent",
+          "modifiedTarget": "98"
+        }
+      ]
+    },
+    {
+      "name": "exp2Ratings",
+      "structure": "Exp2Rating",
+      "doc": "the mean rating of each instruction of Table 1 in Experiment 2's one-referent context.",
+      "locator": "pp. 562-563",
+      "verified": "page-image",
+      "key": [
+        "instruction",
+        "location"
+      ],
+      "columns": [
+        {
+          "name": "instruction",
+          "type": "InstructionType",
+          "doc": "The instruction type."
+        },
+        {
+          "name": "location",
+          "type": "LocationType",
+          "doc": "The location type."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating on the scale from 1 to 5."
+        }
+      ],
+      "rows": [
+        {
+          "instruction": "Bare target",
+          "location": "Matching location",
+          "mean": "3.12"
+        },
+        {
+          "instruction": "Bare target",
+          "location": "Different location",
+          "mean": "4.91"
+        },
+        {
+          "instruction": "Modified target",
+          "location": "Matching location",
+          "mean": "4.74"
+        },
+        {
+          "instruction": "Modified target",
+          "location": "Different location",
+          "mean": "4.3"
+        }
+      ]
+    },
+    {
+      "name": "exp2bRatings",
+      "structure": "Exp2bRating",
+      "doc": "the mean rating of each instruction in Experiment 2b's one-referent context.",
+      "locator": "p. 564",
+      "verified": "page-image",
+      "key": [
+        "instruction",
+        "location"
+      ],
+      "columns": [
+        {
+          "name": "instruction",
+          "type": "InstructionType",
+          "doc": "The instruction type."
+        },
+        {
+          "name": "location",
+          "type": "LocationType",
+          "doc": "The location type."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating on the scale from 1 to 5."
+        }
+      ],
+      "rows": [
+        {
+          "instruction": "Bare target",
+          "location": "Matching location",
+          "mean": "4.69",
+          "note": "p. 564: put the apple on the other towel"
+        },
+        {
+          "instruction": "Bare target",
+          "location": "Different location",
+          "mean": "4.64"
+        },
+        {
+          "instruction": "Modified target",
+          "location": "Matching location",
+          "mean": "4.41",
+          "note": "p. 564: 4.41 vs. 4.21; matching is higher in Fig. 4C"
+        },
+        {
+          "instruction": "Modified target",
+          "location": "Different location",
+          "mean": "4.21"
+        }
+      ]
+    },
+    {
+      "name": "exp2TwoReferentRatings",
+      "structure": "Exp2TwoReferentRating",
+      "doc": "the mean rating of each instruction type in Experiment 2's two-referent context, over location types.",
+      "locator": "p. 563",
+      "verified": "page-image",
+      "key": [
+        "instruction"
+      ],
+      "columns": [
+        {
+          "name": "instruction",
+          "type": "InstructionType",
+          "doc": "The instruction type."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating on the scale from 1 to 5."
+        }
+      ],
+      "rows": [
+        {
+          "instruction": "Bare target",
+          "mean": "2.8"
+        },
+        {
+          "instruction": "Modified target",
+          "mean": "4.35"
+        }
+      ]
+    },
+    {
+      "name": "comparisons",
+      "structure": "Comparison",
+      "doc": "a pairwise comparison of instructions in Experiment 2's one-referent context whose difference the paper reports exceeding the 95% confidence interval, the higher-rated instruction first.",
+      "locator": "pp. 562-563",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "higherInstruction",
+          "type": "InstructionType",
+          "doc": "The instruction type of the higher-rated instruction."
+        },
+        {
+          "name": "higherLocation",
+          "type": "LocationType",
+          "doc": "Its location type."
+        },
+        {
+          "name": "lowerInstruction",
+          "type": "InstructionType",
+          "doc": "The instruction type of the lower-rated instruction."
+        },
+        {
+          "name": "lowerLocation",
+          "type": "LocationType",
+          "doc": "Its location type."
+        },
+        {
+          "name": "interval",
+          "type": "decimal",
+          "doc": "The 95% confidence interval for the difference between the means."
+        }
+      ],
+      "rows": [
+        {
+          "higherInstruction": "Bare target",
+          "higherLocation": "Different location",
+          "lowerInstruction": "Bare target",
+          "lowerLocation": "Matching location",
+          "interval": "0.31"
+        },
+        {
+          "higherInstruction": "Modified target",
+          "higherLocation": "Matching location",
+          "lowerInstruction": "Modified target",
+          "lowerLocation": "Different location",
+          "interval": "0.30"
+        },
+        {
+          "higherInstruction": "Modified target",
+          "higherLocation": "Matching location",
+          "lowerInstruction": "Bare target",
+          "lowerLocation": "Matching location",
+          "interval": "0.27"
+        },
+        {
+          "higherInstruction": "Bare target",
+          "higherLocation": "Different location",
+          "lowerInstruction": "Modified target",
+          "lowerLocation": "Different location",
+          "interval": "0.38"
+        }
+      ]
+    },
+    {
+      "name": "tests",
+      "structure": "Test",
+      "doc": "a test of production in Experiment 1 or of ratings in Experiments 2 and 2b, by subjects, by items and as min F'.",
+      "locator": "pp. 560, 564, Table 4",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "effect",
+          "type": "Effect",
+          "doc": "The effect tested."
+        },
+        {
+          "name": "context",
+          "type": "option ContextType",
+          "doc": "The context type the test is restricted to, if any."
+        },
+        {
+          "name": "f1",
+          "type": "option decimal",
+          "doc": "F by subjects, none where the paper prints no test."
+        },
+        {
+          "name": "p1",
+          "type": "option pvalue",
+          "doc": "Its p-value."
+        },
+        {
+          "name": "f2",
+          "type": "option decimal",
+          "doc": "F by items."
+        },
+        {
+          "name": "p2",
+          "type": "option pvalue",
+          "doc": "Its p-value."
+        },
+        {
+          "name": "minF",
+          "type": "option decimal",
+          "doc": "Min F'."
+        },
+        {
+          "name": "pMin",
+          "type": "option pvalue",
+          "doc": "Its p-value."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "effect": "Context type",
+          "context": null,
+          "f1": "108.08",
+          "p1": "< 0.001",
+          "f2": "257.83",
+          "p2": "< 0.001",
+          "minF": "76.15",
+          "pMin": "< 0.001",
+          "note": "p. 560: 98% vs. 30%; F1(1, 9), F2(1, 5), min F'(1, 14)"
+        },
+        {
+          "experiment": "Experiment 1",
+          "effect": "Above zero",
+          "context": "One-referent",
+          "f1": "11.0",
+          "p1": "< 0.01",
+          "f2": "102.96",
+          "p2": "< 0.001",
+          "minF": "9.94",
+          "pMin": "< 0.01",
+          "note": "p. 560: one-sample t test against 0, as F; F1(1, 9), F2(1, 5), min F'(1, 11)"
+        },
+        {
+          "experiment": "Experiment 2",
+          "effect": "Instruction type",
+          "context": "One-referent",
+          "f1": "11.25",
+          "p1": "< 0.01",
+          "f2": "25.28",
+          "p2": "< 0.01",
+          "minF": "7.79",
+          "pMin": "< 0.05",
+          "note": "Table 4: F1(1, 21), F2(1, 5), min F'(1, 24)"
+        },
+        {
+          "experiment": "Experiment 2",
+          "effect": "Instruction type",
+          "context": "Two-referent",
+          "f1": "72.59",
+          "p1": "< 0.001",
+          "f2": "74.42",
+          "p2": "< 0.001",
+          "minF": "36.74",
+          "pMin": "< 0.001",
+          "note": "Table 4: F1(1, 21), F2(1, 5), min F'(1, 16)"
+        },
+        {
+          "experiment": "Experiment 2b",
+          "effect": "Instruction type",
+          "context": "One-referent",
+          "f1": null,
+          "p1": null,
+          "f2": null,
+          "p2": null,
+          "minF": null,
+          "pMin": null,
+          "note": "p. 564: not statistically significant, no test printed"
+        },
+        {
+          "experiment": "Experiment 2b",
+          "effect": "Instruction type",
+          "context": "Two-referent",
+          "f1": "23.73",
+          "p1": "< 0.01",
+          "f2": "12.33",
+          "p2": "< 0.05",
+          "minF": "8.11",
+          "pMin": "< 0.05",
+          "note": "p. 564: F1(1, 21), F2(1, 5), min F'(1, 11)"
+        }
+      ]
+    }
+  ]
+}
