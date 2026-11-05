@@ -721,7 +721,7 @@
       ["construal", "effective"],
       ["felicity", "infelicitous"]
     ],
-    "comment": "Printed unmarked; the prose says it sounds contradictory or attributes irrationality to John: two effective preferences the agent believes incompatible cannot both be maximal, `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`.",
+    "comment": "Printed unmarked; the prose says it sounds contradictory or attributes irrationality to John: two effective preferences the agent believes incompatible cannot both be maximal, `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maximals`.",
     "verified": "page-image"
   },
   {

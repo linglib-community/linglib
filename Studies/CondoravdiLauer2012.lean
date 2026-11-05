@@ -68,6 +68,7 @@ effective structure alone where cooperation by default ranges over all of the ad
 namespace CondoravdiLauer2012
 
 open Commitment Desire.Preferential Modality
+open PreferenceStructure (mem_maximals_discrete)
 
 variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Set W} {w : W}
 
@@ -123,8 +124,8 @@ theorem imp_self_verifying {K : W → State (A × Force) W} (hK : DoxasticReduct
 theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
     (hs : Sincere (effectivePreference P) K w) (hp : ((a, .preferential), p) ∈ K)
     (hii : p ⊆ {v | Want P ad p v}) :
-    WantNecessary P a {v | Want P ad p v} w :=
-  (hs.want hp).wantNecessary.mono hii
+    WantQuineHintikka P a {v | Want P ad p v} w :=
+  monotone_wantQuineHintikka hii (hs.want hp).wantQuineHintikka
 
 /-! ### Consistency -/
 
@@ -132,27 +133,27 @@ theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
 theorem imperatives_consistent {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hs : Sincere (effectivePreference P) K w) :
     (B ∩ K.commitmentSet (a, .preferential)).Nonempty :=
-  hC.inter_sInter_maxElts_nonempty.mono
+  hC.inter_sInter_maximals_nonempty.mono
     (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter fun _ hp ↦ hs.want hp))
 
 -- (11), (15), (12), (14)
 theorem imperatives_revise {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : ((a, .preferential), p) ∈ K) (hq : ((a, .preferential), q) ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere (effectivePreference P) K w :=
-  fun hs ↦ (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
+  fun hs ↦ (hC.inter_inter_nonempty_of_mem_maximals (hs.want hp) (hs.want hq)).ne_empty h
 
 /-! ### Endorsement by advice, permission, and concession -/
 
 -- (39), (40)
 theorem advice_compatible {S : PreferenceStructure W} {B g : Set W} (hC : S.Consistent B)
-    (hb : ∀ r ∈ S.prefs, ¬ S.prec r g) (hg : g ∈ S.maxElts) (hq : q ∈ S.prefs) :
+    (hb : ∀ r ∈ S.prefs, ¬ S.prec r g) (hg : g ∈ S.maximals) (hq : q ∈ S.prefs) :
     (B ∩ (g ∩ q)).Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun h ↦ hb q hq (hC.prec_of_mem_maxElts hg hq h)
+  Set.nonempty_iff_ne_empty.2 fun h ↦ hb q hq (hC.prec_of_mem_maximals hg hq h)
 
 -- (21), (22)
 theorem concession_not_want {S : PreferenceStructure W} {B : Set W} (hC : S.Consistent B)
-    (hp : p ∈ S.maxElts) (hq : q ∈ S.prefs) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maxElts :=
-  fun hq' ↦ hq'.2 p hp.1 (hC.prec_of_mem_maxElts hp hq h)
+    (hp : p ∈ S.maximals) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maximals :=
+  fun hq ↦ (hC.inter_inter_nonempty_of_mem_maximals hp hq).ne_empty h
 
 /-- The utterances whose follow-ups the paper contrasts. -/
 inductive Use
@@ -163,7 +164,7 @@ inductive Use
 preference for the content unless it is an assertion, which incurs no preferential commitment,
 `declarative_commitmentSets`, and for advice also nothing ranked below the content, (39). -/
 def Use.Holds (u : Use) (S : PreferenceStructure W) (p : Set W) : Prop :=
-  (u ≠ .assertion → p ∈ S.maxElts) ∧ (u = .advice → ∀ r ∈ S.prefs, ¬ S.prec r p)
+  (u ≠ .assertion → p ∈ S.maximals) ∧ (u = .advice → ∀ r ∈ S.prefs, ¬ S.prec r p)
 
 /-- A follow-up's present preference against the content is effective for *I don't want you
 to*, mere for *I wish you would not*, and absent for a deontic statement or a past desire. -/
@@ -174,7 +175,7 @@ inductive Denial
 /-- A denial carries a preference against the content unless it has none, and an effective one
 for a want. -/
 def Denial.Against (d : Denial) (S : PreferenceStructure W) (q : Set W) : Prop :=
-  (d ≠ .none → q ∈ S.prefs) ∧ (d = .want → q ∈ S.maxElts)
+  (d ≠ .none → q ∈ S.prefs) ∧ (d = .want → q ∈ S.maximals)
 
 variable (W) in
 /-- A follow-up is coherent when some consistent effective preference structure meets the
@@ -196,21 +197,21 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     by_cases ha : u = .assertion
     · exact Or.inr (Or.inl ha)
     have hpq' : Set.univ ∩ (p ∩ q) = ∅ := by rw [Set.univ_inter]; exact hpq
-    exact Or.inr (Or.inr ⟨fun hw ↦ concession_not_want hC (hp ha) (hq hd) hpq' (hqm hw),
+    exact Or.inr (Or.inr ⟨fun hw ↦ concession_not_want hC (hp ha) hpq' (hqm hw),
       fun hu ↦ (advice_compatible hC (hb hu) (hp ha) (hq hd)).ne_empty hpq'⟩)
   · rintro (rfl | rfl | ⟨hw, hu⟩)
     · exact ⟨PreferenceStructure.single {x}, {x}, {y},
-        PreferenceStructure.consistent_single ⟨x, Set.mem_singleton x, Set.mem_univ x⟩,
-        ⟨fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩, fun _ _ _ h ↦ h⟩, hxy', fun h ↦ absurd rfl h,
-        nofun⟩
+        PreferenceStructure.consistent_single_iff.2 ⟨x, Set.mem_univ x, Set.mem_singleton x⟩,
+        ⟨fun _ ↦ mem_maximals_discrete (Set.mem_singleton _), fun _ _ _ h ↦ h⟩, hxy',
+        fun h ↦ absurd rfl h, nofun⟩
     · exact ⟨PreferenceStructure.single {y}, {x}, {y},
-        PreferenceStructure.consistent_single ⟨y, Set.mem_singleton y, Set.mem_univ y⟩,
+        PreferenceStructure.consistent_single_iff.2 ⟨y, Set.mem_univ y, Set.mem_singleton y⟩,
         ⟨fun h ↦ absurd rfl h, nofun⟩, hxy', fun _ ↦ Set.mem_singleton _,
-        fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩⟩
+        fun _ ↦ mem_maximals_discrete (Set.mem_singleton _)⟩
     · exact ⟨.rankBelow {{x}, {y}} hne.symm, {x}, {y},
-        PreferenceStructure.consistent_rankBelow hne.symm
-          ⟨x, trivial, fun _ ⟨ht, hty⟩ ↦ (ht.resolve_right hty).symm ▸ rfl⟩
-          ⟨y, trivial, fun _ ⟨ht, htx⟩ ↦ (ht.resolve_left htx).symm ▸ rfl⟩,
+        (PreferenceStructure.consistent_rankBelow_iff hne.symm).2
+          ⟨⟨x, trivial, fun _ ⟨ht, hty⟩ ↦ (ht.resolve_right hty).symm ▸ rfl⟩,
+            ⟨y, trivial, fun _ ⟨ht, htx⟩ ↦ (ht.resolve_left htx).symm ▸ rfl⟩⟩,
         ⟨fun _ ↦ ⟨Or.inl rfl, fun _ _ h ↦ hne h.1⟩, fun h ↦ absurd h hu⟩,
         hxy', fun _ ↦ Or.inr rfl, fun h ↦ absurd h hw⟩
 
