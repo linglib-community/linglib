@@ -397,42 +397,30 @@ section Bimachine
 
 variable {L R : Type*} (B : Bimachine L R α β)
 
-theorem Bimachine.drop_runFrom_append (w : B.LetterToLetter) (l : L) (x v : List α) :
-    (B.runFrom l (x ++ v)).drop x.length = B.runFrom (B.lStateAfter l x) v := by
-  induction x generalizing l with
-  | nil => rfl
-  | cons a x ih => simpa [w.output_eq] using ih (B.lStep l a)
-
-theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List α) :
-    (B.runFrom l (u ++ y)).take u.length
-      = Bimachine.runFrom {B with rInit := B.rState y} l u := by
-  induction u generalizing l with
-  | nil => rfl
-  | cons a u ih =>
-    rw [List.cons_append, B.runFrom_cons, w.output_eq, List.singleton_append,
-      List.length_cons, List.take_succ_cons, ih (B.lStep l a), B.rState_append u y]
-    simp [w.output_eq]
-
 theorem Bimachine.syncResidual_run (w : B.LetterToLetter) (x : List α) :
-    syncResidual B.run x = B.runFrom (B.lState x) :=
-  funext fun v ↦ B.drop_runFrom_append w B.lInit x v
+    syncResidual B.run x = (B.emitted (B.lState x) · B.rInit) :=
+  funext fun v ↦ by
+    rw [syncResidual, w.run_eq, B.emitted_append, List.drop_left' (w.length_emitted ..)]
+    rfl
 
 theorem Bimachine.syncCoresidual_run (w : B.LetterToLetter) (y : List α) :
-    syncCoresidual B.run y = Bimachine.run {B with rInit := B.rState y} :=
-  funext fun u ↦ B.take_runFrom_append w B.lInit u y
+    syncCoresidual B.run y = (B.emitted B.lInit · (B.rState y)) :=
+  funext fun u ↦ by
+    rw [syncCoresidual, w.run_eq, B.emitted_append, List.take_left' (w.length_emitted ..)]
+    rfl
 
 /-! ### Necessity -/
 
 theorem IsLengthPreservingBimachineComputable.finite_range_syncResidual {f : List α → List β}
     (hf : IsLengthPreservingBimachineComputable f) : (Set.range (syncResidual f)).Finite := by
   obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
-  exact Set.Finite.subset (Set.finite_range B.runFrom)
+  exact Set.Finite.subset (Set.finite_range fun l v ↦ B.emitted l v B.rInit)
     (Set.range_subset_iff.mpr fun x ↦ ⟨_, (B.syncResidual_run w x).symm⟩)
 
 theorem IsLengthPreservingBimachineComputable.finite_range_syncCoresidual {f : List α → List β}
     (hf : IsLengthPreservingBimachineComputable f) : (Set.range (syncCoresidual f)).Finite := by
   obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
-  exact Set.Finite.subset (Set.finite_range fun r : R ↦ Bimachine.run {B with rInit := r})
+  exact Set.Finite.subset (Set.finite_range fun r u ↦ B.emitted B.lInit u r)
     (Set.range_subset_iff.mpr fun y ↦ ⟨B.rState y, (B.syncCoresidual_run w y).symm⟩)
 
 /-! ### Sufficiency -/
@@ -449,9 +437,11 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (stateL u) x (stateR w)))
     (hlen : ∀ xs, (f xs).length = xs.length) :
     IsLengthPreservingBimachineComputable f := by
-  set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, fun l a r ↦ [out l a r]⟩
-  suffices B.run = f from
-    this ▸ B.isLengthPreservingBimachineComputable ⟨⟨out, fun _ _ _ ↦ rfl⟩⟩
+  set B : Bimachine L R α β :=
+    { lInit := stateL [], lStep := δL, rInit := stateR [], rStep := δR,
+      output := fun l a r ↦ [out l a r] }
+  let w : B.LetterToLetter := { cell := out, output_eq := fun _ _ _ ↦ rfl }
+  suffices B.run = f from this ▸ B.isLengthPreservingBimachineComputable ⟨w⟩
   have hL : ∀ u, B.lState u = stateL u := foldl_eq_of_append_singleton hδL []
   have hR : ∀ w, B.rState w = stateR w := fun w ↦ by
     induction w with
@@ -459,9 +449,9 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     | cons x w ih => rw [B.rState_cons, ih, hδR]
   funext xs
   refine List.ext_getElem? fun i ↦ ?_
-  rw [(⟨out, fun _ _ _ ↦ rfl⟩ : B.LetterToLetter).getElem?_run,
-    getElem?_eq_of_append_cons hlen hout]
+  rw [w.getElem?_run, getElem?_eq_of_append_cons hlen hout]
   simp only [hL, hR]
+  rfl
 
 theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)

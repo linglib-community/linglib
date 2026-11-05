@@ -126,8 +126,8 @@ theorem utp_eq_resolve_mark (w : List AssociationState) :
 /-- UTP is computable by a bimachine via the (43) decomposition, hence regular (§4.2). -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp.map := by
   rw [show utp.map = resolveRight.runRight ∘ markLeft.run from funext utp_eq_resolve_mark]
-  exact resolveRight.isRightSubsequential.isBimachineComputable_comp
-    markLeft.isLeftSubsequential rfl
+  exact resolveRight.isRightSubsequential.isBimachineComputable.comp
+    markLeft.isLeftSubsequential.isBimachineComputable
 
 /-! ### The autosegmental reading (§4.4)
 
