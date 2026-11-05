@@ -65,15 +65,15 @@ theorem applySet_subset_iff : applySet r ⊆ applySet s ↔ s.features ≤ r.fea
 theorem applySet_ssubset_iff : applySet r ⊂ applySet s ↔ s.features < r.features :=
   Set.Ici_ssubset_Ici
 
-variable [DecidableLE P] {α : Type*} [LinearOrder α] {f : SubsetRule P E → α}
+variable [DecidableLE P] {α : Type*} [LinearOrder α] {g : P → α}
   {v : RuleSet (SubsetRule P E)} {c : P} {φ : E}
 
 /-- A score strictly monotone in the specification selects an Elsewhere winner, so that counting
 features ([halle-1997]) refines the inclusion of contexts ([kiparsky-1973]). It decides between
 incomparable specifications as well, which is where the two come apart. -/
-theorem realize_realizes (hf : ∀ r s : SubsetRule P E, r.features < s.features → f r < f s)
-    (h : v.realize f c = some φ) : v.Realizes applySet c φ :=
-  RuleSet.realize_realizes (fun _ _ _ _ h ↦ hf _ _ (applySet_ssubset_iff.1 h)) h
+theorem realize_realizes (hg : StrictMono g) (h : v.realize (g ∘ features) c = some φ) :
+    v.Realizes applySet c φ :=
+  RuleSet.realize_realizes (fun _ _ _ _ h ↦ hg (applySet_ssubset_iff.1 h)) h
 
 end Preorder
 
@@ -91,17 +91,16 @@ variable [DecidableLE P] {α : Type*} [LinearOrder α] {f : SubsetRule P E → �
 /-- There is no ABA across `y` when it takes in what `x` and `z` share and lies below `z`, whatever
 the score. -/
 theorem realize_eq_of_inf_le_of_le (hv : v.Antihomophonous) (hxz : x ⊓ z ≤ y) (hyz : y ≤ z)
-    (h : v.realize f x = v.realize f z) : v.realize f y = v.realize f x :=
-  RuleSet.realize_eq_of_applies hv (fun _ _ hx hz ↦ applies_of_inf_le hx hz hxz)
-    (fun _ _ hy ↦ le_trans hy hyz) h
+    (h : v.realize f x = v.realize f z) : v.realize f x = v.realize f y :=
+  (RuleSet.realize_eq_of_applies hv (fun _ _ hx hz ↦ applies_of_inf_le hx hz hxz)
+    (fun _ _ hy ↦ le_trans hy hyz) h).symm
 
-variable [OrderBot P]
+variable [OrderBot P] {g : P → α}
 
 /-- A rule for `s` beside an elsewhere rule decides on whether the context extends `s`. -/
-private theorem realize_pair (hf : ∀ r s : SubsetRule P E, r.features < s.features → f r < f s)
-    {s : P} (hs : ⊥ < s) (a b : E) (c : P) :
-    RuleSet.realize [⟨s, a⟩, ⟨⊥, b⟩] f c = some (if s ≤ c then a else b) := by
-  have hlt : f ⟨⊥, b⟩ < f ⟨s, a⟩ := hf _ _ hs
+private theorem realize_pair (hg : StrictMono g) {s : P} (hs : ⊥ < s) (a b : E) (c : P) :
+    RuleSet.realize [⟨s, a⟩, ⟨⊥, b⟩] (g ∘ features) c = some (if s ≤ c then a else b) := by
+  have hlt : (g ∘ features) (⟨⊥, b⟩ : SubsetRule P E) < (g ∘ features) ⟨s, a⟩ := hg hs
   split_ifs with hc
   · refine RuleSet.realize_eq_of_forall_le (r := (⟨s, a⟩ : SubsetRule P E)) (by simp) hc ?_ ?_ <;>
       simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
@@ -116,31 +115,29 @@ private theorem realize_pair (hf : ∀ r s : SubsetRule P E, r.features < s.feat
 /-- **The ABA characterization.** Under a score strictly monotone in the specification, a triple
 escapes ABA under every antihomophonous rule set exactly when its middle takes in what the outer two
 share and lies below one of them. Failing the first, a rule for `x ⊓ z` beside an elsewhere rule
-realizes ABA; failing the second, a rule for `y` itself does, as a rule for the accusative's
+realizes ABA; failing the second, a rule for `y` itself does, as a rule for the accusative
 features does under No Case Containment ([christopoulos-zompi-2023]). -/
-theorem forall_realize_eq_iff [Nontrivial E]
-    (hf : ∀ r s : SubsetRule P E, r.features < s.features → f r < f s) :
+theorem forall_realize_eq_iff [Nontrivial E] (hg : StrictMono g) :
     (∀ v : RuleSet (SubsetRule P E), v.Antihomophonous →
-        v.realize f x = v.realize f z → v.realize f y = v.realize f x) ↔
+        v.realize (g ∘ features) x = v.realize (g ∘ features) z →
+          v.realize (g ∘ features) x = v.realize (g ∘ features) y) ↔
       x ⊓ z ≤ y ∧ (y ≤ x ∨ y ≤ z) := by
   refine ⟨fun h ↦ ?_, fun ⟨hxz, hy⟩ v hv he ↦ hy.elim (fun hyx ↦ ?_) fun hyz ↦
     realize_eq_of_inf_le_of_le hv hxz hyz he⟩
   · obtain ⟨a, b, hab⟩ := exists_pair_ne E
-    have hanti (s : P) : RuleSet.Antihomophonous ([⟨s, a⟩, ⟨⊥, b⟩] : RuleSet (SubsetRule P E)) := by
-      simp [RuleSet.Antihomophonous, Set.InjOn, hab, hab.symm]
+    have key (s : P) (hs : ⊥ < s) (hxz : s ≤ x ↔ s ≤ z) : s ≤ x ↔ s ≤ y := by
+      have hanti : RuleSet.Antihomophonous ([⟨s, a⟩, ⟨⊥, b⟩] : RuleSet (SubsetRule P E)) := by
+        simp [RuleSet.Antihomophonous, Set.InjOn, hab, hab.symm]
+      have := h _ hanti (by simp only [realize_pair hg hs, hxz])
+      simp only [realize_pair hg hs, Option.some.injEq] at this
+      split_ifs at this <;> simp_all
     refine ⟨by_contra fun hn ↦ ?_, by_contra fun hn ↦ ?_⟩
-    · have hs : ⊥ < x ⊓ z := bot_lt_iff_ne_bot.2 fun h0 ↦ hn (h0 ▸ bot_le)
-      have := h _ (hanti (x ⊓ z)) (by simp only [realize_pair hf hs, inf_le_left, inf_le_right,
-        ite_true])
-      simp only [realize_pair hf hs, inf_le_left, hn, ite_true, ite_false,
-        Option.some.injEq] at this
-      exact hab this.symm
+    · exact hn ((key _ (bot_lt_iff_ne_bot.2 fun h0 : x ⊓ z = ⊥ ↦ hn (h0 ▸ bot_le))
+        (iff_of_true inf_le_left inf_le_right)).1 inf_le_left)
     · obtain ⟨hyx, hyz⟩ := not_or.1 hn
-      have hs : ⊥ < y := bot_lt_iff_ne_bot.2 fun h0 ↦ hyx (h0 ▸ bot_le)
-      have := h _ (hanti y) (by simp only [realize_pair hf hs, hyx, hyz, ite_false])
-      simp only [realize_pair hf hs, hyx, le_refl, ite_true, ite_false, Option.some.injEq] at this
-      exact hab this
-  · exact (realize_eq_of_inf_le_of_le hv (inf_comm x z ▸ hxz) hyx he.symm).trans he.symm
+      exact hyx ((key y (bot_lt_iff_ne_bot.2 fun h0 : y = ⊥ ↦ hyx (h0 ▸ bot_le))
+        (iff_of_false hyx hyz)).2 le_rfl)
+  · exact he.trans (realize_eq_of_inf_le_of_le hv (inf_comm x z ▸ hxz) hyx he.symm)
 
 end SemilatticeInf
 
@@ -151,11 +148,7 @@ variable {K : Type*}
 /-- The number of features a rule is specified for, the score of the competition in which "only
 the rule specified for the greatest number of features applies" ([christopoulos-zompi-2023]'s
 (1b), after [halle-1997]). -/
-def card (r : SubsetRule (Finset K) E) : ℕ := r.features.card
-
-theorem card_lt_card {r s : SubsetRule (Finset K) E} (h : r.features < s.features) :
-    r.card < s.card :=
-  Finset.card_lt_card h
+abbrev card : SubsetRule (Finset K) E → ℕ := Finset.card ∘ features
 
 variable [DecidableEq K] {α : Type*} [LinearOrder α] {f : SubsetRule (Finset K) E → α}
   {v : RuleSet (SubsetRule (Finset K) E)} {r s : SubsetRule (Finset K) E} {a b : Finset K} {k : K}

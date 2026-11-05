@@ -81,7 +81,7 @@ def dimOf : K → Dim
 
 /-- A case-number cell. -/
 structure ZCell where
-  case : Case3
+  case : Fin 3
   num : LNum
   deriving DecidableEq, Fintype, Repr
 
@@ -105,28 +105,28 @@ inductive Con | maxD (d : Dim) | depD (d : Dim) | maxG | depG
 /-- Violation counts: `Max`-type stars for expected features the spec lacks,
 `Dep`-type stars for spurious features the spec adds, counted on one
 dimension or globally. -/
-def viol : Con → ZCell → Cand F → ℕ
-  | .maxD d, c, r => ((zdecomp c \ r.features).filter (fun k ↦ dimOf k = d)).card
-  | .depD d, c, r => ((r.features \ zdecomp c).filter (fun k ↦ dimOf k = d)).card
-  | .maxG, c, r => (zdecomp c \ r.features).card
-  | .depG, c, r => (r.features \ zdecomp c).card
+def viol : Con → Finset K → Cand F → ℕ
+  | .maxD d, c, r => ((c \ r.features).filter (fun k ↦ dimOf k = d)).card
+  | .depD d, c, r => ((r.features \ c).filter (fun k ↦ dimOf k = d)).card
+  | .maxG, c, r => (c \ r.features).card
+  | .depG, c, r => (r.features \ c).card
 
 /-- One Eval cut: keep the candidates with fewest violations of `C`. -/
-def cut (c : ZCell) (cands : List (Cand F)) (C : Con) : List (Cand F) :=
+def cut (c : Finset K) (cands : List (Cand F)) (C : Con) : List (Cand F) :=
   match (cands.map (viol C c)).min? with
   | none => cands
   | some m => cands.filter (fun r ↦ viol C c r = m)
 
 /-- Strict-domination Eval: successive cuts down the ranking, top constraint
 first. -/
-def eval (rk : List Con) (v : List (Cand F)) (c : ZCell) : List (Cand F) :=
+def eval (rk : List Con) (v : List (Cand F)) (c : Finset K) : List (Cand F) :=
   rk.foldl (cut c) v
 
 /-- `r` is the unique survivor of Eval at `c`. -/
-def Wins (rk : List Con) (v : List (Cand F)) (c : ZCell) (r : Cand F) : Prop :=
+def Wins (rk : List Con) (v : List (Cand F)) (c : Finset K) (r : Cand F) : Prop :=
   eval rk v c = [r]
 
-instance [DecidableEq F] {rk : List Con} {v : List (Cand F)} {c : ZCell}
+instance [DecidableEq F] {rk : List Con} {v : List (Cand F)} {c : Finset K}
     {r : Cand F} : Decidable (Wins rk v c r) :=
   inferInstanceAs (Decidable (eval rk v c = [r]))
 
@@ -146,16 +146,16 @@ open OptimalityTheory
 
 /-- The candidate's violation vector at a cell, ordered by the ranking — the
 `List ℕ` reading of the OT `ViolationProfile`. -/
-def rankedViols (rk : List Con) (c : ZCell) (r : Cand F) : List ℕ :=
+def rankedViols (rk : List Con) (c : Finset K) (r : Cand F) : List ℕ :=
   rk.map (fun C ↦ viol C c r)
 
-@[simp] theorem rankedViols_nil (c : ZCell) (r : Cand F) : rankedViols [] c r = [] :=
+@[simp] theorem rankedViols_nil (c : Finset K) (r : Cand F) : rankedViols [] c r = [] :=
   rfl
 
-@[simp] theorem rankedViols_cons (C : Con) (rk : List Con) (c : ZCell) (r : Cand F) :
+@[simp] theorem rankedViols_cons (C : Con) (rk : List Con) (c : Finset K) (r : Cand F) :
     rankedViols (C :: rk) c r = viol C c r :: rankedViols rk c r := rfl
 
-theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
+theorem mem_cut_iff {C : Con} {c : Finset K} {v : List (Cand F)} {r : Cand F} :
     r ∈ cut c v C ↔ r ∈ v ∧ ∀ s ∈ v, viol C c r ≤ viol C c s := by
   unfold cut
   cases hm : (v.map (viol C c)).min? with
@@ -174,7 +174,7 @@ theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
       exact ⟨hrv, le_antisymm ((hle _ hs₀v).trans_eq hs₀)
         (hmin _ (List.mem_map_of_mem hrv))⟩
 
-theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F} :
+theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : Finset K} {r : Cand F} :
     r ∈ eval rk v c ↔ r ∈ v ∧ ∀ s ∈ v, rankedViols rk c r ≤ rankedViols rk c s := by
   induction rk generalizing v with
   | nil => simp [eval]
@@ -207,19 +207,19 @@ private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
     l.map f = List.ofFn (fun i : Fin l.length ↦ f (l.get i)) := by
   apply List.ext_getElem <;> simp
 
-theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
+theorem rankedViols_eq_ofFn (rk : List Con) (c : Finset K) (r : Cand F) :
     rankedViols rk c r = List.ofFn (fun i : Fin rk.length ↦ viol (rk.get i) c r) :=
   map_eq_ofFn_get rk (fun C ↦ viol C c r)
 
 /-- The Eval competition as an `OptimalityTheory.Tableau`: candidate set `v`, profile the
 ranked violation vector, rank position `i` reading the `i`-th constraint as a violation count.
 This is a phonological OT tableau with morphological Max/Dep constraints. -/
-def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell) :
+def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : Finset K) :
     Tableau (Cand F) rk.length :=
   ⟨v.toFinset, fun i ↦ viol (rk.get i) c⟩
 
 theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
-    {c : ZCell} {r : Cand F} : r ∈ eval rk v c ↔ r ∈ (zTableau rk v c).optimal := by
+    {c : Finset K} {r : Cand F} : r ∈ eval rk v c ↔ r ∈ (zTableau rk v c).optimal := by
   rw [mem_eval_iff, Tableau.mem_optimal_iff]
   refine and_congr List.mem_toFinset.symm (forall_congr' fun s ↦ ?_)
   refine imp_congr List.mem_toFinset.symm ?_
@@ -259,13 +259,13 @@ def eastFrisian : List (Cand String) := [⟨{.p0}, "z"⟩, ⟨{.k1}, "h"⟩]
 and *z-* in NOM.PL ((164), (166)). -/
 theorem eastFrisian_pattern :
     Wins [.depD .num, .depD .kase, .maxD .kase, .maxD .num] eastFrisian
-        ⟨.nom, .sg⟩ ⟨{.k1}, "h"⟩ ∧
+        (zdecomp ⟨nom, .sg⟩) ⟨{.k1}, "h"⟩ ∧
       Wins [.depD .num, .depD .kase, .maxD .kase, .maxD .num] eastFrisian
-        ⟨.nom, .pl⟩ ⟨{.p0}, "z"⟩ ∧
+        (zdecomp ⟨nom, .pl⟩) ⟨{.p0}, "z"⟩ ∧
       Wins [.depD .num, .depD .kase, .maxD .kase, .maxD .num] eastFrisian
-        ⟨.acc, .sg⟩ ⟨{.k1}, "h"⟩ ∧
+        (zdecomp ⟨acc, .sg⟩) ⟨{.k1}, "h"⟩ ∧
       Wins [.depD .num, .depD .kase, .maxD .kase, .maxD .num] eastFrisian
-        ⟨.acc, .pl⟩ ⟨{.k1}, "h"⟩ := by
+        (zdecomp ⟨acc, .pl⟩) ⟨{.k1}, "h"⟩ := by
   refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Malayalam 1EX candidates ((168)): same two specifications, exponents
@@ -276,44 +276,44 @@ def malayalam : List (Cand String) := [⟨{.p0}, "ñan"⟩, ⟨{.k1}, "enn"⟩]
 *enn-* in ACC.SG ((167), (169)). -/
 theorem malayalam_pattern :
     Wins [.depD .kase, .depD .num, .maxD .num, .maxD .kase] malayalam
-        ⟨.nom, .sg⟩ ⟨{.p0}, "ñan"⟩ ∧
+        (zdecomp ⟨nom, .sg⟩) ⟨{.p0}, "ñan"⟩ ∧
       Wins [.depD .kase, .depD .num, .maxD .num, .maxD .kase] malayalam
-        ⟨.nom, .pl⟩ ⟨{.p0}, "ñan"⟩ ∧
+        (zdecomp ⟨nom, .pl⟩) ⟨{.p0}, "ñan"⟩ ∧
       Wins [.depD .kase, .depD .num, .maxD .num, .maxD .kase] malayalam
-        ⟨.acc, .sg⟩ ⟨{.k1}, "enn"⟩ ∧
+        (zdecomp ⟨acc, .sg⟩) ⟨{.k1}, "enn"⟩ ∧
       Wins [.depD .kase, .depD .num, .maxD .num, .maxD .kase] malayalam
-        ⟨.acc, .pl⟩ ⟨{.p0}, "ñan"⟩ := by
+        (zdecomp ⟨acc, .pl⟩) ⟨{.p0}, "ñan"⟩ := by
   refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-! ### The checkerboard exclusion -/
 
 theorem checkerboard_excluded :
     ∀ rk ∈ rankings, ∀ fa ∈ featSpace.powerset, ∀ fb ∈ featSpace.powerset,
-      Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .sg⟩ ⟨fa, Ex.A⟩ →
-      Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.acc, .pl⟩ ⟨fa, Ex.A⟩ →
-      Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.acc, .sg⟩ ⟨fa, Ex.A⟩ ∨
-        Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .pl⟩ ⟨fa, Ex.A⟩ := by
+      Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨nom, .sg⟩) ⟨fa, 0⟩ →
+      Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨acc, .pl⟩) ⟨fa, 0⟩ →
+      Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨acc, .sg⟩) ⟨fa, 0⟩ ∨
+        Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨nom, .pl⟩) ⟨fa, 0⟩ := by
   decide
 
 /-- With violable constraints, no ranking and two-candidate vocabulary of well-formed specs yields
 ABA down the singular case column (§4.1.4). -/
 theorem unidimensional_ABA_excluded :
     ∀ rk ∈ rankings, ∀ fa ∈ specSpace, ∀ fb ∈ specSpace,
-      Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .sg⟩ ⟨fa, Ex.A⟩ →
-      Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.dat, .sg⟩ ⟨fa, Ex.A⟩ →
-      ¬ Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.acc, .sg⟩ ⟨fb, Ex.B⟩ := by
+      Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨nom, .sg⟩) ⟨fa, 0⟩ →
+      Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨dat, .sg⟩) ⟨fa, 0⟩ →
+      ¬ Wins rk [(⟨fa, 0⟩ : Cand ℕ), ⟨fb, 1⟩] (zdecomp ⟨acc, .sg⟩) ⟨fb, 1⟩ := by
   decide
 
 theorem illformed_spec_breaks_unidimensional_ABA :
     Wins [.maxD .kase, .depD .kase, .maxD .num, .depD .num]
-        [(⟨{.k2}, Ex.A⟩ : Cand Ex), ⟨{.k1, .p0}, Ex.B⟩] ⟨.nom, .sg⟩
-        ⟨{.k2}, Ex.A⟩ ∧
+        [(⟨{.k2}, 0⟩ : Cand ℕ), ⟨{.k1, .p0}, 1⟩] (zdecomp ⟨nom, .sg⟩)
+        ⟨{.k2}, 0⟩ ∧
       Wins [.maxD .kase, .depD .kase, .maxD .num, .depD .num]
-        [(⟨{.k2}, Ex.A⟩ : Cand Ex), ⟨{.k1, .p0}, Ex.B⟩] ⟨.acc, .sg⟩
-        ⟨{.k1, .p0}, Ex.B⟩ ∧
+        [(⟨{.k2}, 0⟩ : Cand ℕ), ⟨{.k1, .p0}, 1⟩] (zdecomp ⟨acc, .sg⟩)
+        ⟨{.k1, .p0}, 1⟩ ∧
       Wins [.maxD .kase, .depD .kase, .maxD .num, .depD .num]
-        [(⟨{.k2}, Ex.A⟩ : Cand Ex), ⟨{.k1, .p0}, Ex.B⟩] ⟨.dat, .sg⟩
-        ⟨{.k2}, Ex.A⟩ := by
+        [(⟨{.k2}, 0⟩ : Cand ℕ), ⟨{.k1, .p0}, 1⟩] (zdecomp ⟨dat, .sg⟩)
+        ⟨{.k2}, 0⟩ := by
   refine ⟨by decide, by decide, by decide⟩
 
 /-! ### The corner rankings: Wolf's mimicry -/
@@ -322,39 +322,37 @@ theorem illformed_spec_breaks_unidimensional_ABA :
 accusative plural obey *ABA, too strong a generalization, since East Frisian and Malayalam each
 break one of them (§4.1.1). -/
 theorem subsetPrinciple_russianDoll {v : RuleSet (Cand F)} (hv : v.Antihomophonous)
-    (h : v.realize card (zdecomp ⟨.nom, .sg⟩) =
-      v.realize card (zdecomp ⟨.acc, .pl⟩)) :
-    v.realize card (zdecomp ⟨.acc, .sg⟩) =
-        v.realize card (zdecomp ⟨.nom, .sg⟩) ∧
-      v.realize card (zdecomp ⟨.nom, .pl⟩) =
-        v.realize card (zdecomp ⟨.nom, .sg⟩) :=
+    (h : v.realize card (zdecomp ⟨nom, .sg⟩) =
+      v.realize card (zdecomp ⟨acc, .pl⟩)) :
+    v.realize card (zdecomp ⟨nom, .sg⟩) = v.realize card (zdecomp ⟨acc, .sg⟩) ∧
+      v.realize card (zdecomp ⟨nom, .sg⟩) = v.realize card (zdecomp ⟨nom, .pl⟩) :=
   ⟨SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide) h,
     SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide) h⟩
 
-private theorem depG_eq_zero_iff {c : ZCell} {r : Cand F} :
-    viol .depG c r = 0 ↔ Applies r (zdecomp c) := by
+private theorem depG_eq_zero_iff {c : Finset K} {r : Cand F} :
+    viol .depG c r = 0 ↔ Applies r c := by
   simp [viol, Finset.sdiff_eq_empty_iff_subset]
 
-private theorem maxG_le_iff {c : ZCell} {r s : Cand F} (hr : Applies r (zdecomp c))
-    (hs : Applies s (zdecomp c)) :
+private theorem maxG_le_iff {c : Finset K} {r s : Cand F} (hr : Applies r c)
+    (hs : Applies s c) :
     viol .maxG c r ≤ viol .maxG c s ↔ s.features.card ≤ r.features.card := by
-  have hr' : r.features ⊆ zdecomp c := hr
-  have hs' : s.features ⊆ zdecomp c := hs
+  have hr' : r.features ⊆ c := hr
+  have hs' : s.features ⊆ c := hs
   have h₁ := Finset.card_sdiff_add_card_eq_card hr'
   have h₂ := Finset.card_sdiff_add_card_eq_card hs'
   simp only [viol]
   omega
 
 -- [wolf-2008] [halle-1997]
-theorem mem_eval_depG_maxG_iff {v : List (Cand F)} {c : ZCell} {r : Cand F}
-    (hv : ∃ s ∈ v, Applies s (zdecomp c)) :
-    r ∈ eval [.depG, .maxG] v c ↔ r ∈ v ∧ Applies r (zdecomp c) ∧
-      ∀ s ∈ v, Applies s (zdecomp c) → s.features.card ≤ r.features.card := by
+theorem mem_eval_depG_maxG_iff {v : List (Cand F)} {c : Finset K} {r : Cand F}
+    (hv : ∃ s ∈ v, Applies s c) :
+    r ∈ eval [.depG, .maxG] v c ↔ r ∈ v ∧ Applies r c ∧
+      ∀ s ∈ v, Applies s c → s.features.card ≤ r.features.card := by
   simp only [mem_eval_iff, rankedViols_cons, rankedViols_nil, List.cons_le_cons_iff', le_refl,
     and_true, ← le_iff_lt_or_eq]
   refine and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun ⟨hr, hmax⟩ s hs ↦ ?_⟩
   · obtain ⟨s₀, hs₀, ha₀⟩ := hv
-    have hr : Applies r (zdecomp c) := depG_eq_zero_iff.1 <| by
+    have hr : Applies r c := depG_eq_zero_iff.1 <| by
       have := depG_eq_zero_iff.2 ha₀
       rcases h s₀ hs₀ with h | h <;> omega
     refine ⟨hr, fun s hs ha ↦ ?_⟩
@@ -362,7 +360,7 @@ theorem mem_eval_depG_maxG_iff {v : List (Cand F)} {c : ZCell} {r : Cand F}
     obtain h | h := h s hs
     · omega
     · exact (maxG_le_iff hr ha).1 h.2
-  · by_cases ha : Applies s (zdecomp c)
+  · by_cases ha : Applies s c
     · exact .inr ⟨(depG_eq_zero_iff.2 hr).trans (depG_eq_zero_iff.2 ha).symm,
         (maxG_le_iff hr ha).2 (hmax s hs ha)⟩
     · have := depG_eq_zero_iff.2 hr
@@ -372,9 +370,9 @@ theorem mem_eval_depG_maxG_iff {v : List (Cand F)} {c : ZCell} {r : Cand F}
 /-- Whenever some candidate is subset-applicable, the unique survivor of the ranking `Dep ≫ Max`
 is what the Subset Principle with feature counting inserts ([wolf-2008] on [halle-1997]; dual to
 [starke-2009]). -/
-theorem depTop_eq_subsetPrinciple {v : List (Cand F)} {c : ZCell} {r : Cand F}
-    (hv : ∃ s ∈ v, Applies s (zdecomp c)) (h : Wins [.depG, .maxG] v c r) :
-    RuleSet.realize v card (zdecomp c) = some r.exponent := by
+theorem depTop_eq_subsetPrinciple {v : List (Cand F)} {c : Finset K} {r : Cand F}
+    (hv : ∃ s ∈ v, Applies s c) (h : Wins [.depG, .maxG] v c r) :
+    RuleSet.realize v card c = some r.exponent := by
   obtain ⟨hr, ha, hmax⟩ := (mem_eval_depG_maxG_iff hv).1 (show r ∈ eval _ v c from h ▸ by simp)
   refine RuleSet.realize_eq_of_forall_le hr ha hmax fun s hs hsa hcard ↦ ?_
   have hmem : s ∈ eval [.depG, .maxG] v c := (mem_eval_depG_maxG_iff hv).2 ⟨hs, hsa, fun t ht hta ↦
