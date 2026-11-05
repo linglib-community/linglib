@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Semantics.Attitudes.Preference.Degree
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.NormNum
+public import Studies.UegakiSudo2019
+import Mathlib.Basic.Nontrivial.Basic
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
@@ -22,30 +21,28 @@ clausal distributivity and evaluative valence. Uegaki and Sudo derive the anti-r
 Threshold Significance. Neither holds in general: *worry* and Mandarin *qidai* relate the agent
 to the question rather than to an answer, and negative predicates such as *fear* lack the
 presupposition. Composition with a question is therefore
-[trivial, and the predicate anti-rogative, exactly for the distributive positive
-class](##QingEtAl2025.trivial_iff_class). Of distributivity, the derivation
-[uses only the inference from an answer to the question](##QingEtAl2025.trivial_positive_iff).
+[L-analytic, and the predicate anti-rogative, exactly for the distributive positive
+class](##QingEtAl2025.isLAnalytic_iff_class). Of distributivity, the derivation
+[uses only the inference from an answer to the question](##QingEtAl2025.trueWhereDefined_positive_iff).
 Apparent uses of *hope* with a polar question are non-canonical, and the asymmetry between hoping
 for the radical and for its negation follows from the goals of a hopeful wondering.
 
 ## Implementation notes
 
-Triviality quantifies over the degree function and threshold, the non-logical constants of
-Gajewski's analyticity, with the question as its own comparison class. A relational predicate is a
-parameter relating the agent to the question, since the paper characterizes the class only as a
-relation to the question not reducible to one to any answer. The paper contrasts positive with
-negative predicates; a neutral one is taken to lack threshold significance. The pragmatic derivation
-compares coming to believe the radical or not by Kratzer's ordering with the event's goals as
-ordering source; the event summation of the adjunction analysis is not formalized. Rows carry the
-paper's truth values where it gives them and its felicity judgments otherwise; the attested
-*hope whether* examples are recorded as marginal, and *temer* with a polar question and *haipa* with
-a constituent question are recorded but not predicted.
+A Class 1 predicate compares degrees on declaratives and relates the agent to a question by a
+parameter, since the paper characterizes the class only as a relation to the question not reducible
+to one to any answer. The paper contrasts positive with negative predicates; a neutral one is taken
+to lack threshold significance. The pragmatic derivation compares coming to believe the radical or
+not by Kratzer's ordering with the event's goals as ordering source; the event summation of the
+adjunction analysis is not formalized. Rows carry the paper's truth values where it gives them and
+its felicity judgments otherwise; the attested *hope whether* examples are recorded as marginal, and
+*temer* with a polar question and *haipa* with a constituent question are recorded but not predicted.
 
 ## Errata
 
 * Non-distributivity is said to block triviality (pp. 10, 13, 16), but the examples refute only the
   inference from the question to an answer, and [a predicate can fail it and stay
-  trivial](##QingEtAl2025.trivial_degreeComparisonOr).
+  L-analytic](##QingEtAl2025.isLAnalytic_degreeComparisonOr).
 
 ## References
 
@@ -65,95 +62,138 @@ a constituent question are recorded but not predicted.
 
 namespace QingEtAl2025
 
-open Examples Preferential Modality
+open Examples Preferential Modality UegakiSudo2019
 
 variable {W E : Type*}
 
-/-! ### The two escapes from triviality (§3)
+/-! ### The two escapes from triviality (§3) -/
 
-The concrete models measure preference in the reals. -/
+section LAnalyticity
 
-section Triviality
+variable {D : Type*} [LinearOrder D]
 
-variable (V : (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W → Prop)
+local notation "Family" =>
+  (E → W → Set W → D) → (Set (Set W) → D) → Set (Set W) → E → Set (Set W) → W → Prop
 
-/-- Composition of a predicate family with a question is trivial under a presupposition when in
-every model the presupposition entails the assertion, the question serving as its own comparison
-class as in Uegaki and Sudo's account. The composition is then true whenever defined, which is
-Gajewski's analyticity with the degree function and threshold as the non-logical constants. -/
-def Trivial (π : (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop) : Prop :=
-  ∀ μ θ x Q w, π μ θ x Q w → V μ θ Q x Q w
+/-- Composition with a question is true wherever it is defined, the case of L-analyticity Uegaki and
+Sudo derive. -/
+def TrueWhereDefined (V π : Family) : Prop :=
+  ∀ μ θ C x Q w, C ⊆ Q → Q.Nontrivial → π μ θ C x Q w → V μ θ C x Q w
 
 /-- A family's declarative use compares degrees in every model, as in [uegaki-sudo-2019] (35). -/
-def ComparesDegrees : Prop := ∀ μ θ C x p w, V μ θ C x {p} w ↔ p ∈ preferred μ θ C x w
-
-variable {V}
+def ComparesDegrees (V : Family) : Prop :=
+  ∀ μ θ C x p w, V μ θ C x {p} w ↔ p ∈ preferred μ θ C x w
 
 /-- A positive preferential predicate presupposes threshold significance of a question. A
 negative one triggers no such presupposition (§3.2) and presupposes only that the question has an
 answer in the comparison class. -/
-def presupposition : EvaluativeValence →
-    (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop
-  | .positive => fun μ θ x Q w ↦ Preferential.ThresholdSignificant (μ x w) θ Q
-  | .negative | .neutral => fun _ _ _ Q _ ↦ Q.Nonempty
+def presupposition : EvaluativeValence → Family
+  | .positive => thresholdSignificance
+  | .negative | .neutral => fun _ _ C _ Q _ ↦ (Q ∩ C).Nonempty
 
-/-- With a declarative use that compares degrees, composition with a question is trivial under
-threshold significance exactly when the predicate is P-to-Q entailing on each question, with that
-question as comparison class. -/
-theorem trivial_positive_iff (hV : ComparesDegrees V) :
-    Trivial V (presupposition .positive) ↔ ∀ μ θ Q, IsPToQEntailing {Q} (V μ θ Q) := by
-  refine ⟨fun h μ θ Q Q' hQ' x w p hp hVp ↦ ?_,
-    fun h μ θ x Q w ⟨p, hp, hlt⟩ ↦ h μ θ Q Q rfl x w p hp ((hV ..).2 ⟨hp, hlt⟩)⟩
+omit [LinearOrder D] in
+theorem TrueWhereDefined.isLAnalytic {V π : Family} (h : TrueWhereDefined V π) : IsLAnalytic V π :=
+  ⟨True, fun μ θ C x Q w hCQ hQ hπ ↦ iff_of_true (h μ θ C x Q w hCQ hQ hπ) trivial⟩
+
+/-- With a declarative use that compares degrees, composition with a question is true wherever
+threshold significance holds exactly when the predicate is P-to-Q entailing on the question. -/
+theorem trueWhereDefined_positive_iff {V : Family} (hV : ComparesDegrees V) :
+    TrueWhereDefined V (presupposition .positive) ↔
+      ∀ μ θ C Q, C ⊆ Q → Q.Nontrivial → IsPToQEntailing {Q} (V μ θ C) := by
+  refine ⟨fun h μ θ C Q hCQ hQ Q' hQ' x w p hp hVp ↦ ?_, fun h μ θ C x Q w hCQ hQ ⟨p, hp, hlt⟩ ↦
+    h μ θ C Q hCQ hQ Q rfl x w p (hCQ hp) ((hV ..).2 ⟨hp, hlt⟩)⟩
   obtain rfl : Q' = Q := hQ'
-  exact h μ θ x Q' w ⟨p, hp, ((hV ..).1 hVp).2⟩
+  obtain ⟨hpC, hlt⟩ := (hV ..).1 hVp
+  exact h μ θ C x Q' w hCQ hQ ⟨p, hpC, hlt⟩
 
-theorem comparesDegrees_degreeComparison : ComparesDegrees (W := W) (E := E) degreeComparison :=
+theorem comparesDegrees_degreeComparison : ComparesDegrees (D := D) (W := W) (E := E) degreeComparison :=
   degreeComparison_singleton
 
 -- Class 3, §3.3: Uegaki and Sudo's derivation
-theorem trivial_positive :
-    Trivial (W := W) (E := E) degreeComparison (presupposition .positive) :=
-  (trivial_positive_iff comparesDegrees_degreeComparison).2 fun μ θ Q ↦
-    (isClausallyDistributive_degreeComparison μ θ Q _).isPToQEntailing
+theorem trueWhereDefined_of_isClausallyDistributive {V : Family} (hV : ComparesDegrees V)
+    (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
+    TrueWhereDefined V (presupposition .positive) :=
+  (trueWhereDefined_positive_iff hV).2 fun μ θ C _ _ _ Q _ ↦
+    (hd μ θ C).isPToQEntailing Q trivial
 
--- Class 2, §3.2: without it the equivalence fails "even if they are C-distributive"
-theorem not_trivial_of_ne_positive [Inhabited E] [Inhabited W] (hV : ComparesDegrees V)
-    {v : EvaluativeValence} (hv : v ≠ .positive) : ¬ Trivial V (presupposition v) := fun h ↦ by
-  have hp := (hV ..).1 (h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default <| by
-    cases v <;> simp_all [presupposition])
-  simp [mem_preferred] at hp
+-- Class 2, §3.2: without the presupposition the assertion stays contingent
+theorem not_isLAnalytic_of_isClausallyDistributive [Nontrivial D] [Inhabited E] [Inhabited W]
+    {V : Family} (hV : ComparesDegrees V) (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C))
+    {v : EvaluativeValence} (hv : v ≠ .positive) : ¬ IsLAnalytic V (presupposition v) := by
+  rintro ⟨t, ht⟩
+  obtain ⟨a, b, hab⟩ := exists_pair_lt D
+  let Q : Set (Set W) := {∅, Set.univ}
+  have hQ : Q.Nontrivial := ⟨∅, by simp [Q], Set.univ, by simp [Q], Set.empty_ne_univ⟩
+  have hπ : ∀ (μ : E → W → Set W → D) θ, presupposition v μ θ Q default Q default := fun μ θ ↦ by
+    cases v
+    · exact absurd rfl hv
+    all_goals exact ⟨∅, by simp [Q], by simp [Q]⟩
+  have ht₁ := (ht (fun _ _ _ ↦ b) (fun _ ↦ a) Q default Q default subset_rfl hQ (hπ _ _)).1 <|
+    (hd _ _ _ Q trivial _ _).2 ⟨∅, by simp [Q], (hV ..).2 ⟨by simp [Q], hab⟩⟩
+  obtain ⟨p, -, hp⟩ := (hd _ _ _ Q trivial _ _).1 <|
+    (ht (fun _ _ _ ↦ a) (fun _ ↦ a) Q default Q default subset_rfl hQ (hπ _ _)).2 ht₁
+  exact lt_irrefl a ((hV ..).1 hp).2
 
--- Class 1, §3.1: a relation independent of the model, which thereby fails P-to-Q entailment
-theorem not_trivial_relational (v : EvaluativeValence) (R : E → Set (Set W) → W → Prop)
-    (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
-    ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
-  obtain ⟨x, Q, w, hQ, hxQ⟩ := hR
-  refine hxQ (h (fun _ _ _ ↦ 1) (fun _ ↦ 0) x Q w ?_)
-  cases v
-  · obtain ⟨p, hp⟩ := hQ
-    exact ⟨p, hp, by norm_num⟩
-  all_goals exact hQ
+/-- A Class 1 predicate compares degrees on declaratives, as (19) and (22) require, and relates its
+subject to a question by a relation `R` that does not consult the degrees. -/
+def relational (R : E → Set (Set W) → W → Prop) : Family :=
+  fun μ θ C x Q w ↦ (Q.Subsingleton ∧ degreeComparison μ θ C x Q w) ∨ (Q.Nontrivial ∧ R x Q w)
+
+theorem comparesDegrees_relational (R : E → Set (Set W) → W → Prop) :
+    ComparesDegrees (D := D) (relational R) := fun μ θ C x p w ↦ by
+  simp [relational]
+
+variable {R : E → Set (Set W) → W → Prop}
+
+-- Class 1, §3.1: `R` is contingent on questions wherever the presupposition holds
+theorem not_isLAnalytic_relational [Nontrivial D] (v : EvaluativeValence)
+    (hT : ∃ x Q w, Q.Nontrivial ∧ R x Q w) (hF : ∃ x Q w, Q.Nontrivial ∧ ¬ R x Q w) :
+    ¬ IsLAnalytic (D := D) (relational R) (presupposition v) := by
+  rintro ⟨t, ht⟩
+  obtain ⟨a, b, hab⟩ := exists_pair_lt D
+  have hπ : ∀ x Q w, Q.Nontrivial →
+      presupposition v (fun (_ : E) (_ : W) _ ↦ b) (fun _ ↦ a) Q x Q w := fun x Q w hQ ↦ by
+    obtain ⟨p, hp⟩ := hQ.nonempty
+    cases v
+    · exact ⟨p, hp, hab⟩
+    all_goals exact ⟨p, hp, hp⟩
+  obtain ⟨x₁, Q₁, w₁, hQ₁, hR₁⟩ := hT
+  obtain ⟨x₂, Q₂, w₂, hQ₂, hR₂⟩ := hF
+  have ht₁ := (ht _ _ Q₁ x₁ Q₁ w₁ subset_rfl hQ₁ (hπ x₁ Q₁ w₁ hQ₁)).1 (.inr ⟨hQ₁, hR₁⟩)
+  obtain ⟨hs, -⟩ | ⟨-, hR⟩ := (ht _ _ Q₂ x₂ Q₂ w₂ subset_rfl hQ₂ (hπ x₂ Q₂ w₂ hQ₂)).2 ht₁
+  · exact hQ₂.not_subsingleton hs
+  · exact hR₂ hR
+
+-- Class 1 escapes by failing P-to-Q entailment
+theorem not_isPToQEntailing_relational [Nontrivial D] (hT : ∃ x Q w, Q.Nontrivial ∧ R x Q w)
+    (hF : ∃ x Q w, Q.Nontrivial ∧ ¬ R x Q w) :
+    ¬ ∀ μ θ C Q, C ⊆ Q → Q.Nontrivial → IsPToQEntailing {Q} (relational (D := D) R μ θ C) :=
+  fun h ↦ not_isLAnalytic_relational .positive hT hF
+    ((trueWhereDefined_positive_iff (comparesDegrees_relational R)).2 h).isLAnalytic
 
 /-- A degree comparison, or a relation `R` to the question, in the shape of the disjunctive entry
 [uegaki-2022] gives contemplative predicates. -/
-def degreeComparisonOr (R : E → Set (Set W) → W → Prop) :
-    (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W → Prop :=
+def degreeComparisonOr (R : E → Set (Set W) → W → Prop) : Family :=
   fun μ θ C x Q w ↦ degreeComparison μ θ C x Q w ∨ R x Q w
 
 /-- Failing Q-to-P entailment does not block triviality (against pp. 10, 13 and 16). Where a
-relation `R` to a question holds of no declarative, a degree comparison or `R` is trivial under
-threshold significance, yet where `R` holds of a question it relates the agent to no answer. -/
-theorem trivial_degreeComparisonOr {R : E → Set (Set W) → W → Prop} (hR : ∀ x p w, ¬ R x {p} w)
-    {x : E} {Q : Set (Set W)} {w : W} (hRQ : R x Q w) :
-    Trivial (degreeComparisonOr R) (presupposition .positive) ∧
-      ∀ C, ¬ IsQToPEntailing {Q} (degreeComparisonOr R (fun _ _ _ ↦ 0) (fun _ ↦ 0) C) := by
-  refine ⟨fun μ θ x Q w h ↦ .inl (trivial_positive μ θ x Q w h), fun C h ↦ ?_⟩
-  obtain ⟨p, -, hp⟩ := h Q rfl x w (.inr hRQ)
-  obtain ⟨q, -, -, hq⟩ | hp := hp
-  · simp at hq
-  · exact hR _ _ _ hp
-
-end Triviality
+relation `R` to a question holds of no declarative, a degree comparison or `R` compares degrees on
+declaratives and is L-analytic under threshold significance, yet where `R` holds of a question it
+relates the agent to no answer. -/
+theorem isLAnalytic_degreeComparisonOr (hR : ∀ x p w, ¬ R x {p} w) {x : E} {Q : Set (Set W)} {w : W}
+    (hRQ : R x Q w) :
+    ComparesDegrees (D := D) (degreeComparisonOr R) ∧
+      IsLAnalytic (D := D) (degreeComparisonOr R) (presupposition .positive) ∧
+      ∀ (a : D) C, ¬ IsQToPEntailing {Q} (degreeComparisonOr R (fun _ _ _ ↦ a) (fun _ ↦ a) C) := by
+  refine ⟨fun μ θ C x p w ↦ by simp [degreeComparisonOr, hR], TrueWhereDefined.isLAnalytic ?_,
+    fun a C h ↦ ?_⟩
+  · exact fun μ θ C x Q w hCQ hQ hπ ↦ .inl <| trueWhereDefined_of_isClausallyDistributive
+      comparesDegrees_degreeComparison (fun μ θ C ↦ isClausallyDistributive_degreeComparison μ θ C _)
+      μ θ C x Q w hCQ hQ hπ
+  · obtain ⟨p, -, hp⟩ := h Q rfl x w (.inr hRQ)
+    obtain ⟨q, -, -, hq⟩ | hp := hp
+    · exact lt_irrefl a hq
+    · exact hR _ _ _ hp
 
 /-! ### The classification (Table 2) -/
 
@@ -174,22 +214,29 @@ def PredicateClass.valence : PredicateClass → EvaluativeValence
   | .distributiveNegative => .negative
   | .distributivePositive => .positive
 
-/-- The interrogative use of a preferential predicate is a relation `R` to the question in Class 1
-and a degree comparison otherwise. -/
-def semantics (R : E → Set (Set W) → W → Prop) : PredicateClass →
-    (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W → Prop
-  | .nonDistributive _ => fun _ _ _ ↦ R
+/-- The meaning of a predicate of each class. -/
+def semantics (R : E → Set (Set W) → W → Prop) : PredicateClass → Family
+  | .nonDistributive _ => relational R
   | .distributiveNegative | .distributivePositive => degreeComparison
 
-/-- Canonical composition with a question is trivial, hence anti-rogative, exactly for the
+/-- Canonical composition with a question is L-analytic, hence anti-rogative, exactly for the
 distributive positive class (Table 2). -/
-theorem trivial_iff_class [Inhabited E] [Inhabited W] (c : PredicateClass)
-    (R : E → Set (Set W) → W → Prop) (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
-    Trivial (semantics R c) (presupposition c.valence) ↔ c = .distributivePositive := by
+theorem isLAnalytic_iff_class [Nontrivial D] [Inhabited E] [Inhabited W] (c : PredicateClass)
+    (hT : ∃ x Q w, Q.Nontrivial ∧ R x Q w) (hF : ∃ x Q w, Q.Nontrivial ∧ ¬ R x Q w) :
+    IsLAnalytic (D := D) (semantics R c) (presupposition c.valence) ↔
+      c = .distributivePositive := by
+  have hd (μ : E → W → Set W → D) (θ : Set (Set W) → D) (C : Set (Set W)) :=
+    isClausallyDistributive_degreeComparison μ θ C Set.univ
   cases c
-  · exact iff_of_false (not_trivial_relational _ R hR) nofun
-  · exact iff_of_false (not_trivial_of_ne_positive comparesDegrees_degreeComparison nofun) nofun
-  · exact iff_of_true trivial_positive rfl
+  · exact iff_of_false (not_isLAnalytic_relational _ hT hF) nofun
+  · exact iff_of_false
+      (not_isLAnalytic_of_isClausallyDistributive (v := .negative)
+        comparesDegrees_degreeComparison hd nofun) nofun
+  · exact iff_of_true
+      (trueWhereDefined_of_isClausallyDistributive comparesDegrees_degreeComparison hd).isLAnalytic
+      rfl
+
+end LAnalyticity
 
 /-! ### The paper's judgments -/
 
@@ -316,8 +363,8 @@ theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 /-! ### Non-canonical composition (§4) -/
 
 -- (70), §4.2
-theorem highlighted_eq_declarative (μ : E → W → Set W → ℝ) (θ : Set (Set W) → ℝ)
-    (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
+theorem highlighted_eq_declarative {D : Type*} [LinearOrder D] (μ : E → W → Set W → D)
+    (θ : Set (Set W) → D) (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
     degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w :=
   degreeComparison_singleton μ θ C x p w
 
