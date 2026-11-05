@@ -16,7 +16,7 @@ statements use it, with the names they use, and the other files of its directory
 
 Everything comes from doc-gen4's output, read by `docgen_index`, and from the bibliography;
 signatures and equations are doc-gen4's own, with their links. With `--checks`, the output of
-`checks.py status --json`, a declaration stating a claim of a source says whether a person has
+`checks.py status --json`, a declaration stating an item of a source says whether a person has
 checked it against the source (`checks/README.md`).
 
 The pages replace doc-gen4's own at the same addresses, and the landing page its `index.html`, so
@@ -58,7 +58,7 @@ THEORY = ("Semantics", "Syntax", "Pragmatics", "Morphology", "Phonology", "Proce
 KW = {"def": "def", "theorem": "theorem", "inductive": "inductive", "instance": "instance",
       "structure": "structure", "abbrev": "abbrev", "class": "class", "axiom": "axiom",
       "opaque": "opaque"}
-# How a declaration stands to a claim it is checked against, when it does not state it exactly.
+# How a declaration stands to an item it is checked against, when it does not state it exactly.
 RELATION = {"generalizes": "a generalization", "specializes": "a special case",
             "variant": "a variant"}
 # A definition's docstring that opens with a paper locator ("(9):", "Eq. (12):", "Table 1:") shows
@@ -217,12 +217,12 @@ class Library:
 
     def __init__(self, doc, checks=None):
         self.doc = doc
-        # The claims of the sources, by `source/id`, and those each declaration states.
-        self.claims, self.claims_of = {}, defaultdict(list)
-        for c in checks["claims"] if checks else ():
-            self.claims[f'{c["source"]}/{c["id"]}'] = c
+        # The items of the sources, by `source/id`, and those each declaration states.
+        self.items, self.items_of = {}, defaultdict(list)
+        for c in checks["items"] if checks else ():
+            self.items[f'{c["source"]}/{c["id"]}'] = c
             for name in c["decls"]:
-                self.claims_of[name].append(c)
+                self.items_of[name].append(c)
         self.modules, self.decls, self.used_by = dx.build(doc)
         data = json.loads((doc / "declarations" / "declaration-data.bmp").read_text(encoding="utf-8"))
         self.decl_data, self.instances_for = data["declarations"], data.get("instancesFor", {})
@@ -531,8 +531,8 @@ class ModulePage:
         return (f'<button type="button" class="tg" data-open="{esc(u)}" aria-expanded="false">'
                 f'{esc(self.by_id[u]["name"])}{self.loc(self.by_id[u])}</button>')
 
-    def claim_name(self, c, source=None):
-        """A claim by its label, after its source's unless that is `source`."""
+    def item_name(self, c, source=None):
+        """An item by its label, after its source's unless that is `source`."""
         if c["source"] == source:
             return esc(c["label"])
         b = self.lib.bib.get(c["source"])
@@ -541,13 +541,13 @@ class ModulePage:
         return f'{paper}, {esc(c["label"])}'
 
     def checks(self, d):
-        """For each claim the declaration states, whether a person has checked it."""
+        """For each item the declaration states, whether a person has checked it."""
         out = ""
-        for c in self.lib.claims_of.get(d["id"], ()):
+        for c in self.lib.items_of.get(d["id"], ()):
             ck = c["check"]
             if c["status"] not in ("checked", "relies", "stale") or not ck:
                 continue
-            against = self.claim_name(c)
+            against = self.item_name(c)
             verb = "Checked against"
             if c["relation"] in RELATION:
                 against += (f' (<span class="rel" title="{esc(c["notes"])}">'
@@ -562,8 +562,8 @@ class ModulePage:
                 line = (f'{verb} {against} at {link(diff, esc(ck["commit"]))}; its '
                         'statement has changed since.')
             elif c["status"] == "relies":
-                rest = [self.lib.claims[r] for r in c["blocking"] if r in self.lib.claims]
-                names = ", ".join(self.claim_name(r, c["source"]) for r in rest)
+                rest = [self.lib.items[r] for r in c["blocking"] if r in self.lib.items]
+                names = ", ".join(self.item_name(r, c["source"]) for r in rest)
                 line = (f'{verb} {against} {by}, relying on {names}, which '
                         f'{"is" if len(rest) == 1 else "are"} not.')
             else:
