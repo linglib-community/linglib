@@ -25,7 +25,7 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 
 ## Main results
 
-* `Formula.Context.setOf_support_fill`: the split behind the translation rules.
+* `Formula.Context.ver_den_fill`: the split behind the translation rules.
 * `soundness`; completeness is proved in `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
 * `strongFalsum_derives`, `conj_disj_derives_disj_conj`, `disj_conj_ne_derives_conj_ne`,
@@ -85,36 +85,37 @@ def fill : Context Atom → Formula Atom → Formula Atom
   | nec C, φ => Formula.nec (C.fill φ)
 
 /-- A context is distributive when its hole is under no modality, so that it is built from `∧`
-    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024] (p. 28). -/
+    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
+    defined before Definition 4.24. -/
 def Distributive : Context Atom → Prop
   | hole => True
   | conjLeft C _ | conjRight _ C | disjLeft C _ | disjRight _ C => C.Distributive
   | poss _ | nec _ => False
 
-/-- At a distributive position, the teams supporting `C.fill ψ` are those supporting `C.fill (ψ ∧
-NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024] p. 34). -/
-theorem setOf_support_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
+/-- At a distributive position, the teams supporting `C.fill ψ` are those supporting
+`C.fill (ψ ∧ NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024], before Definition 4.33). -/
+theorem ver_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
     ∀ {C : Context Atom}, C.Distributive →
-      {s | support M (C.fill ψ) s} = {s | support M (C.fill (.conj ψ .ne)) s} ∪
-        {s | support M (C.fill (.conj ψ .falsum)) s}
+      ((C.fill ψ).den M).ver =
+        ((C.fill (.conj ψ .ne)).den M).ver ∪ ((C.fill (.conj ψ .falsum)).den M).ver
   | hole, _ => by
     ext s
     change _ ↔ (_ ∧ s.Nonempty) ∨ (_ ∧ support M .falsum s)
     rw [support_falsum, ← and_or_left, and_iff_left s.eq_empty_or_nonempty.symm]
     exact Iff.rfl
   | conjLeft C θ, hC => by
-    change {s | _} ∩ {s | _} = ({s | _} ∩ {s | _}) ∪ ({s | _} ∩ {s | _})
-    rw [setOf_support_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
+    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    rw [ver_den_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
   | conjRight θ C, hC => by
-    change {s | _} ∩ {s | _} = ({s | _} ∩ {s | _}) ∪ ({s | _} ∩ {s | _})
-    rw [setOf_support_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
+    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    rw [ver_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
   | disjLeft C θ, hC => by
     change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [setOf_support_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
+    rw [ver_den_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
       Set.sups_union_left]
   | disjRight θ C, hC => by
     change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [setOf_support_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
+    rw [ver_den_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
       Set.sups_union_right]
   | poss _, hC | nec _, hC => hC.elim
 
@@ -312,19 +313,19 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
       Finset.union_eq_left.mpr hsub⟩
   | @neTrs Γ Δ₁ Δ₂ ψ χ C hC _ _ _ ih ih₁ ih₂ =>
     intro s hΓ
-    have h : s ∈ {s | support M (C.fill ψ) s} := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
-    rw [Formula.Context.setOf_support_fill M ψ hC] at h
+    have h : s ∈ ((C.fill ψ).den M).ver := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
+    rw [Formula.Context.ver_den_fill M ψ hC] at h
     rcases h with h | h
     · exact ih₁ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inl (.inr hγ))]
     · exact ih₂ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inr hγ)]
   | @possNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ poss M.access {t | support M (C.fill ψ) t} := ih s hΓ
-    rwa [Formula.Context.setOf_support_fill M ψ hC, poss_union] at h
+    have h : s ∈ poss M.access ((C.fill ψ).den M).ver := ih s hΓ
+    rwa [Formula.Context.ver_den_fill M ψ hC, poss_union] at h
   | @necNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ nec M.access {t | support M (C.fill ψ) t} := ih s hΓ
-    rwa [Formula.Context.setOf_support_fill M ψ hC, nec_union] at h
+    have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
+    rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
 
 theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
   fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
@@ -429,7 +430,7 @@ theorem poss_disj_conj_ne_derives_conj_poss :
 /-! ### Non-derivations -/
 
 /-- Unrestricted `∨I` would be unsound, since `p ⊬ p ∨ NE`. The empty team supports `p` but not
-    `p ∨ NE` ([aloni-anttila-yang-2024] p. 19). -/
+    `p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
 theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .ne := by
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ true⟩
@@ -437,7 +438,7 @@ theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .
   exact hne.ne_empty (Finset.union_eq_empty.mp h).2
 
 /-- Without enrichment, `◇(p ∨ q) ⊬ ◇p ∧ ◇q` for distinct atoms ([aloni-anttila-yang-2024] Figure
-3(b), pp. 6–7). -/
+3(b)). -/
 theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
     ¬ {.poss (.disj (.atom p) (.atom q))} ⊢ .conj (.poss (.atom p)) (.poss (.atom q)) := by
   intro hd

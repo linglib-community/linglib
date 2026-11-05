@@ -36,6 +36,7 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [DecidableEq W'] {Atom : Type*}
 
 open ModalLogic (KripkeModel WorldBisim)
+open Truthmaker (BilProp)
 
 /-! ### Syntax and semantics -/
 
@@ -108,33 +109,24 @@ instance : (φ : Formula Atom) → Decidable φ.EmptFree
 
 end Formula
 
-/-- Bilateral evaluation `eval M b φ t` (Definition 2.3) is support when `b` is `true` and
-    anti-support when it is `false`. -/
-def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true, .atom p, t => ∀ w ∈ t, M.val p w
-  | false, .atom p, t => ∀ w ∈ t, ¬ M.val p w
-  | true, .bot, t => t = ∅
-  | false, .bot, _ => True
-  | true, .ne, t => t.Nonempty
-  | false, .ne, t => t = ∅
-  | true, .neg ψ, t => eval M false ψ t
-  | false, .neg ψ, t => eval M true ψ t
-  | true, .conj ψ₁ ψ₂, t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂, t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
-  | true, .disj ψ₁ ψ₂, t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
-  | false, .disj ψ₁ ψ₂, t => eval M false ψ₁ t ∧ eval M false ψ₂ t
-  | true, .gdisj ψ₁ ψ₂, t => eval M true ψ₁ t ∨ eval M true ψ₂ t
-  | false, .gdisj ψ₁ ψ₂, t => eval M false ψ₁ t ∧ eval M false ψ₂ t
-  | true, .empt ψ, t => eval M true ψ t ∨ t = ∅
-  | false, .empt ψ, t => eval M false ψ t
-  | true, .poss ψ, t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ eval M true ψ s
-  | false, .poss ψ, t => ∀ w ∈ t, eval M false ψ (M.access w)
+/-- The meaning of a formula in a model (Definition 2.3) is the bilateral proposition of the
+    teams that support it and the teams that anti-support it. -/
+def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
+  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
+  | .bot => ⟨{∅}, .univ⟩
+  | .ne => ⟨Team.ne, {∅}⟩
+  | .neg φ => -φ.den M
+  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, Team.tensor (φ.den M).fal (ψ.den M).fal⟩
+  | .disj φ ψ => ⟨Team.tensor (φ.den M).ver (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
+  | .gdisj φ ψ => ⟨(φ.den M).ver ∪ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
+  | .empt φ => ⟨(φ.den M).ver ∪ {∅}, (φ.den M).fal⟩
+  | .poss φ => ⟨Team.poss M.access (φ.den M).ver, Team.nec M.access (φ.den M).fal⟩
 
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  eval M true φ t
+  t ∈ (φ.den M).ver
 
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  eval M false φ t
+  t ∈ (φ.den M).fal
 
 variable (M : KripkeModel W Atom) (φ ψ χ : Formula Atom) (t : Finset W)
 
@@ -194,7 +186,8 @@ theorem support_poss_gdisj :
 
 /-! ### Closure properties (Fact 2.7) -/
 
-private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ antiSupport M φ ∅ := by
+private theorem empty_mem_den_of_neFree (hNE : φ.NEFree) :
+    ∅ ∈ (φ.den M).ver ∧ ∅ ∈ (φ.den M).fal := by
   induction φ with
   | atom p => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
   | bot => exact ⟨rfl, trivial⟩
@@ -209,15 +202,15 @@ private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ an
   | poss ψ _ => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
 
 theorem support_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ :=
-  (eval_empty_of_neFree M φ hNE).1
+  (empty_mem_den_of_neFree M φ hNE).1
 
 private theorem union_inter_of_union_eq {s t t₁ t₂ : Finset W} (h : t₁ ∪ t₂ = s) (hsub : t ⊆ s) :
     (t₁ ∩ t) ∪ (t₂ ∩ t) = t := by
   rw [← Finset.union_inter_distrib_right, h]
   exact Finset.inter_eq_right.mpr hsub
 
-private theorem eval_lower_of_neFree (hNE : φ.NEFree) :
-    IsLowerSet {t : Finset W | support M φ t} ∧ IsLowerSet {t : Finset W | antiSupport M φ t} := by
+private theorem isLowerSet_den_of_neFree (hNE : φ.NEFree) :
+    IsLowerSet (φ.den M).ver ∧ IsLowerSet (φ.den M).fal := by
   induction φ with
   | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
   | bot => exact ⟨Team.isLowerSet_singleton_empty, isLowerSet_univ⟩
@@ -235,10 +228,10 @@ private theorem eval_lower_of_neFree (hNE : φ.NEFree) :
 /-- NE-free formulas are downward closed. -/
 theorem isLowerSet_support_of_neFree (hNE : φ.NEFree) :
     IsLowerSet { t : Finset W | support M φ t } :=
-  (eval_lower_of_neFree M φ hNE).1
+  (isLowerSet_den_of_neFree M φ hNE).1
 
-private theorem eval_supClosed_of_gdFree (hGD : φ.GDFree) :
-    SupClosed {t : Finset W | support M φ t} ∧ SupClosed {t : Finset W | antiSupport M φ t} := by
+private theorem supClosed_den_of_gdFree (hGD : φ.GDFree) :
+    SupClosed (φ.den M).ver ∧ SupClosed (φ.den M).fal := by
   induction φ with
   | atom p => exact ⟨Team.supClosed_flat _, Team.supClosed_flat _⟩
   | bot => exact ⟨Team.supClosed_singleton_empty, supClosed_univ⟩
@@ -261,7 +254,7 @@ private theorem eval_supClosed_of_gdFree (hGD : φ.GDFree) :
 /-- ⨼-free formulas are union closed; in particular every BSML⊘ formula is. -/
 theorem supClosed_support_of_gdFree (hGD : φ.GDFree) :
     SupClosed { t : Finset W | support M φ t } :=
-  (eval_supClosed_of_gdFree M φ hGD).1
+  (supClosed_den_of_gdFree M φ hGD).1
 
 /-- Classical formulas — NE-free and ⨼-free — are flat. -/
 theorem isFlat_support_of_neFree_gdFree (hNE : φ.NEFree) (hGD : φ.GDFree) :
@@ -366,39 +359,25 @@ theorem gdFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).GDFree := by
 theorem emptFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).EmptFree := by
   induction φ <;> simp_all [ofBSML, Formula.EmptFree]
 
-theorem eval_ofBSML (b : Bool) (φ : BSML.Formula Atom) :
-    eval M b (ofBSML φ) t ↔ BSML.eval M b φ t := by
-  induction φ generalizing b t with
-  | atom p => cases b <;> rfl
-  | ne => cases b <;> rfl
-  | neg ψ ih => cases b <;> simp only [ofBSML, eval, BSML.eval, ih]
-  | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp only [ofBSML, eval, BSML.eval]
-      constructor <;> rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-      exacts [⟨t₁, (ih₁ t₁ false).mp h₁, t₂, (ih₂ t₂ false).mp h₂, hsplit⟩,
-        ⟨t₁, (ih₁ t₁ false).mpr h₁, t₂, (ih₂ t₂ false).mpr h₂, hsplit⟩]
-    · simp only [ofBSML, eval, BSML.eval, ih₁, ih₂]
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp only [ofBSML, eval, BSML.eval, ih₁, ih₂]
-    · simp only [ofBSML, eval, BSML.eval]
-      constructor <;> rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-      exacts [⟨t₁, (ih₁ t₁ true).mp h₁, t₂, (ih₂ t₂ true).mp h₂, hsplit⟩,
-        ⟨t₁, (ih₁ t₁ true).mpr h₁, t₂, (ih₂ t₂ true).mpr h₂, hsplit⟩]
-  | poss ψ ih =>
-    cases b
-    · simp only [ofBSML, eval, BSML.eval, Team.mem_nec, Set.mem_ofPred_eq, ih]
-    · simp only [ofBSML, eval, BSML.eval, Team.mem_poss, Set.mem_ofPred_eq]
-      constructor <;> intro h w hw <;> obtain ⟨s, hsub, hne, hsupp⟩ := h w hw
-      exacts [⟨s, hsub, hne, (ih s true).mp hsupp⟩, ⟨s, hsub, hne, (ih s true).mpr hsupp⟩]
+-- The embedding preserves meaning: a BSML formula means the same in the joint language.
+theorem den_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).den M = φ.den M := by
+  induction φ with
+  | atom p => rfl
+  | ne => rfl
+  | neg ψ ih => exact congrArg Neg.neg ih
+  | conj ψ₁ ψ₂ ih₁ ih₂ => simp only [ofBSML, Formula.den, BSML.Formula.den, ih₁, ih₂]
+  | disj ψ₁ ψ₂ ih₁ ih₂ => simp only [ofBSML, Formula.den, BSML.Formula.den, ih₁, ih₂]
+  | poss ψ ih => simp only [ofBSML, Formula.den, BSML.Formula.den, ih]
+
+theorem support_ofBSML (φ : BSML.Formula Atom) : support M (ofBSML φ) t ↔ BSML.support M φ t :=
+  .of_eq (congrArg (t ∈ ·.ver) (den_ofBSML M φ))
 
 /-- Narrow-scope free choice, `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`, transported from
     [aloni-2022] along the embedding. -/
 theorem narrowScopeFC {α β : BSML.Formula Atom} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (ofBSML (BSML.enrich (.poss (.disj α β)))) t) :
     support M (ofBSML (.conj (.poss α) (.poss β))) t :=
-  (eval_ofBSML M t true _).mpr (Aloni2022.narrowScopeFC hα hβ ((eval_ofBSML M t true _).mp h))
+  (support_ofBSML M t _).mpr (Aloni2022.narrowScopeFC hα hβ ((support_ofBSML M t _).mp h))
 
 /-! ### Bisimulation invariance (Theorem 3.8) -/
 
@@ -411,31 +390,30 @@ def Formula.modalDepth : Formula Atom → ℕ
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
     polarities (Theorem 3.8). -/
-theorem invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : ℕ}
-    (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
-    Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
-  induction φ generalizing k b with
-  | atom p =>
-    cases b
-    · exact Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
-    · exact Team.invariant_flat fun _ _ h ↦ h.val_iff p
-  | bot => cases b; exacts [Team.invariant_univ, Team.invariant_singleton_empty]
-  | ne => cases b; exacts [Team.invariant_singleton_empty, Team.invariant_ne]
-  | neg ψ ih => cases b <;> exact ih hd _
+theorem invariant_den {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : ℕ}
+    (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
+    Team.Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧
+      Team.Invariant (WorldBisim k M · M' ·) (φ.den M).fal (φ.den M').fal := by
+  induction φ generalizing k with
+  | atom p => exact ⟨Team.invariant_flat fun _ _ h ↦ h.val_iff p,
+      Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)⟩
+  | bot => exact ⟨Team.invariant_singleton_empty, Team.invariant_univ⟩
+  | ne => exact ⟨Team.invariant_ne, Team.invariant_singleton_empty⟩
+  | neg ψ ih => exact (ih hd).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.tensor (ih₂ hd₂).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.tensor (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).union (ih₂ hd₂ _)]
-  | empt ψ ih => cases b; exacts [ih hd _, (ih hd _).union Team.invariant_singleton_empty]
+    exact ⟨(ih₁ hd₁).1.union (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
+  | empt ψ ih => exact ⟨(ih hd).1.union Team.invariant_singleton_empty, (ih hd).2⟩
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
     have ih := ih (Nat.le_of_succ_le_succ hd)
-    cases b; exacts [(ih _).nec fun _ _ h ↦ h.2, (ih _).poss fun _ _ h ↦ h.2]
+    exact ⟨ih.1.poss fun _ _ h ↦ h.2, ih.2.nec fun _ _ h ↦ h.2⟩
 
 end AloniAnttilaYang2024

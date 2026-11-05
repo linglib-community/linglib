@@ -13,16 +13,16 @@ complete (`BSML/ExpressiveCompleteness.lean`).
 
 ## Main results
 
-* `eval_induction`: every support and anti-support set lies in the closure of the flat
+* `den_induction`: every support and anti-support set lies in the closure of the flat
   properties, `NE` and `{∅}` under `∩` and tensor.
 * `supClosed_support`: support is union-closed.
 * `ordConnected_support`: support is order-convex.
 * `isFlat_support_of_neFree`: an `NE`-free formula is flat.
-* `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
+* `invariant_den`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 
 ## Implementation notes
 
-The modalities define flat properties whatever their argument, so `eval_induction` has no modal
+The modalities define flat properties whatever their argument, so `den_induction` has no modal
 case, and negation swaps the two polarities, so it proves a property of both at once. Anttila,
 and Aloni, Anttila and Yang, derive the flatness of the `NE`-free fragment from its closure
 properties, and from flatness that support is classical truth at every world of the team. Here
@@ -50,34 +50,34 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Union closure and convexity -/
 
-/-- Every support and anti-support set lies in the closure of the flat team properties, `NE` and
-`{∅}` under `∩` and tensor. -/
-theorem eval_induction {C : TeamProperty W → Prop} (flat : ∀ p, C (Team.flat p))
+/-- The support and anti-support sets of every formula lie in the closure of the flat team
+properties, `NE` and `{∅}` under `∩` and tensor. -/
+theorem den_induction {C : TeamProperty W → Prop} (flat : ∀ p, C (Team.flat p))
     (ne : C Team.ne) (empty : C {∅}) (inter : ∀ {P Q}, C P → C Q → C (P ∩ Q))
-    (tensor : ∀ {P Q}, C P → C Q → C (Team.tensor P Q)) (M : KripkeModel W Atom) (b : Bool)
-    (φ : Formula Atom) : C {t | eval M b φ t} := by
-  induction φ generalizing b with
-  | atom p => cases b <;> exact flat _
-  | ne => cases b; exacts [empty, ne]
-  | neg ψ ih => cases b <;> exact ih _
-  | conj ψ₁ ψ₂ ih₁ ih₂ => cases b; exacts [tensor (ih₁ _) (ih₂ _), inter (ih₁ _) (ih₂ _)]
-  | disj ψ₁ ψ₂ ih₁ ih₂ => cases b; exacts [inter (ih₁ _) (ih₂ _), tensor (ih₁ _) (ih₂ _)]
-  | poss ψ _ => cases b <;> exact flat _
+    (tensor : ∀ {P Q}, C P → C Q → C (Team.tensor P Q)) (M : KripkeModel W Atom)
+    (φ : Formula Atom) : C (φ.den M).ver ∧ C (φ.den M).fal := by
+  induction φ with
+  | atom p => exact ⟨flat _, flat _⟩
+  | ne => exact ⟨ne, empty⟩
+  | neg ψ ih => exact ih.symm
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨inter ih₁.1 ih₂.1, tensor ih₁.2 ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨tensor ih₁.1 ih₂.1, inter ih₁.2 ih₂.2⟩
+  | poss ψ _ => exact ⟨flat _, flat _⟩
 
 /-- BSML support is union-closed ([anttila-2021] Proposition 2.2.8). -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed {t | support M φ t} :=
-  eval_induction supClosed_flat supClosed_ne supClosed_singleton_empty .inter .tensor M true φ
+  (den_induction supClosed_flat supClosed_ne supClosed_singleton_empty .inter .tensor M φ).1
 
 /-- BSML support is order-convex, `NE` included ([anttila-2025] Proposition 3.3.6 and the remark
 after Theorem 3.3.7, pp. 82–83). -/
 theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     {t | support M φ t}.OrdConnected :=
-  (eval_induction (C := fun P ↦ P.OrdConnected ∧ SupClosed P)
+  (den_induction (C := fun P ↦ P.OrdConnected ∧ SupClosed P)
     (fun p ↦ ⟨ordConnected_flat p, supClosed_flat p⟩) ⟨ordConnected_ne, supClosed_ne⟩
     ⟨ordConnected_singleton_empty, supClosed_singleton_empty⟩
     (fun h₁ h₂ ↦ ⟨h₁.1.inter h₂.1, h₁.2.inter h₂.2⟩)
-    (fun h₁ h₂ ↦ ⟨h₁.1.tensor h₂.1 h₁.2 h₂.2, h₁.2.tensor h₂.2⟩) M true φ).1
+    (fun h₁ h₂ ↦ ⟨h₁.1.tensor h₂.1 h₁.2 h₂.2, h₁.2.tensor h₂.2⟩) M φ).1.1
 
 /-! ### The `NE`-free fragment -/
 
@@ -107,26 +107,25 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
     polarities ([aloni-anttila-yang-2024] Theorem 3.8). -/
-theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
-    Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
-  induction φ generalizing k b with
-  | atom p =>
-    cases b
-    · exact invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
-    · exact invariant_flat fun _ _ h ↦ h.val_iff p
-  | ne => cases b; exacts [invariant_singleton_empty, invariant_ne]
-  | neg ψ ih => cases b <;> exact ih hd _
+theorem invariant_den {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
+    Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧
+      Invariant (WorldBisim k M · M' ·) (φ.den M).fal (φ.den M').fal := by
+  induction φ generalizing k with
+  | atom p => exact ⟨invariant_flat fun _ _ h ↦ h.val_iff p,
+      invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)⟩
+  | ne => exact ⟨invariant_ne, invariant_singleton_empty⟩
+  | neg ψ ih => exact (ih hd).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.tensor (ih₂ hd₂).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.tensor (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
     have ih := ih (Nat.le_of_succ_le_succ hd)
-    cases b; exacts [(ih _).nec fun _ _ h ↦ h.2, (ih _).poss fun _ _ h ↦ h.2]
+    exact ⟨ih.1.poss fun _ _ h ↦ h.2, ih.2.nec fun _ _ h ↦ h.2⟩
 
 end Bisimulation
 

@@ -18,10 +18,11 @@ BSML* is BSML with the empty team removed from the possible states.
 
 * `BSML.enrich`: the enrichment function `[·]⁺`.
 * `BSML.ConsequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
+* `BSML.Formula.denStar`, `BSML.ConsequenceStar`: meaning and consequence in BSML*.
 
 ## Main results
 
-* `BSML.eval_of_eval_enrich`: on `NE`-free formulas enrichment strengthens in both
+* `BSML.den_enrich_subset`: on `NE`-free formulas enrichment strengthens in both
   polarities (Fact 1); `BSML.support_conj_ne_of_support_enrich` is `[α]⁺ ⊨ α ∧ NE`
   (Fact 2).
 * `BSML.antiSupport_enrich_iff`: on positive formulas enrichment is vacuous under a single
@@ -37,7 +38,9 @@ BSML* is BSML with the empty team removed from the possible states.
 
 Aloni defines `[·]⁺` on the `NE`-free fragment only. `enrich` is total and sends `NE` to
 itself, and `□` abbreviates `¬◇¬`, so it has no clause of its own. Fact 1 is one induction over
-the polarity parameter of `BSML.eval`, which is the paper's double induction.
+both components of the meaning, which is the paper's double induction. Aloni defines BSML* only
+by removing `∅` from the possible states; `Formula.denStar` reads this as non-empty splits and
+keeps the modal clauses of BSML, under which `R[w]` may still be empty.
 
 ## References
 
@@ -49,9 +52,10 @@ the polarity parameter of `BSML.eval`, which is the paper's double induction.
 namespace BSML
 
 open ModalLogic (KripkeModel)
+open Truthmaker (BilProp)
 
 variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
-  {φ ψ : Formula Atom} {t : Finset W} {pol : Bool}
+  {φ ψ : Formula Atom} {t : Finset W}
 
 /-! ### Enrichment -/
 
@@ -83,44 +87,38 @@ theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t :
 
 /-! ### Enrichment strengthens (Facts 1 and 2) -/
 
-/-- Enrichment strengthens an `NE`-free formula in both polarities (Fact 1). -/
-theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol (enrich φ) t) :
-    eval M pol φ t := by
-  induction φ generalizing pol t with
+/-- Enrichment strengthens an `NE`-free formula in both polarities: every team that supports or
+anti-supports `[φ]⁺` supports or anti-supports `φ` (Fact 1). -/
+theorem den_enrich_subset (hNE : φ.NEFree) :
+    ((enrich φ).den M).ver ⊆ (φ.den M).ver ∧ ((enrich φ).den M).fal ⊆ (φ.den M).fal := by
+  induction φ with
   | ne => exact hNE.elim
-  | atom p =>
-    cases pol
-    · exact (antiSupport_conj_ne M _ t).mp h
-    · exact h.1
+  | atom p => exact ⟨fun _ h ↦ h.1, fun t h ↦ (antiSupport_conj_ne M _ t).mp h⟩
   | neg ψ ih =>
-    cases pol
-    · exact ih (pol := true) hNE ((antiSupport_conj_ne M _ t).mp h)
-    · exact ih (pol := false) hNE h.1
+    exact ⟨fun _ h ↦ (ih hNE).2 h.1, fun t h ↦ (ih hNE).1 ((antiSupport_conj_ne M _ t).mp h)⟩
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := (antiSupport_conj_ne M _ t).mp h
-      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
-    · exact ⟨ih₁ hNE.1 h.1.1, ih₂ hNE.2 h.1.2⟩
+    refine ⟨fun _ h ↦ ⟨(ih₁ hNE.1).1 h.1.1, (ih₂ hNE.2).1 h.1.2⟩, fun t h ↦ ?_⟩
+    obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := (antiSupport_conj_ne M _ t).mp h
+    exact ⟨s₁, (ih₁ hNE.1).2 h₁, s₂, (ih₂ hNE.2).2 h₂, hs⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
-      exact ⟨ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    refine ⟨fun _ h ↦ ?_, fun t h ↦ ?_⟩
     · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := h.1
-      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
+      exact ⟨s₁, (ih₁ hNE.1).1 h₁, s₂, (ih₂ hNE.2).1 h₂, hs⟩
+    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
+      exact ⟨(ih₁ hNE.1).2 h₁, (ih₂ hNE.2).2 h₂⟩
   | poss ψ ih =>
-    cases pol
-    · exact fun w hw ↦ ih hNE ((antiSupport_conj_ne M _ t).mp h w hw)
-    · exact fun w hw ↦ (h.1 w hw).imp fun _ ⟨hs, hne, h'⟩ ↦ ⟨hs, hne, ih hNE h'⟩
+    exact ⟨fun _ h w hw ↦ (h.1 w hw).imp fun _ ⟨hs, hne, h'⟩ ↦ ⟨hs, hne, (ih hNE).1 h'⟩,
+      fun t h w hw ↦ (ih hNE).2 ((antiSupport_conj_ne M _ t).mp h w hw)⟩
 
 /-- `[α]⁺ ⊨ α` for `NE`-free `α`, the support half of Fact 1. -/
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
     support M φ t :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).1 h
 
 /-- The anti-support half of Fact 1. -/
 theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M (enrich φ) t) :
     antiSupport M φ t :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).2 h
 
 /-- `[α]⁺ ⊨ α ∧ NE` for `NE`-free `α` (Fact 2). -/
 theorem support_conj_ne_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
@@ -168,6 +166,28 @@ theorem not_equivalent_neg_neg_enrich (hNE : φ.NEFree) :
 def ConsequencePlus (φ ψ : Formula Atom) : Prop :=
   Consequence (W := W) (enrich φ) (enrich ψ)
 
+/-- The meaning of a formula in BSML*, where `∅` is not among the possible states
+([aloni-2022] §6.3.1): each part of a split is non-empty, and the other clauses are those of
+`Formula.den`. -/
+def Formula.denStar (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
+  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
+  | .ne => ⟨Team.ne, {∅}⟩
+  | .neg φ => -φ.denStar M
+  | .conj φ ψ => ⟨(φ.denStar M).ver ∩ (ψ.denStar M).ver,
+      Team.tensor ((φ.denStar M).fal ∩ Team.ne) ((ψ.denStar M).fal ∩ Team.ne)⟩
+  | .disj φ ψ => ⟨Team.tensor ((φ.denStar M).ver ∩ Team.ne) ((ψ.denStar M).ver ∩ Team.ne),
+      (φ.denStar M).fal ∩ (ψ.denStar M).fal⟩
+  | .poss φ => ⟨Team.poss M.access (φ.denStar M).ver, Team.nec M.access (φ.denStar M).fal⟩
+
+/-- BSML* support. -/
+abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+  t ∈ (φ.denStar M).ver
+
+/-- In BSML*, `ψ` is a consequence of `φ` when every non-empty team supporting `φ` supports
+`ψ`. -/
+def ConsequenceStar (φ ψ : Formula Atom) : Prop :=
+  ∀ (M : KripkeModel W Atom) (t : Finset W), t.Nonempty → supportStar M φ t → supportStar M ψ t
+
 theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with
@@ -180,9 +200,9 @@ theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
       fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have e₁ : {s | support M (enrich ψ₁) s} = {s | supportStar M ψ₁ s} ∩ Team.ne :=
+    have e₁ : ((enrich ψ₁).den M).ver = (ψ₁.denStar M).ver ∩ Team.ne :=
       Set.ext fun _ ↦ ih₁ hNE.1 hPos.1
-    have e₂ : {s | support M (enrich ψ₂) s} = {s | supportStar M ψ₂ s} ∩ Team.ne :=
+    have e₂ : ((enrich ψ₂).den M).ver = (ψ₂.denStar M).ver ∩ Team.ne :=
       Set.ext fun _ ↦ ih₂ hNE.2 hPos.2
     change t ∈ Team.tensor _ _ ∧ t.Nonempty ↔ _
     rw [e₁, e₂]
