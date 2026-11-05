@@ -173,9 +173,9 @@ private theorem cond_real_pi_cause_singleton {b : Bool} {B : Set (ι → Bool)} 
   have h : cause (fun _ ↦ b) {X} ∩ B = cause (fun _ ↦ b) {X} ∩ (Function.update · X b) ⁻¹' B := by
     ext w; simp only [mem_inter_iff, mem_cause, Finset.mem_singleton, forall_eq, mem_preimage]
     exact and_congr_right fun h ↦ by rw [← h, Function.update_eq_self]
-  rw [measureReal_def, cond_apply .of_discrete, h, measure_pi_cause_singleton_inter
-    (fun w b' ↦ by simp), measure_pi_cause, Finset.prod_singleton, ← mul_assoc,
-    ENNReal.inv_mul_cancel hb (measure_ne_top _ _), one_mul, measureReal_def]
+  rw [measureReal_def, cond_apply .of_discrete, h, ← cond_apply .of_discrete, ← measureReal_def,
+    (indepSet_pi_cause_singleton fun w b' ↦ by simp).cond_real_apply .of_discrete
+      (by rwa [measure_pi_cause, Finset.prod_singleton])]
 
 private theorem deltaP_pi (h₁ : ν X {true} ≠ 0) (h₀ : ν X {false} ≠ 0) :
     deltaP (Measure.pi ν) (cause (fun _ ↦ true) {X}) E =

@@ -25,7 +25,8 @@ factor of E is the ratio of the two conditional probabilities of E. The paper's 
 - `bayesFactor`: the ratio P(E∣H) / P(E∣¬H)
 - `relevance`: its logarithm, Merin's relevance of E to H (Definition 4)
 - `posRelevant`, `negRelevant`, `irrelevant`: the relevance signs (Definition 5), and
-  `relevanceSign`, the sign of P(E∣H) − P(E∣¬H), which swapping the issue negates
+  `relevanceSign`, the sign of P(E∣H) − P(E∣¬H), which swapping the issue negates and which is
+  `1`, `-1` and `0` exactly at the three signs
 - `hContrary`: A and B have opposite relevance signs
 - `CondIndepIssue`: independence of A and B conditionally on H and on ¬H (Definition 9), the
   content of the Conditional Independence Presumption (Hypothesis 2)
@@ -33,6 +34,7 @@ factor of E is the ratio of the two conditional probabilities of E. The paper's 
 ## Main results
 
 - `posRelevant_iff_cond_lt`: E confirms H iff H makes E more probable than ¬H does
+- `irrelevant_iff_indepSet`: E is irrelevant to a live issue iff it is independent of H
 - `sign_reversal`: BF_H(E) · BF_¬H(E) = 1 (Corollary 3)
 - `relevance_eq_neg_log_sub_neg_log`: relevance is the differential of conditional
   informativeness (Fact 2)
@@ -46,7 +48,9 @@ factor of E is the ratio of the two conditional probabilities of E. The paper's 
 The context stores H, with ¬H implicit. Relevance is carried by `bayesFactor` in `ℝ≥0∞`,
 where the boundary cases P(E∣¬H) = 0 and P(E∣H) = 0 take their true values `∞` and `0`
 (Merin's r = ±∞); `relevance` is the real logarithm, which sends both to `0`, so sign and
-order facts are stated on `bayesFactor`.
+order facts are stated on `bayesFactor`. Contradictory evidence has `bayesFactor` 0 / 0 = 0 but
+relevance zero by Carnap's convention (fn. 24), so `negRelevant` and `irrelevant` compare the two
+conditionals rather than the Bayes factor with `1`.
 
 ## References
 
@@ -159,17 +163,26 @@ theorem posRelevant_iff_one_lt_toReal {ctx : Context W} {e : Set W}
     (ht : bayesFactor ctx e ≠ ⊤) : posRelevant ctx e ↔ 1 < (bayesFactor ctx e).toReal := by
   rw [posRelevant, ← ENNReal.toReal_lt_toReal ENNReal.one_ne_top ht, ENNReal.toReal_one]
 
-/-- E is negatively relevant to H, and so disconfirms it, when BF < 1 (Definition 5). -/
+/-- E is negatively relevant to H, and so disconfirms it, when ¬H makes E more probable than H
+does (Definition 5). This is BF < 1 for possible E; evidence contradicting the background has
+BF = 0 / 0 = 0 but is irrelevant by Carnap's convention (fn. 24). -/
 def negRelevant (ctx : Context W) (e : Set W) : Prop :=
-  bayesFactor ctx e < 1
+  ctx.prior[|ctx.topic] e < ctx.prior[|ctx.topicᶜ] e
 
-theorem negRelevant_iff_toReal_lt_one {ctx : Context W} {e : Set W}
-    (ht : bayesFactor ctx e ≠ ⊤) : negRelevant ctx e ↔ (bayesFactor ctx e).toReal < 1 := by
-  rw [negRelevant, ← ENNReal.toReal_lt_toReal ht ENNReal.one_ne_top, ENNReal.toReal_one]
-
-/-- E is irrelevant to H, neither confirming nor disconfirming it, when BF = 1 (Definition 5). -/
+/-- E is irrelevant to H, neither confirming nor disconfirming it, when H and ¬H make it equally
+probable (Definition 5), contradictory E included (fn. 24). -/
 def irrelevant (ctx : Context W) (e : Set W) : Prop :=
-  bayesFactor ctx e = 1
+  ctx.prior[|ctx.topic] e = ctx.prior[|ctx.topicᶜ] e
+
+/-- Evidence contradicting the background is irrelevant (Carnap's convention, fn. 24). -/
+theorem irrelevant_of_measure_eq_zero {ctx : Context W} {e : Set W} (h : ctx.prior e = 0) :
+    irrelevant ctx e :=
+  (cond_absolutelyContinuous h).trans (cond_absolutelyContinuous h).symm
+
+theorem negRelevant.bayesFactor_lt_one {ctx : Context W} {e : Set W} (h : negRelevant ctx e) :
+    bayesFactor ctx e < 1 := by
+  rwa [bayesFactor_def, ENNReal.div_lt_iff (.inl (zero_le.trans_lt h).ne')
+    (.inl (measure_ne_top _ _)), one_mul]
 
 /-- A and B are H-contrary: they have opposite nonzero relevance signs, one supporting H and
 the other ¬H. -/
@@ -191,14 +204,9 @@ theorem posRelevant_iff_cond_lt {ctx : Context W} {e : Set W} :
     · simp [h, h', ENNReal.div_zero h', pos_iff_ne_zero]
   · rw [ENNReal.lt_div_iff_mul_lt (.inl h) (.inl (measure_ne_top _ _)), one_mul]
 
-theorem negRelevant_iff_cond_lt {ctx : Context W} {e : Set W}
-    (h : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
-    negRelevant ctx e ↔ ctx.prior[|ctx.topic] e < ctx.prior[|ctx.topicᶜ] e := by
-  rw [negRelevant, bayesFactor_def, ENNReal.div_lt_iff (.inl h) (.inl (measure_ne_top _ _)),
-    one_mul]
-
 /-- The relevance sign of E for H, the sign of P(E∣H) − P(E∣¬H): `1` when E is positively
-relevant to H and `-1` when it is negatively relevant (Definition 5). -/
+relevant to H, `-1` when it is negatively relevant, and `0` when it is irrelevant
+(Definition 5). -/
 noncomputable def relevanceSign (ctx : Context W) (e : Set W) : SignType :=
   SignType.sign ((ctx.prior[|ctx.topic]).real e - (ctx.prior[|ctx.topicᶜ]).real e)
 
@@ -211,6 +219,16 @@ theorem relevanceSign_eq_one_iff {ctx : Context W} {e : Set W} :
     relevanceSign ctx e = 1 ↔ posRelevant ctx e := by
   rw [relevanceSign, sign_eq_one_iff, sub_pos, posRelevant_iff_cond_lt, measureReal_def,
     measureReal_def, ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
+
+theorem relevanceSign_eq_neg_one_iff {ctx : Context W} {e : Set W} :
+    relevanceSign ctx e = -1 ↔ negRelevant ctx e := by
+  rw [relevanceSign, sign_eq_neg_one_iff, sub_neg, negRelevant, measureReal_def,
+    measureReal_def, ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
+
+theorem relevanceSign_eq_zero_iff {ctx : Context W} {e : Set W} :
+    relevanceSign ctx e = 0 ↔ irrelevant ctx e := by
+  rw [relevanceSign, sign_eq_zero_iff, sub_eq_zero, irrelevant, measureReal_def,
+    measureReal_def, ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)]
 
 /-- Possible evidence that entails H is positively relevant to it. -/
 theorem relevanceSign_eq_one_of_subset {ctx : Context W} [IsFiniteMeasure ctx.prior] {e : Set W}
@@ -341,26 +359,14 @@ theorem posRelevant_iff_real_cross :
     cond_real_apply _ ctx.topicMeasurable.compl, cond_real_apply _ ctx.topicMeasurable,
     div_lt_div_iff₀ (measureReal_compl_pos ctx) (measureReal_topic_pos ctx)]
 
-theorem negRelevant_iff_real_cross (he : ctx.prior e ≠ 0) :
+theorem negRelevant_iff_real_cross :
     negRelevant ctx e ↔
       ctx.prior.real (ctx.topic ∩ e) * ctx.prior.real ctx.topicᶜ <
         ctx.prior.real (ctx.topicᶜ ∩ e) * ctx.prior.real ctx.topic := by
-  have hHm := ctx.topicMeasurable
-  rcases eq_or_ne (ctx.prior[|ctx.topicᶜ] e) 0 with h | h
-  · have h0 : ctx.prior (ctx.topicᶜ ∩ e) = 0 :=
-      by_contra fun hne ↦ (cond_pos_of_inter_ne_zero hHm.compl hne).ne' h
-    have hH : ctx.prior (ctx.topic ∩ e) ≠ 0 := fun hH ↦ he <| measure_mono_null
-      (fun x hx ↦ (em (x ∈ ctx.topic)).imp (⟨·, hx⟩) (⟨·, hx⟩)) (measure_union_null hH h0)
-    refine iff_of_false ?_ (not_lt.2 ?_)
-    · rw [negRelevant, bayesFactor_def, h,
-        ENNReal.div_zero (cond_pos_of_inter_ne_zero hHm hH).ne', not_lt]
-      exact le_top
-    · rw [measureReal_def ctx.prior (ctx.topicᶜ ∩ e), h0, ENNReal.toReal_zero, zero_mul]
-      positivity
-  · rw [negRelevant_iff_cond_lt h, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _)
-      (measure_ne_top _ _), ← measureReal_def, ← measureReal_def, cond_real_apply _ hHm.compl,
-      cond_real_apply _ hHm,
-      div_lt_div_iff₀ (measureReal_topic_pos ctx) (measureReal_compl_pos ctx)]
+  rw [negRelevant, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _),
+    ← measureReal_def, ← measureReal_def, cond_real_apply _ ctx.topicMeasurable,
+    cond_real_apply _ ctx.topicMeasurable.compl,
+    div_lt_div_iff₀ (measureReal_topic_pos ctx) (measureReal_compl_pos ctx)]
 
 end Cross
 
@@ -389,23 +395,6 @@ section Count
 
 variable [Fintype W] [MeasurableSingletonClass W] {topic a b : Set W}
 
-private theorem indepSet_uniformOn_iff (s : Set W) :
-    IndepSet a b (uniformOn s) ↔
-      (s ∩ (a ∩ b)).ncard * s.ncard = (s ∩ a).ncard * (s ∩ b).ncard := by
-  rw [indepSet_iff_measure_inter_eq_mul .of_discrete .of_discrete (uniformOn s),
-    ← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _)
-      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def, ← measureReal_def,
-    uniformOn_real_apply, uniformOn_real_apply, uniformOn_real_apply]
-  rcases Nat.eq_zero_or_pos s.ncard with h0 | h0
-  · have hz : ∀ t, (s ∩ t).ncard = 0 := fun t ↦
-      Nat.eq_zero_of_le_zero (h0 ▸ Set.ncard_le_ncard Set.inter_subset_left s.toFinite)
-    simp [h0, hz]
-  · rw [div_mul_div_comm, div_eq_div_iff (by positivity) (by positivity)]
-    norm_cast
-    rw [← mul_assoc]
-    exact ⟨fun h ↦ Nat.eq_of_mul_eq_mul_right h0 h, fun h ↦ by rw [h]⟩
-
 theorem condIndepIssue_count_iff :
     CondIndepIssue ⟨topic, .of_discrete, .count⟩ a b ↔
       (topic ∩ (a ∩ b)).ncard * topic.ncard = (topic ∩ a).ncard * (topic ∩ b).ncard ∧
@@ -415,13 +404,29 @@ theorem condIndepIssue_count_iff :
 
 end Count
 
+/-! ### Irrelevance as independence -/
+
+/-- E is irrelevant to a live issue exactly when it is stochastically independent of H, as Merin
+glosses irrelevance in deriving the presupposition of *also*; contradictory E is both. -/
+theorem irrelevant_iff_indepSet {ctx : Context W} [IsProbabilityMeasure ctx.prior]
+    [ctx.Nondegenerate] {e : Set W} (he : MeasurableSet e) :
+    irrelevant ctx e ↔ IndepSet ctx.topic e ctx.prior := by
+  have hH := ctx.topicMeasurable
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · have hc : ctx.prior[e|ctx.topic] = ctx.prior e := by
+      have := cond_add_cond_compl_eq (t := e) hH ctx.prior
+      rw [irrelevant] at h
+      rwa [← h, ← mul_add, measure_add_measure_compl hH, measure_univ, mul_one] at this
+    rw [indepSet_iff_measure_inter_eq_mul hH he ctx.prior, ← cond_mul_eq_inter hH, hc, mul_comm]
+  · rw [irrelevant, h.cond_apply hH Context.Nondegenerate.topic_ne_zero,
+      h.compl_left.cond_apply hH.compl Context.Nondegenerate.compl_ne_zero]
+
 /-! ### Sign reversal -/
 
 /-- E is positively relevant to H iff negatively relevant to ¬H (Corollary 3). -/
-theorem sign_reversal_qual (ctx : Context W) (e : Set W) (hEH : ctx.prior[|ctx.topic] e ≠ 0) :
+theorem sign_reversal_qual (ctx : Context W) (e : Set W) :
     posRelevant ctx e ↔ negRelevant (swapIssue ctx) e := by
-  rw [posRelevant_iff_cond_lt, negRelevant_iff_cond_lt (by simpa [swapIssue] using hEH)]
-  simp [swapIssue]
+  simp [posRelevant_iff_cond_lt, negRelevant, swapIssue]
 
 /-- The Bayes factors of E for H and for ¬H multiply to one (Corollary 3). -/
 theorem sign_reversal (ctx : Context W) (e : Set W) (hEH : ctx.prior[|ctx.topic] e ≠ 0)
@@ -508,9 +513,6 @@ private theorem div_union_bounds {μ ν : Measure W} [IsProbabilityMeasure μ]
   have hlt {s : Set W} (hs : 1 < μ s / ν s) (h0 : ν s ≠ 0) : ν.real s < μ.real s :=
     (ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)).2 <| by
       simpa using (ENNReal.lt_div_iff_mul_lt (.inl h0) (.inl (measure_ne_top _ _))).1 hs
-  have hunion {ρ : Measure W} [IsProbabilityMeasure ρ] (h : IndepSet a b ρ) :
-      ρ.real (a ∪ b) = ρ.real a + ρ.real b - ρ.real a * ρ.real b := by
-    rw [eq_sub_iff_add_eq, ← measureReal_union_add_inter hbm, h.measureReal_inter_eq_mul]
   have hfin {s : Set W} (h0 : ν s ≠ 0) : μ s / ν s ≠ ⊤ := ENNReal.div_ne_top (measure_ne_top _ _) h0
   have hνu : ν (a ∪ b) ≠ 0 := fun h0 ↦ hνa (measure_mono_null Set.subset_union_left h0)
   have hA := hlt ha hνa
@@ -521,10 +523,12 @@ private theorem div_union_bounds {μ ν : Measure W} [IsProbabilityMeasure μ]
   constructor
   · rw [← ENNReal.toReal_lt_toReal (hfin hνu) (max_ne_top (hfin hνa) (hfin hνb)),
       ENNReal.toReal_max (hfin hνa) (hfin hνb), ENNReal.toReal_div, ENNReal.toReal_div,
-      ENNReal.toReal_div, ← measureReal_def, ← measureReal_def, hunion h₁, hunion h₂]
+      ENNReal.toReal_div, ← measureReal_def, ← measureReal_def, h₁.measureReal_union hbm,
+      h₂.measureReal_union hbm]
     exact harith.1
   · rw [← ENNReal.toReal_lt_toReal ENNReal.one_ne_top (hfin hνu), ENNReal.toReal_one,
-      ENNReal.toReal_div, ← measureReal_def, ← measureReal_def, hunion h₁, hunion h₂]
+      ENNReal.toReal_div, ← measureReal_def, ← measureReal_def, h₁.measureReal_union hbm,
+      h₂.measureReal_union hbm]
     exact harith.2
 
 /-- Under issue-conditional independence with A and B positively relevant, the Bayes factor of their

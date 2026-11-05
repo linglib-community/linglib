@@ -5,8 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Pragmatics.RSA.Basic
-public import Linglib.Core.Probability.UniformOn
 
 /-!
 # Grusdt, Lassiter, and Franke (2022): Rational Communication with Conditionals
@@ -103,11 +104,6 @@ def Assertable (θ : ℝ) : Utt → Measure (Bool × Bool) → Prop
   | .conditional, μ => θ ≤ (μ[|A]).real C
   | .likelyC, μ => 1 / 2 < μ.real C
 
-theorem real_cond (μ : Measure (Bool × Bool)) (S T : Set (Bool × Bool)) :
-    (μ[|S]).real T = μ.real (S ∩ T) / μ.real S := by
-  rw [measureReal_def, cond_apply .of_discrete, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    measureReal_def, measureReal_def, div_eq_inv_mul]
-
 /-! ### Two consequences of the assertability conditions, section 5
 
 Section 5.1: when antecedent and consequent are independent, the conditional is assertable
@@ -116,18 +112,17 @@ takes the two to be independent is surprised by it, the source of the infelicity
 missing-link conditionals. Section 5.3: a speaker who can assert both *if A then C* and *if
 not A then C* could have asserted *C* outright. -/
 
-theorem assertable_C_of_indep {μ : Measure (Bool × Bool)} {t : ℝ} (hA : 0 < μ.real A)
-    (hind : μ.real (A ∩ C) = μ.real A * μ.real C) (h : Assertable t .conditional μ) :
+theorem assertable_C_of_indep {μ : Measure (Bool × Bool)} [IsFiniteMeasure μ] {t : ℝ}
+    (hind : IndepSet A C μ) (hA : μ A ≠ 0) (h : Assertable t .conditional μ) :
     Assertable t .C μ := by
-  simp only [Assertable, real_cond] at h ⊢
-  rwa [hind, mul_div_cancel_left₀ _ hA.ne'] at h
+  rwa [Assertable, hind.cond_real_apply .of_discrete hA] at h
 
 theorem assertable_C_of_conditionals {μ : Measure (Bool × Bool)} [IsProbabilityMeasure μ] {t : ℝ}
     (hA : 0 < μ.real A) (hAc : 0 < μ.real Aᶜ) (h₁ : t ≤ (μ[|A]).real C)
     (h₂ : t ≤ (μ[|Aᶜ]).real C) : Assertable t .C μ := by
   simp only [Assertable]
-  rw [real_cond, le_div_iff₀ hA] at h₁
-  rw [real_cond, le_div_iff₀ hAc] at h₂
+  rw [cond_real_apply _ .of_discrete, le_div_iff₀ hA] at h₁
+  rw [cond_real_apply _ .of_discrete, le_div_iff₀ hAc] at h₂
   have htot : μ.real (A ∩ C) + μ.real (Aᶜ ∩ C) = μ.real C := by
     have := measureReal_inter_add_sdiff (μ := μ) (s := C) (MeasurableSet.of_discrete (s := A))
     rwa [Set.inter_comm, Set.sdiff_eq_compl_inter] at this
@@ -208,6 +203,12 @@ theorem real_Ac (s : State) : s.dist.real Aᶜ = s.cell (false, true) + s.cell (
 theorem real_Ac_inter_Cc (s : State) : s.dist.real (Aᶜ ∩ Cᶜ) = s.cell (false, false) := by
   rw [Ac_inter_Cc_eq, State.dist_real_finset, Finset.sum_singleton]
 
+-- Table 2(a)
+theorem indepSet_A_C_iff (s : State) : IndepSet A C s.dist ↔ s ≠ .s2 := by
+  rw [indepSet_iff_measureReal_inter_eq_mul .of_discrete .of_discrete, real_A_inter_C, real_A,
+    real_C]
+  cases s <;> simp [State.cell] <;> norm_num
+
 /-- The assertability extension of an utterance at the threshold `θ`. -/
 def ext (u : Utt) : Set State := {s | Assertable θ u s.dist}
 
@@ -217,7 +218,9 @@ theorem ext_likelyC : ext .likelyC = Set.univ := by
 
 -- Table 2
 theorem ext_conditional : ext .conditional = ↑({State.s1, .s2} : Finset State) := by
-  ext s; cases s <;> simp [ext, Assertable, real_cond, real_A, real_A_inter_C, State.cell, θ] <;>
+  ext s; cases s <;>
+    simp [ext, Assertable, cond_real_apply _ .of_discrete, real_A, real_A_inter_C, State.cell,
+      θ] <;>
     norm_num
 
 -- Table 2
@@ -402,8 +405,8 @@ conditional is assertable while `P(¬C | ¬A) = 6/7` falls short of `θ`. -/
 
 theorem perfection_not_semantic :
     Assertable θ .conditional State.s2.dist ∧ ¬ θ ≤ (State.s2.dist[|Aᶜ]).real Cᶜ := by
-  simp only [Assertable, real_cond, real_A, real_A_inter_C, real_Ac, real_Ac_inter_Cc, State.cell,
-    θ]
+  simp only [Assertable, cond_real_apply _ .of_discrete, real_A, real_A_inter_C, real_Ac,
+    real_Ac_inter_Cc, State.cell, θ]
   norm_num
 
 end GrusdtLassiterFranke2022
