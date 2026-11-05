@@ -199,6 +199,10 @@ theorem intersective_some : (Det.some : Det α).Intersective :=
 theorem intersective_no : (no : Det α).Intersective := fun A B A' B' h ↦
   no_iff_not_some.trans <| (not_congr (intersective_some A B A' B' h)).trans no_iff_not_some.symm
 
+theorem coIntersective_every : (every : Det α).CoIntersective := fun A B A' B' h ↦ by
+  change A ≤ B ↔ A' ≤ B'
+  rw [← sdiff_eq_bot_iff, ← sdiff_eq_bot_iff, h]
+
 /-! ### Anti-additivity -/
 
 theorem leftAntiAdditive_every : (every : Det α).LeftAntiAdditive :=
@@ -220,19 +224,13 @@ theorem compl_some : (Det.some : Det α)ᶜ = no := by
 theorem dual_every : (every : Det α).dual = Det.some := by
   rw [dual, innerNeg_every, ← compl_some, compl_compl]
 
-/-! ### Strength and existentiality -/
+/-! ### Strength -/
 
 theorem positiveStrong_every : (every : Det α).PositiveStrong := fun _ ↦ subset_rfl
 
 theorem not_no_self (hA : A.Nonempty) : ¬ no A A := fun h ↦
   let ⟨_, hx⟩ := hA
   h hx hx
-
-theorem existential_some : (Det.some : Det α).Existential := fun A B ↦ by
-  rw [Det.some, Det.some, Set.inter_univ]
-
-theorem existential_no : (no : Det α).Existential := fun A B ↦
-  no_iff_not_some.trans <| (not_congr (existential_some A B)).trans no_iff_not_some.symm
 
 /-! ### Relational properties ([van-benthem-1984]) -/
 

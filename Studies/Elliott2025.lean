@@ -388,8 +388,8 @@ theorem toGQ_compl (D : Det α) : Dᶜ.toGQ = D.toGQᶜ := by
 noncomputable def consDetOrderIso : ConsDet α ≃o Det α :=
   Equiv.toOrderIso
     { toFun Q := Det.ofGQ Q.1
-      invFun D := ⟨D.toGQ, conservative_toGQ D⟩
-      left_inv Q := Subtype.ext (toGQ_ofGQ_of_conservative Q.2)
+      invFun D := ⟨D.toGQ, mem_conservativeSubalgebra.2 (conservative_toGQ D)⟩
+      left_inv Q := Subtype.ext (toGQ_ofGQ_of_conservative (mem_conservativeSubalgebra.1 Q.2))
       right_inv := ofGQ_toGQ }
     (fun _ _ h _ ↦ h _ _)
     (fun {D₁ D₂} h R S hs ↦ (sentence_iff D₂ R S).2 (h _ ((sentence_iff D₁ R S).1 hs)))

@@ -147,14 +147,14 @@ theorem meaning_concord_iff_resumption :
     meaning [.nword .u A, .nword .u B] P ↔
       DeSwartSag2002.reading .resumption A B fun x y ↦ P [x, y] := by
   rw [DeSwartSag2002.reading_resumption_iff]
-  simp [meaning, interp, NegElement.feature, iterate, no_iff_not_some]
+  simp [meaning, interp, NegElement.feature, iterate, acc, no_iff_not_some]
 
 /-- Two n-words carrying `[iNEG]` in a double negation language give de Swart and Sag's
 iteration of *no*. -/
 theorem meaning_dn_iff_iteration :
     meaning [.nword .i A, .nword .i B] P ↔
       DeSwartSag2002.reading .iteration A B fun x y ↦ P [x, y] := by
-  simp [meaning, interp, NegElement.feature, DeSwartSag2002.reading, iterate]
+  simp [meaning, interp, NegElement.feature, DeSwartSag2002.reading, iterate, acc]
 
 theorem meaning_concord_and_not_iteration :
     meaning [.nword .u (Set.univ : Set (Fin 1)), .nword .u Set.univ] (fun _ ↦ False) ∧
