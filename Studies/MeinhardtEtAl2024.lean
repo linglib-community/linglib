@@ -45,7 +45,9 @@ one](##MeinhardtEtAl2024.exists_isWeaklyDeterministic_not_isNonInteractingBimach
   final function](##MeinhardtEtAl2024.run_ne_boundedRule_of_finalRight_eq_nil), which here does the
   work of the end marker.
   Word-valued cells, on the other hand, admit [a map that is unbounded
-  circumambient](##MeinhardtEtAl2024.exists_isNonInteracting_isUnboundedCircumambient).
+  circumambient](##MeinhardtEtAl2024.exists_isNonInteracting_isUnboundedCircumambient), which
+  letter-to-letter machines also compute, none of them non-interacting: non-interaction is a
+  property of the machine, not of the map.
 
 ## Errata
 
@@ -672,13 +674,18 @@ private theorem getElem?_shiftRun_append (d : ℕ) (ys : List ShiftSym) :
   rw [List.getElem?_append_left (by rw [length_shiftRun]; omega)]
   simp [shiftRun, List.getElem?_append]
 
-/-- Word-valued cells do not exclude unbounded circumambience: this length-preserving machine
-licenses each change by one side, and its target needs both. -/
+/-- Word-valued cells do not exclude unbounded circumambience: this machine licenses each change
+by one side and its target needs both. Letter-to-letter machines compute the same function, and
+none of them is non-interacting, so non-interaction belongs to the machine, not the function. -/
 theorem exists_isNonInteracting_isUnboundedCircumambient :
     ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R ShiftSym ShiftSym),
-      IsNonInteracting B ∧ (∀ w, (B.run w).length = w.length) ∧ IsUnboundedCircumambient B.run := by
+      IsNonInteracting B ∧ IsLetterToLetterBimachineComputable B.run ∧
+        IsUnboundedCircumambient B.run := by
+  have hlen (w : List ShiftSym) : (shiftBM.run w).length = w.length := by
+    simpa [run_shiftBM] using length_emitted_shiftBM none w
   refine ⟨_, _, inferInstance, inferInstance, shiftBM, isNonInteracting_shiftBM,
-    fun w ↦ by simpa [run_shiftBM] using length_emitted_shiftBM none w, fun d ↦ ?_⟩
+    isLetterToLetterBimachineComputable_iff_isBimachineComputable.mpr
+      ⟨shiftBM.isBimachineComputable, hlen⟩, fun d ↦ ?_⟩
   have hm := noMarker_shiftRun d
   have hbase : (s :: (shiftRun d ++ [t]))[d + 1]? = some o := getElem?_shiftRun_append d _
   refine ⟨s :: (shiftRun d ++ [t]), d + 1, by simp [length_shiftRun]; omega, ?_, fun e ↦ ?_⟩

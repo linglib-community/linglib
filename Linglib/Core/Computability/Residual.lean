@@ -13,6 +13,7 @@ public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Data.Fintype.Option
+public import Mathlib.Basic.Finite.Prod
 public import Mathlib.Order.Lattice.Nat
 public import Linglib.Core.Computability.Mealy
 public import Linglib.Core.Computability.Bimachine
@@ -27,8 +28,10 @@ the longest common prefix of the outputs of `f` on the extensions of `u`, and th
 by `u` sends `v` to the rest of `f (u ++ v)`. A function is subsequential iff it has finitely many
 residuals, and Mealy-computable iff it is moreover length- and prefix-preserving. A
 length-preserving function whose output can depend on input unboundedly far to its right, as in
-bidirectional harmony, has infinitely many residuals; it is bimachine-computable iff it has
-finitely many *synchronous* residuals and coresiduals, which cut the output where the input is cut.
+bidirectional harmony, has infinitely many residuals; it is computed by a letter-to-letter
+bimachine iff it has finitely many *synchronous* residuals and coresiduals, which cut the output
+where the input is cut. Over a finite alphabet that is every length-preserving bimachine-computable
+function, while reversal is computed by no bimachine at all.
 
 ## Main definitions
 
@@ -43,6 +46,9 @@ finitely many *synchronous* residuals and coresiduals, which cut the output wher
   finitely many residuals.
 * `isLetterToLetterBimachineComputable_iff_syncResidual`: a length-preserving `f` is computed by a
   letter-to-letter bimachine iff it has finitely many synchronous residuals and coresiduals.
+* `isLetterToLetterBimachineComputable_iff_isBimachineComputable`: over a finite alphabet, a
+  length-preserving bimachine-computable function is computed by a letter-to-letter one.
+* `not_isBimachineComputable_reverse`: reversal is computed by no finite bimachine.
 
 ## Implementation notes
 
@@ -504,3 +510,148 @@ theorem isLetterToLetterBimachineComputable_iff_syncResidual {f : List α → Li
   ⟨fun hf ↦ ⟨hf.length_eq, hf.finite_range_syncResidual, hf.finite_range_syncCoresidual⟩,
    fun h ↦ isLetterToLetterBimachineComputable_of_syncResidual h.1 h.2.1 h.2.2⟩
 
+
+/-! ### Resynchronization
+
+Cut the input of a bimachine as `x ++ v`. The output is what `x` and the final left block emit,
+given the right state over `v`, followed by what `v` and the final right block emit, given the left
+state over `x`. When the function preserves length, how far the first part runs ahead of `x` is
+fixed by those two states alone, so the synchronous residual of `x` is fixed by its left state and
+finitely many short words, and a letter-to-letter machine computes the function. -/
+
+namespace Bimachine
+
+variable {L R : Type*} (B : Bimachine L R α β)
+
+/-- What `B` emits for the prefix `x` of a word whose suffix leaves the right automaton in `r`. -/
+private def leftPart (x : List α) (r : R) : List β :=
+  B.finalLeft (B.rStateFrom r x) ++ B.emitted B.lInit x r
+
+/-- What `B` emits for the suffix `v` of a word whose prefix leaves the left automaton in `l`. -/
+private def rightPart (l : L) (v : List α) : List β :=
+  B.emitted l v B.rInit ++ B.finalRight (B.lStateFrom l v)
+
+private theorem run_append_eq (x v : List α) :
+    B.run (x ++ v) = leftPart B x (B.rState v) ++ rightPart B (B.lState x) v := by
+  simp [run, leftPart, rightPart, rState, lState, rStateFrom_append, lStateFrom_append,
+    emitted_append]
+
+private theorem exists_mem_output {b : β} {l : L} {x : List α} {r : R} (h : b ∈ B.emitted l x r) :
+    ∃ l a r, b ∈ B.output l a r := by
+  induction x generalizing l with
+  | nil => simp at h
+  | cons a x ih =>
+    rw [emitted_cons, List.mem_append] at h
+    exact h.elim (fun h ↦ ⟨_, _, _, h⟩) ih
+
+end Bimachine
+
+open Bimachine in
+/-- Over a finite alphabet, a length-preserving bimachine-computable function has finitely many
+synchronous residuals. -/
+theorem IsBimachineComputable.finite_range_syncResidual [Finite α] {f : List α → List β}
+    (hf : IsBimachineComputable f) (hlen : ∀ x, (f x).length = x.length) :
+    (Set.range (syncResidual f)).Finite := by
+  classical
+  obtain ⟨L, _, R, _, B, rfl⟩ := hf
+  let rep : R → List α := fun r ↦ if h : ∃ v, B.rState v = r then h.choose else []
+  have hrep (v : List α) : B.rState (rep (B.rState v)) = B.rState v := by
+    have h : ∃ w, B.rState w = B.rState v := ⟨v, rfl⟩
+    simp only [rep, h, ↓reduceDIte]
+    exact h.choose_spec
+  have hsum (x v : List α) : (leftPart B x (B.rState v)).length
+      + (rightPart B (B.lState x) v).length = x.length + v.length := by
+    simpa [run_append_eq] using hlen (x ++ v)
+  let Λ : Set β := (⋃ p : L × α × R, {b | b ∈ B.output p.1 p.2.1 p.2.2})
+    ∪ ⋃ r : R, {b | b ∈ B.finalLeft r}
+  have hΛ : Λ.Finite :=
+    (Set.finite_iUnion fun _ ↦ List.finite_toSet _).union
+      (Set.finite_iUnion fun _ ↦ List.finite_toSet _)
+  let D := Finset.univ.sup fun r ↦ (rep r).length
+  let W : Set (List β) := {w | w.length ≤ D ∧ ∀ b ∈ w, b ∈ Λ}
+  have hW : W.Finite := by
+    have := hΛ.to_subtype
+    refine ((List.finite_length_le Λ D).image (List.map Subtype.val)).subset fun w hw ↦ ?_
+    lift w to List Λ using hw.2
+    exact ⟨w, by simpa using hw.1, rfl⟩
+  let S (x : List α) (r : R) : List β := (leftPart B x (B.rState (rep r))).drop x.length
+  let k (l : L) (r : R) : ℕ := (rightPart B l (rep r)).length - (rep r).length
+  let Φ (p : L × (R → List β)) (v : List α) : List β :=
+    p.2 (B.rState v) ++ (rightPart B p.1 v).drop (k p.1 (B.rState v))
+  refine (((Set.toFinite (Set.univ : Set L)).prod (Set.Finite.pi fun _ ↦ hW)).image Φ).subset ?_
+  rintro _ ⟨x, rfl⟩
+  refine ⟨(B.lState x, S x), ⟨trivial, fun r _ ↦ ⟨?_, fun b hb ↦ ?_⟩⟩, funext fun v ↦ ?_⟩
+  · have := hsum x (rep r)
+    have hD : (rep r).length ≤ D := Finset.le_sup (f := fun r ↦ (rep r).length) (Finset.mem_univ r)
+    simp only [S, List.length_drop]
+    omega
+  · rcases List.mem_append.mp (List.mem_of_mem_drop hb) with h | h
+    · exact .inr (Set.mem_iUnion.mpr ⟨_, h⟩)
+    · obtain ⟨l, a, r, h⟩ := B.exists_mem_output h
+      exact .inl (Set.mem_iUnion.mpr ⟨(l, a, r), h⟩)
+  · have := hsum x (rep (B.rState v))
+    rw [hrep] at this
+    simp only [Φ, S, k, hrep, Function.syncResidual, run_append_eq, List.drop_append]
+    congr 2
+    omega
+
+/-- Over a finite alphabet, a length-preserving bimachine-computable function has finitely many
+synchronous coresiduals. -/
+theorem IsBimachineComputable.finite_range_syncCoresidual [Finite α] {f : List α → List β}
+    (hf : IsBimachineComputable f) (hlen : ∀ x, (f x).length = x.length) :
+    (Set.range (syncCoresidual f)).Finite := by
+  have hlen' (x : List α) : (List.revConj f x).length = x.length := by simp [List.revConj, hlen]
+  refine ((hf.revConj.finite_range_syncResidual hlen').image
+    fun g u ↦ (g u.reverse).reverse).subset ?_
+  rintro _ ⟨y, rfl⟩
+  refine ⟨_, ⟨y.reverse, rfl⟩, funext fun u ↦ ?_⟩
+  simp only [Function.syncCoresidual, Function.syncResidual, List.revConj, List.reverse_append,
+    List.reverse_reverse, List.length_reverse, List.drop_reverse, hlen, List.length_append]
+  congr 1
+  omega
+
+/-- Over a finite alphabet, a function is computed by a letter-to-letter bimachine exactly when it
+is bimachine-computable and preserves length ([eilenberg-1974] Th. XI.7.1). -/
+theorem isLetterToLetterBimachineComputable_iff_isBimachineComputable [Finite α]
+    {f : List α → List β} :
+    IsLetterToLetterBimachineComputable f ↔
+      IsBimachineComputable f ∧ ∀ x, (f x).length = x.length :=
+  ⟨fun h ↦ ⟨.of_letterToLetter h, h.length_eq⟩, fun ⟨hf, hlen⟩ ↦
+    isLetterToLetterBimachineComputable_of_syncResidual hlen (hf.finite_range_syncResidual hlen)
+      (hf.finite_range_syncCoresidual hlen)⟩
+
+/-- The finite alphabet is needed: over `ℕ`, the shift `x :: xs ↦ xs ++ [0]` is bimachine-computable
+and preserves length, but a letter-to-letter machine would have to remember the second letter. -/
+theorem exists_isBimachineComputable_not_isLetterToLetterBimachineComputable :
+    ∃ f : List ℕ → List ℕ, IsBimachineComputable f ∧ (∀ x, (f x).length = x.length) ∧
+      ¬ IsLetterToLetterBimachineComputable f := by
+  let B : Bimachine Bool Unit ℕ ℕ :=
+    { lInit := false, lStep := fun _ _ ↦ true, rInit := (), rStep := fun _ _ ↦ (),
+      output := fun l a _ ↦ if l then [a] else [], finalRight := fun l ↦ if l then [0] else [] }
+  have hl (xs : List ℕ) : B.lStateFrom true xs = true := by
+    induction xs with
+    | nil => rfl
+    | cons _ _ ih => exact ih
+  have he (xs : List ℕ) : B.emitted true xs () = xs := by
+    induction xs with
+    | nil => rfl
+    | cons a xs ih => simpa [B] using ih
+  have hrun (a : ℕ) (xs : List ℕ) : B.run (a :: xs) = xs ++ [0] := by
+    simp [Bimachine.run, Bimachine.lState, B, hl, he]
+  refine ⟨B.run, B.isBimachineComputable, fun x ↦ ?_, fun h ↦ ?_⟩
+  · cases x <;> simp [hrun]
+    rfl
+  refine Set.infinite_range_of_injective (f := fun n : ℕ ↦ syncCoresidual B.run [n])
+    (fun m n hmn ↦ ?_) (h.finite_range_syncCoresidual.subset
+      (Set.range_subset_iff.mpr fun n ↦ ⟨[n], rfl⟩))
+  simpa [Function.syncCoresidual, hrun] using congrFun hmn [0]
+
+/-- Reversal is not computed by any finite bimachine: its synchronous residuals are distinct. -/
+theorem not_isBimachineComputable_reverse :
+    ¬ IsBimachineComputable (List.reverse : List Bool → List Bool) := fun h ↦ by
+  refine Set.infinite_range_of_injective
+    (f := fun n : ℕ ↦ syncResidual List.reverse (List.replicate n true)) (fun m n hmn ↦ ?_)
+    ((h.finite_range_syncResidual fun _ ↦ List.length_reverse).subset
+      (Set.range_subset_iff.mpr fun n ↦ ⟨_, rfl⟩))
+  have := congrArg (List.count true) (congrFun hmn (List.replicate (m + n) false))
+  simpa [Function.syncResidual, List.drop_append, List.count_replicate] using this

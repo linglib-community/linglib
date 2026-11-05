@@ -31,13 +31,6 @@ second pass then remembers whether it has read anything, for the final right blo
 
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 
-## TODO
-
-* Over a finite alphabet, a length-preserving bimachine-computable function is computed by a
-  letter-to-letter machine, the resynchronization half of Eilenberg's Theorem XI.7.1. The
-  finiteness is needed: over `ℕ` the shift `x :: xs ↦ xs ++ [0]` is length-preserving and
-  bimachine-computable, but a letter-to-letter machine would have to remember the second letter.
-
 ## References
 
 * [elgot-mezei-1965]
