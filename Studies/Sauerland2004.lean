@@ -86,7 +86,7 @@ instance (c : Connective) : DecidablePred (· ∈ ab c) :=
 
 /-- (46): the only secondary implicature of *A or B* is exclusiveness. -/
 theorem isSecondaryImplicature_ab_iff (c : Connective) :
-    IsSecondaryImplicature (ab .or) (range ab) (ab c) ↔ c = .and := by
+    IsSecondaryImplicature (range ab) (ab .or) (ab c) ↔ c = .and := by
   rw [isSecondaryImplicature_range_iff]
   cases c <;> decide
 
@@ -120,7 +120,7 @@ instance (a : Connective × Quantity) : DecidablePred (· ∈ kai a) :=
 /-- (48)–(49): of the six primary implicatures of *Kai had the broccoli or some of the peas*,
 those of the two conjunctions and of *Kai had all of the peas* strengthen. -/
 theorem isSecondaryImplicature_kai_iff (c : Connective) (q : Quantity) :
-    IsSecondaryImplicature (kai (.or, .some)) (range kai) (kai (c, q)) ↔
+    IsSecondaryImplicature (range kai) (kai (.or, .some)) (kai (c, q)) ↔
       c = .and ∨ (c = .R ∧ q = .all) := by
   rw [isSecondaryImplicature_range_iff]
   simp only [Prod.forall]
@@ -139,7 +139,7 @@ instance (a : Connective × Connective) : DecidablePred (· ∈ abc a) :=
 /-- (51)–(52): the secondary implicatures of *A or (B or C)* are `K¬(B and C)` and those of the
 alternatives whose outer connective is *and*. -/
 theorem isSecondaryImplicature_abc_iff (c d : Connective) :
-    IsSecondaryImplicature (abc (.or, .or)) (range abc) (abc (c, d)) ↔
+    IsSecondaryImplicature (range abc) (abc (.or, .or)) (abc (c, d)) ↔
       c = .and ∨ (c = .R ∧ d = .and) := by
   rw [isSecondaryImplicature_range_iff]
   simp only [Prod.forall]

@@ -221,12 +221,25 @@ variable {C : Set (Set W)} {p q q₁ q₂ : Set W} {w : W}
 
 /-- A member is dominated when the members strictly stronger than it cover it, the condition
 [enguehard-2025] gives (25). A dominated member is never the strongest true one. -/
-def Dominated (C : Set (Set W)) (p : Set W) : Prop := p ⊆ ⋃₀ {q ∈ C | q ⊂ p}
+def Dominated (C : Set (Set W)) (p : Set W) : Prop := p ⊆ ⋃₀ (C ∩ Set.Iio p)
+
+theorem mem_excludes_inter_Iio : w ∈ excludes (C ∩ Set.Iio p) p ↔ ∀ q ∈ C, q ⊂ p → w ∉ q :=
+  ⟨fun h q hq hqp hw ↦ hqp.2 (h q ⟨hq, hqp⟩ hw), fun h q hq hw ↦ (h q hq.1 hq.2 hw).elim⟩
+
+/-- Exhaustifying against the strictly stronger alternatives negates all of them. -/
+theorem mem_exh_inter_Iio : w ∈ exh (C ∩ Set.Iio p) p ↔ w ∈ p ∧ ∀ q ∈ C, q ⊂ p → w ∉ q :=
+  and_congr_right fun _ ↦ mem_excludes_inter_Iio
+
+/-- A member is dominated exactly when negating what is strictly stronger leaves nothing. -/
+theorem exh_inter_Iio_eq_empty_iff : exh (C ∩ Set.Iio p) p = ∅ ↔ Dominated C p := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_exh_inter_Iio, Dominated, Set.subset_def,
+    Set.mem_sUnion, Set.mem_inter_iff, Set.mem_Iio, not_and, not_forall, not_not]
+  exact forall_congr' fun w ↦ forall_congr' fun _ ↦
+    ⟨fun ⟨q, hq, hqp, hw⟩ ↦ ⟨q, ⟨hq, hqp⟩, hw⟩, fun ⟨q, ⟨hq, hqp⟩, hw⟩ ↦ ⟨q, hq, hqp, hw⟩⟩
 
 theorem exh_eq_empty_of_dominated (h : Dominated C p) : exh C p = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ hw ↦
-    let ⟨_, ⟨hq, hqp⟩, hwq⟩ := h hw.1
-    hqp.2 (hw.2 _ hq hwq)
+  Set.subset_empty_iff.1 <|
+    exh_inter_Iio_eq_empty_iff.2 h ▸ exh_antitone Set.inter_subset_left p
 
 /-- The union of two members neither of which entails the other is dominated by them. -/
 theorem dominated_union (h₁ : q₁ ∈ C) (h₂ : q₂ ∈ C) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) :

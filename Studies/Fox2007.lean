@@ -745,7 +745,7 @@ def IsSauerlandExcludable (C : Set (Set W)) (p q : Set W) : Prop :=
 whose denial is a secondary implicature in Sauerland's system as (42) states it: (57b) replicates
 Sauerland's results. -/
 theorem isSauerlandExcludable_iff_isSecondaryImplicature (hC : ∀ r ∈ C, r ⊆ p) :
-    IsSauerlandExcludable C p q ↔ NeoGricean.IsSecondaryImplicature p C q := by
+    IsSauerlandExcludable C p q ↔ NeoGricean.IsSecondaryImplicature C p q := by
   have key : ∀ r ∈ C, ¬ p ⊆ r ↔ r ⊂ p := fun r hr ↦
     ⟨fun h ↦ ssubset_iff_subset_not_subset.2 ⟨hC r hr, h⟩,
       fun h ↦ (ssubset_iff_subset_not_subset.1 h).2⟩
