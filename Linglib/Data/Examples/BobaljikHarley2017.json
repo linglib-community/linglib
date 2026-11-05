@@ -1,0 +1,332 @@
+[
+  {
+    "id": "bobaljikharley2017_ex15a",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(15a)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "U'u maaso uusi-m yi'i-ria-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "U'u",
+        "The"
+      ],
+      [
+        "maaso",
+        "deer.dancer"
+      ],
+      [
+        "uusi-m",
+        "children-PL"
+      ],
+      [
+        "yi'i-ria-k",
+        "dance-APPL-PRF"
+      ]
+    ],
+    "translation": "The deer dancer danced for the children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "unergative"
+      ],
+      [
+        "applicative",
+        "suffixed"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on an agentive intransitive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljikharley2017_ex15b",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(15b)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "Inepo Hose-ta pueta-ta eta-ria-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inepo",
+        "1SG"
+      ],
+      [
+        "Hose-ta",
+        "Jose-ACC"
+      ],
+      [
+        "pueta-ta",
+        "door-ACC"
+      ],
+      [
+        "eta-ria-k",
+        "close-APPL-PRF"
+      ]
+    ],
+    "translation": "I closed the door for Jose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "transitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on an agentive transitive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljikharley2017_ex15c",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(15c)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "Uu tasa Maria-ta hamte-ria-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Uu",
+        "The"
+      ],
+      [
+        "tasa",
+        "cup"
+      ],
+      [
+        "Maria-ta",
+        "Maria-ACC"
+      ],
+      [
+        "hamte-ria-k",
+        "break.INTR-APPL-PRF"
+      ]
+    ],
+    "translation": "The cup broke for/on Maria.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "unaccusative"
+      ],
+      [
+        "applicative",
+        "suffixed"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). No applicative on an unaccusative, whose v is non-agentive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljikharley2017_ex16",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(16)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "Santos Maria-ta San Xavierle-u weye-ria",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Santos",
+        "Santos"
+      ],
+      [
+        "Maria-ta",
+        "Maria-ACC"
+      ],
+      [
+        "San",
+        "San"
+      ],
+      [
+        "Xavierle-u",
+        "Xavier-to"
+      ],
+      [
+        "weye-ria",
+        "go.SG-APPL"
+      ]
+    ],
+    "translation": "Santos is going/walking to San Xavier for Maria.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "suppletiveIntransitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). No applicative on the suppletive intransitive weeye 'go, walk'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljikharley2017_ex17",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(17)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "Santos Maria-ta vetchi'ivo San Xavierle-u weeye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Santos",
+        "Santos"
+      ],
+      [
+        "Maria-ta",
+        "Maria-ACC"
+      ],
+      [
+        "vetchi'ivo",
+        "for"
+      ],
+      [
+        "San",
+        "San"
+      ],
+      [
+        "Xavierle-u",
+        "Xavier-to"
+      ],
+      [
+        "weeye",
+        "go"
+      ]
+    ],
+    "translation": "Santos is going/walking to San Xavier for Maria. (e.g. carrying out a vow she had made for a pilgrimage)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "suppletiveIntransitive"
+      ],
+      [
+        "applicative",
+        "periphrastic"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). A benefactive adjunct PP expresses the meaning of (16), so (16) is not semantically infelicitous.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljikharley2017_ex18",
+    "source": {
+      "bibkey": "bobaljik-harley-2017",
+      "paperLabel": "(18)"
+    },
+    "language": "yaqu1251",
+    "primaryText": "Santos Jose-ta koowi-ta/koowi-m mea/sua-ria-k",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Santos",
+        "Santos"
+      ],
+      [
+        "Jose-ta",
+        "Jose-ACC"
+      ],
+      [
+        "koowi-ta/koowi-m",
+        "pig-ACC/pig-PL"
+      ],
+      [
+        "mea/sua-ria-k",
+        "kill.SG/kill.PL-APPL-PRF"
+      ]
+    ],
+    "translation": "Santos killed a pig/pigs for Jose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.1"
+      ],
+      [
+        "phenomenon",
+        "applicative"
+      ],
+      [
+        "verbClass",
+        "suppletiveTransitive"
+      ],
+      [
+        "applicative",
+        "suffixed"
+      ]
+    ],
+    "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on a suppletive transitive, so suppletion does not block it.",
+    "verified": "page-image"
+  }
+]
