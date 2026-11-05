@@ -116,8 +116,7 @@ theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
       (StrictlyLocalGrammar.ofForbidden {f | f ∈ Fs}).language k :=
   Set.ext fun w ↦ by
     rw [mem_bannedSubgraph, StrictlyLocalGrammar.mem_ofForbidden_language]
-    simp only [AR.Free, List.forall_mem_map, AR.factorEmbeds_ofList_iff, Set.mem_ofPred_eq,
-      List.mem_kFactors]
+    simp only [AR.Free, List.forall_mem_map, AR.factorEmbeds_ofList_iff, Set.mem_ofPred_eq]
     grind
 
 theorem isAutosegmentalStrictlyLocal_ofForbidden {Fs : List (Augmented α)} {k : ℕ}

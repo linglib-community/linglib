@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Phonology.Subregular.Boundary
-public import Linglib.Core.Data.List.Factors
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Basic.Real.Basic
 
@@ -46,7 +45,10 @@ variable {Sym : Type*}
 
 /-- The `k`-gram cues of a form are the `k`-factors of the string padded with one boundary
 symbol on each side, as JudiLing's `make_cue_matrix` computes them with `grams = k`. -/
-def cues (k : ℕ) (w : List Sym) : List (Augmented Sym) := (boundary 2 w).kFactors k
+def cues (k : ℕ) (w : List Sym) : Set (Augmented Sym) := {c | c <:+: boundary 2 w ∧ c.length = k}
+
+instance [DecidableEq Sym] (k : ℕ) (w : List Sym) : DecidablePred (· ∈ cues k w) := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The multiple-hot row over an inventory `inv` marks with `1` the units satisfying `p`. -/
 def multiHot {κ α : Type*} (inv : κ → α) (p : α → Prop) [DecidablePred p] : κ → ℝ :=
