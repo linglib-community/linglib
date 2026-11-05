@@ -277,13 +277,32 @@ theorem ScopeAntitone.sup (h : d.ScopeAntitone) (h' : d'.ScopeAntitone) :
     (d ⊔ d').ScopeAntitone :=
   fun A _ _ hB hd ↦ hd.imp (h A hB) (h' A hB)
 
-theorem Existential.conservative (h : d.Existential) : d.Conservative :=
-  fun A B ↦ by rw [h A B, h A (A ∩ B), ← Set.inter_assoc, Set.inter_self]
+theorem Intersective.iff_inter_univ (h : d.Intersective) : d A B ↔ d (A ∩ B) Set.univ :=
+  h A B _ _ (Set.inter_univ _).symm
 
-theorem Existential.adjRestrict (h : d.Existential) (C : Set α) : (d.adjRestrict C).Existential :=
-  fun A B ↦ by
-    simp only [Det.adjRestrict]
-    rw [h, Set.inter_right_comm]
+theorem intersective_iff : d.Intersective ↔ ∀ A B, d A B ↔ d (A ∩ B) Set.univ :=
+  ⟨fun h _ _ ↦ h.iff_inter_univ, fun h A B A' B' e ↦ by rw [h A B, h A' B', e]⟩
+
+/-- A determiner denotation is co-intersective exactly when `d A B ↔ d univ (A → B)`, so that it
+reduces to its value on the universe at the Boolean conditional. -/
+theorem coIntersective_iff : d.CoIntersective ↔ ∀ A B, d A B ↔ d Set.univ (Aᶜ ∪ B) := by
+  have e (A B : Set α) : Set.univ \ (Aᶜ ∪ B) = A \ B := by ext; simp
+  exact ⟨fun h A B ↦ h A B _ _ (e A B).symm,
+    fun h A B A' B' h' ↦ by
+      rw [h A B, h A' B', show Aᶜ ∪ B = A'ᶜ ∪ B' by
+        rw [← compl_compl (Aᶜ ∪ B), ← compl_compl (A'ᶜ ∪ B')]
+        congr 1
+        simpa [Set.compl_union, Set.sdiff_eq] using h']⟩
+
+theorem Intersective.conservative (h : d.Intersective) : d.Conservative :=
+  fun A B ↦ h A B _ _ (by rw [← Set.inter_assoc, Set.inter_self])
+
+theorem CoIntersective.conservative (h : d.CoIntersective) : d.Conservative :=
+  fun A B ↦ h A B _ _ (by simp)
+
+theorem Intersective.adjRestrict (h : d.Intersective) (C : Set α) :
+    (d.adjRestrict C).Intersective :=
+  fun A B A' B' e ↦ h _ _ _ _ (by rw [Set.inter_right_comm, e, Set.inter_right_comm])
 
 theorem Conservative.adjRestrict (h : d.Conservative) (C : Set α) :
     (d.adjRestrict C).Conservative :=

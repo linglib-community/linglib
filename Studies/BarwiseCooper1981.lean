@@ -165,10 +165,6 @@ theorem intersectionCondition_iff_symm (hc : Conservative D) :
     fun hs A B ↦ (hc.symm_iff_intersective.1 hs) A B (A ∩ B) B
       (by rw [Set.inter_assoc, Set.inter_self])⟩
 
-theorem apply_univ_inter_of_intersective (h : Intersective D) (A B : Set α) :
-    D A B ↔ D (A ∩ B) Set.univ :=
-  h A B (A ∩ B) Set.univ (Set.inter_univ _).symm
-
 /-- A strong intersective determiner is trivial, since positive strong makes every `D(A)`
 everything and negative strong makes it empty. -/
 theorem strong_trivial_of_intersective (h : Intersective D) :

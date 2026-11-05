@@ -33,8 +33,8 @@ of individuals is the quantifier with restrictor `s ∩ A`.
 * `Quantifier.Det.smooth_most`, `Quantifier.Det.proportional_most`: *most* is smooth and
   proportional.
 * `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
-* `Quantifier.Det.not_existential_most`, `Quantifier.Det.not_monotone_half`: *most* is not
-  existential, and *half* is monotone in its scope in neither direction.
+* `Quantifier.Det.not_intersective_most`, `Quantifier.Det.not_monotone_half`: *most* is not
+  intersective, and *half* is monotone in its scope in neither direction.
 * `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
   determiner symbol denotes is conservative and constant, so it satisfies extension and is
   closed under isomorphism.
@@ -339,24 +339,24 @@ theorem proportional_half : (half : Det α).Proportional := NumberTree.proportio
 
 /-! ### Counterexamples on small universes
 
-The proportional quantifiers fail `Existential`, [keenan-stavi-1986]'s condition for felicity
+The proportional quantifiers fail `Intersective`, [keenan-stavi-1986]'s condition for felicity
 in *there*-sentences, since their truth depends on `|A \ B|` and not just on `|A ∩ B|`; *few*
 already fails it on one individual, *most* and *half* on two. This is not the weakness of
 [barwise-cooper-1981], which means being neither positive nor negative strong: their Table II
 lists *few* as weak and does not classify *half*, and they allow a weak *many* or *few* to fail
 the intersection condition. -/
 
-/-- *Most* fails `Existential`, by `A = univ` and `B = {0}` on two individuals. -/
-theorem not_existential_most : ¬ (most : Det (Fin 2)).Existential := fun h ↦ by
-  have := h Set.univ {x | x = 0}
+/-- *Most* fails `Intersective`, by `A = univ` and `B = {0}` on two individuals. -/
+theorem not_intersective_most : ¬ (most : Det (Fin 2)).Intersective := fun h ↦ by
+  have := h.iff_inter_univ (A := Set.univ) (B := {x | x = 0})
   revert this; decide
 
-theorem not_existential_few : ¬ (few : Det (Fin 1)).Existential := fun h ↦ by
-  have := h Set.univ ∅
+theorem not_intersective_few : ¬ (few : Det (Fin 1)).Intersective := fun h ↦ by
+  have := h.iff_inter_univ (A := Set.univ) (B := ∅)
   revert this; decide
 
-theorem not_existential_half : ¬ (half : Det (Fin 2)).Existential := fun h ↦ by
-  have := h Set.univ {x | x = 0}
+theorem not_intersective_half : ¬ (half : Det (Fin 2)).Intersective := fun h ↦ by
+  have := h.iff_inter_univ (A := Set.univ) (B := {x | x = 0})
   revert this; decide
 
 theorem not_restrictorMonotone_most : ¬ (most : Det (Fin 3)).RestrictorMonotone := fun h ↦ by

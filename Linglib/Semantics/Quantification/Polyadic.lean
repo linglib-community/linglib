@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Polyadic quantifiers
@@ -18,9 +19,19 @@ all three, and de Swart and Sag analyse negative concord as the resumption of *n
 A sentence with two quantifiers has two linear scope readings, which are the two orders of
 iteration.
 
+Iteration is composition with the accusative extension `acc`, which applies a quantifier to the
+rows of a relation, so a function from relations to truth values is
+[reducible](##Quantifier.Polyadic.Reducible), in the sense of Keenan's Frege boundary, when it is
+such a composition. [Reducible functions agreeing on the cross products are
+equal](##Quantifier.Polyadic.Reducible.eq_of_forall_prod), and a function is reducible [exactly when
+some accusative extension refines
+it](##Quantifier.Polyadic.reducible_iff_exists_factorsThrough).
+
 ## Main definitions
 
 * `Quantifier.Polyadic.iterate`: the iteration `Q₁x Q₂y R(x, y)` of two quantifiers.
+* `Quantifier.Polyadic.acc`, `Quantifier.Polyadic.Reducible`: the accusative extension of a
+  quantifier, and the functions from relations to truth values that are compositions of quantifiers.
 * `Quantifier.Polyadic.resume`: the binary resumption `Q⟨x, y⟩ R(x, y)` of a quantifier.
 * `Quantifier.Polyadic.branch`: the branching of two quantifiers, witnessed by choice functions.
 * `Quantifier.Polyadic.surfaceScope`, `Quantifier.Polyadic.inverseScope`: the two linear scope
@@ -46,6 +57,7 @@ and `X × Y ⊆ R`; the two should be compared against the sources.
 * [peters-westerstahl-2006]
 * [hintikka-1996]
 * [de-swart-sag-2002]
+* [keenan-1992]
 -/
 
 @[expose] public section
@@ -60,10 +72,15 @@ variable {α : Type u} {Q₁ Q₂ : Det α} {A B : Set α} {R R' : α → α →
 
 /-! ### Iteration and branching -/
 
+/-- The accusative extension of a quantifier maps a relation to the individuals whose row it holds
+of, so that *every student* maps *likes* to the set of those who like every student. -/
+def acc (Q : Quantifier α) (R : α → α → Prop) : Set α := {x | Q {y | R x y}}
+
+@[simp] theorem mem_acc {Q : Quantifier α} {x : α} : x ∈ acc Q R ↔ Q {y | R x y} := .rfl
+
 /-- The iteration `Q₁x Q₂y R(x, y)` nests `Q₂` in the scope of `Q₁`, so that *every student
 read some book* is `iterate every student some book read`. -/
-def iterate (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop :=
-  Q₁ A {x | Q₂ B {y | R x y}}
+def iterate (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop := Q₁ A (acc (Q₂ B) R)
 
 /-- The branching of `Q₁` and `Q₂` evaluates them independently, neither in the scope of the
 other. There are choice functions `f` and `g` such that `Q₁` holds of the `x` related to their
@@ -133,5 +150,90 @@ theorem iterate_every_some_of_some_every (A B : Set α) (R : α → α → Prop)
 theorem iterate_mono (h₁ : Q₁.ScopeMonotone) (h₂ : Q₂.ScopeMonotone)
     (hR : ∀ x y, R x y → R' x y) : iterate Q₁ Q₂ A B R → iterate Q₁ Q₂ A B R' :=
   h₁ A fun x ↦ h₂ B (hR x)
+
+/-! ### Accusative extension and reducibility -/
+
+section Reducible
+
+variable {g : Quantifier α} {F G : (α → α → Prop) → Prop}
+
+/-- Conservativity iterates: only the pairs in `A × B` matter to `Q₁x Q₂y R(x, y)`. -/
+theorem iterate_inter_prod (h₁ : Q₁.Conservative) (h₂ : Q₂.Conservative) :
+    iterate Q₁ Q₂ A B R ↔ iterate Q₁ Q₂ A B fun x y ↦ R x y ∧ x ∈ A ∧ y ∈ B :=
+  h₁.congr_scope fun x hx ↦ h₂.congr_scope fun y hy ↦ by simp [hx, hy]
+
+/-- A function from relations to truth values is reducible, or Fregean, when it is a quantifier
+composed with the accusative extension of a quantifier. -/
+def Reducible (F : (α → α → Prop) → Prop) : Prop := ∃ f g : Quantifier α, ∀ R, F R ↔ f (acc g R)
+
+theorem reducible_iterate : Reducible (iterate Q₁ Q₂ A B) := ⟨Q₁ A, Q₂ B, fun _ ↦ .rfl⟩
+
+/-- [keenan-1992]'s Reducibility Characterization: a function is reducible exactly when the
+accusative extension of some quantifier refines it. Keenan asks for a positive quantifier, which
+`Reducible.exists_positive` supplies. -/
+theorem reducible_iff_exists_factorsThrough :
+    Reducible F ↔ ∃ g : Quantifier α, Function.FactorsThrough F (acc g) := by
+  refine ⟨fun ⟨f, g, h⟩ ↦ ⟨g, fun R S e ↦ propext ?_⟩, fun ⟨g, h⟩ ↦ ?_⟩
+  · rw [h, h, e]
+  · obtain ⟨f, hf⟩ := (Function.factorsThrough_iff F).1 h
+    exact ⟨f, g, fun R ↦ iff_of_eq (congrFun hf R)⟩
+
+/-- A reducible function has a positive right factor, false of the empty set. -/
+theorem Reducible.exists_positive (h : Reducible F) :
+    ∃ f g : Quantifier α, ¬ g ∅ ∧ ∀ R, F R ↔ f (acc g R) := by
+  obtain ⟨f, g, h⟩ := h
+  by_cases hg : g ∅
+  · refine ⟨fun S ↦ f Sᶜ, gᶜ, not_not.2 hg, fun R ↦ (h R).trans (iff_of_eq (congrArg f ?_))⟩
+    exact (compl_compl _).symm
+  · exact ⟨f, g, hg, h⟩
+
+/-- The cross product of two sets as a relation. -/
+def prod (P Q : Set α) : α → α → Prop := fun x y ↦ x ∈ P ∧ y ∈ Q
+
+theorem acc_prod_of_pos {P Y : Set α} (h₀ : ¬ g ∅) (hY : g Y) : acc g (prod P Y) = P := by
+  refine Set.ext fun x ↦ ?_
+  by_cases hx : x ∈ P
+  · simpa [prod, hx] using hY
+  · simpa [prod, hx] using h₀
+
+theorem acc_prod_of_neg {P Y : Set α} (h₀ : ¬ g ∅) (hY : ¬ g Y) : acc g (prod P Y) = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun x hx ↦ ?_
+  by_cases hx' : x ∈ P <;> simp_all [prod]
+
+/-- Under a positive quantifier every relation has the accusative extension of a cross product. -/
+theorem exists_acc_prod_eq (h₀ : ¬ g ∅) (R : α → α → Prop) :
+    ∃ P Y, acc g (prod P Y) = acc g R := by
+  obtain h | ⟨b, hb⟩ := (acc g R).eq_empty_or_nonempty
+  · exact ⟨∅, ∅, by rw [acc_prod_of_neg h₀ h₀, h]⟩
+  · exact ⟨acc g R, {y | R b y}, acc_prod_of_pos h₀ hb⟩
+
+/-- [keenan-1992]'s Reducibility Equivalence: reducible functions agreeing on the cross products
+are equal. -/
+theorem Reducible.eq_of_forall_prod (hF : Reducible F) (hG : Reducible G)
+    (h : ∀ P Y, F (prod P Y) ↔ G (prod P Y)) : F = G := by
+  obtain ⟨f, f', hf₀, hf⟩ := hF.exists_positive
+  obtain ⟨g, g', hg₀, hg⟩ := hG.exists_positive
+  have main {f f' g g' : Quantifier α} {F G : (α → α → Prop) → Prop} (hf₀ : ¬ f' ∅) (hg₀ : ¬ g' ∅)
+      (hf : ∀ R, F R ↔ f (acc f' R)) (hg : ∀ R, G R ↔ g (acc g' R))
+      (h : ∀ P Y, F (prod P Y) ↔ G (prod P Y)) {Y : Set α} (hY : f' Y) (hY' : ¬ g' Y) (R) :
+      F R ↔ G R := by
+    have hc (P : Set α) : f P ↔ g ∅ := by
+      have := h P Y
+      rwa [hf, hg, acc_prod_of_pos hf₀ hY, acc_prod_of_neg hg₀ hY'] at this
+    obtain ⟨P, Q, e⟩ := exists_acc_prod_eq hg₀ R
+    rw [hf, hc, hg, ← e, ← hg, ← h, hf, hc]
+  refine funext fun R ↦ propext ?_
+  by_cases e : f' = g'
+  · subst e
+    obtain ⟨P, Q, e⟩ := exists_acc_prod_eq hf₀ R
+    rw [hf, hg, ← e, ← hf, ← hg]
+    exact h P Q
+  · obtain ⟨Y, hY⟩ := Function.ne_iff.1 e
+    by_cases hY' : f' Y
+    · exact main hf₀ hg₀ hf hg h hY' (fun h' ↦ hY (propext (iff_of_true hY' h'))) R
+    · have hg' : g' Y := by_contra fun h' ↦ hY (propext (iff_of_false hY' h'))
+      exact (main hg₀ hf₀ hg hf (fun P Y ↦ (h P Y).symm) hg' hY' R).symm
+
+end Reducible
 
 end Quantifier.Polyadic
