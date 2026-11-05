@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
+public import Linglib.Morphology.Paradigm.Contiguity
 public import Mathlib.Logic.Relation
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Fragments.Latin.Adjectives
@@ -457,7 +458,7 @@ theorem koryak_morph : ∃ r ∈ StructureDataset.focusedSurvey, r.language.name
 /-! ### The book's vocabularies (ch. 2, ch. 5)
 
 Each vocabulary is run through the Elsewhere engine of
-`Morphology/Exponence/Containment/Contiguity.lean`; the syncretism of the
+`Morphology/Exponence/Containment/SpanRule.lean`; the syncretism of the
 realized cells is the root pattern. -/
 
 /-- Czech BAD (39), with *hor-* under CMPR and *špatn-* elsewhere. -/

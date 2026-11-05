@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
+public import Linglib.Morphology.Paradigm.Contiguity
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.Dekier2021
 public import Linglib.Data.Examples.Readers

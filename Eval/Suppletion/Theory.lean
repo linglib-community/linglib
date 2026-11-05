@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SpanRule
 public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!

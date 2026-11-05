@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SpanRule
+public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Data.Wordlist.SmithMoskalEtAl2019
 
 /-!
@@ -11,16 +12,15 @@ containment account of suppletion from adjectival degree to pronominal case, ove
 hierarchy of Caha, and to pronominal number, over a hierarchy in which the dual contains
 the plural (Greenberg's Universal 34, the paper's (26)). Each hierarchy is a three-grade
 containment structure, so Elsewhere insertion over it generates exactly the contiguous
-patterns and excludes *ABA (`generable_iff_contiguous`, `aba_not_generable`); the attested
+patterns and excludes *ABA (`aba_not_generable`); the attested
 AAA, ABB and ABC patterns are read off the pronoun paradigms of `Data/Wordlist/SmithMoskalEtAl2019`
 (`paradigm`, `lezgian_aaa`, `icelandic_abb`, `russian_abb`, `awtuw_abb`), and the rules (15) for
 the Icelandic first person generate its ABB (`icelandic_abb_generated`).
 
 The domains diverge on AAB. Under the structural adjacency Bobaljik assumes for degree,
 terminal rules with adjacent contexts cannot distinguish the second and third grades, so AAB is
-unattested for degree (`realize_one_eq_two_of_terminal_adjacent`,
-`aab_not_generable_of_terminal_adjacent`); section 3.6 finds genuine AAB in pronominal case,
-the absolutive and ergative sharing a base yet remaining distinct where a syncretic
+unattested for degree (`aab_not_generable_of_terminal_adjacent`); section 3.6 finds genuine AAB
+in pronominal case, the absolutive and ergative sharing a base yet remaining distinct where a syncretic
 {A=A}B pattern would not (`wardaman_aab`, `khinalugh_aab`, `genuine_aab`, `archi_syncretic`),
 and section 4.2 finds it in pronominal number (`yagua_aab`, `wambaya_aab`, `dehu_aab`). The
 paper's section 3.7 replaces adjacency by the accessibility domain of Moskal, the first
@@ -125,11 +125,8 @@ def dehu3m : Paradigm 3 ℕ :=
 
 /-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
 
-theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : SpanRule.Generable p ↔ IsContiguous p :=
-  (SpanRule.isContiguous_iff_generable p).symm
-
 theorem aba_not_generable : ¬ SpanRule.Generable ![0, 1, 0] :=
-  mt (generable_iff_contiguous _).mp (by decide)
+  mt (SpanRule.isContiguous_iff_generable _).mpr (by decide)
 
 theorem lezgian_aaa : Setoid.ker lezgian1sg = Setoid.ker Paradigm.aaa := by decide
 
@@ -148,14 +145,10 @@ theorem icelandic_abb_generated :
 
 /-! ### Structural adjacency and the absence of AAB for degree, section 2 -/
 
-theorem realize_one_eq_two_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
-    (hA : Adjacent v) : realize v 1 = realize v 2 :=
-  realize_const_of_terminal_adjacent hT hA
-
 theorem aab_not_generable_of_terminal_adjacent {v : RuleSet (SpanRule 3 ℕ)} (hT : Terminal v)
     (hA : Adjacent v) {a b : ℕ} (hab : a ≠ b) : realize v ≠ ![some a, some a, some b] := by
   intro h
-  have h12 := realize_one_eq_two_of_terminal_adjacent hT hA
+  have h12 := realize_const_of_terminal_adjacent hT hA
   rw [h] at h12
   exact hab (by simpa using h12)
 
@@ -226,8 +219,9 @@ theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
 theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd : 1 ≤ (d : ℕ))
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
   intro it hit c hc
-  have h1 := hA it hit c hc
+  have h1 := Fin.covBy_iff.1 (hA it hit c hc)
   have h0 := hT it hit
+  rw [Nat.covBy_iff_add_one_eq] at h1
   rw [Fin.le_def]; omega
 
 /-- The rules (20b) and (20f) for the Wardaman third person are a dative-conditioned *gunga* and

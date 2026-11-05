@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Get
-public import Linglib.Morphology.Exponence.Containment.Selection
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Exponence.Select
 
 /-!
