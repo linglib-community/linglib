@@ -30,16 +30,20 @@ notes    = "George's bound `n < |U|` is carried by `TrueOf` (see def-23)."
 * `generalizes`: it states something stronger, such as the claim without one of its assumptions.
 * `specializes`: it states a special case.
 * `variant`: it differs in another way.
+* `refutes`: it proves the claim false, usually by a counterexample.
 * `missing`: nothing states the claim yet, and `decls` is empty.
 
 Every relation other than `exact` and `missing` needs `notes` saying how the statement departs from
-the source. A reader relies on these notes, so they should be precise.
+the source; for `refutes`, what the source claims and how the Lean refutes it. A reader relies on
+these notes, so they should be precise.
 
 ## Signing
 
 A sign-off says that its author has read the source and the Lean and finds that the declarations,
 and the project definitions their statements use, say what the claim says, up to the `relation` and
-`notes`. Sign-offs are made by people, never by agents. Proofs need no check, since Lean has
+`notes`. For a `refutes` claim they say that the claim is false: the signer has checked both what
+the source claims and that the declarations contradict it. Sign-offs are made by people, never by
+agents. Proofs need no check, since Lean has
 checked them.
 
 ```
