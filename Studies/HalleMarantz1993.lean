@@ -22,12 +22,13 @@ distinct items, `zero_morphemes_distinct`.
 
 ## Implementation notes
 
-The paper says the ordering between the `∅` and `-t` pasts "is not determined by complexity"
-and needs none, since their stem lists are disjoint, and that the ordering among the past block,
-`[3sg]` `-z`, and `[+participle]` `-ing` "must be stipulated"; the Subset Principle's count ties
-at those points, and the list order of `vocabulary` carries the stipulation,
-`past_precedes_agreement`. Stem readjustment (*dwel-t*, *brough-t*) is the paper's separate rule
-system (10) and is outside this file.
+The `∅` and `-t` pasts tie on complexity and need no order, since their stem lists are disjoint,
+`strongPast_disjoint_tPast`. The past block, `[+participle]` `-ing` and `[3sg]` `-z` also tie, and
+there the order matters: the paper suggests "a universal hierarchy of tense > aspect > agreement",
+failing which the order "must be stipulated". `rank` breaks that tie by the hierarchy, so insertion
+does not read the listing of `vocabulary`, and the hierarchy orders the items as (8) lists them,
+`vocabulary_ranked`. Stem readjustment (*dwel-t*, *brough-t*) is the paper's separate rule system
+(10) and is outside this file.
 
 ## References
 
@@ -38,7 +39,7 @@ system (10) and is outside this file.
 
 namespace HalleMarantz1993
 
-open DistributedMorphology
+open DistributedMorphology Morphology
 
 /-! ### The fused Tns–Agr node -/
 
@@ -99,13 +100,31 @@ def forStems (features : Finset Feature) (e : String) (stems : List Verb) :
 /-- The seven suffixes of (8): the past block (`-n`, the unordered `∅` and
 `-t`, default `-d`), then `[+participle]` `-ing`, `[3sg]` `-z`, and
 the Elsewhere `∅`. -/
-def vocabulary : List (VocabularyItem Feature String) :=
+def vocabulary : RuleSet (VocabularyItem Feature String) :=
   forStems {.past true, .participle true} "-n" strongParticiple ++
     forStems {.past true} "∅" strongPast ++ forStems {.past true} "-t" tPast ++
     [{.past true} ⟷ "-d", {.participle true} ⟷ "-ing", {.sg3} ⟷ "-z", ∅ ⟷ "∅"]
 
 theorem strongPast_disjoint_tPast : List.Disjoint strongPast tPast :=
   List.disjoint_left.mpr (by decide)
+
+/-- The levels of the paper's hierarchy of tense over aspect over agreement. -/
+def Feature.level : Feature → ℕ
+  | .past _ => 2
+  | .participle _ => 1
+  | .sg3 | .stem _ => 0
+
+/-- An item ranks by its complexity and, where complexity ties, by the highest level among the
+features it spells out. -/
+def rank (i : VocabularyItem Feature String) : (ℕ ×ₗ ℕ) ×ₗ ℕ :=
+  toLex (i.specificity, i.features.sup Feature.level)
+
+/-- The suffix inserted at a node. -/
+def suffix (n : Neighborhood (Finset Feature)) : Option String := vocabulary.realize rank n
+
+/-- The hierarchy orders the items as (8) lists them, "in the order of decreasing complexity". -/
+theorem vocabulary_ranked : vocabulary.Pairwise fun i j ↦ rank j ≤ rank i := by
+  decide
 
 /-! ### The principal parts (7) -/
 
@@ -153,31 +172,33 @@ theorem cell_ofDatum_isSome : ∀ ex ∈ Examples.all, (Cell.ofDatum ex).isSome 
 /-- The cells of (7). -/
 def cells : List Cell := Examples.all.filterMap Cell.ofDatum
 
-/-- **The principal parts**: the Subset Principle over (8) spells out every
-cell of (7) with the suffix the paper segments. -/
-theorem principal_parts :
-    ∀ c ∈ cells, subsetPrinciple vocabulary (c.part.node c.verb) = some c.suffix := by
+/-- **The principal parts**: insertion from (8) spells out every cell of (7) with the suffix the
+paper segments. -/
+theorem principal_parts : ∀ c ∈ cells, suffix (c.part.node c.verb) = some c.suffix := by
   decide
 
 /-! ### What the competition explains -/
 
 theorem participle_eq_past_of_not_strong (v : Verb) (hv : v ∉ strongParticiple) :
-    subsetPrinciple vocabulary (Part.pastParticiple.node v) =
-      subsetPrinciple vocabulary (Part.pastFinite.node v) := by
+    suffix (Part.pastParticiple.node v) = suffix (Part.pastFinite.node v) := by
   revert hv; cases v <;> decide
 
 theorem zero_past_blocks_default :
-    winner? vocabulary (Part.pastFinite.node .put) =
+    vocabulary.selectBy rank (Part.pastFinite.node .put) =
       some ⟨{(0, .past true), (-1, .stem .put)}, "∅"⟩ := by
   decide
 
 theorem zero_morphemes_distinct :
-    winner? vocabulary (Part.pastFinite.node .put) ≠
-      winner? vocabulary (Part.nonpastFinite.node .put) := by
+    vocabulary.selectBy rank (Part.pastFinite.node .put) ≠
+      vocabulary.selectBy rank (Part.nonpastFinite.node .put) := by
   decide
 
+/-- At a `[+past]` node that is `[3sg]` complexity ties `-d` with `-z`, and the hierarchy inserts
+`-d`. -/
 theorem past_precedes_agreement :
-    subsetPrinciple vocabulary (nextTo (tnsAgr true true) .play) = some "-d" := by
+    (({.past true} ⟷ "-d" : VocabularyItem Feature String).specificity =
+        ({.sg3} ⟷ "-z" : VocabularyItem Feature String).specificity) ∧
+      suffix (nextTo (tnsAgr true true) .play) = some "-d" := by
   decide
 
 /-- Substantive features outrank contextual ones: an item for `[+past, +participle]` in any
@@ -192,7 +213,7 @@ theorem substantive_precedes_contextual :
 /-- Fusion of adjacent Tns and Agr, then insertion by the Subset Principle. -/
 def tnsAgrSpellout : Spellout (Finset Feature) String where
   modules := [tnsAgrFusion.applyFirstAdjacent]
-  insert n := (subsetPrinciple vocabulary n).toList
+  insert n := (suffix n).toList
 
 theorem plays_pf : tnsAgrSpellout.pf [tns false false, agr true] = [["-z"]] := by
   decide

@@ -53,7 +53,7 @@ def funa : Verb where
   valency := .ofFrames
     [{ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
      ArgumentFrame.np]
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where

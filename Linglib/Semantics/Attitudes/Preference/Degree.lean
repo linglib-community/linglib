@@ -12,7 +12,8 @@ subject prefers a proposition with a threshold set by a comparison class `C`, in
 semantics of Villalta that Romero and Uegaki and Sudo build on. Relating an agent to a set of
 propositions, the answers of a question or the singleton of a declarative's proposition, it holds
 when some proposition of the set lies in the comparison class and is preferred above the threshold.
-The predicate is therefore [clausally distributive](##Preferential.isDistributive_degreeComparison),
+The predicate is therefore
+[clausally distributive](##Preferential.isClausallyDistributive_degreeComparison),
 and when the comparison class lies inside the question [it asserts only that the threshold is
 significant on the class](##Preferential.degreeComparison_iff_thresholdSignificant), which is how
 Uegaki and Sudo derive the anti-rogativity of *hope*.
@@ -68,10 +69,9 @@ variable (μ θ C)
   simp [degreeComparison]
 
 /-- Degree-comparison predicates are clausally distributive. -/
-theorem isDistributive_degreeComparison :
-    Distributivity.IsDistributive (degreeComparison μ θ C) := fun x Q w ↦ by
-  simp only [degreeComparison_singleton]
-  exact ⟨fun ⟨p, hpQ, hp⟩ ↦ ⟨p, hpQ, hp⟩, fun ⟨p, hpQ, hp⟩ ↦ ⟨p, hpQ, hp⟩⟩
+theorem isClausallyDistributive_degreeComparison (𝒬 : Set (Set (Set W))) :
+    IsClausallyDistributive 𝒬 (degreeComparison μ θ C) :=
+  .of_forall_iff_exists (fun x p w ↦ p ∈ preferred μ θ C x w) fun _ _ _ ↦ Iff.rfl
 
 /-- With the comparison class inside the question, a degree-comparison predicate asserts exactly
 that the threshold is significant on the class. -/

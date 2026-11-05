@@ -41,8 +41,8 @@ finitely many *synchronous* residuals and coresiduals, which cut the output wher
 * `isLeftSubsequential_iff_finite_range_residual`: subsequential iff finitely many residuals.
 * `isMealyComputable_iff_residual`: Mealy-computable iff length- and prefix-preserving with
   finitely many residuals.
-* `isLengthPreservingBimachineComputable_iff_syncResidual`: a length-preserving `f` is
-  bimachine-computable iff it has finitely many synchronous residuals and coresiduals.
+* `isLetterToLetterBimachineComputable_iff_syncResidual`: a length-preserving `f` is computed by a
+  letter-to-letter bimachine iff it has finitely many synchronous residuals and coresiduals.
 
 ## Implementation notes
 
@@ -397,42 +397,30 @@ section Bimachine
 
 variable {L R : Type*} (B : Bimachine L R α β)
 
-theorem Bimachine.drop_runFrom_append (w : B.LetterToLetter) (l : L) (x v : List α) :
-    (B.runFrom l (x ++ v)).drop x.length = B.runFrom (B.lStateAfter l x) v := by
-  induction x generalizing l with
-  | nil => rfl
-  | cons a x ih => simpa [w.output_eq] using ih (B.lStep l a)
-
-theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List α) :
-    (B.runFrom l (u ++ y)).take u.length
-      = Bimachine.runFrom {B with rInit := B.rState y} l u := by
-  induction u generalizing l with
-  | nil => rfl
-  | cons a u ih =>
-    rw [List.cons_append, B.runFrom_cons, w.output_eq, List.singleton_append,
-      List.length_cons, List.take_succ_cons, ih (B.lStep l a), B.rState_append u y]
-    simp [w.output_eq]
-
 theorem Bimachine.syncResidual_run (w : B.LetterToLetter) (x : List α) :
-    syncResidual B.run x = B.runFrom (B.lState x) :=
-  funext fun v ↦ B.drop_runFrom_append w B.lInit x v
+    syncResidual B.run x = (B.emitted (B.lState x) · B.rInit) :=
+  funext fun v ↦ by
+    rw [syncResidual, w.run_eq, B.emitted_append, List.drop_left' (w.length_emitted ..)]
+    rfl
 
 theorem Bimachine.syncCoresidual_run (w : B.LetterToLetter) (y : List α) :
-    syncCoresidual B.run y = Bimachine.run {B with rInit := B.rState y} :=
-  funext fun u ↦ B.take_runFrom_append w B.lInit u y
+    syncCoresidual B.run y = (B.emitted B.lInit · (B.rState y)) :=
+  funext fun u ↦ by
+    rw [syncCoresidual, w.run_eq, B.emitted_append, List.take_left' (w.length_emitted ..)]
+    rfl
 
 /-! ### Necessity -/
 
-theorem IsLengthPreservingBimachineComputable.finite_range_syncResidual {f : List α → List β}
-    (hf : IsLengthPreservingBimachineComputable f) : (Set.range (syncResidual f)).Finite := by
+theorem IsLetterToLetterBimachineComputable.finite_range_syncResidual {f : List α → List β}
+    (hf : IsLetterToLetterBimachineComputable f) : (Set.range (syncResidual f)).Finite := by
   obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
-  exact Set.Finite.subset (Set.finite_range B.runFrom)
+  exact Set.Finite.subset (Set.finite_range fun l v ↦ B.emitted l v B.rInit)
     (Set.range_subset_iff.mpr fun x ↦ ⟨_, (B.syncResidual_run w x).symm⟩)
 
-theorem IsLengthPreservingBimachineComputable.finite_range_syncCoresidual {f : List α → List β}
-    (hf : IsLengthPreservingBimachineComputable f) : (Set.range (syncCoresidual f)).Finite := by
+theorem IsLetterToLetterBimachineComputable.finite_range_syncCoresidual {f : List α → List β}
+    (hf : IsLetterToLetterBimachineComputable f) : (Set.range (syncCoresidual f)).Finite := by
   obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
-  exact Set.Finite.subset (Set.finite_range fun r : R ↦ Bimachine.run {B with rInit := r})
+  exact Set.Finite.subset (Set.finite_range fun r u ↦ B.emitted B.lInit u r)
     (Set.range_subset_iff.mpr fun y ↦ ⟨B.rState y, (B.syncCoresidual_run w y).symm⟩)
 
 /-! ### Sufficiency -/
@@ -440,7 +428,7 @@ theorem IsLengthPreservingBimachineComputable.finite_range_syncCoresidual {f : L
 /-- A length-preserving `f` with finite left and right summaries, congruent in their
 respective scan directions and jointly determining each output cell, is
 bimachine-computable. -/
-theorem isLengthPreservingBimachineComputable_of_stateSummaries
+theorem isLetterToLetterBimachineComputable_of_stateSummaries
     {f : List α → List β} {L R : Type*} [Fintype L] [Fintype R]
     (stateL : List α → L) (δL : L → α → L) (stateR : List α → R) (δR : R → α → R)
     (out : L → α → R → β)
@@ -448,10 +436,12 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     (hδR : ∀ x w, stateR (x :: w) = δR (stateR w) x)
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (stateL u) x (stateR w)))
     (hlen : ∀ xs, (f xs).length = xs.length) :
-    IsLengthPreservingBimachineComputable f := by
-  set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, fun l a r ↦ [out l a r]⟩
-  suffices B.run = f from
-    this ▸ B.isLengthPreservingBimachineComputable ⟨⟨out, fun _ _ _ ↦ rfl⟩⟩
+    IsLetterToLetterBimachineComputable f := by
+  set B : Bimachine L R α β :=
+    { lInit := stateL [], lStep := δL, rInit := stateR [], rStep := δR,
+      output := fun l a r ↦ [out l a r] }
+  let w : B.LetterToLetter := { cell := out, output_eq := fun _ _ _ ↦ rfl }
+  suffices B.run = f from this ▸ B.isLetterToLetterBimachineComputable ⟨w⟩
   have hL : ∀ u, B.lState u = stateL u := foldl_eq_of_append_singleton hδL []
   have hR : ∀ w, B.rState w = stateR w := fun w ↦ by
     induction w with
@@ -459,20 +449,20 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     | cons x w ih => rw [B.rState_cons, ih, hδR]
   funext xs
   refine List.ext_getElem? fun i ↦ ?_
-  rw [(⟨out, fun _ _ _ ↦ rfl⟩ : B.LetterToLetter).getElem?_run,
-    getElem?_eq_of_append_cons hlen hout]
+  rw [w.getElem?_run, getElem?_eq_of_append_cons hlen hout]
   simp only [hL, hR]
+  rfl
 
-theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → List β}
+theorem isLetterToLetterBimachineComputable_of_syncResidual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
     (hfinL : (Set.range (syncResidual f)).Finite)
     (hfinR : (Set.range (syncCoresidual f)).Finite) :
-    IsLengthPreservingBimachineComputable f := by
+    IsLetterToLetterBimachineComputable f := by
   have := hfinL.fintype
   have := hfinR.fintype
   choose repL hrepL using fun r : Set.range (syncResidual f) ↦ r.prop
   choose repR hrepR using fun s : Set.range (syncCoresidual f) ↦ s.prop
-  refine isLengthPreservingBimachineComputable_of_stateSummaries
+  refine isLetterToLetterBimachineComputable_of_stateSummaries
     (fun u ↦ ⟨syncResidual f u, Set.mem_range_self u⟩)
     (fun r x ↦ ⟨fun v ↦ (r.val (x :: v)).drop 1, by
       obtain ⟨u, hu⟩ := r.prop
@@ -504,13 +494,13 @@ theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → L
 
 end Bimachine
 
-/-- A function is length-preserving bimachine-computable iff it is length-preserving with finitely
+/-- A function is computed by a letter-to-letter bimachine iff it is length-preserving with finitely
 many synchronous residuals and finitely many coresiduals, which is the Myhill–Nerode theorem for
 bimachines. -/
-theorem isLengthPreservingBimachineComputable_iff_syncResidual {f : List α → List β} :
-    IsLengthPreservingBimachineComputable f
+theorem isLetterToLetterBimachineComputable_iff_syncResidual {f : List α → List β} :
+    IsLetterToLetterBimachineComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (Set.range (syncResidual f)).Finite
         ∧ (Set.range (syncCoresidual f)).Finite :=
   ⟨fun hf ↦ ⟨hf.length_eq, hf.finite_range_syncResidual, hf.finite_range_syncCoresidual⟩,
-   fun h ↦ isLengthPreservingBimachineComputable_of_syncResidual h.1 h.2.1 h.2.2⟩
+   fun h ↦ isLetterToLetterBimachineComputable_of_syncResidual h.1 h.2.1 h.2.2⟩
 

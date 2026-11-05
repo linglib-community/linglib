@@ -14,7 +14,7 @@ specific when it applies in fewer contexts.
 ## Main definitions
 
 * `ExponenceRule`: a type of rules, each with an exponent and an applicability condition.
-* `RuleSet`: a list of rules, earlier rules winning ties.
+* `RuleSet`: a list of rules.
 * `applySet`: the contexts a rule applies in.
 
 ## References
@@ -37,7 +37,9 @@ class ExponenceRule (R : Type*) (Ctx E : outParam Type*) where
 
 export ExponenceRule (exponent Applies)
 
-/-- A rule set is a list of rules of exponence, earlier rules winning ties. -/
+/-- A rule set is a list of rules of exponence. Selection by a key reads the list only to break
+ties in the key, which no analysis should rest on: one that needs a tie decided states the order in
+its key. A mechanism that is itself a scan of the list, such as strict scansion, reads the order. -/
 abbrev RuleSet (R : Type*) := List R
 
 variable {Ctx E : Type*} {R : Type*} [ExponenceRule R Ctx E]

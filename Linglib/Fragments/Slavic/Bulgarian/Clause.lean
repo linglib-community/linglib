@@ -68,70 +68,70 @@ def emotiveValency : Verb.Valency :=
 def sazhaljavam : Verb where
   morphs := [.root "săžaljavam"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
 def vinovenSam : Verb where
   morphs := [.root "vinoven", .free "săm"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
   morphs := [.root "jad", .free "me", .free "e"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *radvam se* 'be happy'. -/
 def radvamSe : Verb where
   morphs := [.root "radvam", .free "se"]
   valency := emotiveValency
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   factivity := some .full
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : Verb where
   morphs := [.root "nedovolstvam"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : Verb where
   morphs := [.root "pritesnjavam", .free "se"]
   valency := emotiveValency
-  attitude := some (.preferential .negative false)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : Verb where
   morphs := [.root "žal", .free "mi", .free "e"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : Verb where
   morphs := [.root "măčno", .free "mi", .free "e"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : Verb where
   morphs := [.root "sram", .free "me", .free "e"]
   valency := emotiveValency
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
 def vazmushtavamSe : Verb where
   morphs := [.root "văzmuštavam", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/

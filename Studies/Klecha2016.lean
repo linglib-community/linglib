@@ -105,7 +105,7 @@ preferential verb either. Klecha's derivations give *hope* `cir`, (49), and `dox
 study's. -/
 def modalBases : Attitude → Finset Background
   | .doxastic _ => {.dox}
-  | .preferential _ _ => {.dox, .cir}
+  | .preferential _ => {.dox, .cir}
 
 /-- The orientations open to a clause of underlying tense `τ` embedded under an attitude of
 class `a` are those admitted both by one of the attitude's modal bases and by the tense. -/

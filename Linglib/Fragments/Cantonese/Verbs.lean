@@ -36,7 +36,7 @@ def soeng : Verb where
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- 勸 *hyun* 'urge'. -/
 def hyun : Verb where
@@ -63,7 +63,7 @@ def daasyun : Verb where
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- 信 *seon* 'believe', a nonveridical doxastic attitude. -/
 def seon : Verb where
