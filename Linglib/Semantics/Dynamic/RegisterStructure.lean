@@ -54,9 +54,9 @@ cylindrification is the weakest precondition of `[r]`.
 Muskens defines `i[r]j` as agreement on every register other than `r` and asserts that enough
 states exist (AX1). Here `[r]` is the graph of `extend · r e`, which agrees with his relation when
 a state is determined by its registers, as in every instance; it also serves states carrying
-several sorts of registers (`Semantics/Dynamic/ICDRT.lean`), and its uniqueness gives the diagonal
-axioms of the cylindric algebra. Constant registers (AX4) are constant functions of the state,
-and AX3, that distinct referents denote distinct registers, is a hypothesis where it is used.
+several sorts of registers, and its uniqueness gives the diagonal axioms of the cylindric algebra.
+Constant registers (AX4) are constant functions of the state, and AX3, that distinct referents
+denote distinct registers, is a hypothesis where it is used.
 
 ## References
 
@@ -310,6 +310,11 @@ theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C)
 
 theorem mem_box_singleton : i ~[box {r} C] j ↔ i ~[randomAssign r] j ∧ j ∈ C := by
   rw [box_singleton, dexists, mem_comp_test]
+
+theorem mem_box_singleton_comp {D : Update S} :
+    i ~[box {r} C ○ D] j ↔ ∃ e, extend i r e ∈ C ∧ extend i r e ~[D] j := by
+  rw [box_singleton, dexists, comp_assoc, ← dexists, mem_dexists]
+  simp only [mem_test_comp]
 
 theorem commute_box_randomAssign (s : Finset R) (h : r ∉ dimSet C) :
     Commute (box s C) (randomAssign r) :=
