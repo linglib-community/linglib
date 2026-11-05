@@ -115,7 +115,7 @@ def volere : Verb where
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   clauseTypers := [che]
 
 /-- *sperare* 'hope' takes a *che* clause in the subjunctive, the indicative being marginal for
@@ -125,7 +125,7 @@ def sperare : Verb where
   valency := .ofFrame ArgumentFrame.subjunctiveClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   clauseTypers := [che]
 
 /-- *intendere* 'intend' takes a bare infinitive under subject control and no finite complement,
@@ -135,7 +135,7 @@ def intendere : Verb where
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- The causative *fare* 'make' takes a bare infinitive under object control, and a finite clause
 only as *fare sì che* with the subjunctive, never the indicative. -/

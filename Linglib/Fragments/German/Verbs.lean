@@ -192,31 +192,31 @@ def verbinden : Verb :=
 def hoffen : Verb :=
   { Verb.ofStem (weak "hoffen") with
     valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
-    attitude := some (.preferential .positive true) }
+    attitude := some (.preferential .positive) }
 
 /-- *wünschen* 'wish' is a positive preferential attitude verb. -/
 def wuenschen : Verb :=
   { Verb.ofStem (weak "wünschen") with
     valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
-    attitude := some (.preferential .positive true) }
+    attitude := some (.preferential .positive) }
 
 /-- *fürchten* 'fear' is a negative preferential attitude verb. -/
 def fuerchten : Verb :=
   { Verb.ofStem (weak "fürchten") with
     valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
-    attitude := some (.preferential .negative true) }
+    attitude := some (.preferential .negative) }
 
 /-- *befürchten* 'be afraid of' is formed on *fürchten* with the inseparable *be-*. -/
 def befuerchten : Verb :=
   { Verb.ofStem (fuerchten.stem.inseparable "be") with
     valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
-    attitude := some (.preferential .negative true) }
+    attitude := some (.preferential .negative) }
 
 /-- *sorgen* 'worry' is used reflexively, *sich sorgen*, and is based on uncertainty. -/
 def sorgen : Verb :=
   { Verb.ofStem (weak "sorgen") with
     valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
-    attitude := some (.preferential .negative false) }
+    attitude := some (.preferential .negative) }
 
 /-! ### Occasion verbs
 

@@ -8,8 +8,7 @@ public import Linglib.Fragments.Turkish.Morphotactics
 
 This file defines the Turkish verbs that the studies of Qing and colleagues and of Göksel and
 Kerslake consume. The preferential attitudes are *kork-* 'fear', *um-* 'hope' and *endişelen-*
-'worry', whose distributivity over alternatives follows from the kind of preference each
-records. They take a nominalized clause, in the ablative under *kork-* and *endişelen-* and in
+'worry'. They take a nominalized clause, in the ablative under *kork-* and *endişelen-* and in
 the accusative under *um-*, and the first two take it as a question as well. The intransitive
 *dolan-* 'walk around' takes no complement. The causatives *öldür-* 'kill' and *yaptır-* 'have
 done' are built on *öl-* 'die' and *yap-* 'do' by the voice suffix -DIr.
@@ -69,32 +68,32 @@ def nominalizedQuestion : ArgumentFrame :=
 
 /-! ### Preferential attitudes -/
 
-/-- *kork-* 'fear', a negative preference by comparison of degrees. -/
+/-- *kork-* 'fear', a negative preference. -/
 def kork : Verb where
   morphs := [.root "kork"]
   rootSegments := [k, o, r, k]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
 
-/-- *um-* 'hope', a positive preference by comparison of degrees. -/
+/-- *um-* 'hope', a positive preference. -/
 def um : Verb where
   morphs := [.root "um"]
   rootSegments := [u, m]
   valency := .ofFrame ArgumentFrame.gerund
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
-/-- *endişelen-* 'worry', a preference relative to uncertainty. -/
+/-- *endişelen-* 'worry', a negative preference. -/
 def endişelen : Verb where
   morphs := [.root "endişelen"]
   rootSegments := [e, n, d, i, ş, e, l, e, n]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .negative false)
+  attitude := some (.preferential .negative)
 
 /-! ### Motion -/
 

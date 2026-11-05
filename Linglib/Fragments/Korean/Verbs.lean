@@ -207,7 +207,7 @@ def yukamsuleweha : Verb where
   stem := [.root "yukamsuleweha"]
   script := some "유감스러워하다"
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   vendlerClass := some .state
 
 /-- *mit-ta* 'believe', a stative non-veridical doxastic. -/

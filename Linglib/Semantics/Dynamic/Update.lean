@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Algebra.Group.Defs
+import Linglib.Core.Data.Set.Lattice.Order
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Core.Data.Set.Functor
 public import Mathlib.Tactic.TypeStar
@@ -459,35 +460,9 @@ def IsDistributive (φ : CCP S) : Prop :=
 /-- A CCP is distributive iff it preserves arbitrary joins of states. -/
 theorem isDistributive_iff_map_sSup (φ : CCP S) :
     CCP.IsDistributive φ ↔ ∀ T : Set (Set S), φ (sSup T) = sSup (φ '' T) := by
-  simp only [Set.sSup_eq_sUnion]
-  constructor
-  · intro h T
-    ext j
-    constructor
-    · intro hj
-      rw [h] at hj
-      obtain ⟨i, ⟨t, ht, hit⟩, hji⟩ := hj
-      refine ⟨φ t, ⟨t, ht, rfl⟩, ?_⟩
-      rw [h t]
-      exact ⟨i, hit, hji⟩
-    · rintro ⟨_, ⟨t, ht, rfl⟩, hjt⟩
-      rw [h t] at hjt
-      obtain ⟨i, hit, hji⟩ := hjt
-      rw [h]
-      exact ⟨i, ⟨t, ht, hit⟩, hji⟩
-  · intro h s
-    have hs : s = ⋃₀ ((fun i => ({i} : Set S)) '' s) := by
-      ext i
-      simp
-    ext j
-    constructor
-    · intro hj
-      rw [hs, h] at hj
-      obtain ⟨_, ⟨_, ⟨i, hi, rfl⟩, rfl⟩, hji⟩ := hj
-      exact ⟨i, hi, hji⟩
-    · rintro ⟨i, hi, hji⟩
-      rw [hs, h]
-      exact ⟨φ {i}, ⟨{i}, ⟨i, hi, rfl⟩, rfl⟩, hji⟩
+  have h : ∀ s : Set S, {p | ∃ i ∈ s, p ∈ φ {i}} = ⨆ i ∈ s, φ {i} := fun s ↦ by ext; simp
+  simp only [CCP.IsDistributive, h, sSup_image]
+  exact Set.forall_map_sSup_iff.symm
 
 /-! ### The classical fragment -/
 
