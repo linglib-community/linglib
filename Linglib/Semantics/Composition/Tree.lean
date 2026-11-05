@@ -398,6 +398,40 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
       (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
   map_evalAt_combine g _ _
 
+/-- Every denotation of a licensed tree lies in a family indexed by categories and closed under the
+local trees the relation admits: the semantic counterpart of a grammar, which a study states as a
+table of what each category can denote. -/
+theorem interp_mem_of_licensed {R : Label C L → List (Label C L) → Prop}
+    {U : C → Set (Denotation E W M S)}
+    (hT : ∀ c w d, R (.terminal c w) List.nil → lex w = some d → d ∈ U c)
+    (h1 : ∀ c k a, R (.phrase c k) (a :: []) → U (Label.cat a) ⊆ U c)
+    (h2 : ∀ c k a b, R (.phrase c k) (a :: b :: []) → ∀ x ∈ U (Label.cat a), ∀ y ∈ U (Label.cat b),
+      ∀ d, Mode.combine? Mode.evalM x y = some d → d ∈ U c)
+    (hne : ∀ n c ks, ¬ R (.trace n c) ks ∧ ¬ R (.bind n c) ks) (t : Tree C L) :
+    t.Licensed R → ∀ d, interp lex g t = some d → d ∈ U (Tree.cat t) := by
+  refine RoseTree.rec' (motive := fun t ↦ t.Licensed R → ∀ d, interp lex g t = some d →
+    d ∈ U (Tree.cat t)) (fun l cs ih ht d hd ↦ ?_) t
+  obtain ⟨hr, hc⟩ := RoseTree.licensed_node_iff.1 ht
+  cases l with
+  | terminal c w =>
+    rcases cs with _ | ⟨c', r⟩
+    · rw [interp_terminal] at hd
+      exact hT c w d hr hd
+    · cases hd
+  | phrase c k =>
+    rcases cs with _ | ⟨t₁, _ | ⟨t₂, _ | ⟨t₃, r⟩⟩⟩
+    · cases hd
+    · rw [interp_phrase_unary] at hd
+      exact h1 c k _ hr (ih t₁ (by simp) (hc t₁ (by simp)) d hd)
+    · rw [interp_phrase_binary] at hd
+      obtain ⟨x, hx, hd⟩ := Option.bind_eq_some_iff.1 hd
+      obtain ⟨y, hy, hd⟩ := Option.bind_eq_some_iff.1 hd
+      exact h2 c k _ _ hr x (ih t₁ (by simp) (hc t₁ (by simp)) x hx) y
+        (ih t₂ (by simp) (hc t₂ (by simp)) y hy) d hd
+    · cases hd
+  | trace n c => exact absurd hr (hne n c _).1
+  | bind n c => exact absurd hr (hne n c _).2
+
 @[simp] theorem interp_trace (n : ℕ) (c : C) :
     interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
 

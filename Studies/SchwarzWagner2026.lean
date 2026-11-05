@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.SchwarzWagner2026
 public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Quantification.Basic
 public import Studies.Fox2007
@@ -30,13 +31,17 @@ the paper does not discuss.
   `Excl`, `exh` only what the assertion does not entail; they differ only on contradictions.
 * `Blocked` is a `lowerClosure` rather than `NeoGricean.primaryImplicatures`, its complement,
   because the paper declines to choose between Gricean and grammatical strengthening.
-* One grammar covers the examples. `Word` has one lexical item per corner and a predicate with an
-  optional antonym: *some*, *all* and *permitted*, *required*, *optional* are parallel on the
-  paper's own account of (52). A `Case` is a prejacent with its lexicon, and each lexicon lists only
-  the words the paper's discussion of that example uses. `optional` is the O corner, not `I ⊓ O`,
-  as the paper argues from (54).
-* Meanings are read at an arbitrary nondegenerate square, so the results hold at `Det.square` and
-  `modalSquare` alike.
+* One grammar covers the examples. Its clauses compose through `Tree.interp` in the reader of
+  worlds, to the hub's determiners at a restrictor and a predicate's extension in each world, the
+  square `sqAt`. *Permitted*, *required* and *optional* are those determiners over the deontic
+  alternatives, parallel to *some*, *all* and *not all* on the paper's own account of (52);
+  `optional` is the O corner, not `I ⊓ O`, as the paper argues from (54). A `Case` is a prejacent
+  with its lexicon, and each lexicon lists only the words the paper's discussion of that example
+  uses.
+* Complexity is the paper's plain notion, with lexical items as the source: blocking needs none of
+  Katzir's contextual sources, and this one bounds size (`atMostAsComplex.numNodes_le`).
+* What is not simplex comes from a table of what each category can denote
+  (`Tree.interp_mem_of_licensed`), not from listing the trees.
 
 ## Errata
 
@@ -104,8 +109,10 @@ theorem minimalFor_iff_not_blocked {S : Type*} {alts : S → Set S} {content : S
     MinimalFor (· ∈ insert φ (alts φ) ∩ content ⁻¹' Ici s) content φ ↔
       s ⊆ content φ ∧ ¬ Blocked (content '' alts φ) s (content φ) := by
   rw [Presupposition.minimalFor_preimage_Ici_iff, blocked_iff]
-  simp only [mem_image, not_exists, not_and, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
-  exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦ ⟨fun h hs hss ↦ h hss hs, fun h hss hs ↦ h hs hss⟩
+  simp only [mem_image, not_exists, not_and, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂]
+  exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
+    ⟨fun h hs hss ↦ h hss hs, fun h hss hs ↦ h hs hss⟩
 
 theorem exh_compl_singleton (hs : s.Nonempty) (h : s ⊆ p) : exh {sᶜ} p = s := by
   have hnot : ¬ p ⊆ sᶜ := fun hp ↦ let ⟨w, hw⟩ := hs; hp (h hw) hw
@@ -199,9 +206,9 @@ variable {W α : Type*} [Lattice α] {O : α → Set W} {x y : α}
 open Fox2007
 
 /-- Blocking rules out free choice, however derived, since it reads only the output: *You may have
-x* is simpler than *You may have x or y*, strictly stronger, and entailed by the free-choice reading.
-One round of innocent exclusion is never blocked (`exhIE_notMem_lowerClosure`); the second round of
-[fox-2007]'s recursion is. -/
+x* is simpler than *You may have x or y*, strictly stronger, and entailed by the free-choice
+reading. One round of innocent exclusion is never blocked (`exhIE_notMem_lowerClosure`); the second
+round of [fox-2007]'s recursion is. -/
 theorem blocked_freeChoice {F : Set (Set W)} (hF : O x ∈ F) (hO : Monotone O)
     (hab : O (x ⊔ y) ⊆ O x ∪ O y) (hx : (O x \ O y).Nonempty) (hy : (O y \ O x).Nonempty)
     (hfc : ((O x ∩ O y) \ O (x ⊓ y)).Nonempty) :
@@ -290,15 +297,42 @@ end Square
 
 /-! ### The examples -/
 
-/-- The lexical items of the examples: one per corner of the square, *some*, *all* or *permitted*,
-*required*, *optional*; a noun; a predicate and its antonym; negation. -/
+/-- The lexical items of the examples: a determiner per corner of the square (*some*, *all* or
+*permitted*, *required*, *optional*), a noun, a predicate and its antonym, negation. -/
 inductive Word
   | some_ | all_ | nall | noun | pred | antonym | not_
   deriving DecidableEq, Repr
 
+/-- The category of a word. -/
+def catOf : Word → Cat
+  | .some_ | .all_ | .nall => .Det
+  | .noun => .N
+  | .pred | .antonym => .V
+  | .not_ => .Neg
+
+/-- A clause is a noun phrase and a verb phrase; a noun phrase, labelled by its noun, is a
+determiner and a noun; a verb phrase is an optional negation and a verb phrase. -/
+def pat : Cat → List Cat
+  | .S => [.N, .V]
+  | .N => [.Det, .N]
+  | .V => [.Neg, .V]
+  | _ => []
+
+/-- The local trees of the grammar over the words `Ws`, with daughters possibly deleted. -/
+def Licit (Ws : Finset Word) : Label Cat Word → List (Label Cat Word) → Prop
+  | .terminal c w, ks => w ∈ Ws ∧ c = catOf w ∧ ks = []
+  | .phrase c _, ks => (ks.map Label.cat).Sublist (pat c)
+  | _, _ => False
+
+instance (Ws : Finset Word) : ∀ l ks, Decidable (Licit Ws l ks)
+  | .terminal _ _, _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  | .phrase _ _, _ => inferInstanceAs (Decidable (List.Sublist _ _))
+  | .trace _ _, _ => isFalse id
+  | .bind _ _, _ => isFalse id
+
 /-- A sentence with a determiner, the noun, and a predicate phrase. -/
 abbrev sentence (d : Word) (v : Tree Cat Word) : Tree Cat Word :=
-  .node .S [.terminal .Det d, .terminal .N .noun, v]
+  .node .S [.node .N [.terminal .Det d, .terminal .N .noun], v]
 
 /-- The words the base lexicon always has: the assertion's own. -/
 def base : Finset (Tree Cat Word) := {.terminal .Det .some_, .terminal .N .noun, .terminal .V .pred}
@@ -331,183 +365,257 @@ def prejacent : Case → Tree Cat Word
 
 section Interpretation
 
-variable {α : Type*} (sq : Square α)
+open Quantifier Montague
 
-/-- A predicate phrase denotes the square of its scope: an antonym or a negation takes the inner
-negation. -/
-def scope : Tree Cat Word → Option (Square α)
-  | .terminal .V .pred => some sq
-  | .terminal .V .antonym => some sq.inner
-  | .node .V [.terminal .Neg .not_, t] => (scope t).map Square.inner
-  | _ => none
+variable {E W : Type} (A : Set E) (X : W → Set E)
 
-/-- A determiner denotes a corner. -/
-def corner (r : Square α) : Word → Option α
-  | .some_ => some r.I
-  | .all_ => some r.A
-  | .nall => some r.O
-  | _ => none
+/-- *Not every*, the O corner of the determiners' square. -/
+abbrev nallDet : Det E := (Det.every : Det E)ᶜ
 
-/-- The basic meaning of a sentence, where there is one. -/
-def meaning : Tree Cat Word → Option α
-  | .node .S [.terminal .Det d, .terminal .N .noun, v] => (scope sq v).bind (corner · d)
-  | _ => none
+/-- Word meanings in the reader of worlds: a predicate's extension varies with the world, and the
+determiners are the hub's. -/
+def denotes : Word → Option (Denotation E W (ReaderT W Id))
+  | .some_ => some ⟨Ty.det, fun _ ↦ Det.some⟩
+  | .all_ => some ⟨Ty.det, fun _ ↦ Det.every⟩
+  | .nall => some ⟨Ty.det, fun _ ↦ nallDet⟩
+  | .noun => some ⟨Ty.et, fun _ ↦ A⟩
+  | .pred => some ⟨Ty.et, X⟩
+  | .antonym => some ⟨Ty.et, fun w ↦ ((X w)ᶜ : Set E)⟩
+  | .not_ => some ⟨Ty.et ⇒ Ty.et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩
 
-/-- The paper's simplex meanings: those of the sentences no more complex than the assertion. -/
-def simplex (c : Case) : Set α :=
-  {q | ∃ ψ ∈ structuralAlternatives (lex c) (prejacent c), meaning sq ψ = some q}
+/-- The paper's simplex meanings: those of the sentences no more complex than the assertion, in its
+plain sense of deleting constituents and replacing them by lexical items. -/
+def simplex (g : Assignment E) (c : Case) : Set (Set W) :=
+  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧
+    Tree.interp (denotes A X) g ψ = some ⟨.t, q⟩}
+
+/-- The determiners' square at the restrictor, at the predicate's extension in each world. -/
+def sqAt : Square (Set W) where
+  A := {w | Det.every A (X w)}
+  E := {w | Det.no A (X w)}
+  I := {w | Det.some A (X w)}
+  O := {w | nallDet A (X w)}
+
+variable {A X}
+
+theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
+  .of_disjoint (Set.ext fun _ ↦ by simp [sqAt, Det.no_iff_not_some]) rfl
+    (Set.disjoint_left.2 fun _ hE hN ↦ hA.ne_empty (Det.a_e_contrary hE hN))
+
+-- Two members of the restrictor make the square nondegenerate over the possible extensions.
+example {a b : E} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
+    (sqAt A id).triangle t ≠ ⊥ := by
+  have key {s : Set (Set E)} {x : Set E} (hx : x ∈ s) : s ≠ ⊥ := fun h ↦ (h ▸ hx : x ∈ (⊥ : Set _))
+  cases t
+  · exact key (x := ∅) fun _ _ h ↦ h
+  · exact key (x := {a}) ⟨⟨a, ha, rfl⟩, fun h ↦ hab (h hb).symm⟩
+  · exact key (x := univ) fun _ _ ↦ mem_univ _
 
 /-- The square of the assertion: the assertion is its `I` corner. -/
-def squareOf : Case → Square α
+def squareOf (sq : Square (Set W)) : Case → Square (Set W)
   | .negated => sq.inner
   | _ => sq
 
-end Interpretation
+/-- What each category can denote, for determiners `Ds`, predicates `Fs`, and negation if `N`. -/
+def Table (A : Set E) (N : Prop) (Fs : Set (W → E → Prop)) (Ds : Set (Det E)) :
+    Cat → Set (Denotation E W (ReaderT W Id))
+  | .S => {d | d.1 ≠ .t ∨ ∃ D ∈ Ds, ∃ f ∈ Fs, d = ⟨.t, fun w ↦ D A (f w)⟩}
+  | .N => {d | (∃ D ∈ Ds, d = ⟨Ty.det, fun _ ↦ D⟩) ∨ (∃ D ∈ Ds, d = ⟨Ty.ett, fun _ ↦ D A⟩) ∨
+      d = ⟨Ty.et, fun _ ↦ A⟩}
+  | .Det => {d | ∃ D ∈ Ds, d = ⟨Ty.det, fun _ ↦ D⟩}
+  | .V => {d | (∃ f ∈ Fs, d = ⟨Ty.et, f⟩) ∨
+      (N ∧ d = ⟨Ty.et ⇒ Ty.et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩)}
+  | .Neg => {d | N ∧ d = ⟨Ty.et ⇒ Ty.et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩}
+  | _ => ∅
 
-section Results
+variable {N : Prop} {Fs : Set (W → E → Prop)} {Ds : Set (Det E)} {Ws : Finset Word}
+  {g : Assignment E} {c : Case} {q : Set W}
 
-variable {α : Type*} {sq : Square α} {c : Case} {ψ : Tree Cat Word} {q : α}
+theorem table_unary {c a : Cat} (ha : a ∈ pat c) : Table A N Fs Ds a ⊆ Table A N Fs Ds c := by
+  intro d hd
+  unfold pat at ha
+  split at ha <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at ha
+  · rcases ha with rfl | rfl
+    · rcases hd with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | rfl <;> exact Or.inl fun h ↦ by cases h
+    · rcases hd with ⟨_, _, rfl⟩ | ⟨_, rfl⟩ <;> exact Or.inl fun h ↦ by cases h
+  · rcases ha with rfl | rfl
+    · exact Or.inl hd
+    · exact hd
+  · rcases ha with rfl | rfl
+    · exact Or.inr hd
+    · exact hd
 
-theorem scope_eq {t : Tree Cat Word} {r : Square α} (h : scope sq t = some r) :
-    r = sq ∨ r = sq.inner := by
-  fun_induction scope sq t generalizing r with
-  | case1 => simp_all
-  | case2 => simp_all
-  | case3 _ ih =>
-    obtain ⟨r', hr', rfl⟩ := Option.map_eq_some_iff.1 h
-    rcases ih hr' with rfl | rfl
-    · exact Or.inr rfl
-    · exact Or.inl rfl
-  | case4 => simp_all
+theorem table_binary (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs) {c a b : Cat}
+    (hab : [a, b].Sublist (pat c)) : ∀ x ∈ Table A N Fs Ds a, ∀ y ∈ Table A N Fs Ds b, ∀ d,
+      Mode.combine? Mode.evalM x y = some d → d ∈ Table A N Fs Ds c := by
+  intro x hx y hy d hd
+  have pair {x y : Cat} (h : [a, b].Sublist [x, y]) : a = x ∧ b = y := by
+    simpa using h.eq_of_length_le (by simp)
+  unfold pat at hab
+  split at hab
+  · obtain ⟨rfl, rfl⟩ := pair hab
+    rcases hx with ⟨D, hD, rfl⟩ | ⟨D, hD, rfl⟩ | rfl <;> rcases hy with ⟨f, hf, rfl⟩ | ⟨_, rfl⟩ <;>
+      cases hd <;> first
+        | exact Or.inr ⟨D, hD, f, hf, rfl⟩
+        | exact Or.inl fun h ↦ by cases h
+  · obtain ⟨rfl, rfl⟩ := pair hab
+    obtain ⟨D, hD, rfl⟩ := hx
+    rcases hy with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | rfl <;> cases hd
+    exact Or.inr (Or.inl ⟨D, hD, rfl⟩)
+  · obtain ⟨rfl, rfl⟩ := pair hab
+    obtain ⟨hN, rfl⟩ := hx
+    rcases hy with ⟨f, hf, rfl⟩ | ⟨_, rfl⟩ <;> cases hd
+    exact Or.inl ⟨_, hneg hN f hf, rfl⟩
+  · simp at hab
 
-theorem meaning_mem (h : meaning sq ψ = some q) : q ∈ ({sq.A, sq.E, sq.I, sq.O} : Set α) := by
-  unfold meaning at h
-  split at h
-  · obtain ⟨r, hr, hq⟩ := Option.bind_eq_some_iff.1 h
-    rcases scope_eq hr with rfl | rfl <;> revert hq <;> unfold corner <;> split <;>
-      simp +contextual [Square.inner]
-  · simp at h
+theorem licensed_of_alt {source : Set (Tree Cat Word)} {φ ψ : Tree Cat Word}
+    (hs : ∀ s ∈ source, s.Licensed (Licit Ws)) (hφ : φ.Licensed (Licit Ws))
+    (h : atMostAsComplex source ψ φ) : ψ.Licensed (Licit Ws) := by
+  refine licensed_of_atMostAsComplex hs (fun l ks i hl hr ↦ ?_) (fun l ks i k hi hl hc hr ↦ ?_)
+    (fun _ _ _ _ _ h ↦ h) hφ h
+  · cases l with
+    | phrase c k => exact ((List.eraseIdx_sublist ks i).map _).trans hr
+    | _ => exact hl.elim
+  · cases l with
+    | phrase c k =>
+      have hi' : Label.cat ks[i] = (ks.map Label.cat)[i]'(by simpa using hi) := by simp
+      simpa only [Licit, List.map_set, hc, hi', List.set_getElem_self] using hr
+    | _ => exact hl.elim
 
-theorem simplex_subset (c : Case) : simplex sq c ⊆ {sq.A, sq.E, sq.I, sq.O} :=
-  fun _ ⟨_, _, h⟩ ↦ meaning_mem h
+theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Licensed (Licit Ws))
+    (hφ : (prejacent c).Licensed (Licit Ws))
+    (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs)
+    (hsome : .some_ ∈ Ws → Det.some ∈ Ds) (hall : .all_ ∈ Ws → Det.every ∈ Ds)
+    (hnall : .nall ∈ Ws → nallDet ∈ Ds) (hpred : .pred ∈ Ws → X ∈ Fs)
+    (hant : .antonym ∈ Ws → (fun w ↦ (X w)ᶜ) ∈ Fs) (hnot : .not_ ∈ Ws → N)
+    (hq : q ∈ simplex A X g c) : ∃ D ∈ Ds, ∃ f ∈ Fs, q = fun w ↦ D A (f w) := by
+  obtain ⟨ψ, hψ, h⟩ := hq
+  have hcat : Tree.cat ψ = .S := hψ.cat_eq.trans (by cases c <;> rfl)
+  have hT (c : Cat) (w d) (hw : Licit Ws (.terminal c w) List.nil) (hd : denotes A X w = some d) :
+      d ∈ Table A N Fs Ds c := by
+    obtain ⟨hw, rfl, -⟩ := hw
+    cases w <;> cases hd
+    · exact ⟨_, hsome hw, rfl⟩
+    · exact ⟨_, hall hw, rfl⟩
+    · exact ⟨_, hnall hw, rfl⟩
+    · exact Or.inr (Or.inr rfl)
+    · exact Or.inl ⟨_, hpred hw, rfl⟩
+    · exact Or.inl ⟨_, hant hw, rfl⟩
+    · exact ⟨hnot hw, rfl⟩
+  have hm := Tree.interp_mem_of_licensed (denotes A X) g (R := Licit Ws) (U := Table A N Fs Ds) hT
+    (fun _ _ _ hr ↦ table_unary (hr.subset (by simp)))
+    (fun _ _ _ _ hr ↦ table_binary hneg hr)
+    (fun _ _ _ ↦ ⟨id, id⟩) ψ (licensed_of_alt hs hφ hψ) _ h
+  rw [hcat] at hm
+  rcases hm with h0 | ⟨D, hD, f, hf, he⟩
+  · exact absurd rfl h0
+  · exact ⟨D, hD, f, hf, eq_of_heq (Sigma.mk.inj_iff.1 he).2⟩
 
-/-- Whether a tree is a terminal bearing one of the words `B`. -/
-def HasWord (B : Finset Word) (t : Tree Cat Word) : Prop :=
-  (t.value.terminal?.any fun x ↦ decide (x.2 ∈ B)) = true
+theorem nall_compl_iff {B : Set E} : nallDet A Bᶜ ↔ Det.some A B :=
+  (not_congr Det.no_iff_not_some).trans not_not
 
-instance (B : Finset Word) : DecidablePred (HasWord B) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ = true))
+theorem some_compl_iff {B : Set E} : Det.some A Bᶜ ↔ nallDet A B := by
+  simpa using (nall_compl_iff (A := A) (B := Bᶜ)).symm
 
-theorem not_hasWord {B : Finset Word}
-    (hsrc : ∀ t ∈ substitutionSource (lex c) (prejacent c), ∀ s ∈ t.subtrees, ¬ HasWord B s)
-    (hφ : ∀ s ∈ (prejacent c).subtrees, ¬ HasWord B s)
-    (hψ : ψ ∈ structuralAlternatives (lex c) (prejacent c)) : ∀ s ∈ ψ.subtrees, ¬ HasWord B s :=
-  subtree_preservation _ (HasWord B) hsrc
-    (fun _ _ _ _ h ↦ h) (fun _ _ _ _ _ h ↦ h) (fun _ _ _ _ h ↦ h) hφ hψ
+theorem simplex_subset_corners (c : Case) :
+    simplex A X g c ⊆ {(sqAt A X).A, (sqAt A X).E, (sqAt A X).I, (sqAt A X).O} := by
+  intro q hq
+  obtain ⟨D, hD, f, hf, rfl⟩ := simplex_subset (N := True) (Fs := {X, fun w ↦ (X w)ᶜ})
+    (Ds := {Det.some, Det.every, nallDet})
+    (Ws := {.some_, .all_, .nall, .noun, .pred, .antonym, .not_})
+    (by cases c <;> decide) (by cases c <;> decide)
+    (fun _ f hf ↦ by
+      rcases hf with rfl | rfl
+      · exact Or.inr rfl
+      · exact Or.inl (funext fun w ↦ compl_compl (X w)))
+    (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) hq
+  simp only [mem_insert_iff, mem_singleton_iff] at hD hf ⊢
+  rcases hf with rfl | rfl <;> rcases hD with rfl | rfl | rfl
+  · exact Or.inr (Or.inr (Or.inl rfl))
+  · exact Or.inl rfl
+  · exact Or.inr (Or.inr (Or.inr rfl))
+  · exact Or.inr (Or.inr (Or.inr (Set.ext fun w ↦ some_compl_iff)))
+  · exact Or.inr (Or.inl rfl)
+  · exact Or.inr (Or.inr (Or.inl (Set.ext fun w ↦ nall_compl_iff)))
 
-@[simp] theorem hasWord_terminal {B : Finset Word} {c : Cat} {w : Word} :
-    HasWord B (Tree.terminal c w) ↔ w ∈ B := by
-  simp [HasWord, Label.terminal?, RoseTree.value]
+theorem simplex_bare_subset : simplex A X g .bare ⊆ {(sqAt A X).I, (sqAt A X).A} := by
+  intro q hq
+  obtain ⟨D, hD, f, rfl, rfl⟩ := simplex_subset (c := .bare) (N := False) (Fs := {X})
+    (Ds := {Det.some, Det.every}) (Ws := {.some_, .all_, .noun, .pred})
+    (by decide) (by decide) (fun h ↦ h.elim)
+    (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) hq
+  rcases hD with rfl | rfl
+  · exact Or.inl rfl
+  · exact Or.inr rfl
 
-theorem scope_eq_of_free {v : Tree Cat Word} {r : Square α} {B : Finset Word}
-    (hB : Word.antonym ∈ B ∧ Word.not_ ∈ B) (hfree : ∀ s ∈ v.subtrees, ¬ HasWord B s)
-    (h : scope sq v = some r) : r = sq := by
-  fun_cases scope sq v with
-  | case1 => simpa [scope] using h.symm
-  | case2 =>
-    exact absurd (hasWord_terminal.2 hB.1)
-      (hfree (Tree.terminal .V .antonym) (by simp [RoseTree.subtrees_node]))
-  | case3 t =>
-    exact absurd (hasWord_terminal.2 hB.2)
-      (hfree (Tree.terminal .Neg .not_) (by simp [RoseTree.subtrees_node]))
-  | case4 => simp_all [scope]
-
-theorem meaning_of_free {B : Finset Word} (hB : Word.antonym ∈ B ∧ Word.not_ ∈ B)
-    (hfree : ∀ s ∈ ψ.subtrees, ¬ HasWord B s) (h : meaning sq ψ = some q) :
-    ∃ d, d ∉ B ∧ corner sq d = some q := by
-  fun_cases meaning sq ψ with
-  | case1 d v =>
-    obtain ⟨r, hr, hq⟩ := Option.bind_eq_some_iff.1 (by simpa [meaning] using h)
-    have hsub : ∀ s ∈ RoseTree.subtrees v, ¬ HasWord B s := fun s hs ↦ hfree s <| by
-      rw [RoseTree.subtrees_node]
-      exact List.mem_cons_of_mem _ (List.mem_flatMap.2 ⟨v, by simp, hs⟩)
-    obtain rfl := scope_eq_of_free hB hsub hr
-    refine ⟨d, fun hd ↦ hfree (Tree.terminal .Det d) ?_ (hasWord_terminal.2 hd), hq⟩
-    rw [RoseTree.subtrees_node]
-    exact List.mem_cons_of_mem _
-      (List.mem_flatMap.2 ⟨Tree.terminal .Det d, by simp, by simp [RoseTree.subtrees_node]⟩)
-  | case2 => simp_all [meaning]
-
-theorem simplex_bare_subset : simplex sq .bare ⊆ {sq.I, sq.A} := by
-  rintro q ⟨ψ, hψ, h⟩
-  obtain ⟨d, hd, hq⟩ := meaning_of_free (B := {.antonym, .not_, .nall}) (by decide)
-    (not_hasWord (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩) (by decide) hψ) h
-  cases d <;> simp_all [corner]
-
-theorem simplex_minimal_subset : simplex sq .minimal ⊆ {sq.I} := by
-  rintro q ⟨ψ, hψ, h⟩
-  obtain ⟨d, hd, hq⟩ := meaning_of_free (B := {.antonym, .not_, .nall, .all_}) (by decide)
-    (not_hasWord (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩) (by decide) hψ) h
-  cases d <;> simp_all [corner]
+theorem simplex_minimal_subset : simplex A X g .minimal ⊆ {(sqAt A X).I} := by
+  intro q hq
+  obtain ⟨D, rfl, f, rfl, rfl⟩ := simplex_subset (c := .minimal) (N := False) (Fs := {X})
+    (Ds := {Det.some}) (Ws := {.some_, .noun, .pred})
+    (by decide) (by decide) (fun h ↦ h.elim)
+    (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) hq
+  rfl
 
 theorem sentence_mem {d d' : Word} {v : Tree Cat Word} (hφ : prejacent c = sentence d v)
     (h : Tree.terminal .Det d' ∈ lex c) :
-    sentence d' v ∈ structuralAlternatives (lex c) (prejacent c) := by
+    atMostAsComplex ↑(lex c) (sentence d' v) (prejacent c) := by
   rw [hφ]
-  exact .single (.inChild ⟨0, by simp⟩ (.subst rfl (mem_union_left _ h)))
+  exact .single (.inChild ⟨0, by simp⟩ (.inChild ⟨0, by simp⟩ (.subst rfl h)))
 
-theorem A_mem_simplex (hc : c ≠ .minimal) : (squareOf sq c).A ∈ simplex sq c := by
+theorem A_mem_simplex (hc : c ≠ .minimal) : (squareOf (sqAt A X) c).A ∈ simplex A X g c := by
   cases c <;> first
     | exact absurd rfl hc
     | exact ⟨_, sentence_mem (d' := .all_) rfl (by decide), rfl⟩
 
 theorem O_mem_simplex (hc : c = .negated ∨ c = .antonym ∨ c = .lexicalized) :
-    (squareOf sq c).O ∈ simplex sq c := by
+    (squareOf (sqAt A X) c).O ∈ simplex A X g c := by
   rcases hc with rfl | rfl | rfl
   · refine ⟨sentence .some_ (.terminal .V .pred), .single ?_, rfl⟩
-    exact .inChild ⟨2, by simp⟩ (ψ_child := Tree.terminal Cat.V Word.pred)
+    exact .inChild ⟨1, by simp⟩ (ψ_child := Tree.terminal Cat.V Word.pred)
       (.contract (by simp) rfl trivial)
-  · exact ⟨sentence .some_ (.terminal .V .antonym), .single
-      (.inChild ⟨2, by simp⟩ (.subst rfl (mem_union_left _ (by decide)))), rfl⟩
+  · have hO : (squareOf (sqAt A X) .antonym).O = fun w ↦ Det.some A (X w)ᶜ :=
+      Set.ext fun _ ↦ some_compl_iff.symm
+    rw [hO]
+    exact ⟨sentence .some_ (.terminal .V .antonym),
+      .single (.inChild ⟨1, by simp⟩ (.subst rfl (by decide))), rfl⟩
   · exact ⟨_, sentence_mem (d' := .nall) rfl (by decide), rfl⟩
 
-theorem simplex_subset_squareOf (c : Case) : simplex sq c ⊆
-    {(squareOf sq c).A, (squareOf sq c).E, (squareOf sq c).I, (squareOf sq c).O} := by
+theorem simplex_subset_squareOf (c : Case) : simplex A X g c ⊆ {(squareOf (sqAt A X) c).A,
+    (squareOf (sqAt A X) c).E, (squareOf (sqAt A X) c).I, (squareOf (sqAt A X) c).O} := by
   cases c <;> first
-    | exact simplex_subset _
-    | refine (simplex_subset _).trans fun q hq ↦ ?_
+    | exact simplex_subset_corners _
+    | refine (simplex_subset_corners _).trans fun q hq ↦ ?_
       simp only [mem_insert_iff, mem_singleton_iff, squareOf, Square.inner] at hq ⊢
       tauto
 
-variable [BooleanAlgebra α]
-
-theorem squareOf_relations (h : SquareRelations sq) (c : Case) :
-    SquareRelations (squareOf sq c) := by
+theorem squareOf_relations (h : SquareRelations (sqAt A X)) (c : Case) :
+    SquareRelations (squareOf (sqAt A X) c) := by
   cases c <;> first | exact h | exact h.inner
 
-theorem squareOf_triangle_ne (hne : ∀ t, sq.triangle t ≠ ⊥) (c : Case) (t : Triangle) :
-    (squareOf sq c).triangle t ≠ ⊥ := by
+theorem squareOf_triangle_ne (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) (c : Case) (t : Triangle) :
+    (squareOf (sqAt A X) c).triangle t ≠ ⊥ := by
   cases c <;> first
     | exact hne t
     | cases t
       · exact hne .A
-      · exact fun h0 ↦ hne .IO ((inf_comm sq.I sq.O).trans h0)
+      · exact fun h0 ↦ hne .IO ((inf_comm _ _).trans h0)
       · exact hne .E
 
-theorem A_notMem_simplex_minimal (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
-    sq.A ∉ simplex sq .minimal := fun hA ↦
-  absurd (mem_singleton_iff.1 (simplex_minimal_subset hA))
-    ((lt_I_iff h hne (by simp)).2 rfl).ne
-
-theorem O_ne_I (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) : sq.O ≠ sq.I := fun heq ↦
+theorem O_ne_I (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
+    (sqAt A X).O ≠ (sqAt A X).I := fun heq ↦
   hne .A (h.contraryAE.eq_bot_of_le (by
     rw [← h.contradEI.symm.compl_eq, ← heq, ← h.contradAO.compl_eq, compl_compl]))
 
-theorem O_ne_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) : sq.O ≠ sq.A := fun heq ↦
+theorem O_ne_A (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
+    (sqAt A X).O ≠ (sqAt A X).A := fun heq ↦
   hne .A (h.contradAO.disjoint.eq_bot_of_le heq.ge)
 
-theorem O_notMem_simplex (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
-    (hc : c = .bare ∨ c = .minimal) : sq.O ∉ simplex sq c := fun hO ↦ by
+theorem A_notMem_simplex_minimal (h : SquareRelations (sqAt A X))
+    (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) : (sqAt A X).A ∉ simplex A X g .minimal := fun hA ↦
+  absurd (mem_singleton_iff.1 (simplex_minimal_subset hA)) ((lt_I_iff h hne (by simp)).2 rfl).ne
+
+theorem O_notMem_simplex (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥)
+    (hc : c = .bare ∨ c = .minimal) : (sqAt A X).O ∉ simplex A X g c := fun hO ↦ by
   rcases hc with rfl | rfl
   · rcases simplex_bare_subset hO with hq | hq
     · exact O_ne_I h hne hq
@@ -520,15 +628,22 @@ inductive Excluded
   | scalar | symmetric
   deriving DecidableEq, Repr
 
+/-- The other alternative of the pair. -/
+def Excluded.other : Excluded → Excluded
+  | .scalar => .symmetric
+  | .symmetric => .scalar
+
 /-- The negated alternative at each example. -/
-def excl (sq : Square α) (c : Case) : Excluded → α
+def excl (sq : Square (Set W)) (c : Case) : Excluded → Set W
   | .scalar => (squareOf sq c).A
   | .symmetric => (squareOf sq c).O
 
-theorem not_blocked_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (c : Case)
-    (e : Excluded) :
-    ¬ Blocked (simplex sq c) ((squareOf sq c).I \ excl sq c e) (squareOf sq c).I ↔
-      e = .scalar ∨ c = .minimal := by
+-- Excluding the scalar alternative is never blocked, and excluding the symmetric one always is,
+-- except where the language lacks a simplex scalar alternative to block it.
+theorem not_blocked_iff (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥)
+    (c : Case) (e : Excluded) :
+    ¬ Blocked (simplex A X g c) ((squareOf (sqAt A X) c).I \ excl (sqAt A X) c e)
+      (squareOf (sqAt A X) c).I ↔ e = .scalar ∨ c = .minimal := by
   have hr := squareOf_relations h c
   have hn := squareOf_triangle_ne hne c
   cases e
@@ -539,8 +654,11 @@ theorem not_blocked_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠
       | simpa using A_mem_simplex (by decide)
       | simpa [squareOf] using A_notMem_simplex_minimal h hne
 
-theorem excl_mem_simplex_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (c : Case)
-    (e : Excluded) : excl sq c e ∈ simplex sq c ↔
+-- What the complexity filter permits: the scalar alternative where the language has one, and the
+-- symmetric one where it is simplex too.
+theorem excl_mem_simplex_iff (h : SquareRelations (sqAt A X))
+    (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) (c : Case) (e : Excluded) :
+    excl (sqAt A X) c e ∈ simplex A X g c ↔
       (e = .scalar ∧ c ≠ .minimal) ∨ (e = .symmetric ∧ c ≠ .bare ∧ c ≠ .minimal) := by
   cases e <;> cases c <;> simp only [excl, reduceCtorEq, ne_eq, not_true_eq_false,
     not_false_eq_true, and_self, and_false, false_and, or_false, false_or, iff_true, iff_false] <;>
@@ -550,48 +668,16 @@ theorem excl_mem_simplex_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle 
       | exact A_notMem_simplex_minimal h hne
       | exact O_notMem_simplex h hne (by decide)
 
-/-- The other alternative of the pair. -/
-def Excluded.other : Excluded → Excluded
-  | .scalar => .symmetric
-  | .symmetric => .scalar
-
--- (26), (1)
-theorem filter_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (c : Case)
-    (e : Excluded) : (excl sq c e ∈ simplex sq c ∧ excl sq c e.other ∉ simplex sq c) ↔
+-- The filter with the stalemate assumption (26) permits an exclusion only if its alternative is
+-- simplex and the other is not, which is only the scalar alternative of (1).
+theorem filter_iff (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥)
+    (c : Case) (e : Excluded) :
+    (excl (sqAt A X) c e ∈ simplex A X g c ∧ excl (sqAt A X) c e.other ∉ simplex A X g c) ↔
       e = .scalar ∧ c = .bare := by
   rw [excl_mem_simplex_iff h hne, excl_mem_simplex_iff h hne]
   cases e <;> cases c <;> simp [Excluded.other]
 
-end Results
-
-/-! ### The square at the determiners -/
-
-section Determiners
-
-open Quantifier.Det
-
-variable {E : Type*} {A : Set E} {a b : E}
-
--- Negating the scope is the inner negation of the determiners' square.
-example (B : Set E) : (Quantifier.Det.square A).inner.A B ↔ every A Bᶜ := by
-  simp [Square.inner, Quantifier.Det.square, no, every]
-
-example (B : Set E) : (Quantifier.Det.square A).inner.I B ↔ Quantifier.Det.some A Bᶜ := by
-  simp [Square.inner, Quantifier.Det.square, Quantifier.Det.some, every, Set.not_subset,
-    Set.Nonempty]
-
--- Two players make the square nondegenerate, so the examples hold of *some* and *all*.
-example (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
-    (Quantifier.Det.square A).triangle t ≠ ⊥ := by
-  have key : ∀ (q : Quantifier E) (B : Set E), q B → q ≠ ⊥ := fun q B hq h ↦ by
-    subst h
-    exact hq
-  cases t
-  · exact key _ ∅ (fun _ _ h ↦ h)
-  · exact key _ {a} ⟨⟨a, ha, rfl⟩, fun h ↦ hab (h hb).symm⟩
-  · exact key _ univ fun _ _ ↦ mem_univ _
-
-end Determiners
+end Interpretation
 
 /-! ### The judgments -/
 
@@ -618,22 +704,25 @@ theorem rows_available_iff :
 
 section Comparison
 
-variable {α : Type*} [BooleanAlgebra α] {sq : Square α}
+variable {E W : Type} {A : Set E} {X : W → Set E} {g : Assignment E}
 
 /-- Blocking misjudges only (76b), as the paper says. -/
-theorem blocked_misjudges_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
-    ∀ r ∈ rows, (¬ (¬ Blocked (simplex sq r.case)
-      ((squareOf sq r.case).I \ excl sq r.case r.excluded) (squareOf sq r.case).I ↔
-        r.available = true)) ↔ r.case = .minimal ∧ r.excluded = .symmetric := by
+theorem blocked_misjudges_iff (h : SquareRelations (sqAt A X))
+    (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
+    ∀ r ∈ rows, (¬ (¬ Blocked (simplex A X g r.case)
+      ((squareOf (sqAt A X) r.case).I \ excl (sqAt A X) r.case r.excluded)
+        (squareOf (sqAt A X) r.case).I ↔ r.available = true)) ↔
+      r.case = .minimal ∧ r.excluded = .symmetric := by
   intro r hr
   rw [not_blocked_iff h hne]
   revert r
   decide
 
--- (1)
-theorem filter_misjudges_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
-    ∀ r ∈ rows, (¬ ((excl sq r.case r.excluded ∈ simplex sq r.case ∧
-      excl sq r.case r.excluded.other ∉ simplex sq r.case) ↔ r.available = true)) ↔
+-- The filter with the stalemate misjudges the available reading of every example but (1).
+theorem filter_misjudges_iff (h : SquareRelations (sqAt A X))
+    (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
+    ∀ r ∈ rows, (¬ ((excl (sqAt A X) r.case r.excluded ∈ simplex A X g r.case ∧
+      excl (sqAt A X) r.case r.excluded.other ∉ simplex A X g r.case) ↔ r.available = true)) ↔
         r.excluded = .scalar ∧ r.case ≠ .bare := by
   intro r hr
   rw [filter_iff h hne]
