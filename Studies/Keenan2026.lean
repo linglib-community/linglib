@@ -43,10 +43,9 @@ counting with them are meant for finite sets.
   only case used, each element of the closure is a join of meets of generators and their
   complements (the proof of `generateCompleteBoolean_iff_factorsThrough`), so finitely many stages
   suffice.
-* *Cons on either argument*, on two individuals, gives 1008 functions, not the 1020 reported from
-  [zuber-keenan-2019] (`ncard_conservative_or_right`), since the functions conservative on both
-  arguments are the 16 intersective ones. That paper's own definition was not available to check;
-  secondary reports describe it as conservativity on the first or the second argument.
+* *512 of which are Cons and 1020 of which are weak-Cons* misreports [zuber-keenan-2019], which has
+  1008 (`ncard_conservative_or_conservativeOnFirst`): the functions conservative on both arguments
+  are the 16 intersective ones, counted twice in `2 * 512`.
 * *Proportional Ds are conservative* fails at the empty restrictor, which Def. 14 leaves
   unconstrained (`exists_proportional_not_conservative`).
 * (55) is introduced with *an object quantifier may be a nominal and predicate anaphor
@@ -246,12 +245,13 @@ example : {d : Det (Fin 2) | d.Intersective ∨ d.CoIntersective}.ncard = 30 := 
   rw [Fintype.card_fin] at this
   omega
 
-/-- Conservativity on the second argument. -/
-def ConservativeRight (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
+/-- [zuber-keenan-2019]'s `cons₁`, conservativity on the first argument; their `cons₂` is the
+standard `Det.Conservative`, and *weakly conservative* is the disjunction of the two. -/
+def ConservativeOnFirst (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
 
-private theorem ncard_conservativeRight :
-    {d : Det α | ConservativeRight d}.ncard = 2 ^ 3 ^ Fintype.card α := by
-  have h (d : Det α) : ConservativeRight d ↔
+private theorem ncard_conservativeOnFirst :
+    {d : Det α | ConservativeOnFirst d}.ncard = 2 ^ 3 ^ Fintype.card α := by
+  have h (d : Det α) : ConservativeOnFirst d ↔
       d ∈ invariants fun p : Set α × Set α ↦
         (⟨(p.2, p.1 ∩ p.2), Set.inter_subset_right⟩ : Nested α) := by
     refine ⟨fun h A B A' B' e ↦ ?_, fun h A B ↦ h _ _ _ _ (Subtype.ext (by simp))⟩
@@ -262,11 +262,11 @@ private theorem ncard_conservativeRight :
   rw [ncard_eq_card h, card_invariants fun p ↦ ⟨(p.1.2, p.1.1),
     Subtype.ext (Prod.ext rfl (Set.inter_eq_left.2 p.2))⟩, KeenanStavi1986.card_nested]
 
--- Against 1020: the functions conservative on both arguments are the intersective ones
-theorem ncard_conservative_or_right :
-    {d : Det α | d.Conservative ∨ ConservativeRight d}.ncard + 2 ^ 2 ^ Fintype.card α =
+-- Against 1020: the Theorem and Proposition of [zuber-keenan-2019] Section IV
+theorem ncard_conservative_or_conservativeOnFirst :
+    {d : Det α | d.Conservative ∨ ConservativeOnFirst d}.ncard + 2 ^ 2 ^ Fintype.card α =
       2 * 2 ^ 3 ^ Fintype.card α := by
-  have hinter : {d : Det α | d.Conservative} ∩ {d | ConservativeRight d} =
+  have hinter : {d : Det α | d.Conservative} ∩ {d | ConservativeOnFirst d} =
       {d | d.Intersective} := by
     ext d
     refine ⟨fun ⟨h, h'⟩ A B A' B' e ↦ ?_, fun h ↦ ⟨Intersective.conservative h, fun A B ↦
@@ -274,15 +274,15 @@ theorem ncard_conservative_or_right :
     have key (A B : Set α) : d A B ↔ d (A ∩ B) (A ∩ B) := by
       rw [h A B, h' A (A ∩ B), ← Set.inter_assoc, Set.inter_self]
     rw [key A B, key A' B', e]
-  have := Set.ncard_union_add_ncard_inter {d : Det α | d.Conservative} {d | ConservativeRight d}
+  have := Set.ncard_union_add_ncard_inter {d : Det α | d.Conservative} {d | ConservativeOnFirst d}
   have hc : {d : Det α | d.Conservative}.ncard = 2 ^ 3 ^ Fintype.card α :=
     (ncard_eq_card fun _ ↦ mem_conservativeSubalgebra.symm).trans KeenanStavi1986.card_consDet
-  rw [hinter, ncard_intersective, hc, ncard_conservativeRight] at this
+  rw [hinter, ncard_intersective, hc, ncard_conservativeOnFirst] at this
   rw [two_mul, ← this]
   rfl
 
-example : {d : Det (Fin 2) | d.Conservative ∨ ConservativeRight d}.ncard = 1008 := by
-  have := ncard_conservative_or_right (α := Fin 2)
+example : {d : Det (Fin 2) | d.Conservative ∨ ConservativeOnFirst d}.ncard = 1008 := by
+  have := ncard_conservative_or_conservativeOnFirst (α := Fin 2)
   rw [Fintype.card_fin] at this
   omega
 
