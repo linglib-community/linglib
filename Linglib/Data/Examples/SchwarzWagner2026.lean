@@ -127,6 +127,62 @@ def ex_52b : Datum :=
     readings := [("strengthened: permitted and required", .unacceptable)]
     paperFeatures := [("case", "lexicalized"), ("excluded", "symmetric"), ("available", "no")] }
 
+def ex_54a : Datum :=
+  { id := "schwarzwagner2026_54a"
+    source := ⟨"schwarz-wagner-2026", "(54a)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Doing drugs is optional, and in fact it is not (even) permitted"
+    glossedTokens := []
+    context := ""
+    judgment := .marginal
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_54b : Datum :=
+  { id := "schwarzwagner2026_54b"
+    source := ⟨"schwarz-wagner-2026", "(54b)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Doing drugs is optional, and in fact it is (even) required"
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_55a : Datum :=
+  { id := "schwarzwagner2026_55a"
+    source := ⟨"schwarz-wagner-2026", "(55a)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Taking drugs is not optional."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("preferred: taking drugs is required", .acceptable)]
+    paperFeatures := [] }
+
+def ex_55b : Datum :=
+  { id := "schwarzwagner2026_55b"
+    source := ⟨"schwarz-wagner-2026", "(55b)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Taking drugs is non-optional."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("preferred: taking drugs is required", .acceptable)]
+    paperFeatures := [] }
+
 def ex_76a : Datum :=
   { id := "schwarzwagner2026_76a"
     source := ⟨"schwarz-wagner-2026", "(76)"⟩
@@ -155,6 +211,6 @@ def ex_76b : Datum :=
     readings := [("strengthened: John must come", .unacceptable)]
     paperFeatures := [("case", "minimal"), ("excluded", "symmetric"), ("available", "no")] }
 
-def all : List Datum := [ex_1a, ex_1b, ex_33a, ex_33b, ex_42a, ex_42b, ex_52a, ex_52b, ex_76a, ex_76b]
+def all : List Datum := [ex_1a, ex_1b, ex_33a, ex_33b, ex_42a, ex_42b, ex_52a, ex_52b, ex_54a, ex_54b, ex_55a, ex_55b, ex_76a, ex_76b]
 
 end SchwarzWagner2026.Examples

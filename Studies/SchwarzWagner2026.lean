@@ -34,10 +34,16 @@ the paper does not discuss.
 * One grammar covers the examples. Its clauses compose through `Tree.interp` in the reader of
   worlds, to the hub's determiners at a restrictor and a predicate's extension in each world, the
   square `sqAt`. *Permitted*, *required* and *optional* are those determiners over the deontic
-  alternatives, parallel to *some*, *all* and *not all* on the paper's own account of (52);
-  `optional` is the O corner, not `I ⊓ O`, as the paper argues from (54). A `Case` is a prejacent
-  with its lexicon, and each lexicon lists only the words the paper's discussion of that example
-  uses.
+  alternatives, parallel to *some*, *all* and *not all* on the paper's own account of (52). A
+  `Case` is a prejacent with its lexicon, and each lexicon lists only the words the paper's
+  discussion of that example uses.
+* `optional` is the O corner, [not strictly symmetric with *required*](##not_isSymmetric_O), as the
+  paper argues from (54) and [(55)](##compl_O_eq_A). On the `I \ A` of [swanson-2010], [both
+  readings of (52) are blocked](##blocked_of_sdiff_mem) and [both continuations in (54) are
+  contradictory](##sdiff_inf_eq_bot), where at the O corner [only (54b) is](##O_inf_eq_bot_iff).
+  Katzir's (21), the target of [swanson-2010], survives (52) on this entry, though the paper groups
+  it with CF: it reads only strictly stronger alternatives, and [`A` is the only such
+  corner](##lt_I_iff). Only [the filter with a stalemate](##filter_misjudges_iff) stays refuted.
 * Complexity is the paper's plain notion, with lexical items as the source: blocking needs none of
   Katzir's contextual sources, and this one bounds size (`atMostAsComplex.numNodes_le`).
 * What is not simplex comes from a table of what each category can denote
@@ -55,10 +61,11 @@ paper offers no example with such a meaning.
 
 ## TODO
 
-The contextual cases (23), (58), (59), the disjunction (29), the embedding (79) and the question
-effects (61)–(65) are not rows; recoverability is not modelled. [bar-lev-bassi-trinh-2025] derive
-blocking's effects from fatal competition and partition by exhaustification against the 2024
-manuscript's equivalence version, and that comparison needs a theory of questions here.
+The contextual cases (23), (58), (59), the disjunction (29), the embedding (79), the question
+effects (61)–(65) and the triples of footnote 17 are not rows; recoverability is not modelled.
+[bar-lev-bassi-trinh-2025] derive blocking's effects from fatal competition and partition by
+exhaustification against the 2024 manuscript's equivalence version, and that comparison needs a
+theory of questions here.
 
 ## References
 
@@ -140,6 +147,11 @@ theorem IsSymmetric.blocked_sdiff_iff (h : IsSymmetric p a b) :
     Blocked F (p \ a) p ↔ (F ∩ Ico b p).Nonempty := by
   rw [Blocked, h.sdiff_eq, mem_lowerClosure]
   exact ⟨fun ⟨q, ⟨hq, hp⟩, hb⟩ ↦ ⟨q, hq, hb, hp⟩, fun ⟨q, hq, hb, hp⟩ ↦ ⟨q, ⟨hq, hp⟩, hb⟩⟩
+
+-- Section 4.1: with both partners simplex, strict symmetry blocks both strengthenings.
+theorem IsSymmetric.blocked_sdiff (h : IsSymmetric p a b) (hb : b ∈ F) (ha : a.Nonempty) :
+    Blocked F (p \ a) p :=
+  (IsSymmetric.blocked_sdiff_iff h).2 ⟨b, hb, le_rfl, h.symm.ssubset_left ha⟩
 
 -- Section 4.1
 theorem exists_isSymmetric_blocked : ∃ (F : Set (Set (Fin 4))) (p a b : Set (Fin 4)),
@@ -292,6 +304,39 @@ theorem exhIE_I_eq_self {W : Type*} {sq : Square (Set W)} (h : SquareRelations s
     exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
   · have heq : sq.I \ sq.O = sq.A := I_sdiff_O h
     exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .A)
+
+-- Section 2.5: if *optional* is `I \ A`, blocking rules out both readings of (52).
+theorem blocked_of_sdiff_mem {W : Type*} {sq : Square (Set W)} {F : Set (Set W)}
+    (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (hA : sq.A ∈ F)
+    (hO : sq.I \ sq.A ∈ F) : Blocked F (sq.I \ sq.A) sq.I ∧ Blocked F sq.A sq.I := by
+  have hs : IsSymmetric sq.I sq.A (sq.I \ sq.A) := isSymmetric_sdiff h.subalternAI
+  refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .A)), ?_⟩
+  have hO' : (sq.I \ sq.A).Nonempty :=
+    I_sdiff_A h ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
+  simpa only [hs.symm.sdiff_eq] using IsSymmetric.blocked_sdiff hs.symm hA hO'
+
+-- Section 4.1: at the O corner the partners of (52) are no longer strictly symmetric.
+theorem not_isSymmetric_O {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
+    (hne : ∀ t, sq.triangle t ≠ ⊥) : ¬ IsSymmetric sq.I sq.A sq.O := fun hs ↦
+  hne .E (h.contradEI.disjoint.eq_bot_of_le (h.subalternEO.trans hs.subset_right))
+
+-- (54): at the O corner only (54b) is contradictory.
+theorem O_inf_eq_bot_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
+    (sq.O ⊓ sq.E = ⊥ ↔ Examples.ex_54a.judgment = .unacceptable) ∧
+      (sq.O ⊓ sq.A = ⊥ ↔ Examples.ex_54b.judgment = .unacceptable) :=
+  ⟨iff_of_false (fun hE ↦ hne .E ((inf_eq_right.2 h.subalternEO).symm.trans hE)) (by decide),
+    iff_of_true h.contradAO.disjoint.symm.eq_bot rfl⟩
+
+-- (54): at `I \ A` both are, where the paper finds a contrast.
+theorem sdiff_inf_eq_bot (h : SquareRelations sq) :
+    (sq.I \ sq.A) ⊓ sq.E = ⊥ ∧ (sq.I \ sq.A) ⊓ sq.A = ⊥ :=
+  ⟨(h.contradEI.disjoint.symm.mono_left sdiff_le).eq_bot, disjoint_sdiff_self_left.eq_bot⟩
+
+-- (55): negating the O corner gives *required*, the preferred reading; negating `I \ A` does not.
+theorem compl_O_eq_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
+    sq.Oᶜ = sq.A ∧ ¬ (sq.I \ sq.A)ᶜ ≤ sq.A :=
+  ⟨h.contradAO.symm.compl_eq, fun hle ↦ hne .E <| h.contraryAE.symm.eq_bot_of_le <|
+    (le_compl_iff_disjoint_right.2 (h.contradEI.disjoint.mono_right sdiff_le)).trans hle⟩
 
 end Square
 
