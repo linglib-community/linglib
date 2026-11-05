@@ -55,7 +55,7 @@ generalization is statistical here and absolute for Harbour.
 
 namespace AckemaNeeleman2018
 
-open Morphology.Exponence Discourse
+open Morphology Discourse
 
 variable {α β γ E : Type*}
 

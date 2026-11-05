@@ -77,7 +77,7 @@ forward hierarchy](##directionality).
 
 namespace ClemDeal2026
 
-open Deal2024 Phi.PersonSegment DistributedMorphology Morphology.Exponence
+open Deal2024 Phi.PersonSegment DistributedMorphology Morphology
 open Clause (Scenario)
 open Baker2015 (Arg)
 open Minimalist (Derivation LexicalItem CaseAssigners HeadFunction)

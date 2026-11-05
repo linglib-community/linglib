@@ -51,7 +51,7 @@ is set difference, and scansion is a greedy decomposition of the node.
 
 namespace DistributedMorphology
 
-open Morphology.Exponence
+open Morphology
 
 variable {F E : Type*} [DecidableEq F]
 

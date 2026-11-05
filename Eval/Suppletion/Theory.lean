@@ -32,7 +32,7 @@ portmanteaus.
 
 namespace Eval.Suppletion
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology Morphology.Containment
 
 /-- Three theories of the root patterns of a three-cell hierarchy. -/
 inductive Theory

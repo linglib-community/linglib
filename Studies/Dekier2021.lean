@@ -51,7 +51,7 @@ prefixes and suffixes in §4.2 are not modelled.
 
 namespace Dekier2021
 
-open Morphology Morphology.Exponence Morphology.Containment Indefinite Haspelmath1997
+open Morphology Morphology.Containment Indefinite Haspelmath1997
 
 /-! ### The hierarchy -/
 

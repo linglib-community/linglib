@@ -297,7 +297,7 @@ correspondents built on its exponent, a stem. Rules are ordered by Pāṇini's p
 "competition between two or more morphological markings is resolved in favor of the marking
 having the narrowest 'meaning'" (n. 5): a rule whose domain is included in another's is the
 more specific. -/
-abbrev CellRule : Type := Exponence.DomainRule CzCell Stem
+abbrev CellRule : Type := DomainRule CzCell Stem
 
 /-- `plural` is the set of plural cells, `{plural X}` in the paper's notation. -/
 def plural : Finset CzCell := {σ | σ.number = .plural}
@@ -340,7 +340,7 @@ def czRoot (l : CzNoun) : Stem := (entry l).root
 /-- The stem of a cell's form correspondent is the one Pāṇini's principle selects, that of an
 applicable rule no applicable rule is narrower than, or the root where no rule applies. -/
 def stemFor (l : CzNoun) (σ : CzCell) : Stem :=
-  Exponence.RuleSet.realizeMinimalD (czRules l) (·.dom) (fun _ ↦ czRoot l) σ
+  RuleSet.realizeMinimalD (czRules l) (·.dom) (fun _ ↦ czRoot l) σ
 
 @[simp] theorem entry_lexeme (l : CzNoun) : (entry l).lexeme = l := by cases l <;> rfl
 
@@ -359,7 +359,7 @@ theorem lexeme_stem_of_mem_rulesFor {e : Entry} {r : CellRule} (hr : r ∈ rules
     exact e.lexeme_of_mem_softMascCoradical hz
 
 theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
-  Exponence.RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
+  RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
     fun _ hr ↦ (lexeme_stem_of_mem_rulesFor hr).trans (entry_lexeme l)
 
 /-! ### Realization -/
@@ -692,8 +692,8 @@ theorem minimal_univ_of_isFractured {cls : A × B → K} (h : IsFractured cls) :
 
 /-- A rule is sensitive to the value of a category when its applicability does not factor
 through the other category. -/
-def SensitiveTo (r : Exponence.DomainRule (A × B) E) (c : Category) : Prop :=
-  ¬ (Exponence.Applies r).FactorsThrough c.other.proj
+def SensitiveTo (r : DomainRule (A × B) E) (c : Category) : Prop :=
+  ¬ (Applies r).FactorsThrough c.other.proj
 
 /-- A category is privileged for a family `cls` of class maps, one for each lexeme, when it
 serves as an absolute correlate of a cloven paradigm: "the inflectional categories serving as
@@ -708,7 +708,7 @@ the value of a privileged inflectional category for members of C." The lexemes `
 form one privileged syntactic category, so the antecedent on the syntactic category is left
 implicit. -/
 def SatisfiesPCR (cls : L → A × B → K)
-    (rules : L → Exponence.RuleSet (Exponence.DomainRule (A × B) E)) : Prop :=
+    (rules : L → RuleSet (DomainRule (A × B) E)) : Prop :=
   ∀ l, ∀ r ∈ rules l, (∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c
 
 variable [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
@@ -749,16 +749,16 @@ instance (cls : A × B → K) : Decidable (IsCloven cls) := inferInstanceAs (Dec
 
 instance (cls : A × B → K) : Decidable (IsFractured cls) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance (r : Exponence.DomainRule (A × B) E) (c : Category) : Decidable (SensitiveTo r c) :=
+instance (r : DomainRule (A × B) E) (c : Category) : Decidable (SensitiveTo r c) :=
   inferInstanceAs (Decidable (¬ _))
 
 instance [Fintype L] (cls : L → A × B → K) (c : Category) : Decidable (Privileged cls c) :=
   inferInstanceAs (Decidable (∃ _, _))
 
 instance [Fintype L] (cls : L → A × B → K)
-    (rules : L → Exponence.RuleSet (Exponence.DomainRule (A × B) E)) :
+    (rules : L → RuleSet (DomainRule (A × B) E)) :
     Decidable (SatisfiesPCR cls rules) :=
-  have (r : Exponence.DomainRule (A × B) E) :
+  have (r : DomainRule (A × B) E) :
       Decidable ((∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c) :=
     inferInstance
   inferInstanceAs (Decidable (∀ _, _))
@@ -811,9 +811,9 @@ theorem filolog_no_maximal : ∀ c, ¬ IsMaximalCorrelate c (cellClass .filolog)
 /-- If every rule's applicability factors through `A`, so does the noun's class split ((41a), p.
 317). -/
 theorem isAbsoluteCorrelate_of_rules {V : Type*} (l : CzNoun) (A : CzCell → V)
-    (h : ∀ r ∈ czRules l, (Exponence.Applies r).FactorsThrough A) :
+    (h : ∀ r ∈ czRules l, (Applies r).FactorsThrough A) :
     (fun σ ↦ (stemFor l σ).decl).FactorsThrough A :=
-  (Exponence.RuleSet.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
+  (RuleSet.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
     Iff.of_eq (h r hr hA)).comp_left Stem.decl
 
 theorem isAbsoluteCorrelate_of_forall_not_sensitiveTo {c : Category} {l : CzNoun}
@@ -1000,11 +1000,11 @@ inductive Strength
 
 /-- Clause (19a) makes strong the direct-case property sets of a masculine and the direct-case
 plural ones of a neuter. -/
-def rule19a (g : SktGender) : Exponence.DomainRule SktCell Strength :=
+def rule19a (g : SktGender) : DomainRule SktCell Strength :=
   ⟨{σ | σ.1.1 ∈ direct ∧ (g = .masc ∨ σ.2.1 = .plural)}, .strong⟩
 
 /-- Clause (19b) makes weak the accusative plural property set of a masculine. -/
-def rule19b (g : SktGender) : Exponence.DomainRule SktCell Strength :=
+def rule19b (g : SktGender) : DomainRule SktCell Strength :=
   ⟨{σ | g = .masc ∧ σ.1.1 = .acc ∧ σ.2.1 = .plural}, .weak⟩
 
 -- (19b), (19a), n. 19
@@ -1017,7 +1017,7 @@ default; b. but instances of {α accusative plural} are weak; in addition, c. an
 gender/case/number combination that is not strong according to (a) is weak." Clause (19b)
 overrides (19a) by Pāṇini's principle, and (19c) is the default. -/
 def strength (g : SktGender) (σ : SktCell) : Strength :=
-  Exponence.RuleSet.realizeMinimalD [rule19a g, rule19b g] (·.dom) (fun _ ↦ .weak) σ
+  RuleSet.realizeMinimalD [rule19a g, rule19b g] (·.dom) (fun _ ↦ .weak) σ
 
 /-- `weak g` is the set of weak property sets of a lexeme of gender `g`. -/
 def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
@@ -1110,7 +1110,7 @@ def SktEntry.stems (e : SktEntry) : List SktStem := e.root :: (e.middle.toList +
 
 /-- A Sanskrit rule of paradigm linkage gives the cells of its domain form correspondents built on
 its exponent, a stem. -/
-abbrev SktRule : Type := Exponence.DomainRule SktCell SktStem
+abbrev SktRule : Type := DomainRule SktCell SktStem
 
 /-- Rule (20a) (p. 294) reads "Where L is a nominal lexeme having s_w as its Weakest coradical and
 σ is a weak property set, if the realization of the form-cell ⟨s_w, f₁(σ)⟩ is s_w[vowel]X, then
@@ -1126,7 +1126,7 @@ form-correspondent." -/
 def rule20b (e : SktEntry) : Option SktRule := e.middle.map (⟨weak e.gender, ·⟩)
 
 /-- The rules (20a,b) that apply to a lexeme are those whose coradicals it has. The Sanskrit
-default (12) is not among them: it is the root that `Exponence.RuleSet.realizeMinimalD` falls
+default (12) is not among them: it is the root that `RuleSet.realizeMinimalD` falls
 back on. -/
 def sktRulesFor (e : SktEntry) : List SktRule := (rule20a e).toList ++ (rule20b e).toList
 
@@ -1142,7 +1142,7 @@ def sktRoot (l : SktLex) : SktStem := (sktEntry l).root
 narrower of the two rules, override 20b in any instance in which the former rule is applicable"
 (p. 295). -/
 def sktStem (l : SktLex) (σ : SktCell) : SktStem :=
-  Exponence.RuleSet.realizeMinimalD (sktRules l) (·.dom) (fun _ ↦ sktRoot l) σ
+  RuleSet.realizeMinimalD (sktRules l) (·.dom) (fun _ ↦ sktRoot l) σ
 
 /-- The Sanskrit paradigm linkage gives each content cell the stem its rules select, with the
 form property set that `f₁` maps its property set to. -/
@@ -1206,7 +1206,7 @@ theorem SktEntry.exponent_mem_stems {e : SktEntry} {r : SktRule} (hr : r ∈ skt
     simp [SktEntry.stems, hz]
 
 theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEntry l).stems :=
-  Exponence.RuleSet.realizeMinimalD_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
+  RuleSet.realizeMinimalD_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
     fun _ hr ↦ SktEntry.exponent_mem_stems hr
 
 -- §3.2

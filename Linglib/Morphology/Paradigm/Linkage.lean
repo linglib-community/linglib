@@ -48,7 +48,7 @@ takes the lexeme's root.
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
 `IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
 `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
-listed rule of `ofRules` but the fallback of `Exponence.RuleSet.realizeMinimalD`, the lexeme's
+listed rule of `ofRules` but the fallback of `RuleSet.realizeMinimalD`, the lexeme's
 root.
 
 ## References
@@ -364,8 +364,8 @@ theorem canonical_isCanonical {ι : S → M} (hι : Function.Injective ι) (st :
 
 section Rules
 
-variable {R : Type*} [Exponence.Rule R S Z] {κ : Type*} [Preorder κ]
-  [DecidableRel (· < · : κ → κ → Prop)] [DecidableRel (Exponence.Applies : R → S → Prop)]
+variable {R : Type*} [ExponenceRule R S Z] {κ : Type*} [Preorder κ]
+  [DecidableRel (· < · : κ → κ → Prop)] [DecidableRel (Applies : R → S → Prop)]
 
 /-- The linkage of rules of paradigm linkage gives each content cell the stem that its
 lexeme's rules realize, the exponent of an applicable rule that no applicable rule is narrower
@@ -373,7 +373,7 @@ than under `key`, or the lexeme's root, by the universal default rule (5) of [st
 none of its rules applies; its form property set is the image under `ι` of the cell's. -/
 abbrev ofRules (ι : S → M) (key : R → κ) (rules : L → List R) (root : L → Z) :
     Linkage L Z S M :=
-  ofFun ι fun l σ ↦ Exponence.RuleSet.realizeMinimalD (rules l) key (fun _ ↦ root l) σ
+  ofFun ι fun l σ ↦ RuleSet.realizeMinimalD (rules l) key (fun _ ↦ root l) σ
 
 /-- With no language-specific rules, the linkage of rules is the canonical linkage of the
 roots. -/

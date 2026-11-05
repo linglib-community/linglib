@@ -38,9 +38,9 @@ winners and the prediction relation they induce.
 
 @[expose] public section
 
-namespace Morphology.Exponence.RuleSet
+namespace Morphology.RuleSet
 
-variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E] {κ : Type*} [Preorder κ] {key : R → κ}
+variable {Ctx E : Type*} {R : Type*} [ExponenceRule R Ctx E] {κ : Type*} [Preorder κ] {key : R → κ}
 variable {v : RuleSet R} {c : Ctx} {r s : R} {φ : E}
 
 /-! ### Elsewhere winners -/
@@ -112,4 +112,4 @@ theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hv : v.Antihomophonous)
   obtain rfl := hv hu.1.1 ht.1.1 hut
   exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.1 hu.1.2 ht.1.2), rfl⟩
 
-end Morphology.Exponence.RuleSet
+end Morphology.RuleSet

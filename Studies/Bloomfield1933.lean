@@ -156,7 +156,7 @@ def Cell.head? : Cell → Option Terminal
   | .pl => some .pl
   | .past => some .past
 
-open DistributedMorphology Morphology.Exponence in
+open DistributedMorphology Morphology in
 /-- The Vocabulary Items condition each suppletive alternant on its neighbour, *bet-* and *went* on
 the comparative and the past to their right, the plural *-en* and the zero past on √OX and √GO to
 their left, and set an elsewhere item beside it. -/

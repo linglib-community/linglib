@@ -61,7 +61,7 @@ subset-applicable (`depTop_eq_subsetPrinciple`), under which
 
 namespace Zompi2023
 
-open Morphology.Exponence ChristopoulosZompi2023
+open Morphology ChristopoulosZompi2023
 open SubsetRule (card)
 
 /- The `decide` proofs below range over `featSpace` and lists of feature sets. The

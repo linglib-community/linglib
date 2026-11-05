@@ -63,7 +63,7 @@ exponents inside it.
 
 namespace Morphology.Nanosyntax
 
-open Morphology.Exponence RoseTree
+open Morphology RoseTree
 
 variable {F α : Type*}
 

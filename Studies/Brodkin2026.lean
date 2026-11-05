@@ -67,7 +67,7 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
 
 namespace Brodkin2026
 
-open Prosody OptimalityTheory DistributedMorphology Morphology.Exponence CLDF.Wordlist
+open Prosody OptimalityTheory DistributedMorphology Morphology CLDF.Wordlist
 
 /-! ### The vocabulary -/
 
@@ -536,7 +536,8 @@ theorem forms_not_function_of_footed :
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency, d.input.footed) = d.form :=
   not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency, x.footed)) (by decide)
 
-variable {R : Type*} [Rule R Input (Form Wordlist.Cell)] [DecidableRel (Applies : R → Input → Prop)]
+variable {R : Type*} [ExponenceRule R Input (Form Wordlist.Cell)]
+  [DecidableRel (Applies : R → Input → Prop)]
   {κ : Type*} [Preorder κ] [DecidableRel (· < · : κ → κ → Prop)] (w : RuleSet R) (key : R → κ)
 
 private theorem not_realizes_of_not_exists {A : Input → V}

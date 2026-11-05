@@ -32,7 +32,7 @@ suffix *-tiin* of roots like *kipaw* 'rhino', so that class is left out.
 
 namespace DeClercqEtAl2025
 
-open Morphology.Nanosyntax Morphology.Exponence RoseTree
+open Morphology.Nanosyntax Morphology RoseTree
 
 /-! ### Degrees of comparison -/
 

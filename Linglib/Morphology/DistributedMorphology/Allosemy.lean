@@ -65,7 +65,7 @@ two already-selected allosemes. The Voice allosemes map to the cells of
 namespace DistributedMorphology.Allosemy
 
 open Minimalist.Voice (Head)
-open Morphology.Exponence
+open Morphology
 
 /-! ### The alloseme carrier
 

@@ -40,7 +40,7 @@ strong verbs' past plural `-u`, past subjunctive `-i` or epenthetic `u` (*gripu*
 
 namespace BonamiStump2016
 
-open Morphology Morphology.Exponence Morphology.PFM
+open Morphology Morphology.PFM
 
 /-! ### Icelandic verbs -/
 

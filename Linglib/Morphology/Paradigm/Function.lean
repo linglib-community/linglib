@@ -71,7 +71,7 @@ rules, is not modeled.
 
 namespace Morphology.PFM
 
-open Morphology Morphology.Exponence
+open Morphology
 
 variable {L Z P F : Type*}
 
@@ -108,7 +108,7 @@ theorem Rule.narrowness_le_iff {r s : Rule L P F} :
     r.narrowness ≤ s.narrowness ↔ r.klass ⊂ s.klass ∨ r.klass = s.klass ∧ s.props ≤ r.props :=
   Prod.Lex.toLex_le_toLex
 
-instance : Exponence.Rule (Rule L P F) (L × P) F where
+instance : ExponenceRule (Rule L P F) (L × P) F where
   exponent := Rule.payload
   Applies r c := c.1 ∈ r.klass ∧ r.props ≤ c.2
 
