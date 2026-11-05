@@ -3,7 +3,7 @@ module
 public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Fragments.Latvian.Pronouns
 public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -14,19 +14,22 @@ Subset Principle. Strong Case Containment nests them in a chain. It excludes ABA
 [a rule winning an accusative over another applies in no nominative](##scc_prediction), so it
 [cannot derive](##latvian_not_scc) the Latvian stems that Weak Case Containment
 [derives](##latvian_stems). No Case Containment makes them incomparable and
-[derives ABA](##ncc_aba_generable). Excluding ABA while stating a nominative stem, a rule for
-accusative and dative, and a rule for the dative alone is
-[equivalent to the shape of Weak Case Containment](##isWeak_iff): the accusative properly inside the
-dative, nominative and accusative incomparable, and nothing shared by nominative and dative outside
-the accusative.
+[derives ABA](##ncc_aba_generable). A decomposition derives ABA
+[exactly when](##excludesABA_iff_not_isNaturalClass) the accusative alone, or the nominative and
+dative together, form a natural class; ruling those out while keeping the natural classes the data
+ask for is [equivalent to the shape of Weak Case Containment](##isWeak_iff): the accusative properly
+inside the dative, nominative and accusative incomparable, and nothing shared by nominative and
+dative outside the accusative.
 
 ## Implementation notes
 
 * The cases are the three-cell chain `Fin 3`, in the order NOM ≺ ACC ≺ DAT, so *ABA is
-  `IsContiguous` and the PATTERN columns are `Paradigm.abb` and its siblings.
-* Clause (1b) presupposes a unique rule with the greatest number of features. `realize` breaks ties
-  by the order of the rule set, and `WinsAmong` excludes them;
-  [the two agree on a derivation](##realize_of_isDerivation).
+  `IsContiguous` and the PATTERN columns are `Paradigm.abb` and its siblings. Cells of the empirical
+  paradigms are products of case, number and gender, and their bundles lie in the product order.
+* Clause (1b) presupposes a unique rule with the greatest number of features. As competition it is
+  `IsElsewhereWinner` under that count, which leaves two winners at a tie; `realize` breaks ties by
+  the order of the rule set, and [the two agree on a derivation](##realize_of_isDerivation). Rule
+  sets here list the least specific rule first, so that no result leans on that order.
 * That the decomposition is forced is this file's reading: the paper argues that Weak Case
   Containment suffices. Rule sets are antihomophonous where fn. 9 says "barring accidental
   homophony"; a homophonous pair is the disjunctive rule (4), with which Strong Case Containment
@@ -66,10 +69,8 @@ namespace ChristopoulosZompi2023
 open Morphology Exponence
 open SubsetRule (card)
 
-/-- The privative features: k₀–k₃ across the three Case decompositions, plus number (s₀ singular,
-p₀ plural) and gender features for the empirical paradigms, no property contained in its
-category-mates (fn. 26). -/
-inductive K | k0 | k1 | k2 | k3 | s0 | p0 | m0 | f0
+/-- The privative case features k₀–k₃ across the three decompositions. -/
+inductive K | k0 | k1 | k2 | k3
   deriving DecidableEq, Fintype, Repr
 
 /-- The nominative, the first of the *ABA order NOM ≺ ACC ≺ DAT. -/
@@ -105,13 +106,47 @@ def ExcludesABA (F : Type*) (D : Paradigm 3 (Finset K)) : Prop :=
 theorem excludesABA_iff [Nontrivial F] {D : Paradigm 3 (Finset K)} :
     ExcludesABA F D ↔ D nom ∩ D dat ⊆ D acc ∧ (D acc ⊆ D nom ∨ D acc ⊆ D dat) :=
   (forall₂_congr fun _ _ ↦ isContiguous_fin_three_iff _).trans
-    (SubsetRule.forall_realize_eq_iff Finset.card_strictMono)
+    (SubsetRule.forall_realize_eq_iff grade_strictMono)
 
 theorem excludesABA_scc : ExcludesABA F scc := fun _ hv ↦ (isContiguous_fin_three_iff _).2
   (SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide))
 
 theorem excludesABA_wcc : ExcludesABA F wcc := fun _ hv ↦ (isContiguous_fin_three_iff _).2
   (SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide))
+
+/-- The cases `S` are a natural class of a decomposition when some specification applies in exactly
+those cases. -/
+def IsNaturalClass (D : Paradigm 3 (Finset K)) (S : Finset (Fin 3)) : Prop :=
+  ∃ s : Finset K, ∀ c, s ⊆ D c ↔ c ∈ S
+
+/-- **ABA is a question of natural classes.** A decomposition derives ABA exactly when the
+accusative alone, or the nominative and dative together, form a natural class, as the paper has it
+of the accusative-specific set of No Case Containment (p. 885). -/
+theorem excludesABA_iff_not_isNaturalClass [Nontrivial F] {D : Paradigm 3 (Finset K)} :
+    ExcludesABA F D ↔ ¬ IsNaturalClass D {acc} ∧ ¬ IsNaturalClass D {nom, dat} := by
+  rw [excludesABA_iff]
+  constructor
+  · rintro ⟨hi, hy⟩
+    refine ⟨fun ⟨s, h⟩ ↦ ?_, fun ⟨s, h⟩ ↦ ?_⟩
+    · have hs : s ⊆ D acc := (h acc).2 (by decide)
+      obtain hd | hd := hy
+      · exact absurd ((h nom).1 (hs.trans hd)) (by decide)
+      · exact absurd ((h dat).1 (hs.trans hd)) (by decide)
+    · have hs : s ⊆ D acc := fun k hk ↦
+        hi (Finset.mem_inter.2 ⟨(h nom).2 (by decide) hk, (h dat).2 (by decide) hk⟩)
+      exact absurd ((h acc).1 hs) (by decide)
+  · rintro ⟨hy, hxz⟩
+    refine ⟨by_contra fun hn ↦ hxz ⟨D nom ∩ D dat, fun c ↦ ?_⟩,
+      by_contra fun hn ↦ hy ⟨D acc, fun c ↦ ?_⟩⟩
+    · fin_cases c
+      · exact iff_of_true Finset.inter_subset_left (by decide)
+      · exact iff_of_false hn (by decide)
+      · exact iff_of_true Finset.inter_subset_right (by decide)
+    · obtain ⟨h₀, h₂⟩ := not_or.1 hn
+      fin_cases c
+      · exact iff_of_false h₀ (by decide)
+      · exact iff_of_true subset_rfl (by decide)
+      · exact iff_of_false h₂ (by decide)
 
 -- Table 11, row 2: an elsewhere rule beside a rule for the accusative-specific set {k₁, k₃}
 theorem ncc_aba_generable :
@@ -125,36 +160,30 @@ def accInDat : Paradigm 3 (Finset K) := ![{.k0, .k3}, {.k1}, {.k1, .k2, .k3}]
 -- p. 895: containment of the accusative in the dative leaves ABA derivable, by a rule for k₃
 theorem acc_ssubset_dat_derives_aba :
     accInDat acc ⊂ accInDat dat ∧
-      ∀ c, RuleSet.realize [(⟨{.k3}, 0⟩ : SubsetRule (Finset K) ℕ), ⟨∅, 1⟩] card (accInDat c) =
+      ∀ c, RuleSet.realize [(⟨∅, 1⟩ : SubsetRule (Finset K) ℕ), ⟨{.k3}, 0⟩] card (accInDat c) =
         some (Paradigm.aba c) := by
   decide
 
 /-! ### The derivation tables -/
 
-/-- Among the specifications `i`, the rule for `r` wins at `c`: it applies, and has more features
-than any other that does, clause (1b). -/
-def WinsAmong (i : List (Finset K)) (c r : Finset K) : Prop :=
-  r ⊆ c ∧ ∀ s ∈ i, s ⊆ c → s ≠ r → s.card < r.card
+/-- The rules for the specifications `w`, each with its specification as exponent, so that the rules
+differ exactly where their specifications do. -/
+def rules (w : Paradigm 3 (Finset K)) : RuleSet (SubsetRule (Finset K) (Finset K)) :=
+  List.ofFn fun a ↦ ⟨w a, w a⟩
 
-instance (i : List (Finset K)) (c r : Finset K) : Decidable (WinsAmong i c r) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The rules for `w` derive it under `D` when each case's rule wins its case among them. -/
+/-- The rules for `w` derive it under `D` when, competing by clause (1b), each case has its own rule
+as its only winner. -/
 abbrev IsDerivation (D w : Paradigm 3 (Finset K)) : Prop :=
-  ∀ c, WinsAmong (List.ofFn w) (D c) (w c)
+  ∀ c a, (rules w).IsElsewhereWinner (OrderDual.toDual ∘ card) (D c) ⟨w a, w a⟩ ↔ w a = w c
 
--- (1b)
-theorem realize_of_isDerivation {D w : Paradigm 3 (Finset K)} {p : Paradigm 3 F}
-    (hw : IsDerivation D w) (hp : Setoid.ker w = Setoid.ker p) (c : Fin 3) :
-    RuleSet.realize (List.ofFn fun a ↦ (⟨w a, p a⟩ : SubsetRule (Finset K) F)) card (D c) =
-      some (p c) := by
-  have key (a : Fin 3) (hsc : w a ⊆ D c) : w a = w c ∨ (w a).card < (w c).card :=
-    (eq_or_ne _ _).imp_right ((hw c).2 _ (List.mem_ofFn.2 ⟨a, rfl⟩) hsc)
-  refine RuleSet.realize_eq_of_forall_le (r := (⟨w c, p c⟩ : SubsetRule (Finset K) F))
-    (List.mem_ofFn.2 ⟨c, rfl⟩) (hw c).1 (fun s hs hsc ↦ ?_) fun s hs hsc hcard ↦ ?_ <;>
-    obtain ⟨a, rfl⟩ := List.mem_ofFn.1 hs
-  · exact (key a hsc).elim (fun h ↦ (congrArg Finset.card h).le) le_of_lt
-  · exact (key a hsc).elim (Setoid.ext_iff.1 hp a c).1 (absurd hcard ·.ne)
+-- clause (1b) and `realize` agree wherever (1b) decides
+theorem realize_of_isDerivation {D w : Paradigm 3 (Finset K)} (hw : IsDerivation D w) (c : Fin 3) :
+    (rules w).realize card (D c) = some (w c) := by
+  have hwin := (hw c c).2 rfl
+  refine RuleSet.realize_eq_of_forall_realizes ⟨_, hwin.prop.1, hwin.prop.2⟩ ?_
+  rintro ψ ⟨r, hr, rfl⟩
+  obtain ⟨a, rfl⟩ := List.mem_ofFn.1 hr.prop.1
+  exact (hw c a).1 hr
 
 /-- The derivations under a decomposition, by their winners at NOM, ACC and DAT. -/
 def derivations (D : Paradigm 3 (Finset K)) : Finset (Finset K × Finset K × Finset K) :=
@@ -236,39 +265,34 @@ theorem derivations_ncc : derivations ncc = winners (table11 ++ table11Omitted) 
 
 section Predictions
 
-variable {O E α : Type*} [LinearOrder α] {T : O → Finset K}
-  {v : RuleSet (SubsetRule (Finset K) E)} {f : SubsetRule (Finset K) E → α}
-  {A B : SubsetRule (Finset K) E} {o o' : O}
+variable {Q E α : Type*} [Preorder Q] [DecidableLE (Finset K × Q)] [LinearOrder α]
+  {v : RuleSet (SubsetRule (Finset K × Q) E)} {f : SubsetRule (Finset K × Q) E → α}
+  {A B : SubsetRule (Finset K × Q) E} {q q' : Q}
 
-/-- **Prediction (2).** Under Strong Case Containment, crossed with features `T o` of other
-dimensions, a rule winning an accusative over a different nominative winner applies in no
-nominative, under any version of the Subset Principle. -/
-theorem scc_prediction (hT : ∀ o, K.k1 ∉ T o)
-    (hA : v.selectBy f (scc nom ∪ T o) = some A) (hB : v.selectBy f (scc acc ∪ T o) = some B)
-    (hne : A ≠ B) : ¬ Applies B (scc nom ∪ T o') := fun h ↦
-  hT o' <| by
-    simpa [scc] using h <| SubsetRule.mem_features_of_selectBy_ne
-      (Finset.union_subset_union_left (by decide)) (by simp [scc]) hA hB hne
+-- (2): under SCC, crossed with any other dimensions, a rule winning an accusative over a different
+-- nominative winner applies in no nominative, under any version of the Subset Principle
+theorem scc_prediction (hA : v.selectBy f (scc nom, q) = some A)
+    (hB : v.selectBy f (scc acc, q) = some B) (hne : A ≠ B) : ¬ Applies B (scc nom, q') := fun h ↦
+  SubsetRule.not_le_of_selectBy_ne (by decide) hA hB hne (show B.features ≤ (scc nom, q') from h).1
 
--- (8) and (9): a rule winning a dative over a different accusative winner, rule B of an AAB or rule
--- C of an ABC, applies in no nominative or accusative
-theorem wcc_prediction (hT : ∀ o, K.k2 ∉ T o)
-    (hA : v.selectBy f (wcc acc ∪ T o) = some A) (hB : v.selectBy f (wcc dat ∪ T o) = some B)
-    (hne : A ≠ B) {c : Fin 3} (hc : c ≠ dat) : ¬ Applies B (wcc c ∪ T o') := fun h ↦ by
-  have hk : K.k2 ∈ wcc c ∪ T o' := h <| SubsetRule.mem_features_of_selectBy_ne
-    (Finset.union_subset_union_left (by decide))
-    (by rw [show wcc dat = insert K.k2 (wcc acc) by decide, Finset.insert_union]) hA hB hne
-  have hnot : ∀ c : Fin 3, c ≠ dat → K.k2 ∉ wcc c := by decide
-  exact (Finset.mem_union.1 hk).elim (hnot c hc) (hT o')
+-- (8) and (9): under WCC a rule winning a dative over a different accusative winner, rule B of an
+-- AAB or rule C of an ABC, applies in no nominative or accusative
+theorem wcc_prediction (hA : v.selectBy f (wcc acc, q) = some A)
+    (hB : v.selectBy f (wcc dat, q) = some B) (hne : A ≠ B) {c : Fin 3} (hc : c ≠ dat) :
+    ¬ Applies B (wcc c, q') := fun h ↦ by
+  have hmeet : ∀ c : Fin 3, c ≠ dat → wcc c ⊓ wcc dat ≤ wcc acc := by decide
+  exact SubsetRule.not_le_of_selectBy_ne (by decide) hA hB hne
+    ((le_inf (show B.features ≤ (wcc c, q') from h).1
+      (RuleSet.selectBy_applies hB : B.features ≤ (wcc dat, q)).1).trans (hmeet c hc))
 
 end Predictions
 
 /-! ### Latvian *pat-* ~ *paš-* (Table 20, rules (7))
 
 The emphatic pronoun singles out nominative singular across both genders: *pat-s* / *pat-i* against
-*paš-* everywhere else. Rules (7): *pat-* in k₀ singular contexts, *paš-* elsewhere. Number
-decomposes with neither value contained in the other (fn. 26); gender features are carried by the
-cells but referenced by no rule. -/
+*paš-* everywhere else. Rules (7): *pat-* in k₀ singular contexts, *paš-* elsewhere. Each value of
+number and of gender is its own feature, none contained in another (fn. 26); gender features are
+carried by the cells but referenced by no rule. -/
 
 /-- Number. -/
 inductive LNum | sg | pl
@@ -289,33 +313,21 @@ def LNum.toNumber : LNum → Number
 def LGen.toUD : LGen → UD.Gender
   | .masc => .Masc | .fem => .Fem
 
-/-- The features of a number. -/
-def LNum.features : LNum → Finset K
-  | .sg => {.s0} | .pl => {.p0}
+/-- The bundles of a Latvian cell: case, number and gender features. -/
+abbrev LBundle := Finset K × Finset LNum × Finset LGen
 
-/-- The features of a gender. -/
-def LGen.features : LGen → Finset K
-  | .masc => {.m0} | .fem => {.f0}
-
-/-- A Latvian cell: case, number, gender. -/
-structure LCell where
-  case : Fin 3
-  num : LNum
-  gen : LGen
-  deriving DecidableEq, Fintype, Repr
-
-/-- The Latvian decomposition over a decomposition of case. -/
-def latvian (D : Paradigm 3 (Finset K)) (c : LCell) : Finset K :=
-  D c.case ∪ (c.num.features ∪ c.gen.features)
+/-- The Latvian decomposition, crossing a decomposition of case with number and gender. -/
+def latvian (D : Paradigm 3 (Finset K)) : Fin 3 × LNum × LGen → LBundle :=
+  Prod.map D (Prod.map singleton singleton)
 
 /-- Rules (7): *pat-* in k₀ singular contexts; *paš-* elsewhere. -/
-def latvianRules : RuleSet (SubsetRule (Finset K) String) :=
-  [⟨{.k0, .s0}, "pat"⟩, ⟨∅, "paš"⟩]
+def latvianRules : RuleSet (SubsetRule LBundle String) :=
+  [⟨⊥, "paš"⟩, ⟨({.k0}, {.sg}, ∅), "pat"⟩]
 
 /-- The stem of Table 20 at a cell: the root of the form of *pats* in the cell's case, number and
 gender. -/
-def table20stem (c : LCell) : Option String :=
-  (Latvian.Pronouns.pats (toLatvian c.case) c.num.toNumber c.gen.toUD).bind
+def table20stem (c : Fin 3 × LNum × LGen) : Option String :=
+  (Latvian.Pronouns.pats (toLatvian c.1) c.2.1.toNumber c.2.2.toUD).bind
     fun ms ↦ (ms.find? (·.kind = .root)).map (·.form)
 
 /-- Rules (7) generate Table 20's stem distribution under Weak Case Containment. -/
@@ -326,52 +338,53 @@ theorem latvian_stems :
 /-- No antihomophonous rule set derives Table 20 under Strong Case Containment, whatever the score:
 *paš-* wins the accusative singular over *pat-* and still appears in the nominative plural,
 against prediction (2). -/
-theorem latvian_not_scc {α : Type*} [LinearOrder α] {v : RuleSet (SubsetRule (Finset K) String)}
-    {f : SubsetRule (Finset K) String → α} (hv : v.Antihomophonous) :
+theorem latvian_not_scc {α : Type*} [LinearOrder α] {v : RuleSet (SubsetRule LBundle String)}
+    {f : SubsetRule LBundle String → α} (hv : v.Antihomophonous) :
     ¬ ∀ c, v.realize f (latvian scc c) = table20stem c := fun h ↦ by
   obtain ⟨A, hA, heA⟩ := Option.map_eq_some_iff.1
-    ((h ⟨nom, .sg, .masc⟩).trans (by decide : _ = some "pat"))
+    ((h (nom, .sg, .masc)).trans (by decide : _ = some "pat"))
   obtain ⟨B, hB, heB⟩ := Option.map_eq_some_iff.1
-    ((h ⟨acc, .sg, .masc⟩).trans (by decide : _ = some "paš"))
+    ((h (acc, .sg, .masc)).trans (by decide : _ = some "paš"))
   obtain ⟨B', hB', heB'⟩ := Option.map_eq_some_iff.1
-    ((h ⟨nom, .pl, .masc⟩).trans (by decide : _ = some "paš"))
+    ((h (nom, .pl, .masc)).trans (by decide : _ = some "paš"))
   obtain rfl := hv (RuleSet.selectBy_mem hB') (RuleSet.selectBy_mem hB) (heB'.trans heB.symm)
   have hne : A ≠ B' := fun e ↦ absurd (heA.symm.trans ((congrArg exponent e).trans heB))
     (by decide)
-  exact scc_prediction (T := fun p : LNum × LGen ↦ p.1.features ∪ p.2.features)
-    (by rintro ⟨_ | _, _ | _⟩ <;> decide) (o := (.sg, .masc)) (o' := (.pl, .masc)) hA hB hne
-    (RuleSet.selectBy_applies hB')
+  rw [show latvian scc (nom, .sg, .masc) = (scc nom, ({.sg}, {.masc})) from rfl] at hA
+  rw [show latvian scc (acc, .sg, .masc) = (scc acc, ({.sg}, {.masc})) from rfl] at hB
+  rw [show latvian scc (nom, .pl, .masc) = (scc nom, ({.pl}, {.masc})) from rfl] at hB'
+  exact scc_prediction hA hB hne (RuleSet.selectBy_applies hB')
 
 -- (4), p. 889: the disjunctive rule, written as two homophonous rules, derives Table 20 under SCC
 theorem latvian_scc_of_disjunctive :
     ∀ c, RuleSet.realize
-      [(⟨{.k1}, "paš"⟩ : SubsetRule (Finset K) String), ⟨{.p0}, "paš"⟩, ⟨∅, "pat"⟩]
+      [(⟨⊥, "pat"⟩ : SubsetRule LBundle String), ⟨({.k1}, ∅, ∅), "paš"⟩, ⟨(∅, {.pl}, ∅), "paš"⟩]
       card (latvian scc c) = table20stem c := by
   decide
 
 -- the pattern "cuts across genders": neither rule references gender
 theorem latvian_gender_blind (c n) :
-    latvianRules.realize card (latvian wcc ⟨c, n, .masc⟩) =
-      latvianRules.realize card (latvian wcc ⟨c, n, .fem⟩) := by
+    latvianRules.realize card (latvian wcc (c, n, .masc)) =
+      latvianRules.realize card (latvian wcc (c, n, .fem)) := by
   revert c n; decide
 
--- fn. 26: dropping s₀ overgenerates *pat-* into the nominative plural
+-- fn. 26: dropping the singular overgenerates *pat-* into the nominative plural
 theorem latvian_pat_needs_singular :
-    RuleSet.realize [(⟨{.k0}, "pat"⟩ : SubsetRule (Finset K) String), ⟨∅, "paš"⟩] card
-      (latvian wcc ⟨nom, .pl, .masc⟩) = some "pat" := by
+    RuleSet.realize [(⟨⊥, "paš"⟩ : SubsetRule LBundle String), ⟨({.k0}, ∅, ∅), "pat"⟩] card
+      (latvian wcc (nom, .pl, .masc)) = some "pat" := by
   decide
 
--- fn. 8: a rule for m₀ beside one for {k₀, s₀} has an incomparable specification, so under the
--- inclusion of contexts of (i) either may apply in the nominative singular masculine; counting
--- decides, and what it decides is one of them
+-- fn. 8: a rule for the masculine beside one for k₀ singular has an incomparable specification, so
+-- under the inclusion of contexts of (i) either may apply in the nominative singular masculine;
+-- counting decides, and what it decides is one of them
 theorem counting_decides_incomparable :
-    let v : RuleSet (SubsetRule (Finset K) ℕ) := [⟨{.m0}, 0⟩, ⟨{.k0, .s0}, 1⟩]
-    let c := latvian wcc ⟨nom, .sg, .masc⟩
+    let v : RuleSet (SubsetRule LBundle ℕ) := [⟨(∅, ∅, {.masc}), 0⟩, ⟨({.k0}, {.sg}, ∅), 1⟩]
+    let c := latvian wcc (nom, .sg, .masc)
     v.Realizes applySet c 0 ∧ v.Realizes applySet c 1 ∧ v.realize card c = some 1 := by
   intro v c
   have h : v.realize card c = some 1 := by decide
-  refine ⟨⟨⟨{.m0}, 0⟩, ⟨⟨by simp [v], by decide⟩, fun s hs hle ↦ ?_⟩, rfl⟩,
-    SubsetRule.realize_realizes Finset.card_strictMono h, h⟩
+  refine ⟨⟨⟨(∅, ∅, {.masc}), 0⟩, ⟨⟨by simp [v], by decide⟩, fun s hs hle ↦ ?_⟩, rfl⟩,
+    SubsetRule.realize_realizes grade_strictMono h, h⟩
   simp only [v, List.mem_cons, List.not_mem_nil, or_false] at hs
   obtain ⟨rfl | rfl, -⟩ := hs
   · exact le_rfl
@@ -383,26 +396,20 @@ theorem counting_decides_incomparable :
 reference k₁: specified for plural alone it would also capture the nominative plural *m-ir*. This
 ABB row with B more specific than the elsewhere is the evidence that WCC's k₁ is not eliminable. -/
 
-/-- A Yiddish cell: case and number. -/
-structure YCell where
-  case : Fin 3
-  num : LNum
-  deriving DecidableEq, Fintype, Repr
-
-/-- The Yiddish decomposition: WCC for case, s₀/p₀ for number. -/
-def yiddish (c : YCell) : Finset K :=
-  wcc c.case ∪ c.num.features
+/-- The Yiddish decomposition, crossing WCC with number. -/
+def yiddish : Fin 3 × LNum → Finset K × Finset LNum :=
+  Prod.map wcc singleton
 
 /-- The three stem rules: *ix* a non-elsewhere nominative-singular stem, *undz* the k₁-plural stem,
 *m-* the elsewhere. -/
-def yiddishRules : RuleSet (SubsetRule (Finset K) String) :=
-  [⟨{.k0, .s0}, "ix"⟩, ⟨{.k1, .p0}, "undz"⟩, ⟨∅, "m"⟩]
+def yiddishRules : RuleSet (SubsetRule (Finset K × Finset LNum) String) :=
+  [⟨⊥, "m"⟩, ⟨({.k0}, {.sg}), "ix"⟩, ⟨({.k1}, {.pl}), "undz"⟩]
 
 /-- The fn. 25 paradigm's stem distribution: *ix* / *m-ix* / *m-ir* in the singular, *m-ir* /
 *undz* / *undz* in the plural. -/
-def yiddishStem (c : YCell) : String :=
-  if c.case = nom ∧ c.num = .sg then "ix"
-  else if c.case ≠ nom ∧ c.num = .pl then "undz"
+def yiddishStem (c : Fin 3 × LNum) : String :=
+  if c.1 = nom ∧ c.2 = .sg then "ix"
+  else if c.1 ≠ nom ∧ c.2 = .pl then "undz"
   else "m"
 
 -- fn. 25
@@ -412,16 +419,11 @@ theorem yiddish_stems :
 
 -- fn. 25: specified for plural alone, *undz* wrongly beats *m-* in the nominative plural
 theorem undz_needs_k1 :
-    RuleSet.realize [(⟨{.k0, .s0}, "ix"⟩ : SubsetRule (Finset K) String),
-        ⟨{.p0}, "undz"⟩, ⟨∅, "m"⟩] card (yiddish ⟨nom, .pl⟩) = some "undz" := by
+    RuleSet.realize [(⟨⊥, "m"⟩ : SubsetRule (Finset K × Finset LNum) String),
+        ⟨({.k0}, {.sg}), "ix"⟩, ⟨(∅, {.pl}), "undz"⟩] card (yiddish (nom, .pl)) = some "undz" := by
   decide
 
 /-! ### The shape the argument forces -/
-
-/-- The cases `S` are a natural class of a decomposition when some specification applies in exactly
-those cases. -/
-def IsNaturalClass (D : Paradigm 3 (Finset K)) (S : Finset (Fin 3)) : Prop :=
-  ∃ s : Finset K, ∀ c, s ⊆ D c ↔ c ∈ S
 
 /-- The shape of Weak Case Containment: the accusative properly inside the dative, nominative and
 accusative incomparable (p. 894), and nothing shared by nominative and dative outside the

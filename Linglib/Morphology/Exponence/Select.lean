@@ -246,6 +246,21 @@ theorem realize_realizes
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
 
+/-- Where every exponent realized under the key reversing `f` is `φ`, selection by `f` returns `φ`,
+whatever the order of the rule set. -/
+theorem realize_eq_of_forall_realizes (hne : ∃ r ∈ v, Applies r c)
+    (h : ∀ ψ, v.Realizes (OrderDual.toDual ∘ f) c ψ → ψ = φ) : v.realize f c = some φ := by
+  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr hne)
+  have hψ : v.realize f c = some (exponent r) := by rw [realize, hr, Option.map_some]
+  rw [hψ, h _ (realize_realizes (key := OrderDual.toDual ∘ f)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.1 h) hψ)]
+
+instance [DecidableEq R] [DecidableRel (· ≤ · : κ → κ → Prop)] :
+    Decidable (v.IsElsewhereWinner key c r) :=
+  decidable_of_iff (r ∈ v ∧ Applies r c ∧ ∀ s ∈ v, Applies s c → key s ≤ key r → key r ≤ key s)
+    ⟨fun ⟨h₁, h₂, h₃⟩ ↦ ⟨⟨h₁, h₂⟩, fun s hs hle ↦ h₃ s hs.1 hs.2 hle⟩,
+      fun h ↦ ⟨h.1.1, h.1.2, fun _ hs ha hle ↦ h.2 ⟨hs, ha⟩ hle⟩⟩
+
 /-! ### Pāṇinian Determinism -/
 
 /-- Some rule of `v` applicable at `c` is at least as specific as every rule applicable there, as

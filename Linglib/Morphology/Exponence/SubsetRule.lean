@@ -1,19 +1,20 @@
 module
 
 public import Linglib.Morphology.Exponence.Select
-public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Grade
 
 /-!
 # Rules of the Subset Principle
 
 A rule specified for a bundle of features applies in the contexts extending its bundle, the first
-clause of the Subset Principle. Bundles live in any ordered type, a privative decomposition of a
-paradigm's cells being a map into `Finset K`. Competition selects on a score strictly monotone in
-the specification, Halle's greatest number of features being `card`. Any such score
-[selects an Elsewhere winner](##realize_realizes), so counting refines Kiparsky's inclusion of
-contexts. Over a meet-semilattice with a least element, a triple $x, y, z$ escapes ABA under every
-antihomophonous rule set [exactly when](##forall_realize_eq_iff) $x \sqcap z \le y$ and $y$ lies
-below $x$ or $z$: $y$ sits on the path from $x$ down to $x \sqcap z$ and up to $z$.
+clause of the Subset Principle, so that where it applies is the principal filter of its bundle.
+Bundles live in any ordered type: a privative decomposition of a paradigm is a map into `Finset K`,
+and of a multidimensional paradigm a map into a product of such orders. Competition selects on a
+score strictly monotone in the specification, Halle's greatest number of features being the grade.
+Any such score [selects an Elsewhere winner](##realize_realizes), so counting refines Kiparsky's
+inclusion of contexts. Over a meet-semilattice with a least element, a triple $x, y, z$ escapes ABA
+under every antihomophonous rule set [exactly when](##forall_realize_eq_iff) $x \sqcap z \le y$ and
+$y$ lies below $x$ or $z$: $y$ sits on the path from $x$ down to $x \sqcap z$ and up to $z$.
 
 ## References
 
@@ -23,6 +24,25 @@ below $x$ or $z$: $y$ sits on the path from $x$ down to $x \sqcap z$ and up to $
 -/
 
 @[expose] public section
+
+/-- A product of `ℕ`-graded orders is graded by the sum of the grades, each covering step lying in
+one factor. `[UPSTREAM]` candidate for `Mathlib/Order/Grade.lean`. -/
+instance {α β : Type*} [PartialOrder α] [PartialOrder β] [GradeOrder ℕ α] [GradeOrder ℕ β] :
+    GradeOrder ℕ (α × β) where
+  grade p := grade ℕ p.1 + grade ℕ p.2
+  grade_strictMono p q h := by
+    obtain h | h := Prod.lt_iff.1 h
+    · exact add_lt_add_of_lt_of_le (grade_strictMono h.1) (grade_mono h.2)
+    · exact add_lt_add_of_le_of_lt (grade_mono h.1) (grade_strictMono h.2)
+  covBy_grade := by
+    rintro ⟨a₁, a₂⟩ ⟨b₁, b₂⟩ h
+    rw [Order.covBy_iff_add_one_eq]
+    show grade ℕ a₁ + grade ℕ a₂ + 1 = grade ℕ b₁ + grade ℕ b₂
+    obtain ⟨hc, rfl⟩ | ⟨hc, rfl⟩ := Prod.mk_covBy_mk_iff.1 h
+    · have := Order.covBy_iff_add_one_eq.1 (hc.grade ℕ)
+      omega
+    · have := Order.covBy_iff_add_one_eq.1 (hc.grade ℕ)
+      omega
 
 namespace Morphology.Exponence
 
@@ -74,6 +94,12 @@ incomparable specifications as well, which is where the two come apart. -/
 theorem realize_realizes (hg : StrictMono g) (h : v.realize (g ∘ features) c = some φ) :
     v.Realizes applySet c φ :=
   RuleSet.realize_realizes (fun _ _ _ _ h ↦ hg (applySet_ssubset_iff.1 h)) h
+
+/-- An antihomophonous rule set realizes a contiguous paradigm along the order of bundles, whatever
+the score. -/
+theorem isContiguous_realize {f : SubsetRule P E → α} (hv : v.Antihomophonous) :
+    IsContiguous (v.realize f) :=
+  RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ h hs ↦ le_trans hs h
 
 end Preorder
 
@@ -141,31 +167,33 @@ theorem forall_realize_eq_iff [Nontrivial E] (hg : StrictMono g) :
 
 end SemilatticeInf
 
-section Finset
+section Prod
 
-variable {K : Type*}
+variable {Q α : Type*} [Preorder P] [Preorder Q] [DecidableLE (P × Q)] [LinearOrder α]
+  {v : RuleSet (SubsetRule (P × Q) E)} {f : SubsetRule (P × Q) E → α}
+  {r s : SubsetRule (P × Q) E} {a b : P} {o : Q}
+
+/-- Where two cells differ in one dimension, one below the other, and have different winners, the
+winner of the larger is not below the smaller in that dimension, whatever the other dimensions and
+whatever the score: were it below, it would apply at the smaller cell, and selection would keep it
+there. -/
+theorem not_le_of_selectBy_ne (hab : a ≤ b) (hr : v.selectBy f (a, o) = some r)
+    (hs : v.selectBy f (b, o) = some s) (hne : r ≠ s) : ¬ s.features.1 ≤ a := fun h ↦
+  hne <| Option.some.inj <| hr.symm.trans <| RuleSet.selectBy_eq_some_of_applies
+    (fun _ _ ht ↦ le_trans ht (Prod.mk_le_mk.2 ⟨hab, le_rfl⟩)) hs
+    (Prod.mk_le_mk.2 ⟨h, (RuleSet.selectBy_applies hs : s.features ≤ (b, o)).2⟩)
+
+end Prod
+
+section Grade
 
 /-- The number of features a rule is specified for, the score of the competition in which "only
 the rule specified for the greatest number of features applies" ([christopoulos-zompi-2023]'s
-(1b), after [halle-1997]). -/
-abbrev card : SubsetRule (Finset K) E → ℕ := Finset.card ∘ features
+(1b), after [halle-1997]). It is the grade of the bundle: `Finset.card` over one dimension, and over
+several the sum across them. -/
+abbrev card [Preorder P] [GradeOrder ℕ P] : SubsetRule P E → ℕ := grade ℕ ∘ features
 
-variable [DecidableEq K] {α : Type*} [LinearOrder α] {f : SubsetRule (Finset K) E → α}
-  {v : RuleSet (SubsetRule (Finset K) E)} {r s : SubsetRule (Finset K) E} {a b : Finset K} {k : K}
-
-/-- Where a cell adds the one feature `k` to another and the two have different winners, the
-winner of the larger is specified for `k`, whatever the score: were it not, it would apply at the
-smaller, and selection would keep it there. -/
-theorem mem_features_of_selectBy_ne (hab : a ⊆ b) (hb : b ⊆ insert k a)
-    (hr : v.selectBy f a = some r) (hs : v.selectBy f b = some s) (hne : r ≠ s) :
-    k ∈ s.features := by
-  by_contra hk
-  have hsa : Applies s a := fun x hx ↦
-    (Finset.mem_insert.1 (hb (RuleSet.selectBy_applies hs hx))).resolve_left fun h ↦ hk (h ▸ hx)
-  exact hne <| Option.some.inj <| hr.symm.trans <|
-    RuleSet.selectBy_eq_some_of_applies (fun _ _ ht ↦ le_trans ht hab) hs hsa
-
-end Finset
+end Grade
 
 end SubsetRule
 

@@ -126,7 +126,7 @@ theorem realize_map_toSubsetRule (v : RuleSet (SpanRule n F)) (g : Fin n) :
     RuleSet.realize (v.map SpanRule.toSubsetRule) SubsetRule.card (Finset.Iic g) = realize v g := by
   rw [RuleSet.realize, RuleSet.selectBy_map (c := g) (f := SpanRule.threshold)
     (fun _ _ ↦ Finset.Iic_subset_Iic) fun _ _ _ _ ↦ by
-      simp [SpanRule.toSubsetRule, Fin.card_Iic], Option.map_map]
+      simp [SpanRule.toSubsetRule, Fin.card_Iic, Finset.grade_eq], Option.map_map]
   rfl
 
 end Morphology.Containment
