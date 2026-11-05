@@ -49,7 +49,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies", "Eval", "Lab"]
-RELATIONS = {"exact", "generalizes", "specializes", "variant", "missing"}
+RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
 HASH_VERSION = "v1"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 

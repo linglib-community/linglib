@@ -575,23 +575,26 @@ class ModulePage:
             if c["status"] not in ("checked", "relies", "stale") or not ck:
                 continue
             against = self.claim_name(c)
+            verb = "Checked against"
             if c["relation"] in RELATION:
                 against += (f' (<span class="rel" title="{esc(c["notes"])}">'
                             f'{RELATION[c["relation"]]}</span>)')
+            elif c["relation"] == "refutes":
+                verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">refuting</span>'
             day = datetime.date.fromisoformat(ck["date"])
             by = (f'by {link("https://github.com/" + ck["by"], esc(ck["by"]))} '
                   f'on {day.day} {day:%B} {day.year}')
             if c["status"] == "stale":
                 diff = f'{REPO}/compare/{ck["commit"]}...{self.sha or "main"}'
-                line = (f'Checked against {against} at {link(diff, esc(ck["commit"]))}; its '
+                line = (f'{verb} {against} at {link(diff, esc(ck["commit"]))}; its '
                         'statement has changed since.')
             elif c["status"] == "relies":
                 rest = [self.lib.claims[r] for r in c["blocking"] if r in self.lib.claims]
                 names = ", ".join(self.claim_name(r, c["source"]) for r in rest)
-                line = (f'Checked against {against} {by}, relying on {names}, which '
+                line = (f'{verb} {against} {by}, relying on {names}, which '
                         f'{"is" if len(rest) == 1 else "are"} not.')
             else:
-                line = f'Checked against {against} {by}.'
+                line = f'{verb} {against} {by}.'
             out += f'<p class="checked">{line}</p>'
         return out
 
