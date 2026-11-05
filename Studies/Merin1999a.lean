@@ -43,7 +43,8 @@ facie causal responsibility for its host (Corollary 16, Prediction 4).
 ## Implementation notes
 
 - Relevance statements are on `bayesFactor` in `ℝ≥0∞`: r > 0 is `1 < bayesFactor`, finitude of
-  relevance is `bayesFactor ≠ ⊤`, and Merin's sgn(r) is `compare (bayesFactor ctx e) 1`.
+  relevance is `bayesFactor ≠ ⊤`, and Merin's sgn(r) is `relevanceSign`, which is `0` at
+  contradictory evidence (fn. 24) where `bayesFactor` is `0 / 0 = 0`.
 - The earlier context i − k of Definition 13 is a second `Context` over the same issue; that it
   is the last one before D became presupposed is not modelled.
 - Theorem 6b's countermodels are counting priors on small world types.
@@ -169,10 +170,9 @@ theorem exists_negRelevant_symmDiff :
       IndepConfirmers ctx a b ∧ negRelevant ctx (a ∆ b) := by
   refine ⟨_, _, _, indepConfirmers₁, ?_⟩
   obtain ⟨h1, h2, -, -, -, -, -, -, h9, h10⟩ := ncard₁
-  rw [negRelevant_iff_toReal_lt_one (bayesFactor_count_ne_top
-      ⟨.off true false, by simp [Set.mem_symmDiff, World₁.a, World₁.b]⟩),
-    toReal_bayesFactor_count, h1, h2, h9, h10]
-  norm_num
+  rw [← relevanceSign_eq_neg_one_iff, relevanceSign_count_eq (topic := H₁) _ ⟨.issue, rfl⟩
+    ⟨.off true true, by simp⟩, h1, h2, h9, h10]
+  rfl
 
 /-- The worlds of the second countermodel: at `issue a`, where H holds, A holds iff `a` and B
 holds; at `off i b`, A holds iff `i = 0` and B iff `b`. -/
@@ -236,10 +236,9 @@ theorem exists_not_negRelevant_symmDiff :
       IndepConfirmers ctx a b ∧ ¬ negRelevant ctx (a ∆ b) := by
   refine ⟨_, _, _, indepConfirmers₂, ?_⟩
   obtain ⟨h1, h2, -, -, -, -, -, -, -, -, h11, h12⟩ := ncard₂
-  rw [negRelevant_iff_toReal_lt_one
-      (ne_top₂ ⟨.off 0 false, by simp [Set.mem_symmDiff, World₂.h, World₂.a, World₂.b]⟩),
-    toReal_bayesFactor_count, h1, h2, h11, h12]
-  norm_num
+  rw [← relevanceSign_eq_neg_one_iff, relevanceSign_count_eq (topic := H₂) _ ⟨.issue true, rfl⟩
+    ⟨.off 0 true, by simp [World₂.h]⟩, h1, h2, h11, h12]
+  decide
 
 /-- Independent finite confirmers need not license *A or B, if not indeed A*, since neither
 condition of Hypothesis 3 need hold (Prediction 1, Theorem 6b). -/
@@ -280,18 +279,19 @@ def EvenFelicitous (ctx : Context W) (a b : Set W) : Prop :=
 theorem not_butFelicitous_and_evenFelicitous (ctx : Context W) (a b : Set W) :
     ¬ (ButFelicitous ctx a b ∧ EvenFelicitous ctx a b) := by
   rintro ⟨⟨-, hb, -⟩, -, ha, he⟩
-  exact lt_irrefl _ ((ha.trans (OrderDual.toDual_lt_toDual.mp (he a rfl))).trans hb)
+  exact lt_irrefl _ ((ha.trans (OrderDual.toDual_lt_toDual.mp (he a rfl))).trans
+    hb.bayesFactor_lt_one)
 
 /-- Under issue-conditional independence, B is unexpected given A iff A and B are H-contrary
 (Theorem 8). -/
 theorem cond_lt_iff_hContrary (ctx : Context W) [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] {a b : Set W} (ham : MeasurableSet a) (hcip : CondIndepIssue ctx a b)
-    (ha0 : ctx.prior a ≠ 0) (hb0 : ctx.prior b ≠ 0) :
+    (ha0 : ctx.prior a ≠ 0) :
     ctx.prior[|a] b < ctx.prior b ↔ hContrary ctx a b := by
   have hH : ctx.prior ctx.topic ≠ 0 := Context.Nondegenerate.topic_ne_zero
   have hNH : ctx.prior ctx.topicᶜ ≠ 0 := Context.Nondegenerate.compl_ne_zero
-  rw [hContrary, posRelevant_iff_real_cross, negRelevant_iff_real_cross ctx hb0,
-    negRelevant_iff_real_cross ctx ha0, posRelevant_iff_real_cross]
+  rw [hContrary, posRelevant_iff_real_cross, negRelevant_iff_real_cross ctx,
+    negRelevant_iff_real_cross ctx, posRelevant_iff_real_cross]
   set μ := ctx.prior
   set H := ctx.topic
   have hHm : MeasurableSet H := ctx.topicMeasurable
@@ -362,11 +362,12 @@ theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b 
     · rw [cond_apply_self h0 (measure_ne_top _ _), mul_one, Set.inter_comm, cond_inter_self hbm]
 
 -- Theorem 10
-theorem negRelevant_defaultButCtx (μ : Measure W) {b : Set W} (hbm : MeasurableSet b) :
-    negRelevant (defaultButCtx μ b hbm) b := by
-  show μ[|bᶜ] b / μ[|bᶜᶜ] b < 1
-  rw [cond_apply hbm.compl, Set.compl_inter_self]
-  simp
+theorem negRelevant_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {b : Set W}
+    (hbm : MeasurableSet b) (hb : μ b ≠ 0) : negRelevant (defaultButCtx μ b hbm) b := by
+  show μ[b|bᶜ] < μ[b|bᶜᶜ]
+  rw [compl_compl, cond_apply_self hb (measure_ne_top _ _), cond_apply hbm.compl,
+    Set.compl_inter_self, measure_empty, mul_zero]
+  exact zero_lt_one
 
 -- Theorem 10
 theorem bayesFactor_lt_swapIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ]
@@ -401,8 +402,8 @@ theorem cond_lt_of_posRelevant_defaultButCtx (μ : Measure W) [IsProbabilityMeas
   have hbc : μ bᶜ ≠ 0 := fun h ↦ by
     simp [posRelevant, bayesFactor_def, cond_eq_zero_of_meas_eq_zero h] at hpos
   have : (defaultButCtx μ b hbm).Nondegenerate := ⟨hbc, by rwa [compl_compl]⟩
-  exact (cond_lt_iff_hContrary _ ham (condIndepIssue_defaultButCtx μ ham hbm) ha hb).mpr
-    (.inl ⟨hpos, negRelevant_defaultButCtx μ hbm⟩)
+  exact (cond_lt_iff_hContrary _ ham (condIndepIssue_defaultButCtx μ ham hbm) ha).mpr
+    (.inl ⟨hpos, negRelevant_defaultButCtx μ hbm hb⟩)
 
 -- Theorem 10, Fact 5, Theorem 9
 theorem bayesFactor_inter_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b : Set W}
@@ -423,10 +424,9 @@ def NonnegInstantialRelevance {E : Type*} (μ : Measure W) (Q : E → Set W) : P
 theorem not_butFelicitous_of_nonnegInstantialRelevance {E : Type*} (ctx : Context W)
     [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {Q : E → Set W}
     (hQ : NonnegInstantialRelevance ctx.prior Q) {i j : E} (hm : MeasurableSet (Q i))
-    (hcip : CondIndepIssue ctx (Q i) (Q j)) (hi : ctx.prior (Q i) ≠ 0)
-    (hj : ctx.prior (Q j) ≠ 0) :
+    (hcip : CondIndepIssue ctx (Q i) (Q j)) (hi : ctx.prior (Q i) ≠ 0) :
     ¬ ButFelicitous ctx (Q i) (Q j) := fun h ↦
-  (hQ i j).not_gt ((cond_lt_iff_hContrary ctx hm hcip hi hj).mpr (.inl ⟨h.1, h.2.1⟩))
+  (hQ i j).not_gt ((cond_lt_iff_hContrary ctx hm hcip hi).mpr (.inl ⟨h.1, h.2.1⟩))
 
 -- Corollary 11, Theorem 9
 theorem not_butFelicitous_defaultButCtx {E : Type*} (μ : Measure W) [IsProbabilityMeasure μ]
@@ -435,7 +435,7 @@ theorem not_butFelicitous_defaultButCtx {E : Type*} (μ : Measure W) [IsProbabil
     ¬ ButFelicitous (defaultButCtx μ (Q j) hmj) (Q i) (Q j) :=
   have : (defaultButCtx μ (Q j) hmj).Nondegenerate := ⟨hjc, by rwa [compl_compl]⟩
   not_butFelicitous_of_nonnegInstantialRelevance _ hQ hmi
-    (condIndepIssue_defaultButCtx μ hmi hmj) hi hj
+    (condIndepIssue_defaultButCtx μ hmi hmj) hi
 
 /-! ### *Also* -/
 
@@ -467,20 +467,25 @@ theorem IsPresupposed.bayesFactor_inter [IsProbabilityMeasure ctx.prior]
     measure_inter_conull (cond_absolutelyContinuous hc),
     measure_inter_conull (cond_absolutelyContinuous hc)]
 
+theorem IsPresupposed.cond_eq_one {μ : Measure W} [IsProbabilityMeasure μ] {s : Set W}
+    (h : IsPresupposed μ a) (ha : MeasurableSet a) (hs : MeasurableSet s) (h0 : μ s ≠ 0) :
+    μ[a|s] = 1 := by
+  rw [cond_apply hs, measure_inter_conull ((prob_compl_eq_zero_iff ha).mpr
+    ((isPresupposed_iff ha).mp h)), ENNReal.inv_mul_cancel h0 (measure_ne_top _ _)]
+
 theorem IsPresupposed.irrelevant [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate]
     (h : IsPresupposed ctx.prior a) (ha : MeasurableSet a) : irrelevant ctx a := by
-  have hc := (prob_compl_eq_zero_iff ha).mpr ((isPresupposed_iff ha).mp h)
-  have hm := ctx.topicMeasurable
-  rw [DTS.irrelevant, bayesFactor_def, cond_apply hm, cond_apply hm.compl, measure_inter_conull hc,
-    measure_inter_conull hc,
-    ENNReal.inv_mul_cancel Context.Nondegenerate.topic_ne_zero (measure_ne_top _ _),
-    ENNReal.inv_mul_cancel Context.Nondegenerate.compl_ne_zero (measure_ne_top _ _), div_one]
+  rw [DTS.irrelevant, h.cond_eq_one ha ctx.topicMeasurable Context.Nondegenerate.topic_ne_zero,
+    h.cond_eq_one ha ctx.topicMeasurable.compl Context.Nondegenerate.compl_ne_zero]
 
 -- Fact 17
 theorem IsPresupposed.bayesFactor_inter_eq_mul [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] (h : IsPresupposed ctx.prior a) (ha : MeasurableSet a) (b : Set W) :
     bayesFactor ctx (a ∩ b) = bayesFactor ctx a * bayesFactor ctx b := by
-  rw [h.bayesFactor_inter ha, h.irrelevant ha, one_mul]
+  rw [h.bayesFactor_inter ha, bayesFactor_def ctx a,
+    h.cond_eq_one ha ctx.topicMeasurable Context.Nondegenerate.topic_ne_zero,
+    h.cond_eq_one ha ctx.topicMeasurable.compl Context.Nondegenerate.compl_ne_zero, div_one,
+    one_mul]
 
 /-- Definition 13: D is topic-anaphorically salient for E in context `ctx` when E is relevant to
 the issue, D is presupposed, and in an earlier context `ctx₀` on the same issue, where D was not
@@ -494,14 +499,12 @@ structure TopicAnaphoricallySalient (ctx₀ ctx : Context W) (d e : Set W) : Pro
 
 /-- Hypothesis 8, *(and) also*: also(b, B) is felicitous only if Ba is topic-anaphorically
 salient for Bb and Ba had, when it was relevant, the relevance sign Bb has now. -/
-def AlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
-  TopicAnaphoricallySalient ctx₀ ctx ba bb ∧
-    compare (bayesFactor ctx₀ ba) 1 = compare (bayesFactor ctx bb) 1
+noncomputable def AlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
+  TopicAnaphoricallySalient ctx₀ ctx ba bb ∧ relevanceSign ctx₀ ba = relevanceSign ctx bb
 
 /-- Hypothesis 8, *but also*: the signs are opposite. -/
-def ButAlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
-  TopicAnaphoricallySalient ctx₀ ctx ba bb ∧
-    compare (bayesFactor ctx₀ ba) 1 = (compare (bayesFactor ctx bb) 1).swap
+noncomputable def ButAlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
+  TopicAnaphoricallySalient ctx₀ ctx ba bb ∧ relevanceSign ctx₀ ba = -relevanceSign ctx bb
 
 -- Corollary 15
 theorem TopicAnaphoricallySalient.ne {E : Type*} {ctx₀ : Context W}
