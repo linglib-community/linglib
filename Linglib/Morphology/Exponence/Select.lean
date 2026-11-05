@@ -153,17 +153,20 @@ theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s 
     (hr : v.selectBy f c' = none) : v.selectBy f c = none := by
   rw [selectBy_eq_none_iff, applicable_eq_filter h, selectBy_eq_none_iff.mp hr, List.filter_nil]
 
+/-- An antihomophonous rule set realizing one exponent at `c₁` and `c₃` realizes it at `c₂`, if `c₂`
+takes in the rules `c₁` and `c₃` share and its rules all reach `c₃`. The rules of `c₁` need not all
+reach `c₂`. -/
 theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
-    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
+    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
     (h : v.realize f c₁ = v.realize f c₃) : v.realize f c₂ = v.realize f c₁ := by
   rcases h₃ : v.selectBy f c₃ with - | r
-  · rw [realize, realize, selectBy_eq_none_of_applies h₂ h₃,
-      selectBy_eq_none_of_applies h₁ (selectBy_eq_none_of_applies h₂ h₃)]
+  · rw [h, realize, realize, h₃, selectBy_eq_none_of_applies h₂ h₃]
   · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, v.selectBy f c₁ = some r₁ ∧ exponent r₁ = exponent r := by
       simpa [realize, h₃] using h
     obtain rfl := hv (selectBy_mem hr₁) (selectBy_mem h₃) he
-    rw [realize, realize, hr₁,
-      selectBy_eq_some_of_applies h₂ h₃ (h₁ _ (selectBy_mem hr₁) (selectBy_applies hr₁))]
+    rw [realize, realize, hr₁, selectBy_eq_some_of_applies h₂ h₃
+      (h₁ _ (selectBy_mem hr₁) (selectBy_applies hr₁) (selectBy_applies h₃))]
 
 section Contiguity
 
@@ -173,13 +176,13 @@ variable [Preorder Ctx]
 theorem isContiguous_realize_of_monotone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realize f) :=
   fun _ _ _ hij hjk he ↦
-    (realize_eq_of_applies hv (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
+    (realize_eq_of_applies hv (fun s hs hi _ ↦ h s hs hij hi) (fun s hs ↦ h s hs hjk) he).symm
 
 /-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
 theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realize f) :=
   fun _ _ _ hij hjk he ↦ he.trans
-    (realize_eq_of_applies hv (fun s hs ↦ h s hs hjk) (fun s hs ↦ h s hs hij) he.symm).symm
+    (realize_eq_of_applies hv (fun s hs hk _ ↦ h s hs hjk hk) (fun s hs ↦ h s hs hij) he.symm).symm
 
 end Contiguity
 
@@ -407,17 +410,17 @@ theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Appli
 
 theorem realizeMinimal_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
     (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c₂ s})
-    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
+    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
     (h : v.realizeMinimal key c₁ = v.realizeMinimal key c₃) :
     v.realizeMinimal key c₂ = v.realizeMinimal key c₁ := by
   rcases h₃ : v.selectMinimal key c₃ with - | r
-  · rw [realizeMinimal, realizeMinimal, selectMinimal_eq_none_of_applies h₂ h₃,
-      selectMinimal_eq_none_of_applies h₁ (selectMinimal_eq_none_of_applies h₂ h₃)]
+  · rw [h, realizeMinimal, realizeMinimal, h₃, selectMinimal_eq_none_of_applies h₂ h₃]
   · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, v.selectMinimal key c₁ = some r₁ ∧ exponent r₁ = exponent r := by
       simpa [realizeMinimal, h₃] using h
     obtain rfl := hv (selectMinimal_mem hr₁) (selectMinimal_mem h₃) he
     rw [realizeMinimal, realizeMinimal, hr₁, selectMinimal_eq_some_of_applies h₂ hc h₃
-      (h₁ _ (selectMinimal_mem hr₁) (selectMinimal_applies hr₁))]
+      (h₁ _ (selectMinimal_mem hr₁) (selectMinimal_applies hr₁) (selectMinimal_applies h₃))]
 
 section Contiguity
 
@@ -429,13 +432,13 @@ theorem isContiguous_realizeMinimal_of_monotone (hv : v.Antihomophonous)
     (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ (realizeMinimal_eq_of_applies hv (hc _)
-    (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
+    (fun s hs hi _ ↦ h s hs hij hi) (fun s hs ↦ h s hs hjk) he).symm
 
 theorem isContiguous_realizeMinimal_of_antitone (hv : v.Antihomophonous)
     (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ he.trans (realizeMinimal_eq_of_applies hv (hc _)
-    (fun s hs ↦ h s hs hjk) (fun s hs ↦ h s hs hij) he.symm).symm
+    (fun s hs hk _ ↦ h s hs hjk hk) (fun s hs ↦ h s hs hij) he.symm).symm
 
 end Contiguity
 

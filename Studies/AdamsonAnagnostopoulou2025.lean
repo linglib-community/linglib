@@ -296,7 +296,7 @@ theorem no_aba (v : RuleSet (VocabularyItem Node Value)) (hv : v.Antihomophonous
     (hn : v.Realizes applySet (Neighborhood.ofBundle {.cls}) φ)
     (hf : v.Realizes applySet (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
     v.Realizes applySet (Neighborhood.ofBundle {.masc, .cls}) φ :=
-  RuleSet.Realizes.of_realizes hv (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide))
+  RuleSet.Realizes.of_realizes hv (fun _ _ h _ ↦ VocabularyItem.applies_mono h (by decide))
     (fun _ _ h ↦ VocabularyItem.applies_mono h (by decide)) hn hf
 
 end Greek

@@ -28,14 +28,15 @@ the move to violable constraints (`unidimensional_ABA_excluded`), and only becau
 specifications respect the feature entailments
 (`illformed_spec_breaks_unidimensional_ABA`); and with `Dep` outranking `Max` the system is the
 Subset Principle with feature counting ([wolf-2008], [halle-1997]) whenever some candidate is
-subset-applicable (`depTop_eq_subsetPrinciple`).
+subset-applicable (`depTop_eq_subsetPrinciple`), under which
+[both Russian-doll triples obey *ABA](##subsetPrinciple_russianDoll), too strong a generalization.
 
 ## Implementation notes
 
 * Rankings of the four dimension-relativized constraints are enumerated rather than generated
   by `List.permutations`, which does not reduce in the kernel.
-* The exhaustive theorems range over two-candidate vocabularies on the paradigm's feature
-  space; the dissertation's argument is vocabulary-general.
+* `checkerboard_excluded` and `unidimensional_ABA_excluded` range over two-candidate vocabularies
+  on the paradigm's feature space; the dissertation's argument is vocabulary-general.
 
 ## TODO
 
@@ -60,7 +61,8 @@ subset-applicable (`depTop_eq_subsetPrinciple`).
 
 namespace Zompi2023
 
-open Morphology Morphology.Decomposition ChristopoulosZompi2023
+open Morphology.Exponence ChristopoulosZompi2023
+open SubsetRule (card)
 
 /- The `decide` proofs below range over `featSpace.powerset` and lists of feature sets. The
 substrate puts `Fintype (Finset K)` in scope, through which `decide` would enumerate every set
@@ -91,10 +93,9 @@ def zdecomp (c : ZCell) : Finset K :=
 
 variable {F : Type*}
 
-/-- A candidate: the Subset-Principle study's rule carrier, re-read as an OT
-candidate — the spec may now be unfaithful to the context in both
-directions. -/
-abbrev Cand (F : Type*) := Rule ZCell zdecomp F
+/-- A candidate: the Subset Principle's rule, re-read as an OT candidate, whose features may now be
+unfaithful to the context in both directions. -/
+abbrev Cand (F : Type*) := SubsetRule (Finset K) F
 
 /-- The constraint inventory: `Max`/`Dep` relativized to a dimension ((162)),
 plus the unrelativized globals of (161) used for the corner rankings. -/
@@ -105,10 +106,10 @@ inductive Con | maxD (d : Dim) | depD (d : Dim) | maxG | depG
 `Dep`-type stars for spurious features the spec adds, counted on one
 dimension or globally. -/
 def viol : Con → ZCell → Cand F → ℕ
-  | .maxD d, c, r => ((zdecomp c \ r.feats).filter (fun k ↦ dimOf k = d)).card
-  | .depD d, c, r => ((r.feats \ zdecomp c).filter (fun k ↦ dimOf k = d)).card
-  | .maxG, c, r => (zdecomp c \ r.feats).card
-  | .depG, c, r => (r.feats \ zdecomp c).card
+  | .maxD d, c, r => ((zdecomp c \ r.features).filter (fun k ↦ dimOf k = d)).card
+  | .depD d, c, r => ((r.features \ zdecomp c).filter (fun k ↦ dimOf k = d)).card
+  | .maxG, c, r => (zdecomp c \ r.features).card
+  | .depG, c, r => (r.features \ zdecomp c).card
 
 /-- One Eval cut: keep the candidates with fewest violations of `C`. -/
 def cut (c : ZCell) (cands : List (Cand F)) (C : Con) : List (Cand F) :=
@@ -317,14 +318,68 @@ theorem illformed_spec_breaks_unidimensional_ABA :
 
 /-! ### The corner rankings: Wolf's mimicry -/
 
-/-- Whenever some candidate is subset-applicable, the ranking `Dep ≫ Max` selects the Subset
-Principle winner ([wolf-2008] on [halle-1997]; §4.1.1; dual to [starke-2009]). -/
-theorem depTop_eq_subsetPrinciple :
-    ∀ fa ∈ featSpace.powerset, ∀ fb ∈ featSpace.powerset, ∀ c : ZCell,
-      ∀ r ∈ [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩],
-      (fa ⊆ zdecomp c ∨ fb ⊆ zdecomp c) →
-      Wins [.depG, .maxG] [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] c r →
-      pattern [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] c = some r.exponent := by
-  decide
+/-- Under the Subset Principle both Russian-doll triples from the nominative singular to the
+accusative plural obey *ABA, too strong a generalization, since East Frisian and Malayalam each
+break one of them (§4.1.1). -/
+theorem subsetPrinciple_russianDoll {v : RuleSet (Cand F)} (hv : v.Antihomophonous)
+    (h : v.realize card (zdecomp ⟨.nom, .sg⟩) =
+      v.realize card (zdecomp ⟨.acc, .pl⟩)) :
+    v.realize card (zdecomp ⟨.acc, .sg⟩) =
+        v.realize card (zdecomp ⟨.nom, .sg⟩) ∧
+      v.realize card (zdecomp ⟨.nom, .pl⟩) =
+        v.realize card (zdecomp ⟨.nom, .sg⟩) :=
+  ⟨SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide) h,
+    SubsetRule.realize_eq_of_inf_le_of_le hv (by decide) (by decide) h⟩
+
+private theorem depG_eq_zero_iff {c : ZCell} {r : Cand F} :
+    viol .depG c r = 0 ↔ Applies r (zdecomp c) := by
+  simp [viol, Finset.sdiff_eq_empty_iff_subset]
+
+private theorem maxG_le_iff {c : ZCell} {r s : Cand F} (hr : Applies r (zdecomp c))
+    (hs : Applies s (zdecomp c)) :
+    viol .maxG c r ≤ viol .maxG c s ↔ s.features.card ≤ r.features.card := by
+  have hr' : r.features ⊆ zdecomp c := hr
+  have hs' : s.features ⊆ zdecomp c := hs
+  have h₁ := Finset.card_sdiff_add_card_eq_card hr'
+  have h₂ := Finset.card_sdiff_add_card_eq_card hs'
+  simp only [viol]
+  omega
+
+-- [wolf-2008] [halle-1997]
+theorem mem_eval_depG_maxG_iff {v : List (Cand F)} {c : ZCell} {r : Cand F}
+    (hv : ∃ s ∈ v, Applies s (zdecomp c)) :
+    r ∈ eval [.depG, .maxG] v c ↔ r ∈ v ∧ Applies r (zdecomp c) ∧
+      ∀ s ∈ v, Applies s (zdecomp c) → s.features.card ≤ r.features.card := by
+  simp only [mem_eval_iff, rankedViols_cons, rankedViols_nil, List.cons_le_cons_iff', le_refl,
+    and_true, ← le_iff_lt_or_eq]
+  refine and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun ⟨hr, hmax⟩ s hs ↦ ?_⟩
+  · obtain ⟨s₀, hs₀, ha₀⟩ := hv
+    have hr : Applies r (zdecomp c) := depG_eq_zero_iff.1 <| by
+      have := depG_eq_zero_iff.2 ha₀
+      rcases h s₀ hs₀ with h | h <;> omega
+    refine ⟨hr, fun s hs ha ↦ ?_⟩
+    have hd := (depG_eq_zero_iff.2 hr).trans (depG_eq_zero_iff.2 ha).symm
+    obtain h | h := h s hs
+    · omega
+    · exact (maxG_le_iff hr ha).1 h.2
+  · by_cases ha : Applies s (zdecomp c)
+    · exact .inr ⟨(depG_eq_zero_iff.2 hr).trans (depG_eq_zero_iff.2 ha).symm,
+        (maxG_le_iff hr ha).2 (hmax s hs ha)⟩
+    · have := depG_eq_zero_iff.2 hr
+      have := mt (depG_eq_zero_iff (r := s) (c := c)).1 ha
+      exact .inl (by omega)
+
+/-- Whenever some candidate is subset-applicable, the unique survivor of the ranking `Dep ≫ Max`
+is what the Subset Principle with feature counting inserts ([wolf-2008] on [halle-1997]; dual to
+[starke-2009]). -/
+theorem depTop_eq_subsetPrinciple {v : List (Cand F)} {c : ZCell} {r : Cand F}
+    (hv : ∃ s ∈ v, Applies s (zdecomp c)) (h : Wins [.depG, .maxG] v c r) :
+    RuleSet.realize v card (zdecomp c) = some r.exponent := by
+  obtain ⟨hr, ha, hmax⟩ := (mem_eval_depG_maxG_iff hv).1 (show r ∈ eval _ v c from h ▸ by simp)
+  refine RuleSet.realize_eq_of_forall_le hr ha hmax fun s hs hsa hcard ↦ ?_
+  have hmem : s ∈ eval [.depG, .maxG] v c := (mem_eval_depG_maxG_iff hv).2 ⟨hs, hsa, fun t ht hta ↦
+    (hmax t ht hta).trans_eq hcard.symm⟩
+  rw [show eval [.depG, .maxG] v c = [r] from h, List.mem_singleton] at hmem
+  rw [hmem]
 
 end Zompi2023

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Exponence.Containment.Defs
-public import Linglib.Morphology.Exponence.Decomposition
+public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Exponence.Select
 public import Linglib.Morphology.Paradigm.Basic
 public import Mathlib.Order.Interval.Finset.Fin
@@ -13,14 +13,14 @@ This file defines the realization of a rule set over a containment hierarchy und
 reading as the shared core's score selection. Elsewhere insertion selects the applicable rule of
 greatest threshold, the most specific; Superset spellout selects the matching entry of least
 span, Minimize Junk. Both realize Elsewhere winners. Elsewhere insertion is the chain instance of
-feature-decomposition exponence, reading a rule as the initial segment of grades up to its
-threshold.
+the Subset Principle with feature counting, reading a rule as the initial segment of grades up to
+its threshold.
 
 ## Main definitions
 
 * `realize`: Elsewhere insertion.
 * `spellout`: Superset spellout.
-* `SpanRule.toDecomposition`: a rule as a feature-decomposition rule over initial segments.
+* `SpanRule.toSubsetRule`: a rule as a rule of the Subset Principle over initial segments.
 
 ## Main results
 
@@ -29,7 +29,7 @@ threshold.
   applies at.
 * `spellout_eq_none_of_le`: spellout gaps propagate upward.
 * `spellout_eq_some_of_filter_of_le`: the loss of entries extends a form downward only.
-* `pattern_toDecomposition`: Elsewhere insertion is decomposition exponence over the chain.
+* `realize_map_toSubsetRule`: Elsewhere insertion is feature counting over the chain.
 
 ## References
 
@@ -112,21 +112,21 @@ end Spellout
 
 /-! ### The chain decomposition
 
-Feature-decomposition exponence (`Exponence/Decomposition.lean`) over the decomposition of each
-grade into the initial segment below it: a rule specified for the grades up to its threshold
-applies where its threshold does, and feature counting maximizes the threshold. -/
+The Subset Principle with feature counting over the decomposition of each grade into the initial
+segment below it: a rule specified for the grades up to its threshold applies where its threshold
+does, and counting maximizes the threshold. -/
 
-/-- A rule as a feature-decomposition rule specified for the grades up to its threshold. -/
-def SpanRule.toDecomposition (it : SpanRule n F) : Decomposition.Rule (Fin n) Finset.Iic F :=
+/-- A rule as a rule of the Subset Principle specified for the grades up to its threshold. -/
+def SpanRule.toSubsetRule (it : SpanRule n F) : SubsetRule (Finset (Fin n)) F :=
   ⟨Finset.Iic it.threshold, it.exponent⟩
 
-/-- Elsewhere insertion is feature-decomposition exponence over the chain of initial segments. -/
-theorem pattern_toDecomposition (v : RuleSet (SpanRule n F)) :
-    Decomposition.pattern (v.map SpanRule.toDecomposition) = realize v := by
-  funext g
-  rw [Decomposition.pattern, RuleSet.selectBy_map (c := g) (f := SpanRule.threshold)
+/-- Elsewhere insertion is the Subset Principle with feature counting over the chain of initial
+segments. -/
+theorem realize_map_toSubsetRule (v : RuleSet (SpanRule n F)) (g : Fin n) :
+    RuleSet.realize (v.map SpanRule.toSubsetRule) SubsetRule.card (Finset.Iic g) = realize v g := by
+  rw [RuleSet.realize, RuleSet.selectBy_map (c := g) (f := SpanRule.threshold)
     (fun _ _ ↦ Finset.Iic_subset_Iic) fun _ _ _ _ ↦ by
-      simp [SpanRule.toDecomposition, Fin.card_Iic], Option.map_map]
+      simp [SpanRule.toSubsetRule, SubsetRule.card, Fin.card_Iic], Option.map_map]
   rfl
 
 end Morphology.Containment
