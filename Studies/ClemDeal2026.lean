@@ -32,8 +32,10 @@ forward hierarchy](##directionality).
 
 ## Implementation notes
 
-* Items (36a) and (36c) tie in size on a first person, who bears both [SPKR] and [PART]; the order
-  of `objectItems` resolves the tie, and the inclusive items, absent from (36), are not encoded.
+* (36) writes [SPKR] alone, but in the geometry behind the paper's interaction specifications [SPKR]
+  entails [PART], so `objectItems` gives it both. (36a) then outranks (36c) on a first person by
+  size, and scansion reads the items by specificity, `objectItems_ranked`. The inclusive items,
+  absent from (36), are not encoded.
 * `objectAgreement` states v after Kinyalolo's Constraint (35) has removed the subject's features;
   the impoverishment itself is not encoded.
 * The rows of (42), (45), (46) and (49) are read with the object positions of Shawi, as note 38
@@ -294,11 +296,16 @@ def caseItem (e : String) : VocabularyItem Feature String :=
 /-- The Shawi ergative (34). -/
 def ri : VocabularyItem Feature String := caseItem Kawapanan.Shawi.ergativeMarker
 
-/-- The Shawi object agreement items (36), each with [v], in scansion order. -/
+/-- The Shawi object agreement items (36), each with [v] and [SPKR] with the [PART] it entails, in
+scansion order. -/
 def objectItems : List (VocabularyItem Feature String) :=
-  [{.person .speaker, .aug, .head .v} ⟷ "-kui", {.person .speaker, .head .v} ⟷ "-ku",
+  [{.person .speaker, .person .participant, .aug, .head .v} ⟷ "-kui",
+    {.person .speaker, .person .participant, .head .v} ⟷ "-ku",
     {.person .participant, .aug, .head .v} ⟷ "-((n)ke)ma'",
     {.person .participant, .head .v} ⟷ "-(n)ken"]
+
+theorem objectItems_ranked : objectItems.Pairwise fun i j ↦ j.specificity ≤ i.specificity := by
+  decide
 
 /-- The dependent-case system of a language: its probe, the head of the probe, and the vocabulary
 that spells out flags, in scansion order (table 6). -/
