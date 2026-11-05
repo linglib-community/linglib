@@ -288,8 +288,10 @@ theorem exertingForce_not_all_pushPull :
       v ∈ LevinClass.members .throw := by
   decide +kernel
 
-/-- A verb outside the paper's lists is unacceptable in the intransitive resultative (16d), contrary
-to neo-constructional approaches (footnote 7). -/
+/-- Some intransitive resultative with a verb outside the paper's lists is unacceptable, as *The tub
+scrubbed clean* (16d), whose adjective is also outside the paper's set. Footnote 7 says
+neo-constructional approaches, which expect any verb in all resultative patterns, would need to
+explain why such resultatives are not more pervasive. -/
 theorem exists_unacceptable_intransitive_resultative :
     ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
       d.judgment ≠ .acceptable := by
