@@ -134,12 +134,12 @@ theorem interpretable_iff (M : Model T) (g : Assignment (NonemptyInterval T)) (l
 /-- A logical form is true in a model when it composes to a true truth value, its free
 variables denoting the speech time, as an unbound tense variable does (12). -/
 def Model.Holds (M : Model T) (lf : LF) : Prop :=
-  valueAt (M := Id) .t False (interp M.lex (fun _ ↦ M.speechTime) lf)
+  valueAt .t False (interp M.lex (fun _ ↦ M.speechTime) lf)
 
 /-- The extension of a logical form in a model is the set of times it composes to, its free
 variables denoting the speech time. -/
 def Model.extension (M : Model T) (lf : LF) : NonemptyInterval T → Prop :=
-  valueAt (M := Id) (.e ⇒ .t) (fun _ ↦ False) (interp M.lex (fun _ ↦ M.speechTime) lf)
+  valueAt (.e ⇒ .t) (fun _ ↦ False) (interp M.lex (fun _ ↦ M.speechTime) lf)
 
 /-! ### Before and after -/
 
