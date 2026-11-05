@@ -2,7 +2,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.Probability.Independence.Basic
+public import Linglib.Core.Probability.Independence.Basic
 
 /-!
 # Actual causal strength
@@ -175,9 +175,9 @@ theorem measure_pi_compl_cause_singleton (X : ι) :
     Measure.pi ν (cause v {X})ᶜ = ν X {!v X} := by
   rw [compl_cause_singleton, measure_pi_cause, Finset.prod_singleton]
 
-theorem measure_pi_inter_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn (· ∈ A) S)
-    (hB : DependsOn (· ∈ B) T) (h : Disjoint S T) :
-    Measure.pi ν (A ∩ B) = Measure.pi ν A * Measure.pi ν B := by
+/-- Under a product measure, events on disjoint sets of variables are independent. -/
+theorem indepSet_pi_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn (· ∈ A) S)
+    (hB : DependsOn (· ∈ B) T) (h : Disjoint S T) : IndepSet A B (Measure.pi ν) := by
   have hind := (iIndepFun_pi (μ := ν) (X := fun _ ↦ id) fun _ ↦ aemeasurable_id).indepFun_finset
     S T h fun _ ↦ measurable_pi_apply _
   have key : ∀ {C : Set (ι → Bool)} {U : Finset ι}, DependsOn (· ∈ C) U →
@@ -187,17 +187,16 @@ theorem measure_pi_inter_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn 
     refine ⟨fun hw ↦ ⟨w, hw, rfl⟩, fun ⟨w', hw', heq⟩ ↦ ?_⟩
     have : (w' ∈ C) = (w ∈ C) := hC fun i hi ↦ congrFun heq ⟨i, hi⟩
     exact this ▸ hw'
-  rw [key hA, key hB]
+  rw [key hA, key hB, indepSet_iff_measure_inter_eq_mul .of_discrete .of_discrete _]
   exact hind.measure_inter_preimage_eq_mul _ _ .of_discrete .of_discrete
 
 variable [DecidableEq ι]
 
-theorem measure_pi_cause_singleton_inter {X : ι} {B : Set (ι → Bool)}
+theorem indepSet_pi_cause_singleton {X : ι} {B : Set (ι → Bool)}
     (hB : ∀ w b, Function.update w X b ∈ B ↔ w ∈ B) :
-    Measure.pi ν (cause v {X} ∩ B) = ν X {v X} * Measure.pi ν B := by
-  refine (measure_pi_inter_of_dependsOn (T := {X}ᶜ) dependsOn_cause (fun w w' h ↦ ?_)
-    (Finset.disjoint_singleton_left.2 (by simp))).trans (by rw [measure_pi_cause,
-      Finset.prod_singleton])
+    IndepSet (cause v {X}) B (Measure.pi ν) := by
+  refine indepSet_pi_of_dependsOn (T := {X}ᶜ) dependsOn_cause (fun w w' h ↦ ?_)
+    (Finset.disjoint_singleton_left.2 (by simp))
   have : w' = Function.update w X (w' X) := by
     funext i
     by_cases hi : i = X
@@ -206,6 +205,12 @@ theorem measure_pi_cause_singleton_inter {X : ι} {B : Set (ι → Bool)}
   show (w ∈ B) = (w' ∈ B)
   rw [this]
   exact propext (hB w _).symm
+
+theorem measure_pi_cause_singleton_inter {X : ι} {B : Set (ι → Bool)}
+    (hB : ∀ w b, Function.update w X b ∈ B ↔ w ∈ B) :
+    Measure.pi ν (cause v {X} ∩ B) = ν X {v X} * Measure.pi ν B := by
+  rw [(indepSet_pi_cause_singleton hB).measure_inter_eq_mul, measure_pi_cause,
+    Finset.prod_singleton]
 
 omit [Fintype ι] in
 theorem update_mem_cause_iff {X : ι} (hX : X ∉ S) (w : ι → Bool) (b : Bool) :
@@ -261,11 +266,9 @@ theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠
     rw [cause_inter_cause_sdiff hST]
   have hdep : DependsOn (· ∈ (cause w₀ S)ᶜ) S := fun _ _ h ↦ by
     simp only [mem_compl_iff, dependsOn_cause h]
-  rw [score, mul_necessity, hnec, sufficiency, hcond, hsuf, cond_apply .of_discrete,
-    measure_pi_inter_of_dependsOn hdep dependsOn_cause Finset.disjoint_sdiff,
-    ← mul_assoc (Measure.pi ν (cause w₀ S)ᶜ)⁻¹, ENNReal.inv_mul_cancel hc (measure_ne_top _ _),
-    one_mul, hT, measure_pi_inter_of_dependsOn dependsOn_cause dependsOn_cause
-      Finset.disjoint_sdiff, add_comm]
+  rw [score, mul_necessity, hnec, sufficiency, hcond, hsuf, (indepSet_pi_of_dependsOn hdep
+    dependsOn_cause Finset.disjoint_sdiff).cond_apply .of_discrete hc, hT, (indepSet_pi_of_dependsOn dependsOn_cause dependsOn_cause
+      Finset.disjoint_sdiff).measure_inter_eq_mul, add_comm]
 
 theorem score_pi_cause_lt_iff {S' : Finset ι} (hS : S ⊆ T) (hS' : S' ⊆ T)
     (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) (hc' : Measure.pi ν (cause w₀ S')ᶜ ≠ 0) :

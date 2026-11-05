@@ -347,19 +347,10 @@ abbrev defaultButCtx (μ : Measure W) (b : Set W) (hb : MeasurableSet b) : Conte
   ⟨bᶜ, hb.compl, μ⟩
 
 -- Theorem 9
-theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b : Set W}
-    (ham : MeasurableSet a) (hbm : MeasurableSet b) :
-    CondIndepIssue (defaultButCtx μ b hbm) a b := by
-  refine (condIndepIssue_iff _ ham hbm).mpr ⟨?_, ?_⟩
-  · show μ[|bᶜ] (a ∩ b) = μ[|bᶜ] a * μ[|bᶜ] b
-    rw [cond_apply hbm.compl, cond_apply hbm.compl, cond_apply hbm.compl,
-      Set.inter_comm a b, ← Set.inter_assoc, Set.compl_inter_self, Set.empty_inter]
-    simp
-  · show μ[|bᶜᶜ] (a ∩ b) = μ[|bᶜᶜ] a * μ[|bᶜᶜ] b
-    rw [compl_compl]
-    rcases eq_or_ne (μ b) 0 with h0 | h0
-    · simp [cond_eq_zero_of_meas_eq_zero h0]
-    · rw [cond_apply_self h0 (measure_ne_top _ _), mul_one, Set.inter_comm, cond_inter_self hbm]
+theorem condIndepIssue_defaultButCtx (μ : Measure W) {a b : Set W} (ham : MeasurableSet a)
+    (hbm : MeasurableSet b) : CondIndepIssue (defaultButCtx μ b hbm) a b
+  | true => indepSet_of_measure_eq_zero_right ham hbm (by simp [cond_apply hbm.compl])
+  | false => indepSet_of_measure_compl_eq_zero_right ham hbm (by simp [cond_apply hbm])
 
 -- Theorem 10
 theorem negRelevant_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {b : Set W}

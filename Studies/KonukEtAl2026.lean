@@ -136,8 +136,8 @@ theorem causalStrength_cause_lt_of_ssubset (hs : s < 1) (hp₀ : ∀ i, 0 < p i)
     (Finset.sdiff_nonempty.2 h.not_subset)
   unfold causalStrength sampling at *
   rw [score_pi_cause_lt_iff (h.subset.trans hS') hS' (hc hS) (hc (hS.mono h.subset)),
-    ← cause_inter_cause_sdiff h.subset, measure_pi_inter_of_dependsOn dependsOn_cause
-      dependsOn_cause Finset.disjoint_sdiff]
+    ← cause_inter_cause_sdiff h.subset, (indepSet_pi_of_dependsOn dependsOn_cause
+      dependsOn_cause Finset.disjoint_sdiff).measure_inter_eq_mul]
   simpa using (ENNReal.mul_lt_mul_iff_right hpos (measure_ne_top _ _)).2 hlt
 
 end Sampling
@@ -407,8 +407,9 @@ theorem sufficiency_singleton_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (
   rw [sufficiency_singleton (by rwa [hX]), hX, Bool.not_true,
     preimage_update_true_win hrule hXY hXR,
     preimage_update_false_win hrule hXR, union_sdiff_right, sdiff_eq,
-    measure_pi_inter_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
-      simp only [mem_compl_iff, dependsOn_cause h]) (Finset.disjoint_singleton_left.2 hYR),
+    (indepSet_pi_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
+      simp only [mem_compl_iff, dependsOn_cause h])
+      (Finset.disjoint_singleton_left.2 hYR)).measure_inter_eq_mul,
     measure_pi_cause, Finset.prod_singleton, ENNReal.mul_div_cancel_right hR (measure_ne_top _ _)]
 
 theorem sufficiency_singleton_compl_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
@@ -419,8 +420,9 @@ theorem sufficiency_singleton_compl_win (hrule : rule = {{X, Y}, R}) (hXY : X �
   rw [sufficiency_singleton (by rwa [hX]), hX, Bool.not_false, preimage_compl, preimage_compl,
     preimage_update_true_win hrule hXY hXR, preimage_update_false_win hrule hXR, compl_compl,
     sdiff_eq, compl_compl, inter_union_distrib_left, compl_inter_self, union_empty, inter_comm,
-    measure_pi_inter_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
-      simp only [mem_compl_iff, dependsOn_cause h]) (Finset.disjoint_singleton_left.2 hYR),
+    (indepSet_pi_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
+      simp only [mem_compl_iff, dependsOn_cause h])
+      (Finset.disjoint_singleton_left.2 hYR)).measure_inter_eq_mul,
     measure_pi_cause, Finset.prod_singleton]
 
 end TwoConditions
@@ -603,15 +605,9 @@ theorem causalStrength_singleton_compl_win_toReal (hs : s < 1) (X : Urn₂) :
   have hK : μ.real (cause (fun _ ↦ true) (otherColor X)) = K := measureReal_pi_cause
   have hYK : μ.real (cause (fun _ ↦ true) {partner X} ∪ cause (fun _ ↦ true) (otherColor X)) =
       q (partner X) + K - q (partner X) * K := by
-    have := measureReal_union_add_inter (μ := μ) (s := cause (fun _ ↦ true) {partner X})
-      (MeasurableSet.of_discrete (s := cause (fun _ ↦ true) (otherColor X))) (measure_ne_top _ _)
-      (measure_ne_top _ _)
-    have hY : μ.real (cause (fun _ ↦ true) {partner X}) = q (partner X) := by
-      rw [measureReal_pi_cause, Finset.prod_singleton]
-    rw [measureReal_def (s := _ ∩ _), measure_pi_inter_of_dependsOn dependsOn_cause
-      dependsOn_cause (Finset.disjoint_singleton_left.2 hYR), ENNReal.toReal_mul,
-      ← measureReal_def, ← measureReal_def, hY, hK] at this
-    linarith
+    rw [(indepSet_pi_of_dependsOn dependsOn_cause dependsOn_cause
+      (Finset.disjoint_singleton_left.2 hYR)).measureReal_union .of_discrete, hK,
+      measureReal_pi_cause, Finset.prod_singleton]
   have hX₀ := propensity_singleton_ne_zero hs (prior₂_pos X) (prior₂_lt_one X) false true
   have hflip : Function.update (fun _ ↦ false) X true ∈ (win conditions)ᶜ := by
     cases X <;> decide

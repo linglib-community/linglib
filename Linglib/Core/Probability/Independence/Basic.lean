@@ -12,9 +12,9 @@ public import Mathlib.Probability.Independence.Basic
 # Independent events
 
 Lemmas on mathlib's `IndepSet` that mathlib does not state: symmetry and complements, the
-product rule and the inclusion-exclusion law on real-valued masses, the conditional probability
-of one independent event given the other, and independence under a uniform measure as an
-equation between counts.
+independence of null and sure events from every event, the product rule and the
+inclusion-exclusion law on real-valued masses, the conditional probability of one independent
+event given the other, and independence under a uniform measure as an equation between counts.
 `[UPSTREAM]` candidates for `Mathlib/Probability/Independence/Basic.lean`.
 -/
 
@@ -45,6 +45,15 @@ theorem indepSet_iff_measureReal_inter_eq_mul [IsZeroOrProbabilityMeasure μ] (h
   rw [indepSet_iff_measure_inter_eq_mul hs ht μ, measureReal_def, measureReal_def,
     measureReal_def, ← ENNReal.toReal_mul, ENNReal.toReal_eq_toReal_iff' (by finiteness)
     (by finiteness)]
+
+theorem indepSet_of_measure_eq_zero_right [IsZeroOrProbabilityMeasure μ] (hs : MeasurableSet s)
+    (ht : MeasurableSet t) (h : μ t = 0) : IndepSet s t μ :=
+  (indepSet_iff_measure_inter_eq_mul hs ht μ).2 <| by
+    rw [measure_mono_null Set.inter_subset_right h, h, mul_zero]
+
+theorem indepSet_of_measure_compl_eq_zero_right [IsZeroOrProbabilityMeasure μ]
+    (hs : MeasurableSet s) (ht : MeasurableSet t) (h : μ tᶜ = 0) : IndepSet s t μ := by
+  simpa using (indepSet_of_measure_eq_zero_right hs ht.compl h).symm.compl_left.symm
 
 theorem IndepSet.measureReal_union (h : IndepSet s t μ) (ht : MeasurableSet t)
     (hs' : μ s ≠ ∞ := by finiteness) (ht' : μ t ≠ ∞ := by finiteness) :
