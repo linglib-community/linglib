@@ -300,6 +300,16 @@ theorem Intersective.conservative (h : d.Intersective) : d.Conservative :=
 theorem CoIntersective.conservative (h : d.CoIntersective) : d.Conservative :=
   fun A B ↦ h A B _ _ (by simp)
 
+/-- Under conservativity the intersection condition is intersectivity: the functions conservative
+on both arguments are the intersective ones. -/
+theorem Conservative.intersectionCondition_iff (h : d.Conservative) :
+    d.IntersectionCondition ↔ d.Intersective := by
+  refine ⟨fun h' A B A' B' e ↦ ?_, fun h' A B ↦
+    h' _ _ _ _ (by rw [Set.inter_assoc, Set.inter_self])⟩
+  have key (A B : Set α) : d A B ↔ d (A ∩ B) (A ∩ B) := by
+    rw [h A B, h' A (A ∩ B), ← Set.inter_assoc, Set.inter_self]
+  rw [key A B, key A' B', e]
+
 theorem Intersective.adjRestrict (h : d.Intersective) (C : Set α) :
     (d.adjRestrict C).Intersective :=
   fun A B A' B' e ↦ h _ _ _ _ (by rw [Set.inter_right_comm, e, Set.inter_right_comm])

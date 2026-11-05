@@ -71,6 +71,7 @@ universes, such as the Montague lift of a fixed individual, have no counterpart 
 * [van-benthem-1984]
 * [van-benthem-1986]
 * [westerstahl-2024]
+* [zuber-keenan-2019]
 * [zwarts-1998]
 -/
 
@@ -137,6 +138,12 @@ def Intersective (d : Det α) : Prop :=
 and *all but n*. -/
 def CoIntersective (d : Det α) : Prop :=
   ∀ A B A' B' : Set α, A \ B = A' \ B' → (d A B ↔ d A' B')
+
+/-- A determiner denotation satisfies the intersection condition of [barwise-cooper-1981] when
+`d A B ↔ d (A ∩ B) B`, which [zuber-keenan-2019] call conservativity on the first argument. It is
+not intersectivity, on which `d A B` depends on `A ∩ B` alone; for a conservative determiner
+denotation the two coincide. -/
+def IntersectionCondition (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
 
 /-! ### Strength -/
 

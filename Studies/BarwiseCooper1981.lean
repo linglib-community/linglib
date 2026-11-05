@@ -145,25 +145,16 @@ theorem Definite.positiveStrong (hc : Conservative D) (hd : Definite D) :
     fun X ↦ ((hB X).symm.trans (hc A X)).trans (hB _)
   exact (hB A).2 (principalFilter_livesOn_iff.1 hlive)
 
-/-- A determiner satisfies the intersection condition when `B ∈ D(A)` iff `B ∈ D(A ∩ B)`
-(§4.7). It is not intersectivity, on which `D A B` depends on `A ∩ B` alone; for a conservative
-determiner the two coincide, both being symmetry (C5). -/
-def IntersectionCondition (D : Det α) : Prop := ∀ A B, D A B ↔ D (A ∩ B) B
-
-/-- Under the intersection condition `B ∈ D(A)` iff `E ∈ D(A ∩ B)` (C4). -/
+/-- Under the intersection condition (§4.7) `B ∈ D(A)` iff `E ∈ D(A ∩ B)` (C4). -/
 theorem IntersectionCondition.apply_iff (hc : Conservative D) (h : IntersectionCondition D)
-    (A B : Set α) : D A B ↔ D (A ∩ B) Set.univ := by
-  rw [hc A B, h A (A ∩ B), ← Set.inter_assoc, Set.inter_self]
-  exact livesOn_apply_iff (hc.livesOn (A ∩ B))
+    (A B : Set α) : D A B ↔ D (A ∩ B) Set.univ :=
+  (hc.intersectionCondition_iff.1 h).iff_inter_univ
 
 /-- A conservative determiner satisfies the intersection condition exactly when it is
 symmetric (C5). -/
 theorem intersectionCondition_iff_symm (hc : Conservative D) :
     IntersectionCondition D ↔ Std.Symm D :=
-  ⟨fun h ↦ ⟨fun A B hAB ↦ by
-      rwa [h.apply_iff hc, Set.inter_comm, ← h.apply_iff hc] at hAB⟩,
-    fun hs A B ↦ (hc.symm_iff_intersective.1 hs) A B (A ∩ B) B
-      (by rw [Set.inter_assoc, Set.inter_self])⟩
+  hc.intersectionCondition_iff.trans hc.symm_iff_intersective.symm
 
 /-- A strong intersective determiner is trivial, since positive strong makes every `D(A)`
 everything and negative strong makes it empty. -/
@@ -176,8 +167,7 @@ theorem strong_trivial_of_intersective (h : Intersective D) :
 theorem IntersectionCondition.strong_trivial (hc : Conservative D)
     (h : IntersectionCondition D) :
     (PositiveStrong D → ∀ A B, D A B) ∧ (NegativeStrong D → ∀ A B, ¬ D A B) :=
-  strong_trivial_of_intersective <|
-    hc.symm_iff_intersective.1 ((intersectionCondition_iff_symm hc).1 h)
+  strong_trivial_of_intersective (hc.intersectionCondition_iff.1 h)
 
 /-- A persistent symmetric determiner is increasing (C7). -/
 theorem scopeUp_of_restrictorUp_symmetric (hp : RestrictorMonotone D)

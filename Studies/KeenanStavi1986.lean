@@ -138,12 +138,10 @@ theorem generateCompleteBoolean_generators_iff {f : Det α} :
   rw [forall_generators_iff]
   simp [nestedOf, Subtype.ext_iff, Prod.ext_iff]
 
-theorem closure_generators [Finite α] : closure (generators α) = conservativeSubalgebra := by
-  refine le_antisymm (closure_le.2 fun q hq ↦ ?_) fun f hf ↦ ?_
-  · obtain ⟨a, rfl⟩ | ⟨a, rfl⟩ := hq
-    exacts [mem_conservativeSubalgebra.2 (intersective_someOf a).conservative,
-      mem_conservativeSubalgebra.2 (coIntersective_allOf a).conservative]
-  · exact (generateCompleteBoolean_generators_iff.2 (mem_conservativeSubalgebra.1 hf)).mem_closure
+theorem closure_generators [Finite α] : closure (generators α) = conservativeSubalgebra :=
+  SetLike.ext fun f ↦ by
+    rw [← generateCompleteBoolean_iff_mem_closure (Set.toFinite _),
+      generateCompleteBoolean_generators_iff, mem_conservativeSubalgebra]
 
 /-! ### Counting the conservative functions (Section 2.7 and the Appendix) -/
 

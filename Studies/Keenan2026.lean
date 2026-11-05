@@ -44,8 +44,9 @@ counting with them are meant for finite sets.
   complements (the proof of `generateCompleteBoolean_iff_factorsThrough`), so finitely many stages
   suffice.
 * *512 of which are Cons and 1020 of which are weak-Cons* misreports [zuber-keenan-2019], which has
-  1008 (`ncard_conservative_or_conservativeOnFirst`): the functions conservative on both arguments
-  are the 16 intersective ones, counted twice in `2 * 512`.
+  1008 (`ncard_conservative_or_intersectionCondition`): the functions conservative on both arguments
+  are the 16 intersective ones, counted twice in `2 * 512`. Conservativity on the first argument is
+  `Det.IntersectionCondition`.
 * *Proportional Ds are conservative* fails at the empty restrictor, which Def. 14 leaves
   unconstrained (`exists_proportional_not_conservative`).
 * (55) is introduced with *an object quantifier may be a nominal and predicate anaphor
@@ -245,13 +246,9 @@ example : {d : Det (Fin 2) | d.Intersective ∨ d.CoIntersective}.ncard = 30 := 
   rw [Fintype.card_fin] at this
   omega
 
-/-- [zuber-keenan-2019]'s `cons₁`, conservativity on the first argument; their `cons₂` is the
-standard `Det.Conservative`, and *weakly conservative* is the disjunction of the two. -/
-def ConservativeOnFirst (d : Det α) : Prop := ∀ A B, d A B ↔ d (A ∩ B) B
-
-private theorem ncard_conservativeOnFirst :
-    {d : Det α | ConservativeOnFirst d}.ncard = 2 ^ 3 ^ Fintype.card α := by
-  have h (d : Det α) : ConservativeOnFirst d ↔
+private theorem ncard_intersectionCondition :
+    {d : Det α | d.IntersectionCondition}.ncard = 2 ^ 3 ^ Fintype.card α := by
+  have h (d : Det α) : d.IntersectionCondition ↔
       d ∈ invariants fun p : Set α × Set α ↦
         (⟨(p.2, p.1 ∩ p.2), Set.inter_subset_right⟩ : Nested α) := by
     refine ⟨fun h A B A' B' e ↦ ?_, fun h A B ↦ h _ _ _ _ (Subtype.ext (by simp))⟩
@@ -263,26 +260,22 @@ private theorem ncard_conservativeOnFirst :
     Subtype.ext (Prod.ext rfl (Set.inter_eq_left.2 p.2))⟩, KeenanStavi1986.card_nested]
 
 -- Against 1020: the Theorem and Proposition of [zuber-keenan-2019] Section IV
-theorem ncard_conservative_or_conservativeOnFirst :
-    {d : Det α | d.Conservative ∨ ConservativeOnFirst d}.ncard + 2 ^ 2 ^ Fintype.card α =
+theorem ncard_conservative_or_intersectionCondition :
+    {d : Det α | d.Conservative ∨ d.IntersectionCondition}.ncard + 2 ^ 2 ^ Fintype.card α =
       2 * 2 ^ 3 ^ Fintype.card α := by
-  have hinter : {d : Det α | d.Conservative} ∩ {d | ConservativeOnFirst d} =
-      {d | d.Intersective} := by
-    ext d
-    refine ⟨fun ⟨h, h'⟩ A B A' B' e ↦ ?_, fun h ↦ ⟨Intersective.conservative h, fun A B ↦
-      h _ _ _ _ (by rw [Set.inter_assoc, Set.inter_self])⟩⟩
-    have key (A B : Set α) : d A B ↔ d (A ∩ B) (A ∩ B) := by
-      rw [h A B, h' A (A ∩ B), ← Set.inter_assoc, Set.inter_self]
-    rw [key A B, key A' B', e]
-  have := Set.ncard_union_add_ncard_inter {d : Det α | d.Conservative} {d | ConservativeOnFirst d}
+  have hinter : {d : Det α | d.Conservative} ∩ {d | d.IntersectionCondition} =
+      {d | d.Intersective} :=
+    Set.ext fun _ ↦ ⟨fun ⟨h, h'⟩ ↦ h.intersectionCondition_iff.1 h',
+      fun h ↦ ⟨h.conservative, h.conservative.intersectionCondition_iff.2 h⟩⟩
+  have := Set.ncard_union_add_ncard_inter {d : Det α | d.Conservative} {d | d.IntersectionCondition}
   have hc : {d : Det α | d.Conservative}.ncard = 2 ^ 3 ^ Fintype.card α :=
     (ncard_eq_card fun _ ↦ mem_conservativeSubalgebra.symm).trans KeenanStavi1986.card_consDet
-  rw [hinter, ncard_intersective, hc, ncard_conservativeOnFirst] at this
+  rw [hinter, ncard_intersective, hc, ncard_intersectionCondition] at this
   rw [two_mul, ← this]
   rfl
 
-example : {d : Det (Fin 2) | d.Conservative ∨ ConservativeOnFirst d}.ncard = 1008 := by
-  have := ncard_conservative_or_conservativeOnFirst (α := Fin 2)
+example : {d : Det (Fin 2) | d.Conservative ∨ d.IntersectionCondition}.ncard = 1008 := by
+  have := ncard_conservative_or_intersectionCondition (α := Fin 2)
   rw [Fintype.card_fin] at this
   omega
 
@@ -340,7 +333,7 @@ theorem generateCompleteBoolean_acc_individual_iff :
 theorem acc_injective [Nonempty α] : Injective (acc : Quantifier α → _) := fun P Q h ↦
   funext fun A ↦ by
     obtain ⟨a⟩ := ‹Nonempty α›
-    simpa [acc, prod, Set.ext_iff] using congrArg (a ∈ ·) (congrFun h (prod Set.univ A))
+    simpa [acc, Set.ext_iff] using congrArg (a ∈ ·) (congrFun h fun x y ↦ (x, y) ∈ Set.univ ×ˢ A)
 
 /-- (47): the reflexive. -/
 def self (R : α → α → Prop) : Set α := {a | R a a}
@@ -435,52 +428,50 @@ theorem reducible_diffDiff_iff :
     push Not at hcon
     obtain ⟨⟨a, ha, a', ha', haa⟩, ⟨b, hb, b', hb', hbb⟩, hι⟩ := hcon
     obtain ⟨ι⟩ := hι
-    obtain ⟨r, r', hrr, hg⟩ : ∃ r r' : Set B, r ≠ r' ∧
-        (g (Subtype.val '' r) ↔ g (Subtype.val '' r')) := by
-      have h₁ : (∅ : Set B) ≠ {⟨b, hb⟩} := (Set.singleton_nonempty _).ne_empty.symm
-      have h₂ : (∅ : Set B) ≠ {⟨b', hb'⟩} := (Set.singleton_nonempty _).ne_empty.symm
-      have h₃ : ({⟨b, hb⟩} : Set B) ≠ {⟨b', hb'⟩} := fun e ↦
-        hbb (congrArg Subtype.val (Set.singleton_injective e))
-      by_cases e₁ : g (Subtype.val '' (∅ : Set B)) ↔ g (Subtype.val '' ({⟨b, hb⟩} : Set B))
-      · exact ⟨_, _, h₁, e₁⟩
-      by_cases e₂ : g (Subtype.val '' (∅ : Set B)) ↔ g (Subtype.val '' ({⟨b', hb'⟩} : Set B))
-      · exact ⟨_, _, h₂, e₂⟩
-      exact ⟨_, _, h₃, by tauto⟩
-    -- rearrange the rows so that `a` gets `r` and `a'` gets `r'`
-    let A₁ : A := ⟨a, ha⟩
-    let A₂ : A := ⟨a', ha'⟩
-    let ρ : A ↪ Set B := (ι.setValue A₁ r).setValue A₂ r'
-    have hρ := ρ.injective
-    have hne : A₁ ≠ A₂ := fun e ↦ haa (congrArg Subtype.val e)
-    have hρ₁ : ρ A₁ = r := by
-      rw [show ρ A₁ = _ from Embedding.setValue_eq_of_ne hne (by simpa using hrr)]
-      exact Embedding.setValue_eq ..
-    have hρ₂ : ρ A₂ = r' := Embedding.setValue_eq ..
-    let rows : α → Set α := fun x ↦ if hx : x ∈ A then Subtype.val '' ρ ⟨x, hx⟩ else ∅
-    have hrows {x : α} (hx : x ∈ A) : rows x = Subtype.val '' ρ ⟨x, hx⟩ := dite_eq_left hx
-    let R : α → α → Prop := fun x y ↦ y ∈ rows x
-    let R' : α → α → Prop := update R a' fun y ↦ y ∈ Subtype.val '' r
-    have hsub (t : Set B) : Subtype.val '' t ∩ B = Subtype.val '' t :=
-      Set.inter_eq_left.2 (Subtype.coe_image_subset _ _)
-    have hR : diffDiff A B R := fun x hx z hz e ↦ by
-      change rows x ∩ B = rows z ∩ B at e
-      rw [hrows hx, hrows hz, hsub, hsub] at e
-      exact congrArg Subtype.val (hρ (Set.image_injective.2 Subtype.val_injective e))
-    have hR' : ¬ diffDiff A B R' := fun h ↦ by
-      refine haa (h ha ha' ?_)
-      change {y | R' a y} ∩ B = {y | R' a' y} ∩ B
-      rw [show R' a = R a from update_of_ne haa _ _, show R' a' = _ from update_self ..]
+    -- rows in `B` that the function cannot tell apart give two relations it must confuse
+    have main (r r' : Set B) (hrr : r ≠ r')
+        (he : ∀ R x, diffDiff A B (update R x (· ∈ Subtype.val '' r)) ↔
+          diffDiff A B (update R x (· ∈ Subtype.val '' r'))) : False := by
+      let A₁ : A := ⟨a, ha⟩
+      let A₂ : A := ⟨a', ha'⟩
+      let ρ : A ↪ Set B := (ι.setValue A₁ r).setValue A₂ r'
+      have hne : A₁ ≠ A₂ := fun e ↦ haa (congrArg Subtype.val e)
+      have hρ₁ : ρ A₁ = r := by
+        rw [show ρ A₁ = _ from Embedding.setValue_eq_of_ne hne (by simpa using hrr)]
+        exact Embedding.setValue_eq ..
+      have hρ₂ : ρ A₂ = r' := Embedding.setValue_eq ..
+      let rows : α → Set α := fun x ↦ if hx : x ∈ A then Subtype.val '' ρ ⟨x, hx⟩ else ∅
+      have hrows {x : α} (hx : x ∈ A) : rows x = Subtype.val '' ρ ⟨x, hx⟩ := dite_eq_left hx
+      let R : α → α → Prop := fun x y ↦ y ∈ rows x
+      have hsub (t : Set B) : Subtype.val '' t ∩ B = Subtype.val '' t :=
+        Set.inter_eq_left.2 (Subtype.coe_image_subset _ _)
+      have hR : diffDiff A B R := fun x hx z hz e ↦ by
+        change rows x ∩ B = rows z ∩ B at e
+        rw [hrows hx, hrows hz, hsub, hsub] at e
+        exact congrArg Subtype.val (ρ.injective (Set.image_injective.2 Subtype.val_injective e))
+      have hself : update R a' (· ∈ Subtype.val '' r') = R := by
+        refine funext fun x ↦ ?_
+        by_cases hx : x = a'
+        · subst hx
+          rw [update_self]
+          funext y
+          exact (congrArg (y ∈ ·) ((hrows ha').trans (by rw [show ρ ⟨x, ha'⟩ = r' from hρ₂]))).symm
+        · exact update_of_ne hx _ _
+      have hR' := (he R a').2 (by rw [hself]; exact hR)
+      refine haa (hR' ha ha' ?_)
+      change {y | update R a' (· ∈ Subtype.val '' r) a y} ∩ B =
+        {y | update R a' (· ∈ Subtype.val '' r) a' y} ∩ B
+      rw [update_of_ne haa, update_self]
       change rows a ∩ B = Subtype.val '' r ∩ B
       rw [hrows ha, show ρ ⟨a, ha⟩ = r from hρ₁]
-    have hacc : acc g R = acc g R' := Set.ext fun x ↦ by
-      by_cases hx : x = a'
-      · subst hx
-        change g (rows x) ↔ g {y | R' x y}
-        rw [show R' x = _ from update_self .., hrows ha', show ρ ⟨x, ha'⟩ = r' from hρ₂]
-        exact hg.symm
-      · change g {y | R x y} ↔ g {y | R' x y}
-        rw [show R' x = R x from update_of_ne hx _ _]
-    exact hR' ((hF R').2 (hacc ▸ (hF R).1 hR))
+    have h₁ : (∅ : Set B) ≠ {⟨b, hb⟩} := (Set.singleton_nonempty _).ne_empty.symm
+    have h₂ : (∅ : Set B) ≠ {⟨b', hb'⟩} := (Set.singleton_nonempty _).ne_empty.symm
+    have h₃ : ({⟨b, hb⟩} : Set B) ≠ {⟨b', hb'⟩} := fun e ↦
+      hbb (congrArg Subtype.val (Set.singleton_injective e))
+    rcases Reducible.exists_interchangeable ⟨f, g, hF⟩ (· ∈ Subtype.val '' (∅ : Set B))
+      (· ∈ Subtype.val '' ({⟨b, hb⟩} : Set B)) (· ∈ Subtype.val '' ({⟨b', hb'⟩} : Set B))
+      with e | e | e
+    exacts [main _ _ h₁ e, main _ _ h₂ e, main _ _ h₃ e]
   · rintro (h | h | h)
     · exact ⟨fun _ ↦ True, ⊥, fun R ↦ iff_of_true (h.injOn _) trivial⟩
     · refine ⟨fun S ↦ A.InjOn (· ∈ S), Det.some B, fun R ↦ ?_⟩

@@ -25,7 +25,9 @@ rows of a relation, so a function from relations to truth values is
 such a composition. [Reducible functions agreeing on the cross products are
 equal](##Quantifier.Polyadic.Reducible.eq_of_forall_prod), and a function is reducible [exactly when
 some accusative extension refines
-it](##Quantifier.Polyadic.reducible_iff_exists_factorsThrough).
+it](##Quantifier.Polyadic.reducible_iff_exists_factorsThrough), which sees each row through a
+two-valued test, so that [of any three rows two are
+interchangeable](##Quantifier.Polyadic.Reducible.exists_interchangeable).
 
 ## Main definitions
 
@@ -187,22 +189,21 @@ theorem Reducible.exists_positive (h : Reducible F) :
     exact (compl_compl _).symm
   · exact ⟨f, g, hg, h⟩
 
-/-- The cross product of two sets as a relation. -/
-def prod (P Q : Set α) : α → α → Prop := fun x y ↦ x ∈ P ∧ y ∈ Q
-
-theorem acc_prod_of_pos {P Y : Set α} (h₀ : ¬ g ∅) (hY : g Y) : acc g (prod P Y) = P := by
+theorem acc_prod_of_pos {P Y : Set α} (h₀ : ¬ g ∅) (hY : g Y) :
+    acc g (fun x y ↦ (x, y) ∈ P ×ˢ Y) = P := by
   refine Set.ext fun x ↦ ?_
   by_cases hx : x ∈ P
-  · simpa [prod, hx] using hY
-  · simpa [prod, hx] using h₀
+  · simpa [hx] using hY
+  · simpa [hx] using h₀
 
-theorem acc_prod_of_neg {P Y : Set α} (h₀ : ¬ g ∅) (hY : ¬ g Y) : acc g (prod P Y) = ∅ := by
+theorem acc_prod_of_neg {P Y : Set α} (h₀ : ¬ g ∅) (hY : ¬ g Y) :
+    acc g (fun x y ↦ (x, y) ∈ P ×ˢ Y) = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun x hx ↦ ?_
-  by_cases hx' : x ∈ P <;> simp_all [prod]
+  by_cases hx' : x ∈ P <;> simp_all
 
 /-- Under a positive quantifier every relation has the accusative extension of a cross product. -/
 theorem exists_acc_prod_eq (h₀ : ¬ g ∅) (R : α → α → Prop) :
-    ∃ P Y, acc g (prod P Y) = acc g R := by
+    ∃ P Y : Set α, acc g (fun x y ↦ (x, y) ∈ P ×ˢ Y) = acc g R := by
   obtain h | ⟨b, hb⟩ := (acc g R).eq_empty_or_nonempty
   · exact ⟨∅, ∅, by rw [acc_prod_of_neg h₀ h₀, h]⟩
   · exact ⟨acc g R, {y | R b y}, acc_prod_of_pos h₀ hb⟩
@@ -210,12 +211,13 @@ theorem exists_acc_prod_eq (h₀ : ¬ g ∅) (R : α → α → Prop) :
 /-- [keenan-1992]'s Reducibility Equivalence: reducible functions agreeing on the cross products
 are equal. -/
 theorem Reducible.eq_of_forall_prod (hF : Reducible F) (hG : Reducible G)
-    (h : ∀ P Y, F (prod P Y) ↔ G (prod P Y)) : F = G := by
+    (h : ∀ P Y : Set α, F (fun x y ↦ (x, y) ∈ P ×ˢ Y) ↔ G fun x y ↦ (x, y) ∈ P ×ˢ Y) : F = G := by
   obtain ⟨f, f', hf₀, hf⟩ := hF.exists_positive
   obtain ⟨g, g', hg₀, hg⟩ := hG.exists_positive
   have main {f f' g g' : Quantifier α} {F G : (α → α → Prop) → Prop} (hf₀ : ¬ f' ∅) (hg₀ : ¬ g' ∅)
       (hf : ∀ R, F R ↔ f (acc f' R)) (hg : ∀ R, G R ↔ g (acc g' R))
-      (h : ∀ P Y, F (prod P Y) ↔ G (prod P Y)) {Y : Set α} (hY : f' Y) (hY' : ¬ g' Y) (R) :
+      (h : ∀ P Y : Set α, F (fun x y ↦ (x, y) ∈ P ×ˢ Y) ↔ G fun x y ↦ (x, y) ∈ P ×ˢ Y)
+      {Y : Set α} (hY : f' Y) (hY' : ¬ g' Y) (R) :
       F R ↔ G R := by
     have hc (P : Set α) : f P ↔ g ∅ := by
       have := h P Y
@@ -233,6 +235,27 @@ theorem Reducible.eq_of_forall_prod (hF : Reducible F) (hG : Reducible G)
     · exact main hf₀ hg₀ hf hg h hY' (fun h' ↦ hY (propext (iff_of_true hY' h'))) R
     · have hg' : g' Y := by_contra fun h' ↦ hY (propext (iff_of_false hY' h'))
       exact (main hg₀ hf₀ hg hf (fun P Y ↦ (h P Y).symm) hg' hY' R).symm
+
+/-- A reducible function sees a row only through a two-valued test, so of any three rows two are
+interchangeable at every position of every relation. -/
+theorem Reducible.exists_interchangeable [DecidableEq α] (h : Reducible F) (r₀ r₁ r₂ : α → Prop) :
+    (∀ R x, F (Function.update R x r₀) ↔ F (Function.update R x r₁)) ∨
+      (∀ R x, F (Function.update R x r₀) ↔ F (Function.update R x r₂)) ∨
+        ∀ R x, F (Function.update R x r₁) ↔ F (Function.update R x r₂) := by
+  obtain ⟨f, g, hF⟩ := h
+  have key {r r' : α → Prop} (hg : g {z | r z} ↔ g {z | r' z}) (R : α → α → Prop) (x : α) :
+      F (Function.update R x r) ↔ F (Function.update R x r') := by
+    rw [hF, hF]
+    refine iff_of_eq (congrArg f (Set.ext fun y ↦ ?_))
+    by_cases hy : y = x
+    · subst hy
+      simpa only [mem_acc, Function.update_self] using hg
+    · simp only [mem_acc, Function.update_of_ne hy]
+  by_cases h₁ : g {z | r₀ z} ↔ g {z | r₁ z}
+  · exact .inl (key h₁)
+  by_cases h₂ : g {z | r₀ z} ↔ g {z | r₂ z}
+  · exact .inr (.inl (key h₂))
+  · exact .inr (.inr (key (by tauto)))
 
 end Reducible
 
