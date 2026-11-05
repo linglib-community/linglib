@@ -70,7 +70,7 @@ theorem reading_resumption_and_not_iteration :
     reading .resumption (Set.univ : Set (Fin 1)) Set.univ (fun _ _ ↦ False) ∧
       ¬ reading .iteration (Set.univ : Set (Fin 1)) Set.univ (fun _ _ ↦ False) := by
   rw [reading_resumption_iff, reading_iteration_iff]
-  simp [iterate, no, every, Det.some]
+  simp [iterate, acc, no, every, Det.some]
 
 end Readings
 

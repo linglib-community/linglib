@@ -28,9 +28,10 @@ conversational principles.
 
 ## Main results
 
-* `category_preservation`, `phrase_preservation`, `subtree_preservation` — the operations
-  create no category, no phrase of a category and no subtree property absent from the host and
-  the source; `phrase_preservation` is what excludes the symmetric alternatives.
+* `licensed_of_atMostAsComplex` — the operations leave a tree licensed by any relation that survives
+  deleting a daughter and replacing one by another of its category; `phrase_preservation`, no phrase
+  of a category absent from the host and the source, is what excludes the symmetric alternatives.
+* `atMostAsComplex.numNodes_le` — over a source of terminals, complexity bounds size.
 * `horn_alternatives_are_structural` — substituting a same-category lexical item throughout a tree
   is a chain of substitutions, so Horn-scale alternatives are structural alternatives.
 * `alternatives_withAlternatives_subset` — the Hamblin composition of `WithAlternatives`, with each
@@ -40,10 +41,12 @@ conversational principles.
 ## Implementation notes
 
 `atMostAsComplex` is the paper's (19), reachability by finitely many operations, over a source
-given as an argument. The paper draws the replacements that make `ψ` at most as complex as `φ` from
-the substitution source of `φ`, so its equal complexity uses each tree's own source for one
-direction, where `equalComplexity` uses one source for both. The `inBind` constructor extends the
-operations into the body of a binder, which the paper's trees lack.
+given as an argument. Over `substitutionSource`, which holds the tree itself, it bounds no size: a
+tree with a same-category constituent can replace that constituent by the whole. The paper draws
+the replacements that make `ψ` at most as complex as `φ` from the substitution source of `φ`, so
+its equal complexity uses each tree's own source for one direction, where `equalComplexity` uses
+one source for both. The `inBind` constructor extends the operations into the body of a binder,
+which the paper's trees lack.
 
 ## References
 
@@ -124,99 +127,70 @@ theorem self_mem_structuralAlternatives (lex : Finset (Tree C W)) (φ : Tree C W
     φ ∈ structuralAlternatives lex φ :=
   Relation.ReflTransGen.refl
 
-/-! ### Category and subtree preservation -/
+/-! ### Preservation -/
 
-private theorem structuralOp_preserves_no_cat (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats) (h_step : StructuralOp source φ ψ) :
-    c ∉ ψ.cats := by
-  induction h_step with
-  | subst _ h_src => exact h_source _ h_src
-  | @delete l cs i =>
-    rw [Tree.mem_cats_rose] at h_φ ⊢; push Not at h_φ ⊢
-    exact ⟨h_φ.1, fun t ht ↦ h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
-  | @contract l cs child h_mem _ =>
-    rw [Tree.mem_cats_rose] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
-  | @inChild l cs i ψ_child _ _ ih =>
-    rw [Tree.mem_cats_rose] at h_φ ⊢; push Not at h_φ ⊢
-    have hih := ih (h_φ.2 (cs.get i) (List.get_mem cs i))
-    refine ⟨h_φ.1, fun t ht ↦ ?_⟩
-    rcases List.mem_or_eq_of_mem_set ht with ht' | rfl
-    · exact h_φ.2 t ht'
-    · exact hih
-  | @inBind n cat body body' _ ih =>
-    simp only [Tree.cats_bind, List.mem_cons] at h_φ ⊢; push Not at h_φ ⊢
-    exact ⟨h_φ.1, ih h_φ.2⟩
+/-- An operation preserves the category of the tree it acts on. -/
+theorem StructuralOp.cat_eq {source : Set (Tree C W)} {φ ψ : Tree C W}
+    (h : StructuralOp source φ ψ) : Tree.cat ψ = Tree.cat φ := by
+  induction h with
+  | subst hc _ => exact hc
+  | delete _ _ => rfl
+  | contract _ hc _ => exact hc
+  | inChild _ _ _ _ => rfl
+  | inBind _ _ => rfl
 
-/-- No tree reachable by structural operations contains a category absent from the source and
-the host. -/
-theorem category_preservation (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats)
-    (h_reach : atMostAsComplex source ψ φ) : c ∉ ψ.cats := by
-  unfold atMostAsComplex at h_reach
-  induction h_reach with
-  | refl => exact h_φ
-  | tail _ h_last ih =>
-    exact structuralOp_preserves_no_cat source c _ _ h_source ih h_last
+/-- At most as complex a tree has the same category. -/
+theorem atMostAsComplex.cat_eq {source : Set (Tree C W)} {φ ψ : Tree C W}
+    (h : atMostAsComplex source ψ φ) : Tree.cat ψ = Tree.cat φ := by
+  induction h with
+  | refl => rfl
+  | tail _ h ih => exact h.cat_eq.trans ih
 
-private theorem structuralOp_preserves_free (source : Set (Tree C W))
-    (Bad : Tree C W → Prop) (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
-    (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
-      ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.eraseIdx i)))
-    (h_set : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
-      l.IsPhrase → ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.set i ψ)))
-    (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
-      ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
-    {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_step : StructuralOp source φ ψ) :
-    ∀ t ∈ ψ.subtrees, ¬ Bad t := by
-  induction h_step with
-  | subst _ h_src => exact h_source _ h_src
+section Licensed
+
+variable {source : Set (Tree C W)} {R : Tree.Label C W → List (Tree.Label C W) → Prop}
+
+private theorem licensed_of_op (h_source : ∀ s ∈ source, s.Licensed R)
+    (h_delete : ∀ l ks i, l.IsPhrase → R l ks → R l (ks.eraseIdx i))
+    (h_set : ∀ l ks (i : ℕ) k (hi : i < ks.length), l.IsPhrase → Label.cat k = Label.cat ks[i] →
+      R l ks → R l (ks.set i k))
+    (h_bind : ∀ n c k k', Label.cat k' = Label.cat k → R (.bind n c) [k] → R (.bind n c) [k'])
+    {φ ψ : Tree C W} (h : StructuralOp source φ ψ) (hφ : φ.Licensed R) : ψ.Licensed R := by
+  induction h with
+  | subst _ hs => exact h_source _ hs
   | @delete l cs i hl =>
-    rw [RoseTree.subtrees_node] at h_φ ⊢
-    intro t ht
-    rcases List.mem_cons.mp ht with rfl | ht
-    · exact h_delete l cs i hl (h_φ _ (List.mem_cons_self ..))
-    · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
-      exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr
-        ⟨c, (List.eraseIdx_sublist cs i).subset hc, htc⟩))
-  | @contract l cs child h_mem _ =>
-    rw [RoseTree.subtrees_node] at h_φ
-    exact fun t ht ↦ h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨child, h_mem, ht⟩))
-  | @inChild l cs i ψ_child _ hl ih =>
-    rw [RoseTree.subtrees_node] at h_φ ⊢
-    have hih := ih fun t ht ↦
-      h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨cs.get i, List.get_mem cs i, ht⟩))
-    intro t ht
-    rcases List.mem_cons.mp ht with rfl | ht
-    · exact h_set l cs i ψ_child hl (h_φ _ (List.mem_cons_self ..))
-    · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
-      rcases List.mem_or_eq_of_mem_set hc with hc | rfl
-      · exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨c, hc, htc⟩))
-      · exact hih t htc
-  | @inBind n cat body body' _ ih =>
-    rw [Tree.subtrees_bind] at h_φ ⊢
-    intro t ht
-    rcases List.mem_cons.mp ht with rfl | ht
-    · exact h_bind n cat body body' (h_φ _ (List.mem_cons_self ..))
-    · exact ih (fun t ht ↦ h_φ t (List.mem_cons_of_mem _ ht)) t ht
+    obtain ⟨hr, hc⟩ := RoseTree.licensed_node_iff.1 hφ
+    refine RoseTree.licensed_node_iff.2
+      ⟨?_, fun c hm ↦ hc c ((List.eraseIdx_sublist cs i).subset hm)⟩
+    simpa only [List.eraseIdx_eq_take_drop_succ, List.map_append, List.map_take, List.map_drop]
+      using h_delete l _ i hl hr
+  | @contract l cs child hmem _ _ => exact (RoseTree.licensed_node_iff.1 hφ).2 child hmem
+  | @inChild l cs i ψ' hstep hl ih =>
+    obtain ⟨hr, hc⟩ := RoseTree.licensed_node_iff.1 hφ
+    refine RoseTree.licensed_node_iff.2 ⟨?_, fun c hm ↦ ?_⟩
+    · rw [List.map_set]
+      exact h_set l _ i _ (by simp) hl (by simpa [Tree.cat] using hstep.cat_eq) hr
+    · rcases List.mem_or_eq_of_mem_set hm with hm | rfl
+      · exact hc c hm
+      · exact ih (hc _ (List.get_mem cs i))
+  | @inBind n c body body' hstep ih =>
+    obtain ⟨hr, hc⟩ := RoseTree.licensed_node_iff.1 hφ
+    refine RoseTree.licensed_node_iff.2 ⟨h_bind n c _ _ hstep.cat_eq hr, ?_⟩
+    simpa using ih (hc body (by simp))
 
-/-- Let `Bad` be a subtree property that the host and the source items lack, and that no node
-acquires by losing a child, by having a child replaced, or by a change of its binder's body. Then
-no structural alternative of the host has `Bad`. -/
-theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
-    (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
-    (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
-      ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.eraseIdx i)))
-    (h_set : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
-      l.IsPhrase → ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.set i ψ)))
-    (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
-      ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
-    {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_reach : atMostAsComplex source ψ φ) :
-    ∀ t ∈ ψ.subtrees, ¬ Bad t := by
-  unfold atMostAsComplex at h_reach
-  induction h_reach with
-  | refl => exact h_φ
-  | tail _ h_last ih =>
-    exact structuralOp_preserves_free source Bad h_source h_delete h_set h_bind ih h_last
+/-- A tree no more complex than a licensed tree over a licensed source is licensed, when the local
+trees survive deleting a daughter and replacing one by another of its category. -/
+theorem licensed_of_atMostAsComplex (h_source : ∀ s ∈ source, s.Licensed R)
+    (h_delete : ∀ l ks i, l.IsPhrase → R l ks → R l (ks.eraseIdx i))
+    (h_set : ∀ l ks (i : ℕ) k (hi : i < ks.length), l.IsPhrase → Label.cat k = Label.cat ks[i] →
+      R l ks → R l (ks.set i k))
+    (h_bind : ∀ n c k k', Label.cat k' = Label.cat k → R (.bind n c) [k] → R (.bind n c) [k'])
+    {φ ψ : Tree C W} (hφ : φ.Licensed R) (h : atMostAsComplex source ψ φ) : ψ.Licensed R := by
+  induction h with
+  | refl => exact hφ
+  | tail _ h ih => exact licensed_of_op h_source h_delete h_set h_bind h ih
+
+end Licensed
 
 /-- If neither the host nor any source item has a phrase (a node or adjunction structure) of
 category `c`, no structural alternative has one. -/
@@ -224,9 +198,47 @@ theorem phrase_preservation (source : Set (Tree C W)) (c : C)
     (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
     {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
     (h_reach : atMostAsComplex source ψ φ) :
-    ∀ t ∈ ψ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c) :=
-  subtree_preservation source (fun t ↦ t.value.IsPhrase ∧ Tree.cat t = c) h_source
-    (fun _ _ _ _ ↦ id) (fun _ _ _ _ _ ↦ id) (fun _ _ _ _ _ h ↦ h.1.elim) h_φ h_reach
+    ∀ t ∈ ψ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c) := by
+  have key {t : Tree C W} : t.Licensed (fun l _ ↦ ¬ (l.IsPhrase ∧ l.cat = c)) ↔
+      ∀ s ∈ t.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = c) :=
+    RoseTree.licensed_iff_forall_mem_subtrees
+  exact key.1 (licensed_of_atMostAsComplex (fun s hs ↦ key.2 (h_source s hs))
+    (fun _ _ _ _ ↦ id) (fun _ _ _ _ _ _ _ ↦ id) (fun _ _ _ _ _ ↦ id) (key.2 h_φ) h_reach)
+
+/-- Over a source of terminals, at most as complex a tree has no more nodes: the plain notion of
+complexity bounds size, where a source holding the tree itself does not. -/
+theorem atMostAsComplex.numNodes_le {source : Set (Tree C W)}
+    (hs : ∀ t ∈ source, RoseTree.numNodes t = 1) {φ ψ : Tree C W}
+    (h : atMostAsComplex source ψ φ) : RoseTree.numNodes ψ ≤ RoseTree.numNodes φ := by
+  have sum_set {α : Type _} (f : α → ℕ) : ∀ (cs : List α) (i : ℕ) (x : α) (hi : i < cs.length),
+      f x ≤ f cs[i] → ((cs.set i x).map f).sum ≤ (cs.map f).sum := by
+    intro cs
+    induction cs with
+    | nil => exact fun _ _ hi ↦ absurd hi (by simp)
+    | cons c cs ih =>
+      rintro (_ | i) x hi hle
+      · simpa using hle
+      · simpa using ih i x (by simpa using hi) (by simpa using hle)
+  have step {φ ψ : Tree C W} (h : StructuralOp source φ ψ) :
+      RoseTree.numNodes ψ ≤ RoseTree.numNodes φ := by
+    induction h with
+    | subst _ hsrc => rw [hs _ hsrc]; exact RoseTree.numNodes_pos _
+    | @delete l cs i =>
+      simp only [RoseTree.numNodes_node]
+      exact Nat.succ_le_succ
+        (((List.eraseIdx_sublist cs i).map _).sum_le_sum fun _ _ ↦ Nat.zero_le _)
+    | @contract l cs child hmem _ =>
+      rw [RoseTree.numNodes_node]
+      have := List.single_le_sum (l := cs.map RoseTree.numNodes) (fun _ _ ↦ Nat.zero_le _) _
+        (List.mem_map_of_mem hmem)
+      omega
+    | @inChild l cs i ψ' _ _ ih =>
+      simp only [RoseTree.numNodes_node]
+      exact Nat.succ_le_succ (sum_set _ cs i ψ' i.2 ih)
+    | inBind _ ih => simpa using ih
+  induction h with
+  | refl => exact le_rfl
+  | tail _ h ih => exact (step h).trans ih
 
 /-! ### Horn scales are structural alternatives -/
 

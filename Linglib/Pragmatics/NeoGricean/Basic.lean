@@ -61,23 +61,23 @@ variable {W ι : Type*} {s φ ψ : Set W} {alts : Set (Set W)}
 
 /-- The primary implicatures of `φ` against `alts`, conjoined: the states not certain of any
 alternative that asymmetrically entails `φ` ([sauerland-2004] (42)). -/
-def primaryImplicatures (φ : Set W) (alts : Set (Set W)) : Set (Set W) :=
+def primaryImplicatures (alts : Set (Set W)) (φ : Set W) : Set (Set W) :=
   ⋂ ψ ∈ alts ∩ Iio φ, (Iic ψ)ᶜ
 
 @[simp] theorem mem_primaryImplicatures :
-    s ∈ primaryImplicatures φ alts ↔ ∀ ψ ∈ alts, ψ ⊂ φ → ¬ s ⊆ ψ := by
+    s ∈ primaryImplicatures alts φ ↔ ∀ ψ ∈ alts, ψ ⊂ φ → ¬ s ⊆ ψ := by
   simp [primaryImplicatures]
 
 /-- `K¬ψ` is a secondary implicature of asserting `φ` against `alts` iff `¬Kψ` is a primary
 implicature and `K¬ψ` is consistent with `Kφ` and all the primary implicatures
 ([sauerland-2004] (43)). -/
-def IsSecondaryImplicature (φ : Set W) (alts : Set (Set W)) (ψ : Set W) : Prop :=
-  ψ ∈ alts ∧ ψ ⊂ φ ∧ ((Iic φ ∩ primaryImplicatures φ alts ∩ Iic ψᶜ) \ {∅}).Nonempty
+def IsSecondaryImplicature (alts : Set (Set W)) (φ ψ : Set W) : Prop :=
+  ψ ∈ alts ∧ ψ ⊂ φ ∧ ((Iic φ ∩ primaryImplicatures alts φ ∩ Iic ψᶜ) \ {∅}).Nonempty
 
 /-- The strengthened meaning `φ \ ψ` is the canonical witness: `K¬ψ` is a secondary implicature
 iff `φ \ ψ` entails no stronger alternative, so a blocked secondary implicature is always
 blocked by a single primary one. -/
-theorem isSecondaryImplicature_iff : IsSecondaryImplicature φ alts ψ ↔
+theorem isSecondaryImplicature_iff : IsSecondaryImplicature alts φ ψ ↔
     ψ ∈ alts ∧ ψ ⊂ φ ∧ ∀ χ ∈ alts, χ ⊂ φ → ¬ φ \ ψ ⊆ χ := by
   refine and_congr_right fun _ ↦ and_congr_right fun hψ ↦ ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨s, ⟨⟨hφ, hprim⟩, hs⟩, -⟩ χ hχ hχφ hsub
@@ -86,10 +86,10 @@ theorem isSecondaryImplicature_iff : IsSecondaryImplicature φ alts ψ ↔
       (sdiff_nonempty.2 hψ.2).ne_empty⟩
 
 theorem isSecondaryImplicature_range_iff {f : ι → Set W} {i : ι} :
-    IsSecondaryImplicature φ (range f) (f i) ↔ f i ⊂ φ ∧ ∀ j, f j ⊂ φ → ¬ φ \ f i ⊆ f j := by
+    IsSecondaryImplicature (range f) φ (f i) ↔ f i ⊂ φ ∧ ∀ j, f j ⊂ φ → ¬ φ \ f i ⊆ f j := by
   simp [isSecondaryImplicature_iff]
 
-theorem isSecondaryImplicature_singleton : IsSecondaryImplicature φ {ψ} ψ ↔ ψ ⊂ φ := by
+theorem isSecondaryImplicature_singleton : IsSecondaryImplicature {ψ} φ ψ ↔ ψ ⊂ φ := by
   simp only [isSecondaryImplicature_iff, mem_singleton_iff, forall_eq, true_and,
     and_iff_left_iff_imp]
   exact fun h _ hsub ↦ h.2 fun w hw ↦ by_contra fun hψ ↦ hψ (hsub ⟨hw, hψ⟩)

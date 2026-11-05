@@ -109,6 +109,9 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .sprose { margin: 0 0 6px; font-size: 16.5px; }
 .sprose p { margin: 0 0 10px; }
 .sprose a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.drawn { margin: 18px 0 0; padding: 2px 0 2px 14px; border-left: 3px solid var(--study); }
+.drawn .label { margin: 0 0 4px; font-size: 14px; color: var(--secondary); }
+.drawn .links { margin-top: 8px; }
 .lede { margin: 0 0 6px; font-size: 18px; line-height: 1.42; color: var(--primary); font-weight: 500; text-wrap: pretty; }
 .lede p { margin: 0; }
 .lede code { font-size: 0.76em; font-weight: 400; }
@@ -229,6 +232,8 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .rail li a.nd { color: var(--primary); }
 .rail li a.nd:hover, .rail li.lit a.nd { text-decoration: underline; text-underline-offset: 3px; }
 .rail .why { color: var(--secondary); font-size: 13px; }
+.rail .said { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; margin: 2px 0 0; color: var(--secondary); font-size: 13px; line-height: 1.35; }
+.rail .said:hover { color: var(--primary); }
 .rail .names { display: block; font: 12px/1.5 var(--mono); color: var(--secondary); }
 .rail .names a { color: var(--secondary); }
 .rail .names a:hover { color: var(--primary); text-decoration: underline; }

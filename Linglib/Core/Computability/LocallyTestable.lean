@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Computability.Definite
 public import Linglib.Core.Computability.StarFree
-public import Linglib.Core.Data.List.Factors
+public import Linglib.Core.Data.List.Infix
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -57,31 +57,52 @@ variable {α β : Type*} {k : ℕ} {u u' v v' : List α}
 /-- The *`k`-test vector* of `w` is its prefix of length `k - 1`, the set of its factors of length
 `k`, and its suffix of length `k - 1`. -/
 def kTestVector (k : ℕ) (w : List α) : List α × Set (List α) × List α :=
-  (Edge.left.takeAt (k - 1) w, {f | f ∈ w.kFactors k}, Edge.right.takeAt (k - 1) w)
+  (Edge.left.takeAt (k - 1) w, {f | f <:+: w ∧ f.length = k}, Edge.right.takeAt (k - 1) w)
 
-/-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector, since
-a factor across the seam lies in the suffix of one word followed by the prefix of the other. -/
+/-- A factor of `u ++ v` is a factor of `u` or `v`, or crosses the seam in the suffix of `u`
+followed by the prefix of `v`, each of length at most `k - 1`, so words with the same `k`-test
+vectors share it. -/
+private theorem infix_append_of_kTestVector_eq (hu : u.kTestVector k = u'.kTestVector k)
+    (hv : v.kTestVector k = v'.kTestVector k) {f : List α} (hf : f <:+: u ++ v)
+    (hk : f.length = k) : f <:+: u' ++ v' := by
+  simp only [kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right, Set.ext_iff,
+    Set.mem_ofPred_eq] at hu hv
+  obtain ⟨-, huf, hur⟩ := hu
+  obtain ⟨hvl, hvf, -⟩ := hv
+  rcases infix_append_iff_ne_nil.1 hf with h | h | ⟨l₁, l₂, h₁, h₂, rfl, h₃, h₄⟩
+  · exact ((huf f).1 ⟨h, hk⟩).1.trans (prefix_append _ _).isInfix
+  · exact ((hvf f).1 ⟨h, hk⟩).1.trans (suffix_append _ _).isInfix
+  · have := length_pos_iff.2 h₁
+    have := length_pos_iff.2 h₂
+    rw [length_append] at hk
+    exact infix_append_iff.2 (.inr (.inr ⟨l₁, l₂, rfl,
+      (suffix_rtake_iff.1 (hur ▸ suffix_rtake_iff.2 ⟨h₃, by omega⟩)).1,
+      (prefix_take_iff.1 (hvl ▸ prefix_take_iff.2 ⟨h₄, by omega⟩)).1⟩))
+
+/-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector. -/
 theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)
     (hv : v.kTestVector k = v'.kTestVector k) :
     (u ++ v).kTestVector k = (u' ++ v').kTestVector k := by
-  simp only [kTestVector, Prod.mk.injEq, Set.ext_iff, Set.mem_ofPred_eq] at hu hv ⊢
-  obtain ⟨hul, huf, hur⟩ := hu
-  obtain ⟨hvl, hvf, hvr⟩ := hv
-  refine ⟨(Edge.takeAt_append_congr _ hul _).trans (Edge.takeAt_append_congr_right _ hvl _),
-    fun f ↦ ?_, (Edge.takeAt_append_congr _ hur _).trans (Edge.takeAt_append_congr_right _ hvr _)⟩
-  grind [mem_kFactors_append, Edge.takeAt_left, Edge.takeAt_right]
+  have hu' := hu
+  have hv' := hv
+  simp only [kTestVector, Prod.mk.injEq] at hu' hv' ⊢
+  exact ⟨(Edge.takeAt_append_congr _ hu'.1 _).trans (Edge.takeAt_append_congr_right _ hv'.1 _),
+    Set.ext fun f ↦ and_congr_left fun hk ↦ ⟨fun hf ↦ infix_append_of_kTestVector_eq hu hv hf hk,
+      fun hf ↦ infix_append_of_kTestVector_eq hu.symm hv.symm hf hk⟩,
+    (Edge.takeAt_append_congr _ hu'.2.2 _).trans (Edge.takeAt_append_congr_right _ hv'.2.2 _)⟩
 
 theorem kTestVector_map (g : α → β) (w : List α) :
     (w.map g).kTestVector k =
       Prod.map (map g) (Prod.map (Set.image (map g)) (map g)) (w.kTestVector k) := by
-  ext <;> simp [kTestVector, Edge.takeAt_map]
+  ext <;> simp [kTestVector, Edge.takeAt_map, infix_map_iff]
+  grind
 
 theorem kTestVector_flatten_replicate_succ (k : ℕ) (w : List α) :
     (replicate (k + 1) w).flatten.kTestVector k = (replicate k w).flatten.kTestVector k := by
   rcases eq_or_ne w [] with rfl | hw
   · simp
   obtain _ | n := k
-  · simp [kTestVector, Set.ext_iff, mem_kFactors]
+  · simp [kTestVector, Set.ext_iff]
   have hlen (m : ℕ) : m ≤ (replicate m w).flatten.length := by
     simpa using Nat.le_mul_of_pos_right m (length_pos_iff.mpr hw)
   have hl (m : ℕ) : (replicate (m + 1) w).flatten = (replicate m w).flatten ++ w := by
@@ -90,21 +111,19 @@ theorem kTestVector_flatten_replicate_succ (k : ℕ) (w : List α) :
     rw [replicate_succ, flatten_cons]
   simp only [kTestVector, Nat.add_sub_cancel, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right,
     Set.ext_iff, Set.mem_ofPred_eq]
-  refine ⟨?_, fun f ↦ ?_, ?_⟩
+  refine ⟨?_, fun f ↦ and_congr_left fun hf ↦ ⟨fun h ↦ ?_, fun h ↦ h.trans ?_⟩, ?_⟩
   · rw [hl, take_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
-  · rw [hl, mem_kFactors_append, Nat.add_sub_cancel]
-    refine or_iff_left_of_imp ?_
-    rintro (hf | hf) <;> rw [mem_kFactors] at hf ⊢ <;> refine ⟨hf.1.trans ?_, hf.2⟩
-    · exact hr n ▸ (prefix_append _ _).isInfix
-    · rw [hr n, rtake_append_of_le_length (hlen n), ← hr n, hl n]
-      exact infix_append_iff.mpr (.inr (.inr ⟨_, _, rfl, rtake_suffix _ _, take_prefix _ _⟩))
+  · rw [hl, hr, infix_append_append_iff (by have := hlen n; omega), ← hr, ← hl] at h
+    exact h.elim id id
+  · rw [hl (n + 1)]
+    exact (prefix_append _ _).isInfix
   · rw [hr, rtake_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
 
 theorem finite_range_kTestVector [Finite α] (k : ℕ) :
     (Set.range (kTestVector (α := α) k)).Finite :=
   ((Edge.finite_range_takeAt .left (k - 1)).prod <| (List.finite_length_eq α k).finite_subsets.prod
     (Edge.finite_range_takeAt .right (k - 1))).subset <| Set.range_subset_iff.2 fun w ↦
-      ⟨⟨w, rfl⟩, fun _ hf ↦ (mem_kFactors.mp hf).2, ⟨w, rfl⟩⟩
+      ⟨⟨w, rfl⟩, fun _ hf ↦ hf.2, ⟨w, rfl⟩⟩
 
 end List
 
@@ -128,8 +147,8 @@ theorem IsLocallyTestable.union (hL : L.IsLocallyTestable k) (hM : M.IsLocallyTe
     (L ⊔ M).IsLocallyTestable k :=
   fun _ _ e ↦ congrArg₂ Or (hL e) (hM e)
 
-theorem isLocallyTestable_setOf_kFactors (k : ℕ) (P : Set (Set (List α))) :
-    IsLocallyTestable {w | {f | f ∈ w.kFactors k} ∈ P} k :=
+theorem isLocallyTestable_setOf_factors (k : ℕ) (P : Set (Set (List α))) :
+    IsLocallyTestable {w | {f | f <:+: w ∧ f.length = k} ∈ P} k :=
   fun _ _ e ↦ congrArg (fun p ↦ p.2.1 ∈ P) e
 
 theorem IsLocallyTestable.leftQuotient (h : L.IsLocallyTestable k) (u : List α) :
@@ -182,7 +201,7 @@ end Finite
 
 theorem isLocallyTestable_setOf_infix (c : List α) :
     IsLocallyTestable {w | c <:+: w} c.length := by
-  simpa [List.mem_kFactors] using isLocallyTestable_setOf_kFactors c.length {S | c ∈ S}
+  simpa using isLocallyTestable_setOf_factors c.length {S | c ∈ S}
 
 /-- The positions of `c` that hold the letter `a`. Recording them for each letter of a word
 collapses any alphabet onto a finite one without losing the occurrences of `c`. -/

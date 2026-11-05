@@ -116,7 +116,7 @@ theorem windowRun_append_singleton {w : List γ} (hw : w.length ≤ n) (u : List
   | nil => simp [windowRun, List.rtake_of_length_le hw]
   | cons y ys ih =>
     simp only [List.cons_append, windowRun, List.append_assoc, ih (List.length_rtake_le _ _),
-      List.rtake_append_rtake]
+      List.rtake_rtake_append]
 
 theorem isLeftSubsequential_windowRun [Fintype γ] (n : ℕ) (out : List γ → α → List β)
     (upd : List γ → α → List γ) : IsLeftSubsequential (windowRun n out upd []) :=
@@ -204,7 +204,7 @@ theorem IsLeftInputStrictlyLocal.factorsThrough_residual (hf : IsLeftInputStrict
     f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
   exact factorsThrough_residual_of_append_singleton (fun w x ↦ (w ++ [x]).rtake (k - 1))
-    r.windowOutput (fun u x ↦ (List.rtake_append_rtake _ _ _).symm) r.apply_append_singleton
+    r.windowOutput (fun _ _ ↦ List.rtake_rtake_append.symm) r.apply_append_singleton
 
 theorem IsLeftInputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
     (hpre : ∀ u v, f u <+: f (u ++ v))
@@ -229,10 +229,8 @@ theorem isLeftInputStrictlyLocal_iff_factorsThrough_residual :
 /-- A `k`-ISL function is `k'`-ISL for every `k' ≥ k`. -/
 protected theorem IsLeftInputStrictlyLocal.weaken (hf : IsLeftInputStrictlyLocal k f)
     (hk : k ≤ k') : IsLeftInputStrictlyLocal k' f :=
-  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
-    hf.factorsThrough_residual <| by
-      simpa [List.rtake_rtake, Nat.min_eq_left (Nat.sub_le_sub_right hk 1)] using
-        congrArg (List.rtake · (k - 1)) h
+  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun _ _ h ↦
+    hf.factorsThrough_residual <| Edge.right.takeAt_eq_of_le (Nat.sub_le_sub_right hk 1) h
 
 protected theorem IsRightInputStrictlyLocal.weaken (hf : IsRightInputStrictlyLocal k f)
     (hk : k ≤ k') : IsRightInputStrictlyLocal k' f :=

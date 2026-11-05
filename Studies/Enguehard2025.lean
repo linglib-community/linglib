@@ -256,7 +256,7 @@ theorem exists_image_exh_eq_classes_not_stronglyStable :
         obtain ⟨q, ⟨(⟨n, rfl⟩ | ⟨n, rfl⟩) | rfl, hq⟩, hnq⟩ := hd (show none ∈ φ by simp [hφ])
         · exact hψφ n hq.1
         · simp at hnq
-        · exact hq.ne rfl
+        · exact (Set.mem_Iio.1 hq).ne rfl
   -- every world is a cell of its own
   have hcell : ∀ w, strongAnswer A w = {w} := by
     intro w
@@ -775,7 +775,7 @@ theorem exists_not_dominated_every_union_no [Nonempty ι] :
     rcases hψ with ⟨k, rfl⟩ | rfl | rfl
     · exact notMem_empty k h0
     · exact hu0 (mem_singleton_iff.1 h0).symm
-    · exact hψs.ne rfl
+    · exact (Set.mem_Iio.1 hψs).ne rfl
 
 -- p. 714: with *no* an alternative beside *every*, the disjunction of the universal and the negated
 -- existential is dominated, by the two

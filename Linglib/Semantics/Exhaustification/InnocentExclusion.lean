@@ -4,6 +4,7 @@ public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Set.Finite.Powerset
 public import Mathlib.Order.Minimal
+public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.SupClosed
 
 /-!
@@ -238,6 +239,15 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
 theorem exhIE_univ : exhIE univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
+variable {ALT φ} in
+/-- Plain exhaustification keeps the prejacent worlds whose true alternatives are least among the
+prejacent's, as `exhMW` keeps those whose are minimal. Innocent exclusion keeps those below the join
+of the minimal sets (`mem_exhIE_iff_subset_sUnion`), and the cell those at it (`mem_cell_iff`). -/
+theorem mem_exh_iff_least {u : World} : u ∈ exh ALT φ ↔ u ∈ φ ∧
+    ∀ v ∈ φ, Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v :=
+  and_congr_right fun _ ↦ ⟨fun h _ hv q hq ↦ ⟨hq.1, h q hq.1 hq.2 hv⟩,
+    fun h _ hq hw v hv ↦ (h v hv ⟨hq, hw⟩).2⟩
+
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
   fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun _ hv _ a ⟨ha, hua⟩ ↦ ⟨ha, hex a ha hua hv⟩⟩
 
@@ -310,6 +320,32 @@ theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Se
   obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ p hp]
   exact fun h ↦ h hu ((hcov hu.1).resolve_right fun huq ↦ hwq (huw ⟨hq, huq⟩).2)
+
+variable {φ} in
+/-- Alternatives whose union covers the prejacent leave innocent exclusion vacuous, whether or not
+they partition it. -/
+theorem exhIE_eq_self_of_subset_union {p q : Set World} (hcov : φ ⊆ p ∪ q)
+    (hp : (φ \ p).Nonempty) (hq : (φ \ q).Nonempty) : exhIE {φ, p, q} φ = φ := by
+  refine exhIE_eq_self_iff _ _ |>.2 fun a ha ↦ ?_
+  have hfin : ({φ, p, q} : Set (Set World)).Finite := by simp
+  rcases ha.1 with rfl | rfl | rfl
+  · exact absurd ha
+      (not_isInnocentlyExcludable_of_phi_subset hfin (hp.mono sdiff_subset) subset_rfl)
+  · exact absurd ha
+      (not_isInnocentlyExcludable_of_subset_union _ _ hfin (by simp) (by simp) hcov hq)
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ hfin (by simp) (by simp)
+      (union_comm a p ▸ hcov) hp)
+
+variable {ALT φ} in
+/-- Innocent exclusion is below no alternative strictly stronger than the prejacent: such an
+alternative fails at a prejacent world, hence at a minimal world, and minimal worlds survive. -/
+theorem exhIE_notMem_lowerClosure (hfin : ALT.Finite) :
+    exhIE ALT φ ∉ lowerClosure (ALT ∩ Iio φ) := by
+  rw [mem_lowerClosure]
+  rintro ⟨q, ⟨hq, hqφ⟩, hsq⟩
+  obtain ⟨w, hwφ, hwq⟩ := not_subset.1 hqφ.2
+  obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hwφ
+  exact hwq (huw ⟨hq, hsq (exhMW_subset_exhIE ALT φ hu)⟩).2
 
 theorem exhIE_eq_setOf_exhMW_subset_compl :
     exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → u ∉ a} :=

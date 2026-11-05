@@ -225,7 +225,7 @@ def ex_42b : Datum :=
 
 def ex_44 : Datum :=
   { id := "brehenyetal2018_44"
-    source := ⟨"swanson-2010", ""⟩
+    source := ⟨"swanson-2010", "(3)"⟩
     reportedIn := some ⟨"breheny-et-al-2018", "(44)"⟩
     language := "stan1293"
     primaryText := "Going to confession is permitted."
@@ -238,7 +238,7 @@ def ex_44 : Datum :=
 
 def ex_45 : Datum :=
   { id := "brehenyetal2018_45"
-    source := ⟨"swanson-2010", ""⟩
+    source := ⟨"swanson-2010", "(2)"⟩
     reportedIn := some ⟨"breheny-et-al-2018", "(45)"⟩
     language := "stan1293"
     primaryText := "The heater sometimes squeaks."

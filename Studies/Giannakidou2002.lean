@@ -29,7 +29,8 @@ nothing P-like ever happens](##wideScope_of_forall_not), whereas [eventive UNTIL
 *not until* with the actualization his presupposition supplies](##eventiveUntil_iff). The
 paper's Greek, English, Icelandic and Dutch judgments [follow from the aspect of the main clause
 and the fragment entries of the connectives and their polarity items](##rows_predicted), and its
-stativity diagnostics [from homogeneity with negation playing no role](##diagnostics_predicted).
+stativity diagnostics [from homogeneity](##diagnostics_predicted), [which negation does not
+supply](##stativizer_refuted).
 
 ## Implementation notes
 
@@ -439,13 +440,21 @@ inductive Diagnostic
   | howLong | while | forAdverbial | imperative
   deriving DecidableEq, Repr
 
-/-- A `DiagnosticRow` is a sentence of the stativity diagnostics: the diagnostic and the form and
-class of the clause it applies to. Whether the clause is negated is not read, since the
-prediction does not depend on it. -/
+/-- A diagnostic's verdict on a clause, given whether the clause is homogeneous: the stative
+diagnostics accept a homogeneous clause and the imperative rejects one. -/
+def Diagnostic.Accepts (d : Diagnostic) (homogeneous : Prop) : Prop :=
+  (d = .imperative → ¬ homogeneous) ∧ (d ≠ .imperative → homogeneous)
+
+instance (d : Diagnostic) (h : Prop) [Decidable h] : Decidable (d.Accepts h) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A `DiagnosticRow` is a sentence of the stativity diagnostics: the diagnostic, the form and
+class of the clause it applies to, and the licensing context it stands under. -/
 structure DiagnosticRow where
   diagnostic : Diagnostic
   aspect : AspectForm
   eventuality : Eventuality
+  licenser : Option LicensingContext
   deriving DecidableEq, Repr
 
 /-- The diagnostic row of a datum. -/
@@ -454,14 +463,43 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
     ("forAdverbial", .forAdverbial), ("imperative", .imperative)]
   let aspect ← ex.parse? "aspect" aspectForms
   let eventuality ← ex.parse? "eventuality" eventualities
-  pure ⟨diagnostic, aspect, eventuality⟩
+  let licenser ← ex.parse? "licenser" licensers
+  pure ⟨diagnostic, aspect, eventuality, licenser⟩
 
-/-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
-negation playing no role, so negation is no stativizer. -/
+-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, read off the
+-- clause's form and class alone.
 theorem diagnostics_predicted : Datum.Checks DiagnosticRow.ofDatum
-    (fun r ↦ .ofProp ((r.diagnostic = .imperative → ¬ AdmitsDurative r.aspect r.eventuality) ∧
-      (r.diagnostic ≠ .imperative → AdmitsDurative r.aspect r.eventuality)))
+    (fun r ↦ .ofProp (r.diagnostic.Accepts (AdmitsDurative r.aspect r.eventuality)))
     Examples.all 12 := by
+  decide
+
+/-- A negated clause over a predicate of class `c` is homogeneous on the stativizer analysis, the
+wide-scope reading of `wideScope`, when that reading holds of its description in some model. -/
+def AdmitsDurativeNegated (c : Eventuality) : Prop :=
+  ∃ (M : Model) (P : M.W → M.E → Prop) (w : M.W) (t : M.T), P ∈ c.predicates ∧ wideScope P w t
+
+-- Negation makes a clause of any class homogeneous on that analysis: it holds of a predicate true
+-- of nothing.
+theorem admitsDurativeNegated (c : Eventuality) : AdmitsDurativeNegated c := by
+  refine ⟨⟨Unit, ℤ, NonemptyInterval ℤ⟩, fun _ _ ↦ False, (), (1 : ℤ), ?_,
+    wideScope_of_forall_not (t := (0 : ℤ)) (fun _ h ↦ h) (by decide)⟩
+  cases c
+  · exact hasSubintervalProperty_iff_witnesses.2 fun _ _ h ↦ h.elim
+  · exact fun _ _ _ h ↦ h.elim
+
+instance (c : Eventuality) : Decidable (AdmitsDurativeNegated c) :=
+  isTrue (admitsDurativeNegated c)
+
+/-- The diagnostic rows of perfective clauses under negation. -/
+def negatedPerfective (ex : Datum) : Option DiagnosticRow :=
+  (DiagnosticRow.ofDatum ex).filter fun r ↦ r.licenser = some .negation ∧ r.aspect = .perfective
+
+/-- **Negation is no stativizer.** If negation made a perfective clause homogeneous, as the analysis
+of (65) has it, each diagnostic's verdict on (67b), (68b), (70b) and (71c) would be the reverse of
+the printed judgment (pp. 98–99). -/
+theorem stativizer_refuted : Datum.Checks negatedPerfective
+    (fun r ↦ .ofProp (¬ r.diagnostic.Accepts (AdmitsDurativeNegated r.eventuality)))
+    Examples.all 4 := by
   decide
 
 end Giannakidou2002

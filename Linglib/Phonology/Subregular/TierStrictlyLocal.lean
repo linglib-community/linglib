@@ -8,7 +8,6 @@ module
 public import Linglib.Phonology.Subregular.StrictlyLocal
 public import Mathlib.Data.List.Basic
 public import Mathlib.Computability.Language
-public import Linglib.Core.Data.List.Factors
 
 /-!
 # Tier-based strictly local languages (TSL_k)
@@ -89,7 +88,7 @@ def language (G : TierStrictlyLocalGrammar k α) : Language α :=
 
 @[simp] lemma mem_language (G : TierStrictlyLocalGrammar k α) (w : List α) :
     w ∈ G.language ↔
-      ∀ f ∈ List.kFactors k (boundary k (w.filter (G.tier ·))), f ∈ G.permitted := Iff.rfl
+      ∀ f, f.length = k → f <:+: boundary k (w.filter (G.tier ·)) → f ∈ G.permitted := Iff.rfl
 
 theorem mem_language_append_cons_of_not_tier (G : TierStrictlyLocalGrammar k α) {a : α}
     (ha : ¬ G.tier a) (u v : List α) :
@@ -162,12 +161,11 @@ theorem IsTierStrictlyLocal.exists_tier {k : ℕ} {L : Language α}
   simp only [List.filter_append] at h₁ h₂ ⊢
   rw [← hx] at h₂
   set p := x₁.filter (G.tier ·)
-  have hsplit : p = p.take (p.length - (k - 1)) ++ p.drop (p.length - (k - 1)) :=
-    (List.take_append_drop _ _).symm
+  have hsplit : p = p.rdrop (k - 1) ++ p.rtake (k - 1) := (List.rdrop_append_rtake _ _).symm
   rw [hsplit] at h₁ h₂ ⊢
   simpa only [List.append_assoc] using
-    hSSC (u₁.filter _ ++ p.take (p.length - (k - 1))) (v₁.filter _)
-      (u₂.filter _ ++ p.take (p.length - (k - 1))) (v₂.filter _) (p.drop (p.length - (k - 1)))
+    hSSC (u₁.filter _ ++ p.rdrop (k - 1)) (v₁.filter _)
+      (u₂.filter _ ++ p.rdrop (k - 1)) (v₂.filter _) (p.rtake (k - 1))
       (by simp; omega) (by simpa only [List.append_assoc] using h₁)
       (by simpa only [List.append_assoc] using h₂)
 

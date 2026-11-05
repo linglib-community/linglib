@@ -612,7 +612,8 @@ def kilumba : Hybrid Position := fun
   | .predicate => some .both
   | _ => none
 
-/-- The hybrids of Table 8.1 by the names the rows use. -/
+/-- The hybrids of Table 8.1, with the English boat nouns of §6.4.5 and *kamwana* and *kilumba* of
+§8.3, by the names the rows use. -/
 def hybridNames : List (String × Hybrid Position) :=
   [("frenchTitles", frenchTitles),
     ("mädchen", madchen),
@@ -625,7 +626,8 @@ def hybridNames : List (String × Hybrid Position) :=
     ("kamwana", kamwana),
     ("kilumba", kilumba)]
 
-/-- Every hybrid of Table 8.1 respects the Agreement Hierarchy. -/
+/-- Every hybrid of Table 8.1, the English boat nouns of §6.4.5, and *kamwana* and *kilumba* of §8.3
+respect the Agreement Hierarchy. -/
 theorem hybrids_respectHierarchy : ∀ h ∈ hybridNames, RespectsHierarchy h.2 := by decide
 
 /-- At the corpus level, 16.9 per cent of 3,835 of Panov's respondents favour feminine

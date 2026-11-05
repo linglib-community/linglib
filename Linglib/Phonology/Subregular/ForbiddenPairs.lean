@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
-public import Linglib.Core.Data.List.Factors
 public import Linglib.Core.Data.List.Chain
 
 /-!
@@ -58,15 +57,14 @@ def forbiddenPairs : Set (Augmented α) :=
   { f | ∃ a b, R a b ∧ f = [some a, some b] }
 
 private lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
-    (∀ f ∈ List.kFactors 2 xs, f ∉ forbiddenPairs R) ↔
+    (∀ f, f.length = 2 → f <:+: xs → f ∉ forbiddenPairs R) ↔
       xs.IsChain (fun u v ↦ ∀ a ∈ u, ∀ b ∈ v, ¬ R a b) := by
-  induction xs with
-  | nil => simp
-  | cons a rest ih => cases rest with
-    | nil => simp
-    | cons b rest' =>
-      rw [List.kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons, ih]
-      exact and_congr_left' (by cases a <;> cases b <;> simp [forbiddenPairs])
+  rw [List.isChain_iff_forall_rel_of_append_cons_cons]
+  constructor
+  · rintro h _ _ l₁ l₂ rfl a rfl b rfl hR
+    exact h [some a, some b] rfl ⟨l₁, l₂, by simp⟩ ⟨a, b, hR, rfl⟩
+  · rintro h _ - ⟨s, t, rfl⟩ ⟨a, b, hR, rfl⟩
+    exact h (l₁ := s) (l₂ := t) (by simp) a rfl b rfl hR
 
 /-- The TSL_2 grammar banning tier-adjacent pairs satisfying `R` has tier `p` and permits
 everything but `forbiddenPairs R`. -/

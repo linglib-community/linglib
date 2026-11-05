@@ -148,7 +148,17 @@ theorem language_subset_language_iff (hf : IsLatticeSpace f) {a b : V} :
 
 end LatticeSpace
 
-/-! ### Example 2.8 and Table 1 -/
+/-! ### Examples 2.4 and 2.8, and Table 1 -/
+
+/-- `fac k` maps a word to the set of its `k`-factors, its substrings of length `k`
+(Example 2.4). -/
+def fac {α : Type*} [DecidableEq α] (k : ℕ) (w : List α) : Finset (List α) :=
+  (w.sublists.filter fun v ↦ v <:+: w ∧ v.length = k).toFinset
+
+theorem mem_fac {α : Type*} [DecidableEq α] {k : ℕ} {v w : List α} :
+    v ∈ fac k w ↔ v <:+: w ∧ v.length = k := by
+  simp only [fac, List.mem_toFinset, List.mem_filter, List.mem_sublists, decide_eq_true_eq]
+  exact ⟨And.right, fun h ↦ ⟨h.1.sublist, h⟩⟩
 
 section Table1
 
@@ -159,37 +169,33 @@ inductive Letter
 
 open Letter
 
-/-- `fac₂` maps a word to its 2-factors (Example 2.4). -/
-def fac₂ (w : List Letter) : Finset (List Letter) := (w.kFactors 2).toFinset
-
 -- Table 1: the grammar after each of `ab`, `abb`, `aba`, `bba`; it stops changing at `aba`.
 theorem table1 :
-    conjecture fac₂ [some [a, b]] = {[a, b]} ∧
-    conjecture fac₂ [some [a, b], some [a, b, b]] = {[a, b], [b, b]} ∧
-    conjecture fac₂ [some [a, b], some [a, b, b], some [a, b, a]] = {[a, b], [b, b], [b, a]} ∧
-    conjecture fac₂ [some [a, b], some [a, b, b], some [a, b, a], some [b, b, a]] =
+    conjecture (fac 2) [some [a, b]] = {[a, b]} ∧
+    conjecture (fac 2) [some [a, b], some [a, b, b]] = {[a, b], [b, b]} ∧
+    conjecture (fac 2) [some [a, b], some [a, b, b], some [a, b, a]] = {[a, b], [b, b], [b, a]} ∧
+    conjecture (fac 2) [some [a, b], some [a, b, b], some [a, b, a], some [b, b, a]] =
       {[a, b], [b, b], [b, a]} := by
   decide
 
+-- Example 2.8: the language that forbids the 2-factor `aa`.
 theorem language_table1 :
-    language fac₂ ({[a, b], [b, b], [b, a]} : Finset (List Letter)) =
-      {w | [a, a] ∉ w.kFactors 2} := by
+    language (fac 2) ({[a, b], [b, b], [b, a]} : Finset (List Letter)) = {w | ¬ [a, a] <:+: w} := by
   ext w
-  refine ⟨fun h haa ↦ absurd (h (List.mem_toFinset.mpr haa)) (by decide), fun h x hx ↦ ?_⟩
-  have hx' := List.mem_toFinset.mp hx
-  have hlen := (List.mem_kFactors.mp hx').2
+  refine ⟨fun h haa ↦ absurd (h (mem_fac.2 ⟨haa, rfl⟩)) (by decide), fun h x hx ↦ ?_⟩
+  obtain ⟨hx', hlen⟩ := mem_fac.1 hx
   match x, hlen, hx' with
   | [a, a], _, hx' => exact absurd hx' h
   | [a, b], _, _ => decide
   | [b, a], _, _ => decide
   | [b, b], _, _ => decide
 
-theorem identifies_table1 : Identifies (learner fac₂) {w | [a, a] ∉ w.kFactors 2} ∧
-    [a, b, b, b] ∈ {w : List Letter | [a, a] ∉ w.kFactors 2} ∧
-    [a, a, b] ∉ {w : List Letter | [a, a] ∉ w.kFactors 2} := by
+theorem identifies_table1 : Identifies (learner (fac 2)) {w | ¬ [a, a] <:+: w} ∧
+    [a, b, b, b] ∈ {w : List Letter | ¬ [a, a] <:+: w} ∧
+    [a, a, b] ∉ {w : List Letter | ¬ [a, a] <:+: w} := by
   refine ⟨?_, by decide, by decide⟩
-  have := identifies_language_finset_sup (f := fac₂) {[a, b], [a, b, b], [a, b, a]}
-  rwa [show Finset.sup {[a, b], [a, b, b], [a, b, a]} fac₂ = {[a, b], [b, b], [b, a]} by decide,
+  have := identifies_language_finset_sup (f := fac 2) {[a, b], [a, b, b], [a, b, a]}
+  rwa [show Finset.sup {[a, b], [a, b, b], [a, b, a]} (fac 2) = {[a, b], [b, b], [b, a]} by decide,
     language_table1] at this
 
 end Table1
@@ -641,11 +647,11 @@ theorem isLatticeClass_strictlyLocal (k : ℕ) :
   classical
   have heq : {L : Set (List α) | ∃ G : Finset (Augmented α),
       L = StrictlyLocalGrammar.language k (G : Set (Augmented α))} =
-      {L | ∃ G : Finset (Augmented α), L = {w | (List.kFactors k (boundary k w)).toFinset ⊆ G}} :=
+      {L | ∃ G : Finset (Augmented α), L = {w | fac k (boundary k w) ⊆ G}} :=
     Set.ext fun L ↦ exists_congr fun G ↦ by
       refine iff_of_eq (congrArg _ (Set.ext fun w ↦ ?_))
-      simp only [Finset.subset_iff, List.mem_toFinset]
-      exact ⟨fun h x hx ↦ Finset.mem_coe.mp (h x hx), fun h x hx ↦ Finset.mem_coe.mpr (h hx)⟩
+      simp only [Finset.subset_iff, mem_fac]
+      exact ⟨fun h f hf ↦ h f hf.2 hf.1, fun h f hl hf ↦ h ⟨hf, hl⟩⟩
   rw [heq]
   exact isLatticeClass_finite_grammars _
 
@@ -677,23 +683,26 @@ theorem isLatticeClass_isPiecewiseTestable [Finite α] (k : ℕ) :
 exactly when the alphabet is finite. -/
 theorem identifiable_isStrictlyLocal_iff [Countable α] {k : ℕ} (hk : 1 ≤ k) :
     Identifiable {L : Set (List α) | Language.IsStrictlyLocal L k} ↔ Finite α := by
-  let F : List α → Set (Augmented α) := fun w ↦ {f | f ∈ List.kFactors k (boundary k w)}
+  let F : List α → Set (Augmented α) := fun w ↦ {f | f <:+: boundary k w ∧ f.length = k}
   have hclass : {L : Set (List α) | Language.IsStrictlyLocal L k} =
-      range fun G : Set (Augmented α) ↦ {w | F w ⊆ G} := rfl
-  rw [hclass, identifiable_range_iff F fun w ↦ List.finite_toSet _]
+      range fun G : Set (Augmented α) ↦ {w | F w ⊆ G} :=
+    Set.ext fun L ↦ exists_congr fun G ↦ by rw [StrictlyLocalGrammar.language_eq_core]; rfl
+  have hfin (w : List α) : (F w).Finite :=
+    (List.finite_toSet (boundary k w).sublists).subset fun _ hf ↦ List.mem_sublists.mpr hf.1.sublist
+  rw [hclass, identifiable_range_iff F hfin]
   constructor
   · intro hfin
     by_contra hinf
     have : Infinite α := not_finite_iff_infinite.mp hinf
     refine infinite_of_injective_forall_mem (f := fun a : α ↦
       List.replicate (k - 1) none ++ [some a]) (fun a b hab ↦ by simpa using hab) (fun a ↦ ?_) hfin
-    refine mem_iUnion.mpr ⟨[a], List.mem_kFactors.mpr ⟨⟨[], List.replicate (k - 1) none, ?_⟩, ?_⟩⟩
+    refine mem_iUnion.mpr ⟨[a], ⟨[], List.replicate (k - 1) none, ?_⟩, ?_⟩
     · simp [boundary]
     · simp only [List.length_append, List.length_replicate, List.length_singleton]; omega
   · intro _
     refine (List.finite_length_eq (Option α) k).subset fun f hf ↦ ?_
     obtain ⟨w, hw⟩ := mem_iUnion.mp hf
-    exact (List.mem_kFactors.mp hw).2
+    exact hw.2
 
 theorem identifiable_isStrictlyPiecewise_iff [Countable α] {k : ℕ} (hk : 1 ≤ k) :
     Identifiable {L : Set (List α) | Language.IsStrictlyPiecewise L k} ↔ Finite α := by
@@ -749,7 +758,7 @@ theorem not_identifiable_exists_isStrictlyLocal [Countable α] [Nonempty α] :
       · exact ⟨⟨0, by omega⟩, List.getElem?_int_eq_none_iff.mpr (by push_cast; omega)⟩
       · exact ⟨⟨n, by omega⟩, List.getElem?_int_eq_none_iff.mpr (by push_cast; omega)⟩
   · rw [iUnion_length_le]
-    exact ⟨1, univ, eq_univ_of_forall fun _ _ _ ↦ mem_univ _⟩
+    exact ⟨1, univ, eq_univ_of_forall fun _ _ _ _ ↦ mem_univ _⟩
 
 theorem not_identifiable_exists_isStrictlyPiecewise [Countable α] [Nonempty α] :
     ¬Identifiable {L : Set (List α) | ∃ k, Language.IsStrictlyPiecewise L k} := by
