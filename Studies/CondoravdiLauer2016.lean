@@ -78,6 +78,7 @@ cases.
 namespace CondoravdiLauer2016
 
 open Desire.Preferential Modality Conditional.Restrictor
+open PreferenceStructure (mem_maximals_discrete)
 
 section General
 
@@ -98,11 +99,11 @@ and realistic one that guides action, (66) and (67), realism derivable from cons
 -- (71c), §5.5
 theorem not_monotone_want [Nontrivial W] :
     ¬ Monotone (Want (fun (_ : Unit) _ ↦ .single {w}) () · w) := fun h ↦
-  Set.singleton_ne_univ w (h (Set.subset_univ {w}) ⟨rfl, fun _ _ h ↦ h⟩).1.symm
+  Set.singleton_ne_univ w (h (Set.subset_univ {w}) (mem_maximals_discrete rfl)).1.symm
 
 theorem not_antitone_want [Nontrivial W] :
     ¬ Antitone (Want (fun (_ : Unit) _ ↦ .single Set.univ) () · w) := fun h ↦
-  Set.singleton_ne_univ w (h (Set.subset_univ {w}) ⟨rfl, fun _ _ h ↦ h⟩).1
+  Set.singleton_ne_univ w (h (Set.subset_univ {w}) (mem_maximals_discrete rfl)).1
 
 -- (52), (53), §2.3, §5.4
 theorem want_both (p q : Set W) :
@@ -128,10 +129,8 @@ theorem threeWay_pairwise_not_consistent :
       ¬ threeWay.Consistent Set.univ := by
   refine ⟨?_, fun h ↦ ?_⟩
   · rintro _ (rfl | rfl | rfl) _ (rfl | rfl | rfl) <;> exact Set.nonempty_def.2 (by decide)
-  · obtain ⟨_, _, _, _, h⟩ := h threeWay.prefs subset_rfl (by
-      ext w
-      fin_cases w <;> simp [threeWay])
-    exact h
+  · obtain ⟨w, -, hw⟩ := PreferenceStructure.consistent_discrete_iff.1 h
+    fin_cases w <;> simp_all
 
 /-! ### Previous approaches -/
 
@@ -301,7 +300,7 @@ theorem w₀_excluded :
     w₀ ∈ fBelS.accessibleWorlds w₀ ∧
       w₀ ∉ (fBelS.restrict (Want ep () harlem)).accessibleWorlds w₀ :=
   ⟨mem_fBelS.2 rfl, fun h ↦ not_want_of_mem_restricted (q := hoboken) consistent_ep
-    (fun _ ↦ by rw [harlem_inter_hoboken, Set.inter_empty]) h ⟨rfl, fun _ _ h ↦ h⟩⟩
+    (fun _ ↦ by rw [harlem_inter_hoboken, Set.inter_empty]) h (mem_maximals_discrete rfl)⟩
 
 private theorem mem_bestWorlds_fBelS {α : World → Prop} {v : World}
     (hv : v.harlemTrain = .aTrain) (hα : α v) : v ∈ bestWorlds (fBelS.restrict α) ⊥ w := by
@@ -335,7 +334,7 @@ theorem not_possibility_path :
     ¬ conditionalNecessity fBelS ⊥ (Want ep () harlem)
       (possibility fHist (orderingSource ep ()) (· ∈ path)) w := fun h ↦ by
   obtain ⟨u, hu, hpath⟩ := necessity_of_conditionalNecessity h ⟨.harlem, .aTrain, .aTrain⟩
-    (mem_bestWorlds_fBelS rfl ⟨rfl, fun _ _ h ↦ h⟩)
+    (mem_bestWorlds_fBelS rfl (mem_maximals_discrete rfl))
   rw [mem_bestAccessible, bestWorlds_fHist] at hu
   have := (mem_fHist.1 hu.1).2
   simp_all [Goal.dest, harlem, path]
@@ -345,7 +344,7 @@ theorem not_anankastic_desire :
     ¬ conditionalNecessity fBelS ⊥ (Want desire () harlem)
       (necessity fHist (orderingSource ep ()) (· ∈ aTrain)) w₀ := fun h ↦
   nomatch necessity_of_conditionalNecessity h w₀
-    (mem_bestWorlds_fBelS rfl ⟨.inl rfl, fun _ _ h ↦ h⟩) w₀
+    (mem_bestWorlds_fBelS rfl (mem_maximals_discrete (Or.inl rfl))) w₀
     (by rw [mem_bestAccessible, bestWorlds_fHist]; exact ⟨mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩)
 
 private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource ep ()) w₀ := by
@@ -356,13 +355,13 @@ private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource 
 -- §2.3
 theorem saebo_harlem :
     ¬ necessity fBelS ((orderingSource ep ()).restrict (· ∈ harlem)) (· ∈ aTrain) w₀ :=
-  not_necessity_insert (q := (· ∈ hoboken)) ⟨rfl, fun _ _ h ↦ h⟩
+  not_necessity_insert (q := (· ∈ hoboken)) (mem_maximals_discrete rfl)
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun nofun
 
 -- (14)
 theorem saebo_path :
     possibility fBelS ((orderingSource ep ()).restrict (· ∈ harlem)) (· ∈ path) w₀ :=
-  ⟨w₀, mem_bestWorlds_insert (q := (· ∈ hoboken)) ⟨rfl, fun _ _ h ↦ h⟩
+  ⟨w₀, mem_bestWorlds_insert (q := (· ∈ hoboken)) (mem_maximals_discrete rfl)
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun, rfl⟩
 
 end HobokenScenario
@@ -542,14 +541,15 @@ theorem should_vaccine :
       fun _ _ u ⟨_, hu⟩ ↦ ?_
   · rintro _ (rfl | rfl)
     exacts [rfl, fun _ ↦ rfl]
-  · exact (hu safe ⟨.inr rfl, fun _ _ h ↦ h⟩) (hu travel ⟨.inl rfl, fun _ _ h ↦ h⟩)
+  · exact (hu safe (mem_maximals_discrete (Or.inr rfl)))
+      (hu travel (mem_maximals_discrete (Or.inl rfl)))
 
 -- (29b)
 theorem not_should_vaccine_strong :
     ¬ conditionalNecessity ⊥ ⊥ (Want strong () travel)
       (necessity ⊥ (orderingSource strong ()) (· ∈ vaccinated)) w := fun h ↦
   nomatch necessity_of_conditionalNecessity h w
-    (mem_bestWorlds_bot_restrict (α := Want strong () travel) ⟨rfl, fun _ _ h ↦ h⟩)
+    (mem_bestWorlds_bot_restrict (α := Want strong () travel) (mem_maximals_discrete rfl))
     ⟨.go, .none⟩
     (by
       rw [mem_bestAccessible, bestWorlds_orderingSource
@@ -634,11 +634,11 @@ theorem should_train :
       w).Nonempty := by
     refine ⟨⟨.clear, .train⟩, ?_⟩
     rw [Background.accessibleWorlds_sup]
-    exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩,
+    exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, mem_maximals_discrete rfl⟩,
       fun _ hp ↦ by rw [Set.mem_singleton_iff.1 hp]⟩
   rw [bestWorlds_eq_accessibleWorlds_sup hc, Background.accessibleWorlds_sup] at hv
   obtain ⟨ht, hr⟩ := mem_fHist.1 hu
-  rcases hn noon ⟨rfl, fun _ _ h ↦ h⟩ with h | ⟨h, -⟩
+  rcases hn noon (mem_maximals_discrete rfl) with h | ⟨h, -⟩
   · exact absurd h (hr (ht.trans (hv.2 _ rfl)))
   · exact h
 
@@ -649,7 +649,7 @@ theorem should_ride :
   refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.of_finite _ _ _)).2
     fun v hv u ⟨hu, hn⟩ ↦ ?_
   have hvr : v.tracks = .repairs := (Background.mem_accessibleWorlds_restrict.1 hv.1).2.2
-  rcases hn noon ⟨rfl, fun _ _ h ↦ h⟩ with h | ⟨-, h⟩
+  rcases hn noon (mem_maximals_discrete rfl) with h | ⟨-, h⟩
   · exact h
   · exact nomatch h.symm.trans ((mem_fHist.1 hu).1.trans hvr)
 
@@ -661,11 +661,11 @@ theorem not_single_modal :
   refine single_modal_strengthening h₁
     (Filter.mem_of_superset h₂ fun _ hr ht ↦ nomatch hr.symm.trans ht)
     ⟨.repairs, .ride⟩ ?_ rfl
-  rw [bestWorlds_orderingSource
-    (PreferenceStructure.consistent_single_iff.2 ⟨⟨.repairs, .ride⟩,
-      Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩, .inl rfl⟩)]
-  exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩,
-    fun _ ht ↦ ht.1 ▸ .inl rfl⟩
+  have hm : (⟨.repairs, .ride⟩ : World) ∈
+      ((⊥ : Background World).restrict (Want ep () noon)).accessibleWorlds w :=
+    Background.mem_accessibleWorlds_restrict.2 ⟨by simp, mem_maximals_discrete rfl⟩
+  rw [bestWorlds_orderingSource (PreferenceStructure.consistent_single_iff.2 ⟨_, hm, .inl rfl⟩)]
+  exact ⟨hm, fun _ ht ↦ ht.1 ▸ .inl rfl⟩
 
 end AirportScenario
 

@@ -144,6 +144,10 @@ def discrete (S : Set (Set W)) : PreferenceStructure W where
 @[simp] theorem maximals_discrete (S : Set (Set W)) : (discrete S).maximals = S :=
   Set.ext fun _ ↦ ⟨And.left, fun h ↦ ⟨h, fun _ _ h ↦ h⟩⟩
 
+theorem mem_maximals_discrete {S : Set (Set W)} {p : Set W} (h : p ∈ S) :
+    p ∈ (discrete S).maximals :=
+  (maximals_discrete S).symm.subset h
+
 /-- Unranked preferences are consistent exactly when they are jointly realizable. -/
 theorem consistent_discrete_iff {S : Set (Set W)} {B : Set W} :
     (discrete S).Consistent B ↔ (B ∩ ⋂₀ S).Nonempty :=

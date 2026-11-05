@@ -68,6 +68,7 @@ compound *bərə ka*, §4, are outside the paper's analysis.
 namespace Deo2025
 
 open Commitment Desire.Preferential Discourse
+open PreferenceStructure (mem_maximals_discrete)
 
 variable {W : Type*}
 
@@ -289,8 +290,8 @@ theorem mem_uptake_sunnyTomorrow {v : Weather} :
 
 -- (5a)
 theorem felicitous_raining : Felicitous prefs state info benefit safe raining .doxastic w₀ := by
-  refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, nofun, fun _ _ hq ↦ by
-    obtain ⟨h, -⟩ := hq; simp only at h; subst h; trivial⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
+  refine ⟨sincere_bara_iff.2 ⟨mem_maximals_discrete (Or.inl rfl), nofun, fun _ _ hq ↦ by
+    obtain ⟨h, -⟩ := hq; simp only at h; subst h; trivial⟩, mem_maximals_discrete (Or.inr rfl), rfl,
     ?_, ?_⟩
   · rintro v ⟨⟨-, -, hv⟩, hs⟩
     exact mem_uptake_raining.2 (hv hs)
@@ -360,9 +361,10 @@ theorem mem_uptake {v : Car} : v ∈ uptake latent taking .preferential ↔ v.up
 theorem felicitous_latent :
     Felicitous prefs latent info benefit taking taking .preferential w₀ ∧
       Want prefs .addressee taking w₀ := by
-  refine ⟨⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, fun _ ↦ ⟨Or.inr rfl, fun _ _ h ↦ h⟩,
-    fun _ _ hq ↦ absurd hq.2.2 Bool.false_ne_true⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
-    fun v hv ↦ mem_uptake.2 (hv.1 hv.2), fun h ↦ ?_⟩, ⟨rfl, fun _ _ h ↦ h⟩⟩
+  refine ⟨⟨sincere_bara_iff.2 ⟨mem_maximals_discrete (Or.inl rfl),
+    fun _ ↦ mem_maximals_discrete (Or.inr rfl), fun _ _ hq ↦ absurd hq.2.2 Bool.false_ne_true⟩,
+    mem_maximals_discrete (Or.inr rfl), rfl,
+    fun v hv ↦ mem_uptake.2 (hv.1 hv.2), fun h ↦ ?_⟩, mem_maximals_discrete rfl⟩
   simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from fun h ↦ h))
 
 -- (15)

@@ -68,6 +68,7 @@ effective structure alone where cooperation by default ranges over all of the ad
 namespace CondoravdiLauer2012
 
 open Commitment Desire.Preferential Modality
+open PreferenceStructure (mem_maximals_discrete)
 
 variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Set W} {w : W}
 
@@ -151,8 +152,8 @@ theorem advice_compatible {S : PreferenceStructure W} {B g : Set W} (hC : S.Cons
 
 -- (21), (22)
 theorem concession_not_want {S : PreferenceStructure W} {B : Set W} (hC : S.Consistent B)
-    (hp : p ∈ S.maximals) (hq : q ∈ S.prefs) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maximals :=
-  fun hq' ↦ hq'.2 p hp.1 (hC.prec_of_mem_maximals hp hq h)
+    (hp : p ∈ S.maximals) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maximals :=
+  fun hq ↦ (hC.inter_inter_nonempty_of_mem_maximals hp hq).ne_empty h
 
 /-- The utterances whose follow-ups the paper contrasts. -/
 inductive Use
@@ -196,17 +197,17 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     by_cases ha : u = .assertion
     · exact Or.inr (Or.inl ha)
     have hpq' : Set.univ ∩ (p ∩ q) = ∅ := by rw [Set.univ_inter]; exact hpq
-    exact Or.inr (Or.inr ⟨fun hw ↦ concession_not_want hC (hp ha) (hq hd) hpq' (hqm hw),
+    exact Or.inr (Or.inr ⟨fun hw ↦ concession_not_want hC (hp ha) hpq' (hqm hw),
       fun hu ↦ (advice_compatible hC (hb hu) (hp ha) (hq hd)).ne_empty hpq'⟩)
   · rintro (rfl | rfl | ⟨hw, hu⟩)
     · exact ⟨PreferenceStructure.single {x}, {x}, {y},
         PreferenceStructure.consistent_single_iff.2 ⟨x, Set.mem_univ x, Set.mem_singleton x⟩,
-        ⟨fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩, fun _ _ _ h ↦ h⟩, hxy', fun h ↦ absurd rfl h,
-        nofun⟩
+        ⟨fun _ ↦ mem_maximals_discrete (Set.mem_singleton _), fun _ _ _ h ↦ h⟩, hxy',
+        fun h ↦ absurd rfl h, nofun⟩
     · exact ⟨PreferenceStructure.single {y}, {x}, {y},
         PreferenceStructure.consistent_single_iff.2 ⟨y, Set.mem_univ y, Set.mem_singleton y⟩,
         ⟨fun h ↦ absurd rfl h, nofun⟩, hxy', fun _ ↦ Set.mem_singleton _,
-        fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩⟩
+        fun _ ↦ mem_maximals_discrete (Set.mem_singleton _)⟩
     · exact ⟨.rankBelow {{x}, {y}} hne.symm, {x}, {y},
         (PreferenceStructure.consistent_rankBelow_iff hne.symm).2
           ⟨⟨x, trivial, fun _ ⟨ht, hty⟩ ↦ (ht.resolve_right hty).symm ▸ rfl⟩,
