@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantification.Restriction
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Studies.Spector2007
 
@@ -15,7 +15,7 @@ direction and unrestricted extent; under it exhaustive interpretation is [the mi
 exhaustifier over the question's propositions](##Fagen2026.exh_ltDefault). A negative or mixed
 answer is only about its restriction, the intersection of the sets it lives on, which [the
 positive and negative restrictions make
-up](##Fagen2026.positiveRestriction_union_negativeRestriction); the hybrid order minimizes the
+up](##Quantifier.positiveRestriction_union_negativeRestriction); the hybrid order minimizes the
 question-property within the first and maximizes it within the second, so that [nothing outside
 the restriction is concluded](##Fagen2026.mem_exh_ltHybrid_iff_of_inter).
 Positive skew, a restriction equal to the positive restriction, selects the default order. *Some
@@ -44,7 +44,7 @@ formulae of a propositional language.
 * The proof that a quantifier lives on its restriction (A4) ends by claiming the result for any
   countable family of live-on sets; it holds only for finitely many, and fails for the cofinite
   sets of numbers (`not_livesOn_restriction_cofinite`). The appendix assumes a finite model, where
-  the result holds (`livesOn_restriction`).
+  the result holds (`Quantifier.livesOn_restriction`).
 
 ## TODO
 
@@ -65,93 +65,15 @@ formulae of a propositional language.
 
 namespace Fagen2026
 
-open Set
+open Set Quantifier
 
 variable {E : Type*}
 
-/-! ### Restriction operators (§2.2, Appendix) -/
+/-! ### Restriction and skew (§2.2, §3.1, Appendix) -/
 
 section Restriction
 
-variable (T : Quantifier E)
-
-/-- The restriction of a quantifier is the intersection of the sets it lives on ((10)). -/
-def restriction : Set E := ⋂₀ {S | T.LivesOn S}
-
-/-- The positive restriction of a quantifier holds the objects whose addition turns a set the
-quantifier does not apply to into one it applies to ((18a)). -/
-def positiveRestriction : Set E := {x | ∃ S, ¬ T S ∧ T (insert x S)}
-
-/-- The negative restriction of a quantifier holds the objects whose removal turns a set the
-quantifier does not apply to into one it applies to ((18b)). -/
-def negativeRestriction : Set E := {x | ∃ S, ¬ T S ∧ T (S \ {x})}
-
-variable {T} {x : E}
-
-theorem notMem_restriction_iff : x ∉ restriction T ↔ T.LivesOn {x}ᶜ := by
-  simp only [restriction, mem_sInter, mem_ofPred_eq, not_forall, exists_prop]
-  exact ⟨fun ⟨S, hS, hx⟩ ↦ hS.mono (subset_compl_singleton_iff.2 hx),
-    fun h ↦ ⟨_, h, fun h' ↦ h' (mem_singleton x)⟩⟩
-
-theorem mem_restriction_iff : x ∈ restriction T ↔ ∃ S, ¬ (T S ↔ T (S \ {x})) := by
-  rw [← not_iff_not, notMem_restriction_iff, not_exists]
-  simp only [not_not, Quantifier.LivesOn, ← sdiff_eq_compl_inter]
-
--- (20a), A5
-theorem mem_positiveRestriction_iff :
-    x ∈ positiveRestriction T ↔ ∃ S, T S ∧ ¬ T (S \ {x}) := by
-  constructor
-  · rintro ⟨S, hS, hxS⟩
-    have hx : x ∉ S := fun h ↦ hS (by rwa [insert_eq_of_mem h] at hxS)
-    refine ⟨insert x S, hxS, ?_⟩
-    rwa [insert_sdiff_of_mem _ (mem_singleton x), sdiff_singleton_eq_self hx]
-  · rintro ⟨S, hS, hSx⟩
-    have hx : x ∈ S := by_contra fun h ↦ hSx (by rwa [sdiff_singleton_eq_self h])
-    refine ⟨S \ {x}, hSx, ?_⟩
-    rwa [insert_sdiff_singleton, insert_eq_of_mem hx]
-
--- (20b), A6
-theorem mem_negativeRestriction_iff :
-    x ∈ negativeRestriction T ↔ ∃ S, T S ∧ ¬ T (insert x S) := by
-  constructor
-  · rintro ⟨S, hS, hSx⟩
-    have hx : x ∈ S := by_contra fun h ↦ hS (by rwa [sdiff_singleton_eq_self h] at hSx)
-    refine ⟨S \ {x}, hSx, ?_⟩
-    rwa [insert_sdiff_singleton, insert_eq_of_mem hx]
-  · rintro ⟨S, hS, hxS⟩
-    have hx : x ∉ S := fun h ↦ hxS (by rwa [insert_eq_of_mem h])
-    refine ⟨insert x S, hxS, ?_⟩
-    rwa [insert_sdiff_of_mem _ (mem_singleton x), sdiff_singleton_eq_self hx]
-
-variable (T) in
-/-- The positive and negative restrictions of a quantifier make up its restriction (A7). -/
-theorem positiveRestriction_union_negativeRestriction :
-    positiveRestriction T ∪ negativeRestriction T = restriction T := by
-  ext x
-  rw [mem_union, mem_positiveRestriction_iff, mem_restriction_iff, negativeRestriction,
-    mem_ofPred_eq, ← exists_or]
-  exact exists_congr fun S ↦ by tauto
-
-theorem positiveRestriction_subset_restriction : positiveRestriction T ⊆ restriction T :=
-  positiveRestriction_union_negativeRestriction T ▸ subset_union_left
-
-theorem negativeRestriction_subset_restriction : negativeRestriction T ⊆ restriction T :=
-  positiveRestriction_union_negativeRestriction T ▸ subset_union_right
-
--- A4
-theorem livesOn_restriction [Finite E] : T.LivesOn (restriction T) := by
-  classical
-  have key : ∀ F : Finset E, (∀ x ∈ F, T.LivesOn {x}ᶜ) → T.LivesOn (↑F)ᶜ := by
-    intro F
-    induction F using Finset.induction_on with
-    | empty => intro _; simpa using T.livesOn_univ
-    | insert a F _ ih =>
-      intro h
-      rw [Finset.coe_insert, insert_eq, compl_union]
-      exact (h a (Finset.mem_insert_self a F)).inter
-        (ih fun x hx ↦ h x (Finset.mem_insert_of_mem hx))
-  simpa using key (restriction T)ᶜ.toFinite.toFinset
-    fun x hx ↦ notMem_restriction_iff.1 (by simpa using hx)
+variable {T : Quantifier E}
 
 -- A4 on an infinite domain
 theorem not_livesOn_restriction_cofinite :
@@ -163,45 +85,6 @@ theorem not_livesOn_restriction_cofinite :
   rw [hR]
   intro h
   exact infinite_univ (by simpa using (h univ).1 (by simp))
-
-theorem negativeRestriction_eq_empty_of_monotone (hT : Monotone T) :
-    negativeRestriction T = ∅ :=
-  eq_empty_of_forall_notMem fun _ ⟨_, hS, h⟩ ↦ hS (hT sdiff_subset h)
-
-theorem positiveRestriction_eq_empty_of_antitone (hT : Antitone T) :
-    positiveRestriction T = ∅ :=
-  eq_empty_of_forall_notMem fun x ⟨S, hS, h⟩ ↦ hS (hT (subset_insert x S) h)
-
--- A9
-theorem negativeRestriction_eq_empty_iff [Finite E] :
-    negativeRestriction T = ∅ ↔ Monotone T := by
-  classical
-  refine ⟨fun h A B hAB hA ↦ ?_, negativeRestriction_eq_empty_of_monotone⟩
-  have step : ∀ x S, T S → T (insert x S) := fun x S hS ↦ not_not.1 fun hn ↦
-    (eq_empty_iff_forall_notMem.1 h x) (mem_negativeRestriction_iff.2 ⟨S, hS, hn⟩)
-  have key : ∀ F : Finset E, T (A ∪ ↑F) := by
-    intro F
-    induction F using Finset.induction_on with
-    | empty => simpa using hA
-    | insert a F _ ih => rw [Finset.coe_insert, union_insert]; exact step a _ ih
-  have := key (B \ A).toFinite.toFinset
-  rwa [Finite.coe_toFinset, union_sdiff_cancel hAB] at this
-
--- A10
-theorem positiveRestriction_eq_empty_iff [Finite E] :
-    positiveRestriction T = ∅ ↔ Antitone T := by
-  classical
-  refine ⟨fun h A B hAB hB ↦ ?_, positiveRestriction_eq_empty_of_antitone⟩
-  have step : ∀ x S, T S → T (S \ {x}) := fun x S hS ↦ not_not.1 fun hn ↦
-    (eq_empty_iff_forall_notMem.1 h x) (mem_positiveRestriction_iff.2 ⟨S, hS, hn⟩)
-  have key : ∀ F : Finset E, T (B \ ↑F) := by
-    intro F
-    induction F using Finset.induction_on with
-    | empty => simpa using hB
-    | insert a F _ ih =>
-      rw [Finset.coe_insert, insert_eq, union_comm, ← sdiff_sdiff]; exact step a _ ih
-  have := key (B \ A).toFinite.toFinset
-  rwa [Finite.coe_toFinset, sdiff_sdiff_cancel_left hAB] at this
 
 variable (T) in
 /-- A quantifier is positively skewed when its restriction is its positive restriction ((2)). -/
@@ -297,7 +180,7 @@ theorem mem_exh_ltHybrid_iff_of_inter [Finite E] {w w' : W}
     (h : P w ∩ restriction T = P w' ∩ restriction T) :
     w ∈ exh P T (ltHybrid P T) ↔ w' ∈ exh P T (ltHybrid P T) := by
   have hT : T (P w) ↔ T (P w') := by
-    rw [livesOn_restriction (T := T) (P w), livesOn_restriction (T := T) (P w'), inter_comm, h,
+    rw [livesOn_restriction T (P w), livesOn_restriction T (P w'), inter_comm, h,
       inter_comm]
   simp only [exh, mem_ofPred_eq, hT, ltHybrid_iff_of_inter_eq rfl h]
 
@@ -306,8 +189,6 @@ end Orders
 /-! ### Worked examples (§2.1.2, §2.3) -/
 
 section Examples
-
-open Quantifier
 
 -- (6): *Agnes* takes the default order and says that Agnes alone has the property
 theorem exh_selectedOrder_individual (a : E) :
@@ -331,7 +212,7 @@ theorem exh_ltHybrid_not (b : E) :
   refine ⟨fun h ↦ h.1, fun hS ↦ ⟨hS, ?_⟩⟩
   rintro ⟨v, hv, (hpos | hneg), -⟩
   · obtain ⟨y, ⟨-, hy⟩, -⟩ := exists_of_ssubset hpos
-    rw [positiveRestriction_eq_empty_of_antitone (T := fun S ↦ b ∉ S)
+    rw [positiveRestriction_eq_empty_of_antitone (Q := fun S ↦ b ∉ S)
       fun _ _ h hB hA ↦ hB (h hA)] at hy
     exact hy
   · obtain ⟨y, ⟨hyv, S', hS', hS'y⟩, -⟩ := exists_of_ssubset hneg
