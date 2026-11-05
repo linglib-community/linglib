@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCut
 public import Mathlib.Algebra.MonoidAlgebra.MapDomain
 public import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 
@@ -15,14 +15,14 @@ public import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 
 This file defines the linear map `B⁻_a` on `ConnesKreimer R (UnorderedTree α)`, which removes a
 root labelled `a`: it sends the one-tree forest `{node a F}` to `F` and every other forest to `0`.
-It is a left inverse of the grafting operator `B⁺_a` of `Coproduct/Pruning.lean`, and the
+It is a left inverse of the grafting operator `B⁺_a` of `Coproduct/AdmissibleCut.lean`, and the
 transpose of `B⁺_a` under the symmetry-weighted pairing.
 
 Oudom and Guin identify the Grossman–Larson algebra with their product on the symmetric algebra
 through `B⁺` and `B⁻` (their Proposition 4.1), by `B⁺_a(x) ∘ y = B⁺_a(x ⋆ y)`. It follows that
 `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`. Under the pairing these are the facts about
 `⟨F ⋆ G, T⟩` in Foissy's proof of his Proposition 5.2, the one-tree step of the duality in
-`Coproduct/PruningDuality.lean`.
+`Coproduct/AdmissibleCutDuality.lean`.
 
 ## Main definitions
 

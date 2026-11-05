@@ -30,7 +30,7 @@ the object has as a linearized object.
   vacuous binder. `PhraseStructure.Tree.Closed` tells such a reading from one the engine can close.
 * Marcolli, Chomsky and Berwick apply their quotients to the lower copy. Deleting the higher copy is
   their deletion quotient applied to the copy object at the other occurrence, which they do not do
-  (`Marked.mem_cutSummandsDN_lf`); it is the reading of Collins's work on the passive and on
+  (`Marked.mem_deletionCuts_lf`); it is the reading of Collins's work on the passive and on
   reconstruction.
 * Binding at a reading is not in general binding at the copy object: an object that moves from
   itself, read low, comes to c-command the sister of its movement node. The reading `carrying` is

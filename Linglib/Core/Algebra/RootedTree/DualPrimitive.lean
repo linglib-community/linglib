@@ -32,7 +32,7 @@ their Hopf algebra.
   `ConnesKreimer.lie_lcoeff_singleton_apply_of'`: the commutator `⁅δ_{T₁}, δ_{T₂}⁆` takes a tree
   `T` to the number of single cuts of `T` with crown `T₁` and trunk `T₂` minus the number with
   crown `T₂` and trunk `T₁`, and vanishes on every other forest.
-* `ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho`: Hoffman's relation between the
+* `ConnesKreimer.autCard_mul_autCard_mul_countSingleCuts`: Hoffman's relation between the
   single cuts of `T` with crown `T₁` and trunk `T₂` and the graftings of `T₁` onto `T₂` that give
   `T`, each weighted by numbers of symmetries.
 * `GrossmanLarson.isDualPrimitive_pairing`, `GrossmanLarson.pairingLie_injective`: pairing with a
@@ -45,8 +45,8 @@ The product `δ_{T₁} ⋆ δ_{T₂}` is not a combination of the `δ_T`: on the
 the value `1`, or `2` when the trees are equal (`ConnesKreimer.convMul_lcoeff_singleton_apply_mul`).
 Only the commutator is a dual primitive.
 
-The grafting product puts the host first and the pruning coproduct puts the crown first, so the
-pairing reverses products. `GrossmanLarson.pairingLie` is therefore defined on the opposite
+The grafting product puts the host first and the Connes–Kreimer coproduct puts the crown first, so
+the pairing reverses products. `GrossmanLarson.pairingLie` is therefore defined on the opposite
 pre-Lie algebra `(ChapotonLivernet R α)ᵐᵒᵖ`, whose product grafts the first factor onto the
 second, as Connes and Kreimer's does.
 
@@ -118,14 +118,14 @@ variable [DecidableEq α] (T T₁ T₂ : UnorderedTree α)
 
 theorem convMul_lcoeff_singleton_apply_ofTree :
     (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))) (ofTree T) =
-      countSingleCutsRho T T₁ T₂ := by
-  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN,
-    comulTreeNG]
+      countSingleCuts T T₁ T₂ := by
+  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHom_apply_ofTree,
+    comulTreeOfCuts]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_apply,
     TensorProduct.map_tmul, LinearMap.mul'_apply, ofTree, lcoeff_apply, ← of'_zero,
     coeff_of', Multiset.singleton_inj, ite_zero_mul_ite_zero, one_mul,
     Multiset.zero_ne_singleton, ite_false, mul_zero, zero_add]
-  rw [countSingleCutsRho, Multiset.countP_eq_card_filter, ← Multiset.sum_map_filter,
+  rw [countSingleCuts, Multiset.countP_eq_card_filter, ← Multiset.sum_map_filter,
     Multiset.map_const', Multiset.sum_replicate, nsmul_one]
 
 theorem convMul_lcoeff_singleton_apply_mul :
@@ -156,7 +156,7 @@ theorem lie_lcoeff_singleton_apply_of' {F : Forest (UnorderedTree α)} (hF : F.c
 with crown `T₁` and trunk `T₂` minus the number with crown `T₂` and trunk `T₁`. -/
 theorem lie_lcoeff_singleton_apply_ofTree [DecidableEq α] :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆ (ofTree T) =
-      (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by
+      (countSingleCuts T T₁ T₂ : R) - countSingleCuts T T₂ T₁ := by
   simp only [Ring.lie_def, ofConv_sub, LinearMap.sub_apply,
     convMul_lcoeff_singleton_apply_ofTree]
 
@@ -199,9 +199,9 @@ end CommSemiring
 /-- **Hoffman's relation**. The single cuts of `T` with crown `T₁` and trunk `T₂`, counted with
 the symmetries of `T₁` and `T₂`, are as many as the vertices of `T₂` at which grafting `T₁` gives
 `T`, counted with the symmetries of `T`. -/
-theorem _root_.ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho
+theorem _root_.ConnesKreimer.autCard_mul_autCard_mul_countSingleCuts
     (T T₁ T₂ : UnorderedTree α) :
-    autCard T₁ * autCard T₂ * countSingleCutsRho T T₁ T₂ = (T₂ ◁ T₁).count T * autCard T := by
+    autCard T₁ * autCard T₂ * countSingleCuts T T₁ T₂ = (T₂ ◁ T₁).count T * autCard T := by
   have hL : pairing (R := ℕ) (product (ofTree T₂) (ofTree T₁)) (ofTree T) =
       (T₂ ◁ T₁).count T * autCard T := by
     have h : ({T₂} + {T₁} : Forest (UnorderedTree α)) ≠ {T} := fun h ↦ by
@@ -215,7 +215,7 @@ theorem _root_.ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho
     rfl
   have hR : (toConv (pairing (ofTree T₁)) * toConv (pairing (ofTree T₂)) :
       WithConv (ConnesKreimer ℕ (UnorderedTree α) →ₗ[ℕ] ℕ)) (ofTree T) =
-      autCard T₁ * autCard T₂ * countSingleCutsRho T T₁ T₂ := by
+      autCard T₁ * autCard T₂ * countSingleCuts T T₁ T₂ := by
     rw [← of'_singleton T₁, ← of'_singleton T₂, pairing_of', pairing_of', toConv_smul,
       toConv_smul, smul_mul_smul_comm, ofConv_smul, LinearMap.smul_apply,
       convMul_lcoeff_singleton_apply_ofTree, forestAutCard_singleton, forestAutCard_singleton]

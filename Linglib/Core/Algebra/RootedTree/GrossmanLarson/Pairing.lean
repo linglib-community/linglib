@@ -16,7 +16,7 @@ This file defines the pairing on `H = ConnesKreimer R (UnorderedTree α)` that m
 orthogonal basis, each forest paired with itself to its number of symmetries:
 `⟨of' F, of' G⟩ = if F = G then |Aut F| else 0`. Foissy uses this pairing in his dual
 construction of the Connes–Kreimer coproduct; here it makes the Grossman–Larson product dual to
-the pruning coproduct (`Coproduct/PruningDuality.lean`).
+the Connes–Kreimer coproduct (`Coproduct/AdmissibleCutDuality.lean`).
 
 ## Main definitions
 
@@ -193,8 +193,8 @@ open scoped TensorProduct
 
 /-! ### The pairing on `H ⊗ H`
 
-The duality with the pruning coproduct is stated on `H ⊗ H`. No such duality holds for a coproduct
-that leaves marker leaves in the trunk, since grafting never produces them. -/
+The duality with the Connes–Kreimer coproduct is stated on `H ⊗ H`. No such duality holds for a
+coproduct that leaves marker leaves in the trunk, since grafting never produces them. -/
 
 /-- `pairing₂` is the pairing on `H ⊗ H` with `pairing₂ (x ⊗ y) (w ⊗ z) = ⟨x, w⟩ * ⟨y, z⟩`. -/
 noncomputable def pairing₂ :

@@ -13,11 +13,11 @@ public import Linglib.Syntax.Minimalist.Workspace.Merge.SyntacticObject
 # Derivations
 
 An ordered derivation is an initial syntactic object with a sequence of steps. External Merge adds
-an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the current object in which its
-occurrences are replaced by the trace of its head; Internal Merge also comes in two stages,
-`extract` and `remerge`, through a stack of copies. An admissible derivation is the iterated
-algebraic Merge on the workspace of its initial object and its items. The side on which a step
-places its daughter, and the order of an item's daughters, are linearization data that only
+an item built in its own workspace, and Internal Merge raises a mover, re-merging it with the
+current object in which its occurrences are replaced by the trace of its head; Internal Merge also
+comes in two stages, `extract` and `remerge`, through a stack of copies. An admissible derivation is
+the iterated algebraic Merge on the workspace of its initial object and its items. The side on which
+a step places its daughter, and the order of an item's daughters, are linearization data that only
 externalization reads.
 
 ## Main definitions
@@ -241,10 +241,10 @@ noncomputable def Step.mergeOp (step : Step)
     (current : SyntacticObject) :
     ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
   match step with
-  | .em _ item => Merge.mergeOpC traceEncoder Vertex.bare current.val item.toSyntacticObject.val
-  | .im mover _ => Merge.mergeOpC traceEncoder Vertex.bare (deleteAccessible mover current).val
-      mover.val ∘ₗ Merge.mergeOpUnitC traceEncoder mover.val
-  | .extract mover => Merge.mergeOpUnitC traceEncoder mover.val
+  | .em _ item => Merge.traceMergeOp traceEncoder Vertex.bare current.val item.toSyntacticObject.val
+  | .im mover _ => Merge.traceMergeOp traceEncoder Vertex.bare (deleteAccessible mover current).val
+      mover.val ∘ₗ Merge.traceMergeOpUnit traceEncoder mover.val
+  | .extract mover => Merge.traceMergeOpUnit traceEncoder mover.val
   | .remerge _ => 0
 
 /-- A step at the current object is admissible beside a spectator workspace `W` when it matches
@@ -266,10 +266,10 @@ theorem Step.mergeOp_workspace {step : Step}
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
-    exact mergeOpC_node_residual traceEncoder current ↑item h
+    exact traceMergeOp_node_residual traceEncoder current ↑item h
   | im mover _ =>
     obtain ⟨hm, hc, hne, hW⟩ := h
-    exact mergeOpC_im_residual hm hc hne hW
+    exact traceMergeOp_im_residual hm hc hne hW
   | extract _ | remerge _ => exact h.elim
 
 /-- The algebraic Merges of a list of steps from the current object, composed in order. -/
