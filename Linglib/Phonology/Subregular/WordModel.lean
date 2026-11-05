@@ -602,11 +602,6 @@ section LocallyTestable
 
 variable {w v : List α} {k : ℕ}
 
-private theorem suffix_rtake_iff {s : List α} {n : ℕ} :
-    s <:+ w.rtake n ↔ s <:+ w ∧ s.length ≤ n := by
-  rw [List.rtake_eq_reverse_take_reverse, ← List.reverse_prefix, List.reverse_reverse,
-    List.prefix_take_iff, List.reverse_prefix, List.length_reverse]
-
 private theorem exists_infix_length_eq {s : List α} (h : s <:+: w) (hs : s.length ≤ k)
     (hk : k ≤ w.length) : ∃ f, f <:+: w ∧ f.length = k ∧ s <:+: f := by
   obtain ⟨t, ht, hget⟩ := List.infix_iff_getElem?.1 h
@@ -653,7 +648,7 @@ theorem kTestVector_eq_iff :
         rw [hP] at this
         exact this.trans (List.take_prefix _ _)
       · rw [append_infix_anchor_iff] at hc ⊢
-        have : s <:+ w.rtake (k - 1) := suffix_rtake_iff.2 ⟨hc, by simp at hck; omega⟩
+        have : s <:+ w.rtake (k - 1) := List.suffix_rtake_iff.2 ⟨hc, by simp at hck; omega⟩
         rw [hQ] at this
         exact this.trans (List.rtake_suffix _ _)
       · obtain rfl := eq_of_anchor_infix_anchor hc
@@ -665,7 +660,7 @@ theorem kTestVector_eq_iff :
       simpa [hc] using Set.ext_iff.1 hA c
     simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right]
     rcases Nat.eq_zero_or_pos k with rfl | hk
-    · refine ⟨by simp, Set.ext fun f ↦ ?_, by simp [List.rtake]⟩
+    · refine ⟨by simp, Set.ext fun f ↦ ?_, by simp⟩
       simp only [Set.mem_ofPred_eq, List.mem_kFactors, List.length_eq_zero_iff]
       constructor <;> rintro ⟨-, rfl⟩ <;> exact ⟨List.nil_infix, rfl⟩
     have pre (w v : List α) (mem : ∀ c : List (α ⊕ Edge), c.length ≤ k →
@@ -674,8 +669,8 @@ theorem kTestVector_eq_iff :
         (cons_infix_anchor_iff.2 (List.take_prefix _ _))), by simp⟩
     have suf (w v : List α) (mem : ∀ c : List (α ⊕ Edge), c.length ≤ k →
         c <:+: anchor w → c <:+: anchor v) : w.rtake (k - 1) <:+ v.rtake (k - 1) :=
-      suffix_rtake_iff.2 ⟨append_infix_anchor_iff.1 (mem _ (by simp [List.rtake]; omega)
-        (append_infix_anchor_iff.2 (List.rtake_suffix _ _))), by simp [List.rtake]; omega⟩
+      List.suffix_rtake_iff.2 ⟨append_infix_anchor_iff.1 (mem _ (by simp; omega)
+        (append_infix_anchor_iff.2 (List.rtake_suffix _ _))), by simp⟩
     refine ⟨(pre w v fun c hc ↦ (mem c hc).1).eq_of_length
         (le_antisymm (pre w v fun c hc ↦ (mem c hc).1).length_le
           (pre v w fun c hc ↦ (mem c hc).2).length_le), Set.ext fun f ↦ ?_,
@@ -773,14 +768,13 @@ theorem mem_of_factors_subset_biUnion (hL : L.SuffixSubstitutionClosed k) (hk : 
       rwa [List.take_succ_eq_append_getElem hjlt, List.append_assoc]
   obtain ⟨y, hy⟩ := hpre w.length hmw le_rfl
   rw [List.take_length] at hy
-  have hx : (w.drop (w.length - (k - 1))).length = k - 1 := by simp; omega
-  have hsuf : (w.drop (w.length - (k - 1))).map Sum.inl ++ [(.inr .right : α ⊕ Edge)] <:+
-      anchor w := by
-    obtain ⟨t, ht⟩ := (List.drop_suffix (w.length - (k - 1)) w).map (Sum.inl : α → α ⊕ Edge)
+  have hx : (w.rtake (k - 1)).length = k - 1 := by simp; omega
+  have hsuf : (w.rtake (k - 1)).map Sum.inl ++ [(.inr .right : α ⊕ Edge)] <:+ anchor w := by
+    obtain ⟨t, ht⟩ := (List.rtake_suffix w (k - 1)).map (Sum.inl : α → α ⊕ Edge)
     exact ⟨.inr .left :: t, by rw [anchor, ← ht]; simp⟩
   obtain ⟨v, hv, hcv⟩ := hinfix _ hsuf.isInfix (by simp; omega)
   obtain ⟨u₂, rfl⟩ := suffix_of_infix_anchor hcv
-  have := hL (w.take (w.length - (k - 1))) y u₂ [] _ hx (by rwa [List.take_append_drop])
+  have := hL (w.rdrop (k - 1)) y u₂ [] _ hx (by rwa [List.rdrop_append_rtake])
     (by simpa using hv)
   simpa using this
 

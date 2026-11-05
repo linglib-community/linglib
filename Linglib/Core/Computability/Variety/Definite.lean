@@ -54,25 +54,16 @@ variable {α : Type*} {L : Language α} {k : ℕ}
 
 /-! ### Window characterizations -/
 
-private theorem rtake_append_middle {u : List α} (hu : k ≤ u.length) (t x y : List α) :
-    (x ++ (t ++ u) ++ y).rtake k = (x ++ u ++ y).rtake k := by
-  rw [List.rtake_append_append_of_le_length x (t ++ u) y
-      (by simp only [List.length_append]; omega),
-    List.rtake_append_append_of_le_length t u y hu,
-    List.rtake_append_append_of_le_length x u y hu]
-
-private theorem take_append_middle {u : List α} (hu : k ≤ u.length) (t x y : List α) :
-    (x ++ (u ++ t) ++ y).take k = (x ++ u ++ y).take k := by
-  have h₁ : k ≤ (x ++ u).length := by simp only [List.length_append]; omega
-  rw [List.take_append_of_le_length (by simp only [List.length_append]; omega),
-    ← List.append_assoc, List.take_append_of_le_length h₁,
-    List.take_append_of_le_length h₁]
+private theorem takeAt_append_middle (e : Edge) {u v : List α} (h : e.takeAt k u = e.takeAt k v)
+    (x y : List α) : e.takeAt k (x ++ u ++ y) = e.takeAt k (x ++ v ++ y) :=
+  e.takeAt_append_congr (e.takeAt_append_congr_right h x) y
 
 /-! #### Definite languages -/
 
 theorem IsDefinite.syntacticClass_append_left (h : L.IsDefinite k) {u : List α}
     (hu : k ≤ u.length) (t : List α) : L.syntacticClass (t ++ u) = L.syntacticClass u :=
-  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
+  syntacticClass_eq_iff.2 fun x y ↦
+    iff_of_eq (h (takeAt_append_middle .right (List.rtake_append_of_le_length hu) x y))
 
 theorem IsDefinite.isRightZero_syntacticClass (h : L.IsDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsRightZero (L.syntacticClass u) := fun m ↦ by
@@ -87,7 +78,7 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
   refine ⟨fun h _ ↦ h.isRightZero_syntacticClass, fun h ↦ isDefinite_iff_mem_takeAt.2 fun w ↦ ?_⟩
   rcases le_or_gt k w.length with hw | hw
   · refine mem_iff_of_syntacticClass_eq ?_
-    conv_lhs => rw [← List.rdrop_append_rtake k w]
+    conv_lhs => rw [← List.rdrop_append_rtake w k]
     rw [syntacticClass_append, Edge.takeAt_right,
       h _ (by rw [List.length_rtake]; omega)]
   · rw [Edge.takeAt_right, List.rtake_of_length_le hw.le]
@@ -96,7 +87,8 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
 
 theorem IsReverseDefinite.syntacticClass_append_right (h : L.IsReverseDefinite k) {u : List α}
     (hu : k ≤ u.length) (t : List α) : L.syntacticClass (u ++ t) = L.syntacticClass u :=
-  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
+  syntacticClass_eq_iff.2 fun x y ↦
+    iff_of_eq (h (takeAt_append_middle .left (List.take_append_of_le_length hu) x y))
 
 theorem IsReverseDefinite.isLeftZero_syntacticClass (h : L.IsReverseDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsLeftZero (L.syntacticClass u) := fun m ↦ by
@@ -120,9 +112,9 @@ theorem IsGeneralizedDefinite.syntacticClass_append_append (h : L.IsGeneralizedD
     {u : List α} (hu : k ≤ u.length) (t : List α) :
     L.syntacticClass (u ++ t ++ u) = L.syntacticClass u :=
   syntacticClass_eq_iff.2 fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
-    (by rw [Edge.takeAt_left, Edge.takeAt_left, List.append_assoc u t u]
-        exact take_append_middle hu _ x y)
-    (rtake_append_middle hu _ x y)
+    (takeAt_append_middle .left ((congrArg _ (List.append_assoc u t u)).trans
+      (List.take_append_of_le_length hu)) x y)
+    (takeAt_append_middle .right (List.rtake_append_of_le_length hu) x y)
 
 theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self (h : L.IsGeneralizedDefinite k)
     {u : List α} (hu : k ≤ u.length) (s : L.SyntacticMonoid) :
@@ -147,8 +139,8 @@ theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
     have hq := h (a.rtake k) (by rw [List.length_rtake]; omega)
     have ha₁ := List.take_append_drop k a
     have hb₁ : a.take k ++ b.drop k = b := hpre ▸ List.take_append_drop k b
-    have ha₂ := List.rdrop_append_rtake k a
-    have hb₂ : b.rdrop k ++ a.rtake k = b := hsuf ▸ List.rdrop_append_rtake k b
+    have ha₂ := List.rdrop_append_rtake a k
+    have hb₂ : b.rdrop k ++ a.rtake k = b := hsuf ▸ List.rdrop_append_rtake b k
     have e₁ : L.syntacticClass a * L.syntacticClass b = L.syntacticClass b := by
       conv_lhs => rw [← ha₁, ← hb₁]
       rw [syntacticClass_append, syntacticClass_append, ← mul_assoc, hp, ← syntacticClass_append,

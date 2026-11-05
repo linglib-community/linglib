@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.List.DropRight
 public import Linglib.Data.Examples.Collins2005
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Binding.Basic
@@ -457,7 +458,7 @@ def clauseWords? (row : Datum) : Option (List (List Char)) :=
   | none => some ws
   | some a =>
       let as := Gloss.tokens a
-      if as.isSuffixOf ws then some (ws.take (ws.length - as.length)) else none
+      if as.isSuffixOf ws then some (ws.rdrop as.length) else none
 
 /-- A passive row's clause with the words of its sentence. -/
 def passiveRow? (row : Datum) : Option (Clause × List (List Char)) := do

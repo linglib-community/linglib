@@ -114,14 +114,6 @@ lemma takeAt_of_length_le {k : ℕ} {xs : List α} (h : xs.length ≤ k) :
   | left => exact List.take_of_length_le h
   | right => exact List.rtake_of_length_le h
 
-lemma takeAt_left_append_of_le_length {k : ℕ} (p rest : List α) (h : k ≤ p.length) :
-    Edge.left.takeAt k (p ++ rest) = Edge.left.takeAt k p :=
-  List.take_append_of_le_length h
-
-lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ rest.length) :
-    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
-  List.rtake_append_of_le_length h
-
 lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
   takeAt_of_length_le e (by rw [length_takeAt]; exact min_le_left _ _)
 
@@ -135,12 +127,9 @@ lemma takeAt_eq_of_le {k k' : ℕ} (h : k ≤ k') {xs xs' : List α}
 
 lemma takeAt_takeAt_append (ys : List α) :
     e.takeAt k (e.takeAt k xs ++ ys) = e.takeAt k (xs ++ ys) := by
-  cases e with
-  | left =>
-    rcases le_total k xs.length with h | h
-    · simp [List.take_append_of_le_length, h]
-    · simp [List.take_of_length_le h]
-  | right => exact List.rtake_append_rtake k xs ys
+  cases e
+  · simp [List.take_append, List.take_take, ← Nat.sub_eq_sub_min]
+  · exact List.rtake_rtake_append
 
 lemma takeAt_append_congr {k : ℕ} {xs xs' : List α} (h : e.takeAt k xs = e.takeAt k xs')
     (ys : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs' ++ ys) := by
@@ -148,16 +137,17 @@ lemma takeAt_append_congr {k : ℕ} {xs xs' : List α} (h : e.takeAt k xs = e.ta
 
 lemma takeAt_append_takeAt (ys : List α) :
     e.takeAt k (xs ++ e.takeAt k ys) = e.takeAt k (xs ++ ys) := by
-  cases e with
-  | left => simp [List.take_append, List.take_take]
-  | right =>
-    rcases le_total k ys.length with h | h
-    · simp [List.rtake_append_of_le_length, List.rtake_rtake, h]
-    · simp [List.rtake_of_length_le h]
+  cases e <;> simp [List.take_append, List.take_take, List.rtake_append, List.rtake_rtake,
+    ← Nat.sub_eq_sub_min]
 
 lemma takeAt_append_congr_right {k : ℕ} {ys ys' : List α} (h : e.takeAt k ys = e.takeAt k ys')
     (xs : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs ++ ys') := by
   rw [← takeAt_append_takeAt, h, takeAt_append_takeAt]
+
+/-- Reversal exchanges the part of a word at an edge with the part at the other edge. -/
+lemma takeAt_reverse : e.takeAt k xs.reverse = (e.swap.takeAt k xs).reverse := by
+  cases e
+  exacts [List.reverse_rtake.symm, List.rtake_reverse]
 
 lemma takeAt_map {β : Type*} (g : α → β) : e.takeAt k (xs.map g) = (e.takeAt k xs).map g := by
   cases e <;> simp [List.rtake, List.map_take, List.map_drop]

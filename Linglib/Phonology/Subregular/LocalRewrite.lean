@@ -265,9 +265,7 @@ theorem matchesRight_take (ctx : List ContextElem) (right : List Segment) :
 
 theorem matchesLeft_rtake (ctx : List ContextElem) (left : List Segment) :
     MatchesLeft ctx (left.rtake ctx.length) ↔ MatchesLeft ctx left := by
-  have h : (left.rtake ctx.length).reverse = left.reverse.take ctx.reverse.length := by
-    simp [List.rtake_eq_reverse_take_reverse]
-  rw [MatchesLeft, h, matchesRight_take, MatchesLeft]
+  rw [MatchesLeft, List.reverse_rtake, ← ctx.length_reverse, matchesRight_take, MatchesLeft]
 
 theorem matchesLeft_rtake_of_le (ctx : List ContextElem) {n : ℕ} (h : ctx.length ≤ n)
     (left : List Segment) : MatchesLeft ctx (left.rtake n) ↔ MatchesLeft ctx left := by
@@ -365,7 +363,7 @@ theorem Rule.scan_rtake (r : Rule) (left right : List Segment) :
   induction right generalizing left with
   | nil => rfl
   | cons s right ih =>
-    rw [Rule.scan, Rule.verdict_rtake, List.rtake_append_rtake, ih, Rule.apply_go_cons]
+    rw [Rule.scan, Rule.verdict_rtake, List.rtake_rtake_append, ih, Rule.apply_go_cons]
 
 theorem Rule.apply_eq_scan (r : Rule) : r.apply = r.scan [] := by
   funext input
@@ -456,8 +454,7 @@ theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
     simp only [Rule.toSubsequentialTransducer, show buf ++ x :: xs = (buf ++ [x]) ++ xs by simp]
     rcases Nat.lt_or_ge buf.length r.rightReach with h | h
     · have hle : (buf ++ [x]).length ≤ r.rightReach := by simp; omega
-      rw [show (buf ++ [x]).rdrop r.rightReach = [] by simp [List.rdrop]; omega,
-        List.rtake_of_length_le hle]
+      rw [List.rdrop_of_length_le hle, List.rtake_of_length_le hle]
       simp [List.rtake_of_length_le hw]
     · obtain ⟨b, rest, hb⟩ : ∃ b rest, buf ++ [x] = b :: rest :=
         List.exists_cons_of_ne_nil (by simp)

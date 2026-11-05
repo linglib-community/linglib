@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.List.DropRight
 public import Linglib.Syntax.Minimalist.Copy.Chain
 
 /-!
@@ -33,7 +34,7 @@ variable (hd : HeadFunction) (t : LinearizedSyntacticObject)
 /-- The projections of the position `a`, from `a` up to its maximal projection. -/
 def projectionsOf (a : TreePath) : List TreePath :=
   (List.range (a.toList.length - (projectionAt hd t a).toList.length + 1)).map fun k ↦
-    ⟨a.toList.take (a.toList.length - k)⟩
+    ⟨a.toList.rdrop k⟩
 
 /-- The tokens `P` holds of that a probe on the head at `a` meets in search order: projection by
 projection, from the head up, the copies each c-commands outside `cut`, nearest first, a token
