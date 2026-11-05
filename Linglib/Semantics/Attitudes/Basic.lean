@@ -14,11 +14,8 @@ belief (`Doxastic.Alternatives`); Karttunen's split of the factives into full an
 derived from the two: a doxastic predicate is veridical when it is factive or its alternatives are
 epistemic (`Attitude.IsVeridical`), exactly when every denotation of that kind is
 (`Doxastic.isVeridical_forall_iff`). A preferential predicate has the evaluative valence of
-a gradable predicate, positive for *hope* and negative for *fear*, and is clausally distributive
-or not. Villalta's degree comparison relates its subject to a question exactly when it relates
-her to some answer, while *worry*, Mandarin *qidai* and *care* relate her to the question itself
-and can hold of no particular answer. `Attitude` composes the two dimensions, and verb entries
-record one.
+a gradable predicate, positive for *hope* and negative for *fear*. `Attitude` composes the two
+dimensions, and verb entries record one.
 
 ## Implementation notes
 
@@ -29,18 +26,14 @@ meaning entails that the holder knows its complement, as *know*, *realize*, *dis
 
 The binary cut between veridical and non-veridical is the classical default; Giannakidou's
 three-way veridical, nonveridical, and antiveridical taxonomy and finer attitude typologies such
-as Anand and Hacquard's cut the space differently. Clausal distributivity is recorded, as in Qing
-and Uegaki's classification, rather than derived, since the non-distributive predicates share no
-denotation. Speech-act predicates are outside the classification.
+as Anand and Hacquard's cut the space differently. Speech-act predicates are outside the
+classification.
 
 ## References
 
 * [karttunen-1971b]
-* [villalta-2008]
 * [anand-hacquard-2013]
-* [elliott-etal-2017]
 * [giannakidou-1998]
-* [qing-uegaki-2025]
 * [hintikka-1962]
 -/
 
@@ -55,12 +48,10 @@ inductive Doxastic.Alternatives
   deriving DecidableEq, Repr
 
 /-- An attitude predicate is doxastic, with an accessibility semantics over its alternatives
-([hintikka-1962]), or preferential, with an evaluative valence and a record of whether it is
-clausally distributive in the sense of `Distributivity.IsDistributive`, as the degree comparisons
-are (`Preferential.isDistributive_degreeComparison`) and *worry* is not. -/
+([hintikka-1962]), or preferential, with an evaluative valence. -/
 inductive Attitude
   | doxastic (alternatives : Doxastic.Alternatives)
-  | preferential (valence : EvaluativeValence) (distributive : Bool)
+  | preferential (valence : EvaluativeValence)
   deriving DecidableEq, Repr
 
 namespace Attitude
@@ -70,24 +61,24 @@ class `fac` is, when it is factive or quantifies over epistemic alternatives, as
 *discover* do and *believe* and *think* do not. -/
 def IsVeridical (fac : Option Presupposition.Factivity) : Attitude → Prop
   | .doxastic b => fac ≠ none ∨ b = .epistemic
-  | .preferential _ _ => False
+  | .preferential _ => False
 
 instance (fac : Option Presupposition.Factivity) : DecidablePred (IsVeridical fac)
   | .doxastic _ => inferInstanceAs (Decidable (_ ∨ _))
-  | .preferential _ _ => isFalse id
+  | .preferential _ => isFalse id
 
 /-- The attitude is preferential. -/
 def IsPreferential : Attitude → Prop
   | .doxastic _ => False
-  | .preferential _ _ => True
+  | .preferential _ => True
 
 instance : DecidablePred IsPreferential
   | .doxastic _ => isFalse id
-  | .preferential _ _ => isTrue trivial
+  | .preferential _ => isTrue trivial
 
 /-- The valence of a preferential predicate. -/
 def valence : Attitude → Option EvaluativeValence
   | .doxastic _ => none
-  | .preferential v _ => some v
+  | .preferential v => some v
 
 end Attitude

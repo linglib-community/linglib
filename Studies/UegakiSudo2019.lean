@@ -47,11 +47,6 @@ variable {W E D : Type*} [LinearOrder D] (μ : E → W → Set W → D) (θ : Se
 
 /-! ### Triviality for non-veridical preferentials -/
 
--- (30), (36)
-theorem significance_entails_hope_question {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W)
-    (h : Preferential.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
-  (degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h
-
 /-- With the comparison class inside the question, the assertion of *hope* with a question is its
 presupposition, so the meaning is true whenever defined. This is [gajewski-2002]'s L-analyticity,
 which makes *hope* anti-rogative. -/
@@ -81,14 +76,10 @@ def veridical (C : Set (Set W)) (x : E) (Q : Set (Set W)) (w : W) : Prop :=
 
 /-- Veridical preferentials are clausally distributive, so it is veridicality, not a failure of
 distributivity, that lets them take questions. -/
-theorem veridical_isDistributive (C : Set (Set W)) :
-    Distributivity.IsDistributive (veridical μ θ believes C) := fun x Q w ↦ by
-  simp only [veridical, degreeComparison, Set.inter_assoc]
-  constructor
-  · rintro ⟨p, hpQ, hp⟩
-    exact ⟨p, hpQ, p, rfl, hp⟩
-  · rintro ⟨p, hpQ, q, rfl, hq⟩
-    exact ⟨q, hpQ, hq⟩
+theorem isClausallyDistributive_veridical (C : Set (Set W)) (𝒬 : Set (Set (Set W))) :
+    IsClausallyDistributive 𝒬 (veridical μ θ believes C) :=
+  .of_forall_iff_exists (fun x p w ↦ (w ∈ p ∧ believes x p w) ∧ p ∈ preferred μ θ C x w)
+    fun x Q w ↦ by simp [veridical, degreeComparison, Set.Nonempty, and_assoc]
 
 /-- Veridicality breaks the triviality. In a model where Threshold Significance holds, so that the
 non-veridical assertion is true, the veridical assertion is false at a world where the true answer

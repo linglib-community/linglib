@@ -45,14 +45,14 @@ def ke : Complementizer where
 def liloy : Verb where
   morphs := [.root "lilooy"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   factivity := some .full
 
 /-- *’etqew* 'be sad' (27b). -/
 def etqew : Verb where
   morphs := [.root "’etqew"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *cicwaay* 'be surprised' ((27c), (28b)). -/
@@ -65,21 +65,21 @@ def cicwaay : Verb where
 def eeys : Verb where
   morphs := [.root "’eey’s"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   factivity := some .full
 
 /-- *q’eese’* 'be bothered, unhappy' (27e). -/
 def qeese : Verb where
   morphs := [.root "q’eese’"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *tim’neeneki* 'be worried', whose complement projects under negation ((27e), (34)). -/
 def timneneki : Verb where
   morphs := [.root "tim’neeneki"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.preferential .negative false)
+  attitude := some (.preferential .negative)
   factivity := some .full
 
 /-- *timiipni* 'remember', a cognitive factive with the relative edge (27d). -/

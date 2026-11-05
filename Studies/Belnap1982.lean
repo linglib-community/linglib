@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Attitudes.Distributivity
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Data.Examples.Belnap1982
 public import Studies.Karttunen1977
@@ -205,6 +206,13 @@ theorem fallacy_rows :
 section Distributivity
 
 variable {H : Set (Set W)} {p : Set W} {w : W} {K : SetRel W W}
+
+-- p. 176: the principle distributes *know* inside the question and onto its answers
+theorem isClausallyDistributive_knowsSomeAnswer (K : E → SetRel W W)
+    (𝒬 : Set (Set (Set W))) :
+    IsClausallyDistributive 𝒬 fun x H w ↦ KnowsSomeAnswer H w (K x) :=
+  .of_forall_iff_exists (fun x p w ↦ w ∈ p ∧ w ∈ (K x).core p) fun x H w ↦ by
+    simp [KnowsSomeAnswer, trueAnswers, and_assoc]
 
 /-- The inference from knowing that `p` to knowing `H` fails when an agent with factive knowledge
 knows that `p` without knowing some answer to `H` (p. 177). -/

@@ -51,7 +51,7 @@ def regret : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   factivity := some .full
   levinClasses := {LevinClass.admire}
 
@@ -135,7 +135,7 @@ def want : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.appoint, .want}
 
 /-- *intend* reports an intention ([grano-2024]). Its subject controls its infinitive (*intend
@@ -149,7 +149,7 @@ def intend : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.characterize}
 
 /-- *decide* is a hybrid of belief and intention ([grano-2024], §6.1). With a nonfinite
@@ -163,7 +163,7 @@ def decide_ : Verb where
     (controllers := [some 0])
   vendlerClass := some .achievement
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- *hope* is a preferential attitude verb that takes a finite clause (*hope that John leaves*)
     or an infinitive its subject controls (*hope to leave*). -/
@@ -174,7 +174,7 @@ def hope : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.long}
 
 /-- *pray* is a preferential attitude verb that permits future temporal orientation. Like
@@ -188,7 +188,7 @@ def pray : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.long}
 
 /-- "expect" — preferential attitude verb -/
@@ -198,7 +198,7 @@ def expect : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- "wish" — preferential attitude verb -/
 def wish : Verb where
@@ -207,27 +207,27 @@ def wish : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.long}
 
-/-- "fear" — a preferential attitude verb of Class 2, which takes questions. -/
+/-- "fear" — a preferential attitude verb that takes questions. -/
 def fear : Verb where
   morphs := [.root "fear"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   levinClasses := {LevinClass.admire, .marvel}
 
-/-- "dread" — a preferential attitude verb of Class 2, which takes questions. -/
+/-- "dread" — a preferential attitude verb that takes questions. -/
 def dread : Verb where
   morphs := [.root "dread"]
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .negative true)
+  attitude := some (.preferential .negative)
   levinClasses := {LevinClass.admire}
 
 /-- "worry" — preferential attitude verb -/
@@ -237,7 +237,7 @@ def worry : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .negative false)
+  attitude := some (.preferential .negative)
   levinClasses := {LevinClass.amuse, .marvel}
 
 /-! ### Clause-Embedding Predicates -/
