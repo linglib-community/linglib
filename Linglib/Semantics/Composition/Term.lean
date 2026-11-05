@@ -28,8 +28,7 @@ replacement denotes a value, as every term does under the total semantics, where
 ## Main definitions
 
 * `Montague.Term`: the terms over a signature of constants under a typing of the indices.
-* `Montague.Term.relabel`, `Montague.Term.subst`, `Montague.Term.FreeFor`: renaming, substitution
-  and when it captures nothing.
+* `Montague.Term.subst`, `Montague.Term.FreeFor`: substitution and when it captures nothing.
 * `Montague.individualIndices`: Heim and Kratzer's typing, every index of type `e`.
 * `Montague.Interpretation`: an interpretation of the terms.
 * `Montague.Term.realize`: the value of a term in an interpretation under an assignment.
@@ -110,14 +109,6 @@ def freeVars : {ty : Ty} → Term Γ K ty → Finset ℕ
   | _, var n => {n}
   | _, lam n b => b.freeVars.erase n
   | _, comp _ l r => l.freeVars ∪ r.freeVars
-
-/-- The term with its variables renamed by `ρ`: a term under the typing `Γ ∘ ρ` is a term under
-`Γ`, since the variable `n` of the one has the type of the variable `ρ n` of the other. -/
-def relabel (ρ : ℕ → ℕ) : {ty : Ty} → Term (Γ ∘ ρ) K ty → Term Γ K ty
-  | _, const c => const c
-  | _, var n => var (ρ n)
-  | _, lam n b => lam (ρ n) (relabel ρ b)
-  | _, comp m l r => comp m (relabel ρ l) (relabel ρ r)
 
 /-- The term with each free variable `n` replaced by `σ n`. A binder keeps its variable, so a
 replacement with that variable free in it is captured; `FreeFor` says when none is. -/
@@ -242,21 +233,6 @@ theorem realize_congr_of_agree (A : Interpretation.{u, v, w} K) {ty : Ty} (t : T
   | comp m l r ihl ihr =>
     simp only [freeVars, Finset.mem_union] at hg
     exact congrArg₂ (A.mode m) (ihl fun n hn ↦ hg n (.inl hn)) (ihr fun n hn ↦ hg n (.inr hn))
-
-/-- A renamed term has the value of the original under the assignment the renaming pulls back, so
-with `realize_congr_of_agree` a renaming fixing the free variables keeps the value. -/
-theorem realize_relabel (A : Interpretation.{u, v, w} K) {ρ : ℕ → ℕ} (hρ : Function.Injective ρ)
-    {ty : Ty} (t : Term (Γ ∘ ρ) K ty) (g : ∀ n, A.Val (Γ n)) :
-    (t.relabel ρ).realize A g = t.realize A fun n ↦ g (ρ n) := by
-  induction t generalizing g with
-  | const c => rfl
-  | var n => rfl
-  | lam n b ih =>
-    refine congrArg A.lam (funext fun x ↦ (ih _).trans (congrArg (b.realize A) (funext fun m ↦ ?_)))
-    obtain rfl | hm := eq_or_ne m n
-    · simp
-    · simp [Function.update_of_ne hm, Function.update_of_ne (hρ.ne hm)]
-  | comp m l r ihl ihr => exact congrArg₂ (A.mode m) (ihl g) (ihr g)
 
 /-- The substitution lemma: where each replacement denotes a value that the variable it replaces
 denotes under `v`, and no binder captures it, a substituted term has the value of the original

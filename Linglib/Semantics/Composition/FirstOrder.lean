@@ -255,7 +255,7 @@ private theorem realize_relabel_castLE {n k : ℕ} (hk : n ≤ k) (x : L.Term (�
     letI := S
     (x.relabel (Sum.map id (Fin.castLE hk))).realize (Sum.elim v ys) =
       x.realize (Sum.elim v (ys ∘ Fin.castLE hk)) := by
-  rw [Language.Term.realize_relabel, Sum.elim_comp_map, Function.comp_id]
+  rw [Term.realize_relabel, Sum.elim_comp_map, Function.comp_id]
 
 private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
     {P : Ty.SyntacticDomain L α (.e ⇒ .t) k}
