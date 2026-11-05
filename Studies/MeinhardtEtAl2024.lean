@@ -167,8 +167,7 @@ theorem rightwardATR_osl_residual_not_factorsThrough_rtake (k : ℕ) :
     ¬ rightwardATR_osl.apply.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := fun h ↦ by
   have hpre := rightwardATR_osl_isLeftOutputStrictlyLocal.isPrefix
   have hw : ∀ s : Seg, (s :: List.replicate (k - 1) .recL).rtake (k - 1) =
-      List.replicate (k - 1) .recL := fun s ↦ by
-    simpa using List.rtake_append_length (l₁ := [s]) (l₂ := List.replicate (k - 1) Seg.recL)
+      List.replicate (k - 1) .recL := fun _ ↦ List.rtake_cons_of_length_eq (by simp)
   have e := congrFun (h (a := .dom :: List.replicate (k - 1) .recL)
     (b := .recL :: List.replicate (k - 1) .recL) (by simp only [hw])) [.recL]
   rw [Function.residual_eq_drop (hpre _), Function.residual_eq_drop (hpre _)] at e

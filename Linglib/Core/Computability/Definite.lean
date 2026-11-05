@@ -19,24 +19,12 @@ public import Mathlib.Data.Set.Finite.List
 This file defines the definite languages and their relatives. A language `L` is *`k`-definite*
 when membership of a word is decided by its last `k` letters: any two words with the same
 length-`k` suffix are both in `L` or both outside it. Perles, Rabin and Shamir develop the theory
-of these languages; *reverse `k`-definite* languages are the mirror image through the length-`k`
-prefix, and *generalized `k`-definite* languages are decided by the prefix and suffix together.
-
-## Main definitions
-
-* `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`: membership
-  factors through the suffix, the prefix, and both.
-* `Language.IsFiniteOrCofinite`: `L` or its complement is finite.
-
-## Main results
-
-* `Language.IsDefinite.toIsGeneralizedDefinite`,
-  `Language.IsReverseDefinite.toIsGeneralizedDefinite`: definite and reverse definite languages are
-  generalized definite.
-* `Language.IsDefinite.isRegular`, `Language.IsReverseDefinite.isRegular`,
-  `Language.IsGeneralizedDefinite.isRegular`: over a finite alphabet all three are regular.
-* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a finite
-  alphabet, a language is finite or cofinite exactly when it is both definite and reverse definite.
+of these languages; *reverse `k`-definite* languages are [the mirror
+image](##Language.isReverseDefinite_iff_isDefinite_reverse) through the length-`k` prefix, and
+*generalized `k`-definite* languages are decided by the prefix and suffix together. Over a finite
+alphabet a language is [finite or
+cofinite](##Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite) exactly when
+it is both definite and reverse definite.
 
 ## References
 
@@ -54,18 +42,13 @@ Two long words are bridged by a word sharing the length-`k` suffix of the first 
 length-`k'` prefix of the second. This is the combinatorial step behind the characterization of
 the finite and cofinite languages. -/
 
-private lemma takeAt_right_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
-    (hw₁ : k ≤ w₁.length) (_hw₂ : k' ≤ w₂.length) :
-    Edge.right.takeAt k (w₂.take k' ++ w₁.rtake k) = Edge.right.takeAt k w₁ := by
-  have hk : k ≤ (w₁.rtake k).length := by rw [List.length_rtake]; omega
-  rw [Edge.takeAt_right, Edge.takeAt_right, List.rtake_append_of_le_length hk,
-    List.rtake_of_length_le (by rw [List.length_rtake]; omega)]
+private lemma takeAt_right_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α} (hw₁ : k ≤ w₁.length) :
+    Edge.right.takeAt k (w₂.take k' ++ w₁.rtake k) = Edge.right.takeAt k w₁ :=
+  (Edge.right.takeAt_append_takeAt k _ _).trans (List.rtake_append_of_le_length hw₁)
 
-private lemma takeAt_left_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
-    (_hw₁ : k ≤ w₁.length) (hw₂ : k' ≤ w₂.length) :
-    Edge.left.takeAt k' (w₂.take k' ++ w₁.rtake k) = Edge.left.takeAt k' w₂ := by
-  rw [Edge.takeAt_left, Edge.takeAt_left,
-    List.take_append_of_le_length (by rw [List.length_take]; omega), List.take_take, min_self]
+private lemma takeAt_left_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α} (hw₂ : k' ≤ w₂.length) :
+    Edge.left.takeAt k' (w₂.take k' ++ w₁.rtake k) = Edge.left.takeAt k' w₂ :=
+  (Edge.left.takeAt_takeAt_append k' _ _).trans (List.take_append_of_le_length hw₂)
 
 namespace Language
 
@@ -96,12 +79,6 @@ lemma isDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
     L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
   unfold IsDefinite
   rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.right.takeAt_idem k a)]
-  simp only [eq_iff_iff]
-
-lemma isReverseDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
-    L.IsReverseDefinite k ↔ ∀ w, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
-  unfold IsReverseDefinite
-  rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.left.takeAt_idem k a)]
   simp only [eq_iff_iff]
 
 /-- A language is *finite or cofinite* when it or its complement is finite. -/
@@ -155,24 +132,16 @@ theorem isDefinite_ofSuffix (xs : List α) : (ofSuffix xs).IsDefinite xs.length 
 
 /-! ### Reverse duality -/
 
-private lemma takeAt_left_reverse (k : ℕ) (l : List α) :
-    Edge.left.takeAt k l.reverse = (Edge.right.takeAt k l).reverse := by
-  simp [Edge.takeAt_left, Edge.takeAt_right, List.rtake_eq_reverse_take_reverse]
-
-private lemma takeAt_right_reverse (k : ℕ) (l : List α) :
-    Edge.right.takeAt k l.reverse = (Edge.left.takeAt k l).reverse := by
-  simp [Edge.takeAt_left, Edge.takeAt_right, List.rtake_eq_reverse_take_reverse]
-
 theorem isReverseDefinite_iff_isDefinite_reverse {k : ℕ} {L : Language α} :
     L.IsReverseDefinite k ↔ L.reverse.IsDefinite k := by
   constructor
   · intro h a b hab
     have key : Edge.left.takeAt k a.reverse = Edge.left.takeAt k b.reverse := by
-      rw [takeAt_left_reverse, takeAt_left_reverse, hab]
+      rw [Edge.takeAt_reverse, Edge.takeAt_reverse, Edge.swap_left, hab]
     simpa only [Language.mem_reverse] using h key
   · intro h a b hab
     have key : Edge.right.takeAt k a.reverse = Edge.right.takeAt k b.reverse := by
-      rw [takeAt_right_reverse, takeAt_right_reverse, hab]
+      rw [Edge.takeAt_reverse, Edge.takeAt_reverse, Edge.swap_right, hab]
     simpa only [Language.reverse_mem_reverse] using h key
 
 /-! ### Inclusions into the generalized definite languages -/
@@ -279,8 +248,8 @@ theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
   intro w₁ hw₁ w₂ hw₂
   have hk : k ≤ w₁.length := by rw [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt] at hw₁; omega
   have hk' : k' ≤ w₂.length := by rw [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt] at hw₂; omega
-  exact (iff_of_eq (hD (takeAt_right_eq_of_bridge hk hk').symm)).trans
-    (iff_of_eq (hR (takeAt_left_eq_of_bridge hk hk')))
+  exact (iff_of_eq (hD (takeAt_right_eq_of_bridge hk).symm)).trans
+    (iff_of_eq (hR (takeAt_left_eq_of_bridge hk')))
 
 /-- Over a finite alphabet, a language is finite or cofinite exactly when it is definite and
 reverse definite. -/

@@ -215,8 +215,8 @@ theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {
       StringFormula.holdsAt_window hp (mem_windows.1 hu).1, List.getElem?_eq_getElem hp,
       Option.some.injEq]
   have hwin : (w.take p).rtake r ∈ windows alphabet r :=
-    mem_windows.2 ⟨List.length_rtake_le r _, fun a ha ↦
-      hw a (List.mem_of_mem_take ((List.rtake_suffix r _).subset ha))⟩
+    mem_windows.2 ⟨List.length_rtake_le _ r, fun a ha ↦
+      hw a (List.mem_of_mem_take ((List.rtake_suffix _ r).subset ha))⟩
   have hmem {cl} : cl ∈ (ρ.toTransduction alphabet).clauses ↔ ∃ u ∈ windows alphabet r,
       ∃ a ∈ alphabet,
         (StringFormula.label a (.var 0) ⊓ StringFormula.window r u, ρ.windowOutput u a) = cl :=
