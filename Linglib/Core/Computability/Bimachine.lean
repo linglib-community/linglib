@@ -417,8 +417,9 @@ protected theorem IsBimachineComputable.revConj {f : List α → List β}
   ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, .revConj⟩
 
 /-- `f` is computed by a finite **letter-to-letter** bimachine, and so preserves length. Over a
-finite alphabet these are the length-preserving bimachine-computable functions ([eilenberg-1974]
-Th. XI.7.1); over an infinite one they are fewer. -/
+finite alphabet these are the length-preserving bimachine-computable functions
+(`isLetterToLetterBimachineComputable_iff_isBimachineComputable`); over an infinite one they are
+fewer. -/
 def IsLetterToLetterBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.IsLetterToLetter ∧ B.run = f
