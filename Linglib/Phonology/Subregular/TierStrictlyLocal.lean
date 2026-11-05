@@ -8,7 +8,6 @@ module
 public import Linglib.Phonology.Subregular.StrictlyLocal
 public import Mathlib.Data.List.Basic
 public import Mathlib.Computability.Language
-public import Linglib.Core.Data.List.Factors
 
 /-!
 # Tier-based strictly local languages (TSL_k)
@@ -89,7 +88,7 @@ def language (G : TierStrictlyLocalGrammar k α) : Language α :=
 
 @[simp] lemma mem_language (G : TierStrictlyLocalGrammar k α) (w : List α) :
     w ∈ G.language ↔
-      ∀ f ∈ List.kFactors k (boundary k (w.filter (G.tier ·))), f ∈ G.permitted := Iff.rfl
+      ∀ f, f.length = k → f <:+: boundary k (w.filter (G.tier ·)) → f ∈ G.permitted := Iff.rfl
 
 theorem mem_language_append_cons_of_not_tier (G : TierStrictlyLocalGrammar k α) {a : α}
     (ha : ¬ G.tier a) (u v : List α) :

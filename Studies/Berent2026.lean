@@ -95,7 +95,7 @@ end Abstract
 
 section Algebraic
 
-variable {α β : Type*} {f : α → β} {x y z : α} {u : List α} {L : List (List α)}
+variable {α β : Type*} {f : α → β} {x y z : α} {u : α × α} {L : List (List α)}
 
 /-- The 3-factors that begin a word with two identical elements, ⋊XX with X a variable over the
 alphabet. -/
@@ -113,8 +113,8 @@ theorem initialIdentity_iff {r : ConsonantalRoot α} :
   simp only [InitialIdentity, StrictlyLocalGrammar.mem_ofForbidden_language, initialDoubles,
     Set.mem_ofPred_eq, not_forall, not_not, exists_prop]
   constructor
-  · rintro ⟨_, hu, x, rfl⟩
-    obtain ⟨i, -, hi, he⟩ := (mem_kFactors_boundary_iff (by norm_num)).1 hu
+  · rintro ⟨_, hl, hu, x, rfl⟩
+    obtain ⟨i, -, hi, he⟩ := (infix_boundary_and_length_eq_iff (by norm_num)).1 ⟨hu, hl⟩
     simp only [window, List.ofFn_succ, List.ofFn_zero, List.cons.injEq, Fin.val_zero,
       Fin.val_succ, and_true] at he
     obtain ⟨h₀, h₁, h₂⟩ := he
@@ -128,8 +128,7 @@ theorem initialIdentity_iff {r : ConsonantalRoot α} :
     subst h₁ h₂
     exact ⟨x, t, rfl⟩
   · rintro ⟨x, t, h⟩
-    exact ⟨_, List.mem_kFactors.2 ⟨⟨[none], t.map some ++ [none, none], by simp [boundary, h]⟩,
-      rfl⟩, x, rfl⟩
+    exact ⟨_, rfl, ⟨[none], t.map some ++ [none, none], by simp [boundary, h]⟩, x, rfl⟩
 
 instance [DecidableEq α] : DecidablePred (InitialIdentity (α := α)) := fun r ↦
   decidable_of_iff (r.segments ≠ [] ∧ r.segments[0]? = r.segments[1]?) <| by
@@ -151,19 +150,23 @@ theorem initialIdentity_iff_judgment :
 
 variable [DecidableEq α]
 
-/-- The number of occurrences of `u` among the 2-factors of the forms of a lexicon, the statistic
-of a model that tracks the co-occurrence of specific tokens. -/
-def pairCount (L : List (List α)) (u : List α) : ℕ := (L.flatMap (List.kFactors 2)).count u
+/-- The number of occurrences of `u` among the adjacent pairs of the forms of a lexicon, the
+statistic of a model that tracks the co-occurrence of specific tokens. -/
+def pairCount (L : List (List α)) (u : α × α) : ℕ := (L.flatMap List.consecutivePairs).count u
 
-/-- The counts in a lexicon of the 2-factors of a form, all that a model of token co-occurrence
+/-- The counts in a lexicon of the adjacent pairs of a form, all that a model of token co-occurrence
 knows of it. -/
 def pairCounts (L : List (List α)) (w : List α) : List ℕ :=
-  (List.kFactors 2 w).map (pairCount L)
+  w.consecutivePairs.map (pairCount L)
 
-theorem pairCount_eq_zero (hz : ∀ w ∈ L, z ∉ w) (hu : z ∈ u) : pairCount L u = 0 := by
+theorem pairCount_eq_zero (hz : ∀ w ∈ L, z ∉ w) (hu : u.1 = z ∨ u.2 = z) : pairCount L u = 0 := by
   rw [pairCount, List.count_eq_zero]
   simp only [List.mem_flatMap, not_exists, not_and]
-  exact fun w hw h ↦ hz w hw ((List.mem_kFactors.1 h).1.subset hu)
+  rintro w hw h
+  have := List.of_mem_zip (a := u.1) (b := u.2) h
+  rcases hu with rfl | rfl
+  · exact hz w hw this.1
+  · exact hz w hw (List.mem_of_mem_tail this.2)
 
 open Hebrew.Phonology in
 open English.Phonology (θ) in
@@ -180,7 +183,8 @@ theorem initialIdentity_not_factorsThrough (L : List (ConsonantalRoot Segment))
     rintro _ ⟨r, hr, rfl⟩ h
     exact absurd (hL r hr θ h) (by decide +kernel)
   intro h
-  have := @h ⟨[k, θ, θ]⟩ ⟨[θ, θ, k]⟩ (by simp [pairCounts, pairCount_eq_zero hθ])
+  have := @h ⟨[k, θ, θ]⟩ ⟨[θ, θ, k]⟩
+    (by simp [pairCounts, List.consecutivePairs, pairCount_eq_zero hθ])
   exact (by decide +kernel : ¬ InitialIdentity ⟨[k, θ, θ]⟩) (this ▸ by decide +kernel)
 
 -- The fragment's roots, archisegments included, form such a lexicon.
@@ -197,7 +201,7 @@ theorem doubling_not_factorsThrough (hx : ∀ w ∈ L, x ∉ w) (h : x ≠ y) (l
     ¬ Function.FactorsThrough (fun w ↦ ∃ p ∈ (tableau x y l r).optimal, p.surface = w)
         (pairCounts L) := by
   intro hf
-  have := @hf [x, x] [x, y] (by simp [pairCounts, pairCount_eq_zero hx])
+  have := @hf [x, x] [x, y] (by simp [pairCounts, List.consecutivePairs, pairCount_eq_zero hx])
   cases l
   · simp [optimal_phonology h r, Parse.surface, Parse.morphemes, h.symm] at this
   · simp [optimal_morphology h r, Parse.surface, Parse.morphemes, h] at this

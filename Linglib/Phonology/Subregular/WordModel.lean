@@ -623,9 +623,8 @@ private theorem eq_of_kTestVector_eq (h : w.kTestVector k = v.kTestVector k) (hw
   obtain ⟨hP, hK, -⟩ := h
   have hv : v.length < k := by
     by_contra hv
-    have hmem : v.take k ∈ v.kFactors k :=
-      List.mem_kFactors.2 ⟨(List.take_prefix _ _).isInfix, by simp; omega⟩
-    have := ((List.mem_kFactors.1 ((Set.ext_iff.1 hK _).2 hmem)).1).length_le
+    have := ((Set.ext_iff.1 hK (v.take k)).2
+      ⟨(List.take_prefix _ _).isInfix, by simp; omega⟩).1.length_le
     simp at this
     omega
   rwa [List.take_of_length_le (by omega), List.take_of_length_le (by omega)] at hP
@@ -646,8 +645,7 @@ theorem kTestVector_eq_iff :
       obtain ⟨s, rfl | rfl | rfl | rfl⟩ := infix_anchor_cases hc
       · rw [map_inl_infix_anchor_iff] at hc ⊢
         obtain ⟨f, hfw, hfk, hsf⟩ := exists_infix_length_eq hc (by simpa using hck) (by omega)
-        exact hsf.trans (List.mem_kFactors.1
-          ((Set.ext_iff.1 hK f).1 (List.mem_kFactors.2 ⟨hfw, hfk⟩))).1
+        exact hsf.trans ((Set.ext_iff.1 hK f).1 ⟨hfw, hfk⟩).1
       · rw [cons_infix_anchor_iff] at hc ⊢
         have : s <+: w.take (k - 1) := List.prefix_take_iff.2 ⟨hc, by simp at hck; omega⟩
         rw [hP] at this
@@ -666,7 +664,7 @@ theorem kTestVector_eq_iff :
     simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right]
     rcases Nat.eq_zero_or_pos k with rfl | hk
     · refine ⟨by simp, Set.ext fun f ↦ ?_, by simp [List.rtake]⟩
-      simp only [Set.mem_ofPred_eq, List.mem_kFactors, List.length_eq_zero_iff]
+      simp only [Set.mem_ofPred_eq, List.length_eq_zero_iff]
       constructor <;> rintro ⟨-, rfl⟩ <;> exact ⟨List.nil_infix, rfl⟩
     have pre (w v : List α) (mem : ∀ c : List (α ⊕ Edge), c.length ≤ k →
         c <:+: anchor w → c <:+: anchor v) : w.take (k - 1) <+: v.take (k - 1) :=
@@ -682,7 +680,7 @@ theorem kTestVector_eq_iff :
       (suf w v fun c hc ↦ (mem c hc).1).eq_of_length
         (le_antisymm (suf w v fun c hc ↦ (mem c hc).1).length_le
           (suf v w fun c hc ↦ (mem c hc).2).length_le)⟩
-    simp only [Set.mem_ofPred_eq, List.mem_kFactors]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · rintro ⟨hf, rfl⟩
       exact ⟨map_inl_infix_anchor_iff.1 ((mem _ (by simp)).1 (map_inl_infix_anchor_iff.2 hf)), rfl⟩

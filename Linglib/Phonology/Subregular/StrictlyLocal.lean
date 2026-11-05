@@ -5,11 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Computability.Language
 public import Linglib.Phonology.Subregular.Boundary
 public import Linglib.Core.Computability.LocallyTestable
-public import Linglib.Core.Data.List.Factors
 public import Linglib.Core.Relation.SetRel
 
 /-!
@@ -58,9 +56,8 @@ members regenerate it (`Language.isStrictlyLocal_iff_language_image`).
 ## Implementation notes
 
 Grammars are arbitrary sets over an arbitrary alphabet rather than finite sets over a finite one.
-Only star-freeness assumes a finite alphabet (`Language.IsStrictlyLocal.isStarFree`), and only the
-count-vector characterization a finite set of forbidden factors. Learning from positive data needs
-finite grammars: at a fixed width the languages of arbitrary grammars are identifiable in the limit
+Only star-freeness assumes a finite alphabet (`Language.IsStrictlyLocal.isStarFree`). Learning from
+positive data needs finite grammars: at a fixed width the languages of arbitrary grammars are identifiable in the limit
 only over a finite alphabet (`HeinzKasprzikKotzing2012.identifiable_isStrictlyLocal_iff`).
 
 ## References
@@ -81,12 +78,12 @@ abbrev StrictlyLocalGrammar (α : Type*) := Set (Augmented α)
 namespace StrictlyLocalGrammar
 
 /-- The language generated at width `k` consists of the strings whose boundary-augmented form
-has every `k`-factor permitted. -/
+has every infix of length `k` permitted. -/
 def language (k : ℕ) (G : StrictlyLocalGrammar α) : Language α :=
-  {w | ∀ f ∈ List.kFactors k (boundary k w), f ∈ G}
+  {w | ∀ f, f.length = k → f <:+: boundary k w → f ∈ G}
 
 @[simp] lemma mem_language (k : ℕ) (G : StrictlyLocalGrammar α) (w : List α) :
-    w ∈ G.language k ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∈ G :=
+    w ∈ G.language k ↔ ∀ f, f.length = k → f <:+: boundary k w → f ∈ G :=
   Iff.rfl
 
 /-- The grammar of a **forbidden**-factor set is its complement: a string is
@@ -96,7 +93,7 @@ def ofForbidden (forbidden : Set (Augmented α)) : StrictlyLocalGrammar α := fo
 @[simp] lemma mem_ofForbidden_language (forbidden : Set (Augmented α)) (k : ℕ)
     (w : List α) :
     w ∈ (ofForbidden forbidden).language k
-      ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∉ forbidden :=
+      ↔ ∀ f, f.length = k → f <:+: boundary k w → f ∉ forbidden :=
   Iff.rfl
 
 theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : List α} (hk : 1 ≤ k) :
@@ -104,9 +101,10 @@ theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : Lis
   rw [mem_language]
   constructor
   · intro h i h1 h2
-    exact h _ ((mem_kFactors_boundary_iff hk).mpr ⟨i, h1, h2, rfl⟩)
-  · intro h f hf
-    obtain ⟨i, h1, h2, rfl⟩ := (mem_kFactors_boundary_iff hk).mp hf
+    obtain ⟨hf, hl⟩ := (infix_boundary_and_length_eq_iff hk).mpr ⟨i, h1, h2, rfl⟩
+    exact h _ hl hf
+  · intro h f hl hf
+    obtain ⟨i, h1, h2, rfl⟩ := (infix_boundary_and_length_eq_iff hk).mp ⟨hf, hl⟩
     exact h i h1 h2
 
 /-! ### The factor relation -/
@@ -114,8 +112,8 @@ theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : Lis
 /-- The language at width `k` is the core of the relation taking a word to its `k`-factors. -/
 theorem language_eq_core (k : ℕ) (G : StrictlyLocalGrammar α) :
     G.language k =
-      (SetRel.ofSuccessors fun w : List α ↦ {f | f ∈ (boundary k w).kFactors k}).core G :=
-  rfl
+      (SetRel.ofSuccessors fun w : List α ↦ {f | f <:+: boundary k w ∧ f.length = k}).core G :=
+  Set.ext fun _ ↦ ⟨fun h _ hf ↦ h _ hf.2 hf.1, fun h _ hl hf ↦ h ⟨hf, hl⟩⟩
 
 theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyLocalGrammar α) :
     (G₁ ∩ G₂).language k = G₁.language k ⊓ G₂.language k := by
@@ -126,30 +124,6 @@ theorem language_mono (k : ℕ) : Monotone (language k : StrictlyLocalGrammar α
   fun G₁ G₂ h ↦ by
     simp only [language_eq_core]
     exact SetRel.core_subset_core h
-
-/-! ### Count-vector characterisation
-
-Membership in a forbidden-factor SL language is a zero-test of a single
-linear functional of the word's `k`-factor count vector — the total count of
-forbidden factors — with unit margin on nonmembers. Strict locality is thus
-linearly detectable on the factor-count (cue) representation. -/
-
-variable [DecidableEq α]
-
-theorem mem_ofForbidden_language_iff_sum_count_eq_zero
-    (F : Finset (Augmented α)) (k : ℕ) (w : List α) :
-    w ∈ (ofForbidden ↑F).language k
-      ↔ ∑ f ∈ F, (List.kFactors k (boundary k w)).count f = 0 := by
-  simp only [mem_ofForbidden_language, Finset.mem_coe, Finset.sum_eq_zero_iff,
-             List.count_eq_zero]
-  exact ⟨fun h f hf hmem ↦ h f hmem hf, fun h f hmem hf ↦ h f hf hmem⟩
-
-theorem one_le_sum_count_of_not_mem_ofForbidden_language
-    {F : Finset (Augmented α)} {k : ℕ} {w : List α}
-    (h : w ∉ (ofForbidden ↑F).language k) :
-    1 ≤ ∑ f ∈ F, (List.kFactors k (boundary k w)).count f :=
-  Nat.one_le_iff_ne_zero.mpr fun h0 ↦
-    h ((mem_ofForbidden_language_iff_sum_count_eq_zero F k w).mpr h0)
 
 end StrictlyLocalGrammar
 
@@ -168,7 +142,7 @@ def IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
 generates it. -/
 theorem isStrictlyLocal_iff_language_image {L : Language α} {k : ℕ} :
     L.IsStrictlyLocal k ↔
-      StrictlyLocalGrammar.language k {f | ∃ z ∈ L, f ∈ (boundary k z).kFactors k} = L := by
+      StrictlyLocalGrammar.language k {f | ∃ z ∈ L, f <:+: boundary k z ∧ f.length = k} = L := by
   refine ⟨?_, fun h ↦ ⟨_, h⟩⟩
   rintro ⟨G, rfl⟩
   simp only [StrictlyLocalGrammar.language_eq_core]
@@ -185,36 +159,15 @@ def SuffixSubstitutionClosed (L : Language α) (k : ℕ) : Prop :=
 theorem IsStrictlyLocal.suffixSubstitutionClosed {L : Language α} {k : ℕ}
     (h : L.IsStrictlyLocal k) : L.SuffixSubstitutionClosed k := by
   obtain ⟨G, rfl⟩ := h
-  intro u₁ v₁ u₂ v₂ x hx h₁ h₂ f hf
-  rw [List.mem_kFactors] at hf
-  obtain ⟨⟨s, t, hst⟩, hlen⟩ := hf
-  have hPfx : ∀ v : List α, (List.replicate (k - 1) none ++ (u₁ ++ x).map some)
-      <+: boundary k (u₁ ++ x ++ v) := fun v ↦
-    ⟨v.map some ++ List.replicate (k - 1) none, by simp [boundary, List.append_assoc]⟩
-  have hSfx : ∀ u : List α, ((x ++ v₂).map some ++ List.replicate (k - 1) none)
-      <:+ boundary k (u ++ x ++ v₂) := fun u ↦
-    ⟨List.replicate (k - 1) none ++ u.map some, by simp [boundary, List.append_assoc]⟩
-  rcases le_or_gt (s.length + k) (k - 1 + (u₁.length + x.length)) with hcase | hcase
-  · apply h₁
-    rw [List.mem_kFactors]
-    refine ⟨List.IsInfix.trans ?_ (hPfx v₁).isInfix, hlen⟩
-    have hsf : s ++ f <+: List.replicate (k - 1) none ++ (u₁ ++ x).map some := by
-      refine List.prefix_of_prefix_length_le
-        ⟨t, by simpa [List.append_assoc] using hst⟩ (hPfx v₂) ?_
-      simp only [List.length_append, List.length_replicate, List.length_map, hlen]
-      omega
-    exact (List.suffix_append s f).isInfix.trans hsf.isInfix
-  · apply h₂
-    rw [List.mem_kFactors]
-    refine ⟨List.IsInfix.trans ?_ (hSfx u₂).isInfix, hlen⟩
-    have hft : f ++ t <:+ (x ++ v₂).map some ++ List.replicate (k - 1) none := by
-      refine List.suffix_of_suffix_length_le
-        ⟨s, by simpa [List.append_assoc] using hst⟩ (hSfx u₁) ?_
-      have hL := congrArg List.length hst
-      simp only [List.length_append, length_boundary, hlen] at hL
-      simp only [List.length_append, List.length_map, List.length_replicate, hlen]
-      omega
-    exact (List.prefix_append f t).isInfix.trans hft.isInfix
+  intro u₁ v₁ u₂ v₂ x hx h₁ h₂ f hk hf
+  have hb (u v : List α) : boundary k (u ++ x ++ v) = (List.replicate (k - 1) none ++ u.map some) ++
+      x.map some ++ (v.map some ++ List.replicate (k - 1) none) := by
+    simp [boundary, List.append_assoc]
+  have hl : f.length ≤ (x.map some).length + 1 := by simp only [List.length_map]; omega
+  rw [hb, List.infix_append_append_iff hl] at hf
+  rcases hf with hf | hf
+  · exact h₁ f hk (by rw [hb, List.infix_append_append_iff hl]; exact .inl hf)
+  · exact h₂ f hk (by rw [hb, List.infix_append_append_iff hl]; exact .inr hf)
 
 theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk : 2 ≤ k)
     (h : L.SuffixSubstitutionClosed k) : L.IsStrictlyLocal k := by
@@ -228,7 +181,7 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
         ∀ j : ℕ, j < k → y[q + j]? = w[i + j]? := by
     intro i hi1 hi2
     obtain ⟨y, hy, hf⟩ := hw i hi1 hi2
-    obtain ⟨q, hq1, hq2, hq3⟩ := (mem_kFactors_boundary_iff (by omega)).mp hf
+    obtain ⟨q, hq1, hq2, hq3⟩ := (infix_boundary_and_length_eq_iff (by omega)).mp hf
     exact ⟨y, hy, q, hq1, hq2, fun j hj ↦ (window_eq_window_iff.mp hq3 j hj).symm⟩
   clear hw
   rcases eq_or_ne w [] with rfl | hne
@@ -443,7 +396,8 @@ permitted, and that language is locally `k`-testable outright. -/
 theorem IsStrictlyLocal.toIsLocallyTestable {L : Language α} {k : ℕ} (h : L.IsStrictlyLocal k) :
     L.IsLocallyTestable k := by
   obtain ⟨G, rfl⟩ := h
-  exact (((isLocallyTestable_setOf_kFactors k {S | S ⊆ G}).rightQuotient
+  rw [StrictlyLocalGrammar.language_eq_core]
+  exact (((isLocallyTestable_setOf_factors k {S | S ⊆ G}).rightQuotient
     (List.replicate (k - 1) none)).leftQuotient (List.replicate (k - 1) none)).preimage_map some
 
 /-- Over a finite alphabet strictly local languages are star-free. -/
