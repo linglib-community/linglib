@@ -3,6 +3,8 @@ module
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Modification.Basic
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Functor
 
 /-!
 # Composition modes
@@ -26,6 +28,8 @@ it the constant intension of the argument's value.
   they compose to.
 * `Montague.Mode.eval`: the mother's denotation from the daughters'.
 * `Montague.Mode.evalM`: composition under an applicative effect.
+* `Montague.Mode.evalKleisli`: composition at `Ty.DomainM M`, of which `Mode.eval` is the case
+  where computations are values.
 * `Montague.Mode.combine?`: composition, by the mode their types select, in a family of values.
 * `Montague.Ty.modes`: every mode by which two daughters' types compose.
 * `Montague.Mode.IsBasic`: the modes that are not meta-modes.
@@ -230,6 +234,92 @@ def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (
 
 @[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
     m.evalM (M := Id) a b = m.eval a b := rfl
+
+end Mode
+
+/-! ### Composition at a type constructor of computations -/
+
+/-- A computation of a set of alternatives flattened into a set of alternative computations, as the
+join of the set effect needs at `Ty.DomainM M`. -/
+class FlattenAlternatives (M : Type → Type) where
+  /-- The alternatives of a computation of alternatives. -/
+  flatten {α : Type} : M (Set (M α)) → Set (M α)
+
+/-- Values are the computations with no effect. -/
+@[reducible] def pureMonad : Monad (fun α : Type ↦ α) := inferInstanceAs (Monad Id)
+
+/-- A set of alternative values is its own flattening. -/
+@[reducible] def pureFlatten : FlattenAlternatives (fun α : Type ↦ α) := ⟨fun s ↦ s⟩
+
+/-- A set of sets of alternatives flattens to their union. -/
+instance : FlattenAlternatives SetM := ⟨fun y ↦ {z | ∃ s ∈ y.run, z ∈ s}⟩
+
+section Kleisli
+
+variable {M : Type → Type} [Monad M] [FlattenAlternatives M] {E W : Type} {S : Sorts} {α : Type}
+
+/-- An effect's join at `M`: the reader reads one environment for both layers, and indeterminacy
+takes the alternatives of each alternative. -/
+def Eff.joinKleisli : (f : Eff) → Eff.FM M E W f S (Eff.FM M E W f S α) → Eff.FM M E W f S α
+  | .reader _, x => fun i ↦ x i >>= fun y ↦ y i
+  | .set, x => {z | ∃ y ∈ x, z ∈ FlattenAlternatives.flatten y}
+
+namespace Mode
+
+/-- The denotation of a mode at `Ty.DomainM M`, call-by-value: each daughter's computation runs,
+the left first, and a function's value is a computation. -/
+def evalKleisli : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → M (Ty.DomainM M E W σ₁ S) →
+    M (Ty.DomainM M E W σ₂ S) → M (Ty.DomainM M E W τ S)
+  | _, _, _, functionalLeft, f, a => f >>= fun fv ↦ a >>= fv
+  | _, _, _, functionalRight, a, f => f >>= fun fv ↦ a >>= fv
+  | _, _, _, predicateModification, p, q => do
+      let P ← p; let Q ← q; pure fun x ↦ do let a ← P x; let b ← Q x; pure (a ∧ b)
+  | _, _, _, eventIdentificationLeft, f, p => do
+      let F ← f; let P ← p; pure fun x ↦ do
+        let Fx ← F x; pure fun e ↦ do let a ← Fx e; let b ← P e; pure (a ∧ b)
+  | _, _, _, eventIdentificationRight, p, f => do
+      let P ← p; let F ← f; pure fun x ↦ do
+        let Fx ← F x; pure fun e ↦ do let a ← Fx e; let b ← P e; pure (a ∧ b)
+  | _, _, _, mapRight (f := f) m, a, b => do
+      let av ← a; let bv ← b; pure (Eff.map f (m.evalKleisli (pure av)) bv)
+  | _, _, _, mapLeft (f := f) m, a, b => do
+      let av ← a; let bv ← b; pure (Eff.map f (fun x ↦ m.evalKleisli x (pure bv)) av)
+  | _, _, _, ap (f := f) m, a, b => do
+      let av ← a; let bv ← b; pure (Eff.zip f m.evalKleisli av bv)
+  | _, _, _, unitRight (f := f) m, a, b =>
+      m.evalKleisli (do let av ← a; pure fun x ↦ av (Eff.pure f (pure x))) b
+  | _, _, _, unitLeft (f := f) m, a, b =>
+      m.evalKleisli a (do let bv ← b; pure fun y ↦ bv (Eff.pure f (pure y)))
+  | _, _, _, join (f := f) m, a, b => do let x ← m.evalKleisli a b; pure (Eff.joinKleisli f x)
+
+end Mode
+
+end Kleisli
+
+namespace Mode
+
+variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
+
+/-- `eval` is `evalKleisli` where computations are values. -/
+theorem evalKleisli_pure (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
+    letI := pureMonad; letI := pureFlatten; m.evalKleisli (M := fun α ↦ α) a b = m.eval a b := by
+  let _ := pureMonad
+  let _ := pureFlatten
+  induction m with
+  | @mapRight f _ _ _ m ih => cases f <;> simp only [evalKleisli, eval, ← ih] <;> rfl
+  | @mapLeft f _ _ _ m ih => cases f <;> simp only [evalKleisli, eval, ← ih] <;> rfl
+  | @ap f _ _ _ m ih =>
+    have e : (evalKleisli (M := fun α ↦ α) (E := E) (W := W) (S := S) m) = m.eval := funext₂ ih
+    cases f with
+    | reader _ => simp only [evalKleisli, e]; rfl
+    | set => simp only [evalKleisli, e]; exact Set.image2_eq_seq _ _ _
+  | @unitRight f _ _ _ _ m ih => cases f <;> exact ih _ _
+  | @unitLeft f _ _ _ _ m ih => cases f <;> exact ih _ _
+  | @join f _ _ _ m ih =>
+    simp only [evalKleisli, eval]
+    rw [show evalKleisli (M := fun α ↦ α) m a b = m.eval a b from ih a b]
+    cases f <;> rfl
+  | _ => rfl
 
 /-! ### Composition in a family of values -/
 

@@ -22,10 +22,12 @@ carrier of its result's domain.
 * `Montague.Ty.intens`: intensions, the functions from worlds.
 * `Montague.Sorts`: the carriers of the degree and eventuality sorts.
 * `Montague.Eff`: the effects of computation types.
-* `Montague.Ty.Domain E W ty S`, `Montague.Eff.F`: the denotation domain of `ty`, and an
-  effect's carrier.
-* `Montague.Eff.map`, `Montague.Eff.pure`, `Montague.Eff.seq`, `Montague.Eff.join`: an effect's
-  map, unit, application of a computed function to a computed argument, and flattening.
+* `Montague.Ty.DomainM M E W ty S`, `Montague.Eff.FM`: the domain of `ty` and an effect's carrier
+  at a type constructor `M` of computations, call-by-value.
+* `Montague.Ty.Domain E W ty S`, `Montague.Eff.F`: the same where computations are values.
+* `Montague.Eff.map`, `Montague.Eff.pure`, `Montague.Eff.zip`, `Montague.Eff.seq`,
+  `Montague.Eff.join`: an effect's map, unit, pairing, application of a computed function to a
+  computed argument, and flattening.
 * `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
 * `Montague.Ty.Conjoinable`: the types that end in `t`.
 * `Montague.Ty.Domain.completeBooleanAlgebra`: the pointwise complete Boolean algebra of a
@@ -128,10 +130,11 @@ structure Sorts where
 
 mutual
 
-/-- The type `e` denotes in `E`, `t` in `Prop`, `d` in the scale of degrees, `n` in `ℕ`, `v` in
-the eventualities, `s` in `W`, `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b`, so that an intension
-`⟨s,a⟩` denotes in `W → Ty.Domain a`, and a computation type in its effect's carrier. -/
-abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
+/-- The domains of the types at a type constructor `M` of computations, as in the call-by-value
+monadic translation: `e` denotes in `E`, `t` in `Prop`, `d` in the scale of degrees, `n` in `ℕ`, `v`
+in the eventualities, `s` in `W`, `⟨a,b⟩` in the functions from `a`'s domain to computations of
+`b`'s, and a computation type in its effect's carrier. -/
+abbrev Ty.DomainM (M : Type → Type) (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   match ty with
   | .e => E
   | .t => Prop
@@ -139,28 +142,48 @@ abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   | .n => ℕ
   | .v => S.eventuality
   | .s => W
-  | .fn a b => Ty.Domain E W a S → Ty.Domain E W b S
-  | .comp f a => Eff.F E W f S (Ty.Domain E W a S)
+  | .fn a b => Ty.DomainM M E W a S → M (Ty.DomainM M E W b S)
+  | .comp f a => Eff.FM M E W f S (Ty.DomainM M E W a S)
 
-/-- The carrier of an effect: a computation that reads an environment of type `ι` is a function
-from its denotations, and an indeterminate computation is the set of its alternatives. -/
-abbrev Eff.F (E W : Type) (f : Eff) (S : Sorts := {}) (α : Type) : Type :=
+/-- The carrier of an effect at `M`: a computation that reads an environment of type `ι` is a
+function from its denotations to computations, and an indeterminate computation is the set of
+its alternatives, each a computation. -/
+abbrev Eff.FM (M : Type → Type) (E W : Type) (f : Eff) (S : Sorts := {}) (α : Type) : Type :=
   match f with
-  | .reader ι => Ty.Domain E W ι S → α
-  | .set => Set α
+  | .reader ι => Ty.DomainM M E W ι S → M α
+  | .set => Set (M α)
 
 end
 
+/-- The total domains: `Ty.DomainM` where a computation is its value. So an intension `⟨s,a⟩`
+denotes in `W → Ty.Domain a`. -/
+abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
+  Ty.DomainM (fun α ↦ α) E W ty S
+
+/-- The carrier of an effect at the total domains: a computation that reads an environment of type
+`ι` is a function from its denotations, and an indeterminate computation is the set of its
+alternatives. -/
+abbrev Eff.F (E W : Type) (f : Eff) (S : Sorts := {}) (α : Type) : Type :=
+  Eff.FM (fun α ↦ α) E W f S α
+
 /-- An effect's map, a function applied to the result of a computation. -/
-def Eff.map {E W : Type} {S : Sorts} {α β : Type} : (f : Eff) → (α → β) → Eff.F E W f S α →
-    Eff.F E W f S β
+def Eff.map {M : Type → Type} {E W : Type} {S : Sorts} {α β : Type} :
+    (f : Eff) → (M α → M β) → Eff.FM M E W f S α → Eff.FM M E W f S β
   | .reader _, g, x => fun i ↦ g (x i)
   | .set, g, x => g '' x
 
 /-- An effect's unit, the computation with no effect that returns a value. -/
-def Eff.pure {E W : Type} {S : Sorts} {α : Type} : (f : Eff) → α → Eff.F E W f S α
+def Eff.pure {M : Type → Type} {E W : Type} {S : Sorts} {α : Type} :
+    (f : Eff) → M α → Eff.FM M E W f S α
   | .reader _, a => fun _ ↦ a
   | .set, a => {a}
+
+/-- An effect's pairing of two computations by a function of their results. -/
+def Eff.zip {M : Type → Type} {E W : Type} {S : Sorts} {α β γ : Type} :
+    (f : Eff) → (M α → M β → M γ) → Eff.FM M E W f S α → Eff.FM M E W f S β →
+      Eff.FM M E W f S γ
+  | .reader _, g, x, y => fun i ↦ g (x i) (y i)
+  | .set, g, x, y => Set.image2 g x y
 
 /-- An effect's application `⊛` of a computed function to a computed argument
 ([bumford-charlow-2026]): the reader reads one environment for both, and indeterminacy applies

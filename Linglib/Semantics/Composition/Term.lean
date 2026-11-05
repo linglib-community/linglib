@@ -62,6 +62,7 @@ more than the constant functions (`SetM.not_preservesConst`).
 * [montague-1973]
 * [von-fintel-heim-2011]
 * [gallin-1975]
+* [moggi-1991]
 * [kratzer-shimoyama-2002]
 * [shan-2001]
 * [shan-2004]
@@ -342,6 +343,19 @@ its variable to its body's, and a composition what its mode makes of its daughte
 ([heim-kratzer-1998]). -/
 abbrev total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K :=
   effectful (M := Id) I
+
+/-- The call-by-value interpretation at a monad `M` ([moggi-1991]): a term's value is a computation
+in `Ty.DomainM M`, a variable denotes a value, an abstraction the function from the values of its
+variable to its body's computations, and a composition `Mode.evalKleisli`. Unlike `effectful`, it
+needs no distributor, since a function returns computations. -/
+def kleisli (M : Type → Type) [Monad M] [FlattenAlternatives M]
+    (I : ∀ {ty : Ty}, K ty → M (Ty.DomainM M E W ty S)) : Interpretation K where
+  D ty := M (Ty.DomainM M E W ty S)
+  Val ty := Ty.DomainM M E W ty S
+  const := I
+  var x := pure x
+  lam f := pure f
+  mode m := m.evalKleisli
 
 end Interpretation
 
