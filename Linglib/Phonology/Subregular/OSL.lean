@@ -162,7 +162,7 @@ theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStri
   refine factorsThrough_residual_of_append_singleton
     (fun w x ↦ (w ++ r.windowOutput w x).rtake (k - 1)) r.windowOutput (fun u x ↦ ?_)
     r.apply_append_singleton
-  rw [r.apply_append_singleton, List.rtake_append_rtake]
+  rw [r.apply_append_singleton, List.rtake_rtake_append]
 
 /-- A `k`-OSL function meets the tail condition of [chandlee-eyraud-heinz-2015] (Definition 6):
 its residuals factor through the last `k - 1` symbols of its prefix function, which is the
@@ -197,10 +197,8 @@ theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
 /-- A `k`-OSL function is `k'`-OSL for every `k' ≥ k`. -/
 protected theorem IsLeftOutputStrictlyLocal.weaken (hf : IsLeftOutputStrictlyLocal k f)
     (hk : k ≤ k') : IsLeftOutputStrictlyLocal k' f :=
-  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
-    hf.factorsThrough_residual <| by
-      simpa [List.rtake_rtake, Nat.min_eq_left (Nat.sub_le_sub_right hk 1)] using
-        congrArg (List.rtake · (k - 1)) h
+  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun _ _ h ↦
+    hf.factorsThrough_residual <| Edge.right.takeAt_eq_of_le (Nat.sub_le_sub_right hk 1) h
 
 protected theorem IsRightOutputStrictlyLocal.weaken (hf : IsRightOutputStrictlyLocal k f)
     (hk : k ≤ k') : IsRightOutputStrictlyLocal k' f :=
@@ -302,8 +300,8 @@ itself, and the separation refutes the tail condition of [chandlee-eyraud-heinz-
 fails as a corollary. -/
 
 private theorem rtake_cons_replicate (n : ℕ) (x y : α) :
-    (x :: List.replicate n y).rtake n = List.replicate n y := by
-  simpa using List.rtake_append_length (l₁ := [x]) (l₂ := List.replicate n y)
+    (x :: List.replicate n y).rtake n = List.replicate n y :=
+  List.rtake_cons_of_length_eq (by simp)
 
 /-- The prefix function vanishes where two continuations begin with different symbols. -/
 private theorem prefixFunction_eq_nil {f : List α → List β} {u v w : List α} {x y : β}
@@ -364,8 +362,8 @@ private theorem spread_apply_replicate (hab : a ≠ b) (n : ℕ) :
   | zero => rfl
   | succ n ih =>
     rw [List.replicate_succ', OSLRule.apply_append_singleton, ih]
-    have : (List.replicate n b).rtake (2 - 1) ≠ [a] := fun h ↦ hab <|
-      List.eq_of_mem_replicate ((List.rtake_suffix _ _).subset (h ▸ List.mem_singleton_self a))
+    have : List.replicate (min 1 n) b ≠ [a] := fun h ↦ hab <|
+      List.eq_of_mem_replicate (h ▸ List.mem_singleton_self a)
     simp [OSLRule.spread, this]
 
 /-- Spreading fails the tail condition of ISL, since `a bᵏ⁻¹` and `bᵏ` end in the same `k - 1`

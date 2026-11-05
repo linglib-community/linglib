@@ -26,7 +26,7 @@ def ex1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex1b : Datum :=
   { id := "hofmann2025_ex1b"
@@ -39,7 +39,7 @@ def ex1b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex2a : Datum :=
   { id := "hofmann2025_ex2a"
@@ -52,7 +52,7 @@ def ex2a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+    paperFeatures := [] }
 
 def ex2b : Datum :=
   { id := "hofmann2025_ex2b"
@@ -65,7 +65,7 @@ def ex2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex2c : Datum :=
   { id := "hofmann2025_ex2c"
@@ -78,7 +78,7 @@ def ex2c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
+    paperFeatures := [] }
 
 def ex2d : Datum :=
   { id := "hofmann2025_ex2d"
@@ -91,7 +91,7 @@ def ex2d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex5a : Datum :=
   { id := "hofmann2025_ex5a"
@@ -104,7 +104,7 @@ def ex5a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex5b : Datum :=
   { id := "hofmann2025_ex5b"
@@ -117,7 +117,7 @@ def ex5b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex6a : Datum :=
   { id := "hofmann2025_ex6a"
@@ -130,7 +130,7 @@ def ex6a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex6b : Datum :=
   { id := "hofmann2025_ex6b"
@@ -143,7 +143,7 @@ def ex6b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex6c : Datum :=
   { id := "hofmann2025_ex6c"
@@ -156,20 +156,33 @@ def ex6c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
-def ex8 : Datum :=
-  { id := "hofmann2025_ex8"
+def ex8a : Datum :=
+  { id := "hofmann2025_ex8a"
     source := ⟨"roberts-1989", "(11)"⟩
-    reportedIn := some ⟨"hofmann-2025", "(8)"⟩
+    reportedIn := some ⟨"hofmann-2025", "(8a)"⟩
     language := "stan1293"
-    primaryText := "A wolf might walk in."
+    primaryText := "A wolf might walk in. It is gray."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex8b : Datum :=
+  { id := "hofmann2025_ex8b"
+    source := ⟨"roberts-1989", "(11)"⟩
+    reportedIn := some ⟨"hofmann-2025", "(8b)"⟩
+    language := "stan1293"
+    primaryText := "A wolf might walk in. It would eat you first."
     glossedTokens := []
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical")] }
+    paperFeatures := [] }
 
 def ex9 : Datum :=
   { id := "hofmann2025_ex9"
@@ -182,7 +195,7 @@ def ex9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
+    paperFeatures := [] }
 
 def ex10 : Datum :=
   { id := "hofmann2025_ex10"
@@ -195,7 +208,7 @@ def ex10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex11 : Datum :=
   { id := "hofmann2025_ex11"
@@ -208,7 +221,7 @@ def ex11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
 def ex12 : Datum :=
   { id := "hofmann2025_ex12"
@@ -221,7 +234,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
+    paperFeatures := [] }
 
 def ex13a : Datum :=
   { id := "hofmann2025_ex13a"
@@ -234,7 +247,7 @@ def ex13a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
 
 def ex13b : Datum :=
   { id := "hofmann2025_ex13b"
@@ -247,7 +260,7 @@ def ex13b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
 
 def ex15 : Datum :=
   { id := "hofmann2025_ex15"
@@ -260,7 +273,33 @@ def ex15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
+    paperFeatures := [] }
+
+def ex18ac : Datum :=
+  { id := "hofmann2025_ex18ac"
+    source := ⟨"hofmann-2025", "(18a), (18c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There is a bathroom here. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex18bc : Datum :=
+  { id := "hofmann2025_ex18bc"
+    source := ⟨"hofmann-2025", "(18b), (18c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom here. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
 
 def ex26 : Datum :=
   { id := "hofmann2025_ex26"
@@ -273,7 +312,59 @@ def ex26 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
+    paperFeatures := [] }
+
+def ex42a : Datum :=
+  { id := "hofmann2025_ex42a"
+    source := ⟨"hofmann-2025", "(42a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It's not the case that there isn't a bathroom. It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex42b : Datum :=
+  { id := "hofmann2025_ex42b"
+    source := ⟨"hofmann-2025", "(42b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Either there isn't a bathroom, or it is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex42c : Datum :=
+  { id := "hofmann2025_ex42c"
+    source := ⟨"hofmann-2025", "(42c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A: There isn't a bathroom. B: It is upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex42d : Datum :=
+  { id := "hofmann2025_ex42d"
+    source := ⟨"hofmann-2025", "(42d)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom. It would be upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
 
 def ex45 : Datum :=
   { id := "hofmann2025_ex45"
@@ -286,7 +377,7 @@ def ex45 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("case", "bathroom disjunction")] }
+    paperFeatures := [] }
 
 def ex49 : Datum :=
   { id := "hofmann2025_ex49"
@@ -299,8 +390,21 @@ def ex49 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
+    paperFeatures := [] }
 
-def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex26, ex45, ex49]
+def ex51 : Datum :=
+  { id := "hofmann2025_ex51"
+    source := ⟨"hofmann-2025", "(51)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There isn't a bathroom. Sue believes it's upstairs."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8a, ex8b, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex18ac, ex18bc, ex26, ex42a, ex42b, ex42c, ex42d, ex45, ex49, ex51]
 
 end Hofmann2025.Examples

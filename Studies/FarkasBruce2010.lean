@@ -315,8 +315,8 @@ instance : ∀ p : PolarityParticle, DecidablePred (· ∈ p.marks)
   | .ba => fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
   | .si | .doch => inferInstanceAs (DecidablePred (· ∈ reversePositive))
 
-/-- Both English particles confirm a negative question, *no* as [−] (35) and *yes* as [same] (38).
--/
+/-- Both English particles can confirm a negative question: *no* as [−] (35), and *yes* as [same],
+the use (38) shows on an assertion and (50) on a question, with *yup* and *yeah no*. -/
 theorem english_confirmsNegativeQuestion :
     ∀ p ∈ english, Response.ConfirmsNegativeQuestion p.marks := by
   decide

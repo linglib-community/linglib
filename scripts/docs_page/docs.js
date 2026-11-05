@@ -108,6 +108,17 @@
   const P = JSON.parse($("preview").textContent);
   const D = $("decls"), toc = document.querySelector(".toc");
   const cards = new Map(Array.from(D.querySelectorAll(".decl")).map((d) => [d.id, d]));
+
+  // ---- a random visit: the theorem it opened at, shown under the citation
+  const drawn = cards.get(new URLSearchParams(location.search).get("t"));
+  const said = drawn && drawn.querySelector(".lede, .ddoc");
+  if (said) {
+    const box = document.createElement("div");
+    box.className = "drawn";
+    box.innerHTML = `<p class="label">One result from this paper</p><div class="lede">${said.innerHTML}</div>`
+      + `<p class="links"><a href="#${encodeURIComponent(drawn.id)}">See it in Lean</a> <a href="../random.html">Another paper</a></p>`;
+    document.querySelector(".head").append(box);
+  }
   const all = Array.from(cards.values());
   const hay = new Map(all.map((d) => [d.id, d.textContent.toLowerCase()]));
   const sections = Array.from(D.querySelectorAll(".dsec"));
