@@ -375,13 +375,6 @@ theorem Relation.ReflTransGen.rank_le (hrank : ∀ a b, covers a b → rank b < 
   | refl => exact le_rfl
   | tail _ hr ih => exact (hrank _ _ hr).le.trans ih
 
-theorem Relation.ReflTransGen.eq_of_rank_le (hrank : ∀ a b, covers a b → rank b < rank a)
-    {a b : α} (hab : Relation.ReflTransGen covers a b) (h : rank a ≤ rank b) : a = b := by
-  cases hab with
-  | refl => rfl
-  | tail hac hcb =>
-    exact absurd ((hrank _ _ hcb).trans_le ((hac.rank_le hrank).trans h)) (lt_irrefl _)
-
 /-- The partial order whose `≤` is the reflexive transitive closure of an acyclic `covers`:
 antisymmetry holds because two converse chains would close a cycle. -/
 @[reducible] def partialOrderOfAcyclic (covers : α → α → Prop)

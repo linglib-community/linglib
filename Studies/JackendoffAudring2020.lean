@@ -172,8 +172,7 @@ def Animal.parents : Animal → List Animal
   | .canary | .ostrich => [.bird]
 
 instance : PartialOrder Animal :=
-  partialOrderOfCovers (fun a b : Animal ↦ b ∈ a.parents)
-    (fun | .animal => 0 | .bird | .fish => 1 | .canary | .ostrich => 2) (by decide)
+  partialOrderOfAcyclic (fun a b : Animal ↦ b ∈ a.parents) (by decide)
 
 instance : DecidableLE Animal :=
   decidableLEOfCovers (covers := fun a b : Animal ↦ b ∈ a.parents) [.animal, .bird] (by decide)

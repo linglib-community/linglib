@@ -19,7 +19,8 @@ pointwise order on lists of equal length, which the lexicographic order refines
 (`List.Forall₂.le`, `List.Forall₂.lt_of_ne`), as `Pi.toLex_monotone` and `Pi.toLex_strictMono`
 say of `Pi.Lex`; the pointwise witnesses of `Phonology/Tone/Register.lean` lift to the
 lexicographic order this way. [UPSTREAM] candidates for that file, beside
-`List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`.
+`List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`; so are
+`List.sublistForall₂_cons_cons_iff` and `List.decidableSublistForall₂` below.
 
 ## Main results
 
