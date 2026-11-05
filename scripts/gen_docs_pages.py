@@ -7,7 +7,12 @@ the file's definitions its statement names. On a study page, which also shows th
 citation, the headlines are the theorems with a docstring. The right column places the study in the
 library: the theory and fragments its statements use, with the names they use, the imports they
 never name, the studies on the same theory, the papers it cites and those citing it, and the papers
-it cites that no study formalizes.
+it cites that no study formalizes. It also has the theorems whose statements name another paper's
+definitions, with their sentences: this page's about other papers, and other pages' about this one.
+
+`random.html` opens a study page at one of its theorems, named by `?t=`, which the page shows under
+the citation. It draws from the theorems a module docstring names or that name another paper's
+definitions, leaving out proofs that only evaluate and sentences that need the paper open.
 
 On a theory page the headlines are the declarations the module docstring links to, as a mathlib
 header names a file's main definitions and results, or the theorems with a docstring if it links to
@@ -67,6 +72,12 @@ DECL_NAME = re.compile(r'<span class="decl_kind">\w+</span>\s*<span class="decl_
                        re.S)
 REFS = re.compile(r'(<h2 [^>]*id="References"[^>]*>.*?</h2>)\s*<ul>(.*?)</ul>', re.S)
 BARE = '<span class="decl_args"> :</span>'
+# A proof that only evaluates, which a sentence read alone can make sound like a discovery.
+EVALUATED = re.compile(r":=\s*(?:by\s+)?(?:decide|rfl)\s*$")
+# A sentence that needs the paper open, by leaning on what comes before it, or that speaks against
+# the paper, which is not a first sight of it.
+NOT_ALONE = re.compile(r"^(?:\(?\d|§|(?:It|This|These|They|Both|Each|Section|Part)\b)"
+                       r"|\bthe (?:paper|book|chapter|author)\b|\bmisprint|\berrat", re.I)
 # A page left where the study pages used to be, which forwards to the page, anchor and all.
 REDIRECT = """<!DOCTYPE html>
 <html lang="en">
@@ -248,6 +259,21 @@ class Library:
         for s, nodes in self.uses.items():
             for n in nodes:
                 self.users[n].add(s)
+        # The docstringed theorems of each study whose statements name another study's definitions,
+        # by the study named, and the reverse.
+        self.about = defaultdict(lambda: defaultdict(list))
+        self.about_me = defaultdict(lambda: defaultdict(list))
+        for page, mod in self.modules.items():
+            node = node_of(page)
+            if not node or node[0] != "s":
+                continue
+            for b in mod["blocks"]:
+                if b["type"] != "decl" or b["kind"] != "theorem" or not b["doc"]:
+                    continue
+                for other in sorted({node_of(r)[1] for r in b["refs"] if r.startswith("Studies/")}
+                                    - {node[1]}):
+                    self.about[node[1]][other].append(b)
+                    self.about_me[other][node[1]].append(b)
         # For each page, the other pages whose statements name its declarations, and those names.
         self.named_by = defaultdict(lambda: defaultdict(set))
         self.in_dir = defaultdict(list)
@@ -443,6 +469,7 @@ class ModulePage:
              "kind": kind.group(1) if kind else "", "src": src.group(1) if src else "",
              "l0": int(src.group(2)) if src else 0, "l1": int(src.group(3)) if src else 0,
              "attrs": text(attrs.group(1)) if attrs else "", "section": section,
+             "parser": "ParserDescr" in text(header),
              "sig": self.rewrite(header, short=True), "doc": self.rewrite(doc),
              "sorried": "sorried" in block[:block.find(">")],
              "ctors": self.rewrite(ctors, short=True), "fields": self.rewrite(fields, short=True),
@@ -602,7 +629,7 @@ class ModulePage:
         for s in self.sections:
             items = []
             for d in s["decls"]:
-                if d["folded"]:
+                if d["folded"] or d["parser"]:
                     continue
                 cls = "thm" if d["kind"] == "theorem" else "def"
                 cls = ("head" if cls == "thm" else "def head") if self.headline(d) else cls
@@ -677,7 +704,8 @@ class ModulePage:
         for n in nodes.values():
             if n.get("y") is None:
                 n.pop("y", None)
-        return {"nodes": nodes, "edges": edges, "focus": focus}
+        return {"nodes": nodes, "edges": list(map(list, dict.fromkeys(map(tuple, edges)))),
+                "focus": focus}
 
     # -- the page
 
@@ -692,7 +720,8 @@ class ModulePage:
         subst = {"<!--MATH-->": MATH if tex else "", "<!--TITLE_TEXT-->": esc(text(title)),
                  "<!--DESCRIPTION-->": esc(text(title)), "<!--ASSETS-->": self.docs,
                  "<!--TITLE-->": title, "<!--CITE-->": cite, "<!--CRUMBS-->": crumbs,
-                 "<!--MODDOC-->": self.moddoc, "<!--NDECL-->": str(len(self.shown)),
+                 "<!--MODDOC-->": self.moddoc,
+                 "<!--NDECL-->": str(sum(not d["parser"] for d in self.shown)),
                  "<!--INDEX-->": self.index(), "<!--DECLS-->": self.body(), "<!--RAIL-->": rail,
                  "/*GRAPH*/": json.dumps(graph, ensure_ascii=False).replace("</", "<\\/"),
                  "/*PREVIEW*/": json.dumps(self.preview(), ensure_ascii=False).replace("</", "<\\/")}
@@ -777,6 +806,28 @@ class StudyPage(ModulePage):
         def by_year(s):
             return (year_of(s) or 0, s)
 
+        def about(title, theorems, here):
+            """Papers, the latest first, each with the sentence of the first of its `theorems`,
+            which are on this page if `here` and otherwise on that paper's."""
+            shown = sorted(theorems, key=lambda s: (-(year_of(s) or 0), s))
+            rows = []
+            for s in shown[:SHOWN]:
+                t, more = theorems[s][0], len(theorems[s]) - 1
+                href = f'#{t["id"]}' if here else self.to(f"Studies/{s}.html", t["id"])
+                rows.append(self.study_item(nodes, s, (
+                    f'<a class="said" href="{esc(href)}" title="{esc(t["doc"])}">{esc(t["doc"])}</a>'
+                    + (f' <span class="why">and {more} more</span>' if more else ""))))
+            rest = f'<p class="quiet">and {len(shown) - SHOWN} more</p>' if len(shown) > SHOWN else ""
+            parts.append(f"<h3>{title}</h3>\n<ul>" + "".join(rows) + "</ul>" + rest)
+            return shown[:SHOWN]
+
+        if lib.about[me]:
+            edges += [[me, s, "cite"] for s in
+                      about("Theorems here about other papers", lib.about[me], True)]
+        if lib.about_me[me]:
+            edges += [[s, me, "cite"] for s in
+                      about("Theorems elsewhere about this paper", lib.about_me[me], False)]
+
         mine = lib.uses.get(me, set())
         score = defaultdict(float)
         for n in mine:
@@ -793,14 +844,18 @@ class StudyPage(ModulePage):
                 edges += [[s, node_id(n), "use"] for n in shared if node_id(n) in nodes]
             parts.append("<h3>Other papers on the same theory</h3>\n<ul>" + "".join(rows) + "</ul>")
         keys = lib.cites(me)
-        cites = sorted({lib.bib[k]["study"] for k in keys} - {None, me}, key=by_year)[:8]
+        # A study's file may cite later work; the paper does not.
+        cites = sorted(s for s in {lib.bib[k]["study"] for k in keys} - {None, me}
+                       if (year_of(s) or 0) <= (year_of(me) or 9999))
+        cites = sorted(cites, key=by_year)[:8]
         if cites:
             parts.append("<h3>Cites</h3>\n<ul>" + "".join(map(study_item, cites)) + "</ul>")
             edges += [[me, s, "cite"] for s in cites]
         if self.key:
             files = lib.cited_in.get(self.key, ())
             citing = {f.split("/")[1].removesuffix(".lean") for f in files if f.startswith("Studies/")}
-            citing = sorted((citing - {me}) & lib.studies, key=by_year)[:8]
+            citing = sorted((s for s in (citing - {me}) & lib.studies
+                             if (year_of(s) or 9999) >= (year_of(me) or 0)), key=by_year)[:8]
             if citing:
                 parts.append("<h3>Cited by</h3>\n<ul>" + "".join(map(study_item, citing)) + "</ul>")
                 edges += [[s, me, "cite"] for s in citing]
@@ -821,6 +876,18 @@ class StudyPage(ModulePage):
         if imports:
             parts.append(self.module_list(f"All {len(imports)} imports", imports))
         return "\n".join(parts), self.graph_data(nodes, edges, me)
+
+
+    def draws(self):
+        """The theorems a random visit may open this page at."""
+        named = {html.unescape(u) for u in re.findall(r'href="#([^"]+)"', self.moddoc)}
+        about = {b["id"] for bs in self.lib.about[self.study].values() for b in bs}
+        path = ROOT / (self.module.replace(".", "/") + ".lean")
+        lines = path.read_text(encoding="utf-8").split("\n") if path.exists() else []
+        return [d["id"] for d in self.shown
+                if d["kind"] == "theorem" and d["id"] in named | about and not d["sorried"]
+                and (say := text(d["doc"])) and not NOT_ALONE.search(say) and d["l1"] <= len(lines)
+                and not EVALUATED.search("\n".join(lines[d["l0"] - 1:d["l1"]]))]
 
 
 class TheoryPage(ModulePage):
@@ -1128,11 +1195,19 @@ def main():
             mod = page.removesuffix(".html").replace("/", ".")
             return any(mod in (o, f"Studies.{o}") or mod.startswith(o + ".") for o in args.only)
         studies, theory = list(filter(chosen, studies)), list(filter(chosen, theory))
+    pool = {}
     for cls, pages in ((StudyPage, studies), (TheoryPage, theory)):
         for page in pages:
             dest = args.out / page
             dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_text(cls(lib, page, args.root, sha).render(template), encoding="utf-8")
+            built = cls(lib, page, args.root, sha)
+            dest.write_text(built.render(template), encoding="utf-8")
+            if cls is StudyPage and (draws := built.draws()):
+                pool[built.study] = draws
+    (args.out / "random.html").write_text(
+        (PAGE / "random.html").read_text(encoding="utf-8").replace(
+            "/*POOL*/", json.dumps(pool, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
+    print(f"{sum(map(len, pool.values()))} theorems of {len(pool)} studies in random.html")
     print(f"wrote the landing page, {len(studies)} study and {len(theory)} theory pages to {args.out}")
     (args.out / "Studies").mkdir(parents=True, exist_ok=True)
     (args.out / "Studies" / "index.html").write_text(
