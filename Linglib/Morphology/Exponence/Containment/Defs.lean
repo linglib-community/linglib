@@ -20,8 +20,8 @@ in opposite directions.
 
 * `SpanRule`, `SpanRule.threshold`: a rule of exponence and the least grade it applies at.
 * `SupersetRule`: a lexical entry storing an initial span.
-* `Terminal`, `Adjacent`, `Markedness`, `Grounded`: well-formedness conditions on rule sets of
-  span rules.
+* `SpanRule.Terminal`, `SpanRule.Adjacent`, `SpanRule.Markedness`, `SpanRule.Grounded`:
+  well-formedness conditions on rule sets of span rules.
 
 ## Main results
 
@@ -29,8 +29,8 @@ in opposite directions.
   higher.
 * `SupersetRule.applySet_subset_iff`: an entry is more specific than another iff its span is
   smaller, the nanosyntax principle Minimize Junk.
-* `markedness_iff_grounded`: under adjacency the markedness condition is the downward closure of
-  thresholds.
+* `SpanRule.markedness_iff_grounded`: under adjacency the markedness condition is the downward
+  closure of thresholds.
 
 ## References
 
@@ -42,9 +42,7 @@ in opposite directions.
 
 @[expose] public section
 
-namespace Morphology.Containment
-
-open Morphology
+namespace Morphology
 
 variable {n : ℕ} {F : Type*}
 
@@ -91,8 +89,6 @@ theorem applySet_subset_iff : applySet it ⊆ applySet jt ↔ jt.threshold ≤ i
 theorem applySet_ssubset_iff : applySet it ⊂ applySet jt ↔ jt.threshold < it.threshold :=
   Set.Ici_ssubset_Ici
 
-end SpanRule
-
 /-! ### Well-formedness conditions on rule sets
 
 Each generalization hypothesizes exactly the conditions it needs, and rule sets violating a
@@ -123,9 +119,9 @@ def Markedness (v : RuleSet (SpanRule n F)) : Prop :=
 instance (v : RuleSet (SpanRule n F)) : Decidable (Markedness v) := by
   unfold Markedness; infer_instance
 
-/-- A rule set is grounded when its thresholds are closed downward. This strengthens the
-markedness condition to the thresholds between a rule's span and its context, which adjacency
-leaves empty. -/
+/-- A rule set is grounded when its thresholds are closed downward (the name is ours). This
+strengthens the markedness condition to the thresholds between a rule's span and its context,
+which adjacency leaves empty. -/
 def Grounded (v : RuleSet (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
@@ -149,6 +145,8 @@ theorem markedness_iff_grounded {v : RuleSet (SpanRule n F)} (hA : Adjacent v) :
       rw [Fin.lt_def] at hk
       rw [Fin.le_def]
       omega
+
+end SpanRule
 
 /-! ### The Superset reading: lexical entries -/
 
@@ -185,4 +183,4 @@ theorem applySet_ssubset_iff : applySet e ⊂ applySet e' ↔ e.spans < e'.spans
 
 end SupersetRule
 
-end Morphology.Containment
+end Morphology

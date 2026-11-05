@@ -18,18 +18,21 @@ its threshold.
 
 ## Main definitions
 
-* `realize`: Elsewhere insertion.
-* `spellout`: Superset spellout.
+* `SpanRule.realize`: Elsewhere insertion.
+* `SupersetRule.spellout`: Superset spellout.
 * `SpanRule.toSubsetRule`: a rule as a rule of the Subset Principle over initial segments.
 
 ## Main results
 
-* `realize_realizes`, `spellout_realizes`: both realize the exponent of an Elsewhere winner.
-* `realize_eq_of_threshold_le`: the rule selected at a grade is realized at every lower grade it
-  applies at.
-* `spellout_eq_none_of_le`: spellout gaps propagate upward.
-* `spellout_eq_some_of_filter_of_le`: the loss of entries extends a form downward only.
-* `realize_map_toSubsetRule`: Elsewhere insertion is feature counting over the chain.
+* `SpanRule.realize_realizes`, `SupersetRule.spellout_realizes`: both realize the exponent of an
+  Elsewhere winner.
+* `SpanRule.realize_eq_of_threshold_le`: the rule selected at a grade is realized at every lower
+  grade it applies at.
+* `SpanRule.realize_eq_none_of_le`, `SupersetRule.spellout_eq_none_of_le`: Elsewhere gaps
+  propagate downward, spellout gaps upward.
+* `SupersetRule.spellout_eq_some_of_filter_of_le`: the loss of entries extends a form downward
+  only.
+* `SpanRule.realize_map_toSubsetRule`: Elsewhere insertion is feature counting over the chain.
 
 ## References
 
@@ -42,24 +45,29 @@ its threshold.
 
 @[expose] public section
 
-namespace Morphology.Containment
-
+namespace Morphology
 
 variable {n : ℕ} {F : Type*} {g g' : Fin n} {φ : F}
 
 /-! ### Elsewhere insertion -/
+
+namespace SpanRule
 
 /-- Elsewhere insertion realizes at each grade the exponent of the applicable rule of greatest
 threshold, the most specific, the first listed on ties, and `none` where no rule applies. -/
 abbrev realize (v : RuleSet (SpanRule n F)) : Paradigm n (Option F) :=
   v.realize SpanRule.threshold
 
-section Realize
-
 variable {v : RuleSet (SpanRule n F)} {it : SpanRule n F}
 
 theorem realize_realizes (h : realize v g = some φ) : v.Realizes applySet g φ :=
   RuleSet.realize_realizes (fun _ _ _ _ h ↦ SpanRule.applySet_ssubset_iff.1 h) h
+
+/-- Elsewhere gaps propagate downward, since a rule applying at a grade applies at every higher
+one; spellout gaps propagate the other way (`SupersetRule.spellout_eq_none_of_le`). -/
+theorem realize_eq_none_of_le (h : realize v g' = none) (hg : g ≤ g') : realize v g = none :=
+  Option.map_eq_none_iff.mpr <| RuleSet.selectBy_eq_none_of_applies
+    (fun _ _ hs ↦ le_trans hs hg) (Option.map_eq_none_iff.mp h)
 
 /-- The rule selected at a grade is realized at every lower grade its threshold reaches, so
 Elsewhere insertion plateaus between thresholds. -/
@@ -68,16 +76,16 @@ theorem realize_eq_of_threshold_le (h : v.selectBy SpanRule.threshold g' = some 
   congrArg (Option.map _) <|
     (RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ le_trans hs hg) h hit).trans h.symm
 
-end Realize
+end SpanRule
 
 /-! ### Superset spellout -/
+
+namespace SupersetRule
 
 /-- Superset spellout realizes at each grade the exponent of the matching entry storing the least
 structure, the first listed on ties, and `none` where no entry matches. -/
 abbrev spellout (v : RuleSet (SupersetRule n F)) : Paradigm n (Option F) :=
   v.realize (fun e : SupersetRule n F ↦ OrderDual.toDual e.spans)
-
-section Spellout
 
 variable {v : RuleSet (SupersetRule n F)} {e : SupersetRule n F}
 
@@ -107,7 +115,7 @@ theorem spellout_eq_some_of_filter_of_le (hv : v.Antihomophonous) {p : SupersetR
   obtain rfl := hv (List.mem_filter.mp (RuleSet.selectBy_mem he')).1 (RuleSet.selectBy_mem he) hφ
   rw [spellout_eq_of_le_spans he hg (RuleSet.selectBy_applies he'), h]
 
-end Spellout
+end SupersetRule
 
 /-! ### The chain decomposition
 
@@ -121,11 +129,12 @@ def SpanRule.toSubsetRule (it : SpanRule n F) : SubsetRule (Finset (Fin n)) F :=
 
 /-- Elsewhere insertion is the Subset Principle with feature counting over the chain of initial
 segments. -/
-theorem realize_map_toSubsetRule (v : RuleSet (SpanRule n F)) (g : Fin n) :
-    RuleSet.realize (v.map SpanRule.toSubsetRule) SubsetRule.card (Finset.Iic g) = realize v g := by
+theorem SpanRule.realize_map_toSubsetRule (v : RuleSet (SpanRule n F)) (g : Fin n) :
+    RuleSet.realize (v.map SpanRule.toSubsetRule) SubsetRule.card (Finset.Iic g) =
+      SpanRule.realize v g := by
   rw [RuleSet.realize, RuleSet.selectBy_map (c := g) (f := SpanRule.threshold)
     (fun _ _ ↦ Finset.Iic_subset_Iic) fun _ _ _ _ ↦ by
       simp [SpanRule.toSubsetRule, Fin.card_Iic, Finset.grade_eq], Option.map_map]
   rfl
 
-end Morphology.Containment
+end Morphology

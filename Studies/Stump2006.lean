@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Wordlist.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
-public import Linglib.Morphology.Exponence.Domain
+public import Linglib.Morphology.Exponence.DomainRule
 public import Linglib.Morphology.Word.UD
 public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Linglib.Fragments.Slavic.Russian.Case

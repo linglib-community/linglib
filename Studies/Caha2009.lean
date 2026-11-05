@@ -58,7 +58,6 @@ namespace Caha2009
 
 open CLDF.Wordlist (Paradigm)
 open Wordlist
-open Morphology.Containment (SupersetSpellable isContiguous_iff_spelloutGenerable)
 
 /-! ### The Case sequence -/
 
@@ -123,8 +122,8 @@ theorem not_isContiguous_iff :
 /-- Superset spellout generates every paradigm of the tables but the offenders. -/
 theorem supersetSpellable_form {p : Paradigm Wordlist.Cell} (hp : p ∈ Wordlist.paradigms)
     (h : p ∉ offenders) :
-    SupersetSpellable (form p) :=
-  (isContiguous_iff_spelloutGenerable _).1 <|
+    Morphology.SupersetRule.Generable (form p) :=
+  (Morphology.SupersetRule.isContiguous_iff_generable _).1 <|
     not_not.1 fun hc ↦ h ((not_isContiguous_iff p hp).1 hc)
 
 /-- `analyses` pairs a paradigm with the underlying ending or lexical index Caha gives each cell,

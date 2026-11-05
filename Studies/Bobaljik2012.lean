@@ -83,7 +83,10 @@ the Greek (93), with the comparative root *xud-* that §6.4.4 identifies in
 
 namespace Bobaljik2012
 
-open Morphology Morphology.Containment
+open Morphology
+open Morphology.SpanRule (realize Terminal Adjacent Markedness Grounded isContiguous_realize
+  exists_portmanteau_of_ne realize_const_of_markedness)
+open Morphology.SupersetRule (spellout)
 open English.Adjectives
 
 /-! ### Merger -/
@@ -513,8 +516,7 @@ theorem latin_superlative_portmanteau :
 /-- ABC needs a portmanteau ((199), §5.3.1). Under adjacency, distinct comparative and
 superlative cells force a winner exponing more than the root. -/
 theorem latin_sprl_needs_portmanteau :
-    ∃ it ∈ latinBonus, latinBonus.selectBy SpanRule.threshold 2 = some it ∧
-      0 < (it.spans : ℕ) :=
+    ∃ it, latinBonus.selectBy SpanRule.threshold 2 = some it ∧ 0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
 /-! ### The unattested shapes
@@ -550,7 +552,7 @@ theorem welshAAB_not_markedness : ¬ Markedness welshAAB := by decide
 -- (202), with adjacency
 theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Markedness welshAAB) :=
   fun ⟨hAH, hM⟩ ↦
-    absurd (realize_const_of_markedness hAH hM (by decide) (by decide) (by decide)) (by decide)
+    absurd (realize_const_of_markedness hAH hM (by decide) (by decide)) (by decide)
 
 /-- A superlative allomorph accidentally homophonous with the positive yields surface ABA, the
 loophole that Antihomophony (44) closes. -/
@@ -718,7 +720,7 @@ theorem latin_ns_spellout : spellout latinBonusNS = ![some "bon", some "mel", so
   decide
 
 /-- The two frameworks realize Latin cell for cell — the concrete face of
-`spelloutGenerable_iff_generable`. -/
+`SupersetRule.generable_iff_spanRule_generable`. -/
 theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
   latin_ns_spellout.trans latin_bonus_realize.symm
 

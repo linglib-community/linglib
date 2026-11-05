@@ -66,7 +66,9 @@ containment of section 4.1.
 
 namespace SmithMoskalEtAl2019
 
-open Morphology Morphology.Containment
+open Morphology
+open Morphology.SpanRule (realize Terminal Adjacent Markedness Grounded isContiguous_realize
+  realize_const_of_cap realize_const_of_terminal_adjacent)
 
 /-! ### Paradigms from the form table -/
 
@@ -123,10 +125,10 @@ def dehu3m : Paradigm 3 ℕ :=
 
 /-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
 
-theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : ElsewhereGenerable p ↔ IsContiguous p :=
-  (isContiguous_iff_generable p).symm
+theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : SpanRule.Generable p ↔ IsContiguous p :=
+  (SpanRule.isContiguous_iff_generable p).symm
 
-theorem aba_not_generable : ¬ ElsewhereGenerable ![0, 1, 0] :=
+theorem aba_not_generable : ¬ SpanRule.Generable ![0, 1, 0] :=
   mt (generable_iff_contiguous _).mp (by decide)
 
 theorem lezgian_aaa : Setoid.ker lezgian1sg = Setoid.ker Paradigm.aaa := by decide

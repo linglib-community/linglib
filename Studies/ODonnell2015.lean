@@ -4,7 +4,7 @@ public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
 public import Linglib.Core.Probability.Distributions.PitmanYor
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.ODonnell2015
-public import Linglib.Morphology.Exponence.Domain
+public import Linglib.Morphology.Exponence.DomainRule
 public import Linglib.Morphology.Exponence.Select
 
 /-!
