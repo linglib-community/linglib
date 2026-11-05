@@ -84,7 +84,7 @@ theorem cutSummandsCN_map_inl (τ : UnorderedTree (α ⊕ β) → β) (T : Unord
     have h' := congrArg
       (Multiset.map (Prod.map (Multiset.map UnorderedTree.mk) (Option.map UnorderedTree.mk))) h
     simpa [UnorderedTree.map_mk, projSummand, Multiset.map_map, Function.comp_def,
-      Prod.map_apply', cutSummandsCP] using h'
+      Prod.map_apply'] using h'
 
 /-- On trees without traces, erasing the traces that `Δ^c` leaves in the right channel gives the
     pruning coproduct `Δ^ρ`. -/
