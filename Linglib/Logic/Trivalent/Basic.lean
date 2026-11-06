@@ -127,7 +127,8 @@ instance : BoundedOrder Trivalent where
 @[simp] theorem false_le (a : Trivalent) : .false ≤ a := LE.of_false a
 
 /-- Two values agree once they agree on being undefined and on being true. -/
-theorem eq_of_eq_undefined_iff_of_eq_true_iff {a b : Trivalent} (h₀ : a = .undefined ↔ b = .undefined)
+theorem eq_of_eq_undefined_iff_of_eq_true_iff {a b : Trivalent}
+    (h₀ : a = .undefined ↔ b = .undefined)
     (h₁ : a = .true ↔ b = .true) : a = b := by
   revert h₀ h₁; cases a <;> cases b <;> decide
 

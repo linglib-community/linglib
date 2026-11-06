@@ -30,8 +30,8 @@ which is Adams's Thesis.
 * `Trivalent.prob_eq_div`: the weight of truth over that of truth and falsity.
 * `Trivalent.prob_eq_one_iff`, `Trivalent.prob_eq_zero_iff`: probability `1` is almost sure
   non-falsity, and probability `0` is almost sure non-truth where falsity has positive weight.
-* `Trivalent.prob_ofProp`, `Trivalent.prob_transplication_ofProp`: ordinary probability on two-valued
-  propositions, and Adams's Thesis on conditional assertions.
+* `Trivalent.prob_ofProp`, `Trivalent.prob_transplication_ofProp`: ordinary probability on
+  two-valued propositions, and Adams's Thesis on conditional assertions.
 * `Trivalent.prob_compl`: negation complements the probability unless the proposition is void almost
   surely.
 * `Trivalent.prob_joinBelnap`: additivity for disjuncts that are defined together and never true
@@ -184,7 +184,7 @@ theorem prob_transplication_ofProp (s : Set W) [DecidablePred (· ∈ s)] (B : W
     [DecidablePred B] (h : μ s ≠ 0) :
     prob μ (fun w ↦ transplication (ofProp (w ∈ s)) (ofProp (B w))) = μ[{w | B w} | s] := by
   have hs : (gapExt fun w ↦ transplication (ofProp (w ∈ s)) (ofProp (B w)))ᶜ = s := by
-    ext w; by_cases hw : w ∈ s <;> simp [hw, transplication_eq_undefined_iff]
+    ext w; by_cases hw : w ∈ s <;> simp [hw]
   rw [prob_of_measure_support_ne_zero (by rwa [hs]), hs, ← cond_inter_self .of_discrete {w | B w}]
   congr 1
   ext w

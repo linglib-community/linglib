@@ -172,7 +172,8 @@ theorem range_conf_toFour :
 /-- De Finetti's conditional is the supremum of its consequent over the K3 designation of its
 antecedent: the consequent where the antecedent is true, the gap `⊥ₖ` elsewhere. -/
 theorem toKnow_toFour_condAssert_k3 (a b : Trivalent) :
-    toKnow (toFour (condAssert .k3 a b)) = ⨆ _ : Designation.k3.threshold ≤ a, toKnow (toFour b) := by
+    toKnow (toFour (condAssert .k3 a b)) =
+      ⨆ _ : Designation.k3.threshold ≤ a, toKnow (toFour b) := by
   by_cases h : Designation.k3.threshold ≤ a
   · rw [condAssert_of_le h, iSup_pos h]
   · rw [condAssert_of_not_le h, iSup_neg h]; rfl

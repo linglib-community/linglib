@@ -182,7 +182,8 @@ theorem range_extensions : Set.range (extensions (W := W)) = {x | Disjoint x.pro
       · simp_all
 
 /-- Three-valued propositions are the disjoint pairs of world-sets. -/
-noncomputable def orderIsoDisjoint : (W → Trivalent) ≃o {x : Set W ⊙ Set W | Disjoint x.pro x.con} :=
+noncomputable def orderIsoDisjoint :
+    (W → Trivalent) ≃o {x : Set W ⊙ Set W | Disjoint x.pro x.con} :=
   (OrderEmbedding.ofMapLEIff extensions fun _ _ ↦ extensions_le_extensions).orderIso.trans
     (Set.orderIsoOfEq _ _ range_extensions)
 
@@ -289,12 +290,14 @@ where `R` holds. -/
   ext w; simp [and_comm]
 
 /-- Composing with a function undefined exactly at `0` preserves the gap. -/
-theorem gapExt_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a = .undefined ↔ a = .undefined) (p : W → Trivalent) :
+theorem gapExt_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a = .undefined ↔ a = .undefined)
+    (p : W → Trivalent) :
     gapExt (f ∘ p) = gapExt p := by
   ext w; simp [hf]
 
 /-- Composing with a function that is never `0` leaves no gap. -/
-theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .undefined) (p : W → Trivalent) :
+theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .undefined)
+    (p : W → Trivalent) :
     IsBivalent (f ∘ p) :=
   (isBivalent_iff_forall_ne_undefined _).2 fun _ ↦ hf _
 
@@ -379,7 +382,8 @@ section WeakQuantifiers
 
 variable {ι : Sort*} {p : ι → Trivalent}
 
-@[simp] theorem forallWeak_eq_undefined_iff : forallWeak p = .undefined ↔ ∃ i, p i = .undefined := by
+@[simp] theorem forallWeak_eq_undefined_iff :
+    forallWeak p = .undefined ↔ ∃ i, p i = .undefined := by
   rw [forallWeak, forallWith_eq_undefined_iff, not_forall]
   simp
 
@@ -397,7 +401,8 @@ variable {ι : Sort*} {p : ι → Trivalent}
     forallWeak p = .false ↔ (∀ i, p i ≠ .undefined) ∧ ∃ i, p i = .false := by
   rw [forallWeak, forallWith_eq_false_iff]
 
-@[simp] theorem existsWeak_eq_undefined_iff : existsWeak p = .undefined ↔ ∃ i, p i = .undefined := by
+@[simp] theorem existsWeak_eq_undefined_iff :
+    existsWeak p = .undefined ↔ ∃ i, p i = .undefined := by
   rw [existsWeak, existsWith_eq_undefined_iff, not_forall]
   simp
 
@@ -449,7 +454,8 @@ variable {ι : Sort*} {p : ι → Trivalent}
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
 
-theorem forallStrong_ne_undefined_iff : forallStrong p ≠ .undefined ↔ (∃ i, p i = .false) ∨ ∀ i, p i ≠ .undefined := by
+theorem forallStrong_ne_undefined_iff :
+    forallStrong p ≠ .undefined ↔ (∃ i, p i = .false) ∨ ∀ i, p i ≠ .undefined := by
   rw [ne_eq, forallStrong_eq_undefined_iff, not_and_or, not_forall_not, not_exists]
 
 @[simp] theorem existsStrong_eq_true_iff : existsStrong p = .true ↔ ∃ i, p i = .true := by
@@ -470,7 +476,8 @@ theorem forallStrong_ne_undefined_iff : forallStrong p ≠ .undefined ↔ (∃ i
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
 
-theorem existsStrong_ne_undefined_iff : existsStrong p ≠ .undefined ↔ (∃ i, p i = .true) ∨ ∀ i, p i ≠ .undefined := by
+theorem existsStrong_ne_undefined_iff :
+    existsStrong p ≠ .undefined ↔ (∃ i, p i = .true) ∨ ∀ i, p i ≠ .undefined := by
   rw [ne_eq, existsStrong_eq_undefined_iff, not_and_or, not_forall_not, not_exists]
 
 /-- The Strong Kleene quantifiers are dual under Kleene's negation. -/
@@ -492,7 +499,8 @@ section HaugQuantifiers
 
 variable {p : W → Trivalent}
 
-@[simp] theorem forallHaug_eq_undefined_iff : forallHaug p = .undefined ↔ ∀ w, p w = .undefined := by
+@[simp] theorem forallHaug_eq_undefined_iff :
+    forallHaug p = .undefined ↔ ∀ w, p w = .undefined := by
   rw [forallHaug, forallWith_eq_undefined_iff, not_exists]
   simp
 
@@ -505,7 +513,8 @@ variable {p : W → Trivalent}
     forallHaug p = .true ↔ (∃ w, p w ≠ .undefined) ∧ ∀ w, p w ≠ .false := by
   rw [forallHaug, forallWith_eq_true_iff]
 
-@[simp] theorem existsHaug_eq_undefined_iff : existsHaug p = .undefined ↔ ∀ w, p w = .undefined := by
+@[simp] theorem existsHaug_eq_undefined_iff :
+    existsHaug p = .undefined ↔ ∀ w, p w = .undefined := by
   rw [existsHaug, existsWith_eq_undefined_iff, not_exists]
   simp
 
@@ -589,7 +598,8 @@ theorem existsHaug_meetWeak_presuppose {φ ψ : W → Trivalent} (hφ : IsBivale
       meetWeak (existsHaug fun w => (φ w ⊔ .undefined))
         (existsHaug fun w => meetWeak (φ w) (ψ w)) := by
   refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
-  · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff, sup_undefined_eq_undefined_iff, hφ.ne_undefined,
+  · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff,
+      sup_undefined_eq_undefined_iff, hφ.ne_undefined,
       hψ.ne_undefined, or_false]
     exact ⟨Or.inl, fun h => h.elim id fun h w => (h w).elim⟩
   · simp only [existsHaug_eq_true_iff, meetWeak_eq_true_iff, sup_undefined_eq_true_iff]

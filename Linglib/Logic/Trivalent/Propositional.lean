@@ -205,7 +205,8 @@ theorem not_exists_eval_weakKleene_eq_inf {a b : Atom} (hab : a ≠ b) :
     have h := hφ fun x ↦ if x = b then .undefined else .false
     rw [(eval_weakKleene_eq_undefined_iff _ φ).2 ⟨b, hb, by simp⟩] at h
     simp [hab] at h
-  have h : eval .weakKleene (fun _ ↦ .true) φ = eval .weakKleene (fun x ↦ if x = b then .false else .true) φ :=
+  have h : eval .weakKleene (fun _ ↦ .true) φ =
+      eval .weakKleene (fun x ↦ if x = b then .false else .true) φ :=
     dependsOn_eval _ φ fun x hx ↦ by simp [show x ≠ b by rintro rfl; exact hb hx]
   rw [hφ, hφ] at h
   simp [hab] at h
@@ -315,7 +316,8 @@ theorem lp_all_satisfiable (φ : Formula Atom) :
     (fun _ : Atom ↦ .undefined) ⊨[.strongKleene, .lp] φ := by
   simp [Formula.Realize, eval_const_undefined]
 
-/-- Explosion fails in LP, since `{a ∧ ¬a} ⊭ b` with countermodel `M a = .undefined` and `M b = .false`. -/
+/-- Explosion fails in LP, since `{a ∧ ¬a} ⊭ b` with countermodel `M a = .undefined` and
+`M b = .false`. -/
 theorem lp_no_explosion :
     ∃ (φ ψ : Formula Bool), ¬Consequence .strongKleene .lp .lp [.conj φ (.neg φ)] [ψ] := by
   refine ⟨.atom Bool.true, .atom Bool.false, fun h ↦ ?_⟩

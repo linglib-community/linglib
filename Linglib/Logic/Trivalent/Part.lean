@@ -22,7 +22,8 @@ classical value, so theorems proved over either carrier transfer to the other.
 
 ## Main results
 
-* `Trivalent.ofPart_eq_undefined_iff`, `Trivalent.ofPart_eq_true_iff`, `Trivalent.ofPart_eq_false_iff`:
+* `Trivalent.ofPart_eq_undefined_iff`, `Trivalent.ofPart_eq_true_iff`,
+  `Trivalent.ofPart_eq_false_iff`:
   the three values of `ofPart`.
 * `Trivalent.ofPart_map_not`, `Trivalent.ofPart_ite_some_false`: negation and enrichment by a
   two-valued condition transport along `ofPart`.
@@ -75,7 +76,8 @@ variable {p : Part Prop}
 /-- Negation transports along `ofPart`. -/
 theorem ofPart_map_not : ofPart (p.map Not) = (ofPart p)ᶜ := by
   refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
-  · simp only [ofPart_eq_undefined_iff, Trivalent.compl_eq_undefined_iff, Part.dom_iff_mem, Part.mem_map_iff]
+  · simp only [ofPart_eq_undefined_iff, Trivalent.compl_eq_undefined_iff, Part.dom_iff_mem,
+      Part.mem_map_iff]
     exact not_congr ⟨fun ⟨a, b, hb, _⟩ ↦ ⟨b, hb⟩, fun ⟨a, ha⟩ ↦ ⟨¬ a, a, ha, rfl⟩⟩
   · simp only [ofPart_eq_true_iff, Trivalent.compl_eq_true_iff, ofPart_eq_false_iff,
       Part.mem_map_iff]
