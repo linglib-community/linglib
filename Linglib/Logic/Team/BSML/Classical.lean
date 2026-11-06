@@ -56,7 +56,7 @@ variable {W : Type*} {Atom : Type*}
 /-! ### Classical truth -/
 
 /-- `Realize M φ w` is the classical Kripke truth of `φ` at the world `w`. Split disjunction is
-    pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true. -/
+pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w
   | .ne, _ => True
@@ -134,7 +134,7 @@ theorem antiSupport_iff_forall_not_realize (hNE : φ.NEFree) :
   .of_eq (congrArg (t ∈ ·.fal) (den_of_neFree hNE))
 
 /-- A singleton team supports an `NE`-free formula iff its world realizes it,
-    `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
+`{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
 theorem support_singleton_iff_realize (hNE : φ.NEFree) :
     support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hNE]
@@ -146,12 +146,12 @@ theorem antiSupport_singleton_iff_not_realize (hNE : φ.NEFree) :
 /-! ### Consequence is classical consequence (Fact 15) -/
 
 /-- `φ` is a classical modal consequence of `Γ` when every world of every model realizing each
-    formula of `Γ` realizes `φ`. -/
+formula of `Γ` realizes `φ`. -/
 def ClassicalConsequence (Γ : Set (Formula Atom)) (φ : Formula Atom) : Prop :=
   ∀ (W : Type) (M : KripkeModel W Atom) (w : W), (∀ γ ∈ Γ, Realize M γ w) → Realize M φ w
 
 /-- On `NE`-free formulas BSML consequence is classical modal consequence ([aloni-2022] Fact 15,
-    [anttila-2021] Fact 2.2.17). -/
+[anttila-2021] Fact 2.2.17). -/
 theorem consequence_iff_classicalConsequence {Γ : Set (Formula Atom)} (hΓ : ∀ γ ∈ Γ, γ.NEFree)
     (hφ : φ.NEFree) : Γ ⊨ φ ↔ ClassicalConsequence Γ φ where
   mp h W M w hw :=
@@ -163,7 +163,7 @@ theorem consequence_iff_classicalConsequence {Γ : Set (Formula Atom)} (hΓ : �
       h p.World p.model w fun γ hγ ↦ (support_iff_forall_realize (hΓ γ hγ)).mp (hp γ hγ) w hw
 
 /-- On `NE`-free formulas equivalence is mutual classical consequence ([anttila-2021]
-    Fact 2.2.17). -/
+Fact 2.2.17). -/
 theorem equivalent_iff_classicalConsequence (hφ : φ.NEFree) (hψ : ψ.NEFree) :
     Equivalent φ ψ ↔ ClassicalConsequence {φ} ψ ∧ ClassicalConsequence {ψ} φ :=
   equivalent_iff.trans <| and_congr

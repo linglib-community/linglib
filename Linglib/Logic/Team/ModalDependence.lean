@@ -67,13 +67,13 @@ open ModalLogic (KripkeModel)
 /-! ### Syntax (Definition 1.1) -/
 
 /-- The formulas of MDL ([vaananen-2008] Definition 1.1, p. 238) extend classical modal logic
-    with the dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
-    `¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
+with the dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
+`¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
   /-- The dependence atom `=(x⃗; y)` says that the values of `y` in the team are a function
-      of the values of `x⃗`. -/
+  of the values of `x⃗`. -/
   | dep (xs : List Atom) (y : Atom)
   /-- Negation, which swaps support and anti-support. -/
   | neg (φ : Formula Atom)
@@ -99,7 +99,7 @@ def Formula.DepFree : Formula Atom → Prop
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of an MDL formula at a world, with `◇` the shared
-    `ModalLogic.Diamond`; a dependence atom is true at every world. -/
+`ModalLogic.Diamond`; a dependence atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w
   | .dep _ _, _ => True
@@ -116,12 +116,12 @@ variable [DecidableEq W]
 /-! ### Semantics (Definition 4.1) -/
 
 /-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008], p. 245).
-    `eval M true φ t` is support (Player II); `eval M false φ t` is
-    anti-support (Player I). Negation flips polarity (clause (T5)).
+`eval M true φ t` is support (Player II); `eval M false φ t` is
+anti-support (Player I). Negation flips polarity (clause (T5)).
 
-    The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
-    BSML's per-world form; the two formulations diverge for non-union-
-    closed logics like MDL. -/
+The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
+BSML's per-world form; the two formulations diverge for non-union-
+closed logics like MDL. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => t ∈ Team.flat (M.val p)
   | false, .atom p,        t => t ∈ Team.flat fun w ↦ ¬ M.val p w
@@ -242,7 +242,7 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 /-! ### Dep breaks union closure (the defining feature) -/
 
 /-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
-    each of their singleton teams supports `=(p; q)` but the team of both does not. -/
+each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by
@@ -261,7 +261,7 @@ open ModalLogic (WorldBisim)
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 /-- Teams that are `k`-bisimilar agree on every MDL formula of modal depth at most `k`, in both
-    polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
+polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
   induction φ generalizing k b with
@@ -299,13 +299,13 @@ section ExpressivePower
 universe u
 
 /-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
-    depth. -/
+depth. -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
   ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
 
 /-- MDL expresses only classes of pointed team models that are downward closed, contain the empty
-    team and are invariant under bounded bisimulation. -/
+team and are invariant under bounded bisimulation. -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
       {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),

@@ -65,7 +65,7 @@ variable {Atom : Type*} {W : Type*} [DecidableEq W]
 /-! ### Contexts -/
 
 /-- A one-hole context whose hole is in the scope of no `¬`, except as part of `□ = ¬◇¬`.
-    These are the positions at which replacement holds ([aloni-anttila-yang-2024] Lemma 4.4). -/
+These are the positions at which replacement holds ([aloni-anttila-yang-2024] Lemma 4.4). -/
 inductive Formula.Context (Atom : Type*) where
   | hole
   | conjLeft (C : Context Atom) (ψ : Formula Atom)
@@ -88,8 +88,8 @@ def fill : Context Atom → Formula Atom → Formula Atom
   | nec C, φ => Formula.nec (C.fill φ)
 
 /-- A context is distributive when its hole is under no modality, so that it is built from `∧`
-    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
-    defined before Definition 4.24. -/
+and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
+defined before Definition 4.24. -/
 def Distributive : Context Atom → Prop
   | hole => True
   | conjLeft C _ | conjRight _ C | disjLeft C _ | disjRight _ C => C.Distributive
@@ -125,8 +125,8 @@ end Formula.Context
 /-! ### The system -/
 
 /-- The natural deduction system for BSML ([aloni-anttila-yang-2024] Definition 4.33) has the
-    rules of Definition 4.1, boxes (a)–(f), and the three `⊥NE`-translation rules. `Derives Γ φ`
-    says that `φ` is derivable from formulas in `Γ`, and `cut` composes derivations. -/
+rules of Definition 4.1, boxes (a)–(f), and the three `⊥NE`-translation rules. `Derives Γ φ`
+says that `φ` is derivable from formulas in `Γ`, and `cut` composes derivations. -/
 inductive Derives [Inhabited Atom] : Set (Formula Atom) → Formula Atom → Prop where
   /-- An assumption. -/
   | hyp {Γ φ} : φ ∈ Γ → Derives Γ φ
@@ -220,7 +220,7 @@ variable [Inhabited Atom] {Γ Δ : Set (Formula Atom)} {φ ψ χ : Formula Atom}
 /-! ### Soundness -/
 
 /-- **Soundness** ([aloni-anttila-yang-2024] Theorem 4.34). Every team supporting the premises
-    supports what they derive. -/
+supports what they derive. -/
 theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     ∀ s : Finset W, (∀ γ ∈ Γ, support M γ s) → support M φ s := by
   induction h with
@@ -407,7 +407,7 @@ theorem disj_conj_ne_derives_conj_ne :
     (.single θ) (.hyp (Set.mem_insert _ _)) (by simpa [Formula.Context.fill] using hfalsum)
 
 /-- A possibility has a nonempty witness ([aloni-anttila-yang-2024] Lemma 4.21). `◇⊥NETrs`
-    splits `◇φ` into `◇(φ ∧ NE) ∨ ◇(φ ∧ ⊥)`, and `◇⊥` refutes itself. -/
+splits `◇φ` into `◇(φ ∧ NE) ∨ ◇(φ ∧ ⊥)`, and `◇⊥` refutes itself. -/
 theorem poss_derives_poss_conj_ne : {.poss φ} ⊢ .poss (.conj φ .ne) := by
   have hsplit : {.poss φ} ⊢ .disj (.poss (.conj φ .ne)) (.poss (.conj φ .falsum)) :=
     .possNeTrs (ψ := φ) .hole trivial (.single _)
@@ -430,7 +430,7 @@ theorem poss_disj_conj_ne_derives_conj_poss :
 /-! ### Non-derivations -/
 
 /-- Unrestricted `∨I` would be unsound, since `p ⊬ p ∨ NE`. The empty team supports `p` but not
-    `p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
+`p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
 theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .ne := by
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ true⟩

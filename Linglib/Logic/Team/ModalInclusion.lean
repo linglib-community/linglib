@@ -75,9 +75,9 @@ open ModalLogic (KripkeModel)
 /-! ### Syntax -/
 
 /-- The formulas of modal inclusion logic simpliciter, with `◇` and `□` both primitive. An
-    inclusion atom `p₁...pₙ ⊆ q₁...qₙ` over propositional symbols is the list of pairs
-    `[(p₁, q₁), ..., (pₙ, qₙ)]`; [anttila-haggblom-yang-2025] Definition 2.1 allows classical
-    formulas in the atoms. -/
+inclusion atom `p₁...pₙ ⊆ q₁...qₙ` over propositional symbols is the list of pairs
+`[(p₁, q₁), ..., (pₙ, qₙ)]`; [anttila-haggblom-yang-2025] Definition 2.1 allows classical
+formulas in the atoms. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
@@ -86,7 +86,7 @@ inductive Formula (Atom : Type*) where
   /-- Inclusion atom `p⃗ ⊆ q⃗`. -/
   | incl (xys : List (Atom × Atom))
   /-- Classical negation (restricted to classical formulas in the paper;
-      we allow on any formula for uniform recursion). -/
+  we allow on any formula for uniform recursion). -/
   | neg (φ : Formula Atom)
   /-- Conjunction. -/
   | conj (φ ψ : Formula Atom)
@@ -136,7 +136,7 @@ theorem Formula.inclTrivial_of_subsingleton [Subsingleton Atom] (φ : Formula At
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
-    `ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
+`ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w
   | .bot, _ => False
@@ -215,7 +215,7 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-! ### Union closure -/
 
 /-- Every MIL formula has union-closed support. Each case is the closure lemma of its connective
-    in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
+in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
@@ -250,8 +250,8 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
 /-- The inclusion atom is not downward closed. If `w₂` supplies the `b`-value matching both its
-    own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
-    and `{w₁}` does not. -/
+own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
+and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ ↔ M.val b w₂) (hself : M.val a w₂ ↔ M.val b w₂)
     (hwit : ¬ (M.val a w₁ ↔ M.val b w₁)) :
@@ -272,7 +272,7 @@ open ModalLogic (WorldBisim)
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`
-    ([anttila-haggblom-yang-2025] Theorem 3.6). -/
+([anttila-haggblom-yang-2025] Theorem 3.6). -/
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M φ t} {t | eval M' φ t} := by
   induction φ generalizing k with
@@ -345,13 +345,13 @@ section ExpressivePower
 universe u
 
 /-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
-    depth ([anttila-haggblom-yang-2025] p. 766, by Theorem 3.6). -/
+depth ([anttila-haggblom-yang-2025] p. 766, by Theorem 3.6). -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
   ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl hb).1 hp⟩
 
 /-- The logic expresses only classes of pointed team models that are union closed, contain the
-    empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-2025] p. 766).
+empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-2025] p. 766).
 -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
@@ -362,8 +362,8 @@ theorem range_support_subset :
     boundedBisimInvariant_support φ⟩
 
 /-- In one propositional symbol every formula is flat, so the inclusion is strict: the teams that
-    are empty or hold a world where the symbol is true form such a class that no formula expresses.
-    The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `⊤ ⊆ p` (p. 768).
+are empty or hold a world where the symbol is true form such a class that no formula expresses.
+The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `⊤ ⊆ p` (p. 768).
 -/
 theorem range_support_ssubset_of_subsingleton [Subsingleton Atom] [Nonempty Atom] :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂

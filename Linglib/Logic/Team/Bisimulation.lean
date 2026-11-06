@@ -57,7 +57,7 @@ variable {α β : Type*} {r r₁ : α → β → Prop} {p : α → Prop} {p' : �
   {P Q : TeamProperty α} {P' Q' : TeamProperty β}
 
 /-- Team properties `P` and `P'` are invariant under a relation `r` on points when teams related
-    by the lifting `Set.LiftRel r` agree on them. -/
+by the lifting `Set.LiftRel r` agree on them. -/
 def Invariant (r : α → β → Prop) (P : TeamProperty α) (P' : TeamProperty β) : Prop :=
   ∀ ⦃s : Finset α⦄ ⦃s' : Finset β⦄, Set.LiftRel r ↑s ↑s' → (s ∈ P ↔ s' ∈ P')
 
@@ -143,7 +143,7 @@ theorem Invariant.nec (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' 
   invariant_flat fun _ _ hab ↦ h (hR _ _ hab)
 
 /-- Having a part in a property preserves invariance: the upper closures of invariant
-    properties are invariant. -/
+properties are invariant. -/
 theorem Invariant.upperClosure (h : Invariant r P P') :
     Invariant r ↑(_root_.upperClosure P) ↑(_root_.upperClosure P') := by
   refine fun s s' hs ↦ ⟨fun ⟨t, htP, hts⟩ ↦ ?_, fun ⟨t', htP, hts⟩ ↦ ?_⟩
@@ -161,7 +161,7 @@ variable [DecidableEq α] [DecidableEq β]
 /-! ### Splits -/
 
 /-- A split of a team related by the lifting of `r` has a related split on the other side
-    ([aloni-anttila-yang-2024] Lemma 3.7(ii)). -/
+([aloni-anttila-yang-2024] Lemma 3.7(ii)). -/
 theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Finset β}
     (hs : Set.LiftRel r ↑s ↑s') (hsplit : t ∪ u = s) :
     ∃ t' u' : Finset β, t' ∪ u' = s' ∧ Set.LiftRel r ↑t ↑t' ∧ Set.LiftRel r ↑u ↑u' := by
@@ -212,7 +212,7 @@ private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r
     exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y, hy, hyy'⟩, hyy'⟩
 
 /-- The single-witness possibility modality preserves invariance between downward-closed
-    properties. -/
+properties. -/
 theorem Invariant.possWitness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
     (hP : IsLowerSet P) (hP' : IsLowerSet P') (h : Invariant r P P') :
     Invariant r₁ (possWitness R P) (possWitness R' P') := by
@@ -250,8 +250,8 @@ variable {W W' Atom : Type*}
 /-! ### Bisimulation of Kripke models -/
 
 /-- Pointed Kripke models are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.1) when they
-    agree on every atom and, at positive depth, their successor sets are related by the lifting
-    of bisimilarity one depth down. -/
+agree on every atom and, at positive depth, their successor sets are related by the lifting
+of bisimilarity one depth down. -/
 def WorldBisim : ℕ → KripkeModel W Atom → W → KripkeModel W' Atom → W' → Prop
   | 0,     M, w, M', w' => ∀ p : Atom, M.val p w ↔ M'.val p w'
   | k + 1, M, w, M', w' =>
@@ -270,7 +270,7 @@ theorem WorldBisim.val_iff {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : Krip
   | _ + 1, ⟨h, _⟩ => h p
 
 /-- Teams are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.6) when they are related by
-    the lifting of `k`-bisimilarity of their worlds. -/
+the lifting of `k`-bisimilarity of their worlds. -/
 def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeModel W' Atom)
     (s' : Finset W') : Prop :=
   Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
@@ -280,7 +280,7 @@ def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeMod
 universe u
 
 /-- A class of pointed team models is invariant under bounded bisimulation when, for some depth
-    `k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
+`k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
 def BoundedBisimInvariant (P : Set (PointedTeam.{u} Atom)) : Prop :=
   ∃ k : ℕ, ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom,
     StateBisim k p.model p.team p'.model p'.team → p' ∈ P

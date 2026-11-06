@@ -43,8 +43,8 @@ open Truthmaker (BilProp)
 /-! ### Syntax and semantics -/
 
 /-- The formulas of the joint syntax of BSML, BSML⨼ and BSML⊘ (Definition 2.1) are those of
-    BSML together with the weak contradiction `⊥`, the global disjunction `⨼` and the
-    emptiness operator `⊘`. -/
+BSML together with the weak contradiction `⊥`, the global disjunction `⨼` and the
+emptiness operator `⊘`. -/
 inductive Formula (Atom : Type*) where
   | atom (p : Atom)
   /-- Weak contradiction `⊥`, supported by the empty state only. -/
@@ -112,7 +112,7 @@ instance : (φ : Formula Atom) → Decidable φ.EmptFree
 end Formula
 
 /-- The meaning of a formula in a model (Definition 2.3) is the bilateral proposition of the
-    teams that support it and the teams that anti-support it. -/
+teams that support it and the teams that anti-support it. -/
 def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
   | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
   | .bot => ⟨{∅}, .univ⟩
@@ -287,13 +287,13 @@ theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
   | poss ψ _ => exact ⟨fun _ _ _ h hs w hw ↦ hs w (h hw), fun _ _ _ h hs w hw ↦ hs w (h hw)⟩
 
 /-- The two-world model of Fact 3.19 makes `p` true at `true` only and has no accessible
-    worlds. -/
+worlds. -/
 def twoWorlds : KripkeModel Bool Unit where
   access _ := ∅
   val _ w := w = true
 
 /-- The property `‖(p ∧ NE) ∨ (¬p ∧ NE)‖ ∪ ‖⊥‖` of Fact 3.19 is union closed and bisimulation
-    invariant, yet not expressible in BSML. -/
+invariant, yet not expressible in BSML. -/
 def splitProperty (s : Finset Bool) : Prop :=
   support twoWorlds (.disj (.conj (.atom ()) .ne) (.conj (.neg (.atom ())) .ne)) s ∨ s = ∅
 
@@ -319,7 +319,7 @@ theorem bsml_not_complete_for_unionClosed :
 /-! ### The emptiness operator cancels enrichment -/
 
 /-- For classical `α`, `⊘(α ∧ NE) ≡ α` (§5), so the emptiness operator undoes the
-    non-emptiness that pragmatic enrichment adds. -/
+non-emptiness that pragmatic enrichment adds. -/
 theorem support_empt_conj_ne (hα : φ.NEFree) :
     support M (.empt (.conj φ .ne)) t ↔ support M φ t := by
   constructor
@@ -360,7 +360,7 @@ theorem support_ofBSML (φ : BSML.Formula Atom) : support M (ofBSML φ) t ↔ BS
   .of_eq (congrArg (t ∈ ·.ver) (den_ofBSML M φ))
 
 /-- Narrow-scope free choice, `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`, transported from
-    [aloni-2022] along the embedding. -/
+[aloni-2022] along the embedding. -/
 theorem narrowScopeFC {α β : BSML.Formula Atom} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (ofBSML (BSML.enrich (.poss (.disj α β)))) t) :
     support M (ofBSML (.conj (.poss α) (.poss β))) t :=
@@ -376,7 +376,7 @@ def Formula.modalDepth : Formula Atom → ℕ
   | .poss ψ => ψ.modalDepth + 1
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
-    polarities (Theorem 3.8). -/
+polarities (Theorem 3.8). -/
 theorem invariant_den {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : ℕ}
     (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
     Team.Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧

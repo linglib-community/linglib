@@ -50,24 +50,24 @@ section Laws
 variable (φ ψ : Formula Atom)
 
 /-- Double negation elimination holds as a strong equivalence, `¬¬φ ⊜ φ` ([aloni-2022] Fact 6,
-    [aloni-anttila-yang-2024] Fact 2.5). -/
+[aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_neg : StronglyEquivalent (.neg (.neg φ)) φ :=
   stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- The negation of a conjunction is the split disjunction of the negations,
-    `¬(φ ∧ ψ) ⊜ ¬φ ∨ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
+`¬(φ ∧ ψ) ⊜ ¬φ ∨ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_conj :
     StronglyEquivalent (.neg (.conj φ ψ)) (.disj (.neg φ) (.neg ψ)) :=
   stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- The negation of a split disjunction is the conjunction of the negations,
-    `¬(φ ∨ ψ) ⊜ ¬φ ∧ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
+`¬(φ ∨ ψ) ⊜ ¬φ ∧ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_disj :
     StronglyEquivalent (.neg (.disj φ ψ)) (.conj (.neg φ) (.neg ψ)) :=
   stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- Negation turns `◇` into `□`, `¬◇φ ⊜ □¬φ` ([aloni-2022] Fact 6,
-    [aloni-anttila-yang-2024] Fact 2.5). -/
+[aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_poss :
     StronglyEquivalent (.neg (.poss φ)) (Formula.nec (.neg φ)) :=
   stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
@@ -84,7 +84,7 @@ end Laws
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {s t : Finset W}
 
 /-- A team supporting `φ` and a team anti-supporting `φ` are disjoint ([aloni-2022] Fact 7,
-    [anttila-2021] Proposition 3.3.9). -/
+[anttila-2021] Proposition 3.3.9). -/
 theorem disjoint_of_support_of_antiSupport (hs : support M φ s) (ht : antiSupport M φ t) :
     Disjoint s t := by
   induction φ generalizing s t with

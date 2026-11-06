@@ -68,8 +68,8 @@ private theorem support_and_antiSupport_supClosed (φ : Formula Var Const Pred)
   | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
 
 /-- QBSML support is union closed, as BSML's is ([anttila-2021] Proposition 2.2.8).
-    [aloni-vanormondt-2023] Fact 2 states this for `NE`-free quantified formulas, but its argument
-    does not use the hypothesis. -/
+[aloni-vanormondt-2023] Fact 2 states this for `NE`-free quantified formulas, but its argument
+does not use the hypothesis. -/
 theorem supClosed_support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred) :
     SupClosed {s : Finset (Index W Var Domain) | support M φ s} :=
   (support_and_antiSupport_supClosed φ M).1
@@ -108,7 +108,7 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
   | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
 
 /-- `NE`-free QBSML formulas are downward closed ([aloni-vanormondt-2023] Fact 2,
-    [anttila-2021] Proposition 2.2.8). -/
+[anttila-2021] Proposition 2.2.8). -/
 theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
@@ -196,7 +196,7 @@ theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
 /-! ### Atom substitution salva veritate -/
 
 /-- Replacing each atom by a formula with the same support and anti-support preserves support
-    and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
+and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
 theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}

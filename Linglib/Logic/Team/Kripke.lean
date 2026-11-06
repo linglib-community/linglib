@@ -75,7 +75,7 @@ instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.a
 universe u
 
 /-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
-    ([anttila-2025] Definition 2.3.9). -/
+([anttila-2025] Definition 2.3.9). -/
 structure PointedTeam (Atom : Type*) where
   /-- The worlds of the model. -/
   World : Type u

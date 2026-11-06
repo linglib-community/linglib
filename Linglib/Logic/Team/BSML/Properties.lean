@@ -108,7 +108,7 @@ open ModalLogic (WorldBisim)
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
-    polarities ([aloni-anttila-yang-2024] Theorem 3.8). -/
+polarities ([aloni-anttila-yang-2024] Theorem 3.8). -/
 theorem invariant_den {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
     Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧
       Invariant (WorldBisim k M · M' ·) (φ.den M).fal (φ.den M').fal := by
