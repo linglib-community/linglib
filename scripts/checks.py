@@ -31,6 +31,7 @@ Usage, from the repository root:
     python3 scripts/checks.py diff SOURCE ITEM
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --items ID,ID,...) --by GITHUB_HANDLE
+    python3 scripts/checks.py selftest   # after changing `checkClosure` or Lean
 
 Sign-offs are made by people. `sign` refuses to run inside an agent session (`CLAUDECODE`).
 """
@@ -361,6 +362,46 @@ def cmd_sign(args):
     return 0
 
 
+# Groups of declarations in `scripts/checks/ChecksFixture.lean` whose terms must all be equal
+# (True), since they differ only in proofs, bound names or binder annotations, or all differ
+# (False), since what they say differs.
+SELFTEST_GROUPS = [
+    ("a bound variable's type", False, ["unionOne", "unionZero"]),
+    ("the statement", False, ["bounded", "boundedStrict"]),
+    ("a bound variable's name", True, ["bounded", "boundedRenamed"]),
+    ("a binder's annotation", True, ["subset_explicit", "subset_implicit"]),
+    ("a theorem's proof", True, ["subset_explicit", "subset_otherProof"]),
+    ("a proof in a definition's body", True, ["positiveByDecide", "positiveByLemma"]),
+    ("a proof in a statement", True, ["val_byDecide", "val_byLemma"]),
+]
+# Declarations whose closures must leave out a declaration that only their proofs use.
+SELFTEST_UNUSED = [("positiveByLemma", "one_pos")]
+
+
+def cmd_selftest(args):
+    names = sorted({f"ChecksFixture.{n}" for _, _, ns in SELFTEST_GROUPS for n in ns}
+                   | {f"ChecksFixture.{n}" for n, _ in SELFTEST_UNUSED})
+    build = subprocess.run(["lake", "build", "checkClosure", "ChecksFixture"], cwd=ROOT,
+                           capture_output=True, text=True)
+    if build.returncode:
+        sys.exit("the fixture does not build:\n" + build.stdout[-2000:])
+    data = json.loads(subprocess.run(["lake", "exe", "checkClosure", "ChecksFixture", "--", *names],
+                                     cwd=ROOT, check=True, capture_output=True, text=True).stdout)
+    failures = 0
+    for what, same, group in SELFTEST_GROUPS:
+        terms = [data["nodes"][f"ChecksFixture.{n}"]["term"] for n in group]
+        ok = len(set(terms)) == 1 if same else len(set(terms)) == len(terms)
+        failures += not ok
+        effect = "keeps" if same else "changes"
+        print(f"{'ok  ' if ok else 'FAIL'}  {what} {effect} the term  ({', '.join(group)})")
+    for name, unused in SELFTEST_UNUSED:
+        ok = f"ChecksFixture.{unused}" not in data["roots"][f"ChecksFixture.{name}"]["closure"]
+        failures += not ok
+        print(f"{'ok  ' if ok else 'FAIL'}  a declaration used only in a proof is not in the "
+              f"closure  ({unused} in {name})")
+    return 1 if failures else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -382,6 +423,8 @@ def main():
     g.add_argument("--items", help="comma-separated item ids")
     p.add_argument("--by", required=True, help="your GitHub handle")
     p.set_defaults(func=cmd_sign)
+    p = sub.add_parser("selftest", help="check that the hash changes exactly when it should")
+    p.set_defaults(func=cmd_selftest)
     args = parser.parse_args()
     sys.exit(args.func(args))
 

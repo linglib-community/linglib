@@ -62,6 +62,7 @@ python3 scripts/checks.py sign SOURCE --items ex-22,ex-23 --by HANDLE
 python3 scripts/checks.py sign SOURCE --all --by HANDLE
 python3 scripts/checks.py diff SOURCE ITEM
 python3 scripts/checks.py core [--json]
+python3 scripts/checks.py selftest
 ```
 
 `sign` records the hash of the item's statement closure. The closure takes in:
@@ -80,6 +81,10 @@ hide, such as to the type of a bound variable, still makes a sign-off stale. Ren
 variable or changing a binder between explicit and implicit does not, since neither changes what
 a statement says. A Lean or Mathlib upgrade that changes how a statement elaborates, for instance
 by renaming an instance it uses, also makes the sign-off stale.
+
+`selftest` checks that the hash behaves this way, on pairs of declarations in
+`scripts/checks/ChecksFixture.lean` that differ in one respect each. Run it after changing
+`scripts/checks/CheckClosure.lean` or upgrading Lean.
 
 `status` reports each item as one of the following:
 

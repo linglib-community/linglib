@@ -31,8 +31,8 @@ its pretty-printed type and value, with full names, for people to read.
 
 open Lean Meta
 
-/-- The libraries whose declarations a closure follows. -/
-def projectRoots : List Name := [`Linglib, `Studies, `Eval, `Lab]
+/-- The libraries whose declarations a closure follows, and the fixture of `checks.py selftest`. -/
+def projectRoots : List Name := [`Linglib, `Studies, `Eval, `Lab, `ChecksFixture]
 
 def moduleOf? (env : Environment) (n : Name) : Option Name := do
   let idx ← env.getModuleIdxFor? n
