@@ -145,27 +145,29 @@ theorem antiSupport_singleton_iff_not_realize (hNE : φ.NEFree) :
 
 /-! ### Consequence is classical consequence (Fact 15) -/
 
-/-- `ψ` is a classical modal consequence of `φ` when every world of every model realizing `φ`
-    realizes `ψ`. -/
-def ClassicalConsequence (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (w : W), Realize M φ w → Realize M ψ w
+/-- `φ` is a classical modal consequence of `Γ` when every world of every model realizing each
+    formula of `Γ` realizes `φ`. -/
+def ClassicalConsequence (Γ : Set (Formula Atom)) (φ : Formula Atom) : Prop :=
+  ∀ (W : Type) (M : KripkeModel W Atom) (w : W), (∀ γ ∈ Γ, Realize M γ w) → Realize M φ w
 
 /-- On `NE`-free formulas BSML consequence is classical modal consequence ([aloni-2022] Fact 15,
     [anttila-2021] Fact 2.2.17). -/
-theorem consequence_iff_classicalConsequence (hφ : φ.NEFree) (hψ : ψ.NEFree) :
-    Consequence (W := W) φ ψ ↔ ClassicalConsequence (W := W) φ ψ where
-  mp h M w hw :=
-    (support_singleton_iff_realize hψ).mp (h M {w} ((support_singleton_iff_realize hφ).mpr hw))
-  mpr h M _ ht :=
-    (support_iff_forall_realize hψ).mpr fun w hw ↦
-      h M w ((support_iff_forall_realize hφ).mp ht w hw)
+theorem consequence_iff_classicalConsequence {Γ : Set (Formula Atom)} (hΓ : ∀ γ ∈ Γ, γ.NEFree)
+    (hφ : φ.NEFree) : Γ ⊨ φ ↔ ClassicalConsequence Γ φ where
+  mp h W M w hw :=
+    letI := Classical.decEq W
+    (support_singleton_iff_realize hφ).mp
+      (h ⟨W, M, {w}⟩ fun γ hγ ↦ (support_singleton_iff_realize (hΓ γ hγ)).mpr (hw γ hγ))
+  mpr h p hp :=
+    (support_iff_forall_realize hφ).mpr fun w hw ↦
+      h p.World p.model w fun γ hγ ↦ (support_iff_forall_realize (hΓ γ hγ)).mp (hp γ hγ) w hw
 
 /-- On `NE`-free formulas equivalence is mutual classical consequence ([anttila-2021]
     Fact 2.2.17). -/
 theorem equivalent_iff_classicalConsequence (hφ : φ.NEFree) (hψ : ψ.NEFree) :
-    Equivalent (W := W) φ ψ ↔
-      ClassicalConsequence (W := W) φ ψ ∧ ClassicalConsequence (W := W) ψ φ :=
-  equivalent_iff.trans <| and_congr (consequence_iff_classicalConsequence hφ hψ)
-    (consequence_iff_classicalConsequence hψ hφ)
+    Equivalent φ ψ ↔ ClassicalConsequence {φ} ψ ∧ ClassicalConsequence {ψ} φ :=
+  equivalent_iff.trans <| and_congr
+    (consequence_iff_classicalConsequence (by simpa using hφ) hψ)
+    (consequence_iff_classicalConsequence (by simpa using hψ) hφ)
 
 end BSML

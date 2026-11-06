@@ -51,31 +51,31 @@ variable (φ ψ : Formula Atom)
 
 /-- Double negation elimination holds as a strong equivalence, `¬¬φ ⊜ φ` ([aloni-2022] Fact 6,
     [aloni-anttila-yang-2024] Fact 2.5). -/
-theorem stronglyEquivalent_neg_neg : StronglyEquivalent (W := W) (.neg (.neg φ)) φ :=
-  stronglyEquivalent_iff.2 fun _ ↦ rfl
+theorem stronglyEquivalent_neg_neg : StronglyEquivalent (.neg (.neg φ)) φ :=
+  stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- The negation of a conjunction is the split disjunction of the negations,
     `¬(φ ∧ ψ) ⊜ ¬φ ∨ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_conj :
-    StronglyEquivalent (W := W) (.neg (.conj φ ψ)) (.disj (.neg φ) (.neg ψ)) :=
-  stronglyEquivalent_iff.2 fun _ ↦ rfl
+    StronglyEquivalent (.neg (.conj φ ψ)) (.disj (.neg φ) (.neg ψ)) :=
+  stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- The negation of a split disjunction is the conjunction of the negations,
     `¬(φ ∨ ψ) ⊜ ¬φ ∧ ¬ψ` ([aloni-2022] Fact 6, [aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_disj :
-    StronglyEquivalent (W := W) (.neg (.disj φ ψ)) (.conj (.neg φ) (.neg ψ)) :=
-  stronglyEquivalent_iff.2 fun _ ↦ rfl
+    StronglyEquivalent (.neg (.disj φ ψ)) (.conj (.neg φ) (.neg ψ)) :=
+  stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- Negation turns `◇` into `□`, `¬◇φ ⊜ □¬φ` ([aloni-2022] Fact 6,
     [aloni-anttila-yang-2024] Fact 2.5). -/
 theorem stronglyEquivalent_neg_poss :
-    StronglyEquivalent (W := W) (.neg (.poss φ)) (Formula.nec (.neg φ)) :=
-  stronglyEquivalent_iff.2 fun _ ↦ rfl
+    StronglyEquivalent (.neg (.poss φ)) (Formula.nec (.neg φ)) :=
+  stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 /-- Negation turns `□` into `◇`, `¬□φ ⊜ ◇¬φ` ([aloni-2022] Fact 6). -/
 theorem stronglyEquivalent_neg_nec :
-    StronglyEquivalent (W := W) (.neg φ.nec) (.poss (.neg φ)) :=
-  stronglyEquivalent_iff.2 fun _ ↦ rfl
+    StronglyEquivalent (.neg φ.nec) (.poss (.neg φ)) :=
+  stronglyEquivalent_iff.2 fun _ _ _ ↦ rfl
 
 end Laws
 
@@ -113,9 +113,9 @@ theorem eq_empty_of_support_of_antiSupport (hs : support M φ s) (hs' : antiSupp
 /-- Replacement of equivalents fails under negation, as `p ∧ ¬p` and `¬NE` are equivalent but their
 negations are not ([aloni-2022] Fact 8, [anttila-2021] Fact 2.2.3). -/
 theorem exists_equivalent_not_equivalent_neg [Inhabited Atom] :
-    ∃ φ ψ : Formula Atom, Equivalent (W := W) φ ψ ∧ ¬ Equivalent (W := W) (.neg φ) (.neg ψ) :=
-  ⟨.falsum, .neg .ne, fun M t ↦ (support_falsum M t).trans .rfl,
-    fun h ↦ Finset.not_nonempty_empty <| (h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mp
+    ∃ φ ψ : Formula Atom, Equivalent φ ψ ∧ ¬ Equivalent (.neg φ) (.neg ψ) :=
+  ⟨.falsum, .neg .ne, fun p ↦ (support_falsum p.model p.team).trans .rfl,
+    fun h ↦ Finset.not_nonempty_empty <| (h ⟨Unit, ⟨fun _ ↦ ∅, fun _ _ ↦ False⟩, ∅⟩).mp
       ⟨∅, Team.empty_mem_flat _, ∅, Team.empty_mem_flat _, Finset.union_empty ∅⟩⟩
 
 /-! ### Replacement of strong equivalents -/
@@ -132,12 +132,12 @@ def Formula.subst [DecidableEq Atom] : Formula Atom → Atom → Formula Atom �
 /-- Substituting strongly equivalent formulas for an atom yields strongly equivalent formulas
 ([aloni-anttila-yang-2024] Proposition 2.4). -/
 theorem StronglyEquivalent.subst [DecidableEq Atom] {ψ : Formula Atom}
-    (h : StronglyEquivalent (W := W) φ ψ) (θ : Formula Atom) (p : Atom) :
-    StronglyEquivalent (W := W) (θ.subst p φ) (θ.subst p ψ) := by
+    (h : StronglyEquivalent φ ψ) (θ : Formula Atom) (p : Atom) :
+    StronglyEquivalent (θ.subst p φ) (θ.subst p ψ) := by
   rw [stronglyEquivalent_iff] at h ⊢
-  intro M
+  intro W _ M
   induction θ with
-  | atom q => by_cases hq : q = p <;> simp [Formula.subst, hq, h M]
+  | atom q => by_cases hq : q = p <;> simp [Formula.subst, hq, h W M]
   | ne => rfl
   | neg θ ih => exact congrArg Neg.neg ih
   | conj θ η ih₁ ih₂ | disj θ η ih₁ ih₂ => simp only [Formula.subst, Formula.den, ih₁, ih₂]

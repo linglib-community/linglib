@@ -27,7 +27,7 @@ formula into the cases `θ_T` for the teams supporting it.
 * `derives_bigDisj_hintikka`: every world has a type of each depth.
 * `derives_bigDisj_realize`: a classical formula derives the disjunction of its types.
 * `splits_fill`: every formula splits into the strong Hintikka formulas of its teams.
-* `completeness`, `derives_iff`: completeness for finite premise sets.
+* `completeness`, `derives_iff_consequence`: completeness for finite premise sets.
 
 ## Implementation notes
 
@@ -1148,11 +1148,10 @@ theorem Formula.atomsIn_atomList (φ : Formula Atom) : φ.AtomsIn {p | p ∈ φ.
   | conj _ _ ih₁ ih₂ | disj _ _ ih₁ ih₂ =>
     exact ⟨ih₁.mono fun p hp ↦ by simp_all [atomList], ih₂.mono fun p hp ↦ by simp_all [atomList]⟩
 
-/-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets. A
-    consequence that holds on every model is derivable. -/
+/-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets: every
+    consequence is derivable. -/
 theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
-    (h : ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom) (s : Finset W),
-      (∀ γ ∈ Γ, support M γ s) → support M φ s) : (Γ : Set (Formula Atom)) ⊢ φ := by
+    (h : (Γ : Set (Formula Atom)) ⊨ φ) : (Γ : Set (Formula Atom)) ⊢ φ := by
   have := Classical.decEq Atom
   set γ : Formula Atom := bigConj Γ.toList
   set X : Finset Atom := (γ.atomList ++ φ.atomList ++ [default]).toFinset
@@ -1166,16 +1165,22 @@ theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
     refine (splits_fill he hd γ (le_max_left γ.modalDepth φ.modalDepth) hγA
       (C := .hole) trivial).1 φ ?_
     rintro _ (⟨T, hT, rfl⟩ | hσ)
-    · refine (derives_of_support he φ (le_max_right _ _) hφA T).1 (h _ (univModel e) _ ?_)
+    · refine (derives_of_support he φ (le_max_right _ _) hφA T).1 (h ⟨_, univModel e, _⟩ ?_)
       exact fun γ' hγ' ↦ (support_bigConj_iff (univModel e) Γ.toList _).mp hT γ'
         (Finset.mem_toList.mpr hγ')
     · exact hσ.elim
   exact (Derives.bigConj_of_forall fun x hx ↦ .hyp (Finset.mem_toList.mp hx)).trans hγφ
 
-/-- For finite premise sets, derivability is consequence on every model. -/
-theorem derives_iff {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
-    (Γ : Set (Formula Atom)) ⊢ φ ↔ ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom)
-      (s : Finset W), (∀ γ ∈ Γ, support M γ s) → support M φ s :=
-  ⟨fun h _ _ M s hs ↦ soundness h M s fun γ hγ ↦ hs γ hγ, completeness⟩
+/-- For finite premise sets, derivability is consequence. -/
+theorem derives_iff_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
+    (Γ : Set (Formula Atom)) ⊢ φ ↔ (Γ : Set (Formula Atom)) ⊨ φ :=
+  ⟨consequence_of_derives, completeness⟩
+
+/-- A consequence of finitely many premises over models in `Type` holds in models of every
+    universe, so `Consequence` loses nothing by fixing the universe. -/
+theorem support_of_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom}
+    (h : (Γ : Set (Formula Atom)) ⊨ φ) {W : Type*} [DecidableEq W] (M : KripkeModel W Atom)
+    (s : Finset W) (hs : ∀ γ ∈ Γ, support M γ s) : support M φ s :=
+  soundness (completeness h) M s fun γ hγ ↦ hs γ hγ
 
 end BSML
