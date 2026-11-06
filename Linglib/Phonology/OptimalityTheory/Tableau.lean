@@ -48,6 +48,8 @@ candidates of least profile.
 * `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
   above the last, the winners are the candidates satisfying all of them that do best on the last.
 * `Tableau.optimal_tail`: the winners of a tableau are the winners of its tail.
+* `Tableau.optimal_ofList_append`: under two lists ranked one above the other, the winners are
+  the lower list's winners among the upper list's.
 * `Tableau.optimal_ofList_append_of_forall_eq`: a constraint that rates every candidate alike
   changes no winner.
 * `Tableau.optimal_ofList_antifaithful`: under `¬F ≫ F`, the winners are the candidates that
@@ -401,6 +403,14 @@ theorem optimal_ofList_cons : (ofList s (F :: Fs)).optimal = (ofList (s.argmin F
 @[simp] theorem optimal_ofList_nil : (ofList s []).optimal = s :=
   Finset.argmin_eq_self_of_forall_le fun _ _ _ _ ↦
     le_of_eq <| funext fun i ↦ absurd i.2 (Nat.not_lt_zero _)
+
+/-- The winners under `Fs` ranked above `Gs` are the winners under `Gs` among the winners under
+`Fs`. -/
+theorem optimal_ofList_append :
+    (ofList s (Fs ++ Gs)).optimal = (ofList (ofList s Fs).optimal Gs).optimal := by
+  induction Fs generalizing s with
+  | nil => simp
+  | cons F Fs ih => rw [List.cons_append, optimal_ofList_cons, ih, optimal_ofList_cons]
 
 theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by

@@ -595,7 +595,7 @@ theorem uncover :
     (tableau (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
-[benua-1997] winners, (87) and (92). -/
+[benua-1997] winners, (82) and (87). -/
 example :
     (tableau (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
     (Benua1997.Hebrew.captive .d).form .base = (jussive .sibilant .stop .a).stem 0 ∧
