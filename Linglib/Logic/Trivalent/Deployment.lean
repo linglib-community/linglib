@@ -33,10 +33,9 @@ quantifiers and determiners deploy as they are. A failed reduction is `Part.none
 a constant function to the failure value, and `SignType.ofPart` sends it to `0`, the encoding of
 undefinedness used for partial propositions elsewhere.
 
-Deployment is noncomputable, but on a truth function with decidable values it is [a supervaluation
-over finite sets of `Bool`](##Trivalent.deploy₂_eq_supervaluation), which is computable, so its
-tables are proved by `decide`. It is stated for one and two arguments: George's definitions are
-`n`-ary, but his results about truth functions and determiners are unary and binary.
+Deployment is noncomputable, so its tables are proved by cases and not by `decide`, and it is stated
+for one and two arguments. George's definitions are `n`-ary, but his results about truth functions
+and determiners are unary and binary.
 
 ## References
 
@@ -92,14 +91,6 @@ theorem coe_mem_repairSet_iff {a : SignType} {b : Bool} :
     (b : Prop) ∈ a.repairSet ↔ b ∈ toFinset a := by
   rw [mem_repairSet_iff]
   cases a <;> cases b <;> simp
-
-/-- The repair set of a value is the image of `SignType.toFinset` in `Prop`. -/
-theorem repairSet_eq_image (a : SignType) :
-    a.repairSet = (fun b : Bool ↦ (b : Prop)) '' ↑(toFinset a) := by
-  ext P
-  rcases Classical.propComplete P with rfl | rfl
-  · simpa using coe_mem_repairSet_iff (a := a) (b := true)
-  · simpa using coe_mem_repairSet_iff (a := a) (b := false)
 
 end SignType
 
@@ -174,48 +165,6 @@ theorem deploy₁_eq_supervaluationOn (f : Prop → Prop) (x : SignType) :
     deploy₁ f x = supervaluationOn x.repairSet f :=
   ofPart_pkReduce f x.repairSet_nonempty
 
-/-- Unary deployment is the supervaluation over the classical values its argument leaves open,
-which is computable when the function's values are decidable. -/
-theorem deploy₁_eq_supervaluation (f : Prop → Prop) [DecidablePred fun b : Bool ↦ f b] :
-    deploy₁ f x = supervaluation x.toFinset fun b ↦ f b := by
-  rw [deploy₁_eq_supervaluationOn, repairSet_eq_image, supervaluationOn_image]
-  exact supervaluationOn_coe_finset (P := fun b : Bool ↦ f b) x.toFinset
-
-private theorem supervaluation_product_of_forall {s t : Finset Bool} {G : Bool → Bool → Prop}
-    [∀ a b, Decidable (G a b)] (a : Bool) (ha : a ∈ s) (h : ∀ b ∈ s, ∀ c, G b c ↔ G a c) :
-    supervaluation (s ×ˢ t) (fun p ↦ G p.1 p.2) = supervaluation t (G a) := by
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
-  · simp only [supervaluation_eq_one_iff, Finset.mem_product, and_imp, Prod.forall]
-    exact ⟨fun H c hc ↦ H a c ha hc, fun H b c hb hc ↦ (h b hb c).2 (H c hc)⟩
-  · simp only [supervaluation_eq_neg_one_iff, Finset.mem_product, and_imp, Prod.forall,
-      Finset.nonempty_product]
-    exact ⟨fun ⟨⟨_, ht⟩, H⟩ ↦ ⟨ht, fun c hc ↦ H a c ha hc⟩,
-      fun ⟨ht, H⟩ ↦ ⟨⟨⟨a, ha⟩, ht⟩, fun b c hb hc hg ↦ H c hc ((h b hb c).1 hg)⟩⟩
-
-/-- Binary deployment is undefined unless the classical values its first argument leaves open give
-one function, and is then the supervaluation over the pairs of classical values the two arguments
-leave open, which is computable when the function's values are decidable. -/
-theorem deploy₂_eq_supervaluation (g : Prop → Prop → Prop) [∀ a b : Bool, Decidable (g a b)] :
-    deploy₂ g x y = if ∀ a ∈ x.toFinset, ∀ b ∈ x.toFinset, ∀ c : Bool, g a c ↔ g b c then
-      supervaluation (x.toFinset ×ˢ y.toFinset) (fun p ↦ g p.1 p.2) else 0 := by
-  classical
-  split_ifs with h
-  · obtain ⟨a, ha⟩ := x.toFinset_nonempty
-    have hg : ∀ P ∈ x.repairSet, g P = g a := by
-      rw [repairSet_eq_image]
-      rintro _ ⟨b, hb, rfl⟩
-      funext R
-      rw [show R = (decide R : Prop) from propext (by simp)]
-      exact propext (h b hb a ha _)
-    rw [deploy₂, pkReduce_of_forall x.repairSet_nonempty hg, Part.bind_some,
-      supervaluation_product_of_forall a ha fun b hb ↦ h b hb a ha]
-    exact deploy₁_eq_supervaluation y (g a)
-  · simp only [not_forall] at h
-    obtain ⟨a, ha, b, hb, c, hc⟩ := h
-    have hne : g a ≠ g b := fun e ↦ hc (by rw [e])
-    simp [deploy₂, pkReduce_eq_none (coe_mem_repairSet_iff.2 ha) (coe_mem_repairSet_iff.2 hb) hne,
-      Part.bind_none]
-
 -- Remark 8
 theorem deploy₁_ofProp (f : Prop → Prop) (P : Prop) [Decidable P] [Decidable (f P)] :
     deploy₁ f (ofProp P) = ofProp (f P) := by
@@ -266,19 +215,48 @@ theorem deploy₁_id : deploy₁ id y = y := by
 
 -- Proposition 3
 @[simp] theorem deploy₁_not : deploy₁ Not = Neg.neg := by
-  funext x; rw [deploy₁_eq_supervaluation]; revert x; decide
+  funext y
+  cases y
+  · exact deploy₁_zero_of_ne (by simp)
+  · simp [deploy₁]
+  · simp [deploy₁]
 
 -- Proposition 3
 @[simp] theorem deploy₂_and : deploy₂ And = meetMiddle := by
-  funext x y; rw [deploy₂_eq_supervaluation]; revert x y; decide
+  funext x y
+  cases x
+  · rw [SignType.zero_eq_zero, deploy₂_zero_of_ne _ fun h ↦ by simpa using congrFun h True]
+    cases y <;> rfl
+  · rw [SignType.neg_eq_neg_one, deploy₂_neg_one,
+      show And False = fun _ ↦ False by simp [funext_iff], deploy₁_const]
+    cases y <;> rfl
+  · rw [SignType.pos_eq_one, deploy₂_one, show And True = id by simp [funext_iff], deploy₁_id]
+    cases y <;> rfl
 
 -- Proposition 3
 @[simp] theorem deploy₂_or : deploy₂ Or = joinMiddle := by
-  funext x y; rw [deploy₂_eq_supervaluation]; revert x y; decide
+  funext x y
+  cases x
+  · rw [SignType.zero_eq_zero, deploy₂_zero_of_ne _ fun h ↦ by simpa using congrFun h False]
+    cases y <;> rfl
+  · rw [SignType.neg_eq_neg_one, deploy₂_neg_one, show Or False = id by simp [funext_iff],
+      deploy₁_id]
+    cases y <;> rfl
+  · rw [SignType.pos_eq_one, deploy₂_one, show Or True = fun _ ↦ True by simp [funext_iff],
+      deploy₁_const]
+    cases y <;> rfl
 
 -- Proposition 3
 @[simp] theorem deploy₂_imp : deploy₂ (· → ·) = fun x y ↦ joinMiddle (-x) y := by
-  funext x y; rw [deploy₂_eq_supervaluation]; revert x y; decide
+  funext x y
+  cases x
+  · rw [SignType.zero_eq_zero, deploy₂_zero_of_ne _ fun h ↦ by simpa using congrFun h False]
+    cases y <;> rfl
+  · rw [SignType.neg_eq_neg_one, deploy₂_neg_one, show (False → ·) = fun _ ↦ True by simp,
+      deploy₁_const]
+    cases y <;> rfl
+  · rw [SignType.pos_eq_one, deploy₂_one, show (True → ·) = id by simp [funext_iff], deploy₁_id]
+    cases y <;> rfl
 
 /-- The Middle Kleene connectives are the Peters-Kleene deployments of the classical ones
 (Proposition 3 of [george-2014]). -/
