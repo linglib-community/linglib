@@ -102,70 +102,70 @@ theorem minimals_subset_iff_forall_exists_lt (hp : WellFounded p.lt) :
     exact hlt'.2 (ha.2 hb hlt'.1)
 
 /-- Under a total preorder `a < b` exactly when `b ≤ a` fails. -/
-theorem lt_iff_not_ge (hp : Std.Total p.le) {b : α} : p.lt a b ↔ ¬ p.le b a :=
-  (p.lt_iff_le_not_ge a b).trans (and_iff_right_of_imp fun h ↦ (hp.total a b).resolve_right h)
+theorem lt_iff_not_ge [Std.Total p.le] {b : α} : p.lt a b ↔ ¬ p.le b a :=
+  (p.lt_iff_le_not_ge a b).trans (and_iff_right_of_imp fun h ↦ (total_of p.le a b).resolve_right h)
 
 /-- Under a total preorder the minimal elements of a set are its least elements. -/
-theorem mem_minimals_iff_forall_le (hp : Std.Total p.le) :
+theorem mem_minimals_iff_forall_le [Std.Total p.le] :
     a ∈ p.minimals s ↔ a ∈ s ∧ ∀ b ∈ s, p.le a b :=
   letI := p
-  haveI : Std.Total fun x y : α ↦ y ≤ x := ⟨fun a b ↦ hp.total b a⟩
+  haveI : Std.Total fun x y : α ↦ y ≤ x := ⟨fun a b ↦ total_of p.le b a⟩
   (Std.Total.directedOn s).minimal_iff_isLeast
 
 /-- Under a total antisymmetric preorder a set has at most one minimal element. -/
-theorem minimals_subsingleton (hp : Std.Total p.le) (ha : Std.Antisymm p.le) :
+theorem minimals_subsingleton [Std.Total p.le] [Std.Antisymm p.le] :
     (p.minimals s).Subsingleton := fun _ has _ hbs ↦
-  letI : PartialOrder α := { p with le_antisymm := ha.antisymm }
-  IsLeast.unique ((mem_minimals_iff_forall_le hp).1 has) ((mem_minimals_iff_forall_le hp).1 hbs)
+  letI : PartialOrder α := { p with le_antisymm := fun _ _ ↦ antisymm_of p.le }
+  IsLeast.unique (mem_minimals_iff_forall_le.1 has) (mem_minimals_iff_forall_le.1 hbs)
 
 /-- Under a well-founded total preorder, two sets whose minimal elements each lie in the other
 have the same minimal elements. -/
-theorem minimals_eq_of_subset_of_subset (hwf : WellFounded p.lt) (hp : Std.Total p.le)
+theorem minimals_eq_of_subset_of_subset (hwf : WellFounded p.lt) [Std.Total p.le]
     (hst : p.minimals s ⊆ t) (hts : p.minimals t ⊆ s) : p.minimals s = p.minimals t := by
   have key {s t : Set α} (hst : p.minimals s ⊆ t) (hts : p.minimals t ⊆ s) :
       p.minimals s ⊆ p.minimals t := fun a ha ↦ by
     obtain ⟨b, hb, -⟩ := exists_le_mem_minimals hwf (hst ha)
-    have hab := ((mem_minimals_iff_forall_le hp).1 ha).2 b (hts hb)
-    exact (mem_minimals_iff_forall_le hp).2 ⟨hst ha, fun c hc ↦
-      p.le_trans _ _ _ hab (((mem_minimals_iff_forall_le hp).1 hb).2 c hc)⟩
+    have hab := (mem_minimals_iff_forall_le.1 ha).2 b (hts hb)
+    exact mem_minimals_iff_forall_le.2 ⟨hst ha, fun c hc ↦
+      p.le_trans _ _ _ hab ((mem_minimals_iff_forall_le.1 hb).2 c hc)⟩
   exact subset_antisymm (key hst hts) (key hts hst)
 
 /-- Under a well-founded total preorder the minimal elements of a nonempty `s` lie in `t` exactly
 when some element of `s` in `t` lies strictly below every element of `s` outside `t`. -/
-theorem minimals_subset_iff_exists_forall_lt (hp : WellFounded p.lt) (hc : Std.Total p.le)
+theorem minimals_subset_iff_exists_forall_lt (hp : WellFounded p.lt) [Std.Total p.le]
     (hs : s.Nonempty) : p.minimals s ⊆ t ↔ ∃ a ∈ s ∩ t, ∀ b ∈ s \ t, p.lt a b := by
   refine ⟨fun h ↦ ?_, fun ⟨a, ⟨has, _⟩, hlt⟩ b hb ↦ by_contra fun hbt ↦ ?_⟩
   · obtain ⟨a, ha, -⟩ := exists_le_mem_minimals hp hs.some_mem
-    rw [mem_minimals_iff_forall_le hc] at ha
-    refine ⟨a, ⟨ha.1, h ((mem_minimals_iff_forall_le hc).2 ha)⟩, fun b hb ↦
-      (lt_iff_not_ge hc).2 fun hba ↦ hb.2 (h ?_)⟩
-    exact (mem_minimals_iff_forall_le hc).2 ⟨hb.1, fun c hc' ↦ p.le_trans _ _ _ hba (ha.2 c hc')⟩
+    rw [mem_minimals_iff_forall_le] at ha
+    refine ⟨a, ⟨ha.1, h (mem_minimals_iff_forall_le.2 ha)⟩, fun b hb ↦
+      lt_iff_not_ge.2 fun hba ↦ hb.2 (h ?_)⟩
+    exact mem_minimals_iff_forall_le.2 ⟨hb.1, fun c hc' ↦ p.le_trans _ _ _ hba (ha.2 c hc')⟩
   · have hlt' := (p.lt_iff_le_not_ge _ _).1 (hlt b ⟨hb.1, hbt⟩)
     exact hlt'.2 (hb.2 has hlt'.1)
 
 /-- Under a total preorder an element is minimal in a pair exactly when it is below the other
 element. -/
-theorem mem_minimals_pair (hp : Std.Total p.le) {b : α} : a ∈ p.minimals {a, b} ↔ p.le a b := by
-  rw [mem_minimals_iff_forall_le hp]
+theorem mem_minimals_pair [Std.Total p.le] {b : α} : a ∈ p.minimals {a, b} ↔ p.le a b := by
+  rw [mem_minimals_iff_forall_le]
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, true_and, forall_eq_or_imp,
     forall_eq]
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨p.le_refl a, h⟩⟩
 
 /-- Under a total preorder, when the minimal elements of `s` meet `t`, the minimal elements of
 `s ∩ t` are those of `s` in `t`. -/
-theorem minimals_inter_eq (hp : Std.Total p.le) (h : (p.minimals s ∩ t).Nonempty) :
+theorem minimals_inter_eq [Std.Total p.le] (h : (p.minimals s ∩ t).Nonempty) :
     p.minimals (s ∩ t) = p.minimals s ∩ t := by
   obtain ⟨b, hb, hbt⟩ := h
-  rw [mem_minimals_iff_forall_le hp] at hb
+  rw [mem_minimals_iff_forall_le] at hb
   ext a
-  simp only [Set.mem_inter_iff, mem_minimals_iff_forall_le hp]
+  simp only [Set.mem_inter_iff, mem_minimals_iff_forall_le]
   exact ⟨fun ⟨⟨has, hat⟩, ha⟩ ↦ ⟨⟨has, fun c hc ↦ p.le_trans _ _ _ (ha b ⟨hb.1, hbt⟩) (hb.2 c hc)⟩,
       hat⟩, fun ⟨⟨has, ha⟩, hat⟩ ↦ ⟨⟨has, hat⟩, fun c hc ↦ ha c hc.1⟩⟩
 
 /-- A total preorder is determined by its minimal elements. -/
-theorem eq_of_minimals_eq {q : Preorder α} (hp : Std.Total p.le) (hq : Std.Total q.le)
+theorem eq_of_minimals_eq {q : Preorder α} [Std.Total p.le] [Std.Total q.le]
     (h : p.minimals = q.minimals) : p = q :=
-  Preorder.ext fun a b ↦ by rw [← mem_minimals_pair hp, ← mem_minimals_pair hq, h]
+  Preorder.ext fun a b ↦ by rw [← mem_minimals_pair (p := p), ← mem_minimals_pair (p := q), h]
 
 /-- On a finite type every nonempty set has a minimal element. -/
 theorem minimals_nonempty [Finite α] (p : Preorder α) (hs : s.Nonempty) :
@@ -208,7 +208,7 @@ instance [Preorder β] [DecidableLT β] : DecidableRel (Preorder.lift f).lt :=
   fun a b ↦ inferInstanceAs (Decidable (f a < f b))
 
 /-- The pullback of a linear order is total. -/
-theorem total_lift [LinearOrder β] : Std.Total (Preorder.lift f).le :=
+instance total_lift [LinearOrder β] : Std.Total (Preorder.lift f).le :=
   ⟨fun a b ↦ le_total (f a) (f b)⟩
 
 /-- The pullback of a well-founded order is well-founded. -/
@@ -219,7 +219,7 @@ theorem wellFounded_lt_lift [Preorder β] [WellFoundedLT β] : WellFounded (Preo
 value. -/
 theorem mem_minimals_lift [LinearOrder β] :
     a ∈ (Preorder.lift f).minimals s ↔ a ∈ s ∧ ∀ b ∈ s, f a ≤ f b :=
-  mem_minimals_iff_forall_le (total_lift f)
+  mem_minimals_iff_forall_le
 
 end lift
 

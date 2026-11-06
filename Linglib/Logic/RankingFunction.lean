@@ -295,7 +295,7 @@ instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
 
 /-- The consequence relation of a ranking function is rational. -/
 theorem isRational_entails : Nonmonotonic.IsRational (Entails κ) :=
-  Nonmonotonic.isRational_necessityFilter (Preorder.total_lift κ)
+  Nonmonotonic.isRational_necessityFilter
 
 end Grading
 

@@ -283,17 +283,17 @@ theorem mem_closestImp_union (hp : w ∈ closestImp ord p r) (hq : w ∈ closest
     w ∈ closestImp ord (p ∪ q) r :=
   fun _ hu ↦ (Preorder.minimals_union_subset hu).elim (hp ·) (hq ·)
 
-theorem mem_closestImp_or_of_mem_union (htot : ∀ w, Std.Total (ord w).le)
+theorem mem_closestImp_or_of_mem_union [Std.Total (ord w).le]
     (h : w ∈ closestImp ord (p ∪ q) r) :
     w ∈ closestImp ord p r ∨ w ∈ closestImp ord q r := by
   by_contra hn
   simp only [not_or, mem_closestImp, Set.not_subset] at hn
   obtain ⟨⟨x, hx, hxr⟩, ⟨y, hy, hyr⟩⟩ := hn
-  rw [Preorder.mem_minimals_iff_forall_le (htot _)] at hx hy
-  rcases (htot w).total x y with hxy | hyx
-  · refine hxr (h ((Preorder.mem_minimals_iff_forall_le (htot _)).2 ⟨.inl hx.1, ?_⟩))
+  rw [Preorder.mem_minimals_iff_forall_le] at hx hy
+  rcases total_of (ord w).le x y with hxy | hyx
+  · refine hxr (h (Preorder.mem_minimals_iff_forall_le.2 ⟨.inl hx.1, ?_⟩))
     exact fun u hu ↦ hu.elim (hx.2 u) fun hu ↦ (ord w).le_trans x y u hxy (hy.2 u hu)
-  · refine hyr (h ((Preorder.mem_minimals_iff_forall_le (htot _)).2 ⟨.inr hy.1, ?_⟩))
+  · refine hyr (h (Preorder.mem_minimals_iff_forall_le.2 ⟨.inr hy.1, ?_⟩))
     exact fun u hu ↦ hu.elim (fun hu ↦ (ord w).le_trans y x u hyx (hx.2 u hu)) (hy.2 u)
 
 theorem mem_might_closestImp_iff_of_closest_eq_singleton {v : W} (h : (ord w).minimals p = {v}) :
@@ -342,14 +342,14 @@ theorem mem_variablyStrictImp :
 /-- On a total preorder the variably strict conditional holds when no antecedent-world is
 accessible, or some accessible antecedent-world has only consequent-worlds among the accessible
 antecedent-worlds at least as close ([lewis-1973b] §2.3). -/
-theorem mem_variablyStrictImp_iff_of_total (htot : Std.Total (ord i).le) :
+theorem mem_variablyStrictImp_iff_of_total [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔
       access i ∩ p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord i) (access i ∩ p) q := by
   rw [mem_variablyStrictImp]
   rcases (access i ∩ p).eq_empty_or_nonempty with h | h
   · exact iff_of_true (fun u hu ↦ absurd (h ▸ hu) (Set.notMem_empty u)) (.inl h)
   · rw [or_iff_right h.ne_empty]
-    exact OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility_of_total htot h
+    exact OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility_of_total h
 
 /-- The conditional over the best accessible antecedent-worlds, the minimal worlds of
 `access i ∩ p` under the preorder `ord i`. -/
@@ -403,19 +403,18 @@ theorem variablyStrictImp_subset_closestImp :
 
 /-- On a total ordering satisfying the Limit Assumption for `p`, the two conditionals coincide
 ([lewis-1973b] §1.4). -/
-theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
+theorem closestImp_eq_variablyStrictImp [∀ w, Std.Total (ord w).le]
     (hlim : ∀ w, p.Nonempty → ((ord w).minimals p).Nonempty) :
     closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q := by
   refine subset_antisymm (fun w hw ↦ ?_) variablyStrictImp_subset_closestImp
   rw [mem_variablyStrictImp, Set.univ_inter]
   refine OrderingSemantics.mem_necessityFilter_of_minimals_subset (fun u hu ↦ ?_) hw
   obtain ⟨v, hv⟩ := hlim w ⟨u, hu⟩
-  exact ⟨v, hv, ((Preorder.mem_minimals_iff_forall_le (htot w)).1 hv).2 u hu⟩
+  exact ⟨v, hv, (Preorder.mem_minimals_iff_forall_le.1 hv).2 u hu⟩
 
-theorem closestImp_eq_variablyStrictImp_of_finite (htot : ∀ w, Std.Total (ord w).le)
-    (hp : p.Finite) :
+theorem closestImp_eq_variablyStrictImp_of_finite [∀ w, Std.Total (ord w).le] (hp : p.Finite) :
     closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q :=
-  closestImp_eq_variablyStrictImp htot fun w ↦ (ord w).minimals_nonempty_of_finite hp
+  closestImp_eq_variablyStrictImp fun w ↦ (ord w).minimals_nonempty_of_finite hp
 
 /-- Where an antecedent has no closest worlds, as for [lewis-1973b]'s line more than an inch long,
 *if p, it would not be v* is true for every world `v`, since every antecedent-world has a
@@ -464,12 +463,12 @@ theorem isPreferential_variablyStrictImp {ord : I → Preorder W} :
     rw [mem_variablyStrictImp, ← Set.inter_assoc, OrderingSemantics.necessityFilter_inter_of_mem h]
     exact h'
 
-theorem isRational_variablyStrictImp {ord : I → Preorder W} (htot : Std.Total (ord i).le) :
+theorem isRational_variablyStrictImp {ord : I → Preorder W} [Std.Total (ord i).le] :
     Nonmonotonic.IsRational fun p q ↦ i ∈ variablyStrictImp access ord p q where
   toIsPreferential := isPreferential_variablyStrictImp
   rationalMonotonicity h h' := by
     rw [mem_variablyStrictImp, ← Set.inter_assoc,
-      OrderingSemantics.necessityFilter_inter_of_frequently htot h']
+      OrderingSemantics.necessityFilter_inter_of_frequently h']
     exact Filter.mem_inf_of_left h
 
 variable {ord : W → Preorder W}
@@ -480,9 +479,9 @@ theorem isPreferential_closestImp (hwf : WellFounded (ord w).lt) :
   Nonmonotonic.isPreferential_minimals hwf
 
 /-- On a well-founded total preorder the conditional of the closest worlds is rational. -/
-theorem isRational_closestImp (hwf : WellFounded (ord w).lt) (htot : Std.Total (ord w).le) :
+theorem isRational_closestImp (hwf : WellFounded (ord w).lt) [Std.Total (ord w).le] :
     Nonmonotonic.IsRational fun p q ↦ w ∈ closestImp ord p q :=
-  Nonmonotonic.isRational_minimals hwf htot
+  Nonmonotonic.isRational_minimals hwf
 
 theorem exists_not_isRational_closestImp :
     ∃ ord : Fin 3 → Preorder (Fin 3),

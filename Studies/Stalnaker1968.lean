@@ -71,24 +71,26 @@ structure IsSelectionFunction (R : W → Set W) (D : W → Set W → Set W) : Pr
 /-- Under Stalnaker's assumption, a centered similarity ordering that is linear and well-founded,
 the closest accessible antecedent-world is a selection function. -/
 theorem isSelectionFunction_minimals {ord : W → Preorder W} (hR : ∀ w, w ∈ R w)
-    (hc : IsCentered ord) (htot : ∀ w, Std.Total (ord w).le)
-    (hanti : ∀ w, Std.Antisymm (ord w).le) (hwf : ∀ w, WellFounded (ord w).lt) :
+    (hc : IsCentered ord) [∀ w, Std.Total (ord w).le] [∀ w, Std.Antisymm (ord w).le]
+    (hwf : ∀ w, WellFounded (ord w).lt) :
     IsSelectionFunction R fun w A ↦ (ord w).minimals (R w ∩ A) where
   refl := hR
-  subsingleton w _ := Preorder.minimals_subsingleton (htot w) (hanti w)
+  subsingleton _ _ := Preorder.minimals_subsingleton
   subset w _ := ((ord w).minimals_subset _).trans Set.inter_subset_right
   absurdity w _ h := Set.not_nonempty_iff_eq_empty.1 fun hA ↦
     ((Preorder.minimals_nonempty_iff (hwf w)).2 hA).ne_empty h
   centering w _ h := hc.minimals_eq_singleton ⟨hR w, h⟩
-  cso w _ _ h₁ h₂ := Preorder.minimals_eq_of_subset_of_subset (hwf w) (htot w)
+  cso w _ _ h₁ h₂ := Preorder.minimals_eq_of_subset_of_subset (hwf w)
     (Set.subset_inter (((ord w).minimals_subset _).trans Set.inter_subset_left) h₂)
     (Set.subset_inter (((ord w).minimals_subset _).trans Set.inter_subset_left) h₁)
 
 theorem isSelectionFunction_domain {s : SelectionFunction W} (hs : s.IsCSO) :
     IsSelectionFunction (fun _ ↦ Set.univ) s.domain := by
+  have (w : W) : Std.Total (hs.linearOrder w).toPreorder.le := ⟨@le_total W (hs.linearOrder w)⟩
+  have (w : W) : Std.Antisymm (hs.linearOrder w).toPreorder.le :=
+    ⟨@le_antisymm W (hs.linearOrder w).toPartialOrder⟩
   have h := isSelectionFunction_minimals (R := fun _ ↦ Set.univ) (fun _ ↦ trivial) hs.isCentered
-    (fun w ↦ ⟨@le_total W (hs.linearOrder w)⟩)
-    (fun w ↦ ⟨@le_antisymm W (hs.linearOrder w).toPartialOrder⟩) hs.wellFounded
+    hs.wellFounded
   have hD : (fun w A ↦ (hs.linearOrder w).toPreorder.minimals (Set.univ ∩ A)) = s.domain := by
     funext w A
     rw [Set.univ_inter, hs.minimals_eq_domain]
@@ -334,10 +336,10 @@ theorem cyclicSelection_subset_iff {w : Fin 3} {A B : Set (Fin 3)} :
 
 theorem isSelectionFunction_cyclicSelection :
     IsSelectionFunction (fun _ ↦ Set.univ) cyclicSelection :=
+  have (w : Fin 3) : Std.Antisymm (Preorder.lift (· - w)).le :=
+    ⟨(by decide : ∀ w a b : Fin 3, a - w ≤ b - w → b - w ≤ a - w → a = b) w⟩
   isSelectionFunction_minimals (fun _ ↦ trivial)
     (fun w w' ↦ (by decide : ∀ w w' : Fin 3, w ≠ w' → w - w < w' - w) w w')
-    (fun _ ↦ Preorder.total_lift _)
-    (fun w ↦ ⟨(by decide : ∀ w a b : Fin 3, a - w ≤ b - w → b - w ≤ a - w → a = b) w⟩)
     fun _ ↦ Preorder.wellFounded_lt_lift _
 
 theorem not_valid_of_cyclicSelection {β : Type} {A : Formula β} (V : β → Set (Fin 3))

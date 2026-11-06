@@ -161,38 +161,38 @@ theorem isGoodPossibility_of_mem_necessityFilter (h : t ∈ necessityFilter p s)
   let ⟨v, hv, _, hvt⟩ := h _ hu
   ⟨v, hv, hvt⟩
 
-theorem IsGoodPossibility.mem_necessityFilter_of_total (htot : Std.Total p.le)
+theorem IsGoodPossibility.mem_necessityFilter_of_total [Std.Total p.le]
     (h : IsGoodPossibility p s t) : t ∈ necessityFilter p s := by
   obtain ⟨v, hv, hvt⟩ := h
   intro u hu
-  rcases htot.total v u with hvu | huv
+  rcases total_of p.le v u with hvu | huv
   · exact ⟨v, hv, hvu, hvt⟩
   · exact ⟨u, hu, p.le_refl u, fun w hw hwu ↦ hvt w hw (p.le_trans _ _ _ hwu huv)⟩
 
-theorem mem_necessityFilter_iff_isGoodPossibility_of_total (htot : Std.Total p.le)
+theorem mem_necessityFilter_iff_isGoodPossibility_of_total [Std.Total p.le]
     (hs : s.Nonempty) : t ∈ necessityFilter p s ↔ IsGoodPossibility p s t :=
   ⟨fun h ↦ isGoodPossibility_of_mem_necessityFilter h hs,
-    fun h ↦ h.mem_necessityFilter_of_total htot⟩
+    fun h ↦ h.mem_necessityFilter_of_total⟩
 
 /-- On a total preorder `t` is a good possibility over `s` exactly when the `t`-worlds of `s` are
 more possible than its other worlds, in Lewis's sense of comparative possibility. -/
-theorem isGoodPossibility_iff_asymmRel_lewis (htot : Std.Total p.le) :
+theorem isGoodPossibility_iff_asymmRel_lewis [Std.Total p.le] :
     IsGoodPossibility p s t ↔ AsymmRel (ComparativePossibility.Lewis p.le) (s ∩ t) (s \ t) := by
-  rw [@ComparativePossibility.asymmRel_lewis_iff _ _ _ _ htot]
+  rw [ComparativePossibility.asymmRel_lewis_iff]
   refine ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨v, ⟨hv, hvt v hv (p.le_refl v)⟩, fun b hb ↦ ?_⟩,
     fun ⟨a, ha, h⟩ ↦ ⟨a, ha.1, fun w hw hwa ↦ by_contra fun hwt ↦ (h w ⟨hw, hwt⟩).2 hwa⟩⟩
   have hbv : ¬ p.le b v := fun hbv ↦ hb.2 (hvt b hb.1 hbv)
-  exact ⟨(htot.total v b).resolve_right hbv, hbv⟩
+  exact ⟨(total_of p.le v b).resolve_right hbv, hbv⟩
 
 /-- On a total preorder `t` is necessary over `s` exactly when `s` is empty or the `t`-worlds of
 `s` are more possible than its other worlds. -/
-theorem mem_necessityFilter_iff_asymmRel_lewis (htot : Std.Total p.le) :
+theorem mem_necessityFilter_iff_asymmRel_lewis [Std.Total p.le] :
     t ∈ necessityFilter p s ↔
       s = ∅ ∨ AsymmRel (ComparativePossibility.Lewis p.le) (s ∩ t) (s \ t) := by
   rcases s.eq_empty_or_nonempty with rfl | hs
   · exact iff_of_true (fun _ hu ↦ hu.elim) (.inl rfl)
-  · rw [mem_necessityFilter_iff_isGoodPossibility_of_total htot hs,
-      isGoodPossibility_iff_asymmRel_lewis htot, or_iff_right hs.ne_empty]
+  · rw [mem_necessityFilter_iff_isGoodPossibility_of_total hs,
+      isGoodPossibility_iff_asymmRel_lewis, or_iff_right hs.ne_empty]
 
 /-! ### A closest world
 
@@ -272,7 +272,7 @@ theorem necessityFilter_inter_of_mem (ht : t ∈ necessityFilter p s) :
 
 /-- On a total preorder, restricting a domain to a proposition possible over it restricts its
 filter to that proposition: rational monotonicity. -/
-theorem necessityFilter_inter_of_frequently (htot : Std.Total p.le)
+theorem necessityFilter_inter_of_frequently [Std.Total p.le]
     (ht : ∃ᶠ x in necessityFilter p s, x ∈ t) :
     necessityFilter p (s ∩ t) = necessityFilter p s ⊓ 𝓟 t := by
   refine le_antisymm (fun a ha ↦ ?_) necessityFilter_inf_principal_le
@@ -287,7 +287,7 @@ theorem necessityFilter_inter_of_frequently (htot : Std.Total p.le)
   obtain ⟨y, hy, hyu, hyx₀, hyb⟩ : ∃ y ∈ s, p.le y u ∧ p.le y x₀ ∧
       ∀ w ∈ s, p.le w y → w ∈ {x | x ∈ t → x ∈ a} := by
     obtain ⟨y₁, hy₁, hy₁u, hy₁b⟩ := hb u hu.1
-    rcases htot.total y₁ x₀ with h | h
+    rcases total_of p.le y₁ x₀ with h | h
     · exact ⟨y₁, hy₁, hy₁u, h, hy₁b⟩
     · obtain ⟨y₂, hy₂, hy₂x₀, hy₂b⟩ := hb x₀ hx₀
       exact ⟨y₂, hy₂, p.le_trans _ _ _ hy₂x₀ (p.le_trans _ _ _ h hy₁u), hy₂x₀, hy₂b⟩

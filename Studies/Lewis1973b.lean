@@ -80,10 +80,10 @@ theorem self_mem_spheres {r : Preorder W} : A ∈ spheres A r :=
 theorem sUnion_spheres {r : Preorder W} : ⋃₀ spheres A r = A :=
   (sUnion_subset fun _ hS ↦ hS.1).antisymm (subset_sUnion_of_mem self_mem_spheres)
 
-theorem setOf_le_mem_spheres {r : Preorder W} (htot : Std.Total r.le) (j : W) :
+theorem setOf_le_mem_spheres {r : Preorder W} [Std.Total r.le] (j : W) :
     {x ∈ A | r.le x j} ∈ spheres A r :=
   ⟨fun _ hx ↦ hx.1, fun _ hx _ hk hkS ↦
-    (Preorder.lt_iff_not_ge htot).2 fun hkx ↦ hkS ⟨hk, r.le_trans _ _ _ hkx hx.2⟩⟩
+    Preorder.lt_iff_not_ge.2 fun hkx ↦ hkS ⟨hk, r.le_trans _ _ _ hkx hx.2⟩⟩
 
 -- (C), §1.3
 theorem singleton_mem_spheres {access : W → Set W} {ord : W → Preorder W} {w : W}
@@ -150,15 +150,15 @@ theorem isSystemOfSpheres_iff :
     fun ⟨_, _, _, h⟩ ↦ h ▸ isSystemOfSpheres_spheres⟩
 
 -- §2.3: on the accessible worlds the correspondence is one-to-one
-theorem similarity_spheres_le_iff {r : Preorder W} (htot : Std.Total r.le) (hj : j ∈ A)
-    (hk : k ∈ A) : (similarity (spheres A r)).le j k ↔ r.le j k :=
-  ⟨fun h ↦ (h _ (setOf_le_mem_spheres htot k) ⟨hk, r.le_refl k⟩).2,
+theorem similarity_spheres_le_iff {r : Preorder W} [Std.Total r.le] (hj : j ∈ A) (hk : k ∈ A) :
+    (similarity (spheres A r)).le j k ↔ r.le j k :=
+  ⟨fun h ↦ (h _ (setOf_le_mem_spheres k) ⟨hk, r.le_refl k⟩).2,
     fun h _ hS hkS ↦ mem_of_mem_spheres hS hkS hj h⟩
 
 /-! ### Truth conditions by spheres -/
 
 -- §1.3
-theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
+theorem mem_variablyStrictImp_iff_spheres [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔ (∀ S ∈ spheres (access i) (ord i), Disjoint S p) ∨
       ∃ S ∈ spheres (access i) (ord i), (S ∩ p).Nonempty ∧ S ∩ p ⊆ q := by
   constructor
@@ -167,7 +167,7 @@ theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
     · exact .inl fun S hS ↦ disjoint_iff_inter_eq_empty.2
         (subset_empty_iff.1 (he ▸ inter_subset_inter_left p hS.1))
     obtain ⟨b, hb, -, hbq⟩ := h u hu
-    exact .inr ⟨_, setOf_le_mem_spheres htot b, ⟨b, ⟨hb.1, (ord i).le_refl b⟩, hb.2⟩,
+    exact .inr ⟨_, setOf_le_mem_spheres b, ⟨b, ⟨hb.1, (ord i).le_refl b⟩, hb.2⟩,
       fun x hx ↦ hbq x ⟨hx.1.1, hx.2⟩ hx.1.2⟩
   · rintro (h | ⟨S, hS, ⟨x, hxS, hxp⟩, hSq⟩) u hu
     · exact absurd hu.2 (disjoint_left.1 (h _ self_mem_spheres) hu.1)
@@ -179,40 +179,40 @@ theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
 
 -- §1.5
 theorem mem_might_iff_spheres {access : W → Set W} {ord : W → Preorder W} {w : W}
-    (htot : Std.Total (ord w).le) :
+    [Std.Total (ord w).le] :
     w ∈ might (variablyStrictImp access ord) p q ↔
       (∃ S ∈ spheres (access w) (ord w), (S ∩ p).Nonempty) ∧
         ∀ S ∈ spheres (access w) (ord w), (S ∩ p).Nonempty → (S ∩ (p ∩ q)).Nonempty := by
-  simp only [mem_might, mem_variablyStrictImp_iff_spheres htot, not_or, not_forall, not_exists,
+  simp only [mem_might, mem_variablyStrictImp_iff_spheres, not_or, not_forall, not_exists,
     not_and, exists_prop, not_disjoint_iff_nonempty_inter, subset_compl_iff_disjoint_right,
     ← inter_assoc]
 
 /-! ### Comparative possibility (§2.5) -/
 
 -- p. 53
-theorem forall_spheres_iff_lewis {r : Preorder W} (htot : Std.Total r.le) :
+theorem forall_spheres_iff_lewis {r : Preorder W} [Std.Total r.le] :
     (∀ S ∈ spheres A r, (S ∩ q).Nonempty → (S ∩ p).Nonempty) ↔
       ComparativePossibility.Lewis r.le (A ∩ p) (A ∩ q) := by
   refine ⟨fun h b hb ↦ ?_, fun h S hS ⟨b, hbS, hbq⟩ ↦ ?_⟩
-  · obtain ⟨a, ⟨ha, hab⟩, hap⟩ := h _ (setOf_le_mem_spheres htot b)
+  · obtain ⟨a, ⟨ha, hab⟩, hap⟩ := h _ (setOf_le_mem_spheres b)
       ⟨b, ⟨hb.1, r.le_refl b⟩, hb.2⟩
     exact ⟨a, ⟨ha, hap⟩, hab⟩
   · obtain ⟨a, ⟨ha, hap⟩, hab⟩ := h ⟨hS.1 hbS, hbq⟩
     exact ⟨a, mem_of_mem_spheres hS hbS ha hab, hap⟩
 
 -- p. 53: the counterfactual defined from comparative possibility
-theorem mem_variablyStrictImp_iff_asymmRel_lewis (htot : Std.Total (ord i).le) :
+theorem mem_variablyStrictImp_iff_asymmRel_lewis [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔ access i ∩ p = ∅ ∨
       AsymmRel (ComparativePossibility.Lewis (ord i).le) (access i ∩ p ∩ q) ((access i ∩ p) \ q) :=
-  mem_necessityFilter_iff_asymmRel_lewis htot
+  mem_necessityFilter_iff_asymmRel_lewis
 
 -- p. 54: `φ ≼ ψ` is `(φ ∨ ψ) ◇⇒ φ`, the *might* counterfactual unless its antecedent is
 -- impossible (§1.6)
 theorem lewis_iff_might {access : W → Set W} {ord : W → Preorder W} {w : W}
-    (htot : Std.Total (ord w).le) :
+    [Std.Total (ord w).le] :
     ComparativePossibility.Lewis (ord w).le (access w ∩ p) (access w ∩ q) ↔
       ((access w ∩ (p ∪ q)).Nonempty → w ∈ might (variablyStrictImp access ord) (p ∪ q) p) := by
-  rw [← forall_spheres_iff_lewis htot, mem_might_iff_spheres htot, union_inter_cancel_left]
+  rw [← forall_spheres_iff_lewis, mem_might_iff_spheres, union_inter_cancel_left]
   refine ⟨fun h hne ↦ ⟨⟨_, self_mem_spheres, hne⟩, fun S hS ⟨x, hxS, hx⟩ ↦
       hx.elim (fun hxp ↦ ⟨x, hxS, hxp⟩) fun hxq ↦ h S hS ⟨x, hxS, hxq⟩⟩,
     fun h S hS ⟨x, hxS, hxq⟩ ↦ (h ⟨x, hS.1 hxS, .inr hxq⟩).2 S hS ⟨x, hxS, .inr hxq⟩⟩
@@ -267,7 +267,7 @@ over an inch close enough to an inch: the necessities over the antecedent are th
 of an inch on the right (§1.4). -/
 theorem necessityFilter_line (ha : a ≤ 1) : necessityFilter (lineSim a) (Ioi 1) = 𝓝[>] 1 := by
   ext t
-  rw [mem_necessityFilter_iff_isGoodPossibility_of_total (Preorder.total_lift _) nonempty_Ioi,
+  rw [mem_necessityFilter_iff_isGoodPossibility_of_total nonempty_Ioi,
     mem_nhdsGT_iff_exists_Ioc_subset]
   exact exists_congr fun v ↦ and_congr_right fun hv ↦
     ⟨fun h x hx ↦ h x hx.1 ((lineSim_le_iff ha hx.1 hv).2 hx.2),
@@ -327,12 +327,12 @@ theorem StalnakerAssumption.limit (h : StalnakerAssumption access ord i) (B : Se
 
 /-- Stalnaker's Assumption holds exactly when similarity well-orders the accessible worlds: it is
 linear on them, and every nonempty set of them has a closest member (§3.4). -/
-theorem stalnakerAssumption_iff (htot : Std.Total (ord i).le) :
+theorem stalnakerAssumption_iff [Std.Total (ord i).le] :
     StalnakerAssumption access ord i ↔
       (∀ j ∈ access i, ∀ k ∈ access i, (ord i).le j k → (ord i).le k j → j = k) ∧
         ∀ B ⊆ access i, B.Nonempty → ∃ b ∈ B, ∀ x ∈ B, (ord i).le b x := by
   have hmin (s : Set W) (a : W) : a ∈ (ord i).minimals s ↔ a ∈ s ∧ ∀ b ∈ s, (ord i).le a b :=
-    Preorder.mem_minimals_iff_forall_le htot
+    Preorder.mem_minimals_iff_forall_le
   refine ⟨fun h ↦ ⟨fun j hj k hk hjk hkj ↦ ?_, fun B hB hne ↦ ?_⟩, fun ⟨hanti, hleast⟩ p hp ↦ ?_⟩
   · -- two tied accessible worlds are both closest among themselves
     obtain ⟨v, hv⟩ := h {j, k} ⟨j, hj, .inl rfl⟩
@@ -352,7 +352,7 @@ theorem stalnakerAssumption_iff (htot : Std.Total (ord i).le) :
 
 -- p. 78
 theorem isSelectionFunction_of_stalnakerAssumption {access : W → Set W} {ord : W → Preorder W}
-    (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) (htot : ∀ w, Std.Total (ord w).le)
+    (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) [∀ w, Std.Total (ord w).le]
     (hS : ∀ w, StalnakerAssumption access ord w) :
     Stalnaker1968.IsSelectionFunction access fun w A ↦ (ord w).minimals (access w ∩ A) where
   refl := hR
@@ -373,9 +373,9 @@ theorem isSelectionFunction_of_stalnakerAssumption {access : W → Set W} {ord :
       have haB : a ∈ access w ∩ B := ⟨ha.1.1, h₂ ha⟩
       obtain ⟨b, hb⟩ := hS w B ⟨a, haB⟩
       have hbm : b ∈ (ord w).minimals (access w ∩ B) := hb ▸ rfl
-      have hab := ((Preorder.mem_minimals_iff_forall_le (htot w)).1 ha).2 b ⟨hbm.1.1, h₁ hbm⟩
-      exact (Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨haB, fun x hx ↦
-        (ord w).le_trans _ _ _ hab (((Preorder.mem_minimals_iff_forall_le (htot w)).1 hbm).2 x hx)⟩
+      have hab := (Preorder.mem_minimals_iff_forall_le.1 ha).2 b ⟨hbm.1.1, h₁ hbm⟩
+      exact Preorder.mem_minimals_iff_forall_le.2 ⟨haB, fun x hx ↦
+        (ord w).le_trans _ _ _ hab ((Preorder.mem_minimals_iff_forall_le.1 hbm).2 x hx)⟩
     exact (key h₁ h₂).antisymm (key h₂ h₁)
 
 -- §3.4: if Bizet and Verdi were compatriots
@@ -502,12 +502,12 @@ inductive Provable (L : VLogic) : Formula α → Prop
 /-- A formula is valid in a V-logic when it holds at every world of every interpretation over a
 total preorder satisfying the logic's conditions. -/
 def Valid (L : VLogic) (A : Formula α) : Prop :=
-  ∀ {W : Type u} {access : W → Set W} {ord : W → Preorder W}, (∀ w, Std.Total (ord w).le) →
+  ∀ {W : Type u} {access : W → Set W} {ord : W → Preorder W} [∀ w, Std.Total (ord w).le],
     L.Holds access ord → ∀ V : α → Set W, eval access ord V A = Set.univ
 
 /-- Lewis's axiomatizations of the V-logics with the counterfactual primitive are sound (§6.1). -/
 theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
-  intro W access ord htot hL V
+  intro W access ord _ hL V
   refine Set.eq_univ_of_forall fun w ↦ ?_
   induction h generalizing w with
   | taut h => exact h (fun B ↦ w ∈ eval access ord V B) (fun _ ↦ Iff.rfl) fun _ _ ↦ Iff.rfl
@@ -528,7 +528,7 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     intro hfr
     have e : necessityFilter (ord w) (access w ∩ eval access ord V φ ∩ eval access ord V ψ) =
         necessityFilter (ord w) (access w ∩ eval access ord V φ) ⊓ 𝓟 (eval access ord V ψ) :=
-      necessityFilter_inter_of_frequently (htot w) hfr
+      necessityFilter_inter_of_frequently hfr
     rw [mem_eval_iff, mem_eval_corner, mem_eval_corner, eval_and, ← Set.inter_assoc, e,
       mem_inf_principal]
     rfl
@@ -556,7 +556,7 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
       have hmin : v ∈ (ord w).minimals (access w ∩ eval access ord V φ) := by
         rw [hv]; exact Set.mem_singleton v
       rw [necessityFilter_eq_principal fun u hu ↦
-        ⟨v, hmin, ((Preorder.mem_minimals_iff_forall_le (htot w)).1 hmin).2 u hu⟩, hv,
+        ⟨v, hmin, (Preorder.mem_minimals_iff_forall_le.1 hmin).2 u hu⟩, hv,
         mem_principal, mem_principal, Set.singleton_subset_iff, Set.singleton_subset_iff]
       exact id
   | mp _ _ ihab iha => exact ihab w (iha w)
@@ -591,9 +591,9 @@ theorem eval_eq_formula_eval
 
 -- Every theorem of Stalnaker's C2 is valid under centering and Stalnaker's Assumption.
 theorem valid_vcs_of_c2 {A : Formula α} (h : Stalnaker1968.Provable A) : Valid.{u} .VCS A := by
-  intro W access ord htot ⟨⟨hR, hc⟩, hS⟩ V
+  intro W access ord _ ⟨⟨hR, hc⟩, hS⟩ V
   rw [eval_eq_formula_eval fun w ↦ (hS w).limit]
-  exact h.sound (isSelectionFunction_of_stalnakerAssumption hR hc htot hS) V
+  exact h.sound (isSelectionFunction_of_stalnakerAssumption hR hc hS) V
 
 /-- Comparative similarity from `w` under which every other world is equally far. -/
 abbrev tieSim (w : Fin 3) : Preorder (Fin 3) := Preorder.lift fun v ↦ if v = w then (0 : ℕ) else 1
@@ -606,7 +606,7 @@ theorem not_provable_vc_cem :
     show (if w = w then (0 : ℕ) else 1) < if w' = w then 0 else 1
     simp [Ne.symm hne]
   have hL : VLogic.Holds (fun _ : Fin 3 ↦ Set.univ) tieSim .VC := ⟨fun _ ↦ trivial, hc⟩
-  have h0 := h.sound (fun _ ↦ Preorder.total_lift _) hL ![{1, 2}, {1}]
+  have h0 := h.sound hL ![{1, 2}, {1}]
   have hmem : ∀ v : Fin 3, v ∈ (tieSim 0).minimals (Set.univ ∩ {1, 2}) ↔ v = 1 ∨ v = 2 := by
     simp only [Preorder.mem_minimals_lift, Set.univ_inter, Set.mem_insert_iff,
       Set.mem_singleton_iff]
