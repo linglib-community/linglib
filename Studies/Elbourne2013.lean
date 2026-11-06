@@ -119,14 +119,14 @@ variable {S E : Type*}
 
 /-- The definite article, (3) of ch. 3, is `λf.λs : ∃!x f(x)(s). ιx f(x)(s)`, a partial function
 from situations to the unique satisfier of the property in the situation. -/
-noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota (f · s)
+noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota {x | f x s}
 
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
-  iota_isSome_iff _
+  iota_isSome_iff
 
 theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
     the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- A pronoun, (4b) of ch. 10, has the article's entry, its noun phrase supplied by
 NP-deletion. -/
@@ -451,7 +451,7 @@ standing in the covert relation to the individual variable `v`, which a higher q
 bind. -/
 noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop) (v : E)
     (s : S) : Option E :=
-  iota fun x ↦ np x s ∧ rel x v s
+  iota {x | np x s ∧ rel x v s}
 
 -- (17b), (17a)
 theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop)
@@ -459,7 +459,7 @@ theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (n
     relDescription rel np v s = some x ↔
       (np x s ∧ rel x v s) ∧ ∀ y, np y s → rel y v s → y = x := by
   rw [relDescription, iota_eq_some_iff]
-  simp only [and_imp]
+  simp only [Set.mem_ofPred_eq, and_imp]
 
 variable [DecidableEq E]
 

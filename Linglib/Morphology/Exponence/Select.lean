@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Data.List.Find
 public import Linglib.Core.Data.List.MinMax
 public import Linglib.Morphology.Exponence.Elsewhere
-public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Core.Order.OrdConnected
 
 /-!
 # Elsewhere selection

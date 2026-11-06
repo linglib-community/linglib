@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
+public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
 public import Mathlib.Logic.Relation
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Fragments.Latin.Adjectives
@@ -24,10 +26,11 @@ homophony that Antihomophony (44) excludes; AAB needs a
 superlative-conditioned allomorph with no comparative counterpart, either a
 root allomorph conditioned across the comparative (190), which meets the
 markedness condition (202) and which adjacency excludes, or a portmanteau
-with no context-free counterpart (201), which (202) excludes; and a root sees
-CMPR only when Merger has made the comparative synthetic (90), which is the
-RSG, with the SSG as Merger's downward closure. The same locality condition
-limits CSG1 to periphrastic superlatives that embed the comparative (§3.3.3),
+with no context-free counterpart (201), which (202) excludes; and by locality
+(90) [a root sees CMPR only when Merger has brought it into the root's
+word](##mayCondition_spine_iff), which is the RSG, with the SSG as Merger's
+downward closure. The same locality condition limits CSG1 to periphrastic
+superlatives that embed the comparative (§3.3.3),
 so Russian *plox-oj – xuž-e – samyj plox-oj*, whose superlative embeds the
 positive, is ABA without any homophony.
 
@@ -83,7 +86,10 @@ the Greek (93), with the comparative root *xud-* that §6.4.4 identifies in
 
 namespace Bobaljik2012
 
-open Morphology Morphology.Containment
+open Morphology
+open Morphology.SpanRule (realize Terminal Adjacent Markedness Grounded isContiguous_realize
+  exists_portmanteau_of_ne realize_const_of_markedness)
+open Morphology.SupersetRule (spellout)
 open English.Adjectives
 
 /-! ### Merger -/
@@ -196,30 +202,153 @@ theorem Synthesis.syntheticAt_of_le {s : Synthesis n} {g g' : Fin n}
     (h : s.SyntheticAt g) (h' : g' ≤ g) : s.SyntheticAt g' :=
   le_trans h' h
 
+/-! ### Locality (90)
+
+Heads are numbered from the root, `0`, and a head's category is its number. -/
+
+section Locality
+
+open PhraseStructure PhraseStructure.Tree DistributedMorphology
+open Core.Order (TreePath)
+
+/-- The word that Merger builds by adjoining heads `1, …, m` in turn to the root, as in (37). -/
+def word : ℕ → Tree ℕ Unit
+  | 0 => .terminal 0 ()
+  | m + 1 => .adjoin (m + 1) [word m, .terminal (m + 1) ()]
+
+theorem isHead_word : ∀ m, (word m).IsHead
+  | 0 => by decide
+  | m + 1 => by
+    have h := isHead_word m
+    unfold Tree.IsHead at h ⊢
+    exact RoseTree.licensed_node_iff.mpr ⟨trivial, by
+      simp [h, RoseTree.licensed_node_iff, Tree.Label.LicensesHead]⟩
+
+/-- The structure of a grade whose word reaches head `m`, with `j` heads above it: the word
+projects a phrase, and each head above takes the phrase below as its complement, as in (91),
+(109) and (112). -/
+def spine (m : ℕ) : ℕ → Tree ℕ Unit
+  | 0 => .node m [word m]
+  | j + 1 => .node (m + j + 1) [.terminal (m + j + 1) (), spine m j]
+
+/-- The position of the root in `spine m j`. -/
+def rootPos (m j : ℕ) : TreePath := ⟨List.replicate j 1 ++ List.replicate (m + 1) 0⟩
+
+/-- The position of head `k`, for `0 < k`, in `spine m j`. -/
+def headPos (m j k : ℕ) : TreePath :=
+  if k ≤ m then ⟨List.replicate j 1 ++ List.replicate (m - k + 1) 0 ++ [1]⟩
+  else ⟨List.replicate (m + j - k) 1 ++ [0]⟩
+
+theorem cat_spine (m : ℕ) : ∀ j, (spine m j).cat = m + j
+  | 0 => rfl
+  | _ + 1 => rfl
+
+theorem getElem?_spine {m j i : ℕ} (h : i ≤ j) :
+    (spine m j)[List.replicate i 1]? = some (spine m (j - i)) := by
+  induction i generalizing j with
+  | zero => simp
+  | succ i ih =>
+    obtain ⟨j, rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
+    rw [List.replicate_succ, RoseTree.getElem?_cons]
+    simpa [spine] using ih (j := j) (by omega)
+
+theorem not_isHead_spine (m j : ℕ) : ¬ (spine m j).IsHead := by
+  cases j <;> exact not_isHead_node _ _
+
+theorem isHeadAt_spine_word (m j : ℕ) :
+    IsHeadAt (spine m j) ⟨List.replicate j 1 ++ [0]⟩ := fun s hs ↦ by
+  rw [RoseTree.getElem?_treePath, RoseTree.getElem?_append, getElem?_spine le_rfl,
+    Nat.sub_self] at hs
+  cases hs
+  exact isHead_word m
+
+/-- **The root may be conditioned by exactly the heads of its word (90).** In the structure of a
+grade, a head may condition the root under Bobaljik's formulation exactly when Merger has brought
+it into the root's word. -/
+theorem mayCondition_spine_iff {m j k : ℕ} (hk : 0 < k) (hkj : k ≤ m + j) :
+    MayCondition (spine m j) (rootPos m j) (headPos m j k) ↔ k ≤ m := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · by_contra hkm
+    obtain ⟨l, i, rfl, rfl⟩ : ∃ l i, j = l + (i + 1) ∧ k = m + i + 1 :=
+      ⟨m + j - k, k - m - 1, by omega, by omega⟩
+    have hl : m + (l + (i + 1)) - (m + i + 1) = l := by omega
+    have hmother : (spine m (l + (i + 1)))[List.replicate l 1]? =
+        some (Tree.node (m + i + 1) [Tree.terminal (m + i + 1) (), spine m i] : Tree ℕ Unit) := by
+      rw [getElem?_spine (by omega), show l + (i + 1) - l = i + 1 by omega]
+      rfl
+    have hp := mayCondition_iff.mp h ⟨List.replicate l 1 ++ [1]⟩ ?_ ?_
+    · refine hp.elim (fun hh ↦ ?_) fun hmax ↦ hmax ?_
+      · refine not_isHead_spine m i (hh _ ?_)
+        rw [RoseTree.getElem?_treePath, RoseTree.getElem?_append, hmother]
+        rfl
+      · refine isMaximalCategory_append_singleton _ _ (m := ⟨_⟩) ?_ ?_
+        · simp [IsSegmentAt, RoseTree.mem_positionsWhere, hmother, Tree.Label.IsSegment]
+        · simp [Tree.headIndexAt, hmother, headIndex?, List.zipIdx, cat_spine]
+    · rw [TreePath.le_def, rootPos, List.replicate_add, List.replicate_succ, List.append_assoc]
+      exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
+    · simp only [TreePath.le_def, headPos, hkm, ↓reduceIte, hl]
+      intro hpre
+      simpa using hpre.eq_of_length (by simp)
+  · simp only [headPos, h, ↓reduceIte]
+    refine (mayCondition'_of_isHeadAt (isHeadAt_spine_word m j) ?_ ?_).mayCondition
+    · rw [TreePath.le_def, rootPos, List.replicate_succ]
+      exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
+    · rw [TreePath.le_def, List.replicate_succ, List.append_assoc]
+      exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
+
+end Locality
+
 /-! ### Word-internal realization -/
 
-/-- Realization within the lexeme's synthetic extent. At grade `g` rules see only the root's word,
-which reaches head `min g wordTop`, so suppletion cannot be conditioned by material outside the
-word ([bobaljik-2012]'s locality condition (90)). A periphrastic grade thus embeds the highest
-synthetic form, as the Greek superlative *o cheiró-ter-os* embeds the comparative. A superlative
-that embeds the positive instead, as Russian *samyj plox-oj* does (§3.3.3), is `realize`
-precomposed with a choice of word extent for each grade. -/
+/-- The structure of grade `g` of a lexeme with synthesis `s`, whose word reaches head
+`min g wordTop`. -/
+def Synthesis.tree (s : Synthesis n) (g : Fin n) : PhraseStructure.Tree ℕ Unit :=
+  spine (min (g : ℕ) s.wordTop) (g - min (g : ℕ) s.wordTop)
+
+/-- The highest head that may condition the root at grade `g` under the locality condition (90). -/
+def Synthesis.localTop (s : Synthesis n) (g : Fin n) : Fin n :=
+  ⟨Nat.findGreatest (fun k ↦ DistributedMorphology.MayCondition (s.tree g)
+      (rootPos (min (g : ℕ) s.wordTop) (g - min (g : ℕ) s.wordTop))
+      (headPos (min (g : ℕ) s.wordTop) (g - min (g : ℕ) s.wordTop) k)) g,
+    (Nat.findGreatest_le _).trans_lt g.isLt⟩
+
+/-- The heads that may condition the root at grade `g` are those of its word, which reaches
+`min g wordTop`. -/
+theorem Synthesis.localTop_eq (s : Synthesis n) (g : Fin n) :
+    s.localTop g = min g s.wordTop := by
+  have hle : min (g : ℕ) s.wordTop ≤ g := min_le_left _ _
+  rw [Fin.ext_iff, Fin.val_min, localTop, Fin.val_mk, Nat.findGreatest_eq_iff]
+  refine ⟨hle, fun h0 ↦ ?_, fun k hk hkg ↦ ?_⟩
+  · exact (mayCondition_spine_iff (Nat.pos_of_ne_zero h0) (by omega)).mpr le_rfl
+  · rw [Synthesis.tree, mayCondition_spine_iff (by omega) (by omega)]
+    omega
+
+/-- Realization within the lexeme's word. At grade `g` rules see only the heads that may condition
+the root under the locality condition (90), so a periphrastic grade embeds the highest synthetic
+form, as the Greek superlative *o cheiró-ter-os* embeds the comparative. A superlative that embeds
+the positive instead, as Russian *samyj plox-oj* does (§3.3.3), is `realize` precomposed with a
+choice of word extent for each grade. -/
 def realizeIn (s : Synthesis n) (v : RuleSet (SpanRule n F)) : Paradigm n (Option F) :=
-  fun g ↦ realize v (min g s.wordTop)
+  fun g ↦ realize v (s.localTop g)
+
+theorem realizeIn_eq (s : Synthesis n) (v : RuleSet (SpanRule n F)) (g : Fin n) :
+    realizeIn s v g = realize v (min g s.wordTop) :=
+  congrArg (realize v) (s.localTop_eq g)
 
 theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : RuleSet (SpanRule n F)}
     {g : Fin n} (h : g ≤ s.wordTop) : realizeIn s v g = realize v g :=
-  congrArg (realize v) (min_eq_left h)
+  (realizeIn_eq s v g).trans (congrArg (realize v) (min_eq_left h))
 
 theorem realizeIn_eq_realize_wordTop_of_le {s : Synthesis n}
     {v : RuleSet (SpanRule n F)} {g : Fin n} (h : s.wordTop ≤ g) :
     realizeIn s v g = realize v s.wordTop :=
-  congrArg (realize v) (min_eq_right h)
+  (realizeIn_eq s v g).trans (congrArg (realize v) (min_eq_right h))
 
 theorem isContiguous_realizeIn {s : Synthesis n} {v : RuleSet (SpanRule n F)}
     (hAH : v.Antihomophonous) :
-    IsContiguous (realizeIn s v) :=
-  (isContiguous_realize hAH).comp_monotone fun _ _ h ↦ min_le_min_right _ h
+    IsContiguous (realizeIn s v) := by
+  rw [show realizeIn s v = fun g ↦ realize v (min g s.wordTop) from funext (realizeIn_eq s v)]
+  exact (isContiguous_realize hAH).comp_monotone fun _ _ h ↦ min_le_min_right _ h
 
 theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
     {v : RuleSet (SpanRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
@@ -454,13 +583,15 @@ theorem koryak_morph : ∃ r ∈ StructureDataset.focusedSurvey, r.language.name
 /-! ### The book's vocabularies (ch. 2, ch. 5)
 
 Each vocabulary is run through the Elsewhere engine of
-`Morphology/Exponence/Containment/Contiguity.lean`; the syncretism of the
+`Morphology/Exponence/Containment/SpanRule.lean`; the syncretism of the
 realized cells is the root pattern. -/
 
 /-- Czech BAD (39), with *hor-* under CMPR and *špatn-* elsewhere. -/
 def czechBad : RuleSet (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
 
-theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
+-- (40): in the superlative's word, CMPR conditions the root, so *nej-hor-ší*
+theorem czech_bad_realize :
+    realizeIn (⟨2⟩ : Synthesis 3) czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
 
 /-- The engine derives the book's paradigms. -/
@@ -501,6 +632,11 @@ theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", som
 
 theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradigm.abc := by decide
 
+-- (204): *optimus* is one word, in which SPRL conditions the root
+theorem latin_bonus_realizeIn :
+    realizeIn (⟨2⟩ : Synthesis 3) latinBonus = ![some "bon", some "mel", some "opt"] := by
+  decide
+
 theorem latin_wellformed :
     Adjacent latinBonus ∧ Markedness latinBonus ∧ latinBonus.Antihomophonous := by decide
 
@@ -513,8 +649,7 @@ theorem latin_superlative_portmanteau :
 /-- ABC needs a portmanteau ((199), §5.3.1). Under adjacency, distinct comparative and
 superlative cells force a winner exponing more than the root. -/
 theorem latin_sprl_needs_portmanteau :
-    ∃ it ∈ latinBonus, latinBonus.selectBy SpanRule.threshold 2 = some it ∧
-      0 < (it.spans : ℕ) :=
+    ∃ it, latinBonus.selectBy SpanRule.threshold 2 = some it ∧ 0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
 /-! ### The unattested shapes
@@ -550,7 +685,7 @@ theorem welshAAB_not_markedness : ¬ Markedness welshAAB := by decide
 -- (202), with adjacency
 theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Markedness welshAAB) :=
   fun ⟨hAH, hM⟩ ↦
-    absurd (realize_const_of_markedness hAH hM (by decide) (by decide) (by decide)) (by decide)
+    absurd (realize_const_of_markedness hAH hM (by decide) (by decide)) (by decide)
 
 /-- A superlative allomorph accidentally homophonous with the positive yields surface ABA, the
 loophole that Antihomophony (44) closes. -/
@@ -718,7 +853,7 @@ theorem latin_ns_spellout : spellout latinBonusNS = ![some "bon", some "mel", so
   decide
 
 /-- The two frameworks realize Latin cell for cell — the concrete face of
-`spelloutGenerable_iff_generable`. -/
+`SupersetRule.generable_iff_spanRule_generable`. -/
 theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
   latin_ns_spellout.trans latin_bonus_realize.symm
 

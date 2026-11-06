@@ -55,18 +55,18 @@ theorem modalDisjunction (hα : α.NEFree) (hβ : β.NEFree) (hSB : Team.IsState
     (h : support M (enrich (.disj α β)) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨s₁, hs₁, hne₁, h₁⟩, ⟨s₂, hs₂, hne₂, h₂⟩⟩ := witnesses_of_enrich_disj hα hβ h
-  ⟨fun w hw ↦ ⟨s₁, (hSB w hw).symm ▸ hs₁, hne₁, h₁⟩,
-   fun w hw ↦ ⟨s₂, (hSB w hw).symm ▸ hs₂, hne₂, h₂⟩⟩
+  ⟨Team.mem_poss.2 fun w hw ↦ ⟨s₁, (hSB w hw).symm ▸ hs₁, hne₁, h₁⟩,
+   Team.mem_poss.2 fun w hw ↦ ⟨s₂, (hSB w hw).symm ▸ hs₂, hne₂, h₂⟩⟩
 
 /-- Narrow Scope FC (Fact 4) is `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
 theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
-  ⟨fun w hw ↦
-    have ⟨_, hs, _, h'⟩ := h.1 w hw
+  ⟨Team.mem_poss.2 fun w hw ↦
+    have ⟨_, hs, _, h'⟩ := Team.mem_poss.1 h.1 w hw
     (witnesses_of_enrich_disj hα hβ h').1.imp fun _ ⟨hs', hne, h₁⟩ ↦ ⟨hs'.trans hs, hne, h₁⟩,
-   fun w hw ↦
-    have ⟨_, hs, _, h'⟩ := h.1 w hw
+   Team.mem_poss.2 fun w hw ↦
+    have ⟨_, hs, _, h'⟩ := Team.mem_poss.1 h.1 w hw
     (witnesses_of_enrich_disj hα hβ h').2.imp fun _ ⟨hs', hne, h₂⟩ ↦ ⟨hs'.trans hs, hne, h₂⟩⟩
 
 theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
@@ -80,8 +80,8 @@ theorem wideScopeFC (hα : α.NEFree) (hβ : β.NEFree) (hInd : Team.IsIndisputa
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨_, ht₁, ⟨w₁, hw₁⟩, h₁⟩, ⟨_, ht₂, ⟨w₂, hw₂⟩, h₂⟩⟩ :=
     witnesses_of_enrich_disj (α := .poss α) (β := .poss β) hα hβ h
-  ⟨fun w hw ↦ (h₁ w₁ hw₁).imp fun _ ⟨hs, hne, hs'⟩ ↦ ⟨hInd w₁ (ht₁ hw₁) w hw ▸ hs, hne, hs'⟩,
-   fun w hw ↦ (h₂ w₂ hw₂).imp fun _ ⟨hs, hne, hs'⟩ ↦ ⟨hInd w₂ (ht₂ hw₂) w hw ▸ hs, hne, hs'⟩⟩
+  ⟨fun w hw ↦ (h₁ w₁ hw₁).imp fun _ ⟨hs', hs⟩ ↦ ⟨hs', hInd w₁ (ht₁ hw₁) w hw ▸ hs⟩,
+   fun w hw ↦ (h₂ w₂ hw₂).imp fun _ ⟨hs', hs⟩ ↦ ⟨hs', hInd w₂ (ht₂ hw₂) w hw ▸ hs⟩⟩
 
 /-- Dual Prohibition (Fact 11) is `[¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β`. -/
 theorem dualProhibition (hα : α.NEFree) (hβ : β.NEFree)
@@ -103,7 +103,7 @@ only by `∅`, the sole team supporting the weak contradiction `⊥`. -/
 theorem epistemicContradiction (hSB : Team.IsStateBased M.access t)
     (h : support M (.conj (.poss φ) (.neg φ)) t) : t = ∅ :=
   Finset.eq_empty_of_forall_notMem fun w hw ↦
-    have ⟨_, hs, ⟨_, hv⟩, hsupp⟩ := h.1 w hw
+    have ⟨_, ⟨hsupp, _, hv⟩, hs⟩ := h.1 w hw
     Finset.disjoint_right.mp (disjoint_of_support_of_antiSupport hsupp h.2) (hSB w hw ▸ hs hv) hv
 
 /-! ### The four-world illustrations
@@ -223,17 +223,19 @@ Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
 
 /-- BSML⁺ fails Negative FC (Fact 14). -/
 theorem not_negativeFC_poss :
-    ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
+    ¬ ConsequencePlus (Atom := Atom)
       (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=
   fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {{.a}})
-    (h fig5b {{.a}} (by decide))
+    (consequence_singleton_iff.1 h ⟨_, fig5b, {{.a}}⟩
+      (by decide : support fig5b (enrich (.poss (.neg (.conj (.atom .a) (.atom .b))))) {{.a}}))
 
 /-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
 theorem not_negativeFC_nec :
-    ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
+    ¬ ConsequencePlus (Atom := Atom)
       (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
-  fun h ↦ not_negativeFC_poss fun M t hp ↦
-    (support_enrich_neg_neg M _ t).mp (h M t ((support_enrich_neg_neg M _ t).mpr hp))
+  fun h ↦ not_negativeFC_poss <| consequence_singleton_iff.2 fun p hp ↦
+    (support_enrich_neg_neg p.model _ p.team).mp
+      (consequence_singleton_iff.1 h p ((support_enrich_neg_neg p.model _ p.team).mpr hp))
 
 /-! ### BSML∅ against BSML⁺ (Table 5)
 
@@ -245,46 +247,51 @@ Figure 5(a)'s frame and on the arrow-free model, the failing contrapositive bein
 of Positive FC itself. -/
 
 /-- Positive FC holds in BSML⁺, `◇(α ∨ β) ⊨⁺ ◇α ∧ ◇β`. -/
-theorem positiveFC_plus :
-    ConsequencePlus (W := W) (.poss (.disj α β)) (.conj (.poss α) (.poss β)) :=
-  fun M t h ↦
-    have hw : ∀ w ∈ t, (∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich α) s) ∧
-        ∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich β) s := fun w hw ↦
-      have ⟨_, hs, _, ⟨_, h₁, _, h₂, hu⟩, _⟩ := h.1 w hw
+theorem positiveFC_plus : ConsequencePlus (.poss (.disj α β)) (.conj (.poss α) (.poss β)) :=
+  consequence_singleton_iff.2 fun p h ↦
+    have hw : ∀ w ∈ p.team,
+        (∃ s ⊆ p.model.access w, s.Nonempty ∧ support p.model (enrich α) s) ∧
+          ∃ s ⊆ p.model.access w, s.Nonempty ∧ support p.model (enrich β) s := fun w hw ↦
+      have ⟨_, ⟨⟨⟨_, h₁, _, h₂, hu⟩, _⟩, _⟩, hs⟩ := h.1 w hw
       ⟨⟨_, (le_sup_left.trans_eq hu).trans hs, nonempty_of_support_enrich h₁, h₁⟩,
         ⟨_, (le_sup_right.trans_eq hu).trans hs, nonempty_of_support_enrich h₂, h₂⟩⟩
-    ⟨⟨⟨fun w hw' ↦ (hw w hw').1, h.2⟩, ⟨fun w hw' ↦ (hw w hw').2, h.2⟩⟩, h.2⟩
+    ⟨⟨⟨Team.mem_poss.2 fun w hw' ↦ (hw w hw').1, h.2⟩,
+      ⟨Team.mem_poss.2 fun w hw' ↦ (hw w hw').2, h.2⟩⟩, h.2⟩
 
 /-- Positive FC fails in BSML∅, since Figure 4(a) supports `◇(a ∨ b)` but not `◇b`. -/
-theorem not_positiveFC :
-    ¬ Consequence (W := Finset Atom) (.poss aOrB) (.conj mayA mayB) :=
+theorem not_positiveFC : ¬ {.poss aOrB} ⊨ (.conj mayA mayB : Formula Atom) :=
   fun h ↦ (by decide : ¬ support fig4a (.conj mayA mayB) {{.a, .b}})
-    (h fig4a {{.a, .b}} (by decide))
+    (consequence_singleton_iff.1 h ⟨_, fig4a, {{.a, .b}}⟩
+      (by decide : support fig4a (.poss aOrB) {{.a, .b}}))
 
 /-- Addition holds in BSML∅, `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
-theorem addition (hα : α.NEFree) (hβ : β.NEFree) : Consequence (W := W) α (.disj α β) :=
-  (consequence_iff_classicalConsequence (ψ := .disj α β) hα ⟨hα, hβ⟩).mpr fun _ _ ↦ Or.inl
+theorem addition (hα : α.NEFree) (hβ : β.NEFree) : {α} ⊨ .disj α β :=
+  (consequence_iff_classicalConsequence (Γ := {α}) (φ := .disj α β) (by simpa using hα)
+    ⟨hα, hβ⟩).mpr fun _ _ _ h ↦ Or.inl (h α (Finset.mem_singleton_self α))
 
 /-- Addition fails in BSML⁺, `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
 no non-empty witness. -/
-theorem not_addition_plus :
-    ¬ ConsequencePlus (W := Finset Atom) (.atom Atom.a) aOrB :=
+theorem not_addition_plus : ¬ ConsequencePlus (.atom Atom.a) aOrB :=
   fun h ↦ (by decide : ¬ support propositional (enrich aOrB) {{.a}})
-    (h propositional {{.a}} (by decide))
+    (consequence_singleton_iff.1 h ⟨_, propositional, {{.a}}⟩
+      (by decide : support propositional (enrich (.atom .a)) {{.a}}))
 
 /-- Contraposition holds in BSML∅, so for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`. -/
-theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W := W) α β) :
-    Consequence (W := W) (.neg β) (.neg α) :=
-  (consequence_iff_classicalConsequence (φ := .neg β) (ψ := .neg α) hβ hα).mpr
-    fun M w hβ' hα' ↦ hβ' ((consequence_iff_classicalConsequence hα hβ).mp h M w hα')
+theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : {α} ⊨ β) : {.neg β} ⊨ .neg α :=
+  have hc := (consequence_iff_classicalConsequence (Γ := {α}) (φ := β) (by simpa using hα) hβ).mp h
+  (consequence_iff_classicalConsequence (Γ := {.neg β}) (φ := .neg α)
+    (by simpa [Formula.NEFree] using hβ) hα).mpr fun W M w hβ' hα' ↦
+      hβ' (.neg β) (Finset.mem_singleton_self _)
+        (hc W M w fun _ hγ ↦ Finset.mem_singleton.1 hγ ▸ hα')
 
 /-- Positive FC holds in BSML⁺ but its contrapositive fails on Figure 5(a)'s frame, so
 contraposition fails. -/
 theorem not_contraposition_plus :
-    ConsequencePlus (W := Finset Atom) (.poss aOrB) (.conj mayA mayB) ∧
-      ¬ ConsequencePlus (W := Finset Atom) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
+    ConsequencePlus (.poss aOrB) (.conj mayA mayB) ∧
+      ¬ ConsequencePlus (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
   ⟨positiveFC_plus, fun h ↦
     (by decide : ¬ support fig5a (enrich (.neg (.poss aOrB))) {{.a}})
-      (h fig5a {{.a}} (by decide))⟩
+      (consequence_singleton_iff.1 h ⟨_, fig5a, {{.a}}⟩
+        (by decide : support fig5a (enrich (.neg (.conj mayA mayB))) {{.a}}))⟩
 
 end Aloni2022

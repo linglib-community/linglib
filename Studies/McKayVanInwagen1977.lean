@@ -42,7 +42,7 @@ theorem holds {W : Type*} [Finite W] {α : Type*} [LinearOrder α] (d : W → W 
     (p q : Set W) :
     variablyStrictImp (fun _ ↦ Set.univ) (fun w ↦ Preorder.lift (d w)) p q =
       closestImp (fun w ↦ Preorder.lift (d w)) p q :=
-  (closestImp_eq_variablyStrictImp_of_finite (fun w ↦ Preorder.total_lift (d w)) p.toFinite).symm
+  (closestImp_eq_variablyStrictImp_of_finite p.toFinite).symm
 
 /-!
 ## The Bumper Crop Argument

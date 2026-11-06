@@ -173,11 +173,6 @@ theorem toReal_klDiv_add_measureEntropy [Fintype S] {ν : Measure S} [IsProbabil
       (hμν ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h))), negMulLog]
     ring
 
-private theorem absolutelyContinuous_uniformOn_univ [Fintype S] [Nonempty S] (μ : Measure S) :
-    μ ≪ uniformOn Set.univ :=
-  Measure.absolutelyContinuous_of_forall_singleton fun s hs ↦
-    absurd hs (uniformOn_univ_singleton_ne_zero s)
-
 /-- The entropy of a probability measure on a finite type falls short of the logarithm of the
 cardinality by the divergence from the uniform measure. -/
 theorem toReal_klDiv_uniformOn_add_measureEntropy [Fintype S] [Nonempty S] (μ : Measure S)

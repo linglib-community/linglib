@@ -56,13 +56,13 @@ def ixLoc (R : E → L → Prop) (o : L) : E → Prop := λ x => R x o
 
 /-- The demonstrative `⟦that⟧ = λR λP. ιx. P(x) ∧ R(x)`: the unique entity meeting the
 spatial and the nominal restriction. -/
-noncomputable def that (R P : E → Prop) : Option E := iota (Modifier.intersective R P)
+noncomputable def that (R P : E → Prop) : Option E := iota {x | Modifier.intersective R P x}
 
 theorem that_isSome_iff (R P : E → Prop) : (that R P).isSome ↔ ∃! x, P x ∧ R x := by
   simp [that, iota_isSome_iff, and_comm]
 
-theorem that_top (R : E → Prop) : that R ⊤ = iota R :=
-  congrArg iota (inf_top_eq R)
+theorem that_top (R : E → Prop) : that R ⊤ = iota {x | R x} :=
+  congrArg (iota ∘ Set.ofPred) (inf_top_eq R)
 
 /-! ### The continuum of relations
 

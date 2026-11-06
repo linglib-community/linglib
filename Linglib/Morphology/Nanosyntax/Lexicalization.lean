@@ -337,10 +337,10 @@ variable {n : ℕ} {feat : ℕ → F}
 /-- On a lexicon of containment entries the algorithm never evacuates, and it gives each grade
 the single exponent the containment engine spells out there. -/
 theorem exponents_ofSupersetRule (hf : feat.Injective)
-    (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
+    (v : RuleSet (SupersetRule n α)) (g : Fin n) :
     exponents (v.map (LexicalEntry.ofSupersetRule (some ∘ feat)))
         ((List.range ((g : ℕ) + 1)).map feat) =
-      (Containment.spellout v g).map fun x ↦ [x] := by
+      (SupersetRule.spellout v g).map fun x ↦ [x] := by
   have hs : (some ∘ feat).Injective := (Option.some_injective F).comp hf
   rw [List.range_succ_eq_map, List.map_cons, List.map_map, exponents_cons_of_forall_leaf]
   · rw [spine, List.map_map, show phrase (some (feat 0)) (List.map (some ∘ feat ∘ Nat.succ)

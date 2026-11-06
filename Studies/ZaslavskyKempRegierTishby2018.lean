@@ -265,18 +265,18 @@ theorem objective_const_le (ν : Measure W) [IsProbabilityMeasure ν] {β : ℝ}
   rw [objective, objective, complexity_const, h0]
   nlinarith [mul_nonneg (sub_nonneg.2 hβ) h2]
 
-omit [IsMarkovKernel meanings] [Fintype W] [MeasurableSingletonClass W] in
+omit [IsMarkovKernel meanings] [Fintype W] [MeasurableSingletonClass W] [Fintype U] in
 private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u} ≠ 0) (m : M)
     (w : W) : meanings m ≪ decoder meanings source encoder w := by
-  refine Measure.absolutelyContinuous_of_forall_singleton fun u hu => absurd hu ?_
   obtain ⟨m', hm'⟩ : ∃ m', (encoder†source) w {m'} ≠ 0 := by
     by_contra! h
     have := measure_univ (μ := (encoder†source) w)
-    rw [← coe_univ, ← sum_measure_singleton, sum_eq_zero fun m' _ => h m'] at this
+    rw [← coe_univ, ← sum_measure_singleton, sum_eq_zero fun m' _ ↦ h m'] at this
     exact zero_ne_one this
+  refine (le_top.trans_eq (ae_eq_top.2 fun u ↦ ?_).symm).absolutelyContinuous_of_ae
   rw [show decoder meanings source encoder w {u} = _ from
     Kernel.comp_apply_singleton meanings (encoder†source) w u]
-  exact fun h => mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
+  exact fun h ↦ mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
 
 /-- The right side of eq. 7: the encoder whose row at a meaning weighs each word by its marginal
 probability times `exp (−β D[m ‖ m̂_w])`, so that at `β > 0` a word whose interpretation rules

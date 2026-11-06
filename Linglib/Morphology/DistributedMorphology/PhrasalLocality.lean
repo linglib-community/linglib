@@ -86,6 +86,12 @@ theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreeP
     (h : MayCondition' t α β) : MayCondition t α β :=
   fun p hp ↦ .inl (h p hp)
 
+theorem mayCondition_iff [DecidableEq C] {t : Tree C W} {α β : TreePath} :
+    MayCondition t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β →
+      IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p :=
+  ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
+    fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
+
 theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β → IsHeadAt t p :=
   ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),

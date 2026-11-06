@@ -397,11 +397,11 @@ noncomputable def consDetOrderIso : ConsDet α ≃o Det α :=
 /-- The isomorphism sends Keenan and Stavi's atom at a restrictor `p` and a scope `q` inside it
 to the predicate of the single group `polarize p q`. -/
 theorem ofGQ_atom {p q : Set α} (h : q ⊆ p) :
-    Det.ofGQ (KeenanStavi1986.atom p q) = ident (polarize p q) := by
+    Det.ofGQ (KeenanStavi1986.atom p q) = (· = polarize p q) := by
   funext X
   refine propext ⟨fun ⟨hp, hq⟩ ↦ ?_, ?_⟩
   · rw [atoms_inter_posAtoms] at hq
-    rw [ident, ← hp, ← hq, polarize_atoms_posAtoms]
+    rw [← hp, ← hq, polarize_atoms_posAtoms]
   · rintro rfl
     refine ⟨atoms_polarize, ?_⟩
     rw [atoms_polarize, posAtoms_polarize, ← Set.inter_assoc, Set.inter_self,
@@ -551,13 +551,13 @@ section Scope
 
 variable (N : Set α)
 
-theorem all_inf_noun : Det.all ⊓ noun N = ident (polarize N ⊤) := by
+theorem all_inf_noun : Det.all ⊓ noun N = (· = polarize N ⊤) := by
   rw [all_eq_delta_top]
   funext X
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,
     fun h ↦ h ▸ ⟨(delta_iff_eq_polarize (noun_polarize N ⊤)).2 rfl, noun_polarize N ⊤⟩⟩
 
-theorem none_inf_noun : Det.none ⊓ noun N = ident (polarize N ⊥) := by
+theorem none_inf_noun : Det.none ⊓ noun N = (· = polarize N ⊥) := by
   rw [none_eq_delta_bot]
   funext X
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,

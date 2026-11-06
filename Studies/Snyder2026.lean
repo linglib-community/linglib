@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Setoid.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Composition.Ty
 
 /-!
 # Snyder (2026): Numbers as Kinds
@@ -62,11 +63,6 @@ namespace Snyder2026
 
 /-! ### The three polymorphic analyses and the semantic functions -/
 
-/-- Semantic types: entities, predicates and generalized quantifiers. -/
-inductive SemTy
-  | e | et | ett
-  deriving DecidableEq
-
 /-- The three polymorphic analyses: the lexical meaning of *two* is a numeral (5), a
 cardinality predicate (9), or an atomic predicate over relativized atoms (73). -/
 inductive PolymorphicAnalysis
@@ -74,7 +70,7 @@ inductive PolymorphicAnalysis
   deriving DecidableEq
 
 /-- The lexical type of *two* under each analysis. -/
-def PolymorphicAnalysis.lexicalType : PolymorphicAnalysis → SemTy
+def PolymorphicAnalysis.lexicalType : PolymorphicAnalysis → Montague.Ty
   | .substantivalism => .e
   | .adjectivalism => .et
   | .contextualism => .et
@@ -87,7 +83,7 @@ inductive SemanticFunction
   deriving DecidableEq
 
 /-- The type at which each function is used. -/
-def SemanticFunction.targetType : SemanticFunction → SemTy
+def SemanticFunction.targetType : SemanticFunction → Montague.Ty
   | .predicative | .attributive | .tokenPredicate | .taxonomic => .et
   | .quantificational => .ett
   | .specificational | .numeral | .closeAppositive | .tokenRef | .kindRef => .e
@@ -112,20 +108,20 @@ inductive Operator
   deriving DecidableEq
 
 /-- The input type of a type-shifter. -/
-def Operator.input : Operator → SemTy
+def Operator.input : Operator → Montague.Ty
   | .card | .ident => .e
   | .pm | .a | .nom | .iota => .et
 
 /-- The output type of a type-shifter. -/
-def Operator.output : Operator → SemTy
+def Operator.output : Operator → Montague.Ty
   | .card | .pm | .ident => .et
   | .a => .ett
   | .nom | .iota => .e
 
 /-- The type a chain of type-shifters reaches from a type, if each composes with the last. -/
-def wellTyped : SemTy → List Operator → Option SemTy
-  | t, [] => some t
-  | t, op :: ops => if t = op.input then wellTyped op.output ops else none
+def wellTyped : Montague.Ty → List Operator → Option Montague.Ty
+  | τ, [] => some τ
+  | τ, op :: ops => if τ = op.input then wellTyped op.output ops else none
 
 /-- The derivation map of each analysis, the diagrams of sections 2 and 5: the chain of
 type-shifters from the lexical meaning to a function, or none where the analysis does not

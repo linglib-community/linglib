@@ -1,38 +1,20 @@
 module
 
 public import Linglib.Semantics.Quantification.Basic
-public import Mathlib.Order.GaloisConnection.Defs
 public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
 # Individuals
 
-This file is about the Montagovian individuals, the quantifiers `Quantifier.individual a` of the
-sets an entity belongs to, and the type shifts they fix. The individuals generate `Quantifier E`
-under complete Boolean operations: every quantifier is the join of the quantifiers true of one of
-its sets alone, and the quantifier true of `A` alone, *every `A` and no non-`A`*, is a meet of
-individuals and their complements. A complete homomorphism out of `Quantifier E` is therefore
-fixed by its values on the individuals. The individuals are exactly the quantifiers that commute
-with negation and with arbitrary conjunction, Keenan and Faltz's characterization of proper-noun
-denotations, and an existential is one exactly when its restrictor is a singleton.
-
-Predicative content `BE` is the complete homomorphism sending each individual to its singleton,
-and the existential determiner `Det.some`, Partee's `A`, is a section of it, so `BE ∘ A` is the
-identity. On the monotone quantifiers the two form a Galois coinsertion, and a quantifier
-survives the round trip `A ∘ BE` exactly when it is existential, as an individual is.
-
-## Main definitions
-
-* `Quantifier.BE`: predicative content, as a complete lattice homomorphism.
-* `Quantifier.gciSomeBE`: the Galois coinsertion of `Det.some` and `BE` on the monotone quantifiers.
-
-## Main statements
-
-* `Quantifier.BE_some`: `BE ∘ A` is the identity.
-* `Quantifier.completeLatticeHom_ext`: complete homomorphisms out of `Quantifier E` agreeing on the
-  individuals are equal.
-* `Quantifier.exists_eq_individual_iff`: the individuals are the quantifiers commuting with
-  negation and arbitrary conjunction.
+The individual of an entity, `Quantifier.individual a`, is the quantifier of the sets it belongs
+to, Montague's lift. The individuals [generate the quantifiers](##Quantifier.completeLatticeHom_ext)
+under complete Boolean operations and are [those commuting with negation and arbitrary
+conjunction](##Quantifier.exists_eq_individual_iff), Keenan and Faltz's proper-noun denotations.
+An existential is an individual [exactly when its restrictor is a
+singleton](##Quantifier.some_eq_individual_iff). Partee's `lower` is the partial inverse of the
+lift, so *the king* [lowers to `iota` of its noun](##Quantifier.lower_the), and *a man* and
+*every man* do only where there is one man. Predicative content is in
+`Quantification/Predicative.lean`.
 
 ## References
 
@@ -93,51 +75,55 @@ theorem completeLatticeHom_ext {β : Type*} [CompleteBooleanAlgebra β]
   simp only [map_iSup, map_inf, every_eq_iInf_individual, no_eq_iInf_compl_individual, map_iInf,
     map_compl', h]
 
-/-! ### Predicative content and existential closure -/
-
-/-- `BE Q` is the predicative content of the quantifier `Q`, `BE(Q) = {x | Q {x}}`, which
-preserves arbitrary meets and joins. -/
-def BE : CompleteLatticeHom (Quantifier E) (Set E) where
-  toFun Q := {x | Q {x}}
-  map_sInf' _ := Set.ext fun _ ↦ by simp
-  map_sSup' _ := Set.ext fun _ ↦ by simp
-
-@[simp] theorem mem_BE (Q : Quantifier E) (x : E) : x ∈ BE Q ↔ Q {x} := .rfl
-
-@[simp] theorem BE_individual (j : E) : BE (individual j) = {j} :=
-  Set.ext fun _ ↦ eq_comm
+/-! ### Existential closure of a singleton -/
 
 @[simp] theorem some_singleton (j : E) : Det.some {j} = individual j :=
   funext fun _ ↦ propext Set.singleton_inter_nonempty
 
-/-- `BE ∘ A` is the identity: *be a man* is *man*. -/
-@[simp] theorem BE_some (A : Set E) : BE (Det.some A) = A :=
-  Set.ext fun _ ↦ Set.inter_singleton_nonempty
-
-theorem some_injective : Function.Injective (Det.some : Det E) :=
-  Function.LeftInverse.injective BE_some
-
 theorem some_eq_individual_iff {N : Set E} {a : E} : Det.some N = individual a ↔ N = {a} := by
-  rw [← some_singleton, some_injective.eq_iff]
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ some_singleton a⟩
+  have hsub : N ⊆ {a} := fun x hx ↦ by_contra fun hxa ↦ ((congrFun h {a}ᶜ).mp ⟨x, hx, hxa⟩) rfl
+  have hne : N.Nonempty := by simpa [Det.some] using (congrFun h Set.univ).mpr (Set.mem_univ a)
+  exact hne.subset_singleton_iff.1 hsub
 
-theorem some_BE_eq_self_iff {Q : Quantifier E} : Det.some (BE Q) = Q ↔ ∃ A, Det.some A = Q :=
-  ⟨fun h ↦ ⟨_, h⟩, fun ⟨A, h⟩ ↦ h ▸ congrArg Det.some (BE_some A)⟩
+/-! ### Lowering
 
-/-! ### The Galois coinsertion on monotone quantifiers -/
+`lower` takes a principal ultrafilter to the entity generating it. A definite description has an
+entity reading where `iota` of its restrictor is defined; an indefinite or a universal has one only
+on a singleton restrictor, which `iota` again detects. -/
 
-theorem individual_le_iff {Q : Quantifier E} (hQ : Monotone Q) {x : E} :
-    individual x ≤ Q ↔ x ∈ BE Q :=
-  ⟨fun h ↦ h _ rfl, fun h _ hB ↦ hQ (Set.singleton_subset_iff.2 hB) h⟩
+/-- `lower Q` is the entity whose individual is `Q`, defined when `Q` is a principal ultrafilter. -/
+noncomputable def lower : Quantifier E → Option E := Function.partialInv individual
 
-theorem some_le_iff {Q : Quantifier E} (hQ : Monotone Q) {A : Set E} :
-    Det.some A ≤ Q ↔ A ⊆ BE Q := by
-  simp only [some_eq_iSup_individual, iSup₂_le_iff, individual_le_iff hQ]
-  rfl
+theorem lower_isPartialInv : Function.IsPartialInv individual (lower (E := E)) :=
+  individual_injective.isPartialInv
 
-/-- On the monotone quantifiers `Det.some` and `BE` form a Galois coinsertion. -/
-def gciSomeBE :
-    GaloisCoinsertion (fun A ↦ (⟨Det.some A, monotone_some A⟩ : Set E →o Prop)) fun Q ↦ BE Q :=
-  GaloisConnection.toGaloisCoinsertion (fun _ Q ↦ some_le_iff Q.monotone) fun A ↦ (BE_some A).le
+theorem lower_eq_some_iff {Q : Quantifier E} {a : E} : lower Q = some a ↔ individual a = Q :=
+  lower_isPartialInv a Q
+
+@[simp] theorem lower_individual (a : E) : lower (individual a) = some a :=
+  Function.partialInv_left individual_injective a
+
+@[simp] theorem lower_bot : lower (⊥ : Quantifier E) = none :=
+  Option.eq_none_iff_forall_ne_some.2 fun a h ↦
+    (congrFun (lower_eq_some_iff.1 h) Set.univ).mp (Set.mem_univ a)
+
+private theorem lower_eq_iota_of {f : Det E}
+    (hf : ∀ {A : Set E} {a : E}, f A = individual a ↔ A = {a}) (A : Set E) :
+    lower (f A) = iota A :=
+  Option.ext fun _ ↦ lower_eq_some_iff.trans <| eq_comm.trans <| hf.trans <|
+    Set.eq_singleton_iff_unique_mem.trans iota_eq_some_iff.symm
+
+/-- An indefinite has an entity reading by `lower` only where the definite does
+([partee-1987], §3.4.1). -/
+theorem lower_some (A : Set E) : lower (Det.some A) = iota A :=
+  lower_eq_iota_of some_eq_individual_iff A
+
+theorem lower_every (A : Set E) : lower (every A) = iota A :=
+  lower_eq_iota_of (fun {_ _} ↦ by rw [individual_eq_every, every_injective.eq_iff]) A
+
+@[simp] theorem lower_the (A : Set E) : lower (the A) = iota A := by
+  rw [the_eq_elim]; cases iota A <;> simp
 
 /-! ### Individuals as complete homomorphisms
 

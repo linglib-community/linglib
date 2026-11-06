@@ -26,6 +26,7 @@ disjunctions differ from Kleene's only in when a compound is undefined.
   where a given condition fails.
 * `SignType.meetWeak`, `SignType.meetMiddle`, `SignType.meetBelnap` and their joins: the Weak
   Kleene, Middle Kleene and Belnap connectives.
+* `SignType.transplication`: the binary presupposition operator of [blamey-1986].
 * `SignType.condAssert`: conditional assertion at a designation standard, de Finetti's conditional
   at K3 and Cooper's at LP.
 * `SignType.supervaluation`: the value of a predicate over a finite family of valuations.
@@ -41,6 +42,9 @@ disjunctions differ from Kleene's only in when a compound is undefined.
 * `Trivalent.Designation.dual_threshold_le_neg_iff`: negation exchanges the K3 and LP standards.
 * `SignType.meetWeak_eq_meetWith` and companions: each connective is `meetWith` or `joinWith` at
   its definedness condition.
+* `SignType.transplication_self`, `SignType.transplication_eq`: Beaver's presupposition
+  operator is the diagonal of transplication, and transplication is definable from it.
+* `SignType.condAssert_k3`: de Finetti's conditional is transplication.
 * `SignType.neg_condAssert`, `SignType.condAssert_condAssert`: conditional assertion commutes with
   negation and satisfies Import-Export.
 
@@ -66,6 +70,7 @@ pattern-matched definition, so that `rfl` and `decide` evaluate it.
 * [kalman-1958]
 * [beaver-1992]
 * [beaver-krahmer-2001]
+* [blamey-1986]
 * [van-fraassen-1966]
 * [george-2014]
 -/
@@ -93,23 +98,23 @@ attribute [simp] SignType.neg_eq_zero_iff SignType.nonpos_iff_ne_one SignType.no
 @[simp] protected theorem neg_eq_one_iff {a : SignType} : -a = 1 ↔ a = -1 := by
   cases a <;> decide
 
-@[simp] protected theorem neg_eq_neg_one_iff {a : SignType} : -a = -1 ↔ a = 1 := by
+protected theorem neg_eq_neg_one_iff {a : SignType} : -a = -1 ↔ a = 1 := by
   cases a <;> decide
 
-@[simp] protected theorem sup_one (a : SignType) : a ⊔ 1 = 1 := by cases a <;> rfl
-@[simp] protected theorem one_sup (a : SignType) : 1 ⊔ a = 1 := by cases a <;> rfl
-@[simp] protected theorem inf_neg_one (a : SignType) : a ⊓ -1 = -1 := by cases a <;> rfl
-@[simp] protected theorem neg_one_inf (a : SignType) : -1 ⊓ a = -1 := by cases a <;> rfl
+protected theorem sup_one (a : SignType) : a ⊔ 1 = 1 := by cases a <;> rfl
+protected theorem one_sup (a : SignType) : 1 ⊔ a = 1 := by cases a <;> rfl
+protected theorem inf_neg_one (a : SignType) : a ⊓ -1 = -1 := by cases a <;> rfl
+protected theorem neg_one_inf (a : SignType) : -1 ⊓ a = -1 := by cases a <;> rfl
 
-@[simp] protected theorem neg_one_ne_one : (-1 : SignType) ≠ 1 := by decide
-@[simp] protected theorem one_ne_neg_one : (1 : SignType) ≠ -1 := by decide
-@[simp] protected theorem neg_one_ne_zero : (-1 : SignType) ≠ 0 := by decide
+protected theorem neg_one_ne_one : (-1 : SignType) ≠ 1 := by decide
+protected theorem one_ne_neg_one : (1 : SignType) ≠ -1 := by decide
+protected theorem neg_one_ne_zero : (-1 : SignType) ≠ 0 := by decide
 @[simp] protected theorem zero_ne_neg_one : (0 : SignType) ≠ -1 := by decide
 
-@[simp] protected theorem inf_one (a : SignType) : a ⊓ 1 = a := by cases a <;> rfl
-@[simp] protected theorem one_inf (a : SignType) : 1 ⊓ a = a := by cases a <;> rfl
-@[simp] protected theorem sup_neg_one (a : SignType) : a ⊔ -1 = a := by cases a <;> rfl
-@[simp] protected theorem neg_one_sup (a : SignType) : -1 ⊔ a = a := by cases a <;> rfl
+protected theorem inf_one (a : SignType) : a ⊓ 1 = a := by cases a <;> rfl
+protected theorem one_inf (a : SignType) : 1 ⊓ a = a := by cases a <;> rfl
+protected theorem sup_neg_one (a : SignType) : a ⊔ -1 = a := by cases a <;> rfl
+protected theorem neg_one_sup (a : SignType) : -1 ⊔ a = a := by cases a <;> rfl
 
 @[simp] theorem inf_eq_one_iff {a b : SignType} : a ⊓ b = 1 ↔ a = 1 ∧ b = 1 := by
   cases a <;> cases b <;> decide
@@ -171,7 +176,7 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 @[simp] theorem ofProp_ne_zero : ofProp P ≠ 0 := by
   by_cases h : P <;> simp [ofProp, h]
 
-@[simp] theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
+theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
   by_cases h : P <;> simp [ofProp, h]
 
 theorem ofProp_eq_one_of_ne_zero {a : SignType} [Decidable (a = 1)] (h : a ≠ 0) :
@@ -384,6 +389,38 @@ theorem sup_zero_eq_zero_iff {a : SignType} : a ⊔ 0 = 0 ↔ a ≠ 1 := by case
 
 theorem sup_zero_ne_neg_one (a : SignType) : a ⊔ 0 ≠ -1 := by cases a <;> decide
 
+/-- The transplication `π / φ` of [blamey-1986], `φ` presupposing `π`: the value of `φ` if `π` is
+true, undefined otherwise ([beaver-krahmer-2001] Definition 3). -/
+def transplication : SignType → SignType → SignType
+  | .pos, b => b
+  | _, _ => 0
+
+theorem transplication_eq_ite (a b : SignType) : transplication a b = if a = 1 then b else 0 := by
+  cases a <;> rfl
+
+theorem transplication_eq_one_iff {a b : SignType} : transplication a b = 1 ↔ a = 1 ∧ b = 1 := by
+  cases a <;> cases b <;> decide
+
+theorem transplication_eq_neg_one_iff {a b : SignType} :
+    transplication a b = -1 ↔ a = 1 ∧ b = -1 := by
+  cases a <;> cases b <;> decide
+
+theorem transplication_eq_zero_iff {a b : SignType} : transplication a b = 0 ↔ a ≠ 1 ∨ b = 0 := by
+  cases a <;> cases b <;> decide
+
+/-- Beaver's presupposition operator is the diagonal of transplication. -/
+theorem transplication_self (a : SignType) : transplication a a = a ⊔ 0 := by cases a <;> rfl
+
+/-- Transplication is definable from Beaver's presupposition operator and the Strong Kleene
+connectives, `π / φ = (∂π ∧ φ) ∨ ¬∂π` ([beaver-krahmer-2001] p. 151). -/
+theorem transplication_eq (a b : SignType) : transplication a b = (a ⊔ 0) ⊓ b ⊔ -(a ⊔ 0) := by
+  cases a <;> cases b <;> rfl
+
+/-- Transplication is `φ` scaled by `∂π`: multiplication by `1` keeps a value and by `0` absorbs
+it. -/
+theorem transplication_eq_sup_zero_mul (a b : SignType) : transplication a b = (a ⊔ 0) * b := by
+  cases a <;> cases b <;> rfl
+
 /-! ### Middle Kleene
 
 The Middle Kleene connectives of [peters-1979] read their operands from left to right. An
@@ -550,7 +587,7 @@ theorem joinBelnap_eq_sup_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠
     joinBelnap a b = a ⊔ b := by
   revert ha hb; cases a <;> cases b <;> decide
 
-@[simp] theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
+theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
   cases a <;> cases b <;> decide
 
 /-! ### Conditional assertion
@@ -565,6 +602,11 @@ conditional commutes with negation and imports and exports a conjunction. -/
 `0` elsewhere. -/
 def condAssert (d : Trivalent.Designation) (a b : SignType) : SignType :=
   if d.threshold ≤ a then b else 0
+
+/-- At K3 the conditional assertion is transplication: de Finetti's conditional and
+[blamey-1986]'s binary presupposition operator are one table. -/
+theorem condAssert_k3 (a b : SignType) : condAssert .k3 a b = transplication a b := by
+  cases a <;> rfl
 
 section CondAssert
 

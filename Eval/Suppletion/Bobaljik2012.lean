@@ -17,7 +17,7 @@ in its cell (`Contested`), as the 2009 questionnaire rejects Zajkov's Karelian *
 Three theories say which root patterns three synthetic grades can show (`Eval.Suppletion.Theory`).
 Elsewhere insertion over the containment hierarchy generates the contiguous patterns, Bobaljik's
 containment with an antihomophonous and grounded vocabulary generates AAA, ABB and ABC
-(`groundedGenerable_iff`), and a theory of the grades as independent cells generates every
+(`SpanRule.groundedGenerable_iff`), and a theory of the grades as independent cells generates every
 pattern. A theory parses a triple into the grade whose structure its root's word realizes in each
 cell: every grade itself, or the positive in a superlative that embeds it
 (`Bobaljik2012.positiveEmbedding`). A theory fits a triple under a parse when a pattern it
@@ -60,7 +60,7 @@ analyses of §3.4, four stipulations (`verdict_syntheticSuperlatives_naive`,
 
 namespace Eval.Suppletion.Bobaljik2012
 
-open Morphology Morphology.Containment
+open Morphology
 open CLDF.Wordlist (RootClasses)
 open _root_.Bobaljik2012 (rootPattern positiveEmbedding)
 open _root_.Bobaljik2012.Wordlist

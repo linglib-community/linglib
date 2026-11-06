@@ -46,6 +46,8 @@ types.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace BSML
 
 open ModalLogic
@@ -55,7 +57,7 @@ variable {W W' : Type*} {Atom : Type*}
 /-! ### `⊤` and finite conjunction -/
 
 /-- The tautology `p ∨ ¬p` for the default atom is `NE`-free, true at every world and
-    supported by every team. -/
+supported by every team. -/
 def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
@@ -136,7 +138,7 @@ def bigDisjNE (L : List (Formula Atom)) : Formula Atom := bigDisj (L.map fun x �
 /-! ### World types -/
 
 /-- A world type of depth `k` over `n` atoms gives the truth values of the atoms and, at positive
-    depth, the set of the depth `k - 1` types of the successors. -/
+depth, the set of the depth `k - 1` types of the successors. -/
 def WorldType (n : ℕ) : ℕ → Type
   | 0 => Fin n → Bool
   | k + 1 => (Fin n → Bool) × Finset (WorldType n k)
@@ -162,7 +164,7 @@ variable {n : ℕ} (e : Fin n → Atom)
 
 open scoped Classical in
 /-- `worldType e M k w` is the type of depth `k` of the world `w`, over the atoms enumerated
-    by `e`. -/
+by `e`. -/
 noncomputable def worldType (M : KripkeModel W Atom) : (k : ℕ) → W → WorldType n k
   | 0, w => fun i ↦ decide (M.val (e i) w)
   | k + 1, w => (fun i ↦ decide (M.val (e i) w), (M.access w).image (worldType M k))
@@ -184,7 +186,7 @@ def literals (a : Fin n → Bool) : Formula Atom :=
   bigConj ((List.finRange n).map fun i ↦ literal e i (a i))
 
 /-- The Hintikka formula of a type conjoins its literals and, at positive depth, the possibility
-    of each successor type and the necessity of their disjunction. -/
+of each successor type and the necessity of their disjunction. -/
 noncomputable def hintikka : (k : ℕ) → WorldType n k → Formula Atom
   | 0, a => literals e a
   | k + 1, τ => .conj (literals e τ.1)
@@ -192,7 +194,7 @@ noncomputable def hintikka : (k : ℕ) → WorldType n k → Formula Atom
       (Formula.nec (bigDisj (τ.2.toList.map (hintikka k)))))
 
 /-- The strong Hintikka formula of a set of types `T` is the disjunction of the formulas
-    `χ_τ ∧ NE` for `τ ∈ T`. -/
+`χ_τ ∧ NE` for `τ ∈ T`. -/
 noncomputable def strongHintikka {k : ℕ} (T : Finset (WorldType n k)) : Formula Atom :=
   bigDisjNE (T.toList.map (hintikka e k))
 
@@ -263,7 +265,7 @@ theorem realize_hintikka_iff (M : KripkeModel W Atom) :
 
 omit [Inhabited Atom] in
 /-- Two worlds have the same type exactly when they are `k`-bisimilar, once `e` enumerates every
-    atom. -/
+atom. -/
 theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeModel W Atom}
     {M' : KripkeModel W' Atom} :
     ∀ (k : ℕ) (w : W) (w' : W'), worldType e M k w = worldType e M' k w' ↔ WorldBisim k M w M' w'
@@ -281,7 +283,7 @@ theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeMode
 
 omit [Inhabited Atom] in
 /-- Two teams have the same types exactly when they are `k`-bisimilar, once `e` enumerates every
-    atom. -/
+atom. -/
 theorem image_worldType_eq_iff_stateBisim (he : Function.Surjective e) {k : ℕ}
     {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {s : Finset W} {s' : Finset W'} :
     s.image (worldType e M k) = s'.image (worldType e M' k) ↔ StateBisim k M s M' s' := by
@@ -305,7 +307,7 @@ theorem worldType_sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) (k : �
       simp
 
 /-- The Hintikka formula of the type of `w` holds at `w'` exactly when `w'` is `k`-bisimilar to `w`
-    ([aloni-anttila-yang-2024] Theorem 3.3). -/
+([aloni-anttila-yang-2024] Theorem 3.3). -/
 theorem realize_hintikka_worldType_iff (he : Function.Surjective e) {M : KripkeModel W Atom}
     {M' : KripkeModel W' Atom} (k : ℕ) (w : W) (w' : W') :
     Realize M' (hintikka e k (worldType e M k w)) w' ↔ WorldBisim k M w M' w' := by
@@ -356,11 +358,12 @@ private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
       support M (bigDisjNE (l.map (hintikka e k))) t ↔ t.image (worldType e M k) = l.toFinset
   | [], t => by simp [bigDisjNE, bigDisj]
   | τ :: r, t => by
-    change t ∈ Team.tensor _ _ ↔ _
+    change t ∈ _ ⊻ _ ↔ _
     rw [List.toFinset_cons]
     constructor
     · rintro ⟨t₁, ⟨h₁, hne⟩, t₂, h₂, rfl⟩
       replace h₁ := (support_iff_forall_realize (neFree_hintikka e k τ)).mp h₁
+      simp only [Finset.sup_eq_union]
       rw [Finset.image_union, (support_bigDisjNE_hintikka M r t₂).mp h₂, Finset.insert_eq]
       congr 1
       refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, fun σ hσ ↦ ?_⟩
@@ -383,11 +386,11 @@ private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
         obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp (h ▸ Finset.mem_insert_of_mem hσ)
         exact ⟨w, ⟨hw, hσ⟩, rfl⟩
       · ext w
-        simp only [Finset.mem_union, Finset.mem_filter]
+        simp only [Finset.sup_eq_union, Finset.mem_union, Finset.mem_filter]
         exact ⟨fun h ↦ h.elim And.left And.left, fun hw ↦ (hmem w hw).imp (⟨hw, ·⟩) (⟨hw, ·⟩)⟩
 
 /-- A team supports the strong Hintikka formula of `T` exactly when the types of its worlds are
-    those in `T` ([aloni-anttila-yang-2024] Definition 3.10). -/
+those in `T` ([aloni-anttila-yang-2024] Definition 3.10). -/
 theorem support_strongHintikka_iff (M : KripkeModel W Atom) {k : ℕ} (T : Finset (WorldType n k))
     (t : Finset W) : support M (strongHintikka e T) t ↔ t.image (worldType e M k) = T := by
   rw [strongHintikka, support_bigDisjNE_hintikka, Finset.toList_toFinset]

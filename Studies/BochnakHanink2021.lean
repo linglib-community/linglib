@@ -88,11 +88,11 @@ variable {E W : Type} (cont : E → W → Prop) (p q : W → Prop) (d : ℕ) (g 
 def fprop : E → Prop := fun x ↦ cont x = p
 
 /-- The nominalized complement with index `d`, the familiar DP over FPROP (77). -/
-def complement : DefiniteDescription E W := .anaphoric (fun _ _ x ↦ fprop cont p x) d
+def complement : DefiniteDescription E W := .anaphoric (fun _ _ ↦ Set.ofPred (fprop cont p)) d
 
 -- (78)
 theorem denote_complement :
-    ⟦complement cont p d⟧ g s = iota fun x ↦ cont x = p ∧ Hanink2021.idxVar d g x := rfl
+    ⟦complement cont p d⟧ g s = iota ({x | cont x = p} ∩ {g d}) := rfl
 
 -- §5.3
 theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=
