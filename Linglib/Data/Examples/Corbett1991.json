@@ -1474,7 +1474,8 @@
       ]
     ],
     "comment": "Hermant, quoted by Grevisse 1964: 314; the predicate ombrageuse is feminine too.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_2",
@@ -1599,7 +1600,8 @@
       ]
     ],
     "comment": "Voltaire, quoted by Grevisse 1964: 406: the feminine pronoun though the king is addressed.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_4",
@@ -1689,7 +1691,8 @@
       ]
     ],
     "comment": "J. & J. Tharaud, quoted by Grevisse 1964: 405: a masculine pronoun, possible only here.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_5",
@@ -1872,7 +1875,8 @@
       ]
     ],
     "comment": "The book's Spanish data are from J. England (personal communication).",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_11",
@@ -1922,7 +1926,8 @@
       ]
     ],
     "comment": "The book's Spanish data are from J. England (personal communication).",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_12a",
@@ -2024,7 +2029,8 @@
       ]
     ],
     "comment": "The compound relative el cual is masculine. The book's Spanish data are from J. England (personal communication). The book prints (12) as one example of two sentences; the second is 12b.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_12b",
@@ -2078,7 +2084,8 @@
       ]
     ],
     "comment": "The personal pronoun continuing (12) is masculine. The book's Spanish data are from J. England (personal communication). The book prints (12) as one example of two sentences; the first is 12a.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_13",
@@ -2170,7 +2177,8 @@
       ]
     ],
     "comment": "Panov's survey: of 3,835 respondents 16.9 per cent chose the feminine (15). The book takes the figures from Kitajgorodskaja 1976's account of Panov 1968's survey.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "experiment"
   },
   {
     "id": "corbett1991_8_15",
@@ -2216,7 +2224,8 @@
       ]
     ],
     "comment": "The book takes the figures from Kitajgorodskaja 1976's account of Panov 1968's survey.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "experiment"
   },
   {
     "id": "corbett1991_8_16",
@@ -2258,7 +2267,8 @@
       ]
     ],
     "comment": "The book takes the figures from Kitajgorodskaja 1976's account of Panov 1968's survey.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "experiment"
   },
   {
     "id": "corbett1991_8_17",
@@ -2300,7 +2310,8 @@
       ]
     ],
     "comment": "Of 3,806 respondents 51.7 per cent chose the feminine. The book takes the figures from Kitajgorodskaja 1976's account of Panov 1968's survey.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "experiment"
   },
   {
     "id": "corbett1991_8_18",
@@ -2415,7 +2426,8 @@
       ]
     ],
     "comment": "Ivo Andrić; feminine attributive and predicate with a plural gazda-type noun.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_20",
@@ -2477,7 +2489,8 @@
       ]
     ],
     "comment": "Ivo Andrić; masculine attributive and preposed predicate. The book glosses moćn-i 'Powerful-MASC.PL'.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_21",
@@ -2531,7 +2544,8 @@
       ]
     ],
     "comment": "Ewa Jaworska's judgments; the predicate is non-masculine personal too.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_22",
@@ -2585,7 +2599,8 @@
       ]
     ],
     "comment": "The relative pronoun was accepted only in the non-masculine personal form.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_23",
@@ -2674,7 +2689,8 @@
       ]
     ],
     "comment": "The anaphoric personal pronoun is masculine personal.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_24",
@@ -2813,7 +2829,8 @@
       ]
     ],
     "comment": "Stacked attributives: the further target shows semantic agreement. The book prints nijihov-i. The book cites Oslobođenje, 27 February 1953, quoted by Marković 1954: 96.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_27",
@@ -2855,7 +2872,8 @@
       ]
     ],
     "comment": "ngwazi has the morphology of gender 9/10 and denotes a human. The book's data are from Sam Mchombo.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_28",
@@ -2897,7 +2915,8 @@
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_29",
@@ -2939,7 +2958,8 @@
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_30",
@@ -2981,7 +3001,8 @@
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_8_31",
@@ -3047,7 +3068,8 @@
       ]
     ],
     "comment": "Parallel predicates: the nearer feminine, the further masculine. The book cites Oslobođenje, 27 February 1953, quoted by Marković 1954: 96.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_8_35",
@@ -4898,7 +4920,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: with the target preceding, the verb agrees with the nearer feminine conjunct; the resolved form would be masculine.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_12",
@@ -5202,7 +5225,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Telugu: the rational plural, as in Tamil. The book's Telugu data are from Malathi Rao (personal communication).",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_9_22",
@@ -5235,7 +5259,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "The book's Telugu data are from Malathi Rao (personal communication).",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_9_23",
@@ -5268,7 +5293,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Not uncommon colloquially, though a different construction is more common. The book's Telugu data are from Malathi Rao (personal communication).",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "corbett1991_9_24",
@@ -6869,7 +6895,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: neuter plurals only, so no number resolution and no gender resolution; the neuter plural is agreement with the nearer conjunct. The book glosses ustupal-a 'yielded-NEUT-PL'.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_55",
@@ -6922,7 +6949,8 @@
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Anikina Vremena: feminine and neuter plurals with a masculine predicate: conjuncts requiring different target gender forms trigger gender resolution on their own.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_56",
@@ -7890,9 +7918,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "znanje+intuicija"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
     "comment": "Andrić, Travnička Hronika: feminine and neuter conjoined take the masculine.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_75",
@@ -7991,9 +8029,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "mesto+značenje"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
     "comment": "Andrić, Travnička Hronika: neuters conjoined take the masculine plural.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_76",
@@ -8052,9 +8100,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "opreznost+suptilnost+pedanterija"
+      ],
+      [
+        "resolved",
+        "fem"
+      ]
+    ],
     "comment": "Andrić, Travnička Hronika: all conjuncts feminine: feminine agreement, as in Slovene.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_77",
@@ -8101,9 +8159,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "nebriga+lakomislenost"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
     "comment": "Andrić, Travnička Hronika. Following Gudkov 1965, a masculine predicate with feminine conjuncts, one of the -Ø declension; all such examples denote inanimates, so the condition is semantic.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_78",
@@ -8178,9 +8246,19 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "štula+štaka"
+      ],
+      [
+        "resolved",
+        "masc"
+      ]
+    ],
     "comment": "Popović, cited from Gudkov 1974: 61: feminine nouns in -a with masculine agreement, inanimates again.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "corpus"
   },
   {
     "id": "corbett1991_9_79",
