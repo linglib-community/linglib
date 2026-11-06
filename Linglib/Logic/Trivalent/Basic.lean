@@ -97,23 +97,23 @@ attribute [simp] SignType.neg_eq_zero_iff SignType.nonpos_iff_ne_one SignType.no
 @[simp] protected theorem neg_eq_one_iff {a : SignType} : -a = 1 ↔ a = -1 := by
   cases a <;> decide
 
-@[simp] protected theorem neg_eq_neg_one_iff {a : SignType} : -a = -1 ↔ a = 1 := by
+protected theorem neg_eq_neg_one_iff {a : SignType} : -a = -1 ↔ a = 1 := by
   cases a <;> decide
 
-@[simp] protected theorem sup_one (a : SignType) : a ⊔ 1 = 1 := by cases a <;> rfl
-@[simp] protected theorem one_sup (a : SignType) : 1 ⊔ a = 1 := by cases a <;> rfl
-@[simp] protected theorem inf_neg_one (a : SignType) : a ⊓ -1 = -1 := by cases a <;> rfl
-@[simp] protected theorem neg_one_inf (a : SignType) : -1 ⊓ a = -1 := by cases a <;> rfl
+protected theorem sup_one (a : SignType) : a ⊔ 1 = 1 := by cases a <;> rfl
+protected theorem one_sup (a : SignType) : 1 ⊔ a = 1 := by cases a <;> rfl
+protected theorem inf_neg_one (a : SignType) : a ⊓ -1 = -1 := by cases a <;> rfl
+protected theorem neg_one_inf (a : SignType) : -1 ⊓ a = -1 := by cases a <;> rfl
 
-@[simp] protected theorem neg_one_ne_one : (-1 : SignType) ≠ 1 := by decide
-@[simp] protected theorem one_ne_neg_one : (1 : SignType) ≠ -1 := by decide
-@[simp] protected theorem neg_one_ne_zero : (-1 : SignType) ≠ 0 := by decide
+protected theorem neg_one_ne_one : (-1 : SignType) ≠ 1 := by decide
+protected theorem one_ne_neg_one : (1 : SignType) ≠ -1 := by decide
+protected theorem neg_one_ne_zero : (-1 : SignType) ≠ 0 := by decide
 @[simp] protected theorem zero_ne_neg_one : (0 : SignType) ≠ -1 := by decide
 
-@[simp] protected theorem inf_one (a : SignType) : a ⊓ 1 = a := by cases a <;> rfl
-@[simp] protected theorem one_inf (a : SignType) : 1 ⊓ a = a := by cases a <;> rfl
-@[simp] protected theorem sup_neg_one (a : SignType) : a ⊔ -1 = a := by cases a <;> rfl
-@[simp] protected theorem neg_one_sup (a : SignType) : -1 ⊔ a = a := by cases a <;> rfl
+protected theorem inf_one (a : SignType) : a ⊓ 1 = a := by cases a <;> rfl
+protected theorem one_inf (a : SignType) : 1 ⊓ a = a := by cases a <;> rfl
+protected theorem sup_neg_one (a : SignType) : a ⊔ -1 = a := by cases a <;> rfl
+protected theorem neg_one_sup (a : SignType) : -1 ⊔ a = a := by cases a <;> rfl
 
 @[simp] theorem inf_eq_one_iff {a b : SignType} : a ⊓ b = 1 ↔ a = 1 ∧ b = 1 := by
   cases a <;> cases b <;> decide
@@ -175,7 +175,7 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 @[simp] theorem ofProp_ne_zero : ofProp P ≠ 0 := by
   by_cases h : P <;> simp [ofProp, h]
 
-@[simp] theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
+theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
   by_cases h : P <;> simp [ofProp, h]
 
 theorem ofProp_eq_one_of_ne_zero {a : SignType} [Decidable (a = 1)] (h : a ≠ 0) :
@@ -581,7 +581,7 @@ theorem joinBelnap_eq_sup_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠
     joinBelnap a b = a ⊔ b := by
   revert ha hb; cases a <;> cases b <;> decide
 
-@[simp] theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
+theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
   cases a <;> cases b <;> decide
 
 /-! ### Conditional assertion
