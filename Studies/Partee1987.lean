@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Intensional
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
@@ -13,15 +13,19 @@ public import Mathlib.Order.Interval.Set.Infinite
 A noun phrase may denote an entity, a predicate or a generalized quantifier, and the shifts among
 the three types pair a total injection with its partial inverse: the lift of an entity with
 `Quantifier.lower`, the singleton property with `iota`, and nominalization, which [cannot be
-total](##nom_russell), with predication. Montague's *be*, recast as the shift `BE`, is [the only
+total](##nom_russell), with predication. The paper works in the extension at an index of
+Montague's intensional types; `BE`, the lift, `A` and *the* are projections of his shifts, while
+nominalization [does not factor through the extension](##not_exists_nom_eq_comp) and the
+predicative *the owner* is [a role that no set represents](##role_not_rigid). `BE` is [the only
 complete homomorphism](##Quantifier.BE_unique) taking each lift to its singleton, and `A` is [its
-only conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse); *exactly
-one* is [another section](##BE_exactly_one), [set apart only by
-monotonicity](##exactly_one_ne_some).
+only conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse), which
+*exactly one* [fails only by monotonicity](##exactly_one_ne_some).
 
 ## Implementation notes
 
-* Properties are sets, as in the paper's extensional fragment.
+* The paper systematically represents properties as sets (fn. 5) in an extensional fragment
+  (fn. 2); here a property is a set of individuals at each index, and the fragment is
+  `Quantifier.Intensional` read at an index.
 * Nominalization and predication are a partial equivalence between properties and entities, a
   parameter as Chierchia's property correlates are primitive. His later kind operators, defined
   at each situation from the largest member, are `Kind.down` and `Kind.up`.
@@ -61,23 +65,47 @@ namespace Partee1987
 
 open Quantifier Quantifier.Det Filter
 
-variable {E : Type*}
+variable {W E : Type*}
 
 /-! ### Figure 1: nominalization and predication -/
 
-/-- The Russell property of a nominalization: being the correlate of a property one lacks. -/
-def russell (c : Set E ≃. E) : Set E := {x | ∃ P ∈ c.symm x, x ∉ P}
+/-- The Russell property of a nominalization: at each index, being the correlate of a property one
+lacks there. -/
+def russell (c : (W → Set E) ≃. E) : W → Set E := fun w ↦ {x | ∃ P ∈ c.symm x, x ∉ P w}
 
 /-- Nominalization is only almost total: the Russell property has no entity correlate (§3.1). -/
-theorem nom_russell (c : Set E ≃. E) : c (russell c) = none := by
+theorem nom_russell [Nonempty W] (c : (W → Set E) ≃. E) : c (russell c) = none := by
   refine Option.eq_none_iff_forall_ne_some.2 fun r h ↦ ?_
   have hr : c.symm r = some (russell c) := c.eq_some_iff.2 h
-  exact iff_not_self (a := r ∈ russell c)
+  obtain ⟨w⟩ := ‹Nonempty W›
+  exact iff_not_self (a := r ∈ russell c w)
     ⟨fun ⟨_, hP, hrP⟩ ↦ (Option.some_injective _ (hr.symm.trans hP)) ▸ hrP, fun h ↦ ⟨_, hr, h⟩⟩
+
+/-- Nominalization is not a function of extensions, the sense in which the paper's `nom` is an
+extensional misrepresentation (§3.1): where it is defined on a property, a different property with
+the same extension at `w` defeats any factoring through the extension at `w`. -/
+theorem not_exists_nom_eq_comp (c : (W → Set E) ≃. E) {w : W} {P P' : W → Set E}
+    (hw : P w = P' w) (hne : P ≠ P') {x : E} (hx : c P = some x) :
+    ¬ ∃ f : Set E → Option E, ∀ Q, c Q = f (Q w) := fun ⟨f, hf⟩ ↦
+  hne <| c.inj hx <| by rw [hf P', ← hw, ← hf P]; exact hx
+
+/-! ### fn. 16: the predicative definite as a property -/
+
+/-- The predicative *the owner of this land* is the role of being the only owner at each index,
+which presupposes no owner and is no set once the owner changes from one index to another
+(fn. 16). -/
+theorem role_not_rigid {P : W → Set E} {w₀ w₁ : W} {a b : E} (h₀ : P w₀ = {a})
+    (h₁ : P w₁ = {b}) (hab : a ≠ b) : (fun w ↦ BE (the (P w))) ∉ Set.range (Function.const W) := by
+  rintro ⟨B, hB⟩
+  have h₀' := congrFun hB w₀
+  have h₁' := congrFun hB w₁
+  simp only [Function.const_apply, h₀, h₁,
+    BE_the_of_subsingleton Set.subsingleton_singleton] at h₀' h₁'
+  exact hab (Set.singleton_injective (h₀'.symm.trans h₁'))
 
 /-! ### §3.3: `A`, *exactly one* and *most* under `BE` -/
 
-/-- *Exactly one* is also an inverse of `BE` (§3.3). -/
+-- §3.3
 theorem BE_exactly_one (A : Set E) : BE (exactly 1 A) = A :=
   Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
     by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
@@ -90,7 +118,7 @@ theorem exactly_one_ne_some [Nontrivial E] : (exactly 1 : Det E) ≠ Det.some :=
   have := congrFun₂ h {a, b} {a, b}
   simp [exactly_apply, Set.ncard_pair hab, Det.some] at this
 
-/-- With finitely many men, *be most men* is *be the man*: it holds of the only man (§3.3). -/
+-- §3.3
 theorem BE_most {A : Set E} (hA : A.Finite) : BE (most A) = BE (the A) := by
   ext x
   rw [mem_BE_the, mem_BE, most_apply]
