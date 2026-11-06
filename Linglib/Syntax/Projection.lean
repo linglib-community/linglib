@@ -639,6 +639,25 @@ theorem isMaximalCategory_iff_inits (x : TreePath) :
   · exact fun h s hs ↦ h s (List.mem_map.2 ⟨_, (List.mem_inits _ _).2
       (TreePath.le_def.1 (IsProjectionOf.le (fun _ _ ↦ headDaughterRel_covBy _) hs)), rfl⟩) hs
 
+/-- A daughter other than the head of a mother that is no segment is a maximal category. -/
+theorem isMaximalCategory_append_singleton {m : TreePath} {i : ℕ} (hm : ¬ seg m)
+    (hi : hd m ≠ some i) :
+    IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
+      (headDaughterRel (adjunctionIndex hd seg)) ⟨m.toList ++ [i]⟩ := by
+  have hmother {c : TreePath} {j : ℕ} (h : m.toList ++ [i] = c.toList ++ [j]) : c = m ∧ j = i := by
+    obtain ⟨h₁, h₂⟩ := List.append_inj' h rfl
+    exact ⟨TreePath.ext h₁.symm, (List.singleton_inj.mp h₂).symm⟩
+  rw [isMaximalCategory_iff_forall_above (fun _ _ ↦ headDaughterRel_covBy _)
+    (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)
+    (fun _ _ ↦ not_projection_of_adjunction hd seg)]
+  intro s hs
+  rcases Relation.ReflTransGen.cases_tail hs with rfl | ⟨c, -, j, hj, hc⟩
+  · rintro c ⟨j, hj, hc⟩
+    obtain ⟨rfl, rfl⟩ := hmother hc
+    exact hi (by simpa [projectionIndex, hm] using hj)
+  · obtain ⟨rfl, rfl⟩ := hmother hc
+    simp [adjunctionIndex, hm] at hj
+
 instance (x : TreePath) : Decidable (IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
     (headDaughterRel (adjunctionIndex hd seg)) x) :=
   decidable_of_iff _ (isMaximalCategory_iff_inits hd seg x).symm
