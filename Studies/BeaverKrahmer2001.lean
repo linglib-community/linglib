@@ -29,9 +29,10 @@ semantics into a dynamic account of accommodation.
   only through presupposition failure. The three logics index one connective constructor,
   so that the floating-A machinery counts surface occurrences; the paper's definitions of
   the middle and weak connectives in strong Kleene terms are theorems.
-* Transplication is defined by the paper's own interdefinability formula over ∂, which is
-  `p ⊔ 0` on values. The assertion operator `A` is `ofProp (a = 1)` and meta-denial is its
-  composite with negation.
+* Transplication is `SignType.transplication`, by the paper's truth table, presupposition
+  first as in Blamey's `π / φ`; the interdefinability formula over ∂, which is `p ⊔ 0` on
+  values, is `SignType.transplication_eq`. The assertion operator `A` is `ofProp (a = 1)` and
+  meta-denial is its composite with negation.
 * Incoherence counts non-presuppositional subformula occurrences. Reproducing the paper's
   printed degrees requires not substituting inside the argument of an assertion operator,
   which the text leaves open; the literal reading changes the degrees but no preference
@@ -77,7 +78,7 @@ semantics into a dynamic account of accommodation.
 
 namespace BeaverKrahmer2001
 
-open SignType (ofProp meetMiddle joinMiddle meetWeak joinWeak)
+open SignType (ofProp meetMiddle joinMiddle meetWeak joinWeak transplication)
 
 /-! ### Transplication, assertion, denial
 
@@ -85,20 +86,6 @@ The binary presupposition operator is [blamey-1986]'s transplication. The unary 
 interdefinable with is Beaver's ([beaver-1992]); it keeps truth and sends falsity to the gap,
 so `∂p` is `p ⊔ 0`. The assertion operator `A` is Bochvar's ([bochvar-1938]); it says that
 its argument is true, so `Aa` is `ofProp (a = 1)`. -/
-
-/-- Transplication `φ⟨π⟩` attaches the elementary presupposition `π` to `φ`, by the
-paper's interdefinability formula `(∂π ∧ φ) ∨ ¬∂π` over the strong Kleene connectives. -/
-def transplicate (a p : SignType) : SignType :=
-  ((p ⊔ 0) ⊓ a) ⊔ -(p ⊔ 0)
-
-theorem transplicate_eq_one_iff (a p : SignType) :
-    transplicate a p = 1 ↔ p = 1 ∧ a = 1 := by cases a <;> cases p <;> decide
-
-theorem transplicate_eq_neg_one_iff (a p : SignType) :
-    transplicate a p = -1 ↔ p = 1 ∧ a = -1 := by cases a <;> cases p <;> decide
-
-theorem transplicate_eq_zero_iff (a p : SignType) :
-    transplicate a p = 0 ↔ p ≠ 1 ∨ a = 0 := by cases a <;> cases p <;> decide
 
 /-- Meta-denial asserts falsity, `D = A ∘ ¬`. -/
 def metaDeny (a : SignType) : SignType := ofProp (-a = 1)
@@ -183,8 +170,8 @@ theorem impWeak_eq (a b : SignType) :
 theorem presupVal_neg (a : SignType) : presupVal (-a) = presupVal a := by
   cases a <;> decide
 
-theorem presupVal_transplicate (a p : SignType) :
-    presupVal (transplicate a p) = ofProp (p = 1) ⊓ presupVal a := by
+theorem presupVal_transplication (p a : SignType) :
+    presupVal (transplication p a) = ofProp (p = 1) ⊓ presupVal a := by
   cases a <;> cases p <;> decide
 
 theorem presupVal_imp_strong (a b : SignType) :
@@ -230,9 +217,9 @@ disjunctions. -/
 theorem no_disjunction_table_projects_and_cancels :
     ¬ ∃ f : SignType → SignType → SignType,
       (∀ π γ δ : Bool,
-        f (transplicate (ofProp γ) (ofProp π)) (ofProp δ) ≠ 0 ↔ π = true) ∧
+        f (transplication (ofProp π) (ofProp γ)) (ofProp δ) ≠ 0 ↔ π = true) ∧
       ∀ π γ : Bool,
-        f (transplicate (ofProp γ) (ofProp π)) (-ofProp π) ≠ 0 := by
+        f (transplication (ofProp π) (ofProp γ)) (-ofProp π) ≠ 0 := by
   rintro ⟨f, h18, h21⟩
   exact Bool.false_ne_true ((h18 false true true).1 (h21 false true))
 
@@ -263,7 +250,7 @@ def eval (V : Valuation Atom) : Formula Atom → SignType
   | atom a => ofProp (V a)
   | neg φ => -eval V φ
   | conn c k φ ψ => c.eval k (eval V φ) (eval V ψ)
-  | transpl φ π => transplicate (eval V φ) (eval V π)
+  | transpl φ π => transplication (eval V π) (eval V φ)
   | assert φ => ofProp (eval V φ = 1)
 
 @[simp] theorem eval_atom (V : Valuation Atom) (a : Atom) :
@@ -273,7 +260,7 @@ def eval (V : Valuation Atom) : Formula Atom → SignType
 @[simp] theorem eval_conn (V : Valuation Atom) (c k) (φ ψ : Formula Atom) :
     eval V (conn c k φ ψ) = c.eval k (eval V φ) (eval V ψ) := rfl
 @[simp] theorem eval_transpl (V : Valuation Atom) (φ π : Formula Atom) :
-    eval V (transpl φ π) = transplicate (eval V φ) (eval V π) := rfl
+    eval V (transpl φ π) = transplication (eval V π) (eval V φ) := rfl
 @[simp] theorem eval_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (assert φ) = ofProp (eval V φ = 1) := rfl
 
@@ -411,11 +398,11 @@ theorem deny_imp (φ ψ : Formula Atom) :
 
 theorem assert_transpl (φ π : Formula Atom) :
     Equiv (assert (transpl φ π)) (conn .conj .strong (assert π) (assert φ)) := fun V ↦ by
-  simp [transplicate, Connective.eval, Kleene.meet]
+  simp [SignType.transplication_eq, Connective.eval, Kleene.meet]
 
 theorem deny_transpl (φ π : Formula Atom) :
     Equiv (deny (transpl φ π)) (conn .conj .strong (assert π) (deny φ)) := fun V ↦ by
-  simp [deny, transplicate, Connective.eval, Kleene.meet, inf_comm]
+  simp [deny, SignType.transplication_eq, Connective.eval, Kleene.meet, inf_comm]
 
 theorem eval_neg_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (neg (assert φ)) = cancelNeg (eval V φ) := by
@@ -429,7 +416,7 @@ theorem presup_neg (φ : Formula Atom) : Equiv (presup (neg φ)) (presup φ) := 
 theorem presup_transpl (φ π : Formula Atom) :
     Equiv (presup (transpl φ π)) (conn .conj .strong (assert π) (presup φ)) := fun V ↦ by
   simp only [eval_presup, eval_transpl, eval_conn, eval_assert, Connective.eval,
-    Kleene.meet, presupVal_transplicate]
+    Kleene.meet, presupVal_transplication]
 
 /-- The strong conditional projects only a disjunctively weakened presupposition, the
 famous too-weak prediction for a presupposing antecedent. -/

@@ -300,7 +300,8 @@ theorem Formula.toTrivalent_impl :
 true, and otherwise has the value of `e`. -/
 theorem Formula.toTrivalent_presup :
     Formula.toTrivalent M g (.presup φ ψ) =
-      if ψ.toTrivalent M g = 1 then φ.toTrivalent M g else 0 := by
+      (ψ.toTrivalent M g).transplication (φ.toTrivalent M g) := by
+  rw [SignType.transplication_eq_ite]
   split_ifs with h
   · exact SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp_all) (by simp_all)
   · simp_all

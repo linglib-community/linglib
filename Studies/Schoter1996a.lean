@@ -195,7 +195,6 @@ and clause 2, the `presumably` operator, is built from the guard and semi-design
 
 section Connectives
 
-open Bilattice.Product (guard)
 
 variable {S : Type*} [LinearOrder S] [BoundedOrder S]
 
@@ -270,7 +269,7 @@ value of its infon. -/
 def eval (I : α → Know (S ⊙ S)) : Formula α → S ⊙ S
   | atom p => weight (ofKnow (I p))
   | neg φ => (eval I φ)ᶜ
-  | guard φ ψ => Product.guard (eval I φ) (eval I ψ)
+  | guard φ ψ => Bilattice.guard (eval I φ) (eval I ψ)
 
 variable [DecidableEq α]
 
@@ -414,7 +413,7 @@ theorem designated_eval_of_infons_le :
     have hφ := designated_eval_of_infons_le φ true (le_sup_left.trans h)
     have hψ := designated_eval_of_infons_le ψ b (le_sup_right.trans h)
     have hg : (Formula.guard φ ψ).eval J = ψ.eval J :=
-      Product.guard_of_top_kLE (designated_iff_top_kLE.mp hφ) _
+      guard_of_top_kLE (designated_iff_top_kLE.mp hφ) _
     rwa [hg]
 
 variable [Finite α] [Fintype S]
@@ -599,13 +598,13 @@ open Formula
 open FOUR (U T F I) in
 -- Table 6.1
 theorem guard_table :
-    ∀ y : FOUR, Product.guard T y = y ∧ Product.guard U y = U ∧ Product.guard F y = U ∧
-      Product.guard I y = y := by
+    ∀ y : FOUR, Bilattice.guard T y = y ∧ Bilattice.guard U y = U ∧ Bilattice.guard F y = U ∧
+      Bilattice.guard I y = y := by
   decide
 
 theorem guard_truth_gap {α : Type*} {I : α → Know PRESUP} {φ ψ : Formula α}
     (h : φ.eval I = PRESUP.F) : (guard φ ψ).eval I = PRESUP.U :=
-  (congrArg (Product.guard · (ψ.eval I)) h).trans (Product.guard_of_pro_bot rfl _)
+  (congrArg (Bilattice.guard · (ψ.eval I)) h).trans (Product.guard_of_pro_bot rfl _)
 
 open Regret
 
