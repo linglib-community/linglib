@@ -5,9 +5,8 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.Tone.Constraints
-public import Linglib.Phonology.Tone.Grammatical
 public import Linglib.Fragments.Poko.Tone
-public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Mathlib.Tactic.Linarith
 
@@ -434,41 +433,3 @@ theorem weighted_HG_inadequate :
 /-! ### Deferred: GEN shift and insert-and-associate ops, L% boundary tone, §§3.3–3.4 tableaux -/
 
 end McPhersonLamont2026
-
-/-! ### `Candidate` strictly extends the [rolle-2018] overwrite encoding -/
-
-namespace Autosegmental
-
-open Tone (TBU TRN)
-
-variable {S M : Type*}
-
-/-- Embed a `Tone.overwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
-def Form.ofTBUList (host : List (TBU S)) (m : M) : Form S TRN M :=
-  .melody m (host.map TBU.tone) (host.map TBU.seg)
-    ((List.range host.length).map fun i ↦ (i, i)).toFinset
-
-theorem Form.ofTBUList_linksTo_subsingleton (host : List (TBU S)) (m : M)
-    (i : Fin (Form.ofTBUList host m).lower.length) :
-    ((Candidate.input (Form.ofTBUList host m)).linksTo i).length ≤ 1 := by
-  have h_all : ∀ n ∈ ((Candidate.input (Form.ofTBUList host m)).linksTo i).map Fin.val,
-      n = i.val := fun n hn ↦ by
-    obtain ⟨k, hk, rfl⟩ := List.mem_map.1 hn
-    have := Candidate.mem_linksTo.1 hk
-    rw [Candidate.input_links] at this
-    obtain ⟨a, -, ha⟩ := List.mem_map.1 (List.mem_toFinset.1 (Form.mem_links_melody.1 this))
-    simp only [Prod.mk.injEq] at ha
-    omega
-  have h_count := List.count_eq_length.mpr fun b hb ↦ (h_all b hb).symm
-  have := List.nodup_iff_count_le_one.mp
-    (((Candidate.input (Form.ofTBUList host m)).nodup_linksTo i).map Fin.val_injective) i.val
-  rw [List.length_map] at h_count
-  omega
-
-theorem Candidate.exists_multi_tone_TBU :
-    ∃ u : Form Unit TRN Unit, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
-  ⟨.melody () [.H, .L] [()] ∅,
-    (Candidate.input _).insertLink ⟨0, by decide⟩ ⟨0, by decide⟩
-      |>.insertLink ⟨1, by decide⟩ ⟨0, by decide⟩, ⟨0, by decide⟩, by decide⟩
-
-end Autosegmental

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Mwaghavul.Basic
-public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.OCP
 public import Linglib.Core.Data.List.Forall2
 public import Linglib.Phonology.OptimalityTheory.Tableau
@@ -141,11 +141,11 @@ abbrev Form := Autosegmental.Form Syl TRN Morpheme
 /-- The input of an ideophone as the root `m`: one lexical tone for each run of identical tones,
 linked to every syllable of its run. -/
 def rootInput (m : Morpheme) (i : Ideophone) : Form :=
-  .melody m (OCP.collapse i.tones) (i.syllables.map TBU.seg)
+  .morph m (OCP.collapse i.tones) (i.syllables.map TBU.seg)
     ((List.range i.syllables.length).map fun k ↦ (OCP.runIdx i.tones k, k)).toFinset
 
 /-- The input of a verbaliser: its tones, floating. -/
-def Verbalizer.input (v : Verbalizer) : Form := .melody .vbz v.tune.melody [] ∅
+def Verbalizer.input (v : Verbalizer) : Form := .morph .vbz v.tune.melody [] ∅
 
 /-- The constraints of the analysis: LEFT-ANCHOR and RIGHT-ANCHOR for the verbaliser's M and H
 ((22)), and MAX-Tone ((23)). -/

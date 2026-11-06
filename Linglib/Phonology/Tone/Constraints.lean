@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 
