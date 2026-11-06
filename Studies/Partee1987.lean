@@ -23,10 +23,10 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
 * The paper systematically represents properties as sets (fn. 5) in an extensional fragment
   (fn. 2); a property here is a set of individuals at each index, `W → Set E`, and a set is the
   rigid property `Function.const W` of it.
-* The general results are stated where their objects live: the shifts and `BE` in
-  `Quantification/Individual.lean`, the counting determiners under `BE` in
-  `Quantification/Counting.lean`, ∩ and ∪ in `Reference/Kind.lean`. This file keeps the
-  paper's errata.
+* The general results are stated where their objects live: the lift and `lower` in
+  `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`,
+  the counting determiners under `BE` in `Quantification/Counting.lean`, ∩ and ∪ in
+  `Reference/Kind.lean`. This file keeps the paper's errata.
 
 ## Errata
 
