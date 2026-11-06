@@ -27,7 +27,7 @@ def ex15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "unergative"), ("applicative", "suffixed")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def ex15b : Datum :=
   { id := "bobaljikharley2017_ex15b"
@@ -41,7 +41,7 @@ def ex15b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "transitive"), ("applicative", "suffixed")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def ex15c : Datum :=
   { id := "bobaljikharley2017_ex15c"
@@ -55,7 +55,7 @@ def ex15c : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "unaccusative"), ("applicative", "suffixed")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def ex16 : Datum :=
   { id := "bobaljikharley2017_ex16"
@@ -69,7 +69,7 @@ def ex16 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "suffixed")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def ex17 : Datum :=
   { id := "bobaljikharley2017_ex17"
@@ -83,7 +83,7 @@ def ex17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive"), ("applicative", "periphrastic")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def ex18 : Datum :=
   { id := "bobaljikharley2017_ex18"
@@ -97,7 +97,7 @@ def ex18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive"), ("applicative", "suffixed")] }
+    paperFeatures := [("section", "7.2.1"), ("phenomenon", "applicative")] }
 
 def all : List Datum := [ex15a, ex15b, ex15c, ex16, ex17, ex18]
 

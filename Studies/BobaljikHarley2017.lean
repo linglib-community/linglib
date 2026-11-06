@@ -4,6 +4,7 @@ public import Studies.Harley2014
 public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
 public import Linglib.Data.Examples.BobaljikHarley2017
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
 
 /-!
 # Bobaljik and Harley (2017): Suppletion is local: Evidence from Hiaki
@@ -23,6 +24,8 @@ copies into the verb](##mayCondition'_tree21).
   `DistributedMorphology.MayCondition'`.
 * A terminal is represented by the number it bears, so a DP by the number its determiner copies to
   its label.
+* The verb of an applicative example is read off its gloss line, as the word glossed `APPL`, and
+  its frame is the one the chapter gives it, in (15) or in the list (10) of suppletive verbs.
 
 ## TODO
 
@@ -44,7 +47,7 @@ namespace BobaljikHarley2017
 open PhraseStructure Core.Order
 open DistributedMorphology (MayCondition MayCondition' localLabels mayCondition'_of_isHeadAt)
 open Clause (Arguments)
-open Clause.Arguments (unaccusative unergative)
+open Clause.Arguments (unaccusative unergative transitive)
 
 /-- The categories of the chapter's trees: the schematic X and Y, the Root's, Voice, the
 non-agentive v, I and D. -/
@@ -147,11 +150,6 @@ theorem mayCondition_moveToVoice :
 
 /-! ### The applicative diagnostic -/
 
-/-- The verb classes of the applicative examples. -/
-inductive VerbClass
-  | unergative | transitive | unaccusative | suppletiveIntransitive | suppletiveTransitive
-  deriving DecidableEq, Repr
-
 /-- The applicative *-ria* selects agentive Voice, and clashes with the non-agentive v of a
 clause without an external argument. -/
 def ApplicativeLicensed (c : Arguments Number) : Prop := (clause c).cat = .voice
@@ -164,35 +162,41 @@ theorem applicativeLicensed_iff {c : Arguments Number} :
   unfold ApplicativeLicensed clause
   cases c .external <;> simp
 
-/-- The frame of each class, given that of the suppletive intransitives. -/
-def VerbClass.frame (s : Arguments Number) : VerbClass → Arguments Number
-  | .unergative => Clause.Arguments.unergative .singular
-  | .transitive | .suppletiveTransitive => Clause.Arguments.transitive .singular .singular
-  | .unaccusative => Clause.Arguments.unaccusative .singular
-  | .suppletiveIntransitive => s
+/-- The frames of the verbs of the applicative examples, by their glosses: those the chapter gives
+the verbs of (15), agentive intransitive *dance*, agentive transitive *close* and unaccusative
+*break*, and transitive for *kill*, whose suppletion (10) tracks its object. -/
+def frames : List (List Char × Arguments Number) :=
+  [("dance".toList, unergative .singular), ("close".toList, transitive .singular .singular),
+    ("break".toList, unaccusative .singular), ("kill".toList, transitive .singular .singular)]
 
-/-- The classes as named in the rows. -/
-def classTable : List (String × VerbClass) :=
-  [("unergative", .unergative), ("transitive", .transitive), ("unaccusative", .unaccusative),
-    ("suppletiveIntransitive", .suppletiveIntransitive),
-    ("suppletiveTransitive", .suppletiveTransitive)]
+/-- The frame of a verb, given a frame `s` for *go*, whose suppletion (10) tracks its subject. -/
+def frame? (s : Arguments Number) (g : List Char) : Option (Arguments Number) :=
+  if g = "go".toList then some s else frames.lookup g
 
-/-- The examples with a suffixed *-ria*, (15) and (16) and (18), by verb class and judgment. -/
-def applicativeRows : List (VerbClass × Judgment) :=
-  Examples.all.filterMap fun d ↦ do
-    guard (d.feature? "applicative" = some "suffixed")
-    pure (← d.parse? "verbClass" classTable, d.judgment)
+/-- The verb of an example, read from its gloss line as the first element of the lexical gloss of
+the word that carries `APPL`, where one does. -/
+def applicativeVerb? (d : Datum) : Option (List Char) := do
+  let w ← d.glossedWords.find? fun w ↦ "APPL".toList ∈ w.labels
+  (Gloss.elements (← w.lexicalGloss?)).head?
 
-/-- A frame for the suppletive intransitives fits the examples when each suffixed applicative is
-acceptable exactly where the frame of its class licenses it. -/
+/-- The examples whose verb carries the applicative suffix, (15), (16) and (18), by their verb and
+judgment. -/
+def applicativeRows : List (List Char × Judgment) :=
+  Examples.all.filterMap fun d ↦ (applicativeVerb? d).map (·, d.judgment)
+
+/-- A frame for the suppletive intransitives fits the examples when the verb of each suffixed
+applicative has a frame, which licenses the applicative exactly where it is acceptable. -/
 def Fits (s : Arguments Number) : Prop :=
-  ∀ p ∈ applicativeRows, p.2 = .acceptable ↔ ApplicativeLicensed (p.1.frame s)
+  ∀ p ∈ applicativeRows, ∃ c ∈ frame? s p.1, p.2 = .acceptable ↔ ApplicativeLicensed c
 
 instance (s : Arguments Number) : Decidable (Fits s) := List.decidableBAll _ _
 
 private theorem fits_congr {s s' : Arguments Number}
     (h : s .external = none ↔ s' .external = none) : Fits s ↔ Fits s' :=
-  forall₂_congr fun p _ ↦ by cases p.1 <;> simp [VerbClass.frame, applicativeLicensed_iff, h]
+  forall₂_congr fun ⟨g, _⟩ _ ↦ by
+    by_cases hg : g = "go".toList
+    · simp [frame?, hg, applicativeLicensed_iff, h]
+    · simp only [frame?, hg, ↓reduceIte]
 
 /-- **The suppletive intransitives are unaccusative.** The applicative examples fit a frame for the
 suppletive intransitives exactly when it has no external argument. -/
