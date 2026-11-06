@@ -587,25 +587,13 @@ variable {W : Type*} (M : Model V A W) [Fintype W] [∀ a w v, Decidable (w ~[M.
 /-- Satisfaction is decidable over finitely many worlds. -/
 def decSat : ∀ (p : Formula V A) (w : W), Decidable (M.Sat p w)
   | .atom v, w => inferInstanceAs (Decidable (M.val v w))
-  | .neg p, w => haveI := decSat p w; inferInstanceAs (Decidable (¬ M.Sat p w))
-  | .and p q, w =>
-    haveI := decSat p w; haveI := decSat q w
-    inferInstanceAs (Decidable (M.Sat p w ∧ M.Sat q w))
-  | .or p q, w =>
-    haveI := decSat p w; haveI := decSat q w
-    inferInstanceAs (Decidable (M.Sat p w ∨ M.Sat q w))
-  | .K a p, w =>
-    haveI : DecidablePred (M.Sat p) := decSat p
-    inferInstanceAs (Decidable (□[M.epi a] (M.Sat p) w))
-  | .P a p, w =>
-    haveI : DecidablePred (M.Sat p) := decSat p
-    inferInstanceAs (Decidable (◇[M.epi a] (M.Sat p) w))
-  | .B a p, w =>
-    haveI : DecidablePred (M.Sat p) := decSat p
-    inferInstanceAs (Decidable (□[M.dox a] (M.Sat p) w))
-  | .C a p, w =>
-    haveI : DecidablePred (M.Sat p) := decSat p
-    inferInstanceAs (Decidable (◇[M.dox a] (M.Sat p) w))
+  | .neg p, w => @instDecidableNot _ (decSat p w)
+  | .and p q, w => @instDecidableAnd _ _ (decSat p w) (decSat q w)
+  | .or p q, w => @instDecidableOr _ _ (decSat p w) (decSat q w)
+  | .K a p, w => haveI := decSat p; inferInstanceAs (Decidable (□[M.epi a] (M.Sat p) w))
+  | .P a p, w => haveI := decSat p; inferInstanceAs (Decidable (◇[M.epi a] (M.Sat p) w))
+  | .B a p, w => haveI := decSat p; inferInstanceAs (Decidable (□[M.dox a] (M.Sat p) w))
+  | .C a p, w => haveI := decSat p; inferInstanceAs (Decidable (◇[M.dox a] (M.Sat p) w))
 
 instance (p : Formula V A) (w : W) : Decidable (M.Sat p w) := M.decSat p w
 
@@ -629,9 +617,8 @@ local notation "𝐲" => (some Role.addressee : Option Role)
 /-- A third person. -/
 local notation "𝐡" => (none : Option Role)
 
-/-- A model in which belief and knowledge diverge: from world `0` the doxastic alternative is
-`1` and the epistemic alternatives are all three worlds, each other world being its own only
-alternative; the atom holds at `0` and `1`. -/
+/-- A model in which belief and knowledge diverge at `0`, which believes `1` but cannot rule out
+`2`. -/
 abbrev mK : Model Unit (Option Role) (Fin 3) where
   epi _ := {p | p.1 = p.2 ∨ p.1 = 0}
   dox _ := {p | (p.1 = 0 ∧ p.2 = 1) ∨ (p.1 ≠ 0 ∧ p.1 = p.2)}
@@ -643,10 +630,7 @@ abbrev mK : Model Unit (Option Role) (Fin 3) where
 instance (a : Option Role) : (mK.epi a).IsTrans := ⟨by decide +revert⟩
 instance (a : Option Role) : (mK.dox a).IsTrans := ⟨by decide +revert⟩
 
-/-- A model in which the speaker believes that a third person believes what the speaker does not
-believe: from world `0` the speaker's doxastic alternatives are `1` and `2`, from the others
-`1`; everyone else always considers only `0` possible; knowledge is trivial; the atom holds at
-`0` and `1`. -/
+/-- A model in which the speaker believes that a third person believes what the speaker does not. -/
 abbrev mB : Model Unit (Option Role) (Fin 3) where
   epi _ := .univ
   dox a := {p | (a = 𝐈 ∧ ((p.1 = 0 ∧ p.2 ≠ 0) ∨ (p.1 ≠ 0 ∧ p.2 = 1))) ∨ (a ≠ 𝐈 ∧ p.2 = 0)}
@@ -658,8 +642,7 @@ abbrev mB : Model Unit (Option Role) (Fin 3) where
 instance (a : Option Role) : (mB.epi a).IsTrans := ⟨fun _ _ _ _ _ ↦ trivial⟩
 instance (a : Option Role) : (mB.dox a).IsTrans := ⟨by revert a; decide⟩
 
-/-- The model system of Section 4.14 for (45): the speaker's doxastic alternative `1` to `0` and
-to itself, where the atom holds, has the epistemic alternative `2`, where it fails. -/
+/-- The model system of Section 4.14 for (45). -/
 abbrev model45 : Model Unit (Option Role) (Fin 3) where
   epi a := {p | p.1 = p.2 ∨ (a = 𝐈 ∧ p.1 < p.2)}
   dox a := {p | (a = 𝐈 ∧ p.1 ≠ 2 ∧ p.2 = 1) ∨ ((a ≠ 𝐈 ∨ p.1 = 2) ∧ p.1 = p.2)}
@@ -671,9 +654,7 @@ abbrev model45 : Model Unit (Option Role) (Fin 3) where
 instance (a : Option Role) : (model45.epi a).IsTrans := ⟨by revert a; decide⟩
 instance (a : Option Role) : (model45.dox a).IsTrans := ⟨by revert a; decide⟩
 
-/-- The model system of Section 5.10 for (73) and (72), with doxastic alternativeness closed
-under transitivity: the speaker's doxastic alternatives to `0` are `1`, where the atom fails,
-and `2`, where it holds, the only alternative to `1` and to itself. -/
+/-- The model system of (74)-(82), its doxastic alternativeness closed under transitivity. -/
 abbrev model73 : Model Unit (Option Role) (Fin 3) where
   epi _ := {p | p.1 ≤ p.2}
   dox a := {p | (a = 𝐈 ∧ (p.1 = 0 ∧ p.2 ≠ 0 ∨ p.1 ≠ 0 ∧ p.2 = 2)) ∨ (a ≠ 𝐈 ∧ p.1 = p.2)}
@@ -685,8 +666,7 @@ abbrev model73 : Model Unit (Option Role) (Fin 3) where
 instance (a : Option Role) : (model73.epi a).IsTrans := ⟨by decide +revert⟩
 instance (a : Option Role) : (model73.dox a).IsTrans := ⟨by revert a; decide⟩
 
-/-- A model in which a third person believes the atom false at world `0`, where it holds;
-everyone else knows and believes what is true. -/
+/-- A model in which a third person disbelieves the atom, true at `0`; the others are omniscient. -/
 abbrev mThird : Model Unit (Option Role) (Fin 2) where
   epi a := {p | p.1 = p.2 ∨ a = 𝐡 ∧ p.1 = 0}
   dox a := {p | a = 𝐡 ∧ p.2 = 1 ∨ a ≠ 𝐡 ∧ p.1 = p.2}
@@ -698,8 +678,7 @@ abbrev mThird : Model Unit (Option Role) (Fin 2) where
 instance (a : Option Role) : (mThird.epi a).IsTrans := ⟨by decide +revert⟩
 instance (a : Option Role) : (mThird.dox a).IsTrans := ⟨by decide +revert⟩
 
-/-- A model in which the speaker cannot tell the two worlds apart and believes `1`, where the
-atom holds; everyone else knows and believes what is true. -/
+/-- A model in which the speaker cannot tell the two worlds apart and believes the atom true. -/
 abbrev mUndecided : Model Unit (Option Role) (Fin 2) where
   epi a := {p | p.1 = p.2 ∨ a = 𝐈}
   dox a := {p | a = 𝐈 ∧ p.2 = 1 ∨ a ≠ 𝐈 ∧ p.1 = p.2}
@@ -711,9 +690,8 @@ abbrev mUndecided : Model Unit (Option Role) (Fin 2) where
 instance (a : Option Role) : (mUndecided.epi a).IsTrans := ⟨by decide +revert⟩
 instance (a : Option Role) : (mUndecided.dox a).IsTrans := ⟨by decide +revert⟩
 
-/-- The truth sets of this model satisfy neither (C.KK*) nor (C.BB*): from world `0` the
-alternatives of each kind are `1`, where the atom holds, and from `1` they are `2`, where it
-fails. -/
+/-- A model with intransitive alternativeness, whose truth sets satisfy neither (C.KK*) nor
+(C.BB*). -/
 abbrev nonTransitive : Model Unit (Option Role) (Fin 3) where
   epi _ := {p | p.1 = p.2 ∨ p.2 = p.1 + 1}
   dox _ := {p | p.2 = p.1 + 1}
@@ -1064,11 +1042,14 @@ theorem predictedJudgment_of_epistemicallyIndefensible (h : Defensible {B 𝐈 p
   simp only [predictedJudgment, show ¬ DoxasticallyIndefensible 𝐈 p from not_not_intro h, h',
     ↓reduceIte]
 
-theorem predictedJudgment_of_defensible (h : Defensible {B 𝐈 p}) (hI : Defensible {K 𝐈 p})
-    (hy : Defensible {K 𝐲 p}) : predictedJudgment p = .acceptable := by
-  simp only [predictedJudgment, show ¬ DoxasticallyIndefensible 𝐈 p from not_not_intro h,
+theorem predictedJudgment_of_sat {W : Type*} (M : Model Unit (Option Role) W)
+    [∀ a, (M.epi a).IsTrans] [∀ a, (M.dox a).IsTrans] {w : W}
+    (h : M.Sat (B 𝐈 p ⋏ K 𝐈 p ⋏ K 𝐲 p) w) : predictedJudgment p = .acceptable := by
+  simp only [predictedJudgment, ↓reduceIte,
+    show ¬ DoxasticallyIndefensible 𝐈 p from not_not_intro (M.defensible_of_sat h.1.1),
     show ¬ (EpistemicallyIndefensible 𝐈 p ∨ EpistemicallyIndefensible 𝐲 p) from
-      not_or_intro (not_not_intro hI) (not_not_intro hy), ↓reduceIte]
+      not_or_intro (not_not_intro (M.defensible_of_sat h.1.2))
+        (not_not_intro (M.defensible_of_sat h.2))]
 
 /-- The judged sentences whose judgments the grading predicts, with their forms. -/
 def rows : List (Datum × Formula Unit (Option Role)) :=
@@ -1113,35 +1094,26 @@ theorem rows_judgment : ∀ r ∈ rows, predictedJudgment r.2 = r.1.judgment := 
     predictedJudgment_of_epistemicallyIndefensible
       (mUndecided.defensible_of_sat (w := 0) (by decide))
       (.inl (indefensible_K_moore_whether 𝐈 𝐩)),
-    predictedJudgment_of_defensible (defensible_B_moore_of_ne 𝐡 𝐈 (by decide) ())
-      (mThird.defensible_of_sat (w := 0) (by decide))
-      (mThird.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_sat mThird (w := 0) (by decide),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_B_moore 𝐈 𝐩).doxasticallyIndefensible,
-    predictedJudgment_of_defensible (mThird.defensible_of_sat (w := 0) (by decide))
-      (mThird.defensible_of_sat (w := 0) (by decide))
-      (mThird.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_sat mThird (w := 0) (by decide),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_K_moore_whether 𝐈 𝐩).doxasticallyIndefensible,
     predictedJudgment_of_epistemicallyIndefensible
       (mUndecided.defensible_of_sat (w := 0) (by decide))
       (.inl (epistemicallyIndefensible_K_neg_K 𝐡 𝐈 𝐩)),
-    predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
-      defensible_K_knowsWhether (mUndecided.defensible_of_sat (w := 0) (by decide)),
-    predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
-      defensible_K_B_neg_K (mUndecided.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_sat mUndecided (w := 0) (by decide),
+    predictedJudgment_of_sat mUndecided (w := 0) (by decide),
     predictedJudgment_of_epistemicallyIndefensible
       (model45.defensible_of_sat (w := 0) (by decide)) (.inl (indefensible_K_moore 𝐈 (B 𝐈 𝐩))),
-    predictedJudgment_of_defensible defensible_B_B_P defensible_K_B_P
-      (mUndecided.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_sat mUndecided (w := 0) (by decide),
     predictedJudgment_of_epistemicallyIndefensible (mB.defensible_of_sat (w := 1) (by decide))
       (.inr (indefensible_K_moore 𝐲 𝐩)),
     predictedJudgment_of_epistemicallyIndefensible defensible_B_neg_K
       (.inl (indefensible_K_moore 𝐈 𝐩)),
-    predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
-      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide)),
-    predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
-      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide)),
+    predictedJudgment_of_sat mK (w := 1) (by decide),
+    predictedJudgment_of_sat mK (w := 1) (by decide),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_K_and_not_KK 𝐈 𝐩).doxasticallyIndefensible⟩
 
@@ -1149,21 +1121,13 @@ theorem departures_judgment : ∀ r ∈ departures, predictedJudgment r.2 ≠ r.
   simp only [departures, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
     implies_true, and_true]
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
-      (mUndecided.defensible_of_sat (w := 0) (by decide))
-      (mUndecided.defensible_of_sat (w := 0) (by decide))]
-    decide
+  · rw [predictedJudgment_of_sat mUndecided (w := 0) (by decide)]; decide
   · rw [predictedJudgment_of_epistemicallyIndefensible
-      (mB.defensible_of_sat (w := 1) (by decide)) (.inr (indefensible_K_moore 𝐲 𝐩))]
-    decide
+      (mB.defensible_of_sat (w := 1) (by decide)) (.inr (indefensible_K_moore 𝐲 𝐩))]; decide
   · rw [predictedJudgment_of_epistemicallyIndefensible defensible_B_neg_K
-      (.inl (indefensible_K_moore 𝐈 𝐩))]
-    decide
-  · rw [predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
-      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide))]
-    decide
+      (.inl (indefensible_K_moore 𝐈 𝐩))]; decide
+  · rw [predictedJudgment_of_sat mK (w := 1) (by decide)]; decide
   · rw [predictedJudgment_of_doxasticallyIndefensible
-      (indefensible_K_and_not_KK 𝐡 𝐩).doxasticallyIndefensible]
-    decide
+      (indefensible_K_and_not_KK 𝐡 𝐩).doxasticallyIndefensible]; decide
 
 end Hintikka1962
