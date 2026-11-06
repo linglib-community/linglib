@@ -39,8 +39,6 @@ sentences by the indefensibility of their believed and known forms
 
 ## TODO
 
-* Section 4.9 (p. 76): a sentence is doxastically self-sustaining only if it is self-sustaining.
-  The proof adds a fresh world doxastically accessing a world at which the sentence fails.
 * Chapter 6's quantified model sets.
 
 ## References
@@ -134,22 +132,22 @@ structure ModelSystem (V : Type u) (A : Type v) where
   /-- The model sets. -/
   sets : Set (Set (Formula V A))
   /-- Epistemic alternativeness with respect to an agent. -/
-  epi : A → Set (Formula V A) → Set (Formula V A) → Prop
+  epi : A → SetRel (Set (Formula V A)) (Set (Formula V A))
   /-- Doxastic alternativeness with respect to an agent. -/
-  dox : A → Set (Formula V A) → Set (Formula V A) → Prop
+  dox : A → SetRel (Set (Formula V A)) (Set (Formula V A))
   isModelSet : ∀ {μ}, μ ∈ sets → IsModelSet μ
   /-- (C.P*) -/
-  P_star : ∀ {a p μ}, μ ∈ sets → P a p ∈ μ → ∃ ν ∈ sets, epi a μ ν ∧ p ∈ ν
+  P_star : ∀ {a p μ}, μ ∈ sets → P a p ∈ μ → ∃ ν ∈ sets, μ ~[epi a] ν ∧ p ∈ ν
   /-- (C.K*) -/
-  K_star : ∀ {a p μ ν}, epi a μ ν → K a p ∈ μ → p ∈ ν
+  K_star : ∀ {a p μ ν}, μ ~[epi a] ν → K a p ∈ μ → p ∈ ν
   /-- (C.C*) -/
-  C_star : ∀ {a p μ}, μ ∈ sets → C a p ∈ μ → ∃ ν ∈ sets, dox a μ ν ∧ p ∈ ν
+  C_star : ∀ {a p μ}, μ ∈ sets → C a p ∈ μ → ∃ ν ∈ sets, μ ~[dox a] ν ∧ p ∈ ν
   /-- (C.b*) -/
-  b_star : ∀ {a p μ}, μ ∈ sets → B a p ∈ μ → ∃ ν ∈ sets, dox a μ ν ∧ p ∈ ν
+  b_star : ∀ {a p μ}, μ ∈ sets → B a p ∈ μ → ∃ ν ∈ sets, μ ~[dox a] ν ∧ p ∈ ν
   /-- (C.B*) -/
-  B_star : ∀ {a p μ ν}, dox a μ ν → B a p ∈ μ → p ∈ ν
+  B_star : ∀ {a p μ ν}, μ ~[dox a] ν → B a p ∈ μ → p ∈ ν
   /-- (C.dox) -/
-  dox_le_epi : ∀ a, dox a ≤ epi a
+  dox_le_epi : ∀ a, dox a ⊆ epi a
 
 namespace ModelSystem
 
@@ -158,27 +156,48 @@ variable (S : ModelSystem V A)
 /-- (C.KK*) (Section 3.2): what an agent knows in a model set he knows in its epistemic
 alternatives. -/
 class IsKKStar : Prop where
-  KK_star : ∀ {a p μ ν}, S.epi a μ ν → K a p ∈ μ → K a p ∈ ν
+  KK_star : ∀ {a p μ ν}, μ ~[S.epi a] ν → K a p ∈ μ → K a p ∈ ν
 
 /-- (C.BB*) (Section 3.5): what an agent believes in a model set he believes in its doxastic
 alternatives. -/
 class IsBBStar : Prop where
-  BB_star : ∀ {a p μ ν}, S.dox a μ ν → B a p ∈ μ → B a p ∈ ν
+  BB_star : ∀ {a p μ ν}, μ ~[S.dox a] ν → B a p ∈ μ → B a p ∈ ν
 
-variable {S} {a : A} {p : Formula V A} {μ ν : Set (Formula V A)}
+variable {S} {a : A} {p q : Formula V A} {μ ν : Set (Formula V A)}
 
-theorem KK_star [S.IsKKStar] (h : S.epi a μ ν) (hp : K a p ∈ μ) : K a p ∈ ν :=
+/-! The conditions on a model set, read at a member of a model system. -/
+
+section Member
+
+variable (hμ : μ ∈ S.sets)
+include hμ
+
+theorem neg (h : p ∈ μ) : ∼p ∉ μ := (S.isModelSet hμ).neg h
+theorem and (h : p ⋏ q ∈ μ) : p ∈ μ ∧ q ∈ μ := (S.isModelSet hμ).and h
+theorem or (h : p ⋎ q ∈ μ) : p ∈ μ ∨ q ∈ μ := (S.isModelSet hμ).or h
+theorem neg_neg (h : ∼∼p ∈ μ) : p ∈ μ := (S.isModelSet hμ).neg_neg h
+theorem neg_and (h : ∼(p ⋏ q) ∈ μ) : ∼p ∈ μ ∨ ∼q ∈ μ := (S.isModelSet hμ).neg_and h
+theorem neg_or (h : ∼(p ⋎ q) ∈ μ) : ∼p ∈ μ ∧ ∼q ∈ μ := (S.isModelSet hμ).neg_or h
+theorem know (h : K a p ∈ μ) : p ∈ μ := (S.isModelSet hμ).know h
+theorem neg_know (h : ∼K a p ∈ μ) : P a ∼p ∈ μ := (S.isModelSet hμ).neg_know h
+theorem neg_poss (h : ∼P a p ∈ μ) : K a ∼p ∈ μ := (S.isModelSet hμ).neg_poss h
+theorem neg_believe (h : ∼B a p ∈ μ) : C a ∼p ∈ μ := (S.isModelSet hμ).neg_believe h
+theorem neg_compat (h : ∼C a p ∈ μ) : B a ∼p ∈ μ := (S.isModelSet hμ).neg_compat h
+
+end Member
+
+theorem KK_star [S.IsKKStar] (h : μ ~[S.epi a] ν) (hp : K a p ∈ μ) : K a p ∈ ν :=
   IsKKStar.KK_star h hp
 
-theorem BB_star [S.IsBBStar] (h : S.dox a μ ν) (hp : B a p ∈ μ) : B a p ∈ ν :=
+theorem BB_star [S.IsBBStar] (h : μ ~[S.dox a] ν) (hp : B a p ∈ μ) : B a p ∈ ν :=
   IsBBStar.BB_star h hp
 
 -- Section 3.6
-theorem KK_star_dox [S.IsKKStar] (h : S.dox a μ ν) (hp : K a p ∈ μ) : K a p ∈ ν :=
-  S.KK_star (S.dox_le_epi a μ ν h) hp
+theorem KK_star_dox [S.IsKKStar] (h : μ ~[S.dox a] ν) (hp : K a p ∈ μ) : K a p ∈ ν :=
+  S.KK_star (S.dox_le_epi a h) hp
 
-theorem K_star_dox (h : S.dox a μ ν) (hp : K a p ∈ μ) : p ∈ ν :=
-  S.K_star (S.dox_le_epi a μ ν h) hp
+theorem K_star_dox (h : μ ~[S.dox a] ν) (hp : K a p ∈ μ) : p ∈ ν :=
+  S.K_star (S.dox_le_epi a h) hp
 
 end ModelSystem
 
@@ -219,6 +238,9 @@ def EpistemicallyIndefensible (a : A) (p : Formula V A) : Prop := Indefensible {
 def EpistemicallyImplies (a : A) (p q : Formula V A) : Prop :=
   EpistemicallyIndefensible a (p ⋏ ∼q)
 
+/-- Doxastic self-sustenance (Section 4.9): "a does not believe that p" is indefensible. -/
+def DoxasticallySelfSustaining (a : A) (p : Formula V A) : Prop := Indefensible {∼B a p}
+
 variable {a b : A} {p q : Formula V A}
 
 theorem indefensible_singleton : Indefensible {p} ↔
@@ -234,7 +256,7 @@ theorem indefensible_pair : Indefensible {p, q} ↔
 
 theorem Indefensible.of_and (h : Indefensible {p, q}) : Indefensible {p ⋏ q} :=
   indefensible_singleton.2 fun S _ _ μ hμ hpq ↦
-    let h' := (S.isModelSet hμ).and hpq; indefensible_pair.1 h S ‹_› ‹_› μ hμ h'.1 h'.2
+    let h' := S.and hμ hpq; indefensible_pair.1 h S ‹_› ‹_› μ hμ h'.1 h'.2
 
 theorem Indefensible.doxasticallyIndefensible (h : Indefensible {p}) :
     DoxasticallyIndefensible a p :=
@@ -244,7 +266,7 @@ theorem Indefensible.doxasticallyIndefensible (h : Indefensible {p}) :
 -- Section 3.10
 theorem virtuallyImplies_of_indefensible (h : Indefensible {p, ∼q}) : VirtuallyImplies p q :=
   indefensible_singleton.2 fun S _ _ μ hμ hn ↦
-    let h₁ := (S.isModelSet hμ).and ((S.isModelSet hμ).neg_neg hn)
+    let h₁ := S.and hμ (S.neg_neg hμ hn)
     indefensible_pair.1 h S ‹_› ‹_› μ hμ h₁.1 h₁.2
 
 -- Section 4.8
@@ -311,31 +333,31 @@ theorem isModelSet_truthSet (w : W) : IsModelSet (M.truthSet w) where
 system. -/
 def toModelSystem : ModelSystem V A where
   sets := Set.range M.truthSet
-  epi a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ w ~[M.epi a] v
-  dox a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ w ~[M.dox a] v
+  epi a := Prod.map M.truthSet M.truthSet '' M.epi a
+  dox a := Prod.map M.truthSet M.truthSet '' M.dox a
   isModelSet := by rintro _ ⟨w, rfl⟩; exact M.isModelSet_truthSet w
   P_star := by
     rintro a p _ ⟨w, rfl⟩ ⟨v, hv, hp⟩
-    exact ⟨_, ⟨v, rfl⟩, ⟨w, v, rfl, rfl, hv⟩, hp⟩
-  K_star := by rintro a p _ _ ⟨w, v, rfl, rfl, hwv⟩ h; exact h v hwv
+    exact ⟨_, ⟨v, rfl⟩, ⟨(w, v), hv, rfl⟩, hp⟩
+  K_star := by rintro a p _ _ ⟨⟨w, v⟩, hwv, ⟨⟩⟩ h; exact h v hwv
   C_star := by
     rintro a p _ ⟨w, rfl⟩ ⟨v, hv, hp⟩
-    exact ⟨_, ⟨v, rfl⟩, ⟨w, v, rfl, rfl, hv⟩, hp⟩
+    exact ⟨_, ⟨v, rfl⟩, ⟨(w, v), hv, rfl⟩, hp⟩
   b_star := by
     rintro a p _ ⟨w, rfl⟩ h
     obtain ⟨v, hv⟩ := (M.dox_serial a).serial w
-    exact ⟨_, ⟨v, rfl⟩, ⟨w, v, rfl, rfl, hv⟩, h v hv⟩
-  B_star := by rintro a p _ _ ⟨w, v, rfl, rfl, hwv⟩ h; exact h v hwv
-  dox_le_epi a _ _ := fun ⟨w, v, hw, hv, h⟩ ↦ ⟨w, v, hw, hv, M.dox_le_epi a h⟩
+    exact ⟨_, ⟨v, rfl⟩, ⟨(w, v), hv, rfl⟩, h v hv⟩
+  B_star := by rintro a p _ _ ⟨⟨w, v⟩, hwv, ⟨⟩⟩ h; exact h v hwv
+  dox_le_epi a := Set.image_mono (M.dox_le_epi a)
 
 instance [∀ a, (M.epi a).IsTrans] : M.toModelSystem.IsKKStar where
   KK_star := by
-    rintro a p _ _ ⟨w, v, rfl, rfl, hwv⟩ h u hvu
+    rintro a p _ _ ⟨⟨w, v⟩, hwv, ⟨⟩⟩ h u hvu
     exact h u ((M.epi a).trans hwv hvu)
 
 instance [∀ a, (M.dox a).IsTrans] : M.toModelSystem.IsBBStar where
   BB_star := by
-    rintro a p _ _ ⟨w, v, rfl, rfl, hwv⟩ h u hvu
+    rintro a p _ _ ⟨⟨w, v⟩, hwv, ⟨⟩⟩ h u hvu
     exact h u ((M.dox a).trans hwv hvu)
 
 theorem mem_toModelSystem (w : W) : M.truthSet w ∈ M.toModelSystem.sets := ⟨w, rfl⟩
@@ -351,6 +373,77 @@ theorem defensible_of_sat {w : W} (h : M.Sat p w) : Defensible {p} :=
 
 theorem not_virtuallyImplies_of_sat {w : W} (h : M.Sat (p ⋏ ∼q) w) : ¬ VirtuallyImplies p q :=
   not_not_intro (M.defensible_of_sat (not_not_intro h))
+
+end Model
+
+/-! ### A world before a world
+
+A model with a new world whose alternatives are those of a given world `w₀` together with `w₀`
+itself evaluates every formula at the old worlds as before, since no old world sees the new one;
+the new world does not believe what fails at `w₀`. -/
+
+namespace Model
+
+variable {W : Type*} (M : Model V A W)
+
+/-- `M` with a new world placed before `w₀`: its epistemic alternatives are itself and those of
+`w₀`, and its doxastic alternatives `w₀` and those of `w₀`. -/
+def withPredecessor (w₀ : W) : Model V A (Option W) where
+  epi a := {(x, y) | match x, y with
+    | some w, some v => w ~[M.epi a] v
+    | none, some v => w₀ ~[M.epi a] v
+    | none, none => True
+    | some _, none => False}
+  dox a := {(x, y) | match x, y with
+    | some w, some v => w ~[M.dox a] v
+    | none, some v => v = w₀ ∨ w₀ ~[M.dox a] v
+    | _, none => False}
+  val v x := x.elim False (M.val v)
+  epi_refl a := ⟨fun
+    | none => trivial
+    | some w => (M.epi_refl a).refl w⟩
+  dox_serial a := ⟨fun
+    | none => ⟨some w₀, Or.inl rfl⟩
+    | some w => let ⟨v, hv⟩ := (M.dox_serial a).serial w; ⟨some v, hv⟩⟩
+  dox_le_epi a := by
+    rintro ⟨_ | w, _ | v⟩ h
+    · exact False.elim h
+    · exact Or.elim h (fun h ↦ h ▸ (M.epi_refl a).refl w₀) fun h ↦ M.dox_le_epi a h
+    · exact False.elim h
+    · exact M.dox_le_epi a h
+
+variable (w₀ : W)
+
+instance [∀ a, (M.epi a).IsTrans] (a : A) : ((M.withPredecessor w₀).epi a).IsTrans := ⟨by
+  rintro (_ | x) (_ | y) (_ | z) hxy hyz
+  exacts [trivial, hyz, False.elim hyz, (M.epi a).trans hxy hyz, False.elim hxy, False.elim hxy,
+    False.elim hyz, (M.epi a).trans hxy hyz]⟩
+
+instance [∀ a, (M.dox a).IsTrans] (a : A) : ((M.withPredecessor w₀).dox a).IsTrans := ⟨by
+  rintro (_ | x) (_ | y) (_ | z) hxy hyz
+  exacts [False.elim hxy, False.elim hxy, False.elim hyz,
+    Or.inr (Or.elim hxy (fun h ↦ h ▸ hyz) fun h ↦ (M.dox a).trans h hyz), False.elim hxy,
+    False.elim hxy, False.elim hyz, (M.dox a).trans hxy hyz]⟩
+
+theorem sat_withPredecessor (p : Formula V A) (w : W) :
+    (M.withPredecessor w₀).Sat p (some w) ↔ M.Sat p w := by
+  induction p generalizing w with
+  | atom v => rfl
+  | neg p ih => exact not_congr (ih w)
+  | and p q ihp ihq => exact and_congr (ihp w) (ihq w)
+  | or p q ihp ihq => exact or_congr (ihp w) (ihq w)
+  | K a p ih | B a p ih =>
+    exact ⟨fun h v hv ↦ (ih v).1 (h (some v) hv), fun h ↦ fun
+      | some v, hv => (ih v).2 (h v hv)
+      | none, hv => False.elim hv⟩
+  | P a p ih | C a p ih =>
+    exact ⟨fun
+      | ⟨some v, hv, hp⟩ => ⟨v, hv, (ih v).1 hp⟩
+      | ⟨none, hv, _⟩ => False.elim hv, fun ⟨v, hv, hp⟩ ↦ ⟨some v, hv, (ih v).2 hp⟩⟩
+
+theorem sat_withPredecessor_none_neg_B {a : A} {p : Formula V A} (h : ¬ M.Sat p w₀) :
+    (M.withPredecessor w₀).Sat (∼B a p) none :=
+  fun hB ↦ h ((M.sat_withPredecessor w₀ p w₀).1 (hB (some w₀) (Or.inl rfl)))
 
 end Model
 
@@ -370,20 +463,20 @@ variable (S : ModelSystem V A)
 
 /-- The canonical model of a model system. -/
 def toModel : Model V A S.sets where
-  epi a := {(μ, ν) | ReflTransGen (fun μ ν : S.sets ↦ S.epi a μ ν) μ ν}
-  dox a := {(μ, ν) | TransGen (fun μ ν : S.sets ↦ S.dox a μ ν) μ ν ∨
-    μ = ν ∧ ∀ ξ : S.sets, ¬ S.dox a μ ξ}
+  epi a := {(μ, ν) | ReflTransGen (fun μ ν : S.sets ↦ ↑μ ~[S.epi a] ↑ν) μ ν}
+  dox a := {(μ, ν) | TransGen (fun μ ν : S.sets ↦ ↑μ ~[S.dox a] ↑ν) μ ν ∨
+    μ = ν ∧ ∀ ξ : S.sets, ¬ ↑μ ~[S.dox a] ↑ξ}
   val v μ := atom v ∈ (μ : Set (Formula V A))
   epi_refl _ := ⟨fun _ ↦ .refl⟩
   dox_serial a := ⟨fun μ ↦ by
-    by_cases h : ∃ ν : S.sets, S.dox a μ ν
+    by_cases h : ∃ ν : S.sets, ↑μ ~[S.dox a] ↑ν
     · obtain ⟨ν, h⟩ := h
       exact ⟨ν, .inl (.single h)⟩
     · exact ⟨μ, .inr ⟨rfl, not_exists.mp h⟩⟩⟩
   dox_le_epi a := by
     rintro ⟨μ, ν⟩ (h | ⟨rfl, -⟩)
-    · exact ReflTransGen.mono (r := fun μ ν : S.sets ↦ S.dox a μ ν)
-        (fun μ ν ↦ S.dox_le_epi a μ ν) _ _ h.to_reflTransGen
+    · exact ReflTransGen.mono (r := fun μ ν : S.sets ↦ ↑μ ~[S.dox a] ↑ν)
+        (fun _ _ h ↦ S.dox_le_epi a h) _ _ h.to_reflTransGen
     · exact .refl
 
 instance (a : A) : (S.toModel.epi a).IsTrans := ⟨fun _ _ _ ↦ ReflTransGen.trans⟩
@@ -405,7 +498,7 @@ theorem mem_of_epi_toModel [S.IsKKStar] {μ ν : S.sets} (h : K a p ∈ (μ : Se
     induction hμν with
     | refl => exact h
     | tail _ h' ih => exact S.KK_star h' ih
-  exact (S.isModelSet ν.2).know this
+  exact S.know ν.2 this
 
 theorem mem_of_dox_toModel [S.IsBBStar] {μ ν : S.sets} (h : B a p ∈ (μ : Set (Formula V A)))
     (hμν : μ ~[S.toModel.dox a] ν) : p ∈ (ν : Set (Formula V A)) := by
@@ -425,36 +518,35 @@ theorem sat_toModel (p : Formula V A) (μ : S.sets) :
     (p ∈ (μ : Set (Formula V A)) → S.toModel.Sat p μ) ∧
       (∼p ∈ (μ : Set (Formula V A)) → ¬ S.toModel.Sat p μ) := by
   induction p generalizing μ with
-  | atom v => exact ⟨id, fun h h' ↦ (S.isModelSet μ.2).neg h' h⟩
-  | neg p ih => exact ⟨(ih μ).2, fun h hn ↦ hn ((ih μ).1 ((S.isModelSet μ.2).neg_neg h))⟩
+  | atom v => exact ⟨id, fun h h' ↦ S.neg μ.2 h' h⟩
+  | neg p ih => exact ⟨(ih μ).2, fun h hn ↦ hn ((ih μ).1 (S.neg_neg μ.2 h))⟩
   | and p q ihp ihq =>
     refine ⟨fun h ↦ ?_, fun h ⟨hp, hq⟩ ↦ ?_⟩
-    · have h' := (S.isModelSet μ.2).and h
+    · have h' := S.and μ.2 h
       exact ⟨(ihp μ).1 h'.1, (ihq μ).1 h'.2⟩
-    · exact ((S.isModelSet μ.2).neg_and h).elim (fun h ↦ (ihp μ).2 h hp)
-        fun h ↦ (ihq μ).2 h hq
+    · exact (S.neg_and μ.2 h).elim (fun h ↦ (ihp μ).2 h hp) fun h ↦ (ihq μ).2 h hq
   | or p q ihp ihq =>
-    refine ⟨fun h ↦ ((S.isModelSet μ.2).or h).imp (ihp μ).1 (ihq μ).1, fun h ↦ ?_⟩
-    have h' := (S.isModelSet μ.2).neg_or h
+    refine ⟨fun h ↦ (S.or μ.2 h).imp (ihp μ).1 (ihq μ).1, fun h ↦ ?_⟩
+    have h' := S.neg_or μ.2 h
     exact not_or_intro ((ihp μ).2 h'.1) ((ihq μ).2 h'.2)
   | K a p ih =>
     refine ⟨fun h ν hμν ↦ (ih ν).1 (mem_of_epi_toModel h hμν), fun h hK ↦ ?_⟩
-    obtain ⟨ν, hν, hμν, hp⟩ := S.P_star μ.2 ((S.isModelSet μ.2).neg_know h)
+    obtain ⟨ν, hν, hμν, hp⟩ := S.P_star μ.2 (S.neg_know μ.2 h)
     exact (ih ⟨ν, hν⟩).2 hp (hK ⟨ν, hν⟩ (.single hμν))
   | P a p ih =>
     refine ⟨fun h ↦ ?_, fun h ⟨ν, hμν, hp⟩ ↦ ?_⟩
     · obtain ⟨ν, hν, hμν, hp⟩ := S.P_star μ.2 h
       exact ⟨⟨ν, hν⟩, .single hμν, (ih ⟨ν, hν⟩).1 hp⟩
-    · exact (ih ν).2 (mem_of_epi_toModel ((S.isModelSet μ.2).neg_poss h) hμν) hp
+    · exact (ih ν).2 (mem_of_epi_toModel (S.neg_poss μ.2 h) hμν) hp
   | B a p ih =>
     refine ⟨fun h ν hμν ↦ (ih ν).1 (mem_of_dox_toModel h hμν), fun h hB ↦ ?_⟩
-    obtain ⟨ν, hν, hμν, hp⟩ := S.C_star μ.2 ((S.isModelSet μ.2).neg_believe h)
+    obtain ⟨ν, hν, hμν, hp⟩ := S.C_star μ.2 (S.neg_believe μ.2 h)
     exact (ih ⟨ν, hν⟩).2 hp (hB ⟨ν, hν⟩ (.inl (.single hμν)))
   | C a p ih =>
     refine ⟨fun h ↦ ?_, fun h ⟨ν, hμν, hp⟩ ↦ ?_⟩
     · obtain ⟨ν, hν, hμν, hp⟩ := S.C_star μ.2 h
       exact ⟨⟨ν, hν⟩, .inl (.single hμν), (ih ⟨ν, hν⟩).1 hp⟩
-    · exact (ih ν).2 (mem_of_dox_toModel ((S.isModelSet μ.2).neg_compat h) hμν) hp
+    · exact (ih ν).2 (mem_of_dox_toModel (S.neg_compat μ.2 h) hμν) hp
 
 theorem subset_truthSet_toModel (μ : S.sets) :
     (μ : Set (Formula V A)) ⊆ S.toModel.truthSet μ :=
@@ -593,33 +685,31 @@ abbrev model73 : Model Unit (Option Role) (Fin 3) where
 instance (a : Option Role) : (model73.epi a).IsTrans := ⟨by decide +revert⟩
 instance (a : Option Role) : (model73.dox a).IsTrans := ⟨by revert a; decide⟩
 
-/-- Epistemic alternativeness in `judgedModel`. -/
-def judgedEpi : Option Role → Fin 8 → Fin 8 → Bool
-  | some .speaker, w, v => w = v ∨ (w, v) ∈ [(2, 3), (2, 4), (3, 4), (5, 6), (6, 5)]
-  | some .addressee, w, v => w = v ∨ (w, v) = (3, 4)
-  | none, w, v => w = v ∨ (w, v) = (0, 1)
-
-/-- The doxastic alternative of each world of `judgedModel`. -/
-def judgedDox : Option Role → Fin 8 → Fin 8
-  | some .speaker => ![0, 1, 3, 3, 4, 6, 6, 7]
-  | some .addressee => id
-  | none => ![1, 1, 2, 3, 4, 5, 6, 7]
-
-/-- The model of the judged sentences, four blocks of worlds. In `0` and `1` only the third
-person's alternativeness is not the identity: from `0`, where the atom holds, he believes `1`,
-where it fails. In `2`, `3` and `4` the speaker believes `3`, where the atom holds, and from `3`
-knows `4` possible, where it fails, as does the addressee. In `5` and `6` the speaker cannot
-tell the two apart and believes `6`, where the atom holds. In `7` everyone knows the atom. -/
-abbrev judgedModel : Model Unit (Option Role) (Fin 8) where
-  epi a := {p | judgedEpi a p.1 p.2}
-  dox a := {p | p.2 = judgedDox a p.1}
-  val _ w := w ∈ ({0, 3, 6, 7} : Finset (Fin 8))
-  epi_refl _ := ⟨by decide +revert⟩
-  dox_serial a := ⟨fun w ↦ ⟨judgedDox a w, rfl⟩⟩
+/-- A model in which a third person believes the atom false at world `0`, where it holds;
+everyone else knows and believes what is true. -/
+abbrev mThird : Model Unit (Option Role) (Fin 2) where
+  epi a := {p | p.1 = p.2 ∨ a = 𝐡 ∧ p.1 = 0}
+  dox a := {p | a = 𝐡 ∧ p.2 = 1 ∨ a ≠ 𝐡 ∧ p.1 = p.2}
+  val _ w := w = 0
+  epi_refl _ := ⟨fun _ ↦ .inl rfl⟩
+  dox_serial _ := ⟨by decide +revert⟩
   dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
 
-instance (a : Option Role) : (judgedModel.epi a).IsTrans := ⟨by revert a; decide⟩
-instance (a : Option Role) : (judgedModel.dox a).IsTrans := ⟨by revert a; decide⟩
+instance (a : Option Role) : (mThird.epi a).IsTrans := ⟨by decide +revert⟩
+instance (a : Option Role) : (mThird.dox a).IsTrans := ⟨by decide +revert⟩
+
+/-- A model in which the speaker cannot tell the two worlds apart and believes `1`, where the
+atom holds; everyone else knows and believes what is true. -/
+abbrev mUndecided : Model Unit (Option Role) (Fin 2) where
+  epi a := {p | p.1 = p.2 ∨ a = 𝐈}
+  dox a := {p | a = 𝐈 ∧ p.2 = 1 ∨ a ≠ 𝐈 ∧ p.1 = p.2}
+  val _ w := w = 1
+  epi_refl _ := ⟨fun _ ↦ .inl rfl⟩
+  dox_serial _ := ⟨by decide +revert⟩
+  dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
+
+instance (a : Option Role) : (mUndecided.epi a).IsTrans := ⟨by decide +revert⟩
+instance (a : Option Role) : (mUndecided.dox a).IsTrans := ⟨by decide +revert⟩
 
 /-- The truth sets of this model satisfy neither (C.KK*) nor (C.BB*): from world `0` the
 alternatives of each kind are `1`, where the atom holds, and from `1` they are `2`, where it
@@ -644,8 +734,8 @@ variable (a b p)
 
 theorem virtuallyImplies_K_B_K : VirtuallyImplies (K a p) (B a (K a p)) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ μ hμ hK hn ↦ by
-    obtain ⟨ν, hν, hμν, h⟩ := S.C_star hμ ((S.isModelSet hμ).neg_believe hn)
-    exact (S.isModelSet hν).neg (S.KK_star_dox hμν hK) h
+    obtain ⟨ν, hν, hμν, h⟩ := S.C_star hμ (S.neg_believe hμ hn)
+    exact S.neg hν (S.KK_star_dox hμν hK) h
 
 -- Section 3.7
 theorem not_virtuallyImplies_B_K_P : ¬ VirtuallyImplies (B 𝐈 𝐩) (K 𝐈 (P 𝐈 𝐩)) :=
@@ -664,8 +754,8 @@ theorem not_virtuallyImplies_K_P : ¬ VirtuallyImplies 𝐩 (K 𝐈 (P 𝐈 𝐩
 -- (20)-(26), Sections 4.1 and 4.2
 theorem virtuallyImplies_K_K_K : VirtuallyImplies (K a (K b p)) (K a p) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ μ hμ hK hn ↦ by
-    obtain ⟨ν, hν, hμν, h⟩ := S.P_star hμ ((S.isModelSet hμ).neg_know hn)
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).know (S.K_star hμν hK)) h
+    obtain ⟨ν, hν, hμν, h⟩ := S.P_star hμ (S.neg_know hμ hn)
+    exact S.neg hν (S.know hν (S.K_star hμν hK)) h
 
 -- (27), Section 4.3
 theorem not_virtuallyImplies_B_B_B : ¬ VirtuallyImplies (B 𝐈 (B 𝐡 𝐩)) (B 𝐈 𝐩) :=
@@ -719,9 +809,8 @@ theorem indefensible_B_moore : Indefensible {B a (p ⋏ ∼B a p)} :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
     obtain ⟨ν, hν, hμν, h₁⟩ := S.b_star hμ h
     have h₂ := S.BB_star hμν h
-    obtain ⟨ξ, hξ, hνξ, h₃⟩ :=
-      S.C_star hν ((S.isModelSet hν).neg_believe ((S.isModelSet hν).and h₁).2)
-    exact (S.isModelSet hξ).neg ((S.isModelSet hξ).and (S.B_star hνξ h₂)).1 h₃
+    obtain ⟨ξ, hξ, hνξ, h₃⟩ := S.C_star hν (S.neg_believe hν (S.and hν h₁).2)
+    exact S.neg hξ (S.and hξ (S.B_star hνξ h₂)).1 h₃
 
 -- (30), p. 68, note 4
 theorem exists_B_moore_mem :
@@ -731,10 +820,9 @@ theorem exists_B_moore_mem :
 -- Section 4.7, (8), (30)
 theorem ModelSystem.moore_and_B_moore_not_mem (S : ModelSystem V A) {μ : Set (Formula V A)}
     (hμ : μ ∈ S.sets) : (p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p) ∉ μ := fun h ↦ by
-  obtain ⟨h₁, h₂⟩ := (S.isModelSet hμ).and h
-  obtain ⟨ν, hν, hμν, h₃⟩ :=
-    S.C_star hμ ((S.isModelSet hμ).neg_believe ((S.isModelSet hμ).and h₁).2)
-  exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.B_star hμν h₂)).1 h₃
+  obtain ⟨h₁, h₂⟩ := S.and hμ h
+  obtain ⟨ν, hν, hμν, h₃⟩ := S.C_star hμ (S.neg_believe hμ (S.and hμ h₁).2)
+  exact S.neg hν (S.and hν (S.B_star hμν h₂)).1 h₃
 
 -- Section 4.8, (8)
 theorem doxasticallyIndefensible_moore : DoxasticallyIndefensible a (p ⋏ ∼B a p) :=
@@ -743,6 +831,14 @@ theorem doxasticallyIndefensible_moore : DoxasticallyIndefensible a (p ⋏ ∼B 
 -- Section 4.9
 theorem doxasticallyImplies_B : DoxasticallyImplies a p (B a p) :=
   indefensible_B_moore a p
+
+-- Section 4.9 (p. 76)
+theorem doxasticallySelfSustaining_iff : DoxasticallySelfSustaining a p ↔ SelfSustaining p := by
+  refine ⟨fun h hd ↦ h ?_, fun h ↦ indefensible_singleton.2 fun S _ _ μ hμ hn ↦ ?_⟩
+  · obtain ⟨W, M, _, _, w, hw⟩ := defensible_iff_exists_sat.1 hd
+    exact (M.withPredecessor w).defensible_of_sat (M.sat_withPredecessor_none_neg_B w (hw rfl))
+  · obtain ⟨ν, hν, -, hp⟩ := S.C_star hμ (S.neg_believe hμ hn)
+    exact indefensible_singleton.1 h S ‹_› ‹_› ν hν hp
 
 /-! ### Chapter 4: the analogue for knowledge
 
@@ -754,9 +850,9 @@ apart in (44) and (45) (Section 4.14). -/
 -- (41), Section 4.11
 theorem ModelSystem.K_moore_not_mem (S : ModelSystem V A) {μ : Set (Formula V A)}
     (hμ : μ ∈ S.sets) : K a (p ⋏ ∼K a p) ∉ μ := fun h ↦ by
-  have h₁ := (S.isModelSet hμ).and ((S.isModelSet hμ).know h)
-  obtain ⟨ν, hν, hμν, h₂⟩ := S.P_star hμ ((S.isModelSet hμ).neg_know h₁.2)
-  exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.K_star hμν h)).1 h₂
+  have h₁ := S.and hμ (S.know hμ h)
+  obtain ⟨ν, hν, hμν, h₂⟩ := S.P_star hμ (S.neg_know hμ h₁.2)
+  exact S.neg hν (S.and hν (S.K_star hμν h)).1 h₂
 
 -- (41)
 theorem indefensible_K_moore : Indefensible {K a (p ⋏ ∼K a p)} :=
@@ -765,10 +861,9 @@ theorem indefensible_K_moore : Indefensible {K a (p ⋏ ∼K a p)} :=
 -- (40)*, (9), Section 4.11
 theorem indefensible_K_moore_whether : Indefensible {K a (p ⋏ notKnowsWhether a p)} :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    have h₁ := (S.isModelSet hμ).and ((S.isModelSet hμ).know h)
-    obtain ⟨ν, hν, hμν, h₂⟩ :=
-      S.P_star hμ ((S.isModelSet hμ).neg_know ((S.isModelSet hμ).and h₁.2).1)
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.K_star hμν h)).1 h₂
+    have h₁ := S.and hμ (S.know hμ h)
+    obtain ⟨ν, hν, hμν, h₂⟩ := S.P_star hμ (S.neg_know hμ (S.and hμ h₁.2).1)
+    exact S.neg hν (S.and hν (S.K_star hμν h)).1 h₂
 
 -- Sections 4.12 and 4.13 (p. 82)
 theorem epistemicallyImplies_K : EpistemicallyImplies a p (K a p) :=
@@ -777,22 +872,21 @@ theorem epistemicallyImplies_K : EpistemicallyImplies a p (K a p) :=
 -- (42)*, Section 4.13
 theorem epistemicallyIndefensible_K_neg_K : EpistemicallyIndefensible b (K a p ⋏ ∼K b p) :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    have h₁ := (S.isModelSet hμ).and ((S.isModelSet hμ).know h)
-    obtain ⟨ν, hν, hμν, h₂⟩ := S.P_star hμ ((S.isModelSet hμ).neg_know h₁.2)
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).know
-      ((S.isModelSet hν).and (S.K_star hμν h)).1) h₂
+    have h₁ := S.and hμ (S.know hμ h)
+    obtain ⟨ν, hν, hμν, h₂⟩ := S.P_star hμ (S.neg_know hμ h₁.2)
+    exact S.neg hν (S.know hν (S.and hν (S.K_star hμν h)).1) h₂
 
 -- (43), Section 4.13
 theorem defensible_K_knowsWhether :
     Defensible {K 𝐈 (knowsWhether 𝐡 𝐩 ⋏ ∼knowsWhether 𝐈 𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 -- (44), Section 4.14
 theorem indefensible_K_neg_B : Indefensible {K a (p ⋏ ∼B a p)} :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    have h₁ := (S.isModelSet hμ).and ((S.isModelSet hμ).know h)
-    obtain ⟨ν, hν, hμν, h₂⟩ := S.C_star hμ ((S.isModelSet hμ).neg_believe h₁.2)
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.K_star_dox hμν h)).1 h₂
+    have h₁ := S.and hμ (S.know hμ h)
+    obtain ⟨ν, hν, hμν, h₂⟩ := S.C_star hμ (S.neg_believe hμ h₁.2)
+    exact S.neg hν (S.and hν (S.K_star_dox hμν h)).1 h₂
 
 -- (45), Section 4.14
 theorem defensible_B_neg_K : Defensible {B 𝐈 (𝐩 ⋏ ∼K 𝐈 𝐩)} :=
@@ -802,77 +896,72 @@ theorem defensible_B_neg_K : Defensible {B 𝐈 (𝐩 ⋏ ∼K 𝐈 𝐩)} :=
 theorem virtuallyImplies_B_and :
     VirtuallyImplies (B a (p ⋏ notKnowsWhether a p)) (B a p ⋏ ∼K a p) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ μ hμ h₀ hn ↦ by
-    rcases (S.isModelSet hμ).neg_and hn with h | h
-    · obtain ⟨ν, hν, hμν, h₁⟩ := S.C_star hμ ((S.isModelSet hμ).neg_believe h)
-      exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.B_star hμν h₀)).1 h₁
+    rcases S.neg_and hμ hn with h | h
+    · obtain ⟨ν, hν, hμν, h₁⟩ := S.C_star hμ (S.neg_believe hμ h)
+      exact S.neg hν (S.and hν (S.B_star hμν h₀)).1 h₁
     · obtain ⟨ν, hν, hμν, h₁⟩ := S.b_star hμ h₀
-      exact (S.isModelSet hν).neg (S.KK_star_dox hμν ((S.isModelSet hμ).neg_neg h))
-        ((S.isModelSet hν).and ((S.isModelSet hν).and h₁).2).1
+      exact S.neg hν (S.KK_star_dox hμν (S.neg_neg hμ h)) (S.and hν (S.and hν h₁).2).1
 
 -- (47), (46), Section 4.14
 theorem doxasticallyImplies_B_of_and :
     DoxasticallyImplies a (B a p ⋏ ∼K a p) (B a (p ⋏ notKnowsWhether a p)) :=
   indefensible_singleton.2 fun S _ _ μ hμ h₀ ↦ by
     obtain ⟨ν, hν, hμν, h₁⟩ := S.b_star hμ h₀
-    obtain ⟨h₂, h₃⟩ := (S.isModelSet hν).and h₁
-    obtain ⟨ξ, hξ, hνξ, h₄⟩ := S.C_star hν ((S.isModelSet hν).neg_believe h₃)
-    have hp := S.B_star hνξ ((S.isModelSet hν).and h₂).1
-    have hK := ((S.isModelSet hξ).and ((S.isModelSet hξ).and
-      (S.B_star hνξ (S.BB_star hμν h₀))).1).2
-    rcases (S.isModelSet hξ).neg_and h₄ with h | h
-    · exact (S.isModelSet hξ).neg hp h
-    · rcases (S.isModelSet hξ).neg_and h with h | h
-      · exact (S.isModelSet hξ).neg ((S.isModelSet hξ).neg_neg h) hK
-      · exact (S.isModelSet hξ).neg hp ((S.isModelSet hξ).know ((S.isModelSet hξ).neg_neg h))
+    obtain ⟨h₂, h₃⟩ := S.and hν h₁
+    obtain ⟨ξ, hξ, hνξ, h₄⟩ := S.C_star hν (S.neg_believe hν h₃)
+    have hp := S.B_star hνξ (S.and hν h₂).1
+    have hK := (S.and hξ (S.and hξ (S.B_star hνξ (S.BB_star hμν h₀))).1).2
+    rcases S.neg_and hξ h₄ with h | h
+    · exact S.neg hξ hp h
+    · rcases S.neg_and hξ h with h | h
+      · exact S.neg hξ (S.neg_neg hξ h) hK
+      · exact S.neg hξ hp (S.know hξ (S.neg_neg hξ h))
 
 -- (48), (47), Section 4.14
 theorem defensible_K_B_neg_K : Defensible {K 𝐈 (B 𝐈 𝐩 ⋏ ∼K 𝐈 𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 -- Section 4.14 (p. 84)
 theorem defensible_K_B_notKnowsWhether : Defensible {K 𝐈 (B 𝐈 𝐩 ⋏ notKnowsWhether 𝐈 𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 -- (51), Section 4.16
 theorem defensible_K_B_P : Defensible {K 𝐈 (B 𝐈 𝐩 ⋏ P 𝐈 ∼𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 -- (51), Section 4.16
 theorem defensible_B_B_P : Defensible {B 𝐈 (B 𝐈 𝐩 ⋏ P 𝐈 ∼𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 -- (51)(a), Section 4.16
 theorem indefensible_B_C : Indefensible {B a p ⋏ C a ∼p} :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    obtain ⟨h₁, h₂⟩ := (S.isModelSet hμ).and h
+    obtain ⟨h₁, h₂⟩ := S.and hμ h
     obtain ⟨ν, hν, hμν, h₃⟩ := S.C_star hμ h₂
-    exact (S.isModelSet hν).neg (S.B_star hμν h₁) h₃
+    exact S.neg hν (S.B_star hμν h₁) h₃
 
 -- (51)(b), Section 4.16
 theorem epistemicallyIndefensible_C : EpistemicallyIndefensible a (p ⋏ C a ∼p) :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    obtain ⟨ν, hν, hμν, h₁⟩ :=
-      S.C_star hμ ((S.isModelSet hμ).and ((S.isModelSet hμ).know h)).2
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.K_star_dox hμν h)).1 h₁
+    obtain ⟨ν, hν, hμν, h₁⟩ := S.C_star hμ (S.and hμ (S.know hμ h)).2
+    exact S.neg hν (S.and hν (S.K_star_dox hμν h)).1 h₁
 
 -- (51)(b), Section 4.16
 theorem doxasticallyIndefensible_C : DoxasticallyIndefensible a (p ⋏ C a ∼p) :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
     obtain ⟨ν, hν, hμν, h₁⟩ := S.b_star hμ h
-    obtain ⟨ξ, hξ, hνξ, h₂⟩ := S.C_star hν ((S.isModelSet hν).and h₁).2
-    exact (S.isModelSet hξ).neg
-      ((S.isModelSet hξ).and (S.B_star hνξ (S.BB_star hμν h))).1 h₂
+    obtain ⟨ξ, hξ, hνξ, h₂⟩ := S.C_star hν (S.and hν h₁).2
+    exact S.neg hξ (S.and hξ (S.B_star hνξ (S.BB_star hμν h))).1 h₂
 
 -- (51)(c), Section 4.16
 theorem epistemicallyIndefensible_P : EpistemicallyIndefensible a (p ⋏ P a ∼p) :=
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
-    obtain ⟨ν, hν, hμν, h₁⟩ :=
-      S.P_star hμ ((S.isModelSet hμ).and ((S.isModelSet hμ).know h)).2
-    exact (S.isModelSet hν).neg ((S.isModelSet hν).and (S.K_star hμν h)).1 h₁
+    obtain ⟨ν, hν, hμν, h₁⟩ := S.P_star hμ (S.and hμ (S.know hμ h)).2
+    exact S.neg hν (S.and hν (S.K_star hμν h)).1 h₁
 
 -- (51)(c), Section 4.16
 theorem defensible_B_P : Defensible {B 𝐈 (𝐩 ⋏ P 𝐈 ∼𝐩)} :=
-  judgedModel.defensible_of_sat (w := 5) (by decide)
+  mUndecided.defensible_of_sat (w := 0) (by decide)
 
 /-! ### Chapter 5: knowing that one knows
 
@@ -886,13 +975,13 @@ conversely (Section 5.10). -/
 -- (65)-(69), Section 5.2
 theorem virtuallyImplies_K_KK : VirtuallyImplies (K a p) (K a (K a p)) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ μ hμ hK hn ↦ by
-    obtain ⟨ν, hν, hμν, h⟩ := S.P_star hμ ((S.isModelSet hμ).neg_know hn)
-    exact (S.isModelSet hν).neg (S.KK_star hμν hK) h
+    obtain ⟨ν, hν, hμν, h⟩ := S.P_star hμ (S.neg_know hμ hn)
+    exact S.neg hν (S.KK_star hμν hK) h
 
 -- Section 5.2
 theorem virtuallyImplies_KK_K : VirtuallyImplies (K a (K a p)) (K a p) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ _ hμ hK hn ↦
-    (S.isModelSet hμ).neg ((S.isModelSet hμ).know hK) hn
+    S.neg hμ (S.know hμ hK) hn
 
 /-- Section 5.2: (63), "a knows that a knows that p", and (64), "a knows that p", are virtually
 equivalent. -/
@@ -925,8 +1014,8 @@ theorem not_virtuallyImplies_B_negK_K :
 -- (72), (73), Sections 5.3 and 5.10
 theorem virtuallyImplies_B_BB : VirtuallyImplies (B a p) (B a (B a p)) :=
   virtuallyImplies_of_indefensible <| indefensible_pair.2 fun S _ _ μ hμ hB hn ↦ by
-    obtain ⟨ν, hν, hμν, h⟩ := S.C_star hμ ((S.isModelSet hμ).neg_believe hn)
-    exact (S.isModelSet hν).neg (S.BB_star hμν hB) h
+    obtain ⟨ν, hν, hμν, h⟩ := S.C_star hμ (S.neg_believe hμ hn)
+    exact S.neg hν (S.BB_star hμν hB) h
 
 /-- Section 5.10: (73), "a believes that a believes that p", does not virtually imply (72), "a
 believes that p", by the model system of (74)-(82). -/
@@ -938,8 +1027,7 @@ theorem doxasticallyIndefensible_B_neg : DoxasticallyIndefensible a (B a p ⋏ �
   indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
     obtain ⟨ν, hν, hμν, h₁⟩ := S.b_star hμ h
     obtain ⟨ξ, hξ, hνξ, h₂⟩ := S.b_star hν (S.BB_star hμν h)
-    exact (S.isModelSet hξ).neg (S.B_star hνξ ((S.isModelSet hν).and h₁).1)
-      ((S.isModelSet hξ).and h₂).2
+    exact S.neg hξ (S.B_star hνξ (S.and hν h₁).1) (S.and hξ h₂).2
 
 -- (84), Section 5.10
 theorem doxasticallyIndefensible_BB_neg_B : DoxasticallyIndefensible a (B a (B a p) ⋏ ∼B a p) :=
@@ -1023,41 +1111,37 @@ theorem rows_judgment : ∀ r ∈ rows, predictedJudgment r.2 = r.1.judgment := 
     and_true]
   refine ⟨predictedJudgment_of_doxasticallyIndefensible (doxasticallyIndefensible_moore 𝐈 𝐩),
     predictedJudgment_of_epistemicallyIndefensible
-      (judgedModel.defensible_of_sat (w := 2) (by decide))
+      (mUndecided.defensible_of_sat (w := 0) (by decide))
       (.inl (indefensible_K_moore_whether 𝐈 𝐩)),
     predictedJudgment_of_defensible (defensible_B_moore_of_ne 𝐡 𝐈 (by decide) ())
-      (judgedModel.defensible_of_sat (w := 0) (by decide))
-      (judgedModel.defensible_of_sat (w := 0) (by decide)),
+      (mThird.defensible_of_sat (w := 0) (by decide))
+      (mThird.defensible_of_sat (w := 0) (by decide)),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_B_moore 𝐈 𝐩).doxasticallyIndefensible,
-    predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 0) (by decide))
-      (judgedModel.defensible_of_sat (w := 0) (by decide))
-      (judgedModel.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_defensible (mThird.defensible_of_sat (w := 0) (by decide))
+      (mThird.defensible_of_sat (w := 0) (by decide))
+      (mThird.defensible_of_sat (w := 0) (by decide)),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_K_moore_whether 𝐈 𝐩).doxasticallyIndefensible,
     predictedJudgment_of_epistemicallyIndefensible
-      (judgedModel.defensible_of_sat (w := 2) (by decide))
+      (mUndecided.defensible_of_sat (w := 0) (by decide))
       (.inl (epistemicallyIndefensible_K_neg_K 𝐡 𝐈 𝐩)),
-    predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 5) (by decide))
-      defensible_K_knowsWhether (judgedModel.defensible_of_sat (w := 5) (by decide)),
-    predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 5) (by decide))
-      defensible_K_B_neg_K (judgedModel.defensible_of_sat (w := 5) (by decide)),
+    predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
+      defensible_K_knowsWhether (mUndecided.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
+      defensible_K_B_neg_K (mUndecided.defensible_of_sat (w := 0) (by decide)),
     predictedJudgment_of_epistemicallyIndefensible
-      (judgedModel.defensible_of_sat (w := 2) (by decide))
-      (.inl (indefensible_K_moore 𝐈 (B 𝐈 𝐩))),
+      (model45.defensible_of_sat (w := 0) (by decide)) (.inl (indefensible_K_moore 𝐈 (B 𝐈 𝐩))),
     predictedJudgment_of_defensible defensible_B_B_P defensible_K_B_P
-      (judgedModel.defensible_of_sat (w := 5) (by decide)),
-    predictedJudgment_of_epistemicallyIndefensible
-      (judgedModel.defensible_of_sat (w := 2) (by decide))
+      (mUndecided.defensible_of_sat (w := 0) (by decide)),
+    predictedJudgment_of_epistemicallyIndefensible (mB.defensible_of_sat (w := 1) (by decide))
       (.inr (indefensible_K_moore 𝐲 𝐩)),
     predictedJudgment_of_epistemicallyIndefensible defensible_B_neg_K
       (.inl (indefensible_K_moore 𝐈 𝐩)),
-    predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide)),
-    predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide)),
+    predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
+      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide)),
+    predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
+      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide)),
     predictedJudgment_of_doxasticallyIndefensible
       (indefensible_K_and_not_KK 𝐈 𝐩).doxasticallyIndefensible⟩
 
@@ -1065,19 +1149,18 @@ theorem departures_judgment : ∀ r ∈ departures, predictedJudgment r.2 ≠ r.
   simp only [departures, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
     implies_true, and_true]
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 5) (by decide))
-      (judgedModel.defensible_of_sat (w := 5) (by decide))
-      (judgedModel.defensible_of_sat (w := 5) (by decide))]
+  · rw [predictedJudgment_of_defensible (mUndecided.defensible_of_sat (w := 0) (by decide))
+      (mUndecided.defensible_of_sat (w := 0) (by decide))
+      (mUndecided.defensible_of_sat (w := 0) (by decide))]
     decide
   · rw [predictedJudgment_of_epistemicallyIndefensible
-      (judgedModel.defensible_of_sat (w := 2) (by decide)) (.inr (indefensible_K_moore 𝐲 𝐩))]
+      (mB.defensible_of_sat (w := 1) (by decide)) (.inr (indefensible_K_moore 𝐲 𝐩))]
     decide
   · rw [predictedJudgment_of_epistemicallyIndefensible defensible_B_neg_K
       (.inl (indefensible_K_moore 𝐈 𝐩))]
     decide
-  · rw [predictedJudgment_of_defensible (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide))
-      (judgedModel.defensible_of_sat (w := 7) (by decide))]
+  · rw [predictedJudgment_of_defensible (mK.defensible_of_sat (w := 1) (by decide))
+      (mK.defensible_of_sat (w := 1) (by decide)) (mK.defensible_of_sat (w := 1) (by decide))]
     decide
   · rw [predictedJudgment_of_doxasticallyIndefensible
       (indefensible_K_and_not_KK 𝐡 𝐩).doxasticallyIndefensible]
