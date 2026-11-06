@@ -443,7 +443,7 @@ variable {ord p q r}
 /-- Disjunctive antecedents simplify. Over total similarity preorders, given a world where only
 the first simplification holds, one where only the second does, and one where both hold but the
 conjunctive one fails, `(p ∨ q) → r` strengthens to `(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
-theorem sda (htot : ∀ w, Std.Total (ord w).le)
+theorem sda [∀ w, Std.Total (ord w).le]
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r,
       w ∉ closestImp ord q r ∪ closestImp ord (p ∩ q) r)
     (h₂ : ∃ w ∈ closestImp ord (p ∪ q) r,
@@ -455,7 +455,7 @@ theorem sda (htot : ∀ w, Std.Total (ord w).le)
   have hsub : closestImp ord p r ∩ closestImp ord q r ⊆ closestImp ord (p ∪ q) r :=
     fun _ h ↦ mem_closestImp_union h.1 h.2
   have hcov : closestImp ord (p ∪ q) r ⊆ closestImp ord p r ∪ closestImp ord q r :=
-    fun _ h ↦ mem_closestImp_or_of_mem_union htot h
+    fun _ h ↦ mem_closestImp_or_of_mem_union h
   rw [sdaAlts, exhIEII_pair hcov
     (h₁.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_right fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
     (h₂.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_left fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
@@ -484,7 +484,7 @@ def orBothAlts : Set (Set W) :=
 
 /-- With the antecedent's cells as alternatives, `(p ∨ q) → r` asserts the conjunctive conditional
 (82). -/
-theorem orBoth (htot : ∀ w, Std.Total (ord w).le)
+theorem orBoth [∀ w, Std.Total (ord w).le]
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r,
       w ∉ closestImp ord (q \ p) r ∪ closestImp ord (p ∩ q) r)
     (h₂ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (q \ p) r,
@@ -503,9 +503,9 @@ theorem orBoth (htot : ∀ w, Std.Total (ord w).le)
     have hpq : p ∪ q = p \ q ∪ (q \ p ∪ p ∩ q) := by
       ext x; by_cases hp : x ∈ p <;> by_cases hq : x ∈ q <;> simp [hp, hq]
     rw [hpq] at hw
-    rcases mem_closestImp_or_of_mem_union htot hw with h | h
+    rcases mem_closestImp_or_of_mem_union hw with h | h
     · exact Set.mem_iUnion.2 ⟨0, h⟩
-    rcases mem_closestImp_or_of_mem_union htot h with h | h
+    rcases mem_closestImp_or_of_mem_union h with h | h
     · exact Set.mem_iUnion.2 ⟨1, h⟩
     · exact Set.mem_iUnion.2 ⟨2, h⟩
   have hA : orBothAlts ord p q r = insert (closestImp ord (p ∪ q) r)
@@ -560,8 +560,6 @@ def rank (w₀ w : Switch) : ℕ :=
 /-- Similarity to `w₀`, ordered by `rank`. -/
 abbrev sim (w₀ : Switch) : Preorder Switch := Preorder.lift (rank w₀)
 
-theorem sim_total (w₀ : Switch) : Std.Total (sim w₀).le := Preorder.total_lift (rank w₀)
-
 /-- Switch A is down. -/
 abbrev down₁ : Set Switch := {w | w.up₁ = false}
 
@@ -578,7 +576,7 @@ def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
-  rw [sda sim_total ⟨⟨false, true, fun x y ↦ !x && !y⟩, by decide⟩
+  rw [sda ⟨⟨false, true, fun x y ↦ !x && !y⟩, by decide⟩
     ⟨⟨true, false, fun x y ↦ !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
   decide
 
@@ -586,7 +584,7 @@ theorem sda_actual :
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
-  rw [orBoth sim_total ⟨⟨false, true, fun x y ↦ x || !y⟩, by decide⟩
+  rw [orBoth ⟨⟨false, true, fun x y ↦ x || !y⟩, by decide⟩
     ⟨⟨true, false, fun x y ↦ y || !x⟩, by decide⟩ ⟨⟨false, false, fun x y ↦ x || y⟩, by decide⟩
     ⟨⟨true, true, fun x y ↦ x && y⟩, by decide⟩]
   decide

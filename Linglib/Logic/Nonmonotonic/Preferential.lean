@@ -110,10 +110,10 @@ theorem isPreferential_necessityFilter (p : Preorder W) :
   cautiousMonotonicity h h' := (necessityFilter_inter_of_mem h).le h'
 
 /-- The consequence relation of a total preorder is rational. -/
-theorem isRational_necessityFilter (hc : Std.Total p.le) :
+theorem isRational_necessityFilter [Std.Total p.le] :
     IsRational fun φ ψ ↦ ψ ∈ necessityFilter p φ where
   toIsPreferential := isPreferential_necessityFilter p
-  rationalMonotonicity h h' := (necessityFilter_inter_of_frequently hc h').le (mem_inf_of_left h)
+  rationalMonotonicity h h' := (necessityFilter_inter_of_frequently h').le (mem_inf_of_left h)
 
 /-- Totality cannot be dropped. Let `0` be more normal than `2` and `1` comparable to
 neither. Then normally `0` or `1` holds and it is not normal that `0` holds, yet given `1` or
@@ -150,10 +150,10 @@ theorem isPreferential_minimals (hp : WellFounded p.lt) :
   simpa only [necessityFilter_eq_principal_of_wellFounded hp, mem_principal] using
     isPreferential_necessityFilter p
 
-theorem isRational_minimals (hp : WellFounded p.lt) (hc : Std.Total p.le) :
+theorem isRational_minimals (hp : WellFounded p.lt) [Std.Total p.le] :
     IsRational fun φ ψ ↦ p.minimals φ ⊆ ψ := by
   simpa only [necessityFilter_eq_principal_of_wellFounded hp, mem_principal] using
-    isRational_necessityFilter hc
+    isRational_necessityFilter (p := p)
 
 /-- Well-foundedness cannot be dropped from the relation of the minimal worlds. Let the integers
 descend without a least element beside a world comparable to no other, which is then the only
@@ -249,7 +249,8 @@ theorem total_preorder : Std.Total (h.preorder hc).le :=
 `φ`-worlds. -/
 theorem minimals_preorder (φ : Set W) : (h.preorder hc).minimals φ = C φ := by
   ext w
-  rw [Preorder.mem_minimals_iff_forall_le (h.total_preorder hc)]
+  have := h.total_preorder hc
+  rw [Preorder.mem_minimals_iff_forall_le]
   refine ⟨fun ⟨hw, hle⟩ ↦ ?_, fun hw ↦ ⟨h.refl φ hw, fun v hv ↦ ?_⟩⟩
   · obtain ⟨u, hu⟩ := nonempty_of_consistent hc ⟨w, hw⟩
     have hwu : w ∈ C {w, u} := hle u (h.refl φ hu)
@@ -262,8 +263,9 @@ theorem minimals_preorder (φ : Set W) : (h.preorder hc).minimals φ = C φ := b
 theorem wellFounded_preorder_lt : WellFounded (h.preorder hc).lt :=
   WellFounded.wellFounded_iff_has_min.2 fun φ hφ ↦
     have ⟨m, hm⟩ := nonempty_of_consistent hc hφ
-    ⟨m, h.refl φ hm, fun x hx hlt ↦ hlt.2 <| ((Preorder.mem_minimals_iff_forall_le
-      (h.total_preorder hc)).1 (h.minimals_preorder hc φ ▸ hm)).2 x hx⟩
+    have := h.total_preorder hc
+    ⟨m, h.refl φ hm, fun x hx hlt ↦ hlt.2 <|
+      (Preorder.mem_minimals_iff_forall_le.1 (h.minimals_preorder hc φ ▸ hm)).2 x hx⟩
 
 end IsRational
 
@@ -273,7 +275,7 @@ consistency. -/
 theorem exists_minimals_eq_iff :
     (∃ p : Preorder W, Std.Total p.le ∧ WellFounded p.lt ∧ p.minimals = C) ↔
       (IsRational fun φ ψ ↦ C φ ⊆ ψ) ∧ ∀ φ, C φ ⊆ ∅ → φ = ∅ :=
-  ⟨fun ⟨_, hp, hwf, e⟩ ↦ e ▸ ⟨isRational_minimals hwf hp, fun _ hφ ↦
+  ⟨fun ⟨_, _, hwf, e⟩ ↦ e ▸ ⟨isRational_minimals hwf, fun _ hφ ↦
       Set.not_nonempty_iff_eq_empty.1 fun ⟨_, hw⟩ ↦
         let ⟨_, hv, _⟩ := Preorder.exists_le_mem_minimals hwf hw; hφ hv⟩,
     fun ⟨h, hc⟩ ↦ ⟨h.preorder hc, h.total_preorder hc, h.wellFounded_preorder_lt hc,
@@ -286,7 +288,7 @@ consequence relation of a total preorder on the worlds. -/
 theorem isRational_and_iff_exists_necessityFilter_eq [Finite W] :
     (IsRational r ∧ ∀ φ, r φ ∅ → φ = ∅) ↔
       ∃ p : Preorder W, Std.Total p.le ∧ (fun φ ψ ↦ ψ ∈ necessityFilter p φ) = r := by
-  refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, hp, e⟩ ↦ e ▸ ⟨isRational_necessityFilter hp,
+  refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, _, e⟩ ↦ e ▸ ⟨isRational_necessityFilter,
     fun φ hφ ↦ Set.not_nonempty_iff_eq_empty.1 fun hne ↦
       (necessityFilter_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hφ)⟩⟩
   have hsInter : ∀ φ, r φ (⋂₀ {ψ | r φ ψ}) := fun φ ↦ by

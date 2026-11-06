@@ -81,12 +81,12 @@ private theorem exists_mem_minimals_le {S : Set W} {x : W} (hx : x ∈ S) :
   Preorder.exists_le_mem_minimals (let := ord w; wellFounded_lt) hx
 
 -- §2
-theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
+theorem minimals_union_of_moreRealistic [Std.Total (ord w).le]
     (h : MoreRealistic ord A B w) : (ord w).minimals (A ∪ B) = (ord w).minimals A := by
   let := ord w
   obtain ⟨⟨a₀, ha₀⟩, hAB⟩ := h
   ext x
-  rw [Preorder.mem_minimals_iff_forall_le (htot w), Preorder.mem_minimals_iff_forall_le (htot w)]
+  rw [Preorder.mem_minimals_iff_forall_le, Preorder.mem_minimals_iff_forall_le]
   refine ⟨fun ⟨hx, hle⟩ ↦ ⟨hx.resolve_right fun hxB ↦ ?_, fun u hu ↦ hle u (.inl hu)⟩,
     fun ⟨hx, hle⟩ ↦ ⟨.inl hx, ?_⟩⟩
   · obtain ⟨b, hb, hbx⟩ := exists_mem_minimals_le hxB
@@ -94,25 +94,25 @@ theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
   · rintro u (hu | hu)
     · exact hle u hu
     · obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
-      exact (hAB x ((Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨hx, hle⟩) b hb).le.trans hbu
+      exact (hAB x (Preorder.mem_minimals_iff_forall_le.2 ⟨hx, hle⟩) b hb).le.trans hbu
 
 -- §2
-theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
+theorem minimals_union_of_equallyRealistic [Std.Total (ord w).le]
     (hAB : ¬ MoreRealistic ord A B w) (hBA : ¬ MoreRealistic ord B A w) :
     (ord w).minimals (A ∪ B) = (ord w).minimals A ∪ (ord w).minimals B := by
   let := ord w
   have key : ∀ {S T : Set W}, ¬ MoreRealistic ord T S w →
       (ord w).minimals S ⊆ (ord w).minimals (S ∪ T) := by
     intro S T hTS x hx
-    rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hx ⊢
+    rw [Preorder.mem_minimals_iff_forall_le] at hx ⊢
     refine ⟨.inl hx.1, ?_⟩
     rintro u (hu | hu)
     · exact hx.2 u hu
     by_contra hxu
-    have hux := (((htot w).total x u).resolve_left hxu).lt_of_not_ge hxu
+    have hux := ((total_of (ord w).le x u).resolve_left hxu).lt_of_not_ge hxu
     obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
     refine hTS ⟨⟨b, hb⟩, fun b' hb' a ha ↦ ?_⟩
-    rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hb hb'
+    rw [Preorder.mem_minimals_iff_forall_le] at hb hb'
     exact (hb'.2 b hb.1).trans_lt (hbu.trans_lt (hux.trans_le (hx.2 a ha.1)))
   refine subset_antisymm Preorder.minimals_union_subset (Set.union_subset (key hBA) ?_)
   rw [Set.union_comm]
@@ -137,16 +137,16 @@ section Finite
 
 variable [Fintype W]
 
-theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
+theorem would_iff_distributive_of_equallyRealistic [Std.Total (ord w).le]
     (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
     w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ distributiveImp ord {A, B} C := by
-  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic htot hAB hBA,
+  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic hAB hBA,
     Set.union_subset_iff, mem_distributiveImp_pair, mem_closestImp, mem_closestImp]
 
-theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
+theorem would_iff_of_moreRealistic [Std.Total (ord w).le]
     (h : MoreRealistic ord ↑A ↑B w) :
     w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C := by
-  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_moreRealistic htot h, mem_closestImp]
+  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_moreRealistic h, mem_closestImp]
 
 end Finite
 
@@ -154,10 +154,10 @@ theorem would_of_distributive (h : w ∈ distributiveImp ord {A, B} C) :
     w ∈ disjunctiveImp ord {A, B} C :=
   mem_disjunctiveImp_pair_of_mem_distributiveImp h
 
-theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctiveImp ord {A, B} C) :
+theorem dcr_of_would [Std.Total (ord w).le] (h : w ∈ disjunctiveImp ord {A, B} C) :
     DCR ord A B C w := by
   rw [disjunctiveImp_pair] at h
-  exact mem_closestImp_or_of_mem_union htot h
+  exact mem_closestImp_or_of_mem_union h
 
 /-! ### Homogeneity and exhaustification (§2, §3) -/
 
@@ -172,8 +172,7 @@ theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord
   (disjunctiveImp_pair A B).symm
 
 open BarLevFox2020 in
-theorem distributive_of_exh
-    (htot : ∀ w, Std.Total (ord w).le)
+theorem distributive_of_exh [∀ w, Std.Total (ord w).le]
     (h₁ : ∃ v ∈ closestImp ord (↑A ∪ ↑B) C,
       v ∉ closestImp ord ↑B C ∪ closestImp ord (↑A ∩ ↑B) C)
     (h₂ : ∃ v ∈ closestImp ord (↑A ∪ ↑B) C,
@@ -181,7 +180,7 @@ theorem distributive_of_exh
     (h : ∃ v ∈ closestImp ord ↑A C ∩ closestImp ord ↑B C, v ∉ closestImp ord (↑A ∩ ↑B) C)
     (hw : w ∈ Exhaustification.exhIEII (sdaAlts ord ↑A ↑B C) (closestImp ord (↑A ∪ ↑B) C)) :
     w ∈ distributiveImp ord {A, B} C := by
-  rw [sda htot h₁ h₂ h] at hw
+  rw [sda h₁ h₂ h] at hw
   exact mem_distributiveImp_pair.2 ⟨hw.1.1, hw.1.2⟩
 
 end Pair
@@ -190,18 +189,18 @@ end Pair
 
 variable [Fintype W]
 
-theorem moreRealistic_of_closeness (htot : ∀ w, Std.Total (ord w).le) {H S T : Finset W}
+theorem moreRealistic_of_closeness [Std.Total (ord w).le] {H S T : Finset W}
     (hclose : w ∈ closestImp ord (↑H)ᶜ ↑S) (hS : S.Nonempty)
     (hT : ∀ t ∈ T, t ∉ H) (hST : ∀ t ∈ T, t ∉ S) : MoreRealistic ord ↑S ↑T w := by
   let := ord w
   refine ⟨(ord w).minimals_nonempty_of_finite S.finite_toSet (Finset.coe_nonempty.2 hS),
     fun a ha b hb ↦ ?_⟩
-  rw [Preorder.mem_minimals_iff_forall_le (htot w)] at ha hb
+  rw [Preorder.mem_minimals_iff_forall_le] at ha hb
   have hbH : b ∈ (↑H : Set W)ᶜ := hT b hb.1
   obtain ⟨m, hm, hmb⟩ := exists_mem_minimals_le (ord := ord) (w := w) hbH
   have ham := ha.2 m (hclose hm)
   refine (ham.trans hmb).lt_of_not_ge fun hba ↦ hST b hb.1 (hclose ?_)
-  rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hm ⊢
+  rw [Preorder.mem_minimals_iff_forall_le] at hm ⊢
   exact ⟨hbH, fun u hu ↦ (hba.trans ham).trans (hm.2 u hu)⟩
 
 /-! ### The race scenario and Table 3 -/
@@ -234,9 +233,6 @@ abbrev nonEqual (_ : Competitor) : Preorder Competitor := Preorder.lift Competit
 
 /-- In Figure 3(b), the equally realistic condition, the squirrel and the tortoise tie. -/
 abbrev equal (_ : Competitor) : Preorder Competitor := Preorder.lift fun v ↦ min v.speed 1
-
-theorem nonEqual_total (w₀ : Competitor) : Std.Total (nonEqual w₀).le :=
-  Preorder.total_lift _
 
 /-- A target item (9) reads *if `first` or `second` wins, it will get `prize`*. -/
 structure Item where
@@ -290,7 +286,7 @@ theorem closeness_item :
 
 -- Table 3
 theorem squirrel_moreRealistic : MoreRealistic nonEqual {.squirrel} {.tortoise} .hare := by
-  simpa using moreRealistic_of_closeness nonEqual_total (H := {.hare}) (S := {.squirrel})
+  simpa using moreRealistic_of_closeness (ord := nonEqual) (H := {.hare}) (S := {.squirrel})
     (T := {.tortoise}) (by simpa using closeness_item.1) ⟨.squirrel, by simp⟩ (by decide)
     (by decide)
 
