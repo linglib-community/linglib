@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SpanRule
 public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
@@ -10,10 +10,10 @@ Three theories say which root patterns a three-cell containment hierarchy can sh
 cells are the grades of an adjective or the cases or numbers of a pronoun (`Theory.Generates`).
 Elsewhere insertion over the hierarchy generates the contiguous patterns, Bobaljik's containment
 with an antihomophonous and grounded vocabulary generates AAA, ABB and ABC
-(`groundedGenerable_iff`), and a theory of the cells as independent generates every pattern. A
-theory fits a pattern under a parse, which gives the cell whose structure each cell's word
-realizes, when a pattern it generates, read through the parse, classes the cells as the pattern
-does (`Theory.Fits`).
+(`SpanRule.groundedGenerable_iff`), and a theory of the cells as independent generates every
+pattern. A theory fits a pattern under a parse, which gives the cell whose structure each cell's
+word realizes, when a pattern it generates, read through the parse, classes the cells as the
+pattern does (`Theory.Fits`).
 
 ## TODO
 
@@ -32,7 +32,7 @@ portmanteaus.
 
 namespace Eval.Suppletion
 
-open Morphology Morphology.Containment
+open Morphology
 
 /-- Three theories of the root patterns of a three-cell hierarchy. -/
 inductive Theory
@@ -47,15 +47,13 @@ inductive Theory
 /-- A theory generates a root pattern on the three cells of a hierarchy, for degree the three
 synthetic grades. -/
 def Theory.Generates : Theory → Paradigm 3 ℕ → Prop
-  | .elsewhere, p => ElsewhereGenerable p
-  | .grounded, p => GroundedGenerable p
+  | .elsewhere, p => SpanRule.Generable p
+  | .grounded, p => SpanRule.GroundedGenerable p
   | .free, _ => True
 
 instance : ∀ T : Theory, DecidablePred T.Generates
-  | .elsewhere => fun p ↦ decidable_of_iff _
-      ((isContiguous_fin_three_iff p).symm.trans (isContiguous_iff_generable p))
-  | .grounded => fun p ↦ decidable_of_iff ((p 0 = p 2 → p 0 = p 1) ∧ ¬ (p 0 = p 1 ∧ p 1 ≠ p 2))
-      (by rw [Theory.Generates, groundedGenerable_iff, isContiguous_fin_three_iff])
+  | .elsewhere => fun p ↦ inferInstanceAs (Decidable (SpanRule.Generable p))
+  | .grounded => fun p ↦ inferInstanceAs (Decidable (SpanRule.GroundedGenerable p))
   | .free => fun _ ↦ isTrue trivial
 
 /-- The theories that rest on containment, under which Merger reaches the comparative before the

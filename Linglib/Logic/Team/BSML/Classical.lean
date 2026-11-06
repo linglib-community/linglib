@@ -19,9 +19,9 @@ definitions, as Aloni and Anttila observe.
 
 ## Main results
 
-* `eval_iff_forall_realize`, `support_iff_forall_realize`,
-  `antiSupport_iff_forall_not_realize`: an `NE`-free formula is supported by a team iff it is
-  true at each of its worlds, and anti-supported iff false at each.
+* `den_of_neFree`, `support_iff_forall_realize`, `antiSupport_iff_forall_not_realize`: an
+  `NE`-free formula is supported by a team iff it is true at each of its worlds, and
+  anti-supported iff false at each.
 * `support_singleton_iff_realize`: the singleton case, `{w} ⊨⁺ φ ↔ M, w ⊨ φ`.
 * `consequence_iff_classicalConsequence`: on `NE`-free formulas, BSML consequence is
   classical modal consequence.
@@ -32,8 +32,8 @@ definitions, as Aloni and Anttila observe.
 
 `Realize` is total: `NE` is true at every world, since singletons are non-empty, so the
 equations of Proposition 2.2.16 are stated for `NE`-free formulas only, as in the sources.
-The proposition is one induction over the polarity parameter of `eval`, with the split
-clauses discharged by `Team.mem_tensor_flat` and the `◇`-support clause by
+The proposition is one induction proving an equation of meanings, with the split clauses
+discharged by `Team.mem_flat_sups_flat` and the `◇`-support clause by
 `Team.exists_nonempty_subset_forall_iff`. The sources derive the proposition from the flatness
 of the `NE`-free fragment; here flatness is derived from it (`isFlat_support_of_neFree`).
 
@@ -100,41 +100,38 @@ theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w 
 
 variable [DecidableEq W] {t : Finset W}
 
-/-- An `NE`-free formula is supported (anti-supported) by `t` iff it is true (false) at every world
-of `t` ([anttila-2021] Proposition 2.2.16). -/
-theorem eval_iff_forall_realize (hNE : φ.NEFree) (b : Bool) (t : Finset W) :
-    eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
-  induction φ generalizing b t with
-  | atom p => cases b <;> simp [eval, Realize]
+/-- The meaning of an `NE`-free formula is the pair of flat properties of its truth and its
+falsity: a team supports it iff it is true at each world of the team, and anti-supports it iff it
+is false at each ([anttila-2021] Proposition 2.2.16). -/
+theorem den_of_neFree (hNE : φ.NEFree) :
+    φ.den M = ⟨Team.flat (Realize M φ), Team.flat fun w ↦ ¬ Realize M φ w⟩ := by
+  induction φ with
+  | atom p => rfl
   | ne => exact hNE.elim
-  | neg ψ ih =>
-    cases b
-    · simpa [eval, Realize] using ih hNE true t
-    · simpa [eval, Realize] using ih hNE false t
+  | neg ψ ih => ext t <;> simp [ih hNE]
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2]
-      refine Team.mem_tensor_flat.trans ?_
-      simp [Realize, imp_iff_not_or]
-    · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and]
+    ext t
+    · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and]
+    · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
+      refine Team.mem_flat_sups_flat.trans ?_
+      simp [imp_iff_not_or]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and, not_or]
-    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2]
-      refine Team.mem_tensor_flat.trans ?_
-      simp [Realize]
+    ext t
+    · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
+      exact Team.mem_flat_sups_flat
+    · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and, not_or]
   | poss ψ ih =>
-    cases b
-    · simp [eval, ih hNE, realize_poss]
-    · simp [eval, ih hNE, Team.exists_nonempty_subset_forall_iff, realize_poss]
+    ext t
+    · simp [Formula.den, ih hNE, Team.exists_nonempty_subset_forall_iff, realize_poss]
+    · simp [Formula.den, ih hNE, realize_poss]
 
 theorem support_iff_forall_realize (hNE : φ.NEFree) :
-    support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
-  simpa using eval_iff_forall_realize hNE true t
+    support M φ t ↔ ∀ w ∈ t, Realize M φ w :=
+  .of_eq (congrArg (t ∈ ·.ver) (den_of_neFree hNE))
 
 theorem antiSupport_iff_forall_not_realize (hNE : φ.NEFree) :
-    antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w := by
-  simpa using eval_iff_forall_realize hNE false t
+    antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w :=
+  .of_eq (congrArg (t ∈ ·.fal) (den_of_neFree hNE))
 
 /-- A singleton team supports an `NE`-free formula iff its world realizes it,
     `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/

@@ -95,6 +95,15 @@ def Antihomophonous (v : RuleSet R) : Prop :=
 instance [DecidableEq R] [DecidableEq E] (v : RuleSet R) : Decidable v.Antihomophonous :=
   inferInstanceAs (Decidable (∀ r ∈ v, ∀ s ∈ v, exponent r = exponent s → r = s))
 
+/-- A map of rules that keeps exponents keeps antihomophony. -/
+theorem Antihomophonous.map {R' Ctx' : Type*} [ExponenceRule R' Ctx' E] {f : R → R'}
+    (hv : v.Antihomophonous) (hf : ∀ r, exponent (f r) = exponent r) :
+    Antihomophonous (v.map f) := by
+  rintro _ hfr _ hfs h
+  obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hfr
+  obtain ⟨s, hs, rfl⟩ := List.mem_map.mp hfs
+  exact congrArg f (hv hr hs (by rwa [hf, hf] at h))
+
 theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' → Applies s c)
     (hr : v.IsElsewhereWinner key c r) (hc' : Applies r c') : v.IsElsewhereWinner key c' r :=
   hr.anti (fun s hs ↦ ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩

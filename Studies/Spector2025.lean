@@ -273,15 +273,8 @@ theorem speaker_eq_ofWeights : speaker μ α C parse = Kernel.ofWeights fun w σ
 theorem speaker_eq_maximinSpeaker (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0) :
     speaker μ α C parse = maximinSpeaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
       fun w ↦ ν.prod (Measure.dirac w) := by
-  refine Kernel.ext fun w ↦ maximinSpeaker_congr_belief ?_
-  have h (p : ι × W) :
-      ν.prod (Measure.dirac w) {p} = 0 ↔ Measure.count.prod (Measure.dirac w) {p} = 0 :=
-    not_iff_not.1 (by simp [Measure.prod_dirac_apply_singleton_ne_zero_iff, hν])
-  exact le_antisymm
-    (Measure.ae_le_iff_absolutelyContinuous.2
-      (Measure.absolutelyContinuous_of_forall_singleton fun p ↦ (h p).1))
-    (Measure.ae_le_iff_absolutelyContinuous.2
-      (Measure.absolutelyContinuous_of_forall_singleton fun p ↦ (h p).2))
+  refine Kernel.ext fun w ↦ maximinSpeaker_congr_belief <| Filter.ext' fun _ ↦ ?_
+  simp [ae_iff_of_countable, Measure.prod_dirac_apply_singleton_ne_zero_iff, hν]
 
 variable [IsFiniteMeasure μ]
 

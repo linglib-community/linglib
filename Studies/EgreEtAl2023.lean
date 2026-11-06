@@ -392,12 +392,10 @@ theorem L0_between1_7_real_singleton (x : Fin 9) :
   rw [measureReal_def, L0_between1_7_apply_singleton]
   split_ifs <;> simp
 
-theorem table1_ac_around4 : table1 ≪ L0 .around4 :=
-  Measure.absolutelyContinuous_of_forall_singleton fun x hx ↦ by
-    rw [L0_around4_apply_singleton] at hx
-    rcases ENNReal.div_eq_zero_iff.mp hx with h | h
-    · exact absurd (Nat.cast_eq_zero.mp h) (by have := x.isLt; unfold Nat.dist; omega)
-    · exact absurd h (by norm_num)
+theorem table1_ac_around4 : table1 ≪ L0 .around4 := by
+  refine (le_top.trans_eq (ae_eq_top.2 fun x ↦ ?_).symm).absolutelyContinuous_of_ae
+  rw [L0_around4_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨Nat.cast_ne_zero.2 (by have := x.isLt; unfold Nat.dist; omega), by norm_num⟩
 
 -- Table 1
 theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=

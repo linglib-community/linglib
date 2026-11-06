@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Get
-public import Linglib.Morphology.Exponence.Containment.Selection
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Exponence.Select
 
 /-!
@@ -309,18 +309,18 @@ theorem exists_matching_not_isSubtree :
 /-! ### Spellout over containment hierarchies -/
 
 /-- An entry of the containment engine read as an entry storing the chain up to its span. -/
-def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : Containment.SupersetRule n α) :
+def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : SupersetRule n α) :
     LexicalEntry F α :=
   ⟨chainTree feat e.spans, e.exponent⟩
 
 /-- On chains, tree spellout is the spellout of the containment engine, since containment of
 chains is comparison of their ranks. -/
 theorem treeSpellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
-    (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
+    (v : RuleSet (SupersetRule n α)) (g : Fin n) :
     treeSpellout (v.map (LexicalEntry.ofSupersetRule feat)) (chainTree feat g) =
-      Containment.spellout v g := by
+      SupersetRule.spellout v g := by
   rw [treeSpellout, treeSelect, RuleSet.selectBy_map (c := g)
-    (f := fun e : Containment.SupersetRule n α ↦ OrderDual.toDual e.spans)
+    (f := fun e : SupersetRule n α ↦ OrderDual.toDual e.spans)
     (fun _ _ ↦ (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le)
     fun _ _ _ _ ↦ by simp [LexicalEntry.ofSupersetRule, chainTree_numNodes], Option.map_map]
   rfl
