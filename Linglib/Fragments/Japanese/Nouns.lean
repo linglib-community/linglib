@@ -115,6 +115,16 @@ def sensei : Noun :=
   { form := "sensei", script := "先生", gloss := "teacher", counters := {some Classifiers.nin},
     animacy := .human }
 
+/-- 患者 *kanja* 'patient'. -/
+def kanja : Noun :=
+  { form := "kanja", script := "患者", gloss := "patient", counters := {some Classifiers.nin},
+    animacy := .human }
+
+/-- 顔 *kao* 'face', counted with the general *-tsu*. -/
+def kao : Noun :=
+  { form := "kao", script := "顔", gloss := "face", counters := {some Classifiers.tsu},
+    animacy := .inanimate }
+
 /-- 友達 *tomodachi* 'friend'. -/
 def tomodachi : Noun :=
   { form := "tomodachi", script := "友達", gloss := "friend", counters := {some Classifiers.nin},
@@ -123,7 +133,7 @@ def tomodachi : Noun :=
 /-- The nouns. -/
 def nouns : List Noun :=
   [inu, neko, hito, kodomo, hon, kuruma, tatemono, tori, hana, mizu, gohan, musume, musuko,
-    gakusei, sensei, tomodachi]
+    gakusei, sensei, kanja, kao, tomodachi]
 
 /-! ### Proper names -/
 
@@ -148,5 +158,8 @@ def yamada : ProperName := name "Yamada" "山田"
 
 /-- *Tanaka* 田中, a family name. -/
 def tanaka : ProperName := name "Tanaka" "田中"
+
+/-- *Endō* 遠藤, a family name. -/
+def endoo : ProperName := name "Endō" "遠藤"
 
 end Japanese.Nouns
