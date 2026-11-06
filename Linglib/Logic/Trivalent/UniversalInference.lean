@@ -6,6 +6,7 @@ Authors: Patrick Elliott, Robert Hawkins
 module
 
 public import Linglib.Logic.Trivalent.Deployment
+public import Mathlib.Order.Cover
 
 /-!
 # Universal inferences of trivalent quantifiers
@@ -20,7 +21,7 @@ step](##Trivalent.universalPresupposition_deployQuantifier_iff).
 
 ## Implementation notes
 
-The definitions take any `(α → SignType) → SignType`, so they apply to the other trivalent
+The definitions take any `(α → Trivalent) → Trivalent`, so they apply to the other trivalent
 quantifiers of `Linglib.Logic.Trivalent.Pointwise` as well as to deployed ones. The domain lets one
 notion cover quantifiers, over the whole universe, and determiners, over the restrictor.
 
@@ -33,23 +34,21 @@ notion cover quantifiers, over the whole universe, and determiners, over the res
 
 namespace Trivalent
 
-open SignType
-
 variable {α : Type*}
 
 /-- `T` has a universal entailment over `R` when it is true of a predicate only if the predicate is
 defined throughout `R`. -/
-def UniversalEntailment (R : Set α) (T : (α → SignType) → SignType) : Prop :=
-  ∀ A, T A = 1 → ∀ a ∈ R, A a ≠ 0
+def UniversalEntailment (R : Set α) (T : (α → Trivalent) → Trivalent) : Prop :=
+  ∀ A, T A = .true → ∀ a ∈ R, A a ≠ .undefined
 
 /-- `T` has a universal anti-entailment over `R` when it is false of a predicate only if the
 predicate is defined throughout `R`. -/
-def UniversalAntiEntailment (R : Set α) (T : (α → SignType) → SignType) : Prop :=
-  ∀ A, T A = -1 → ∀ a ∈ R, A a ≠ 0
+def UniversalAntiEntailment (R : Set α) (T : (α → Trivalent) → Trivalent) : Prop :=
+  ∀ A, T A = .false → ∀ a ∈ R, A a ≠ .undefined
 
 /-- `T` has a universal presupposition over `R` when it has a universal entailment and a universal
 anti-entailment there. -/
-def UniversalPresupposition (R : Set α) (T : (α → SignType) → SignType) : Prop :=
+def UniversalPresupposition (R : Set α) (T : (α → Trivalent) → Trivalent) : Prop :=
   UniversalEntailment R T ∧ UniversalAntiEntailment R T
 
 variable {Q : Set α → Prop} {R : Set α}
@@ -58,7 +57,7 @@ variable {Q : Set α → Prop} {R : Set α}
 when the predicate is defined throughout `R` is one that never holds of both a set and the set with
 one more element of `R`. -/
 theorem forall_repairs_imp_iff (P : Set α → Prop) (R : Set α) :
-    (∀ A : α → SignType, (∀ X ∈ repairs A, P X) → ∀ a ∈ R, A a ≠ 0) ↔
+    (∀ A : α → Trivalent, (∀ X ∈ repairs A, P X) → ∀ a ∈ R, A a ≠ .undefined) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
   constructor
   · rintro h B a haR haB ⟨hB, hC⟩
@@ -67,8 +66,8 @@ theorem forall_repairs_imp_iff (P : Set α → Prop) (R : Set α) :
     rcases (Set.covBy_insert haB).eq_or_eq hX.1 hX.2 with rfl | rfl <;> assumption
   · intro h A hA a haR ha0
     rw [repairs_eq_Icc] at hA
-    exact h (posSupport A) a haR (by simp [ha0]) ⟨hA _ ⟨le_rfl, posSupport_subset A⟩,
-      hA _ ⟨Set.subset_insert _ _, Set.insert_subset (by simp [ha0]) (posSupport_subset A)⟩⟩
+    exact h (posExt A) a haR (by simp [ha0]) ⟨hA _ ⟨le_rfl, posExt_subset A⟩,
+      hA _ ⟨Set.subset_insert _ _, Set.insert_subset (by simp [ha0]) (posExt_subset A)⟩⟩
 
 /-! ### Deployed quantifiers: single steps -/
 
@@ -78,7 +77,7 @@ theorem universalEntailment_deployQuantifier_iff :
     UniversalEntailment R (deployQuantifier Q) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (Q B ∧ Q (insert a B)) := by
   rw [← forall_repairs_imp_iff]
-  simp [UniversalEntailment, deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_one_iff]
+  simp [UniversalEntailment, deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_true_iff]
 
 /-- A deployed quantifier has a universal anti-entailment over `R` when it never fails of both a set
 and the set with one more element of `R`. -/
@@ -87,7 +86,7 @@ theorem universalAntiEntailment_deployQuantifier_iff :
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (¬ Q B ∧ ¬ Q (insert a B)) := by
   rw [← forall_repairs_imp_iff (fun B ↦ ¬ Q B)]
   simp [UniversalAntiEntailment, deployQuantifier_eq_supervaluationOn,
-    supervaluationOn_eq_neg_one_iff, repairs_nonempty]
+    supervaluationOn_eq_false_iff, repairs_nonempty]
 
 /-- A deployed quantifier has a universal anti-entailment exactly when its complement has a
 universal entailment. -/

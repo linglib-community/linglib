@@ -5,27 +5,29 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Basic.Sign
-public import Linglib.Logic.Trivalent.Basic
-public import Mathlib.Data.Set.Basic
-public import Mathlib.Algebra.Notation.Indicator
+public import Linglib.Logic.Bilattice.Guard
+public import Linglib.Logic.Trivalent.Knowledge
+public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
 # Trivalent propositions
 
-A trivalent proposition is a function `W → SignType`, true, false or undefined at each world.
-Its worlds split into a positive extension, a negative extension and a gap, and Beaver and
-Krahmer's assertion operator applied pointwise collapses the gap into the negative extension.
-Strong Kleene conjunction and disjunction of propositions are the pointwise `⊓` and `⊔`. A
-trivalent proposition is also a conditional event in de Finetti's sense, fixed by where it is
-defined and where it is true. This file adds the extensions, bivalence, the conditional-event
-decomposition, and the three families of trivalent quantifiers.
+A trivalent proposition is a function `W → Trivalent`, true, false or undefined at each world,
+with the connectives taken pointwise. Its worlds split into a positive extension, a negative
+extension and a gap. Sending a proposition to its two extensions is a bounded lattice embedding
+into Fitting's product `Set W ⊙ Set W`, natural in the worlds, whose image is the disjoint pairs;
+it carries Kleene's negation to the swap and transplication to Fitting's guard. A trivalent
+proposition is also a conditional event in de Finetti's sense, the transplication of its truth on
+its definedness, and Beaver and Krahmer's assertion operator applied pointwise collapses its gap
+into the negative extension. The file ends with the three families of trivalent quantifiers.
 
 ## Main definitions
 
-* `Trivalent.gapExt`: the extension gap. The positive and negative extensions are the supports
-  `posSupport` and `negSupport` of a sign vector (`Core/Basic/Sign.lean`).
-* `Trivalent.IsBivalent`: the proposition is never `0`.
+* `Trivalent.posExt`, `Trivalent.negExt`, `Trivalent.gapExt`: where a proposition is true, false
+  and undefined.
+* `Trivalent.extensions`: the two extensions, as a bounded lattice hom into `Set W ⊙ Set W`, and
+  `Trivalent.orderIsoDisjoint`: an order isomorphism onto the disjoint pairs.
+* `Trivalent.IsBivalent`: the proposition is never `undefined`.
 * `Trivalent.forallWeak`, `Trivalent.existsWeak`: the Weak Kleene quantifiers, undefined as
   soon as any instance is.
 * `Trivalent.forallStrong`, `Trivalent.existsStrong`: the Strong Kleene quantifiers, the
@@ -35,8 +37,11 @@ decomposition, and the three families of trivalent quantifiers.
 
 ## Main results
 
-* `Trivalent.indicator_support_ofProp_eq_one`, `Trivalent.indicator_ofProp_eq_indicator_ofProp_iff`:
-  every trivalent proposition is the conditional event of its truth on its definedness, and two
+* `Trivalent.extensions_compl`, `Trivalent.extensions_transplication`, `Trivalent.extensions_comp`:
+  negation is the swap, transplication is Fitting's guard, and reindexing the worlds takes
+  preimages.
+* `Trivalent.transplication_definedness_truth`, `Trivalent.transplication_ofProp_eq_iff`: every
+  trivalent proposition is the conditional event of its truth on its definedness, and two
   conditional events coincide exactly when they have the same condition and agree on it.
 
 Each family is the quantifier of a theory of how a presupposition projects from the scope of a
@@ -49,7 +54,7 @@ delimit when each reading surfaces.
 ## Implementation notes
 
 The Strong Kleene quantifiers are explicit definitions rather than `⨅` and `⨆`, because a
-`CompleteLinearOrder` instance on `SignType` would carry a second `LinearOrder` parent that
+`CompleteLinearOrder` instance on `Trivalent` would carry a second `LinearOrder` parent that
 instance search prefers, making every later `⊓` noncomputable.
 
 ## References
@@ -63,160 +68,242 @@ instance search prefers, making every later `⊓` noncomputable.
 * [spector-sudo-2017]
 * [fox-2013]
 * [de-finetti-1936]
+* [fitting-1994]
 * [george-2014]
 -/
 
 @[expose] public section
 
-
 namespace Trivalent
 
-open SignType
+open Bilattice Product
 
 variable {W : Type*}
 
 /-! ### Extensions -/
 
+/-- The positive extension collects the worlds where the proposition is true. -/
+def posExt (p : W → Trivalent) : Set W := {w | p w = .true}
+
+/-- The negative extension collects the worlds where the proposition is false. -/
+def negExt (p : W → Trivalent) : Set W := {w | p w = .false}
+
 /-- The extension gap collects the worlds where the proposition is neither true nor false. -/
-def gapExt (p : W → SignType) : Set W := {w | p w = 0}
+def gapExt (p : W → Trivalent) : Set W := {w | p w = .undefined}
 
-@[simp] theorem mem_gapExt {p : W → SignType} {w : W} :
-    w ∈ gapExt p ↔ p w = 0 := Iff.rfl
+section Extensions
 
-instance (p : W → SignType) : DecidablePred (· ∈ gapExt p) :=
-  fun w ↦ inferInstanceAs (Decidable (p w = 0))
+variable {p q : W → Trivalent} {w : W}
 
-theorem posSupport_union_negSupport_union_gapExt (p : W → SignType) :
-    posSupport p ∪ negSupport p ∪ gapExt p = Set.univ := by
+@[simp] theorem mem_posExt : w ∈ posExt p ↔ p w = .true := Iff.rfl
+@[simp] theorem mem_negExt : w ∈ negExt p ↔ p w = .false := Iff.rfl
+@[simp] theorem mem_gapExt : w ∈ gapExt p ↔ p w = .undefined := Iff.rfl
+theorem mem_compl_gapExt : w ∈ (gapExt p)ᶜ ↔ p w ≠ .undefined := Iff.rfl
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ posExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .true))
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ negExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .false))
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ gapExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .undefined))
+
+theorem posExt_union_negExt_union_gapExt (p : W → Trivalent) :
+    posExt p ∪ negExt p ∪ gapExt p = Set.univ := by
   ext w
-  simp only [Set.mem_union, mem_posSupport, mem_negSupport, mem_gapExt, Set.mem_univ,
-    iff_true]
+  simp only [Set.mem_union, mem_posExt, mem_negExt, mem_gapExt, Set.mem_univ, iff_true]
   cases p w <;> simp
 
-/-- A proposition is bivalent if it takes no `0` value. -/
-def IsBivalent (p : W → SignType) : Prop :=
-  ∀ w, p w = 1 ∨ p w = -1
+theorem posExt_union_negExt (p : W → Trivalent) : posExt p ∪ negExt p = (gapExt p)ᶜ := by
+  ext w; cases h : p w <;> simp [h]
 
-theorem isBivalent_iff_gapExt_eq_empty (p : W → SignType) :
+theorem disjoint_posExt_negExt (p : W → Trivalent) : Disjoint (posExt p) (negExt p) :=
+  Set.disjoint_left.2 fun w h₁ h₂ ↦ absurd ((mem_posExt.1 h₁).symm.trans h₂) (by decide)
+
+theorem posExt_subset_compl_gapExt (p : W → Trivalent) : posExt p ⊆ (gapExt p)ᶜ :=
+  (posExt_union_negExt p) ▸ Set.subset_union_left
+
+theorem negExt_subset_compl_gapExt (p : W → Trivalent) : negExt p ⊆ (gapExt p)ᶜ :=
+  (posExt_union_negExt p) ▸ Set.subset_union_right
+
+theorem compl_gapExt_inter_compl_posExt (p : W → Trivalent) :
+    (gapExt p)ᶜ ∩ (posExt p)ᶜ = negExt p := by
+  ext w; cases h : p w <;> simp [h]
+
+@[simp] theorem gapExt_ofProp (A : W → Prop) [DecidablePred A] :
+    gapExt (fun w ↦ ofProp (A w)) = ∅ := by
+  ext w; simp
+
+@[simp] theorem gapExt_undefined : gapExt (fun _ ↦ .undefined : W → Trivalent) = Set.univ :=
+  Set.eq_univ_of_forall fun _ ↦ rfl
+
+/-- The positive and negative extensions of a trivalent proposition, in Fitting's product of
+world-sets: Strong Kleene conjunction and disjunction are its truth meet and join. -/
+def extensions : BoundedLatticeHom (W → Trivalent) (Set W ⊙ Set W) where
+  toFun p := mk (posExt p) (negExt p)
+  map_sup' p q := by ext w <;> simp [posExt, negExt]
+  map_inf' p q := by ext w <;> simp [posExt, negExt]
+  map_top' := by ext w <;> simp [posExt, negExt]
+  map_bot' := by ext w <;> simp [posExt, negExt]
+
+theorem extensions_apply (p : W → Trivalent) : extensions p = mk (posExt p) (negExt p) := rfl
+
+@[simp] theorem pro_extensions (p : W → Trivalent) : (extensions p).pro = posExt p := rfl
+@[simp] theorem con_extensions (p : W → Trivalent) : (extensions p).con = negExt p := rfl
+
+/-- `extensions` is natural in the worlds: reindexing a proposition along `f` takes preimages of
+its extensions. -/
+theorem extensions_comp {W' : Type*} (f : W' → W) (p : W → Trivalent) :
+    extensions (p ∘ f) = mk (f ⁻¹' posExt p) (f ⁻¹' negExt p) := rfl
+
+theorem extensions_le_extensions : extensions p ≤ extensions q ↔ p ≤ q := by
+  have key : ∀ a b : Trivalent, a ≤ b ↔ (a = .true → b = .true) ∧ (b = .false → a = .false) := by
+    decide
+  simp only [extensions_apply, mk_le_mk, Set.subset_def, mem_posExt, mem_negExt, Pi.le_def, key]
+  exact ⟨fun h w ↦ ⟨h.1 w, h.2 w⟩, fun h ↦ ⟨fun w ↦ (h w).1, fun w ↦ (h w).2⟩⟩
+
+theorem extensions_injective : Function.Injective (extensions (W := W)) := fun _ _ h ↦
+  le_antisymm (extensions_le_extensions.1 h.le) (extensions_le_extensions.1 h.ge)
+
+/-- The extensions of a proposition are disjoint, and every disjoint pair is the extensions of a
+proposition: over a Boolean factor, Fitting's consistent pairs. -/
+theorem range_extensions : Set.range (extensions (W := W)) = {x | Disjoint x.pro x.con} := by
+  classical
+  ext x
+  constructor
+  · rintro ⟨p, rfl⟩
+    rw [Set.mem_ofPred_eq, Set.disjoint_left]
+    intro w h₁ h₂
+    simp only [pro_extensions, con_extensions, mem_posExt, mem_negExt] at h₁ h₂
+    exact absurd (h₁.symm.trans h₂) (by decide)
+  · intro hx
+    refine ⟨fun w ↦ if w ∈ x.pro then .true else if w ∈ x.con then .false else .undefined, ?_⟩
+    ext w <;> simp only [pro_extensions, con_extensions, mem_posExt, mem_negExt]
+    · split_ifs <;> simp_all
+    · split_ifs with h₁ h₂
+      · exact iff_of_false (by decide) (Set.disjoint_left.1 hx h₁)
+      · simp_all
+      · simp_all
+
+/-- Three-valued propositions are the disjoint pairs of world-sets. -/
+noncomputable def orderIsoDisjoint :
+    (W → Trivalent) ≃o {x : Set W ⊙ Set W | Disjoint x.pro x.con} :=
+  (OrderEmbedding.ofMapLEIff extensions fun _ _ ↦ extensions_le_extensions).orderIso.trans
+    (Set.orderIsoOfEq _ _ range_extensions)
+
+/-- Kleene's negation of a proposition swaps its extensions. -/
+@[simp] theorem extensions_compl (p : W → Trivalent) : extensions pᶜ = (extensions p)ᶜ := by
+  ext w <;> simp [posExt, negExt]
+
+/-- Transplication of propositions is Fitting's guard on their extensions. -/
+theorem extensions_transplication (π φ : W → Trivalent) :
+    extensions (fun w ↦ transplication (π w) (φ w)) = guard (extensions π) (extensions φ) := by
+  ext w <;> simp [posExt, negExt, transplication_eq_true_iff, transplication_eq_false_iff]
+
+end Extensions
+
+/-- A proposition is bivalent if it takes no `undefined` value. -/
+def IsBivalent (p : W → Trivalent) : Prop :=
+  ∀ w, p w = .true ∨ p w = .false
+
+theorem isBivalent_iff_gapExt_eq_empty (p : W → Trivalent) :
     IsBivalent p ↔ gapExt p = ∅ := by
   simp only [IsBivalent, Set.eq_empty_iff_forall_notMem, mem_gapExt]
   exact forall_congr' fun w => by cases p w <;> simp
 
-theorem isBivalent_iff_forall_ne_zero (p : W → SignType) :
-    IsBivalent p ↔ ∀ w, p w ≠ 0 :=
+theorem isBivalent_iff_forall_ne_undefined (p : W → Trivalent) :
+    IsBivalent p ↔ ∀ w, p w ≠ .undefined :=
   forall_congr' fun w => by cases p w <;> simp
 
-theorem IsBivalent.ne_zero {p : W → SignType} (h : IsBivalent p) (w : W) : p w ≠ 0 :=
-  (isBivalent_iff_forall_ne_zero p).1 h w
-
-/-! ### Presupposition and assertion
-
-A proposition defined where `A` holds and asserting `B` there is the indicator
-`{w | A w}.indicator fun w ↦ ofProp (B w)`: the classical value of `B` on `A` and `0` elsewhere.
-Its defined region is its `Function.support`, and an indicator of an indicator is the indicator
-of the intersection (`Set.indicator_indicator`). -/
-
-section Indicator
-
-variable {s : Set W} {f : W → SignType} {w : W}
-
-@[simp] theorem support_ofProp (B : W → Prop) [DecidablePred B] :
-    Function.support (fun w ↦ SignType.ofProp (B w)) = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ SignType.ofProp_ne_zero
-
-@[simp] theorem indicator_apply_eq_one_iff : s.indicator f w = 1 ↔ w ∈ s ∧ f w = 1 := by
-  by_cases h : w ∈ s <;> simp [h]
-
-@[simp] theorem indicator_apply_eq_neg_one_iff : s.indicator f w = -1 ↔ w ∈ s ∧ f w = -1 := by
-  by_cases h : w ∈ s <;> simp [h]
-
-theorem support_eq_compl_gapExt (p : W → SignType) : Function.support p = (gapExt p)ᶜ := rfl
-
-end Indicator
+theorem IsBivalent.ne_undefined {p : W → Trivalent} (h : IsBivalent p) (w : W) :
+    p w ≠ .undefined :=
+  (isBivalent_iff_forall_ne_undefined p).1 h w
 
 /-! ### Conditional events
 
-A trivalent proposition is fixed by where it is defined and where it is true, and every such pair
-arises: the indicator of `B` on `A` is defined on `A` and true on `A ∩ B`. So trivalent
+A proposition defined where `A` holds and asserting `B` there is the transplication of `B` on `A`,
+pointwise: the classical value of `B` on `A` and `undefined` elsewhere. A trivalent proposition is
+fixed by where it is defined and where it is true, and every such pair arises, so trivalent
 propositions are the conditional events `B | A` of [de-finetti-1936], conditional assertions of a
-two-valued content on a two-valued condition, and two of them coincide exactly when they have the
+two-valued content on a two-valued condition; two of them coincide exactly when they have the
 same condition and agree on it. -/
 
 section ConditionalEvent
 
 /-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
-theorem indicator_support_ofProp_eq_one (p : W → SignType) :
-    (Function.support p).indicator (fun w ↦ ofProp (p w = 1)) = p := by
-  funext w
-  by_cases h : p w = 0
-  · rw [Set.indicator_of_notMem (by simpa using h), h]
-  · rw [Set.indicator_of_mem h]
-    cases hp : p w <;> simp_all
+theorem transplication_definedness_truth (p : W → Trivalent) :
+    (fun w ↦ transplication (ofProp (p w ≠ .undefined)) (ofProp (p w = .true))) = p := by
+  funext w; cases p w <;> rfl
 
 /-- Two conditional events coincide exactly when they have the same condition and agree on it. -/
-theorem indicator_ofProp_eq_indicator_ofProp_iff {A A' : Set W} {B B' : W → Prop}
-    [DecidablePred B] [DecidablePred B'] :
-    (A.indicator fun w ↦ ofProp (B w)) = A'.indicator (fun w ↦ ofProp (B' w)) ↔
-      A = A' ∧ A ∩ {w | B w} = A' ∩ {w | B' w} := by
+theorem transplication_ofProp_eq_iff {A A' B B' : W → Prop} [DecidablePred A]
+    [DecidablePred A'] [DecidablePred B] [DecidablePred B'] :
+    (fun w ↦ transplication (ofProp (A w)) (ofProp (B w))) =
+        (fun w ↦ transplication (ofProp (A' w)) (ofProp (B' w))) ↔
+      {w | A w} = {w | A' w} ∧ {w | A w} ∩ {w | B w} = {w | A' w} ∩ {w | B' w} := by
   constructor
   · intro h
-    have hsupp := congrArg Function.support h
-    have hpos := congrArg posSupport h
-    simp only [Set.support_indicator, support_ofProp, Set.inter_univ] at hsupp
-    refine ⟨hsupp, ?_⟩
-    simpa [Set.ext_iff, posSupport] using hpos
-  · rintro ⟨rfl, h⟩
+    have hgap := congrArg gapExt h
+    have hpos := congrArg posExt h
+    simp only [Set.ext_iff, mem_gapExt, mem_posExt, transplication_eq_undefined_iff,
+      transplication_eq_true_iff, ne_eq, ofProp_eq_true_iff, ofProp_ne_undefined, or_false]
+      at hgap hpos
+    exact ⟨Set.ext fun w ↦ not_iff_not.1 (hgap w), Set.ext fun w ↦ hpos w⟩
+  · rintro ⟨hA, hAB⟩
     funext w
-    by_cases hw : w ∈ A
-    · have := Set.ext_iff.1 h w
-      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, hw, true_and] at this
-      simp [hw, this]
-    · simp [hw]
+    have h₁ := Set.ext_iff.1 hA w
+    have h₂ := Set.ext_iff.1 hAB w
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff] at h₁ h₂
+    by_cases ha : A w
+    · have ha' := h₁.1 ha
+      simp only [ofProp, ha, ha', ite_true, transplication_true_left]
+      exact ofProp_congr ⟨fun hb ↦ (h₂.1 ⟨ha, hb⟩).2, fun hb ↦ (h₂.2 ⟨ha', hb⟩).2⟩
+    · have ha' : ¬ A' w := fun h ↦ ha (h₁.2 h)
+      simp only [ofProp, ha, ha', ite_false]; rfl
 
 end ConditionalEvent
 
 /-! ### Extensions under assertion
 
-Asserting a proposition pointwise, `fun w ↦ ofProp (p w = 1)`, keeps its positive extension and
+Asserting a proposition pointwise, `fun w ↦ ofProp (p w = .true)`, keeps its positive extension and
 moves its gap into the negative extension. Conjoining it with a two-valued `R` keeps its gap only
 where `R` holds. -/
 
-@[simp] theorem posSupport_ofProp_eq_one (p : W → SignType) :
-    posSupport (fun w ↦ ofProp (p w = 1)) = posSupport p := by
+@[simp] theorem posExt_ofProp_eq_true (p : W → Trivalent) :
+    posExt (fun w ↦ ofProp (p w = .true)) = posExt p := by
   ext w; simp
 
-@[simp] theorem negSupport_ofProp_eq_one (p : W → SignType) :
-    negSupport (fun w ↦ ofProp (p w = 1)) = negSupport p ∪ gapExt p := by
+@[simp] theorem negExt_ofProp_eq_true (p : W → Trivalent) :
+    negExt (fun w ↦ ofProp (p w = .true)) = negExt p ∪ gapExt p := by
   ext w; cases h : p w <;> simp [h]
 
-@[simp] theorem gapExt_ofProp_eq_one (p : W → SignType) :
-    gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
-  ext w; simp
-
-@[simp] theorem posSupport_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
-    posSupport (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posSupport p := by
+@[simp] theorem posExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → Trivalent) :
+    posExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posExt p := by
   ext w; by_cases h : R w <;> simp [h]
 
-@[simp] theorem negSupport_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
-    negSupport (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w}ᶜ ∪ negSupport p := by
+@[simp] theorem negExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → Trivalent) :
+    negExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w}ᶜ ∪ negExt p := by
   ext w; by_cases h : R w <;> simp [h]
 
-@[simp] theorem gapExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+@[simp] theorem gapExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → Trivalent) :
     gapExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ gapExt p := by
   ext w; simp [and_comm]
 
-/-- Composing with a function undefined exactly at `0` preserves the gap. -/
-theorem gapExt_comp {f : SignType → SignType} (hf : ∀ a, f a = 0 ↔ a = 0) (p : W → SignType) :
+/-- Composing with a function undefined exactly at `undefined` preserves the gap. -/
+theorem gapExt_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a = .undefined ↔ a = .undefined)
+    (p : W → Trivalent) :
     gapExt (f ∘ p) = gapExt p := by
   ext w; simp [hf]
 
-/-- Composing with a function that is never `0` leaves no gap. -/
-theorem isBivalent_comp {f : SignType → SignType} (hf : ∀ a, f a ≠ 0) (p : W → SignType) :
+/-- Composing with a function that is never `undefined` leaves no gap. -/
+theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .undefined)
+    (p : W → Trivalent) :
     IsBivalent (f ∘ p) :=
-  (isBivalent_iff_forall_ne_zero _).2 fun _ ↦ hf _
+  (isBivalent_iff_forall_ne_undefined _).2 fun _ ↦ hf _
 
-theorem isBivalent_ofProp_eq_one (p : W → SignType) : IsBivalent fun w ↦ ofProp (p w = 1) :=
-  fun w ↦ by by_cases h : p w = 1 <;> simp [h]
+theorem isBivalent_ofProp_eq_true (p : W → Trivalent) : IsBivalent fun w ↦ ofProp (p w = .true) :=
+  fun w ↦ by by_cases h : p w = .true <;> simp [h]
 
 /-! ### Quantifiers
 
@@ -238,35 +325,35 @@ open Classical in
 /-- `forallWith D p` is the universal quantifier undefined unless `D` holds, and otherwise false
 exactly when some instance is. All the families share this truth rule
 (`forallWith_eq_forallWith_of_defined`). -/
-noncomputable def forallWith {ι : Sort*} (D : Prop) (p : ι → SignType) : SignType :=
-  if D then if ∃ i, p i = -1 then -1 else 1 else 0
+noncomputable def forallWith {ι : Sort*} (D : Prop) (p : ι → Trivalent) : Trivalent :=
+  if D then if ∃ i, p i = .false then .false else .true else .undefined
 
 /-- `existsWith D p` is the existential quantifier of the family whose definedness condition
 is `D`, the dual of `forallWith`. -/
-noncomputable def existsWith {ι : Sort*} (D : Prop) (p : ι → SignType) : SignType :=
-  -forallWith D fun i ↦ -p i
+noncomputable def existsWith {ι : Sort*} (D : Prop) (p : ι → Trivalent) : Trivalent :=
+  (forallWith D fun i ↦ (p i)ᶜ)ᶜ
 
 section WithFamilies
 
-variable {ι : Sort*} {D D' : Prop} {p : ι → SignType}
+variable {ι : Sort*} {D D' : Prop} {p : ι → Trivalent}
 
-theorem forallWith_eq_zero_iff : forallWith D p = 0 ↔ ¬D := by
+theorem forallWith_eq_undefined_iff : forallWith D p = .undefined ↔ ¬D := by
   unfold forallWith; split_ifs <;> simp_all
 
-theorem forallWith_eq_neg_one_iff : forallWith D p = -1 ↔ D ∧ ∃ i, p i = -1 := by
+theorem forallWith_eq_false_iff : forallWith D p = .false ↔ D ∧ ∃ i, p i = .false := by
   unfold forallWith; split_ifs <;> simp_all
 
-theorem forallWith_eq_one_iff : forallWith D p = 1 ↔ D ∧ ∀ i, p i ≠ -1 := by
+theorem forallWith_eq_true_iff : forallWith D p = .true ↔ D ∧ ∀ i, p i ≠ .false := by
   unfold forallWith; split_ifs <;> simp_all
 
-theorem existsWith_eq_zero_iff : existsWith D p = 0 ↔ ¬D := by
-  simp [existsWith, SignType.neg_eq_zero_iff, forallWith_eq_zero_iff]
+theorem existsWith_eq_undefined_iff : existsWith D p = .undefined ↔ ¬D := by
+  simp [existsWith, forallWith_eq_undefined_iff]
 
-theorem existsWith_eq_one_iff : existsWith D p = 1 ↔ D ∧ ∃ i, p i = 1 := by
-  simp [existsWith, neg_eq_iff_eq_neg, forallWith_eq_neg_one_iff]
+theorem existsWith_eq_true_iff : existsWith D p = .true ↔ D ∧ ∃ i, p i = .true := by
+  simp [existsWith, forallWith_eq_false_iff]
 
-theorem existsWith_eq_neg_one_iff : existsWith D p = -1 ↔ D ∧ ∀ i, p i ≠ 1 := by
-  simp [existsWith, neg_eq_iff_eq_neg, forallWith_eq_one_iff]
+theorem existsWith_eq_false_iff : existsWith D p = .false ↔ D ∧ ∀ i, p i ≠ .true := by
+  simp [existsWith, forallWith_eq_true_iff]
 
 theorem forallWith_eq_forallWith_of_defined (hD : D) (hD' : D') :
     forallWith D p = forallWith D' p := by
@@ -274,61 +361,63 @@ theorem forallWith_eq_forallWith_of_defined (hD : D) (hD' : D') :
   rw [ite_eq_left hD, ite_eq_left hD']
 
 theorem forallWith_congr (h : D ↔ D') : forallWith D p = forallWith D' p :=
-  eq_of_eq_zero_iff_of_eq_one_iff
-    (by rw [forallWith_eq_zero_iff, forallWith_eq_zero_iff, h])
-    (by rw [forallWith_eq_one_iff, forallWith_eq_one_iff, h])
+  eq_of_eq_undefined_iff_of_eq_true_iff
+    (by rw [forallWith_eq_undefined_iff, forallWith_eq_undefined_iff, h])
+    (by rw [forallWith_eq_true_iff, forallWith_eq_true_iff, h])
 
 theorem existsWith_congr (h : D ↔ D') : existsWith D p = existsWith D' p :=
-  congrArg Neg.neg (forallWith_congr h)
+  congrArg compl (forallWith_congr h)
 
 end WithFamilies
 
 /-- The Weak Kleene universal quantifier is undefined when any instance is, and otherwise
 classical. -/
-noncomputable def forallWeak {ι : Sort*} (p : ι → SignType) : SignType :=
-  forallWith (∀ i, p i ≠ 0) p
+noncomputable def forallWeak {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  forallWith (∀ i, p i ≠ .undefined) p
 
 /-- The Weak Kleene existential quantifier is the dual of `forallWeak`. -/
-noncomputable def existsWeak {ι : Sort*} (p : ι → SignType) : SignType :=
-  existsWith (∀ i, p i ≠ 0) p
+noncomputable def existsWeak {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  existsWith (∀ i, p i ≠ .undefined) p
 
 section WeakQuantifiers
 
-variable {ι : Sort*} {p : ι → SignType}
+variable {ι : Sort*} {p : ι → Trivalent}
 
-@[simp] theorem forallWeak_eq_zero_iff : forallWeak p = 0 ↔ ∃ i, p i = 0 := by
-  rw [forallWeak, forallWith_eq_zero_iff, not_forall]
+@[simp] theorem forallWeak_eq_undefined_iff :
+    forallWeak p = .undefined ↔ ∃ i, p i = .undefined := by
+  rw [forallWeak, forallWith_eq_undefined_iff, not_forall]
   simp
 
-@[simp] theorem forallWeak_eq_one_iff : forallWeak p = 1 ↔ ∀ i, p i = 1 := by
-  rw [forallWeak, forallWith_eq_one_iff]
+@[simp] theorem forallWeak_eq_true_iff : forallWeak p = .true ↔ ∀ i, p i = .true := by
+  rw [forallWeak, forallWith_eq_true_iff]
   constructor
   · rintro ⟨hd, hf⟩ i
     cases h : p i
-    · exact absurd h (hd i)
     · exact absurd h (hf i)
+    · exact absurd h (hd i)
     · rfl
   · exact fun h => ⟨fun i ↦ by rw [h i]; decide, fun i ↦ by rw [h i]; decide⟩
 
-@[simp] theorem forallWeak_eq_neg_one_iff :
-    forallWeak p = -1 ↔ (∀ i, p i ≠ 0) ∧ ∃ i, p i = -1 := by
-  rw [forallWeak, forallWith_eq_neg_one_iff]
+@[simp] theorem forallWeak_eq_false_iff :
+    forallWeak p = .false ↔ (∀ i, p i ≠ .undefined) ∧ ∃ i, p i = .false := by
+  rw [forallWeak, forallWith_eq_false_iff]
 
-@[simp] theorem existsWeak_eq_zero_iff : existsWeak p = 0 ↔ ∃ i, p i = 0 := by
-  rw [existsWeak, existsWith_eq_zero_iff, not_forall]
+@[simp] theorem existsWeak_eq_undefined_iff :
+    existsWeak p = .undefined ↔ ∃ i, p i = .undefined := by
+  rw [existsWeak, existsWith_eq_undefined_iff, not_forall]
   simp
 
-@[simp] theorem existsWeak_eq_one_iff :
-    existsWeak p = 1 ↔ (∀ i, p i ≠ 0) ∧ ∃ i, p i = 1 := by
-  rw [existsWeak, existsWith_eq_one_iff]
+@[simp] theorem existsWeak_eq_true_iff :
+    existsWeak p = .true ↔ (∀ i, p i ≠ .undefined) ∧ ∃ i, p i = .true := by
+  rw [existsWeak, existsWith_eq_true_iff]
 
-@[simp] theorem existsWeak_eq_neg_one_iff : existsWeak p = -1 ↔ ∀ i, p i = -1 := by
-  rw [existsWeak, existsWith_eq_neg_one_iff]
+@[simp] theorem existsWeak_eq_false_iff : existsWeak p = .false ↔ ∀ i, p i = .false := by
+  rw [existsWeak, existsWith_eq_false_iff]
   constructor
   · rintro ⟨hd, hf⟩ i
     cases h : p i
-    · exact absurd h (hd i)
     · rfl
+    · exact absurd h (hd i)
     · exact absurd h (hf i)
   · exact fun h => ⟨fun i ↦ by rw [h i]; decide, fun i ↦ by rw [h i]; decide⟩
 
@@ -336,104 +425,108 @@ end WeakQuantifiers
 
 /-- The Strong Kleene universal quantifier is the indexed `⊓`, false when any instance is, true
 when all are, and undefined otherwise. -/
-noncomputable def forallStrong {ι : Sort*} (p : ι → SignType) : SignType :=
-  forallWith ((∃ i, p i = -1) ∨ ∀ i, p i = 1) p
+noncomputable def forallStrong {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  forallWith ((∃ i, p i = .false) ∨ ∀ i, p i = .true) p
 
 /-- The Strong Kleene existential quantifier is the dual of `forallStrong`, the indexed
 `⊔`. -/
-noncomputable def existsStrong {ι : Sort*} (p : ι → SignType) : SignType :=
-  existsWith ((∃ i, p i = 1) ∨ ∀ i, p i = -1) p
+noncomputable def existsStrong {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  existsWith ((∃ i, p i = .true) ∨ ∀ i, p i = .false) p
 
 section StrongQuantifiers
 
-variable {ι : Sort*} {p : ι → SignType}
+variable {ι : Sort*} {p : ι → Trivalent}
 
-@[simp] theorem forallStrong_eq_neg_one_iff : forallStrong p = -1 ↔ ∃ i, p i = -1 := by
-  rw [forallStrong, forallWith_eq_neg_one_iff, and_iff_right_iff_imp]
+@[simp] theorem forallStrong_eq_false_iff : forallStrong p = .false ↔ ∃ i, p i = .false := by
+  rw [forallStrong, forallWith_eq_false_iff, and_iff_right_iff_imp]
   exact fun h => .inl h
 
-@[simp] theorem forallStrong_eq_one_iff : forallStrong p = 1 ↔ ∀ i, p i = 1 := by
-  rw [forallStrong, forallWith_eq_one_iff]
+@[simp] theorem forallStrong_eq_true_iff : forallStrong p = .true ↔ ∀ i, p i = .true := by
+  rw [forallStrong, forallWith_eq_true_iff]
   constructor
   · rintro ⟨⟨i, hi⟩ | h, hf⟩
     · exact absurd hi (hf i)
     · exact h
   · exact fun h => ⟨.inr h, fun i ↦ by rw [h i]; decide⟩
 
-@[simp] theorem forallStrong_eq_zero_iff :
-    forallStrong p = 0 ↔ (∀ i, p i ≠ -1) ∧ ∃ i, p i = 0 := by
-  rw [forallStrong, forallWith_eq_zero_iff, not_or, not_exists, not_forall]
+@[simp] theorem forallStrong_eq_undefined_iff :
+    forallStrong p = .undefined ↔ (∀ i, p i ≠ .false) ∧ ∃ i, p i = .undefined := by
+  rw [forallStrong, forallWith_eq_undefined_iff, not_or, not_exists, not_forall]
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
 
-theorem forallStrong_ne_zero_iff : forallStrong p ≠ 0 ↔ (∃ i, p i = -1) ∨ ∀ i, p i ≠ 0 := by
-  rw [ne_eq, forallStrong_eq_zero_iff, not_and_or, not_forall_not, not_exists]
+theorem forallStrong_ne_undefined_iff :
+    forallStrong p ≠ .undefined ↔ (∃ i, p i = .false) ∨ ∀ i, p i ≠ .undefined := by
+  rw [ne_eq, forallStrong_eq_undefined_iff, not_and_or, not_forall_not, not_exists]
 
-@[simp] theorem existsStrong_eq_one_iff : existsStrong p = 1 ↔ ∃ i, p i = 1 := by
-  rw [existsStrong, existsWith_eq_one_iff, and_iff_right_iff_imp]
+@[simp] theorem existsStrong_eq_true_iff : existsStrong p = .true ↔ ∃ i, p i = .true := by
+  rw [existsStrong, existsWith_eq_true_iff, and_iff_right_iff_imp]
   exact fun h => .inl h
 
-@[simp] theorem existsStrong_eq_neg_one_iff : existsStrong p = -1 ↔ ∀ i, p i = -1 := by
-  rw [existsStrong, existsWith_eq_neg_one_iff]
+@[simp] theorem existsStrong_eq_false_iff : existsStrong p = .false ↔ ∀ i, p i = .false := by
+  rw [existsStrong, existsWith_eq_false_iff]
   constructor
   · rintro ⟨⟨i, hi⟩ | h, hf⟩
     · exact absurd hi (hf i)
     · exact h
   · exact fun h => ⟨.inr h, fun i ↦ by rw [h i]; decide⟩
 
-@[simp] theorem existsStrong_eq_zero_iff :
-    existsStrong p = 0 ↔ (∀ i, p i ≠ 1) ∧ ∃ i, p i = 0 := by
-  rw [existsStrong, existsWith_eq_zero_iff, not_or, not_exists, not_forall]
+@[simp] theorem existsStrong_eq_undefined_iff :
+    existsStrong p = .undefined ↔ (∀ i, p i ≠ .true) ∧ ∃ i, p i = .undefined := by
+  rw [existsStrong, existsWith_eq_undefined_iff, not_or, not_exists, not_forall]
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
 
-theorem existsStrong_ne_zero_iff : existsStrong p ≠ 0 ↔ (∃ i, p i = 1) ∨ ∀ i, p i ≠ 0 := by
-  rw [ne_eq, existsStrong_eq_zero_iff, not_and_or, not_forall_not, not_exists]
+theorem existsStrong_ne_undefined_iff :
+    existsStrong p ≠ .undefined ↔ (∃ i, p i = .true) ∨ ∀ i, p i ≠ .undefined := by
+  rw [ne_eq, existsStrong_eq_undefined_iff, not_and_or, not_forall_not, not_exists]
 
 /-- The Strong Kleene quantifiers are dual under Kleene's negation. -/
-theorem neg_forallStrong : -forallStrong p = existsStrong fun i ↦ -p i :=
-  SignType.eq_of_eq_one_iff_of_eq_neg_one_iff (by simp) (by simp)
+theorem compl_forallStrong : (forallStrong p)ᶜ = existsStrong fun i ↦ (p i)ᶜ :=
+  eq_of_eq_true_iff_of_eq_false_iff (by simp) (by simp)
 
 end StrongQuantifiers
 
 /-- Haug's universal quantifier skips undefined instances — undefined only when every
 instance is, false when some instance is, and true otherwise. -/
-noncomputable def forallHaug (p : W → SignType) : SignType :=
-  forallWith (∃ w, p w ≠ 0) p
+noncomputable def forallHaug (p : W → Trivalent) : Trivalent :=
+  forallWith (∃ w, p w ≠ .undefined) p
 
 /-- The dual of `forallHaug`. -/
-noncomputable def existsHaug (p : W → SignType) : SignType :=
-  existsWith (∃ w, p w ≠ 0) p
+noncomputable def existsHaug (p : W → Trivalent) : Trivalent :=
+  existsWith (∃ w, p w ≠ .undefined) p
 
 section HaugQuantifiers
 
-variable {p : W → SignType}
+variable {p : W → Trivalent}
 
-@[simp] theorem forallHaug_eq_zero_iff : forallHaug p = 0 ↔ ∀ w, p w = 0 := by
-  rw [forallHaug, forallWith_eq_zero_iff, not_exists]
+@[simp] theorem forallHaug_eq_undefined_iff :
+    forallHaug p = .undefined ↔ ∀ w, p w = .undefined := by
+  rw [forallHaug, forallWith_eq_undefined_iff, not_exists]
   simp
 
-@[simp] theorem forallHaug_eq_neg_one_iff : forallHaug p = -1 ↔ ∃ w, p w = -1 := by
-  rw [forallHaug, forallWith_eq_neg_one_iff, and_iff_right_iff_imp]
+@[simp] theorem forallHaug_eq_false_iff : forallHaug p = .false ↔ ∃ w, p w = .false := by
+  rw [forallHaug, forallWith_eq_false_iff, and_iff_right_iff_imp]
   rintro ⟨w, hw⟩
   exact ⟨w, hw ▸ by decide⟩
 
-@[simp] theorem forallHaug_eq_one_iff :
-    forallHaug p = 1 ↔ (∃ w, p w ≠ 0) ∧ ∀ w, p w ≠ -1 := by
-  rw [forallHaug, forallWith_eq_one_iff]
+@[simp] theorem forallHaug_eq_true_iff :
+    forallHaug p = .true ↔ (∃ w, p w ≠ .undefined) ∧ ∀ w, p w ≠ .false := by
+  rw [forallHaug, forallWith_eq_true_iff]
 
-@[simp] theorem existsHaug_eq_zero_iff : existsHaug p = 0 ↔ ∀ w, p w = 0 := by
-  rw [existsHaug, existsWith_eq_zero_iff, not_exists]
+@[simp] theorem existsHaug_eq_undefined_iff :
+    existsHaug p = .undefined ↔ ∀ w, p w = .undefined := by
+  rw [existsHaug, existsWith_eq_undefined_iff, not_exists]
   simp
 
-@[simp] theorem existsHaug_eq_one_iff : existsHaug p = 1 ↔ ∃ w, p w = 1 := by
-  rw [existsHaug, existsWith_eq_one_iff, and_iff_right_iff_imp]
+@[simp] theorem existsHaug_eq_true_iff : existsHaug p = .true ↔ ∃ w, p w = .true := by
+  rw [existsHaug, existsWith_eq_true_iff, and_iff_right_iff_imp]
   rintro ⟨w, hw⟩
   exact ⟨w, hw ▸ by decide⟩
 
-@[simp] theorem existsHaug_eq_neg_one_iff :
-    existsHaug p = -1 ↔ (∃ w, p w ≠ 0) ∧ ∀ w, p w ≠ 1 := by
-  rw [existsHaug, existsWith_eq_neg_one_iff]
+@[simp] theorem existsHaug_eq_false_iff :
+    existsHaug p = .false ↔ (∃ w, p w ≠ .undefined) ∧ ∀ w, p w ≠ .true := by
+  rw [existsHaug, existsWith_eq_false_iff]
 
 end HaugQuantifiers
 
@@ -445,20 +538,20 @@ pair lemma instantiates it. -/
 
 section Pairs
 
-variable (a b : SignType)
+variable (a b : Trivalent)
 
 theorem forallWith_pair {D : Prop} [Decidable D] :
     forallWith D (fun i : Bool => bif i then a else b) = meetWith D a b := by
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [forallWith_eq_zero_iff, meetWith_eq_zero_iff]
-  · rw [forallWith_eq_one_iff, meetWith_eq_one_iff, Bool.forall_bool]
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · rw [forallWith_eq_undefined_iff, meetWith_eq_undefined_iff]
+  · rw [forallWith_eq_true_iff, meetWith_eq_true_iff, Bool.forall_bool]
     exact and_congr_right fun _ => and_comm
 
 theorem existsWith_pair {D : Prop} [Decidable D] :
     existsWith D (fun i : Bool => bif i then a else b) = joinWith D a b := by
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [existsWith_eq_zero_iff, joinWith_eq_zero_iff]
-  · rw [existsWith_eq_one_iff, joinWith_eq_one_iff, Bool.exists_bool]
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · rw [existsWith_eq_undefined_iff, joinWith_eq_undefined_iff]
+  · rw [existsWith_eq_true_iff, joinWith_eq_true_iff, Bool.exists_bool]
     exact and_congr_right fun _ => or_comm
 
 theorem forallWeak_pair : forallWeak (fun i : Bool => bif i then a else b) = meetWeak a b :=
@@ -493,23 +586,24 @@ theorem existsHaug_pair :
 
 end Pairs
 
-theorem existsHaug_presuppose_ne_neg_one (p : W → SignType) :
-    existsHaug (fun w => (p w ⊔ 0)) ≠ -1 := by
+theorem existsHaug_presuppose_ne_false (p : W → Trivalent) :
+    existsHaug (fun w => (p w ⊔ .undefined)) ≠ .false := by
   simp
 
 /-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
 existential project as an existentially quantified presupposition, over bivalent `φ` and
 `ψ`. -/
-theorem existsHaug_meetWeak_presuppose {φ ψ : W → SignType} (hφ : IsBivalent φ)
+theorem existsHaug_meetWeak_presuppose {φ ψ : W → Trivalent} (hφ : IsBivalent φ)
     (hψ : IsBivalent ψ) :
-    existsHaug (fun w => meetWeak (φ w ⊔ 0) (ψ w)) =
-      meetWeak (existsHaug fun w => (φ w ⊔ 0))
+    existsHaug (fun w => meetWeak (φ w ⊔ .undefined) (ψ w)) =
+      meetWeak (existsHaug fun w => (φ w ⊔ .undefined))
         (existsHaug fun w => meetWeak (φ w) (ψ w)) := by
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, sup_zero_eq_zero_iff, hφ.ne_zero,
-      hψ.ne_zero, or_false]
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff,
+      sup_undefined_eq_undefined_iff, hφ.ne_undefined,
+      hψ.ne_undefined, or_false]
     exact ⟨Or.inl, fun h => h.elim id fun h w => (h w).elim⟩
-  · simp only [existsHaug_eq_one_iff, meetWeak_eq_one_iff, sup_zero_eq_one_iff]
+  · simp only [existsHaug_eq_true_iff, meetWeak_eq_true_iff, sup_undefined_eq_true_iff]
     exact ⟨fun ⟨w, h⟩ => ⟨⟨w, h.1⟩, w, h⟩, fun h => h.2⟩
 
 end Trivalent

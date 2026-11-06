@@ -121,19 +121,19 @@ def partitive (x : E) : E → Prop := (· ≤ x)
 
 /-- `FS(ALL)` composed with a partitive pronoun over worlds `W`, as in (50e) and (51e), is
 defined where the pronoun is and asserts that every part of its referent satisfies the scope. -/
-noncomputable def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : W → SignType :=
+noncomputable def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : W → Trivalent :=
   presupOfReferent pron fun x w ↦ every (partitive x) (Q · w)
 
-theorem fsAllOf_ixArc_eq_zero_iff {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
+theorem fsAllOf_ixArc_eq_undefined_iff {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
     {Q : E → W → Prop} {w : W} :
-    fsAllOf (fun _ ↦ ixArc g C h i) Q w = 0 ↔ ¬ (Arc (g i) ∧ h.presup C (g i)) := by
-  simp only [fsAllOf, presupOfReferent_eq_zero_iff, ixArc]
+    fsAllOf (fun _ ↦ ixArc g C h i) Q w = .undefined ↔ ¬ (Arc (g i) ∧ h.presup C (g i)) := by
+  simp only [fsAllOf, presupOfReferent_eq_undefined_iff, ixArc]
   split_ifs with hp <;> simp [hp]
 
 -- (50e)
-theorem fsAllOf_eq_one_iff {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
-    (h : pron w = some c) : fsAllOf pron Q w = 1 ↔ ∀ y ∈ Set.Iic c, Q y w := by
-  simp only [fsAllOf, presupOfReferent_of_some h, SignType.ofProp_eq_one_iff]
+theorem fsAllOf_eq_true_iff {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
+    (h : pron w = some c) : fsAllOf pron Q w = .true ↔ ∀ y ∈ Set.Iic c, Q y w := by
+  simp only [fsAllOf, presupOfReferent_of_some h, Trivalent.ofProp_eq_true_iff]
   rfl
 
 theorem all_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :

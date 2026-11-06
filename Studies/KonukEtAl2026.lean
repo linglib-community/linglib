@@ -328,16 +328,16 @@ variable {rule} {w w₀ : ι → Bool}
 /-- A win is the truth of some condition's plural predication, "the urns of the condition gave
 colored balls". -/
 theorem mem_win_iff_barePlural :
-    w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 1 := by
-  simp [win, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
+    w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = .true := by
+  simp [win, Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff]
 
 /-- In a losing round, the homogeneous loss is the homogeneous negation of the rule over the urns
 white in that round (pp. 459, 468). -/
 theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
     w ∈ homogeneousLoss rule w₀ ↔ ∀ D ∈ rule,
-      Homogeneity.barePlural (fun i w ↦ w i = true) (D.filter (w₀ · = false)) w = -1 := by
+      Homogeneity.barePlural (fun i w ↦ w i = true) (D.filter (w₀ · = false)) w = .false := by
   simp only [homogeneousLoss, mem_ofPred_eq, Homogeneity.barePlural,
-    SignType.supervaluation_eq_neg_one_iff, Finset.mem_filter, and_imp, Bool.not_eq_true]
+    Trivalent.supervaluation_eq_false_iff, Finset.mem_filter, and_imp, Bool.not_eq_true]
   refine forall₂_congr fun D hD ↦ (and_iff_right ?_).symm
   by_contra hne
   refine h ⟨D, hD, fun i hi ↦ ?_⟩
@@ -348,10 +348,10 @@ theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
 some condition's plural predication falls in the homogeneity gap. -/
 theorem not_mem_homogeneousLoss_iff_indet (hw : w ∉ win rule) :
     w ∉ homogeneousLoss rule (fun _ ↦ false) ↔
-      ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 0 := by
+      ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = .undefined := by
   simp only [win, mem_ofPred_eq, not_exists, not_and, not_forall] at hw
   simp only [homogeneousLoss, mem_ofPred_eq, Homogeneity.barePlural,
-    SignType.supervaluation_eq_zero_iff, not_forall, Bool.not_eq_false, forall_const]
+    Trivalent.supervaluation_eq_undefined_iff, not_forall, Bool.not_eq_false, forall_const]
   exact ⟨fun ⟨D, hD, i, hi, h⟩ ↦ ⟨D, hD, ⟨i, hi, h⟩,
       let ⟨j, hj, h'⟩ := hw D hD; ⟨j, hj, h'⟩⟩,
     fun ⟨D, hD, ⟨i, hi, h⟩, _⟩ ↦ ⟨D, hD, i, hi, h⟩⟩

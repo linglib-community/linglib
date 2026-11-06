@@ -52,7 +52,7 @@ namespace AugurzkyEtAl2023
 
 open Trivalent (Designation)
 open KrizChemla2015 (Display cell resolve reading someReading allReading supervaluation
-  supervaluation_eq_zero_iff supervaluation_eq_designations reading_no)
+  supervaluation_eq_undefined_iff supervaluation_eq_designations reading_no)
 
 /-! ### Quantifiers and pictures -/
 
@@ -82,10 +82,10 @@ def Picture.display (p : Picture) : Display := p.opened.map cell
 
 /-- The trivalent value a level of TRUTH VALUE names, a mixed picture being one on which the
 sentence's two resolutions disagree. -/
-def Truth.value : Truth → SignType
-  | .trueControl => 1
-  | .falseControl => (-1)
-  | .mixed => 0
+def Truth.value : Truth → Trivalent
+  | .trueControl => .true
+  | .falseControl => (.false)
+  | .mixed => .undefined
 
 /-- The TRUTH VALUE of every picture of Figures 1 and 4 is the supervaluation of its sentence. -/
 theorem pictures_truth :
@@ -104,12 +104,12 @@ or which of them opened all. -/
 def Context.issue (ctx : Context) : Setoid Display := Setoid.ker (resolve ctx.designation)
 
 -- (12), (13)
-theorem issue_singleton (ctx : Context) (v v' : SignType) :
+theorem issue_singleton (ctx : Context) (v v' : Trivalent) :
     ctx.issue [v] [v'] ↔ (ctx.designation.threshold ≤ v ↔ ctx.designation.threshold ≤ v') := by
   simp [Setoid.ker_def, resolve]
 
 private theorem resolve_map_ofProp (δ : Designation) (c : List Bool) :
-    resolve δ (c.map (fun b : Bool ↦ SignType.ofProp b)) = c := by
+    resolve δ (c.map (fun b : Bool ↦ Trivalent.ofProp b)) = c := by
   simp [resolve, List.map_map, Function.comp_def, Trivalent.Designation.threshold_le_ofProp_iff]
 
 /-! ### The non-implicature approach -/
@@ -118,14 +118,14 @@ section NonImplicature
 
 variable (q : NumberTree)
 
-theorem usable_iff_reading_of {S : Display → SignType} {δ : Designation}
-    (htrue : ∀ d, S d = 1 → reading q d δ) (hfalse : ∀ d, S d = -1 → ¬ reading q d δ)
-    (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ SignType.ofProp b) = 1)
+theorem usable_iff_reading_of {S : Display → Trivalent} {δ : Designation}
+    (htrue : ∀ d, S d = .true → reading q d δ) (hfalse : ∀ d, S d = .false → ¬ reading q d δ)
+    (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ Trivalent.ofProp b) = .true)
     {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ})
     (d : Display) : Homogeneity.usable Q S d ↔ reading q d δ := by
   have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
   exact ⟨fun ⟨⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
-    ⟨⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
+    ⟨⟨(resolve δ d).map (fun b : Bool ↦ Trivalent.ofProp b),
       h₁ (Setoid.ker_def.2 (resolve_map_ofProp δ _).symm), hres _ h⟩,
       fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
 
@@ -135,11 +135,11 @@ theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
     (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
   refine usable_iff_reading_of q (fun d' h ↦ ?_) (fun d' h ↦ ?_) (fun c h ↦ ?_) h₁ h₂ d
-  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff] at h
+  · rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff] at h
     exact h δ (Finset.mem_univ δ)
-  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_neg_one_iff] at h
+  · rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_false_iff] at h
     exact h.2 δ (Finset.mem_univ δ)
-  · rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff]
+  · rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff]
     intro δ' _
     rw [reading, resolve_map_ofProp]
     exact h
@@ -166,17 +166,17 @@ theorem nonImplicature_compl (ctx : Context) (d : Display) :
 variable {q} {d : Display}
 
 theorem nonImplicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
-    (hd : supervaluation q d = 0) (ctx : Context) :
+    (hd : supervaluation q d = .undefined) (ctx : Context) :
     nonImplicature q ctx d ↔ ctx = .existential := by
-  have h := supervaluation_eq_zero_iff.1 hd
+  have h := supervaluation_eq_undefined_iff.1 hd
   have h' := KrizChemla2015.allReading_imp_someReading (d := d) hq
   rw [nonImplicature_iff]
   cases ctx <;> simp only [Context.designation, reduceCtorEq, iff_true, iff_false] <;> tauto
 
 theorem nonImplicature_universal_of_scopeAntitone (hq : q.ScopeAntitone)
-    (hd : supervaluation q d = 0) (ctx : Context) :
+    (hd : supervaluation q d = .undefined) (ctx : Context) :
     nonImplicature q ctx d ↔ ctx = .universal := by
-  have h := supervaluation_eq_zero_iff.1 hd
+  have h := supervaluation_eq_undefined_iff.1 hd
   have h' := KrizChemla2015.someReading_imp_allReading (d := d) hq
   rw [nonImplicature_iff]
   cases ctx <;> simp only [Context.designation, reduceCtorEq, iff_true, iff_false] <;> tauto
@@ -186,8 +186,8 @@ end NonImplicature
 /-- The family rule is respected where no present was opened, or where all were; the question
 whether it was is the question §3 states. -/
 def Context.respected : Context → Set Display
-  | .existential => {d | ∀ v ∈ d, v = -1}
-  | .universal => {d | ∀ v ∈ d, v = 1}
+  | .existential => {d | ∀ v ∈ d, v = .false}
+  | .universal => {d | ∀ v ∈ d, v = .true}
 
 /-- Neither *every boy* nor *no boy opened his presents* addresses the polar question whether the
 rule was respected, unlike the boy-by-boy question of Table 2. -/
@@ -196,8 +196,8 @@ theorem not_addressesIssue_respected :
         (supervaluation NumberTree.all) ∧
       ¬ Homogeneity.addressesIssue (Setoid.polar Context.universal.respected)
         (supervaluation NumberTree.no) := by
-  refine ⟨fun h ↦ h ⟨[1, 1], [-1, 1], ?_, by decide, by decide⟩,
-    fun h ↦ h ⟨[-1, -1], [1, -1], ?_, by decide, by decide⟩⟩ <;>
+  refine ⟨fun h ↦ h ⟨[.true, .true], [.false, .true], ?_, by decide, by decide⟩,
+    fun h ↦ h ⟨[.false, .false], [.true, .false], ?_, by decide, by decide⟩⟩ <;>
   exact Setoid.polar_iff.2 (by simp [Context.respected])
 
 /-! ### The implicature approach -/
@@ -244,16 +244,16 @@ theorem implicature_existential_iff :
   by_cases h : q.ScopeAntitone <;> simp [implicature, h, Context.designation]
 
 theorem not_implicature_of_scopeAntitone (hq : q.ScopeAntitone)
-    (hd : supervaluation q d = 0) (ctx : Context) : ¬ implicature q ctx d := by
-  have h := supervaluation_eq_zero_iff.1 hd
+    (hd : supervaluation q d = .undefined) (ctx : Context) : ¬ implicature q ctx d := by
+  have h := supervaluation_eq_undefined_iff.1 hd
   have h' := KrizChemla2015.someReading_imp_allReading (d := d) hq
   simp only [implicature, hq, ite_true]
   tauto
 
 theorem implicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
-    (hd : supervaluation q d = 0) (ctx : Context) :
+    (hd : supervaluation q d = .undefined) (ctx : Context) :
     implicature q ctx d ↔ ctx = .existential := by
-  have h := supervaluation_eq_zero_iff.1 hd
+  have h := supervaluation_eq_undefined_iff.1 hd
   have h' := KrizChemla2015.allReading_imp_someReading (d := d) hq
   have hq' : ¬ q.ScopeAntitone := fun ha ↦
     h (iff_of_true (by tauto) (KrizChemla2015.someReading_imp_allReading ha (by tauto)))
@@ -274,7 +274,7 @@ variable {d : Display}
 
 /-- On the non-implicature approach, each quantifier's mixed picture is accepted exactly in its lax
 context (Table 2; Experiment 1, χ²(1) = 11, §3.1.2; Experiment 2, §3.2.2). -/
-theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
+theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .undefined)
     (ctx : Context) : nonImplicature q.tree ctx d ↔ ctx = q.lax := by
   cases q
   · exact nonImplicature_existential_of_scopeMonotone NumberTree.scopeMonotone_all hd ctx
@@ -283,7 +283,7 @@ theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tr
 
 /-- On the implicature approach, only *every*'s mixed picture is accepted, in its lax context (Table
 2; Experiment 1, χ²(1) = 11, §3.1.2; Experiment 2, §3.2.2). -/
-theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
+theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .undefined)
     (ctx : Context) : implicature q.tree ctx d ↔ q = .every ∧ ctx = q.lax := by
   cases q
   · exact (implicature_existential_of_scopeMonotone (q := Quantifier.every.tree)
@@ -295,16 +295,16 @@ theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree 
 
 /-- On both approaches, Table 1 is the one-boy case of Table 2. -/
 theorem table1 (ctx : Context) :
-    (implicature NumberTree.all ctx [0] ↔ ctx = .existential) ∧
-      ¬ implicature NumberTree.notAll ctx [0] ∧
-      (nonImplicature NumberTree.all ctx [0] ↔ ctx = .existential) ∧
-      (nonImplicature NumberTree.notAll ctx [0] ↔ ctx = .universal) :=
-  ⟨(implicature_nonmaximal_iff (d := [0]) .every (by decide) ctx).trans
+    (implicature NumberTree.all ctx [.undefined] ↔ ctx = .existential) ∧
+      ¬ implicature NumberTree.notAll ctx [.undefined] ∧
+      (nonImplicature NumberTree.all ctx [.undefined] ↔ ctx = .existential) ∧
+      (nonImplicature NumberTree.notAll ctx [.undefined] ↔ ctx = .universal) :=
+  ⟨(implicature_nonmaximal_iff (d := [.undefined]) .every (by decide) ctx).trans
       (by simp [Quantifier.lax]),
     fun h ↦ by
-      simpa using (implicature_nonmaximal_iff (d := [0]) .notEvery (by decide) ctx).1 h,
-    nonImplicature_nonmaximal_iff (d := [0]) .every (by decide) ctx,
-    nonImplicature_nonmaximal_iff (d := [0]) .notEvery (by decide) ctx⟩
+      simpa using (implicature_nonmaximal_iff (d := [.undefined]) .notEvery (by decide) ctx).1 h,
+    nonImplicature_nonmaximal_iff (d := [.undefined]) .every (by decide) ctx,
+    nonImplicature_nonmaximal_iff (d := [.undefined]) .notEvery (by decide) ctx⟩
 
 /-! ### Križ and Chemla's asymmetry under an accommodated existential context (§2) -/
 
@@ -324,8 +324,8 @@ theorem krizChemla_asymmetry_of_existential :
   have hs : i.status ≠ .faulty := fun h ↦ by
     simp [krizChemla_faulty_clearlyFalse i hi h] at hc
   obtain ⟨hw, hst⟩ := KrizChemla2015.items_variants i (List.mem_append_left _ hi) hs hm
-  have hgap : supervaluation i.embedding.tree i.display = 0 :=
-    (KrizChemla2015.supervaluation_eq_zero_iff_weak _ _).2 (by rw [hw, hst]; simp [hc])
+  have hgap : supervaluation i.embedding.tree i.display = .undefined :=
+    (KrizChemla2015.supervaluation_eq_undefined_iff_weak _ _).2 (by rw [hw, hst]; simp [hc])
   rcases he with he | he <;> rw [he] at hgap ⊢
   · exact iff_of_true ((nonImplicature_existential_of_scopeMonotone (q := NumberTree.all)
       NumberTree.scopeMonotone_all hgap _).2 rfl) rfl
@@ -383,7 +383,7 @@ theorem designated_cell (ctx : Context) (n : ℕ) :
   cases ctx
   · exact KrizChemla2015.designated_lp_cell n
   · rw [Context.threshold, nine, Finset.card_range]
-    exact SignType.one_le_iff.trans (KrizChemla2015.designated_k3_cell n)
+    exact top_le_iff.trans (KrizChemla2015.designated_k3_cell n)
 
 /-- The reading pruning selects for a boy's presents under the context's question holds of the
 presents he opened exactly when the context's standard designates his cell. -/
@@ -395,10 +395,10 @@ theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
 
 theorem barePlural_holds_eq_cell (w : Finset ℕ) :
     Homogeneity.barePlural BarLev2021.holds nine w = cell (nine ∩ w).card := by
-  have h1 : Homogeneity.barePlural BarLev2021.holds nine w = 1 ↔
-      cell (nine ∩ w).card = 1 := by
+  have h1 : Homogeneity.barePlural BarLev2021.holds nine w = .true ↔
+      cell (nine ∩ w).card = .true := by
     rw [KrizChemla2015.designated_k3_cell, Homogeneity.barePlural,
-      SignType.supervaluation_eq_one_iff]
+      Trivalent.supervaluation_eq_true_iff]
     constructor
     · intro h
       rw [Finset.inter_eq_left.2 fun a ha ↦ h a ha]
@@ -408,11 +408,11 @@ theorem barePlural_holds_eq_cell (w : Finset ℕ) :
         (by simpa [nine] using h)
       rw [← this] at ha
       exact (Finset.mem_inter.1 ha).2
-  have h2 : Homogeneity.barePlural BarLev2021.holds nine w = -1 ↔
-      cell (nine ∩ w).card = -1 := by
-    rw [← not_iff_not, ← Ne, ← Ne, ← SignType.nonneg_iff_ne_neg_one (a := cell _),
+  have h2 : Homogeneity.barePlural BarLev2021.holds nine w = .false ↔
+      cell (nine ∩ w).card = .false := by
+    rw [← not_iff_not, ← Ne, ← Ne, ← Trivalent.undefined_le_iff_ne_false (a := cell _),
       KrizChemla2015.designated_lp_cell, Homogeneity.barePlural, Ne,
-      SignType.supervaluation_eq_neg_one_iff, Nat.one_le_iff_ne_zero, Ne, Finset.card_eq_zero,
+      Trivalent.supervaluation_eq_false_iff, Nat.one_le_iff_ne_zero, Ne, Finset.card_eq_zero,
       ← Ne, ← Finset.nonempty_iff_ne_empty]
     simp only [nine, BarLev2021.holds, Finset.Nonempty, Finset.mem_inter, Finset.mem_range,
       not_and, not_forall, not_not, exists_prop]
@@ -458,15 +458,15 @@ private theorem reading_some (d : Display) (δ : Designation) :
 
 /-- On the mixed pictures, the amended implicature approach accepts *every* and *not every* exactly
 in their lax contexts and *no* in neither (§4.2). -/
-theorem enriched_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
-    (ht : 1 ∈ d) (ctx : Context) :
+theorem enriched_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .undefined)
+    (ht : .true ∈ d) (ctx : Context) :
     implicature q.enriched ctx d ↔ q ≠ .no ∧ ctx = q.lax := by
   cases q
   · exact (implicature_existential_of_scopeMonotone (q := Quantifier.every.enriched)
       NumberTree.scopeMonotone_all hd ctx).trans (by simp [Quantifier.lax])
   · exact iff_of_false (not_implicature_of_scopeAntitone (q := Quantifier.no.enriched)
       NumberTree.scopeAntitone_no hd ctx) (by simp)
-  · have h := supervaluation_eq_zero_iff.1 hd
+  · have h := supervaluation_eq_undefined_iff.1 hd
     have h' := KrizChemla2015.someReading_imp_allReading (d := d) NumberTree.scopeAntitone_notAll
     have hk3 : reading NumberTree.some d .k3 := (reading_some d .k3).2 ⟨_, ht, by simp⟩
     have hne : ¬ (NumberTree.notAll ⊓ NumberTree.some).ScopeAntitone :=
@@ -479,23 +479,24 @@ theorem enriched_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d =
 /-! ### The proposed test (§4.3) -/
 
 private theorem count_resolve_lp (d : Display) :
-    (resolve .lp d).count true = d.count 1 + d.count 0 := by
+    (resolve .lp d).count Bool.true = d.count .true + d.count .undefined := by
   induction d with
   | nil => rfl
   | cons v d ih => cases v <;> simp [resolve] at ih ⊢ <;> omega
 
-private theorem count_resolve_k3 (d : Display) : (resolve .k3 d).count true = d.count 1 := by
+private theorem count_resolve_k3 (d : Display) :
+    (resolve .k3 d).count Bool.true = d.count .true := by
   induction d with
   | nil => rfl
-  | cons v d ih => cases v <;> simp [resolve] at ih ⊢ <;> omega
+  | cons v d ih => cases v <;> simp +decide [resolve] at ih ⊢ <;> omega
 
 private theorem reading_cardinal {s : Set ℕ} [DecidablePred (· ∈ s)] (d : Display)
-    (δ : Designation) : reading (NumberTree.cardinal s) d δ ↔ (resolve δ d).count true ∈ s :=
+    (δ : Designation) : reading (NumberTree.cardinal s) d δ ↔ (resolve δ d).count Bool.true ∈ s :=
   Iff.rfl
 
 /-- In a mixed scenario for its positive part, (20) is accepted exactly in the existential context.
 -/
-theorem exactlyTwo_positive (h₂ : d.count 0 = 2) (ht : 1 ∉ d) (ctx : Context) :
+theorem exactlyTwo_positive (h₂ : d.count .undefined = 2) (ht : .true ∉ d) (ctx : Context) :
     nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .existential := by
   have h0 := List.count_eq_zero.2 ht
   rw [nonImplicature_iff]
@@ -503,7 +504,7 @@ theorem exactlyTwo_positive (h₂ : d.count 0 = 2) (ht : 1 ∉ d) (ctx : Context
     simp [Context.designation, reading_cardinal, count_resolve_lp, count_resolve_k3, h₂, h0]
 
 /-- In a mixed scenario for its negative part, (20) is accepted exactly in the universal context. -/
-theorem exactlyTwo_negative (h₂ : d.count 1 = 2) (hi : 0 ∈ d) (ctx : Context) :
+theorem exactlyTwo_negative (h₂ : d.count .true = 2) (hi : .undefined ∈ d) (ctx : Context) :
     nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .universal := by
   have h0 := List.count_pos_iff.2 hi
   rw [nonImplicature_iff]

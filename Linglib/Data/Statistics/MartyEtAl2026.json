@@ -1,0 +1,1503 @@
+{
+ "meta": {
+  "bibkey": "marty-etal-2026",
+  "method": "experiment",
+  "description": "Two picture-verification experiments on presupposition projection from the scope of 'each', 'none' and 'exactly one' (the last with a positive and a negated scope), over a domain of four children named and pictured. Experiment 1 tests the existence presupposition of 'the present in front of him' (74 participants after exclusions), Experiment 2 the gender presupposition of 'her' (71). Each target sentence was paired with four picture types, each instantiated four times with the children's positions varied, and judged 'Good' or 'Bad'. Figure 1 plots the proportion of 'Good' responses per sentence and picture type, recorded here as counts recomputed from the released trials; the text reports some of them as rounded percentages.",
+  "rawData": [
+   {
+    "url": "https://osf.io/46vef",
+    "doc": "trial-level data, condition means and analysis output of both experiments (§3.4); the pictures and counts are recomputed from processed_data_existence.csv and processed_data_gender.csv, which already apply the exclusions of §3.5"
+   }
+  ]
+ },
+ "types": [
+  {
+   "name": "Experiment",
+   "doc": "An experiment: the presupposition it tests.",
+   "levels": [
+    {
+     "name": "existence",
+     "label": "Exp.1",
+     "doc": "Experiment 1, the existence presupposition of *the present in front of him*"
+    },
+    {
+     "name": "gender",
+     "label": "Exp.2",
+     "doc": "Experiment 2, the gender presupposition of *her*"
+    }
+   ]
+  },
+  {
+   "name": "Sentence",
+   "doc": "A target sentence (3a-d): its quantifier and the polarity of its scope.",
+   "levels": [
+    {
+     "name": "mPos",
+     "label": "m-pos",
+     "doc": "*each of the four ... opened the present in front of him/her*"
+    },
+    {
+     "name": "mNeg",
+     "label": "m-neg",
+     "doc": "*none of the four ... opened the present in front of him/her*"
+    },
+    {
+     "name": "nmPos",
+     "label": "nm-pos",
+     "doc": "*exactly one of the four ... opened the present in front of him/her*"
+    },
+    {
+     "name": "nmNeg",
+     "label": "nm-neg",
+     "doc": "*exactly one of the four ... didn't open the present in front of him/her*"
+    }
+   ]
+  },
+  {
+   "name": "Picture",
+   "doc": "A picture type paired with a target sentence.",
+   "levels": [
+    {
+     "name": "false",
+     "label": "False",
+     "doc": "the presupposition holds of every child and the assertion is false"
+    },
+    {
+     "name": "target1",
+     "label": "Target-1",
+     "doc": "the presupposition fails of some child, the first such picture"
+    },
+    {
+     "name": "target2",
+     "label": "Target-2",
+     "doc": "the presupposition fails of some child, the second such picture"
+    },
+    {
+     "name": "true",
+     "label": "True",
+     "doc": "the presupposition holds of every child and the assertion is true"
+    }
+   ]
+  },
+  {
+   "name": "Gift",
+   "doc": "What lies in front of a child in a picture of Experiment 1.",
+   "levels": [
+    {
+     "name": "noPresent",
+     "label": "no present",
+     "doc": "no present"
+    },
+    {
+     "name": "closedPresent",
+     "label": "closed present",
+     "doc": "a present the child has not opened"
+    },
+    {
+     "name": "openPresent",
+     "label": "open present",
+     "doc": "a present the child has opened"
+    }
+   ]
+  },
+  {
+   "name": "Recipient",
+   "doc": "A child in a picture of Experiment 2, who always has a present: a girl or a boy, the present open or closed.",
+   "levels": [
+    {
+     "name": "girlOpen",
+     "label": "girl, open present",
+     "doc": "a girl with an open present"
+    },
+    {
+     "name": "girlClosed",
+     "label": "girl, closed present",
+     "doc": "a girl with a closed present"
+    },
+    {
+     "name": "boyOpen",
+     "label": "boy, open present",
+     "doc": "a boy, drawn with glasses, with an open present"
+    },
+    {
+     "name": "boyClosed",
+     "label": "boy, closed present",
+     "doc": "a boy, drawn with glasses, with a closed present"
+    }
+   ]
+  },
+  {
+   "name": "Reading",
+   "doc": "An interpretive option of §2, coded as a binary predictor of the models of Table 3.",
+   "levels": [
+    {
+     "name": "univ",
+     "label": "∀",
+     "doc": "universal projection, ∀-proj"
+    },
+    {
+     "name": "exist",
+     "label": "∃",
+     "doc": "existential projection, ∃-proj"
+    },
+    {
+     "name": "intermediate",
+     "label": "Λ",
+     "doc": "intermediate projection, Λ-proj"
+    },
+    {
+     "name": "locA",
+     "label": "LocA",
+     "doc": "local accommodation at the scope"
+    }
+   ]
+  },
+  {
+   "name": "Model",
+   "doc": "A model of Table 3, named by its predictors.",
+   "levels": [
+    {
+     "name": "univLocA",
+     "label": "∀+LocA",
+     "doc": "∀-proj with local accommodation"
+    },
+    {
+     "name": "existLocA",
+     "label": "∃+LocA",
+     "doc": "∃-proj with local accommodation"
+    },
+    {
+     "name": "intermediateLocA",
+     "label": "Λ+LocA",
+     "doc": "Λ-proj with local accommodation"
+    },
+    {
+     "name": "univExistLocA",
+     "label": "∀+∃+LocA",
+     "doc": "∀-proj and ∃-proj with local accommodation"
+    },
+    {
+     "name": "univIntermediateLocA",
+     "label": "∀+Λ+LocA",
+     "doc": "∀-proj and Λ-proj with local accommodation"
+    }
+   ]
+  }
+ ],
+ "constants": [
+  {
+   "name": "children",
+   "type": "nat",
+   "value": 4,
+   "doc": "The children in every picture and in the domain of every target sentence, 'the four children' ('recipients' in Exp. 2).",
+   "locator": "§3.2, p. 752",
+   "verified": "page-image"
+  }
+ ],
+ "tables": [
+  {
+   "name": "existencePictures",
+   "structure": "ExistencePicture",
+   "doc": "the children of a picture of Experiment 1, what lies in front of each, as a multiset listed in the order of the levels.",
+   "locator": "Table 2, p. 754",
+   "verified": "raw-data",
+   "key": [
+    "sentence",
+    "picture"
+   ],
+   "columns": [
+    {
+     "name": "sentence",
+     "type": "Sentence",
+     "doc": "The target sentence."
+    },
+    {
+     "name": "picture",
+     "type": "Picture",
+     "doc": "The picture type."
+    },
+    {
+     "name": "children",
+     "type": "list Gift",
+     "doc": "What lies in front of each child."
+    }
+   ],
+   "rows": [
+    {
+     "sentence": "m-pos",
+     "picture": "False",
+     "children": [
+      "closed present",
+      "open present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "children": [
+      "no present",
+      "no present",
+      "no present",
+      "no present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "children": [
+      "no present",
+      "open present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "True",
+     "children": [
+      "open present",
+      "open present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "False",
+     "children": [
+      "closed present",
+      "closed present",
+      "closed present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "children": [
+      "no present",
+      "no present",
+      "no present",
+      "no present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "children": [
+      "no present",
+      "closed present",
+      "closed present",
+      "closed present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "True",
+     "children": [
+      "closed present",
+      "closed present",
+      "closed present",
+      "closed present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "False",
+     "children": [
+      "closed present",
+      "closed present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "children": [
+      "no present",
+      "no present",
+      "no present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "children": [
+      "no present",
+      "closed present",
+      "closed present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "True",
+     "children": [
+      "closed present",
+      "closed present",
+      "closed present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "False",
+     "children": [
+      "closed present",
+      "closed present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "children": [
+      "no present",
+      "open present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "children": [
+      "no present",
+      "closed present",
+      "open present",
+      "open present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "True",
+     "children": [
+      "closed present",
+      "open present",
+      "open present",
+      "open present"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "genderPictures",
+   "structure": "GenderPicture",
+   "doc": "the children of a picture of Experiment 2, each a girl or a boy with an open or a closed present, as a multiset listed in the order of the levels.",
+   "locator": "Table 2, p. 754",
+   "verified": "raw-data",
+   "key": [
+    "sentence",
+    "picture"
+   ],
+   "columns": [
+    {
+     "name": "sentence",
+     "type": "Sentence",
+     "doc": "The target sentence."
+    },
+    {
+     "name": "picture",
+     "type": "Picture",
+     "doc": "The picture type."
+    },
+    {
+     "name": "children",
+     "type": "list Recipient",
+     "doc": "The children."
+    }
+   ],
+   "rows": [
+    {
+     "sentence": "m-pos",
+     "picture": "False",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, open present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "children": [
+      "boy, open present",
+      "boy, open present",
+      "boy, open present",
+      "boy, open present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, open present",
+      "boy, open present"
+     ]
+    },
+    {
+     "sentence": "m-pos",
+     "picture": "True",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, open present",
+      "girl, open present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "False",
+     "children": [
+      "girl, open present",
+      "girl, closed present",
+      "girl, closed present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "children": [
+      "boy, closed present",
+      "boy, closed present",
+      "boy, closed present",
+      "boy, closed present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "children": [
+      "girl, closed present",
+      "girl, closed present",
+      "girl, closed present",
+      "boy, closed present"
+     ]
+    },
+    {
+     "sentence": "m-neg",
+     "picture": "True",
+     "children": [
+      "girl, closed present",
+      "girl, closed present",
+      "girl, closed present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "False",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, closed present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "children": [
+      "girl, open present",
+      "boy, closed present",
+      "boy, closed present",
+      "boy, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "children": [
+      "girl, open present",
+      "girl, closed present",
+      "girl, closed present",
+      "boy, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-pos",
+     "picture": "True",
+     "children": [
+      "girl, open present",
+      "girl, closed present",
+      "girl, closed present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "False",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, closed present",
+      "girl, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, open present",
+      "boy, closed present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, closed present",
+      "boy, open present"
+     ]
+    },
+    {
+     "sentence": "nm-neg",
+     "picture": "True",
+     "children": [
+      "girl, open present",
+      "girl, open present",
+      "girl, open present",
+      "girl, closed present"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "predictions",
+   "structure": "Prediction",
+   "doc": "the interpretive options under which Table 2 prints a picture as accepting its sentence, the coding of the binary predictors of the models of Table 3.",
+   "locator": "Table 2, p. 754",
+   "verified": "page-image",
+   "key": [
+    "experiment",
+    "sentence",
+    "picture"
+   ],
+   "columns": [
+    {
+     "name": "experiment",
+     "type": "Experiment",
+     "doc": "The experiment."
+    },
+    {
+     "name": "sentence",
+     "type": "Sentence",
+     "doc": "The target sentence."
+    },
+    {
+     "name": "picture",
+     "type": "Picture",
+     "doc": "The picture type."
+    },
+    {
+     "name": "accepting",
+     "type": "list Reading",
+     "doc": "The options printed with 1."
+    }
+   ],
+   "rows": [
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "accepting": [
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "accepting": [
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "accepting": [
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "False",
+     "accepting": []
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "accepting": [
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "accepting": [
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "True",
+     "accepting": [
+      "∀",
+      "∃",
+      "Λ",
+      "LocA"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "responses",
+   "structure": "Responses",
+   "doc": "the 'Good' responses to a target sentence with a picture type, over the trials of the participants retained; Figure 1 plots their proportion.",
+   "locator": "Fig. 1, p. 757",
+   "verified": "raw-data",
+   "key": [
+    "experiment",
+    "sentence",
+    "picture"
+   ],
+   "columns": [
+    {
+     "name": "experiment",
+     "type": "Experiment",
+     "doc": "The experiment."
+    },
+    {
+     "name": "sentence",
+     "type": "Sentence",
+     "doc": "The target sentence."
+    },
+    {
+     "name": "picture",
+     "type": "Picture",
+     "doc": "The picture type."
+    },
+    {
+     "name": "good",
+     "type": "nat",
+     "doc": "The 'Good' responses."
+    },
+    {
+     "name": "trials",
+     "type": "nat",
+     "doc": "The trials."
+    }
+   ],
+   "rows": [
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "False",
+     "good": 3,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "good": 4,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "good": 37,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "True",
+     "good": 292,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "False",
+     "good": 4,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "good": 89,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "good": 175,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "True",
+     "good": 290,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "False",
+     "good": 8,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "good": 251,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "good": 204,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "True",
+     "good": 290,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "False",
+     "good": 2,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "good": 39,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "good": 148,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "True",
+     "good": 276,
+     "trials": 296
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "False",
+     "good": 17,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "good": 34,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "Target-2",
+     "good": 55,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "True",
+     "good": 277,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "False",
+     "good": 11,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "good": 54,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "good": 69,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "True",
+     "good": 278,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "False",
+     "good": 12,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "good": 234,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "good": 227,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "True",
+     "good": 269,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "False",
+     "good": 19,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "good": 37,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "good": 214,
+     "trials": 284
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "True",
+     "good": 265,
+     "trials": 284
+    }
+   ]
+  },
+  {
+   "name": "reportedRates",
+   "structure": "ReportedRate",
+   "doc": "an acceptance rate the text reports, in the order it reports them.",
+   "locator": "§3.6, pp. 756-757",
+   "verified": "page-image",
+   "columns": [
+    {
+     "name": "experiment",
+     "type": "Experiment",
+     "doc": "The experiment."
+    },
+    {
+     "name": "sentence",
+     "type": "Sentence",
+     "doc": "The target sentence."
+    },
+    {
+     "name": "picture",
+     "type": "Picture",
+     "doc": "The picture type."
+    },
+    {
+     "name": "percent",
+     "type": "decimal",
+     "doc": "The rate, in percent."
+    }
+   ],
+   "rows": [
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "percent": "30"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "percent": "20"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "False",
+     "percent": "1"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "False",
+     "percent": "4"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "percent": "13"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-pos",
+     "picture": "Target-1",
+     "percent": "12"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "percent": "13"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "percent": "50"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-1",
+     "percent": "13"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "percent": "73"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "percent": "59"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "percent": "30"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-2",
+     "percent": "24"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "m-neg",
+     "picture": "Target-1",
+     "percent": "19"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "percent": "69"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "percent": "85"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "percent": "80"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-1",
+     "percent": "82"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "percent": "50"
+    },
+    {
+     "experiment": "Exp.1",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "percent": "69"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-neg",
+     "picture": "Target-2",
+     "percent": "75"
+    },
+    {
+     "experiment": "Exp.2",
+     "sentence": "nm-pos",
+     "picture": "Target-2",
+     "percent": "80"
+    }
+   ]
+  },
+  {
+   "name": "models",
+   "structure": "ModelPredictors",
+   "doc": "the predictors of a model, the interpretive options of the theory it stands for (note 5).",
+   "locator": "Table 3 and note 5, pp. 756-757",
+   "verified": "page-image",
+   "key": [
+    "model"
+   ],
+   "columns": [
+    {
+     "name": "model",
+     "type": "Model",
+     "doc": "The model."
+    },
+    {
+     "name": "readings",
+     "type": "list Reading",
+     "doc": "Its predictors."
+    }
+   ],
+   "rows": [
+    {
+     "model": "∀+LocA",
+     "readings": [
+      "∀",
+      "LocA"
+     ]
+    },
+    {
+     "model": "∃+LocA",
+     "readings": [
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "model": "Λ+LocA",
+     "readings": [
+      "Λ",
+      "LocA"
+     ]
+    },
+    {
+     "model": "∀+∃+LocA",
+     "readings": [
+      "∀",
+      "∃",
+      "LocA"
+     ]
+    },
+    {
+     "model": "∀+Λ+LocA",
+     "readings": [
+      "∀",
+      "Λ",
+      "LocA"
+     ]
+    }
+   ],
+   "method": "model"
+  },
+  {
+   "name": "modelFits",
+   "structure": "ModelFit",
+   "doc": "the fit of a model, a binomial GLMM with by-subject random intercepts and slopes, to the responses to the target sentences.",
+   "locator": "Table 3, p. 757",
+   "verified": "page-image",
+   "method": "model",
+   "key": [
+    "experiment",
+    "model"
+   ],
+   "columns": [
+    {
+     "name": "experiment",
+     "type": "Experiment",
+     "doc": "The experiment."
+    },
+    {
+     "name": "model",
+     "type": "Model",
+     "doc": "The model."
+    },
+    {
+     "name": "npar",
+     "type": "nat",
+     "doc": "The number of parameters."
+    },
+    {
+     "name": "aic",
+     "type": "nat",
+     "doc": "The AIC."
+    },
+    {
+     "name": "bic",
+     "type": "nat",
+     "doc": "The BIC."
+    },
+    {
+     "name": "r2",
+     "type": "decimal",
+     "doc": "The conditional R²."
+    }
+   ],
+   "rows": [
+    {
+     "experiment": "Exp.1",
+     "model": "∀+LocA",
+     "npar": 7,
+     "aic": 3061,
+     "bic": 3106,
+     "r2": "0.74"
+    },
+    {
+     "experiment": "Exp.1",
+     "model": "∃+LocA",
+     "npar": 7,
+     "aic": 3744,
+     "bic": 3789,
+     "r2": "0.62"
+    },
+    {
+     "experiment": "Exp.1",
+     "model": "Λ+LocA",
+     "npar": 7,
+     "aic": 3195,
+     "bic": 3241,
+     "r2": "0.68"
+    },
+    {
+     "experiment": "Exp.1",
+     "model": "∀+∃+LocA",
+     "npar": 11,
+     "aic": 2951,
+     "bic": 3022,
+     "r2": "0.75"
+    },
+    {
+     "experiment": "Exp.1",
+     "model": "∀+Λ+LocA",
+     "npar": 11,
+     "aic": 2783,
+     "bic": 2854,
+     "r2": "0.76"
+    },
+    {
+     "experiment": "Exp.2",
+     "model": "∀+LocA",
+     "npar": 7,
+     "aic": 3526,
+     "bic": 3571,
+     "r2": "0.73"
+    },
+    {
+     "experiment": "Exp.2",
+     "model": "∃+LocA",
+     "npar": 7,
+     "aic": 4075,
+     "bic": 4120,
+     "r2": "0.56"
+    },
+    {
+     "experiment": "Exp.2",
+     "model": "Λ+LocA",
+     "npar": 7,
+     "aic": 2671,
+     "bic": 2716,
+     "r2": "0.75"
+    },
+    {
+     "experiment": "Exp.2",
+     "model": "∀+∃+LocA",
+     "npar": 11,
+     "aic": 3338,
+     "bic": 3409,
+     "r2": "0.73"
+    },
+    {
+     "experiment": "Exp.2",
+     "model": "∀+Λ+LocA",
+     "npar": 11,
+     "aic": 2471,
+     "bic": 2542,
+     "r2": "0.80"
+    }
+   ]
+  }
+ ]
+}

@@ -548,13 +548,13 @@ theorem not_consequence_tolerant_strict (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
 /-! ### LP and K3 -/
 
 open Classical in
-/-- In the MV-model of Lemma 4, a predication is `1` when strictly true, `-1` when not
-tolerantly true and `0` when borderline, and similarity statements are two-valued. -/
+/-- In the MV-model of Lemma 4, a predication is true when strictly true, false when not
+tolerantly true and undefined when borderline, and similarity statements are two-valued. -/
 noncomputable def toMV (M : TModel Pred C D) : Trivalent.Model (Atom Pred C)
   | .pred P a =>
-    if □[M.sim P] (M.interp P) (M.const a) then 1
-    else if ◇[M.sim P] (M.interp P) (M.const a) then 0 else -1
-  | .sim P a b => if (M.const a) ~[M.sim P] (M.const b) then 1 else -1
+    if □[M.sim P] (M.interp P) (M.const a) then .true
+    else if ◇[M.sim P] (M.interp P) (M.const a) then .undefined else .false
+  | .sim P a b => if (M.const a) ~[M.sim P] (M.const b) then .true else .false
 
 -- Lemma 4
 theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
@@ -566,7 +566,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
         Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
-        Trivalent.Designation.threshold_k3, SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff,
+        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff,
         toMV]
       split_ifs with hs ht
       · exact ⟨iff_of_true ⟨_, (M.sim P).refl _, box_T hs⟩ (by decide), iff_of_true hs rfl⟩
@@ -575,7 +575,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     | sim P a b =>
       simp only [TModel.realize_sim, Trivalent.Formula.realize_atom,
         Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-        SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff, toMV]
+        Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff, toMV]
       split_ifs with h <;> simp [h]
   | neg ψ ih =>
     simp only [TModel.realize_neg, Trivalent.Formula.realize_neg, Mode.dual_tolerant,
@@ -598,8 +598,8 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
 def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
   const a := (a, false)
   interp P
-    | (a, false) => v (.pred P a) = 1
-    | (a, true) => v (.pred P a) ≠ -1
+    | (a, false) => v (.pred P a) = .true
+    | (a, true) => v (.pred P a) ≠ .false
   sim _ := {p | p.1.1 = p.2.1}
   sim_ktb _ := { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm }
 
@@ -613,7 +613,7 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
         Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
-        Trivalent.Designation.threshold_k3, SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff,
+        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff,
         ofMV, Box, Diamond]
       refine ⟨⟨?_, fun h ↦ ⟨(a, true), rfl, h⟩⟩, ⟨fun h ↦ h (a, false) rfl, ?_⟩⟩
       · rintro ⟨⟨b, i⟩, hb, h⟩
@@ -794,19 +794,19 @@ theorem not_ct_two_step :
 -- §3.3.2
 theorem exists_realize_pred_not_realize {m n : Mode} (P : Pred) (a : C) (h : n < m) :
     ∃ M : TModels Pred C, M.Realize m (.atom (.pred P a)) ∧ ¬ M.Realize n (.atom (.pred P a)) := by
-  have hv := ofMV_realize (fun _ ↦ 0) (φ := .atom (.pred P a)) trivial
-  have hvt : (ofMV fun _ ↦ 0).Realize .tolerant (.atom (.pred P a)) :=
-    hv.1.2 (show 0 ≤ 0 by decide)
-  have hvc : ¬ (ofMV fun _ ↦ 0).Realize .classical (.atom (.pred P a)) :=
-    show ¬ 0 = 1 by decide
-  have hvs : ¬ (ofMV fun _ ↦ 0).Realize .strict (.atom (.pred P a)) :=
-    fun hs ↦ absurd (hv.2.1 hs) (show ¬ (1 : SignType) ≤ 0 by decide)
+  have hv := ofMV_realize (fun _ ↦ .undefined) (φ := .atom (.pred P a)) trivial
+  have hvt : (ofMV fun _ ↦ .undefined).Realize .tolerant (.atom (.pred P a)) :=
+    hv.1.2 (show (.undefined : Trivalent) ≤ .undefined by decide)
+  have hvc : ¬ (ofMV fun _ ↦ .undefined).Realize .classical (.atom (.pred P a)) :=
+    show ¬ (.undefined : Trivalent) = .true by decide
+  have hvs : ¬ (ofMV fun _ ↦ .undefined).Realize .strict (.atom (.pred P a)) :=
+    fun hs ↦ absurd (hv.2.1 hs) (show ¬ (.true : Trivalent) ≤ .undefined by decide)
   have hb := allBorderline_realize (Pred := Pred) (C := C) (φ := .atom (.pred P a)) trivial
   cases m <;> cases n <;> first
     | exact absurd h (by decide)
     | exact ⟨⟨_, allBorderline Pred C⟩, rfl, hb.1⟩
-    | exact ⟨⟨_, ofMV fun _ ↦ 0⟩, hvt, hvc⟩
-    | exact ⟨⟨_, ofMV fun _ ↦ 0⟩, hvt, hvs⟩
+    | exact ⟨⟨_, ofMV fun _ ↦ .undefined⟩, hvt, hvc⟩
+    | exact ⟨⟨_, ofMV fun _ ↦ .undefined⟩, hvt, hvs⟩
 
 /-- `⊨ᵐⁿ` is reflexive iff `m ≤ n` (§3.3.2), so `φ ⊨ᵗᵗ φ` and `φ ⊨ˢˢ φ` but `Pa ⊭ᵗᶜ Pa` and
 `Pa ⊭ᶜˢ Pa`. -/

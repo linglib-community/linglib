@@ -733,24 +733,24 @@ instance : DecidablePred (reading Q R A) := fun r ↦ by
 
 /-- A quantified reciprocal sentence is true iff true at both ranges, false iff false at both,
 and neither otherwise, the supervaluation over the two precisifications (109). -/
-def truthValue : SignType :=
-  SignType.supervaluation {.referenceSet, .maximalSet} (reading Q R A)
+def truthValue : Trivalent :=
+  Trivalent.supervaluation {.referenceSet, .maximalSet} (reading Q R A)
 
 theorem truthValue_true_iff :
-    truthValue Q R A = 1 ↔ RefSetReading Q R A ∧ MaxSetReading Q R A := by
-  unfold truthValue; rw [SignType.supervaluation_eq_one_iff]; simp [reading]
+    truthValue Q R A = .true ↔ RefSetReading Q R A ∧ MaxSetReading Q R A := by
+  unfold truthValue; rw [Trivalent.supervaluation_eq_true_iff]; simp [reading]
 
 theorem truthValue_false_iff :
-    truthValue Q R A = -1 ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
-  unfold truthValue; rw [SignType.supervaluation_eq_neg_one_iff]; simp [reading]
+    truthValue Q R A = .false ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
+  unfold truthValue; rw [Trivalent.supervaluation_eq_false_iff]; simp [reading]
 
 theorem truthValue_true_iff_of_monotone (hQ : Monotone (Q A)) :
-    truthValue Q R A = 1 ↔ RefSetReading Q R A :=
+    truthValue Q R A = .true ↔ RefSetReading Q R A :=
   (truthValue_true_iff Q R A).trans
     ⟨And.left, fun h ↦ ⟨h, maxSetReading_of_refSetReading Q R A hQ h⟩⟩
 
 theorem truthValue_false_iff_of_monotone (hQ : Monotone (Q A)) :
-    truthValue Q R A = -1 ↔ ¬ MaxSetReading Q R A :=
+    truthValue Q R A = .false ↔ ¬ MaxSetReading Q R A :=
   (truthValue_false_iff Q R A).trans
     ⟨And.right, fun h ↦ ⟨fun hr ↦ h (maxSetReading_of_refSetReading Q R A hQ hr), h⟩⟩
 
@@ -780,8 +780,8 @@ instance : DecidableRel few := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 
 -- (102), (110), (111)
 theorem street_scenarios :
-    truthValue most clique Finset.univ = 1 ∧ truthValue few clique Finset.univ = -1 ∧
-      truthValue most pairs Finset.univ = 0 ∧ truthValue few pairs Finset.univ = 0 := by
+    truthValue most clique Finset.univ = .true ∧ truthValue few clique Finset.univ = .false ∧
+      truthValue most pairs Finset.univ = .undefined ∧ truthValue few pairs Finset.univ = .undefined := by
   decide
 
 /-! ### Maximize Anaphora (§6) -/

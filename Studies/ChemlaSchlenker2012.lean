@@ -73,12 +73,12 @@ def target (p q q' : Atom) : Construction → Order → Formula Atom
 variable {p q q' : Atom} {C : Set W}
 
 private theorem supervaluationAcceptable_incremental_iff_forall {F : Formula Atom} :
-    SupervaluationAcceptable I .incremental C F ↔ ∀ w ∈ C, F.middleKleene I w ≠ 0 :=
+    SupervaluationAcceptable I .incremental C F ↔ ∀ w ∈ C, F.middleKleene I w ≠ .undefined :=
   (supervaluationAcceptable_incremental_iff I C F).trans Iff.rfl
 
 private theorem supervaluationAcceptable_symmetric_iff_forall {F : Formula Atom}
     (hF : (F.triggers.map Prod.snd).Nodup) :
-    SupervaluationAcceptable I .symmetric C F ↔ ∀ w ∈ C, F.strongKleene I w ≠ 0 :=
+    SupervaluationAcceptable I .symmetric C F ↔ ∀ w ∈ C, F.strongKleene I w ≠ .undefined :=
   (supervaluationAcceptable_symmetric_iff I C F).trans
     (forall₂_congr fun _ _ ↦ supervaluationDefined_iff_of_nodup I hF)
 

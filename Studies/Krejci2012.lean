@@ -85,12 +85,12 @@ that earlier state about ((65a)). `R` relates a state to the earlier states. The
 reading of a verb is the verb over this predicate. -/
 def againState (R : SetRel State State) (S : Entity → State → Prop) (x : Entity)
     (s : State) : Prop :=
-  Presupposition.again R (S x) s = 1
+  Presupposition.again R (S x) s = .true
 
 /-- On the repetitive reading *again* modifies the whole predicate ((66b)), so the sentence
 presupposes that the whole event happened before. -/
 def Repetitive (P : Entity → E → Prop) (x : Entity) (e : E) : Prop :=
-  Presupposition.again earlier (P x) e = 1
+  Presupposition.again earlier (P x) e = .true
 
 variable {M manip S} {x y z : Entity} {e : E}
 
@@ -221,9 +221,9 @@ theorem restitutive_not_repetitive :
     eat twoMeals twoManip (againState {p | p.2 < p.1} digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=
   ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5, ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
-      Presupposition.again_eq_one_iff.2 ⟨⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩⟩,
+      Presupposition.again_eq_true_iff.2 ⟨⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩⟩,
     fun h ↦ by
-      obtain ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ := Presupposition.again_eq_one_iff.1 h
+      obtain ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ := Presupposition.again_eq_true_iff.1 h
       rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
       · exact Participant.noConfusion h
       rcases hc with ⟨h, _⟩ | ⟨_, he⟩

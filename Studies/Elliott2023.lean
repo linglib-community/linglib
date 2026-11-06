@@ -85,15 +85,16 @@ noncomputable abbrev donkey (x : V) : BilateralUpdate W V E :=
 
 -- (31)
 theorem firstPart_donkey (hx : State.Novel s x) :
-    firstPart 1 (~(exists_ x (pred1 B x))) (pred1 U x) s =
+    firstPart .true (~(exists_ x (pred1 B x))) (pred1 U x) s =
       (exists_ x (pred1 B x)).negative s := by
   have hn := hx.mono (negative_exists_subset x (pred1 B x) s)
   ext p
-  simp only [mem_firstPart, update_one, positive_neg]
-  refine ⟨fun ⟨b, hp⟩ ↦ ?_, fun hp ↦ ⟨0, by simpa [unknownUpdate_pred1_of_novel U hn] using hp⟩⟩
+  simp only [mem_firstPart, update_true, positive_neg]
+  refine ⟨fun ⟨b, hp⟩ ↦ ?_, fun hp ↦
+    ⟨.undefined, by simpa [unknownUpdate_pred1_of_novel U hn] using hp⟩⟩
   cases b
-  · simpa [update, unknownUpdate_pred1_of_novel U hn] using hp
   · simp [update, negative_pred1_of_novel U hn] at hp
+  · simpa [update, unknownUpdate_pred1_of_novel U hn] using hp
   · simp [update, positive_pred1_of_novel U hn] at hp
 
 -- §2.4.3, before (31)
@@ -115,15 +116,15 @@ theorem not_cover_pred1 :
 
 -- (32), with the empty cell where both disjuncts are true
 theorem secondPart_donkey [Nonempty E] (hx : State.Novel s x) :
-    secondPart 1 (~(exists_ x (pred1 B x))) (pred1 U x) s =
+    secondPart .true (~(exists_ x (pred1 B x))) (pred1 U x) s =
       (pred1 U x).positive ((exists_ x (pred1 B x)).positive s) := by
   have hn := hx.mono (negative_exists_subset x (pred1 B x) s)
   ext p
-  simp only [mem_secondPart, update_one]
-  refine ⟨fun ⟨a, hp⟩ ↦ ?_, fun hp ↦ ⟨-1, by simpa using hp⟩⟩
+  simp only [mem_secondPart, update_true]
+  refine ⟨fun ⟨a, hp⟩ ↦ ?_, fun hp ↦ ⟨.false, by simpa using hp⟩⟩
   cases a
-  · simp [update, unknownUpdate_neg, unknownUpdate_exists_pred1 B hx] at hp
   · simpa [update] using hp
+  · simp [update, unknownUpdate_neg, unknownUpdate_exists_pred1 B hx] at hp
   · simp [update, positive_pred1_of_novel U hn] at hp
 
 /-- The positive update of the donkey disjunction keeps the points without a bathroom and extends
@@ -274,15 +275,15 @@ end Donkey
 omit [DecidableEq V] in
 -- (47)
 theorem lift_material_eq_disj (φ ψ : BilateralUpdate W V E) :
-    lift (fun a b ↦ -a ⊔ b) φ ψ = (~φ) ⊕ ψ := by
-  have key (c : SignType) (p : Possibility W V (Flat E)) (s) :
-      (∃ a b, -a ⊔ b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
+    lift (fun a b ↦ aᶜ ⊔ b) φ ψ = (~φ) ⊕ ψ := by
+  have key (c : Trivalent) (p : Possibility W V (Flat E)) (s) :
+      (∃ a b, aᶜ ⊔ b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
         ∃ a b, a ⊔ b = c ∧ p ∈ ψ.update b ((~φ).update a s) := by
     simp only [update_neg]
-    exact ⟨fun ⟨a, b, h, hp⟩ ↦ ⟨-a, b, h, by simpa using hp⟩,
-      fun ⟨a, b, h, hp⟩ ↦ ⟨-a, b, by simpa using h, hp⟩⟩
+    exact ⟨fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, b, h, by simpa using hp⟩,
+      fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, b, by simpa using h, hp⟩⟩
   ext s p
-  · simpa [disj] using key 1 p s
+  · simpa [disj] using key .true p s
   · simp [disj]
 
 /-! ### Existential statements (§2.3) -/
@@ -389,7 +390,7 @@ theorem not_egli_negative :
           (State.randomAssign ({Possibility.bot ()} : Set (Possibility Unit ℕ (Flat Unit))) 0)) :=
       mem_negative_pred1.2 ⟨h₁, (), by simp, not_false⟩
     simp only [conj, mem_negative_lift]
-    exact ⟨1, -1, rfl, by rw [update_neg_one, update_one]; exact h₂⟩
+    exact ⟨.true, .false, rfl, by rw [update_false, update_true]; exact h₂⟩
   rw [← h] at hmem
   have := congrArg (fun p : Possibility Unit ℕ (Flat Unit) ↦ p.assignment 0)
     (Set.mem_singleton_iff.mp (negative_exists_subset _ _ _ hmem))
