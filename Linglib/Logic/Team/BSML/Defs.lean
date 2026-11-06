@@ -200,9 +200,9 @@ theorem not_support_strongFalsum [Inhabited Atom] : ¬ support M .strongFalsum t
 supports `φ` ([aloni-2022] Definition 3, with premise sets as in [aloni-anttila-yang-2024]).
 The models have finite successor sets and finite teams and range over `Type`. For finite premise
 sets neither restriction changes the relation: what is a consequence here is derivable
-(`BSML.completeness`), the derivation system is sound for arbitrary models
-([aloni-anttila-yang-2024] Theorem 4.34), and the universe is immaterial
-(`BSML.support_of_consequence`). -/
+(`BSML.completeness`), every rule of `BSML.Derives` is sound for arbitrary models (those of
+[aloni-anttila-yang-2024] Definition 4.33 by their Theorem 4.34, `cut` and necessitation
+directly), and the universe is immaterial (`BSML.support_of_consequence`). -/
 def Consequence (Γ : Finset (Formula Atom)) (φ : Formula Atom) : Prop :=
   ∀ p : PointedTeam.{0} Atom, (∀ γ ∈ Γ, support p.model γ p.team) → support p.model φ p.team
 

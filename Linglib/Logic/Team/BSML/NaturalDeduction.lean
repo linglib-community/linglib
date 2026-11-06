@@ -41,7 +41,10 @@ takes `⊥` as primitive. Contexts are upper bounds on undischarged assumptions,
 `NE`-freeness conditions on side derivations are conditions on their contexts. The paper chains
 derivations freely, but substituting a derivation for an assumption of a side derivation can break
 that side derivation's condition, so composition is the rule `cut`; weakening follows from it.
-Result numbers and pages follow arXiv:2305.11777v3.
+`cut` is admissible in the paper's system, whose derivability is consequence (Theorems 4.34 and
+4.43). The paper's figure leaves open whether `□Mon` may have no boxed premises; Anttila's thesis
+allows it, as necessitation, and so does `necMon`. Result numbers and pages follow
+arXiv:2305.11777v3.
 
 ## References
 
@@ -181,7 +184,8 @@ inductive Derives [Inhabited Atom] : Set (Formula Atom) → Formula Atom → Pro
   | strongFalsumCtr {Γ φ} (ψ) : Derives Γ (.disj .strongFalsum φ) → Derives Γ ψ
   /-- `◇Mon`, for a side derivation from `φ` alone. -/
   | possMon {Γ φ ψ} : Derives {φ} ψ → Derives Γ (.poss φ) → Derives Γ (.poss ψ)
-  /-- `□Mon`, for a side derivation from the boxed formulas alone. -/
+  /-- `□Mon`, for a side derivation from the boxed formulas alone. The list may be empty, which
+  is the necessitation rule ([anttila-2021] p. 65). -/
   | necMon {Γ ψ} (φs : List (Formula Atom)) :
       Derives {δ | δ ∈ φs} ψ → (∀ δ ∈ φs, Derives Γ (Formula.nec δ)) →
       Derives Γ (Formula.nec ψ)
