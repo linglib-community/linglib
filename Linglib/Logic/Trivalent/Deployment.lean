@@ -60,7 +60,7 @@ behaviour follows from its classical meaning and the order of its arguments.
 An `n`-ary truth function is a function on `Fin n → Bool`, and a `0`-ary one is identified with
 its value. A failed reduction is `none` rather than George's constant function to the failure
 value, which deployment then sends to `0`. The repair set of a value (Definition 14) is
-`SignType.toFinset`. Choosing `true` or `false` as the member to reduce by is specific to `Bool`
+`Trivalent.toFinset`. Choosing `true` or `false` as the member to reduce by is specific to `Bool`
 and keeps `deploy` computable. Repair sets of predicates over an infinite domain ([george-2014]
 §4) need George's existential formulation of Definition 13, which `deployWith` follows.
 
@@ -76,7 +76,7 @@ and keeps `deploy` computable. Repair sets of predicates over an infinite domain
 
 namespace Trivalent
 
-open SignType
+open Trivalent
 
 variable {n : ℕ}
 
@@ -115,7 +115,7 @@ theorem pkReduce_toFinset_zero (f : (Fin (n + 1) → Bool) → Bool) :
 /-- The Peters-Kleene deployment `f[x₁, …, xₙ]` Peters-Kleene reduces `f` by the repair set of
 each argument in turn, following George's convention `f[x₁, …, xₙ] = f[x₁]…[xₙ]`, and is
 undefined once a reduction fails. -/
-def deploy : {n : ℕ} → ((Fin n → Bool) → Bool) → (Fin n → SignType) → SignType
+def deploy : {n : ℕ} → ((Fin n → Bool) → Bool) → (Fin n → Trivalent) → Trivalent
   | 0, f, _ => ofProp (f ![])
   | _ + 1, f, x =>
     match pkReduce f (toFinset (x 0)) with
@@ -123,16 +123,16 @@ def deploy : {n : ℕ} → ((Fin n → Bool) → Bool) → (Fin n → SignType) 
     | none => 0
 
 /-- A classical first argument fills the first argument position. -/
-theorem deploy_cons_ofProp (f : (Fin (n + 1) → Bool) → Bool) (b : Bool) (x : Fin n → SignType) :
+theorem deploy_cons_ofProp (f : (Fin (n + 1) → Bool) → Bool) (b : Bool) (x : Fin n → Trivalent) :
     deploy f (Fin.cons (ofProp b) x) = deploy (reduceFirst f b) x := by
   have h : toFinset (ofProp b) = {b} := by cases b <;> rfl
   rw [deploy, Fin.cons_zero, h, pkReduce_singleton, Fin.tail_cons]
 
 /-- An undefined first argument is skipped if its position does not matter, and makes the
 deployment undefined otherwise. -/
-theorem deploy_cons_zero (f : (Fin (n + 1) → Bool) → Bool) (x : Fin n → SignType) :
+theorem deploy_cons_zero (f : (Fin (n + 1) → Bool) → Bool) (x : Fin n → Trivalent) :
     deploy f (Fin.cons 0 x) =
-      if reduceFirst f true = reduceFirst f false then deploy (reduceFirst f true) x else 0 := by
+      if reduceFirst f true = reduceFirst f false then deploy (reduceFirst f true) x else .undefined := by
   rw [deploy, Fin.cons_zero, pkReduce_toFinset_zero, Fin.tail_cons]
   split_ifs <;> rfl
 
@@ -149,8 +149,8 @@ theorem deploy_ofProp (f : (Fin n → Bool) → Bool) (b : Fin n → Bool) :
 /-- An undefined argument in a position whose value matters makes the deployment undefined,
 generalising Remarks 9 and 10. -/
 theorem deploy_eq_zero_of_reduceFirst_ne {f : (Fin (n + 1) → Bool) → Bool}
-    (h : reduceFirst f true ≠ reduceFirst f false) {x : Fin (n + 1) → SignType} (hx : x 0 = 0) :
-    deploy f x = 0 := by
+    (h : reduceFirst f true ≠ reduceFirst f false) {x : Fin (n + 1) → Trivalent} (hx : x 0 = .undefined) :
+    deploy f x = .undefined := by
   simp only [deploy, hx, pkReduce_toFinset_zero, h, ite_false]
 
 /-! ### Deployment over arbitrary repair sets
@@ -171,12 +171,12 @@ open Classical in
 /-- The Peters-Kleene deployment of a function of arguments in `α` on arguments in `β`, with
 repair sets given by `rep`. An empty repair set makes the deployment undefined, which Definition 13
 leaves open since George's repair sets are never empty. -/
-noncomputable def deployWith : {n : ℕ} → ((Fin n → α) → Bool) → (Fin n → β) → SignType
+noncomputable def deployWith : {n : ℕ} → ((Fin n → α) → Bool) → (Fin n → β) → Trivalent
   | 0, f, _ => ofProp (f ![])
   | _ + 1, f, x =>
     if h : ∃ g, (rep (x 0)).Nonempty ∧ ∀ a ∈ rep (x 0), reduceFirst f a = g then
       deployWith h.choose (Fin.tail x)
-    else 0
+    else .undefined
 
 variable {rep}
 
@@ -199,13 +199,13 @@ theorem deployWith_succ_of_forall {f : (Fin (n + 1) → α) → Bool} {x : Fin (
 undefined. -/
 theorem deployWith_succ_of_ne {f : (Fin (n + 1) → α) → Bool} {x : Fin (n + 1) → β} {a b : α}
     (ha : a ∈ rep (x 0)) (hb : b ∈ rep (x 0)) (hab : reduceFirst f a ≠ reduceFirst f b) :
-    deployWith rep f x = 0 := by
+    deployWith rep f x = .undefined := by
   rw [deployWith, dite_eq_right_of_eq_false (eq_false ?_)]
   rintro ⟨g, -, h⟩
   exact hab ((h a ha).trans (h b hb).symm)
 
 /-- On truth values, deployment by `toFinset` is `deploy`. -/
-theorem deploy_eq_deployWith (f : (Fin n → Bool) → Bool) (x : Fin n → SignType) :
+theorem deploy_eq_deployWith (f : (Fin n → Bool) → Bool) (x : Fin n → Trivalent) :
     deploy f x = deployWith (fun s ↦ ↑(toFinset s)) f x := by
   induction n with
   | zero => rw [deploy, deployWith_zero]
@@ -218,7 +218,7 @@ theorem deploy_eq_deployWith (f : (Fin n → Bool) → Bool) (x : Fin n → Sign
       rw [deploy_cons_ofProp, ih, deployWith_succ_of_forall (g := reduceFirst f b)
         (by cases b <;> simp) fun a ha ↦ by cases b <;> simp_all, Fin.tail_cons]
     cases s
-    · rw [show SignType.zero = 0 from rfl, deploy_cons_zero]
+    · rw [show Trivalent.zero = .undefined from rfl, deploy_cons_zero]
       split_ifs with h
       · rw [ih, deployWith_succ_of_forall (g := reduceFirst f true) (by simp) fun a ha ↦ by
           cases a <;> simp_all, Fin.tail_cons]
@@ -231,28 +231,28 @@ end DeployWith
 /-! ### Unary and binary deployment -/
 
 /-- The deployment of a unary truth function. -/
-def deploy₁ (f : Bool → Bool) (x : SignType) : SignType :=
+def deploy₁ (f : Bool → Bool) (x : Trivalent) : Trivalent :=
   deploy (fun v ↦ f (v 0)) ![x]
 
 /-- The deployment of a binary truth function, its first argument first. -/
-def deploy₂ (f : Bool → Bool → Bool) (x y : SignType) : SignType :=
+def deploy₂ (f : Bool → Bool → Bool) (x y : Trivalent) : Trivalent :=
   deploy (fun v ↦ f (v 0) (v 1)) ![x, y]
 
 /-- Unary deployment is the Strong Kleene lift: it leaves open the classical values `f` takes on
 the repair set of its argument. -/
-theorem toFinset_deploy₁ (f : Bool → Bool) (x : SignType) :
+theorem toFinset_deploy₁ (f : Bool → Bool) (x : Trivalent) :
     toFinset (deploy₁ f x) = (toFinset x).image f := by
   revert f x; decide
 
 /-- After a classical first argument, binary deployment is unary deployment. -/
-theorem deploy₂_ofProp_left (f : Bool → Bool → Bool) (b : Bool) (y : SignType) :
+theorem deploy₂_ofProp_left (f : Bool → Bool → Bool) (b : Bool) (y : Trivalent) :
     deploy₂ f (ofProp b) y = deploy₁ (f b) y := by
   rw [deploy₂, deploy₁, Matrix.vecCons, deploy_cons_ofProp]; rfl
 
 /-- After an undefined first argument, binary deployment is unary deployment if the first
 position does not matter, and undefined otherwise. -/
-theorem deploy₂_zero_left (f : Bool → Bool → Bool) (y : SignType) :
-    deploy₂ f 0 y = if f true = f false then deploy₁ (f true) y else 0 := by
+theorem deploy₂_zero_left (f : Bool → Bool → Bool) (y : Trivalent) :
+    deploy₂ f 0 y = if f true = f false then deploy₁ (f true) y else .undefined := by
   revert f y; decide
 
 /-! ### The Peters connectives -/

@@ -113,6 +113,26 @@ theorem posExt_union_negExt_union_gapExt (p : W → Trivalent) :
   simp only [Set.mem_union, mem_posExt, mem_negExt, mem_gapExt, Set.mem_univ, iff_true]
   cases p w <;> simp
 
+theorem posExt_union_negExt (p : W → Trivalent) : posExt p ∪ negExt p = (gapExt p)ᶜ := by
+  ext w; cases h : p w <;> simp [h]
+
+theorem disjoint_posExt_negExt (p : W → Trivalent) : Disjoint (posExt p) (negExt p) :=
+  Set.disjoint_left.2 fun w h₁ h₂ ↦ absurd ((mem_posExt.1 h₁).symm.trans h₂) (by decide)
+
+theorem posExt_subset_compl_gapExt (p : W → Trivalent) : posExt p ⊆ (gapExt p)ᶜ :=
+  (posExt_union_negExt p) ▸ Set.subset_union_left
+
+theorem negExt_subset_compl_gapExt (p : W → Trivalent) : negExt p ⊆ (gapExt p)ᶜ :=
+  (posExt_union_negExt p) ▸ Set.subset_union_right
+
+theorem compl_gapExt_inter_compl_posExt (p : W → Trivalent) :
+    (gapExt p)ᶜ ∩ (posExt p)ᶜ = negExt p := by
+  ext w; cases h : p w <;> simp [h]
+
+@[simp] theorem gapExt_ofProp (A : W → Prop) [DecidablePred A] :
+    gapExt (fun w ↦ ofProp (A w)) = ∅ := by
+  ext w; simp
+
 /-- The positive and negative extensions of a trivalent proposition, in Fitting's product of
 world-sets: Strong Kleene conjunction and disjunction are its truth meet and join. -/
 def extensions : BoundedLatticeHom (W → Trivalent) (Set W ⊙ Set W) where

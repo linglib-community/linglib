@@ -13,13 +13,13 @@ public import Linglib.Logic.Trivalent.Supervaluation
 
 A generalised quantifier is a function from predicate extensions to truth values, so Peters-Kleene
 deployment applies to it once a trivalent predicate has repairs ([george-2014] §4.1). The repairs of
-a predicate `A : U → SignType` are the classical predicates that agree with `A` wherever `A` is
+a predicate `A : U → Trivalent` are the classical predicates that agree with `A` wherever `A` is
 classical and are free wherever `A` is undefined (Definition 19). A quantifier deployed on a
 trivalent predicate is then the supervaluation over its repairs, which George relates to the
 supervaluation quantifiers of [van-eijck-1996]. Deploying the universal and existential
 quantifiers gives the Strong Kleene quantifiers `forallStrong` and `existsStrong`, so
 *everybody has stopped smoking* presupposes only that somebody smokes or everybody has smoked
-(`forallStrong_ne_zero_iff`, George's (11)), not that everybody has smoked.
+(`forallStrong_ne_undefined_iff`, George's (11)), not that everybody has smoked.
 
 A determiner takes its restrictor first. Either two repairs of the restrictor make different
 quantifiers of the determiner, and the deployment is undefined, or they all make the same
@@ -60,7 +60,7 @@ scope, then, a deployed determiner is a supervaluation over repairs.
 
 namespace Trivalent
 
-open SignType
+open Trivalent
 
 /-! ### Unary deployment as supervaluation -/
 
@@ -98,36 +98,36 @@ variable {U : Type*}
 
 /-- The repairs of a trivalent predicate are the classical predicates that agree with it wherever
 it is classical (Definition 19). -/
-def repairs (A : U → SignType) : Set (U → Bool) :=
+def repairs (A : U → Trivalent) : Set (U → Bool) :=
   Set.univ.pi fun u ↦ ↑(toFinset (A u))
 
-@[simp] theorem mem_repairs {A : U → SignType} {g : U → Bool} :
+@[simp] theorem mem_repairs {A : U → Trivalent} {g : U → Bool} :
     g ∈ repairs A ↔ ∀ u, g u ∈ toFinset (A u) := by
   simp [repairs]
 
 /-- The lower repair of a predicate sends every gap to `false`, its K3 reading. -/
-def lowerRepair (A : U → SignType) : U → Bool := fun u ↦ decide (A u = 1)
+def lowerRepair (A : U → Trivalent) : U → Bool := fun u ↦ decide (A u = .true)
 
 /-- The upper repair of a predicate sends every gap to `true`, its LP reading. -/
-def upperRepair (A : U → SignType) : U → Bool := fun u ↦ decide (A u ≠ -1)
+def upperRepair (A : U → Trivalent) : U → Bool := fun u ↦ decide (A u ≠ .false)
 
-theorem lowerRepair_mem_repairs (A : U → SignType) : lowerRepair A ∈ repairs A := by
+theorem lowerRepair_mem_repairs (A : U → Trivalent) : lowerRepair A ∈ repairs A := by
   simp only [mem_repairs, lowerRepair]; intro u; cases A u <;> decide
 
-theorem upperRepair_mem_repairs (A : U → SignType) : upperRepair A ∈ repairs A := by
+theorem upperRepair_mem_repairs (A : U → Trivalent) : upperRepair A ∈ repairs A := by
   simp only [mem_repairs, upperRepair]; intro u; cases A u <;> decide
 
-theorem repairs_nonempty (A : U → SignType) : (repairs A).Nonempty :=
+theorem repairs_nonempty (A : U → Trivalent) : (repairs A).Nonempty :=
   ⟨_, lowerRepair_mem_repairs A⟩
 
-theorem lowerRepair_le_of_mem_repairs {A : U → SignType} {g : U → Bool} (hg : g ∈ repairs A) :
+theorem lowerRepair_le_of_mem_repairs {A : U → Trivalent} {g : U → Bool} (hg : g ∈ repairs A) :
     lowerRepair A ≤ g := fun u ↦ by
   have := mem_repairs.1 hg u
   simp only [lowerRepair]
   generalize A u = a, g u = b at this ⊢
   cases a <;> cases b <;> simp_all
 
-theorem le_upperRepair_of_mem_repairs {A : U → SignType} {g : U → Bool} (hg : g ∈ repairs A) :
+theorem le_upperRepair_of_mem_repairs {A : U → Trivalent} {g : U → Bool} (hg : g ∈ repairs A) :
     g ≤ upperRepair A := fun u ↦ by
   have := mem_repairs.1 hg u
   simp only [upperRepair]
@@ -151,8 +151,8 @@ section Step
 
 open Classical in
 /-- The predicate true on `B`, undefined at `a` and false elsewhere. -/
-private noncomputable def gapAt (B : Set U) (a : U) : U → SignType :=
-  fun x ↦ if x ∈ B then 1 else if x = a then 0 else -1
+private noncomputable def gapAt (B : Set U) (a : U) : U → Trivalent :=
+  fun x ↦ if x ∈ B then .true else if x = a then .undefined else .false
 
 /-- When `a ∉ B`, the repairs of `gapAt B a` are true on `B` or on `insert a B`. -/
 private theorem setOf_eq_of_mem_repairs_gapAt {B : Set U} {a : U} (ha : a ∉ B) {g : U → Bool}
@@ -176,7 +176,7 @@ private theorem setOf_eq_of_mem_repairs_gapAt {B : Set U} {a : U} (ha : a ∉ B)
 only when the predicate is defined throughout `R` is one that never holds of both a set and the
 set with one more element of `R`. -/
 theorem forall_repairs_imp_iff (P : Set U → Prop) (R : Set U) :
-    (∀ A : U → SignType, (∀ g ∈ repairs A, P {a | g a}) → ∀ a ∈ R, A a ≠ 0) ↔
+    (∀ A : U → Trivalent, (∀ g ∈ repairs A, P {a | g a}) → ∀ a ∈ R, A a ≠ .undefined) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
   classical
   constructor
@@ -185,14 +185,14 @@ theorem forall_repairs_imp_iff (P : Set U → Prop) (R : Set U) :
     rcases setOf_eq_of_mem_repairs_gapAt haB hg with e | e <;> rw [e] <;> assumption
   · intro h A hA a haR hAa
     have hlow := lowerRepair_mem_repairs A
-    have hstep : (fun x ↦ decide (A x = 1 ∨ x = a)) ∈ repairs A := by
+    have hstep : (fun x ↦ decide (A x = .true ∨ x = a)) ∈ repairs A := by
       rw [mem_repairs]
       intro x
       by_cases hx : x = a
       · subst hx; simp [hAa]
       · have := mem_repairs.1 hlow x
         simpa [lowerRepair, hx] using this
-    refine h {x | A x = 1} a haR (by simp [hAa]) ⟨?_, ?_⟩
+    refine h {x | A x = .true} a haR (by simp [hAa]) ⟨?_, ?_⟩
     · simpa [lowerRepair] using hA _ hlow
     · simpa [Set.insert_def, or_comm] using hA _ hstep
 
@@ -201,11 +201,11 @@ end Step
 /-! ### Deployed quantifiers -/
 
 /-- The Peters-Kleene deployment `Q[A]` of a generalised quantifier on a trivalent predicate. -/
-noncomputable def deployQuantifier (Q : (U → Bool) → Bool) (A : U → SignType) : SignType :=
+noncomputable def deployQuantifier (Q : (U → Bool) → Bool) (A : U → Trivalent) : Trivalent :=
   deployWith repairs (fun v ↦ Q (v 0)) ![A]
 
 /-- A deployed quantifier is the supervaluation over the repairs of its argument. -/
-theorem deployQuantifier_eq_supervaluationOn (Q : (U → Bool) → Bool) (A : U → SignType) :
+theorem deployQuantifier_eq_supervaluationOn (Q : (U → Bool) → Bool) (A : U → Trivalent) :
     deployQuantifier Q A = supervaluationOn (repairs A) (Q · = true) :=
   deployWith_unary (repairs_nonempty A)
 
@@ -213,12 +213,12 @@ theorem deployQuantifier_eq_supervaluationOn (Q : (U → Bool) → Bool) (A : U 
 @[simp] theorem deployQuantifier_ofProp (Q : (U → Bool) → Bool) (g : U → Bool) :
     deployQuantifier Q (fun u ↦ ofProp (g u)) = ofProp (Q g) := by
   rw [deployQuantifier_eq_supervaluationOn, repairs_ofProp]
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_ <;>
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;>
     simp [supervaluationOn_eq_one_iff, supervaluationOn_eq_neg_one_iff]
 
 /-- A monotone quantifier deployed on a predicate is settled by its lower and upper repairs. -/
 theorem deployQuantifier_of_monotone {Q : (U → Bool) → Bool} (hQ : Monotone Q)
-    (A : U → SignType) :
+    (A : U → Trivalent) :
     deployQuantifier Q A = supervaluationOn {lowerRepair A, upperRepair A} (Q · = true) := by
   rw [deployQuantifier_eq_supervaluationOn]
   refine supervaluationOn_eq_of_between (lowerRepair_mem_repairs A) (upperRepair_mem_repairs A)
@@ -228,7 +228,7 @@ theorem deployQuantifier_of_monotone {Q : (U → Bool) → Bool} (hQ : Monotone 
 
 /-- An antitone quantifier deployed on a predicate is settled by its upper and lower repairs. -/
 theorem deployQuantifier_of_antitone {Q : (U → Bool) → Bool} (hQ : Antitone Q)
-    (A : U → SignType) :
+    (A : U → Trivalent) :
     deployQuantifier Q A = supervaluationOn {upperRepair A, lowerRepair A} (Q · = true) := by
   rw [deployQuantifier_eq_supervaluationOn]
   refine supervaluationOn_eq_of_between (upperRepair_mem_repairs A) (lowerRepair_mem_repairs A)
@@ -236,7 +236,7 @@ theorem deployQuantifier_of_antitone {Q : (U → Bool) → Bool} (hQ : Antitone 
   · exact le_antisymm (Bool.le_true _) (h ▸ hQ (le_upperRepair_of_mem_repairs hg))
   · exact le_antisymm (Bool.le_true _) (h ▸ hQ (lowerRepair_le_of_mem_repairs hg))
 
-private theorem neg_one_ne_one : (-1 : SignType) ≠ 1 := by decide
+private theorem neg_one_ne_one : (-1 : Trivalent) ≠ .true := by decide
 
 /-- Deploying the universal quantifier (Definition 16) gives the Strong Kleene universal. -/
 theorem deployQuantifier_eq_forallStrong {Q : (U → Bool) → Bool}
@@ -244,7 +244,7 @@ theorem deployQuantifier_eq_forallStrong {Q : (U → Bool) → Bool}
   funext A
   rw [deployQuantifier_of_monotone fun g h hgh ↦ Bool.le_iff_imp.2 fun H ↦
     (hQ h).2 fun u ↦ Bool.le_iff_imp.1 (hgh u) ((hQ g).1 H u)]
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · simp [supervaluationOn_eq_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
   · simp [supervaluationOn_eq_neg_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
 
@@ -254,7 +254,7 @@ theorem deployQuantifier_eq_existsStrong {Q : (U → Bool) → Bool}
   funext A
   rw [deployQuantifier_of_monotone fun g h hgh ↦ Bool.le_iff_imp.2 fun H ↦
     (hQ h).2 <| let ⟨u, hu⟩ := (hQ g).1 H; ⟨u, Bool.le_iff_imp.1 (hgh u) hu⟩]
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · simp [supervaluationOn_eq_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
   · simp [supervaluationOn_eq_neg_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
 
@@ -263,12 +263,12 @@ theorem deployQuantifier_eq_existsStrong {Q : (U → Bool) → Bool}
 /-- The Peters-Kleene deployment `D[A, B]` of a determiner on a trivalent restrictor `A` and
 nuclear scope `B`, the restrictor first. -/
 noncomputable def deployDeterminer (D : (U → Bool) → (U → Bool) → Bool)
-    (A B : U → SignType) : SignType :=
+    (A B : U → Trivalent) : Trivalent :=
   deployWith repairs (fun v ↦ D (v 0) (v 1)) ![A, B]
 
 /-- If every repair of the restrictor makes the same quantifier of the determiner, the deployed
 determiner is that quantifier deployed on the nuclear scope. -/
-theorem deployDeterminer_of_forall {D : (U → Bool) → (U → Bool) → Bool} {A B : U → SignType}
+theorem deployDeterminer_of_forall {D : (U → Bool) → (U → Bool) → Bool} {A B : U → Trivalent}
     {Q : (U → Bool) → Bool} (h : ∀ g ∈ repairs A, D g = Q) :
     deployDeterminer D A B = deployQuantifier Q B :=
   deployWith_succ_of_forall (repairs_nonempty A) fun g hg ↦ funext fun v ↦ by
@@ -276,14 +276,14 @@ theorem deployDeterminer_of_forall {D : (U → Bool) → (U → Bool) → Bool} 
 
 /-- Two repairs of the restrictor that the determiner tells apart make it undefined. -/
 theorem deployDeterminer_eq_zero_of_ne {D : (U → Bool) → (U → Bool) → Bool}
-    {A B : U → SignType} {g h : U → Bool} (hg : g ∈ repairs A) (hh : h ∈ repairs A)
-    (hgh : D g ≠ D h) : deployDeterminer D A B = 0 :=
+    {A B : U → Trivalent} {g h : U → Bool} (hg : g ∈ repairs A) (hh : h ∈ repairs A)
+    (hgh : D g ≠ D h) : deployDeterminer D A B = .undefined :=
   deployWith_succ_of_ne hg hh fun e ↦ hgh (funext fun b ↦ congrFun e ![b])
 
 /-- With a classical restrictor, a deployed determiner is the deployed quantifier it makes of the
 restrictor. -/
 theorem deployDeterminer_ofProp_left (D : (U → Bool) → (U → Bool) → Bool) (g : U → Bool)
-    (B : U → SignType) :
+    (B : U → Trivalent) :
     deployDeterminer D (fun u ↦ ofProp (g u)) B = deployQuantifier (D g) B :=
   deployDeterminer_of_forall fun h hh ↦ by rw [repairs_ofProp] at hh; rw [hh]
 

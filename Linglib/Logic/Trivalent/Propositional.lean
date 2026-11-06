@@ -13,7 +13,7 @@ public import Mathlib.Logic.Function.DependsOn
 # Trivalent propositional logic
 
 Propositional formulas built from atoms by negation, conjunction, disjunction and the conditional
-are evaluated into `SignType` by an interpretation of the binary connectives, the Strong, Weak or
+are evaluated into `Trivalent` by an interpretation of the binary connectives, the Strong, Weak or
 Middle Kleene tables or Cooper's or de Finetti's, with Kleene's negation throughout. A formula is
 realized at a designation standard when its value is designated: K3 designates only `1` and LP also
 `0`, so one evaluation yields both logics, and mixed consequence takes premises at one standard and
@@ -61,7 +61,7 @@ the model sending every atom to `0` voids every formula under the Strong Kleene 
 
 namespace Trivalent
 
-open SignType
+open Trivalent
 
 open Consequence (IsDual MixedConsequence mixedConsequence_iff_dual)
 
@@ -76,7 +76,7 @@ inductive Formula (Atom : Type*) where
   deriving DecidableEq
 
 /-- A trivalent model assigns a value to each atom. -/
-abbrev Model (Atom : Type*) := Atom → SignType
+abbrev Model (Atom : Type*) := Atom → Trivalent
 
 /-- The Boolean model of a classical valuation of the atoms, which leaves no atom void. -/
 def Model.ofBool {Atom : Type*} (v : Atom → Bool) : Model Atom := fun a ↦ ofProp (v a)
@@ -89,7 +89,7 @@ namespace Formula
 variable {Atom : Type*}
 
 /-- The value of a formula under the connectives `C` in the model `M`. -/
-def eval (C : Connectives) (M : Model Atom) : Formula Atom → SignType
+def eval (C : Connectives) (M : Model Atom) : Formula Atom → Trivalent
   | .atom a => M a
   | .neg φ => -eval C M φ
   | .conj φ ψ => C.conj (eval C M φ) (eval C M ψ)
@@ -193,7 +193,7 @@ theorem eval_weakKleene_eq_zero_iff (M : Model Atom) (φ : Formula Atom) :
   | atom a => simp
   | neg φ ih => simpa using ih
   | conj φ ψ ihφ ihψ | disj φ ψ ihφ ihψ | cond φ ψ ihφ ihψ =>
-    simp [ihφ, ihψ, SignType.joinWeak_eq_zero_iff, or_and_right, exists_or]
+    simp [ihφ, ihψ, Trivalent.joinWeak_eq_undefined_iff, or_and_right, exists_or]
 
 /-- The Weak Kleene connectives do not define Strong Kleene conjunction: no formula takes, under
 them, the Strong Kleene conjunction of the values of two distinct atoms. -/
@@ -243,7 +243,7 @@ variable (C : Connectives) (M : Model Atom) (d : Trivalent.Designation)
 /-- Negation swaps the designation standards at the level of formulas, under any connectives. -/
 @[simp] theorem realize_neg (φ : Formula Atom) :
     (M ⊨[C, d] Formula.neg φ) ↔ ¬(M ⊨[C, d.dual] φ) := by
-  have h := Trivalent.Designation.dual_threshold_le_neg_iff d.dual (eval C M φ)
+  have h := Trivalent.Designation.dual_threshold_le_compl_iff d.dual (eval C M φ)
   rwa [Trivalent.Designation.dual_dual] at h
 
 /-- Each standard is dual to the other along negation ([cobreros-etal-2012], Definition 20). -/
