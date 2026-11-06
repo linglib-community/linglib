@@ -90,7 +90,7 @@ inductive Account where
 individual's count of objects with the property, by the account's own definition; none for an
 account that needs a context. -/
 def Account.value (a : Account) (q : NumberTree) [DecidableRel q] (counts : List ℕ) :
-    Option SignType :=
+    Option Trivalent :=
   match a with
   | .supervaluation => some (_root_.KrizChemla2015.supervaluation q (counts.map cell))
   | .pointwise => some (_root_.KrizChemla2015.pointwise q (counts.map cell))
@@ -115,6 +115,6 @@ def Account.accepts (a : Account) (q : Quantifier) (ctx : Context) (counts : Lis
   | .presuppositionalExhaustification =>
     some (decide (_root_.RomoliEtAl2026.asymmetric q.tree ctx counts))
   | .krizSpector => none
-  | a => some (decide (a.value q.tree counts = some 1))
+  | a => some (decide (a.value q.tree counts = some .true))
 
 end Eval.Homogeneity
