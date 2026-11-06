@@ -162,34 +162,34 @@ theorem lower_eq_some_iff {Q : Quantifier E} {a : E} : lower Q = some a ↔ indi
     (congrFun (lower_eq_some_iff.1 h) Set.univ).mp (Set.mem_univ a)
 
 theorem iota_BE_individual (a : E) : iota (BE (individual a)) = some a := by
-  rw [BE_individual]; exact iota_ident a
+  rw [BE_individual, iota_singleton]
 
 theorem every_injective : Function.Injective (every : Det E) := fun A B h ↦
   subset_antisymm ((congrFun h B).mpr subset_rfl) ((congrFun h A).mp subset_rfl)
 
 private theorem lower_eq_iota_of {f : Det E}
     (hf : ∀ {A : Set E} {a : E}, f A = individual a ↔ A = {a}) (A : Set E) :
-    lower (f A) = iota (· ∈ A) :=
+    lower (f A) = iota A :=
   Option.ext fun _ ↦ lower_eq_some_iff.trans <| eq_comm.trans <| hf.trans <|
     Set.eq_singleton_iff_unique_mem.trans (iota_eq_some_iff _).symm
 
 /-- An indefinite has an entity reading by `lower` only where the definite does. -/
-theorem lower_some (A : Set E) : lower (Det.some A) = iota (· ∈ A) :=
+theorem lower_some (A : Set E) : lower (Det.some A) = iota A :=
   lower_eq_iota_of some_eq_individual_iff A
 
-theorem lower_every (A : Set E) : lower (every A) = iota (· ∈ A) :=
+theorem lower_every (A : Set E) : lower (every A) = iota A :=
   lower_eq_iota_of (fun {_ _} ↦ by rw [individual_eq_every, every_injective.eq_iff]) A
 
 /-! ### The definite article -/
 
 /-- *The `A`* is the lift of `iota A` where `iota A` is defined, and the empty quantifier
 elsewhere. -/
-theorem the_eq_elim (A : Set E) : the A = (iota (· ∈ A)).elim ⊥ individual :=
+theorem the_eq_elim (A : Set E) : the A = (iota A).elim ⊥ individual :=
   funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by
-    cases iota (· ∈ A) <;> simp [individual]
+    cases iota A <;> simp [individual]
 
-@[simp] theorem lower_the (A : Set E) : lower (the A) = iota (· ∈ A) := by
-  rw [the_eq_elim]; cases iota (· ∈ A) <;> simp
+@[simp] theorem lower_the (A : Set E) : lower (the A) = iota A := by
+  rw [the_eq_elim]; cases iota A <;> simp
 
 /-- *Be the `A`* holds of `x` when `x` is the only `A`. -/
 theorem mem_BE_the {A : Set E} {x : E} : x ∈ BE (the A) ↔ A = {x} :=

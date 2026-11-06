@@ -10,8 +10,8 @@ Chierchia models a kind as an individual concept: at each situation it picks out
 instances, and it has no value where it has none. The operator 'down', ∩, takes a property to the
 concept of the largest member of its extension at each situation, which is the property's kind
 where that concept is a kind, and the operator 'up', ∪, takes a kind to the property of being one
-of its instances, the parts of its value. ∩ is ι applied at each situation, and ∪ its partial
-inverse, `Set.Iic`.
+of its instances, the parts of its value. ∩ is ι applied at each situation to the largest
+members, and ∪ its partial inverse, `Set.Iic`.
 
 [∩ undoes ∪](##Kind.down_up), and [∪ undoes ∩](##Kind.up_down) on a property closed downward
 wherever ∩ is defined, that is, wherever the property has instances its extension has a largest
@@ -69,7 +69,8 @@ end Preorder
 
 /-- ∩: the concept of the largest member of a property's extension at each situation, which is the
 property's kind where it is a kind. -/
-noncomputable def down [LE E] (P : S → Set E) (s : S) : Option E := iota (IsGreatest (P s))
+noncomputable def down [LE E] (P : S → Set E) (s : S) : Option E :=
+  iota {x | IsGreatest (P s) x}
 
 section PartialOrder
 

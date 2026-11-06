@@ -122,10 +122,10 @@ instance (D : Display) (d : Description) : DecidablePred (d.property D) := fun i
 situation that the description does. -/
 def Description.restrictor (D : Display) (d : Description) :
     DefiniteDescription.Restrictor (Fin 5) (Finset (Fin 5)) :=
-  fun _ s i ↦ i ∈ s ∧ d.property D i
+  fun _ s ↦ {i | i ∈ s ∧ d.property D i}
 
 instance (D : Display) (d : Description) (g : Assignment (Fin 5)) (s : Finset (Fin 5)) :
-    DecidablePred (d.restrictor D g s) := fun i ↦
+    DecidablePred (· ∈ d.restrictor D g s) := fun i ↦
   inferInstanceAs (Decidable (i ∈ s ∧ d.property D i))
 
 section Maxim
@@ -294,9 +294,11 @@ theorem overDescribes_rated_lower_exp2 :
 /-- The definite with a description is referentially supported in the display exactly when the
 description observes the maxim of Quantity for some object. -/
 theorem referentiallySupported_iff_exists_observesQuantity (D : Display) (d : Description) :
-    ReferentiallySupported (d.bare.property D) (d.modifier.map (·.property D)) ↔
+    ReferentiallySupported {i | d.bare.property D i}
+      (d.modifier.map fun m ↦ {i | m.property D i}) ↔
       ∃ r, ObservesQuantity D univ r d := by
-  have h (d : Description) (r : Fin 5) : Identifies D univ r d ↔ iota (d.property D) = some r := by
+  have h (d : Description) (r : Fin 5) :
+      Identifies D univ r d ↔ iota {i | d.property D i} = some r := by
     unfold Identifies Description.restrictor
     simp
   rcases d with ⟨k, _ | m⟩
@@ -321,14 +323,14 @@ def Attachment.target : Attachment → Description
 /-- The Referential Model takes *on the towel* as the location in the one-referent display
 (pp. 555–556). -/
 theorem supports_oneReferent_iff {a : Attachment} :
-    ReferentiallySupported (a.target.bare.property oneReferent)
-        (a.target.modifier.map (·.property oneReferent)) ↔ a = .location := by
+    ReferentiallySupported {i | a.target.bare.property oneReferent i}
+        (a.target.modifier.map fun m ↦ {i | m.property oneReferent i}) ↔ a = .location := by
   rw [referentiallySupported_iff_exists_observesQuantity]
   revert a; decide
 
 theorem supports_twoReferent_iff {a : Attachment} :
-    ReferentiallySupported (a.target.bare.property twoReferent)
-        (a.target.modifier.map (·.property twoReferent)) ↔ a = .modifier := by
+    ReferentiallySupported {i | a.target.bare.property twoReferent i}
+        (a.target.modifier.map fun m ↦ {i | m.property twoReferent i}) ↔ a = .modifier := by
   rw [referentiallySupported_iff_exists_observesQuantity]
   revert a; decide
 

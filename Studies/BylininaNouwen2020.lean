@@ -80,7 +80,7 @@ def MANY (d : ℕ) : Set (Finset α) := Finset.card ⁻¹' {d}
 theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.rfl
 
 /-- `CARD P` is the number of atoms every plurality in `P` has, `ιd. ∀x[P(x) → #x = d]` ((24)). -/
-noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota fun d ↦ ∀ x ∈ P, x.card = d
+noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota {d | ∀ x ∈ P, x.card = d}
 
 -- (25)
 theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
@@ -136,20 +136,20 @@ end Scope
 entity ((48)–(50)), and send it where they send the lower-bound quantifier. -/
 
 -- (49)
-theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
-  funext fun x ↦ propext (maxIn_singleton.trans
+theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = {n} :=
+  Set.ext fun x ↦ (maxIn_singleton.trans
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
 
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
-  rw [BE_maxIn_singleton, BE_individual]; rfl
+  rw [BE_maxIn_singleton, BE_individual]
 
 -- (50), (48)
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
   rw [BE_maxIn_singleton_eq_BE_individual]; exact iota_BE_individual n
 
 theorem maxIn_singleton_injective : Function.Injective fun n : ℕ ↦ MaxIn {n} :=
-  fun a b (h : MaxIn {a} = MaxIn {b}) ↦
-    ident_injective (by rw [← BE_maxIn_singleton, ← BE_maxIn_singleton, h])
+  fun a b (h : MaxIn {a} = MaxIn {b}) ↦ Set.singleton_injective <|
+    (BE_maxIn_singleton a).symm.trans <| (congrArg BE h).trans (BE_maxIn_singleton b)
 
 /-! ### The survey's proposal
 

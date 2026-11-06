@@ -154,13 +154,13 @@ theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14
 
 -- (31b)
 theorem that_eq (s : Setoid E) (a : E) :
-    iota (fun y ↦ y ∈ s.classes ∧ a ∈ y) = some {x | s x a} :=
+    iota {y ∈ s.classes | a ∈ y} = some {x | s x a} :=
   (iota_eq_some_iff _).2 ⟨⟨s.mem_classes a, s.refl' a⟩,
     fun _ hy ↦ (Setoid.classes_eqv_classes a).unique hy ⟨s.mem_classes a, s.refl' a⟩⟩
 
 -- (32b)
 theorem the_kind_eq_none (s : Setoid E) {a b : E} (h : ¬ s a b) :
-    iota (· ∈ s.classes) = none :=
+    iota s.classes = none :=
   (iota_eq_none_iff _).2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
     ⟨y, hy, hu _ (s.mem_classes a) ▸ s.refl' a, hu _ (s.mem_classes b) ▸ s.refl' b⟩
 
@@ -180,20 +180,20 @@ def kappaPlus (s : Setoid E) (P : Set E) : Set (Set E) := {y ∈ s.classes | P �
 /-- When every instance of the restrictor shares the cell of `a ∈ P`, the definite over
 κ+ refers to that cell (36). -/
 theorem the_kappaPlus_eq_some (s : Setoid E) {P : Set E} {a : E} (ha : a ∈ P)
-    (hP : ∀ x ∈ P, s x a) : iota (· ∈ kappaPlus s P) = some {x | s x a} :=
+    (hP : ∀ x ∈ P, s x a) : iota (kappaPlus s P) = some {x | s x a} :=
   (iota_eq_some_iff _).2 ⟨⟨s.mem_classes a, hP⟩, fun _ ⟨hy, hPy⟩ ↦
     Setoid.eq_of_mem_classes hy (hPy ha) (s.mem_classes a) (s.refl' a)⟩
 
 /-- When two instances of the restrictor lie in different cells, no cell contains them both and
 the definite fails (p. 604). -/
 theorem the_kappaPlus_eq_none (s : Setoid E) {P : Set E} {a b : E} (ha : a ∈ P) (hb : b ∈ P)
-    (h : ¬ s a b) : iota (· ∈ kappaPlus s P) = none :=
+    (h : ¬ s a b) : iota (kappaPlus s P) = none :=
   (iota_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
     h (s.rel_iff_exists_classes.2 ⟨y, hy, hPy ha, hPy hb⟩)
 
 -- (36), (37), footnote 11
 theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
-    iota (· ∈ kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
+    iota (kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
   the_kappaPlus_eq_some _ rfl fun _ h ↦ h
 
 /-- Subspecies of lion. -/
@@ -216,13 +216,13 @@ def eatPeople : Set Lion := Lion.diet ⁻¹' {.people}
 
 -- p. 604
 theorem the_kappaPlus_subspecies :
-    iota (· ∈ kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = none :=
+    iota (kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = none :=
   the_kappaPlus_eq_none _ (a := ⟨.african, .people, 0⟩) (b := ⟨.asiatic, .people, 0⟩) rfl rfl
     (by simp [Setoid.ker_def])
 
 -- (37)
 theorem the_kappaPlus_diet :
-    iota (· ∈ kappaPlus (Setoid.ker Lion.diet) eatPeople) = some eatPeople :=
+    iota (kappaPlus (Setoid.ker Lion.diet) eatPeople) = some eatPeople :=
   the_kappaPlus_ker Lion.diet ⟨.african, .people, 0⟩
 
 /-! ### Amounts (§4.3) -/
@@ -231,7 +231,7 @@ theorem the_kappaPlus_diet :
 exactly as A as `a` ((57)–(59), §4.3, p. 617). -/
 theorem amount_reading [Preorder E] {P : Set E} {a : E} (ha : a ∈ P)
     (hP : ∀ x ∈ P, AntisymmRel (· ≤ ·) x a) :
-    iota (· ∈ kappaPlus (AntisymmRel.setoid E (· ≤ ·)) P) =
+    iota (kappaPlus (AntisymmRel.setoid E (· ≤ ·)) P) =
       some {y | AntisymmRel (· ≤ ·) a y} := by
   rw [the_kappaPlus_eq_some _ ha hP]
   exact congrArg some (Set.ext fun _ ↦ antisymmRel_comm)

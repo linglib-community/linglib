@@ -20,11 +20,11 @@ when some individual is the modified definite's referent and not the bare one's.
 
 @[expose] public section
 
-variable {E : Type*} {N M : E → Prop}
+variable {E : Type*} {N M : Set E}
 
 /-- A definite with head `N` and the intersective modifier `M`, if any, is referentially supported
 when it refers and, if modified, the definite with the bare head does not. -/
-def ReferentiallySupported (N : E → Prop) : Option (E → Prop) → Prop
+def ReferentiallySupported (N : Set E) : Option (Set E) → Prop
   | none => (iota N).isSome
   | some M => (iota (Modifier.intersective M N)).isSome ∧ iota N = none
 

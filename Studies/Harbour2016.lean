@@ -431,7 +431,7 @@ example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toTr
   refine ⟨⟨{0}, ?_, trivial⟩, ?_⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
   · rw [← ne_eq, Option.ne_none_iff_exists']
-    exact ⟨∅, (iota_eq_some_iff (P := fun x : Finset (Fin 2) ↦ True ∧ x = g₀ 0)).2
+    exact ⟨∅, (iota_eq_some_iff {x : Finset (Fin 2) | True ∧ x = g₀ 0}).2
       ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩⟩
 
 /-- With no vicinities, even a demonstrative without a deictic contrast presupposes falsely. -/

@@ -72,10 +72,9 @@ theorem the_iff : the A B ↔ (∃! x, x ∈ A) ∧ A ⊆ B := by
   · rintro ⟨⟨x, hx, huniq⟩, hB⟩
     exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hB hx⟩
 
-theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota (· ∈ A), x ∈ B :=
+theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota A, x ∈ B :=
   exists_congr fun x ↦ and_congr_left' <|
-    (funext_iff.trans <| forall_congr' fun _ ↦ eq_iff_iff.trans Iff.comm).symm.trans
-      (iota_isPartialInv x (· ∈ A)).symm
+    Set.ext_iff.symm.trans <| eq_comm.trans (iota_isPartialInv x A).symm
 
 theorem every_iff_le : every A B ↔ A ≤ B := .rfl
 

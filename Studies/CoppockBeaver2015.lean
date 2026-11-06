@@ -38,7 +38,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
   appendix and is carried here by classical equivalence.
 * The rival entries of Table 1 are classical and noncomputable, since only their
   presupposition profiles are stated. Lowering the individual-denoting Fregean entry by
-  Partee's `ident` reads the undefined individual through `Option`, since the paper's logic
+  Partee's *ident* reads the undefined individual through `Option`, since the paper's logic
   makes identity bivalent even on the undefined individual; Löbner's individual-noun row of
   Table 2 is not of the article's type and is not compared.
 * The appendix's possessive type shift prints the possessor arguments in the opposite order
@@ -356,10 +356,10 @@ noncomputable def be (G : (E → SignType) → SignType) : E → SignType :=
   fun x ↦ G (fun y ↦ ofProp (y = x))
 
 open Classical in
-/-- Partee's `ident` applied to the individual-denoting Fregean entry yields the property of
+/-- Partee's *ident* applied to the individual-denoting Fregean entry yields the property of
 being the unique `P`, undefined when there is none (Table 2). -/
 noncomputable def identIota (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ (_root_.iota (P · = 1)).elim 0 fun j ↦ ofProp (x = j)
+  fun x ↦ (_root_.iota {y | P y = 1}).elim 0 fun j ↦ ofProp (x = j)
 
 theorem presupposesUniqueness_the [DecidablePred (WeakUnique (E := E))] :
     PresupposesUniqueness (the (E := E)) :=
@@ -413,8 +413,9 @@ theorem presupposesExistence_be_theFregeanGQ :
 theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
     identIota P x ≠ 0 ↔ ∃! y, P y = 1 := by
   classical
-  rw [identIota, ← _root_.iota_isSome_iff]
-  cases _root_.iota (P · = 1) <;> simp
+  refine Iff.trans ?_ (_root_.iota_isSome_iff {y | P y = 1})
+  rw [identIota]
+  cases _root_.iota {y | P y = 1} <;> simp
 
 -- Table 2
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
@@ -530,7 +531,7 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84) returns the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : (E → SignType)) : Option E := _root_.iota (P · = 1)
+noncomputable def iota (P : (E → SignType)) : Option E := _root_.iota {x | P x = 1}
 
 theorem iota_isSome_iff (P : (E → SignType)) : (iota P).isSome ↔ ∃! x, P x = 1 :=
   _root_.iota_isSome_iff _
