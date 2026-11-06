@@ -1,18 +1,24 @@
 /-
 Copyright (c) 2026 Patrick Elliott. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Patrick Elliott
+Authors: Patrick Elliott, Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Presupposition.UniversalInference
+public import Linglib.Logic.Trivalent.UniversalInference
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.NumberTree
+public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 
 /-!
-# George (2014): the taxonomy of universal inferences
+# George (2014): Some remarks on certain trivalent accounts of presupposition projection
 
-Under Peters-Kleene deployment *every student has stopped smoking* [entails that every student has
+George relates trivalent accounts of presupposition projection to Heim's dynamic one, and derives
+Peters' Middle Kleene connectives, answering Schlenker's explanatory challenge, by deploying
+classical truth functions one argument at a time. Deployed on a quantifier, *every student has
+stopped smoking* [entails that every student has
 smoked](##George2014.Det.every_universalEntailment) without [presupposing
 it](##George2014.Det.not_every_universalAntiEntailment). A quantity-invariant quantifier has a
 universal entailment when it is [true of no two consecutive
@@ -24,11 +30,14 @@ things*](##George2014.UniversalPresupposition.eq_even_or_eq_odd).
 
 ## Implementation notes
 
-Deployment is `Linglib.Logic.Trivalent.Deployment`, and the single-step characterization of
-universal inferences `Linglib.Semantics.Presupposition.UniversalInference`. George states his
-results for quantity-invariant quantifiers and conservative ones on a finite non-empty universe. The
-monotone remarks here need neither quantity invariance nor finiteness, and the parity remarks need
-finiteness but not quantity invariance.
+The update map from trivalent propositions to Heim's updates is in
+`Linglib.Semantics.Dynamic.Partial`, deployment and the connectives it derives in
+`Linglib.Logic.Trivalent.Deployment`, and the single-step characterization of universal inferences
+in `Linglib.Logic.Trivalent.UniversalInference`. George states his results for quantity-invariant
+quantifiers and conservative ones on a finite non-empty universe. The monotone remarks here need
+neither quantity invariance nor finiteness, and the parity remarks need finiteness but not quantity
+invariance. The reading of universal entailments and presuppositions on the Hasse diagram of
+`Set α` is not George's, who argues by counting.
 
 ## Errata
 
@@ -37,6 +46,8 @@ says *perm-quantifier* for *pc-determiner*. Propositions 5 and 7 say `Q` for `D`
 
 ## TODO
 
+* Integrate George's isomorphism between Heim's updates and trivalent propositions, already
+  formalized as `CCP.Partial.ofTrivalentEquiv` in `Linglib.Semantics.Dynamic.Partial`.
 * George's comparison with the experiments of Chemla, importing `Chemla2009a`: deployment derives
   entailments for *exactly three* (note 26), where Chemla finds rates like those of the
   existentials.
@@ -51,7 +62,8 @@ says *perm-quantifier* for *pc-determiner*. Propositions 5 and 7 say `Q` for `D`
 
 namespace George2014
 
-open Quantifier Quantifier.Det Trivalent SignType
+open Quantifier Quantifier.Det SignType SimpleGraph
+open Trivalent hiding UniversalEntailment UniversalAntiEntailment UniversalPresupposition
 
 variable {α : Type*} {Q : Quantifier α}
 
@@ -60,12 +72,12 @@ variable {α : Type*} {Q : Quantifier α}
 /-- A quantifier has a universal entailment when its deployment on a trivalent predicate is true
 only if the predicate is defined everywhere (Definition 20). -/
 def UniversalEntailment (Q : Quantifier α) : Prop :=
-  Presupposition.UniversalEntailment Set.univ (deployQuantifier Q)
+  Trivalent.UniversalEntailment Set.univ (deployQuantifier Q)
 
 /-- A quantifier has a universal anti-entailment when its deployment on a trivalent predicate is
 false only if the predicate is defined everywhere (Definition 21). -/
 def UniversalAntiEntailment (Q : Quantifier α) : Prop :=
-  Presupposition.UniversalAntiEntailment Set.univ (deployQuantifier Q)
+  Trivalent.UniversalAntiEntailment Set.univ (deployQuantifier Q)
 
 /-- A quantifier has a universal presupposition when it has a universal entailment and a universal
 anti-entailment (Definition 22). -/
@@ -74,18 +86,18 @@ def UniversalPresupposition (Q : Quantifier α) : Prop :=
 
 theorem universalEntailment_iff :
     UniversalEntailment Q ↔ ∀ B a, a ∉ B → ¬ (Q B ∧ Q (insert a B)) :=
-  (Presupposition.universalEntailment_deployQuantifier_iff (R := Set.univ)).trans (by simp)
+  (Trivalent.universalEntailment_deployQuantifier_iff (R := Set.univ)).trans (by simp)
 
 theorem universalAntiEntailment_iff :
     UniversalAntiEntailment Q ↔ ∀ B a, a ∉ B → ¬ (¬ Q B ∧ ¬ Q (insert a B)) :=
-  (Presupposition.universalAntiEntailment_deployQuantifier_iff (R := Set.univ)).trans (by simp)
+  (Trivalent.universalAntiEntailment_deployQuantifier_iff (R := Set.univ)).trans (by simp)
 
 theorem universalAntiEntailment_iff_compl : UniversalAntiEntailment Q ↔ UniversalEntailment Qᶜ :=
-  Presupposition.universalAntiEntailment_deployQuantifier_iff_compl
+  Trivalent.universalAntiEntailment_deployQuantifier_iff_compl
 
 theorem universalPresupposition_iff :
     UniversalPresupposition Q ↔ ∀ B a, a ∉ B → (Q (insert a B) ↔ ¬ Q B) :=
-  (Presupposition.universalPresupposition_deployQuantifier_iff (R := Set.univ)).trans (by simp)
+  (Trivalent.universalPresupposition_deployQuantifier_iff (R := Set.univ)).trans (by simp)
 
 /-! ### Counting: Propositions 4 and 6 -/
 
@@ -180,6 +192,41 @@ theorem UniversalPresupposition.eq_even_or_eq_odd [Finite α] (h : UniversalPres
   · exact .inl (funext fun B ↦ propext (by rw [key B]; tauto))
   · exact .inr (funext fun B ↦ propext (by rw [key B, ← Nat.not_even_iff_odd]; tauto))
 
+/-! ### The Hasse diagram of `Set α` -/
+
+-- Not George's: Definition 20 as independence in the Hasse diagram of `Set α`
+theorem universalEntailment_iff_isIndepSet :
+    UniversalEntailment Q ↔ (hasse (Set α)).IsIndepSet Q := by
+  rw [universalEntailment_iff]
+  constructor
+  · intro h B hB C hC _ hadj
+    rcases hasse_adj.1 hadj with e | e
+    · obtain ⟨a, ha, rfl⟩ := Set.covBy_iff_exists_insert.1 e
+      exact h B a ha ⟨hB, hC⟩
+    · obtain ⟨a, ha, rfl⟩ := Set.covBy_iff_exists_insert.1 e
+      exact h C a ha ⟨hC, hB⟩
+  · rintro h B a ha ⟨hB, hC⟩
+    have e := Set.covBy_insert ha
+    exact h hB hC e.ne (hasse_adj.2 (.inl e))
+
+-- Not George's: Definition 22 as a proper 2-colouring of the Hasse diagram of `Set α`
+theorem universalPresupposition_iff_exists_coloring :
+    UniversalPresupposition Q ↔ ∃ c : (hasse (Set α)).Coloring Prop, ⇑c = Q := by
+  rw [universalPresupposition_iff]
+  constructor
+  · intro h
+    refine ⟨Coloring.mk Q fun {B C} hadj e ↦ ?_, rfl⟩
+    rcases hasse_adj.1 hadj with e' | e'
+    · obtain ⟨a, ha, rfl⟩ := Set.covBy_iff_exists_insert.1 e'
+      have := h B a ha
+      simp_all
+    · obtain ⟨a, ha, rfl⟩ := Set.covBy_iff_exists_insert.1 e'
+      have := h C a ha
+      simp_all
+  · rintro ⟨c, rfl⟩ B a ha
+    have h := c.valid (hasse_adj.2 (.inl (Set.covBy_insert ha)))
+    by_cases hB : c B <;> by_cases hC : c (insert a B) <;> simp_all
+
 /-! ### Universal inferences of a determiner: Definitions 20–22 -/
 
 namespace Det
@@ -190,13 +237,13 @@ open Classical in
 /-- A determiner has a universal entailment when its deployment with a classical restrictor `R` is
 true only if the nuclear scope is defined throughout `R` (Definition 20). -/
 def UniversalEntailment (d : Det α) : Prop :=
-  ∀ R : Set α, Presupposition.UniversalEntailment R (deployDeterminer d fun a ↦ ofProp (a ∈ R))
+  ∀ R : Set α, Trivalent.UniversalEntailment R (deployDeterminer d fun a ↦ ofProp (a ∈ R))
 
 open Classical in
 /-- A determiner has a universal anti-entailment when its deployment with a classical restrictor `R`
 is false only if the nuclear scope is defined throughout `R` (Definition 21). -/
 def UniversalAntiEntailment (d : Det α) : Prop :=
-  ∀ R : Set α, Presupposition.UniversalAntiEntailment R (deployDeterminer d fun a ↦ ofProp (a ∈ R))
+  ∀ R : Set α, Trivalent.UniversalAntiEntailment R (deployDeterminer d fun a ↦ ofProp (a ∈ R))
 
 /-- A determiner has a universal presupposition when it has a universal entailment and a universal
 anti-entailment (Definition 22). -/
@@ -212,13 +259,13 @@ theorem universalEntailment_iff :
     UniversalEntailment d ↔ ∀ R B, ∀ a ∈ R, a ∉ B → ¬ (d R B ∧ d R (insert a B)) :=
   forall_congr' fun R ↦ by
     rw [deployDeterminer_ofProp_eq]
-    exact Presupposition.universalEntailment_deployQuantifier_iff
+    exact Trivalent.universalEntailment_deployQuantifier_iff
 
 theorem universalAntiEntailment_iff :
     UniversalAntiEntailment d ↔ ∀ R B, ∀ a ∈ R, a ∉ B → ¬ (¬ d R B ∧ ¬ d R (insert a B)) :=
   forall_congr' fun R ↦ by
     rw [deployDeterminer_ofProp_eq]
-    exact Presupposition.universalAntiEntailment_deployQuantifier_iff
+    exact Trivalent.universalAntiEntailment_deployQuantifier_iff
 
 theorem universalAntiEntailment_iff_compl : UniversalAntiEntailment d ↔ UniversalEntailment dᶜ := by
   rw [universalAntiEntailment_iff, universalEntailment_iff]; rfl

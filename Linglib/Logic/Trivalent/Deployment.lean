@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Patrick Elliott. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Patrick Elliott
+Authors: Patrick Elliott, Robert Hawkins
 -/
 module
 
@@ -13,10 +13,11 @@ public import Linglib.Logic.Trivalent.Supervaluation
 # Peters-Kleene deployment
 
 Peters-Kleene deployment applies a classical function to three-valued arguments one at a time, from
-left to right. An argument is replaced by each member of its repair set, and the application goes
-through only if every repair leaves the same function of the remaining arguments. Its one primitive
-is [reduction by a set](##Trivalent.pkReduce), a partial value, so that several arguments are a
-`Part.bind`, and on a last argument reduction [is supervaluation](##Trivalent.ofPart_pkReduce).
+left to right ([george-2014] §3). An argument is replaced by each member of its repair set, and the
+application goes through only if every repair leaves the same function of the remaining arguments.
+Its one primitive is [reduction by a set](##Trivalent.pkReduce), a partial value, so that several
+arguments are a `Part.bind`, and on a last argument reduction [is
+supervaluation](##Trivalent.ofPart_pkReduce).
 Deploying the classical connectives gives [the Middle Kleene tables of
 Peters](##Trivalent.Connectives.middleKleene_eq_deploy), also called the Kleene-Peters tables. The
 repairs of a trivalent predicate are [an interval of sets](##Trivalent.repairs_eq_Icc), got by
@@ -52,7 +53,7 @@ namespace SignType
 /-! ### Repair sets of truth values -/
 
 /-- The repair set of a truth value is the set of its readings at the two standards: `{True}` for
-`1`, `{False}` for `-1`, and both for `0`. -/
+`1`, `{False}` for `-1`, and both for `0` (Definition 14 of [george-2014]). -/
 def repairSet (a : SignType) : Set Prop :=
   Set.range fun d : Trivalent.Designation ↦ d.threshold ≤ a
 
@@ -103,8 +104,9 @@ section Reduce
 
 variable {α γ : Type*} {f : α → γ} {X : Set α} {g : γ}
 
-/-- The Peters-Kleene reduction `f///X` is the one value `f` takes throughout a nonempty `X`. Since
-`f` may be curried, this is reduction of its first argument position. -/
+/-- The Peters-Kleene reduction `f///X` is the one value `f` takes throughout a nonempty `X`
+(Definition 13 of [george-2014]). Since `f` may be curried, this is reduction of its first argument
+position. -/
 noncomputable def pkReduce (f : α → γ) (X : Set α) : Part γ where
   Dom := ∃ g, X.Nonempty ∧ ∀ a ∈ X, f a = g
   get h := h.choose
@@ -149,11 +151,12 @@ section Connectives
 
 variable {f : Prop → Prop} {g : Prop → Prop → Prop} (x y : SignType)
 
-/-- The deployment `f[x]` of a unary truth function. -/
+/-- The deployment `f[x]` of a unary truth function (Definition 15 of [george-2014]). -/
 noncomputable def deploy₁ (f : Prop → Prop) (x : SignType) : SignType :=
   ofPart (pkReduce f x.repairSet)
 
-/-- The deployment `g[x, y]` of a binary truth function, which is `g[x][y]`. -/
+/-- The deployment `g[x, y]` of a binary truth function, which is `g[x][y]` (Definition 15 of
+[george-2014], for two arguments). -/
 noncomputable def deploy₂ (g : Prop → Prop → Prop) (x y : SignType) : SignType :=
   ofPart ((pkReduce g x.repairSet).bind (pkReduce · y.repairSet))
 
@@ -326,22 +329,6 @@ theorem repairs_ofIcc {B C : Set U} (h : B ⊆ C) : repairs (ofIcc B C) = Set.Ic
     · by_cases hc : u ∈ C <;> simp [ofIcc, hu, hc]
   rw [repairs_eq_Icc, e₁, e₂]
 
-/-- Over a domain `R`, a property of sets that holds of the repairs of a trivalent predicate only
-when the predicate is defined throughout `R` is one that never holds of both a set and the set with
-one more element of `R`. -/
-theorem forall_repairs_imp_iff (P : Set U → Prop) (R : Set U) :
-    (∀ A : U → SignType, (∀ X ∈ repairs A, P X) → ∀ a ∈ R, A a ≠ 0) ↔
-      ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
-  constructor
-  · rintro h B a haR haB ⟨hB, hC⟩
-    refine h (ofIcc B (insert a B)) (fun X hX ↦ ?_) a haR (by simp [ofIcc, haB])
-    rw [repairs_ofIcc (Set.subset_insert a B)] at hX
-    rcases (Set.covBy_insert haB).eq_or_eq hX.1 hX.2 with rfl | rfl <;> assumption
-  · intro h A hA a haR ha0
-    rw [repairs_eq_Icc] at hA
-    exact h (posSupport A) a haR (by simp [ha0]) ⟨hA _ ⟨le_rfl, posSupport_subset A⟩,
-      hA _ ⟨Set.subset_insert _ _, Set.insert_subset (by simp [ha0]) (posSupport_subset A)⟩⟩
-
 /-! ### Deployed quantifiers -/
 
 variable {Q : Set U → Prop}
@@ -383,7 +370,8 @@ theorem deployQuantifier_of_antitone (hQ : Antitone Q) (A : U → SignType) :
     [Decidable (Q R)] : deployQuantifier Q (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R) := by
   simp [deployQuantifier, repairs_ofProp]
 
--- Definition 16 of [george-2014]
+/-- Deploying `∀`, the quantifier true only of `Set.univ` (Definition 16 of [george-2014]), gives
+the Strong Kleene universal, as George computes in §4.1. -/
 theorem deployQuantifier_eq_forallStrong (A : U → SignType) :
     deployQuantifier (· = Set.univ) A = forallStrong A := by
   rw [deployQuantifier_eq_supervaluationOn, repairs_eq_Icc]
@@ -397,7 +385,8 @@ theorem deployQuantifier_eq_forallStrong (A : U → SignType) :
     obtain ⟨u, hu⟩ := (Set.ne_univ_iff_exists_notMem _).1 (h _ ⟨posSupport_subset A, le_rfl⟩)
     exact ⟨u, mem_negSupport.1 (not_not.1 hu)⟩
 
--- Definition 17 of [george-2014]
+/-- Deploying `∃`, the quantifier true of the nonempty sets (Definition 17 of [george-2014]),
+gives the Strong Kleene existential, by the computation George calls analogous in §4.1. -/
 theorem deployQuantifier_eq_existsStrong (A : U → SignType) :
     deployQuantifier Set.Nonempty A = existsStrong A := by
   rw [deployQuantifier_eq_supervaluationOn, repairs_eq_Icc]
