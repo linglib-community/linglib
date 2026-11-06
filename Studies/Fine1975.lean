@@ -3,7 +3,8 @@ module
 public import Mathlib.Order.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Fintype.Basic
-public import Linglib.Logic.Trivalent.Flat
+public import Linglib.Core.Order.Flat
+public import Linglib.Logic.Trivalent.Knowledge
 public import Linglib.Logic.Trivalent.Propositional
 
 /-!
@@ -12,8 +13,8 @@ public import Linglib.Logic.Trivalent.Propositional
 Fine argues for the super-truth theory of vagueness. §1 treats Indefinite as a third truth-value: a
 partial specification assigns True, False or Indefinite to the atomic sentences, and a
 truth-functional valuation is constrained by Fidelity — classical on definite values — and Stability
-— definite values preserved under extension (the knowledge order `SignType.toFlat`). Those two
-conditions fix negation (`neg_eq_of_faithful_stable`) and leave a commutative conjunction exactly
+— definite values preserved under extension (the knowledge order `≤ₖ`). Those two
+conditions fix negation (`compl_eq_of_faithful_stable`) and leave a commutative conjunction exactly
 the minimizing and maximizing options of Kleene's weak and strong tables
 (`conj_eq_inf_or_meetWeak`). Yet no truth-functional account respects penumbral connection: with the
 blob on the border of pink and red, *pink and red* is false while *pink and pink* is indefinite,
@@ -23,7 +24,7 @@ extension, complete points to which every point extends (Completability), and su
 as truth at all its complete extensions (`SuperTrue`), which satisfies Fidelity and Stability
 (`superTrue_iff_of_isMax`, `SuperTrue.mono`); the partial points are recovered from the complete
 ones as the sets of their completions, extension becoming inclusion (`completions`,
-`completions_mono`), and super-truth at a point is `SignType.supervaluation` over its completions
+`completions_mono`), and super-truth at a point is `Trivalent.supervaluation` over its completions
 (`superTrue_completions`). §3 argues that the theory is forced: an account satisfying Fidelity,
 Stability and Resolution is the super-truth account (`Account.eq_superTruth_of_resolves`), and the
 A-clauses — Resolution for atoms, the classical clauses for negation, and for conjunction the truth
@@ -58,7 +59,7 @@ to Kamp and to Lewis.
   space is a `Finset` of complete specifications, more precise spaces being smaller sets.
 * Partial specifications are `Atom → Flat Bool` with the pointwise knowledge order, so that
   extension is the order of `Flat`; they instantiate the class (`isMax_iff`). Connectives are
-  evaluated on `SignType`, whose strong Kleene tables are the maximizing account and
+  evaluated on `Trivalent`, whose strong Kleene tables are the maximizing account and
   `meetWeak` the minimizing one; its logic with True designated (`Trivalent.k3_no_tautologies`)
   has no valid formulas, as §4 observes.
 * The examples are Fine's: *bald* over hair counts with the admissible thresholds 40 to 60 of
@@ -83,7 +84,7 @@ to Kamp and to Lewis.
 
 namespace Fine1975
 
-open SignType
+open Bilattice Trivalent
 open Trivalent (Formula)
 
 /-! ### The truth-value approach (§1) -/
@@ -91,54 +92,55 @@ open Trivalent (Formula)
 section TruthValue
 
 /-- A connective satisfies Fidelity when it is classical on definite values. -/
-def Faithful (f : SignType → SignType → SignType) (g : Bool → Bool → Bool) : Prop :=
+def Faithful (f : Trivalent → Trivalent → Trivalent) (g : Bool → Bool → Bool) : Prop :=
   ∀ x y : Bool, f (ofProp x) (ofProp y) = ofProp (g x y)
 
 /-- A connective satisfies Stability when it preserves definite values as its arguments are
 extended, that is, when it is monotone in the knowledge order. -/
-def Stable (f : SignType → SignType → SignType) : Prop :=
-  ∀ a a' b b', toFlat a ≤ toFlat a' → toFlat b ≤ toFlat b' → toFlat (f a b) ≤ toFlat (f a' b')
+def Stable (f : Trivalent → Trivalent → Trivalent) : Prop :=
+  ∀ a a' b b', a ≤ₖ a' → b ≤ₖ b' → f a b ≤ₖ f a' b'
 
-private theorem eq_zero_of_le (v : SignType) (h₁ : toFlat v ≤ toFlat 1)
-    (h₂ : toFlat v ≤ toFlat (-1)) : v = 0 := by
+private theorem eq_undefined_of_kLE (v : Trivalent) (h₁ : v ≤ₖ .true) (h₂ : v ≤ₖ .false) :
+    v = .undefined := by
   cases v <;> revert h₁ h₂ <;> decide
 
-theorem neg_eq_of_faithful_stable (n : SignType → SignType)
+theorem compl_eq_of_faithful_stable (n : Trivalent → Trivalent)
     (hF : ∀ x : Bool, n (ofProp x) = ofProp (!x))
-    (hS : ∀ a a', toFlat a ≤ toFlat a' → toFlat (n a) ≤ toFlat (n a')) : n = Neg.neg := by
-  have hT : n 1 = -1 := hF Bool.true
-  have hFa : n (-1) = 1 := hF Bool.false
+    (hS : ∀ a a', a ≤ₖ a' → n a ≤ₖ n a') : n = compl := by
+  have hT : n .true = .false := hF Bool.true
+  have hFa : n .false = .true := hF Bool.false
   funext a
   cases a
-  · exact eq_zero_of_le _ (hFa ▸ hS 0 (-1) bot_le) (hT ▸ hS 0 1 bot_le)
   · exact hFa
+  · exact eq_undefined_of_kLE _ (hFa ▸ hS .undefined .false (undefined_kLE _))
+      (hT ▸ hS .undefined .true (undefined_kLE _))
   · exact hT
 
-theorem conj_eq_inf_or_meetWeak (f : SignType → SignType → SignType) (hF : Faithful f (· && ·))
+theorem conj_eq_inf_or_meetWeak (f : Trivalent → Trivalent → Trivalent) (hF : Faithful f (· && ·))
     (hS : Stable f) (hC : ∀ a b, f a b = f b a) : f = (· ⊓ ·) ∨ f = meetWeak := by
-  have hTT : f 1 1 = 1 := hF Bool.true Bool.true
-  have hTF : f 1 (-1) = -1 := hF Bool.true Bool.false
-  have hFT : f (-1) 1 = -1 := hF Bool.false Bool.true
-  have hFF : f (-1) (-1) = -1 := hF Bool.false Bool.false
-  have hIT : f 0 1 = 0 := eq_zero_of_le _
-    (by simpa only [hTT] using hS 0 1 1 1 bot_le le_rfl)
-    (by simpa only [hFT] using hS 0 (-1) 1 1 bot_le le_rfl)
-  have hII : f 0 0 = 0 := eq_zero_of_le _
-    (by simpa only [hTT] using hS 0 1 0 1 bot_le bot_le)
-    (by simpa only [hFF] using hS 0 (-1) 0 (-1) bot_le bot_le)
-  have hIF : f 0 (-1) ≠ 1 := fun h ↦ by
-    have := hS 0 1 (-1) (-1) bot_le le_rfl
+  have hTT : f .true .true = .true := hF Bool.true Bool.true
+  have hTF : f .true .false = .false := hF Bool.true Bool.false
+  have hFT : f .false .true = .false := hF Bool.false Bool.true
+  have hFF : f .false .false = .false := hF Bool.false Bool.false
+  have hIT : f .undefined .true = .undefined := eq_undefined_of_kLE _
+    (by simpa only [hTT] using hS _ .true _ _ (undefined_kLE _) (kLE_refl .true))
+    (by simpa only [hFT] using hS _ .false _ _ (undefined_kLE _) (kLE_refl .true))
+  have hII : f .undefined .undefined = .undefined := eq_undefined_of_kLE _
+    (by simpa only [hTT] using hS _ .true _ .true (undefined_kLE _) (undefined_kLE _))
+    (by simpa only [hFF] using hS _ .false _ .false (undefined_kLE _) (undefined_kLE _))
+  have hIF : f .undefined .false ≠ .true := fun h ↦ by
+    have := hS _ .true _ _ (undefined_kLE _) (kLE_refl .false)
     rw [h, hTF] at this
     exact absurd this (by decide)
-  obtain h | h | h := (f 0 (-1)).trichotomy
+  obtain h | h | h := (f .undefined .false).trichotomy
   · left
     funext a b
-    cases a <;> cases b <;> simp only [zero_eq_zero, neg_eq_neg_one, pos_eq_one, hTT, hTF, hFT,
-      hFF, hIT, hII, h, hC 1 0, hC (-1) 0] <;> decide
+    cases a <;> cases b <;> simp only [hTT, hTF, hFT, hFF, hIT, hII, h, hC .true .undefined,
+      hC .false .undefined] <;> decide
   · right
     funext a b
-    cases a <;> cases b <;> simp only [zero_eq_zero, neg_eq_neg_one, pos_eq_one, hTT, hTF, hFT,
-      hFF, hIT, hII, h, hC 1 0, hC (-1) 0] <;> decide
+    cases a <;> cases b <;> simp only [hTT, hTF, hFT, hFF, hIT, hII, h, hC .true .undefined,
+      hC .false .undefined] <;> decide
   · exact absurd h hIF
 
 /-! The blob on the border of pink and red (§1, §3): a colour boundary between hue 3 and hue 7
@@ -153,27 +155,27 @@ abbrev pink (hue θ : ℕ) : Prop := θ < hue
 /-- *x is red* when its hue is at or below the boundary. -/
 abbrev red (hue θ : ℕ) : Prop := hue ≤ θ
 
-theorem pink_indet : supervaluation colour (pink 5) = 0 := by decide
+theorem pink_indet : supervaluation colour (pink 5) = .undefined := by decide
 
-theorem red_indet : supervaluation colour (red 5) = 0 := by decide
+theorem red_indet : supervaluation colour (red 5) = .undefined := by decide
 
-theorem pink_and_red_false : supervaluation colour (fun θ ↦ pink 5 θ ∧ red 5 θ) = -1 := by
+theorem pink_and_red_false : supervaluation colour (fun θ ↦ pink 5 θ ∧ red 5 θ) = .false := by
   decide
 
-theorem pink_or_red_true : supervaluation colour (fun θ ↦ pink 5 θ ∨ red 5 θ) = 1 := by decide
+theorem pink_or_red_true : supervaluation colour (fun θ ↦ pink 5 θ ∨ red 5 θ) = .true := by decide
 
-theorem pink_imp_not_red_true : supervaluation colour (fun θ ↦ pink 5 θ → ¬ red 5 θ) = 1 := by
+theorem pink_imp_not_red_true : supervaluation colour (fun θ ↦ pink 5 θ → ¬ red 5 θ) = .true := by
   decide
 
 theorem pink_imp_not_pink_indet :
-    supervaluation colour (fun θ ↦ pink 5 θ → ¬ pink 5 θ) = 0 := by decide
+    supervaluation colour (fun θ ↦ pink 5 θ → ¬ pink 5 θ) = .undefined := by decide
 
 theorem maximal_pink_and_red :
-    supervaluation colour (pink 5) ⊓ supervaluation colour (red 5) = 0 := by
+    supervaluation colour (pink 5) ⊓ supervaluation colour (red 5) = .undefined := by
   decide
 
 theorem conj_not_truthFunctional :
-    ¬ ∃ f : SignType → SignType → SignType, ∀ (P Q : ℕ → Prop) [DecidablePred P]
+    ¬ ∃ f : Trivalent → Trivalent → Trivalent, ∀ (P Q : ℕ → Prop) [DecidablePred P]
       [DecidablePred Q], supervaluation colour (fun θ ↦ P θ ∧ Q θ) = f (supervaluation colour P)
         (supervaluation colour Q) := by
   rintro ⟨f, hf⟩
@@ -184,7 +186,7 @@ theorem conj_not_truthFunctional :
   exact absurd h₁ (by decide)
 
 theorem disj_not_truthFunctional :
-    ¬ ∃ f : SignType → SignType → SignType, ∀ (P Q : ℕ → Prop) [DecidablePred P]
+    ¬ ∃ f : Trivalent → Trivalent → Trivalent, ∀ (P Q : ℕ → Prop) [DecidablePred P]
       [DecidablePred Q], supervaluation colour (fun θ ↦ P θ ∨ Q θ) = f (supervaluation colour P)
         (supervaluation colour Q) := by
   rintro ⟨f, hf⟩
@@ -263,8 +265,8 @@ theorem completions_nonempty [SpecificationSpace Point] (t : Point) :
   exact ⟨u, by simp [completions, htu, hu]⟩
 
 theorem superTrue_completions [DecidablePred A] :
-    supervaluation (completions t) A = 1 ↔ SuperTrue A t := by
-  rw [supervaluation_eq_one_iff]
+    supervaluation (completions t) A = .true ↔ SuperTrue A t := by
+  rw [supervaluation_eq_true_iff]
   simp [completions, SuperTrue]
 
 theorem completions_mono (htu : t ≤ u) : completions u ⊆ completions t := by
@@ -502,20 +504,20 @@ section Logic
 variable {Spec : Type*} (A B : Spec → Prop) [DecidablePred A] [DecidablePred B]
 
 /-- A sentence is valid when it is super-true in every specification space. -/
-def SuperValid : Prop := ∀ S : Finset Spec, supervaluation S A = 1
+def SuperValid : Prop := ∀ S : Finset Spec, supervaluation S A = .true
 
 /-- `B` is a consequence of `A` when it is super-true in every specification space in which `A`
 is. -/
 def SuperConsequence : Prop :=
-  ∀ S : Finset Spec, supervaluation S A = 1 → supervaluation S B = 1
+  ∀ S : Finset Spec, supervaluation S A = .true → supervaluation S B = .true
 
 theorem superValid_iff_classical : SuperValid A ↔ ∀ s, A s :=
   ⟨fun h s ↦ by simpa using h {s},
-    fun h S ↦ (supervaluation_eq_one_iff ..).2 fun s _ ↦ h s⟩
+    fun h S ↦ (supervaluation_eq_true_iff ..).2 fun s _ ↦ h s⟩
 
 theorem superConsequence_iff_classical : SuperConsequence A B ↔ ∀ s, A s → B s := by
   refine ⟨fun h s hA ↦ by simpa using h {s} (by simp [hA]), fun h S hA ↦ ?_⟩
-  rw [supervaluation_eq_one_iff] at hA ⊢
+  rw [supervaluation_eq_true_iff] at hA ⊢
   exact fun s hs ↦ h s (hA s hs)
 
 end Logic
@@ -529,35 +531,35 @@ def baldness : Finset ℕ := Finset.Icc 40 60
 /-- *A man with `n` hairs is bald* at threshold `θ`. -/
 abbrev bald (n θ : ℕ) : Prop := n < θ
 
-theorem yulBrynner_bald : supervaluation baldness (bald 0) = 1 := by decide
+theorem yulBrynner_bald : supervaluation baldness (bald 0) = .true := by decide
 
-theorem mickJagger_not_bald : supervaluation baldness (bald 100000) = -1 := by decide
+theorem mickJagger_not_bald : supervaluation baldness (bald 100000) = .false := by decide
 
-theorem herbert_indet : supervaluation baldness (bald 50) = 0 := by decide
+theorem herbert_indet : supervaluation baldness (bald 50) = .undefined := by decide
 
-theorem herbert_lem : supervaluation baldness (fun θ ↦ bald 50 θ ∨ ¬ bald 50 θ) = 1 :=
-  (supervaluation_eq_one_iff ..).2 fun _ _ ↦ Decidable.em _
+theorem herbert_lem : supervaluation baldness (fun θ ↦ bald 50 θ ∨ ¬ bald 50 θ) = .true :=
+  (supervaluation_eq_true_iff ..).2 fun _ _ ↦ Decidable.em _
 
 theorem bald_superConsequence {m n : ℕ} (h : m ≤ n) : SuperConsequence (bald n) (bald m) :=
   (superConsequence_iff_classical _ _).2 fun _ hn ↦ lt_of_le_of_lt h hn
 
 theorem tolerance_superFalse :
-    supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = -1 :=
-  (supervaluation_eq_neg_one_iff ..).2 ⟨⟨40, by simp [baldness]⟩, fun θ hθ h ↦ by
+    supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = .false :=
+  (supervaluation_eq_false_iff ..).2 ⟨⟨40, by simp [baldness]⟩, fun θ hθ h ↦ by
     have := Finset.mem_Icc.1 hθ
     exact absurd (h (θ - 1) (by unfold bald; omega)) (by unfold bald; omega)⟩
 
 theorem sorites :
-    supervaluation baldness (bald 0) = 1 ∧
-      supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = -1 ∧
-      supervaluation baldness (bald 1000000) = -1 :=
+    supervaluation baldness (bald 0) = .true ∧
+      supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = .false ∧
+      supervaluation baldness (bald 1000000) = .false :=
   ⟨yulBrynner_bald, tolerance_superFalse, by decide⟩
 
 /-! ### Higher-order vagueness (§5) -/
 
 theorem metaAssert_not_stable :
-    ¬ ∀ a b, toFlat a ≤ toFlat b → toFlat (ofProp (a = 1)) ≤ toFlat (ofProp (b = 1)) :=
-  fun h ↦ absurd (h 0 1 bot_le) (by decide)
+    ¬ ∀ a b : Trivalent, a ≤ₖ b → ofProp (a = .true) ≤ₖ ofProp (b = .true) :=
+  fun h ↦ absurd (h .undefined .true (undefined_kLE _)) (by decide)
 
 section Definitely
 
@@ -581,24 +583,24 @@ variable [DecidablePred A]
 instance : Decidable (definitely A S) := inferInstanceAs (Decidable (∀ s ∈ _, _))
 
 theorem definitely_imp_valid :
-    supervaluation S (fun s ↦ ¬ definitely A S ∨ A s) = 1 :=
-  (supervaluation_eq_one_iff ..).2 fun s hs ↦
+    supervaluation S (fun s ↦ ¬ definitely A S ∨ A s) = .true :=
+  (supervaluation_eq_true_iff ..).2 fun s hs ↦
     (Decidable.em (definitely A S)).symm.imp_right (· s hs)
 
-theorem superTrue_definitely_of_superTrue (h : supervaluation S A = 1) :
-    supervaluation S (fun _ : Spec ↦ definitely A S) = 1 :=
-  (supervaluation_eq_one_iff ..).2 fun _ _ ↦ (supervaluation_eq_one_iff ..).1 h
+theorem superTrue_definitely_of_superTrue (h : supervaluation S A = .true) :
+    supervaluation S (fun _ : Spec ↦ definitely A S) = .true :=
+  (supervaluation_eq_true_iff ..).2 fun _ _ ↦ (supervaluation_eq_true_iff ..).1 h
 
-theorem superTrue_imp_definitely_of_indet (h : supervaluation S A = 0) :
-    supervaluation S (fun s ↦ ¬ A s ∨ definitely A S) = 0 := by
-  have hD : ¬ definitely A S := fun hD ↦ by simp [(supervaluation_eq_one_iff ..).2 hD] at h
+theorem superTrue_imp_definitely_of_indet (h : supervaluation S A = .undefined) :
+    supervaluation S (fun s ↦ ¬ A s ∨ definitely A S) = .undefined := by
+  have hD : ¬ definitely A S := fun hD ↦ by simp [(supervaluation_eq_true_iff ..).2 hD] at h
   simp only [hD, or_false]
-  obtain ⟨⟨s, hs, -⟩, -⟩ := (supervaluation_eq_zero_iff ..).1 h
+  obtain ⟨⟨s, hs, -⟩, -⟩ := (supervaluation_eq_undefined_iff ..).1 h
   rw [supervaluation_not _ ⟨s, hs⟩, h]
   rfl
 
 theorem herbert_not_imp_definitely :
-    supervaluation baldness (fun θ ↦ ¬ bald 50 θ ∨ definitely (bald 50) baldness) ≠ 1 := by
+    supervaluation baldness (fun θ ↦ ¬ bald 50 θ ∨ definitely (bald 50) baldness) ≠ .true := by
   rw [superTrue_imp_definitely_of_indet _ _ herbert_indet]
   decide
 
@@ -606,8 +608,8 @@ theorem herbert_not_imp_definitely :
 once the Deduction Theorem fails. -/
 theorem superConsequence_iff_definitely_imp {B : Spec → Prop} [DecidablePred B] :
     SuperConsequence A B ↔
-      ∀ S : Finset Spec, supervaluation S (fun s ↦ ¬ definitely A S ∨ B s) = 1 := by
-  simp only [SuperConsequence, supervaluation_eq_one_iff]
+      ∀ S : Finset Spec, supervaluation S (fun s ↦ ¬ definitely A S ∨ B s) = .true := by
+  simp only [SuperConsequence, supervaluation_eq_true_iff]
   refine ⟨fun h S s hs ↦ ?_, fun h S hA s hs ↦ (h S s hs).resolve_left (not_not.2 hA)⟩
   by_cases hA : definitely A S
   · exact .inr (h S hA s hs)

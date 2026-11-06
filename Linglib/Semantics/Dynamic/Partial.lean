@@ -43,7 +43,7 @@ connectives are Peters'.
   conditionalised on the first.
 * `CCP.Partial.admits_seq_ofTrivalent`, `CCP.Partial.admits_cond_ofTrivalent`,
   `CCP.Partial.admits_disj_ofTrivalent`: the filtering connectives, derived.
-* `CCP.Partial.ofTrivalent_injective`, `CCP.Partial.ofTrivalent_one`,
+* `CCP.Partial.ofTrivalent_injective`, `CCP.Partial.ofTrivalent_true`,
   `CCP.Partial.ofTrivalent_meetMiddle`, `CCP.Partial.ofTrivalent_diff`,
   `CCP.Partial.ofTrivalent_joinWeak`, `CCP.Partial.ofTrivalent_meetWeak`: the update map is an
   isomorphism of the trivalent operations onto the operations on updates.
@@ -375,7 +375,7 @@ theorem admits_disj_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (
 
 Under `ofTrivalent`, the admittance conditions of the dynamic connectives are exactly the
 definedness conditions of the filtering connectives, Peters' Middle Kleene connectives: both are
-satisfaction in the local contexts (`Presupposition.subset_support_meetMiddle_iff` and its
+satisfaction in the local contexts (`Presupposition.subset_compl_gapExt_meetMiddle_iff` and its
 siblings), so Karttunen filtering is the composition law of partial updates, not a
 stipulation. -/
 
@@ -383,21 +383,21 @@ stipulation. -/
 theorem admits_seq_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ (Trivalent.gapExt fun w ↦ (p w).meetMiddle (q w))ᶜ :=
-  (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
+  (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_meetMiddle_iff.symm
 
 /-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
 it. -/
 theorem admits_cond_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ (Trivalent.gapExt fun w ↦ (p w)ᶜ.joinMiddle (q w))ᶜ :=
-  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
+  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_neg_joinMiddle_iff.symm
 
 /-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
 the ¬φ local context being Karttunen's negative-antecedent filtering. -/
 theorem admits_disj_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ (Trivalent.gapExt fun w ↦ (p w).joinMiddle (q w))ᶜ :=
-  (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_support_joinMiddle_iff.symm
+  (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_joinMiddle_iff.symm
 
 /-! ### The update isomorphism
 
@@ -429,7 +429,7 @@ theorem ofTrivalent_injective :
   · rw [← h₁, ← h₁, h]
 
 /-- The constant truth gives the null update. -/
-@[simp] theorem ofTrivalent_one : ofTrivalent ((fun _ ↦ .true) : W → Trivalent) = PFun.id (Set W) := by
+@[simp] theorem ofTrivalent_true : ofTrivalent ((fun _ ↦ .true) : W → Trivalent) = PFun.id (Set W) := by
   funext s
   exact Part.ext' (iff_of_true (fun w _ ↦ by simp) trivial) fun _ _ ↦ by simp [ofTrivalent]
 
@@ -500,14 +500,14 @@ theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
 ([george-2014], footnote 15). -/
 theorem ofTrivalent_neg (p : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w)ᶜ) = neg (ofTrivalent p) := by
-  rw [neg_eq_diff, ← ofTrivalent_one, ← ofTrivalent_diff]
+  rw [neg_eq_diff, ← ofTrivalent_true, ← ofTrivalent_diff]
   simp only [Pi.one_apply, Trivalent.meetWeak_true_left]
 
 /-- The Heim conditional is Peters' conditional, read off the isomorphic images of
 `ε \ (φ \ (φ; ψ))` ([george-2014], footnote 15). -/
 theorem ofTrivalent_cond (p q : W → Trivalent) :
     ofTrivalent (fun w ↦ ((p w)ᶜ).joinMiddle (q w)) = cond (ofTrivalent p) (ofTrivalent q) := by
-  rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_one,
+  rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_true,
     ← ofTrivalent_diff]
   congr 1; funext w
   generalize p w = a; generalize q w = b
@@ -556,7 +556,7 @@ the toolbox ([george-2014], Corollary 1) and Heim's connectives (Proposition 2).
 
 variable {φ ψ : CCP.Partial W}
 
-theorem isTrivalentisable_id : IsTrivalentisable (PFun.id (Set W)) := ⟨(fun _ ↦ .true), ofTrivalent_one⟩
+theorem isTrivalentisable_id : IsTrivalentisable (PFun.id (Set W)) := ⟨(fun _ ↦ .true), ofTrivalent_true⟩
 
 theorem IsTrivalentisable.seq (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
     IsTrivalentisable (PartialUpdate.seq φ ψ) := by

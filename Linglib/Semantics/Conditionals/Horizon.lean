@@ -21,7 +21,7 @@ horizon, but it is valid wherever the conclusion's presupposition holds.
 
 ## Main results
 
-* `Conditional.exists_mem_of_horizonCounterfactual_eq_one`: a true counterfactual has a
+* `Conditional.exists_mem_of_horizonCounterfactual_eq_true`: a true counterfactual has a
   horizon-world where antecedent and consequent hold together.
 
 ## Implementation notes
@@ -50,23 +50,23 @@ noncomputable def horizonCounterfactual : I → Trivalent :=
 
 variable {horizon p q} {i : I}
 
-@[simp] theorem horizonCounterfactual_eq_zero_iff :
+@[simp] theorem horizonCounterfactual_eq_undefined_iff :
     horizonCounterfactual horizon p q i = .undefined ↔ ¬ (horizon i ∩ p).Nonempty := by
   simp [horizonCounterfactual]
 
-@[simp] theorem horizonCounterfactual_eq_one_iff :
+@[simp] theorem horizonCounterfactual_eq_true_iff :
     horizonCounterfactual horizon p q i = .true ↔ (horizon i ∩ p).Nonempty ∧ horizon i ∩ p ⊆ q := by
   simp [horizonCounterfactual]
 
-@[simp] theorem horizonCounterfactual_eq_neg_one_iff :
+@[simp] theorem horizonCounterfactual_eq_false_iff :
     horizonCounterfactual horizon p q i = .false ↔
       (horizon i ∩ p).Nonempty ∧ ¬ horizon i ∩ p ⊆ q := by
   simp [horizonCounterfactual]
 
 /-- A true counterfactual has a horizon-world where its antecedent and consequent hold together. -/
-theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual horizon p q i = .true) :
+theorem exists_mem_of_horizonCounterfactual_eq_true (h : horizonCounterfactual horizon p q i = .true) :
     ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
-  let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_one_iff.1 h
+  let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_true_iff.1 h
   ⟨w, hw.1, hw.2, hs hw⟩
 
 end Conditional

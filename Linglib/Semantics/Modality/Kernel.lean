@@ -132,25 +132,25 @@ noncomputable def kernelCant : W → Trivalent :=
 
 variable {k φ w}
 
-@[simp] theorem kernelMust_eq_zero_iff : kernelMust k φ w = .undefined ↔ k.directlySettles φ := by
+@[simp] theorem kernelMust_eq_undefined_iff : kernelMust k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMust_eq_one_iff :
+@[simp] theorem kernelMust_eq_true_iff :
     kernelMust k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMust_eq_neg_one_iff :
+@[simp] theorem kernelMust_eq_false_iff :
     kernelMust k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMight_eq_zero_iff : kernelMight k φ w = .undefined ↔ k.directlySettles φ := by
+@[simp] theorem kernelMight_eq_undefined_iff : kernelMight k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMight]
 
-@[simp] theorem kernelMight_eq_one_iff :
+@[simp] theorem kernelMight_eq_true_iff :
     kernelMight k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
   simp [kernelMight]
 
-@[simp] theorem kernelMight_eq_neg_one_iff :
+@[simp] theorem kernelMight_eq_false_iff :
     kernelMight k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
   simp [kernelMight]
 
@@ -172,7 +172,7 @@ theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = (kernelCant k φ)ᶜ 
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
 
-theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ .undefined := by
+theorem kernelMust_empty_ne_undefined : kernelMust ⟨∅⟩ φ w ≠ .undefined := by
   simp [Kernel.directlySettles]
 
 /-! ### Bridge to Kratzer necessity -/

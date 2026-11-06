@@ -109,12 +109,12 @@ noncomputable def Det.toBool (d : Det α) : (α → Bool) → (α → Bool) → 
   rfl
 
 /-- A deployed quantifier is true when it holds of every repair. -/
-theorem deployQuantifier_toBool_eq_one_iff {Q : Quantifier α} {A : α → Trivalent} :
+theorem deployQuantifier_toBool_eq_true_iff {Q : Quantifier α} {A : α → Trivalent} :
     deployQuantifier Q.toBool A = .true ↔ ∀ g ∈ repairs A, Q {a | g a} := by
   simp [deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_true_iff, toBool]
 
 /-- A deployed quantifier is false when it fails of every repair. -/
-theorem deployQuantifier_toBool_eq_neg_one_iff {Q : Quantifier α} {A : α → Trivalent} :
+theorem deployQuantifier_toBool_eq_false_iff {Q : Quantifier α} {A : α → Trivalent} :
     deployQuantifier Q.toBool A = .false ↔ ∀ g ∈ repairs A, ¬ Q {a | g a} := by
   simp [deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_false_iff, toBool,
     repairs_nonempty A]
@@ -145,7 +145,7 @@ theorem universalEntailment_iff :
     Q.UniversalEntailment ↔ ∀ B a, a ∉ B → ¬ (Q B ∧ Q (insert a B)) := by
   have := forall_repairs_imp_iff Q Set.univ
   simp only [Set.mem_univ, forall_const] at this
-  simpa [UniversalEntailment, deployQuantifier_toBool_eq_one_iff] using this
+  simpa [UniversalEntailment, deployQuantifier_toBool_eq_true_iff] using this
 
 /-- A quantifier has a universal anti-entailment when it never fails of both a set and the set
 with one more element. -/
@@ -153,7 +153,7 @@ theorem universalAntiEntailment_iff :
     Q.UniversalAntiEntailment ↔ ∀ B a, a ∉ B → ¬ (¬ Q B ∧ ¬ Q (insert a B)) := by
   have := forall_repairs_imp_iff (fun B ↦ ¬ Q B) Set.univ
   simp only [Set.mem_univ, forall_const] at this
-  simpa [UniversalAntiEntailment, deployQuantifier_toBool_eq_neg_one_iff] using this
+  simpa [UniversalAntiEntailment, deployQuantifier_toBool_eq_false_iff] using this
 
 theorem universalAntiEntailment_iff_compl :
     Q.UniversalAntiEntailment ↔ Qᶜ.UniversalEntailment := by
@@ -305,7 +305,7 @@ one more element of the restrictor. -/
 theorem universalEntailment_iff :
     d.UniversalEntailment ↔ ∀ R B, ∀ a ∈ R, a ∉ B → ¬ (d R B ∧ d R (insert a B)) := by
   rw [← forall_restrictor_iff]
-  simp [UniversalEntailment, deployDeterminer_ofProp_left, deployQuantifier_toBool_eq_one_iff]
+  simp [UniversalEntailment, deployDeterminer_ofProp_left, deployQuantifier_toBool_eq_true_iff]
 
 /-- A determiner has a universal anti-entailment when it never fails of both a scope and the scope
 with one more element of the restrictor. -/
@@ -314,7 +314,7 @@ theorem universalAntiEntailment_iff :
       ∀ R B, ∀ a ∈ R, a ∉ B → ¬ (¬ d R B ∧ ¬ d R (insert a B)) := by
   rw [← forall_restrictor_iff (fun R B ↦ ¬ d R B)]
   simp [UniversalAntiEntailment, deployDeterminer_ofProp_left,
-    deployQuantifier_toBool_eq_neg_one_iff]
+    deployQuantifier_toBool_eq_false_iff]
 
 theorem universalAntiEntailment_iff_compl :
     d.UniversalAntiEntailment ↔ dᶜ.UniversalEntailment := by

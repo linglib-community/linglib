@@ -17,7 +17,7 @@ stronger requirement is unattested; the weaker is the postsupposition Glass give
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profiles of *know* and *think*
 come from the factivity of their fragment entries, whose factive presupposition in the doxastic
-substrate is the requirement of the factive profile (`subset_support_sentence_iff`,
+substrate is the requirement of the factive profile (`subset_compl_gapExt_sentence_iff`,
 `rows_admits`).
 
 ## Implementation notes
@@ -171,9 +171,10 @@ def Profile.ofFactivity : Option Factivity → Profile
 variable {E : Type*} in
 /-- A doxastic predicate's presupposition is admitted iff the requirement of its factivity profile
 holds, Common Ground status for a factive (10). -/
-theorem subset_support_sentence_iff (V : DoxasticPredicate W E) (a : E) :
-    c ⊆ Function.support (V.sentence a p) ↔ (Profile.ofFactivity V.factivity).condition c p := by
-  rw [DoxasticPredicate.support_sentence]
+theorem subset_compl_gapExt_sentence_iff (V : DoxasticPredicate W E) (a : E) :
+    c ⊆ (Trivalent.gapExt (V.sentence a p))ᶜ ↔
+      (Profile.ofFactivity V.factivity).condition c p := by
+  rw [DoxasticPredicate.compl_gapExt_sentence]
   cases V.factivity
   · exact iff_of_true (fun _ _ _ h ↦ nomatch h) trivial
   · exact ⟨fun h w hw ↦ h hw _ rfl, fun h _ hw _ _ ↦ h _ hw⟩

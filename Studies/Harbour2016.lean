@@ -426,8 +426,8 @@ def g₀ : Assignment (Finset (Fin 2)) := fun _ ↦ ∅
 
 /-- *this* resolved with a trivial restrictor is defined and its deictic presupposition holds. -/
 example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toTrivalent
-    (fun _ _ ↦ True) g₀ () ≠ 0 := by
-  rw [Ne, Nominal.toTrivalent_eq_zero_iff, not_imp]
+    (fun _ _ ↦ True) g₀ () ≠ .undefined := by
+  rw [Ne, Nominal.toTrivalent_eq_undefined_iff, not_imp]
   refine ⟨⟨{0}, ?_, trivial⟩, ?_⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
   · rw [← ne_eq, Option.ne_none_iff_exists']

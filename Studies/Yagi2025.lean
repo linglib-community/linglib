@@ -13,9 +13,9 @@ President of Buganda is conducting the ceremony*. Such a disjunction presupposes
 disjunction of the two presuppositions and is false when that holds and both disjuncts are
 false. Four theories fail the second observation. Under Strong Kleene disjunction the sentence
 is true whenever defined, so it is never false and its negation never true
-(`sup_ne_neg_one`, `neg_sup_ne_one`); the symmetric two-dimensional disjunction in the
+(`sup_ne_false`, `neg_sup_ne_true`); the symmetric two-dimensional disjunction in the
 tradition of Karttunen and Peters has a presupposition that entails the assertion
-(`orKPSymmetric_ne_neg_one`), and replacing it by the disjunction of the presuppositions
+(`orKPSymmetric_ne_false`), and replacing it by the disjunction of the presuppositions
 (`orPresupOr`) fixes the case but predicts a tautologous presupposition for *either baldness is
 not hereditary or all of Bill's children are bald* (`orPresupOr_notAtIssue_of_left`); the update
 semantics of Heim and Beaver, with failure as a designated state, is defined only when the
@@ -23,9 +23,9 @@ first disjunct already holds throughout the input, so it is uninformative wherev
 (`mem_disj_iff`); and Schlenker's local contexts admit only worlds where one disjunct is
 true (`local_contexts_force_truth`). Of the two reactions, Beaver and Krahmer's meta-assertion
 operator makes the disjunction false, but also where neither presupposition holds, and leaves it
-presuppositionless (`joinWeak_ofProp_eq_one_eq_neg_one_iff`, `joinWeak_ofProp_eq_one_ne_zero`);
+presuppositionless (`joinWeak_ofProp_eq_true_eq_false_iff`, `joinWeak_ofProp_eq_true_ne_undefined`);
 inserting it on one disjunct under Strong Kleene yields only a conditional presupposition
-(`sup_ofProp_eq_one_ne_zero_iff`).
+(`sup_ofProp_eq_true_ne_undefined_iff`).
 
 Flexible accommodation evaluates each disjunct in the input restricted by an accommodated
 proposition (`flex`). The standard update is the case where the second disjunct's
@@ -46,7 +46,7 @@ where its presupposition fails, so they are two-dimensional meanings
 trivalent propositions. The designated undefined state of the update semantics is the undefined
 value of `Part`, the updates being the substrate's partial context change potentials of trivalent
 propositions. The meta-assertion operator is Bochvar's assertion operator applied pointwise,
-`fun w ↦ SignType.ofProp (φ w = 1)`. The licensing constraint on the operator is not modelled.
+`fun w ↦ Trivalent.ofProp (φ w = 1)`. The licensing constraint on the operator is not modelled.
 The paper's examples are the rows of `Data.Examples.Yagi2025`; (1c) and (4) are modelled by the
 Buganda input and (15a) by the Bill input.
 
@@ -69,23 +69,23 @@ namespace Yagi2025
 
 open DynamicSemantics CCP.Partial ConventionalImplicature
 
-variable {W : Type*} {φ ψ : W → SignType} {p q : TwoDim W (W → Prop)}
+variable {W : Type*} {φ ψ : W → Trivalent} {p q : TwoDim W (W → Prop)}
 
 /-- Two trivalent propositions have conflicting presuppositions when at every world one of them
 is undefined. -/
-def Conflict (φ ψ : W → SignType) : Prop := ∀ w, φ w = 0 ∨ ψ w = 0
+def Conflict (φ ψ : W → Trivalent) : Prop := ∀ w, φ w = .undefined ∨ ψ w = .undefined
 
 /-! ### Strong Kleene and two-dimensional disjunction -/
 
-theorem sup_ne_neg_one (h : Conflict φ ψ) (w : W) : (φ ⊔ ψ) w ≠ -1 := by
+theorem sup_ne_false (h : Conflict φ ψ) (w : W) : (φ ⊔ ψ) w ≠ .false := by
   rcases h w with h | h <;> simp [h]
 
-theorem neg_sup_ne_one (h : Conflict φ ψ) (w : W) : (-(φ ⊔ ψ)) w ≠ 1 := by
-  simpa using sup_ne_neg_one h w
+theorem neg_sup_ne_true (h : Conflict φ ψ) (w : W) : ((φ ⊔ ψ)ᶜ) w ≠ .true := by
+  simpa using sup_ne_false h w
 
-theorem orKPSymmetric_ne_neg_one (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
-    (p.orKPSymmetric q).toTrivalent w ≠ -1 := fun hn ↦ by
-  rw [TwoDim.toTrivalent_eq_neg_one_iff] at hn
+theorem orKPSymmetric_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
+    (p.orKPSymmetric q).toTrivalent w ≠ .false := fun hn ↦ by
+  rw [TwoDim.toTrivalent_eq_false_iff] at hn
   refine hn.2 (TwoDim.orKPSymmetric_atIssue_of_conflict p q (fun ⟨hp, hq⟩ ↦ ?_) hn.1)
   rcases h w with h | h <;> simp_all
 
@@ -94,8 +94,8 @@ presuppositions, (7). -/
 def orPresupOr (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
   ⟨fun w ↦ p.atIssue w ∨ q.atIssue w, fun w ↦ p.notAtIssue w ∨ q.notAtIssue w⟩
 
-theorem orPresupOr_toTrivalent_eq_neg_one_iff (w : W) :
-    (orPresupOr p q).toTrivalent w = -1 ↔
+theorem orPresupOr_toTrivalent_eq_false_iff (w : W) :
+    (orPresupOr p q).toTrivalent w = .false ↔
       (p.notAtIssue w ∨ q.notAtIssue w) ∧ ¬ p.atIssue w ∧ ¬ q.atIssue w := by
   simp [orPresupOr]
 
@@ -107,11 +107,11 @@ theorem orPresupOr_notAtIssue_of_left (h : ∀ w, p.notAtIssue w) (w : W) :
 /-! ### Update semantics with a designated undefined state -/
 
 theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
-    t ∈ disj (ofTrivalent φ) (ofTrivalent ψ) s ↔ (∀ w ∈ s, φ w = 1) ∧ t = s := by
+    t ∈ disj (ofTrivalent φ) (ofTrivalent ψ) s ↔ (∀ w ∈ s, φ w = .true) ∧ t = s := by
   simp only [disj, Part.mem_bind_iff, Part.mem_map_iff, mem_ofTrivalent]
   constructor
   · rintro ⟨a, ⟨hp, rfl⟩, b, ⟨hq, rfl⟩, rfl⟩
-    have hφ : ∀ w ∈ s, φ w = 1 := fun w hw ↦
+    have hφ : ∀ w ∈ s, φ w = .true := fun w hw ↦
       by_contra fun hn ↦ (h w).elim (hp hw) (hq ⟨hw, fun ha ↦ hn ha.2⟩)
     refine ⟨hφ, ?_⟩
     ext w
@@ -128,26 +128,26 @@ theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
 /-! ### Local contexts -/
 
 theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
-    (h₁ : ∀ w ∈ s, φ w ≠ 1 → ψ w ≠ 0) (h₂ : ∀ w ∈ s, ψ w ≠ 1 → φ w ≠ 0) :
-    ∀ w ∈ s, φ w = 1 ∨ ψ w = 1 := fun w hw ↦ by
+    (h₁ : ∀ w ∈ s, φ w ≠ .true → ψ w ≠ .undefined) (h₂ : ∀ w ∈ s, ψ w ≠ .true → φ w ≠ .undefined) :
+    ∀ w ∈ s, φ w = .true ∨ ψ w = .true := fun w hw ↦ by
   by_contra hn
   rw [not_or] at hn
   exact (h w).elim (h₂ w hw hn.2) (h₁ w hw hn.1)
 
 /-! ### The meta-assertion operator -/
 
-theorem joinWeak_ofProp_eq_one_ne_zero (w : W) :
-    (SignType.ofProp (φ w = 1)).joinWeak (SignType.ofProp (ψ w = 1)) ≠ 0 := by
-  simp [SignType.joinWeak_eq_zero_iff]
+theorem joinWeak_ofProp_eq_true_ne_undefined (w : W) :
+    (Trivalent.ofProp (φ w = .true)).joinWeak (Trivalent.ofProp (ψ w = .true)) ≠ .undefined := by
+  simp [Trivalent.joinWeak_eq_undefined_iff]
 
-theorem joinWeak_ofProp_eq_one_eq_neg_one_iff (w : W) :
-    (SignType.ofProp (φ w = 1)).joinWeak (SignType.ofProp (ψ w = 1)) = -1 ↔
-      φ w ≠ 1 ∧ ψ w ≠ 1 := by
-  simp [SignType.joinWeak_eq_neg_one_iff]
+theorem joinWeak_ofProp_eq_true_eq_false_iff (w : W) :
+    (Trivalent.ofProp (φ w = .true)).joinWeak (Trivalent.ofProp (ψ w = .true)) = .false ↔
+      φ w ≠ .true ∧ ψ w ≠ .true := by
+  simp [Trivalent.joinWeak_eq_false_iff]
 
-theorem sup_ofProp_eq_one_ne_zero_iff (w : W) :
-    φ w ⊔ SignType.ofProp (ψ w = 1) ≠ 0 ↔ (ψ w ≠ 1 → φ w ≠ 0) := by
-  by_cases h : ψ w = 1 <;> simp [h]
+theorem sup_ofProp_eq_true_ne_undefined_iff (w : W) :
+    φ w ⊔ Trivalent.ofProp (ψ w = .true) ≠ .undefined ↔ (ψ w ≠ .true → φ w ≠ .undefined) := by
+  by_cases h : ψ w = .true <;> simp [h]
 
 /-! ### Flexible accommodation -/
 
@@ -167,31 +167,31 @@ def Genuine (u φ ψ : CCP.Partial W) (s : Set W) : Prop :=
   (∃ w ∈ s, {w} ∈ φ {w} ∧ ∃ t ∈ u s, w ∈ t) ∧ ∃ w ∈ s, {w} ∈ ψ {w} ∧ ∃ t ∈ u s, w ∈ t
 
 theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
-    flex Set.univ (posSupport φ)ᶜ (ofTrivalent φ) ψ = disj (ofTrivalent φ) ψ := by
+    flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) ψ = disj (ofTrivalent φ) ψ := by
   funext s
   refine Part.ext fun t ↦ ?_
   simp only [flex, disj, Set.inter_univ, Part.mem_bind_iff, mem_ofTrivalent]
   refine exists_congr fun a ↦ and_congr_right fun ⟨_, ha⟩ ↦ ?_
   subst ha
-  rw [show s \ {w ∈ s | φ w = 1} = s ∩ (posSupport φ)ᶜ by
-    ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_compl_iff, mem_posSupport,
+  rw [show s \ {w ∈ s | φ w = .true} = s ∩ (Trivalent.posExt φ)ᶜ by
+    ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_compl_iff, Trivalent.mem_posExt,
       Set.mem_sep_iff]; tauto]
 
 /-- Accommodating the negated first disjunct for the second (15) yields Katzir and Singh's
 conditional presupposition (fn. 6). -/
 theorem admits_flex_univ_iff (s : Set W) :
-    (flex Set.univ (posSupport φ)ᶜ (ofTrivalent φ) (ofTrivalent ψ)).Admits s ↔
-      ∀ w ∈ s, φ w ≠ 0 ∧ (φ w ≠ 1 → ψ w ≠ 0) := by
+    (flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) (ofTrivalent ψ)).Admits s ↔
+      ∀ w ∈ s, φ w ≠ .undefined ∧ (φ w ≠ .true → ψ w ≠ .undefined) := by
   rw [flex_univ_eq_disj, admits_disj_ofTrivalent, Set.subset_def]
   refine forall₂_congr fun w _ ↦ ?_
-  simp only [Function.mem_support, ne_eq, SignType.joinMiddle_eq_zero_iff]
+  simp only [Trivalent.mem_compl_gapExt, ne_eq, Trivalent.joinMiddle_eq_undefined_iff]
   generalize φ w = a; generalize ψ w = b
   cases a <;> cases b <;> decide
 
 theorem mem_flex_univ_univ_iff (s t : Set W) :
     t ∈ flex Set.univ Set.univ (ofTrivalent φ) (ofTrivalent ψ) s ↔
-      (∀ w ∈ s, φ w ≠ 0) ∧ (∀ w ∈ s, ψ w ≠ 0) ∧
-        t = {w ∈ s | φ w = 1} ∪ {w ∈ s | ψ w = 1} := by
+      (∀ w ∈ s, φ w ≠ .undefined) ∧ (∀ w ∈ s, ψ w ≠ .undefined) ∧
+        t = {w ∈ s | φ w = .true} ∪ {w ∈ s | ψ w = .true} := by
   simp only [flex, Set.inter_univ, Part.mem_bind_iff, Part.mem_map_iff, mem_ofTrivalent]
   constructor
   · rintro ⟨_, ⟨hp, rfl⟩, _, ⟨hq, rfl⟩, rfl⟩
@@ -208,7 +208,7 @@ theorem not_admits_flex_univ_univ (h : Conflict φ ψ) {s : Set W} (hs : s.Nonem
 
 /-- When the first disjunct contradicts the second presupposition (15), the update with tautologies
 accommodated is not genuine. -/
-theorem not_genuine_flex_univ_univ (h : ∀ w, φ w = 1 → ψ w = 0) (s : Set W) :
+theorem not_genuine_flex_univ_univ (h : ∀ w, φ w = .true → ψ w = .undefined) (s : Set W) :
     ¬ Genuine (flex Set.univ Set.univ (ofTrivalent φ) (ofTrivalent ψ))
       (ofTrivalent φ) (ofTrivalent ψ) s := by
   rintro ⟨⟨w, hw, hφ, t, ht, -⟩, -⟩
@@ -219,9 +219,9 @@ theorem not_genuine_flex_univ_univ (h : ∀ w, φ w = 1 → ψ w = 0) (s : Set W
 each input world satisfies a presupposition, and keeps the worlds where a disjunct is true. -/
 theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
     t ∈ flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ) (ofTrivalent ψ) s ↔
-      (∀ w ∈ s, φ w ≠ 0 ∨ ψ w ≠ 0) ∧ t = {w ∈ s | φ w = 1 ∨ ψ w = 1} := by
-  have hset : {w ∈ s ∩ Trivalent.gapExt ψ | φ w = 1} ∪ {w ∈ s ∩ Trivalent.gapExt φ | ψ w = 1} =
-      {w ∈ s | φ w = 1 ∨ ψ w = 1} := by
+      (∀ w ∈ s, φ w ≠ .undefined ∨ ψ w ≠ .undefined) ∧ t = {w ∈ s | φ w = .true ∨ ψ w = .true} := by
+  have hset : {w ∈ s ∩ Trivalent.gapExt ψ | φ w = .true} ∪ {w ∈ s ∩ Trivalent.gapExt φ | ψ w = .true} =
+      {w ∈ s | φ w = .true ∨ ψ w = .true} := by
     ext w
     simp only [Set.mem_union, Set.mem_sep_iff, Set.mem_inter_iff, Trivalent.mem_gapExt]
     refine ⟨fun h' ↦ h'.elim (fun ⟨⟨hw, _⟩, ha⟩ ↦ ⟨hw, .inl ha⟩) fun ⟨⟨hw, _⟩, ha⟩ ↦ ⟨hw, .inr ha⟩,
@@ -230,14 +230,14 @@ theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
   simp only [flex, Part.mem_bind_iff, Part.mem_map_iff, mem_ofTrivalent]
   constructor
   · rintro ⟨_, ⟨h₁, rfl⟩, _, ⟨-, rfl⟩, rfl⟩
-    exact ⟨fun w hw ↦ (em (ψ w = 0)).elim (fun hq ↦ .inl (h₁ ⟨hw, hq⟩)) .inr, hset⟩
+    exact ⟨fun w hw ↦ (em (ψ w = .undefined)).elim (fun hq ↦ .inl (h₁ ⟨hw, hq⟩)) .inr, hset⟩
   · rintro ⟨hs, rfl⟩
     exact ⟨_, ⟨fun w hw ↦ (hs w hw.1).resolve_right (not_not.2 hw.2), rfl⟩, _,
       ⟨fun w hw ↦ (hs w hw.1).resolve_left (not_not.2 hw.2), rfl⟩, hset⟩
 
-theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w ≠ 0 ∨ ψ w ≠ 0) :
+theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w ≠ .undefined ∨ ψ w ≠ .undefined) :
     neg (flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ) (ofTrivalent ψ)) s =
-      Part.some {w ∈ s | φ w ≠ 1 ∧ ψ w ≠ 1} := by
+      Part.some {w ∈ s | φ w ≠ .true ∧ ψ w ≠ .true} := by
   rw [CCP.Partial.neg, Part.eq_some_iff, Part.mem_map_iff]
   refine ⟨_, (mem_flex_rival_iff h s _).2 ⟨hs, rfl⟩, ?_⟩
   ext w
@@ -246,8 +246,8 @@ theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w 
 
 /-- At a world where the first disjunct holds and the second presupposition fails, the standard
 update admits the disjunction but accommodating tautologies does not (18). -/
-theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ w ≠ 0)
-    (hf : ∀ w, φ w ≠ 1 → ψ w ≠ 0) {w : W} (hq : ψ w = 0) :
+theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ w ≠ .undefined)
+    (hf : ∀ w, φ w ≠ .true → ψ w ≠ .undefined) {w : W} (hq : ψ w = .undefined) :
     (disj (ofTrivalent φ) (ofTrivalent ψ)).Admits {w} ∧
       ¬ (flex Set.univ Set.univ (ofTrivalent φ) (ofTrivalent ψ)).Admits {w} := by
   refine ⟨?_, fun hd ↦ ((mem_flex_univ_univ_iff _ _).1 (Part.get_mem hd)).2.1 w rfl hq⟩
@@ -261,12 +261,12 @@ not open it, the president conducts the ceremony, and the president does not con
 abbrev Buganda := Fin 4
 
 /-- *The King of Buganda is opening parliament*. -/
-noncomputable def kingOpens : Buganda → SignType :=
-  {w | w < 2}.indicator fun w ↦ SignType.ofProp (w = 0)
+noncomputable def kingOpens : Buganda → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w < 2)) (Trivalent.ofProp (w = 0))
 
 /-- *The President of Buganda is conducting the ceremony*. -/
-noncomputable def presidentConducts : Buganda → SignType :=
-  {w | 2 ≤ w}.indicator fun w ↦ SignType.ofProp (w = 2)
+noncomputable def presidentConducts : Buganda → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (2 ≤ w)) (Trivalent.ofProp (w = 2))
 
 theorem conflict_buganda : Conflict kingOpens presidentConducts := by
   intro w; fin_cases w <;> simp [kingOpens, presidentConducts]
@@ -279,7 +279,7 @@ theorem buganda :
       neg (flex (Trivalent.gapExt presidentConducts) (Trivalent.gapExt kingOpens)
         (ofTrivalent kingOpens) (ofTrivalent presidentConducts)) Set.univ =
         Part.some {1, 3} := by
-  have hs : ∀ w ∈ (Set.univ : Set Buganda), kingOpens w ≠ 0 ∨ presidentConducts w ≠ 0 := by
+  have hs : ∀ w ∈ (Set.univ : Set Buganda), kingOpens w ≠ .undefined ∨ presidentConducts w ≠ .undefined := by
     intro w _; fin_cases w <;> simp [kingOpens, presidentConducts]
   refine ⟨Part.eq_some_iff.2 ((mem_flex_rival_iff conflict_buganda _ _).2 ⟨hs, ?_⟩), ?_⟩
   · ext w
@@ -294,21 +294,21 @@ all bald, or has children who are not all bald. -/
 abbrev Bill := Fin 3
 
 /-- *Bill has no child*. -/
-def noChild : Bill → SignType := fun w ↦ SignType.ofProp (w = 0)
+def noChild : Bill → Trivalent := fun w ↦ Trivalent.ofProp (w = 0)
 
 /-- *All of Bill's children are bald*, presupposing that Bill has children. -/
-noncomputable def allBald : Bill → SignType :=
-  {w | w ≠ 0}.indicator fun w ↦ SignType.ofProp (w = 1)
+noncomputable def allBald : Bill → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ≠ 0)) (Trivalent.ofProp (w = 1))
 
 /-- On the Bill input, accommodating tautologies leaves the update undefined, while accommodating
 the negated first disjunct for the second (15) is defined and genuine. -/
 theorem bill :
     ¬ (flex Set.univ Set.univ (ofTrivalent noChild) (ofTrivalent allBald)).Admits Set.univ ∧
-      {0, 1} ∈ flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
+      {0, 1} ∈ flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
         (ofTrivalent allBald) Set.univ ∧
-      Genuine (flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
+      Genuine (flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
         (ofTrivalent allBald)) (ofTrivalent noChild) (ofTrivalent allBald) Set.univ := by
-  have hd : {0, 1} ∈ flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
+  have hd : {0, 1} ∈ flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
       (ofTrivalent allBald) Set.univ := by
     simp only [flex, Set.inter_univ, Set.univ_inter, Part.mem_bind_iff, Part.mem_map_iff,
       mem_ofTrivalent]

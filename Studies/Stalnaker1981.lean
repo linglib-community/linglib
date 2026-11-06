@@ -144,19 +144,19 @@ abbrev bizetItalian : Set BVWorld := {.bothItalian}
 abbrev verdiFrench : Set BVWorld := {.bothFrench}
 
 theorem bizet_italian_indet :
-    superCounterfactual bvSim compatriots bizetItalian .actual = 0 := by
+    superCounterfactual bvSim compatriots bizetItalian .actual = .undefined := by
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 theorem verdi_french_indet :
-    superCounterfactual bvSim compatriots verdiFrench .actual = 0 := by
+    superCounterfactual bvSim compatriots verdiFrench .actual = .undefined := by
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 theorem bizet_verdi_cem :
     (∀ s : SelectionFunction BVWorld, s.Compatible bvSim →
       .actual ∈ selectionConditional s compatriots bizetItalian ∪
         selectionConditional s compatriots bizetItalianᶜ) ∧
-    superCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
-    superCounterfactual bvSim compatriots bizetItalianᶜ .actual = 0 := by
+    superCounterfactual bvSim compatriots bizetItalian .actual = .undefined ∧
+    superCounterfactual bvSim compatriots bizetItalianᶜ .actual = .undefined := by
   refine ⟨cem_supervaluation bvSim compatriots bizetItalian .actual, bizet_italian_indet, ?_⟩
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
@@ -173,9 +173,9 @@ theorem distribution_fails_bizetverdi :
   ⟨by decide, by decide, by decide⟩
 
 theorem distribution_needs_uniqueness :
-    selectionalCounterfactual bvSim compatriots (bizetItalian ∪ verdiFrench) .actual = 1 ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = 0 :=
+    selectionalCounterfactual bvSim compatriots (bizetItalian ∪ verdiFrench) .actual = .true ∧
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .undefined ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .undefined :=
   ⟨by decide, by decide, by decide⟩
 
 end BizetVerdi
@@ -227,8 +227,8 @@ theorem court_scope_universal :
   ⟨by decide, by decide⟩
 
 theorem court_no_particular_woman :
-    superCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = 1 ∧
-    ∀ x, superCounterfactual courtSim vacancy (appointed x) .actual = 0 := by
+    superCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = .true ∧
+    ∀ x, superCounterfactual courtSim vacancy (appointed x) .actual = .undefined := by
   simp only [superCounterfactual_eq_selectionalCounterfactual isCentered_courtSim]
   exact ⟨by decide, by decide⟩
 
@@ -267,15 +267,15 @@ variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (
   [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] (w : W)
 
 theorem selectionalMight_iff (h : ((ord w).minimals A).Nonempty) :
-    selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ 1 := by
+    selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ .true := by
   rw [selectionalMight, selectionalCounterfactual_compl h]
   cases selectionalCounterfactual ord A B w <;> decide
 
 theorem might_would_asymmetry :
     selectionalMight bvSim compatriots bizetItalian .actual ∧
     selectionalMight bvSim compatriots verdiFrench .actual ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = 0 :=
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .undefined ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .undefined :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 end Might

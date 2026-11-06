@@ -40,8 +40,8 @@ and the conditionals, generics and habituals of the closing section, are not for
 
 namespace AghaJeretic2022
 
-open SignType (supervaluation supervaluation_eq_one_iff supervaluation_eq_neg_one_iff
-  supervaluation_eq_zero_iff supervaluation_not)
+open Trivalent (supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
+  supervaluation_eq_undefined_iff supervaluation_not)
 open Homogeneity
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
@@ -49,39 +49,39 @@ variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 /-! ### Weak necessity as plural predication over worlds -/
 
 /-- Weak necessity `should D p` predicates the prejacent of the plurality of best worlds `D w`. -/
-def should : W → SignType := fun w ↦ supervaluation (D w) p
+def should : W → Trivalent := fun w ↦ supervaluation (D w) p
 
 /-- Strong necessity `must D p` holds when the prejacent holds in every best world. -/
-def must : W → SignType := fun w ↦ SignType.ofProp (∀ w' ∈ D w, p w')
+def must : W → Trivalent := fun w ↦ Trivalent.ofProp (∀ w' ∈ D w, p w')
 
-theorem should_eq_one_iff (w : W) : should D p w = 1 ↔ ∀ w' ∈ D w, p w' :=
-  supervaluation_eq_one_iff ..
+theorem should_eq_true_iff (w : W) : should D p w = .true ↔ ∀ w' ∈ D w, p w' :=
+  supervaluation_eq_true_iff ..
 
-theorem should_eq_neg_one_iff (w : W) :
-    should D p w = -1 ↔ (D w).Nonempty ∧ ∀ w' ∈ D w, ¬ p w' :=
-  supervaluation_eq_neg_one_iff ..
+theorem should_eq_false_iff (w : W) :
+    should D p w = .false ↔ (D w).Nonempty ∧ ∀ w' ∈ D w, ¬ p w' :=
+  supervaluation_eq_false_iff ..
 
 /-- The sentence has a gap when some best worlds satisfy the prejacent and some do not. -/
-theorem should_eq_zero_iff (w : W) :
-    should D p w = 0 ↔ (∃ w' ∈ D w, p w') ∧ ∃ w' ∈ D w, ¬ p w' :=
-  supervaluation_eq_zero_iff ..
+theorem should_eq_undefined_iff (w : W) :
+    should D p w = .undefined ↔ (∃ w' ∈ D w, p w') ∧ ∃ w' ∈ D w, ¬ p w' :=
+  supervaluation_eq_undefined_iff ..
 
 /-- Over a nonempty domain negating the prejacent negates the modal sentence, so the gap is
 symmetric and negation is scopeless. -/
 theorem should_not (w : W) (hne : (D w).Nonempty) :
-    should D (fun w' ↦ ¬ p w') w = -should D p w :=
+    should D (fun w' ↦ ¬ p w') w = (should D p w)ᶜ :=
   supervaluation_not _ hne
 
 /-- A true negated weak necessity leaves no best world for the existential continuation. -/
-theorem not_exists_of_should_not (w : W) (h : should D (fun w' ↦ ¬ p w') w = 1) :
+theorem not_exists_of_should_not (w : W) (h : should D (fun w' ↦ ¬ p w') w = .true) :
     ¬ ∃ w' ∈ D w, p w' :=
-  fun ⟨w', hw', hp⟩ ↦ (should_eq_one_iff D _ w).1 h w' hw' hp
+  fun ⟨w', hw', hp⟩ ↦ (should_eq_true_iff D _ w).1 h w' hw' hp
 
 /-- In a mixed domain a negated strong necessity is true and the existential continuation
 holds with it. -/
-theorem must_false_of_indet (w : W) (h : should D p w = 0) :
-    must D p w = -1 ∧ ∃ w' ∈ D w, p w' := by
-  obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (should_eq_zero_iff D p w).1 h
+theorem must_false_of_indet (w : W) (h : should D p w = .undefined) :
+    must D p w = .false ∧ ∃ w' ∈ D w, p w' := by
+  obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (should_eq_undefined_iff D p w).1 h
   have : ¬ ∀ w' ∈ D w, p w' := fun hall ↦ hn (hall b hb)
   exact ⟨by simp [must, this], a, ha, hp⟩
 
@@ -89,18 +89,18 @@ theorem must_false_of_indet (w : W) (h : should D p w = 0) :
 
 /-- *Must* is *should* with its gap removed, the universal quantifier being the meta-assertion
 of the plural predication, as *all* is of *the*. -/
-theorem must_eq_metaAssert_should : must D p = (fun v ↦ SignType.ofProp (v = 1)) ∘ should D p :=
-  funext fun w ↦ by simp [must, should, supervaluation_eq_one_iff]
+theorem must_eq_metaAssert_should : must D p = (fun v ↦ Trivalent.ofProp (v = .true)) ∘ should D p :=
+  funext fun w ↦ by simp [must, should, supervaluation_eq_true_iff]
 
 theorem isBivalent_must : Trivalent.IsBivalent (must D p) :=
-  must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_ofProp_eq_one _
+  must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_ofProp_eq_true _
 
 /-- In a mixed domain the negated bare *should* is not true, while the negated *necessarily
 should* is true and compatible with the existential continuation. -/
-theorem necessarily_removes_gap (w : W) (h : should D p w = 0) :
-    should D (fun w' ↦ ¬ p w') w ≠ 1 ∧ -SignType.ofProp (should D p w = 1) = 1 ∧
+theorem necessarily_removes_gap (w : W) (h : should D p w = .undefined) :
+    should D (fun w' ↦ ¬ p w') w ≠ .true ∧ (Trivalent.ofProp (should D p w = .true))ᶜ = .true ∧
       ∃ w' ∈ D w, p w' := by
-  obtain ⟨⟨a, ha, hp⟩, -⟩ := (should_eq_zero_iff D p w).1 h
+  obtain ⟨⟨a, ha, hp⟩, -⟩ := (should_eq_undefined_iff D p w).1 h
   refine ⟨fun h' ↦ not_exists_of_should_not D p w h' ⟨a, ha, hp⟩, ?_, a, ha, hp⟩
   rw [h]; rfl
 
@@ -120,8 +120,8 @@ abbrev strict : Setoid Door := ⊥
 
 /-- Taking the right door *should* be taken is neither true nor false — neither assertible nor
 deniable — while that it *must* be taken is false. -/
-theorem two_doors : ∀ w, should doors (· = .right) w = 0 ∧
-    ¬ usable strict (should doors (· = .right)) w ∧ must doors (· = .right) w = -1 := by
+theorem two_doors : ∀ w, should doors (· = .right) w = .undefined ∧
+    ¬ usable strict (should doors (· = .right)) w ∧ must doors (· = .right) w = .false := by
   decide
 
 /-- In a world of the perfect-grade scenario the rules require every exercise or only most, and
@@ -239,7 +239,7 @@ structure Cell where
   /-- The scenario. -/
   scenario : Scenario
   /-- The value judged. -/
-  observed : SignType
+  observed : Trivalent
   deriving DecidableEq
 
 /-- A row reads as a cell from its polarity and scenario. The value judged is the one the
@@ -249,11 +249,11 @@ def Cell.ofDatum (e : Datum) : Option Cell := do
   let pol ← e.parse? "polarity" [("positive", .positive), ("negative", .negative)]
   let sc ← e.parse? "condition" [("ALL", .all), ("NONE", .none), ("GAP", .gap)]
   let observed ← match sc, pol with
-    | .all, .positive | .none, .negative => some 1
-    | .all, .negative | .none, .positive => some (-1)
+    | .all, .positive | .none, .negative => some .true
+    | .all, .negative | .none, .positive => some (.false)
     | .gap, _ =>
-      if e.feature? "gap_detected" = some "true" then some 0
-      else e.parse? "classical_value" [("true", 1), ("false", -1)]
+      if e.feature? "gap_detected" = some "Bool.true" then some .undefined
+      else e.parse? "classical_value" [("Bool.true", .true), ("Bool.false", .false)]
   some ⟨pol, sc, observed⟩
 
 /-- The polarity-by-scenario grid for *should*. -/
@@ -262,20 +262,20 @@ def shouldGrid : List Cell :=
 
 /-- A representative domain for each scenario, a world being the prejacent's truth value at it. -/
 def scenarioDomain : Scenario → Finset Bool
-  | .all => {true}
-  | .none => {false}
-  | .gap => {true, false}
+  | .all => {Bool.true}
+  | .none => {Bool.false}
+  | .gap => {Bool.true, Bool.false}
 
 /-- The plural semantics' value at a cell predicates the negated prejacent at negative polarity. -/
-def shouldPredict (pol : Polarity) (s : Scenario) : SignType :=
+def shouldPredict (pol : Polarity) (s : Scenario) : Trivalent :=
   match pol with
-  | .positive => should (fun _ ↦ scenarioDomain s) (· = true) true
-  | .negative => should (fun _ ↦ scenarioDomain s) (· = false) true
+  | .positive => should (fun _ ↦ scenarioDomain s) (· = Bool.true) Bool.true
+  | .negative => should (fun _ ↦ scenarioDomain s) (· = Bool.false) Bool.true
 
 /-- Domain restriction's value at a cell is universal quantification, negated by strong Kleene
 negation. -/
-def domainRestrictionPredict (pol : Polarity) (s : Scenario) : SignType :=
-  pol • must (fun _ ↦ scenarioDomain s) (· = true) true
+def domainRestrictionPredict (pol : Polarity) (s : Scenario) : Trivalent :=
+  pol • must (fun _ ↦ scenarioDomain s) (· = Bool.true) Bool.true
 
 /-- The plural semantics reproduces every cell of the *should* grid. -/
 theorem should_matches_grid :

@@ -20,7 +20,7 @@ and von Fintel's *only x is P* over individuals on the identity scale; the two
 additive asserts its prejacent and presupposes what *only* asserts to be false, and the
 presupposition of *even*, after Karttunen and Peters, is that the prejacent is less likely than
 every alternative. On a partial order of alternatives, *only* says that the prejacent is [the
-strongest true alternative](##Focus.only_ge_eq_one_iff). On a scale refining entailment *only* is
+strongest true alternative](##Focus.only_ge_eq_true_iff). On a scale refining entailment *only* is
 [Strawson downward entailing](##Focus.isStrawsonDE_only) in its prejacent, and over individuals
 [in its predicate](##Focus.isStrawsonDE_only_eq).
 
@@ -86,17 +86,17 @@ variable {S C P i} {j : ι} {w : W}
 
 @[simp] theorem mem_atMost : w ∈ atMost S C P i ↔ ∀ j ∈ C, w ∈ P j → S i j := Iff.rfl
 
-@[simp] theorem only_eq_zero_iff : only S C P i w = .undefined ↔ w ∉ atLeast S C P i := by
+@[simp] theorem only_eq_undefined_iff : only S C P i w = .undefined ↔ w ∉ atLeast S C P i := by
   simp [only]
 
-theorem support_only : (Trivalent.gapExt (only S C P i))ᶜ = atLeast S C P i := by
+theorem compl_gapExt_only : (Trivalent.gapExt (only S C P i))ᶜ = atLeast S C P i := by
   ext; simp
 
-@[simp] theorem only_eq_one_iff :
+@[simp] theorem only_eq_true_iff :
     only S C P i w = .true ↔ w ∈ atLeast S C P i ∧ w ∈ atMost S C P i := by
   simp [only]
 
-@[simp] theorem only_eq_neg_one_iff :
+@[simp] theorem only_eq_false_iff :
     only S C P i w = .false ↔ w ∈ atLeast S C P i ∧ w ∉ atMost S C P i := by
   simp [only]
 
@@ -113,9 +113,9 @@ theorem antitone_atMost {S : Set W → Set W → Prop} {C : Set (Set W)}
 
 /-- With the stronger alternatives above, *only* is true exactly where the prejacent is the greatest
 true alternative. -/
-theorem only_ge_eq_one_iff [PartialOrder ι] :
+theorem only_ge_eq_true_iff [PartialOrder ι] :
     only (· ≥ ·) C P i w = .true ↔ IsGreatest {j ∈ C | w ∈ P j} i := by
-  simp only [only_eq_one_iff, mem_atLeast, mem_atMost, IsGreatest, upperBounds]
+  simp only [only_eq_true_iff, mem_atLeast, mem_atMost, IsGreatest, upperBounds]
   grind
 
 /-! #### The entailment scale -/
@@ -156,9 +156,9 @@ theorem atMost_eq_eq_atMost_subset {C : Set (Set W)} {p : Set W} (h : ∀ q ∈ 
 
 /-- Over individuals on the identity scale, *only x* presupposes that `x` is `P` and asserts that
 no other individual is. -/
-theorem only_eq_eq_one_iff {P : ι → Set W} {x : ι} (hx : x ∈ C) :
+theorem only_eq_eq_true_iff {P : ι → Set W} {x : ι} (hx : x ∈ C) :
     only (· = ·) C P x w = .true ↔ w ∈ P x ∧ ∀ y ∈ C, y ≠ x → w ∉ P y := by
-  simp only [only_eq_one_iff, mem_atLeast, mem_atMost]
+  simp only [only_eq_true_iff, mem_atLeast, mem_atMost]
   exact ⟨fun ⟨⟨_, _, hw, h⟩, ha⟩ ↦ ⟨h ▸ hw, fun y hy hyx hwy ↦ hyx (ha y hy hwy).symm⟩,
     fun ⟨hw, ha⟩ ↦ ⟨⟨x, hx, hw, rfl⟩, fun y hy hwy ↦ by_contra fun h ↦ ha y hy (Ne.symm h) hwy⟩⟩
 
@@ -177,7 +177,7 @@ theorem only_eq_eq_only_subset_range (hP : ∀ y, P x ⊆ P y → y = x) :
   funext w
   have hx := atLeast_subset_eq (mem_range_self (f := P) x)
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [hx]) ?_
-  rw [only_eq_eq_one_iff (mem_univ x), only_eq_one_iff, hx]
+  rw [only_eq_eq_true_iff (mem_univ x), only_eq_true_iff, hx]
   simp only [mem_atMost, forall_mem_range, id, mem_univ, true_implies]
   refine and_congr_right fun _ ↦ ⟨fun h y hw ↦ ?_, fun h y hyx hw ↦ hyx (hP y (h y hw))⟩
   by_cases hyx : y = x
@@ -191,9 +191,9 @@ theorem only_eq_ne_only_subset_range :
       only (· ⊆ ·) (range fun _ : Bool ↦ (univ : Set Unit)) id univ := by
   intro h
   have h0 : only (· ⊆ ·) (range fun _ : Bool ↦ (univ : Set Unit)) id univ () = .true :=
-    only_eq_one_iff.2 ⟨⟨univ, ⟨Bool.true, rfl⟩, trivial, subset_rfl⟩,
+    only_eq_true_iff.2 ⟨⟨univ, ⟨Bool.true, rfl⟩, trivial, subset_rfl⟩,
       fun q ⟨_, hq⟩ _ ↦ hq ▸ subset_rfl⟩
-  rw [← h, only_eq_eq_one_iff (mem_univ _)] at h0
+  rw [← h, only_eq_eq_true_iff (mem_univ _)] at h0
   exact h0.2 Bool.false trivial Bool.false_ne_true trivial
 
 end Individuals
@@ -228,23 +228,23 @@ variable {S C P i} {j : ι} {w : W}
 theorem additivePresup_eq_compl_atMost : additivePresup S C P i = (atMost S C P i)ᶜ := by
   ext; simp
 
-@[simp] theorem additive_eq_zero_iff : additive S C P i w = .undefined ↔ w ∉ additivePresup S C P i := by
+@[simp] theorem additive_eq_undefined_iff : additive S C P i w = .undefined ↔ w ∉ additivePresup S C P i := by
   simp [additive]
 
-theorem support_additive : (Trivalent.gapExt (additive S C P i))ᶜ = additivePresup S C P i := by
+theorem compl_gapExt_additive : (Trivalent.gapExt (additive S C P i))ᶜ = additivePresup S C P i := by
   ext; simp
 
-@[simp] theorem additive_eq_one_iff :
+@[simp] theorem additive_eq_true_iff :
     additive S C P i w = .true ↔ w ∈ additivePresup S C P i ∧ w ∈ P i := by
   simp [additive]
 
-@[simp] theorem additive_eq_neg_one_iff :
+@[simp] theorem additive_eq_false_iff :
     additive S C P i w = .false ↔ w ∈ additivePresup S C P i ∧ w ∉ P i := by
   simp [additive]
 
 /-- Where the prejacent and the presupposition of *only* hold, *only* is true exactly where the
 additive is not. -/
-theorem only_eq_one_iff_additive_ne_one (hw : w ∈ P i) (hl : w ∈ atLeast S C P i) :
+theorem only_eq_true_iff_additive_ne_true (hw : w ∈ P i) (hl : w ∈ atLeast S C P i) :
     only S C P i w = .true ↔ additive S C P i w ≠ .true := by
   simp [-mem_atLeast, -mem_atMost, hw, hl, additivePresup_eq_compl_atMost]
 
@@ -360,19 +360,19 @@ Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may f
 theorem not_antitone_posSupport_only_subset :
     ¬ Antitone fun p : Set Bool ↦ Trivalent.posExt (only (· ⊆ ·) {{Bool.true}, .univ} id p) :=
   not_antitone_posSupport (p := {Bool.true}) (q := .univ) (w := Bool.false) (Set.subset_univ _)
-    (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
+    (only_eq_true_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
       exacts [absurd hw (by simp), subset_rfl]⟩)
-    (only_eq_zero_iff.2 fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw)
+    (only_eq_undefined_iff.2 fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw)
 
 /-- On a scale ranked by reverse entailment, *only* is not Strawson downward entailing in its
 prejacent, as the footnote claims ([coppock-beaver-2014], fn. 22). -/
 theorem not_isStrawsonDE_only_superset :
     ¬ IsStrawsonDE (only (· ⊇ ·) ({{Bool.true}, .univ} : Set (Set Bool)) id) := fun h ↦ by
   have := h (p := {Bool.true}) (q := .univ) (Set.subset_univ _) Bool.true
-    (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun _ _ _ ↦ Set.subset_univ _⟩)
-    (by rw [Ne, only_eq_zero_iff, not_not]; exact ⟨{Bool.true}, by simp, rfl, subset_rfl⟩)
-  exact absurd ((only_eq_one_iff.1 this).2 .univ (by simp) trivial (Set.mem_univ Bool.false))
+    (only_eq_true_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun _ _ _ ↦ Set.subset_univ _⟩)
+    (by rw [Ne, only_eq_undefined_iff, not_not]; exact ⟨{Bool.true}, by simp, rfl, subset_rfl⟩)
+  exact absurd ((only_eq_true_iff.1 this).2 .univ (by simp) trivial (Set.mem_univ Bool.false))
     (by simp)
 
 end Propositions
@@ -393,7 +393,7 @@ theorem isStrawsonAntiAdditive_only_eq :
     fun P w h ↦ by
       have hx : w ∈ P x := by simpa using h
       show only (· = ·) univ P x w = .true ↔ _
-      rw [only_eq_eq_one_iff (mem_univ x)]
+      rw [only_eq_eq_true_iff (mem_univ x)]
       simp [hx]
 
 theorem isStrawsonDE_only_eq : IsStrawsonDE fun P : ι → Set W ↦ only (· = ·) univ P x :=
@@ -404,14 +404,14 @@ presupposition may fail ([von-fintel-1999]'s (11)). -/
 theorem not_antitone_posSupport_only_eq :
     ¬ Antitone fun P : Bool → Set Unit ↦ Trivalent.posExt (only (· = ·) univ P Bool.true) :=
   not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = Bool.true}) (w := ()) bot_le
-    (by rw [only_eq_eq_one_iff (mem_univ _)]; simp) (by simp)
+    (by rw [only_eq_eq_true_iff (mem_univ _)]; simp) (by simp)
 
 /-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and
 false when someone else drinks, so *only* is not upward entailing in its predicate. -/
 theorem not_isStrawsonUE_only_eq :
     ¬ IsStrawsonUE fun P : Bool → Set Unit ↦ only (· = ·) univ P Bool.true :=
   not_isStrawsonUE (p := fun y ↦ {_u | y = Bool.true}) (q := ⊤) (w := ()) le_top
-    (by rw [only_eq_eq_one_iff (mem_univ _)]; simp) (by simp)
+    (by rw [only_eq_eq_true_iff (mem_univ _)]; simp) (by simp)
 
 end Individuals
 

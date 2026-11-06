@@ -13,7 +13,7 @@ public import Mathlib.Data.Part
 
 A presuppositional meaning is carried either by a partial proposition `Part Prop`, as in Heim and
 Kratzer's composition engine, or by a three-valued one, `Trivalent`. `Trivalent.ofPart` maps the
-first carrier onto the second, sending an undefined value to `0` and a defined one to its
+first carrier onto the second, sending an undefined value to `undefined` and a defined one to its
 classical value, so theorems proved over either carrier transfer to the other.
 
 ## Main definitions
@@ -41,8 +41,8 @@ classical value, so theorems proved over either carrier transfer to the other.
 namespace Trivalent
 
 open Classical in
-/-- The three-valued value of a partial proposition is `0` where it is undefined and its
-classical value elsewhere. -/
+/-- The three-valued value of a partial proposition is `undefined` where it is undefined and
+its classical value elsewhere. -/
 noncomputable def ofPart (p : Part Prop) : Trivalent :=
   if h : p.Dom then ofProp (p.get h) else .undefined
 

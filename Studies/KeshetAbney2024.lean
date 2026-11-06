@@ -93,15 +93,15 @@ variable {V L : Type*} {P : ℕ → Type*} [DecidableEq V] {α : Type*} (M : Mod
 /-- Conjunction is not Strong Kleene (fn. 21). -/
 theorem exists_toTrivalent_conj_ne_inf : ∃ φ ψ : Formula V L P,
     Formula.toTrivalent M g (.conj φ ψ) ≠ φ.toTrivalent M g ⊓ ψ.toTrivalent M g := by
-  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g 0
-  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g (-1)
+  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g .undefined
+  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g (.false)
   exact ⟨φ, ψ, by rw [Formula.toTrivalent_conj, hφ, hψ]; decide⟩
 
 /-- Conjunction is not Weak Kleene (fn. 21). -/
 theorem exists_toTrivalent_conj_ne_meetWeak : ∃ φ ψ : Formula V L P,
     Formula.toTrivalent M g (.conj φ ψ) ≠ (φ.toTrivalent M g).meetWeak (ψ.toTrivalent M g) := by
-  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g (-1)
-  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g 0
+  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g (.false)
+  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g .undefined
   exact ⟨φ, ψ, by rw [Formula.toTrivalent_conj, hφ, hψ]; decide⟩
 
 /-- Given a felicitous discourse `γ` ((48)), its extension by `φ` is felicitous iff `γ` strictly

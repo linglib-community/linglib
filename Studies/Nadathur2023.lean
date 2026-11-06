@@ -165,7 +165,7 @@ instance : dreyfusModel.ContextAtRoots :=
 
 /-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal interpretation,
 with the nerve as the prerequisite. -/
-noncomputable def dare (e : V) : dreyfusModel.contexts dreyfusBg → SignType :=
+noncomputable def dare (e : V) : dreyfusModel.contexts dreyfusBg → Trivalent :=
   sentence (causalInterpretation dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩
     (.NRV, true) (e, true)
 
@@ -209,40 +209,44 @@ theorem nrv_necessary_for_msg :
   ⟨by decide, by decide, ⟨_, .refl _, by decide, by decide⟩, fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
 /-- *Dreyfus dared to send a message to the Germans* (34a) is felicitous. -/
-theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : dare .MSG u ≠ 0 := by
-  rw [dare, sentence, Set.indicator_apply_ne_zero]
-  exact ⟨⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
-    fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩, by simp⟩
+theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) :
+    dare .MSG u ≠ .undefined := by
+  simp only [dare, sentence, ne_eq, Trivalent.transplication_eq_undefined_iff,
+    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not]
+  exact ⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
+    fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩
 
 /-- (34a) entails that Dreyfus sent the message. -/
-theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : dare .MSG u = 1) :
+theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : dare .MSG u = .true) :
     dreyfusModel.solve ⊥ u .MSG = true := by
-  have h' : (Polarity.positive • dare .MSG) u = 1 := by simpa using h
+  have h' : (Polarity.positive • dare .MSG) u = .true := by simpa using h
   exact holds_signed_of_implied_eq (m := .positive) (q := .positive) rfl h'
 
 /-- (34b) *Dreyfus did not dare to send a message to the Germans* entails that he did not send
 it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
-    (h : (-dare .MSG) u = 1) : dreyfusModel.solve ⊥ u .MSG ≠ true := by
-  have h' : (Polarity.negative • dare .MSG) u = 1 := by simpa using h
+    (h : ((dare .MSG)ᶜ) u = .true) : dreyfusModel.solve ⊥ u .MSG ≠ true := by
+  have h' : (Polarity.negative • dare .MSG) u = .true := by simpa using h
   exact ((causalInterpretation dreyfusModel dreyfusBg).holds_neg _ u).1
     (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h')
 
 /-- *?/# Dreyfus dared to establish communication with the Germans* (34c) is infelicitous, since NRV
 is not causally sufficient for COM. -/
-theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) : dare .COM u = 0 := by
-  rw [dare, sentence]
-  exact Set.indicator_of_notMem (fun h ↦
-    (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
-      (h.1 .positive rfl).2) _
+theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) :
+    dare .COM u = .undefined := by
+  simp only [dare, sentence, Trivalent.transplication_eq_undefined_iff, ne_eq,
+    Trivalent.ofProp_eq_true_iff]
+  exact .inl fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
+    (h.1 .positive rfl).2
 
 /-- *?/# Dreyfus dared to spy for the Germans* (34d) is infelicitous, since NRV is not causally
 sufficient for SPY. -/
-theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) : dare .SPY u = 0 := by
-  rw [dare, sentence]
-  exact Set.indicator_of_notMem (fun h ↦
-    (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
-      (h.1 .positive rfl).2) _
+theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) :
+    dare .SPY u = .undefined := by
+  simp only [dare, sentence, Trivalent.transplication_eq_undefined_iff, ne_eq,
+    Trivalent.ofProp_eq_true_iff]
+  exact .inl fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
+    (h.1 .positive rfl).2
 
 -- (34c)
 theorem nrv_necessary_for_com :

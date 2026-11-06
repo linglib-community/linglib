@@ -16,7 +16,7 @@ approach, Guerrini and Wehbe's presuppositional exhaustification below the quant
 presupposition accommodated globally, it affects positive ones only, including the positive part
 of *exactly two*. The third experiment found the negative part affected as much as the positive.
 
-* `pointwise_exactlyTwo_ne_zero_iff` and its siblings: the definedness conditions (25).
+* `pointwise_exactlyTwo_ne_undefined_iff` and its siblings: the definedness conditions (25).
 
 ## Implementation notes
 
@@ -110,8 +110,10 @@ def Recoding.context : Recoding → Polarity → Context
 /-- The trivalent display of a picture, one cell per boy. -/
 def Item.display (p : Item) : Display := p.opened.map cell
 
-private theorem cell_eq_neg_one_iff (n : ℕ) : cell n = -1 ↔ n = 0 := by
-  rw [← not_iff_not, ← Ne, ← SignType.nonneg_iff_ne_neg_one, KrizChemla2015.designated_lp_cell]
+private theorem true_le_iff {a : Trivalent} : .true ≤ a ↔ a = .true := top_le_iff
+
+private theorem cell_eq_false_iff (n : ℕ) : cell n = .false ↔ n = 0 := by
+  rw [← not_iff_not, ← Ne, ← Trivalent.undefined_le_iff_ne_false, KrizChemla2015.designated_lp_cell]
   omega
 
 /-! ### Strong Kleene projection (25) -/
@@ -121,58 +123,61 @@ section StrongKleene
 variable {d : Display}
 
 -- (25a)
-theorem pointwise_all_ne_zero_iff :
-    pointwise NumberTree.all d ≠ 0 ↔ (∀ v ∈ d, v = 1) ∨ -1 ∈ d := by
+theorem pointwise_all_ne_undefined_iff :
+    pointwise NumberTree.all d ≠ .undefined ↔ (∀ v ∈ d, v = .true) ∨ .false ∈ d := by
   rw [KrizChemla2015.pointwise_eq_supervaluation_of_scopeMonotone NumberTree.scopeMonotone_all,
-    Ne, KrizChemla2015.supervaluation_eq_zero_iff, not_not, someReading, allReading,
+    Ne, KrizChemla2015.supervaluation_eq_undefined_iff, not_not, someReading, allReading,
     KrizChemla2015.reading_all, KrizChemla2015.reading_all]
   simp only [Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-    SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff]
-  refine ⟨fun h ↦ (em (-1 ∈ d)).symm.imp (fun hm ↦ h.1 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
+    Trivalent.undefined_le_iff_ne_false, true_le_iff]
+  refine ⟨fun h ↦ (em (.false ∈ d)).symm.imp (fun hm ↦ h.1 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
   rintro (h | h)
   · exact iff_of_true (fun v hv ↦ by simp [h v hv]) h
   · exact iff_of_false (fun h' ↦ h' _ h rfl) fun h' ↦ by simpa using h' _ h
 
 -- (25b)
-theorem pointwise_no_ne_zero_iff :
-    pointwise NumberTree.no d ≠ 0 ↔ (∀ v ∈ d, v = -1) ∨ 1 ∈ d := by
+theorem pointwise_no_ne_undefined_iff :
+    pointwise NumberTree.no d ≠ .undefined ↔ (∀ v ∈ d, v = .false) ∨ .true ∈ d := by
   rw [KrizChemla2015.pointwise_eq_supervaluation_of_scopeAntitone NumberTree.scopeAntitone_no,
-    Ne, KrizChemla2015.supervaluation_eq_zero_iff, not_not, someReading, allReading,
+    Ne, KrizChemla2015.supervaluation_eq_undefined_iff, not_not, someReading, allReading,
     KrizChemla2015.reading_no, KrizChemla2015.reading_no]
   simp only [Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-    SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff, not_not]
-  refine ⟨fun h ↦ (em (1 ∈ d)).symm.imp (fun hm ↦ h.2 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
+    Trivalent.undefined_le_iff_ne_false, true_le_iff, not_not]
+  refine ⟨fun h ↦ (em (.true ∈ d)).symm.imp (fun hm ↦ h.2 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
   rintro (h | h)
   · exact iff_of_true h fun v hv ↦ by simp [h v hv]
   · exact iff_of_false (fun h' ↦ by simpa using h' _ h) fun h' ↦ h' _ h rfl
 
 -- (25c)
-theorem pointwise_notAll_ne_zero_iff :
-    pointwise NumberTree.notAll d ≠ 0 ↔ -1 ∈ d ∨ ∀ v ∈ d, v = 1 := by
+theorem pointwise_notAll_ne_undefined_iff :
+    pointwise NumberTree.notAll d ≠ .undefined ↔ .false ∈ d ∨ ∀ v ∈ d, v = .true := by
   have h : pointwise NumberTree.notAll d = pointwise NumberTree.allᶜ d := rfl
-  rw [h, KrizChemla2015.pointwise_compl, show ∀ v : SignType, -v ≠ 0 ↔ v ≠ 0 by decide,
-    pointwise_all_ne_zero_iff, or_comm]
+  rw [h, KrizChemla2015.pointwise_compl,
+    show ∀ v : Trivalent, vᶜ ≠ .undefined ↔ v ≠ .undefined by decide,
+    pointwise_all_ne_undefined_iff, or_comm]
 
-theorem pointwise_exactlyTwo_eq_one_iff :
-    pointwise (NumberTree.cardinal {2}) d = 1 ↔ d.count 1 = 2 ∧ d.count 0 = 0 := by
-  rw [KrizChemla2015.pointwise_cardinal_eq_one_iff]
+theorem pointwise_exactlyTwo_eq_true_iff :
+    pointwise (NumberTree.cardinal {2}) d = .true ↔ d.count .true = 2 ∧ d.count .undefined = 0 := by
+  rw [KrizChemla2015.pointwise_cardinal_eq_true_iff]
   simp only [Set.mem_singleton_iff]
   exact ⟨fun h ↦ by have := h _ le_rfl (by omega); have := h _ (by omega) le_rfl; omega,
     fun h k h₁ h₂ ↦ by omega⟩
 
-theorem pointwise_exactlyTwo_eq_neg_one_iff :
-    pointwise (NumberTree.cardinal {2}) d = -1 ↔ 2 < d.count 1 ∨ d.count 1 + d.count 0 < 2 := by
-  rw [KrizChemla2015.pointwise_cardinal_eq_neg_one_iff]
+theorem pointwise_exactlyTwo_eq_false_iff :
+    pointwise (NumberTree.cardinal {2}) d = .false ↔
+      2 < d.count .true ∨ d.count .true + d.count .undefined < 2 := by
+  rw [KrizChemla2015.pointwise_cardinal_eq_false_iff]
   simp only [Set.mem_singleton_iff]
   exact ⟨fun h ↦ by by_contra hc; exact h 2 (by omega) (by omega) rfl,
     fun h k h₁ h₂ ↦ by omega⟩
 
 /-- *Exactly two* is defined where two boys opened all presents and the rest none, more than two
 opened all, or fewer than two any (25d). -/
-theorem pointwise_exactlyTwo_ne_zero_iff :
-    pointwise (NumberTree.cardinal {2}) d ≠ 0 ↔
-      (d.count 1 = 2 ∧ d.count 0 = 0) ∨ 2 < d.count 1 ∨ d.count 1 + d.count 0 < 2 := by
-  rw [← pointwise_exactlyTwo_eq_one_iff, ← pointwise_exactlyTwo_eq_neg_one_iff]
+theorem pointwise_exactlyTwo_ne_undefined_iff :
+    pointwise (NumberTree.cardinal {2}) d ≠ .undefined ↔
+      (d.count .true = 2 ∧ d.count .undefined = 0) ∨ 2 < d.count .true ∨
+        d.count .true + d.count .undefined < 2 := by
+  rw [← pointwise_exactlyTwo_eq_true_iff, ← pointwise_exactlyTwo_eq_false_iff]
   generalize pointwise (NumberTree.cardinal {2}) d = v
   decide +revert
 
@@ -194,9 +199,9 @@ theorem symmetric_iff (ctx : AugurzkyEtAl2023.Context) (d : Display) :
   refine AugurzkyEtAl2023.usable_iff_reading_of q (fun d h ↦ ?_) (fun d h ↦ ?_) (fun c h ↦ ?_)
     le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <| show reading q _ _ ↔ reading q _ _ by
       rw [reading, reading, Setoid.ker_def.1 h]) d
-  · rw [pointwise, SignType.supervaluation_eq_one_iff] at h
+  · rw [pointwise, Trivalent.supervaluation_eq_true_iff] at h
     exact h _ (List.mem_toFinset.2 (KrizChemla2015.resolve_mem_resolutions _ d))
-  · rw [pointwise, SignType.supervaluation_eq_neg_one_iff] at h
+  · rw [pointwise, Trivalent.supervaluation_eq_false_iff] at h
     exact h.2 _ (List.mem_toFinset.2 (KrizChemla2015.resolve_mem_resolutions _ d))
   · rw [KrizChemla2015.pointwise_map_ofProp]
     simp [h]
@@ -236,18 +241,18 @@ theorem isReading_alternatives (ctx : AugurzkyEtAl2023.Context) :
 
 /-- The value `pex` gives the definite of a boy who opened `n` of his presents is false if `n` is
 zero, true if `n` reaches the number the context's question asks about, and a gap otherwise. -/
-def pexCell (ctx : AugurzkyEtAl2023.Context) (n : ℕ) : SignType :=
-  if n = 0 then -1 else if ctx.threshold nine ≤ n then 1 else 0
+def pexCell (ctx : AugurzkyEtAl2023.Context) (n : ℕ) : Trivalent :=
+  if n = 0 then .false else if ctx.threshold nine ≤ n then .true else .undefined
 
-theorem pexCell_eq_one_iff {ctx : AugurzkyEtAl2023.Context} {n : ℕ} :
-    pexCell ctx n = 1 ↔ ctx.threshold nine ≤ n := by
+theorem pexCell_eq_true_iff {ctx : AugurzkyEtAl2023.Context} {n : ℕ} :
+    pexCell ctx n = .true ↔ ctx.threshold nine ≤ n := by
   have := (threshold_nine ctx).1
   unfold pexCell
   split_ifs <;> simp_all
   omega
 
-theorem zero_le_pexCell_iff {ctx : AugurzkyEtAl2023.Context} {n : ℕ} :
-    0 ≤ pexCell ctx n ↔ 1 ≤ n := by
+theorem undefined_le_pexCell_iff {ctx : AugurzkyEtAl2023.Context} {n : ℕ} :
+    .undefined ≤ pexCell ctx n ↔ 1 ≤ n := by
   unfold pexCell
   split_ifs <;> simp_all <;> omega
 
@@ -256,22 +261,22 @@ context leaves, is the value `pexCell` gives the number of his presents he opene
 theorem pexPlural_alternatives (ctx : AugurzkyEtAl2023.Context) (w : Finset ℕ) :
     pexPlural nine nine BarLev2021.holds (alternatives ctx) w = pexCell ctx (nine ∩ w).card := by
   have hk := threshold_nine ctx
-  have h1 := GuerriniWehbe2025.pexPlural_subDisjsOfCard_eq_one_iff (w := w)
+  have h1 := GuerriniWehbe2025.pexPlural_subDisjsOfCard_eq_true_iff (w := w)
     (BarLev2021.separating_holds nine nine) (m := nine.card + 1 - ctx.threshold nine) (by omega)
     (by rw [Finset.inter_self]; omega)
   simp only [Finset.inter_self, BarLev2021.mem_atLeast, BarLev2021.count_holds] at h1
   rw [show nine.card + 1 - (nine.card + 1 - ctx.threshold nine) = ctx.threshold nine by omega]
     at h1
-  have h2 : pexPlural nine nine BarLev2021.holds (alternatives ctx) w = -1 ↔
+  have h2 : pexPlural nine nine BarLev2021.holds (alternatives ctx) w = .false ↔
       (nine ∩ w).card = 0 := by
-    rw [GuerriniWehbe2025.pexPlural_eq_neg_one_iff, Finset.card_eq_zero,
+    rw [GuerriniWehbe2025.pexPlural_eq_false_iff, Finset.card_eq_zero,
       Finset.eq_empty_iff_forall_notMem]
     simp
   unfold pexCell
   split_ifs with h0 hn
   · exact h2.2 h0
   · exact h1.2 hn
-  · rcases (by decide : ∀ v : SignType, v = 0 ∨ v = -1 ∨ v = 1)
+  · rcases (by decide : ∀ v : Trivalent, v = .undefined ∨ v = .false ∨ v = .true)
       (pexPlural nine nine BarLev2021.holds (alternatives ctx) w) with h | h | h
     · exact h
     · exact absurd (h2.1 h) h0
@@ -284,8 +289,7 @@ theorem pexCell_universal (n : ℕ) : pexCell .universal n = cell n := by
     simp [AugurzkyEtAl2023.Context.threshold, nine]
   unfold pexCell
   rw [hk]
-  rcases (by decide : ∀ v : SignType, v = 0 ∨ v = -1 ∨ v = 1) (cell n) with h | h | h <;>
-    rw [h] at h0 h1 ⊢ <;> split_ifs <;> simp_all
+  obtain h | h | h := (cell n).trichotomy <;> rw [h] at h0 h1 ⊢ <;> split_ifs <;> simp_all
 
 section Asymmetric
 
@@ -295,7 +299,7 @@ variable (q : NumberTree) [DecidableRel q]
 alternatives the context leaves, projects its presupposition by Strong Kleene and accommodates it
 globally, accepting the sentence where it is true. -/
 def asymmetric (ctx : AugurzkyEtAl2023.Context) (opened : List ℕ) : Prop :=
-  pointwise q (opened.map (pexCell ctx)) = 1
+  pointwise q (opened.map (pexCell ctx)) = .true
 
 instance (ctx : AugurzkyEtAl2023.Context) (opened : List ℕ) :
     Decidable (asymmetric q ctx opened) :=
@@ -304,7 +308,7 @@ instance (ctx : AugurzkyEtAl2023.Context) (opened : List ℕ) :
 /-- Accommodating each boy's presupposition below the quantifier, as (35) does under *no*, the
 quantifier ranges over the boys of whom the accommodated reading holds. -/
 def localAccommodation (ctx : AugurzkyEtAl2023.Context) (opened : List ℕ) : Prop :=
-  holds q (opened.map fun n ↦ decide (pexCell ctx n = 1))
+  holds q (opened.map fun n ↦ decide (pexCell ctx n = .true))
 
 instance (ctx : AugurzkyEtAl2023.Context) (opened : List ℕ) :
     Decidable (localAccommodation q ctx opened) :=
@@ -316,18 +320,19 @@ private theorem resolve_lp_pexCell :
     resolve .lp (opened.map (pexCell ctx)) = resolve .lp (opened.map cell) := by
   simp only [resolve, List.map_map]
   refine List.map_congr_left fun n _ ↦ decide_eq_decide.2 ?_
-  rw [Trivalent.Designation.threshold_lp, zero_le_pexCell_iff, KrizChemla2015.designated_lp_cell]
+  rw [Trivalent.Designation.threshold_lp, undefined_le_pexCell_iff,
+    KrizChemla2015.designated_lp_cell]
 
 private theorem resolve_k3_pexCell :
     resolve .k3 (opened.map (pexCell ctx)) = resolve ctx.designation (opened.map cell) := by
   simp only [resolve, List.map_map]
   refine List.map_congr_left fun n _ ↦ ?_
-  simp [SignType.one_le_iff, pexCell_eq_one_iff, AugurzkyEtAl2023.designated_cell]
+  simp [true_le_iff, pexCell_eq_true_iff, AugurzkyEtAl2023.designated_cell]
 
 theorem asymmetric_iff_of_scopeMonotone (hq : q.ScopeMonotone) :
     asymmetric q ctx opened ↔ reading q (opened.map cell) ctx.designation := by
   rw [asymmetric, KrizChemla2015.pointwise_eq_supervaluation_of_scopeMonotone hq,
-    KrizChemla2015.supervaluation_eq_one_iff,
+    KrizChemla2015.supervaluation_eq_true_iff,
     and_iff_right_of_imp (KrizChemla2015.allReading_imp_someReading hq), allReading, reading,
     resolve_k3_pexCell]
   rfl
@@ -337,7 +342,7 @@ context ((26), (27)). -/
 theorem asymmetric_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
     asymmetric q ctx opened ↔ someReading q (opened.map cell) := by
   rw [asymmetric, KrizChemla2015.pointwise_eq_supervaluation_of_scopeAntitone hq,
-    KrizChemla2015.supervaluation_eq_one_iff,
+    KrizChemla2015.supervaluation_eq_true_iff,
     and_iff_left_of_imp (KrizChemla2015.someReading_imp_allReading hq), someReading, reading,
     resolve_lp_pexCell]
   rfl
@@ -357,13 +362,13 @@ theorem localAccommodation_iff_symmetric :
     localAccommodation q ctx opened ↔ symmetric q ctx (opened.map cell) := by
   rw [symmetric_iff, reading, localAccommodation, resolve, List.map_map]
   refine iff_of_eq (congrArg _ (List.map_congr_left fun n _ ↦ ?_))
-  simp [pexCell_eq_one_iff, AugurzkyEtAl2023.designated_cell]
+  simp [pexCell_eq_true_iff, AugurzkyEtAl2023.designated_cell]
 
 -- (26)
 theorem asymmetric_no_iff : asymmetric NumberTree.no ctx opened ↔ ∀ n ∈ opened, n = 0 := by
   rw [asymmetric_iff_of_scopeAntitone ctx opened NumberTree.scopeAntitone_no, someReading,
     KrizChemla2015.reading_no]
-  simp [cell_eq_neg_one_iff]
+  simp [cell_eq_false_iff]
 
 -- (27)
 theorem asymmetric_notAll_iff : asymmetric NumberTree.notAll ctx opened ↔ 0 ∈ opened := by
@@ -371,7 +376,7 @@ theorem asymmetric_notAll_iff : asymmetric NumberTree.notAll ctx opened ↔ 0 �
     ← NumberTree.compl_all]
   change ¬ reading NumberTree.all _ _ ↔ _
   rw [KrizChemla2015.reading_all]
-  simp [cell_eq_neg_one_iff]
+  simp [cell_eq_false_iff]
 
 variable {ctx}
 
@@ -380,22 +385,22 @@ theorem asymmetric_all_universal_iff :
     asymmetric NumberTree.all .universal opened ↔ ∀ n ∈ opened, 9 ≤ n := by
   rw [asymmetric_iff_of_scopeMonotone _ opened NumberTree.scopeMonotone_all,
     KrizChemla2015.reading_all]
-  simp [AugurzkyEtAl2023.Context.designation, KrizChemla2015.designated_k3_cell]
+  simp [AugurzkyEtAl2023.Context.designation, true_le_iff, KrizChemla2015.designated_k3_cell]
 
 /-- Without pruning, *exactly two boys opened their presents* says after accommodation that two boys
 opened all of theirs and every other boy none (30). -/
 theorem asymmetric_exactlyTwo_universal_iff :
     asymmetric (NumberTree.cardinal {2}) .universal opened ↔
-      (opened.map cell).count 1 = 2 ∧ (opened.map cell).count 0 = 0 := by
+      (opened.map cell).count .true = 2 ∧ (opened.map cell).count .undefined = 0 := by
   rw [asymmetric, List.map_congr_left fun n _ ↦ pexCell_universal n]
-  exact pointwise_exactlyTwo_eq_one_iff
+  exact pointwise_exactlyTwo_eq_true_iff
 
 -- (35)
 theorem localAccommodation_no_universal_iff :
     localAccommodation NumberTree.no .universal opened ↔ ∀ n ∈ opened, n < 9 := by
   have hk : AugurzkyEtAl2023.Context.universal.threshold nine = 9 := by
     simp [AugurzkyEtAl2023.Context.threshold, nine]
-  simp [localAccommodation, holds, NumberTree.no, List.count_eq_zero, pexCell_eq_one_iff, hk]
+  simp [localAccommodation, holds, NumberTree.no, List.count_eq_zero, pexCell_eq_true_iff, hk]
 
 end Asymmetric
 
@@ -403,26 +408,26 @@ end Asymmetric
 
 -- §3.2.1
 theorem targets_gap : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor,
-    pointwise (sentences p.experiment pol).quantifier.tree p.display = 0 := by
+    pointwise (sentences p.experiment pol).quantifier.tree p.display = .undefined := by
   decide
 
 -- §3.3.1
 theorem targets_unanalysed : ∀ p ∈ pictures, p.experiment = .one → p.picture = .target →
     ∀ pol, pol ∉ p.targetFor →
-    pointwise (sentences p.experiment pol).quantifier.tree p.display = -1 := by
+    pointwise (sentences p.experiment pol).quantifier.tree p.display = .false := by
   decide
 
 theorem controls_bivalent : ∀ p ∈ pictures, p.picture ≠ .target → ∀ pol,
-    pointwise (sentences p.experiment pol).quantifier.tree p.display ≠ 0 ∧
+    pointwise (sentences p.experiment pol).quantifier.tree p.display ≠ .undefined ∧
       (p.picture = .trueControl →
-        pointwise (sentences p.experiment pol).quantifier.tree p.display = 1) ∧
+        pointwise (sentences p.experiment pol).quantifier.tree p.display = .true) ∧
       (p.picture = .falseControl →
-        pointwise (sentences p.experiment pol).quantifier.tree p.display = -1) := by
+        pointwise (sentences p.experiment pol).quantifier.tree p.display = .false) := by
   decide
 
 theorem targets_exactlyTwo : ∀ p ∈ pictures, p.experiment = .three →
-    (.positive ∈ p.targetFor → p.display.count 0 = 2 ∧ 1 ∉ p.display) ∧
-      (.negative ∈ p.targetFor → p.display.count 1 = 2 ∧ 0 ∈ p.display) := by
+    (.positive ∈ p.targetFor → p.display.count .undefined = 2 ∧ .true ∉ p.display) ∧
+      (.negative ∈ p.targetFor → p.display.count .true = 2 ∧ .undefined ∈ p.display) := by
   decide
 
 /-- On the symmetric approach every sentence is accepted on its target pictures exactly in its

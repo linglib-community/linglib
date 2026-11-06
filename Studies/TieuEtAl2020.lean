@@ -130,28 +130,28 @@ theorem isLeast_compl_weak : IsLeast {weakᶜ, strongᶜ} weakᶜ :=
 
 /-- The plural sentence is true of a plurality of giraffes, false of none and undefined
 otherwise, (20)–(22). -/
-def homogeneous (n : ℕ) : SignType :=
-  if 2 ≤ n then 1 else if n = 0 then -1 else 0
+def homogeneous (n : ℕ) : Trivalent :=
+  if 2 ≤ n then .true else if n = 0 then .false else .undefined
 
-theorem homogeneous_eq_one_iff {n : ℕ} : homogeneous n = 1 ↔ 2 ≤ n := by
+theorem homogeneous_eq_true_iff {n : ℕ} : homogeneous n = .true ↔ 2 ≤ n := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
 -- (23), (24)
-theorem neg_homogeneous_eq_one_iff {n : ℕ} : -homogeneous n = 1 ↔ n = 0 := by
+theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n)ᶜ = .true ↔ n = 0 := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
 /-! ### Predictions (section 1.3) -/
 
 theorem readings_positive :
     exhIE {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
-      {n | homogeneous n = 1} = strong :=
-  ⟨exhIE_weak, isLeast_strong, Set.ext fun _ ↦ homogeneous_eq_one_iff⟩
+      {n | homogeneous n = .true} = strong :=
+  ⟨exhIE_weak, isLeast_strong, Set.ext fun _ ↦ homogeneous_eq_true_iff⟩
 
 theorem readings_negative :
     exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
-      {n | -homogeneous n = 1} = weakᶜ := by
+      {n | (homogeneous n)ᶜ = .true} = weakᶜ := by
   refine ⟨exhIE_compl_weak, isLeast_compl_weak, Set.ext fun n ↦ ?_⟩
-  rw [Set.mem_ofPred_eq, neg_homogeneous_eq_one_iff]
+  rw [Set.mem_ofPred_eq, neg_homogeneous_eq_true_iff]
   simp [weak]
 
 /-- In the singular context (27) the implicature approach treats the positive and negative sentences
@@ -160,7 +160,7 @@ theorem singular_context :
     (1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak ∧
         1 ∉ exhIE {weakᶜ, singularᶜ} weakᶜ) ∧
       (1 ∉ strong ∧ 1 ∉ weakᶜ) ∧
-      (homogeneous 1 = 0 ∧ -homogeneous 1 = 0) := by
+      (homogeneous 1 = .undefined ∧ (homogeneous 1)ᶜ = .undefined) := by
   rw [exhIE_weak, exhIE_compl_weak]
   simp [weak, strong, homogeneous]
 

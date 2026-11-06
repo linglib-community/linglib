@@ -13,7 +13,7 @@ tradition: `w ~[R x] w'` reads "`w'` is compatible with what `x` believes or kno
 ⟦x believes p⟧(w) is the relational box `□[R x] p w`, so closure under known implication is the
 K axiom `ModalLogic.box_K`. A `DoxasticPredicate` pairs an accessibility relation with a
 factivity class; applied to a complement it presupposes the complement when factive, which a
-context admits only if it entails the complement (`support_sentence`), and asserts the box. A
+context admits only if it entails the complement (`compl_gapExt_sentence`), and asserts the box. A
 predicate is veridical when it entails its complement (`IsVeridical`), which it does exactly when
 it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`). A verb's entry
 records its factivity and whether its alternatives are epistemic, reflexive in every model, or
@@ -67,7 +67,7 @@ theorem holdsAt_iff :
     V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ □[V.access agent] p w := by
   simp [HoldsAt, sentence]
 
-theorem support_sentence :
+theorem compl_gapExt_sentence :
     (Trivalent.gapExt (V.sentence agent p))ᶜ = {w | ∀ _ ∈ V.factivity, p w} := by
   ext w
   simp [sentence]

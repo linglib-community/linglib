@@ -46,7 +46,7 @@ scope, then, a deployed determiner is a supervaluation over repairs.
   or antitone quantifier is settled by the lower and upper repairs.
 * `Trivalent.deployQuantifier_eq_forallStrong`, `Trivalent.deployQuantifier_eq_existsStrong`:
   deploying `∀` and `∃` (Definitions 16 and 17) gives the Strong Kleene quantifiers.
-* `Trivalent.deployDeterminer_of_forall`, `Trivalent.deployDeterminer_eq_zero_of_ne`,
+* `Trivalent.deployDeterminer_of_forall`, `Trivalent.deployDeterminer_eq_undefined_of_ne`,
   `Trivalent.deployDeterminer_ofProp_left`: a deployed determiner is undefined or a deployed
   quantifier on its nuclear scope, according to its restrictor.
 
@@ -273,7 +273,7 @@ theorem deployDeterminer_of_forall {D : (U → Bool) → (U → Bool) → Bool} 
     simp [h g hg]
 
 /-- Two repairs of the restrictor that the determiner tells apart make it undefined. -/
-theorem deployDeterminer_eq_zero_of_ne {D : (U → Bool) → (U → Bool) → Bool}
+theorem deployDeterminer_eq_undefined_of_ne {D : (U → Bool) → (U → Bool) → Bool}
     {A B : U → Trivalent} {g h : U → Bool} (hg : g ∈ repairs A) (hh : h ∈ repairs A)
     (hgh : D g ≠ D h) : deployDeterminer D A B = .undefined :=
   deployWith_succ_of_ne hg hh fun e ↦ hgh (funext fun b ↦ congrFun e ![b])

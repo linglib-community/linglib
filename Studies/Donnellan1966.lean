@@ -56,7 +56,7 @@ noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E 
   .ofReferent (attributive φ)
 
 theorem attributiveNominal_resolve_eq_one_iff (ψ : E → W → Prop) (h : attributive φ w = some e) :
-    (attributiveNominal φ).resolve ψ () w = 1 ↔ ψ e w := by
+    (attributiveNominal φ).resolve ψ () w = .true ↔ ψ e w := by
   simp [attributiveNominal, Nominal.ofReferent_resolve, Presupposition.presupOfReferent_of_some h]
 
 theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :

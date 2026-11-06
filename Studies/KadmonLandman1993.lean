@@ -32,7 +32,7 @@ of GEN.
   readings are the paper's own annotations, so `rows_agree` checks the paper's classification
   against its judgments rather than deriving those two readings.
 * The vague-restriction apparatus is `Set`-based; on a finite enumeration of the
-  precisifications, supervaluation is `SignType.supervaluation` over it.
+  precisifications, supervaluation is `Trivalent.supervaluation` over it.
 
 ## References
 
@@ -209,7 +209,7 @@ domain — while generic *an owl* is **domain vague**: the normalcy restriction
 is inherently underspecified, and different precisifications yield different
 domains. This is what lets generics tolerate exceptions ("a poodle gives live
 birth" survives male poodles). The `Set`-based notions are stated locally
-because the supervaluation substrate (`SignType.supervaluation`) is
+because the supervaluation substrate (`Trivalent.supervaluation`) is
 `Finset`-based for computability; the finite case is below. -/
 
 /-- A vague restriction ⟨v₀, V⟩ (K&L §4.1) is a precise part, the properties known to hold,
@@ -395,8 +395,8 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSuperTrue X apply R scope ↔
-      SignType.supervaluation V (genericTrue apply R scope) = 1 := by
-  rw [SignType.supervaluation_eq_one_iff]
+      Trivalent.supervaluation V (genericTrue apply R scope) = .true := by
+  rw [Trivalent.supervaluation_eq_true_iff]
   simp only [genericSuperTrue, ← hV, Finset.mem_coe]
 
 /-- K&L's exception-tolerance zone is Fine's borderline zone. A generic that is
@@ -407,8 +407,8 @@ theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSubTrue X apply R scope ∧ ¬genericSuperTrue X apply R scope ↔
-      SignType.supervaluation V (genericTrue apply R scope) = 0 := by
-  rw [SignType.supervaluation_eq_zero_iff]
+      Trivalent.supervaluation V (genericTrue apply R scope) = .undefined := by
+  rw [Trivalent.supervaluation_eq_undefined_iff]
   simp only [genericSubTrue, genericSuperTrue, ← hV, Finset.mem_coe, not_forall, exists_prop]
 
 /-! ### The *almost* test

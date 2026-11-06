@@ -13,8 +13,8 @@ public import Mathlib.Data.Fintype.Pi
 /-!
 # Strong Kleene logic as supervaluation
 
-A trivalent value is the supervaluation of its two bivalent readings, true where it is `1` and
-true where it is not `-1`, its designation at K3 and at LP. Reading each occurrence of an atom at
+A trivalent value is the supervaluation of its two bivalent readings, true where it is `true` and
+true where it is not `false`, its designation at K3 and at LP. Reading each occurrence of an atom at
 a standard of its own, independently of its other occurrences, gives the bivalent variants of a
 formula, and the Strong Kleene value of the formula is the supervaluation of its bivalent
 variants. The same holds of the Strong Kleene quantifiers, each instance read at its own
@@ -23,7 +23,7 @@ presuppositional exhaustification as underspecified between a parse with an exha
 and one without.
 
 Uniform supervaluation, which reads every occurrence of an atom at the same standard, is not
-Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `0`, and Strong Kleene leaves it undefined.
+Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `undefined`, and Strong Kleene leaves it undefined.
 
 ## Main definitions
 
@@ -132,8 +132,8 @@ section SupervaluationOn
 variable {α : Type*} {s : Set α} {P Q : α → Prop}
 
 open Classical in
-/-- The supervaluation of `P` over a set is `1` when `P` holds throughout it, `-1` when `P` fails
-throughout it and it is nonempty, and `0` otherwise. -/
+/-- The supervaluation of `P` over a set is `true` when `P` holds throughout it, `false` when `P`
+fails throughout it and it is nonempty, and `undefined` otherwise. -/
 noncomputable def supervaluationOn (s : Set α) (P : α → Prop) : Trivalent :=
   if ∀ a ∈ s, P a then .true else if ∃ a ∈ s, P a then .undefined else .false
 

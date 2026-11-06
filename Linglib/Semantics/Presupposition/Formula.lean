@@ -149,7 +149,7 @@ def accommodate : Formula Atom → Formula Atom
 
 variable {w : W}
 
-theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
+theorem middleKleene_bin_ne_undefined_iff {c : Connective} {F G : Formula Atom}
     (hF : F.middleKleene I w ≠ .undefined → F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I)) :
     (bin c F G).middleKleene I w ≠ .undefined ↔
       F.middleKleene I w ≠ .undefined ∧
@@ -173,15 +173,15 @@ theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ .u
     simp only [middleKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff] at h ⊢
     simp [ih h, truth]
   | bin c F G ihF ihG =>
-    obtain ⟨hF, hG⟩ := (middleKleene_bin_ne_zero_iff I ihF).1 h
+    obtain ⟨hF, hG⟩ := (middleKleene_bin_ne_undefined_iff I ihF).1 h
     simp only [middleKleene, eval, ihF hF]
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp_all [Connective.localContext, truth, Connective.eval]
 
-theorem middleKleene_bin_ne_zero {c : Connective} {F G : Formula Atom} :
+theorem middleKleene_bin_ne_undefined {c : Connective} {F G : Formula Atom} :
     (bin c F G).middleKleene I w ≠ .undefined ↔
       F.middleKleene I w ≠ .undefined ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) :=
-  middleKleene_bin_ne_zero_iff I (middleKleene_eq_ofProp I)
+  middleKleene_bin_ne_undefined_iff I (middleKleene_eq_ofProp I)
 
 theorem nonempty_atom : Formula Atom → Nonempty Atom
   | atom p => ⟨p⟩
@@ -189,14 +189,14 @@ theorem nonempty_atom : Formula Atom → Nonempty Atom
   | not F => nonempty_atom F
   | bin _ F _ => nonempty_atom F
 
-theorem subset_support_middleKleene_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
+theorem subset_compl_gapExt_middleKleene_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
     C ⊆ (Trivalent.gapExt ((bin c F G).middleKleene I))ᶜ ↔
       C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ ∧
         c.localContext C (F.truth I) ⊆ (Trivalent.gapExt (G.middleKleene I))ᶜ := by
   have hl (w) : w ∈ c.localContext C (F.truth I) ↔ w ∈ C ∧
       w ∈ c.localContext Set.univ (F.truth I) := by
     cases c <;> simp [Connective.localContext]
-  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, middleKleene_bin_ne_zero I, hl, and_imp]
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, middleKleene_bin_ne_undefined I, hl, and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw hc ↦ (h w hw).2 hc⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
@@ -219,7 +219,7 @@ private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
     · rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
   | bin c F G ihF ihG =>
     intro C
-    rw [subset_support_middleKleene_bin_iff I]
+    rw [subset_compl_gapExt_middleKleene_bin_iff I]
     cases c
     · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun ⟨hF, hG⟩ ↦ ?_⟩
       · have hF := (ihF C).1 hφ

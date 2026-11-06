@@ -24,7 +24,7 @@ C* from *not A*.
   `EgreRossiSprenger2026b`. The update is Definition 3.2, which collapses when the sentence is
   nowhere true, not the one of `EgreRossiSprenger2026b`, which collapses when the update is
   self-defeating; footnote 6 contrasts the two (`update_neg_conj_dia`, `update_contra_footnote6`).
-  The paper's values `1`, `#` and `0` are `1`, `0` and `-1` in `SignType`.
+  The paper's values `1`, `#` and `0` are `true`, `undefined` and `false` in `Trivalent`.
 * Worlds outside the context are left open (footnote 3); the conditional is void there.
 * Definition 4.2 describes presupposition carriers whose value is a presupposition-free content in
   contexts accepting the presupposition and void elsewhere; `carrier` is that template, and
@@ -73,7 +73,8 @@ C* from *not A*.
 
 namespace EgreRossiSprenger2026c
 
-open Classical SignType Trivalent
+open Classical
+open Trivalent hiding true false
 open EgreRossiSprenger2026b (Sentence Entails NeverVoid accepts_ofSet_iff)
 open EgreRossiSprenger2026b.Sentence (ofSet ofSet_apply restrict mem_restrict conj disj box dia
   ContextFree)
@@ -85,22 +86,22 @@ variable {W : Type*}
 /-- The update `s[A]` of Definition 3.2 keeps the worlds of `s` where `A` is not false, provided `A`
 is true somewhere in `s`, and otherwise collapses to `∅`. -/
 noncomputable def update (s : Set W) (φ : Sentence W) : Set W :=
-  if ∃ w ∈ s, φ s w = 1 then restrict s φ else ∅
+  if ∃ w ∈ s, φ s w = .true then restrict s φ else ∅
 
 /-- The conditional asserts its consequent at the context updated with its antecedent, and is void
 where the world drops out of the update (§2). -/
 noncomputable def cond (φ ψ : Sentence W) : Sentence W := fun s w ↦
-  if w ∈ update s φ then ψ (update s φ) w else 0
+  if w ∈ update s φ then ψ (update s φ) w else .undefined
 
 section Update
 
 variable {s : Set W} {φ ψ χ : Sentence W} {w : W}
 
-theorem update_of_exists (h : ∃ w ∈ s, φ s w = 1) : update s φ = restrict s φ := ite_eq_left h
+theorem update_of_exists (h : ∃ w ∈ s, φ s w = .true) : update s φ = restrict s φ := ite_eq_left h
 
-theorem update_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = 1) : update s φ = ∅ := ite_eq_right h
+theorem update_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = .true) : update s φ = ∅ := ite_eq_right h
 
-theorem mem_update : w ∈ update s φ ↔ (w ∈ s ∧ 0 ≤ φ s w) ∧ ∃ w' ∈ s, φ s w' = 1 := by
+theorem mem_update : w ∈ update s φ ↔ (w ∈ s ∧ .undefined ≤ φ s w) ∧ ∃ w' ∈ s, φ s w' = .true := by
   unfold update
   split_ifs with h <;> simp [h]
 
@@ -110,7 +111,7 @@ theorem update_subset (s : Set W) (φ : Sentence W) : update s φ ⊆ s :=
 @[simp] theorem update_empty (φ : Sentence W) : update ∅ φ = ∅ :=
   Set.subset_eq_empty (update_subset ∅ φ) rfl
 
-theorem update_nonempty_iff : (update s φ).Nonempty ↔ ∃ w ∈ s, φ s w = 1 := by
+theorem update_nonempty_iff : (update s φ).Nonempty ↔ ∃ w ∈ s, φ s w = .true := by
   refine ⟨fun ⟨w, hw⟩ ↦ (mem_update.1 hw).2, fun ⟨w, hw, h⟩ ↦
     ⟨w, mem_update.2 ⟨⟨hw, ?_⟩, w, hw, h⟩⟩⟩
   rw [h]
@@ -120,7 +121,7 @@ theorem update_congr (h : φ s = ψ s) : update s φ = update s ψ := by
   ext w
   simp only [mem_update, h]
 
-theorem update_zero (s : Set W) : update s 0 = ∅ :=
+theorem update_undefined (s : Set W) : update s (fun _ _ ↦ .undefined) = ∅ :=
   update_of_not_exists fun ⟨_, _, h⟩ ↦ by simp at h
 
 @[simp] theorem update_ofSet (s p : Set W) : update s (ofSet p) = s ∩ p := by
@@ -134,15 +135,16 @@ theorem update_zero (s : Set W) : update s 0 = ∅ :=
 
 theorem cond_apply_of_mem (h : w ∈ update s φ) : cond φ ψ s w = ψ (update s φ) w := ite_eq_left h
 
-theorem cond_apply_of_notMem (h : w ∉ update s φ) : cond φ ψ s w = 0 := ite_eq_right h
+theorem cond_apply_of_notMem (h : w ∉ update s φ) : cond φ ψ s w = .undefined := ite_eq_right h
 
-theorem cond_apply_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = 1) (w : W) : cond φ ψ s w = 0 :=
+theorem cond_apply_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = .true) (w : W) :
+    cond φ ψ s w = .undefined :=
   cond_apply_of_notMem (by rw [update_of_not_exists h]; exact Set.notMem_empty w)
 
 -- §2
-theorem neg_cond (φ ψ : Sentence W) : -cond φ ψ = cond φ (-ψ) := by
+theorem neg_cond (φ ψ : Sentence W) : (cond φ ψ)ᶜ = cond φ ψᶜ := by
   funext s w
-  simp only [Pi.neg_apply, cond]
+  simp only [Pi.compl_apply, cond]
   split_ifs <;> simp
 
 -- §2
@@ -155,12 +157,12 @@ theorem cond_ofSet_apply {p : Set W} (hψ : ContextFree ψ) (hw : w ∈ s) :
     simp [hp]
 
 theorem cond_cond_of_inter_eq_empty {p q : Set W} (h : s ∩ p = ∅) (hw : w ∈ s) :
-    cond (cond (ofSet p) (ofSet q)) χ s w = 0 ∧
+    cond (cond (ofSet p) (ofSet q)) χ s w = .undefined ∧
       condAssert .lp (cond (ofSet p) (ofSet q) s w) (χ s w) = χ s w ∧
-      cond (disj (-ofSet p) (ofSet q)) χ s w = χ s w := by
-  have hpq : cond (ofSet p) (ofSet q) s w = 0 :=
+      cond (disj (ofSet p)ᶜ (ofSet q)) χ s w = χ s w := by
+  have hpq : cond (ofSet p) (ofSet q) s w = .undefined :=
     cond_apply_of_notMem (by rw [update_ofSet, h]; exact Set.notMem_empty w)
-  refine ⟨cond_apply_of_not_exists ?_ w, by rw [hpq, condAssert_lp_zero_left], ?_⟩
+  refine ⟨cond_apply_of_not_exists ?_ w, by rw [hpq, condAssert_lp_undefined_left], ?_⟩
   · rintro ⟨w', -, h'⟩
     rw [cond_apply_of_notMem (by rw [update_ofSet, h]; exact Set.notMem_empty w')] at h'
     exact absurd h' (by decide)
@@ -175,7 +177,7 @@ end Update
 
 /-- A sentence avoids void in a context when it is not void at every world of it; by Avoid Void a
 sentence can be felicitously asserted only in a context where it avoids void. -/
-def AvoidsVoid (s : Set W) (φ : Sentence W) : Prop := ∃ w ∈ s, φ s w ≠ 0
+def AvoidsVoid (s : Set W) (φ : Sentence W) : Prop := ∃ w ∈ s, φ s w ≠ .undefined
 
 /-- A context accepts a sentence when the sentence is false at none of its worlds and avoids void
 in it (Definition 3.1). -/
@@ -185,7 +187,7 @@ section Accepts
 
 variable {s : Set W} {φ ψ χ : Sentence W}
 
-theorem accepts_iff : Accepts s φ ↔ (∀ w ∈ s, 0 ≤ φ s w) ∧ ∃ w ∈ s, φ s w = 1 := by
+theorem accepts_iff : Accepts s φ ↔ (∀ w ∈ s, .undefined ≤ φ s w) ∧ ∃ w ∈ s, φ s w = .true := by
   refine and_congr_right fun h ↦ ⟨fun ⟨w, hw, h0⟩ ↦ ⟨w, hw, ?_⟩, fun ⟨w, hw, h1⟩ ↦ ⟨w, hw, ?_⟩⟩
   · have h0' := h w hw
     generalize φ s w = v at h0 h0' ⊢
@@ -204,23 +206,24 @@ theorem avoidsVoid_box_iff : AvoidsVoid s (box φ) ↔ AvoidsVoid s φ := by
   constructor
   · rintro ⟨w, hw, h⟩
     by_contra hall
-    exact h ((Sentence.box_eq_zero_iff hw).2 fun w' hw' ↦ by
+    exact h ((Sentence.box_eq_undefined_iff hw).2 fun w' hw' ↦ by
       by_contra h'
       exact hall ⟨w', hw', h'⟩)
   · rintro ⟨w, hw, h⟩
-    exact ⟨w, hw, fun h' ↦ h ((Sentence.box_eq_zero_iff hw).1 h' w hw)⟩
+    exact ⟨w, hw, fun h' ↦ h ((Sentence.box_eq_undefined_iff hw).1 h' w hw)⟩
 
 -- §3, Definition 3.1
 theorem accepts_box_iff : Accepts s (box φ) ↔ Accepts s φ :=
   and_congr Sentence.accepts_box_iff avoidsVoid_box_iff
 
-theorem accepts_dia_iff : Accepts s (dia φ) ↔ ∃ w ∈ s, φ s w = 1 := by
+theorem accepts_dia_iff : Accepts s (dia φ) ↔ ∃ w ∈ s, φ s w = .true := by
   rw [accepts_iff]
   constructor
   · rintro ⟨-, w, hw, h⟩
-    exact (Sentence.dia_eq_one_iff hw).1 h
+    exact (Sentence.dia_eq_true_iff hw).1 h
   · rintro ⟨w, hw, h⟩
-    have h1 : ∀ w' ∈ s, dia φ s w' = 1 := fun w' hw' ↦ (Sentence.dia_eq_one_iff hw').2 ⟨w, hw, h⟩
+    have h1 : ∀ w' ∈ s, dia φ s w' = .true := fun w' hw' ↦
+      (Sentence.dia_eq_true_iff hw').2 ⟨w, hw, h⟩
     exact ⟨fun w' hw' ↦ by rw [h1 w' hw']; decide, w, hw, h1 w hw⟩
 
 /-- A context accepts `A → B` iff its update with `A` accepts `B` (**Proposition 3.3**, the Ramsey
@@ -245,12 +248,12 @@ end Accepts
 
 /-- `A` presupposes `B` when every context not accepting `B` makes `A` void at all its worlds,
 which by Avoid Void makes `A` unassertable there (Definition 4.1). -/
-def Presupposes (φ ψ : Sentence W) : Prop := ∀ s, ¬ Accepts s ψ → ∀ w ∈ s, φ s w = 0
+def Presupposes (φ ψ : Sentence W) : Prop := ∀ s, ¬ Accepts s ψ → ∀ w ∈ s, φ s w = .undefined
 
 /-- An elementary presupposition carrier with presupposition `B` and content `C` takes the value of
 `C` in a context accepting `B`, and is void throughout any other (Definition 4.2). -/
 noncomputable def carrier (ψ χ : Sentence W) : Sentence W := fun s w ↦
-  if Accepts s ψ then χ s w else 0
+  if Accepts s ψ then χ s w else .undefined
 
 section Presupposition
 
@@ -262,24 +265,25 @@ theorem Presupposes.not_avoidsVoid (h : Presupposes φ ψ) (hs : ¬ Accepts s ψ
 theorem presupposes_carrier (ψ χ : Sentence W) : Presupposes (carrier ψ χ) ψ :=
   fun _ hs _ _ ↦ ite_eq_right hs
 
-theorem neg_carrier (ψ χ : Sentence W) : -carrier ψ χ = carrier ψ (-χ) := by
+theorem neg_carrier (ψ χ : Sentence W) : (carrier ψ χ)ᶜ = carrier ψ χᶜ := by
   funext s w
-  simp only [Pi.neg_apply, carrier]
+  simp only [Pi.compl_apply, carrier]
   split_ifs <;> simp
 
 theorem update_carrier (s : Set W) (ψ χ : Sentence W) :
     update s (carrier ψ χ) = if Accepts s ψ then update s χ else ∅ := by
   split_ifs with h
   · exact update_congr (funext fun w ↦ ite_eq_left h)
-  · rw [update_congr (ψ := 0) (funext fun w ↦ ite_eq_right h), update_zero]
+  · rw [update_congr (ψ := fun _ _ ↦ .undefined) (funext fun w ↦ ite_eq_right h),
+      update_undefined]
 
 /-- A presupposition projects through negation (Proposition 5.1). -/
-theorem Presupposes.neg (h : Presupposes φ ψ) : Presupposes (-φ) ψ := fun s hs w hw ↦ by
+theorem Presupposes.neg (h : Presupposes φ ψ) : Presupposes φᶜ ψ := fun s hs w hw ↦ by
   simp [h s hs w hw]
 
 /-- A presupposition projects through *might* (Proposition 5.1). -/
 theorem Presupposes.dia (h : Presupposes φ ψ) : Presupposes (dia φ) ψ := fun s hs _ hw ↦
-  (Sentence.dia_eq_zero_iff hw).2 (h s hs)
+  (Sentence.dia_eq_undefined_iff hw).2 (h s hs)
 
 /-- A presupposition of the antecedent projects from a conditional (Proposition 5.1). -/
 theorem Presupposes.cond_left (h : Presupposes φ ψ) (χ : Sentence W) :
@@ -290,7 +294,7 @@ theorem Presupposes.cond_left (h : Presupposes φ ψ) (χ : Sentence W) :
 -- Proposition 5.1
 theorem not_avoidsVoid_of_presupposes (h : Presupposes φ ψ) (hs : ¬ Accepts s ψ)
     (χ : Sentence W) :
-    ¬ AvoidsVoid s (-φ) ∧ ¬ AvoidsVoid s (dia φ) ∧ ¬ AvoidsVoid s (cond φ χ) :=
+    ¬ AvoidsVoid s φᶜ ∧ ¬ AvoidsVoid s (dia φ) ∧ ¬ AvoidsVoid s (cond φ χ) :=
   ⟨h.neg.not_avoidsVoid hs, h.dia.not_avoidsVoid hs, (h.cond_left χ).not_avoidsVoid hs⟩
 
 /-- A conditional presupposes that its antecedent is possible (**Fact 4.3**). -/
@@ -299,7 +303,7 @@ theorem presupposes_cond_dia (φ ψ : Sentence W) : Presupposes (cond φ ψ) (di
 
 -- Fact 4.6
 theorem presupposes_cond_dia_projects (φ ψ χ : Sentence W) :
-    Presupposes (-cond φ ψ) (dia φ) ∧ Presupposes (dia (cond φ ψ)) (dia φ) ∧
+    Presupposes (cond φ ψ)ᶜ (dia φ) ∧ Presupposes (dia (cond φ ψ)) (dia φ) ∧
       Presupposes (cond (cond φ ψ) χ) (dia φ) :=
   ⟨(presupposes_cond_dia φ ψ).neg, (presupposes_cond_dia φ ψ).dia,
     (presupposes_cond_dia φ ψ).cond_left χ⟩
@@ -307,7 +311,7 @@ theorem presupposes_cond_dia_projects (φ ψ χ : Sentence W) :
 /-- With a context-free consequent, a conditional does not presuppose its antecedent (Fact 4.4,
 first claim). -/
 theorem not_presupposes_cond_antecedent (hψ : ContextFree ψ) {w₁ w₂ : W}
-    (h₁ : φ {w₁, w₂} w₁ = 1) (h₁' : ψ {w₁, w₂} w₁ = 1) (h₂ : φ {w₁, w₂} w₂ = -1) :
+    (h₁ : φ {w₁, w₂} w₁ = .true) (h₁' : ψ {w₁, w₂} w₁ = .true) (h₂ : φ {w₁, w₂} w₂ = .false) :
     ¬ Presupposes (cond φ ψ) φ := by
   intro h
   have hu : w₁ ∈ update {w₁, w₂} φ :=
@@ -321,15 +325,15 @@ theorem not_presupposes_cond_antecedent (hψ : ContextFree ψ) {w₁ w₂ : W}
 
 /-- Nor does it presuppose the negation of its antecedent or the possibility of that negation
 (**Fact 4.4**, second and third claims). -/
-theorem not_presupposes_cond_neg (hψ : ContextFree ψ) {w₁ : W} (h₁ : φ {w₁} w₁ = 1)
-    (h₁' : ψ {w₁} w₁ = 1) :
-    ¬ Presupposes (cond φ ψ) (-φ) ∧ ¬ Presupposes (cond φ ψ) (dia (-φ)) := by
+theorem not_presupposes_cond_neg (hψ : ContextFree ψ) {w₁ : W} (h₁ : φ {w₁} w₁ = .true)
+    (h₁' : ψ {w₁} w₁ = .true) :
+    ¬ Presupposes (cond φ ψ) φᶜ ∧ ¬ Presupposes (cond φ ψ) (dia φᶜ) := by
   have hu : w₁ ∈ update {w₁} φ := mem_update.2 ⟨⟨rfl, by rw [h₁]; decide⟩, w₁, rfl, h₁⟩
-  have hval : cond φ ψ {w₁} w₁ = 1 := by
+  have hval : cond φ ψ {w₁} w₁ = .true := by
     rw [cond_apply_of_mem hu, hψ _ {w₁} w₁, h₁']
-  have hneg : ¬ ∃ w ∈ ({w₁} : Set W), (-φ) {w₁} w = 1 := by
+  have hneg : ¬ ∃ w ∈ ({w₁} : Set W), φᶜ {w₁} w = .true := by
     rintro ⟨w, rfl, h⟩
-    rw [Pi.neg_apply, Pi.neg_apply, h₁] at h
+    rw [Pi.compl_apply, Pi.compl_apply, h₁] at h
     exact absurd h (by decide)
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · have := h {w₁} (fun hacc ↦ hneg (accepts_iff.1 hacc).2) w₁ rfl
@@ -380,11 +384,11 @@ section Quantifiers
 
 variable {D : Type*}
 
-private theorem cond_ofSet_eq_zero_of_not_accepts {A : D → Set W} {ψ : D → Sentence W}
+private theorem cond_ofSet_eq_undefined_of_not_accepts {A : D → Set W} {ψ : D → Sentence W}
     {s : Set W} (hs : ¬ Accepts s (dia (ofSet (⋃ d, A d)))) (d : D) (w : W) :
-    cond (ofSet (A d)) (ψ d) s w = 0 :=
+    cond (ofSet (A d)) (ψ d) s w = .undefined :=
   cond_apply_of_not_exists (fun ⟨w', hw', h⟩ ↦ hs (accepts_dia_iff.2 ⟨w', hw', by
-    simp only [ofSet_apply, ofProp_eq_one_iff, Set.mem_iUnion] at h ⊢
+    simp only [ofSet_apply, ofProp_eq_true_iff, Set.mem_iUnion] at h ⊢
     exact ⟨d, h⟩⟩)) w
 
 /-- Restricted universal and existential sentences presuppose that their restrictor is possibly
@@ -393,8 +397,10 @@ theorem presupposes_forallInstances_dia (A : D → Set W) (ψ : D → Sentence W
     Presupposes (forallInstances fun d ↦ cond (ofSet (A d)) (ψ d)) (dia (ofSet (⋃ d, A d))) ∧
       Presupposes (existsInstances fun d ↦ cond (ofSet (A d)) (ψ d))
         (dia (ofSet (⋃ d, A d))) :=
-  ⟨fun _ hs w _ ↦ forallHaug_eq_zero_iff.2 fun d ↦ cond_ofSet_eq_zero_of_not_accepts hs d w,
-    fun _ hs w _ ↦ existsHaug_eq_zero_iff.2 fun d ↦ cond_ofSet_eq_zero_of_not_accepts hs d w⟩
+  ⟨fun _ hs w _ ↦ forallHaug_eq_undefined_iff.2 fun d ↦
+      cond_ofSet_eq_undefined_of_not_accepts hs d w,
+    fun _ hs w _ ↦ existsHaug_eq_undefined_iff.2 fun d ↦
+      cond_ofSet_eq_undefined_of_not_accepts hs d w⟩
 
 -- Fact 4.5
 theorem not_presupposes_forallInstances_exists :
@@ -405,15 +411,15 @@ theorem not_presupposes_forallInstances_exists :
   have hnot : ¬ Accepts Set.univ (ofSet (⋃ _ : Unit, ({true} : Set Bool))) := fun hacc ↦ by
     have := (accepts_ofSet_iff'.1 hacc).2 (Set.mem_univ false)
     simp at this
-  have hc : cond (ofSet {true}) (ofSet .univ) Set.univ true = (1 : SignType) := by
+  have hc : cond (ofSet {true}) (ofSet .univ) Set.univ true = (.true : Trivalent) := by
     rw [cond_apply_of_mem (by rw [update_ofSet]; simp)]
     simp
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · have := h Set.univ hnot true (Set.mem_univ _)
-    simp only [forallInstances, hc, forallHaug_eq_zero_iff] at this
+    simp only [forallInstances, hc, forallHaug_eq_undefined_iff] at this
     exact absurd (this ()) (by decide)
   · have := h Set.univ hnot true (Set.mem_univ _)
-    simp only [existsInstances, hc, existsHaug_eq_zero_iff] at this
+    simp only [existsInstances, hc, existsHaug_eq_undefined_iff] at this
     exact absurd (this ()) (by decide)
 
 /-- At a single world the restricted universal is [belnap-1970]'s restricted quantification, whose
@@ -427,10 +433,10 @@ theorem forallInstances_singleton {D : Type} (A B : D → Set W) (w : W) :
   beta_reduce
   by_cases h : w ∈ A d
   · rw [cond_apply_of_mem (by rw [update_ofSet]; exact ⟨rfl, h⟩),
-      Set.indicator_of_mem (show d ∈ {x | w ∈ A x} from h)]
+      ofProp_eq_true_iff.2 (show d ∈ {x | w ∈ A x} from h), transplication_true_left]
     rfl
   · rw [cond_apply_of_notMem (by rw [update_ofSet]; exact fun h' ↦ h h'.2),
-      Set.indicator_of_notMem (show d ∉ {x | w ∈ A x} from h)]
+      ofProp_eq_false_iff.2 (show d ∉ {x | w ∈ A x} from h), transplication_false_left]
 
 end Quantifiers
 
@@ -464,10 +470,10 @@ theorem update_cond_eq_empty_iff :
 worlds that updating on `A` and then `¬B` keeps (Proposition 5.2). -/
 theorem update_cond_ofSet {p : Set W} (hψ : NeverVoid ψ)
     (h : (update s (cond (ofSet p) ψ)).Nonempty) :
-    update s (cond (ofSet p) ψ) = s \ update (update s (ofSet p)) (-ψ) := by
+    update s (cond (ofSet p) ψ) = s \ update (update s (ofSet p)) ψᶜ := by
   rw [update_of_exists (update_nonempty_iff.1 h), update_ofSet]
   ext w
-  simp only [mem_restrict, Set.mem_sdiff, mem_update, Pi.neg_apply]
+  simp only [mem_restrict, Set.mem_sdiff, mem_update, Pi.compl_apply]
   refine and_congr_right fun hw ↦ ?_
   by_cases hu : w ∈ s ∩ p
   · rw [cond_apply_of_mem (by rwa [update_ofSet]), update_ofSet]
@@ -489,16 +495,16 @@ theorem update_cond_ofSet {p : Set W} (hψ : NeverVoid ψ)
 /-- For classical disjuncts, with `¬A ∧ B` possible, the update on `A ∨ B` is the update on
 `¬A → B` (**Proposition 5.2**, (3)). -/
 theorem update_disj_ofSet {p q : Set W} (h : (s ∩ (pᶜ ∩ q)).Nonempty) :
-    update s (disj (ofSet p) (ofSet q)) = update s (cond (-ofSet p) (ofSet q)) := by
-  have hu : update s (-ofSet p) = s ∩ pᶜ := by rw [Sentence.neg_ofSet, update_ofSet]
-  have hval : ∀ w ∈ s, 0 ≤ cond (-ofSet p) (ofSet q) s w ↔ w ∈ p ∪ q := fun w hw ↦ by
+    update s (disj (ofSet p) (ofSet q)) = update s (cond (ofSet p)ᶜ (ofSet q)) := by
+  have hu : update s (ofSet p)ᶜ = s ∩ pᶜ := by rw [Sentence.neg_ofSet, update_ofSet]
+  have hval : ∀ w ∈ s, .undefined ≤ cond (ofSet p)ᶜ (ofSet q) s w ↔ w ∈ p ∪ q := fun w hw ↦ by
     by_cases hp : w ∈ p
     · rw [cond_apply_of_notMem (by rw [hu]; exact fun h' ↦ h'.2 hp)]
       exact iff_of_true le_rfl (.inl hp)
     · rw [cond_apply_of_mem (by rw [hu]; exact ⟨hw, hp⟩), hu]
       simp [hp]
   obtain ⟨x, hx, hxp, hxq⟩ := h
-  have hex : ∃ w ∈ s, cond (-ofSet p) (ofSet q) s w = 1 :=
+  have hex : ∃ w ∈ s, cond (ofSet p)ᶜ (ofSet q) s w = .true :=
     ⟨x, hx, by rw [cond_apply_of_mem (by rw [hu]; exact ⟨hx, hxp⟩), hu]; simp [hxq]⟩
   rw [EgreRossiSprenger2026b.disj_ofSet, update_ofSet, update_of_exists hex]
   ext w
@@ -536,27 +542,28 @@ noncomputable def ofTrigger (p p' : Atom) : Sentence W := carrier (ofSet (I p)) 
 
 theorem ofTrigger_singleton (p p' : Atom) (w : W) :
     ofTrigger I p p' {w} w = (Formula.trigger p p').middleKleene I w := by
-  show _ = (I p).indicator (fun w ↦ ofProp (w ∈ I p')) w
+  show _ = transplication (ofProp (w ∈ I p)) (ofProp (w ∈ I p'))
   by_cases h : w ∈ I p
   · have hacc : Accepts {w} (ofSet (I p)) :=
       accepts_ofSet_iff'.2 ⟨Set.singleton_nonempty w, Set.singleton_subset_iff.2 h⟩
-    rw [Set.indicator_of_mem h, ofTrigger, carrier, ite_eq_left hacc]
+    rw [ofProp_eq_true_iff.2 h, transplication_true_left, ofTrigger, carrier, ite_eq_left hacc]
     rfl
   · have hacc : ¬ Accepts {w} (ofSet (I p)) := fun hacc ↦
       h (Set.singleton_subset_iff.1 (accepts_ofSet_iff'.1 hacc).2)
-    rw [Set.indicator_of_notMem h, ofTrigger, carrier, ite_eq_right hacc]
+    rw [ofProp_eq_false_iff.2 h, transplication_false_left, ofTrigger, carrier,
+      ite_eq_right hacc]
 
 /-- The context in which sequential update evaluates the second argument of a connective. -/
 noncomputable def localUpdate (s : Set W) (φ : Sentence W) : Connective → Set W
   | .conj | .cond => update s φ
-  | .disj => update s (-φ)
+  | .disj => update s φᶜ
 
 variable {I} {s : Set W}
 
-private theorem support_middleKleene_trigger (p p' : Atom) :
-    Function.support ((Formula.trigger p p').middleKleene I) = I p := by
+private theorem compl_gapExt_middleKleene_trigger (p p' : Atom) :
+    (Trivalent.gapExt ((Formula.trigger p p').middleKleene I))ᶜ = I p := by
   ext w
-  show (I p).indicator (fun w ↦ ofProp (w ∈ I p')) w ≠ 0 ↔ w ∈ I p
+  show transplication (ofProp (w ∈ I p)) (ofProp (w ∈ I p')) ≠ .undefined ↔ w ∈ I p
   by_cases h : w ∈ I p <;> simp [h]
 
 private theorem localUpdate_ofTrigger (c : Connective) {a : Atom} (a' : Atom) (hs : s ⊆ I a) :
@@ -595,11 +602,11 @@ private theorem update_ofTrigger_nonempty_iff {t : Set W} (b b' : Atom) :
 local context (§5.3–5.5). -/
 theorem update_localUpdate_nonempty_iff (c : Connective) (a a' b b' : Atom) :
     (update (localUpdate s (ofTrigger I a a') c) (ofTrigger I b b')).Nonempty ↔
-      s ⊆ Function.support ((Formula.bin c (.trigger a a') (.trigger b b')).middleKleene I) ∧
+      s ⊆ (Trivalent.gapExt ((Formula.bin c (.trigger a a') (.trigger b b')).middleKleene I))ᶜ ∧
         (c.localContext s ((Formula.trigger a a').truth I) ∩
           (Formula.trigger b b').truth I).Nonempty := by
-  rw [Formula.subset_support_middleKleene_bin_iff, support_middleKleene_trigger,
-    support_middleKleene_trigger]
+  rw [Formula.subset_compl_gapExt_middleKleene_bin_iff, compl_gapExt_middleKleene_trigger,
+    compl_gapExt_middleKleene_trigger]
   change _ ↔ (s ⊆ I a ∧ c.localContext s (I a ∩ I a') ⊆ I b) ∧
     (c.localContext s (I a ∩ I a') ∩ (I b ∩ I b')).Nonempty
   by_cases hs : s ⊆ I a
@@ -622,50 +629,50 @@ variable {s : Set W}
 
 -- §5.3
 theorem update_update_neg_dia (s p : Set W) :
-    update (update s (-ofSet p)) (dia (ofSet p)) = ∅ := by
+    update (update s (ofSet p)ᶜ) (dia (ofSet p)) = ∅ := by
   apply update_of_not_exists
   rintro ⟨w, hw, h⟩
-  obtain ⟨w', hw', h'⟩ := (Sentence.dia_eq_one_iff hw).1 h
+  obtain ⟨w', hw', h'⟩ := (Sentence.dia_eq_true_iff hw).1 h
   rw [Sentence.neg_ofSet, update_ofSet] at hw'
-  simp only [ofSet_apply, ofProp_eq_one_iff] at h'
+  simp only [ofSet_apply, ofProp_eq_true_iff] at h'
   exact hw'.2 h'
 
-private theorem dia_ofSet_eq_neg_one {p : Set W} {w : W} (hw : w ∈ s) (h : ∀ x ∈ s, x ∉ p) :
-    dia (ofSet p) s w = -1 := by
+private theorem dia_ofSet_eq_false {p : Set W} {w : W} (hw : w ∈ s) (h : ∀ x ∈ s, x ∉ p) :
+    dia (ofSet p) s w = .false := by
   cases hv : dia (ofSet p) s w
-  · exact absurd ((Sentence.dia_eq_zero_iff hw).1 hv w hw) (by simp)
   · rfl
-  · obtain ⟨x, hx, hxp⟩ := (Sentence.dia_eq_one_iff hw).1 hv
+  · exact absurd ((Sentence.dia_eq_undefined_iff hw).1 hv w hw) (by simp)
+  · obtain ⟨x, hx, hxp⟩ := (Sentence.dia_eq_true_iff hw).1 hv
     exact absurd (by simpa using hxp) (h x hx)
 
 -- footnote 6
 theorem not_accepts_neg_conj_dia (s p : Set W) :
-    ¬ Accepts s (conj (-ofSet p) (dia (ofSet p))) := by
+    ¬ Accepts s (conj (ofSet p)ᶜ (dia (ofSet p))) := by
   rintro ⟨h, w, hw, -⟩
   by_cases hp : ∃ x ∈ s, x ∈ p
   · obtain ⟨x, hx, hxp⟩ := hp
     have := h x hx
-    have hn : (-ofSet p) s x = -1 := by simp [hxp]
-    rw [Sentence.conj_apply, hn, (Sentence.dia_eq_one_iff hx).2 ⟨x, hx, by simp [hxp]⟩] at this
+    have hn : (ofSet p)ᶜ s x = .false := by simp [hxp]
+    rw [Sentence.conj_apply, hn, (Sentence.dia_eq_true_iff hx).2 ⟨x, hx, by simp [hxp]⟩] at this
     exact absurd this (by decide)
   · have := h w hw
-    rw [Sentence.conj_apply, dia_ofSet_eq_neg_one hw fun x hx hxp ↦ hp ⟨x, hx, hxp⟩] at this
+    rw [Sentence.conj_apply, dia_ofSet_eq_false hw fun x hx hxp ↦ hp ⟨x, hx, hxp⟩] at this
     by_cases hwp : w ∈ p
-    · rw [show (-ofSet p) s w = -1 by simp [hwp]] at this
+    · rw [show (ofSet p)ᶜ s w = .false by simp [hwp]] at this
       exact absurd this (by decide)
-    · rw [show (-ofSet p) s w = 1 by simp [hwp]] at this
+    · rw [show (ofSet p)ᶜ s w = .true by simp [hwp]] at this
       exact absurd this (by decide)
 
 -- Definition 3.2, footnote 6
 theorem update_neg_conj_dia {p : Set W} (h : (s ∩ p).Nonempty) (h' : (s \ p).Nonempty) :
-    update s (conj (-ofSet p) (dia (ofSet p))) = s \ p := by
+    update s (conj (ofSet p)ᶜ (dia (ofSet p))) = s \ p := by
   obtain ⟨y, hy, hyp⟩ := h
-  have hv : ∀ w ∈ s, conj (-ofSet p) (dia (ofSet p)) s w = ofProp (w ∉ p) := fun w hw ↦ by
-    rw [Sentence.conj_apply, (Sentence.dia_eq_one_iff hw).2 ⟨y, hy, by simp [hyp]⟩]
+  have hv : ∀ w ∈ s, conj (ofSet p)ᶜ (dia (ofSet p)) s w = ofProp (w ∉ p) := fun w hw ↦ by
+    rw [Sentence.conj_apply, (Sentence.dia_eq_true_iff hw).2 ⟨y, hy, by simp [hyp]⟩]
     by_cases hp : w ∈ p
-    · rw [show (-ofSet p) s w = -1 by simp [hp], show ofProp (w ∉ p) = -1 by simp [hp]]
+    · rw [show (ofSet p)ᶜ s w = .false by simp [hp], show ofProp (w ∉ p) = .false by simp [hp]]
       rfl
-    · rw [show (-ofSet p) s w = 1 by simp [hp], show ofProp (w ∉ p) = 1 by simp [hp]]
+    · rw [show (ofSet p)ᶜ s w = .true by simp [hp], show ofProp (w ∉ p) = .true by simp [hp]]
       rfl
   obtain ⟨x, hx, hxp⟩ := h'
   rw [update_of_exists ⟨x, hx, by rw [hv x hx]; simp [hxp]⟩]
@@ -675,22 +682,22 @@ theorem update_neg_conj_dia {p : Set W} (h : (s ∩ p).Nonempty) (h' : (s \ p).N
 
 -- Definition 3.2, footnote 6 [egre-rossi-sprenger-2026b]
 theorem update_contra_footnote6 :
-    update Set.univ (conj (-ofSet {true}) (dia (ofSet {true}))) = {false} ∧
-      conj (-ofSet {true}) (dia (ofSet {true})) {false} false = -1 ∧
-      Sentence.update Set.univ (conj (-ofSet {true}) (dia (ofSet ({true} : Set Bool)))) = ∅ := by
+    update Set.univ (conj (ofSet {true})ᶜ (dia (ofSet {true}))) = {false} ∧
+      conj (ofSet {true})ᶜ (dia (ofSet {true})) {false} false = .false ∧
+      Sentence.update Set.univ (conj (ofSet {true})ᶜ (dia (ofSet ({true} : Set Bool)))) = ∅ := by
   refine ⟨?_, ?_, ?_⟩
   · rw [update_neg_conj_dia ⟨true, by simp⟩ ⟨false, by simp⟩]
     ext b
     cases b <;> simp
-  · rw [Sentence.conj_apply, dia_ofSet_eq_neg_one (s := ({false} : Set Bool)) rfl (by simp),
-      show (-ofSet ({true} : Set Bool)) {false} false = 1 by simp]
+  · rw [Sentence.conj_apply, dia_ofSet_eq_false (s := ({false} : Set Bool)) rfl (by simp),
+      show (ofSet ({true} : Set Bool))ᶜ {false} false = .true by simp]
     rfl
-  · have h₁ : -ofSet ({true} : Set Bool) = ofSet {false} := by
+  · have h₁ : (ofSet ({true} : Set Bool))ᶜ = ofSet {false} := by
       rw [Sentence.neg_ofSet]
       congr 1
       ext b
       cases b <;> simp
-    have h₂ : ofSet ({true} : Set Bool) = -ofSet {false} := by
+    have h₂ : ofSet ({true} : Set Bool) = (ofSet {false})ᶜ := by
       rw [Sentence.neg_ofSet]
       congr 1
       ext b
@@ -707,19 +714,23 @@ Fact 4.3 rests on the collapse of Definition 3.2 at a sentence that is nowhere t
 it a conditional whose antecedent is void throughout the context takes its consequent's value. -/
 
 theorem not_presupposes_cond_dia_of_restrict :
-    ¬ Presupposes (Sentence.cond (0 : Sentence Unit) (ofSet .univ)) (dia 0) := by
+    ¬ Presupposes (Sentence.cond (fun _ _ ↦ .undefined : Sentence Unit) (ofSet .univ))
+      (dia fun _ _ ↦ .undefined) := by
   intro h
-  have hnot : ¬ Accepts Set.univ (dia (0 : Sentence Unit)) := fun hacc ↦ by
+  have hnot : ¬ Accepts Set.univ (dia (fun _ _ ↦ .undefined : Sentence Unit)) := fun hacc ↦ by
     obtain ⟨w, -, hw⟩ := accepts_dia_iff.1 hacc
     simp at hw
   have := h Set.univ hnot () (Set.mem_univ _)
   rw [Sentence.cond_apply_of_mem (Set.mem_univ _)
-    (by rw [Sentence.update_eq_self_of_accepts (EgreRossiSprenger2026b.accepts_zero _)]; trivial)]
+    (by
+      rw [Sentence.update_eq_self_of_accepts (EgreRossiSprenger2026b.accepts_undefined _)]
+      trivial)]
     at this
   simp at this
 
 -- Definition 3.2
-theorem cond_zero_left (ψ : Sentence W) (s : Set W) (w : W) : cond 0 ψ s w = 0 :=
+theorem cond_undefined_left (ψ : Sentence W) (s : Set W) (w : W) :
+    cond (fun _ _ ↦ .undefined) ψ s w = .undefined :=
   cond_apply_of_not_exists (fun ⟨_, _, h⟩ ↦ by simp at h) w
 
 /-! ### Inference (§6)
@@ -737,19 +748,20 @@ def EntailsFlat (Γ : Set (Sentence W)) (ψ : Sentence W) : Prop :=
 /-- An inference is C#-valid when it is C-valid and not every context–world pair at which the
 premises are not false voids the conclusion (Definition 6.1). -/
 def EntailsSharp (Γ : Set (Sentence W)) (ψ : Sentence W) : Prop :=
-  Entails Γ ψ ∧ ¬ ∀ s, ∀ w ∈ s, (∀ φ ∈ Γ, 0 ≤ φ s w) → ψ s w = 0
+  Entails Γ ψ ∧ ¬ ∀ s, ∀ w ∈ s, (∀ φ ∈ Γ, .undefined ≤ φ s w) → ψ s w = .undefined
 
 section Inference
 
 variable {Γ : Set (Sentence W)} {φ ψ : Sentence W}
 
 theorem entailsSharp_iff : EntailsSharp Γ ψ ↔
-    Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, 0 ≤ φ s w) ∧ ψ s w ≠ 0 := by
+    Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, .undefined ≤ φ s w) ∧ ψ s w ≠ .undefined := by
   simp only [EntailsSharp, not_forall, exists_prop]
 
 -- Definition 6.1
 theorem entailsSharp_iff_of_contextFree (hΓ : ∀ φ ∈ Γ, ContextFree φ) (hψ : ContextFree ψ) :
-    EntailsSharp Γ ψ ↔ Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, 0 ≤ φ s w) ∧ ψ s w = 1 := by
+    EntailsSharp Γ ψ ↔
+      Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, .undefined ≤ φ s w) ∧ ψ s w = .true := by
   rw [entailsSharp_iff]
   refine and_congr_right fun hC ↦
     ⟨fun ⟨s, w, hw, hΓw, hψw⟩ ↦ ⟨s, w, hw, hΓw, ?_⟩, fun ⟨s, w, hw, hΓw, h1⟩ ↦
@@ -762,8 +774,8 @@ theorem entailsSharp_iff_of_contextFree (hΓ : ∀ φ ∈ Γ, ContextFree φ) (h
   revert hψw h0
   cases v <;> decide
 
-private theorem cond_ofSet_empty_ne_one (φ : Sentence W) (s : Set W) (w : W) :
-    cond φ (ofSet ∅) s w ≠ 1 := by
+private theorem cond_ofSet_empty_ne_true (φ : Sentence W) (s : Set W) (w : W) :
+    cond φ (ofSet ∅) s w ≠ .true := by
   by_cases hu : w ∈ update s φ
   · rw [cond_apply_of_mem hu]
     simp
@@ -771,37 +783,37 @@ private theorem cond_ofSet_empty_ne_one (φ : Sentence W) (s : Set W) (w : W) :
     decide
 
 theorem entailsSharp_never_true :
-    EntailsSharp {ofSet {true}} (cond (dia (-ofSet {true})) (ofSet ∅)) ∧
-      ∀ s, ∀ w ∈ s, cond (dia (-ofSet ({true} : Set Bool))) (ofSet ∅) s w ≠ 1 := by
+    EntailsSharp {ofSet {true}} (cond (dia (ofSet {true})ᶜ) (ofSet ∅)) ∧
+      ∀ s, ∀ w ∈ s, cond (dia (ofSet ({true} : Set Bool))ᶜ) (ofSet ∅) s w ≠ .true := by
   refine ⟨entailsSharp_iff.2 ⟨fun s h w _ ↦ ?_, Set.univ, true, Set.mem_univ _, ?_, ?_⟩,
-    fun s w _ ↦ cond_ofSet_empty_ne_one _ s w⟩
+    fun s w _ ↦ cond_ofSet_empty_ne_true _ s w⟩
   · have hs := accepts_ofSet_iff.1 (h _ rfl)
-    have hnot : ¬ ∃ x ∈ s, dia (-ofSet ({true} : Set Bool)) s x = 1 := by
+    have hnot : ¬ ∃ x ∈ s, dia (ofSet ({true} : Set Bool))ᶜ s x = .true := by
       rintro ⟨x, hx, hd⟩
-      obtain ⟨y, hy, hy'⟩ := (Sentence.dia_eq_one_iff hx).1 hd
+      obtain ⟨y, hy, hy'⟩ := (Sentence.dia_eq_true_iff hx).1 hd
       have := hs hy
       simp_all
     rw [cond_apply_of_not_exists hnot w]
   · intro φ hφ
     rw [Set.mem_singleton_iff.1 hφ]
     simp
-  · have hd : ∀ w, dia (-ofSet ({true} : Set Bool)) Set.univ w = 1 := fun w ↦
-      (Sentence.dia_eq_one_iff (Set.mem_univ w)).2 ⟨false, Set.mem_univ _, by simp⟩
-    have hu : true ∈ update Set.univ (dia (-ofSet ({true} : Set Bool))) :=
+  · have hd : ∀ w, dia (ofSet ({true} : Set Bool))ᶜ Set.univ w = .true := fun w ↦
+      (Sentence.dia_eq_true_iff (Set.mem_univ w)).2 ⟨false, Set.mem_univ _, by simp⟩
+    have hu : true ∈ update Set.univ (dia (ofSet ({true} : Set Bool))ᶜ) :=
       mem_update.2 ⟨⟨Set.mem_univ _, by rw [hd]; decide⟩, true, Set.mem_univ _, hd true⟩
     rw [cond_apply_of_mem hu]
     simp
 
 /-- False Antecedents, `¬A ⊨ A → C`, is C-valid. -/
-theorem entails_neg_cond (φ ψ : Sentence W) : Entails {-φ} (cond φ ψ) := fun s h w _ ↦
+theorem entails_neg_cond (φ ψ : Sentence W) : Entails {φᶜ} (cond φ ψ) := fun s h w _ ↦
   (cond_apply_of_not_exists (fun ⟨w', hw', h'⟩ ↦ by
     have := h _ (Set.mem_singleton _) w' hw'
-    rw [Pi.neg_apply, Pi.neg_apply, h'] at this
+    rw [Pi.compl_apply, Pi.compl_apply, h'] at this
     exact absurd this (by decide)) w).ge
 
 /-- False Antecedents is not C♭-valid for a contingent classical antecedent. -/
 theorem not_entailsFlat_neg_cond {p : Set W} {w : W} (hw : w ∉ p) (ψ : Sentence W) :
-    ¬ EntailsFlat {-ofSet p} (cond (ofSet p) ψ) := fun h ↦ by
+    ¬ EntailsFlat {(ofSet p)ᶜ} (cond (ofSet p) ψ) := fun h ↦ by
   have := accepts_cond_iff.1 (h {w} fun φ hφ ↦ by
     rw [Set.mem_singleton_iff.1 hφ, Sentence.neg_ofSet, accepts_ofSet_iff']
     exact ⟨⟨w, rfl⟩, fun x hx ↦ (Set.mem_singleton_iff.1 hx) ▸ hw⟩)
@@ -812,20 +824,20 @@ theorem not_entailsFlat_neg_cond {p : Set W} {w : W} (hw : w ∉ p) (ψ : Senten
 /-- False Antecedents is not C#-valid for a classical antecedent, since wherever `¬A` is not false
 `A → C` is void. -/
 theorem not_entailsSharp_neg_cond (p : Set W) (ψ : Sentence W) :
-    ¬ EntailsSharp {-ofSet p} (cond (ofSet p) ψ) := fun ⟨_, h⟩ ↦ h fun s w _ hΓ ↦ by
+    ¬ EntailsSharp {(ofSet p)ᶜ} (cond (ofSet p) ψ) := fun ⟨_, h⟩ ↦ h fun s w _ hΓ ↦ by
   have hwp : w ∉ p := fun hwp ↦ by
     have := hΓ _ (Set.mem_singleton _)
-    rw [show (-ofSet p) s w = -1 by simp [hwp]] at this
+    rw [show (ofSet p)ᶜ s w = .false by simp [hwp]] at this
     exact absurd this (by decide)
   exact cond_apply_of_notMem fun hu ↦ hwp (by rw [update_ofSet] at hu; exact hu.2)
 
 theorem entailsFlat_neg_cond (φ ψ : Sentence W) :
-    EntailsFlat {-cond φ ψ} (cond φ (-ψ)) ∧ EntailsFlat {cond φ (-ψ)} (-cond φ ψ) := by
+    EntailsFlat {(cond φ ψ)ᶜ} (cond φ ψᶜ) ∧ EntailsFlat {cond φ ψᶜ} (cond φ ψ)ᶜ := by
   rw [neg_cond]
   exact ⟨fun _ h ↦ h _ (Set.mem_singleton _), fun _ h ↦ h _ (Set.mem_singleton _)⟩
 
 theorem not_entailsFlat_or_to_if {p q : Set W} {w : W} (hp : w ∈ p) :
-    ¬ EntailsFlat {disj (ofSet p) (ofSet q)} (cond (-ofSet p) (ofSet q)) := fun h ↦ by
+    ¬ EntailsFlat {disj (ofSet p) (ofSet q)} (cond (ofSet p)ᶜ (ofSet q)) := fun h ↦ by
   have := accepts_cond_iff.1 (h {w} fun φ hφ ↦ by
     rw [Set.mem_singleton_iff.1 hφ, EgreRossiSprenger2026b.disj_ofSet, accepts_ofSet_iff']
     exact ⟨⟨w, rfl⟩, fun x hx ↦ .inl ((Set.mem_singleton_iff.1 hx) ▸ hp)⟩)
@@ -835,13 +847,13 @@ theorem not_entailsFlat_or_to_if {p q : Set W} {w : W} (hp : w ∈ p) :
 
 /-- Or-to-If is C#-valid when `¬p ∧ q` is possible. -/
 theorem entailsSharp_or_to_if {p q : Set W} {w : W} (hp : w ∉ p) (hq : w ∈ q) :
-    EntailsSharp {disj (ofSet p) (ofSet q)} (cond (-ofSet p) (ofSet q)) := by
+    EntailsSharp {disj (ofSet p) (ofSet q)} (cond (ofSet p)ᶜ (ofSet q)) := by
   rw [entailsSharp_iff]
   refine ⟨fun s h x _ ↦ ?_, {w}, w, rfl, fun φ hφ ↦ ?_, ?_⟩
   · have hs : s ⊆ p ∪ q :=
       accepts_ofSet_iff.1 (EgreRossiSprenger2026b.disj_ofSet p q ▸ h _ (Set.mem_singleton _))
-    by_cases hu : x ∈ update s (-ofSet p)
-    · rw [cond_apply_of_mem hu, ofSet_apply, zero_le_ofProp_iff]
+    by_cases hu : x ∈ update s (ofSet p)ᶜ
+    · rw [cond_apply_of_mem hu, ofSet_apply, undefined_le_ofProp_iff]
       rw [Sentence.neg_ofSet, update_ofSet] at hu
       exact (hs hu.1).resolve_left hu.2
     · rw [cond_apply_of_notMem hu]
@@ -852,17 +864,17 @@ theorem entailsSharp_or_to_if {p q : Set W} {w : W} (hp : w ∉ p) (hq : w ∈ q
 
 -- §6, (33), (34) [gibbard-1981]
 theorem not_accepts_cond_cond_neg (s p q : Set W) :
-    ¬ (Accepts s (cond (ofSet p) (ofSet q)) ∧ Accepts s (cond (ofSet p) (-ofSet q))) := by
+    ¬ (Accepts s (cond (ofSet p) (ofSet q)) ∧ Accepts s (cond (ofSet p) (ofSet q)ᶜ)) := by
   rintro ⟨h₁, h₂⟩
   rw [accepts_cond_iff, accepts_iff] at h₁ h₂
   obtain ⟨-, w, hw, h⟩ := h₁
   have := h₂.1 w hw
-  rw [Pi.neg_apply, Pi.neg_apply, h] at this
+  rw [Pi.compl_apply, Pi.compl_apply, h] at this
   exact absurd this (by decide)
 
 /-- Reductio from conflicting conditionals, `p → q, p → ¬q ⊨ ¬p`, is C#-valid when `p` can fail. -/
 theorem entailsSharp_reductio {p q : Set W} {w : W} (hw : w ∉ p) :
-    EntailsSharp {cond (ofSet p) (ofSet q), cond (ofSet p) (-ofSet q)} (-ofSet p) := by
+    EntailsSharp {cond (ofSet p) (ofSet q), cond (ofSet p) (ofSet q)ᶜ} (ofSet p)ᶜ := by
   rw [entailsSharp_iff]
   refine ⟨fun s h x hx ↦ ?_, {w}, w, rfl, fun φ hφ ↦ ?_, by simp [hw]⟩
   · by_cases hp : x ∈ p
@@ -881,7 +893,7 @@ theorem entailsSharp_reductio {p q : Set W} {w : W} (hw : w ∉ p) :
 
 -- footnote 15
 theorem entailsSharp_ofSet_self {p : Set W} {w : W} (hw : w ∈ p) :
-    EntailsSharp {ofSet p} (ofSet p) ∧ ¬ EntailsSharp {ofSet p, -ofSet p} (ofSet p) := by
+    EntailsSharp {ofSet p} (ofSet p) ∧ ¬ EntailsSharp {ofSet p, (ofSet p)ᶜ} (ofSet p) := by
   refine ⟨entailsSharp_iff.2 ⟨EgreRossiSprenger2026b.entails_refl _, {w}, w, rfl,
     fun φ hφ ↦ ?_, by simp⟩, fun ⟨_, h⟩ ↦ h fun s x _ hΓ ↦ ?_⟩
   · rw [Set.mem_singleton_iff.1 hφ]
@@ -892,7 +904,7 @@ theorem entailsSharp_ofSet_self {p : Set W} {w : W} (hw : w ∈ p) :
 
 -- footnote 15
 theorem not_entailsSharp_contradiction (p : Set W) :
-    ¬ EntailsSharp {conj (ofSet p) (-ofSet p)} (conj (ofSet p) (-ofSet p)) := fun ⟨_, h⟩ ↦
+    ¬ EntailsSharp {conj (ofSet p) (ofSet p)ᶜ} (conj (ofSet p) (ofSet p)ᶜ) := fun ⟨_, h⟩ ↦
   h fun s x _ hΓ ↦ by
     have := hΓ _ (Set.mem_singleton _)
     rw [Sentence.neg_ofSet, EgreRossiSprenger2026b.conj_ofSet, Set.inter_compl_self] at this
@@ -902,8 +914,8 @@ theorem not_entailsSharp_contradiction (p : Set W) :
 theorem not_entailsSharp_trans {p q : Set W} {w w' : W} (hw : w ∈ p) (hw' : w' ∉ p)
     (hq : w' ∈ q) :
     EntailsSharp {ofSet p} (disj (ofSet p) (ofSet q)) ∧
-      EntailsSharp {disj (ofSet p) (ofSet q)} (cond (-ofSet p) (ofSet q)) ∧
-      ¬ EntailsSharp {ofSet p} (cond (-ofSet p) (ofSet q)) := by
+      EntailsSharp {disj (ofSet p) (ofSet q)} (cond (ofSet p)ᶜ (ofSet q)) ∧
+      ¬ EntailsSharp {ofSet p} (cond (ofSet p)ᶜ (ofSet q)) := by
   refine ⟨entailsSharp_iff.2 ⟨fun s h ↦ ?_, {w}, w, rfl, fun φ hφ ↦ ?_, ?_⟩,
     entailsSharp_or_to_if hw' hq, fun ⟨_, h⟩ ↦ h fun s x _ hΓ ↦ ?_⟩
   · rw [EgreRossiSprenger2026b.disj_ofSet, accepts_ofSet_iff]
@@ -913,14 +925,14 @@ theorem not_entailsSharp_trans {p q : Set W} {w w' : W} (hw : w ∈ p) (hw' : w'
   · rw [EgreRossiSprenger2026b.disj_ofSet]
     simp
   · have := hΓ _ (Set.mem_singleton _)
-    rw [ofSet_apply, zero_le_ofProp_iff] at this
+    rw [ofSet_apply, undefined_le_ofProp_iff] at this
     exact cond_apply_of_notMem fun hu ↦ by
       rw [Sentence.neg_ofSet, update_ofSet] at hu
       exact hu.2 this
 
 /-- [von-fintel-1999]'s Strawson entailment between trivalent propositions is the strict-tolerant
 validity of [cobreros-etal-2012] (§6). -/
-theorem strawsonEntails_iff_st (p q : W → SignType) :
+theorem strawsonEntails_iff_st (p q : W → Trivalent) :
     Presupposition.strawsonEntails p q ↔
       ∀ w, Designation.k3.threshold ≤ p w → Designation.lp.threshold ≤ q w := by
   simp only [Presupposition.strawsonEntails, Designation.threshold_k3, Designation.threshold_lp]

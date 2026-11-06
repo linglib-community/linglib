@@ -6,12 +6,13 @@ public import Linglib.Logic.Trivalent.Pointwise
 # Presupposition in trivalent semantics
 
 A sentence with a presupposition denotes a trivalent proposition `W → Trivalent`, true or false
-where its presupposition holds and `0` where it fails. A trigger presupposing `A` and asserting
-`B` is the indicator `fun w ↦ Trivalent.transplication (Trivalent.ofProp (A w)) (ofProp (B w)`, its presupposition is its support)
-`(Trivalent.gapExt p)ᶜ`, and it holds at `w` when `p w = 1`. Theories of projection differ in their
+where its presupposition holds and undefined where it fails. A trigger presupposing `A` and
+asserting `B` is the transplication `fun w ↦ transplication (ofProp (A w)) (ofProp (B w))`, its
+presupposition is where it is defined, `(Trivalent.gapExt p)ᶜ`, and it holds at `w` when
+`p w = .true`. Theories of projection differ in their
 connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), Karttunen's filtering
 connectives are Peters' Middle Kleene (`Trivalent.meetMiddle`, `Trivalent.joinMiddle`), Bochvar's
-truth operator is `fun w ↦ ofProp (p w = 1)`, and the rival Strong Kleene and Belnap connectives
+truth operator is `fun w ↦ ofProp (p w = .true)`, and the rival Strong Kleene and Belnap connectives
 are `⊓`, `⊔`, `Trivalent.meetBelnap` and `Trivalent.joinBelnap`. Each projection rule is a
 characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's filtering
 conjunction), and quantified presuppositions project by the trivalent quantifiers of
@@ -88,15 +89,15 @@ section PresupOfReferent
 
 variable {E : Type*} {referent : W → Option E} {scope : E → W → Prop} {w : W}
 
-@[simp] theorem presupOfReferent_eq_zero_iff :
+@[simp] theorem presupOfReferent_eq_undefined_iff :
     presupOfReferent referent scope w = .undefined ↔ referent w = none := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
-@[simp] theorem presupOfReferent_eq_one_iff :
+@[simp] theorem presupOfReferent_eq_true_iff :
     presupOfReferent referent scope w = .true ↔ ∃ e, referent w = some e ∧ scope e w := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
-@[simp] theorem presupOfReferent_eq_neg_one_iff :
+@[simp] theorem presupOfReferent_eq_false_iff :
     presupOfReferent referent scope w = .false ↔ ∃ e, referent w = some e ∧ ¬ scope e w := by
   cases h : referent w <;> simp [presupOfReferent, h]
 

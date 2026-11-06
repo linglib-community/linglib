@@ -84,8 +84,8 @@ variable {W O : Type*}
 
 open Classical in
 /-- The presuppositional projection presupposes the counterstance and asserts the prejacent. -/
-noncomputable def toTrivalent (m : Outlook W O) : W → SignType :=
-  {w | m.counterstance w}.indicator fun w ↦ SignType.ofProp (m.prejacent w)
+noncomputable def toTrivalent (m : Outlook W O) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (m.counterstance w)) (Trivalent.ofProp (m.prejacent w))
 
 /-- The expressive projection at an outlook pairs the prejacent with the stance as its
 use-conditional dimension. -/
@@ -93,8 +93,8 @@ use-conditional dimension. -/
   ⟨m.prejacent, m.evaluation o⟩
 
 -- (40), (41)
-theorem support_neg_toTrivalent (m : Outlook W O) :
-    Function.support (-m.toTrivalent) = {w | m.counterstance w} := by
+theorem compl_gapExt_neg_toTrivalent (m : Outlook W O) :
+    (Trivalent.gapExt (m.toTrivalentᶜ))ᶜ = {w | m.counterstance w} := by
   ext w
   simp [toTrivalent]
 

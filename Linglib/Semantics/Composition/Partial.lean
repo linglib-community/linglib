@@ -375,7 +375,7 @@ def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g t = some d
 
 /-- A sentence fails exactly where its three-valued readout is undefined, so the engine's
 denotations and Strong Kleene propositions agree on presupposition failure. -/
-theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
+theorem presupFailure_iff_ofPart_eq_undefined {t : Tree C L} {v : Part Prop}
     (h : interpPartial lex g t = some ⟨.t, v⟩) :
     PresupFailure lex g t ↔ Trivalent.ofPart v = .undefined := by
   rw [PresupFailure, Trivalent.ofPart_eq_undefined_iff, h]

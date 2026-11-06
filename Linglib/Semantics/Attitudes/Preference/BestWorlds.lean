@@ -29,8 +29,8 @@ assertion of wanting `p` false.
   problem Villalta raises.
 * `Desire.BestWorlds.want_inter_iff`: wanting a conjunction is wanting each conjunct, which makes
   *sorry* anti-additive in its complement.
-* `Desire.BestWorlds.support_regret`: *sorry* has the presupposition of *glad*.
-* `Desire.BestWorlds.ssubset_of_glad_ne_zero`: the presupposition of *glad* makes the domain
+* `Desire.BestWorlds.compl_gapExt_regret`: *sorry* has the presupposition of *glad*.
+* `Desire.BestWorlds.ssubset_of_glad_ne_undefined`: the presupposition of *glad* makes the domain
   properly contain the belief worlds.
 
 ## Implementation notes
@@ -124,27 +124,27 @@ noncomputable def regret : W → Trivalent :=
 
 variable {dox base g p} {w : W}
 
-@[simp] theorem want_eq_zero_iff : want base g p w = .undefined ↔ ¬ IsContingent (base w) p := by
+@[simp] theorem want_eq_undefined_iff : want base g p w = .undefined ↔ ¬ IsContingent (base w) p := by
   simp [want]
 
-@[simp] theorem want_eq_one_iff :
+@[simp] theorem want_eq_true_iff :
     want base g p w = .true ↔ IsContingent (base w) p ∧ Want (g w) (base w) p := by
   simp [want]
 
-@[simp] theorem want_eq_neg_one_iff :
+@[simp] theorem want_eq_false_iff :
     want base g p w = .false ↔ IsContingent (base w) p ∧ ¬ Want (g w) (base w) p := by
   simp [want]
 
 variable (dox base g p) in
 /-- *Sorry* has the presupposition of *glad*, since *want* presupposes as much of `¬p` as of
 `p`. -/
-theorem support_regret :
+theorem compl_gapExt_regret :
     (Trivalent.gapExt (regret dox base g p))ᶜ = (Trivalent.gapExt (glad dox base g p))ᶜ := by
   ext; simp [regret, glad, isContingent_compl]
 
 /-- If *glad* is defined, its domain properly contains the belief worlds ([von-fintel-1999], p.
 123). -/
-theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ .undefined) : dox w ⊂ base w := by
+theorem ssubset_of_glad_ne_undefined (h : glad dox base g p w ≠ .undefined) : dox w ⊂ base w := by
   obtain ⟨hp, hb, -, v, hv⟩ : dox w ⊆ p ∧ dox w ⊆ base w ∧ IsContingent (base w) p := by
     simpa [glad, and_assoc] using h
   exact hb.ssubset_of_not_superset fun h ↦ hv.2 (hp (h hv.1))

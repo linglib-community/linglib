@@ -11,7 +11,7 @@ public import Studies.Simik2024
 Staňková and Šimík analyse negation in Czech polar questions. The negative prefix moves with the
 finite verb, so verb position fixes the position of negation: a clause-initial verb sits above
 the canonical negation operator and is licensed only by Repp's commitment operator FALSUM
-(`Simik2024.falsumCz_eq_one_of_falsum`), while a verb in situ is licensed by either
+(`Simik2024.falsumCz_eq_true_of_falsum`), while a verb in situ is licensed by either
 (`mem_availableReadings_iff`). Following Zeijlstra, the concord item *žádný* and the prefix carry
 an uninterpretable negative feature and contribute no negation of their own, so of the readings
 the determiner fragment lists for *žádný* only the indefinite one yields 'no' under the canonical

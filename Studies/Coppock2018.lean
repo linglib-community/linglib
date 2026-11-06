@@ -94,10 +94,10 @@ conditions on the three verbs are checked.
 
 namespace Coppock2018
 
-open SignType Trivalent ModalLogic
+open Trivalent Trivalent ModalLogic
 open SetRel
 
-variable {W Ω : Type*} (ρ : Ω → W) (R : SetRel Ω Ω) (p : (Ω → SignType)) (C : Set Ω)
+variable {W Ω : Type*} (ρ : Ω → W) (R : SetRel Ω Ω) (p : (Ω → Trivalent)) (C : Set Ω)
 
 /-! ### Refinement and objective propositions (§3.1)
 
@@ -154,21 +154,21 @@ each refinement class restricted to the state. The unrelativised notions of the 
 case of the universal state. -/
 
 /-- `p` is objectively false at `w` when it is false at every refinement of `w`. -/
-def ObjectivelyFalseAt (w : W) : Prop := ∀ o, ρ o = w → p o = -1
+def ObjectivelyFalseAt (w : W) : Prop := ∀ o, ρ o = w → p o = .false
 
 /-- `p` is objective relative to `C` when no refinement class restricted to `C` assigns it
 both true and false. -/
-def ObjectiveOn : Prop := ∀ o ∈ C, ∀ o' ∈ C, ρ o = ρ o' → p o = 1 → p o' ≠ -1
+def ObjectiveOn : Prop := ∀ o ∈ C, ∀ o' ∈ C, ρ o = ρ o' → p o = .true → p o' ≠ .false
 
 /-- `p` is discretionary relative to `C` when some refinement class restricted to `C` assigns
 it both true and false. -/
-def DiscretionaryOn : Prop := ∃ o ∈ C, ∃ o' ∈ C, ρ o = ρ o' ∧ p o = 1 ∧ p o' = -1
+def DiscretionaryOn : Prop := ∃ o ∈ C, ∃ o' ∈ C, ρ o = ρ o' ∧ p o = .true ∧ p o' = .false
 
 /-- `p` is strongly discretionary relative to `C` when every refinement class the state
 leaves nonempty assigns `p` both true and false, a cut within every world the state leaves
 open. -/
 def StronglyDiscretionaryOn : Prop :=
-  ∀ w, (∃ o ∈ C, ρ o = w) → ∃ o ∈ C, ∃ o' ∈ C, ρ o = w ∧ ρ o' = w ∧ p o = 1 ∧ p o' = -1
+  ∀ w, (∃ o ∈ C, ρ o = w) → ∃ o ∈ C, ∃ o' ∈ C, ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false
 
 theorem discretionaryOn_iff_not_objectiveOn : DiscretionaryOn ρ p C ↔ ¬ ObjectiveOn ρ p C := by
   simp [DiscretionaryOn, ObjectiveOn]
@@ -181,18 +181,18 @@ theorem StronglyDiscretionaryOn.discretionaryOn (h : StronglyDiscretionaryOn ρ 
 
 theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
     StronglyDiscretionaryOn ρ p Set.univ ↔
-      ∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = 1 ∧ p o' = -1 :=
+      ∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false :=
   ⟨fun h w ↦ let ⟨o, _, o', _, h₁, h₂, h₃, h₄⟩ := h w (let ⟨o, ho⟩ := hρ w; ⟨o, trivial, ho⟩)
     ⟨o, o', h₁, h₂, h₃, h₄⟩,
    fun h w _ ↦ let ⟨o, o', h₁, h₂, h₃, h₄⟩ := h w; ⟨o, trivial, o', trivial, h₁, h₂, h₃, h₄⟩⟩
 
 -- §3.1
 theorem objectiveOn_univ_iff_objective_posSupport (h : IsBivalent p) :
-    ObjectiveOn ρ p Set.univ ↔ Objective ρ (posSupport p) := by
+    ObjectiveOn ρ p Set.univ ↔ Objective ρ (Trivalent.posExt p) := by
   rw [objective_iff_forall_mem_iff]
   constructor
   · intro hobj o o' hoo'
-    have key : ∀ a b, ρ a = ρ b → p a = 1 → p b = 1 := fun a b hab ha ↦
+    have key : ∀ a b, ρ a = ρ b → p a = .true → p b = .true := fun a b hab ha ↦
       (h b).resolve_right (hobj a trivial b trivial hab ha)
     exact ⟨key o o' hoo', key o' o hoo'.symm⟩
   · intro hinv o _ o' _ hoo' ht hf
@@ -224,7 +224,7 @@ faultless disagreement; contradiction is supplied by the propositions being comp
 
 /-- `p` splits `w` when some refinement makes it true and another false. A disagreement about
 `p` at such a world is faultless, the paper's footnote 12. -/
-def SplitsAt (w : W) : Prop := (∃ o, ρ o = w ∧ p o = 1) ∧ ∃ o, ρ o = w ∧ p o = -1
+def SplitsAt (w : W) : Prop := (∃ o, ρ o = w ∧ p o = .true) ∧ ∃ o, ρ o = w ∧ p o = .false
 
 theorem SplitsAt.not_objectivelyFalseAt {w : W} (h : SplitsAt ρ p w) :
     ¬ ObjectivelyFalseAt ρ p w := fun hf ↦
@@ -249,11 +249,11 @@ box over outlooks with the proposition's truth as valuation. -/
 
 /-- An agent with accessibility `R` accepts `p` at `o` when `p` is true at every accessible
 outlook. -/
-def Accepts : Ω → Prop := □[R] (p · = 1)
+def Accepts : Ω → Prop := □[R] (p · = .true)
 
 /-- An agent with accessibility `R` rejects `p` at `o` when `p` is false at every accessible
 outlook, which is stronger than not accepting it. -/
-def Rejects : Ω → Prop := □[R] (p · = -1)
+def Rejects : Ω → Prop := □[R] (p · = .false)
 
 /-- Two agents disagree about `p` at `o` when one accepts it and the other rejects it. -/
 def DisagreeAt (R₁ R₂ : SetRel Ω Ω) (o : Ω) : Prop := Accepts R₁ p o ∧ Rejects R₂ p o
@@ -298,39 +298,39 @@ which an undefined conjunct makes the conjunction undefined. -/
 variable [DecidablePred (Accepts R p)]
 
 /-- *think* (31) denotes bare doxastic acceptance. -/
-def think : (Ω → SignType) := fun o ↦ ofProp (Accepts R p o)
+def think : (Ω → Trivalent) := fun o ↦ ofProp (Accepts R p o)
 
 variable [Decidable (StronglyDiscretionaryOn ρ p C)]
 
 /-- *tycka* (32) carries the presupposition that the complement is strongly discretionary
 relative to `C`, conjoined by Weak Kleene conjunction with acceptance. -/
-def tycka : (Ω → SignType) := fun o ↦
-  meetWeak (ofProp (StronglyDiscretionaryOn ρ p C) ⊔ 0) (ofProp (Accepts R p o))
+def tycka : (Ω → Trivalent) := fun o ↦
+  meetWeak (ofProp (StronglyDiscretionaryOn ρ p C) ⊔ .undefined) (ofProp (Accepts R p o))
 
 variable (o : Ω)
 
 -- (28), (29)
-theorem tycka_eq_zero_iff : tycka ρ R p C o = 0 ↔ ¬ StronglyDiscretionaryOn ρ p C := by
-  simp [tycka, SignType.nonpos_iff_ne_one]
+theorem tycka_eq_undefined_iff : tycka ρ R p C o = .undefined ↔ ¬ StronglyDiscretionaryOn ρ p C := by
+  simp [tycka, Trivalent.le_undefined_iff_ne_true]
 
-theorem tycka_eq_one_iff :
-    tycka ρ R p C o = 1 ↔ StronglyDiscretionaryOn ρ p C ∧ Accepts R p o := by
+theorem tycka_eq_true_iff :
+    tycka ρ R p C o = .true ↔ StronglyDiscretionaryOn ρ p C ∧ Accepts R p o := by
   simp [tycka]
 
-theorem tycka_eq_think_of_ne_zero (h : tycka ρ R p C o ≠ 0) :
+theorem tycka_eq_think_of_ne_undefined (h : tycka ρ R p C o ≠ .undefined) :
     tycka ρ R p C o = think R p o := by
-  have hS := not_not.1 ((tycka_eq_zero_iff ρ R p C o).not.1 h)
-  simp only [tycka, think, hS, ofProp_true, SignType.one_sup, meetWeak_one_left]
+  have hS := not_not.1 ((tycka_eq_undefined_iff ρ R p C o).not.1 h)
+  simp only [tycka, think, hS, ofProp_true, Trivalent.true_sup, meetWeak_true_left]
 
 -- (28)
-theorem neg_tycka_eq_zero_iff :
-    -tycka ρ R p C o = 0 ↔ ¬ StronglyDiscretionaryOn ρ p C :=
-  SignType.neg_eq_zero_iff.trans (tycka_eq_zero_iff ρ R p C o)
+theorem neg_tycka_eq_undefined_iff :
+    (tycka ρ R p C o)ᶜ = .undefined ↔ ¬ StronglyDiscretionaryOn ρ p C :=
+  Trivalent.compl_eq_undefined_iff.trans (tycka_eq_undefined_iff ρ R p C o)
 
 -- (2b), (28)
-theorem tycka_eq_zero_of_objectiveOn (hobj : ObjectiveOn ρ p C) (hC : C.Nonempty) :
-    tycka ρ R p C o = 0 :=
-  (tycka_eq_zero_iff ρ R p C o).2 fun h ↦
+theorem tycka_eq_undefined_of_objectiveOn (hobj : ObjectiveOn ρ p C) (hC : C.Nonempty) :
+    tycka ρ R p C o = .undefined :=
+  (tycka_eq_undefined_iff ρ R p C o).2 fun h ↦
     let ⟨o₀, ho₀⟩ := hC
     let ⟨o₁, ho₁, o₂, ho₂, hw₁, hw₂, ht, hf⟩ := h (ρ o₀) ⟨o₀, ho₀, rfl⟩
     hobj o₁ ho₁ o₂ ho₂ (hw₁.trans hw₂.symm) ht hf
@@ -356,21 +356,21 @@ abbrev Outlook := Bool × Bool
 def world : Outlook → Bool := Prod.snd
 
 /-- `p`, *the chili is tasty*. -/
-def tasty : (Outlook → SignType) := fun o ↦ SignType.ofProp o.1
+def tasty : (Outlook → Trivalent) := fun o ↦ Trivalent.ofProp o.1
 
 /-- `q`, *I am an opera singer*. -/
-def opera : (Outlook → SignType) := fun o ↦ SignType.ofProp o.2
+def opera : (Outlook → Trivalent) := fun o ↦ Trivalent.ofProp o.2
 
 /-- *John is a sexy linguist* (10), the objective coordinate read as linguisthood. -/
-def sexyLinguist : (Outlook → SignType) := fun o ↦ SignType.ofProp (o.1 && o.2)
+def sexyLinguist : (Outlook → Trivalent) := fun o ↦ Trivalent.ofProp (o.1 && o.2)
 
 /-- *It's terrible that he dumped her* (33) is defined only where he did, the objective
 coordinate, and then settled by the discretionary one. -/
-def terribleDumped : (Outlook → SignType) := fun o ↦ if o.2 then SignType.ofProp o.1 else 0
+def terribleDumped : (Outlook → Trivalent) := fun o ↦ if o.2 then Trivalent.ofProp o.1 else .undefined
 
 /-- *She doesn't care that he is an idiot* (34) is defined only where he is, the
 discretionary coordinate, and then settled by the objective one. -/
-def caresNotIdiot : (Outlook → SignType) := fun o ↦ if o.1 then SignType.ofProp o.2 else 0
+def caresNotIdiot : (Outlook → Trivalent) := fun o ↦ if o.1 then Trivalent.ofProp o.2 else .undefined
 
 /-- Agent `a` reaches the tasty outlook of the current world. -/
 def accessA : SetRel Outlook Outlook := {p | p.2 = (.true, p.1.2)}
@@ -474,10 +474,10 @@ theorem objectivelyFalseAt_opera : ObjectivelyFalseAt world opera .false := by d
 theorem objectivelyFalseAt_sexyLinguist : ObjectivelyFalseAt world sexyLinguist .false := by
   decide
 
-theorem tycka_tasty (o : Outlook) : tycka world accessA tasty Set.univ o = 1 := by
+theorem tycka_tasty (o : Outlook) : tycka world accessA tasty Set.univ o = .true := by
   decide +revert
 
-theorem tycka_opera (o : Outlook) : tycka world accessA opera Set.univ o = 0 := by
+theorem tycka_opera (o : Outlook) : tycka world accessA opera Set.univ o = .undefined := by
   decide +revert
 
 end Chili
@@ -495,7 +495,7 @@ presupposition placement ((33) against (34)) and the split of *find* from *consi
 hybrid (37). -/
 
 /-- The model proposition a row's complement denotes. -/
-def complements : List (String × (Chili.Outlook → SignType)) :=
+def complements : List (String × (Chili.Outlook → Trivalent)) :=
   [("discretionary", Chili.tasty), ("objective", Chili.opera), ("hybrid", Chili.sexyLinguist),
     ("presupObjective", Chili.terribleDumped), ("presupDiscretionary", Chili.caresNotIdiot)]
 
@@ -511,11 +511,11 @@ inductive VerbCondition
   deriving DecidableEq
 
 /-- The condition as a predicate on a proposition of the chili model relative to a state. -/
-def VerbCondition.Holds : VerbCondition → (Chili.Outlook → SignType) → Set Chili.Outlook → Prop
+def VerbCondition.Holds : VerbCondition → (Chili.Outlook → Trivalent) → Set Chili.Outlook → Prop
   | .strong, p, C => StronglyDiscretionaryOn Chili.world p C
   | .mere, p, C => DiscretionaryOn Chili.world p C
 
-instance (vc : VerbCondition) (p : (Chili.Outlook → SignType)) (cg : Chili.CommonGround) :
+instance (vc : VerbCondition) (p : (Chili.Outlook → Trivalent)) (cg : Chili.CommonGround) :
     Decidable (vc.Holds p cg.toSet) := by
   cases vc <;> simp only [VerbCondition.Holds] <;> infer_instance
 

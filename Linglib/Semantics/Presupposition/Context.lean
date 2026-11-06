@@ -20,7 +20,7 @@ the report presupposes that the subject believes what the complement presupposes
 
 Theories of projection agree on the table and differ in why it holds. Karttunen's filtering
 connectives, Peters' Middle Kleene connectives, are admittance in it
-(`subset_support_meetMiddle_iff`), Heim's context change potentials evaluate their second argument
+(`subset_compl_gapExt_meetMiddle_iff`), Heim's context change potentials evaluate their second argument
 in it (`Semantics/Dynamic/Partial.lean`), and Schlenker derives it from transparency. They part at
 disjunction, where the table is asymmetric and symmetric filtering is `TwoDim.orKPSymmetric`.
 
@@ -31,8 +31,8 @@ is false somewhere in the context.
 ## Main declarations
 
 * `Connective.localContext`: the local context of the second argument of a connective.
-* `subset_support_meetMiddle_iff`, `subset_support_neg_joinMiddle_iff`,
-  `subset_support_joinMiddle_iff`: the filtering connectives are admittance in the local contexts.
+* `subset_compl_gapExt_meetMiddle_iff`, `subset_compl_gapExt_neg_joinMiddle_iff`,
+  `subset_compl_gapExt_joinMiddle_iff`: the filtering connectives are admittance in the local contexts.
 * `PostAccommodationInformative`, `postAccommodationInformative_iff`: informativity after
   accommodation is falsity somewhere in the context.
 
@@ -78,7 +78,7 @@ variable {C : Set W} {p q : W → Trivalent}
 
 /-- A context admits Karttunen's filtering conjunction when it admits the first conjunct and the
 second conjunct's local context admits the second. -/
-theorem subset_support_meetMiddle_iff :
+theorem subset_compl_gapExt_meetMiddle_iff :
     C ⊆ (Trivalent.gapExt (fun w ↦ (p w).meetMiddle (q w)))ᶜ ↔
       C ⊆ (Trivalent.gapExt p)ᶜ ∧ conj.localContext C (Trivalent.posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
   simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.meetMiddle_eq_undefined_iff,
@@ -88,7 +88,7 @@ theorem subset_support_meetMiddle_iff :
 
 /-- A context admits Karttunen's filtering conditional when it admits the antecedent and the
 consequent's local context admits the consequent. -/
-theorem subset_support_neg_joinMiddle_iff :
+theorem subset_compl_gapExt_neg_joinMiddle_iff :
     C ⊆ (Trivalent.gapExt (fun w ↦ ((p w)ᶜ).joinMiddle (q w)))ᶜ ↔
       C ⊆ (Trivalent.gapExt p)ᶜ ∧ cond.localContext C (Trivalent.posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
   simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,
@@ -99,7 +99,7 @@ theorem subset_support_neg_joinMiddle_iff :
 
 /-- A context admits Karttunen's filtering disjunction when it admits the first disjunct and the
 second disjunct's local context admits the second. -/
-theorem subset_support_joinMiddle_iff :
+theorem subset_compl_gapExt_joinMiddle_iff :
     C ⊆ (Trivalent.gapExt (fun w ↦ (p w).joinMiddle (q w)))ᶜ ↔
       C ⊆ (Trivalent.gapExt p)ᶜ ∧ disj.localContext C (Trivalent.posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
   simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,

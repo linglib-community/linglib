@@ -29,9 +29,9 @@ Karttunen and Peters treat presupposition the same way, as not-at-issue content.
 two-dimensional proposition evaluates to a trivalent one (`toTrivalent`), undefined where its
 not-at-issue content fails, and the connectives here then evaluate to the Weak Kleene ones
 (`toTrivalent_and`). The two part at Karttunen's filtering: a filtering conditional presupposes
-at most what the unfiltered one does (`imp_notAtIssue_subset_support`), and less in
+at most what the unfiltered one does (`imp_notAtIssue_subset_compl_gapExt`), and less in
 general, because its antecedent's at-issue content can satisfy its consequent's presupposition,
-which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_support`). Two
+which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_compl_gapExt`). Two
 operations read the at-issue content where the not-at-issue content fails, and so are no
 trivalent operations: Karttunen and Peters's symmetric disjunction (`orKPSymmetric_not_trivalent`)
 and embedding under a negative factive (`negFactive`).
@@ -207,14 +207,14 @@ not-at-issue content fails and the classical value of its at-issue content elsew
 noncomputable def toTrivalent : W → Trivalent :=
   fun w ↦ Trivalent.transplication (Trivalent.ofProp (p.notAtIssue w)) (Trivalent.ofProp (p.atIssue w))
 
-@[simp] theorem toTrivalent_eq_one_iff : p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
+@[simp] theorem toTrivalent_eq_true_iff : p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
   simp [toTrivalent]
 
-@[simp] theorem toTrivalent_eq_neg_one_iff :
+@[simp] theorem toTrivalent_eq_false_iff :
     p.toTrivalent w = .false ↔ p.notAtIssue w ∧ ¬ p.atIssue w := by
   simp [toTrivalent]
 
-@[simp] theorem toTrivalent_eq_zero_iff : p.toTrivalent w = .undefined ↔ ¬ p.notAtIssue w := by
+@[simp] theorem toTrivalent_eq_undefined_iff : p.toTrivalent w = .undefined ↔ ¬ p.notAtIssue w := by
   simp [toTrivalent]
 
 theorem toTrivalent_neg : p.neg.toTrivalent = p.toTrivalentᶜ := by
@@ -233,13 +233,13 @@ theorem toTrivalent_imp :
   by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
 
-theorem imp_notAtIssue_subset_support :
+theorem imp_notAtIssue_subset_compl_gapExt :
     {w | (p.imp q).notAtIssue w} ⊆
       (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := fun w h ↦ by
   simp only [Set.mem_ofPred_eq, imp_notAtIssue, Pi.inf_apply, inf_Prop_eq] at h
   simp [h.1, h.2]
 
-theorem exists_notAtIssue_ne_support [Nonempty W] :
+theorem exists_notAtIssue_ne_compl_gapExt [Nonempty W] :
     ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
       {w | (f <$> p <*> q).notAtIssue w} ≠
         (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := by

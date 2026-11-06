@@ -3,8 +3,7 @@ module
 public import Linglib.Data.Examples.Stalnaker1978
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Semantics.Reference.Kaplan
-public import Mathlib.Algebra.Notation.Support
-public import Mathlib.Basic.Sign.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -50,9 +49,9 @@ known](##eq_up_diag), so that Stalnaker's reinterpretation is the update by the 
   derived from the facts the paper stipulates for it. Demonstratives, indexicals and terms whose
   reference is fixed by a description are `Kaplan.Character.dthat`, and proper names are constant
   characters, which is the paper's assumption that both are rigid designators.
-* A truth-value gap, for the second principle, is the value `0` of a `SignType`-valued concept, as
-  in `Semantics/Presupposition/Basic.lean`. A sentence that fails to express a proposition at a
-  world has a row of gaps there.
+* A truth-value gap, for the second principle, is the value `undefined` of a `Trivalent`-valued
+  concept, as in `Semantics/Presupposition/Basic.lean`. A sentence that fails to express a
+  proposition at a world has a row of gaps there.
 * The third principle is stated with the clarification of note 13: what is said at two worlds of
   the context set need coincide only within the context set.
 * The paper proposes the essential effect, not an update rule. That the diagonal is the only
@@ -168,8 +167,8 @@ def FirstPrinciple (cs p : Set W) : Prop := (cs ∩ p).Nonempty ∧ ¬ cs ⊆ p
 
 /-- The second principle: an assertive utterance expresses, relative to each world of the context
 set, a proposition with a truth value at each world of the context set. -/
-def SecondPrinciple (cs : Set W) (χ : Character W W SignType) : Prop :=
-  ∀ v ∈ cs, cs ⊆ Function.support (χ v)
+def SecondPrinciple (cs : Set W) (χ : Character W W Trivalent) : Prop :=
+  ∀ v ∈ cs, cs ⊆ (Trivalent.gapExt (χ v))ᶜ
 
 /-- The third principle: the proposition expressed at any world of the context set coincides
 within the context set with the proposition expressed at any other. -/
@@ -179,8 +178,8 @@ def ThirdPrinciple (cs : Set W) (χ : Character W W α) : Prop :=
 /-- The second principle turns semantic presupposition into speaker presupposition: if the
 sentence has a truth value only where `φ` is true, then `φ` is true throughout the context set
 (p. 326). -/
-theorem subset_of_secondPrinciple {χ : Character W W SignType} {φ : Set W}
-    (h : SecondPrinciple cs χ) (hφ : ∀ v, Function.support (χ v) ⊆ φ) : cs ⊆ φ :=
+theorem subset_of_secondPrinciple {χ : Character W W Trivalent} {φ : Set W}
+    (h : SecondPrinciple cs χ) (hφ : ∀ v, (Trivalent.gapExt (χ v))ᶜ ⊆ φ) : cs ⊆ φ :=
   fun w hw ↦ hφ w (h w hw hw)
 
 /-- The third principle holds exactly when the essential effect of the assertion, eliminating the

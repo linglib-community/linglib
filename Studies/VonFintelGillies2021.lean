@@ -48,17 +48,17 @@ abbrev notRaining : World → Prop := fun w ↦ ¬ raining w
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
 -- Observation 5
-theorem cant_might_exclusion (hCant : kernelCant k φ w = 1) : kernelMight k φ w = -1 := by
-  rw [kernelMight_eq_neg_kernelCant, Pi.neg_apply, hCant]
+theorem cant_might_exclusion (hCant : kernelCant k φ w = .true) : kernelMight k φ w = .false := by
+  rw [kernelMight_eq_neg_kernelCant, Pi.compl_apply, hCant, Trivalent.compl_true]
 
-theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = 1) : ¬ φ w :=
-  must_entails_prejacent k _ w hReal (kernelMust_eq_one_iff.1 hTrue).2
+theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = .true) : ¬ φ w :=
+  must_entails_prejacent k _ w hReal (kernelMust_eq_true_iff.1 hTrue).2
 
 theorem cant_dilemma_resolved :
-    (true, true) ∈ wetGearK.base ∧ kernelCant wetGearK notRaining (true, true) = 1 ∧
-      kernelMight wetGearK notRaining (true, true) = -1 ∧ ¬ notRaining (true, true) := by
-  have hCant : kernelCant wetGearK notRaining (true, true) = 1 := by
-    refine kernelMust_eq_one_iff.2 ⟨?_, ?_⟩
+    (true, true) ∈ wetGearK.base ∧ kernelCant wetGearK notRaining (true, true) = .true ∧
+      kernelMight wetGearK notRaining (true, true) = .false ∧ ¬ notRaining (true, true) := by
+  have hCant : kernelCant wetGearK notRaining (true, true) = .true := by
+    refine kernelMust_eq_true_iff.2 ⟨?_, ?_⟩
     · rintro ⟨x, hx, hxor⟩
       rcases hx with rfl | hx'
       · rcases hxor with h_sub | h_disj
@@ -75,7 +75,7 @@ theorem cant_dilemma_resolved :
       decide
   exact ⟨by rw [wetGearK_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
 
-theorem cant_direct_evidence_infelicity (w : World) : kernelCant rainK notRaining w = 0 :=
-  kernelMust_eq_zero_iff.2 ⟨raining, by simp [rainK], Or.inl fun _ hw hn ↦ hn hw⟩
+theorem cant_direct_evidence_infelicity (w : World) : kernelCant rainK notRaining w = .undefined :=
+  kernelMust_eq_undefined_iff.2 ⟨raining, by simp [rainK], Or.inl fun _ hw hn ↦ hn hw⟩
 
 end VonFintelGillies2021

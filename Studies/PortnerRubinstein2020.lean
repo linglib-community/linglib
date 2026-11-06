@@ -224,8 +224,8 @@ theorem want_alice_and_want_sue (w : Marriage) :
 /-- On von Fintel's best-worlds *want* it is false that the speaker wants to marry Alice, since
 the outcome is contingent on the beliefs⁺ and marrying Sue is a best outcome. -/
 theorem bestWorlds_want_alice_eq_neg_one (w : Marriage) :
-    Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice w = -1 := by
-  refine Desire.BestWorlds.want_eq_neg_one_iff.2
+    Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice w = .false := by
+  refine Desire.BestWorlds.want_eq_false_iff.2
     ⟨⟨⟨.alice, by simp [doxPlus], rfl⟩, .sue, by simp [doxPlus], nofun⟩, fun h ↦ ?_⟩
   have hbest : Marriage.sue ∈ (premisePreorder (bul w)).minimals (doxPlus.accessibleWorlds w) := by
     refine ⟨by simp [doxPlus], fun v _ hvs ↦ ?_⟩

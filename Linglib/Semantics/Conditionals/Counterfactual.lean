@@ -32,7 +32,7 @@ agree on the consequent, and part under embedding.
   centered ordering the supervaluation over completions is the selectional counterfactual.
 * `cem_supervaluation`: conditional excluded middle is super-true, while the strong-Kleene
   disjunction of the two selectional counterfactuals is only never false
-  (`selectionalCounterfactual_sup_compl_ne_neg_one`).
+  (`selectionalCounterfactual_sup_compl_ne_false`).
 
 ## References
 
@@ -70,21 +70,21 @@ noncomputable def homogeneityCounterfactual : W → Trivalent :=
 
 variable {ord p q w}
 
-@[simp] theorem homogeneityCounterfactual_eq_one_iff :
+@[simp] theorem homogeneityCounterfactual_eq_true_iff :
     homogeneityCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
   simp +contextual [homogeneityCounterfactual]
 
-@[simp] theorem homogeneityCounterfactual_eq_neg_one_iff :
+@[simp] theorem homogeneityCounterfactual_eq_false_iff :
     homogeneityCounterfactual ord p q w = .false ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
   simp +contextual [homogeneityCounterfactual, and_comm]
 
-@[simp] theorem homogeneityCounterfactual_eq_zero_iff :
+@[simp] theorem homogeneityCounterfactual_eq_undefined_iff :
     homogeneityCounterfactual ord p q w = .undefined ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [homogeneityCounterfactual]
 
-theorem support_homogeneityCounterfactual_compl :
+theorem compl_gapExt_homogeneityCounterfactual_compl :
     (Trivalent.gapExt (homogeneityCounterfactual ord p qᶜ))ᶜ =
       (Trivalent.gapExt (homogeneityCounterfactual ord p q))ᶜ := by
   ext; simp [and_comm]
@@ -93,8 +93,8 @@ theorem homogeneityCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
     homogeneityCounterfactual ord p qᶜ w = (homogeneityCounterfactual ord p q w)ᶜ := by
   obtain ⟨v, hv⟩ := h
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [and_comm]) ?_
-  rw [Trivalent.compl_eq_true_iff, homogeneityCounterfactual_eq_one_iff,
-    homogeneityCounterfactual_eq_neg_one_iff]
+  rw [Trivalent.compl_eq_true_iff, homogeneityCounterfactual_eq_true_iff,
+    homogeneityCounterfactual_eq_false_iff]
   exact ⟨fun hn ↦ ⟨fun hq ↦ hn hv (hq hv), hn⟩, And.right⟩
 
 /-! ### The selectional theory
@@ -112,11 +112,11 @@ def selectionalCounterfactual : Trivalent :=
 
 variable {ord p q w}
 
-theorem selectionalCounterfactual_eq_one_iff :
+theorem selectionalCounterfactual_eq_true_iff :
     selectionalCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
   simp [selectionalCounterfactual, Trivalent.supervaluation_eq_true_iff, Set.subset_def]
 
-theorem selectionalCounterfactual_eq_neg_one_iff :
+theorem selectionalCounterfactual_eq_false_iff :
     selectionalCounterfactual ord p q w = .false ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
   simp only [selectionalCounterfactual, Trivalent.supervaluation_eq_false_iff,
@@ -124,7 +124,7 @@ theorem selectionalCounterfactual_eq_neg_one_iff :
   exact ⟨fun ⟨⟨v, hv⟩, h⟩ ↦ ⟨fun h' ↦ h v hv (h' v hv), h⟩, fun ⟨hn, h⟩ ↦
     ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ hn fun v hv ↦ absurd hv (he ▸ Set.notMem_empty v), h⟩⟩
 
-theorem selectionalCounterfactual_eq_zero_iff :
+theorem selectionalCounterfactual_eq_undefined_iff :
     selectionalCounterfactual ord p q w = .undefined ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [selectionalCounterfactual, Trivalent.supervaluation_eq_undefined_iff, Set.not_subset, and_comm]
@@ -139,7 +139,7 @@ variable (ord p q w)
 /-- The strong-Kleene disjunction of *if p, q* and *if p, not q* is never false. It can be
 indeterminate, when the closest `p`-worlds disagree on `q`; conditional excluded middle is
 super-true all the same (`cem_supervaluation`), supervaluation not being truth-functional. -/
-theorem selectionalCounterfactual_sup_compl_ne_neg_one :
+theorem selectionalCounterfactual_sup_compl_ne_false :
     selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ .false := by
   rcases ((ord w).minimals p).eq_empty_or_nonempty with h | h
   · simp [selectionalCounterfactual, h]
@@ -150,8 +150,8 @@ theorem selectionalCounterfactual_sup_compl_ne_neg_one :
 theorem homogeneityCounterfactual_eq_selectionalCounterfactual :
     homogeneityCounterfactual ord p q w = selectionalCounterfactual ord p q w :=
   Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff
-    (by rw [homogeneityCounterfactual_eq_zero_iff, selectionalCounterfactual_eq_zero_iff])
-    (by rw [homogeneityCounterfactual_eq_one_iff, selectionalCounterfactual_eq_one_iff])
+    (by rw [homogeneityCounterfactual_eq_undefined_iff, selectionalCounterfactual_eq_undefined_iff])
+    (by rw [homogeneityCounterfactual_eq_true_iff, selectionalCounterfactual_eq_true_iff])
 
 /-! ### *Might* counterfactuals
 
@@ -183,7 +183,7 @@ most one closest world ([stalnaker-1981]). -/
 theorem distribution_selectional (h_unique : ((ord w).minimals p).Subsingleton)
     (h : selectionalCounterfactual ord p (q ∪ r) w = .true) :
     selectionalCounterfactual ord p q w = .true ∨ selectionalCounterfactual ord p r w = .true := by
-  simp only [selectionalCounterfactual_eq_one_iff, mem_closestImp] at h ⊢
+  simp only [selectionalCounterfactual_eq_true_iff, mem_closestImp] at h ⊢
   rcases h_unique.eq_empty_or_singleton with h0 | ⟨v, hv⟩
   · simp [h0]
   · simpa only [hv, Set.singleton_subset_iff, Set.mem_union] using h
@@ -226,15 +226,15 @@ theorem cem_supervaluation :
 variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
 
-theorem selectionalCounterfactual_eq_one_iff_forall_compatible (hc : IsCentered ord) :
+theorem selectionalCounterfactual_eq_true_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = .true ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q :=
-  selectionalCounterfactual_eq_one_iff.trans (mem_closestImp_iff_forall_compatible hc)
+  selectionalCounterfactual_eq_true_iff.trans (mem_closestImp_iff_forall_compatible hc)
 
-theorem selectionalCounterfactual_eq_neg_one_iff_forall_compatible (hc : IsCentered ord) :
+theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = .false ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q := by
-  rw [selectionalCounterfactual_eq_neg_one_iff, mem_closestImp_iff_forall_compatible hc,
+  rw [selectionalCounterfactual_eq_false_iff, mem_closestImp_iff_forall_compatible hc,
     mem_closestImp_iff_forall_compatible hc]
   obtain ⟨s₀, hs₀, -⟩ := SelectionFunction.exists_compatible (p := Set.univ) (w := w) hc
     ⟨Set.mem_univ w, fun u _ _ ↦ hc.le w u⟩
@@ -255,8 +255,8 @@ the selectional counterfactual. -/
 theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
     superCounterfactual ord p q w = selectionalCounterfactual ord p q w := by
   unfold superCounterfactual
-  rw [← selectionalCounterfactual_eq_one_iff_forall_compatible hc,
-    ← selectionalCounterfactual_eq_neg_one_iff_forall_compatible hc]
+  rw [← selectionalCounterfactual_eq_true_iff_forall_compatible hc,
+    ← selectionalCounterfactual_eq_false_iff_forall_compatible hc]
   cases selectionalCounterfactual ord p q w <;> simp
 
 theorem selectionalCounterfactual_eq_ofProp {s : SelectionFunction W} (hs : s.Compatible ord)

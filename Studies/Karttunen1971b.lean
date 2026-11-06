@@ -43,12 +43,13 @@ namespace Karttunen1971b
 
 open Presupposition ModalLogic
 
-variable {W : Type*} {R : SetRel W W} {A : W → SignType} {s : W → Prop}
+variable {W : Type*} {R : SetRel W W} {A : W → Trivalent} {s : W → Prop}
   {c : Factivity} {e : FamilyVariant}
 
-private theorem eq_one_sup_neg_eq_one (A : W → SignType) :
-    ((A · = 1) ⊔ (-A · = 1) : W → Prop) = (A · ≠ 0) :=
-  funext fun w ↦ propext <| by simp only [Pi.sup_apply, sup_Prop_eq]; cases A w <;> simp
+private theorem eq_true_sup_neg_eq_true (A : W → Trivalent) :
+    ((A · = .true) ⊔ (Aᶜ · = .true) : W → Prop) = (A · ≠ .undefined) :=
+  funext fun w ↦ propext <| by
+    simp only [Pi.sup_apply, Pi.compl_apply, sup_Prop_eq]; cases A w <;> simp
 
 /-! ### The meaning postulates -/
 
@@ -56,18 +57,18 @@ private theorem eq_one_sup_neg_eq_one (A : W → SignType) :
 semi-factive sentence and its negation each necessitate the complement, (11). For a true factive
 the possibility of the sentence and the possibility of its negation do, (11′), which is to say
 that the sentence presupposes its complement (fn. 8). -/
-def Postulates (c : Factivity) (R : SetRel W W) (A : W → SignType) (s : W → Prop) : Prop :=
+def Postulates (c : Factivity) (R : SetRel W W) (A : W → Trivalent) (s : W → Prop) : Prop :=
   match c with
-  | .semi => (A · = 1) ≤ s ∧ (-A · = 1) ≤ s
-  | .full => ◇[R] (A · = 1) ≤ s ∧ ◇[R] (-A · = 1) ≤ s
+  | .semi => (A · = .true) ≤ s ∧ (Aᶜ · = .true) ≤ s
+  | .full => ◇[R] (A · = .true) ≤ s ∧ ◇[R] (Aᶜ · = .true) ≤ s
 
-theorem postulates_semi_iff : Postulates .semi R A s ↔ (A · ≠ 0) ≤ s := by
-  rw [← eq_one_sup_neg_eq_one, sup_le_iff]; rfl
+theorem postulates_semi_iff : Postulates .semi R A s ↔ (A · ≠ .undefined) ≤ s := by
+  rw [← eq_true_sup_neg_eq_true, sup_le_iff]; rfl
 
-theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] (A · ≠ 0) ≤ s := by
-  rw [← eq_one_sup_neg_eq_one, diamond_sup, sup_le_iff]; rfl
+theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] (A · ≠ .undefined) ≤ s := by
+  rw [← eq_true_sup_neg_eq_true, diamond_sup, sup_le_iff]; rfl
 
-theorem postulates_full_iff_le_box : Postulates .full R A s ↔ (A · ≠ 0) ≤ □[R.inv] s :=
+theorem postulates_full_iff_le_box : Postulates .full R A s ↔ (A · ≠ .undefined) ≤ □[R.inv] s :=
   postulates_full_iff.trans (diamond_box_gc R _ _)
 
 -- fn. 9
@@ -80,16 +81,16 @@ theorem Postulates.semi [R.IsRefl] (h : Postulates .full R A s) : Postulates .se
 to the sentence and a negative assertion to its negation. A question and the antecedent of a
 conditional conversationally imply that the sentence is possible (fn. 5), which a possibility
 statement asserts, (26). -/
-def commitment (R : SetRel W W) (A : W → SignType) : FamilyVariant → W → Prop
-  | .unembedded => (A · = 1)
-  | .negation => (-A · = 1)
-  | .question | .conditionalAntecedent | .epistemicModal => ◇[R] (A · = 1)
+def commitment (R : SetRel W W) (A : W → Trivalent) : FamilyVariant → W → Prop
+  | .unembedded => (A · = .true)
+  | .negation => (Aᶜ · = .true)
+  | .question | .conditionalAntecedent | .epistemicModal => ◇[R] (A · = .true)
 
 /-- The complement of a factive of class `c` follows in environment `e` when, in every model
 where what is the case is possible, the complement of a sentence obeying the postulates of `c`
 is true wherever the speaker's commitment is. -/
 def Projects (c : Factivity) (e : FamilyVariant) : Prop :=
-  ∀ (W : Type) (R : SetRel W W) [R.IsRefl] (A : W → SignType) (s : W → Prop),
+  ∀ (W : Type) (R : SetRel W W) [R.IsRefl] (A : W → Trivalent) (s : W → Prop),
     Postulates c R A s → commitment R A e ≤ s
 
 theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
@@ -101,9 +102,9 @@ theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
 
 -- (26b), (26c)
 theorem exists_semi_not_diamond_le :
-    ∃ (R : SetRel Bool Bool) (_ : R.IsRefl) (A : Bool → SignType) (s : Bool → Prop),
-      Postulates .semi R A s ∧ ¬ ◇[R] (A · = 1) ≤ s :=
-  ⟨.univ, inferInstance, fun b ↦ cond b 1 0, (· = true),
+    ∃ (R : SetRel Bool Bool) (_ : R.IsRefl) (A : Bool → Trivalent) (s : Bool → Prop),
+      Postulates .semi R A s ∧ ¬ ◇[R] (A · = .true) ≤ s :=
+  ⟨.univ, inferInstance, fun b ↦ cond b .true .undefined, (· = true),
     postulates_semi_iff.2 fun b ↦ by cases b <;> simp,
     fun h ↦ Bool.false_ne_true (h false ⟨true, trivial, rfl⟩)⟩
 
@@ -127,7 +128,7 @@ theorem Projects.commitment_le [R.IsRefl] (hp : Projects c e) (h : Postulates c 
   h.commitment_le (projects_iff.1 hp)
 
 -- (5), (14)
-theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → W → SignType} {s : ι → W → Prop}
+theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → W → Trivalent} {s : ι → W → Prop}
     [R.IsRefl] (hp : Projects c e) (hA : ∀ x, Postulates c R (A x) (s x)) {w : W}
     (h : ∃ x, S x ∧ commitment R (A x) e w) : ∃ x, S x ∧ s x w :=
   let ⟨x, hx, hw⟩ := h; ⟨x, hx, hp.commitment_le (hA x) w hw⟩
@@ -148,9 +149,10 @@ theorem projection_rows :
 /-- The emphatic denial of a true factive sentence is consistent with the falsity of its complement
 ((23), fn. 7). -/
 theorem emphatic_denial :
-    ∃ (R : SetRel Unit Unit) (_ : R.IsRefl) (A : Unit → SignType) (s : Unit → Prop),
-      Postulates .full R A s ∧ -SignType.ofProp (A () = 1) = 1 ∧ ¬ ◇[R] (A · ≠ 0) () ∧ ¬ s () :=
-  ⟨.univ, inferInstance, 0, fun _ ↦ False, postulates_full_iff.2 fun _ ⟨_, _, h⟩ ↦ h rfl,
-    by simp, fun ⟨_, _, h⟩ ↦ h rfl, id⟩
+    ∃ (R : SetRel Unit Unit) (_ : R.IsRefl) (A : Unit → Trivalent) (s : Unit → Prop),
+      Postulates .full R A s ∧ (Trivalent.ofProp (A () = .true))ᶜ = .true ∧
+        ¬ ◇[R] (A · ≠ .undefined) () ∧ ¬ s () :=
+  ⟨.univ, inferInstance, fun _ ↦ .undefined, fun _ ↦ False,
+    postulates_full_iff.2 fun _ ⟨_, _, h⟩ ↦ h rfl, by simp, fun ⟨_, _, h⟩ ↦ h rfl, id⟩
 
 end Karttunen1971b

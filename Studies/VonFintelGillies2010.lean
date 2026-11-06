@@ -105,8 +105,8 @@ theorem raining_follows : wetGearK.FollowsFrom raining := by
   rintro w rfl
   rfl
 
-theorem must_raining_eq_one (w : World) : kernelMust wetGearK raining w = 1 :=
-  kernelMust_eq_one_iff.2 ⟨raining_unsettled, raining_follows⟩
+theorem must_raining_eq_one (w : World) : kernelMust wetGearK raining w = .true :=
+  kernelMust_eq_true_iff.2 ⟨raining_unsettled, raining_follows⟩
 
 theorem rainK_settles_raining : rainK.directlySettles raining :=
   ⟨raining, by simp [rainK], Or.inl subset_rfl⟩
@@ -120,10 +120,10 @@ theorem entailment_settling_gap :
 
 -- §4.1, (6), (7)
 theorem indirectness_neq_weakness (w : World) :
-    kernelMust wetGearK raining w = 1 ∧ kernelMust rainK raining w = 0 ∧
-      kernelMust onlyRainWetsK raining w = -1 := by
-  refine ⟨must_raining_eq_one w, kernelMust_eq_zero_iff.2 rainK_settles_raining,
-    kernelMust_eq_neg_one_iff.2 ⟨?_, ?_⟩⟩
+    kernelMust wetGearK raining w = .true ∧ kernelMust rainK raining w = .undefined ∧
+      kernelMust onlyRainWetsK raining w = .false := by
+  refine ⟨must_raining_eq_one w, kernelMust_eq_undefined_iff.2 rainK_settles_raining,
+    kernelMust_eq_false_iff.2 ⟨?_, ?_⟩⟩
   · rintro ⟨x, hx, hxor⟩
     obtain rfl : x = onlyRainWets := hx
     rcases hxor with h_sub | h_disj
@@ -141,16 +141,16 @@ variable {W : Type*} (k : Kernel W)
 
 theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     (hReal : w ∈ k.base)
-    (hCond : φ w → kernelMust k ψ w = 1)
+    (hCond : φ w → kernelMust k ψ w = .true)
     (hPhi : φ w) :
     ψ w :=
-  Modality.must_entails_prejacent k ψ w hReal (kernelMust_eq_one_iff.1 (hCond hPhi)).2
+  Modality.must_entails_prejacent k ψ w hReal (kernelMust_eq_true_iff.1 (hCond hPhi)).2
 
 theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
-    (hMust : kernelMust k φ w = 1) :
-    kernelMight k (fun w' ↦ ¬ φ w') w = -1 := by
-  obtain ⟨hs, hf⟩ := kernelMust_eq_one_iff.1 hMust
-  refine kernelMight_eq_neg_one_iff.2 ⟨(Kernel.directlySettles_not k φ).not.2 hs, ?_⟩
+    (hMust : kernelMust k φ w = .true) :
+    kernelMight k (fun w' ↦ ¬ φ w') w = .false := by
+  obtain ⟨hs, hf⟩ := kernelMust_eq_true_iff.1 hMust
+  refine kernelMight_eq_false_iff.2 ⟨(Kernel.directlySettles_not k φ).not.2 hs, ?_⟩
   rintro ⟨w', hw', hφneg⟩
   exact hφneg (hf w' hw')
 

@@ -264,14 +264,14 @@ noncomputable def Formula.toTrivalent (φ : Formula V L P) : Trivalent :=
 
 variable {M g} {φ ψ : Formula V L P}
 
-@[simp] theorem Formula.toTrivalent_eq_zero_iff : φ.toTrivalent M g = .undefined ↔ ¬ φ.Felicitous M g := by
+@[simp] theorem Formula.toTrivalent_eq_undefined_iff : φ.toTrivalent M g = .undefined ↔ ¬ φ.Felicitous M g := by
   unfold toTrivalent; split_ifs <;> simp_all
 
-@[simp] theorem Formula.toTrivalent_eq_one_iff :
+@[simp] theorem Formula.toTrivalent_eq_true_iff :
     φ.toTrivalent M g = .true ↔ φ.Felicitous M g ∧ Formula.Realize M g φ := by
   unfold toTrivalent; split_ifs <;> simp_all
 
-@[simp] theorem Formula.toTrivalent_eq_neg_one_iff :
+@[simp] theorem Formula.toTrivalent_eq_false_iff :
     φ.toTrivalent M g = .false ↔ φ.Felicitous M g ∧ ¬ Formula.Realize M g φ := by
   unfold toTrivalent; split_ifs <;> simp_all
 
@@ -312,15 +312,15 @@ theorem Formula.toTrivalent_ex (x : V) :
     Formula.toTrivalent M g (.ex x φ) =
       Trivalent.existsWeak fun X => φ.toTrivalent M (Function.update g x X) :=
   Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) <| by
-    simp only [toTrivalent_eq_one_iff, felicitous_ex, realize_ex,
-      Trivalent.existsWeak_eq_true_iff, ne_eq, toTrivalent_eq_zero_iff, not_not]
+    simp only [toTrivalent_eq_true_iff, felicitous_ex, realize_ex,
+      Trivalent.existsWeak_eq_true_iff, ne_eq, toTrivalent_eq_undefined_iff, not_not]
     exact ⟨fun ⟨hF, X, hX⟩ => ⟨hF, X, hF X, hX⟩, fun ⟨hF, X, _, hX⟩ => ⟨hF, X, hX⟩⟩
 
 theorem Formula.toTrivalent_all (x : V) :
     (Formula.all x φ).toTrivalent M g =
       Trivalent.forallWeak fun X => φ.toTrivalent M (Function.update g x X) :=
   Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) <| by
-    simp only [toTrivalent_eq_one_iff, felicitous_all, realize_all,
+    simp only [toTrivalent_eq_true_iff, felicitous_all, realize_all,
       Trivalent.forallWeak_eq_true_iff]
     exact ⟨fun ⟨hF, hT⟩ X => ⟨hF X, hT X⟩, fun h => ⟨fun X => (h X).1, fun X => (h X).2⟩⟩
 

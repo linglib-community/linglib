@@ -12,11 +12,11 @@ Guerrini and Wehbe derive homogeneity by presuppositional exhaustification. A pl
 contributes Bar-Lev's existential pluralization, and the operator `pex` of Del Pinal, Bassi and
 Sauerland asserts it while presupposing that its subdomain alternatives are all true or all false.
 Accommodating the presupposition yields the universal reading as long as no alternative for a
-single atom is pruned (`pexPlural_eq_one_iff`), and pruning those yields non-maximal readings, all
+single atom is pruned (`pexPlural_eq_true_iff`), and pruning those yields non-maximal readings, all
 but `m - 1` of the atoms for the alternatives over `m` of them
-(`pexPlural_subDisjsOfCard_eq_one_iff`), at least two of three students for the pairs of (21)
-(`pexPlural_pairs_eq_one_iff`). Under negation the presupposition projects and the negated
-existential already entails it, so pruning has no effect (`pexPlural_eq_neg_one_iff`).
+(`pexPlural_subDisjsOfCard_eq_true_iff`), at least two of three students for the pairs of (21)
+(`pexPlural_pairs_eq_true_iff`). Under negation the presupposition projects and the negated
+existential already entails it, so pruning has no effect (`pexPlural_eq_false_iff`).
 Non-maximality under negation needs local accommodation below negation and a second `pex` over the
 negated universal, which is the positive case for the negated predicate
 (`localAccommodation_nonMaximal`).
@@ -67,12 +67,12 @@ variable {Atom W : Type*} [DecidableEq Atom] {D x : Finset Atom} {P : Atom → W
 variable (D x P) in
 /-- A plural predication under `pex`, (19), asserts Bar-Lev's existential pluralization and
 presupposes that its relevant subdomain alternatives are homogeneous. -/
-noncomputable abbrev pexPlural (R : Set (Set W)) : W → SignType :=
+noncomputable abbrev pexPlural (R : Set (Set W)) : W → Trivalent :=
   pexIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) R
 
 -- (19b)
-theorem pexPlural_ne_zero_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
-    pexPlural D x P R w ≠ 0 ↔
+theorem pexPlural_ne_undefined_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
+    pexPlural D x P R w ≠ .undefined ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
   have hset : {a ∈ R | IsInnocentlyIncludable (supClosure (atom P '' ↑(x ∩ D)))
       (⋃ b ∈ x ∩ D, atom P b) a ∧ a ≠ ⋃ b ∈ x ∩ D, atom P b} =
@@ -82,15 +82,15 @@ theorem pexPlural_ne_zero_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) 
       hsplit_supClosure h.single hne h.all]
     simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     tauto
-  rw [pexIEII_ne_zero_iff, hset]
+  rw [pexIEII_ne_undefined_iff, hset]
   exact and_iff_right fun ψ hψ ↦
     absurd hψ (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
 
 /-- In (20), after accommodation, a plural predication is universal as long as no alternative for
 a single atom is pruned. -/
-theorem pexPlural_eq_one_iff (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
+theorem pexPlural_eq_true_iff (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
-    pexPlural D x P R w = 1 ↔ ∀ a ∈ x, a ∈ D → P a w := by
+    pexPlural D x P R w = .true ↔ ∀ a ∈ x, a ∈ D → P a w := by
   have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
   have hsing : ∀ a ∈ x ∩ D,
       atom P a ∈ supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b} ∩ R := by
@@ -101,7 +101,7 @@ theorem pexPlural_eq_one_iff (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
     have hin : wb ∈ ⋃ b ∈ x ∩ D, atom P b := Set.mem_biUnion hb ((hwb b hb).2 rfl)
     rw [← Set.mem_singleton_iff.1 heq] at hin
     exact hba ((hwb a ha).1 hin).symm
-  rw [pexIEII_eq_one_iff, pexPlural_ne_zero_iff h hne]
+  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne]
   constructor
   · rintro ⟨hhom | hhom, hw⟩
     · exact fun b hbx hbD ↦ hhom _ (hsing b (Finset.mem_inter.2 ⟨hbx, hbD⟩))
@@ -119,14 +119,14 @@ theorem pexPlural_eq_one_iff (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
 
 /-- In (25) and (28), a negated plural predication is true exactly where no atom satisfies the
 predicate, however the alternatives are pruned. -/
-theorem pexPlural_eq_neg_one_iff : pexPlural D x P R w = -1 ↔ ∀ a ∈ x, a ∈ D → ¬ P a w := by
+theorem pexPlural_eq_false_iff : pexPlural D x P R w = .false ↔ ∀ a ∈ x, a ∈ D → ¬ P a w := by
   have hout (hnone : ∀ a ∈ x, a ∈ D → ¬ P a w) :
       ∀ q ∈ supClosure (atom P '' ↑(x ∩ D)), w ∉ q := by
     intro q hq hw
     obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
     obtain ⟨c, hc, hPc⟩ := Set.mem_iUnion₂.1 hw
     exact hnone c (Finset.mem_inter.1 (hS hc)).1 (Finset.mem_inter.1 (hS hc)).2 hPc
-  rw [pexIEII_eq_neg_one_iff, pexIEII_ne_zero_iff]
+  rw [pexIEII_eq_false_iff, pexIEII_ne_undefined_iff]
   refine ⟨fun ⟨_, hna⟩ a hax haD hPa ↦ hna (Set.mem_biUnion (Finset.mem_inter.2 ⟨hax, haD⟩) hPa),
     fun hnone ↦ ⟨⟨fun ψ hψ _ ↦ hout hnone ψ hψ.1, .inr fun α hα ↦ hout hnone α hα.2.1.1⟩,
       fun hw ↦ ?_⟩⟩
@@ -149,12 +149,12 @@ variable [∀ a w, Decidable (P a w)]
 
 /-- With the alternatives over `m` atoms, as in (21), `pex` makes the plural true after
 accommodation iff all but at most `m - 1` atoms satisfy the predicate. -/
-theorem pexPlural_subDisjsOfCard_eq_one_iff (h : Separating D x P) {m : ℕ} (hm : 0 < m)
+theorem pexPlural_subDisjsOfCard_eq_true_iff (h : Separating D x P) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
-    pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = 1 ↔
+    pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = .true ↔
       w ∈ atLeast D x P ((x ∩ D).card + 1 - m) := by
   have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
-  rw [pexIEII_eq_one_iff, pexPlural_ne_zero_iff h hne, mem_atLeast, count]
+  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne, mem_atLeast, count]
   have key := forall_card_eq_exists_mem_iff (I := x ∩ D) (T := (x ∩ D).filter (P · w))
     (Finset.filter_subset _ _) (m := m)
   simp only [Finset.mem_filter] at key
@@ -210,14 +210,14 @@ variable {Atom : Type*} [DecidableEq Atom] {D x : Finset Atom} {P : Atom → W �
 theorem not_informative_pexPlural :
     ¬ PostAccommodationInformative (⋃ b ∈ x ∩ D, atom P b) (pexPlural D x P R) := fun h ↦
   let ⟨_, hw, h⟩ := postAccommodationInformative_iff.1 h
-  (pexIEII_eq_neg_one_iff.1 h).2 hw
+  (pexIEII_eq_false_iff.1 h).2 hw
 
 -- (10b), (12b), (13c), (23)
 theorem not_informative_neg (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
-    ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} (-pexPlural D x P R) := fun hi ↦
+    ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} ((pexPlural D x P R)ᶜ) := fun hi ↦
   let ⟨_, hw, hf⟩ := postAccommodationInformative_iff.1 hi
-  hw ((pexPlural_eq_one_iff h hcard hR).1 (SignType.neg_eq_neg_one_iff.1 hf))
+  hw ((pexPlural_eq_true_iff h hcard hR).1 (Trivalent.compl_eq_false_iff.1 hf))
 
 end Informativity
 
@@ -229,10 +229,10 @@ section Students
 
 /-- In (21), pruning to pairs of the three students makes *the students smiled* true after
 accommodation iff at least two smiled. -/
-theorem pexPlural_pairs_eq_one_iff (w : Finset (Fin 3)) :
-    pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = 1 ↔
+theorem pexPlural_pairs_eq_true_iff (w : Finset (Fin 3)) :
+    pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = .true ↔
       2 ≤ w.card := by
-  have h := pexPlural_subDisjsOfCard_eq_one_iff (w := w) (separating_holds Finset.univ
+  have h := pexPlural_subDisjsOfCard_eq_true_iff (w := w) (separating_holds Finset.univ
     Finset.univ) (m := 2) two_pos (by simp)
   simpa [Finset.inter_self, count_holds] using h
 
@@ -243,10 +243,10 @@ private theorem separating_not : Separating Finset.univ Finset.univ notSmiled :=
   ⟨by decide, by decide⟩
 
 -- (31)
-theorem localAccommodation_eq_one_iff (w : Finset (Fin 3)) :
+theorem localAccommodation_eq_true_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ notSmiled
-      (supClosure (Set.range (atom notSmiled))) w = 1 ↔ w = ∅ := by
-  rw [pexPlural_eq_one_iff separating_not (by decide)
+      (supClosure (Set.range (atom notSmiled))) w = .true ↔ w = ∅ := by
+  rw [pexPlural_eq_true_iff separating_not (by decide)
     fun a _ ↦ subset_supClosure (Set.mem_range_self a), Finset.eq_empty_iff_forall_notMem]
   simp
 
@@ -254,8 +254,8 @@ theorem localAccommodation_eq_one_iff (w : Finset (Fin 3)) :
 true when only that student smiled, a non-maximal reading under negation. -/
 theorem localAccommodation_nonMaximal :
     pexPlural Finset.univ Finset.univ notSmiled
-      (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) {2} = 1 := by
-  rw [pexIEII_eq_one_iff, pexPlural_ne_zero_iff separating_not ⟨0, by simp⟩]
+      (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) {2} = .true := by
+  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff separating_not ⟨0, by simp⟩]
   refine ⟨.inl ?_, Set.mem_biUnion (x := 0) (by simp) (by decide)⟩
   rintro _ ⟨-, hq, hne⟩
   obtain ⟨S, ⟨c, hc⟩, rfl⟩ := Set.mem_supClosure_range.1 hq
@@ -286,10 +286,11 @@ open Finset
 theorem judgments_9 :
     (Examples.ex_9a.judgment = .acceptable ↔
       PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
-        ({w | w.1 = 10}.indicator fun w ↦ SignType.ofProp (w.2 = true))) ∧
+        (fun w ↦ Trivalent.transplication (Trivalent.ofProp (w.1 = 10))
+          (Trivalent.ofProp (w.2 = true)))) ∧
     (Examples.ex_9b.judgment = .acceptable ↔
       PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
-        fun w ↦ SignType.ofProp (w.1 = 10 ∧ w.2 = true)) :=
+        fun w ↦ Trivalent.ofProp (w.1 = 10 ∧ w.2 = true)) :=
   ⟨iff_of_false (by decide) fun h ↦ by
       obtain ⟨_, hw, h⟩ := postAccommodationInformative_iff.1 h
       simp_all,
@@ -307,7 +308,7 @@ theorem judgments_10 :
         (pexPlural univ univ holds (supClosure (Set.range (atom holds))))) ∧
     (Examples.ex_10b.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        (-pexPlural univ univ holds (supClosure (Set.range (atom holds))))) :=
+        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_false (by decide) fun h ↦ not_informative_pexPlural
       (h.mono fun _ ⟨a, ha⟩ ↦ Set.mem_biUnion (by simp) ha),
     iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
@@ -317,10 +318,10 @@ theorem judgments_10 :
 theorem judgments_12 :
     (Examples.ex_12a.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        fun w ↦ SignType.ofProp (w = ∅)) ∧
+        fun w ↦ Trivalent.ofProp (w = ∅)) ∧
     (Examples.ex_12b.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
-        (-pexPlural univ univ holds (supClosure (Set.range (atom holds))))) :=
+        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
     iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
@@ -330,13 +331,13 @@ are informative, and their plural-definite counterparts are not. -/
 theorem judgments_13 :
     (Examples.ex_13a.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        fun w ↦ SignType.ofProp (w = ∅)) ∧
+        fun w ↦ Trivalent.ofProp (w = ∅)) ∧
     (Examples.ex_13b.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        fun w ↦ SignType.ofProp (∀ a, a ∉ w)) ∧
+        fun w ↦ Trivalent.ofProp (∀ a, a ∉ w)) ∧
     (Examples.ex_13c.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
-        (-pexPlural univ univ holds (supClosure (Set.range (atom holds))))) ∧
+        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) ∧
     (Examples.ex_13d.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w.card ≤ 1}
         (pexPlural univ univ (fun (a : Fin 2) (w : Finset (Fin 2)) ↦ a ∉ w)
@@ -357,7 +358,7 @@ theorem judgments_13 :
 theorem judgments_23 :
     Examples.ex_23.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 3) | w ≠ univ}
-        (-pexPlural univ univ holds (supClosure (Set.range (atom holds)))) :=
+        ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ) :=
   iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
     (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)
 

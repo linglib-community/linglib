@@ -49,13 +49,13 @@ noncomputable def again (R : SetRel ι ι) (P : ι → Prop) : ι → Trivalent 
 
 variable {i : ι}
 
-@[simp] theorem again_eq_zero_iff :
+@[simp] theorem again_eq_undefined_iff :
     again R P i = .undefined ↔ ¬ ◇[R] P i := by simp [again,
         Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
 
-theorem again_ne_zero_iff : again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_zero_iff.not_left
+theorem again_ne_undefined_iff : again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_undefined_iff.not_left
 
-@[simp] theorem again_eq_one_iff :
+@[simp] theorem again_eq_true_iff :
     again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again,
         Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
 

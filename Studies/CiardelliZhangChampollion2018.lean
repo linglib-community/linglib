@@ -43,8 +43,8 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 namespace CiardelliZhangChampollion2018
 
 open Conditional (closestImp mem_closestImp_union selectionalCounterfactual
-  selectionalCounterfactual_eq_one_iff homogeneityCounterfactual
-  homogeneityCounterfactual_eq_one_iff)
+  selectionalCounterfactual_eq_true_iff homogeneityCounterfactual
+  homogeneityCounterfactual_eq_true_iff)
 
 /-! ### The switches scenario (Fig. 1) -/
 
@@ -103,12 +103,12 @@ theorem notBothUp_off_at_uu :
     .uu ∈ closestImp hammingSim notBothUp lightOff := by decide
 
 theorem selectional_notBothUp_off_at_uu :
-    selectionalCounterfactual hammingSim notBothUp lightOff .uu = 1 := by
+    selectionalCounterfactual hammingSim notBothUp lightOff .uu = .true := by
   decide
 
 theorem homogeneity_notBothUp_off_at_uu :
-    homogeneityCounterfactual hammingSim notBothUp lightOff .uu = 1 :=
-  homogeneityCounterfactual_eq_one_iff.2 notBothUp_off_at_uu
+    homogeneityCounterfactual hammingSim notBothUp lightOff .uu = .true :=
+  homogeneityCounterfactual_eq_true_iff.2 notBothUp_off_at_uu
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
 
@@ -119,18 +119,18 @@ theorem minimal_change_forces_notBothUp (ord : World → Preorder World) (w₀ :
 
 theorem selectional_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
-    (h_a : selectionalCounterfactual ord aDn lightOff w₀ = 1)
-    (h_b : selectionalCounterfactual ord bDn lightOff w₀ = 1) :
-    selectionalCounterfactual ord notBothUp lightOff w₀ = 1 := by
-  rw [selectionalCounterfactual_eq_one_iff] at *
+    (h_a : selectionalCounterfactual ord aDn lightOff w₀ = .true)
+    (h_b : selectionalCounterfactual ord bDn lightOff w₀ = .true) :
+    selectionalCounterfactual ord notBothUp lightOff w₀ = .true := by
+  rw [selectionalCounterfactual_eq_true_iff] at *
   exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
 theorem homogeneity_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) (w₀ : World)
-    (h_a : homogeneityCounterfactual ord aDn lightOff w₀ = 1)
-    (h_b : homogeneityCounterfactual ord bDn lightOff w₀ = 1) :
-    homogeneityCounterfactual ord notBothUp lightOff w₀ = 1 := by
-  rw [homogeneityCounterfactual_eq_one_iff] at *
+    (h_a : homogeneityCounterfactual ord aDn lightOff w₀ = .true)
+    (h_b : homogeneityCounterfactual ord bDn lightOff w₀ = .true) :
+    homogeneityCounterfactual ord notBothUp lightOff w₀ = .true := by
+  rw [homogeneityCounterfactual_eq_true_iff] at *
   exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
 /-! ### The main experiment (Table 3) -/

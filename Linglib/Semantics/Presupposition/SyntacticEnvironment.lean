@@ -34,9 +34,9 @@ Karttunen's local context of a gap (`SyntacticEnvironment.localContext`) is reco
 good finals: some good final makes the formula's truth value at a world depend on the gap iff the
 world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the filtering
 evaluation is defined at a world iff every trigger's presupposition holds there whenever the world
-is in the trigger's local context (`Formula.middleKleene_ne_zero_iff`). The Weak Kleene evaluation
+is in the trigger's local context (`Formula.middleKleene_ne_undefined_iff`). The Weak Kleene evaluation
 is defined at a world iff every trigger's presupposition holds there, wherever the trigger is
-(`Formula.weakKleene_ne_zero_iff`).
+(`Formula.weakKleene_ne_undefined_iff`).
 
 ## Main definitions
 
@@ -539,7 +539,7 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
 
 end SyntacticEnvironment
 
-theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
+theorem Formula.middleKleene_ne_undefined_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
     F.middleKleene I w ≠ .undefined ↔
       ∀ o ∈ F.triggers, w ∈ o.1.localContext I Set.univ → w ∈ I o.2.1 := by
   open SyntacticEnvironment in
@@ -561,12 +561,12 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
       refine ⟨fun h hc o ho hl ↦ h o ho ?_, fun h o ho hl ↦ ?_⟩
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
-    rw [hG, middleKleene_bin_ne_zero I]
+    rw [hG, middleKleene_bin_ne_undefined I]
 
 /-- Under the Weak Kleene connectives every presupposition projects: a formula is defined at a world
 iff the presupposition of each of its triggers holds there, as the cumulative hypothesis of
 [langendoen-savin-1971] has it. -/
-theorem Formula.weakKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
+theorem Formula.weakKleene_ne_undefined_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
     F.weakKleene I w ≠ .undefined ↔ ∀ o ∈ F.triggers, w ∈ I o.2.1 := by
   induction F with
   | atom p => simp [weakKleene, eval, triggers]
@@ -584,7 +584,7 @@ theorem Formula.weakKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (
 theorem Formula.isBivalent_middleKleene_accommodate (I : Atom → Set W) (F : Formula Atom) :
     Trivalent.IsBivalent (F.accommodate.middleKleene I) :=
   (Trivalent.isBivalent_iff_forall_ne_undefined _).2 fun w ↦
-    (Formula.middleKleene_ne_zero_iff I _ w).2 (by simp)
+    (Formula.middleKleene_ne_undefined_iff I _ w).2 (by simp)
 
 /-! ### Occurrences -/
 

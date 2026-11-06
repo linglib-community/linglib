@@ -143,20 +143,20 @@ noncomputable def description (σ : S → S) (f : E → S → Prop) (s : S) : Op
 
 /-- `[[[the NP] sᵢ] VP]` is the sentence as a trivalent proposition, (3) of ch. 4 for a free
 pronoun and (4) for a bound one. -/
-noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : S → SignType :=
+noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : S → Trivalent :=
   presupOfReferent (description σ f) vp
 
 /-- The sentence presupposes exactly one satisfier at the situation its pronoun denotes. A free
 pronoun discharges the domain condition at its referent, whatever situation the proposition is
 applied to; a bound one carries it to the situation where the proposition is applied. -/
-theorem sentence_ne_zero_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
-    sentence σ f vp s ≠ 0 ↔ ∃! x, f x (σ s) := by
-  rw [sentence, Ne, presupOfReferent_eq_zero_iff, ← Ne, Option.ne_none_iff_isSome]
+theorem sentence_ne_undefined_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
+    sentence σ f vp s ≠ .undefined ↔ ∃! x, f x (σ s) := by
+  rw [sentence, Ne, presupOfReferent_eq_undefined_iff, ← Ne, Option.ne_none_iff_isSome]
   exact the_isSome_iff f (σ s)
 
 -- (12)
-theorem sentence_eq_one_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : description σ f s = some x) : sentence σ f vp s = 1 ↔ vp x s := by
+theorem sentence_eq_true_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
+    (h : description σ f s = some x) : sentence σ f vp s = .true ↔ vp x s := by
   simp [sentence, presupOfReferent_of_some h]
 
 /-! ### Intensional operators: de re, de dicto, attributive de re (ch. 7) -/
@@ -164,49 +164,49 @@ theorem sentence_eq_one_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x 
 /-- A universal intensional operator over an accessibility relation is the Weak Kleene universal
 over the accessible situations, defined where the proposition is defined throughout them and true
 where it is true throughout them, as in (12) and (14) of ch. 7. -/
-noncomputable def box (R : S → Set S) (p : S → SignType) : S → SignType :=
+noncomputable def box (R : S → Set S) (p : S → Trivalent) : S → Trivalent :=
   fun s ↦ Trivalent.forallWeak fun w : R s ↦ p w
 
-theorem box_ne_zero_iff (R : S → Set S) (p : S → SignType) (s : S) :
-    box R p s ≠ 0 ↔ ∀ w ∈ R s, p w ≠ 0 := by
+theorem box_ne_undefined_iff (R : S → Set S) (p : S → Trivalent) (s : S) :
+    box R p s ≠ .undefined ↔ ∀ w ∈ R s, p w ≠ .undefined := by
   simp [box]
 
 /-- De dicto, (11) of ch. 7, the situation pronoun is bound by `ς` immediately below the
 operator. -/
-noncomputable def deDicto (R : S → Set S) (f vp : E → S → Prop) : S → SignType :=
+noncomputable def deDicto (R : S → Set S) (f vp : E → S → Prop) : S → Trivalent :=
   box R (sentence id f vp)
 
 /-- De re, (13) of ch. 7, the situation pronoun inside the operator refers to the actual world
 `w₀`. -/
-noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : S → SignType :=
+noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : S → Trivalent :=
   box R (sentence (fun _ ↦ w₀) f vp)
 
 /-- Attributive de re, (17) and (25) of ch. 7, the pronoun is bound above the operator, so the
 description is evaluated at the topic situation and only the predicate is modalized. -/
-noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : S → SignType :=
+noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : S → Trivalent :=
   presupOfReferent (the f) fun x s ↦ ∀ w ∈ R s, vp x w
 
 /-- De dicto, every accessible situation must contain exactly one satisfier, and the satisfiers
 may differ. -/
-theorem deDicto_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    deDicto R f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w :=
-  (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
+theorem deDicto_ne_undefined_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    deDicto R f vp s ≠ .undefined ↔ ∀ w ∈ R s, ∃! x, f x w :=
+  (box_ne_undefined_iff R _ s).trans <| forall₂_congr fun w _ ↦ sentence_ne_undefined_iff id f vp w
 
 /-- De re, the satisfier is fixed in the actual world, and need not satisfy the property in the
 accessible situations. -/
-theorem deRe_ne_zero_iff (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
-    deRe R w₀ f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
-  (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦
-    sentence_ne_zero_iff (fun _ ↦ w₀) f vp w
+theorem deRe_ne_undefined_iff (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
+    deRe R w₀ f vp s ≠ .undefined ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
+  (box_ne_undefined_iff R _ s).trans <| forall₂_congr fun w _ ↦
+    sentence_ne_undefined_iff (fun _ ↦ w₀) f vp w
 
-theorem attributiveDeRe_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    attributiveDeRe R f vp s ≠ 0 ↔ ∃! x, f x s :=
-  sentence_ne_zero_iff id f _ s
+theorem attributiveDeRe_ne_undefined_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    attributiveDeRe R f vp s ≠ .undefined ↔ ∃! x, f x s :=
+  sentence_ne_undefined_iff id f _ s
 
 /-- Kripke's *the number of the planets* is attributive yet de re ((16) of ch. 7). -/
-theorem attributiveDeRe_eq_one_iff (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : the f s = some x) : attributiveDeRe R f vp s = 1 ↔ ∀ w ∈ R s, vp x w :=
-  sentence_eq_one_iff id f _ h
+theorem attributiveDeRe_eq_true_iff (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
+    (h : the f s = some x) : attributiveDeRe R f vp s = .true ↔ ∀ w ∈ R s, vp x w :=
+  sentence_eq_true_iff id f _ h
 
 /-! ### Existence entailments (ch. 8) -/
 
@@ -215,33 +215,34 @@ open Classical in
 complement is defined throughout the subject's doxastic alternatives, and true where the
 complement is true throughout the verb's own alternatives, doxastic for *believe* and bouletic for
 *want*. -/
-noncomputable def attitude (dox R : S → Set S) (p : S → SignType) : S → SignType :=
-  {s | ∀ w ∈ dox s, p w ≠ 0}.indicator fun s ↦ SignType.ofProp (∀ w ∈ R s, p w = 1)
+noncomputable def attitude (dox R : S → Set S) (p : S → Trivalent) : S → Trivalent :=
+  fun s ↦ Trivalent.transplication (Trivalent.ofProp (∀ w ∈ dox s, p w ≠ .undefined))
+    (Trivalent.ofProp (∀ w ∈ R s, p w = .true))
 
 -- (40), (41)
-theorem attitude_ne_zero_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    attitude dox R (sentence id f vp) s ≠ 0 ↔ ∀ w ∈ dox s, ∃! x, f x w := by
-  simp only [attitude, ne_eq, Set.indicator_apply_eq_zero, Set.mem_ofPred_eq,
-    SignType.ofProp_ne_zero, imp_false, not_not]
-  exact forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
+theorem attitude_ne_undefined_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    attitude dox R (sentence id f vp) s ≠ .undefined ↔ ∀ w ∈ dox s, ∃! x, f x w := by
+  simp only [attitude, ne_eq, Trivalent.transplication_eq_undefined_iff,
+    Trivalent.ofProp_ne_undefined, or_false, not_not, Trivalent.ofProp_eq_true_iff]
+  exact forall₂_congr fun w _ ↦ sentence_ne_undefined_iff id f vp w
 
 /-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost to be
 quiet ((31) with (33b)). -/
-theorem attitude_eq_zero_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
-    (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : attitude dox R (sentence id f vp) s = 0 := by
+theorem attitude_eq_undefined_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
+    (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : attitude dox R (sentence id f vp) s = .undefined := by
   refine not_not.1 fun hp ↦ ?_
   obtain ⟨w, hw, hno⟩ := h
-  exact hno ((attitude_ne_zero_iff dox R f vp s).1 hp w hw).exists
+  exact hno ((attitude_ne_undefined_iff dox R f vp s).1 hp w hw).exists
 
 /-- The Russellian paraphrase (33a) asserts existence and uniqueness inside the attitude. -/
 def russellian (R : S → Set S) (f vp : E → S → Prop) (s : S) : Prop :=
   ∀ w ∈ R s, ∃ x, f x w ∧ (∀ y, f y w → y = x) ∧ vp x w
 
 -- (39)
-theorem conditional_ne_zero_iff (f vp : E → S → Prop) (q : S → SignType) (s : S) :
-    (-sentence id f vp s).joinWeak (q s) ≠ 0 ↔ (∃! x, f x s) ∧ q s ≠ 0 := by
-  rw [Ne, SignType.joinWeak_eq_zero_iff, SignType.neg_eq_zero_iff, not_or, ← Ne,
-    sentence_ne_zero_iff]
+theorem conditional_ne_undefined_iff (f vp : E → S → Prop) (q : S → Trivalent) (s : S) :
+    ((sentence id f vp s)ᶜ).joinWeak (q s) ≠ .undefined ↔ (∃! x, f x s) ∧ q s ≠ .undefined := by
+  rw [Ne, Trivalent.joinWeak_eq_undefined_iff, Trivalent.compl_eq_undefined_iff, not_or, ← Ne,
+    sentence_ne_undefined_iff]
   rfl
 
 end Article
@@ -254,11 +255,11 @@ theorem russellian_consistent :
     ⟨false, Set.mem_univ _, by simp⟩, fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl, trivial⟩⟩
 
 -- (36)
-theorem attitude_ne_zero_not_speaker :
+theorem attitude_ne_undefined_not_speaker :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop) (s : Bool),
-      attitude dox R (sentence id f vp) s ≠ 0 ∧ ¬ ∃ x, f x s :=
+      attitude dox R (sentence id f vp) s ≠ .undefined ∧ ¬ ∃ x, f x s :=
   ⟨fun _ ↦ {true}, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True, false,
-    (attitude_ne_zero_iff _ _ _ _ _).mpr fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl⟩, by simp⟩
+    (attitude_ne_undefined_iff _ _ _ _ _).mpr fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl⟩, by simp⟩
 
 /-! ### The village: situations as sets of facts (ch. 6, ch. 9) -/
 
@@ -437,9 +438,9 @@ theorem room_le_world : room ≤ world := by decide
 two tables ((4) of ch. 9). -/
 theorem incomplete_description :
     sentence (fun _ ↦ room) (fun x (s : Village Bool) ↦ Fact.table x ∈ s)
-        (fun x s ↦ Fact.covered x ∈ s) world ≠ 0 ∧
+        (fun x s ↦ Fact.covered x ∈ s) world ≠ .undefined ∧
       ¬ ∃! x, Fact.table x ∈ world :=
-  ⟨(sentence_ne_zero_iff _ _ _ _).mpr ⟨true, by decide, by decide⟩, fun ⟨_, _, h⟩ ↦
+  ⟨(sentence_ne_undefined_iff _ _ _ _).mpr ⟨true, by decide, by decide⟩, fun ⟨_, _, h⟩ ↦
     Bool.noConfusion ((h true (by decide)).trans (h false (by decide)).symm)⟩
 
 section SloppyIdentity

@@ -91,9 +91,9 @@ def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Fl
   | .false => φ.negative
   | .undefined => φ.unknownUpdate
 
-@[simp] theorem update_one (φ : BilateralUpdate W V E) : φ.update .true = φ.positive := rfl
-@[simp] theorem update_neg_one (φ : BilateralUpdate W V E) : φ.update (.false) = φ.negative := rfl
-@[simp] theorem update_zero (φ : BilateralUpdate W V E) : φ.update .undefined = φ.unknownUpdate := rfl
+@[simp] theorem update_true (φ : BilateralUpdate W V E) : φ.update .true = φ.positive := rfl
+@[simp] theorem update_false (φ : BilateralUpdate W V E) : φ.update (.false) = φ.negative := rfl
+@[simp] theorem update_undefined (φ : BilateralUpdate W V E) : φ.update .undefined = φ.unknownUpdate := rfl
 
 /-- Negation negates the truth value at which a sentence updates. -/
 theorem update_neg (φ : BilateralUpdate W V E) (a : Trivalent) : (~φ).update a = φ.update (aᶜ) := by
@@ -116,20 +116,20 @@ variable {v : Possibility W V (Flat E) → Trivalent}
 @[simp] theorem mem_negative_ofTrivalent : p ∈ (ofTrivalent v).negative s ↔ p ∈ s ∧ v p = .false :=
   Iff.rfl
 
-theorem positive_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).positive s = ∅ :=
+theorem positive_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).positive s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
-theorem negative_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).negative s = ∅ :=
+theorem negative_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).negative s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
 /-- Where a trivalent proposition is undefined throughout, every point is unknown. -/
-theorem unknownUpdate_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = .undefined) :
+theorem unknownUpdate_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
     (ofTrivalent v).unknownUpdate s = s := by
   ext p
-  simp [unknownUpdate, positive_ofTrivalent_of_eq_zero h, negative_ofTrivalent_of_eq_zero h]
+  simp [unknownUpdate, positive_ofTrivalent_of_eq_undefined h, negative_ofTrivalent_of_eq_undefined h]
 
 /-- Where a trivalent proposition is defined throughout, no point is unknown. -/
-theorem unknownUpdate_ofTrivalent_of_ne_zero (h : ∀ p ∈ s, v p ≠ .undefined) :
+theorem unknownUpdate_ofTrivalent_of_ne_undefined (h : ∀ p ∈ s, v p ≠ .undefined) :
     (ofTrivalent v).unknownUpdate s = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun p ⟨hp, hpos, hneg⟩ ↦ ?_
   match hv : v p with
@@ -197,7 +197,7 @@ theorem negative_atom (pred : W → Prop) (s : Set (Possibility W V (Flat E))) :
 
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
     (atom pred (V := V) (E := E)).unknownUpdate s = ∅ :=
-  unknownUpdate_ofTrivalent_of_ne_zero fun _ _ ↦ by simp
+  unknownUpdate_ofTrivalent_of_ne_undefined fun _ _ ↦ by simp
 
 theorem neg_pred1 (P : E → W → Prop) (t : V) :
     ~(pred1 P t) = pred1 (fun e w ↦ ¬ P e w) t := by
@@ -216,19 +216,19 @@ variable {x : V}
 
 theorem positive_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).positive s = ∅ :=
-  positive_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  positive_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 theorem negative_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).negative s = ∅ :=
-  negative_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  negative_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 theorem unknownUpdate_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).unknownUpdate s = s :=
-  unknownUpdate_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  unknownUpdate_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 /-! ### Connectives -/
 
-/-- The lift of a binary truth function `f`: at `1` and `-1`, the union over the cells of the table
+/-- The lift of a binary truth function `f`: at `true` and `false`, the union over the cells of the table
 with that value of the update by `φ` at the row's value followed by `ψ` at the column's. -/
 def lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralUpdate W V E) :
     BilateralUpdate W V E where

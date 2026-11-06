@@ -290,13 +290,13 @@ where `R` holds. -/
     gapExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ gapExt p := by
   ext w; simp [and_comm]
 
-/-- Composing with a function undefined exactly at `0` preserves the gap. -/
+/-- Composing with a function undefined exactly at `undefined` preserves the gap. -/
 theorem gapExt_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a = .undefined ↔ a = .undefined)
     (p : W → Trivalent) :
     gapExt (f ∘ p) = gapExt p := by
   ext w; simp [hf]
 
-/-- Composing with a function that is never `0` leaves no gap. -/
+/-- Composing with a function that is never `undefined` leaves no gap. -/
 theorem isBivalent_comp {f : Trivalent → Trivalent} (hf : ∀ a, f a ≠ .undefined)
     (p : W → Trivalent) :
     IsBivalent (f ∘ p) :=

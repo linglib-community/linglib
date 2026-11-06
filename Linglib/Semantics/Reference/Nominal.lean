@@ -82,10 +82,10 @@ section Values
 
 variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
-@[simp] theorem resolve_eq_zero_iff : nd.resolve scope c w = .undefined ↔ nd.selector c w = none :=
-  presupOfReferent_eq_zero_iff
+@[simp] theorem resolve_eq_undefined_iff : nd.resolve scope c w = .undefined ↔ nd.selector c w = none :=
+  presupOfReferent_eq_undefined_iff
 
-@[simp] theorem toTrivalent_eq_zero_iff :
+@[simp] theorem toTrivalent_eq_undefined_iff :
     nd.toTrivalent scope c w = .undefined ↔ (nd.presup c w → nd.selector c w = none) := by
   simp [toTrivalent, imp_iff_not_or]
 

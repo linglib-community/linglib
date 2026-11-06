@@ -59,7 +59,7 @@ behaviour follows from its classical meaning and the order of its arguments.
 
 An `n`-ary truth function is a function on `Fin n → Bool`, and a `0`-ary one is identified with
 its value. A failed reduction is `none` rather than George's constant function to the failure
-value, which deployment then sends to `0`. The repair set of a value (Definition 14) is
+value, which deployment then sends to `undefined`. The repair set of a value (Definition 14) is
 `Trivalent.toFinset`. Choosing `true` or `false` as the member to reduce by is specific to `Bool`
 and keeps `deploy` computable. Repair sets of predicates over an infinite domain ([george-2014]
 §4) need George's existential formulation of Definition 13, which `deployWith` follows.

@@ -15,8 +15,8 @@ public import Mathlib.Logic.Function.DependsOn
 Propositional formulas built from atoms by negation, conjunction, disjunction and the conditional
 are evaluated into `Trivalent` by an interpretation of the binary connectives, the Strong, Weak or
 Middle Kleene tables or Cooper's or de Finetti's, with Kleene's negation throughout. A formula is
-realized at a designation standard when its value is designated: K3 designates only `1` and LP also
-`0`, so one evaluation yields both logics, and mixed consequence takes premises at one standard and
+realized at a designation standard when its value is designated: K3 designates only `true` and LP
+also `undefined`, so one evaluation yields both logics, and mixed consequence takes premises at one standard and
 conclusions at another, as Cobreros, Égré, Ripley and van Rooij do. Under the Weak Kleene tables a
 formula is undefined as soon as one of its atoms is, so they define the Weak Kleene connectives from
 the Strong Kleene ones but not the converse.
@@ -41,7 +41,7 @@ the Strong Kleene ones but not the converse.
   Kleene conjunction, while the Strong Kleene ones define the Weak Kleene connectives
   (`Trivalent.Formula.exists_eval_strongKleene_eq_meetWeak`).
 * `Trivalent.k3_no_tautologies`, `Trivalent.lp_all_satisfiable`: the model sending every atom to
-  `0` gives Strong Kleene K3 no tautologies and LP no unsatisfiable formula.
+  `undefined` gives Strong Kleene K3 no tautologies and LP no unsatisfiable formula.
 * `Trivalent.lp_no_explosion`: LP is paraconsistent.
 
 ## Implementation notes
@@ -49,7 +49,7 @@ the Strong Kleene ones but not the converse.
 The API mirrors `Mathlib.ModelTheory` (`Realize`, per-constructor `@[simp]` lemmas, `⊨` notation),
 and consequence is the multiple-conclusion, list-based `MixedConsequence` rather than theories as
 sets. The language has no constants, so `⊤` and `⊥` are `p ∨ ¬p` and `p ∧ ¬p` for an atom `p`, and
-the model sending every atom to `0` voids every formula under the Strong Kleene tables.
+the model sending every atom to `undefined` voids every formula under the Strong Kleene tables.
 
 ## References
 
@@ -302,15 +302,15 @@ theorem eval_const_undefined (φ : Formula Atom) :
     simp only [Formula.eval_conj, Formula.eval_disj, Formula.eval_cond, ihψ, ihχ]
     decide
 
-/-- K3 has no tautologies, since nothing is designated in the model sending every atom to `0`
-([cobreros-etal-2012], Theorem 2). -/
+/-- K3 has no tautologies, since nothing is designated in the model sending every atom to
+`undefined` ([cobreros-etal-2012], Theorem 2). -/
 theorem k3_no_tautologies [Nonempty Atom] (φ : Formula Atom) :
     ¬(∀ M : Model Atom, M ⊨[.strongKleene, .k3] φ) := by
   intro h
   have := h fun _ ↦ .undefined
   simp [Formula.Realize, eval_const_undefined] at this
 
-/-- Every formula is LP-satisfiable, since the model sending every atom to `0` designates
+/-- Every formula is LP-satisfiable, since the model sending every atom to `undefined` designates
 everything ([cobreros-etal-2012], Theorem 2). -/
 theorem lp_all_satisfiable (φ : Formula Atom) :
     (fun _ : Atom ↦ .undefined) ⊨[.strongKleene, .lp] φ := by

@@ -67,8 +67,8 @@ open Classical in
 /-- On the quantificational theory a particle meaning *only* composes with its sister `α` and
 then with its scope `β`, presupposing `β α` and asserting that `β` is false of every other
 alternative to `α` in `C` ((72)). -/
-noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W → SignType :=
-  (β α).indicator fun w ↦ SignType.ofProp (∀ γ ∈ C, γ ≠ α → w ∉ β γ)
+noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (β α))) (Trivalent.ofProp (∀ γ ∈ C, γ ≠ α → w ∉ β γ))
 
 -- (73)
 theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
@@ -80,10 +80,10 @@ theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
       ⟨fun h hw ↦ (congrArg β (not_not.1 fun hne ↦ h hne hw)).symm,
         fun h hne hw ↦ hne (hβ hγ hα (h hw).symm)⟩).trans Set.forall_mem_image.symm
   funext w
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [only_eq_zero_iff, ← hL]
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · rw [only_eq_undefined_iff, ← hL]
     simp [quantifierOnly]
-  · rw [only_eq_one_iff, ← hL, ← hM]
+  · rw [only_eq_true_iff, ← hL, ← hM]
     simp [quantifierOnly]
 
 /-- A particle on a proper part of its focus is not a quantifier over alternatives to its sister.
@@ -94,10 +94,10 @@ theorem quantifierOnly_ne_only (C : Set σ) (hψ : ψ ∈ D) (hne : ψ ≠ β α
     (hwα : w ∈ β α) (hβ : ∀ γ, γ ≠ α → w ∉ β γ) :
     quantifierOnly C α β ≠ only (· = ·) D id (β α) := by
   intro h
-  have hq : quantifierOnly C α β w = 1 := by
-    simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
+  have hq : quantifierOnly C α β w = .true := by
+    simp only [quantifierOnly, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
     exact ⟨hwα, fun γ _ hγ ↦ hβ γ hγ⟩
-  rw [h, only_eq_one_iff] at hq
+  rw [h, only_eq_true_iff] at hq
   exact notMem_atMost hψ hw hne.symm hq.2
 
 -- The paper's pseudo-English "Peter read only Hamlet" (79), a world being what Peter did.
@@ -108,11 +108,11 @@ def swam : Set (Set Deed) := {w | .swim ∈ w}
 
 -- (79), (81)
 theorem peter_read_only_hamlet :
-    quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = 1 ∧
+    quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = .true ∧
       only (· = ·) {read .hamlet, read .macbeth, swam} id (read .hamlet)
-        {.read .hamlet, .swim} = -1 := by
-  simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff,
-    only_eq_neg_one_iff]
+        {.read .hamlet, .swim} = .false := by
+  simp only [quantifierOnly, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
+    only_eq_false_iff]
   refine ⟨⟨by simp [read], ?_⟩, mem_atLeast.2 ⟨read .hamlet, by simp, by simp [read], rfl⟩,
     fun h ↦ ?_⟩
   · rintro (_ | _) - h

@@ -47,22 +47,23 @@ variable {W : Type*} (alts : Set (Set W)) (p : Set W)
 open Classical in
 /-- The Akan *nà* and Ga *ni* constructions, (75) and (76), assert the prejacent and presuppose
 conditional exhaustivity together with existence. -/
-noncomputable def cleft : W → SignType :=
-  {w | (w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts}.indicator fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def cleft : W → Trivalent := fun w ↦
+  Trivalent.transplication (Trivalent.ofProp ((w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts))
+    (Trivalent.ofProp (w ∈ p))
 
 open Classical in
 /-- The Ngamo *=i/ye* construction (78) asserts the prejacent and presupposes the salience of the
 background, the existential closure of the alternatives. -/
-noncomputable def marked (salient : Set W → Prop) : W → SignType :=
-  {_w | salient (⋃₀ alts)}.indicator fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def marked (salient : Set W → Prop) : W → Trivalent := fun w ↦
+  Trivalent.transplication (Trivalent.ofProp (salient (⋃₀ alts))) (Trivalent.ofProp (w ∈ p))
 
 /-! ### The exhaustive inference is not asserted, section 5.2.1 -/
 
 /-- Negated overt *only* keeps the prejacent and verifies a non-entailed alternative, giving *also*
 its antecedent ((36b), (37b)). -/
-theorem negated_only_licenses_also {w : W} (h : -only (· ⊆ ·) alts id p w = 1) :
+theorem negated_only_licenses_also {w : W} (h : (only (· ⊆ ·) alts id p w)ᶜ = .true) :
     w ∈ p ∧ ∃ q ∈ alts, ¬ p ⊆ q ∧ w ∈ q := by
-  rw [SignType.neg_eq_one_iff, only_eq_neg_one_iff] at h
+  rw [Trivalent.compl_eq_true_iff, only_eq_false_iff] at h
   refine ⟨atLeast_subset_subset h.1, ?_⟩
   by_contra hno
   push Not at hno
@@ -70,7 +71,7 @@ theorem negated_only_licenses_also {w : W} (h : -only (· ⊆ ·) alts id p w = 
 
 /-- Negating a marked construction targets the prejacent, so *also* lacks its antecedent, (36a)
 to (38a). -/
-theorem negated_cleft_notMem {w : W} (h : -cleft alts p w = 1) : w ∉ p := by
+theorem negated_cleft_notMem {w : W} (h : (cleft alts p w)ᶜ = .true) : w ∉ p := by
   simp_all [cleft]
 
 /-! ### Implicature in Ngamo, presupposition in Akan and Ga, section 5.2.2 -/
@@ -79,33 +80,34 @@ theorem negated_cleft_notMem {w : W} (h : -cleft alts p w = 1) : w ∉ p := by
 holds, so its exhaustivity is cancellable ((42), (45)). -/
 theorem marked_exhaustivity_cancellable {salient : Set W → Prop} {q : Set W} {w : W}
     (hs : salient (⋃₀ alts)) (hq : q ∈ alts) (hne : ¬ p ⊆ q) (hw : w ∈ p ∩ q) :
-    marked alts p salient w = 1 ∧ w ∉ excludes alts p :=
+    marked alts p salient w = .true ∧ w ∉ excludes alts p :=
   ⟨by simp [marked, hs, hw.1], fun h ↦ hne (h q hq hw.2)⟩
 
 /-- Where defined and true, the cleft is exhaustive ((43), (44), (77)), so it cannot answer a
 mention-some question ((49), (50)). -/
-theorem cleft_exhaustive {w : W} (h : cleft alts p w = 1) : w ∈ excludes alts p := by
-  simp only [cleft, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff] at h
+theorem cleft_exhaustive {w : W} (h : cleft alts p w = .true) : w ∈ excludes alts p := by
+  simp only [cleft, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff] at h
   exact h.1.1 h.2
 
 /-- A negated cleft is true where the prejacent fails and another alternative holds, so the
 conditional presupposition projects (54). -/
 theorem cleft_neg_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (hp : w ∉ p) :
-    -cleft alts p w = 1 := by
+    (cleft alts p w)ᶜ = .true := by
   simpa [cleft, hp] using ⟨q, hq, hw⟩
 
 /-! ### Existence, section 6 -/
 
 /-- The cleft presupposes that some alternative holds, so a focused negative quantifier clashes
 with it ((60) and (61)). -/
-theorem cleft_existence {w : W} (h : cleft alts p w ≠ 0) : w ∈ ⋃₀ alts :=
-  (Set.mem_of_indicator_ne_zero h).2
+theorem cleft_existence {w : W} (h : cleft alts p w ≠ .undefined) : w ∈ ⋃₀ alts := by
+  simp only [cleft, ne_eq, Trivalent.transplication_eq_undefined_iff,
+    Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not] at h
+  exact h.2
 
 /-- The Ngamo construction is defined at a world where no alternative holds, so it carries no
 existence presupposition (59). -/
 theorem marked_of_not_exists {salient : Set W → Prop} (hs : salient (⋃₀ alts)) {w : W}
-    (_ : w ∉ ⋃₀ alts) : marked alts p salient w ≠ 0 := by
+    (_ : w ∉ ⋃₀ alts) : marked alts p salient w ≠ .undefined := by
   simp [marked, hs]
 
 end GrubicRenansDuah2019

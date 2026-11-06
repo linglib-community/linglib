@@ -28,7 +28,7 @@ sentence implies what its signature says.
 
 * `Implicative.holds_signed_of_implied_eq`: an affirmed or denied claim implies the polarity of
   the complement that its signature records for that context
-* `Implicative.antitone_support`: a signature that implies more presupposes more
+* `Implicative.antitone_compl_gapExt`: a signature that implies more presupposes more
 
 ## References
 
@@ -121,7 +121,7 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
 variable (R v S) in
 /-- A signature that implies more presupposes more, the presupposition of a sentence weakening
 as its signature descends. -/
-theorem antitone_support : Antitone fun s ↦ (Trivalent.gapExt (sentence R s v S))ᶜ := by
+theorem antitone_compl_gapExt : Antitone fun s ↦ (Trivalent.gapExt (sentence R s v S))ᶜ := by
   intro s t h w hw
   simp only [sentence, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq,
     Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_eq_true_iff,

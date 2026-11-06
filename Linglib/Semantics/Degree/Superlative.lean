@@ -11,7 +11,7 @@ Heim's absolute superlative holds of `x` when it is in the comparison class and 
 other member. Von Fintel makes membership a presupposition: `trivalentSuperlative` is a trivalent
 proposition, so that the presupposition rather than the assertion fails when the class shrinks below
 `x`, and at a world it is [true exactly of the absolute
-superlative](##trivalentSuperlative_eq_one_iff_absoluteSuperlative). The assertion is [the
+superlative](##trivalentSuperlative_eq_true_iff_absoluteSuperlative). The assertion is [the
 set-standard comparative over the other members](##trivalentSuperlative_assertion_iff), so [it is
 anti-additive in the class](##isAntiAdditive_trivalentSuperlative_assertion), by Hoeksema's
 anti-additivity of the set comparative.
@@ -74,10 +74,10 @@ noncomputable def trivalentSuperlative (μ : α → D) (C : W → Set α) (x : �
 
 variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 
-@[simp] theorem trivalentSuperlative_eq_zero_iff : trivalentSuperlative μ C x w = .undefined ↔ x ∉ C w := by
+@[simp] theorem trivalentSuperlative_eq_undefined_iff : trivalentSuperlative μ C x w = .undefined ↔ x ∉ C w := by
   simp [trivalentSuperlative]
 
-@[simp] theorem trivalentSuperlative_eq_one_iff :
+@[simp] theorem trivalentSuperlative_eq_true_iff :
     trivalentSuperlative μ C x w = .true ↔ x ∈ C w ∧ ∀ y ∈ C w, y ≠ x → μ y < μ x := by
   simp [trivalentSuperlative]
 
@@ -105,10 +105,10 @@ end Preorder
 
 /-- At a world the superlative is true exactly when `x` is the absolute superlative of the class
 there ([heim-1999]). -/
-theorem trivalentSuperlative_eq_one_iff_absoluteSuperlative [LinearOrder D] {μ : α → D}
+theorem trivalentSuperlative_eq_true_iff_absoluteSuperlative [LinearOrder D] {μ : α → D}
     {C : W → Set α}
     {x : α} {w : W} : trivalentSuperlative μ C x w = .true ↔ AbsoluteSuperlative μ (C w) x :=
-  trivalentSuperlative_eq_one_iff
+  trivalentSuperlative_eq_true_iff
 
 open Presupposition Trivalent
 
