@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Intensional
+public import Linglib.Semantics.Quantification.Individual
 public import Mathlib.Basic.PEquiv
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
@@ -13,10 +13,10 @@ public import Mathlib.Order.Interval.Set.Infinite
 A noun phrase may denote an entity, a predicate or a generalized quantifier, and the shifts among
 the three types pair a total injection with its partial inverse: the lift of an entity with
 `Quantifier.lower`, the singleton property with `iota`, and nominalization, which [cannot be
-total](##nom_russell), with predication. The paper works in the extension at an index of
-Montague's intensional types; `BE`, the lift, `A` and *the* are projections of his shifts, while
-nominalization [does not factor through the extension](##not_exists_nom_eq_comp) and the
-predicative *the owner* is [a role that no set represents](##role_not_rigid). `BE` is [the only
+total](##nom_russell), with predication. The paper works with the extensions of Montague's
+properties at an index, and two of its shifts need the properties themselves: nominalization
+[does not factor through the extension](##not_exists_nom_eq_comp), and the predicative *the
+owner* is [a role that no set represents](##role_not_rigid). `BE` is [the only
 complete homomorphism](##Quantifier.BE_unique) taking each lift to its singleton, and `A` is [its
 only conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse), which
 *exactly one* [fails only by monotonicity](##exactly_one_ne_some).
@@ -24,8 +24,8 @@ only conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInve
 ## Implementation notes
 
 * The paper systematically represents properties as sets (fn. 5) in an extensional fragment
-  (fn. 2); here a property is a set of individuals at each index, and the fragment is
-  `Quantifier.Intensional` read at an index.
+  (fn. 2); a property here is a set of individuals at each index, `W → Set E`, and a set is the
+  rigid property `Function.const W` of it.
 * Nominalization and predication are a partial equivalence between properties and entities, a
   parameter as Chierchia's property correlates are primitive. His later kind operators, defined
   at each situation from the largest member, are `Kind.down` and `Kind.up`.
