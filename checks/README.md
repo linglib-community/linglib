@@ -70,9 +70,16 @@ python3 scripts/checks.py core [--json]
 * the types and bodies of the project definitions those types mention, followed transitively
   (Mathlib is trusted).
 
-It leaves out every proof. So a proof can change without affecting a sign-off. A change to a
+It leaves out every proof, including proofs inside a statement or a definition's body, and the
+declarations used only in them. So a proof can change without affecting a sign-off. A change to a
 statement, or to a definition it uses, makes the sign-off stale, and `diff` shows the changes
-since the signed commit. An upgrade of Lean's pretty-printer can also make sign-offs stale.
+since the signed commit.
+
+The hash is taken over the elaborated terms, not their printed form. A change that printing would
+hide, such as to the type of a bound variable, still makes a sign-off stale. Renaming a bound
+variable or changing a binder between explicit and implicit does not, since neither changes what
+a statement says. A Lean or Mathlib upgrade that changes how a statement elaborates, for instance
+by renaming an instance it uses, also makes the sign-off stale.
 
 `status` reports each item as one of the following:
 

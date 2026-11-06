@@ -51,7 +51,7 @@ CHECKS = ROOT / "checks"
 LIBRARIES = ["Linglib", "Studies", "Eval", "Lab"]
 KINDS = {"definition", "result", "datum"}
 RELATIONS = {"exact", "generalizes", "specializes", "variant", "refutes", "missing"}
-HASH_VERSION = "v1"
+HASH_VERSION = "v2"
 STANDARD_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 
 
@@ -143,10 +143,10 @@ def item_hash(item, data):
     closure = set()
     for name in sorted(item["decls"]):
         root = data["roots"][name]
-        h.update(f"\0root\0{name}\0{root['doc']}\0{data['nodes'][name]['text']}".encode())
+        h.update(f"\0root\0{name}\0{root['doc']}\0{data['nodes'][name]['term']}".encode())
         closure.update(root["closure"])
     for name in sorted(closure - set(item["decls"])):
-        h.update(f"\0node\0{name}\0{data['nodes'][name]['text']}".encode())
+        h.update(f"\0node\0{name}\0{data['nodes'][name]['term']}".encode())
     return h.hexdigest()[:16]
 
 
