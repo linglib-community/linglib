@@ -26,6 +26,7 @@ disjunctions differ from Kleene's only in when a compound is undefined.
   where a given condition fails.
 * `SignType.meetWeak`, `SignType.meetMiddle`, `SignType.meetBelnap` and their joins: the Weak
   Kleene, Middle Kleene and Belnap connectives.
+* `SignType.transplication`: the binary presupposition operator of [blamey-1986].
 * `SignType.condAssert`: conditional assertion at a designation standard, de Finetti's conditional
   at K3 and Cooper's at LP.
 * `SignType.supervaluation`: the value of a predicate over a finite family of valuations.
@@ -41,6 +42,8 @@ disjunctions differ from Kleene's only in when a compound is undefined.
 * `Trivalent.Designation.dual_threshold_le_neg_iff`: negation exchanges the K3 and LP standards.
 * `SignType.meetWeak_eq_meetWith` and companions: each connective is `meetWith` or `joinWith` at
   its definedness condition.
+* `SignType.transplication_self`, `SignType.transplication_eq`: Beaver's presupposition
+  operator is the diagonal of transplication, and transplication is definable from it.
 * `SignType.neg_condAssert`, `SignType.condAssert_condAssert`: conditional assertion commutes with
   negation and satisfies Import-Export.
 
@@ -66,6 +69,7 @@ pattern-matched definition, so that `rfl` and `decide` evaluate it.
 * [kalman-1958]
 * [beaver-1992]
 * [beaver-krahmer-2001]
+* [blamey-1986]
 * [van-fraassen-1966]
 * [george-2014]
 -/
@@ -383,6 +387,33 @@ theorem sup_zero_eq_one_iff {a : SignType} : a ⊔ 0 = 1 ↔ a = 1 := by cases a
 theorem sup_zero_eq_zero_iff {a : SignType} : a ⊔ 0 = 0 ↔ a ≠ 1 := by cases a <;> decide
 
 theorem sup_zero_ne_neg_one (a : SignType) : a ⊔ 0 ≠ -1 := by cases a <;> decide
+
+/-- The transplication `π / φ` of [blamey-1986], `φ` presupposing `π`: the value of `φ` if `π` is
+true, undefined otherwise ([beaver-krahmer-2001] Definition 3). -/
+def transplication : SignType → SignType → SignType
+  | .pos, b => b
+  | _, _ => 0
+
+theorem transplication_eq_ite (a b : SignType) : transplication a b = if a = 1 then b else 0 := by
+  cases a <;> rfl
+
+theorem transplication_eq_one_iff {a b : SignType} : transplication a b = 1 ↔ a = 1 ∧ b = 1 := by
+  cases a <;> cases b <;> decide
+
+theorem transplication_eq_neg_one_iff {a b : SignType} :
+    transplication a b = -1 ↔ a = 1 ∧ b = -1 := by
+  cases a <;> cases b <;> decide
+
+theorem transplication_eq_zero_iff {a b : SignType} : transplication a b = 0 ↔ a ≠ 1 ∨ b = 0 := by
+  cases a <;> cases b <;> decide
+
+/-- Beaver's presupposition operator is the diagonal of transplication. -/
+theorem transplication_self (a : SignType) : transplication a a = a ⊔ 0 := by cases a <;> rfl
+
+/-- Transplication is definable from Beaver's presupposition operator and the Strong Kleene
+connectives, `π / φ = (∂π ∧ φ) ∨ ¬∂π` ([beaver-krahmer-2001] p. 151). -/
+theorem transplication_eq (a b : SignType) : transplication a b = (a ⊔ 0) ⊓ b ⊔ -(a ⊔ 0) := by
+  cases a <;> cases b <;> rfl
 
 /-! ### Middle Kleene
 

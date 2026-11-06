@@ -6,11 +6,14 @@ public import Linglib.Logic.Bilattice.Product
 # The guard connective
 
 The guard `P : Q` of [fitting-1994] is `Q` when `P` is at least true and undefined otherwise; it
-makes Kleene's weak logic and the asymmetric Lisp logic definable over Belnap's `FOUR`. On a
-bilattice with negation it is `x : y = [(x ⊓ₖ t) ⊔ₖ ¬(x ⊓ₖ t)] ⊓ₖ y`, the value of `y`
-attenuated by the degree to which `x` is believed. On a product `L ⊙ L` this is
-`⟨a, b⟩ : ⟨c, d⟩ = ⟨a ⊓ c, a ⊓ d⟩`. The guard is knowledge-monotone in both arguments but not a
-lattice-theoretic connective.
+makes Kleene's weak logic and the asymmetric Lisp logic definable over Belnap's `FOUR`, and on
+Kleene's three values it is the transplication of [blamey-1986], the binary presupposition
+operator (`SignType.toFour_transplication`). Fitting defines it on the products `L ⊙ L` that
+represent the distributive bilattices, as `⟨a, b⟩ : ⟨c, d⟩ = ⟨a ⊓ c, a ⊓ d⟩`, and characterizes it
+in the bilattice operations as `x : y = [(x ⊓ₖ t) ⊔ₖ ¬(x ⊓ₖ t)] ⊓ₖ y`, the value of `y`
+attenuated by the degree to which `x` is believed. The characterization is taken here as the
+definition, so the guard is available on any bilattice with negation. It is knowledge-monotone
+in both arguments but not a lattice-theoretic connective.
 
 ## Main definitions
 
@@ -28,6 +31,7 @@ lattice-theoretic connective.
 ## References
 
 * [fitting-1994]
+* [blamey-1986]
 -/
 
 @[expose] public section
@@ -40,8 +44,8 @@ section Defs
 
 variable [Top B] [Compl B] [Lattice (Know B)]
 
-/-- The guard `x : y` ([fitting-1994] §9): the value of `y`, attenuated by the degree to which
-`x` is believed. -/
+/-- The guard `x : y` by Fitting's characterization in the bilattice operations ([fitting-1994]
+§9): the value of `y`, attenuated by the degree to which `x` is believed. -/
 def guard (x y : B) : B := (x ⊓ₖ ⊤ ⊔ₖ (x ⊓ₖ ⊤)ᶜ) ⊓ₖ y
 
 variable (x y z : B)
