@@ -31,9 +31,16 @@ formula into the cases `θ_T` for the teams supporting it.
 
 ## Implementation notes
 
-Successor sets are finite, so completeness holds for finite premise sets only. No team supports
-`{◇pₙ | n ∈ ℕ} ∪ {□¬(pᵢ ∧ pⱼ) | i ≠ j} ∪ {NE}`, yet each of its finite subsets is satisfiable.
-The first sections derive general rules of the system.
+Successor sets are finite, so consequence (`BSML.Consequence`) takes finite premise sets and
+completeness is proved for them. Over infinite sets the two consequence relations would part: no
+team supports `{◇pₙ | n ∈ ℕ} ∪ {□¬(pᵢ ∧ pⱼ) | i ≠ j} ∪ {NE}`, yet each of its finite subsets is
+satisfiable, so by compactness it is satisfiable over arbitrary models. The first sections derive
+general rules of the system.
+
+## TODO
+
+Strong completeness ([aloni-anttila-yang-2024] Theorem 4.43 for arbitrary premise sets), with the
+compactness they derive from it, needs models with arbitrary successor sets.
 
 ## References
 
@@ -1151,7 +1158,7 @@ theorem Formula.atomsIn_atomList (φ : Formula Atom) : φ.AtomsIn {p | p ∈ φ.
 /-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets: every
 consequence is derivable. -/
 theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
-    (h : (Γ : Set (Formula Atom)) ⊨ φ) : (Γ : Set (Formula Atom)) ⊢ φ := by
+    (h : Γ ⊨ φ) : (Γ : Set (Formula Atom)) ⊢ φ := by
   have := Classical.decEq Atom
   set γ : Formula Atom := bigConj Γ.toList
   set X : Finset Atom := (γ.atomList ++ φ.atomList ++ [default]).toFinset
@@ -1173,13 +1180,13 @@ theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
 
 /-- For finite premise sets, derivability is consequence. -/
 theorem derives_iff_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
-    (Γ : Set (Formula Atom)) ⊢ φ ↔ (Γ : Set (Formula Atom)) ⊨ φ :=
+    (Γ : Set (Formula Atom)) ⊢ φ ↔ Γ ⊨ φ :=
   ⟨consequence_of_derives, completeness⟩
 
 /-- A consequence of finitely many premises over models in `Type` holds in models of every
 universe, so `Consequence` loses nothing by fixing the universe. -/
 theorem support_of_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom}
-    (h : (Γ : Set (Formula Atom)) ⊨ φ) {W : Type*} [DecidableEq W] (M : KripkeModel W Atom)
+    (h : Γ ⊨ φ) {W : Type*} [DecidableEq W] (M : KripkeModel W Atom)
     (s : Finset W) (hs : ∀ γ ∈ Γ, support M γ s) : support M φ s :=
   soundness (completeness h) M s fun γ hγ ↦ hs γ hγ
 

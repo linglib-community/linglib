@@ -196,11 +196,14 @@ theorem not_support_strongFalsum [Inhabited Atom] : ¬ support M .strongFalsum t
 
 /-! ### Consequence and equivalence -/
 
-/-- `Γ ⊨ φ`: every pointed team model whose team supports each formula of `Γ` supports `φ`
-([aloni-2022] Definition 3, with sets of premises as in [aloni-anttila-yang-2024]). The
-models range over `Type`; by soundness and completeness the universe does not matter for finite
-premise sets (`BSML.support_of_consequence`). -/
-def Consequence (Γ : Set (Formula Atom)) (φ : Formula Atom) : Prop :=
+/-- `Γ ⊨ φ`: every pointed team model whose team supports each formula of the finite set `Γ`
+supports `φ` ([aloni-2022] Definition 3, with premise sets as in [aloni-anttila-yang-2024]).
+The models have finite successor sets and finite teams and range over `Type`. For finite premise
+sets neither restriction changes the relation: what is a consequence here is derivable
+(`BSML.completeness`), the derivation system is sound for arbitrary models
+([aloni-anttila-yang-2024] Theorem 4.34), and the universe is immaterial
+(`BSML.support_of_consequence`). -/
+def Consequence (Γ : Finset (Formula Atom)) (φ : Formula Atom) : Prop :=
   ∀ p : PointedTeam.{0} Atom, (∀ γ ∈ Γ, support p.model γ p.team) → support p.model φ p.team
 
 @[inherit_doc] scoped infix:50 " ⊨ " => Consequence

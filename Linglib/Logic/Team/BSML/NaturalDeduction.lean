@@ -326,9 +326,9 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
     rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
 
-/-- Derivability implies consequence. -/
-theorem consequence_of_derives (h : Γ ⊢ φ) : Γ ⊨ φ :=
-  fun p ↦ soundness h p.model p.team
+/-- Derivability from a finite set implies consequence. -/
+theorem consequence_of_derives {Γ : Finset (Formula Atom)} (h : ↑Γ ⊢ φ) : Γ ⊨ φ :=
+  fun p hΓ ↦ soundness h p.model p.team fun γ hγ ↦ hΓ γ hγ
 
 /-! ### Derived rules -/
 

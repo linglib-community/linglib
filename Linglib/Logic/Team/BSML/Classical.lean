@@ -145,14 +145,14 @@ theorem antiSupport_singleton_iff_not_realize (hNE : φ.NEFree) :
 
 /-! ### Consequence is classical consequence (Fact 15) -/
 
-/-- `φ` is a classical modal consequence of `Γ` when every world of every model realizing each
-formula of `Γ` realizes `φ`. -/
-def ClassicalConsequence (Γ : Set (Formula Atom)) (φ : Formula Atom) : Prop :=
+/-- `φ` is a classical modal consequence of the finite set `Γ` when every world of every model
+realizing each formula of `Γ` realizes `φ`. -/
+def ClassicalConsequence (Γ : Finset (Formula Atom)) (φ : Formula Atom) : Prop :=
   ∀ (W : Type) (M : KripkeModel W Atom) (w : W), (∀ γ ∈ Γ, Realize M γ w) → Realize M φ w
 
 /-- On `NE`-free formulas BSML consequence is classical modal consequence ([aloni-2022] Fact 15,
 [anttila-2021] Fact 2.2.17). -/
-theorem consequence_iff_classicalConsequence {Γ : Set (Formula Atom)} (hΓ : ∀ γ ∈ Γ, γ.NEFree)
+theorem consequence_iff_classicalConsequence {Γ : Finset (Formula Atom)} (hΓ : ∀ γ ∈ Γ, γ.NEFree)
     (hφ : φ.NEFree) : Γ ⊨ φ ↔ ClassicalConsequence Γ φ where
   mp h W M w hw :=
     letI := Classical.decEq W

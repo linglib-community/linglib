@@ -267,7 +267,7 @@ theorem not_positiveFC : ¬ {.poss aOrB} ⊨ (.conj mayA mayB : Formula Atom) :=
 /-- Addition holds in BSML∅, `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
 theorem addition (hα : α.NEFree) (hβ : β.NEFree) : {α} ⊨ .disj α β :=
   (consequence_iff_classicalConsequence (Γ := {α}) (φ := .disj α β) (by simpa using hα)
-    ⟨hα, hβ⟩).mpr fun _ _ _ h ↦ Or.inl (h α rfl)
+    ⟨hα, hβ⟩).mpr fun _ _ _ h ↦ Or.inl (h α (Finset.mem_singleton_self α))
 
 /-- Addition fails in BSML⁺, `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
 no non-empty witness. -/
@@ -278,10 +278,11 @@ theorem not_addition_plus : ¬ ConsequencePlus (.atom Atom.a) aOrB :=
 
 /-- Contraposition holds in BSML∅, so for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`. -/
 theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : {α} ⊨ β) : {.neg β} ⊨ .neg α :=
+  have hc := (consequence_iff_classicalConsequence (Γ := {α}) (φ := β) (by simpa using hα) hβ).mp h
   (consequence_iff_classicalConsequence (Γ := {.neg β}) (φ := .neg α)
-    (by simpa [Formula.NEFree] using hβ) hα).mpr fun W M w hβ' hα' ↦ hβ' (.neg β) rfl
-      ((consequence_iff_classicalConsequence (Γ := {α}) (φ := β) (by simpa using hα) hβ).mp h
-        W M w fun _ hγ ↦ hγ ▸ hα')
+    (by simpa [Formula.NEFree] using hβ) hα).mpr fun W M w hβ' hα' ↦
+      hβ' (.neg β) (Finset.mem_singleton_self _)
+        (hc W M w fun _ hγ ↦ Finset.mem_singleton.1 hγ ▸ hα')
 
 /-- Positive FC holds in BSML⁺ but its contrapositive fails on Figure 5(a)'s frame, so
 contraposition fails. -/
