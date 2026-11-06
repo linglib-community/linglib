@@ -169,6 +169,14 @@ def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := ∀ s ∈ t[p]?, Tree.IsHea
 instance (t : Tree C W) (p : TreePath) : Decidable (IsHeadAt t p) :=
   inferInstanceAs (Decidable (∀ s ∈ _, _))
 
+/-- The nodes below a head-level node are head-level. -/
+theorem IsHeadAt.mono {t : Tree C W} {h p : TreePath} (hh : IsHeadAt t h) (hp : h ≤ p) :
+    IsHeadAt t p := fun s hs ↦ by
+  obtain ⟨q, hq⟩ := hp
+  rw [RoseTree.getElem?_treePath, ← hq, RoseTree.getElem?_append] at hs
+  obtain ⟨u, hu, hs⟩ := Option.bind_eq_some_iff.mp hs
+  exact RoseTree.Licensed.of_getElem? (hh u hu) hs
+
 end HeadLevel
 
 end PhraseStructure.Tree

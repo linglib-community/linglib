@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.AlexiadouLohndal2017
-public import Studies.BobaljikHarley2017
 public import Studies.Embick2004
+public import Studies.Harley2014
 public import Studies.DeBelderVanCraenenbroeck2015
 public import Studies.VanCraenenbroeck2014
 public import Linglib.Data.Examples.Readers
@@ -30,8 +30,8 @@ categorized at all.
 ## Implementation notes
 
 * The locality condition (25) is the one the chapter quotes from the manuscript of Bobaljik and
-  Harley's chapter, `DistributedMorphology.MayCondition'`, and the trees are over the categories
-  of `BobaljikHarley2017`. In (27c) the lower F is the complex head of F and the Root.
+  Harley's chapter, `DistributedMorphology.MayCondition'`. In (27c) the lower F is the complex
+  head of F and the Root.
 * That Direct Merge and complement Merge build one complex head is
   `Embick2004.headDaughter?_moveRoot`.
 * A view's licensing of a resultative aP is read off how it attaches a Root of each class: a v
@@ -56,22 +56,27 @@ argument structure, and the endocentricity argument for Roots as modifiers are n
 
 namespace AlexiadouLohndal2017
 
-open PhraseStructure BobaljikHarley2017
+open PhraseStructure
 open DistributedMorphology (MayCondition MayCondition')
 open DistributedMorphology.RootCategorization (Attachment)
 
 /-! ### Hiaki suppletion without Root complements -/
 
+/-- The categories of (26) and (27): Voice, the functional head F, v, D and the Root's. -/
+inductive Cat
+  | voice | f | v | d | root
+  deriving DecidableEq, Repr
+
 /-- The structure (26), the internal argument in the specifier of F over vP, the Root in situ. -/
-def tree26 : T :=
-  .node .voice [.terminal .d .phrase, .node .voice [.terminal .voice .voice,
-    .node .f [.terminal .d .phrase,
-      .node .f [.terminal .f .f, .node .v [.terminal .v .v, .terminal .root .root]]]]]
+def tree26 : Tree Cat Unit :=
+  .node .voice [.terminal .d (), .node .voice [.terminal .voice (),
+    .node .f [.terminal .d (), .node .f [.terminal .f (), .node .v [.terminal .v (),
+      .terminal .root ()]]]]]
 
 /-- The last step of the derivation (27). Once vP is spelled out, the Root forms a complex head with
 F, and the internal argument merges with that head. -/
-def tree27 : T :=
-  .node .f [.terminal .d .phrase, .adjoin .f [.terminal .f .f, .terminal .root .root]]
+def tree27 : Tree Cat Unit :=
+  .node .f [.terminal .d (), .adjoin .f [.terminal .f (), .terminal .root ()]]
 
 /-- Under (25), the internal argument may condition the Root in (27) but not in (26). -/
 theorem mayCondition'_tree27 :
