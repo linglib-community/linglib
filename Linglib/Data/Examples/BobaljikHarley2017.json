@@ -39,14 +39,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "unergative"
-      ],
-      [
-        "applicative",
-        "suffixed"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on an agentive intransitive.",
@@ -92,14 +84,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "transitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on an agentive transitive.",
@@ -145,14 +129,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "unaccusative"
-      ],
-      [
-        "applicative",
-        "suffixed"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). No applicative on an unaccusative, whose v is non-agentive.",
@@ -202,14 +178,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveIntransitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). No applicative on the suppletive intransitive weeye 'go, walk'.",
@@ -263,14 +231,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveIntransitive"
-      ],
-      [
-        "applicative",
-        "periphrastic"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). A benefactive adjunct PP expresses the meaning of (16), so (16) is not semantically infelicitous.",
@@ -316,14 +276,6 @@
       [
         "phenomenon",
         "applicative"
-      ],
-      [
-        "verbClass",
-        "suppletiveTransitive"
-      ],
-      [
-        "applicative",
-        "suffixed"
       ]
     ],
     "comment": "From Harley, Tubino Blanco and Haugen (2009). The applicative on a suppletive transitive, so suppletion does not block it.",
