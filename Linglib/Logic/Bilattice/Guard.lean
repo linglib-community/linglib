@@ -9,7 +9,7 @@ The guard `P : Q` of [fitting-1994] is `Q` when `P` is at least true and undefin
 makes Kleene's weak logic and the asymmetric Lisp logic definable over Belnap's `FOUR`. On a
 diagonal product `L ⊙ L` it is `⟨a, b⟩ : ⟨c, d⟩ = ⟨a ⊓ c, a ⊓ d⟩` ([fitting-1994] Definition 9.4),
 the second argument attenuated by the evidence for the first. It is knowledge-monotone in both
-arguments but not a lattice-theoretic connective ([schoter-1996b] Def 4).
+arguments but not a lattice-theoretic connective ([fitting-1994] §5).
 
 ## Main definitions
 
@@ -26,7 +26,6 @@ arguments but not a lattice-theoretic connective ([schoter-1996b] Def 4).
 ## References
 
 * [fitting-1994]
-* [schoter-1996b]
 -/
 
 @[expose] public section
@@ -46,7 +45,7 @@ def guard (x y : L ⊙ L) : L ⊙ L := mk (x.pro ⊓ y.pro) (x.pro ⊓ y.con)
 @[simp] theorem pro_guard (x y : L ⊙ L) : (guard x y).pro = x.pro ⊓ y.pro := rfl
 @[simp] theorem con_guard (x y : L ⊙ L) : (guard x y).con = x.pro ⊓ y.con := rfl
 
-/-- The guard is monotone in the knowledge order in both arguments ([schoter-1996b] Def 4). -/
+/-- The guard is monotone in the knowledge order in both arguments ([fitting-1994] §5). -/
 theorem guard_kLE_guard {x x' y y' : L ⊙ L} (hx : x ≤ₖ x') (hy : y ≤ₖ y') :
     guard x y ≤ₖ guard x' y' :=
   ⟨inf_le_inf hx.1 hy.1, inf_le_inf hx.1 hy.2⟩
@@ -56,12 +55,12 @@ theorem guard_kLE_right (x y : L ⊙ L) : guard x y ≤ₖ y := ⟨inf_le_right,
 
 variable [BoundedOrder L]
 
-/-- A first argument that is at least true passes the second through ([schoter-1996b] Def 4). -/
+/-- A first argument that is at least true passes the second through ([fitting-1994] §5). -/
 theorem guard_of_top_kLE {x : L ⊙ L} (h : (⊤ : L ⊙ L) ≤ₖ x) (y : L ⊙ L) : guard x y = y := by
   have hp : x.pro = ⊤ := le_antisymm le_top h.1
   simp [guard, hp]
 
-/-- A first argument with no evidence for it gives `⊥ₖ = ⟨⊥, ⊥⟩` ([schoter-1996b] Def 4). -/
+/-- A first argument with no evidence for it gives `⊥ₖ = ⟨⊥, ⊥⟩` ([fitting-1994] §9). -/
 theorem guard_of_pro_bot {x : L ⊙ L} (h : x.pro = ⊥) (y : L ⊙ L) : guard x y = mk ⊥ ⊥ := by
   simp [guard, h]
 

@@ -216,8 +216,7 @@ theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know 
       STSatisfies F v ([] : List (Fml α)) [] := by
   intro h
   set kT : B := ofKnow (⊤ : Know B) with hkT
-  have hle_top : ∀ x : B, x ≤ₖ kT := fun x ↦ by
-    rw [hkT, kLE_def, toKnow_ofKnow]; exact le_top
+  have hle_top : ∀ x : B, x ≤ₖ kT := fun _ ↦ le_top (α := Know B)
   have hanti : IsAnticonsistent kT := hle_top _
   have hnexact : ¬ IsExact kT := hkT ▸ not_isExact_ofKnow_top hbt
   have hmem : kT ∈ F := by

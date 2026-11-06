@@ -160,18 +160,18 @@ theorem top_kSup_bot : (⊤ : B) ⊔ₖ ⊥ = ofKnow ⊤ :=
 theorem ofKnow_top_inf_ofKnow_bot : ofKnow ⊤ ⊓ ofKnow ⊥ = (⊥ : B) :=
   kLE_antisymm
     (calc ofKnow ⊤ ⊓ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊓ ⊥ :=
-        inf_kLE_inf (kLE_refl _) (bot_le : (⊥ : Know B) ≤ toKnow (⊥ : B))
+        inf_kLE_inf (kLE_refl _) (bot_le (α := Know B))
       _ = ⊥ := inf_bot_eq _)
     (calc (⊥ : B) = ⊥ ⊓ ofKnow ⊥ := (bot_inf_eq _).symm
-      _ ≤ₖ ofKnow ⊤ ⊓ ofKnow ⊥ := inf_kLE_inf (le_top : toKnow (⊥ : B) ≤ ⊤) (kLE_refl _))
+      _ ≤ₖ ofKnow ⊤ ⊓ ofKnow ⊥ := inf_kLE_inf (le_top (α := Know B)) (kLE_refl _))
 
 theorem ofKnow_top_sup_ofKnow_bot : ofKnow ⊤ ⊔ ofKnow ⊥ = (⊤ : B) :=
   kLE_antisymm
     (calc ofKnow ⊤ ⊔ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊔ ⊤ :=
-        sup_kLE_sup (kLE_refl _) (bot_le : (⊥ : Know B) ≤ toKnow (⊤ : B))
+        sup_kLE_sup (kLE_refl _) (bot_le (α := Know B))
       _ = ⊤ := sup_top_eq _)
     (calc (⊤ : B) = ⊤ ⊔ ofKnow ⊥ := (top_sup_eq _).symm
-      _ ≤ₖ ofKnow ⊤ ⊔ ofKnow ⊥ := sup_kLE_sup (le_top : toKnow (⊤ : B) ≤ ⊤) (kLE_refl _))
+      _ ≤ₖ ofKnow ⊤ ⊔ ofKnow ⊥ := sup_kLE_sup (le_top (α := Know B)) (kLE_refl _))
 
 end Interlaced
 

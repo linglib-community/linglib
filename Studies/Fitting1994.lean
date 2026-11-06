@@ -93,7 +93,7 @@ variable {x y z}
 theorem guard_kLE_guard_of_le (h : x ≤ y) : guard x z ≤ₖ guard y z :=
   calc guard x z = guard x z ⊓ₖ guard y z := by
         rw [← guard_kInf_left, guard_kInf_eq_guard_inf, inf_eq_left.2 h]
-    _ ≤ₖ guard y z := (inf_le_right : toKnow (guard x z) ⊓ toKnow (guard y z) ≤ _)
+    _ ≤ₖ guard y z := inf_le_right (α := Know (L ⊙ L))
 
 end Lattice
 
@@ -155,22 +155,16 @@ variable (x y : L ⊙ L)
 
 -- p. 121: the strong connectives are the gullibility of the two evaluation orders
 theorem inf_eq_landL_kSup_landL : x ⊓ y = landL x y ⊔ₖ landL y x := by
-  ext
-  · simp only [landL, Product.guard, pro_kSup, pro_inf, pro_mk]
-    rw [inf_left_idem, inf_left_idem, inf_comm y.pro, sup_idem]
-  · simp only [landL, Product.guard, con_kSup, con_inf, con_mk]
-    exact le_antisymm (sup_le (le_sup_of_le_left le_sup_left) (le_sup_of_le_right le_sup_left))
-      (sup_le (sup_le le_sup_left (inf_le_right.trans le_sup_right))
-        (sup_le le_sup_right (inf_le_right.trans le_sup_left)))
+  ext <;> simp only [landL, pro_kSup, con_kSup, pro_inf, con_inf, pro_guard, con_guard]
+  · rw [inf_left_idem, inf_left_idem, inf_comm y.pro, sup_idem]
+  · rw [sup_sup_sup_comm, eq_comm, sup_eq_left]
+    exact sup_le (inf_le_right.trans le_sup_right) (inf_le_right.trans le_sup_left)
 
 theorem sup_eq_lorL_kSup_lorL : x ⊔ y = lorL x y ⊔ₖ lorL y x := by
-  ext
-  · simp only [lorL, Product.guard, pro_kSup, pro_sup, pro_mk, pro_compl]
-    exact le_antisymm (sup_le (le_sup_of_le_left le_sup_left) (le_sup_of_le_right le_sup_left))
-      (sup_le (sup_le le_sup_left (inf_le_right.trans le_sup_right))
-        (sup_le le_sup_right (inf_le_right.trans le_sup_left)))
-  · simp only [lorL, Product.guard, con_kSup, con_sup, con_mk, pro_compl]
-    rw [inf_left_idem, inf_left_idem, inf_comm y.con, sup_idem]
+  ext <;> simp only [lorL, pro_kSup, con_kSup, pro_sup, con_sup, pro_guard, con_guard, pro_compl]
+  · rw [sup_sup_sup_comm, eq_comm, sup_eq_left]
+    exact sup_le (inf_le_right.trans le_sup_right) (inf_le_right.trans le_sup_left)
+  · rw [inf_left_idem, inf_left_idem, inf_comm y.con, sup_idem]
 
 end Lisp
 
@@ -321,7 +315,7 @@ theorem exists_not_isExact_kSup [Lattice B] [BoundedOrder B] [Lattice (Know B)]
 bound alone suffices: consistency passes down the knowledge order. -/
 theorem isConsistent_kSup [Preorder B] [Lattice (Know B)] [Conflation B] {x y z : B}
     (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) :=
-  hz.anti (sup_le hxz hyz : toKnow x ⊔ toKnow y ≤ toKnow z)
+  hz.anti (sup_le (α := Know B) hxz hyz)
 
 end Bilattice
 
@@ -344,12 +338,10 @@ theorem lorL_kLE_lorL (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorL x y ≤ₖ lo
   sup_kLE_sup hx (guard_kLE_guard (compl_kLE_compl hx) hy)
 
 theorem landW_kLE_landW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : landW x y ≤ₖ landW x' y' :=
-  (inf_le_inf (landL_kLE_landL hx hy) (landL_kLE_landL hy hx) :
-    toKnow (landL x y) ⊓ toKnow (landL y x) ≤ toKnow (landL x' y') ⊓ toKnow (landL y' x'))
+  inf_le_inf (α := Know (L ⊙ L)) (landL_kLE_landL hx hy) (landL_kLE_landL hy hx)
 
 theorem lorW_kLE_lorW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorW x y ≤ₖ lorW x' y' :=
-  (inf_le_inf (lorL_kLE_lorL hx hy) (lorL_kLE_lorL hy hx) :
-    toKnow (lorL x y) ⊓ toKnow (lorL y x) ≤ toKnow (lorL x' y') ⊓ toKnow (lorL y' x'))
+  inf_le_inf (α := Know (L ⊙ L)) (lorL_kLE_lorL hx hy) (lorL_kLE_lorL hy hx)
 
 variable [InvolutiveCompl L]
 

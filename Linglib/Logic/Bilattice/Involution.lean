@@ -269,7 +269,7 @@ variable [Preorder B] [Lattice (Know B)] [Conflation B]
 /-- The consensus of a consistent value with any value is consistent ([fitting-1994]
 Theorem 9.3). -/
 theorem IsConsistent.kInf {a : B} (ha : IsConsistent a) (b : B) : IsConsistent (a ⊓ₖ b) :=
-  ha.anti (inf_le_left : toKnow a ⊓ toKnow b ≤ toKnow a)
+  ha.anti (inf_le_left (α := Know B))
 
 end KnowledgeMeet
 
@@ -279,8 +279,8 @@ variable [Preorder B] [PartialOrder (Know B)] [BoundedOrder (Know B)] [Conflatio
 
 /-- Conflation exchanges the knowledge bounds. -/
 @[simp] theorem conf_ofKnow_top : conf (ofKnow (⊤ : Know B)) = ofKnow ⊥ :=
-  kLE_antisymm (conf_conf (ofKnow (⊥ : Know B)) ▸
-    conf_kLE_conf (le_top : toKnow (conf (ofKnow (⊥ : Know B))) ≤ ⊤)) bot_le
+  have h : conf (ofKnow (⊥ : Know B)) ≤ₖ ofKnow ⊤ := le_top (α := Know B)
+  kLE_antisymm (conf_conf (ofKnow (⊥ : Know B)) ▸ conf_kLE_conf h) (bot_le (α := Know B))
 
 @[simp] theorem conf_ofKnow_bot : conf (ofKnow (⊥ : Know B)) = ofKnow ⊤ := by
   rw [← conf_ofKnow_top, conf_conf]
