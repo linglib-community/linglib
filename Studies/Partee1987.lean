@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Predicative
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
@@ -15,7 +16,7 @@ total](##Kind.apply_russell_eq_none) and is [no function of
 extensions](##Kind.not_exists_apply_eq_comp). `BE` is [the only complete
 homomorphism](##Quantifier.BE_unique) taking each lift to its singleton, `A` is [its only
 conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse), and [*exactly
-one* fails only by monotonicity](##Quantifier.Det.exactly_one_ne_some). The predicative *the
+one* fails only by monotonicity](##exactly_one_ne_some). The predicative *the
 owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_mem_range_const).
 
 ## Implementation notes
@@ -24,9 +25,9 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
   (fn. 2); a property here is a set of individuals at each index, `W → Set E`, and a set is the
   rigid property `Function.const W` of it.
 * The general results are stated where their objects live: the lift and `lower` in
-  `Quantification/Individual.lean`, `BE`, its sections and the counting determiners under it in
-  `Quantification/Predicative.lean`, ∩ and ∪ in `Reference/Kind.lean`. This file keeps the
-  paper's errata.
+  `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`,
+  ∩ and ∪ in `Reference/Kind.lean`. This file keeps the paper's comparison of `A` with *exactly
+  one* and its errata.
 
 ## Errata
 
@@ -35,7 +36,7 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
   elsewhere](##exists_boundedLatticeHom_ne_BE); the argument from Keenan and Faltz's generation
   result needs complete homomorphisms.
 * *Most men* is said never to contain a singleton, so that *be most men* is always empty; with
-  exactly one man [it is the singleton of that man](##Quantifier.Det.BE_most), the degenerate
+  exactly one man [it is the singleton of that man](##BE_most), the degenerate
   case the paper grants for *every man*.
 * *Exactly one* is said to be neither symmetric nor monotone; it is symmetric
   (`Quantifier.Det.symm_exactly`), as every intersective determiner is.
@@ -59,6 +60,39 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
 namespace Partee1987
 
 open Quantifier Quantifier.Det Filter
+
+variable {E : Type*}
+
+/-! ### §3.3: *exactly one* and *most* under `BE`
+
+`BE` undoes *exactly one* as it undoes *some*, and *exactly one* is conservative and symmetric too,
+so only monotonicity tells it from *some* among the sections of `BE`. *Be most `A`*, like *be every
+`A`*, holds only of the only `A`. -/
+
+theorem BE_exactly_one (A : Set E) : BE (exactly 1 A) = A :=
+  Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
+    by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
+      Set.inter_singleton_eq_empty.2]
+
+/-- *Exactly one* is a conservative, symmetric section of `BE` other than *some*, so monotonicity
+is what singles out *some* among them ([partee-1987], §3.3). -/
+theorem exactly_one_ne_some [Nontrivial E] : (exactly 1 : Det E) ≠ Det.some := fun h ↦ by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have := congrFun₂ h {a, b} {a, b}
+  simp [exactly_apply, Set.ncard_pair hab, Det.some] at this
+
+/-- On a finite restrictor, *be most `A`* is *be the `A`*, as *be every `A`* is
+([partee-1987], §3.3). -/
+theorem BE_most {A : Set E} (hA : A.Finite) : BE (most A) = BE (the A) := by
+  ext x
+  rw [mem_BE_the, mem_BE, most_apply]
+  by_cases hx : x ∈ A
+  · rw [Set.inter_singleton_of_mem hx, Set.ncard_singleton, Nat.lt_one_iff,
+      Set.ncard_eq_zero hA.sdiff, Set.sdiff_eq_empty]
+    exact ⟨fun h ↦ (Set.subset_singleton_iff_eq.1 h).resolve_left
+      (Set.nonempty_of_mem hx).ne_empty, fun h ↦ h.le⟩
+  · rw [Set.inter_singleton_eq_empty.2 hx, Set.ncard_empty]
+    exact ⟨fun h ↦ absurd h (Nat.not_lt_zero _), fun h ↦ absurd (h ▸ rfl : x ∈ A) hx⟩
 
 /-! ### Fact 2 on an infinite domain -/
 
