@@ -173,7 +173,7 @@ theorem homogeneity_gap :
   tauto
 
 -- fn. 2
-theorem homogeneity_gap_neg :
+theorem homogeneity_gap_compl :
     Trivalent.gapExt ((pexPossOr R a b)ᶜ) = symmDiff (R.preimage a) (R.preimage b) := by
   rw [← homogeneity_gap hF]
   ext w

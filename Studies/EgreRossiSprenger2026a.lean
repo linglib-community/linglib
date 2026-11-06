@@ -370,11 +370,6 @@ abbrev value (t : W → ι → Bool) (φ : Formula ι) : W → Trivalent := fun 
 
 variable {μ : Measure W} {t : W → ι → Bool}
 
-omit [MeasurableSpace W] in
-@[simp] private theorem gapExt_undefined :
-    Trivalent.gapExt (fun _ ↦ .undefined : W → Trivalent) = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ rfl
-
 theorem prob_value_top [IsProbabilityMeasure μ] (i : ι) :
     Trivalent.prob μ (value t (top i)) = 1 := by
   have : value t (top i) = fun w ↦ ofProp True := funext fun w ↦ cooperEval_top i

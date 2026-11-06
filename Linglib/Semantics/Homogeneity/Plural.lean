@@ -167,12 +167,12 @@ def allPlural : W → Trivalent :=
   fun w ↦ Trivalent.ofProp (barePlural P x w = .true)
 
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
-  Trivalent.gapExt_ofProp_eq_true _
+  Trivalent.gapExt_ofProp _
 
-theorem posSupport_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
+theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
   Trivalent.posExt_ofProp_eq_true _
 
-theorem negSupport_allPlural :
+theorem negExt_allPlural :
     Trivalent.negExt (allPlural P x) =
       Trivalent.negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
   Trivalent.negExt_ofProp_eq_true _

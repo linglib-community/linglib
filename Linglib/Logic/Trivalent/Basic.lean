@@ -129,6 +129,9 @@ theorem trichotomy (a : Trivalent) : a = .false ∨ a = .undefined ∨ a = .true
 @[simp] theorem le_true (a : Trivalent) : a ≤ .true := LE.of_true a
 @[simp] theorem false_le (a : Trivalent) : .false ≤ a := LE.of_false a
 
+@[simp] theorem true_le_iff {a : Trivalent} : .true ≤ a ↔ a = .true := top_le_iff
+@[simp] theorem le_false_iff {a : Trivalent} : a ≤ .false ↔ a = .false := le_bot_iff
+
 /-- Two values agree once they agree on being undefined and on being true. -/
 theorem eq_of_eq_undefined_iff_of_eq_true_iff {a b : Trivalent}
     (h₀ : a = .undefined ↔ b = .undefined)
@@ -206,9 +209,9 @@ instance : InvolutiveCompl Trivalent where
 theorem compl_antitone : Antitone (compl : Trivalent → Trivalent) :=
   fun _ _ ↦ InvolutiveCompl.compl_le_compl
 
-@[simp] theorem compl_inf (a b : Trivalent) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := compl_antitone.map_min
+theorem compl_inf (a b : Trivalent) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := compl_antitone.map_min
 
-@[simp] theorem compl_sup (a b : Trivalent) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := compl_antitone.map_max
+theorem compl_sup (a b : Trivalent) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := compl_antitone.map_max
 
 /-- `Trivalent` is [kalman-1958]'s three-element Kleene algebra. -/
 instance : IsKleene Trivalent := ⟨by decide⟩

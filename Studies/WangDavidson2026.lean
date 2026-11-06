@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Trivalent
 public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Data.Examples.WangDavidson2026
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod
@@ -33,8 +34,9 @@ exclusive readings mean less filtering are the paper's Type A; the paper's Manda
 Strong Kleene exclusive disjunction is the negation of the Strong Kleene biconditional
 `(aᶜ ⊔ b) ⊓ (a ⊔ bᶜ)`. The exhaustification identity is checked on the four valuations of
 two atoms, the free model of a propositional identity. George's algorithm is stated as the paper
-renders it, on the set of classical values a trivalent argument leaves open. The experiment's
-ratings are not formalized; its stimuli are in `Data.Examples.WangDavidson2026`.
+renders it, on the set of classical values a trivalent argument leaves open
+(`Trivalent.toFinset`). The experiment's ratings are not formalized; its stimuli are in
+`Data.Examples.WangDavidson2026`.
 
 ## References
 
@@ -112,22 +114,16 @@ theorem exh_or : exhIE (Set.range orAlt) (orAlt 0) = {v | Xor v.1 v.2} := by
 
 /-! ### George's algorithm -/
 
-/-- The classical values a trivalent value leaves open. -/
-def values : Trivalent → Finset Bool
-  | .true => {true}
-  | .false => {false}
-  | .undefined => Finset.univ
-
 /-- [george-2008]'s algorithm computes the trivalent table of a classical connective, as
 [kalomoiros-schwarz-2024] render it. If the left argument settles the value, that is the value;
 otherwise, if some value of the right argument could make the sentence true, the two arguments
 settle the value or the sentence is undefined; otherwise it is undefined. -/
 def george (f : Bool → Bool → Bool) (a b : Trivalent) : Trivalent :=
-  if ∀ x ∈ values a, ∀ y, f x y then .true
-  else if ∀ x ∈ values a, ∀ y, f x y = false then .false
-  else if ∃ y, ∀ x ∈ values a, f x y then
-    if ∀ x ∈ values a, ∀ y ∈ values b, f x y then .true
-    else if ∀ x ∈ values a, ∀ y ∈ values b, f x y = false then .false
+  if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y then .true
+  else if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y = false then .false
+  else if ∃ y, ∀ x ∈ Trivalent.toFinset a, f x y then
+    if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y then .true
+    else if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y = false then .false
     else .undefined
   else .undefined
 

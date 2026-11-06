@@ -93,7 +93,8 @@ def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Fl
 
 @[simp] theorem update_true (φ : BilateralUpdate W V E) : φ.update .true = φ.positive := rfl
 @[simp] theorem update_false (φ : BilateralUpdate W V E) : φ.update (.false) = φ.negative := rfl
-@[simp] theorem update_undefined (φ : BilateralUpdate W V E) : φ.update .undefined = φ.unknownUpdate := rfl
+@[simp] theorem update_undefined (φ : BilateralUpdate W V E) :
+    φ.update .undefined = φ.unknownUpdate := rfl
 
 /-- Negation negates the truth value at which a sentence updates. -/
 theorem update_neg (φ : BilateralUpdate W V E) (a : Trivalent) : (~φ).update a = φ.update (aᶜ) := by
@@ -116,17 +117,20 @@ variable {v : Possibility W V (Flat E) → Trivalent}
 @[simp] theorem mem_negative_ofTrivalent : p ∈ (ofTrivalent v).negative s ↔ p ∈ s ∧ v p = .false :=
   Iff.rfl
 
-theorem positive_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).positive s = ∅ :=
+theorem positive_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
+    (ofTrivalent v).positive s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
-theorem negative_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) : (ofTrivalent v).negative s = ∅ :=
+theorem negative_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
+    (ofTrivalent v).negative s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
 /-- Where a trivalent proposition is undefined throughout, every point is unknown. -/
 theorem unknownUpdate_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
     (ofTrivalent v).unknownUpdate s = s := by
   ext p
-  simp [unknownUpdate, positive_ofTrivalent_of_eq_undefined h, negative_ofTrivalent_of_eq_undefined h]
+  simp [unknownUpdate, positive_ofTrivalent_of_eq_undefined h,
+      negative_ofTrivalent_of_eq_undefined h]
 
 /-- Where a trivalent proposition is defined throughout, no point is unknown. -/
 theorem unknownUpdate_ofTrivalent_of_ne_undefined (h : ∀ p ∈ s, v p ≠ .undefined) :
@@ -228,8 +232,8 @@ theorem unknownUpdate_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s 
 
 /-! ### Connectives -/
 
-/-- The lift of a binary truth function `f`: at `true` and `false`, the union over the cells of the table
-with that value of the update by `φ` at the row's value followed by `ψ` at the column's. -/
+/-- The lift of a binary truth function `f`: at `true` and `false`, the union over the cells of the
+table with that value of the update by `φ` at the row's value followed by `ψ` at the column's. -/
 def lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralUpdate W V E) :
     BilateralUpdate W V E where
   positive s := ⋃ (a) (b) (_ : f a b = .true), ψ.update b (φ.update a s)
@@ -316,7 +320,8 @@ def secondPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibi
   Set.mem_iUnion
 
 /-- A disjunction is verified by its first or its second disjunct. -/
-theorem positive_disj_eq_union : (φ ⊕ ψ).positive s = firstPart .true φ ψ s ∪ secondPart .true φ ψ s := by
+theorem positive_disj_eq_union :
+    (φ ⊕ ψ).positive s = firstPart .true φ ψ s ∪ secondPart .true φ ψ s := by
   ext p
   simp only [disj, mem_positive_lift, Trivalent.sup_eq_true_iff, Set.mem_union, mem_firstPart,
     mem_secondPart]

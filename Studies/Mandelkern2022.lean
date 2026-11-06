@@ -324,7 +324,7 @@ theorem update_subset : update I o c p ⊆ c := Set.sep_subset _ _
     p.toTrivalent I o c i = .true ↔ p.Satt I o c i.1 i.2 ∧ p.Realize I i.1 i.2 := by
   simp [toTrivalent]
 
-theorem update_eq_inter_posSupport : update I o c p = c ∩ Trivalent.posExt (p.toTrivalent I o c) :=
+theorem update_eq_inter_posExt : update I o c p = c ∩ Trivalent.posExt (p.toTrivalent I o c) :=
   Set.ext fun _ ↦ and_congr_right' (toTrivalent_eq_true_iff.trans and_comm).symm
 
 @[simp] theorem satt_atom {n : ℕ} {R : L.Relations n} {xs : Fin n → V} :
@@ -370,9 +370,9 @@ theorem realize_conj_of_satt_indef (hs : (indef x p q).Satt I o c g w)
 
 The points at which a formula is true and satt at a context, the positive extension
 `Trivalent.posExt (p.toTrivalent I o c)`, decompose along the connectives; updating a context intersects
-it with this set (`update_eq_inter_posSupport`). -/
+it with this set (`update_eq_inter_posExt`). -/
 
-theorem posSupport_conj : Trivalent.posExt ((conj p q).toTrivalent I .asymmetric c) =
+theorem posExt_conj : Trivalent.posExt ((conj p q).toTrivalent I .asymmetric c) =
     Trivalent.posExt (p.toTrivalent I .asymmetric c) ∩
       Trivalent.posExt (q.toTrivalent I .asymmetric (update I .asymmetric c p)) := by
   ext
@@ -380,21 +380,21 @@ theorem posSupport_conj : Trivalent.posExt ((conj p q).toTrivalent I .asymmetric
     Set.mem_inter_iff]
   tauto
 
-theorem posSupport_indef : Trivalent.posExt ((indef x p q).toTrivalent I o c) =
+theorem posExt_indef : Trivalent.posExt ((indef x p q).toTrivalent I o c) =
     {i ∈ Trivalent.posExt ((conj p q).toTrivalent I o c) | (indef x p q).Realize I i.1 i.2} := by
   ext ⟨g, w⟩
   simp only [Trivalent.mem_posExt, toTrivalent_eq_true_iff]
   exact ⟨fun ⟨hs, hr⟩ ↦ ⟨⟨(hs.2 hr).2, (hs.2 hr).1⟩, hr⟩,
     fun ⟨⟨hs, hr⟩, hi⟩ ↦ ⟨⟨⟨g, hs⟩, fun _ ↦ ⟨hr, hs⟩⟩, hi⟩⟩
 
-theorem posSupport_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
+theorem posExt_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
     Trivalent.posExt ((indef x p q).toTrivalent I o c) = Trivalent.posExt ((conj p q).toTrivalent I o c) := by
-  rw [posSupport_indef]
+  rw [posExt_indef]
   refine Set.sep_eq_self_iff_mem_true.2 fun _ hi ↦ ?_
   obtain ⟨-, hr⟩ := toTrivalent_eq_true_iff.1 hi
   exact realize_indef_of_ne_bot (hp _ _ hr.1) hr.1 hr.2
 
-theorem posSupport_iota_of_update_eq (h : update I o c p = c) :
+theorem posExt_iota_of_update_eq (h : update I o c p = c) :
     Trivalent.posExt ((iota x p q).toTrivalent I o c) =
       {i | p.Realize I i.1 i.2} ∩ Trivalent.posExt (q.toTrivalent I o c) := by
   ext
@@ -403,7 +403,7 @@ theorem posSupport_iota_of_update_eq (h : update I o c p = c) :
   tauto
 
 -- p. 1104
-theorem posSupport_iota_eq_empty (h : update I o c p ≠ c) :
+theorem posExt_iota_eq_empty (h : update I o c p ≠ c) :
     Trivalent.posExt ((iota x p q).toTrivalent I o c) = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hi ↦
     h ((satt_iota (x := x) (q := q)).1 (toTrivalent_eq_true_iff.1 hi).1).1
@@ -418,28 +418,28 @@ theorem posSupport_iota_eq_empty (h : update I o c p ≠ c) :
 -- fn. 20
 theorem update_conj : update I .asymmetric c (conj p q) =
     update I .asymmetric (update I .asymmetric c p) q := by
-  rw [update_eq_inter_posSupport, posSupport_conj, ← Set.inter_assoc, ← update_eq_inter_posSupport,
-    ← update_eq_inter_posSupport]
+  rw [update_eq_inter_posExt, posExt_conj, ← Set.inter_assoc, ← update_eq_inter_posExt,
+    ← update_eq_inter_posExt]
 
 theorem update_indef :
     update I o c (indef x p q) =
       {i ∈ update I o c (conj p q) | (indef x p q).Realize I i.1 i.2} := by
-  rw [update_eq_inter_posSupport, posSupport_indef, update_eq_inter_posSupport]
+  rw [update_eq_inter_posExt, posExt_indef, update_eq_inter_posExt]
   exact Set.ext fun _ ↦ and_assoc.symm
 
 theorem update_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
     update I o c (indef x p q) = update I o c (conj p q) := by
-  rw [update_eq_inter_posSupport, posSupport_indef_of_ne_bot hp, ← update_eq_inter_posSupport]
+  rw [update_eq_inter_posExt, posExt_indef_of_ne_bot hp, ← update_eq_inter_posExt]
 
 theorem update_iota_of_update_eq (h : update I .asymmetric c p = c) :
     update I .asymmetric c (iota x p q) = update I .asymmetric c (conj p q) := by
   have hp : c ⊆ {i | p.Realize I i.1 i.2} := fun i hi ↦ (h.ge hi).2.1
-  rw [update_conj, h, update_eq_inter_posSupport, posSupport_iota_of_update_eq h,
-    ← Set.inter_assoc, Set.inter_eq_left.2 hp, ← update_eq_inter_posSupport]
+  rw [update_conj, h, update_eq_inter_posExt, posExt_iota_of_update_eq h,
+    ← Set.inter_assoc, Set.inter_eq_left.2 hp, ← update_eq_inter_posExt]
 
 -- p. 1104
 theorem update_iota_eq_empty (h : update I o c p ≠ c) : update I o c (iota x p q) = ∅ := by
-  rw [update_eq_inter_posSupport, posSupport_iota_eq_empty h, Set.inter_empty]
+  rw [update_eq_inter_posExt, posExt_iota_eq_empty h, Set.inter_empty]
 
 theorem update_iota_top_eq_empty (h : ∃ i ∈ c, i.1 x = ⊥) :
     update I o c (iota x (top x) q) = ∅ := by
@@ -447,7 +447,7 @@ theorem update_iota_top_eq_empty (h : ∃ i ∈ c, i.1 x = ⊥) :
   exact update_iota_eq_empty fun he ↦ (he.ge hi).2.1 hx
 
 @[simp] theorem update_neg_neg : update I o c (neg (neg p)) = update I o c p := by
-  rw [update_eq_inter_posSupport, toTrivalent_neg_neg, ← update_eq_inter_posSupport]
+  rw [update_eq_inter_posExt, toTrivalent_neg_neg, ← update_eq_inter_posExt]
 
 /-! ### One-place atoms -/
 
@@ -491,17 +491,17 @@ theorem setOf_realize_atom₁ :
     {i : Assign V Δ E × W | (atom₁ R x).Realize I i.1 i.2} = valuedIn x (extension I R) :=
   Set.ext fun _ ↦ realize_atom₁
 
-theorem posSupport_atom₁ :
+theorem posExt_atom₁ :
     Trivalent.posExt ((atom₁ R x).toTrivalent I o c) = valuedIn x (extension I R) := by
   ext
   rw [Trivalent.mem_posExt, toTrivalent_eq_true_iff, satt_atom₁, realize_atom₁]
   exact ⟨And.right, fun h ↦ ⟨ne_bot_of_mem_valuedIn h, h⟩⟩
 
-theorem posSupport_top : Trivalent.posExt ((top x : Formula L V Δ).toTrivalent I o c) = {i | i.1 x ≠ ⊥} :=
+theorem posExt_top : Trivalent.posExt ((top x : Formula L V Δ).toTrivalent I o c) = {i | i.1 x ≠ ⊥} :=
   Set.ext fun _ ↦ toTrivalent_eq_true_iff.trans and_self_iff
 
 theorem update_atom₁ : update I o c (atom₁ R x) = c ∩ valuedIn x (extension I R) := by
-  rw [update_eq_inter_posSupport, posSupport_atom₁]
+  rw [update_eq_inter_posExt, posExt_atom₁]
 
 theorem update_atom₁_of_subset (h : c ⊆ valuedIn x (extension I R)) :
     update I o c (atom₁ R x) = c := by
@@ -509,7 +509,7 @@ theorem update_atom₁_of_subset (h : c ⊆ valuedIn x (extension I R)) :
 
 theorem update_top_of_subset (h : c ⊆ valuedIn x S) : update I o c (top x) = c := by
   have hx : c ⊆ {i | i.1 x ≠ ⊥} := fun i hi ↦ ne_bot_of_mem_valuedIn (h hi)
-  rw [update_eq_inter_posSupport, posSupport_top, Set.inter_eq_left.2 hx]
+  rw [update_eq_inter_posExt, posExt_top, Set.inter_eq_left.2 hx]
 
 end Formula
 
@@ -544,17 +544,17 @@ theorem exists_satt_indef_atom₁ [Nonempty E] (c : Set (Assign V Δ E × W)) (w
   · exact ⟨⊥, (satt_indef_atom₁ F G).2 fun hne ↦ absurd h hne.ne_empty⟩
   · exact ⟨⟨fun _ ↦ a, fun _ _ ↦ ⊥⟩, (satt_indef_atom₁ F G).2 fun _ ↦ ⟨a, ha, rfl⟩⟩
 
-theorem posSupport_indef_atom₁ :
+theorem posExt_indef_atom₁ :
     Trivalent.posExt ((indef x (atom₁ F x) (atom₁ G x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G) := by
-  rw [posSupport_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, posSupport_conj,
-    posSupport_atom₁, posSupport_atom₁, valuedIn_inter_valuedIn]
+  rw [posExt_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, posExt_conj,
+    posExt_atom₁, posExt_atom₁, valuedIn_inter_valuedIn]
 
 -- p. 1103
 theorem update_indef_atom₁ :
     update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G) := by
-  rw [update_eq_inter_posSupport, posSupport_indef_atom₁]
+  rw [update_eq_inter_posExt, posExt_indef_atom₁]
 
 -- p. 1103
 theorem not_univ_subset_compl_gapExt_indef_atom₁
@@ -570,7 +570,7 @@ theorem not_univ_subset_compl_gapExt_indef_atom₁
   exact ne_bot_of_realize_atom₁ (realize_conj_of_satt_indef hs hr).1 rfl
 
 -- p. 1104
-theorem posSupport_iota_after_indef_atom₁ :
+theorem posExt_iota_after_indef_atom₁ :
     Trivalent.posExt ((iota x (atom₁ F x) (atom₁ H x)).toTrivalent I
         .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))) =
       valuedIn x (extension I F ⊓ extension I H) := by
@@ -578,11 +578,11 @@ theorem posSupport_iota_after_indef_atom₁ :
       ⊆ valuedIn x (extension I F) := by
     rw [update_indef_atom₁]
     exact fun i hi ↦ valuedIn_mono inf_le_left hi.2
-  rw [posSupport_iota_of_update_eq (update_atom₁_of_subset hc), setOf_realize_atom₁,
-    posSupport_atom₁, valuedIn_inter_valuedIn]
+  rw [posExt_iota_of_update_eq (update_atom₁_of_subset hc), setOf_realize_atom₁,
+    posExt_atom₁, valuedIn_inter_valuedIn]
 
 -- p. 1104
-theorem posSupport_iota_top_after_indef_atom₁ :
+theorem posExt_iota_top_after_indef_atom₁ :
     Trivalent.posExt ((iota x (top x) (atom₁ H x)).toTrivalent I
         .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))) =
       valuedIn x (extension I H) := by
@@ -590,7 +590,7 @@ theorem posSupport_iota_top_after_indef_atom₁ :
       ⊆ valuedIn x (extension I F) := by
     rw [update_indef_atom₁]
     exact fun i hi ↦ valuedIn_mono inf_le_left hi.2
-  rw [posSupport_iota_of_update_eq (update_top_of_subset hc), posSupport_atom₁]
+  rw [posExt_iota_of_update_eq (update_top_of_subset hc), posExt_atom₁]
   exact Set.inter_eq_right.2 fun _ hi ↦ ne_bot_of_mem_valuedIn hi
 
 theorem satt_iota_top_after_indef_atom₁ : (iota x (top x) (atom₁ H x)).Satt I .asymmetric
@@ -604,7 +604,7 @@ theorem update_indef_then_the :
     update I .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))
       (iota x (atom₁ F x) (atom₁ H x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [update_eq_inter_posSupport, posSupport_iota_after_indef_atom₁, update_indef_atom₁,
+  rw [update_eq_inter_posExt, posExt_iota_after_indef_atom₁, update_indef_atom₁,
     Set.inter_assoc, valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
 /-- *There is a cat. It is tabby.* keeps the same points (p. 1104). -/
@@ -612,13 +612,13 @@ theorem update_indef_then_it :
     update I .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))
       (iota x (top x) (atom₁ H x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [update_eq_inter_posSupport, posSupport_iota_top_after_indef_atom₁, update_indef_atom₁,
+  rw [update_eq_inter_posExt, posExt_iota_top_after_indef_atom₁, update_indef_atom₁,
     Set.inter_assoc, valuedIn_inter_valuedIn]
 
 /-! ### Negated indefinites (§5.5) -/
 
 -- pp. 1106–1107
-theorem posSupport_neg_indef_atom₁ [Nonempty E] :
+theorem posExt_neg_indef_atom₁ [Nonempty E] :
     Trivalent.posExt ((neg (indef x (atom₁ F x) (atom₁ G x))).toTrivalent I .asymmetric c) =
       {i | extension I F i.2 ∩ extension I G i.2 = ∅} := by
   ext ⟨g, w⟩
@@ -638,7 +638,7 @@ theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension 
     exact isEmptyElim a
   obtain ⟨w, hw⟩ := h
   refine update_iota_top_eq_empty ⟨(⊥, w), ?_, rfl⟩
-  rw [update_eq_inter_posSupport, posSupport_neg_indef_atom₁]
+  rw [update_eq_inter_posExt, posExt_neg_indef_atom₁]
   exact ⟨Set.mem_univ _, hw⟩
 
 end Updating
@@ -772,25 +772,25 @@ theorem realize_ex20c_of_realize_ex20b (hc : (g, w) ∈ c)
 variable (F G H : L.Relations 1)
 
 -- (20-a), p. 1108
-theorem posSupport_ex20a :
+theorem posExt_ex20a :
     Trivalent.posExt ((ex20a x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20a, posSupport_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, posSupport_conj,
-    posSupport_conj, posSupport_atom₁, posSupport_atom₁, posSupport_atom₁, ← Set.inter_assoc,
+  rw [ex20a, posExt_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, posExt_conj,
+    posExt_conj, posExt_atom₁, posExt_atom₁, posExt_atom₁, ← Set.inter_assoc,
     valuedIn_inter_valuedIn, valuedIn_inter_valuedIn]
 
 -- (20-b), p. 1108
-theorem posSupport_ex20b :
+theorem posExt_ex20b :
     Trivalent.posExt ((ex20b x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20b, posSupport_conj, posSupport_indef_atom₁, posSupport_iota_after_indef_atom₁,
+  rw [ex20b, posExt_conj, posExt_indef_atom₁, posExt_iota_after_indef_atom₁,
     valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
 -- (20-c), (20-a), p. 1108, footnote 23
-theorem posSupport_ex20c :
+theorem posExt_ex20c :
     Trivalent.posExt ((ex20c x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20c, posSupport_conj, posSupport_indef_atom₁, posSupport_iota_top_after_indef_atom₁,
+  rw [ex20c, posExt_conj, posExt_indef_atom₁, posExt_iota_top_after_indef_atom₁,
     valuedIn_inter_valuedIn]
 
 -- (20), (20-a), (20-b), p. 1108
@@ -830,7 +830,7 @@ theorem update_neg_neg_indef_then_the :
   rw [update_neg_neg, update_indef_then_the]
 
 -- p. 1109
-theorem posSupport_bathroom [Nonempty E] :
+theorem posExt_bathroom [Nonempty E] :
     Trivalent.posExt ((disj (neg (indef x (atom₁ F x) (atom₁ G x)))
         (iota x (atom₁ F x) (atom₁ H x))).toTrivalent I .asymmetric c) =
       {i | extension I F i.2 ∩ extension I G i.2 = ∅} ∪

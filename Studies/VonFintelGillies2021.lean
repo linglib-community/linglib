@@ -49,7 +49,7 @@ variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
 -- Observation 5
 theorem cant_might_exclusion (hCant : kernelCant k φ w = .true) : kernelMight k φ w = .false := by
-  rw [kernelMight_eq_neg_kernelCant, Pi.compl_apply, hCant, Trivalent.compl_true]
+  rw [kernelMight_eq_compl_kernelCant, Pi.compl_apply, hCant, Trivalent.compl_true]
 
 theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = .true) : ¬ φ w :=
   must_entails_prejacent k _ w hReal (kernelMust_eq_true_iff.1 hTrue).2

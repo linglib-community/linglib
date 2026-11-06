@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Four
+public import Linglib.Logic.Bilattice.Guard
+public import Linglib.Logic.Trivalent.Knowledge
 public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
@@ -133,6 +134,9 @@ theorem compl_gapExt_inter_compl_posExt (p : W → Trivalent) :
 @[simp] theorem gapExt_ofProp (A : W → Prop) [DecidablePred A] :
     gapExt (fun w ↦ ofProp (A w)) = ∅ := by
   ext w; simp
+
+@[simp] theorem gapExt_undefined : gapExt (fun _ ↦ .undefined : W → Trivalent) = Set.univ :=
+  Set.eq_univ_of_forall fun _ ↦ rfl
 
 /-- The positive and negative extensions of a trivalent proposition, in Fitting's product of
 world-sets: Strong Kleene conjunction and disjunction are its truth meet and join. -/
@@ -273,10 +277,6 @@ where `R` holds. -/
 @[simp] theorem negExt_ofProp_eq_true (p : W → Trivalent) :
     negExt (fun w ↦ ofProp (p w = .true)) = negExt p ∪ gapExt p := by
   ext w; cases h : p w <;> simp [h]
-
-@[simp] theorem gapExt_ofProp_eq_true (p : W → Trivalent) :
-    gapExt (fun w ↦ ofProp (p w = .true)) = ∅ := by
-  ext w; simp
 
 @[simp] theorem posExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → Trivalent) :
     posExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posExt p := by

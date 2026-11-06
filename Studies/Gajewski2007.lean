@@ -409,17 +409,17 @@ theorem Env.antiAdditive_iff (e : Env) :
   | notWantThink =>
     exact iff_of_false (fun h ↦ not_isAntiAdditive_negStack (h _ _ _ _)) (by decide)
   | only =>
-    exact iff_of_false (fun h ↦ Focus.not_antitone_posSupport_only_eq (h Unit Bool true).antitone)
+    exact iff_of_false (fun h ↦ Focus.not_antitone_posExt_only_eq (h Unit Bool true).antitone)
       (by decide)
   | adversative =>
-    exact iff_of_false (fun h ↦ not_antitone_posSupport_regret (h _ _ _ _).antitone) (by decide)
+    exact iff_of_false (fun h ↦ not_antitone_posExt_regret (h _ _ _ _).antitone) (by decide)
   | conditional =>
     exact iff_of_false
-      (fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _ _).antitone)
+      (fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _ _).antitone)
       (by decide)
   | superlative =>
     exact iff_of_false
-      (fun h ↦ not_antitone_posSupport_trivalentSuperlative (h Unit Unit ℕ _ _).antitone)
+      (fun h ↦ not_antitone_posExt_trivalentSuperlative (h Unit Unit ℕ _ _).antitone)
       (by decide)
 
 instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.antiAdditive_iff.symm

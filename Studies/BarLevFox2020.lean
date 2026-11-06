@@ -412,12 +412,12 @@ theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
-theorem posSupport_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
+theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
     (hII : ∀ r, IsInnocentlyIncludable ALT φ r ↔ r = φ) :
     Trivalent.posExt (only ALT φ) =
       Trivalent.posExt (Focus.only (· ⊆ ·) ALT id φ) := by
-  rw [Focus.posSupport_only_subset hφ]
+  rw [Focus.posExt_only_subset hφ]
   ext w
   simp only [Trivalent.mem_posExt, only, Trivalent.transplication_eq_true_iff,
     Trivalent.ofProp_eq_true_iff, hII, forall_eq, hIE,

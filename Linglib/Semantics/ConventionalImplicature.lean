@@ -31,8 +31,8 @@ not-at-issue content fails, and the connectives here then evaluate to the Weak K
 (`toTrivalent_and`). The two part at Karttunen's filtering: a filtering conditional presupposes
 at most what the unfiltered one does (`imp_notAtIssue_subset_compl_gapExt`), and less in
 general, because its antecedent's at-issue content can satisfy its consequent's presupposition,
-which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_compl_gapExt`). Two
-operations read the at-issue content where the not-at-issue content fails, and so are no
+which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_compl_gapExt`).
+Two operations read the at-issue content where the not-at-issue content fails, and so are no
 trivalent operations: Karttunen and Peters's symmetric disjunction (`orKPSymmetric_not_trivalent`)
 and embedding under a negative factive (`negFactive`).
 
@@ -205,9 +205,11 @@ variable (p q : TwoDim W (W → Prop)) {w : W}
 /-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
 not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
 noncomputable def toTrivalent : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (p.notAtIssue w)) (Trivalent.ofProp (p.atIssue w))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (p.notAtIssue w))
+    (Trivalent.ofProp (p.atIssue w))
 
-@[simp] theorem toTrivalent_eq_true_iff : p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
+@[simp] theorem toTrivalent_eq_true_iff :
+    p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
   simp [toTrivalent]
 
 @[simp] theorem toTrivalent_eq_false_iff :

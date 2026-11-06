@@ -51,12 +51,13 @@ variable {i : ι}
 
 @[simp] theorem again_eq_undefined_iff :
     again R P i = .undefined ↔ ¬ ◇[R] P i := by simp [again,
-        Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
+        Trivalent.transplication_eq_undefined_iff]
 
-theorem again_ne_undefined_iff : again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_undefined_iff.not_left
+theorem again_ne_undefined_iff :
+    again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_undefined_iff.not_left
 
 @[simp] theorem again_eq_true_iff :
     again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again,
-        Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
+        Trivalent.transplication_eq_true_iff]
 
 end Presupposition

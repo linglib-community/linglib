@@ -111,7 +111,8 @@ def truth : Formula Atom → Set W
 defined where its presupposition holds. -/
 noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Trivalent
   | atom p => fun w ↦ Trivalent.ofProp (w ∈ I p)
-  | trigger p p' => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (I p))) (Trivalent.ofProp (w ∈ I p'))
+  | trigger p p' => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (I p)))
+    (Trivalent.ofProp (w ∈ I p'))
   | not F => (eval C F)ᶜ
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
@@ -180,7 +181,8 @@ theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ .u
 
 theorem middleKleene_bin_ne_undefined {c : Connective} {F G : Formula Atom} :
     (bin c F G).middleKleene I w ≠ .undefined ↔
-      F.middleKleene I w ≠ .undefined ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) :=
+      F.middleKleene I w ≠ .undefined ∧
+        (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) :=
   middleKleene_bin_ne_undefined_iff I (middleKleene_eq_ofProp I)
 
 theorem nonempty_atom : Formula Atom → Nonempty Atom
@@ -196,7 +198,8 @@ theorem subset_compl_gapExt_middleKleene_bin_iff {c : Connective} {F G : Formula
   have hl (w) : w ∈ c.localContext C (F.truth I) ↔ w ∈ C ∧
       w ∈ c.localContext Set.univ (F.truth I) := by
     cases c <;> simp [Connective.localContext]
-  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, middleKleene_bin_ne_undefined I, hl, and_imp]
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, middleKleene_bin_ne_undefined I, hl,
+      and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw hc ↦ (h w hw).2 hc⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 

@@ -367,7 +367,7 @@ theorem exists_cell_of_weakReading_eq_true (h : weakReading Cov R A = .true) (ha
       exact ⟨z, hc, hz.trans le_sup_right, haz⟩
 
 -- (100), (101a)
-theorem neg_weakReading_pair_eq_true_iff (hab : a ≠ b) :
+theorem compl_weakReading_pair_eq_true_iff (hab : a ≠ b) :
     (weakReading Atom R {a, b})ᶜ = .true ↔ ¬ (R {a} {b} ∧ R {b} {a}) := by
   have hnt : ({a, b} : Finset α).Nontrivial := ⟨a, by simp, b, by simp, hab⟩
   rw [Trivalent.compl_eq_true_iff, weakReading_eq_false_iff, weakReciprocity_pair,
@@ -557,7 +557,7 @@ theorem pluralize_partialScope_eq_weakReading [Nonempty γ] (Cov : Finset α →
 
 open Classical in
 -- (121c), (121d)
-theorem pluralize_neg_eq_weakReading (Cov : Finset α → Prop) (R : Finset α → Finset α → Prop)
+theorem pluralize_compl_eq_weakReading (Cov : Finset α → Prop) (R : Finset α → Finset α → Prop)
     (A : Finset α) :
     pluralize (fun p : Finset α × Finset α ↦
         Trivalent.meetWeak (Trivalent.ofProp (Cov p.1 ∧ Cov p.2))
@@ -993,7 +993,7 @@ theorem weakReading_symmGen_iff [DecidableEq α] (R : α → α → Prop) (hA : 
 
 open Classical in
 -- (225), (229), (230b), (230c)
-theorem neg_barePlural_offDiag_iff {W : Type*} (R : α → α → W → Prop) (w : W) :
+theorem compl_barePlural_offDiag_iff {W : Type*} (R : α → α → W → Prop) (w : W) :
     (∀ X ⊆ A, X.Nontrivial →
         (Homogeneity.barePlural (fun p w ↦ R p.1 p.2 w) X.offDiag w)ᶜ = .true) ↔
       ∀ a ∈ A, ∀ b ∈ A, a ≠ b → ¬ R a b w := by

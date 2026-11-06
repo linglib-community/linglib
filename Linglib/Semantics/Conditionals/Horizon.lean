@@ -46,7 +46,8 @@ open Classical in
 /-- *If p, would q* over a modal horizon presupposes that the horizon admits `p` and asserts the
 strict conditional over the horizon ([von-fintel-1999]'s (82) and (83)). -/
 noncomputable def horizonCounterfactual : I → Trivalent :=
-  fun i ↦ Trivalent.transplication (Trivalent.ofProp ((horizon i ∩ p).Nonempty)) (Trivalent.ofProp (i ∈ strictImp horizon p q))
+  fun i ↦ Trivalent.transplication (Trivalent.ofProp ((horizon i ∩ p).Nonempty))
+    (Trivalent.ofProp (i ∈ strictImp horizon p q))
 
 variable {horizon p q} {i : I}
 
@@ -64,7 +65,8 @@ variable {horizon p q} {i : I}
   simp [horizonCounterfactual]
 
 /-- A true counterfactual has a horizon-world where its antecedent and consequent hold together. -/
-theorem exists_mem_of_horizonCounterfactual_eq_true (h : horizonCounterfactual horizon p q i = .true) :
+theorem exists_mem_of_horizonCounterfactual_eq_true
+    (h : horizonCounterfactual horizon p q i = .true) :
     ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
   let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_true_iff.1 h
   ⟨w, hw.1, hw.2, hs hw⟩
@@ -96,10 +98,10 @@ theorem isStrawsonDE_horizonCounterfactual :
 
 /-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
 fall outside the horizon ([von-fintel-1999], §4.3). -/
-theorem not_antitone_posSupport_horizonCounterfactual :
+theorem not_antitone_posExt_horizonCounterfactual :
     ¬ Antitone fun p : Set Unit ↦
       Trivalent.posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
-  not_antitone_posSupport (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
+  not_antitone_posExt (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
 
 /-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
 worlds the consequent excludes. -/

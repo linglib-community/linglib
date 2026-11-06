@@ -130,11 +130,11 @@ theorem uncenter_ego_of_eq (h : t c x = x) : uncenter (ego V t c) x = {w | V x w
 theorem uncenter_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c) x = ∅ := by
   ext w; simp [uncenter, h]
 
-theorem uncenter_neg_ego_of_eq (h : t c x = x) :
+theorem uncenter_compl_ego_of_eq (h : t c x = x) :
     uncenter (ego V t c)ᶜ x = {w | V x w}ᶜ := by
   ext w; simp [uncenter, ego, h]
 
-theorem uncenter_neg_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c)ᶜ x = ∅ := by
+theorem uncenter_compl_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c)ᶜ x = ∅ := by
   ext w; simp [uncenter, ego, h]
 
 theorem uncenter_egoAuth :
@@ -167,7 +167,7 @@ theorem inCrisis_assert_ego (h : t c c.authority ≠ c.authority) :
 
 theorem inCrisis_ask_ego (h : t c c.authority ≠ c.authority) :
     (ask K c (ego V t c)).InCrisis := by
-  rw [ask, uncenter_ego_of_ne h, uncenter_neg_ego_of_ne h, sup_idem]
+  rw [ask, uncenter_ego_of_ne h, uncenter_compl_ego_of_ne h, sup_idem]
   exact inCrisis_push_ofSet_empty
 
 theorem assert_ego_of_eq (h : t c c.authority = c.authority) :
@@ -176,7 +176,7 @@ theorem assert_ego_of_eq (h : t c c.authority = c.authority) :
 
 theorem ask_ego_of_eq (h : t c c.authority = c.authority) :
     ask K c (ego V t c) = K.polarQuestion {w | V c.authority w} := by
-  rw [ask, uncenter_ego_of_eq h, uncenter_neg_ego_of_eq h]; rfl
+  rw [ask, uncenter_ego_of_eq h, uncenter_compl_ego_of_eq h]; rfl
 
 theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥) :

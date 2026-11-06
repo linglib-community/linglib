@@ -34,9 +34,9 @@ Karttunen's local context of a gap (`SyntacticEnvironment.localContext`) is reco
 good finals: some good final makes the formula's truth value at a world depend on the gap iff the
 world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the filtering
 evaluation is defined at a world iff every trigger's presupposition holds there whenever the world
-is in the trigger's local context (`Formula.middleKleene_ne_undefined_iff`). The Weak Kleene evaluation
-is defined at a world iff every trigger's presupposition holds there, wherever the trigger is
-(`Formula.weakKleene_ne_undefined_iff`).
+is in the trigger's local context (`Formula.middleKleene_ne_undefined_iff`). The Weak Kleene
+evaluation is defined at a world iff every trigger's presupposition holds there, wherever the
+trigger is (`Formula.weakKleene_ne_undefined_iff`).
 
 ## Main definitions
 
@@ -548,15 +548,16 @@ theorem Formula.middleKleene_ne_undefined_iff (I : Atom → Set W) (F : Formula 
   | trigger p p' => simp [middleKleene, eval, triggers]
   | not F ih =>
     simp only [middleKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
-      List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
-      Step.localContext]
+        List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
+        Step.localContext]
     exact ih
   | bin c F G ihF ihG =>
     simp only [triggers, List.forall_mem_append, List.forall_mem_map, localContext_append,
       localContext_cons, localContext_nil, Step.localContext]
     rw [← ihF]
     have hG : (∀ o ∈ G.triggers, w ∈ o.1.localContext I (c.localContext Set.univ (F.truth I)) →
-        w ∈ I o.2.1) ↔ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) := by
+        w ∈ I o.2.1) ↔
+        (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) := by
       rw [ihG]
       refine ⟨fun h hc o ho hl ↦ h o ho ?_, fun h o ho hl ↦ ?_⟩
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩

@@ -13,7 +13,7 @@ President of Buganda is conducting the ceremony*. Such a disjunction presupposes
 disjunction of the two presuppositions and is false when that holds and both disjuncts are
 false. Four theories fail the second observation. Under Strong Kleene disjunction the sentence
 is true whenever defined, so it is never false and its negation never true
-(`sup_ne_false`, `neg_sup_ne_true`); the symmetric two-dimensional disjunction in the
+(`sup_ne_false`, `compl_sup_ne_true`); the symmetric two-dimensional disjunction in the
 tradition of Karttunen and Peters has a presupposition that entails the assertion
 (`orKPSymmetric_ne_false`), and replacing it by the disjunction of the presuppositions
 (`orPresupOr`) fixes the case but predicts a tautologous presupposition for *either baldness is
@@ -80,7 +80,7 @@ def Conflict (φ ψ : W → Trivalent) : Prop := ∀ w, φ w = .undefined ∨ ψ
 theorem sup_ne_false (h : Conflict φ ψ) (w : W) : (φ ⊔ ψ) w ≠ .false := by
   rcases h w with h | h <;> simp [h]
 
-theorem neg_sup_ne_true (h : Conflict φ ψ) (w : W) : ((φ ⊔ ψ)ᶜ) w ≠ .true := by
+theorem compl_sup_ne_true (h : Conflict φ ψ) (w : W) : ((φ ⊔ ψ)ᶜ) w ≠ .true := by
   simpa using sup_ne_false h w
 
 theorem orKPSymmetric_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :

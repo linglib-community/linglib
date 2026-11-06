@@ -9,7 +9,7 @@ This file defines Iatridou's temporal *since*, in the form von Fintel gives it: 
 years since p* presupposes that `p` held at the time five years before the evaluation time and
 asserts that it has not held since. It is [Strawson
 anti-additive](##Tense.isStrawsonAntiAdditive_since) in `p`, but [not classically downward
-entailing](##Tense.not_antitone_posSupport_since), since its presupposition can fail at a
+entailing](##Tense.not_antitone_posExt_since), since its presupposition can fail at a
 stronger argument, and [not Strawson upward entailing](##Tense.not_isStrawsonUE_since).
 
 ## References
@@ -32,7 +32,8 @@ open Classical in
 before the evaluation time `t` and asserts that it has not held since ([von-fintel-1999], after
 Iatridou). -/
 noncomputable def since (p : Set T) : T → Trivalent :=
-  fun t ↦ Trivalent.transplication (Trivalent.ofProp (ago t ∈ p)) (Trivalent.ofProp (Disjoint (Set.Ioc (ago t) t) p))
+  fun t ↦ Trivalent.transplication (Trivalent.ofProp (ago t ∈ p))
+    (Trivalent.ofProp (Disjoint (Set.Ioc (ago t) t) p))
 
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
   .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
@@ -42,9 +43,9 @@ theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
 theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
   (isStrawsonAntiAdditive_since ago).isStrawsonDE
 
-theorem not_antitone_posSupport_since :
+theorem not_antitone_posExt_since :
     ¬ Antitone fun p : Set ℤ ↦ Trivalent.posExt (since (· - 5) p) :=
-  not_antitone_posSupport (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
+  not_antitone_posExt (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
     (by simp [since, Set.disjoint_singleton_right]) (by simp [since])
 
 /-- *It's been five years since I saw an eagle* does not Strawson-entail *it's been five years

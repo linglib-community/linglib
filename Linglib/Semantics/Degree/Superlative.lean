@@ -70,11 +70,13 @@ open Classical in
 /-- *x is the μ-est of C* presupposes that `x` is in the comparison class and asserts that it
 measures above every other member of the class ([von-fintel-1999]'s (79)). -/
 noncomputable def trivalentSuperlative (μ : α → D) (C : W → Set α) (x : α) : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C w)) (Trivalent.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C w))
+    (Trivalent.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x))
 
 variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 
-@[simp] theorem trivalentSuperlative_eq_undefined_iff : trivalentSuperlative μ C x w = .undefined ↔ x ∉ C w := by
+@[simp] theorem trivalentSuperlative_eq_undefined_iff :
+    trivalentSuperlative μ C x w = .undefined ↔ x ∉ C w := by
   simp [trivalentSuperlative]
 
 @[simp] theorem trivalentSuperlative_eq_true_iff :
@@ -124,10 +126,10 @@ theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (
 
 /-- *Emma is the tallest girl in her class* does not classically entail its restriction to girls who
 have learned the alphabet ([von-fintel-1999]'s (76)). -/
-theorem not_antitone_posSupport_trivalentSuperlative :
+theorem not_antitone_posExt_trivalentSuperlative :
     ¬ Antitone fun C : Unit → Set Unit ↦
       Trivalent.posExt (trivalentSuperlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
-  not_antitone_posSupport (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
+  not_antitone_posExt (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
 
 /-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
 tallest girl*, defined and false when a taller girl has not learned it. -/

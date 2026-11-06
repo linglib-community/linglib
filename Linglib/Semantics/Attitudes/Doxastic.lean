@@ -58,7 +58,8 @@ open Classical in
 /-- Applied to a holder and a complement, the predicate is a trivalent proposition that
 presupposes the complement if the predicate is factive and asserts the box. -/
 noncomputable def sentence : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ _ ∈ V.factivity, p w)) (Trivalent.ofProp (□[V.access agent] p w))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ _ ∈ V.factivity, p w))
+    (Trivalent.ofProp (□[V.access agent] p w))
 
 /-- ⟦x V that p⟧(w) is true when `sentence` is. -/
 def HoldsAt : Prop := V.sentence agent p w = .true

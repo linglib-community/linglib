@@ -107,7 +107,8 @@ other than the prejacent, are homogeneous. -/
 noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
     World → Trivalent :=
   fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (excludesIE ALT φ Rc ∩
-    {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w}))) (Trivalent.ofProp (w ∈ φ))
+    {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w})))
+    (Trivalent.ofProp (w ∈ φ))
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
@@ -116,10 +117,12 @@ theorem pexIEII_ne_undefined_iff :
       Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w := by
   simp [pexIEII]
 
-theorem pexIEII_eq_true_iff : pexIEII ALT φ Rc w = .true ↔ pexIEII ALT φ Rc w ≠ .undefined ∧ w ∈ φ := by
+theorem pexIEII_eq_true_iff :
+    pexIEII ALT φ Rc w = .true ↔ pexIEII ALT φ Rc w ≠ .undefined ∧ w ∈ φ := by
   simp [pexIEII]
 
-theorem pexIEII_eq_false_iff : pexIEII ALT φ Rc w = .false ↔ pexIEII ALT φ Rc w ≠ .undefined ∧ w ∉ φ := by
+theorem pexIEII_eq_false_iff :
+    pexIEII ALT φ Rc w = .false ↔ pexIEII ALT φ Rc w ≠ .undefined ∧ w ∉ φ := by
   simp [pexIEII]
 
 /-- A prejacent between the meet and the join of its relevant includable alternatives is true
@@ -129,7 +132,8 @@ theorem pexIEII_eq_true_iff_forall_mem
     (hu : φ ⊆ ⋃₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}) :
     pexIEII ALT φ Rc w = .true ↔ pexIEII ALT φ Rc w ≠ .undefined ∧
       ∀ α ∈ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}, w ∈ α :=
-  pexIEII_eq_true_iff.trans <| and_congr_right fun h ↦ (pexIEII_ne_undefined_iff.1 h).2.mem_iff hl hu
+  pexIEII_eq_true_iff.trans <|
+    and_congr_right fun h ↦ (pexIEII_ne_undefined_iff.1 h).2.mem_iff hl hu
 
 /-- A prejacent between the meet and the join of its relevant includable alternatives is false
 under `pex` exactly where the presupposition holds and all of them are false. -/
@@ -153,7 +157,8 @@ theorem pexIEII_eq_pexIE (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a 
     pexIEII ALT φ Rc = pexIE ALT φ Rc := by
   funext w
   refine Trivalent.eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · rw [pexIEII_eq_true_iff, pexIEII_ne_undefined_iff_of_inter_eq_empty h, pexIE_eq_true_iff, and_comm]
+  · rw [pexIEII_eq_true_iff, pexIEII_ne_undefined_iff_of_inter_eq_empty h, pexIE_eq_true_iff,
+      and_comm]
   · rw [pexIEII_eq_false_iff, pexIEII_ne_undefined_iff_of_inter_eq_empty h, pexIE_eq_false_iff,
       and_iff_right_iff_imp]
     exact fun hw ψ hψ hR hwψ ↦ hw (hIE ψ hψ hR hwψ)

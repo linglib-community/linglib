@@ -82,7 +82,8 @@ section Values
 
 variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
-@[simp] theorem resolve_eq_undefined_iff : nd.resolve scope c w = .undefined ↔ nd.selector c w = none :=
+@[simp] theorem resolve_eq_undefined_iff :
+    nd.resolve scope c w = .undefined ↔ nd.selector c w = none :=
   presupOfReferent_eq_undefined_iff
 
 @[simp] theorem toTrivalent_eq_undefined_iff :

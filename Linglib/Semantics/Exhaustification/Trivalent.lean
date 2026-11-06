@@ -10,7 +10,8 @@ This file defines Spector and Sudo's two trivalent exhaustification operators. B
 prejacent and deny its innocently excludable alternatives, computed by Fox's algorithm on the
 classical truth conditions, the worlds where each proposition is true; they differ in the negation
 applied to a denied alternative. `exh1` uses weak negation, under which an undefined alternative
-counts as denied, so the operator is undefined exactly where the prejacent is (`exh1_eq_undefined_iff`).
+counts as denied, so the operator is undefined exactly where the prejacent is
+(`exh1_eq_undefined_iff`).
 `exh2` uses strong negation, under which an undefined alternative leaves the whole undefined, so the
 operator inherits the presuppositions of the alternatives it denies (`exh2_eq_undefined_iff`).
 
@@ -42,7 +43,9 @@ instance (i : ι) : Decidable (Excluded alts p i) :=
 innocent exclusion on the worlds where each proposition is true. -/
 def exh1 (w : W) : Trivalent :=
   if p w = .undefined then .undefined
-  else if w ∈ exhIE (Set.range fun j ↦ Trivalent.posExt (alts j)) (Trivalent.posExt p) then .true else .false
+  else if w ∈ exhIE (Set.range fun j ↦ Trivalent.posExt (alts j)) (Trivalent.posExt p) then
+    .true
+  else .false
 
 /-- Strong-negation exhaustification is undefined where the prejacent or some excluded alternative
 is, true where the prejacent is true and every excluded alternative false, and false otherwise. -/
@@ -56,7 +59,8 @@ theorem exh1_eq_undefined_iff : exh1 alts p w = .undefined ↔ p w = .undefined 
   unfold exh1; split_ifs <;> simp_all
 
 theorem exh2_eq_undefined_iff :
-    exh2 alts p w = .undefined ↔ p w = .undefined ∨ ∃ i, Excluded alts p i ∧ alts i w = .undefined := by
+    exh2 alts p w = .undefined ↔
+      p w = .undefined ∨ ∃ i, Excluded alts p i ∧ alts i w = .undefined := by
   unfold exh2; split_ifs <;> simp_all
 
 theorem exh1_preserves_presup (h : p w = .undefined) : exh1 alts p w = .undefined :=

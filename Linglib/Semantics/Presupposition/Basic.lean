@@ -14,8 +14,8 @@ connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), K
 connectives are Peters' Middle Kleene (`Trivalent.meetMiddle`, `Trivalent.joinMiddle`), Bochvar's
 truth operator is `fun w ↦ ofProp (p w = .true)`, and the rival Strong Kleene and Belnap connectives
 are `⊓`, `⊔`, `Trivalent.meetBelnap` and `Trivalent.joinBelnap`. Each projection rule is a
-characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's filtering
-conjunction), and quantified presuppositions project by the trivalent quantifiers of
+characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's
+filtering conjunction), and quantified presuppositions project by the trivalent quantifiers of
 `Logic/Trivalent/Pointwise.lean`. Two-dimensional accounts, which read an assertion where its
 presupposition fails, use `TwoDim` (`Semantics/ConventionalImplicature.lean`).
 
@@ -53,7 +53,8 @@ variable {W : Type*}
 /-- Strawson entailment ([von-fintel-1999]) requires `q` to be true wherever `p` is true and `q`
 is defined, the conclusion's presupposition being a premise added to the entailment rather than
 something the entailment delivers. -/
-def strawsonEntails (p q : W → Trivalent) : Prop := ∀ w, p w = .true → q w ≠ .undefined → q w = .true
+def strawsonEntails (p q : W → Trivalent) : Prop :=
+  ∀ w, p w = .true → q w ≠ .undefined → q w = .true
 
 /-- Strawson entailment is the disjointness of the premise's truth and the conclusion's falsity. -/
 theorem strawsonEntails_iff_disjoint {p q : W → Trivalent} :
@@ -71,7 +72,8 @@ theorem strawsonEntails_not_trans :
     ¬ ∀ p q r : Unit → Trivalent,
       strawsonEntails p q → strawsonEntails q r → strawsonEntails p r := by
   intro h
-  have := h (fun _ ↦ .true) (fun _ ↦ .undefined) ((fun _ ↦ .false)) (fun _ _ h ↦ absurd rfl h) (fun _ h ↦ by simp at h) () rfl (by simp)
+  have := h (fun _ ↦ .true) (fun _ ↦ .undefined) (fun _ ↦ .false) (fun _ _ h ↦ absurd rfl h)
+    (fun _ h ↦ by simp at h) () rfl (by simp)
   simp at this
 
 /-! ### Definite descriptions -/

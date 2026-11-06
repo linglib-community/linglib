@@ -91,7 +91,7 @@ theorem cleft_exhaustive {w : W} (h : cleft alts p w = .true) : w ∈ excludes a
 
 /-- A negated cleft is true where the prejacent fails and another alternative holds, so the
 conditional presupposition projects (54). -/
-theorem cleft_neg_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (hp : w ∉ p) :
+theorem cleft_compl_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (hp : w ∉ p) :
     (cleft alts p w)ᶜ = .true := by
   simpa [cleft, hp] using ⟨q, hq, hw⟩
 

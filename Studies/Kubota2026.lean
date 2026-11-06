@@ -93,7 +93,7 @@ use-conditional dimension. -/
   ⟨m.prejacent, m.evaluation o⟩
 
 -- (40), (41)
-theorem compl_gapExt_neg_toTrivalent (m : Outlook W O) :
+theorem compl_gapExt_compl_toTrivalent (m : Outlook W O) :
     (Trivalent.gapExt (m.toTrivalentᶜ))ᶜ = {w | m.counterstance w} := by
   ext w
   simp [toTrivalent]

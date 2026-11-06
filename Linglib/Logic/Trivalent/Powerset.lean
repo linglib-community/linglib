@@ -134,7 +134,7 @@ theorem toFinset_supervaluation {α : Type*} {s : Finset α} (P : α → Prop) [
   cases a <;> cases b <;> decide
 
 /-- The Strong Kleene biconditional `(¬a ∨ b) ∧ (a ∨ ¬b)` is the lift of `==`. -/
-@[simp] theorem toFinset_compl_sup_inf_sup_compl (a b : Trivalent) :
+theorem toFinset_compl_sup_inf_sup_compl (a b : Trivalent) :
     toFinset ((aᶜ ⊔ b) ⊓ (a ⊔ bᶜ)) = Finset.image₂ (· == ·) (toFinset a) (toFinset b) := by
   cases a <;> cases b <;> decide
 

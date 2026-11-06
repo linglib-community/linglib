@@ -105,7 +105,8 @@ open Classical in
 and asserts that its best worlds under the ordering source `g` are `p`-worlds
 ([von-fintel-1999]'s (45)). -/
 noncomputable def want : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (IsContingent (base w) p)) (Trivalent.ofProp (Want (g w) (base w) p))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (IsContingent (base w) p))
+    (Trivalent.ofProp (Want (g w) (base w) p))
 
 open Classical in
 /-- *a is glad that p* presupposes, besides the presupposition of *want*, that `a` believes `p`
@@ -124,7 +125,8 @@ noncomputable def regret : W → Trivalent :=
 
 variable {dox base g p} {w : W}
 
-@[simp] theorem want_eq_undefined_iff : want base g p w = .undefined ↔ ¬ IsContingent (base w) p := by
+@[simp] theorem want_eq_undefined_iff :
+    want base g p w = .undefined ↔ ¬ IsContingent (base w) p := by
   simp [want]
 
 @[simp] theorem want_eq_true_iff :
@@ -201,14 +203,16 @@ theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
 
 /-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
 Civic* ([von-fintel-1999]'s (30)). -/
-theorem not_antitone_posSupport_regret :
+theorem not_antitone_posExt_regret :
     ¬ Antitone fun p : Set Bool ↦
-      Trivalent.posExt (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {(· = Bool.false)}) p) := by
-  have hb : (premisePreorder {(· = Bool.false)}).minimals ({Bool.false, Bool.true} : Set Bool) = {Bool.false} := by
+      Trivalent.posExt
+        (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {(· = Bool.false)}) p) := by
+  have hb : (premisePreorder {(· = Bool.false)}).minimals ({Bool.false, Bool.true} : Set Bool) =
+      {Bool.false} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨Bool.false, by simp, by simp⟩]
     ext
     simp
-  exact not_antitone_posSupport (p := ∅) (q := {Bool.true}) (w := Bool.true) (Set.empty_subset _)
+  exact not_antitone_posExt (p := ∅) (q := {Bool.true}) (w := Bool.true) (Set.empty_subset _)
     (by simp [regret, Want, IsContingent, hb]) (by simp [regret])
 
 /-- *Sorry that Robin bought a Civic* does not Strawson-entail *sorry that Robin bought a Civic or

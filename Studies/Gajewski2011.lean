@@ -152,9 +152,9 @@ theorem strawsonAA_not_sufficient :
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧
         ¬ Licensed .sorryThat .strong :=
   ⟨Focus.isStrawsonAntiAdditive_only_eq, Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
-    isStrawsonAntiAdditive_regret, fun h ↦ Focus.not_antitone_posSupport_only_eq (h _),
-    fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _),
-    fun h ↦ not_antitone_posSupport_regret (h _ _ _)⟩
+    isStrawsonAntiAdditive_regret, fun h ↦ Focus.not_antitone_posExt_only_eq (h _),
+    fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _),
+    fun h ↦ not_antitone_posExt_regret (h _ _ _)⟩
 
 theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := by
   cases L with

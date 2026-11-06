@@ -262,7 +262,7 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | classical F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
   | scalar F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
   | strawson F =>
-    exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posSupport
+    exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posExt
       (ProjectivitySignature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
 

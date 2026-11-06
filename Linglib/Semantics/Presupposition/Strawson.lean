@@ -72,7 +72,7 @@ theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
     (hf : ∀ p w, f p w ≠ .undefined → (f p w = .true ↔ a p w)) : IsStrawsonUE f :=
   fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
 
-theorem IsStrawsonDE.of_antitone_posSupport (h : Antitone fun p ↦ Trivalent.posExt (f p)) :
+theorem IsStrawsonDE.of_antitone_posExt (h : Antitone fun p ↦ Trivalent.posExt (f p)) :
     IsStrawsonDE f :=
   fun _ _ hpq _ hq _ ↦ h hpq hq
 
@@ -87,11 +87,13 @@ theorem isStrawsonUE_ofProp_iff {g : α → W → Prop} :
     IsStrawsonUE (fun p w ↦ Trivalent.ofProp (g p w)) ↔ Monotone g :=
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
-theorem not_antitone_posSupport {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = .true) (hp : f p w = .undefined) :
+theorem not_antitone_posExt {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = .true)
+    (hp : f p w = .undefined) :
     ¬ Antitone fun p ↦ Trivalent.posExt (f p) :=
   fun h ↦ by simpa [hp] using h hpq hq
 
-theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = .true) (hq : f q w = .false) :
+theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = .true)
+    (hq : f q w = .false) :
     ¬ IsStrawsonUE f :=
   fun h ↦ by simpa [hq] using h hpq w hp (by simp [hq])
 
@@ -148,8 +150,8 @@ theorem isStrawsonAntiAdditive_ofProp_iff {g : α → W → Prop} :
     IsStrawsonAntiAdditive (fun p w ↦ Trivalent.ofProp (g p w)) ↔ IsAntiAdditive g := by
   refine forall₂_congr fun p q ↦ ?_
   simp only [strawsonEntails, Trivalent.ofProp_eq_true_iff, ne_eq, Trivalent.ofProp_ne_undefined,
-    not_false_eq_true, forall_const, Trivalent.meetWeak_eq_true_iff, Trivalent.meetWeak_eq_undefined_iff,
-    or_self, funext_iff, Pi.inf_apply, inf_Prop_eq]
+      not_false_eq_true, forall_const, Trivalent.meetWeak_eq_true_iff,
+      Trivalent.meetWeak_eq_undefined_iff, or_self, funext_iff, Pi.inf_apply, inf_Prop_eq]
   exact ⟨fun h w ↦ propext ⟨h.1 w, h.2 w⟩, fun h ↦ ⟨fun w ↦ (h w).mp, fun w ↦ (h w).mpr⟩⟩
 
 end SemilatticeSup

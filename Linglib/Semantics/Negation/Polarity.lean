@@ -183,7 +183,8 @@ instance : MulAction Polarity SignType := .ofEndHom (lift ⟨Neg.neg, neg_involu
 polarity acting as Kleene negation. -/
 instance : MulAction Polarity Trivalent :=
   .ofEndHom (lift ⟨compl,
-    (show Function.Involutive (compl : Trivalent → Trivalent) from Trivalent.compl_compl).comp_self⟩)
+    (show Function.Involutive (compl : Trivalent → Trivalent) from
+      Trivalent.compl_compl).comp_self⟩)
 
 @[simp] theorem negative_smul_trivalent (a : Trivalent) : negative • a = aᶜ := rfl
 

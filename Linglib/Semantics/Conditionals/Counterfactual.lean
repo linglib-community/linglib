@@ -127,7 +127,8 @@ theorem selectionalCounterfactual_eq_false_iff :
 theorem selectionalCounterfactual_eq_undefined_iff :
     selectionalCounterfactual ord p q w = .undefined ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
-  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_undefined_iff, Set.not_subset, and_comm]
+  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_undefined_iff, Set.not_subset,
+      and_comm]
 
 theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
     selectionalCounterfactual ord p qᶜ w = (selectionalCounterfactual ord p q w)ᶜ := by

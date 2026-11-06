@@ -152,7 +152,7 @@ theorem the_ne_undefined_iff : the P x ≠ .undefined ↔ WeakUnique P ∧ P x �
   rw [ne_eq, the_eq_undefined_iff, not_or, not_not]
 
 -- (45), (46)
-theorem neg_the_eq_undefined_iff : (the P x)ᶜ = .undefined ↔ ¬ WeakUnique P ∨ P x = .undefined :=
+theorem compl_the_eq_undefined_iff : (the P x)ᶜ = .undefined ↔ ¬ WeakUnique P ∨ P x = .undefined :=
   Trivalent.compl_eq_undefined_iff.trans the_eq_undefined_iff
 
 -- (13)
@@ -160,7 +160,7 @@ theorem the_false (x : E) : the (fun _ ↦ .false) x = .false :=
   congrFun (the_eq_of_weakUnique fun _ h ↦ by simp at h) x
 
 -- (45a)
-theorem neg_the_false (x : E) : (the (fun _ ↦ .false) x)ᶜ = .true := by rw [the_false]; rfl
+theorem compl_the_false (x : E) : (the (fun _ ↦ .false) x)ᶜ = .true := by rw [the_false]; rfl
 
 -- (114), (115)
 theorem eq_of_the_eq_true {a b : E} (ha : the P a = .true) (hb : the P b = .true) : a = b := by
@@ -615,7 +615,7 @@ variable [DecidablePred (WeakUnique (E := E))] [DecidableRel (Exclusive (E := E)
   {P Q : (E → Trivalent)}
 
 -- (89), (94)
-theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
+theorem compl_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
     (ex (the (only P)) Q)ᶜ =
       meetWeak (existsHaug fun x ↦ P x ⊔ .undefined)
         (existsHaug fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x)))ᶜ := by

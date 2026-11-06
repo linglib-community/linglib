@@ -21,7 +21,7 @@ contradictions) come out at the level of acceptance and inference, not truth con
 * `Sentence.ContextFree.update_eq_restrict` (Fact 1); `Sentence.update_box_of_accepts`,
   `Sentence.update_dia_of` and their converses (Fact 2), which on a conditional-free prejacent is
   [veltman-1996]'s test (`update_dia_ofSet`).
-* `Sentence.cond_box_eq_false` (Fact 3), `Sentence.neg_cond` (Proposition 2),
+* `Sentence.cond_box_eq_false` (Fact 3), `Sentence.compl_cond` (Proposition 2),
   `Sentence.ContextFree.update_update` (Proposition 3), `Sentence.ContextFree.cond_cond`
   (Corollary 1), and `import_export_fails` for a modal antecedent, (18) against (19).
 * `not_accepts_contra'`, `update_contra'` (Fact 5): through `Agrees`, the semantics is
@@ -32,7 +32,7 @@ contradictions) come out at the level of acceptance and inference, not truth con
   (Theorem 1); `cEntails_iff_entails` (Theorem 2).
 * `schema_K` (Fact 6), `entails_box` (Fact 7), `entails_cond_box` (Corollary 2),
   `accepts_cond_dia_iff` (Fact 8), `entails_dia_conj`, `entails_cond_dia` (Fact 9),
-  `eq_empty_of_accepts_neg_dia`, `eq_empty_of_if_might`, `not_entails_of_dia` (Proposition 5),
+  `eq_empty_of_accepts_compl_dia`, `eq_empty_of_if_might`, `not_entails_of_dia` (Proposition 5),
   `modus_ponens` (Fact 10), `modus_tollens` and its failures (Fact 11), the structural rules and
   failures of Proposition 4, and `entails_insert_iff` (Theorem 3) with the Conditional Proof
   counterexample.
@@ -128,9 +128,9 @@ open Classical in
 
 theorem contextFree_ofSet (p : Set W) : ContextFree (ofSet p) := fun _ _ _ ↦ rfl
 
-@[simp] theorem neg_apply (φ : Sentence W) (s : Set W) (w : W) : φᶜ s w = (φ s w)ᶜ := rfl
+@[simp] theorem compl_apply (φ : Sentence W) (s : Set W) (w : W) : φᶜ s w = (φ s w)ᶜ := rfl
 
-theorem neg_ofSet (p : Set W) : (ofSet p)ᶜ = ofSet pᶜ := by
+theorem compl_ofSet (p : Set W) : (ofSet p)ᶜ = ofSet pᶜ := by
   funext s w
   by_cases h : w ∈ p <;> simp [ofSet, h]
 
@@ -146,7 +146,7 @@ def disj (φ ψ : Sentence W) : Sentence W := fun s w ↦ joinBelnap (φ s w) (�
 @[simp] theorem disj_apply (φ ψ : Sentence W) (s : Set W) (w : W) :
     disj φ ψ s w = joinBelnap (φ s w) (ψ s w) := rfl
 
-theorem ContextFree.neg {φ : Sentence W} (h : ContextFree φ) : ContextFree φᶜ :=
+theorem ContextFree.compl {φ : Sentence W} (h : ContextFree φ) : ContextFree φᶜ :=
   fun s s' w ↦ by simp [h s s' w]
 
 theorem ContextFree.conj {φ ψ : Sentence W} (hφ : ContextFree φ) (hψ : ContextFree ψ) :
@@ -277,18 +277,18 @@ theorem box_apply_congr {w' : W} (h : w ∈ s) (h' : w' ∈ s) : box φ s w = bo
 theorem dia_apply_congr {w' : W} (h : w ∈ s) (h' : w' ∈ s) : dia φ s w = dia φ s w' := by
   rw [dia_apply_of_mem h, dia_apply_of_mem h']
 
-theorem dia_eq_neg_box_neg (φ : Sentence W) : dia φ = (box φᶜ)ᶜ := by
+theorem dia_eq_compl_box_compl (φ : Sentence W) : dia φ = (box φᶜ)ᶜ := by
   funext s w
   refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
-  · simp only [dia, box, neg_apply, Trivalent.compl_eq_undefined_iff, existsHaug_eq_undefined_iff,
+  · simp only [dia, box, compl_apply, Trivalent.compl_eq_undefined_iff, existsHaug_eq_undefined_iff,
       forallHaug_eq_undefined_iff]
     exact forall_congr' fun w' ↦ by by_cases h : w' ∈ ctx s w <;> simp [h]
-  · simp only [dia, box, neg_apply, Trivalent.compl_eq_true_iff, existsHaug_eq_true_iff,
+  · simp only [dia, box, compl_apply, Trivalent.compl_eq_true_iff, existsHaug_eq_true_iff,
       forallHaug_eq_false_iff]
     exact exists_congr fun w' ↦ by by_cases h : w' ∈ ctx s w <;> simp [h]
 
-theorem box_eq_neg_dia_neg (φ : Sentence W) : box φ = (dia φᶜ)ᶜ := by
-  rw [dia_eq_neg_box_neg, InvolutiveCompl.compl_compl, InvolutiveCompl.compl_compl]
+theorem box_eq_compl_dia_compl (φ : Sentence W) : box φ = (dia φᶜ)ᶜ := by
+  rw [dia_eq_compl_box_compl, InvolutiveCompl.compl_compl, InvolutiveCompl.compl_compl]
 
 end ModalValues
 
@@ -316,9 +316,9 @@ theorem cond_normalized (φ ψ : Sentence W) : Normalized (cond φ ψ) := fun s 
   rw [cond, cond, ctx_of_notMem h, ctx_singleton]
 
 /-- Negation commutes with the conditional at every context–world pair (**Proposition 2**). -/
-theorem neg_cond (φ ψ : Sentence W) : (cond φ ψ)ᶜ = cond φ ψᶜ := by
+theorem compl_cond (φ ψ : Sentence W) : (cond φ ψ)ᶜ = cond φ ψᶜ := by
   funext s w
-  rw [neg_apply, cond, cond]
+  rw [compl_apply, cond, cond]
   split_ifs <;> simp
 
 /-- Where `A → B` is false, so is `A → □B` (**Fact 3**), so the bare conditional has the less
@@ -606,8 +606,8 @@ variable {φ φ' : Sentence W} {ψ ψ' : DomainSemantics.Sentence W}
 theorem agrees_ofSet (p : Set W) : Agrees (ofSet p) (DomainSemantics.Sentence.ofProp p) :=
   fun _ _ _ ↦ rfl
 
-theorem Agrees.neg (h : Agrees φ ψ) : Agrees φᶜ ψᶜ := fun s w hw ↦ by
-  rw [neg_apply, h s w hw, ← ofProp_not]
+theorem Agrees.compl (h : Agrees φ ψ) : Agrees φᶜ ψᶜ := fun s w hw ↦ by
+  rw [compl_apply, h s w hw, ← ofProp_not]
   exact ofProp_congr Iff.rfl
 
 theorem Agrees.conj (h : Agrees φ ψ) (h' : Agrees φ' ψ') : Agrees (conj φ φ') (ψ ⊓ ψ') :=
@@ -627,8 +627,8 @@ theorem Agrees.dia (h : Agrees φ ψ) : Agrees (dia φ) ψ.might := fun s w hw �
     rw [h s w' hw', ofProp_eq_true_iff]
 
 theorem Agrees.box (h : Agrees φ ψ) : Agrees (box φ) ψ.must := by
-  rw [box_eq_neg_dia_neg, DomainSemantics.Sentence.must_eq_compl_might_compl]
-  exact h.neg.dia.neg
+  rw [box_eq_compl_dia_compl, DomainSemantics.Sentence.must_eq_compl_might_compl]
+  exact h.compl.dia.compl
 
 theorem Agrees.accepts_iff (h : Agrees φ ψ) {s : Set W} : Accepts s φ ↔ ψ.AcceptedIn s :=
   forall₂_congr fun w hw ↦ by rw [h s w hw, undefined_le_ofProp_iff]
@@ -637,7 +637,7 @@ theorem Agrees.accepts_iff (h : Agrees φ ψ) {s : Set W} : Accepts s φ ↔ ψ.
 conditional-free fragment is `Yalcin2007.not_accepted_contra'`... -/
 theorem not_accepts_contra' {s : Set W} (hs : s.Nonempty) (q : Set W) :
     ¬ Accepts s (conj (ofSet q) (dia (ofSet q)ᶜ)) := by
-  rw [((agrees_ofSet q).conj (agrees_ofSet q).neg.dia).accepts_iff]
+  rw [((agrees_ofSet q).conj (agrees_ofSet q).compl.dia).accepts_iff]
   exact Yalcin2007.not_accepted_contra' hs
 
 /-- ... and every update on it collapses. -/
@@ -646,13 +646,13 @@ theorem update_contra' (s q : Set W) : update s (conj (ofSet q) (dia (ofSet q)�
 
 theorem not_accepts_contra {s : Set W} (hs : s.Nonempty) (p : Set W) :
     ¬ Accepts s (conj (ofSet p)ᶜ (dia (ofSet p))) := by
-  rw [((agrees_ofSet p).neg.conj (agrees_ofSet p).dia).accepts_iff]
+  rw [((agrees_ofSet p).compl.conj (agrees_ofSet p).dia).accepts_iff]
   exact Yalcin2007.not_accepted_contra hs
 
 -- (19)
-theorem not_accepts_dia_conj_neg {s : Set W} (hs : s.Nonempty) (p : Set W) :
+theorem not_accepts_dia_conj_compl {s : Set W} (hs : s.Nonempty) (p : Set W) :
     ¬ Accepts s (conj (dia (ofSet p)) (ofSet p)ᶜ) := by
-  rw [((agrees_ofSet p).dia.conj (agrees_ofSet p).neg).accepts_iff, inf_comm]
+  rw [((agrees_ofSet p).dia.conj (agrees_ofSet p).compl).accepts_iff, inf_comm]
   exact Yalcin2007.not_accepted_contra hs
 
 /-- Import-Export fails for a modal antecedent, since `◇p → (¬p → q)` (18) can be true where `(◇p ∧
@@ -664,7 +664,7 @@ theorem import_export_fails :
   have hdia : update Set.univ (dia (ofSet ({true} : Set Bool))) = Set.univ :=
     update_dia_of (.inl ⟨true, trivial, by simp⟩)
   have hneg : update Set.univ (ofSet ({true} : Set Bool))ᶜ = {false} := by
-    rw [neg_ofSet, update_ofSet]
+    rw [compl_ofSet, update_ofSet]
     ext w
     cases w <;> simp
   refine ⟨?_, ?_⟩
@@ -672,7 +672,7 @@ theorem import_export_fails :
       cond_apply_of_mem (Set.mem_univ _) (by rw [hneg]; exact Set.mem_singleton _), hneg]
     simp
   · refine cond_apply_of_notMem (Set.mem_univ _) ?_
-    rw [update_eq_empty_of_forall_not_accepts fun _ ht ↦ not_accepts_dia_conj_neg ht _]
+    rw [update_eq_empty_of_forall_not_accepts fun _ ht ↦ not_accepts_dia_conj_compl ht _]
     exact Set.notMem_empty _
 
 end DomainSemantics
@@ -763,12 +763,12 @@ theorem neverVoid_ofSet (p : Set W) : NeverVoid (ofSet p) := fun _ _ _ ↦ ofPro
 
 /-- **Proposition 5**, the is-might contradiction: no nonempty context accepts both `¬B` and
 `◇B` for a never-void `B`, that is, `¬B, ◇B ⊨ ⊥`. -/
-theorem eq_empty_of_accepts_neg_dia {φ : Sentence W} (hφ : NeverVoid φ)
+theorem eq_empty_of_accepts_compl_dia {φ : Sentence W} (hφ : NeverVoid φ)
     (h₁ : Accepts s φᶜ) (h₂ : Accepts s (dia φ)) : s = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun w hw ↦ ?_
   rcases accepts_dia_iff.1 h₂ with ⟨v, hv, h1⟩ | h0
   · have := h₁ v hv
-    rw [neg_apply, h1] at this
+    rw [compl_apply, h1] at this
     exact absurd this (by decide)
   · exact hφ s w hw (h0 w hw)
 
@@ -778,7 +778,7 @@ theorem eq_empty_of_if_might {φ ψ : Sentence W} (hφ : ContextFree φ) (hψ : 
     (h₀ : Accepts s (dia φ)) (h₁ : Accepts s (cond φ ψᶜ)) (h₂ : Accepts s (cond φ (dia ψ))) :
     s = ∅ := by
   rw [accepts_cond_iff] at h₁ h₂
-  have hu := eq_empty_of_accepts_neg_dia hψ h₁ h₂
+  have hu := eq_empty_of_accepts_compl_dia hψ h₁ h₂
   rw [hφ.update_eq_restrict] at hu
   refine Set.eq_empty_of_forall_notMem fun w hw ↦ ?_
   rcases accepts_dia_iff.1 h₀ with ⟨v, hv, h1⟩ | h0
@@ -794,13 +794,13 @@ theorem not_entails_of_dia : ¬ Entails {dia (ofSet ({true} : Set Bool))} (ofSet
   exact absurd (accepts_ofSet_iff.1 this (Set.mem_univ false)) (by simp)
 
 -- §5
-theorem not_entails_neg_box : ¬ Entails {(box (ofSet ({true} : Set Bool)))ᶜ} (ofSet {true})ᶜ := by
+theorem not_entails_compl_box : ¬ Entails {(box (ofSet ({true} : Set Bool)))ᶜ} (ofSet {true})ᶜ := by
   intro h
   have := h Set.univ fun φ hφ w hw ↦ by
-    rw [Set.mem_singleton_iff.1 hφ, neg_apply,
+    rw [Set.mem_singleton_iff.1 hφ, compl_apply,
       (box_eq_false_iff hw).2 ⟨false, Set.mem_univ _, by simp⟩]
     decide
-  rw [neg_ofSet, accepts_ofSet_iff] at this
+  rw [compl_ofSet, accepts_ofSet_iff] at this
   exact this (Set.mem_univ true) rfl
 
 /-- Modus Tollens holds for conditional-free sentences (**Fact 11**)... -/
@@ -809,7 +809,7 @@ theorem modus_tollens (a b : Set W) :
   intro s h
   have h₁ := accepts_ofSet_iff.1 (accepts_cond_ofSet_iff.1 (h _ (Set.mem_insert _ _)))
   have h₂ := h _ (Set.mem_insert_of_mem _ rfl)
-  rw [neg_ofSet, accepts_ofSet_iff] at h₂ ⊢
+  rw [compl_ofSet, accepts_ofSet_iff] at h₂ ⊢
   exact fun w hw hwa ↦ h₂ hw (h₁ ⟨hw, hwa⟩)
 
 theorem not_modus_tollens_void :
@@ -822,19 +822,19 @@ theorem not_modus_tollens_void :
       exact accepts_undefined _
     · rw [cond_ofSet_empty]
       exact accepts_undefined _
-  rw [neg_ofSet, Set.compl_univ, accepts_ofSet_iff] at this
+  rw [compl_ofSet, Set.compl_univ, accepts_ofSet_iff] at this
   exact this (Set.mem_univ ())
 
 private theorem marble_box (w : Bool) : box (ofSet {false}) Set.univ w = .false :=
   (box_eq_false_iff (Set.mem_univ w)).2 ⟨true, Set.mem_univ _, by simp⟩
 
 private theorem marble_must : Accepts Set.univ (cond (ofSet {true})ᶜ (box (ofSet {false}))) := by
-  rw [neg_ofSet, accepts_cond_ofSet_iff, accepts_box_iff, accepts_ofSet_iff]
+  rw [compl_ofSet, accepts_cond_ofSet_iff, accepts_box_iff, accepts_ofSet_iff]
   intro w hw
   simpa using hw.2
 
 private theorem marble_not_must : Accepts Set.univ (box (ofSet ({false} : Set Bool)))ᶜ :=
-  fun w _ ↦ by rw [neg_apply, marble_box]; decide
+  fun w _ ↦ by rw [compl_apply, marble_box]; decide
 
 -- (28) [yalcin-2012]
 theorem not_modus_tollens_box :
@@ -877,7 +877,7 @@ theorem entails_cond_iff_disj (p q : Set W) :
     Entails {cond (ofSet p) (ofSet q)} (disj (ofSet p)ᶜ (ofSet q)) ∧
       Entails {disj (ofSet p)ᶜ (ofSet q)} (cond (ofSet p) (ofSet q)) := by
   refine ⟨fun s h ↦ ?_, fun s h ↦ ?_⟩ <;> have h₀ := h _ rfl <;>
-    rw [neg_ofSet, disj_ofSet, accepts_ofSet_iff] at * <;>
+    rw [compl_ofSet, disj_ofSet, accepts_ofSet_iff] at * <;>
     rw [accepts_cond_ofSet_iff, accepts_ofSet_iff] at *
   · intro w hw
     by_cases hp : w ∈ p
@@ -885,45 +885,45 @@ theorem entails_cond_iff_disj (p q : Set W) :
     · exact .inl hp
   · exact fun w hw ↦ (h₀ hw.1).resolve_left (not_not.2 hw.2)
 
-theorem not_entails_neg_cond_neg_disj :
+theorem not_entails_compl_cond_compl_disj :
     ¬ Entails {(cond (ofSet (∅ : Set Unit)) (ofSet ∅))ᶜ} (disj (ofSet ∅)ᶜ (ofSet ∅))ᶜ := by
   intro h
   have := h Set.univ fun φ hφ ↦ by
     rw [Set.mem_singleton_iff.1 hφ, cond_ofSet_empty]
     exact accepts_undefined _
-  rw [neg_ofSet, disj_ofSet, neg_ofSet, Set.compl_empty, Set.univ_union, Set.compl_univ,
+  rw [compl_ofSet, disj_ofSet, compl_ofSet, Set.compl_empty, Set.univ_union, Set.compl_univ,
     accepts_ofSet_iff] at this
   exact this (Set.mem_univ ())
 
 -- §5
-theorem entails_of_dia_neg (p q : Set W) :
+theorem entails_of_dia_compl (p q : Set W) :
     Entails {ofSet p, ofSet q, dia (ofSet p)ᶜ} (ofSet q)ᶜ := by
   intro s h
   have hp := accepts_ofSet_iff.1 (h _ (Set.mem_insert _ _))
   have hd := h _ (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl))
-  rw [neg_ofSet, accepts_dia_ofSet_iff] at hd
+  rw [compl_ofSet, accepts_dia_ofSet_iff] at hd
   intro w hw
   obtain ⟨v, hvs, hvp⟩ := hd ⟨w, hw⟩
   exact absurd (hp hvs) hvp
 
 -- footnote 18
-theorem not_entails_cond_of_dia_neg :
+theorem not_entails_cond_of_dia_compl :
     ¬ Entails {ofSet (Set.univ : Set Bool), dia (ofSet {true})ᶜ}
       (cond (ofSet {true}) (ofSet Set.univ)ᶜ) := by
   intro h
   have := h Set.univ fun φ hφ ↦ by
     rcases hφ with rfl | rfl
     · exact accepts_ofSet_iff.2 subset_rfl
-    · rw [neg_ofSet, accepts_dia_ofSet_iff]
+    · rw [compl_ofSet, accepts_dia_ofSet_iff]
       exact fun _ ↦ ⟨false, Set.mem_univ _, by simp⟩
-  rw [accepts_cond_ofSet_iff, neg_ofSet, Set.compl_univ, accepts_ofSet_iff] at this
+  rw [accepts_cond_ofSet_iff, compl_ofSet, Set.compl_univ, accepts_ofSet_iff] at this
   exact this ⟨Set.mem_univ true, rfl⟩
 
 theorem not_accepts_fn18_printed :
     ¬ Accepts Set.univ (conj (ofSet (Set.univ : Set Bool)) (dia (ofSet {true}))ᶜ) := by
   intro h
   have := h true (Set.mem_univ _)
-  rw [conj_apply, neg_apply, (dia_eq_true_iff (Set.mem_univ _)).2 ⟨true, Set.mem_univ _, by simp⟩]
+  rw [conj_apply, compl_apply, (dia_eq_true_iff (Set.mem_univ _)).2 ⟨true, Set.mem_univ _, by simp⟩]
     at this
   simp at this
 
@@ -1093,10 +1093,6 @@ theorem cond_ofSet (a b : Set W) :
   change cond (ofCooper fun w ↦ ofProp (w ∈ a)) (ofCooper fun w ↦ ofProp (w ∈ b)) = _
   rw [cond_ofCooper]
   rfl
-
-@[simp] private theorem gapExt_undefined :
-    gapExt (fun _ ↦ .undefined : W → Trivalent) = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ rfl
 
 variable [MeasurableSpace W]
 

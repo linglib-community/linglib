@@ -213,7 +213,7 @@ theorem not_informative_pexPlural :
   (pexIEII_eq_false_iff.1 h).2 hw
 
 -- (10b), (12b), (13c), (23)
-theorem not_informative_neg (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
+theorem not_informative_compl (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
     ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} ((pexPlural D x P R)ᶜ) := fun hi ↦
   let ⟨_, hw, hf⟩ := postAccommodationInformative_iff.1 hi
@@ -311,7 +311,7 @@ theorem judgments_10 :
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_false (by decide) fun h ↦ not_informative_pexPlural
       (h.mono fun _ ⟨a, ha⟩ ↦ Set.mem_biUnion (by simp) ha),
-    iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
 -- (12)
@@ -323,7 +323,7 @@ theorem judgments_12 :
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ)) :=
   ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
 /-- In (13), with at most one winner, *none of the candidates won* and *all of the candidates lost*
@@ -344,7 +344,7 @@ theorem judgments_13 :
           (supClosure (Set.range (atom fun a w ↦ a ∉ w))))) :=
   ⟨iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
     iff_of_true (by decide) (postAccommodationInformative_iff.2 ⟨{0}, by decide, by decide⟩),
-    iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
+    iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a))
       (h.mono fun w hw hall ↦ by
         rw [eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a)] at hw
@@ -359,7 +359,7 @@ theorem judgments_23 :
     Examples.ex_23.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 3) | w ≠ univ}
         ((pexPlural univ univ holds (supClosure (Set.range (atom holds))))ᶜ) :=
-  iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
+  iff_of_false (by decide) fun h ↦ not_informative_compl (separating_holds _ _) (by decide)
     (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)
 
 end Judgments

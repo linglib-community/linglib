@@ -255,7 +255,7 @@ theorem mem_ofTrivalent (p : W → Trivalent) (s t : Set W) :
 theorem mem_ofTrivalent_self (p : W → Trivalent) (s : Set W) :
     s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = .true := by
   refine ⟨fun ⟨_, e⟩ ↦ Set.sep_eq_self_iff_mem_true.1 e, fun h ↦ ⟨fun w hw ↦ ?_, ?_⟩⟩
-  · simp [Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, h w hw]
+  · simp [Trivalent.mem_gapExt, h w hw]
   · exact Set.sep_eq_self_iff_mem_true.2 h
 
 theorem ofTrivalent_congr {p q : W → Trivalent} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
@@ -364,7 +364,8 @@ theorem admits_cond_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (
 
 theorem admits_disj_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (disj (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧
+        ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
   have e : s \ {w ∈ s | p w = .true} = Connective.disj.localContext s (Trivalent.posExt p) :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
@@ -390,7 +391,8 @@ it. -/
 theorem admits_cond_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ (Trivalent.gapExt fun w ↦ (p w)ᶜ.joinMiddle (q w))ᶜ :=
-  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_neg_joinMiddle_iff.symm
+  (admits_cond_ofTrivalent_iff p _ s).trans
+    Presupposition.subset_compl_gapExt_compl_joinMiddle_iff.symm
 
 /-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
 the ¬φ local context being Karttunen's negative-antecedent filtering. -/
@@ -421,7 +423,7 @@ theorem ofTrivalent_injective :
   intro p q h
   funext w
   have h₀ : ∀ r : W → Trivalent, (ofTrivalent r {w}).Dom ↔ ¬ r w = .undefined := fun r ↦ by
-    simp [ofTrivalent, Trivalent.mem_compl_gapExt]
+    simp [ofTrivalent]
   have h₁ : ∀ r : W → Trivalent, {w} ∈ ofTrivalent r {w} ↔ r w = .true := fun r ↦ by
     simp [mem_ofTrivalent_self]
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
@@ -429,7 +431,8 @@ theorem ofTrivalent_injective :
   · rw [← h₁, ← h₁, h]
 
 /-- The constant truth gives the null update. -/
-@[simp] theorem ofTrivalent_true : ofTrivalent ((fun _ ↦ .true) : W → Trivalent) = PFun.id (Set W) := by
+@[simp] theorem ofTrivalent_true :
+    ofTrivalent ((fun _ ↦ .true) : W → Trivalent) = PFun.id (Set W) := by
   funext s
   exact Part.ext' (iff_of_true (fun w _ ↦ by simp) trivial) fun _ _ ↦ by simp [ofTrivalent]
 
@@ -445,10 +448,11 @@ theorem ofTrivalent_meetMiddle (p q : W → Trivalent) :
 
 /-- An update of a pointwise Weak Kleene operation is defined where both operands' updates are. -/
 theorem admits_ofTrivalent_weak {f : Trivalent → Trivalent → Trivalent}
-    (hf : ∀ a b, f a b ≠ .undefined ↔ a ≠ .undefined ∧ b ≠ .undefined) (p q : W → Trivalent) (s : Set W) :
+    (hf : ∀ a b, f a b ≠ .undefined ↔ a ≠ .undefined ∧ b ≠ .undefined) (p q : W → Trivalent)
+        (s : Set W) :
     (ofTrivalent fun w ↦ f (p w) (q w)).Admits s ↔
       (ofTrivalent p).Admits s ∧ (ofTrivalent q).Admits s := by
-  simp only [admits_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, hf]
+  simp only [admits_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, hf]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
@@ -501,7 +505,7 @@ theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
 theorem ofTrivalent_neg (p : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w)ᶜ) = neg (ofTrivalent p) := by
   rw [neg_eq_diff, ← ofTrivalent_true, ← ofTrivalent_diff]
-  simp only [Pi.one_apply, Trivalent.meetWeak_true_left]
+  simp only [Trivalent.meetWeak_true_left]
 
 /-- The Heim conditional is Peters' conditional, read off the isomorphic images of
 `ε \ (φ \ (φ; ψ))` ([george-2014], footnote 15). -/
@@ -556,7 +560,8 @@ the toolbox ([george-2014], Corollary 1) and Heim's connectives (Proposition 2).
 
 variable {φ ψ : CCP.Partial W}
 
-theorem isTrivalentisable_id : IsTrivalentisable (PFun.id (Set W)) := ⟨(fun _ ↦ .true), ofTrivalent_true⟩
+theorem isTrivalentisable_id :
+    IsTrivalentisable (PFun.id (Set W)) := ⟨(fun _ ↦ .true), ofTrivalent_true⟩
 
 theorem IsTrivalentisable.seq (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
     IsTrivalentisable (PartialUpdate.seq φ ψ) := by
@@ -599,10 +604,12 @@ end Closure
 theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) [DecidablePred p] :
     PartialUpdate.Presupposes φ (ofTrivalent fun w ↦ Trivalent.ofProp (p w)) ↔
       ∀ c, φ.Admits c → ∀ w ∈ c, p w := by
-  simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self, Trivalent.ofProp_eq_true_iff]
+  simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self,
+      Trivalent.ofProp_eq_true_iff]
 
 theorem presupposes_ofTrivalent (p : W → Trivalent) :
-    PartialUpdate.Presupposes (ofTrivalent p) (ofTrivalent fun w ↦ Trivalent.ofProp (p w ≠ .undefined)) :=
+    PartialUpdate.Presupposes (ofTrivalent p)
+      (ofTrivalent fun w ↦ Trivalent.ofProp (p w ≠ .undefined)) :=
   (presupposes_ofProp_iff _ _).2 fun _ h _ hw ↦ (admits_ofTrivalent _ _).1 h hw
 
 end CCP.Partial

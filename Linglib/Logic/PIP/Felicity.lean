@@ -264,7 +264,8 @@ noncomputable def Formula.toTrivalent (φ : Formula V L P) : Trivalent :=
 
 variable {M g} {φ ψ : Formula V L P}
 
-@[simp] theorem Formula.toTrivalent_eq_undefined_iff : φ.toTrivalent M g = .undefined ↔ ¬ φ.Felicitous M g := by
+@[simp] theorem Formula.toTrivalent_eq_undefined_iff :
+    φ.toTrivalent M g = .undefined ↔ ¬ φ.Felicitous M g := by
   unfold toTrivalent; split_ifs <;> simp_all
 
 @[simp] theorem Formula.toTrivalent_eq_true_iff :
@@ -277,7 +278,8 @@ variable {M g} {φ ψ : Formula V L P}
 
 variable (M g)
 
-@[simp] theorem Formula.toTrivalent_top : Formula.toTrivalent M g (.top : Formula V L P) = .true := by
+@[simp] theorem Formula.toTrivalent_top :
+    Formula.toTrivalent M g (.top : Formula V L P) = .true := by
   simp
 
 theorem Formula.toTrivalent_neg : Formula.toTrivalent M g (.neg φ) = (φ.toTrivalent M g)ᶜ :=

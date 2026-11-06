@@ -117,7 +117,7 @@ theorem enrichment_eq_meetMiddle (R : Prop) [Decidable R] (a : Trivalent) :
 
 /-- Enriching a trigger that presupposes `S ∩ T` by `S` accommodates `S` and leaves the
 conditional presupposition that `S` implies `T` (§5.2.1), while `A` above the trigger leaves no
-presupposition at all ((35), `Trivalent.gapExt_ofProp_eq_true`), as does the substrate's
+presupposition at all ((35), `Trivalent.gapExt_ofProp`), as does the substrate's
 accommodation of every trigger at once
 (`Presupposition.Formula.isBivalent_middleKleene_accommodate`). -/
 theorem partial_accommodation (S T : Set W) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)]

@@ -78,7 +78,8 @@ open Classical in
 `P` is `id`; over individuals, with the identity scale, it is von Fintel's *only x is P*, which
 presupposes that `x` is `P` and asserts that nothing else is ([von-fintel-1999]'s (15)). -/
 noncomputable def only : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (atLeast S C P i))) (Trivalent.ofProp (w ∈ atMost S C P i))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (atLeast S C P i)))
+    (Trivalent.ofProp (w ∈ atMost S C P i))
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -135,12 +136,14 @@ open Classical in
 /-- On the entailment scale, with the prejacent among the alternatives, *only* presupposes its
 prejacent and asserts the exclusion ([von-fintel-1999]'s (68a)). -/
 theorem only_subset_eq (hp : p ∈ C) :
-    only (· ⊆ ·) C id p = fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (w ∈ excludes C p)) := by
+    only (· ⊆ ·) C id p =
+        fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p))
+          (Trivalent.ofProp (w ∈ excludes C p)) := by
   funext w; simp only [only, atLeast_subset_eq hp, atMost_subset]
 
 /-- On the entailment scale *only* is true exactly where the exhaustification
 `Exhaustification.exh` is. -/
-theorem posSupport_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C id p) = exh C p := by
+theorem posExt_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C id p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
 
 end Entailment
@@ -216,7 +219,8 @@ open Classical in
 /-- An additive particle, *too* or *also*, presupposes `additivePresup S C P i` and asserts its
 prejacent `P i`. -/
 noncomputable def additive : W → Trivalent :=
-  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (additivePresup S C P i))) (Trivalent.ofProp (w ∈ P i))
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (additivePresup S C P i)))
+    (Trivalent.ofProp (w ∈ P i))
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -228,10 +232,12 @@ variable {S C P i} {j : ι} {w : W}
 theorem additivePresup_eq_compl_atMost : additivePresup S C P i = (atMost S C P i)ᶜ := by
   ext; simp
 
-@[simp] theorem additive_eq_undefined_iff : additive S C P i w = .undefined ↔ w ∉ additivePresup S C P i := by
+@[simp] theorem additive_eq_undefined_iff :
+    additive S C P i w = .undefined ↔ w ∉ additivePresup S C P i := by
   simp [additive]
 
-theorem compl_gapExt_additive : (Trivalent.gapExt (additive S C P i))ᶜ = additivePresup S C P i := by
+theorem compl_gapExt_additive :
+    (Trivalent.gapExt (additive S C P i))ᶜ = additivePresup S C P i := by
   ext; simp
 
 @[simp] theorem additive_eq_true_iff :
@@ -357,9 +363,9 @@ theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p
 
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
-theorem not_antitone_posSupport_only_subset :
+theorem not_antitone_posExt_only_subset :
     ¬ Antitone fun p : Set Bool ↦ Trivalent.posExt (only (· ⊆ ·) {{Bool.true}, .univ} id p) :=
-  not_antitone_posSupport (p := {Bool.true}) (q := .univ) (w := Bool.false) (Set.subset_univ _)
+  not_antitone_posExt (p := {Bool.true}) (q := .univ) (w := Bool.false) (Set.subset_univ _)
     (only_eq_true_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
       exacts [absurd hw (by simp), subset_rfl]⟩)
@@ -401,9 +407,9 @@ theorem isStrawsonDE_only_eq : IsStrawsonDE fun P : ι → Set W ↦ only (· = 
 
 /-- *Only John ate vegetables* does not classically entail *only John ate kale*, whose
 presupposition may fail ([von-fintel-1999]'s (11)). -/
-theorem not_antitone_posSupport_only_eq :
+theorem not_antitone_posExt_only_eq :
     ¬ Antitone fun P : Bool → Set Unit ↦ Trivalent.posExt (only (· = ·) univ P Bool.true) :=
-  not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = Bool.true}) (w := ()) bot_le
+  not_antitone_posExt (p := ⊥) (q := fun y ↦ {_u | y = Bool.true}) (w := ()) bot_le
     (by rw [only_eq_eq_true_iff (mem_univ _)]; simp) (by simp)
 
 /-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and

@@ -23,7 +23,8 @@ presuppositional exhaustification as underspecified between a parse with an exha
 and one without.
 
 Uniform supervaluation, which reads every occurrence of an atom at the same standard, is not
-Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `undefined`, and Strong Kleene leaves it undefined.
+Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `undefined`, and Strong Kleene leaves it
+undefined.
 
 ## Main definitions
 

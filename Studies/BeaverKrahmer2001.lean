@@ -167,7 +167,7 @@ theorem impWeak_eq (a b : Trivalent) :
 
 /-! ### Projection at the value level -/
 
-theorem presupVal_neg (a : Trivalent) : presupVal aᶜ = presupVal a := by
+theorem presupVal_compl (a : Trivalent) : presupVal aᶜ = presupVal a := by
   cases a <;> decide
 
 theorem presupVal_transplication (p a : Trivalent) :
@@ -207,7 +207,7 @@ def cancelNeg : Trivalent → Trivalent
   | .false => .true
   | .undefined => .true
 
-theorem cancelNeg_eq_neg_metaAssert (a : Trivalent) :
+theorem cancelNeg_eq_compl_metaAssert (a : Trivalent) :
     cancelNeg a = (ofProp (a = .true))ᶜ := by
   cases a <;> rfl
 
@@ -406,12 +406,12 @@ theorem deny_transpl (φ π : Formula Atom) :
 
 theorem eval_neg_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (neg (assert φ)) = cancelNeg (eval V φ) := by
-  rw [eval_neg, eval_assert, cancelNeg_eq_neg_metaAssert]
+  rw [eval_neg, eval_assert, cancelNeg_eq_compl_metaAssert]
 
 /-! ### Projection at formula level -/
 
 theorem presup_neg (φ : Formula Atom) : Equiv (presup (neg φ)) (presup φ) := fun V ↦ by
-  simp [eval_presup, presupVal_neg]
+  simp [eval_presup, presupVal_compl]
 
 theorem presup_transpl (φ π : Formula Atom) :
     Equiv (presup (transpl φ π)) (conn .conj .strong (assert π) (presup φ)) := fun V ↦ by

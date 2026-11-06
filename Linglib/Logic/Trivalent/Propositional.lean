@@ -16,10 +16,10 @@ Propositional formulas built from atoms by negation, conjunction, disjunction an
 are evaluated into `Trivalent` by an interpretation of the binary connectives, the Strong, Weak or
 Middle Kleene tables or Cooper's or de Finetti's, with Kleene's negation throughout. A formula is
 realized at a designation standard when its value is designated: K3 designates only `true` and LP
-also `undefined`, so one evaluation yields both logics, and mixed consequence takes premises at one standard and
-conclusions at another, as Cobreros, Égré, Ripley and van Rooij do. Under the Weak Kleene tables a
-formula is undefined as soon as one of its atoms is, so they define the Weak Kleene connectives from
-the Strong Kleene ones but not the converse.
+also `undefined`, so one evaluation yields both logics, and mixed consequence takes premises at one
+standard and conclusions at another, as Cobreros, Égré, Ripley and van Rooij do. Under the Weak
+Kleene tables a formula is undefined as soon as one of its atoms is, so they define the Weak Kleene
+connectives from the Strong Kleene ones but not the converse.
 
 ## Main definitions
 
@@ -304,7 +304,7 @@ theorem eval_const_undefined (φ : Formula Atom) :
 
 /-- K3 has no tautologies, since nothing is designated in the model sending every atom to
 `undefined` ([cobreros-etal-2012], Theorem 2). -/
-theorem k3_no_tautologies [Nonempty Atom] (φ : Formula Atom) :
+theorem k3_no_tautologies (φ : Formula Atom) :
     ¬(∀ M : Model Atom, M ⊨[.strongKleene, .k3] φ) := by
   intro h
   have := h fun _ ↦ .undefined

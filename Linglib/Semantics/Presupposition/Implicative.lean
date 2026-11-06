@@ -123,7 +123,7 @@ variable (R v S) in
 as its signature descends. -/
 theorem antitone_compl_gapExt : Antitone fun s ↦ (Trivalent.gapExt (sentence R s v S))ᶜ := by
   intro s t h w hw
-  simp only [sentence, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq,
+  simp only [sentence, Trivalent.mem_compl_gapExt, ne_eq,
     Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_eq_true_iff,
     Trivalent.ofProp_ne_undefined, or_false, not_not] at hw ⊢
   obtain ⟨hp, hn⟩ := hw

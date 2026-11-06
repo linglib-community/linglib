@@ -110,8 +110,6 @@ def Recoding.context : Recoding → Polarity → Context
 /-- The trivalent display of a picture, one cell per boy. -/
 def Item.display (p : Item) : Display := p.opened.map cell
 
-private theorem true_le_iff {a : Trivalent} : .true ≤ a ↔ a = .true := top_le_iff
-
 private theorem cell_eq_false_iff (n : ℕ) : cell n = .false ↔ n = 0 := by
   rw [← not_iff_not, ← Ne, ← Trivalent.undefined_le_iff_ne_false, KrizChemla2015.designated_lp_cell]
   omega
@@ -129,7 +127,7 @@ theorem pointwise_all_ne_undefined_iff :
     Ne, KrizChemla2015.supervaluation_eq_undefined_iff, not_not, someReading, allReading,
     KrizChemla2015.reading_all, KrizChemla2015.reading_all]
   simp only [Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-    Trivalent.undefined_le_iff_ne_false, true_le_iff]
+    Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff]
   refine ⟨fun h ↦ (em (.false ∈ d)).symm.imp (fun hm ↦ h.1 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
   rintro (h | h)
   · exact iff_of_true (fun v hv ↦ by simp [h v hv]) h
@@ -142,7 +140,7 @@ theorem pointwise_no_ne_undefined_iff :
     Ne, KrizChemla2015.supervaluation_eq_undefined_iff, not_not, someReading, allReading,
     KrizChemla2015.reading_no, KrizChemla2015.reading_no]
   simp only [Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-    Trivalent.undefined_le_iff_ne_false, true_le_iff, not_not]
+    Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff, not_not]
   refine ⟨fun h ↦ (em (.true ∈ d)).symm.imp (fun hm ↦ h.2 fun v hv hv' ↦ hm (hv' ▸ hv)) id, ?_⟩
   rintro (h | h)
   · exact iff_of_true h fun v hv ↦ by simp [h v hv]
@@ -327,7 +325,7 @@ private theorem resolve_k3_pexCell :
     resolve .k3 (opened.map (pexCell ctx)) = resolve ctx.designation (opened.map cell) := by
   simp only [resolve, List.map_map]
   refine List.map_congr_left fun n _ ↦ ?_
-  simp [true_le_iff, pexCell_eq_true_iff, AugurzkyEtAl2023.designated_cell]
+  simp [Trivalent.true_le_iff, pexCell_eq_true_iff, AugurzkyEtAl2023.designated_cell]
 
 theorem asymmetric_iff_of_scopeMonotone (hq : q.ScopeMonotone) :
     asymmetric q ctx opened ↔ reading q (opened.map cell) ctx.designation := by
@@ -385,7 +383,7 @@ theorem asymmetric_all_universal_iff :
     asymmetric NumberTree.all .universal opened ↔ ∀ n ∈ opened, 9 ≤ n := by
   rw [asymmetric_iff_of_scopeMonotone _ opened NumberTree.scopeMonotone_all,
     KrizChemla2015.reading_all]
-  simp [AugurzkyEtAl2023.Context.designation, true_le_iff, KrizChemla2015.designated_k3_cell]
+  simp [AugurzkyEtAl2023.Context.designation, Trivalent.true_le_iff, KrizChemla2015.designated_k3_cell]
 
 /-- Without pruning, *exactly two boys opened their presents* says after accommodation that two boys
 opened all of theirs and every other boy none (30). -/

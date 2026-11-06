@@ -294,7 +294,7 @@ def cualquiera : ModalIndefinite ι := ⟨atoms, Scenario.Normative, UniqueWitne
 def nimporteQuel : ModalIndefinite ι := ⟨atoms, Scenario.Normative, fun _ ↦ True⟩
 
 -- (49)–(50): negation targets the modal component with the existential
-theorem neg_yalnhej_denotation : (yalnhej.denotation s e w)ᶜ = .true ↔ ¬ Claim sums s e w := by
+theorem compl_yalnhej_denotation : (yalnhej.denotation s e w)ᶜ = .true ↔ ¬ Claim sums s e w := by
   rw [Trivalent.compl_eq_true_iff]
   simp [ModalIndefinite.denotation, yalnhej]
 

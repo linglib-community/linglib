@@ -137,7 +137,7 @@ theorem homogeneous_eq_true_iff {n : ℕ} : homogeneous n = .true ↔ 2 ≤ n :=
   rcases n with _ | _ | n <;> simp [homogeneous]
 
 -- (23), (24)
-theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n)ᶜ = .true ↔ n = 0 := by
+theorem compl_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n)ᶜ = .true ↔ n = 0 := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
 /-! ### Predictions (section 1.3) -/
@@ -151,7 +151,7 @@ theorem readings_negative :
     exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
       {n | (homogeneous n)ᶜ = .true} = weakᶜ := by
   refine ⟨exhIE_compl_weak, isLeast_compl_weak, Set.ext fun n ↦ ?_⟩
-  rw [Set.mem_ofPred_eq, neg_homogeneous_eq_true_iff]
+  rw [Set.mem_ofPred_eq, compl_homogeneous_eq_true_iff]
   simp [weak]
 
 /-- In the singular context (27) the implicature approach treats the positive and negative sentences

@@ -46,7 +46,7 @@ open Presupposition ModalLogic
 variable {W : Type*} {R : SetRel W W} {A : W → Trivalent} {s : W → Prop}
   {c : Factivity} {e : FamilyVariant}
 
-private theorem eq_true_sup_neg_eq_true (A : W → Trivalent) :
+private theorem eq_true_sup_compl_eq_true (A : W → Trivalent) :
     ((A · = .true) ⊔ (Aᶜ · = .true) : W → Prop) = (A · ≠ .undefined) :=
   funext fun w ↦ propext <| by
     simp only [Pi.sup_apply, Pi.compl_apply, sup_Prop_eq]; cases A w <;> simp
@@ -63,10 +63,10 @@ def Postulates (c : Factivity) (R : SetRel W W) (A : W → Trivalent) (s : W →
   | .full => ◇[R] (A · = .true) ≤ s ∧ ◇[R] (Aᶜ · = .true) ≤ s
 
 theorem postulates_semi_iff : Postulates .semi R A s ↔ (A · ≠ .undefined) ≤ s := by
-  rw [← eq_true_sup_neg_eq_true, sup_le_iff]; rfl
+  rw [← eq_true_sup_compl_eq_true, sup_le_iff]; rfl
 
 theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] (A · ≠ .undefined) ≤ s := by
-  rw [← eq_true_sup_neg_eq_true, diamond_sup, sup_le_iff]; rfl
+  rw [← eq_true_sup_compl_eq_true, diamond_sup, sup_le_iff]; rfl
 
 theorem postulates_full_iff_le_box : Postulates .full R A s ↔ (A · ≠ .undefined) ≤ □[R.inv] s :=
   postulates_full_iff.trans (diamond_box_gc R _ _)

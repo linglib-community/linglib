@@ -547,9 +547,6 @@ theorem not_consequence_tolerant_strict (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
 
 /-! ### LP and K3 -/
 
-private theorem true_le_iff {a : Trivalent} : .true ≤ a ↔ a = .true := by
-  cases a <;> decide
-
 open Classical in
 /-- In the MV-model of Lemma 4, a predication is true when strictly true, false when not
 tolerantly true and undefined when borderline, and similarity statements are two-valued. -/
@@ -569,7 +566,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
         Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
-        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, true_le_iff,
+        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff,
         toMV]
       split_ifs with hs ht
       · exact ⟨iff_of_true ⟨_, (M.sim P).refl _, box_T hs⟩ (by decide), iff_of_true hs rfl⟩
@@ -578,7 +575,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     | sim P a b =>
       simp only [TModel.realize_sim, Trivalent.Formula.realize_atom,
         Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
-        Trivalent.undefined_le_iff_ne_false, true_le_iff, toMV]
+        Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff, toMV]
       split_ifs with h <;> simp [h]
   | neg ψ ih =>
     simp only [TModel.realize_neg, Trivalent.Formula.realize_neg, Mode.dual_tolerant,
@@ -616,7 +613,7 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
         Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
-        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, true_le_iff,
+        Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff,
         ofMV, Box, Diamond]
       refine ⟨⟨?_, fun h ↦ ⟨(a, true), rfl, h⟩⟩, ⟨fun h ↦ h (a, false) rfl, ?_⟩⟩
       · rintro ⟨⟨b, i⟩, hb, h⟩

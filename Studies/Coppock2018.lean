@@ -187,7 +187,7 @@ theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
    fun h w _ ↦ let ⟨o, o', h₁, h₂, h₃, h₄⟩ := h w; ⟨o, trivial, o', trivial, h₁, h₂, h₃, h₄⟩⟩
 
 -- §3.1
-theorem objectiveOn_univ_iff_objective_posSupport (h : IsBivalent p) :
+theorem objectiveOn_univ_iff_objective_posExt (h : IsBivalent p) :
     ObjectiveOn ρ p Set.univ ↔ Objective ρ (Trivalent.posExt p) := by
   rw [objective_iff_forall_mem_iff]
   constructor
@@ -323,7 +323,7 @@ theorem tycka_eq_think_of_ne_undefined (h : tycka ρ R p C o ≠ .undefined) :
   simp only [tycka, think, hS, ofProp_true, Trivalent.true_sup, meetWeak_true_left]
 
 -- (28)
-theorem neg_tycka_eq_undefined_iff :
+theorem compl_tycka_eq_undefined_iff :
     (tycka ρ R p C o)ᶜ = .undefined ↔ ¬ StronglyDiscretionaryOn ρ p C :=
   Trivalent.compl_eq_undefined_iff.trans (tycka_eq_undefined_iff ρ R p C o)
 

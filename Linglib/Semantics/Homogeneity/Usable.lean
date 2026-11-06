@@ -91,7 +91,8 @@ theorem usable.eq_undefined_of_ne_true {q : Setoid W} {p : W → Trivalent} {w :
   ((Trivalent.trichotomy (p w)).resolve_left h.ne_false).resolve_right hne
 
 theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → Trivalent) (w : W)
-    (h : usable q ((fun v ↦ Trivalent.ofProp (v = .true)) ∘ p) w) : Trivalent.ofProp (p w = .true) = .true :=
+    (h : usable q ((fun v ↦ Trivalent.ofProp (v = .true)) ∘ p) w) :
+    Trivalent.ofProp (p w = .true) = .true :=
   ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_true p) q w).mp h).1
 
 /-- When `p` is used at `w` under the issue `q`, a sentence mentioning an exception cannot address
@@ -118,11 +119,11 @@ instance communicatedContent.instDecidableMem [Fintype W] (q : Setoid W) [Decida
     (p : W → Trivalent) (w : W) : Decidable (w ∈ communicatedContent q p) :=
   inferInstanceAs (Decidable (sufficientlyTrue q p w))
 
-theorem posSupport_subset_communicated (q : Setoid W) (p : W → Trivalent) :
+theorem posExt_subset_communicated (q : Setoid W) (p : W → Trivalent) :
     Trivalent.posExt p ⊆ communicatedContent q p :=
   fun _ hw ↦ literal_imp_sufficient q p _ hw
 
-theorem communicatedContent_eq_posSupport {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
+theorem communicatedContent_eq_posExt {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (hAddr : addressesIssue q p) :
     communicatedContent q p = Trivalent.posExt p := by
   ext w

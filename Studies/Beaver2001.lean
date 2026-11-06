@@ -70,7 +70,7 @@ private theorem of_table (f g : Trivalent → Trivalent → Trivalent)
 /-! The rows of Fact 2.1, with the Strong Kleene connectives `⊓`, `⊔` and `ᶜ`, and
 `φ → ψ` read as `¬φ ∨ ψ`. -/
 
-theorem neg (h : StrawsonPresupposes φ π) : StrawsonPresupposes (fun w ↦ (φ w)ᶜ) π :=
+theorem compl (h : StrawsonPresupposes φ π) : StrawsonPresupposes (fun w ↦ (φ w)ᶜ) π :=
   fun w hw ↦ h w (mt Trivalent.compl_eq_undefined_iff.2 hw)
 
 theorem and_left (h : StrawsonPresupposes φ π) :

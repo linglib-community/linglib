@@ -153,7 +153,7 @@ theorem exists_of_report_ne_undefined [Nonempty E] (hpast : ∃ t', t'.Precedes 
   ⟨t', x, hprec, hx⟩
 
 -- (15)
-theorem gapExt_neg_report :
+theorem gapExt_compl_report :
     Trivalent.gapExt (report τ about P Q g₁ t)ᶜ = Trivalent.gapExt (report τ about P Q g₁ t) := by
   ext; simp
 
