@@ -61,7 +61,7 @@ def AscribesUnder (A : Set C) (p : C) (k : C → Option α) (y : α) (P : α →
   k p = some y ∧ A ⊆ deRe k P
 
 theorem relatum_eq_some_iff : relatum R p = some y ↔ R y p ∧ ∀ z, R z p → z = y :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- A concept is the partial concept of the relation each center bears to its value there. -/
 theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = some ∘ c :=

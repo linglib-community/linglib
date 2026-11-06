@@ -63,14 +63,14 @@ open Quantifier Quantifier.Det Filter
 /-! ### Fact 2 on an infinite domain -/
 
 /-- `x` is in `boolBE Q` when `Q` holds of `{x} ∪ [n, ∞)` for ultrafilter-many `n`. -/
-noncomputable def boolBE : BoundedLatticeHom (Quantifier ℕ) (Set ℕ) where
+private noncomputable def boolBE : BoundedLatticeHom (Quantifier ℕ) (Set ℕ) where
   toFun Q := {x | ∀ᶠ n in (hyperfilter ℕ : Filter ℕ), Q (insert x (Set.Ici n))}
   map_sup' _ _ := Set.ext fun _ ↦ Ultrafilter.eventually_or
   map_inf' _ _ := Set.ext fun _ ↦ eventually_and
   map_top' := Set.ext fun _ ↦ by simp
   map_bot' := Set.ext fun _ ↦ by simpa using (hyperfilter ℕ).neBot.ne
 
-theorem boolBE_individual (j : ℕ) : boolBE (individual j) = {j} := by
+private theorem boolBE_individual (j : ℕ) : boolBE (individual j) = {j} := by
   ext x
   simp only [boolBE, BoundedLatticeHom.coe_mk, LatticeHom.coe_mk, SupHom.coe_mk,
     Set.mem_ofPred_eq, individual, Set.mem_insert_iff, Set.mem_Ici, Set.mem_singleton_iff]

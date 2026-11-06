@@ -164,16 +164,14 @@ theorem lower_eq_some_iff {Q : Quantifier E} {a : E} : lower Q = some a ↔ indi
 theorem iota_BE_individual (a : E) : iota (BE (individual a)) = some a := by
   rw [BE_individual, iota_singleton]
 
-theorem every_injective : Function.Injective (every : Det E) := fun A B h ↦
-  subset_antisymm ((congrFun h B).mpr subset_rfl) ((congrFun h A).mp subset_rfl)
-
 private theorem lower_eq_iota_of {f : Det E}
     (hf : ∀ {A : Set E} {a : E}, f A = individual a ↔ A = {a}) (A : Set E) :
     lower (f A) = iota A :=
   Option.ext fun _ ↦ lower_eq_some_iff.trans <| eq_comm.trans <| hf.trans <|
-    Set.eq_singleton_iff_unique_mem.trans (iota_eq_some_iff _).symm
+    Set.eq_singleton_iff_unique_mem.trans iota_eq_some_iff.symm
 
-/-- An indefinite has an entity reading by `lower` only where the definite does. -/
+/-- An indefinite has an entity reading by `lower` only where the definite does
+([partee-1987], §3.4.1). -/
 theorem lower_some (A : Set E) : lower (Det.some A) = iota A :=
   lower_eq_iota_of some_eq_individual_iff A
 
@@ -182,16 +180,10 @@ theorem lower_every (A : Set E) : lower (every A) = iota A :=
 
 /-! ### The definite article -/
 
-/-- *The `A`* is the lift of `iota A` where `iota A` is defined, and the empty quantifier
-elsewhere. -/
-theorem the_eq_elim (A : Set E) : the A = (iota A).elim ⊥ individual :=
-  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by
-    cases iota A <;> simp [individual]
-
 @[simp] theorem lower_the (A : Set E) : lower (the A) = iota A := by
   rw [the_eq_elim]; cases iota A <;> simp
 
-/-- *Be the `A`* holds of `x` when `x` is the only `A`. -/
+/-- *Be the `A`* holds of `x` when `x` is the only `A` ([partee-1987], §3.2). -/
 theorem mem_BE_the {A : Set E} {x : E} : x ∈ BE (the A) ↔ A = {x} :=
   ⟨fun ⟨_, hz, hzx⟩ ↦ Set.ext fun z ↦ (hz z).trans (by rw [hzx]; rfl),
     fun h ↦ ⟨x, fun z ↦ h ▸ Iff.rfl, rfl⟩⟩
@@ -201,7 +193,7 @@ president* ([partee-1987], §3.2). -/
 theorem BE_the_of_subsingleton {A : Set E} (hA : A.Subsingleton) : BE (the A) = A :=
   Set.ext fun _ ↦ mem_BE_the.trans ⟨fun h ↦ h ▸ rfl, hA.eq_singleton_of_mem⟩
 
-/-- On a nonempty restrictor, *be every `A`* is *be the `A`*. -/
+/-- On a nonempty restrictor, *be every `A`* is *be the `A`* ([partee-1987], §3.3). -/
 theorem BE_every_of_nonempty {A : Set E} (hA : A.Nonempty) : BE (every A) = BE (the A) :=
   Set.ext fun _ ↦ hA.subset_singleton_iff.trans mem_BE_the.symm
 

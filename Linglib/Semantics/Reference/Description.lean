@@ -167,30 +167,30 @@ theorem denote_anaphoric_eq_possessive :
 
 theorem denote_eq_some_iff (k : DefiniteDescription E W) :
     ⟦k⟧ g s = some x ↔ x ∈ k.restrictor g s ∧ ∀ y ∈ k.restrictor g s, y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 theorem denote_isSome_iff (k : DefiniteDescription E W) :
     (⟦k⟧ g s).isSome ↔ ∃! x, x ∈ k.restrictor g s :=
-  iota_isSome_iff _
+  iota_isSome_iff
 
 /-- The weak article denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
 theorem denote_unique_eq_some_iff : ⟦unique R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- The covert iota denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
 theorem denote_bare_eq_some_iff : ⟦bare R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- The weak article is defined iff the restrictor has a unique satisfier at the situation. -/
 theorem denote_unique_isSome_iff : (⟦unique R⟧ g s).isSome ↔ ∃! x, x ∈ R g s :=
-  iota_isSome_iff _
+  iota_isSome_iff
 
 /-- The weak article is undefined where the restrictor has two satisfiers. -/
 theorem denote_unique_eq_none_of_ne {y : E} (hx : x ∈ R g s) (hy : y ∈ R g s) (hne : x ≠ y) :
     ⟦unique R⟧ g s = none :=
-  iota_eq_none_of_ne _ hx hy hne
+  iota_eq_none_of_ne hx hy hne
 
 /-- The strong article denotes `x` iff `x` is its antecedent and the restrictor holds of the
 antecedent at the situation, so the index selects and the situation only decides definedness. -/
@@ -222,13 +222,13 @@ theorem denote_possessive_eq_some_iff :
     ⟦possessive R possessor rel⟧ g s = some x ↔
       (x ∈ R g s ∧ rel g s (possessor g s) x) ∧
         ∀ y, y ∈ R g s ∧ rel g s (possessor g s) y → y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- The possessive is defined iff exactly one satisfier of the restrictor stands in the
 possession relation to the possessor. -/
 theorem denote_possessive_isSome_iff :
     (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, x ∈ R g s ∧ rel g s (possessor g s) x :=
-  iota_isSome_iff _
+  iota_isSome_iff
 
 theorem possNP_iff_exists_mem_denote_possessive (B : Set E) :
     Possession.PossNP (Quantifier.individual (possessor g s)) Quantifier.Det.the (rel g s)

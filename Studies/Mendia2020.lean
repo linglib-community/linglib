@@ -155,13 +155,13 @@ theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14
 -- (31b)
 theorem that_eq (s : Setoid E) (a : E) :
     iota {y ∈ s.classes | a ∈ y} = some {x | s x a} :=
-  (iota_eq_some_iff _).2 ⟨⟨s.mem_classes a, s.refl' a⟩,
+  iota_eq_some_iff.2 ⟨⟨s.mem_classes a, s.refl' a⟩,
     fun _ hy ↦ (Setoid.classes_eqv_classes a).unique hy ⟨s.mem_classes a, s.refl' a⟩⟩
 
 -- (32b)
 theorem the_kind_eq_none (s : Setoid E) {a b : E} (h : ¬ s a b) :
     iota s.classes = none :=
-  (iota_eq_none_iff _).2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
+  iota_eq_none_iff.2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
     ⟨y, hy, hu _ (s.mem_classes a) ▸ s.refl' a, hu _ (s.mem_classes b) ▸ s.refl' b⟩
 
 /-- The operator κ+ (33) gives the cells of the partition that contain every instance of the
@@ -181,14 +181,14 @@ def kappaPlus (s : Setoid E) (P : Set E) : Set (Set E) := {y ∈ s.classes | P �
 κ+ refers to that cell (36). -/
 theorem the_kappaPlus_eq_some (s : Setoid E) {P : Set E} {a : E} (ha : a ∈ P)
     (hP : ∀ x ∈ P, s x a) : iota (kappaPlus s P) = some {x | s x a} :=
-  (iota_eq_some_iff _).2 ⟨⟨s.mem_classes a, hP⟩, fun _ ⟨hy, hPy⟩ ↦
+  iota_eq_some_iff.2 ⟨⟨s.mem_classes a, hP⟩, fun _ ⟨hy, hPy⟩ ↦
     Setoid.eq_of_mem_classes hy (hPy ha) (s.mem_classes a) (s.refl' a)⟩
 
 /-- When two instances of the restrictor lie in different cells, no cell contains them both and
 the definite fails (p. 604). -/
 theorem the_kappaPlus_eq_none (s : Setoid E) {P : Set E} {a b : E} (ha : a ∈ P) (hb : b ∈ P)
     (h : ¬ s a b) : iota (kappaPlus s P) = none :=
-  (iota_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
+  iota_eq_none_iff.2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
     h (s.rel_iff_exists_classes.2 ⟨y, hy, hPy ha, hPy hb⟩)
 
 -- (36), (37), footnote 11

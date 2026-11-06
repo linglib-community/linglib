@@ -84,7 +84,7 @@ noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota {d | ∀ x ∈
 
 -- (25)
 theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
-  (iota_eq_some_iff _).2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
+  iota_eq_some_iff.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
 -- (17)
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by

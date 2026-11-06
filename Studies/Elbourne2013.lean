@@ -122,11 +122,11 @@ from situations to the unique satisfier of the property in the situation. -/
 noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota {x | f x s}
 
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
-  iota_isSome_iff _
+  iota_isSome_iff
 
 theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
     the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- A pronoun, (4b) of ch. 10, has the article's entry, its noun phrase supplied by
 NP-deletion. -/

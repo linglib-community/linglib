@@ -192,7 +192,7 @@ theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shi
 relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
     (g : Assignment S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
-  (iota_eq_none_iff _).2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
+  iota_eq_none_iff.2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
 
 end Shift
 
@@ -272,7 +272,7 @@ theorem relational_anaphora_coauthored :
     ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = none ∧
       ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ =
         some {.coauthoredNovel} :=
-  ⟨iota_eq_none_of_ne _ (e := {.author}) (e' := {.coauthor})
+  ⟨iota_eq_none_of_ne (e := {.author}) (e' := {.coauthor})
       ⟨trivial, .inr ⟨rfl, .inl rfl⟩, by decide⟩ ⟨trivial, .inr ⟨rfl, .inr rfl⟩, by decide⟩
       (by decide),
     (DefiniteDescription.denote_anaphoric_eq_some_iff _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
@@ -280,7 +280,7 @@ theorem relational_anaphora_coauthored :
 -- (231)
 theorem larger_situation_strong :
     ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = none :=
-  (iota_eq_none_iff _).2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
+  iota_eq_none_iff.2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
 -- (58), §6.4.1
 theorem partWhole_bridging_strong :

@@ -8,27 +8,17 @@ public import Mathlib.Order.UpperLower.Basic
 /-!
 # Iota
 
-The iota operator takes a set of individuals to its only member, when it has exactly one. It is
-the partial inverse of the singleton map, Partee's *ident*, which sends an individual to the
-property of being it; `iota s` is `none` when `s` is empty or has several members.
+The iota operator takes a set of individuals to its only member, when it has exactly one: it is
+[the partial inverse](##iota_isPartialInv) of the singleton map, Partee's *ident*, which sends an
+individual to the property of being it, so `iota s` is [the unique member of
+`s`](##iota_eq_some_iff) and `none` when `s` is empty or has several members.
 
 On individuals ordered by part-of, the definite picks out the largest member of a set,
-`iota {d | IsGreatest X d}`. On an antichain, such as a set of atoms, the largest member is the
-only member. On a lower set, such as the extension of a mass noun, taking the largest member is
-the partial inverse of `Set.Iic`, which sends an individual to its parts.
-
-## Main definitions
-
-* `iota`: the partial inverse of `{·}`.
-
-## Main statements
-
-* `iota_isPartialInv`: `iota s = some e` exactly when `s` is `{e}`.
-* `iota_eq_some_iff`: `iota s` is the unique member of `s`.
-* `IsAntichain.iota_isGreatest`: on an antichain the largest member is the unique member.
-* `IsLowerSet.iota_isGreatest`: on a lower set the largest member is the partial inverse of
-  `Set.Iic`.
-* `DirectedOn.iota_isGreatest_isSome`: a finite nonempty directed set has a largest member.
+`iota {d | IsGreatest X d}`. On an antichain, such as a set of atoms, [the largest member is the
+only member](##IsAntichain.iota_isGreatest). On a lower set, such as the extension of a mass noun,
+taking the largest member is [the partial inverse of `Set.Iic`](##IsLowerSet.iota_isGreatest),
+which sends an individual to its parts, and a finite nonempty directed set [has a largest
+member](##DirectedOn.iota_isGreatest_isSome).
 
 ## Implementation notes
 
@@ -55,7 +45,7 @@ generalization; Krifka, following Link, writes σ for the largest member and def
 
 @[expose] public section
 
-variable {E : Type*} (s : Set E) {e : E}
+variable {E : Type*} {s : Set E} {e : E}
 
 /-- `iota s` is the only member of `s`, the partial inverse of `{·}`. -/
 noncomputable def iota : Set E → Option E :=
@@ -71,25 +61,23 @@ theorem iota_eq_some_iff : iota s = some e ↔ e ∈ s ∧ ∀ x ∈ s, x = e :=
   (iota_isPartialInv e s).trans <| eq_comm.trans Set.eq_singleton_iff_unique_mem
 
 theorem iota_isSome_iff : (iota s).isSome ↔ ∃! x, x ∈ s :=
-  Option.isSome_iff_exists.trans <| exists_congr fun _ ↦ iota_eq_some_iff s
+  Option.isSome_iff_exists.trans <| exists_congr fun _ ↦ iota_eq_some_iff
 
 theorem iota_eq_none_iff : iota s = none ↔ ¬ ∃! x, x ∈ s := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
 
 theorem iota_eq_none_of_ne {e' : E} (he : e ∈ s) (he' : e' ∈ s) (hne : e ≠ e') : iota s = none :=
-  (iota_eq_none_iff s).2 fun h ↦ hne (h.unique he he')
+  iota_eq_none_iff.2 fun h ↦ hne (h.unique he he')
 
 /-! ### Sets with at most one member -/
 
 section Subsingleton
 
-variable {s}
-
 theorem Set.Subsingleton.iota_eq_some_iff (h : s.Subsingleton) : iota s = some e ↔ e ∈ s :=
-  (_root_.iota_eq_some_iff s).trans ⟨And.left, fun he ↦ ⟨he, fun _ hx ↦ h hx he⟩⟩
+  _root_.iota_eq_some_iff.trans ⟨And.left, fun he ↦ ⟨he, fun _ hx ↦ h hx he⟩⟩
 
 theorem Set.Subsingleton.iota_isSome_iff (h : s.Subsingleton) : (iota s).isSome ↔ s.Nonempty :=
-  (_root_.iota_isSome_iff s).trans
+  _root_.iota_isSome_iff.trans
     ⟨fun ⟨x, hx, _⟩ ↦ ⟨x, hx⟩, fun ⟨x, hx⟩ ↦ ⟨x, hx, fun _ hy ↦ h hy hx⟩⟩
 
 end Subsingleton
@@ -140,7 +128,7 @@ theorem elim_Iic_iota_isGreatest (hX : IsLowerSet X) (hd : X.Nonempty → ∃ d,
 theorem IsAntichain.iota_isGreatest (hs : IsAntichain (· ≤ ·) X) :
     iota {x | IsGreatest X x} = iota X :=
   Option.ext fun _ ↦ (iota_isGreatest_eq_some_iff.trans <|
-    hs.greatest_iff.trans Set.eq_singleton_iff_unique_mem).trans (iota_eq_some_iff _).symm
+    hs.greatest_iff.trans Set.eq_singleton_iff_unique_mem).trans iota_eq_some_iff.symm
 
 theorem IsAntichain.iota_isGreatest_eq_none (hs : IsAntichain (· ≤ ·) X) {a b : E}
     (ha : a ∈ X) (hb : b ∈ X) (hab : a ≠ b) : iota {x | IsGreatest X x} = none :=

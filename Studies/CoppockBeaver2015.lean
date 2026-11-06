@@ -413,7 +413,7 @@ theorem presupposesExistence_be_theFregeanGQ :
 theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
     identIota P x ≠ 0 ↔ ∃! y, P y = 1 := by
   classical
-  refine Iff.trans ?_ (_root_.iota_isSome_iff {y | P y = 1})
+  refine Iff.trans ?_ (_root_.iota_isSome_iff (s := {y | P y = 1}))
   rw [identIota]
   cases _root_.iota {y | P y = 1} <;> simp
 
@@ -534,7 +534,7 @@ end Derivations
 noncomputable def iota (P : (E → SignType)) : Option E := _root_.iota {x | P x = 1}
 
 theorem iota_isSome_iff (P : (E → SignType)) : (iota P).isSome ↔ ∃! x, P x = 1 :=
-  _root_.iota_isSome_iff _
+  _root_.iota_isSome_iff
 
 theorem iota_eq_none_iff (P : (E → SignType)) : iota P = none ↔ ¬ ∃! x, P x = 1 := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
@@ -588,7 +588,7 @@ theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → SignType
       CCP.Partial.ofTrivalent (fun w ↦ ex (π w) (Q w)) C := by
   refine CCP.Partial.ofTrivalent_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
-  have hi : iota (π w) = some x := (iota_eq_some_iff _).2 ⟨hx, hu⟩
+  have hi : iota (π w) = some x := iota_eq_some_iff.2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
   refine (eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_).symm
   · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, (hπ w hw).ne_zero,
