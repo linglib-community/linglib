@@ -85,15 +85,15 @@ end Bridge
 /-- No truth-functional conjunction is both idempotent at the borderline value and false on
 borderline contradictions (pp. 130–131). -/
 theorem kleene_dilemma :
-    ¬∃ (meet : SignType → SignType → SignType), meet 0 0 = 0 ∧ meet 0 (-0) = -1 := by
+    ¬∃ (meet : Trivalent → Trivalent → Trivalent), meet .undefined .undefined = .undefined ∧ meet .undefined (.undefinedᶜ) = .false := by
   rintro ⟨meet, hidem, hcontra⟩
-  rw [SignType.neg_zero, hidem] at hcontra
+  rw [Trivalent.compl_undefined, hidem] at hcontra
   cases hcontra
 
-/-- Strong Kleene conjunction, `⊓` on `SignType`, takes the idempotent horn of the dilemma, so
+/-- Strong Kleene conjunction, `⊓` on `Trivalent`, takes the idempotent horn of the dilemma, so
 borderline contradictions are not false. -/
-example : (0 : SignType) ⊓ 0 = 0 ∧ (0 : SignType) ⊓ 0ᶜ ≠ ⊥ :=
-  ⟨inf_idem _, SignType.inf_compl_zero_ne_bot⟩
+example : (.undefined : Trivalent) ⊓ .undefined = .undefined ∧ (.undefined : Trivalent) ⊓ .undefinedᶜ ≠ ⊥ :=
+  ⟨inf_idem _, Trivalent.inf_compl_undefined_ne_bot⟩
 
 /-! ### The completion comparative
 

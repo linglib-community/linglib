@@ -65,9 +65,9 @@ theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P 
   and_iff_left_of_imp (h x s)
 
 theorem diamond_become_of_againAt_achievement_ne_zero {e : Event}
-    (hp : againAt M .achievement R P y x e ≠ 0) : ◇[R] (◇[M.become.inv] ⊤) e :=
+    (hp : againAt M .achievement R P y x e ≠ .undefined) : ◇[R] (◇[M.become.inv] ⊤) e :=
   ModalLogic.diamond_mono R (fun w ↦ ModalLogic.diamond_mono _ le_top w) e
-    (again_ne_zero_iff.1 hp)
+    (again_ne_undefined_iff.1 hp)
 
 end Model
 

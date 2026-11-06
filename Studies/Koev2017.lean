@@ -75,15 +75,14 @@ open Classical in
 condition of the learning event, which restricts the context set, (74b), and whose assertion
 is the core proposition, to which the declarative operator (72) commits the speaker. -/
 noncomputable def LearningScenario.toEvidentialProp (loc : E → L) (s : LearningScenario E)
-    {W : Type*} (p : W → Prop) : W → SignType :=
-  {_w | spatiotemporallyDistant loc s.described s.learning}.indicator fun w ↦
-    SignType.ofProp (p w)
+    {W : Type*} (p : W → Prop) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (spatiotemporallyDistant loc s.described s.learning)) (Trivalent.ofProp (p w))
 
 /-- Negation preserves the evidential presupposition while negating the core proposition,
 (78). -/
 theorem projection_past_negation (loc : E → L) (s : LearningScenario E) {W : Type*}
     (p : W → Prop) :
-    Function.support (-s.toEvidentialProp loc p) = Function.support (s.toEvidentialProp loc p) := by
+    (Trivalent.gapExt ((s.toEvidentialProp loc p)ᶜ))ᶜ = (Trivalent.gapExt (s.toEvidentialProp loc p))ᶜ := by
   ext; simp
 
 /-! ### The scenarios of §4 -/

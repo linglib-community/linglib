@@ -180,12 +180,12 @@ theorem transparency_incremental_iff_admits (C : Set W) (F : Formula Atom) :
       (∃ f ∈ K.continuations I 0, DependsAt f w) ↔ w ∈ K.localContext I Set.univ := by
     rw [SyntacticEnvironment.continuations_zero]
     exact Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w)
-  refine ⟨fun h w hw ↦ (Formula.middleKleene_ne_zero_iff I F w).2 fun o ho hl ↦ ?_,
+  refine ⟨fun h w hw ↦ (Formula.middleKleene_ne_undefined_iff I F w).2 fun o ho hl ↦ ?_,
     fun h o ho ↦ (transparent_iff_subset henv).2 fun w ⟨hw, hl⟩ ↦ ?_⟩
   · have : Nonempty Atom := ⟨o.2.1⟩
     exact (transparent_iff_subset henv).1 (h o ho) ⟨hw, (hdep o.1 w).2 hl⟩
   · have : Nonempty Atom := ⟨o.2.1⟩
-    exact (Formula.middleKleene_ne_zero_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
+    exact (Formula.middleKleene_ne_undefined_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
 
 /-- Incremental satisfaction is admittance by the formula's context change potential (C.22). -/
 theorem satisfaction_incremental_iff_admits (C : Set W) (F : Formula Atom) :
@@ -291,8 +291,8 @@ end Belief
 /-- The complement's presupposition is satisfied under *believe* iff the context admits the report
 under rule (18) of [heim-1992] (p. 3:32). -/
 theorem satisfied_believe_iff_admits {E : Type*} (Dox : E → W → Set W) (a : E)
-    (p : W → SignType) {C : Set W} :
-    Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' Function.support p) ↔
+    (p : W → Trivalent) {C : Set W} :
+    Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' (Trivalent.gapExt p)ᶜ) ↔
       (Heim1992.believes Dox a (CCP.Partial.ofTrivalent p)).Admits C := by
   rw [satisfied_believe_iff, Heim1992.admits_believes_iff]
 
@@ -342,7 +342,7 @@ def Version.completions (r : Version) (F : Formula Atom) : Set (Formula Atom) :=
 Kleene value at every world of `C`, by the evaluation of item 40, which Theorem 41
 (`tokenDefined_iff`) shows equivalent to items 27–28 (item 29). -/
 def StrongKleeneAcceptable (r : Version) (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ w ∈ C, ∀ X ∈ r.completions F, X.strongKleene I w ≠ 0
+  ∀ w ∈ C, ∀ X ∈ r.completions F, X.strongKleene I w ≠ .undefined
 
 /-- Supervaluation acceptability on a version: every sentence the version evaluates is
 supervaluation-defined at every world of `C` (item 26). -/
@@ -415,18 +415,19 @@ private theorem exists_resolve_merge (c : Connective) (F G : Formula Atom)
     resolve_congr I F fun L ↦ ite_eq_left ⟨L, rfl⟩,
     resolve_congr I G fun _ ↦ ite_eq_right fun ⟨_, h⟩ ↦ append_left_ne_append_right h.symm⟩
 
-theorem resolve_of_middleKleene_ne_zero {F : Formula Atom} (h : F.middleKleene I w ≠ 0)
-    (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) (K : SyntacticEnvironment Atom) :
+theorem resolve_of_middleKleene_ne_undefined {F : Formula Atom}
+    (h : F.middleKleene I w ≠ .undefined) (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop)
+    (K : SyntacticEnvironment Atom) :
     resolve I w ρ K F ↔ w ∈ F.truth I := by
   induction F generalizing K with
   | atom p => rfl
   | trigger p p' =>
-    have hp : w ∈ I p := Set.mem_of_indicator_ne_zero h
+    have hp : w ∈ I p := by simpa [Formula.middleKleene, Formula.eval] using h
     simp only [resolve, Formula.truth, Set.mem_inter_iff, hp, not_true_eq_false, false_and,
       or_false, true_and]
   | not F ih => exact not_congr (ih (by simpa [Formula.middleKleene, Formula.eval] using h) _)
   | bin c F G ihF ihG =>
-    rw [Formula.middleKleene_bin_ne_zero] at h
+    rw [Formula.middleKleene_bin_ne_undefined] at h
     simp only [resolve, Formula.truth, Set.mem_ofPred_eq, ihF h.1]
     cases c <;> simp only [Connective.eval, Connective.localContext, Set.mem_inter_iff,
       Set.mem_univ, true_and, Set.mem_compl_iff] at h ⊢
@@ -442,22 +443,22 @@ theorem resolve_of_middleKleene_ne_zero {F : Formula Atom} (h : F.middleKleene I
 
 /-! #### Theorem 41: Strong Kleene is supervaluation over trigger tokens -/
 
-private theorem inf_ne_neg_one {a b : SignType} : a ⊓ b ≠ -1 ↔ a ≠ -1 ∧ b ≠ -1 := by
+private theorem inf_ne_false {a b : Trivalent} : a ⊓ b ≠ .false ↔ a ≠ .false ∧ b ≠ .false := by
   cases a <;> cases b <;> decide
-private theorem inf_ne_one {a b : SignType} : a ⊓ b ≠ 1 ↔ a ≠ 1 ∨ b ≠ 1 := by
+private theorem inf_ne_true {a b : Trivalent} : a ⊓ b ≠ .true ↔ a ≠ .true ∨ b ≠ .true := by
   cases a <;> cases b <;> decide
-private theorem sup_ne_neg_one {a b : SignType} : a ⊔ b ≠ -1 ↔ a ≠ -1 ∨ b ≠ -1 := by
+private theorem sup_ne_false {a b : Trivalent} : a ⊔ b ≠ .false ↔ a ≠ .false ∨ b ≠ .false := by
   cases a <;> cases b <;> decide
-private theorem sup_ne_one {a b : SignType} : a ⊔ b ≠ 1 ↔ a ≠ 1 ∧ b ≠ 1 := by
+private theorem sup_ne_true {a b : Trivalent} : a ⊔ b ≠ .true ↔ a ≠ .true ∧ b ≠ .true := by
   cases a <;> cases b <;> decide
-private theorem neg_ne_neg_one {a : SignType} : -a ≠ -1 ↔ a ≠ 1 := by
+private theorem compl_ne_false {a : Trivalent} : aᶜ ≠ .false ↔ a ≠ .true := by
   cases a <;> decide
-private theorem neg_ne_one {a : SignType} : -a ≠ 1 ↔ a ≠ -1 := by
+private theorem compl_ne_true {a : Trivalent} : aᶜ ≠ .true ↔ a ≠ .false := by
   cases a <;> decide
 
 private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment Atom) :
-    ((∃ ρ, resolve I w ρ K F) ↔ F.strongKleene I w ≠ -1) ∧
-      ((∃ ρ, ¬ resolve I w ρ K F) ↔ F.strongKleene I w ≠ 1) := by
+    ((∃ ρ, resolve I w ρ K F) ↔ F.strongKleene I w ≠ .false) ∧
+      ((∃ ρ, ¬ resolve I w ρ K F) ↔ F.strongKleene I w ≠ .true) := by
   induction F generalizing K with
   | atom p =>
     simp [resolve, Formula.strongKleene, Formula.eval]
@@ -470,13 +471,13 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
         fun h ↦ ⟨fun _ _ _ ↦ False, fun h' ↦ h'.elim h fun h'' ↦ h''.2⟩⟩
     refine ⟨e₁.trans ?_, e₀.trans ?_⟩ <;>
       simp only [Formula.strongKleene, Formula.eval, ne_eq,
-        Trivalent.indicator_apply_eq_neg_one_iff, Trivalent.indicator_apply_eq_one_iff,
-        SignType.ofProp_eq_neg_one_iff,
-        SignType.ofProp_eq_one_iff]
+        Trivalent.transplication_eq_false_iff, Trivalent.transplication_eq_true_iff,
+        Trivalent.ofProp_eq_false_iff,
+        Trivalent.ofProp_eq_true_iff]
     tauto
   | not F ih =>
-    simp only [resolve, Formula.strongKleene, Formula.eval, Pi.neg_apply, neg_ne_neg_one,
-      neg_ne_one, not_not]
+    simp only [resolve, Formula.strongKleene, Formula.eval, Pi.compl_apply, compl_ne_false,
+      compl_ne_true, not_not]
     exact ⟨(ih _).2, (ih _).1⟩
   | bin c F G ihF ihG =>
     obtain ⟨hF₁, hF₀⟩ := ihF (.left c G :: K)
@@ -484,8 +485,8 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
     have merge := exists_resolve_merge I (w := w) c F G K
     cases c <;> simp only [resolve, Formula.strongKleene, Formula.eval, Connective.table,
       Trivalent.Connectives.strongKleene_conj, Trivalent.Connectives.strongKleene_cond,
-      Trivalent.Connectives.strongKleene_disj, Connective.eval, inf_ne_neg_one, inf_ne_one,
-      sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁, ← hF₀, ← hG₁, ← hG₀]
+      Trivalent.Connectives.strongKleene_disj, Connective.eval, inf_ne_false, inf_ne_true,
+      sup_ne_false, sup_ne_true, compl_ne_false, compl_ne_true, ← hF₁, ← hF₀, ← hG₁, ← hG₀]
     · refine ⟨⟨fun ⟨ρ, a, b⟩ ↦ ⟨⟨ρ, a⟩, ⟨ρ, b⟩⟩, fun ⟨⟨ρ₁, a⟩, ⟨ρ₂, b⟩⟩ ↦ ?_⟩,
         ⟨fun ⟨ρ, h⟩ ↦ ?_, fun h ↦ h.elim (fun ⟨ρ, a⟩ ↦ ⟨ρ, fun h ↦ a h.1⟩)
           (fun ⟨ρ, b⟩ ↦ ⟨ρ, fun h ↦ b h.2⟩)⟩⟩
@@ -508,19 +509,20 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
       exact ⟨ρ, fun h ↦ h.elim (fun h ↦ a (e₁.1 h)) (fun h ↦ b (e₂.1 h))⟩
 
 -- Theorem 41
-theorem resolve_iff_of_ne_zero {F : Formula Atom} (h : F.strongKleene I w ≠ 0)
+theorem resolve_iff_of_ne_undefined {F : Formula Atom} (h : F.strongKleene I w ≠ .undefined)
     (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
-    resolve I w ρ [] F ↔ F.strongKleene I w = 1 := by
+    resolve I w ρ [] F ↔ F.strongKleene I w = .true := by
   obtain ⟨h₁, h₀⟩ := exists_resolve_iff I (w := w) F []
-  by_cases ha : F.strongKleene I w = 1
+  by_cases ha : F.strongKleene I w = .true
   · exact iff_of_true (by by_contra hn; exact h₀.1 ⟨ρ, hn⟩ ha) ha
-  · have he : F.strongKleene I w = -1 := by cases hv : F.strongKleene I w <;> simp_all
+  · have he : F.strongKleene I w = .false := by cases hv : F.strongKleene I w <;> simp_all
     exact iff_of_false (fun hr ↦ h₁.1 ⟨ρ, hr⟩ he) ha
 
 -- Theorem 41
-theorem tokenDefined_iff (F : Formula Atom) : TokenDefined I w F ↔ F.strongKleene I w ≠ 0 := by
+theorem tokenDefined_iff (F : Formula Atom) :
+    TokenDefined I w F ↔ F.strongKleene I w ≠ .undefined := by
   refine ⟨fun hd he ↦ ?_, fun hp ρ ρ' ↦ by
-    rw [resolve_iff_of_ne_zero I hp, resolve_iff_of_ne_zero I hp]⟩
+    rw [resolve_iff_of_ne_undefined I hp, resolve_iff_of_ne_undefined I hp]⟩
   obtain ⟨h₁, h₀⟩ := exists_resolve_iff I (w := w) F []
   obtain ⟨ρ, hρ⟩ := h₁.2 (by rw [he]; decide)
   obtain ⟨ρ', hρ'⟩ := h₀.2 (by rw [he]; decide)
@@ -529,8 +531,8 @@ theorem tokenDefined_iff (F : Formula Atom) : TokenDefined I w F ↔ F.strongKle
 /-! #### Lemmas 6–8 and 11: Kleene and supervaluations -/
 
 -- Lemma 7
-theorem supervaluationDefined_of_strongKleene_ne_zero {F : Formula Atom} (h : F.strongKleene I w ≠ 0) :
-    SupervaluationDefined I w F :=
+theorem supervaluationDefined_of_strongKleene_ne_undefined {F : Formula Atom}
+    (h : F.strongKleene I w ≠ .undefined) : SupervaluationDefined I w F :=
   fun _ _ ↦ (tokenDefined_iff I F).2 h _ _
 
 theorem resolve_congr_triggers {ρ ρ' : SyntacticEnvironment Atom → Atom → Atom → Prop}
@@ -559,8 +561,9 @@ theorem resolve_congr_triggers {ρ ρ' : SyntacticEnvironment Atom → Atom → 
 
 -- Lemma 6
 theorem supervaluationDefined_iff_of_nodup {F : Formula Atom} (hF : (F.triggers.map Prod.snd).Nodup) :
-    SupervaluationDefined I w F ↔ F.strongKleene I w ≠ 0 := by
-  refine ⟨fun hs ↦ (tokenDefined_iff I F).1 fun ρ ρ' ↦ ?_, supervaluationDefined_of_strongKleene_ne_zero I⟩
+    SupervaluationDefined I w F ↔ F.strongKleene I w ≠ .undefined := by
+  refine ⟨fun hs ↦ (tokenDefined_iff I F).1 fun ρ ρ' ↦ ?_,
+    supervaluationDefined_of_strongKleene_ne_undefined I⟩
   have key (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) : resolve I w ρ [] F ↔
       resolve I w (fun _ p p' ↦ ∃ o ∈ F.triggers, o.2 = (p, p') ∧ ρ o.1 p p') [] F :=
     resolve_congr_triggers I F fun o ho ↦ by
@@ -574,7 +577,7 @@ theorem supervaluationDefined_iff_of_nodup {F : Formula Atom} (hF : (F.triggers.
 -- Lemma 8
 theorem StrongKleeneAcceptable.supervaluationAcceptable {r : Version} {C : Set W} {F : Formula Atom}
     (h : StrongKleeneAcceptable I r C F) : SupervaluationAcceptable I r C F :=
-  fun w hw X hX ↦ supervaluationDefined_of_strongKleene_ne_zero I (h w hw X hX)
+  fun w hw X hX ↦ supervaluationDefined_of_strongKleene_ne_undefined I (h w hw X hX)
 
 /-! #### Incremental acceptability -/
 
@@ -645,9 +648,9 @@ private theorem incrementally_iff_middleKleene (P : Formula Atom → Prop)
     (hnot : ∀ X : Formula Atom, P (.not X) ↔ P X)
     (hleft : ∀ (c : Connective) (X : Formula Atom), (∀ (c' : Connective) (G' : Formula Atom),
       (c = .cond ↔ c' = .cond) → G'.triggers = [] → P (.bin c' X G')) ↔ P X)
-    (hright : ∀ (c : Connective) (F Y : Formula Atom), F.middleKleene I w ≠ 0 →
+    (hright : ∀ (c : Connective) (F Y : Formula Atom), F.middleKleene I w ≠ .undefined →
       (P (.bin c F Y) ↔ (w ∈ c.localContext Set.univ (F.truth I) → P Y)))
-    (F : Formula Atom) : Incrementally P F ↔ F.middleKleene I w ≠ 0 := by
+    (F : Formula Atom) : Incrementally P F ↔ F.middleKleene I w ≠ .undefined := by
   induction F with
   | atom p =>
     exact iff_of_true (incrementally_atom P p) (by simp [Formula.middleKleene, Formula.eval])
@@ -655,7 +658,8 @@ private theorem incrementally_iff_middleKleene (P : Formula Atom → Prop)
   | not F ih =>
     rw [incrementally_not, Incrementally.congr hnot, ih]; simp [Formula.middleKleene, Formula.eval]
   | bin c F G ihF ihG =>
-    rw [incrementally_bin, Incrementally.congr (hleft c), ihF, Formula.middleKleene_bin_ne_zero]
+    rw [incrementally_bin, Incrementally.congr (hleft c), ihF,
+      Formula.middleKleene_bin_ne_undefined]
     refine and_congr_right fun hF ↦ ?_
     rw [Incrementally.congr (hright c F · hF), ← ihG]
     exact ⟨fun h hk o ho K' hK hT ↦ h o ho K' hK hT hk, fun h o ho K' hK hT hk ↦ h hk o ho K' hK hT⟩
@@ -665,45 +669,47 @@ private def taut (a : Atom) : Formula Atom := .bin .cond (.atom a) (.atom a)
 
 private theorem triggers_taut (a : Atom) : (taut a).triggers = [] := rfl
 
-private theorem middleKleene_ne_zero_of_triggers {F : Formula Atom} (h : F.triggers = []) :
-    F.middleKleene I w ≠ 0 :=
-  (Formula.middleKleene_ne_zero_iff I F w).2 fun o ho ↦ by simp [h] at ho
+private theorem middleKleene_ne_undefined_of_triggers {F : Formula Atom} (h : F.triggers = []) :
+    F.middleKleene I w ≠ .undefined :=
+  (Formula.middleKleene_ne_undefined_iff I F w).2 fun o ho ↦ by simp [h] at ho
 
 open Classical in
-theorem strongKleene_eq_ofProp_of_middleKleene_ne_zero {F : Formula Atom}
-    (h : F.middleKleene I w ≠ 0) : F.strongKleene I w = SignType.ofProp (w ∈ F.truth I) := by
-  have hp : F.strongKleene I w ≠ 0 := (tokenDefined_iff I F).1 fun ρ ρ' ↦ by
-    rw [resolve_of_middleKleene_ne_zero I h, resolve_of_middleKleene_ne_zero I h]
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp [hp]) ?_
-  rw [SignType.ofProp_eq_one_iff, ← resolve_iff_of_ne_zero I hp fun _ _ _ ↦ True]
-  exact resolve_of_middleKleene_ne_zero I h _ _
+theorem strongKleene_eq_ofProp_of_middleKleene_ne_undefined {F : Formula Atom}
+    (h : F.middleKleene I w ≠ .undefined) :
+    F.strongKleene I w = Trivalent.ofProp (w ∈ F.truth I) := by
+  have hp : F.strongKleene I w ≠ .undefined := (tokenDefined_iff I F).1 fun ρ ρ' ↦ by
+    rw [resolve_of_middleKleene_ne_undefined I h, resolve_of_middleKleene_ne_undefined I h]
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [hp]) ?_
+  rw [Trivalent.ofProp_eq_true_iff, ← resolve_iff_of_ne_undefined I hp fun _ _ _ ↦ True]
+  exact resolve_of_middleKleene_ne_undefined I h _ _
 
-private theorem strongKleene_ne_zero (c : Connective) {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
-    c.table .strongKleene a b ≠ 0 := by
+private theorem strongKleene_ne_undefined (c : Connective) {a b : Trivalent}
+    (ha : a ≠ .undefined) (hb : b ≠ .undefined) : c.table .strongKleene a b ≠ .undefined := by
   revert ha hb; cases c <;> cases a <;> cases b <;> decide
 
 private theorem incrementally_strongKleene_iff (w : W) (F : Formula Atom) :
-    Incrementally (fun X ↦ X.strongKleene I w ≠ 0) F ↔ F.middleKleene I w ≠ 0 := by
+    Incrementally (fun X ↦ X.strongKleene I w ≠ .undefined) F ↔
+      F.middleKleene I w ≠ .undefined := by
   refine incrementally_iff_middleKleene I _ (fun _ _ ↦ by simp [Formula.strongKleene, Formula.eval])
     (fun _ ↦ by simp [Formula.strongKleene, Formula.eval]) (fun c X ↦ ?_) (fun c F Y hF ↦ ?_) F
   · have : Nonempty Atom := X.nonempty_atom
     let a := Classical.arbitrary Atom
-    have htaut : (taut a).strongKleene I w = 1 := by
+    have htaut : (taut a).strongKleene I w = .true := by
       by_cases ha : w ∈ I a <;> simp [taut, Formula.strongKleene, Formula.eval, ha]
     refine ⟨fun h ↦ ?_, fun hX c' G' _ hG ↦ ?_⟩
     · cases c
       · simpa [Formula.strongKleene, Formula.eval, htaut] using h .conj (taut a) Iff.rfl rfl
       · simpa [Formula.strongKleene, Formula.eval, htaut] using h .cond (.not (taut a)) Iff.rfl rfl
       · simpa [Formula.strongKleene, Formula.eval, htaut] using h .disj (.not (taut a)) Iff.rfl rfl
-    · have hG' := strongKleene_eq_ofProp_of_middleKleene_ne_zero I (w := w)
-        (middleKleene_ne_zero_of_triggers I hG)
-      exact strongKleene_ne_zero c' hX (by simp [hG'])
-  · have hF' := strongKleene_eq_ofProp_of_middleKleene_ne_zero I hF
+    · have hG' := strongKleene_eq_ofProp_of_middleKleene_ne_undefined I (w := w)
+        (middleKleene_ne_undefined_of_triggers I hG)
+      exact strongKleene_ne_undefined c' hX (by simp [hG'])
+  · have hF' := strongKleene_eq_ofProp_of_middleKleene_ne_undefined I hF
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp [Formula.strongKleene, Formula.eval, Connective.localContext, hF', ht]
 
 private theorem incrementally_supervaluationDefined_iff (w : W) (F : Formula Atom) :
-    Incrementally (SupervaluationDefined I w) F ↔ F.middleKleene I w ≠ 0 := by
+    Incrementally (SupervaluationDefined I w) F ↔ F.middleKleene I w ≠ .undefined := by
   have hconst (σ : Atom → Atom → Prop) (K : SyntacticEnvironment Atom) (X : Formula Atom) :=
     resolve_const I (w := w) σ K [] X
   have hbin (σ : Atom → Atom → Prop) (c : Connective) (X Y : Formula Atom) :
@@ -713,7 +719,7 @@ private theorem incrementally_supervaluationDefined_iff (w : W) (F : Formula Ato
     rw [hconst σ [.left c Y] X, hconst σ [.right c X] Y]
   have hfree {G : Formula Atom} (hG : G.triggers = []) (σ : Atom → Atom → Prop) :
       resolve I w (fun _ ↦ σ) [] G ↔ w ∈ G.truth I :=
-    resolve_of_middleKleene_ne_zero I (middleKleene_ne_zero_of_triggers I hG) _ _
+    resolve_of_middleKleene_ne_undefined I (middleKleene_ne_undefined_of_triggers I hG) _ _
   refine incrementally_iff_middleKleene I _ (fun p p' ↦ ?_) (fun X ↦ ?_) (fun c X ↦ ?_)
     (fun c F Y hF ↦ ?_) F
   · by_cases hp : w ∈ I p
@@ -738,38 +744,38 @@ private theorem incrementally_supervaluationDefined_iff (w : W) (F : Formula Ato
         rw [hbin, hbin, hfree (G := (taut a).not) rfl, hfree (G := (taut a).not) rfl] at this
         simpa [taut, Formula.truth, Connective.eval] using this
     · rw [hbin, hbin, hfree hG, hfree hG, hX σ σ']
-  · have hF' (σ : Atom → Atom → Prop) := resolve_of_middleKleene_ne_zero I hF (fun _ ↦ σ) []
+  · have hF' (σ : Atom → Atom → Prop) := resolve_of_middleKleene_ne_undefined I hF (fun _ ↦ σ) []
     simp only [SupervaluationDefined, hbin, hF']
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp [Connective.eval, Connective.localContext, ht]
 
 -- Theorems 36 and 38a
 theorem strongKleeneAcceptable_incremental_iff (C : Set W) (F : Formula Atom) :
-    StrongKleeneAcceptable I .incremental C F ↔ C ⊆ Function.support (F.middleKleene I) :=
+    StrongKleeneAcceptable I .incremental C F ↔ C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ :=
   forall₂_congr fun w _ ↦
     forall_mem_completions_incremental.trans (incrementally_strongKleene_iff I w F)
 
 theorem supervaluationAcceptable_incremental_iff (C : Set W) (F : Formula Atom) :
-    SupervaluationAcceptable I .incremental C F ↔ C ⊆ Function.support (F.middleKleene I) :=
+    SupervaluationAcceptable I .incremental C F ↔ C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ :=
   forall₂_congr fun w _ ↦
     forall_mem_completions_incremental.trans (incrementally_supervaluationDefined_iff I w F)
 
 theorem strongKleeneAcceptable_symmetric_iff (C : Set W) (F : Formula Atom) :
-    StrongKleeneAcceptable I .symmetric C F ↔ C ⊆ Function.support (F.strongKleene I) := by
-  simp only [Set.subset_def, Function.mem_support]
+    StrongKleeneAcceptable I .symmetric C F ↔ C ⊆ (Trivalent.gapExt (F.strongKleene I))ᶜ := by
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt]
   refine forall₂_congr fun w _ ↦ forall_mem_completions_symmetric.trans ⟨fun h ↦ ?_, fun h _ ↦ h⟩
   by_cases hF : F.triggers = []
-  · simp [strongKleene_eq_ofProp_of_middleKleene_ne_zero I
-      (middleKleene_ne_zero_of_triggers I (w := w) hF)]
+  · simp [strongKleene_eq_ofProp_of_middleKleene_ne_undefined I
+      (middleKleene_ne_undefined_of_triggers I (w := w) hF)]
   · exact h hF
 
 theorem supervaluationAcceptable_symmetric_iff (C : Set W) (F : Formula Atom) :
     SupervaluationAcceptable I .symmetric C F ↔ ∀ w ∈ C, SupervaluationDefined I w F := by
   refine forall₂_congr fun w _ ↦ forall_mem_completions_symmetric.trans ⟨fun h ↦ ?_, fun h _ ↦ h⟩
   by_cases hF : F.triggers = []
-  · refine supervaluationDefined_of_strongKleene_ne_zero I ?_
-    simp [strongKleene_eq_ofProp_of_middleKleene_ne_zero I
-      (middleKleene_ne_zero_of_triggers I (w := w) hF)]
+  · refine supervaluationDefined_of_strongKleene_ne_undefined I ?_
+    simp [strongKleene_eq_ofProp_of_middleKleene_ne_undefined I
+      (middleKleene_ne_undefined_of_triggers I (w := w) hF)]
   · exact h hF
 
 /-- Incremental Strong Kleene acceptability is incremental supervaluation acceptability (Theorem 36,
@@ -783,7 +789,7 @@ theorem strongKleeneAcceptable_iff_supervaluationAcceptable_incremental (C : Set
 theorem StrongKleeneAcceptable.symmetric {C : Set W} {F : Formula Atom}
     (h : StrongKleeneAcceptable I .incremental C F) : StrongKleeneAcceptable I .symmetric C F :=
   (strongKleeneAcceptable_symmetric_iff I C F).2 fun _ hw ↦ by
-    simp [strongKleene_eq_ofProp_of_middleKleene_ne_zero I
+    simp [strongKleene_eq_ofProp_of_middleKleene_ne_undefined I
       ((strongKleeneAcceptable_incremental_iff I C F).1 h hw)]
 
 theorem SupervaluationAcceptable.symmetric {C : Set W} {F : Formula Atom}
@@ -817,7 +823,7 @@ theorem transparency_symmetric_not_strongKleeneAcceptable_not_supervaluationAcce
     rcases hw with rfl | rfl <;> rcases ho with rfl | rfl <;>
       simp [SyntacticEnvironment.occurrence, SyntacticEnvironment.truth,
         SyntacticEnvironment.Step.truth, Connective.eval, Formula.truth, hp₁, hq₁, hp₂, hq₂]
-  · have h₁ : Formula.strongKleene I (.bin .conj (.trigger p p') (.trigger q q')) w₁ ≠ 0 :=
+  · have h₁ : Formula.strongKleene I (.bin .conj (.trigger p p') (.trigger q q')) w₁ ≠ .undefined :=
       (strongKleeneAcceptable_symmetric_iff I _ _).1 h (Set.mem_insert w₁ _)
     simp [Formula.strongKleene, Formula.eval, hp₁, hq₁] at h₁
   · have := (supervaluationAcceptable_symmetric_iff I _ _).1 h w₁ (Set.mem_insert _ _)
@@ -834,8 +840,8 @@ theorem supervaluationAcceptable_symmetric_not_strongKleeneAcceptable {p p' : At
   refine ⟨(supervaluationAcceptable_symmetric_iff I _ _).2 fun w _ σ σ' ↦ ?_, fun h ↦ ?_⟩
   · simp only [resolve, Connective.eval]
     tauto
-  · have h₀ : Formula.strongKleene I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠ 0 :=
-      (strongKleeneAcceptable_symmetric_iff I _ _).1 h (Set.mem_univ w₀)
+  · have h₀ : Formula.strongKleene I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠
+        .undefined := (strongKleeneAcceptable_symmetric_iff I _ _).1 h (Set.mem_univ w₀)
     simp [Formula.strongKleene, Formula.eval, hw₀] at h₀
 
 end Trivalent
@@ -989,7 +995,7 @@ variable {q : NumberTree} {R : Formula Atom} {p a : Atom}
 private theorem resolve_iff_of_triggers {F : Formula Atom} (hF : F.triggers = [])
     (x : W × E) (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
     Schlenker2009.resolve J x ρ [] F ↔ x ∈ F.truth J :=
-  resolve_of_middleKleene_ne_zero J (middleKleene_ne_zero_of_triggers J hF) ρ []
+  resolve_of_middleKleene_ne_undefined J (middleKleene_ne_undefined_of_triggers J hF) ρ []
 
 private theorem resolve_trigger_iff (hR : R.triggers = []) {w : W} {ρR ρS} :
     resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toDet (fun e ↦ (w, e) ∈ R.truth J)

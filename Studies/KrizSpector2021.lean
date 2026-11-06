@@ -266,8 +266,8 @@ instance (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop) [∀ D w, 
 
 /-- The trivalent value of the sentence is true, false, or undefined on its candidates. -/
 def value (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop) [∀ D w, Decidable (φ D w)]
-    (w : W) : SignType :=
-  if TrueOnAll x φ w then 1 else if FalseOnAll x φ w then -1 else 0
+    (w : W) : Trivalent :=
+  if TrueOnAll x φ w then .true else if FalseOnAll x φ w then .false else .undefined
 
 -- (61), (62)
 theorem falseOnAll_iff_trueOnAll_not (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop)
@@ -307,14 +307,14 @@ theorem value_reading_distributive {x : Finset Atom} (hx : x.Nonempty) (Q : Atom
       obtain ⟨a, ha⟩ := (mem_parts.1 hz).1
       exact h a ((mem_parts.1 hz).2 ha) (hQ a ha)
   unfold value barePlural
-  obtain h | h | h := (SignType.supervaluation x (Q · w)).trichotomy <;> rw [h]
-  · rw [SignType.supervaluation_eq_neg_one_iff] at h
+  obtain h | h | h := (Trivalent.supervaluation x (Q · w)).trichotomy <;> rw [h]
+  · rw [Trivalent.supervaluation_eq_false_iff] at h
     obtain ⟨a, ha⟩ := hx
     rw [ite_eq_right fun h' ↦ h.2 a ha (ht.1 h' a ha), ite_eq_left (hf.2 h.2)]
-  · rw [SignType.supervaluation_eq_zero_iff] at h
+  · rw [Trivalent.supervaluation_eq_undefined_iff] at h
     obtain ⟨⟨a, ha, hQ⟩, b, hb, hQ'⟩ := h
     rw [ite_eq_right fun h' ↦ hQ' (ht.1 h' b hb), ite_eq_right fun h' ↦ hf.1 h' a ha hQ]
-  · rw [SignType.supervaluation_eq_one_iff] at h
+  · rw [Trivalent.supervaluation_eq_true_iff] at h
     exact ite_eq_left (ht.2 h)
 
 /-! ### Non-monotonic contexts (§3.1)
@@ -376,7 +376,7 @@ theorem exactlyTwo_not_falseOnAll : ¬ FalseOnAll books exactlyTwo read₀ := by
   have hT : exactlyTwo (conv (insert books {{.a, .b}})) read₀ := by decide +kernel
   exact h _ hD hT
 
-theorem value_exactlyTwo : value books exactlyTwo read₀ = 0 := by
+theorem value_exactlyTwo : value books exactlyTwo read₀ = .undefined := by
   simp [value, exactlyTwo_not_trueOnAll, exactlyTwo_not_falseOnAll]
 
 end ExactlyTwo
@@ -528,20 +528,20 @@ end ReadingList
 
 /-- Križ's Addressing condition, the paper's (34a), has strong relevance as its special case
 on bivalent propositions. -/
-theorem addressesIssue_iff_stronglyRelevant {S : W → SignType}
+theorem addressesIssue_iff_stronglyRelevant {S : W → Trivalent}
     (hbiv : Trivalent.IsBivalent S) (q : Setoid W) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ posSupport S) := by
+    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ Trivalent.posExt S) := by
   constructor
   · intro h
     refine Setoid.decides_iff.2 fun w₁ w₂ hr ↦ ?_
-    show S w₁ = 1 ↔ S w₂ = 1
+    show S w₁ = .true ↔ S w₂ = .true
     constructor
     · intro h₁
       exact (hbiv w₂).resolve_right fun h₂ ↦ h ⟨w₁, w₂, hr, h₁, h₂⟩
     · intro h₂
       exact (hbiv w₁).resolve_right fun h₁ ↦ h ⟨w₂, w₁, q.symm' hr, h₂, h₁⟩
   · rintro h ⟨w₁, w₂, hr, h₁, h₂⟩
-    have h₂' : S w₂ = 1 := (Setoid.decides_iff.1 h w₁ w₂ hr).1 h₁
+    have h₂' : S w₂ = .true := (Setoid.decides_iff.1 h w₁ w₂ hr).1 h₁
     simp [h₂] at h₂'
 
 /-! The paper's (36): to pass, Mary must solve all of the math problems, or some of them and
@@ -570,22 +570,22 @@ theorem passFail_r (w v : ExamWorld Math) : passFail w v ↔ (Pass w ↔ Pass v)
   simp
 
 /-- *Mary solved the math problems* as Križ's trivalent sentence. -/
-def solvedMath : (ExamWorld Math → SignType) := barePlural (fun m w ↦ m ∈ w.1) Finset.univ
+def solvedMath : (ExamWorld Math → Trivalent) := barePlural (fun m w ↦ m ∈ w.1) Finset.univ
 
-theorem solvedMath_eq_one_iff (w : ExamWorld Math) :
-    solvedMath w = 1 ↔ w.1 = Finset.univ := by
-  simp [solvedMath, barePlural, SignType.supervaluation_eq_one_iff, Finset.eq_univ_iff_forall]
+theorem solvedMath_eq_true_iff (w : ExamWorld Math) :
+    solvedMath w = .true ↔ w.1 = Finset.univ := by
+  simp [solvedMath, barePlural, Trivalent.supervaluation_eq_true_iff, Finset.eq_univ_iff_forall]
 
-theorem solvedMath_eq_neg_one_iff [Nonempty Math] (w : ExamWorld Math) :
-    solvedMath w = -1 ↔ w.1 = ∅ := by
-  simp [solvedMath, barePlural, SignType.supervaluation_eq_neg_one_iff,
+theorem solvedMath_eq_false_iff [Nonempty Math] (w : ExamWorld Math) :
+    solvedMath w = .false ↔ w.1 = ∅ := by
+  simp [solvedMath, barePlural, Trivalent.supervaluation_eq_false_iff,
     Finset.eq_empty_iff_forall_notMem]
 
 theorem addressesIssue_solvedMath [Nonempty Math] :
     addressesIssue passFail (solvedMath (Math := Math)) := by
   rintro ⟨w₁, w₂, hr, h₁, h₂⟩
-  rw [solvedMath_eq_one_iff] at h₁
-  rw [solvedMath_eq_neg_one_iff] at h₂
+  rw [solvedMath_eq_true_iff] at h₁
+  rw [solvedMath_eq_false_iff] at h₂
   have hp : Pass w₂ := ((passFail_r w₁ w₂).1 hr).1 (Or.inl h₁)
   rcases hp with hp | hp
   · exact Finset.univ_nonempty.ne_empty (hp ▸ h₂)
@@ -595,7 +595,7 @@ theorem communicatedContent_solvedMath [Nonempty Math] :
     communicatedContent passFail (solvedMath (Math := Math)) = {w | Pass w} := by
   ext w
   simp only [mem_communicatedContent, sufficientlyTrue, Set.mem_ofPred_eq, passFail_r,
-    solvedMath_eq_one_iff]
+    solvedMath_eq_true_iff]
   constructor
   · rintro ⟨w', hr, h⟩
     exact hr.2 (Or.inl h)
@@ -946,9 +946,9 @@ theorem falseOnAllUp_iff {x : Finset Atom} (hx : x.Nonempty) (P : Finset Atom �
 
 /-- The trivalent value on the appendix's candidates. -/
 def valueUp (x : Finset Atom) (P : Finset Atom → W → Prop) [∀ z w, Decidable (P z w)]
-    (w : W) : SignType :=
-  if ∀ D ∈ CandUp x, reading D P w then 1
-  else if ∀ D ∈ CandUp x, ¬ reading D P w then -1 else 0
+    (w : W) : Trivalent :=
+  if ∀ D ∈ CandUp x, reading D P w then .true
+  else if ∀ D ∈ CandUp x, ¬ reading D P w then .false else .undefined
 
 theorem valueUp_eq_generalisedTruthValue {x : Finset Atom} (hx : x.Nonempty)
     (P : Finset Atom → W → Prop) [∀ z w, Decidable (P z w)] (w : W) :
@@ -1029,13 +1029,14 @@ theorem mem_cellResolutions_iff {n : ℕ} {b : Bool} :
 /-- The value of a sentence under the quantifier `q` on a display, a cell for each count of
 objects with the property: true when every choice of a candidate for each cell makes it true,
 false when none does, and a gap otherwise. -/
-def displayValue (q : Quantifier.NumberTree) [DecidableRel q] (counts : List ℕ) : SignType :=
-  SignType.supervaluation (counts.map cellResolutions).sections.toFinset (KrizChemla2015.holds q)
+def displayValue (q : Quantifier.NumberTree) [DecidableRel q] (counts : List ℕ) : Trivalent :=
+  Trivalent.supervaluation (counts.map cellResolutions).sections.toFinset (KrizChemla2015.holds q)
 
 theorem displayValue_eq_pointwise (q : Quantifier.NumberTree) [DecidableRel q] (counts : List ℕ) :
     displayValue q counts = KrizChemla2015.pointwise q (counts.map KrizChemla2015.cell) := by
   have hcell (n : ℕ) (b : Bool) : b ∈ cellResolutions n ↔
-      b ∈ [decide (0 ≤ KrizChemla2015.cell n), decide (KrizChemla2015.cell n = 1)] := by
+      b ∈ [decide (.undefined ≤ KrizChemla2015.cell n),
+        decide (KrizChemla2015.cell n = .true)] := by
     simp only [KrizChemla2015.designated_lp_cell, KrizChemla2015.designated_k3_cell,
       cellResolutions]
     split_ifs <;> cases b <;> simp <;> omega
@@ -1063,11 +1064,11 @@ variable [DecidableEq Atom] {R : Atom → Atom → W → Prop} {x y z : Finset A
 -/
 def Reciprocated (R : Atom → Atom → W → Prop) (z y : Finset Atom) (w : W) : Prop :=
   Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
-    (Relation.Map (R · · w) ({·}) ({·})) z y = 1
+    (Relation.Map (R · · w) ({·}) ({·})) z y = .true
 
 theorem reciprocated_iff :
     Reciprocated R z y w ↔ z.Nonempty ∧ Set.LiftRel (fun a b ↦ R a b w ∧ a ≠ b) ↑z ↑y := by
-  simp only [Reciprocated, Beck2001.cumulatedReading_atom_eq_one_iff,
+  simp only [Reciprocated, Beck2001.cumulatedReading_atom_eq_true_iff,
     Sternefeld1998.map_singleton_singleton]
 
 theorem reciprocated_self_iff :
@@ -1175,7 +1176,7 @@ theorem reciprocated_singleton (a : Atom) (w : W) :
     Beck2001.Examples.ex119.judgment ≠ .acceptable ∧
     ∀ H : HParam Atom, H.Admissible → ∀ z ∈ H i {a}, ∀ y ∈ H j {a},
       Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
-        (Relation.Map (R · · w) ({·}) ({·})) z y = 0 := by
+        (Relation.Map (R · · w) ({·}) ({·})) z y = .undefined := by
   refine ⟨forall_not_pred₂_reciprocated_iff.2 fun u hu v hv hne _ ↦
     hne ((Finset.mem_singleton.1 hu).trans (Finset.mem_singleton.1 hv).symm),
     by decide, fun H hH z hz y hy ↦ ?_⟩
@@ -1185,7 +1186,7 @@ theorem reciprocated_singleton (a : Atom) (w : W) :
     exact Finset.Subset.antisymm hsub (Finset.singleton_subset_iff.2
       (let ⟨c, hc⟩ := hne; Finset.mem_singleton.1 (hsub hc) ▸ hc))
   rw [key (hH i {a}) hz, key (hH j {a}) hy]
-  exact Beck2001.weakReading_eq_zero_iff.2 Finset.not_nontrivial_singleton
+  exact Beck2001.weakReading_eq_undefined_iff.2 Finset.not_nontrivial_singleton
 
 /-- The parameter whose candidate at `x` is based on the part `U`. -/
 def HParam.basedOn (x U : Finset Atom) : HParam Atom :=

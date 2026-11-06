@@ -15,13 +15,13 @@ presupposition is possibility along it, `◇[R]` of `Logic/Modal`.
 
 The three classes differ only in the polarity they require of the prior state and of the result
 state (`Phasal.Prior`, `Phasal.Result`). An inception that is true is Dowty's BECOME, a state
-that holds having failed before (`denote_inception_eq_one_iff`). A cessation is the inception of
+that holds having failed before (`denote_inception_eq_true_iff`). A cessation is the inception of
 the complementary state (`denote_cessation_eq_inception`) and the negation of a continuation
-(`denote_cessation_eq_neg`), and a continuation is *again* applied to the state
+(`denote_cessation_eq_compl`), and a continuation is *again* applied to the state
 (`denote_continuation`). Where `R` relates an index to every earlier one a state may have both
 held and failed before, so that a cessation and an inception of it are both defined; the two
 exclude one another exactly where the prior index is unique
-(`forall_denote_cessation_eq_zero_or_inception_eq_zero_iff`).
+(`forall_denote_cessation_eq_undefined_or_inception_eq_undefined_iff`).
 
 ## Main definitions
 
@@ -33,12 +33,12 @@ exclude one another exactly where the prior index is unique
 
 ## Main results
 
-* `Aspect.Phasal.denote_eq_one_iff`: a phasal verb is true where some earlier index and the
+* `Aspect.Phasal.denote_eq_true_iff`: a phasal verb is true where some earlier index and the
   index of evaluation stand in its transition.
 * `Aspect.Phasal.result_iff_not_prior`: the classes other than continuation are changes, the
   result state having the opposite polarity to the prior state.
-* `Aspect.Phasal.forall_denote_cessation_eq_zero_or_inception_eq_zero_iff`: no state can both
-  stop and start at an index exactly when the index has at most one earlier index.
+* `Aspect.Phasal.forall_denote_cessation_eq_undefined_or_inception_eq_undefined_iff`: no state can
+  both stop and start at an index exactly when the index has at most one earlier index.
 
 ## References
 
@@ -129,47 +129,50 @@ theorem not_transition_cessation_of_continuation (h : continuation.Transition p 
 open Classical in
 /-- `t.denote R P` asserts the result state of `P` at an index and presupposes its prior state
 at one of the indices that `R` relates it to, the earlier ones. -/
-noncomputable def denote (t : Phasal) (R : SetRel ι ι) (P : ι → Prop) : ι → SignType :=
-  {i | ◇[R] (fun i ↦ t.Prior (P i)) i}.indicator fun i ↦ SignType.ofProp (t.Result (P i))
+noncomputable def denote (t : Phasal) (R : SetRel ι ι) (P : ι → Prop) : ι → Trivalent :=
+  fun i ↦ Trivalent.transplication (Trivalent.ofProp (◇[R] (fun i ↦ t.Prior (P i)) i))
+    (Trivalent.ofProp (t.Result (P i)))
 
 variable {t : Phasal}
 
-@[simp] theorem denote_eq_zero_iff : t.denote R P i = 0 ↔ ¬ ◇[R] (fun i ↦ t.Prior (P i)) i := by
+@[simp] theorem denote_eq_undefined_iff :
+    t.denote R P i = .undefined ↔ ¬ ◇[R] (fun i ↦ t.Prior (P i)) i := by
   simp [denote]
 
 /-- A phasal verb is true where an earlier index and the index of evaluation stand in its
 transition. -/
-theorem denote_eq_one_iff : t.denote R P i = 1 ↔ ∃ i', i ~[R] i' ∧ t.Transition (P i') (P i) := by
-  simp only [denote, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff]
+theorem denote_eq_true_iff :
+    t.denote R P i = .true ↔ ∃ i', i ~[R] i' ∧ t.Transition (P i') (P i) := by
+  simp only [denote, Trivalent.transplication_eq_true_iff,
+    Trivalent.ofProp_eq_true_iff]
   exact ⟨fun ⟨⟨i', hr, hp⟩, hq⟩ ↦ ⟨i', hr, hp, hq⟩, fun ⟨i', hr, hp, hq⟩ ↦ ⟨⟨i', hr, hp⟩, hq⟩⟩
 
-theorem denote_inception_eq_one_iff : inception.denote R P i = 1 ↔ Become R P i := by
+theorem denote_inception_eq_true_iff : inception.denote R P i = .true ↔ Become R P i := by
   simp [denote, Become]
 
 theorem denote_continuation : continuation.denote R P = again R P := rfl
 
-theorem denote_cessation_eq_neg : cessation.denote R P = -continuation.denote R P :=
-  funext fun _ ↦ SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [denote])
+theorem denote_cessation_eq_compl : cessation.denote R P = (continuation.denote R P)ᶜ :=
+  funext fun _ ↦ Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp [denote])
 
 theorem denote_cessation_eq_inception :
     cessation.denote R P = inception.denote R (fun i ↦ ¬ P i) :=
-  funext fun _ ↦ SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [denote])
+  funext fun _ ↦ Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp [denote])
 
-theorem denote_cessation_eq_one_iff :
-    cessation.denote R P i = 1 ↔ Become R (fun i ↦ ¬ P i) i := by
-  rw [denote_cessation_eq_inception, denote_inception_eq_one_iff]
+theorem denote_cessation_eq_true_iff :
+    cessation.denote R P i = .true ↔ Become R (fun i ↦ ¬ P i) i := by
+  rw [denote_cessation_eq_inception, denote_inception_eq_true_iff]
 
 /-- A cessation and an inception presuppose contradictory prior states, though possibly of
 different earlier indices, so that for no state are both defined at an index exactly when the
 index has at most one earlier index. -/
-theorem forall_denote_cessation_eq_zero_or_inception_eq_zero_iff :
-    (∀ P : ι → Prop, cessation.denote R P i = 0 ∨ inception.denote R P i = 0) ↔
+theorem forall_denote_cessation_eq_undefined_or_inception_eq_undefined_iff :
+    (∀ P : ι → Prop, cessation.denote R P i = .undefined ∨ inception.denote R P i = .undefined) ↔
       ∀ ⦃j⦄, i ~[R] j → ∀ ⦃k⦄, i ~[R] k → j = k := by
   rw [← diamond_le_box_at_iff]
   refine forall_congr' fun P ↦ ?_
-  simp only [denote_eq_zero_iff, prior_cessation, prior_inception, not_diamond, not_box, not_not,
-    or_iff_not_imp_left]
+  simp only [denote_eq_undefined_iff, prior_cessation, prior_inception, not_diamond, not_box,
+      not_not, or_iff_not_imp_left]
 
 end Phasal
 

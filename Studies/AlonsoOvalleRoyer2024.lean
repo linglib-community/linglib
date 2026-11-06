@@ -264,8 +264,8 @@ attribute [instance] ModalIndefinite.decAdmits ModalIndefinite.decBound
 /-- The item's denotation anchored to `e` is defined when the item admits the anchor and true
 when the claim holds within the bound. -/
 def ModalIndefinite.denotation (i : ModalIndefinite ι) (s : Scenario ι) (e : EventBinder) :
-    Finset ι → SignType :=
-  fun w ↦ if i.Admits s e then SignType.ofProp (Claim i.domain s e w ∧ i.Bound w) else 0
+    Finset ι → Trivalent :=
+  fun w ↦ if i.Admits s e then Trivalent.ofProp (Claim i.domain s e w ∧ i.Bound w) else .undefined
 
 /-- The item with its noun restricted to the atoms. -/
 def ModalIndefinite.atomic (i : ModalIndefinite ι) : ModalIndefinite ι := { i with domain := atoms }
@@ -294,16 +294,16 @@ def cualquiera : ModalIndefinite ι := ⟨atoms, Scenario.Normative, UniqueWitne
 def nimporteQuel : ModalIndefinite ι := ⟨atoms, Scenario.Normative, fun _ ↦ True⟩
 
 -- (49)–(50): negation targets the modal component with the existential
-theorem neg_yalnhej_denotation : -yalnhej.denotation s e w = 1 ↔ ¬ Claim sums s e w := by
-  rw [neg_eq_iff_eq_neg]
+theorem compl_yalnhej_denotation : (yalnhej.denotation s e w)ᶜ = .true ↔ ¬ Claim sums s e w := by
+  rw [Trivalent.compl_eq_true_iff]
   simp [ModalIndefinite.denotation, yalnhej]
 
 /-- *Uno cualquiera* is defined anchored to the speech event exactly when it is an order, and
 never anchored to a belief state: it has no epistemic reading, but a harmonic one under an
 imperative ((67)–(68), (86), (93)). -/
 theorem cualquiera_selective :
-    (cualquiera.denotation s .speechAct w ≠ 0 ↔ s.force = .directive) ∧
-      cualquiera.denotation s .attitude w = 0 := by
+    (cualquiera.denotation s .speechAct w ≠ .undefined ↔ s.force = .directive) ∧
+      cualquiera.denotation s .attitude w = .undefined := by
   constructor
   · by_cases h : s.force = .directive <;>
       simp [ModalIndefinite.denotation, cualquiera, Scenario.Normative, h]
@@ -311,8 +311,8 @@ theorem cualquiera_selective :
 
 -- (120)
 theorem nimporteQuel_selective :
-    (nimporteQuel.denotation s .speechAct w ≠ 0 ↔ s.force = .directive) ∧
-      nimporteQuel.denotation s .attitude w = 0 := by
+    (nimporteQuel.denotation s .speechAct w ≠ .undefined ↔ s.force = .directive) ∧
+      nimporteQuel.denotation s .attitude w = .undefined := by
   constructor
   · by_cases h : s.force = .directive <;>
       simp [ModalIndefinite.denotation, nimporteQuel, Scenario.Normative, h]
@@ -320,7 +320,7 @@ theorem nimporteQuel_selective :
 
 -- (124)–(127): where everything was taken
 theorem yalnhej_denotation_univ [Nonempty ι] :
-    yalnhej.denotation s e univ = 1 ↔ univ ∈ s.worlds e := by
+    yalnhej.denotation s e univ = .true ↔ univ ∈ s.worlds e := by
   simp [ModalIndefinite.denotation, yalnhej, claim_sums_iff, univ_nonempty]
 
 -- (122)–(123): *algún*'s bound and *uno cualquiera*'s unique witness fail where everything was
@@ -329,7 +329,7 @@ theorem not_notAll_univ : ¬ NotAll atoms Took (univ : Finset ι) := by
   simp [NotAll, Took]
 
 theorem cualquiera_denotation_univ [Nontrivial ι] (h : s.Normative e) :
-    cualquiera.denotation s e univ = -1 := by
+    cualquiera.denotation s e univ = .false := by
   have : ¬ UniqueWitness atoms Took (univ : Finset ι) := by
     rintro ⟨x, -, -, hx⟩
     obtain ⟨a, b, hab⟩ := exists_pair_ne ι
@@ -515,7 +515,7 @@ projects from binds the DP there and the sentence, negated if `neg`, is true. -/
 def Gives (i : ModalIndefinite Item) (neg : Prop) [Decidable neg] (c : Context) (site : Site)
     (r : String) : Prop :=
   ∃ e ∈ binders site c.1, ReadsFrom c.1 e r ∧
-    (if neg then -i.denotation c.1 e c.2 else i.denotation c.1 e c.2) = 1
+    (if neg then (i.denotation c.1 e c.2)ᶜ else i.denotation c.1 e c.2) = .true
 
 instance (i : ModalIndefinite Item) (neg : Prop) [Decidable neg] (c : Context) (site : Site)
     (r : String) : Decidable (Gives i neg c site r) := by

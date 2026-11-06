@@ -43,7 +43,7 @@ connectives are Peters'.
   conditionalised on the first.
 * `CCP.Partial.admits_seq_ofTrivalent`, `CCP.Partial.admits_cond_ofTrivalent`,
   `CCP.Partial.admits_disj_ofTrivalent`: the filtering connectives, derived.
-* `CCP.Partial.ofTrivalent_injective`, `CCP.Partial.ofTrivalent_one`,
+* `CCP.Partial.ofTrivalent_injective`, `CCP.Partial.ofTrivalent_true`,
   `CCP.Partial.ofTrivalent_meetMiddle`, `CCP.Partial.ofTrivalent_diff`,
   `CCP.Partial.ofTrivalent_joinWeak`, `CCP.Partial.ofTrivalent_meetWeak`: the update map is an
   isomorphism of the trivalent operations onto the operations on updates.
@@ -235,34 +235,34 @@ of [coppock-beaver-2015].
 The whole-state domain condition is what separates admittance from per-world filtering (the
 static update `CCP.up`). A context containing a single presupposition-failing world admits
 nothing, rather than silently discarding the world. -/
-def ofTrivalent (p : W → SignType) : CCP.Partial W :=
-  fun s ↦ ⟨s ⊆ Function.support p, fun _ ↦ {w ∈ s | p w = 1}⟩
+def ofTrivalent (p : W → Trivalent) : CCP.Partial W :=
+  fun s ↦ ⟨s ⊆ (Trivalent.gapExt p)ᶜ, fun _ ↦ {w ∈ s | p w = .true}⟩
 
-theorem admits_ofTrivalent (p : W → SignType) (s : Set W) :
-    (ofTrivalent p).Admits s ↔ s ⊆ Function.support p := Iff.rfl
+theorem admits_ofTrivalent (p : W → Trivalent) (s : Set W) :
+    (ofTrivalent p).Admits s ↔ s ⊆ (Trivalent.gapExt p)ᶜ := Iff.rfl
 
-theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → SignType) (s : Set W) :
+theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → Trivalent) (s : Set W) :
     (ofTrivalent p).Admits s ↔ Disjoint s (Trivalent.gapExt p) := by
-  rw [admits_ofTrivalent, Trivalent.support_eq_compl_gapExt, Set.subset_compl_iff_disjoint_right]
+  rw [admits_ofTrivalent, Set.subset_compl_iff_disjoint_right]
 
-@[simp] theorem ofTrivalent_get (p : W → SignType) (s : Set W) (h : (ofTrivalent p s).Dom) :
-    (ofTrivalent p s).get h = {w ∈ s | p w = 1} := rfl
+@[simp] theorem ofTrivalent_get (p : W → Trivalent) (s : Set W) (h : (ofTrivalent p s).Dom) :
+    (ofTrivalent p s).get h = {w ∈ s | p w = .true} := rfl
 
-theorem mem_ofTrivalent (p : W → SignType) (s t : Set W) :
-    t ∈ ofTrivalent p s ↔ s ⊆ Function.support p ∧ t = {w ∈ s | p w = 1} :=
+theorem mem_ofTrivalent (p : W → Trivalent) (s t : Set W) :
+    t ∈ ofTrivalent p s ↔ s ⊆ (Trivalent.gapExt p)ᶜ ∧ t = {w ∈ s | p w = .true} :=
   ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
-theorem mem_ofTrivalent_self (p : W → SignType) (s : Set W) :
-    s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = 1 := by
+theorem mem_ofTrivalent_self (p : W → Trivalent) (s : Set W) :
+    s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = .true := by
   refine ⟨fun ⟨_, e⟩ ↦ Set.sep_eq_self_iff_mem_true.1 e, fun h ↦ ⟨fun w hw ↦ ?_, ?_⟩⟩
-  · simp [Function.mem_support, h w hw]
+  · simp [Trivalent.mem_gapExt, h w hw]
   · exact Set.sep_eq_self_iff_mem_true.2 h
 
-theorem ofTrivalent_congr {p q : W → SignType} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
+theorem ofTrivalent_congr {p q : W → Trivalent} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
     ofTrivalent p s = ofTrivalent q s :=
   Part.ext' (forall₂_congr fun w hw ↦ by simp [h w hw])
     fun _ _ ↦ Set.ext fun w ↦ and_congr_right fun hw ↦
-      show p w = 1 ↔ q w = 1 by rw [h w hw]
+      show p w = .true ↔ q w = .true by rw [h w hw]
 
 /-! ### Connectives -/
 
@@ -319,7 +319,7 @@ theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
 
 /-! ### Eliminativity -/
 
-theorem isEliminative_ofTrivalent (p : W → SignType) :
+theorem isEliminative_ofTrivalent (p : W → Trivalent) :
     (ofTrivalent p).IsEliminative := fun _ _ h ↦ (Part.mem_mk_iff.mp h).2 ▸ Set.sep_subset _ _
 
 theorem isEliminative_neg (φ : CCP.Partial P) : (neg φ).IsEliminative := fun _ _ h ↦ by
@@ -352,52 +352,54 @@ context updated with the first argument, disjunction in the context updated with
 
 open Presupposition (Connective)
 
-theorem admits_seq_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+theorem admits_seq_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (posSupport p)) :=
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.conj.localContext s (Trivalent.posExt p)) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
-theorem admits_cond_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+theorem admits_cond_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (cond (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (posSupport p)) :=
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.cond.localContext s (Trivalent.posExt p)) :=
   admits_seq_ofTrivalent_iff p ψ s
 
-theorem admits_disj_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+theorem admits_disj_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (disj (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (posSupport p)) := by
-  have e : s \ {w ∈ s | p w = 1} = Connective.disj.localContext s (posSupport p) :=
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧
+        ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
+  have e : s \ {w ∈ s | p w = .true} = Connective.disj.localContext s (Trivalent.posExt p) :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
   · rw [← e]; exact hψ
-  · change ψ.Admits (s \ {w ∈ s | p w = 1}); rw [e]; exact hψ
+  · change ψ.Admits (s \ {w ∈ s | p w = .true}); rw [e]; exact hψ
 
 /-! ### Filtering connectives, derived
 
 Under `ofTrivalent`, the admittance conditions of the dynamic connectives are exactly the
 definedness conditions of the filtering connectives, Peters' Middle Kleene connectives: both are
-satisfaction in the local contexts (`Presupposition.subset_support_meetMiddle_iff` and its
+satisfaction in the local contexts (`Presupposition.subset_compl_gapExt_meetMiddle_iff` and its
 siblings), so Karttunen filtering is the composition law of partial updates, not a
 stipulation. -/
 
 /-- Dynamic conjunction admits `s` iff the Middle Kleene conjunction is defined throughout it. -/
-theorem admits_seq_ofTrivalent (p q : W → SignType) (s : Set W) :
+theorem admits_seq_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (p w).meetMiddle (q w) :=
-  (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
+      s ⊆ (Trivalent.gapExt fun w ↦ (p w).meetMiddle (q w))ᶜ :=
+  (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_meetMiddle_iff.symm
 
 /-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
 it. -/
-theorem admits_cond_ofTrivalent (p q : W → SignType) (s : Set W) :
+theorem admits_cond_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
-  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
+      s ⊆ (Trivalent.gapExt fun w ↦ (p w)ᶜ.joinMiddle (q w))ᶜ :=
+  (admits_cond_ofTrivalent_iff p _ s).trans
+    Presupposition.subset_compl_gapExt_compl_joinMiddle_iff.symm
 
 /-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
 the ¬φ local context being Karttunen's negative-antecedent filtering. -/
-theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
+theorem admits_disj_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
-  (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_support_joinMiddle_iff.symm
+      s ⊆ (Trivalent.gapExt fun w ↦ (p w).joinMiddle (q w))ᶜ :=
+  (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_compl_gapExt_joinMiddle_iff.symm
 
 /-! ### The update isomorphism
 
@@ -411,119 +413,120 @@ Heim's connectives off their isomorphic images shows that they are Peters' (foot
 ([george-2014], Definition 11). -/
 def IsTrivalentisable (φ : CCP.Partial W) : Prop := φ ∈ Set.range ofTrivalent
 
-theorem isTrivalentisable_ofTrivalent (p : W → SignType) : IsTrivalentisable (ofTrivalent p) :=
+theorem isTrivalentisable_ofTrivalent (p : W → Trivalent) : IsTrivalentisable (ofTrivalent p) :=
   ⟨p, rfl⟩
 
 /-- Distinct trivalent propositions give distinct updates, as the update of a singleton context
 recovers the value at its world ([george-2014], Remark 1). -/
 theorem ofTrivalent_injective :
-    Function.Injective (ofTrivalent : (W → SignType) → CCP.Partial W) := by
+    Function.Injective (ofTrivalent : (W → Trivalent) → CCP.Partial W) := by
   intro p q h
   funext w
-  have h₀ : ∀ r : W → SignType, (ofTrivalent r {w}).Dom ↔ ¬ r w = 0 := fun r ↦ by
-    simp [ofTrivalent, Function.mem_support]
-  have h₁ : ∀ r : W → SignType, {w} ∈ ofTrivalent r {w} ↔ r w = 1 := fun r ↦ by
+  have h₀ : ∀ r : W → Trivalent, (ofTrivalent r {w}).Dom ↔ ¬ r w = .undefined := fun r ↦ by
+    simp [ofTrivalent]
+  have h₁ : ∀ r : W → Trivalent, {w} ∈ ofTrivalent r {w} ↔ r w = .true := fun r ↦ by
     simp [mem_ofTrivalent_self]
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
   · rw [← not_iff_not, ← h₀, ← h₀, h]
   · rw [← h₁, ← h₁, h]
 
 /-- The constant truth gives the null update. -/
-@[simp] theorem ofTrivalent_one : ofTrivalent (1 : W → SignType) = PFun.id (Set W) := by
+@[simp] theorem ofTrivalent_true :
+    ofTrivalent ((fun _ ↦ .true) : W → Trivalent) = PFun.id (Set W) := by
   funext s
   exact Part.ext' (iff_of_true (fun w _ ↦ by simp) trivial) fun _ _ ↦ by simp [ofTrivalent]
 
 /-- Peters' conjunction gives sequencing. -/
-theorem ofTrivalent_meetMiddle (p q : W → SignType) :
+theorem ofTrivalent_meetMiddle (p q : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w).meetMiddle (q w)) =
       PartialUpdate.seq (ofTrivalent p) (ofTrivalent q) := by
   funext s
   refine Part.ext' (admits_seq_ofTrivalent p q s).symm fun _ _ ↦ ?_
-  show {w ∈ s | _} = {w ∈ {w ∈ s | p w = 1} | q w = 1}
+  show {w ∈ s | _} = {w ∈ {w ∈ s | p w = .true} | q w = .true}
   ext w
   simp [and_assoc]
 
 /-- An update of a pointwise Weak Kleene operation is defined where both operands' updates are. -/
-theorem admits_ofTrivalent_weak {f : SignType → SignType → SignType}
-    (hf : ∀ a b, f a b ≠ 0 ↔ a ≠ 0 ∧ b ≠ 0) (p q : W → SignType) (s : Set W) :
+theorem admits_ofTrivalent_weak {f : Trivalent → Trivalent → Trivalent}
+    (hf : ∀ a b, f a b ≠ .undefined ↔ a ≠ .undefined ∧ b ≠ .undefined) (p q : W → Trivalent)
+        (s : Set W) :
     (ofTrivalent fun w ↦ f (p w) (q w)).Admits s ↔
       (ofTrivalent p).Admits s ∧ (ofTrivalent q).Admits s := by
-  simp only [admits_ofTrivalent, Set.subset_def, Function.mem_support, hf]
+  simp only [admits_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, hf]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
 /-- The Weak Kleene difference gives the difference of updates. -/
-theorem ofTrivalent_diff (p q : W → SignType) :
-    ofTrivalent (fun w ↦ SignType.meetWeak (p w) (-q w)) =
+theorem ofTrivalent_diff (p q : W → Trivalent) :
+    ofTrivalent (fun w ↦ Trivalent.meetWeak (p w) ((q w)ᶜ)) =
       diff (ofTrivalent p) (ofTrivalent q) := by
   funext s
-  refine Part.ext' ((admits_ofTrivalent_weak (f := fun a b ↦ SignType.meetWeak a (-b))
+  refine Part.ext' ((admits_ofTrivalent_weak (f := fun a b ↦ Trivalent.meetWeak a (bᶜ))
     (by decide) p q s).trans (admits_diff _ _ s).symm) fun h _ ↦ ?_
   simp only [diff, Part.sdiff_get_eq, ofTrivalent_get]
   ext w
   by_cases hw : w ∈ s
-  · have hd : SignType.meetWeak (p w) (-q w) ≠ 0 := h hw
+  · have hd : Trivalent.meetWeak (p w) ((q w)ᶜ) ≠ .undefined := h hw
     simp only [Set.mem_ofPred_eq, Set.mem_sdiff, hw, true_and]
     revert hd; generalize p w = a; generalize q w = b
     cases a <;> cases b <;> decide
   · simp [hw]
 
 /-- Weak Kleene disjunction gives the union of updates. -/
-theorem ofTrivalent_joinWeak (p q : W → SignType) :
-    ofTrivalent (fun w ↦ SignType.joinWeak (p w) (q w)) =
+theorem ofTrivalent_joinWeak (p q : W → Trivalent) :
+    ofTrivalent (fun w ↦ Trivalent.joinWeak (p w) (q w)) =
       union (ofTrivalent p) (ofTrivalent q) := by
   funext s
-  refine Part.ext' ((admits_ofTrivalent_weak (f := SignType.joinWeak) (by decide) p q s).trans
+  refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.joinWeak) (by decide) p q s).trans
     (admits_union _ _ s).symm) fun h _ ↦ ?_
   simp only [union, Part.union_get_eq, ofTrivalent_get]
   ext w
   by_cases hw : w ∈ s
-  · have hd : SignType.joinWeak (p w) (q w) ≠ 0 := h hw
+  · have hd : Trivalent.joinWeak (p w) (q w) ≠ .undefined := h hw
     simp only [Set.mem_ofPred_eq, Set.mem_union, hw, true_and]
     revert hd; generalize p w = a; generalize q w = b
     cases a <;> cases b <;> decide
   · simp [hw]
 
 /-- Weak Kleene conjunction gives the intersection of updates. -/
-theorem ofTrivalent_meetWeak (p q : W → SignType) :
-    ofTrivalent (fun w ↦ SignType.meetWeak (p w) (q w)) =
+theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
+    ofTrivalent (fun w ↦ Trivalent.meetWeak (p w) (q w)) =
       inter (ofTrivalent p) (ofTrivalent q) := by
   funext s
-  refine Part.ext' ((admits_ofTrivalent_weak (f := SignType.meetWeak) (by decide) p q s).trans
+  refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.meetWeak) (by decide) p q s).trans
     (admits_inter _ _ s).symm) fun _ _ ↦ ?_
   simp only [inter, Part.inter_get_eq, ofTrivalent_get]
   ext w
-  simp only [Set.mem_inter_iff, Set.mem_sep_iff, SignType.meetWeak_eq_one_iff]
+  simp only [Set.mem_inter_iff, Set.mem_sep_iff, Trivalent.meetWeak_eq_true_iff]
   tauto
 
 /-- Heim negation is Kleene negation, read off the isomorphic images of `ε \ φ`
 ([george-2014], footnote 15). -/
-theorem ofTrivalent_neg (p : W → SignType) :
-    ofTrivalent (fun w ↦ -p w) = neg (ofTrivalent p) := by
-  rw [neg_eq_diff, ← ofTrivalent_one, ← ofTrivalent_diff]
-  simp only [Pi.one_apply, SignType.meetWeak_one_left]
+theorem ofTrivalent_neg (p : W → Trivalent) :
+    ofTrivalent (fun w ↦ (p w)ᶜ) = neg (ofTrivalent p) := by
+  rw [neg_eq_diff, ← ofTrivalent_true, ← ofTrivalent_diff]
+  simp only [Trivalent.meetWeak_true_left]
 
 /-- The Heim conditional is Peters' conditional, read off the isomorphic images of
 `ε \ (φ \ (φ; ψ))` ([george-2014], footnote 15). -/
-theorem ofTrivalent_cond (p q : W → SignType) :
-    ofTrivalent (fun w ↦ (-p w).joinMiddle (q w)) = cond (ofTrivalent p) (ofTrivalent q) := by
-  rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_one,
+theorem ofTrivalent_cond (p q : W → Trivalent) :
+    ofTrivalent (fun w ↦ ((p w)ᶜ).joinMiddle (q w)) = cond (ofTrivalent p) (ofTrivalent q) := by
+  rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_true,
     ← ofTrivalent_diff]
   congr 1; funext w
-  simp only [Pi.one_apply]
   generalize p w = a; generalize q w = b
   cases a <;> cases b <;> rfl
 
 /-- Beaver's disjunction is Peters' disjunction. It is not built from the toolbox, so this is
 proved directly; `ofTrivalent_joinMiddle_eq_neg_seq_neg` reads off the De Morgan form. -/
-theorem ofTrivalent_joinMiddle (p q : W → SignType) :
+theorem ofTrivalent_joinMiddle (p q : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w).joinMiddle (q w)) = disj (ofTrivalent p) (ofTrivalent q) := by
   funext s
   refine Part.ext' (admits_disj_ofTrivalent p q s).symm fun h _ ↦ ?_
-  show {w ∈ s | _} = {w ∈ s | p w = 1} ∪ {w ∈ s \ {w ∈ s | p w = 1} | q w = 1}
+  show {w ∈ s | _} = {w ∈ s | p w = .true} ∪ {w ∈ s \ {w ∈ s | p w = .true} | q w = .true}
   ext w
   by_cases hw : w ∈ s
-  · have hd : (p w).joinMiddle (q w) ≠ 0 := h hw
+  · have hd : (p w).joinMiddle (q w) ≠ .undefined := h hw
     simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_sdiff, hw, true_and]
     revert hd; generalize p w = a; generalize q w = b
     cases a <;> cases b <;> decide
@@ -531,7 +534,7 @@ theorem ofTrivalent_joinMiddle (p q : W → SignType) :
 
 /-- [george-2014]'s disjunction `¬(¬φ; ¬ψ)` (Definition 9) is Peters' disjunction, read off the
 isomorphic images (footnote 15). -/
-theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → SignType) :
+theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w).joinMiddle (q w)) =
       neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
   rw [← ofTrivalent_neg, ← ofTrivalent_neg, ← ofTrivalent_meetMiddle, ← ofTrivalent_neg]
@@ -541,13 +544,13 @@ theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → SignType) :
 
 /-- On trivalentisable updates Beaver's disjunction is the De Morgan disjunction of
 [george-2014]'s Definition 9; on arbitrary updates the two differ. -/
-theorem disj_ofTrivalent (p q : W → SignType) :
+theorem disj_ofTrivalent (p q : W → Trivalent) :
     disj (ofTrivalent p) (ofTrivalent q) =
       neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
   rw [← ofTrivalent_joinMiddle, ofTrivalent_joinMiddle_eq_neg_seq_neg]
 
 /-- Trivalent propositions are the trivalentisable updates. -/
-noncomputable def ofTrivalentEquiv : (W → SignType) ≃ Set.range (ofTrivalent (W := W)) :=
+noncomputable def ofTrivalentEquiv : (W → Trivalent) ≃ Set.range (ofTrivalent (W := W)) :=
   Equiv.ofInjective _ ofTrivalent_injective
 
 section Closure
@@ -557,7 +560,8 @@ the toolbox ([george-2014], Corollary 1) and Heim's connectives (Proposition 2).
 
 variable {φ ψ : CCP.Partial W}
 
-theorem isTrivalentisable_id : IsTrivalentisable (PFun.id (Set W)) := ⟨1, ofTrivalent_one⟩
+theorem isTrivalentisable_id :
+    IsTrivalentisable (PFun.id (Set W)) := ⟨(fun _ ↦ .true), ofTrivalent_true⟩
 
 theorem IsTrivalentisable.seq (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
     IsTrivalentisable (PartialUpdate.seq φ ψ) := by
@@ -598,12 +602,14 @@ end Closure
 /-! ### Presupposition -/
 
 theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) [DecidablePred p] :
-    PartialUpdate.Presupposes φ (ofTrivalent fun w ↦ SignType.ofProp (p w)) ↔
+    PartialUpdate.Presupposes φ (ofTrivalent fun w ↦ Trivalent.ofProp (p w)) ↔
       ∀ c, φ.Admits c → ∀ w ∈ c, p w := by
-  simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self, SignType.ofProp_eq_one_iff]
+  simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self,
+      Trivalent.ofProp_eq_true_iff]
 
-theorem presupposes_ofTrivalent (p : W → SignType) :
-    PartialUpdate.Presupposes (ofTrivalent p) (ofTrivalent fun w ↦ SignType.ofProp (p w ≠ 0)) :=
+theorem presupposes_ofTrivalent (p : W → Trivalent) :
+    PartialUpdate.Presupposes (ofTrivalent p)
+      (ofTrivalent fun w ↦ Trivalent.ofProp (p w ≠ .undefined)) :=
   (presupposes_ofProp_iff _ _).2 fun _ h _ hw ↦ (admits_ofTrivalent _ _).1 h hw
 
 end CCP.Partial

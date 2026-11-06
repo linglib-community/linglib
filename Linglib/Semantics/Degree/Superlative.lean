@@ -11,7 +11,7 @@ Heim's absolute superlative holds of `x` when it is in the comparison class and 
 other member. Von Fintel makes membership a presupposition: `trivalentSuperlative` is a trivalent
 proposition, so that the presupposition rather than the assertion fails when the class shrinks below
 `x`, and at a world it is [true exactly of the absolute
-superlative](##trivalentSuperlative_eq_one_iff_absoluteSuperlative). The assertion is [the
+superlative](##trivalentSuperlative_eq_true_iff_absoluteSuperlative). The assertion is [the
 set-standard comparative over the other members](##trivalentSuperlative_assertion_iff), so [it is
 anti-additive in the class](##isAntiAdditive_trivalentSuperlative_assertion), by Hoeksema's
 anti-additivity of the set comparative.
@@ -69,16 +69,18 @@ variable [Preorder D]
 open Classical in
 /-- *x is the μ-est of C* presupposes that `x` is in the comparison class and asserts that it
 measures above every other member of the class ([von-fintel-1999]'s (79)). -/
-noncomputable def trivalentSuperlative (μ : α → D) (C : W → Set α) (x : α) : W → SignType :=
-  {w | x ∈ C w}.indicator fun w ↦ SignType.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x)
+noncomputable def trivalentSuperlative (μ : α → D) (C : W → Set α) (x : α) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (x ∈ C w))
+    (Trivalent.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x))
 
 variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 
-@[simp] theorem trivalentSuperlative_eq_zero_iff : trivalentSuperlative μ C x w = 0 ↔ x ∉ C w := by
+@[simp] theorem trivalentSuperlative_eq_undefined_iff :
+    trivalentSuperlative μ C x w = .undefined ↔ x ∉ C w := by
   simp [trivalentSuperlative]
 
-@[simp] theorem trivalentSuperlative_eq_one_iff :
-    trivalentSuperlative μ C x w = 1 ↔ x ∈ C w ∧ ∀ y ∈ C w, y ≠ x → μ y < μ x := by
+@[simp] theorem trivalentSuperlative_eq_true_iff :
+    trivalentSuperlative μ C x w = .true ↔ x ∈ C w ∧ ∀ y ∈ C w, y ≠ x → μ y < μ x := by
   simp [trivalentSuperlative]
 
 /-- The assertion is the set-standard comparative of `x` against the degrees of the other
@@ -105,10 +107,10 @@ end Preorder
 
 /-- At a world the superlative is true exactly when `x` is the absolute superlative of the class
 there ([heim-1999]). -/
-theorem trivalentSuperlative_eq_one_iff_absoluteSuperlative [LinearOrder D] {μ : α → D}
+theorem trivalentSuperlative_eq_true_iff_absoluteSuperlative [LinearOrder D] {μ : α → D}
     {C : W → Set α}
-    {x : α} {w : W} : trivalentSuperlative μ C x w = 1 ↔ AbsoluteSuperlative μ (C w) x :=
-  trivalentSuperlative_eq_one_iff
+    {x : α} {w : W} : trivalentSuperlative μ C x w = .true ↔ AbsoluteSuperlative μ (C w) x :=
+  trivalentSuperlative_eq_true_iff
 
 open Presupposition Trivalent
 
@@ -124,14 +126,14 @@ theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (
 
 /-- *Emma is the tallest girl in her class* does not classically entail its restriction to girls who
 have learned the alphabet ([von-fintel-1999]'s (76)). -/
-theorem not_antitone_posSupport_trivalentSuperlative :
+theorem not_antitone_posExt_trivalentSuperlative :
     ¬ Antitone fun C : Unit → Set Unit ↦
-      posSupport (trivalentSuperlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
-  not_antitone_posSupport (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
+      Trivalent.posExt (trivalentSuperlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
+  not_antitone_posExt (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
 
 /-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
 tallest girl*, defined and false when a taller girl has not learned it. -/
 theorem not_isStrawsonUE_trivalentSuperlative :
-    ¬ IsStrawsonUE (trivalentSuperlative (W := Unit) (fun _ : Bool ↦ (0 : ℕ)) · true) :=
-  not_isStrawsonUE (p := fun _ ↦ {true}) (q := fun _ ↦ .univ) (w := ())
+    ¬ IsStrawsonUE (trivalentSuperlative (W := Unit) (fun _ : Bool ↦ (0 : ℕ)) · Bool.true) :=
+  not_isStrawsonUE (p := fun _ ↦ {Bool.true}) (q := fun _ ↦ .univ) (w := ())
     (fun _ ↦ Set.subset_univ _) (by simp) (by simp [trivalentSuperlative])

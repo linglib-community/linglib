@@ -1,0 +1,785 @@
+[
+  {
+    "id": "sbardolini2026_table1_episodic",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary ate any pizza",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "Fx"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_negation",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary didn't eat any pizza",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "¬Fx"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_everyScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who left ate any pizza",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Every A)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_everyRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who ate any pizza left",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Every F)A"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_someScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Someone who left ate any pizza",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Some A)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_someRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Someone who ate any pizza left",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Some F)A"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_mostScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most professors ate any pizza",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Most As)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_mostRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most professors who ate any pizza left",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Most Fs)A"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_antecedent",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Mary drank anything, she got sick",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "If F, A"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_consequent",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Mary got sick, she drank anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "If A, F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_question",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Did Mary drink anything?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "Fx?"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_imperative",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Drink anything!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "F!"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_possibility",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary might drink anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "◇Fx"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_necessity",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary must drink anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "□Fx"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_genericScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary eats anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "GEN[(A)F]"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_genericRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Anybody knows the Beatles",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "GEN[(F)A]"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_tautology",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Zero or more students read anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "|A∩F| ≤ 0"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "The table prints the environment as |A∩F| ≤ 0, the downward-entailing no; the example, zero or more, is the tautology |A∩F| ≥ 0.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_contradiction",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most 1 and at least 3 students read anything",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "3 ≤ |A∩F| ≥ 1"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "The table prints the environment as 3 ≤ |A∩F| ≥ 1, which is at least three; the example is the contradiction |A∩F| ≤ 1 and 3 ≤ |A∩F|.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_theRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The student with any books sold them",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(The F)A"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_theScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The student sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(The A)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_thePlRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The students with any books sold them",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(The Fs)A"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_thePlScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The students sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(The As)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_bothRestrictor",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Both students with any books sold them",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Both Fs)A"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_bothScope",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Both students sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "(Both As)F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_only",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Only Mary sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "Only x F"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_cleft",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is Mary who sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "It is x who F"
+      ],
+      [
+        "sum",
+        "true"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sbardolini2026_table1_sorry",
+    "source": {
+      "bibkey": "sbardolini-2026",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is sorry that Mary sold any books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "x is sorry that F"
+      ],
+      [
+        "sum",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

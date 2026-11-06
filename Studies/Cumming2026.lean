@@ -78,8 +78,8 @@ open Classical in
 /-- The meaning of a cell at a frame presupposes the constraints and asserts the content, so the
 constraint is not part of what is asserted. -/
 noncomputable def meaning {W : Type*} (c : Constraint) (f : EvidentialFrame T) (φ : W → Prop) :
-    W → SignType :=
-  {_w | c.Holds f}.indicator fun w ↦ SignType.ofProp (φ w)
+    W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (c.Holds f)) (Trivalent.ofProp (φ w))
 
 /-- An evidential fixes the relation of the acquisition of the evidence to speech and turns
 the tense it combines with into a constraint on the evidential perspective (§3). -/

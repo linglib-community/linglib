@@ -88,19 +88,19 @@ variable {W U : Type*}
 
 /-- The reading of a trivalent meaning at a designation standard: where a message is true, at K3,
 or not false, at LP. -/
-def readings (m : U → W → SignType) (d : Trivalent.Designation) (σ : U) : Set W :=
+def readings (m : U → W → Trivalent) (d : Trivalent.Designation) (σ : U) : Set W :=
   {w | d.threshold ≤ m σ w}
 
-instance (m : U → W → SignType) (d : Trivalent.Designation) (σ : U) :
+instance (m : U → W → Trivalent) (d : Trivalent.Designation) (σ : U) :
     DecidablePred (· ∈ readings m d σ) :=
   fun w ↦ inferInstanceAs (Decidable (d.threshold ≤ m σ w))
 
-variable {m : U → W → SignType} {w : W} {σ : U}
+variable {m : U → W → Trivalent} {w : W} {σ : U}
 
-theorem forall_mem_readings_iff : (∀ d, w ∈ readings m d σ) ↔ m σ w = 1 := by
+theorem forall_mem_readings_iff : (∀ d, w ∈ readings m d σ) ↔ m σ w = .true := by
   cases h : m σ w <;> simp only [readings, Set.mem_ofPred_eq, h] <;> decide
 
-theorem readings_lp : readings m .lp σ = {w | m σ w ≠ -1} := by
+theorem readings_lp : readings m .lp σ = {w | m σ w ≠ .false} := by
   ext; simp [readings]
 
 theorem readings_k3_subset_lp : readings m .k3 σ ⊆ readings m .lp σ := fun _ h ↦
@@ -110,21 +110,21 @@ variable {ALT : U → Set (Set W)} {lit : U → Set W}
 
 theorem readings_pexIE_k3 :
     readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .k3 σ = exhIE (ALT σ) (lit σ) := by
-  have h1 (a : SignType) : 1 ≤ a ↔ a = 1 := by cases a <;> decide
-  ext; simp [readings, h1, pexIE_eq_one_iff_mem_exhIE subset_rfl]
+  have h1 (a : Trivalent) : .true ≤ a ↔ a = .true := by cases a <;> decide
+  ext; simp [readings, h1, pexIE_eq_true_iff_mem_exhIE subset_rfl]
 
 theorem readings_pexIE_lp : readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .lp σ = lit σ := by
-  ext; simp [readings, pexIE_eq_neg_one_iff]
+  ext; simp [readings, pexIE_eq_false_iff]
 
 /-- A sentence whose scalar items are read by `pex` is true by Strong Kleene exactly where each of
 its bivalent variants is true, the variant reading each item at its own standard, by its parse with
 the operator at K3 (`readings_pexIE_k3`) and without it at LP (`readings_pexIE_lp`) (§5) ((21),
 (24)). -/
-theorem eval_strongKleene_pexIE_eq_one_iff [DecidableEq U] (φ : Trivalent.Formula U) :
-    Trivalent.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = 1 ↔
+theorem eval_strongKleene_pexIE_eq_true_iff [DecidableEq U] (φ : Trivalent.Formula U) :
+    Trivalent.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = .true ↔
       ∀ ψ ∈ φ.bivalentVariants, Trivalent.Formula.evalBool (fun x ↦
         decide (w ∈ readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) x.2 x.1)) ψ = true := by
-  rw [Trivalent.Formula.eval_strongKleene_eq_supervaluation, SignType.supervaluation_eq_one_iff]
+  rw [Trivalent.Formula.eval_strongKleene_eq_supervaluation, Trivalent.supervaluation_eq_true_iff]
   rfl
 
 end Readings
@@ -148,7 +148,7 @@ inductive QWord
   | scalar
   deriving DecidableEq
 
-variable {E : Type} (Q : (E → Prop) → Prop) (p : E → SignType)
+variable {E : Type} (Q : (E → Prop) → Prop) (p : E → Trivalent)
 
 /-- The quantifier, and the trivalent scalar predicate read at both standards. -/
 def lexicon : QWord → Option (Denotation E Unit SetM)
@@ -210,33 +210,33 @@ theorem interp_raised (g : Assignment E) :
 /-- Under the universal, the set effect computes the Strong Kleene universal. -/
 example [Fintype E] [DecidableEq E] (g : Assignment E) {X : SetM Prop}
     (hX : Tree.interp (lexicon (fun P ↦ ∀ x, P x) p) g raised = some ⟨.t, X⟩) :
-    SignType.supervaluationOn X.run id = Trivalent.forallStrong p := by
+    Trivalent.supervaluationOn X.run id = Trivalent.forallStrong p := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised _ p g)))
   dsimp only [SetM.run]
-  rw [← Set.image_univ, SignType.supervaluationOn_image, Function.id_comp, ← Finset.coe_univ,
-    SignType.supervaluationOn_coe_finset, Trivalent.forallStrong_eq_supervaluation]
+  rw [← Set.image_univ, Trivalent.supervaluationOn_image, Function.id_comp, ← Finset.coe_univ,
+    Trivalent.supervaluationOn_coe_finset, Trivalent.forallStrong_eq_supervaluation]
 
 variable {Q}
 
 /-- Under a raised monotone quantifier, truth on all parses is the Strong Kleene value. -/
 theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : Assignment E)
     {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
-    SignType.supervaluationOn (parses (lexicon Q p) g raised) id =
-      SignType.supervaluationOn X.run id := by
+    Trivalent.supervaluationOn (parses (lexicon Q p) g raised) id =
+      Trivalent.supervaluationOn X.run id := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
   dsimp only [SetM.run]
-  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, SignType.supervaluationOn_image,
-    SignType.supervaluationOn_image]
+  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, Trivalent.supervaluationOn_image,
+    Trivalent.supervaluationOn_image]
   exact (Trivalent.supervaluationOn_pi_eq_const_of_monotone p hQ).symm
 
 theorem supervaluationOn_parses_eq_of_antitone (hQ : Antitone Q) (g : Assignment E)
     {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
-    SignType.supervaluationOn (parses (lexicon Q p) g raised) id =
-      SignType.supervaluationOn X.run id := by
+    Trivalent.supervaluationOn (parses (lexicon Q p) g raised) id =
+      Trivalent.supervaluationOn X.run id := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
   dsimp only [SetM.run]
-  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, SignType.supervaluationOn_image,
-    SignType.supervaluationOn_image]
+  rw [parses_raised, ← Set.image_univ, ← Set.image_univ, Trivalent.supervaluationOn_image,
+    Trivalent.supervaluationOn_image]
   exact (Trivalent.supervaluationOn_pi_eq_const_of_antitone p hQ).symm
 
 end Quantifiers
@@ -375,14 +375,14 @@ theorem speaker_apply_singleton_eq_zero_iff_speaker (ν : Measure ι) [IsFiniteM
 
 /-! #### The readings of a trivalent meaning as the parses -/
 
-variable {m : U → W → SignType}
+variable {m : U → W → Trivalent}
 
 theorem speaker_readings_ne_zero_iff (hα : 0 < α) (hw : μ {w} ≠ 0) :
-    speaker μ α C (readings m) w {σ} ≠ 0 ↔ m σ w = 1 := by
+    speaker μ α C (readings m) w {σ} ≠ 0 ↔ m σ w = .true := by
   rw [speaker_apply_singleton_ne_zero_iff hα hw, forall_mem_readings_iff]
 
 theorem listener_readings_ne_zero_iff (hα : 0 < α) :
-    listener μ (speaker μ α C (readings m)) σ {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ m σ w = 1 := by
+    listener μ (speaker μ α C (readings m)) σ {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ m σ w = .true := by
   rw [listener_apply_singleton_ne_zero_iff_forall_mem hα, forall_mem_readings_iff]
 
 omit [Fintype W] [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSpace U]
@@ -393,8 +393,8 @@ theorem iSup_measure_readings (σ : U) : ⨆ d, μ (readings m d σ) = μ (readi
 
 /-- Among the messages true at a world, the speaker ranks by the surprisal of their LP reading less
 the cost. -/
-theorem speaker_readings_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : m σ w = 1)
-    (hτ : m τ w = 1) :
+theorem speaker_readings_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : m σ w = .true)
+    (hτ : m τ w = .true) :
     (speaker μ α C (readings m) w).real {σ} < (speaker μ α C (readings m) w).real {τ} ↔
       -Real.log (μ.real (readings m .lp σ)) - C σ <
         -Real.log (μ.real (readings m .lp τ)) - C τ := by
@@ -439,7 +439,7 @@ def alternatives : Message → Set (Set World)
   | σ => {literal σ}
 
 /-- The `pex` meaning of a message. -/
-noncomputable def meaning (σ : Message) : World → SignType :=
+noncomputable def meaning (σ : Message) : World → Trivalent :=
   pexIE (alternatives σ) (literal σ) (alternatives σ)
 
 theorem readings_lp_meaning (σ : Message) : readings meaning .lp σ = literal σ :=
@@ -450,30 +450,30 @@ private theorem exhIE_singleton {σ : Message} (h : alternatives σ = {literal �
   rw [h]
   exact exhIE_eq_self_of_forall _ _ fun a ha _ ↦ (Set.mem_singleton_iff.1 ha).ge
 
-theorem meaning_eq_one_iff {σ : Message} {w : World} :
-    meaning σ w = 1 ↔ w ∈ exhIE (alternatives σ) (literal σ) :=
-  pexIE_eq_one_iff_mem_exhIE subset_rfl
+theorem meaning_eq_true_iff {σ : Message} {w : World} :
+    meaning σ w = .true ↔ w ∈ exhIE (alternatives σ) (literal σ) :=
+  pexIE_eq_true_iff_mem_exhIE subset_rfl
 
-theorem meaning_some_eq_one_iff {w : World} : meaning .some w = 1 ↔ w = .justSome := by
-  rw [meaning_eq_one_iff]
+theorem meaning_some_eq_true_iff {w : World} : meaning .some w = .true ↔ w = .justSome := by
+  rw [meaning_eq_true_iff]
   change w ∈ exhIE {literal .some, literal .all} (literal .some) ↔ _
   rw [exhIE_pair_sdiff (φ := literal .some) (d := literal .all) ⟨.justSome, by simp [literal]⟩]
   cases w <;> simp [literal]
 
-theorem meaning_notAll_eq_one_iff {w : World} : meaning .notAll w = 1 ↔ w = .justSome := by
-  rw [meaning_eq_one_iff]
+theorem meaning_notAll_eq_true_iff {w : World} : meaning .notAll w = .true ↔ w = .justSome := by
+  rw [meaning_eq_true_iff]
   change w ∈ exhIE {literal .notAll, literal .no} (literal .notAll) ↔ _
   rw [exhIE_pair_sdiff (φ := literal .notAll) (d := literal .no) ⟨.justSome, by simp [literal]⟩]
   cases w <;> simp [literal]
 
-theorem meaning_someButNotAll_eq_one_iff {w : World} :
-    meaning .someButNotAll w = 1 ↔ w = .justSome := by
-  rw [meaning_eq_one_iff, exhIE_singleton rfl]
+theorem meaning_someButNotAll_eq_true_iff {w : World} :
+    meaning .someButNotAll w = .true ↔ w = .justSome := by
+  rw [meaning_eq_true_iff, exhIE_singleton rfl]
   simp [literal]
 
 theorem readings_null (d : Trivalent.Designation) : readings meaning d .null = .univ :=
   Set.eq_univ_of_forall fun w ↦ (forall_mem_readings_iff.2
-    (meaning_eq_one_iff.2 (by rw [exhIE_singleton rfl]; trivial))) d
+    (meaning_eq_true_iff.2 (by rw [exhIE_singleton rfl]; trivial))) d
 
 /-- Three students: two solved every problem, one some but not all. -/
 def solved : Fin 3 → World := ![.all, .all, .justSome]
@@ -485,20 +485,20 @@ problem leaves exactly two. -/
 theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3)) {X : SetM Prop}
     (hX : PhraseStructure.Tree.interp (lexicon (fun P ↦ {x | P x}.ncard = 2)
       fun x ↦ meaning .some (solved x)) g raised = some ⟨.t, X⟩) :
-    SignType.supervaluationOn (parses (lexicon (fun P ↦ {x | P x}.ncard = 2)
-      fun x ↦ meaning .some (solved x)) g raised) id = -1 ∧
-      SignType.supervaluationOn X.run id = 0 := by
+    Trivalent.supervaluationOn (parses (lexicon (fun P ↦ {x | P x}.ncard = 2)
+      fun x ↦ meaning .some (solved x)) g raised) id = .false ∧
+      Trivalent.supervaluationOn X.run id = .undefined := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised _ _ g)))
   dsimp only [SetM.run]
   rw [parses_raised]
-  have hk3 (x : Fin 3) : 1 ≤ meaning .some (solved x) ↔ x = 2 := by
-    rw [show ∀ a : SignType, 1 ≤ a ↔ a = 1 by decide, meaning_some_eq_one_iff]
+  have hk3 (x : Fin 3) : .true ≤ meaning .some (solved x) ↔ x = 2 := by
+    rw [show ∀ a : Trivalent, .true ≤ a ↔ a = .true by decide, meaning_some_eq_true_iff]
     fin_cases x <;> simp [solved]
-  have hlp (x : Fin 3) : 0 ≤ meaning .some (solved x) := by
-    rw [show ∀ a : SignType, 0 ≤ a ↔ a ≠ -1 by decide, Ne, meaning, pexIE_eq_neg_one_iff]
+  have hlp (x : Fin 3) : .undefined ≤ meaning .some (solved x) := by
+    rw [Trivalent.undefined_le_iff_ne_false, Ne, meaning, pexIE_eq_false_iff]
     fin_cases x <;> simp [solved, literal]
-  refine ⟨SignType.supervaluationOn_eq_neg_one_iff.2 ⟨Set.range_nonempty _, ?_⟩,
-    SignType.supervaluationOn_eq_zero_iff.2 ⟨⟨_, ⟨![.lp, .k3, .k3], rfl⟩, ?_⟩,
+  refine ⟨Trivalent.supervaluationOn_eq_false_iff.2 ⟨Set.range_nonempty _, ?_⟩,
+    Trivalent.supervaluationOn_eq_undefined_iff.2 ⟨⟨_, ⟨![.lp, .k3, .k3], rfl⟩, ?_⟩,
       ⟨_, ⟨fun _ ↦ .k3, rfl⟩, ?_⟩⟩⟩
   · rintro _ ⟨d, rfl⟩
     cases d <;> simp [hk3, hlp]
@@ -508,9 +508,10 @@ theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3)) {X
   · simp [hk3]
 
 -- (22)
-theorem not_some_eq_one_iff (w : World) :
-    Trivalent.Formula.eval .strongKleene (meaning · w) (.neg (.atom .some)) = 1 ↔ w = .none := by
-  simp [meaning, pexIE_eq_neg_one_iff, literal]
+theorem not_some_eq_true_iff (w : World) :
+    Trivalent.Formula.eval .strongKleene (meaning · w) (.neg (.atom .some)) = .true ↔
+      w = .none := by
+  simp [meaning, pexIE_eq_false_iff, literal]
 
 variable {μ : Measure World} [IsFiniteMeasure μ] {α : ℝ} {C : Message → ℝ}
 
@@ -536,12 +537,12 @@ theorem judgments_11 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) (hnone : μ {
       PostAccommodationInformative {w | μ {w} ≠ 0} (meaning .some) := by
   have hjs : 0 < μ.real {World.justSome} := ENNReal.toReal_pos hsome (measure_ne_top _ _)
   refine ⟨rfl, rfl, ?_, ?_, postAccommodationInformative_iff.2
-    ⟨.none, hnone, pexIE_eq_neg_one_iff.2 (by simp [literal])⟩⟩
-  · rw [speaker_readings_real_lt_iff hα hsome (meaning_some_eq_one_iff.2 rfl)
-      (meaning_someButNotAll_eq_one_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
+    ⟨.none, hnone, pexIE_eq_false_iff.2 (by simp [literal])⟩⟩
+  · rw [speaker_readings_real_lt_iff hα hsome (meaning_some_eq_true_iff.2 rfl)
+      (meaning_someButNotAll_eq_true_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
     exact neg_log_sub_lt_iff hjs (measureReal_literal_pos (by simp [literal]) hsome)
-  · rw [speaker_readings_real_lt_iff hα hsome (meaning_notAll_eq_one_iff.2 rfl)
-      (meaning_someButNotAll_eq_one_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
+  · rw [speaker_readings_real_lt_iff hα hsome (meaning_notAll_eq_true_iff.2 rfl)
+      (meaning_someButNotAll_eq_true_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
     exact neg_log_sub_lt_iff hjs (measureReal_literal_pos (by simp [literal]) hsome)
 
 -- (14a), §1.2, §3 [wehbe-doron-2025]
@@ -556,11 +557,11 @@ theorem judgments_14 [IsProbabilityMeasure μ] (hα : 0 < α) (hsome : μ {.just
   · have hlit : literal .some = {World.none}ᶜ := by
       ext w; cases w <;> simp [literal]
     rw [speaker_real_lt_null_iff readings_null hCnull hα hsome
-      (forall_mem_readings_iff.2 (meaning_some_eq_one_iff.2 rfl)), iSup_measure_readings,
+      (forall_mem_readings_iff.2 (meaning_some_eq_true_iff.2 rfl)), iSup_measure_readings,
       readings_lp_meaning, hlit, ← measureReal_def,
       probReal_compl_eq_one_sub (measurableSet_singleton _)]
   · obtain ⟨w, hw, hf⟩ := postAccommodationInformative_iff.1 h
-    cases w <;> simp_all [meaning, pexIE_eq_neg_one_iff, literal]
+    cases w <;> simp_all [meaning, pexIE_eq_false_iff, literal]
 
 -- (15), (14)
 theorem judgments_15 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) :
@@ -569,8 +570,8 @@ theorem judgments_15 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) :
           (speaker μ α C (readings meaning) .justSome).real {.notAll} ↔
         μ.real (literal .notAll) * Real.exp (C .notAll - C .some) < μ.real (literal .some)) := by
   refine ⟨rfl, rfl, ?_⟩
-  rw [speaker_readings_real_lt_iff hα hsome (meaning_some_eq_one_iff.2 rfl)
-    (meaning_notAll_eq_one_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
+  rw [speaker_readings_real_lt_iff hα hsome (meaning_some_eq_true_iff.2 rfl)
+    (meaning_notAll_eq_true_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
   exact neg_log_sub_lt_iff (measureReal_literal_pos (by simp [literal]) hsome)
     (measureReal_literal_pos (by simp [literal]) hsome)
 
@@ -595,7 +596,7 @@ def alternatives (u : CremersWilcoxSpector2023.Message) : Set (Set World) :=
   (fun f ↦ {w | f w = true}) '' {f | f ∈ CremersWilcoxSpector2023.alternatives u}
 
 /-- The `pex` meaning of a message. -/
-noncomputable def meaning (u : CremersWilcoxSpector2023.Message) : World → SignType :=
+noncomputable def meaning (u : CremersWilcoxSpector2023.Message) : World → Trivalent :=
   pexIE (alternatives u) (literal u) (alternatives u)
 
 theorem readings_lp_meaning (u : CremersWilcoxSpector2023.Message) :
@@ -613,13 +614,13 @@ theorem alternatives_aAndNotB : alternatives .aAndNotB = {literal .aAndNotB} := 
     {truth .aAndNotB} by ext; simp [CremersWilcoxSpector2023.alternatives], Set.image_singleton]
   rfl
 
-theorem meaning_a_eq_one_iff {w : World} : meaning .a w = 1 ↔ w = .wa := by
-  rw [meaning, pexIE_eq_one_iff_mem_exhIE subset_rfl, alternatives_a,
+theorem meaning_a_eq_true_iff {w : World} : meaning .a w = .true ↔ w = .wa := by
+  rw [meaning, pexIE_eq_true_iff_mem_exhIE subset_rfl, alternatives_a,
     exhIE_pair_sdiff (φ := literal .a) (d := literal .aAndB) ⟨.wa, by simp [literal, truth]⟩]
   cases w <;> simp [literal, truth]
 
-theorem meaning_aAndNotB_eq_one_iff {w : World} : meaning .aAndNotB w = 1 ↔ w = .wa := by
-  rw [meaning, pexIE_eq_one_iff_mem_exhIE subset_rfl, alternatives_aAndNotB,
+theorem meaning_aAndNotB_eq_true_iff {w : World} : meaning .aAndNotB w = .true ↔ w = .wa := by
+  rw [meaning, pexIE_eq_true_iff_mem_exhIE subset_rfl, alternatives_aAndNotB,
     exhIE_eq_self_of_forall _ _ fun a ha _ ↦ (Set.mem_singleton_iff.1 ha).ge]
   cases w <;> simp [literal, truth]
 
@@ -632,12 +633,12 @@ theorem judgments_19 (s : Setting) :
         (s.speaker CremersWilcoxSpector2023.literal .wa).real {.a} <
           (s.speaker CremersWilcoxSpector2023.literal .wa).real {.aAndNotB}) := by
   refine ⟨rfl, listener_apply_singleton_eq_zero (speaker_apply_singleton_eq_zero s.lam_pos
-    (i := .k3) fun h ↦ absurd (meaning_a_eq_one_iff.1 ((show (1 : SignType) ≤ _ ↔ _ by
+    (i := .k3) fun h ↦ absurd (meaning_a_eq_true_iff.1 ((show (.true : Trivalent) ≤ _ ↔ _ by
       cases meaning .a .wab <;> decide).1 h)) (by decide)), ?_⟩
   have hlit : literal .a = .univ := by ext w; cases w <;> simp [literal, truth]
   have hwa : literal .aAndNotB = {.wa} := by ext w; cases w <;> simp [literal, truth]
   rw [speaker_readings_real_lt_iff s.lam_pos (s.prior_ne_zero .wa)
-      (meaning_a_eq_one_iff.2 rfl) (meaning_aAndNotB_eq_one_iff.2 rfl),
+      (meaning_a_eq_true_iff.2 rfl) (meaning_aAndNotB_eq_true_iff.2 rfl),
     readings_lp_meaning, readings_lp_meaning, CremersWilcoxSpector2023.baseline_a_lt_aAndNotB_iff,
     hlit, hwa, measureReal_def, measure_univ, ENNReal.toReal_one, Setting.prior_real_wa,
     Real.log_one]

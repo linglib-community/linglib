@@ -178,7 +178,7 @@ def Account.Accepts {Atom : Type*} (I : Atom → Set W) (C : Set W) (F : Formula
   | incremental => Schlenker2009.Satisfaction .incremental C (Formula.occurrences I F)
   | limitedSymmetry => Kalomoiros2023.LimitedSymmetry C (Formula.occurrences I F)
   | symmetric => Schlenker2009.Satisfaction .symmetric C (Formula.occurrences I F)
-  | localAccommodation => C ⊆ Function.support (F.accommodate.middleKleene I)
+  | localAccommodation => C ⊆ (Trivalent.gapExt (F.accommodate.middleKleene I))ᶜ
 
 /-- An account filters the implication in an antecedent type when the antecedent is acceptable
 in every context, provided the conjoined clause entails the implication. -/
@@ -213,7 +213,7 @@ theorem Account.filters_iff {a : Account} {x : Antecedent} :
   · exact iff_of_false (hno fun I C h ↦
       (Schlenker2009.satisfaction_trigger_iff I .symmetric).1 h) (by simp)
   all_goals exact iff_of_true (fun _ _ I _ _ _ _ _ w _ ↦
-    (Formula.middleKleene_ne_zero_iff I _ w).2 (by simp)) (by simp)
+    (Formula.middleKleene_ne_undefined_iff I _ w).2 (by simp)) (by simp)
 
 instance (a : Account) (x : Antecedent) : Decidable (a.Filters x) :=
   decidable_of_iff' _ Account.filters_iff

@@ -114,19 +114,14 @@ private theorem antiLicenses_classical {s₀ : Negation.Strength}
 private theorem not_antiLicenses (h : ¬ L.Holds .anti) : ¬ L.AntiLicenses e :=
   fun ⟨_, _, hr⟩ ↦ not_holds_toProjectivitySignature h hr
 
-private theorem licenses_modal {F : ModalFamily} (hc : L = .modal F)
+private theorem licenses_modal {F : ModalFamily} (hc : L = .modal F) (hu : L.IsStrawsonUE)
     (h : L.LicensesFreeChoice) : L.Licenses e ↔ e.IsFCI := by
   refine ⟨fun hl ↦ ?_, fun hf ↦ .inr (.inl ⟨h, hf⟩)⟩
   rcases hl with ⟨r, _, hr⟩ | ⟨_, hf⟩ | ⟨hq, _⟩
-  · rw [hc] at hr
-    exact hr.weak.1.elim
+  · exact (hr.weak.2 hu).elim
   · exact hf
   · rw [hc] at hq
     exact False.elim hq
-
-@[simp] theorem not_antiLicenses_modal {F : ModalFamily} (hc : L = .modal F) :
-    ¬ L.AntiLicenses e :=
-  not_antiLicenses (by rw [hc]; exact id)
 
 instance [DecidablePred L.Licenses] [DecidablePred L.AntiLicenses] : DecidablePred L.Admits :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -317,34 +312,34 @@ variable {e : PolarityItem}
   not_antiLicenses id
 
 @[simp] theorem licenses_modalPossibility : modalPossibility.licenser.Licenses e ↔ e.IsFCI :=
-  licenses_modal rfl licensesFreeChoice_modalPossibility
+  licenses_modal rfl isStrawsonUE_modalPossibility licensesFreeChoice_modalPossibility
 
 @[simp] theorem licenses_modalNecessity : modalNecessity.licenser.Licenses e ↔ e.IsFCI :=
-  licenses_modal rfl licensesFreeChoice_necessityFamily
+  licenses_modal rfl isStrawsonUE_necessityFamily licensesFreeChoice_necessityFamily
 
 @[simp] theorem licenses_imperative : imperative.licenser.Licenses e ↔ e.IsFCI :=
-  licenses_modal rfl licensesFreeChoice_necessityFamily
+  licenses_modal rfl isStrawsonUE_necessityFamily licensesFreeChoice_necessityFamily
 
 @[simp] theorem licenses_generic : generic.licenser.Licenses e ↔ e.IsFCI :=
-  licenses_modal rfl licensesFreeChoice_necessityFamily
+  licenses_modal rfl isStrawsonUE_necessityFamily licensesFreeChoice_necessityFamily
 
 @[simp] theorem licenses_freeRelative : freeRelative.licenser.Licenses e ↔ e.IsFCI :=
-  licenses_modal rfl licensesFreeChoice_necessityFamily
+  licenses_modal rfl isStrawsonUE_necessityFamily licensesFreeChoice_necessityFamily
 
 @[simp] theorem not_antiLicenses_modalPossibility : ¬ modalPossibility.licenser.AntiLicenses e :=
-  not_antiLicenses_modal rfl
+  not_antiLicenses not_holds_anti_modalPossibility
 
 @[simp] theorem not_antiLicenses_modalNecessity : ¬ modalNecessity.licenser.AntiLicenses e :=
-  not_antiLicenses_modal rfl
+  not_antiLicenses not_holds_anti_necessityFamily
 
 @[simp] theorem not_antiLicenses_imperative : ¬ imperative.licenser.AntiLicenses e :=
-  not_antiLicenses_modal rfl
+  not_antiLicenses not_holds_anti_necessityFamily
 
 @[simp] theorem not_antiLicenses_generic : ¬ generic.licenser.AntiLicenses e :=
-  not_antiLicenses_modal rfl
+  not_antiLicenses not_holds_anti_necessityFamily
 
 @[simp] theorem not_antiLicenses_freeRelative : ¬ freeRelative.licenser.AntiLicenses e :=
-  not_antiLicenses_modal rfl
+  not_antiLicenses not_holds_anti_necessityFamily
 
 /-! ### Deciding licensing at the named contexts
 

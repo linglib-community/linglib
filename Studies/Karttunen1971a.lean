@@ -48,26 +48,26 @@ open Presupposition Implicative NaturalLogic
 /-- Double negation cancels, so that *John didn't remember not to lock his door* commits the
 speaker to *John locked his door* (13). -/
 theorem manage_neg_neg_imp {W : Type*} {v S : W → Prop} {w : W}
-    (hs : (-sentence (Interpretation.material W) ⟨.some .positive, .some .negative⟩ v
-      fun w ↦ ¬ S w) w = 1) : S w :=
+    (hs : ((sentence (Interpretation.material W) ⟨.some .positive, .some .negative⟩ v)ᶜ
+      fun w ↦ ¬ S w) w = .true) : S w :=
   not_not.mp (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl (by simpa using hs))
 
 /-- (58) *John didn't force Mary to stay home* leaves open whether she stayed. -/
 theorem force_neg_not_entails : ∃ (v S : Unit → Prop),
-    (-sentence (Interpretation.material Unit) ⟨.some .positive, ⊥⟩ v S) () = 1 ∧ S () :=
+    ((sentence (Interpretation.material Unit) ⟨.some .positive, ⊥⟩ v S)ᶜ) () = .true ∧ S () :=
   ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Interpretation.material, Flat.bot_ne_coe],
     trivial⟩
 
 /-- (55) *John was able to come* leaves open whether he came. -/
 theorem beAble_not_entails : ∃ (v S : Unit → Prop),
-    sentence (Interpretation.material Unit) ⟨⊥, .some .negative⟩ v S () = 1 ∧ ¬ S () :=
+    sentence (Interpretation.material Unit) ⟨⊥, .some .negative⟩ v S () = .true ∧ ¬ S () :=
   ⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Interpretation.material, Flat.bot_ne_coe], id⟩
 
 /-- A non-implicative, whose signature `◦/◦` gives it no presupposition, commits the speaker to
 nothing about its complement in either polarity (5). -/
 theorem nonImplicative_not_entails :
-    (∃ (v S : Unit → Prop), sentence (Interpretation.material Unit) ⊥ v S () = 1 ∧ ¬ S ()) ∧
-      ∃ (v S : Unit → Prop), (-sentence (Interpretation.material Unit) ⊥ v S) () = 1 ∧ S () :=
+    (∃ (v S : Unit → Prop), sentence (Interpretation.material Unit) ⊥ v S () = .true ∧ ¬ S ()) ∧
+      ∃ (v S : Unit → Prop), ((sentence (Interpretation.material Unit))ᶜ ⊥ v S) () = .true ∧ S () :=
   ⟨⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Interpretation.material, Flat.bot_ne_coe], id⟩,
    ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Interpretation.material, Flat.bot_ne_coe],
     trivial⟩⟩

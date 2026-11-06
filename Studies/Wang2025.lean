@@ -330,14 +330,14 @@ open Presupposition ModalLogic Aspect
 
 /-- The candidate for a sentence with the trivalent meaning `φ` commits the speaker to its
 presupposition, where `φ` is defined, and to its assertion, where `φ` is true. -/
-def Candidate.ofTrivalent (φ : W → SignType) : Candidate W :=
-  presupSentence (Function.support φ) (posSupport φ)
+def Candidate.ofTrivalent (φ : W → Trivalent) : Candidate W :=
+  presupSentence ((Trivalent.gapExt φ)ᶜ) (Trivalent.posExt φ)
 
-variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → SignType}
+variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → Trivalent}
 
 theorem Candidate.ofTrivalent_eq_presupSentence {a : Set W}
-    (h : ∀ w, φ w ≠ 0 → (φ w = 1 ↔ w ∈ a)) :
-    Candidate.ofTrivalent φ = presupSentence (Function.support φ) a := by
+    (h : ∀ w, φ w ≠ .undefined → (φ w = .true ↔ w ∈ a)) :
+    Candidate.ofTrivalent φ = presupSentence ((Trivalent.gapExt φ)ᶜ) a := by
   simp only [Candidate.ofTrivalent, presupSentence, Candidate.mk.injEq, and_true]
   congr 1
   ext w
@@ -348,7 +348,7 @@ earlier ones, the `<` of (12), and `S` relates an index to the earlier index of 
 (38), a relation the dissertation writes `∞`. The meaning of *kaishi* is that of the phasal class
 of its fragment entry, and the other triggers of Table 4.1 are not aspectual. -/
 noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
-    Trigger → Option (W → SignType)
+    Trigger → Option (W → Trivalent)
   | .you | .zai => some (again R P)
   | .reng => some (Phasal.continuation.denote S P)
   | .buzai => some (Phasal.cessation.denote S P)
@@ -356,29 +356,29 @@ noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
   | _ => none
 
 -- (1)
-theorem eq_one_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ 0) : φ w = 1 ↔ P w := by
+theorem eq_true_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ .undefined) : φ w = .true ↔ P w := by
   cases t <;>
     first | (cases ht; done) | (cases h; done) | (cases h; simp_all [Phasal.denote, again])
 
-theorem eq_one_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (hw : φ w ≠ 0) :
-    φ w = 1 ↔ ¬ P w := by
+theorem eq_true_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (hw : φ w ≠ .undefined) :
+    φ w = .true ↔ ¬ P w := by
   cases h; simp_all [Phasal.denote]
 
 -- Table 4.2
 theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) (hp : ctx ⊆ K (Function.support φ))
+    (ht : t.altStructure = .deletion) (hp : ctx ⊆ K ((Trivalent.gapExt φ)ᶜ))
     (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
     Beats (ranking ctx (.ofTrivalent φ)) (.ofTrivalent φ) (plain {w | P w}) := by
-  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
+  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_true_iff_of_altStructure_deletion h ht]
   exact obligatory_of_entailed hp hwit
 
 -- Table 4.3
 theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K (Function.support φ))
-    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ Function.support φ ∩ {w | P w}) :
+    (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K ((Trivalent.gapExt φ)ᶜ))
+    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ (Trivalent.gapExt φ)ᶜ ∩ {w | P w}) :
     Beats (ranking ctx (.ofTrivalent φ)) (plain {w | P w}) (.ofTrivalent φ) := by
-  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
+  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_true_iff_of_altStructure_deletion h ht]
   exact omitted_of_not_entailed hp hwit
 
 end Aspectual

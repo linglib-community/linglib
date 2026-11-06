@@ -578,28 +578,28 @@ theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
   Focus.isStrawsonDE_only_eq p.x
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
-  Focus.not_antitone_posSupport_only_eq
+  Focus.not_antitone_posExt_only_eq
     (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
-  Desire.BestWorlds.not_antitone_posSupport_regret (ProjectivitySignature.holdsFor_anti_iff.mp
+  Desire.BestWorlds.not_antitone_posExt_regret (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_trivalentSuperlative p.μ p.x
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  not_antitone_posSupport_trivalentSuperlative (ProjectivitySignature.holdsFor_anti_iff.mp
+  not_antitone_posExt_trivalentSuperlative (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
   fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
 
 theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .anti := fun h ↦
-  Conditional.not_antitone_posSupport_horizonCounterfactual
+  Conditional.not_antitone_posExt_horizonCounterfactual
     (ProjectivitySignature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
@@ -607,7 +607,7 @@ theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun 
   isStrawsonDE_since p.ago
 
 theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h ↦
-  not_antitone_posSupport_since (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
+  not_antitone_posExt_since (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
 
@@ -632,6 +632,26 @@ theorem licensesFreeChoice_modalPossibility : modalPossibility.licenser.Licenses
       (fun S ↦ branching.preimage (⋃ d ∈ S, witnessAt d)) .univ
     rw [Exhaustification.antiExh_preimage_biUnion witnessAt branching Finset.univ_nonempty]
     exact Set.mem_iInter₂.2 fun d _ ↦ ⟨d.succ, rfl, rfl, d.succ_ne_zero⟩⟩
+
+/-- Necessity is upward entailing. -/
+theorem isStrawsonUE_necessityFamily : (Licenser.modal necessityFamily).IsStrawsonUE :=
+  fun _ ↦ SetRel.core_mono
+
+/-- Possibility is upward entailing. -/
+theorem isStrawsonUE_modalPossibility : modalPossibility.licenser.IsStrawsonUE :=
+  fun _ ↦ SetRel.preimage_mono
+
+/-- Necessity is not downward entailing: at a world that accesses itself it is the identity. -/
+theorem not_holds_anti_necessityFamily : ¬ (Licenser.modal necessityFamily).Holds .anti :=
+  fun h ↦ by
+    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    simp [Set.subset_def, SetRel.core] at this
+
+/-- Possibility is not downward entailing: at a world that accesses itself it is the identity. -/
+theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .anti :=
+  fun h ↦ by
+    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    simp [Set.subset_def, SetRel.preimage] at this
 
 end LicensingContext
 
