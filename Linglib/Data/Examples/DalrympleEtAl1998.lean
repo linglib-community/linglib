@@ -28,6 +28,20 @@ def ex95 : Datum :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
+def ex96 : Datum :=
+  { id := "dalrympleetal1998_ex96"
+    source := ⟨"dalrymple-et-al-1998", "(96), (4)"⟩
+    reportedIn := none
+    method := some .corpus
+    language := "stan1293"
+    primaryText := "As the preposterous horde crowded around, waiting for the likes of Evans and Mike Greenwell, five Boston pitchers sat alongside each other: Larry Andersen, Jeff Reardon, Jeff Gray, Dennis Lamp and Tom Bolton."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "6.1")] }
+
 def ex98 : Datum :=
   { id := "dalrympleetal1998_ex98"
     source := ⟨"dalrymple-et-al-1998", "(98), (8)"⟩
@@ -58,6 +72,7 @@ def ex109 : Datum :=
   { id := "dalrympleetal1998_ex109"
     source := ⟨"dalrymple-et-al-1998", "(109)"⟩
     reportedIn := none
+    method := some .introspection
     language := "stan1293"
     primaryText := "John and Bill are taller than each other."
     glossedTokens := []
@@ -71,6 +86,7 @@ def ex110 : Datum :=
   { id := "dalrympleetal1998_ex110"
     source := ⟨"dalrymple-et-al-1998", "(110), (6), (43)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "\"The captain!\" said the pirates, staring at each other in surprise."
     glossedTokens := []
@@ -80,6 +96,6 @@ def ex110 : Datum :=
     readings := []
     paperFeatures := [("section", "6.3")] }
 
-def all : List Datum := [ex95, ex98, ex108, ex109, ex110]
+def all : List Datum := [ex95, ex96, ex98, ex108, ex109, ex110]
 
 end DalrympleEtAl1998.Examples

@@ -18,6 +18,25 @@
     "verified": "page-image"
   },
   {
+    "id": "dalrympleetal1998_ex96",
+    "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(96), (4)"},
+    "method": "corpus",
+    "language": "stan1293",
+    "primaryText": "As the preposterous horde crowded around, waiting for the likes of Evans and Mike Greenwell, five Boston pitchers sat alongside each other: Larry Andersen, Jeff Reardon, Jeff Gray, Dennis Lamp and Tom Bolton.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.1"]
+    ],
+    "comment": "Sitting alongside is symmetric, so SR = SAR, IR = IAR and IAO = OWR; with five pitchers and only two sides SR cannot hold, and the sentence means IR.",
+    "verified": "page-image"
+  },
+  {
     "id": "dalrympleetal1998_ex98",
     "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(98), (8)"},
     "language": "stan1293",
@@ -56,6 +75,7 @@
   {
     "id": "dalrympleetal1998_ex109",
     "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(109)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "John and Bill are taller than each other.",
     "discourseSegments": [],
@@ -74,6 +94,7 @@
   {
     "id": "dalrympleetal1998_ex110",
     "source": {"bibkey": "dalrymple-et-al-1998", "paperLabel": "(110), (6), (43)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "\"The captain!\" said the pirates, staring at each other in surprise.",
     "discourseSegments": [],

@@ -213,6 +213,20 @@ theorem OneWayWeakReciprocity.inclusiveAlternativeOrdering (h : OneWayWeakRecipr
     InclusiveAlternativeOrdering R X :=
   h.mono fun _ _ ↦ .of_rel
 
+/-- One-way Weak Reciprocity on a finite set forces a cycle: following `R` from member to member
+must return to some member. -/
+theorem OneWayWeakReciprocity.exists_transGen_self (h : OneWayWeakReciprocity R X) :
+    ∃ x ∈ X, TransGen R x x := by
+  obtain ⟨hX, h⟩ := oneWayWeakReciprocity_iff.1 h
+  by_contra! hcyc
+  let r : X → X → Prop := fun a b ↦ TransGen R b.1 a.1
+  have : IsTrans X r := ⟨fun _ _ _ hab hbc ↦ hbc.trans hab⟩
+  have : Std.Irrefl r := ⟨fun a ↦ hcyc a.1 a.2⟩
+  obtain ⟨m, -, hm⟩ := (Finite.wellFounded_of_trans_of_irrefl r).has_min Set.univ
+    ⟨⟨_, hX.nonempty.choose_spec⟩, trivial⟩
+  obtain ⟨y, hy, -, hR⟩ := h m.1 m.2
+  exact hm ⟨y, hy⟩ trivial (.single hR)
+
 /-! ### The two parameters
 
 Dalrymple and colleagues obtain their six schemes from two parameters: which of the three

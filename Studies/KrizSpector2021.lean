@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Homogeneity.Plural
 public import Studies.Beck2001
-public import Studies.DalrympleEtAl1998
 public import Studies.Kriz2016
 public import Studies.KrizChemla2015
 public import Mathlib.Data.Finset.Interval
@@ -1499,7 +1498,7 @@ theorem fn16_row (hR : ∀ a, ¬ Relation.TransGen (R · · w) a a) (hH : H.Admi
       ∀ a ∈ x, ∀ b ∈ x, a ≠ b → ¬ R a b w) ∧
     Beck2001.Examples.fn16ii.judgment = .unacceptable :=
   ⟨(noneNeutral_id_iff hH hij).2 fun _ _ hne hW ↦
-    let ⟨a, ha⟩ := DalrympleEtAl1998.exists_transGen_of_oneWayWeak (hW.oneWayWeak hne)
+    let ⟨a, _, ha⟩ := (hW.oneWayWeak hne).exists_transGen_self
     hR a ha,
     forall_noneInSitu_iff, forall_noneNeutral_const_iff hij, by decide⟩
 
