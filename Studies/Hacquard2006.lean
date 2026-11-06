@@ -41,8 +41,8 @@ one possibility modal over one prejacent can be false over the first and true ov
 Events, worlds, and times are arbitrary types with an occurrence relation and a running time;
 event descriptions are predicates of an event and a world, and a description is assumed to hold
 of an event only where it occurs. Modal bases are functions from events to sets of worlds, the
-content of an event is partial, and the epistemic readings are
-`Semantics/Modality/EventRelativity.lean`'s quantifiers over it. The binding conditions (200)
+content of an event is partial, and the epistemic readings are necessity and possibility along
+`Modality.contentAccessible`. The binding conditions (200)
 and (309) are syntactic and enter only through which event a modal is anchored to; the
 progressive (124) and the counterfactual modal of chapter 2, Italian *volere* (chapter 4), and
 the interaction with negation (84) are not formalized.
@@ -65,7 +65,7 @@ epistemic case is glossed with the *might* of (222).
 
 namespace Hacquard2006
 
-open Modality
+open Modality ModalLogic
 
 variable {W E T : Type*}
 
@@ -166,7 +166,7 @@ def binderPerspective : EventBinder → TemporalPerspective
 /-- The perspective a modal's position determines in a matrix clause (201), through the event
 its closest binder supplies. -/
 def positionPerspective (pos : ModalPosition) : TemporalPerspective :=
-  binderPerspective pos.matrixBinder
+  binderPerspective (pos.binder .speechAct)
 
 -- the two readings of (201) are [condoravdi-2002]'s two scopes of the modal and the perfect
 open Condoravdi2002 (Scope) in
@@ -180,8 +180,8 @@ theorem position_determines_perspective :
     positionPerspective .aboveAsp ≠ positionPerspective .belowAsp := nofun
 
 theorem embedding_shifts_perspective :
-    binderPerspective ModalPosition.aboveAsp.embeddedBinder ≠
-      binderPerspective ModalPosition.aboveAsp.matrixBinder := nofun
+    binderPerspective (ModalPosition.aboveAsp.binder .attitude) ≠
+      binderPerspective (ModalPosition.aboveAsp.binder .speechAct) := nofun
 
 /-- The aspect-bound epistemic reading of a modal over an attitude complement (248c), (248d).
 There was an attitude state of the subject within the reference time, and some world
@@ -189,7 +189,7 @@ compatible with its content is such that all worlds compatible with it are `Q`-w
 def aspectBoundEpistemic (occurs : E → W → Prop) (τ : E → Set T) (con : E → Option (Set W))
     (think : E → Prop) (w : W) (t : Set T) (Q : W → Prop) : Prop :=
   perfective occurs τ w t fun s ↦
-    think s ∧ contentPossibility con (fun _ ↦ contentNecessity con Q s) s
+    think s ∧ ◇[contentAccessible con] (fun _ ↦ □[contentAccessible con] Q s) s
 
 variable {con : E → Option (Set W)} {think : E → Prop} {P : W → Prop}
 
@@ -197,15 +197,16 @@ variable {con : E → Option (Set W)} {think : E → Prop} {P : W → Prop}
 with consistent content that entails `Q`. -/
 theorem aspectBoundEpistemic_iff :
     aspectBoundEpistemic occurs τ con think w t P ↔
-      perfective occurs τ w t fun s ↦ think s ∧ ∃ C ∈ con s, C.Nonempty ∧ ∀ w'' ∈ C, P w'' :=
+      perfective occurs τ w t fun s ↦
+        think s ∧ s ∈ (contentAccessible con).dom ∧ □[contentAccessible con] P s :=
   exists_congr fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
-    contentPossibility_contentNecessity
+    diamond_const
 
 /-- An aspect-bound modal has no epistemic reading where actual events lack content, as with the
 train-taking of (246), since the reading needs a contentful event (310a). -/
 theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = none) :
     ¬ aspectBoundEpistemic occurs τ con think w t P :=
-  fun ⟨e, he, _, _, hp⟩ ↦ not_contentPossibility_of_eq_none (h e he) hp
+  fun ⟨e, he, _, _, hp⟩ ↦ not_diamond_contentAccessible (h e he) hp
 
 /-! ### The content of the speech event, chapter 3
 

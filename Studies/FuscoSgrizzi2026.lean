@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Events.Closure
+public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Fragments.Romance.Italian.Verbs
@@ -24,9 +25,9 @@ property its complement supplies (`Frame.convincere`, the paper's (24)). A *di*-
 the eventuality argument of the bare infinitive into a proposition, which *di* quantifies over
 the state's content worlds; an *a*-complement keeps it open, and *a*, anchored to the state,
 quantifies over the state's inertia worlds and binds the event to the state by the causal
-relation (`aP`). Both heads are Kratzer necessity over backgrounds the state projects, the
-event-relative modality of [hacquard-2010]: *di* over a content background, *a* over a
-circumstantial base ordered by inertia ([dowty-1979], [kratzer-2013]). This is the causal
+relation (`aP`). Both heads are necessity anchored to the state, the event-relative modality of
+[hacquard-2010]: *di* over the state's content, *a* over a circumstantial base ordered by inertia
+([dowty-1979], [kratzer-2013]). This is the causal
 self-referentiality of intention ([searle-1983]): in every inertia world the intended event is
 caused by the attitude state, hence later than it, the future orientation of *a*-infinitives
 ([wurmbrand-2014]; `intention_future`). Complement size is the extended projection's
@@ -40,12 +41,17 @@ reaches (`rows_predicted`).
   inside it. The extension order makes negation level with tense and the modal heads, so
   the absence of modal auxiliaries ((9) and (10)) and the ban on past-oriented complements ((5))
   stay in the prose and in `intention_future`.
-* The two heads are stated over abstract eventualities and worlds, with the content background,
-  the circumstantial base and the inertial ordering as anchoring functions of the state. The
+* The two heads are stated over abstract eventualities and worlds, with the content, the
+  circumstantial base and the inertial ordering as functions of the state. The
   closure head (23b) is `Event.closure` and the prejacent of *a* is `Event.causedClosure`, the
   operators of [grano-2024]'s account, so a complement takes its world before its eventuality.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
   `Fragments/Romance/Italian/Verbs.lean`.
+
+## Errata
+
+* (26) writes the vP as `λe.λw.Have-a-Child(e, w′) ∧ Agent(e, PRO, w)`, crossing the world
+  variables (23a) keeps together; `diP` reads both conjuncts at the content world.
 
 ## References
 
@@ -64,7 +70,7 @@ reaches (`rows_predicted`).
 namespace FuscoSgrizzi2026
 
 open Modality Minimalist Italian.Verbs Event
-open scoped SetRel
+open scoped SetRel ModalLogic
 
 section Semantics
 
@@ -86,8 +92,8 @@ theorem aP_bot (circumstances : V → Background W) (causeStar : W → SetRel V 
   necessity_bot_iff ..
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
-def diP (content : V → Background W) (Q : W → Prop) (s : V) (w : W) : Prop :=
-  simpleNecessity (content s) Q w
+def diP (con : V → Option (Set W)) (Q : W → Prop) (s : V) : Prop :=
+  □[contentAccessible con] Q s
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
 causation between eventualities, and the class of rational attitudes. -/
@@ -105,13 +111,13 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (content circumstances : V → Background W)
+variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances : V → Background W)
   (inertia : V → Background W)
   (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V) (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the
 bare infinitive into a proposition held at the state's content worlds. -/
-def beliefReport : Prop := F.convincere (fun s ↦ diP content (closure P) s w) x y e w
+def beliefReport : Prop := F.convincere (fun s ↦ diP con (closure P) s) x y e w
 
 /-- The intention report is *convincere* with the *a*-complement. -/
 def intentionReport : Prop :=
