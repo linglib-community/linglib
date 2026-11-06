@@ -25,8 +25,8 @@ bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.Poi
 ## Main results
 
 * `Team.invariant_flat`, `Team.Invariant.inter`, `Team.Invariant.union`,
-  `Team.Invariant.tensor`, `Team.invariant_dep`, `Team.invariant_incl`: the non-modal
-  connectives and atoms preserve invariance.
+  `Team.Invariant.sups`, `Team.Invariant.upperClosure`, `Team.invariant_dep`,
+  `Team.invariant_incl`: the non-modal connectives and atoms preserve invariance.
 * `Team.Invariant.poss`, `Team.Invariant.nec`, `Team.Invariant.possWitness`,
   `Team.Invariant.possLax`, `Team.Invariant.necImage`: the modalities preserve invariance one
   step down.
@@ -46,6 +46,8 @@ every atom of the atom type, which is the paper's notion when that type is the f
 -/
 
 @[expose] public section
+
+open scoped SetFamily
 
 open scoped Relator
 
@@ -140,16 +142,19 @@ theorem Invariant.nec (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' 
     (h : Invariant r P P') : Invariant r₁ (nec R P) (nec R' P') :=
   invariant_flat fun _ _ hab ↦ h (hR _ _ hab)
 
+/-- Having a part in a property preserves invariance: the upper closures of invariant
+    properties are invariant. -/
+theorem Invariant.upperClosure (h : Invariant r P P') :
+    Invariant r ↑(_root_.upperClosure P) ↑(_root_.upperClosure P') := by
+  refine fun s s' hs ↦ ⟨fun ⟨t, htP, hts⟩ ↦ ?_, fun ⟨t', htP, hts⟩ ↦ ?_⟩
+  · obtain ⟨t', ht', htt'⟩ := hs.exists_finset_subset hts
+    exact ⟨t', (h htt').1 htP, ht'⟩
+  · obtain ⟨t, ht, htt'⟩ := (Set.liftRel_swap.2 hs).exists_finset_subset hts
+    exact ⟨t, (h (Set.liftRel_swap.1 htt')).2 htP, ht⟩
+
 theorem Invariant.poss (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
-    (h : Invariant r P P') : Invariant r₁ (poss R P) (poss R' P') := by
-  refine invariant_flat fun a b hab ↦ ⟨?_, ?_⟩
-  · rintro ⟨t, ht, htne, htP⟩
-    obtain ⟨t', ht', htt'⟩ := (hR a b hab).exists_finset_subset ht
-    exact ⟨t', ht', Finset.coe_nonempty.1 (htt'.nonempty_iff.1 htne), (h htt').1 htP⟩
-  · rintro ⟨t', ht', htne, htP⟩
-    obtain ⟨t, ht, htt'⟩ := (Set.liftRel_swap.2 (hR a b hab)).exists_finset_subset ht'
-    rw [Set.liftRel_swap] at htt'
-    exact ⟨t, ht, Finset.coe_nonempty.1 (htt'.nonempty_iff.2 htne), (h htt').2 htP⟩
+    (h : Invariant r P P') : Invariant r₁ (poss R P) (poss R' P') :=
+  (h.inter invariant_ne).upperClosure.nec hR
 
 variable [DecidableEq α] [DecidableEq β]
 
@@ -173,8 +178,8 @@ theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Fins
   exact Finset.mem_union.2 <| (Finset.mem_union.1 ha).imp
     (fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩) fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩
 
-theorem Invariant.tensor (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
-    Invariant r (tensor P Q) (tensor P' Q') := fun _ _ hs ↦
+theorem Invariant.sups (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
+    Invariant r (P ⊻ Q) (P' ⊻ Q') := fun _ _ hs ↦
   Set.mem_sups_congr (r := fun (s : Finset α) (s' : Finset β) ↦ Set.LiftRel r ↑s ↑s')
     (fun h ↦ h.exists_finset_union_eq rfl)
     (fun h ↦

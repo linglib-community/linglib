@@ -25,7 +25,7 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 
 ## Main results
 
-* `Formula.Context.setOf_support_fill`: the split behind the translation rules.
+* `Formula.Context.ver_den_fill`: the split behind the translation rules.
 * `soundness`; completeness is proved in `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
 * `strongFalsum_derives`, `conj_disj_derives_disj_conj`, `disj_conj_ne_derives_conj_ne`,
@@ -50,6 +50,8 @@ Result numbers and pages follow arXiv:2305.11777v3.
 -/
 
 @[expose] public section
+
+open scoped SetFamily
 
 namespace BSML
 
@@ -85,37 +87,36 @@ def fill : Context Atom → Formula Atom → Formula Atom
   | nec C, φ => Formula.nec (C.fill φ)
 
 /-- A context is distributive when its hole is under no modality, so that it is built from `∧`
-    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024] (p. 28). -/
+    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
+    defined before Definition 4.24. -/
 def Distributive : Context Atom → Prop
   | hole => True
   | conjLeft C _ | conjRight _ C | disjLeft C _ | disjRight _ C => C.Distributive
   | poss _ | nec _ => False
 
-/-- At a distributive position, the teams supporting `C.fill ψ` are those supporting `C.fill (ψ ∧
-NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024] p. 34). -/
-theorem setOf_support_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
+/-- At a distributive position, the teams supporting `C.fill ψ` are those supporting
+`C.fill (ψ ∧ NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024], before Definition 4.33). -/
+theorem ver_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
     ∀ {C : Context Atom}, C.Distributive →
-      {s | support M (C.fill ψ) s} = {s | support M (C.fill (.conj ψ .ne)) s} ∪
-        {s | support M (C.fill (.conj ψ .falsum)) s}
+      ((C.fill ψ).den M).ver =
+        ((C.fill (.conj ψ .ne)).den M).ver ∪ ((C.fill (.conj ψ .falsum)).den M).ver
   | hole, _ => by
     ext s
     change _ ↔ (_ ∧ s.Nonempty) ∨ (_ ∧ support M .falsum s)
     rw [support_falsum, ← and_or_left, and_iff_left s.eq_empty_or_nonempty.symm]
     exact Iff.rfl
   | conjLeft C θ, hC => by
-    change {s | _} ∩ {s | _} = ({s | _} ∩ {s | _}) ∪ ({s | _} ∩ {s | _})
-    rw [setOf_support_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
+    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    rw [ver_den_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
   | conjRight θ C, hC => by
-    change {s | _} ∩ {s | _} = ({s | _} ∩ {s | _}) ∪ ({s | _} ∩ {s | _})
-    rw [setOf_support_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
+    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    rw [ver_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
   | disjLeft C θ, hC => by
-    change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [setOf_support_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
-      Set.sups_union_left]
+    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
+    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_left]
   | disjRight θ C, hC => by
-    change tensor _ _ = tensor _ _ ∪ tensor _ _
-    rw [setOf_support_fill M ψ (C := C) hC, tensor_eq_sups, tensor_eq_sups, tensor_eq_sups,
-      Set.sups_union_right]
+    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
+    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_right]
   | poss _, hC | nec _, hC => hC.elim
 
 end Formula.Context
@@ -280,51 +281,49 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     · exact isLowerSet_support_of_neFree (hΔ γ hγ) M Finset.subset_union_right (hΓ γ (.inr hγ))
   | falsumE _ ih =>
     intro s hΓ
-    obtain ⟨t₁, h₁, t₂, h₂, rfl⟩ := ih s hΓ
-    rwa [(support_falsum M t₁).mp h₁, Finset.empty_union]
+    obtain ⟨t₁, h₁, t₂, h₂, rfl⟩ := Set.mem_sups.1 (ih s hΓ)
+    rwa [(support_falsum M t₁).mp h₁, Finset.sup_eq_union, Finset.empty_union]
   | strongFalsumCtr _ _ ih =>
     intro s hΓ
     obtain ⟨t₁, h₁, -⟩ := ih s hΓ
     exact absurd h₁ (not_support_strongFalsum M t₁)
   | possMon _ _ ihD ihPoss =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, hne, hφ⟩ := ihPoss s hΓ w hw
-    exact ⟨t, hsub, hne, ihD t fun γ hγ ↦ hγ ▸ hφ⟩
+    obtain ⟨t, ⟨hφ, hne⟩, hsub⟩ := ihPoss s hΓ w hw
+    exact ⟨t, ⟨ihD t fun γ hγ ↦ hγ ▸ hφ, hne⟩, hsub⟩
   | necMon _ _ _ ihD ihboxes => exact fun s hΓ w hw ↦ ihD _ fun δ hδ ↦ ihboxes δ hδ s hΓ w hw
   | possSep _ ih =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, _, t₁, -, t₂, ⟨hψ, hne⟩, rfl⟩ := ih s hΓ w hw
-    exact ⟨t₂, Finset.subset_union_right.trans hsub, hne, hψ⟩
+    obtain ⟨_, ⟨⟨t₁, -, t₂, ⟨hψ, hne⟩, rfl⟩, -⟩, hsub⟩ := ih s hΓ w hw
+    exact ⟨t₂, ⟨hψ, hne⟩, le_sup_right.trans hsub⟩
   | possJoin _ _ ih₁ ih₂ =>
     intro s hΓ w hw
-    obtain ⟨t₁, hsub₁, hne₁, hφ⟩ := ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw
-    obtain ⟨t₂, hsub₂, -, hψ⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
-    exact ⟨t₁ ∪ t₂, Finset.union_subset hsub₁ hsub₂, hne₁.mono Finset.subset_union_left,
-      t₁, hφ, t₂, hψ, rfl⟩
+    obtain ⟨t₁, ⟨hφ, hne₁⟩, hsub₁⟩ := ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw
+    obtain ⟨t₂, ⟨hψ, -⟩, hsub₂⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
+    exact ⟨t₁ ⊔ t₂, ⟨⟨t₁, hφ, t₂, hψ, rfl⟩, hne₁.mono le_sup_left⟩, sup_le hsub₁ hsub₂⟩
   | necInst _ ih =>
     intro s hΓ w hw
     obtain ⟨hφ, hne⟩ := ih s hΓ w hw
-    exact ⟨M.access w, subset_rfl, hne, hφ⟩
+    exact ⟨M.access w, ⟨hφ, hne⟩, le_rfl⟩
   | necPossJoin _ _ ih₁ ih₂ =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, -, hψ⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
-    exact ⟨M.access w, ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw, t, hψ,
-      Finset.union_eq_left.mpr hsub⟩
+    obtain ⟨t, ⟨hψ, -⟩, hsub⟩ := ih₂ s (fun γ hγ ↦ hΓ γ (.inr hγ)) w hw
+    exact ⟨M.access w, ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw, t, hψ, sup_eq_left.mpr hsub⟩
   | @neTrs Γ Δ₁ Δ₂ ψ χ C hC _ _ _ ih ih₁ ih₂ =>
     intro s hΓ
-    have h : s ∈ {s | support M (C.fill ψ) s} := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
-    rw [Formula.Context.setOf_support_fill M ψ hC] at h
+    have h : s ∈ ((C.fill ψ).den M).ver := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
+    rw [Formula.Context.ver_den_fill M ψ hC] at h
     rcases h with h | h
     · exact ih₁ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inl (.inr hγ))]
     · exact ih₂ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inr hγ)]
   | @possNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ poss M.access {t | support M (C.fill ψ) t} := ih s hΓ
-    rwa [Formula.Context.setOf_support_fill M ψ hC, poss_union] at h
+    have h : s ∈ poss M.access ((C.fill ψ).den M).ver := ih s hΓ
+    rwa [Formula.Context.ver_den_fill M ψ hC, poss_union] at h
   | @necNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ nec M.access {t | support M (C.fill ψ) t} := ih s hΓ
-    rwa [Formula.Context.setOf_support_fill M ψ hC, nec_union] at h
+    have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
+    rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
 
 theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
   fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
@@ -429,7 +428,7 @@ theorem poss_disj_conj_ne_derives_conj_poss :
 /-! ### Non-derivations -/
 
 /-- Unrestricted `∨I` would be unsound, since `p ⊬ p ∨ NE`. The empty team supports `p` but not
-    `p ∨ NE` ([aloni-anttila-yang-2024] p. 19). -/
+    `p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
 theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .ne := by
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ true⟩
@@ -437,15 +436,15 @@ theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .
   exact hne.ne_empty (Finset.union_eq_empty.mp h).2
 
 /-- Without enrichment, `◇(p ∨ q) ⊬ ◇p ∧ ◇q` for distinct atoms ([aloni-anttila-yang-2024] Figure
-3(b), pp. 6–7). -/
+3(b)). -/
 theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
     ¬ {.poss (.disj (.atom p) (.atom q))} ⊢ .conj (.poss (.atom p)) (.poss (.atom q)) := by
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ {()}, fun r _ ↦ r = q⟩
   have h := soundness hd M {()} fun γ hγ ↦ hγ ▸ fun _ _ ↦
-    ⟨{()}, subset_rfl, Finset.singleton_nonempty _, ∅, empty_supports_atom M p, {()},
-      fun _ _ ↦ by simp [M], by simp⟩
-  obtain ⟨s, hs, ⟨⟨⟩, hu⟩, hp⟩ := h.1 () (Finset.mem_singleton_self _)
+    ⟨{()}, ⟨⟨∅, empty_supports_atom M p, {()}, fun _ _ ↦ by simp [M], by simp⟩,
+      Finset.singleton_nonempty _⟩, le_rfl⟩
+  obtain ⟨s, ⟨hp, ⟨⟨⟩, hu⟩⟩, hs⟩ := h.1 () (Finset.mem_singleton_self _)
   exact hpq (by simpa [M] using hp () hu)
 
 end BSML

@@ -54,6 +54,8 @@ non-classical behaviour.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace QBSML
 
 open FirstOrder
@@ -366,8 +368,8 @@ def eval (M : Model W Domain Const Pred) :
   | true,  .neg ψ, s => eval M false ψ s
   | false, .neg ψ, s => eval M true ψ s
   | true,  .conj φ ψ, s => eval M true φ s ∧ eval M true ψ s
-  | false, .conj φ ψ, s => s ∈ Team.tensor {t | eval M false φ t} {t | eval M false ψ t}
-  | true,  .disj φ ψ, s => s ∈ Team.tensor {t | eval M true φ t} {t | eval M true ψ t}
+  | false, .conj φ ψ, s => s ∈ {t | eval M false φ t} ⊻ {t | eval M false ψ t}
+  | true,  .disj φ ψ, s => s ∈ {t | eval M true φ t} ⊻ {t | eval M true ψ t}
   | false, .disj φ ψ, s => eval M false φ s ∧ eval M false ψ s
   | true,  .poss ψ, s => s ∈ Team.poss (Index.successors M.access) {t | eval M true ψ t}
   | false, .poss ψ, s => s ∈ Team.nec (Index.successors M.access) {t | eval M false ψ t}
@@ -406,9 +408,9 @@ variable {M : Model W Domain Const Pred} {φ : Formula Var Const Pred} {x : Var}
 theorem support_poss_iff : support M (.poss φ) s ↔
     ∀ i ∈ s, ∃ X ⊆ M.access i.world, X.Nonempty ∧ support M φ (State.modalLift X i.assign) :=
   forall₂_congr fun i _ ↦
-    ⟨fun ⟨t, ht, hne, h⟩ ↦ ⟨State.worldProj t, State.worldProj_subset_of_subset_modalLift ht,
+    ⟨fun ⟨t, ⟨h, hne⟩, ht⟩ ↦ ⟨State.worldProj t, State.worldProj_subset_of_subset_modalLift ht,
         State.worldProj_nonempty hne, (State.modalLift_worldProj_of_subset ht).symm ▸ h⟩,
-      fun ⟨X, hX, hne, h⟩ ↦ ⟨State.modalLift X i.assign, State.modalLift_mono hX, hne.image _, h⟩⟩
+      fun ⟨X, hX, hne, h⟩ ↦ ⟨State.modalLift X i.assign, ⟨h, hne.image _⟩, State.modalLift_mono hX⟩⟩
 
 theorem antiSupport_poss_iff : antiSupport M (.poss φ) s ↔
     ∀ i ∈ s, antiSupport M φ (State.modalLift (M.access i.world) i.assign) := Iff.rfl

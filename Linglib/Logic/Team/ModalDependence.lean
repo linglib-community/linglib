@@ -56,6 +56,8 @@ split `t₁ ∪ t₂ = t`, which is equivalent to Väänänen's `t ⊆ t₁ ∪ 
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace ModalLogic.Dependence
 
 variable {W : Type*} {Atom : Type*}
@@ -128,8 +130,8 @@ def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .neg ψ,         t => eval M false ψ t
   | false, .neg ψ,         t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
-  | true,  .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
+  | false, .conj ψ₁ ψ₂,    t => t ∈ {s | eval M false ψ₁ s} ⊻ {s | eval M false ψ₂ s}
+  | true,  .disj ψ₁ ψ₂,    t => t ∈ {s | eval M true ψ₁ s} ⊻ {s | eval M true ψ₂ s}
   | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true,  .poss ψ,        t => t ∈ Team.possWitness M.access {s | eval M true ψ s}
   | false, .poss ψ,        t => t ∈ Team.necImage M.access {s | eval M false ψ s}
@@ -207,8 +209,8 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     exact ⟨(Team.isLowerSet_dep _ _).preimage fun _ _ ↦ Finset.coe_subset.2,
       Team.isLowerSet_singleton_empty⟩
   | neg ψ ih => exact ih.symm
-  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.sups ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.sups ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ ih => exact ⟨Team.isLowerSet_possWitness _ _, ih.2.necImage⟩
 
 /-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2, p. 245). -/
@@ -228,8 +230,8 @@ private theorem support_and_antiSupport_empty
     simp only [support, eval, Finset.coe_empty]
     exact Team.empty_mem_dep
   | neg ψ ih => exact ih.symm
-  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Team.empty_mem_tensor ih₁.2 ih₂.2⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Set.bot_mem_sups ih₁.2 ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Set.bot_mem_sups ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss ψ ih => exact ⟨Team.empty_mem_possWitness ih.1, Team.empty_mem_necImage ih.2⟩
 
 /-- Every MDL formula is supported on the empty team. -/
@@ -275,10 +277,10 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
   | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+    cases b; exacts [(ih₁ hd₁ _).sups (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).sups (ih₂ hd₂ _)]
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
@@ -336,14 +338,14 @@ theorem eval_iff_forall_realize (hD : φ.DepFree) (b : Bool) (t : Finset W) :
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_tensor_flat.trans ?_
+      refine Team.mem_flat_sups_flat.trans ?_
       simp [Realize, imp_iff_not_or]
     · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and, not_or]
     · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_tensor_flat.trans ?_
+      refine Team.mem_flat_sups_flat.trans ?_
       simp [Realize]
   | poss ψ ih =>
     cases b
