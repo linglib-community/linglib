@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Studies.BylininaNouwen2018
-public import Studies.Partee1987
+public import Linglib.Semantics.Quantification.Individual
 
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics
@@ -145,7 +145,7 @@ theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (ind
 
 -- (50), (48)
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
-  rw [BE_maxIn_singleton_eq_BE_individual]; exact Partee1987.iota_BE_lift n
+  rw [BE_maxIn_singleton_eq_BE_individual]; exact iota_BE_individual n
 
 theorem maxIn_singleton_injective : Function.Injective fun n : ℕ ↦ MaxIn {n} :=
   fun a b (h : MaxIn {a} = MaxIn {b}) ↦

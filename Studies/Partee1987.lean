@@ -1,45 +1,52 @@
 module
 
+public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Individual
-public import Linglib.Semantics.Reference.Iota
+public import Mathlib.Basic.PEquiv
+public import Mathlib.Order.Filter.Cofinite
+public import Mathlib.Order.Filter.Ultrafilter.Basic
+public import Mathlib.Order.Interval.Set.Infinite
 
 /-!
-# Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
+# Partee (1987): Noun phrase interpretation and type-shifting principles
 
-This file formalizes the type-shifting principles of [partee-1987]. A noun phrase may denote
-an entity, a predicate, or a generalized quantifier as its environment demands, and the
-mappings between the three types come in inverse pairs, the paper's Figure 1: `lift`, the
-substrate's `Quantifier.individual`, and `lower`, the total injection of an entity into
-its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
-of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
-properties and entities after Chierchia. The first two pairs are an injection and its
-`Function.partialInv` (`lower_isPartialInv`, `iota_isPartialInv`). The
-definite article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`,
-which is the determiner `Det.the`. Whenever `iota(king')` is defined `THE(king')` is its lift,
-and otherwise the empty set of properties, so `lower(THE(king')) = iota(king')` either way. The
-predicative reading of *the king* is `BE(THE(king'))`, the singleton of the unique king, which
-is `ident(iota(king'))` when the latter is defined and coincides with the common noun when there
-is at most one king; this is why the article can be dropped in *John is (the) president*
-(`the_eq_individual`, `lower_the`, `BE_the_eq_ident`, `BE_the_eq_self`).
-
-The functor `BE`, Montague's translation of *be* reconceived as a type shifter, is a
-homomorphism of the Boolean structures, Fact 1, which the substrate builds into `Quantifier.BE`, and
-the unique homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`, Fact 2
-(`BE_natural`). The indefinite article `A` is `Det.some`, natural as an inverse of `BE`
-(`Quantifier.BE_some`), so *be a man* comes out as *man*, and *be no man* as the complement of *be a
-man* (`BE_no`), while *be every man* holds only of the only man (`mem_BE_every`). English
-*be* itself is then predicate application, the predicative reading having moved into the noun
-phrase.
+A noun phrase may denote an entity, a predicate or a generalized quantifier, and the shifts among
+the three types pair a total injection with its partial inverse: the lift of an entity with
+`Quantifier.lower`, the singleton property with `iota`, and nominalization, which [cannot be
+total](##nom_russell), with predication. Montague's *be*, recast as the shift `BE`, is [the only
+complete homomorphism](##Quantifier.BE_unique) taking each lift to its singleton, and `A` is [its
+only conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse); *exactly
+one* is [another section](##BE_exactly_one), [set apart only by
+monotonicity](##exactly_one_ne_some).
 
 ## Implementation notes
 
-* The setting is extensional, so `pred` is `ident` and `nom` and `iota` are both the Russellian
-  `iota`.
-* Fact 2 is read with complete homomorphisms, the homomorphisms of [keenan-faltz-1985]'s result
-  that the individuals generate the quantifiers, which the paper invokes for it; on an infinite
-  domain a merely Boolean homomorphism need not preserve the infinite meets the argument uses.
-* The mappings to and from kinds of §3.4 onward and the analysis of the Williams counterexample
-  are not formalized.
+* Properties are sets, as in the paper's extensional fragment.
+* Nominalization and predication are a partial equivalence between properties and entities, a
+  parameter as Chierchia's property correlates are primitive. His later kind operators, defined
+  at each situation from the largest member, are `Kind.down` and `Kind.up`.
+* Fact 2, that `BE` is the unique homomorphism making Figure 3 commute, is
+  `Quantifier.BE_unique`, for complete homomorphisms; the predictions of §3.3 and §3.4.1 for
+  particular noun phrases are the lemmas on `BE` and `Quantifier.lower` beside it.
+
+## Errata
+
+* Fact 2 is stated for homomorphisms of the Boolean structures. On an infinite domain a Boolean
+  homomorphism can [agree with `BE` on the lifts and differ
+  elsewhere](##exists_boundedLatticeHom_ne_BE); the argument from Keenan and Faltz's generation
+  result needs complete homomorphisms.
+* *Most men* is said never to contain a singleton, so that *be most men* is always empty; with
+  exactly one man [it is the singleton of that man](##BE_most), the degenerate case the paper
+  grants for *every man*.
+* *Exactly one* is said to be neither symmetric nor monotone; it is symmetric
+  (`Quantifier.Det.symm_exactly`), as every intersective determiner is.
+
+## TODO
+
+* Link's pair of §3.4.2, the sum of a set of atoms and `Mereology.atomsBelow` back, and the
+  analysis of the Williams puzzle in §4.
+* The *consider* judgments of (10) as `Data/Examples` rows, *every island* and *most islands*
+  paired with their degenerate predicative readings once a degenerate predicate is defined.
 
 ## References
 
@@ -52,64 +59,78 @@ phrase.
 
 namespace Partee1987
 
-open Quantifier Quantifier.Det
+open Quantifier Quantifier.Det Filter
 
-variable {E : Type*} (j : E) (P : Set E)
+variable {E : Type*}
 
-/-- `lower Q` is the entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
-noncomputable def lower : Quantifier E → Option E := Function.partialInv individual
+/-! ### Figure 1: nominalization and predication -/
 
-/-! ### Figure 1: three inverse pairs -/
+/-- The Russell property of a nominalization: being the correlate of a property one lacks. -/
+def russell (c : Set E ≃. E) : Set E := {x | ∃ P ∈ c.symm x, x ∉ P}
 
-theorem lower_isPartialInv : Function.IsPartialInv individual (lower (E := E)) :=
-  individual_injective.isPartialInv
+/-- Nominalization is only almost total: the Russell property has no entity correlate (§3.1). -/
+theorem nom_russell (c : Set E ≃. E) : c (russell c) = none := by
+  refine Option.eq_none_iff_forall_ne_some.2 fun r h ↦ ?_
+  have hr : c.symm r = some (russell c) := c.eq_some_iff.2 h
+  exact iff_not_self (a := r ∈ russell c)
+    ⟨fun ⟨_, hP, hrP⟩ ↦ (Option.some_injective _ (hr.symm.trans hP)) ▸ hrP, fun h ↦ ⟨_, hr, h⟩⟩
 
-theorem lower_lift : lower (individual j) = some j :=
-  Function.partialInv_left individual_injective j
+/-! ### §3.3: `A`, *exactly one* and *most* under `BE` -/
 
-theorem iota_BE_lift : iota (BE (individual j)) = some j := by
-  rw [BE_individual]; exact iota_ident j
+/-- *Exactly one* is also an inverse of `BE` (§3.3). -/
+theorem BE_exactly_one (A : Set E) : BE (exactly 1 A) = A :=
+  Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
+    by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
+      Set.inter_singleton_eq_empty.2]
 
-/-! ### Figure 2: *the king* in three types (§3.2) -/
+/-- *Exactly one* is conservative, symmetric and undone by `BE`, yet it is not `A`: monotonicity
+is what singles `A` out (§3.3). -/
+theorem exactly_one_ne_some [Nontrivial E] : (exactly 1 : Det E) ≠ Det.some := fun h ↦ by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have := congrFun₂ h {a, b} {a, b}
+  simp [exactly_apply, Set.ncard_pair hab, Det.some] at this
 
-theorem the_eq_individual (h : iota (· ∈ P) = some j) : the P = individual j :=
-  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by simp [h, individual]
+/-- With finitely many men, *be most men* is *be the man*: it holds of the only man (§3.3). -/
+theorem BE_most {A : Set E} (hA : A.Finite) : BE (most A) = BE (the A) := by
+  ext x
+  rw [mem_BE_the, mem_BE, most_apply]
+  by_cases hx : x ∈ A
+  · rw [Set.inter_singleton_of_mem hx, Set.ncard_singleton, Nat.lt_one_iff,
+      Set.ncard_eq_zero hA.sdiff, Set.sdiff_eq_empty]
+    exact ⟨fun h ↦ (Set.subset_singleton_iff_eq.1 h).resolve_left
+      (Set.nonempty_of_mem hx).ne_empty, fun h ↦ h.le⟩
+  · rw [Set.inter_singleton_eq_empty.2 hx, Set.ncard_empty]
+    exact ⟨fun h ↦ absurd h (Nat.not_lt_zero _), fun h ↦ absurd (h ▸ rfl : x ∈ A) hx⟩
 
-theorem the_eq_bot (h : iota (· ∈ P) = none) : the P = ⊥ :=
-  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by simp [h]
+/-! ### Fact 2 on an infinite domain -/
 
-theorem lower_the : lower (the P) = iota (· ∈ P) := by
-  cases h : iota (· ∈ P) with
-  | some j => rw [the_eq_individual j P h, lower_lift]
-  | none =>
-    rw [the_eq_bot P h]
-    exact Option.eq_none_iff_forall_ne_some.2 fun j hj ↦
-      (congrFun ((lower_isPartialInv j ⊥).1 hj) ⊤).mp trivial
+/-- `x` is in `boolBE Q` when `Q` holds of `{x} ∪ [n, ∞)` for ultrafilter-many `n`. -/
+noncomputable def boolBE : BoundedLatticeHom (Quantifier ℕ) (Set ℕ) where
+  toFun Q := {x | ∀ᶠ n in (hyperfilter ℕ : Filter ℕ), Q (insert x (Set.Ici n))}
+  map_sup' _ _ := Set.ext fun _ ↦ Ultrafilter.eventually_or
+  map_inf' _ _ := Set.ext fun _ ↦ eventually_and
+  map_top' := Set.ext fun _ ↦ by simp
+  map_bot' := Set.ext fun _ ↦ by simpa using (hyperfilter ℕ).neBot.ne
 
-theorem mem_BE_the (x : E) : x ∈ BE (the P) ↔ ∀ y, y ∈ P ↔ y = x :=
-  ⟨fun ⟨_, hz, hzx⟩ ↦ hzx ▸ hz, fun h ↦ ⟨x, h, rfl⟩⟩
+theorem boolBE_individual (j : ℕ) : boolBE (individual j) = {j} := by
+  ext x
+  simp only [boolBE, BoundedLatticeHom.coe_mk, LatticeHom.coe_mk, SupHom.coe_mk,
+    Set.mem_ofPred_eq, individual, Set.mem_insert_iff, Set.mem_Ici, Set.mem_singleton_iff]
+  refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun h ↦ .of_forall fun _ ↦ .inl h.symm⟩
+  have hgt : ∀ᶠ n in (hyperfilter ℕ : Filter ℕ), j < n :=
+    hyperfilter_le_cofinite (Nat.cofinite_eq_atTop ▸ eventually_gt_atTop j)
+  obtain ⟨n, h1, h2⟩ := (h.and hgt).exists
+  exact h1.elim (fun e ↦ hne e.symm) fun h ↦ absurd h2 (not_lt.2 h)
 
-theorem BE_the_eq_ident (h : iota (· ∈ P) = some j) : BE (the P) = ident j := by
-  rw [the_eq_individual j P h, BE_individual]; rfl
-
-/-- With at most one king, the predicative *the king* is the common noun *king*, as in *John is
-(the) president* (12). -/
-theorem BE_the_eq_self (hP : P.Subsingleton) : BE (the P) = P :=
-  Set.ext fun x ↦ (mem_BE_the P x).trans
-    ⟨fun h ↦ (h x).2 rfl, fun hx _ ↦ ⟨fun hy ↦ hP hy hx, fun e ↦ e ▸ hx⟩⟩
-
-/-! ### `A` and `BE` as natural functors (§3.3) -/
-
-/-- Fact 2: `BE` is the unique homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`. -/
-theorem BE_natural (f : CompleteLatticeHom (Quantifier E) (Set E))
-    (hcomm : ∀ j : E, f (individual j) = ident j) : f = BE :=
-  completeLatticeHom_ext fun j ↦ (hcomm j).trans (BE_individual j).symm
-
-theorem mem_BE_every (x : E) : x ∈ BE (every P) ↔ ∀ y ∈ P, y = x :=
-  .rfl
-
-/-- `BE(no man) = not(BE(a man))`, by Fact 1. -/
-theorem BE_no : BE (no P) = (BE (Det.some P))ᶜ :=
-  (congrArg BE (congrFun compl_some P)).symm.trans (map_compl' BE _)
+/-- Read with Boolean homomorphisms, Fact 2 (§3.3) fails on an infinite domain: a homomorphism can
+take each lift to its singleton and still differ from `BE`. -/
+theorem exists_boundedLatticeHom_ne_BE :
+    ∃ f : BoundedLatticeHom (Quantifier ℕ) (Set ℕ), (∀ j, f (individual j) = {j}) ∧
+      f ≠ (BE : CompleteLatticeHom (Quantifier ℕ) (Set ℕ)).toBoundedLatticeHom := by
+  refine ⟨boolBE, boolBE_individual, fun h ↦ ?_⟩
+  have h0 : (0 : ℕ) ∈ boolBE (fun B ↦ B.Infinite) :=
+    .of_forall fun n ↦ (Set.Ici_infinite n).mono (Set.subset_insert _ _)
+  rw [h] at h0
+  exact (Set.finite_singleton 0).not_infinite h0
 
 end Partee1987
