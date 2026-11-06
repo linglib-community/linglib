@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Individual
 public import Mathlib.Order.GaloisConnection.Defs
 
@@ -10,9 +11,10 @@ public import Mathlib.Order.GaloisConnection.Defs
 individuals whose singleton it contains. It is a complete homomorphism, [the only one taking each
 individual to its singleton](##Quantifier.BE_unique), and the existential determiner `Det.some`,
 Partee's `A`, is a section of it, [the only conservative, symmetric, monotone
-one](##Quantifier.eq_some_of_leftInverse); on the monotone quantifiers the two form a Galois
-coinsertion. On an intersective determiner `BE` [asks of an individual only about the restrictor
-there](##Quantifier.Det.Intersective.mem_BE). *Be the `A`* [holds of the only
+one](##Quantifier.eq_some_of_leftInverse), which *exactly one* [fails only by
+monotonicity](##Quantifier.Det.exactly_one_ne_some); on the monotone quantifiers the two form a
+Galois coinsertion. On an intersective determiner `BE` [asks of an individual only about the
+restrictor there](##Quantifier.Det.Intersective.mem_BE). *Be the `A`* [holds of the only
 `A`](##Quantifier.mem_BE_the), as *be every `A`* does once there is an `A`, and read at each index
 it is [a role that no set represents](##Quantifier.BE_the_not_mem_range_const).
 
@@ -133,5 +135,40 @@ theorem some_le_iff {Q : Quantifier E} (hQ : Monotone Q) {A : Set E} :
 def gciSomeBE :
     GaloisCoinsertion (fun A ↦ (⟨Det.some A, monotone_some A⟩ : Set E →o Prop)) fun Q ↦ BE Q :=
   GaloisConnection.toGaloisCoinsertion (fun _ Q ↦ some_le_iff Q.monotone) fun A ↦ (BE_some A).le
+
+namespace Det
+
+/-! ### Counting determiners
+
+`BE` undoes *exactly one* as it undoes *some*, and *exactly one* is conservative and symmetric too,
+so only monotonicity tells it from *some* among the sections of `BE`. *Be most `A`*, like *be every
+`A`*, holds only of the only `A`. -/
+
+theorem BE_exactly_one (A : Set E) : BE (exactly 1 A) = A :=
+  Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
+    by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
+      Set.inter_singleton_eq_empty.2]
+
+/-- *Exactly one* is a conservative, symmetric section of `BE` other than *some*, so monotonicity
+is what singles out *some* among them ([partee-1987], §3.3). -/
+theorem exactly_one_ne_some [Nontrivial E] : (exactly 1 : Det E) ≠ Det.some := fun h ↦ by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have := congrFun₂ h {a, b} {a, b}
+  simp [exactly_apply, Set.ncard_pair hab, Det.some] at this
+
+/-- On a finite restrictor, *be most `A`* is *be the `A`*, as *be every `A`* is
+([partee-1987], §3.3). -/
+theorem BE_most {A : Set E} (hA : A.Finite) : BE (most A) = BE (the A) := by
+  ext x
+  rw [mem_BE_the, mem_BE, most_apply]
+  by_cases hx : x ∈ A
+  · rw [Set.inter_singleton_of_mem hx, Set.ncard_singleton, Nat.lt_one_iff,
+      Set.ncard_eq_zero hA.sdiff, Set.sdiff_eq_empty]
+    exact ⟨fun h ↦ (Set.subset_singleton_iff_eq.1 h).resolve_left
+      (Set.nonempty_of_mem hx).ne_empty, fun h ↦ h.le⟩
+  · rw [Set.inter_singleton_eq_empty.2 hx, Set.ncard_empty]
+    exact ⟨fun h ↦ absurd h (Nat.not_lt_zero _), fun h ↦ absurd (h ▸ rfl : x ∈ A) hx⟩
+
+end Det
 
 end Quantifier

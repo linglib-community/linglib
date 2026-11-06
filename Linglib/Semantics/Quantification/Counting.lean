@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Predicative
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Core.Data.Set.Card
 public import Mathlib.Tactic.Linarith
@@ -431,37 +431,6 @@ theorem most_singleton_iff (j : α) (B : Set α) : most {j} B ↔ j ∈ B := by
     simpa using h
   · rw [most_apply, Set.singleton_inter_of_notMem h]
     simpa using h
-
-/-! ### Predicative content
-
-`BE` undoes *exactly one* as it undoes *some*, and *exactly one* is conservative and symmetric too,
-so only monotonicity tells it from *some* among the sections of `BE`. *Be most `A`*, like *be every
-`A`*, holds only of the only `A`. -/
-
-theorem BE_exactly_one (A : Set α) : BE (exactly 1 A) = A :=
-  Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
-    by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
-      Set.inter_singleton_eq_empty.2]
-
-/-- *Exactly one* is a conservative, symmetric section of `BE` other than *some*, so monotonicity
-is what singles out *some* among them ([partee-1987], §3.3). -/
-theorem exactly_one_ne_some [Nontrivial α] : (exactly 1 : Det α) ≠ Det.some := fun h ↦ by
-  obtain ⟨a, b, hab⟩ := exists_pair_ne α
-  have := congrFun₂ h {a, b} {a, b}
-  simp [exactly_apply, Set.ncard_pair hab, Det.some] at this
-
-/-- On a finite restrictor, *be most `A`* is *be the `A`*, as *be every `A`* is
-([partee-1987], §3.3). -/
-theorem BE_most {A : Set α} (hA : A.Finite) : BE (most A) = BE (the A) := by
-  ext x
-  rw [mem_BE_the, mem_BE, most_apply]
-  by_cases hx : x ∈ A
-  · rw [Set.inter_singleton_of_mem hx, Set.ncard_singleton, Nat.lt_one_iff,
-      Set.ncard_eq_zero hA.sdiff, Set.sdiff_eq_empty]
-    exact ⟨fun h ↦ (Set.subset_singleton_iff_eq.1 h).resolve_left
-      (Set.nonempty_of_mem hx).ne_empty, fun h ↦ h.le⟩
-  · rw [Set.inter_singleton_eq_empty.2 hx, Set.ncard_empty]
-    exact ⟨fun h ↦ absurd h (Nat.not_lt_zero _), fun h ↦ absurd (h ▸ rfl : x ∈ A) hx⟩
 
 /-! ### The families of the canonical denotations
 

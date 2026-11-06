@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Semantics.Composition.Coordination
