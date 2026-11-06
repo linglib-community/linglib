@@ -11,10 +11,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "piedPiping"],
-      ["section", "Processing without gaps"]
-    ],
+    "paperFeatures": [],
     "comment": "The filler associates with put as soon as the verb is read.",
     "verified": "page-image"
   },
@@ -31,8 +28,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "prepositionStranding"],
-      ["section", "Processing without gaps"],
       ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; the paper calls it rather awkward: the filler associates with the stranded preposition at the end.",
@@ -50,10 +45,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multiplePiedPiping"],
-      ["section", "Processing recursive constructions"]
-    ],
+    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -68,10 +60,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"]
-    ],
+    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -87,8 +76,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "multipleObjectRelative"],
-      ["section", "Processing recursive constructions"],
       ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked: grammatical, with 'processing difficulties' the paper attributes to nested associations.",
@@ -111,8 +98,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"],
       ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; German speakers find it difficult in the same way English speakers find (45) difficult.",
@@ -130,10 +115,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"]
-    ],
+    "paperFeatures": [],
     "comment": "A further relative clause adds no processing complexity.",
     "verified": "page-image"
   },
@@ -150,8 +132,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "multipleObjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; extending (45) 'makes the sentence virtually incomprehensible'.",
     "verified": "page-image"
@@ -174,8 +155,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; the further relative clause 'leads to extreme processing difficulty'.",
     "verified": "page-image"
@@ -192,10 +172,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multiplePiedPiping"],
-      ["section", "Processing recursive constructions"]
-    ],
+    "paperFeatures": [],
     "comment": "Processed like (51), not like (52).",
     "verified": "page-image"
   },
@@ -211,10 +188,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multiplePiedPiping"],
-      ["section", "Processing recursive constructions"]
-    ],
+    "paperFeatures": [],
     "comment": "Five gaps at the end of the sentence under the empty-category analysis, with no increase in processing difficulty.",
     "verified": "page-image"
   },
@@ -231,8 +205,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "multiplePrepositionStranding"],
-      ["section", "Discussion"]
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; very hard to process: the filler–preposition associations are nested.",
     "verified": "page-image"
@@ -249,10 +222,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "multipleObjectRelativeDitransitive"],
-      ["section", "Discussion"]
-    ],
+    "paperFeatures": [],
     "comment": "Under the reading where Mary gave the slave the punishment and Tom sold the nobleman the slave.",
     "verified": "page-image"
   },
@@ -268,10 +238,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "embeddedQuestion"],
-      ["section", "Unbounded dependencies in categorial grammar"]
-    ],
+    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -286,10 +253,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "embeddedQuestion"],
-      ["section", "Unbounded dependencies in categorial grammar"]
-    ],
+    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -304,10 +268,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "embeddedQuestion"],
-      ["section", "Unbounded dependencies in categorial grammar"]
-    ],
+    "paperFeatures": [],
     "verified": "page-image"
   },
   {
@@ -322,10 +283,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "embeddedQuestion"],
-      ["section", "Unbounded dependencies in categorial grammar"]
-    ],
+    "paperFeatures": [],
     "comment": "Also with whom.",
     "verified": "page-image"
   },
@@ -341,10 +299,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["construction", "recursivePassive"],
-      ["section", "Passives"]
-    ],
+    "paperFeatures": [],
     "comment": "Not hard to process, even if further recursions are added.",
     "verified": "page-image"
   }
