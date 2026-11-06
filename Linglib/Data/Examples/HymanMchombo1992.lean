@@ -169,7 +169,7 @@ def ex_3c_ra_doubled : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RA(R)")] }
 
 def ex_3d_ri : Datum :=
   { id := "hymanmchombo1992_3d_ri"
@@ -195,7 +195,7 @@ def ex_3d_ir : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "IR"), ("suffixes", "IR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RI"), ("suffixes", "IR")] }
 
 def ex_4a_rp : Datum :=
   { id := "hymanmchombo1992_4a_rp"
@@ -273,7 +273,7 @@ def ex_6b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "ARA"), ("suffixes", "ARAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "ARA"), ("suffixes", "ARA(R)")] }
 
 def ex_6c_ap : Datum :=
   { id := "hymanmchombo1992_6c_ap"
@@ -390,7 +390,7 @@ def ex_7c_ia : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "IA"), ("suffixes", "IA")] }
+    paperFeatures := [("root", "mang"), ("scope", "AI"), ("suffixes", "IA")] }
 
 def ex_7c_ai : Datum :=
   { id := "hymanmchombo1992_7c_ai"
@@ -416,7 +416,7 @@ def ex_7d_ip : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "IP"), ("suffixes", "IP")] }
+    paperFeatures := [("root", "mang"), ("scope", "PI"), ("suffixes", "IP")] }
 
 def ex_7d_pi : Datum :=
   { id := "hymanmchombo1992_7d_pi"
@@ -546,7 +546,7 @@ def ex_12c_rcpa : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPA(R)")] }
 
 def ex_12d : Datum :=
   { id := "hymanmchombo1992_12d"
@@ -559,7 +559,7 @@ def ex_12d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RCPAI"), ("suffixes", "RCPARI")] }
+    paperFeatures := [("root", "mang"), ("scope", "RCPAI"), ("suffixes", "RCPA(R)I")] }
 
 def ex_16_ac : Datum :=
   { id := "hymanmchombo1992_16_ac"
@@ -637,7 +637,7 @@ def ex_23a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RCA"), ("suffixes", "RCAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RCA"), ("suffixes", "RCA(R)")] }
 
 def ex_23b_bad : Datum :=
   { id := "hymanmchombo1992_23b_bad"
@@ -663,7 +663,7 @@ def ex_23b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPA(R)")] }
 
 def ex_25a_1 : Datum :=
   { id := "hymanmchombo1992_25a_1"
@@ -676,7 +676,7 @@ def ex_25a_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RA(R)")] }
 
 def ex_25a_2 : Datum :=
   { id := "hymanmchombo1992_25a_2"
@@ -689,7 +689,7 @@ def ex_25a_2 : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RAA"), ("suffixes", "RARAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RAA"), ("suffixes", "RA(R)A(R)")] }
 
 def ex_25a_3 : Datum :=
   { id := "hymanmchombo1992_25a_3"
@@ -702,7 +702,7 @@ def ex_25a_3 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RAAA"), ("suffixes", "RARARAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RAAA"), ("suffixes", "RA(R)A(R)A(R)")] }
 
 def ex_25b : Datum :=
   { id := "hymanmchombo1992_25b"
@@ -715,7 +715,7 @@ def ex_25b : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RACA"), ("suffixes", "RARCAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RACA"), ("suffixes", "RA(R)CA(R)")] }
 
 def ex_27a_ap : Datum :=
   { id := "hymanmchombo1992_27a_ap"
@@ -1001,7 +1001,7 @@ def ex_34d : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RARC")] }
+    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RA(R)C")] }
 
 def ex_34e_1 : Datum :=
   { id := "hymanmchombo1992_34e_1"
@@ -1014,7 +1014,7 @@ def ex_34e_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RCAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RCA(R)")] }
 
 def ex_34e_2 : Datum :=
   { id := "hymanmchombo1992_34e_2"
@@ -1027,7 +1027,7 @@ def ex_34e_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "CRAR")] }
+    paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "CRA(R)")] }
 
 def ex_34e_3 : Datum :=
   { id := "hymanmchombo1992_34e_3"
