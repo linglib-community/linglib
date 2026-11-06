@@ -23,10 +23,10 @@ def ex_1 : Datum :=
     primaryText := "It is raining and I do not know that it is raining."
     glossedTokens := []
     context := ""
-    judgment := .acceptable
+    judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none"), ("felicity", "infelicitous")] }
+    paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
 def ex_2 : Datum :=
   { id := "yalcin2007_2"
@@ -36,10 +36,10 @@ def ex_2 : Datum :=
     primaryText := "It is not raining and for all I know, it is raining."
     glossedTokens := []
     context := ""
-    judgment := .acceptable
+    judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none"), ("felicity", "infelicitous")] }
+    paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
 def ex_3 : Datum :=
   { id := "yalcin2007_3"

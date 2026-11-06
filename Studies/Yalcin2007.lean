@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Yalcin2007
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Dynamic.Consequence
 public import Linglib.Semantics.Modality.DomainSemantics
+public import Studies.Hintikka1962
 
 /-!
 # Yalcin (2007): Epistemic Modals
@@ -14,7 +15,9 @@ are `DomainSemantics`, from the puzzle of epistemic contradictions, sentences of
 raining and it might not be raining* or *it is not raining and it might be raining*. Unlike
 Moore-paradoxical sentences, which are unassertable but embed happily under *suppose* and in
 conditional antecedents, epistemic contradictions are unsupposable, and a relational semantics
-cannot explain this, since it makes them true at some world (`exists_relational_contra`). Domain
+cannot explain this, since it [gives an epistemic contradiction the form of a Moore-paradoxical
+sentence](##Yalcin2007.relational_conflates), which Hintikka's logic makes supposable but not
+assertable. Domain
 semantics evaluates a sentence at an index of an information parameter, a set of worlds, and a
 world, with the epistemic possibility modal quantifying existentially over the parameter. Attitude
 verbs shift the parameter to the attitude state and quantify over it (`supposes`), so the universal
@@ -92,11 +95,58 @@ theorem not_accepted_contra' {p s : Set W} (hs : s.Nonempty) : ¬ (contra' p).Ac
   obtain ⟨-, w', hw', hp⟩ := h w hw
   exact hp (h w' hw').1
 
-/-! ### Relational semantics -/
+/-! ### Relational semantics
 
-theorem exists_relational_contra :
-    ∃ (R : SetRel Bool Bool) (p : Set Bool) (w : Bool), w ∉ p ∧ ◇[R] (· ∈ p) w :=
-  ⟨Set.univ, {true}, false, by simp, true, trivial, rfl⟩
+The relational semantics of Section 2 reads a possibility modal as possibility along the
+accessibility of what some contextually given agent knows. With the speaker as the agent it is
+Hintikka's possibility operator `P 𝐈`, and a sentence describes an entertainable possibility when
+its form is defensible, true at some world of a model. -/
+
+section Relational
+
+open Hintikka1962 Hintikka1962.Formula Discourse
+
+/-- The atomic sentence *it is raining*. -/
+local notation "𝐩" => (Formula.atom () : Formula Unit (Option Role))
+/-- The speaker. -/
+local notation "𝐈" => (some Role.speaker : Option Role)
+
+/-- The *suppose* sentences (7) to (9), (14) and (15), each with the relational form of what it
+asks to suppose. -/
+def supposed : List (Datum × Formula Unit (Option Role)) :=
+  [(Examples.ex_3, 𝐩 ⋏ P 𝐈 ∼𝐩), (Examples.ex_4, ∼𝐩 ⋏ P 𝐈 𝐩), (Examples.ex_5, 𝐩 ⋏ P 𝐈 ∼𝐩),
+   (Examples.ex_8, 𝐩 ⋏ ∼K 𝐈 𝐩), (Examples.ex_9, ∼𝐩 ⋏ P 𝐈 𝐩)]
+
+-- (3), p. 992
+theorem defensible_relational_contra : Defensible {∼𝐩 ⋏ P 𝐈 𝐩} :=
+  mUndecided.defensible_of_sat (w := 0) (by decide)
+
+-- Section 2
+theorem supposed_defensible : ∀ r ∈ supposed, Defensible {r.2} := by
+  simp only [supposed, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+    and_true]
+  exact ⟨mUndecided.defensible_of_sat (w := 1) (by decide), defensible_relational_contra,
+    mUndecided.defensible_of_sat (w := 1) (by decide),
+    mUndecided.defensible_of_sat (w := 1) (by decide), defensible_relational_contra⟩
+
+/-- Section 2: the relational semantics gives the epistemic contradiction supposed in (8) the
+form of the Moore-paradoxical sentence supposed in (15), so it cannot separate their judgments. -/
+theorem relational_conflates :
+    ∃ r ∈ supposed, ∃ r' ∈ supposed, r.2 = r'.2 ∧ r.1.judgment ≠ r'.1.judgment :=
+  ⟨(Examples.ex_4, ∼𝐩 ⋏ P 𝐈 𝐩), by simp [supposed], (Examples.ex_9, ∼𝐩 ⋏ P 𝐈 𝐩),
+    by simp [supposed], rfl, by decide⟩
+
+-- (5), (6), note 2: supposable but not assertable
+theorem moore_defensible_epistemicallyIndefensible :
+    (Defensible {𝐩 ⋏ ∼K 𝐈 𝐩} ∧ EpistemicallyIndefensible 𝐈 (𝐩 ⋏ ∼K 𝐈 𝐩)) ∧
+      (Defensible {∼𝐩 ⋏ P 𝐈 𝐩} ∧ EpistemicallyIndefensible 𝐈 (∼𝐩 ⋏ P 𝐈 𝐩)) :=
+  ⟨⟨mUndecided.defensible_of_sat (w := 1) (by decide), indefensible_K_moore 𝐈 𝐩⟩,
+    defensible_relational_contra, indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
+      obtain ⟨-, h₂⟩ := S.and hμ (S.know hμ h)
+      obtain ⟨ν, hν, hμν, hp⟩ := S.P_star hμ h₂
+      exact S.neg hν hp (S.and hν (S.K_star hμν h)).1⟩
+
+end Relational
 
 /-! ### Attitudes -/
 
