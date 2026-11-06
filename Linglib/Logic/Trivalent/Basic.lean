@@ -44,6 +44,7 @@ disjunctions differ from Kleene's only in when a compound is undefined.
   its definedness condition.
 * `SignType.transplication_self`, `SignType.transplication_eq`: Beaver's presupposition
   operator is the diagonal of transplication, and transplication is definable from it.
+* `SignType.condAssert_k3`: de Finetti's conditional is transplication.
 * `SignType.neg_condAssert`, `SignType.condAssert_condAssert`: conditional assertion commutes with
   negation and satisfies Import-Export.
 
@@ -415,6 +416,11 @@ connectives, `π / φ = (∂π ∧ φ) ∨ ¬∂π` ([beaver-krahmer-2001] p. 15
 theorem transplication_eq (a b : SignType) : transplication a b = (a ⊔ 0) ⊓ b ⊔ -(a ⊔ 0) := by
   cases a <;> cases b <;> rfl
 
+/-- Transplication is `φ` scaled by `∂π`: multiplication by `1` keeps a value and by `0` absorbs
+it. -/
+theorem transplication_eq_sup_zero_mul (a b : SignType) : transplication a b = (a ⊔ 0) * b := by
+  cases a <;> cases b <;> rfl
+
 /-! ### Middle Kleene
 
 The Middle Kleene connectives of [peters-1979] read their operands from left to right. An
@@ -596,6 +602,11 @@ conditional commutes with negation and imports and exports a conjunction. -/
 `0` elsewhere. -/
 def condAssert (d : Trivalent.Designation) (a b : SignType) : SignType :=
   if d.threshold ≤ a then b else 0
+
+/-- At K3 the conditional assertion is transplication: de Finetti's conditional and
+[blamey-1986]'s binary presupposition operator are one table. -/
+theorem condAssert_k3 (a b : SignType) : condAssert .k3 a b = transplication a b := by
+  cases a <;> rfl
 
 section CondAssert
 
