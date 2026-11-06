@@ -181,7 +181,7 @@ def ex_6_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "bărbat"), ("number", "singular"), ("form", "zero")] }
+    paperFeatures := [("noun", "bărbat")] }
 
 def ex_6_6 : Datum :=
   { id := "corbett1991_6_6"
@@ -195,7 +195,7 @@ def ex_6_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "scaun"), ("number", "singular"), ("form", "zero")] }
+    paperFeatures := [("noun", "scaun")] }
 
 def ex_6_7 : Datum :=
   { id := "corbett1991_6_7"
@@ -209,7 +209,7 @@ def ex_6_7 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "fată"), ("number", "singular"), ("form", "ă")] }
+    paperFeatures := [("noun", "fată")] }
 
 def ex_6_8 : Datum :=
   { id := "corbett1991_6_8"
@@ -223,7 +223,7 @@ def ex_6_8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "bărbat"), ("number", "plural"), ("form", "i")] }
+    paperFeatures := [("noun", "bărbat")] }
 
 def ex_6_9 : Datum :=
   { id := "corbett1991_6_9"
@@ -237,7 +237,7 @@ def ex_6_9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "scaun"), ("number", "plural"), ("form", "e")] }
+    paperFeatures := [("noun", "scaun")] }
 
 def ex_6_10 : Datum :=
   { id := "corbett1991_6_10"
@@ -251,7 +251,7 @@ def ex_6_10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("noun", "fată"), ("number", "plural"), ("form", "e")] }
+    paperFeatures := [("noun", "fată")] }
 
 def ex_6_11 : Datum :=
   { id := "corbett1991_6_11"
@@ -867,7 +867,7 @@ def ex_8_26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "syntactic"), ("far", "semantic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_27 : Datum :=
   { id := "corbett1991_8_27"
@@ -881,7 +881,7 @@ def ex_8_27 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "syntactic"), ("far", "syntactic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_28 : Datum :=
   { id := "corbett1991_8_28"
@@ -895,7 +895,7 @@ def ex_8_28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "semantic"), ("far", "semantic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_29 : Datum :=
   { id := "corbett1991_8_29"
@@ -909,7 +909,7 @@ def ex_8_29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "syntactic"), ("far", "semantic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_30 : Datum :=
   { id := "corbett1991_8_30"
@@ -923,7 +923,7 @@ def ex_8_30 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("near", "semantic"), ("far", "syntactic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_31 : Datum :=
   { id := "corbett1991_8_31"
@@ -937,7 +937,7 @@ def ex_8_31 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "syntactic"), ("far", "semantic")] }
+    paperFeatures := [("targets", "parallel")] }
 
 def ex_8_35 : Datum :=
   { id := "corbett1991_8_35"
@@ -1133,7 +1133,7 @@ def ex_8_49 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("near", "semantic"), ("far", "semantic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_50 : Datum :=
   { id := "corbett1991_8_50"
@@ -1147,7 +1147,7 @@ def ex_8_50 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("near", "semantic"), ("far", "syntactic")] }
+    paperFeatures := [("targets", "stacked")] }
 
 def ex_8_51 : Datum :=
   { id := "corbett1991_8_51"
@@ -1287,7 +1287,7 @@ def ex_9_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "1+2"), ("resolved", "1")] }
+    paperFeatures := [("conjunct", "1"), ("conjunct", "2")] }
 
 def ex_9_2 : Datum :=
   { id := "corbett1991_9_2"
@@ -1301,7 +1301,7 @@ def ex_9_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "3+1"), ("resolved", "1")] }
+    paperFeatures := [("conjunct", "3"), ("conjunct", "1")] }
 
 def ex_9_3 : Datum :=
   { id := "corbett1991_9_3"
@@ -1315,7 +1315,7 @@ def ex_9_3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "3+2"), ("resolved", "2")] }
+    paperFeatures := [("conjunct", "3"), ("conjunct", "2")] }
 
 def ex_9_4 : Datum :=
   { id := "corbett1991_9_4"
@@ -1329,7 +1329,7 @@ def ex_9_4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_5 : Datum :=
   { id := "corbett1991_9_5"
@@ -1343,7 +1343,7 @@ def ex_9_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("numbers", "sg+sg+sg"), ("number", "plural")] }
+    paperFeatures := [] }
 
 def ex_9_6 : Datum :=
   { id := "corbett1991_9_6"
@@ -1357,7 +1357,7 @@ def ex_9_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("numbers", "sg+du"), ("number", "plural")] }
+    paperFeatures := [] }
 
 def ex_9_7 : Datum :=
   { id := "corbett1991_9_7"
@@ -1427,7 +1427,7 @@ def ex_9_14 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+masc"), ("resolved", "rational")] }
+    paperFeatures := [] }
 
 def ex_9_15 : Datum :=
   { id := "corbett1991_9_15"
@@ -1441,7 +1441,7 @@ def ex_9_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+fem"), ("resolved", "rational")] }
+    paperFeatures := [] }
 
 def ex_9_16 : Datum :=
   { id := "corbett1991_9_16"
@@ -1455,7 +1455,7 @@ def ex_9_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+masc"), ("resolved", "rational")] }
+    paperFeatures := [] }
 
 def ex_9_17 : Datum :=
   { id := "corbett1991_9_17"
@@ -1469,7 +1469,7 @@ def ex_9_17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "neut+neut"), ("resolved", "neuter")] }
+    paperFeatures := [] }
 
 def ex_9_18 : Datum :=
   { id := "corbett1991_9_18"
@@ -1483,7 +1483,7 @@ def ex_9_18 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+neut"), ("resolved", "rational")] }
+    paperFeatures := [] }
 
 def ex_9_19 : Datum :=
   { id := "corbett1991_9_19"
@@ -1539,7 +1539,7 @@ def ex_9_24 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "rational+rational"), ("resolved", "I/II")] }
+    paperFeatures := [("conjunct", "rational"), ("conjunct", "rational")] }
 
 def ex_9_25 : Datum :=
   { id := "corbett1991_9_25"
@@ -1553,7 +1553,7 @@ def ex_9_25 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "rational+nonrational"), ("resolved", "I/II")] }
+    paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
 def ex_9_26 : Datum :=
   { id := "corbett1991_9_26"
@@ -1567,7 +1567,7 @@ def ex_9_26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "rational+nonrational"), ("resolved", "I/II")] }
+    paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
 def ex_9_27 : Datum :=
   { id := "corbett1991_9_27"
@@ -1581,7 +1581,7 @@ def ex_9_27 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "rational+nonrational"), ("resolved", "I/II")] }
+    paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
 def ex_9_28 : Datum :=
   { id := "corbett1991_9_28"
@@ -1595,7 +1595,7 @@ def ex_9_28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "nonrational+nonrational"), ("resolved", "III/IV")] }
+    paperFeatures := [("conjunct", "nonrational"), ("conjunct", "nonrational")] }
 
 def ex_9_29 : Datum :=
   { id := "corbett1991_9_29"
@@ -1609,7 +1609,7 @@ def ex_9_29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "nonrational+nonrational"), ("resolved", "III/IV")] }
+    paperFeatures := [("conjunct", "nonrational"), ("conjunct", "nonrational")] }
 
 def ex_9_30 : Datum :=
   { id := "corbett1991_9_30"
@@ -1623,7 +1623,7 @@ def ex_9_30 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "rational+nonrational"), ("resolved", "I/II")] }
+    paperFeatures := [("conjunct", "rational"), ("conjunct", "nonrational")] }
 
 def ex_9_31 : Datum :=
   { id := "corbett1991_9_31"
@@ -1637,7 +1637,7 @@ def ex_9_31 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "human+human+human"), ("resolved", "2")] }
+    paperFeatures := [("conjunct", "human"), ("conjunct", "human"), ("conjunct", "human")] }
 
 def ex_9_32 : Datum :=
   { id := "corbett1991_9_32"
@@ -1651,7 +1651,7 @@ def ex_9_32 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "human+human+human"), ("resolved", "2")] }
+    paperFeatures := [("conjunct", "human"), ("conjunct", "human"), ("conjunct", "human")] }
 
 def ex_9_33 : Datum :=
   { id := "corbett1991_9_33"
@@ -1665,7 +1665,7 @@ def ex_9_33 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "nonhuman+nonhuman+nonhuman+nonhuman"), ("resolved", "8")] }
+    paperFeatures := [("conjunct", "nonhuman"), ("conjunct", "nonhuman"), ("conjunct", "nonhuman"), ("conjunct", "nonhuman")] }
 
 def ex_9_34 : Datum :=
   { id := "corbett1991_9_34"
@@ -1693,7 +1693,7 @@ def ex_9_35 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "human+nonhuman"), ("resolved", "2")] }
+    paperFeatures := [("conjunct", "human"), ("conjunct", "nonhuman")] }
 
 def ex_9_36 : Datum :=
   { id := "corbett1991_9_36"
@@ -1805,7 +1805,7 @@ def ex_9_43 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+masc"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_44 : Datum :=
   { id := "corbett1991_9_44"
@@ -1819,7 +1819,7 @@ def ex_9_44 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+fem"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_45 : Datum :=
   { id := "corbett1991_9_45"
@@ -1833,7 +1833,7 @@ def ex_9_45 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+fem"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_46 : Datum :=
   { id := "corbett1991_9_46"
@@ -1847,7 +1847,7 @@ def ex_9_46 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+fem"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_47 : Datum :=
   { id := "corbett1991_9_47"
@@ -1861,7 +1861,7 @@ def ex_9_47 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+fem"), ("resolved", "masc"), ("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_48 : Datum :=
   { id := "corbett1991_9_48"
@@ -1875,7 +1875,7 @@ def ex_9_48 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+neut"), ("resolved", "masc"), ("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_49 : Datum :=
   { id := "corbett1991_9_49"
@@ -1889,7 +1889,7 @@ def ex_9_49 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+neut"), ("resolved", "masc"), ("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_50 : Datum :=
   { id := "corbett1991_9_50"
@@ -1903,7 +1903,7 @@ def ex_9_50 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "neut+neut"), ("resolved", "masc"), ("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_51 : Datum :=
   { id := "corbett1991_9_51"
@@ -1917,7 +1917,7 @@ def ex_9_51 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+fem"), ("resolved", "fem"), ("numbers", "sg+sg"), ("number", "dual")] }
+    paperFeatures := [] }
 
 def ex_9_52 : Datum :=
   { id := "corbett1991_9_52"
@@ -1931,7 +1931,7 @@ def ex_9_52 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "neut+neut+neut"), ("resolved", "masc"), ("numbers", "sg+sg+sg"), ("number", "plural")] }
+    paperFeatures := [] }
 
 def ex_9_53 : Datum :=
   { id := "corbett1991_9_53"
@@ -1945,7 +1945,7 @@ def ex_9_53 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+fem+fem"), ("resolved", "fem"), ("numbers", "sg+sg+sg"), ("number", "plural")] }
+    paperFeatures := [] }
 
 def ex_9_54 : Datum :=
   { id := "corbett1991_9_54"
@@ -1987,7 +1987,7 @@ def ex_9_56 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc+fem"), ("resolved", "neut")] }
+    paperFeatures := [] }
 
 def ex_9_57 : Datum :=
   { id := "corbett1991_9_57"
@@ -2001,7 +2001,7 @@ def ex_9_57 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+neut"), ("resolved", "neut")] }
+    paperFeatures := [] }
 
 def ex_9_58 : Datum :=
   { id := "corbett1991_9_58"
@@ -2015,7 +2015,7 @@ def ex_9_58 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fem+fem"), ("resolved", "nonMascPers")] }
+    paperFeatures := [("conjunct", "fem"), ("conjunct", "fem")] }
 
 def ex_9_59 : Datum :=
   { id := "corbett1991_9_59"
@@ -2029,7 +2029,7 @@ def ex_9_59 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "mascPers+fem+fem"), ("resolved", "mascPers")] }
+    paperFeatures := [("conjunct", "mascPers"), ("conjunct", "fem"), ("conjunct", "fem")] }
 
 def ex_9_60 : Datum :=
   { id := "corbett1991_9_60"
@@ -2085,7 +2085,7 @@ def ex_9_63 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc.human+fem.human"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_64 : Datum :=
   { id := "corbett1991_9_64"
@@ -2099,7 +2099,7 @@ def ex_9_64 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "masc.inanimate+fem.inanimate"), ("resolved", "neut")] }
+    paperFeatures := [] }
 
 def ex_9_65 : Datum :=
   { id := "corbett1991_9_65"
@@ -2113,7 +2113,7 @@ def ex_9_65 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "fată+femeie"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_66 : Datum :=
   { id := "corbett1991_9_66"
@@ -2127,7 +2127,7 @@ def ex_9_66 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "băiat+bărbat"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_67 : Datum :=
   { id := "corbett1991_9_67"
@@ -2141,7 +2141,7 @@ def ex_9_67 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "băiat+fată"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_68 : Datum :=
   { id := "corbett1991_9_68"
@@ -2155,7 +2155,7 @@ def ex_9_68 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "uşă+perete"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_69 : Datum :=
   { id := "corbett1991_9_69"
@@ -2169,7 +2169,7 @@ def ex_9_69 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "perete+scaun"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_70 : Datum :=
   { id := "corbett1991_9_70"
@@ -2183,7 +2183,7 @@ def ex_9_70 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "scaun+masă"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_71 : Datum :=
   { id := "corbett1991_9_71"
@@ -2197,7 +2197,7 @@ def ex_9_71 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "nuc+prun"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_72 : Datum :=
   { id := "corbett1991_9_72"
@@ -2211,7 +2211,7 @@ def ex_9_72 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "frigider+televizor"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_73 : Datum :=
   { id := "corbett1991_9_73"
@@ -2225,7 +2225,7 @@ def ex_9_73 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "uşă+masă"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_74 : Datum :=
   { id := "corbett1991_9_74"
@@ -2239,7 +2239,7 @@ def ex_9_74 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "znanje+intuicija"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_75 : Datum :=
   { id := "corbett1991_9_75"
@@ -2253,7 +2253,7 @@ def ex_9_75 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "mesto+značenje"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_76 : Datum :=
   { id := "corbett1991_9_76"
@@ -2267,7 +2267,7 @@ def ex_9_76 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "opreznost+suptilnost+pedanterija"), ("resolved", "fem")] }
+    paperFeatures := [] }
 
 def ex_9_77 : Datum :=
   { id := "corbett1991_9_77"
@@ -2281,7 +2281,7 @@ def ex_9_77 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "nebriga+lakomislenost"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_78 : Datum :=
   { id := "corbett1991_9_78"
@@ -2295,7 +2295,7 @@ def ex_9_78 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "štula+štaka"), ("resolved", "masc")] }
+    paperFeatures := [] }
 
 def ex_9_79 : Datum :=
   { id := "corbett1991_9_79"
@@ -2309,7 +2309,7 @@ def ex_9_79 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "animate+animate"), ("resolved", "animate")] }
+    paperFeatures := [] }
 
 def ex_9_80 : Datum :=
   { id := "corbett1991_9_80"
@@ -2323,7 +2323,7 @@ def ex_9_80 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "inanimate+inanimate"), ("resolved", "inanimate")] }
+    paperFeatures := [] }
 
 def ex_9_81 : Datum :=
   { id := "corbett1991_9_81"
@@ -2337,7 +2337,7 @@ def ex_9_81 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "animate+inanimate"), ("resolved", "inanimate")] }
+    paperFeatures := [] }
 
 def ex_9_82 : Datum :=
   { id := "corbett1991_9_82"
@@ -2351,7 +2351,7 @@ def ex_9_82 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("conjuncts", "animate+inanimate"), ("resolved", "animate")] }
+    paperFeatures := [] }
 
 def ex_9_83 : Datum :=
   { id := "corbett1991_9_83"
@@ -2365,7 +2365,7 @@ def ex_9_83 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("speaker", "younger")] }
 
 def ex_9_84 : Datum :=
   { id := "corbett1991_9_84"
@@ -2379,7 +2379,7 @@ def ex_9_84 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("speaker", "younger")] }
 
 def all : List Datum := [ex_3_1, ex_3_2, ex_3_3, ex_3_4, ex_3_5, ex_3_6, ex_3_7, ex_6_1, ex_6_2, ex_6_3, ex_6_4, ex_6_5, ex_6_6, ex_6_7, ex_6_8, ex_6_9, ex_6_10, ex_6_11, ex_6_12, ex_6_13, ex_6_14, ex_6_15, ex_6_16, ex_6_17, ex_6_18, ex_6_19, ex_6_20, ex_6_21, ex_6_22, ex_6_23, ex_6_24, ex_6_25, ex_6_26, ex_6_27, ex_6_28, ex_6_29, ex_6_30, ex_8_1, ex_8_2, ex_8_3, ex_8_4, ex_8_5, ex_8_6, ex_8_10, ex_8_11, ex_8_12a, ex_8_12b, ex_8_13, ex_8_14, ex_8_15, ex_8_16, ex_8_17, ex_8_18, ex_8_19, ex_8_20, ex_8_21, ex_8_22, ex_8_23, ex_8_24, ex_8_25, ex_8_26, ex_8_27, ex_8_28, ex_8_29, ex_8_30, ex_8_31, ex_8_35, ex_8_36, ex_8_38, ex_8_39, ex_8_40, ex_8_41, ex_8_42, ex_8_43, ex_8_44, ex_8_45, ex_8_46, ex_8_47, ex_8_48, ex_8_49, ex_8_50, ex_8_51, ex_8_52a, ex_8_52b, ex_8_53a, ex_8_53b, ex_8_54a, ex_8_54b, ex_8_55, ex_8_56, ex_9_1, ex_9_2, ex_9_3, ex_9_4, ex_9_5, ex_9_6, ex_9_7, ex_9_8, ex_9_10, ex_9_12, ex_9_14, ex_9_15, ex_9_16, ex_9_17, ex_9_18, ex_9_19, ex_9_22, ex_9_23, ex_9_24, ex_9_25, ex_9_26, ex_9_27, ex_9_28, ex_9_29, ex_9_30, ex_9_31, ex_9_32, ex_9_33, ex_9_34, ex_9_35, ex_9_36, ex_9_37, ex_9_38, ex_9_39, ex_9_40, ex_9_41, ex_9_42, ex_9_43, ex_9_44, ex_9_45, ex_9_46, ex_9_47, ex_9_48, ex_9_49, ex_9_50, ex_9_51, ex_9_52, ex_9_53, ex_9_54, ex_9_55, ex_9_56, ex_9_57, ex_9_58, ex_9_59, ex_9_60, ex_9_61, ex_9_62, ex_9_63, ex_9_64, ex_9_65, ex_9_66, ex_9_67, ex_9_68, ex_9_69, ex_9_70, ex_9_71, ex_9_72, ex_9_73, ex_9_74, ex_9_75, ex_9_76, ex_9_77, ex_9_78, ex_9_79, ex_9_80, ex_9_81, ex_9_82, ex_9_83, ex_9_84]
 

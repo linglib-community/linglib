@@ -473,14 +473,6 @@
       [
         "noun",
         "bărbat"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "form",
-        "zero"
       ]
     ],
     "comment": "The book cites Mallinson 1984: 441.",
@@ -519,14 +511,6 @@
       [
         "noun",
         "scaun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "form",
-        "zero"
       ]
     ],
     "comment": "The book cites Mallinson 1984: 441.",
@@ -565,14 +549,6 @@
       [
         "noun",
         "fată"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "form",
-        "ă"
       ]
     ],
     "comment": "The book cites Mallinson 1984: 441.",
@@ -611,14 +587,6 @@
       [
         "noun",
         "bărbat"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "form",
-        "i"
       ]
     ],
     "comment": "The book cites Mallinson 1984: 441.",
@@ -657,14 +625,6 @@
       [
         "noun",
         "scaun"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "form",
-        "e"
       ]
     ],
     "comment": "scaun takes the same form as bărbat in the singular and as fată in the plural: three agreement classes with two target genders in each number. The book cites Mallinson 1984: 441.",
@@ -703,14 +663,6 @@
       [
         "noun",
         "fată"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "form",
-        "e"
       ]
     ],
     "comment": "The book cites Mallinson 1984: 441.",
@@ -2820,12 +2772,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "syntactic"
-      ],
-      [
-        "far",
-        "semantic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "Stacked attributives: the further target shows semantic agreement. The book prints nijihov-i. The book cites Oslobođenje, 27 February 1953, quoted by Marković 1954: 96.",
@@ -2863,12 +2811,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "syntactic"
-      ],
-      [
-        "far",
-        "syntactic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "ngwazi has the morphology of gender 9/10 and denotes a human. The book's data are from Sam Mchombo.",
@@ -2906,12 +2850,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "semantic"
-      ],
-      [
-        "far",
-        "semantic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
@@ -2949,12 +2889,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "syntactic"
-      ],
-      [
-        "far",
-        "semantic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
@@ -2992,12 +2928,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "semantic"
-      ],
-      [
-        "far",
-        "syntactic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "The book's data are from Sam Mchombo.",
@@ -3059,12 +2991,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "syntactic"
-      ],
-      [
-        "far",
-        "semantic"
+        "targets",
+        "parallel"
       ]
     ],
     "comment": "Parallel predicates: the nearer feminine, the further masculine. The book cites Oslobođenje, 27 February 1953, quoted by Marković 1954: 96.",
@@ -4014,12 +3942,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "semantic"
-      ],
-      [
-        "far",
-        "semantic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "With another modifier intervening, the possessive takes animate concord. The book cites Zawawi 1979: 89.",
@@ -4056,12 +3980,8 @@
     "readings": [],
     "paperFeatures": [
       [
-        "near",
-        "semantic"
-      ],
-      [
-        "far",
-        "syntactic"
+        "targets",
+        "stacked"
       ]
     ],
     "comment": "The book cites Zawawi 1979: 89.",
@@ -4482,12 +4402,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "1+2"
+        "conjunct",
+        "1"
       ],
       [
-        "resolved",
-        "1"
+        "conjunct",
+        "2"
       ]
     ],
     "comment": "Person resolution: first person takes precedence over second. The book cites Trávníček 1949: 433; Bauernöppel, Fritsch & Bielefeld 1976: 164.",
@@ -4544,11 +4464,11 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "3+1"
+        "conjunct",
+        "3"
       ],
       [
-        "resolved",
+        "conjunct",
         "1"
       ]
     ],
@@ -4602,11 +4522,11 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "3+2"
+        "conjunct",
+        "3"
       ],
       [
-        "resolved",
+        "conjunct",
         "2"
       ]
     ],
@@ -4650,16 +4570,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Two singulars conjoined take the dual. The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -4704,16 +4615,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "numbers",
-        "sg+sg+sg"
-      ],
-      [
-        "number",
-        "plural"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -4758,16 +4660,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "numbers",
-        "sg+du"
-      ],
-      [
-        "number",
-        "plural"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -5001,16 +4894,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+masc"
-      ],
-      [
-        "resolved",
-        "rational"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
     "verified": "page-image"
   },
@@ -5051,16 +4935,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+fem"
-      ],
-      [
-        "resolved",
-        "rational"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
     "verified": "page-image"
   },
@@ -5097,16 +4972,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+masc"
-      ],
-      [
-        "resolved",
-        "rational"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
     "verified": "page-image"
   },
@@ -5139,16 +5005,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "neut+neut"
-      ],
-      [
-        "resolved",
-        "neuter"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
     "verified": "page-image"
   },
@@ -5181,16 +5038,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+neut"
-      ],
-      [
-        "resolved",
-        "rational"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "A rational conjoined with a non-rational: an alternative construction must be used, though some speakers allow the rational plural colloquially. The book cites Arden 1942: 184-5 and Asher 1985: 73, 185 for the judgment.",
     "verified": "page-image"
   },
@@ -5331,12 +5179,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "rational+rational"
+        "conjunct",
+        "rational"
       ],
       [
-        "resolved",
-        "I/II"
+        "conjunct",
+        "rational"
       ]
     ],
     "comment": "The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5377,12 +5225,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "rational+nonrational"
+        "conjunct",
+        "rational"
       ],
       [
-        "resolved",
-        "I/II"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "A gender III conjunct does not affect the agreement. The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5423,12 +5271,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "rational+nonrational"
+        "conjunct",
+        "rational"
       ],
       [
-        "resolved",
-        "I/II"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5469,12 +5317,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "rational+nonrational"
+        "conjunct",
+        "rational"
       ],
       [
-        "resolved",
-        "I/II"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "An inanimate conjunct too: the significant factor is a conjunct denoting a rational. The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5515,12 +5363,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "nonrational+nonrational"
+        "conjunct",
+        "nonrational"
       ],
       [
-        "resolved",
-        "III/IV"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5561,12 +5409,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "nonrational+nonrational"
+        "conjunct",
+        "nonrational"
       ],
       [
-        "resolved",
-        "III/IV"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5607,12 +5455,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "rational+nonrational"
+        "conjunct",
+        "rational"
       ],
       [
-        "resolved",
-        "I/II"
+        "conjunct",
+        "nonrational"
       ]
     ],
     "comment": "xalq' 'people' takes gender III agreement in the singular yet resolves as a rational: the rules are semantic, not gender-based. The book marks labialization with a subscript circle, rendered ₒ. The book cites Kibrik 1977b: 186-7.",
@@ -5657,12 +5505,16 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "human+human+human"
+        "conjunct",
+        "human"
       ],
       [
-        "resolved",
-        "2"
+        "conjunct",
+        "human"
+      ],
+      [
+        "conjunct",
+        "human"
       ]
     ],
     "comment": "Only one conjunct is in gender 1/2, yet class 2 resolves. The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -5707,12 +5559,16 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "human+human+human"
+        "conjunct",
+        "human"
       ],
       [
-        "resolved",
-        "2"
+        "conjunct",
+        "human"
+      ],
+      [
+        "conjunct",
+        "human"
       ]
     ],
     "comment": "No conjunct in gender 1/2: the class 2 form is semantically motivated. The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -5761,12 +5617,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "nonhuman+nonhuman+nonhuman+nonhuman"
+        "conjunct",
+        "nonhuman"
       ],
       [
-        "resolved",
-        "8"
+        "conjunct",
+        "nonhuman"
+      ],
+      [
+        "conjunct",
+        "nonhuman"
+      ],
+      [
+        "conjunct",
+        "nonhuman"
       ]
     ],
     "comment": "The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -5844,12 +5708,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "human+nonhuman"
+        "conjunct",
+        "human"
       ],
       [
-        "resolved",
-        "2"
+        "conjunct",
+        "nonhuman"
       ]
     ],
     "comment": "The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -6167,16 +6031,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+masc"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
     "verified": "page-image"
   },
@@ -6221,16 +6076,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+fem"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
     "verified": "page-image"
   },
@@ -6275,16 +6121,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+fem"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
     "verified": "page-image"
   },
@@ -6329,16 +6166,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+fem"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The rules apply alike to animates and inanimates. The book cites Grevisse 1964: 306-7.",
     "verified": "page-image"
   },
@@ -6379,24 +6207,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+fem"
-      ],
-      [
-        "resolved",
-        "masc"
-      ],
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6441,24 +6252,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+neut"
-      ],
-      [
-        "resolved",
-        "masc"
-      ],
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6523,24 +6317,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+neut"
-      ],
-      [
-        "resolved",
-        "masc"
-      ],
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6605,24 +6382,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "neut+neut"
-      ],
-      [
-        "resolved",
-        "masc"
-      ],
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Two neuter singulars take a masculine dual. The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6663,24 +6423,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+fem"
-      ],
-      [
-        "resolved",
-        "fem"
-      ],
-      [
-        "numbers",
-        "sg+sg"
-      ],
-      [
-        "number",
-        "dual"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6749,24 +6492,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "neut+neut+neut"
-      ],
-      [
-        "resolved",
-        "masc"
-      ],
-      [
-        "numbers",
-        "sg+sg+sg"
-      ],
-      [
-        "number",
-        "plural"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "All conjuncts neuter, yet the masculine plural: number resolution, triggered by the singular conjuncts, brings gender resolution with it. The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6811,24 +6537,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+fem+fem"
-      ],
-      [
-        "resolved",
-        "fem"
-      ],
-      [
-        "numbers",
-        "sg+sg+sg"
-      ],
-      [
-        "number",
-        "plural"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
     "verified": "page-image"
   },
@@ -6993,16 +6702,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc+fem"
-      ],
-      [
-        "resolved",
-        "neut"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Icelandic: the neuter plural for any mixture of genders. The book cites Jónsson 1927: 14.",
     "verified": "page-image"
   },
@@ -7051,16 +6751,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fem+neut"
-      ],
-      [
-        "resolved",
-        "neut"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book prints bœði svort. The book cites Einarsson 1949: 133.",
     "verified": "page-image"
   },
@@ -7099,12 +6790,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "fem+fem"
+        "conjunct",
+        "fem"
       ],
       [
-        "resolved",
-        "nonMascPers"
+        "conjunct",
+        "fem"
       ]
     ],
     "comment": "The book cites Kulak, Łaciak & Żelezkiewicz 1966: 249.",
@@ -7149,12 +6840,16 @@
     "readings": [],
     "paperFeatures": [
       [
-        "conjuncts",
-        "mascPers+fem+fem"
+        "conjunct",
+        "mascPers"
       ],
       [
-        "resolved",
-        "mascPers"
+        "conjunct",
+        "fem"
+      ],
+      [
+        "conjunct",
+        "fem"
       ]
     ],
     "comment": "The book cites Kulak, Łaciak & Żelezkiewicz 1966: 249.",
@@ -7356,16 +7051,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc.human+fem.human"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Persons of mixed gender take the masculine. The book cites Kühner & Stegmann 1955: 44-52.",
     "verified": "page-image"
   },
@@ -7414,16 +7100,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "masc.inanimate+fem.inanimate"
-      ],
-      [
-        "resolved",
-        "neut"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Mixed gender without persons takes the neuter. The book cites Kühner & Stegmann 1955: 44-52.",
     "verified": "page-image"
   },
@@ -7464,16 +7141,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "fată+femeie"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Mallinson 1984: 445-6.",
     "verified": "page-image"
   },
@@ -7514,16 +7182,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "băiat+bărbat"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Mallinson 1984: 445-6.",
     "verified": "page-image"
   },
@@ -7572,16 +7231,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "băiat+fată"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book glosses frumoşi 'happy.MASC.PL' and translates accordingly; frumoşi is 'beautiful'. The book cites Mallinson 1984: 445-6.",
     "verified": "page-image"
   },
@@ -7618,16 +7268,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "uşă+perete"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Examples with personal pronouns: for mixed genders of inanimates the feminine. The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7664,16 +7305,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "perete+scaun"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7710,16 +7342,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "scaun+masă"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7756,16 +7379,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "nuc+prun"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7802,16 +7416,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "frigider+televizor"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7848,16 +7453,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "uşă+masă"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
     "verified": "page-image"
   },
@@ -7918,16 +7514,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "znanje+intuicija"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: feminine and neuter conjoined take the masculine.",
     "verified": "page-image",
     "method": "corpus"
@@ -8029,16 +7616,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "mesto+značenje"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: neuters conjoined take the masculine plural.",
     "verified": "page-image",
     "method": "corpus"
@@ -8100,16 +7678,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "opreznost+suptilnost+pedanterija"
-      ],
-      [
-        "resolved",
-        "fem"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: all conjuncts feminine: feminine agreement, as in Slovene.",
     "verified": "page-image",
     "method": "corpus"
@@ -8159,16 +7728,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "nebriga+lakomislenost"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika. Following Gudkov 1965, a masculine predicate with feminine conjuncts, one of the -Ø declension; all such examples denote inanimates, so the condition is semantic.",
     "verified": "page-image",
     "method": "corpus"
@@ -8246,16 +7806,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "štula+štaka"
-      ],
-      [
-        "resolved",
-        "masc"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Popović, cited from Gudkov 1974: 61: feminine nouns in -a with masculine agreement, inanimates again.",
     "verified": "page-image",
     "method": "corpus"
@@ -8293,16 +7844,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "animate+animate"
-      ],
-      [
-        "resolved",
-        "animate"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Grammatically animate nouns conjoined take animate agreement. The book cites Delisle 1972: 130.",
     "verified": "page-image"
   },
@@ -8339,16 +7881,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "inanimate+inanimate"
-      ],
-      [
-        "resolved",
-        "inanimate"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Delisle 1972: 130.",
     "verified": "page-image"
   },
@@ -8385,16 +7918,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "animate+inanimate"
-      ],
-      [
-        "resolved",
-        "inanimate"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Animate and inanimate may not be conjoined, whatever the verb form. The book cites Delisle 1972: 130.",
     "verified": "page-image"
   },
@@ -8431,16 +7955,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      [
-        "conjuncts",
-        "animate+inanimate"
-      ],
-      [
-        "resolved",
-        "animate"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "The book cites Delisle 1972: 130.",
     "verified": "page-image"
   },
@@ -8481,7 +7996,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "speaker",
+        "younger"
+      ]
+    ],
     "comment": "A younger speaker accepts a grammatically animate but biologically inanimate noun conjoined with an inanimate, with inanimate subject agreement. The book's source is Linda Schwartz and Timothy Dunnigan (personal communication).",
     "verified": "page-image"
   },
@@ -8522,7 +8042,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "speaker",
+        "younger"
+      ]
+    ],
     "comment": "When all conjuncts are grammatically animate, grammatical gender counts. The book's source is Linda Schwartz and Timothy Dunnigan (personal communication).",
     "verified": "page-image"
   }

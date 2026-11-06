@@ -19,6 +19,8 @@ public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Romance.French.Gender
 public import Linglib.Fragments.Slavic.Serbian.Gender
+public import Linglib.Fragments.Slavic.Slovenian.Gender
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Corbett1991
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -46,8 +48,13 @@ declension](##SerboCroat.not_morphological).
 * Number resolution counts the conjuncts, which no resolution rule can
   (`Slovene.numberResolve_ne_resolve`), so it is stated directly and matched to the substrate's
   `Number.System.resolve`.
+* The judgments are read off the book's glosses: a coordination's target form and its
+  conjuncts' genders from their category labels, its nouns by the fragment nouns their glosses
+  name, the agreements of stacked targets from their labels. Rows still name the hybrid, target
+  and agreement of chapter 8, the Swahili concords of chapter 3, and the conjuncts of Czech,
+  Archi, Luganda and Polish, whose rules read person or meaning that no fragment yet gives.
 * Not modelled: chapters 4, 5, 7 and 10, Russian acronyms and indeclinables, and the optional
-  Polish resolution rules, which are rows only.
+  Polish resolution rules of (60) to (62).
 
 ## TODO
 
@@ -56,6 +63,8 @@ declension](##SerboCroat.not_morphological).
 * §9.8: resolution is never less semantic than assignment.
 * §9.6.2: resolved forms are the semantically justified ones that mark number clearly, which
   excludes the Slovene neuter.
+* §9.7: the rules of the younger Ojibwa speaker of (83) and (84), which read biological
+  animacy.
 
 ## References
 
@@ -397,13 +406,20 @@ theorem card_range_adjForm :
         Fintype.card (Gender.targetGenders Value.adjForm (numberSystem.value .plural)) = 2 := by
   decide
 
+/-- A row's noun, the number its copula shows, *e* 'is' or *sînt* 'are', and the ending of its
+adjective *bun* 'good'. -/
+def adjectiveRow? (row : Datum) :
+    Option (_root_.Romanian.Gender.Noun × numberSystem.values × AdjForm) := do
+  let n ← row.parse? "noun" (allNouns.map fun n ↦ (n.form, n))
+  let v ← row.surfaceTokens.findSome? (List.lookup · [("e", numberSystem.value .singular),
+    ("sînt", numberSystem.value .plural)])
+  let f ← row.surfaceTokens.findSome? (List.lookup · [("bun", AdjForm.zero), ("bună", .ă),
+    ("buni", .i), ("bune", .e)])
+  pure (n, v, f)
+
 -- (5), (10)
-theorem rows : ∀ row ∈ Examples.all, row.language = .romanian →
-    ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
-      ∀ pl ∈ row.parse? "number"
-          [("singular", numberSystem.value .singular), ("plural", numberSystem.value .plural)],
-        ∀ f ∈ row.parse? "form" [("zero", AdjForm.zero), ("ă", .ă), ("i", .i), ("e", .e)],
-          (row.judgment = .acceptable ↔ n.gender.adjForm pl = f) := by
+theorem rows : Datum.Checks adjectiveRow? (fun r ↦ .ofProp (r.1.gender.adjForm r.2.1 = r.2.2))
+    Examples.all 6 := by
   decide +kernel
 
 end Romanian
@@ -458,16 +474,11 @@ end Lak
 
 namespace Slovene
 
-/-- An agreeing predicate's endings for the three genders in the three numbers (Table 9.3) are
-parallel between singular and plural and convergent with the dual, where feminine and neuter
-share a form (Figure 6.11). -/
-inductive Value where
-  | masc
-  | fem
-  | neut
-  deriving DecidableEq, Repr, Fintype
+open _root_.Slovenian.Gender
 
-/-- The endings of the past active participle. -/
+/-- The endings of the past active participle, by which an agreeing predicate's forms for the
+three genders (Table 9.3) are parallel between singular and plural and convergent with the
+dual, where feminine and neuter share a form (Figure 6.11). -/
 inductive Ending where
   | zero
   | a
@@ -477,27 +488,27 @@ inductive Ending where
   deriving DecidableEq, Repr, Fintype
 
 /-- The singular ending of each gender. -/
-def Value.sgEnding : Value → Ending
-  | .masc => .zero
-  | .fem => .a
-  | .neut => .o
+def sgEnding : Value → Ending
+  | .masculine => .zero
+  | .feminine => .a
+  | .neuter => .o
 
 /-- The dual ending of each gender. -/
-def Value.duEnding : Value → Ending
-  | .masc => .a
-  | .fem | .neut => .i
+def duEnding : Value → Ending
+  | .masculine => .a
+  | .feminine | .neuter => .i
 
 /-- The plural ending of each gender. -/
-def Value.plEnding : Value → Ending
-  | .masc => .i
-  | .fem => .e
-  | .neut => .a
+def plEnding : Value → Ending
+  | .masculine => .i
+  | .feminine => .e
+  | .neuter => .a
 
-theorem parallel_sg_pl : Gender.Parallel Value.sgEnding Value.plEnding := by decide
+theorem parallel_sg_pl : Gender.Parallel sgEnding plEnding := by decide
 
-theorem convergent_sg_du : Gender.Convergent Value.sgEnding Value.duEnding := by decide
+theorem convergent_sg_du : Gender.Convergent sgEnding duEnding := by decide
 
-theorem convergent_pl_du : Gender.Convergent Value.plEnding Value.duEnding := by decide
+theorem convergent_pl_du : Gender.Convergent plEnding duEnding := by decide
 
 end Slovene
 
@@ -698,13 +709,50 @@ theorem hybrid_monotone (i : FinePosition) :
 
 end BantuStage
 
+/-! ### Reading the glosses
+
+The rows are read off Corbett's glosses: a word's category labels name the gender, class or
+number its form marks, and the lexical gloss of its first morph names the noun it is. -/
+
+/-- The category labels of a gloss, stripped of the brackets around optional material. -/
+def labels (g : String) : List (List Char) := (Gloss.labels g).map Gloss.trim
+
+/-- What `table` reads off the first label of a gloss that it lists. -/
+def readLabel {α : Type*} (table : List (List Char × α)) (g : String) : Option α :=
+  (labels g).findSome? (List.lookup · table)
+
+/-- A gloss marks a non-singular number, `PL` or the book's `DUAL`. -/
+def Nonsingular (g : String) : Prop := "PL".toList ∈ labels g ∨ "DUAL".toList ∈ labels g
+
+instance : DecidablePred Nonsingular := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The number a gloss marks, singular where it marks none. -/
+def number (g : String) : Number :=
+  if "DUAL".toList ∈ labels g then .dual else if "PL".toList ∈ labels g then .plural else .singular
+
+/-- The words of the lexical gloss of a word's first morph: *elder sister* in
+`elder.sister-and`, *door the* in `door.FEM.the`. -/
+def lexicalWords (g : String) : List (List Char) :=
+  ((Gloss.elements ((Gloss.segments g).headD [])).map Gloss.trim).filter
+    fun e ↦ !decide (Gloss.IsLabel e)
+
+/-- A gloss names the noun glossed `n` when its lexical words begin with those of `n`. -/
+def Names (n g : String) : Bool := (Gloss.split [' '] n.toList).isPrefixOf (lexicalWords g)
+
+/-- What `f` reads off each word of a row that glosses a noun of `lex`, with the word's gloss,
+in order. -/
+def glossed {N β : Type*} (gloss : N → String) (lex : List N) (f : N → String → β)
+    (row : Datum) : List β :=
+  row.glossedTokens.filterMap fun t ↦ (lex.find? fun n ↦ Names (gloss n) t.2).map (f · t.2)
+
 /-! ### The judgments of chapter 8
 
 A row with a `hybrid`, a `target` and an `agreement` feature is a use of a hybrid noun at a
 position of the hierarchy, acceptable exactly when the hybrid's availability there admits
-the agreement. A row with `near` and `far` features is a pair of stacked or parallel targets of
-one controller; by the constraints of §8.1.2 the further shows semantic agreement when the two
-differ, so the agreement never decreases with distance from the controller. -/
+the agreement. A row with a `targets` feature shows two stacked or parallel targets of one
+controller, whose agreements its glosses mark; by the constraints of §8.1.2 the further shows
+semantic agreement when the two differ, so the agreement never decreases with distance from the
+controller. -/
 
 /-- The positions of the hierarchy by the names the rows use. -/
 def positionNames : List (String × Position) :=
@@ -725,14 +773,20 @@ def stageNames : List (String × BantuStage) :=
 /-- The two agreements by the names the rows use. -/
 def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
-theorem hybrid_rows : ∀ row ∈ Examples.all, ∀ h ∈ hybridNames, row.feature? "hybrid" = some h.1 →
-    ∀ t ∈ row.parse? "target" positionNames, ∀ k ∈ row.parse? "agreement" kindNames,
-      (row.judgment = .acceptable ↔ ∃ a ∈ h.2 t, a.Allows k) := by
+/-- A use of a hybrid of `hybrids` at a position of `positions`, with the agreement it shows. -/
+def hybridUse? {ι : Type} (hybrids : List (String × Hybrid ι)) (positions : List (String × ι))
+    (row : Datum) : Option (Hybrid ι × ι × Kind) := do
+  let h ← row.parse? "hybrid" hybrids
+  let t ← row.parse? "target" positions
+  let k ← row.parse? "agreement" kindNames
+  pure (h, t, k)
+
+theorem hybrid_rows : Datum.Checks (hybridUse? hybridNames positionNames)
+    (fun u ↦ .ofProp (∃ a ∈ u.1 u.2.1, a.Allows u.2.2)) Examples.all 30 := by
   decide +kernel
 
-theorem stage_rows : ∀ row ∈ Examples.all, ∀ s ∈ stageNames, row.feature? "hybrid" = some s.1 →
-    ∀ t ∈ row.parse? "target" finePositionNames, ∀ k ∈ row.parse? "agreement" kindNames,
-      (row.judgment = .acceptable ↔ ∃ a ∈ s.2.hybrid t, a.Allows k) := by
+theorem stage_rows : Datum.Checks (hybridUse? (stageNames.map fun s ↦ (s.1, s.2.hybrid))
+    finePositionNames) (fun u ↦ .ofProp (∃ a ∈ u.1 u.2.1, a.Allows u.2.2)) Examples.all 14 := by
   decide +kernel
 
 -- Table 8.1, §8.3
@@ -741,8 +795,43 @@ theorem hybrid_rows_covered : ∀ row ∈ Examples.all, ∀ n ∈ row.feature? "
       ∀ t ∈ row.feature? "target", t ∈ finePositionNames.map Prod.fst := by
   decide +kernel
 
-theorem stacked_rows : ∀ row ∈ Examples.all, ∀ near ∈ row.parse? "near" kindNames,
-    ∀ far ∈ row.parse? "far" kindNames, (row.judgment = .acceptable ↔ near ≤ far) := by
+/-- A controller whose agreement may be syntactic or semantic: its gloss, and the labels of its
+syntactic and of its semantic agreements. -/
+structure Controller where
+  /-- The gloss of the noun. -/
+  gloss : String
+  /-- The labels of its syntactic agreements. -/
+  syntactic : List (List Char)
+  /-- The labels of its semantic agreements. -/
+  semantic : List (List Char)
+
+/-- The agreement a target's gloss shows with the controller. -/
+def Controller.kind? (c : Controller) (g : String) : Option Kind :=
+  if (labels g).any c.semantic.contains then some .semantic
+  else if (labels g).any c.syntactic.contains then some .syntactic else none
+
+/-- The controllers of the stacked and parallel targets: Serbo-Croat *vođe* 'leaders' and
+*Sarajlije* 'Sarajevans', declined like feminines but denoting men (§8.1.2), and Chichewa
+*ngwazi* 'hero' and Swahili *rafiki* 'friend', of gender 9/10 in form and 1/2 in meaning (§8.1.2,
+§8.3). -/
+def controllers : List Controller :=
+  [⟨"leaders", ["FEM".toList], ["MASC".toList]⟩, ⟨"Sarajevans", ["FEM".toList], ["MASC".toList]⟩,
+    ⟨"hero", ["9".toList, "10".toList], ["1".toList, "2".toList]⟩,
+    ⟨"friend", ["9".toList, "10".toList], ["1".toList, "2".toList]⟩]
+
+/-- The agreements of a row's two stacked or parallel targets as their glosses mark them, the
+one nearer the controller first. -/
+def targetPair? (row : Datum) : Option (Kind × Kind) := do
+  guard (row.feature? "targets").isSome
+  let gs := row.glossedTokens.map (·.2)
+  let (c, i) ← gs.zipIdx.findSome? fun (g, i) ↦
+    (controllers.find? fun c ↦ Names c.gloss g).map (·, i)
+  match gs.zipIdx.filterMap fun (g, j) ↦ (c.kind? g).map (if i ≤ j then j - i else i - j, ·) with
+  | [a, b] => some (if a.1 ≤ b.1 then (a.2, b.2) else (b.2, a.2))
+  | _ => none
+
+theorem stacked_rows :
+    Datum.Checks targetPair? (fun p ↦ .ofProp (p.1 ≤ p.2)) Examples.all 8 := by
   decide +kernel
 
 /-! ### Resolution (chapter 9) -/
@@ -878,17 +967,21 @@ theorem numberResolve_ne_resolve (rs : List (ResolutionRule Number Number)) :
   rw [resolve_congr rs (ds := [.singular, .singular, .singular]) (by simp), ← congrFun h] at this
   exact absurd this (by decide)
 
+open _root_.Slovenian.Gender in
 /-- By §9.4, all feminines take the feminine and anything else the masculine, a type-B system
 in which the neuter never results from resolution. -/
-def rules : List (ResolutionRule Value Value) := [.all (· = .fem) .fem, otherwise .masc]
+def rules : List (ResolutionRule Value Value) :=
+  [.all (· = .feminine) .feminine, otherwise .masculine]
 
+open _root_.Slovenian.Gender in
 -- (52)
 theorem resolve_neuters :
-    resolve rules [.neut, .neut, .neut] = some .masc ∧
+    resolve rules [.neuter, .neuter, .neuter] = some .masculine ∧
       numberResolve numbers [.singular, .singular, .singular] = some .plural := by
   decide
 
-theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neut := fun h ↦ by
+open _root_.Slovenian.Gender in
+theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neuter := fun h ↦ by
   simpa [rules] using mem_map_out_of_resolve_eq_some h
 
 end Slovene
@@ -907,13 +1000,10 @@ namespace Latin
 
 open _root_.Latin.Gender
 
-/-- A conjunct is described by its gender and the animacy of its referent. -/
-abbrev Conjunct := Value × Animacy
-
 /-- §9.5 has two syntactic rules for homogeneous genders, a semantic rule for humans, and the
 neuter otherwise. -/
-def rules : List (ResolutionRule Conjunct Value) :=
-  [.all (·.1 = .masc) .masc, .all (·.1 = .fem) .fem, .all (·.2 = .human) .masc,
+def rules : List (ResolutionRule _root_.Latin.Gender.Noun Value) :=
+  [.all (·.gender = .masc) .masc, .all (·.gender = .fem) .fem, .all (·.animacy = .human) .masc,
     otherwise .neut]
 
 end Latin
@@ -927,8 +1017,8 @@ inductive PlForm where
   deriving DecidableEq, Repr, Fintype
 
 /-- The obligatory rules of §9.5 give the masculine personal if a conjunct is masculine
-personal and the non-masculine personal otherwise. The optional rules of (60) to (62) are rows
-only. -/
+personal and the non-masculine personal otherwise. The optional rules of (60) to (62) are not
+modelled. -/
 def rules : List (ResolutionRule Bool PlForm) :=
   [.any (· = true) .mascPers, otherwise .nonMascPers]
 
@@ -1051,113 +1141,132 @@ end Ojibwa
 
 /-! ### The judgments of chapter 9
 
-A row with a `conjuncts` and a `resolved` feature names its conjuncts and the form the
-predicate shows; it is acceptable exactly when the language's rules select that form. -/
+A coordination is read off its glosses: its target is the last word whose gloss marks a
+non-singular number with a form the language's rules select, as `new-MASC.PL` on French *neuf-s*
+in (43), and its conjuncts are the words whose glosses name the language's fragment nouns, or
+whose labels mark the gender the rules read, as `book.MASC`. Where the rules read a conjunct's
+person or meaning and no fragment gives the nouns, a `conjunct` feature names it. A coordination
+is acceptable exactly when the language's rules select the target's form. -/
 
-theorem czech_rows : ∀ row ∈ Examples.all, row.language = .czech →
-    ∀ cs ∈ row.parse? "conjuncts" [("1+2", [Person.first, .second]), ("3+1", [.third, .first]),
-      ("3+2", [.third, .second])],
-      ∀ p ∈ row.parse? "resolved" [("1", Person.first), ("2", .second)],
-        (row.judgment = .acceptable ↔ resolve personRules cs = some p) := by
+/-- The form a coordination's target shows: what `form` reads off the gloss of the last word
+whose form it reads. -/
+def target? {G : Type*} (form : String → Option G) (row : Datum) : Option G :=
+  row.glossedTokens.reverse.findSome? (form ·.2)
+
+/-- The form of `table` a target's gloss marks along with a non-singular number. -/
+def pluralForm {G : Type*} (table : List (List Char × G)) (g : String) : Option G :=
+  if Nonsingular g then readLabel table g else none
+
+/-- The conjuncts the labels of a row's glosses mark: the words whose gloss labels a value of
+`table` and no non-singular number. -/
+def labelled {α : Type*} (table : List (List Char × α)) (row : Datum) : List α :=
+  row.glossedTokens.filterMap fun t ↦ if Nonsingular t.2 then none else readLabel table t.2
+
+/-- A coordination of `lang`: at least two conjuncts as `conjuncts` reads them, and the form
+its target shows. -/
+def coordination? {α G : Type*} (lang : Glottocode) (conjuncts : Datum → List α)
+    (form : String → Option G) (row : Datum) : Option (List α × G) :=
+  if row.language = lang ∧ 2 ≤ (conjuncts row).length then
+    (target? form row).map (conjuncts row, ·)
+  else none
+
+/-- The genders by the labels the book glosses them with. -/
+def genderLabels {G : Type*} (masc fem neut : G) : List (List Char × G) :=
+  [("MASC".toList, masc), ("FEM".toList, fem), ("NEUT".toList, neut)]
+
+theorem czech_rows : Datum.Checks
+    (coordination? .czech
+      (fun r ↦
+        (r.parseAll? "conjunct" [("1", Person.first), ("2", .second), ("3", .third)]).getD [])
+      (pluralForm [("1ST".toList, Person.first), ("2ND".toList, .second)]))
+    (fun p ↦ .ofProp (resolve personRules p.1 = some p.2)) Examples.all 3 := by
   decide +kernel
 
 open _root_.Tamil.Gender in
-theorem tamil_rows : ∀ row ∈ Examples.all, row.language = .tamil →
-    ∀ cs ∈ row.parse? "conjuncts" [("masc+masc", [Value.masc, .masc]), ("fem+fem", [.fem, .fem]),
-      ("fem+masc", [.fem, .masc]), ("neut+neut", [.neut, .neut]), ("masc+neut", [.masc, .neut])],
-      ∀ g ∈ row.parse? "resolved" [("rational", PlConcord.rational), ("neuter", .neuter)],
-        (row.judgment = .acceptable ↔ resolve Tamil.rules cs = some g) := by
+theorem tamil_rows : Datum.Checks
+    (coordination? .tamil (glossed (·.gloss) allNouns fun n _ ↦ n)
+      (pluralForm [("RATIONAL".toList, PlConcord.rational), ("NEUT".toList, .neuter)]))
+    (fun p ↦ .ofProp (resolve Tamil.rules (p.1.map (·.gender)) = some p.2)) Examples.all 5 := by
   decide +kernel
 
-theorem archi_rows : ∀ row ∈ Examples.all, row.language = .archi →
-    ∀ cs ∈ row.parse? "conjuncts" [("rational+rational", [true, true]),
-      ("rational+nonrational", [true, false]), ("nonrational+nonrational", [false, false])],
-      ∀ g ∈ row.parse? "resolved" [("I/II", Archi.PlForm.I_II), ("III/IV", .III_IV)],
-        (row.judgment = .acceptable ↔ resolve Archi.rules cs = some g) := by
+theorem archi_rows : Datum.Checks
+    (coordination? .archi
+      (fun r ↦ (r.parseAll? "conjunct" [("rational", true), ("nonrational", false)]).getD [])
+      (pluralForm [("I/II".toList, Archi.PlForm.I_II), ("III/IV".toList, .III_IV)]))
+    (fun p ↦ .ofProp (resolve Archi.rules p.1 = some p.2)) Examples.all 7 := by
   decide +kernel
 
-theorem luganda_rows : ∀ row ∈ Examples.all, row.language = .ganda →
-    ∀ cs ∈ row.parse? "conjuncts" [("human+human+human", [true, true, true]),
-      ("nonhuman+nonhuman+nonhuman+nonhuman", [false, false, false, false]),
-      ("human+nonhuman", [true, false])],
-      ∀ g ∈ row.parse? "resolved" [("2", Luganda.PlForm.cl2), ("8", .cl8)],
-        (row.judgment = .acceptable ↔ resolve Luganda.rules cs = some g) := by
+-- the class 2 and class 8 prefixes are plural, so a Luganda target is read off its class alone
+theorem luganda_rows : Datum.Checks
+    (coordination? .ganda
+      (fun r ↦ (r.parseAll? "conjunct" [("human", true), ("nonhuman", false)]).getD [])
+      (readLabel [("2".toList, Luganda.PlForm.cl2), ("8".toList, .cl8)]))
+    (fun p ↦ .ofProp (resolve Luganda.rules p.1 = some p.2)) Examples.all 4 := by
   decide +kernel
 
-theorem french_rows : ∀ row ∈ Examples.all, row.language = .french →
-    ∀ cs ∈ row.parse? "conjuncts" [("masc+masc", [French.Gender.Value.masculine, .masculine]),
-      ("fem+fem", [.feminine, .feminine]), ("masc+fem", [.masculine, .feminine])],
-      ∀ g ∈ row.parse? "resolved" [("masc", French.Gender.Value.masculine), ("fem", .feminine)],
-        (row.judgment = .acceptable ↔ resolve French.rulesA cs = some g) := by
+open _root_.French.Gender in
+theorem french_rows : Datum.Checks
+    (coordination? .french (labelled [("MASC".toList, Value.masculine), ("FEM".toList, .feminine)])
+      (pluralForm [("MASC".toList, Value.masculine), ("FEM".toList, .feminine)]))
+    (fun p ↦ .ofProp (resolve French.rulesA p.1 = some p.2)) Examples.all 4 := by
   decide +kernel
 
-theorem slovene_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
-    ∀ cs ∈ row.parse? "conjuncts" [("masc+fem", [Slovene.Value.masc, .fem]),
-      ("masc+neut", [.masc, .neut]), ("fem+neut", [.fem, .neut]), ("neut+neut", [.neut, .neut]),
-      ("fem+fem", [.fem, .fem]), ("neut+neut+neut", [.neut, .neut, .neut]),
-      ("fem+fem+fem", [.fem, .fem, .fem])],
-      ∀ g ∈ row.parse? "resolved" [("masc", Slovene.Value.masc), ("fem", .fem)],
-        (row.judgment = .acceptable ↔ resolve Slovene.rules cs = some g) := by
+open _root_.Slovenian.Gender in
+theorem slovene_rows : Datum.Checks
+    (coordination? .slovenian (glossed (·.gloss) allNouns fun n _ ↦ n.gender)
+      (pluralForm (genderLabels .masculine .feminine .neuter)))
+    (fun p ↦ .ofProp (resolve Slovene.rules p.1 = some p.2)) Examples.all 7 := by
   decide +kernel
 
-theorem slovene_number_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
-    ∀ ns ∈ row.parse? "numbers" [("sg+sg", [Number.singular, .singular]),
-      ("sg+sg+sg", [.singular, .singular, .singular]), ("sg+du", [.singular, .dual])],
-      ∀ n ∈ row.parse? "number" [("dual", Number.dual), ("plural", .plural)],
-        (row.judgment = .acceptable ↔ numberResolve Slovene.numbers ns = some n) := by
+open _root_.Slovenian.Gender in
+theorem slovene_number_rows : Datum.Checks
+    (coordination? .slovenian (glossed (·.gloss) allNouns fun _ g ↦ number g)
+      fun g ↦ if Nonsingular g then some (number g) else none)
+    (fun p ↦ .ofProp (numberResolve Slovene.numbers p.1 = some p.2)) Examples.all 10 := by
   decide +kernel
 
-theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = .icelandic →
-    ∀ cs ∈ row.parse? "conjuncts"
-      [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
-        ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
-      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Icelandic.Gender.Value.neuter)],
-        (row.judgment = .acceptable ↔ resolve Icelandic.rules (cs.map (·.gender)) = some g) := by
+open _root_.Icelandic.Gender in
+theorem icelandic_rows : Datum.Checks
+    (coordination? .icelandic (labelled (genderLabels .masculine .feminine .neuter))
+      (pluralForm (genderLabels .masculine .feminine .neuter)))
+    (fun p ↦ .ofProp (resolve Icelandic.rules p.1 = some p.2)) Examples.all 2 := by
   decide +kernel
 
-theorem polish_rows : ∀ row ∈ Examples.all, row.language = .polish →
-    ∀ cs ∈ row.parse? "conjuncts" [("fem+fem", [false, false]),
-      ("mascPers+fem+fem", [true, false, false])],
-      ∀ g ∈ row.parse? "resolved" [("mascPers", Polish.PlForm.mascPers),
-        ("nonMascPers", .nonMascPers)],
-        (row.judgment = .acceptable ↔ resolve Polish.rules cs = some g) := by
+theorem polish_rows : Datum.Checks
+    (coordination? .polish
+      (fun r ↦ (r.parseAll? "conjunct" [("mascPers", true), ("fem", false)]).getD [])
+      (pluralForm [("MASC_PERS".toList, Polish.PlForm.mascPers),
+        ("NON_MASC_PERS".toList, .nonMascPers)]))
+    (fun p ↦ .ofProp (resolve Polish.rules p.1 = some p.2)) Examples.all 2 := by
   decide +kernel
 
-theorem latin_rows : ∀ row ∈ Examples.all, row.language = .latin →
-    ∀ cs ∈ row.parse? "conjuncts" [("masc.human+fem.human",
-      [((Latin.Gender.Value.masc, .human) : Latin.Conjunct), (.fem, .human)]),
-      ("masc.inanimate+fem.inanimate", [(.masc, .inanimate), (.fem, .inanimate)])],
-      ∀ g ∈ row.parse? "resolved" [("masc", Latin.Gender.Value.masc), ("neut", .neut)],
-        (row.judgment = .acceptable ↔ resolve Latin.rules cs = some g) := by
+open _root_.Latin.Gender in
+theorem latin_rows : Datum.Checks
+    (coordination? .latin (glossed (·.gloss) allNouns fun n _ ↦ n)
+      (pluralForm (genderLabels .masc .fem .neut)))
+    (fun p ↦ .ofProp (resolve Latin.rules p.1 = some p.2)) Examples.all 2 := by
   decide +kernel
 
 open _root_.Romanian.Gender in
-theorem romanian_resolution_rows : ∀ row ∈ Examples.all, row.language = .romanian →
-    ∀ cs ∈ row.parse? "conjuncts" [("fată+femeie", [fata, femeie]),
-      ("băiat+bărbat", [baiat, barbat]), ("băiat+fată", [baiat, fata]),
-      ("uşă+perete", [usa, perete]), ("perete+scaun", [perete, scaun]),
-      ("scaun+masă", [scaun, masa]), ("nuc+prun", [nuc, prun]),
-      ("frigider+televizor", [frigider, televizor]), ("uşă+masă", [usa, masa])],
-      ∀ g ∈ row.parse? "resolved" [("masc", Value.masc), ("fem", .fem)],
-        (row.judgment = .acceptable ↔ resolve Romanian.rules cs = some g) := by
+theorem romanian_resolution_rows : Datum.Checks
+    (coordination? .romanian (glossed (·.gloss) allNouns fun n _ ↦ n)
+      (pluralForm (genderLabels .masc .fem .neut)))
+    (fun p ↦ .ofProp (resolve Romanian.rules p.1 = some p.2)) Examples.all 9 := by
   decide +kernel
 
 open _root_.Serbian.Gender in
-theorem serboCroat_rows : ∀ row ∈ Examples.all, row.language = .serbianCroatianBosnian →
-    ∀ cs ∈ row.parse? "conjuncts" [("znanje+intuicija", [znanje, intuicija]),
-      ("mesto+značenje", [mesto, znacenje]),
-      ("opreznost+suptilnost+pedanterija", [opreznost, suptilnost, pedanterija]),
-      ("nebriga+lakomislenost", [nebriga, lakomislenost]), ("štula+štaka", [stula, staka])],
-      ∀ g ∈ row.parse? "resolved" [("masc", Value.masculine), ("fem", .feminine)],
-        (row.judgment = .acceptable ↔ ∃ gr ∈ SerboCroat.stage2, resolve gr cs = some g) := by
+theorem serboCroat_rows : Datum.Checks
+    (coordination? .serbianCroatianBosnian (glossed (·.gloss) allNouns fun n _ ↦ n)
+      (pluralForm (genderLabels .masculine .feminine .neuter)))
+    (fun p ↦ .ofProp (∃ g ∈ SerboCroat.stage2, resolve g p.1 = some p.2)) Examples.all 5 := by
   decide +kernel
 
-theorem ojibwa_rows : ∀ row ∈ Examples.all, row.language = .ojibwa →
-    ∀ cs ∈ row.parse? "conjuncts" [("animate+animate", [Ojibwa.Value.animate, .animate]),
-      ("inanimate+inanimate", [.inanimate, .inanimate]),
-      ("animate+inanimate", [.animate, .inanimate])],
-      ∀ g ∈ row.parse? "resolved" [("animate", Ojibwa.Value.animate), ("inanimate", .inanimate)],
-        (row.judgment = .acceptable ↔ resolve Ojibwa.rules cs = some g) := by
+-- Delisle's informant; the younger speaker of (83) and (84) has the rules of p. 305
+theorem ojibwa_rows : Datum.Checks
+    (fun r ↦ if r.feature? "speaker" = some "younger" then none else coordination? .ojibwa
+      (labelled [("ANIM".toList, Ojibwa.Value.animate), ("INAN".toList, .inanimate)])
+      (pluralForm [("ANIM".toList, Ojibwa.Value.animate), ("INAN".toList, .inanimate)]) r)
+    (fun p ↦ .ofProp (resolve Ojibwa.rules p.1 = some p.2)) Examples.all 4 := by
   decide +kernel
 
 /-! ### The judgments of chapter 3
@@ -1166,10 +1275,13 @@ A Swahili row with a `noun` and a `concord` feature is acceptable exactly when t
 is the gender the assignment rules give the noun. -/
 
 open _root_.Swahili in
-theorem swahili_rows : ∀ row ∈ Examples.all, row.language = .swahili →
-    ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
-      ∀ g ∈ row.parse? "concord" [("1/2", Gender.genderA), ("3/4", .genderB), ("7/8", .genderD)],
-        (row.judgment = .acceptable ↔ Swahili.system.assign Swahili.sem Noun.morphClass n = g) := by
+theorem swahili_rows : Datum.Checks
+    (fun row ↦ do
+      let n ← row.parse? "noun" (allNouns.map fun n ↦ (n.form, n))
+      let g ← row.parse? "concord" [("1/2", Gender.genderA), ("3/4", .genderB), ("7/8", .genderD)]
+      pure (n, g))
+    (fun p ↦ .ofProp (Swahili.system.assign Swahili.sem Noun.morphClass p.1 = p.2))
+    Examples.all 6 := by
   decide +kernel
 
 end Corbett1991

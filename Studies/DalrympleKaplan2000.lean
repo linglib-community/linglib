@@ -405,23 +405,23 @@ end Icelandic
 namespace Slovene
 
 /-- The marker assignment (122). -/
-def markers : Corbett1991.Slovene.Value → GenderSet
-  | .masc => {.fem, .neut}
-  | .fem => {.fem}
-  | .neut => {.neut}
+def markers : Slovenian.Gender.Value → GenderSet
+  | .masculine => {.fem, .neut}
+  | .feminine => {.fem}
+  | .neuter => {.neut}
 
 /-- With the conjunction contributing the feminine marker (126), union of the marker sets
 reproduces Corbett's rules on every coordination ((127)). -/
-theorem map_resolve {cs : List Corbett1991.Slovene.Value} (hcs : cs ≠ []) :
+theorem map_resolve {cs : List Slovenian.Gender.Value} (hcs : cs ≠ []) :
     (resolve Corbett1991.Slovene.rules cs).map markers = some (cs.toFinset.sup markers ∪ {.fem}) :=
-  of_sublists (univ := [.masc, .fem, .neut])
+  of_sublists (univ := [.masculine, .feminine, .neuter])
     (P := fun r s ↦ r.map markers = some (s.sup markers ∪ {.fem})) (by decide) hcs
     fun c _ ↦ by cases c <;> simp
 
 -- (105b), (123)
 theorem neuters :
-    resolve Corbett1991.Slovene.rules [.neut, .neut] = some .masc ∧
-      [Corbett1991.Slovene.Value.neut, .neut].toFinset.sup markers = markers .neut := by
+    resolve Corbett1991.Slovene.rules [.neuter, .neuter] = some .masculine ∧
+      [Slovenian.Gender.Value.neuter, .neuter].toFinset.sup markers = markers .neuter := by
   decide
 
 end Slovene
@@ -445,8 +445,8 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = .icelandic →
 
 -- (123), (127)
 theorem slovene_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
-    ∀ cs ∈ row.parse? "conjuncts" [("NEUT and NEUT", [Corbett1991.Slovene.Value.neut, .neut])],
-    ∀ g ∈ row.parse? "agreement" [("MASC", Corbett1991.Slovene.Value.masc)],
+    ∀ cs ∈ row.parse? "conjuncts" [("NEUT and NEUT", [Slovenian.Gender.Value.neuter, .neuter])],
+    ∀ g ∈ row.parse? "agreement" [("MASC", Slovenian.Gender.Value.masculine)],
       (row.judgment = .acceptable ↔
         cs.toFinset.sup Slovene.markers ∪ {.fem} = Slovene.markers g) := by
   decide +kernel

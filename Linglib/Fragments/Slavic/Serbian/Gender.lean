@@ -108,4 +108,9 @@ def stula : GenderedNoun Value := { form := "štula", gloss := "wooden leg", gen
 /-- *štaka* 'crutch'. -/
 def staka : GenderedNoun Value := { form := "štaka", gloss := "crutch", gender := .feminine }
 
+/-- The nouns of the file. -/
+def allNouns : List (GenderedNoun Value) :=
+  [muskarac, zena, covek, znanje, intuicija, selo, brdo, knjiga, pesak, mleko, mesto, znacenje,
+    opreznost, suptilnost, pedanterija, nebriga, lakomislenost, stula, staka]
+
 end Serbian.Gender
