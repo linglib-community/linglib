@@ -184,17 +184,6 @@ theorem subset_of_dependsOn_toDet [Finite E] {a b : ℕ} (hab : a + b + 1 = R.nc
   rw [h₁, h₂] at this
   exact hq this
 
-theorem toDet_all_iff [Finite E] {B : Set E} : NumberTree.all.toDet R B ↔ R ⊆ B := by
-  rw [NumberTree.toDet_apply]
-  change (R \ B).ncard = 0 ↔ _
-  rw [Set.ncard_eq_zero, Set.sdiff_eq_empty]
-
-theorem toDet_no_iff [Finite E] {B : Set E} : NumberTree.no.toDet R B ↔ ∀ x ∈ R, x ∉ B := by
-  rw [NumberTree.toDet_apply]
-  change (R ∩ B).ncard = 0 ↔ _
-  rw [Set.ncard_eq_zero, Set.eq_empty_iff_forall_notMem]
-  exact ⟨fun h x hx hb ↦ h x ⟨hx, hb⟩, fun h x ⟨hx, hb⟩ ↦ h x hx hb⟩
-
 theorem toDet_cardinal_iff {n : ℕ} {B : Set E} :
     (NumberTree.cardinal {n}).toDet R B ↔ (R ∩ B).ncard = n := by
   simp [NumberTree.toDet_apply]
@@ -242,10 +231,10 @@ theorem deployWithConcern_all_eq_true_iff :
     deployWithConcern (NumberTree.all.toDet R) g = .true ↔ ∀ x ∈ R, g x = .true := by
   rw [deployWithConcern_eq_true_iff]
   refine ⟨fun ⟨_, h⟩ x hx ↦ ?_, fun h ↦ ?_⟩
-  · simpa using toDet_all_iff.1 (apply_repair_k3_of_deploy_eq_true h) hx
+  · simpa using NumberTree.toDet_all_iff.1 (apply_repair_k3_of_deploy_eq_true h) hx
   · have hd : deploy (NumberTree.all.toDet R) g = .true :=
       (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun x hx ↦ by simp [h x hx]).2
-        (toDet_all_iff.2 fun x hx ↦ by simpa using h x hx)
+        (NumberTree.toDet_all_iff.2 fun x hx ↦ by simpa using h x hx)
     exact ⟨not_disappointing_of_deploy_eq_true hd, hd⟩
 
 /-- §3.3: *each* presupposes that the scope is defined of every individual of the restrictor. -/
@@ -257,7 +246,7 @@ theorem deployWithConcern_all_eq_undefined_iff :
     have hnd : ¬ Disappointing (NumberTree.all.toDet R) g := fun hd ↦ by
       refine hd.1 (trueOffGaps g) gapExt_trueOffGaps ?_
       refine (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun x hx ↦ ?_).2
-        (toDet_all_iff.2 fun x hx ↦ ?_) <;> simp [trueOffGaps, hc x hx]
+        (NumberTree.toDet_all_iff.2 fun x hx ↦ ?_) <;> simp [trueOffGaps, hc x hx]
     simp only [deployWithConcern, hnd, ↓reduceIte] at h
     exact deploy_ne_undefined_of_defined (dependsOn_toDet _ R) hc h
   · have hd : Disappointing (NumberTree.all.toDet R) g := by
@@ -265,10 +254,10 @@ theorem deployWithConcern_all_eq_undefined_iff :
       · have hy' : g' y = .undefined := by
           have : y ∈ gapExt g' := hg' ▸ (show y ∈ gapExt g from hgy)
           simpa using this
-        have := toDet_all_iff.1 (apply_repair_k3_of_deploy_eq_true h) hy
+        have := NumberTree.toDet_all_iff.1 (apply_repair_k3_of_deploy_eq_true h) hy
         simp [hy'] at this
       · exact (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun _ _ ↦ by simp).2
-          (toDet_all_iff.2 fun _ _ ↦ by simp)
+          (NumberTree.toDet_all_iff.2 fun _ _ ↦ by simp)
     simp [deployWithConcern, hd]
 
 -- §3.4
@@ -285,16 +274,16 @@ theorem deployWithConcern_no_eq_true_iff :
         simpa using this
       by_cases ht : ∃ z ∈ R, g' z = .true
       · obtain ⟨z, hz, hgz⟩ := ht
-        exact toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h') z hz (by simpa using hgz)
+        exact NumberTree.toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h') ⟨z, hz, by simpa using hgz⟩
       · push Not at ht
         have := deploy_eq_true_iff.1 h' _ (repair_lp_mem_availableRepairs (dependsOn_toDet _ R) ht)
-        exact toDet_no_iff.1 this x hx (by simp [hx'])
+        exact NumberTree.toDet_no_iff.1 this ⟨x, hx, by simp [hx']⟩
     · have ht : g x = .true := by
         rcases trichotomy (g x) with h' | h' | h' <;> simp_all
-      exact toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h) x hx (by simpa using ht)
+      exact NumberTree.toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h) ⟨x, hx, by simpa using ht⟩
   · have hd : deploy (NumberTree.no.toDet R) g = .true :=
       (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun x hx ↦ by simp [h x hx]).2
-        (toDet_no_iff.2 fun x hx ↦ by simp [h x hx])
+        (NumberTree.toDet_no_iff.2 fun ⟨x, hx, hxB⟩ ↦ by simp [h x hx] at hxB)
     exact ⟨not_disappointing_of_deploy_eq_true hd, hd⟩
 
 /-- §3.4: *none* presupposes that the scope is defined of every individual of the restrictor. -/
@@ -306,7 +295,9 @@ theorem deployWithConcern_no_eq_undefined_iff :
     have hnd : ¬ Disappointing (NumberTree.no.toDet R) g := fun hd ↦ by
       refine hd.1 (falseOffGaps g) gapExt_falseOffGaps ?_
       refine (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun x hx ↦ ?_).2
-        (toDet_no_iff.2 fun x hx ↦ ?_) <;> simp [falseOffGaps, hc x hx]
+        (NumberTree.toDet_no_iff.2 fun ⟨x, hx, hxB⟩ ↦ ?_)
+      · simp [falseOffGaps, hc x hx]
+      · simp [falseOffGaps, hc x hx] at hxB
     simp only [deployWithConcern, hnd, ↓reduceIte] at h
     exact deploy_ne_undefined_of_defined (dependsOn_toDet _ R) hc h
   · have hd : Disappointing (NumberTree.no.toDet R) g := by
@@ -316,13 +307,13 @@ theorem deployWithConcern_no_eq_undefined_iff :
           simpa using this
         by_cases ht : ∃ z ∈ R, g' z = .true
         · obtain ⟨z, hz, hgz⟩ := ht
-          exact toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h) z hz (by simpa using hgz)
+          exact NumberTree.toDet_no_iff.1 (apply_repair_k3_of_deploy_eq_true h) ⟨z, hz, by simpa using hgz⟩
         · push Not at ht
           have := deploy_eq_true_iff.1 h _
             (repair_lp_mem_availableRepairs (dependsOn_toDet _ R) ht)
-          exact toDet_no_iff.1 this y hy (by simp [hy'])
+          exact NumberTree.toDet_no_iff.1 this ⟨y, hy, by simp [hy']⟩
       · exact (deploy_eq_true_iff_of_defined (dependsOn_toDet _ R) fun _ _ ↦ by simp).2
-          (toDet_no_iff.2 fun _ _ ↦ by simp)
+          (NumberTree.toDet_no_iff.2 fun ⟨_, _, hxB⟩ ↦ by simp at hxB)
     simp [deployWithConcern, hd]
 
 /-- §3.5: *exactly n* is true where the scope is true of exactly `n` individuals of the
