@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Writer
+public import Linglib.Core.Control.Monad.Writer
 
 /-!
 # Giorgolo and Asudeh (2012): ⟨M, η, ⋆⟩ Monads for Conventional Implicatures
@@ -23,8 +23,10 @@ multidimensionality.
 ## Implementation notes
 
 * The two channels are the transformer `WriterT (List CI) (Writer (List Presup))`, over the Writer
-  surface of `Semantics/Composition/Writer.lean`, with `check` lifted from the presupposition
-  monad as fn. 4 prescribes. The paper's logs are sets under union; these are lists.
+  surface of `Core/Control/Monad/Writer.lean`, with `check` lifted from the presupposition
+  monad as fn. 4 prescribes. The paper's logs are sets under union; these are lists. It requires
+  the arrows to be isotone in the log for the preorder `x ≤ y ↔ ∃ z, x * z = y`, which is `x ∣ y`
+  in mathlib and on lists, the free monoid, the prefix order (`Writer.log_prefix_bind`).
 * Glue's `⊸` elimination is the monad's `<*>`, and `⊸*` elimination plain application to monadic
   arguments; the introduction rules, which reason hypothetically, are not needed.
 * The extension of *like* is a parameter: the presupposition of *also* follows from the logged

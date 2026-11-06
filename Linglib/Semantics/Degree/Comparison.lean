@@ -9,15 +9,14 @@ public import Mathlib.Order.UpperLower.Closure
 
 A `Comparison` is one of the five ways a measured value can relate to a threshold, `=`, `≥`, `>`,
 `≤` and `<`, kept as data so that numerals, measure phrases and comparatives can share it. It
-selects an order interval, and the entities a measure `μ` sends into that interval form the
-preimage `μ ⁻¹' c.interval n`. A comparison is strict when
-[its threshold lies outside the interval](##Degree.Comparison.self_mem_interval_iff), and as a
-modifier of degree sets it is
-[extensive exactly when not strict](##Degree.Comparison.isExtensive_modifier_iff).
-[Reversing the scale exchanges its two sides](##Degree.Comparison.rel_dual), and an order embedding
-[preserves it when the threshold moves along](##Degree.Comparison.preimage_interval). Maximality on
-a scale is the [greatest](##Degree.mem_maxOnScale_gt) or [least](##Degree.mem_maxOnScale_lt) member
-of a set, the two [exchanged by reversing the scale](##Degree.mem_maxOnScale_dual).
+selects an order interval, and the entities a measure `μ` sends into that interval form the preimage
+`μ ⁻¹' c.interval n`. A comparison is strict when [its threshold lies outside the
+interval](##Comparison.self_mem_interval_iff), and as a modifier of degree sets it is [extensive
+exactly when not strict](##Comparison.isExtensive_modifier_iff). [Reversing the scale exchanges its
+two sides](##Comparison.rel_dual), and an order embedding [preserves it when the threshold moves
+along](##Comparison.preimage_interval). Maximality on a scale is the
+[greatest](##Comparison.mem_maxOnScale_gt) or [least](##Comparison.mem_maxOnScale_lt) member of a
+set, the two [exchanged by reversing the scale](##Comparison.mem_maxOnScale_dual).
 
 ## Implementation notes
 
@@ -35,12 +34,9 @@ versions that do not require membership.
 * [rett-2015a]
 * [rett-2020a]
 * [rett-2026]
-* [uegaki-sudo-2019]
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-- A comparison is the ordering relation a degree modifier draws between a measured value and a
 threshold. The bare and modified numerals of [kennedy-2015] differ only in this relation (73), as
@@ -247,31 +243,6 @@ theorem forall_preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) :
 
 end CompLinear
 
-end Comparison
-
-variable {E α : Type*}
-
-/-! ### Threshold significance
-
-[uegaki-sudo-2019] take a gradable expression whose interpretation depends on a threshold to
-presuppose that some member of the comparison class exceeds it, since a threshold above the whole
-class draws no distinction in the class. -/
-
-section Threshold
-
-variable [Preorder α]
-
-/-- A threshold function `θ` is significant on the comparison class `C` when some member of `C`
-measures above `θ C`, [uegaki-sudo-2019] (36). -/
-def ThresholdSignificant (μ : E → α) (θ : Set E → α) (C : Set E) : Prop :=
-  (C ∩ μ ⁻¹' Set.Ioi (θ C)).Nonempty
-
-theorem thresholdSignificant_iff {μ : E → α} {θ : Set E → α} {C : Set E} :
-    ThresholdSignificant μ θ C ↔ ∃ y ∈ C, θ C < μ y :=
-  Iff.rfl
-
-end Threshold
-
 /-! ### Scale-sensitive maximality
 
 What counts as maximal depends on the ordering of the scale, so the same operator picks the latest
@@ -308,4 +279,4 @@ theorem mem_maxOnScale_lt : x ∈ maxOnScale .lt X ↔ IsLeast X x :=
 
 end MaximalityPartial
 
-end Degree
+end Comparison

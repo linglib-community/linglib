@@ -40,8 +40,8 @@ the Heim-Kennedy generalization ((80)).
   the singletons of `Z`, the full lattice `×Z`; without the empty sum it is Link's `*Z`,
   `Mereology.AlgClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
   plurality that is in `plural B`.
-* Degrees are natural numbers; Kennedy's numeral is `Degree.MaxIn {n}` and its two scopes are
-  `Degree.LowScope` and `Degree.HighScope`. Exhaustification against the higher numerals is
+* Degrees are natural numbers; Kennedy's numeral is `Quantifier.MaxIn {n}` and its two scopes are
+  `Quantifier.LowScope` and `Quantifier.HighScope`. Exhaustification against the higher numerals is
   `Exhaustification.exhAgainst (· < ·)`.
 * Licensing is the library's: *zero* is a scalar `PolarityItem.Licenser`, and every item
   needs the meaning below the exhaustivity operator non-trivially downward entailing. For strong
@@ -67,7 +67,7 @@ let the de-Fregean analysis do without `⊥` (Section 6.1) are not formalized.
 @[expose] public section
 namespace BylininaNouwen2018
 
-open Degree Exhaustification Numerals Quantifier Quantifier.Det Set Mereology
+open Exhaustification Numerals Quantifier Quantifier.Det Set Mereology
 
 variable {α : Type*} [DecidableEq α]
 
@@ -285,8 +285,8 @@ end Scope
 
 /-- A count's measured degree property is that of its full pluralities. With finitely many members
 of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their number,
-so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the plural
-model. -/
+so `Quantifier.LowScope` and `Quantifier.HighScope` at `Iic ∘` the count are the readings of the
+plural model. -/
 theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
     (h : ∀ i, (A ∩ B i).Finite) :
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=

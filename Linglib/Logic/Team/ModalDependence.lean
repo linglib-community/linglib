@@ -56,6 +56,8 @@ split `t₁ ∪ t₂ = t`, which is equivalent to Väänänen's `t ⊆ t₁ ∪ 
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace ModalLogic.Dependence
 
 variable {W : Type*} {Atom : Type*}
@@ -65,13 +67,13 @@ open ModalLogic (KripkeModel)
 /-! ### Syntax (Definition 1.1) -/
 
 /-- The formulas of MDL ([vaananen-2008] Definition 1.1, p. 238) extend classical modal logic
-    with the dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
-    `¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
+with the dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
+`¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
   /-- The dependence atom `=(x⃗; y)` says that the values of `y` in the team are a function
-      of the values of `x⃗`. -/
+  of the values of `x⃗`. -/
   | dep (xs : List Atom) (y : Atom)
   /-- Negation, which swaps support and anti-support. -/
   | neg (φ : Formula Atom)
@@ -97,7 +99,7 @@ def Formula.DepFree : Formula Atom → Prop
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of an MDL formula at a world, with `◇` the shared
-    `ModalLogic.Diamond`; a dependence atom is true at every world. -/
+`ModalLogic.Diamond`; a dependence atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w
   | .dep _ _, _ => True
@@ -114,12 +116,12 @@ variable [DecidableEq W]
 /-! ### Semantics (Definition 4.1) -/
 
 /-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008], p. 245).
-    `eval M true φ t` is support (Player II); `eval M false φ t` is
-    anti-support (Player I). Negation flips polarity (clause (T5)).
+`eval M true φ t` is support (Player II); `eval M false φ t` is
+anti-support (Player I). Negation flips polarity (clause (T5)).
 
-    The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
-    BSML's per-world form; the two formulations diverge for non-union-
-    closed logics like MDL. -/
+The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
+BSML's per-world form; the two formulations diverge for non-union-
+closed logics like MDL. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => t ∈ Team.flat (M.val p)
   | false, .atom p,        t => t ∈ Team.flat fun w ↦ ¬ M.val p w
@@ -128,8 +130,8 @@ def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .neg ψ,         t => eval M false ψ t
   | false, .neg ψ,         t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
-  | true,  .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
+  | false, .conj ψ₁ ψ₂,    t => t ∈ {s | eval M false ψ₁ s} ⊻ {s | eval M false ψ₂ s}
+  | true,  .disj ψ₁ ψ₂,    t => t ∈ {s | eval M true ψ₁ s} ⊻ {s | eval M true ψ₂ s}
   | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true,  .poss ψ,        t => t ∈ Team.possWitness M.access {s | eval M true ψ s}
   | false, .poss ψ,        t => t ∈ Team.necImage M.access {s | eval M false ψ s}
@@ -207,8 +209,8 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     exact ⟨(Team.isLowerSet_dep _ _).preimage fun _ _ ↦ Finset.coe_subset.2,
       Team.isLowerSet_singleton_empty⟩
   | neg ψ ih => exact ih.symm
-  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.sups ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.sups ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ ih => exact ⟨Team.isLowerSet_possWitness _ _, ih.2.necImage⟩
 
 /-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2, p. 245). -/
@@ -228,8 +230,8 @@ private theorem support_and_antiSupport_empty
     simp only [support, eval, Finset.coe_empty]
     exact Team.empty_mem_dep
   | neg ψ ih => exact ih.symm
-  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Team.empty_mem_tensor ih₁.2 ih₂.2⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Set.bot_mem_sups ih₁.2 ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Set.bot_mem_sups ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss ψ ih => exact ⟨Team.empty_mem_possWitness ih.1, Team.empty_mem_necImage ih.2⟩
 
 /-- Every MDL formula is supported on the empty team. -/
@@ -240,7 +242,7 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 /-! ### Dep breaks union closure (the defining feature) -/
 
 /-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
-    each of their singleton teams supports `=(p; q)` but the team of both does not. -/
+each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by
@@ -259,7 +261,7 @@ open ModalLogic (WorldBisim)
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 /-- Teams that are `k`-bisimilar agree on every MDL formula of modal depth at most `k`, in both
-    polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
+polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
   induction φ generalizing k b with
@@ -275,10 +277,10 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
   | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+    cases b; exacts [(ih₁ hd₁ _).sups (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).sups (ih₂ hd₂ _)]
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
@@ -297,13 +299,13 @@ section ExpressivePower
 universe u
 
 /-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
-    depth. -/
+depth. -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
   ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
 
 /-- MDL expresses only classes of pointed team models that are downward closed, contain the empty
-    team and are invariant under bounded bisimulation. -/
+team and are invariant under bounded bisimulation. -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
       {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
@@ -336,14 +338,14 @@ theorem eval_iff_forall_realize (hD : φ.DepFree) (b : Bool) (t : Finset W) :
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_tensor_flat.trans ?_
+      refine Team.mem_flat_sups_flat.trans ?_
       simp [Realize, imp_iff_not_or]
     · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and, not_or]
     · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_tensor_flat.trans ?_
+      refine Team.mem_flat_sups_flat.trans ?_
       simp [Realize]
   | poss ψ ih =>
     cases b

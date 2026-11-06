@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Mathlib.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
 

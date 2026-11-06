@@ -43,7 +43,7 @@ syntactic pattern of raising: an auxiliary's subject is also its valent's subjec
 * Only exemplars inherit (Section 2.5). `DefaultInheritance.inherited` is defined at every
   concept, and the theorems query the exemplars.
 * Each taxonomy is declared by its immediate isA links, and its order is their reflexive
-  transitive closure (`partialOrderOfCovers`).
+  transitive closure (`partialOrderOfAcyclic`).
 * The kinship system of Figure 8.16 is built from `mother` and `father` on an arbitrary type
   of people, with sex as predicates; the compositions are mathlib's `Relation.Comp` and
   `Relation.TransGen`.
@@ -78,14 +78,8 @@ def Bird.parents : Bird → List Bird
   | .e1 => [.sparrow]
   | .e2 => [.penguin]
 
-/-- The depth of a concept below *bird*. -/
-def Bird.rank : Bird → ℕ
-  | .bird => 0
-  | .sparrow | .penguin => 1
-  | .e1 | .e2 => 2
-
 instance : PartialOrder Bird :=
-  partialOrderOfCovers (fun a b : Bird ↦ b ∈ a.parents) Bird.rank (by decide)
+  partialOrderOfAcyclic (fun a b : Bird ↦ b ∈ a.parents) (by decide)
 
 instance : DecidableLE Bird :=
   decidableLEOfCovers (covers := fun a b : Bird ↦ b ∈ a.parents) [.bird, .sparrow, .penguin]
@@ -142,14 +136,8 @@ def Car.parents : Car → List Car
   | .dieselCar | .e' => [.car]
   | .e => [.dieselCar]
 
-/-- The depth of a concept below *car*. -/
-def Car.rank : Car → ℕ
-  | .car => 0
-  | .dieselCar | .e' => 1
-  | .e => 2
-
 instance : PartialOrder Car :=
-  partialOrderOfCovers (fun a b : Car ↦ b ∈ a.parents) Car.rank (by decide)
+  partialOrderOfAcyclic (fun a b : Car ↦ b ∈ a.parents) (by decide)
 
 instance : DecidableLE Car :=
   decidableLEOfCovers (covers := fun a b : Car ↦ b ∈ a.parents) [.car, .dieselCar] (by decide)
@@ -188,14 +176,8 @@ def Person.parents : Person → List Person
   | .republican | .quaker => [.person]
   | .nixon => [.republican, .quaker]
 
-/-- The depth of a concept below *person*. -/
-def Person.rank : Person → ℕ
-  | .person => 0
-  | .republican | .quaker => 1
-  | .nixon => 2
-
 instance : PartialOrder Person :=
-  partialOrderOfCovers (fun a b : Person ↦ b ∈ a.parents) Person.rank (by decide)
+  partialOrderOfAcyclic (fun a b : Person ↦ b ∈ a.parents) (by decide)
 
 instance : DecidableLE Person :=
   decidableLEOfCovers (covers := fun a b : Person ↦ b ∈ a.parents)
@@ -264,14 +246,8 @@ def Human.parents : Human → List Human
   | .woman => [.female, .adult]
   | .girl => [.female, .child]
 
-/-- The depth of a concept below *person*. -/
-def Human.rank : Human → ℕ
-  | .person => 0
-  | .male | .female | .adult | .child => 1
-  | .man | .boy | .woman | .girl => 2
-
 instance : PartialOrder Human :=
-  partialOrderOfCovers (fun a b : Human ↦ b ∈ a.parents) Human.rank (by decide)
+  partialOrderOfAcyclic (fun a b : Human ↦ b ∈ a.parents) (by decide)
 
 instance : DecidableLE Human :=
   decidableLEOfCovers (covers := fun a b : Human ↦ b ∈ a.parents)

@@ -72,25 +72,23 @@ namespace DistributedMorphology.RootCategorization
 
 open PhraseStructure PhraseStructure.Tree Core.Order
 
-/-- The categories of a categorized Root's phrase are the Root's, a categorizer's, that of a
-functional head that categorizes nothing, and those of the DPs and PPs it combines with. -/
-inductive Cat
-  | root | cat (x : Categorizer) | f | d | p
-  deriving DecidableEq, Repr, Fintype
-
 variable {W : Type*}
 
 /-- The material of a categorized Root is its categorizer and the words of the Root, the
 categorizer and the argument. -/
 structure Lexicon (W : Type*) where
-  x : Categorizer
+  x : Minimalist.Cat
   root : W
   head : W
   arg : W
+  isCategorizer : x.IsCategorizer := by decide
+
+theorem Lexicon.x_ne_D (L : Lexicon W) : L.x ≠ .D := fun h ↦ by
+  simpa [h, Minimalist.Cat.IsCategorizer] using L.isCategorizer
 
 /-- The complex head of the categorizer with the Root adjoined to it. -/
 def complexHead (L : Lexicon W) : Tree Cat W :=
-  .adjoin (.cat L.x) [.terminal .root L.root, .terminal (.cat L.x) L.head]
+  .adjoin (.head L.x) [.terminal .root L.root, .terminal (.head L.x) L.head]
 
 /-- How the Root is merged with its categorizer. -/
 inductive Attachment
@@ -103,13 +101,13 @@ inductive Attachment
 /-- The phrase of a categorized Root after head movement. -/
 def Attachment.tree (L : Lexicon W) : Attachment → Tree Cat W
   | .complement =>
-    .node (.cat L.x) [complexHead L, .node .root [.trace 0 .root, .terminal .d L.arg]]
-  | .modifier => .node (.cat L.x) [complexHead L, .terminal .d L.arg]
+    .node (.head L.x) [complexHead L, .node .root [.trace 0 .root, .terminal (.head .D) L.arg]]
+  | .modifier => .node (.head L.x) [complexHead L, .terminal (.head .D) L.arg]
 
 /-- The phrase with the Root in the categorizer's complement and the argument in its
 specifier. -/
 def specifierTree (L : Lexicon W) : Tree Cat W :=
-  .node (.cat L.x) [.terminal .d L.arg, .node (.cat L.x) [complexHead L, .trace 0 .root]]
+  .node (.head L.x) [.terminal (.head .D) L.arg, .node (.head L.x) [complexHead L, .trace 0 .root]]
 
 /-- The profile of the node at `α` is the complex head containing it together with the labels
 that may condition it. -/
@@ -124,7 +122,7 @@ def rootProjects (t : Tree Cat W) : Bool :=
 def rootPos : TreePath := ⟨[0, 0]⟩
 
 theorem localLabels_tree (a : Attachment) (L : Lexicon W) :
-    localLabels (a.tree L) rootPos = [(.root, L.root), (.cat L.x, L.head), (.d, L.arg)] := by
+    localLabels (a.tree L) rootPos = [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)] := by
   cases a <;> rfl
 
 theorem x0At_tree (a : Attachment) (L : Lexicon W) :
@@ -133,7 +131,7 @@ theorem x0At_tree (a : Attachment) (L : Lexicon W) :
 
 theorem profile_tree (a : Attachment) (L : Lexicon W) :
     profile (a.tree L) rootPos =
-      (some (complexHead L), {l | l ∈ [(.root, L.root), (.cat L.x, L.head), (.d, L.arg)]}) := by
+      (some (complexHead L), {l | l ∈ [(.root, L.root), (.head L.x, L.head), (.head .D, L.arg)]}) := by
   rw [profile, x0At_tree]
   congr 1
   ext l
@@ -161,12 +159,13 @@ theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
 theorem profile_specifier_ne (a : Attachment) (L : Lexicon W) :
     profile (specifierTree L) ⟨[1, 0, 0]⟩ ≠ profile (a.tree L) rootPos := by
   intro h
-  have hmem : (Cat.d, L.arg) ∈ (profile (a.tree L) rootPos).2 := by
+  have hmem : (Cat.head .D, L.arg) ∈ (profile (a.tree L) rootPos).2 := by
     rw [profile_tree]; simp
   rw [← h] at hmem
-  have hl : localLabels (specifierTree L) ⟨[1, 0, 0]⟩ = [(.root, L.root), (.cat L.x, L.head)] :=
+  have hl : localLabels (specifierTree L) ⟨[1, 0, 0]⟩ = [(.root, L.root), (.head L.x, L.head)] :=
     rfl
   simp [profile, mem_localSet_iff, hl] at hmem
+  exact L.x_ne_D hmem.1.symm
 
 /-! ### Invariance and completeness -/
 
@@ -174,15 +173,17 @@ theorem lexicon_eq_of_profile_eq {a a' : Attachment} {L L' : Lexicon W}
     (h : profile (a.tree L) rootPos = profile (a'.tree L') rootPos) : L = L' := by
   rw [profile_tree, profile_tree, Prod.mk.injEq, Option.some.injEq] at h
   obtain ⟨h1, h2⟩ := h
-  obtain ⟨x, r, hd, ar⟩ := L
-  obtain ⟨x', r', hd', ar'⟩ := L'
-  simp only [complexHead, RoseTree.node.injEq, Tree.Label.phrase.injEq, Cat.cat.injEq,
+  obtain ⟨x, r, hd, ar, hx⟩ := L
+  obtain ⟨x', r', hd', ar', hx'⟩ := L'
+  simp only [complexHead, RoseTree.node.injEq, Tree.Label.phrase.injEq, Cat.head.injEq,
     List.cons.injEq, Tree.Label.terminal.injEq, and_true, true_and] at h1
   obtain ⟨rfl, rfl, -, rfl⟩ := h1
-  have hm : (Cat.d, ar) ∈ {l | l ∈ [(Cat.root, r), (Cat.cat x, hd), (Cat.d, ar')]} := by
+  have hm : (Cat.head .D, ar) ∈ {l | l ∈ [(Cat.root, r), (Cat.head x, hd), (Cat.head .D, ar')]} := by
     rw [← h2]; simp
   simp at hm
-  rw [hm]
+  rcases hm with ⟨hD, -⟩ | rfl
+  · exact absurd hD.symm (Lexicon.x_ne_D ⟨x, r, hd, ar, hx⟩)
+  · rfl
 
 /-- An observable of a phrase and the position of its Root. -/
 abbrev Observable (W X : Type*) := Tree Cat W × TreePath → X
@@ -256,7 +257,7 @@ theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome
   exacts [absurd rfl hp0, rfl, rfl]
 
 theorem strands_specifier (L : Lexicon W) :
-    Strands (.cat L.x) (specifierTree L) ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
+    Strands (.head L.x) (specifierTree L) ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
   ⟨⟨[1]⟩, by decide, _, rfl, not_isHead_node _ _, rfl⟩
 
 /-- The category of the head a node below the root is merged with, that of its mother. -/
@@ -265,11 +266,12 @@ def selector (t : Tree Cat W) (β : TreePath) : Option Cat :=
 
 /-- The positions of the arguments of a phrase, its DPs. -/
 def argPositions (t : Tree Cat W) : List TreePath :=
-  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .d then some x.1 else none
+  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .head .D then some x.1 else none
 
 theorem argPositions_tree (a : Attachment) (L : Lexicon W) :
     argPositions (a.tree L) = [a.argPos] := by
-  cases a <;> rfl
+  obtain ⟨x, _, _, _, hx⟩ := L
+  cases x <;> cases hx <;> cases a <;> rfl
 
 /-- A proform of category `X` strands an argument from the node. -/
 def StrandsArgument (X : Cat) : Observable W Prop :=

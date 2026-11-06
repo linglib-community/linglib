@@ -25,8 +25,8 @@ bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.Poi
 ## Main results
 
 * `Team.invariant_flat`, `Team.Invariant.inter`, `Team.Invariant.union`,
-  `Team.Invariant.tensor`, `Team.invariant_dep`, `Team.invariant_incl`: the non-modal
-  connectives and atoms preserve invariance.
+  `Team.Invariant.sups`, `Team.Invariant.upperClosure`, `Team.invariant_dep`,
+  `Team.invariant_incl`: the non-modal connectives and atoms preserve invariance.
 * `Team.Invariant.poss`, `Team.Invariant.nec`, `Team.Invariant.possWitness`,
   `Team.Invariant.possLax`, `Team.Invariant.necImage`: the modalities preserve invariance one
   step down.
@@ -47,6 +47,8 @@ every atom of the atom type, which is the paper's notion when that type is the f
 
 @[expose] public section
 
+open scoped SetFamily
+
 open scoped Relator
 
 namespace Team
@@ -55,7 +57,7 @@ variable {α β : Type*} {r r₁ : α → β → Prop} {p : α → Prop} {p' : �
   {P Q : TeamProperty α} {P' Q' : TeamProperty β}
 
 /-- Team properties `P` and `P'` are invariant under a relation `r` on points when teams related
-    by the lifting `Set.LiftRel r` agree on them. -/
+by the lifting `Set.LiftRel r` agree on them. -/
 def Invariant (r : α → β → Prop) (P : TeamProperty α) (P' : TeamProperty β) : Prop :=
   ∀ ⦃s : Finset α⦄ ⦃s' : Finset β⦄, Set.LiftRel r ↑s ↑s' → (s ∈ P ↔ s' ∈ P')
 
@@ -140,23 +142,26 @@ theorem Invariant.nec (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' 
     (h : Invariant r P P') : Invariant r₁ (nec R P) (nec R' P') :=
   invariant_flat fun _ _ hab ↦ h (hR _ _ hab)
 
+/-- Having a part in a property preserves invariance: the upper closures of invariant
+properties are invariant. -/
+theorem Invariant.upperClosure (h : Invariant r P P') :
+    Invariant r ↑(_root_.upperClosure P) ↑(_root_.upperClosure P') := by
+  refine fun s s' hs ↦ ⟨fun ⟨t, htP, hts⟩ ↦ ?_, fun ⟨t', htP, hts⟩ ↦ ?_⟩
+  · obtain ⟨t', ht', htt'⟩ := hs.exists_finset_subset hts
+    exact ⟨t', (h htt').1 htP, ht'⟩
+  · obtain ⟨t, ht, htt'⟩ := (Set.liftRel_swap.2 hs).exists_finset_subset hts
+    exact ⟨t, (h (Set.liftRel_swap.1 htt')).2 htP, ht⟩
+
 theorem Invariant.poss (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
-    (h : Invariant r P P') : Invariant r₁ (poss R P) (poss R' P') := by
-  refine invariant_flat fun a b hab ↦ ⟨?_, ?_⟩
-  · rintro ⟨t, ht, htne, htP⟩
-    obtain ⟨t', ht', htt'⟩ := (hR a b hab).exists_finset_subset ht
-    exact ⟨t', ht', Finset.coe_nonempty.1 (htt'.nonempty_iff.1 htne), (h htt').1 htP⟩
-  · rintro ⟨t', ht', htne, htP⟩
-    obtain ⟨t, ht, htt'⟩ := (Set.liftRel_swap.2 (hR a b hab)).exists_finset_subset ht'
-    rw [Set.liftRel_swap] at htt'
-    exact ⟨t, ht, Finset.coe_nonempty.1 (htt'.nonempty_iff.2 htne), (h htt').2 htP⟩
+    (h : Invariant r P P') : Invariant r₁ (poss R P) (poss R' P') :=
+  (h.inter invariant_ne).upperClosure.nec hR
 
 variable [DecidableEq α] [DecidableEq β]
 
 /-! ### Splits -/
 
 /-- A split of a team related by the lifting of `r` has a related split on the other side
-    ([aloni-anttila-yang-2024] Lemma 3.7(ii)). -/
+([aloni-anttila-yang-2024] Lemma 3.7(ii)). -/
 theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Finset β}
     (hs : Set.LiftRel r ↑s ↑s') (hsplit : t ∪ u = s) :
     ∃ t' u' : Finset β, t' ∪ u' = s' ∧ Set.LiftRel r ↑t ↑t' ∧ Set.LiftRel r ↑u ↑u' := by
@@ -173,17 +178,14 @@ theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Fins
   exact Finset.mem_union.2 <| (Finset.mem_union.1 ha).imp
     (fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩) fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩
 
-theorem Invariant.tensor (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
-    Invariant r (tensor P Q) (tensor P' Q') := by
-  intro s s' hs
-  constructor
-  · rintro ⟨t, ht, u, hu, rfl⟩
-    obtain ⟨t', u', hsplit, htt', huu'⟩ := hs.exists_finset_union_eq rfl
-    exact ⟨t', (h₁ htt').1 ht, u', (h₂ huu').1 hu, hsplit⟩
-  · rintro ⟨t', ht', u', hu', rfl⟩
-    obtain ⟨t, u, hsplit, htt', huu'⟩ := (Set.liftRel_swap.2 hs).exists_finset_union_eq rfl
-    rw [Set.liftRel_swap] at htt' huu'
-    exact ⟨t, (h₁ htt').2 ht', u, (h₂ huu').2 hu', hsplit⟩
+theorem Invariant.sups (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
+    Invariant r (P ⊻ Q) (P' ⊻ Q') := fun _ _ hs ↦
+  Set.mem_sups_congr (r := fun (s : Finset α) (s' : Finset β) ↦ Set.LiftRel r ↑s ↑s')
+    (fun h ↦ h.exists_finset_union_eq rfl)
+    (fun h ↦
+      let ⟨t, u, hsplit, htt', huu'⟩ := (Set.liftRel_swap.2 h).exists_finset_union_eq rfl
+      ⟨t, u, hsplit, Set.liftRel_swap.1 htt', Set.liftRel_swap.1 huu'⟩)
+    h₁ h₂ hs
 
 /-! ### Image modalities of dependence and inclusion logic -/
 
@@ -210,7 +212,7 @@ private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r
     exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y, hy, hyy'⟩, hyy'⟩
 
 /-- The single-witness possibility modality preserves invariance between downward-closed
-    properties. -/
+properties. -/
 theorem Invariant.possWitness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
     (hP : IsLowerSet P) (hP' : IsLowerSet P') (h : Invariant r P P') :
     Invariant r₁ (possWitness R P) (possWitness R' P') := by
@@ -248,8 +250,8 @@ variable {W W' Atom : Type*}
 /-! ### Bisimulation of Kripke models -/
 
 /-- Pointed Kripke models are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.1) when they
-    agree on every atom and, at positive depth, their successor sets are related by the lifting
-    of bisimilarity one depth down. -/
+agree on every atom and, at positive depth, their successor sets are related by the lifting
+of bisimilarity one depth down. -/
 def WorldBisim : ℕ → KripkeModel W Atom → W → KripkeModel W' Atom → W' → Prop
   | 0,     M, w, M', w' => ∀ p : Atom, M.val p w ↔ M'.val p w'
   | k + 1, M, w, M', w' =>
@@ -268,30 +270,17 @@ theorem WorldBisim.val_iff {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : Krip
   | _ + 1, ⟨h, _⟩ => h p
 
 /-- Teams are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.6) when they are related by
-    the lifting of `k`-bisimilarity of their worlds. -/
+the lifting of `k`-bisimilarity of their worlds. -/
 def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeModel W' Atom)
     (s' : Finset W') : Prop :=
   Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
 
-/-! ### Pointed team models -/
+/-! ### Bounded bisimulation invariance -/
 
 universe u
 
-/-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
-    ([anttila-2025] Definition 2.3.9). -/
-structure PointedTeam (Atom : Type*) where
-  /-- The worlds of the model. -/
-  World : Type u
-  [decEq : DecidableEq World]
-  /-- The model. -/
-  model : KripkeModel World Atom
-  /-- The team. -/
-  team : Finset World
-
-attribute [instance] PointedTeam.decEq
-
 /-- A class of pointed team models is invariant under bounded bisimulation when, for some depth
-    `k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
+`k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
 def BoundedBisimInvariant (P : Set (PointedTeam.{u} Atom)) : Prop :=
   ∃ k : ℕ, ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom,
     StateBisim k p.model p.team p'.model p'.team → p' ∈ P

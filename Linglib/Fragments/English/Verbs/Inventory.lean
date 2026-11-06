@@ -25,7 +25,7 @@ past participle, the patient the subject and the agent demoted to an optional *b
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### The inventory -/
 

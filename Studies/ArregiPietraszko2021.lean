@@ -53,7 +53,7 @@ half without the verb, is exponed as *do*.
 
 namespace ArregiPietraszko2021
 
-open Phonology FreeMagma DistributedMorphology Morphology.Exponence
+open Phonology FreeMagma DistributedMorphology Morphology
 
 /-! ### Head chains -/
 
@@ -222,9 +222,9 @@ theorem subsetPrinciple_eq_dummy_iff {n : Neighborhood (Finset Feat)} (hT : .T �
     exact ⟨hf (by simp), hf (by simp)⟩
   · rintro ⟨hv, ho⟩
     have hT' : ∀ (fs : Finset Feat) (e : Piece), .T ∈ fs →
-        ¬ Morphology.Exponence.Applies (fs ⟷ e) n :=
+        ¬ Morphology.Applies (fs ⟷ e) n :=
       fun fs e h hs ↦ hT (VocabularyItem.applies_ofFeatures.1 hs h)
-    have key : ∀ s ∈ vocabulary, Morphology.Exponence.Applies s n →
+    have key : ∀ s ∈ vocabulary, Morphology.Applies s n →
         s = dummy ∨ s.specificity < dummy.specificity := by
       intro s hs ha
       simp only [vocabulary, List.mem_cons, List.not_mem_nil, or_false] at hs

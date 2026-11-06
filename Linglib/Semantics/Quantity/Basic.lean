@@ -2,27 +2,18 @@ module
 
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
-public import Linglib.Semantics.Degree.Measure.Dimension
+public import Linglib.Semantics.Quantity.Dimension
 
 /-!
 # The quantity calculus
 
-A quantity is a magnitude together with a dimension: `0.9 g` is a magnitude in the
-dimension of mass, `0.9 g/mL` one in the dimension of density, and `9` is a pure number,
-a magnitude in the identity dimension. This file sets up the quantity calculus that
-measure-phrase semantics computes in. Dimensions are the group `QuantityDimension`;
-quantities are pairs `K × QuantityDimension` of a magnitude and a dimension and
-multiply and divide componentwise, so that dividing two quantities of one dimension yields a
-pure number.
-
-## Main definitions
-
-* `Quantity`, `Quantity.pure`: quantities and pure numbers.
-
-## Main statements
-
-* `Quantity.isUnit_iff`: a quantity is invertible exactly when its magnitude is nonzero, so the
-  division lemmas of mathlib's `IsUnit` API apply to it.
+A quantity is a magnitude together with a dimension: `0.9 g` is a magnitude in the dimension of
+mass, `0.9 g/mL` one in the dimension of density, and `9` is a pure number, a magnitude in the
+identity dimension. Quantities are pairs of a magnitude and a `QuantityDimension` that multiply and
+divide componentwise, the calculus measure-phrase semantics computes in, so that dividing two
+quantities of one dimension yields a pure number. [A quantity is invertible exactly when its
+magnitude is nonzero](##Quantity.isUnit_iff), so the division lemmas of mathlib's `IsUnit` API
+apply.
 
 ## References
 
@@ -31,8 +22,6 @@ pure number.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-- A quantity, a magnitude in `K` with a dimension. Quantities multiply and divide
 componentwise. -/
@@ -53,5 +42,3 @@ theorem isUnit_iff [CommGroupWithZero K] {q : Quantity K} : IsUnit q ↔ q.1 ≠
   simp [Prod.isUnit_iff, Group.isUnit, isUnit_iff_ne_zero]
 
 end Quantity
-
-end Degree

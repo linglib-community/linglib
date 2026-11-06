@@ -22,7 +22,7 @@ with the entailment each carries from its complement.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Implicative / Control -/
 
@@ -60,7 +60,7 @@ def persuade : Verb where
   valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
     verb whose subject commits to a future action; [landau-2015] (5c) classifies it as
@@ -77,7 +77,7 @@ def promise : Verb where
     (controllers := [some 0, some 0])
   vendlerClass := some .achievement
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
   levinClasses := {LevinClass.futureHaving}
 
 /-- "remember" — implicative with infinitival ("remember to call") -/

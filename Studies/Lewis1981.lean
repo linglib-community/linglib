@@ -27,10 +27,10 @@ conditional of the theory layer (`Conditional.variablyStrictImp`), the necessity
 semantics over the antecedent-worlds of the field. It entails OF
 (`Conditional.variablyStrictImp_subset_orderingImp`), is OF under the Limit Assumption
 (`Conditional.mem_variablyStrictImp_iff_mem_orderingImp`), and under comparability is the truth
-condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`). Its premise
-counterpart P, on which every nonempty premise set consistent with the antecedent is included in
-one that implies the consequent together with it, is the same conditional of the induced ordering
-frame (`neutralPremiseImp_eq_variablyStrictImp`).
+condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_isGoodPossibility`). Its
+premise counterpart P, on which every nonempty premise set consistent with the antecedent is
+included in one that implies the consequent together with it, is the same conditional of the
+induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
 
 ## Main definitions
 

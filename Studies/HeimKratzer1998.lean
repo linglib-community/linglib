@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.Extensional
 public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.FirstOrder
 public import Mathlib.Tactic.DeriveFintype
@@ -297,12 +299,12 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
   | @pa g n c body τ F _ ih =>
     have hg := ih (g n)
     rw [Function.update_eq_self] at hg
-    simp only [interp_bind, hg, Option.bind_some]
+    simp only [interp_bind, hg, Option.map_some]
     show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ (F (g n)) (interp lex (g[n ↦ x]) body)⟩ :
       Option (Denotation E W)) = _
     congr 2
     funext x
-    simp [ih x, valueAt]
+    simp [ih x]
 
 theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
@@ -442,7 +444,7 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
     rw [interpPartial_bind, hg, Option.map_some]
     congr 3
     funext x
-    simp [ih x, valueAtPartial]
+    simp [ih x]
 
 theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
@@ -926,6 +928,18 @@ theorem translations_lexiconAt_maryBelievesJanIsLoyal (w : W) (g : Assignment E)
   simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexiconAt, lexicon, Ty.modes,
     Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
     Mode.eventIdentification?, Eff.pure, Mode.join?]
+
+/-- Application mapped over the reader of worlds gives the function at `w` its argument's whole
+intension, and Unit Right gives it the constant intension of the argument's value at `w`; the two
+agree at `w` on every argument exactly when the function, read as an operator on intensions, is
+extensional at `w`. -/
+theorem forall_eval_mapLeft_eq_eval_unitRight_iff {S : Sorts} {σ τ : Ty}
+    {f : W → (W → Ty.Domain E W σ S) → Ty.Domain E W τ S} {w : W} :
+    (∀ a, (Mode.mapLeft (f := .reader .s)
+        (.functionalLeft (σ := .comp (.reader .s) σ) (τ := τ))).eval f a w =
+        (Mode.unitRight (f := .reader .s) (.functionalLeft (σ := σ) (τ := τ))).eval (f w) (a w)) ↔
+      Montague.IsExtensionalAt (fun a w' ↦ f w' a) w :=
+  Montague.isExtensionalAt_iff_forall_const.symm
 
 /-- An attitude verb's complement is a nonextensional context at `w` exactly when the subject's
 attitude at `w` leaves open a world other than `w`, so the truth value of the complement fixes the

@@ -255,12 +255,12 @@ theorem persona_cloned_feminine :
 /-! ### Structural gender assignment (§3.2) -/
 
 /-- The four n's of (24). -/
-def spanishHeads : List Categorizer.Head := [.n_iFem, .n_iMasc, .n_plain, .n_uFem]
+def spanishHeads : List Categorizer := [.n_iFem, .n_iMasc, .n_plain, .n_uFem]
 
 /-- A Fragment noun's n bears interpretable gender for the natural-gender
 nouns and u[+fem] for the arbitrarily feminine remainder, *persona* among
 them, and is plain otherwise. -/
-def nHead (n : Spanish.Gender.Noun) : Categorizer.Head :=
+def nHead (n : Spanish.Gender.Noun) : Categorizer :=
   match n.gender, n.referentGender with
   | .fem, some .female => .n_iFem
   | .masc, some .male => .n_iMasc
@@ -285,7 +285,7 @@ inductive DetFeature where
   deriving DecidableEq, Repr
 
 /-- What the determiner carries after agreeing with a head. -/
-def determinerFeatures (ch : Categorizer.Head) : Finset DetFeature :=
+def determinerFeatures (ch : Categorizer) : Finset DetFeature :=
   {.d, .definite} ∪ (ch.gender.map fun gf ↦ .gender gf.val).toFinset
 
 /-- Of the Spanish definite determiners (25), *la* carries [+fem] and *el* is
@@ -294,7 +294,7 @@ def determiners : List (VocabularyItem DetFeature String) :=
   [{.d, .definite, .gender ⟨.fem, .pos⟩} ⟷ "la", {.d, .definite} ⟷ "el"]
 
 /-- The determiner a head takes, by the Subset Principle. -/
-def determiner (ch : Categorizer.Head) : Option String :=
+def determiner (ch : Categorizer) : Option String :=
   subsetPrinciple determiners (determinerFeatures ch)
 
 theorem determiner_iMasc_eq_plain :

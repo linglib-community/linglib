@@ -54,7 +54,7 @@ prejacent, are deviant there.
 
 namespace Mihoc2019
 
-open Degree ModalLogic Exhaustification Numerals
+open ModalLogic Exhaustification Numerals
 
 /-! ### Extent indicators and the two operators -/
 

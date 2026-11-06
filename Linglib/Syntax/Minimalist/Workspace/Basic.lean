@@ -22,7 +22,7 @@ occurrences of the targets, substituted simultaneously, and `merge`, leaving cop
 (`Workspace.terms_subset_terms_merge`). The forest product is disjoint union, so a workspace is
 what `of'` lifts into the Hopf algebra `ConnesKreimer ℤ (UnorderedTree Vertex)`, where the Merge
 operator of `Workspace/Merge/` computes MERGE leaving traces on Internal and Sideward Merge
-(`SyntacticObject.mergeOpC_im_of'_merge`, `SyntacticObject.mergeOpC_sideward2b_of'_merge`).
+(`SyntacticObject.traceMergeOp_im_of'_merge`, `SyntacticObject.traceMergeOp_sideward2b_of'_merge`).
 
 ## Main definitions
 

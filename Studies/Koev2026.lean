@@ -21,7 +21,7 @@ against the fragment's *believe* and *doubt*.
 
 ## Implementation notes
 
-Rows name predicates by form, looked up as a `Degree.Gradability` among the fragment's adjectives
+Rows name predicates by form, looked up as a `Gradability` among the fragment's adjectives
 and its *believe* and *doubt*. Credences are degrees of a linear order with a top, and probability
 measures over a countable discrete space for the comparison with Hintikka.
 
@@ -48,7 +48,6 @@ measures over a countable discrete space for the comparison with Hintikka.
 
 namespace Koev2026
 
-open Degree
 
 /-! ### The fragment's predicates -/
 

@@ -61,15 +61,15 @@ private theorem support_and_antiSupport_supClosed (φ : Formula Var Const Pred)
   | predc P c => exact ⟨supClosed_flat _, supClosed_flat _⟩
   | ne => exact ⟨supClosed_ne, supClosed_singleton_empty⟩
   | neg _ ih => exact ih.symm
-  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
-  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.sups ih₂.2⟩
+  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.sups ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss _ _ => exact ⟨supClosed_flat _, supClosed_flat _⟩
   | exi x _ ih => exact ⟨ih.1.possLax, ih.2.necImage⟩
   | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
 
 /-- QBSML support is union closed, as BSML's is ([anttila-2021] Proposition 2.2.8).
-    [aloni-vanormondt-2023] Fact 2 states this for `NE`-free quantified formulas, but its argument
-    does not use the hypothesis. -/
+[aloni-vanormondt-2023] Fact 2 states this for `NE`-free quantified formulas, but its argument
+does not use the hypothesis. -/
 theorem supClosed_support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred) :
     SupClosed {s : Finset (Index W Var Domain) | support M φ s} :=
   (support_and_antiSupport_supClosed φ M).1
@@ -83,8 +83,8 @@ private theorem support_and_antiSupport_empty_of_neFree
   | pred P x => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
   | predc P c => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
   | neg _ ih => exact ih.symm
-  | conj _ _ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, empty_mem_tensor ih₁.2 ih₂.2⟩
-  | disj _ _ ih₁ ih₂ => exact ⟨empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
+  | conj _ _ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Set.bot_mem_sups ih₁.2 ih₂.2⟩
+  | disj _ _ ih₁ ih₂ => exact ⟨Set.bot_mem_sups ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss _ _ => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
   | exi x _ ih => exact ⟨empty_mem_possLax ih.1, empty_mem_necImage ih.2⟩
   | univ x _ ih => exact ⟨empty_mem_necImage ih.1, empty_mem_possLax ih.2⟩
@@ -101,14 +101,14 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
   | pred P x => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
   | predc P c => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
   | neg _ ih => exact ih.symm
-  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
-  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.sups ih₂.2⟩
+  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.sups ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss _ _ => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
   | exi x _ ih => exact ⟨ih.1.possLax, ih.2.necImage⟩
   | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
 
 /-- `NE`-free QBSML formulas are downward closed ([aloni-vanormondt-2023] Fact 2,
-    [anttila-2021] Proposition 2.2.8). -/
+[anttila-2021] Proposition 2.2.8). -/
 theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
@@ -196,7 +196,7 @@ theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
 /-! ### Atom substitution salva veritate -/
 
 /-- Replacing each atom by a formula with the same support and anti-support preserves support
-    and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
+and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
 theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}
@@ -300,7 +300,7 @@ private theorem eval_singleton_iff_realize (M : Model W Domain Const Pred)
   | conj h₁ h₂ ih₁ ih₂ =>
     cases b
     · simp only [eval]
-      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_tensor_flat]
+      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_flat_sups_flat]
       simp only [Finset.mem_singleton, forall_eq, ih₁ _ hv, ih₂ _ hv, Formula.toModal,
         ModalFormula.realize_inf, Bool.false_eq_true, iff_false]
       exact not_and_or.symm
@@ -309,7 +309,7 @@ private theorem eval_singleton_iff_realize (M : Model W Domain Const Pred)
     cases b
     · simp [eval, ih₁ _ hv, ih₂ _ hv, Formula.toModal, not_or]
     · simp only [eval]
-      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_tensor_flat]
+      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_flat_sups_flat]
       simp [ih₁ _ hv, ih₂ _ hv, Formula.toModal]
   | poss h ih =>
     have := fun b (w : W) ↦ ih b (i := (w, i.2)) hv

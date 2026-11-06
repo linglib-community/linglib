@@ -22,6 +22,8 @@ candidates of least profile.
 ## Main definitions
 
 * `ViolationProfile n`: the violation vector `Fin n → ℕ` under its lexicographic order.
+* `ViolationProfile.of`, `ViolationProfile.ofList`: a candidate's profile under constraints in rank
+  order, given as a family or as a list.
 * `Tableau C n`: a finite set of candidates and `n` constraints in rank order, position `0`
   most dominant.
 * `Tableau.profile`, `Tableau.optimal`: a candidate's violation profile, and the set of winners.
@@ -29,6 +31,7 @@ candidates of least profile.
   constraint at rank position `p` is `con (r p)`.
 * `Tableau.ofList`, `Tableau.ofOrder`: the tableau of a list of constraints in rank order, and
   the tableau of a printed table, a column order of labels and the marks in each cell.
+* `Tableau.ofLabels`: the tableau of a list of constraints over candidates named by labels.
 * `Tableau.tail`: the candidates that do best on the top constraint, under the constraints below
   it.
 
@@ -46,6 +49,8 @@ candidates of least profile.
 * `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
   above the last, the winners are the candidates satisfying all of them that do best on the last.
 * `Tableau.optimal_tail`: the winners of a tableau are the winners of its tail.
+* `Tableau.optimal_ofList_append`: under two lists ranked one above the other, the winners are
+  the lower list's winners among the upper list's.
 * `Tableau.optimal_ofList_append_of_forall_eq`: a constraint that rates every candidate alike
   changes no winner.
 * `Tableau.optimal_ofList_antifaithful`: under `¬F ≫ F`, the winners are the candidates that
@@ -78,6 +83,62 @@ namespace OptimalityTheory
 order. -/
 abbrev ViolationProfile (n : ℕ) := Lex (Fin n → ℕ)
 
+namespace ViolationProfile
+
+variable {C : Type*} {n : ℕ}
+
+/-- The violation profile of a candidate under constraints in rank order, position `0` most
+dominant. -/
+abbrev of (cs : ConstraintSet C (Fin n)) (c : C) : ViolationProfile n := toLex fun p ↦ cs p c
+
+/-- The violation profile of a candidate under a list of constraints in rank order. -/
+def ofList (ranking : List (Constraint C)) : C → ViolationProfile ranking.length := of ranking.get
+
+theorem of_lt_iff {cs : ConstraintSet C (Fin (n + 1))} {d e : C} :
+    of cs d < of cs e ↔
+      cs 0 d < cs 0 e ∨ cs 0 d = cs 0 e ∧ of (Fin.tail cs) d < of (Fin.tail cs) e :=
+  Pi.toLex_lt_toLex_iff_succ _ _
+
+/-- A candidate is minimal under ranked constraints iff it is minimal under the lower constraints
+among the candidates doing best on the top constraint. -/
+theorem minimalFor_of_iff {P : C → Prop} {cs : ConstraintSet C (Fin (n + 1))} {c : C} :
+    MinimalFor P (of cs) c ↔ MinimalFor (MinimalFor P (cs 0)) (of (Fin.tail cs)) c := by
+  simp only [minimalFor_iff_forall_lt, of_lt_iff]
+  refine ⟨fun ⟨hc, hmin⟩ ↦ ⟨⟨hc, fun d hd ↦ hmin (.inl hd)⟩, fun d hd ⟨hdR, hdF⟩ ↦ ?_⟩,
+    fun ⟨⟨hc, hF⟩, hmin⟩ ↦ ⟨hc, fun d hd hdR ↦ ?_⟩⟩
+  · have heq : cs 0 d = cs 0 c :=
+      (not_lt.1 fun h ↦ hdF h hc).antisymm (not_lt.1 fun h ↦ hmin (.inl h) hdR)
+    exact hmin (.inr ⟨heq, hd⟩) hdR
+  · rcases hd with hd | ⟨heq, hd⟩
+    · exact hF hd hdR
+    · exact hmin hd ⟨hdR, fun e he ↦ hF (heq ▸ he)⟩
+
+theorem ofList_cons_lt_iff {F : Constraint C} {Fs : List (Constraint C)} {d e : C} :
+    ofList (F :: Fs) d < ofList (F :: Fs) e ↔
+      F d < F e ∨ F d = F e ∧ ofList Fs d < ofList Fs e :=
+  of_lt_iff
+
+theorem not_ofList_nil_lt {d e : C} : ¬ ofList [] d < ofList [] e := fun ⟨i, _⟩ ↦ i.elim0
+
+theorem minimalFor_ofList_nil {P : C → Prop} {c : C} : MinimalFor P (ofList []) c ↔ P c :=
+  ⟨(·.1), fun h ↦ minimalFor_iff_forall_lt.2 ⟨h, fun _ hd ↦ absurd hd not_ofList_nil_lt⟩⟩
+
+theorem minimalFor_ofList_cons {P : C → Prop} {F : Constraint C} {Fs : List (Constraint C)}
+    {c : C} : MinimalFor P (ofList (F :: Fs)) c ↔ MinimalFor (MinimalFor P F) (ofList Fs) c :=
+  minimalFor_of_iff
+
+/-- The profile is strictly monotone in a candidate order when every constraint is monotone and
+some constraint separates each strict pair. -/
+theorem strictMono_ofList [Preorder C] {ranking : List (Constraint C)}
+    (hmono : ∀ c ∈ ranking, Monotone c) (hsep : ∀ ⦃p q⦄, p < q → ∃ c ∈ ranking, c p < c q) :
+    StrictMono (ofList ranking) := fun p q hpq ↦ by
+  refine Pi.toLex_strictMono (Pi.lt_def.2 ⟨fun i ↦ hmono _ (List.get_mem ..) hpq.le, ?_⟩)
+  obtain ⟨c, hc, hlt⟩ := hsep hpq
+  obtain ⟨i, rfl⟩ := List.mem_iff_get.1 hc
+  exact ⟨i, hlt⟩
+
+end ViolationProfile
+
 /-- An *Optimality-theoretic tableau*: a finite set of candidates and the constraints that
 evaluate them, in rank order. -/
 structure Tableau (C : Type*) (n : ℕ) where
@@ -92,7 +153,7 @@ variable {C : Type*} {n : ℕ} (t : Tableau C n) (c : C)
 
 /-- The *violation profile* of a candidate: its violations read in rank order, under the
 lexicographic order. -/
-def profile : ViolationProfile n := toLex fun p ↦ t.constraints p c
+def profile : ViolationProfile n := ViolationProfile.of t.constraints c
 
 @[simp] theorem profile_apply (p : Fin n) : t.profile c p = t.constraints p c := rfl
 
@@ -175,6 +236,12 @@ def ofRanking : Tableau C n := ⟨candidates, con ∘ r⟩
 `Tableau.ofRanking` under the identity ranking. -/
 def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) candidates
 
+/-- The tableau of the candidates that the labels `labels` name, the label `l` naming `cand l`,
+under a list of constraints in rank order. -/
+def ofLabels {L : Type*} (cand : L → C) (labels : Finset L) (cs : List (Constraint C)) :
+    Tableau L (cs.map (Constraint.comap cand)).length :=
+  ofList labels (cs.map (Constraint.comap cand))
+
 @[simp] theorem ofRanking_candidates : (ofRanking con r candidates).candidates = candidates := rfl
 
 @[simp] theorem ofRanking_constraints : (ofRanking con r candidates).constraints = con ∘ r := rfl
@@ -182,6 +249,9 @@ def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) ca
 @[simp] theorem ofList_candidates : (ofList candidates ranking).candidates = candidates := rfl
 
 @[simp] theorem ofList_constraints : (ofList candidates ranking).constraints = ranking.get := rfl
+
+@[simp] theorem profile_ofList :
+    (ofList candidates ranking).profile = ViolationProfile.ofList ranking := rfl
 
 variable {con r candidates}
 
@@ -325,14 +395,8 @@ def tail (t : Tableau C (n + 1)) : Tableau C n :=
 /-- The winners of a tableau are the winners of its tail. -/
 theorem optimal_tail (t : Tableau C (n + 1)) : t.tail.optimal = t.optimal := by
   ext c
-  simp only [mem_optimal_iff, tail, Finset.mem_argmin, profile, Pi.toLex_le_toLex_iff_succ]
-  refine ⟨fun ⟨⟨hc, hmin⟩, htail⟩ ↦ ⟨hc, fun d hd ↦ ?_⟩, fun h ↦ ⟨⟨h.1, fun d hd ↦ ?_⟩,
-    fun d hd ↦ ?_⟩⟩
-  · exact (hmin d hd).lt_or_eq.imp id fun h0 ↦ ⟨h0, htail d ⟨hd, fun e he ↦ h0 ▸ hmin e he⟩⟩
-  · rcases h.2 d hd with h0 | ⟨h0, -⟩
-    exacts [h0.le, h0.le]
-  · rcases h.2 d hd.1 with h0 | ⟨-, ht⟩
-    exacts [absurd (hd.2 c h.1) (not_le.2 h0), ht]
+  simp only [optimal, tail, Finset.mem_argmin_iff_minimalFor]
+  exact ViolationProfile.minimalFor_of_iff.symm
 
 variable {s : Finset C} {F : Constraint C} {Fs Gs : List (Constraint C)}
 
@@ -346,6 +410,20 @@ theorem optimal_ofList_cons : (ofList s (F :: Fs)).optimal = (ofList (s.argmin F
 @[simp] theorem optimal_ofList_nil : (ofList s []).optimal = s :=
   Finset.argmin_eq_self_of_forall_le fun _ _ _ _ ↦
     le_of_eq <| funext fun i ↦ absurd i.2 (Nat.not_lt_zero _)
+
+/-- The winners under `Fs` ranked above `Gs` are the winners under `Gs` among the winners under
+`Fs`. -/
+theorem optimal_ofList_append :
+    (ofList s (Fs ++ Gs)).optimal = (ofList (ofList s Fs).optimal Gs).optimal := by
+  induction Fs generalizing s with
+  | nil => simp
+  | cons F Fs ih => rw [List.cons_append, optimal_ofList_cons, ih, optimal_ofList_cons]
+
+theorem optimal_ofLabels_append {L : Type*} {cand : L → C} {labels : Finset L} :
+    (ofLabels cand labels (Fs ++ Gs)).optimal =
+      (ofLabels cand (ofLabels cand labels Fs).optimal Gs).optimal := by
+  rw [ofLabels, List.map_append, optimal_ofList_append]
+  rfl
 
 theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by

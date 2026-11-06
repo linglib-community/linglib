@@ -5,22 +5,21 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.List.Factors
 public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.List.Infix
 public import Mathlib.Data.List.OfFn
 
 /-!
 # Subregular Languages: Boundary Augmentation
 
 Boundary augmentation pads a string with `k - 1` boundary markers on each side, so that the
-`k`-factors of the padded string see the edges of the word. The strictly local, locally testable,
-and tier-based classes are built on it; the contiguous `k`-factors themselves are the generic
-`List.kFactors`. A word read at integer positions is a two-sided family blank outside
-`[0, w.length)`, and its width-`k` window at `i` lists its entries on `[i, i + k)`. The entries of
-the padded word are those of the word shifted by the pad width, so
-[the `k`-factors of the augmented word are exactly its windows](##mem_kFactors_boundary_iff)
-starting in `[1 - k, w.length)`.
+`k`-factors of the padded string, its infixes of length `k`, see the edges of the word. The strictly
+local, locally testable, and tier-based classes are built on it. A word read at integer positions
+is a two-sided family blank outside `[0, w.length)`, and its width-`k` window at `i` lists its
+entries on `[i, i + k)`. The entries of the padded word are those of the word shifted by the pad
+width, so [the `k`-factors of the augmented word are exactly its
+windows](##infix_boundary_and_length_eq_iff) starting in `[1 - k, w.length)`.
 
 ## Implementation notes
 
@@ -208,10 +207,9 @@ lemma getElem?_boundary_eq_getElem?_int {q : ℕ} (h : q < w.length + 2 * (k - 1
 
 /-- The `k`-factors of the augmented word are exactly its windows over
 `[1 - k, w.length)`. -/
-lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
-    f ∈ List.kFactors k (boundary k y) ↔
+lemma infix_boundary_and_length_eq_iff {f : List (Option α)} (hk : 1 ≤ k) :
+    f <:+: boundary k y ∧ f.length = k ↔
       ∃ i : ℤ, 1 - k ≤ i ∧ i < y.length ∧ f = window k y i := by
-  rw [List.mem_kFactors]
   constructor
   · rintro ⟨hinf, hlen⟩
     obtain ⟨δ, hbound, hδ⟩ := List.infix_iff_getElem?.mp hinf

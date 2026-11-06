@@ -60,7 +60,7 @@ namespace Harley2014
 
 open DistributedMorphology
 open DistributedMorphology.Allosemy (toInterpreted embedding)
-open Morphology.Exponence
+open Morphology
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive empty)
 
@@ -225,15 +225,15 @@ theorem cahoot_interp_gap :
 
 section OneReplacement
 
-open RootCategorization (Cat Lexicon Attachment rootPos selector)
+open RootCategorization (Lexicon Attachment rootPos selector)
 
 /-- The root √STUD of *student*, nominalized by *-ent*, with the argument *chemistry*. -/
-def student : Lexicon String := ⟨.n, "stud", "ent", "chemistry"⟩
+def student : Lexicon String := { x := .n, root := "stud", head := "ent", arg := "chemistry" }
 
 /-- *student of chemistry with long hair*, the nP of (22) with the adjunct of (23) adjoined to
 it. -/
 def studentWithHair (a : Attachment) : PhraseStructure.Tree Cat String :=
-  .adjoin (.cat .n) [a.tree student, .terminal .p "with long hair"]
+  .adjoin (.head .n) [a.tree student, .terminal (.head .P) "with long hair"]
 
 /-- The dependents of a noun that *one* replaces. -/
 inductive Dependent
@@ -247,7 +247,7 @@ def Dependent.pos (a : Attachment) : Dependent → Core.Order.TreePath
 
 /-- *one*, an nP anaphor, strands the dependent from the root. -/
 def OneStrands (a : Attachment) (d : Dependent) : Prop :=
-  Strands (.cat .n) (studentWithHair a) ⟨0 :: rootPos.toList⟩ (d.pos a)
+  Strands (.head .n) (studentWithHair a) ⟨0 :: rootPos.toList⟩ (d.pos a)
 
 instance (a : Attachment) (d : Dependent) : Decidable (OneStrands a d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
@@ -267,10 +267,11 @@ theorem oneStrands_iff : ∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands .co
   decide +kernel
 
 /-- The verb *study* of (21a), with the object *physics*. -/
-def study : Lexicon String := ⟨.v, "stud", "y", "physics"⟩
+def study : Lexicon String := { x := .v, root := "stud", head := "y", arg := "physics" }
 
 /-- The noun *student* of (21b), with the object *physics*. -/
-def studentOfPhysics : Lexicon String := ⟨.n, "stud", "ent", "physics"⟩
+def studentOfPhysics : Lexicon String :=
+  { x := .n, root := "stud", head := "ent", arg := "physics" }
 
 /-- The verb and the noun of (21) merge their object with the same head iff the root takes the
 object as complement. -/

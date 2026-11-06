@@ -5,8 +5,8 @@ public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Degree.MeasurePhrase
-public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.Measurement
+public import Linglib.Semantics.Degree.ScalarDimension
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.HayKennedyLevin1999
@@ -32,7 +32,7 @@ open-range adjectives are checked against the scales of the English fragment.
   than a top element, and density makes "some amount" and *slightly* unbounded.
 * In a group, INCREASE (16) is the differential comparative of the argument at the end of the
   event with itself at the start (`increase_iff_differentialComparative`).
-* A modifier's difference values are the degrees that stand in a `Degree.Comparison` to its
+* A modifier's difference values are the degrees that stand in a `Comparison` to its
   degree: exactly a measure phrase's, at least *significantly*'s standard, and among the positive
   ones at most *slightly*'s. A monotone decreasing modifier is one whose comparison gives a lower
   set.
@@ -63,7 +63,7 @@ open-range adjectives are checked against the scales of the English fragment.
 
 namespace HayKennedyLevin1999
 
-open Degree Set
+open Set
 open English
 open English.Verbs hiding Verb
 
@@ -272,15 +272,16 @@ end Semantics
 
 /-- The closed-range adjectives the paper names are *straight*, *empty* and *dry* ((25a)), and
     *flat*. -/
-def closedRange : List GradableAdjective :=
+def closedRange : List Adjective :=
   open English.Adjectives in [straight, empty, dry, flat]
 
 /-- The open-range adjectives the paper names are *long*, *wide* and *short* ((25b)). -/
-def openRange : List GradableAdjective :=
+def openRange : List Adjective :=
   open English.Adjectives in [long, wide, short]
 
 theorem fragment_range :
-    (∀ a ∈ closedRange, a.boundedness.HasMax) ∧ ∀ a ∈ openRange, ¬ a.boundedness.HasMax := by
+    (∀ a ∈ closedRange, ∃ b ∈ a.boundedness, b.HasMax) ∧
+      ∀ a ∈ openRange, ∃ b ∈ a.boundedness, ¬ b.HasMax := by
   decide
 
 theorem fragment_verbs :

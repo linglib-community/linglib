@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Order.Interval.Set.Basic
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Exhaustification.Basic
 
 /-!

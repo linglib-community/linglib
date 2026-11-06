@@ -11,9 +11,9 @@ public import Linglib.Core.Data.UnorderedTree.Licensed
 public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
 /-!
-# Vertex conservation for pruning cuts
+# Vertex conservation for admissible cuts
 
-A pruning cut removes its crown subtrees entirely, so crown vertices and trunk vertices recover
+An admissible cut removes its crown subtrees entirely, so crown vertices and trunk vertices recover
 the vertices of the tree exactly. Hence every crown component, and the trunk of a proper cut, is
 smaller than the tree: the descent that makes recursions over cuts, such as the antipode, well
 founded. Contracting the vertices the cut leaves with a single child then removes one more
@@ -21,14 +21,15 @@ vertex for each.
 
 ## Main results
 
-* `ConnesKreimer.cutSummandsN_numNodes`, `hasExtractionCost_numNodes_cutSummandsN`: vertex
-  conservation for the nonplanar pruning cuts, and for a choice of them over a forest.
-* `ConnesKreimer.cutSummandsN_crown_numNodes_lt`, `ConnesKreimer.cutSummandsN_trunk_numNodes_lt`:
-  crowns and proper trunks are smaller than the tree.
-* `ConnesKreimer.cutSummandsN_numEdges_contractUnary`: the edges of the tree, of the crown and of
+* `ConnesKreimer.admissibleCuts_numNodes`, `hasExtractionCost_numNodes_admissibleCuts`: vertex
+  conservation for the admissible cuts, and for a choice of them over a forest.
+* `ConnesKreimer.admissibleCuts_crown_numNodes_lt`,
+  `ConnesKreimer.admissibleCuts_trunk_numNodes_lt`: crowns and proper trunks are smaller than the
+  tree.
+* `ConnesKreimer.admissibleCuts_numEdges_contractUnary`: the edges of the tree, of the crown and of
   the contracted trunk.
-* `ConnesKreimer.cutSummandsN_numUnary`: in a full binary tree a cut leaves a unary vertex for each
-  tree it extracts, less two for each vertex both of whose children it extracts.
+* `ConnesKreimer.admissibleCuts_numUnary`: in a full binary tree a cut leaves a unary vertex for
+  each tree it extracts, less two for each vertex both of whose children it extracts.
 
 ## References
 
@@ -43,93 +44,94 @@ namespace ConnesKreimer
 
 variable {α : Type*}
 
-/-! ### Vertex conservation for the pruning cuts -/
+/-! ### Vertex conservation for the admissible cuts -/
 
-/-- The crown and the trunk of a pruning cut have exactly the vertices of the tree. -/
-theorem cutSummandsN_numNodes (T : UnorderedTree α) :
-    ∀ p ∈ cutSummandsN T,
+/-- The crown and the trunk of an admissible cut have exactly the vertices of the tree. -/
+theorem admissibleCuts_numNodes (T : UnorderedTree α) :
+    ∀ p ∈ admissibleCuts T,
       (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes = T.numNodes :=
   Quotient.inductionOn T fun t p hp ↦ by
-    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsN_mk] at hp
+    rw [UnorderedTree.quot_mk_eq_mk, admissibleCuts_mk] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    simpa [projSummand, Multiset.map_map, Function.comp_def] using
-      cutSummandsG_numNodes pruning (k := 0) (fun _ _ h ↦ by cases h; rfl) t q hq
+    simpa [projCut, Multiset.map_map, Function.comp_def] using
+      rootCuts_numNodes leaveNothing (k := 0) (fun _ _ h ↦ by cases h; rfl) t q hq
 
-/-- A choice of pruning cuts conserves vertices. -/
-theorem hasExtractionCost_numNodes_cutSummandsN {F : Multiset (UnorderedTree α)} {s : CutChoice α}
-    (hs : s ∈ forestCutChoicesG cutSummandsN F) :
+/-- A choice of admissible cuts conserves vertices. -/
+theorem hasExtractionCost_numNodes_admissibleCuts {F : Multiset (UnorderedTree α)} {s : CutChoice α}
+    (hs : s ∈ forestCutChoices admissibleCuts F) :
     s.HasExtractionCost UnorderedTree.numNodes 0 :=
-  .of_mem_forestCutChoicesG hs fun x _ p hp _ ↦ by simpa using (cutSummandsN_numNodes x.1 p hp).symm
+  .of_mem_forestCutChoices hs fun x _ p hp _ ↦ by
+    simpa using (admissibleCuts_numNodes x.1 p hp).symm
 
-theorem cutSummandsN_crown_ne_singleton (T : UnorderedTree α)
-    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
+theorem admissibleCuts_crown_ne_singleton (T : UnorderedTree α)
+    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ admissibleCuts T) :
     p.1 ≠ ({T} : Multiset (UnorderedTree α)) := by
   intro hcrown
-  have hw := cutSummandsN_numNodes T p hp
+  have hw := admissibleCuts_numNodes T p hp
   rw [hcrown] at hw
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at hw
   have := p.2.numNodes_pos
   omega
 
-/-- Every crown component of a pruning cut has fewer vertices than the tree. -/
-theorem cutSummandsN_crown_numNodes_lt {T : UnorderedTree α}
-    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+/-- Every crown component of an admissible cut has fewer vertices than the tree. -/
+theorem admissibleCuts_crown_numNodes_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ admissibleCuts T)
     {t : UnorderedTree α} (ht : t ∈ p.1) : t.numNodes < T.numNodes := by
-  have hw := cutSummandsN_numNodes T p hp
+  have hw := admissibleCuts_numNodes T p hp
   have := Multiset.le_sum_of_mem (Multiset.mem_map_of_mem UnorderedTree.numNodes ht)
   have := p.2.numNodes_pos
   omega
 
-/-- The trunk of a pruning cut with a nonempty crown has fewer vertices than the tree. -/
-theorem cutSummandsN_trunk_numNodes_lt {T : UnorderedTree α}
-    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+/-- The trunk of an admissible cut with a nonempty crown has fewer vertices than the tree. -/
+theorem admissibleCuts_trunk_numNodes_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ admissibleCuts T)
     (h : p.1 ≠ 0) : p.2.numNodes < T.numNodes := by
   obtain ⟨t, ht⟩ := Multiset.exists_mem_of_ne_zero h
-  have hw := cutSummandsN_numNodes T p hp
+  have hw := admissibleCuts_numNodes T p hp
   have := Multiset.le_sum_of_mem (Multiset.mem_map_of_mem UnorderedTree.numNodes ht)
   have := t.numNodes_pos
   omega
 
-theorem cutSummandsN_crown_numEdges_lt {T : UnorderedTree α}
-    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+theorem admissibleCuts_crown_numEdges_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ admissibleCuts T)
     (h : p.1 ≠ 0) : (p.1.map UnorderedTree.numEdges).sum < T.numEdges := by
-  have hw := cutSummandsN_numNodes T p hp
+  have hw := admissibleCuts_numNodes T p hp
   rw [UnorderedTree.sum_map_numNodes] at hw
   have := Multiset.card_pos.mpr h
   have := p.2.numNodes_pos
   have := T.numEdges_add_one
   omega
 
-theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
-    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
+theorem admissibleCuts_self_not_mem_crown (T : UnorderedTree α)
+    (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ admissibleCuts T) :
     T ∉ p.1 :=
-  fun h ↦ (cutSummandsN_crown_numNodes_lt hp h).false
+  fun h ↦ (admissibleCuts_crown_numNodes_lt hp h).false
 
-/-! ### Unary vertices left by a pruning cut
+/-! ### Unary vertices left by an admissible cut
 
-In a full binary tree a pruning cut leaves the parent of each tree it extracts with a single child,
-unless it extracts both of the parent's children, which leaves the parent a leaf. Contracting the
-unary vertices of the trunk then removes one more vertex for each. -/
+In a full binary tree an admissible cut leaves the parent of each tree it extracts with a single
+child, unless it extracts both of the parent's children, which leaves the parent a leaf. Contracting
+the unary vertices of the trunk then removes one more vertex for each. -/
 
-/-- Deleting the crown of a pruning cut and contracting the unary vertices of its trunk removes,
+/-- Deleting the crown of an admissible cut and contracting the unary vertices of its trunk removes,
     besides the crown's own edges, one edge for each crown component and one for each unary
     vertex. -/
-theorem cutSummandsN_numEdges_contractUnary {T : UnorderedTree α}
-    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T) :
+theorem admissibleCuts_numEdges_contractUnary {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ admissibleCuts T) :
     T.numEdges = (p.1.map UnorderedTree.numEdges).sum + p.2.contractUnary.numEdges +
       Multiset.card p.1 + p.2.numUnary := by
-  have hw := cutSummandsN_numNodes T p hp
+  have hw := admissibleCuts_numNodes T p hp
   rw [UnorderedTree.sum_map_numNodes] at hw
   have := UnorderedTree.numNodes_contractUnary_add_numUnary p.2
   have := T.numEdges_add_one
   have := p.2.contractUnary.numEdges_add_one
   omega
 
-private theorem cutSummandsG_pruning_numUnary (t : RoseTree α)
+private theorem rootCuts_leaveNothing_numUnary (t : RoseTree α)
     (ht : t.Licensed fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
       Multiset.card (ks : Multiset α) = 2) :
-    ∀ p ∈ cutSummandsG pruning t, ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := fun p hp ↦ by
-  obtain ⟨-, k, hk⟩ := cutSummandsG_induction pruning
+    ∀ p ∈ rootCuts leaveNothing t, ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := fun p hp ↦ by
+  obtain ⟨-, k, hk⟩ := rootCuts_induction leaveNothing
     (P := fun cs q ↦ (∀ c ∈ cs, c.Licensed fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
         Multiset.card (ks : Multiset α) = 2) →
       q.2.length ≤ cs.length ∧
@@ -162,15 +164,15 @@ private theorem cutSummandsG_pruning_numUnary (t : RoseTree α)
     t p hp (by simpa using ht)
   exact ⟨k, by simp at hk; omega⟩
 
-/-- In a full binary tree a pruning cut leaves a unary vertex for each tree it extracts, less two
-    for each vertex both of whose children it extracts. -/
-theorem cutSummandsN_numUnary {T : UnorderedTree α} (hT : T.IsFullBinary)
-    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T) :
+/-- In a full binary tree an admissible cut leaves a unary vertex for each tree it extracts, less
+    two for each vertex both of whose children it extracts. -/
+theorem admissibleCuts_numUnary {T : UnorderedTree α} (hT : T.IsFullBinary)
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ admissibleCuts T) :
     ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := by
   induction T using Quotient.inductionOn with
   | h t =>
-    rw [UnorderedTree.quot_mk_eq_mk, cutSummandsN_mk] at hp
+    rw [UnorderedTree.quot_mk_eq_mk, admissibleCuts_mk] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    simpa [projSummand] using cutSummandsG_pruning_numUnary t hT q hq
+    simpa [projCut] using rootCuts_leaveNothing_numUnary t hT q hq
 
 end ConnesKreimer

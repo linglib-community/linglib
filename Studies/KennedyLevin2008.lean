@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.PositiveStandard
 public import Mathlib.Algebra.Order.Group.PosPart
 public import Studies.HayKennedyLevin1999
 
@@ -36,7 +36,7 @@ scales.
   difference (`coe_measureOfChange_sub`), as the paper glosses the difference function (23). A
   verbal degree modifier compares it with a degree, and on positive values it then has the reading
   of Hay, Kennedy and Levin's modifier with the same comparison (`describes_interval_iff`); their
-  measure phrase compares by `Degree.Comparison.eq` and the one here by `Degree.Comparison.ge`.
+  measure phrase compares by `Comparison.eq` and the one here by `Comparison.ge`.
 * The minimum standard is read strictly, `⊥ < ·`, after the prose and Kennedy's positive form,
   though the verbal positive form is printed with `⪰`. An argument that begins with the greatest
   degree meets the maximum standard without changing, so the theorems relating the two readings
@@ -70,7 +70,7 @@ scales.
 
 namespace KennedyLevin2008
 
-open Degree Aspect Set
+open Aspect Set
 
 /-! ### The measure of change (25) -/
 
@@ -224,7 +224,7 @@ theorem da_vendler_classes_agree :
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
 with scales closed above, *bent* with one closed only below, and *long*, *wide*, *cool* and
 *warm* with open ones. -/
-def pairs : List (GradableAdjective × Verb) :=
+def pairs : List (Adjective × Verb) :=
   [(English.Adjectives.clean, English.Verbs.clean.toVerb),
    (English.Adjectives.dry, English.Verbs.dry.toVerb),
    (English.Adjectives.straight, English.Verbs.straighten.toVerb),
@@ -237,7 +237,7 @@ def pairs : List (GradableAdjective × Verb) :=
    (English.Adjectives.warm, English.Verbs.warm.toVerb)]
 
 theorem adjective_verb_scales :
-    ∀ p ∈ pairs, p.2.changeScale = some p.1.boundedness := by
+    ∀ p ∈ pairs, p.2.changeScale = p.1.boundedness := by
   decide
 
 -- (1), (6)

@@ -156,7 +156,7 @@ def Lexicalizes : Entry → CovertShift → Prop
   | _, _ => False
 
 /-- The restrictor true of everything, with two satisfiers in `Bool`. -/
-private abbrev top : Restrictor Bool Unit := fun _ _ _ ↦ True
+private abbrev top : Restrictor Bool Unit := fun _ _ ↦ Set.univ
 
 /-- With two satisfiers the weak article is undefined and the strong one picks the indexed
 entity. -/
@@ -205,7 +205,7 @@ where the definite is not. -/
 theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift) :
     ¬ (possessive p).Lexicalizes τ := by
   have key : ∀ k : DefiniteDescription Unit Unit, (⟦k⟧ (fun _ ↦ ()) ()).isSome →
-      p.denote (fun _ _ _ ↦ True) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toNominal :=
+      p.denote (fun _ _ ↦ Set.univ) (fun _ _ ↦ ()) (fun _ _ _ _ ↦ False) ≠ k.toNominal :=
     fun k hk h ↦ by
       have h' := congrFun (congrFun (congrArg Nominal.selector h) fun _ ↦ ()) ()
       rw [PossessiveDeterminer.denote_selector, DefiniteDescription.toNominal_selector] at h'

@@ -65,7 +65,7 @@ two already-selected allosemes. The Voice allosemes map to the cells of
 namespace DistributedMorphology.Allosemy
 
 open Minimalist.Voice (Head)
-open Morphology.Exponence
+open Morphology
 
 /-! ### The alloseme carrier
 
@@ -142,7 +142,7 @@ spell-out domain, across semantically null heads only — is `ComplexHead.Sees`
 /-- A condition an alloseme places on a neighbouring terminal, on its category or on whether it
 denotes an event or a state. -/
 inductive Feature where
-  | cat (c : Categorizer)
+  | cat (c : Minimalist.Cat)
   | eventive
   | stative
   deriving DecidableEq, Repr

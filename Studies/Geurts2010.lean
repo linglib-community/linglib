@@ -117,7 +117,7 @@ private theorem compl_Iic_ssubset_Ioi_bot (hx : IsAtom x) : (Iic x)ᶜ ⊂ Ioi (
 -- disjunction
 theorem isSecondaryImplicature_Ici (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hab : a ≠ b)
     (hac : a ≠ c) (hbc : b ≠ c) :
-    IsSecondaryImplicature (Ioi ⊥) (Ici '' {x | x ≠ ⊥}) (Ici a) := by
+    IsSecondaryImplicature (Ici '' {x | x ≠ ⊥}) (Ioi ⊥) (Ici a) := by
   refine isSecondaryImplicature_iff.2 ⟨⟨a, ha.1, rfl⟩, Ici_ssubset_Ioi_bot ha hb hab, ?_⟩
   rintro _ ⟨x, hx, rfl⟩ - hsub
   have hxb : x = b := (hb.le_iff_eq hx).1 (hsub ⟨hb.bot_lt, notMem_Ici_of_isAtom hb ha.1 hab⟩)
@@ -135,7 +135,7 @@ theorem union_sdiff_parse (A B C : Set W) :
 -- contra p. 64: over the closure the text rejects, the weak implicatures give ignorance about every
 -- disjunct
 theorem notMem_polar_Ici_of_mem_primaryImplicatures (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
-    {s : Set α} (hq : s ⊆ Ioi ⊥) (hp : s ∈ primaryImplicatures (Ioi ⊥) {χ | IsUpperSet χ}) :
+    {s : Set α} (hq : s ⊆ Ioi ⊥) (hp : s ∈ primaryImplicatures {χ | IsUpperSet χ} (Ioi ⊥)) :
     s ∉ polar (Ici a) := by
   have hweak := mem_primaryImplicatures.1 hp
   refine fun h ↦ (Question.mem_polar.1 h).elim
@@ -151,7 +151,7 @@ private theorem exists_isAtom_le {y : α} (hy : y ∈ Ioi ⊥) : ∃ b, IsAtom b
 -- contra p. 64: over alternatives closed under conjunction and disjunction, an alternative passes
 -- the consistency check just when it holds in no world in which only one disjunct does
 theorem isSecondaryImplicature_upperSets_iff :
-    IsSecondaryImplicature (Ioi ⊥) {χ | IsUpperSet χ} t ↔
+    IsSecondaryImplicature {χ | IsUpperSet χ} (Ioi ⊥) t ↔
       IsUpperSet t ∧ t ⊂ Ioi ⊥ ∧ ∀ x, IsAtom x → x ∉ t := by
   rw [isSecondaryImplicature_iff]
   refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
@@ -165,7 +165,7 @@ theorem isSecondaryImplicature_upperSets_iff :
 /-- Closing the alternatives of a long disjunction under conjunction and under disjunction, and
 strengthening wherever Competence is consistent, yields exactly the exclusive reading. -/
 theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
-    Ioi ⊥ \ ⋃₀ {t | IsSecondaryImplicature (Ioi ⊥) {χ | IsUpperSet χ} t} = {x : α | IsAtom x} := by
+    Ioi ⊥ \ ⋃₀ {t | IsSecondaryImplicature {χ | IsUpperSet χ} (Ioi ⊥) t} = {x : α | IsAtom x} := by
   ext x
   simp only [mem_sdiff, mem_Ioi, mem_sUnion, mem_ofPred_eq, isSecondaryImplicature_upperSets_iff]
   refine ⟨fun ⟨hx, hn⟩ ↦ ?_, fun hx ↦ ⟨hx.bot_lt, fun ⟨t, ⟨_, _, h⟩, hxt⟩ ↦ h x hx hxt⟩⟩
@@ -417,7 +417,7 @@ variable {M A F : Set W}
 
 -- §8.1, (6)–(8), pp. 166–167: the implicature *not all the figs* passes the consistency check
 theorem isSecondaryImplicature_mango (hA : A ⊆ F) (hM : (M \ F).Nonempty)
-    (hF : (F \ (M ∪ A)).Nonempty) : IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} A := by
+    (hF : (F \ (M ∪ A)).Nonempty) : IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) A := by
   obtain ⟨f, hf, hfn⟩ := hF
   obtain ⟨m, hm, hmn⟩ := hM
   simp only [mem_union, not_or] at hfn
@@ -434,7 +434,7 @@ theorem isSecondaryImplicature_mango (hA : A ⊆ F) (hM : (M \ F).Nonempty)
 -- §8.1: Competence fails for (7a), (7b) and (7d), so no strong implicature that Cleo had no mango
 theorem isSecondaryImplicature_mango_iff (hA : A ⊆ F) (hM : (M \ F).Nonempty)
     (hF : (F \ (M ∪ A)).Nonempty) {χ : Set W} (hχ : χ ∈ ({M, F, A, M ∪ A} : Set (Set W))) :
-    IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} χ ↔ χ = A := by
+    IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) χ ↔ χ = A := by
   have hFφ : F ⊂ M ∪ F := ⟨subset_union_right, fun h ↦
     let ⟨_, hw, hwF⟩ := hM; hwF (h (.inl hw))⟩
   have hMφ : M ⊂ M ∪ F := ⟨subset_union_left, fun h ↦
@@ -528,9 +528,9 @@ def Item.Derived : Item → Prop
       s ∈ survivors V size (atom true) (altsScalar V (atom true) (and (atom false) (atom true))) →
         ¬ (and (atom false) (atom true)).Believes V s
   | .figs => ∀ {W : Type} (M F A : Set W), A ⊆ F → (M \ F).Nonempty → (F \ (M ∪ A)).Nonempty →
-      IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} A
+      IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) A
   | .mango => ∀ {W : Type} (M F A : Set W), A ⊆ F → (M \ F).Nonempty → (F \ (M ∪ A)).Nonempty →
-      IsSecondaryImplicature (M ∪ F) {M, F, A, M ∪ A} M
+      IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) M
   | .referent => ∀ {W D : Type} (sailor some all : W → Set D) (t : SetRel W D),
       t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some → ¬ t ⊆ SetRel.ofSuccessors all →
         t ∈ polar (SetRel.ofSuccessors all) → t ⊆ (SetRel.ofSuccessors all)ᶜ

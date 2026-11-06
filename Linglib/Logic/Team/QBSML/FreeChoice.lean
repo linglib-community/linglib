@@ -73,11 +73,11 @@ theorem witnesses_of_enrich_disj {u : Finset (Index W Var Domain)} (hα : α.NEF
 private theorem possFC_on (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (.poss (Formula.disj α β).enrich) s) :
     support M (.poss α) s ∧ support M (.poss β) s :=
-  ⟨fun i hi ↦
-    have ⟨_, hu, _, h'⟩ := h i hi
+  ⟨Team.mem_poss.2 fun i hi ↦
+    have ⟨_, hu, _, h'⟩ := Team.mem_poss.1 h i hi
     (witnesses_of_enrich_disj M hα hβ h').1.imp fun _ ⟨ht, hne, h₁⟩ ↦ ⟨ht.trans hu, hne, h₁⟩,
-   fun i hi ↦
-    have ⟨_, hu, _, h'⟩ := h i hi
+   Team.mem_poss.2 fun i hi ↦
+    have ⟨_, hu, _, h'⟩ := Team.mem_poss.1 h i hi
     (witnesses_of_enrich_disj M hα hβ h').2.imp fun _ ⟨ht, hne, h₂⟩ ↦ ⟨ht.trans hu, hne, h₂⟩⟩
 
 /-! ### Free choice (Facts 7, 8 and 9) -/
@@ -100,8 +100,8 @@ theorem boxFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (Formula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
   rw [support_enrich_nec_iff] at h
-  exact ⟨fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).1,
-    fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).2⟩
+  exact ⟨Team.mem_poss.2 fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).1,
+    Team.mem_poss.2 fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).2⟩
 
 /-! ### Quantified □-free choice
 
@@ -130,7 +130,7 @@ theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
       (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :
     support M (.poss (.exi x α)) s ∧ support M (.poss (.exi x β)) s := by
   rw [support_enrich_nec_iff] at h
-  refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
+  refine ⟨Team.mem_poss.2 fun i hi ↦ ?_, Team.mem_poss.2 fun i hi ↦ ?_⟩
   · obtain ⟨S, hS, -, hD⟩ := (h.1 i hi).1
     obtain ⟨t, htS, htne, ht⟩ := (witnesses_of_enrich_disj M hα hβ hD).1
     exact exists_support_exi_of_subset_extendUniversal M (htS.trans hS) htne ht

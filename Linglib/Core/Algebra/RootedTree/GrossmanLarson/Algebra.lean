@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
+public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCutDuality
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 public import Mathlib.Algebra.Lie.UniversalEnveloping
@@ -27,8 +27,8 @@ This file proves that the Grossman–Larson product is associative, makes `Gross
 
 ## Implementation notes
 
-Associativity is proved over `ℤ` by duality: the product is the transpose of the pruning
-coproduct under the symmetry-weighted pairing (`Coproduct/PruningDuality.lean`), which is
+Associativity is proved over `ℤ` by duality: the product is the transpose of the Connes–Kreimer
+coproduct under the symmetry-weighted pairing (`Coproduct/AdmissibleCutDuality.lean`), which is
 coassociative, and over `ℤ` the pairing separates points. The structure constants are natural
 numbers, so the `ℤ` case is an identity of multisets of forests, which gives associativity over
 every commutative semiring.

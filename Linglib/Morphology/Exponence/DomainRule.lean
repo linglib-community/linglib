@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Disjoint
 public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Domain rules
@@ -15,7 +16,7 @@ domain rules.
 
 ## Main definitions
 
-* `Exponence.DomainRule`: a finite domain with an exponent, with its `Exponence.Rule` instance;
+* `DomainRule`: a finite domain with an exponent, with its `ExponenceRule` instance;
   its specificity key is the domain, ordered by inclusion.
 
 ## Main results
@@ -37,7 +38,7 @@ domain rules.
 
 @[expose] public section
 
-namespace Morphology.Exponence
+namespace Morphology
 
 /-- A domain rule carries an exponent and applies exactly at the contexts of a finite
 domain. -/
@@ -52,11 +53,11 @@ namespace DomainRule
 
 variable {Ctx E : Type*} {r s : DomainRule Ctx E} {c : Ctx}
 
-instance : Rule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun r c ↦ c ∈ r.dom⟩
+instance : ExponenceRule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun r c ↦ c ∈ r.dom⟩
 
 @[simp] theorem applies_iff : Applies r c ↔ c ∈ r.dom := Iff.rfl
 
-@[simp] theorem rule_exponent : Rule.exponent r = r.exponent := rfl
+@[simp] theorem rule_exponent : ExponenceRule.exponent r = r.exponent := rfl
 
 theorem coe_dom : (r.dom : Set Ctx) = applySet r := rfl
 
@@ -104,4 +105,4 @@ theorem exists_not_isContiguous_realizeMinimal :
 
 end DomainRule
 
-end Morphology.Exponence
+end Morphology

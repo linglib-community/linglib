@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.AckemaNeeleman2018
 public import Linglib.Fragments.Dutch.Pronouns
-public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Exponence.SubsetRule
 public import Mathlib.Data.Set.Subsingleton
 public import Studies.Harbour2016
 public import Linglib.Data.Examples.Readers
@@ -55,7 +55,7 @@ generalization is statistical here and absolute for Harbour.
 
 namespace AckemaNeeleman2018
 
-open Morphology.Exponence Discourse
+open Morphology Discourse
 
 variable {α β γ E : Type*}
 
@@ -392,82 +392,65 @@ theorem acceptable_iff_canBeExpletive :
 
 /-! ### Spell-out and Maximal Encoding -/
 
-/-- A spell-out rule inserts a form for the person features it mentions, counted with
-multiplicity, with `PL` or without. -/
-structure SpellOut (E : Type*) where
-  /-- The person features mentioned. -/
-  features : Multiset Feature
-  /-- Whether `PL` is mentioned. -/
-  plural : Bool
-  /-- The form inserted. -/
-  exponent : E
+/-- What a spell-out rule reads of a pronoun: its person features, counted with multiplicity, and
+whether it bears `PL`. -/
+def Pronoun.bundle (p : Pronoun) : Multiset Feature × Bool := (p.person, p.plural)
 
-/-- A rule applies to a pronoun that has every feature it mentions. -/
-instance : Rule (SpellOut E) Pronoun E where
-  exponent := SpellOut.exponent
-  Applies r p := r.features ≤ p.person ∧ r.plural ≤ p.plural
-
-instance : DecidableRel (Applies : SpellOut E → Pronoun → Prop) := fun _ _ ↦
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The number of features a rule mentions. -/
-def SpellOut.size (r : SpellOut E) : ℕ := r.features.card + r.plural.toNat
+/-- The number of features a spell-out rule mentions. -/
+def size (r : SubsetRule (Multiset Feature × Bool) E) : ℕ :=
+  r.features.1.card + r.features.2.toNat
 
 section NaturalClasses
 
-variable {r : SpellOut E} {n : Bool}
+variable {r : SubsetRule (Multiset Feature × Bool) E} {n : Bool}
 
 theorem shared_features :
     (first : Multiset Feature) ∩ second = {.prox} ∧ (second : Multiset Feature) ∩ third = {.dist} ∧
       (first : Multiset Feature) ∩ third = 0 := by
   decide
 
-theorem applies_of_inter_le {fs gs hs : List Feature} (hf : Applies r (⟨fs, n⟩ : Pronoun))
-    (hg : Applies r (⟨gs, n⟩ : Pronoun)) (h : (fs : Multiset Feature) ∩ gs ≤ hs) :
-    Applies r (⟨hs, n⟩ : Pronoun) :=
-  ⟨(Multiset.le_inter hf.1 hg.1).trans h, hf.2⟩
+theorem applies_second_of_first_of_third (h₁ : Applies r (⟨first, n⟩ : Pronoun).bundle)
+    (h₃ : Applies r (⟨third, n⟩ : Pronoun).bundle) : Applies r (⟨second, n⟩ : Pronoun).bundle :=
+  SubsetRule.applies_of_inf_le h₁ h₃ (by cases n <;> decide)
 
-theorem applies_second_of_first_of_third (h₁ : Applies r (⟨first, n⟩ : Pronoun))
-    (h₃ : Applies r (⟨third, n⟩ : Pronoun)) : Applies r (⟨second, n⟩ : Pronoun) :=
-  applies_of_inter_le h₁ h₃ (by decide)
+theorem applies_first_of_inclusive_of_second (h₁ : Applies r (⟨inclusive, n⟩ : Pronoun).bundle)
+    (h₂ : Applies r (⟨second, n⟩ : Pronoun).bundle) : Applies r (⟨first, n⟩ : Pronoun).bundle :=
+  SubsetRule.applies_of_inf_le h₁ h₂ (by cases n <;> decide)
 
-theorem applies_first_of_inclusive_of_second (h₁ : Applies r (⟨inclusive, n⟩ : Pronoun))
-    (h₂ : Applies r (⟨second, n⟩ : Pronoun)) : Applies r (⟨first, n⟩ : Pronoun) :=
-  applies_of_inter_le h₁ h₂ (by decide)
-
-theorem applies_exclusive_iff_first (h : r.plural = false) :
-    Applies r (⟨first, true⟩ : Pronoun) ↔ Applies r ⟨first, false⟩ := by
-  simp [Applies, h]
+theorem applies_exclusive_iff_first (h : r.features.2 = false) :
+    Applies r (⟨first, true⟩ : Pronoun).bundle ↔ Applies r (⟨first, false⟩ : Pronoun).bundle := by
+  simp [Pronoun.bundle, Prod.le_def, h]
 
 end NaturalClasses
 
 open Dutch.Pronouns in
 /-- The spell-out rules of the Dutch strong subject pronouns, none of which mentions two
 `PROX`. -/
-def dutch : RuleSet (SpellOut PersonalPronoun) :=
-  [⟨{.prox}, false, ik⟩, ⟨{.prox, .dist}, false, jij⟩, ⟨{.dist}, false, hij⟩,
-    ⟨{.prox}, true, wij⟩, ⟨{.prox, .dist}, true, jullie⟩, ⟨{.dist}, true, zij_pl⟩]
+def dutch : RuleSet (SubsetRule (Multiset Feature × Bool) PersonalPronoun) :=
+  [⟨({.prox}, false), ik⟩, ⟨({.prox, .dist}, false), jij⟩, ⟨({.dist}, false), hij⟩,
+    ⟨({.prox}, true), wij⟩, ⟨({.prox, .dist}, true), jullie⟩, ⟨({.dist}, true), zij_pl⟩]
 
 open Dutch.Pronouns in
 /-- Under Maximal Encoding the rule mentioning the most features is used, so the Dutch rules
 realize the inventory with one form for the inclusive and the exclusive. -/
 theorem dutch_paradigm :
-    inventory.map (dutch.realize SpellOut.size) =
+    inventory.map (dutch.realize size ∘ Pronoun.bundle) =
       [some ik, some jij, some hij, some wij, some wij, some jullie, some zij_pl] := by
   decide
 
 /-- Each Dutch pronoun denotes the referential categories that the pronouns it realizes cover. -/
 theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
     c ∈ r.exponent.referential ↔
-      ∃ p ∈ inventory, dutch.realize SpellOut.size p = some r.exponent ∧ c ∈ p.categories := by
+      ∃ p ∈ inventory, dutch.realize size p.bundle = some r.exponent ∧ c ∈ p.categories := by
   decide
 
 /-- A rule set with a rule mentioning two `PROX` and a rule mentioning one, both with `PL`. -/
-def clusive (a b : E) : RuleSet (SpellOut E) := [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩]
+def clusive (a b : E) : RuleSet (SubsetRule (Multiset Feature × Bool) E) :=
+  [⟨({.prox, .prox}, true), a⟩, ⟨({.prox}, true), b⟩]
 
 theorem clusive_split (a b : E) :
-    (clusive a b).realize SpellOut.size ⟨first, true⟩ = some a ∧
-      (clusive a b).realize SpellOut.size ⟨inclusive, true⟩ = some b :=
+    (clusive a b).realize size (⟨first, true⟩ : Pronoun).bundle = some a ∧
+      (clusive a b).realize size (⟨inclusive, true⟩ : Pronoun).bundle = some b :=
   ⟨rfl, rfl⟩
 
 /-! ### Zwicky's generalization
@@ -492,26 +475,28 @@ def pluralGraph [DecidableEq E] (f : Pronoun → Option E) : Finset (Finset Role
     participants p.person = some P.1 ∧ participants q.person = some P.2 ∧ f p = f q
 
 /-- Plural rules for two `PROX`, one `PROX`, `PROX` with `DIST`, and `DIST`. -/
-def pluralRules : RuleSet (SpellOut (Fin 4)) :=
-  [⟨{.prox, .prox}, true, 0⟩, ⟨{.prox}, true, 1⟩, ⟨{.prox, .dist}, true, 2⟩, ⟨{.dist}, true, 3⟩]
+def pluralRules : RuleSet (SubsetRule (Multiset Feature × Bool) (Fin 4)) :=
+  [⟨({.prox, .prox}, true), 0⟩, ⟨({.prox}, true), 1⟩, ⟨({.prox, .dist}, true), 2⟩,
+    ⟨({.dist}, true), 3⟩]
 
 -- without impoverishment the plural paradigm is the quadripartition
 theorem pluralGraph_pluralRules :
-    pluralGraph (pluralRules.realize SpellOut.size) = Harbour2016.graph {.author, .hearer} := by
+    pluralGraph (pluralRules.realize size ∘ Pronoun.bundle) =
+      Harbour2016.graph {.author, .hearer} := by
   decide
 
 -- with it, Zwicky's tripartition: the inclusive with the second person, the exclusive apart
 theorem pluralGraph_pluralRules_impoverishDist :
-    pluralGraph (pluralRules.realize SpellOut.size ∘ impoverishDist) =
+    pluralGraph (pluralRules.realize size ∘ Pronoun.bundle ∘ impoverishDist) =
       Harbour2016.graph {.hearer, .participant} := by
   decide
 
 /-- Impoverishing `DIST` under `PROX` in the plural turns a plural paradigm that Harbour's
 parameters generate into one they never generate, Zwicky's tripartition. -/
 theorem impoverishDist_not_mem_image_graph :
-    pluralGraph (pluralRules.realize SpellOut.size) ∈
+    pluralGraph (pluralRules.realize size ∘ Pronoun.bundle) ∈
         Finset.univ.image Harbour2016.Setting.graph ∧
-      pluralGraph (pluralRules.realize SpellOut.size ∘ impoverishDist) ∉
+      pluralGraph (pluralRules.realize size ∘ Pronoun.bundle ∘ impoverishDist) ∉
         Finset.univ.image Harbour2016.Setting.graph := by
   rw [pluralGraph_pluralRules, pluralGraph_pluralRules_impoverishDist,
     Harbour2016.graph_mem_image_iff, Harbour2016.graph_mem_image_iff]

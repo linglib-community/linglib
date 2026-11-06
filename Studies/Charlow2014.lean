@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Card
 public import Linglib.Core.Data.Set.Monad
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Focus.Particles
 public import Mathlib.Control.Monad.Cont
 public import Linglib.Semantics.Reference.ChoiceFunction

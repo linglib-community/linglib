@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
-public import Linglib.Semantics.Degree.Measure.Quantity
+public import Linglib.Syntax.Category.Adjective.Basic
+public import Linglib.Semantics.Quantity.Basic
 public import Linglib.Fragments.English.Nouns
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Rat.Cast.Order
@@ -45,7 +45,6 @@ plain count nouns, listed in `containerNouns` and `atomizers`.
 
 namespace English.MeasurePhrases
 
-open Degree (QuantityDimension Quantity)
 
 /-- A measure term, a count noun naming a unit quantity of a dimension. -/
 structure MeasureTerm extends toEnglishNoun : Nouns.Noun where
@@ -61,7 +60,7 @@ structure MeasureTerm extends toEnglishNoun : Nouns.Noun where
 namespace MeasureTerm
 
 /-- A measure term names an extent from the zero of its dimension, so a positive one. -/
-def directedScale (t : MeasureTerm) : Degree.DirectedScale := (.inl t.dimension, .positive)
+def directedScale (t : MeasureTerm) : DirectedScale := (.inl t.dimension, .positive)
 
 /-- The unit quantity a measure term denotes, its size in the reference unit times the unit
 quantity of its dimension. -/

@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.AlexiadouLohndal2017
-public import Studies.BobaljikHarley2017
 public import Studies.Embick2004
+public import Studies.Harley2014
 public import Studies.DeBelderVanCraenenbroeck2015
 public import Studies.VanCraenenbroeck2014
 public import Linglib.Data.Examples.Readers
@@ -30,8 +30,8 @@ categorized at all.
 ## Implementation notes
 
 * The locality condition (25) is the one the chapter quotes from the manuscript of Bobaljik and
-  Harley's chapter, `DistributedMorphology.MayCondition'`, and the trees are over the categories
-  of `BobaljikHarley2017`. In (27c) the lower F is the complex head of F and the Root.
+  Harley's chapter, `DistributedMorphology.MayCondition'`. In (27c) the lower F is the complex
+  head of F and the Root.
 * That Direct Merge and complement Merge build one complex head is
   `Embick2004.headDaughter?_moveRoot`.
 * A view's licensing of a resultative aP is read off how it attaches a Root of each class: a v
@@ -56,22 +56,22 @@ argument structure, and the endocentricity argument for Roots as modifiers are n
 
 namespace AlexiadouLohndal2017
 
-open PhraseStructure BobaljikHarley2017
-open DistributedMorphology (MayCondition MayCondition')
+open PhraseStructure
+open DistributedMorphology (Cat MayCondition MayCondition')
 open DistributedMorphology.RootCategorization (Attachment)
 
 /-! ### Hiaki suppletion without Root complements -/
 
 /-- The structure (26), the internal argument in the specifier of F over vP, the Root in situ. -/
-def tree26 : T :=
-  .node .voice [.terminal .d .phrase, .node .voice [.terminal .voice .voice,
-    .node .f [.terminal .d .phrase,
-      .node .f [.terminal .f .f, .node .v [.terminal .v .v, .terminal .root .root]]]]]
+def tree26 : Tree Cat Unit :=
+  .node (.head .Voice) [.terminal (.head .D) (), .node (.head .Voice) [.terminal (.head .Voice) (),
+    .node .f [.terminal (.head .D) (), .node .f [.terminal .f (),
+      .node (.head .v) [.terminal (.head .v) (), .terminal .root ()]]]]]
 
 /-- The last step of the derivation (27). Once vP is spelled out, the Root forms a complex head with
 F, and the internal argument merges with that head. -/
-def tree27 : T :=
-  .node .f [.terminal .d .phrase, .adjoin .f [.terminal .f .f, .terminal .root .root]]
+def tree27 : Tree Cat Unit :=
+  .node .f [.terminal (.head .D) (), .adjoin .f [.terminal .f (), .terminal .root ()]]
 
 /-- Under (25), the internal argument may condition the Root in (27) but not in (26). -/
 theorem mayCondition'_tree27 :
@@ -136,8 +136,9 @@ open DistributedMorphology.RootCategorization (selector)
 
 /-- A deverbal noun with an adjunct, the nP of a nominalizer over the phrase of a Root and its
 argument under v, with a PP adjoined to it. -/
-def deverbal (c : Config) : Tree DistributedMorphology.RootCategorization.Cat Unit :=
-  .adjoin (.cat .n) [.node (.cat .n) [.terminal (.cat .n) (), c.tree .v], .terminal .p ()]
+def deverbal (c : Config) : Tree Cat Unit :=
+  .adjoin (.head .n) [.node (.head .n) [.terminal (.head .n) (), c.tree VanCraenenbroeck2014.verb],
+    .terminal (.head .P) ()]
 
 /-- The position of a dependent in `deverbal`. -/
 def position (c : Config) : Harley2014.Dependent → Core.Order.TreePath
@@ -146,7 +147,7 @@ def position (c : Config) : Harley2014.Dependent → Core.Order.TreePath
 
 /-- *one*, a proform of the category of the noun, strands the dependent from the Root. -/
 def OneStrands (c : Config) (d : Harley2014.Dependent) : Prop :=
-  Strands (.cat .n) (deverbal c) ⟨0 :: 1 :: c.rootPos.toList⟩ (position c d)
+  Strands (.head .n) (deverbal c) ⟨0 :: 1 :: c.rootPos.toList⟩ (position c d)
 
 instance (c : Config) (d : Harley2014.Dependent) : Decidable (OneStrands c d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
@@ -162,7 +163,8 @@ theorem oneData_length : oneData.length = 2 := by decide +kernel
 with the verb's head, whatever the configuration. -/
 theorem deverbal_derives (c : Config) :
     (∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands c p.1) ∧
-      selector (deverbal c) (position c .argument) = selector (c.tree .v) c.argPos := by
+      selector (deverbal c) (position c .argument) =
+        selector (c.tree VanCraenenbroeck2014.verb) c.argPos := by
   cases c <;> decide +kernel
 
 end Deverbal

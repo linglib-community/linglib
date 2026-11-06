@@ -322,6 +322,8 @@ theorem Mealy.isLeftSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β)
     IsLeftSubsequential T.run :=
   T.isMealyComputable.isLeftSubsequential
 
+theorem Mealy.runRight_eq_revConj_run (T : Mealy σ α β) : T.runRight = List.revConj T.run := rfl
+
 theorem Mealy.isRightSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsRightSubsequential T.runRight :=
   T.isLeftSubsequential.revConj
@@ -395,9 +397,9 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     ∃ N : ℕ, ∀ u v i, i + N < (f u).length → (f u)[i]? = (f (u ++ v))[i]? := by
   obtain ⟨N, hN⟩ := hf.bounded_delay
   refine ⟨N, fun u v i hi ↦ ?_⟩
-  rw [List.prefix_iff_getElem?.mp (hN u v) i (by simp; omega),
-    List.getElem?_eq_getElem (by omega)]
-  simp [List.rdrop]
+  have hi' : i < ((f u).rdrop N).length := by simp; omega
+  exact (List.prefix_iff_getElem?.mp (List.rdrop_prefix _ N) i hi').trans
+    (List.prefix_iff_getElem?.mp (hN u v) i hi').symm
 
 theorem IsLeftSubsequential.exists_getElem?_take_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :

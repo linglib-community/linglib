@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Partial
-public import Linglib.Semantics.Composition.WithAlternatives
+public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Linglib.Data.Examples.Readers
 
@@ -223,8 +223,8 @@ theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
       some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
     simp only [clause, vp, interpPartial_phrase_binary, interpPartial_terminal, interpPartial_bind,
       interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
-      Mode.combine?_fn_right, valueAtPartial, dite_true, Function.update_self, Mode.evalPartial]
-    erw [Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some]
+      Mode.combine?_fn_right, valueAt_some, Function.update_self, Mode.evalKleisli,
+      Part.bind_eq_bind, Part.bind_some]
   rw [this, Part.bind_some_eq_map]
 
 open Classical in

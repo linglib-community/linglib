@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Get
-public import Linglib.Morphology.Exponence.Containment.Selection
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Exponence.Select
 
 /-!
@@ -64,7 +64,7 @@ where tree spellout is also the spellout of the containment engine.
 
 namespace Morphology.Nanosyntax
 
-open Morphology.Exponence RoseTree
+open Morphology RoseTree
 
 variable {F α : Type*}
 
@@ -87,19 +87,19 @@ instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) : Decidable (e
   inferInstanceAs (Decidable (IsSubtree _ _))
 
 /-- A lexical entry is a rule of the exponence core, applicable where it matches. -/
-instance : Exponence.Rule (LexicalEntry F α) (RoseTree F) α :=
+instance : ExponenceRule (LexicalEntry F α) (RoseTree F) α :=
   ⟨LexicalEntry.exponent, fun e t ↦ e.Matches t⟩
 
 /-- One entry is at least as specific as another exactly when the other's stored tree contains
 its stored tree. -/
 theorem LexicalEntry.applySet_subset_iff {a b : LexicalEntry F α} :
-    Exponence.applySet a ⊆ Exponence.applySet b ↔ IsSubtree a.tree b.tree :=
+    applySet a ⊆ applySet b ↔ IsSubtree a.tree b.tree :=
   ⟨fun h ↦ h (.refl a.tree), fun h _ hc ↦ hc.trans h⟩
 
 /-! ### Spellout -/
 
 private theorem numNodes_lt_of_applySet_ssubset {s r : LexicalEntry F α}
-    (hlt : Exponence.applySet s ⊂ Exponence.applySet r) : s.tree.numNodes < r.tree.numNodes := by
+    (hlt : applySet s ⊂ applySet r) : s.tree.numNodes < r.tree.numNodes := by
   have hcon := LexicalEntry.applySet_subset_iff.mp hlt.le
   refine lt_of_le_of_ne hcon.numNodes_le fun heq ↦ ?_
   exact hlt.not_ge (LexicalEntry.applySet_subset_iff.mpr (hcon.eq_of_numNodes_le heq.ge ▸ .refl _))
@@ -123,14 +123,14 @@ def treeSpellout (entries : RuleSet (LexicalEntry F α)) (t : RoseTree F) : Opti
 /-- Smallest-tree selection picks an Elsewhere winner. -/
 theorem treeSelect_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {e : LexicalEntry F α} (h : treeSelect entries t = some e) :
-    entries.IsElsewhereWinner Exponence.applySet t e :=
+    entries.IsElsewhereWinner applySet t e :=
   RuleSet.selectBy_isElsewhereWinner
     (f := fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.numNodes)
     (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (numNodes_lt_of_applySet_ssubset h)) h
 
 theorem treeSpellout_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {x : α} (h : treeSpellout entries t = some x) :
-    ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner Exponence.applySet t e := by
+    ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner applySet t e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, RuleSet.selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 
@@ -309,18 +309,18 @@ theorem exists_matching_not_isSubtree :
 /-! ### Spellout over containment hierarchies -/
 
 /-- An entry of the containment engine read as an entry storing the chain up to its span. -/
-def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : Containment.SupersetRule n α) :
+def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : SupersetRule n α) :
     LexicalEntry F α :=
   ⟨chainTree feat e.spans, e.exponent⟩
 
 /-- On chains, tree spellout is the spellout of the containment engine, since containment of
 chains is comparison of their ranks. -/
 theorem treeSpellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
-    (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
+    (v : RuleSet (SupersetRule n α)) (g : Fin n) :
     treeSpellout (v.map (LexicalEntry.ofSupersetRule feat)) (chainTree feat g) =
-      Containment.spellout v g := by
+      SupersetRule.spellout v g := by
   rw [treeSpellout, treeSelect, RuleSet.selectBy_map (c := g)
-    (f := fun e : Containment.SupersetRule n α ↦ OrderDual.toDual e.spans)
+    (f := fun e : SupersetRule n α ↦ OrderDual.toDual e.spans)
     (fun _ _ ↦ (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le)
     fun _ _ _ _ ↦ by simp [LexicalEntry.ofSupersetRule, chainTree_numNodes], Option.map_map]
   rfl

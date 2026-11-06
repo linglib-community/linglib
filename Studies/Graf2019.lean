@@ -1,7 +1,8 @@
 module
 
 public import Studies.Bobaljik2012
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
+public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Mathlib.Tactic.TFAE
@@ -56,7 +57,8 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 
 namespace Graf2019
 
-open Morphology Morphology.Exponence Morphology.Containment
+open Morphology
+open Morphology.SpanRule (realize Adjacent Markedness realize_const_of_markedness)
 
 /-! ### Feasible monotonicity -/
 
@@ -76,11 +78,11 @@ theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
 theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
     [IsContiguous p,
      FeasiblyMonotone p,
-     ElsewhereGenerable p,
-     SupersetSpellable p].TFAE := by
+     SpanRule.Generable p,
+     SupersetRule.Generable p].TFAE := by
   tfae_have 1 ↔ 2 := isContiguous_iff_feasiblyMonotone p
-  tfae_have 1 ↔ 3 := isContiguous_iff_generable p
-  tfae_have 1 ↔ 4 := isContiguous_iff_spelloutGenerable p
+  tfae_have 1 ↔ 3 := SpanRule.isContiguous_iff_generable p
+  tfae_have 1 ↔ 4 := SupersetRule.isContiguous_iff_generable p
   tfae_finish
 
 /-! ### Table 1: adjectival gradation -/
@@ -148,9 +150,7 @@ theorem aab_not_realizable {v : RuleSet (SpanRule 3 ℕ)} {a b : ℕ} (hAH : v.A
     (hM : Markedness v) (hA : Adjacent v) (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
-  have h01 : realize v 0 = realize v 1 := by simp [h]
-  have h2 : (realize v 2).isSome := by simp [h]
-  have h12 := realize_const_of_markedness hAH hM hA h01 h2
+  have h12 := realize_const_of_markedness hAH hM hA (by simp [h])
   rw [h] at h12
   exact hab (by simpa using h12)
 

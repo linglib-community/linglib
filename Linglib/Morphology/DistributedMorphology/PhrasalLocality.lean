@@ -10,9 +10,10 @@ them. In Bobaljik's formulation no maximal projection may intervene, so suppleti
 another is restricted to synthetic formations, in which Merger or head movement has brought the
 trigger into the target's complex head. Bobaljik and Harley's refinement lets no phrasal
 projection at all intervene, which renders specifiers non-local, so that a head is local only to
-the material of its complex head and to its complement. The boundaries crossed going from the
-target to the trigger are the nodes that dominate the target but not the trigger. The
-word-internal domains of cycles and pruning are in `Locality.lean`.
+the material of its complex head and to its complement; within a complex head the refinement
+changes nothing. The boundaries crossed going from the target to the trigger are the nodes that
+dominate the target but not the trigger. The word-internal domains of cycles and pruning are in
+`Locality.lean`.
 
 A proform stands for a phrase of its category, so it strands one node from another when a phrase
 of its category separates them. The refined formulation is the absence of every such phrase: a
@@ -33,6 +34,8 @@ everything inside is related to them as it was.
 
 ## Main statements
 
+* `DistributedMorphology.mayCondition'_of_isHeadAt`: within a complex head everything may
+  condition everything under the refined formulation.
 * `DistributedMorphology.mayCondition'_iff_forall_not_strands`: a trigger may condition a head
   under the refined formulation exactly when no proform strands it from the head.
 * `DistributedMorphology.localSet_replaceAt`, `DistributedMorphology.x0At_replaceAt`: embedding a
@@ -83,10 +86,24 @@ theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreeP
     (h : MayCondition' t α β) : MayCondition t α β :=
   fun p hp ↦ .inl (h p hp)
 
+theorem mayCondition_iff [DecidableEq C] {t : Tree C W} {α β : TreePath} :
+    MayCondition t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β →
+      IsHeadAt t p ∨ ¬ IsMaximalCategory (Tree.ProjectsAt t) (Tree.AdjoinsAt t) p :=
+  ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
+    fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
+
 theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ p, p ≤ α → ¬ p ≤ β → IsHeadAt t p :=
   ⟨fun h p hα hβ ↦ h p (mem_crossed.mpr ⟨hα, hβ⟩),
     fun h p hp ↦ h p (mem_crossed.mp hp).1 (mem_crossed.mp hp).2⟩
+
+/-- **The refinement changes nothing within a complex head.** Whatever a head-level node
+contains may condition anything else it contains. -/
+theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : TreePath} (hh : IsHeadAt t h)
+    (hα : h ≤ α) (hβ : h ≤ β) : MayCondition' t α β :=
+  mayCondition'_iff.mpr fun _ hp hpβ ↦
+    (IsLeftLinear.comparable_of_le_common hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
+      hh.mono
 
 /-! ### Pronominal stranding -/
 

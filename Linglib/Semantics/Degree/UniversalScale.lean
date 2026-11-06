@@ -4,7 +4,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Degree.Quotient
+public import Linglib.Semantics.Degree.CresswellDegree
 
 /-!
 # The universal scale
@@ -13,18 +13,18 @@ A measure `μ : E → D` orders a finite comparison class `C` by a quasi-order w
 values `C.image μ`. Bale's universal degree of a member is the position of its class: one plus
 the number of classes below it, over the number of classes, a rational between zero and one.
 Universal degrees record positions and nothing else. They are
-[unchanged by any order embedding of the scale](##Degree.universalDegree_comp), and on a comparison
+[unchanged by any order embedding of the scale](##universalDegree_comp), and on a comparison
 class two measures give the same universal degrees
-[exactly when they induce the same quasi-order](##Degree.ker_universalDegree). Comparing two
+[exactly when they induce the same quasi-order](##ker_universalDegree). Comparing two
 measures directly is not invariant under rescaling one of them
-(`Degree.Comparison.forall_preimage_interval_eq_iff`), but comparing their universal degrees is,
+(`Comparison.forall_preimage_interval_eq_iff`), but comparing their universal degrees is,
 which is what makes a comparison between different adjectives meaningful.
 
 ## Implementation notes
 
 A comparison class is a `Finset`, Klein's comparison class made finite so that its classes can be
 counted. Two members of the class are [equivalent exactly when they share a universal
-degree](##Degree.universalDegree_eq_iff), so the primary scale, the quotient of the restricted
+degree](##universalDegree_eq_iff), so the primary scale, the quotient of the restricted
 quasi-order, can be read on `C.image μ`, where universal degrees are computed.
 
 ## References
@@ -36,8 +36,6 @@ quasi-order, can be read on `C.image μ`, where universal degrees are computed.
 
 @[expose] public section
 
-namespace Degree
-
 open Finset
 
 /-! ### Positions in a finite scale -/
@@ -48,9 +46,9 @@ variable {D : Type*} [LinearOrder D]
 
 /-- The relative rank of `d` in a finite scale `S` is the share of `S` at or below it, one plus
 the number of values below `d` over the number of values. -/
-def relativeRank (S : Finset D) (d : D) : ℚ := #(S.filter (· ≤ d)) / #S
+def Finset.relativeRank (S : Finset D) (d : D) : ℚ := #(S.filter (· ≤ d)) / #S
 
-theorem relativeRank_strictMonoOn (S : Finset D) : StrictMonoOn (relativeRank S) S := by
+theorem Finset.relativeRank_strictMonoOn (S : Finset D) : StrictMonoOn (relativeRank S) S := by
   intro a ha b hb hab
   have hS : (0 : ℚ) < #S := by exact_mod_cast card_pos.2 ⟨a, ha⟩
   rw [relativeRank, relativeRank, div_lt_div_iff_of_pos_right hS, Nat.cast_lt]
@@ -59,16 +57,17 @@ theorem relativeRank_strictMonoOn (S : Finset D) : StrictMonoOn (relativeRank S)
   · exact mem_filter.2 ⟨hb, le_rfl⟩
   · exact fun h ↦ (mem_filter.1 h).2.not_gt hab
 
-theorem relativeRank_of_forall_le {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, x ≤ d) :
+theorem Finset.relativeRank_of_forall_le {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, x ≤ d) :
     relativeRank S d = 1 := by
   rw [relativeRank, filter_true_of_mem h, div_self]
   exact_mod_cast (card_pos.2 ⟨d, hd⟩).ne'
 
-theorem relativeRank_of_forall_ge {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, d ≤ x) :
+theorem Finset.relativeRank_of_forall_ge {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, d ≤ x) :
     relativeRank S d = 1 / #S := by
   rw [relativeRank, show S.filter (· ≤ d) = {d} by ext x; grind, card_singleton, Nat.cast_one]
 
-theorem relativeRank_Icc {N n : ℕ} (hn : n ∈ Icc 1 N) : relativeRank (Icc 1 N) n = n / N := by
+theorem Finset.relativeRank_Icc {N n : ℕ} (hn : n ∈ Icc 1 N) :
+    relativeRank (Icc 1 N) n = n / N := by
   rw [relativeRank, show (Icc 1 N).filter (· ≤ n) = Icc 1 n by ext k; grind]
   simp
 
@@ -169,5 +168,3 @@ theorem universalDegree_of_image_eq_Icc {μ : E → ℕ} {N : ℕ} (h : C.image 
   rw [universalDegree, h, relativeRank_Icc (h ▸ mem_image_of_mem μ hx)]
 
 end Universal
-
-end Degree

@@ -146,12 +146,12 @@ structure Aspect where
   perfectivity : Option Perfectivity := none
   /-- The dimension of a gradable verb's scale, along which a degree achievement measures change
       and on which a gradable state such as *believe* measures its holder. -/
-  scaleDimension : Option Degree.ScalarDimension := none
+  scaleDimension : Option ScalarDimension := none
   /-- The pole of the dimension the verb measures towards, negative for *dry*, a decrease in
       wetness, and for *doubt*, the antonym of *believe*. -/
   scalePolarity : Polarity := .positive
   /-- The positive standard the verb's lexicon fixes, `none` taking its scale's default. -/
-  lexicalStandard : Option Degree.PositiveStandard := none
+  lexicalStandard : Option PositiveStandard := none
   /-- The direction of the path along which a verb of motion displaces its theme, relative to
       the ground ([pantcheva-2011]). It is `.goal` for *arrive* and *come*, `.source` for
       *leave*, and `.place` for a verb of manner of motion, which displaces its theme without a
@@ -204,20 +204,20 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Clause.Embedding where
 def Verb.form (v : Verb) : String := Morph.surface v.morphs
 
 /-- The degree semantics of a verb, `none` for a verb without a scale. -/
-def Verb.gradability? (v : Verb) : Option Degree.Gradability :=
+def Verb.gradability? (v : Verb) : Option Gradability :=
   v.scaleDimension.map fun d ↦ ⟨d, v.scalePolarity, v.lexicalStandard⟩
 
 /-- The scale of a gradable verb. -/
-def Verb.boundedness (v : Verb) : Option Degree.Boundedness :=
+def Verb.boundedness (v : Verb) : Option Boundedness :=
   v.gradability?.map (·.boundedness)
 
 /-- The positive standard of a gradable verb. -/
-def Verb.standard (v : Verb) : Option Degree.PositiveStandard :=
+def Verb.standard (v : Verb) : Option PositiveStandard :=
   v.gradability?.map (·.standard)
 
 /-- The scale along which a degree achievement measures change is the scale of a verb that is not
 a state, since a state measures no change. -/
-def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
+def Verb.changeScale (v : Verb) : Option Boundedness :=
   if v.vendlerClass = some .state then none else v.boundedness
 
 /-! ### ArgumentFrame accessors

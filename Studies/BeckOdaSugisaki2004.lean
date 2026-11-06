@@ -23,7 +23,7 @@ no degree-based negative islands — and its scope argument.
 
 * `er`: the comparative morpheme on degree sets, `max D₂ > max D₁`.
 * `pos`: the positive form at a standard `c`; the contextual comparative is
-  `Degree.MaxIn (Set.Ioi c)`.
+  `Quantifier.MaxIn (Set.Ioi c)`.
 * `theC`: the Fregean definite over a contextual domain, the denotation of a *yori*-clause.
 * `erJ`: the comparative that combines directly with the adjective meaning.
 
@@ -46,7 +46,7 @@ Example numbers follow the journal article; the examples are typed in
 
 namespace BeckOdaSugisaki2004
 
-open Degree Quantifier Quantifier.Det
+open Quantifier Quantifier.Det
 
 variable {Entity D : Type*} [LinearOrder D]
 
@@ -97,11 +97,11 @@ theorem pos_comparedTo (μ : Entity → D) (x y : Entity) :
 
 /-- `theC C P` is the unique `P`-individual of the contextual domain `C` (54). -/
 noncomputable def theC (C : Set Entity) (P : Entity → Prop) : Option Entity :=
-  iota fun x => x ∈ C ∧ P x
+  iota {x | x ∈ C ∧ P x}
 
 theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
     theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
-  simp only [theC, iota_eq_some_iff, and_imp]
+  simp only [theC, iota_eq_some_iff, Set.mem_ofPred_eq, and_imp]
 
 -- (41a)
 theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}

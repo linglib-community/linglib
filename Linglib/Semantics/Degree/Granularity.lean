@@ -18,7 +18,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 
 A granularity function of width $w$ maps each degree to an interval of width $w$ containing it,
 the properties Sauerland and Stateva collect in [`IsGranularity`](##IsGranularity). The grain of
-width $ε$ reports a degree by [the nearest multiple of $ε$](##abs_sub_representative_le_abs_sub),
+width $ε$ reports a degree by [the nearest multiple of $ε$](##abs_sub_nearestMultiple_le_abs_sub),
 as Krifka's levels of precision do, and its cells, which Deo and Thomas take as the answers to a
 degree question, are [the half-open intervals of width $ε$ centred on the
 multiples](##cell_grain). A finer grain is a narrower one, not a refinement: on a dense scale
@@ -43,8 +43,6 @@ Thomas and Deo are after Gyarmathy, and needs no `sSup`, which `ℚ` lacks.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 open Set
 
@@ -99,73 +97,73 @@ variable {α : Type*} [Field α] [LinearOrder α] [FloorRing α] {ε ε₁ ε₂
 `ε`. -/
 def grain (ε : α) : Setoid α := Setoid.ker fun d ↦ round (d / ε)
 
-/-- The representative of `d` at width `ε` is the nearest multiple of `ε`. -/
-def representative (ε d : α) : α := round (d / ε) • ε
+/-- The multiple of `ε` nearest to `d`. -/
+def nearestMultiple (ε d : α) : α := round (d / ε) • ε
 
 theorem grain_iff : grain ε d d' ↔ round (d / ε) = round (d' / ε) := Iff.rfl
 
-theorem representative_mem_zmultiples (ε d : α) : representative ε d ∈ AddSubgroup.zmultiples ε :=
+theorem nearestMultiple_mem_zmultiples (ε d : α) : nearestMultiple ε d ∈ AddSubgroup.zmultiples ε :=
   AddSubgroup.mem_zmultiples_iff.2 ⟨_, rfl⟩
 
-theorem preimage_representative_of_notMem {d : α} (hd : d ∉ AddSubgroup.zmultiples ε) :
-    representative ε ⁻¹' {d} = ∅ :=
-  eq_empty_of_forall_notMem fun v hv ↦ hd (hv ▸ representative_mem_zmultiples ε v)
+theorem preimage_nearestMultiple_of_notMem {d : α} (hd : d ∉ AddSubgroup.zmultiples ε) :
+    nearestMultiple ε ⁻¹' {d} = ∅ :=
+  eq_empty_of_forall_notMem fun v hv ↦ hd (hv ▸ nearestMultiple_mem_zmultiples ε v)
 
-theorem representative_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
-    (hd : d ∈ AddSubgroup.zmultiples ε) : representative ε d = d := by
+theorem nearestMultiple_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
+    (hd : d ∈ AddSubgroup.zmultiples ε) : nearestMultiple ε d = d := by
   obtain ⟨k, rfl⟩ := AddSubgroup.mem_zmultiples_iff.1 hd
-  simp only [representative, zsmul_eq_mul]
+  simp only [nearestMultiple, zsmul_eq_mul]
   rw [mul_div_cancel_right₀ _ hε, round_intCast]
 
 variable [IsStrictOrderedRing α]
 
-theorem ker_representative (hε : ε ≠ 0) : Setoid.ker (representative ε) = grain ε :=
+theorem ker_nearestMultiple (hε : ε ≠ 0) : Setoid.ker (nearestMultiple ε) = grain ε :=
   Setoid.ker_comp_of_injective (fun d ↦ round (d / ε)) (g := (· • ε)) fun m n h ↦ by
     simpa [zsmul_eq_mul, hε] using h
 
-theorem abs_sub_representative_le (hε : 0 < ε) (d : α) : |d - representative ε d| ≤ ε / 2 :=
+theorem abs_sub_nearestMultiple_le (hε : 0 < ε) (d : α) : |d - nearestMultiple ε d| ≤ ε / 2 :=
   abs_sub_round_div_zsmul_le hε d
 
-theorem abs_sub_representative_le_abs_sub (hε : ε ≠ 0) (d : α) (n : ℤ) :
-    |d - representative ε d| ≤ |d - n • ε| :=
+theorem abs_sub_nearestMultiple_le_abs_sub (hε : ε ≠ 0) (d : α) (n : ℤ) :
+    |d - nearestMultiple ε d| ≤ |d - n • ε| :=
   abs_sub_round_div_zsmul_le_abs_sub_zsmul hε d n
 
-/-- The cell of `d` is the half-open interval of width `ε` centred on its representative. -/
+/-- The cell of `d` is the half-open interval of width `ε` centred on its nearestMultiple. -/
 theorem cell_grain (hε : 0 < ε) (d : α) :
-    (grain ε).cell d = Ico (representative ε d - ε / 2) (representative ε d + ε / 2) := by
+    (grain ε).cell d = Ico (nearestMultiple ε d - ε / 2) (nearestMultiple ε d + ε / 2) := by
   ext x
   rw [Setoid.mem_cell, grain_iff, round_eq_iff, mem_Ico, mem_Ico, le_div_iff₀ hε,
-    div_lt_iff₀ hε, representative, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
+    div_lt_iff₀ hε, nearestMultiple, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
 
 theorem cell_grain_of_mem_zmultiples (hε : 0 < ε) (hd : d ∈ AddSubgroup.zmultiples ε) :
     (grain ε).cell d = Ico (d - ε / 2) (d + ε / 2) := by
-  rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne' hd]
+  rw [cell_grain hε, nearestMultiple_eq_self_of_mem_zmultiples hε.ne' hd]
 
 theorem cell_grain_zero (hε : 0 < ε) : (grain ε).cell 0 = Ico (-(ε / 2)) (ε / 2) := by
   rw [cell_grain_of_mem_zmultiples hε (zero_mem _), zero_sub, zero_add]
 
-/-- The degrees farthest from their representative are the lower ends of the cells. -/
-theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) :
-    |d - representative ε d| = ε / 2 ↔ d + ε / 2 ∈ AddSubgroup.zmultiples ε := by
+/-- The degrees farthest from their nearest multiple are the lower ends of the cells. -/
+theorem abs_sub_nearestMultiple_eq_half_iff (hε : 0 < ε) :
+    |d - nearestMultiple ε d| = ε / 2 ↔ d + ε / 2 ∈ AddSubgroup.zmultiples ε := by
   have hd := (grain ε).mem_cell_self d
   rw [cell_grain hε] at hd
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · rw [show d + ε / 2 = representative ε d by
+  · rw [show d + ε / 2 = nearestMultiple ε d by
       rcases (abs_eq (by positivity)).1 h with h | h <;> linarith [hd.2]]
-    exact representative_mem_zmultiples ε d
+    exact nearestMultiple_mem_zmultiples ε d
   · have hmem : d ∈ (grain ε).cell (d + ε / 2) := by
       rw [cell_grain_of_mem_zmultiples hε h]
       constructor <;> linarith
-    rw [← ker_representative hε.ne', Setoid.mem_cell, Setoid.ker_def,
-      representative_eq_self_of_mem_zmultiples hε.ne' h] at hmem
+    rw [← ker_nearestMultiple hε.ne', Setoid.mem_cell, Setoid.ker_def,
+      nearestMultiple_eq_self_of_mem_zmultiples hε.ne' h] at hmem
     rw [hmem, sub_add_cancel_left, abs_neg, abs_of_pos (by positivity)]
 
-theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
-    representative ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by
-  rw [← cell_grain_of_mem_zmultiples hε hd, ← ker_representative hε.ne']
+theorem preimage_nearestMultiple (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
+    nearestMultiple ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by
+  rw [← cell_grain_of_mem_zmultiples hε hd, ← ker_nearestMultiple hε.ne']
   ext v
   rw [mem_preimage, mem_singleton_iff, Setoid.mem_cell, Setoid.ker_def,
-    representative_eq_self_of_mem_zmultiples hε.ne' hd]
+    nearestMultiple_eq_self_of_mem_zmultiples hε.ne' hd]
 
 theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε := by
   have hd : d ∈ (grain ε).cell d' := h
@@ -176,8 +174,8 @@ theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε :
 
 theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε where
   mem_self := (grain ε).mem_cell_self
-  exists_Ioo_subset_subset_Icc d := ⟨representative ε d - ε / 2, by
-    rw [cell_grain hε, show representative ε d - ε / 2 + ε = representative ε d + ε / 2 by ring]
+  exists_Ioo_subset_subset_Icc d := ⟨nearestMultiple ε d - ε / 2, by
+    rw [cell_grain hε, show nearestMultiple ε d - ε / 2 + ε = nearestMultiple ε d + ε / 2 by ring]
     exact ⟨Ioo_subset_Ico_self, Ico_subset_Icc_self⟩⟩
 
 /-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
@@ -221,5 +219,3 @@ theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
   · exact iff_of_true (grain_le_grain_of_odd j) (odd_two_mul_add_one j)
 
 end Grain
-
-end Degree

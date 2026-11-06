@@ -12,19 +12,19 @@ of another component; in 3(a) both are accessible terms of one component; in 3(b
 accessible terms of two different components. Lemmas 1.4.4 and 1.4.5 show that the Merge
 operator of Definition 1.3.4 realizes all three, so Merge alone does not rule them out.
 
-Each case evaluates the Merge formula `mergeOpG_apply_of'` on the workspace. On a single tree the
-matching cuts are the cuts with crown `{S, S'}`, since the tree itself is a one-element crown. On
-two trees the hypotheses force each matching forest cut to take `S` from the first tree and `S'`
+Each case evaluates the Merge formula `mergeOpOfCuts_apply_of'` on the workspace. On a single tree
+the matching cuts are the cuts with crown `{S, S'}`, since the tree itself is a one-element crown.
+On two trees the hypotheses force each matching forest cut to take `S` from the first tree and `S'`
 from the second, so the sum factors through the two one-tree sums. A spectator workspace passes
-through unchanged (`mergeOpG_of'_mul`).
+through unchanged (`mergeOpOfCuts_of'_mul`).
 
 ## Main results
 
-* `Minimalist.Merge.mergeOpG_sideward_2b`: a component merged with an accessible term of another
-  component, beside the remainder of that component.
-* `Minimalist.Merge.mergeOpG_sideward_3a`: two accessible terms of one component, beside its
+* `Minimalist.Merge.mergeOpOfCuts_sideward_2b`: a component merged with an accessible term of
+  another component, beside the remainder of that component.
+* `Minimalist.Merge.mergeOpOfCuts_sideward_3a`: two accessible terms of one component, beside its
   remainder after both are cut.
-* `Minimalist.Merge.mergeOpG_sideward_3b`: accessible terms of two components, beside both
+* `Minimalist.Merge.mergeOpOfCuts_sideward_3b`: accessible terms of two components, beside both
   remainders.
 
 ## Implementation notes
@@ -52,24 +52,24 @@ open RoseTree UnorderedTree ConnesKreimer
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
   {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
 
-private theorem sum_filter_treeCutsG_of_ne {T : UnorderedTree α} {K : Forest (UnorderedTree α)}
+private theorem sum_filter_treeCuts_of_ne {T : UnorderedTree α} {K : Forest (UnorderedTree α)}
     (h : {T} ≠ K) :
-    (((treeCutsG cuts T).filter (·.1 = K)).map fun p ↦ of' (R := R) p.2).sum =
+    (((treeCuts cuts T).filter (·.1 = K)).map fun p ↦ of' (R := R) p.2).sum =
       (((cuts T).filter (·.1 = K)).map fun p ↦ ofTree (R := R) p.2).sum := by
-  rw [treeCutsG, Multiset.filter_cons_of_neg (p := fun x : Forest _ × Forest _ ↦ x.1 = K) _ h,
+  rw [treeCuts, Multiset.filter_cons_of_neg (p := fun x : Forest _ × Forest _ ↦ x.1 = K) _ h,
     Multiset.filter_map, Multiset.map_map]
   rfl
 
 /-- On a two-tree workspace whose matching cuts take the crown `A` from `T` and `B` from `T'`,
     Merge is the product of the two one-tree sums. -/
-private theorem mergeOpG_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree α}
+private theorem mergeOpOfCuts_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree α}
     {A B : Forest (UnorderedTree α)}
-    (h : ∀ a ∈ treeCutsG cuts T, ∀ b ∈ treeCutsG cuts T',
+    (h : ∀ a ∈ treeCuts cuts T, ∀ b ∈ treeCuts cuts T',
       a.1 + b.1 = {S, S'} ↔ a.1 = A ∧ b.1 = B) :
-    mergeOpG (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
-      (((treeCutsG cuts T).filter (·.1 = A)).map fun p ↦ of' (R := R) p.2).sum *
-      (((treeCutsG cuts T').filter (·.1 = B)).map fun p ↦ of' (R := R) p.2).sum := by
-  rw [mergeOpG_apply_of', forestCutsG_pair, Multiset.conv, Multiset.filter_map,
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
+      (((treeCuts cuts T).filter (·.1 = A)).map fun p ↦ of' (R := R) p.2).sum *
+      (((treeCuts cuts T').filter (·.1 = B)).map fun p ↦ of' (R := R) p.2).sum := by
+  rw [mergeOpOfCuts_apply_of', forestCuts_pair, Multiset.conv, Multiset.filter_map,
     Multiset.filter_congr (q := fun x : (Forest _ × Forest _) × (Forest _ × Forest _) ↦
       x.1.1 = A ∧ x.2.1 = B) fun ⟨a, b⟩ hx ↦ h a (Multiset.mem_product.mp hx).1 b
         (Multiset.mem_product.mp hx).2,
@@ -80,20 +80,20 @@ private theorem mergeOpG_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree α}
 
 /-- Merge on a one-tree workspace is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]
 Lemma 1.4.5). -/
-theorem mergeOpG_sideward_3a (lbl : α) (S S' T : UnorderedTree α) :
-    mergeOpG (R := R) cuts lbl S S' (of' {T}) = of' {UnorderedTree.node lbl {S, S'}} *
+theorem mergeOpOfCuts_sideward_3a (lbl : α) (S S' T : UnorderedTree α) :
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' {T}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((cuts T).filter (·.1 = {S, S'})).map fun p ↦ ofTree (R := R) p.2).sum := by
-  rw [mergeOpG_apply_of', forestCutsG_singleton,
-    sum_filter_treeCutsG_of_ne fun h ↦ by simpa using congrArg Multiset.card h]
+  rw [mergeOpOfCuts_apply_of', forestCuts_singleton,
+    sum_filter_treeCuts_of_ne fun h ↦ by simpa using congrArg Multiset.card h]
 
 /-- Merging a component `T` with a term `S'` of another component is Sideward Merge of type 2(b)
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.4). -/
-theorem mergeOpG_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedTree α}
+theorem mergeOpOfCuts_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedTree α}
     (hT : T ∉ T'.subtrees) (hS' : S' ≠ T') :
-    mergeOpG (R := R) cuts lbl T S' (of' {T, T'}) = of' {UnorderedTree.node lbl {T, S'}} *
+    mergeOpOfCuts (R := R) cuts lbl T S' (of' {T, T'}) = of' {UnorderedTree.node lbl {T, S'}} *
       (((cuts T').filter (·.1 = {S'})).map fun p ↦ ofTree (R := R) p.2).sum := by
-  rw [mergeOpG_pair_eq_mul lbl (A := {T}) (B := {S'}) fun a ha b hb ↦ ?_,
-    sum_filter_treeCutsG_of_ne (Multiset.singleton_inj.not.mpr hS'.symm), treeCutsG,
+  rw [mergeOpOfCuts_pair_eq_mul lbl (A := {T}) (B := {S'}) fun a ha b hb ↦ ?_,
+    sum_filter_treeCuts_of_ne (Multiset.singleton_inj.not.mpr hS'.symm), treeCuts,
     Multiset.filter_cons_of_pos (p := fun x : Forest _ × Forest _ ↦ x.1 = {T}) _ rfl,
     Multiset.filter_eq_nil.mpr fun p hp ↦ ?_]
   · simp
@@ -101,7 +101,7 @@ theorem mergeOpG_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedT
     exact IsMergeCuts.crown_ne_singleton hq
   refine ⟨fun hab ↦ ?_, fun ⟨h1, h2⟩ ↦ by rw [h1, h2]; rfl⟩
   have hTa : T ∈ a.1 := (Multiset.mem_add.mp (hab ▸ Multiset.mem_cons_self _ _)).resolve_right
-    fun h ↦ hT (IsMergeCuts.mem_subtrees_of_mem_treeCutsG hb h)
+    fun h ↦ hT (IsMergeCuts.mem_subtrees_of_mem_treeCuts hb h)
   have ha1 : a.1 = {T} := by
     rcases Multiset.mem_cons.mp ha with rfl | ha
     · rfl
@@ -111,20 +111,20 @@ theorem mergeOpG_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedT
 
 /-- Merging terms `S` of `T` and `S'` of `T'` is Sideward Merge of type 3(b)
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.4). -/
-theorem mergeOpG_sideward_3b [IsMergeCuts cuts] (lbl : α) {T T' S S' : UnorderedTree α}
+theorem mergeOpOfCuts_sideward_3b [IsMergeCuts cuts] (lbl : α) {T T' S S' : UnorderedTree α}
     (hST : S ≠ T) (hS'T' : S' ≠ T') (hST' : S ∉ T'.subtrees) (hS'T : S' ∉ T.subtrees) :
-    mergeOpG (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((cuts T).filter (·.1 = {S})).map fun p ↦ ofTree (R := R) p.2).sum *
       (((cuts T').filter (·.1 = {S'})).map fun p ↦ ofTree (R := R) p.2).sum := by
-  rw [mergeOpG_pair_eq_mul lbl (A := {S}) (B := {S'}) fun a ha b hb ↦ ?_,
-    sum_filter_treeCutsG_of_ne (Multiset.singleton_inj.not.mpr hST.symm),
-    sum_filter_treeCutsG_of_ne (Multiset.singleton_inj.not.mpr hS'T'.symm)]
+  rw [mergeOpOfCuts_pair_eq_mul lbl (A := {S}) (B := {S'}) fun a ha b hb ↦ ?_,
+    sum_filter_treeCuts_of_ne (Multiset.singleton_inj.not.mpr hST.symm),
+    sum_filter_treeCuts_of_ne (Multiset.singleton_inj.not.mpr hS'T'.symm)]
   refine ⟨fun hab ↦ ?_, fun ⟨h1, h2⟩ ↦ by rw [h1, h2]; rfl⟩
   have ha' : a.1 ≤ {S} := (Multiset.le_cons_of_notMem fun h ↦
-    hS'T (IsMergeCuts.mem_subtrees_of_mem_treeCutsG ha h)).mp <| by
+    hS'T (IsMergeCuts.mem_subtrees_of_mem_treeCuts ha h)).mp <| by
       rw [← Multiset.insert_eq_cons, ← Multiset.pair_comm, ← hab]; exact Multiset.le_add_right _ _
   have hb' : b.1 ≤ {S'} := (Multiset.le_cons_of_notMem fun h ↦
-    hST' (IsMergeCuts.mem_subtrees_of_mem_treeCutsG hb h)).mp <| by
+    hST' (IsMergeCuts.mem_subtrees_of_mem_treeCuts hb h)).mp <| by
       rw [← Multiset.insert_eq_cons, ← hab]; exact Multiset.le_add_left _ _
   have hcard := congrArg Multiset.card hab
   rcases Multiset.le_singleton.mp ha' with h1 | h1 <;>

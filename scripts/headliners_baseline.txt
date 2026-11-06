@@ -66,7 +66,6 @@ BelkNeelemanPhilip2023
 Belnap1970
 Beltrama2025
 BeltramaSoltBurnett2023
-Benua1997
 Benz2025
 BenzSalzmann2025
 BerentEtAl2016
@@ -79,7 +78,6 @@ BirdKlein1990
 Blake1994
 Bobaljik2008
 Bobaljik2012
-BobaljikHarley2017
 Bohnemeyer2004
 BonamiStump2016
 Bondarenko2022
@@ -122,7 +120,6 @@ ChampollionAlsopGrosu2019
 ChampollionBernard2024
 ChanShen2026
 ChandleeEtAl2019
-Charlow2018
 Charlow2019
 Charlow2020
 Charlow2021
@@ -142,7 +139,6 @@ Chomsky1995
 Chomsky2013
 Chomsky2015
 ChowErlewine2022
-ChristopoulosZompi2023
 ChungMascarenhas2023
 CiardelliGuerrini2026
 CiardelliZhangChampollion2018
@@ -209,7 +205,6 @@ Elliott2025
 Embick2010
 Embick2015
 Embick2021
-EngelhardtEtAl2006
 ErkHerbelot2024
 EvcenBaleBarner2026
 Faller2019
@@ -342,7 +337,6 @@ Lassiter2017
 Lassiter2025
 LevinRappaportHovav1995
 LevshinaEtAl2023
-Lewis1973b
 LittleMoroneyRoyer2022
 LiuRotter2025
 LiuYip2026
@@ -410,7 +404,6 @@ Prince1983
 Privizentseva2026
 Przepiorkowski2021
 PullumGazdar1982
-QingEtAl2025
 QingFranke2015
 QingGoodmanLassiter2016
 Rakosi2020
@@ -454,7 +447,6 @@ Sharvit2014
 Sharvit2025
 Shieber1986
 Short1993
-Sidner1979
 SikosEtAl2021
 Siloni2012
 SiptarTorkenczy2000

@@ -278,7 +278,7 @@ theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
     ¬ support M (Formula.enrich (Formula.nec (.disj (.predc A c) (.predc B c)))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
-  obtain ⟨t, ht, ⟨j, hj⟩, hsupp⟩ := (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
+  obtain ⟨t, ht, ⟨j, hj⟩, hsupp⟩ := Team.mem_poss.1 (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
   exact hB i hi j.world (Index.mem_successors.mp (ht hj)).1 (hsupp j hj)
 
 theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
@@ -326,7 +326,7 @@ theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [Decidable
     ¬ support M (Formula.enrich (reinterpret sub P (Formula.nec (.exi x (.pred Q x))))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
-  obtain ⟨t, ht, ⟨j, hj⟩, S, -, hcov, hs'⟩ := (fc_of_reinterpret M hsub h).2 i hi
+  obtain ⟨t, ht, ⟨j, hj⟩, S, -, hcov, hs'⟩ := Team.mem_poss.1 (fc_of_reinterpret M hsub h).2 i hi
   obtain ⟨_, hy, hyj⟩ := hcov j hj
   obtain ⟨d, rfl⟩ := Index.mem_variants.mp hyj
   obtain ⟨d₁, hd₁, hnP⟩ := hs'.1 _ hy

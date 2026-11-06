@@ -98,8 +98,8 @@ theorem minimalYieldWeak_iff_signature_le {acc : κ → ℕ} {F F' : Multiset κ
 /-! ### Terms of Merge and of its unit stage
 
 A term of Merge or of its unit stage on `F` chooses a cut for each component of `F`
-(`mergeOpG_apply_of'_eq_sum`, `mergeOpUnitG_apply_of'_eq_sum`). Its workspace holds the object `X`
-built from the crown beside the trunk. -/
+(`mergeOpOfCuts_apply_of'_eq_sum`, `mergeOpUnitOfCuts_apply_of'_eq_sum`). Its workspace holds the
+object `X` built from the crown beside the trunk. -/
 
 section Terms
 
@@ -109,7 +109,7 @@ variable [DecidableEq (UnorderedTree α)]
 
 /-- A term has one component for the object built from the crown and one for each component that
     was cut, so each component taken whole lowers `b₀` by one. -/
-theorem card_singleton_add_trunk_add_numWhole (hs : s ∈ forestCutChoicesG cuts F)
+theorem card_singleton_add_trunk_add_numWhole (hs : s ∈ forestCutChoices cuts F)
     (X : UnorderedTree α) :
     Multiset.card ({X} + s.trunk) + s.numWhole = Multiset.card F + 1 := by
   rw [Multiset.card_add, Multiset.card_singleton, add_assoc,
@@ -117,7 +117,7 @@ theorem card_singleton_add_trunk_add_numWhole (hs : s ∈ forestCutChoicesG cuts
 
 /-- A term that takes no component whole raises `b₀`, so a term satisfying the weak form of
     Minimal Yield takes some component whole. -/
-theorem MinimalYieldWeak.numWhole_ne_zero (hs : s ∈ forestCutChoicesG cuts F)
+theorem MinimalYieldWeak.numWhole_ne_zero (hs : s ∈ forestCutChoices cuts F)
     {X : UnorderedTree α} (h : MinimalYieldWeak acc F ({X} + s.trunk)) : s.numWhole ≠ 0 := by
   have := card_singleton_add_trunk_add_numWhole hs X
   have := h.noDivergence
@@ -125,7 +125,7 @@ theorem MinimalYieldWeak.numWhole_ne_zero (hs : s ∈ forestCutChoicesG cuts F)
 
 /-- A term of Merge has the accessible terms of the workspace, `2` more for the Merge of its two
     objects, and `k` fewer for each object it extracts rather than takes whole. -/
-theorem sum_map_merge_term_add (hs : s ∈ forestCutChoicesG cuts F)
+theorem sum_map_merge_term_add (hs : s ∈ forestCutChoices cuts F)
     (hc : s.HasExtractionCost acc k) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     (({X} + s.trunk).map acc).sum + 2 * k = (F.map acc).sum + k * s.numWhole + 2 := by
@@ -138,7 +138,7 @@ theorem sum_map_merge_term_add (hs : s ∈ forestCutChoicesG cuts F)
 
 /-- When each extraction costs one accessible term, as under `Δ^c`, a Merge term satisfies Minimal
 Yield iff some merged object is an unextracted workspace component (Lemma 1.6.3 (1.6.8)). -/
-theorem MinimalYield.merge_term_iff_of_extraction_one (hs : s ∈ forestCutChoicesG cuts F)
+theorem MinimalYield.merge_term_iff_of_extraction_one (hs : s ∈ forestCutChoices cuts F)
     (hc : s.HasExtractionCost acc 1) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYield acc F ({X} + s.trunk) ↔ s.numWhole ≠ 0 := by
@@ -148,7 +148,7 @@ theorem MinimalYield.merge_term_iff_of_extraction_one (hs : s ∈ forestCutChoic
 
 /-- When each extraction costs two accessible terms, as under `Δ^d`, a Merge term satisfies Minimal
 Yield iff both merged objects are unextracted workspace components (Lemma 1.6.3 (1.6.7)). -/
-theorem MinimalYield.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoicesG cuts F)
+theorem MinimalYield.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoices cuts F)
     (hc : s.HasExtractionCost acc 2) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYield acc F ({X} + s.trunk) ↔ s.numWhole = 2 := by
@@ -160,7 +160,7 @@ theorem MinimalYield.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoic
 
 /-- With each extraction costing two accessible terms, a term of Merge satisfies the weak form of
     Minimal Yield exactly when it takes at least one of its objects whole. -/
-theorem MinimalYieldWeak.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoicesG cuts F)
+theorem MinimalYieldWeak.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoices cuts F)
     (hc : s.HasExtractionCost acc 2) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
     MinimalYieldWeak acc F ({X} + s.trunk) ↔ s.numWhole ≠ 0 := by
@@ -170,7 +170,7 @@ theorem MinimalYieldWeak.merge_term_iff_of_extraction_two (hs : s ∈ forestCutC
 
 /-- A term of the unit stage has the accessible terms of the workspace, less `k` for the object
     it extracts unless it takes it whole. -/
-theorem sum_map_unit_term_add (hs : s ∈ forestCutChoicesG cuts F)
+theorem sum_map_unit_term_add (hs : s ∈ forestCutChoices cuts F)
     (hc : s.HasExtractionCost acc k) {B : UnorderedTree α} (hK : s.crown = {B}) :
     (({B} + s.trunk).map acc).sum + k = (F.map acc).sum + k * s.numWhole := by
   have h := hc.sum_map_add_mul_numWhole hs
@@ -183,14 +183,14 @@ theorem sum_map_unit_term_add (hs : s ∈ forestCutChoicesG cuts F)
 /-- A term whose crown contains no workspace component violates Minimal Yield under any counting
 ([marcolli-chomsky-berwick-2025] Proposition 1.6.8, Remark 1.6.7). -/
 theorem MinimalYieldWeak.not_of_forall_notMem (acc : UnorderedTree α → ℕ)
-    (hs : s ∈ forestCutChoicesG cuts F) (hK : ∀ T ∈ s.crown, T ∉ F) (X : UnorderedTree α) :
+    (hs : s ∈ forestCutChoices cuts F) (hK : ∀ T ∈ s.crown, T ∉ F) (X : UnorderedTree α) :
     ¬ MinimalYieldWeak acc F ({X} + s.trunk) := fun h ↦
   h.numWhole_ne_zero hs <| CutChoice.numWhole_eq_zero.mpr fun x hx hx0 ↦
-    hK x.1 (CutChoice.fst_mem_crown hs hx hx0) (fst_mem_of_mem_forestCutChoicesG hs hx)
+    hK x.1 (CutChoice.fst_mem_crown hs hx hx0) (fst_mem_of_mem_forestCutChoices hs hx)
 
 /-- Strong-form corollary of `MinimalYieldWeak.not_of_forall_notMem`. -/
 theorem MinimalYield.not_of_forall_notMem (acc : UnorderedTree α → ℕ)
-    (hs : s ∈ forestCutChoicesG cuts F) (hK : ∀ T ∈ s.crown, T ∉ F) (X : UnorderedTree α) :
+    (hs : s ∈ forestCutChoices cuts F) (hK : ∀ T ∈ s.crown, T ∉ F) (X : UnorderedTree α) :
     ¬ MinimalYield acc F ({X} + s.trunk) :=
   fun h ↦ MinimalYieldWeak.not_of_forall_notMem acc hs hK X h.toMinimalYieldWeak
 
@@ -208,7 +208,7 @@ theorem MinimalYield.em_pair (lbl : α) (S S' : UnorderedTree (α ⊕ β)) :
       {UnorderedTree.node (Sum.inl lbl) {S, S'}} := by
   classical
   simpa using (merge_term_iff_of_extraction_two
-    (map_whole_mem_forestCutChoicesG (cuts := cutSummandsN) _)
+    (map_whole_mem_forestCutChoices (cuts := admissibleCuts) _)
     (CutChoice.hasExtractionCost_map_whole _ _ _) (CutChoice.crown_map_whole _)
     (UnorderedTree.numEdges_node_pair _ S S')).2 (by simp)
 
@@ -220,7 +220,7 @@ theorem MinimalYield.em_pair_accessibleCount (lbl : α) {S S' : UnorderedTree (�
       {UnorderedTree.node (Sum.inl lbl) {S, S'}} := by
   classical
   simpa using (merge_term_iff_of_extraction_two
-    (map_whole_mem_forestCutChoicesG (cuts := cutSummandsN) _)
+    (map_whole_mem_forestCutChoices (cuts := admissibleCuts) _)
     (CutChoice.hasExtractionCost_map_whole _ _ _) (CutChoice.crown_map_whole _)
     (UnorderedTree.accessibleCount_merge lbl S S' hS hS')).2 (by simp)
 
@@ -235,13 +235,13 @@ variable (lbl : α) {T : UnorderedTree (α ⊕ β)}
 
 /-- Internal Merge through a deletion cut of a full binary tree keeps its accessible terms
     ([marcolli-chomsky-berwick-2025] Proposition 1.6.4, for `Δ^d`). -/
-theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ cutSummandsDN T) (hv : p.1 = {v}) :
+theorem numEdges_im_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T) (hv : p.1 = {v}) :
     (UnorderedTree.node (Sum.inl lbl) {v, p.2}).numEdges = T.numEdges := by
-  rw [UnorderedTree.numEdges_node_pair, cutSummandsDN_numEdges hT hp hv]
+  rw [UnorderedTree.numEdges_node_pair, deletionCuts_numEdges hT hp hv]
 
 /-- Internal Merge through a deletion cut of a full binary tree satisfies the weak form of Minimal
     Yield under deletion counting. -/
-theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ cutSummandsDN T)
+theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
     (hv : p.1 = {v}) :
     MinimalYieldWeak UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
   ⟨by simp, by simp only [Multiset.map_singleton, Multiset.sum_singleton,
@@ -249,7 +249,7 @@ theorem MinimalYieldWeak.im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ cu
 
 /-- Internal Merge through a deletion cut of a full binary tree violates Minimal Yield under
     deletion counting, since its size `σ` does not grow. -/
-theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ cutSummandsDN T)
+theorem MinimalYield.not_im_numEdges_of_cut (hT : T.IsFullBinary) (hp : p ∈ deletionCuts T)
     (hv : p.1 = {v}) :
     ¬ MinimalYield UnorderedTree.numEdges {T} {UnorderedTree.node (Sum.inl lbl) {v, p.2}} :=
   fun h ↦ by
@@ -265,16 +265,16 @@ end Internal
 theorem accessibleCount_im_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β) → β)
     (F₀ : Forest (UnorderedTree (α ⊕ β)))
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
-    (hp : p ∈ cutSummandsCN τ (UnorderedTree.node (Sum.inl a₀) F₀))
+    (hp : p ∈ traceCuts τ (UnorderedTree.node (Sum.inl a₀) F₀))
     (v : UnorderedTree (α ⊕ β)) (hv : p.1 = {v}) :
     (UnorderedTree.node (Sum.inl lbl) {v, p.2}).accessibleCount =
       (UnorderedTree.node (Sum.inl a₀) F₀).accessibleCount + 1 := by
   rw [UnorderedTree.accessibleCount_merge lbl v p.2
     (UnorderedTree.numTraces_lt_numNodes_of_isLeft <|
-      cutSummandsCN_value_isLeft_of_mem_crown τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
+      traceCuts_value_isLeft_of_mem_crown τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
     (UnorderedTree.numTraces_lt_numNodes_of_isLeft <| by
-      rw [cutSummandsCN_trunk_value τ _ p hp]; simp)]
-  have := cutSummandsCN_accessibleCount τ (by simp) hp
+      rw [traceCuts_trunk_value τ _ p hp]; simp)]
+  have := traceCuts_accessibleCount τ (by simp) hp
   simp only [hv, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at this
   omega
 
@@ -283,7 +283,7 @@ theorem accessibleCount_im_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β
 theorem MinimalYield.im_accessibleCount_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β) → β)
     (F₀ : Forest (UnorderedTree (α ⊕ β)))
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
-    (hp : p ∈ cutSummandsCN τ (UnorderedTree.node (Sum.inl a₀) F₀))
+    (hp : p ∈ traceCuts τ (UnorderedTree.node (Sum.inl a₀) F₀))
     (v : UnorderedTree (α ⊕ β)) (hv : p.1 = {v}) :
     MinimalYield UnorderedTree.accessibleCount
       ({UnorderedTree.node (Sum.inl a₀) F₀} : Forest (UnorderedTree (α ⊕ β)))
@@ -305,9 +305,9 @@ variable [DecidableEq (UnorderedTree α)] {F : Forest (UnorderedTree α)} {s : C
   {S S' X : UnorderedTree α}
 
 private theorem hasExtractionCost_numEdges_merge_term (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoicesG cutSummandsDN F) (hK : s.crown = {S, S'}) (h : s.numWhole ≠ 0) :
+    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'}) (h : s.numWhole ≠ 0) :
     s.HasExtractionCost UnorderedTree.numEdges 2 :=
-  hasExtractionCost_numEdges_cutSummandsDN hF hs fun x hx hx0 ↦ by
+  hasExtractionCost_numEdges_deletionCuts hF hs fun x hx hx0 ↦ by
     have := CutChoice.card_add_numWhole_le_card_crown hs hx hx0
     rw [hK] at this
     simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton] at this
@@ -317,7 +317,7 @@ private theorem hasExtractionCost_numEdges_merge_term (hF : ∀ T ∈ F, T.IsFul
     exactly when it takes both of its objects whole ([marcolli-chomsky-berwick-2025]
     Propositions 1.6.4 and 1.6.8, for `Δ^d`). -/
 theorem MinimalYield.merge_term_numEdges_iff (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoicesG cutSummandsDN F) (hK : s.crown = {S, S'})
+    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'})
     (hX : X.numEdges = S.numEdges + S'.numEdges + 2) :
     MinimalYield UnorderedTree.numEdges F ({X} + s.trunk) ↔ s.numWhole = 2 :=
   ⟨fun h ↦ (merge_term_iff_of_extraction_two hs
@@ -328,7 +328,7 @@ theorem MinimalYield.merge_term_numEdges_iff (hF : ∀ T ∈ F, T.IsFullBinary)
 /-- Under deletion counting, on a full binary workspace, a term of Merge satisfies the weak form of
     Minimal Yield exactly when it takes an object whole. -/
 theorem MinimalYieldWeak.merge_term_numEdges_iff (hF : ∀ T ∈ F, T.IsFullBinary)
-    (hs : s ∈ forestCutChoicesG cutSummandsDN F) (hK : s.crown = {S, S'})
+    (hs : s ∈ forestCutChoices deletionCuts F) (hK : s.crown = {S, S'})
     (hX : X.numEdges = S.numEdges + S'.numEdges + 2) :
     MinimalYieldWeak UnorderedTree.numEdges F ({X} + s.trunk) ↔ s.numWhole ≠ 0 :=
   ⟨fun h ↦ h.numWhole_ne_zero hs, fun h ↦ (MinimalYieldWeak.merge_term_iff_of_extraction_two hs
@@ -345,18 +345,18 @@ variable [DecidableEq (UnorderedTree (α ⊕ β))] {τ : UnorderedTree (α ⊕ �
 
 /-- Under trace counting a term of Merge gains one accessible term for each object it takes whole
     ([marcolli-chomsky-berwick-2025] Propositions 1.6.4 and 1.6.8, for `Δ^c`). -/
-theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoices (traceCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {S S' : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {S, S'}) :
     Forest.accessibleCount ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) =
       Forest.accessibleCount F + s.numWhole := by
-  have h := sum_map_merge_term_add hs (hasExtractionCost_accessibleCount_cutSummandsCN hs hF) hK
+  have h := sum_map_merge_term_add hs (hasExtractionCost_accessibleCount_traceCuts hs hF) hK
     (accessibleCount_merge_of_crown_eq a hs hF hK)
   simp only [Forest.accessibleCount] at h ⊢
   omega
 
 /-- Under trace counting every term of Merge grows the size `σ` of the workspace by exactly one. -/
-theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoices (traceCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {S S' : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {S, S'}) :
     Forest.accessibleSize ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) =
@@ -369,23 +369,23 @@ theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSum
 /-- Under trace counting, a Merge term satisfies Minimal Yield iff some merged object is an
 unextracted workspace component ([marcolli-chomsky-berwick-2025] Proposition 1.6.8). -/
 theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
-    (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+    (hs : s ∈ forestCutChoices (traceCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft)
     {S S' : UnorderedTree (α ⊕ β)} (hK : s.crown = {S, S'}) :
     MinimalYield UnorderedTree.accessibleCount F
         ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) ↔ s.numWhole ≠ 0 :=
   MinimalYield.merge_term_iff_of_extraction_one hs
-    (hasExtractionCost_accessibleCount_cutSummandsCN hs hF) hK
+    (hasExtractionCost_accessibleCount_traceCuts hs hF) hK
     (accessibleCount_merge_of_crown_eq a hs hF hK)
 
 /-- Under trace counting, a unit-stage term loses one accessible term unless `B` is an unextracted
 workspace component ([marcolli-chomsky-berwick-2025] Remark 1.6.7, for `Δ^c`). -/
-theorem accessibleCount_unit_term (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+theorem accessibleCount_unit_term (hs : s ∈ forestCutChoices (traceCuts τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {B : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {B}) :
     Forest.accessibleCount ({B} + s.trunk) + 1 = Forest.accessibleCount F + s.numWhole ∧
       Forest.accessibleSize ({B} + s.trunk) = Forest.accessibleSize F := by
-  have h := sum_map_unit_term_add hs (hasExtractionCost_accessibleCount_cutSummandsCN hs hF) hK
+  have h := sum_map_unit_term_add hs (hasExtractionCost_accessibleCount_traceCuts hs hF) hK
   have := card_singleton_add_trunk_add_numWhole hs B
   simp only [Forest.accessibleSize, Forest.accessibleCount, one_mul] at *
   omega

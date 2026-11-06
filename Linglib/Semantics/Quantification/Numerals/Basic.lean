@@ -8,14 +8,14 @@ module
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Predicative
 
 /-!
 # Numeral meanings
 
 A bare numeral and its modifications *more than*, *fewer than*, *at least* and *at most* are the
-five comparisons of `Degree.Comparison`. On Kennedy's de-Fregean semantics the form with comparison
-`c` and number `m` is the degree quantifier `Degree.MaxIn (c.interval m)`, so the bare numeral
+five comparisons of `Comparison`. On Kennedy's de-Fregean semantics the form with comparison
+`c` and number `m` is the degree quantifier `Quantifier.MaxIn (c.interval m)`, so the bare numeral
 `MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded
 `Quantifier.individual m`. Each reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interval](##BE_maxIn) and
 [existential closure then gives the lower-bounded numeral](##some_BE_maxIn_singleton), which the
@@ -45,7 +45,7 @@ classes of modifier are read off the construction it is built on.
 
 namespace Numerals
 
-open Degree Exhaustification Quantifier
+open Exhaustification Quantifier
 
 /-! ### The two readings of a bare numeral -/
 
@@ -151,7 +151,7 @@ modifier places a bound on a range of amounts, so *a hexagon has at most 10 side
 the modifier conveys that the speaker does not know the amount.
 
 [kennedy-2015] and [rett-2015a] reduce the split to the ordering the modifier expresses, exclusive
-for Class A and inclusive for Class B (`Degree.Comparison.self_mem_interval_iff`), and derive the
+for Class A and inclusive for Class B (`Comparison.self_mem_interval_iff`), and derive the
 ignorance as an implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
 that *at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
 contrast graded and dependent on the question under discussion, and [enguehard-2018] derives

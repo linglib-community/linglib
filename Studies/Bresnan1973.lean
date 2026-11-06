@@ -311,7 +311,7 @@ def catOf : String → Option Cat
   | _ => none
 
 open English.Adjectives in
-def adjectiveOf : String → Option Degree.GradableAdjective
+def adjectiveOf : String → Option Adjective
   | "tall" => some tall
   | "short" => some short
   | "high" => some high

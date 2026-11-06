@@ -73,11 +73,12 @@ def moroccan : Cand → Paradigm Seg (List Seg) :=
   paradigms .sh .r .b [[.t], [.n, .a], [.t, .i], [.t, .u]] [[.schwa, .t], [.u]]
 
 -- (10)
-theorem moroccan_verb : (tableau moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
+theorem moroccan_verb : (Tableau.ofLabels moroccan {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 -- (12)
-theorem moroccan_noun : (tableau (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
+theorem moroccan_noun :
+    (Tableau.ofLabels (paradigms .sh .r .b [] []) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 /-! ### Judeo-Tripolitanian Arabic verbs and nouns (§3.1) -/
@@ -89,7 +90,7 @@ def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
 -- (13)
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (tableau (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
+      (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The roots of the nouns (14): CəCC with C₂ more sonorous than C₃ — *kəlb, bəntʃ, wəld,
@@ -100,8 +101,10 @@ def nouns : List (Seg × Seg × Seg) × List (Seg × Seg × Seg) :=
 
 -- (14)
 theorem jta_nouns :
-    (∀ r ∈ nouns.1, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
-    ∀ r ∈ nouns.2, (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
+    (∀ r ∈ nouns.1,
+      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b}) ∧
+    ∀ r ∈ nouns.2,
+      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.a} := by
   decide
 
 /-! ### The challenge from adjectives (§3.2–3.3)
@@ -120,13 +123,14 @@ def adjectives : List (Seg × Seg × Seg) :=
 
 -- (19)
 theorem adjective_paradigm :
-    ∀ r ∈ adjectives, (tableau (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
+    ∀ r ∈ adjectives,
+      (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 -- (20)
 theorem adjective_bare :
     ∀ r ∈ adjectives,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
+      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} ranking).optimal = {.b} := by
   decide
 
 /-! ### Category-specific templates (§3.3) -/
@@ -149,20 +153,21 @@ def templateRanking (cat : Category) : List (Constraint (Paradigm Seg (List Seg)
 -- (23)
 theorem template_adjective :
     ∀ r ∈ adjectives,
-      (tableau (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
+      (Tableau.ofLabels (adjective r.1 r.2.1 r.2.2) {.a, .b} (templateRanking .adjective)).optimal =
         {.a} := by
   decide
 
 -- (13), (14)
 theorem template_verb_noun :
     (∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
-      (tableau (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)).optimal
+      (Tableau.ofLabels (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} (templateRanking .verb)).optimal
         = {.a}) ∧
     (∀ r ∈ nouns.1,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} (templateRanking .noun)).optimal = {.b}) ∧
+      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
+        (templateRanking .noun)).optimal = {.b}) ∧
     ∀ r ∈ nouns.2,
-      (tableau (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b} (templateRanking .noun)).optimal =
-        {.a} := by
+      (Tableau.ofLabels (paradigms r.1 r.2.1 r.2.2 [] []) {.a, .b}
+        (templateRanking .noun)).optimal = {.a} := by
   decide
 
 end MarcoRasin2026

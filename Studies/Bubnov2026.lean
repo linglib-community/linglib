@@ -46,7 +46,8 @@ reversed hierarchy. It is taken as unattested here.
 
 namespace Bubnov2026
 
-open DeganoAloni2025 Dekier2021 Indefinite Team Morphology.Containment Morphology.Exponence
+open DeganoAloni2025 Dekier2021 Indefinite Team Morphology
+open Morphology.SupersetRule (spellout spellout_eq_some_of_filter_of_le isContiguous_spellout)
 open Morphology.Nanosyntax
 open Haspelmath1997 hiding russian
 

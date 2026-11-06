@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Coordinator
+public import Linglib.Semantics.Coordinator
 public import Linglib.Semantics.Composition.Mode
 
 /-!

@@ -222,7 +222,7 @@ def sampledRoots : List SampledRoot :=
 
 /-- A diagnostic derivational operator is given by its exponent, the core-argument positions it
 adds, and its structural applicability condition with bundled decidability, since the inventory
-holds heterogeneous conditions. Selection comes from the `Morphology.Exponence.Rule` instance. -/
+holds heterogeneous conditions. Selection comes from the `Morphology.ExponenceRule` instance. -/
 structure DiagOp where
   /-- The suffix, in the paper's orthography. -/
   exponent : String
@@ -233,15 +233,15 @@ structure DiagOp where
   /-- Bundled decidability of the condition. -/
   decApplies : DecidablePred Applies
 
-instance : Exponence.Rule DiagOp SampledRoot String where
+instance : ExponenceRule DiagOp SampledRoot String where
   exponent := DiagOp.exponent
   Applies := DiagOp.Applies
 
-instance : DecidableRel (Exponence.Applies : DiagOp → SampledRoot → Prop) :=
+instance : DecidableRel (Applies : DiagOp → SampledRoot → Prop) :=
   fun op r ↦ op.decApplies r
 
 @[simp] theorem applies_iff (op : DiagOp) (r : SampledRoot) :
-    Exponence.Applies op r ↔ op.Applies r := Iff.rfl
+    Applies op r ↔ op.Applies r := Iff.rfl
 
 /-- Affective *=t* transitivises an agent-salient root by adding a patient argument. -/
 def affectiveT : DiagOp :=
@@ -262,7 +262,7 @@ def positionalLah : DiagOp :=
 
 /-- The diagnostic inventory in the paper's order, the three transitivisers of (1) and then the
 positional derivation. -/
-def inventory : Exponence.RuleSet DiagOp :=
+def inventory : RuleSet DiagOp :=
   [affectiveT, zeroDeriv, causativeS, positionalLah]
 
 /-- The exponents of the inventory's applicable operators at `r`, in inventory order, which are
@@ -298,7 +298,7 @@ theorem predictedExponents_eq (r : SampledRoot) :
     predictedExponents r =
       (predictedClass r).toList.map exponentOf ++
         (if IsPositional r.kinds then ["=lah"] else []) := by
-  simp only [predictedExponents, predictedClass, Exponence.RuleSet.applicable,
+  simp only [predictedExponents, predictedClass, RuleSet.applicable,
     applies_iff, inventory, affectiveT, zeroDeriv, causativeS,
     positionalLah, List.filter_cons, List.filter_nil, decide_eq_true_eq,
     SalienceClass.ofKinds]

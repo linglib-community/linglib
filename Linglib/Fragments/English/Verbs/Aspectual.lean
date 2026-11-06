@@ -18,7 +18,7 @@ adjacent phase.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Change of State -/
 

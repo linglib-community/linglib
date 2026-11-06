@@ -18,37 +18,16 @@ public import Linglib.Core.Algebra.Order.Archimedean.Class
 # Marginal and large differences
 
 Dinis and Jacinto's ML theory orders degrees by smaller than together with a relation of being
-marginally smaller. A degree is largely smaller than another when it is smaller but not
-marginally so. A marginal scale, the theory's ML scale, is a linear order with a
-marginally-smaller-than relation obeying the five axioms of their 2026 paper, which simplify the
-original theory of 2025.
-
-Largely smaller than is a strict weak order, and its incomparability relation is at most
-marginal difference. The degrees therefore fall into order-connected blocks of marginally
-different degrees, no block having an endpoint that faces another block, and every such partition
-of a linear order is a marginal scale. Two families of examples are lexicographic pairs of a
-block and a location within it, among them the representative model `ℚ ×ₗ ℤ`, and the
-differences lying in an order-connected subgroup of an ordered group, such as the infinitesimals
-among the hyperreals.
-
-## Main definitions
-
-* `Degree.MarginalScale`: a marginal scale, with `MarginallyLT` marginally smaller than,
-  `LargelyLT` largely smaller than, and `AtMostMarginal` at most marginal difference.
-* `Degree.MarginalScale.ofSetoid`, `Degree.MarginalScale.lex`,
-  `Degree.MarginalScale.ofAddSubgroup`: marginal scales from order-connected partitions,
-  lexicographic pairs, and order-connected subgroups.
-* `Degree.MarginalScale.IsHom`: a homomorphism of marginal scales.
-
-## Main statements
-
-* `Degree.MarginalScale.atMostMarginal_iff_incompRel`: largely smaller than is a strict weak
-  order whose incomparability is at most marginal difference.
-* `Degree.MarginalScale.ofSetoid_atMostMarginalSetoid`: marginal scales correspond to their
-  partitions into blocks.
-* `Degree.MarginalScale.isHom_lex_iff`: a map into a lexicographic marginal scale is a
-  homomorphism exactly when its block coordinate pulls back largely smaller than and its location
-  coordinate grows along marginal steps.
+marginally smaller, and a degree is largely smaller than another when it is smaller but not
+marginally so. A `MarginalScale` is a linear order with such a relation obeying the five axioms of
+their 2026 paper, which simplify the original theory of 2025. Largely smaller than is a strict weak
+order [whose incomparability is at most marginal
+difference](##MarginalScale.atMostMarginal_iff_incompRel), so the degrees fall into order-connected
+blocks, and [marginal scales correspond to their partitions into
+blocks](##MarginalScale.ofSetoid_atMostMarginalSetoid). [Lexicographic pairs](##MarginalScale.lex)
+of a block and a location within it are marginal scales, among them the representative model `ℚ ×ₗ
+ℤ`, as are [the differences in an order-connected subgroup](##MarginalScale.ofAddSubgroup) of an
+ordered group.
 
 ## References
 
@@ -57,8 +36,6 @@ among the hyperreals.
 -/
 
 @[expose] public section
-
-namespace Degree
 
 /-- A marginal scale is a linear order with a relation of being marginally smaller, subject to the
 five axioms of ML theory. A degree is largely smaller than another when it is smaller but not
@@ -391,5 +368,3 @@ theorem IsHom.fst_eq_fst_iff (hf : ml.IsHom (lex β γ) f) :
 end Lex
 
 end MarginalScale
-
-end Degree

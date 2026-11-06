@@ -193,6 +193,10 @@ theorem IsExact.isConsistent {a : B} (h : IsExact a) : IsConsistent a := by
 theorem IsExact.isAnticonsistent {a : B} (h : IsExact a) : IsAnticonsistent a := by
   rw [IsAnticonsistent, h.eq]
 
+/-- The consistent values form a lower set of the knowledge order. -/
+theorem IsConsistent.anti {a b : B} (hb : IsConsistent b) (h : a ≤ₖ b) : IsConsistent a :=
+  kLE_trans (kLE_trans h hb) (conf_kLE_conf h)
+
 instance [DecidableRel (kLE (B := B))] : DecidablePred (IsConsistent (B := B)) :=
   fun a ↦ inferInstanceAs (Decidable (a ≤ₖ conf a))
 
@@ -210,35 +214,23 @@ variable [Lattice B] [Lattice (Know B)] [IsInterlaced B] [Conflation B]
 theorem IsConsistent.inf {a b : B} (ha : IsConsistent a) (hb : IsConsistent b) :
     IsConsistent (a ⊓ b) := by
   rw [IsConsistent, conf_inf]
-  calc a ⊓ b ≤ₖ conf a ⊓ b := IsInterlaced.inf_kmono ha b
-    _ = b ⊓ conf a := inf_comm ..
-    _ ≤ₖ conf b ⊓ conf a := IsInterlaced.inf_kmono hb (conf a)
-    _ = conf a ⊓ conf b := inf_comm ..
+  exact inf_kLE_inf ha hb
 
 theorem IsConsistent.sup {a b : B} (ha : IsConsistent a) (hb : IsConsistent b) :
     IsConsistent (a ⊔ b) := by
   rw [IsConsistent, conf_sup]
-  calc a ⊔ b ≤ₖ conf a ⊔ b := IsInterlaced.sup_kmono ha b
-    _ = b ⊔ conf a := sup_comm ..
-    _ ≤ₖ conf b ⊔ conf a := IsInterlaced.sup_kmono hb (conf a)
-    _ = conf a ⊔ conf b := sup_comm ..
+  exact sup_kLE_sup ha hb
 
 /-- The anticonsistent values are closed under truth meet. -/
 theorem IsAnticonsistent.inf {a b : B} (ha : IsAnticonsistent a)
     (hb : IsAnticonsistent b) : IsAnticonsistent (a ⊓ b) := by
   rw [IsAnticonsistent, conf_inf]
-  calc conf a ⊓ conf b ≤ₖ a ⊓ conf b := IsInterlaced.inf_kmono ha (conf b)
-    _ = conf b ⊓ a := inf_comm ..
-    _ ≤ₖ b ⊓ a := IsInterlaced.inf_kmono hb a
-    _ = a ⊓ b := inf_comm ..
+  exact inf_kLE_inf ha hb
 
 theorem IsAnticonsistent.sup {a b : B} (ha : IsAnticonsistent a)
     (hb : IsAnticonsistent b) : IsAnticonsistent (a ⊔ b) := by
   rw [IsAnticonsistent, conf_sup]
-  calc conf a ⊔ conf b ≤ₖ a ⊔ conf b := IsInterlaced.sup_kmono ha (conf b)
-    _ = conf b ⊔ a := sup_comm ..
-    _ ≤ₖ b ⊔ a := IsInterlaced.sup_kmono hb a
-    _ = a ⊔ b := sup_comm ..
+  exact sup_kLE_sup ha hb
 
 omit [IsInterlaced B] in
 /-- The exact values are closed under truth meet. -/
@@ -275,12 +267,35 @@ section KnowledgeMeet
 variable [Preorder B] [Lattice (Know B)] [Conflation B]
 
 /-- The consensus of a consistent value with any value is consistent ([fitting-1994]
-Theorem 9.3, there for products). -/
+Theorem 9.3). -/
 theorem IsConsistent.kInf {a : B} (ha : IsConsistent a) (b : B) : IsConsistent (a ⊓ₖ b) :=
-  have h : a ⊓ₖ b ≤ₖ a := (inf_le_left : toKnow a ⊓ toKnow b ≤ toKnow a)
-  kLE_trans (kLE_trans h ha) (conf_kLE_conf h)
+  ha.anti (inf_le_left (α := Know B))
 
 end KnowledgeMeet
+
+section KnowledgeBounds
+
+variable [Preorder B] [PartialOrder (Know B)] [BoundedOrder (Know B)] [Conflation B]
+
+/-- Conflation exchanges the knowledge bounds. -/
+@[simp] theorem conf_ofKnow_top : conf (ofKnow (⊤ : Know B)) = ofKnow ⊥ :=
+  have h : conf (ofKnow (⊥ : Know B)) ≤ₖ ofKnow ⊤ := le_top (α := Know B)
+  kLE_antisymm (conf_conf (ofKnow (⊥ : Know B)) ▸ conf_kLE_conf h) (bot_le (α := Know B))
+
+@[simp] theorem conf_ofKnow_bot : conf (ofKnow (⊥ : Know B)) = ofKnow ⊤ := by
+  rw [← conf_ofKnow_top, conf_conf]
+
+/-- Over a nontrivial knowledge order the knowledge top is not exact ([fitting-1994]
+Theorem 9.2). -/
+theorem not_isExact_ofKnow_top (h : (⊥ : Know B) ≠ ⊤) : ¬ IsExact (ofKnow (⊤ : Know B)) :=
+  fun hx ↦ h (ofKnow.injective (conf_ofKnow_top.symm.trans hx.eq))
+
+/-- Over a nontrivial knowledge order the knowledge bottom is not exact ([fitting-1994]
+Theorem 9.2). -/
+theorem not_isExact_ofKnow_bot (h : (⊥ : Know B) ≠ ⊤) : ¬ IsExact (ofKnow (⊥ : Know B)) :=
+  fun hx ↦ h (ofKnow.injective (hx.eq.symm.trans conf_ofKnow_bot))
+
+end KnowledgeBounds
 
 section Interpolation
 

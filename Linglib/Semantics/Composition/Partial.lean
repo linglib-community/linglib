@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.PFun
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.LogicalRelation
 
 /-!
 # Partial interpretation
@@ -29,17 +30,18 @@ failure, as distinct from uninterpretability, where the types do not compose.
 
 ## Implementation notes
 
-A partial function is mathlib's `PFun`, and a node denotes a `Part` value of its type. The engine
-evaluates the term a tree translates to (`PhraseStructure.Tree.translate`), so Predicate
-Abstraction needs no distributor; uninterpretability is the engine returning no denotation, and
-presupposition failure its returning an undefined one. `Ty.PDomain` interprets a function type by
-the partial functions `a → Part b`, with partiality inside the arrow: the call-by-value monadic
-interpretation of the types at `Part`, of which `Ty.Domain` is the case at `Id`. The effectful
-engine of `Composition/Tree.lean` at `M = Part` is a different engine, with partiality outside the
-arrow, `Part (a → b)`. There a Fregean definite, defined on some predicates and undefined on
-others, has no value, and Predicate Abstraction would be defined only where the body is defined
-at every entity. The partial domain of a set of alternatives is trivial: how definedness projects
-through alternatives is left open, so the engine's partial values say nothing about them.
+A node denotes a `Part` value of its type. The engine evaluates the term a tree translates to
+(`PhraseStructure.Tree.translate`), so Predicate Abstraction needs no distributor;
+uninterpretability is the engine returning no denotation, and presupposition failure its returning
+an undefined one. `Ty.PDomain` is `Ty.DomainM` at `Part`, interpreting a function type by the
+functions `a → Part b`, with partiality inside the arrow, as `Ty.Domain` is `Ty.DomainM` where
+computations are values; `Mode.evalPartial` and the lift to total denotations are likewise
+`Mode.evalKleisli` and `Ty.LiftRel` at `Part`. The effectful engine of `Composition/Tree.lean` at
+`M = Part` is a different engine, with partiality outside the arrow, `Part (a → b)`. There a
+Fregean definite, defined on some predicates and undefined on others, has no value, and Predicate
+Abstraction would be defined only where the body is defined at every entity. Each alternative of a
+set is defined or not, and a failed computation of alternatives is one failed alternative: this
+records definedness alternative by alternative and leaves open how it projects to a sentence.
 
 ## References
 
@@ -50,19 +52,10 @@ through alternatives is left open, so the engine's partial values say nothing ab
 
 namespace Montague
 
-/-- Partial denotation domains, as `Ty.Domain` but with functions the partial functions `→.`,
-whose domain is a lexical entry's definedness condition. -/
+/-- Partial denotation domains, `Ty.DomainM` at `Part`: a function is defined at an argument where a
+lexical entry's definedness condition holds, and each alternative of a set is defined or not. -/
 abbrev Ty.PDomain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
-  match ty with
-  | .e => E
-  | .t => Prop
-  | .d => S.degree
-  | .n => ℕ
-  | .v => S.eventuality
-  | .s => W
-  | .fn a b => Ty.PDomain E W a S →. Ty.PDomain E W b S
-  | .comp (.reader ι) b => Ty.PDomain E W ι S →. Ty.PDomain E W b S
-  | .comp .set _ => PUnit
+  Ty.DomainM Part E W ty S
 
 /-- A partial denotation is a semantic type with a possibly undefined value in its partial
 domain. -/
@@ -75,74 +68,45 @@ section Evaluation
 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
-/-- The partial denotation of a mode, defined where both daughters are and the function or role
-head among them is defined at its argument. -/
-def Mode.evalPartial : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ S) →
-    Part (Ty.PDomain E W σ₂ S) → Part (Ty.PDomain E W τ S)
-  | _, _, _, .functionalLeft, f, a => f.bind fun fv ↦ a.bind fv
-  | _, _, _, .functionalRight, a, f => f.bind fun fv ↦ a.bind fv
-  | _, _, _, .predicateModification, p, q => p.bind fun P ↦ q.bind fun Q ↦
-      Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b
-  | _, _, _, .eventIdentificationLeft, f, p => f.bind fun F ↦ p.bind fun P ↦
-      Part.some fun x ↦ (F x).map fun Fx e ↦ (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b
-  | _, _, _, .eventIdentificationRight, p, f => f.bind fun F ↦ p.bind fun P ↦
-      Part.some fun x ↦ (F x).map fun Fx e ↦ (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b
-  | _, _, _, .mapRight (f := .reader _) m, a, b =>
-      a.bind fun av ↦ b.map fun bv i ↦ m.evalPartial (Part.some av) (bv i)
-  | _, _, _, .mapLeft (f := .reader _) m, a, b =>
-      a.bind fun av ↦ b.map fun bv i ↦ m.evalPartial (av i) (Part.some bv)
-  | _, _, _, .ap (f := .reader _) m, a, b =>
-      a.bind fun av ↦ b.map fun bv i ↦ m.evalPartial (av i) (bv i)
-  | _, _, _, .unitRight (f := .reader _) m, a, b =>
-      m.evalPartial (a.map fun av x ↦ av fun _ ↦ Part.some x) b
-  | _, _, _, .unitLeft (f := .reader _) m, a, b =>
-      m.evalPartial a (b.map fun bv y ↦ bv fun _ ↦ Part.some y)
-  | _, _, _, .join (f := .reader _) m, a, b =>
-      (m.evalPartial a b).map fun x i ↦ (x i).bind fun y ↦ y i
-  | _, _, _, .mapRight (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
-  | _, _, _, .mapLeft (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
-  | _, _, _, .ap (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
-  | _, _, _, .unitRight (f := .set) m, a, b => m.evalPartial (a.map fun av _ ↦ av PUnit.unit) b
-  | _, _, _, .unitLeft (f := .set) m, a, b => m.evalPartial a (b.map fun bv _ ↦ bv PUnit.unit)
-  | _, _, _, .join (f := .set) m, a, b => (m.evalPartial a b).map fun _ ↦ PUnit.unit
+/-- A failed computation of alternatives is a failed alternative. -/
+instance : FlattenAlternatives Part :=
+  ⟨fun y ↦ {z | (∃ s ∈ y, z ∈ s) ∨ (¬ y.Dom ∧ z = Part.none)}⟩
+
+/-- The partial denotation of a mode, `Mode.evalKleisli` at `Part`: defined where both daughters
+are and the function or role head among them is defined at its argument. -/
+abbrev Mode.evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) :
+    Part (Ty.PDomain E W σ₁ S) → Part (Ty.PDomain E W σ₂ S) → Part (Ty.PDomain E W τ S) :=
+  m.evalKleisli
 
 /-- Every mode is strict in its left daughter. -/
 theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
     {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : a.Dom := by
   induction m with
-  | @unitRight f _ _ _ _ _ ih => cases f <;> exact ih h
-  | @unitLeft f _ _ _ _ _ ih => cases f <;> exact ih h
-  | @join f _ _ _ _ ih => cases f <;> exact ih h
-  | @mapRight f | @mapLeft f | @ap f => cases f <;> exact h.1
-  | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
-  | eventIdentificationRight =>
-    obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
+  | functionalRight => exact Part.Dom.of_bind h.2
+  | unitRight _ ih => exact Part.Dom.of_bind (ih h)
+  | unitLeft _ ih => exact ih h
+  | join _ ih => exact ih (Part.Dom.of_bind h)
+  | _ => exact Part.Dom.of_bind h
 
 /-- Every mode is strict in its right daughter. -/
 theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
     {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : b.Dom := by
   induction m with
-  | @unitRight f _ _ _ _ _ ih => cases f <;> exact ih h
-  | @unitLeft f _ _ _ _ _ ih => cases f <;> exact ih h
-  | @join f _ _ _ _ ih => cases f <;> exact ih h
-  | @mapRight f | @mapLeft f | @ap f => cases f <;> exact h.2
-  | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
-  | eventIdentificationRight =>
-    obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
+  | functionalRight => exact Part.Dom.of_bind h
+  | unitRight _ ih => exact ih h
+  | unitLeft _ ih => exact Part.Dom.of_bind (ih h)
+  | join _ ih => exact ih (Part.Dom.of_bind h)
+  | _ => exact Part.Dom.of_bind h.2
 
 open scoped Assignment
 
-/-- The partial interpretation: a term's value is a possibly undefined partial denotation, an
-abstraction is the partial function undefined wherever its body is, and a composition is defined
-where its daughters are and the function among them is defined at its argument. -/
-def Interpretation.partial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) :
-    Interpretation K where
-  D ty := Part (Ty.PDomain E W ty S)
-  Val ty := Ty.PDomain E W ty S
-  const := I
-  var x := Part.some x
-  lam f := Part.some f
-  mode m := m.evalPartial
+/-- The partial interpretation, call-by-value at `Part`: a term's value is a possibly undefined
+partial denotation, an abstraction is the partial function undefined wherever its body is, and a
+composition is defined where its daughters are and the function among them is defined at its
+argument. -/
+abbrev Interpretation.partial {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) : Interpretation K :=
+  .kleisli Part I
 
 /-- The partial denotation of a term under a partial interpretation of the constants and an
 assignment. -/
@@ -171,28 +135,27 @@ variable {E W : Type} {S : Sorts}
 
 /-! ### Composition of defined daughters
 
-These are rewriting lemmas rather than `simp` lemmas, since the reducible `Ty.PDomain` keys a
-concrete domain and a variable one differently for `simp`'s index. For the same reason, a `Part`
-redex at a concrete type, such as `(Part.some f).bind k` after `Mode.evalPartial` unfolds, is
-rewritten by `erw`, not `rw`. -/
+A mode's partial value on defined daughters, in the `Part.bind` and `Part.map` form a study
+compares with. -/
 
 theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
     (a : Ty.PDomain E W σ S) :
     Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W S) ⟨σ, Part.some a⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_left]; simp [Mode.evalPartial]
+  rw [Mode.combine?_fn_left]; simp [Mode.evalKleisli, Part.bind_eq_bind]
 
 theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ S)
     (f : Ty.PDomain E W (σ ⇒ τ) S) :
     Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W S) ⟨σ ⇒ τ, Part.some f⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_right]; simp [Mode.evalPartial]
+  rw [Mode.combine?_fn_right]; simp [Mode.evalKleisli, Part.bind_eq_bind]
 
 theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) S) :
     Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
-  rw [Mode.combine?_predicateModification]; simp [Mode.evalPartial]
+  rw [Mode.combine?_predicateModification]
+  simp [Mode.evalKleisli, Part.bind_eq_bind, Part.bind_some_eq_map]
 
 theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.e ⇒ .v ⇒ .t) S)
     (P : Ty.PDomain E W (.v ⇒ .t) S) :
@@ -200,13 +163,8 @@ theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.
         ⟨.v ⇒ .t, Part.some P⟩ =
       some ⟨.e ⇒ .v ⇒ .t, Part.some fun x ↦ (F x).map fun Fx e ↦
         (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b⟩ := by
-  rw [Mode.combine?_eventIdentificationLeft]; simp [Mode.evalPartial]
-
-/-- The value of an interpreted daughter at the type `τ`, which is undefined where the daughter
-is uninterpretable or of another type. -/
-def valueAtPartial (τ : Ty) : Option (PDenotation E W S) → Part (Ty.PDomain E W τ S)
-  | some ⟨ty, v⟩ => if h : ty = τ then h ▸ v else Part.none
-  | none => Part.none
+  rw [Mode.combine?_eventIdentificationLeft]
+  simp [Mode.evalKleisli, Part.bind_eq_bind, Part.bind_some_eq_map]
 
 end Composition
 
@@ -224,23 +182,37 @@ variable {E W : Type} {S : Sorts}
 
 open scoped Assignment
 
-/-- The lifting relation between a total denotation and a partial one of the same type. -/
-def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty S → Prop
-  | .e, x, y => x = y
-  | .t, x, y => x = y
-  | .d, x, y => x = y
-  | .n, x, y => x = y
-  | .v, x, y => x = y
-  | .s, x, y => x = y
-  | .fn a b, f, f' => ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
-  | .comp (.reader ι) b, f, f' =>
-    ∀ x y, Ty.Lifts ι x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
-  | .comp .set _, _, _ => True
+/-- The relator between values and partial values: defined, with a related value. -/
+def LiftsPart {α β : Type} (R : α → β → Prop) (x : α) (y : Part β) : Prop :=
+  ∃ z, y = Part.some z ∧ R x z
+
+/-- `LiftsPart` respects units, binds and the flattening of alternatives. -/
+theorem KleisliRelator.liftsPart :
+    letI := pureMonad; letI := pureFlatten
+    KleisliRelator (M := fun α ↦ α) (M' := Part) LiftsPart := by
+  let _ := pureMonad
+  let _ := pureFlatten
+  refine ⟨fun h ↦ ⟨_, rfl, h⟩, ?_, ?_⟩
+  · rintro _ _ _ _ _ _ x _ f g ⟨z, rfl, hz⟩ hf
+    obtain ⟨w, hw, hR⟩ := hf hz
+    exact ⟨w, by simpa using hw, hR⟩
+  · rintro _ _ _ x _ ⟨s, rfl, h⟩
+    have e : FlattenAlternatives.flatten (Part.some s) = s := by
+      ext z
+      simp [FlattenAlternatives.flatten]
+    rw [e]
+    exact h
+
+/-- The lifting relation between a total denotation and a partial one of the same type: the logical
+relation at `LiftsPart` and equality on the base types. -/
+abbrev Ty.Lifts (ty : Ty) : Ty.Domain E W ty S → Ty.PDomain E W ty S → Prop :=
+  Ty.LiftRel (M := fun α ↦ α) (M' := Part) LiftsPart .eq ty
 
 @[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (S := S) .e x y ↔ x = y :=
   Iff.rfl
 
-@[simp] theorem Ty.lifts_t {x y : Prop} : Ty.Lifts (E := E) (W := W) (S := S) .t x y ↔ x = y :=
+@[simp] theorem Ty.lifts_t {x y : Prop} :
+    Ty.Lifts (E := E) (W := W) (S := S) .t x y ↔ (x ↔ y) :=
   Iff.rfl
 
 theorem Ty.lifts_fn {a b : Ty} {f : Ty.Domain E W (a ⇒ b) S} {f' : Ty.PDomain E W (a ⇒ b) S} :
@@ -286,13 +258,14 @@ def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty
   | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
   | .fn _ _, _ => fun _ ↦ Part.none
   | .comp (.reader _) _, _ => fun _ ↦ Part.none
-  | .comp .set _, _ => PUnit.unit
+  | .comp .set _, _ => ∅
 
 theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S) :
     Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
   induction h with
   | fn _ ih => exact Ty.lifts_lift fun x ↦ ih _
   | intens _ ih => exact fun _ _ hw ↦ ⟨_, hw ▸ rfl, ih _⟩
+  | t => exact Iff.rfl
   | _ => rfl
 
 /-- The partial denotation a total one lifts to. -/
@@ -305,101 +278,17 @@ theorem Denotation.lifts_toPartial {d : Denotation E W Id S} (h : d.1.FirstOrder
   exact .mk (Ty.lifts_toPartial h x)
 
 /-- Every mode preserves the lift, since on defined daughters that lift total ones a mode's
-partial value is defined and lifts its total value. -/
+partial value is defined and lifts its total value: `Mode.rel_evalKleisli` at `LiftsPart`. -/
 theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ S}
     {b : Ty.Domain E W σ₂ S} {a' : Ty.PDomain E W σ₁ S} {b' : Ty.PDomain E W σ₂ S}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
     ∃ z, m.evalPartial (Part.some a') (Part.some b') = Part.some z ∧ Ty.Lifts τ (m.eval a b) z := by
-  induction m with
-  | @mapRight f _ _ _ m ih =>
-    cases f with
-    | reader =>
-      refine ⟨fun i ↦ m.evalPartial (Part.some a') (b' i), by simp [evalPartial],
-        fun x y hxy ↦ ?_⟩
-      obtain ⟨w, hw, hlw⟩ := hb x y hxy
-      obtain ⟨z, hz, hlz⟩ := ih ha hlw
-      exact ⟨z, by simp only [hw, hz], hlz⟩
-    | set => exact ⟨PUnit.unit, by simp [evalPartial], trivial⟩
-  | @mapLeft f _ _ _ m ih =>
-    cases f with
-    | reader =>
-      refine ⟨fun i ↦ m.evalPartial (a' i) (Part.some b'), by simp [evalPartial],
-        fun x y hxy ↦ ?_⟩
-      obtain ⟨w, hw, hlw⟩ := ha x y hxy
-      obtain ⟨z, hz, hlz⟩ := ih hlw hb
-      exact ⟨z, by simp only [hw, hz], hlz⟩
-    | set => exact ⟨PUnit.unit, by simp [evalPartial], trivial⟩
-  | @ap f _ _ _ m ih =>
-    cases f with
-    | reader =>
-      refine ⟨fun i ↦ m.evalPartial (a' i) (b' i), by simp [evalPartial], fun x y hxy ↦ ?_⟩
-      obtain ⟨u, hu, hlu⟩ := ha x y hxy
-      obtain ⟨w, hw, hlw⟩ := hb x y hxy
-      obtain ⟨z, hz, hlz⟩ := ih hlu hlw
-      exact ⟨z, by simp only [hu, hw, hz], hlz⟩
-    | set => exact ⟨PUnit.unit, by simp [evalPartial], trivial⟩
-  | @unitRight f _ _ _ _ m ih =>
-    cases f with
-    | reader =>
-      simpa [evalPartial, eval, Eff.pure] using
-        ih (a := fun x ↦ a fun _ ↦ x) (a' := fun x ↦ a' fun _ ↦ Part.some x)
-          (fun x y hxy ↦ ha (fun _ ↦ x) (fun _ ↦ Part.some y) fun _ _ _ ↦ ⟨y, rfl, hxy⟩) hb
-    | set =>
-      simpa [evalPartial, eval, Eff.pure] using
-        ih (a := fun x ↦ a {x}) (a' := fun _ ↦ a' PUnit.unit)
-          (fun x _ _ ↦ ha {x} PUnit.unit trivial) hb
-  | @unitLeft f _ _ _ _ m ih =>
-    cases f with
-    | reader =>
-      simpa [evalPartial, eval, Eff.pure] using
-        ih (b := fun y ↦ b fun _ ↦ y) (b' := fun y ↦ b' fun _ ↦ Part.some y) ha
-          (fun x y hxy ↦ hb (fun _ ↦ x) (fun _ ↦ Part.some y) fun _ _ _ ↦ ⟨y, rfl, hxy⟩)
-    | set =>
-      simpa [evalPartial, eval, Eff.pure] using
-        ih (b := fun y ↦ b {y}) (b' := fun _ ↦ b' PUnit.unit) ha
-          (fun x _ _ ↦ hb {x} PUnit.unit trivial)
-  | @join f _ _ _ m ih =>
-    obtain ⟨z, hz, hlz⟩ := ih ha hb
-    cases f with
-    | reader =>
-      refine ⟨fun i ↦ (z i).bind fun y ↦ y i, by simp [evalPartial, hz], fun x y hxy ↦ ?_⟩
-      obtain ⟨u, hu, hlu⟩ := hlz x y hxy
-      obtain ⟨v, hv, hlv⟩ := hlu x y hxy
-      exact ⟨v, by simp [hu, hv], hlv⟩
-    | set => exact ⟨PUnit.unit, by simp [evalPartial, hz], trivial⟩
-  | functionalLeft => simpa [evalPartial, eval] using ha b b' hb
-  | functionalRight => simpa [evalPartial, eval] using hb a a' ha
-  | predicateModification =>
-    refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x y hxy ↦ ?_⟩
-    obtain ⟨p, hp, hlp⟩ := ha x y hxy
-    obtain ⟨q, hq, hlq⟩ := hb x y hxy
-    rw [Ty.lifts_t] at hlp hlq
-    subst hlp hlq
-    exact ⟨a x ∧ b x, by simp [hp, hq], rfl⟩
-  | eventIdentificationLeft =>
-    refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x _ hxy ↦ ?_⟩
-    obtain rfl : x = _ := hxy
-    obtain ⟨F, hF, hlF⟩ := ha x x rfl
-    refine ⟨_, by simp [hF]; rfl, Ty.lifts_fn.mpr fun e _ hey ↦ ?_⟩
-    obtain rfl : e = _ := hey
-    obtain ⟨p, hp, hlp⟩ := hlF e e rfl
-    obtain ⟨q, hq, hlq⟩ := hb e e rfl
-    rw [Ty.lifts_t] at hlp hlq
-    subst hlp hlq
-    exact ⟨a x e ∧ b e, by simp [hp, hq], rfl⟩
-  | eventIdentificationRight =>
-    refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x _ hxy ↦ ?_⟩
-    obtain rfl : x = _ := hxy
-    obtain ⟨F, hF, hlF⟩ := hb x x rfl
-    refine ⟨_, by simp [hF]; rfl, Ty.lifts_fn.mpr fun e _ hey ↦ ?_⟩
-    obtain rfl : e = _ := hey
-    obtain ⟨p, hp, hlp⟩ := hlF e e rfl
-    obtain ⟨q, hq, hlq⟩ := ha e e rfl
-    rw [Ty.lifts_t] at hlp hlq
-    subst hlp hlq
-    exact ⟨b x e ∧ a e, by simp [hp, hq], rfl⟩
+  let _ := pureMonad
+  let _ := pureFlatten
+  rw [← evalKleisli_pure]
+  exact Mode.rel_evalKleisli KleisliRelator.liftsPart m ⟨a', rfl, ha⟩ ⟨b', rfl, hb⟩
 
-/-- A partial constant lifts a total one when it is defined with a value lifting it. -/
+/-- A constant's total and partial denotations, related by `LiftsPart`. -/
 def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E W ty S)) : Prop :=
   ∃ y, c' = Part.some y ∧ Ty.Lifts ty c y
 
@@ -446,25 +335,13 @@ binary node what the mode its daughters' types select composes, a trace the valu
 a binder the partial function abstracting over its index in the body. -/
 def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
     Option (PDenotation E W S) :=
-  (translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
-    ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
-
-private theorem map_bind_combine (g : Assignment E)
-    (t₁ t₂ : Option (Σ ty, Term individualIndices (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
-    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
-      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
-        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
-          Mode.combine? Mode.evalPartial d₁ d₂ := by
-  rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
-  simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
-  rfl
+  realize (.partial (K := fun ty ↦ Part (Ty.PDomain E W ty S)) fun c ↦ c) individualIndices lex g t
 
 variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 
 @[simp] theorem interpPartial_terminal (c : C) (w : L) :
     interpPartial lex g (.terminal c w : Tree C L) = lex w := by
-  simp only [interpPartial, translate_terminal, Option.map_map]
+  simp only [interpPartial, realize_terminal]
   cases lex w <;> rfl
 
 @[simp] theorem interpPartial_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
@@ -473,24 +350,20 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 @[simp] theorem interpPartial_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
     interpPartial lex g (.phrase c k (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
       (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
-  map_bind_combine g _ _
+  realize_phrase_binary ..
 
 @[simp] theorem interpPartial_trace (n : ℕ) (c : C) :
     interpPartial lex g (.trace n c : Tree C L) = some ⟨.e, Part.some (g n)⟩ := rfl
 
 @[simp] theorem interpPartial_bind (n : ℕ) (c : C) (body : Tree C L) :
     interpPartial lex g (.bind n c body) = (interpPartial lex g body).map fun d ↦
-      ⟨.fn .e d.1, Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) body)⟩ := by
-  simp only [interpPartial, translate_bind, Option.map_map]
-  rcases translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with
-    _ | ⟨τ, b⟩
-  · rfl
-  · simp [valueAtPartial]
+      ⟨.fn .e d.1, Part.some fun x ↦ valueAt d.1 d.2 (interpPartial lex (g[n ↦ x]) body)⟩ :=
+  realize_bind ..
 
 theorem interpPartial_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    interpPartial lex g (RoseTree.node l cs) = none := by
-  simp only [interpPartial, translate_junk _ h, Option.map_none]
+    interpPartial lex g (RoseTree.node l cs) = none :=
+  realize_junk _ _ _ _ h
 
 /-! ### Uninterpretability and presupposition failure -/
 
@@ -510,9 +383,11 @@ theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
 
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))
     (t : Tree C L) :
-    (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) := by
-  simp only [interpPartial, Option.map_map, Function.comp_def]
-  exact translate_map_fst lex h t
+    (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) :=
+  (realize_map_fst (K := fun ty ↦ Part (Ty.PDomain E W ty S)) (.partial fun c ↦ c)
+    individualIndices lex g t).trans ((translate_map_fst lex h t).trans
+      (realize_map_fst (K := fun ty ↦ Part (Ty.PDomain E W ty S)) (.partial fun c ↦ c)
+        individualIndices lex' g' t).symm)
 
 /-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
@@ -542,9 +417,10 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   obtain ⟨⟨τ, u'⟩, ht', rfl⟩ := Option.map_eq_some_iff.1 h
   obtain ⟨u, hu, hr⟩ := translate_rel lex hrel t ht'
   obtain ⟨z, hz, hl⟩ := hr.lifts (g := g) (g' := g) fun _ ↦ rfl
-  refine ⟨⟨τ, u.eval (fun c ↦ c) g⟩, ?_, ?_⟩
-  · simp [Tree.interp, hu, evalAt]; rfl
-  · simp only [hz]
+  refine ⟨⟨τ, u.eval (Γ := individualIndices) (fun c ↦ c) g⟩, ?_, ?_⟩
+  · simp [Tree.interp, Tree.interpWith, Tree.realize, hu]; rfl
+  · show Denotation.Lifts _ ⟨τ, u'.evalPartial (Γ := individualIndices) (fun c ↦ c) g⟩
+    rw [hz]
     exact .mk hl
 
 /-- A lexicon lifting a total one has no presupposition failures. -/

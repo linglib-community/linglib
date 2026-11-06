@@ -3,6 +3,7 @@ module
 public import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
 public import Linglib.Core.ModelTheory.LanguageMap
 public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Finite.Lattice
 
 /-!
 # The Ehrenfeucht–Fraïssé game on monadic structures
@@ -35,6 +36,8 @@ van Benthem's characterization of the first-order definable determiners.
 * `FirstOrder.Language.foDefinable_iff_exists_min_encard_eq`: a class of structures for a finite
   monadic signature is definable within `K` iff it is invariant under agreement of the unary type
   counts up to some threshold.
+* `FirstOrder.Language.exists_finite_realize`: the finite model property, a satisfiable sentence of
+  a finite monadic signature having a finite model.
 
 ## References
 
@@ -256,5 +259,37 @@ theorem elementarilyEquivalentUpTo_monadic_structure_iff {ι : Type v} [Finite �
     (monadic.structure Q) _ _ t).trans ⟨fun h S => ?_, fun h S => ?_⟩
   · simpa only [hM, hN] using h fun | .pred i => S i
   · simpa only [hM, hN] using h fun i => S (.pred i)
+
+/-! ### The finite model property -/
+
+/-- A satisfiable sentence of a finite monadic signature has a finite model: keep as many elements
+of each unary type as the quantifier rank of the sentence. -/
+theorem exists_finite_realize [L.IsMonadic] [Finite L.Symbols] {φ : L.Sentence} (h : M ⊨ φ) :
+    ∃ (N : Type w) (_ : L.Structure N), Finite N ∧ N ⊨ φ := by
+  classical
+  have hfin : Finite (L.Relations 1) :=
+    Finite.of_injective (fun R ↦ (Sum.inr ⟨1, R⟩ : L.Symbols)) fun R S e ↦ by simpa using e
+  choose T hTsub hTcard using fun S : L.Relations 1 → Prop ↦
+    Set.exists_subset_encard_eq (min_le_right (φ.qr : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard)
+  let U : L.Substructure M := ⟨⋃ S, T S, fun f ↦ isEmptyElim f⟩
+  have htype (x : U) : L.unaryType x = L.unaryType (x : M) := funext fun R ↦ by
+    change Structure.RelMap R (fun i ↦ ((![x] i : U) : M)) = Structure.RelMap R ![(x : M)]
+    congr 1
+    exact funext fun i ↦ by simp [Subsingleton.elim i 0]
+  have hmem {x : M} {S} (hx : x ∈ T S) : L.unaryType x = S := hTsub S hx
+  have hfib (S) : Subtype.val '' (L.unaryType ⁻¹' {S} : Set U) = T S := by
+    ext x
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      obtain ⟨S', hS'⟩ := Set.mem_iUnion.1 y.2
+      have : S' = S := (hmem hS').symm.trans ((htype y).symm.trans hy)
+      exact this ▸ hS'
+    · exact fun hx ↦ ⟨⟨x, Set.mem_iUnion.2 ⟨S, hx⟩⟩, (htype _).trans (hmem hx), rfl⟩
+  have hequiv : M ≅[L, φ.qr] U := elementarilyEquivalentUpTo_iff_min_encard_eq.2 fun S ↦ by
+    rw [← Subtype.val_injective.encard_image (L.unaryType ⁻¹' {S} : Set U), hfib, hTcard]
+    simp
+  have hU : (U : Set M).Finite := Set.finite_iUnion fun S ↦
+    Set.finite_of_encard_le_coe ((hTcard S).le.trans (min_le_left _ _))
+  exact ⟨U, inferInstance, hU.to_subtype, (hequiv φ le_rfl).1 h⟩
 
 end FirstOrder.Language

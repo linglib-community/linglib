@@ -13,10 +13,10 @@ is a quantifier over degree properties, true of a property when its greatest deg
 the numeral's relation to the number, `max{n | D(n)} = m` for the bare numeral ((29)), `> m` and
 `< m` for the Class A modifiers *more than* and *fewer than* ((41)), `≥ m` and `≤ m` for the
 Class B modifiers *at least* and *at most* ((42)); this is the substrate's degree quantifier
-`Degree.MaxIn` at the comparison's interval. Applied to the degrees a count reaches it is the
+`Quantifier.MaxIn` at the comparison's interval. Applied to the degrees a count reaches it is the
 comparison of the count, so bare numerals are two-sided without a Horn scale
 (`maxIn_interval_Iic`), and the one-sided readings of numerals under root modals ((31)–(34)) are
-matters of scope, `Degree.HighScope`: a bare numeral scoping over a necessity modal names the
+matters of scope, `Quantifier.HighScope`: a bare numeral scoping over a necessity modal names the
 least count the modal requires and over a possibility modal the greatest it allows
 (`necessity_wide_iff`, `possibility_wide_iff`).
 
@@ -39,12 +39,11 @@ Class A forms are entailed by no alternative at all and have no primary implicat
 ## Implementation notes
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
-the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
-neo-Gricean operators are `NeoGricean.primaryImplicatures` and
-`NeoGricean.IsSecondaryImplicature`. A root modal is the quantifier `every R` or `Det.some R` over
-its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` and
-`Degree.HighScope` of `MaxIn {m}` over it. The interactions of Class B modifiers with root modals
-(Section 4.2) are not formalized.
+the alternatives are the five forms of the numeral, one for each `Comparison`, and the neo-Gricean
+operators are `NeoGricean.primaryImplicatures` and `NeoGricean.IsSecondaryImplicature`. A root modal
+is the quantifier `every R` or `Det.some R` over its accessible worlds `R`, and the numeral's two
+scopes are `Quantifier.LowScope` and `Quantifier.HighScope` of `MaxIn {m}` over it. The interactions
+of Class B modifiers with root modals (Section 4.2) are not formalized.
 
 ## References
 
@@ -57,7 +56,7 @@ its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` an
 
 namespace Kennedy2015
 
-open Degree Numerals NeoGricean Quantifier Quantifier.Det Set
+open Numerals NeoGricean Quantifier Quantifier.Det Set
 
 /-! ### The de-Fregean semantics (Section 3)
 
@@ -147,7 +146,7 @@ theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
 /-- (47a): the primary implicatures of *at least m* are that the speaker knows neither that
 exactly `m` nor that more than `m`. -/
 theorem primaryImplicatures_ge {m : ℕ} (hm : 0 < m) :
-    primaryImplicatures (Comparison.ge.interval m) (alternatives m) =
+    primaryImplicatures (alternatives m) (Comparison.ge.interval m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.gt.interval m))ᶜ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
@@ -158,7 +157,7 @@ theorem primaryImplicatures_ge {m : ℕ} (hm : 0 < m) :
 /-- (47b): the primary implicatures of *at most m* are that the speaker knows neither that
 exactly `m` nor that fewer than `m`. -/
 theorem primaryImplicatures_le {m : ℕ} (hm : 0 < m) :
-    primaryImplicatures (Comparison.le.interval m) (alternatives m) =
+    primaryImplicatures (alternatives m) (Comparison.le.interval m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.lt.interval m))ᶜ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
@@ -169,7 +168,7 @@ theorem primaryImplicatures_le {m : ℕ} (hm : 0 < m) :
 /-- No alternative entails the bare numeral or a Class A form, so they have no primary
 implicatures. -/
 theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
-    (hc : c = .eq ∨ c.IsStrict) : primaryImplicatures (c.interval m) (alternatives m) = univ := by
+    (hc : c = .eq ∨ c.IsStrict) : primaryImplicatures (alternatives m) (c.interval m) = univ := by
   ext s
   simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
     mem_univ, iff_true]
@@ -180,11 +179,11 @@ theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
 -- (2), (3). Only the second has primary implicatures, so the contrast lies in the comparison.
 theorem interval_lt_succ_eq_le_and_primaryImplicatures {m : ℕ} (hm : 0 < m) :
     Comparison.lt.interval (m + 1) = Comparison.le.interval m ∧
-      primaryImplicatures (Comparison.lt.interval (m + 1)) (alternatives (m + 1)) = univ ∧
-      primaryImplicatures (Comparison.le.interval m) (alternatives m) ≠ univ := by
+      primaryImplicatures (alternatives (m + 1)) (Comparison.lt.interval (m + 1)) = univ ∧
+      primaryImplicatures (alternatives m) (Comparison.le.interval m) ≠ univ := by
   refine ⟨Set.ext fun _ ↦ Nat.lt_succ_iff, primaryImplicatures_eq_univ m.succ_pos (.inr trivial),
     fun h ↦ ?_⟩
-  have hempty : (∅ : Set ℕ) ∈ primaryImplicatures (Comparison.le.interval m) (alternatives m) :=
+  have hempty : (∅ : Set ℕ) ∈ primaryImplicatures (alternatives m) (Comparison.le.interval m) :=
     h ▸ mem_univ _
   rw [primaryImplicatures_le hm] at hempty
   exact hempty.1 (empty_subset _)
@@ -193,7 +192,7 @@ theorem interval_lt_succ_eq_le_and_primaryImplicatures {m : ℕ} (hm : 0 < m) :
 alternative, and either primary implicature of a Class B form strengthened contradicts the
 assertion together with the other. -/
 theorem not_isSecondaryImplicature {m : ℕ} (hm : 0 < m) (c : Comparison) (ψ : Set ℕ) :
-    ¬ IsSecondaryImplicature (c.interval m) (alternatives m) ψ := by
+    ¬ IsSecondaryImplicature (alternatives m) (c.interval m) ψ := by
   rw [isSecondaryImplicature_iff]
   rintro ⟨⟨c', rfl⟩, hψ, h⟩
   have block : ∀ c₁ : Comparison, (c₁, c) ∈

@@ -420,7 +420,7 @@ theorem endRule_right (L : ℕ) (fco : Bool) (g : Grid) :
 def elm : Edge → (Grid → Grid) → Grid → Grid
   | .left, f, [] => f []
   | .left, f, x :: t => x :: f t
-  | .right, f, g => f g.dropLast ++ g.drop (g.length - 1)
+  | .right, f, g => f g.dropLast ++ g.rtake 1
 
 /-- One sweep of Perfect Grid Construction raises a column to the stress level when neither
 neighbour reaches it, `prev` being the height of the column just passed. -/
@@ -818,7 +818,7 @@ theorem antepenultimate_iff (d : Edge) (a : Altitude) (x : Option Edge) :
     have h : alternating .right .trough (some .right) (m + 4) =
         (alt .trough (m + 1)).reverse ++ [2, 1, 1] := by
       simp only [alternating, Option.elim_some, elm, pg, List.revConj, List.dropLast_replicate,
-        List.drop_replicate, List.length_replicate, List.reverse_replicate, sweep_replicate]
+        List.rtake_replicate, List.reverse_replicate, sweep_replicate]
       simp [alt, Altitude.height, Altitude.flip]
     rw [h, lastIdx?_append]
     simp [lastIdx?_cons]
@@ -863,8 +863,7 @@ theorem hawaiian_eq {n : ℕ} (hn : 4 ≤ n) :
     · rw [edgeIdx?, show 2 :: 1 :: ((alt .trough m).reverse ++ [2]) =
         (2 :: 1 :: (alt .trough m).reverse) ++ [2] by simp, lastIdx?_append]
       simp [lastIdx?_cons]
-  simp only [hawaiian, elm, Function.comp_apply, List.dropLast_replicate, List.drop_replicate,
-    List.length_replicate]
+  simp only [hawaiian, elm, Function.comp_apply, List.dropLast_replicate, List.rtake_replicate]
   rw [show m + 4 - 1 = m + 3 from rfl, h1, h2, h3, h4]
   simp
 

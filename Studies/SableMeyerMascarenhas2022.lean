@@ -266,9 +266,7 @@ variable [IsFiniteMeasure μ]
 
 theorem confirmationD_eq_zero (hd : MeasurableSet d) (hcd : IndepSet c d μ) (h0 : μ d ≠ 0) :
     confirmationD μ c d = 0 := by
-  have hd0 : μ.real d ≠ 0 := ENNReal.toReal_ne_zero.2 ⟨h0, measure_ne_top _ _⟩
-  rw [confirmationD, cond_real_apply μ hd, Set.inter_comm, hcd.measureReal_inter_eq_mul,
-    mul_div_assoc, div_self hd0, mul_one, sub_self]
+  rw [confirmationD, hcd.symm.cond_real_apply hd h0, sub_self]
 
 -- §5.4
 theorem confirmationD_inter_pos (hd : MeasurableSet d) (hab : IndepSet a b μ)
@@ -341,28 +339,16 @@ private theorem card_situation : (Fintype.card Situation : ℝ) = 28 := by
   simp [Fintype.card_prod]
 
 private theorem indepSet_car_guitar : IndepSet car guitar (uniformOn univ) := by
-  rw [indepSet_iff_measureReal_inter_eq_mul .of_discrete .of_discrete, uniformOn_univ_real_apply,
-    uniformOn_univ_real_apply, uniformOn_univ_real_apply, card_situation,
-    show (car ∩ guitar).ncard = 8 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show car.ncard = 16 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show guitar.ncard = 14 by rw [Set.ncard_eq_toFinset_card']; decide]
-  norm_num
+  simp only [indepSet_uniformOn_iff, univ_inter, ncard_eq_toFinset_card']
+  decide
 
 private theorem indepSet_car_brake_guitar : IndepSet (car ∩ brake) guitar (uniformOn univ) := by
-  rw [indepSet_iff_measureReal_inter_eq_mul .of_discrete .of_discrete, uniformOn_univ_real_apply,
-    uniformOn_univ_real_apply, uniformOn_univ_real_apply, card_situation,
-    show (car ∩ brake ∩ guitar).ncard = 4 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show (car ∩ brake).ncard = 8 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show guitar.ncard = 14 by rw [Set.ncard_eq_toFinset_card']; decide]
-  norm_num
+  simp only [indepSet_uniformOn_iff, univ_inter, ncard_eq_toFinset_card']
+  decide
 
 private theorem indepSet_attic_brake : IndepSet attic brake (uniformOn univ) := by
-  rw [indepSet_iff_measureReal_inter_eq_mul .of_discrete .of_discrete, uniformOn_univ_real_apply,
-    uniformOn_univ_real_apply, uniformOn_univ_real_apply, card_situation,
-    show (attic ∩ brake).ncard = 6 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show attic.ncard = 14 by rw [Set.ncard_eq_toFinset_card']; decide,
-    show brake.ncard = 12 by rw [Set.ncard_eq_toFinset_card']; decide]
-  norm_num
+  simp only [indepSet_uniformOn_iff, univ_inter, ncard_eq_toFinset_card']
+  decide
 
 private theorem uniformOn_ne_zero {s : Set Situation} (hs : s.Nonempty) : uniformOn univ s ≠ 0 :=
   by rw [Ne, uniformOn_eq_zero_iff finite_univ, univ_inter]; exact hs.ne_empty

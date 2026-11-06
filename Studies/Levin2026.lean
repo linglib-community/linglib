@@ -126,13 +126,22 @@ inductive Sense
 /-- The senses by their `paperFeatures` labels. -/
 def Sense.labels : List (String × Sense) := [("spatial", .spatial), ("other", .other)]
 
-/-- The result adjectives by their `paperFeatures` labels, with the fragment entry of those the
-fragment has. -/
-def adjectiveLabels : List (String × Option Degree.GradableAdjective) :=
-  open English.Adjectives in
-  [("open", some open_), ("closed", some closed_), ("shut", some shut), ("free", some free_),
-   ("loose", some loose), ("flat", some flat), ("solid", none), ("clean", none), ("bald", none),
-   ("firm", none), ("smooth", none), ("senseless", none)]
+/-- A spatial configuration type classifies the spatial state an adjective describes in a
+    resultative construction. Only adjectives describing spatially instantiated
+    states license intransitive *push open* resultatives. -/
+inductive SpatialConfigType where
+  | barrierConfig   -- open, closed, shut: config relative to frame
+  | unattachment    -- free, loose: freedom from spatial contiguity
+  | surfaceOrient   -- flat: orientation relative to reference surface
+  deriving DecidableEq, Repr
+
+/-- The result adjectives by their `paperFeatures` labels, with the spatial configuration of those
+that have one. -/
+def adjectiveLabels : List (String × Option SpatialConfigType) :=
+  [("open", some .barrierConfig), ("closed", some .barrierConfig), ("shut", some .barrierConfig),
+   ("free", some .unattachment), ("loose", some .unattachment), ("flat", some .surfaceOrient),
+   ("solid", none), ("clean", none), ("bald", none), ("firm", none), ("smooth", none),
+   ("senseless", none)]
 
 /-- The kinds of entity a subject denotes. -/
 inductive Theme
@@ -171,16 +180,16 @@ def Frame.labels : List (String × Frame) :=
 /-- A result phrase has an adjective, recorded where the fragment has it, and the sense the
 adjective is used in. -/
 structure Result where
-  adjective : Option Degree.GradableAdjective
+  spatialConfig : Option SpatialConfigType
   sense : Sense
 
 /-- A result phrase describes a spatially instantiated state when its adjective has a spatial
 configuration and is used in that sense. -/
 def Result.IsSpatial (r : Result) : Prop :=
-  r.sense = .spatial ∧ ∃ a ∈ r.adjective, a.spatialConfigType.isSome
+  r.sense = .spatial ∧ r.spatialConfig.isSome
 
 instance : DecidablePred Result.IsSpatial := fun r ↦
-  inferInstanceAs (Decidable (r.sense = .spatial ∧ ∃ a ∈ r.adjective, a.spatialConfigType.isSome))
+  inferInstanceAs (Decidable (r.sense = .spatial ∧ r.spatialConfig.isSome))
 
 /-- An example of the paper records the kind of its verb, its result phrase and the kind of its
 subject, where it has them, its frame and its judgment. -/
@@ -214,7 +223,7 @@ def result? (e : Datum) : Option (Option Result) :=
   match e.feature? "adjective" with
   | none => some none
   | some _ => do
-    pure (some { adjective := ← e.parse? "adjective" adjectiveLabels
+    pure (some { spatialConfig := ← e.parse? "adjective" adjectiveLabels
                  sense := ← e.parse? "sense" Sense.labels })
 
 /-- A datum read into its row. -/
@@ -279,8 +288,10 @@ theorem exertingForce_not_all_pushPull :
       v ∈ LevinClass.members .throw := by
   decide +kernel
 
-/-- A verb outside the paper's lists is unacceptable in the intransitive resultative (16d), contrary
-to neo-constructional approaches (footnote 7). -/
+/-- Some intransitive resultative with a verb outside the paper's lists is unacceptable, as *The tub
+scrubbed clean* (16d), whose adjective is also outside the paper's set. Footnote 7 says
+neo-constructional approaches, which expect any verb in all resultative patterns, would need to
+explain why such resultatives are not more pervasive. -/
 theorem exists_unacceptable_intransitive_resultative :
     ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
       d.judgment ≠ .acceptable := by

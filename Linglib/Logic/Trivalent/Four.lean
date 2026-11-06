@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Bilattice.Product
+public import Linglib.Logic.Bilattice.Guard
 public import Linglib.Logic.Trivalent.Flat
 
 /-!
@@ -25,12 +25,15 @@ and join, and the knowledge order of `SignType.toFlat` to `FOUR`'s.
 * `SignType.orderIsoConsistent`: `SignType` is the consistent part of `FOUR`.
 * `SignType.toFour_neg`, `SignType.toFour_inf`, `SignType.toFour_sup`,
   `SignType.toFour_kLE_toFour`: the identification respects the connectives and both orders.
+* `SignType.toFour_transplication`: Blamey's transplication is Fitting's guard on Kleene's
+  values.
 
 ## References
 
 * [belnap-1977]
 * [arieli-avron-1996]
 * [fitting-1994]
+* [blamey-1986]
 -/
 
 @[expose] public section
@@ -130,6 +133,12 @@ theorem toFour_kLE_toFour {a b : SignType} : toFour a ≤ₖ toFour b ↔ toFlat
 
 /-- Strong Kleene disjunction is `FOUR`'s truth join on Kleene's values ([fitting-1994] §3). -/
 @[simp] theorem toFour_sup (a b : SignType) : toFour (a ⊔ b) = toFour a ⊔ toFour b := by
+  cases a <;> cases b <;> decide
+
+/-- Blamey's transplication is Fitting's guard on Kleene's values: `π / φ` is `π : φ`
+([blamey-1986], [fitting-1994]). -/
+theorem toFour_transplication (a b : SignType) :
+    toFour (transplication a b) = guard (toFour a) (toFour b) := by
   cases a <;> cases b <;> decide
 
 end SignType

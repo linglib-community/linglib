@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.List.DropRight
 public import Linglib.Fragments.Slavic.Czech.Declension
 public import Linglib.Syntax.Category.Noun.Basic
 
@@ -84,7 +85,7 @@ def Noun.clsAt (n : Noun) (m : Number) : Class := if m = .plural then n.clsPlura
 
 /-- The stem of a noun is its citation form less the nominative singular ending of its class. -/
 def Noun.stem (n : Noun) : List String :=
-  (segments n.form).take ((segments n.form).length - n.cls.nomSg.length)
+  (segments n.form).rdrop n.cls.nomSg.length
 
 /-- The endings of a noun in a class at a cell are those of the class on the noun's stem, save
 that the noun's lexical nominative plural replaces the class's in the nominative and the

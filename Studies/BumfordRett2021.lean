@@ -66,7 +66,7 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 
 namespace BumfordRett2021
 
-open MeasureTheory ProbabilityTheory Degree
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 /-! ### Worlds -/
@@ -610,7 +610,7 @@ antonym's own cost. -/
 
 /-- A simulated construction instantiates the positive construction, the equative for the
 comparisons `=` and `≥`, or the comparative for `>`, in Rett's classification. -/
-def construction : Option Comparison → Construction
+def construction : Option Comparison → Rett2015b.Construction
   | none => .positive
   | some .gt | some .lt => .comparative
   | some _ => .equative

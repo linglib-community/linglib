@@ -35,7 +35,7 @@ to future work.
 
 namespace Stump2020
 
-open Morphology Morphology.Exponence Morphology.PFM
+open Morphology Morphology.PFM
 
 /-! ### Old English HIERAN 'hear' (§2.2, Table 3) -/
 

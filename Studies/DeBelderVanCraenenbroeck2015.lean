@@ -305,7 +305,7 @@ open DistributedMorphology (subsetPrinciple VocabularyItem)
 open scoped DistributedMorphology
 
 /-- The present forms of *zijn* 'be', third person singular *is* the Elsewhere form. -/
-def zijn : Morphology.Exponence.RuleSet (VocabularyItem Phi String) :=
+def zijn : Morphology.RuleSet (VocabularyItem Phi String) :=
   [{.person .first, .number .singular} ⟷ "ben", {.person .second, .number .singular} ⟷ "bent",
     {.number .plural} ⟷ "zijn", ∅ ⟷ "is"]
 

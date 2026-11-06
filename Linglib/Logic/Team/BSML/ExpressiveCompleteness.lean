@@ -118,7 +118,7 @@ section Completeness
 depth ([aloni-anttila-yang-2024] Theorem 3.8). -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
-  ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
+  ⟨φ.modalDepth, fun _ hp _ hb ↦ ((invariant_den φ le_rfl).1 hb).1 hp⟩
 
 /-- **BSML is not expressively complete** for the union-closed classes invariant under bounded
 bisimulation: the teams holding both a `p`-world and a `¬p`-world, with the empty team, are such a
@@ -143,9 +143,9 @@ theorem range_support_ssubset_supClosed [Nonempty Atom] :
       exact .inr ((support_falsum M _).2 (Finset.union_empty _))
   have hinv : BoundedBisimInvariant Q := ⟨0, by
     rintro ⟨W, M, s⟩ (hs | hs) ⟨W', M', s'⟩ hb
-    · exact .inl ((invariant_eval ψ (by simp [ψ, Formula.modalDepth]) true hb).1 hs)
-    · exact .inr ((invariant_eval .falsum (by simp [Formula.falsum, Formula.modalDepth])
-        true hb).1 hs)⟩
+    · exact .inl (((invariant_den ψ (by simp [ψ, Formula.modalDepth])).1 hb).1 hs)
+    · exact .inr (((invariant_den .falsum (by simp [Formula.falsum, Formula.modalDepth])).1
+        hb).1 hs)⟩
   obtain ⟨φ, hφ⟩ := h ⟨hsup, hinv⟩
   let M : KripkeModel (ULift.{u} Bool) Atom := ⟨fun _ ↦ ∅, fun _ w ↦ w.down = true⟩
   let a : ULift.{u} Bool := ⟨true⟩
@@ -154,8 +154,8 @@ theorem range_support_ssubset_supClosed [Nonempty Atom] :
   have hbot : (∅ : Finset (ULift.{u} Bool)) ∈ PointedTeam.mk _ M ⁻¹' Q :=
     .inr ((support_falsum M _).2 rfl)
   have htop : ({a, ⟨false⟩} : Finset (ULift.{u} Bool)) ∈ PointedTeam.mk _ M ⁻¹' Q :=
-    .inl ⟨{a}, ⟨by simp [a, M, Team.flat, eval], Finset.singleton_nonempty _⟩, {⟨false⟩},
-      ⟨by simp [M, Team.flat, eval], Finset.singleton_nonempty _⟩, rfl⟩
+    .inl ⟨{a}, ⟨by simp [a, M, Team.flat, Formula.den], Finset.singleton_nonempty _⟩, {⟨false⟩},
+      ⟨by simp [M, Team.flat, Formula.den], Finset.singleton_nonempty _⟩, rfl⟩
   rcases (hiff _).1 ((ordConnected_support M φ).out ((hiff _).2 hbot) ((hiff _).2 htop)
     (show _ ∈ Set.Icc _ _ from ⟨Finset.empty_subset {a}, by simp⟩)) with hmid | hmid
   · obtain ⟨_, _, u, ⟨hu, x, hx⟩, hsplit⟩ := hmid

@@ -20,9 +20,15 @@ total semantics is its case under the identity effect. An intension is a computa
 world, as Shan treats intensionality, and its type says so (`Ty.comp`), so a semantics relative to
 a world is the total semantics of a lexicon whose worldly words have such types.
 
+A term's value commutes with [substitution](##Term.realize_subst) where no binder captures and each
+replacement denotes a value, as every term does under the total semantics, where this is
+[λ-conversion](##Term.eval_beta); under the set effect
+[λ-conversion fails with no capture](##Term.exists_evalM_comp_lam_ne_subst).
+
 ## Main definitions
 
 * `Montague.Term`: the terms over a signature of constants under a typing of the indices.
+* `Montague.Term.subst`, `Montague.Term.FreeFor`: substitution and when it captures nothing.
 * `Montague.individualIndices`: Heim and Kratzer's typing, every index of type `e`.
 * `Montague.Interpretation`: an interpretation of the terms.
 * `Montague.Term.realize`: the value of a term in an interpretation under an assignment.
@@ -55,6 +61,8 @@ more than the constant functions (`SetM.not_preservesConst`).
 * [heim-kratzer-1998]
 * [montague-1973]
 * [von-fintel-heim-2011]
+* [gallin-1975]
+* [moggi-1991]
 * [kratzer-shimoyama-2002]
 * [shan-2001]
 * [shan-2004]
@@ -102,6 +110,32 @@ def freeVars : {ty : Ty} → Term Γ K ty → Finset ℕ
   | _, var n => {n}
   | _, lam n b => b.freeVars.erase n
   | _, comp _ l r => l.freeVars ∪ r.freeVars
+
+/-- The term with each free variable `n` replaced by `σ n`. A binder keeps its variable, so a
+replacement with that variable free in it is captured; `FreeFor` says when none is. -/
+def subst : {ty : Ty} → Term Γ K ty → (∀ n, Term Γ K (Γ n)) → Term Γ K ty
+  | _, const c, _ => const c
+  | _, var n, σ => σ n
+  | _, lam n b, σ => lam n (b.subst (Function.update σ n (var n)))
+  | _, comp m l r, σ => comp m (l.subst σ) (r.subst σ)
+
+/-- The replacements `σ` are *free for* a term when no binder in it captures a free variable of
+the replacement for a variable free below it. -/
+def FreeFor : {ty : Ty} → Term Γ K ty → (∀ n, Term Γ K (Γ n)) → Prop
+  | _, const _, _ | _, var _, _ => True
+  | _, lam n b, σ => (∀ m ∈ b.freeVars, m ≠ n → n ∉ (σ m).freeVars) ∧
+      b.FreeFor (Function.update σ n (var n))
+  | _, comp _ l r, σ => l.FreeFor σ ∧ r.FreeFor σ
+
+/-- The variables themselves are free for any term. -/
+theorem freeFor_var {ty : Ty} (t : Term Γ K ty) : t.FreeFor fun n ↦ var n := by
+  induction t with
+  | const c => trivial
+  | var n => trivial
+  | lam n b ih =>
+    refine ⟨fun m _ hmn h ↦ hmn (Finset.mem_singleton.1 h).symm, ?_⟩
+    rwa [Function.update_eq_self_iff.2 rfl]
+  | comp m l r ihl ihr => exact ⟨ihl, ihr⟩
 
 /-- Two terms over two signatures have the same shape, with constants related by `R`. -/
 inductive Rel (R : ∀ ty : Ty, K ty → K' ty → Prop) :
@@ -201,6 +235,30 @@ theorem realize_congr_of_agree (A : Interpretation.{u, v, w} K) {ty : Ty} (t : T
     simp only [freeVars, Finset.mem_union] at hg
     exact congrArg₂ (A.mode m) (ihl fun n hn ↦ hg n (.inl hn)) (ihr fun n hn ↦ hg n (.inr hn))
 
+/-- The substitution lemma: where each replacement denotes a value that the variable it replaces
+denotes under `v`, and no binder captures it, a substituted term has the value of the original
+under `v`. Replacements need not be values in general: a computation can have effects that a
+variable lacks. -/
+theorem realize_subst (A : Interpretation.{u, v, w} K) {ty : Ty} {t : Term Γ K ty}
+    {σ : ∀ n, Term Γ K (Γ n)} (ht : t.FreeFor σ) {g v : ∀ n, A.Val (Γ n)}
+    (hv : ∀ n ∈ t.freeVars, (σ n).realize A g = A.var (v n)) :
+    (t.subst σ).realize A g = t.realize A v := by
+  induction t generalizing σ g v with
+  | const c => rfl
+  | var n => exact hv n (Finset.mem_singleton_self n)
+  | lam n b ih =>
+    refine congrArg A.lam (funext fun x ↦ ih ht.2 fun m hm ↦ ?_)
+    obtain rfl | hmn := eq_or_ne m n
+    · simp
+    · rw [Function.update_of_ne hmn, Function.update_of_ne hmn,
+        realize_congr_of_agree A (σ m) (g' := g) fun k hk ↦ Function.update_of_ne
+          (fun hkn : k = n ↦ ht.1 m hm hmn (hkn ▸ hk)) x g]
+      exact hv m (Finset.mem_erase.2 ⟨hmn, hm⟩)
+  | comp m l r ihl ihr =>
+    simp only [freeVars, Finset.mem_union] at hv
+    exact congrArg₂ (A.mode m) (ihl ht.1 fun n hn ↦ hv n (.inl hn))
+      (ihr ht.2 fun n hn ↦ hv n (.inr hn))
+
 theorem realize_map (A : Interpretation.{u', v, w} K') (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : ∀ n, A.Val (Γ n)) {ty : Ty} (t : Term Γ K ty) :
     (t.map f).realize A g = t.realize (A.comap f) g := by
@@ -286,6 +344,19 @@ its variable to its body's, and a composition what its mode makes of its daughte
 abbrev total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K :=
   effectful (M := Id) I
 
+/-- The call-by-value interpretation at a monad `M` ([moggi-1991]): a term's value is a computation
+in `Ty.DomainM M`, a variable denotes a value, an abstraction the function from the values of its
+variable to its body's computations, and a composition `Mode.evalKleisli`. Unlike `effectful`, it
+needs no distributor, since a function returns computations. -/
+def kleisli (M : Type → Type) [Monad M] [FlattenAlternatives M]
+    (I : ∀ {ty : Ty}, K ty → M (Ty.DomainM M E W ty S)) : Interpretation K where
+  D ty := M (Ty.DomainM M E W ty S)
+  Val ty := Ty.DomainM M E W ty S
+  const := I
+  var x := pure x
+  lam f := pure f
+  mode m := m.evalKleisli
+
 end Interpretation
 
 namespace Term
@@ -329,6 +400,27 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
     (t.map f).eval I g = t.eval (fun c ↦ I (f c)) g :=
   realize_map (.total I) f g t
 
+/-- Under the total interpretation every term denotes a value, so substitution needs only that no
+binder captures. -/
+theorem eval_subst {ty : Ty} {t : Term Γ K ty} {σ : ∀ n, Term Γ K (Γ n)} (ht : t.FreeFor σ)
+    (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : ∀ n, Ty.Domain E W (Γ n) S) :
+    (t.subst σ).eval I g = t.eval I fun n ↦ (σ n).eval I g :=
+  realize_subst (.total I) ht fun _ _ ↦ rfl
+
+/-- λ-conversion, [gallin-1975]'s axiom AS4 of Ty₂ (p. 60): under the total interpretation, a
+function abstracted over `n` applied to `a` has the value of its body with `a` for `n`, where `a` is
+free for `n` in the body. -/
+theorem eval_beta {n : ℕ} {τ : Ty} {b : Term Γ K τ} {a : Term Γ K (Γ n)}
+    (hb : b.FreeFor (Function.update (fun k ↦ var k) n a))
+    (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : ∀ n, Ty.Domain E W (Γ n) S) :
+    (comp .functionalLeft (lam n b) a).eval I g =
+      (b.subst (Function.update (fun k ↦ var k) n a)).eval I g := by
+  rw [eval_subst hb]
+  refine congrArg (b.eval I) (funext fun k ↦ ?_)
+  obtain rfl | hk := eq_or_ne k n
+  · simp [eval]
+  · simp [Function.update_of_ne hk]
+
 /-- The denotation of a term under an applicative effect, given an interpretation `I` of the
 constants as computations and an assignment of values to the variables. -/
 def evalM {M : Type → Type} [Applicative M] [Distributive M]
@@ -355,11 +447,6 @@ variable {M : Type → Type} [Applicative M] [Distributive M]
     (r : Term Γ K σ₂) : (comp m l r).evalM I g = m.evalM (l.evalM I g) (r.evalM I g) :=
   rfl
 
-/-- A term's denotation depends on the assignment only at its free variables. -/
-theorem evalM_congr_of_agree {ty : Ty} (t : Term Γ K ty) {g g' : ∀ n, Ty.Domain E W (Γ n) S}
-    (hg : ∀ n ∈ t.freeVars, g n = g' n) : t.evalM I g = t.evalM I g' :=
-  realize_congr_of_agree _ t hg
-
 end Effect
 
 theorem evalM_map {M : Type → Type} [Applicative M] [Distributive M]
@@ -385,6 +472,26 @@ theorem Rel.mem_run_evalM {ty : Ty} {u : Term Γ (fun ty ↦ Id (Ty.Domain E W t
     (fun _ _ hc ↦ hc) (fun _ _ h ↦ by subst h; exact rfl)
     (fun _ _ h ↦ SetM.mem_run_distribute.2 fun x ↦ h x x rfl)
     (fun m a _ b _ ha hb ↦ ⟨m.eval a, ⟨a, ha, rfl⟩, b, hb, rfl⟩) fun _ ↦ rfl
+
+/-- Under the set effect λ-conversion fails with no capture, since substituting copies a choice:
+`(λx. x = x)(a)` has only the value true, while `a = a` has both truth values when `a` has two
+alternatives. So `realize_subst` asks that a replacement denote a value. -/
+theorem exists_evalM_comp_lam_ne_subst :
+    ∃ (a : Term individualIndices (fun ty ↦ SetM (Ty.Domain Bool Unit ty)) .e)
+      (b : Term individualIndices (fun ty ↦ SetM (Ty.Domain Bool Unit ty)) .t),
+      b.FreeFor (Function.update (fun k ↦ var k) 0 a) ∧
+        (comp .functionalLeft (lam 0 b) a).evalM (fun c ↦ c) (fun _ ↦ true) ≠
+          (b.subst (Function.update (fun k ↦ var k) 0 a)).evalM (fun c ↦ c) (fun _ ↦ true) := by
+  refine ⟨const (Set.univ : Set Bool), comp .functionalLeft (comp .functionalLeft
+    (const (pure fun x y : Bool ↦ x = y)) (var 0)) (var 0), by simp [FreeFor], ?_⟩
+  intro h
+  have hr := congrArg (False ∈ SetM.run ·) h
+  simp only [subst, Function.update_self, evalM, realize, Interpretation.effectful, Mode.evalM,
+    map_pure, seq_pure, Mode.eval, eq_iff_iff] at hr
+  obtain ⟨_, ⟨F, hF, rfl⟩, x, -, hx⟩ :=
+    hr.2 ⟨_, ⟨_, ⟨_, rfl, true, trivial, rfl⟩, rfl⟩, false, trivial, by simp⟩
+  have hFx : F x = True := SetM.mem_run_distribute.1 hF x
+  simp [hFx] at hx
 
 end Term
 

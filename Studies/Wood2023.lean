@@ -76,9 +76,9 @@ preposition and the root are read off its attachment. The event-modifier account
 
 namespace Wood2023
 
-open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns Morphology.Exponence
+open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns
+open Morphology hiding Feature
 open Wood2023.Examples
-open Morphology (Morph)
 
 /-! ### Vocabulary Insertion at v and n -/
 
@@ -87,7 +87,7 @@ namespace Allomorphy
 /-- A Vocabulary Item of v or n may mention the category of its own head, or the exponent of a
 concatenated neighbor, a root or an affix. -/
 inductive Feature
-  | cat (c : Categorizer)
+  | cat (c : Minimalist.Cat)
   | exp (m : Morph)
   deriving DecidableEq, Repr
 

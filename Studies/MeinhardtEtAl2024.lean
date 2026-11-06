@@ -39,9 +39,15 @@ one](##MeinhardtEtAl2024.exists_isWeaklyDeterministic_not_isNonInteractingBimach
 * Bimachines here read no end markers, unlike those of the paper's figures, and their class is
   letter-to-letter, so every output keeps the origin of its input. The paper's cells emit words, and
   it places a bounded two-sided rule in the class by moving outputs between cells; [that rule is
-  outside the class here](##MeinhardtEtAl2024.not_isNonInteractingBimachineComputable_boundedRule).
+  outside the class here](##MeinhardtEtAl2024.not_isNonInteractingBimachineComputable_boundedRule),
+  and [a word-valued machine with one right
+  state](##MeinhardtEtAl2024.exists_isNonInteracting_run_eq_boundedRule) computes it [only through a
+  final function](##MeinhardtEtAl2024.run_ne_boundedRule_of_finalRight_eq_nil), which here does the
+  work of the end marker.
   Word-valued cells, on the other hand, admit [a map that is unbounded
-  circumambient](##MeinhardtEtAl2024.exists_isNonInteracting_isUnboundedCircumambient).
+  circumambient](##MeinhardtEtAl2024.exists_isNonInteracting_isUnboundedCircumambient), which
+  letter-to-letter machines also compute, none of them non-interacting: non-interaction is a
+  property of the machine, not of the map.
 
 ## Errata
 
@@ -167,8 +173,7 @@ theorem rightwardATR_osl_residual_not_factorsThrough_rtake (k : ℕ) :
     ¬ rightwardATR_osl.apply.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := fun h ↦ by
   have hpre := rightwardATR_osl_isLeftOutputStrictlyLocal.isPrefix
   have hw : ∀ s : Seg, (s :: List.replicate (k - 1) .recL).rtake (k - 1) =
-      List.replicate (k - 1) .recL := fun s ↦ by
-    simpa using List.rtake_append_length (l₁ := [s]) (l₂ := List.replicate (k - 1) Seg.recL)
+      List.replicate (k - 1) .recL := fun _ ↦ List.rtake_cons_of_length_eq (by simp)
   have e := congrFun (h (a := .dom :: List.replicate (k - 1) .recL)
     (b := .recL :: List.replicate (k - 1) .recL) (by simp only [hw])) [.recL]
   rw [Function.residual_eq_drop (hpre _), Function.residual_eq_drop (hpre _)] at e
@@ -227,7 +232,8 @@ private theorem exists_rule {ι : Type*} (out : ι → List α) (a : α) :
 /-- A letter-to-letter bimachine is non-interacting exactly when its output is the union of one
 change rule per side, which agree where both fire. This is the machine-level content of Def. 5,
 whose alignment with Def. 6 the paper claims with the proof deferred (p. 1221, fn. 20). -/
-theorem isNonInteracting_iff_exists_rules [DecidableEq α] {B : Bimachine L R α α} :
+theorem isNonInteracting_iff_exists_rules [DecidableEq α] {B : Bimachine L R α α}
+    (hfL : ∀ r, B.finalLeft r = []) (hfR : ∀ l, B.finalRight l = []) :
     B.IsLetterToLetter ∧ IsNonInteracting B ↔
       ∃ (ruleL : L → α → α) (ruleR : R → α → α), ∀ l a r,
         (ruleL l a ≠ a → ruleR r a ≠ a → ruleL l a = ruleR r a) ∧
@@ -252,7 +258,7 @@ theorem isNonInteracting_iff_exists_rules [DecidableEq α] {B : Bimachine L R α
       exact hL l a hl r
   · rintro ⟨ruleL, ruleR, h⟩
     refine ⟨⟨⟨fun l a r ↦ if ruleL l a = a then ruleR r a else ruleL l a,
-      fun l a r ↦ (h l a r).2⟩⟩, fun l a r hne ↦ ?_⟩
+      fun l a r ↦ (h l a r).2, hfL, hfR⟩⟩, fun l a r hne ↦ ?_⟩
     by_cases hl : ruleL l a = a
     · have hr : ruleR r a ≠ a := fun hr ↦ hne (by rw [(h l a r).2, ite_eq_left hl, hr])
       refine .inr fun l' ↦ ?_
@@ -274,23 +280,36 @@ private def trim (B : Bimachine L R α β) :
     obtain ⟨_, s, rfl⟩ := r
     exact ⟨a :: s, rfl⟩⟩
   output l a r := B.output l a r
+  finalLeft r := B.finalLeft r
+  finalRight l := B.finalRight l
 
-private theorem coe_rState_trim (B : Bimachine L R α β) (s : List α) :
-    ((trim B).rState s : R) = B.rState s := by
+private theorem coe_lStateFrom_trim (B : Bimachine L R α β) (l : Set.range B.lState) (s : List α) :
+    ((trim B).lStateFrom l s : L) = B.lStateFrom l s := by
+  induction s generalizing l with
+  | nil => rfl
+  | cons a s ih => exact ih _
+
+private theorem coe_rStateFrom_trim (B : Bimachine L R α β) (r : Set.range B.rState) (s : List α) :
+    ((trim B).rStateFrom r s : R) = B.rStateFrom r s := by
   induction s with
   | nil => rfl
   | cons a s ih => exact congrArg (B.rStep · a) ih
 
-private theorem run_trim (B : Bimachine L R α β) : (trim B).run = B.run := by
-  have h : ∀ (xs : List α) (l : Set.range B.lState), (trim B).runFrom l xs = B.runFrom l xs := by
-    intro xs
-    induction xs with
-    | nil => exact fun _ ↦ rfl
-    | cons a xs ih =>
-      intro l
-      rw [Bimachine.runFrom_cons, Bimachine.runFrom_cons, ih]
-      exact congrArg (B.output l a · ++ B.runFrom (B.lStep l a) xs) (coe_rState_trim B xs)
-  exact funext fun xs ↦ h xs _
+private theorem emitted_trim (B : Bimachine L R α β) (l : Set.range B.lState) (xs : List α)
+    (r : Set.range B.rState) : (trim B).emitted l xs r = B.emitted l xs r := by
+  induction xs generalizing l with
+  | nil => rfl
+  | cons a xs ih =>
+    rw [Bimachine.emitted_cons, Bimachine.emitted_cons, ih]
+    exact congrArg (B.output l a · ++ B.emitted (B.lStep l a) xs r) (coe_rStateFrom_trim B r xs)
+
+private theorem run_trim (B : Bimachine L R α β) : (trim B).run = B.run :=
+  funext fun xs ↦ by
+    change B.finalLeft ((trim B).rStateFrom (trim B).rInit xs)
+        ++ (trim B).emitted (trim B).lInit xs (trim B).rInit
+        ++ B.finalRight ((trim B).lStateFrom (trim B).lInit xs) = _
+    rw [coe_rStateFrom_trim, coe_lStateFrom_trim, emitted_trim]
+    rfl
 
 private theorem contextOutput_run {B : Bimachine L R α α} (w : B.LetterToLetter) (p : List α)
     (a : α) (s : List α) :
@@ -302,7 +321,7 @@ such machine is non-interacting. So the condition on machines is one on function
 identification of semiambience with weak determinism the paper states (p. 1202). -/
 theorem isNonInteractingBimachineComputable_iff {f : List α → List α} :
     IsNonInteractingBimachineComputable f ↔
-      IsLengthPreservingBimachineComputable f ∧ IsSemiambient f := by
+      IsLetterToLetterBimachineComputable f ∧ IsSemiambient f := by
   constructor
   · rintro ⟨L, _, R, _, B, ⟨w⟩, hB, rfl⟩
     refine ⟨⟨L, ‹_›, R, ‹_›, B, ⟨w⟩, rfl⟩, fun p a s hc ↦ ?_⟩
@@ -312,7 +331,8 @@ theorem isNonInteractingBimachineComputable_iff {f : List α → List α} :
     · exact .inr fun p' ↦ by simp only [contextOutput_run w, Option.some_inj, w.cell_inj, h]
   · rintro ⟨⟨L, _, R, _, B, ⟨w⟩, rfl⟩, hf⟩
     refine ⟨Set.range B.lState, Fintype.ofFinite _, Set.range B.rState, Fintype.ofFinite _, trim B,
-      ⟨⟨fun l a r ↦ w.cell l a r, fun _ _ _ ↦ w.output_eq _ _ _⟩⟩, ?_, run_trim B⟩
+      ⟨⟨fun l a r ↦ w.cell l a r, fun _ _ _ ↦ w.output_eq _ _ _, fun _ ↦ w.finalLeft_eq _,
+        fun _ ↦ w.finalRight_eq _⟩⟩, ?_, run_trim B⟩
     rintro ⟨_, p, rfl⟩ a ⟨_, s, rfl⟩ hne
     have hc : contextOutput B.run p a s ≠ some a := by
       rw [contextOutput_run w, ne_eq, Option.some_inj]
@@ -360,7 +380,7 @@ theorem not_isNonInteractingBimachineComputable_of_isUnboundedCircumambient {f :
 theorem isNonInteractingBimachineComputable_of_isMealyComputable {f : List α → List α}
     (hf : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
   have ⟨σ, _, T, hT⟩ := hf
-  ⟨σ, ‹_›, Unit, inferInstance, T.toBimachine, ⟨⟨fun l a _ ↦ T.output l a, fun _ _ _ ↦ rfl⟩⟩,
+  ⟨σ, ‹_›, Unit, inferInstance, T.toBimachine, ⟨T.toBimachine_letterToLetter⟩,
     fun _ _ _ _ ↦ .inl fun _ ↦ rfl, T.toBimachine_run.trans hT⟩
 
 end WeakDeterminism
@@ -385,8 +405,9 @@ def maasaiBM : Bimachine Bool Bool Seg Seg :=
     if (l = true ∨ r = true) ∧ s = .recL then .recH else s
 
 theorem maasaiBM_isNonInteracting : IsNonInteracting maasaiBM :=
-  (isNonInteracting_iff_exists_rules.mpr ⟨fun l s ↦ if l = true ∧ s = .recL then .recH else s,
-    fun r s ↦ if r = true ∧ s = .recL then .recH else s, by decide⟩).2
+  ((isNonInteracting_iff_exists_rules (fun _ ↦ rfl) (fun _ ↦ rfl)).mpr
+    ⟨fun l s ↦ if l = true ∧ s = .recL then .recH else s,
+      fun r s ↦ if r = true ∧ s = .recL then .recH else s, by decide⟩).2
 
 private theorem dom_mem_iff {xs : List Seg} {i : ℕ} (h : xs[i]? = some .recL) :
     Seg.dom ∈ xs ↔ Seg.dom ∈ xs.take i ∨ Seg.dom ∈ xs.drop (i + 1) := by
@@ -410,19 +431,20 @@ theorem maasai_isNonInteractingBimachineComputable : IsNonInteractingBimachineCo
   ⟨Bool, inferInstance, Bool, inferInstance, maasaiBM, ⟨Bimachine.ofFlags_letterToLetter _ _ _⟩,
     maasaiBM_isNonInteracting, maasaiBM_run⟩
 
-/-- Def. 6 as printed, over every output rather than every change, admits no bimachine for Maasai:
-the output of a lone recessive vowel would be fixed by one side, yet a dominant vowel on either
-side raises it. -/
+/-- Def. 6 as printed, over every output rather than every change, admits no bimachine of Def. 4,
+which has no final functions, for Maasai: the output of a lone recessive vowel would be fixed by
+one side, yet a dominant vowel on either side raises it. -/
 theorem run_ne_maasai_of_forall_output_iff {L R : Type*} (B : Bimachine L R Seg Seg)
+    (hfL : ∀ r, B.finalLeft r = []) (hfR : ∀ l, B.finalRight l = [])
     (h : ∀ l x r y, B.output l x r = y ↔
       (∀ r', B.output l x r' = y) ∨ ∀ l', B.output l' x r = y) : B.run ≠ maasai := fun hB ↦ by
   have hone : B.output B.lInit .recL B.rInit = [.recL] := by
-    simpa [Bimachine.run, maasai] using congrFun hB [Seg.recL]
+    simpa [Bimachine.run, hfL, hfR, maasai] using congrFun hB [Seg.recL]
   rcases (h _ _ _ _).mp hone with hr | hl
   · have := congrFun hB [Seg.recL, Seg.dom]
-    simp [Bimachine.run, hr, maasai] at this
+    simp [Bimachine.run, hfL, hfR, hr, maasai] at this
   · have := congrArg List.getLast? (congrFun hB [Seg.dom, Seg.recL])
-    simp [Bimachine.run, hl, maasai] at this
+    simp [Bimachine.run, hfL, hfR, hl, maasai] at this
 
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
   refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
@@ -531,6 +553,25 @@ theorem not_isNonInteractingBimachineComputable_boundedRule :
   · exact absurd (h []) (by decide)
   · exact absurd (h []) (by decide)
 
+-- p. 1220
+theorem exists_isNonInteracting_run_eq_boundedRule :
+    ∃ (L : Type) (_ : Fintype L) (B : Bimachine L Unit Seg Seg),
+      IsNonInteracting B ∧ B.run = boundedRule none :=
+  ⟨_, inferInstance, boundedRuleT.toBimachine, fun _ _ _ _ ↦ .inl fun _ ↦ rfl,
+    boundedRuleT.run_toBimachine.trans run_boundedRuleT⟩
+
+theorem run_ne_boundedRule_of_finalRight_eq_nil {L : Type*} (B : Bimachine L Unit Seg Seg)
+    (hfL : ∀ r, B.finalLeft r = []) (hfR : ∀ l, B.finalRight l = []) :
+    B.run ≠ boundedRule none := fun h ↦ by
+  have run_eq (xs : List Seg) : B.run xs = B.emitted B.lInit xs () := by
+    simp [Bimachine.run, hfL, hfR]
+  have hp := congrFun h [.dom, .recL]
+  have hq := congrFun h [.dom, .recL, .dom]
+  rw [run_eq] at hp hq
+  rw [show [Seg.dom, .recL, .dom] = [Seg.dom, .recL] ++ [.dom] from rfl, B.emitted_append,
+    show B.rStateFrom () [Seg.dom] = () from rfl, hp] at hq
+  simp [boundedRule] at hq
+
 /-! ### Word-valued cells
 
 The letter-to-letter restriction is what makes unbounded circumambience an exclusion. A machine
@@ -572,13 +613,17 @@ theorem isNonInteracting_shiftBM : IsNonInteracting shiftBM := fun _ x _ hne ↦
   · exact absurd rfl hne
   · exact absurd rfl hne
 
-private theorem length_runFrom_shiftBM (l : Option ShiftSym) (xs : List ShiftSym) :
-    (shiftBM.runFrom l xs).length =
-      xs.length + if l = some s ∧ shiftBM.rState xs = some t then 1 else 0 := by
+private theorem run_shiftBM (xs : List ShiftSym) :
+    shiftBM.run xs = shiftBM.emitted none xs none := by
+  simp [Bimachine.run, shiftBM]
+
+private theorem length_emitted_shiftBM (l : Option ShiftSym) (xs : List ShiftSym) :
+    (shiftBM.emitted l xs none).length =
+      xs.length + if l = some s ∧ shiftBM.rStateFrom none xs = some t then 1 else 0 := by
   induction xs generalizing l with
   | nil => simp [shiftBM]
   | cons x xs ih =>
-    rw [Bimachine.runFrom_cons, List.length_append, ih, Bimachine.rState_cons]
+    rw [Bimachine.emitted_cons, List.length_append, ih, Bimachine.rStateFrom_cons]
     cases x <;> simp only [shiftBM] <;> split_ifs <;> simp_all <;> omega
 
 /-- The letters between markers, which pass through unchanged and leave both states alone. -/
@@ -586,8 +631,8 @@ private def NoMarker (xs : List ShiftSym) : Prop := ∀ x ∈ xs, x = o ∨ x = 
 
 private theorem shiftBM_append {xs : List ShiftSym} (hxs : NoMarker xs)
     (l : Option ShiftSym) (ys : List ShiftSym) :
-    shiftBM.rState (xs ++ ys) = shiftBM.rState ys ∧
-      shiftBM.runFrom l (xs ++ ys) = xs ++ shiftBM.runFrom l ys := by
+    shiftBM.rStateFrom none (xs ++ ys) = shiftBM.rStateFrom none ys ∧
+      shiftBM.emitted l (xs ++ ys) none = xs ++ shiftBM.emitted l ys none := by
   induction xs generalizing l with
   | nil => exact ⟨rfl, rfl⟩
   | cons x xs ih =>
@@ -596,11 +641,10 @@ private theorem shiftBM_append {xs : List ShiftSym} (hxs : NoMarker xs)
       exact ⟨(ih' l).1, congrArg (_ :: ·) (ih' l).2⟩
 
 private theorem run_shiftBM_cons {m : List ShiftSym} (hm : NoMarker m) (x y : ShiftSym) :
-    shiftBM.run (x :: (m ++ [y])) = shiftBM.output none x (shiftBM.rState [y]) ++
-      (m ++ shiftBM.runFrom (shiftBM.lStep none x) [y]) := by
-  rw [Bimachine.run, Bimachine.runFrom_cons, (shiftBM_append hm none [y]).1,
+    shiftBM.run (x :: (m ++ [y])) = shiftBM.output none x (shiftBM.rStateFrom none [y]) ++
+      (m ++ shiftBM.emitted (shiftBM.lStep none x) [y] none) := by
+  rw [run_shiftBM, Bimachine.emitted_cons, (shiftBM_append hm none [y]).1,
     (shiftBM_append hm _ [y]).2]
-  rfl
 
 private theorem run_shiftBM_s_t {m : List ShiftSym} (hm : NoMarker m) :
     shiftBM.run (s :: (m ++ [t])) = m ++ [t, t] :=
@@ -630,13 +674,18 @@ private theorem getElem?_shiftRun_append (d : ℕ) (ys : List ShiftSym) :
   rw [List.getElem?_append_left (by rw [length_shiftRun]; omega)]
   simp [shiftRun, List.getElem?_append]
 
-/-- Word-valued cells do not exclude unbounded circumambience: this length-preserving machine
-licenses each change by one side, and its target needs both. -/
+/-- Word-valued cells do not exclude unbounded circumambience: this machine licenses each change
+by one side and its target needs both. Letter-to-letter machines compute the same function, and
+none of them is non-interacting, so non-interaction belongs to the machine, not the function. -/
 theorem exists_isNonInteracting_isUnboundedCircumambient :
     ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R ShiftSym ShiftSym),
-      IsNonInteracting B ∧ (∀ w, (B.run w).length = w.length) ∧ IsUnboundedCircumambient B.run := by
+      IsNonInteracting B ∧ IsLetterToLetterBimachineComputable B.run ∧
+        IsUnboundedCircumambient B.run := by
+  have hlen (w : List ShiftSym) : (shiftBM.run w).length = w.length := by
+    simpa [run_shiftBM] using length_emitted_shiftBM none w
   refine ⟨_, _, inferInstance, inferInstance, shiftBM, isNonInteracting_shiftBM,
-    fun w ↦ by simpa [Bimachine.run, shiftBM] using length_runFrom_shiftBM none w, fun d ↦ ?_⟩
+    isLetterToLetterBimachineComputable_iff_isBimachineComputable.mpr
+      ⟨shiftBM.isBimachineComputable, hlen⟩, fun d ↦ ?_⟩
   have hm := noMarker_shiftRun d
   have hbase : (s :: (shiftRun d ++ [t]))[d + 1]? = some o := getElem?_shiftRun_append d _
   refine ⟨s :: (shiftRun d ++ [t]), d + 1, by simp [length_shiftRun]; omega, ?_, fun e ↦ ?_⟩

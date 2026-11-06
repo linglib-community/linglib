@@ -424,7 +424,7 @@ def vouloir : Verb where
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- *espérer* 'hope' takes a *que* clause in the indicative and an infinitive under subject
 control. Some speakers also accept the subjunctive in a complement about the future, a use this
@@ -435,7 +435,7 @@ def esperer : Verb where
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- *croire* 'believe' takes a *que* clause in the indicative. -/
 def croire : Verb where

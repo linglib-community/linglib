@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Fragments.English.Adjectives
 
 /-!
@@ -25,7 +25,6 @@ the preimages of `Set.Ioi θ`, `Set.Ioi ⊥` and `Set.Ici ⊤` under the measure
 
 namespace Kennedy2007
 
-open Degree
 
 variable {Entity D : Type*} [LinearOrder D]
 
@@ -119,12 +118,10 @@ theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModif
 open English.Adjectives in
 -- (61)
 theorem fragment_pairs_table61 :
-    full.boundedness.Licenses .maximizer ∧ empty.boundedness.Licenses .maximizer ∧
-    wet.boundedness.Licenses .minimizer ∧ ¬ wet.boundedness.Licenses .maximizer ∧
-    dry.boundedness.Licenses .maximizer ∧ ¬ dry.boundedness.Licenses .minimizer ∧
-    bent.boundedness.Licenses .minimizer ∧ ¬ bent.boundedness.Licenses .maximizer ∧
-    straight.boundedness.Licenses .maximizer ∧
-    ¬ tall.boundedness.Licenses .maximizer ∧ ¬ short.boundedness.Licenses .minimizer := by
+    (∀ a ∈ [full, empty, dry, straight], ∃ b ∈ a.boundedness, b.Licenses .maximizer) ∧
+    (∀ a ∈ [wet, bent], ∃ b ∈ a.boundedness, b.Licenses .minimizer) ∧
+    (∀ a ∈ [wet, bent, tall], ∃ b ∈ a.boundedness, ¬ b.Licenses .maximizer) ∧
+    ∀ a ∈ [dry, short], ∃ b ∈ a.boundedness, ¬ b.Licenses .minimizer := by
   decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/
@@ -137,8 +134,8 @@ open English.Adjectives in
 /-- *Bent* and *straight* could take a relative standard, but their scale fixes the transition
 from zero to positive bend, and Interpretive Economy selects the standard it fixes (p. 37). -/
 theorem bent_straight_absolute :
-    bent.boundedness.Admits .minEndpoint ∧ ¬ bent.boundedness.Admits .contextual ∧
-      straight.boundedness.Admits .maxEndpoint ∧ ¬ straight.boundedness.Admits .contextual := by
+    (∃ b ∈ bent.boundedness, b.Admits .minEndpoint ∧ ¬ b.Admits .contextual) ∧
+      ∃ b ∈ straight.boundedness, b.Admits .maxEndpoint ∧ ¬ b.Admits .contextual := by
   decide
 
 /-- A totally closed scale is interpretively variable, admitting both endpoint standards

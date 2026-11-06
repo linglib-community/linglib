@@ -131,7 +131,7 @@ variable {α : Type*} [DecidableEq α] {Cov : Finset α → Prop} {x y d A : Fin
 the cover that are parts of the range `y` and do not overlap the contrast `x`, where there is one.
 -/
 noncomputable def eachOther (Cov : Finset α → Prop) (x y : Finset α) : Option (Finset α) :=
-  iota (IsGreatest {z | AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Cov z) z})
+  iota {w | IsGreatest {z | AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Cov z) z} w}
 
 theorem eachOther_isSome_iff :
     (eachOther Cov x y).isSome ↔ ∃ z, ¬ Overlap z x ∧ z ≤ y ∧ Cov z := by
@@ -150,8 +150,8 @@ private theorem algClosure_otherAtoms_iff :
   simp [overlap_iff_not_disjoint, atom_singleton, Finset.subset_iff, and_comm]
 
 theorem eachOther_atom_eq_some_iff : eachOther Atom x y = some d ↔ d.Nonempty ∧ d = y \ x := by
-  simp only [eachOther, iota_isGreatest_eq_some_iff, IsGreatest, upperBounds, Set.mem_ofPred_eq,
-    algClosure_otherAtoms_iff]
+  rw [eachOther, iota_isGreatest_eq_some_iff]
+  simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, algClosure_otherAtoms_iff]
   refine ⟨fun ⟨⟨hd, hsub⟩, hub⟩ ↦ ⟨hd, hsub.antisymm (hub ⟨hd.mono hsub, subset_rfl⟩)⟩, ?_⟩
   rintro ⟨hd, rfl⟩
   exact ⟨⟨hd, subset_rfl⟩, fun _ hz ↦ hz.2⟩

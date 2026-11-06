@@ -87,9 +87,9 @@ private def emTerm : CutChoice Vertex :=
     W.map fun T ↦ (T, (0, {T}))
 
 private theorem emTerm_mem :
-    emTerm S S' W ∈ forestCutChoicesG (cutSummandsCN traceEncoder) ({S, S'} + W) :=
-  add_mem_forestCutChoicesG (map_whole_mem_forestCutChoicesG _)
-    (map_uncut_mem_forestCutChoicesG fun T _ ↦ zero_mem_cutSummandsCN _ T)
+    emTerm S S' W ∈ forestCutChoices (traceCuts traceEncoder) ({S, S'} + W) :=
+  add_mem_forestCutChoices (map_whole_mem_forestCutChoices _)
+    (map_uncut_mem_forestCutChoices fun T _ ↦ zero_mem_traceCuts _ T)
 
 private theorem emTerm_crown : (emTerm S S' W).crown = {S, S'} := by simp [emTerm]
 
@@ -115,11 +115,11 @@ end ExternalMerge
 variable {step : Step} {current : SyntacticObject} {W : Workspace}
 
 /-- The trace cut extracting the mover of an admissible Internal Merge. -/
-private theorem mem_cutSummandsCN_mover {mover : SyntacticObject} (hm : mover.val.value.isLeft)
+private theorem mem_traceCuts_mover {mover : SyntacticObject} (hm : mover.val.value.isLeft)
     (h : current.terms.count mover = 1) (hne : current ≠ mover) :
-    ({mover.val}, (deleteAccessible mover current).val) ∈ cutSummandsCN traceEncoder current.val :=
+    ({mover.val}, (deleteAccessible mover current).val) ∈ traceCuts traceEncoder current.val :=
   Multiset.mem_of_mem_filter (p := fun p ↦ p.1 = {mover.val}) <| by
-    rw [cutSummandsCN_filter_mover hm h hne]
+    rw [traceCuts_filter_mover hm h hne]
     exact Multiset.mem_singleton_self _
 
 /-- An admissible step whose operands are not traces satisfies No Complexity Loss under the size `σ`
@@ -139,7 +139,7 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     have := NoComplexityLoss.of_componentMap hs
       (X := UnorderedTree.node Vertex.bare {current.val, (item : SyntacticObject).val})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
-        (hasExtractionCost_accessibleSize_cutSummandsCN hs (emTerm_lexical _ hcur hitems))
+        (hasExtractionCost_accessibleSize_traceCuts hs (emTerm_lexical _ hcur hitems))
         (fun T ↦ by simp) (emTerm_crown ..)
         (by simp only [Forest.accessibleSize_singleton, hm]; omega)
         (by simp only [Forest.accessibleSize_singleton, hm]; omega)).mpr
@@ -150,11 +150,11 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     rwa [Multiset.singleton_add]
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_cutSummandsCN_mover hm hc hne
-    have hσ := cutSummandsCN_accessibleSize traceEncoder hcur hp
+    have hp := mem_traceCuts_mover hm hc hne
+    have hσ := traceCuts_accessibleSize traceEncoder hcur hp
     have hmerge := UnorderedTree.accessibleCount_merge none (deleteAccessible mover current).val
       mover.val (UnorderedTree.numTraces_lt_numNodes_of_isLeft (by
-        rw [cutSummandsCN_trunk_value traceEncoder _ _ hp]; exact hcur))
+        rw [traceCuts_trunk_value traceEncoder _ _ hp]; exact hcur))
       (UnorderedTree.numTraces_lt_numNodes_of_isLeft hm)
     simp only [Multiset.map_singleton, Multiset.sum_singleton,
       Forest.accessibleSize_singleton] at hσ
@@ -189,7 +189,7 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.va
       (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)).add_right _
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
-    have hp := mem_cutSummandsCN_mover hm hc hne
+    have hp := mem_traceCuts_mover hm hc hne
     obtain ⟨l, r, rfl⟩ := exists_eq_merge_of_count_terms hc hne
     simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
       merge_val, Multiset.pair_comm (deleteAccessible mover (merge l r)).val] at hp ⊢

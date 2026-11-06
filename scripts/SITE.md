@@ -46,6 +46,9 @@ needs it:
   with the theory it builds on above it and what uses it below, down through the theory, the papers
   on their axis and the languages. Its right column lists the same, with the names each one uses,
   then the rest of the file's directory, then every import and importer.
+- A study's right column has the theorems whose statements name another paper's definitions, with
+  their sentences: this page's about other papers, and other pages' about this one. Say "about",
+  never "uses" or "cites": a theorem may name a definition to argue against it.
 - Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
   or proved against not yet, the same vocabulary as the bibliography's roles.
 - Every entry of a References list links to its bibliography entry, the study's own paper too;
@@ -59,6 +62,11 @@ Addresses are per page, relative to its depth under `/docs/`. A docstring's path
 doc-gen4 links from the site's root, is resolved to the file if there is one and left as text if
 not; a page's links to mathlib and its dependencies, which the site does not carry, go to mathlib's
 docs.
+
+`/docs/random.html`, in the menu as Random, opens a study page at a theorem, a paper first so that
+long files do not dominate. The page shows that theorem's sentence under the citation, labelled as
+one result from the paper, with a link to the Lean statement. Don't call a sentence proved: Lean
+checks the statement, not that the sentence says the same thing.
 
 The landing page at `/docs/` (`docs_page/index.html`, where `/docs/Studies/` forwards) is the
 page's title, one box that filters the page as you type and sends Enter to doc-gen4's search, and

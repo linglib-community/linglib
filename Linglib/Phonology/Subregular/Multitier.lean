@@ -13,7 +13,6 @@ public import Linglib.Core.Computability.Variety.Eilenberg
 public import Linglib.Core.Computability.LocallyTestable
 public import Mathlib.Computability.Language
 public import Mathlib.Order.BooleanSubalgebra
-public import Linglib.Core.Data.List.Factors
 
 /-!
 # Multitier extensions of subregular classes

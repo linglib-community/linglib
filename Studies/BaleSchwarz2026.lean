@@ -38,7 +38,7 @@ and (3) and (24) name no predicate dimension.
 
 namespace BaleSchwarz2026
 
-open Degree Quantity English.MeasurePhrases BaleSchwarz2022
+open Quantity English.MeasurePhrases BaleSchwarz2022
 
 noncomputable section
 

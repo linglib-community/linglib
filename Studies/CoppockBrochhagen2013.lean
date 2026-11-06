@@ -156,7 +156,7 @@ theorem atLeast_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
       Focus.atLeast (· ≥ ·) univ (twoSided μ) n = μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
-  rw [atLeast_twoSided, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
+  rw [atLeast_twoSided, Comparison.modifier_singleton, Comparison.interval_ge]
 
 /-- On the question of how many, *at most* is the Fragment's reading of the numeral it modifies,
 pulled back along the count. -/
@@ -164,7 +164,7 @@ theorem atMost_fragment (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,
       Focus.atMost (· ≥ ·) univ (twoSided μ) n = μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
-  rw [atMost_twoSided, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_le]
+  rw [atMost_twoSided, Comparison.modifier_singleton, Comparison.interval_le]
 
 end Fragment
 

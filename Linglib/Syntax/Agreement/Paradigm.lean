@@ -16,7 +16,7 @@ specify: a verb whose cells give person and number realizes a controller bearing
 too by its person and number. Syncretism is two cells with one exponent, a bundle extending no
 cell has no form, and a default form is an entry whose cell is `⊥`. Each entry is a rule of
 exponence applying at the bundles that extend its cell, so realization is the Elsewhere selection
-of a `Morphology.Exponence.RuleSet`, and on a table of incomparable cells it is
+of a `Morphology.RuleSet`, and on a table of incomparable cells it is
 [looking the cell up](##realize_of_mem).
 
 ## Main definitions
@@ -46,12 +46,12 @@ abbrev Paradigm (Exp : Type*) := List (Bundle × Exp)
 
 namespace Paradigm
 
-open Morphology.Exponence
+open Morphology
 
 variable {Exp : Type*} {p q : Paradigm Exp} {x y c : Bundle} {e : Exp}
 
 /-- An entry is a rule of exponence applying at the bundles that extend its cell. -/
-instance : Rule (Bundle × Exp) Bundle Exp := ⟨Prod.snd, fun e x ↦ e.1 ≤ x⟩
+instance : ExponenceRule (Bundle × Exp) Bundle Exp := ⟨Prod.snd, fun e x ↦ e.1 ≤ x⟩
 
 @[simp] theorem applies_iff {e : Bundle × Exp} : Applies e x ↔ e.1 ≤ x := Iff.rfl
 

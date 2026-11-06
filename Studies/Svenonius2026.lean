@@ -45,7 +45,7 @@ the control.
 namespace Svenonius2026
 
 open DistributedMorphology
-open Morphology.Exponence
+open Morphology
 
 /-- Joint spell-out: every morpheme of the fully realized word bears the exponent that wins the
 Subset Principle in the context of that very word, so realization is a fixed point of Vocabulary

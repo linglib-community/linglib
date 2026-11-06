@@ -154,7 +154,7 @@ theorem similarity_lt_of_ne (hx : x ≠ M.solve ⊥ u) : (similarity M u).lt (M.
   Prod.Lex.toLex_strictMono (score_solve_bot_lt hx)
 
 -- p. 560
-theorem similarity_total : Std.Total (similarity M u).le :=
+instance similarity_total : Std.Total (similarity M u).le :=
   ⟨fun x y ↦ le_total (toLex (score M u x)) (toLex (score M u y))⟩
 
 variable [DecidableEq V] {b : α c}

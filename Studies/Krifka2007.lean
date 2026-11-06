@@ -81,13 +81,14 @@ def approximateInterpretation : Form × Reading → ℕ
 /-- The superoptimal pairs of the earlier account read the simple form approximately and the
 complex form precisely, the division of pragmatic labour. -/
 theorem division_of_labour :
-    superoptimal Finset.univ (profile [simpleExpression, approximateInterpretation]) =
+    superoptimal Finset.univ
+        (ViolationProfile.ofList [simpleExpression, approximateInterpretation]) =
       {(.simple, .approximate), (.complex, .precise)} := by
   decide
 
 theorem division_of_labour_without_simple_precise :
     superoptimal (Finset.univ.erase (.simple, .precise))
-      (profile [simpleExpression, approximateInterpretation]) =
+      (ViolationProfile.ofList [simpleExpression, approximateInterpretation]) =
       {(.simple, .approximate), (.complex, .precise)} := by
   decide
 
@@ -212,7 +213,7 @@ theorem approximate_more_probable :
 
 /-! ### Choosing a scale -/
 
-open Degree Numerals.Roundness
+open Numerals.Roundness
 
 private theorem intCast_mem_zmultiples_iff {w : ℕ} {n : ℤ} :
     (n : ℝ) ∈ AddSubgroup.zmultiples (w : ℝ) ↔ (w : ℤ) ∣ n := by
@@ -225,20 +226,20 @@ variable {W : Finset ℕ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} 
 /-- The speaker chooses the scale of width `w` and reports the scale point nearest the value as
 `n`. -/
 def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
-  {w} ×ˢ (representative ((w : ℕ) : ℝ) ⁻¹' {(n : ℝ)})
+  {w} ×ˢ (nearestMultiple ((w : ℕ) : ℝ) ⁻¹' {(n : ℝ)})
 
 theorem measure_reportedOn_of_dvd [SFinite ν]
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) {w : W} (hw : 0 < (w : ℕ))
     (hI : Set.Ico ((n : ℝ) - (w : ℕ) / 2) (n + (w : ℕ) / 2) ⊆ I) (h : ((w : ℕ) : ℤ) ∣ n) :
     (μs.prod ν) (reportedOn w n) = μs {w} * (r * ENNReal.ofReal ((w : ℕ) : ℝ)) := by
-  rw [reportedOn, Measure.prod_prod, preimage_representative (by exact_mod_cast hw)
+  rw [reportedOn, Measure.prod_prod, preimage_nearestMultiple (by exact_mod_cast hw)
     (intCast_mem_zmultiples_iff.2 h), hν measurableSet_Ico hI, Real.volume_Ico]
   congr 3
   ring
 
 theorem measure_reportedOn_of_not_dvd {w : W} (h : ¬ ((w : ℕ) : ℤ) ∣ n) :
     (μs.prod ν) (reportedOn w n) = 0 := by
-  rw [reportedOn, preimage_representative_of_notMem (mt intCast_mem_zmultiples_iff.1 h),
+  rw [reportedOn, preimage_nearestMultiple_of_notMem (mt intCast_mem_zmultiples_iff.1 h),
     Set.prod_empty, measure_empty]
 
 /-- Hearing `n` on aligned scales with equal priors, the most probable scale is the coarsest one
@@ -327,10 +328,10 @@ private theorem add_half_mem_zmultiples_iff {ε d : ℝ} (hε : ε ≠ 0) :
     · exact ⟨k + 1, by rw [← hm]; push_cast; ring⟩
 
 theorem halving_adds_most_distorted {d : ℝ} :
-    |d - representative 10 d| = 5 ↔
+    |d - nearestMultiple 10 d| = 5 ↔
       d ∈ AddSubgroup.zmultiples (5 : ℝ) ∧ d ∉ AddSubgroup.zmultiples (10 : ℝ) := by
   simpa [show (10 : ℝ) / 2 = 5 by norm_num]
-    using (abs_sub_representative_eq_half_iff (d := d) (by norm_num : (0 : ℝ) < 10)).trans
+    using (abs_sub_nearestMultiple_eq_half_iff (d := d) (by norm_num : (0 : ℝ) < 10)).trans
       (add_half_mem_zmultiples_iff (by norm_num))
 
 end Krifka2007

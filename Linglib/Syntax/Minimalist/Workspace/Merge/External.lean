@@ -11,25 +11,26 @@ public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 
 External Merge (Lemma 1.4.1 of Marcolli, Chomsky and Berwick) is Merge of two components `S, S'`
 of a workspace. It replaces them by `node lbl {S, S'}` and leaves the rest unchanged. For a
-two-object workspace this holds over every cut enumeration admitting Merge (`mergeOpG_pair`), in
-particular at the pruning and trace cuts. With a residual workspace `F̂` it holds when no component
-of `F̂` has `S` or `S'` as a subtree (`mergeOpG_pair_residual`), since such a workspace passes
-through Merge unchanged (`mergeOpG_of'_mul`). The book's Merge, at the deletion cuts, reaches
-these through the contraction of unary vertices (`mergeOp_eq_rename_contractUnary_comp`), so its
-forms hold of objects without unary vertices, as syntactic objects are.
+two-object workspace this holds over every cut enumeration admitting Merge (`mergeOpOfCuts_pair`),
+in particular at the admissible and trace cuts. With a residual workspace `F̂` it holds when no
+component of `F̂` has `S` or `S'` as a subtree (`mergeOpOfCuts_pair_residual`), since such a
+workspace passes through Merge unchanged (`mergeOpOfCuts_of'_mul`). The book's Merge, at the
+deletion cuts, reaches these through the contraction of unary vertices
+(`mergeOp_eq_rename_contractUnary_comp`), so its forms hold of objects without unary vertices, as
+syntactic objects are.
 
-The proof of `mergeOpG_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
+The proof of `mergeOpOfCuts_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
 primitive terms and the cut sums of `S` and `S'`. Only the primitive term survives: a cut of `S'`
 alone would need crown `{S'}`, and cuts of both would need crowns reassembling `{S, S'}`, and
 both are ruled out by the edge bound of `IsMergeCuts`.
 
 ## Main results
 
-* `Minimalist.Merge.mergeOpG_pair`, `mergeOp_pair`, `mergeOpC_pair`: External Merge on a
+* `Minimalist.Merge.mergeOpOfCuts_pair`, `mergeOp_pair`, `traceMergeOp_pair`: External Merge on a
   two-object workspace.
-* `Minimalist.Merge.mergeOpG_of'_mul`: Merge commutes with a spectator workspace.
-* `Minimalist.Merge.mergeOpG_pair_residual`, `mergeOp_pair_residual`, `mergeOpC_pair_residual`:
-  External Merge with a residual workspace.
+* `Minimalist.Merge.mergeOpOfCuts_of'_mul`: Merge commutes with a spectator workspace.
+* `Minimalist.Merge.mergeOpOfCuts_pair_residual`, `mergeOp_pair_residual`,
+  `traceMergeOp_pair_residual`: External Merge with a residual workspace.
 
 ## References
 
@@ -56,21 +57,21 @@ section DecidableEq
 
 variable [DecidableEq (UnorderedTree α)]
 
-instance : IsMergeCuts (cutSummandsN (α := α)) where
-  crown_numEdges_lt := cutSummandsN_crown_numEdges_lt
-  mem_subtrees_of_mem_crown hp hx := (exists_mem_crown_cutSummandsN_iff.mp ⟨_, hp, hx⟩).1
-  filter_empty := cutSummandsN_filter_empty
+instance : IsMergeCuts (admissibleCuts (α := α)) where
+  crown_numEdges_lt := admissibleCuts_crown_numEdges_lt
+  mem_subtrees_of_mem_crown hp hx := (exists_mem_crown_admissibleCuts_iff.mp ⟨_, hp, hx⟩).1
+  filter_empty := admissibleCuts_filter_empty
 
-instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (cutSummandsCN τ) where
-  crown_numEdges_lt := cutSummandsCN_crown_numEdges_lt τ
-  mem_subtrees_of_mem_crown hp hx := cutSummandsCN_mem_subtrees_of_mem_crown τ hp hx
-  filter_empty := cutSummandsCN_filter_empty τ
+instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (traceCuts τ) where
+  crown_numEdges_lt := traceCuts_crown_numEdges_lt τ
+  mem_subtrees_of_mem_crown hp hx := traceCuts_mem_subtrees_of_mem_crown τ hp hx
+  filter_empty := traceCuts_filter_empty τ
 
 /-- External Merge of a two-object workspace, over a cut enumeration admitting Merge. -/
-theorem mergeOpG_pair
+theorem mergeOpOfCuts_pair
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) (S S' : UnorderedTree α) :
-    mergeOpG (R := R) cuts lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
   have key (F F' : Forest (UnorderedTree α)) (t t' : ConnesKreimer R (UnorderedTree α)) :
       mergePost (R := R) lbl S S' ((of' F ⊗ₜ[R] t) * (of' F' ⊗ₜ[R] t'))
@@ -97,9 +98,9 @@ theorem mergeOpG_pair
         omega
       · have := IsMergeCuts.crown_numEdges_lt hp' h2
         omega
-  rw [mergeOpG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomNG_apply_of',
-    show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ S' ::ₘ 0 from rfl, comulForestNG_cons,
-    comulForestNG_cons, comulForestNG_zero, mul_one, comulTreeNG, comulTreeNG]
+  rw [mergeOpOfCuts, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulOfCuts_apply_of',
+    show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ S' ::ₘ 0 from rfl, comulForestOfCuts_cons,
+    comulForestOfCuts_cons, comulForestOfCuts_zero, mul_one, comulTreeOfCuts, comulTreeOfCuts]
   simp only [ofTree, add_mul, mul_add, ← Multiset.sum_map_mul_left,
     ← Multiset.sum_map_mul_right, map_add, map_multiset_sum, Multiset.map_map,
     Function.comp_def, key, ite_eq_left hpair, mul_one]
@@ -115,21 +116,22 @@ theorem mergeOp_pair (lbl : α) {S S' : UnorderedTree α} (hS : S.numUnary = 0)
     (hS' : S'.numUnary = 0) :
     mergeOp (R := R) lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
-  rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply, mergeOpG_pair,
+  rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply, mergeOpOfCuts_pair,
     AlgHom.toLinearMap_apply, rename_of', Multiset.map_singleton,
     UnorderedTree.contractUnary_node_pair, UnorderedTree.contractUnary_eq_self_iff.mpr hS,
     UnorderedTree.contractUnary_eq_self_iff.mpr hS']
 
 /-- Merge commutes with a spectator component having neither `S` nor `S'` as a subtree
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
-theorem mergeOpG_ofTree_mul
+theorem mergeOpOfCuts_ofTree_mul
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' T : UnorderedTree α}
     (hT_S : S ∉ T.subtrees) (hT_S' : S' ∉ T.subtrees)
     (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpG (R := R) cuts lbl S S' (ofTree T * w) = ofTree T * mergeOpG (R := R) cuts lbl S S' w := by
-  rw [mergeOpG, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul, comulAlgHomNG_apply_ofTree, comulTreeNG, add_mul, map_add,
+    mergeOpOfCuts (R := R) cuts lbl S S' (ofTree T * w) =
+      ofTree T * mergeOpOfCuts (R := R) cuts lbl S S' w := by
+  rw [mergeOpOfCuts, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
+    AlgHom.toLinearMap_apply, map_mul, comulOfCuts_apply_ofTree, comulTreeOfCuts, add_mul, map_add,
     ← of'_singleton]
   -- The primitive term vanishes, since `{T}` does not fit inside `{S, S'}`.
   rw [mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ ?prim, zero_add]
@@ -165,18 +167,19 @@ theorem mergeOpG_ofTree_mul
 
 /-- Merge commutes with a spectator workspace `F` none of whose components has `S` or `S'` as a
     subtree. -/
-theorem mergeOpG_of'_mul
+theorem mergeOpOfCuts_of'_mul
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' : UnorderedTree α} {F : Forest (UnorderedTree α)}
     (hF : ∀ T ∈ F, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees)
     (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpG (R := R) cuts lbl S S' (of' F * w) = of' F * mergeOpG (R := R) cuts lbl S S' w := by
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' F * w) =
+      of' F * mergeOpOfCuts (R := R) cuts lbl S S' w := by
   induction F using Multiset.induction generalizing w with
   | empty => rw [of'_zero, one_mul, one_mul]
   | cons T F ih =>
     have hT := hF T (Multiset.mem_cons_self _ _)
     rw [of'_cons, mul_assoc,
-      mergeOpG_ofTree_mul lbl (Multiset.disjoint_left.mp hT (by simp))
+      mergeOpOfCuts_ofTree_mul lbl (Multiset.disjoint_left.mp hT (by simp))
         (Multiset.disjoint_left.mp hT (by simp)),
       ih (fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)), mul_assoc]
 
@@ -187,18 +190,18 @@ theorem mergeOp_ofTree_mul (lbl : α) {S S' T : UnorderedTree α} (hS : S.numUna
     (hT_S' : S' ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOp (R := R) lbl S S' (ofTree T * w) = ofTree T * mergeOp (R := R) lbl S S' w := by
   simp only [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply,
-    mergeOpG_ofTree_mul lbl hT_S hT_S', AlgHom.toLinearMap_apply, map_mul, rename_ofTree,
+    mergeOpOfCuts_ofTree_mul lbl hT_S hT_S', AlgHom.toLinearMap_apply, map_mul, rename_ofTree,
     UnorderedTree.contractUnary_eq_self_iff.mpr hT]
 
 /-- External Merge of `S` and `S'` beside a workspace `F̂` none of whose components contains them
 leaves `F̂` unchanged ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
-theorem mergeOpG_pair_residual
+theorem mergeOpOfCuts_pair_residual
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' : UnorderedTree α} {Fhat : Forest (UnorderedTree α)}
     (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees) :
-    mergeOpG (R := R) cuts lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat))
+    mergeOpOfCuts (R := R) cuts lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat))
       = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) := by
-  rw [add_comm, of'_add, mergeOpG_of'_mul lbl hF, mergeOpG_pair, ← of'_add, add_comm]
+  rw [add_comm, of'_add, mergeOpOfCuts_of'_mul lbl hF, mergeOpOfCuts_pair, ← of'_add, add_comm]
 
 /-- External Merge with a residual workspace, all of whose objects are without unary vertices. -/
 theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
@@ -210,7 +213,7 @@ theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
   have hFhat : Fhat.map UnorderedTree.contractUnary = Fhat.map id :=
     Multiset.map_congr rfl fun T hT ↦ UnorderedTree.contractUnary_eq_self_iff.mpr (hFu T hT)
   rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply,
-    mergeOpG_pair_residual lbl hF, AlgHom.toLinearMap_apply, rename_of', Multiset.map_add,
+    mergeOpOfCuts_pair_residual lbl hF, AlgHom.toLinearMap_apply, rename_of', Multiset.map_add,
     Multiset.map_singleton, UnorderedTree.contractUnary_node_pair,
     UnorderedTree.contractUnary_eq_self_iff.mpr hS, UnorderedTree.contractUnary_eq_self_iff.mpr hS',
     hFhat, Multiset.map_id]
@@ -220,19 +223,19 @@ end DecidableEq
 /-! ### External Merge at the trace cuts -/
 
 /-- External Merge of a two-object workspace at the trace cuts. -/
-theorem mergeOpC_pair {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+theorem traceMergeOp_pair {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
-    mergeOpC (R := R) τ lbl S S' (of' ({S, S'} : Forest (UnorderedTree (α ⊕ β))))
+    traceMergeOp (R := R) τ lbl S S' (of' ({S, S'} : Forest (UnorderedTree (α ⊕ β))))
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree (α ⊕ β))) :=
-  mergeOpG_pair lbl S S'
+  mergeOpOfCuts_pair lbl S S'
 
 /-- External Merge at the trace cuts with a residual workspace. -/
-theorem mergeOpC_pair_residual {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+theorem traceMergeOp_pair_residual {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) {S S' : UnorderedTree (α ⊕ β)}
     {Fhat : Forest (UnorderedTree (α ⊕ β))}
     (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree (α ⊕ β))) T.subtrees) :
-    mergeOpC (R := R) τ lbl S S' (of' (({S, S'} : Forest (UnorderedTree (α ⊕ β))) + Fhat))
+    traceMergeOp (R := R) τ lbl S S' (of' (({S, S'} : Forest (UnorderedTree (α ⊕ β))) + Fhat))
       = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree (α ⊕ β))) + Fhat) :=
-  mergeOpG_pair_residual lbl hF
+  mergeOpOfCuts_pair_residual lbl hF
 
 end Minimalist.Merge

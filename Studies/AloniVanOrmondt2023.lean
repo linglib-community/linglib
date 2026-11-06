@@ -45,7 +45,7 @@ disjuncts split over individuals, [obviating the ignorance](##obviation).
 
 namespace AloniVanOrmondt2023
 
-open QBSML Degree
+open QBSML
 
 inductive Var
   | x
@@ -89,7 +89,7 @@ theorem support_enrich_predc_amountModel :
 theorem support_disj_predc_amountModel :
     support (amountModel R κ μ) (.disj (.predc A k) (.predc B k)) s ↔
       support (amountModel R κ μ) (.predc (A ∪ B) k) s :=
-  Team.mem_tensor_flat
+  Team.mem_flat_sups_flat
 
 /-- The translation of a modified numeral is supported exactly where the comparison holds of the
 amount, so splitting a superlative keeps its truth conditions ((8), (14), (16)). -/

@@ -13,8 +13,8 @@ of simultaneous extractions multiply, and Merge pays the weight of the terms it 
 `M^ε_{S,S'} = ⊔ ∘ (B^ε ⊗ id) ∘ δ_{S,S'} ∘ Δ` of (1.5.1) and (1.5.2).
 
 The weighted coproduct `comulEps ε` scales a tree by `ε` for each level it is moved down on its
-way to the left channel. At `ε = 1` it is the pruning coproduct, so the weighted Merge
-`mergeOpEps 1` is Merge at the pruning cuts. At `ε = 0` only whole components reach the left
+way to the left channel. At `ε = 1` it is the Connes–Kreimer coproduct, so the weighted Merge
+`mergeOpEps 1` is Merge at the admissible cuts. At `ε = 0` only whole components reach the left
 channel and the coproduct is primitive, so `mergeOpEps 0` merges two components of the workspace
 and nothing else. At every `ε`, weighted Merge agrees with its value at `ε = 0` up to a multiple
 of `ε`, and External and Internal Merge have weight `1` (Proposition 1.5.1): they cost nothing,
@@ -28,7 +28,7 @@ every Sideward term costs at least one, and in the limit only External and Inter
 ## Main results
 
 * `Minimalist.Merge.comulEps_one`, `comulEps_zero`: at `ε = 1` the weighted coproduct is the
-  pruning coproduct, and at `ε = 0` it is the primitive coproduct.
+  Connes–Kreimer coproduct, and at `ε = 0` it is the primitive coproduct.
 * `Minimalist.Merge.mergeOpEps_pair`, `mergeOpEps_im_composition`: External and Internal Merge
   have weight `1` at every `ε`.
 * `Minimalist.Merge.mergeOpEps_eq_add_smul`, `mergeOpEps_of'_eq_smul_of_not_le`: weighted Merge is
@@ -44,11 +44,11 @@ every Sideward term costs at least one, and in the limit only External and Inter
   coefficient of the left channel only. The book uses the right weight only to compute the cost
   `d - d = 0` of Internal Merge, which here is the cost `0` of merging two components.
 * The unit stage `M_{β,1}` grafts nothing and costs nothing (the book's rule 4), so Internal Merge
-  is `mergeOpEps ε lbl Q β ∘ mergeOpUnitG cutSummandsN β`, as the book writes it in proving
+  is `mergeOpEps ε lbl Q β ∘ mergeOpUnitOfCuts admissibleCuts β`, as the book writes it in proving
   Proposition 1.5.1.
-* The weights are put on the pruning coproduct `Δ^ρ`. The book's `Δ` is `Δ^d`, which differs from
-  `Δ^ρ` only by contracting the unary vertices of the right channel
-  (`mergeOp_eq_comp_comulAlgHomN`), the channel the weights do not read.
+* The weights are put on the Connes–Kreimer coproduct `Δ^ρ`. The book's `Δ` is `Δ^d`, which differs
+  from `Δ^ρ` only by contracting the unary vertices of the right channel
+  (`mergeOp_eq_comp_comulAlgHom`), the channel the weights do not read.
 * The weights are polynomial in `ε`, and the limit `ε → 0` is evaluation at `ε = 0`, the book's
   `M^ε_{S,S'}|_{ε=0}`.
 
@@ -123,17 +123,17 @@ noncomputable def comulEps (ε : R) :
     comulEps ε (ofTree T) = comulTreeEps ε T :=
   aeval_ofTree _ T
 
-/-- At `ε = 1` every extraction has weight `1`, and the weighted coproduct is the pruning
+/-- At `ε = 1` every extraction has weight `1`, and the weighted coproduct is the Connes–Kreimer
     coproduct. -/
-theorem comulEps_one : comulEps (1 : R) = comulAlgHomN (α := α) := by
+theorem comulEps_one : comulEps (1 : R) = comulAlgHom (α := α) := by
   ext T
-  rw [comulEps_ofTree, comulAlgHomN_apply_ofTree]
+  rw [comulEps_ofTree, comulAlgHom_apply_ofTree]
   induction T with
   | node a F ih =>
     have hθ : (aeval fun t ↦ (1 : R) • ofTree (R := R) (T := UnorderedTree α) t) = AlgHom.id R _ :=
       algHom_ext_ofTree fun t ↦ by simp
-    rw [comulTreeEps_node, hθ, Multiset.map_congr rfl ih, ← comulAlgHomN_apply_ofTree,
-      ← bPlus_of', comulAlgHomN_bPlus_cocycle, comulAlgHomN_apply_of']
+    rw [comulTreeEps_node, hθ, Multiset.map_congr rfl ih, ← comulAlgHom_apply_ofTree,
+      ← bPlus_of', comulAlgHom_bPlus_cocycle, comulAlgHom_apply_of']
     rfl
 
 /-- At `ε = 0` every tree is primitive for the weighted coproduct, since only whole components reach
@@ -331,22 +331,22 @@ noncomputable def mergeOpEps (ε : R) (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost lbl S S' ∘ₗ (comulEps ε).toLinearMap
 
-/-- At `ε = 1` weighted Merge is Merge at the pruning cuts. -/
+/-- At `ε = 1` weighted Merge is Merge at the admissible cuts. -/
 theorem mergeOpEps_one (lbl : α) (S S' : UnorderedTree α) :
-    mergeOpEps (1 : R) lbl S S' = mergeOpG cutSummandsN lbl S S' := by
+    mergeOpEps (1 : R) lbl S S' = mergeOpOfCuts admissibleCuts lbl S S' := by
   rw [mergeOpEps, comulEps_one]; rfl
 
 /-- At `ε = 0` weighted Merge is Merge at the empty-cut enumeration. -/
 theorem mergeOpEps_zero (lbl : α) (S S' : UnorderedTree α) :
-    mergeOpEps (0 : R) lbl S S' = mergeOpG emptyCuts lbl S S' := by
-  rw [mergeOpEps, comulEps_zero, ← comulAlgHomNG_emptyCuts]; rfl
+    mergeOpEps (0 : R) lbl S S' = mergeOpOfCuts emptyCuts lbl S S' := by
+  rw [mergeOpEps, comulEps_zero, ← comulOfCuts_emptyCuts]; rfl
 
 /-- At `ε = 0`, Merge vanishes on a workspace unless `S` and `S'` are both components of it
 ([marcolli-chomsky-berwick-2025] Proposition 1.5.1). -/
 theorem mergeOpEps_zero_of'_of_not_le (lbl : α) {S S' : UnorderedTree α}
     {F : Forest (UnorderedTree α)} (h : ¬ ({S, S'} : Forest (UnorderedTree α)) ≤ F) :
     mergeOpEps (0 : R) lbl S S' (of' F) = 0 := by
-  rw [mergeOpEps_zero, mergeOpG_apply_of', forestCutsG_emptyCuts,
+  rw [mergeOpEps_zero, mergeOpOfCuts_apply_of', forestCuts_emptyCuts,
     (Multiset.filter_eq_nil (p := fun p : Forest _ × Forest _ ↦ p.1 = {S, S'})).mpr
       fun p hp hpS ↦ h (by rw [← hpS, ← Multiset.mem_antidiagonal.mp hp]; exact le_self_add),
     Multiset.map_zero, Multiset.sum_zero, mul_zero]
@@ -383,7 +383,7 @@ theorem mergeOpEps_zero_pair_add (lbl : α) {S S' : UnorderedTree α}
     {F : Forest (UnorderedTree α)} (hS : S ∉ F) (hS' : S' ∉ F) :
     mergeOpEps (0 : R) lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + F)) =
       of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + F) := by
-  rw [add_comm, of'_add, mergeOpEps_zero_of'_mul lbl hS hS', mergeOpEps_zero, mergeOpG_pair,
+  rw [add_comm, of'_add, mergeOpEps_zero_of'_mul lbl hS hS', mergeOpEps_zero, mergeOpOfCuts_pair,
     ← of'_add, add_comm]
 
 /-- Weighted Merge agrees with its value at `ε = 0` modulo `ε` ([marcolli-chomsky-berwick-2025]
@@ -455,12 +455,12 @@ theorem mergeOpEps_pair (ε : R) (lbl : α) (S S' : UnorderedTree α) :
     components. -/
 theorem mergeOpEps_im_composition (ε : R) (lbl : α) (β T Q : UnorderedTree α)
     (p0 : Forest (UnorderedTree α) × UnorderedTree α)
-    (h_filter : (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
+    (h_filter : (admissibleCuts T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
     (h_remainder : p0.2 = Q) (hTβ : T ≠ β) :
     mergeOpEps ε lbl Q β
-        (mergeOpUnitG (R := R) cutSummandsN β (of' ({T} : Forest (UnorderedTree α)))) =
+        (mergeOpUnitOfCuts (R := R) admissibleCuts β (of' ({T} : Forest (UnorderedTree α)))) =
       of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) := by
-  rw [mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
+  rw [mergeOpUnitOfCuts_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
     ← of'_singleton, ← of'_add, add_comm]
   exact mergeOpEps_pair ε lbl Q β
 

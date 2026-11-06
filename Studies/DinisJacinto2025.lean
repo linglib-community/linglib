@@ -46,7 +46,7 @@ makes the premises jointly satisfiable.
 
 namespace DinisJacinto2025
 
-open Degree MarginalScale
+open MarginalScale
 
 variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {x y : α}
 

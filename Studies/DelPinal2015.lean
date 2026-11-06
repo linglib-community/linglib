@@ -256,15 +256,17 @@ theorem fake_isPrivative {lex : (W → E → Prop) → DualContent W E}
     IsPrivative (DualContent.extension ∘ fake made ∘ lex) :=
   fun P ↦ (disjoint_privativeE (lex P)).mono_right (hlex P).ge
 
-/-- Hence the literal *fake N* is vacuous within its head, the local domain of head primacy,
-which is what triggers the head shift of [partee-2010]. -/
+/-- Hence the value of (16) is never non-vacuous within the extension of its head, the local domain
+of head primacy, so the non-vacuity the paper claims for it (p. 7:28) is not relative to that
+domain. The trigger it reports for the head shift of [partee-2010] concerns another predicate, the
+fake things that are Ns, believed to be none (p. 7:27). -/
 theorem fake_vacuous_in_head {lex : (W → E → Prop) → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) (P : W → E → Prop) (w : W) :
     ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=
   Modifier.IsPrivative.not_isNonVacuous (fake_isPrivative hlex) P w
 
-/-- In any domain with a fake N and an N, literal *fake N* is non-vacuous, so no shift is needed
-(§5). -/
+/-- In any domain with a fake N and an N, the value of (16) is non-vacuous, so no shift is needed
+(§5). By `fake_vacuous_in_head` that domain is never the extension of the head itself. -/
 theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
     (hfake : ∃ x, d x ∧ (fake made N).extension w x) (hN : ∃ x, d x ∧ N.extension w x) :
     IsNonVacuous (fake made N).extension w d :=

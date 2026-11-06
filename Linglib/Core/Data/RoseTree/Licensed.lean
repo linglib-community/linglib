@@ -70,6 +70,10 @@ theorem licensed_iff_forall_mem_localTrees {t : RoseTree α} :
 instance [∀ a ks, Decidable (R a ks)] (t : RoseTree α) : Decidable (t.Licensed R) :=
   decidable_of_iff _ licensed_iff_forall_mem_localTrees.symm
 
+theorem licensed_iff_forall_mem_subtrees {t : RoseTree α} :
+    t.Licensed R ↔ ∀ s ∈ t.subtrees, R s.value (s.children.map value) :=
+  forall_congr' fun _ ↦ imp_congr_left mem_subtrees.symm
+
 theorem Licensed.rel_root {a : α} {cs : List (RoseTree α)} (h : (node a cs).Licensed R) :
     R a (cs.map value) :=
   (licensed_node_iff.mp h).1

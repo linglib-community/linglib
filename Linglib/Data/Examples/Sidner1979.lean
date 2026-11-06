@@ -106,6 +106,19 @@ def d9 : Datum :=
     readings := [("he = Jeff throughout", .acceptable)]
     paperFeatures := [("phenomenon", "animateDiscourseFocusRule")] }
 
+def d10 : Datum :=
+  { id := "sidner1979_d10"
+    source := ⟨"sidner-1979", "D10 (chapter 4), 2a"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "John called up Mike yesterday. He wanted to discuss his physics homework."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("he = John", .acceptable)]
+    paperFeatures := [("phenomenon", "agentPronoun")] }
+
 def d14a : Datum :=
   { id := "sidner1979_d14a"
     source := ⟨"sidner-1979", "D14 (chapter 4), 2a"⟩
@@ -145,6 +158,19 @@ def d25 : Datum :=
     readings := [("they = the strawberries", .acceptable)]
     paperFeatures := [("phenomenon", "focusConfirmation")] }
 
+def d31 : Datum :=
+  { id := "sidner1979_d31"
+    source := ⟨"sidner-1979", "D31 (chapter 2)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Wilbur is a fine scientist and a thoughtful guy. He gave me a book a while back which I really liked. It was on relativity theory. It talks about quarks. They are hard to imagine, because they indicate the need for elementary field theories of a complex nature. These theories are absolutely essential to all relativity research. Anyway, I got it while I was working on the initial part of my research. He's really a helpful colleague to have thought of giving it to me."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("it in the eighth sentence = the book", .acceptable)]
+    paperFeatures := [("phenomenon", "focusPopping")] }
+
 def d35 : Datum :=
   { id := "sidner1979_d35"
     source := ⟨"sidner-1979", "D35 (chapter 2)"⟩
@@ -158,6 +184,6 @@ def d35 : Datum :=
     readings := [("they in the fourth sentence = the ice cream cones", .acceptable)]
     paperFeatures := [("phenomenon", "focusMovement")] }
 
-def all : List Datum := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d14a, d14b, d25, d35]
+def all : List Datum := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d10, d14a, d14b, d25, d31, d35]
 
 end Sidner1979.Examples

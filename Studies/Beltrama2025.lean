@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Order.CompleteLattice.Basic
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Beltrama (2025): Evaluation, thresholds, and practical commitments
@@ -113,7 +113,7 @@ theorem neither_defective [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x
   rw [acceptable_iff x w hμ]
   simp [Unacceptable]
 
-theorem good_gap (tp : Degree.ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.Nonempty :=
+theorem good_gap (tp : ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.Nonempty :=
   tp.gap_nonempty_iff.2 h
 
 /-! ### Against the minimum-standard analysis -/

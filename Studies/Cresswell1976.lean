@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Sigma
-public import Linglib.Semantics.Degree.Quotient
+public import Linglib.Semantics.Degree.CresswellDegree
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
@@ -38,7 +38,7 @@ Stalnaker selection function.
   comparison is [the set of classes of the field of the comparison](##field_lt), and everything
   outside that field [falls into one class](##mk_eq_mk_of_notMem_field).
 * The scale of an example is read from `English.Adjectives`, `English.Nouns` and
-  `English.MeasurePhrases` (`Degree.ScalarDimension.comparisonScale`), and *six feet* is the
+  `English.MeasurePhrases` (`ScalarDimension.comparisonScale`), and *six feet* is the
   paper's degree on the relation ordering lengths: if it is the name of $⟨u, >⟩$ it cannot also be
   the name of $⟨u, <⟩$ (p. 274). The fragment's *long* is the spatial clause of (4.3); the temporal
   clause is the paper's and stays here.
@@ -54,7 +54,7 @@ Stalnaker selection function.
   hypothesis is a slip: it would make all four equivalent, and the proof uses only the other two.
 * §2 remarks that whether the relation of a scale is strict or total "seems unimportant". For the
   construction of §4 it matters. A connected preorder and its strict part
-  [give the same degrees](##Degree.cresswellSetoid_lt_eq_le), but on a partial order the strict
+  [give the same degrees](##cresswellSetoid_lt_eq_le), but on a partial order the strict
   part can [identify incomparable points that the order keeps apart](##cresswellSetoid_lt_ne_le).
 
 ## TODO
@@ -72,7 +72,7 @@ Stalnaker selection function.
 
 namespace Cresswell1976
 
-open Degree OrderDual
+open OrderDual
 
 /-! ### Comparison of degree properties (2.3), (2.7) -/
 

@@ -350,7 +350,7 @@ def querer : Verb where
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- *esperar* 'hope' takes a *que* clause in the subjunctive and an infinitive under subject
 control. With an indicative clause about the future the verb means 'expect', a sense this entry
@@ -361,7 +361,7 @@ def esperar : Verb where
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .positive true)
+  attitude := some (.preferential .positive)
 
 /-- The causative *hacer* 'make' takes an infinitive under object control and a *que* clause in
 the subjunctive. -/

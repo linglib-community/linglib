@@ -22,7 +22,7 @@ appearance, motion and weather, each with the frames Levin's alternations requir
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect Degree
+open ArgumentStructure Aspect
 
 /-! ### Putting (§ 9) -/
 

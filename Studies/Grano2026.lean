@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Grano2026
 public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.PositiveStandard
 public import Linglib.Semantics.Modality.Typology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Powerset
@@ -69,7 +69,7 @@ only that two propositions meeting the weak necessity threshold be jointly permi
 
 namespace Grano2026
 
-open Modality Degree
+open Modality
 
 /-! ### Binders of the degree argument (§4, §6) -/
 

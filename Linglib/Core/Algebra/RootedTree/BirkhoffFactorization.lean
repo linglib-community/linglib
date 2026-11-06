@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCut
 public import Linglib.Core.Algebra.RotaBaxter
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Mathlib.RingTheory.Bialgebra.Convolution
@@ -70,13 +70,13 @@ variable {R ℛ : Type*} [CommSemiring R] [CommSemiring ℛ] [Algebra R ℛ] {α
   (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ) (P : ℛ →+ ℛ)
 
 /-- The negative part on a tree,
-`φ₋(T) = P (Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} φ₋(t)) · φ(T'))`, by recursion on the number
+`φ₋(T) = P (Σ_{(F, T') ∈ admissibleCuts T} (Π_{t ∈ F} φ₋(t)) · φ(T'))`, by recursion on the number
 of vertices. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
-  P ((cutSummandsN T).attach.map fun p ↦
+  P ((admissibleCuts T).attach.map fun p ↦
     (p.1.1.attach.map fun t ↦ birkhoffMinusTree t.1).prod * φ (ofTree p.1.2)).sum
 termination_by T.numNodes
-decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
+decreasing_by exact admissibleCuts_crown_numNodes_lt p.2 t.2
 
 /-- The negative part `φ₋`, the multiplicative extension of `birkhoffMinusTree` to forests. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
@@ -91,9 +91,9 @@ noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
   aeval_ofTree _ T
 
 /-- The Bogolyubov preparation on a tree,
-`φ̃(T) = Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} φ₋(t)) · φ(T')`. -/
+`φ̃(T) = Σ_{(F, T') ∈ admissibleCuts T} (Π_{t ∈ F} φ₋(t)) · φ(T')`. -/
 noncomputable def birkhoffPrepTree (T : UnorderedTree α) : ℛ :=
-  ((cutSummandsN T).map fun p ↦ (p.1.map (birkhoffMinusTree φ P)).prod * φ (ofTree p.2)).sum
+  ((admissibleCuts T).map fun p ↦ (p.1.map (birkhoffMinusTree φ P)).prod * φ (ofTree p.2)).sum
 
 theorem birkhoffMinusTree_eq (T : UnorderedTree α) :
     birkhoffMinusTree φ P T = P (birkhoffPrepTree φ P T) := by
@@ -125,8 +125,8 @@ noncomputable def birkhoffPlus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
 `φ₋(T)` and the cuts contribute the preparation `φ̃(T)`. -/
 theorem convMul_birkhoffMinus_apply_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
     (toConv (birkhoffMinus φ P).toLinearMap * toConv φ) (ofTree T) = birkhoffPlusTree φ P T := by
-  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN,
-    comulTreeNG]
+  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHom_apply_ofTree,
+    comulTreeOfCuts]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
     TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
     birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]
@@ -179,13 +179,13 @@ theorem birkhoffMinusTree_eq_zero (h : ∀ T, P (φ (ofTree T)) = 0) (T : Unorde
     rw [Multiset.prod_eq_zero (Multiset.mem_map.mpr ⟨t, ht, birkhoffMinusTree_eq_zero h t⟩),
       zero_mul, map_zero]
 termination_by T.numNodes
-decreasing_by exact cutSummandsN_crown_numNodes_lt hp ht
+decreasing_by exact admissibleCuts_crown_numNodes_lt hp ht
 
 theorem birkhoffPlusTree_eq_of_forall (h : ∀ T, P (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffPlusTree φ P T = φ (ofTree T) := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq_zero h, add_zero, birkhoffPrepTree,
-    ← Multiset.filter_add_not (·.1.card = 0) (cutSummandsN T), Multiset.map_add, Multiset.sum_add,
-    cutSummandsN_filter_empty, Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_zero,
+    ← Multiset.filter_add_not (·.1.card = 0) (admissibleCuts T), Multiset.map_add, Multiset.sum_add,
+    admissibleCuts_filter_empty, Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_zero,
     Multiset.prod_zero, one_mul]
   refine (congrArg _ (Multiset.sum_eq_zero fun x hx ↦ ?_)).trans (add_zero _)
   obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx

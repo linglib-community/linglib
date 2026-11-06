@@ -6,6 +6,7 @@ public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Readings
 public import Linglib.Data.Examples.Spector2025
 
 /-!
@@ -199,7 +200,7 @@ theorem interp_raised (g : Assignment E) :
     Tree.interp (lexicon Q p) g raised = some ⟨.t,
       (Set.range fun c : E → Designation ↦ Q fun x ↦ (c x).threshold ≤ p x : Set Prop)⟩ := by
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
-  simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton, Term.evalM,
+  simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton,
     Term.realize, Interpretation.effectful, Function.update_self, Set.seq_eq_set_seq,
     Set.singleton_seq, ← Set.range_comp]
   change Q '' Set.univ.pi (fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x) = _
@@ -272,15 +273,8 @@ theorem speaker_eq_ofWeights : speaker μ α C parse = Kernel.ofWeights fun w σ
 theorem speaker_eq_maximinSpeaker (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0) :
     speaker μ α C parse = maximinSpeaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
       fun w ↦ ν.prod (Measure.dirac w) := by
-  refine Kernel.ext fun w ↦ maximinSpeaker_congr_belief ?_
-  have h (p : ι × W) :
-      ν.prod (Measure.dirac w) {p} = 0 ↔ Measure.count.prod (Measure.dirac w) {p} = 0 :=
-    not_iff_not.1 (by simp [Measure.prod_dirac_apply_singleton_ne_zero_iff, hν])
-  exact le_antisymm
-    (Measure.ae_le_iff_absolutelyContinuous.2
-      (Measure.absolutelyContinuous_of_forall_singleton fun p ↦ (h p).1))
-    (Measure.ae_le_iff_absolutelyContinuous.2
-      (Measure.absolutelyContinuous_of_forall_singleton fun p ↦ (h p).2))
+  refine Kernel.ext fun w ↦ maximinSpeaker_congr_belief <| Filter.ext' fun _ ↦ ?_
+  simp [ae_iff_of_countable, Measure.prod_dirac_apply_singleton_ne_zero_iff, hν]
 
 variable [IsFiniteMeasure μ]
 

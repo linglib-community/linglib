@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Fragments.English.Inflection
 
 /-!
@@ -34,7 +34,7 @@ pair's `pos` and `neg`.
 
 namespace English.Adjectives
 
-open Degree Morphology
+open Morphology
 
 /-! ### Grade -/
 
@@ -85,7 +85,7 @@ abbrev happy := happiness.pos
 
 abbrev unhappy := happiness.neg
 
-def sad : GradableAdjective :=
+def sad : Adjective :=
   { form := "sad", polarity := .negative, dimension := some .happiness
   , comparison := inflectional "sad"
   , antonymForm := some "happy"
@@ -143,34 +143,30 @@ abbrev straight := straightness.pos
 
 abbrev bent := straightness.neg
 
-def flat : GradableAdjective :=
-  { form := "flat", dimension := some .flatness, antonymForm := some "bumpy"
-  , spatialConfigType := some .surfaceOrient }
+def flat : Adjective :=
+  { form := "flat", dimension := some .flatness, antonymForm := some "bumpy" }
 
 /-- *open* takes the minimum standard, any amount of opening ([kennedy-2007] (68)); *closed* the
 maximum. -/
 def openness : AntonymPair :=
   { dimension := .openness, posForm := "open", negForm := "closed"
-  , posLexicalStandard := some .minEndpoint, spatialConfigType := some .barrierConfig }
+  , posLexicalStandard := some .minEndpoint }
 
 abbrev open_ := openness.pos
 
 abbrev closed_ := openness.neg
 
-def shut : GradableAdjective :=
-  { form := "shut", polarity := .negative, dimension := some .openness, antonymForm := some "open"
-  , spatialConfigType := some .barrierConfig }
+def shut : Adjective :=
+  { form := "shut", polarity := .negative, dimension := some .openness, antonymForm := some "open" }
 
-def free_ : GradableAdjective :=
-  { form := "free", dimension := some .freedom, antonymForm := some "stuck"
-  , spatialConfigType := some .unattachment }
+def free_ : Adjective :=
+  { form := "free", dimension := some .freedom, antonymForm := some "stuck" }
 
-def loose : GradableAdjective :=
+def loose : Adjective :=
   { form := "loose", polarity := .negative, dimension := some .tightness
-  , antonymForm := some "tight"
-  , spatialConfigType := some .unattachment }
+  , antonymForm := some "tight" }
 
-def tight : GradableAdjective :=
+def tight : Adjective :=
   { form := "tight", dimension := some .tightness, antonymForm := some "loose" }
 
 def smoothness : AntonymPair :=
@@ -187,7 +183,7 @@ abbrev hard := hardness.pos
 
 abbrev soft := hardness.neg
 
-def pure_ : GradableAdjective :=
+def pure_ : Adjective :=
   { form := "pure", dimension := some .purity, antonymForm := some "impure" }
 
 /-- *dead* takes the maximum standard and is rarely used imprecisely ([kennedy-mcnally-2005]);
@@ -200,7 +196,7 @@ abbrev alive := life.pos
 
 abbrev dead := life.neg
 
-def pregnant : GradableAdjective :=
+def pregnant : Adjective :=
   { form := "pregnant" }
 
 def size : AntonymPair :=
@@ -232,10 +228,10 @@ abbrev pristine := pristineness.pos
 
 abbrev filthy := pristineness.neg
 
-def long : GradableAdjective :=
+def long : Adjective :=
   { form := "long", dimension := some .length, antonymForm := some "short" }
 
-def wide : GradableAdjective :=
+def wide : Adjective :=
   { form := "wide", dimension := some .width, antonymForm := some "narrow" }
 
 def warmth : AntonymPair :=
@@ -312,20 +308,20 @@ The confidence adjectives are the gradable attitude adjectives of
 scale, with *certain* at its maximum and *doubtful*, *unsure* and *uncertain*
 on its negative pole. -/
 
-def smart : GradableAdjective :=
+def smart : Adjective :=
   { form := "smart", dimension := some .intelligence, comparison := inflectional "smart"
   , antonymForm := some "dumb" }
 
 /-- *Tragic* measures tragedy, which no other entry does. -/
-def tragic : GradableAdjective :=
+def tragic : Adjective :=
   { form := "tragic", dimension := some .tragedy, comparison := analytic "tragic" }
 
 /-- *Clever* measures intelligence, as *smart* does. -/
-def clever : GradableAdjective :=
+def clever : Adjective :=
   { form := "clever", dimension := some .intelligence, comparison := inflectional "clever" }
 
 /-- *Wise* measures wisdom, which *clever* does not: *clever but not wise* is consistent. -/
-def wise : GradableAdjective :=
+def wise : Adjective :=
   { form := "wise", dimension := some .wisdom, comparison := inflectional "wise"
   , antonymForm := some "foolish" }
 
@@ -336,7 +332,7 @@ states ((40), Figure 3), so that *confident but not certain* (65a) is consistent
 threshold non-maximal in many ordinary contexts, on the evidence of *confident that p, and even
 more confident that p or q* (3). Interpretive Economy ([kennedy-2007] (66)) would give it the
 maximum of the scale, so the standard is lexical. -/
-def confident : GradableAdjective :=
+def confident : Adjective :=
   { form := "confident", dimension := some .confidence, lexicalStandard := some .contextual
   , comparison := analytic "confident" }
 
@@ -362,7 +358,7 @@ abbrev sure := sureness.pos
 
 abbrev unsure := sureness.neg
 
-def doubtful : GradableAdjective :=
+def doubtful : Adjective :=
   { form := "doubtful", polarity := .negative, dimension := some .confidence
   , comparison := analytic "doubtful" }
 
@@ -389,7 +385,7 @@ abbrev beautiful := beauty.pos
 
 abbrev ugly := beauty.neg
 
-def important : GradableAdjective :=
+def important : Adjective :=
   { form := "important", dimension := some .importance }
 
 /-- *safe* and *dangerous* measure on an upper-closed scale, so *completely safe* is fine but
@@ -418,26 +414,26 @@ dented*), compatible with *completely* and *partially*. Contra
     Deverbal adjective from *crack* (Levin 45.1 Break verbs).
     NOT a two-point scale: accepts *more cracked*, *completely cracked*,
     *partially cracked*, *badly cracked* ([tham-2025] §2.3–2.4). -/
-def cracked : GradableAdjective :=
+def cracked : Adjective :=
   { form := "cracked", dimension := some .cracking, lexicalStandard := some .minEndpoint }
 
 /-- "dented" — closed scale.
     Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
     *badly dented* ([tham-2025] (11a), (20b)). -/
-def dented : GradableAdjective :=
+def dented : Adjective :=
   { form := "dented", dimension := some .denting, lexicalStandard := some .minEndpoint }
 
 /-- "scratched" — closed scale.
     Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
     scratched*, *badly scratched* ([tham-2025] (11b), (20c)). -/
-def scratched : GradableAdjective :=
+def scratched : Adjective :=
   { form := "scratched", dimension := some .scratching, lexicalStandard := some .minEndpoint }
 
 /-- "shattered" — closed scale, NON-GRADABLE.
     Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
     Contrast: ??*more shattered*, punctual verb, no durative reading.
     Not a physical disturbance predicate ([tham-2025] (12c)). -/
-def shattered : GradableAdjective :=
+def shattered : Adjective :=
   { form := "shattered" }
 
 /-! ## Mildly positive adjectives (MPAs)
@@ -449,7 +445,7 @@ compatible) predicates. -/
 
 /-- "nice" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *nicely*. -/
-def nice : GradableAdjective :=
+def nice : Adjective :=
   { form := "nice", dimension := some .value, evaluativeValence := some .positive }
 
 /-- "pleasant" — open scale, positive evaluative ([nouwen-2024]).
@@ -464,20 +460,20 @@ abbrev unpleasant := pleasantness.neg
 
 /-- *decent* is a mildly positive adjective, on the open value scale with a functional
     (necessity) standard ([beltrama-2025]) recorded as its `lexicalStandard`. -/
-def decent : GradableAdjective :=
+def decent : Adjective :=
   { form := "decent", dimension := some .value, evaluativeValence := some .positive
   , lexicalStandard := some .necessity }
 
 /-- "acceptable" — mildly-positive adjective; open `.value` scale, functional
     standard ([beltrama-2025]). Deverbal *-able* form: the modal suffix
     contributes the functional standard. -/
-def acceptable : GradableAdjective :=
+def acceptable : Adjective :=
   { form := "acceptable", dimension := some .value, evaluativeValence := some .positive
   , lexicalStandard := some .necessity }
 
 /-- "adequate" — mildly-positive adjective; open `.value` scale, functional
     (necessity) standard ([beltrama-2025]). -/
-def adequate : GradableAdjective :=
+def adequate : Adjective :=
   { form := "adequate", dimension := some .value, evaluativeValence := some .positive
   , lexicalStandard := some .necessity }
 
@@ -491,49 +487,49 @@ impossible) bases follow Zwicky's generalization. -/
 /-! ### Negative-evaluative bases: H-degree intensifiers -/
 
 /-- "horrible" — open scale, negative evaluative. Base for H-degree *horribly*. -/
-def horrible : GradableAdjective :=
+def horrible : Adjective :=
   { form := "horrible", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "terrible" — open scale, negative evaluative. Base for H-degree *terribly*. -/
-def terrible : GradableAdjective :=
+def terrible : Adjective :=
   { form := "terrible", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "awful" — open scale, negative evaluative. Base for H-degree *awfully*. -/
-def awful : GradableAdjective :=
+def awful : Adjective :=
   { form := "awful", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "dreadful" — open scale, negative evaluative. Base for H-degree *dreadfully*. -/
-def dreadful : GradableAdjective :=
+def dreadful : Adjective :=
   { form := "dreadful", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "frightening" — open scale, negative evaluative. Base for H-degree *frighteningly*. -/
-def frightening : GradableAdjective :=
+def frightening : Adjective :=
   { form := "frightening", dimension := some .danger, evaluativeValence := some .negative }
 
 /-- "disgusting" — open scale, negative evaluative. Base for H-degree *disgustingly*. -/
-def disgusting : GradableAdjective :=
+def disgusting : Adjective :=
   { form := "disgusting", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "annoying" — open scale, negative evaluative. Base for H-degree *annoyingly*. -/
-def annoying : GradableAdjective :=
+def annoying : Adjective :=
   { form := "annoying", dimension := some .quality, evaluativeValence := some .negative }
 
 /-- "scary" — open scale, negative evaluative. Base for H-degree *scarily*. -/
-def scary : GradableAdjective :=
+def scary : Adjective :=
   { form := "scary", dimension := some .danger, evaluativeValence := some .negative }
 
 /-! ### Positive-evaluative bases: M-degree intensifiers -/
 
 /-- "wonderful" — open scale, positive evaluative. Base for M-degree *wonderfully*. -/
-def wonderful : GradableAdjective :=
+def wonderful : Adjective :=
   { form := "wonderful", dimension := some .quality, evaluativeValence := some .positive }
 
 /-- "delightful" — open scale, positive evaluative. Base for M-degree *delightfully*. -/
-def delightful : GradableAdjective :=
+def delightful : Adjective :=
   { form := "delightful", dimension := some .quality, evaluativeValence := some .positive }
 
 /-- "gorgeous" — open scale, positive evaluative. Base for M-degree *gorgeously*. -/
-def gorgeous : GradableAdjective :=
+def gorgeous : Adjective :=
   { form := "gorgeous", dimension := some .beauty, evaluativeValence := some .positive }
 
 /-! ### Mirative bases: H-degree intensifiers, not evaluative -/
@@ -547,23 +543,23 @@ abbrev usual := expectation.pos
 abbrev unusual := expectation.neg
 
 /-- "surprising" — open scale, neutral (mirative). Base for H-degree *surprisingly*. -/
-def surprising : GradableAdjective :=
+def surprising : Adjective :=
   { form := "surprising", dimension := some .expectation, evaluativeValence := some .neutral }
 
 /-- "remarkable" — open scale, positive evaluative (§2.4.1). Extreme positive
     evaluation: H-degree *remarkably* despite positive valence (Goldilocks exception). -/
-def remarkable : GradableAdjective :=
+def remarkable : Adjective :=
   { form := "remarkable", dimension := some .quality, evaluativeValence := some .positive }
 
 /-- "stunning" — open scale, positive evaluative (Figure 2, upper-right quadrant).
     Extreme positive evaluation: H-degree *stunningly* (Goldilocks exception). -/
-def stunning : GradableAdjective :=
+def stunning : Adjective :=
   { form := "stunning", dimension := some .quality, evaluativeValence := some .positive }
 
 /-! ### Modal bases: Zwicky's generalization -/
 
 /-- "expected" — open scale, neutral (modal). Unattested as intensifier (*expectedly). -/
-def expected : GradableAdjective :=
+def expected : Adjective :=
   { form := "expected", dimension := some .expectation, evaluativeValence := some .neutral }
 
 /-- *possible* and *impossible* are contradictories, since *possible* takes the minimum standard of
@@ -588,7 +584,7 @@ def pairs : List AntonymPair := [
   expectation, possibility, safety]
 
 /-- The entries outside an antonym pair. -/
-def singletons : List GradableAdjective := [
+def singletons : List Adjective := [
   sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, tragic, clever,
   wise, confident,
   doubtful, important, cracked, dented, scratched, shattered, nice, decent,
@@ -596,11 +592,11 @@ def singletons : List GradableAdjective := [
   scary, wonderful, delightful, gorgeous, surprising, remarkable, stunning, expected]
 
 /-- Every entry of the fragment. -/
-def allEntries : List GradableAdjective :=
+def allEntries : List Adjective :=
   pairs.flatMap (fun p ↦ [p.pos, p.neg]) ++ singletons
 
 /-- The entry with a given surface form. -/
-def lookup (form : String) : Option GradableAdjective :=
+def lookup (form : String) : Option Adjective :=
   allEntries.find? (·.form == form)
 
 /-- The antonym pair with a given surface form as one of its poles. -/

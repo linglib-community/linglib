@@ -25,7 +25,7 @@ distribution](##acceptable_iff_judgment) from the scales of the terms.
 
 ## Implementation notes
 
-Granularities are the grains `Degree.grain`, identified by their widths, and the interval a term
+Granularities are the grains `grain`, identified by their widths, and the interval a term
 denotes is the cell of its degree. Cells are half-open so that they partition the scale; the
 chapter writes them closed, (12)–(13). A term is given by the endpoints of the scale it denotes a
 point on, `none` for an epistemically vague one: a numeral's scale is the order of `ℕ`, an
@@ -50,7 +50,7 @@ unblocked](##approximately_wet), which §6.4.1 calls unnatural.
 
 namespace SauerlandStateva2011
 
-open Degree English.Adjectives
+open English.Adjectives
 
 /-! ### Scalar approximators, (19), (38), (46) -/
 
@@ -91,9 +91,6 @@ def moreOrLess : Approximator := ⟨.coarsest, .maximum⟩
 /-- A numeral denotes a point on the order of the natural numbers. -/
 noncomputable def numeral : Option Boundedness := some (.ofOrder ℕ)
 
-/-- An adjective denotes a point on its scale. -/
-def adjective (a : GradableAdjective) : Option Boundedness := some a.boundedness
-
 namespace Approximator
 
 /-- An approximator applies to a term that denotes a point, and one that targets the maximum
@@ -130,19 +127,20 @@ noncomputable def judged : List (Approximator × Option Boundedness × Datum) :=
    (exactly, none, Examples.ex_4b_exactly), (approximately, none, Examples.ex_4b_approximately),
    (completely, numeral, Examples.ex_6a_absolutely),
    (completely, numeral, Examples.ex_6a_completely), (completely, numeral, Examples.ex_6a_totally),
-   (completely, adjective full, Examples.ex_32a_absolutely),
-   (exactly, adjective full, Examples.ex_32a_exactly),
-   (exactly, adjective dry, Examples.ex_35a_dry), (exactly, adjective full, Examples.ex_35a_full),
-   (exactly, adjective empty, Examples.ex_35a_empty), (exactly, numeral, Examples.ex_35b_three),
+   (completely, full.boundedness, Examples.ex_32a_absolutely),
+   (exactly, full.boundedness, Examples.ex_32a_exactly),
+   (exactly, dry.boundedness, Examples.ex_35a_dry),
+   (exactly, full.boundedness, Examples.ex_35a_full),
+   (exactly, empty.boundedness, Examples.ex_35a_empty), (exactly, numeral, Examples.ex_35b_three),
    (exactly, none, Examples.ex_35c_stroganoff), (exactly, none, Examples.ex_35c_heap),
-   (completely, adjective dry, Examples.ex_37a_dry), (completely, numeral, Examples.ex_37b_three),
+   (completely, dry.boundedness, Examples.ex_37a_dry), (completely, numeral, Examples.ex_37b_three),
    (completely, none, Examples.ex_37c_stroganoff), (completely, none, Examples.ex_37c_heap),
-   (approximately, adjective dry, Examples.ex_44a_dry),
+   (approximately, dry.boundedness, Examples.ex_44a_dry),
    (approximately, numeral, Examples.ex_44b_three),
    (approximately, none, Examples.ex_44c_stroganoff), (approximately, none, Examples.ex_44c_heap),
-   (moreOrLess, adjective dry, Examples.ex_45a_dry), (moreOrLess, numeral, Examples.ex_45b_three),
+   (moreOrLess, dry.boundedness, Examples.ex_45a_dry), (moreOrLess, numeral, Examples.ex_45b_three),
    (moreOrLess, none, Examples.ex_45c_stroganoff), (moreOrLess, none, Examples.ex_45c_heap),
-   (exactly, adjective closed_, Examples.p132_closed)]
+   (exactly, closed_.boundedness, Examples.p132_closed)]
 
 /-- The entries of the approximators and the scales of the terms predict every cited judgment:
 *exactly* and *approximately* combine with numerals, *completely* and *more or less* with
@@ -155,7 +153,7 @@ theorem acceptable_iff_judgment :
 /-- *More or less* needs a maximum and *wet* has only a minimum, so *approximately wet* is
 unblocked, against the judgment of §6.4.1. -/
 theorem approximately_wet :
-    approximately.Acceptable (adjective wet) ∧ Examples.p132_wet.judgment ≠ .acceptable := by
+    approximately.Acceptable wet.boundedness ∧ Examples.p132_wet.judgment ≠ .acceptable := by
   decide
 
 /-! ### Granularity setting, (12)–(20) -/

@@ -173,7 +173,7 @@ theorem rows_agree :
 -- (27), (30)
 theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     (s : W) (x : E) :
-    ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+    ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ g d ∈ R g s ∧ x = g d :=
   DefiniteDescription.denote_anaphoric_eq_some_iff R d g s
 
 /-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
@@ -186,7 +186,7 @@ theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Ass
 /-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
 noun denotes each situation at that situation, so distinct situations give distinct referents. -/
 theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
-    ⟦DefiniteDescription.bare fun _ s x ↦ x = s⟧ g s = some s :=
+    ⟦DefiniteDescription.bare fun _ s ↦ {s}⟧ g s = some s :=
   (DefiniteDescription.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
 
 /-! ### The typology (Table 2) -/

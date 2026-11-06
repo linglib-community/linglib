@@ -24,7 +24,7 @@ diminutive that is not an n, bearing no gender, leaves the gender of the n below
 
 * `GenderValue`: a binary gender dimension with a sign.
 * `GenderFeature`: a gender value with its interpretability.
-* `Categorizer.Head`: a categorizer with its gender feature and {D}.
+* `Categorizer`: a categorizer with its gender feature and {D}.
 * `agreeingGender`: the gender a gender probe agrees in, or the default on failed Agree.
 
 ## Main results
@@ -85,39 +85,39 @@ structure GenderFeature where
 
 /-- A categorizing head with its gender feature and the selectional feature {D}, a head of a
 `ComplexHead`. -/
-structure Categorizer.Head where
-  /-- The categorizer n, v or a. -/
-  categorizer : Categorizer
+structure Categorizer where
+  /-- The category, n, v or a. -/
+  cat : Minimalist.Cat
   /-- The gender feature, if any. -/
   gender : Option GenderFeature := none
   /-- The selectional feature {D}. -/
   selectsD : Bool := false
   deriving DecidableEq, Repr
 
-namespace Categorizer.Head
+namespace Categorizer
 
 /-- The n bearing the gender feature of interpretability `interp` and value `v`. -/
-def gendered (interp : Interpretability) (v : GenderValue) : Categorizer.Head where
-  categorizer := .n
+def gendered (interp : Interpretability) (v : GenderValue) : Categorizer where
+  cat := .n
   gender := some ⟨interp, v⟩
 
 /-- The n with no gender feature. -/
-def n_plain : Categorizer.Head where
-  categorizer := .n
+def n_plain : Categorizer where
+  cat := .n
 
 /-- The n bearing interpretable [+FEM], the natural feminine. -/
-def n_iFem : Categorizer.Head := gendered .interpretable ⟨.fem, .pos⟩
+def n_iFem : Categorizer := gendered .interpretable ⟨.fem, .pos⟩
 
 /-- The n bearing interpretable [−FEM], the natural masculine. -/
-def n_iMasc : Categorizer.Head := gendered .interpretable ⟨.fem, .neg⟩
+def n_iMasc : Categorizer := gendered .interpretable ⟨.fem, .neg⟩
 
 /-- The n bearing uninterpretable [+FEM], the arbitrary feminine. -/
-def n_uFem : Categorizer.Head := gendered .uninterpretable ⟨.fem, .pos⟩
+def n_uFem : Categorizer := gendered .uninterpretable ⟨.fem, .pos⟩
 
 /-- The n bearing uninterpretable [+ANIM], the nominalizer of Teop body-part roots. -/
-def n_uAnim : Categorizer.Head := gendered .uninterpretable ⟨.anim, .pos⟩
+def n_uAnim : Categorizer := gendered .uninterpretable ⟨.anim, .pos⟩
 
-end Categorizer.Head
+end Categorizer
 
 /-! ### Agreement in gender -/
 

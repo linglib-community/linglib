@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -70,6 +71,7 @@ subject.
 namespace MartinRoseNichols2025
 
 open BidirectionalOT
+open OptimalityTheory (ViolationProfile)
 
 /-! ### Two concepts of causation -/
 
@@ -127,8 +129,8 @@ def production (promotes : Bool) (p : Form × Reading) : ℕ :=
   if promotes ∧ p.2 = .dependence then 1 else 0
 
 /-- The tableau of a form and reading under `markedness ≫ production`. -/
-def tableau (promotes : Bool) : Form × Reading → List ℕ :=
-  profile [markedness, production promotes]
+def tableau (promotes : Bool) : Form × Reading → ViolationProfile 2 :=
+  ViolationProfile.ofList [markedness, production promotes]
 
 /-- The transitive forms expressing a causal relation between a subject and an object. -/
 def transitivePairs : Finset (Form × Reading) :=

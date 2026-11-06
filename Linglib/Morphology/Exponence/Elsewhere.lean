@@ -27,7 +27,8 @@ winners and the prediction relation they induce.
 
 * `RuleSet.Realizes.eq`: where the Elsewhere winners form a chain, Pāṇinian Determinism, a
   coherent rule set makes a unique prediction.
-* `RuleSet.Realizes.of_realizes`: no ABA pattern across nested contexts.
+* `RuleSet.Realizes.of_realizes`: no ABA pattern across a context that takes in the rules the outer
+  two share and whose rules all reach one of them.
 
 ## References
 
@@ -37,9 +38,9 @@ winners and the prediction relation they induce.
 
 @[expose] public section
 
-namespace Morphology.Exponence.RuleSet
+namespace Morphology.RuleSet
 
-variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E] {κ : Type*} [Preorder κ] {key : R → κ}
+variable {Ctx E : Type*} {R : Type*} [ExponenceRule R Ctx E] {κ : Type*} [Preorder κ] {key : R → κ}
 variable {v : RuleSet R} {c : Ctx} {r s : R} {φ : E}
 
 /-! ### Elsewhere winners -/
@@ -94,19 +95,30 @@ def Antihomophonous (v : RuleSet R) : Prop :=
 instance [DecidableEq R] [DecidableEq E] (v : RuleSet R) : Decidable v.Antihomophonous :=
   inferInstanceAs (Decidable (∀ r ∈ v, ∀ s ∈ v, exponent r = exponent s → r = s))
 
+/-- A map of rules that keeps exponents keeps antihomophony. -/
+theorem Antihomophonous.map {R' Ctx' : Type*} [ExponenceRule R' Ctx' E] {f : R → R'}
+    (hv : v.Antihomophonous) (hf : ∀ r, exponent (f r) = exponent r) :
+    Antihomophonous (v.map f) := by
+  rintro _ hfr _ hfs h
+  obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hfr
+  obtain ⟨s, hs, rfl⟩ := List.mem_map.mp hfs
+  exact congrArg f (hv hr hs (by rwa [hf, hf] at h))
+
 theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' → Applies s c)
     (hr : v.IsElsewhereWinner key c r) (hc' : Applies r c') : v.IsElsewhereWinner key c' r :=
   hr.anti (fun s hs ↦ ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩
 
-/-- There is no ABA across nested contexts. Over an antihomophonous rule set, an exponent
-realized at the smallest and the largest of three nested contexts is realized at the middle
-one. -/
+/-- There is no ABA across a middle context that takes in the rules the outer two share and whose
+rules all reach the second of them. Over an antihomophonous rule set, an exponent realized at the
+outer contexts is then realized at the middle one. Nested contexts are the case where every rule
+of the first reaches the middle; the first need not lie below it. -/
 theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hv : v.Antihomophonous)
-    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c → Applies s c₂)
+    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c)
     (hr₁ : v.Realizes key c₁ φ) (hr : v.Realizes key c φ) : v.Realizes key c₂ φ := by
   obtain ⟨t, ht, rfl⟩ := hr
   obtain ⟨u, hu, hut⟩ := hr₁
   obtain rfl := hv hu.1.1 ht.1.1 hut
-  exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.1 hu.1.2), rfl⟩
+  exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.1 hu.1.2 ht.1.2), rfl⟩
 
-end Morphology.Exponence.RuleSet
+end Morphology.RuleSet

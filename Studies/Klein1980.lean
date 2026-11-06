@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Degree.Delineation
-public import Linglib.Semantics.Degree.Quotient
+public import Linglib.Semantics.Delineation
+public import Linglib.Semantics.Degree.CresswellDegree
 public import Studies.Kamp1975
 
 /-!
@@ -11,7 +11,7 @@ Klein gives gradable adjectives a semantics without degrees. Relative to a compa
 adjective is a partial predicate, with a positive extension, a negative extension and a gap of
 borderline cases between them; the comparative is derived from the positive by quantifying over
 comparison classes, and degrees, where they are wanted, are recovered as classes of entities no
-comparison class tells apart. The delineation vocabulary of `Degree.Delineation` supplies the
+comparison class tells apart. The delineation vocabulary of `Delineation` supplies the
 extensions, the induced ordering, Klein's two constraints and the modifiers *very* and *fairly*;
 this file states the paper's claims about them.
 
@@ -50,7 +50,7 @@ least as* over all completions.
 
 namespace Klein1980
 
-open Degree Delineation
+open Delineation
 
 variable {E D : Type*} [LinearOrder D]
 
@@ -182,12 +182,12 @@ theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C
 /-! ### Cresswell's equivalence relation ((6), n. 5)
 
 Klein's (6) is Cresswell's relation over the comparative, and on a strict weak order his gloss on
-it, neither more nor less A, is `Degree.cresswellSetoid_iff_incompRel`. On a gapless delineation
+it, neither more nor less A, is `cresswellSetoid_iff_incompRel`. On a gapless delineation
 under the consistency constraint the comparative is such an order, so its classes form a scale. -/
 
 example {d : Delineation E} {C : Set E} (hd : d.IsGapless) (hm : d.IsMonotoneOn (𝒫 C)) :
     IsStrictTotalOrder (CresswellDegree (d.Outranks C)) (· < ·) :=
-  isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
+  CresswellDegree.isStrictTotalOrder_lt_iff.2 (hd.isStrictWeakOrder_outranks hm)
 
 -- p. 30: for *tall*, Klein's degree (62) is Cresswell's class.
 theorem mem_kleinDegree_ofMeasure_iff_cresswell (μ : E → D) {u v : E} :

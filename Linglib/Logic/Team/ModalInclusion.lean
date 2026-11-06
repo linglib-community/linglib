@@ -64,6 +64,8 @@ pointwise clause, where the source restricts it to classical formulas.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace ModalLogic.Inclusion
 
 variable {W : Type*} {Atom : Type*}
@@ -73,9 +75,9 @@ open ModalLogic (KripkeModel)
 /-! ### Syntax -/
 
 /-- The formulas of modal inclusion logic simpliciter, with `◇` and `□` both primitive. An
-    inclusion atom `p₁...pₙ ⊆ q₁...qₙ` over propositional symbols is the list of pairs
-    `[(p₁, q₁), ..., (pₙ, qₙ)]`; [anttila-haggblom-yang-2025] Definition 2.1 allows classical
-    formulas in the atoms. -/
+inclusion atom `p₁...pₙ ⊆ q₁...qₙ` over propositional symbols is the list of pairs
+`[(p₁, q₁), ..., (pₙ, qₙ)]`; [anttila-haggblom-yang-2025] Definition 2.1 allows classical
+formulas in the atoms. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
@@ -84,7 +86,7 @@ inductive Formula (Atom : Type*) where
   /-- Inclusion atom `p⃗ ⊆ q⃗`. -/
   | incl (xys : List (Atom × Atom))
   /-- Classical negation (restricted to classical formulas in the paper;
-      we allow on any formula for uniform recursion). -/
+  we allow on any formula for uniform recursion). -/
   | neg (φ : Formula Atom)
   /-- Conjunction. -/
   | conj (φ ψ : Formula Atom)
@@ -134,7 +136,7 @@ theorem Formula.inclTrivial_of_subsingleton [Subsingleton Atom] (φ : Formula At
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
-    `ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
+`ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w
   | .bot, _ => False
@@ -163,7 +165,7 @@ def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
       (t : Set W) ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
   | .neg ψ,         t => t ∈ Team.flat fun w ↦ ¬ eval M ψ {w}
   | .conj ψ₁ ψ₂,    t => eval M ψ₁ t ∧ eval M ψ₂ t
-  | .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M ψ₁ s} {s | eval M ψ₂ s}
+  | .disj ψ₁ ψ₂,    t => t ∈ {s | eval M ψ₁ s} ⊻ {s | eval M ψ₂ s}
   | .poss ψ,        t => t ∈ Team.possLax M.access {s | eval M ψ s}
   | .nec ψ,         t => t ∈ Team.necImage M.access {s | eval M ψ s}
 
@@ -213,7 +215,7 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-! ### Union closure -/
 
 /-- Every MIL formula has union-closed support. Each case is the closure lemma of its connective
-    in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
+in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
@@ -225,7 +227,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     exact Team.supClosed_incl _ _ hs ht
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.tensor ih₂
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.sups ih₂
   | poss ψ ih => exact ih.possLax
   | nec ψ ih => exact ih.necImage
 
@@ -241,15 +243,15 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     exact Team.empty_mem_incl _ _
   | neg ψ _ => exact Team.empty_mem_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ => exact Team.empty_mem_tensor ih₁ ih₂
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact Set.bot_mem_sups ih₁ ih₂
   | poss ψ ih => exact Team.empty_mem_possLax ih
   | nec ψ ih => exact Team.empty_mem_necImage ih
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
 /-- The inclusion atom is not downward closed. If `w₂` supplies the `b`-value matching both its
-    own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
-    and `{w₁}` does not. -/
+own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
+and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ ↔ M.val b w₂) (hself : M.val a w₂ ↔ M.val b w₂)
     (hwit : ¬ (M.val a w₁ ↔ M.val b w₁)) :
@@ -270,7 +272,7 @@ open ModalLogic (WorldBisim)
 variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`
-    ([anttila-haggblom-yang-2025] Theorem 3.6). -/
+([anttila-haggblom-yang-2025] Theorem 3.6). -/
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M φ t} {t | eval M' φ t} := by
   induction φ generalizing k with
@@ -285,7 +287,7 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
     exact (ih₁ hd₁).inter (ih₂ hd₂)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    exact (ih₁ hd₁).tensor (ih₂ hd₂)
+    exact (ih₁ hd₁).sups (ih₂ hd₂)
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
@@ -322,7 +324,7 @@ theorem support_iff_forall_realize (hI : φ.InclTrivial) (t : Finset W) :
   | conj ψ₁ ψ₂ ih₁ ih₂ => simp [support, eval, ih₁ hI.1, ih₂ hI.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     simp only [support, eval, ih₁ hI.1, ih₂ hI.2]
-    exact Team.mem_tensor_flat.trans (by simp [Realize])
+    exact Team.mem_flat_sups_flat.trans (by simp [Realize])
   | poss ψ ih =>
     simp only [support, eval, ih hI]
     exact Team.mem_possLax_flat.trans (by simp [realize_poss])
@@ -343,13 +345,13 @@ section ExpressivePower
 universe u
 
 /-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
-    depth ([anttila-haggblom-yang-2025] p. 766, by Theorem 3.6). -/
+depth ([anttila-haggblom-yang-2025] p. 766, by Theorem 3.6). -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
   ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl hb).1 hp⟩
 
 /-- The logic expresses only classes of pointed team models that are union closed, contain the
-    empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-2025] p. 766).
+empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-2025] p. 766).
 -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
@@ -360,8 +362,8 @@ theorem range_support_subset :
     boundedBisimInvariant_support φ⟩
 
 /-- In one propositional symbol every formula is flat, so the inclusion is strict: the teams that
-    are empty or hold a world where the symbol is true form such a class that no formula expresses.
-    The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `⊤ ⊆ p` (p. 768).
+are empty or hold a world where the symbol is true form such a class that no formula expresses.
+The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `⊤ ⊆ p` (p. 768).
 -/
 theorem range_support_ssubset_of_subsingleton [Subsingleton Atom] [Nonempty Atom] :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂

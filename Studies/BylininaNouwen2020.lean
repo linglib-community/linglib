@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Studies.BylininaNouwen2018
-public import Studies.Partee1987
+public import Linglib.Semantics.Quantification.Predicative
 
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics
@@ -36,15 +36,15 @@ items that *zero* does not, while with `MAX` apart from the numeral *zero* is a 
 
 ## Implementation notes
 
-* Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate
-  on them. Kennedy's numeral is the substrate's `Degree.MaxIn {n}`, and its scope relative to a
-  modal or nominal quantifier `Q` over a count `μ` is `Degree.LowScope` or `Degree.HighScope`.
-* Pluralities, degree properties and licensing are those of `BylininaNouwen2018`: the finite sets
-  of atoms, with the empty plurality, so `plural Z` is the full lattice `×Z` and Link's `*Z` ((12))
-  its nonempty part. The lower bound (29) is `isLowerSet_countDegrees_plural`, and its failure with
-  a collective predicate (fn. 8) `countDegrees_singleton`.
-* `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher numeral, which on those
-  lower sets are the stronger alternatives of (32).
+* Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate on
+  them. Kennedy's numeral is the substrate's `Quantifier.MaxIn {n}`, and its scope relative to a
+  modal or nominal quantifier `Q` over a count `μ` is `Quantifier.LowScope` or
+  `Quantifier.HighScope`. * Pluralities, degree properties and licensing are those of
+  `BylininaNouwen2018`: the finite sets of atoms, with the empty plurality, so `plural Z` is the
+  full lattice `×Z` and Link's `*Z` ((12)) its nonempty part. The lower bound (29) is
+  `isLowerSet_countDegrees_plural`, and its failure with a collective predicate (fn. 8)
+  `countDegrees_singleton`. * `EXH` is `Exhaustification.exhAgainst (· < ·)`, denying every higher
+  numeral, which on those lower sets are the stronger alternatives of (32).
 
 ## TODO
 
@@ -64,7 +64,7 @@ The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not 
 @[expose] public section
 namespace BylininaNouwen2020
 
-open BylininaNouwen2018 Degree Exhaustification Numerals Quantifier Quantifier.Det
+open BylininaNouwen2018 Exhaustification Numerals Quantifier Quantifier.Det
   Quantifier Set
 
 variable {α : Type*}
@@ -80,11 +80,11 @@ def MANY (d : ℕ) : Set (Finset α) := Finset.card ⁻¹' {d}
 theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.rfl
 
 /-- `CARD P` is the number of atoms every plurality in `P` has, `ιd. ∀x[P(x) → #x = d]` ((24)). -/
-noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota fun d ↦ ∀ x ∈ P, x.card = d
+noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota {d | ∀ x ∈ P, x.card = d}
 
 -- (25)
 theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
-  (iota_eq_some_iff _).2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
+  iota_eq_some_iff.2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
 -- (17)
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
@@ -136,20 +136,20 @@ end Scope
 entity ((48)–(50)), and send it where they send the lower-bound quantifier. -/
 
 -- (49)
-theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
-  funext fun x ↦ propext (maxIn_singleton.trans
+theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = {n} :=
+  Set.ext fun x ↦ (maxIn_singleton.trans
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
 
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
-  rw [BE_maxIn_singleton, BE_individual]; rfl
+  rw [BE_maxIn_singleton, BE_individual]
 
 -- (50), (48)
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
-  rw [BE_maxIn_singleton_eq_BE_individual]; exact Partee1987.iota_BE_lift n
+  rw [BE_maxIn_singleton_eq_BE_individual]; exact iota_BE_individual n
 
 theorem maxIn_singleton_injective : Function.Injective fun n : ℕ ↦ MaxIn {n} :=
-  fun a b (h : MaxIn {a} = MaxIn {b}) ↦
-    ident_injective (by rw [← BE_maxIn_singleton, ← BE_maxIn_singleton, h])
+  fun a b (h : MaxIn {a} = MaxIn {b}) ↦ Set.singleton_injective <|
+    (BE_maxIn_singleton a).symm.trans <| (congrArg BE h).trans (BE_maxIn_singleton b)
 
 /-! ### The survey's proposal
 

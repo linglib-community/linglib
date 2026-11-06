@@ -46,11 +46,6 @@ infrastructure to consumers of `IsFlat`.
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
-
-## TODO
-
-* Generalise `IsFlat` to atomistic lattices (`[SemilatticeSup L]
-  [OrderBot L] [IsAtomistic L]`) once a non-`Finset` consumer surfaces.
 -/
 
 @[expose] public section
@@ -63,10 +58,10 @@ variable {α : Type*}
 abbrev TeamProperty (α : Type*) : Type _ := Set (Finset α)
 
 /-- A team property `T` is **flat** iff membership reduces
-    pointwise: `s ∈ T ↔ every singleton from s is in T`.
+pointwise: `s ∈ T ↔ every singleton from s is in T`.
 
-    [anttila-2021] Definition 2.2.1. Equivalent characterisations: `isFlat_iff` (via
-    closure properties), `isFlat_iff_isIdeal` (via `Order.IsIdeal`). -/
+[anttila-2021] Definition 2.2.1. Equivalent characterisations: `isFlat_iff` (via
+closure properties), `isFlat_iff_isIdeal` (via `Order.IsIdeal`). -/
 def IsFlat (T : TeamProperty α) : Prop :=
   ∀ s : Finset α, s ∈ T ↔ ∀ w ∈ s, ({w} : Finset α) ∈ T
 
@@ -75,8 +70,8 @@ section
 variable [DecidableEq α]
 
 /-- **[anttila-2021] Proposition 2.2.2**: a team property is flat iff it is
-    downward-closed under inclusion, closed under binary union, and
-    contains the empty team. -/
+downward-closed under inclusion, closed under binary union, and
+contains the empty team. -/
 theorem isFlat_iff (T : TeamProperty α) :
     IsFlat T ↔ IsLowerSet T ∧ SupClosed T ∧ ∅ ∈ T := by
   constructor
@@ -162,9 +157,9 @@ theorem isLowerSet_of_ordConnected_empty {T : TeamProperty α}
   exact hConv.out hEmpty hb hmem
 
 /-- **Given the empty-team property, downward closure and convexity coincide**
-    ([anttila-2025]). For NE-bearing team properties — which break the
-    empty-team property — convexity is the invariant that survives where
-    downward closure does not. -/
+([anttila-2025]). For NE-bearing team properties — which break the
+empty-team property — convexity is the invariant that survives where
+downward closure does not. -/
 theorem isLowerSet_iff_ordConnected_of_empty {T : TeamProperty α}
     (hEmpty : ∅ ∈ T) : IsLowerSet T ↔ T.OrdConnected :=
   ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩

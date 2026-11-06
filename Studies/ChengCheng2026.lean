@@ -44,7 +44,8 @@ noun phrase.
 
 namespace ChengCheng2026
 
-open DistributedMorphology DistributedMorphology.RootCategorization Morphology.Exponence
+open DistributedMorphology DistributedMorphology.RootCategorization
+open Morphology hiding Feature
 open Harley2017 (Feature)
 open PhraseStructure Core.Order
 
@@ -120,11 +121,12 @@ inductive Combination where
 def combinationTable : List (String × Combination) := [("R", .root), ("N", .noun)]
 
 /-- The lexicon of the *dǎ*+R structure, with trivial words. -/
-def lexicon : Lexicon Unit := ⟨.v, (), (), ()⟩
+def lexicon : Lexicon Unit := { x := .v, root := (), head := (), arg := () }
 
 /-- The *dǎ*+N structure (53): the verbalizer over an nP. -/
 def nounTree : Tree Cat Unit :=
-  .node (.cat .v) [.terminal (.cat .v) (), .node (.cat .n) [complexHead ⟨.n, (), (), ()⟩]]
+  .node (.head .v) [.terminal (.head .v) (),
+    .node (.head .n) [complexHead { x := .n, root := (), head := (), arg := () }]]
 
 namespace Combination
 

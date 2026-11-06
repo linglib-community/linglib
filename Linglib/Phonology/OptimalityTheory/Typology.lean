@@ -97,8 +97,8 @@ theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
     o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.con C (i, o') = S.con C (i, o) := by
   refine ⟨fun h ↦ ⟨Tableau.optimal_subset h, con_eq_of_mem_language h ho⟩, fun ⟨hg, he⟩ ↦ ?_⟩
   have hp : (S.tableau r i).profile o' = (S.tableau r i).profile o := by
-    simp only [tableau, Tableau.profile, Tableau.ofRanking_constraints, Function.comp_apply,
-      conAt_apply, he]
+    simp only [tableau, Tableau.profile, ViolationProfile.of, Tableau.ofRanking_constraints,
+      Function.comp_apply, conAt_apply, he]
   exact Tableau.mem_optimal_iff.2 ⟨hg, fun d hd ↦ hp ▸ Tableau.le_of_mem_optimal ho hd⟩
 
 section Joint

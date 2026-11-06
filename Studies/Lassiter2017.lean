@@ -21,7 +21,7 @@ and they are relative adjectives on it. *Certain* takes the scale's maximum as i
 *possible* its minimum, so the three are the positive forms of likelihood at Kennedy's three
 standards on one closed scale (`likely_eq_preimage`, `certain_eq_preimage`,
 `possible_eq_preimage`). A relative adjective on a closed scale is what Kennedy's
-Interpretive Economy excludes, `Degree.Boundedness.Admits`, and what the book's own typology
+Interpretive Economy excludes, `Boundedness.Admits`, and what the book's own typology
 (4.58) allows: *likely* is the counter-example of p. 82
 (`coherent_and_not_admits_contextual_probability`). The distribution of *completely* and
 *slightly*, which Kennedy reads off the scale, the book reads off the positive form (§4.2.9);
@@ -84,7 +84,7 @@ that yields it is the preceding conclusion $θ_{possible} < θ_{might}$
 * The measurement-theoretic representation of p. 82 and p. 97, and its generalization to sets of
   measures when connectedness fails.
 * The certainty scales of Analyses 2 and 3 (§5.1.6, §5.1.7), the first a half-open interval
-  (`Degree.Boundedness.ofOrder_Ioc`) or a log transform.
+  (`Boundedness.ofOrder_Ioc`) or a log transform.
 * The experiment of §6.5 as `Data/Statistics`, and the modifier judgments of §4.2 as examples.
 
 ## References
@@ -130,14 +130,13 @@ noncomputable def likelihood (A : Set W) : Probability :=
 end Scale
 
 /-- The probability scale is totally closed (p. 82, p. 97). -/
-theorem ofOrder_probability : Degree.Boundedness.ofOrder Probability = .closed :=
-  Degree.Boundedness.ofOrder_Icc zero_le_one
+theorem ofOrder_probability : Boundedness.ofOrder Probability = .closed :=
+  Boundedness.ofOrder_Icc zero_le_one
 
 /-! ### Two typologies of standards (§4.2.4–§4.2.6) -/
 
 section Typology
 
-open Degree
 
 /-- A positive standard admits a scale as in (4.58), where a minimum or maximum standard needs its
 endpoint and a contextual standard fits any scale. Interpretive Economy, `Boundedness.Admits`,
@@ -191,7 +190,7 @@ end Typology
 
 section Adjectives
 
-open ComparativeProbability Degree
+open ComparativeProbability
 
 variable {W : Type*} [MeasurableSpace W] (P : Measure W) {A : Set W} {θ : ℝ}
 
@@ -236,8 +235,8 @@ theorem possible_eq_preimage : possible P = likelihood P ⁻¹' Set.Ioi ⊥ := b
 *impossible* the maximum of the dual (§5.2.5). The fragment's possibility scale is only lower
 closed; the maximum of the probability scale is the book's claim that *possible* shares the scale
 of *likely*. -/
-example : English.Adjectives.possible.standard = .minEndpoint ∧
-    English.Adjectives.impossible.standard = .maxEndpoint := by
+example : English.Adjectives.possible.standard = some .minEndpoint ∧
+    English.Adjectives.impossible.standard = some .maxEndpoint := by
   decide
 
 /-- *Certain* and *possible* are [lassiter-2015]'s strong *must* and *might* at threshold one (p.
@@ -283,7 +282,7 @@ instance : LinearOrder EpistemicItem := LinearOrder.lift' rank rank_injective
 
 /-- *Must* and *certain* compare the probability weakly with their thresholds, *might*, *likely*
 and *possible* strictly (6.29). -/
-def comparison : EpistemicItem → Degree.Comparison
+def comparison : EpistemicItem → Comparison
   | .must | .certain => .ge
   | .possible | .might | .likely => .gt
 
@@ -291,7 +290,7 @@ end EpistemicItem
 
 section Thresholds
 
-open ComparativeProbability Degree
+open ComparativeProbability
 
 variable {W : Type*} [MeasurableSpace W] (P : Measure W) (θ : EpistemicItem → ℝ) {A : Set W}
 

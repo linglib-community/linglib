@@ -61,7 +61,8 @@ modifiers are open, and *n or more* is not in the fragment.
 
 namespace Rett2015a
 
-open Degree Quantifier Quantifier.Det Set OrderDual
+open Quantifier Quantifier.Det Set OrderDual
+open Comparison (maxOnScale mem_maxOnScale_dual mem_maxOnScale_gt mem_maxOnScale_lt)
 open scoped Denotes
 
 /-! ### Comparison and strengthening -/

@@ -18,10 +18,11 @@ BSML* is BSML with the empty team removed from the possible states.
 
 * `BSML.enrich`: the enrichment function `[·]⁺`.
 * `BSML.ConsequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
+* `BSML.Formula.denStar`, `BSML.ConsequenceStar`: meaning and consequence in BSML*.
 
 ## Main results
 
-* `BSML.eval_of_eval_enrich`: on `NE`-free formulas enrichment strengthens in both
+* `BSML.den_enrich_subset`: on `NE`-free formulas enrichment strengthens in both
   polarities (Fact 1); `BSML.support_conj_ne_of_support_enrich` is `[α]⁺ ⊨ α ∧ NE`
   (Fact 2).
 * `BSML.antiSupport_enrich_iff`: on positive formulas enrichment is vacuous under a single
@@ -37,7 +38,9 @@ BSML* is BSML with the empty team removed from the possible states.
 
 Aloni defines `[·]⁺` on the `NE`-free fragment only. `enrich` is total and sends `NE` to
 itself, and `□` abbreviates `¬◇¬`, so it has no clause of its own. Fact 1 is one induction over
-the polarity parameter of `BSML.eval`, which is the paper's double induction.
+both components of the meaning, which is the paper's double induction. Aloni defines BSML* only
+by removing `∅` from the possible states; `Formula.denStar` reads this as non-empty splits and
+keeps the modal clauses of BSML, under which `R[w]` may still be empty.
 
 ## References
 
@@ -46,12 +49,15 @@ the polarity parameter of `BSML.eval`, which is the paper's double induction.
 
 @[expose] public section
 
+open scoped SetFamily
+
 namespace BSML
 
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel PointedTeam)
+open Truthmaker (BilProp)
 
 variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
-  {φ ψ : Formula Atom} {t : Finset W} {pol : Bool}
+  {φ ψ : Formula Atom} {t : Finset W}
 
 /-! ### Enrichment -/
 
@@ -83,44 +89,38 @@ theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t :
 
 /-! ### Enrichment strengthens (Facts 1 and 2) -/
 
-/-- Enrichment strengthens an `NE`-free formula in both polarities (Fact 1). -/
-theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol (enrich φ) t) :
-    eval M pol φ t := by
-  induction φ generalizing pol t with
+/-- Enrichment strengthens an `NE`-free formula in both polarities: every team that supports or
+anti-supports `[φ]⁺` supports or anti-supports `φ` (Fact 1). -/
+theorem den_enrich_subset (hNE : φ.NEFree) :
+    ((enrich φ).den M).ver ⊆ (φ.den M).ver ∧ ((enrich φ).den M).fal ⊆ (φ.den M).fal := by
+  induction φ with
   | ne => exact hNE.elim
-  | atom p =>
-    cases pol
-    · exact (antiSupport_conj_ne M _ t).mp h
-    · exact h.1
+  | atom p => exact ⟨fun _ h ↦ h.1, fun t h ↦ (antiSupport_conj_ne M _ t).mp h⟩
   | neg ψ ih =>
-    cases pol
-    · exact ih (pol := true) hNE ((antiSupport_conj_ne M _ t).mp h)
-    · exact ih (pol := false) hNE h.1
+    exact ⟨fun _ h ↦ (ih hNE).2 h.1, fun t h ↦ (ih hNE).1 ((antiSupport_conj_ne M _ t).mp h)⟩
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := (antiSupport_conj_ne M _ t).mp h
-      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
-    · exact ⟨ih₁ hNE.1 h.1.1, ih₂ hNE.2 h.1.2⟩
+    refine ⟨fun _ h ↦ ⟨(ih₁ hNE.1).1 h.1.1, (ih₂ hNE.2).1 h.1.2⟩, fun t h ↦ ?_⟩
+    obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := (antiSupport_conj_ne M _ t).mp h
+    exact ⟨s₁, (ih₁ hNE.1).2 h₁, s₂, (ih₂ hNE.2).2 h₂, hs⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
-      exact ⟨ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    refine ⟨fun _ h ↦ ?_, fun t h ↦ ?_⟩
     · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := h.1
-      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
+      exact ⟨s₁, (ih₁ hNE.1).1 h₁, s₂, (ih₂ hNE.2).1 h₂, hs⟩
+    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
+      exact ⟨(ih₁ hNE.1).2 h₁, (ih₂ hNE.2).2 h₂⟩
   | poss ψ ih =>
-    cases pol
-    · exact fun w hw ↦ ih hNE ((antiSupport_conj_ne M _ t).mp h w hw)
-    · exact fun w hw ↦ (h.1 w hw).imp fun _ ⟨hs, hne, h'⟩ ↦ ⟨hs, hne, ih hNE h'⟩
+    exact ⟨fun _ h w hw ↦ (h.1 w hw).imp fun _ ⟨⟨h', hne⟩, hs⟩ ↦ ⟨⟨(ih hNE).1 h', hne⟩, hs⟩,
+      fun t h w hw ↦ (ih hNE).2 ((antiSupport_conj_ne M _ t).mp h w hw)⟩
 
 /-- `[α]⁺ ⊨ α` for `NE`-free `α`, the support half of Fact 1. -/
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
     support M φ t :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).1 h
 
 /-- The anti-support half of Fact 1. -/
 theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M (enrich φ) t) :
     antiSupport M φ t :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).2 h
 
 /-- `[α]⁺ ⊨ α ∧ NE` for `NE`-free `α` (Fact 2). -/
 theorem support_conj_ne_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
@@ -156,8 +156,8 @@ theorem support_neg_enrich_neg_iff (M : KripkeModel W Atom) (φ : Formula Atom) 
 /-- Enrichment is not vacuous under a double negation, `¬¬[α]⁺ ≢ ¬¬α` for `NE`-free `α`
 (Fact 10). The empty team supports `¬¬α` but not `¬¬[α]⁺`. -/
 theorem not_equivalent_neg_neg_enrich (hNE : φ.NEFree) :
-    ¬ Equivalent (W := W) (.neg (.neg (enrich φ))) (.neg (.neg φ)) := fun h ↦
-  have h₀ := (h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mpr
+    ¬ Equivalent (.neg (.neg (enrich φ))) (.neg (.neg φ)) := fun h ↦
+  have h₀ := (h ⟨Unit, ⟨fun _ ↦ ∅, fun _ _ ↦ False⟩, ∅⟩).mpr
     (support_empty_of_neFree (φ := .neg (.neg φ)) hNE _)
   (nonempty_of_support_enrich (φ := φ) h₀).ne_empty rfl
 
@@ -166,7 +166,30 @@ theorem not_equivalent_neg_neg_enrich (hNE : φ.NEFree) :
 /-- BSML⁺ consequence is consequence between the enriched formulas,
 `α ⊨⁺ β iff [α]⁺ ⊨ [β]⁺`. -/
 def ConsequencePlus (φ ψ : Formula Atom) : Prop :=
-  Consequence (W := W) (enrich φ) (enrich ψ)
+  {enrich φ} ⊨ enrich ψ
+
+/-- The meaning of a formula in BSML*, where `∅` is not among the possible states
+([aloni-2022] §6.3.1): each part of a split is non-empty, and the other clauses are those of
+`Formula.den`. -/
+def Formula.denStar (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
+  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
+  | .ne => ⟨Team.ne, {∅}⟩
+  | .neg φ => -φ.denStar M
+  | .conj φ ψ => ⟨(φ.denStar M).ver ∩ (ψ.denStar M).ver,
+      ((φ.denStar M).fal ∩ Team.ne) ⊻ ((ψ.denStar M).fal ∩ Team.ne)⟩
+  | .disj φ ψ => ⟨((φ.denStar M).ver ∩ Team.ne) ⊻ ((ψ.denStar M).ver ∩ Team.ne),
+      (φ.denStar M).fal ∩ (ψ.denStar M).fal⟩
+  | .poss φ => ⟨Team.poss M.access (φ.denStar M).ver, Team.nec M.access (φ.denStar M).fal⟩
+
+/-- BSML* support. -/
+abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+  t ∈ (φ.denStar M).ver
+
+/-- In BSML*, `ψ` is a consequence of `φ` when every pointed team model with a non-empty team
+supporting `φ` supports `ψ`. -/
+def ConsequenceStar (φ ψ : Formula Atom) : Prop :=
+  ∀ p : PointedTeam.{0} Atom, p.team.Nonempty → supportStar p.model φ p.team →
+    supportStar p.model ψ p.team
 
 theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
@@ -180,43 +203,43 @@ theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
       fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have e₁ : {s | support M (enrich ψ₁) s} = {s | supportStar M ψ₁ s} ∩ Team.ne :=
+    have e₁ : ((enrich ψ₁).den M).ver = (ψ₁.denStar M).ver ∩ Team.ne :=
       Set.ext fun _ ↦ ih₁ hNE.1 hPos.1
-    have e₂ : {s | support M (enrich ψ₂) s} = {s | supportStar M ψ₂ s} ∩ Team.ne :=
+    have e₂ : ((enrich ψ₂).den M).ver = (ψ₂.denStar M).ver ∩ Team.ne :=
       Set.ext fun _ ↦ ih₂ hNE.2 hPos.2
-    change t ∈ Team.tensor _ _ ∧ t.Nonempty ↔ _
+    change t ∈ _ ⊻ _ ∧ t.Nonempty ↔ _
     rw [e₁, e₂]
     exact Iff.rfl
   | poss ψ ih =>
     have ih := fun s ↦ ih (t := s) hNE hPos
-    exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
-          ⟨hs, hs', ((ih _).mp h').1⟩, hne⟩,
-      fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
-          ⟨hs, hs', (ih _).mpr ⟨h', hs'⟩⟩, hne⟩⟩
+    exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨⟨h', hs'⟩, hs⟩ ↦
+          ⟨⟨((ih _).mp h').1, hs'⟩, hs⟩, hne⟩,
+      fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨⟨h', hs'⟩, hs⟩ ↦
+          ⟨⟨(ih _).mpr ⟨h', hs'⟩, hs'⟩, hs⟩, hne⟩⟩
 
 /-- BSML* and BSML⁺ consequence coincide on classical positive formulas (Fact 13). Excluding
 the empty team from the states and excluding it syntactically through `[·]⁺` agree. -/
 theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positive)
     (hψ : ψ.NEFree) (hψ' : ψ.Positive) :
-    ConsequenceStar (W := W) φ ψ ↔ ConsequencePlus (W := W) φ ψ where
-  mp h M t h' :=
-    have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ hφ').mp h'
-    (support_enrich_iff_supportStar hψ hψ').mpr ⟨h M t hne hs, hne⟩
-  mpr h M t hne hs :=
-    ((support_enrich_iff_supportStar hψ hψ').mp
-      (h M t ((support_enrich_iff_supportStar hφ hφ').mpr ⟨hs, hne⟩))).1
+    ConsequenceStar φ ψ ↔ ConsequencePlus φ ψ := by
+  rw [ConsequencePlus, consequence_singleton_iff]
+  exact ⟨fun h p h' ↦
+      have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ hφ').mp h'
+      (support_enrich_iff_supportStar hψ hψ').mpr ⟨h p hne hs, hne⟩,
+    fun h p hne hs ↦ ((support_enrich_iff_supportStar hψ hψ').mp
+      (h p ((support_enrich_iff_supportStar hφ hφ').mpr ⟨hs, hne⟩))).1⟩
 
 /-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). -/
 theorem negativeFC_star_poss (α β : Formula Atom) :
-    ConsequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
-  fun _ _ _ h w hw ↦
-    have ⟨_, hs, _, s₁, ⟨h₁, hne₁⟩, _, _, hu⟩ := h w hw
-    ⟨s₁, (hu ▸ Finset.subset_union_left).trans hs, hne₁, h₁⟩
+    ConsequenceStar (Atom := Atom) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
+  fun _ _ h w hw ↦
+    have ⟨_, ⟨⟨s₁, ⟨h₁, hne₁⟩, _, _, hu⟩, _⟩, hs⟩ := h w hw
+    ⟨s₁, ⟨h₁, hne₁⟩, (le_sup_left.trans_eq hu).trans hs⟩
 
 /-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
 duality `□φ := ¬◇¬φ`. -/
 theorem negativeFC_star_nec (α β : Formula Atom) :
-    ConsequenceStar (W := W) (.neg (Formula.nec (.conj α β))) (.neg (Formula.nec α)) :=
+    ConsequenceStar (Atom := Atom) (.neg (Formula.nec (.conj α β))) (.neg (Formula.nec α)) :=
   negativeFC_star_poss α β
 
 end BSML

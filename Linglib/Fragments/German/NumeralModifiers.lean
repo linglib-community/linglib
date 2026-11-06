@@ -29,7 +29,7 @@ the upper bound it shares with *höchstens*.
 
 namespace German.NumeralModifiers
 
-open Degree Numerals
+open Numerals
 
 /-- *genau* 'exactly' fixes the amount. -/
 def genau : NumeralModifier := .ofComparison "genau" none .eq

@@ -1,55 +1,43 @@
 module
 
 public import Studies.Harley2014
-public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
+public import Linglib.Data.Examples.BobaljikHarley2017
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
 
 /-!
 # Bobaljik and Harley (2017): Suppletion is local: Evidence from Hiaki
 
-A trigger may condition the suppletion of a head only if no phrasal boundary separates them. In the
-first formulation the boundary is a maximal projection, and in the refined one any projection
-above the head level, so that a specifier is not local to its head either. Hiaki verbs supplete
-for the number of an argument, of the object of a transitive verb and of the subject of an
-intransitive one. Since an internal argument is base-generated as the sister of its Root, the
-object is local to the Root, while an external argument, in the specifier of VoiceP, is separated
-from it by the Root's own projection. The subjects that condition suppletion are therefore those
-of unaccusative verbs, which the applicative *-ria*, impossible without an agentive verb,
-confirms. The locality is structural rather than word-internal: within a complex head and with a
-sister phrase alike, conditioning is local exactly where no phrase intervenes.
-
-The refined condition also decides between the configurations in which the internal argument is
-introduced. As the Root's sister it may condition the Root under both formulations. In the
-specifier of the categorizer that takes the Root as its complement, as in Embick's resultative
-participles, it may do so only under the first. Adjoined to a low functional projection above the
-Root, as van Craenenbroeck suggests, it may do so under neither, since the lower segment of that
-projection is already a maximal one.
+Bobaljik's locality condition lets a trigger condition the suppletion of a head only if no maximal
+projection separates them. Hiaki verbs supplete for the number of a transitive's object and an
+intransitive's subject, and the applicative *-ria*, which needs an agentive verb, shows that [the
+suppletive intransitives have no external argument](##fits_iff), so the trigger is always [the
+internal argument, the Root's sister](##localNumbers_clause). The refined condition, on which no
+phrasal projection may intervene, makes [specifiers non-local](##mayCondition_tree19) and [closes
+the loophole of head movement](##mayCondition_moveToVoice), but [admits a number that agreement
+copies into the verb](##mayCondition'_tree21).
 
 ## Implementation notes
 
 * The two formulations of locality are `DistributedMorphology.MayCondition` and
-  `DistributedMorphology.MayCondition'`, on which the segments of a maximal category all count as
-  maximal, as the chapter's remark on specifiers as adjuncts presupposes. A trigger's features
-  are the number on the label of its DP, so a DP is represented by a terminal bearing its
-  number.
-* The applicative examples are those of `Data/Examples/Harley2014.json`, which the chapter repeats
-  as its (15)–(18). The verb classes are taken from them, the suppletive intransitives excepted,
-  whose class the rows determine.
+  `DistributedMorphology.MayCondition'`.
+* A terminal is represented by the number it bears, so a DP by the number its determiner copies to
+  its label.
+* The verb of an applicative example is read off its gloss line, as the word glossed `APPL`, and
+  its frame is the one the chapter gives it, in (15) or in the list (10) of suppletive verbs.
 
 ## TODO
 
-The typological survey of number-conditioned suppletion and the subject-conditioned transitive
-suppletives of Seri and Hiw, which the chapter leaves to further investigation, are not
-formalized.
+The typological survey, the subject-conditioned transitive suppletives of Seri and Hiw, and the
+evidence from Huichol, Kolyma Yukaghir and Georgian that suppletion follows underlying positions
+where agreement follows derived ones are not formalized.
 
 ## References
 
 * [bobaljik-harley-2017]
-* [harley-2014]
 * [bobaljik-2012]
-* [embick-2004]
-* [van-craenenbroeck-2014]
+* [harley-2014]
 -/
 
 @[expose] public section
@@ -57,49 +45,55 @@ formalized.
 namespace BobaljikHarley2017
 
 open PhraseStructure Core.Order
-open DistributedMorphology (MayCondition MayCondition')
+open DistributedMorphology (Cat MayCondition MayCondition' localLabels mayCondition'_of_isHeadAt)
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive)
 
-/-! ### The configurations of the chapter -/
+/-- Trees whose terminals are represented by the number they bear, if any. -/
+abbrev T := Tree Cat (Option Number)
 
-/-- The categories are two abstract ones for the schematic trees, the Root's own, Voice, the
-verbalizer, a low functional head, and determiner phrases. -/
-inductive Cat
-  | x | y | root | voice | v | f | d
-  deriving DecidableEq, Repr
+/-- A DP, represented by the number its determiner copies to its label ((11), (12)). -/
+abbrev dp (n : Number) : T := .terminal (.head .D) (some n)
 
-/-- The terminals are heads, phrases, Roots, DPs with their number, and the heads Voice, v and F. -/
-inductive Word
-  | head | phrase | root | dp (n : Number) | voice | v | f
-  deriving DecidableEq, Repr
+/-- A terminal of category `c` that bears no number. -/
+abbrev term (c : Minimalist.Cat) : T := .terminal (.head c) none
 
-/-- Trees over the chapter's categories. -/
-abbrev T := Tree Cat Word
+/-- A phrase of category `c`. -/
+abbrev xp (c : Minimalist.Cat) (ts : List T) : T := .node (.head c) ts
 
-/-- The schematic tree (19), a head with a specifier and a complement. -/
+/-! ### The refined condition -/
+
+/-- The tree (19), the chapter's schematic head with a specifier and a complement, here Voice. -/
 def tree19 : T :=
-  .node .x [.terminal .d .phrase, .node .x [.terminal .x .head, .terminal .d .phrase]]
+  xp .Voice [term .D, xp .Voice [term .Voice, term .D]]
 
-/-- Both arguments of a head are local to it under (1), only its complement under (1′) (19). -/
-theorem mayCondition_mayCondition'_tree19 :
+/-- **Specifiers are not local.** Both DPs of (19) may condition the head under the first
+formulation, and only its complement under the refined one. -/
+theorem mayCondition_tree19 :
     MayCondition tree19 ⟨[1, 0]⟩ ⟨[0]⟩ ∧ MayCondition tree19 ⟨[1, 0]⟩ ⟨[1, 1]⟩ ∧
       ¬ MayCondition' tree19 ⟨[1, 0]⟩ ⟨[0]⟩ ∧ MayCondition' tree19 ⟨[1, 0]⟩ ⟨[1, 1]⟩ := by
   decide
 
-/-- The schematic tree (20), a head with a specifier over a phrase whose head has a specifier and a
-complement. -/
-def tree20 : T :=
-  .node .x [.terminal .d .phrase, .node .x [.terminal .x .head,
-    .node .y [.terminal .d .phrase, .node .y [.terminal .y .head, .terminal .d .phrase]]]]
+/-- The tree (19) with the specifier adjoined to the phrase, as in theories whose specifiers are
+adjuncts. -/
+def tree19Adjoined : T :=
+  .adjoin (.head .Voice) [term .D, xp .Voice [term .Voice, term .D]]
 
-/-- Of the phrases of (20) only the complement of Y⁰ may condition it under (1′), and the higher
-head X⁰ may not either. -/
+-- fn. 7
+theorem not_mayCondition_tree19Adjoined : ¬ MayCondition tree19Adjoined ⟨[1, 0]⟩ ⟨[0]⟩ := by
+  decide
+
+/-- The tree (20), the chapter's schematic head with a specifier over a phrase whose head has a
+specifier and a complement, here T over Voice. -/
+def tree20 : T :=
+  xp .T [term .D, xp .T [term .T, xp .Voice [term .D, xp .Voice [term .Voice, term .D]]]]
+
+-- (20)
 theorem mayCondition'_tree20 :
     MayCondition' tree20 ⟨[1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1]⟩ ∧
       ¬ MayCondition' tree20 ⟨[1, 1, 1, 0]⟩ ⟨[1, 1, 0]⟩ ∧
       ¬ MayCondition' tree20 ⟨[1, 1, 1, 0]⟩ ⟨[0]⟩ ∧
-      ¬ MayCondition' tree20 ⟨[1, 1, 1, 0]⟩ ⟨[1, 0]⟩ := by
+      ¬ MayCondition tree20 ⟨[1, 1, 1, 0]⟩ ⟨[1, 0]⟩ := by
   decide
 
 /-! ### Hiaki clauses -/
@@ -107,148 +101,124 @@ theorem mayCondition'_tree20 :
 /-- The Root's projection, the internal argument base-generated as the Root's sister (13). -/
 def rootP (c : Arguments Number) : T :=
   match c .internal with
-  | some n => .node .root [.terminal .d (.dp n), .terminal .root .root]
-  | none => .node .root [.terminal .root .root]
+  | some n => .node .root [dp n, .terminal .root none]
+  | none => .node .root [.terminal .root none]
 
-/-- The clause, VoiceP over the Root's projection, the external argument in its specifier (14). -/
+/-- The verbal projection over the Root's: agentive Voice with the external argument in its
+specifier (14), or the non-agentive v of a clause without one. -/
 def clause (c : Arguments Number) : T :=
   match c .external with
-  | some n => .node .voice [.terminal .d (.dp n), .node .voice [rootP c, .terminal .voice .voice]]
-  | none => .node .voice [rootP c, .terminal .voice .voice]
+  | some n => xp .Voice [dp n, xp .Voice [rootP c, term .Voice]]
+  | none => xp .v [rootP c, term .v]
 
 /-- The position of the Root in the clause. -/
 def rootPos (c : Arguments Number) : TreePath :=
   ⟨(if (c .external).isSome then [1, 0] else [0]) ++ [if (c .internal).isSome then 1 else 0]⟩
 
-/-- The numbers of the DPs that may condition the head at `α` under (1′). -/
-def localNumbers (t : T) (α : TreePath) : List Number :=
-  t.positionedTerminals.filterMap fun x ↦
-    match x.2.2 with
-    | .dp n => if MayCondition' t α x.1 then some n else none
-    | _ => none
+/-- The numbers that may condition the node at `α` under the refined formulation. -/
+def localNumbers (t : T) (α : TreePath) : List Number := (localLabels t α).filterMap Prod.snd
 
 /-- **Only the internal argument is local to the Root.** Whatever arguments a Hiaki clause has, the
 numbers that may condition its Root are exactly that of its internal argument. -/
 theorem localNumbers_clause (c : Arguments Number) :
     localNumbers (clause c) (rootPos c) = (c .internal).toList := by
   rcases hi : c .internal with _ | n <;> rcases he : c .external with _ | e <;>
-    simp only [clause, rootP, rootPos, hi, he, Option.isSome_none, Option.isSome_some] <;>
-    first
-    | decide
-    | (cases n <;> decide)
-    | (cases e <;> decide)
-    | (cases n <;> cases e <;> decide)
+    simp only [clause, rootP, rootPos, hi, he] <;> rfl
 
-/-- The context that locality gives a Root's Vocabulary Items, its index and the numbers local to
-it. -/
+/-- The context locality gives a Root's Vocabulary Items, its index and the numbers local to it. -/
 def structuralSite (c : Arguments Number) (r : DistributedMorphology.Root) :
     DistributedMorphology.Neighborhood (Finset Harley2014.SiteFeature) :=
   ⟨{.root r}, (localNumbers (clause c) (rootPos c)).map fun n ↦ {.internal n}, []⟩
 
-/-- The context locality gives a Root is the one Harley's site stipulates, so Hiaki suppletion is
-spelled out over the context that (1′) delivers. -/
+-- Harley's insertion site is the context the refined condition delivers.
 theorem structuralSite_eq_site (c : Arguments Number) (r : DistributedMorphology.Root) :
     structuralSite c r = Harley2014.site c r := by
   rw [structuralSite, localNumbers_clause, Harley2014.site]
   cases c .internal <;> rfl
 
-theorem spellout_eq (c : Arguments Number) (r : DistributedMorphology.Root) :
-    Harley2014.spellout c r =
-      DistributedMorphology.subsetPrinciple Harley2014.vocabulary (structuralSite c r) := by
-  rw [structuralSite_eq_site]; rfl
+/-- The unergative clause (14) after head movement of the Root to Voice, which leaves a trace. -/
+def moveToVoice : T :=
+  xp .Voice [dp .plural, xp .Voice [.node .root [.trace 0 .root],
+    .adjoin (.head .Voice) [.terminal .root none, term .Voice]]]
 
-/-- Head movement of the Root to Voice adjoins the Root to Voice, leaving a trace. -/
-def moveToVoice (c : Arguments Number) : T :=
-  match c .external with
-  | some n => .node .voice [.terminal .d (.dp n),
-      .node .voice [.node .root [.trace 0 .root],
-        .adjoin .voice [.terminal .root .root, .terminal .voice .voice]]]
-  | none => .node .voice [.node .root [.trace 0 .root],
-      .adjoin .voice [.terminal .root .root, .terminal .voice .voice]]
-
--- (1)
-theorem mayCondition_moveToVoice (e : Number) :
-    MayCondition (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ ∧
-      ¬ MayCondition' (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ := by
-  cases e <;> decide
+/-- **The refined condition closes the loophole of head movement.** Moved to Voice, the Root is
+local to the external argument under the first formulation and not under the refined one. -/
+theorem mayCondition_moveToVoice :
+    MayCondition moveToVoice ⟨[1, 1, 0]⟩ ⟨[0]⟩ ∧ ¬ MayCondition' moveToVoice ⟨[1, 1, 0]⟩ ⟨[0]⟩ := by
+  decide
 
 /-! ### The applicative diagnostic -/
 
-/-- The classes of the applicative examples. -/
-inductive VerbClass
-  | unergative | transitive | unaccusative | suppletiveIntransitive | suppletiveTransitive
-  deriving DecidableEq, Repr
-
-/-- The applicative *-ria* needs an agentive verb, a clause with an external argument. -/
-def ApplicativeLicensed (c : Arguments Number) : Prop := (c .external).isSome
+/-- The applicative *-ria* selects agentive Voice, and clashes with the non-agentive v of a
+clause without an external argument. -/
+def ApplicativeLicensed (c : Arguments Number) : Prop := (clause c).cat = .head .Voice
 
 instance (c : Arguments Number) : Decidable (ApplicativeLicensed c) :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (_ = _))
 
-/-- The argument frame of each class, given the frame of the suppletive intransitives. -/
-def VerbClass.frame (s : Arguments Number) : VerbClass → Arguments Number
-  | .unergative => Clause.Arguments.unergative .singular
-  | .transitive | .suppletiveTransitive => Clause.Arguments.transitive .singular .singular
-  | .unaccusative => Clause.Arguments.unaccusative .singular
-  | .suppletiveIntransitive => s
+theorem applicativeLicensed_iff {c : Arguments Number} :
+    ApplicativeLicensed c ↔ c .external ≠ none := by
+  unfold ApplicativeLicensed clause
+  cases c .external <;> simp
 
-/-- The classes as named in the rows. -/
-def classTable : List (String × VerbClass) :=
-  [("unergative", .unergative), ("transitive", .transitive), ("unaccusative", .unaccusative),
-    ("suppletiveIntransitive", .suppletiveIntransitive),
-    ("suppletiveTransitive", .suppletiveTransitive)]
+/-- The frames of the verbs of the applicative examples, by their glosses: those the chapter gives
+the verbs of (15), agentive intransitive *dance*, agentive transitive *close* and unaccusative
+*break*, and transitive for *kill*, whose suppletion (10) tracks its object. -/
+def frames : List (List Char × Arguments Number) :=
+  [("dance".toList, unergative .singular), ("close".toList, transitive .singular .singular),
+    ("break".toList, unaccusative .singular), ("kill".toList, transitive .singular .singular)]
 
-/-- The applicative examples with a suffixed *-ria*, by their verb class and judgment. -/
-def applicativeRows : List (VerbClass × Judgment) :=
-  Harley2014.Examples.all.filterMap fun d ↦ do
-    guard (d.feature? "applicative" = some "suffixed")
-    pure (← d.parse? "verbClass" classTable, d.judgment)
+/-- The frame of a verb, given a frame `s` for *go*, whose suppletion (10) tracks its subject. -/
+def frame? (s : Arguments Number) (g : List Char) : Option (Arguments Number) :=
+  if g = "go".toList then some s else frames.lookup g
 
-/-- A frame for the suppletive intransitives fits the rows when every suffixed applicative is
-acceptable exactly where its frame is agentive. -/
+/-- The verb of an example, read from its gloss line as the first element of the lexical gloss of
+the word that carries `APPL`, where one does. -/
+def applicativeVerb? (d : Datum) : Option (List Char) := do
+  let w ← d.glossedWords.find? fun w ↦ "APPL".toList ∈ w.labels
+  (Gloss.elements (← w.lexicalGloss?)).head?
+
+/-- The examples whose verb carries the applicative suffix, (15), (16) and (18), by their verb and
+judgment. -/
+def applicativeRows : List (List Char × Judgment) :=
+  Examples.all.filterMap fun d ↦ (applicativeVerb? d).map (·, d.judgment)
+
+/-- A frame for the suppletive intransitives fits the examples when the verb of each suffixed
+applicative has a frame, which licenses the applicative exactly where it is acceptable. -/
 def Fits (s : Arguments Number) : Prop :=
-  ∀ p ∈ applicativeRows, p.2 = .acceptable ↔ ApplicativeLicensed (p.1.frame s)
+  ∀ p ∈ applicativeRows, ∃ c ∈ frame? s p.1, p.2 = .acceptable ↔ ApplicativeLicensed c
 
 instance (s : Arguments Number) : Decidable (Fits s) := List.decidableBAll _ _
 
-theorem length_applicativeRows : applicativeRows.length = 5 := by decide +kernel
+private theorem fits_congr {s s' : Arguments Number}
+    (h : s .external = none ↔ s' .external = none) : Fits s ↔ Fits s' :=
+  forall₂_congr fun ⟨g, _⟩ _ ↦ by
+    by_cases hg : g = "go".toList
+    · simp [frame?, hg, applicativeLicensed_iff, h]
+    · simp only [frame?, hg, ↓reduceIte]
 
-/-- Of the single-argument frames only the unaccusative fits the applicative rows, so the suppletive
-intransitives' subjects are internal arguments (16). -/
-theorem frame_eq_unaccusative (n : Number) :
-    Fits (unaccusative n) ∧ ¬ Fits (unergative n) := by
-  cases n <;> decide +kernel
+/-- **The suppletive intransitives are unaccusative.** The applicative examples fit a frame for the
+suppletive intransitives exactly when it has no external argument. -/
+theorem fits_iff (s : Arguments Number) : Fits s ↔ s .external = none := by
+  rcases h : s .external with _ | n
+  · simpa using (fits_congr (s' := unaccusative .singular) (by simp [h, unaccusative])).mpr
+      (by decide +kernel)
+  · simpa using (fits_congr (s' := unergative .singular) (by simp [h, unergative])).not.mpr
+      (by decide +kernel)
 
-/-! ### The configurations of an internal argument -/
+/-! ### Agreement -/
 
-/-- An internal argument is introduced as the Root's sister, in the specifier of the categorizer
-that takes the Root as its complement, or adjoined to a low functional projection over the
-Root. -/
-inductive Configuration
-  | sister | specifier | lowAdjunct
-  deriving DecidableEq, Repr
+/-- The structure (21), in which agreement has copied the subject's plural onto Infl, here T, and
+V⁰, here the Root, has moved into I⁰. -/
+def tree21 : T :=
+  xp .T [dp .plural,
+    xp .T [.adjoin (.head .T) [.terminal .root none, .terminal (.head .T) (some .plural)],
+      xp .v [.trace 0 .root]]]
 
-/-- The tree of a configuration with the internal argument of number `n`, the Root at position
-`[1, 1]` in the last two and `[1]` in the first. -/
-def Configuration.tree (n : Number) : Configuration → T
-  | .sister => .node .root [.terminal .d (.dp n), .terminal .root .root]
-  | .specifier => .node .v [.terminal .d (.dp n), .node .v [.terminal .v .v, .terminal .root .root]]
-  | .lowAdjunct =>
-    .adjoin .f [.terminal .d (.dp n), .node .f [.terminal .f .f, .terminal .root .root]]
-
-/-- The position of the Root in a configuration. -/
-def Configuration.rootPos : Configuration → TreePath
-  | .sister => ⟨[1]⟩
-  | .specifier | .lowAdjunct => ⟨[1, 1]⟩
-
-/-- Under (1′) the internal argument may condition the Root only as its sister. -/
-theorem mayCondition'_iff_configuration (n : Number) (k : Configuration) :
-    MayCondition' (k.tree n) k.rootPos ⟨[0]⟩ ↔ k = .sister := by
-  cases n <;> cases k <;> decide
-
--- (1)
-theorem mayCondition_iff_configuration (n : Number) (k : Configuration) :
-    MayCondition (k.tree n) k.rootPos ⟨[0]⟩ ↔ k ≠ .lowAdjunct := by
-  cases n <;> cases k <;> decide
+/-- **Locality does not exclude agreement.** In (21) the number copied onto Infl may condition the
+Root under the refined formulation, though the subject's own may not. -/
+theorem mayCondition'_tree21 :
+    MayCondition' tree21 ⟨[1, 0, 0]⟩ ⟨[1, 0, 1]⟩ ∧ ¬ MayCondition' tree21 ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
+  ⟨mayCondition'_of_isHeadAt (h := ⟨[1, 0]⟩) (by decide) (by decide) (by decide), by decide⟩
 
 end BobaljikHarley2017

@@ -3,7 +3,6 @@ module
 public import Linglib.Data.Examples.Rett2015b
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Semantics.Degree.Antonymy
-public import Linglib.Semantics.Degree.Defs
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -12,8 +11,9 @@ public import Linglib.Data.Examples.Readers
 Rett derives the distribution of evaluativity across degree constructions, her Table 3.1, from two
 Neo-Gricean implicatures. A Quantity implicature strengthens the otherwise tautological positive
 construction, and the Marked Meaning Principle, after Horn's division of pragmatic labor, makes the
-marked, negative antonym evaluative in exactly the polar-invariant constructions, the equatives
-and degree questions in which its unmarked antonym has the same truth conditions.
+marked, negative antonym evaluative in exactly the polar-invariant constructions, the equatives,
+degree questions and degree demonstratives in which its unmarked antonym has the same truth
+conditions.
 
 ## Implementation notes
 
@@ -37,20 +37,36 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 namespace Rett2015b
 
-open Degree
 open English.Adjectives
+
+/-- The surface forms of a gradable predicate in the book's Table 3.1. -/
+inductive Construction where
+  /-- *Adam is tall*. -/
+  | positive
+  /-- *Adam is six feet tall*. -/
+  | measurePhrase
+  /-- *Adam is taller than Doug*. -/
+  | comparative
+  /-- *Adam is as tall as Doug*. -/
+  | equative
+  /-- *How tall is Adam?* -/
+  | degreeQuestion
+  /-- *Doug's (about) that tall too*. -/
+  | degreeDemonstrative
+  deriving DecidableEq, Repr
 
 /-! ### Polar (in)variance and markedness -/
 
 /-- A construction is polar-invariant, in Rett's sense, when the two antonyms yield the same truth
-conditions in it, so that the marked antonym has an unmarked competitor. Equatives and degree
-questions are polar-invariant; positives, comparatives, and measure phrases are not. -/
+conditions in it, so that the marked antonym has an unmarked competitor. Equatives, degree questions
+and degree demonstratives are polar-invariant; positives, comparatives, and measure phrases are not.
+-/
 def IsPolarInvariant : Construction → Prop
-  | .equative | .degreeQuestion => True
+  | .equative | .degreeQuestion | .degreeDemonstrative => True
   | .positive | .comparative | .measurePhrase => False
 
 instance : DecidablePred IsPolarInvariant
-  | .equative | .degreeQuestion => isTrue trivial
+  | .equative | .degreeQuestion | .degreeDemonstrative => isTrue trivial
   | .positive | .comparative | .measurePhrase => isFalse id
 
 /-- Negative antonyms are the marked members of their pairs. -/
@@ -99,7 +115,7 @@ positive-antonym counterparts are not. -/
 
 /-- The implicature deriving evaluativity for a fragment adjective in a construction, read off
 its lexicalized polarity. -/
-def evaluativity (a : GradableAdjective) (c : Construction) : Option Implicature :=
+def evaluativity (a : Adjective) (c : Construction) : Option Implicature :=
   implicature c a.polarity
 
 theorem as_short_as : evaluativity short .equative = some .manner := rfl
@@ -115,7 +131,8 @@ readings: the strengthened ("exactly") equatives of the two antonyms share truth
 so a truth-conditionally equivalent unmarked alternative exists and the Marked Meaning
 Principle can fire; the antonym comparatives exclude each other, so no such alternative
 exists. Degree questions pattern with the equative — both antonyms' true answers are the
-subject's actual measure. -/
+subject's actual measure — and a degree demonstrative picks out a specific degree, of which the
+antonyms' truth conditions are mutually entailing. -/
 
 section PolarVarianceGrounding
 
@@ -134,6 +151,12 @@ theorem exact_equative_antonym_invariant :
       (a ∈ μ ⁻¹' ((Polarity.negative * p) • Comparison.ge).interval (μ b) ∧
         a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b)) := by
   rw [exact_equative_iff_eq, exact_equative_iff_eq]
+
+-- (33), (34) p. 111
+theorem demonstrative_antonym_invariant (d : D) :
+    a ∈ μ ⁻¹' (p • Comparison.eq).interval d ↔
+      a ∈ μ ⁻¹' ((Polarity.negative * p) • Comparison.eq).interval d := by
+  cases p <;> simp
 
 theorem comparative_antonyms_exclusive (h : a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b)) :
     a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by
@@ -156,7 +179,7 @@ def datum (e : Datum) : Option (Construction × Polarity × Bool) :=
   do
     let c ← e.parse? "construction" [("positive", Construction.positive),
       ("comparative", .comparative), ("equative", .equative), ("measurePhrase", .measurePhrase),
-      ("degreeQuestion", .degreeQuestion)]
+      ("degreeQuestion", .degreeQuestion), ("degreeDemonstrative", .degreeDemonstrative)]
     let p ← e.parse? "polarity" [("positive", Polarity.positive), ("negative", .negative)]
     let v ← e.parse? "evaluative" [("true", true), ("false", false)]
     pure (c, p, v)

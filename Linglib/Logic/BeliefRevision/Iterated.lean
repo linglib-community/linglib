@@ -271,7 +271,8 @@ variable {ord : S → Preorder W} {Ψ : S} {μ α β : Set W} {w v : W}
 evidence. -/
 theorem Faithful.mem_bel_revise (h : r.Faithful ord) :
     w ∈ r.bel (r.revise Ψ μ) ↔ w ∈ μ ∧ ∀ y ∈ μ, (ord Ψ).le w y := by
-  rw [h.bel_revise, Preorder.mem_minimals_iff_forall_le (h.total Ψ)]
+  have := h.total Ψ
+  rw [h.bel_revise, Preorder.mem_minimals_iff_forall_le]
 
 theorem Faithful.le_of_mem (h : r.Faithful ord) (hw : w ∈ r.bel Ψ) (hv : v ∉ r.bel Ψ) :
     (ord Ψ).le w v :=
@@ -285,13 +286,16 @@ theorem Faithful.not_le_of_mem (h : r.Faithful ord) (hw : w ∈ r.bel Ψ) (hv : 
 at least as plausible as `v`. -/
 theorem Faithful.mem_bel_revise_pair (h : r.Faithful ord) :
     w ∈ r.bel (r.revise Ψ {w, v}) ↔ (ord Ψ).le w v := by
-  rw [h.bel_revise, Preorder.mem_minimals_pair (h.total Ψ)]
+  have := h.total Ψ
+  rw [h.bel_revise, Preorder.mem_minimals_pair]
 
 /-- At most one faithful assignment represents an operator. -/
 theorem Faithful.unique {o₁ o₂ : S → Preorder W} (h₁ : r.Faithful o₁) (h₂ : r.Faithful o₂) :
     o₁ = o₂ :=
-  funext fun Ψ ↦ Preorder.eq_of_minimals_eq (h₁.total Ψ) (h₂.total Ψ) <|
-    funext fun μ ↦ (h₁.bel_revise Ψ μ).symm.trans (h₂.bel_revise Ψ μ)
+  funext fun Ψ ↦
+    have := h₁.total Ψ
+    have := h₂.total Ψ
+    Preorder.eq_of_minimals_eq <| funext fun μ ↦ (h₁.bel_revise Ψ μ).symm.trans (h₂.bel_revise Ψ μ)
 
 /-- A faithfully represented operator satisfies the postulates. -/
 theorem Faithful.isAGM (h : r.Faithful ord) : r.IsAGM where
@@ -315,10 +319,12 @@ theorem Faithful.isAGM (h : r.Faithful ord) : r.IsAGM where
     simp only [h.bel_revise]
     rcases ((ord Ψ).minimals μ ∩ φ).eq_empty_or_nonempty with he | hne
     · exact he ▸ Set.empty_subset _
-    · exact (Preorder.minimals_inter_eq (h.total Ψ) hne).ge
+    · have := h.total Ψ
+      exact (Preorder.minimals_inter_eq hne).ge
   subexpansion Ψ μ φ hne := by
     simp only [h.bel_revise] at hne ⊢
-    exact (Preorder.minimals_inter_eq (h.total Ψ) hne).le
+    have := h.total Ψ
+    exact (Preorder.minimals_inter_eq hne).le
 
 /-- An operator satisfies the postulates iff a faithful assignment represents it (Theorem 9). -/
 theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
@@ -336,7 +342,9 @@ than every `α \ β`-world (Lemma 10). -/
 theorem Faithful.accepts_iff_exists_lt (h : r.Faithful ord) (hα : α.Nonempty) :
     r.Accepts Ψ α β ↔ ∃ w ∈ α ∩ β, ∀ v ∈ α \ β, (ord Ψ).lt w v := by
   rw [Accepts, h.bel_revise]
-  exact Preorder.minimals_subset_iff_exists_forall_lt (h.wellFounded Ψ) (h.total Ψ) hα
+  have := h.total Ψ
+  exact Preorder.minimals_subset_iff_exists_forall_lt <|
+    (Preorder.minimals_nonempty_iff (h.wellFounded Ψ)).2 hα
 
 /-! ### The iterated-revision postulates -/
 
@@ -377,23 +385,24 @@ keeps each strict ranking of a `D Ψ μ ∩ X Ψ μ`-world below a `D Ψ μ \ X 
 theorem Faithful.preservesLt_iff (h : r.Faithful ord) (D X : S → Set W → Set W) :
     (∀ Ψ μ α, α ⊆ D Ψ μ → r.Accepts Ψ α (X Ψ μ) → r.Accepts (r.revise Ψ μ) α (X Ψ μ)) ↔
       ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) (D Ψ μ ∩ X Ψ μ) (D Ψ μ \ X Ψ μ) := by
+  have := h.total
   constructor
   · rintro hC Ψ μ w ⟨hwD, hwX⟩ v ⟨hvD, hvX⟩ hlt
-    refine (Preorder.lt_iff_not_ge (h.total _)).2 fun hvw ↦ hvX ?_
+    refine Preorder.lt_iff_not_ge.2 fun hvw ↦ hvX ?_
     refine hC Ψ μ {w, v} (Set.pair_subset hwD hvD) (fun x hx ↦ ?_) (Set.pair_comm w v ▸
       h.mem_bel_revise_pair.2 hvw)
     rcases (h.mem_bel_revise.1 hx).1 with rfl | rfl
     · exact hwX
     · exact absurd ((h.mem_bel_revise.1 hx).2 w (by simp))
-        ((Preorder.lt_iff_not_ge (h.total Ψ)).1 hlt)
+        (Preorder.lt_iff_not_ge.1 hlt)
   · intro hR Ψ μ α hα hacc x hx
     by_contra hxX
     have hx' := h.mem_bel_revise.1 hx
     obtain ⟨u, hu⟩ := h.isAGM.consistency Ψ α ⟨x, hx'.1⟩
     have hu' := h.mem_bel_revise.1 hu
-    have hlt : (ord Ψ).lt u x := (Preorder.lt_iff_not_ge (h.total Ψ)).2 fun hxu ↦
+    have hlt : (ord Ψ).lt u x := Preorder.lt_iff_not_ge.2 fun hxu ↦
       hxX (hacc (h.mem_bel_revise.2 ⟨hx'.1, fun y hy ↦ (ord Ψ).le_trans _ _ _ hxu (hu'.2 y hy)⟩))
-    exact (Preorder.lt_iff_not_ge (h.total _)).1
+    exact Preorder.lt_iff_not_ge.1
       (hR Ψ μ u ⟨hα hu'.1, hacc hu⟩ x ⟨hα hx'.1, hxX⟩ hlt) (hx'.2 u hu'.1)
 
 /-- Revising by `μ` before `α ⊆ D Ψ μ` acquires no conditional belief `X Ψ μ ∣ α` iff the revision
@@ -463,7 +472,8 @@ theorem Faithful.cb_iff_c1_c2_c3_c4_c5_c6 (h : r.Faithful ord) :
   refine forall₂_congr fun Ψ μ ↦ ?_
   have hB {w} : w ∈ r.bel (r.revise Ψ μ) ↔ w ∈ μ ∧ ∀ y ∈ μ, (ord Ψ).le w y := h.mem_bel_revise
   have hBμ {w} (hw : w ∈ r.bel (r.revise Ψ μ)) : w ∈ μ := (hB.1 hw).1
-  have lt_iff {Φ w v} : (ord Φ).lt w v ↔ ¬ (ord Φ).le v w := Preorder.lt_iff_not_ge (h.total Φ)
+  have := h.total
+  have lt_iff {Φ w v} : (ord Φ).lt w v ↔ ¬ (ord Φ).le v w := Preorder.lt_iff_not_ge
   constructor
   · intro hA
     refine ⟨fun w hw v hv ↦ ?_, fun w hw v hv ↦ hA w (mt hBμ hw) v (mt hBμ hv),
