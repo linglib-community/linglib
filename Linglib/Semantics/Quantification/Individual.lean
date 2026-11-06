@@ -205,6 +205,19 @@ theorem BE_the_of_subsingleton {A : Set E} (hA : A.Subsingleton) : BE (the A) = 
 theorem BE_every_of_nonempty {A : Set E} (hA : A.Nonempty) : BE (every A) = BE (the A) :=
   Set.ext fun _ ↦ hA.subset_singleton_iff.trans mem_BE_the.symm
 
+/-- The predicative definite read at each index is the role of being the only `P` there, which
+no set read at every index represents once the referent changes: *the owner of this land* as a
+predicate depends on who owns it where ([partee-1987], fn. 16). -/
+theorem BE_the_not_mem_range_const {W : Type*} {P : W → Set E} {w₀ w₁ : W} {a b : E}
+    (h₀ : P w₀ = {a}) (h₁ : P w₁ = {b}) (hab : a ≠ b) :
+    (fun w ↦ BE (the (P w))) ∉ Set.range (Function.const W) := by
+  rintro ⟨B, hB⟩
+  have h₀' := congrFun hB w₀
+  have h₁' := congrFun hB w₁
+  simp only [Function.const_apply, h₀, h₁,
+    BE_the_of_subsingleton Set.subsingleton_singleton] at h₀' h₁'
+  exact hab (Set.singleton_injective (h₀'.symm.trans h₁'))
+
 /-! ### The Galois coinsertion on monotone quantifiers -/
 
 theorem individual_le_iff {Q : Quantifier E} (hQ : Monotone Q) {x : E} :
