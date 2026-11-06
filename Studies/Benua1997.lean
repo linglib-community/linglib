@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
 public import Linglib.Phonology.Segmental.Sonority
 public import Linglib.Phonology.Segmental.PHOIBLE
 
@@ -9,13 +8,13 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 # Benua 1997: transderivational identity
 
 Benua holds a derived word identical to its base by constraints on an output–output
-correspondence, ranked in one hierarchy with markedness and each word's faithfulness to its input.
-Evaluated recursively, the base's copy of the hierarchy above the derived word's, [a paradigm
-wins when its derived word wins among the paradigms whose base wins](##optimal_tableau_recursive).
-Summed evaluation [never selects underapplication](##eq_zero_of_mem_optimal_nonrecursive),
-recursion does ([*L[æ]rry ~ L[æ]r*](##English.underapplication)) unless it would leave a highly
-marked structure ([TETRU](##Hebrew.tetru)), and two truncations differ only in [the rank of
-their identity constraints](##Hebrew.imperative_normalApplication).
+correspondence, ranked in one hierarchy with markedness and each word's faithfulness to its input,
+and evaluates the two words recursively, the base above the derived word
+(`OptimalityTheory.Transderivational`). Recursion makes underapplication optimal, as in
+[*L[æ]rry ~ L[æ]r*](##English.underapplication), keeps a base from overapplying to restore
+identity ([Sundanese](##Sundanese.base_priority)), and stops short of highly marked structure
+([TETRU](##Hebrew.tetru)); two truncations differ only in [the rank of their identity
+constraints](##Hebrew.imperative_normalApplication).
 
 ## Implementation notes
 
@@ -23,9 +22,11 @@ their identity constraints](##Hebrew.imperative_normalApplication).
   transparent to nasal spread; Tiberian Hebrew by sonority class and continuancy, with the
   sibilants apart because \*SPIR bans only non-strident fricatives. Vowel quality is not
   represented.
-* OO-Identity is vacuous at the base, a simplex word with no OO relation of its own (p. 35
-  fn. 25); the relation of the Hebrew imperfective's prefix is ignored, as in the paper (p. 108
-  fn. 61).
+* Each OO relation is the one the IO relations induce (`Transderivational.paradigm`), the
+  Sundanese affixes preceding the root in the input; in every tableau it is the relation Benua
+  draws.
+* OO-Identity is vacuous at the base, a simplex word (p. 35 fn. 25); the relation of the Hebrew
+  imperfective's prefix is ignored, as in the paper (p. 108 fn. 61).
 * Summed evaluation adds each constraint's violations in the two words, as in tableaux (53),
   (83) and (115). The English summed tableau is not printed; p. 35 says it cannot select
   underapplication.
@@ -47,116 +48,8 @@ their identity constraints](##Hebrew.imperative_normalApplication).
 
 namespace Benua1997
 
-open OptimalityTheory
+open OptimalityTheory Transderivational
 open OptimalityTheory.Correspondence (diagonalPairs)
-
-/-! ### Subparadigms and recursive evaluation -/
-
-section Recursion
-
-variable {α ρ L : Type*}
-
-/-- The four positions of a subparadigm (11), each word with its own input. -/
-inductive Role
-  | baseInput | base | derivInput | derivative
-  deriving DecidableEq, Repr
-
-/-- A subparadigm has the base and the derived word with their inputs, and the three
-correspondence relations of (11), each word's IO relation and the OO relation. -/
-def paradigm (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Correspondence Role α :=
-  .ofPairs (fun | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
-    fun | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
-        | _, _ => []
-
-/-- A constraint of the hierarchy is read at each word of the subparadigm. A markedness
-constraint reads the word's output, IO-Faith its IO relation, and OO-Identity the OO
-relation, being vacuous at the base, which bears none (§2.3.1). -/
-structure ParadigmConstraint (α : Type*) where
-  /-- The violations the base incurs. -/
-  atBase : Correspondence Role α → ℕ
-  /-- The violations the derived word incurs. -/
-  atDerived : Correspondence Role α → ℕ
-
-/-- A markedness constraint, read off each output. -/
-def markedness (m : List α → ℕ) : ρ → ParadigmConstraint α :=
-  fun _ ↦ ⟨fun c ↦ m (c.form .base), fun c ↦ m (c.form .derivative)⟩
-
-/-- An IO-Faith constraint, read off each word's IO relation. -/
-def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
-  fun _ ↦ ⟨fun c ↦ f c .baseInput .base, fun c ↦ f c .derivInput .derivative⟩
-
-/-- The OO-Identity constraint proper to the relation `rel` is read off the OO relation of a
-paradigm bearing `rel`, and is vacuous on paradigms bearing another (§4.6.3) and at the base. -/
-def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) :
-    ρ → ParadigmConstraint α :=
-  fun r ↦ ⟨fun _ ↦ 0, fun c ↦ if r = rel then f c .base .derivative else 0⟩
-
-/-- The copy of the hierarchy that evaluates the base of a paradigm bearing `r`. -/
-def baseRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
-  ranking.map fun k ↦ (k r).atBase
-
-/-- The copy of the hierarchy that evaluates the derived word of a paradigm bearing `r`. -/
-def derivedRecursion (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
-  ranking.map fun k ↦ (k r).atDerived
-
-/-- Recursive evaluation (§2.3.1) duplicates the hierarchy and ranks the base's copy above the
-derived word's. -/
-def recursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
-  baseRecursion ranking r ++ derivedRecursion ranking r
-
-/-- Summed evaluation tallies each constraint's violations over both words. -/
-def nonrecursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Correspondence Role α)) :=
-  ranking.map fun k c ↦ (k r).atBase c + (k r).atDerived c
-
-/-- The tableau of the candidate paradigms `cand` labelled by `labels` under the constraints
-`cs`. -/
-def tableau (cand : L → Correspondence Role α) (labels : Finset L)
-    (cs : List (Constraint (Correspondence Role α))) :=
-  Tableau.ofList labels (cs.map (Constraint.comap cand))
-
-variable {cand : L → Correspondence Role α} {labels : Finset L}
-  {ranking : List (ρ → ParadigmConstraint α)} {r : ρ}
-
-/-- Base priority is ranking priority (p. 46): the winners of recursive evaluation are the
-derived word's winners among the paradigms whose base wins its own copy of the hierarchy. -/
-theorem optimal_tableau_recursive :
-    (tableau cand labels (recursive ranking r)).optimal =
-      (tableau cand (tableau cand labels (baseRecursion ranking r)).optimal
-        (derivedRecursion ranking r)).optimal := by
-  rw [tableau, recursive, List.map_append, Tableau.optimal_ofList_append]
-  rfl
-
-theorem optimal_tableau_recursive_of_forall_eq
-    (h : ∀ k ∈ ranking, ∀ x ∈ labels, ∀ y ∈ labels, (k r).atBase (cand x) = (k r).atBase (cand y)) :
-    (tableau cand labels (recursive ranking r)).optimal =
-      (Tableau.ofList labels (ranking.map fun k ↦ (k r).atDerived ∘ cand)).optimal := by
-  rw [tableau, recursive, List.map_append, Tableau.optimal_ofList_append_of_forall_eq]
-  · rw [derivedRecursion, List.map_map]
-    rfl
-  · simp only [baseRecursion, List.map_map, List.mem_map, Function.comp_apply]
-    rintro _ ⟨k, hk, rfl⟩ x hx y hy
-    exact h k hk x hx y hy
-
-/-- Without recursion underapplication is never optimal (pp. 35, 109): under summed evaluation, if
-some paradigm satisfies the top constraints in both words, as overapplication satisfies
-OO-Identity and the markedness constraint driving the process, so does every winner. -/
-theorem eq_zero_of_mem_optimal_nonrecursive {top rest : List (ρ → ParadigmConstraint α)} {x y : L}
-    (hy : y ∈ (tableau cand labels (nonrecursive (top ++ rest) r)).optimal) (hx : x ∈ labels)
-    (h0 : ∀ k ∈ top, (k r).atBase (cand x) = 0 ∧ (k r).atDerived (cand x) = 0) :
-    ∀ k ∈ top, (k r).atBase (cand y) = 0 ∧ (k r).atDerived (cand y) = 0 := by
-  rw [tableau, nonrecursive, List.map_append, List.map_append] at hy
-  have := Tableau.eq_zero_of_mem_optimal_ofList_append hy hx (by
-    simp only [List.map_map, List.mem_map, Function.comp_apply]
-    rintro _ ⟨k, hk, rfl⟩
-    simp [Constraint.comap, h0 k hk])
-  intro k hk
-  simpa [Constraint.comap] using this _ (List.mem_map.2 ⟨_, List.mem_map.2 ⟨k, hk, rfl⟩, rfl⟩)
-
-end Recursion
 
 /-- The candidate paradigms of a four-way tableau. -/
 inductive Cand4
@@ -206,22 +99,22 @@ def ranking : List (Unit → ParadigmConstraint Seg) :=
 *L[æ]r*, from the inputs `/læri/` and `/læri + TRUNC/`. -/
 def cand : Cand4 → Correspondence Role Seg
   | .a => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .a, .r]
-      (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
+      (diagonalPairs 4) (diagonalPairs 3)
   | .b => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
-      (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
+      (diagonalPairs 4) (diagonalPairs 3)
   | .c => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .a, .r]
-      (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
+      (diagonalPairs 4) (diagonalPairs 3)
   | .d => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
-      (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
+      (diagonalPairs 4) (diagonalPairs 3)
 
 /-- The neutralisation underapplies in *L[æ]rry ~ L[æ]r* ((16), (29)): the overapplying
 *L[a]rry ~ L[a]r*, which satisfies OO-Identity and `*ær]σ`, loses in the base's recursion. -/
 theorem underapplication :
-    (tableau cand {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
+    (Tableau.ofLabels cand {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
 
 -- p. 35
 theorem overapplication_nonrecursive :
-    (tableau cand {.a, .b, .c, .d} (nonrecursive ranking ())).optimal = {.a} := by decide
+    (Tableau.ofLabels cand {.a, .b, .c, .d} (nonrecursive ranking ())).optimal = {.a} := by decide
 
 end English
 
@@ -289,31 +182,25 @@ theorem allophony : ∀ input ∈ inputs,
 `ɲ-ãl-ĩãr` places the affix's segments after the root-initial nasal. -/
 def infixIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5)]
 
-/-- The OO correspondence of *ɲĩãr* with *ɲ-ãl-ĩãr*: the root around the infix. -/
-def infixOO : List (ℕ × ℕ) := [(0, 0), (1, 3), (2, 4), (3, 5)]
-
 /-- The paradigms of (48) pair the base *ɲiar* or *ɲĩãr* with the plural *ɲ-ãl-iar* or
 *ɲ-ãl-ĩãr*, from the inputs `/ɲĩãr/` and `/ãl + ɲĩãr/`. -/
 def plural : Cand4 → Correspondence Role Seg
   | .a => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO 2
   | .b => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO 2
   | .c => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO 2
   | .d => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO 2
 
 -- (48)
 theorem overapplication :
-    (tableau plural {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
-
-/-- The OO correspondence of *dəhəs* with *d-um-əhəs*. -/
-def umOO : List (ℕ × ℕ) := [(0, 0), (1, 3), (2, 4), (3, 5), (4, 6)]
+    (Tableau.ofLabels plural {.a, .b, .c, .d} (recursive ranking ())).optimal = {.d} := by decide
 
 /-- The correspondence of `/ũm + dəhəs/` with *d-um-əhəs*. -/
 def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5), (6, 6)]
@@ -322,13 +209,13 @@ def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5),
 oral or nasal in the infix and in the root. -/
 def approach : Cand4 → Correspondence Role Seg
   | .a => paradigm base base input
-      [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO 2
   | .b => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO umOO
+      [.oralC, .nasalV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO 2
   | .c => paradigm base base input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
   | .d => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO umOO
+      [.oralC, .nasalV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
 where
   /-- The base *dəhəs*, faithful to its input. -/
   base : List Seg := [.oralC, .oralV, .laryngeal, .oralV, .oralC]
@@ -337,22 +224,24 @@ where
 
 -- (51)
 theorem normalApplication :
-    (tableau approach {.a, .b, .c, .d} (recursive ranking ())).optimal = {.c} := by decide
+    (Tableau.ofLabels approach {.a, .b, .c, .d} (recursive ranking ())).optimal = {.c} := by decide
 
 /-- The paradigms of (52) and (53) set the base *də̃hə̃s*, which would overapply to restore
 identity, against the canonical *dəhəs*. -/
 def baseChoice : Cand2 → Correspondence Role Seg
   | .a => paradigm approach.base [.oralC, .nasalV, .laryngeal, .nasalV, .oralC] approach.input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
   | .b => approach .c
 
--- (52)
+/-- Misapplication in the base is never optimal (52): the base *də̃hə̃s*, which overapplies nasal
+harmony to restore identity, loses in the base's recursion, though summed evaluation selects it
+(53). -/
 theorem base_priority :
-    (tableau baseChoice {.a, .b} (recursive ranking ())).optimal = {.b} := by decide
+    (Tableau.ofLabels baseChoice {.a, .b} (recursive ranking ())).optimal = {.b} := by decide
 
 -- (53)
 theorem base_overapplies_nonrecursive :
-    (tableau baseChoice {.a, .b} (nonrecursive ranking ())).optimal = {.a} := by decide
+    (Tableau.ofLabels baseChoice {.a, .b} (nonrecursive ranking ())).optimal = {.a} := by decide
 
 end Sundanese
 
@@ -458,15 +347,13 @@ def spirantization : List (Relation → ParadigmConstraint Seg) :=
 *yi.šə.bē* or *yiš.bē* with the jussive *yi.šeb* or *yišb*. -/
 def captive : Cand4 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .vowel, .stop] epenthetic epenthetic (diagonalPairs 5)
+      [.glide, .vowel, .sibilant, .vowel, .stop] epenthetic epenthetic
   | .b => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
       [.glide, .vowel, .sibilant, .stop] epenthetic (diagonalPairs 4)
-      [(0, 0), (1, 1), (2, 2), (4, 3)]
   | .c => paradigm input [.glide, .vowel, .sibilant, .stop, .vowel] input
       [.glide, .vowel, .sibilant, .vowel, .stop] (diagonalPairs 5) epenthetic
-      [(0, 0), (1, 1), (2, 2), (3, 4)]
   | .d => paradigm input [.glide, .vowel, .sibilant, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .stop] (diagonalPairs 5) (diagonalPairs 4) (diagonalPairs 4)
+      [.glide, .vowel, .sibilant, .stop] (diagonalPairs 5) (diagonalPairs 4)
 where
   /-- The input `/ya-šbē/`. -/
   input : List Seg := [.glide, .vowel, .sibilant, .stop, .vowel]
@@ -475,12 +362,12 @@ where
 
 -- (82)
 theorem epenthesis_underapplies :
-    (tableau captive {.a, .b, .c, .d} (recursive epenthesis .jussive)).optimal = {.d} := by
+    (Tableau.ofLabels captive {.a, .b, .c, .d} (recursive epenthesis .jussive)).optimal = {.d} := by
   decide
 
 -- (83)
 theorem epenthesis_overapplies_nonrecursive :
-    (tableau captive {.a, .d} (nonrecursive epenthesis .jussive)).optimal = {.a} := by
+    (Tableau.ofLabels captive {.a, .d} (nonrecursive epenthesis .jussive)).optimal = {.a} := by
   decide
 
 /-- The paradigms of (87), from `/ya-glē/`, pair the base *yi.ɣə.lē* or *yiɣ.lē* with the
@@ -488,12 +375,10 @@ jussive *yi.ɣel* or *yiɣl*. -/
 def uncover : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .spirant, .vowel, .liquid, .vowel] input
       [.glide, .vowel, .spirant, .vowel, .liquid] captive.epenthetic captive.epenthetic
-      (diagonalPairs 5)
   | .b => paradigm input [.glide, .vowel, .spirant, .liquid, .vowel] input
       [.glide, .vowel, .spirant, .vowel, .liquid] (diagonalPairs 5) captive.epenthetic
-      [(0, 0), (1, 1), (2, 2), (3, 4)]
   | .c => paradigm input [.glide, .vowel, .spirant, .liquid, .vowel] input
-      [.glide, .vowel, .spirant, .liquid] (diagonalPairs 5) (diagonalPairs 4) (diagonalPairs 4)
+      [.glide, .vowel, .spirant, .liquid] (diagonalPairs 5) (diagonalPairs 4)
 where
   /-- The input `/ya-glē/`, with the stop that surfaces as a spirant after the prefix vowel. -/
   input : List Seg := [.glide, .vowel, .stop, .liquid, .vowel]
@@ -502,66 +387,65 @@ where
 underapplication would leave rises in sonority and SON-CON outranks OOJ-DEP, while the
 overapplying base *yi.ɣə.lē* loses in the base's recursion. -/
 theorem tetru :
-    (tableau uncover {.a, .b, .c} (recursive epenthesis .jussive)).optimal = {.b} := by decide
+    (Tableau.ofLabels uncover {.a, .b, .c} (recursive epenthesis .jussive)).optimal = {.b} := by
+  decide
 
 /-- The 2fs paradigms of (114), from `/šamaʕ-tī/` and its truncation, have a stop or a spirant
 as the base's coronal and as the 2fs stem's after the epenthetic vowel. -/
 def heard : Cand3 → Correspondence Role Seg
   | .a => paradigm input (stem .spirant .vowel) input (stem .vowel .spirant) (diagonalPairs 7)
-      truncated truncated
+      truncated
   | .b => paradigm input (stem .stop .vowel) input (stem .vowel .spirant) (diagonalPairs 7)
-      truncated truncated
+      truncated
   | .c => paradigm input (stem .stop .vowel) input (stem .vowel .stop) (diagonalPairs 7)
-      truncated truncated
+      truncated
 where
   /-- *šāmaʕ* followed by two segments. -/
   stem (x y : Seg) : List Seg := [.sibilant, .vowel, .nasal, .vowel, .guttural, x, y]
   /-- The input `/šamaʕ-tī/`. -/
   input : List Seg := stem .stop .vowel
-  /-- The correspondence of *šāmaʕtī* with *šāmaʕat* truncates the final vowel and
-  epenthesizes a vowel before the stop. -/
+  /-- The 2fs stem's IO relation truncates the final vowel and epenthesizes a vowel before the
+  stop. -/
   truncated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 6)]
 
 -- (114)
 theorem spirantization_underapplies :
-    (tableau heard {.a, .b, .c} (recursive spirantization .jussive)).optimal = {.c} := by
+    (Tableau.ofLabels heard {.a, .b, .c} (recursive spirantization .jussive)).optimal = {.c} := by
   decide
 
 -- (115)
 theorem spirantization_overapplies_nonrecursive :
-    (tableau heard {.a, .c} (nonrecursive spirantization .jussive)).optimal = {.a} := by
+    (Tableau.ofLabels heard {.a, .c} (nonrecursive spirantization .jussive)).optimal = {.a} := by
   decide
 
 /-- The imperative paradigms of (134), from `/ya-ktōb/`, pair the base *yikθōβ* or *yixtōβ* with
 the imperative *kəθōβ* or *xətōβ*. -/
 def write : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .stop, .spirant, .vowel, .spirant] input
-      [.stop, .vowel, .spirant, .vowel, .spirant] (diagonalPairs 6) imperativeIO imperativeOO
+      [.stop, .vowel, .spirant, .vowel, .spirant] (diagonalPairs 6) imperativeIO
   | .b => paradigm input [.glide, .vowel, .spirant, .stop, .vowel, .spirant] input
-      [.spirant, .vowel, .stop, .vowel, .spirant] (diagonalPairs 6) imperativeIO imperativeOO
+      [.spirant, .vowel, .stop, .vowel, .spirant] (diagonalPairs 6) imperativeIO
   | .c => paradigm input [.glide, .vowel, .spirant, .stop, .vowel, .spirant] input
-      [.stop, .vowel, .spirant, .vowel, .spirant] (diagonalPairs 6) imperativeIO imperativeOO
+      [.stop, .vowel, .spirant, .vowel, .spirant] (diagonalPairs 6) imperativeIO
 where
   /-- The input `/ya-ktōb/`. -/
   input : List Seg := [.glide, .vowel, .stop, .stop, .vowel, .stop]
   /-- The imperative keeps the root; its second vowel is epenthetic. -/
   imperativeIO : List (ℕ × ℕ) := [(2, 0), (3, 2), (4, 3), (5, 4)]
-  /-- The root's segments in the imperfective correspond to theirs in the imperative. -/
-  imperativeOO : List (ℕ × ℕ) := [(2, 0), (3, 2), (4, 3), (5, 4)]
 
 /-- Under the ranking (136) under which spirantization underapplies in 2fs stems, it applies
 normally in the imperative *yixtōβ ~ kəθōβ* (134), whose OO relation's identity constraint
 ranks below the spirantization constraints (§4.6.3). -/
 theorem imperative_normalApplication :
-    (tableau write {.a, .b, .c} (recursive spirantization .imperative)).optimal = {.c} := by
+    (Tableau.ofLabels write {.a, .b, .c} (recursive spirantization .imperative)).optimal =
+      {.c} := by
   decide
 
 /-- The imperative paradigms of (135), from `/ya-ydaʕ/`, pair the coalesced base *yēδaʕ* with
 the imperative *δaʕ* or *daʕ*. -/
 def know : Cand2 → Correspondence Role Seg
   | .a => paradigm input base input [.spirant, .vowel, .guttural] coalesced truncated
-      truncatedOO
-  | .b => paradigm input base input [.stop, .vowel, .guttural] coalesced truncated truncatedOO
+  | .b => paradigm input base input [.stop, .vowel, .guttural] coalesced truncated
 where
   /-- The input `/ya-ydaʕ/`. -/
   input : List Seg := [.glide, .vowel, .glide, .stop, .vowel, .guttural]
@@ -571,12 +455,11 @@ where
   coalesced : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 1), (3, 2), (4, 3), (5, 4)]
   /-- The imperative keeps the root's last two consonants and its vowel. -/
   truncated : List (ℕ × ℕ) := [(3, 0), (4, 1), (5, 2)]
-  /-- The imperfective's root segments correspond to theirs in the imperative. -/
-  truncatedOO : List (ℕ × ℕ) := [(2, 0), (3, 1), (4, 2)]
 
 -- (135)
 theorem imperative_initialStop :
-    (tableau know {.a, .b} (recursive spirantization .imperative)).optimal = {.b} := by decide
+    (Tableau.ofLabels know {.a, .b} (recursive spirantization .imperative)).optimal = {.b} := by
+  decide
 
 end Hebrew
 

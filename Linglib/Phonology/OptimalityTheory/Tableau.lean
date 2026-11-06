@@ -31,6 +31,7 @@ candidates of least profile.
   constraint at rank position `p` is `con (r p)`.
 * `Tableau.ofList`, `Tableau.ofOrder`: the tableau of a list of constraints in rank order, and
   the tableau of a printed table, a column order of labels and the marks in each cell.
+* `Tableau.ofLabels`: the tableau of a list of constraints over candidates named by labels.
 * `Tableau.tail`: the candidates that do best on the top constraint, under the constraints below
   it.
 
@@ -235,6 +236,12 @@ def ofRanking : Tableau C n := ⟨candidates, con ∘ r⟩
 `Tableau.ofRanking` under the identity ranking. -/
 def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) candidates
 
+/-- The tableau of the candidates that the labels `labels` name, the label `l` naming `cand l`,
+under a list of constraints in rank order. -/
+def ofLabels {L : Type*} (cand : L → C) (labels : Finset L) (cs : List (Constraint C)) :
+    Tableau L (cs.map (Constraint.comap cand)).length :=
+  ofList labels (cs.map (Constraint.comap cand))
+
 @[simp] theorem ofRanking_candidates : (ofRanking con r candidates).candidates = candidates := rfl
 
 @[simp] theorem ofRanking_constraints : (ofRanking con r candidates).constraints = con ∘ r := rfl
@@ -411,6 +418,12 @@ theorem optimal_ofList_append :
   induction Fs generalizing s with
   | nil => simp
   | cons F Fs ih => rw [List.cons_append, optimal_ofList_cons, ih, optimal_ofList_cons]
+
+theorem optimal_ofLabels_append {L : Type*} {cand : L → C} {labels : Finset L} :
+    (ofLabels cand labels (Fs ++ Gs)).optimal =
+      (ofLabels cand (ofLabels cand labels Fs).optimal Gs).optimal := by
+  rw [ofLabels, List.map_append, optimal_ofList_append]
+  rfl
 
 theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by

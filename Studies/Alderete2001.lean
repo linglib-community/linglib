@@ -1,6 +1,6 @@
 module
 
-public import Studies.Benua1997
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
 public import Linglib.Data.Wordlist.Alderete2001
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Segmental.PHOIBLE
@@ -14,11 +14,11 @@ output–output relation an affix subcategorizes for in Benua's Transderivationa
 Theory (8), `¬F` forces one alternation in the base of the derived word: the Luo voicing exchange
 (§2.2.2), the accent deletion of Japanese dominant affixes (§3) and the dragging-tone mutation of
 Limburg Dutch (§5.2). The subparadigms, the relation-indexed OO constraints and recursive
-evaluation are those of `Benua1997`.
+evaluation are those of `OptimalityTheory.Transderivational`.
 
 ## Main definitions
 
-* `ooAnti`: the anti-faithfulness counterpart of `Benua1997.ooIdentity`.
+* `ooAnti`: the anti-faithfulness counterpart of `Transderivational.ooIdentity`.
 * `derivation`: the subparadigm of a suffixed word.
 * `Japanese.grammar`, `Limburg.grammar`: the summary rankings (24) and (54), with the ranking of
   the anti-faithfulness constraint over its IO counterpart that they leave out.
@@ -52,7 +52,7 @@ past tense *yón-da*; the two agree on the accent the derivative inherits.
 
 namespace Alderete2001
 
-open OptimalityTheory Benua1997
+open OptimalityTheory Transderivational
 open Wordlist (OORelation)
 
 /-! ### Transderivational anti-faithfulness -/
@@ -65,7 +65,7 @@ variable {α ρ : Type*} [DecidableEq ρ]
 input, the derivative and its input, and pairs positions from the left edge in every
 correspondence relation. -/
 def derivation (base input d : List α) : Correspondence Role α :=
-  paradigm base base input d (Correspondence.diagonalPairs base.length)
+  paradigmOfPairs base base input d (Correspondence.diagonalPairs base.length)
     (Correspondence.diagonalPairs input.length) (Correspondence.diagonalPairs base.length)
 
 variable {b i d : List α}
@@ -254,10 +254,10 @@ def exchange : List (OORelation → ParadigmConstraint Segment) :=
 in the base, whenever one exists ((9), fn. 7). -/
 theorem optimal_exchange {b i : List Segment} {S : Finset (List Segment)}
     (h : ∃ d ∈ S, identVoice (derivation b i d) .base .derivative = 1) :
-    (tableau (derivation b i) S (recursive exchange .exchange)).optimal =
+    (Tableau.ofLabels (derivation b i) S (recursive exchange .exchange)).optimal =
       S.filter fun d ↦ identVoice (derivation b i d) .base .derivative = 1 := by
   obtain ⟨d₀, hd₀, h₀⟩ := h
-  rw [optimal_tableau_recursive_of_forall_eq (by simp [exchange, ooAnti, ooIdentity]),
+  rw [optimal_ofLabels_recursive_of_forall_eq (by simp [exchange, ooAnti, ooIdentity]),
     show exchange.map (fun k ↦ (k .exchange).atDerived ∘ derivation b i) =
       [Constraint.antifaithful fun d ↦ identVoice (derivation b i d) .base .derivative,
         fun d ↦ identVoice (derivation b i d) .base .derivative] from rfl,
@@ -272,13 +272,14 @@ theorem optimal_exchange {b i : List Segment} {S : Finset (List Segment)}
 
 -- (11a)
 theorem bat_bede :
-    (tableau (derivation (segments "bat") (segments "bat-e")) {segments "bed-e", segments "bet-e",
-      segments "ped-e"} (recursive exchange .exchange)).optimal = {segments "bed-e"} := by
+    (Tableau.ofLabels (derivation (segments "bat") (segments "bat-e"))
+      {segments "bed-e", segments "bet-e", segments "ped-e"}
+      (recursive exchange .exchange)).optimal = {segments "bed-e"} := by
   decide
 
 -- (11b)
 theorem cogo_coke :
-    (tableau (derivation (segments "čogo") (segments "čogo-e")) {segments "čok-e",
+    (Tableau.ofLabels (derivation (segments "čogo") (segments "čogo-e")) {segments "čok-e",
       segments "čog-e"} (recursive exchange .exchange)).optimal = {segments "čok-e"} := by
   decide
 
@@ -288,8 +289,9 @@ def pluralInput (r : CLDF.Wordlist.FormRelation Wordlist.Analysis) : List Segmen
 
 -- (6)
 theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
-    segments r.target.form.form ∈ (tableau (derivation (segments r.form.form.form) (pluralInput r))
-      (voicings (segments r.target.form.form)) (recursive exchange .exchange)).optimal := by
+    segments r.target.form.form ∈
+      (Tableau.ofLabels (derivation (segments r.form.form.form) (pluralInput r))
+        (voicings (segments r.target.form.form)) (recursive exchange .exchange)).optimal := by
   have h : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
       segments r.target.form.form ∈ voicings (segments r.target.form.form) ∧
         identVoice (derivation (segments r.form.form.form) (pluralInput r)
@@ -302,7 +304,7 @@ theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some
 
 -- fn. 7
 theorem pete_wins :
-    segments "pet-e" ∈ (tableau (derivation (segments "bat") (segments "bat-e"))
+    segments "pet-e" ∈ (Tableau.ofLabels (derivation (segments "bat") (segments "bat-e"))
       (voicings (segments "bed-e")) (recursive exchange .exchange)).optimal := by
   rw [optimal_exchange ⟨segments "bed-e", by decide, by decide⟩]
   decide
@@ -349,7 +351,7 @@ def summary : Finset (Con × Con) :=
 among the accentings of its segments `w`. -/
 def eval {n : ℕ} (σ : Ranking Con n) (base input w : List Char) (rel : OORelation) :
     Finset (List Char) :=
-  (tableau (derivation base input) (accentings w) (recursive (List.ofFn fun p ↦ (σ p).eval)
+  (Tableau.ofLabels (derivation base input) (accentings w) (recursive (List.ofFn fun p ↦ (σ p).eval)
     rel)).optimal
 
 /-- The violations each constraint assigns a derivative of base `b` and input `i`, counted on the
@@ -378,7 +380,7 @@ theorem Con.atBase_derivation (c : Con) (rel : OORelation) {b i d d' : List Char
 theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) (rel : OORelation) :
     eval σ b i w rel =
       (Tableau.ofList (accentings w) (List.ofFn fun p ↦ (σ p).violations rel b i)).optimal := by
-  rw [eval, optimal_tableau_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
+  rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
     show ((fun k ↦ (k rel).atDerived ∘ derivation b i) ∘ fun p ↦ (σ p).eval) =
       fun p ↦ (σ p).violations rel b i from funext fun p ↦ Con.atDerived_derivation _ _ _ _]
   obtain ⟨p, rfl⟩ := List.mem_ofFn.1 hk
@@ -396,7 +398,7 @@ theorem grammar_antiDomMax : grammar.Dominates .antiDomMax .ioMax ∧
 
 -- (21)
 theorem dominant_accented :
-    (tableau (derivation (word "adá") (word "adá+ppó+i"))
+    (Tableau.ofLabels (derivation (word "adá") (word "adá+ppó+i"))
       {word "adá-ppo-i", word "ada-ppo-i", word "ada-ppó-i"} (recursive
       [ooAnti OORelation.dominant maxAccent, ooIdentity .dominant maxAccent, ioFaith maxAccent]
       .dominant)).optimal = {word "ada-ppó-i"} := by
@@ -404,14 +406,15 @@ theorem dominant_accented :
 
 -- (22)
 theorem recessive :
-    (tableau (derivation (word "yón-da") (word "yóm+tára")) {word "yon-dára", word "yón-dara"}
+    (Tableau.ofLabels (derivation (word "yón-da") (word "yóm+tára"))
+      {word "yon-dára", word "yón-dara"}
       (recursive [ooIdentity OORelation.recessive maxAccent, ooAnti .recessive maxAccent]
       .recessive)).optimal = {word "yón-dara"} := by
   decide
 
 -- (23)
 theorem dominant_unaccented :
-    (tableau (derivation (word "kóobe") (word "kóobe+kko"))
+    (Tableau.ofLabels (derivation (word "kóobe") (word "kóobe+kko"))
       {word "kóobe-kko", word "koobé-kko", word "koobe-kko"} (recursive
       [ooAnti OORelation.dominant maxAccent, ioFaith depAccent, markedness culmin]
       .dominant)).optimal = {word "koobe-kko"} := by
@@ -419,7 +422,7 @@ theorem dominant_unaccented :
 
 -- (27)
 theorem root_dominance :
-    (tableau (derivation (word "róot") (word "róot+áf")) {word "róot-af", word "root-áf"}
+    (Tableau.ofLabels (derivation (word "róot") (word "róot+áf")) {word "róot-af", word "root-áf"}
       (recursive [ooAnti OORelation.dominant maxAccent, ooIdentity .dominant maxAccent]
         .dominant)).optimal = {word "root-áf"} := by
   decide
@@ -496,8 +499,8 @@ def summary : Finset (Con × Con) :=
 /-- The winners under `σ` for a word derived by a mutating suffix, with base `base` and input
 `input`, among the tone patterns of its segments `w`. -/
 def eval {n : ℕ} (σ : Ranking Con n) (base input w : List Char) : Finset (List Char) :=
-  (tableau (derivation base input) (tonePatterns w) (recursive (List.ofFn fun p ↦ (σ p).eval)
-    .dominant)).optimal
+  (Tableau.ofLabels (derivation base input) (tonePatterns w)
+    (recursive (List.ofFn fun p ↦ (σ p).eval) .dominant)).optimal
 
 /-- The violations each constraint assigns a derivative of base `b` and input `i` bearing the
 relation of the mutating suffixes, counted on the zips of their strings
@@ -527,7 +530,7 @@ theorem Con.atBase_derivation (c : Con) {b i d d' : List Char} :
 theorem eval_eq {n : ℕ} (σ : Ranking Con n) (b i w : List Char) :
     eval σ b i w =
       (Tableau.ofList (tonePatterns w) (List.ofFn fun p ↦ (σ p).violations b i)).optimal := by
-  rw [eval, optimal_tableau_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
+  rw [eval, optimal_ofLabels_recursive_of_forall_eq fun k hk _ _ _ _ ↦ ?_, List.map_ofFn,
     show ((fun k ↦ (k .dominant).atDerived ∘ derivation b i) ∘ fun p ↦ (σ p).eval) =
       fun p ↦ (σ p).violations b i from funext fun p ↦ Con.atDerived_derivation _ _ _]
   obtain ⟨p, rfl⟩ := List.mem_ofFn.1 hk
@@ -542,7 +545,7 @@ theorem grammar_extends_summary : ∀ p ∈ summary, grammar.Dominates p.1 p.2 :
 
 -- (52)
 theorem dragging_mutates :
-    (tableau (derivation (word "káál") (word "káál+ə")) {word "káal-ə", word "káál-ə",
+    (Tableau.ofLabels (derivation (word "káál") (word "káál+ə")) {word "káal-ə", word "káál-ə",
       word "kaál-ə"} (recursive
       [markedness alignL, ooAnti OORelation.dominant maxAccent, ooIdentity .dominant maxAccent]
       .dominant)).optimal = {word "káal-ə"} := by
@@ -550,7 +553,7 @@ theorem dragging_mutates :
 
 -- (53)
 theorem falling_stays :
-    (tableau (derivation (word "stúur") (word "stúur+ə")) {word "stúur-ə", word "stúúr-ə",
+    (Tableau.ofLabels (derivation (word "stúur") (word "stúur+ə")) {word "stúur-ə", word "stúúr-ə",
       word "stuúr-ə"} (recursive
       [markedness alignL, ooAnti OORelation.dominant maxAccent, ooIdentity .dominant depAccent]
       .dominant)).optimal = {word "stúur-ə"} := by
@@ -559,7 +562,7 @@ theorem falling_stays :
 /-- (53) needs the tonic to bear a tone (§5.2.2). Admitted, the toneless *stuur-ə* satisfies
 ¬OO-NOFLOP(Tone) by losing the base's only link, and wins. -/
 theorem toneless_wins :
-    (tableau (derivation (word "stúur") (word "stúur+ə")) {word "stúur-ə", word "stúúr-ə",
+    (Tableau.ofLabels (derivation (word "stúur") (word "stúur+ə")) {word "stúur-ə", word "stúúr-ə",
       word "stuúr-ə", word "stuur-ə"} (recursive
       [markedness alignL, ooAnti OORelation.dominant maxAccent, ooIdentity .dominant depAccent]
       .dominant)).optimal = {word "stuur-ə"} := by
