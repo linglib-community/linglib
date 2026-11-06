@@ -267,7 +267,7 @@ over an inch close enough to an inch: the necessities over the antecedent are th
 of an inch on the right (§1.4). -/
 theorem necessityFilter_line (ha : a ≤ 1) : necessityFilter (lineSim a) (Ioi 1) = 𝓝[>] 1 := by
   ext t
-  rw [mem_necessityFilter_iff_isGoodPossibility_of_total nonempty_Ioi,
+  rw [mem_necessityFilter_iff_isGoodPossibility nonempty_Ioi,
     mem_nhdsGT_iff_exists_Ioc_subset]
   exact exists_congr fun v ↦ and_congr_right fun hv ↦
     ⟨fun h x hx ↦ h x hx.1 ((lineSim_le_iff ha hx.1 hv).2 hx.2),
@@ -349,34 +349,6 @@ theorem stalnakerAssumption_iff [Std.Total (ord i).le] :
     refine ⟨b, eq_singleton_iff_unique_mem.2 ⟨(hmin _ _).2 ⟨hb, hbl⟩, fun m hm ↦ ?_⟩⟩
     have hm' := (hmin _ _).1 hm
     exact hanti m hm'.1.1 b hb.1 (hm'.2 b hb) (hbl m hm'.1)
-
--- p. 78
-theorem isSelectionFunction_of_stalnakerAssumption {access : W → Set W} {ord : W → Preorder W}
-    (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) [∀ w, Std.Total (ord w).le]
-    (hS : ∀ w, StalnakerAssumption access ord w) :
-    Stalnaker1968.IsSelectionFunction access fun w A ↦ (ord w).minimals (access w ∩ A) where
-  refl := hR
-  subsingleton w A := by
-    rcases (access w ∩ A).eq_empty_or_nonempty with h | h
-    · rw [h, Preorder.minimals_empty]; exact subsingleton_empty
-    · obtain ⟨v, hv⟩ := hS w A h
-      rw [hv]; exact subsingleton_singleton
-  subset w _ := ((ord w).minimals_subset _).trans inter_subset_right
-  absurdity w A h := not_nonempty_iff_eq_empty.1 fun hA ↦
-    let ⟨v, hv⟩ := hS w A hA
-    singleton_ne_empty v (hv ▸ h)
-  centering w _ h := hc.minimals_eq_singleton ⟨hR w, h⟩
-  cso w A B h₁ h₂ := by
-    have key {A B : Set W} (h₁ : (ord w).minimals (access w ∩ B) ⊆ A)
-        (h₂ : (ord w).minimals (access w ∩ A) ⊆ B) :
-        (ord w).minimals (access w ∩ A) ⊆ (ord w).minimals (access w ∩ B) := fun a ha ↦ by
-      have haB : a ∈ access w ∩ B := ⟨ha.1.1, h₂ ha⟩
-      obtain ⟨b, hb⟩ := hS w B ⟨a, haB⟩
-      have hbm : b ∈ (ord w).minimals (access w ∩ B) := hb ▸ rfl
-      have hab := (Preorder.mem_minimals_iff_forall_le.1 ha).2 b ⟨hbm.1.1, h₁ hbm⟩
-      exact Preorder.mem_minimals_iff_forall_le.2 ⟨haB, fun x hx ↦
-        (ord w).le_trans _ _ _ hab ((Preorder.mem_minimals_iff_forall_le.1 hbm).2 x hx)⟩
-    exact (key h₁ h₂).antisymm (key h₂ h₁)
 
 -- §3.4: if Bizet and Verdi were compatriots
 theorem not_cem_of_tie {v v' : W} (hv : v ∈ (ord i).minimals (access i ∩ p))
@@ -589,11 +561,12 @@ theorem eval_eq_formula_eval
     rw [ihA, ihB]
     exact mem_variablyStrictImp_iff_mem_orderingImp (hlim w)
 
--- Every theorem of Stalnaker's C2 is valid under centering and Stalnaker's Assumption.
+-- Every theorem of Stalnaker's C2 is valid under centering and Stalnaker's Assumption, since the
+-- Assumption makes the closest world a selection function in Stalnaker's sense (p. 78).
 theorem valid_vcs_of_c2 {A : Formula α} (h : Stalnaker1968.Provable A) : Valid.{u} .VCS A := by
   intro W access ord _ ⟨⟨hR, hc⟩, hS⟩ V
   rw [eval_eq_formula_eval fun w ↦ (hS w).limit]
-  exact h.sound (isSelectionFunction_of_stalnakerAssumption hR hc hS) V
+  exact h.sound (Stalnaker1968.isSelectionFunction_minimals hR hc hS) V
 
 /-- Comparative similarity from `w` under which every other world is equally far. -/
 abbrev tieSim (w : Fin 3) : Preorder (Fin 3) := Preorder.lift fun v ↦ if v = w then (0 : ℕ) else 1

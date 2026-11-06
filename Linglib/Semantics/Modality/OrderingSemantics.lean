@@ -53,7 +53,7 @@ proposition.
   leaves its filter unchanged.
 * `OrderingSemantics.necessityFilter_inter_of_frequently`: on a total preorder, restricting a
   domain to a proposition possible over it restricts its filter to that proposition.
-* `OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility_of_total`: on a total preorder
+* `OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility`: on a total preorder
   necessity is good possibility.
 
 ## References
@@ -161,7 +161,7 @@ theorem isGoodPossibility_of_mem_necessityFilter (h : t ∈ necessityFilter p s)
   let ⟨v, hv, _, hvt⟩ := h _ hu
   ⟨v, hv, hvt⟩
 
-theorem IsGoodPossibility.mem_necessityFilter_of_total [Std.Total p.le]
+theorem IsGoodPossibility.mem_necessityFilter [Std.Total p.le]
     (h : IsGoodPossibility p s t) : t ∈ necessityFilter p s := by
   obtain ⟨v, hv, hvt⟩ := h
   intro u hu
@@ -169,10 +169,10 @@ theorem IsGoodPossibility.mem_necessityFilter_of_total [Std.Total p.le]
   · exact ⟨v, hv, hvu, hvt⟩
   · exact ⟨u, hu, p.le_refl u, fun w hw hwu ↦ hvt w hw (p.le_trans _ _ _ hwu huv)⟩
 
-theorem mem_necessityFilter_iff_isGoodPossibility_of_total [Std.Total p.le]
+theorem mem_necessityFilter_iff_isGoodPossibility [Std.Total p.le]
     (hs : s.Nonempty) : t ∈ necessityFilter p s ↔ IsGoodPossibility p s t :=
   ⟨fun h ↦ isGoodPossibility_of_mem_necessityFilter h hs,
-    fun h ↦ h.mem_necessityFilter_of_total⟩
+    fun h ↦ h.mem_necessityFilter⟩
 
 /-- On a total preorder `t` is a good possibility over `s` exactly when the `t`-worlds of `s` are
 more possible than its other worlds, in Lewis's sense of comparative possibility. -/
@@ -191,7 +191,7 @@ theorem mem_necessityFilter_iff_asymmRel_lewis [Std.Total p.le] :
       s = ∅ ∨ AsymmRel (ComparativePossibility.Lewis p.le) (s ∩ t) (s \ t) := by
   rcases s.eq_empty_or_nonempty with rfl | hs
   · exact iff_of_true (fun _ hu ↦ hu.elim) (.inl rfl)
-  · rw [mem_necessityFilter_iff_isGoodPossibility_of_total hs,
+  · rw [mem_necessityFilter_iff_isGoodPossibility hs,
       isGoodPossibility_iff_asymmRel_lewis, or_iff_right hs.ne_empty]
 
 /-! ### A closest world

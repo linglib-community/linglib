@@ -34,8 +34,8 @@ where the Limit Assumption holds.
 * `variablyStrictImp_subset_orderingImp`, `mem_variablyStrictImp_iff_mem_orderingImp`: the
   variably strict conditional entails truth at the best accessible antecedent-worlds, and is it
   under the Limit Assumption.
-* `mem_variablyStrictImp_iff_of_total`: on a total preorder it is Lewis's clause over comparative
-  similarity.
+* `mem_variablyStrictImp_iff_isGoodPossibility`: on a total preorder it is Lewis's clause over
+  comparative similarity.
 * `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
   be v* holds for every world `v`.
 * `isPreferential_variablyStrictImp`, `isRational_variablyStrictImp`: the conditional at a world
@@ -318,9 +318,10 @@ source ([kratzer-1981]) give each evaluation point the same two items. *If p, q*
 when `q` is a necessity of ordering semantics over the accessible `p`-worlds: every accessible
 `p`-world has one at least as close all of whose accessible `p`-worlds at least as close are
 `q`-worlds (`variablyStrictImp`). The clause needs neither the Limit Assumption nor a total
-preorder, and on a total preorder it is §2.3's (`mem_variablyStrictImp_iff_of_total`). Under the
-Limit Assumption it is truth at the best accessible antecedent-worlds (`orderingImp`), the
-restrictor analysis of [lewis-1975] and [kratzer-1986]. The strict conditional is the case of the
+preorder, and on a total preorder it is §2.3's
+(`mem_variablyStrictImp_iff_isGoodPossibility`). Under the Limit Assumption it is truth at the best
+accessible antecedent-worlds (`orderingImp`), the restrictor analysis of [lewis-1975] and
+[kratzer-1986]. The strict conditional is the case of the
 preorder relating every two worlds (`strictImp_eq_orderingImp`), and the conditional of the
 closest worlds the case in which every world is accessible (`closestImp_eq_orderingImp`). -/
 
@@ -342,14 +343,14 @@ theorem mem_variablyStrictImp :
 /-- On a total preorder the variably strict conditional holds when no antecedent-world is
 accessible, or some accessible antecedent-world has only consequent-worlds among the accessible
 antecedent-worlds at least as close ([lewis-1973b] §2.3). -/
-theorem mem_variablyStrictImp_iff_of_total [Std.Total (ord i).le] :
+theorem mem_variablyStrictImp_iff_isGoodPossibility [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔
       access i ∩ p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord i) (access i ∩ p) q := by
   rw [mem_variablyStrictImp]
   rcases (access i ∩ p).eq_empty_or_nonempty with h | h
   · exact iff_of_true (fun u hu ↦ absurd (h ▸ hu) (Set.notMem_empty u)) (.inl h)
   · rw [or_iff_right h.ne_empty]
-    exact OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility_of_total h
+    exact OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility h
 
 /-- The conditional over the best accessible antecedent-worlds, the minimal worlds of
 `access i ∩ p` under the preorder `ord i`. -/

@@ -343,7 +343,8 @@ theorem Faithful.accepts_iff_exists_lt (h : r.Faithful ord) (hα : α.Nonempty) 
     r.Accepts Ψ α β ↔ ∃ w ∈ α ∩ β, ∀ v ∈ α \ β, (ord Ψ).lt w v := by
   rw [Accepts, h.bel_revise]
   have := h.total Ψ
-  exact Preorder.minimals_subset_iff_exists_forall_lt (h.wellFounded Ψ) hα
+  exact Preorder.minimals_subset_iff_exists_forall_lt <|
+    (Preorder.minimals_nonempty_iff (h.wellFounded Ψ)).2 hα
 
 /-! ### The iterated-revision postulates -/
 

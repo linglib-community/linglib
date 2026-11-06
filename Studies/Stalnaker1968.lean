@@ -68,29 +68,44 @@ structure IsSelectionFunction (R : W → Set W) (D : W → Set W → Set W) : Pr
   world. -/
   cso : ∀ w A B, D w B ⊆ A → D w A ⊆ B → D w A = D w B
 
-/-- Under Stalnaker's assumption, a centered similarity ordering that is linear and well-founded,
-the closest accessible antecedent-world is a selection function. -/
+-- The closest accessible antecedent-world is a selection function when a centered total ordering
+-- gives every antecedent true at an accessible world exactly one closest accessible such world.
 theorem isSelectionFunction_minimals {ord : W → Preorder W} (hR : ∀ w, w ∈ R w)
-    (hc : IsCentered ord) [∀ w, Std.Total (ord w).le] [∀ w, Std.Antisymm (ord w).le]
-    (hwf : ∀ w, WellFounded (ord w).lt) :
+    (hc : IsCentered ord) [∀ w, Std.Total (ord w).le]
+    (h : ∀ w A, (R w ∩ A).Nonempty → ∃ v, (ord w).minimals (R w ∩ A) = {v}) :
     IsSelectionFunction R fun w A ↦ (ord w).minimals (R w ∩ A) where
   refl := hR
-  subsingleton _ _ := Preorder.minimals_subsingleton
+  subsingleton w A x hx _ hy :=
+    let ⟨v, hv⟩ := h w A ⟨x, hx.1⟩
+    Set.subsingleton_singleton (a := v) (hv ▸ hx) (hv ▸ hy)
   subset w _ := ((ord w).minimals_subset _).trans Set.inter_subset_right
-  absurdity w _ h := Set.not_nonempty_iff_eq_empty.1 fun hA ↦
-    ((Preorder.minimals_nonempty_iff (hwf w)).2 hA).ne_empty h
+  absurdity w A hA := Set.not_nonempty_iff_eq_empty.1 fun hne ↦
+    let ⟨v, hv⟩ := h w A hne
+    Set.singleton_ne_empty v (hv ▸ hA)
   centering w _ h := hc.minimals_eq_singleton ⟨hR w, h⟩
-  cso w _ _ h₁ h₂ := Preorder.minimals_eq_of_subset_of_subset (hwf w)
+  cso w A B h₁ h₂ := Preorder.minimals_eq_of_subset_of_subset
+    (fun hne ↦ (h w A hne).elim fun v hv ↦ ⟨v, hv ▸ rfl⟩)
+    (fun hne ↦ (h w B hne).elim fun v hv ↦ ⟨v, hv ▸ rfl⟩)
     (Set.subset_inter (((ord w).minimals_subset _).trans Set.inter_subset_left) h₂)
     (Set.subset_inter (((ord w).minimals_subset _).trans Set.inter_subset_left) h₁)
+
+/-- Under Stalnaker's assumption, a centered similarity ordering that is linear and well-founded,
+the closest accessible antecedent-world is a selection function. -/
+theorem isSelectionFunction_minimals_of_wellFounded {ord : W → Preorder W} (hR : ∀ w, w ∈ R w)
+    (hc : IsCentered ord) [∀ w, Std.Total (ord w).le] [∀ w, Std.Antisymm (ord w).le]
+    (hwf : ∀ w, WellFounded (ord w).lt) :
+    IsSelectionFunction R fun w A ↦ (ord w).minimals (R w ∩ A) :=
+  isSelectionFunction_minimals hR hc fun w _ hA ↦
+    Set.exists_eq_singleton_iff_nonempty_subsingleton.2
+      ⟨(Preorder.minimals_nonempty_iff (hwf w)).2 hA, Preorder.minimals_subsingleton⟩
 
 theorem isSelectionFunction_domain {s : SelectionFunction W} (hs : s.IsCSO) :
     IsSelectionFunction (fun _ ↦ Set.univ) s.domain := by
   have (w : W) : Std.Total (hs.linearOrder w).toPreorder.le := ⟨@le_total W (hs.linearOrder w)⟩
   have (w : W) : Std.Antisymm (hs.linearOrder w).toPreorder.le :=
     ⟨@le_antisymm W (hs.linearOrder w).toPartialOrder⟩
-  have h := isSelectionFunction_minimals (R := fun _ ↦ Set.univ) (fun _ ↦ trivial) hs.isCentered
-    hs.wellFounded
+  have h := isSelectionFunction_minimals_of_wellFounded (R := fun _ ↦ Set.univ) (fun _ ↦ trivial)
+    hs.isCentered hs.wellFounded
   have hD : (fun w A ↦ (hs.linearOrder w).toPreorder.minimals (Set.univ ∩ A)) = s.domain := by
     funext w A
     rw [Set.univ_inter, hs.minimals_eq_domain]
@@ -338,7 +353,7 @@ theorem isSelectionFunction_cyclicSelection :
     IsSelectionFunction (fun _ ↦ Set.univ) cyclicSelection :=
   have (w : Fin 3) : Std.Antisymm (Preorder.lift (· - w)).le :=
     ⟨(by decide : ∀ w a b : Fin 3, a - w ≤ b - w → b - w ≤ a - w → a = b) w⟩
-  isSelectionFunction_minimals (fun _ ↦ trivial)
+  isSelectionFunction_minimals_of_wellFounded (fun _ ↦ trivial)
     (fun w w' ↦ (by decide : ∀ w w' : Fin 3, w ≠ w' → w - w < w' - w) w w')
     fun _ ↦ Preorder.wellFounded_lt_lift _
 

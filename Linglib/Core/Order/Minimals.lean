@@ -118,24 +118,25 @@ theorem minimals_subsingleton [Std.Total p.le] [Std.Antisymm p.le] :
   letI : PartialOrder α := { p with le_antisymm := fun _ _ ↦ antisymm_of p.le }
   IsLeast.unique (mem_minimals_iff_forall_le.1 has) (mem_minimals_iff_forall_le.1 hbs)
 
-/-- Under a well-founded total preorder, two sets whose minimal elements each lie in the other
-have the same minimal elements. -/
-theorem minimals_eq_of_subset_of_subset (hwf : WellFounded p.lt) [Std.Total p.le]
-    (hst : p.minimals s ⊆ t) (hts : p.minimals t ⊆ s) : p.minimals s = p.minimals t := by
-  have key {s t : Set α} (hst : p.minimals s ⊆ t) (hts : p.minimals t ⊆ s) :
-      p.minimals s ⊆ p.minimals t := fun a ha ↦ by
-    obtain ⟨b, hb, -⟩ := exists_le_mem_minimals hwf (hst ha)
+/-- Under a total preorder, two sets that have minimal elements when nonempty and whose minimal
+elements each lie in the other have the same minimal elements. -/
+theorem minimals_eq_of_subset_of_subset [Std.Total p.le] (hs : s.Nonempty → (p.minimals s).Nonempty)
+    (ht : t.Nonempty → (p.minimals t).Nonempty) (hst : p.minimals s ⊆ t) (hts : p.minimals t ⊆ s) :
+    p.minimals s = p.minimals t := by
+  have key {s t : Set α} (ht : t.Nonempty → (p.minimals t).Nonempty) (hst : p.minimals s ⊆ t)
+      (hts : p.minimals t ⊆ s) : p.minimals s ⊆ p.minimals t := fun a ha ↦ by
+    obtain ⟨b, hb⟩ := ht ⟨a, hst ha⟩
     have hab := (mem_minimals_iff_forall_le.1 ha).2 b (hts hb)
     exact mem_minimals_iff_forall_le.2 ⟨hst ha, fun c hc ↦
       p.le_trans _ _ _ hab ((mem_minimals_iff_forall_le.1 hb).2 c hc)⟩
-  exact subset_antisymm (key hst hts) (key hts hst)
+  exact subset_antisymm (key ht hst hts) (key hs hts hst)
 
-/-- Under a well-founded total preorder the minimal elements of a nonempty `s` lie in `t` exactly
-when some element of `s` in `t` lies strictly below every element of `s` outside `t`. -/
-theorem minimals_subset_iff_exists_forall_lt (hp : WellFounded p.lt) [Std.Total p.le]
-    (hs : s.Nonempty) : p.minimals s ⊆ t ↔ ∃ a ∈ s ∩ t, ∀ b ∈ s \ t, p.lt a b := by
+/-- Under a total preorder, when `s` has a minimal element, the minimal elements of `s` lie in `t`
+exactly when some element of `s` in `t` lies strictly below every element of `s` outside `t`. -/
+theorem minimals_subset_iff_exists_forall_lt [Std.Total p.le] (hs : (p.minimals s).Nonempty) :
+    p.minimals s ⊆ t ↔ ∃ a ∈ s ∩ t, ∀ b ∈ s \ t, p.lt a b := by
   refine ⟨fun h ↦ ?_, fun ⟨a, ⟨has, _⟩, hlt⟩ b hb ↦ by_contra fun hbt ↦ ?_⟩
-  · obtain ⟨a, ha, -⟩ := exists_le_mem_minimals hp hs.some_mem
+  · obtain ⟨a, ha⟩ := hs
     rw [mem_minimals_iff_forall_le] at ha
     refine ⟨a, ⟨ha.1, h (mem_minimals_iff_forall_le.2 ha)⟩, fun b hb ↦
       lt_iff_not_ge.2 fun hba ↦ hb.2 (h ?_)⟩
