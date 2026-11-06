@@ -51,6 +51,9 @@ theorem guard_kLE_guard {x x' y y' : L ⊙ L} (hx : x ≤ₖ x') (hy : y ≤ₖ 
     guard x y ≤ₖ guard x' y' :=
   ⟨inf_le_inf hx.1 hy.1, inf_le_inf hx.1 hy.2⟩
 
+/-- The guard only attenuates: `x : y` carries no more information than `y`. -/
+theorem guard_kLE_right (x y : L ⊙ L) : guard x y ≤ₖ y := ⟨inf_le_right, inf_le_right⟩
+
 variable [BoundedOrder L]
 
 /-- A first argument that is at least true passes the second through ([schoter-1996b] Def 4). -/

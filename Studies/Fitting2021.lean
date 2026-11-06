@@ -103,18 +103,8 @@ variable [Negation B] [IsInterlaced B]
 theorem eval_kLE_eval {v w : α → B} (h : ∀ p, v p ≤ₖ w p) :
     ∀ φ : Fml α, φ.eval v ≤ₖ φ.eval w
   | .atom p => h p
-  | .and φ ψ => by
-    calc φ.eval v ⊓ ψ.eval v
-        ≤ₖ φ.eval w ⊓ ψ.eval v := IsInterlaced.inf_kmono (eval_kLE_eval h φ) _
-      _ = ψ.eval v ⊓ φ.eval w := inf_comm ..
-      _ ≤ₖ ψ.eval w ⊓ φ.eval w := IsInterlaced.inf_kmono (eval_kLE_eval h ψ) _
-      _ = φ.eval w ⊓ ψ.eval w := inf_comm ..
-  | .or φ ψ => by
-    calc φ.eval v ⊔ ψ.eval v
-        ≤ₖ φ.eval w ⊔ ψ.eval v := IsInterlaced.sup_kmono (eval_kLE_eval h φ) _
-      _ = ψ.eval v ⊔ φ.eval w := sup_comm ..
-      _ ≤ₖ ψ.eval w ⊔ φ.eval w := IsInterlaced.sup_kmono (eval_kLE_eval h ψ) _
-      _ = φ.eval w ⊔ ψ.eval w := sup_comm ..
+  | .and φ ψ => inf_kLE_inf (eval_kLE_eval h φ) (eval_kLE_eval h ψ)
+  | .or φ ψ => sup_kLE_sup (eval_kLE_eval h φ) (eval_kLE_eval h ψ)
   | .not φ => compl_kLE_compl (eval_kLE_eval h φ)
 
 end Eval
@@ -229,12 +219,7 @@ theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know 
   have hle_top : ∀ x : B, x ≤ₖ kT := fun x ↦ by
     rw [hkT, kLE_def, toKnow_ofKnow]; exact le_top
   have hanti : IsAnticonsistent kT := hle_top _
-  have hnexact : ¬ IsExact kT := by
-    intro hex
-    have h1 := conf_kLE_conf (hle_top (conf (ofKnow (⊥ : Know B))))
-    rw [conf_conf, show conf kT = kT from hex] at h1
-    rw [hkT, kLE_def, toKnow_ofKnow, toKnow_ofKnow] at h1
-    exact hbt (le_antisymm h1 bot_le).symm
+  have hnexact : ¬ IsExact kT := hkT ▸ not_isExact_ofKnow_top hbt
   have hmem : kT ∈ F := by
     obtain ⟨a, ha⟩ := F.nonempty
     exact F.mem_of_kLE ha (hle_top a)

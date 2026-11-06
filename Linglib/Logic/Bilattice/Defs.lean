@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Logic.Equiv.Defs
-public import Mathlib.Order.Lattice
+public import Mathlib.Order.BoundedOrder.Lattice
 
 /-!
 # Bilattices
@@ -114,5 +114,65 @@ class IsInterlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
   kInf_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊓ₖ z) ≤ y ⊓ₖ z
   /-- knowledge join `⊔ₖ` is `≤_t`-monotone -/
   kSup_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊔ₖ z) ≤ y ⊔ₖ z
+
+section Interlaced
+
+variable [Lattice B] [Lattice (Know B)] [IsInterlaced B]
+
+/-- The truth meet is knowledge-monotone in both arguments. -/
+theorem inf_kLE_inf {a b c d : B} (h₁ : a ≤ₖ b) (h₂ : c ≤ₖ d) : a ⊓ c ≤ₖ b ⊓ d :=
+  calc a ⊓ c ≤ₖ b ⊓ c := IsInterlaced.inf_kmono h₁ c
+    _ = c ⊓ b := inf_comm ..
+    _ ≤ₖ d ⊓ b := IsInterlaced.inf_kmono h₂ b
+    _ = b ⊓ d := inf_comm ..
+
+/-- The truth join is knowledge-monotone in both arguments. -/
+theorem sup_kLE_sup {a b c d : B} (h₁ : a ≤ₖ b) (h₂ : c ≤ₖ d) : a ⊔ c ≤ₖ b ⊔ d :=
+  calc a ⊔ c ≤ₖ b ⊔ c := IsInterlaced.sup_kmono h₁ c
+    _ = c ⊔ b := sup_comm ..
+    _ ≤ₖ d ⊔ b := IsInterlaced.sup_kmono h₂ b
+    _ = b ⊔ d := sup_comm ..
+
+/-! #### The four bounds
+
+In an interlaced bilattice each bound is a combination of two others: the consensus and the
+gullibility of `t` and `f` are the knowledge bounds, and the truth meet and join of the knowledge
+bounds are `f` and `t` ([fitting-1994] §6). -/
+
+variable [BoundedOrder B] [BoundedOrder (Know B)]
+
+theorem top_kInf_bot : (⊤ : B) ⊓ₖ ⊥ = ofKnow ⊥ :=
+  le_antisymm
+    (calc (⊤ : B) ⊓ₖ ⊥ = ⊥ ⊓ₖ ⊤ := congrArg ofKnow (inf_comm _ _)
+      _ ≤ ofKnow ⊥ ⊓ₖ ⊤ := IsInterlaced.kInf_tmono bot_le ⊤
+      _ = ofKnow ⊥ := congrArg ofKnow (bot_inf_eq _))
+    (calc ofKnow ⊥ = ofKnow ⊥ ⊓ₖ ⊥ := congrArg ofKnow (bot_inf_eq _).symm
+      _ ≤ ⊤ ⊓ₖ ⊥ := IsInterlaced.kInf_tmono le_top ⊥)
+
+theorem top_kSup_bot : (⊤ : B) ⊔ₖ ⊥ = ofKnow ⊤ :=
+  le_antisymm
+    (calc (⊤ : B) ⊔ₖ ⊥ = ⊥ ⊔ₖ ⊤ := congrArg ofKnow (sup_comm _ _)
+      _ ≤ ofKnow ⊤ ⊔ₖ ⊤ := IsInterlaced.kSup_tmono bot_le ⊤
+      _ = ofKnow ⊤ := congrArg ofKnow (top_sup_eq _))
+    (calc ofKnow ⊤ = ofKnow ⊤ ⊔ₖ ⊥ := congrArg ofKnow (top_sup_eq _).symm
+      _ ≤ ⊤ ⊔ₖ ⊥ := IsInterlaced.kSup_tmono le_top ⊥)
+
+theorem ofKnow_top_inf_ofKnow_bot : ofKnow ⊤ ⊓ ofKnow ⊥ = (⊥ : B) :=
+  kLE_antisymm
+    (calc ofKnow ⊤ ⊓ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊓ ⊥ :=
+        inf_kLE_inf (kLE_refl _) (bot_le : (⊥ : Know B) ≤ toKnow (⊥ : B))
+      _ = ⊥ := inf_bot_eq _)
+    (calc (⊥ : B) = ⊥ ⊓ ofKnow ⊥ := (bot_inf_eq _).symm
+      _ ≤ₖ ofKnow ⊤ ⊓ ofKnow ⊥ := inf_kLE_inf (le_top : toKnow (⊥ : B) ≤ ⊤) (kLE_refl _))
+
+theorem ofKnow_top_sup_ofKnow_bot : ofKnow ⊤ ⊔ ofKnow ⊥ = (⊤ : B) :=
+  kLE_antisymm
+    (calc ofKnow ⊤ ⊔ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊔ ⊤ :=
+        sup_kLE_sup (kLE_refl _) (bot_le : (⊥ : Know B) ≤ toKnow (⊤ : B))
+      _ = ⊤ := sup_top_eq _)
+    (calc (⊤ : B) = ⊤ ⊔ ofKnow ⊥ := (top_sup_eq _).symm
+      _ ≤ₖ ofKnow ⊤ ⊔ ofKnow ⊥ := sup_kLE_sup (le_top : toKnow (⊤ : B) ≤ ⊤) (kLE_refl _))
+
+end Interlaced
 
 end Bilattice

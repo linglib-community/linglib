@@ -1,37 +1,35 @@
 module
 
-public import Mathlib.Order.Lattice
 public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Bilattice.Guard
-public import Linglib.Core.Order.InvolutiveCompl
 
 /-!
 # Fitting (1994): Kleene's three valued logics and their children
 
-Fitting shows that Kleene's strong three-valued logic is the consistent part `x ≤ₖ −x` of
-Belnap's `FOUR`, and that the guard connective `P : Q`, which is `Q` if `P` is at least true and
-`⊥` otherwise, extends Belnap's logic so that Kleene's weak logic and the asymmetric Lisp logic
-become definable there (Definition 5.1). Both generalize to Ginsberg's product bilattices `L ⊙ L`,
-where the guard is `⟨a, b⟩ : ⟨c, d⟩ = ⟨a ∧ c, a ∧ d⟩` (Definition 9.4).
-
-The main results are the identities of Figure 4 for the guard, the closure theorems for exact
-and consistent values (Theorems 9.2 and 9.3, `not_isExact_kTop`, `isConsistent_kSup`), the
-identification of the Lisp and weak connectives on Kleene's values with `SignType.meetMiddle`
-and `SignType.meetWeak`, and the collapse for bilinear bilattices: an equivalence of formulas
-holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equivalent_iff_four`).
+Kleene's strong three-valued logic is the consistent part of Belnap's `FOUR`. Fitting adds a guard
+connective `P : Q`, which is `Q` when `P` is at least true and `⊥` otherwise, and with it defines
+four-valued [Lisp](##landL_toFour) and [weak Kleene](##landW_toFour) connectives that agree with
+the three-valued ones on Kleene's values. On a product bilattice `L ⊙ L` the guard keeps its
+four-valued identities, the consistent values stay [closed under the new
+connectives](##isConsistent_landW) and, below a common consistent bound,
+[under gullibility](##isConsistent_kSup), and for a linear `L` [an equivalence holds in `L ⊙ L`
+exactly when it holds in `FOUR`](##equivalent_iff_four).
 
 ## Implementation notes
 
-* The product, its negation and the conflation of §§6–7 are `Bilattice.Product` with its `Compl`
-  and `Conflation` instances; a De Morgan lattice is a bounded distributive lattice with an
-  `InvolutiveCompl`. §3's identification of
-  Kleene's values with the consistent part of `FOUR` is `Trivalent.orderIsoConsistent`, and the
-  closure clauses of Theorems 9.2 and 9.3 are `IsExact.inf`, `IsConsistent.compl` and their kin;
-  the study keeps what the substrate lacks.
-* The representation theorems of §8, with their negation- and conflation-preserving refinements
-  (Theorems 8.2 and 8.3), and the tableau system of §4 are not formalized.
-* Theorem 10.5 is stated for products of linear bounded lattices; `ofFour` embeds `FOUR` by
-  sending the Boolean coordinates to the bounds, and `θ_⊤` reads it back.
+* Formulas are evaluated in any product `L ⊙ L`; restriction, requirement and equivalence read
+  them in `FOUR`. The tableaux and the representation theorems are not formalized, so the guard,
+  which Fitting defines through the representation, lives on products `L ⊙ L`, and the collapse
+  theorem is stated for products of bounded linear lattices, with `ofFour` embedding `FOUR` and
+  `θ_⊤` reading it back.
+* The Lisp and weak connectives are definitions on values whose formula counterparts evaluate to
+  them by `rfl`, so the collapse covers Fitting's whole list of connectives.
+* The identities among the four bounds of an interlaced bilattice, the failure of the knowledge
+  bounds to be exact, and the closure of the exact and consistent values under the truth
+  operations and negation are substrate (`Bilattice.top_kInf_bot`,
+  `Bilattice.not_isExact_ofKnow_top`, `Bilattice.IsConsistent.inf` and their kin).
+* Fitting closes the consistent values under `⊕` for members with a common upper bound. The bound
+  is read as consistent, and the members' consistency then follows from it.
 
 ## References
 
@@ -50,156 +48,94 @@ open Bilattice.Product (guard)
 
 namespace Fitting1994
 
-/-! ### Formulas and the semantics behind the tableaux (§4) -/
+/-! ### The guard connective -/
 
-/-- Formulas over the bilattice connectives, namely the truth connectives and negation, consensus
-`⊓ₖ`, gullibility `⊔ₖ`, and the guard `P : Q` of §5. -/
-inductive Formula (Atom : Type*) where
-  | atom : Atom → Formula Atom
-  | inf : Formula Atom → Formula Atom → Formula Atom
-  | sup : Formula Atom → Formula Atom → Formula Atom
-  | neg : Formula Atom → Formula Atom
-  | kInf : Formula Atom → Formula Atom → Formula Atom
-  | kSup : Formula Atom → Formula Atom → Formula Atom
-  | guard : Formula Atom → Formula Atom → Formula Atom
-
-namespace Formula
-
-variable {Atom L : Type*} [Lattice L]
-
-/-- Evaluation in `L ⊙ L` under a valuation of the atoms (Definition 4.1). -/
-def eval (v : Atom → L ⊙ L) : Formula Atom → L ⊙ L
-  | atom a => v a
-  | inf φ ψ => eval v φ ⊓ eval v ψ
-  | sup φ ψ => eval v φ ⊔ eval v ψ
-  | neg φ => (eval v φ)ᶜ
-  | kInf φ ψ => eval v φ ⊓ₖ eval v ψ
-  | kSup φ ψ => (eval v φ ⊔ₖ eval v ψ)
-  | guard φ ψ => Product.guard (eval v φ) (eval v ψ)
-
-/-- `X` restricts `Y` when, under every valuation in `FOUR`, `Y` is at most true (`⊥` or `true`)
-whenever `X` is (Definition 4.2). -/
-def Restricts (φ ψ : Formula Atom) : Prop :=
-  ∀ v : Atom → FOUR, eval v φ ≤ₖ FOUR.T → eval v ψ ≤ₖ FOUR.T
-
-/-- `X` requires `Y` when, under every valuation in `FOUR`, `Y` is at least true (`true` or `⊤`)
-whenever `X` is (Definition 4.2). -/
-def Requires (φ ψ : Formula Atom) : Prop :=
-  ∀ v : Atom → FOUR, FOUR.T ≤ₖ eval v φ → FOUR.T ≤ₖ eval v ψ
-
-/-- `X ≡ Y` when the two formulas take the same value in `FOUR` under every valuation. -/
-def Equivalent (φ ψ : Formula Atom) : Prop := ∀ v : Atom → FOUR, eval v φ = eval v ψ
-
--- §4
-theorem restricts_iff_requires_neg (φ ψ : Formula Atom) :
-    Restricts φ ψ ↔ Requires (.neg ψ) (.neg φ) := by
-  have key : ∀ x y : FOUR, (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ↔
-      (FOUR.T ≤ₖ yᶜ → FOUR.T ≤ₖ xᶜ) := by decide
-  exact forall_congr' fun v ↦ key _ _
-
--- §4
-theorem equivalent_iff (φ ψ : Formula Atom) :
-    Equivalent φ ψ ↔ Restricts φ ψ ∧ Requires φ ψ ∧ Restricts ψ φ ∧ Requires ψ φ := by
-  have key : ∀ x y : FOUR, x = y ↔ (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ∧ (FOUR.T ≤ₖ x → FOUR.T ≤ₖ y) ∧
-      (y ≤ₖ FOUR.T → x ≤ₖ FOUR.T) ∧ (FOUR.T ≤ₖ y → FOUR.T ≤ₖ x) := by decide
-  simp only [Equivalent, Restricts, Requires, key, forall_and]
-
-end Formula
-
-/-! ### The guard connective (§5) -/
-
+-- §5, and p. 128: Definition 9.4 gives the §5 guard on `FOUR`
 theorem guard_four :
     ∀ x y : FOUR, guard x y = if FOUR.T ≤ₖ x then y else FOUR.U := by decide
 
 section Guard
 
-variable {L : Type*} [DistribLattice L] (x y z : L ⊙ L)
+/-! The identities of Figure 4, which hold for the guard of any product (p. 128). -/
 
--- Figure 4
-theorem guard_kInf_left :
-    guard (x ⊓ₖ y) z = guard (x ⊓ y) z := by ext <;> simp [Product.guard]
+variable {L : Type*}
 
--- Figure 4
-theorem guard_kInf_left_eq :
-    guard (x ⊓ₖ y) z = guard x z ⊓ₖ guard y z := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
-    exact inf_inf_distrib_right _ _ _
+section Lattice
 
--- Figure 4
-theorem guard_kInf_left_eq_guard_guard :
-    guard (x ⊓ₖ y) z = guard (guard x y) z := by
-  ext <;> simp [Product.guard]
+variable [Lattice L] (x y z : L ⊙ L)
 
--- Figure 4
-theorem guard_kInf_left_eq_guard_guard' :
-    guard (x ⊓ₖ y) z = guard x (guard y z) := by
-  ext <;> simp [Product.guard, inf_assoc]
+theorem guard_kInf_eq_guard_inf : guard (x ⊓ₖ y) z = guard (x ⊓ y) z := rfl
 
--- Figure 4
-theorem guard_kSup_left :
-    guard (x ⊔ₖ y) z = guard (x ⊔ y) z := by ext <;> simp [Product.guard]
+theorem guard_kInf_left : guard (x ⊓ₖ y) z = guard x z ⊓ₖ guard y z := by
+  ext <;> exact inf_inf_distrib_right _ _ _
 
--- Figure 4
-theorem guard_kSup_left_eq :
-    guard (x ⊔ₖ y) z = guard x z ⊔ₖ guard y z := by
-  ext <;> simp [Product.guard, inf_sup_right]
+theorem guard_guard_left : guard (guard x y) z = guard (x ⊓ₖ y) z := rfl
 
--- Figure 4
-theorem guard_compl : guard x yᶜ = (guard x y)ᶜ := by
-  ext <;> simp [Product.guard]
+theorem guard_guard : guard x (guard y z) = guard (x ⊓ₖ y) z := by
+  ext <;> exact (inf_assoc _ _ _).symm
 
--- Figure 4
-theorem guard_inf : guard x (y ⊓ z) = guard x y ⊓ guard x z := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_inf, con_inf]
-  · exact inf_inf_distrib_left _ _ _
-  · exact inf_sup_left _ _ _
+theorem guard_kSup_eq_guard_sup : guard (x ⊔ₖ y) z = guard (x ⊔ y) z := rfl
 
--- Figure 4
-theorem guard_sup : guard x (y ⊔ z) = guard x y ⊔ guard x z := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_sup, con_sup]
-  · exact inf_sup_left _ _ _
-  · exact inf_inf_distrib_left _ _ _
+theorem guard_compl : guard x yᶜ = (guard x y)ᶜ := rfl
 
--- Figure 4
 theorem guard_kInf : guard x (y ⊓ₖ z) = guard x y ⊓ₖ guard x z := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
-    exact inf_inf_distrib_left _ _ _
+  ext <;> exact inf_inf_distrib_left _ _ _
 
--- Figure 4
-theorem guard_kSup :
-    guard x (y ⊔ₖ z) = guard x y ⊔ₖ guard x z := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;>
-    exact inf_sup_left _ _ _
+theorem kSup_guard_self : x ⊔ₖ guard y x = x :=
+  congrArg ofKnow (sup_eq_left.2 (guard_kLE_right y x))
 
--- Figure 4
-theorem kSup_guard_self : x ⊔ₖ guard y x = x := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;> rw [inf_comm] <;>
-    exact sup_inf_self
-
--- Figure 4
-theorem kInf_guard_self : x ⊓ₖ guard y x = guard y x := by
-  ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
-    rw [inf_comm y.pro, inf_left_idem]
+theorem kInf_guard_self : x ⊓ₖ guard y x = guard y x :=
+  congrArg ofKnow (inf_eq_right.2 (guard_kLE_right y x))
 
 variable {x y z}
 
-theorem guard_le_guard_right (h : y ≤ z) : guard x y ≤ guard x z :=
-  ⟨inf_le_inf_left _ h.1, inf_le_inf_left _ h.2⟩
-
+-- p. 120: from `x ≤ y`, `x : z = (x ∧ y) : z = (x : z) ⊗ (y : z) ≤ₖ y : z`
 theorem guard_kLE_guard_of_le (h : x ≤ y) : guard x z ≤ₖ guard y z :=
-  ⟨inf_le_inf_right _ h.1, inf_le_inf_right _ h.1⟩
+  calc guard x z = guard x z ⊓ₖ guard y z := by
+        rw [← guard_kInf_left, guard_kInf_eq_guard_inf, inf_eq_left.2 h]
+    _ ≤ₖ guard y z := (inf_le_right : toKnow (guard x z) ⊓ toKnow (guard y z) ≤ _)
+
+end Lattice
+
+section DistribLattice
+
+variable [DistribLattice L] (x y z : L ⊙ L)
+
+theorem guard_kSup_left : guard (x ⊔ₖ y) z = guard x z ⊔ₖ guard y z := by
+  ext <;> exact inf_sup_right _ _ _
+
+theorem guard_inf : guard x (y ⊓ z) = guard x y ⊓ guard x z := by
+  ext
+  · exact inf_inf_distrib_left _ _ _
+  · exact inf_sup_left _ _ _
+
+theorem guard_sup : guard x (y ⊔ z) = guard x y ⊔ guard x z := by
+  ext
+  · exact inf_sup_left _ _ _
+  · exact inf_inf_distrib_left _ _ _
+
+theorem guard_kSup : guard x (y ⊔ₖ z) = guard x y ⊔ₖ guard x z := by
+  ext <;> exact inf_sup_left _ _ _
+
+end DistribLattice
+
+-- §5: monotone in the second argument for the truth order
+theorem guard_le_guard_right [SemilatticeInf L] {x y z : L ⊙ L} (h : y ≤ z) :
+    guard x y ≤ guard x z :=
+  ⟨inf_le_inf_left _ h.1, inf_le_inf_left _ h.2⟩
 
 end Guard
 
+-- §5: but not in the first
 theorem not_guard_le_guard_left :
     ¬ ∀ x y z : FOUR, x ≤ y → guard x z ≤ guard y z :=
   fun h ↦ absurd (h FOUR.U FOUR.T FOUR.F (by decide)) (by decide)
 
-/-! ### Lisp and weak Kleene connectives through the guard (§5) -/
+/-! ### Lisp and weak Kleene connectives through the guard -/
 
 section Lisp
 
-variable {L : Type*} [DistribLattice L]
+variable {L : Type*} [Lattice L]
 
 /-- Lisp conjunction `P ∧⃗ Q = P ∧ (P : Q)` (Definition 5.1), which consults the second conjunct
 only past the guard of the first. -/
@@ -217,6 +153,7 @@ def lorW (x y : L ⊙ L) : L ⊙ L := lorL x y ⊓ₖ lorL y x
 
 variable (x y : L ⊙ L)
 
+-- p. 121: the strong connectives are the gullibility of the two evaluation orders
 theorem inf_eq_landL_kSup_landL : x ⊓ y = landL x y ⊔ₖ landL y x := by
   ext
   · simp only [landL, Product.guard, pro_kSup, pro_inf, pro_mk]
@@ -237,124 +174,187 @@ theorem sup_eq_lorL_kSup_lorL : x ⊔ y = lorL x y ⊔ₖ lorL y x := by
 
 end Lisp
 
+/-- On Kleene's values the guarded conjunction is the Lisp conjunction, the Middle Kleene
+`meetMiddle` (pp. 120–121). -/
 theorem landL_toFour : ∀ a b : SignType, landL (toFour a) (toFour b) =
     toFour (SignType.meetMiddle a b) := by decide
 
+-- pp. 120–121
 theorem lorL_toFour : ∀ a b : SignType, lorL (toFour a) (toFour b) =
     toFour (SignType.joinMiddle a b) := by decide
 
+/-- On Kleene's values the consensus of the two Lisp evaluation orders is Weak Kleene
+conjunction (p. 121). -/
 theorem landW_toFour : ∀ a b : SignType, landW (toFour a) (toFour b) =
     toFour (SignType.meetWeak a b) := by decide
 
+-- p. 121
 theorem lorW_toFour : ∀ a b : SignType, lorW (toFour a) (toFour b) =
     toFour (SignType.joinWeak a b) := by decide
 
+-- p. 121: Lisp conjunction distributes over Lisp disjunction on Kleene's values
 theorem meetMiddle_joinMiddle_distrib : ∀ a b c : SignType,
     SignType.meetMiddle a (SignType.joinMiddle b c) =
       SignType.joinMiddle (SignType.meetMiddle a b) (SignType.meetMiddle a c) := by
   decide
 
+-- p. 121: but not on `FOUR`, with `P = R = ⊤` and `Q = ⊥`
 theorem not_landL_lorL_distrib :
     ¬ ∀ x y z : FOUR, landL x (lorL y z) = lorL (landL x y) (landL x z) :=
   fun h ↦ absurd (h FOUR.I FOUR.U FOUR.I) (by decide)
 
-/-! ### Bilattices and the product construction (§§6–7) -/
+/-! ### Formulas, restriction and requirement -/
 
-section Product
+/-- Formulas over the bilattice connectives, namely the truth connectives and negation, consensus
+`⊓ₖ`, gullibility `⊔ₖ`, and the guard `P : Q`. -/
+inductive Formula (Atom : Type*) where
+  | atom : Atom → Formula Atom
+  | inf : Formula Atom → Formula Atom → Formula Atom
+  | sup : Formula Atom → Formula Atom → Formula Atom
+  | neg : Formula Atom → Formula Atom
+  | kInf : Formula Atom → Formula Atom → Formula Atom
+  | kSup : Formula Atom → Formula Atom → Formula Atom
+  | guard : Formula Atom → Formula Atom → Formula Atom
 
-variable {L : Type*} [Lattice L] [BoundedOrder L]
+namespace Formula
 
--- §6
-theorem extremal :
-    ((⊤ : L ⊙ L) ⊔ₖ ⊥) = mk ⊤ ⊤ ∧ (⊤ : L ⊙ L) ⊓ₖ ⊥ = mk ⊥ ⊥ ∧
-      (mk ⊤ ⊤ : L ⊙ L) ⊓ mk ⊥ ⊥ = ⊥ ∧ (mk ⊤ ⊤ : L ⊙ L) ⊔ mk ⊥ ⊥ = ⊤ := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> ext <;> simp
+variable {Atom L : Type*} [Lattice L]
 
-end Product
+/-- Evaluation in `L ⊙ L` under a valuation of the atoms, extended inductively (Definition 4.1,
+there in `FOUR`; p. 129 for any bilattice). -/
+def eval (v : Atom → L ⊙ L) : Formula Atom → L ⊙ L
+  | atom a => v a
+  | inf φ ψ => eval v φ ⊓ eval v ψ
+  | sup φ ψ => eval v φ ⊔ eval v ψ
+  | neg φ => (eval v φ)ᶜ
+  | kInf φ ψ => eval v φ ⊓ₖ eval v ψ
+  | kSup φ ψ => (eval v φ ⊔ₖ eval v ψ)
+  | guard φ ψ => Product.guard (eval v φ) (eval v ψ)
 
-/-! ### Kleene's logics generalized (§9)
+/-- Lisp conjunction of formulas (Definition 5.1). -/
+def landL (φ ψ : Formula Atom) : Formula Atom := .inf φ (.guard φ ψ)
 
-Definition 9.1's exact and consistent values are `IsExact` and `IsConsistent`, read off the
-coordinates by `Product.isExact_iff` and `Product.isConsistent_iff`; their closure under the
-truth connectives and negation (Theorems 9.2 and 9.3) is `IsExact.inf`, `IsExact.sup`,
-`IsExact.compl`, `IsConsistent.inf`, `IsConsistent.sup` and `IsConsistent.compl`. The guard of
-Definition 9.4 is `guard`, with its characterization in the bilattice operations
-`guard_eq_kSup_compl`. -/
+/-- Lisp disjunction of formulas (Definition 5.1). -/
+def lorL (φ ψ : Formula Atom) : Formula Atom := .sup φ (.guard (.neg φ) ψ)
+
+/-- Weak Kleene conjunction of formulas (Definition 5.1). -/
+def landW (φ ψ : Formula Atom) : Formula Atom := .kInf (landL φ ψ) (landL ψ φ)
+
+/-- Weak Kleene disjunction of formulas (Definition 5.1). -/
+def lorW (φ ψ : Formula Atom) : Formula Atom := .kInf (lorL φ ψ) (lorL ψ φ)
+
+variable (v : Atom → L ⊙ L) (φ ψ : Formula Atom)
+
+@[simp] theorem eval_landL : eval v (landL φ ψ) = Fitting1994.landL (eval v φ) (eval v ψ) := rfl
+@[simp] theorem eval_lorL : eval v (lorL φ ψ) = Fitting1994.lorL (eval v φ) (eval v ψ) := rfl
+@[simp] theorem eval_landW : eval v (landW φ ψ) = Fitting1994.landW (eval v φ) (eval v ψ) := rfl
+@[simp] theorem eval_lorW : eval v (lorW φ ψ) = Fitting1994.lorW (eval v φ) (eval v ψ) := rfl
+
+/-- `X` restricts `Y` when, under every valuation in `FOUR`, `Y` is at most true (`⊥` or `true`)
+whenever `X` is (Definition 4.2). -/
+def Restricts (φ ψ : Formula Atom) : Prop :=
+  ∀ v : Atom → FOUR, eval v φ ≤ₖ FOUR.T → eval v ψ ≤ₖ FOUR.T
+
+/-- `X` requires `Y` when, under every valuation in `FOUR`, `Y` is at least true (`true` or `⊤`)
+whenever `X` is (Definition 4.2). -/
+def Requires (φ ψ : Formula Atom) : Prop :=
+  ∀ v : Atom → FOUR, FOUR.T ≤ₖ eval v φ → FOUR.T ≤ₖ eval v ψ
+
+/-- `X ≡ Y` when the two formulas take the same value in `FOUR` under every valuation. -/
+def Equivalent (φ ψ : Formula Atom) : Prop := ∀ v : Atom → FOUR, eval v φ = eval v ψ
+
+-- p. 118
+theorem restricts_iff_requires_neg : Restricts φ ψ ↔ Requires (.neg ψ) (.neg φ) := by
+  have key : ∀ x y : FOUR, (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ↔
+      (FOUR.T ≤ₖ yᶜ → FOUR.T ≤ₖ xᶜ) := by decide
+  exact forall_congr' fun v ↦ key _ _
+
+-- Proposition 4.4(3)
+theorem equivalent_iff :
+    Equivalent φ ψ ↔ Restricts φ ψ ∧ Requires φ ψ ∧ Restricts ψ φ ∧ Requires ψ φ := by
+  have key : ∀ x y : FOUR, x = y ↔ (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ∧ (FOUR.T ≤ₖ x → FOUR.T ≤ₖ y) ∧
+      (y ≤ₖ FOUR.T → x ≤ₖ FOUR.T) ∧ (FOUR.T ≤ₖ y → FOUR.T ≤ₖ x) := by decide
+  simp only [Equivalent, Restricts, Requires, key, forall_and]
+
+/-! Fitting's tableaux for the Lisp distributive law (Figure 8): the left side requires the right,
+and the valuation read off the open middle branch shows the converse fails (p. 122). -/
+
+theorem requires_landL_lorL (φ ψ χ : Formula Atom) :
+    Requires (φ.landL (ψ.lorL χ)) ((φ.landL ψ).lorL (φ.landL χ)) := by
+  have key : ∀ p q r : FOUR, FOUR.T ≤ₖ Fitting1994.landL p (Fitting1994.lorL q r) →
+      FOUR.T ≤ₖ Fitting1994.lorL (Fitting1994.landL p q) (Fitting1994.landL p r) := by decide
+  exact fun v ↦ key _ _ _
+
+theorem not_requires_lorL_landL {p q r : Atom} (hpq : p ≠ q) (hrq : r ≠ q) :
+    ¬ Requires (((atom p).landL (atom q)).lorL ((atom p).landL (atom r)))
+      ((atom p).landL ((atom q).lorL (atom r))) := by
+  classical
+  intro h
+  have := h (Function.update (fun _ ↦ FOUR.I) q FOUR.U)
+  simp only [eval_landL, eval_lorL, eval, Function.update_self, Function.update_of_ne hpq,
+    Function.update_of_ne hrq] at this
+  exact absurd (this (by decide)) (by decide)
+
+end Formula
+
+/-! ### Kleene's logics generalized -/
 
 section Generalized
 
-variable {L : Type*} [DistribLattice L] {x y z : L ⊙ L}
+section Bilattice
 
-section Exact
+variable {B : Type*}
 
-variable [BoundedOrder L] [InvolutiveCompl L]
+-- Theorem 9.2: the exact values are not closed under `⊗`
+theorem exists_not_isExact_kInf [Lattice B] [BoundedOrder B] [Lattice (Know B)]
+    [BoundedOrder (Know B)] [IsInterlaced B] [Conflation B] (h : (⊥ : Know B) ≠ ⊤) :
+    ∃ x y : B, IsExact x ∧ IsExact y ∧ ¬ IsExact (x ⊓ₖ y) :=
+  ⟨⊤, ⊥, conf_top, conf_bot, top_kInf_bot (B := B) ▸ not_isExact_ofKnow_bot h⟩
 
-/-- The knowledge top `⊤ = (⊤, ⊤)` is not exact (Theorem 9.2). -/
-theorem not_isExact_kTop [Nontrivial L] : ¬ IsExact (mk ⊤ ⊤ : L ⊙ L) := by
-  rw [isExact_iff]
-  simp
+-- Theorem 9.2: nor under `⊕`
+theorem exists_not_isExact_kSup [Lattice B] [BoundedOrder B] [Lattice (Know B)]
+    [BoundedOrder (Know B)] [IsInterlaced B] [Conflation B] (h : (⊥ : Know B) ≠ ⊤) :
+    ∃ x y : B, IsExact x ∧ IsExact y ∧ ¬ IsExact (x ⊔ₖ y) :=
+  ⟨⊤, ⊥, conf_top, conf_bot, top_kSup_bot (B := B) ▸ not_isExact_ofKnow_top h⟩
 
--- Theorem 9.2
-theorem not_isExact_kBot [Nontrivial L] : ¬ IsExact (mk ⊥ ⊥ : L ⊙ L) := by
-  rw [isExact_iff]
-  simp
+/-- Two values below a common consistent value have a consistent gullibility (Theorem 9.3). The
+bound alone suffices: consistency passes down the knowledge order. -/
+theorem isConsistent_kSup [Preorder B] [Lattice (Know B)] [Conflation B] {x y z : B}
+    (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) :=
+  hz.anti (sup_le hxz hyz : toKnow x ⊔ toKnow y ≤ toKnow z)
 
--- Theorem 9.2
-theorem not_isExact_kInf [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊓ₖ ⊥) := by
-  rw [isExact_iff]
-  simp
+end Bilattice
 
--- Theorem 9.2
-theorem not_isExact_kSup [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊔ₖ ⊥) := by
-  rw [isExact_iff]
-  simp
+variable {L : Type*}
 
-end Exact
+-- p. 128: from `x : y ≤ₖ y`
+theorem isConsistent_guard [SemilatticeInf L] [InvolutiveCompl L] {y : L ⊙ L}
+    (hy : IsConsistent y) (x : L ⊙ L) : IsConsistent (guard x y) :=
+  hy.anti (guard_kLE_right x y)
 
-section Consistent
+variable [Lattice L] {x y x' y' : L ⊙ L}
 
-variable [InvolutiveCompl L]
+/-! The Lisp and weak connectives are knowledge-monotone by the monotonicity of the guard and
+interlacing (p. 128). -/
 
-/-- The consistent values are closed under gullibility `⊔ₖ` below a common consistent upper bound
-(Theorem 9.3). -/
-theorem isConsistent_kSup (hx : IsConsistent x) (hy : IsConsistent y)
-    (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) := by
-  rw [isConsistent_iff] at *
-  simp only [pro_kSup, con_kSup, InvolutiveCompl.compl_sup]
-  exact sup_le (le_inf hx (hxz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hyz.1))))
-    (le_inf (hyz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hxz.1))) hy)
-
--- §9
-theorem isConsistent_guard (hy : IsConsistent y) (x : L ⊙ L) :
-    IsConsistent (guard x y) := by
-  rw [isConsistent_iff] at *
-  simpa [Product.guard] using inf_le_right.trans (hy.trans le_sup_right)
-
-end Consistent
-
-variable {x' y' : L ⊙ L}
-
--- §9
 theorem landL_kLE_landL (hx : x ≤ₖ x') (hy : y ≤ₖ y') : landL x y ≤ₖ landL x' y' :=
-  ⟨inf_le_inf hx.1 (inf_le_inf hx.1 hy.1), sup_le_sup hx.2 (inf_le_inf hx.1 hy.2)⟩
+  inf_kLE_inf hx (guard_kLE_guard hx hy)
 
--- §9
 theorem lorL_kLE_lorL (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorL x y ≤ₖ lorL x' y' :=
-  ⟨sup_le_sup hx.1 (inf_le_inf hx.2 hy.1), inf_le_inf hx.2 (inf_le_inf hx.2 hy.2)⟩
+  sup_kLE_sup hx (guard_kLE_guard (compl_kLE_compl hx) hy)
 
--- §9
 theorem landW_kLE_landW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : landW x y ≤ₖ landW x' y' :=
-  ⟨inf_le_inf (landL_kLE_landL hx hy).1 (landL_kLE_landL hy hx).1,
-    inf_le_inf (landL_kLE_landL hx hy).2 (landL_kLE_landL hy hx).2⟩
+  (inf_le_inf (landL_kLE_landL hx hy) (landL_kLE_landL hy hx) :
+    toKnow (landL x y) ⊓ toKnow (landL y x) ≤ toKnow (landL x' y') ⊓ toKnow (landL y' x'))
 
--- §9
 theorem lorW_kLE_lorW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorW x y ≤ₖ lorW x' y' :=
-  ⟨inf_le_inf (lorL_kLE_lorL hx hy).1 (lorL_kLE_lorL hy hx).1,
-    inf_le_inf (lorL_kLE_lorL hx hy).2 (lorL_kLE_lorL hy hx).2⟩
+  (inf_le_inf (lorL_kLE_lorL hx hy) (lorL_kLE_lorL hy hx) :
+    toKnow (lorL x y) ⊓ toKnow (lorL y x) ≤ toKnow (lorL x' y') ⊓ toKnow (lorL y' x'))
 
 variable [InvolutiveCompl L]
 
--- §9
+/-! The consistent values are closed under the Lisp and weak connectives (p. 128). -/
+
 theorem isConsistent_landL (hx : IsConsistent x) (hy : IsConsistent y) :
     IsConsistent (landL x y) :=
   hx.inf (isConsistent_guard hy x)
@@ -363,6 +363,8 @@ theorem isConsistent_lorL (hx : IsConsistent x) (hy : IsConsistent y) :
     IsConsistent (lorL x y) :=
   hx.sup (isConsistent_guard hy xᶜ)
 
+/-- The consistent values of a product bilattice are closed under weak Kleene conjunction, so the
+weak logic generalizes with Kleene's values as its consistent part (p. 128). -/
 theorem isConsistent_landW (hx : IsConsistent x) (hy : IsConsistent y) :
     IsConsistent (landW x y) :=
   (isConsistent_landL hx hy).kInf _
@@ -373,7 +375,7 @@ theorem isConsistent_lorW (hx : IsConsistent x) (hy : IsConsistent y) :
 
 end Generalized
 
-/-! ### Bilinear bilattices (§10) -/
+/-! ### Bilinear bilattices -/
 
 /-- A bilattice is bilinear when any two members are comparable in at least one of the two
 orders (Definition 10.1). -/
@@ -383,10 +385,10 @@ def Bilinear (B : Type*) [Preorder B] [Preorder (Know B)] : Prop :=
 -- Proposition 10.2
 theorem bilinear_iff {L R : Type*} [PartialOrder L] [PartialOrder R] [BoundedOrder L]
     [BoundedOrder R] :
-    Bilinear (L ⊙ R) ↔ (∀ a b : L, a ≤ b ∨ b ≤ a) ∧ ∀ a b : R, a ≤ b ∨ b ≤ a := by
+    Bilinear (L ⊙ R) ↔ Std.Total (α := L) (· ≤ ·) ∧ Std.Total (α := R) (· ≤ ·) := by
   constructor
   · intro h
-    refine ⟨fun a b ↦ ?_, fun a b ↦ ?_⟩
+    refine ⟨⟨fun a b ↦ ?_⟩, ⟨fun a b ↦ ?_⟩⟩
     · rcases h (mk a ⊥) (mk b ⊥) with h | h | h | h
       · exact .inl h.1
       · exact .inr h.1
@@ -398,7 +400,7 @@ theorem bilinear_iff {L R : Type*} [PartialOrder L] [PartialOrder R] [BoundedOrd
       · exact .inl h.2
       · exact .inr h.2
   · rintro ⟨hL, hR⟩ x y
-    rcases hL x.pro y.pro with h₁ | h₁ <;> rcases hR x.con y.con with h₂ | h₂
+    rcases hL.total x.pro y.pro with h₁ | h₁ <;> rcases hR.total x.con y.con with h₂ | h₂
     · exact .inr (.inr (.inl ⟨h₁, h₂⟩))
     · exact .inl ⟨h₁, h₂⟩
     · exact .inr (.inl ⟨h₁, h₂⟩)
@@ -420,9 +422,9 @@ private theorem decide_inf (p q : L) : decide (a ≤ p ⊓ q) = (decide (a ≤ p
 private theorem decide_sup (p q : L) : decide (a ≤ p ⊔ q) = (decide (a ≤ p) ⊔ decide (a ≤ q)) := by
   by_cases hp : a ≤ p <;> by_cases hq : a ≤ q <;> simp [hp, hq]
 
+-- Lemma 10.4
 theorem theta_compl : theta a xᶜ = (theta a x)ᶜ := rfl
 
--- Lemma 10.4
 theorem theta_inf : theta a (x ⊓ y) = theta a x ⊓ theta a y := by
   ext <;> simp only [theta, pro_mk, con_mk, pro_inf, con_inf, decide_inf, decide_sup]
 
@@ -481,8 +483,8 @@ theorem theta_top_ofFour [Nontrivial L] (z : FOUR) : theta (⊤ : L) (ofFour z) 
   · show decide ((⊤ : L) ≤ if z.con then ⊤ else ⊥) = z.con
     cases z.con <;> simp
 
-/-- An equivalence is valid in the bilinear product `L ⊙ L` iff it is valid in `FOUR`
-(Theorem 10.5). -/
+/-- An equivalence is valid in the bilinear product `L ⊙ L` iff it is valid in `FOUR`, so bilinear
+bilattices validate no new equivalences (Theorem 10.5). -/
 theorem equivalent_iff_four [Nontrivial L] (φ ψ : Formula Atom) :
     (∀ v : Atom → L ⊙ L, Formula.eval v φ = Formula.eval v ψ) ↔ Formula.Equivalent φ ψ := by
   constructor
