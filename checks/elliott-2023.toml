@@ -1,0 +1,398 @@
+# Faithfulness record for Elliott (2023), Donkey disjunctions and overlapping updates.
+#
+# Each item maps a numbered item of the paper to the Lean declarations that state it. The paper
+# numbers its definitions and results as examples, so labels are example numbers; items the paper
+# states only in prose are labelled by section. A `[[item.check]]` entry is a human sign-off that
+# those declarations, and the linglib definitions their statements use, say what the paper says up
+# to the stated `relation` and `notes`. Sign-offs are human only and are added by tooling; none has
+# been made yet. A signed item counts as checked only once every item covering a definition its
+# statement uses is checked too, so the results of §§2.3–3 wait on the definitions of §2.
+
+source = "elliott-2023"
+
+# ── Bilateral Update Semantics (§2) ──────────────────────────────────────────────────────────
+
+[[item]]
+id       = "ex-13"
+kind     = "definition"
+label    = "(13)"
+decls    = ["DynamicSemantics.Possibility", "DynamicSemantics.State", "Flat",
+            "DynamicSemantics.BilateralUpdate"]
+relation = "exact"
+notes    = """
+With the prose before it: a file is a set of world–assignment pairs (`Possibility`, `State`), and
+assignments are total maps into `Flat E`, whose `⊥` is the undefined individual `#e`. A sentence
+denotes a positive and a negative update, each a map from states to states (`CCP`).
+"""
+
+[[item]]
+id       = "ex-14"
+kind     = "definition"
+label    = "(14)"
+decls    = ["DynamicSemantics.BilateralUpdate.pred1",
+            "DynamicSemantics.BilateralUpdate.mem_positive_pred1",
+            "DynamicSemantics.BilateralUpdate.mem_negative_pred1"]
+relation = "exact"
+notes    = """
+Predication is the static update of a trivalent proposition over points (`ofTrivalent`), undefined
+where the variable `t` is.
+"""
+
+[[item]]
+id       = "ex-14-binary"
+kind     = "definition"
+label    = "(14), binary predication"
+decls    = ["DynamicSemantics.BilateralUpdate.pred2"]
+relation = "generalizes"
+notes    = """
+(14) gives only unary predication; (23) uses a binary predicate without defining it. `pred2`
+extends (14) to two variables, undefined where either is, and otherwise true or false as the
+relation holds of their values.
+"""
+
+[[item]]
+id       = "ex-17"
+kind     = "definition"
+label    = "(17)"
+decls    = ["DynamicSemantics.BilateralUpdate.neg", "DynamicSemantics.BilateralUpdate.neg_neg"]
+relation = "exact"
+notes    = "`neg_neg` is Double Negation Elimination, footnote 4."
+
+[[item]]
+id       = "ex-18"
+kind     = "definition"
+label    = "(18)"
+decls    = ["DynamicSemantics.State.randomAssign"]
+relation = "exact"
+notes    = """
+`g[x]h` is not defined in the paper. The Lean reads it as: `h` is `g` with `x` set to an
+individual, so `h(x)` is defined, as (19) shows and as (24) requires. On the Groenendijk–Stokhof
+reading (`h` differs from `g` at most at `x`), `h(x) = #e` would be allowed.
+"""
+
+[[item]]
+id       = "ex-20"
+kind     = "definition"
+label    = "(20)"
+decls    = ["DynamicSemantics.BilateralUpdate.exists_"]
+relation = "exact"
+
+[[item]]
+id       = "ex-21"
+kind     = "definition"
+label    = "(21)"
+decls    = ["DynamicSemantics.Possibility.le_def"]
+relation = "variant"
+notes    = """
+Subsistence `i ≺ s` is `i ∈ lowerClosure s`, for the order of `le_def`: a descendant has the same
+world and extends the assignment, agreeing wherever it is defined, as the prose before (21) puts
+it. (21) itself asks only that the descendant be defined on at least the same variables, which
+would let it reassign them: on that reading `(w, [x→a])` subsists in `{(w, [x→b])}` (study
+erratum).
+"""
+
+[[item]]
+id       = "ex-25"
+kind     = "definition"
+label    = "(25)"
+decls    = ["DynamicSemantics.BilateralUpdate.unknownUpdate"]
+relation = "exact"
+notes    = "The paper calls `s[φ]?` presupposition failure; the Lean calls it the unknown update."
+
+[[item]]
+id       = "ex-26"
+kind     = "definition"
+label    = "(26)"
+decls    = ["DynamicSemantics.BilateralUpdate.Assertable"]
+relation = "variant"
+notes    = """
+Only the definedness condition (26a) is a definition; the output (26b) is the positive update.
+(26a) says assertion is defined when `c[φ]? ≠ ∅`, but the prose (and footnote 6) require the
+unknown update to be empty, and `Assertable` follows the prose (study erratum).
+"""
+
+[[item]]
+id       = "sec-2-4-1-familiarity"
+kind     = "result"
+label    = "§2.4.1, before (26)"
+decls    = ["Elliott2023.assertable_not_familiar"]
+relation = "refutes"
+notes    = """
+The paper says Heimian familiarity follows from (26): for a sentence with a free `x` to be
+assertable at `c`, `x` must be defined at every point of `c`. The Lean gives a state with a point
+of a world `w` that defines `x` and a point of `w` that does not, at which `P(x)`, with `P` true of
+everything, is assertable but `x` is not familiar: the point without `x` lies below the one with
+it, so it subsists in the positive update and the unknown update is empty.
+"""
+
+[[item]]
+id       = "ex-27"
+kind     = "definition"
+label    = "(27)"
+decls    = ["DynamicSemantics.BilateralUpdate.conj", "DynamicSemantics.BilateralUpdate.positive_conj"]
+relation = "exact"
+notes    = """
+Conjunction is the lift of strong Kleene conjunction, the recipe the paper describes: +, − and ?
+are `1`, `-1` and `0`, and fig. 1 is `⊓` for Mathlib's order `-1 < 0 < 1`. Fig. 1 is headed
+"φ ∨ ψ", a typo for "φ ∧ ψ". `positive_conj` is (27) as stated.
+"""
+
+[[item]]
+id       = "ex-28"
+kind     = "definition"
+label    = "(28)"
+decls    = ["DynamicSemantics.BilateralUpdate.conj"]
+relation = "exact"
+notes    = """
+The negative update of the lift is the union over the cells of the table with value `-1`, which
+are the five cells of (28). No lemma states (28) in its own form.
+"""
+
+[[item]]
+id       = "ex-29"
+kind     = "definition"
+label    = "(29)"
+decls    = ["DynamicSemantics.BilateralUpdate.disj",
+            "DynamicSemantics.BilateralUpdate.positive_disj_eq_union"]
+relation = "exact"
+notes    = """
+Disjunction is the lift of strong Kleene disjunction: +, − and ? are `1`, `-1` and `0`, and fig. 2
+is `⊔` for Mathlib's order `-1 < 0 < 1`. `positive_disj_eq_union` splits (29)
+into the two lines of the paper, the first disjunct true and the second disjunct true; the two
+parts overlap in the cell where both are true, which (29) lists once.
+"""
+
+[[item]]
+id       = "ex-34"
+kind     = "definition"
+label    = "(34)"
+decls    = ["DynamicSemantics.BilateralUpdate.negative_disj"]
+relation = "exact"
+
+# ── Existential statements (§2.3) ────────────────────────────────────────────────────────────
+
+[[item]]
+id       = "ex-22"
+kind     = "result"
+label    = "(22)"
+decls    = ["DynamicSemantics.BilateralUpdate.negative_exists_pred1"]
+relation = "specializes"
+notes    = """
+Assumes `x` novel at `s` and a nonempty domain; (22c) is false without either (a familiar `x`
+keeps its value, so `g` survives when `g(x)` is not a P though something is; an empty domain
+empties `s + x`). The paper takes both for granted.
+"""
+
+[[item]]
+id       = "ex-23"
+kind     = "result"
+label    = "(23)"
+decls    = ["Elliott2023.negative_exists_pred2"]
+relation = "specializes"
+notes    = """
+Assumes every point of `s` defines the same variables, `x` not among them, `y ≠ x`, and a
+nonempty domain.
+"""
+
+[[item]]
+id       = "sec-2-3-projection"
+kind     = "result"
+label    = "§2.3, before (23)"
+decls    = ["Elliott2023.not_negative_exists_pred2"]
+relation = "refutes"
+notes    = """
+The paper says the denial of `∃x R(x, y)` keeps a point only if it already defines `y`, and that
+(23a) equals (23b) in general. The Lean gives a state with a point of a world `w` that defines `y`
+and a point of `w` that does not, with `R` empty: the point without `y` lies below an extension of
+the other, so it subsists in the negative update of the scope and (23a) keeps it, while (23b)
+does not. The equation holds at uniform states (ex-23).
+"""
+
+[[item]]
+id       = "ex-24"
+kind     = "datum"
+label    = "(24)"
+decls    = ["Elliott2023.familiar_positive_neg_neg_exists", "Elliott2023.ex24"]
+relation = "specializes"
+notes    = """
+The positive update of `¬¬∃x P(x)` makes `x` familiar, so a later pronoun can pick it up; the
+general claim, that `¬¬φ` updates as `φ` does, is `neg_neg` (ex-17). `ex24` ties this to the
+datum for (24), whose sentence and judgment the signer checks against the paper.
+"""
+
+# ── Donkey disjunctions (§2.4.3) ─────────────────────────────────────────────────────────────
+
+[[item]]
+id       = "ex-30"
+kind     = "definition"
+label    = "(30)"
+decls    = ["Elliott2023.donkey"]
+relation = "exact"
+
+[[item]]
+id       = "ex-31"
+kind     = "result"
+label    = "(31)"
+decls    = ["Elliott2023.firstPart_donkey"]
+relation = "specializes"
+notes    = """
+Assumes `x` novel at `s`. States the first equality; the second is (22). The paper justifies the
+first by the updates of `U(x)` partitioning their input, which fails in general
+(sec-2-4-3-partition) but holds where `x` is novel.
+"""
+
+[[item]]
+id       = "sec-2-4-3-partition"
+kind     = "result"
+label    = "§2.4.3, before (31)"
+decls    = ["Elliott2023.not_cover_pred1"]
+relation = "refutes"
+notes    = """
+The paper says the positive, negative and unknown updates of `U(x)` partition their input. The
+Lean gives a state with a point of a world `w` that defines `x` and a point of `w` that does not,
+with `U` true of everything: the point without `x` lies below the one with it, so it subsists in
+the positive update and is not in the unknown update, and it is in neither of the other two.
+"""
+
+[[item]]
+id       = "ex-32"
+kind     = "result"
+label    = "(32)"
+decls    = ["Elliott2023.secondPart_donkey"]
+relation = "specializes"
+notes    = """
+Assumes `x` novel at `s` and a nonempty domain. `secondPart` also includes the cell where both
+disjuncts are true, which (32) leaves to the first line; it adds nothing here. The last line of
+(32) is the second disjunct of `mem_positive_donkey` (ex-33).
+"""
+
+[[item]]
+id       = "ex-33"
+kind     = "result"
+label    = "(33)"
+decls    = ["Elliott2023.positive_donkey", "Elliott2023.mem_positive_donkey"]
+relation = "specializes"
+notes    = "Assumes `x` novel at `s` and a nonempty domain."
+
+[[item]]
+id       = "ex-35"
+kind     = "result"
+label    = "(35)"
+decls    = ["Elliott2023.negative_donkey", "Elliott2023.mem_negative_donkey"]
+relation = "exact"
+notes    = "`negative_donkey` is the first equality and `mem_negative_donkey` the second."
+
+[[item]]
+id       = "ex-7"
+kind     = "datum"
+label    = "(7)"
+decls    = ["Elliott2023.assertable_donkey", "Elliott2023.ex7"]
+relation = "specializes"
+notes    = """
+The donkey disjunction is assertable at every state where `x` is novel, over a nonempty domain:
+the pronoun is licensed with no prior antecedent. `ex7` ties this to the datum for (7), whose
+sentence and judgment the signer checks against the paper.
+"""
+
+[[item]]
+id       = "ex-37"
+kind     = "result"
+label    = "(37)"
+decls    = ["Elliott2023.nonempty_lnc_iff"]
+relation = "specializes"
+notes    = "Assumes `x` novel at `s` and a nonempty domain. Both bathrooms are in one world of the state."
+
+[[item]]
+id       = "ex-38"
+kind     = "result"
+label    = "(38)"
+decls    = ["DynamicSemantics.BilateralUpdate.neg_disj", "DynamicSemantics.BilateralUpdate.neg_conj"]
+relation = "generalizes"
+notes    = """
+The equivalences hold of the whole bilateral update, positive and negative, where (38) states the
+positive updates. The right-hand side of (38a) follows by `positive_conj`; that of (38b) is the
+negative update of conjunction, (28).
+"""
+
+[[item]]
+id       = "ex-41a"
+kind     = "result"
+label    = "(41a)"
+decls    = ["DynamicSemantics.BilateralUpdate.egli"]
+relation = "exact"
+notes    = "The prose before (41) cites the positive case as \"(41b)\", a typo for (41a)."
+
+[[item]]
+id       = "ex-41b"
+kind     = "result"
+label    = "(41b)"
+decls    = ["Elliott2023.not_egli_negative"]
+relation = "exact"
+notes    = "The witness is `φ = P(x)`, `ψ = Q(x)` over one world and one individual."
+
+# ── Homogeneous readings (§3) ────────────────────────────────────────────────────────────────
+
+[[item]]
+id       = "ex-46"
+kind     = "definition"
+label    = "(45), (46)"
+decls    = ["Elliott2023.exhAssert"]
+relation = "variant"
+notes    = """
+Only the output (b) is defined; definedness is `Assertable`, read as for (26) (study erratum).
+The QuD is a partition of all worlds rather than of the context set, so the cell-mate `w'` is
+required to be a world of the context. (45) is `exhAssert ⊥`: Mathlib's `⊥ : Setoid W` is
+equality, so every world is its own cell (the fact-finding question), and `⊤` relates all worlds.
+No lemma states this; it holds wherever the worlds of `c[φ]+` are worlds of `c`, as for every
+sentence here.
+"""
+
+[[item]]
+id       = "sec-3-1-cell-1"
+kind     = "result"
+label    = "§3.1, cell 1"
+decls    = ["Elliott2023.world_exhAssert_bot"]
+relation = "specializes"
+notes    = """
+Asserted exhaustively at the fact-finding question, the donkey disjunction keeps the worlds where
+every bathroom is upstairs. Stated for the worlds of the output; assumes `x` novel at `s` and a
+nonempty domain.
+"""
+
+[[item]]
+id       = "sec-3-1-cell-2"
+kind     = "result"
+label    = "§3.1, cell 2"
+decls    = ["Elliott2023.world_exhAssert_bot_neg", "Elliott2023.ex12"]
+relation = "specializes"
+notes    = """
+The negated donkey disjunction, (12), keeps the worlds with a bathroom where no bathroom is
+upstairs. Same assumptions as cell 1. `ex12` ties the homogeneous reading to the datum for (12),
+whose sentence and judgment the signer checks against the paper.
+"""
+
+[[item]]
+id       = "sec-3-2"
+kind     = "result"
+label    = "§3.2, heterogeneous readings"
+decls    = ["Elliott2023.exhAssert_top"]
+relation = "specializes"
+notes    = """
+The paper's example is a QuD that merges mixed and non-mixed worlds (how Gabe paid). The Lean
+takes the extreme case `⊤`, which merges all worlds: exhaustive assertion is then the plain
+positive update, provided some world of the context has every bathroom upstairs.
+"""
+
+# ── Conclusion (§4) ──────────────────────────────────────────────────────────────────────────
+
+[[item]]
+id       = "ex-47"
+kind     = "result"
+label    = "(47)"
+decls    = ["Elliott2023.lift_material_eq_disj"]
+relation = "exact"
+notes    = """
+The paper does not define `→` in BUS; "a Strong Kleene semantics for material implication" is read
+as the lift of its table, `-a ⊔ b`, by the recipe of §2.4. The equivalence is equality of the
+whole bilateral update, positive and negative.
+"""

@@ -104,6 +104,10 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .used { margin: 8px 0 0; font-size: 14px; color: var(--secondary); }
 .used a { color: var(--secondary); font-family: var(--mono); font-size: 13px; }
 .used a:hover { color: var(--primary); text-decoration: underline; }
+.checked { margin: 8px 0 0; font-size: 14px; color: var(--secondary); }
+.checked a { color: var(--secondary); }
+.checked a:hover { color: var(--primary); text-decoration: underline; }
+.checked .rel { border-bottom: 1px dotted var(--tertiary); cursor: help; }
 
 /* The flow: headline theorems as open cards, everything else a row that opens in place */
 .sprose { margin: 0 0 6px; font-size: 16.5px; }
