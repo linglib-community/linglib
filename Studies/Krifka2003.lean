@@ -137,9 +137,9 @@ theorem down_withNumber_one {a : Atom} (h : D w = {a}) :
 predicates, quantifiers and truth values. -/
 inductive Den (E : Type*)
   | ent (x : E)
-  | pred (P : E → Prop)
-  | vp (V : E → Prop)
-  | quant (Q : (E → Prop) → Prop)
+  | pred (P : Set E)
+  | vp (V : Set E)
+  | quant (Q : Quantifier E)
   | tv (p : Prop)
 
 namespace Den
@@ -149,7 +149,7 @@ variable {E : Type*}
 /-- The composition rule (51) is functional application whichever way is well formed, and
 otherwise Partee's existential shift (30a) of a predicate meeting a verbal predicate. -/
 def app : Den E → Den E → Option (Den E)
-  | pred P, ent x | ent x, pred P | vp P, ent x | ent x, vp P => some (tv (P x))
+  | pred P, ent x | ent x, pred P | vp P, ent x | ent x, vp P => some (tv (x ∈ P))
   | quant Q, vp V | vp V, quant Q | quant Q, pred V | pred V, quant Q => some (tv (Q V))
   | pred P, vp V | vp V, pred P => some (tv (Quantifier.Det.some P V))
   | _, _ => none
@@ -161,53 +161,53 @@ def neg : Den E → Option (Den E)
 
 /-- In movement over negation that binds a type-neutral variable (70), the moved denotation is
 substituted at its trace, where it meets the verbal predicate. -/
-def movedNeutral (d : Den E) (V : E → Prop) : Option (Den E) := (d.app (vp V)).bind neg
+def movedNeutral (d : Den E) (V : Set E) : Option (Den E) := (d.app (vp V)).bind neg
 
 /-- In movement over negation that binds an entity variable (71), the moved denotation applies
 to the abstract over the trace. -/
-def movedEntity (d : Den E) (V : E → Prop) : Option (Den E) := d.app (pred fun x ↦ ¬ V x)
+def movedEntity (d : Den E) (V : Set E) : Option (Den E) := d.app (pred Vᶜ)
 
 -- (69)
-theorem app_pred_vp (P V : E → Prop) : (pred P).app (vp V) = some (tv (∃ x, P x ∧ V x)) := rfl
+theorem app_pred_vp (P V : Set E) : (pred P).app (vp V) = some (tv (∃ x, x ∈ P ∧ x ∈ V)) := rfl
 
 -- (70)
-theorem movedNeutral_pred (P V : E → Prop) :
-    movedNeutral (pred P) V = some (tv (¬ ∃ x, P x ∧ V x)) := rfl
+theorem movedNeutral_pred (P V : Set E) :
+    movedNeutral (pred P) V = some (tv (¬ ∃ x, x ∈ P ∧ x ∈ V)) := rfl
 
-theorem movedEntity_pred (P V : E → Prop) : movedEntity (pred P) V = none := rfl
+theorem movedEntity_pred (P V : Set E) : movedEntity (pred P) V = none := rfl
 
-theorem movedNeutral_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
+theorem movedNeutral_quant (Q : Quantifier E) (V : Set E) :
     movedNeutral (quant Q) V = some (tv (¬ Q V)) := rfl
 
-theorem movedEntity_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
-    movedEntity (quant Q) V = some (tv (Q fun x ↦ ¬ V x)) := rfl
+theorem movedEntity_quant (Q : Quantifier E) (V : Set E) :
+    movedEntity (quant Q) V = some (tv (Q Vᶜ)) := rfl
 
 end Den
 
 /-- A bare plural denotes, at each world, the property that the semantic plural yields. -/
 def bare (den : CountNoun World Atom) (w : World) : Den (Finset Atom) :=
-  .pred (· ∈ pluralize den w)
+  .pred (pluralize den w)
 
 /-- A determiner phrase with a number word ((67), (72)) has existential force; the indefinite
 article is the number word *one* as a determiner. -/
 def indefinite (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Finset Atom) :=
-  .quant fun P ↦ ∃ x, x ∈ den w n ∧ P x
+  .quant (Quantifier.Det.some (den w n))
 
 /-- A noun phrase with a number word (54) is a predicate, so it scopes like a bare plural. -/
 def numeral (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Finset Atom) :=
-  .pred (· ∈ den w n)
+  .pred (den w n)
 
 /-- Bare plurals scope below negation whether moved or not, and cannot scope above it. -/
-theorem bare_narrow (den : CountNoun World Atom) (w : World) (V : Finset Atom → Prop) :
-    (bare den w).movedNeutral V = some (.tv (¬ ∃ x, (∃ n, x ∈ den w n) ∧ V x)) ∧
+theorem bare_narrow (den : CountNoun World Atom) (w : World) (V : Set (Finset Atom)) :
+    (bare den w).movedNeutral V = some (.tv (¬ ∃ x, (∃ n, x ∈ den w n) ∧ x ∈ V)) ∧
       (bare den w).movedEntity V = none :=
   ⟨rfl, rfl⟩
 
 /-- In *Two dogs aren't barking* (72)–(73), a numeral phrase scopes over negation as a
 determiner phrase but not as a noun phrase. -/
 theorem indefinite_wide_numeral_narrow (n : ℕ) (den : CountNoun World Atom) (w : World)
-    (V : Finset Atom → Prop) :
-    (indefinite n den w).movedEntity V = some (.tv (∃ x, x ∈ den w n ∧ ¬ V x)) ∧
+    (V : Set (Finset Atom)) :
+    (indefinite n den w).movedEntity V = some (.tv (∃ x, x ∈ den w n ∧ x ∉ V)) ∧
       (numeral n den w).movedEntity V = none :=
   ⟨rfl, rfl⟩
 

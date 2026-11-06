@@ -75,9 +75,9 @@ inductive Referent where
 /-- The modifier of the definite under an analysis: under a relative-clause analysis the clause
 *that he'd risked his life for*, which holds of the woman the fireman rescued, and under the
 complement-clause analysis none. -/
-def Disambiguation.modifier : Disambiguation → Option (Referent → Prop)
+def Disambiguation.modifier : Disambiguation → Option (Set Referent)
   | .complementClause => none
-  | .relativeClause | .unambiguousRelativeClause => some (· = .rescued)
+  | .relativeClause | .unambiguousRelativeClause => some {.rescued}
 
 /-- A discourse introduces one woman, with a man, or two women. -/
 inductive ReferentialContext where
@@ -89,10 +89,10 @@ inductive ReferentialContext where
 
 namespace ReferentialContext
 
-/-- `c.Woman r` holds when `r` is one of the women the context `c` introduces. -/
-def Woman : ReferentialContext → Referent → Prop
-  | .uniqueReferent, r => r = .rescued
-  | .nonUniqueReferents, r => r ≠ .man
+/-- `c.Woman` is the set of women the context `c` introduces. -/
+def Woman : ReferentialContext → Set Referent
+  | .uniqueReferent => {.rescued}
+  | .nonUniqueReferents => {.man}ᶜ
 
 theorem iota_woman_isSome_iff (c : ReferentialContext) :
     (iota c.Woman).isSome ↔ c = .uniqueReferent := by
@@ -106,8 +106,8 @@ theorem iota_woman_eq_none_iff (c : ReferentialContext) :
   cases c <;> simp
 
 theorem iota_relativeClause_isSome (c : ReferentialContext) :
-    (iota (Modifier.intersective (· = .rescued) c.Woman)).isSome := by
-  have hw : c.Woman .rescued := by cases c <;> simp [Woman]
+    (iota (Modifier.intersective {.rescued} c.Woman)).isSome := by
+  have hw : .rescued ∈ c.Woman := by cases c <;> simp [Woman]
   rw [iota_isSome_iff]
   exact ⟨.rescued, ⟨rfl, hw⟩, fun _ h ↦ h.1⟩
 

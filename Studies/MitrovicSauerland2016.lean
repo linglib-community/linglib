@@ -59,31 +59,18 @@ section Semantics
 
 variable {α : Type*}
 
-/-- The head μ denotes the subset relation between two predicates, (12a). -/
-def mu (R S : α → Prop) : Prop := R ≤ S
-
-/-- The shift from an individual to its characteristic property, the singleton. -/
-def shift (a : α) : α → Prop := (· = a)
-
--- (15)
-theorem mu_eq_every : (mu : Det α) = Det.every := rfl
-
-theorem mu_shift (a : α) : mu (shift a) = Quantifier.individual a :=
-  funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
-
 -- (13)
 theorem conjunction_eq {j : Coordinator} (hj : j.role = .conjunctive) (a b : α) :
-    j.denote {mu (shift a), mu (shift b)} = Quantifier.individual a ⊓ Quantifier.individual b := by
-  rw [mu_shift, mu_shift, Coordinator.denote_of_conjunctive hj, sInf_pair]
+    j.denote {Det.every {a}, Det.every {b}} =
+      Quantifier.individual a ⊓ Quantifier.individual b := by
+  rw [← Quantifier.individual_eq_every, ← Quantifier.individual_eq_every,
+    Coordinator.denote_of_conjunctive hj, sInf_pair]
 
 /-- The conjunction holds of a predicate that holds of each conjunct, so it has no collective
 reading, (14). -/
 theorem conjunction_apply {j : Coordinator} (hj : j.role = .conjunctive) (a b : α)
-    (P : α → Prop) : j.denote {mu (shift a), mu (shift b)} P ↔ P a ∧ P b := by
+    (P : Set α) : j.denote {Det.every {a}, Det.every {b}} P ↔ a ∈ P ∧ b ∈ P := by
   rw [conjunction_eq hj]; rfl
-
-theorem shift_inf_shift_eq_bot_iff {a b : α} : shift a ⊓ shift b = ⊥ ↔ a ≠ b := by
-  simp [funext_iff, shift]
 
 end Semantics
 
@@ -122,19 +109,19 @@ theorem muPrime_team :
 /-- An indeterminate quantifier whose particle is conjunctive denotes μ, (15). -/
 theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
     (hq : q.particle.role = .conjunctive) {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦q⟧) : d α = mu := by
+    (h : d ∈ ⟦q⟧) : d α = Det.every := by
   obtain rfl : d = q.reading := h
   rw [IndeterminateQuantifier.reading_of_conjunctive hq]
   rfl
 
 -- (1a)
 theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = mu :=
+    (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = Det.every :=
   mu_of_conjunctive_particle rfl h
 
 -- (40)
 theorem quisque_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = mu :=
+    (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = Det.every :=
   mu_of_conjunctive_particle rfl h
 
 /-! ### Exponence, §3.1 -/

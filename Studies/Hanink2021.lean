@@ -78,12 +78,12 @@ abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → P
 /-- A familiar DP is the anaphoric description, denoting the antecedent if it satisfies the
 restriction ((15), (35b), (97) and (106)). -/
 theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
+    ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) := rfl
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) refer as the anaphoric DP does.
 -/
 theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
+    ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (R g s ∩ Set.ofPred (idxVar d g)) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/
@@ -104,8 +104,8 @@ theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Pro
 /-- The silent D over the bound clause (72) refers to what the definite over the externally headed
 relative (60) refers to. -/
 theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
-    iota (idxBind n (openClause n P ψ) g) =
-      iota (Modifier.intersective P (lambdaAbsG n ψ g)) := by
+    iota (Set.ofPred (idxBind n (openClause n P ψ) g)) =
+      iota (Set.ofPred (Modifier.intersective P (lambdaAbsG n ψ g))) := by
   rw [idxBind_openClause]
 
 /-- If `φ` does not depend on the index, the binder meaning is constant, so by (86) a perception

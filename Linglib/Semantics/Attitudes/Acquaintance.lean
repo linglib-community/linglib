@@ -48,7 +48,7 @@ variable {α C : Type*} {R : α → C → Prop} {k : C → Option α} {c : C →
 
 /-- The relatum of the center `p` under `R` is the unique thing `p` bears `R` to, and `none` when
 there is no such thing or several. -/
-noncomputable def relatum (R : α → C → Prop) (p : C) : Option α := iota (R · p)
+noncomputable def relatum (R : α → C → Prop) (p : C) : Option α := iota {a | R a p}
 
 /-- The property of having a value under the partial concept `k` that has `P`, the centers that
 do. -/
@@ -61,11 +61,11 @@ def AscribesUnder (A : Set C) (p : C) (k : C → Option α) (y : α) (P : α →
   k p = some y ∧ A ⊆ deRe k P
 
 theorem relatum_eq_some_iff : relatum R p = some y ↔ R y p ∧ ∀ z, R z p → z = y :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- A concept is the partial concept of the relation each center bears to its value there. -/
 theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = some ∘ c :=
-  funext fun p ↦ iota_ident (c p)
+  funext fun p ↦ iota_singleton (c p)
 
 theorem mem_deRe_iff_of_eq_some (h : k p = some y) : p ∈ deRe k P ↔ p ∈ P y :=
   ⟨fun ⟨_, hz, hP⟩ ↦ Option.some_inj.1 (h.symm.trans hz) ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩

@@ -97,11 +97,11 @@ theorem pos_comparedTo (μ : Entity → D) (x y : Entity) :
 
 /-- `theC C P` is the unique `P`-individual of the contextual domain `C` (54). -/
 noncomputable def theC (C : Set Entity) (P : Entity → Prop) : Option Entity :=
-  iota fun x => x ∈ C ∧ P x
+  iota {x | x ∈ C ∧ P x}
 
 theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
     theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
-  simp only [theC, iota_eq_some_iff, and_imp]
+  simp only [theC, iota_eq_some_iff, Set.mem_ofPred_eq, and_imp]
 
 -- (41a)
 theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}

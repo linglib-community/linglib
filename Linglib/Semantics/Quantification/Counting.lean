@@ -234,6 +234,11 @@ theorem conservative_atLeast (n : ℕ) : (atLeast n : Det α).Conservative :=
 theorem conservative_exactly (n : ℕ) : (exactly n : Det α).Conservative :=
   NumberTree.conservative_toDet _
 
+theorem intersective_exactly (n : ℕ) : (exactly n : Det α).Intersective :=
+  fun _ _ _ _ h ↦ by rw [exactly_apply, exactly_apply, h]
+
+instance symm_exactly (n : ℕ) : Std.Symm (exactly n : Det α) := (intersective_exactly n).symm
+
 /-! ### Identities -/
 
 theorem atMost_eq_compl_atLeast_succ (n : ℕ) : (atMost n : Det α) = (atLeast (n + 1))ᶜ := by
