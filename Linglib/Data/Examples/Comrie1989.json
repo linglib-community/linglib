@@ -2,6 +2,7 @@
   {
     "id": "comrie1989_ch5_ex11",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, (11)"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "The man hit the woman and came here.",
     "discourseSegments": [],
@@ -136,6 +137,7 @@
   {
     "id": "comrie1989_ch5_english_imperative",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, §5.4"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Hit the man!",
     "discourseSegments": [],
@@ -284,11 +286,13 @@
       ["test", "resultative"],
       ["grouping", "withP"]
     ],
-    "comment": "Natural ergative-absolutive syntax: a change of state is attributed to the S of an intransitive and to the P of a transitive."
+    "comment": "Natural ergative-absolutive syntax: a change of state is attributed to the S of an intransitive and to the P of a transitive.",
+    "verified": "page-image"
   },
   {
     "id": "comrie1989_ch5_english_resultative",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 5, §5.4"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "The woman has roasted the meat.",
     "discourseSegments": [],
@@ -963,6 +967,7 @@
   {
     "id": "comrie1989_ch8_english_broke",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 8, §8.1.2"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Anton broke the stick.",
     "discourseSegments": [],
@@ -983,6 +988,7 @@
   {
     "id": "comrie1989_ch8_english_brought_about",
     "source": {"bibkey": "comrie-1989", "paperLabel": "ch. 8, §8.1.2"},
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Anton brought it about that the stick broke.",
     "discourseSegments": [],

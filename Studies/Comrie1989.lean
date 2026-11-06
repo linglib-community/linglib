@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Card
 public import Linglib.Data.Examples.Comrie1989
+public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
@@ -13,75 +14,51 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Comrie (1989): Language Universals and Linguistic Typology
 
-Three of the book's chapters make claims sharp enough to state. Case marking (chapter 6) serves
-first to discriminate the two arguments of a transitive clause: of the five ways the primitives
-S, A and P can share cases, only the nominative–accusative and ergative–absolutive systems keep
-A and P apart with two cases, which is why those two are the widespread ones, the tripartite
-system spending a case on a distinction it does not need and the neutral and the A/P-against-S
-systems failing to make the one that matters. The same function explains differential marking:
-the agent of a transitive clause is typically more animate and more definite than its patient,
-so marking is spent on the departures, a P high on the hierarchies or an A low on them, and
-each language's marking is monotone in prominence, Russian and Polish by animacy, Turkish and
-Persian by definiteness, Hindi and Spanish by both, Dyirbal marking its As downward and its Ps
-upward from the same cut between first and second person pronouns and the rest of the animacy
-hierarchy.
-
-In causatives (chapter 8) the causee takes the highest position on the hierarchy subject >
-direct object > indirect object > oblique that the base verb's arguments leave free, as Turkish
-shows for intransitive, transitive and ditransitive bases; languages may in addition double a
-filled position, Sanskrit a direct object and Turkish an indirect object, or demote further
-than required, French by *par*, and the analysis of the oblique causee as a passive fails for
-Turkish, where passive applies to every transitive verb but the oblique causee only to
-ditransitive bases, and for Hungarian, which has an oblique causee and no passive expressing
-its agent in that case. Where a language offers two cases for the causee, the one lower on
-the hierarchy encodes the causee that retains more control, Hungarian instrumental over
-accusative, Japanese dative over accusative, Kannada instrumental over dative; and within a
-language the more compact a causative's form, the more direct the causation it expresses.
-Subject (chapter 5) is a prototype, the intersection of agent and topic, so that constructions
-tied to agents, such as imperative addressee deletion, group S with A even in Dyirbal,
-constructions tied to affected participants, such as the Nivkh resultative, group S with P,
-both as tendencies, and constructions tied to neither, such as coordination, vary: S with A in
-English, S with P in Dyirbal, neither in Chukchi.
-
-The case systems are the equivalence relations on the three primitives, `caseSystem_of_equivalence`
-that the five are all of them and `discriminates_two_case_iff` that two of them are the
-economical discriminating ones; the book's examples are the rows, over which `marking_monotone`
-is the information-flow prediction, `causee_rows` and `passive_analysis_fails` the hierarchy
-against its rival, `range_causeeEmbedding` its place in the accessibility hierarchy of relative
-clauses, `control_rows` the control hierarchy, `compactness_rows` the directness
-correlation through the substrate's monotonicity, and `bias_rows`, `coordination_rows` and
-`mixed_rows` the prototype's predictions.
+Case marking serves to keep apart the agent A and the patient P of a transitive clause, so
+[accusative and ergative alignment do this with the fewest cases](##discriminates_two_cases_iff)
+and differential marking is spent where the information flow departs from the natural one,
+[on a P high and an A low in prominence](##marking_rows). A causee takes [the highest free
+position on the hierarchy subject > direct object > indirect object > oblique](##causee_rows),
+and of two positions [the lower encodes more control](##control_rows). Subject is a prototype,
+the intersection of agent and topic, so constructions tied to agents group S with A and those
+tied to affected participants S with P, [each as a tendency](##bias_rows).
 
 ## Implementation notes
 
-* A marking row records, for each argument the book discusses, the scales the book invokes for that
-  language and the marking its position takes, obligatory, optional or none; monotonicity is read
-  over pairs of acceptable rows of one language and role in the product order of the parameters §9.4
-  separates, person, animacy proper and the degree of definiteness, a parameter the row does not
-  cite constraining nothing. A row whose marking the book attributes to a parameter beside the
-  hierarchies, Polish's male-human cut, carries a `parameter` feature and has no marking.
-* The departures from the paradigm case are per-language parameters: which positions a
-  language doubles, whether it demotes further than required, and whether it has a passive,
-  the last consulted only by the rival analysis and stated by the book for Turkish, French and
-  Hungarian; Sanskrit's and Kannada's passives are textbook facts.
-* The prototype's predictions are stated through the bias of a construction type, agent-linked
-  or patient-linked, which the book gives as the explanation; a control complement, the
-  Chukchi infinitive construction, favours S with A on the book's account, and coordination
-  has no bias.
+* S, A and P are `ArgumentRole.S`, `.A` and `.P`, and a case system is a marking of the roles, so
+  the five logically possible systems are the five alignments of `Alignment.marking_cases`.
+* A marking row records, for each argument the book discusses, the scales the book invokes for
+  that language and the marking its position takes, obligatory, optional or none. A row covers
+  every value of a scale it does not cite, so two rows of a language and role are compared when
+  some value of the first lies below some value of the second in the product of the person,
+  animacy and definiteness scales. A row whose marking the book attributes to a parameter beside
+  the hierarchies, Polish's male-human cut, carries a `parameter` feature and has no marking.
+* The departures from the paradigm causee are per-language parameters: which positions a
+  language doubles, whether it demotes further than required, and whether it has a passive
+  expressing its agent in the causee's oblique case, the last consulted only by the rival
+  analysis. Sanskrit's and Kannada's passives are textbook facts.
+* Imperative addressee deletion and indirect commands are tied to agents, the resultative to
+  affected participants, and coordination to neither; the book gives the Chukchi infinitive
+  construction no bias.
 
 ## TODO
 
 * The book's four-grade definiteness continuum, complete identifiability > definite superset >
-  discourse relevance > neither, is coarsened onto the substrate's scale, which merges the
-  middle two grades; Persian (23) and Turkish (25) are therefore indefinite specific.
+  relevance of identification > neither, is coarsened onto the substrate's scale, which merges
+  the middle two grades into the specific indefinite.
 * The book says Sanskrit has no dative causee at all, a position the hierarchy skips; the
   parameters record only doubling and further demotion, and no row tests the gap.
-* The doubling universal of §8.2, that the possibilities for doubling increase down the
-  hierarchy, needs more languages than the book's rows give.
-* Chapter 9's animacy hierarchy is prose here: the Navajo *yi-* ~ *bi-* alternation, Chukchi
-  number and the Tangut and Southern Tiwa agreement data would need agreement substrate.
-* The Russian numeral continuum of §5.2 and Greenberg's Universal 38 on the unmarkedness of the
-  S case (§6.1) are not stated.
+* The argument that Hungarian has an oblique causee and no passive to supply it is recorded in
+  the parameters but tested by no row, since the book gives no Hungarian causative of a
+  transitive verb.
+* The doubling universal, that the possibilities for doubling increase down the hierarchy, needs
+  more languages than the book's rows give.
+* Each language's marking rows should extend to a conditioned marking that fits the prominence
+  order in the sense of `Alignment.Fits`, A marked on a lower set and P on an upper set; the book
+  states the cut-off form of the prediction, and `marking_rows` checks only pairs of rows.
+* The animacy hierarchy of chapter 9 (the Navajo *yi-* ~ *bi-* alternation, Chukchi number,
+  Tangut and Southern Tiwa agreement), the Russian numeral continuum, and Greenberg's Universal
+  38 on the unmarkedness of the case of S are not stated.
 
 ## References
 
@@ -97,71 +74,32 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 
 namespace Comrie1989
 
-open Causation.Morphological
+open Alignment Causation.Morphological
 
-/-! ### The discriminatory function of case (§6.1) -/
+/-! ### The discriminatory function of case -/
 
-/-- The three primitives of case marking are the intransitive subject and the agent and patient
-of the transitive clause. -/
-inductive Primitive
-  | S | A | P
-  deriving DecidableEq, Repr, Fintype
+section Discrimination
 
-/-- The five logically possible case systems, by which primitives share a case. -/
-inductive CaseSystem
-  | neutral | nominativeAccusative | ergativeAbsolutive | tripartite | apAgainstS
-  deriving DecidableEq, Repr, Fintype
+variable {κ : Type*} {m : ArgumentRole → κ}
 
-/-- The cases of a system, as the sets of primitives each marks. -/
-def CaseSystem.blocks : CaseSystem → Finset (Finset Primitive)
-  | .neutral => {{.S, .A, .P}}
-  | .nominativeAccusative => {{.S, .A}, {.P}}
-  | .ergativeAbsolutive => {{.S, .P}, {.A}}
-  | .tripartite => {{.S}, {.A}, {.P}}
-  | .apAgainstS => {{.A, .P}, {.S}}
+-- §6.1
+theorem ne_iff_not_isNeutral_and_not_isHorizontal :
+    m .A ≠ m .P ↔ ¬ IsNeutral m ∧ ¬ IsHorizontal m := by
+  unfold IsNeutral IsHorizontal
+  by_cases h₁ : m .S = m .A <;> by_cases h₂ : m .S = m .P <;> by_cases h₃ : m .A = m .P <;>
+    simp_all
 
-/-- Two primitives take the same case. -/
-def CaseSystem.Same (c : CaseSystem) (x y : Primitive) : Prop := ∃ b ∈ c.blocks, x ∈ b ∧ y ∈ b
+/-- A marking keeps A and P apart with only two cases on S, A and P exactly when it is accusative
+or ergative: since S never occurs with A or P, its case can serve one of them, and the tripartite
+system spends a third case on a distinction never needed (§6.1). -/
+theorem discriminates_two_cases_iff [DecidableEq κ] :
+    m .A ≠ m .P ∧ (ArgumentRole.core.image m).card = 2 ↔ IsAccusative m ∨ IsErgative m := by
+  simp only [ArgumentRole.core, Finset.image_insert, Finset.image_singleton, IsAccusative,
+    IsErgative]
+  by_cases h₁ : m .S = m .A <;> by_cases h₂ : m .S = m .P <;> by_cases h₃ : m .A = m .P <;>
+    simp_all [Finset.card_insert_of_notMem]
 
-instance (c : CaseSystem) (x y : Primitive) : Decidable (c.Same x y) :=
-  inferInstanceAs (Decidable (∃ b ∈ c.blocks, x ∈ b ∧ y ∈ b))
-
-/-- The number of cases. -/
-def CaseSystem.caseCount (c : CaseSystem) : ℕ := c.blocks.card
-
-/-- The system discriminates the two arguments of a transitive clause. -/
-def CaseSystem.Discriminates (c : CaseSystem) : Prop := ¬ c.Same .A .P
-
-instance (c : CaseSystem) : Decidable c.Discriminates := inferInstanceAs (Decidable (¬ _))
-
-/-- The reflexive symmetric relation with the given values on the three pairs. -/
-private def rel (sa sp ap : Bool) : Primitive → Primitive → Bool
-  | .S, .A | .A, .S => sa
-  | .S, .P | .P, .S => sp
-  | .A, .P | .P, .A => ap
-  | _, _ => true
-
-private theorem exhaustive_bool : ∀ sa sp ap : Bool, (sa → sp → ap) → (sa → ap → sp) →
-    (sp → ap → sa) → ∃ c : CaseSystem, ∀ x y, rel sa sp ap x y ↔ c.Same x y := by
-  decide
-
-theorem caseSystem_of_equivalence (r : Primitive → Primitive → Prop) (h : Equivalence r) :
-    ∃ c : CaseSystem, ∀ x y, r x y ↔ c.Same x y := by
-  classical
-  have hs : ∀ x y, r x y ↔ r y x := fun _ _ ↦ ⟨h.symm, h.symm⟩
-  obtain ⟨c, hc⟩ := exhaustive_bool (decide (r .S .A)) (decide (r .S .P)) (decide (r .A .P))
-    (by simpa using fun h₁ h₂ ↦ h.trans (h.symm h₁) h₂) (by simpa using fun h₁ ↦ h.trans h₁)
-    (by simpa using fun h₁ h₂ ↦ h.trans h₁ (h.symm h₂))
-  refine ⟨c, fun x y ↦ (?_ : r x y ↔ _).trans (hc x y)⟩
-  cases x <;> cases y <;> simp [rel, h.refl _, hs .A .S, hs .P .S, hs .P .A]
-
-theorem CaseSystem.discriminates_iff (c : CaseSystem) :
-    c.Discriminates ↔ c ≠ .neutral ∧ c ≠ .apAgainstS := by
-  cases c <;> decide
-
-theorem CaseSystem.discriminates_two_case_iff (c : CaseSystem) :
-    c.Discriminates ∧ c.caseCount = 2 ↔ c = .nominativeAccusative ∨ c = .ergativeAbsolutive := by
-  cases c <;> decide
+end Discrimination
 
 /-! ### The rows -/
 
@@ -173,22 +111,16 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 /-- The marking an argument's position takes is none, optional, or obligatory. -/
 inductive Marked
   | unmarked | optional | marked
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Optional marking sits between unmarked and marked. -/
-def Marked.toNat : Marked → ℕ
-  | .unmarked => 0
-  | .optional => 1
-  | .marked => 2
-
-instance : LinearOrder Marked :=
-  LinearOrder.lift' Marked.toNat (fun a b h ↦ by cases a <;> cases b <;> simp_all [Marked.toNat])
+instance : LinearOrder Marked := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/
 structure Marking where
   /-- A or P; S, taking the unmarked case, has no row. -/
-  role : Primitive
+  role : ArgumentRole
   /-- Whether the argument is a speech-act participant, where the marking consults it. -/
   person : Option Person.Class
   /-- The argument's animacy, where the marking consults it. -/
@@ -198,8 +130,8 @@ structure Marking where
   /-- The marking the position takes. -/
   marked : Marked
 
-/-- The animacy labels of the rows, read as person and animacy apart, the parameters §9.4
-separates: the speech-act participants are human, and the nouns are third person. -/
+/-- The animacy labels of the rows, read as person and animacy apart, the speech-act
+participants being human and the nouns third person. -/
 def animacyNames : List (String × (Person.Class × Animacy)) :=
   [("speaker", (.participant, .human)), ("addressee", (.participant, .human)),
     ("human", (.nonParticipant, .human)), ("animal", (.nonParticipant, .animate)),
@@ -210,7 +142,7 @@ prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter b
 hierarchies has none. -/
 def Marking.ofRow (row : Datum) : List Marking :=
   if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
-    [(Primitive.A, "A."), (.P, "P.")].filterMap fun (role, p) ↦ do
+    [(ArgumentRole.A, "A."), (.P, "P.")].filterMap fun (role, p) ↦ do
       let a := row.parse? (p ++ "animacy") animacyNames
       return ⟨role, a.map Prod.fst, a.map Prod.snd,
         row.parse? (p ++ "definiteness") [("definite", DefinitenessDegree.definite),
@@ -228,15 +160,23 @@ def Marking.AtMost (m₁ m₂ : Marking) : Prop :=
 
 instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Within a language, special P-marking is monotone up the prominence scales and special A-marking
-down them ((7)–(27) of chapter 6). -/
-theorem marking_monotone : ∀ r₁ ∈ acceptable, ∀ m₁ ∈ Marking.ofRow r₁,
-    ∀ r₂ ∈ acceptable.filter (·.language = r₁.language), ∀ m₂ ∈ Marking.ofRow r₂,
-      m₁.AtMost m₂ →
-        (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked) := by
+/-- The pair follows the information flow: where `m₁` is at most as prominent as `m₂`, a P is
+marked no more and an A no less. -/
+def Marking.FollowsFlow (m₁ m₂ : Marking) : Prop :=
+  m₁.AtMost m₂ → (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked)
+
+instance (m₁ m₂ : Marking) : Decidable (m₁.FollowsFlow m₂) := inferInstanceAs (Decidable (_ → _))
+
+/-- A marking row is acceptable exactly when its marking agrees with the information flow against
+every acceptable row of its language, special P-marking rising up the prominence scales and
+special A-marking falling down them; the one row the book doubts, the Hindi human P without *ko*
+of (18), is the one that departs ((7)–(27) of chapter 6). -/
+theorem marking_rows : ∀ r ∈ Examples.all, r.feature? "construction" = some "marking" →
+    (r.judgment = .acceptable ↔ ∀ r' ∈ acceptable.filter (·.language = r.language),
+      ∀ m ∈ Marking.ofRow r, ∀ m' ∈ Marking.ofRow r', m.FollowsFlow m' ∧ m'.FollowsFlow m) := by
   decide
 
-theorem marking_contrast : ∀ role : Primitive, role ≠ .S →
+theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
     ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
       ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₁.AtMost m₂ ∧
         (role = .P → m₁.marked < m₂.marked) ∧ (role = .A → m₂.marked < m₁.marked) := by
@@ -266,7 +206,7 @@ theorem range_causeeEmbedding :
 /-- A language's departures from the paradigm case. -/
 structure Parameters where
   /-- The positions the language lets a causee double. -/
-  doubles : List CauseeSlot
+  doubles : Finset CauseeSlot
   /-- Whether the causee may take a position below the paradigm one. -/
   extended : Bool
   /-- Whether the language has a passive expressing its agent in the oblique case of the
@@ -277,12 +217,16 @@ structure Parameters where
 never demotes further, Sanskrit doubles direct objects and demotes to the instrumental,
 French, Hungarian, Japanese and Kannada demote further, and Hungarian has no passive. -/
 def parameters : List (Glottocode × Parameters) :=
-  [(.turkish, { doubles := [.indirectObject], extended := false, passive := true }),
-    (.sanskrit, { doubles := [.directObject], extended := true, passive := true }),
-    (.french, { doubles := [], extended := true, passive := true }),
-    (.hungarian, { doubles := [], extended := true, passive := false }),
-    (.japanese, { doubles := [], extended := true, passive := true }),
-    (.kannada, { doubles := [], extended := true, passive := true })]
+  [(.turkish, { doubles := {.indirectObject}, extended := false, passive := true }),
+    (.sanskrit, { doubles := {.directObject}, extended := true, passive := true }),
+    (.french, { doubles := ∅, extended := true, passive := true }),
+    (.hungarian, { doubles := ∅, extended := true, passive := false }),
+    (.japanese, { doubles := ∅, extended := true, passive := true }),
+    (.kannada, { doubles := ∅, extended := true, passive := true })]
+
+/-- The causee positions the rows name. -/
+def causeeNames : List (String × CauseeSlot) :=
+  [("directObject", .directObject), ("indirectObject", .indirectObject), ("oblique", .oblique)]
 
 /-- A causative row's configuration is the base verb's valency, the causee's position, and the
 language's parameters. -/
@@ -297,10 +241,7 @@ structure Causative where
 /-- The configuration a causative or control row records. -/
 def Causative.ofRow (row : Datum) : Option Causative := do
   guard (row.feature? "construction" ∈ [some "causative", some "control"])
-  return ⟨← row.parse? "valency" [("1", 1), ("2", 2), ("3", 3)],
-    ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
-      ("oblique", .oblique)],
-    ← row.byLanguage parameters⟩
+  return ⟨← row.nat? "valency", ← row.parse? "causee" causeeNames, ← row.byLanguage parameters⟩
 
 /-- The paradigm position is the highest the base verb's arguments leave free. -/
 def Causative.paradigm (c : Causative) : CauseeSlot := causeeDemotion c.valency
@@ -330,8 +271,8 @@ theorem causee_rows : ∀ row ∈ Examples.all, ∀ c ∈ Causative.ofRow row,
     (row.judgment = .acceptable ↔ c.HierarchyAdmits) := by
   decide
 
-/-- The passive analysis wrongly admits the Turkish oblique causee (22) and excludes the Hungarian
-instrumental causee (9). -/
+-- (22) and (9): Turkish passivizes every transitive verb yet bars the oblique causee of one, and
+-- the oblique causee of the intransitive (9) is one no passive can supply.
 theorem passive_analysis_fails :
     (∃ row ∈ Examples.all, ∃ c ∈ Causative.ofRow row,
       c.PassiveAdmits ∧ row.judgment = .ungrammatical) ∧
@@ -355,8 +296,7 @@ structure Controlled where
 def Controlled.ofRow (row : Datum) : Option Controlled := do
   guard (row.feature? "construction" = some "control")
   return ⟨← row.parse? "control" [("less", Control.less), ("more", .more)],
-    ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
-      ("oblique", .oblique)]⟩
+    ← row.parse? "causee" causeeNames⟩
 
 /-- Within a language the causee retaining more control takes the lower hierarchy position, and some
 language offers the pair ((8)–(9), (23)–(28)). -/
@@ -379,8 +319,8 @@ def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := 
       ("analytic", .periphrastic)],
     ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)]⟩
 
-/-- Within a language the more compact causative is the more appropriate to direct causation, as in
-Nivkh (6)–(7). -/
+-- Nivkh (6)–(7) and English *Anton broke the stick* against *Anton brought it about that the
+-- stick broke*.
 theorem compactness_rows :
     (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ CausativeConstruction.ofRow r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language),
@@ -404,13 +344,14 @@ inductive Test
   deriving DecidableEq, Repr, Fintype
 
 /-- The prototype predicts that a construction tied to agents, the deletion of an imperative's
-addressee or of the recipient of an indirect command, and a control complement such as the
-Chukchi infinitive construction, favour S with A; one tied to affected participants, the
-resultative, favours S with P; coordination, tied to neither, is free to vary (§5.3–§5.4). -/
+addressee or of the recipient of an indirect command, favours S with A, and one tied to affected
+participants, the resultative, S with P; coordination, tied to neither, is free to vary (§5.4).
+The Chukchi infinitive construction, nominative-accusative in a language whose coordination is
+neutral, is given no bias (§5.3). -/
 def Test.bias : Test → Option Grouping
-  | .imperative | .indirectCommand | .infinitive => some .withA
+  | .imperative | .indirectCommand => some .withA
   | .resultative => some .withP
-  | .coordination => none
+  | .coordination | .infinitive => none
 
 /-- A grouping row's configuration. -/
 structure Grouped where
@@ -427,6 +368,9 @@ def Grouped.ofRow (row : Datum) : Option Grouped := do
       ("infinitive", .infinitive)],
     ← row.parse? "grouping" [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)]⟩
 
+/-- Imperative addressee deletion groups S with A in every language, even Dyirbal, and the
+resultative groups S with P somewhere; but each bias is a tendency, crossed by the Dyirbal
+indirect command and the English resultative (§5.4). -/
 theorem bias_rows :
     (∀ row ∈ Examples.all, ∀ g ∈ Grouped.ofRow row, g.test = .imperative →
       g.grouping = .withA) ∧
