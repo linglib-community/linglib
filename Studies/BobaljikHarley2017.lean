@@ -45,27 +45,27 @@ where agreement follows derived ones are not formalized.
 namespace BobaljikHarley2017
 
 open PhraseStructure Core.Order
-open DistributedMorphology (MayCondition MayCondition' localLabels mayCondition'_of_isHeadAt)
+open DistributedMorphology (Cat MayCondition MayCondition' localLabels mayCondition'_of_isHeadAt)
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive)
-
-/-- The categories of the chapter's trees: the schematic X and Y, the Root's, Voice, the
-non-agentive v, I and D. -/
-inductive Cat
-  | x | y | root | voice | v | i | d
-  deriving DecidableEq, Repr
 
 /-- Trees whose terminals are represented by the number they bear, if any. -/
 abbrev T := Tree Cat (Option Number)
 
 /-- A DP, represented by the number its determiner copies to its label ((11), (12)). -/
-abbrev dp (n : Number) : T := .terminal .d (some n)
+abbrev dp (n : Number) : T := .terminal (.head .D) (some n)
+
+/-- A terminal of category `c` that bears no number. -/
+abbrev term (c : Minimalist.Cat) : T := .terminal (.head c) none
+
+/-- A phrase of category `c`. -/
+abbrev xp (c : Minimalist.Cat) (ts : List T) : T := .node (.head c) ts
 
 /-! ### The refined condition -/
 
-/-- The tree (19), a head with a specifier and a complement. -/
+/-- The tree (19), the chapter's schematic head with a specifier and a complement, here Voice. -/
 def tree19 : T :=
-  .node .x [.terminal .d none, .node .x [.terminal .x none, .terminal .d none]]
+  xp .Voice [term .D, xp .Voice [term .Voice, term .D]]
 
 /-- **Specifiers are not local.** Both DPs of (19) may condition the head under the first
 formulation, and only its complement under the refined one. -/
@@ -77,17 +77,16 @@ theorem mayCondition_tree19 :
 /-- The tree (19) with the specifier adjoined to the phrase, as in theories whose specifiers are
 adjuncts. -/
 def tree19Adjoined : T :=
-  .adjoin .x [.terminal .d none, .node .x [.terminal .x none, .terminal .d none]]
+  .adjoin (.head .Voice) [term .D, xp .Voice [term .Voice, term .D]]
 
 -- fn. 7
 theorem not_mayCondition_tree19Adjoined : ¬ MayCondition tree19Adjoined ⟨[1, 0]⟩ ⟨[0]⟩ := by
   decide
 
-/-- The tree (20), a head with a specifier over a phrase whose head has a specifier and a
-complement. -/
+/-- The tree (20), the chapter's schematic head with a specifier over a phrase whose head has a
+specifier and a complement, here T over Voice. -/
 def tree20 : T :=
-  .node .x [.terminal .d none, .node .x [.terminal .x none,
-    .node .y [.terminal .d none, .node .y [.terminal .y none, .terminal .d none]]]]
+  xp .T [term .D, xp .T [term .T, xp .Voice [term .D, xp .Voice [term .Voice, term .D]]]]
 
 -- (20)
 theorem mayCondition'_tree20 :
@@ -109,8 +108,8 @@ def rootP (c : Arguments Number) : T :=
 specifier (14), or the non-agentive v of a clause without one. -/
 def clause (c : Arguments Number) : T :=
   match c .external with
-  | some n => .node .voice [dp n, .node .voice [rootP c, .terminal .voice none]]
-  | none => .node .v [rootP c, .terminal .v none]
+  | some n => xp .Voice [dp n, xp .Voice [rootP c, term .Voice]]
+  | none => xp .v [rootP c, term .v]
 
 /-- The position of the Root in the clause. -/
 def rootPos (c : Arguments Number) : TreePath :=
@@ -139,8 +138,8 @@ theorem structuralSite_eq_site (c : Arguments Number) (r : DistributedMorphology
 
 /-- The unergative clause (14) after head movement of the Root to Voice, which leaves a trace. -/
 def moveToVoice : T :=
-  .node .voice [dp .plural, .node .voice [.node .root [.trace 0 .root],
-    .adjoin .voice [.terminal .root none, .terminal .voice none]]]
+  xp .Voice [dp .plural, xp .Voice [.node .root [.trace 0 .root],
+    .adjoin (.head .Voice) [.terminal .root none, term .Voice]]]
 
 /-- **The refined condition closes the loophole of head movement.** Moved to Voice, the Root is
 local to the external argument under the first formulation and not under the refined one. -/
@@ -152,7 +151,7 @@ theorem mayCondition_moveToVoice :
 
 /-- The applicative *-ria* selects agentive Voice, and clashes with the non-agentive v of a
 clause without an external argument. -/
-def ApplicativeLicensed (c : Arguments Number) : Prop := (clause c).cat = .voice
+def ApplicativeLicensed (c : Arguments Number) : Prop := (clause c).cat = .head .Voice
 
 instance (c : Arguments Number) : Decidable (ApplicativeLicensed c) :=
   inferInstanceAs (Decidable (_ = _))
@@ -209,11 +208,12 @@ theorem fits_iff (s : Arguments Number) : Fits s ↔ s .external = none := by
 
 /-! ### Agreement -/
 
-/-- The structure (21), in which agreement has copied the subject's plural onto Infl and V⁰, here
-the Root, has moved into I⁰. -/
+/-- The structure (21), in which agreement has copied the subject's plural onto Infl, here T, and
+V⁰, here the Root, has moved into I⁰. -/
 def tree21 : T :=
-  .node .i [dp .plural, .node .i [.adjoin .i [.terminal .root none, .terminal .i (some .plural)],
-    .node .v [.trace 0 .root]]]
+  xp .T [dp .plural,
+    xp .T [.adjoin (.head .T) [.terminal .root none, .terminal (.head .T) (some .plural)],
+      xp .v [.trace 0 .root]]]
 
 /-- **Locality does not exclude agreement.** In (21) the number copied onto Infl may condition the
 Root under the refined formulation, though the subject's own may not. -/

@@ -71,7 +71,7 @@ and *nanVh* 'face' take the gender of an inalienable possessor on their agreemen
 namespace Adamson2024
 
 open DistributedMorphology
-open DistributedMorphology.Categorizer (Head)
+open DistributedMorphology (Categorizer)
 
 /-! ### The gender locality hypothesis -/
 
@@ -143,27 +143,27 @@ open _root_.Teop
 
 /-- The nominalizer of a body-part or kinship root, bearing u[animate] and, when `selectsD`,
 the feature {D} that licenses a possessor. -/
-def relationalN (selectsD : Bool) : Head := { Head.n_uAnim with selectsD }
+def relationalN (selectsD : Bool) : Categorizer := { Categorizer.n_uAnim with selectsD }
 
 /-- The alienator, a gender II n that closes the possessor slot. -/
-def alienatorN : Head := Head.n_plain
+def alienatorN : Categorizer := Categorizer.n_plain
 
 /-- The class a head gives a nominal, the a-class for the gender I feature [+ANIM] and none
 otherwise. -/
-def headClass (h : Head) : Option NounClass :=
+def headClass (h : Categorizer) : Option NounClass :=
   if h.gender.map (·.val) = some ⟨.anim, .pos⟩ then some .a else none
 
 /-- The n's of a possessed body-part noun, the {D} nominalizer. -/
-def ipossessed : List Head := [relationalN true]
+def ipossessed : List Categorizer := [relationalN true]
 
 /-- The n's of an unpossessed body-part noun, the {D}-less nominalizer under the alienator,
 innermost first. Alienably possessed and compounded body-part nouns have the same n's. -/
-def free : List Head := [relationalN false, alienatorN]
+def free : List Categorizer := [relationalN false, alienatorN]
 
 /-- The class of a nominal over the root `r` with the n's `hs`, the gender a probe finds in its
 last cycle, which is the o-class (gender II) by default. Every categorizer is a cyclic head. -/
-def classOf (r : Root) (hs : List Head) : NounClass :=
-  agreeingGender headClass .o ((⟨r, hs⟩ : ComplexHead Root Head).lastCycle fun _ ↦ True)
+def classOf (r : Root) (hs : List Categorizer) : NounClass :=
+  agreeingGender headClass .o ((⟨r, hs⟩ : ComplexHead Root Categorizer).lastCycle fun _ ↦ True)
 
 theorem switch (r : Root) : classOf r ipossessed = .a ∧ classOf r free = .o := by
   simp only [classOf, ComplexHead.lastCycle]
@@ -178,7 +178,7 @@ theorem bodyPartTerms_free (r : Root) : ∀ n ∈ bodyPartTerms, n.gender = clas
   decide
 
 /-- The n's of a body-part or kinship noun, by how it is possessed. -/
-def possession : List (String × List Head) :=
+def possession : List (String × List Categorizer) :=
   [("inalienable", ipossessed), ("alienable", free), ("none", free)]
 
 /-- The analysis predicts the class of every attested body-part and kinship phrase from how its
