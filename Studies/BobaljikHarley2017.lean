@@ -193,8 +193,8 @@ instance (s : Arguments Number) : Decidable (Fits s) := List.decidableBAll _ _
 
 private theorem fits_congr {s s' : Arguments Number}
     (h : s .external = none ↔ s' .external = none) : Fits s ↔ Fits s' :=
-  forall₂_congr fun p _ ↦ by
-    by_cases hg : p.1 = "go".toList
+  forall₂_congr fun ⟨g, _⟩ _ ↦ by
+    by_cases hg : g = "go".toList
     · simp [frame?, hg, applicativeLicensed_iff, h]
     · simp only [frame?, hg, ↓reduceIte]
 
