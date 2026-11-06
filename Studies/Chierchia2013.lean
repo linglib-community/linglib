@@ -180,10 +180,11 @@ theorem carries_weak_doubtVerb : LicensingContext.doubtVerb.licenser.Carries .we
     ⟨LicensingContext.holds_doubtVerb_iff.2 le_rfl, LicensingContext.not_isStrawsonUE_doubtVerb⟩
 
 theorem not_carries_weak_modalPossibility :
-    ¬ LicensingContext.modalPossibility.licenser.Carries .weak := fun h ↦ h.1
+    ¬ LicensingContext.modalPossibility.licenser.Carries .weak :=
+  fun h ↦ h.2 LicensingContext.isStrawsonUE_modalPossibility
 
 theorem not_carries_weak_imperative : ¬ LicensingContext.imperative.licenser.Carries .weak :=
-  fun h ↦ h.1
+  fun h ↦ h.2 LicensingContext.isStrawsonUE_necessityFamily
 
 /-- A position is downward entailing when it is a licensing context whose licenser carries weak
 strength. -/
@@ -231,10 +232,10 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
       c.licenser.LicensesFreeChoice := by
   have hfc : c.licenser.LicensesFreeChoice →
       ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
-    generalize c.licenser = L
-    cases L with
-    | modal => exact fun _ ↦ ⟨fun h ↦ h.1, id⟩
-    | classical | scalar | strawson | question => exact fun h ↦ (h : False).elim
+    cases c <;> first
+      | exact fun h ↦ (h : False).elim
+      | exact fun _ ↦ ⟨fun h ↦ h.2 LicensingContext.isStrawsonUE_modalPossibility, id⟩
+      | exact fun _ ↦ ⟨fun h ↦ h.2 LicensingContext.isStrawsonUE_necessityFamily, id⟩
   have ha : c.licenser.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
       c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
     simp [PolarityItem.Licenser.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]

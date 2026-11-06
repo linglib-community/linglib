@@ -370,6 +370,11 @@ theorem not_restrictorMonotone_most : ¬ (most : Det (Fin 3)).RestrictorMonotone
     h _ hle
   revert this; decide
 
+theorem not_restrictorAntitone_most : ¬ (most : Det (Fin 3)).RestrictorAntitone := fun h ↦ by
+  have : most Set.univ {x : Fin 3 | x ≠ 2} → most {x : Fin 3 | x = 2} {x | x ≠ 2} :=
+    h _ (Set.subset_univ _)
+  revert this; decide
+
 theorem not_symm_most : ¬ Std.Symm (most : Det (Fin 3)) := fun h ↦ by
   have := h.symm {x | x = 0} {x | x = 0 ∨ x = 1}
   revert this; decide

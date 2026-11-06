@@ -97,6 +97,18 @@ theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = .true)
     ¬ IsStrawsonUE f :=
   fun h ↦ by simpa [hq] using h hpq w hp (by simp [hq])
 
+/-- An operator is Strawson upward and downward entailing exactly when it takes the same value at
+comparable arguments wherever both values are defined. -/
+theorem isStrawsonUE_and_isStrawsonDE_iff :
+    IsStrawsonUE f ∧ IsStrawsonDE f ↔ ∀ ⦃p q⦄, p ≤ q → ∀ w,
+      f p w ≠ .undefined → f q w ≠ .undefined → f p w = f q w := by
+  refine ⟨fun ⟨hu, hd⟩ p q hpq w hp hq ↦ ?_, fun h ↦ ⟨fun p q hpq w hp hq ↦ ?_, ?_⟩⟩
+  · cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+    · simpa [hfp] using hd hpq w hfq (by simp [hfp])
+    · simpa [hfq] using hu hpq w hfp (by simp [hfq])
+  · rw [← h hpq w (by simp [hp]) hq, hp]
+  · exact fun p q hpq w hq hp ↦ by rw [h hpq w hp (by simp [hq]), hq]
+
 end Preorder
 
 /-! ### Strawson anti-additivity -/

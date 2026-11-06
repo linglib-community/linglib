@@ -29,10 +29,9 @@ stronger scale-mates; only a scalar licenser has a direct implicature.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
   `PolarityItem.Licenser.IsStrawsonUE`: a signature held outright, and downward and upward
   entailment modulo presupposition.
-* `PolarityItem.Licenser.Carries`: a strength of negation carried. Every negative polarity item
-  needs the plain meaning downward entailing modulo presupposition (von Fintel) and not upward
-  entailing as well (Bylinina and Nouwen); a stronger strength must hold outright of the
-  exhaustified meaning.
+* `PolarityItem.Licenser.Carries`: a strength of negation carried. Von Fintel asks the plain meaning
+  to be downward entailing modulo presupposition, Bylinina and Nouwen add that it not be upward
+  entailing as well, and a stronger strength must hold outright of the exhaustified meaning.
 * `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`,
   `PolarityItem.Licenser.LicensesByRelevance`: the strengthening route of a downward-entailing
   licenser (Kadmon and Landman), the free-choice route of a modal licenser (Chierchia) and the
@@ -49,7 +48,9 @@ stronger scale-mates; only a scalar licenser has a direct implicature.
   kept here, and agree with Gajewski's condition at the endpoints of the scale.
 * The unit conditions of `ProjectivitySignature.HoldsFor` do not exclude constant maps, which are
   downward entailing and, if constantly false, anti-additive; requiring weak strength not to be
-  upward entailing as well excludes them.
+  upward entailing as well excludes them, since a map monotone both ways modulo presupposition
+  takes one value at comparable arguments where defined
+  (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
 * The question route states the weak form the theory of question value proves, that widening
   never lowers the question's value; van Rooy's strict condition for rhetorical questions is not
   formalized.
@@ -159,27 +160,29 @@ trivalent propositions holds it on its truth set, and a scalar operator on its p
 def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
   | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
-  | .modal _, _ | .question, _ => False
+  | .modal F, σ => ∀ p, σ.HoldsFor (F.op p)
+  | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward
 entailing modulo its presupposition. -/
 def IsStrawsonDE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Antitone (F.op p)
   | .strawson F => ∀ p, Presupposition.IsStrawsonDE (F.op p)
-  | .modal _ | .question => False
+  | .modal F => ∀ p, Antitone (F.op p)
+  | .question => False
 
 /-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
 modulo its presupposition; a constant operator is both this and downward entailing. -/
 def IsStrawsonUE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Monotone (F.op p)
   | .strawson F => ∀ p, Presupposition.IsStrawsonUE (F.op p)
-  | .modal _ | .question => False
+  | .modal F => ∀ p, Monotone (F.op p)
+  | .question => False
 
 /-- A licenser carries weak strength when it is downward and not upward entailing modulo
-presupposition. This is the condition every negative polarity item puts on the meaning below the
-exhaustivity operator ([von-fintel-1999], [gajewski-2011]'s Condition 1,
-[bylinina-nouwen-2018]'s (53)). It carries a stronger strength when, in addition, its exhaustified
-meaning holds that strength outright. -/
+presupposition, the condition [von-fintel-1999], [gajewski-2011]'s Condition 1 and
+[bylinina-nouwen-2018]'s (53) put on the meaning below the exhaustivity operator. It carries a
+stronger strength when, in addition, its exhaustified meaning holds that strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toProjectivitySignature
@@ -223,7 +226,9 @@ def LicensesByStrengthening : Licenser → Prop
       D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
   | .strawson F => ∀ p (E : Type) (P : E → F.Dom p) ⦃D D' : Finset E⦄,
       D ⊆ D' → strawsonEntails (F.op p (D'.sup P)) (F.op p (D.sup P))
-  | .modal _ | .question => False
+  | .modal F => ∀ p (E : Type) (P : E → Set (F.W p)) ⦃D D' : Finset E⦄,
+      D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
+  | .question => False
 
 /-- A modal licenser licenses free choice when, under one of its operators and over a domain of at
 least two possible witnesses, the antiexhaustified existential is consistent
@@ -249,9 +254,9 @@ variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength
 
 theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
   cases L with
-  | classical F | strawson F => exact fun p ↦ (h p).of_le hστ
+  | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hστ
   | scalar F => exact fun p ↦ (h p).of_le hστ
-  | modal _ | question => exact h
+  | question => exact h
 
 theorem Holds.toProjectivitySignature_of_le (h : L.Holds t.toProjectivitySignature) (hst : s ≤ t) :
     L.Holds s.toProjectivitySignature :=
@@ -264,7 +269,8 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | strawson F =>
     exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posExt
       (ProjectivitySignature.holdsFor_anti_iff.mp (h p))
-  | modal _ | question => exact h
+  | modal F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
+  | question => exact h
 
 /-- Widening strengthens under every operator of a licenser exactly when the licenser is downward
 entailing modulo presupposition. -/
