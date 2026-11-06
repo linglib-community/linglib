@@ -6,6 +6,7 @@ public import Linglib.Fragments.Latvian.Pronouns
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Christopoulos and Zompì (2023): Weak Case Containment

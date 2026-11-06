@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Disjoint
 public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Domain rules
