@@ -96,9 +96,8 @@ fact `S`. It presupposes that `v` is sufficient for the complement `s` implies i
 context and necessary for the negation of the complement it implies in a negative context, and it
 asserts `v`. -/
 noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → Trivalent :=
-  {w | (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
-    ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w}.indicator
-    fun w ↦ Trivalent.ofProp (R.Holds v w)
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
+    ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w)) (Trivalent.ofProp (R.Holds v w))
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
@@ -119,9 +118,9 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
 variable (R v S) in
 /-- A signature that implies more presupposes more, the presupposition of a sentence weakening
 as its signature descends. -/
-theorem antitone_support : Antitone fun s ↦ Function.support (sentence R s v S) := by
+theorem antitone_support : Antitone fun s ↦ (Trivalent.gapExt (sentence R s v S))ᶜ := by
   intro s t h w hw
-  simp only [sentence, Function.mem_support, ne_eq, Set.indicator_apply_eq_zero,
+  simp only [sentence, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Set.indicator_apply_eq_zero,
     Trivalent.ofProp_ne_undefined, imp_false, not_not, Set.mem_ofPred_eq] at hw ⊢
   obtain ⟨hp, hn⟩ := hw
   have hst := ImplicationSignature.le_iff.1 h

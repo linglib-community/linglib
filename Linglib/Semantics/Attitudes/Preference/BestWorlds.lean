@@ -107,16 +107,20 @@ and asserts that its best worlds under the ordering source `g` are `p`-worlds
 noncomputable def want : W → Trivalent :=
   fun w ↦ Trivalent.transplication (Trivalent.ofProp (IsContingent (base w) p)) (Trivalent.ofProp (Want (g w) (base w) p))
 
+open Classical in
 /-- *a is glad that p* presupposes, besides the presupposition of *want*, that `a` believes `p`
 and that the domain contains her belief worlds, and asserts that `a` wants `p`
 ([von-fintel-1999]'s (50)). -/
 noncomputable def glad : W → Trivalent :=
-  {w | dox w ⊆ p ∧ dox w ⊆ base w}.indicator (want base g p)
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (dox w ⊆ p ∧ dox w ⊆ base w))
+    (want base g p w)
 
+open Classical in
 /-- *a regrets that p* has the presupposition of *glad* and asserts that `a` wants `p` false
 ([von-fintel-1999]'s (53)), restricting *want* `¬p` as *glad* restricts *want* `p`. -/
 noncomputable def regret : W → Trivalent :=
-  {w | dox w ⊆ p ∧ dox w ⊆ base w}.indicator (want base g pᶜ)
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (dox w ⊆ p ∧ dox w ⊆ base w))
+    (want base g pᶜ w)
 
 variable {dox base g p} {w : W}
 
@@ -135,14 +139,14 @@ variable (dox base g p) in
 /-- *Sorry* has the presupposition of *glad*, since *want* presupposes as much of `¬p` as of
 `p`. -/
 theorem support_regret :
-    Function.support (regret dox base g p) = Function.support (glad dox base g p) := by
+    (Trivalent.gapExt (regret dox base g p))ᶜ = (Trivalent.gapExt (glad dox base g p))ᶜ := by
   ext; simp [regret, glad, isContingent_compl]
 
 /-- If *glad* is defined, its domain properly contains the belief worlds ([von-fintel-1999], p.
 123). -/
-theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ 0) : dox w ⊂ base w := by
+theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ .undefined) : dox w ⊂ base w := by
   obtain ⟨hp, hb, -, v, hv⟩ : dox w ⊆ p ∧ dox w ⊆ base w ∧ IsContingent (base w) p := by
-    simpa [glad] using h
+    simpa [glad, and_assoc] using h
   exact hb.ssubset_of_not_superset fun h ↦ hv.2 (hp (h hv.1))
 
 end Entries

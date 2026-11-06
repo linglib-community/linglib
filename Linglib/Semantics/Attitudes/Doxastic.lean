@@ -68,7 +68,7 @@ theorem holdsAt_iff :
   simp [HoldsAt, sentence]
 
 theorem support_sentence :
-    Function.support (V.sentence agent p) = {w | ∀ _ ∈ V.factivity, p w} := by
+    (Trivalent.gapExt (V.sentence agent p))ᶜ = {w | ∀ _ ∈ V.factivity, p w} := by
   ext w
   simp [sentence]
 

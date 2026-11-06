@@ -97,6 +97,7 @@ variable {p q : W → Trivalent} {w : W}
 @[simp] theorem mem_posExt : w ∈ posExt p ↔ p w = .true := Iff.rfl
 @[simp] theorem mem_negExt : w ∈ negExt p ↔ p w = .false := Iff.rfl
 @[simp] theorem mem_gapExt : w ∈ gapExt p ↔ p w = .undefined := Iff.rfl
+theorem mem_compl_gapExt : w ∈ (gapExt p)ᶜ ↔ p w ≠ .undefined := Iff.rfl
 
 instance (p : W → Trivalent) : DecidablePred (· ∈ posExt p) :=
   fun w ↦ inferInstanceAs (Decidable (p w = .true))

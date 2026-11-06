@@ -41,28 +41,28 @@ instance (i : ι) : Decidable (Excluded alts p i) :=
 /-- Weak-negation exhaustification is `0` where the prejacent is, and elsewhere classical innocent
 exclusion on the worlds where each proposition is `1`. -/
 def exh1 (w : W) : Trivalent :=
-  if p w = 0 then 0
-  else if w ∈ exhIE (Set.range fun j ↦ posExt (alts j)) (posExt p) then 1 else -1
+  if p w = .undefined then .undefined
+  else if w ∈ exhIE (Set.range fun j ↦ posExt (alts j)) (posExt p) then .true else .false
 
 /-- Strong-negation exhaustification is `0` where the prejacent or some excluded alternative is,
 `1` where the prejacent is `1` and every excluded alternative is `-1`, and `-1` otherwise. -/
 def exh2 (w : W) : Trivalent :=
-  if p w = 0 ∨ ∃ i, Excluded alts p i ∧ alts i w = 0 then 0
-  else if p w = 1 ∧ ∀ i, Excluded alts p i → alts i w = -1 then 1 else -1
+  if p w = .undefined ∨ ∃ i, Excluded alts p i ∧ alts i w = .undefined then .undefined
+  else if p w = .true ∧ ∀ i, Excluded alts p i → alts i w = .false then .true else .false
 
 variable (w : W)
 
-theorem exh1_eq_zero_iff : exh1 alts p w = 0 ↔ p w = 0 := by
+theorem exh1_eq_zero_iff : exh1 alts p w = 0 ↔ p w = .undefined := by
   unfold exh1; split_ifs <;> simp_all
 
 theorem exh2_eq_zero_iff :
-    exh2 alts p w = 0 ↔ p w = 0 ∨ ∃ i, Excluded alts p i ∧ alts i w = 0 := by
+    exh2 alts p w = 0 ↔ p w = .undefined ∨ ∃ i, Excluded alts p i ∧ alts i w = .undefined := by
   unfold exh2; split_ifs <;> simp_all
 
-theorem exh1_preserves_presup (h : p w = 0) : exh1 alts p w = 0 :=
+theorem exh1_preserves_presup (h : p w = .undefined) : exh1 alts p w = 0 :=
   (exh1_eq_zero_iff alts p w).2 h
 
-theorem exh2_preserves_presup (h : p w = 0) : exh2 alts p w = 0 :=
+theorem exh2_preserves_presup (h : p w = .undefined) : exh2 alts p w = 0 :=
   (exh2_eq_zero_iff alts p w).2 (Or.inl h)
 
 end Exhaustification.Trivalent

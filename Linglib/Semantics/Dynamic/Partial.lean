@@ -236,10 +236,10 @@ The whole-state domain condition is what separates admittance from per-world fil
 static update `CCP.up`). A context containing a single presupposition-failing world admits
 nothing, rather than silently discarding the world. -/
 def ofTrivalent (p : W → Trivalent) : CCP.Partial W :=
-  fun s ↦ ⟨s ⊆ Function.support p, fun _ ↦ {w ∈ s | p w = 1}⟩
+  fun s ↦ ⟨s ⊆ (Trivalent.gapExt p)ᶜ, fun _ ↦ {w ∈ s | p w = 1}⟩
 
 theorem admits_ofTrivalent (p : W → Trivalent) (s : Set W) :
-    (ofTrivalent p).Admits s ↔ s ⊆ Function.support p := Iff.rfl
+    (ofTrivalent p).Admits s ↔ s ⊆ (Trivalent.gapExt p)ᶜ := Iff.rfl
 
 theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → Trivalent) (s : Set W) :
     (ofTrivalent p).Admits s ↔ Disjoint s (Trivalent.gapExt p) := by
@@ -249,13 +249,13 @@ theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → Trivalent) (s : Set W)
     (ofTrivalent p s).get h = {w ∈ s | p w = 1} := rfl
 
 theorem mem_ofTrivalent (p : W → Trivalent) (s t : Set W) :
-    t ∈ ofTrivalent p s ↔ s ⊆ Function.support p ∧ t = {w ∈ s | p w = 1} :=
+    t ∈ ofTrivalent p s ↔ s ⊆ (Trivalent.gapExt p)ᶜ ∧ t = {w ∈ s | p w = 1} :=
   ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
 theorem mem_ofTrivalent_self (p : W → Trivalent) (s : Set W) :
     s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = 1 := by
   refine ⟨fun ⟨_, e⟩ ↦ Set.sep_eq_self_iff_mem_true.1 e, fun h ↦ ⟨fun w hw ↦ ?_, ?_⟩⟩
-  · simp [Function.mem_support, h w hw]
+  · simp [Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, h w hw]
   · exact Set.sep_eq_self_iff_mem_true.2 h
 
 theorem ofTrivalent_congr {p q : W → Trivalent} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
@@ -354,17 +354,17 @@ open Presupposition (Connective)
 
 theorem admits_seq_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (posExt p)) :=
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.conj.localContext s (posExt p)) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
 theorem admits_cond_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (cond (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (posExt p)) :=
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.cond.localContext s (posExt p)) :=
   admits_seq_ofTrivalent_iff p ψ s
 
 theorem admits_disj_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
     (disj (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (posExt p)) := by
+      s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.disj.localContext s (posExt p)) := by
   have e : s \ {w ∈ s | p w = 1} = Connective.disj.localContext s (posExt p) :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
@@ -382,21 +382,21 @@ stipulation. -/
 /-- Dynamic conjunction admits `s` iff the Middle Kleene conjunction is defined throughout it. -/
 theorem admits_seq_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (p w).meetMiddle (q w) :=
+      s ⊆ (Trivalent.gapExt fun)ᶜ w ↦ (p w).meetMiddle (q w) :=
   (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
 
 /-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
 it. -/
 theorem admits_cond_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
+      s ⊆ (Trivalent.gapExt fun)ᶜ w ↦ (-p w).joinMiddle (q w) :=
   (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
 
 /-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
 the ¬φ local context being Karttunen's negative-antecedent filtering. -/
 theorem admits_disj_ofTrivalent (p q : W → Trivalent) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
-      s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
+      s ⊆ (Trivalent.gapExt fun)ᶜ w ↦ (p w).joinMiddle (q w) :=
   (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_support_joinMiddle_iff.symm
 
 /-! ### The update isomorphism
@@ -421,7 +421,7 @@ theorem ofTrivalent_injective :
   intro p q h
   funext w
   have h₀ : ∀ r : W → Trivalent, (ofTrivalent r {w}).Dom ↔ ¬ r w = 0 := fun r ↦ by
-    simp [ofTrivalent, Function.mem_support]
+    simp [ofTrivalent, Trivalent.mem_compl_gapExt]
   have h₁ : ∀ r : W → Trivalent, {w} ∈ ofTrivalent r {w} ↔ r w = 1 := fun r ↦ by
     simp [mem_ofTrivalent_self]
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
@@ -448,7 +448,7 @@ theorem admits_ofTrivalent_weak {f : Trivalent → Trivalent → Trivalent}
     (hf : ∀ a b, f a b ≠ 0 ↔ a ≠ 0 ∧ b ≠ 0) (p q : W → Trivalent) (s : Set W) :
     (ofTrivalent fun w ↦ f (p w) (q w)).Admits s ↔
       (ofTrivalent p).Admits s ∧ (ofTrivalent q).Admits s := by
-  simp only [admits_ofTrivalent, Set.subset_def, Function.mem_support, hf]
+  simp only [admits_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, hf]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 

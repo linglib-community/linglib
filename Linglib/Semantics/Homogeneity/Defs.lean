@@ -54,7 +54,7 @@ variable {S : Set (Set W)} {φ : Set W} {w : W}
 /-- On a finite family, homogeneity at `w` is definedness at `w` of the supervaluation of truth
 over the family. -/
 theorem homogeneous_coe_iff (s : Finset (Set W)) [DecidablePred fun α : Set W ↦ w ∈ α] :
-    Homogeneous (s : Set (Set W)) w ↔ Trivalent.supervaluation s (w ∈ ·) ≠ 0 := by
+    Homogeneous (s : Set (Set W)) w ↔ Trivalent.supervaluation s (w ∈ ·) ≠ .undefined := by
   rw [Ne, Trivalent.supervaluation_eq_undefined_iff]
   grind [Homogeneous]
 

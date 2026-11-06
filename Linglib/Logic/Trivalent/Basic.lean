@@ -245,9 +245,9 @@ theorem ofProp_ne_undefined_inf_self (a : Trivalent) :
 @[congr] theorem ofProp_congr (h : P ↔ Q) : ofProp P = ofProp Q :=
   eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp [h])
 
-@[simp] theorem ofProp_true : ofProp True = .true := rfl
+@[simp] theorem ofProp_true [Decidable True] : ofProp True = .true := by simp [ofProp]
 
-@[simp] theorem ofProp_false : ofProp False = .false := rfl
+@[simp] theorem ofProp_false [Decidable False] : ofProp False = .false := by simp [ofProp]
 
 @[simp] theorem ofProp_and : ofProp (P ∧ Q) = ofProp P ⊓ ofProp Q := by
   by_cases hP : P <;> by_cases hQ : Q <;> simp [ofProp, hP, hQ]

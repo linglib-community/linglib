@@ -8,7 +8,7 @@ public import Linglib.Logic.Trivalent.Pointwise
 A sentence with a presupposition denotes a trivalent proposition `W → Trivalent`, true or false
 where its presupposition holds and `0` where it fails. A trigger presupposing `A` and asserting
 `B` is the indicator `fun w ↦ Trivalent.transplication (Trivalent.ofProp (A w)) (ofProp (B w)`, its presupposition is its support)
-`Function.support p`, and it holds at `w` when `p w = 1`. Theories of projection differ in their
+`(Trivalent.gapExt p)ᶜ`, and it holds at `w` when `p w = 1`. Theories of projection differ in their
 connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), Karttunen's filtering
 connectives are Peters' Middle Kleene (`Trivalent.meetMiddle`, `Trivalent.joinMiddle`), Bochvar's
 truth operator is `fun w ↦ ofProp (p w = 1)`, and the rival Strong Kleene and Belnap connectives

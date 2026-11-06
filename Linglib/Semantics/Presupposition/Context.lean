@@ -9,7 +9,7 @@ public import Linglib.Discourse.CommonGround
 
 A context set admits a sentence with a presupposition when it entails the presupposition, in the
 tradition of Stalnaker, Karttunen and Heim: for a trivalent proposition `p`, when
-`C ⊆ Function.support p`. An embedded clause is checked in its local context. Karttunen's table
+`C ⊆ (Trivalent.gapExt p)ᶜ`. An embedded clause is checked in its local context. Karttunen's table
 gives the local contexts of the connectives (`Connective.localContext`): a first argument and the
 argument of negation are evaluated in the context itself, the second argument of a conjunction or
 a conditional in the context updated with the first argument, and a second disjunct in the context
@@ -79,9 +79,9 @@ variable {C : Set W} {p q : W → Trivalent}
 /-- A context admits Karttunen's filtering conjunction when it admits the first conjunct and the
 second conjunct's local context admits the second. -/
 theorem subset_support_meetMiddle_iff :
-    C ⊆ Function.support (fun w ↦ (p w).meetMiddle (q w)) ↔
-      C ⊆ Function.support p ∧ conj.localContext C (posExt p) ⊆ Function.support q := by
-  simp only [Set.subset_def, Function.mem_support, ne_eq, Trivalent.meetMiddle_eq_undefined_iff,
+    C ⊆ (Trivalent.gapExt (fun w ↦ (p w).meetMiddle (q w)))ᶜ ↔
+      C ⊆ (Trivalent.gapExt p)ᶜ ∧ conj.localContext C (posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.meetMiddle_eq_undefined_iff,
     not_or, not_and, localContext, Set.mem_inter_iff, mem_posExt, and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
@@ -89,9 +89,9 @@ theorem subset_support_meetMiddle_iff :
 /-- A context admits Karttunen's filtering conditional when it admits the antecedent and the
 consequent's local context admits the consequent. -/
 theorem subset_support_neg_joinMiddle_iff :
-    C ⊆ Function.support (fun w ↦ (-p w).joinMiddle (q w)) ↔
-      C ⊆ Function.support p ∧ cond.localContext C (posExt p) ⊆ Function.support q := by
-  simp only [Set.subset_def, Function.mem_support, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,
+    C ⊆ (Trivalent.gapExt (fun w ↦ ((p w)ᶜ).joinMiddle (q w)))ᶜ ↔
+      C ⊆ (Trivalent.gapExt p)ᶜ ∧ cond.localContext C (posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,
     Trivalent.compl_eq_undefined_iff, Trivalent.compl_eq_false_iff, not_or, not_and, localContext,
     Set.mem_inter_iff, mem_posExt, and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
@@ -100,9 +100,9 @@ theorem subset_support_neg_joinMiddle_iff :
 /-- A context admits Karttunen's filtering disjunction when it admits the first disjunct and the
 second disjunct's local context admits the second. -/
 theorem subset_support_joinMiddle_iff :
-    C ⊆ Function.support (fun w ↦ (p w).joinMiddle (q w)) ↔
-      C ⊆ Function.support p ∧ disj.localContext C (posExt p) ⊆ Function.support q := by
-  simp only [Set.subset_def, Function.mem_support, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,
+    C ⊆ (Trivalent.gapExt (fun w ↦ (p w).joinMiddle (q w)))ᶜ ↔
+      C ⊆ (Trivalent.gapExt p)ᶜ ∧ disj.localContext C (posExt p) ⊆ (Trivalent.gapExt q)ᶜ := by
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, ne_eq, Trivalent.joinMiddle_eq_undefined_iff,
     not_or, not_and, localContext, Set.mem_inter_iff, Set.mem_compl_iff, mem_posExt, and_imp]
   refine ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw h1 ↦ ?_⟩, fun h w hw ↦ ⟨h.1 w hw, ?_⟩⟩
   · exact (h w hw).2 (by have := (h w hw).1; cases hp : p w <;> simp_all)
@@ -117,14 +117,14 @@ defined. Doron and Wehbe's constraint asks that the sentence still be informativ
 Post-Accommodation Informativity, when the context with its presupposition accommodated does not
 entail it. -/
 def PostAccommodationInformative (C : Set W) (p : W → Trivalent) : Prop :=
-  ¬ C ∩ Function.support p ⊆ posExt p
+  ¬ C ∩ (Trivalent.gapExt p)ᶜ ⊆ posExt p
 
 /-- A sentence is informative after accommodation exactly when it is false somewhere in the
 context ([spector-2025], (3) and (4)). -/
 theorem postAccommodationInformative_iff :
-    PostAccommodationInformative C p ↔ ∃ w ∈ C, p w = -1 := by
+    PostAccommodationInformative C p ↔ ∃ w ∈ C, p w = .false := by
   simp only [PostAccommodationInformative, Set.subset_def, Set.mem_inter_iff,
-    Function.mem_support, mem_posExt, not_forall, exists_prop, and_assoc]
+    Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, mem_posExt, not_forall, exists_prop, and_assoc]
   exact exists_congr fun w ↦ and_congr_right fun _ ↦ by cases p w <;> decide
 
 theorem PostAccommodationInformative.mono {C' : Set W} (h : PostAccommodationInformative C p)

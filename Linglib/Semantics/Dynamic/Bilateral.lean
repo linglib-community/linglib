@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Basic.Sign
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
@@ -84,11 +84,12 @@ theorem unknownUpdate_neg (φ : BilateralUpdate W V E) (s) :
   simp only [unknownUpdate, neg, Set.mem_ofPred_eq,
     and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
-/-- The update at a truth value: positive at `1`, negative at `-1` and unknown at `0`. -/
+/-- The update at a truth value: positive at `true`, negative at `false` and unknown at
+`undefined`. -/
 def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Flat E))
-  | .pos => φ.positive
-  | .neg => φ.negative
-  | .zero => φ.unknownUpdate
+  | .true => φ.positive
+  | .false => φ.negative
+  | .undefined => φ.unknownUpdate
 
 @[simp] theorem update_one (φ : BilateralUpdate W V E) : φ.update .true = φ.positive := rfl
 @[simp] theorem update_neg_one (φ : BilateralUpdate W V E) : φ.update (.false) = φ.negative := rfl
@@ -97,15 +98,15 @@ def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Fl
 /-- Negation negates the truth value at which a sentence updates. -/
 theorem update_neg (φ : BilateralUpdate W V E) (a : Trivalent) : (~φ).update a = φ.update (aᶜ) := by
   cases a
-  exacts [funext (unknownUpdate_neg φ), rfl, rfl]
+  exacts [rfl, funext (unknownUpdate_neg φ), rfl]
 
 /-! ### Static updates -/
 
 /-- The static update of a trivalent proposition over points: it keeps the points where the
 proposition is true, positively, and where it is false, negatively. -/
 def ofTrivalent (v : Possibility W V (Flat E) → Trivalent) : BilateralUpdate W V E where
-  positive := CCP.up (posExt v)
-  negative := CCP.up (negExt v)
+  positive := CCP.up (Trivalent.posExt v)
+  negative := CCP.up (Trivalent.negExt v)
 
 variable {v : Possibility W V (Flat E) → Trivalent}
 
@@ -132,9 +133,9 @@ theorem unknownUpdate_ofTrivalent_of_ne_zero (h : ∀ p ∈ s, v p ≠ .undefine
     (ofTrivalent v).unknownUpdate s = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun p ⟨hp, hpos, hneg⟩ ↦ ?_
   match hv : v p with
-  | .pos => exact hpos (subset_lowerClosure ⟨hp, hv⟩)
-  | .neg => exact hneg (subset_lowerClosure ⟨hp, hv⟩)
-  | .zero => exact h p hp hv
+  | .true => exact hpos (subset_lowerClosure ⟨hp, hv⟩)
+  | .false => exact hneg (subset_lowerClosure ⟨hp, hv⟩)
+  | .undefined => exact h p hp hv
 
 open scoped Classical in
 /-- A worldly atom: the proposition at the world of a point. -/
@@ -249,7 +250,7 @@ theorem neg_lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralU
     ~(lift f φ ψ) = lift (fun a b ↦ (f (aᶜ) (bᶜ))ᶜ) (~φ) (~ψ) := by
   have key (c : Trivalent) (p) (s) : (∃ a b, f a b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
       ∃ a b, (f (aᶜ) (bᶜ))ᶜ = cᶜ ∧ p ∈ (~ψ).update b ((~φ).update a s) := by
-    simp only [update_neg, neg_inj]
+    simp only [update_neg, InvolutiveCompl.compl_inj_iff]
     exact ⟨fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, bᶜ, by simpa using h, by simpa using hp⟩,
       fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, bᶜ, h, hp⟩⟩
   ext s p
@@ -258,6 +259,7 @@ theorem neg_lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralU
     simp
   · change p ∈ (lift f φ ψ).positive s ↔ _
     rw [mem_positive_lift, mem_negative_lift, key .true]
+    simp
 
 /-- Conjunction lifts strong Kleene conjunction. -/
 def conj (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E := lift (· ⊓ ·) φ ψ
@@ -282,13 +284,13 @@ def disj (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E := lift (· ⊔
 /-- De Morgan: `¬(φ ∨ ψ)` is `¬φ ∧ ¬ψ`, in both dimensions. -/
 theorem neg_disj (φ ψ : BilateralUpdate W V E) : ~(φ ⊕ ψ) = (~φ) ⊙ (~ψ) := by
   rw [disj, neg_lift]
-  simp only [Trivalent.compl_sup, _root_.neg_neg]
+  simp only [Trivalent.compl_sup, Trivalent.compl_compl]
   rfl
 
 /-- De Morgan: `¬(φ ∧ ψ)` is `¬φ ∨ ¬ψ`, in both dimensions. -/
 theorem neg_conj (φ ψ : BilateralUpdate W V E) : ~(φ ⊙ ψ) = (~φ) ⊕ (~ψ) := by
   rw [conj, neg_lift]
-  simp only [Trivalent.compl_inf, _root_.neg_neg]
+  simp only [Trivalent.compl_inf, Trivalent.compl_compl]
   rfl
 
 /-! ### Responsibility -/

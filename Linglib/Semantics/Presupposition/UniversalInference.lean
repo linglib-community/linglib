@@ -110,12 +110,12 @@ noncomputable def Det.toBool (d : Det α) : (α → Bool) → (α → Bool) → 
 
 /-- A deployed quantifier is true when it holds of every repair. -/
 theorem deployQuantifier_toBool_eq_one_iff {Q : Quantifier α} {A : α → Trivalent} :
-    deployQuantifier Q.toBool A = 1 ↔ ∀ g ∈ repairs A, Q {a | g a} := by
+    deployQuantifier Q.toBool A = .true ↔ ∀ g ∈ repairs A, Q {a | g a} := by
   simp [deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_true_iff, toBool]
 
 /-- A deployed quantifier is false when it fails of every repair. -/
 theorem deployQuantifier_toBool_eq_neg_one_iff {Q : Quantifier α} {A : α → Trivalent} :
-    deployQuantifier Q.toBool A = -1 ↔ ∀ g ∈ repairs A, ¬ Q {a | g a} := by
+    deployQuantifier Q.toBool A = .false ↔ ∀ g ∈ repairs A, ¬ Q {a | g a} := by
   simp [deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_false_iff, toBool,
     repairs_nonempty A]
 
@@ -125,12 +125,12 @@ theorem deployQuantifier_toBool_eq_neg_one_iff {Q : Quantifier α} {A : α → T
 /-- A quantifier has a universal entailment when its deployment on a trivalent predicate is true
 only if the predicate is defined everywhere (Definition 20). -/
 def UniversalEntailment (Q : Quantifier α) : Prop :=
-  ∀ A : α → Trivalent, deployQuantifier Q.toBool A = 1 → ∀ a, A a ≠ 0
+  ∀ A : α → Trivalent, deployQuantifier Q.toBool A = .true → ∀ a, A a ≠ .undefined
 
 /-- A quantifier has a universal anti-entailment when its deployment on a trivalent predicate is
 false only if the predicate is defined everywhere (Definition 21). -/
 def UniversalAntiEntailment (Q : Quantifier α) : Prop :=
-  ∀ A : α → Trivalent, deployQuantifier Q.toBool A = -1 → ∀ a, A a ≠ 0
+  ∀ A : α → Trivalent, deployQuantifier Q.toBool A = .false → ∀ a, A a ≠ .undefined
 
 /-- A quantifier has a universal presupposition when it has a universal entailment and a
 universal anti-entailment (Definition 22). -/
@@ -273,13 +273,13 @@ variable {d : Det α}
 is true only if the nuclear scope is defined throughout `B` (Definition 20). -/
 def UniversalEntailment (d : Det α) : Prop :=
   ∀ (B : α → Bool) (A : α → Trivalent),
-    deployDeterminer d.toBool (fun a ↦ ofProp (B a)) A = 1 → ∀ a, B a → A a ≠ 0
+    deployDeterminer d.toBool (fun a ↦ ofProp (B a)) A = .true → ∀ a, B a → A a ≠ .undefined
 
 /-- A determiner has a universal anti-entailment when its deployment with a classical restrictor
 `B` is false only if the nuclear scope is defined throughout `B` (Definition 21). -/
 def UniversalAntiEntailment (d : Det α) : Prop :=
   ∀ (B : α → Bool) (A : α → Trivalent),
-    deployDeterminer d.toBool (fun a ↦ ofProp (B a)) A = -1 → ∀ a, B a → A a ≠ 0
+    deployDeterminer d.toBool (fun a ↦ ofProp (B a)) A = .false → ∀ a, B a → A a ≠ .undefined
 
 /-- A determiner has a universal presupposition when it has a universal entailment and a
 universal anti-entailment (Definition 22). -/
@@ -289,7 +289,7 @@ def UniversalPresupposition (d : Det α) : Prop :=
 /-- The universal inferences of a determiner, quantified over restrictor sets. -/
 private theorem forall_restrictor_iff (P : Set α → Set α → Prop) :
     (∀ B : α → Bool, ∀ A : α → Trivalent,
-        (∀ g ∈ repairs A, P {a | B a} {a | g a}) → ∀ a, B a → A a ≠ 0) ↔
+        (∀ g ∈ repairs A, P {a | B a} {a | g a}) → ∀ a, B a → A a ≠ .undefined) ↔
       ∀ R B, ∀ a ∈ R, a ∉ B → ¬ (P R B ∧ P R (insert a B)) := by
   classical
   constructor

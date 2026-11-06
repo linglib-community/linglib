@@ -205,19 +205,19 @@ variable (p q : TwoDim W (W → Prop)) {w : W}
 /-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
 not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
 noncomputable def toTrivalent : W → Trivalent :=
-  Set.indicator {w | p.notAtIssue w} fun w ↦ Trivalent.ofProp (p.atIssue w)
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (p.notAtIssue w)) (Trivalent.ofProp (p.atIssue w))
 
-@[simp] theorem toTrivalent_eq_one_iff : p.toTrivalent w = 1 ↔ p.notAtIssue w ∧ p.atIssue w := by
+@[simp] theorem toTrivalent_eq_one_iff : p.toTrivalent w = .true ↔ p.notAtIssue w ∧ p.atIssue w := by
   simp [toTrivalent]
 
 @[simp] theorem toTrivalent_eq_neg_one_iff :
-    p.toTrivalent w = -1 ↔ p.notAtIssue w ∧ ¬ p.atIssue w := by
+    p.toTrivalent w = .false ↔ p.notAtIssue w ∧ ¬ p.atIssue w := by
   simp [toTrivalent]
 
-@[simp] theorem toTrivalent_eq_zero_iff : p.toTrivalent w = 0 ↔ ¬ p.notAtIssue w := by
+@[simp] theorem toTrivalent_eq_zero_iff : p.toTrivalent w = .undefined ↔ ¬ p.notAtIssue w := by
   simp [toTrivalent]
 
-theorem toTrivalent_neg : p.neg.toTrivalent = -p.toTrivalent := by
+theorem toTrivalent_neg : p.neg.toTrivalent = p.toTrivalentᶜ := by
   funext w; by_cases h : p.notAtIssue w <;> by_cases a : p.atIssue w <;> simp [toTrivalent, h, a]
 
 theorem toTrivalent_and : (p.and q).toTrivalent w = (p.toTrivalent w).meetWeak (q.toTrivalent w) :=
@@ -229,20 +229,20 @@ theorem toTrivalent_or : (p.or q).toTrivalent w = (p.toTrivalent w).joinWeak (q.
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
 
 theorem toTrivalent_imp :
-    (p.imp q).toTrivalent w = (-p.toTrivalent w).joinWeak (q.toTrivalent w) := by
+    (p.imp q).toTrivalent w = ((p.toTrivalent w)ᶜ).joinWeak (q.toTrivalent w) := by
   by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
 
 theorem imp_notAtIssue_subset_support :
     {w | (p.imp q).notAtIssue w} ⊆
-      Function.support fun w ↦ (-p.toTrivalent w).joinMiddle (q.toTrivalent w) := fun w h ↦ by
+      (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := fun w h ↦ by
   simp only [Set.mem_ofPred_eq, imp_notAtIssue, Pi.inf_apply, inf_Prop_eq] at h
   simp [h.1, h.2]
 
 theorem exists_notAtIssue_ne_support [Nonempty W] :
     ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
       {w | (f <$> p <*> q).notAtIssue w} ≠
-        Function.support fun w ↦ (-p.toTrivalent w).joinMiddle (q.toTrivalent w) := by
+        (Trivalent.gapExt fun w ↦ (p.toTrivalent w)ᶜ.joinMiddle (q.toTrivalent w))ᶜ := by
   refine ⟨⟨⊥, ⊤⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
   obtain ⟨w⟩ := ‹Nonempty W›
   have := congrArg (w ∈ ·) h

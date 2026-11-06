@@ -38,25 +38,25 @@ variable {W : Type*}
 `p` literally true. This weakens the maxim of Quality, so that a speaker need only assert
 something equivalent, for current purposes, to something true. -/
 def sufficientlyTrue (q : Setoid W) (p : W → Trivalent) (w : W) : Prop :=
-  ∃ w', q w w' ∧ p w' = 1
+  ∃ w', q w w' ∧ p w' = .true
 
 instance sufficientlyTrue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
     (p : W → Trivalent) (w : W) : Decidable (sufficientlyTrue q p w) :=
-  inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = 1))
+  inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = .true))
 
 theorem literal_imp_sufficient (q : Setoid W) (p : W → Trivalent) (w : W)
-    (h : p w = 1) : sufficientlyTrue q p w :=
+    (h : p w = .true) : sufficientlyTrue q p w :=
   ⟨w, q.refl' w, h⟩
 
 /-- `p` addresses issue `q` when no cell of `q` overlaps both the positive and the negative
 extension. Gap-worlds do not count, since only cells straddling the true/false boundary
 disqualify. -/
 def addressesIssue (q : Setoid W) (p : W → Trivalent) : Prop :=
-  ¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1
+  ¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = .true ∧ p w₂ = .false
 
 instance addressesIssue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
     (p : W → Trivalent) : Decidable (addressesIssue q p) :=
-  inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1))
+  inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = .true ∧ p w₂ = .false))
 
 /-- `p` may be used at `w` when it is sufficiently true at `w` and addresses the issue. -/
 def usable (q : Setoid W) (p : W → Trivalent) (w : W) : Prop :=
@@ -69,13 +69,13 @@ instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W
 /-- A usable proposition is not false: a true world in the cell of a false one would straddle the
 true/false boundary ([kriz-2016] §3.4). -/
 theorem usable.ne_neg_one {q : Setoid W} {p : W → Trivalent} {w : W} (h : usable q p w) :
-    p w ≠ -1 := fun hf ↦
+    p w ≠ .false := fun hf ↦
   let ⟨⟨w', hq, ht⟩, hAddr⟩ := h
   hAddr ⟨w', w, q.symm' hq, ht, hf⟩
 
 theorem usable_iff_of_isBivalent {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (w : W) :
-    usable q p w ↔ p w = 1 ∧ addressesIssue q p := by
+    usable q p w ↔ p w = .true ∧ addressesIssue q p := by
   constructor
   · intro h
     exact ⟨(hbiv w).resolve_right h.ne_neg_one, h.2⟩
@@ -87,18 +87,18 @@ theorem usable_iff_of_isBivalent {p : W → Trivalent} (hbiv : Trivalent.IsBival
 /-- A proposition used where it is not literally true is in its extension gap there, so a
 proposition without gaps can be used only where it is true ([kriz-2016] §3.4). -/
 theorem usable.eq_zero_of_ne_one {q : Setoid W} {p : W → Trivalent} {w : W} (h : usable q p w)
-    (hne : p w ≠ 1) : p w = 0 :=
+    (hne : p w ≠ .true) : p w = .undefined :=
   ((Trivalent.trichotomy (p w)).resolve_left h.ne_neg_one).resolve_right hne
 
 theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → Trivalent) (w : W)
-    (h : usable q ((fun v ↦ Trivalent.ofProp (v = 1)) ∘ p) w) : Trivalent.ofProp (p w = 1) = 1 :=
+    (h : usable q ((fun v ↦ Trivalent.ofProp (v = .true)) ∘ p) w) : Trivalent.ofProp (p w = .true) = .true :=
   ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_true p) q w).mp h).1
 
 /-- When `p` is used at `w` under the issue `q`, a sentence mentioning an exception cannot address
 `q` ([kriz-2016] §4.1). -/
 theorem exception_unaddressable (q : Setoid W) (p e : W → Trivalent) (w : W)
-    (hUse : usable q p w) (hEw : e w = 1)
-    (hEfalse : ∀ w', p w' = 1 → e w' = -1) :
+    (hUse : usable q p w) (hEw : e w = .true)
+    (hEfalse : ∀ w', p w' = .true → e w' = .false) :
     ¬ addressesIssue q e := by
   obtain ⟨⟨w', hEq, hTrue⟩, -⟩ := hUse
   exact fun hAddr ↦ hAddr ⟨w, w', hEq, hEw, hEfalse w' hTrue⟩

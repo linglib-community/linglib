@@ -132,26 +132,26 @@ noncomputable def kernelCant : W → Trivalent :=
 
 variable {k φ w}
 
-@[simp] theorem kernelMust_eq_zero_iff : kernelMust k φ w = 0 ↔ k.directlySettles φ := by
+@[simp] theorem kernelMust_eq_zero_iff : kernelMust k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMust]
 
 @[simp] theorem kernelMust_eq_one_iff :
-    kernelMust k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
+    kernelMust k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
   simp [kernelMust]
 
 @[simp] theorem kernelMust_eq_neg_one_iff :
-    kernelMust k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
+    kernelMust k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMight_eq_zero_iff : kernelMight k φ w = 0 ↔ k.directlySettles φ := by
+@[simp] theorem kernelMight_eq_zero_iff : kernelMight k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMight]
 
 @[simp] theorem kernelMight_eq_one_iff :
-    kernelMight k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
+    kernelMight k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
   simp [kernelMight]
 
 @[simp] theorem kernelMight_eq_neg_one_iff :
-    kernelMight k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
+    kernelMight k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
   simp [kernelMight]
 
 /-! ### Core properties -/
@@ -167,12 +167,12 @@ theorem Kernel.compatibleWith_iff_not_followsFrom_not :
 
 /-- *Might* `φ` is the negation of *can't* `φ`, with the same presupposition and the negated
 assertion. -/
-theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
+theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = (kernelCant k φ)ᶜ := by
   ext w
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
 
-theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by
+theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ .undefined := by
   simp [Kernel.directlySettles]
 
 /-! ### Bridge to Kratzer necessity -/

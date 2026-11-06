@@ -111,7 +111,7 @@ def truth : Formula Atom → Set W
 defined where its presupposition holds. -/
 noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Trivalent
   | atom p => fun w ↦ Trivalent.ofProp (w ∈ I p)
-  | trigger p p' => (I p).indicator fun w ↦ Trivalent.ofProp (w ∈ I p')
+  | trigger p p' => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (I p))) (Trivalent.ofProp (w ∈ I p'))
   | not F => -eval C F
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
@@ -190,25 +190,25 @@ theorem nonempty_atom : Formula Atom → Nonempty Atom
   | bin _ F _ => nonempty_atom F
 
 theorem subset_support_middleKleene_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
-    C ⊆ Function.support ((bin c F G).middleKleene I) ↔
-      C ⊆ Function.support (F.middleKleene I) ∧
-        c.localContext C (F.truth I) ⊆ Function.support (G.middleKleene I) := by
+    C ⊆ (Trivalent.gapExt ((bin c F G).middleKleene I))ᶜ ↔
+      C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ ∧
+        c.localContext C (F.truth I) ⊆ (Trivalent.gapExt (G.middleKleene I))ᶜ := by
   have hl (w) : w ∈ c.localContext C (F.truth I) ↔ w ∈ C ∧
       w ∈ c.localContext Set.univ (F.truth I) := by
     cases c <;> simp [Connective.localContext]
-  simp only [Set.subset_def, Function.mem_support, middleKleene_bin_ne_zero I, hl, and_imp]
+  simp only [Set.subset_def, Trivalent.mem_compl_gapExt, Trivalent.mem_gapExt, middleKleene_bin_ne_zero I, hl, and_imp]
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw hc ↦ (h w hw).2 hc⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
 private theorem mem_ofTrivalent_middleKleene {F : Formula Atom} {C : Set W}
-    (h : C ⊆ Function.support (F.middleKleene I)) :
+    (h : C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ) :
     C ∩ F.truth I ∈ CCP.Partial.ofTrivalent (F.middleKleene I) C :=
   (CCP.Partial.mem_ofTrivalent _ _ _).2 ⟨h, Set.ext fun w ↦ and_congr_right fun hw ↦ by
     rw [middleKleene_eq_ofProp I (h hw), Trivalent.ofProp_eq_true_iff]⟩
 
 private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
-    ((F.ccp I).Admits C → C ⊆ Function.support (F.middleKleene I)) ∧
-      (C ⊆ Function.support (F.middleKleene I) → C ∩ F.truth I ∈ F.ccp I C) := by
+    ((F.ccp I).Admits C → C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ) ∧
+      (C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ → C ∩ F.truth I ∈ F.ccp I C) := by
   induction F with
   | atom p => exact fun C ↦ ⟨id, mem_ofTrivalent_middleKleene I⟩
   | trigger p p' => exact fun C ↦ ⟨id, mem_ofTrivalent_middleKleene I⟩
@@ -256,7 +256,7 @@ private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
 /-- The context change potential of a formula admits a context iff the filtering evaluation is
 defined throughout the context. -/
 theorem admits_ccp_iff {F : Formula Atom} {C : Set W} :
-    (F.ccp I).Admits C ↔ C ⊆ Function.support (F.middleKleene I) :=
+    (F.ccp I).Admits C ↔ C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ :=
   ⟨(ccp_spec I F C).1, fun h ↦ Part.dom_iff_mem.2 ⟨_, (ccp_spec I F C).2 h⟩⟩
 
 theorem ccp_get {F : Formula Atom} {C : Set W} (h : (F.ccp I).Admits C) :

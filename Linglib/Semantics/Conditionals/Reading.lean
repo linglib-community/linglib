@@ -80,7 +80,7 @@ propositions. The hypothetical reading is `cond p q`, and the premise reading as
 `p` presupposed. -/
 noncomputable def denote : Reading → W → Trivalent
   | .hypothetical => fun w ↦ Trivalent.ofProp (w ∈ cond p q)
-  | .premise => p.indicator fun w ↦ Trivalent.ofProp (w ∈ q)
+  | .premise => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (w ∈ q))
 
 variable {cond p q} {w : W}
 
@@ -149,26 +149,26 @@ def clauseSignature : Reading → Clause → ProjectivitySignature
   | _, _ => .mono
 
 /-- The entailment direction of a clause under a reading, the sign of its signature. -/
-def clausePolarity (ct : Reading) (c : Clause) : Trivalent := (clauseSignature ct c).sign
+def clausePolarity (ct : Reading) (c : Clause) : SignType := (clauseSignature ct c).sign
 
 /-- The function of a clause under a reading, the other clause held fixed, on truth sets. -/
 def clauseMap (ct : Reading) : Clause → Set W → Set W
-  | .antecedent => fun p' ↦ posExt (ct.denote cond p' q)
-  | .consequent => fun q' ↦ posExt (ct.denote cond p q')
+  | .antecedent => fun p' ↦ Trivalent.posExt (ct.denote cond p' q)
+  | .consequent => fun q' ↦ Trivalent.posExt (ct.denote cond p q')
 
 variable {cond p q}
 
 theorem antitone_posSupport_hypothetical (hD : ∀ w, Monotone (D w)) (q : Set W) :
-    Antitone fun p ↦ posExt (hypothetical.denote (ofDomain D) p q) :=
+    Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (ofDomain D) p q) :=
   fun _ _ h _ hw ↦ denote_hypothetical_eq_one_iff.2
     (ofDomain_anti_left (fun i ↦ hD i h) (denote_hypothetical_eq_one_iff.1 hw))
 
 theorem monotone_posSupport_premise (cond : Set W → Set W → Set W) (q : Set W) :
-    Monotone fun p ↦ posExt (premise.denote cond p q) :=
+    Monotone fun p ↦ Trivalent.posExt (premise.denote cond p q) :=
   fun _ _ h _ hw ↦ denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_left (h ·))
 
 theorem monotone_posSupport_consequent (ct : Reading) (p : Set W) :
-    Monotone fun q ↦ posExt (ct.denote (ofDomain D) p q) := by
+    Monotone fun q ↦ Trivalent.posExt (ct.denote (ofDomain D) p q) := by
   cases ct
   · exact fun _ _ h _ hw ↦
       denote_hypothetical_eq_one_iff.2 (ofDomain_mono_right h (denote_hypothetical_eq_one_iff.1 hw))
@@ -190,14 +190,14 @@ worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2
 not. -/
 theorem exists_not_antitone_hypothetical_closestImp :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (q : Set (Fin 3)),
-      ¬ Antitone fun p ↦ posExt (hypothetical.denote (closestImp ord) p q) := by
+      ¬ Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (closestImp ord) p q) := by
   let ord : Fin 3 → Preorder (Fin 3) := fun _ ↦ Preorder.lift fun v : Fin 3 ↦ (v : ℕ)
   refine ⟨ord, {1}, fun h ↦ ?_⟩
-  have h1 : (0 : Fin 3) ∈ posExt (hypothetical.denote (closestImp ord) {1, 2} {1}) := by
-    simp only [mem_posExt, denote_hypothetical_eq_one_iff]
+  have h1 : (0 : Fin 3) ∈ Trivalent.posExt (hypothetical.denote (closestImp ord) {1, 2} {1}) := by
+    simp only [Trivalent.mem_posExt, denote_hypothetical_eq_one_iff]
     decide
   have h2 := h (show ({2} : Set (Fin 3)) ⊆ {1, 2} by simp) h1
-  simp only [mem_posExt, denote_hypothetical_eq_one_iff] at h2
+  simp only [Trivalent.mem_posExt, denote_hypothetical_eq_one_iff] at h2
   revert h2; decide
 
 end ProjectivitySignature

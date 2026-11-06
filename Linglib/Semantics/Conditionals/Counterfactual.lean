@@ -65,32 +65,32 @@ open Classical in
 /-- The homogeneity counterfactual, which asserts that every closest `p`-world is a `q`-world and
 presupposes that the closest `p`-worlds agree on `q`. -/
 noncomputable def homogeneityCounterfactual : W → Trivalent :=
-  (closestImp ord p q ∪ closestImp ord p qᶜ).indicator
-    fun v ↦ Trivalent.ofProp (v ∈ closestImp ord p q)
+  fun v ↦ Trivalent.transplication (Trivalent.ofProp (v ∈ closestImp ord p q ∪ closestImp ord p qᶜ))
+    (Trivalent.ofProp (v ∈ closestImp ord p q))
 
 variable {ord p q w}
 
 @[simp] theorem homogeneityCounterfactual_eq_one_iff :
-    homogeneityCounterfactual ord p q w = 1 ↔ w ∈ closestImp ord p q := by
+    homogeneityCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
   simp +contextual [homogeneityCounterfactual]
 
 @[simp] theorem homogeneityCounterfactual_eq_neg_one_iff :
-    homogeneityCounterfactual ord p q w = -1 ↔
+    homogeneityCounterfactual ord p q w = .false ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
   simp +contextual [homogeneityCounterfactual, and_comm]
 
 @[simp] theorem homogeneityCounterfactual_eq_zero_iff :
-    homogeneityCounterfactual ord p q w = 0 ↔
+    homogeneityCounterfactual ord p q w = .undefined ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [homogeneityCounterfactual]
 
 theorem support_homogeneityCounterfactual_compl :
-    Function.support (homogeneityCounterfactual ord p qᶜ) =
-      Function.support (homogeneityCounterfactual ord p q) := by
+    (Trivalent.gapExt (homogeneityCounterfactual ord p qᶜ))ᶜ =
+      (Trivalent.gapExt (homogeneityCounterfactual ord p q))ᶜ := by
   ext; simp [and_comm]
 
 theorem homogeneityCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
-    homogeneityCounterfactual ord p qᶜ w = -homogeneityCounterfactual ord p q w := by
+    homogeneityCounterfactual ord p qᶜ w = (homogeneityCounterfactual ord p q w)ᶜ := by
   obtain ⟨v, hv⟩ := h
   refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [and_comm]) ?_
   rw [Trivalent.compl_eq_true_iff, homogeneityCounterfactual_eq_one_iff,
