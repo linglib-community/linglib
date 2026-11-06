@@ -104,7 +104,7 @@ def distributiveConditional : Prop := w ∈ distributiveImp ord (truthmakers alt
 
 /-- The homogeneity presupposition of `DIST_π` is that every truthmaker's counterfactual holds,
 or none does. -/
-def homogeneityPresup : SignType := homogeneousImp ord (truthmakers alts S).toFinset C w
+def homogeneityPresup : Trivalent := homogeneousImp ord (truthmakers alts S).toFinset C w
 
 /-- `[if φ] would ψ` without `DIST_π` holds when the modal extracts the disjunctive closure of
 the truthmakers. -/
@@ -201,7 +201,7 @@ theorem spain_not_distributive :
 
 /-- The homogeneity presupposition of the distributive parsing fails on (8). -/
 theorem spain_homogeneity :
-    homogeneityPresup spainSim spainAlts (axis ∪ allies) foughtAxis .actual = 0 := by
+    homogeneityPresup spainSim spainAlts (axis ∪ allies) foughtAxis .actual = .undefined := by
   decide
 
 end Spain

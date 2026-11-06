@@ -167,17 +167,17 @@ end Context
 open Classical in
 /-- *Just* with the current question `cq` and prejacent `p` presupposes that `cq` is the optimal
 construal of the underspecified question and asserts `p`, (36). -/
-noncomputable def just (c : Context W) (cq : Question W) (p : Set W) : W → SignType :=
-  {_w | c.IsOptimal cq}.indicator fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def just (c : Context W) (cq : Question W) (p : Set W) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (c.IsOptimal cq)) (Trivalent.ofProp (w ∈ p))
 
 variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 
-@[simp] theorem just_eq_zero_iff : just c cq p w = 0 ↔ ¬ c.IsOptimal cq := by simp [just]
+@[simp] theorem just_eq_undefined_iff : just c cq p w = .undefined ↔ ¬ c.IsOptimal cq := by simp [just]
 
-@[simp] theorem just_eq_one_iff : just c cq p w = 1 ↔ c.IsOptimal cq ∧ w ∈ p := by simp [just]
+@[simp] theorem just_eq_true_iff : just c cq p w = .true ↔ c.IsOptimal cq ∧ w ∈ p := by simp [just]
 
-theorem eq_of_just_ne_zero (h : just c cq p w ≠ 0) (h' : just c cq' p' w' ≠ 0) : cq = cq' := by
-  simp only [ne_eq, just_eq_zero_iff, not_not] at h h'
+theorem eq_of_just_ne_undefined (h : just c cq p w ≠ .undefined) (h' : just c cq' p' w' ≠ .undefined) : cq = cq' := by
+  simp only [ne_eq, just_eq_undefined_iff, not_not] at h h'
   exact h.unique h'
 
 /-! ### Partitions: refinement is width, §4.2 and §4.7 -/

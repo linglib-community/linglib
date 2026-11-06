@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Trivalent
 public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Data.Examples.WangDavidson2026
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod
@@ -24,17 +25,18 @@ by a context satisfying both presuppositions (`xorCCPs_admits`). Spector and Sud
 exhaustifiers split: weak-negation EXH¹ is undefined exactly where its prejacent is, so it leaves
 projection alone, while strong-negation EXH² is undefined wherever an innocently excludable
 alternative is, and for a disjunction the conjunction alternative's presupposition together with
-the disjunction's is both disjuncts' (`sup_inf_ne_zero_iff`). The theories predicting that more
+the disjunction's is both disjuncts' (`sup_inf_ne_undefined_iff`). The theories predicting that more
 exclusive readings mean less filtering are the paper's Type A; the paper's Mandarin experiment on
 *huozhe* finds no such effect.
 
 ## Implementation notes
 
-Strong Kleene exclusive disjunction is `-(a * b)`, since multiplication on `SignType` is the
-Strong Kleene biconditional. The exhaustification identity is checked on the four valuations of
+Strong Kleene exclusive disjunction is the negation of the Strong Kleene biconditional
+`(aᶜ ⊔ b) ⊓ (a ⊔ bᶜ)`. The exhaustification identity is checked on the four valuations of
 two atoms, the free model of a propositional identity. George's algorithm is stated as the paper
-renders it, on the set of classical values a trivalent argument leaves open. The experiment's
-ratings are not formalized; its stimuli are in `Data.Examples.WangDavidson2026`.
+renders it, on the set of classical values a trivalent argument leaves open
+(`Trivalent.toFinset`). The experiment's ratings are not formalized; its stimuli are in
+`Data.Examples.WangDavidson2026`.
 
 ## References
 
@@ -58,24 +60,23 @@ open CCP.Partial
 
 /-- A trivalent connective filters from left to right when a defined left argument can make the
 whole defined with an undefined right argument. -/
-def FiltersLR (f : SignType → SignType → SignType) : Prop := ∃ a, f a 0 ≠ 0
+def FiltersLR (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ a, f a .undefined ≠ .undefined
 
 /-- Filtering from right to left. -/
-def FiltersRL (f : SignType → SignType → SignType) : Prop := ∃ b, f 0 b ≠ 0
+def FiltersRL (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ b, f .undefined b ≠ .undefined
 
 /-- A connective filters when it does so in either direction. -/
-def Filters (f : SignType → SignType → SignType) : Prop := FiltersLR f ∨ FiltersRL f
+def Filters (f : Trivalent → Trivalent → Trivalent) : Prop := FiltersLR f ∨ FiltersRL f
 
 -- Table 1
-theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨1, by decide⟩
+theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨.true, by decide⟩
 
-theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨1, by decide⟩
+theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨.true, by decide⟩
 
 /-- Strong Kleene exclusive disjunction never filters (Table 2). -/
-theorem not_filters_xor : ¬ Filters fun a b ↦ -(a * b) := by
-  rintro (⟨a, h⟩ | ⟨b, h⟩)
-  · exact h (SignType.neg_eq_zero_iff.2 (mul_zero a))
-  · exact h (SignType.neg_eq_zero_iff.2 (zero_mul b))
+theorem not_filters_xor : ¬ Filters fun a b ↦ ((aᶜ ⊔ b) ⊓ (a ⊔ bᶜ))ᶜ := by
+  unfold Filters FiltersLR FiltersRL
+  decide
 
 /-! ### Bivalent exhaustification yields exclusive disjunction -/
 
@@ -113,32 +114,26 @@ theorem exh_or : exhIE (Set.range orAlt) (orAlt 0) = {v | Xor v.1 v.2} := by
 
 /-! ### George's algorithm -/
 
-/-- The classical values a trivalent value leaves open. -/
-def values : SignType → Finset Bool
-  | .pos => {true}
-  | .neg => {false}
-  | .zero => Finset.univ
-
 /-- [george-2008]'s algorithm computes the trivalent table of a classical connective, as
 [kalomoiros-schwarz-2024] render it. If the left argument settles the value, that is the value;
 otherwise, if some value of the right argument could make the sentence true, the two arguments
 settle the value or the sentence is undefined; otherwise it is undefined. -/
-def george (f : Bool → Bool → Bool) (a b : SignType) : SignType :=
-  if ∀ x ∈ values a, ∀ y, f x y then 1
-  else if ∀ x ∈ values a, ∀ y, f x y = false then -1
-  else if ∃ y, ∀ x ∈ values a, f x y then
-    if ∀ x ∈ values a, ∀ y ∈ values b, f x y then 1
-    else if ∀ x ∈ values a, ∀ y ∈ values b, f x y = false then -1
-    else 0
-  else 0
+def george (f : Bool → Bool → Bool) (a b : Trivalent) : Trivalent :=
+  if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y then .true
+  else if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y = false then .false
+  else if ∃ y, ∀ x ∈ Trivalent.toFinset a, f x y then
+    if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y then .true
+    else if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y = false then .false
+    else .undefined
+  else .undefined
 
 theorem george_or : george (· || ·) = (· ⊔ ·) := by
   funext a b; revert a b; decide
 
-theorem george_xor : george (· ^^ ·) = fun a b ↦ -(a * b) := by
+theorem george_xor : george (· ^^ ·) = fun a b ↦ ((aᶜ ⊔ b) ⊓ (a ⊔ bᶜ))ᶜ := by
   funext a b; revert a b; decide
 
-theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨-1, by decide⟩
+theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨.false, by decide⟩
 
 theorem not_filtersRL_george_and : ¬ FiltersRL (george (· && ·)) := by
   rintro ⟨b, h⟩; revert b; decide
@@ -149,15 +144,15 @@ theorem not_filters_george_xor : ¬ Filters (george (· ^^ ·)) := george_xor �
 
 section Dynamic
 
-variable {W : Type*} (α β : W → SignType) {s : Set W}
+variable {W : Type*} (α β : W → Trivalent) {s : Set W}
 
 /-- Update with a proposition or with its negation. -/
-def lit : Bool → (W → SignType) → CCP.Partial W
+def lit : Bool → (W → Trivalent) → CCP.Partial W
   | true, p => ofTrivalent p
   | false, p => CCP.Partial.neg (ofTrivalent p)
 
 /-- The context `C[p][q]`, for `p` and `q` propositions or their negations. -/
-def chain (b₁ : Bool) (p : W → SignType) (b₂ : Bool) (q : W → SignType) : CCP.Partial W :=
+def chain (b₁ : Bool) (p : W → Trivalent) (b₂ : Bool) (q : W → Trivalent) : CCP.Partial W :=
   seq (lit b₁ p) (lit b₂ q)
 
 /-- The union of two updates, defined when both are. -/
@@ -179,30 +174,32 @@ def xorCCPs : List (CCP.Partial W) :=
    diff (chain true α true β) (chain false α false β),
    diff (chain true β true α) (chain false β false α)]
 
-theorem subset_support_of_split (h₁ : {w ∈ s | α w = 1} ⊆ Function.support β)
-    (h₂ : s \ {w ∈ s | α w = 1} ⊆ Function.support β) : s ⊆ Function.support β := fun w hw ↦ by
-  by_cases ha : α w = 1
+theorem subset_compl_gapExt_of_split (h₁ : {w ∈ s | α w = .true} ⊆ (Trivalent.gapExt β)ᶜ)
+    (h₂ : s \ {w ∈ s | α w = .true} ⊆ (Trivalent.gapExt β)ᶜ) : s ⊆ (Trivalent.gapExt β)ᶜ :=
+    fun w hw ↦ by
+  by_cases ha : α w = .true
   · exact h₁ ⟨hw, ha⟩
   · exact h₂ ⟨hw, fun h ↦ ha h.2⟩
 
 theorem xorCCPs_admits :
     ∀ u ∈ xorCCPs α β, u.Admits s →
-      s ⊆ Function.support α ∧ s ⊆ Function.support β := by
+      s ⊆ (Trivalent.gapExt α)ᶜ ∧ s ⊆ (Trivalent.gapExt β)ᶜ := by
   simp only [xorCCPs, List.mem_cons, List.mem_nil_iff, or_false]
   rintro u (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl) ⟨⟨h₁, h₂⟩, ⟨h₃, h₄⟩⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, subset_support_of_split α β h₂ h₄⟩
-  · exact ⟨subset_support_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, subset_compl_gapExt_of_split α β h₂ h₄⟩
+  · exact ⟨subset_compl_gapExt_of_split β α h₂ h₄, h₁⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, subset_support_of_split α β h₂ h₄⟩
-  · exact ⟨subset_support_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, subset_compl_gapExt_of_split α β h₂ h₄⟩
+  · exact ⟨subset_compl_gapExt_of_split β α h₂ h₄, h₁⟩
 
 theorem exists_disj_admits_not_admits :
-    ∃ α β : Bool → SignType, (disj (ofTrivalent α) (ofTrivalent β)).Admits Set.univ ∧
-      ¬ Set.univ ⊆ Function.support β := by
-  refine ⟨fun w ↦ SignType.ofProp (w = true), {w | w = false}.indicator 1,
+    ∃ α β : Bool → Trivalent, (disj (ofTrivalent α) (ofTrivalent β)).Admits Set.univ ∧
+      ¬ Set.univ ⊆ (Trivalent.gapExt β)ᶜ := by
+  refine ⟨fun w ↦ Trivalent.ofProp (w = true),
+    fun w ↦ Trivalent.transplication (Trivalent.ofProp (w = false)) .true,
     ⟨fun _ _ ↦ by simp, ?_⟩, fun h ↦ h (Set.mem_univ true) (by simp)⟩
   rintro (_ | _) hw
   · simp
@@ -214,25 +211,25 @@ end Dynamic
 
 /-- Under Strong Kleene (8), the presuppositions of `α ∨ β` and `α ∧ β` together are those of both
 disjuncts. -/
-theorem sup_inf_ne_zero_iff (a b : SignType) :
-    (a ⊔ b ≠ 0 ∧ a ⊓ b ≠ 0) ↔ a ≠ 0 ∧ b ≠ 0 := by
+theorem sup_inf_ne_undefined_iff (a b : Trivalent) :
+    (a ⊔ b ≠ .undefined ∧ a ⊓ b ≠ .undefined) ↔ a ≠ .undefined ∧ b ≠ .undefined := by
   revert a b; decide
 
 /-- A bathroom disjunction on the valuations of two atoms — `bathLeft` is always defined and
 `bathRight` presupposes its negation. -/
-def bathLeft : Val → SignType := fun v ↦ .ofProp v.1
+def bathLeft : Val → Trivalent := fun v ↦ .ofProp v.1
 
-def bathRight : Val → SignType := fun v ↦ if v.1 then 0 else .ofProp v.2
+def bathRight : Val → Trivalent := fun v ↦ if v.1 then .undefined else .ofProp v.2
 
 /-- The alternatives of the bathroom disjunction. -/
-def bathAlts : Fin 3 → Val → SignType :=
+def bathAlts : Fin 3 → Val → Trivalent :=
   ![bathLeft, bathRight, fun v ↦ bathLeft v ⊓ bathRight v]
 
 /-- The inclusive bathroom disjunction. -/
-def bathOr : Val → SignType := fun v ↦ bathLeft v ⊔ bathRight v
+def bathOr : Val → Trivalent := fun v ↦ bathLeft v ⊔ bathRight v
 
-theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = 1 := by decide
+theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = .true := by decide
 
-theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = 0 := by decide
+theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = .undefined := by decide
 
 end WangDavidson2026

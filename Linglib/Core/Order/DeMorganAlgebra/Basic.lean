@@ -16,7 +16,8 @@ is a bounded distributive lattice with an involutive complement, written
 *Kleene algebra* adds Kleene's law `a ⊓ aᶜ ≤ b ⊔ bᶜ`, that contradictions lie below excluded
 middles; Kalman's "normal" lattices with involution are the distributive lattices satisfying it,
 with or without bounds. Every Boolean algebra is a Kleene algebra, the law degenerating through
-`⊥`, and the three-element chain `SignType` is the canonical non-Boolean example.
+`⊥`, and the three-element chain of Kleene's values (`Trivalent`) is the canonical non-Boolean
+example.
 
 "Kleene algebra" here is the lattice notion, not the regular-expression star-semiring of
 mathlib's root `KleeneAlgebra`. Kalman's construction of Kleene algebras from distributive

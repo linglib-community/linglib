@@ -43,7 +43,7 @@ is veridical for declaratives, `DeclVeridical.of_choice`; *know* is c-distributi
 
 Verb meanings are predicates on worlds; the paper's sentence meanings are their principal
 ideals, the non-inquisitive contents `Question.ofSet`. Presuppositional entries are trivalent
-propositions `W → SignType`. Worlds are finite where the paper assumes so, footnote 7, which
+propositions `W → Trivalent`. Worlds are finite where the paper assumes so, footnote 7, which
 gives every resolution an alternative above it. The wh-nucleus of Fact 2 is a family of
 answers, one per individual, with the non-exhaustive reading resolved by an answer or by there
 being none and the exhaustive reading the partition by the set of true answers; the answers are
@@ -197,19 +197,19 @@ def certain (w : W) : Prop := ∀ v ∈ dox x w, dox x w ∈ f v
 
 open Classical in
 /-- *know* with its factivity presupposition, (43), presupposes that the nucleus is true. -/
-noncomputable def knowFactive : W → SignType :=
-  {w | (f w).Nonempty}.indicator fun w ↦ SignType.ofProp (know dox f x w)
+noncomputable def knowFactive : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty)) (Trivalent.ofProp (know dox f x w))
 
 open Classical in
 /-- *be right*, (59), presupposes *be certain* and asserts *know*. -/
-noncomputable def right : W → SignType :=
-  {w | certain dox f x w}.indicator fun w ↦ SignType.ofProp (know dox f x w)
+noncomputable def right : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (certain dox f x w)) (Trivalent.ofProp (know dox f x w))
 
 open Classical in
 /-- *be wrong*, (64), presupposes that the state is a truthful resolution at some world the
 subject considers possible and asserts that it is none at the world of evaluation. -/
-noncomputable def wrong : W → SignType :=
-  {w | ∃ v ∈ dox x w, dox x w ∈ f v}.indicator fun w ↦ SignType.ofProp (dox x w ∉ f w)
+noncomputable def wrong : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ v ∈ dox x w, dox x w ∈ f v)) (Trivalent.ofProp (dox x w ∉ f w))
 
 /-- *be surprised* holds when some maximal truthful resolution at the world of evaluation is
 believed but was not expected (68). -/
@@ -220,9 +220,8 @@ open Classical in
 /-- *care*, (72), presupposes truthful resolutions at the world of evaluation and at every
 world the subject considers possible, and asserts that some maximal truthful resolution at
 some world is desired or undesired. -/
-noncomputable def care (bou : X → W → Set W) : W → SignType :=
-  {w | (f w).Nonempty ∧ ∀ v ∈ dox x w, (f v).Nonempty}.indicator fun w ↦
-    SignType.ofProp (∃ v q, Maximal (· ∈ f v) q ∧ (bou x w ⊆ q ∨ Disjoint (bou x w) q))
+noncomputable def care (bou : X → W → Set W) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty ∧ ∀ v ∈ dox x w, (f v).Nonempty)) (Trivalent.ofProp (∃ v q, Maximal (· ∈ f v) q ∧ (bou x w ⊆ q ∨ Disjoint (bou x w) q)))
 
 variable {dox f x} {P : Question W} {q : Set W} {w : W}
 
@@ -263,17 +262,17 @@ theorem knowInt_Ecmp_iff_of_isPartition [Finite W] (h : P.IsPartition) :
   rw [Ecmp_eq_E_of_isPartition h, knowInt_E_iff]
 
 -- (41)
-theorem knowFactive_ofSet_ne_zero_iff [Finite W] :
-    knowFactive dox (E (ofSet q)) x w ≠ 0 ↔ w ∈ q := by
+theorem knowFactive_ofSet_ne_undefined_iff [Finite W] :
+    knowFactive dox (E (ofSet q)) x w ≠ .undefined ↔ w ∈ q := by
   simp [knowFactive, E_nonempty_iff, info_ofSet]
 
-theorem knowFactive_ne_zero_of_isPartition [Finite W] (h : P.IsPartition) :
-    knowFactive dox (E P) x w ≠ 0 := by
+theorem knowFactive_ne_undefined_of_isPartition [Finite W] (h : P.IsPartition) :
+    knowFactive dox (E P) x w ≠ .undefined := by
   simp [knowFactive, E_nonempty_iff, h.info_eq_univ]
 
 -- (69a)
-theorem care_ofSet_ne_zero_iff [Finite W] (bou : X → W → Set W) :
-    care dox (E (ofSet q)) x bou w ≠ 0 ↔ w ∈ q ∧ dox x w ⊆ q := by
+theorem care_ofSet_ne_undefined_iff [Finite W] (bou : X → W → Set W) :
+    care dox (E (ofSet q)) x bou w ≠ .undefined ↔ w ∈ q ∧ dox x w ⊆ q := by
   simp [care, E_nonempty_iff, info_ofSet, Set.subset_def]
 
 -- (65)

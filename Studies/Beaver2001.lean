@@ -26,7 +26,7 @@ Part I, the file states Strawsonian presupposition and its Strong Kleene project
 * Presupposition and its projection through negation, conjunction and *implies* are the
   substrate's `PartialUpdate.Presupposes` and its lemmas; the study adds *might*, *must* and
   `∂`.
-* `Formula.tval` gives the modal sentences the junk value `0`; every theorem about it
+* `Formula.tval` gives the modal sentences the junk value `undefined`; every theorem about it
   assumes the sentence non-modal.
 
 ## TODO
@@ -55,39 +55,39 @@ variable {P W : Type*}
 
 /-- `φ` presupposes `π` in Strawson's sense (D1) when `π` is true wherever `φ` is
 classical. -/
-def StrawsonPresupposes (φ π : W → SignType) : Prop := ∀ w, φ w ≠ 0 → π w = 1
+def StrawsonPresupposes (φ π : W → Trivalent) : Prop := ∀ w, φ w ≠ .undefined → π w = .true
 
 namespace StrawsonPresupposes
 
-variable {φ ψ π : W → SignType}
+variable {φ ψ π : W → Trivalent}
 
-private theorem of_table (f g : SignType → SignType → SignType)
-    (t : ∀ a b c, (a ≠ 0 → c = 1) → f a b ≠ 0 → g b c = 1)
+private theorem of_table (f g : Trivalent → Trivalent → Trivalent)
+    (t : ∀ a b c, (a ≠ .undefined → c = .true) → f a b ≠ .undefined → g b c = .true)
     (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ f (φ w) (ψ w)) fun w ↦ g (ψ w) (π w) :=
   fun w ↦ t _ _ _ (h w)
 
-/-! The rows of Fact 2.1, with the Strong Kleene connectives `⊓`, `⊔` and `-`, and
+/-! The rows of Fact 2.1, with the Strong Kleene connectives `⊓`, `⊔` and `ᶜ`, and
 `φ → ψ` read as `¬φ ∨ ψ`. -/
 
-theorem neg (h : StrawsonPresupposes φ π) : StrawsonPresupposes (fun w ↦ -φ w) π :=
-  fun w hw ↦ h w (mt SignType.neg_eq_zero_iff.2 hw)
+theorem compl (h : StrawsonPresupposes φ π) : StrawsonPresupposes (fun w ↦ (φ w)ᶜ) π :=
+  fun w hw ↦ h w (mt Trivalent.compl_eq_undefined_iff.2 hw)
 
 theorem and_left (h : StrawsonPresupposes φ π) :
-    StrawsonPresupposes (fun w ↦ φ w ⊓ ψ w) fun w ↦ -ψ w ⊔ π w :=
-  h.of_table (· ⊓ ·) (fun b c ↦ -b ⊔ c) (by decide)
+    StrawsonPresupposes (fun w ↦ φ w ⊓ ψ w) fun w ↦ (ψ w)ᶜ ⊔ π w :=
+  h.of_table (· ⊓ ·) (fun b c ↦ bᶜ ⊔ c) (by decide)
 
 theorem and_right (h : StrawsonPresupposes φ π) :
-    StrawsonPresupposes (fun w ↦ ψ w ⊓ φ w) fun w ↦ -ψ w ⊔ π w :=
-  h.of_table (fun a b ↦ b ⊓ a) (fun b c ↦ -b ⊔ c) (by decide)
+    StrawsonPresupposes (fun w ↦ ψ w ⊓ φ w) fun w ↦ (ψ w)ᶜ ⊔ π w :=
+  h.of_table (fun a b ↦ b ⊓ a) (fun b c ↦ bᶜ ⊔ c) (by decide)
 
 theorem imp_left (h : StrawsonPresupposes φ π) :
-    StrawsonPresupposes (fun w ↦ -φ w ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
-  h.of_table (fun a b ↦ -a ⊔ b) (· ⊔ ·) (by decide)
+    StrawsonPresupposes (fun w ↦ (φ w)ᶜ ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
+  h.of_table (fun a b ↦ aᶜ ⊔ b) (· ⊔ ·) (by decide)
 
 theorem imp_right (h : StrawsonPresupposes φ π) :
-    StrawsonPresupposes (fun w ↦ -ψ w ⊔ φ w) fun w ↦ -ψ w ⊔ π w :=
-  h.of_table (fun a b ↦ -b ⊔ a) (fun b c ↦ -b ⊔ c) (by decide)
+    StrawsonPresupposes (fun w ↦ (ψ w)ᶜ ⊔ φ w) fun w ↦ (ψ w)ᶜ ⊔ π w :=
+  h.of_table (fun a b ↦ bᶜ ⊔ a) (fun b c ↦ bᶜ ⊔ c) (by decide)
 
 theorem or_left (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ φ w ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
@@ -340,13 +340,13 @@ variable (F : P → Set W)
 /-- The value of a sentence of PL+∂ at a world under Peters' trivalent semantics (D70, D71),
 with bivalent atoms, the Peters connectives, and `∂φ` true where `φ` is true and undefined
 elsewhere. -/
-noncomputable def tval : Formula P → W → SignType
+noncomputable def tval : Formula P → W → Trivalent
   | atom p, w => .ofProp (w ∈ F p)
-  | not φ, w => -tval φ w
+  | not φ, w => (tval φ w)ᶜ
   | and φ ψ, w => (tval φ w).meetMiddle (tval ψ w)
-  | presup φ, w => (tval φ w ⊔ 0)
-  | might _, _ => 0
-  | must _, _ => 0
+  | presup φ, w => (tval φ w ⊔ .undefined)
+  | might _, _ => .undefined
+  | must _, _ => .undefined
 
 /-- `φ` is true at `w` in the update semantics (D76) when `{w}[φ]{w}`. -/
 def TrueAt (w : W) (φ : Formula P) : Prop := {w} ∈ φ.eval F {w}
@@ -356,8 +356,8 @@ def FalseAt (w : W) (φ : Formula P) : Prop := ∅ ∈ φ.eval F {w}
 
 end Model
 
-private theorem meetMiddle_ne_zero_iff {a b : SignType} :
-    a.meetMiddle b ≠ 0 ↔ a ≠ 0 ∧ (a = 1 → b ≠ 0) := by
+private theorem meetMiddle_ne_undefined_iff {a b : Trivalent} :
+    a.meetMiddle b ≠ .undefined ↔ a ≠ .undefined ∧ (a = .true → b ≠ .undefined) := by
   cases a <;> cases b <;> decide
 
 /-- On PL+∂ an update is the Heimian update of the sentence's trivalent value (Lemma 10.1, with the
@@ -371,10 +371,10 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @not φ _ ih =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_not, ih]
-    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval, ne_eq,
-      SignType.neg_eq_zero_iff, SignType.neg_eq_one_iff]
-    have e : ∀ t : W → SignType, (∀ w ∈ σ, t w ≠ 0) →
-        σ \ {w ∈ σ | t w = 1} = {w ∈ σ | t w = -1} := fun t h ↦ Set.ext fun w ↦ by
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, tval, ne_eq,
+      Trivalent.compl_eq_undefined_iff, Trivalent.compl_eq_true_iff]
+    have e : ∀ t : W → Trivalent, (∀ w ∈ σ, t w ≠ .undefined) →
+        σ \ {w ∈ σ | t w = .true} = {w ∈ σ | t w = .false} := fun t h ↦ Set.ext fun w ↦ by
       by_cases hw : w ∈ σ
       · have := h w hw; simp only [Set.mem_sdiff, Set.mem_ofPred_eq, hw, true_and]; revert this
         cases t w <;> decide
@@ -384,8 +384,8 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @and φ ψ _ _ ihφ ihψ =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_and, ihφ, ihψ]
-    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval,
-      meetMiddle_ne_zero_iff, SignType.meetMiddle_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, tval,
+      meetMiddle_ne_undefined_iff, Trivalent.meetMiddle_eq_true_iff]
     constructor
     · rintro ⟨_, ⟨h₁, rfl⟩, h₂, rfl⟩
       exact ⟨fun w hw ↦ ⟨h₁ w hw, fun ht ↦ h₂ w ⟨hw, ht⟩⟩, by ext; simp [and_assoc]⟩
@@ -395,20 +395,20 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @presup φ _ ih =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_presup, ih, CCP.Partial.mem_ofTrivalent_self]
-    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval, ne_eq,
-      SignType.sup_zero_eq_zero_iff, not_not, SignType.sup_zero_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Trivalent.mem_compl_gapExt, tval, ne_eq,
+      Trivalent.sup_undefined_eq_undefined_iff, not_not, Trivalent.sup_undefined_eq_true_iff]
     exact and_congr_right fun h ↦ by rw [Set.sep_eq_self_iff_mem_true.2 h]
 
 theorem admits_iff (hφ : NonModal φ) :
-    (φ.eval F).Admits σ ↔ ∀ w ∈ σ, φ.tval F w ≠ 0 := by
+    (φ.eval F).Admits σ ↔ ∀ w ∈ σ, φ.tval F w ≠ .undefined := by
   rw [eval_eq_ofTrivalent hφ]; rfl
 
 -- Lemma 10.1
-theorem trueAt_iff (hφ : NonModal φ) : TrueAt F w φ ↔ φ.tval F w = 1 := by
+theorem trueAt_iff (hφ : NonModal φ) : TrueAt F w φ ↔ φ.tval F w = .true := by
   rw [TrueAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent_self]; simp
 
 -- Lemma 10.1
-theorem falseAt_iff (hφ : NonModal φ) : FalseAt F w φ ↔ φ.tval F w = -1 := by
+theorem falseAt_iff (hφ : NonModal φ) : FalseAt F w φ ↔ φ.tval F w = .false := by
   rw [FalseAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent]
   simp only [Set.mem_singleton_iff, eq_comm (a := (∅ : Set W))]
   cases hv : φ.tval F w <;> simp [Set.eq_empty_iff_forall_notMem, hv]
@@ -434,7 +434,7 @@ theorem entails_iff_satisfies (hφ : NonModal φ) (hψ : NonModal ψ) :
 
 /-- The update and trivalent entailments coincide on PL+∂ (Fact 10.3). -/
 theorem entails_iff_tval (hφ : NonModal φ) (hψ : NonModal ψ) :
-    Entails F φ ψ ↔ ∀ w, φ.tval F w = 1 → ψ.tval F w = 1 := by
+    Entails F φ ψ ↔ ∀ w, φ.tval F w = .true → ψ.tval F w = .true := by
   rw [entails_iff hφ hψ]
   exact forall_congr' fun w ↦ imp_congr (trueAt_iff hφ) (trueAt_iff hψ)
 
@@ -456,9 +456,9 @@ theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
   rw [presupposes_iff_strawsonPresupposes hφ hψ]
   intro w hw
   cases hv : φ.tval F w with
-  | pos => exact h₁ w hv
-  | neg => exact h₂ w (show -φ.tval F w = 1 by rw [hv]; rfl)
-  | zero => exact absurd hv hw
+  | true => exact h₁ w hv
+  | false => exact h₂ w (show (φ.tval F w)ᶜ = .true by rw [hv]; rfl)
+  | undefined => exact absurd hv hw
 
 end Formula
 
@@ -552,7 +552,7 @@ theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
     (presup_and_presupposes _ _).might.entails (.atom _),
     DynamicSemantics.Entails.trans ((presup_and_presupposes _ _).entails hR)
       ((entails_iff_tval hR ((NonModal.atom _).and (.atom _))).2 fun w ↦ by
-        simp [tval, SignType.meetMiddle_eq_one_iff]),
+        simp [tval, Trivalent.meetMiddle_eq_true_iff]),
     (presup_and_presupposes _ _).implies_right.entails
       ((NonModal.atom _).not.implies (.atom _))]
 
@@ -596,6 +596,6 @@ theorem e177_admits (F : Atom → Set W) (σ : Set W) :
   refine (admits_iff ((NonModal.atom _).and ((NonModal.atom _).presup.and (.atom _)))).2
     fun w _ ↦ ?_
   by_cases hw : w ∈ F .hiding <;>
-    simp [tval, hw, SignType.meetMiddle_one_left, SignType.meetMiddle_neg_one_left]
+    simp [tval, hw, Trivalent.meetMiddle_true_left, Trivalent.meetMiddle_false_left]
 
 end Beaver2001

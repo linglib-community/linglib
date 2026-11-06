@@ -66,9 +66,9 @@ def Better (A : Set (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈
 open Classical in
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
 the belief worlds are strictly better than every relevant non-`p` world. -/
-noncomputable def gladBetter : W → SignType :=
-  (Function.support (glad dox rel g p)).indicator
-    fun w ↦ SignType.ofProp (Better (g w) (dox w) (rel w \ p))
+noncomputable def gladBetter : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ))
+    (Trivalent.ofProp (Better (g w) (dox w) (rel w \ p)))
 
 /-- The set-comparison *glad* is still Strawson upward entailing in its complement (§3.3). -/
 theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
@@ -78,8 +78,8 @@ theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
 
 /-- On the best-worlds *glad*, *a wants p and believes p* entails *a is glad that p*, the
 inference [kadmon-landman-1993] draw, when the modal base contains the belief worlds. -/
-theorem glad_eq_one_of_want_eq_one {w : W} (hd : dox w ⊆ rel w) (hb : dox w ⊆ p)
-    (hw : want rel g p w = 1) : glad dox rel g p w = 1 := by
+theorem glad_eq_true_of_want_eq_true {w : W} (hd : dox w ⊆ rel w) (hb : dox w ⊆ p)
+    (hw : want rel g p w = .true) : glad dox rel g p w = .true := by
   simp [glad, hd, hb, hw]
 
 /-- The Honda Civic scenario refutes that inference on the set-comparison *glad*. World `0` is
@@ -88,13 +88,13 @@ where none is; the subject believes `0`, wants the good Civic, and is not glad t
 bought, since `0` is no better than `2`. -/
 theorem not_gladBetter_of_want :
     ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Fin 3 → Prop)) (p : Set (Fin 3))
-      (w : Fin 3), dox w ⊆ p ∧ want rel g p w = 1 ∧ gladBetter dox rel g p w = -1 := by
+      (w : Fin 3), dox w ⊆ p ∧ want rel g p w = .true ∧ gladBetter dox rel g p w = .false := by
   refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, ?_, ?_⟩
-  · refine want_eq_one_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
+  · refine want_eq_true_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
     simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide
-  · simp only [gladBetter, Trivalent.indicator_apply_eq_neg_one_iff, SignType.ofProp_eq_neg_one_iff]
+  · simp only [gladBetter, Trivalent.transplication_eq_false_iff, Trivalent.ofProp_eq_false_iff]
     refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
     simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
@@ -103,9 +103,9 @@ theorem not_gladBetter_of_want :
 open Classical in
 /-- The set-comparison *sorry* (54) has the presupposition of *glad* and asserts that every
 relevant non-`p` world is strictly better than every belief world. -/
-noncomputable def regretBetter : W → SignType :=
-  (Function.support (glad dox rel g p)).indicator
-    fun w ↦ SignType.ofProp (Better (g w) (rel w \ p) (dox w))
+noncomputable def regretBetter : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ))
+    (Trivalent.ofProp (Better (g w) (rel w \ p) (dox w)))
 
 /-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
@@ -120,13 +120,13 @@ theorem not_isStrawsonDE_regretBetter :
     ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {(· = 2)})) :=
   fun h ↦ by
     have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
-        simp only [regretBetter, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
+        simp only [regretBetter, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
         refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
         simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
           Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
         decide)
       (by simpa [regretBetter, glad] using ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩)
-    simp only [regretBetter, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff,
+    simp only [regretBetter, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff,
       Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff, Set.mem_singleton_iff,
       forall_eq, Set.mem_sdiff, Set.mem_univ, true_and] at this
     exact absurd (this.2 1 (by decide)) (by decide)
@@ -151,12 +151,16 @@ variable (C : Set (Set W)) (p : Set W)
 open Classical in
 /-- *Only* in the entry (68b) presupposes the prejacent and that no alternative is entailed by
 it, and asserts that every true alternative is the prejacent. -/
-noncomputable def only68b : W → SignType :=
-  {w | w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r}.indicator fun w ↦ SignType.ofProp (w ∈ atMost (· = ·) C id p)
+noncomputable def only68b : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r))
+    (Trivalent.ofProp (w ∈ atMost (· = ·) C id p))
 
+open Classical in
 /-- With (68b), no downward inference within one set of alternatives can be assessed (p. 134). -/
-theorem only68b_eq_zero {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) : only68b C q w = 0 :=
-  Set.indicator_of_notMem (fun h ↦ h.2 ⟨p, hp, hqp⟩) _
+theorem only68b_eq_undefined {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) :
+    only68b C q w = .undefined :=
+  Trivalent.transplication_eq_undefined_iff.2 <| .inl <|
+    Trivalent.ofProp_eq_true_iff.not.2 fun h ↦ h.2 ⟨p, hp, hqp⟩
 
 end Only
 
@@ -187,18 +191,18 @@ variable {D : Type*} [Preorder D] (μ : ι → D) (C : W → Set ι) (d : D)
 open Classical in
 /-- *The μ-est C exceeds d* presupposes a superlative individual and asserts that every such
 individual exceeds `d`. -/
-noncomputable def theSuperlativeExceeds : W → SignType :=
-  {w | ∃ a, trivalentSuperlative μ C a w = 1}.indicator
-    fun w ↦ SignType.ofProp (∀ a, trivalentSuperlative μ C a w = 1 → d < μ a)
+noncomputable def theSuperlativeExceeds : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ a, trivalentSuperlative μ C a w = .true))
+    (Trivalent.ofProp (∀ a, trivalentSuperlative μ C a w = .true → d < μ a))
 
 /-- The definite-description superlative is not Strawson downward entailing (80). -/
 theorem not_isStrawsonDE_theSuperlativeExceeds :
     ¬ IsStrawsonDE (theSuperlativeExceeds (W := Unit) (fun b : Bool ↦ if b then 3 else 5) · 4) :=
   fun h ↦ by
     have := @h (fun _ ↦ {true}) (fun _ ↦ Set.univ) (fun _ _ _ ↦ trivial) ()
-    simp only [theSuperlativeExceeds, trivalentSuperlative_eq_one_iff,
-      Trivalent.indicator_apply_eq_one_iff, Set.indicator_apply_eq_zero, ne_eq,
-      SignType.ofProp_eq_one_iff, SignType.ofProp_ne_zero, Set.mem_ofPred_eq,
+    simp only [theSuperlativeExceeds, trivalentSuperlative_eq_true_iff,
+      Trivalent.transplication_eq_true_iff, Trivalent.transplication_eq_undefined_iff, ne_eq,
+      Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
       Set.mem_singleton_iff, Set.mem_univ] at this
     revert this
     decide

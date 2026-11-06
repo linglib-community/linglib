@@ -278,17 +278,17 @@ variable [∀ C (x : E), Decidable (x ∈ d C)] {a b : E} (S : Finset (Set E))
 
 theorem IsMonotoneOn.supervaluation_eq_true_of_comparative (hmono : d.IsMonotoneOn ↑S)
     (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∈ d.neg C)
-    (hb : SignType.supervaluation S (b ∈ d ·) = 1) :
-    SignType.supervaluation S (a ∈ d ·) = 1 := by
-  rw [SignType.supervaluation_eq_one_iff] at hb ⊢
+    (hb : Trivalent.supervaluation S (b ∈ d ·) = .true) :
+    Trivalent.supervaluation S (a ∈ d ·) = .true := by
+  rw [Trivalent.supervaluation_eq_true_iff] at hb ⊢
   obtain ⟨C₀, hC₀, haC₀, hbC₀⟩ := hdisc
   exact fun C hC ↦ (hmono C₀ hC₀ C hC a b haC₀ hbC₀).1 (hb C hC)
 
 variable (d) in
 theorem supervaluation_ne_true_of_comparative (hdisc : ∃ C ∈ S, a ∈ d C ∧ b ∈ d.neg C) :
-    SignType.supervaluation S (b ∈ d ·) ≠ 1 := fun h ↦
+    Trivalent.supervaluation S (b ∈ d ·) ≠ .true := fun h ↦
   let ⟨C₀, hC₀, _, hb⟩ := hdisc
-  d.notMem_neg_of_mem ((SignType.supervaluation_eq_one_iff ..).mp h C₀ hC₀) hb
+  d.notMem_neg_of_mem ((Trivalent.supervaluation_eq_true_iff ..).mp h C₀ hC₀) hb
 
 end Supervaluation
 

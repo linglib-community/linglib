@@ -42,20 +42,20 @@ theorem selector_eq_assignment :
 /-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
 the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
 theorem undefined_of_masculine (hfem : e.gender = some .Fem) (h : g n ∈ Gendered.masculine) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ = .undefined := by
   simp [hfem, h]
 
 theorem she_undefined_of_masculine (h : g n ∈ Gendered.masculine) :
-    (she.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
+    (she.denote n c).toTrivalent scope g ⟨⟩ = .undefined :=
   undefined_of_masculine she g n c scope rfl h
 
 /-- A first-person pronoun is undefined of a referent that does not include the agent. -/
 theorem undefined_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ = .undefined := by
   simp [hp, h]
 
 theorem i_undefined_of_not_agent (h : ¬ c.agent ≤ g n) :
-    (i.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
+    (i.denote n c).toTrivalent scope g ⟨⟩ = .undefined :=
   undefined_of_not_agent i g n c scope (by decide) h
 
 /-- An entry carrying only unmarked values — third person, plural, no gender — restricts the
@@ -64,17 +64,17 @@ a feature rather than a feature of their own, which is why the underspecified fo
 avoid a gender specification. -/
 theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined := by
   simp [hp, hn, hg]
 
 theorem they_defined_regardless_of_gender :
-    (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
+    (they.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined :=
   defined_of_unmarked_features they g n c scope (by decide) (by decide) rfl
 
 /-- The two entries come apart exactly at the referents the gender feature excludes, where *she*
 has no value and *they* has one. -/
 theorem they_defined_where_she_undefined (h : g n ∈ Gendered.masculine) :
-    (she.denote n c).toTrivalent scope g ⟨⟩ = 0 ∧ (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
+    (she.denote n c).toTrivalent scope g ⟨⟩ = .undefined ∧ (they.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined :=
   ⟨she_undefined_of_masculine g n c scope h,
     they_defined_regardless_of_gender g n c scope⟩
 

@@ -379,12 +379,12 @@ def holds {W : Type*} [Membership ι W] (i : ι) : Set W := {w | i ∈ w}
 @[simp] theorem mem_holds {W : Type*} [Membership ι W] {w : W} : w ∈ holds i ↔ i ∈ w := .rfl
 
 /-- The entry ch. 5 (50), *kàn* or silent, over the alternatives `P`. -/
-noncomputable abbrev exclusive {W : Type*} (P : ι → Set W) (i : ι) : W → SignType :=
+noncomputable abbrev exclusive {W : Type*} (P : ι → Set W) (i : ι) : W → Trivalent :=
   only (· ⊆ ·) (range P) id (P i)
 
-theorem exclusive_eq_one_iff {W : Type*} {P : ι → Set W} {w : W} (hP : ∀ j, P i ⊆ P j → j = i) :
-    exclusive P i w = 1 ↔ w ∈ P i ∧ ∀ j, j ≠ i → w ∉ P j := by
-  rw [exclusive, ← only_eq_eq_only_subset_range hP, only_eq_eq_one_iff (mem_univ i)]
+theorem exclusive_eq_true_iff {W : Type*} {P : ι → Set W} {w : W} (hP : ∀ j, P i ⊆ P j → j = i) :
+    exclusive P i w = .true ↔ w ∈ P i ∧ ∀ j, j ≠ i → w ∉ P j := by
+  rw [exclusive, ← only_eq_eq_only_subset_range hP, only_eq_eq_true_iff (mem_univ i)]
   simp
 
 theorem holds_subset_holds {j : ι} (h : holds i ⊆ (holds j : Set (Set ι))) : j = i := by
@@ -409,6 +409,7 @@ theorem exclusive_reaches_eq [PartialOrder ι] :
     refine Set.ext fun w ↦ ⟨fun h j _ hj ↦ (hc j i).1 (h _ (mem_range_self j) ⟨j, hj, le_rfl⟩), ?_⟩
     rintro h _ ⟨j, rfl⟩ ⟨k, hk, hjk⟩
     exact (hc j i).2 (hjk.trans (h k (mem_univ k) hk))
+  funext w
   rw [exclusive, only, only, hL, hM]
 
 /-- The scale a particle sets, ch. 5 (66). -/
@@ -434,26 +435,26 @@ instance [DecidableEq ι] [DecidableLE ι] : ∀ (s : Scale) (i j : ι), Decidab
 
 theorem Scale.allows_refl (s : Scale) (i : ι) : s.Allows i i := by cases s <;> simp [Scale.Allows]
 
-theorem exclusive_alternative_eq_one_iff :
-    exclusive s.alternative i w = 1 ↔ i ∈ w ∧ ∀ j ∈ w, s.Allows i j := by
+theorem exclusive_alternative_eq_true_iff :
+    exclusive s.alternative i w = .true ↔ i ∈ w ∧ ∀ j ∈ w, s.Allows i j := by
   cases s
-  · rw [Scale.alternative, exclusive_eq_one_iff fun _ ↦ holds_subset_holds]
+  · rw [Scale.alternative, exclusive_eq_true_iff fun _ ↦ holds_subset_holds]
     simp only [mem_holds, Scale.Allows]
     grind
   · rw [Scale.alternative, exclusive_reaches_eq]
-    refine only_ge_eq_one_iff.trans ?_
+    refine only_ge_eq_true_iff.trans ?_
     simp [IsGreatest, upperBounds, Scale.Allows]
 
 /-- *He is only `i`. He is also `c`*, of another `c`, can hold together. -/
 def Scale.Compatible (s : Scale) (i c : ι) : Prop :=
-  c ≠ i ∧ ∃ w, exclusive s.alternative i w = 1 ∧ additive (· = ·) univ holds c w = 1
+  c ≠ i ∧ ∃ w, exclusive s.alternative i w = .true ∧ additive (· = ·) univ holds c w = .true
 
 theorem compatible_iff : s.Compatible i c ↔ c ≠ i ∧ s.Allows i c := by
   refine and_congr_right fun hc ↦ ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨w, h₁, h₂⟩
-    exact (exclusive_alternative_eq_one_iff.1 h₁).2 c (additive_eq_one_iff.1 h₂).2
-  · refine ⟨{c, i}, exclusive_alternative_eq_one_iff.2 ⟨by simp, ?_⟩,
-      additive_eq_one_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
+    exact (exclusive_alternative_eq_true_iff.1 h₁).2 c (additive_eq_true_iff.1 h₂).2
+  · refine ⟨{c, i}, exclusive_alternative_eq_true_iff.2 ⟨by simp, ?_⟩,
+      additive_eq_true_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
     rintro j (rfl | rfl)
     exacts [h, s.allows_refl _]
 
@@ -462,23 +463,23 @@ instance [DecidableEq ι] [DecidableLE ι] : Decidable (s.Compatible i c) :=
 
 /-- The exclusive is true where just the alternatives in `l` hold. -/
 def Scale.TrueOf (s : Scale) (i : ι) (l : List ι) : Prop :=
-  exclusive s.alternative i {x | x ∈ l} = 1
+  exclusive s.alternative i {x | x ∈ l} = .true
 
 theorem trueOf_iff {l : List ι} : s.TrueOf i l ↔ i ∈ l ∧ ∀ j ∈ l, s.Allows i j :=
-  exclusive_alternative_eq_one_iff.trans (by simp)
+  exclusive_alternative_eq_true_iff.trans (by simp)
 
 instance [DecidableEq ι] [DecidableLE ι] {l : List ι} : Decidable (s.TrueOf i l) :=
   decidable_of_iff _ trueOf_iff.symm
 
 -- (158), p. 99: exhaustivity is what rules out the additive continuation of a bare answer.
 theorem exists_additive_iff (hc : c ≠ i) :
-    (∃ w : Set ι, (if a.Exhaustive then exclusive holds i w = 1 else i ∈ w) ∧
-      additive (· = ·) univ holds c w = 1) ↔ ¬ a.Exhaustive := by
+    (∃ w : Set ι, (if a.Exhaustive then exclusive holds i w = .true else i ∈ w) ∧
+      additive (· = ·) univ holds c w = .true) ↔ ¬ a.Exhaustive := by
   by_cases h : a.Exhaustive
   · simp only [h, ite_true, not_true_eq_false, iff_false]
     exact fun ⟨w, h₁, h₂⟩ ↦ hc (compatible_iff (s := .entailment) |>.1 ⟨hc, w, h₁, h₂⟩).2
   · simp only [h, ite_false, not_false_eq_true, iff_true]
-    exact ⟨{c, i}, by simp, additive_eq_one_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
+    exact ⟨{c, i}, by simp, additive_eq_true_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
 
 end Exclusive
 
@@ -487,18 +488,18 @@ section Negation
 variable {ι : Type*} {i : ι} {w : Set ι}
 
 -- ch. 5 (58): under negation the prejacent survives.
-theorem exclusive_holds_eq_neg_one_iff :
-    exclusive holds i w = -1 ↔ i ∈ w ∧ ∃ j ∈ w, j ≠ i := by
+theorem exclusive_holds_eq_false_iff :
+    exclusive holds i w = .false ↔ i ∈ w ∧ ∃ j ∈ w, j ≠ i := by
   rw [exclusive, ← only_eq_eq_only_subset_range fun _ ↦ holds_subset_holds]
-  simp only [only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
+  simp only [only_eq_false_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
     true_implies]
   grind
 
 -- ch. 5 (59): under negation only something higher holds, not the prejacent.
-theorem exclusive_reaches_eq_neg_one_iff [LinearOrder ι] :
-    exclusive reaches i w = -1 ↔ ∃ j ∈ w, i < j := by
+theorem exclusive_reaches_eq_false_iff [LinearOrder ι] :
+    exclusive reaches i w = .false ↔ ∃ j ∈ w, i < j := by
   rw [exclusive_reaches_eq]
-  simp only [only_eq_neg_one_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
+  simp only [only_eq_false_iff, mem_atLeast, mem_atMost, mem_univ, true_and, mem_holds,
     true_implies, not_forall, exists_prop, ge_iff_le, not_le]
   exact ⟨fun ⟨_, h⟩ ↦ h, fun ⟨j, hj, hij⟩ ↦ ⟨⟨j, hj, hij.le⟩, j, hj, hij⟩⟩
 
@@ -572,18 +573,18 @@ theorem mem_numeral_core {n : ℕ} {w : World} :
 both scopes of a quantifier of the two with an individual trace, (31), (32) [hirsch-2017]. -/
 theorem split_scope (w : World) :
     (Examples.ch5_30c.JudgedFelicitous ↔
-      exclusive (fun n ↦ required.core (numeral slaughter n)) 2 w = 1) ∧
-    w ∉ required.core {v | exclusive (numeral slaughter) 2 v = 1} ∧
-    exclusive (numeral fun x ↦ required.core (slaughter x)) 2 w ≠ 1 := by
-  refine ⟨iff_of_true (by decide) (only_eq_one_iff.2 ⟨⟨_, ⟨2, rfl⟩, mem_core_numeral.2 le_rfl,
+      exclusive (fun n ↦ required.core (numeral slaughter n)) 2 w = .true) ∧
+    w ∉ required.core {v | exclusive (numeral slaughter) 2 v = .true} ∧
+    exclusive (numeral fun x ↦ required.core (slaughter x)) 2 w ≠ .true := by
+  refine ⟨iff_of_true (by decide) (only_eq_true_iff.2 ⟨⟨_, ⟨2, rfl⟩, mem_core_numeral.2 le_rfl,
     subset_rfl⟩, ?_⟩), fun h ↦ ?_, fun h ↦ ?_⟩
   · rintro _ ⟨n, rfl⟩ hw v -
     exact mem_core_numeral.2 (mem_core_numeral.1 hw)
-  · have hu := only_eq_one_iff.1 (h (b := Finset.univ) (mem_required.2 (by decide)))
+  · have hu := only_eq_true_iff.1 (h (b := Finset.univ) (mem_required.2 (by decide)))
     have h3 := hu.2 _ ⟨3, rfl⟩ (mem_numeral_slaughter.2 (by decide))
     exact absurd (mem_numeral_slaughter.1 (h3 (mem_numeral_slaughter.2
       (show 2 ≤ ({0, 1} : Finset Fowl).card by decide)))) (by decide)
-  · obtain ⟨⟨_, ⟨n, rfl⟩, hw, hsub⟩, -⟩ := only_eq_one_iff.1 h
+  · obtain ⟨⟨_, ⟨n, rfl⟩, hw, hsub⟩, -⟩ := only_eq_true_iff.1 h
     exact two_ne_zero (mem_numeral_core.1 (hsub hw))
 
 /-! ### Concord -/
@@ -593,42 +594,42 @@ section Concord
 variable {α β : Type*} {a : α} {b : β} {w : Set (α × β)}
 
 /-- One operator over the pairs, ch. 5 (47). -/
-noncomputable def concord (a : α) (b : β) : Set (α × β) → SignType :=
+noncomputable def concord (a : α) (b : β) : Set (α × β) → Trivalent :=
   exclusive holds (a, b)
 
 /-- Two operators, ch. 5 (49). -/
-noncomputable def double (a : α) (b : β) : Set (α × β) → SignType :=
-  exclusive (fun x ↦ {w | exclusive (fun y ↦ holds (x, y)) b w = 1}) a
+noncomputable def double (a : α) (b : β) : Set (α × β) → Trivalent :=
+  exclusive (fun x ↦ {w | exclusive (fun y ↦ holds (x, y)) b w = .true}) a
 
-private theorem only_b_eq_one_iff {x : α} :
-    exclusive (fun y ↦ holds (x, y)) b w = 1 ↔ (x, b) ∈ w ∧ ∀ y, y ≠ b → (x, y) ∉ w :=
-  exclusive_eq_one_iff fun j h ↦ by
+private theorem only_b_eq_true_iff {x : α} :
+    exclusive (fun y ↦ holds (x, y)) b w = .true ↔ (x, b) ∈ w ∧ ∀ y, y ≠ b → (x, y) ∉ w :=
+  exclusive_eq_true_iff fun j h ↦ by
     simpa using h (show ({(x, b)} : Set (α × β)) ∈ holds (x, b) from rfl)
 
-theorem concord_eq_one_iff : concord a b w = 1 ↔ w = {(a, b)} := by
-  rw [concord, exclusive_eq_one_iff fun _ ↦ holds_subset_holds, eq_singleton_iff_unique_mem]
+theorem concord_eq_true_iff : concord a b w = .true ↔ w = {(a, b)} := by
+  rw [concord, exclusive_eq_true_iff fun _ ↦ holds_subset_holds, eq_singleton_iff_unique_mem]
   simp only [mem_holds, ne_eq, not_imp_not]
 
-theorem double_eq_one_iff :
-    double a b w = 1 ↔ ((a, b) ∈ w ∧ ∀ y, y ≠ b → (a, y) ∉ w) ∧
+theorem double_eq_true_iff :
+    double a b w = .true ↔ ((a, b) ∈ w ∧ ∀ y, y ≠ b → (a, y) ∉ w) ∧
       ∀ x, x ≠ a → ¬ ((x, b) ∈ w ∧ ∀ y, y ≠ b → (x, y) ∉ w) := by
-  rw [double, exclusive_eq_one_iff fun j h ↦ ?_]
-  · simp only [mem_ofPred_eq, only_b_eq_one_iff]
-  · have h₀ := only_b_eq_one_iff.1 (h (a := {(a, b)}) (only_b_eq_one_iff.2 (by simp)))
+  rw [double, exclusive_eq_true_iff fun j h ↦ ?_]
+  · simp only [mem_ofPred_eq, only_b_eq_true_iff]
+  · have h₀ := only_b_eq_true_iff.1 (h (a := {(a, b)}) (only_b_eq_true_iff.2 (by simp)))
     simpa using h₀.1
 
 /-- The concord reading entails the double one (ch. 5 (46-c), (120)). -/
-theorem double_of_concord (h : concord a b w = 1) : double a b w = 1 := by
-  obtain rfl := concord_eq_one_iff.1 h
-  simp [double_eq_one_iff]
+theorem double_of_concord (h : concord a b w = .true) : double a b w = .true := by
+  obtain rfl := concord_eq_true_iff.1 h
+  simp [double_eq_true_iff]
 
 -- ch. 5 p. 168: `a` alone ate only `b`, and `c` ate `b` and `d`.
 theorem not_concord_of_double {c : α} {d : β} (hc : c ≠ a) (hd : d ≠ b) :
-    double a b {(a, b), (c, b), (c, d)} = 1 ∧ concord a b {(a, b), (c, b), (c, d)} ≠ 1 := by
-  refine ⟨double_eq_one_iff.2 ?_, fun h ↦ ?_⟩
+    double a b {(a, b), (c, b), (c, d)} = .true ∧ concord a b {(a, b), (c, b), (c, d)} ≠ .true := by
+  refine ⟨double_eq_true_iff.2 ?_, fun h ↦ ?_⟩
   · simp only [mem_insert_iff, mem_singleton_iff, Prod.mk.injEq]
     grind
-  · have := (eq_singleton_iff_unique_mem.1 (concord_eq_one_iff.1 h)).2 (c, b) (by simp)
+  · have := (eq_singleton_iff_unique_mem.1 (concord_eq_true_iff.1 h)).2 (c, b) (by simp)
     simp_all
 
 end Concord

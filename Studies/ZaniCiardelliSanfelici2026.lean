@@ -163,8 +163,8 @@ theorem dcr_of_would [Std.Total (ord w).le] (h : w ∈ disjunctiveImp ord {A, B}
 
 theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le]
     [DecidablePred (· ∈ C)] :
-    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ -1 := by
-  simp only [DCR, Ne, homogeneousImp_eq_neg_one_iff, Finset.insert_nonempty, true_and,
+    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ .false := by
+  simp only [DCR, Ne, homogeneousImp_eq_false_iff, Finset.insert_nonempty, true_and,
     Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in

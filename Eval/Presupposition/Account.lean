@@ -119,7 +119,7 @@ variable {Atom W : Type*}
 given by the theory's own predicate. -/
 noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula Atom → Prop
   | dynamic => fun I C F ↦ (F.ccp I).Admits C
-  | filtering => fun I C F ↦ C ⊆ Function.support (F.middleKleene I)
+  | filtering => fun I C F ↦ C ⊆ (Trivalent.gapExt (F.middleKleene I))ᶜ
   | transparencyIncremental => fun I C F ↦
     Schlenker2009.Transparency .incremental C (Formula.occurrences I F)
   | transparencySymmetric => fun I C F ↦

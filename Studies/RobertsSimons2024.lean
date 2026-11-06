@@ -70,17 +70,17 @@ variable (t : Phasal) (R : SetRel ι ι) (P : ι → Prop)
 
 /-- A change of state occurs at an index when the prior state held at an earlier index and the
 result state holds at the index, which is where the phasal verb is defined and true. -/
-def cosOccurs : Set ι := posSupport (t.denote R P)
+def cosOccurs : Set ι := Trivalent.posExt (t.denote R P)
 
 /-- The ontological precondition of a change of state is its prior state at an earlier index, as
 being on the ladder is for falling off it (5). It is what the phasal verb presupposes. -/
-def cosPrecondition : Set ι := Function.support (t.denote R P)
+def cosPrecondition : Set ι := (Trivalent.gapExt (t.denote R P))ᶜ
 
 variable {t R P}
 
 /-- A sentence describing a change of state entails its precondition (§2.1). -/
 theorem cosOccurs_subset_cosPrecondition : cosOccurs t R P ⊆ cosPrecondition t R P :=
-  fun _ h ↦ ne_of_eq_of_ne h one_ne_zero
+  fun _ h ↦ Trivalent.mem_compl_gapExt.2 (ne_of_eq_of_ne h (by decide))
 
 /-! ### Why preconditions project (§3.1) -/
 
@@ -88,7 +88,7 @@ theorem cosOccurs_subset_cosPrecondition : cosOccurs t R P ⊆ cosPrecondition t
 consistent with *John didn't stop smoking* (§3.1). -/
 theorem mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : i ~[R] i') (hp : t.Prior (P i'))
     (hn : ¬ t.Result (P i)) : i ∈ cosPrecondition t R P \ cosOccurs t R P :=
-  ⟨Phasal.denote_eq_zero_iff.not_left.2 ⟨i', hr, hp⟩, by simp [cosOccurs, Phasal.denote, hn]⟩
+  ⟨Phasal.denote_eq_undefined_iff.not_left.2 ⟨i', hr, hp⟩, by simp [cosOccurs, Phasal.denote, hn]⟩
 
 /-- An entailment holding only where the change occurs is inconsistent with the negated trigger
 (§3.1). -/

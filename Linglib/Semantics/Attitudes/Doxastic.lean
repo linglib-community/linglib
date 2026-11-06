@@ -13,7 +13,7 @@ tradition: `w ~[R x] w'` reads "`w'` is compatible with what `x` believes or kno
 ⟦x believes p⟧(w) is the relational box `□[R x] p w`, so closure under known implication is the
 K axiom `ModalLogic.box_K`. A `DoxasticPredicate` pairs an accessibility relation with a
 factivity class; applied to a complement it presupposes the complement when factive, which a
-context admits only if it entails the complement (`support_sentence`), and asserts the box. A
+context admits only if it entails the complement (`compl_gapExt_sentence`), and asserts the box. A
 predicate is veridical when it entails its complement (`IsVeridical`), which it does exactly when
 it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`). A verb's entry
 records its factivity and whether its alternatives are epistemic, reflexive in every model, or
@@ -57,18 +57,19 @@ variable (V : DoxasticPredicate W E) (agent : E) (p : W → Prop) (w : W)
 open Classical in
 /-- Applied to a holder and a complement, the predicate is a trivalent proposition that
 presupposes the complement if the predicate is factive and asserts the box. -/
-noncomputable def sentence : W → SignType :=
-  {w | ∀ _ ∈ V.factivity, p w}.indicator fun w ↦ SignType.ofProp (□[V.access agent] p w)
+noncomputable def sentence : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ _ ∈ V.factivity, p w))
+    (Trivalent.ofProp (□[V.access agent] p w))
 
 /-- ⟦x V that p⟧(w) is true when `sentence` is. -/
-def HoldsAt : Prop := V.sentence agent p w = 1
+def HoldsAt : Prop := V.sentence agent p w = .true
 
 theorem holdsAt_iff :
     V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ □[V.access agent] p w := by
   simp [HoldsAt, sentence]
 
-theorem support_sentence :
-    Function.support (V.sentence agent p) = {w | ∀ _ ∈ V.factivity, p w} := by
+theorem compl_gapExt_sentence :
+    (Trivalent.gapExt (V.sentence agent p))ᶜ = {w | ∀ _ ∈ V.factivity, p w} := by
   ext w
   simp [sentence]
 

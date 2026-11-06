@@ -8,7 +8,7 @@ public import Linglib.Logic.Bilattice.Product
 The guard `P : Q` of [fitting-1994] is `Q` when `P` is at least true and undefined otherwise; it
 makes Kleene's weak logic and the asymmetric Lisp logic definable over Belnap's `FOUR`, and on
 Kleene's three values it is the transplication of [blamey-1986], the binary presupposition
-operator (`SignType.toFour_transplication`). Fitting defines it on the products `L ⊙ L` that
+operator (`Trivalent.toFour_transplication`). Fitting defines it on the products `L ⊙ L` that
 represent the distributive bilattices, as `⟨a, b⟩ : ⟨c, d⟩ = ⟨a ⊓ c, a ⊓ d⟩`, and characterizes it
 in the bilattice operations as `x : y = [(x ⊓ₖ t) ⊔ₖ ¬(x ⊓ₖ t)] ⊓ₖ y`, the value of `y`
 attenuated by the degree to which `x` is believed. The characterization is taken here as the

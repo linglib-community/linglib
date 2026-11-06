@@ -215,10 +215,10 @@ theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
 /-! ### Local satisfaction -/
 
 theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t)
-    (p : W → SignType) (M R : SetRel W W) [M.IsRefl] :
-    ¬ t.Accepted (Function.support p) R (fun e c ↦ (e.rel M).image c ⊆ Function.support p)
-      (fun c ↦ R.image c ⊆ Function.support p) :=
-  h W _ M R (· ⊆ Function.support p) _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h)
+    (p : W → Trivalent) (M R : SetRel W W) [M.IsRefl] :
+    ¬ t.Accepted ((Trivalent.gapExt p)ᶜ) R (fun e c ↦ (e.rel M).image c ⊆ (Trivalent.gapExt p)ᶜ)
+      (fun c ↦ R.image c ⊆ (Trivalent.gapExt p)ᶜ) :=
+  h W _ M R (· ⊆ (Trivalent.gapExt p)ᶜ) _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h)
     (fun _ _ h ↦ SetRel.image_subset_iff.1 h)
 
 /-! ### The rows -/

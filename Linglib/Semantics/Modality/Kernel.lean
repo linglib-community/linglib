@@ -23,7 +23,7 @@ directly settling it. The partition-based implementation and the worked examples
 ## Main statements
 
 * `explicit_implies_entailment`: direct settling implies entailment, but not conversely.
-* `kernelMight_eq_neg_kernelCant`: *might* is the negation of *can't*, presupposition and all.
+* `kernelMight_eq_compl_kernelCant`: *might* is the negation of *can't*, presupposition and all.
 * `Kernel.followsFrom_iff_simpleNecessity`: the assertion of `kernelMust` is Kratzer's simple
   necessity over the kernel.
 
@@ -117,41 +117,45 @@ theorem Kernel.directlySettles_not : k.directlySettles (fun w' ↦ ¬ φ w') ↔
 open Classical in
 /-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ⊆ ⟦φ⟧`. -/
-noncomputable def kernelMust : W → SignType :=
-  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.FollowsFrom φ)
+noncomputable def kernelMust : W → Trivalent :=
+  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (¬ k.directlySettles φ))
+    (Trivalent.ofProp (k.FollowsFrom φ))
 
 open Classical in
 /-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
-noncomputable def kernelMight : W → SignType :=
-  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.compatibleWith φ)
+noncomputable def kernelMight : W → Trivalent :=
+  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (¬ k.directlySettles φ))
+    (Trivalent.ofProp (k.compatibleWith φ))
 
 /-- `⟦can't φ⟧` is `⟦must ¬φ⟧`. -/
-noncomputable def kernelCant : W → SignType :=
+noncomputable def kernelCant : W → Trivalent :=
   kernelMust k (fun w' ↦ ¬ φ w')
 
 variable {k φ w}
 
-@[simp] theorem kernelMust_eq_zero_iff : kernelMust k φ w = 0 ↔ k.directlySettles φ := by
+@[simp] theorem kernelMust_eq_undefined_iff :
+    kernelMust k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMust_eq_one_iff :
-    kernelMust k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
+@[simp] theorem kernelMust_eq_true_iff :
+    kernelMust k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMust_eq_neg_one_iff :
-    kernelMust k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
+@[simp] theorem kernelMust_eq_false_iff :
+    kernelMust k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
   simp [kernelMust]
 
-@[simp] theorem kernelMight_eq_zero_iff : kernelMight k φ w = 0 ↔ k.directlySettles φ := by
+@[simp] theorem kernelMight_eq_undefined_iff :
+    kernelMight k φ w = .undefined ↔ k.directlySettles φ := by
   simp [kernelMight]
 
-@[simp] theorem kernelMight_eq_one_iff :
-    kernelMight k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
+@[simp] theorem kernelMight_eq_true_iff :
+    kernelMight k φ w = .true ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
   simp [kernelMight]
 
-@[simp] theorem kernelMight_eq_neg_one_iff :
-    kernelMight k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
+@[simp] theorem kernelMight_eq_false_iff :
+    kernelMight k φ w = .false ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
   simp [kernelMight]
 
 /-! ### Core properties -/
@@ -167,12 +171,12 @@ theorem Kernel.compatibleWith_iff_not_followsFrom_not :
 
 /-- *Might* `φ` is the negation of *can't* `φ`, with the same presupposition and the negated
 assertion. -/
-theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
+theorem kernelMight_eq_compl_kernelCant : kernelMight k φ = (kernelCant k φ)ᶜ := by
   ext w
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
 
-theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by
+theorem kernelMust_empty_ne_undefined : kernelMust ⟨∅⟩ φ w ≠ .undefined := by
   simp [Kernel.directlySettles]
 
 /-! ### Bridge to Kratzer necessity -/

@@ -161,18 +161,18 @@ section Again
 
 variable {Entity Ev : Type*} {M : Model Entity Ev} {R : SetRel Ev Ev} {P : Ev → Prop} {v : Ev}
 
-theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ 0) :
+theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ .undefined) :
     ◇[R] M.IsStateᶜ v :=
-  diamond_mono R hP v (again_ne_zero_iff.1 h)
+  diamond_mono R hP v (again_ne_undefined_iff.1 h)
 
 variable (B : Entity → Ev → Prop) (x : Entity)
 
 /-- *Again* on a change-of-state root presupposes an earlier event wherever it attaches, so the root
 has no restitutive reading (25). -/
 theorem again_changeOfState :
-    (again R (Analysis.yuAusensiSmith.denote M .changeOfState B x) v ≠ 0 →
+    (again R (Analysis.yuAusensiSmith.denote M .changeOfState B x) v ≠ .undefined →
         ◇[R] M.IsStateᶜ v) ∧
-      (again R (M.causative (Analysis.yuAusensiSmith.denote M .changeOfState B x)) v ≠ 0 →
+      (again R (M.causative (Analysis.yuAusensiSmith.denote M .changeOfState B x)) v ≠ .undefined →
         ◇[R] M.IsStateᶜ v) :=
   ⟨diamond_compl_of_again_ne_zero (Analysis.denote_le_compl (by decide) B x),
     diamond_compl_of_again_ne_zero (Model.causative_le_compl _)⟩
@@ -180,9 +180,9 @@ theorem again_changeOfState :
 /-- On Beavers and Koontz-Garboden's analysis, *again* on a change-of-state root presupposes an
 earlier state resulting from a change (p. 1616). -/
 theorem again_beaversKoontzGarboden
-    (h : again R (Analysis.beaversKoontzGarboden.denote M .changeOfState B x) v ≠ 0) :
+    (h : again R (Analysis.beaversKoontzGarboden.denote M .changeOfState B x) v ≠ .undefined) :
     ◇[R] (◇[M.become] ⊤) v :=
-  diamond_mono R (fun _ hw ↦ hw.1.2) v (again_ne_zero_iff.1 h)
+  diamond_mono R (fun _ hw ↦ hw.1.2) v (again_ne_undefined_iff.1 h)
 
 end Again
 
