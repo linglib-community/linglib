@@ -151,7 +151,8 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleObjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["section", "Processing recursive constructions"],
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; extending (45) 'makes the sentence virtually incomprehensible'.",
     "verified": "page-image"
@@ -175,7 +176,8 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "multipleSubjectRelative"],
-      ["section", "Processing recursive constructions"]
+      ["section", "Processing recursive constructions"],
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; the further relative clause 'leads to extreme processing difficulty'.",
     "verified": "page-image"
@@ -232,7 +234,8 @@
     "readings": [],
     "paperFeatures": [
       ["construction", "multiplePrepositionStranding"],
-      ["section", "Discussion"]
+      ["section", "Discussion"],
+      ["difficulty", "hard"]
     ],
     "comment": "Printed unmarked; very hard to process: the filler–preposition associations are nested.",
     "verified": "page-image"
