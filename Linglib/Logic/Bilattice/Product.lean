@@ -9,6 +9,7 @@ public import Linglib.Logic.Bilattice.Involution
 public import Linglib.Core.Order.InvolutiveCompl
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.SupClosed
+public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # The Ginsberg–Fitting product bilattice
@@ -158,6 +159,8 @@ instance [DistribLattice L] [DistribLattice R] : DistribLattice (Know (L ⊙ R))
 instance [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
     BoundedOrder (Know (L ⊙ R)) :=
   inferInstanceAs (BoundedOrder (L × R))
+instance [CompleteLattice L] [CompleteLattice R] : CompleteLattice (Know (L ⊙ R)) :=
+  inferInstanceAs (CompleteLattice (L × R))
 instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
     DecidableLE (Know (L ⊙ R)) :=
   inferInstanceAs (DecidableLE (L × R))
