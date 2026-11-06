@@ -50,7 +50,7 @@ diagnostics separating resultative from stative participles are not formalized.
 namespace Embick2004
 
 open PhraseStructure
-open DistributedMorphology (ComplexHead VocabularyItem subsetPrinciple)
+open DistributedMorphology (Cat ComplexHead VocabularyItem subsetPrinciple)
 open scoped DistributedMorphology
 
 /-! ### Roots -/
@@ -72,12 +72,6 @@ instance : DecidablePred TakesArgument := fun _ ↦ inferInstanceAs (Decidable (
 
 /-! ### The two configurations -/
 
-/-- The categories are the verbalizer, the Root's own, the adjectivizer, aspect and determiner
-phrases. -/
-inductive Cat
-  | v | root | a | asp | d
-  deriving DecidableEq, Repr
-
 /-- The terminals are v[FIENT], Roots, the adjectivizer, AspR and DPs. -/
 inductive Word
   | fient | root (r : Root) | adj | aspR | dp (x : DP)
@@ -85,11 +79,11 @@ inductive Word
 
 /-- The Root complement structure (47), v[FIENT] taking the Root as its complement. -/
 def rootComplement (r : Root) : Tree Cat Word :=
-  .node .v [.terminal .v .fient, .terminal .root (.root r)]
+  .node (.head .v) [.terminal (.head .v) .fient, .terminal .root (.root r)]
 
 /-- The complex head that Direct Merge builds (48), the Root adjoined to v[FIENT]. -/
 def directMerge (r : Root) : Tree Cat Word :=
-  .adjoin .v [.terminal .root (.root r), .terminal .v .fient]
+  .adjoin (.head .v) [.terminal .root (.root r), .terminal (.head .v) .fient]
 
 theorem children_perm (r : Root) : (rootComplement r).children.Perm (directMerge r).children :=
   List.Perm.swap _ _ []
@@ -123,7 +117,7 @@ theorem headDaughter?_moveRoot (r : Root) :
 
 /-- A complex head of v[FIENT] with a Root adjoined, read as the Root with the head above it. -/
 def complexHead? : Tree Cat Word → Option (ComplexHead Root Word)
-  | .adjoin .v [.terminal .root (.root r), .terminal .v w] => some ⟨r, [w]⟩
+  | .adjoin (.head .v) [.terminal .root (.root r), .terminal (.head .v) w] => some ⟨r, [w]⟩
   | _ => none
 
 /-- The features Vocabulary Items mention, v[FIENT] and the identity of a Root. -/

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Categories
@@ -21,6 +22,7 @@ features exactly when they share their family.
 ## Main definitions
 
 * `Minimalist.Cat`, `Minimalist.SelStack`: the categories and the selectional stack.
+* `Minimalist.Cat.IsCategorizer`: the categorizers n, v and a.
 * `Minimalist.CatFamily`, `Minimalist.Cat.family`: the four families.
 * `Minimalist.CatFamily.lexical`: the lexical head of a family.
 * `Minimalist.CatFeatures`, `Minimalist.Cat.features`: the features `[±V, ±N]`, read off the
@@ -42,6 +44,7 @@ Chomsky's features first classified the noun, the verb and the adjective; the fo
 * [chomsky-1970]
 * [baker-2003]
 * [chomsky-2013]
+* [marantz-2001]
 -/
 
 @[expose] public section
@@ -121,7 +124,15 @@ inductive Cat where
   | Nmlz
   /-- The inherent-case shell ([newman-2024]): KP wraps DP for oblique or inherent case. -/
   | K
-  deriving Repr, DecidableEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited, Fintype
+
+/-- The categorizers, little n, v and a, one of which merges with every root ([marantz-2001]). -/
+def Cat.IsCategorizer : Cat → Prop
+  | .n | .v | .a => True
+  | _ => False
+
+instance : DecidablePred Cat.IsCategorizer := fun c ↦ by
+  cases c <;> unfold Cat.IsCategorizer <;> infer_instance
 
 /-- A selectional stack, consumed left to right. -/
 abbrev SelStack := List Cat

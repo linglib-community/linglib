@@ -35,7 +35,7 @@ open DistributedMorphology
 
 /-- A head of a nominal, a categorizer or an evaluative head that is not one. -/
 inductive Head where
-  | cat (h : Categorizer.Head)
+  | cat (h : Categorizer)
   | eval
   deriving DecidableEq
 
@@ -62,7 +62,7 @@ def agreeing (default : UD.Gender) (r : Root) (hs : List Head) : UD.Gender :=
 
 /-- The Highest Gender Hypothesis (32). A nominal agrees as its highest n would over a bare
 root. -/
-theorem highestGender (default : UD.Gender) (r r' : Root) (hs : List Head) (h : Categorizer.Head) :
+theorem highestGender (default : UD.Gender) (r r' : Root) (hs : List Head) (h : Categorizer) :
     agreeing default r (hs ++ [.cat h]) = agreeing default r' [.cat h] := by
   rw [agreeing, agreeing, agreeingGender_lastCycle (above := []) trivial (by simp),
     show [Head.cat h] = [] ++ [.cat h] from rfl,
@@ -85,7 +85,7 @@ theorem german_chen (r : Root) :
 /-- By (42), a non-n evaluative head keeps the gender of the highest n, as Russian *l'es-ók* 'little
 forest' stays masculine. -/
 theorem evaluative_transparent (default : UD.Gender) (r : Root) (hs : List Head)
-    (h : Categorizer.Head) :
+    (h : Categorizer) :
     agreeing default r (hs ++ [.cat h, .eval]) = agreeing default r (hs ++ [.cat h]) := by
   rw [agreeing, agreeing, show hs ++ [.cat h, .eval] = hs ++ .cat h :: [.eval] from rfl,
     agreeingGender_lastCycle trivial (by simp [Head.Cyclic, Head.gender]),
