@@ -117,17 +117,17 @@ theorem Kernel.directlySettles_not : k.directlySettles (fun w' ↦ ¬ φ w') ↔
 open Classical in
 /-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ⊆ ⟦φ⟧`. -/
-noncomputable def kernelMust : W → SignType :=
-  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.FollowsFrom φ)
+noncomputable def kernelMust : W → Trivalent :=
+  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (¬ k.directlySettles φ)) (Trivalent.ofProp (k.FollowsFrom φ))
 
 open Classical in
 /-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
-noncomputable def kernelMight : W → SignType :=
-  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.compatibleWith φ)
+noncomputable def kernelMight : W → Trivalent :=
+  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (¬ k.directlySettles φ)) (Trivalent.ofProp (k.compatibleWith φ))
 
 /-- `⟦can't φ⟧` is `⟦must ¬φ⟧`. -/
-noncomputable def kernelCant : W → SignType :=
+noncomputable def kernelCant : W → Trivalent :=
   kernelMust k (fun w' ↦ ¬ φ w')
 
 variable {k φ w}
@@ -169,7 +169,7 @@ theorem Kernel.compatibleWith_iff_not_followsFrom_not :
 assertion. -/
 theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
   ext w
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_ <;>
     simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
 
 theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by

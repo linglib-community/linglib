@@ -57,11 +57,11 @@ variable (V : DoxasticPredicate W E) (agent : E) (p : W → Prop) (w : W)
 open Classical in
 /-- Applied to a holder and a complement, the predicate is a trivalent proposition that
 presupposes the complement if the predicate is factive and asserts the box. -/
-noncomputable def sentence : W → SignType :=
-  {w | ∀ _ ∈ V.factivity, p w}.indicator fun w ↦ SignType.ofProp (□[V.access agent] p w)
+noncomputable def sentence : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ _ ∈ V.factivity, p w)) (Trivalent.ofProp (□[V.access agent] p w))
 
 /-- ⟦x V that p⟧(w) is true when `sentence` is. -/
-def HoldsAt : Prop := V.sentence agent p w = 1
+def HoldsAt : Prop := V.sentence agent p w = .true
 
 theorem holdsAt_iff :
     V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ □[V.access agent] p w := by

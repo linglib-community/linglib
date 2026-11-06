@@ -44,15 +44,19 @@ variable {ι : Type*} {R : SetRel ι ι} {P : ι → Prop}
 open Classical in
 /-- `again R P` asserts `P` of an eventuality and presupposes that `P` holds of one of the
 eventualities that `R` relates it to, the earlier ones. -/
-noncomputable def again (R : SetRel ι ι) (P : ι → Prop) : ι → SignType :=
-  {i | ◇[R] P i}.indicator fun i ↦ SignType.ofProp (P i)
+noncomputable def again (R : SetRel ι ι) (P : ι → Prop) : ι → Trivalent :=
+  fun i ↦ Trivalent.transplication (Trivalent.ofProp (◇[R] P i)) (Trivalent.ofProp (P i))
 
 variable {i : ι}
 
-@[simp] theorem again_eq_zero_iff : again R P i = 0 ↔ ¬ ◇[R] P i := by simp [again]
+@[simp] theorem again_eq_zero_iff :
+    again R P i = .undefined ↔ ¬ ◇[R] P i := by simp [again,
+        Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
 
-theorem again_ne_zero_iff : again R P i ≠ 0 ↔ ◇[R] P i := again_eq_zero_iff.not_left
+theorem again_ne_zero_iff : again R P i ≠ .undefined ↔ ◇[R] P i := again_eq_zero_iff.not_left
 
-@[simp] theorem again_eq_one_iff : again R P i = 1 ↔ ◇[R] P i ∧ P i := by simp [again]
+@[simp] theorem again_eq_one_iff :
+    again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again,
+        Trivalent.transplication_eq_undefined_iff, Trivalent.transplication_eq_true_iff]
 
 end Presupposition

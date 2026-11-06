@@ -62,7 +62,7 @@ def ofReferent (referent : W → Option E) : Nominal Unit W E where
 where a referent is selected and applying `scope` to it there. It is `presupOfReferent` over
 `nd.selector c`, so any `presupOfReferent`-built denotation is a `resolve`, by `rfl`. -/
 noncomputable def resolve (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
-    W → SignType :=
+    W → Trivalent :=
   presupOfReferent (nd.selector c) scope
 
 theorem ofReferent_resolve (referent : W → Option E) (scope : E → W → Prop) :
@@ -75,7 +75,7 @@ the two presuppositions conjoined. For a definite the intrinsic presupposition i
 `toTrivalent` and `resolve` agree; for a pronoun the conjoined presupposition is where the
 φ-features project. -/
 noncomputable def toTrivalent (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
-    W → SignType :=
+    W → Trivalent :=
   {w | nd.presup c w}.indicator (nd.resolve scope c)
 
 section Values

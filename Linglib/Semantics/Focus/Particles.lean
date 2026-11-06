@@ -77,8 +77,8 @@ open Classical in
 `atLeast S C P i` and asserts `atMost S C P i` ([coppock-beaver-2014]'s (73)). Over propositions,
 `P` is `id`; over individuals, with the identity scale, it is von Fintel's *only x is P*, which
 presupposes that `x` is `P` and asserts that nothing else is ([von-fintel-1999]'s (15)). -/
-noncomputable def only : W → SignType :=
-  (atLeast S C P i).indicator fun w ↦ SignType.ofProp (w ∈ atMost S C P i)
+noncomputable def only : W → Trivalent :=
+  (atLeast S C P i).indicator fun w ↦ Trivalent.ofProp (w ∈ atMost S C P i)
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -135,12 +135,12 @@ open Classical in
 /-- On the entailment scale, with the prejacent among the alternatives, *only* presupposes its
 prejacent and asserts the exclusion ([von-fintel-1999]'s (68a)). -/
 theorem only_subset_eq (hp : p ∈ C) :
-    only (· ⊆ ·) C id p = p.indicator fun w ↦ SignType.ofProp (w ∈ excludes C p) := by
+    only (· ⊆ ·) C id p = p.indicator fun w ↦ Trivalent.ofProp (w ∈ excludes C p) := by
   rw [only, atLeast_subset_eq hp, atMost_subset]
 
 /-- On the entailment scale *only* is true exactly where the exhaustification
 `Exhaustification.exh` is. -/
-theorem posSupport_only_subset (hp : p ∈ C) : posSupport (only (· ⊆ ·) C id p) = exh C p := by
+theorem posSupport_only_subset (hp : p ∈ C) : posExt (only (· ⊆ ·) C id p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
 
 end Entailment
@@ -176,7 +176,7 @@ theorem only_eq_eq_only_subset_range (hP : ∀ y, P x ⊆ P y → y = x) :
     only (· = ·) univ P x = only (· ⊆ ·) (range P) id (P x) := by
   funext w
   have hx := atLeast_subset_eq (mem_range_self (f := P) x)
-  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp [hx]) ?_
+  refine Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp [hx]) ?_
   rw [only_eq_eq_one_iff (mem_univ x), only_eq_one_iff, hx]
   simp only [mem_atMost, forall_mem_range, id, mem_univ, true_implies]
   refine and_congr_right fun _ ↦ ⟨fun h y hw ↦ ?_, fun h y hyx hw ↦ hyx (hP y (h y hw))⟩
@@ -187,14 +187,14 @@ theorem only_eq_eq_only_subset_range (hP : ∀ y, P x ⊆ P y → y = x) :
 /-- Without that condition the two come apart, since two individuals with the same predication
 are one alternative proposition, entailed by the prejacent, but two individuals. -/
 theorem only_eq_ne_only_subset_range :
-    only (· = ·) univ (fun _ : Bool ↦ (univ : Set Unit)) true ≠
+    only (· = ·) univ (fun _ : Bool ↦ (univ : Set Unit)) Bool.true ≠
       only (· ⊆ ·) (range fun _ : Bool ↦ (univ : Set Unit)) id univ := by
   intro h
   have h0 : only (· ⊆ ·) (range fun _ : Bool ↦ (univ : Set Unit)) id univ () = 1 :=
-    only_eq_one_iff.2 ⟨⟨univ, ⟨true, rfl⟩, trivial, subset_rfl⟩,
+    only_eq_one_iff.2 ⟨⟨univ, ⟨Bool.true, rfl⟩, trivial, subset_rfl⟩,
       fun q ⟨_, hq⟩ _ ↦ hq ▸ subset_rfl⟩
   rw [← h, only_eq_eq_one_iff (mem_univ _)] at h0
-  exact h0.2 false trivial Bool.false_ne_true trivial
+  exact h0.2 Bool.false trivial Bool.false_ne_true trivial
 
 end Individuals
 
@@ -215,8 +215,8 @@ def additivePresup : Set W := {w | ∃ j ∈ C, w ∈ P j ∧ ¬ S i j}
 open Classical in
 /-- An additive particle, *too* or *also*, presupposes `additivePresup S C P i` and asserts its
 prejacent `P i`. -/
-noncomputable def additive : W → SignType :=
-  (additivePresup S C P i).indicator fun w ↦ SignType.ofProp (w ∈ P i)
+noncomputable def additive : W → Trivalent :=
+  (additivePresup S C P i).indicator fun w ↦ Trivalent.ofProp (w ∈ P i)
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -358,8 +358,8 @@ theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
 theorem not_antitone_posSupport_only_subset :
-    ¬ Antitone fun p : Set Bool ↦ posSupport (only (· ⊆ ·) {{true}, .univ} id p) :=
-  not_antitone_posSupport (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
+    ¬ Antitone fun p : Set Bool ↦ posExt (only (· ⊆ ·) {{Bool.true}, .univ} id p) :=
+  not_antitone_posSupport (p := {Bool.true}) (q := .univ) (w := Bool.false) (Set.subset_univ _)
     (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
       exacts [absurd hw (by simp), subset_rfl]⟩)
@@ -368,11 +368,11 @@ theorem not_antitone_posSupport_only_subset :
 /-- On a scale ranked by reverse entailment, *only* is not Strawson downward entailing in its
 prejacent, as the footnote claims ([coppock-beaver-2014], fn. 22). -/
 theorem not_isStrawsonDE_only_superset :
-    ¬ IsStrawsonDE (only (· ⊇ ·) ({{true}, .univ} : Set (Set Bool)) id) := fun h ↦ by
-  have := h (p := {true}) (q := .univ) (Set.subset_univ _) true
+    ¬ IsStrawsonDE (only (· ⊇ ·) ({{Bool.true}, .univ} : Set (Set Bool)) id) := fun h ↦ by
+  have := h (p := {Bool.true}) (q := .univ) (Set.subset_univ _) Bool.true
     (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun _ _ _ ↦ Set.subset_univ _⟩)
-    (by rw [Ne, only_eq_zero_iff, not_not]; exact ⟨{true}, by simp, rfl, subset_rfl⟩)
-  exact absurd ((only_eq_one_iff.1 this).2 .univ (by simp) trivial (Set.mem_univ false))
+    (by rw [Ne, only_eq_zero_iff, not_not]; exact ⟨{Bool.true}, by simp, rfl, subset_rfl⟩)
+  exact absurd ((only_eq_one_iff.1 this).2 .univ (by simp) trivial (Set.mem_univ Bool.false))
     (by simp)
 
 end Propositions
@@ -402,15 +402,15 @@ theorem isStrawsonDE_only_eq : IsStrawsonDE fun P : ι → Set W ↦ only (· = 
 /-- *Only John ate vegetables* does not classically entail *only John ate kale*, whose
 presupposition may fail ([von-fintel-1999]'s (11)). -/
 theorem not_antitone_posSupport_only_eq :
-    ¬ Antitone fun P : Bool → Set Unit ↦ posSupport (only (· = ·) univ P true) :=
-  not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
+    ¬ Antitone fun P : Bool → Set Unit ↦ posExt (only (· = ·) univ P Bool.true) :=
+  not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = Bool.true}) (w := ()) bot_le
     (by rw [only_eq_eq_one_iff (mem_univ _)]; simp) (by simp)
 
 /-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and
 false when someone else drinks, so *only* is not upward entailing in its predicate. -/
 theorem not_isStrawsonUE_only_eq :
-    ¬ IsStrawsonUE fun P : Bool → Set Unit ↦ only (· = ·) univ P true :=
-  not_isStrawsonUE (p := fun y ↦ {_u | y = true}) (q := ⊤) (w := ()) le_top
+    ¬ IsStrawsonUE fun P : Bool → Set Unit ↦ only (· = ·) univ P Bool.true :=
+  not_isStrawsonUE (p := fun y ↦ {_u | y = Bool.true}) (q := ⊤) (w := ()) le_top
     (by rw [only_eq_eq_one_iff (mem_univ _)]; simp) (by simp)
 
 end Individuals

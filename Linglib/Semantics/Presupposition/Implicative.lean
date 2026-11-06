@@ -95,10 +95,10 @@ open Classical in
 fact `S`. It presupposes that `v` is sufficient for the complement `s` implies in a positive
 context and necessary for the negation of the complement it implies in a negative context, and it
 asserts `v`. -/
-noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → SignType :=
+noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → Trivalent :=
   {w | (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
     ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w}.indicator
-    fun w ↦ SignType.ofProp (R.Holds v w)
+    fun w ↦ Trivalent.ofProp (R.Holds v w)
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
@@ -108,11 +108,11 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
     (hs : (m • sentence R s v S) w = 1) : R.Holds (R.signed q S) w := by
   cases m
   · simp only [Pi.smul_apply, Polarity.positive_smul, sentence,
-      Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq, SignType.ofProp_eq_one_iff] at hs
+      Trivalent.transplication_eq_true_iff, Set.mem_ofPred_eq, Trivalent.ofProp_eq_true_iff] at hs
     exact R.holds_of_sufficient (hs.1.1 q hq) hs.2
-  · simp only [Pi.smul_apply, Polarity.negative_smul_signType, SignType.neg_eq_one_iff, sentence,
-      Trivalent.indicator_apply_eq_neg_one_iff, Set.mem_ofPred_eq,
-      SignType.ofProp_eq_neg_one_iff] at hs
+  · simp only [Pi.smul_apply, Polarity.negative_smul_signType, Trivalent.compl_eq_true_iff, sentence,
+      Trivalent.transplication_eq_false_iff, Set.mem_ofPred_eq,
+      Trivalent.ofProp_eq_false_iff] at hs
     by_contra h
     exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Interpretation.holds_signed_negative_mul.2 h))
 
@@ -122,7 +122,7 @@ as its signature descends. -/
 theorem antitone_support : Antitone fun s ↦ Function.support (sentence R s v S) := by
   intro s t h w hw
   simp only [sentence, Function.mem_support, ne_eq, Set.indicator_apply_eq_zero,
-    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq] at hw ⊢
+    Trivalent.ofProp_ne_undefined, imp_false, not_not, Set.mem_ofPred_eq] at hw ⊢
   obtain ⟨hp, hn⟩ := hw
   have hst := ImplicationSignature.le_iff.1 h
   exact ⟨fun q hq ↦ hp q (Flat.coe_le_iff.1 (hq ▸ hst.1)),

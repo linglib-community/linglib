@@ -73,8 +73,8 @@ open Classical in
 relevant innocently excludable alternatives are false, and false exactly where the prejacent is
 false: the Strong Kleene conjunction of the prejacent with the presupposition. -/
 noncomputable def pexIE (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
-    World → SignType := fun w ↦
-  SignType.ofProp (w ∈ φ) ⊓ (SignType.ofProp (w ∈ excludesIE ALT φ Rc) ⊔ 0)
+    World → Trivalent := fun w ↦
+  Trivalent.ofProp (w ∈ φ) ⊓ (Trivalent.ofProp (w ∈ excludesIE ALT φ Rc) ⊔ 0)
 
 section PexIE
 
@@ -94,7 +94,7 @@ theorem pexIE_eq_one_iff_mem_exhIE (h : ALT ⊆ Rc) : pexIE ALT φ Rc w = 1 ↔ 
 
 /-- `pex^{IE}` is not false exactly where its prejacent is true. -/
 theorem pexIE_nonneg_iff : 0 ≤ pexIE ALT φ Rc w ↔ w ∈ φ := by
-  rw [SignType.nonneg_iff_ne_neg_one, Ne, pexIE_eq_neg_one_iff, not_not]
+  rw [Trivalent.undefined_le_iff_ne_false, Ne, pexIE_eq_neg_one_iff, not_not]
 
 end PexIE
 
@@ -105,10 +105,10 @@ open Classical in
 alternatives in the relevance set `Rc` are false and that the innocently includable ones in it,
 other than the prejacent, are homogeneous. -/
 noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
-    World → SignType :=
+    World → Trivalent :=
   (excludesIE ALT φ Rc ∩
     {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w}).indicator
-    fun w ↦ SignType.ofProp (w ∈ φ)
+    fun w ↦ Trivalent.ofProp (w ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
@@ -153,7 +153,7 @@ theorem pexIEII_eq_pexIE (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a 
     (hIE : ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ψ ⊆ φ) :
     pexIEII ALT φ Rc = pexIE ALT φ Rc := by
   funext w
-  refine SignType.eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
+  refine Trivalent.eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · rw [pexIEII_eq_one_iff, pexIEII_ne_zero_iff_of_inter_eq_empty h, pexIE_eq_one_iff, and_comm]
   · rw [pexIEII_eq_neg_one_iff, pexIEII_ne_zero_iff_of_inter_eq_empty h, pexIE_eq_neg_one_iff,
       and_iff_right_iff_imp]

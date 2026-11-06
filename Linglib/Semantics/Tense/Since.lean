@@ -31,8 +31,8 @@ open Classical in
 /-- *It has been five years since p* presupposes that `p` held at the time `ago t` five years
 before the evaluation time `t` and asserts that it has not held since ([von-fintel-1999], after
 Iatridou). -/
-noncomputable def since (p : Set T) : T → SignType :=
-  {t | ago t ∈ p}.indicator fun t ↦ SignType.ofProp (Disjoint (Set.Ioc (ago t) t) p)
+noncomputable def since (p : Set T) : T → Trivalent :=
+  fun t ↦ Trivalent.transplication (Trivalent.ofProp (ago t ∈ p)) (Trivalent.ofProp (Disjoint (Set.Ioc (ago t) t) p))
 
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
   .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
@@ -43,7 +43,7 @@ theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
   (isStrawsonAntiAdditive_since ago).isStrawsonDE
 
 theorem not_antitone_posSupport_since :
-    ¬ Antitone fun p : Set ℤ ↦ posSupport (since (· - 5) p) :=
+    ¬ Antitone fun p : Set ℤ ↦ posExt (since (· - 5) p) :=
   not_antitone_posSupport (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
     (by simp [since, Set.disjoint_singleton_right]) (by simp [since])
 

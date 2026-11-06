@@ -463,15 +463,15 @@ theorem transplication_eq_ite (a b : Trivalent) :
 @[simp] theorem transplication_undefined_left (b : Trivalent) :
     transplication .undefined b = .undefined := rfl
 
-theorem transplication_eq_true_iff {a b : Trivalent} :
+@[simp] theorem transplication_eq_true_iff {a b : Trivalent} :
     transplication a b = .true ↔ a = .true ∧ b = .true := by
   cases a <;> cases b <;> decide
 
-theorem transplication_eq_false_iff {a b : Trivalent} :
+@[simp] theorem transplication_eq_false_iff {a b : Trivalent} :
     transplication a b = .false ↔ a = .true ∧ b = .false := by
   cases a <;> cases b <;> decide
 
-theorem transplication_eq_undefined_iff {a b : Trivalent} :
+@[simp] theorem transplication_eq_undefined_iff {a b : Trivalent} :
     transplication a b = .undefined ↔ a ≠ .true ∨ b = .undefined := by
   cases a <;> cases b <;> decide
 

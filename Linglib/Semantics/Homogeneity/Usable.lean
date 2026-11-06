@@ -6,7 +6,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 /-!
 # Pragmatic usability of trivalent propositions
 
-Križ evaluates a trivalent proposition `W → SignType` relative to an issue, a partition
+Križ evaluates a trivalent proposition `W → Trivalent` relative to an issue, a partition
 `Setoid W` of the worlds. A proposition is `sufficientlyTrue` at a world when the world's cell
 contains a world where it is true, `addressesIssue` when no cell contains both a true and a false
 world, and `usable` at a world when it is sufficiently true there and addresses the issue. A
@@ -37,43 +37,43 @@ variable {W : Type*}
 /-- `p` is true enough at `w` relative to the issue `q` when some `q`-equivalent world makes
 `p` literally true. This weakens the maxim of Quality, so that a speaker need only assert
 something equivalent, for current purposes, to something true. -/
-def sufficientlyTrue (q : Setoid W) (p : W → SignType) (w : W) : Prop :=
+def sufficientlyTrue (q : Setoid W) (p : W → Trivalent) (w : W) : Prop :=
   ∃ w', q w w' ∧ p w' = 1
 
 instance sufficientlyTrue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : W → SignType) (w : W) : Decidable (sufficientlyTrue q p w) :=
+    (p : W → Trivalent) (w : W) : Decidable (sufficientlyTrue q p w) :=
   inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = 1))
 
-theorem literal_imp_sufficient (q : Setoid W) (p : W → SignType) (w : W)
+theorem literal_imp_sufficient (q : Setoid W) (p : W → Trivalent) (w : W)
     (h : p w = 1) : sufficientlyTrue q p w :=
   ⟨w, q.refl' w, h⟩
 
 /-- `p` addresses issue `q` when no cell of `q` overlaps both the positive and the negative
 extension. Gap-worlds do not count, since only cells straddling the true/false boundary
 disqualify. -/
-def addressesIssue (q : Setoid W) (p : W → SignType) : Prop :=
+def addressesIssue (q : Setoid W) (p : W → Trivalent) : Prop :=
   ¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1
 
 instance addressesIssue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : W → SignType) : Decidable (addressesIssue q p) :=
+    (p : W → Trivalent) : Decidable (addressesIssue q p) :=
   inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1))
 
 /-- `p` may be used at `w` when it is sufficiently true at `w` and addresses the issue. -/
-def usable (q : Setoid W) (p : W → SignType) (w : W) : Prop :=
+def usable (q : Setoid W) (p : W → Trivalent) (w : W) : Prop :=
   sufficientlyTrue q p w ∧ addressesIssue q p
 
-instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W → SignType)
+instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W → Trivalent)
     (w : W) : Decidable (usable q p w) :=
   inferInstanceAs (Decidable (sufficientlyTrue q p w ∧ addressesIssue q p))
 
 /-- A usable proposition is not false: a true world in the cell of a false one would straddle the
 true/false boundary ([kriz-2016] §3.4). -/
-theorem usable.ne_neg_one {q : Setoid W} {p : W → SignType} {w : W} (h : usable q p w) :
+theorem usable.ne_neg_one {q : Setoid W} {p : W → Trivalent} {w : W} (h : usable q p w) :
     p w ≠ -1 := fun hf ↦
   let ⟨⟨w', hq, ht⟩, hAddr⟩ := h
   hAddr ⟨w', w, q.symm' hq, ht, hf⟩
 
-theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
+theorem usable_iff_of_isBivalent {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (w : W) :
     usable q p w ↔ p w = 1 ∧ addressesIssue q p := by
   constructor
@@ -86,17 +86,17 @@ theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivale
 
 /-- A proposition used where it is not literally true is in its extension gap there, so a
 proposition without gaps can be used only where it is true ([kriz-2016] §3.4). -/
-theorem usable.eq_zero_of_ne_one {q : Setoid W} {p : W → SignType} {w : W} (h : usable q p w)
+theorem usable.eq_zero_of_ne_one {q : Setoid W} {p : W → Trivalent} {w : W} (h : usable q p w)
     (hne : p w ≠ 1) : p w = 0 :=
-  ((SignType.trichotomy (p w)).resolve_left h.ne_neg_one).resolve_right hne
+  ((Trivalent.trichotomy (p w)).resolve_left h.ne_neg_one).resolve_right hne
 
-theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
-    (h : usable q ((fun v ↦ SignType.ofProp (v = 1)) ∘ p) w) : SignType.ofProp (p w = 1) = 1 :=
-  ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_one p) q w).mp h).1
+theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → Trivalent) (w : W)
+    (h : usable q ((fun v ↦ Trivalent.ofProp (v = 1)) ∘ p) w) : Trivalent.ofProp (p w = 1) = 1 :=
+  ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_true p) q w).mp h).1
 
 /-- When `p` is used at `w` under the issue `q`, a sentence mentioning an exception cannot address
 `q` ([kriz-2016] §4.1). -/
-theorem exception_unaddressable (q : Setoid W) (p e : W → SignType) (w : W)
+theorem exception_unaddressable (q : Setoid W) (p e : W → Trivalent) (w : W)
     (hUse : usable q p w) (hEw : e w = 1)
     (hEfalse : ∀ w', p w' = 1 → e w' = -1) :
     ¬ addressesIssue q e := by
@@ -107,24 +107,24 @@ theorem exception_unaddressable (q : Setoid W) (p e : W → SignType) (w : W)
 
 /-- The worlds the hearer considers possible after hearing `p` under issue `q` are those
 indistinguishable, for current purposes, from a world where `p` is literally true. -/
-def communicatedContent (q : Setoid W) (p : W → SignType) : Set W :=
+def communicatedContent (q : Setoid W) (p : W → Trivalent) : Set W :=
   {w | sufficientlyTrue q p w}
 
-@[simp] theorem mem_communicatedContent {q : Setoid W} {p : W → SignType} {w : W} :
+@[simp] theorem mem_communicatedContent {q : Setoid W} {p : W → Trivalent} {w : W} :
     w ∈ communicatedContent q p ↔ sufficientlyTrue q p w :=
   Iff.rfl
 
 instance communicatedContent.instDecidableMem [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : W → SignType) (w : W) : Decidable (w ∈ communicatedContent q p) :=
+    (p : W → Trivalent) (w : W) : Decidable (w ∈ communicatedContent q p) :=
   inferInstanceAs (Decidable (sufficientlyTrue q p w))
 
-theorem posSupport_subset_communicated (q : Setoid W) (p : W → SignType) :
-    posSupport p ⊆ communicatedContent q p :=
+theorem posSupport_subset_communicated (q : Setoid W) (p : W → Trivalent) :
+    posExt p ⊆ communicatedContent q p :=
   fun _ hw ↦ literal_imp_sufficient q p _ hw
 
-theorem communicatedContent_eq_posSupport {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
+theorem communicatedContent_eq_posSupport {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (hAddr : addressesIssue q p) :
-    communicatedContent q p = posSupport p := by
+    communicatedContent q p = posExt p := by
   ext w
   constructor
   · intro ⟨w', hEq, hTrue⟩
@@ -134,7 +134,7 @@ theorem communicatedContent_eq_posSupport {p : W → SignType} (hbiv : Trivalent
       exact absurd ⟨w', w, q.symm' hEq, hTrue, hFalse⟩ hAddr
   · exact literal_imp_sufficient q p w
 
-theorem communicatedContent_antitone {q q' : Setoid W} (p : W → SignType) (hRef : q' ≤ q) :
+theorem communicatedContent_antitone {q q' : Setoid W} (p : W → Trivalent) (hRef : q' ≤ q) :
     communicatedContent q' p ⊆ communicatedContent q p :=
   fun _ ⟨w', hEq, hTrue⟩ ↦ ⟨w', Setoid.le_def.1 hRef hEq, hTrue⟩
 

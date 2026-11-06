@@ -45,26 +45,26 @@ variable {I W : Type*} (horizon : I → Set W) (p q : Set W)
 open Classical in
 /-- *If p, would q* over a modal horizon presupposes that the horizon admits `p` and asserts the
 strict conditional over the horizon ([von-fintel-1999]'s (82) and (83)). -/
-noncomputable def horizonCounterfactual : I → SignType :=
-  {i | (horizon i ∩ p).Nonempty}.indicator fun i ↦ SignType.ofProp (i ∈ strictImp horizon p q)
+noncomputable def horizonCounterfactual : I → Trivalent :=
+  fun i ↦ Trivalent.transplication (Trivalent.ofProp ((horizon i ∩ p).Nonempty)) (Trivalent.ofProp (i ∈ strictImp horizon p q))
 
 variable {horizon p q} {i : I}
 
 @[simp] theorem horizonCounterfactual_eq_zero_iff :
-    horizonCounterfactual horizon p q i = 0 ↔ ¬ (horizon i ∩ p).Nonempty := by
+    horizonCounterfactual horizon p q i = .undefined ↔ ¬ (horizon i ∩ p).Nonempty := by
   simp [horizonCounterfactual]
 
 @[simp] theorem horizonCounterfactual_eq_one_iff :
-    horizonCounterfactual horizon p q i = 1 ↔ (horizon i ∩ p).Nonempty ∧ horizon i ∩ p ⊆ q := by
+    horizonCounterfactual horizon p q i = .true ↔ (horizon i ∩ p).Nonempty ∧ horizon i ∩ p ⊆ q := by
   simp [horizonCounterfactual]
 
 @[simp] theorem horizonCounterfactual_eq_neg_one_iff :
-    horizonCounterfactual horizon p q i = -1 ↔
+    horizonCounterfactual horizon p q i = .false ↔
       (horizon i ∩ p).Nonempty ∧ ¬ horizon i ∩ p ⊆ q := by
   simp [horizonCounterfactual]
 
 /-- A true counterfactual has a horizon-world where its antecedent and consequent hold together. -/
-theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual horizon p q i = 1) :
+theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual horizon p q i = .true) :
     ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
   let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_one_iff.1 h
   ⟨w, hw.1, hw.2, hs hw⟩
@@ -98,15 +98,15 @@ theorem isStrawsonDE_horizonCounterfactual :
 fall outside the horizon ([von-fintel-1999], §4.3). -/
 theorem not_antitone_posSupport_horizonCounterfactual :
     ¬ Antitone fun p : Set Unit ↦
-      posSupport (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
+      posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
   not_antitone_posSupport (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
 
 /-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
 worlds the consequent excludes. -/
 theorem not_isStrawsonUE_horizonCounterfactual :
     ¬ IsStrawsonUE fun p : Set Bool ↦
-      horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {true} :=
-  not_isStrawsonUE (p := {true}) (q := .univ) (w := ()) (Set.subset_univ _) (by simp)
+      horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {Bool.true} :=
+  not_isStrawsonUE (p := {Bool.true}) (q := .univ) (w := ()) (Set.subset_univ _) (by simp)
     (by simp [Set.subset_def])
 
 end Conditional

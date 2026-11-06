@@ -157,32 +157,32 @@ variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
-def barePlural : (W → SignType) :=
-  fun w ↦ SignType.supervaluation x (P · w)
+def barePlural : (W → Trivalent) :=
+  fun w ↦ Trivalent.supervaluation x (P · w)
 
 /-- The *all*-sentence "all the Xs are P" asserts the bare plural pointwise. Per [kriz-2016]
 §3.1, *all*'s semantic contribution is gap removal, so its semantics is derived from the bare
 plural rather than stipulated. -/
-def allPlural : W → SignType :=
-  fun w ↦ SignType.ofProp (barePlural P x w = 1)
+def allPlural : W → Trivalent :=
+  fun w ↦ Trivalent.ofProp (barePlural P x w = 1)
 
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
-  Trivalent.gapExt_ofProp_eq_one _
+  Trivalent.gapExt_ofProp_eq_true _
 
-theorem posSupport_allPlural : posSupport (allPlural P x) = posSupport (barePlural P x) :=
-  Trivalent.posSupport_ofProp_eq_one _
+theorem posSupport_allPlural : posExt (allPlural P x) = posExt (barePlural P x) :=
+  Trivalent.posExt_ofProp_eq_true _
 
 theorem negSupport_allPlural :
-    negSupport (allPlural P x) =
-      negSupport (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
-  Trivalent.negSupport_ofProp_eq_one _
+    negExt (allPlural P x) =
+      negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
+  Trivalent.negExt_ofProp_eq_true _
 
 theorem isBivalent_allPlural : Trivalent.IsBivalent (allPlural P x) :=
-  Trivalent.isBivalent_ofProp_eq_one _
+  Trivalent.isBivalent_ofProp_eq_true _
 
 theorem allPlural_eq_one_iff (w : W) :
     allPlural P x w = 1 ↔ ∀ a ∈ x, P a w := by
-  simp [allPlural, barePlural, SignType.supervaluation_eq_one_iff]
+  simp [allPlural, barePlural, Trivalent.supervaluation_eq_true_iff]
 
 theorem allPlural_eq_neg_one_iff (w : W) :
     allPlural P x w = -1 ↔ ¬ ∀ a ∈ x, P a w := by
@@ -223,13 +223,13 @@ variable {P x} in
 theorem barePlural_eq_one_iff (hx : x.Nonempty) (w : W) :
     barePlural P x w = 1 ↔ w ∈ ⋂₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
   rw [sInter_readings (by simpa [isBot_iff_eq_bot, Finset.nonempty_iff_ne_empty] using hx)]
-  simp [barePlural, SignType.supervaluation_eq_one_iff]
+  simp [barePlural, Trivalent.supervaluation_eq_true_iff]
 
 variable {P x} in
 /-- The bare plural is false where no reading of the distributive predicate is true. -/
 theorem barePlural_eq_neg_one_iff (hx : x.Nonempty) (w : W) :
     barePlural P x w = -1 ↔ w ∉ ⋃₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
-  simp only [sUnion_readings, barePlural, SignType.supervaluation_eq_neg_one_iff, hx, true_and,
+  simp only [sUnion_readings, barePlural, Trivalent.supervaluation_eq_false_iff, hx, true_and,
     isBot_iff_eq_bot, Finset.bot_eq_empty, ← Finset.nonempty_iff_ne_empty, Set.mem_ofPred_eq,
     not_exists, not_and]
   exact ⟨fun h z hzx ⟨a, ha⟩ hz ↦ h a (hzx ha) (hz a ha), fun h a ha hPa ↦

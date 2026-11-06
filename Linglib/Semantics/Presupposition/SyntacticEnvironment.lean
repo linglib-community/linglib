@@ -547,7 +547,7 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
   | atom p => simp [middleKleene, eval, triggers]
   | trigger p p' => simp [middleKleene, eval, triggers]
   | not F ih =>
-    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, triggers,
+    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
       List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
       Step.localContext]
     exact ih
@@ -572,18 +572,18 @@ theorem Formula.weakKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (
   | atom p => simp [weakKleene, eval, triggers]
   | trigger p p' => simp [weakKleene, eval, triggers]
   | not F ih =>
-    simp only [weakKleene, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, triggers,
+    simp only [weakKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
       List.forall_mem_map] at ih ⊢
     exact ih
   | bin c F G ihF ihG =>
     simp only [weakKleene] at ihF ihG ⊢
     simp only [eval, triggers, List.forall_mem_append, List.forall_mem_map, ← ihF, ← ihG]
-    cases c <;> simp [SignType.joinWeak_eq_zero_iff, not_or]
+    cases c <;> simp [Trivalent.joinWeak_eq_undefined_iff, not_or]
 
 /-- Local accommodation of every trigger leaves no undefinedness, so it is all-or-nothing. -/
 theorem Formula.isBivalent_middleKleene_accommodate (I : Atom → Set W) (F : Formula Atom) :
     Trivalent.IsBivalent (F.accommodate.middleKleene I) :=
-  (Trivalent.isBivalent_iff_forall_ne_zero _).2 fun w ↦
+  (Trivalent.isBivalent_iff_forall_ne_undefined _).2 fun w ↦
     (Formula.middleKleene_ne_zero_iff I _ w).2 (by simp)
 
 /-! ### Occurrences -/

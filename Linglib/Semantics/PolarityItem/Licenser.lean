@@ -108,7 +108,7 @@ structure PresupposingFamily where
   /-- The domain is bounded. -/
   [bndDom : ∀ p, BoundedOrder (Dom p)]
   /-- The operator at each parameter. -/
-  op : ∀ p, Dom p → W p → SignType
+  op : ∀ p, Dom p → W p → Trivalent
 
 attribute [instance] PresupposingFamily.latDom PresupposingFamily.bndDom
 
@@ -158,7 +158,7 @@ def exhaustified : Licenser → Licenser
 trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
 def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ posSupport (F.op p x)
+  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ posExt (F.op p x)
   | .modal _, _ | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward

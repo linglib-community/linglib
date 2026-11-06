@@ -279,8 +279,8 @@ The pairs whose evidence for and against are disjoint are closed under negation 
 of `Disjoint` and, over a distributive factor, under the truth operations, and negation satisfies
 the Kleene law on them: they form Kalman's construction `Kalman L`
 (`Core/Order/DeMorganAlgebra/Kalman.lean`). Over a Boolean factor disjointness is Fitting's
-consistency. Over a De Morgan factor neither implies the other: `⟨0, 0⟩` in
-`SignType ⊙ SignType` is consistent but not disjoint, and the pair of the glut and the gap in
+consistency. Over a De Morgan factor neither implies the other: the pair of two undefined values
+in `Trivalent ⊙ Trivalent` is consistent but not disjoint, and the pair of the glut and the gap in
 `FOUR ⊙ FOUR` is disjoint but not consistent. Over a Heyting factor, whose pseudocomplement is no
 involution, disjointness is the only notion available. -/
 

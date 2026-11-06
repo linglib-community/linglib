@@ -26,27 +26,27 @@ namespace Exhaustification.Trivalent
 
 open Exhaustification
 
-variable {W ι : Type*} [Fintype W] [Fintype ι] (alts : ι → W → SignType) (p : W → SignType)
+variable {W ι : Type*} [Fintype W] [Fintype ι] (alts : ι → W → Trivalent) (p : W → Trivalent)
 
 /-- An alternative is excluded when its classical truth conditions are innocently excludable given
 the prejacent's. -/
 def Excluded (i : ι) : Prop :=
-  IsInnocentlyExcludable (Set.range fun j ↦ posSupport (alts j)) (posSupport p)
-    (posSupport (alts i))
+  IsInnocentlyExcludable (Set.range fun j ↦ posExt (alts j)) (posExt p)
+    (posExt (alts i))
 
 instance (i : ι) : Decidable (Excluded alts p i) :=
-  inferInstanceAs (Decidable (IsInnocentlyExcludable (Set.range fun j ↦ posSupport (alts j))
-    (posSupport p) ((fun j ↦ posSupport (alts j)) i)))
+  inferInstanceAs (Decidable (IsInnocentlyExcludable (Set.range fun j ↦ posExt (alts j))
+    (posExt p) ((fun j ↦ posExt (alts j)) i)))
 
 /-- Weak-negation exhaustification is `0` where the prejacent is, and elsewhere classical innocent
 exclusion on the worlds where each proposition is `1`. -/
-def exh1 (w : W) : SignType :=
+def exh1 (w : W) : Trivalent :=
   if p w = 0 then 0
-  else if w ∈ exhIE (Set.range fun j ↦ posSupport (alts j)) (posSupport p) then 1 else -1
+  else if w ∈ exhIE (Set.range fun j ↦ posExt (alts j)) (posExt p) then 1 else -1
 
 /-- Strong-negation exhaustification is `0` where the prejacent or some excluded alternative is,
 `1` where the prejacent is `1` and every excluded alternative is `-1`, and `-1` otherwise. -/
-def exh2 (w : W) : SignType :=
+def exh2 (w : W) : Trivalent :=
   if p w = 0 ∨ ∃ i, Excluded alts p i ∧ alts i w = 0 then 0
   else if p w = 1 ∧ ∀ i, Excluded alts p i → alts i w = -1 then 1 else -1
 

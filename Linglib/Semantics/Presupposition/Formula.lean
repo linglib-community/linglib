@@ -14,7 +14,7 @@ and its classical meaning is the conjunction of the two (`Formula.truth`, C.2).
 Each binary connective is interpreted classically (`Connective.eval`), by the truth table of any
 trivalent connectives (`Connective.table`), and by Heim's context change potentials, with Beaver's
 disjunction (`Connective.ccp`). The fold `Formula.eval` evaluates a formula into a trivalent
-proposition `W → SignType` under given connectives, the Strong Kleene ones for
+proposition `W → Trivalent` under given connectives, the Strong Kleene ones for
 `Formula.strongKleene` and Peters' filtering ones for `Formula.middleKleene`, and `Formula.ccp`
 evaluates it into `CCP.Partial`, sending an atom or a trigger to the update of its trivalent
 meaning. Where the filtering evaluation is defined it is the classical meaning
@@ -69,7 +69,7 @@ def eval : Connective → Prop → Prop → Prop
   | disj, a, b => a ∨ b
 
 /-- The truth table that the trivalent connectives `C` give a binary connective. -/
-@[simp] def table (C : Trivalent.Connectives) : Connective → SignType → SignType → SignType
+@[simp] def table (C : Trivalent.Connectives) : Connective → Trivalent → Trivalent → Trivalent
   | conj => C.conj
   | cond => C.cond
   | disj => C.disj
@@ -109,20 +109,20 @@ def truth : Formula Atom → Set W
 
 /-- The evaluation by the trivalent connectives `C`, in which an atom is classical and a trigger is
 defined where its presupposition holds. -/
-noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → SignType
-  | atom p => fun w ↦ SignType.ofProp (w ∈ I p)
-  | trigger p p' => (I p).indicator fun w ↦ SignType.ofProp (w ∈ I p')
+noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Trivalent
+  | atom p => fun w ↦ Trivalent.ofProp (w ∈ I p)
+  | trigger p p' => (I p).indicator fun w ↦ Trivalent.ofProp (w ∈ I p')
   | not F => -eval C F
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
 /-- The Strong Kleene evaluation. -/
-noncomputable abbrev strongKleene : Formula Atom → W → SignType := eval I .strongKleene
+noncomputable abbrev strongKleene : Formula Atom → W → Trivalent := eval I .strongKleene
 
 /-- The evaluation by [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
-noncomputable abbrev middleKleene : Formula Atom → W → SignType := eval I .middleKleene
+noncomputable abbrev middleKleene : Formula Atom → W → Trivalent := eval I .middleKleene
 
 /-- The Weak Kleene evaluation. -/
-noncomputable abbrev weakKleene : Formula Atom → W → SignType := eval I .weakKleene
+noncomputable abbrev weakKleene : Formula Atom → W → Trivalent := eval I .weakKleene
 
 /-- The context change potential of a formula updates an atom or a trigger by its trivalent
 meaning, so a trigger is defined in a context that entails its presupposition. -/
@@ -150,7 +150,7 @@ def accommodate : Formula Atom → Formula Atom
 variable {w : W}
 
 theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
-    (hF : F.middleKleene I w ≠ 0 → F.middleKleene I w = SignType.ofProp (w ∈ F.truth I)) :
+    (hF : F.middleKleene I w ≠ 0 → F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I)) :
     (bin c F G).middleKleene I w ≠ 0 ↔
       F.middleKleene I w ≠ 0 ∧
         (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) := by
@@ -164,13 +164,13 @@ theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
       simp_all [Connective.localContext]
 
 theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0) :
-    F.middleKleene I w = SignType.ofProp (w ∈ F.truth I) := by
+    F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I) := by
   induction F with
   | atom p => rfl
   | trigger p p' =>
     by_cases hp : w ∈ I p <;> simp_all [middleKleene, eval, truth]
   | not F ih =>
-    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
+    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff] at h ⊢
     simp [ih h, truth]
   | bin c F G ihF ihG =>
     obtain ⟨hF, hG⟩ := (middleKleene_bin_ne_zero_iff I ihF).1 h
@@ -204,7 +204,7 @@ private theorem mem_ofTrivalent_middleKleene {F : Formula Atom} {C : Set W}
     (h : C ⊆ Function.support (F.middleKleene I)) :
     C ∩ F.truth I ∈ CCP.Partial.ofTrivalent (F.middleKleene I) C :=
   (CCP.Partial.mem_ofTrivalent _ _ _).2 ⟨h, Set.ext fun w ↦ and_congr_right fun hw ↦ by
-    rw [middleKleene_eq_ofProp I (h hw), SignType.ofProp_eq_one_iff]⟩
+    rw [middleKleene_eq_ofProp I (h hw), Trivalent.ofProp_eq_true_iff]⟩
 
 private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
     ((F.ccp I).Admits C → C ⊆ Function.support (F.middleKleene I)) ∧

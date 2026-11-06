@@ -377,8 +377,8 @@ def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g t = some d
 denotations and Strong Kleene propositions agree on presupposition failure. -/
 theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
     (h : interpPartial lex g t = some ⟨.t, v⟩) :
-    PresupFailure lex g t ↔ SignType.ofPart v = 0 := by
-  rw [PresupFailure, SignType.ofPart_eq_zero_iff, h]
+    PresupFailure lex g t ↔ Trivalent.ofPart v = .undefined := by
+  rw [PresupFailure, Trivalent.ofPart_eq_undefined_iff, h]
   simp
 
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))

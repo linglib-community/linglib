@@ -204,8 +204,8 @@ variable (p q : TwoDim W (W → Prop)) {w : W}
 
 /-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
 not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
-noncomputable def toTrivalent : W → SignType :=
-  Set.indicator {w | p.notAtIssue w} fun w ↦ SignType.ofProp (p.atIssue w)
+noncomputable def toTrivalent : W → Trivalent :=
+  Set.indicator {w | p.notAtIssue w} fun w ↦ Trivalent.ofProp (p.atIssue w)
 
 @[simp] theorem toTrivalent_eq_one_iff : p.toTrivalent w = 1 ↔ p.notAtIssue w ∧ p.atIssue w := by
   simp [toTrivalent]
@@ -269,7 +269,7 @@ theorem orKPSymmetric_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIss
   · exact Or.inr (h₁.resolve_right hp)
 
 theorem orKPSymmetric_not_trivalent (w : W) :
-    ¬ ∃ f : SignType → SignType → SignType,
+    ¬ ∃ f : Trivalent → Trivalent → Trivalent,
       ∀ p q : TwoDim W (W → Prop),
         (orKPSymmetric p q).toTrivalent w = f (p.toTrivalent w) (q.toTrivalent w) := by
   rintro ⟨f, hf⟩

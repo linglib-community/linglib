@@ -259,51 +259,51 @@ theorem Expr.felicitous_presup_of_presupFree {k : Kind} (e : Expr V L P k) {ψ :
 open Classical in
 /-- The trivalent value of a formula: undefined where it is infelicitous, and its truth value
 elsewhere. -/
-noncomputable def Formula.toTrivalent (φ : Formula V L P) : SignType :=
-  if φ.Felicitous M g then SignType.ofProp (Formula.Realize M g φ) else 0
+noncomputable def Formula.toTrivalent (φ : Formula V L P) : Trivalent :=
+  if φ.Felicitous M g then Trivalent.ofProp (Formula.Realize M g φ) else .undefined
 
 variable {M g} {φ ψ : Formula V L P}
 
-@[simp] theorem Formula.toTrivalent_eq_zero_iff : φ.toTrivalent M g = 0 ↔ ¬ φ.Felicitous M g := by
+@[simp] theorem Formula.toTrivalent_eq_zero_iff : φ.toTrivalent M g = .undefined ↔ ¬ φ.Felicitous M g := by
   unfold toTrivalent; split_ifs <;> simp_all
 
 @[simp] theorem Formula.toTrivalent_eq_one_iff :
-    φ.toTrivalent M g = 1 ↔ φ.Felicitous M g ∧ Formula.Realize M g φ := by
+    φ.toTrivalent M g = .true ↔ φ.Felicitous M g ∧ Formula.Realize M g φ := by
   unfold toTrivalent; split_ifs <;> simp_all
 
 @[simp] theorem Formula.toTrivalent_eq_neg_one_iff :
-    φ.toTrivalent M g = -1 ↔ φ.Felicitous M g ∧ ¬ Formula.Realize M g φ := by
+    φ.toTrivalent M g = .false ↔ φ.Felicitous M g ∧ ¬ Formula.Realize M g φ := by
   unfold toTrivalent; split_ifs <;> simp_all
 
 variable (M g)
 
-@[simp] theorem Formula.toTrivalent_top : Formula.toTrivalent M g (.top : Formula V L P) = 1 := by
+@[simp] theorem Formula.toTrivalent_top : Formula.toTrivalent M g (.top : Formula V L P) = .true := by
   simp
 
-theorem Formula.toTrivalent_neg : Formula.toTrivalent M g (.neg φ) = -φ.toTrivalent M g :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp)
+theorem Formula.toTrivalent_neg : Formula.toTrivalent M g (.neg φ) = (φ.toTrivalent M g)ᶜ :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
 
 /-- Conjunction is Peters' Middle Kleene conjunction ([keshet-abney-2024], fn. 21). -/
 theorem Formula.toTrivalent_conj :
     Formula.toTrivalent M g (.conj φ ψ) = (φ.toTrivalent M g).meetMiddle (ψ.toTrivalent M g) :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp; tauto) (by simp; tauto)
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp; tauto) (by simp; tauto)
 
 theorem Formula.toTrivalent_disj :
     (φ.disj ψ).toTrivalent M g = (φ.toTrivalent M g).joinMiddle (ψ.toTrivalent M g) :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp; tauto) (by simp; tauto)
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp; tauto) (by simp; tauto)
 
 theorem Formula.toTrivalent_impl :
-    (φ.impl ψ).toTrivalent M g = (-φ.toTrivalent M g).joinMiddle (ψ.toTrivalent M g) :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp; tauto) (by simp; tauto)
+    (φ.impl ψ).toTrivalent M g = ((φ.toTrivalent M g)ᶜ).joinMiddle (ψ.toTrivalent M g) :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp; tauto) (by simp; tauto)
 
 /-- A presupposition is the transplication of [blamey-1986]: `e|ψ` is undefined unless `ψ` is
 true, and otherwise has the value of `e`. -/
 theorem Formula.toTrivalent_presup :
     Formula.toTrivalent M g (.presup φ ψ) =
       (ψ.toTrivalent M g).transplication (φ.toTrivalent M g) := by
-  rw [SignType.transplication_eq_ite]
+  rw [Trivalent.transplication_eq_ite]
   split_ifs with h
-  · exact SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp_all) (by simp_all)
+  · exact Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp_all) (by simp_all)
   · simp_all
 
 /-- Existential quantification is Weak Kleene: a presupposition projects universally from its
@@ -311,24 +311,24 @@ scope. -/
 theorem Formula.toTrivalent_ex (x : V) :
     Formula.toTrivalent M g (.ex x φ) =
       Trivalent.existsWeak fun X => φ.toTrivalent M (Function.update g x X) :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) <| by
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) <| by
     simp only [toTrivalent_eq_one_iff, felicitous_ex, realize_ex,
-      Trivalent.existsWeak_eq_one_iff, ne_eq, toTrivalent_eq_zero_iff, not_not]
+      Trivalent.existsWeak_eq_true_iff, ne_eq, toTrivalent_eq_zero_iff, not_not]
     exact ⟨fun ⟨hF, X, hX⟩ => ⟨hF, X, hF X, hX⟩, fun ⟨hF, X, _, hX⟩ => ⟨hF, X, hX⟩⟩
 
 theorem Formula.toTrivalent_all (x : V) :
     (Formula.all x φ).toTrivalent M g =
       Trivalent.forallWeak fun X => φ.toTrivalent M (Function.update g x X) :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) <| by
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) <| by
     simp only [toTrivalent_eq_one_iff, felicitous_all, realize_all,
-      Trivalent.forallWeak_eq_one_iff]
+      Trivalent.forallWeak_eq_true_iff]
     exact ⟨fun ⟨hF, hT⟩ X => ⟨hF X, hT X⟩, fun h => ⟨fun X => (h X).1, fun X => (h X).2⟩⟩
 
 theorem Formula.toTrivalent_surjective :
-    Function.Surjective (Formula.toTrivalent M g : Formula V L P → SignType)
-  | 0 => ⟨.presup .top (.neg .top), by simp⟩
-  | -1 => ⟨.neg .top, by simp⟩
-  | 1 => ⟨.top, by simp⟩
+    Function.Surjective (Formula.toTrivalent M g : Formula V L P → Trivalent)
+  | .undefined => ⟨.presup .top (.neg .top), by simp⟩
+  | .false => ⟨.neg .top, by simp⟩
+  | .true => ⟨.top, by simp⟩
 
 end Felicity
 
