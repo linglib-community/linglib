@@ -45,10 +45,10 @@ variable {W E : Type*} {φ : E → W → Prop} {w : W} {e intended : E}
 
 /-- The attributive use, which picks out at each world the unique satisfier of the description
 there. -/
-noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ iota (φ · w)
+noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ iota {x | φ x w}
 
 theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
-  iota_eq_some_iff _
+  iota_eq_some_iff
 
 /-- The attributive use as a nominal denotation, whose selector is the pointwise iota and which
 presupposes nothing beyond the iota's definedness. -/

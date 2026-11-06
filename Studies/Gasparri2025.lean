@@ -45,8 +45,8 @@ namespace Gasparri2025
 open Quantifier Quantifier.Det
 
 theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
-    (VP : E → Prop) :
-    most (ident j) VP ↔ VP j :=
+    (VP : Set E) :
+    most {j} VP ↔ j ∈ VP :=
   most_singleton_iff j VP
 
 /-! ### The paper's judgments -/

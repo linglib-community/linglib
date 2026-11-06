@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Word.Tree
+public import Linglib.Syntax.Minimalist.Category
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.Basic
@@ -10,8 +11,8 @@ public import Mathlib.Data.Finset.Basic
 
 Distributed Morphology builds words in the syntax and supplies their forms late. The syntax
 combines abstract morphemes: roots, which have no category, and functional morphemes, bundles of
-features, among them the categorizers *n*, *v* and *a* with one of which every root combines.
-Head movement and the operations after syntax gather a root and the heads above it into a complex
+features, which bear the categories of the syntax, among them the categorizers *n*, *v* and *a*
+with one of which every root combines. Head movement and the operations after syntax gather a root and the heads above it into a complex
 head, and Vocabulary Insertion realizes its terminals, choosing among Vocabulary Items by the
 Subset Principle.
 
@@ -24,7 +25,7 @@ into the syntax.
 ## Main definitions
 
 * `DistributedMorphology.Root`: a root, individuated by an index alone.
-* `DistributedMorphology.Categorizer`: the categorizers *n*, *v* and *a*.
+* `DistributedMorphology.Cat`: the category of a terminal, a root's or a functional head's.
 * `DistributedMorphology.Morpheme`: a terminal at PF, its features with the exponent Vocabulary
   Insertion substitutes for its variable Q.
 * `DistributedMorphology.ComplexHead`: a root with the heads adjoined above it.
@@ -61,7 +62,7 @@ namespace DistributedMorphology
 
 open Morphology (Morph)
 
-/-! ### Roots and categorizers -/
+/-! ### Roots and categories -/
 
 /-- A root is individuated by an arbitrary index alone, with deliberately no form or meaning, and
 receives its form at Vocabulary Insertion. A different object from the comparative-concept root
@@ -82,14 +83,14 @@ def Root.equivNat : Root ≃ ℕ where
 /-- The root inventory is unbounded, an open class. -/
 instance : Infinite Root := Root.equivNat.infinite_iff.mpr inferInstance
 
-/-- The categorizing heads, which merge with a root that has no category. -/
-inductive Categorizer where
-  | n
-  | v
-  | a
-  deriving DecidableEq, Repr, Fintype
-
-theorem card_categorizer : Fintype.card Categorizer = 3 := rfl
+/-- The category of a terminal of the syntax: a root, which has none of the syntax's categories, a
+head of one of them, the categorizers `Minimalist.Cat.n`, `Minimalist.Cat.v` and `Minimalist.Cat.a`
+among them, or a functional head that its source leaves unnamed, written F. -/
+inductive Cat
+  | root
+  | head (c : Minimalist.Cat)
+  | f
+  deriving DecidableEq, Repr
 
 /-! ### Morphemes -/
 

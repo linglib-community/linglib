@@ -68,8 +68,8 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 
 open scoped Denotes
 
-/-- A restrictor is a property of entities at a situation, relative to an entity assignment. -/
-abbrev DefiniteDescription.Restrictor (E W : Type) := Assignment E → W → E → Prop
+/-- A restrictor is a set of entities at a situation, relative to an entity assignment. -/
+abbrev DefiniteDescription.Restrictor (E W : Type) := Assignment E → W → Set E
 
 /-- A definite description is the covert iota of a bare noun, the weak or the strong article of
 [schwarz-2009], a deictic demonstrative, or a possessive. -/
@@ -123,7 +123,7 @@ demonstrative to the indexed entity and for the possessive to what stands in the
 relation to the possessor. -/
 def restrictor : DefiniteDescription E W → Restrictor E W
   | .bare R | .unique R => R
-  | .anaphoric R d | .demonstrative R d => fun g s x ↦ R g s x ∧ x = g d
+  | .anaphoric R d | .demonstrative R d => fun g s ↦ R g s ∩ {g d}
   | .possessive R possessor rel => fun g s ↦ Possession.π (R g s) (rel g s) (possessor g s)
 
 /-- A description picks out, at an assignment and a resource situation, the Russellian iota over its
@@ -138,10 +138,10 @@ noncomputable instance : Denotes (DefiniteDescription E W) (Assignment E → W �
 @[simp] theorem denote_unique : ⟦unique R⟧ g s = iota (R g s) := rfl
 
 @[simp] theorem denote_anaphoric :
-    ⟦anaphoric R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
+    ⟦anaphoric R d⟧ g s = iota (R g s ∩ {g d}) := rfl
 
 @[simp] theorem denote_demonstrative :
-    ⟦demonstrative R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
+    ⟦demonstrative R d⟧ g s = iota (R g s ∩ {g d}) := rfl
 
 @[simp] theorem denote_possessive :
     ⟦possessive R possessor rel⟧ g s = iota (Possession.π (R g s) (rel g s) (possessor g s)) :=
@@ -166,40 +166,40 @@ theorem denote_anaphoric_eq_possessive :
 /-! ### Referent conditions -/
 
 theorem denote_eq_some_iff (k : DefiniteDescription E W) :
-    ⟦k⟧ g s = some x ↔ k.restrictor g s x ∧ ∀ y, k.restrictor g s y → y = x :=
-  iota_eq_some_iff _
+    ⟦k⟧ g s = some x ↔ x ∈ k.restrictor g s ∧ ∀ y ∈ k.restrictor g s, y = x :=
+  iota_eq_some_iff
 
 theorem denote_isSome_iff (k : DefiniteDescription E W) :
-    (⟦k⟧ g s).isSome ↔ ∃! x, k.restrictor g s x :=
-  iota_isSome_iff _
+    (⟦k⟧ g s).isSome ↔ ∃! x, x ∈ k.restrictor g s :=
+  iota_isSome_iff
 
 /-- The weak article denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
-theorem denote_unique_eq_some_iff : ⟦unique R⟧ g s = some x ↔ R g s x ∧ ∀ y, R g s y → y = x :=
-  iota_eq_some_iff _
+theorem denote_unique_eq_some_iff : ⟦unique R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
+  iota_eq_some_iff
 
 /-- The covert iota denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
-theorem denote_bare_eq_some_iff : ⟦bare R⟧ g s = some x ↔ R g s x ∧ ∀ y, R g s y → y = x :=
-  iota_eq_some_iff _
+theorem denote_bare_eq_some_iff : ⟦bare R⟧ g s = some x ↔ x ∈ R g s ∧ ∀ y ∈ R g s, y = x :=
+  iota_eq_some_iff
 
 /-- The weak article is defined iff the restrictor has a unique satisfier at the situation. -/
-theorem denote_unique_isSome_iff : (⟦unique R⟧ g s).isSome ↔ ∃! x, R g s x :=
-  iota_isSome_iff _
+theorem denote_unique_isSome_iff : (⟦unique R⟧ g s).isSome ↔ ∃! x, x ∈ R g s :=
+  iota_isSome_iff
 
 /-- The weak article is undefined where the restrictor has two satisfiers. -/
-theorem denote_unique_eq_none_of_ne {y : E} (hx : R g s x) (hy : R g s y) (hne : x ≠ y) :
+theorem denote_unique_eq_none_of_ne {y : E} (hx : x ∈ R g s) (hy : y ∈ R g s) (hne : x ≠ y) :
     ⟦unique R⟧ g s = none :=
-  iota_eq_none_of_ne _ hx hy hne
+  iota_eq_none_of_ne hx hy hne
 
 /-- The strong article denotes `x` iff `x` is its antecedent and the restrictor holds of the
 antecedent at the situation, so the index selects and the situation only decides definedness. -/
-theorem denote_anaphoric_eq_some_iff : ⟦anaphoric R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+theorem denote_anaphoric_eq_some_iff : ⟦anaphoric R d⟧ g s = some x ↔ g d ∈ R g s ∧ x = g d :=
   (Set.Subsingleton.iota_eq_some_iff fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
     ⟨fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩, fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩⟩
 
 /-- The strong article is defined iff the restrictor holds of its antecedent at the situation. -/
-theorem denote_anaphoric_isSome_iff : (⟦anaphoric R d⟧ g s).isSome ↔ R g s (g d) := by
+theorem denote_anaphoric_isSome_iff : (⟦anaphoric R d⟧ g s).isSome ↔ g d ∈ R g s := by
   rw [Option.isSome_iff_exists]
   simp only [denote_anaphoric_eq_some_iff, exists_eq_right]
 
@@ -212,28 +212,28 @@ theorem denote_anaphoric_rigid {s' : W} {x' : E} (h : ⟦anaphoric R d⟧ g s = 
 
 /-- Where the antecedent is the only satisfier of the restrictor, the strong article denotes as the
 weak one. -/
-theorem denote_anaphoric_eq_unique_of_forall_eq (h : ∀ y, R g s y → y = g d) :
+theorem denote_anaphoric_eq_unique_of_forall_eq (h : ∀ y ∈ R g s, y = g d) :
     ⟦anaphoric R d⟧ g s = ⟦unique R⟧ g s :=
-  congrArg iota <| funext fun x ↦ propext <| and_iff_left_of_imp (h x)
+  congrArg iota <| Set.inter_eq_left.2 h
 
 /-- The possessive denotes `x` iff `x` is the unique satisfier of the restrictor that stands in the
 possession relation to the possessor. -/
 theorem denote_possessive_eq_some_iff :
     ⟦possessive R possessor rel⟧ g s = some x ↔
-      (R g s x ∧ rel g s (possessor g s) x) ∧ ∀ y, R g s y ∧ rel g s (possessor g s) y → y = x :=
-  iota_eq_some_iff _
+      (x ∈ R g s ∧ rel g s (possessor g s) x) ∧
+        ∀ y, y ∈ R g s ∧ rel g s (possessor g s) y → y = x :=
+  iota_eq_some_iff
 
 /-- The possessive is defined iff exactly one satisfier of the restrictor stands in the
 possession relation to the possessor. -/
 theorem denote_possessive_isSome_iff :
-    (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, R g s x ∧ rel g s (possessor g s) x :=
-  iota_isSome_iff _
+    (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, x ∈ R g s ∧ rel g s (possessor g s) x :=
+  iota_isSome_iff
 
 theorem possNP_iff_exists_mem_denote_possessive (B : Set E) :
     Possession.PossNP (Quantifier.individual (possessor g s)) Quantifier.Det.the (rel g s)
         (R g s) B ↔ ∃ x ∈ ⟦possessive R possessor rel⟧ g s, x ∈ B := by
   rw [Possession.possNP_individual_the, Quantifier.Det.the_iff_exists_mem_iota, denote_possessive]
-  rfl
 
 end DefiniteDescription
 

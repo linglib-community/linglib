@@ -47,10 +47,14 @@ the argument in the specifier of a functional head over the root has both proper
 namespace VanCraenenbroeck2014
 
 open PhraseStructure DistributedMorphology
-open DistributedMorphology.RootCategorization (Cat Lexicon Attachment specifierTree selector)
+open DistributedMorphology.RootCategorization (Lexicon Attachment specifierTree selector)
 open Core.Order (TreePath)
 
 /-! ### Pronominalization and selection -/
+
+-- `Config.Derives` quantifies over the categories a proform may have.
+deriving instance Fintype for Minimalist.Cat
+deriving instance Fintype for DistributedMorphology.Cat
 
 /-- In the configurations of a root and its argument, the root takes the argument as its
 complement, as in (12), or modifies the categorizer whose complement it is, or the argument is in
@@ -60,12 +64,13 @@ inductive Config
   | complement | modifier | specifier | severed
   deriving DecidableEq, Repr
 
-/-- A configuration's phrase under a categorizer. -/
-def Config.tree (x : Categorizer) : Config → Tree Cat Unit
-  | .complement => Attachment.complement.tree ⟨x, (), (), ()⟩
-  | .modifier => Attachment.modifier.tree ⟨x, (), (), ()⟩
-  | .specifier => specifierTree ⟨x, (), (), ()⟩
-  | .severed => .node .f [.terminal .d (), .node .f [.terminal .f (), .terminal .root ()]]
+/-- A configuration's phrase, for the categorizer and words of a categorized root. -/
+def Config.tree (L : Lexicon Unit) : Config → Tree Cat Unit
+  | .complement => Attachment.complement.tree L
+  | .modifier => Attachment.modifier.tree L
+  | .specifier => specifierTree L
+  | .severed =>
+    .node .f [.terminal (.head .D) (), .node .f [.terminal .f (), .terminal .root ()]]
 
 /-- The position of the root. -/
 def Config.rootPos : Config → TreePath
@@ -86,12 +91,12 @@ inductive Use
 
 /-- A proform of category `X` may stand for a phrase that contains the root and strands or
 includes the argument. -/
-def Config.Licenses (c : Config) (x : Categorizer) (X : Cat) : Use → Prop
-  | .stranded => Strands X (c.tree x) c.rootPos c.argPos
+def Config.Licenses (c : Config) (L : Lexicon Unit) (X : Cat) : Use → Prop
+  | .stranded => Strands X (c.tree L) c.rootPos c.argPos
   | .included =>
-    ∃ p ∈ c.rootPos.toList.inits.map TreePath.mk, p ≤ c.argPos ∧ Replaceable X (c.tree x) p
+    ∃ p ∈ c.rootPos.toList.inits.map TreePath.mk, p ≤ c.argPos ∧ Replaceable X (c.tree L) p
 
-instance (c : Config) (x : Categorizer) (X : Cat) : ∀ u, Decidable (c.Licenses x X u)
+instance (c : Config) (L : Lexicon Unit) (X : Cat) : ∀ u, Decidable (c.Licenses L X u)
   | .stranded => inferInstanceAs (Decidable (Strands _ _ _ _))
   | .included => inferInstanceAs (Decidable (∃ p ∈ _, _))
 
@@ -103,21 +108,27 @@ inductive Proform
 /-- The proforms as named in the rows. -/
 def proformTable : List (String × Proform) := [("the same/likewise", .sameLikewise), ("ien", .ien)]
 
+/-- A root categorized as a verb. -/
+def verb : Lexicon Unit := { x := .v, root := (), head := (), arg := () }
+
+/-- A root categorized as a noun. -/
+def noun : Lexicon Unit := { x := .n, root := (), head := (), arg := () }
+
 /-- The categories as named in the rows. -/
-def categoryTable : List (String × Categorizer) := [("verb", .v), ("noun", .n)]
+def categoryTable : List (String × Lexicon Unit) := [("verb", verb), ("noun", noun)]
 
 /-- The uses as named in the rows. -/
 def useTable : List (String × Use) := [("stranded", .stranded), ("included", .included)]
 
 /-- The categories of the selection examples (10) and (15). -/
-def selectionData : List Categorizer :=
+def selectionData : List (Lexicon Unit) :=
   Examples.all.filterMap fun d ↦
     if d.feature? "construction" = some "selection" then d.parse? "category" categoryTable
     else none
 
 /-- The pronominalization examples (11), (13) and (17), each with the category of the
 pronominalized phrase, the proform, its use and the judgment. -/
-def pronominalizationData : List (Categorizer × Proform × Use × Judgment) :=
+def pronominalizationData : List (Lexicon Unit × Proform × Use × Judgment) :=
   Examples.all.filterMap fun d ↦ do
     guard (d.feature? "construction" = some "pronominalization")
     pure (← d.parse? "category" categoryTable, ← d.parse? "proform" proformTable,

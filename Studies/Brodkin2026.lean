@@ -80,7 +80,7 @@ inductive Head
 among them. -/
 inductive Feature
   | head (h : Head)
-  | cat (c : Categorizer)
+  | cat (c : Minimalist.Cat)
   deriving DecidableEq, Repr
 
 namespace Head
@@ -586,26 +586,22 @@ section CCommand
 
 open PhraseStructure Core.Order
 
-/-- The categories of the ditransitive clause (90). -/
-inductive Cat
-  | voice | v | appl | verb | det | noun
-  deriving DecidableEq, Repr
-
 /-- The ditransitive clause of (90), the verb raised to Voice over the internal argument, a
 demonstrative whose noun phrase is elided, and the applied argument in a rightward specifier of
 Appl above it ((89)). The traces of the raised verb and the elided noun phrase are silent leaves;
 the silent external argument and the final deictic are left out. -/
-def ditransitive (verb o d : String) : PhraseStructure.Tree Cat String :=
-  Tree.node .voice [Tree.terminal .voice verb,
+def ditransitive (verb o d : String) : PhraseStructure.Tree Minimalist.Cat String :=
+  Tree.node .Voice [Tree.terminal .Voice verb,
     Tree.node .v [Tree.trace 0 .v,
-      Tree.node .appl [
-        Tree.node .appl [Tree.trace 0 .appl,
-          Tree.node .verb [Tree.trace 0 .verb,
-            Tree.node .det [Tree.terminal .det o, Tree.trace 1 .noun]]],
-        Tree.node .det [Tree.terminal .noun d]]]]
+      Tree.node .Appl [
+        Tree.node .Appl [Tree.trace 0 .Appl,
+          Tree.node .V [Tree.trace 0 .V,
+            Tree.node .D [Tree.terminal .D o, Tree.trace 1 .N]]],
+        Tree.node .D [Tree.terminal .N d]]]]
 
 /-- The words of the terminals a position c-commands. -/
-def cCommandedWords (t : PhraseStructure.Tree Cat String) (p : TreePath) : List String :=
+def cCommandedWords (t : PhraseStructure.Tree Minimalist.Cat String) (p : TreePath) :
+    List String :=
   (t.positionedTerminals.filter fun x ↦ t.CCommands p x.1).map (·.2.2)
 
 -- The raised verb c-commands both arguments, and the applied argument c-commands the internal
@@ -623,7 +619,7 @@ def cCommanded? (ex : Datum) : Option (List String) := do
   let o ← ex.glossedTokens[2]?
   let d ← ex.glossedTokens[3]?
   let t := ditransitive verb.1 o.1 d.1
-  let p ← (t.positionedTerminals.find? (·.2.1 = .det)).map (·.1)
+  let p ← (t.positionedTerminals.find? (·.2.1 = .D)).map (·.1)
   pure (cCommandedWords t p)
 
 /-- The ditransitive examples, (78a), (78b) and (92), each with the words its head c-commands. -/

@@ -253,7 +253,9 @@ theorem not_basicTrue_singleton : ¬ BasicTrue {0} := by decide
 /-- The decomposition, a conjunctive J over the μ phrases of the shifted conjuncts, computes the
 basic truth conditions of *is on the table*. -/
 theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
-    (st : EndState) : BasicTrue st ↔ j.denote {mu (shift (0 : Object)), mu (shift 1)} (· ∈ st) := by
+    (st : EndState) : BasicTrue st ↔
+      j.denote {Quantifier.Det.every {(0 : Object)}, Quantifier.Det.every {1}}
+        (st : Set Object) := by
   rw [conjunction_apply hj]; simp [BasicTrue, mentioned, Finset.insert_subset_iff]
 
 /-- An end state is accurate when it matches the exhaustified sentence, the basic truth

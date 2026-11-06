@@ -96,7 +96,7 @@ variable {R : Restrictor E W} {d : ℕ} {g : Assignment E} {s : W}
 
 /-- Over a restrictor with a satisfier besides the antecedent, the weak article fails uniqueness and
 the strong article returns the antecedent. -/
-theorem weak_eq_none_strong_eq_some {y : E} (hd : R g s (g d)) (hy : R g s y) (hne : y ≠ g d) :
+theorem weak_eq_none_strong_eq_some {y : E} (hd : g d ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g d) :
     ⟦DefiniteDescription.unique R⟧ g s = none ∧
       ⟦DefiniteDescription.anaphoric R d⟧ g s = some (g d) :=
   ⟨DefiniteDescription.denote_unique_eq_none_of_ne R g s hd hy hne.symm,
@@ -131,12 +131,12 @@ variable (f : W → E) (d : ℕ) (g : Assignment E) (s : W)
 
 /-- The weak article over a restrictor true at each situation of one entity denotes that entity, as
 *Gewinner* does in (48). -/
-theorem weak_covaries : ⟦DefiniteDescription.unique fun _ s x ↦ x = f s⟧ g s = some (f s) :=
-  iota_ident (f s)
+theorem weak_covaries : ⟦DefiniteDescription.unique fun _ s ↦ {f s}⟧ g s = some (f s) :=
+  iota_singleton (f s)
 
 /-- The strong article does not covary with the situation. At a fixed assignment it is defined over
 the same restrictor only at the situations whose entity is the antecedent. -/
-theorem strong_isSome_iff : (⟦DefiniteDescription.anaphoric (fun _ s x ↦ x = f s) d⟧ g s).isSome ↔
+theorem strong_isSome_iff : (⟦DefiniteDescription.anaphoric (fun _ s ↦ {f s}) d⟧ g s).isSome ↔
     g d = f s :=
   DefiniteDescription.denote_anaphoric_isSome_iff _ d g s
 
@@ -171,7 +171,7 @@ variable {S : Type} [PartialOrder S]
 /-- The type-shifter Π of (260) makes a property of a relational noun `R`. An individual `x` has it
 at `s` when `x` stands in `R` to a whole `y`, evaluated at `y` itself, that overlaps `s`;
 individuals are situations, so the whole is one. -/
-def shift (R : S → S → S → Prop) : Restrictor S S := fun _ s x ↦ ∃ y, R y x y ∧ Overlap s y
+def shift (R : S → S → S → Prop) : Restrictor S S := fun _ s ↦ {x | ∃ y, R y x y ∧ Overlap s y}
 
 /-- A relational noun is local when it holds at a situation only of parts of the situation, as
 *Bürgermeister* evaluated at a town holds of a mayor who is part of the town. -/
@@ -180,19 +180,19 @@ def IsLocal (R : S → S → S → Prop) : Prop := ∀ y x s, R y x s → x ≤ 
 variable {R : S → S → S → Prop} {g : Assignment S} {s x y : S}
 
 /-- Π of a local relational noun picks out only parts of a whole that overlaps the situation. -/
-theorem exists_le_of_shift (hR : IsLocal R) (h : shift R g s x) :
+theorem exists_le_of_shift (hR : IsLocal R) (h : x ∈ shift R g s) :
     ∃ y, x ≤ y ∧ R y x y ∧ Overlap s y :=
   let ⟨y, hy, ho⟩ := h
   ⟨y, hR y x y hy, hy, ho⟩
 
-theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : shift R g s x :=
+theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shift R g s :=
   ⟨y, hy, (Overlap.of_le hb hys).symm⟩
 
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
     (g : Assignment S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
-  (iota_eq_none_iff _).2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
+  iota_eq_none_iff.2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
 
 end Shift
 
@@ -233,7 +233,7 @@ def authorOf (y x s : Sit) : Prop :=
     x ≤ s
 
 /-- *Roman* 'novel' holds of both novels. -/
-def novel : Restrictor Sit Sit := fun _ _ x ↦ x = {.novel} ∨ x = {.coauthoredNovel}
+def novel : Restrictor Sit Sit := fun _ _ ↦ {{.novel}, {.coauthoredNovel}}
 
 theorem isLocal_authorOf : IsLocal authorOf := fun _ _ _ h ↦ h.2
 
@@ -272,7 +272,7 @@ theorem relational_anaphora_coauthored :
     ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = none ∧
       ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ =
         some {.coauthoredNovel} :=
-  ⟨iota_eq_none_of_ne _ (e := {.author}) (e' := {.coauthor})
+  ⟨iota_eq_none_of_ne (e := {.author}) (e' := {.coauthor})
       ⟨trivial, .inr ⟨rfl, .inl rfl⟩, by decide⟩ ⟨trivial, .inr ⟨rfl, .inr rfl⟩, by decide⟩
       (by decide),
     (DefiniteDescription.denote_anaphoric_eq_some_iff _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
@@ -280,7 +280,7 @@ theorem relational_anaphora_coauthored :
 -- (231)
 theorem larger_situation_strong :
     ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = none :=
-  (iota_eq_none_iff _).2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
+  iota_eq_none_iff.2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
 -- (58), §6.4.1
 theorem partWhole_bridging_strong :
@@ -301,7 +301,7 @@ inductive Scenario where
 /-- The plain noun of a scenario holds of the referent `0`, and of `1` too unless the referent is
 unique. -/
 def plainNoun (unique : Bool) : Restrictor (Fin 2) Unit :=
-  fun _ _ x ↦ x = 0 ∨ unique = false ∧ x = 1
+  fun _ _ ↦ {x | x = 0 ∨ unique = false ∧ x = 1}
 
 /-- The relational noun of a scenario is *Bürgermeister* if its referent is part of its relatum and
 *Autor* if not. -/

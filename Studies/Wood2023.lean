@@ -87,7 +87,7 @@ namespace Allomorphy
 /-- A Vocabulary Item of v or n may mention the category of its own head, or the exponent of a
 concatenated neighbor, a root or an affix. -/
 inductive Feature
-  | cat (c : Categorizer)
+  | cat (c : Minimalist.Cat)
   | exp (m : Morph)
   deriving DecidableEq, Repr
 

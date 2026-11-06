@@ -65,31 +65,16 @@ def Paradigm.stem (P : Paradigm α ι) (i : ℕ) : List α :=
 def Paradigm.io (P : Paradigm α ι) (i : ℕ) : List (ℕ × ℕ) :=
   ((P.members[i]?).map Member.io).getD []
 
-/-- The positions of two stems that realise the same input position. -/
-def compose (l₁ l₂ : List (ℕ × ℕ)) : List (ℕ × ℕ) :=
-  l₁.flatMap fun (r, p) ↦ l₂.filterMap fun (r', q) ↦ if r = r' then some (p, q) else none
-
-/-- The positions of a stem of length `n` without an input correspondent. -/
-def epenthetic (l : List (ℕ × ℕ)) (n : ℕ) : List ℕ :=
-  (List.range n).filter fun p ↦ ∀ rp ∈ l, rp.2 ≠ p
-
-/-- The site of a stem position: the last input position realised at or before it. -/
-def site (l : List (ℕ × ℕ)) (p : ℕ) : Option ℕ :=
-  ((l.filter fun rp ↦ rp.2 ≤ p).map Prod.fst).max?
-
-/-- ℛ_OP between two stems of lengths `n₁`, `n₂` with input correspondences `l₁`, `l₂`: the
-positions realising the same input position, and the epenthetic positions at the same site. -/
-def opPairs (l₁ l₂ : List (ℕ × ℕ)) (n₁ n₂ : ℕ) : List (ℕ × ℕ) :=
-  compose l₁ l₂ ++ (epenthetic l₁ n₁).flatMap fun p ↦
-    (epenthetic l₂ n₂).filterMap fun q ↦ if site l₁ p = site l₂ q then some (p, q) else none
-
 /-- The correspondence diagram of a candidate (2c): each member's input–stem relation, and
-between the stems of distinct members the relation ℛ_OP of `opPairs`. -/
+between the stems of distinct members ℛ_OP, the relation their input correspondences induce
+(`Correspondence.ooPairs`): the positions realising the same input position, and the epenthetic
+positions at the same site. -/
 def Paradigm.corr (P : Paradigm α ι) : Correspondence Role α :=
   .ofPairs (fun | .input => P.input | .member i => P.stem i)
     fun | .input, .member i => P.io i
         | .member i, .member j =>
-          if i = j then [] else opPairs (P.io i) (P.io j) (P.stem i).length (P.stem j).length
+          if i = j then [] else
+            Correspondence.ooPairs (P.io i) (P.io j) (P.stem i).length (P.stem j).length
         | _, _ => []
 
 /-- A markedness constraint on the word of each cell, summed over the members (2b). -/
@@ -105,11 +90,6 @@ pairs of distinct members. -/
 def opFaith (f : Correspondence Role α → Role → Role → ℕ) : Constraint (Paradigm α ι) :=
   fun P ↦ ((List.range P.members.length).flatMap fun i ↦ (List.range P.members.length).map fun j ↦
     if i = j then 0 else f P.corr (.member i) (.member j)).sum
-
-/-- The tableau of the labelled candidate paradigms under a ranking. -/
-def tableau {L : Type*} [DecidableEq L] (cand : L → Paradigm α ι) (labels : Finset L)
-    (ranking : List (Constraint (Paradigm α ι))) :=
-  Tableau.ofList labels (ranking.map (Constraint.comap cand))
 
 /-- The candidate paradigms of a tableau. -/
 inductive Cand
@@ -315,7 +295,8 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 5
 
 -- (12)
-theorem shortening_overapplies : (tableau long {.a, .b, .c, .d} ranking).optimal = {.a} := by
+theorem shortening_overapplies :
+    (Tableau.ofLabels long {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The paradigms of /faʕl/ in (13): epenthesis throughout, the cluster kept throughout with
@@ -334,7 +315,8 @@ where
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
 -- (13)
-theorem epenthesis_overapplies : (tableau cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
+theorem epenthesis_overapplies :
+    (Tableau.ofLabels cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
 /-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
@@ -348,7 +330,7 @@ where
   syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
 
 -- (17)
-theorem no_syncope : (tableau syncope {.a, .b} ranking).optimal = {.a} := by decide
+theorem no_syncope : (Tableau.ofLabels syncope {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
 def noun : Cand → Paradigm Seg Cell
@@ -360,7 +342,7 @@ where
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4)]
 
 -- (24)
-theorem noun_epenthesis : (tableau noun {.a, .b} ranking).optimal = {.a} := by decide
+theorem noun_epenthesis : (Tableau.ofLabels noun {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
 imperfectives *ja-…-u*, *ja-…-na*. -/
@@ -388,7 +370,7 @@ where
 
 -- (25)
 theorem attraction_to_the_unmarked :
-    (tableau eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
+    (Tableau.ofLabels eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
 
 /-- The paradigms of /stafʕaːl/ in (27), the candidates obeying the undominated constraints:
 levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
@@ -418,7 +400,7 @@ where
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
 
 -- (27), (21)
-theorem two_attractors : (tableau tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
+theorem two_attractors : (Tableau.ofLabels tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
   decide
 
 /-! ### Domination of OP faithfulness (§8.4.4)
@@ -443,7 +425,7 @@ where
 
 -- (29)
 theorem geminate_alternation :
-    (tableau geminate {.a, .b}
+    (Tableau.ofLabels geminate {.a, .b}
       (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
   decide
 
@@ -541,7 +523,8 @@ where
   input : List Seg := [.sh, .schwa, .r, .b]
 
 -- (32)
-theorem majority_rules : (tableau drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
+theorem majority_rules :
+    (Tableau.ofLabels drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
   decide
 
 end Arabic
@@ -587,17 +570,17 @@ where
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
 -- (33)
-theorem cry : (tableau (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
+theorem cry : (Tableau.ofLabels (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
   decide
 
 -- fn. 34
 theorem uncover :
-    (tableau (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
+    (Tableau.ofLabels (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
 
 /-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
-[benua-1997] winners, (87) and (92). -/
+[benua-1997] winners, (82) and (87). -/
 example :
-    (tableau (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
+    (Tableau.ofLabels (jussive .sibilant .stop) {.a, .b, .c} ranking).optimal = {.a} ∧
     (Benua1997.Hebrew.captive .d).form .base = (jussive .sibilant .stop .a).stem 0 ∧
     (Benua1997.Hebrew.captive .d).form .derivative = (jussive .sibilant .stop .a).stem 1 ∧
     (Benua1997.Hebrew.uncover .b).form .base = (jussive .spirant .liquid .c).stem 0 ∧

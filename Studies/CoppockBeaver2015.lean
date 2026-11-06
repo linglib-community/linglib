@@ -38,7 +38,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
   appendix and is carried here by classical equivalence.
 * The rival entries of Table 1 are classical and noncomputable, since only their
   presupposition profiles are stated. Lowering the individual-denoting Fregean entry by
-  Partee's `ident` reads the undefined individual through `Option`, since the paper's logic
+  Partee's *ident* reads the undefined individual through `Option`, since the paper's logic
   makes identity bivalent even on the undefined individual; Löbner's individual-noun row of
   Table 2 is not of the article's type and is not compared.
 * The appendix's possessive type shift prints the possessor arguments in the opposite order
@@ -357,10 +357,10 @@ noncomputable def be (G : (E → Trivalent) → Trivalent) : E → Trivalent :=
   fun x ↦ G (fun y ↦ ofProp (y = x))
 
 open Classical in
-/-- Partee's `ident` applied to the individual-denoting Fregean entry yields the property of
+/-- Partee's *ident* applied to the individual-denoting Fregean entry yields the property of
 being the unique `P`, undefined when there is none (Table 2). -/
 noncomputable def identIota (P : (E → Trivalent)) : (E → Trivalent) :=
-  fun x ↦ (_root_.iota (P · = .true)).elim .undefined fun j ↦ ofProp (x = j)
+  fun x ↦ (_root_.iota {y | P y = .true}).elim .undefined fun j ↦ ofProp (x = j)
 
 theorem presupposesUniqueness_the [DecidablePred (WeakUnique (E := E))] :
     PresupposesUniqueness (the (E := E)) :=
@@ -414,8 +414,9 @@ theorem presupposesExistence_be_theFregeanGQ :
 theorem identIota_ne_undefined_iff {P : (E → Trivalent)} {x : E} :
     identIota P x ≠ .undefined ↔ ∃! y, P y = .true := by
   classical
-  rw [identIota, ← _root_.iota_isSome_iff]
-  cases _root_.iota (P · = .true) <;> simp
+  refine Iff.trans ?_ (_root_.iota_isSome_iff (s := {y | P y = .true}))
+  rw [identIota]
+  cases _root_.iota {y | P y = .true} <;> simp
 
 -- Table 2
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
@@ -531,10 +532,10 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84) returns the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : (E → Trivalent)) : Option E := _root_.iota (P · = .true)
+noncomputable def iota (P : (E → Trivalent)) : Option E := _root_.iota {x | P x = .true}
 
 theorem iota_isSome_iff (P : (E → Trivalent)) : (iota P).isSome ↔ ∃! x, P x = .true :=
-  _root_.iota_isSome_iff _
+  _root_.iota_isSome_iff
 
 theorem iota_eq_none_iff (P : (E → Trivalent)) : iota P = none ↔ ¬ ∃! x, P x = .true := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
@@ -590,7 +591,7 @@ theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → Trivalen
       CCP.Partial.ofTrivalent (fun w ↦ ex (π w) (Q w)) C := by
   refine CCP.Partial.ofTrivalent_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
-  have hi : iota (π w) = some x := (iota_eq_some_iff _).2 ⟨hx, hu⟩
+  have hi : iota (π w) = some x := iota_eq_some_iff.2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
   refine (eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_).symm
   · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff, (hπ w hw).ne_undefined,

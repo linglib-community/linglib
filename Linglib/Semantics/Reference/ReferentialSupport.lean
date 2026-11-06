@@ -20,11 +20,11 @@ when some individual is the modified definite's referent and not the bare one's.
 
 @[expose] public section
 
-variable {E : Type*} {N M : E → Prop}
+variable {E : Type*} {N M : Set E}
 
 /-- A definite with head `N` and the intersective modifier `M`, if any, is referentially supported
 when it refers and, if modified, the definite with the bare head does not. -/
-def ReferentiallySupported (N : E → Prop) : Option (E → Prop) → Prop
+def ReferentiallySupported (N : Set E) : Option (Set E) → Prop
   | none => (iota N).isSome
   | some M => (iota (Modifier.intersective M N)).isSome ∧ iota N = none
 
@@ -41,5 +41,5 @@ theorem referentiallySupported_some_iff :
   · obtain ⟨e, he⟩ := Option.isSome_iff_exists.1 h
     exact ⟨e, he, by simp [hN]⟩
   · refine Option.eq_none_iff_forall_ne_some.2 fun e' he' ↦ hN ?_
-    obtain rfl := ((iota_eq_some_iff N).1 he').2 e ((iota_eq_some_iff _).1 he).1.2
+    obtain rfl := (iota_eq_some_iff.1 he').2 e (iota_eq_some_iff.1 he).1.2
     exact he'

@@ -38,6 +38,11 @@ scope projects](##Elliott2023.negative_exists_pred2).
   substrate takes extension.
 * Heimian familiarity is said to follow from (26), but [an open sentence can be assertable where its
   variable is not familiar](##Elliott2023.assertable_not_familiar).
+* (23) is said to hold of every state, but [a point that does not define `y` can survive the
+  denial of `∃x R(x, y)`](##Elliott2023.not_negative_exists_pred2); it holds where the points
+  define the same referents.
+* (31) is justified by the updates of `U(x)` partitioning their input, but [they need not cover
+  it](##Elliott2023.not_cover_pred1); they do where `x` is novel, as in (31).
 
 ## References
 
@@ -91,6 +96,23 @@ theorem firstPart_donkey (hx : State.Novel s x) :
   · simp [update, negative_pred1_of_novel U hn] at hp
   · simpa [update, unknownUpdate_pred1_of_novel U hn] using hp
   · simp [update, positive_pred1_of_novel U hn] at hp
+
+-- §2.4.3, before (31)
+theorem not_cover_pred1 :
+    ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
+      (pred1 (fun _ _ ↦ True) 0).positive s ∪ (pred1 (fun _ _ ↦ True) 0).negative s ∪
+        (pred1 (fun _ _ ↦ True) 0).unknownUpdate s ≠ s := by
+  let p₀ : Possibility Unit ℕ (Flat Unit) := Possibility.bot ()
+  have h₁ : p₀.update 0 ↑() ∈ (pred1 (fun _ _ ↦ True) 0).positive {p₀.update 0 ↑(), p₀} :=
+    by simp
+  refine ⟨{p₀.update 0 ↑(), p₀}, fun h ↦ ?_⟩
+  have hp : p₀ ∈ ({p₀.update 0 ↑(), p₀} : Set (Possibility Unit ℕ (Flat Unit))) :=
+    Set.mem_insert_of_mem _ rfl
+  rw [← h] at hp
+  rcases hp with (hp | hp) | ⟨-, hpos, -⟩
+  · simp [p₀, Possibility.bot] at hp
+  · simp [p₀, Possibility.bot] at hp
+  · exact hpos ⟨_, h₁, Possibility.le_update_of_eq_bot rfl _⟩
 
 -- (32), with the empty cell where both disjuncts are true
 theorem secondPart_donkey [Nonempty E] (hx : State.Novel s x) :
@@ -334,6 +356,22 @@ theorem negative_exists_pred2 [Nonempty E] (R : E → E → W → Prop) {X : Set
     exact (mem_lowerClosure_pred2_randomAssign hs hx hyx (fun e a w ↦ ¬ R e a w) hp).2
       ⟨a, ha, e, h e⟩
 
+-- (23)
+theorem not_negative_exists_pred2 :
+    ∃ (W E : Type) (x y : ℕ) (R : E → E → W → Prop) (s : Set (Possibility W ℕ (Flat E))),
+      (exists_ x (pred2 R x y)).negative s ≠
+        {p ∈ s | ∃ a : E, p.assignment y = ↑a ∧ ∀ e, ¬ R e a p.world} := by
+  let p₀ : Possibility Unit ℕ (Flat Unit) := Possibility.bot ()
+  let s : Set (Possibility Unit ℕ (Flat Unit)) := {p₀, p₀.update 1 ↑()}
+  refine ⟨Unit, Unit, 0, 1, fun _ _ _ ↦ False, s, fun h ↦ ?_⟩
+  have hmem : p₀ ∈ (exists_ 0 (pred2 (fun _ _ _ ↦ False) 0 1)).negative s := by
+    refine ⟨Set.mem_insert _ _, fun ⟨r, hr, _⟩ ↦ by simp at hr, (p₀.update 1 ↑()).update 0 ↑(),
+      mem_negative_pred2.2 ⟨⟨_, Set.mem_insert_of_mem _ rfl, (), rfl⟩, (), by simp, (), by simp,
+        not_false⟩, Possibility.bot_le⟩
+  rw [h] at hmem
+  obtain ⟨a, ha, -⟩ := hmem.2
+  simp [p₀, Possibility.bot] at ha
+
 -- (41b)
 theorem not_egli_negative :
     ∃ (W E : Type) (x : ℕ) (P Q : E → W → Prop) (s : Set (Possibility W ℕ (Flat E))),
@@ -360,8 +398,7 @@ theorem not_egli_negative :
 
 /-! ### Assertion (§2.4.1) -/
 
-/-- Assertability does not make a variable familiar: a state with a point that defines `x` and a
-point of the same world that does not makes `P(x)` assertable. -/
+-- §2.4.1, before (26)
 theorem assertable_not_familiar :
     ∃ s : Set (Possibility Unit ℕ (Flat Unit)),
       (pred1 (fun _ _ ↦ True) 0).Assertable s ∧ ¬ State.Familiar s 0 := by

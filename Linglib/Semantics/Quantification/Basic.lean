@@ -12,8 +12,9 @@ public import Mathlib.Order.CompleteLattice.Basic
 This file defines the determiner denotations *every* (`A ⊆ B`), *some* (`A ∩ B` nonempty), *no*
 (`A ⊆ Bᶜ`) and the Russellian *the*, whose truth conditions need no counting, and proves their
 conservativity, monotonicity, symmetry, duality and square-of-opposition properties. The
-properties checked are Barwise and Cooper's determiner universal and monotonicity constraint, Keenan and Stavi's Boolean
-structure, and Peters and Westerståhl's left monotonicity and smoothness. The counting
+properties checked are Barwise and Cooper's determiner universal and monotonicity constraint,
+Keenan and Stavi's Boolean structure, and Peters and Westerståhl's left monotonicity and
+smoothness. The counting
 quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 ## Main definitions
@@ -39,6 +40,7 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 * [barwise-cooper-1981]
 * [keenan-stavi-1986]
+* [partee-1987]
 * [peters-westerstahl-2006]
 * [russell-1905]
 * [van-benthem-1984]
@@ -72,12 +74,20 @@ theorem the_iff : the A B ↔ (∃! x, x ∈ A) ∧ A ⊆ B := by
   · rintro ⟨⟨x, hx, huniq⟩, hB⟩
     exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hB hx⟩
 
-theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota (· ∈ A), x ∈ B :=
+theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota A, x ∈ B :=
   exists_congr fun x ↦ and_congr_left' <|
-    (funext_iff.trans <| forall_congr' fun _ ↦ eq_iff_iff.trans Iff.comm).symm.trans
-      (iota_isPartialInv x (· ∈ A)).symm
+    Set.ext_iff.symm.trans <| eq_comm.trans (iota_isPartialInv x A).symm
+
+/-- *The `A`* is the lift of `iota A` where `iota A` is defined, and the empty quantifier
+elsewhere ([partee-1987], §3.2). -/
+theorem the_eq_elim (A : Set α) : the A = (iota A).elim ⊥ individual :=
+  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans <| by
+    cases iota A <;> simp [individual]
 
 theorem every_iff_le : every A B ↔ A ≤ B := .rfl
+
+theorem every_injective : Function.Injective (every : Det α) := fun A B h ↦
+  subset_antisymm ((congrFun h B).mpr subset_rfl) ((congrFun h A).mp subset_rfl)
 
 theorem no_iff_le_compl : no A B ↔ A ≤ Bᶜ := .rfl
 

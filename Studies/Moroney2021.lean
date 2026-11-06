@@ -236,7 +236,7 @@ variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : Se
 situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
 *nâj*. -/
 noncomputable def demDenotation (R : Restrictor E W) (g : Assignment E) (s : W) : Option E :=
-  (⟦bare R⟧ g s).bind fun _ ↦ iota fun x ↦ R g s x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)
+  (⟦bare R⟧ g s).bind fun _ ↦ iota (R g s ∩ χ.image (c.participants ⁻¹' d.deixis))
 
 /-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
 domain. -/
