@@ -152,121 +152,81 @@ def rules : Rules
   | causative, reciprocal | intensive, reciprocal => some .optional
   | f, g => rules₀ f g
 
-/-- The ways the spell-out of `f` splits a stem, given in reverse, into the suffixes it keeps
-and the suffixes it marks off, which `m` accumulates. The causative marks off one suffix after
-another (18) and every other feature at most one (fn. 16), and a split that leaves an obligatory
-circumscription undone is not one. -/
-def splits (K : Rules) (f : Feature) : Stem → Stem → List (Stem × Stem)
-  | [], m => [([], m)]
-  | x :: rest, m =>
-    let mark := if f = causative ∨ m = [] then splits K f rest (x :: m) else []
-    match K f x.feature with
-    | some .obligatory => mark
-    | some .optional => ((x :: rest).reverse, m) :: mark
-    | none => [((x :: rest).reverse, m)]
+/-- The ways the spell-out of `f` splits a stem into the suffixes it keeps and the suffixes it
+marks off: every marked-off suffix falls under a rule for `f`, only the causative marks off more
+than one (18, fn. 16), and the last kept suffix is not one that `f` must mark off. -/
+def splits (K : Rules) (f : Feature) (s : Stem) : List (Stem × Stem) :=
+  ((List.range (s.length + 1)).map fun j ↦ (s.take j, s.drop j)).filter fun km ↦
+    decide ((∀ x ∈ km.2, K f x.feature ≠ none) ∧ (f = causative ∨ km.2.length ≤ 1) ∧
+      ∀ x ∈ km.1.getLast?, K f x.feature ≠ some .obligatory)
 
-/-- The *-an-* the applicative spells out again on a base containing a reciprocal (24), unless
-the base's own *-an-* was marked off (22). -/
-def doubling (i : Input) (f : Feature) (m : Stem) : Stem :=
-  if f = applicative ∧ reciprocal ∈ i ∧ m.head?.map Suffix.feature ≠ some reciprocal then
+/-- The *-an-* the applicative spells out again on a base containing a reciprocal, whose feature
+percolates from anywhere in the base (24), unless the base's own *-an-* was marked off (22). -/
+def doubling (f : Feature) (s m : Stem) : Stem :=
+  if f = applicative ∧ .spell reciprocal ∈ s ∧ m.head?.map Suffix.feature ≠ some reciprocal then
     [.doubled]
   else []
 
-/-- A cycle spells out `f` on a stem `s` of the input `i` by placing the new morph after the kept
-suffixes and before the marked-off ones; the RMC blocks a result that repeats a morph. -/
-def cycle (K : Rules) (i : Input) (f : Feature) (s : Stem) : List Stem :=
-  ((splits K f s.reverse []).map fun km ↦ km.1 ++ .spell f :: (doubling i f km.2 ++ km.2)).filter
+/-- A cycle spells out `f` on a stem `s` by placing the new morph after the kept suffixes and
+before the marked-off ones; the RMC blocks a result that repeats a morph. -/
+def cycle (K : Rules) (f : Feature) (s : Stem) : List Stem :=
+  ((splits K f s).map fun km ↦ km.1 ++ .spell f :: (doubling f s km.2 ++ km.2)).filter
     fun t ↦ decide (RMC t)
 
-/-- The stems the cyclic spell-out of an input derives. -/
-def spellOut (K : Rules) (i : Input) : Finset Stem := go i.reverse
-where
-  /-- The stems of an input given in reverse. -/
-  go : List Feature → Finset Stem
-    | [] => {[]}
-    | f :: rest => (go rest).biUnion fun s ↦ (cycle K rest.reverse f s).toFinset
+/-- The stems the cyclic spell-out of an input derives, a cycle for each feature from the
+innermost out. -/
+def spellOut (K : Rules) (i : Input) : Finset Stem :=
+  i.foldl (fun S f ↦ S.biUnion fun s ↦ (cycle K f s).toFinset) {[]}
 
-theorem splits_spec {K : Rules} {f : Feature} : ∀ {rev acc : Stem} {km : Stem × Stem},
-    km ∈ splits K f rev acc → km.1 ++ km.2 = rev.reverse ++ acc ∧
-      (∀ x ∈ km.2, x ∈ acc ∨ K f x.feature ≠ none) ∧
-      ∀ x ∈ km.1.getLast?, K f x.feature ≠ some .obligatory
-  | [], acc, km, h => by
-    simp only [splits, List.mem_singleton] at h
-    subst h
-    exact ⟨rfl, fun x hx ↦ .inl hx, by simp⟩
-  | g :: rest, acc, km, h => by
-    have hmark : km ∈ (if f = causative ∨ acc = [] then splits K f rest (g :: acc) else []) →
-        K f g.feature ≠ none → km.1 ++ km.2 = (g :: rest).reverse ++ acc ∧
-          (∀ x ∈ km.2, x ∈ acc ∨ K f x.feature ≠ none) ∧
-          ∀ x ∈ km.1.getLast?, K f x.feature ≠ some .obligatory := by
-      intro hm hg
-      split at hm
-      · obtain ⟨h1, h2, h3⟩ := splits_spec hm
-        refine ⟨by simp [h1], fun x hx ↦ ?_, h3⟩
-        rcases h2 x hx with hx | hx
-        · rcases List.mem_cons.mp hx with rfl | hx
-          · exact .inr hg
-          · exact .inl hx
-        · exact .inr hx
-      · simp at hm
-    have hstop (hg : K f g.feature ≠ some .obligatory) (hk : km = ((g :: rest).reverse, acc)) :
-        km.1 ++ km.2 = (g :: rest).reverse ++ acc ∧
-          (∀ x ∈ km.2, x ∈ acc ∨ K f x.feature ≠ none) ∧
-          ∀ x ∈ km.1.getLast?, K f x.feature ≠ some .obligatory := by
-      subst hk
-      refine ⟨rfl, fun x hx ↦ .inl hx, fun x hx ↦ ?_⟩
-      simp only [List.reverse_cons, List.getLast?_concat, Option.mem_def,
-        Option.some.injEq] at hx
-      exact hx ▸ hg
-    simp only [splits] at h
-    split at h
-    · exact hmark h (by simp_all)
-    · rcases List.mem_cons.mp h with h | h
-      · exact hstop (by simp_all) h
-      · exact hmark h (by simp_all)
-    · exact hstop (by simp_all) (List.mem_singleton.mp h)
+section SpellOut
 
-theorem mem_spellOut_go {K : Rules} {f : Feature} {rest : List Feature} {t : Stem} :
-    t ∈ spellOut.go K (f :: rest) ↔ ∃ s ∈ spellOut.go K rest, t ∈ cycle K rest.reverse f s := by
-  simp [spellOut.go]
+variable {K : Rules} {f : Feature} {i : Input} {s t : Stem}
 
-theorem rmc_of_mem_spellOut {K : Rules} {i : Input} {s : Stem} (h : s ∈ spellOut K i) :
-    RMC s := by
-  unfold spellOut at h
-  generalize i.reverse = l at h
-  cases l with
-  | nil =>
-    simp only [spellOut.go, Finset.mem_singleton] at h
-    exact h ▸ List.IsChain.nil
-  | cons f rest =>
-    obtain ⟨_, -, ht⟩ := mem_spellOut_go.mp h
-    simp only [cycle, List.mem_filter, decide_eq_true_eq] at ht
-    exact ht.2
+theorem mem_splits {km : Stem × Stem} : km ∈ splits K f s ↔ km.1 ++ km.2 = s ∧
+    (∀ x ∈ km.2, K f x.feature ≠ none) ∧ (f = causative ∨ km.2.length ≤ 1) ∧
+      ∀ x ∈ km.1.getLast?, K f x.feature ≠ some .obligatory := by
+  simp only [splits, List.mem_filter, List.mem_map, List.mem_range, decide_eq_true_eq]
+  constructor
+  · rintro ⟨⟨j, -, rfl⟩, h⟩
+    exact ⟨List.take_append_drop j s, h⟩
+  · rintro ⟨rfl, h⟩
+    exact ⟨⟨km.1.length, by simp only [List.length_append]; omega, by simp⟩, h⟩
 
-theorem spell_not_mem_doubling {i : Input} {f x : Feature} {m : Stem} :
-    Suffix.spell x ∉ doubling i f m := by
-  unfold doubling; split <;> simp
+theorem mem_spellOut_concat :
+    t ∈ spellOut K (i ++ [f]) ↔ ∃ s ∈ spellOut K i, t ∈ cycle K f s := by
+  simp [spellOut, List.foldl_append]
 
-theorem spell_mem_iff_of_mem_spellOut {K : Rules} {i : Input} {s : Stem}
-    (h : s ∈ spellOut K i) (x : Feature) : Suffix.spell x ∈ s ↔ x ∈ i := by
-  rw [← List.mem_reverse (as := i)]
-  unfold spellOut at h
-  generalize i.reverse = l at h
-  induction l generalizing s with
-  | nil =>
-    simp only [spellOut.go, Finset.mem_singleton] at h
-    simp [h]
-  | cons f rest ih =>
-    obtain ⟨s', hs', ht⟩ := mem_spellOut_go.mp h
+theorem spellOut_induction {P : Input → Stem → Prop} (h : s ∈ spellOut K i) (nil : P [] [])
+    (step : ∀ i f s t, P i s → t ∈ cycle K f s → P (i ++ [f]) t) : P i s := by
+  induction i using List.reverseRecOn generalizing s with
+  | nil => rwa [show s = [] by simpa [spellOut] using h]
+  | append_singleton i f ih =>
+    obtain ⟨s', hs', ht⟩ := mem_spellOut_concat.mp h
+    exact step i f s' s (ih hs') ht
+
+theorem rmc_of_mem_spellOut (h : s ∈ spellOut K i) : RMC s :=
+  spellOut_induction (P := fun _ s ↦ RMC s) h (by decide) fun _ _ _ _ _ ht ↦
+    of_decide_eq_true (List.mem_filter.mp ht).2
+
+/-- The feature a suffix spells out on its own cycle, none for the doubled *-an-*. -/
+def Suffix.own? : Suffix → Option Feature
+  | spell f => some f
+  | doubled => none
+
+@[simp] theorem Suffix.own?_spell : (Suffix.spell f).own? = some f := rfl
+
+theorem filterMap_own_doubling {m : Stem} : (doubling f s m).filterMap Suffix.own? = [] := by
+  unfold doubling; split <;> rfl
+
+-- Each feature of the input is spelled out on a cycle of its own, once.
+theorem perm_of_mem_spellOut (h : s ∈ spellOut K i) : (s.filterMap Suffix.own?).Perm i :=
+  spellOut_induction (P := fun i s ↦ (s.filterMap Suffix.own?).Perm i) h .nil fun i f s t hs ht ↦ by
     simp only [cycle, List.mem_filter, List.mem_map] at ht
     obtain ⟨⟨km, hkm, rfl⟩, -⟩ := ht
-    obtain ⟨h1, -, -⟩ := splits_spec hkm
-    rw [List.reverse_reverse, List.append_nil] at h1
-    have hs := ih hs'
-    rw [← h1, List.mem_append] at hs
-    simp only [List.mem_append, List.mem_cons, Suffix.spell.injEq, spell_not_mem_doubling,
-      false_or]
-    tauto
+    obtain ⟨rfl, -⟩ := mem_splits.mp hkm
+    simp only [List.filterMap_append, List.filterMap_cons, Suffix.own?_spell,
+      filterMap_own_doubling, List.nil_append] at hs ⊢
+    exact List.perm_middle.trans ((hs.cons f).trans (List.perm_append_singleton f i).symm)
 
 /-! ### The filters (10) -/
 
@@ -287,25 +247,19 @@ theorem filtered_cons {x : Suffix} {l : Stem} (hl : Filtered l)
     (h : ∀ y ∈ l.head?, y.feature ∉ [causative, intensive]) : Filtered (x :: l) :=
   List.isChain_cons.mpr ⟨fun y hy hxy ↦ h y hy hxy.2, hl⟩
 
-theorem Filtered.cycle {i : Input} {f : Feature} {s t : Stem} (hs : Filtered s)
-    (ht : t ∈ cycle rules i f s) : Filtered t := by
+theorem Filtered.cycle (hs : Filtered s) (ht : t ∈ cycle rules f s) : Filtered t := by
   simp only [HymanMchombo1992.cycle, List.mem_filter, List.mem_map] at ht
   obtain ⟨⟨km, hkm, rfl⟩, -⟩ := ht
-  obtain ⟨h1, h2, h3⟩ := splits_spec hkm
-  rw [List.reverse_reverse, List.append_nil] at h1
-  rw [← h1] at hs
+  obtain ⟨rfl, h2, -, h3⟩ := mem_splits.mp hkm
   have hm : ∀ x ∈ km.2, x.feature ∉ [causative, intensive] := fun x hx ↦
-    not_mem_of_rules_ne_none ((h2 x hx).resolve_left List.not_mem_nil)
-  have hd : ∀ y ∈ (doubling i f km.2 ++ km.2).head?, y.feature ∉ [causative, intensive] := by
-    intro y hy
-    unfold doubling at hy
-    split at hy
-    · simp only [List.singleton_append, List.head?_cons, Option.mem_def,
-        Option.some.injEq] at hy
-      subst hy
-      decide
-    · exact hm y (List.mem_of_mem_head? (by simpa using hy))
-  have hr : Filtered (doubling i f km.2 ++ km.2) := by
+    not_mem_of_rules_ne_none (h2 x hx)
+  have hd : ∀ y ∈ (doubling f (km.1 ++ km.2) km.2 ++ km.2).head?,
+      y.feature ∉ [causative, intensive] := by
+    unfold doubling
+    split
+    · simp [Suffix.feature]
+    · exact fun y hy ↦ hm y (List.mem_of_mem_head? (by simpa using hy))
+  have hr : Filtered (doubling f (km.1 ++ km.2) km.2 ++ km.2) := by
     unfold doubling
     split
     · exact filtered_cons hs.right_of_append fun y hy ↦ hm y (List.mem_of_mem_head? hy)
@@ -317,17 +271,10 @@ theorem Filtered.cycle {i : Input} {f : Feature} {s t : Stem} (hs : Filtered s)
 
 /-- Morphemic circumscription makes the filters (10) redundant: no stem the cyclic spell-out
 derives violates them. -/
-theorem filtered_of_mem_spellOut {i : Input} {s : Stem} (h : s ∈ spellOut rules i) :
-    Filtered s := by
-  unfold spellOut at h
-  generalize i.reverse = l at h
-  induction l generalizing s with
-  | nil =>
-    simp only [spellOut.go, Finset.mem_singleton] at h
-    exact h ▸ List.IsChain.nil
-  | cons f rest ih =>
-    obtain ⟨s', hs', ht⟩ := mem_spellOut_go.mp h
-    exact (ih hs').cycle ht
+theorem filtered_of_mem_spellOut (h : s ∈ spellOut rules i) : Filtered s :=
+  spellOut_induction (P := fun _ s ↦ Filtered s) h .nil fun _ _ _ _ hs ht ↦ hs.cycle ht
+
+end SpellOut
 
 -- (35)
 theorem ambiguity_needs_late_rule :
