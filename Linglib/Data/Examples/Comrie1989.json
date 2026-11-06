@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "coordination"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "The reading 'the man hit the woman and the woman came here' is unavailable: English requires the omitted noun phrase to be S or A.",
     "verified": "page-image"
@@ -38,7 +39,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "coordination"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "Cannot mean 'the man hit the woman and the man came here': Dyirbal requires the coreferential noun phrases to be S or P.",
     "verified": "page-image"
@@ -60,7 +62,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "coordination"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "The book glosses the omitted S as 'you/*I': the ergative-absolutive basis of the construction is independent of the pronouns' morphology.",
     "verified": "page-image"
@@ -83,7 +86,9 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "coordination"],
-      ["grouping", "neither"]
+      ["pivot", "S"],
+      ["pivot", "A"],
+      ["pivot", "P"]
     ],
     "comment": "Chukchi patterns like neither English nor Dyirbal in coordination: the book's list is English nominative-accusative, Dyirbal ergative-absolutive, Yidiny both, Chukchi neither.",
     "verified": "page-image"
@@ -106,7 +111,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "infinitive"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "The infinitive construction omits the S or A of the infinitive: nominative-accusative syntax in a language whose coordination is neutral, (20).",
     "verified": "page-image"
@@ -129,7 +135,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "infinitive"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -150,7 +157,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "imperative"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "Cited in prose; the book's (32)-(33) show that passive imperatives with an addressee patient are possible but unnatural.",
     "verified": "page-image"
@@ -172,7 +180,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "imperative"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -194,7 +203,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "imperative"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "Explained by the agent property of addressees: S and especially A control the situation, P rarely does.",
     "verified": "page-image"
@@ -217,7 +227,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "indirectCommand"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "The book's counterexample to an agent-bound property yielding S/A: nominative-accusative syntax does not carry over from imperatives to indirect commands in Dyirbal.",
     "verified": "page-image"
@@ -240,7 +251,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "indirectCommand"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -262,7 +274,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "resultative"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "The suffix -γəta forms the resultative; -dʼ marks finiteness.",
     "verified": "page-image"
@@ -284,7 +297,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "resultative"],
-      ["grouping", "withP"]
+      ["pivot", "S"],
+      ["pivot", "P"]
     ],
     "comment": "Natural ergative-absolutive syntax: a change of state is attributed to the S of an intransitive and to the P of a transitive.",
     "verified": "page-image"
@@ -305,7 +319,8 @@
     "paperFeatures": [
       ["construction", "grouping"],
       ["test", "resultative"],
-      ["grouping", "withA"]
+      ["pivot", "S"],
+      ["pivot", "A"]
     ],
     "comment": "Cited in prose as the reason the ergative bias of resultatives is a tendency, not an absolute universal.",
     "verified": "page-image"
@@ -1024,7 +1039,8 @@
       ["construction", "control"],
       ["valency", "1"],
       ["causee", "directObject"],
-      ["control", "less"]
+      ["control", "less"],
+      ["case", "acc"]
     ],
     "comment": "Repeated as (23).",
     "verified": "page-image"
@@ -1047,7 +1063,8 @@
       ["construction", "control"],
       ["valency", "1"],
       ["causee", "oblique"],
-      ["control", "more"]
+      ["control", "more"],
+      ["case", "inst"]
     ],
     "comment": "Repeated as (24); the book's translation covers both. Not all speakers accept the instrumental causee. Hungarian has no passive that would express the agent in the instrumental, so the oblique causee cannot come from a passive.",
     "verified": "page-image"
@@ -1245,7 +1262,8 @@
       ["construction", "control"],
       ["valency", "1"],
       ["causee", "directObject"],
-      ["control", "less"]
+      ["control", "less"],
+      ["case", "acc"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1266,7 +1284,8 @@
       ["construction", "control"],
       ["valency", "1"],
       ["causee", "indirectObject"],
-      ["control", "more"]
+      ["control", "more"],
+      ["case", "dat"]
     ],
     "comment": "The book notes that no formal distinction between indirect object and passive agent is possible here; the indirect-object coding is one of the two readings of ni.",
     "verified": "page-image"
@@ -1290,7 +1309,8 @@
       ["construction", "control"],
       ["valency", "2"],
       ["causee", "indirectObject"],
-      ["control", "less"]
+      ["control", "less"],
+      ["case", "dat"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1311,7 +1331,8 @@
       ["construction", "control"],
       ["valency", "2"],
       ["causee", "oblique"],
-      ["control", "more"]
+      ["control", "more"],
+      ["case", "inst"]
     ],
     "comment": "",
     "verified": "page-image"

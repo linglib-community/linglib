@@ -4,6 +4,9 @@ public import Mathlib.Data.Finset.Card
 public import Linglib.Core.Order.Monotone.Extension
 public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
+public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
@@ -20,9 +23,9 @@ Case marking serves to keep apart the agent A and the patient P of a transitive 
 and differential marking is spent where the information flow departs from the natural one,
 [on a P high and an A low in prominence](##marking_rows). A causee takes [the highest free
 position on the hierarchy subject > direct object > indirect object > oblique](##causee_rows),
-and of two positions [the lower encodes more control](##control_rows). Subject is a prototype,
-the intersection of agent and topic, so constructions tied to agents group S with A and those
-tied to affected participants S with P, [each as a tendency](##bias_rows).
+and of two, [the one keeping more control the lower](##control_rows). Subject is the intersection
+of agent and topic, so a construction's alignment [leans to S with A or with P by what it asks of
+its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_syntax).
 
 ## Implementation notes
 
@@ -42,9 +45,17 @@ tied to affected participants S with P, [each as a tendency](##bias_rows).
   language doubles, whether it demotes further than required, and whether it has a passive
   expressing its agent in the causee's oblique case, the last consulted only by the rival
   analysis. Sanskrit's and Kannada's passives are textbook facts.
-* Imperative addressee deletion and indirect commands are tied to agents, the resultative to
-  affected participants, and coordination to neither; the book gives the Chukchi infinitive
-  construction no bias.
+* A construction's grouping of S is the alignment, in the sense of `Alignment`, of its pivot: the
+  core roles that may bear its shared or omitted argument. Its bias comes from the property it asks
+  of the pivot, control (`ProtoRoleFeature.volition`) for imperatives and indirect commands and a
+  change of state for resultatives, and from which of the two proto-role clusters contains it; the
+  book gives coordination and the Chukchi infinitive construction no such property.
+* A causee's control is its proto-agent entailments, sentience where it keeps less control and
+  volition beside it where it keeps more. A case's control is that of the role it typically
+  marks, through the substrate's `ThetaRole.canonicalProfile`, which orders the accusative, the
+  dative and the instrumental as the book's control hierarchy does.
+* The Turkish marking rows are checked against `Turkish.ObjectMarking.accusative` rather than
+  restated.
 
 ## TODO
 
@@ -76,7 +87,7 @@ tied to affected participants S with P, [each as a tendency](##bias_rows).
 
 namespace Comrie1989
 
-open Alignment Causation.Morphological
+open Alignment ArgumentStructure Causation.Morphological
 
 /-! ### The discriminatory function of case -/
 
@@ -238,6 +249,12 @@ theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
           (role = .A → m₂.marked < m₁.marked) := by
   decide
 
+-- (13), (14) and (25): the Turkish rows mark P exactly on the degrees of definiteness the
+-- fragment's accusative covers, the continuum cut at the specific indefinites.
+theorem turkish_rows : ∀ r ∈ Examples.all, r.language = .turkish → ∀ m ∈ Marking.ofRow r,
+    ∀ d ∈ m.definiteness, (m.marked = .marked ↔ d ∈ Turkish.ObjectMarking.accusative) := by
+  decide
+
 /-! ### The causee hierarchy (§8.2) -/
 
 /-- `causeePosition s` is the position of the same name in [keenan-comrie-1977]'s accessibility
@@ -337,33 +354,59 @@ theorem passive_analysis_fails :
         ¬ c.PassiveAdmits ∧ row.judgment = .acceptable := by
   decide
 
-/-- Whether a causee retains less or more control. -/
-inductive Control
-  | less | more
-  deriving DecidableEq, Repr
+/-- The role a case typically marks, on the book's account of the control hierarchy: the
+accusative a patient, the dative an experiencer, and the instrumental, as the case of passive
+agents, an agent (p. 181). -/
+def typicalRole : Case → Option ThetaRole
+  | .acc => some .patient
+  | .dat => some .experiencer
+  | .inst => some .agent
+  | _ => none
 
-/-- A control row's configuration is the control the causee retains and its position. -/
+/-- The control a case typically marks, the proto-agent entailments of its typical role. -/
+def caseControl (c : Case) : Finset ProtoRoleFeature :=
+  EntailmentProfile.protoAgent ((typicalRole c).elim ∅ ThetaRole.canonicalProfile)
+
+/-- The basic case of each position: the nominative of the subject, the accusative of the direct
+object, the dative of the indirect object, and the instrumental of the oblique. -/
+def basicCase : CauseeSlot → Case
+  | .subject => .nom
+  | .directObject => .acc
+  | .indirectObject => .dat
+  | .oblique => .inst
+
+-- p. 181: the control hierarchy instrumental > dative > accusative is the causee hierarchy below
+-- the subject "presented in reverse order".
+theorem caseControl_basicCase_strictAntiOn :
+    StrictAntiOn (caseControl ∘ basicCase) {s | s ≠ .subject} := by
+  intro a ha b hb h; revert a b; decide
+
+/-- A control row's configuration: the causee's entailments, sentience where it retains less
+control and volition beside it where it retains more, and the case it takes. -/
 structure Controlled where
-  /-- The control the causee retains. -/
-  control : Control
-  /-- The position the causee takes. -/
-  causee : CauseeSlot
+  /-- The proto-role entailments of the causee. -/
+  profile : EntailmentProfile
+  /-- The causee's case. -/
+  causeeCase : Case
 
 /-- The configuration a control row records. -/
 def Controlled.ofRow (row : Datum) : Option Controlled := do
   guard (row.feature? "construction" = some "control")
-  return ⟨← row.parse? "control" [("less", Control.less), ("more", .more)],
-    ← row.parse? "causee" causeeNames⟩
+  return ⟨← row.parse? "control"
+      [("less", ({.sentience} : EntailmentProfile)), ("more", {.volition, .sentience})],
+    ← row.parse? "case" [("acc", Case.acc), ("dat", .dat), ("inst", .inst)]⟩
 
-/-- Within a language the causee retaining more control takes the lower hierarchy position, and some
-language offers the pair ((8)–(9), (23)–(28)). -/
+/-- Within a language the causee with more proto-agent entailments takes the case higher on the
+control hierarchy, the one whose typical role has more, and some language offers the pair
+((8)–(9), (23)–(28)). -/
 theorem control_rows :
     (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ Controlled.ofRow r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language), ∀ c₂ ∈ Controlled.ofRow r₂,
-        c₁.control = .less → c₂.control = .more → c₂.causee < c₁.causee) ∧
+        c₁.profile.protoAgent ⊂ c₂.profile.protoAgent →
+          caseControl c₁.causeeCase ⊂ caseControl c₂.causeeCase) ∧
       ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
         ∃ c₁ ∈ Controlled.ofRow r₁, ∃ c₂ ∈ Controlled.ofRow r₂,
-          c₁.control = .less ∧ c₂.control = .more := by
+          c₁.profile.protoAgent ⊂ c₂.profile.protoAgent := by
   decide
 
 /-! ### Compactness and directness (§8.1) -/
@@ -389,33 +432,37 @@ theorem compactness_rows :
 
 /-! ### Subject as a prototype (chapter 5) -/
 
-/-- The argument of a transitive clause a construction groups with S is A, P, or neither,
-where either may be omitted. -/
-inductive Grouping
-  | withA | withP | neither
-  deriving DecidableEq, Repr, Fintype
-
 /-- The constructions tested. -/
 inductive Test
   | coordination | imperative | indirectCommand | resultative | infinitive
   deriving DecidableEq, Repr, Fintype
 
-/-- The prototype predicts that a construction tied to agents, the deletion of an imperative's
-addressee or of the recipient of an indirect command, favours S with A, and one tied to affected
-participants, the resultative, S with P; coordination, tied to neither, is free to vary (§5.4).
-The Chukchi infinitive construction, nominative-accusative in a language whose coordination is
-neutral, is given no bias (§5.3). -/
-def Test.bias : Test → Option Grouping
-  | .imperative | .indirectCommand => some .withA
-  | .resultative => some .withP
+/-- The property a construction asks of its pivot, on the book's explanation: the addressee of an
+imperative and the recipient of an indirect command must control the resulting situation, and a
+resultative attributes a change of state; coordination and the Chukchi infinitive ask for
+neither (§5.3, §5.4). -/
+def Test.property : Test → Option ProtoRoleFeature
+  | .imperative | .indirectCommand => some .volition
+  | .resultative => some .changeOfState
   | .coordination | .infinitive => none
 
-/-- A grouping row's configuration. -/
+/-- A construction is biased toward the alignment identifying S with the transitive argument whose
+prototype has its property: A, the agent of the prototypical transitive situation, for a
+proto-agent property, and P, the patient, for a proto-patient one. -/
+def Test.bias (t : Test) : Option AlignmentType :=
+  t.property.map fun f ↦ if f ∈ ProtoRoleFeature.agentCluster then .accusative else .ergative
+
+/-- A grouping row's configuration: the construction and the core roles that may bear its shared
+or omitted argument. -/
 structure Grouped where
   /-- The construction. -/
   test : Test
-  /-- The grouping it shows. -/
-  grouping : Grouping
+  /-- The core roles that may bear the shared or omitted argument. -/
+  pivot : List ArgumentRole
+
+/-- The construction's marking of the roles, whether each may be its pivot; its alignment is the
+grouping the construction shows. -/
+def Grouped.marking (g : Grouped) (r : ArgumentRole) : Bool := decide (r ∈ g.pivot)
 
 /-- The configuration a grouping row records. -/
 def Grouped.ofRow (row : Datum) : Option Grouped := do
@@ -423,26 +470,52 @@ def Grouped.ofRow (row : Datum) : Option Grouped := do
   return ⟨← row.parse? "test" [("coordination", Test.coordination), ("imperative", .imperative),
       ("indirectCommand", .indirectCommand), ("resultative", .resultative),
       ("infinitive", .infinitive)],
-    ← row.parse? "grouping" [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)]⟩
+    ← row.parseAll? "pivot" [("S", ArgumentRole.S), ("A", .A), ("P", .P)]⟩
 
-/-- Imperative addressee deletion groups S with A in every language, even Dyirbal, and the
-resultative groups S with P somewhere; but each bias is a tendency, crossed by the Dyirbal
+/-- Imperative addressee deletion follows its bias in every language, accusative even in Dyirbal,
+and the resultative is ergative somewhere; but each bias is a tendency, crossed by the Dyirbal
 indirect command and the English resultative (§5.4). -/
 theorem bias_rows :
     (∀ row ∈ Examples.all, ∀ g ∈ Grouped.ofRow row, g.test = .imperative →
-      g.grouping = .withA) ∧
+      ∃ a ∈ g.test.bias, a = .accusative ∧ a.Classifies g.marking) ∧
       (∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
-        g.test = .resultative ∧ g.grouping = .withP) ∧
-      ∀ b : Grouping, b ≠ .neither → ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
-        g.test.bias = some b ∧ g.grouping ≠ b := by
+        g.test = .resultative ∧ IsErgative g.marking) ∧
+      ∀ t : Test, ∀ a ∈ t.bias, ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
+        g.test.bias = some a ∧ ¬ a.Classifies g.marking := by
   decide
 
-theorem coordination_rows : ∀ gr : Grouping, ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
-    g.test = .coordination ∧ g.grouping = gr := by
+-- §5.4: coordination is accusative in English, ergative in Dyirbal and neutral in Chukchi.
+theorem coordination_rows : ∀ a ∈ [AlignmentType.accusative, .ergative, .neutral],
+    ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
+      g.test = .coordination ∧ a.Classifies g.marking := by
   decide
 
+-- §5.3: Chukchi coordination is neutral and its infinitive construction accusative.
 theorem mixed_rows : ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
-    ∃ g₁ ∈ Grouped.ofRow r₁, ∃ g₂ ∈ Grouped.ofRow r₂, g₁.grouping ≠ g₂.grouping := by
+    ∃ g₁ ∈ Grouped.ofRow r₁, ∃ g₂ ∈ Grouped.ofRow r₂, ∃ a : AlignmentType,
+      a.Classifies g₁.marking ∧ ¬ a.Classifies g₂.marking := by
+  decide
+
+/-- The cases a marking row gives the core roles of its clause: a role whose position takes the
+special marking has a case of its own, the ergative of A or the accusative of P, and the rest
+share the unmarked case of S (§6.1, §6.2). -/
+def Marking.clause (row : Datum) (r : ArgumentRole) : Option ArgumentRole :=
+  if ∃ m ∈ Marking.ofRow row, m.role = r ∧ m.marked ≠ .unmarked then some r else none
+
+-- Chapter 6, (7)–(10): the split marking of Dyirbal gives its clauses four alignments, ergative
+-- A with accusative P and nominative A with absolutive P beside the two familiar ones.
+theorem dyirbal_clauses :
+    IsErgative (Marking.clause Examples.ch6_ex7) ∧ IsAccusative (Marking.clause Examples.ch6_ex8) ∧
+      IsTripartite (Marking.clause Examples.ch6_ex9) ∧
+        IsNeutral (Marking.clause Examples.ch6_ex10) := by
+  decide
+
+-- Chapter 5, (16)–(19), and chapter 6, (7)–(8): syntax does not follow morphology. Dyirbal marks
+-- the pronouns of *Ŋadʸa ŋinuna balgan* 'I hit you' accusatively and the nouns of (7)
+-- ergatively, yet coordinates the same pronominal clause ergatively, S with P.
+theorem dyirbal_marking_syntax :
+    IsAccusative (Marking.clause Examples.ch6_ex8) ∧ IsErgative (Marking.clause Examples.ch6_ex7) ∧
+      ∀ g ∈ Grouped.ofRow Examples.ch5_ex19, IsErgative g.marking := by
   decide
 
 end Comrie1989

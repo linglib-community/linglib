@@ -27,7 +27,7 @@ def ch5_ex11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_ex15 : Datum :=
   { id := "comrie1989_ch5_ex15"
@@ -41,7 +41,7 @@ def ch5_ex15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_ex19 : Datum :=
   { id := "comrie1989_ch5_ex19"
@@ -55,7 +55,7 @@ def ch5_ex19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_ex20 : Datum :=
   { id := "comrie1989_ch5_ex20"
@@ -69,7 +69,7 @@ def ch5_ex20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "neither")] }
+    paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("pivot", "S"), ("pivot", "A"), ("pivot", "P")] }
 
 def ch5_ex25 : Datum :=
   { id := "comrie1989_ch5_ex25"
@@ -83,7 +83,7 @@ def ch5_ex25 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_ex26 : Datum :=
   { id := "comrie1989_ch5_ex26"
@@ -97,7 +97,7 @@ def ch5_ex26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_english_imperative : Datum :=
   { id := "comrie1989_ch5_english_imperative"
@@ -111,7 +111,7 @@ def ch5_english_imperative : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_ex30 : Datum :=
   { id := "comrie1989_ch5_ex30"
@@ -125,7 +125,7 @@ def ch5_ex30 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_ex31 : Datum :=
   { id := "comrie1989_ch5_ex31"
@@ -139,7 +139,7 @@ def ch5_ex31 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch5_ex34 : Datum :=
   { id := "comrie1989_ch5_ex34"
@@ -153,7 +153,7 @@ def ch5_ex34 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_ex35 : Datum :=
   { id := "comrie1989_ch5_ex35"
@@ -167,7 +167,7 @@ def ch5_ex35 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_ex37 : Datum :=
   { id := "comrie1989_ch5_ex37"
@@ -181,7 +181,7 @@ def ch5_ex37 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_ex39 : Datum :=
   { id := "comrie1989_ch5_ex39"
@@ -195,7 +195,7 @@ def ch5_ex39 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withP")] }
+    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("pivot", "S"), ("pivot", "P")] }
 
 def ch5_english_resultative : Datum :=
   { id := "comrie1989_ch5_english_resultative"
@@ -209,7 +209,7 @@ def ch5_english_resultative : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withA")] }
+    paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("pivot", "S"), ("pivot", "A")] }
 
 def ch6_ex7 : Datum :=
   { id := "comrie1989_ch6_ex7"
@@ -671,7 +671,7 @@ def ch8_ex8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less")] }
+    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less"), ("case", "acc")] }
 
 def ch8_ex9 : Datum :=
   { id := "comrie1989_ch8_ex9"
@@ -685,7 +685,7 @@ def ch8_ex9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "oblique"), ("control", "more")] }
+    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "oblique"), ("control", "more"), ("case", "inst")] }
 
 def ch8_ex12 : Datum :=
   { id := "comrie1989_ch8_ex12"
@@ -811,7 +811,7 @@ def ch8_ex25 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less")] }
+    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less"), ("case", "acc")] }
 
 def ch8_ex26 : Datum :=
   { id := "comrie1989_ch8_ex26"
@@ -825,7 +825,7 @@ def ch8_ex26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "indirectObject"), ("control", "more")] }
+    paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "indirectObject"), ("control", "more"), ("case", "dat")] }
 
 def ch8_ex27 : Datum :=
   { id := "comrie1989_ch8_ex27"
@@ -839,7 +839,7 @@ def ch8_ex27 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "indirectObject"), ("control", "less")] }
+    paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "indirectObject"), ("control", "less"), ("case", "dat")] }
 
 def ch8_ex28 : Datum :=
   { id := "comrie1989_ch8_ex28"
@@ -853,7 +853,7 @@ def ch8_ex28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "oblique"), ("control", "more")] }
+    paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "oblique"), ("control", "more"), ("case", "inst")] }
 
 def all : List Datum := [ch5_ex11, ch5_ex15, ch5_ex19, ch5_ex20, ch5_ex25, ch5_ex26, ch5_english_imperative, ch5_ex30, ch5_ex31, ch5_ex34, ch5_ex35, ch5_ex37, ch5_ex39, ch5_english_resultative, ch6_ex7, ch6_ex8, ch6_ex9, ch6_ex10, ch6_ex11_boy, ch6_ex11_hippopotamus, ch6_ex11_oak, ch6_ex11_table, ch6_ex12_boys, ch6_ex12_girls, ch6_ex12_dogs, ch6_ex12_tables, ch6_ex13, ch6_ex14, ch6_ex15, ch6_ex16, ch6_ex17, ch6_ex18, ch6_ex19, ch6_ex20, ch6_ex21, ch6_ex22_car, ch6_ex22_the_clerk, ch6_ex22_a_certain_clerk, ch6_ex22_a_clerk, ch6_ex23, ch6_ex25, ch6_ex27, ch8_ex6, ch8_ex7, ch8_english_broke, ch8_english_brought_about, ch8_ex8, ch8_ex9, ch8_ex12, ch8_ex14, ch8_ex16, ch8_ex17, ch8_ex18, ch8_ex19, ch8_ex20, ch8_ex22, ch8_ex25, ch8_ex26, ch8_ex27, ch8_ex28]
 
