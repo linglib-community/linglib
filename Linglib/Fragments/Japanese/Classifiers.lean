@@ -132,6 +132,12 @@ def kyaku : Classifier := { toMorph := .suff "kyaku", script := some "脚" }
 /-- *-rin* 輪, flowers. -/
 def rin : Classifier := { toMorph := .suff "rin", script := some "輪" }
 
+/-- *-ryō* 輛, train cars. -/
+def ryoo : Classifier := { toMorph := .suff "ryō", script := some "輛" }
+
+/-- *-fusa* 房, clusters, such as bunches of grapes. -/
+def fusa : Classifier := { toMorph := .suff "fusa", script := some "房" }
+
 /-- *-kumi* 組, pairs. -/
 def kumi : Classifier := { toMorph := .suff "kumi", script := some "組" }
 
@@ -142,6 +148,6 @@ def daasu : Classifier := { toMorph := .suff "dāsu", script := some "ダース"
 def classifiers : Finset Classifier :=
   {tsu, nin, mei, hiki, tou, hon, mai, ko, satsu, tsubu, dai, kenBuilding, kenIncident, ki, ku,
     kyoku, mon, mune, seki, soku, soo, ten, toori, tsuu, kabu, shoku, teki, sao, wa, furi, zen,
-    kyaku, rin, kumi, daasu}
+    kyaku, rin, ryoo, fusa, kumi, daasu}
 
 end Japanese.Classifiers

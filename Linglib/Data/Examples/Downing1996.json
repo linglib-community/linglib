@@ -3,6 +3,7 @@
     "id": "downing1996_1_14",
     "source": {"bibkey": "downing-1996", "paperLabel": "(14), Chapter 1"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Ik-ken-no mise-ga hiraite-ita node, hairu koto-ni shita.",
     "discourseSegments": [],
@@ -16,8 +17,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "1"],
-      ["classifier", "kenBuilding"],
       ["criterion", "cooccursWithNoun"]
     ],
     "comment": "The second criterion of the definition: a true classifier readily co-occurs with a noun denoting the enumerated referent.",
@@ -37,14 +36,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "hi-ga mik-ka tatte",
-        "judgment": "acceptable"
-      }
+      {"form": "hi-ga mik-ka tatte", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "1"],
       ["criterion", "cooccursWithNoun"]
     ],
     "comment": "An unclassified time word: adding the co-referring noun hi 'day' is grammatical but marked, so -ka is not a classifier by the second criterion.",
@@ -67,7 +62,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
       ["trait", "withoutNoun"]
     ],
     "comment": "The classifier rooru cannot appear without an accompanying noun or antecedent.",
@@ -92,8 +86,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "tsubu"],
       ["trait", "withoutNoun"]
     ],
     "comment": "The shape classifier tsubu does not readily stand alone without a nominal antecedent. The page prints the mark ?*.",
@@ -119,8 +111,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "hiki"],
       ["trait", "alternation"]
     ],
     "comment": "Animate referents are invariably marked as such: live snakes take hiki and never the shape classifiers hon or suji, though they are long and thin.",
@@ -130,6 +120,7 @@
     "id": "downing1996_3_4",
     "source": {"bibkey": "downing-1996", "paperLabel": "(4), Chapter 3"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Dewa, ringo san-ko-to banana ni-hon-de-wa doo ka, to iu to, ichi-nensei-wa magotsuku. Zenbu-de itsu-tsu da.",
     "discourseSegments": [],
@@ -145,8 +136,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "tsu"],
       ["trait", "alternation"]
     ],
     "comment": "Shape classifiers may be replaced by the general tsu to combine referents of different classes.",
@@ -169,16 +158,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "nin"],
       ["trait", "alternation"]
     ],
     "comment": "The human classifier, unlike the shape classifiers, cannot be generalised to cover a dog together with a person; speakers vary. The page marks (5a) with %: the same sentence, (14) of Chapter 3, is one some speakers accept and most find somewhat unnatural.",
     "verified": "page-image"
   },
   {
-    "id": "downing1996_3_33",
-    "source": {"bibkey": "downing-1996", "paperLabel": "(33), Chapter 3"},
+    "id": "downing1996_3_33a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(33a), Chapter 3"},
     "reportedIn": null,
     "language": "nucl1643",
     "primaryText": "denwa ichi-dai",
@@ -189,21 +176,84 @@
     "translation": "one telephone",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "denwa it-tsuu", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
       ["cohesion", "kind"],
       ["function", "disambiguation"]
     ],
-    "comment": "A kind-classifier disambiguates a noun: dai picks out the telephone as apparatus and tsuu the telephone call.",
+    "comment": "dai picks out the telephone as apparatus.",
     "verified": "page-image"
   },
   {
-    "id": "downing1996_3_35",
-    "source": {"bibkey": "downing-1996", "paperLabel": "(35), Chapter 3"},
+    "id": "downing1996_3_33b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(33b), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "denwa it-tsuu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["it-tsuu", "letter"]
+    ],
+    "translation": "one telephone call",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "kind"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "tsuu picks out the call, where dai in (33a) picks out the apparatus.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_34a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(34a), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "kisha ichi-dai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kisha", "train"], ["ichi-dai", "1-furniture.vehicle.or.machine"]
+    ],
+    "translation": "one train or one train car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "kind"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "The general vehicle classifier leaves open the train and the car.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_34b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(34b), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "kisha ichi-ryoo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ichi-ryoo", "train.car"]
+    ],
+    "translation": "one train car",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "kind"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "The classifier for train cars singles out the car.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_35a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(35a), Chapter 3"},
     "reportedIn": null,
     "language": "nucl1643",
     "primaryText": "budoo hito-tsubu",
@@ -214,22 +264,62 @@
     "translation": "one grape",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "budoo ik-ko", "judgment": "acceptable"},
-      {"form": "budoo hito-fusa", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
       ["cohesion", "quality"],
       ["function", "disambiguation"]
     ],
-    "comment": "Quality-classifiers disambiguate too: tsubu a grape, ko a grape or a bunch, fusa a bunch.",
+    "comment": "tsubu counts a single grape.",
     "verified": "page-image"
   },
   {
-    "id": "downing1996_3_36",
-    "source": {"bibkey": "downing-1996", "paperLabel": "(36), Chapter 3"},
+    "id": "downing1996_3_35b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(35b), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "budoo ik-ko",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ik-ko", "small.3-D.object"]
+    ],
+    "translation": "one bunch of grapes or one grape",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "quality"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "ko counts a grape or a bunch.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_35c",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(35c), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "budoo hito-fusa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["hito-fusa", "cluster"]
+    ],
+    "translation": "one bunch of grapes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "quality"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "fusa counts a bunch.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_36a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(36a), Chapter 3"},
     "reportedIn": null,
     "language": "nucl1643",
     "primaryText": "ume ip-pon",
@@ -240,23 +330,64 @@
     "translation": "one plum branch",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "ume ik-ko", "judgment": "acceptable"},
-      {"form": "ume ichi-rin", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
       ["cohesion", "quality"],
       ["function", "disambiguation"]
     ],
-    "comment": "hon a plum branch, ko a plum, and the kind-classifier rin a plum blossom.",
+    "comment": "hon counts a plum branch.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_36b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(36b), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "ume ik-ko",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ik-ko", "small.3-D.object"]
+    ],
+    "translation": "one plum",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "quality"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "ko counts the fruit.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_3_36c",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(36c), Chapter 3"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "ume ichi-rin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ichi-rin", "flower"]
+    ],
+    "translation": "one plum blossom",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cohesion", "kind"],
+      ["function", "disambiguation"]
+    ],
+    "comment": "The kind-classifier rin counts the blossom.",
     "verified": "page-image"
   },
   {
     "id": "downing1996_3_37a",
     "source": {"bibkey": "downing-1996", "paperLabel": "(37a), Chapter 3"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Hoosu-no saki-o yubi-de tsubusu-to, mizu-wa ni-hon-no kiri-ni natte ...",
     "discourseSegments": [],
@@ -271,9 +402,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "hon"],
-      ["cohesion", "quality"],
       ["function", "addingInformation"]
     ],
     "comment": "A quality-classifier imposes on mist, a noun that normally takes no classifier, a shape the noun does not imply.",
@@ -283,6 +411,7 @@
     "id": "downing1996_3_38",
     "source": {"bibkey": "downing-1996", "paperLabel": "(38), Chapter 3"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "mottomo igi aru kichoona nihon-no yuubin-kitte go-jut-ten-o hajimete gin-de saigen-shita shinseina fukusei-no korekushon",
     "discourseSegments": [],
@@ -297,8 +426,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "ten"],
       ["function", "addingInformation"]
     ],
     "comment": "Stamps, which normally take mai, are counted with ten, the classifier for works of art, to convey their artistic value.",
@@ -320,9 +447,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "3"],
-      ["classifier", "mai"],
-      ["cohesion", "quality"],
       ["function", "addingInformation"]
     ],
     "comment": "Feet printed on a sheet of paper take mai rather than hon or tsu: a shape classifier marks a referent as a non-standard member of the noun's category, a use closed to the kind-classifiers.",
@@ -346,8 +470,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "5"],
-      ["classifier", "wa"],
       ["function", "predication"]
     ],
     "comment": "A numeral-classifier pair does not answer a question about the nature of a referent; a full noun does, (8). Classifiers acknowledge category membership rather than assert it.",
@@ -371,7 +493,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "5"],
       ["function", "disambiguation"]
     ],
     "comment": "The classifier carries an independent semantic load when one noun admits several classifiers: a sheet of stamps against one stamp.",
@@ -381,6 +502,7 @@
     "id": "downing1996_6_2",
     "source": {"bibkey": "downing-1996", "paperLabel": "(2), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Ip-piki desu.",
     "discourseSegments": [],
@@ -393,8 +515,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "hiki"],
       ["use", "predicate"]
     ],
     "comment": "A noun-less numeral-classifier pair used non-referentially, as the predicate.",
@@ -404,6 +524,7 @@
     "id": "downing1996_6_5",
     "source": {"bibkey": "downing-1996", "paperLabel": "(5), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Sono asa, komori-zawa-ni-wa, nana-hiki-no iwana-ga nobotte-ita. Jootaroo-zawa-ni-wa san-biki, ushiro-zawa-ni yon-hiki, koiwake-zawa-ni san-biki-ga ita.",
     "discourseSegments": [],
@@ -418,8 +539,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "hiki"],
       ["use", "additionalMembers"]
     ],
     "comment": "Classifier phrases introducing additional members of a category already introduced, pronouns of laziness.",
@@ -429,6 +548,7 @@
     "id": "downing1996_6_6",
     "source": {"bibkey": "downing-1996", "paperLabel": "(6), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "... mae-ni futari suwattete sa, hitori-wa taaban-o maita indojin de sa, kore-ga unten shiteru. De, moo hitori-wa arabiajin da yo ne, futari-tomo ushiro-nanka minai-n da yo.",
     "discourseSegments": [],
@@ -443,8 +563,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "nin"],
       ["use", "subsets"]
     ],
     "comment": "Naked numeral-classifier pairs singling out subsets of a grouping already introduced. The page prints no period after shiteru.",
@@ -454,6 +572,7 @@
     "id": "downing1996_6_9",
     "source": {"bibkey": "downing-1996", "paperLabel": "(9), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Shuuichi-wa Shingo-no musuko da keredomo, Kikuko-ga kono-yoo-ni-shite-made Shuuichi-to musubarete inakereba naranai hodo, futari-wa risoo-no fuufu na-no ka, Shingo-wa utagai dasu to kagiri-ga nakatta.",
     "discourseSegments": [],
@@ -467,8 +586,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "nin"],
       ["use", "anaphoric"]
     ],
     "comment": "A numeral-classifier pair carrying the identity of individuals already mentioned, like a zero anaphor or pronoun, and at a distance excluding them. The page prints Shuichii in the translation.",
@@ -478,6 +595,7 @@
     "id": "downing1996_6_13",
     "source": {"bibkey": "downing-1996", "paperLabel": "(13), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Mukashi-mukashi, soko-ni hitori-no ryooshi-ga arimashita.",
     "discourseSegments": [],
@@ -491,8 +609,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "nin"],
       ["construction", "preNominal"],
       ["use", "introduction"]
     ],
@@ -503,6 +619,7 @@
     "id": "downing1996_6_20",
     "source": {"bibkey": "downing-1996", "paperLabel": "(20), Chapter 6"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Yasuko-no imooto-no omokage-wa, futari-no kokoro-no soko-ni atta wake da.",
     "discourseSegments": [],
@@ -517,8 +634,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "6"],
-      ["classifier", "nin"],
       ["use", "anaphoric"]
     ],
     "comment": "The classifier phrase refers to the couple evenhandedly, avoiding the collective noun fuufu and the centring of Shingo-tachi or kanojo-tachi on one member.",
@@ -528,6 +643,7 @@
     "id": "downing1996_7_2b",
     "source": {"bibkey": "downing-1996", "paperLabel": "(2b), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Ojisan-to, sono futari-no otoko-no ko-tachi-to kaeko-to kotatsu-ni atatte-imashita.",
     "discourseSegments": [],
@@ -541,11 +657,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["classifier", "nin"],
-      ["number", "classifierAndPlural"]
-    ],
+    "paperFeatures": [],
     "comment": "A classifier phrase and a plural suffix on one noun phrase without redundancy, against the hypothesis that classifiers and plural morphemes are in complementary distribution.",
     "verified": "page-image"
   },
@@ -553,6 +665,7 @@
     "id": "downing1996_7_3",
     "source": {"bibkey": "downing-1996", "paperLabel": "(3), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Takai hana-to aoi iro-no me-o motta ningyoo-wa ichi-nichi-juu nazo-no yoona bishoo-o ukabete-iru.",
     "discourseSegments": [],
@@ -566,10 +679,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["number", "transnumeral"]
-    ],
+    "paperFeatures": [],
     "comment": "Bare nouns are transnumeral: me 'eye' refers to two eyes and hana 'nose' to one.",
     "verified": "page-image"
   },
@@ -577,6 +687,7 @@
     "id": "downing1996_7_4",
     "source": {"bibkey": "downing-1996", "paperLabel": "(4), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Sono ashi-ni-wa yubi-ga rop-pon aru.",
     "discourseSegments": [],
@@ -590,10 +701,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "7"],
-      ["classifier", "hon"],
-      ["construction", "qFloat"],
-      ["number", "unitizing"]
+      ["construction", "qFloat"]
     ],
     "comment": "A classifier phrase spells out the number of referents of a transnumeral noun.",
     "verified": "page-image"
@@ -602,6 +710,7 @@
     "id": "downing1996_7_6a",
     "source": {"bibkey": "downing-1996", "paperLabel": "(6a), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Ima, tookyoo-to-iu daitokai-ni iru kodomo-tachi-o mite-iru to, zuibun kawaisoo da to omou-no-wa ...",
     "discourseSegments": [],
@@ -613,17 +722,27 @@
     "translation": "What I find really sad when I see the children of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Ima, tookyoo-to iu daitokai-ni iru kodomo-o mite-iru to, zuibun kawaisoo da to omou no wa, ...", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["head", "commonNoun"],
-      ["number", "pluralPossible"]
-    ],
+    "paperFeatures": [],
     "comment": "A common noun with human referents takes a plural marker or not: Table 7.2, possible.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_6b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(6b), Chapter 7"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Ima, tookyoo-to iu daitokai-ni iru kodomo-o mite-iru to, zuibun kawaisoo da to omou no wa, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The bare common noun kodomo in the frame of (6a).",
     "verified": "page-image"
   },
   {
@@ -639,17 +758,27 @@
     "translation": "What I find really sad when I see the cats of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [
-      {"form": "Ima, tookyoo-to iu daitokai-ni iru neko-o mite-iru to, zuibun kawaisoo da to omou no wa, ...", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "animate"],
-      ["head", "commonNoun"],
-      ["number", "pluralRare"]
-    ],
+    "paperFeatures": [],
     "comment": "A plural marker on a common noun with animal referents is marginal, acceptable only for personified animals: Table 7.2, rare. The page prints mite iru , in (7a); the frame is printed mite-iru to, in (6), (7b) and (8).",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_7b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(7b), Chapter 7"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Ima, tookyoo-to iu daitokai-ni iru neko-o mite-iru to, zuibun kawaisoo da to omou no wa. ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The bare common noun neko in the frame of (7a).",
     "verified": "page-image"
   },
   {
@@ -665,23 +794,34 @@
     "translation": "What I find really sad when I see the buildings of the big city of Tokyo today is ...",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
-      {"form": "Ima, tookyoo-to iu daitokai-ni aru tatemono-o mite-iru to, zuibun kawaisoo da to omou no wa, ...", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "inanimate"],
-      ["head", "commonNoun"],
-      ["number", "pluralImpossible"]
-    ],
+    "paperFeatures": [],
     "comment": "Common nouns with inanimate referents reject plural markers: Table 7.2, impossible.",
     "verified": "page-image"
   },
   {
-    "id": "downing1996_7_9",
-    "source": {"bibkey": "downing-1996", "paperLabel": "(9), Chapter 7"},
+    "id": "downing1996_7_8b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(8b), Chapter 7"},
     "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Ima, tookyoo-to iu daitokai-ni aru tatemono-o mite-iru to, zuibun kawaisoo da to omou no wa, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The bare common noun tatemono in the frame of (8a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_9a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(9a), Chapter 7"},
+    "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Kore-ra-no kao-no naka-ni-wa, ...",
     "discourseSegments": [],
@@ -691,23 +831,36 @@
     "translation": "Among these faces, ...",
     "context": "Fathers with children and youths with their lovers have gone in and out of the shop.",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Kono kao-tachi-no naka-ni-wa, ...", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "inanimate"],
-      ["head", "pronoun"],
-      ["number", "pluralRequired"]
-    ],
-    "comment": "With the same inanimate referents, the plural suffix is required on a demonstrative pronoun and unacceptable on a common noun, even one modified by a demonstrative.",
+    "paperFeatures": [],
+    "comment": "With inanimate referents the plural suffix is required on a demonstrative pronoun.",
     "verified": "page-image"
   },
   {
-    "id": "downing1996_7_10",
-    "source": {"bibkey": "downing-1996", "paperLabel": "(10), Chapter 7"},
+    "id": "downing1996_7_9b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(9b), Chapter 7"},
     "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Kono kao-tachi-no naka-ni-wa, ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kono", "this"], ["kao-tachi-no", "face-PL-GEN"], ["naka-ni-wa", "middle-LOC-TOP"]
+    ],
+    "translation": "",
+    "context": "Fathers with children and youths with their lovers have gone in and out of the shop.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The same referents, but the plural suffix on a common noun, even one modified by a demonstrative, is unacceptable.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_10a",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(10a), Chapter 7"},
+    "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Kanja-wa hyakushoo-no okami-ya sono kodomo-ga ooi. Kare-ra-wa genkan-no agarikuchi-ni koshi-o oroshite ... matte-ita.",
     "discourseSegments": [],
@@ -719,24 +872,55 @@
     "translation": "The patients were primarily farmers' wives and children. They would wait, sitting in the entranceway, ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Kanja-tachi-wa hyakushoo-no okami-ya sono kodomo-ga ooi. Kare-ra-wa genkan-no agarikuchi-ni koshi-o oroshite ... matte-ita.", "judgment": "acceptable"},
-      {"form": "Kanja-wa hyakushoo-no okami-ya sono kodomo-ga ooi. Kare-wa genkan-no agarikuchi-ni koshi-o oroshite ... matte-ita.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["head", "pronoun"],
-      ["number", "pluralRequired"]
+    "paperFeatures": [],
+    "comment": "The attested original: the common noun kanja is bare, the pronoun kare-ra suffixed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_10b",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(10b), Chapter 7"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Kanja-tachi-wa hyakushoo-no okami-ya sono kodomo-ga ooi. Kare-ra-wa genkan-no agarikuchi-ni koshi-o oroshite ... matte-ita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kanja-tachi-wa", "patient-PL-TOP"]
     ],
-    "comment": "The common noun kanja may or may not carry the plural marker; the pronoun kare referring to the same group must.",
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "kanja may take the plural suffix.",
+    "verified": "page-image"
+  },
+  {
+    "id": "downing1996_7_10c",
+    "source": {"bibkey": "downing-1996", "paperLabel": "(10c), Chapter 7"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Kanja-wa hyakushoo-no okami-ya sono kodomo-ga ooi. Kare-wa genkan-no agarikuchi-ni koshi-o oroshite ... matte-ita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kare-wa", "he-TOP"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "kare-ra cannot drop its plural suffix.",
     "verified": "page-image"
   },
   {
     "id": "downing1996_7_11",
     "source": {"bibkey": "downing-1996", "paperLabel": "(11), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Endoo-san-tachi-to hanashi-o suru to, watashi-no gehinna bubun-ga hikidasarete-kuru-no.",
     "discourseSegments": [],
@@ -749,12 +933,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["head", "properNoun"],
-      ["number", "associativePlural"]
-    ],
+    "paperFeatures": [],
     "comment": "On a proper noun the suffix is an associative plural, a group centred on Mr. Endo.",
     "verified": "page-image"
   },
@@ -778,12 +957,7 @@
       {"name": "class plural: the mothers", "judgment": "acceptable"},
       {"name": "associative: Mother and the others", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["head", "commonNoun"],
-      ["number", "classPlural"]
-    ],
+    "paperFeatures": [],
     "comment": "On the common noun kodomo the suffix is a class plural only; okaasan, usable as a common noun or a proper name, yields a plural or an associative reading.",
     "verified": "page-image"
   },
@@ -791,6 +965,7 @@
     "id": "downing1996_7_16",
     "source": {"bibkey": "downing-1996", "paperLabel": "(16), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Masutaa-to onaji-yoona katachi-no kitsune-no yoona kao-o motta otoko-ga iku-nin-mo suwatte-ita. ... kare-ra-no hosonagai zoo-no yoona me-wa ... Ano otoko-tachi-mo ima-wa doko-ka-de gasorin-sutando-no shujin-ni natte-iru kamoshirenai.",
     "discourseSegments": [
@@ -808,12 +983,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["number", "tracking"],
-      ["mentions", "classifierPhrase,pluralMarked,pluralMarked"]
-    ],
+    "paperFeatures": [],
     "comment": "The referents are introduced by category with a classifier phrase and tracked as individuals with plural markers; the reverse order is unattested.",
     "verified": "page-image"
   },
@@ -821,6 +991,7 @@
     "id": "downing1996_7_18",
     "source": {"bibkey": "downing-1996", "paperLabel": "(18), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "neko-wa ne, kawaii kodomo-no toki dat-tara, go-rop-piki, kai-tai kedomo ...",
     "discourseSegments": [],
@@ -833,11 +1004,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["classifier", "hiki"],
-      ["number", "unitizing"]
-    ],
+    "paperFeatures": [],
     "comment": "A classifier phrase merely unitizes random members of a category, where a plural marker would flag particular tracking-worthy individuals.",
     "verified": "page-image"
   },
@@ -845,6 +1012,7 @@
     "id": "downing1996_7_23",
     "source": {"bibkey": "downing-1996", "paperLabel": "(23), Chapter 7"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Iku-nin-mo-no onna-no kao-ga me-no mae-no kuukan-ni naranda. Sono onna-tachi-no naka-de-wa, watashi-no kodomo-o oroshita kao-mo majitte-ita.",
     "discourseSegments": [
@@ -861,12 +1029,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["chapter", "7"],
-      ["referent", "human"],
-      ["number", "tracking"],
-      ["mentions", "classifierPhrase,pluralMarked"]
-    ],
+    "paperFeatures": [],
     "comment": "Introduction with noun plus classifier construction, then a noun plus plural marker: the typical pattern for groups of human referents.",
     "verified": "page-image"
   },
@@ -889,8 +1052,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "dai"],
       ["construction", "preNominal"]
     ],
     "comment": "The pre-nominal construction is specific and exhaustive, 'the two cars'; the Q-Float variant reads 'two of the cars'.",
@@ -915,8 +1076,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "hon"],
       ["construction", "preNominal"]
     ],
     "comment": "The pre-nominal construction emphasises the referents as individuals and is awkward where distinctions between members are irrelevant; Q-Float is preferred.",
@@ -937,15 +1096,10 @@
     "context": "The speaker has particular individuals in mind.",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "Tomodachi-o san-nin matte-imasu.",
-        "judgment": "marginal"
-      }
+      {"form": "Tomodachi-o san-nin matte-imasu.", "judgment": "marginal"}
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "preNominal"]
     ],
     "comment": "Pre-nominal is preferred for particular individuals known to the speaker.",
@@ -963,15 +1117,10 @@
     "context": "Any three secretaries will do; their identities are not known to the speaker.",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "San-nin-no hisho-o sagashite-imasu.",
-        "judgment": "marginal"
-      }
+      {"form": "San-nin-no hisho-o sagashite-imasu.", "judgment": "marginal"}
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "qFloat"]
     ],
     "comment": "Q-Float is preferred where the individuals are not identifiable as individuals.",
@@ -993,8 +1142,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "appositive"]
     ],
     "comment": "The nominal of the pre-nominal construction must denote a category; a pronoun is possible only in the appositive construction.",
@@ -1004,6 +1151,7 @@
     "id": "downing1996_8_8",
     "source": {"bibkey": "downing-1996", "paperLabel": "(8), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Sore-ga, atashi-tachi-no, otona-no hito-tsu-no tsutome demo-aru-n desu yo.",
     "discourseSegments": [],
@@ -1017,8 +1165,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "tsu"],
       ["construction", "preNominal"],
       ["use", "definitenessBlocking"]
     ],
@@ -1041,10 +1187,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
-      ["construction", "appositive"],
-      ["number", "associativePlural"]
+      ["construction", "appositive"]
     ],
     "comment": "The appositive construction admits a proper name with the associative plural; the pre-nominal Go-nin-no Taroo-tachi-ga would mean five people all named Taro, (18).",
     "verified": "page-image"
@@ -1053,6 +1196,7 @@
     "id": "downing1996_8_19",
     "source": {"bibkey": "downing-1996", "paperLabel": "(19), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Haha-no nakunatta yoru, hitobito-no doojoo-wa, Kaeko hitori-ni atsumarimashita.",
     "discourseSegments": [],
@@ -1067,8 +1211,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "appositive"],
       ["use", "exhaustive"]
     ],
@@ -1079,6 +1221,7 @@
     "id": "downing1996_8_25",
     "source": {"bibkey": "downing-1996", "paperLabel": "(25), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Shiroi shinsatsuki-o kita oyaji, Asai joshu, kangofuchoo Toda, Suguro-no go-nin-ga byooshitsu-ni hairu to ...",
     "discourseSegments": [],
@@ -1093,8 +1236,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "summativeAppositive"]
     ],
     "comment": "The summative appositive: the nominal enumerates the individuals whose number the classifier phrase confirms.",
@@ -1104,6 +1245,7 @@
     "id": "downing1996_8_28",
     "source": {"bibkey": "downing-1996", "paperLabel": "(28), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Enban-wa ichi-mai-zutsu tonde-iki, ...",
     "discourseSegments": [],
@@ -1117,8 +1259,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "mai"],
       ["construction", "qFloat"],
       ["use", "distributive"]
     ],
@@ -1144,8 +1284,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "qFloat"],
       ["use", "introduction"]
     ],
@@ -1156,6 +1294,7 @@
     "id": "downing1996_8_31",
     "source": {"bibkey": "downing-1996", "paperLabel": "(31), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Kantoku-ga hitori-no onna-shashoo-to modotte-kita.",
     "discourseSegments": [],
@@ -1171,8 +1310,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "preNominal"],
       ["role", "oblique"]
     ],
@@ -1198,8 +1335,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "preNominal"],
       ["role", "dativeSubject"]
     ],
@@ -1222,8 +1357,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "qFloat"],
       ["role", "nominativeSubject"]
     ],
@@ -1250,8 +1383,6 @@
       {"name": "quantifies the transitive subject: three men", "judgment": "marginal"}
     ],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "qFloat"],
       ["role", "object"]
     ],
@@ -1278,8 +1409,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "soo"],
       ["construction", "qFloat"],
       ["role", "unaccusativeSubject"]
     ],
@@ -1290,6 +1419,7 @@
     "id": "downing1996_8_42",
     "source": {"bibkey": "downing-1996", "paperLabel": "(42), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "Ta-ni, boku-no deshi-ga nan-nin-ka ite, ...",
     "discourseSegments": [],
@@ -1303,8 +1433,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "nin"],
       ["construction", "qFloat"],
       ["use", "partitive"]
     ],
@@ -1315,6 +1443,7 @@
     "id": "downing1996_8_43",
     "source": {"bibkey": "downing-1996", "paperLabel": "(43), Chapter 8"},
     "reportedIn": null,
+    "method": "corpus",
     "language": "nucl1643",
     "primaryText": "kenjuu-o koshi-ni sageta heishi-ga ni-mei doa-o akete ikioiyoku tobi-orita. ... kogara-no futari-no heishi-tachi-no yoko-de kare-ra-no sei-ga amarini takai.",
     "discourseSegments": [
@@ -1332,10 +1461,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
       ["construction", "qFloat"],
-      ["use", "introduction"],
-      ["mentions", "classifierPhrase,pluralMarked"]
+      ["use", "introduction"]
     ],
     "comment": "The referents are introduced with Q-Float, whose number information must be new, and re-mentioned with the exhaustive pre-nominal construction and a plural marker.",
     "verified": "page-image"
@@ -1360,8 +1487,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["chapter", "8"],
-      ["classifier", "tsu"],
       ["construction", "preNominal"]
     ],
     "comment": "The same phrase in the pre-nominal, appositive and Q-Float positions: the same blouse, only a blouse, and one blouse as new information.",

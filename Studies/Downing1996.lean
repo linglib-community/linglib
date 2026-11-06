@@ -1,84 +1,77 @@
 module
 
 public import Linglib.Fragments.Japanese.Nouns
+public import Linglib.Fragments.Japanese.Pronouns
+public import Linglib.Discourse.Givenness
 public import Linglib.Data.Examples.Downing1996
 public import Linglib.Data.Examples.Readers
 
 /-!
 # Downing (1996): Numeral Classifier Systems: The Case of Japanese
 
-This file formalizes the semantic and pragmatic analysis of the Japanese numeral classifier system
-in [downing-1996]. A numeral classifier is a form that follows a numeral, readily co-occurs with a
-noun denoting the enumerated referent, and denotes a natural unit of that referent whose
-characteristics dictate its choice, which excludes standard measures, containers, partitions and
-groupings (Chapter 1); the core inventory of Table 1.1 and six classifiers of the extended inventory
-of Table 1.2 are `Row`, each row's entry a classifier of `Japanese.Classifiers`. The monograph
-evaluates two universalist hypotheses (Chapter 5). Hypothesis 1, after [denny-1976], is that
-classifiers encode categories defined by parameters of physical, functional and social interaction,
-`Interaction`, and the core inventory conforms to this extent, `core_interaction`, though the
-monograph finds the system adulterated with categories of little cultural weight. Hypothesis 2 is
-that classifiers supplement the information carried by nouns; the capacity lies with the
-quality-classifiers, whose deductive categories in the sense of [hunn-1977] are united by one or two
-physical properties and crosscut noun categories, against the kind-classifiers of inductive
-categories, `cohesion`, the animal and boat categories being inductive categories split by the
-deductive parameter of size, `sizeSplits`. The morphemes serving as classifiers mostly bear
-independent senses related to their categories along the six recurrent patterns of Table 5.2,
-`MorphemeRelation`; a seventh pattern attested in other languages is absent from Japanese,
-`relation_ne_sharedQuality`, only the pairs of the first pattern are clones of noun categories, and
-no quality-classifier is one, `quality_not_clone`. Chapter 7 reconsiders [sanches-slobin-1973]'s
-universal that classifier languages lack obligatory plural marking and [greenberg-1972]'s
-collective/singulative rationale for it: Japanese common nouns are transnumeral and its pronouns and
-proper nouns inherently singular, `numberSystem`, so plural marking is required on the latter and at
-most possible on the former, Table 7.2, `pluralMarking`, which predicts the judgments of the
-plural-marked common nouns of (6a)–(8a) from the animacy their fragment entries record,
-`tachi_judgments`, and is monotone in the animacy of the referent and the referentiality of the noun
-phrase, `pluralMarking_mono_referent` and `pluralMarking_mono_head`, a plurality split in the sense
-of [smith-stark-1974]; the same suffixes read as associative plurals on the singular heads and as
-class plurals on the transnumeral ones, `reading`. Classifier phrases unitize and plural markers
-maintain tracking-worthy individuals, so a group is introduced with the former and tracked with the
-latter and never the reverse, `Tracks`. The anaphoric use of classifier phrases (Chapter 6) and the
-four positions of the classifier phrase (Chapter 8) are represented by their examples.
+[downing-1996] divides the Japanese numeral classifiers into kind-classifiers, whose inductive
+categories are given by the world and often clone noun categories, and quality-classifiers, whose
+deductive categories rest on one or two physical properties. Read off the parameters of each
+category, the division [matches her labels](##cohesion_eq_label), and Denny's hypothesis [holds of
+the classifiers she cites for it](##params_interaction). The plural suffixes *-tachi* and *-ra* are
+not facultative: their use [rises with animacy and referentiality](##pluralMarking_monotone), [as
+her judgments bear out](##plural_rows), and since they mark individuals the hearer can identify,
+[no new group is introduced with them](##licensed_new_cons_iff).
 
 ## Implementation notes
 
-The kind/quality distinction is derived from the semantic parameters of each row's category, coded
-in Aikhenvald's vocabulary from the descriptions of the tables (`Row.params`): a parameter of
-physical interaction, including [allan-1977]'s quanta, is deductive, one of functional or social
-interaction inductive, and a classifier is a quality-classifier when its parameters are all
-deductive, a kind-classifier when all inductive, mixed when both, and general when it has none. The
-morpheme-category relations of Table 5.2 are recorded for the rows the monograph assigns; the rows
-it does not discuss are `none`, as are `mai` and `tsu`, which have no independent sense. Table 7.2
-is the function `pluralMarking` on the animacy of the referent, Downing's human, other animate and
-inanimate, and the head of the noun phrase; its regularities are proved by `decide` over the nine
-cells. The frequency, breadth, acquisition, anaphoric-distance and construction-distribution counts
-of Chapters 3, 6 and 8 are corpus statistics and are not represented, nor are the taxonomic analyses
-of Chapter 4 or the history of Chapter 2.
+The semantic parameters of each category are coded here in the vocabulary of `Classifier.Parameter`
+from the referent classes of the inventory tables. The coding is the formalization's, and it answers
+to Downing twice: to the kind and quality labels she prints beside her examples of disambiguation,
+and to her sorting of classifiers by Denny's three kinds of interaction. A parameter is deductive
+when it reflects physical interaction; an inherent nature, which a classifier specific to one kind
+of noun encodes, does not, so *-rin* 'flowers' and *-kabu* 'rooted plants' are kind-classifiers. The
+examples are linked to the fragments by typed lists in this file, of classifiers of the inventory
+and of noun-phrase heads with the animacy of their groups; no row feature feeds a prediction, and
+the printed labels are read only as the targets of the cohesion check. The corpus counts of
+Chapters 3, 6 and 8, the taxonomies of Chapter 4, the history of Chapter 2 and the positions of the
+classifier phrase in Chapter 8 are not represented.
+
+## Errata
+
+Table 1.1 is introduced as the twenty-seven forms every respondent used, but the general *-tsu* was
+left off the questionnaire, as a note to the first chapter concedes, so twenty-six were attested by
+all; the table also numbers *-tsubu* 27 before *-tsū* 26.
+
+## TODO
+
+Downing's claim that only quality-classifiers serve as modifiers, adding information a noun does
+not carry, needs the conventional classifiers of the nouns concerned in the fragment; one of her
+examples uses *-ten*, which the coding makes a kind-classifier. Her estimate that deductive forms
+are under a quarter of the core and extended inventories needs the whole extended inventory.
 
 ## References
 
 * [downing-1996]
 * [denny-1976]
 * [hunn-1977]
-* [adams-conklin-1973]
 * [allan-1977]
 * [sanches-slobin-1973]
 * [greenberg-1972]
 * [smith-stark-1974]
-* [martin-1975]
+* [lambrecht-1994]
 -/
 
 @[expose] public section
 
 namespace Downing1996
 
-/-! ### The inventory, Tables 1.1 and 1.2 -/
+open Classifier (Parameter)
 
-/-- The classifiers of the questionnaire, the twenty-seven every respondent used (Table 1.1) and
-six of the forty-seven a majority used (Table 1.2). -/
+/-! ### The inventory -/
+
+/-- The classifiers of the questionnaire: the twenty-six every respondent used and the general
+*-tsu*, left off it, which make the core inventory of Table 1.1, and eight of the forty-seven forms
+a majority used, from the extended inventory of Table 1.2. -/
 inductive Row where
   | tsu | nin | mei | hiki | tou | hon | mai | ko | satsu | tsubu | dai | kenBuilding
   | kenIncident | ki | ku | kyoku | mon | mune | seki | soku | soo | ten | toori | tsuu | kabu
-  | shoku | teki | sao | wa | furi | zen | kyaku | rin
+  | shoku | teki | sao | wa | furi | zen | kyaku | rin | ryoo | fusa
   deriving DecidableEq, Repr, Fintype
 
 namespace Row
@@ -118,19 +111,23 @@ def entry : Row → Classifier
   | .zen => Japanese.Classifiers.zen
   | .kyaku => Japanese.Classifiers.kyaku
   | .rin => Japanese.Classifiers.rin
+  | .ryoo => Japanese.Classifiers.ryoo
+  | .fusa => Japanese.Classifiers.fusa
 
-/-- The twenty-seven classifiers every respondent used. -/
+/-- The core inventory. -/
 def core : List Row :=
   [.tsu, .nin, .mei, .hiki, .tou, .hon, .mai, .ko, .satsu, .tsubu, .dai, .kenBuilding,
     .kenIncident, .ki, .ku, .kyoku, .mon, .mune, .seki, .soku, .soo, .ten, .toori, .tsuu, .kabu,
     .shoku, .teki]
 
-/-- Six of the further classifiers a majority of respondents used. -/
-def extended : List Row := [.sao, .wa, .furi, .zen, .kyaku, .rin]
+/-- The forms of the extended inventory entered here. -/
+def extended : List Row := [.sao, .wa, .furi, .zen, .kyaku, .rin, .ryoo, .fusa]
 
-/-- The semantic parameters of the category each classifier names, coded in Aikhenvald's
-vocabulary from the descriptions of the tables; the general *-tsu* has none. -/
-def params : Row → List Classifier.Parameter
+/-- The semantic parameters of the category each classifier names, coded from the referent classes
+of the inventory tables: *-rin* by its category of flowers, not by its morpheme 'ring', *-shoku* by
+the use of a meal, and *-soku* by the pair of footwear it counts, a quantity of a kind ((13) of
+Chapter 1). The general *-tsu* has none. -/
+def params : Row → List Parameter
   | .tsu => []
   | .nin => [.humanness]
   | .mei => [.humanness, .register]
@@ -150,26 +147,29 @@ def params : Row → List Classifier.Parameter
   | .mon => [.function]
   | .mune => [.function]
   | .seki => [.function, .size]
-  | .soku => [.function, .arrangement]
+  | .soku => [.function, .quanta]
   | .soo => [.function, .size]
   | .ten => [.function]
   | .toori => [.function]
   | .tsuu => [.function]
-  | .kabu => [.function]
-  | .shoku => [.quanta]
+  | .kabu => [.nature]
+  | .shoku => [.function]
   | .teki => [.quanta]
   | .sao => [.shape]
   | .wa => [.animacy]
   | .furi => [.function]
   | .zen => [.function]
   | .kyaku => [.function]
-  | .rin => [.shape, .boundedness]
+  | .rin => [.nature]
+  | .ryoo => [.function]
+  | .fusa => [.quanta]
 
+-- Table 1.1: *-tsu* is the general classifier.
 theorem params_eq_nil_iff (r : Row) : r.params = [] ↔ r = .tsu := by cases r <;> decide
 
 end Row
 
-/-! ### Interaction parameters, Hypothesis 1 -/
+/-! ### Kind-classifiers and quality-classifiers -/
 
 /-- The three kinds of human interaction by which [denny-1976] has classifier categories
 defined. -/
@@ -179,34 +179,22 @@ inductive Interaction
   | social
   deriving DecidableEq, Repr
 
-/-- The interaction a semantic parameter reflects: physical for the perceptual parameters,
-[allan-1977]'s primary qualities, functional for use, and social for animacy and status;
-colour, which no classifier system encodes, reflects none. -/
-def interaction : Classifier.Parameter → Option Interaction
+/-- The interaction a parameter reflects: physical for the perceptual parameters, including
+[allan-1977]'s quanta, functional for use, and social for animacy and status. An inherent nature,
+which a classifier specific to one kind of noun encodes, reflects none, nor does colour, which no
+classifier system encodes. -/
+def interaction : Parameter → Option Interaction
   | .shape | .size | .consistency | .constitution | .material | .arrangement | .boundedness
-  | .interioricity | .direction | .nature | .quanta => some .physical
+  | .interioricity | .direction | .quanta => some .physical
   | .function => some .functional
   | .animacy | .humanness | .sex | .socialStatus | .kinship | .register => some .social
-  | .colour => none
+  | .nature | .colour => none
 
-/-- Hypothesis 1 on the core inventory: every core classifier but the general `tsu` encodes
-a parameter of physical, functional or social interaction. -/
-theorem core_interaction :
-    ∀ r ∈ Row.core, r ≠ .tsu → ∃ p ∈ r.params, (interaction p).isSome := by
-  decide
+/-- A deductive parameter, in the sense of [hunn-1977], unites a category by a perceptual property,
+as length unites the category of *-hon*. -/
+def Deductive (p : Parameter) : Prop := interaction p = some .physical
 
-/-! ### Kind-classifiers and quality-classifiers, Chapter 3 -/
-
-/-- A deductive parameter unites a category by a single perceptual property. -/
-def Deductive (p : Classifier.Parameter) : Prop := interaction p = some .physical
-
-/-- An inductive parameter names a category given by the world as humans use it. -/
-def Inductive (p : Classifier.Parameter) : Prop :=
-  interaction p = some .functional ∨ interaction p = some .social
-
-instance : DecidablePred Deductive := fun p ↦ by unfold Deductive; infer_instance
-
-instance : DecidablePred Inductive := fun p ↦ by unfold Inductive; infer_instance
+instance : DecidablePred Deductive := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The type of semantic cohesion of a classifier's category. -/
 inductive Cohesion
@@ -216,20 +204,36 @@ inductive Cohesion
   | mixed
   deriving DecidableEq, Repr
 
-/-- The cohesion of a classifier's category, read off its parameters: kind when all are
-inductive, quality when all are deductive, mixed when both kinds occur, and general when it
-has none. -/
+/-- A category is a kind, an inductive category, when none of its parameters is deductive, a
+quality when all are, mixed when both occur, and general when it has none. -/
 def cohesion (r : Row) : Cohesion :=
-  match r.params.any (decide <| Inductive ·), r.params.any (decide <| Deductive ·) with
+  match r.params.any (decide <| Deductive ·), r.params.any (decide <| ¬ Deductive ·) with
   | false, false => .general
-  | true, false => .kind
-  | false, true => .quality
+  | false, true => .kind
+  | true, false => .quality
   | true, true => .mixed
 
-theorem cohesion_shape_kind :
-    cohesion .hon = .quality ∧ cohesion .mai = .quality ∧ cohesion .ko = .quality ∧
-      cohesion .tsubu = .quality ∧ cohesion .nin = .kind ∧ cohesion .kenBuilding = .kind ∧
-      cohesion .tsu = .general := by
+/-- The labels Downing prints beside her examples. -/
+def Cohesion.labels : List (String × Cohesion) := [("kind", .kind), ("quality", .quality)]
+
+/-- The examples of disambiguation by the choice of classifier, each with its classifier. -/
+def disambiguation : List (Row × Datum) :=
+  [(.dai, Examples.ex_3_33a), (.tsuu, Examples.ex_3_33b), (.dai, Examples.ex_3_34a),
+    (.ryoo, Examples.ex_3_34b), (.tsubu, Examples.ex_3_35a), (.ko, Examples.ex_3_35b),
+    (.fusa, Examples.ex_3_35c), (.hon, Examples.ex_3_36a), (.ko, Examples.ex_3_36b),
+    (.rin, Examples.ex_3_36c)]
+
+/-- The cohesion read off each category's parameters is the one Downing prints beside her
+examples of disambiguation, (33)–(36): kind for *-dai*, *-tsū*, *-ryō* and *-rin*, quality for
+*-tsubu*, *-ko*, *-fusa* and *-hon*. -/
+theorem cohesion_eq_label :
+    ∀ p ∈ disambiguation, p.2.parse? "cohesion" Cohesion.labels = some (cohesion p.1) := by
+  decide
+
+-- The examples checked are every example carrying a printed label.
+theorem disambiguation_eq_labelled :
+    disambiguation.map (·.2.id) =
+      (Examples.all.filter fun e ↦ (e.feature? "cohesion").isSome).map (·.id) := by
   decide
 
 /-- The pairs of core classifiers splitting one inductive category by size. -/
@@ -237,15 +241,28 @@ def sizeSplits : List (Row × Row) :=
   (Row.core.product Row.core).filter fun (r, r') ↦
     r ≠ r' ∧ cohesion r = .mixed ∧ r.params = r'.params ∧ .size ∈ r.params
 
+-- p. 91: the animal and boat categories are inductively given and split by size.
 theorem sizeSplits_eq :
     sizeSplits = [(.hiki, .tou), (.tou, .hiki), (.seki, .soo), (.soo, .seki)] := by
   decide
 
-/-! ### The classifier and noun systems, Hypothesis 2 -/
+/-- Hypothesis 1, after [denny-1976], has classifiers encode categories of physical, functional and
+social interaction, and it holds of the classifiers Downing cites for it (p. 143): each encodes a
+parameter of the interaction she assigns it, physical for *-hon*, *-mai* and *-satsu*, functional
+for *-ken* and *-mune* 'buildings' and *-ku* 'verses', social for *-nin*, *-mei*, *-hiki*, *-wa* and
+*-tō*. -/
+theorem params_interaction :
+    ∀ ri ∈ [(Row.hon, Interaction.physical), (.mai, .physical), (.satsu, .physical),
+        (.kenBuilding, .functional), (.mune, .functional), (.ku, .functional), (.nin, .social),
+        (.mei, .social), (.hiki, .social), (.wa, .social), (.tou, .social)],
+      ∃ p ∈ ri.1.params, interaction p = some ri.2 := by
+  decide
 
-/-- The recurrent relations between a classifier's category and the independent sense of
-its morpheme, Table 5.2: the six patterns of Japanese, the seventh found in other
-languages, and the metonymic and metaphoric extensions of (4) and (5). -/
+/-! ### The classifier and noun systems -/
+
+/-- The recurrent relations between a classifier's category and the independent sense of its
+morpheme, Table 5.2: the six patterns of Japanese, the seventh found in other languages, and the
+metonymic and metaphoric extensions of (4) and (5). -/
 inductive MorphemeRelation
   | identicalClass
   | partOfMembers
@@ -258,40 +275,42 @@ inductive MorphemeRelation
   | metaphoric
   deriving DecidableEq, Repr
 
-/-- The relation the monograph assigns to the fragment's entries, `none` for the entries it
-does not discuss and for `mai` and `tsu`, which are confined to classifier use. -/
+/-- The relation Downing assigns, `none` where she assigns none: for the classifiers she does not
+discuss, for *-mai* and *-tsu*, which have no independent sense, and for *-sao* 'pole', whose
+members bear several relations to it. -/
 def relation : Row → Option MorphemeRelation
   | .nin => some .identicalClass -- 'person', (3)
   | .kenIncident => some .identicalClass -- 'matter, case'
   | .ki => some .identicalClass -- 'machine'
   | .tou => some .partOfMembers -- 'head'
   | .kyaku => some .partOfMembers -- 'leg'
+  | .mune => some .partOfMembers -- 'ridgepole', of the traditional building (p. 151)
   | .tsuu => some .associatedAction -- 'to pass'
   | .furi => some .associatedAction -- 'to shake'
   | .soku => some .beneficiaryGoal -- 'foot'
   | .zen => some .metonymic -- 'tray', (4a)
   | _ => none
 
-theorem relation_ne_sharedQuality : ∀ c, relation c ≠ some .sharedQuality := by decide
-
-theorem quality_not_clone :
-    ∀ c, cohesion c = .quality → relation c ≠ some .identicalClass := by
+-- pp. 151–152: only the first pattern pairs identical classes, and the quality-classifiers are
+-- not clones of noun categories.
+theorem relation_ne_identicalClass :
+    ∀ r, cohesion r = .quality → relation r ≠ some .identicalClass := by
   decide
 
-/-! ### Plural markers and classifier phrases as individuators, Chapter 7
+/-! ### Plural suffixes
 
-Number is not an obligatory category of Japanese, and [martin-1975]'s six devices for
-expressing it all carry other information; the classifier phrase and the plural suffixes
-*-tachi*, *-ra* share the task of individuating referents, (2). -/
+Number is not obligatory in Japanese, and the classifier phrase and the plural suffixes *-tachi*
+and *-ra* share the task of individuating referents, against the universal of
+[sanches-slobin-1973] that classifier languages lack obligatory plural marking. -/
 
-/-- The head of the noun phrase, in the order of its referentiality. -/
+/-- The head of a noun phrase, in the order of its referentiality. -/
 inductive NPHead
   | commonNoun
   | properNoun
   | pronoun
   deriving DecidableEq, Repr, Fintype
 
-/-- The availability of a plural marker, from impossible to required. -/
+/-- The availability of the plural suffix, from impossible to required. -/
 inductive Availability
   | impossible
   | rare
@@ -299,25 +318,11 @@ inductive Availability
   | required
   deriving DecidableEq, Repr, Fintype
 
-def NPHead.rank : NPHead → ℕ
-  | .commonNoun => 0
-  | .properNoun => 1
-  | .pronoun => 2
+instance : LinearOrder NPHead := LinearOrder.lift' NPHead.ctorIdx (by decide)
 
-def Availability.rank : Availability → ℕ
-  | .impossible => 0
-  | .rare => 1
-  | .possible => 2
-  | .required => 3
+instance : LinearOrder Availability := LinearOrder.lift' Availability.ctorIdx (by decide)
 
-instance : LinearOrder NPHead :=
-  LinearOrder.lift' NPHead.rank fun a b h ↦ by cases a <;> cases b <;> simp_all [NPHead.rank]
-
-instance : LinearOrder Availability :=
-  LinearOrder.lift' Availability.rank fun a b h ↦ by
-    cases a <;> cases b <;> simp_all [Availability.rank]
-
-/-- Table 7.2: the availability of a plural marker by the animacy of the referent and the head
+/-- Table 7.2: the availability of the plural suffix by the animacy of the referents and the head
 of the noun phrase. -/
 def pluralMarking : Animacy → NPHead → Availability
   | _, .pronoun => .required
@@ -325,15 +330,6 @@ def pluralMarking : Animacy → NPHead → Availability
   | .human, .commonNoun => .possible
   | .animate, _ => .rare
   | .inanimate, _ => .impossible
-
--- (10c)
-theorem pluralMarking_pronoun (r : Animacy) : pluralMarking r .pronoun = .required := by
-  cases r <;> rfl
-
--- (8a), (9b)
-theorem pluralMarking_inanimate (h : NPHead) (hh : h ≠ .pronoun) :
-    pluralMarking .inanimate h = .impossible := by
-  cases h <;> first | rfl | exact absurd rfl hh
 
 theorem pluralMarking_mono_referent (h : NPHead) : Monotone (pluralMarking · h) := by
   unfold Monotone
@@ -343,77 +339,145 @@ theorem pluralMarking_mono_head (r : Animacy) : Monotone (pluralMarking r) := by
   unfold Monotone
   decide +revert
 
-/-- The number system of a noun phrase head: common nouns are transnumeral, denoting the
-concept rather than individuals, while pronouns and proper nouns are inherently singular. -/
+/-- The two factors of Table 7.2 correlate with the speaker's referential intent: the use of the
+suffix rises with the animacy of the referents and with the referentiality of the head, from the
+common noun to the proper noun to the pronoun, a plurality split in the sense of
+[smith-stark-1974]. -/
+theorem pluralMarking_monotone : Monotone (Function.uncurry pluralMarking) :=
+  fun a b h ↦ (pluralMarking_mono_referent a.2 h.1).trans (pluralMarking_mono_head b.1 h.2)
+
+-- pp. 216–217: the speaker has a true option only with common nouns referring to humans.
+theorem pluralMarking_eq_possible_iff {r : Animacy} {h : NPHead} :
+    pluralMarking r h = .possible ↔ r = .human ∧ h = .commonNoun := by
+  decide +revert
+
+/-- The number system of a head, after [greenberg-1972]: common nouns are transnumeral, denoting
+the concept rather than individuals, while pronouns and proper nouns are inherently singular. The
+suffix accordingly makes a class plural of a common noun, *kodomo-tachi* 'children', and an
+associative plural of a singular head, *Endoo-san-tachi* 'Mr. Endo and the others'. -/
 inductive NumberSystem
   | transnumeral
   | singularPlural
   deriving DecidableEq, Repr
 
+/-- The number system of each head. -/
 def numberSystem : NPHead → NumberSystem
   | .commonNoun => .transnumeral
-  | _ => .singularPlural
+  | .properNoun | .pronoun => .singularPlural
 
+-- pp. 211–212: an inherently singular head referring to several humans requires the suffix.
 theorem required_iff_singularPlural (h : NPHead) :
     pluralMarking .human h = .required ↔ numberSystem h = .singularPlural := by
   cases h <;> decide
 
-/-- What a plural suffix denotes: a group centred on the referent of its host, or a
-plurality of members of the host's category. -/
-inductive PluralReading
-  | associative
-  | classPlural
-  deriving DecidableEq, Repr
+/-- The head of a noun phrase as an entry of the fragments. -/
+inductive Head
+  | noun (n : Japanese.Nouns.Noun)
+  | name (n : Japanese.Nouns.ProperName)
+  | personal (p : PersonalPronoun)
+  | demonstrative (p : DemonstrativePronoun)
 
-/-- *-tachi* and *-ra* are associative on pronouns and proper nouns, (11), and class plurals
-on common nouns, (12). -/
-def reading : NPHead → PluralReading
-  | .commonNoun => .classPlural
-  | _ => .associative
+/-- The head type of Table 7.2 that an entry instantiates. -/
+def Head.type : Head → NPHead
+  | .noun _ => .commonNoun
+  | .name _ => .properNoun
+  | .personal _ | .demonstrative _ => .pronoun
 
-theorem reading_classPlural_iff (h : NPHead) :
-    reading h = .classPlural ↔ numberSystem h = .transnumeral := by
-  cases h <;> decide
+/-- A noun phrase referring to a group: its head and the animacy of the group's members. -/
+structure GroupNP where
+  /-- The head. -/
+  head : Head
+  /-- The animacy of the members of the group. -/
+  animacy : Animacy
 
-/-- The judgments Table 7.2 predicts for a plural-marked noun phrase: accepted where the marker
-is possible or required, rejected where it is rare or impossible. -/
-def Availability.band : Availability → Judgment.Band
-  | .possible | .required => .accepted
-  | .rare | .impossible => .rejected
+/-- A common noun refers to a group of the animacy the fragment records for it. -/
+def GroupNP.ofNoun (n : Japanese.Nouns.Noun) : GroupNP := ⟨.noun n, n.animacy⟩
 
-/-- The *-tachi* forms of (6a), (7a) and (8a), on common nouns for humans, animals and
-inanimates, are judged as Table 7.2 predicts from the animacy the fragment records. -/
-theorem tachi_judgments :
-    ∀ p ∈ [(Japanese.Nouns.kodomo, Examples.ex_7_6a), (Japanese.Nouns.neko, Examples.ex_7_7a),
-      (Japanese.Nouns.tatemono, Examples.ex_7_8a)],
-      p.2.judgment.band = (pluralMarking p.1.animacy .commonNoun).band := by
+/-- The availability of the plural suffix on the noun phrase. -/
+def GroupNP.availability (x : GroupNP) : Availability := pluralMarking x.animacy x.head.type
+
+open Japanese.Nouns Japanese.Pronouns in
+/-- The plural-suffixed noun phrases of the examples (6)–(12), each with its example. A pronoun's
+group is the one the context names with a common noun, the faces of (9a) and the patients of
+(10a), and *Endoo-san* 'Mr. Endo' of (11) is a person. -/
+def suffixed : List (Datum × GroupNP) :=
+  [(Examples.ex_7_6a, .ofNoun kodomo), (Examples.ex_7_7a, .ofNoun neko),
+    (Examples.ex_7_8a, .ofNoun tatemono), (Examples.ex_7_9a, ⟨.demonstrative kore, kao.animacy⟩),
+    (Examples.ex_7_9b, .ofNoun kao), (Examples.ex_7_10a, ⟨.personal kare, kanja.animacy⟩),
+    (Examples.ex_7_10b, .ofNoun kanja), (Examples.ex_7_11, ⟨.name endoo, .human⟩),
+    (Examples.ex_7_12, .ofNoun kodomo)]
+
+open Japanese.Nouns Japanese.Pronouns in
+/-- The bare noun phrases of the examples (6)–(10) referring to the same groups. -/
+def bare : List (Datum × GroupNP) :=
+  [(Examples.ex_7_6b, .ofNoun kodomo), (Examples.ex_7_7b, .ofNoun neko),
+    (Examples.ex_7_8b, .ofNoun tatemono), (Examples.ex_7_10c, ⟨.personal kare, kanja.animacy⟩)]
+
+/-- Table 7.2 predicts the judgments of the examples that test it: a plural-suffixed noun phrase
+is accepted where the suffix is possible or required, so *kodomo-tachi* 'children' and *kore-ra*
+'these' but not *neko-tachi* 'cats', *tatemono-tachi* 'buildings' or *kao-tachi* 'faces', and a
+bare noun phrase referring to a group wherever the suffix is not required, so *kodomo*, *neko* and
+*tatemono* but not *kare* for *kare-ra* 'they'. -/
+theorem plural_rows :
+    (∀ p ∈ suffixed, p.1.judgment.band = .ofProp (.possible ≤ p.2.availability)) ∧
+      ∀ p ∈ bare, p.1.judgment.band = .ofProp (p.2.availability < .required) := by
   decide
 
--- (2b)
-theorem plural_and_classifier :
-    ∀ n ∈ Japanese.Nouns.nouns, n.animacy = .human →
-      pluralMarking n.animacy .commonNoun = .possible ∧ n.classifiers.Nonempty := by
-  decide
+/-! ### Introducing and tracking a group -/
 
-/-- The devices by which a mention of a group of referents marks their number. -/
-inductive Mention
+/-- The two individuators. -/
+inductive Individuator
   | classifierPhrase
-  | bare
-  | pluralMarked
-  deriving DecidableEq, Repr
+  | pluralMarker
+  deriving DecidableEq, Repr, Fintype
 
-/-- A sequence of mentions of one group tracks it when no plural-marked mention precedes a
-classifier phrase: the classifier phrase unitizes on introduction and the plural marker
-maintains the individuated status, (16) and (23), and the reverse order is unattested. -/
-def Tracks (s : List Mention) : Prop :=
-  s.Pairwise fun a b ↦ ¬ (a = .pluralMarked ∧ b = .classifierPhrase)
+/-- A mention of a group, by the individuators its noun phrase carries: none on a bare noun, and
+both on *sono futari-no otoko-no ko-tachi* 'those two boys' (2b). -/
+abbrev Mention := Finset Individuator
 
-instance : DecidablePred Tracks := fun s ↦ by unfold Tracks; infer_instance
+/-- A sequence of mentions of a group is licensed when the group is identifiable to the hearer
+([lambrecht-1994]) at every plural-marked mention: at the first as the context makes it, and after
+it, since a mention makes the group identifiable. -/
+def Licensed : Discourse.BinaryGivenness → List Mention → Prop
+  | _, [] => True
+  | g, m :: s => (.pluralMarker ∈ m → g = .given) ∧ Licensed .given s
 
--- (16)
-theorem tracks_16 :
-    Tracks [.classifierPhrase, .pluralMarked, .pluralMarked] ∧
-      ¬ Tracks [.pluralMarked, .classifierPhrase] := by
+instance instDecidableLicensed : ∀ g s, Decidable (Licensed g s)
+  | _, [] => isTrue trivial
+  | g, m :: s =>
+    have := instDecidableLicensed .given s
+    decidable_of_iff ((.pluralMarker ∈ m → g = .given) ∧ Licensed .given s) Iff.rfl
+
+theorem licensed_given : ∀ s, Licensed .given s
+  | [] => trivial
+  | _ :: s => ⟨fun _ ↦ rfl, licensed_given s⟩
+
+/-- A group the hearer cannot yet identify is tracked by a licensed sequence of mentions exactly
+when its introduction carries no plural marker: it is introduced bare or with a classifier phrase,
+and the plural marker then maintains it, since a plural-marked introduction would be like an
+initial mention with a definite article in English. -/
+theorem licensed_new_cons_iff {m : Mention} {s : List Mention} :
+    Licensed .new (m :: s) ↔ .pluralMarker ∉ m := by
+  simp [Licensed, licensed_given]
+
+-- p. 215: no group is introduced with the plural marker and then counted with a classifier
+-- phrase, though the classifier phrase may be repeated.
+example : ¬ Licensed .new [{.pluralMarker}, {.classifierPhrase}] := by decide
+
+example : Licensed .new [{.classifierPhrase}, {.pluralMarker}, {.classifierPhrase}] := by decide
+
+/-- The mentions of the groups of (16) and (23) and of (43) of Chapter 8: *otoko-ga iku-nin-mo*
+'men, any number', then *kare-ra* 'they' and *ano otoko-tachi* 'those men'; *iku-nin-mo-no onna*
+'a number of women', then *sono onna-tachi* 'those women'; *heishi-ga ni-mei* 'two soldiers', then
+*futari-no heishi-tachi* 'the two soldiers'. -/
+def chains : List (Datum × List Mention) :=
+  [(Examples.ex_7_16, [{.classifierPhrase}, {.pluralMarker}, {.pluralMarker}]),
+    (Examples.ex_7_23, [{.classifierPhrase}, {.pluralMarker}]),
+    (Examples.ex_8_43, [{.classifierPhrase}, {.classifierPhrase, .pluralMarker}])]
+
+-- (16), (23), and (43) of Chapter 8
+theorem chains_licensed :
+    ∀ p ∈ chains, p.1.judgment.band = .ofProp (Licensed .new p.2) := by
   decide
 
 end Downing1996
