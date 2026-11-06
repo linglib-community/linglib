@@ -13,7 +13,7 @@ public import Linglib.Data.Examples.Readers
 categories are given by the world and often clone noun categories, and quality-classifiers, whose
 deductive categories rest on one or two physical properties. Read off the parameters of each
 category, the division [matches her labels](##cohesion_eq_label), and Denny's hypothesis [holds of
-the classifiers she cites for it](##params_interaction). The plural suffixes *-tachi* and *-ra* are
+the classifiers she cites for it](##params_toClass). The plural suffixes *-tachi* and *-ra* are
 not facultative: their use [rises with animacy and referentiality](##pluralMarking_monotone), [as
 her judgments bear out](##plural_rows), and since they mark individuals the hearer can identify,
 [no new group is introduced with them](##licensed_new_cons_iff).
@@ -22,15 +22,17 @@ her judgments bear out](##plural_rows), and since they mark individuals the hear
 
 The semantic parameters of each category are coded here in the vocabulary of `Classifier.Parameter`
 from the referent classes of the inventory tables. The coding is the formalization's, and it answers
-to Downing twice: to the kind and quality labels she prints beside her examples of disambiguation,
-and to her sorting of classifiers by Denny's three kinds of interaction. A parameter is deductive
-when it reflects physical interaction; an inherent nature, which a classifier specific to one kind
-of noun encodes, does not, so *-rin* 'flowers' and *-kabu* 'rooted plants' are kind-classifiers. The
-examples are linked to the fragments by typed lists in this file, of classifiers of the inventory
-and of noun-phrase heads with the animacy of their groups; no row feature feeds a prediction, and
-the printed labels are read only as the targets of the cohesion check. The corpus counts of
-Chapters 3, 6 and 8, the taxonomies of Chapter 4, the history of Chapter 2 and the positions of the
-classifier phrase in Chapter 8 are not represented.
+to Downing three times: to the kind and quality labels she prints beside her examples of
+disambiguation, to her sorting of classifiers by Denny's three kinds of interaction, and to the
+animacy of the nouns the fragment counts with each classifier. A parameter is deductive when it is
+a physical property; an inherent nature, which a classifier specific to one kind of noun encodes,
+is not, so *-rin* 'flowers' and *-kabu* 'rooted plants' are kind-classifiers. The coding is keyed by
+the fragment's classifier entries, and the examples are linked to the fragments by typed lists, of
+classifiers and of noun-phrase heads with the animacy of their groups; no row feature feeds a
+prediction, and the printed labels are read only as the targets of the cohesion check. About a
+dozen codings, among them *-ten*, *-shoku* and *-kabu*, meet none of these checks. The corpus
+counts of Chapters 3, 6 and 8, the taxonomies of Chapter 4, the history of Chapter 2 and the
+positions of the classifier phrase in Chapter 8 are not represented.
 
 ## Errata
 
@@ -65,134 +67,45 @@ open Classifier (Parameter)
 
 /-! ### The inventory -/
 
-/-- The classifiers of the questionnaire: the twenty-six every respondent used and the general
-*-tsu*, left off it, which make the core inventory of Table 1.1, and eight of the forty-seven forms
-a majority used, from the extended inventory of Table 1.2. -/
-inductive Row where
-  | tsu | nin | mei | hiki | tou | hon | mai | ko | satsu | tsubu | dai | kenBuilding
-  | kenIncident | ki | ku | kyoku | mon | mune | seki | soku | soo | ten | toori | tsuu | kabu
-  | shoku | teki | sao | wa | furi | zen | kyaku | rin | ryoo | fusa
-  deriving DecidableEq, Repr, Fintype
+open Japanese.Classifiers in
+/-- The core inventory of Table 1.1, the twenty-six classifiers every respondent of the
+questionnaire used and the general *-tsu*, left off it, each with the semantic parameters of its
+category. The parameters are coded from the referent classes of the table: *-shoku* by the use of
+a meal, *-soku* by the pair of footwear it counts, a quantity of a kind ((13) of Chapter 1), and
+*-kabu* 'rooted plants' by the inherent nature of its members. -/
+def core : List (Classifier × List Parameter) :=
+  [(tsu, []), (nin, [.humanness]), (mei, [.humanness, .register]), (hiki, [.animacy, .size]),
+    (tou, [.animacy, .size]), (hon, [.shape]), (mai, [.shape]), (ko, [.shape]), (satsu, [.shape]),
+    (tsubu, [.shape]), (dai, [.function]), (kenBuilding, [.function]),
+    (kenIncident, [.function]), (ki, [.function]), (ku, [.function]), (kyoku, [.function]),
+    (mon, [.function]), (mune, [.function]), (seki, [.function, .size]),
+    (soku, [.function, .quanta]), (soo, [.function, .size]), (ten, [.function]),
+    (toori, [.function]), (tsuu, [.function]), (kabu, [.nature]), (shoku, [.function]),
+    (teki, [.quanta])]
 
-namespace Row
+open Japanese.Classifiers in
+/-- Ten of the forty-seven further forms a majority used, the extended inventory of Table 1.2,
+coded likewise: *-rin* by its category of flowers, not by its morpheme 'ring'. -/
+def extended : List (Classifier × List Parameter) :=
+  [(sao, [.shape]), (wa, [.animacy]), (furi, [.function]), (zen, [.function]),
+    (kyaku, [.function]), (rin, [.nature]), (ryoo, [.function]), (fusa, [.quanta]),
+    (suji, [.shape]), (maki, [.arrangement])]
 
-/-- The fragment's entry for the row. -/
-def entry : Row → Classifier
-  | .tsu => Japanese.Classifiers.tsu
-  | .nin => Japanese.Classifiers.nin
-  | .mei => Japanese.Classifiers.mei
-  | .hiki => Japanese.Classifiers.hiki
-  | .tou => Japanese.Classifiers.tou
-  | .hon => Japanese.Classifiers.hon
-  | .mai => Japanese.Classifiers.mai
-  | .ko => Japanese.Classifiers.ko
-  | .satsu => Japanese.Classifiers.satsu
-  | .tsubu => Japanese.Classifiers.tsubu
-  | .dai => Japanese.Classifiers.dai
-  | .kenBuilding => Japanese.Classifiers.kenBuilding
-  | .kenIncident => Japanese.Classifiers.kenIncident
-  | .ki => Japanese.Classifiers.ki
-  | .ku => Japanese.Classifiers.ku
-  | .kyoku => Japanese.Classifiers.kyoku
-  | .mon => Japanese.Classifiers.mon
-  | .mune => Japanese.Classifiers.mune
-  | .seki => Japanese.Classifiers.seki
-  | .soku => Japanese.Classifiers.soku
-  | .soo => Japanese.Classifiers.soo
-  | .ten => Japanese.Classifiers.ten
-  | .toori => Japanese.Classifiers.toori
-  | .tsuu => Japanese.Classifiers.tsuu
-  | .kabu => Japanese.Classifiers.kabu
-  | .shoku => Japanese.Classifiers.shoku
-  | .teki => Japanese.Classifiers.teki
-  | .sao => Japanese.Classifiers.sao
-  | .wa => Japanese.Classifiers.wa
-  | .furi => Japanese.Classifiers.furi
-  | .zen => Japanese.Classifiers.zen
-  | .kyaku => Japanese.Classifiers.kyaku
-  | .rin => Japanese.Classifiers.rin
-  | .ryoo => Japanese.Classifiers.ryoo
-  | .fusa => Japanese.Classifiers.fusa
+/-- The classifiers coded here. -/
+def coding : List (Classifier × List Parameter) := core ++ extended
 
-/-- The core inventory. -/
-def core : List Row :=
-  [.tsu, .nin, .mei, .hiki, .tou, .hon, .mai, .ko, .satsu, .tsubu, .dai, .kenBuilding,
-    .kenIncident, .ki, .ku, .kyoku, .mon, .mune, .seki, .soku, .soo, .ten, .toori, .tsuu, .kabu,
-    .shoku, .teki]
-
-/-- The forms of the extended inventory entered here. -/
-def extended : List Row := [.sao, .wa, .furi, .zen, .kyaku, .rin, .ryoo, .fusa]
-
-/-- The semantic parameters of the category each classifier names, coded from the referent classes
-of the inventory tables: *-rin* by its category of flowers, not by its morpheme 'ring', *-shoku* by
-the use of a meal, and *-soku* by the pair of footwear it counts, a quantity of a kind ((13) of
-Chapter 1). The general *-tsu* has none. -/
-def params : Row → List Parameter
-  | .tsu => []
-  | .nin => [.humanness]
-  | .mei => [.humanness, .register]
-  | .hiki => [.animacy, .size]
-  | .tou => [.animacy, .size]
-  | .hon => [.shape]
-  | .mai => [.shape]
-  | .ko => [.shape]
-  | .satsu => [.shape]
-  | .tsubu => [.shape]
-  | .dai => [.function]
-  | .kenBuilding => [.function]
-  | .kenIncident => [.function]
-  | .ki => [.function]
-  | .ku => [.function]
-  | .kyoku => [.function]
-  | .mon => [.function]
-  | .mune => [.function]
-  | .seki => [.function, .size]
-  | .soku => [.function, .quanta]
-  | .soo => [.function, .size]
-  | .ten => [.function]
-  | .toori => [.function]
-  | .tsuu => [.function]
-  | .kabu => [.nature]
-  | .shoku => [.function]
-  | .teki => [.quanta]
-  | .sao => [.shape]
-  | .wa => [.animacy]
-  | .furi => [.function]
-  | .zen => [.function]
-  | .kyaku => [.function]
-  | .rin => [.nature]
-  | .ryoo => [.function]
-  | .fusa => [.quanta]
+/-- The parameters of a classifier's category, if the inventory codes it. -/
+def params (c : Classifier) : Option (List Parameter) := coding.lookup c
 
 -- Table 1.1: *-tsu* is the general classifier.
-theorem params_eq_nil_iff (r : Row) : r.params = [] ↔ r = .tsu := by cases r <;> decide
-
-end Row
+theorem coding_eq_nil_iff : ∀ p ∈ coding, p.2 = [] ↔ p.1 = Japanese.Classifiers.tsu := by
+  decide
 
 /-! ### Kind-classifiers and quality-classifiers -/
 
-/-- The three kinds of human interaction by which [denny-1976] has classifier categories
-defined. -/
-inductive Interaction
-  | physical
-  | functional
-  | social
-  deriving DecidableEq, Repr
-
-/-- The interaction a parameter reflects: physical for the perceptual parameters, including
-[allan-1977]'s quanta, functional for use, and social for animacy and status. An inherent nature,
-which a classifier specific to one kind of noun encodes, reflects none, nor does colour, which no
-classifier system encodes. -/
-def interaction : Parameter → Option Interaction
-  | .shape | .size | .consistency | .constitution | .material | .arrangement | .boundedness
-  | .interioricity | .direction | .quanta => some .physical
-  | .function => some .functional
-  | .animacy | .humanness | .sex | .socialStatus | .kinship | .register => some .social
-  | .nature | .colour => none
-
-/-- A deductive parameter, in the sense of [hunn-1977], unites a category by a perceptual property,
+/-- A deductive parameter, in the sense of [hunn-1977], unites a category by a physical property,
 as length unites the category of *-hon*. -/
-def Deductive (p : Parameter) : Prop := interaction p = some .physical
+def Deductive (p : Parameter) : Prop := p.toClass = some .physical
 
 instance : DecidablePred Deductive := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
@@ -206,56 +119,69 @@ inductive Cohesion
 
 /-- A category is a kind, an inductive category, when none of its parameters is deductive, a
 quality when all are, mixed when both occur, and general when it has none. -/
-def cohesion (r : Row) : Cohesion :=
-  match r.params.any (decide <| Deductive ·), r.params.any (decide <| ¬ Deductive ·) with
+def Cohesion.ofParams (ps : List Parameter) : Cohesion :=
+  match ps.any (decide <| Deductive ·), ps.any (decide <| ¬ Deductive ·) with
   | false, false => .general
   | false, true => .kind
   | true, false => .quality
   | true, true => .mixed
 
+/-- The cohesion of a coded classifier's category. -/
+def cohesion (c : Classifier) : Option Cohesion := (params c).map .ofParams
+
 /-- The labels Downing prints beside her examples. -/
 def Cohesion.labels : List (String × Cohesion) := [("kind", .kind), ("quality", .quality)]
 
+open Japanese.Classifiers in
 /-- The examples of disambiguation by the choice of classifier, each with its classifier. -/
-def disambiguation : List (Row × Datum) :=
-  [(.dai, Examples.ex_3_33a), (.tsuu, Examples.ex_3_33b), (.dai, Examples.ex_3_34a),
-    (.ryoo, Examples.ex_3_34b), (.tsubu, Examples.ex_3_35a), (.ko, Examples.ex_3_35b),
-    (.fusa, Examples.ex_3_35c), (.hon, Examples.ex_3_36a), (.ko, Examples.ex_3_36b),
-    (.rin, Examples.ex_3_36c)]
+def disambiguation : List (Classifier × Datum) :=
+  [(dai, Examples.ex_3_33a), (tsuu, Examples.ex_3_33b), (dai, Examples.ex_3_34a),
+    (ryoo, Examples.ex_3_34b), (tsubu, Examples.ex_3_35a), (ko, Examples.ex_3_35b),
+    (fusa, Examples.ex_3_35c), (hon, Examples.ex_3_36a), (ko, Examples.ex_3_36b),
+    (rin, Examples.ex_3_36c)]
 
 /-- The cohesion read off each category's parameters is the one Downing prints beside her
 examples of disambiguation, (33)–(36): kind for *-dai*, *-tsū*, *-ryō* and *-rin*, quality for
 *-tsubu*, *-ko*, *-fusa* and *-hon*. -/
 theorem cohesion_eq_label :
-    ∀ p ∈ disambiguation, p.2.parse? "cohesion" Cohesion.labels = some (cohesion p.1) := by
+    ∀ p ∈ disambiguation, p.2.parse? "cohesion" Cohesion.labels = cohesion p.1 := by
   decide
 
--- The examples checked are every example carrying a printed label.
+-- The examples checked are every example carrying a printed label, so no side is `none`.
 theorem disambiguation_eq_labelled :
     disambiguation.map (·.2.id) =
       (Examples.all.filter fun e ↦ (e.feature? "cohesion").isSome).map (·.id) := by
   decide
 
 /-- The pairs of core classifiers splitting one inductive category by size. -/
-def sizeSplits : List (Row × Row) :=
-  (Row.core.product Row.core).filter fun (r, r') ↦
-    r ≠ r' ∧ cohesion r = .mixed ∧ r.params = r'.params ∧ .size ∈ r.params
+def sizeSplits : List (Classifier × Classifier) :=
+  ((core.product core).filter fun (p, q) ↦
+      .size ∈ p.2 ∧ p.2 = q.2 ∧ Cohesion.ofParams p.2 = .mixed ∧ p.1 ≠ q.1).map
+    fun (p, q) ↦ (p.1, q.1)
 
+open Japanese.Classifiers in
 -- p. 91: the animal and boat categories are inductively given and split by size.
-theorem sizeSplits_eq :
-    sizeSplits = [(.hiki, .tou), (.tou, .hiki), (.seki, .soo), (.soo, .seki)] := by
+theorem sizeSplits_eq : sizeSplits = [(hiki, tou), (tou, hiki), (seki, soo), (soo, seki)] := by
   decide
 
+open Japanese.Classifiers in
 /-- Hypothesis 1, after [denny-1976], has classifiers encode categories of physical, functional and
-social interaction, and it holds of the classifiers Downing cites for it (p. 143): each encodes a
-parameter of the interaction she assigns it, physical for *-hon*, *-mai* and *-satsu*, functional
-for *-ken* and *-mune* 'buildings' and *-ku* 'verses', social for *-nin*, *-mei*, *-hiki*, *-wa* and
-*-tō*. -/
-theorem params_interaction :
-    ∀ ri ∈ [(Row.hon, Interaction.physical), (.mai, .physical), (.satsu, .physical),
-        (.kenBuilding, .functional), (.mune, .functional), (.ku, .functional), (.nin, .social),
-        (.mei, .social), (.hiki, .social), (.wa, .social), (.tou, .social)],
-      ∃ p ∈ ri.1.params, interaction p = some ri.2 := by
+social interaction, the substrate's physical, function and animacy classes, and it holds of the
+classifiers Downing cites for it (p. 143): each encodes a parameter of the class she assigns it,
+physical for *-hon*, *-suji*, *-mai* and *-satsu*, function for *-ken* and *-mune* 'buildings' and
+*-ku* 'verses', animacy for *-nin*, *-mei*, *-hiki*, *-wa* and *-tō*. -/
+theorem params_toClass :
+    ∀ ci ∈ [(hon, Parameter.Class.physical), (suji, .physical), (mai, .physical),
+        (satsu, .physical), (kenBuilding, .function), (mune, .function), (ku, .function),
+        (nin, .animacy), (mei, .animacy), (hiki, .animacy), (wa, .animacy), (tou, .animacy)],
+      ∃ ps ∈ params ci.1, ∃ p ∈ ps, p.toClass = some ci.2 := by
+  decide
+
+-- p. 143: the classifiers for humans and animals are set apart from those for inanimates, and the
+-- classifiers that count the fragment's nouns encode animacy exactly for the animate nouns.
+theorem params_animacy_iff :
+    ∀ n ∈ Japanese.Nouns.nouns, ∀ c ∈ n.classifiers,
+      ∃ ps ∈ params c, (∃ p ∈ ps, p.toClass = some .animacy) ↔ n.animacy ≠ .inanimate := by
   decide
 
 /-! ### The classifier and noun systems -/
@@ -275,26 +201,21 @@ inductive MorphemeRelation
   | metaphoric
   deriving DecidableEq, Repr
 
-/-- The relation Downing assigns, `none` where she assigns none: for the classifiers she does not
-discuss, for *-mai* and *-tsu*, which have no independent sense, and for *-sao* 'pole', whose
-members bear several relations to it. -/
-def relation : Row → Option MorphemeRelation
-  | .nin => some .identicalClass -- 'person', (3)
-  | .kenIncident => some .identicalClass -- 'matter, case'
-  | .ki => some .identicalClass -- 'machine'
-  | .tou => some .partOfMembers -- 'head'
-  | .kyaku => some .partOfMembers -- 'leg'
-  | .mune => some .partOfMembers -- 'ridgepole', of the traditional building (p. 151)
-  | .tsuu => some .associatedAction -- 'to pass'
-  | .furi => some .associatedAction -- 'to shake'
-  | .soku => some .beneficiaryGoal -- 'foot'
-  | .zen => some .metonymic -- 'tray', (4a)
-  | _ => none
+open Japanese.Classifiers in
+/-- The relations Downing assigns, by Table 5.2, its surrounding text and (4a). She assigns none to
+*-mai* and *-tsu*, which have no independent sense, nor to *-sao* 'pole', whose members bear
+several relations to it; the pattern of shared quality and the metaphoric extension have no
+Japanese instance. -/
+def relations : List (Classifier × MorphemeRelation) :=
+  [(nin, .identicalClass), (kenIncident, .identicalClass), (ki, .identicalClass),
+    (tou, .partOfMembers), (kyaku, .partOfMembers), (mune, .partOfMembers),
+    (tsuu, .associatedAction), (furi, .associatedAction), (suji, .exemplar),
+    (maki, .creationAction), (soku, .beneficiaryGoal), (zen, .metonymic)]
 
 -- pp. 151–152: only the first pattern pairs identical classes, and the quality-classifiers are
 -- not clones of noun categories.
-theorem relation_ne_identicalClass :
-    ∀ r, cohesion r = .quality → relation r ≠ some .identicalClass := by
+theorem relations_identicalClass :
+    ∀ p ∈ relations, p.2 = .identicalClass → ∃ k ∈ cohesion p.1, k ≠ .quality := by
   decide
 
 /-! ### Plural suffixes
