@@ -18,7 +18,9 @@ violation by merging each run of identical elements into one; it is `List.destut
 retraction onto the clean tiers, as `List.dedup` is onto the lists without duplicates.
 `mergeAppend` concatenates two words and merges identical elements at the seam only; the collapse
 of a concatenation is the merging append of the collapses. The run index `runIdx` tracks where
-each position lands under fusion.
+each position lands under fusion. On a tier of morphs the OCP is the repeated morph constraint,
+which a language obeys by blocking the derivation, by fusion (affix haplology) or by suppletion,
+or else tolerates.
 
 The gradient OCP of Frisch, Pierrehumbert and Broe, which scales with the similarity of the two
 consonants, is a different object and lives in that paper's study.
@@ -47,6 +49,7 @@ consonants, is a different object and lives in that paper's study.
 * [mccarthy-prince-1995]
 * [frisch-pierrehumbert-broe-2004]
 * [jardine-heinz-2015]
+* [menn-macwhinney-1984]
 -/
 
 @[expose] public section
