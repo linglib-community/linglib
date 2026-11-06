@@ -20,7 +20,8 @@ exactly by the non-empty teams, is the source of the free-choice effects.
 * `BSML.Formula.den`: the meaning of a formula in a model.
 * `BSML.support`, `BSML.antiSupport`: support and anti-support.
 * `BSML.Formula.NEFree`, `BSML.Formula.Positive`: the `NE`-free and the negation-free fragments.
-* `BSML.Consequence`, `BSML.Equivalent`, `BSML.StronglyEquivalent`.
+* `BSML.Consequence` (`Γ ⊨ φ`), `BSML.Equivalent`, `BSML.StronglyEquivalent`: consequence and
+  equivalence over pointed team models.
 
 ## Implementation notes
 
@@ -42,7 +43,7 @@ open scoped SetFamily
 
 namespace BSML
 
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel PointedTeam)
 open Truthmaker (BilProp)
 
 /-! ### Formulas -/
@@ -195,35 +196,43 @@ theorem not_support_strongFalsum [Inhabited Atom] : ¬ support M .strongFalsum t
 
 /-! ### Consequence and equivalence -/
 
-/-- `ψ` is a consequence of `φ` when every team supporting `φ` supports `ψ`
-    ([aloni-2022] Definition 3). -/
-def Consequence (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t → support M ψ t
+/-- `Γ ⊨ φ`: every pointed team model whose team supports each formula of `Γ` supports `φ`
+    ([aloni-2022] Definition 3, with sets of premises as in [aloni-anttila-yang-2024]). The
+    models range over `Type`; by soundness and completeness the universe does not matter for finite
+    premise sets (`BSML.support_of_consequence`). -/
+def Consequence (Γ : Set (Formula Atom)) (φ : Formula Atom) : Prop :=
+  ∀ p : PointedTeam.{0} Atom, (∀ γ ∈ Γ, support p.model γ p.team) → support p.model φ p.team
 
-/-- Two formulas are equivalent, `φ ≡ ψ`, when they have the same support in every model. -/
-def Equivalent (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t ↔ support M ψ t
+@[inherit_doc] scoped infix:50 " ⊨ " => Consequence
 
 variable {φ ψ}
 
-theorem equivalent_iff :
-    Equivalent (W := W) φ ψ ↔ Consequence (W := W) φ ψ ∧ Consequence (W := W) ψ φ where
-  mp h := ⟨fun M t ↦ (h M t).mp, fun M t ↦ (h M t).mpr⟩
-  mpr h M t := ⟨h.1 M t, h.2 M t⟩
+@[simp] theorem consequence_singleton_iff :
+    {φ} ⊨ ψ ↔ ∀ p : PointedTeam.{0} Atom, support p.model φ p.team → support p.model ψ p.team :=
+  forall_congr' fun _ ↦ by simp
+
+/-- Two formulas are equivalent, `φ ≡ ψ`, when each is a consequence of the other, that is, when
+    they have the same support. -/
+def Equivalent (φ ψ : Formula Atom) : Prop :=
+  ∀ p : PointedTeam.{0} Atom, support p.model φ p.team ↔ support p.model ψ p.team
+
+theorem equivalent_iff : Equivalent φ ψ ↔ {φ} ⊨ ψ ∧ {ψ} ⊨ φ := by
+  rw [consequence_singleton_iff, consequence_singleton_iff]
+  exact ⟨fun h ↦ ⟨fun p ↦ (h p).1, fun p ↦ (h p).2⟩, fun h p ↦ ⟨h.1 p, h.2 p⟩⟩
 
 /-- Two formulas are strongly equivalent, `φ ⊜ ψ`, when they and their negations are equivalent
     [aloni-anttila-yang-2024], that is, when they have the same support and the same
     anti-support. -/
 def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
-  Equivalent (W := W) φ ψ ∧ Equivalent (W := W) (.neg φ) (.neg ψ)
+  Equivalent φ ψ ∧ Equivalent (.neg φ) (.neg ψ)
 
 /-- Two formulas are strongly equivalent exactly when they have the same meaning in every
     model. -/
-theorem stronglyEquivalent_iff :
-    StronglyEquivalent (W := W) φ ψ ↔ ∀ M : KripkeModel W Atom, φ.den M = ψ.den M where
-  mp h M := BilProp.ext (Set.ext (h.1 M)) (Set.ext (h.2 M))
-  mpr h := ⟨fun M t ↦ .of_eq (congrArg (t ∈ ·.ver) (h M)),
-    fun M t ↦ .of_eq (congrArg (t ∈ ·.fal) (h M))⟩
+theorem stronglyEquivalent_iff : StronglyEquivalent φ ψ ↔
+    ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom), φ.den M = ψ.den M where
+  mp h W _ M := BilProp.ext (Set.ext fun t ↦ h.1 ⟨W, M, t⟩) (Set.ext fun t ↦ h.2 ⟨W, M, t⟩)
+  mpr h := ⟨fun p ↦ .of_eq (congrArg (p.team ∈ ·.ver) (h p.World p.model)),
+    fun p ↦ .of_eq (congrArg (p.team ∈ ·.fal) (h p.World p.model))⟩
 
 /-! ### Decidability -/
 

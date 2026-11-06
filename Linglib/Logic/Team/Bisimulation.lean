@@ -275,22 +275,9 @@ def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeMod
     (s' : Finset W') : Prop :=
   Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
 
-/-! ### Pointed team models -/
+/-! ### Bounded bisimulation invariance -/
 
 universe u
-
-/-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
-    ([anttila-2025] Definition 2.3.9). -/
-structure PointedTeam (Atom : Type*) where
-  /-- The worlds of the model. -/
-  World : Type u
-  [decEq : DecidableEq World]
-  /-- The model. -/
-  model : KripkeModel World Atom
-  /-- The team. -/
-  team : Finset World
-
-attribute [instance] PointedTeam.decEq
 
 /-- A class of pointed team models is invariant under bounded bisimulation when, for some depth
     `k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/

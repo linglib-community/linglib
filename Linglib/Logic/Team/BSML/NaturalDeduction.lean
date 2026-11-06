@@ -26,7 +26,8 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 ## Main results
 
 * `Formula.Context.ver_den_fill`: the split behind the translation rules.
-* `soundness`; completeness is proved in `Completeness.lean`.
+* `soundness`, `consequence_of_derives`: what is derivable is a consequence; the converse is in
+  `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
 * `strongFalsum_derives`, `conj_disj_derives_disj_conj`, `disj_conj_ne_derives_conj_ne`,
   `poss_derives_poss_conj_ne`, `poss_disj_conj_ne_derives_conj_poss`: derivations from the
@@ -325,8 +326,9 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
     rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
 
-theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
-  fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
+/-- Derivability implies consequence. -/
+theorem consequence_of_derives (h : Γ ⊢ φ) : Γ ⊨ φ :=
+  fun p ↦ soundness h p.model p.team
 
 /-! ### Derived rules -/
 
