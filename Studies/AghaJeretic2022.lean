@@ -250,10 +250,10 @@ def Cell.ofDatum (e : Datum) : Option Cell := do
   let sc ← e.parse? "condition" [("ALL", .all), ("NONE", .none), ("GAP", .gap)]
   let observed ← match sc, pol with
     | .all, .positive | .none, .negative => some .true
-    | .all, .negative | .none, .positive => some (.false)
+    | .all, .negative | .none, .positive => some .false
     | .gap, _ =>
-      if e.feature? "gap_detected" = some "Bool.true" then some .undefined
-      else e.parse? "classical_value" [("Bool.true", .true), ("Bool.false", .false)]
+      if e.feature? "gap_detected" = some "true" then some .undefined
+      else e.parse? "classical_value" [("true", .true), ("false", .false)]
   some ⟨pol, sc, observed⟩
 
 /-- The polarity-by-scenario grid for *should*. -/
@@ -262,20 +262,20 @@ def shouldGrid : List Cell :=
 
 /-- A representative domain for each scenario, a world being the prejacent's truth value at it. -/
 def scenarioDomain : Scenario → Finset Bool
-  | .all => {Bool.true}
-  | .none => {Bool.false}
-  | .gap => {Bool.true, Bool.false}
+  | .all => {true}
+  | .none => {false}
+  | .gap => {true, false}
 
 /-- The plural semantics' value at a cell predicates the negated prejacent at negative polarity. -/
 def shouldPredict (pol : Polarity) (s : Scenario) : Trivalent :=
   match pol with
-  | .positive => should (fun _ ↦ scenarioDomain s) (· = Bool.true) Bool.true
-  | .negative => should (fun _ ↦ scenarioDomain s) (· = Bool.false) Bool.true
+  | .positive => should (fun _ ↦ scenarioDomain s) (· = true) true
+  | .negative => should (fun _ ↦ scenarioDomain s) (· = false) true
 
 /-- Domain restriction's value at a cell is universal quantification, negated by strong Kleene
 negation. -/
 def domainRestrictionPredict (pol : Polarity) (s : Scenario) : Trivalent :=
-  pol • must (fun _ ↦ scenarioDomain s) (· = Bool.true) Bool.true
+  pol • must (fun _ ↦ scenarioDomain s) (· = true) true
 
 /-- The plural semantics reproduces every cell of the *should* grid. -/
 theorem should_matches_grid :
