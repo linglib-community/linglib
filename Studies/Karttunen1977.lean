@@ -21,7 +21,9 @@ verb like *tell* is veridical with an indirect question where it is not with a *
 
 Footnote 11's meaning postulate relates the question-embedding *know* to the
 proposition-embedding one: an agent knows a question when she knows each of its true answers,
-and knows that it has none when it has none (`Knows`). The first conjunct is the substrate's
+and knows that it has none when it has none (`Knows`). The postulate quantifies over question
+intensions, which need not be the true answers of one Hamblin set: a *which*-phrase reads its
+common noun at the world of evaluation. On a Hamblin set the first conjunct is the substrate's
 `Question.KnowsAnswer`, knowledge of the intersection of the true answers, and the second is
 what keeps knowledge of an empty question from being trivial (`knows_iff_of_no_witness`).
 Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
@@ -112,22 +114,22 @@ theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w
 variable (Dox : SetRel W W)
 
 /-- Footnote 11's meaning postulate, with the proposition-embedding *know* read through the
-agent's doxastic alternatives `Dox`, says that the agent knows every true answer and, when there
-is none, knows that there is none. -/
-def Knows (H : Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
-  KnowsAnswer H w Dox ∧ (trueAnswers H w = ∅ → w ∈ Dox.core {v | trueAnswers H v = ∅})
+agent's doxastic alternatives `Dox`, says that the agent knows every answer the question `q` gives
+at `w` and, when it gives none, knows that it gives none. -/
+def Knows (q : W → Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
+  w ∈ Dox.core (⋂₀ q w) ∧ (q w = ∅ → w ∈ Dox.core {v | q v = ∅})
 
 /-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
 theorem knows_pair_iff (p : Set W) :
-    Knows {p, pᶜ} w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
+    Knows (trueAnswers {p, pᶜ}) w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
   by_cases h : w ∈ p
-  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
-  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
+  · simp [Knows, trueAnswers_pair_of_mem w h, h]
+  · simp [Knows, trueAnswers_pair_of_notMem w h, h]
 
 theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
-    Knows (P '' D) w Dox ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
+    Knows (trueAnswers (P '' D)) w Dox ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
   have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h
-  simp only [Knows, KnowsAnswer, weakAnswer, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
+  simp only [Knows, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
     true_and, true_imp_iff, trueAnswers_image_eq_empty_iff, SetRel.mem_core,
     Set.mem_ofPred_eq]
 

@@ -61,7 +61,7 @@ def Assumption (Ans : W → Set (Set W)) : Prop := ∀ ⦃w v p⦄, p ∈ Ans w 
 theorem assumption_trueAnswers (H : Set (Set W)) : Assumption (trueAnswers H) :=
   fun _ _ _ hp hv ↦ ⟨hp.1, hv⟩
 
-theorem trueAnswers_iUnion (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) (hA : Assumption Ans) :
+theorem trueAnswers_iUnion (hT : IsVeridical Ans) (hA : Assumption Ans) :
     trueAnswers (⋃ w, Ans w) = Ans := by
   ext w p
   simp only [mem_trueAnswers, Set.mem_iUnion]
@@ -70,14 +70,14 @@ theorem trueAnswers_iUnion (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) (hA : Assumpti
 /-- Answers at each world are the true members of a Hamblin set exactly when they are true and
 satisfy the Assumption (p. 173). -/
 theorem exists_eq_trueAnswers_iff :
-    (∃ H, Ans = trueAnswers H) ↔ (∀ w, ∀ p ∈ Ans w, w ∈ p) ∧ Assumption Ans := by
+    (∃ H, Ans = trueAnswers H) ↔ IsVeridical Ans ∧ Assumption Ans := by
   constructor
   · rintro ⟨H, rfl⟩
-    exact ⟨fun _ _ hp ↦ hp.2, assumption_trueAnswers H⟩
+    exact ⟨isVeridical_trueAnswers H, assumption_trueAnswers H⟩
   · rintro ⟨hT, hA⟩
     exact ⟨_, (trueAnswers_iUnion hT hA).symm⟩
 
-theorem possibleAnswer_iff_iff_assumption (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) :
+theorem possibleAnswer_iff_iff_assumption (hT : IsVeridical Ans) :
     (∀ p, (p.Nonempty ∧ ∀ w ∈ p, p ∈ Ans w) ↔ ∃ w, p ∈ Ans w) ↔ Assumption Ans := by
   refine ⟨fun h w v p hp hv ↦ ((h p).2 ⟨w, hp⟩).2 v hv, fun hA p ↦ ⟨?_, ?_⟩⟩
   · rintro ⟨⟨w, hw⟩, h⟩
@@ -85,7 +85,7 @@ theorem possibleAnswer_iff_iff_assumption (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p)
   · rintro ⟨w, hp⟩
     exact ⟨⟨w, hT w p hp⟩, fun v hv ↦ hA hp hv⟩
 
-theorem presuppositions_eq_iff (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) :
+theorem presuppositions_eq_iff (hT : IsVeridical Ans) :
     {r : Set W | ∀ w, ∀ p ∈ Ans w, p ⊆ r} = {r | ∀ w, (Ans w).Nonempty → w ∈ r} ↔
       ∀ w, ∀ p ∈ Ans w, p ⊆ {v | (Ans v).Nonempty} := by
   refine ⟨fun h w p hp ↦ (Set.ext_iff.1 h {v | (Ans v).Nonempty}).2 (fun _ hw ↦ hw) w p hp,
@@ -93,15 +93,15 @@ theorem presuppositions_eq_iff (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) :
   ext r
   exact ⟨fun hr w ⟨p, hp⟩ ↦ hr w p hp (hT w p hp), fun hr w p hp v hv ↦ hr v (h w p hp hv)⟩
 
-theorem presuppositions_eq (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) (hA : Assumption Ans) :
+theorem presuppositions_eq (hT : IsVeridical Ans) (hA : Assumption Ans) :
     {r : Set W | ∀ w, ∀ p ∈ Ans w, p ⊆ r} = {r | ∀ w, (Ans w).Nonempty → w ∈ r} :=
   (presuppositions_eq_iff hT).2 fun _ p hp _ hv ↦ ⟨p, hA hp hv⟩
 
 theorem exists_presuppositions_eq_not_assumption :
-    ∃ Ans : Bool → Set (Set Bool), (∀ w, ∀ p ∈ Ans w, w ∈ p) ∧
+    ∃ Ans : Bool → Set (Set Bool), IsVeridical Ans ∧
       {r | ∀ w, ∀ p ∈ Ans w, p ⊆ r} = {r | ∀ w, (Ans w).Nonempty → w ∈ r} ∧
         ¬Assumption Ans := by
-  have hT : ∀ w, ∀ p ∈ ({if w then Set.univ else {false}} : Set (Set Bool)), w ∈ p := by
+  have hT : IsVeridical fun w ↦ ({if w then Set.univ else {false}} : Set (Set Bool)) := by
     rintro (_ | _) p rfl <;> simp
   refine ⟨fun w ↦ {if w then Set.univ else {false}}, hT,
     (presuppositions_eq_iff hT).2 fun _ _ _ v _ ↦ Set.singleton_nonempty _, fun h ↦ ?_⟩
@@ -241,12 +241,12 @@ private theorem inferenceFails_of {v : W} (hw : w ∈ p) (hv : v ∈ p)
 /-- On a question with a unique true answer, knowing some answer is knowing the question by
 Karttunen's postulate. -/
 theorem knowsSomeAnswer_iff_knows (h : trueAnswers H w = {p}) :
-    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows H w K := by
-  simp [Karttunen1977.Knows, knowsSomeAnswer_iff_knowsAnswer h, h]
+    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows (trueAnswers H) w K := by
+  simp [Karttunen1977.Knows, knowsSomeAnswer_iff_knowsAnswer h, KnowsAnswer, weakAnswer, h]
 
 theorem knowsSomeAnswer_not_knows :
     ∃ K : SetRel (Set Station) (Set Station), K.IsRefl ∧ KnowsSomeAnswer gas Set.univ K ∧
-      ¬Karttunen1977.Knows gas Set.univ K := by
+      ¬Karttunen1977.Knows (trueAnswers gas) Set.univ K := by
   refine ⟨alsoPossible {Station.a}, inferInstance,
     ⟨isOpen .a, ⟨⟨_, rfl⟩, trivial⟩, mem_core_alsoPossible.2 ⟨trivial, rfl⟩⟩,
     fun ⟨hk, _⟩ ↦ ?_⟩
