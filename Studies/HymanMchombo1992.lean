@@ -33,8 +33,10 @@ on the thematic hierarchy, [not the passive subject](##rows_passive).
   applicative spells *-an-* again on a base containing a reciprocal (24) unless the base's own
   *-an-* was marked off (22); the rule block's respelling of *-ir-* on a reciprocal cycle, which
   the RMC blocks in (24a), is omitted.
-* The RMC skips the doubled *-an-*, the second of the paper's two explanations of (25), which it
-  supports with (25b). The rows write a doubled *-an-* as `(R)`, after the label of (12c).
+* The RMC is Menn and MacWhinney's constraint on two adjacent affixes, which Chichewa obeys by
+  blocking the derivation (fn. 4). It skips the doubled *-an-*, the second of the paper's two
+  explanations of (25), which it supports with (25b). The rows write a doubled *-an-* as `(R)`,
+  after the label of (12c).
 * Rows marked ? or ?* carry no claim beyond (25). The passive subjects of (27)–(30) are
   compared with Baker's rules applied, in the order of the suffixes, to a transitive root with
   an applied oblique.
@@ -55,10 +57,13 @@ on the thematic hierarchy, [not the passive subject](##rows_passive).
 * The anti-cyclic spell-out the authors propose after (34), which fixes the causative's position
   before the other features are spelled out; the paper does not specify it further.
 * The Cibemba data (20) and the phonological case for cyclic spell-out.
+* The RMC between an affix and the end of the stem, by which fn. 4 bars the intensive after a stem
+  ending in [ts] (*\*uts-ITS-*) but not after *opsy-* (*opsy-ETS-*).
 
 ## References
 
 * [hyman-mchombo-1992]
+* [menn-macwhinney-1984]
 * [baker-1985]
 * [creissels-2024]
 -/
@@ -121,8 +126,9 @@ def Suffix.feature : Suffix → Feature
 /-- A stem lists the suffixes that follow the root, in surface order. -/
 abbrev Stem := List Suffix
 
-/-- The Repeated Morph Constraint bars two features spelled out in succession by the same morphs
-(4b): the OCP on the morph tier of the suffixes spelled out on their own cycles. -/
+/-- The Repeated Morph Constraint of [menn-macwhinney-1984] bars two features spelled out in
+succession by the same morphs (4b): the OCP on the morph tier of the suffixes spelled out on their
+own cycles. -/
 abbrev RMC (s : Stem) : Prop :=
   OCP.IsCleanOn (· ≠ Suffix.doubled) (Feature.morphs ∘ Suffix.feature) s
 
