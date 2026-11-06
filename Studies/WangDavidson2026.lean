@@ -6,6 +6,7 @@ public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Data.Examples.WangDavidson2026
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Prod
+public import Studies.George2008
 
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
@@ -17,8 +18,8 @@ exclusive disjunction is undefined whenever a disjunct is (`Filters`, `not_filte
 Fox's bivalent exhaustification strengthens a disjunction to its exclusive reading (`exh_or`), so
 once the strengthened truth conditions feed the projection computation three projection theories
 agree that an exclusive disjunction projects uniformly: Strong Kleene, as Mayr and Romoli apply
-it; George's algorithm, rendered as `george` over any classical connective, which agrees with
-Strong Kleene on inclusive and exclusive disjunction (`george_or`, `george_xor`) while filtering
+it; George's deployment with concern for disappointment, `George2008.deployWithConcern₂`, which
+agrees with Strong Kleene on inclusive and exclusive disjunction (`deployWithConcern₂_xor`) while filtering
 conjunction only from left to right; and dynamic semantics, where each of the eight context
 change potentials that Rothschild's restrictions allow for exclusive disjunction is admitted only
 by a context satisfying both presuppositions (`xorCCPs_admits`). Spector and Sudo's trivalent
@@ -33,10 +34,9 @@ exclusive readings mean less filtering are the paper's Type A; the paper's Manda
 
 Strong Kleene exclusive disjunction is the negation of the Strong Kleene biconditional
 `(aᶜ ⊔ b) ⊓ (a ⊔ bᶜ)`. The exhaustification identity is checked on the four valuations of
-two atoms, the free model of a propositional identity. George's algorithm is stated as the paper
-renders it, on the set of classical values a trivalent argument leaves open
-(`Trivalent.toFinset`). The experiment's ratings are not formalized; its stimuli are in
-`Data.Examples.WangDavidson2026`.
+two atoms, the free model of a propositional identity. George's algorithm is his deployment with
+concern for disappointment (`Studies/George2008`), shown equal to the rendering the paper follows.
+The experiment's ratings are not formalized; its stimuli are in `Data.Examples.WangDavidson2026`.
 
 ## References
 
@@ -114,31 +114,33 @@ theorem exh_or : exhIE (Set.range orAlt) (orAlt 0) = {v | Xor v.1 v.2} := by
 
 /-! ### George's algorithm -/
 
-/-- [george-2008]'s algorithm computes the trivalent table of a classical connective, as
-[kalomoiros-schwarz-2024] render it. If the left argument settles the value, that is the value;
-otherwise, if some value of the right argument could make the sentence true, the two arguments
-settle the value or the sentence is undefined; otherwise it is undefined. -/
-def george (f : Bool → Bool → Bool) (a b : Trivalent) : Trivalent :=
-  if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y then .true
-  else if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y = false then .false
-  else if ∃ y, ∀ x ∈ Trivalent.toFinset a, f x y then
-    if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y then .true
-    else if ∀ x ∈ Trivalent.toFinset a, ∀ y ∈ Trivalent.toFinset b, f x y = false then .false
-    else .undefined
-  else .undefined
+open George2008 (deploy₂ deployWithConcern₂)
 
-theorem george_or : george (· || ·) = (· ⊔ ·) := by
+/-- [george-2008]'s deployment with concern for disappointment is the algorithm as
+[kalomoiros-schwarz-2024] render it, on every classical connective. If the left argument settles
+the value, that is the value; otherwise, if some value of the right argument could make the
+sentence true, the two arguments settle the value or the sentence is undefined; otherwise it is
+undefined. -/
+theorem deployWithConcern₂_eq (f : Bool → Bool → Bool) (a b : Trivalent) :
+    deployWithConcern₂ f a b =
+      if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y then .true
+      else if ∀ x ∈ Trivalent.toFinset a, ∀ y, f x y = false then .false
+      else if ∃ y, ∀ x ∈ Trivalent.toFinset a, f x y then deploy₂ f a b
+      else .undefined := by
+  revert f a b; decide
+
+theorem deployWithConcern₂_xor :
+    deployWithConcern₂ (· ^^ ·) = fun a b ↦ ((aᶜ ⊔ b) ⊓ (a ⊔ bᶜ))ᶜ := by
   funext a b; revert a b; decide
 
-theorem george_xor : george (· ^^ ·) = fun a b ↦ ((aᶜ ⊔ b) ⊓ (a ⊔ bᶜ))ᶜ := by
-  funext a b; revert a b; decide
+theorem filtersLR_deployWithConcern₂_and : FiltersLR (deployWithConcern₂ (· && ·)) :=
+  ⟨.false, by decide⟩
 
-theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨.false, by decide⟩
-
-theorem not_filtersRL_george_and : ¬ FiltersRL (george (· && ·)) := by
+theorem not_filtersRL_deployWithConcern₂_and : ¬ FiltersRL (deployWithConcern₂ (· && ·)) := by
   rintro ⟨b, h⟩; revert b; decide
 
-theorem not_filters_george_xor : ¬ Filters (george (· ^^ ·)) := george_xor ▸ not_filters_xor
+theorem not_filters_deployWithConcern₂_xor : ¬ Filters (deployWithConcern₂ (· ^^ ·)) :=
+  deployWithConcern₂_xor ▸ not_filters_xor
 
 /-! ### Dynamic semantics -/
 
