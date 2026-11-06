@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Studies.BylininaNouwen2018
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Predicative
 
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics

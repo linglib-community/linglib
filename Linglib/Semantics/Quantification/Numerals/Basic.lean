@@ -8,7 +8,7 @@ module
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Predicative
 
 /-!
 # Numeral meanings

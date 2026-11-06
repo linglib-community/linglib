@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Predicative
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Core.Data.Set.Card
 public import Mathlib.Tactic.Linarith

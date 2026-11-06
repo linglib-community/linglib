@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantification.Predicative
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
 public import Mathlib.Order.Interval.Set.Infinite
