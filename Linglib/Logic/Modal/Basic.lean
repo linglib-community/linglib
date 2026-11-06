@@ -107,7 +107,7 @@ theorem box_transGen_iff {p : W → Prop} {w : W} :
 /-- `R` is an *S5 frame* when it is reflexive and Euclidean. -/
 class IsS5Frame : Prop extends R.IsRefl, IsEuclidean R
 
-/-- `R` is a *KD45 frame*, the frame of belief, when it is serial, transitive and Euclidean. -/
+/-- `R` is a *KD45 frame* when it is serial, transitive and Euclidean. -/
 class IsKD45Frame : Prop extends IsSerial R, R.IsTrans, IsEuclidean R
 
 /-- `R` is a *K45 frame* when it is transitive and Euclidean. -/
