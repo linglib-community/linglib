@@ -289,9 +289,12 @@ instance (π : Pivot) : DecidablePred π.Holds
   | none => inferInstanceAs (Decidable False)
   | some r => inferInstanceAs (Decidable (π.Admits r))
 
-theorem not_admits_iff :
-    (∀ r ∈ ArgumentRole.core, ¬ Pivot.SA.Admits r ↔ r = .P) ∧
-      ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by
+/-- The pivot as a marking of the roles, whether each is a pivot function. -/
+def Pivot.marking (π : Pivot) (r : ArgumentRole) : Bool := decide (π.Admits r)
+
+-- §8.2: an S/A pivot is accusative syntax and an S/O pivot ergative syntax.
+theorem isAccusative_SA_isErgative_SO :
+    IsAccusative Pivot.SA.marking ∧ IsErgative Pivot.SO.marking := by
   decide
 
 -- §6.2.1, §6.2.2, §6.2.3: passive alone feeds an S/A pivot for an NP in O function and

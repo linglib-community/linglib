@@ -32,15 +32,14 @@ its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_synt
 * S, A and P are `ArgumentRole.S`, `.A` and `.P`, and a case system is a marking of the roles, so
   the five logically possible systems are the five alignments of `Alignment.marking_cases`.
 * A marking row records, for each argument the book discusses, the scales the book invokes for
-  that language and the marking its position takes, obligatory, optional or none, and covers
-  every value of a scale it does not cite. A language's rows follow the information flow when a
-  P-marking monotone and an A-marking antitone in the componentwise order of person, animacy and
-  definiteness take each row's value on what it covers; at each degree of marking the prominences
-  marked to it then form an upper set for P and a lower set for A, the fit `Alignment.Fits` asks
-  of overt marking. By `exists_monotone_forall_eq_iff` such markings exist exactly when the rows
-  agree pair by pair, which `decide` checks. A row whose marking the book attributes to a
-  parameter beside the hierarchies, Polish's male-human cut, carries a `parameter` feature and
-  has no marking.
+  that language and whether its position takes the special marking always, sometimes or never
+  (`Alignment.Overtness`), and covers every value of a scale it does not cite. A language's rows
+  follow the information flow when a graded marking fitting the componentwise order of person,
+  animacy and definiteness (`Alignment.FitsGraded`), A's overtness falling and P's rising, takes
+  each row's value on what it covers. By `exists_monotone_forall_eq_iff` such a marking exists
+  exactly when the rows agree pair by pair, which `decide` checks. A row whose marking the book
+  attributes to a parameter beside the hierarchies, Polish's male-human cut, carries a
+  `parameter` feature and has no marking.
 * The departures from the paradigm causee are per-language parameters: which positions a
   language doubles, whether it demotes further than required, and whether it has a passive
   expressing its agent in the causee's oblique case, the last consulted only by the rival
@@ -121,18 +120,6 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-! ### Differential marking and the natural information flow (§6.2) -/
 
-/-- The marking an argument's position takes is none, optional, or obligatory. -/
-inductive Marked
-  | unmarked | optional | marked
-  deriving DecidableEq, Repr, Fintype
-
-/-- Optional marking sits between unmarked and marked. -/
-instance : LinearOrder Marked := LinearOrder.lift' (·.ctorIdx) (by decide)
-
-instance : OrderBot Marked where
-  bot := .unmarked
-  bot_le := by decide
-
 /-- An argument's prominence is its person, animacy and degree of definiteness, ordered
 componentwise. -/
 abbrev Prominence := Person.Class × Animacy × DefinitenessDegree
@@ -148,8 +135,8 @@ structure Marking where
   animacy : Option Animacy
   /-- The argument's degree of definiteness, where the marking consults it. -/
   definiteness : Option DefinitenessDegree
-  /-- The marking the position takes. -/
-  marked : Marked
+  /-- Whether the position takes the special marking always, sometimes or never. -/
+  overtness : Overtness
   deriving DecidableEq
 
 /-- The animacy labels of the rows, read as person and animacy apart, the speech-act
@@ -170,7 +157,7 @@ def Marking.ofRow (row : Datum) : List Marking :=
         row.parse? (p ++ "definiteness") [("definite", DefinitenessDegree.definite),
           ("indefiniteSpecific", .specific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
-          [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]⟩
+          [("marked", Overtness.obligatory), ("optional", .optional), ("unmarked", .excluded)]⟩
   else []
 
 /-- The prominences a marking covers: every value of a scale it does not cite. -/
@@ -201,32 +188,42 @@ theorem Marking.atMost_iff {m₁ m₂ : Marking} : m₁.AtMost m₂ ↔
 
 instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := decidable_of_iff' _ Marking.atMost_iff
 
-/-- The markings of `rows` follow the natural information flow: a marking of P monotone in
-prominence and one of A antitone in it, each with its own cut-offs, take every row's value
-throughout the prominences the row covers. -/
+/-- The markings of `rows` follow the natural information flow: a graded marking that fits the
+prominence order, A's overtness falling and P's rising, each with its own cut-offs, takes every
+row's value throughout the prominences the row covers. -/
 def FollowsFlow (rows : List Datum) : Prop :=
-  (∃ f : Prominence → Marked, Monotone f ∧
-    ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .P → ∀ c ∈ m.cell, f c = m.marked) ∧
-  ∃ f : Prominence → Marked, Antitone f ∧
-    ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .A → ∀ c ∈ m.cell, f c = m.marked
+  ∃ μ : ArgumentRole → Prominence → Overtness, FitsGraded μ ∧ ∀ ρ ∈ [ArgumentRole.A, .P],
+    ∀ m ∈ rows.flatMap Marking.ofRow, m.role = ρ → ∀ c ∈ m.cell, μ ρ c = m.overtness
 
 section FollowsFlow
 
 variable {L : List Marking} {ρ : ArgumentRole}
 
+theorem followsFlow_iff {rows : List Datum} : FollowsFlow rows ↔
+    (∃ f : Prominence → Overtness, Antitone f ∧
+      ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .A → ∀ c ∈ m.cell, f c = m.overtness) ∧
+    ∃ f : Prominence → Overtness, Monotone f ∧
+      ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .P → ∀ c ∈ m.cell, f c = m.overtness := by
+  refine ⟨fun ⟨μ, ⟨hA, hP⟩, h⟩ ↦ ⟨⟨μ .A, hA, h .A (by simp)⟩, ⟨μ .P, hP, h .P (by simp)⟩⟩,
+    fun ⟨⟨f, hf, hf'⟩, g, hg, hg'⟩ ↦ ⟨fun r ↦ if r = .A then f else g, ⟨hf, hg⟩, ?_⟩⟩
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+  exact ⟨hf', hg'⟩
+
 theorem exists_monotone_iff :
-    (∃ f : Prominence → Marked, Monotone f ∧ ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.marked) ↔
-      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m.AtMost m' → m.marked ≤ m'.marked := by
+    (∃ f : Prominence → Overtness, Monotone f ∧
+      ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.overtness) ↔
+      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m.AtMost m' → m.overtness ≤ m'.overtness := by
   have h := exists_monotone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
-    (s := Marking.cell) (k := Marking.marked)
+    (s := Marking.cell) (k := Marking.overtness)
   simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq, and_imp] at h
   exact h
 
 theorem exists_antitone_iff :
-    (∃ f : Prominence → Marked, Antitone f ∧ ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.marked) ↔
-      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m'.AtMost m → m.marked ≤ m'.marked := by
+    (∃ f : Prominence → Overtness, Antitone f ∧
+      ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.overtness) ↔
+      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m'.AtMost m → m.overtness ≤ m'.overtness := by
   have h := exists_antitone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
-    (s := Marking.cell) (k := Marking.marked)
+    (s := Marking.cell) (k := Marking.overtness)
   simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq, and_imp] at h
   exact h
 
@@ -239,20 +236,20 @@ that departs ((7)–(27) of chapter 6). -/
 theorem marking_rows : ∀ r ∈ Examples.all, r.feature? "construction" = some "marking" →
     (r.judgment = .acceptable ↔
       FollowsFlow (r :: acceptable.filter (·.language = r.language))) := by
-  simp only [FollowsFlow, exists_monotone_iff, exists_antitone_iff]
+  simp only [followsFlow_iff, exists_monotone_iff, exists_antitone_iff]
   decide
 
 theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
     ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
       ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₂.role = role ∧
-        m₁.AtMost m₂ ∧ (role = .P → m₁.marked < m₂.marked) ∧
-          (role = .A → m₂.marked < m₁.marked) := by
+        m₁.AtMost m₂ ∧ (role = .P → m₁.overtness < m₂.overtness) ∧
+          (role = .A → m₂.overtness < m₁.overtness) := by
   decide
 
 -- (13), (14) and (25): the Turkish rows mark P exactly on the degrees of definiteness the
 -- fragment's accusative covers, the continuum cut at the specific indefinites.
 theorem turkish_rows : ∀ r ∈ Examples.all, r.language = .turkish → ∀ m ∈ Marking.ofRow r,
-    ∀ d ∈ m.definiteness, (m.marked = .marked ↔ d ∈ Turkish.ObjectMarking.accusative) := by
+    ∀ d ∈ m.definiteness, (m.overtness = .obligatory ↔ d ∈ Turkish.ObjectMarking.accusative) := by
   decide
 
 /-! ### The causee hierarchy (§8.2) -/
@@ -500,7 +497,7 @@ theorem mixed_rows : ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.
 special marking has a case of its own, the ergative of A or the accusative of P, and the rest
 share the unmarked case of S (§6.1, §6.2). -/
 def Marking.clause (row : Datum) (r : ArgumentRole) : Option ArgumentRole :=
-  if ∃ m ∈ Marking.ofRow row, m.role = r ∧ m.marked ≠ .unmarked then some r else none
+  if ∃ m ∈ Marking.ofRow row, m.role = r ∧ m.overtness ≠ .excluded then some r else none
 
 -- Chapter 6, (7)–(10): the split marking of Dyirbal gives its clauses four alignments, ergative
 -- A with accusative P and nominative A with absolutive P beside the two familiar ones.

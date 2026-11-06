@@ -19,7 +19,8 @@ partitions, so [a marking has one of five alignments](##Alignment.marking_cases)
 accusative, with S marked like A, ergative, with S marked like P, horizontal, with A marked like P,
 and tripartite. Ditransitive alignment reads P, T and R the same way. A marking may also depend on a
 condition besides the role, and [hierarchy effects are its fit to an order on the
-conditions](##Alignment.Fits).
+conditions](##Alignment.Fits); where coding may also be optional, [a graded marking fits when it
+fits at every degree](##Alignment.fitsGraded_iff_forall_fits).
 
 ## Implementation notes
 
@@ -31,6 +32,7 @@ marking.
 
 ## References
 
+* [aissen-2003]
 * [bickel-et-al-2015]
 * [comrie-1978]
 * [comrie-2013]
@@ -177,5 +179,49 @@ of them and P on an upper set. -/
 def Fits [Preorder C] : Prop := IsLowerSet (overt m .A) ∧ IsUpperSet (overt m .P)
 
 end Conditioned
+
+/-! ### Graded overtness
+
+Coding may be obligatory under some conditions and optional under others, as in Aissen's three
+zones of overt case marking. A graded marking fits an order on the conditions when A's overtness
+falls along it and P's rises, and this is the fit of `Fits` at every degree. -/
+
+/-- Overt coding of a role under a condition is excluded, optional or obligatory, the three zones
+of [aissen-2003]. -/
+inductive Overtness where
+  | excluded
+  | optional
+  | obligatory
+  deriving DecidableEq, Repr, Fintype
+
+/-- Excluded < optional < obligatory. -/
+instance : LinearOrder Overtness := LinearOrder.lift' (·.ctorIdx) (by decide)
+
+instance : BoundedOrder Overtness where
+  top := .obligatory
+  le_top := by decide
+  bot := .excluded
+  bot_le := by decide
+
+section Graded
+
+variable {C : Type*} [Preorder C] (μ : ArgumentRole → C → Overtness)
+
+/-- A graded marking fits an order on its conditions when A's overtness falls along it and P's
+rises. -/
+def FitsGraded : Prop := Antitone (μ .A) ∧ Monotone (μ .P)
+
+/-- A graded marking fits exactly when, at every degree, the marking overt where the overtness
+reaches that degree fits. -/
+theorem fitsGraded_iff_forall_fits :
+    FitsGraded μ ↔ ∀ k : Overtness, Fits fun r c ↦ if k ≤ μ r c then some () else none := by
+  have h (k : Overtness) (r : ArgumentRole) :
+      overt (fun r c ↦ if k ≤ μ r c then some () else none) r = {c | k ≤ μ r c} := by
+    ext; simp
+  simp only [FitsGraded, Fits, h, isLowerSet_setOfPred, isUpperSet_setOfPred, forall_and]
+  refine and_congr ⟨fun hA k _ _ hab hb ↦ hb.trans (hA hab), fun hA _ _ hab ↦ hA _ hab le_rfl⟩
+    ⟨fun hP k _ _ hab ha ↦ ha.trans (hP hab), fun hP _ _ hab ↦ hP _ hab le_rfl⟩
+
+end Graded
 
 end Alignment
