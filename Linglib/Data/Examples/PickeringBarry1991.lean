@@ -27,7 +27,7 @@ def ex15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "piedPiping"), ("section", "Processing without gaps")] }
+    paperFeatures := [] }
 
 def ex16 : Datum :=
   { id := "pickeringbarry1991_ex16"
@@ -41,7 +41,7 @@ def ex16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "prepositionStranding"), ("section", "Processing without gaps"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex42 : Datum :=
   { id := "pickeringbarry1991_ex42"
@@ -55,7 +55,7 @@ def ex42 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
+    paperFeatures := [] }
 
 def ex44 : Datum :=
   { id := "pickeringbarry1991_ex44"
@@ -69,7 +69,7 @@ def ex44 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
+    paperFeatures := [] }
 
 def ex45 : Datum :=
   { id := "pickeringbarry1991_ex45"
@@ -83,7 +83,7 @@ def ex45 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex48 : Datum :=
   { id := "pickeringbarry1991_ex48"
@@ -97,7 +97,7 @@ def ex48 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex51 : Datum :=
   { id := "pickeringbarry1991_ex51"
@@ -111,7 +111,7 @@ def ex51 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
+    paperFeatures := [] }
 
 def ex52 : Datum :=
   { id := "pickeringbarry1991_ex52"
@@ -125,7 +125,7 @@ def ex52 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex53 : Datum :=
   { id := "pickeringbarry1991_ex53"
@@ -139,7 +139,7 @@ def ex53 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex54 : Datum :=
   { id := "pickeringbarry1991_ex54"
@@ -153,7 +153,7 @@ def ex54 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
+    paperFeatures := [] }
 
 def ex55 : Datum :=
   { id := "pickeringbarry1991_ex55"
@@ -167,7 +167,7 @@ def ex55 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
+    paperFeatures := [] }
 
 def ex60 : Datum :=
   { id := "pickeringbarry1991_ex60"
@@ -181,7 +181,7 @@ def ex60 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multiplePrepositionStranding"), ("section", "Discussion"), ("difficulty", "hard")] }
+    paperFeatures := [("difficulty", "hard")] }
 
 def ex62 : Datum :=
   { id := "pickeringbarry1991_ex62"
@@ -195,7 +195,7 @@ def ex62 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "multipleObjectRelativeDitransitive"), ("section", "Discussion")] }
+    paperFeatures := [] }
 
 def ex82a : Datum :=
   { id := "pickeringbarry1991_ex82a"
@@ -209,7 +209,7 @@ def ex82a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
+    paperFeatures := [] }
 
 def ex82b : Datum :=
   { id := "pickeringbarry1991_ex82b"
@@ -223,7 +223,7 @@ def ex82b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
+    paperFeatures := [] }
 
 def ex82c : Datum :=
   { id := "pickeringbarry1991_ex82c"
@@ -237,7 +237,7 @@ def ex82c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
+    paperFeatures := [] }
 
 def ex82d : Datum :=
   { id := "pickeringbarry1991_ex82d"
@@ -251,7 +251,7 @@ def ex82d : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
+    paperFeatures := [] }
 
 def ex93 : Datum :=
   { id := "pickeringbarry1991_ex93"
@@ -265,7 +265,7 @@ def ex93 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "recursivePassive"), ("section", "Passives")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex15, ex16, ex42, ex44, ex45, ex48, ex51, ex52, ex53, ex54, ex55, ex60, ex62, ex82a, ex82b, ex82c, ex82d, ex93]
 
