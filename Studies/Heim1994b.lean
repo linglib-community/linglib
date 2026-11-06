@@ -11,12 +11,12 @@ public import Mathlib.Tactic.TFAE
 This file compares Karttunen's entry for *know* with a question complement, on which the agent
 believes the intersection of the true answers and, if there are none, that there are none, with
 Groenendijk and Stokhof's. Heim's generalization, on which the agent believes the answer set to be
-what it is, [makes the first clause redundant](##Karttunen.simplifiedKnow_of_generalizedKnow) and
+what it is, [makes the first clause redundant](##Karttunen.simplifiedKnows_of_generalizedKnows) and
 is Groenendijk and Stokhof's entry on the kernel of the question's intension: [their partition for
-*which students called*](##ker_which) when no two individuals call in the same worlds, but
-[whether there are students](##Karttunen.ker_which_identicalWithSelf) for a universally necessary
+*which students called*](##ker_wh) when no two individuals call in the same worlds, but
+[whether there are students](##Karttunen.ker_wh_identicalWithSelf) for a universally necessary
 property. Structured answers [give their partition for every predicate](##ker_whichStructured), as
-[living with one's actual spouse](##Spouses.truthValue_row) requires.
+[living with one's actual spouse](##Spouses.verdict_row) requires.
 
 ## Implementation notes
 
@@ -29,7 +29,7 @@ property. Structured answers [give their partition for every predicate](##ker_wh
 
 * §6 and §8 take the proposition believed on the generalized analysis to be the answer in the
   second sense; the two agree on the true answers of a Hamblin set, but for identity with oneself
-  the answer in the second sense [is trivial](##ans₂_which_identicalWithSelf).
+  the answer in the second sense [is trivial](##ans₂_wh_identicalWithSelf).
 * §7 gives the truth conditions (22) as those of (15); they are those of (21).
 
 ## References
@@ -50,33 +50,21 @@ open scoped SetRel
 
 variable {W E : Type*}
 
-/-! ### Karttunen intensions -/
+/-! ### Karttunen intensions
 
-/-- The intension of *which students called* on Karttunen's semantics gives at `w` the proposition
-that `x` called for each student `x` who called at `w`, (3). -/
-def Karttunen.which (S C : E → Set W) (w : W) : Set (Set W) :=
-  C '' extension (fun x ↦ S x ∩ C x) w
-
--- (3): Karttunen's rule for *which*, with the common noun read at `w`
-theorem Karttunen.which_eq_trueAnswers (S C : E → Set W) (w : W) :
-    which S C w = trueAnswers (C '' extension S w) w := by
-  rw [trueAnswers_image]
-  rfl
-
-theorem Karttunen.isVeridical_which (S C : E → Set W) : IsVeridical (which S C) := by
-  rintro w p ⟨x, hx, rfl⟩
-  exact hx.2
+Karttunen's intension for *which students called*, (3), is `Karttunen1977.wh`, which reads the
+common noun at the world of evaluation. -/
 
 -- (6)
-theorem Karttunen.which_univ (C : E → Set W) :
-    which (fun _ ↦ Set.univ) C = trueAnswers (Set.range C) := by
+theorem Karttunen.wh_univ (C : E → Set W) :
+    Karttunen1977.wh (fun _ ↦ Set.univ) C = trueAnswers (Set.range C) := by
   funext w
-  simp [which, extension, trueAnswers_range]
+  simp [Karttunen1977.wh]
 
 -- §3
-theorem Karttunen.which_mono {S P : E → Set W} (C : E → Set W) (h : ∀ x, S x ⊆ P x) (w : W) :
-    which S C w ⊆ which P C w :=
-  Set.image_mono fun _ hx ↦ ⟨h _ hx.1, hx.2⟩
+theorem Karttunen.wh_mono {S P : E → Set W} (C : E → Set W) (h : ∀ x, S x ⊆ P x) (w : W) :
+    Karttunen1977.wh S C w ⊆ Karttunen1977.wh P C w :=
+  fun _ hq ↦ ⟨Set.image_mono (fun x hx ↦ h x hx) hq.1, hq.2⟩
 
 /-! ### The answer in the two senses -/
 
@@ -111,43 +99,43 @@ theorem ans₂_subset_ans₁ {q : W → Set (Set W)} (hq : IsVeridical q) (w : W
 Karttunen's actual entry (5) is his meaning postulate `Karttunen1977.Knows`. -/
 
 /-- On the simplified Karttunen analysis, (4), the agent believes the answer in the first sense. -/
-def Karttunen.simplifiedKnow (q : W → Set (Set W)) (w : W) (R : SetRel W W) : Prop :=
+def Karttunen.SimplifiedKnows (q : W → Set (Set W)) (w : W) (R : SetRel W W) : Prop :=
   w ∈ R.core (ans₁ q w)
 
 /-- On the generalized Karttunen analysis, (9), the agent believes that the answer set is what it
 is, for answer sets of any type, as §8 applies the entry to structured answers. -/
-def generalizedKnow {α : Type*} (q : W → α) (w : W) (R : SetRel W W) : Prop :=
+def GeneralizedKnows {α : Type*} (q : W → α) (w : W) (R : SetRel W W) : Prop :=
   w ∈ R.core {v | q v = q w}
 
 variable {q : W → Set (Set W)} {w : W} {R : SetRel W W}
 
-theorem generalizedKnow_iff_knows_ker {α : Type*} {q : W → α} :
-    generalizedKnow q w R ↔ GroenendijkStokhof1984.Knows (Setoid.ker q) w R := Iff.rfl
+theorem generalizedKnows_iff_knows_ker {α : Type*} {q : W → α} :
+    GeneralizedKnows q w R ↔ GroenendijkStokhof1984.Knows (Setoid.ker q) w R := Iff.rfl
 
 -- §3
-theorem Karttunen.simplifiedKnow_of_subset {q' : W → Set (Set W)} (h : q w ⊆ q' w)
-    (hk : simplifiedKnow q' w R) : simplifiedKnow q w R :=
+theorem Karttunen.simplifiedKnows_of_subset {q' : W → Set (Set W)} (h : q w ⊆ q' w)
+    (hk : SimplifiedKnows q' w R) : SimplifiedKnows q w R :=
   SetRel.core_mono (Set.sInter_subset_sInter h) hk
 
 /-- Under Karttunen's semantics for questions, an agent who believes the answer set to be what it
 is believes the answer in the first sense, so that clause (i) of (8) is redundant (§4). -/
-theorem Karttunen.simplifiedKnow_of_generalizedKnow (hq : IsVeridical q)
-    (h : generalizedKnow q w R) : simplifiedKnow q w R :=
+theorem Karttunen.simplifiedKnows_of_generalizedKnows (hq : IsVeridical q)
+    (h : GeneralizedKnows q w R) : SimplifiedKnows q w R :=
   SetRel.core_mono (fun _ hv ↦ ans₂_subset_ans₁ hq w (ker_le_ker_ans₁ q hv)) h
 
 -- (8), (9)
-theorem Karttunen.knows_of_generalizedKnow (hq : IsVeridical q) (h : generalizedKnow q w R) :
+theorem Karttunen.knows_of_generalizedKnows (hq : IsVeridical q) (h : GeneralizedKnows q w R) :
     Karttunen1977.Knows q w R :=
-  ⟨simplifiedKnow_of_generalizedKnow hq h, fun e ↦ by rwa [generalizedKnow, e] at h⟩
+  ⟨simplifiedKnows_of_generalizedKnows hq h, fun e ↦ by rwa [GeneralizedKnows, e] at h⟩
 
 -- (5), (7)
-theorem Karttunen.knows_iff_generalizedKnow_of_eq_empty (h : q w = ∅) :
-    Karttunen1977.Knows q w R ↔ generalizedKnow q w R := by
-  simp [Karttunen1977.Knows, generalizedKnow, h]
+theorem Karttunen.knows_iff_generalizedKnows_of_eq_empty (h : q w = ∅) :
+    Karttunen1977.Knows q w R ↔ GeneralizedKnows q w R := by
+  simp [Karttunen1977.Knows, GeneralizedKnows, h]
 
 -- §4: the de re reading, quantifying in the common noun
-theorem generalizedKnow_deRe (S C : E → Set W) (u : W) :
-    generalizedKnow (trueAnswers (C '' extension S u)) w R ↔
+theorem generalizedKnows_deRe (S C : E → Set W) (u : W) :
+    GeneralizedKnows (trueAnswers (C '' extension S u)) w R ↔
       GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeRe S C u) w R := by
   rw [GroenendijkStokhof1984.whichDeRe_eq_partition]
   rfl
@@ -169,13 +157,13 @@ theorem trueAnswers_pair_nonempty (φ : Set W) (w : W) : (trueAnswers {φ, φᶜ
 
 -- §4, footnote 11
 theorem knows_whether_tfae (φ : Set W) :
-    [Karttunen.simplifiedKnow (trueAnswers {φ, φᶜ}) w R,
+    [Karttunen.SimplifiedKnows (trueAnswers {φ, φᶜ}) w R,
       Karttunen1977.Knows (trueAnswers {φ, φᶜ}) w R,
-      generalizedKnow (trueAnswers {φ, φᶜ}) w R,
+      GeneralizedKnows (trueAnswers {φ, φᶜ}) w R,
       GroenendijkStokhof1984.Knows (Setoid.polar φ) w R].TFAE := by
   tfae_have 1 ↔ 2 :=
     (and_iff_left fun h ↦ absurd h (trueAnswers_pair_nonempty φ w).ne_empty).symm
-  tfae_have 3 ↔ 4 := by rw [generalizedKnow_iff_knows_ker, ker_trueAnswers_pair]
+  tfae_have 3 ↔ 4 := by rw [generalizedKnows_iff_knows_ker, ker_trueAnswers_pair]
   tfae_have 2 ↔ 4 := by
     rw [Karttunen1977.knows_pair_iff]
     simp [GroenendijkStokhof1984.Knows, iff_comm]
@@ -186,24 +174,26 @@ theorem knows_whether_tfae (φ : Set W) :
 /-- When no two individuals call in the same worlds, the kernel of Karttunen's intension for
 *which students called* is Groenendijk and Stokhof's de dicto partition, so that (10) is
 (11) (§4). -/
-theorem ker_which {S C : E → Set W} (hC : Function.Injective C) :
-    Setoid.ker (Karttunen.which S C) = whichDeDicto S C :=
-  Setoid.ker_comp_of_injective (extension _) hC.image_injective
+theorem ker_wh {S C : E → Set W} (hC : Function.Injective C) :
+    Setoid.ker (Karttunen1977.wh S C) = whichDeDicto S C := by
+  rw [show Karttunen1977.wh S C = Set.image C ∘ extension (fun x ↦ S x ∩ C x) from
+    funext (Karttunen1977.wh_eq_image · S C)]
+  exact Setoid.ker_comp_of_injective _ hC.image_injective
 
-theorem generalizedKnow_which_iff {S C : E → Set W} (hC : Function.Injective C) :
-    generalizedKnow (Karttunen.which S C) w R ↔
+theorem generalizedKnows_wh_iff {S C : E → Set W} (hC : Function.Injective C) :
+    GeneralizedKnows (Karttunen1977.wh S C) w R ↔
       GroenendijkStokhof1984.Knows (whichDeDicto S C) w R := by
-  rw [generalizedKnow_iff_knows_ker, ker_which hC]
+  rw [generalizedKnows_iff_knows_ker, ker_wh hC]
 
 -- §6
 theorem whichDeDicto_comm (S C : E → Set W) : whichDeDicto S C = whichDeDicto C S :=
   congrArg Setoid.ker (funext fun w ↦ Set.ext fun x ↦ by simp [Set.inter_comm])
 
 -- §6
-theorem ker_which_comm {S C : E → Set W} (hS : Function.Injective S)
+theorem ker_wh_comm {S C : E → Set W} (hS : Function.Injective S)
     (hC : Function.Injective C) :
-    Setoid.ker (Karttunen.which S C) = Setoid.ker (Karttunen.which C S) := by
-  rw [ker_which hC, ker_which hS, whichDeDicto_comm]
+    Setoid.ker (Karttunen1977.wh S C) = Setoid.ker (Karttunen1977.wh C S) := by
+  rw [ker_wh hC, ker_wh hS, whichDeDicto_comm]
 
 /-! ### Exhaustiveness (§2)
 
@@ -228,19 +218,20 @@ def agnostic : SetRel Bool Bool := Set.univ
 theorem called_injective : Function.Injective called := by
   rintro (_ | _) (_ | _) h <;> simp_all [called, Set.ext_iff]
 
-theorem which_false : Karttunen.which student called false = {Set.univ} := by
+theorem wh_false : Karttunen1977.wh student called false = {Set.univ} := by
   ext p
+  rw [Karttunen1977.mem_wh_iff, Set.mem_singleton_iff]
   constructor
-  · rintro ⟨(_ | _), hx, rfl⟩
+  · rintro ⟨(_ | _), -, hc, rfl⟩
     · rfl
-    · simp [student, called] at hx
+    · simp [called] at hc
   · rintro rfl
-    exact ⟨.bill, by simp [student, called], rfl⟩
+    exact ⟨.bill, trivial, trivial, rfl⟩
 
 -- (1)
-theorem karttunen_knows : Karttunen1977.Knows (Karttunen.which student called) false agnostic := by
-  refine ⟨?_, fun h ↦ absurd h (by rw [which_false]; exact Set.singleton_ne_empty _)⟩
-  rw [which_false, Set.sInter_singleton, SetRel.core_univ]
+theorem karttunen_knows : Karttunen1977.Knows (Karttunen1977.wh student called) false agnostic := by
+  refine ⟨?_, fun h ↦ absurd h (by rw [wh_false]; exact Set.singleton_ne_empty _)⟩
+  rw [wh_false, Set.sInter_singleton, SetRel.core_univ]
   trivial
 
 -- (1)
@@ -250,16 +241,17 @@ theorem not_knows_whichDeDicto :
   simp [student, called] at this
 
 -- (1)
-theorem not_generalizedKnow : ¬ generalizedKnow (Karttunen.which student called) false agnostic :=
-  (generalizedKnow_which_iff called_injective).not.2 not_knows_whichDeDicto
+theorem not_generalizedKnows :
+    ¬ GeneralizedKnows (Karttunen1977.wh student called) false agnostic :=
+  (generalizedKnows_wh_iff called_injective).not.2 not_knows_whichDeDicto
 
 -- (1)
-theorem truthValue_row :
-    (generalizedKnow (Karttunen.which student called) false agnostic ↔
-        Examples.ex1_exhaustive.feature? "truthValue" = some "true") ∧
-      ¬ (Karttunen1977.Knows (Karttunen.which student called) false agnostic ↔
-        Examples.ex1_exhaustive.feature? "truthValue" = some "true") :=
-  ⟨iff_of_false not_generalizedKnow (by decide), fun h ↦ absurd (h.1 karttunen_knows) (by decide)⟩
+theorem verdict_row :
+    (GeneralizedKnows (Karttunen1977.wh student called) false agnostic ↔
+        Examples.ex1_exhaustive.verdict = some true) ∧
+      ¬ (Karttunen1977.Knows (Karttunen1977.wh student called) false agnostic ↔
+        Examples.ex1_exhaustive.verdict = some true) :=
+  ⟨iff_of_false not_generalizedKnows (by decide), fun h ↦ absurd (h.1 karttunen_knows) (by decide)⟩
 
 end Exhaustiveness
 
@@ -280,54 +272,58 @@ def called : Unit → Set Bool := fun _ ↦ Set.univ
 /-- John's beliefs rule out no world. -/
 def agnostic : SetRel Bool Bool := Set.univ
 
--- (1)
-theorem karttunen_knows : Karttunen1977.Knows (Karttunen.which student called) true agnostic := by
-  refine ⟨fun v _ ↦ ?_, fun h ↦ ?_⟩
-  · simp [Karttunen.which, extension, student, called]
-  · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [student, called], rfl⟩)
+theorem wh_true : Karttunen1977.wh student called true = {Set.univ} := by
+  ext p
+  simp [Karttunen1977.mem_wh_iff, student, called, eq_comm]
+
+theorem wh_false : Karttunen1977.wh student called false = ∅ :=
+  (Karttunen1977.wh_eq_empty_iff _ _ _).2 fun _ h ↦ absurd h (by simp [student])
+
+theorem wh_who (v : Bool) : Karttunen1977.wh (fun _ ↦ Set.univ) called v = {Set.univ} := by
+  ext p
+  simp [Karttunen1977.mem_wh_iff, called]
 
 -- (1)
-theorem not_generalizedKnow : ¬ generalizedKnow (Karttunen.which student called) true agnostic :=
-  (generalizedKnow_which_iff (Function.injective_of_subsingleton _)).not.2 fun h ↦ by
+theorem karttunen_knows : Karttunen1977.Knows (Karttunen1977.wh student called) true agnostic := by
+  refine ⟨?_, fun h ↦ absurd h (by rw [wh_true]; exact Set.singleton_ne_empty _)⟩
+  rw [wh_true, Set.sInter_singleton, SetRel.core_univ]
+  trivial
+
+-- (1)
+theorem not_generalizedKnows : ¬ GeneralizedKnows (Karttunen1977.wh student called) true agnostic :=
+  (generalizedKnows_wh_iff (Function.injective_of_subsingleton _)).not.2 fun h ↦ by
     have := who_iff.1 (h (show true ~[agnostic] false from trivial)) ()
     simp [student, called] at this
 
 -- (6)
-theorem generalizedKnow_who :
-    generalizedKnow (Karttunen.which (fun _ ↦ Set.univ) called) true agnostic := by
-  intro v _
-  simp [Karttunen.which, extension, called]
+theorem generalizedKnows_who :
+    GeneralizedKnows (Karttunen1977.wh (fun _ ↦ Set.univ) called) true agnostic :=
+  fun v _ ↦ (wh_who v).trans (wh_who true).symm
 
 -- (6)
 theorem karttunen_knows_who :
-    Karttunen1977.Knows (Karttunen.which (fun _ ↦ Set.univ) called) false agnostic := by
-  refine ⟨fun v _ ↦ ?_, fun h ↦ ?_⟩
-  · simp [Karttunen.which, extension, called]
-  · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [called], rfl⟩)
+    Karttunen1977.Knows (Karttunen1977.wh (fun _ ↦ Set.univ) called) false agnostic := by
+  refine ⟨?_, fun h ↦ absurd h (by rw [wh_who]; exact Set.singleton_ne_empty _)⟩
+  rw [wh_who, Set.sInter_singleton, SetRel.core_univ]
+  trivial
 
 -- (1), (6)
 theorem not_karttunen_knows_of_no_student :
-    ¬ Karttunen1977.Knows (Karttunen.which student called) false agnostic := by
-  rintro ⟨-, hii⟩
-  have h0 : Karttunen.which student called false = ∅ := by
-    simp [Karttunen.which, extension, student]
-  have e : Karttunen.which student called true = ∅ :=
-    hii h0 (show false ~[agnostic] true from trivial)
-  have h1 : (Set.univ : Set Bool) ∈ Karttunen.which student called true :=
-    ⟨(), by simp [student, called], rfl⟩
-  rw [e] at h1
-  exact Set.notMem_empty _ h1
+    ¬ Karttunen1977.Knows (Karttunen1977.wh student called) false agnostic := fun ⟨_, hii⟩ ↦
+  have e : Karttunen1977.wh student called true = ∅ :=
+    hii wh_false (show false ~[agnostic] true from trivial)
+  Set.singleton_ne_empty _ (wh_true ▸ e)
 
 -- (1), (6)
-theorem truthValue_rows :
-    (generalizedKnow (Karttunen.which student called) true agnostic ↔
-        Examples.ex1_dedicto.feature? "truthValue" = some "true") ∧
-      ¬ (Karttunen1977.Knows (Karttunen.which student called) true agnostic ↔
-        Examples.ex1_dedicto.feature? "truthValue" = some "true") ∧
-      (generalizedKnow (Karttunen.which (fun _ ↦ Set.univ) called) true agnostic ↔
-        Examples.ex6.feature? "truthValue" = some "true") :=
-  ⟨iff_of_false not_generalizedKnow (by decide), fun h ↦ absurd (h.1 karttunen_knows) (by decide),
-    iff_of_true generalizedKnow_who (by decide)⟩
+theorem verdict_rows :
+    (GeneralizedKnows (Karttunen1977.wh student called) true agnostic ↔
+        Examples.ex1_dedicto.verdict = some true) ∧
+      ¬ (Karttunen1977.Knows (Karttunen1977.wh student called) true agnostic ↔
+        Examples.ex1_dedicto.verdict = some true) ∧
+      (GeneralizedKnows (Karttunen1977.wh (fun _ ↦ Set.univ) called) true agnostic ↔
+        Examples.ex6.verdict = some true) :=
+  ⟨iff_of_false not_generalizedKnows (by decide), fun h ↦ absurd (h.1 karttunen_knows) (by decide),
+    iff_of_true generalizedKnows_who (by decide)⟩
 
 end DeDicto
 
@@ -336,14 +332,16 @@ end DeDicto
 /-- The universally necessary property, which every individual has in every world. -/
 def identicalWithSelf : E → Set W := fun _ ↦ Set.univ
 
-theorem Karttunen.which_identicalWithSelf_of_exists {S : E → Set W} (h : ∃ x, w ∈ S x) :
-    which S identicalWithSelf w = {Set.univ} :=
-  Set.Nonempty.image_const (s := extension (fun x ↦ S x ∩ identicalWithSelf x) w)
-    (let ⟨x, hx⟩ := h; ⟨x, hx, trivial⟩) _
+theorem Karttunen.wh_identicalWithSelf_of_exists {S : E → Set W} (h : ∃ x, w ∈ S x) :
+    Karttunen1977.wh S identicalWithSelf w = {Set.univ} := by
+  obtain ⟨x, hx⟩ := h
+  rw [Karttunen1977.wh_eq_image]
+  exact Set.Nonempty.image_const (s := {x | w ∈ S x ∧ w ∈ identicalWithSelf x}) ⟨x, hx, trivial⟩
+    Set.univ
 
-theorem Karttunen.which_identicalWithSelf_of_not_exists {S : E → Set W} (h : ¬ ∃ x, w ∈ S x) :
-    which S identicalWithSelf w = ∅ :=
-  Set.image_eq_empty.2 (Set.eq_empty_of_forall_notMem fun x hx ↦ h ⟨x, hx.1⟩)
+theorem Karttunen.wh_identicalWithSelf_of_not_exists {S : E → Set W} (h : ¬ ∃ x, w ∈ S x) :
+    Karttunen1977.wh S identicalWithSelf w = ∅ :=
+  (Karttunen1977.wh_eq_empty_iff w S _).2 fun x hx _ ↦ h ⟨x, hx⟩
 
 -- (21), (22)
 theorem whichDeDicto_identicalWithSelf (S : E → Set W) :
@@ -352,21 +350,21 @@ theorem whichDeDicto_identicalWithSelf (S : E → Set W) :
 
 /-- On the generalized analysis, knowing which students are identical with themselves is knowing
 whether there are students, (23) (§7). -/
-theorem Karttunen.ker_which_identicalWithSelf (S : E → Set W) :
-    Setoid.ker (which S identicalWithSelf) = Setoid.polar {w | ∃ x, w ∈ S x} := by
+theorem Karttunen.ker_wh_identicalWithSelf (S : E → Set W) :
+    Setoid.ker (Karttunen1977.wh S identicalWithSelf) = Setoid.polar {w | ∃ x, w ∈ S x} := by
   ext v w
   rw [Setoid.ker_def, Setoid.polar_iff]
   by_cases hv : ∃ x, v ∈ S x <;> by_cases hw : ∃ x, w ∈ S x <;>
-    simp [hv, hw, which_identicalWithSelf_of_exists, which_identicalWithSelf_of_not_exists]
+    simp [hv, hw, wh_identicalWithSelf_of_exists, wh_identicalWithSelf_of_not_exists]
 
-theorem ans₁_which_identicalWithSelf (S : E → Set W) (w : W) :
-    ans₁ (Karttunen.which S identicalWithSelf) w = Set.univ :=
-  Set.sInter_eq_univ.2 fun _ ⟨_, _, h⟩ ↦ h.symm
+theorem ans₁_wh_identicalWithSelf (S : E → Set W) (w : W) :
+    ans₁ (Karttunen1977.wh S identicalWithSelf) w = Set.univ :=
+  Set.sInter_eq_univ.2 fun _ ⟨⟨_, _, h⟩, _⟩ ↦ h.symm
 
 -- §6, §8
-theorem ans₂_which_identicalWithSelf (S : E → Set W) (w : W) :
-    ans₂ (Karttunen.which S identicalWithSelf) w = Set.univ := by
-  simp [ans₂, ans₁_which_identicalWithSelf]
+theorem ans₂_wh_identicalWithSelf (S : E → Set W) (w : W) :
+    ans₂ (Karttunen1977.wh S identicalWithSelf) w = Set.univ := by
+  simp [ans₂, ans₁_wh_identicalWithSelf]
 
 /-! A world fixes the one student, if there is any. Where John believes that there is a student
 but not which, the generalized analysis ascribes knowledge of (21) and Groenendijk and Stokhof's
@@ -386,9 +384,9 @@ def someStudent : SetRel (Option Student) (Option Student) := {p | p.2.isSome}
 def agnostic : SetRel (Option Student) (Option Student) := Set.univ
 
 -- (21)
-theorem generalizedKnow_someStudent :
-    generalizedKnow (Karttunen.which student identicalWithSelf) (some .bill) someStudent := by
-  rw [generalizedKnow_iff_knows_ker, Karttunen.ker_which_identicalWithSelf]
+theorem generalizedKnows_someStudent :
+    GeneralizedKnows (Karttunen1977.wh student identicalWithSelf) (some .bill) someStudent := by
+  rw [generalizedKnows_iff_knows_ker, Karttunen.ker_wh_identicalWithSelf]
   rintro (_ | x) h
   · simp [someStudent] at h
   · simp [student]
@@ -402,20 +400,20 @@ theorem not_knows_whichDeDicto {R : SetRel (Option Student) (Option Student)}
     simp [student, identicalWithSelf] at this
 
 -- (21)
-theorem not_generalizedKnow_agnostic :
-    ¬ generalizedKnow (Karttunen.which student identicalWithSelf) (some .bill) agnostic := by
-  rw [generalizedKnow_iff_knows_ker, Karttunen.ker_which_identicalWithSelf]
+theorem not_generalizedKnows_agnostic :
+    ¬ GeneralizedKnows (Karttunen1977.wh student identicalWithSelf) (some .bill) agnostic := by
+  rw [generalizedKnows_iff_knows_ker, Karttunen.ker_wh_identicalWithSelf]
   intro h
   have := h (show some .bill ~[agnostic] none from trivial)
   simp [student] at this
 
 -- (21)
-theorem truthValue_row :
-    ¬ (generalizedKnow (Karttunen.which student identicalWithSelf) (some .bill) agnostic ↔
-        Examples.ex21.feature? "truthValue" = some "true") ∧
+theorem verdict_row :
+    ¬ (GeneralizedKnows (Karttunen1977.wh student identicalWithSelf) (some .bill) agnostic ↔
+        Examples.ex21.verdict = some true) ∧
       ¬ (GroenendijkStokhof1984.Knows (whichDeDicto student identicalWithSelf) (some .bill)
-          agnostic ↔ Examples.ex21.feature? "truthValue" = some "true") :=
-  ⟨fun h ↦ not_generalizedKnow_agnostic (h.2 (by decide)),
+          agnostic ↔ Examples.ex21.verdict = some true) :=
+  ⟨fun h ↦ not_generalizedKnows_agnostic (h.2 (by decide)),
     fun h ↦ not_knows_whichDeDicto (R := agnostic) trivial (h.2 (by decide))⟩
 
 end Identity
@@ -463,19 +461,18 @@ theorem extension_alt :
   cases x <;> simp [student, livesWithSpouse]
 
 -- (26)
-theorem which_eq :
-    Karttunen.which student livesWithSpouse (false, true) =
-      Karttunen.which student livesWithSpouse actual := by
-  rw [Karttunen.which, Karttunen.which, extension_actual, extension_alt, Set.image_singleton,
-    Set.image_univ]
+theorem wh_eq :
+    Karttunen1977.wh student livesWithSpouse (false, true) =
+      Karttunen1977.wh student livesWithSpouse actual := by
   ext p
-  exact ⟨fun h ↦ ⟨.bill, h.symm⟩, fun ⟨_, h⟩ ↦ h.symm⟩
+  simp only [Karttunen1977.mem_wh_iff]
+  exact ⟨fun ⟨_, _, _, h⟩ ↦ ⟨.bill, trivial, rfl, h⟩, fun ⟨_, _, _, h⟩ ↦ ⟨.bill, trivial, rfl, h⟩⟩
 
 -- (24), (26)
-theorem generalizedKnow_holds :
-    generalizedKnow (Karttunen.which student livesWithSpouse) actual john := by
+theorem generalizedKnows_holds :
+    GeneralizedKnows (Karttunen1977.wh student livesWithSpouse) actual john := by
   rintro v (rfl : v = (false, true))
-  exact which_eq
+  exact wh_eq
 
 -- (24), (25)
 theorem not_knows_whichDeDicto :
@@ -491,7 +488,7 @@ end Spouses
 /-- Karttunen's rejected remedy for exhaustiveness, (i) of footnote 8, adds the proposition that
 `x` did not call for each student `x` who did not call. -/
 def Karttunen.whichWithNegations (S C : E → Set W) (w : W) : Set (Set W) :=
-  which S C w ∪ which S (fun x ↦ (C x)ᶜ) w
+  Karttunen1977.wh S C w ∪ Karttunen1977.wh S (fun x ↦ (C x)ᶜ) w
 
 -- footnote 8
 theorem Karttunen.whichWithNegations_compl (S C : E → Set W) :
@@ -502,9 +499,9 @@ theorem Karttunen.whichWithNegations_compl (S C : E → Set W) :
 
 -- footnote 8
 theorem Karttunen.ans₁_whichWithNegations (S C : E → Set W) (w : W) :
-    ans₁ (whichWithNegations S C) w = strongAnswer (C '' extension S w) w := by
+    ans₁ (whichWithNegations S C) w = strongAnswer (C '' {x | w ∈ S x}) w := by
   rw [← weakAnswer_union_image_compl, Set.image_image, weakAnswer, ans₁, whichWithNegations,
-    which_eq_trueAnswers, which_eq_trueAnswers]
+    Karttunen1977.wh, Karttunen1977.wh]
   congr 1
   ext p
   simp [or_and_right]
@@ -532,49 +529,51 @@ def feynman : SetRel Bool Bool := Set.univ
 theorem discovered_injective : Function.Injective discovered := by
   rintro (_ | _) (_ | _) h <;> simp_all [discovered, Set.ext_iff]
 
-theorem which_discovered (v : Bool) : Karttunen.which particle discovered v = {Set.univ} := by
+theorem wh_discovered (v : Bool) : Karttunen1977.wh particle discovered v = {Set.univ} := by
   ext p
+  rw [Karttunen1977.mem_wh_iff, Set.mem_singleton_iff]
   constructor
-  · rintro ⟨(_ | _), hz, rfl⟩
+  · rintro ⟨(_ | _), -, hd, rfl⟩
     · rfl
-    · simp [particle, discovered] at hz
+    · simp [discovered] at hd
   · rintro rfl
-    exact ⟨.x, by simp [particle, discovered], rfl⟩
+    exact ⟨.x, trivial, trivial, rfl⟩
 
 -- footnote 9
-theorem generalizedKnow_discovered :
-    generalizedKnow (Karttunen.which particle discovered) true feynman :=
-  fun v _ ↦ (which_discovered v).trans (which_discovered true).symm
+theorem generalizedKnows_discovered :
+    GeneralizedKnows (Karttunen1977.wh particle discovered) true feynman :=
+  fun v _ ↦ (wh_discovered v).trans (wh_discovered true).symm
 
 -- footnote 9
-theorem not_generalizedKnow_undiscovered :
-    ¬ generalizedKnow (Karttunen.which particle fun z ↦ (discovered z)ᶜ) true feynman := by
+theorem not_generalizedKnows_undiscovered :
+    ¬ GeneralizedKnows (Karttunen1977.wh particle fun z ↦ (discovered z)ᶜ) true feynman := by
   intro h
   have e := h (show true ~[feynman] false from trivial)
-  have hy : (discovered .y)ᶜ ∈ Karttunen.which particle (fun z ↦ (discovered z)ᶜ) true :=
-    ⟨.y, by simp [particle, discovered], rfl⟩
-  rw [← show Karttunen.which particle (fun z ↦ (discovered z)ᶜ) false = _ from e] at hy
-  obtain ⟨(_ | _), hz, -⟩ := hy <;> simp [particle, discovered] at hz
+  have hy : (discovered .y)ᶜ ∈ Karttunen1977.wh particle (fun z ↦ (discovered z)ᶜ) true :=
+    (Karttunen1977.mem_wh_iff _ _ _).2 ⟨.y, rfl, Set.notMem_empty true, rfl⟩
+  rw [← show Karttunen1977.wh particle (fun z ↦ (discovered z)ᶜ) false = _ from e] at hy
+  obtain ⟨(_ | _), hx, hd, -⟩ := (Karttunen1977.mem_wh_iff _ _ _).1 hy <;>
+    simp [particle, discovered] at hx hd
 
 -- footnote 9
 theorem knows_discovered_not_undiscovered :
     GroenendijkStokhof1984.Knows (whichDeDicto particle discovered) true feynman ∧
       ¬ GroenendijkStokhof1984.Knows (whichDeDicto particle fun z ↦ (discovered z)ᶜ) true
         feynman :=
-  ⟨(generalizedKnow_which_iff discovered_injective).1 generalizedKnow_discovered,
-    (generalizedKnow_which_iff (compl_injective.comp discovered_injective)).not.1
-      not_generalizedKnow_undiscovered⟩
+  ⟨(generalizedKnows_wh_iff discovered_injective).1 generalizedKnows_discovered,
+    (generalizedKnows_wh_iff (compl_injective.comp discovered_injective)).not.1
+      not_generalizedKnows_undiscovered⟩
 
 -- footnote 8
-theorem truthValue_row :
-    (generalizedKnow (Karttunen.which particle discovered) true feynman ∧
-          ¬ generalizedKnow (Karttunen.which particle fun z ↦ (discovered z)ᶜ) true feynman ↔
-        Examples.fn8ii.feature? "truthValue" = some "true") ∧
+theorem verdict_row :
+    (GeneralizedKnows (Karttunen1977.wh particle discovered) true feynman ∧
+          ¬ GeneralizedKnows (Karttunen1977.wh particle fun z ↦ (discovered z)ᶜ) true feynman ↔
+        Examples.fn8ii.verdict = some true) ∧
       ∀ K : (Bool → Set (Set Bool)) → Prop,
         ¬ (K (Karttunen.whichWithNegations particle discovered) ∧
             ¬ K (Karttunen.whichWithNegations particle fun z ↦ (discovered z)ᶜ) ↔
-          Examples.fn8ii.feature? "truthValue" = some "true") := by
-  refine ⟨iff_of_true ⟨generalizedKnow_discovered, not_generalizedKnow_undiscovered⟩ (by decide),
+          Examples.fn8ii.verdict = some true) := by
+  refine ⟨iff_of_true ⟨generalizedKnows_discovered, not_generalizedKnows_undiscovered⟩ (by decide),
     fun K h ↦ ?_⟩
   rw [Karttunen.whichWithNegations_compl] at h
   exact (h.2 (by decide)).2 (h.2 (by decide)).1
@@ -595,21 +594,22 @@ theorem ker_whichStructured (S C : E → Set W) :
     Setoid.ker (whichStructured S C) = whichDeDicto S C :=
   Setoid.ker_comp_of_injective (extension _) (Prod.mk_left_injective C).image_injective
 
-theorem generalizedKnow_whichStructured_iff {S C : E → Set W} :
-    generalizedKnow (whichStructured S C) w R ↔
+theorem generalizedKnows_whichStructured_iff {S C : E → Set W} :
+    GeneralizedKnows (whichStructured S C) w R ↔
       GroenendijkStokhof1984.Knows (whichDeDicto S C) w R := by
-  rw [generalizedKnow_iff_knows_ker, ker_whichStructured]
+  rw [generalizedKnows_iff_knows_ker, ker_whichStructured]
 
 -- §8
-theorem Karttunen.which_eq_image_whichStructured (S C : E → Set W) (w : W) :
-    which S C w = (fun p : E × (E → Set W) ↦ p.2 p.1) '' whichStructured S C w := by
-  simp [which, whichStructured, Set.image_image]
+theorem Karttunen.wh_eq_image_whichStructured (S C : E → Set W) (w : W) :
+    Karttunen1977.wh S C w = (fun p : E × (E → Set W) ↦ p.2 p.1) '' whichStructured S C w := by
+  rw [Karttunen1977.wh_eq_image, whichStructured, Set.image_image]
+  rfl
 
 -- (21)
-theorem Identity.not_generalizedKnow_structured :
-    ¬ generalizedKnow (whichStructured Identity.student identicalWithSelf) (some .bill)
+theorem Identity.not_generalizedKnows_structured :
+    ¬ GeneralizedKnows (whichStructured Identity.student identicalWithSelf) (some .bill)
       Identity.someStudent :=
-  generalizedKnow_whichStructured_iff.not.2 (Identity.not_knows_whichDeDicto rfl)
+  generalizedKnows_whichStructured_iff.not.2 (Identity.not_knows_whichDeDicto rfl)
 
 -- §8
 theorem Spouses.whichStructured_ne :
@@ -623,16 +623,16 @@ theorem Spouses.whichStructured_ne :
 student, knows which students live with their actual spouses on the generalized analysis, but not
 on Groenendijk and Stokhof's or with structured answers, and the paper judges (24) false (§7,
 §8). -/
-theorem Spouses.truthValue_row :
-    ¬ (generalizedKnow (Karttunen.which Spouses.student Spouses.livesWithSpouse) Spouses.actual
-        Spouses.john ↔ Examples.ex24.feature? "truthValue" = some "true") ∧
+theorem Spouses.verdict_row :
+    ¬ (GeneralizedKnows (Karttunen1977.wh Spouses.student Spouses.livesWithSpouse) Spouses.actual
+        Spouses.john ↔ Examples.ex24.verdict = some true) ∧
       (GroenendijkStokhof1984.Knows (whichDeDicto Spouses.student Spouses.livesWithSpouse)
-          Spouses.actual Spouses.john ↔ Examples.ex24.feature? "truthValue" = some "true") ∧
-      (generalizedKnow (whichStructured Spouses.student Spouses.livesWithSpouse) Spouses.actual
-          Spouses.john ↔ Examples.ex24.feature? "truthValue" = some "true") :=
-  ⟨fun h ↦ absurd (h.1 Spouses.generalizedKnow_holds) (by decide),
+          Spouses.actual Spouses.john ↔ Examples.ex24.verdict = some true) ∧
+      (GeneralizedKnows (whichStructured Spouses.student Spouses.livesWithSpouse) Spouses.actual
+          Spouses.john ↔ Examples.ex24.verdict = some true) :=
+  ⟨fun h ↦ absurd (h.1 Spouses.generalizedKnows_holds) (by decide),
     iff_of_false Spouses.not_knows_whichDeDicto (by decide),
-    iff_of_false (generalizedKnow_whichStructured_iff.not.2 Spouses.not_knows_whichDeDicto)
+    iff_of_false (generalizedKnows_whichStructured_iff.not.2 Spouses.not_knows_whichDeDicto)
       (by decide)⟩
 
 end Heim1994b

@@ -12,16 +12,13 @@
     "translation": "",
     "context": "Student Mary did not call, and John is agnostic as to whether she called; of every student who called he believes that they called.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
         "2"
-      ],
-      [
-        "truthValue",
-        "false"
       ]
     ],
     "comment": "Intuitively John does not know which students called, at least not completely (pp. 130-131); Berman (1991) rejects the judgment (fn. 7).",
@@ -40,6 +37,7 @@
     "translation": "",
     "context": "Mary is a student who called; John knows exactly who called but does not know that Mary is a student.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -50,10 +48,6 @@
       [
         "reading",
         "de dicto"
-      ],
-      [
-        "truthValue",
-        "false"
       ]
     ],
     "comment": "False on the de dicto reading, on which (6) does not entail (1) (pp. 132, 135).",
@@ -72,16 +66,13 @@
     "translation": "",
     "context": "Mary is a student who called; John knows exactly who called but does not know that Mary is a student.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
         "3"
-      ],
-      [
-        "truthValue",
-        "true"
       ]
     ],
     "comment": "Entails (1) only on the de re reading of (1) (p. 132).",
@@ -220,16 +211,13 @@
     "translation": "",
     "context": "Any, even one where John has no idea who, if anyone, is a student.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
         "7"
-      ],
-      [
-        "truthValue",
-        "true"
       ]
     ],
     "comment": "The salient intuition ascribes trivial knowledge to John, which neither analysis captures (p. 141).",
@@ -248,16 +236,13 @@
     "translation": "",
     "context": "Bill is married to Sue; both are students and live with each other, and no other students live with their spouses. John is well informed about these facts, except that he falsely believes Sue not to be a student.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
         "7"
-      ],
-      [
-        "truthValue",
-        "false"
       ]
     ],
     "comment": "Arguably false: John would answer 'Bill' or 'Only Bill', where the correct answer is 'Bill and Sue' (p. 141).",
@@ -276,16 +261,13 @@
     "translation": "",
     "context": "Of exactly two elementary particles only one had been discovered by 1978; Feynman's beliefs in 1978 are compatible with the actual world and with one where the discovered particle is the only elementary particle and the only one discovered.",
     "judgment": "acceptable",
+    "verdict": true,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
         "section",
         "2"
-      ],
-      [
-        "truthValue",
-        "true"
       ]
     ],
     "comment": "Bromberger's example, cited from Lahiri (1991): not contradictory, against an equivalence of which-alpha-beta and which-alpha-not-beta (fn. 8); the scenario is fn. 9's.",

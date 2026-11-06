@@ -25,9 +25,10 @@ def ex1_exhaustive : Datum :=
     glossedTokens := []
     context := "Student Mary did not call, and John is agnostic as to whether she called; of every student who called he believes that they called."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("truthValue", "false")] }
+    paperFeatures := [("section", "2")] }
 
 def ex1_dedicto : Datum :=
   { id := "heim1994b_ex1_dedicto"
@@ -39,9 +40,10 @@ def ex1_dedicto : Datum :=
     glossedTokens := []
     context := "Mary is a student who called; John knows exactly who called but does not know that Mary is a student."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("reading", "de dicto"), ("truthValue", "false")] }
+    paperFeatures := [("section", "3"), ("reading", "de dicto")] }
 
 def ex6 : Datum :=
   { id := "heim1994b_ex6"
@@ -53,9 +55,10 @@ def ex6 : Datum :=
     glossedTokens := []
     context := "Mary is a student who called; John knows exactly who called but does not know that Mary is a student."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("truthValue", "true")] }
+    paperFeatures := [("section", "3")] }
 
 def ex17 : Datum :=
   { id := "heim1994b_ex17"
@@ -137,9 +140,10 @@ def ex21 : Datum :=
     glossedTokens := []
     context := "Any, even one where John has no idea who, if anyone, is a student."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7"), ("truthValue", "true")] }
+    paperFeatures := [("section", "7")] }
 
 def ex24 : Datum :=
   { id := "heim1994b_ex24"
@@ -151,9 +155,10 @@ def ex24 : Datum :=
     glossedTokens := []
     context := "Bill is married to Sue; both are students and live with each other, and no other students live with their spouses. John is well informed about these facts, except that he falsely believes Sue not to be a student."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "7"), ("truthValue", "false")] }
+    paperFeatures := [("section", "7")] }
 
 def fn8ii : Datum :=
   { id := "heim1994b_fn8ii"
@@ -165,9 +170,10 @@ def fn8ii : Datum :=
     glossedTokens := []
     context := "Of exactly two elementary particles only one had been discovered by 1978; Feynman's beliefs in 1978 are compatible with the actual world and with one where the discovered particle is the only elementary particle and the only one discovered."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2"), ("truthValue", "true")] }
+    paperFeatures := [("section", "2")] }
 
 def all : List Datum := [ex1_exhaustive, ex1_dedicto, ex6, ex17, ex18, ex19, ex20a, ex20b, ex21, ex24, fn8ii]
 
