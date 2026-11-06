@@ -80,7 +80,7 @@ theorem supervaluation_product_and (hs : s.Nonempty) (ht : t.Nonempty) :
 coordinates, disjoined, is the Strong Kleene disjunction of their supervaluations. -/
 theorem supervaluation_product_or (hs : s.Nonempty) (ht : t.Nonempty) :
     supervaluation (s ×ˢ t) (fun x ↦ P x.1 ∨ Q x.2) = supervaluation s P ⊔ supervaluation t Q := by
-  rw [← neg_neg (supervaluation s P ⊔ _), Trivalent.compl_sup, ← supervaluation_not _ hs,
+  rw [← compl_compl (supervaluation s P ⊔ _), Trivalent.compl_sup, ← supervaluation_not _ hs,
     ← supervaluation_not _ ht, ← supervaluation_product_and _ _ hs ht,
     ← supervaluation_not _ (hs.product ht)]
   exact supervaluation_congr fun _ _ ↦ by tauto
@@ -113,8 +113,8 @@ on the choices, one holding, is the Strong Kleene existential over their superva
 theorem supervaluation_piFinset_exists (hS : ∀ i, (S i).Nonempty) :
     supervaluation (Fintype.piFinset S) (fun c ↦ ∃ i, R i (c i)) =
       Trivalent.existsStrong fun i ↦ supervaluation (S i) (R i) := by
-  have h : (fun i ↦ supervaluation (S i) (R i)) = fun i ↦ -supervaluation (S i) (¬R i ·) :=
-    funext fun i ↦ by rw [supervaluation_not _ (hS i), neg_neg]
+  have h : (fun i ↦ supervaluation (S i) (R i)) = fun i ↦ (supervaluation (S i) (¬R i ·))ᶜ :=
+    funext fun i ↦ by rw [supervaluation_not _ (hS i), compl_compl]
   rw [h, ← Trivalent.compl_forallStrong, ← supervaluation_piFinset_forall _ hS,
     ← supervaluation_not _ (Fintype.piFinset_nonempty.2 hS)]
   exact supervaluation_congr fun _ _ ↦ by simp [not_forall_not]
@@ -137,16 +137,16 @@ throughout it and it is nonempty, and `0` otherwise. -/
 noncomputable def supervaluationOn (s : Set α) (P : α → Prop) : Trivalent :=
   if ∀ a ∈ s, P a then .true else if ∃ a ∈ s, P a then .undefined else .false
 
-theorem supervaluationOn_eq_one_iff : supervaluationOn s P = .true ↔ ∀ a ∈ s, P a := by
+theorem supervaluationOn_eq_true_iff : supervaluationOn s P = .true ↔ ∀ a ∈ s, P a := by
   unfold supervaluationOn
   split_ifs <;> grind
 
-theorem supervaluationOn_eq_neg_one_iff :
+theorem supervaluationOn_eq_false_iff :
     supervaluationOn s P = .false ↔ s.Nonempty ∧ ∀ a ∈ s, ¬ P a := by
   unfold supervaluationOn
   split_ifs <;> grind [Set.Nonempty]
 
-theorem supervaluationOn_eq_zero_iff :
+theorem supervaluationOn_eq_undefined_iff :
     supervaluationOn s P = .undefined ↔ (∃ a ∈ s, P a) ∧ ∃ a ∈ s, ¬ P a := by
   unfold supervaluationOn
   split_ifs <;> simp_all
@@ -154,9 +154,9 @@ theorem supervaluationOn_eq_zero_iff :
 theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
     supervaluationOn s P = supervaluationOn s Q := by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp only [supervaluationOn_eq_one_iff]
+  · simp only [supervaluationOn_eq_true_iff]
     exact forall₂_congr h
-  · simp only [supervaluationOn_eq_neg_one_iff]
+  · simp only [supervaluationOn_eq_false_iff]
     exact and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ not_congr (h a ha)
 
 /-- Over a finite set, supervaluation over the set is the supervaluation of the family. -/
@@ -167,7 +167,7 @@ theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
 theorem supervaluationOn_image {β : Type*} (f : α → β) (Q : β → Prop) :
     supervaluationOn (f '' s) Q = supervaluationOn s (Q ∘ f) := by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;>
-    simp [supervaluationOn_eq_one_iff, supervaluationOn_eq_neg_one_iff]
+    simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff]
 
 variable {lo hi : α}
 
@@ -177,10 +177,10 @@ theorem supervaluationOn_eq_of_between (hlo : lo ∈ s) (hhi : hi ∈ s)
     (hs : ∀ a ∈ s, (P lo → P a) ∧ (P a → P hi)) :
     supervaluationOn s P = supervaluationOn {lo, hi} P := by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp only [supervaluationOn_eq_one_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  · simp only [supervaluationOn_eq_true_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq]
     exact ⟨fun h ↦ ⟨h lo hlo, h hi hhi⟩, fun h a ha ↦ (hs a ha).1 h.1⟩
-  · simp only [supervaluationOn_eq_neg_one_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  · simp only [supervaluationOn_eq_false_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq, Set.insert_nonempty, true_and]
     exact ⟨fun h ↦ ⟨h.2 lo hlo, h.2 hi hhi⟩, fun h ↦ ⟨⟨lo, hlo⟩, fun a ha hPa ↦
       h.2 ((hs a ha).2 hPa)⟩⟩
@@ -207,8 +207,8 @@ section Standards
 variable {ι : Type*} {Q : (ι → Prop) → Prop} (p : ι → Trivalent)
 
 private theorem between_threshold_le (c : ι → Designation) :
-    (fun i ↦ 1 ≤ p i) ≤ (fun i ↦ (c i).threshold ≤ p i) ∧
-      (fun i ↦ (c i).threshold ≤ p i) ≤ fun i ↦ 0 ≤ p i := by
+    (fun i ↦ .true ≤ p i) ≤ (fun i ↦ (c i).threshold ≤ p i) ∧
+      (fun i ↦ (c i).threshold ≤ p i) ≤ fun i ↦ .undefined ≤ p i := by
   refine ⟨fun i h ↦ le_trans ?_ h, fun i h ↦ le_trans ?_ h⟩ <;> cases c i <;> decide
 
 /-- For a monotone `Q`, reading each index at a standard of its own gives the supervaluation of
@@ -282,7 +282,7 @@ theorem bivalentVariants_nonempty (φ : Formula Atom) : φ.bivalentVariants.None
 occurrence of an atom designated at its standard ([spector-2025], §5). -/
 theorem eval_strongKleene_eq_supervaluation (M : Model Atom) (φ : Formula Atom) :
     eval .strongKleene M φ = supervaluation φ.bivalentVariants
-      fun ψ ↦ evalBool (fun x ↦ decide (x.2.threshold ≤ M x.1)) ψ = true := by
+      fun ψ ↦ evalBool (fun x ↦ decide (x.2.threshold ≤ M x.1)) ψ = Bool.true := by
   induction φ with
   | atom a =>
     simp only [bivalentVariants, supervaluation_image]

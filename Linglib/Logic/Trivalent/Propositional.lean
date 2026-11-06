@@ -35,7 +35,7 @@ the Strong Kleene ones but not the converse.
   swaps the standards.
 * `Trivalent.consequence_iff_dual`: `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
 * `Trivalent.Formula.eval_ofBool`: on a Boolean model the Strong Kleene tables are classical.
-* `Trivalent.Formula.eval_weakKleene_eq_zero_iff`: under the Weak Kleene tables a formula is
+* `Trivalent.Formula.eval_weakKleene_eq_undefined_iff`: under the Weak Kleene tables a formula is
   undefined exactly when one of its atoms is.
 * `Trivalent.Formula.not_exists_eval_weakKleene_eq_inf`: the Weak Kleene tables do not define Strong
   Kleene conjunction, while the Strong Kleene ones define the Weak Kleene connectives
@@ -91,7 +91,7 @@ variable {Atom : Type*}
 /-- The value of a formula under the connectives `C` in the model `M`. -/
 def eval (C : Connectives) (M : Model Atom) : Formula Atom → Trivalent
   | .atom a => M a
-  | .neg φ => -eval C M φ
+  | .neg φ => (eval C M φ)ᶜ
   | .conj φ ψ => C.conj (eval C M φ) (eval C M ψ)
   | .disj φ ψ => C.disj (eval C M φ) (eval C M ψ)
   | .cond φ ψ => C.cond (eval C M φ) (eval C M ψ)
@@ -102,7 +102,7 @@ variable (C : Connectives) (M : Model Atom)
 
 @[simp] theorem eval_atom (a : Atom) : eval C M (.atom a) = M a := rfl
 
-@[simp] theorem eval_neg (φ : Formula Atom) : eval C M (.neg φ) = -eval C M φ := rfl
+@[simp] theorem eval_neg (φ : Formula Atom) : eval C M (.neg φ) = (eval C M φ)ᶜ := rfl
 
 @[simp] theorem eval_conj (φ ψ : Formula Atom) :
     eval C M (.conj φ ψ) = C.conj (eval C M φ) (eval C M ψ) := rfl
@@ -178,7 +178,7 @@ theorem dependsOn_eval (C : Connectives) (φ : Formula Atom) :
     DependsOn (fun M : Model Atom ↦ eval C M φ) φ.atoms := by
   induction φ with
   | atom a => exact fun _ _ h ↦ h a rfl
-  | neg φ ih => exact fun _ _ h ↦ congrArg Neg.neg (ih h)
+  | neg φ ih => exact fun _ _ h ↦ congrArg compl (ih h)
   | conj φ ψ ihφ ihψ =>
     exact fun _ _ h ↦ congrArg₂ C.conj (ihφ fun a ha ↦ h a (.inl ha)) (ihψ fun a ha ↦ h a (.inr ha))
   | disj φ ψ ihφ ihψ =>
@@ -187,8 +187,8 @@ theorem dependsOn_eval (C : Connectives) (φ : Formula Atom) :
     exact fun _ _ h ↦ congrArg₂ C.cond (ihφ fun a ha ↦ h a (.inl ha)) (ihψ fun a ha ↦ h a (.inr ha))
 
 /-- Under the Weak Kleene connectives a formula is undefined exactly when one of its atoms is. -/
-theorem eval_weakKleene_eq_zero_iff (M : Model Atom) (φ : Formula Atom) :
-    eval .weakKleene M φ = 0 ↔ ∃ a ∈ φ.atoms, M a = 0 := by
+theorem eval_weakKleene_eq_undefined_iff (M : Model Atom) (φ : Formula Atom) :
+    eval .weakKleene M φ = .undefined ↔ ∃ a ∈ φ.atoms, M a = .undefined := by
   induction φ with
   | atom a => simp
   | neg φ ih => simpa using ih
@@ -202,10 +202,10 @@ theorem not_exists_eval_weakKleene_eq_inf {a b : Atom} (hab : a ≠ b) :
   classical
   rintro ⟨φ, hφ⟩
   have hb : b ∉ φ.atoms := fun hb ↦ by
-    have h := hφ fun x ↦ if x = b then 0 else -1
-    rw [(eval_weakKleene_eq_zero_iff _ φ).2 ⟨b, hb, by simp⟩] at h
+    have h := hφ fun x ↦ if x = b then .undefined else .false
+    rw [(eval_weakKleene_eq_undefined_iff _ φ).2 ⟨b, hb, by simp⟩] at h
     simp [hab] at h
-  have h : eval .weakKleene (fun _ ↦ 1) φ = eval .weakKleene (fun x ↦ if x = b then -1 else 1) φ :=
+  have h : eval .weakKleene (fun _ ↦ .true) φ = eval .weakKleene (fun x ↦ if x = b then .false else .true) φ :=
     dependsOn_eval _ φ fun x hx ↦ by simp [show x ≠ b by rintro rfl; exact hb hx]
   rw [hφ, hφ] at h
   simp [hab] at h
@@ -267,7 +267,7 @@ theorem realize_ofBool (v : Atom → Bool) (φ : Formula Atom) :
 @[simp] theorem realize_cond (φ ψ : Formula Atom) :
     (M ⊨[.strongKleene, d] φ.cond ψ) ↔
       ((M ⊨[.strongKleene, d.dual] φ) → (M ⊨[.strongKleene, d] ψ)) := by
-  change d.threshold ≤ -eval _ M φ ⊔ eval _ M ψ ↔ _
+  change d.threshold ≤ (eval _ M φ)ᶜ ⊔ eval _ M ψ ↔ _
   rw [le_sup_iff, or_iff_not_imp_left]
   exact imp_congr_left ((realize_neg .strongKleene M d φ).not.trans not_not)
 
@@ -292,8 +292,8 @@ theorem consequence_iff_dual {C : Connectives} {m n : Trivalent.Designation}
     Consequence C m n Γ Δ ↔ Consequence C n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=
   mixedConsequence_iff_dual (Formula.isDual C m) (Formula.isDual C n)
 
-theorem eval_const_zero (φ : Formula Atom) :
-    Formula.eval .strongKleene (fun _ : Atom ↦ 0) φ = 0 := by
+theorem eval_const_undefined (φ : Formula Atom) :
+    Formula.eval .strongKleene (fun _ : Atom ↦ .undefined) φ = .undefined := by
   induction φ with
   | atom _ => rfl
   | neg ψ ih => simp [ih]
@@ -306,20 +306,20 @@ theorem eval_const_zero (φ : Formula Atom) :
 theorem k3_no_tautologies [Nonempty Atom] (φ : Formula Atom) :
     ¬(∀ M : Model Atom, M ⊨[.strongKleene, .k3] φ) := by
   intro h
-  have := h fun _ ↦ 0
-  simp [Formula.Realize, eval_const_zero] at this
+  have := h fun _ ↦ .undefined
+  simp [Formula.Realize, eval_const_undefined] at this
 
 /-- Every formula is LP-satisfiable, since the model sending every atom to `0` designates
 everything ([cobreros-etal-2012], Theorem 2). -/
 theorem lp_all_satisfiable (φ : Formula Atom) :
-    (fun _ : Atom ↦ 0) ⊨[.strongKleene, .lp] φ := by
-  simp [Formula.Realize, eval_const_zero]
+    (fun _ : Atom ↦ .undefined) ⊨[.strongKleene, .lp] φ := by
+  simp [Formula.Realize, eval_const_undefined]
 
-/-- Explosion fails in LP, since `{a ∧ ¬a} ⊭ b` with countermodel `M a = 0` and `M b = -1`. -/
+/-- Explosion fails in LP, since `{a ∧ ¬a} ⊭ b` with countermodel `M a = .undefined` and `M b = .false`. -/
 theorem lp_no_explosion :
     ∃ (φ ψ : Formula Bool), ¬Consequence .strongKleene .lp .lp [.conj φ (.neg φ)] [ψ] := by
   refine ⟨.atom Bool.true, .atom Bool.false, fun h ↦ ?_⟩
-  have := h (fun b ↦ if b then 0 else -1) fun γ hγ ↦ by
+  have := h (fun b ↦ if b then .undefined else .false) fun γ hγ ↦ by
     simp only [List.mem_singleton] at hγ; subst hγ
     simp [Formula.Realize, Connectives.strongKleene]
   simp [Formula.Realize] at this

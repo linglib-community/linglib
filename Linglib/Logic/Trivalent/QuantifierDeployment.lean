@@ -70,11 +70,11 @@ variable {α β : Type*} {rep : β → Set α}
 
 /-- Deploying a unary function by a nonempty repair set is the supervaluation over the repairs. -/
 theorem deployWith_unary {f : α → Bool} {x : β} (hx : (rep x).Nonempty) :
-    deployWith rep (fun y ↦ f (y 0)) ![x] = supervaluationOn (rep x) (f · = true) := by
+    deployWith rep (fun y ↦ f (y 0)) ![x] = supervaluationOn (rep x) (f · = Bool.true) := by
   by_cases h : ∃ a ∈ rep x, ∃ b ∈ rep x, f a ≠ f b
   · obtain ⟨a, ha, b, hb, hab⟩ := h
     rw [deployWith_succ_of_ne (f := fun y : Fin 1 → α ↦ f (y 0)) (x := ![x]) ha hb
-      fun e ↦ hab (congrFun e ![]), eq_comm, supervaluationOn_eq_zero_iff]
+      fun e ↦ hab (congrFun e ![]), eq_comm, supervaluationOn_eq_undefined_iff]
     cases hfa : f a <;> cases hfb : f b <;> simp only [hfa, hfb, ne_eq, not_true_eq_false] at hab
     · exact ⟨⟨b, hb, hfb⟩, a, ha, by simp [hfa]⟩
     · exact ⟨⟨a, ha, hfa⟩, b, hb, by simp [hfb]⟩
@@ -84,10 +84,10 @@ theorem deployWith_unary {f : α → Bool} {x : β} (hx : (rep x).Nonempty) :
       (g := fun _ ↦ f a) ⟨a, ha⟩ fun c hc ↦ funext fun _ ↦ h c hc a ha, deployWith_zero]
     cases hfa : f a
     · simp only [Bool.false_eq_true, ofProp_false]
-      rw [eq_comm, supervaluationOn_eq_neg_one_iff]
+      rw [eq_comm, supervaluationOn_eq_false_iff]
       exact ⟨⟨a, ha⟩, fun c hc ↦ by simp [h c hc a ha, hfa]⟩
     · simp only [ofProp_true]
-      rw [eq_comm, supervaluationOn_eq_one_iff]
+      rw [eq_comm, supervaluationOn_eq_true_iff]
       exact fun c hc ↦ (h c hc a ha).trans hfa
 
 end Unary
@@ -206,7 +206,7 @@ noncomputable def deployQuantifier (Q : (U → Bool) → Bool) (A : U → Trival
 
 /-- A deployed quantifier is the supervaluation over the repairs of its argument. -/
 theorem deployQuantifier_eq_supervaluationOn (Q : (U → Bool) → Bool) (A : U → Trivalent) :
-    deployQuantifier Q A = supervaluationOn (repairs A) (Q · = true) :=
+    deployQuantifier Q A = supervaluationOn (repairs A) (Q · = Bool.true) :=
   deployWith_unary (repairs_nonempty A)
 
 /-- On a classical predicate, a deployed quantifier is the quantifier. -/
@@ -214,12 +214,12 @@ theorem deployQuantifier_eq_supervaluationOn (Q : (U → Bool) → Bool) (A : U 
     deployQuantifier Q (fun u ↦ ofProp (g u)) = ofProp (Q g) := by
   rw [deployQuantifier_eq_supervaluationOn, repairs_ofProp]
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;>
-    simp [supervaluationOn_eq_one_iff, supervaluationOn_eq_neg_one_iff]
+    simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff]
 
 /-- A monotone quantifier deployed on a predicate is settled by its lower and upper repairs. -/
 theorem deployQuantifier_of_monotone {Q : (U → Bool) → Bool} (hQ : Monotone Q)
     (A : U → Trivalent) :
-    deployQuantifier Q A = supervaluationOn {lowerRepair A, upperRepair A} (Q · = true) := by
+    deployQuantifier Q A = supervaluationOn {lowerRepair A, upperRepair A} (Q · = Bool.true) := by
   rw [deployQuantifier_eq_supervaluationOn]
   refine supervaluationOn_eq_of_between (lowerRepair_mem_repairs A) (upperRepair_mem_repairs A)
     fun g hg ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
@@ -229,34 +229,32 @@ theorem deployQuantifier_of_monotone {Q : (U → Bool) → Bool} (hQ : Monotone 
 /-- An antitone quantifier deployed on a predicate is settled by its upper and lower repairs. -/
 theorem deployQuantifier_of_antitone {Q : (U → Bool) → Bool} (hQ : Antitone Q)
     (A : U → Trivalent) :
-    deployQuantifier Q A = supervaluationOn {upperRepair A, lowerRepair A} (Q · = true) := by
+    deployQuantifier Q A = supervaluationOn {upperRepair A, lowerRepair A} (Q · = Bool.true) := by
   rw [deployQuantifier_eq_supervaluationOn]
   refine supervaluationOn_eq_of_between (upperRepair_mem_repairs A) (lowerRepair_mem_repairs A)
     fun g hg ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · exact le_antisymm (Bool.le_true _) (h ▸ hQ (le_upperRepair_of_mem_repairs hg))
   · exact le_antisymm (Bool.le_true _) (h ▸ hQ (lowerRepair_le_of_mem_repairs hg))
 
-private theorem neg_one_ne_one : (-1 : Trivalent) ≠ .true := by decide
-
 /-- Deploying the universal quantifier (Definition 16) gives the Strong Kleene universal. -/
 theorem deployQuantifier_eq_forallStrong {Q : (U → Bool) → Bool}
-    (hQ : ∀ g, Q g = true ↔ ∀ u, g u = true) : deployQuantifier Q = forallStrong := by
+    (hQ : ∀ g, Q g = Bool.true ↔ ∀ u, g u = Bool.true) : deployQuantifier Q = forallStrong := by
   funext A
   rw [deployQuantifier_of_monotone fun g h hgh ↦ Bool.le_iff_imp.2 fun H ↦
     (hQ h).2 fun u ↦ Bool.le_iff_imp.1 (hgh u) ((hQ g).1 H u)]
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp [supervaluationOn_eq_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
-  · simp [supervaluationOn_eq_neg_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
+  · simp [supervaluationOn_eq_true_iff, hQ, lowerRepair, upperRepair]; grind
+  · simp [supervaluationOn_eq_false_iff, hQ, lowerRepair, upperRepair]; grind
 
 /-- Deploying the existential quantifier (Definition 17) gives the Strong Kleene existential. -/
 theorem deployQuantifier_eq_existsStrong {Q : (U → Bool) → Bool}
-    (hQ : ∀ g, Q g = true ↔ ∃ u, g u = true) : deployQuantifier Q = existsStrong := by
+    (hQ : ∀ g, Q g = Bool.true ↔ ∃ u, g u = Bool.true) : deployQuantifier Q = existsStrong := by
   funext A
   rw [deployQuantifier_of_monotone fun g h hgh ↦ Bool.le_iff_imp.2 fun H ↦
     (hQ h).2 <| let ⟨u, hu⟩ := (hQ g).1 H; ⟨u, Bool.le_iff_imp.1 (hgh u) hu⟩]
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp [supervaluationOn_eq_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
-  · simp [supervaluationOn_eq_neg_one_iff, hQ, lowerRepair, upperRepair]; grind [neg_one_ne_one]
+  · simp [supervaluationOn_eq_true_iff, hQ, lowerRepair, upperRepair]; grind
+  · simp [supervaluationOn_eq_false_iff, hQ, lowerRepair, upperRepair]; grind
 
 /-! ### Deployed determiners -/
 

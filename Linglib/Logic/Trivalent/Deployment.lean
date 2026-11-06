@@ -40,15 +40,15 @@ behaviour follows from its classical meaning and the order of its arguments.
 
 ## Main results
 
-* `Trivalent.deploy_cons_ofProp`, `Trivalent.deploy_cons_zero`: deployment takes its arguments one
+* `Trivalent.deploy_cons_ofProp`, `Trivalent.deploy_cons_undefined`: deployment takes its arguments one
   at a time.
 * `Trivalent.deploy_ofProp`: on classical arguments, deployment is application (Remark 8).
-* `Trivalent.deploy_eq_zero_of_reduceFirst_ne`: an undefined argument in a position that matters
+* `Trivalent.deploy_eq_undefined_of_reduceFirst_ne`: an undefined argument in a position that matters
   makes the deployment undefined (generalising Remarks 9 and 10).
 * `Trivalent.deploy_eq_deployWith`: on truth values, deployment with the repair sets `toFinset`
   is `deploy`.
 * `Trivalent.toFinset_deploy₁`: unary deployment is the Strong Kleene lift.
-* `Trivalent.deploy₂_ofProp_left`, `Trivalent.deploy₂_zero_left`: binary deployment is unary
+* `Trivalent.deploy₂_ofProp_left`, `Trivalent.deploy₂_undefined_left`: binary deployment is unary
   deployment after its first argument.
 * `Trivalent.deploy₁_not`, `Trivalent.deploy₂_and`, `Trivalent.deploy₂_or`,
   `Trivalent.deploy₂_imp`, `Trivalent.Connectives.middleKleene_eq_deploy`: deployment of the
@@ -99,7 +99,7 @@ nonempty, and on `∅` the reduction is by `false`. -/
 def pkReduce (f : (Fin (n + 1) → Bool) → Bool) (X : Finset Bool) :
     Option ((Fin n → Bool) → Bool) :=
   if ∀ x ∈ X, ∀ y ∈ X, reduceFirst f x = reduceFirst f y then
-    some (reduceFirst f (decide (true ∈ X)))
+    some (reduceFirst f (decide (Bool.true ∈ X)))
   else none
 
 /-- Peters-Kleene reduction by a single value is reduction by that value (Remark 7). -/
@@ -107,10 +107,10 @@ def pkReduce (f : (Fin (n + 1) → Bool) → Bool) (X : Finset Bool) :
     pkReduce f {x} = some (reduceFirst f x) := by
   cases x <;> simp [pkReduce]
 
-theorem pkReduce_toFinset_zero (f : (Fin (n + 1) → Bool) → Bool) :
-    pkReduce f (toFinset 0) =
-      if reduceFirst f true = reduceFirst f false then some (reduceFirst f true) else none := by
-  by_cases h : reduceFirst f true = reduceFirst f false <;> simp [pkReduce, h, eq_comm]
+theorem pkReduce_toFinset_undefined (f : (Fin (n + 1) → Bool) → Bool) :
+    pkReduce f (toFinset .undefined) =
+      if reduceFirst f Bool.true = reduceFirst f Bool.false then some (reduceFirst f Bool.true) else none := by
+  by_cases h : reduceFirst f Bool.true = reduceFirst f Bool.false <;> simp [pkReduce, h, eq_comm]
 
 /-- The Peters-Kleene deployment `f[x₁, …, xₙ]` Peters-Kleene reduces `f` by the repair set of
 each argument in turn, following George's convention `f[x₁, …, xₙ] = f[x₁]…[xₙ]`, and is
@@ -120,7 +120,7 @@ def deploy : {n : ℕ} → ((Fin n → Bool) → Bool) → (Fin n → Trivalent)
   | _ + 1, f, x =>
     match pkReduce f (toFinset (x 0)) with
     | some g => deploy g (Fin.tail x)
-    | none => 0
+    | none => .undefined
 
 /-- A classical first argument fills the first argument position. -/
 theorem deploy_cons_ofProp (f : (Fin (n + 1) → Bool) → Bool) (b : Bool) (x : Fin n → Trivalent) :
@@ -130,10 +130,10 @@ theorem deploy_cons_ofProp (f : (Fin (n + 1) → Bool) → Bool) (b : Bool) (x :
 
 /-- An undefined first argument is skipped if its position does not matter, and makes the
 deployment undefined otherwise. -/
-theorem deploy_cons_zero (f : (Fin (n + 1) → Bool) → Bool) (x : Fin n → Trivalent) :
-    deploy f (Fin.cons 0 x) =
-      if reduceFirst f true = reduceFirst f false then deploy (reduceFirst f true) x else .undefined := by
-  rw [deploy, Fin.cons_zero, pkReduce_toFinset_zero, Fin.tail_cons]
+theorem deploy_cons_undefined (f : (Fin (n + 1) → Bool) → Bool) (x : Fin n → Trivalent) :
+    deploy f (Fin.cons .undefined x) =
+      if reduceFirst f Bool.true = reduceFirst f Bool.false then deploy (reduceFirst f Bool.true) x else .undefined := by
+  rw [deploy, Fin.cons_zero, pkReduce_toFinset_undefined, Fin.tail_cons]
   split_ifs <;> rfl
 
 /-- On classical arguments, deployment is application (Remark 8). -/
@@ -148,10 +148,10 @@ theorem deploy_ofProp (f : (Fin n → Bool) → Bool) (b : Fin n → Bool) :
 
 /-- An undefined argument in a position whose value matters makes the deployment undefined,
 generalising Remarks 9 and 10. -/
-theorem deploy_eq_zero_of_reduceFirst_ne {f : (Fin (n + 1) → Bool) → Bool}
-    (h : reduceFirst f true ≠ reduceFirst f false) {x : Fin (n + 1) → Trivalent} (hx : x 0 = .undefined) :
+theorem deploy_eq_undefined_of_reduceFirst_ne {f : (Fin (n + 1) → Bool) → Bool}
+    (h : reduceFirst f Bool.true ≠ reduceFirst f Bool.false) {x : Fin (n + 1) → Trivalent} (hx : x 0 = .undefined) :
     deploy f x = .undefined := by
-  simp only [deploy, hx, pkReduce_toFinset_zero, h, ite_false]
+  simp only [deploy, hx, pkReduce_toFinset_undefined, h, ite_false]
 
 /-! ### Deployment over arbitrary repair sets
 
@@ -218,13 +218,13 @@ theorem deploy_eq_deployWith (f : (Fin n → Bool) → Bool) (x : Fin n → Triv
       rw [deploy_cons_ofProp, ih, deployWith_succ_of_forall (g := reduceFirst f b)
         (by cases b <;> simp) fun a ha ↦ by cases b <;> simp_all, Fin.tail_cons]
     cases s
-    · rw [show Trivalent.zero = .undefined from rfl, deploy_cons_zero]
+    · exact hs Bool.false rfl
+    · rw [deploy_cons_undefined]
       split_ifs with h
-      · rw [ih, deployWith_succ_of_forall (g := reduceFirst f true) (by simp) fun a ha ↦ by
+      · rw [ih, deployWith_succ_of_forall (g := reduceFirst f Bool.true) (by simp) fun a ha ↦ by
           cases a <;> simp_all, Fin.tail_cons]
-      · rw [deployWith_succ_of_ne (a := true) (b := false) (by simp) (by simp) h]
-    · exact hs false rfl
-    · exact hs true rfl
+      · rw [deployWith_succ_of_ne (a := Bool.true) (b := Bool.false) (by simp) (by simp) h]
+    · exact hs Bool.true rfl
 
 end DeployWith
 
@@ -251,14 +251,14 @@ theorem deploy₂_ofProp_left (f : Bool → Bool → Bool) (b : Bool) (y : Triva
 
 /-- After an undefined first argument, binary deployment is unary deployment if the first
 position does not matter, and undefined otherwise. -/
-theorem deploy₂_zero_left (f : Bool → Bool → Bool) (y : Trivalent) :
-    deploy₂ f 0 y = if f true = f false then deploy₁ (f true) y else .undefined := by
+theorem deploy₂_undefined_left (f : Bool → Bool → Bool) (y : Trivalent) :
+    deploy₂ f .undefined y = if f Bool.true = f Bool.false then deploy₁ (f Bool.true) y else .undefined := by
   revert f y; decide
 
 /-! ### The Peters connectives -/
 
 /-- Deploying classical negation gives Kleene's negation (Proposition 3). -/
-@[simp] theorem deploy₁_not : deploy₁ (!·) = Neg.neg := by
+@[simp] theorem deploy₁_not : deploy₁ (!·) = compl := by
   funext x; revert x; decide
 
 /-- Deploying classical conjunction gives Peters' conjunction (Proposition 3). -/
@@ -270,7 +270,7 @@ theorem deploy₂_zero_left (f : Bool → Bool → Bool) (y : Trivalent) :
   funext x y; revert x y; decide
 
 /-- Deploying the classical material conditional gives Peters' conditional (Proposition 3). -/
-@[simp] theorem deploy₂_imp : deploy₂ (fun a b ↦ !a || b) = fun x y ↦ joinMiddle (-x) y := by
+@[simp] theorem deploy₂_imp : deploy₂ (fun a b ↦ !a || b) = fun x y ↦ joinMiddle xᶜ y := by
   funext x y; revert x y; decide
 
 /-- The Middle Kleene connectives are the Peters-Kleene deployments of the classical ones. -/
