@@ -5,6 +5,7 @@ public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Studies.Blake1994
 public import Linglib.Data.Wordlist.Caha2009
 public import Linglib.Morphology.Word.UD
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Caha (2009): The Nanosyntax of Case
