@@ -15,24 +15,24 @@ public import Mathlib.Order.Bounds.Defs
 /-!
 # Dalrymple, Kanazawa, Kim, Mchombo and Peters (1998): Reciprocal Expressions and the Concept of Reciprocity
 
-The reciprocal is one polyadic quantifier whose strength among the six settings of two parameters
-(`Reciprocal.Recip`) context fixes; [iterating a quantifier and a permutation-invariant one never
-yields Intermediate Reciprocity](##intermediateReciprocity_not_iterateOtherPairs). By the Strongest
-Meaning Hypothesis a sentence is felicitous when one interpretation consistent with the context
-entails the others, and expresses it: [Intermediate Reciprocity for the
-pitchers](##pitchers_isLeast), [Intermediate Alternative Reciprocity for
-measles](##measles_isLeast). As the paper concedes, it [accepts *John and Bill are taller than each
+The reciprocal is one polyadic quantifier whose six settings (`Reciprocal.Recip`) order its readings
+as entailment does (`Reciprocal.setOf_recip_subset_iff`); [no iteration of a quantifier and a
+permutation-invariant one yields Intermediate
+Reciprocity](##intermediateReciprocity_not_iterateOtherPairs). By the Strongest Meaning Hypothesis a
+sentence is felicitous when one interpretation consistent with the context entails the others,
+[exactly when the consistent settings are closed under joins](##felicitous_iff), as for
+[measles](##measles_isLeast). As the paper concedes, it [accepts *John and Bill are taller than each
 other*](##smh_mispredicts_taller) and [denies the staring pirates eye contact](##pirates_isLeast).
 
 ## Implementation notes
 
-A situation is an extension of the scope relation over a fixed antecedent set, so an
-interpretation is the set of relations satisfying a quantifier, the non-linguistic information is
-a set of relations, and entailment is inclusion. Each context is stated by the properties of the
-relation the paper appeals to, the symmetry of *sit alongside* among them. The pitchers'
-consistency witness seats them in a circle rather than a row; either puts each beside at most two
-others. The footnote's argument needs only the inner quantifier to be permutation invariant. The
-quantified antecedents of §7 are not formalized.
+A situation is an extension of the scope relation over a fixed antecedent set, so an interpretation
+is the set of relations satisfying a quantifier, the non-linguistic information is a set of
+relations, entailment is inclusion, and the hypothesis is `IsLeast` over the interpretations
+consistent with that information. Each context is stated by the properties of the relation the paper
+appeals to, the symmetry of *sit alongside* among them. The witnesses of consistency carry a circle
+on positions to the group along its enumeration. The footnote's argument needs only the inner
+quantifier to be permutation invariant. The quantified antecedents of §7 are not formalized.
 
 ## References
 
@@ -213,41 +213,48 @@ theorem intermediateReciprocity_not_iterateOtherPairs (Q₁ : Det (Fin 6))
 
 end Iteration
 
-/-! ### The Strongest Meaning Hypothesis (§6.2) -/
+/-! ### The Strongest Meaning Hypothesis (§6.2)
+
+The interpretations of a sentence are the images of the six settings, and by the hypothesis it is
+felicitous in a context supplying the information `I` when, among the interpretations consistent
+with `I`, one entails all the others: when `Set.range (interpretation X) ∩ {p | (p ∩ I).Nonempty}`
+has a least element, which the sentence then expresses. The consistent settings form a lower set,
+so the strongest of them, when there is one, gives that element. -/
 
 /-- The interpretation of *the Xs R each other* with the reciprocal read at setting `q` is the
 set of extensions of the scope relation that make the sentence true. -/
 def interpretation (X : Finset A) (q : Coverage × Direction) : Set (A → A → Prop) :=
   {R | Recip q R X}
 
-/-- The interpretations consistent with the non-linguistic information `I`. -/
-def candidates (X : Finset A) (I : Set (A → A → Prop)) : Set (Set (A → A → Prop)) :=
-  {p | ∃ q, interpretation X q = p ∧ (p ∩ I).Nonempty}
-
-/-- By the Strongest Meaning Hypothesis a reciprocal sentence is felicitous in the context `I`
-when one of its candidates entails all the others, and it then expresses that one. -/
-def Felicitous (X : Finset A) (I : Set (A → A → Prop)) : Prop :=
-  ∃ p, IsLeast (candidates X I) p
-
 theorem interpretation_antitone : Antitone (interpretation X) :=
   fun _ _ hq _ hR ↦ recip_antitone hq hR
 
-theorem nonempty_inter_of_le {q q' : Coverage × Direction} (hq : q ≤ q')
-    (h : (interpretation X q' ∩ I).Nonempty) : (interpretation X q ∩ I).Nonempty :=
-  h.mono (Set.inter_subset_inter_left _ (interpretation_antitone hq))
+theorem isLowerSet_consistent : IsLowerSet (interpretation X ⁻¹' {p | (p ∩ I).Nonempty}) :=
+  fun _ _ hq h ↦ h.mono (Set.inter_subset_inter_left _ (interpretation_antitone hq))
 
-theorem isLeast_of_isGreatest {q : Coverage × Direction}
-    (h : IsGreatest {q | (interpretation X q ∩ I).Nonempty} q) :
-    IsLeast (candidates X I) (interpretation X q) :=
-  ⟨⟨q, rfl, h.1⟩, by
-    rintro _ ⟨q', rfl, hq'⟩
-    exact interpretation_antitone (h.2 hq')⟩
+-- the strongest consistent setting, once `I` excludes a setting below each one not below `q`
+theorem isLeast_of_blocked {q : Coverage × Direction} {t : Finset (Coverage × Direction)}
+    (hq : (interpretation X q ∩ I).Nonempty) (ht : ∀ q', ¬ q' ≤ q → ∃ c ∈ t, c ≤ q')
+    (hI : ∀ c ∈ t, ¬ (interpretation X c ∩ I).Nonempty) :
+    IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ I).Nonempty}) (interpretation X q) :=
+  (isLowerSet_consistent.isGreatest_of_forall_not_le hq ht hI).isLeast_range_inter
+    interpretation_antitone
+
+/-- With four or more members, a reciprocal sentence is felicitous exactly when the settings
+consistent with the context are closed under joins; it then expresses the interpretation at their
+join. -/
+theorem felicitous_iff (hX : 4 ≤ X.card) :
+    (∃ p, IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ I).Nonempty}) p) ↔
+      (interpretation X ⁻¹' {p | (p ∩ I).Nonempty}).Nonempty ∧
+        SupClosed (interpretation X ⁻¹' {p | (p ∩ I).Nonempty}) :=
+  exists_isLeast_range_inter_iff (fun _ _ ↦ setOf_recip_subset_iff hX)
+    fun _ _ h ⟨R, hR⟩ ↦ ⟨R, h hR.1, hR.2⟩
 
 -- (95)
 theorem isLeast_strong (h : ∃ R ∈ I, StrongReciprocity R X) :
-    IsLeast (candidates X I) (interpretation X (.ful, .plain)) :=
-  isLeast_of_isGreatest ⟨let ⟨R, hRI, hR⟩ := h; ⟨R, hR, hRI⟩, fun ⟨c, d⟩ _ ↦
-    Prod.mk_le_mk.2 ⟨by cases c <;> decide, by cases d <;> decide⟩⟩
+    IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ I).Nonempty})
+      (interpretation X (.ful, .plain)) :=
+  isLeast_of_blocked (let ⟨R, hRI, hR⟩ := h; ⟨R, hR, hRI⟩) (t := ∅) (by decide) (by simp)
 
 /-! ### How many others one bears the relation to
 
@@ -258,6 +265,14 @@ more than the bound, and Strong Alternative Reciprocity by one more than twice i
 /-- The non-linguistic information that each individual bears `R` to at most `k` individuals. -/
 def boundedDegree (k : ℕ) : Set (A → A → Prop) :=
   {R | ∀ x, {y | R x y}.encard ≤ k}
+
+/-- In the non-linguistic information for *staring at each other*, each stares at only one
+other. -/
+def singleValued : Set (A → A → Prop) :=
+  {R | ∀ x y y', R x y → R x y' → y = y'}
+
+theorem singleValued_subset_boundedDegree : singleValued ⊆ boundedDegree (A := A) 1 :=
+  fun _ hR x ↦ Set.encard_le_one_iff.2 fun _ _ ↦ hR x _ _
 
 theorem card_le_of_strongReciprocity (hR : R ∈ boundedDegree k) (h : StrongReciprocity R X) :
     X.card ≤ k + 1 := by
@@ -307,6 +322,49 @@ theorem card_le_of_strongAlternative (hR : R ∈ boundedDegree k)
   have := Nat.le_of_mul_le_mul_left key hpos
   omega
 
+/-! ### Relations carried from an enumeration
+
+A relation on the positions `Fin X.card` carries to the members of `X` along their enumeration,
+keeping Intermediate Reciprocity, symmetry, and how many others each bears it to. -/
+
+/-- A relation on `Fin X.card` carried to the members of `X` along the enumeration of `X`. -/
+def ofFin (X : Finset A) (r : Fin X.card → Fin X.card → Prop) (a b : A) : Prop :=
+  ∃ (ha : a ∈ X) (hb : b ∈ X), r (X.equivFin ⟨a, ha⟩) (X.equivFin ⟨b, hb⟩)
+
+section OfFin
+
+variable {r : Fin X.card → Fin X.card → Prop}
+
+instance [Std.Symm r] : Std.Symm (ofFin X r) := ⟨fun _ _ ⟨ha, hb, h⟩ ↦ ⟨hb, ha, symm_of r h⟩⟩
+
+theorem intermediateReciprocity_ofFin (h : IntermediateReciprocity r Finset.univ) :
+    IntermediateReciprocity (ofFin X r) X := by
+  obtain ⟨hn, h⟩ := intermediateReciprocity_iff.1 h
+  refine intermediateReciprocity_iff.2 ⟨?_, fun a ha b hb hab ↦ ?_⟩
+  · rw [← Finset.one_lt_card_iff_nontrivial] at hn ⊢
+    simpa using hn
+  · have := TransGen.lift (p := fun x y ↦ x ∈ X ∧ y ∈ X ∧ ofFin X r x y)
+      (fun i ↦ (X.equivFin.symm i : A))
+      (fun i j hij ↦ ⟨(X.equivFin.symm i).2, (X.equivFin.symm j).2, (X.equivFin.symm i).2,
+        (X.equivFin.symm j).2, by simpa using hij.2.2⟩) _ _
+      (h (Finset.mem_univ (X.equivFin ⟨a, ha⟩)) (Finset.mem_univ (X.equivFin ⟨b, hb⟩))
+        (by simpa using hab))
+    simpa only [Function.onFun, Equiv.symm_apply_apply] using this
+
+theorem ofFin_mem_boundedDegree (hr : r ∈ boundedDegree k) : ofFin X r ∈ boundedDegree k := by
+  intro a
+  by_cases ha : a ∈ X
+  · refine (Set.encard_le_encard fun b hb ↦ ?_).trans <|
+      (Set.encard_image_le (fun i ↦ (X.equivFin.symm i : A)) _).trans (hr (X.equivFin ⟨a, ha⟩))
+    obtain ⟨_, hb', h⟩ := hb
+    exact ⟨X.equivFin ⟨b, hb'⟩, h, by simp⟩
+  · simp [ofFin, ha]
+
+theorem ofFin_mem_singleValued (hr : r ∈ singleValued) : ofFin X r ∈ singleValued :=
+  fun _ _ _ ⟨_, _, h⟩ ⟨_, _, h'⟩ ↦ congrArg Subtype.val (X.equivFin.injective (hr _ _ _ h h'))
+
+end OfFin
+
 /-! ### Pitchers sitting alongside each other (§6.1) -/
 
 /-- In the non-linguistic information for *sat alongside each other*, sitting alongside is
@@ -321,55 +379,44 @@ theorem circle_mem_boundedDegree {n : ℕ} [NeZero n] : circle ∈ boundedDegree
     · exact .inr (add_sub_cancel_right y 1).symm).trans <|
     (Set.encard_insert_le _ _).trans (by simp [one_add_one_eq_two])
 
-/-- With five pitchers, *sat alongside each other* expresses Intermediate Reciprocity (96):
-symmetry makes each quantifier its own alternative, and two sides leave no room for Strong
-Reciprocity. -/
-theorem pitchers_isLeast :
-    IsLeast (candidates (Finset.univ : Finset (Fin 5)) alongside)
-      (interpretation Finset.univ (.lin, .plain)) := by
-  refine isLeast_of_isGreatest ⟨⟨circle, intermediate_circle (by omega), inferInstance,
-    circle_mem_boundedDegree⟩, ?_⟩
-  have hsr : ¬ (interpretation (Finset.univ : Finset (Fin 5)) (.ful, .alternative) ∩
-      alongside).Nonempty := by
-    rintro ⟨R, h, _, hR⟩
-    simpa using card_le_of_strongReciprocity hR ((recip_alternative_iff (R := R) .ful).1 h)
-  rintro ⟨c, d⟩ h
-  cases c <;> cases d
-  all_goals first
-    | decide
-    | exact absurd (nonempty_inter_of_le (by decide) h) hsr
+-- (96)
+theorem pitchers_isLeast (hX : 4 ≤ X.card) :
+    IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ alongside).Nonempty})
+      (interpretation X (.lin, .plain)) := by
+  have : NeZero X.card := ⟨by omega⟩
+  refine isLeast_of_blocked ⟨ofFin X circle,
+    intermediateReciprocity_ofFin (intermediate_circle (n := X.card) (by omega)), inferInstance,
+    ofFin_mem_boundedDegree circle_mem_boundedDegree⟩ (t := {(.ful, .alternative)}) (by decide) ?_
+  simp only [Finset.mem_singleton, forall_eq]
+  rintro ⟨R, h, _, hR⟩
+  have := card_le_of_strongReciprocity hR ((recip_alternative_iff (R := R) .ful).1 h)
+  omega
 
 /-- Five individuals in a round, each bearing the relation to the next two. -/
 def nextTwo (x y : Fin 5) : Prop := y = x + 1 ∨ y = x + 2
 
 instance : DecidableRel nextTwo := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
--- (96): without the symmetry of *sit alongside*, two sides leave Strong Alternative and
--- Intermediate Reciprocity both consistent, and neither entails the other
+-- (96): without the symmetry of *sit alongside*, Strong Alternative and Intermediate Reciprocity
+-- are both consistent with two sides, but their join, Strong Reciprocity, is not
 theorem not_felicitous_boundedDegree :
-    ¬ Felicitous (Finset.univ : Finset (Fin 5)) (boundedDegree 2) := by
-  have hT : nextTwo ∈ interpretation Finset.univ (.ful, .alternative) :=
-    show StrongReciprocity (SymmGen nextTwo) Finset.univ by decide
-  have hTdeg : nextTwo ∈ boundedDegree 2 := fun x ↦
-    (Set.encard_le_encard (t := {x + 1, x + 2}) fun _ hy ↦ hy).trans <|
-      (Set.encard_insert_le _ _).trans (by simp [one_add_one_eq_two])
-  have hsar : circle ∉ interpretation (Finset.univ : Finset (Fin 5)) (.ful, .alternative) :=
-    show ¬ StrongReciprocity (SymmGen circle) Finset.univ by decide
-  have hlt : (· < ·) ∈ interpretation (Finset.univ : Finset (Fin 5)) (.ful, .alternative) :=
-    show StrongReciprocity (SymmGen (· < ·)) Finset.univ by decide
-  have hir : (· < ·) ∉ interpretation (Finset.univ : Finset (Fin 5)) (.lin, .plain) := fun h ↦
-    absurd (IntermediateReciprocity.oneWayWeak (R := fun x y : Fin 5 ↦ x < y) h) (by decide)
-  have hcirc : circle ∈ interpretation (Finset.univ : Finset (Fin 5)) (.lin, .plain) :=
-    intermediate_circle (by omega)
-  rintro ⟨_, ⟨⟨c, d⟩, rfl, hq⟩, hle⟩
-  have hc₁ := hle ⟨(.ful, .alternative), rfl, nextTwo, hT, hTdeg⟩
-  have hc₂ := hle ⟨(.lin, .plain), rfl, circle, hcirc, circle_mem_boundedDegree⟩
-  cases c <;> cases d
-  all_goals first
-    | exact hsar (hc₁ (interpretation_antitone (by decide) hcirc))
-    | exact hir (hc₂ hlt)
-    | obtain ⟨R, h, hR⟩ := hq
-      simpa using card_le_of_strongReciprocity hR h
+    ¬ ∃ p, IsLeast (Set.range (interpretation (Finset.univ : Finset (Fin 5))) ∩
+      {p | (p ∩ boundedDegree 2).Nonempty}) p := by
+  rw [felicitous_iff (by simp)]
+  rintro ⟨-, h⟩
+  have hT : (Coverage.ful, Direction.alternative) ∈ interpretation Finset.univ ⁻¹'
+      {p | (p ∩ boundedDegree 2).Nonempty} :=
+    ⟨nextTwo, show StrongReciprocity (SymmGen nextTwo) Finset.univ by decide, fun x ↦
+      (Set.encard_le_encard (t := {x + 1, x + 2}) fun _ hy ↦ hy).trans <|
+        (Set.encard_insert_le _ _).trans (by simp [one_add_one_eq_two])⟩
+  have hC : (Coverage.lin, Direction.plain) ∈ interpretation Finset.univ ⁻¹'
+      {p | (p ∩ boundedDegree 2).Nonempty} :=
+    ⟨circle, intermediate_circle (n := 5) (by omega), circle_mem_boundedDegree⟩
+  have := h hT hC
+  rw [show ((Coverage.ful, Direction.alternative) ⊔ (Coverage.lin, Direction.plain) :
+    Coverage × Direction) = (.ful, .plain) by decide] at this
+  obtain ⟨R, hR, hdeg⟩ := this
+  simpa using card_le_of_strongReciprocity hdeg hR
 
 /-! ### Measles (§6.1) -/
 
@@ -420,19 +467,16 @@ theorem exists_intermediateAlternative_measles (hX : X.Nontrivial) {s : A} (hs :
 /-- With three or more students, *gave each other measles* expresses Intermediate Alternative
 Reciprocity (98), since every stronger quantifier is inconsistent with the measles facts. -/
 theorem measles_isLeast (hX : 3 ≤ X.card) :
-    IsLeast (candidates X measles) (interpretation X (.lin, .alternative)) := by
+    IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ measles).Nonempty})
+      (interpretation X (.lin, .alternative)) := by
   obtain ⟨s, hs⟩ := Finset.card_pos.1 (by omega : 0 < X.card)
   obtain ⟨R₀, hR₀, h₀⟩ :=
     exists_intermediateAlternative_measles (Finset.one_lt_card_iff_nontrivial.1 (by omega)) hs
-  refine isLeast_of_isGreatest ⟨⟨R₀, h₀, hR₀⟩, ?_⟩
-  have howr : ¬ (interpretation X (.tot, .plain) ∩ measles).Nonempty := fun ⟨R, h, hR⟩ ↦
-    not_oneWayWeak_of_measles hR h
-  rintro ⟨c, d⟩ h
-  cases c <;> cases d
-  all_goals first
-    | decide
-    | exact absurd (nonempty_inter_of_le (by decide) h) howr
-    | exact absurd h fun ⟨R, h, hR⟩ ↦ not_strongAlternative_of_measles hR hX h
+  refine isLeast_of_blocked ⟨R₀, h₀, hR₀⟩ (t := {(.ful, .alternative), (.tot, .plain)})
+    (by decide) ?_
+  simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  exact ⟨fun ⟨R, h, hR⟩ ↦ not_strongAlternative_of_measles hR hX h,
+    fun ⟨R, h, hR⟩ ↦ not_oneWayWeak_of_measles hR h⟩
 
 /-! ### Two members and an asymmetric relation (§6.3) -/
 
@@ -445,67 +489,37 @@ than* are. -/
 def asymmetric : Set (A → A → Prop) :=
   {R | ∀ x y, R x y → ¬ R y x}
 
-private theorem mem_pair (a b : A) {y : A} : y ∈ ({a, b} : Finset A) ↔ y = a ∨ y = b := by
-  simp
-
-theorem interpretation_pair_alternative {a b : A} (hab : a ≠ b) :
-    interpretation {a, b} (.tot, .alternative) = interpretation {a, b} (.ful, .alternative) := by
-  ext R
-  show OneWayWeakReciprocity (SymmGen R) {a, b} ↔ StrongReciprocity (SymmGen R) {a, b}
-  rw [oneWayWeakReciprocity_iff, strongReciprocity_iff, Finset.coe_pair, Set.pairwise_pair,
-    imp_iff_right hab]
-  refine and_congr_right fun _ ↦ ⟨fun h ↦ ?_, fun ⟨hab', hba'⟩ x hx ↦ ?_⟩
-  · obtain ⟨y, hy, hne, hay⟩ := h a (by simp)
-    obtain rfl := ((mem_pair _ _).1 hy).resolve_left (Ne.symm hne)
-    exact ⟨hay, hay.symm⟩
-  · obtain rfl | rfl := (mem_pair _ _).1 hx
-    · exact ⟨b, by simp, hab, hab'⟩
-    · exact ⟨a, by simp, Ne.symm hab, hba'⟩
-
--- (108)
+-- (108): on two members every coverage gives the same reading, and asymmetry leaves only the
+-- alternative relation
 theorem pair_isLeast {a b : A} (hab : a ≠ b) :
-    IsLeast (candidates {a, b} asymmetric) (interpretation {a, b} (.tot, .alternative)) := by
-  rw [interpretation_pair_alternative hab]
-  refine isLeast_of_isGreatest ⟨⟨fun x y ↦ x = a ∧ y = b, ?_, ?_⟩, ?_⟩
-  · show StrongReciprocity (SymmGen fun x y ↦ x = a ∧ y = b) {a, b}
-    rw [strongReciprocity_iff, Finset.coe_pair, Set.pairwise_pair]
-    exact ⟨Finset.one_lt_card_iff_nontrivial.1 (by rw [Finset.card_pair hab]; omega),
-      fun _ ↦ ⟨.of_rel ⟨rfl, rfl⟩, .of_rel_symm ⟨rfl, rfl⟩⟩⟩
+    IsLeast (Set.range (interpretation {a, b}) ∩ {p | (p ∩ asymmetric).Nonempty})
+      (interpretation {a, b} (.tot, .alternative)) := by
+  rw [show interpretation {a, b} (.tot, .alternative) = interpretation {a, b} (.ful, .alternative)
+    from Set.ext fun R ↦ (recip_pair .tot .alternative).trans (recip_pair .ful .alternative).symm]
+  refine isLeast_of_blocked ⟨fun x y ↦ x = a ∧ y = b, (recip_pair .ful .alternative).2
+    ⟨hab, Or.inl ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩⟩, ?_⟩
+    (t := {(.tot, .plain)}) (by decide) ?_
   · rintro x y ⟨rfl, rfl⟩ ⟨rfl, -⟩
     exact hab rfl
-  have howr : ¬ (interpretation {a, b} (.tot, .plain) ∩ asymmetric).Nonempty := by
+  · simp only [Finset.mem_singleton, forall_eq]
     rintro ⟨R, h, hR⟩
-    have h' := (oneWayWeakReciprocity_iff (R := R) (X := {a, b})).1 h
-    obtain ⟨y, hy, hne, hay⟩ := h'.2 a (by simp)
-    obtain ⟨y', hy', hne', hby'⟩ := h'.2 b (by simp)
-    obtain rfl := ((mem_pair _ _).1 hy).resolve_left (Ne.symm hne)
-    obtain rfl := ((mem_pair _ _).1 hy').resolve_right (Ne.symm hne')
-    exact hR _ _ hay hby'
-  rintro ⟨c, d⟩ h
-  cases c <;> cases d
-  all_goals first
-    | decide
-    | exact absurd (nonempty_inter_of_le (by decide) h) howr
+    obtain ⟨-, hab', hba'⟩ := (recip_pair .tot .plain).1 h
+    exact hR _ _ hab' hba'
 
-/-- The hypothesis cannot tell (108) from (109): with two members and an asymmetric relation it
+/-- The hypothesis cannot tell (108) from (109): on two members and an asymmetric relation it
 makes both felicitous, but only (108) is. -/
 theorem smh_mispredicts_taller {a b : A} (hab : a ≠ b) :
-    (Felicitous {a, b} asymmetric ↔ Examples.ex108.judgment = .acceptable) ∧
-      ¬ (Felicitous {a, b} asymmetric ↔ Examples.ex109.judgment = .acceptable) :=
-  have h : Felicitous {a, b} asymmetric := ⟨_, pair_isLeast hab⟩
+    ((∃ p, IsLeast (Set.range (interpretation {a, b}) ∩ {p | (p ∩ asymmetric).Nonempty}) p) ↔
+        Examples.ex108.judgment = .acceptable) ∧
+      ¬ ((∃ p, IsLeast (Set.range (interpretation {a, b}) ∩
+        {p | (p ∩ asymmetric).Nonempty}) p) ↔ Examples.ex109.judgment = .acceptable) :=
+  have h : ∃ p, IsLeast (Set.range (interpretation {a, b}) ∩
+      {p | (p ∩ asymmetric).Nonempty}) p := ⟨_, pair_isLeast hab⟩
   ⟨iff_of_true h rfl, fun h' ↦ absurd (h'.1 h) (by decide)⟩
 
 end Pair
 
 /-! ### The staring pirates (§6.3) -/
-
-/-- In the non-linguistic information for *staring at each other*, each stares at only one
-other. -/
-def singleValued : Set (A → A → Prop) :=
-  {R | ∀ x y y', R x y → R x y' → y = y'}
-
-theorem singleValued_subset_boundedDegree : singleValued ⊆ boundedDegree (A := A) 1 :=
-  fun _ hR x ↦ Set.encard_le_one_iff.2 fun _ _ ↦ hR x _ _
 
 theorem not_mutual_of_intermediate (hR : R ∈ singleValued) (h : IntermediateReciprocity R X)
     (hX : 3 ≤ X.card) {a b : A} (ha : a ∈ X) (hab : R a b) (hba : R b a) : False := by
@@ -526,30 +540,29 @@ theorem not_mutual_of_intermediate (hR : R ∈ singleValued) (h : IntermediateRe
   · exact hca rfl
   · exact hcb rfl
 
-/-- Four pirates, each staring at the next around a circle. -/
-def stareRound (x y : Fin 4) : Prop := y = x + 1
+/-- Pirates each staring at the next around a circle. -/
+def stareRound {n : ℕ} [NeZero n] (x y : Fin n) : Prop := y = x + 1
 
 /-- Four pirates in two pairs, each staring at the other of the pair. -/
 def stareBack (x y : Fin 4) : Prop := x ≠ y ∧ x.val / 2 = y.val / 2
 
 instance : DecidableRel stareBack := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- With four pirates, the fewest for which the paper's argument excludes both quantifiers built
-on `FUL`, the hypothesis makes *staring at each other* express Intermediate Reciprocity (110),
-which a single-valued relation satisfies only without eye contact. -/
-theorem pirates_isLeast :
-    IsLeast (candidates (Finset.univ : Finset (Fin 4)) singleValued)
-      (interpretation Finset.univ (.lin, .plain)) := by
-  refine isLeast_of_isGreatest ⟨⟨stareRound, intermediate_of_succ (by omega) fun _ ↦ rfl,
-    fun _ _ _ h h' ↦ h.trans h'.symm⟩, ?_⟩
-  have hsar : ¬ (interpretation (Finset.univ : Finset (Fin 4)) (.ful, .alternative) ∩
-      singleValued).Nonempty := fun ⟨_, h, hR⟩ ↦
-    absurd (card_le_of_strongAlternative (singleValued_subset_boundedDegree hR) h) (by decide)
-  rintro ⟨c, d⟩ h
-  cases c <;> cases d
-  all_goals first
-    | decide
-    | exact absurd (nonempty_inter_of_le (by decide) h) hsar
+/-- With four or more pirates, the fewest for which the paper's argument excludes both quantifiers
+built on `FUL`, the hypothesis makes *staring at each other* express Intermediate Reciprocity
+(110), which a single-valued relation satisfies only without eye contact. -/
+theorem pirates_isLeast (hX : 4 ≤ X.card) :
+    IsLeast (Set.range (interpretation X) ∩ {p | (p ∩ singleValued).Nonempty})
+      (interpretation X (.lin, .plain)) := by
+  have : NeZero X.card := ⟨by omega⟩
+  refine isLeast_of_blocked ⟨ofFin X stareRound,
+    intermediateReciprocity_ofFin (intermediate_of_succ (n := X.card) (by omega) fun _ ↦ rfl),
+    ofFin_mem_singleValued fun _ _ _ h h' ↦ h.trans h'.symm⟩ (t := {(.ful, .alternative)})
+    (by decide) ?_
+  simp only [Finset.mem_singleton, forall_eq]
+  rintro ⟨R, h, hR⟩
+  have := card_le_of_strongAlternative (singleValued_subset_boundedDegree hR) h
+  omega
 
 -- (110)
 theorem pirates_eyeContact :

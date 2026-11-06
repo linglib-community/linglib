@@ -4,6 +4,7 @@ public import Mathlib.Data.Finset.Pairwise
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Data.Set.Functor
+public import Linglib.Core.Order.SupClosed
 public import Linglib.Core.ModelTheory.Graph
 
 /-!
@@ -37,6 +38,9 @@ that Beck orders by entailment.
 
 * `Reciprocal.ful_le_lin`, `Reciprocal.lin_le_tot`, `Reciprocal.recip_antitone`: a stronger
   setting of the parameters entails a weaker one.
+* `Reciprocal.setOf_recip_subset_iff`: with four or more members, only then, so the six readings
+  are distinct.
+* `Reciprocal.recip_pair`: on two members the coverage parameter is idle.
 * `Reciprocal.strongReciprocity_iff`, `Reciprocal.intermediateReciprocity_iff`,
   `Reciprocal.oneWayWeakReciprocity_iff`: the relativizations stated over the members of `X`.
 * `Reciprocal.IntermediateReciprocity.weak`, `Reciprocal.PartitionedStrongReciprocity.weak`:
@@ -316,6 +320,145 @@ theorem recip_antitone : Antitone fun q ↦ Recip q R X := by
   rintro ⟨c, d⟩ ⟨c', d'⟩ hle h
   obtain ⟨hc, hd⟩ := Prod.mk_le_mk.1 hle
   exact Coverage.quantifier_antitone hc (c'.mem_quantifier_mono (Direction.rel_anti hd) h)
+
+section Pair
+
+variable [DecidableEq α] {a b : α}
+
+theorem oneWayWeakReciprocity_pair : OneWayWeakReciprocity R {a, b} ↔ a ≠ b ∧ R a b ∧ R b a := by
+  rw [oneWayWeakReciprocity_iff]
+  refine ⟨fun ⟨_, h⟩ ↦ ?_, fun ⟨hab, hR, hR'⟩ ↦ ⟨⟨a, by simp, b, by simp, hab⟩, fun x hx ↦ ?_⟩⟩
+  · obtain ⟨y, hy, hay, hR⟩ := h a (by simp)
+    obtain ⟨z, hz, hbz, hR'⟩ := h b (by simp)
+    obtain rfl : y = b := by simpa [Ne.symm hay] using hy
+    obtain rfl : z = a := by simpa [Ne.symm hbz] using hz
+    exact ⟨hay, hR, hR'⟩
+  · rw [Finset.mem_insert, Finset.mem_singleton] at hx
+    obtain rfl | rfl := hx
+    · exact ⟨b, by simp, hab, hR⟩
+    · exact ⟨a, by simp, Ne.symm hab, hR'⟩
+
+theorem intermediateReciprocity_pair :
+    IntermediateReciprocity R {a, b} ↔ a ≠ b ∧ R a b ∧ R b a :=
+  ⟨fun h ↦ oneWayWeakReciprocity_pair.1 h.oneWayWeak,
+    fun h ↦ (strongReciprocity_pair.2 h).intermediate⟩
+
+/-- On two members the coverage requirement is idle: every setting asks only that the two be
+related both ways by the setting's relation. -/
+theorem recip_pair (c : Coverage) (d : Direction) :
+    Recip (c, d) R {a, b} ↔ a ≠ b ∧ d.rel R a b ∧ d.rel R b a := by
+  cases c
+  exacts [oneWayWeakReciprocity_pair, intermediateReciprocity_pair, strongReciprocity_pair]
+
+end Pair
+
+/-! ### The settings order the readings exactly
+
+With four or more members, one setting's reading entails another's only when the setting is
+stronger, so the six readings are distinct and ordered as the product of the parameters. Four
+relations around chosen members separate them: everyone else bearing the relation to all others
+but not one member, which has Strong Alternative but not One-way Weak Reciprocity; one member
+related both ways to all others, which has Intermediate but not Strong Alternative Reciprocity;
+that member bearing it outward only, which has Intermediate Alternative Reciprocity and neither of
+those; and two cliques, which have One-way Weak but not Intermediate Alternative Reciprocity. -/
+
+section Separation
+
+private theorem recip_iff_le_of_blocked {w : Coverage × Direction}
+    {t : Finset (Coverage × Direction)} (hw : Recip w R X) (ht : ∀ q, ¬ q ≤ w → ∃ c ∈ t, c ≤ q)
+    (hR : ∀ c ∈ t, ¬ Recip c R X) (q : Coverage × Direction) : Recip q R X ↔ q ≤ w :=
+  ⟨fun h ↦ (IsLowerSet.isGreatest_of_forall_not_le (s := {q | Recip q R X})
+    (fun _ _ h hq ↦ recip_antitone h hq) hw ht hR).2 h, fun h ↦ recip_antitone h hw⟩
+
+private theorem not_recip_ful {l l' : α} (hl : l ∈ X) (hl' : l' ∈ X) (hne : l ≠ l')
+    (h : ¬ R l l') (h' : ¬ R l' l) (d : Direction) : ¬ Recip (.ful, d) R X := fun hr ↦ by
+  have := (strongReciprocity_iff.1 (show StrongReciprocity (d.rel R) X from hr)).2 hl hl' hne
+  cases d
+  · exact this.elim h h'
+  · exact h this
+
+private theorem not_oneWayWeak {x : α} (hx : x ∈ X) (h : ∀ y ∈ X, x ≠ y → ¬ R x y) :
+    ¬ OneWayWeakReciprocity R X := fun hr ↦
+  let ⟨y, hy, hne, hR⟩ := (oneWayWeakReciprocity_iff.1 hr).2 x hx
+  h y hy hne hR
+
+private theorem not_intermediate_of_invariant {p : α → Prop} (hp : ∀ x y, R x y → (p x ↔ p y))
+    {x y : α} (hx : x ∈ X) (hy : y ∈ X) (hpx : p x) (hpy : ¬ p y) :
+    ¬ IntermediateReciprocity R X := fun h ↦ by
+  have hxy : x ≠ y := fun e ↦ hpy (e ▸ hpx)
+  have key {a b : α} (hab : TransGen (fun u v ↦ u ∈ X ∧ v ∈ X ∧ R u v) a b) : p a ↔ p b := by
+    induction hab with
+    | single h => exact hp _ _ h.2.2
+    | tail _ h ih => exact ih.trans (hp _ _ h.2.2)
+  exact hpy ((key ((intermediateReciprocity_iff.1 h).2 hx hy hxy)).1 hpx)
+
+/-- With four or more members, one setting's reading entails another's exactly when it is
+stronger, so the six readings are distinct and ordered as the diagram of
+[dalrymple-et-al-1998] shows. -/
+theorem setOf_recip_subset_iff (hX : 4 ≤ X.card) {q q' : Coverage × Direction} :
+    {R | Recip q R X} ⊆ {R | Recip q' R X} ↔ q' ≤ q := by
+  classical
+  refine ⟨fun h ↦ by_contra fun hq ↦ ?_, fun h _ ↦ recip_antitone h⟩
+  obtain ⟨s, hs⟩ := Finset.card_pos.1 (by omega : 0 < X.card)
+  obtain ⟨l, hl, hls⟩ := X.exists_mem_ne (by omega) s
+  obtain ⟨l', hl', hl'l⟩ := (X.erase s).exists_mem_ne
+    (by have := Finset.pred_card_le_card_erase (s := X) (a := s); omega) l
+  obtain ⟨hl's, hl'X⟩ := Finset.mem_erase.1 hl'
+  have hX2 : X.Nontrivial := ⟨s, hs, l, hl, Ne.symm hls⟩
+  -- the member `s` is a sink, a hub, and an outward hub; `{s, l}` is one of two cliques
+  have hub : IntermediateReciprocity (fun x y ↦ x ≠ y ∧ (x = s ∨ y = s)) X := by
+    refine intermediateReciprocity_iff.2 ⟨hX2, fun x hx y hy hxy ↦ ?_⟩
+    by_cases hxs : x = s
+    · exact .single ⟨hx, hy, hxy, .inl hxs⟩
+    by_cases hys : y = s
+    · exact .single ⟨hx, hy, hxy, .inr hys⟩
+    exact .tail (.single ⟨hx, hs, hxs, .inr rfl⟩) ⟨hs, hy, Ne.symm hys, .inl rfl⟩
+  have key : ∀ w ∈ ({(.ful, .alternative), (.lin, .plain), (.lin, .alternative), (.tot, .plain)} :
+      Finset (Coverage × Direction)), ∃ R : α → α → Prop, ∀ q, Recip q R X ↔ q ≤ w := by
+    simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+    refine ⟨⟨fun x y ↦ x ≠ y ∧ x ≠ s, recip_iff_le_of_blocked (t := {(.tot, .plain)}) ?_
+      (by decide) ?_⟩, ⟨fun x y ↦ x ≠ y ∧ (x = s ∨ y = s), recip_iff_le_of_blocked
+      (t := {(.ful, .alternative)}) hub (by decide) ?_⟩, ⟨fun x y ↦ x = s ∧ y ≠ s,
+      recip_iff_le_of_blocked (t := {(.ful, .alternative), (.tot, .plain)}) ?_ (by decide) ?_⟩,
+      ⟨fun x y ↦ x ≠ y ∧ (x = s ∨ x = l ↔ y = s ∨ y = l), recip_iff_le_of_blocked
+      (t := {(.lin, .alternative)}) ?_ (by decide) ?_⟩⟩
+    · refine strongReciprocity_iff.2 ⟨hX2, fun x _ y _ hxy ↦ ?_⟩
+      by_cases hxs : x = s
+      · exact .inr ⟨Ne.symm hxy, hxs ▸ Ne.symm hxy⟩
+      · exact .inl ⟨hxy, hxs⟩
+    · simp only [Finset.mem_singleton, forall_eq]
+      exact not_oneWayWeak hs fun y _ hsy h ↦ h.2 rfl
+    · simp only [Finset.mem_singleton, forall_eq]
+      exact not_recip_ful hl hl'X (Ne.symm hl'l) (fun h ↦ h.2.elim hls hl's)
+        (fun h ↦ h.2.elim hl's hls) _
+    · exact hub.mono fun x y ⟨hxy, h⟩ ↦ h.elim (fun e ↦ .inl ⟨e, e ▸ Ne.symm hxy⟩)
+        fun e ↦ .inr ⟨e, e ▸ hxy⟩
+    · simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+      exact ⟨not_recip_ful hl hl'X (Ne.symm hl'l) (fun h ↦ hls h.1) (fun h ↦ hl's h.1) _,
+        not_oneWayWeak hl fun y _ _ h ↦ hls h.1⟩
+    · refine oneWayWeakReciprocity_iff.2 ⟨hX2, fun x hx ↦ ?_⟩
+      by_cases hxs : x = s
+      · exact ⟨l, hl, hxs ▸ Ne.symm hls, hxs ▸ Ne.symm hls, by simp [hxs]⟩
+      by_cases hxl : x = l
+      · exact ⟨s, hs, hxl ▸ hls, hxl ▸ hls, by simp [hxl]⟩
+      obtain ⟨y, hy⟩ : (((X.erase s).erase l).erase x).Nonempty := Finset.card_pos.1 (by
+        have := Finset.pred_card_le_card_erase (s := X) (a := s)
+        have := Finset.pred_card_le_card_erase (s := X.erase s) (a := l)
+        have := Finset.pred_card_le_card_erase (s := (X.erase s).erase l) (a := x)
+        omega)
+      obtain ⟨hyx, hyl, hys, hyX⟩ : y ≠ x ∧ y ≠ l ∧ y ≠ s ∧ y ∈ X := by simpa using hy
+      exact ⟨y, hyX, Ne.symm hyx, Ne.symm hyx, by simp [hxs, hxl, hys, hyl]⟩
+    · simp only [Finset.mem_singleton, forall_eq]
+      exact not_intermediate_of_invariant (p := fun x ↦ x = s ∨ x = l)
+        (fun x y h ↦ h.elim (fun h ↦ h.2) fun h ↦ h.2.symm) hs hl'X (.inl rfl)
+        (by simp [hl's, hl'l])
+  obtain ⟨w, hw, hqw, hq'w⟩ := (by decide : ∀ q q' : Coverage × Direction, ¬ q' ≤ q →
+    ∃ w ∈ ({(.ful, .alternative), (.lin, .plain), (.lin, .alternative), (.tot, .plain)} :
+      Finset (Coverage × Direction)), q ≤ w ∧ ¬ q' ≤ w) q q' hq
+  obtain ⟨R, hR⟩ := key w hw
+  exact hq'w ((hR q').1 (h ((hR q).2 hqw)))
+
+end Separation
 
 /-! ### Weak Reciprocity -/
 
