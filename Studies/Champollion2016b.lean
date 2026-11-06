@@ -130,8 +130,7 @@ theorem minimal_some_inf_some_iff_of_disjoint {N N' P : Set E} (h : Disjoint N N
 -- (43)
 theorem minimal_individual_inf_some_iff {N P : Set E} {j : E} (hj : j ∈ N) :
     Minimal (individual j ⊓ Det.some N) P ↔ P = {j} := by
-  rw [show individual j = Det.some {j} by funext Q; simp [individual, Det.some],
-    minimal_some_inf_some_iff]
+  rw [← some_singleton, minimal_some_inf_some_iff]
   simp [hj]
 
 -- (40)
