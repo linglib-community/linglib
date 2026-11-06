@@ -177,6 +177,10 @@ def Sentence.tree : Sentence → NumberTree
 /-- The quantifier of a target sentence over the four children. -/
 def Sentence.quantifier (s : Sentence) : Set (Fin children) → Prop := s.tree.toDet Set.univ
 
+theorem Sentence.quantifier_apply (s : Sentence) (X : Set (Fin children)) :
+    s.quantifier X ↔ s.tree.toDet Set.univ X :=
+  .rfl
+
 /-- The nuclear scope of a target sentence (2), *opened the present in front of him*, a trigger of
 the presupposition, negated in nm-neg. -/
 def Sentence.scope : Sentence → Formula Atom
@@ -204,18 +208,6 @@ def interp {σ : Type*} (π o : σ → Prop) : Atom → Set ((Fin children → �
 noncomputable def Sentence.scopeAt {σ : Type*} (s : Sentence) (π o : σ → Prop)
     (w : Fin children → σ) (e : Fin children) : Trivalent :=
   s.scope.strongKleene (interp π o) (w, e)
-
-private theorem toDet_iff {n : ℕ} {q : NumberTree} {A B : Set (Fin n)} [DecidablePred (· ∈ A)]
-    [DecidablePred (· ∈ B)] : q.toDet A B ↔
-      q (Finset.univ.filter fun i ↦ i ∈ A ∧ i ∉ B).card
-        (Finset.univ.filter fun i ↦ i ∈ A ∧ i ∈ B).card := by
-  rw [NumberTree.toDet_apply, ← Set.ncard_coe_finset, ← Set.ncard_coe_finset]
-  congr! 2 <;> ext <;> simp
-
-private theorem quantifier_apply (s : Sentence) (X : Set (Fin children)) [DecidablePred (· ∈ X)] :
-    s.quantifier X ↔
-      s.tree (Finset.univ.filter (· ∉ X)).card (Finset.univ.filter (· ∈ X)).card := by
-  simp [Sentence.quantifier, toDet_iff]
 
 theorem Sentence.scopeAt_apply {σ : Type*} (s : Sentence) (π o : σ → Prop) [DecidablePred π]
     [DecidablePred o] (w : Fin children → σ) (e : Fin children) :
@@ -247,9 +239,10 @@ theorem deployWithConcern_quantifier_eq_true_iff (s : Sentence) (A : Fin childre
       (s = .mNeg → ∀ e, A e ≠ .undefined) ∧ s.quantifier (posExt A) := by
   cases s
   · simp [Sentence.quantifier, Sentence.tree, George2008.deployWithConcern_all_eq_true_iff,
-      George2008.toDet_all_iff, Set.subset_def]
+      NumberTree.toDet_all_iff, Set.subset_def]
   · simp only [Sentence.quantifier, Sentence.tree, George2008.deployWithConcern_no_eq_true_iff,
-      George2008.toDet_no_iff, Set.mem_univ, forall_const, Trivalent.mem_posExt]
+      NumberTree.toDet_no_iff, Set.mem_univ, forall_const, Set.univ_inter, Set.Nonempty,
+      Trivalent.mem_posExt, not_exists]
     exact ⟨fun h ↦ ⟨fun e ↦ by simp [h e], fun e ↦ by simp [h e]⟩,
       fun ⟨h₁, h₂⟩ e ↦ by rcases Trivalent.trichotomy (A e) with h | h | h <;> simp_all⟩
   all_goals
@@ -332,7 +325,7 @@ theorem Reading.accepts_iff (r : Reading) (e : Experiment) (s : Sentence) (p : P
   simp [Reading.Accepts, Reading.value, universalProjection_eq_true_iff,
     existentialProjection_eq_true_iff, localAccommodation_eq_true_iff,
     deployWithConcern_quantifier_eq_true_iff, scopeValue, Sentence.scopeAt_apply,
-    Sentence.triggerStandard, Trivalent.posExt, quantifier_apply, Sentence.tree] <;>
+    Sentence.triggerStandard, Trivalent.posExt, Sentence.quantifier_apply, Sentence.tree] <;>
   decide
 
 instance (r : Reading) (e : Experiment) (s : Sentence) (p : Picture) :
@@ -351,7 +344,7 @@ theorem mem_predictions_exist_iff (e : Experiment) (s : Sentence) (p : Picture) 
       (∃ i, scopeValue e s p i ≠ .undefined) ∧ Reading.locA.Accepts e s p := by
   cases e <;> cases s <;> cases p <;>
   simp [Reading.Accepts, Reading.value, localAccommodation_eq_true_iff, scopeValue,
-    Sentence.scopeAt_apply, Sentence.triggerStandard, quantifier_apply, Sentence.tree] <;>
+    Sentence.scopeAt_apply, Sentence.triggerStandard, Sentence.quantifier_apply, Sentence.tree] <;>
   decide
 
 /-! ### The design and the results -/
@@ -411,7 +404,7 @@ theorem enrichedAccommodation_mNeg :
       Reading.locA.Accepts .existence .mNeg .target2 := by
   refine ⟨?_, ?_, by decide, by decide⟩ <;>
   simp [enrichedAccommodation_eq_true_iff, scopeValue, Sentence.scopeAt_apply, Trivalent.gapExt,
-    quantifier_apply, Sentence.tree] <;>
+    Sentence.quantifier_apply, Sentence.tree] <;>
   decide
 
 end MartyEtAl2026
