@@ -1,7 +1,10 @@
 [
   {
     "id": "yalcin2007_1",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(5)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(5)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "It is raining and I do not know that it is raining.",
@@ -9,20 +12,28 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "none"],
-      ["felicity", "infelicitous"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "none"
+      ]
     ],
     "comment": "Printed without a mark; the prose calls (5) and (6) \"odd, contradictory-sounding, and unassertable\". Unassertable, but coherent under embedding.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_2",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(6)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(6)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "It is not raining and for all I know, it is raining.",
@@ -30,20 +41,28 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "none"],
-      ["felicity", "infelicitous"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "none"
+      ]
     ],
     "comment": "Printed without a mark; the prose calls (5) and (6) \"odd, contradictory-sounding, and unassertable\".",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_3",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(7)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(7)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is raining and it might not be raining.",
@@ -55,15 +74,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_4",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(8)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(8)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is not raining and it might be raining.",
@@ -75,15 +103,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_5",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(9)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(9)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is raining and possibly it is not raining.",
@@ -95,15 +132,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_6",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(11)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(11)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is raining and it might not be raining, then …",
@@ -115,15 +161,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "Unintelligible whatever the consequent.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_7",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(13)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(13)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is raining and it might not be raining, then (still) it is raining.",
@@ -135,15 +190,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "Unintelligible rather than trivially true.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_8",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(14)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(14)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is raining and I do not know that it is raining.",
@@ -155,15 +219,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "A coherent request.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_9",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(15)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(15)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is not raining and for all I know, it is raining.",
@@ -175,15 +248,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_10",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(16)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(16)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is raining and I do not know it, then there is something I do not know.",
@@ -195,15 +277,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_11",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(17)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(17)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is not raining but for all I know, it is, then there is something I do not know.",
@@ -215,15 +306,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "Moore-paradoxical"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "Moore-paradoxical"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_12",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(18)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(18)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is not raining and it might be raining, then for all I know, it is raining.",
@@ -235,15 +335,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "A relational semantics on which might entails for-all-I-know predicts this true.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_13",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(19)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(19)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Vann believes that Bob might be in his office.",
@@ -254,17 +363,26 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "the modal quantifies over Vann's belief worlds", "judgment": "acceptable"}
+      {
+        "name": "the modal quantifies over Vann's belief worlds",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["embedding", "believe"]
+      [
+        "embedding",
+        "believe"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_14",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(20)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(20)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Fido thinks there might be an intruder downstairs.",
@@ -276,14 +394,20 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["embedding", "think"]
+      [
+        "embedding",
+        "think"
+      ]
     ],
     "comment": "True without second-order beliefs on Fido's part.",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_15",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(21)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(21)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Cheerios may reduce the risk of heart disease.",
@@ -295,14 +419,20 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["reading", "expert information"]
+      [
+        "reading",
+        "expert information"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_16",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(23)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(23)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "I do not know whether the late Antarctic spring might be caused by ozone depletion.",
@@ -314,14 +444,20 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["reading", "target information state"]
+      [
+        "reading",
+        "target information state"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_17",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(24)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(24)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is not raining and it must be raining.",
@@ -333,16 +469,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["modal", "must"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "modal",
+        "must"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_18",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(25)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(25)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is not raining and it is likely that it is raining.",
@@ -354,16 +502,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["modal", "probability"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "modal",
+        "probability"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_19",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(26)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(26)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Suppose it is raining and it probably is not raining.",
@@ -375,16 +535,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["modal", "probability"],
-      ["embedding", "suppose"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "modal",
+        "probability"
+      ],
+      [
+        "embedding",
+        "suppose"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_20",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(27)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(27)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If it is not raining and it is probably raining, then …",
@@ -396,16 +568,28 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["type", "epistemic contradiction"],
-      ["modal", "probability"],
-      ["embedding", "conditional antecedent"]
+      [
+        "type",
+        "epistemic contradiction"
+      ],
+      [
+        "modal",
+        "probability"
+      ],
+      [
+        "embedding",
+        "conditional antecedent"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_21",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(C1)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(C1)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If the butler did not do it, the gardener did.",
@@ -417,14 +601,20 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["consequent", "plain"]
+      [
+        "consequent",
+        "plain"
+      ]
     ],
     "comment": "",
     "verified": "page-image"
   },
   {
     "id": "yalcin2007_22",
-    "source": {"bibkey": "yalcin-2007", "paperLabel": "(C2)"},
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(C2)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If the butler did not do it, the gardener must have.",
@@ -436,7 +626,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["consequent", "must"]
+      [
+        "consequent",
+        "must"
+      ]
     ],
     "comment": "Sounds equivalent to (C1).",
     "verified": "page-image"

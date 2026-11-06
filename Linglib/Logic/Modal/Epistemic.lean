@@ -10,7 +10,8 @@ In epistemic logic an agent *knows* a proposition at a world when it is true at 
 agent cannot tell apart from it. A group's *everyone*, *distributed* and *common knowledge* are
 necessity along the union, the intersection and the transitive closure of the union of its
 members' relations, and common knowledge [is the infinite conjunction of iterated knowledge by
-everyone](##commonKnowledge_iff_forall_iterate). Belief is the same operator along a KD45 frame.
+everyone](##commonKnowledge_iff_forall_iterate). Belief is the same operator along a serial
+relation, transitive in Hintikka's logic and Euclidean as well in KD45.
 A common ground is *grounded in* common knowledge when the worlds it leaves open are exactly those
 at which every proposition it accepts is common knowledge.
 
@@ -24,7 +25,7 @@ at which every proposition it accepts is common knowledge.
 * [fagin-halpern-moses-vardi-1995] — group knowledge and its reachability semantics
 * [halpern-2003] — the same operators in the uncertainty setting
 * [fagin-halpern-1994] — the probabilistic extension, `Studies/FaginHalpern1994.lean`
-* [hintikka-1962] — knowledge as necessity
+* [hintikka-1962] — knowledge and belief as necessity
 * [lederman-2014] — common knowledge as reachability (UNVERIFIED: Appendix 2.B)
 * [stalnaker-2002] — common ground as common knowledge
 -/
