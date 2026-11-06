@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Exponence.Containment.SupersetRule
+public import Linglib.Morphology.Paradigm.Contiguity
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.Dekier2021
 public import Linglib.Data.Examples.Readers
@@ -51,7 +52,8 @@ prefixes and suffixes in §4.2 are not modelled.
 
 namespace Dekier2021
 
-open Morphology Morphology.Containment Indefinite Haspelmath1997
+open Morphology Indefinite Haspelmath1997
+open Morphology.SupersetRule (spellout spellout_eq_none_of_le isContiguous_spellout)
 
 /-! ### The hierarchy -/
 

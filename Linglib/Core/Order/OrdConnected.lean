@@ -98,6 +98,10 @@ theorem IsContiguous.comp_monotone {κ : Type*} [Preorder κ] {p : ι → F} (hp
     {f : κ → ι} (hf : Monotone f) : IsContiguous (p ∘ f) :=
   fun _ _ _ hij hjk heq ↦ hp (hf hij) (hf hjk) heq
 
+theorem IsContiguous.comp_antitone {κ : Type*} [Preorder κ] {p : ι → F} (hp : IsContiguous p)
+    {f : κ → ι} (hf : Antitone f) : IsContiguous (p ∘ f) :=
+  fun _ _ _ hij hjk heq ↦ heq.trans (hp (hf hjk) (hf hij) heq.symm)
+
 end Preorder
 
 section LinearOrder
