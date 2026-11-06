@@ -120,6 +120,9 @@ instance : BoundedOrder Trivalent where
   bot := .false
   bot_le := by exact LE.of_false
 
+theorem trichotomy (a : Trivalent) : a = .false ∨ a = .undefined ∨ a = .true := by
+  cases a <;> simp
+
 @[simp] theorem top_eq_true : (⊤ : Trivalent) = .true := rfl
 @[simp] theorem bot_eq_false : (⊥ : Trivalent) = .false := rfl
 

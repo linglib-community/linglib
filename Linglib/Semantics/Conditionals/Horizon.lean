@@ -98,7 +98,7 @@ theorem isStrawsonDE_horizonCounterfactual :
 fall outside the horizon ([von-fintel-1999], §4.3). -/
 theorem not_antitone_posSupport_horizonCounterfactual :
     ¬ Antitone fun p : Set Unit ↦
-      posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
+      Trivalent.posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
   not_antitone_posSupport (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
 
 /-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit

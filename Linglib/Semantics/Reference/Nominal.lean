@@ -76,7 +76,7 @@ the two presuppositions conjoined. For a definite the intrinsic presupposition i
 φ-features project. -/
 noncomputable def toTrivalent (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
     W → Trivalent :=
-  {w | nd.presup c w}.indicator (nd.resolve scope c)
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (nd.presup c w)) (nd.resolve scope c w)
 
 section Values
 
@@ -87,7 +87,7 @@ variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
 @[simp] theorem toTrivalent_eq_zero_iff :
     nd.toTrivalent scope c w = .undefined ↔ (nd.presup c w → nd.selector c w = none) := by
-  simp [toTrivalent]
+  simp [toTrivalent, imp_iff_not_or]
 
 end Values
 

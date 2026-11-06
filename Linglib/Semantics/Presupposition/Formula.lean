@@ -112,7 +112,7 @@ defined where its presupposition holds. -/
 noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → Trivalent
   | atom p => fun w ↦ Trivalent.ofProp (w ∈ I p)
   | trigger p p' => fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ (I p))) (Trivalent.ofProp (w ∈ I p'))
-  | not F => -eval C F
+  | not F => (eval C F)ᶜ
   | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
 /-- The Strong Kleene evaluation. -/
@@ -150,27 +150,27 @@ def accommodate : Formula Atom → Formula Atom
 variable {w : W}
 
 theorem middleKleene_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
-    (hF : F.middleKleene I w ≠ 0 → F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I)) :
-    (bin c F G).middleKleene I w ≠ 0 ↔
-      F.middleKleene I w ≠ 0 ∧
-        (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) := by
+    (hF : F.middleKleene I w ≠ .undefined → F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I)) :
+    (bin c F G).middleKleene I w ≠ .undefined ↔
+      F.middleKleene I w ≠ .undefined ∧
+        (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) := by
   simp only [middleKleene, eval] at hF ⊢
   refine ⟨fun h ↦ ?_, fun ⟨h, hG⟩ ↦ ?_⟩
-  · have h' : F.middleKleene I w ≠ 0 := by cases c <;> simp_all
+  · have h' : F.middleKleene I w ≠ .undefined := by cases c <;> simp_all
     rw [hF h'] at h
     exact ⟨h', fun hl ↦ by cases c <;> simp_all [Connective.localContext]⟩
   · rw [hF h]
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp_all [Connective.localContext]
 
-theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0) :
+theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ .undefined) :
     F.middleKleene I w = Trivalent.ofProp (w ∈ F.truth I) := by
   induction F with
   | atom p => rfl
   | trigger p p' =>
     by_cases hp : w ∈ I p <;> simp_all [middleKleene, eval, truth]
   | not F ih =>
-    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff] at h ⊢
+    simp only [middleKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff] at h ⊢
     simp [ih h, truth]
   | bin c F G ihF ihG =>
     obtain ⟨hF, hG⟩ := (middleKleene_bin_ne_zero_iff I ihF).1 h
@@ -179,8 +179,8 @@ theorem middleKleene_eq_ofProp {F : Formula Atom} (h : F.middleKleene I w ≠ 0)
       simp_all [Connective.localContext, truth, Connective.eval]
 
 theorem middleKleene_bin_ne_zero {c : Connective} {F G : Formula Atom} :
-    (bin c F G).middleKleene I w ≠ 0 ↔
-      F.middleKleene I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) :=
+    (bin c F G).middleKleene I w ≠ .undefined ↔
+      F.middleKleene I w ≠ .undefined ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) :=
   middleKleene_bin_ne_zero_iff I (middleKleene_eq_ofProp I)
 
 theorem nonempty_atom : Formula Atom → Nonempty Atom

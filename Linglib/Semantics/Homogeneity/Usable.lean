@@ -119,12 +119,12 @@ instance communicatedContent.instDecidableMem [Fintype W] (q : Setoid W) [Decida
   inferInstanceAs (Decidable (sufficientlyTrue q p w))
 
 theorem posSupport_subset_communicated (q : Setoid W) (p : W → Trivalent) :
-    posExt p ⊆ communicatedContent q p :=
+    Trivalent.posExt p ⊆ communicatedContent q p :=
   fun _ hw ↦ literal_imp_sufficient q p _ hw
 
 theorem communicatedContent_eq_posSupport {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (hAddr : addressesIssue q p) :
-    communicatedContent q p = posExt p := by
+    communicatedContent q p = Trivalent.posExt p := by
   ext w
   constructor
   · intro ⟨w', hEq, hTrue⟩

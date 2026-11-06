@@ -203,7 +203,7 @@ theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
 Civic* ([von-fintel-1999]'s (30)). -/
 theorem not_antitone_posSupport_regret :
     ¬ Antitone fun p : Set Bool ↦
-      posExt (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {(· = Bool.false)}) p) := by
+      Trivalent.posExt (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {(· = Bool.false)}) p) := by
   have hb : (premisePreorder {(· = Bool.false)}).minimals ({Bool.false, Bool.true} : Set Bool) = {Bool.false} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨Bool.false, by simp, by simp⟩]
     ext

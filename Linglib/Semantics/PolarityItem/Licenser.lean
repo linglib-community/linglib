@@ -158,7 +158,7 @@ def exhaustified : Licenser → Licenser
 trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
 def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ posExt (F.op p x)
+  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
   | .modal _, _ | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward

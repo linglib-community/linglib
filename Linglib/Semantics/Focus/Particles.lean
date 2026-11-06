@@ -135,12 +135,12 @@ open Classical in
 /-- On the entailment scale, with the prejacent among the alternatives, *only* presupposes its
 prejacent and asserts the exclusion ([von-fintel-1999]'s (68a)). -/
 theorem only_subset_eq (hp : p ∈ C) :
-    only (· ⊆ ·) C id p = fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (w ∈ excludes C p) := by)
-  rw [only, atLeast_subset_eq hp, atMost_subset]
+    only (· ⊆ ·) C id p = fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (w ∈ excludes C p)) := by
+  funext w; simp only [only, atLeast_subset_eq hp, atMost_subset]
 
 /-- On the entailment scale *only* is true exactly where the exhaustification
 `Exhaustification.exh` is. -/
-theorem posSupport_only_subset (hp : p ∈ C) : posExt (only (· ⊆ ·) C id p) = exh C p := by
+theorem posSupport_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C id p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
 
 end Entailment
@@ -358,7 +358,7 @@ theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
 theorem not_antitone_posSupport_only_subset :
-    ¬ Antitone fun p : Set Bool ↦ posExt (only (· ⊆ ·) {{Bool.true}, .univ} id p) :=
+    ¬ Antitone fun p : Set Bool ↦ Trivalent.posExt (only (· ⊆ ·) {{Bool.true}, .univ} id p) :=
   not_antitone_posSupport (p := {Bool.true}) (q := .univ) (w := Bool.false) (Set.subset_univ _)
     (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
@@ -402,7 +402,7 @@ theorem isStrawsonDE_only_eq : IsStrawsonDE fun P : ι → Set W ↦ only (· = 
 /-- *Only John ate vegetables* does not classically entail *only John ate kale*, whose
 presupposition may fail ([von-fintel-1999]'s (11)). -/
 theorem not_antitone_posSupport_only_eq :
-    ¬ Antitone fun P : Bool → Set Unit ↦ posExt (only (· = ·) univ P Bool.true) :=
+    ¬ Antitone fun P : Bool → Set Unit ↦ Trivalent.posExt (only (· = ·) univ P Bool.true) :=
   not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = Bool.true}) (w := ()) bot_le
     (by rw [only_eq_eq_one_iff (mem_univ _)]; simp) (by simp)
 

@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Logic.Trivalent.Basic
 
 /-!
 # Polarity
@@ -173,11 +174,18 @@ instance [AddCommGroup α] : MulAction Polarity α :=
 @[simp] theorem negative_smul [AddCommGroup α] (x : α) : negative • x = -x :=
   show ((-1 : ℤˣ) : ℤ) • x = -x by simp
 
-/-- A polarity acts on signs, and so pointwise on trivalent propositions, the negative polarity
-acting as Kleene negation. -/
+/-- A polarity acts on signs, the negative polarity reversing the sign. -/
 instance : MulAction Polarity SignType := .ofEndHom (lift ⟨Neg.neg, neg_involutive.comp_self⟩)
 
 @[simp] theorem negative_smul_signType (a : SignType) : negative • a = -a := rfl
+
+/-- A polarity acts on truth values, and so pointwise on trivalent propositions, the negative
+polarity acting as Kleene negation. -/
+instance : MulAction Polarity Trivalent :=
+  .ofEndHom (lift ⟨compl,
+    (show Function.Involutive (compl : Trivalent → Trivalent) from Trivalent.compl_compl).comp_self⟩)
+
+@[simp] theorem negative_smul_trivalent (a : Trivalent) : negative • a = aᶜ := rfl
 
 /-- The action on signs is multiplication by the sign of the polarity. -/
 theorem smul_signType (s : Polarity) (a : SignType) : s • a = s * a := by

@@ -126,7 +126,7 @@ theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (
 have learned the alphabet ([von-fintel-1999]'s (76)). -/
 theorem not_antitone_posSupport_trivalentSuperlative :
     ¬ Antitone fun C : Unit → Set Unit ↦
-      posExt (trivalentSuperlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
+      Trivalent.posExt (trivalentSuperlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
   not_antitone_posSupport (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
 
 /-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the

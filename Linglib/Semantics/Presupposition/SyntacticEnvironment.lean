@@ -540,14 +540,14 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
 end SyntacticEnvironment
 
 theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
-    F.middleKleene I w ≠ 0 ↔
+    F.middleKleene I w ≠ .undefined ↔
       ∀ o ∈ F.triggers, w ∈ o.1.localContext I Set.univ → w ∈ I o.2.1 := by
   open SyntacticEnvironment in
   induction F with
   | atom p => simp [middleKleene, eval, triggers]
   | trigger p p' => simp [middleKleene, eval, triggers]
   | not F ih =>
-    simp only [middleKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
+    simp only [middleKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
       List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
       Step.localContext]
     exact ih
@@ -556,7 +556,7 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
       localContext_cons, localContext_nil, Step.localContext]
     rw [← ihF]
     have hG : (∀ o ∈ G.triggers, w ∈ o.1.localContext I (c.localContext Set.univ (F.truth I)) →
-        w ∈ I o.2.1) ↔ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ 0) := by
+        w ∈ I o.2.1) ↔ (w ∈ c.localContext Set.univ (F.truth I) → G.middleKleene I w ≠ .undefined) := by
       rw [ihG]
       refine ⟨fun h hc o ho hl ↦ h o ho ?_, fun h o ho hl ↦ ?_⟩
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
@@ -567,12 +567,12 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
 iff the presupposition of each of its triggers holds there, as the cumulative hypothesis of
 [langendoen-savin-1971] has it. -/
 theorem Formula.weakKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
-    F.weakKleene I w ≠ 0 ↔ ∀ o ∈ F.triggers, w ∈ I o.2.1 := by
+    F.weakKleene I w ≠ .undefined ↔ ∀ o ∈ F.triggers, w ∈ I o.2.1 := by
   induction F with
   | atom p => simp [weakKleene, eval, triggers]
   | trigger p p' => simp [weakKleene, eval, triggers]
   | not F ih =>
-    simp only [weakKleene, eval, Pi.neg_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
+    simp only [weakKleene, eval, Pi.compl_apply, ne_eq, Trivalent.compl_eq_undefined_iff, triggers,
       List.forall_mem_map] at ih ⊢
     exact ih
   | bin c F G ihF ihG =>

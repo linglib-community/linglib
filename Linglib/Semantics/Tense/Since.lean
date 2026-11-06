@@ -43,7 +43,7 @@ theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
   (isStrawsonAntiAdditive_since ago).isStrawsonDE
 
 theorem not_antitone_posSupport_since :
-    ¬ Antitone fun p : Set ℤ ↦ posExt (since (· - 5) p) :=
+    ¬ Antitone fun p : Set ℤ ↦ Trivalent.posExt (since (· - 5) p) :=
   not_antitone_posSupport (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
     (by simp [since, Set.disjoint_singleton_right]) (by simp [since])
 

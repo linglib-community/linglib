@@ -72,7 +72,7 @@ theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
     (hf : ∀ p w, f p w ≠ .undefined → (f p w = .true ↔ a p w)) : IsStrawsonUE f :=
   fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
 
-theorem IsStrawsonDE.of_antitone_posSupport (h : Antitone fun p ↦ posExt (f p)) :
+theorem IsStrawsonDE.of_antitone_posSupport (h : Antitone fun p ↦ Trivalent.posExt (f p)) :
     IsStrawsonDE f :=
   fun _ _ hpq _ hq _ ↦ h hpq hq
 
@@ -88,7 +88,7 @@ theorem isStrawsonUE_ofProp_iff {g : α → W → Prop} :
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
 theorem not_antitone_posSupport {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = .true) (hp : f p w = .undefined) :
-    ¬ Antitone fun p ↦ posExt (f p) :=
+    ¬ Antitone fun p ↦ Trivalent.posExt (f p) :=
   fun h ↦ by simpa [hp] using h hpq hq
 
 theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = .true) (hq : f q w = .false) :
