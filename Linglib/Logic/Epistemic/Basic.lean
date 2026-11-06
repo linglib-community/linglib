@@ -54,6 +54,7 @@ inductive Formula (V A : Type*)
   | P : A → Formula V A → Formula V A
   | B : A → Formula V A → Formula V A
   | C : A → Formula V A → Formula V A
+  deriving DecidableEq
 
 namespace Formula
 
