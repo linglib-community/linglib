@@ -26,7 +26,8 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 ## Main results
 
 * `Formula.Context.ver_den_fill`: the split behind the translation rules.
-* `soundness`; completeness is proved in `Completeness.lean`.
+* `soundness`, `consequence_of_derives`: what is derivable is a consequence; the converse is in
+  `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
 * `strongFalsum_derives`, `conj_disj_derives_disj_conj`, `disj_conj_ne_derives_conj_ne`,
   `poss_derives_poss_conj_ne`, `poss_disj_conj_ne_derives_conj_poss`: derivations from the
@@ -40,7 +41,10 @@ takes `⊥` as primitive. Contexts are upper bounds on undischarged assumptions,
 `NE`-freeness conditions on side derivations are conditions on their contexts. The paper chains
 derivations freely, but substituting a derivation for an assumption of a side derivation can break
 that side derivation's condition, so composition is the rule `cut`; weakening follows from it.
-Result numbers and pages follow arXiv:2305.11777v3.
+`cut` is admissible in the paper's system, whose derivability is consequence (Theorems 4.34 and
+4.43). The paper's figure leaves open whether `□Mon` may have no boxed premises; Anttila's thesis
+allows it, as necessitation, and so does `necMon`. Result numbers and pages follow
+arXiv:2305.11777v3.
 
 ## References
 
@@ -64,7 +68,7 @@ variable {Atom : Type*} {W : Type*} [DecidableEq W]
 /-! ### Contexts -/
 
 /-- A one-hole context whose hole is in the scope of no `¬`, except as part of `□ = ¬◇¬`.
-    These are the positions at which replacement holds ([aloni-anttila-yang-2024] Lemma 4.4). -/
+These are the positions at which replacement holds ([aloni-anttila-yang-2024] Lemma 4.4). -/
 inductive Formula.Context (Atom : Type*) where
   | hole
   | conjLeft (C : Context Atom) (ψ : Formula Atom)
@@ -87,8 +91,8 @@ def fill : Context Atom → Formula Atom → Formula Atom
   | nec C, φ => Formula.nec (C.fill φ)
 
 /-- A context is distributive when its hole is under no modality, so that it is built from `∧`
-    and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
-    defined before Definition 4.24. -/
+and `∨` alone. These are the `⩔`-distributive positions of [aloni-anttila-yang-2024],
+defined before Definition 4.24. -/
 def Distributive : Context Atom → Prop
   | hole => True
   | conjLeft C _ | conjRight _ C | disjLeft C _ | disjRight _ C => C.Distributive
@@ -124,8 +128,8 @@ end Formula.Context
 /-! ### The system -/
 
 /-- The natural deduction system for BSML ([aloni-anttila-yang-2024] Definition 4.33) has the
-    rules of Definition 4.1, boxes (a)–(f), and the three `⊥NE`-translation rules. `Derives Γ φ`
-    says that `φ` is derivable from formulas in `Γ`, and `cut` composes derivations. -/
+rules of Definition 4.1, boxes (a)–(f), and the three `⊥NE`-translation rules. `Derives Γ φ`
+says that `φ` is derivable from formulas in `Γ`, and `cut` composes derivations. -/
 inductive Derives [Inhabited Atom] : Set (Formula Atom) → Formula Atom → Prop where
   /-- An assumption. -/
   | hyp {Γ φ} : φ ∈ Γ → Derives Γ φ
@@ -180,7 +184,8 @@ inductive Derives [Inhabited Atom] : Set (Formula Atom) → Formula Atom → Pro
   | strongFalsumCtr {Γ φ} (ψ) : Derives Γ (.disj .strongFalsum φ) → Derives Γ ψ
   /-- `◇Mon`, for a side derivation from `φ` alone. -/
   | possMon {Γ φ ψ} : Derives {φ} ψ → Derives Γ (.poss φ) → Derives Γ (.poss ψ)
-  /-- `□Mon`, for a side derivation from the boxed formulas alone. -/
+  /-- `□Mon`, for a side derivation from the boxed formulas alone. The list may be empty, which
+  is the necessitation rule ([anttila-2021] p. 65). -/
   | necMon {Γ ψ} (φs : List (Formula Atom)) :
       Derives {δ | δ ∈ φs} ψ → (∀ δ ∈ φs, Derives Γ (Formula.nec δ)) →
       Derives Γ (Formula.nec ψ)
@@ -219,7 +224,7 @@ variable [Inhabited Atom] {Γ Δ : Set (Formula Atom)} {φ ψ χ : Formula Atom}
 /-! ### Soundness -/
 
 /-- **Soundness** ([aloni-anttila-yang-2024] Theorem 4.34). Every team supporting the premises
-    supports what they derive. -/
+supports what they derive. -/
 theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     ∀ s : Finset W, (∀ γ ∈ Γ, support M γ s) → support M φ s := by
   induction h with
@@ -325,8 +330,9 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
     rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
 
-theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
-  fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
+/-- Derivability from a finite set implies consequence. -/
+theorem consequence_of_derives {Γ : Finset (Formula Atom)} (h : ↑Γ ⊢ φ) : Γ ⊨ φ :=
+  fun p hΓ ↦ soundness h p.model p.team fun γ hγ ↦ hΓ γ hγ
 
 /-! ### Derived rules -/
 
@@ -405,7 +411,7 @@ theorem disj_conj_ne_derives_conj_ne :
     (.single θ) (.hyp (Set.mem_insert _ _)) (by simpa [Formula.Context.fill] using hfalsum)
 
 /-- A possibility has a nonempty witness ([aloni-anttila-yang-2024] Lemma 4.21). `◇⊥NETrs`
-    splits `◇φ` into `◇(φ ∧ NE) ∨ ◇(φ ∧ ⊥)`, and `◇⊥` refutes itself. -/
+splits `◇φ` into `◇(φ ∧ NE) ∨ ◇(φ ∧ ⊥)`, and `◇⊥` refutes itself. -/
 theorem poss_derives_poss_conj_ne : {.poss φ} ⊢ .poss (.conj φ .ne) := by
   have hsplit : {.poss φ} ⊢ .disj (.poss (.conj φ .ne)) (.poss (.conj φ .falsum)) :=
     .possNeTrs (ψ := φ) .hole trivial (.single _)
@@ -428,7 +434,7 @@ theorem poss_disj_conj_ne_derives_conj_poss :
 /-! ### Non-derivations -/
 
 /-- Unrestricted `∨I` would be unsound, since `p ⊬ p ∨ NE`. The empty team supports `p` but not
-    `p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
+`p ∨ NE` ([aloni-anttila-yang-2024], after Definition 4.1). -/
 theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .ne := by
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ true⟩

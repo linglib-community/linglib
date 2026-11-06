@@ -20,7 +20,8 @@ exactly by the non-empty teams, is the source of the free-choice effects.
 * `BSML.Formula.den`: the meaning of a formula in a model.
 * `BSML.support`, `BSML.antiSupport`: support and anti-support.
 * `BSML.Formula.NEFree`, `BSML.Formula.Positive`: the `NE`-free and the negation-free fragments.
-* `BSML.Consequence`, `BSML.Equivalent`, `BSML.StronglyEquivalent`.
+* `BSML.Consequence` (`Γ ⊨ φ`), `BSML.Equivalent`, `BSML.StronglyEquivalent`: consequence and
+  equivalence over pointed team models.
 
 ## Implementation notes
 
@@ -42,13 +43,13 @@ open scoped SetFamily
 
 namespace BSML
 
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel PointedTeam)
 open Truthmaker (BilProp)
 
 /-! ### Formulas -/
 
 /-- The formulas of BSML over an atom type are built from atoms and `NE` by `¬`, `∧`, split `∨`
-    and `◇` ([aloni-2022] Definition 1). -/
+and `◇` ([aloni-2022] Definition 1). -/
 inductive Formula (Atom : Type*) where
   /-- An atomic proposition. -/
   | atom : Atom → Formula Atom
@@ -67,15 +68,15 @@ inductive Formula (Atom : Type*) where
 variable {Atom : Type*}
 
 /-- Necessity `□φ` abbreviates `¬◇¬φ`. A team supports it when the successors of each of its
-    worlds support `φ`, and anti-supports it when each world has a non-empty set of successors
-    anti-supporting `φ`. -/
+worlds support `φ`, and anti-supports it when each world has a non-empty set of successors
+anti-supporting `φ`. -/
 def Formula.nec (φ : Formula Atom) : Formula Atom :=
   .neg (.poss (.neg φ))
 
 /-! ### Syntactic fragments -/
 
 /-- `Formula.NEFree φ` holds when `φ` contains no `NE` atom. On this fragment, support at a
-    singleton team is classical modal truth (`BSML/Classical.lean`). -/
+singleton team is classical modal truth (`BSML/Classical.lean`). -/
 def Formula.NEFree : Formula Atom → Prop
   | .atom _ => True
   | .ne => False
@@ -119,7 +120,7 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-! ### Contradictions -/
 
 /-- The weak contradiction `⊥ := p ∧ ¬p` for a fixed atom `p`, the default one. Its meaning is
-    that of the primitive `⊥` of [aloni-anttila-yang-2024] (`Formula.den_falsum`). -/
+that of the primitive `⊥` of [aloni-anttila-yang-2024] (`Formula.den_falsum`). -/
 def Formula.falsum [Inhabited Atom] : Formula Atom :=
   .conj (.atom default) (.neg (.atom default))
 
@@ -135,8 +136,8 @@ def Formula.strongFalsum [Inhabited Atom] : Formula Atom :=
 variable {W : Type*} [DecidableEq W]
 
 /-- The meaning of a formula in a model is the bilateral proposition whose verifiers are the
-    teams that support it and whose falsifiers are the teams that anti-support it
-    ([aloni-2022] Definition 2). The split clauses are the pointwise sups `⊻` of teams. -/
+teams that support it and whose falsifiers are the teams that anti-support it
+([aloni-2022] Definition 2). The split clauses are the pointwise sups `⊻` of teams. -/
 def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
   | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
   | .ne => ⟨Team.ne, {∅}⟩
@@ -170,7 +171,7 @@ lemma empty_supports_atom (p : Atom) : support M (.atom p) ∅ :=
   Team.empty_mem_flat _
 
 /-- The weak contradiction is supported only by the empty team and anti-supported by every
-    team, the meaning of the primitive `⊥` of [aloni-anttila-yang-2024]. -/
+team, the meaning of the primitive `⊥` of [aloni-anttila-yang-2024]. -/
 theorem Formula.den_falsum [Inhabited Atom] :
     (Formula.falsum : Formula Atom).den M = ⟨{∅}, .univ⟩ := by
   refine BilProp.ext (Set.ext fun t ↦ ⟨fun ⟨h₁, h₂⟩ ↦ ?_, ?_⟩) ?_
@@ -195,35 +196,46 @@ theorem not_support_strongFalsum [Inhabited Atom] : ¬ support M .strongFalsum t
 
 /-! ### Consequence and equivalence -/
 
-/-- `ψ` is a consequence of `φ` when every team supporting `φ` supports `ψ`
-    ([aloni-2022] Definition 3). -/
-def Consequence (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t → support M ψ t
+/-- `Γ ⊨ φ`: every pointed team model whose team supports each formula of the finite set `Γ`
+supports `φ` ([aloni-2022] Definition 3, with premise sets as in [aloni-anttila-yang-2024]).
+The models have finite successor sets and finite teams and range over `Type`. For finite premise
+sets neither restriction changes the relation: what is a consequence here is derivable
+(`BSML.completeness`), every rule of `BSML.Derives` is sound for arbitrary models (those of
+[aloni-anttila-yang-2024] Definition 4.33 by their Theorem 4.34, `cut` and necessitation
+directly), and the universe is immaterial (`BSML.support_of_consequence`). -/
+def Consequence (Γ : Finset (Formula Atom)) (φ : Formula Atom) : Prop :=
+  ∀ p : PointedTeam.{0} Atom, (∀ γ ∈ Γ, support p.model γ p.team) → support p.model φ p.team
 
-/-- Two formulas are equivalent, `φ ≡ ψ`, when they have the same support in every model. -/
-def Equivalent (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t ↔ support M ψ t
+@[inherit_doc] scoped infix:50 " ⊨ " => Consequence
 
 variable {φ ψ}
 
-theorem equivalent_iff :
-    Equivalent (W := W) φ ψ ↔ Consequence (W := W) φ ψ ∧ Consequence (W := W) ψ φ where
-  mp h := ⟨fun M t ↦ (h M t).mp, fun M t ↦ (h M t).mpr⟩
-  mpr h M t := ⟨h.1 M t, h.2 M t⟩
+@[simp] theorem consequence_singleton_iff :
+    {φ} ⊨ ψ ↔ ∀ p : PointedTeam.{0} Atom, support p.model φ p.team → support p.model ψ p.team :=
+  forall_congr' fun _ ↦ by simp
+
+/-- Two formulas are equivalent, `φ ≡ ψ`, when each is a consequence of the other, that is, when
+they have the same support. -/
+def Equivalent (φ ψ : Formula Atom) : Prop :=
+  ∀ p : PointedTeam.{0} Atom, support p.model φ p.team ↔ support p.model ψ p.team
+
+theorem equivalent_iff : Equivalent φ ψ ↔ {φ} ⊨ ψ ∧ {ψ} ⊨ φ := by
+  rw [consequence_singleton_iff, consequence_singleton_iff]
+  exact ⟨fun h ↦ ⟨fun p ↦ (h p).1, fun p ↦ (h p).2⟩, fun h p ↦ ⟨h.1 p, h.2 p⟩⟩
 
 /-- Two formulas are strongly equivalent, `φ ⊜ ψ`, when they and their negations are equivalent
-    [aloni-anttila-yang-2024], that is, when they have the same support and the same
-    anti-support. -/
+[aloni-anttila-yang-2024], that is, when they have the same support and the same
+anti-support. -/
 def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
-  Equivalent (W := W) φ ψ ∧ Equivalent (W := W) (.neg φ) (.neg ψ)
+  Equivalent φ ψ ∧ Equivalent (.neg φ) (.neg ψ)
 
 /-- Two formulas are strongly equivalent exactly when they have the same meaning in every
-    model. -/
-theorem stronglyEquivalent_iff :
-    StronglyEquivalent (W := W) φ ψ ↔ ∀ M : KripkeModel W Atom, φ.den M = ψ.den M where
-  mp h M := BilProp.ext (Set.ext (h.1 M)) (Set.ext (h.2 M))
-  mpr h := ⟨fun M t ↦ .of_eq (congrArg (t ∈ ·.ver) (h M)),
-    fun M t ↦ .of_eq (congrArg (t ∈ ·.fal) (h M))⟩
+model. -/
+theorem stronglyEquivalent_iff : StronglyEquivalent φ ψ ↔
+    ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom), φ.den M = ψ.den M where
+  mp h W _ M := BilProp.ext (Set.ext fun t ↦ h.1 ⟨W, M, t⟩) (Set.ext fun t ↦ h.2 ⟨W, M, t⟩)
+  mpr h := ⟨fun p ↦ .of_eq (congrArg (p.team ∈ ·.ver) (h p.World p.model)),
+    fun p ↦ .of_eq (congrArg (p.team ∈ ·.fal) (h p.World p.model))⟩
 
 /-! ### Decidability -/
 

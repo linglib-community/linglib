@@ -65,7 +65,7 @@ variable {W Var Domain : Type*}
 /-! ### Indices -/
 
 /-- An index `⟨w, g⟩` pairs a world with a partial assignment ([aloni-vanormondt-2023]
-    Definition 4.2). -/
+Definition 4.2). -/
 abbrev Index (W Var Domain : Type*) := W × PartialAssign Var Domain
 
 /-- The world component of an index. -/
@@ -79,7 +79,7 @@ section Update
 variable [DecidableEq Var]
 
 /-- The update `i[x/d] = ⟨wᵢ, gᵢ[x/d]⟩` of an index ([aloni-vanormondt-2023] Definitions 4.3
-    and 4.4). -/
+and 4.4). -/
 def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) : Index W Var Domain :=
   (i.world, i.assign.update x d)
 
@@ -98,7 +98,7 @@ section WorldProj
 variable [DecidableEq W] {s : Finset (Index W Var Domain)}
 
 /-- The world projection `s↓ = {w | ⟨w, g⟩ ∈ s}` of a state ([aloni-vanormondt-2023]
-    Definition 4.10). -/
+Definition 4.10). -/
 def State.worldProj (s : Finset (Index W Var Domain)) : Finset W :=
   s.image Index.world
 
@@ -119,7 +119,7 @@ section ModalLift
 variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 
 /-- The pairing `X[g] = {⟨w, g⟩ | w ∈ X}` of a set of worlds with one assignment
-    ([aloni-vanormondt-2023] Definition 4.9). -/
+([aloni-vanormondt-2023] Definition 4.9). -/
 def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
     Finset (Index W Var Domain) :=
   X.image fun v ↦ (v, g)
@@ -159,7 +159,7 @@ theorem State.modalLift_worldProj_of_subset (h : s ⊆ State.modalLift X g) :
   · exact fun his ↦ ⟨⟨i, his, rfl⟩, (State.mem_modalLift.mp (h his)).2⟩
 
 /-- The modal successors `R(wᵢ)[gᵢ]` of an index: the worlds its world accesses, paired with its
-    assignment ([aloni-vanormondt-2023] Definition 4.9). -/
+assignment ([aloni-vanormondt-2023] Definition 4.9). -/
 def Index.successors (R : W → Finset W) (i : Index W Var Domain) : Finset (Index W Var Domain) :=
   State.modalLift (R i.world) i.assign
 
@@ -185,13 +185,13 @@ def Index.variants [Fintype Domain] (x : Var) (i : Index W Var Domain) :
   simp [Index.variants]
 
 /-- The functional extension `s[x/h] = {i[x/d] | i ∈ s, d ∈ h(i)}` ([aloni-vanormondt-2023]
-    Definition 4.7). -/
+Definition 4.7). -/
 def State.extendFunctional (s : Finset (Index W Var Domain)) (x : Var)
     (h : Index W Var Domain → Finset Domain) : Finset (Index W Var Domain) :=
   s.biUnion fun i ↦ (h i).image (i.update x)
 
 /-- The universal extension `s[x] = {i[x/d] | i ∈ s, d ∈ D}` ([aloni-vanormondt-2023]
-    Definition 4.6), the union of the `x`-variants of the indices of `s`. -/
+Definition 4.6), the union of the `x`-variants of the indices of `s`. -/
 def State.extendUniversal [Fintype Domain] (s : Finset (Index W Var Domain)) (x : Var) :
     Finset (Index W Var Domain) :=
   s.biUnion (Index.variants x)
@@ -207,7 +207,7 @@ variable {s : Finset (Index W Var Domain)} {x : Var} {j : Index W Var Domain}
   simp [State.extendUniversal]
 
 /-- A state is in the lax diamond of a property over the `x`-variants iff one of its functional
-    `x`-extensions is in it. -/
+`x`-extensions is in it. -/
 theorem State.mem_possLax_variants_iff [Fintype Domain]
     {P : Team.TeamProperty (Index W Var Domain)} :
     s ∈ Team.possLax (Index.variants x) P ↔
@@ -240,8 +240,8 @@ end Variants
 variable {Const Pred : Type*}
 
 /-- The formulas of QBSML ([aloni-vanormondt-2023] Definition 4.1) over variables `Var`,
-    individual constants `Const` and monadic predicates `Pred`. The terms `t := c | x` appear as
-    the two atom constructors, and `□` is the abbreviation `Formula.nec`. -/
+individual constants `Const` and monadic predicates `Pred`. The terms `t := c | x` appear as
+the two atom constructors, and `□` is the abbreviation `Formula.nec`. -/
 inductive Formula (Var : Type*) (Const : Type*) (Pred : Type*) where
   /-- A predicate applied to a variable. -/
   | pred : Pred → Var → Formula Var Const Pred
@@ -268,7 +268,7 @@ def Formula.nec (φ : Formula Var Const Pred) : Formula Var Const Pred :=
   .neg (.poss (.neg φ))
 
 /-- The `NE`-free fragment, on which QBSML is classical first-order modal logic
-    ([aloni-vanormondt-2023] Proposition 4.1). -/
+([aloni-vanormondt-2023] Proposition 4.1). -/
 inductive Formula.NEFree : Formula Var Const Pred → Prop
   | pred (P : Pred) (x : Var) : NEFree (.pred P x)
   | predc (P : Pred) (c : Const) : NEFree (.predc P c)
@@ -282,7 +282,7 @@ inductive Formula.NEFree : Formula Var Const Pred → Prop
 /-! ### Atom substitution -/
 
 /-- Substitute a formula for each atom, commuting with the connectives and quantifiers and fixing
-    `NE`; [yan-2023]'s reinterpretation function is an instance. -/
+`NE`; [yan-2023]'s reinterpretation function is an instance. -/
 def Formula.mapAtoms (fp : Pred → Var → Formula Var Const Pred)
     (fc : Pred → Const → Formula Var Const Pred) :
     Formula Var Const Pred → Formula Var Const Pred
@@ -313,7 +313,7 @@ theorem Formula.NEFree.mapAtoms {fp : Pred → Var → Formula Var Const Pred}
 /-! ### Models -/
 
 /-- A QBSML model `⟨W, D, R, I⟩` ([aloni-vanormondt-2023] Definition 4.2) is a constant-domain
-    first-order Kripke structure over the monadic signature with constants. -/
+first-order Kripke structure over the monadic signature with constants. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*) (Pred : Type*) :=
   FirstOrder.Language.ModalStructure ((Language.monadic Pred)[[Const]]) W Domain
 
@@ -322,7 +322,7 @@ abbrev predSymb (P : Pred) : ((Language.monadic Pred)[[Const]]).Relations 1 :=
   Sum.inl (.pred P)
 
 /-- The QBSML model with accessibility `access`, constant interpretation `κ`, and valuation
-    `V`. -/
+`V`. -/
 def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
     Model W Domain Const Pred :=
@@ -350,7 +350,7 @@ section Evaluation
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
 /-- Bilateral evaluation ([aloni-vanormondt-2023] Definition 4.9): `eval M true φ s` is support
-    `M, s ⊨ φ` and `eval M false φ s` is anti-support `M, s ⫤ φ`. -/
+`M, s ⊨ φ` and `eval M false φ s` is anti-support `M, s ⫤ φ`. -/
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>

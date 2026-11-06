@@ -18,6 +18,7 @@ sees the same worlds, and state-basedness, that every world of the team sees exa
 ## Main definitions
 
 * `ModalLogic.KripkeModel`, with the accessibility relation `KripkeModel.accessible`.
+* `ModalLogic.PointedTeam`: a Kripke model with a team on it.
 * `Team.IsIndisputable`, `Team.IsStateBased`: the conditions of [aloni-2022] Definition 5.
 
 ## Implementation notes
@@ -34,6 +35,7 @@ Definition 3.3.1 (p. 46) restates them up to bisimilarity of the successor sets.
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
 * [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
+* [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [vaananen-2008] Väänänen, Modal Dependence Logic
 -/
 
@@ -69,6 +71,21 @@ open SetRel in
 open SetRel in
 instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
   inferInstanceAs (Decidable (v ∈ M.access w))
+
+universe u
+
+/-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
+([anttila-2025] Definition 2.3.9). -/
+structure PointedTeam (Atom : Type*) where
+  /-- The worlds of the model. -/
+  World : Type u
+  [decEq : DecidableEq World]
+  /-- The model. -/
+  model : KripkeModel World Atom
+  /-- The team. -/
+  team : Finset World
+
+attribute [instance] PointedTeam.decEq
 
 end ModalLogic
 

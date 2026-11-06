@@ -27,13 +27,20 @@ formula into the cases `θ_T` for the teams supporting it.
 * `derives_bigDisj_hintikka`: every world has a type of each depth.
 * `derives_bigDisj_realize`: a classical formula derives the disjunction of its types.
 * `splits_fill`: every formula splits into the strong Hintikka formulas of its teams.
-* `completeness`, `derives_iff`: completeness for finite premise sets.
+* `completeness`, `derives_iff_consequence`: completeness for finite premise sets.
 
 ## Implementation notes
 
-Successor sets are finite, so completeness holds for finite premise sets only. No team supports
-`{◇pₙ | n ∈ ℕ} ∪ {□¬(pᵢ ∧ pⱼ) | i ≠ j} ∪ {NE}`, yet each of its finite subsets is satisfiable.
-The first sections derive general rules of the system.
+Successor sets are finite, so consequence (`BSML.Consequence`) takes finite premise sets and
+completeness is proved for them. Over infinite sets the two consequence relations would part: no
+team supports `{◇pₙ | n ∈ ℕ} ∪ {□¬(pᵢ ∧ pⱼ) | i ≠ j} ∪ {NE}`, yet each of its finite subsets is
+satisfiable, so by compactness it is satisfiable over arbitrary models. The first sections derive
+general rules of the system.
+
+## TODO
+
+Strong completeness ([aloni-anttila-yang-2024] Theorem 4.43 for arbitrary premise sets), with the
+compactness they derive from it, needs models with arbitrary successor sets.
 
 ## References
 
@@ -195,7 +202,7 @@ theorem Derives.nec_of_falsum (h : Γ ⊢ .falsum) : Γ ⊢ Formula.nec φ := by
   exact h₂.necMap (Derives.single _).falsumE
 
 /-- With `◇φ`, a necessary disjunction `□(φ ∨ ψ)` conjoins `NE` to `φ`
-    ([aloni-anttila-yang-2024] Lemma 4.22 (ii), right to left). -/
+([aloni-anttila-yang-2024] Lemma 4.22 (ii), right to left). -/
 theorem Derives.nec_disj_conj_ne (h : Γ ⊢ Formula.nec (.disj φ ψ)) (h' : Γ ⊢ .poss φ) :
     Γ ⊢ Formula.nec (.disj (.conj φ .ne) ψ) := by
   have h₁ := Set.union_self Γ ▸ h.necPossJoin (h'.trans poss_derives_poss_conj_ne)
@@ -230,7 +237,7 @@ private theorem Derives.nec_tag {A : List (Formula Atom)} :
     exact h₃.necMap ((Derives.single _).disjMonLeft h₄).disj_assoc
 
 /-- With the possibility of each disjunct, a necessary disjunction conjoins `NE` to every
-    disjunct ([aloni-anttila-yang-2024] Lemma 4.23 (ii), right to left). -/
+disjunct ([aloni-anttila-yang-2024] Lemma 4.23 (ii), right to left). -/
 theorem Derives.nec_bigDisjNE (h : Γ ⊢ Formula.nec (bigDisj L)) (hL : ∀ x ∈ L, Γ ⊢ .poss x) :
     Γ ⊢ Formula.nec (bigDisjNE L) :=
   ((Derives.nec_tag (A := []) hL (h.necMap ((Derives.single _).disjI
@@ -378,7 +385,7 @@ theorem Derives.poss_strongHintikka {k : ℕ} {U : Finset (WorldType n k)} {Γ :
 /-! ### Strong Hintikka formulas derive what their teams support -/
 
 /-- A strong Hintikka formula derives every formula its team supports, and the negation of every
-    formula its team anti-supports. -/
+formula its team anti-supports. -/
 theorem derives_of_support (he : Function.Injective e) :
     ∀ (φ : Formula Atom) {k : ℕ}, φ.modalDepth ≤ k → φ.AtomsIn (Set.range e) →
       ∀ T : Finset (WorldType n k),
@@ -546,7 +553,7 @@ private theorem derives_bigDisj_succLit_aux (e : Fin n → Atom) {k : ℕ} (Γ :
       · simpa [succLit, hσ] using key S fun _ _ _ ↦ Iff.rfl
 
 /-- `succPart e S` is the modal part of the Hintikka formula of a type with successor
-    types `S`. -/
+types `S`. -/
 noncomputable def succPart (e : Fin n → Atom) {k : ℕ} (S : Finset (WorldType n k)) : Formula Atom :=
   .conj (bigConj (S.toList.map fun σ ↦ .poss (hintikka e k σ)))
     (Formula.nec (bigDisj (S.toList.map (hintikka e k))))
@@ -657,7 +664,7 @@ theorem hintikka_derives (he : Function.Injective e) {β : Formula Atom} (hβ : 
       (h.2 ((antiSupport_singleton_iff_not_realize hβ).mpr hr)))⟩
 
 /-- **Classical normal form.** A classical formula derives the disjunction of the Hintikka
-    formulas of the types at which it is true. -/
+formulas of the types at which it is true. -/
 theorem derives_bigDisj_realize (he : Function.Injective e) {β : Formula Atom} (hβ : β.NEFree)
     {k : ℕ} (hk : β.modalDepth ≤ k) (hA : β.AtomsIn (Set.range e)) :
     {β} ⊢ bigDisj ((Finset.univ.filter fun τ ↦ Realize (univModel e) β (world k τ)).toList.map
@@ -857,7 +864,7 @@ theorem atomsIn_hintikka (hd : default ∈ Set.range e) :
 /-! ### Distinct strong Hintikka formulas contradict -/
 
 /-- A disjunction with a disjunct `α ∧ NE` contradicts `¬α`
-    ([aloni-anttila-yang-2024] Lemma 4.13). -/
+([aloni-anttila-yang-2024] Lemma 4.13). -/
 theorem conj_ne_disj_derives_strongFalsum {α : Formula Atom} (hα : α.NEFree) :
     {.conj (.neg α) (.disj (.conj α .ne) φ)} ⊢ .strongFalsum := by
   have h₀ := Derives.single (Formula.conj (.neg α) (.conj α .ne))
@@ -868,7 +875,7 @@ theorem conj_ne_disj_derives_strongFalsum {α : Formula Atom} (hα : α.NEFree) 
     (conj_disj_derives_disj_conj (φ := .neg α) hα)).disjMonLeft h₁)
 
 /-- Distinct strong Hintikka formulas contradict each other
-    ([aloni-anttila-yang-2024] Lemma 4.11). -/
+([aloni-anttila-yang-2024] Lemma 4.11). -/
 theorem strongHintikka_conj_derives (he : Function.Injective e) (hd : default ∈ Set.range e)
     {k : ℕ} {T₁ T₂ : Finset (WorldType n k)} (hT : T₁ ≠ T₂) :
     {.conj (strongHintikka e T₁) (strongHintikka e T₂)} ⊢ .strongFalsum := by
@@ -935,8 +942,8 @@ theorem splits_fill_of_neFree (he : Function.Injective e) {β : Formula Atom} (h
     (support_image_iff hβ T).mpr fun τ hτ ↦ by simpa using hT hτ) hC
 
 /-- In a splittable context, a formula splits into the strong Hintikka formulas of the teams
-    supporting it, and its negation into those of the teams anti-supporting it, together with
-    the context's extra case. -/
+supporting it, and its negation into those of the teams anti-supporting it, together with
+the context's extra case. -/
 theorem splits_fill (he : Function.Injective e) (hd : default ∈ Set.range e) :
     ∀ (φ : Formula Atom) {k : ℕ}, φ.modalDepth ≤ k → φ.AtomsIn (Set.range e) →
       ∀ {C : Formula.Context Atom}, C.Splittable →
@@ -1148,11 +1155,10 @@ theorem Formula.atomsIn_atomList (φ : Formula Atom) : φ.AtomsIn {p | p ∈ φ.
   | conj _ _ ih₁ ih₂ | disj _ _ ih₁ ih₂ =>
     exact ⟨ih₁.mono fun p hp ↦ by simp_all [atomList], ih₂.mono fun p hp ↦ by simp_all [atomList]⟩
 
-/-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets. A
-    consequence that holds on every model is derivable. -/
+/-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets: every
+consequence is derivable. -/
 theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
-    (h : ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom) (s : Finset W),
-      (∀ γ ∈ Γ, support M γ s) → support M φ s) : (Γ : Set (Formula Atom)) ⊢ φ := by
+    (h : Γ ⊨ φ) : (Γ : Set (Formula Atom)) ⊢ φ := by
   have := Classical.decEq Atom
   set γ : Formula Atom := bigConj Γ.toList
   set X : Finset Atom := (γ.atomList ++ φ.atomList ++ [default]).toFinset
@@ -1166,16 +1172,22 @@ theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
     refine (splits_fill he hd γ (le_max_left γ.modalDepth φ.modalDepth) hγA
       (C := .hole) trivial).1 φ ?_
     rintro _ (⟨T, hT, rfl⟩ | hσ)
-    · refine (derives_of_support he φ (le_max_right _ _) hφA T).1 (h _ (univModel e) _ ?_)
+    · refine (derives_of_support he φ (le_max_right _ _) hφA T).1 (h ⟨_, univModel e, _⟩ ?_)
       exact fun γ' hγ' ↦ (support_bigConj_iff (univModel e) Γ.toList _).mp hT γ'
         (Finset.mem_toList.mpr hγ')
     · exact hσ.elim
   exact (Derives.bigConj_of_forall fun x hx ↦ .hyp (Finset.mem_toList.mp hx)).trans hγφ
 
-/-- For finite premise sets, derivability is consequence on every model. -/
-theorem derives_iff {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
-    (Γ : Set (Formula Atom)) ⊢ φ ↔ ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom)
-      (s : Finset W), (∀ γ ∈ Γ, support M γ s) → support M φ s :=
-  ⟨fun h _ _ M s hs ↦ soundness h M s fun γ hγ ↦ hs γ hγ, completeness⟩
+/-- For finite premise sets, derivability is consequence. -/
+theorem derives_iff_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
+    (Γ : Set (Formula Atom)) ⊢ φ ↔ Γ ⊨ φ :=
+  ⟨consequence_of_derives, completeness⟩
+
+/-- A consequence of finitely many premises over models in `Type` holds in models of every
+universe, so `Consequence` loses nothing by fixing the universe. -/
+theorem support_of_consequence {Γ : Finset (Formula Atom)} {φ : Formula Atom}
+    (h : Γ ⊨ φ) {W : Type*} [DecidableEq W] (M : KripkeModel W Atom)
+    (s : Finset W) (hs : ∀ γ ∈ Γ, support M γ s) : support M φ s :=
+  soundness (completeness h) M s fun γ hγ ↦ hs γ hγ
 
 end BSML

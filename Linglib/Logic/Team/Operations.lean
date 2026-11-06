@@ -62,24 +62,24 @@ variable {α : Type*}
 /-! ### Pointwise connectives -/
 
 /-- `flat p` holds of the teams all of whose points satisfy `p`. Atoms, and every flat
-    connective, define such properties. -/
+connective, define such properties. -/
 def flat (p : α → Prop) : TeamProperty α := {t | ∀ x ∈ t, p x}
 
 /-- The non-emptiness atom `NE` holds of the non-empty teams. -/
 def ne : TeamProperty α := {t | t.Nonempty}
 
 /-- The flat necessity modality over successor sets `R` holds of a team when the successor set of
-    each of its points is in `P`. -/
+each of its points is in `P`. -/
 def nec (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ R x ∈ P
 
 /-- The flat possibility modality holds of a team when each of its points has a non-empty set of
-    successors in `P`: it is `nec` of the teams with a non-empty part in `P`. -/
+successors in `P`: it is `nec` of the teams with a non-empty part in `P`. -/
 def poss (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   nec R ↑(upperClosure (P ∩ ne))
 
 /-- The possibility modality of modal dependence logic holds of a team when a single team `Y` in
-    `P` contains a successor of each of its points ([vaananen-2008] clause (T8), p. 245). -/
+`P` contains a successor of each of its points ([vaananen-2008] clause (T8), p. 245). -/
 def possWitness (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ Y, (∀ x ∈ t, ∃ y ∈ Y, y ∈ R x) ∧ Y ∈ P}
 
@@ -163,13 +163,13 @@ def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
     biUnionHom R t = t.biUnion R := rfl
 
 /-- The necessity modality of modal dependence logic holds of a team when the union of the
-    successor sets of its points is in `P` ([vaananen-2008] clause (T9), p. 245). -/
+successor sets of its points is in `P` ([vaananen-2008] clause (T9), p. 245). -/
 def necImage (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   biUnionHom R ⁻¹' P
 
 /-- The lax possibility modality of modal inclusion logic holds of a team when some set of
-    successors of its points is in `P` and contains a successor of each point
-    ([anttila-haggblom-yang-2025] Definition 2.2). -/
+successors of its points is in `P` and contains a successor of each point
+([anttila-haggblom-yang-2025] Definition 2.2). -/
 def possLax (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ S ⊆ t.biUnion R, (∀ x ∈ t, ∃ y ∈ S, y ∈ R x) ∧ S ∈ P}
 
@@ -275,7 +275,7 @@ theorem nec_union (R : α → Finset α) (P Q : TeamProperty α) :
   rw [nec, nec, nec, flat_sups_flat]; rfl
 
 /-- The flat possibility modality turns a union into a split disjunction. This is the law
-    behind `◇(φ ⩔ ψ) ≡ ◇φ ∨ ◇ψ` in [aloni-anttila-yang-2024]. -/
+behind `◇(φ ⩔ ψ) ≡ ◇φ ∨ ◇ψ` in [aloni-anttila-yang-2024]. -/
 theorem poss_union (R : α → Finset α) (P Q : TeamProperty α) :
     poss R (P ∪ Q) = poss R P ⊻ poss R Q := by
   rw [poss, poss, poss, Set.union_inter_distrib_right, upperClosure_union, UpperSet.coe_inf,
