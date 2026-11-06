@@ -18,17 +18,9 @@
       [
         "section",
         "4.5"
-      ],
-      [
-        "form",
-        "p & ~B_a p"
-      ],
-      [
-        "status",
-        "defensible; doxastically indefensible for the speaker"
       ]
     ],
-    "comment": "'absurd to utter' (p. 9); 'something logically very queer about (8)' (p. 65). Moore's sentence: defensible, but its believed form (30)* is indefensible.",
+    "comment": "'absurd to utter' (p. 9); 'something logically very queer about (8)' (p. 65).",
     "verified": "page-image"
   },
   {
@@ -50,17 +42,9 @@
       [
         "section",
         "4.11"
-      ],
-      [
-        "form",
-        "p & ~K_a p & ~K_a ~p"
-      ],
-      [
-        "status",
-        "defensible; epistemically indefensible for the speaker"
       ]
     ],
-    "comment": "'sometimes also somewhat peculiar' (p. 9); 'often somewhat awkward although it is not itself indefensible' (p. 78). Less strange than (8): the known form (40)* is indefensible.",
+    "comment": "'sometimes also somewhat peculiar' (p. 9); 'often somewhat awkward' (p. 78); 'distinctly less strange' than (8) (p. 82).",
     "verified": "page-image"
   },
   {
@@ -82,17 +66,9 @@
       [
         "section",
         "4.5"
-      ],
-      [
-        "form",
-        "p & ~B_a p"
-      ],
-      [
-        "status",
-        "defensible; doxastically defensible for a third person"
       ]
     ],
-    "comment": "A change of person removes the absurdity of (8).",
+    "comment": "A change of person removes the absurdity of (8) (p. 65).",
     "verified": "page-image"
   },
   {
@@ -114,13 +90,9 @@
       [
         "section",
         "4.5"
-      ],
-      [
-        "status",
-        "defensible"
       ]
     ],
-    "comment": "A change of tense removes the absurdity of (8); (32), its believed form, is defensible.",
+    "comment": "A change of tense removes the absurdity of (8) (p. 65).",
     "verified": "page-image"
   },
   {
@@ -142,17 +114,9 @@
       [
         "section",
         "4.6"
-      ],
-      [
-        "form",
-        "B_a (p & ~B_a p)"
-      ],
-      [
-        "status",
-        "indefensible"
       ]
     ],
-    "comment": "'indefensible' (p. 67): (30)*, by the reductive argument (33)–(39).",
+    "comment": "'indefensible' (p. 67).",
     "verified": "page-image"
   },
   {
@@ -174,14 +138,6 @@
       [
         "section",
         "4.6"
-      ],
-      [
-        "form",
-        "B_b (p & ~B_a p)"
-      ],
-      [
-        "status",
-        "defensible unless a = b"
       ]
     ],
     "comment": "",
@@ -206,14 +162,6 @@
       [
         "section",
         "4.11"
-      ],
-      [
-        "form",
-        "K_a (p & ~K_a p & ~K_a ~p)"
-      ],
-      [
-        "status",
-        "indefensible"
       ]
     ],
     "comment": "'it is indefensible to say' (p. 79).",
@@ -238,17 +186,9 @@
       [
         "section",
         "4.13"
-      ],
-      [
-        "form",
-        "K_a p & ~K_b p"
-      ],
-      [
-        "status",
-        "epistemically indefensible for b"
       ]
     ],
-    "comment": "'sometimes (not always) a somewhat strange thing to say' (p. 80): epistemically indefensible for the speaker, by a simple argument.",
+    "comment": "'sometimes (not always) a somewhat strange thing to say' (p. 80).",
     "verified": "page-image"
   },
   {
@@ -270,17 +210,9 @@
       [
         "section",
         "4.13"
-      ],
-      [
-        "form",
-        "(K_a p v K_a ~p) & ~(K_b p v K_b ~p)"
-      ],
-      [
-        "status",
-        "epistemically defensible"
       ]
     ],
-    "comment": "Unlike (42), nothing is wrong with it.",
+    "comment": "'there is nothing wrong with sentences of the form (43)' (p. 80).",
     "verified": "page-image"
   },
   {
@@ -302,17 +234,9 @@
       [
         "section",
         "4.14"
-      ],
-      [
-        "form",
-        "B_a (p & ~K_a p)"
-      ],
-      [
-        "status",
-        "defensible"
       ]
     ],
-    "comment": "'does not sound quite all right', 'slightly queer' (p. 83), only because more complicated than (47), which it virtually implies.",
+    "comment": "'does not sound quite all right', 'slightly queer' (p. 83).",
     "verified": "page-image"
   },
   {
@@ -334,17 +258,9 @@
       [
         "section",
         "4.14"
-      ],
-      [
-        "form",
-        "B_a p & ~K_a p"
-      ],
-      [
-        "status",
-        "defensible; its known form (48) defensible"
       ]
     ],
-    "comment": "A perfectly natural form of words; implies (46) doxastically.",
+    "comment": "'a perfectly natural form of words' (p. 84).",
     "verified": "page-image"
   },
   {
@@ -366,17 +282,9 @@
       [
         "section",
         "4.15"
-      ],
-      [
-        "form",
-        "B_a p & ~K_a B_a p"
-      ],
-      [
-        "status",
-        "epistemically indefensible for the speaker"
       ]
     ],
-    "comment": "'the absurdity of (49)' (p. 87), in the sense in which the same page speaks of the absurdity of (9). A special case of (9): 'I believe that p' implies 'I know that I believe that p' epistemically.",
+    "comment": "'the absurdity of (49)' (p. 87).",
     "verified": "page-image"
   },
   {
@@ -398,14 +306,6 @@
       [
         "section",
         "4.16"
-      ],
-      [
-        "form",
-        "B_a p & P_a ~p"
-      ],
-      [
-        "status",
-        "epistemically and doxastically defensible"
       ]
     ],
     "comment": "",
@@ -430,17 +330,9 @@
       [
         "section",
         "4.17"
-      ],
-      [
-        "form",
-        "p & ~K_b p"
-      ],
-      [
-        "status",
-        "epistemically indefensible to address to its hearer"
       ]
     ],
-    "comment": "'may sometimes be distinctly odd', 'sometimes felt to be somewhat odd' (p. 90). Antiperformatory: saying it to a well-informed hearer makes it false.",
+    "comment": "'may sometimes be distinctly odd' (p. 90).",
     "verified": "page-image"
   },
   {
@@ -462,17 +354,9 @@
       [
         "section",
         "4.17"
-      ],
-      [
-        "form",
-        "p & ~K_b p"
-      ],
-      [
-        "status",
-        "a roundabout way of letting the hearer know that p"
       ]
     ],
-    "comment": "",
+    "comment": "Understood as 'a roundabout way of letting you know that p' (p. 91).",
     "verified": "page-image"
   },
   {
@@ -494,17 +378,9 @@
       [
         "section",
         "4.21"
-      ],
-      [
-        "form",
-        "p & ~K_a p"
-      ],
-      [
-        "status",
-        "epistemically indefensible"
       ]
     ],
-    "comment": "More natural than (56): religious discourse is not defeated by the failure to know.",
+    "comment": "More natural than (56) (p. 100).",
     "verified": "page-image"
   },
   {
@@ -526,14 +402,6 @@
       [
         "section",
         "4.21"
-      ],
-      [
-        "form",
-        "p & ~K_a p"
-      ],
-      [
-        "status",
-        "epistemically indefensible"
       ]
     ],
     "comment": "A '(putative) statement', less natural than (55) (p. 100).",
@@ -558,13 +426,9 @@
       [
         "section",
         "4.21"
-      ],
-      [
-        "status",
-        "less awkward than (9)"
       ]
     ],
-    "comment": "Stress on the verb assimilates the sentence to (47).",
+    "comment": "'perceptibly less awkward than (9)' (p. 100).",
     "verified": "page-image"
   },
   {
@@ -586,13 +450,9 @@
       [
         "section",
         "4.21"
-      ],
-      [
-        "status",
-        "implies (8) yet less absurd"
       ]
     ],
-    "comment": "Shows that the absurdity of (8) is not indefensibility, which (58) would inherit.",
+    "comment": "'a fairly natural form of words' (p. 101), 'clearly less absurd than (8)' (p. 102).",
     "verified": "page-image"
   },
   {
@@ -614,10 +474,6 @@
       [
         "section",
         "4.21"
-      ],
-      [
-        "status",
-        "natural"
       ]
     ],
     "comment": "",
@@ -642,17 +498,9 @@
       [
         "section",
         "5.1"
-      ],
-      [
-        "form",
-        "K_a K_a p"
-      ],
-      [
-        "status",
-        "virtually equivalent to (62)"
       ]
     ],
-    "comment": "'rather strange' (p. 104), being virtually equivalent to the simpler (62).",
+    "comment": "'rather strange' (p. 104).",
     "verified": "page-image"
   },
   {
@@ -674,14 +522,6 @@
       [
         "section",
         "5.1"
-      ],
-      [
-        "form",
-        "K_b K_a p"
-      ],
-      [
-        "status",
-        "virtually implies K_b p"
       ]
     ],
     "comment": "",
@@ -706,10 +546,6 @@
       [
         "section",
         "5.2"
-      ],
-      [
-        "form",
-        "K_a p"
       ]
     ],
     "comment": "",
@@ -734,17 +570,9 @@
       [
         "section",
         "5.5"
-      ],
-      [
-        "form",
-        "K_a p & ~K_a K_a p"
-      ],
-      [
-        "status",
-        "indefensible"
       ]
     ],
-    "comment": "'may very well have uses in more or less ordinary discourse', 'not one which cannot reasonably be made' (p. 112), though indefensible: a has not followed the implications of what he knows far enough.",
+    "comment": "'may very well have uses in more or less ordinary discourse' (p. 112).",
     "verified": "page-image"
   },
   {
@@ -766,17 +594,9 @@
       [
         "section",
         "5.5"
-      ],
-      [
-        "form",
-        "K_a p & ~K_a K_a p"
-      ],
-      [
-        "status",
-        "indefensible"
       ]
     ],
-    "comment": "'absurd in a way (70) is not', 'more absurd than (70)' (p. 113): the speaker cannot specify such a p himself.",
+    "comment": "'absurd in a way (70) is not' (p. 113).",
     "verified": "page-image"
   }
 ]
