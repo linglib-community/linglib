@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Card
+public import Linglib.Core.Order.Monotone.Extension
 public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Semantics.Reference.Animacy
@@ -28,11 +29,15 @@ tied to affected participants S with P, [each as a tendency](##bias_rows).
 * S, A and P are `ArgumentRole.S`, `.A` and `.P`, and a case system is a marking of the roles, so
   the five logically possible systems are the five alignments of `Alignment.marking_cases`.
 * A marking row records, for each argument the book discusses, the scales the book invokes for
-  that language and the marking its position takes, obligatory, optional or none. A row covers
-  every value of a scale it does not cite, so two rows of a language and role are compared when
-  some value of the first lies below some value of the second in the product of the person,
-  animacy and definiteness scales. A row whose marking the book attributes to a parameter beside
-  the hierarchies, Polish's male-human cut, carries a `parameter` feature and has no marking.
+  that language and the marking its position takes, obligatory, optional or none, and covers
+  every value of a scale it does not cite. A language's rows follow the information flow when a
+  P-marking monotone and an A-marking antitone in the componentwise order of person, animacy and
+  definiteness take each row's value on what it covers; at each degree of marking the prominences
+  marked to it then form an upper set for P and a lower set for A, the fit `Alignment.Fits` asks
+  of overt marking. By `exists_monotone_forall_eq_iff` such markings exist exactly when the rows
+  agree pair by pair, which `decide` checks. A row whose marking the book attributes to a
+  parameter beside the hierarchies, Polish's male-human cut, carries a `parameter` feature and
+  has no marking.
 * The departures from the paradigm causee are per-language parameters: which positions a
   language doubles, whether it demotes further than required, and whether it has a passive
   expressing its agent in the causee's oblique case, the last consulted only by the rival
@@ -53,9 +58,6 @@ tied to affected participants S with P, [each as a tendency](##bias_rows).
   transitive verb.
 * The doubling universal, that the possibilities for doubling increase down the hierarchy, needs
   more languages than the book's rows give.
-* Each language's marking rows should extend to a conditioned marking that fits the prominence
-  order in the sense of `Alignment.Fits`, A marked on a lower set and P on an upper set; the book
-  states the cut-off form of the prediction, and `marking_rows` checks only pairs of rows.
 * The animacy hierarchy of chapter 9 (the Navajo *yi-* ~ *bi-* alternation, Chukchi number,
   Tangut and Southern Tiwa agreement), the Russian numeral continuum, and Greenberg's Universal
   38 on the unmarkedness of the case of S are not stated.
@@ -116,6 +118,14 @@ inductive Marked
 /-- Optional marking sits between unmarked and marked. -/
 instance : LinearOrder Marked := LinearOrder.lift' (·.ctorIdx) (by decide)
 
+instance : OrderBot Marked where
+  bot := .unmarked
+  bot_le := by decide
+
+/-- An argument's prominence is its person, animacy and degree of definiteness, ordered
+componentwise. -/
+abbrev Prominence := Person.Class × Animacy × DefinitenessDegree
+
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/
 structure Marking where
@@ -129,6 +139,7 @@ structure Marking where
   definiteness : Option DefinitenessDegree
   /-- The marking the position takes. -/
   marked : Marked
+  deriving DecidableEq
 
 /-- The animacy labels of the rows, read as person and animacy apart, the speech-act
 participants being human and the nouns third person. -/
@@ -151,35 +162,80 @@ def Marking.ofRow (row : Datum) : List Marking :=
           [("marked", Marked.marked), ("optional", .optional), ("unmarked", .unmarked)]⟩
   else []
 
-/-- `m₁` marks the same role as `m₂` and is at most as prominent on every parameter both
-cite. -/
-def Marking.AtMost (m₁ m₂ : Marking) : Prop :=
-  m₁.role = m₂.role ∧ (∀ p₁ ∈ m₁.person, ∀ p₂ ∈ m₂.person, p₁ ≤ p₂) ∧
-    (∀ a₁ ∈ m₁.animacy, ∀ a₂ ∈ m₂.animacy, a₁ ≤ a₂) ∧
-    ∀ d₁ ∈ m₁.definiteness, ∀ d₂ ∈ m₂.definiteness, d₁ ≤ d₂
+/-- The prominences a marking covers: every value of a scale it does not cite. -/
+def Marking.cell (m : Marking) : Set Prominence :=
+  {c | (∀ p ∈ m.person, c.1 = p) ∧ (∀ a ∈ m.animacy, c.2.1 = a) ∧ ∀ d ∈ m.definiteness, c.2.2 = d}
 
-instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := inferInstanceAs (Decidable (_ ∧ _))
+/-- Some prominence `m₁` covers lies below some prominence `m₂` covers. -/
+def Marking.AtMost (m₁ m₂ : Marking) : Prop := ∃ x ∈ m₁.cell, ∃ y ∈ m₂.cell, x ≤ y
 
-/-- The pair follows the information flow: where `m₁` is at most as prominent as `m₂`, a P is
-marked no more and an A no less. -/
-def Marking.FollowsFlow (m₁ m₂ : Marking) : Prop :=
-  m₁.AtMost m₂ → (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked)
+private theorem exists_le_of_option {γ : Type*} [Preorder γ] (g : γ) {o₁ o₂ : Option γ}
+    (h : ∀ a ∈ o₁, ∀ b ∈ o₂, a ≤ b) :
+    ∃ x y : γ, (∀ a ∈ o₁, x = a) ∧ (∀ b ∈ o₂, y = b) ∧ x ≤ y := by
+  rcases o₁ with _ | a <;> rcases o₂ with _ | b
+  exacts [⟨g, g, by simp⟩, ⟨b, b, by simp⟩, ⟨a, a, by simp⟩,
+    ⟨a, b, by simp, by simp, h a rfl b rfl⟩]
 
-instance (m₁ m₂ : Marking) : Decidable (m₁.FollowsFlow m₂) := inferInstanceAs (Decidable (_ → _))
+theorem Marking.atMost_iff {m₁ m₂ : Marking} : m₁.AtMost m₂ ↔
+    (∀ p₁ ∈ m₁.person, ∀ p₂ ∈ m₂.person, p₁ ≤ p₂) ∧
+      (∀ a₁ ∈ m₁.animacy, ∀ a₂ ∈ m₂.animacy, a₁ ≤ a₂) ∧
+        ∀ d₁ ∈ m₁.definiteness, ∀ d₂ ∈ m₂.definiteness, d₁ ≤ d₂ := by
+  refine ⟨fun ⟨x, ⟨hp, ha, hd⟩, y, ⟨hp', ha', hd'⟩, h₁, h₂, h₃⟩ ↦
+    ⟨fun p h q h' ↦ hp p h ▸ hp' q h' ▸ h₁, fun a h b h' ↦ ha a h ▸ ha' b h' ▸ h₂,
+      fun d h e h' ↦ hd d h ▸ hd' e h' ▸ h₃⟩, fun ⟨hp, ha, hd⟩ ↦ ?_⟩
+  obtain ⟨x₁, y₁, hx₁, hy₁, h₁⟩ := exists_le_of_option ⊥ hp
+  obtain ⟨x₂, y₂, hx₂, hy₂, h₂⟩ := exists_le_of_option .inanimate ha
+  obtain ⟨x₃, y₃, hx₃, hy₃, h₃⟩ := exists_le_of_option .nonSpecific hd
+  exact ⟨(x₁, x₂, x₃), ⟨hx₁, hx₂, hx₃⟩, (y₁, y₂, y₃), ⟨hy₁, hy₂, hy₃⟩, h₁, h₂, h₃⟩
 
-/-- A marking row is acceptable exactly when its marking agrees with the information flow against
-every acceptable row of its language, special P-marking rising up the prominence scales and
-special A-marking falling down them; the one row the book doubts, the Hindi human P without *ko*
-of (18), is the one that departs ((7)–(27) of chapter 6). -/
+instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := decidable_of_iff' _ Marking.atMost_iff
+
+/-- The markings of `rows` follow the natural information flow: a marking of P monotone in
+prominence and one of A antitone in it, each with its own cut-offs, take every row's value
+throughout the prominences the row covers. -/
+def FollowsFlow (rows : List Datum) : Prop :=
+  (∃ f : Prominence → Marked, Monotone f ∧
+    ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .P → ∀ c ∈ m.cell, f c = m.marked) ∧
+  ∃ f : Prominence → Marked, Antitone f ∧
+    ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .A → ∀ c ∈ m.cell, f c = m.marked
+
+section FollowsFlow
+
+variable {L : List Marking} {ρ : ArgumentRole}
+
+theorem exists_monotone_iff :
+    (∃ f : Prominence → Marked, Monotone f ∧ ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.marked) ↔
+      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m.AtMost m' → m.marked ≤ m'.marked := by
+  have h := exists_monotone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
+    (s := Marking.cell) (k := Marking.marked)
+  simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq, and_imp] at h
+  exact h
+
+theorem exists_antitone_iff :
+    (∃ f : Prominence → Marked, Antitone f ∧ ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.marked) ↔
+      ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m'.AtMost m → m.marked ≤ m'.marked := by
+  have h := exists_antitone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
+    (s := Marking.cell) (k := Marking.marked)
+  simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq, and_imp] at h
+  exact h
+
+end FollowsFlow
+
+/-- A marking row is acceptable exactly when it and the acceptable rows of its language follow
+the natural information flow, special P-marking rising with prominence and special A-marking
+falling with it; the one row the book doubts, the Hindi human P without *ko* of (18), is the one
+that departs ((7)–(27) of chapter 6). -/
 theorem marking_rows : ∀ r ∈ Examples.all, r.feature? "construction" = some "marking" →
-    (r.judgment = .acceptable ↔ ∀ r' ∈ acceptable.filter (·.language = r.language),
-      ∀ m ∈ Marking.ofRow r, ∀ m' ∈ Marking.ofRow r', m.FollowsFlow m' ∧ m'.FollowsFlow m) := by
+    (r.judgment = .acceptable ↔
+      FollowsFlow (r :: acceptable.filter (·.language = r.language))) := by
+  simp only [FollowsFlow, exists_monotone_iff, exists_antitone_iff]
   decide
 
 theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
     ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
-      ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₁.AtMost m₂ ∧
-        (role = .P → m₁.marked < m₂.marked) ∧ (role = .A → m₂.marked < m₁.marked) := by
+      ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₂.role = role ∧
+        m₁.AtMost m₂ ∧ (role = .P → m₁.marked < m₂.marked) ∧
+          (role = .A → m₂.marked < m₁.marked) := by
   decide
 
 /-! ### The causee hierarchy (§8.2) -/
@@ -187,6 +243,7 @@ theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
 /-- `causeePosition s` is the position of the same name in [keenan-comrie-1977]'s accessibility
 hierarchy. -/
 def causeePosition : CauseeSlot → Relativization.Position
+  | .subject => .subject
   | .directObject => .directObject
   | .indirectObject => .indirectObject
   | .oblique => .oblique
@@ -198,7 +255,7 @@ def causeeEmbedding : CauseeSlot ↪o Relativization.Position :=
   OrderEmbedding.ofStrictMono causeePosition fun a b ↦ by revert a b; decide
 
 theorem range_causeeEmbedding :
-    Set.range causeeEmbedding = Set.Icc .oblique .directObject := by
+    Set.range causeeEmbedding = Set.Icc .oblique .subject := by
   ext p
   simp only [causeeEmbedding, OrderEmbedding.coe_ofStrictMono, Set.mem_range, Set.mem_Icc]
   revert p; decide

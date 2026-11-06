@@ -1,7 +1,7 @@
 module
 
-public import Mathlib.Order.Basic
-public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Data.Finset.Max
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -12,8 +12,8 @@ Causative constructions vary along two scales: **morphological complexity**, fro
 about the result itself to one that acts through a causee. [comrie-1989]'s generalization is that
 within a language the more compact construction expresses the more direct causation
 (`CausativeConstruction.ComrieMonotone`). The causee of a causativized verb takes the highest
-grammatical relation its base verb leaves free (`causeeDemotion`), so the causee sinks as the
-base valency rises (`causeeDemotion_antitoneOn`).
+grammatical relation not already filled by the causer and the base verb's other arguments
+(`causeeDemotion`), so the causee sinks as the base valency rises (`causeeDemotion_antitone`).
 
 ## References
 
@@ -38,14 +38,8 @@ inductive Mediation where
   | indirect
   deriving DecidableEq, Repr, Fintype
 
-/-- Numeric rank: direct (0) < indirect (1). -/
-def Mediation.rank : Mediation → ℕ
-  | .direct => 0
-  | .indirect => 1
-
 /-- Direct < indirect: the directness scale. -/
-instance : LinearOrder Mediation :=
-  LinearOrder.lift' Mediation.rank fun a b _ ↦ by cases a <;> cases b <;> simp_all [Mediation.rank]
+instance : LinearOrder Mediation := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 /-! ### Causative complexity -/
 
@@ -58,17 +52,10 @@ inductive CausativeComplexity where
   | lexical
   | morphological
   | periphrastic
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- Numeric encoding: lexical (0) < morphological (1) < periphrastic (2). -/
-def CausativeComplexity.toNat : CausativeComplexity → ℕ
-  | .lexical => 0
-  | .morphological => 1
-  | .periphrastic => 2
-
-instance : LinearOrder CausativeComplexity :=
-  LinearOrder.lift' CausativeComplexity.toNat fun a b _ ↦ by
-    cases a <;> cases b <;> simp_all [CausativeComplexity.toNat]
+/-- Lexical < morphological < periphrastic: the compactness scale, compact first. -/
+instance : LinearOrder CausativeComplexity := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 /-! ### Causative constructions and Comrie's generalization -/
 
@@ -88,37 +75,52 @@ def CausativeConstruction.ComrieMonotone (c₁ c₂ : CausativeConstruction) : P
 instance (c₁ c₂ : CausativeConstruction) : Decidable (c₁.ComrieMonotone c₂) :=
   inferInstanceAs (Decidable (_ → _))
 
-/-! ### The causee-marking hierarchy -/
+/-! ### The causee hierarchy -/
 
-/-- Grammatical relations available to the causee, ordered from highest to lowest.
-
-[comrie-1989]: when a verb is causativized, its original subject is demoted to the highest
-relation on the hierarchy that the base verb's arguments leave free, so an intransitive base
-yields a direct-object causee, a transitive one an indirect-object causee, and a ditransitive
-one an oblique causee. -/
+/-- The grammatical relations of [comrie-1989]'s causative hierarchy, subject > direct object >
+indirect object > oblique. The causee of a causativized verb takes the highest of them that is not
+already filled, so an intransitive base yields a direct-object causee, a transitive one an
+indirect-object causee, and a ditransitive one an oblique causee. -/
 inductive CauseeSlot where
-  | directObject
-  | indirectObject
   | oblique
+  | indirectObject
+  | directObject
+  | subject
   deriving DecidableEq, Repr, Fintype
 
-/-- Rank on the hierarchy: DO (2) > IO (1) > OBL (0). -/
-def CauseeSlot.rank : CauseeSlot → ℕ
-  | .directObject => 2
-  | .indirectObject => 1
-  | .oblique => 0
+/-- Oblique < indirect object < direct object < subject. -/
+instance : LinearOrder CauseeSlot := LinearOrder.lift' (·.ctorIdx) (by decide)
 
-/-- Oblique < indirect object < direct object: the grammatical-relations hierarchy. -/
-instance : LinearOrder CauseeSlot := LinearOrder.lift' CauseeSlot.rank (by decide)
+/-- The subject tops the hierarchy and the oblique is its bottom. -/
+instance : BoundedOrder CauseeSlot where
+  top := .subject
+  le_top := by decide
+  bot := .oblique
+  bot_le := by decide
 
-/-- The causee's slot given the base verb's valency: the highest slot the base verb's own
-arguments leave free. -/
-def causeeDemotion : ℕ → CauseeSlot
-  | 1 => .directObject
-  | 2 => .indirectObject
-  | _ => .oblique
+instance : LocallyFiniteOrder CauseeSlot := Fintype.toLocallyFiniteOrder
 
-theorem causeeDemotion_antitoneOn : AntitoneOn causeeDemotion (Set.Ici 1) := by
-  rintro (_ | _ | _ | a) ha (_ | _ | _ | b) hb hab <;> simp_all [causeeDemotion] <;> decide
+/-- The slots filled before the causee is placed, in the causative of a base verb with `n`
+arguments: the subject by the causer, and the slots below it by the base verb's other arguments,
+which keep their relations, down to the `n`th slot from the top. No oblique is ever filled, a
+clause admitting any number of them. -/
+def CauseeSlot.filled (n : ℕ) : Finset CauseeSlot := {s | s ≠ .oblique ∧ (Finset.Ioi s).card < n}
+
+theorem CauseeSlot.oblique_notMem_filled (n : ℕ) : oblique ∉ filled n := by simp [filled]
+
+theorem CauseeSlot.filled_mono : Monotone filled := fun _ _ h _ ↦ by
+  simp only [filled, Finset.mem_filter, Finset.mem_univ, true_and]
+  exact fun ⟨hs, hn⟩ ↦ ⟨hs, hn.trans_le h⟩
+
+/-- The causee of a base verb with `n` arguments takes the highest slot not already filled. -/
+def causeeDemotion (n : ℕ) : CauseeSlot :=
+  (CauseeSlot.filled n)ᶜ.max' ⟨.oblique, Finset.mem_compl.2 (CauseeSlot.oblique_notMem_filled n)⟩
+
+theorem isGreatest_causeeDemotion (n : ℕ) :
+    IsGreatest ↑(CauseeSlot.filled n)ᶜ (causeeDemotion n) :=
+  Finset.isGreatest_max' _ _
+
+theorem causeeDemotion_antitone : Antitone causeeDemotion := fun _ _ h ↦
+  Finset.max'_subset _ (Finset.compl_subset_compl.2 (CauseeSlot.filled_mono h))
 
 end Causation.Morphological
