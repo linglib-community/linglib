@@ -52,6 +52,10 @@ open Core.Order (TreePath)
 
 /-! ### Pronominalization and selection -/
 
+-- `Config.Derives` quantifies over the categories a proform may have.
+deriving instance Fintype for Minimalist.Cat
+deriving instance Fintype for DistributedMorphology.Cat
+
 /-- In the configurations of a root and its argument, the root takes the argument as its
 complement, as in (12), or modifies the categorizer whose complement it is, or the argument is in
 the specifier of the categorizer, or in the specifier of a functional head over the root, as in

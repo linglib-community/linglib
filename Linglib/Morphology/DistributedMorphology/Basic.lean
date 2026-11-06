@@ -90,7 +90,7 @@ inductive Cat
   | root
   | head (c : Minimalist.Cat)
   | f
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr
 
 /-! ### Morphemes -/
 

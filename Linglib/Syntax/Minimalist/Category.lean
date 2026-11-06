@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Function.Basic
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Categories
@@ -124,7 +123,7 @@ inductive Cat where
   | Nmlz
   /-- The inherent-case shell ([newman-2024]): KP wraps DP for oblique or inherent case. -/
   | K
-  deriving Repr, DecidableEq, Inhabited, Fintype
+  deriving Repr, DecidableEq, Inhabited
 
 /-- The categorizers, little n, v and a, one of which merges with every root ([marantz-2001]). -/
 def Cat.IsCategorizer : Cat → Prop
