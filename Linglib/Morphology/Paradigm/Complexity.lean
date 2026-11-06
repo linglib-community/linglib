@@ -216,7 +216,7 @@ theorem predicts_iff_condEntropy_eq_zero [Nonempty D] :
   rw [← condEntropy_cellForm, condEntropy_eq_zero_iff _ (measurable_of_finite _)
     (measurable_of_finite _), predicts_singleton_iff, ← M.factorsThrough_cellForm_iff,
     Function.factorsThrough_iff]
-  simp only [uniformOn_univ_ae_iff, funext_iff, Function.comp_apply]
+  simp only [ae_uniformOn_univ, Filter.eventually_top, funext_iff, Function.comp_apply]
 
 variable [Fintype Cell] [DecidableEq Cell]
 
