@@ -25,9 +25,11 @@ segment of the scale. The subhierarchies' derivation by harmonic alignment
 directly in their derived ranking.
 
 A language's zone, a set of cells of the grid of animacy and definiteness, records *obligatory*
-marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
-optional zones (constraints that rerank with \*STRUC_C, stochastically in
-Boersma's sense) are noted in docstrings but not represented.
+marking — the zone whose constraints strictly dominate \*STRUC_C. The optional zones of the
+three-zone systems of §5 (constraints that rerank with \*STRUC_C, stochastically in Boersma's
+sense) are possible zones beside them, and the pair is a graded marking (`Alignment.FitsGraded`);
+the optional cases of the one-dimensional systems (Ritharngu's animates, Yiddish, Sinhalese) are
+noted in docstrings but not represented.
 
 - `figure2_typology` / `figure2_languages` — the six interpolation points on
   the definiteness subhierarchy generate exactly the six cutoff systems,
@@ -214,6 +216,79 @@ theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
 prominent object while leaving a more prominent one unmarked. -/
 theorem dom_fits : ∀ z ∈ allDOMZones, Fits (marking z) :=
   fun z hz ↦ (fits_marking_iff z).2 (dom_obligatory_zone_upperSet z hz)
+
+/-! ### Optional zones
+
+Hindi, Persian and the two stages of Spanish have three zones (§5): marking is obligatory where
+the iconicity constraints dominate \*STRUC_C, optional where they rerank with it, and excluded where
+it dominates them. A system's possible zone is where marking is obligatory or optional. -/
+
+/-- CMC Spanish may mark human and animate definites and specific indefinites, and inanimate
+pronouns and proper names (§5.1, Figures 5–6). -/
+abbrev cmcSpanishPossible : Set (Animacy × DefinitenessScale) :=
+  Set.Ici (.animate, .indefiniteSpecific) ∪ Set.Ici (.inanimate, .properName)
+
+/-- Hindi excludes marking only on inanimate indefinites (§5.2, Figure 7). -/
+abbrev hindiPossible : Set (Animacy × DefinitenessScale) :=
+  Set.Ici (.animate, .nonSpecific) ∪ Set.Ici (.inanimate, .definite)
+
+/-- Persian may mark every object, the three non-specifics optionally (§5.3, Figure 8). -/
+abbrev persianPossible : Set (Animacy × DefinitenessScale) := Set.univ
+
+/-- Modern Spanish keeps the lower boundary of CMC Spanish (§5.4, Figure 9). -/
+abbrev spanishPossible : Set (Animacy × DefinitenessScale) :=
+  Set.Ici (.animate, .indefiniteSpecific) ∪ Set.Ici (.inanimate, .properName)
+
+open Classical in
+/-- The graded marking of a three-zone system: the object obligatorily marked on `z`, optionally
+on the rest of `w`, and never elsewhere, and no other role marked. -/
+noncomputable def overtness (z w : Set (Animacy × DefinitenessScale)) :
+    ArgumentRole → Animacy × DefinitenessScale → Overtness
+  | .P, c => if c ∈ z then .obligatory else if c ∈ w then .optional else .excluded
+  | _, _ => .excluded
+
+theorem fitsGraded_overtness_iff {z w : Set (Animacy × DefinitenessScale)} (h : z ⊆ w) :
+    FitsGraded (overtness z w) ↔ IsUpperSet z ∧ IsUpperSet w := by
+  classical
+  have hP (c) : (.obligatory ≤ overtness z w .P c ↔ c ∈ z) ∧
+      (.optional ≤ overtness z w .P c ↔ c ∈ w) := by
+    by_cases hz : c ∈ z
+    · simp only [overtness, hz, h hz, ↓reduceIte, iff_true]; decide
+    · by_cases hw : c ∈ w <;> simp only [overtness, hz, hw, ↓reduceIte, iff_true,
+        iff_false] <;> decide
+  refine ⟨fun ⟨_, hm⟩ ↦ ⟨fun a b hab ha ↦ (hP b).1.1 (((hP a).1.2 ha).trans (hm hab)),
+    fun a b hab ha ↦ (hP b).2.1 (((hP a).2.2 ha).trans (hm hab))⟩,
+    fun ⟨hz, hw⟩ ↦ ⟨fun _ _ _ ↦ le_rfl, fun a b hab ↦ le_of_forall_le fun k hk ↦ ?_⟩⟩
+  cases k
+  · exact bot_le
+  · exact (hP b).2.2 (hw hab ((hP a).2.1 hk))
+  · exact (hP b).1.2 (hz hab ((hP a).1.1 hk))
+
+-- §5, Figures 5–9: in each three-zone system the obligatory zone lies within the possible zone
+-- and the graded marking fits the prominence order, so the optional zones too are monotone.
+theorem three_zone_systems_fit :
+    ∀ zw ∈ [(cmcSpanishDOM, cmcSpanishPossible), (hindiDOM, hindiPossible),
+      (persianDOM, persianPossible), (spanishDOM, spanishPossible)],
+      zw.1 ⊆ zw.2 ∧ FitsGraded (overtness zw.1 zw.2) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false]
+  rintro _ (rfl | rfl | rfl | rfl) <;>
+    refine ⟨?_, (fitsGraded_overtness_iff ?_).2 ⟨?_, ?_⟩⟩
+  all_goals first
+    | exact isUpperSet_Ici _
+    | exact isUpperSet_univ
+    | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
+    | exact Set.subset_univ _
+    | exact Set.subset_union_of_subset_left (Set.Ici_subset_Ici.2 (by decide)) _
+    | exact Set.union_subset (Set.subset_union_of_subset_left (Set.Ici_subset_Ici.2 (by decide)) _)
+        (Set.subset_union_of_subset_left (Set.Ici_subset_Ici.2 (by decide)) _)
+
+-- §5.4, Figure 9: DOM spread from CMC to Modern Spanish by demoting \*STRUC_C, which enlarged
+-- the obligatory zone and left the possible zone where it was; Modern Spanish then shares Hindi's
+-- obligatory zone but not its optional one (§5.2).
+theorem spread_of_dom :
+    cmcSpanishDOM ⊆ spanishDOM ∧ cmcSpanishPossible = spanishPossible ∧
+      spanishDOM = hindiDOM ∧ (.human, .nonSpecific) ∈ hindiPossible \ spanishPossible :=
+  ⟨Set.subset_union_of_subset_right (Set.Ici_subset_Ici.2 (by decide)) _, rfl, rfl, by decide⟩
 
 theorem isUpperSet_iff_eq_empty_or_Ici {α : Type*} [LinearOrder α] [WellFoundedLT α]
     {s : Set α} : IsUpperSet s ↔ s = ∅ ∨ ∃ a, s = Set.Ici a :=
