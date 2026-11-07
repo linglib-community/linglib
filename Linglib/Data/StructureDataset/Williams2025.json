@@ -1,0 +1,65 @@
+{
+  "bibkey": "williams-2025",
+  "description": "Williams's survey of five languages: whether the factive presupposition of forget and its kin is modalized with each non-finite complement.",
+  "ContributionTable": [
+    {
+      "ID": "table_1",
+      "Name": "Table 1",
+      "Lean": "table1",
+      "Source": "williams-2025[Table 1, p. 8]",
+      "Description": "Modalization of factive presupposition with non-finite complements.",
+      "comment": "Transcribed from the page image. A check mark is recorded as modalized and a cross as not modalized; a dash, which the table does not gloss, is recorded as no value (fn. 5 says English bans perfect infinitives with forget)."
+    }
+  ],
+  "LanguageTable": [
+    {"ID": "english", "Name": "English", "Glottocode": "stan1293"},
+    {"ID": "spanish", "Name": "Spanish", "Glottocode": "stan1288"},
+    {"ID": "italian", "Name": "Italian", "Glottocode": "ital1282"},
+    {"ID": "german", "Name": "German", "Glottocode": "stan1295"},
+    {"ID": "hungarian", "Name": "Hungarian", "Glottocode": "hung1274"}
+  ],
+  "ParameterTable": [
+    {
+      "ID": "modalization",
+      "Name": "modalization",
+      "Lean": "Modalization",
+      "Description": "Whether the factive presupposition of forget with a complement is modalized, as the presupposition that the subject was supposed to perform the action is (5a)."
+    },
+    {
+      "ID": "plain_infinitive",
+      "Name": "plain infinitive",
+      "Lean": "PlainInfinitive",
+      "Codes": "modalization",
+      "Description": "forget with a plain infinitive."
+    },
+    {
+      "ID": "perfect_infinitive",
+      "Name": "perfect infinitive",
+      "Lean": "PerfectInfinitive",
+      "Codes": "modalization",
+      "Description": "forget with a perfect infinitive."
+    },
+    {
+      "ID": "clausal_gerund",
+      "Name": "clausal gerund",
+      "Lean": "ClausalGerund",
+      "Codes": "modalization",
+      "Description": "forget with a clausal gerund, the PRO-ing gerund of §3.1.1."
+    }
+  ],
+  "CodeTable": [
+    {"ID": "modalized", "Parameter_ID": "modalization", "Name": "✓", "Lean": "modalized", "Description": "The factive presupposition is modalized."},
+    {"ID": "not_modalized", "Parameter_ID": "modalization", "Name": "×", "Lean": "notModalized", "Description": "The factive presupposition is not modalized."}
+  ],
+  "ValueTable": [
+    {"Language_ID": "english", "Parameter_ID": "plain_infinitive", "Code_ID": "modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "english", "Parameter_ID": "clausal_gerund", "Code_ID": "not_modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "spanish", "Parameter_ID": "plain_infinitive", "Code_ID": "modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "spanish", "Parameter_ID": "perfect_infinitive", "Code_ID": "not_modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "italian", "Parameter_ID": "plain_infinitive", "Code_ID": "modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "italian", "Parameter_ID": "perfect_infinitive", "Code_ID": "not_modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "german", "Parameter_ID": "plain_infinitive", "Code_ID": "modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "german", "Parameter_ID": "perfect_infinitive", "Code_ID": "not_modalized", "Contribution_ID": "table_1"},
+    {"Language_ID": "hungarian", "Parameter_ID": "plain_infinitive", "Code_ID": "modalized", "Contribution_ID": "table_1"}
+  ]
+}
