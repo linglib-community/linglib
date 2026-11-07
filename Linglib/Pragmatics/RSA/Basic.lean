@@ -616,6 +616,9 @@ variable (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) 
 
 instance : IsFiniteKernel (speaker α C L b) := inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
+instance : IsZeroOrProbabilityMeasure (speaker α C L b o) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.softmax _ o))
+
 theorem speaker_apply_univ_le_one : speaker α C L b o Set.univ ≤ 1 := by
   rw [speaker_eq_ofWeights]
   exact Kernel.ofWeights_apply_univ_le_one _ o

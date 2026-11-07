@@ -143,6 +143,22 @@ noncomputable def condPrefixProb : List α → List α → ℝ≥0∞
 @[simp] theorem condPrefixProb_cons (c : List α) (a : α) (x : List α) :
     M.condPrefixProb c (a :: x) = M.next c {some a} * M.condPrefixProb (c ++ [a]) x := rfl
 
+theorem toReal_condPrefixProb_cons (c : List α) (a : α) (x : List α) :
+    (M.condPrefixProb c (a :: x)).toReal =
+      (M.next c).real {some a} * (M.condPrefixProb (c ++ [a]) x).toReal := by
+  rw [condPrefixProb_cons, ENNReal.toReal_mul, measureReal_def]
+
+/-- A property of contexts that each symbol of positive conditional probability preserves holds
+after every continuation of positive conditional probability. -/
+theorem induction_of_condPrefixProb_ne_zero {P : List α → Prop}
+    (step : ∀ c a, P c → M.next c {some a} ≠ 0 → P (c ++ [a])) {c x : List α} (hc : P c)
+    (h : M.condPrefixProb c x ≠ 0) : P (c ++ x) := by
+  induction x generalizing c with
+  | nil => simpa using hc
+  | cons a x ih =>
+    rw [condPrefixProb_cons] at h
+    simpa using ih (step c a hc (left_ne_zero_of_mul h)) (right_ne_zero_of_mul h)
+
 /-- The chain rule: a continuation begins with `x ++ y` when it begins with `x` and the
 continuation of `c ++ x` begins with `y`. -/
 theorem condPrefixProb_append (c x y : List α) :
@@ -189,6 +205,10 @@ noncomputable def stringMeasure : Measure (List α) :=
 
 @[simp] theorem stringMeasure_singleton (x : List α) : M.stringMeasure {x} = M.stringProb x :=
   Measure.sum_smul_dirac_singleton
+
+theorem stringMeasure_real_singleton (x : List α) :
+    M.stringMeasure.real {x} = (M.prefixProb x).toReal * (M.next x).real {none} := by
+  rw [measureReal_def, stringMeasure_singleton, stringProb, ENNReal.toReal_mul, measureReal_def]
 
 theorem stringMeasure_univ : M.stringMeasure Set.univ = ∑' x, M.stringProb x := by
   simp [stringMeasure, Measure.sum_apply _ MeasurableSet.univ]

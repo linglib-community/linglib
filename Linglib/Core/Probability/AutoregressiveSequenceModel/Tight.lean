@@ -162,6 +162,11 @@ theorem isTight_iff_tendsto_survival : M.IsTight ↔ Tendsto M.survival atTop (�
   · intro h
     rw [tendsto_nhds_unique (tendsto_atTop_iInf M.survival_antitone) h, tsub_zero]
 
+/-- A model whose strings all end within `n` symbols is tight. -/
+theorem isTight_of_survival_eq_zero {n : ℕ} (h : M.survival n = 0) : M.IsTight :=
+  M.isTight_iff_tendsto_survival.2 (tendsto_atTop_of_eventually_const (i₀ := n) fun _ hm ↦
+    nonpos_iff_eq_zero.1 (h ▸ M.survival_antitone hm))
+
 /-! ### The conditional end probability -/
 
 theorem eosHazard_le_one (n : ℕ) : M.eosHazard n ≤ 1 :=

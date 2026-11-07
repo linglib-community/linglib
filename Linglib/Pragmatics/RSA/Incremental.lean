@@ -5,31 +5,37 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Probability.AutoregressiveSequenceModel.Basic
+public import Linglib.Core.Probability.Kernel.Basic
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
-public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.Probability.Kernel.Defs
+public import Mathlib.Data.List.ReduceOption
 
 /-!
-# Incremental RSA: string meanings and the chain rule
+# Incremental RSA: string meanings and the incremental speaker
 
 Incremental rational speech act models run the pipeline word by word. In the model of Cohn-Gordon,
 Goodman and Potts an incomplete string gets its meaning from the complete utterances that continue
-it, and the probability of an utterance is the product of the speaker's word choices along it.
-With graded word meanings the value of an utterance is the product of the values of its words, as
-in the models of Waldon and Degen and of Schlotterbeck and Wang.
+it, the speaker chooses each word, or the end of the utterance, against a listener of the string so
+far, and the probability of an utterance is the product of her choices along it: she is an
+autoregressive sequence model. With graded word meanings the value of an utterance is the product
+of the values of its words, as in the models of Waldon and Degen and of Schlotterbeck and Wang.
 
 ## Main definitions
 
 * `RSA.prodMeaning lex us w`: the product over the words `us` of their values `lex u w`.
 * `RSA.continuations utts pfx`, `RSA.stringMeaning utts m pfx`: the complete utterances that
   continue a prefix, and the mean of the utterance meaning `m` over them.
-* `RSA.chain S r ctx us`: the product of a word-level speaker's choices along the words `us`.
+* `RSA.stopped u`, `RSA.incrementalMeaning utts m c o`: a complete utterance closed by the end
+  symbol `none`, and the string meaning of the context `c` followed by the next symbol `o`.
+* `RSA.incrementalSpeaker S r`: the autoregressive sequence model of the word-level speaker `S`.
 
 ## Main results
 
 * `RSA.prodMeaning_perm`: the value of an utterance does not depend on the order of its words.
+* `RSA.next_incrementalSpeaker_apply_some`: the incremental speaker chooses each word as the
+  word-level speaker does.
 
 ## References
 
@@ -146,26 +152,113 @@ theorem stringMeaning_eq_of_perm_map {U' W' : Type*} [DecidableEq U'] {utts' : L
 
 end StringMeaning
 
-/-! ### The chain rule -/
+/-! ### The end of the utterance -/
 
-section Chain
+section Stop
 
-variable [MeasurableSpace U] [MeasurableSpace W]
+/-- A complete utterance closed by the end symbol `none`. -/
+def stopped (u : List U) : List (Option U) := u.map some ++ [none]
 
-/-- The probability that a word-level speaker `S`, who chooses each word given the words so far,
-continues the context `ctx` with the words `us` for the referent `r`. -/
-noncomputable def chain (S : List U → ProbabilityTheory.Kernel W U) (r : W) :
-    List U → List U → ℝ
-  | _, [] => 1
-  | ctx, u :: us => (S ctx r).real {u} * chain S r (ctx ++ [u]) us
+@[simp] theorem length_stopped (u : List U) : (stopped u).length = u.length + 1 := by
+  simp [stopped]
 
-@[simp] theorem chain_nil (S : List U → ProbabilityTheory.Kernel W U) (r : W) (ctx : List U) :
-    chain S r ctx [] = 1 := rfl
+@[simp] theorem reduceOption_stopped (u : List U) : (stopped u).reduceOption = u := by
+  induction u with
+  | nil => rfl
+  | cons a u ih => simpa [stopped] using ih
 
-@[simp] theorem chain_cons (S : List U → ProbabilityTheory.Kernel W U) (r : W) (ctx : List U)
-    (u : U) (us : List U) :
-    chain S r ctx (u :: us) = (S ctx r).real {u} * chain S r (ctx ++ [u]) us := rfl
+/-- A context `c` followed by the symbol `o` begins the closed utterance `u` when `o` ends it and
+`u` is `c`, or `o` is a word that continues `c` along `u`. -/
+theorem map_some_append_prefix_stopped_iff {c u : List U} {o : Option U} :
+    c.map some ++ [o] <+: stopped u ↔ o = none ∧ u = c ∨ ∃ a, o = some a ∧ c ++ [a] <+: u := by
+  induction c generalizing u with
+  | nil => cases u <;> cases o <;> simp [stopped, eq_comm]
+  | cons x c ih =>
+    cases u with
+    | nil => simp [stopped]
+    | cons b u =>
+      simp only [stopped, List.map_cons, List.cons_append, List.cons_prefix_cons, Option.some.injEq,
+        List.cons.injEq] at ih ⊢
+      rw [ih]
+      constructor
+      · rintro ⟨rfl, h | ⟨a, rfl, h⟩⟩
+        · exact .inl ⟨h.1, rfl, h.2⟩
+        · exact .inr ⟨a, rfl, rfl, h⟩
+      · rintro (⟨h, rfl, rfl⟩ | ⟨a, rfl, rfl, h⟩)
+        · exact ⟨rfl, .inl ⟨h, rfl⟩⟩
+        · exact ⟨rfl, .inr ⟨a, rfl, h⟩⟩
 
-end Chain
+@[simp] theorem map_some_append_none_prefix_stopped_iff {c u : List U} :
+    c.map some ++ [none] <+: stopped u ↔ u = c := by
+  simp [map_some_append_prefix_stopped_iff]
+
+@[simp] theorem map_some_append_some_prefix_stopped_iff {c u : List U} {a : U} :
+    c.map some ++ [some a] <+: stopped u ↔ c ++ [a] <+: u := by
+  simp [map_some_append_prefix_stopped_iff]
+
+theorem exists_map_some_append_prefix_stopped_iff {c u : List U} :
+    (∃ o, c.map some ++ [o] <+: stopped u) ↔ c <+: u := by
+  simp only [map_some_append_prefix_stopped_iff]
+  constructor
+  · rintro ⟨o, ⟨-, rfl⟩ | ⟨a, -, h⟩⟩
+    · exact List.prefix_refl _
+    · exact (List.prefix_append _ _).trans h
+  · rintro ⟨_ | ⟨a, t⟩, rfl⟩
+    · exact ⟨none, .inl ⟨rfl, by simp⟩⟩
+    · exact ⟨some a, .inr ⟨a, rfl, by simp⟩⟩
+
+/-- The incremental meaning of the context `c` followed by `o`, the next word or the end of the
+utterance, is its string meaning among the complete utterances closed by the end symbol. -/
+noncomputable def incrementalMeaning [DecidableEq U] (utts : List (List U)) (m : List U → W → ℝ)
+    (c : List U) (o : Option U) (r : W) : ℝ :=
+  stringMeaning (utts.map stopped) (fun s ↦ m s.reduceOption) (c.map some ++ [o]) r
+
+end Stop
+
+/-! ### The incremental speaker -/
+
+section Speaker
+
+open MeasureTheory ProbabilityTheory
+
+variable [MeasurableSpace U] [Countable U] [MeasurableSpace W]
+  {S : List U → Kernel W (Option U)} {r : W} {c : List U}
+
+open Classical in
+/-- The incremental speaker for `r` is the autoregressive sequence model whose choice after each
+context `c` is the word-level speaker's, `S c r`, over the next word and the end of the
+utterance. A context where she has no choice ends the string. -/
+noncomputable def incrementalSpeaker (S : List U → Kernel W (Option U)) (r : W) :
+    AutoregressiveSequenceModel U where
+  next := Kernel.ofFunOfCountable fun c ↦
+    if IsProbabilityMeasure (S c r) then S c r else Measure.dirac none
+  isMarkovKernel_next := ⟨fun c ↦ by
+    rw [Kernel.ofFunOfCountable_apply]
+    split_ifs with h
+    exacts [h, inferInstance]⟩
+
+theorem next_incrementalSpeaker [IsProbabilityMeasure (S c r)] :
+    (incrementalSpeaker S r).next c = S c r := by
+  classical
+  rw [incrementalSpeaker, Kernel.ofFunOfCountable_apply, ite_eq_left ‹_›]
+
+theorem next_incrementalSpeaker_of_ne_zero [IsZeroOrProbabilityMeasure (S c r)] (h : S c r ≠ 0) :
+    (incrementalSpeaker S r).next c = S c r :=
+  have : IsProbabilityMeasure (S c r) := ⟨IsZeroOrProbabilityMeasure.measure_univ.resolve_left
+    fun h0 ↦ h (Measure.measure_univ_eq_zero.1 h0)⟩
+  next_incrementalSpeaker
+
+/-- The incremental speaker chooses each word as the word-level speaker does. -/
+theorem next_incrementalSpeaker_apply_some [MeasurableSingletonClass U]
+    [IsZeroOrProbabilityMeasure (S c r)] (a : U) :
+    (incrementalSpeaker S r).next c {some a} = S c r {some a} := by
+  rcases eq_or_ne (S c r) 0 with h | h
+  · classical
+    rw [incrementalSpeaker, Kernel.ofFunOfCountable_apply, h,
+      ite_eq_right fun h' ↦ by simpa using h'.measure_univ]
+    simp [Measure.dirac_apply' _ (measurableSet_singleton _)]
+  · rw [next_incrementalSpeaker_of_ne_zero h]
+
+end Speaker
 
 end RSA
