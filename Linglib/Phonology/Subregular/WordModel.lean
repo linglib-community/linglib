@@ -819,7 +819,7 @@ strictly `k`-local set of words under successor relativized to the tier. Restric
 its tier positions and taking successor there gives the successor model of its projection, so
 the relativized models are those of the projections. -/
 theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
-    IsTierStrictlyLocal k L ↔ ∃ (T : α → Prop) (_ : DecidablePred T),
+    L.IsTierStrictlyLocal k ↔ ∃ (T : α → Prop) (_ : DecidablePred T),
       (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
         (fun w ↦ WordModel (anchor (w.filter (T ·))) (· ⋖ ·)) k L := by
   constructor
