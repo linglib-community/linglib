@@ -49,7 +49,7 @@ harmony.
 namespace AksenovaEtAl2024
 
 open Phonology.Harmony Subregular
-open Subregular.TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff
+open TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff
   mem_ofForbiddenPairs_or_language_iff ofForbiddenPairs_language_congr)
 
 /-! ### Grammars on a tier -/
@@ -70,11 +70,11 @@ instance (R : V → V → Prop) [DecidableRel R] : DecidableRel (TierRel R) := f
 
 /-- The TSL₂ grammar of a printed table has the tier `V` and bans tier-adjacent `R`-related
 symbols. -/
-abbrev tierGrammar (R : V → V → Prop) : TierStrictlyLocalGrammar 2 (Option V) :=
+abbrev tierGrammar (R : V → V → Prop) : TierStrictlyLocalGrammar (Option V) :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (TierRel R) (·.isSome)
 
 private theorem mem_tierGrammar_window (R : V → V → Prop) (a b : V) (n : ℕ) :
-    [some a] ++ List.replicate n none ++ [some b] ∈ (tierGrammar R).language ↔ ¬ R a b := by
+    [some a] ++ List.replicate n none ++ [some b] ∈ (tierGrammar R).language 2 ↔ ¬ R a b := by
   rw [mem_ofForbiddenPairs_language_iff]
   simp [List.filter_append, TierRel]
 
@@ -91,7 +91,7 @@ private theorem harmonic_pair {α W : Type*} (p : Pattern α W) (x y : α) :
 theorem harmonic_and_iff_mem_tsl {α W W' : Type*} (p : Pattern α W) (q : Pattern α W')
     (h : ∀ s, p.OnTier s ↔ q.OnTier s) (w : List α) :
     p.Harmonic w ∧ q.Harmonic w ↔ w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs
-      (fun a b ↦ ¬ p.Licit a b ∨ ¬ q.Licit a b) p.OnTier).language := by
+      (fun a b ↦ ¬ p.Licit a b ∨ ¬ q.Licit a b) p.OnTier).language 2 := by
   rw [Pattern.harmonic_iff_mem_tsl, Pattern.harmonic_iff_mem_tsl,
     mem_ofForbiddenPairs_or_language_iff,
     ofForbiddenPairs_language_congr (p := q.OnTier) (p' := p.OnTier) (fun s ↦ (h s).symm)
@@ -124,18 +124,18 @@ def lokaaBanned (x y : LokaaV) : Prop := x.tense ≠ y.tense
 
 instance : DecidableRel lokaaBanned := fun _ _ ↦ by unfold lokaaBanned; infer_instance
 
-abbrev lokaa : TierStrictlyLocalGrammar 2 (Option LokaaV) := tierGrammar lokaaBanned
+abbrev lokaa : TierStrictlyLocalGrammar (Option LokaaV) := tierGrammar lokaaBanned
 
 -- (3)
 theorem lokaa_rows :
     (∀ f ∈ Wordlist.all, f.languageId = .lokaa →
-        read LokaaV.ofChar f.form.toList ∈ lokaa.language) ∧
+        read LokaaV.ofChar f.form.toList ∈ lokaa.language 2) ∧
       ∀ f ∈ Wordlist.marked, f.languageId = .lokaa →
-        read LokaaV.ofChar f.form.toList ∉ lokaa.language := by
+        read LokaaV.ofChar f.form.toList ∉ lokaa.language 2 := by
   decide
 
 /-- No strictly local grammar captures Lokaa harmony (§34.2.1). -/
-theorem lokaa_not_isStrictlyLocal (k : ℕ) : ¬ lokaa.language.IsStrictlyLocal k := fun h ↦
+theorem lokaa_not_isStrictlyLocal (k : ℕ) : ¬ (lokaa.language 2).IsStrictlyLocal k := fun h ↦
   (mem_tierGrammar_window _ _ _ _).1 (h.suffixSubstitutionClosed [some .e] [some .o] [some .eh]
     [some .oh] _ (List.length_replicate ..) ((mem_tierGrammar_window _ _ _ _).2 (by decide))
     ((mem_tierGrammar_window _ _ _ _).2 (by decide))) (by decide : lokaaBanned .e .oh)
@@ -146,7 +146,7 @@ def lokaaSP : StrictlyPiecewiseGrammar (Option LokaaV) :=
   .ofForbiddenPairs (TierRel lokaaBanned) (·.isSome)
 
 /-- The TSL₂ grammar of Table 34.2 and the SP₂ grammar of Table 34.1 generate one language. -/
-theorem lokaa_language_eq_strictlyPiecewise : lokaa.language = lokaaSP.language 2 :=
+theorem lokaa_language_eq_strictlyPiecewise : lokaa.language 2 = lokaaSP.language 2 :=
   TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_strictlyPiecewise (by decide)
 
 /-! ### Kirghiz ((5), Table 34.3): fronting and rounding on one tier -/
@@ -182,14 +182,14 @@ def kirghizBanned (x y : TurkicV) : Prop := x.front ≠ y.front ∨ x.round ≠ 
 
 instance : DecidableRel kirghizBanned := fun _ _ ↦ by unfold kirghizBanned; infer_instance
 
-abbrev kirghiz : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar kirghizBanned
+abbrev kirghiz : TierStrictlyLocalGrammar (Option TurkicV) := tierGrammar kirghizBanned
 
 -- (5), Figure 34.3
 theorem kirghiz_rows :
     (∀ f ∈ Wordlist.all, f.languageId = .kirghiz →
-        read TurkicV.ofChar f.form.toList ∈ kirghiz.language) ∧
+        read TurkicV.ofChar f.form.toList ∈ kirghiz.language 2) ∧
       ∀ f ∈ Wordlist.marked, f.languageId = .kirghiz →
-        read TurkicV.ofChar f.form.toList ∉ kirghiz.language := by
+        read TurkicV.ofChar f.form.toList ∉ kirghiz.language 2 := by
   decide
 
 /-- In Kirghiz frontness harmony every vowel participates. -/
@@ -201,12 +201,12 @@ def kirghizRound : Pattern (Option TurkicV) Bool :=
   { value := Option.map TurkicV.round, participation := allParticipate }
 
 theorem kirghiz_language :
-    kirghiz.language = {w | kirghizFront.Harmonic w ∧ kirghizRound.Harmonic w} := by
+    kirghiz.language 2 = {w | kirghizFront.Harmonic w ∧ kirghizRound.Harmonic w} := by
   ext w
   exact (Set.ext_iff.1 (ofForbiddenPairs_language_congr (by decide) (by decide)) w).trans
     (harmonic_and_iff_mem_tsl kirghizFront kirghizRound (fun _ ↦ Iff.rfl) w).symm
 
-theorem kirghiz_isStrictlyPiecewise : kirghiz.language.IsStrictlyPiecewise 2 :=
+theorem kirghiz_isStrictlyPiecewise : (kirghiz.language 2).IsStrictlyPiecewise 2 :=
   TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise (by decide)
 
 /-! ### Buryat ((9), Table 34.4): high vowels block rounding -/
@@ -243,14 +243,14 @@ def buryatBanned (x y : BuryatV) : Prop :=
 
 instance : DecidableRel buryatBanned := fun _ _ ↦ by unfold buryatBanned; infer_instance
 
-abbrev buryat : TierStrictlyLocalGrammar 2 (Option BuryatV) := tierGrammar buryatBanned
+abbrev buryat : TierStrictlyLocalGrammar (Option BuryatV) := tierGrammar buryatBanned
 
 -- (9)
 theorem buryat_rows :
     (∀ f ∈ Wordlist.all, f.languageId = .russiaBuriat →
-        read BuryatV.ofChar f.form.toList ∈ buryat.language) ∧
+        read BuryatV.ofChar f.form.toList ∈ buryat.language 2) ∧
       ∀ f ∈ Wordlist.marked, f.languageId = .russiaBuriat →
-        read BuryatV.ofChar f.form.toList ∉ buryat.language := by
+        read BuryatV.ofChar f.form.toList ∉ buryat.language 2 := by
   decide
 
 /-- In Buryat ATR harmony every tier vowel participates. -/
@@ -267,17 +267,17 @@ def buryatRound : Pattern (Option BuryatV) Bool :=
 /-- The printed grammar is ATR harmony and rounding harmony with opaque high vowels, on one
 tier. -/
 theorem buryat_language :
-    buryat.language = {w | buryatATR.Harmonic w ∧ buryatRound.Harmonic w} := by
+    buryat.language 2 = {w | buryatATR.Harmonic w ∧ buryatRound.Harmonic w} := by
   ext w
   exact (Set.ext_iff.1 (ofForbiddenPairs_language_congr (by decide) (by decide)) w).trans
     (harmonic_and_iff_mem_tsl buryatATR buryatRound (by decide) w).symm
 
 /-- **Blocking is strictly piecewise at no width** (§34.2.2). Deleting the blocking causative
 vowel of `ɔr-ʊːl-aːd` (9b) leaves the starred `*ɔr-aːd` of (9a). -/
-theorem buryat_not_isStrictlyPiecewise (k : ℕ) : ¬ buryat.language.IsStrictlyPiecewise k :=
+theorem buryat_not_isStrictlyPiecewise (k : ℕ) : ¬ (buryat.language 2).IsStrictlyPiecewise k :=
   fun h ↦ by
-    have hmem : read BuryatV.ofChar "ɔr-ʊːl-aːd".toList ∈ buryat.language := by decide
-    exact (by decide : read BuryatV.ofChar "ɔr-aːd".toList ∉ buryat.language)
+    have hmem : read BuryatV.ofChar "ɔr-ʊːl-aːd".toList ∈ buryat.language 2 := by decide
+    exact (by decide : read BuryatV.ofChar "ɔr-aːd".toList ∉ buryat.language 2)
       (h.isSublistClosed (by decide) hmem)
 
 /-! ### Yakut ((14), Table 34.5): harmonizing blockers -/
@@ -291,19 +291,19 @@ def yakutBanned (x y : TurkicV) : Prop :=
 
 instance : DecidableRel yakutBanned := fun _ _ ↦ by unfold yakutBanned; infer_instance
 
-abbrev yakut : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar yakutBanned
+abbrev yakut : TierStrictlyLocalGrammar (Option TurkicV) := tierGrammar yakutBanned
 
 theorem yakut_rows :
     (∀ f ∈ Wordlist.all, f.languageId = .sakha →
-        read TurkicV.ofChar f.form.toList ∈ yakut.language) ∧
+        read TurkicV.ofChar f.form.toList ∈ yakut.language 2) ∧
       ∀ f ∈ Wordlist.marked, f.languageId = .sakha →
-        read TurkicV.ofChar f.form.toList ∉ yakut.language := by
+        read TurkicV.ofChar f.form.toList ∉ yakut.language 2 := by
   decide
 
 -- §34.2.2, (14g)
-theorem yakut_not_isStrictlyPiecewise (k : ℕ) : ¬ yakut.language.IsStrictlyPiecewise k :=
-  fun h ↦ (by decide : [some .o, some .a] ∉ yakut.language) <|
-    h.isSublistClosed (by decide) (by decide : [some .o, some .u, some .a] ∈ yakut.language)
+theorem yakut_not_isStrictlyPiecewise (k : ℕ) : ¬ (yakut.language 2).IsStrictlyPiecewise k :=
+  fun h ↦ (by decide : [some .o, some .a] ∉ yakut.language 2) <|
+    h.isSublistClosed (by decide) (by decide : [some .o, some .u, some .a] ∈ yakut.language 2)
 
 /-- In Yakut fronting harmony every vowel participates. -/
 def yakutFront : Pattern (Option TurkicV) Bool :=
@@ -314,16 +314,16 @@ values, tier, blockers, icy targets, and direction. The tier bigram `u a` is lic
 not, so read left to right `a` would have to be opaque or `u` an icy target, and either would
 license `*oa` or `*uo`; read right to left the two roles swap. -/
 theorem yakut_rounding_not_pattern {W : Type*} (q : Pattern (Option TurkicV) W) :
-    yakut.language ≠ {w | yakutFront.Harmonic w ∧ q.Harmonic w} := fun h ↦ by
-  have hmem : ∀ w, w ∈ yakut.language ↔ yakutFront.Harmonic w ∧ q.Harmonic w := fun w ↦ by
+    yakut.language 2 ≠ {w | yakutFront.Harmonic w ∧ q.Harmonic w} := fun h ↦ by
+  have hmem : ∀ w, w ∈ yakut.language 2 ↔ yakutFront.Harmonic w ∧ q.Harmonic w := fun w ↦ by
     rw [h]; rfl
   have hua := ((hmem [some .u, some .a]).1 (by decide)).2
   have hau : ¬ q.Harmonic [some .a, some .u] := fun hq ↦
-    (by decide : [some .a, some .u] ∉ yakut.language) ((hmem _).2 ⟨by decide, hq⟩)
+    (by decide : [some .a, some .u] ∉ yakut.language 2) ((hmem _).2 ⟨by decide, hq⟩)
   have huo : ¬ q.Harmonic [some .u, some .o] := fun hq ↦
-    (by decide : [some .u, some .o] ∉ yakut.language) ((hmem _).2 ⟨by decide, hq⟩)
+    (by decide : [some .u, some .o] ∉ yakut.language 2) ((hmem _).2 ⟨by decide, hq⟩)
   have hoa : ¬ q.Harmonic [some .o, some .a] := fun hq ↦
-    (by decide : [some .o, some .a] ∉ yakut.language) ((hmem _).2 ⟨by decide, hq⟩)
+    (by decide : [some .o, some .a] ∉ yakut.language 2) ((hmem _).2 ⟨by decide, hq⟩)
   simp only [harmonic_pair, not_imp] at hua hau huo hoa
   obtain ⟨ha, hu, hau⟩ := hau
   obtain ⟨-, -, huo⟩ := huo
@@ -375,18 +375,18 @@ abbrev kikongoVowelTier (s : KikongoSeg) : Prop := s.isVowel = true
 abbrev kikongoNasalTier (s : KikongoSeg) : Prop := s.isVowel = false
 
 /-- `H_v` bans tier-adjacent vowels disagreeing in height. -/
-abbrev kikongoVowel : TierStrictlyLocalGrammar 2 KikongoSeg :=
+abbrev kikongoVowel : TierStrictlyLocalGrammar KikongoSeg :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y ↦ x.high ≠ y.high) kikongoVowelTier
 
 /-- `H_n` bans `d` or `l` after a nasal. -/
-abbrev kikongoNasal : TierStrictlyLocalGrammar 2 KikongoSeg :=
+abbrev kikongoNasal : TierStrictlyLocalGrammar KikongoSeg :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y ↦ x.isNasal ∧ ¬ y.isNasal) kikongoNasalTier
 
 /-- Kikongo phonotactics conjoins the two harmonies, each on its own tier. -/
-def kikongo : Language KikongoSeg := kikongoVowel.language ⊓ kikongoNasal.language
+def kikongo : Language KikongoSeg := kikongoVowel.language 2 ⊓ kikongoNasal.language 2
 
 instance : DecidablePred (· ∈ kikongo) := fun w ↦
-  inferInstanceAs (Decidable (w ∈ kikongoVowel.language ∧ w ∈ kikongoNasal.language))
+  inferInstanceAs (Decidable (w ∈ kikongoVowel.language 2 ∧ w ∈ kikongoNasal.language 2))
 
 -- (16), (18), Figure 34.6
 theorem kikongo_rows :
@@ -399,20 +399,18 @@ theorem kikongo_rows :
 private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
     (hy : y.isVowel = false) (n : ℕ) :
     [x] ++ List.replicate n KikongoSeg.e ++ [y] ∈ kikongo ↔ ¬ (x.isNasal ∧ ¬ y.isNasal) := by
-  show _ ∈ kikongoVowel.language ∧ _ ∈ kikongoNasal.language ↔ _
+  show _ ∈ kikongoVowel.language 2 ∧ _ ∈ kikongoNasal.language 2 ↔ _
   rw [mem_ofForbiddenPairs_language_iff,
     mem_ofForbiddenPairs_language_iff]
   have he : KikongoSeg.e.isVowel = true := rfl
   simp [List.filter_append, hx, hy, he, List.isChain_replicate_of_rel]
 
 /-- No single tier carries Kikongo's two harmonies (§34.3.3), by [lambert-2023]'s method. -/
-theorem kikongo_not_isTierStrictlyLocal (k : ℕ) : ¬ Language.IsTierStrictlyLocal k kikongo :=
+theorem kikongo_not_isTierStrictlyLocal (k : ℕ) : ¬ kikongo.IsTierStrictlyLocal k :=
   fun h ↦ by
-    obtain ⟨T, _, hinv, hL⟩ := h.exists_tier
-    have hT (a : KikongoSeg) (u v : List KikongoSeg)
-        (h : ¬ (u ++ a :: v ∈ kikongo ↔ u ++ v ∈ kikongo)) : T a :=
-      by_contra fun ha ↦ h (hinv u v a ha)
-    have he := hT .e [.i] [] (by decide)
+    obtain ⟨T, hinv, hL⟩ := h.exists_tier
+    have he : T .e := by_contra fun he ↦
+      absurd (Language.syntacticClass_eq_one_iff.1 (hinv .e he) [.i] []) (by decide)
     have hx : (List.replicate (k - 1) KikongoSeg.e).filter (T ·) = List.replicate (k - 1) .e := by
       simp [he]
     exact (mem_kikongo_window .n .l rfl rfl (k - 1)).1

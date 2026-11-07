@@ -60,8 +60,6 @@ tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma.
 
 namespace Language
 
-open Subregular
-
 variable {α : Type*} {𝒞 𝒟 : Language α → Prop} {L L₁ L₂ : Language α} {k : ℕ}
   {w₁ w₂ : List α}
 
@@ -75,11 +73,8 @@ def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
 
 namespace IsTierBased
 
-theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L := by
-  refine ⟨fun _ ↦ true, L, ?_, h⟩
-  ext w
-  show w ∈ L ↔ List.filter (fun _ ↦ true) w ∈ L
-  rw [List.filter_true]
+theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L :=
+  ⟨fun _ ↦ true, L, by simp only [List.filter_true]; rfl, h⟩
 
 /-- Monotonicity in the base class. -/
 theorem mono (h : ∀ L, 𝒞 L → 𝒟 L) (hL : IsTierBased 𝒞 L) : IsTierBased 𝒟 L := by
@@ -210,14 +205,14 @@ theorem isBTD_ofSuffix (hk : xs.length ≤ k) : IsBTD k (ofSuffix xs) :=
 `k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with an `SL_k` language
 pulled back along erasure of the off-tier symbols. -/
 theorem isTierStrictlyLocal_iff_isTierBased :
-    IsTierStrictlyLocal k L ↔ IsTierBased (IsStrictlyLocal · k) L := by
+    L.IsTierStrictlyLocal k ↔ IsTierBased (IsStrictlyLocal · k) L := by
   constructor
   · rintro ⟨G, rfl⟩
     exact ⟨fun x ↦ decide (G.tier x), _, rfl, G.permitted, rfl⟩
   · rintro ⟨T, _, rfl, G, rfl⟩
     exact ⟨⟨(T · = true), G⟩, by simp [TierStrictlyLocalGrammar.language]⟩
 
-theorem IsTierStrictlyLocal.toIsBTSL (h : IsTierStrictlyLocal k L) : IsBTSL k L :=
+theorem IsTierStrictlyLocal.toIsBTSL (h : L.IsTierStrictlyLocal k) : IsBTSL k L :=
   .base (isTierStrictlyLocal_iff_isTierBased.mp h)
 
 /-! ### Refuting membership by indistinguishability

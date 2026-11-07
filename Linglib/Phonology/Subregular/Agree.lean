@@ -48,15 +48,13 @@ strictly piecewise only on a tier with at most one symbol.
 
 @[expose] public section
 
-namespace Subregular
-
 variable {α : Type*}
 
 /-- The TSL₂ grammar of AGREE forbids two adjacent distinct symbols on the tier defined by `p`,
 so every tier-adjacent pair agrees. It is the inequality instance of
 `TierStrictlyLocalGrammar.ofForbiddenPairs`. -/
 def TierStrictlyLocalGrammar.agree [DecidableEq α] (p : α → Prop) [DecidablePred p] :
-    TierStrictlyLocalGrammar 2 α :=
+    TierStrictlyLocalGrammar α :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (α := α) (· ≠ ·) p
 
 /-! ### Strictly piecewise forbidden-pair languages
@@ -94,7 +92,7 @@ variable (hR : ∀ a b c, p a → p b → p c → ¬ R a b → ¬ R b c → ¬ R
 include hR
 theorem TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublist_pair
     (w : List α) :
-    w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language ↔
+    w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language 2 ↔
       ∀ a b, [a, b] <+ w → p a → p b → ¬ R a b := by
   rw [mem_ofForbiddenPairs_language_iff]
   have hp : ∀ x ∈ w.filter (p ·), p x := fun x hx ↦ of_decide_eq_true (mem_filter.mp hx).2
@@ -113,14 +111,14 @@ theorem TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublis
 /-- The tier-based and subsequence-based descriptions generate the same language when the
 permitted pairs are transitive on the tier. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_strictlyPiecewise :
-    (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language =
+    (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language 2 =
       (StrictlyPiecewiseGrammar.ofForbiddenPairs R p).language 2 :=
   Set.ext fun w ↦ (mem_ofForbiddenPairs_language_iff_forall_sublist_pair hR w).trans
     ⟨fun h s _ hs a b hab ha hb ↦ h a b (hab ▸ hs) ha hb,
       fun h a b hab ↦ h [a, b] (by simp) hab a b rfl⟩
 
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise :
-    (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language.IsStrictlyPiecewise 2 :=
+    ((TierStrictlyLocalGrammar.ofForbiddenPairs R p).language 2).IsStrictlyPiecewise 2 :=
   ⟨_, (ofForbiddenPairs_language_eq_strictlyPiecewise hR).symm⟩
 
 end Transitive
@@ -129,11 +127,11 @@ end Transitive
 transitive on the tier. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise_iff
     (hk : 2 ≤ k) :
-    (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language.IsStrictlyPiecewise k ↔
+    ((TierStrictlyLocalGrammar.ofForbiddenPairs R p).language 2).IsStrictlyPiecewise k ↔
       ∀ a b c, p a → p b → p c → ¬ R a b → ¬ R b c → ¬ R a c := by
   refine ⟨fun h a b c ha hb hc hab hbc hac ↦ ?_,
     fun hR ↦ (ofForbiddenPairs_language_isStrictlyPiecewise hR).mono hk⟩
-  have hmem : [a, b, c] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := by
+  have hmem : [a, b, c] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language 2 := by
     rw [mem_ofForbiddenPairs_language_iff]
     simp [ha, hb, hc, hab, hbc]
   have := h.isSublistClosed (v := [a, c]) (by simp) hmem
@@ -144,7 +142,7 @@ theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise_i
 `a` and `b`, the word `a b a` is legal and its subsequence `a a` is not. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_eq_language_isStrictlyPiecewise_iff
     [DecidableEq α] (hk : 2 ≤ k) :
-    (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p).language.IsStrictlyPiecewise k ↔
+    ((TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p).language 2).IsStrictlyPiecewise k ↔
       ∀ a b, p a → p b → a = b := by
   rw [ofForbiddenPairs_language_isStrictlyPiecewise_iff hk]
   exact ⟨fun h a b ha hb ↦ by_contra fun hab ↦ h a b a ha hb ha hab (Ne.symm hab) rfl,
@@ -161,22 +159,21 @@ section Agree
 variable [DecidableEq α] (p : α → Prop) [DecidablePred p]
 
 theorem TierStrictlyLocalGrammar.mem_agree_language_iff_forall_sublist_pair (w : List α) :
-    w ∈ (TierStrictlyLocalGrammar.agree p).language ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b :=
+    w ∈ (TierStrictlyLocalGrammar.agree p).language 2 ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b :=
   (mem_ofForbiddenPairs_language_iff_forall_sublist_pair not_ne_trans w).trans <| by
     simp only [ne_eq, not_not]
 
 /-- The tier-based and subsequence-based descriptions of agreement generate the same language,
 for any tier predicate. -/
 theorem TierStrictlyLocalGrammar.agree_language_eq_strictlyPiecewise :
-    (TierStrictlyLocalGrammar.agree p).language = (StrictlyPiecewiseGrammar.agree p).language 2 :=
+    (TierStrictlyLocalGrammar.agree p).language 2 = (StrictlyPiecewiseGrammar.agree p).language 2 :=
   ofForbiddenPairs_language_eq_strictlyPiecewise not_ne_trans
 
 theorem TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise :
-    ((TierStrictlyLocalGrammar.agree p).language).IsStrictlyPiecewise 2 :=
+    ((TierStrictlyLocalGrammar.agree p).language 2).IsStrictlyPiecewise 2 :=
   ofForbiddenPairs_language_isStrictlyPiecewise not_ne_trans
 
 end Agree
 
 end Piecewise
 
-end Subregular

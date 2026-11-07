@@ -68,7 +68,7 @@ only (62) is proved (`Language.exists_isBTK_iff`).
 namespace Lambert2026
 
 open Language Subregular List
-open Subregular.TierStrictlyLocalGrammar (mem_agree_language_iff_forall_sublist_pair
+open TierStrictlyLocalGrammar (mem_agree_language_iff_forall_sublist_pair
   mem_ofForbiddenPairs_language_iff)
 
 /-! ### Bookended witnesses
@@ -298,7 +298,7 @@ def navajo : Language (Option Bool) :=
 theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
 
 theorem navajo_eq_agree :
-    navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
+    navajo = (TierStrictlyLocalGrammar.agree (·.isSome)).language 2 := by
   ext w
   rw [mem_agree_language_iff_forall_sublist_pair]
   show (w.filter isAnterior = [] ∨ w.filter isPosterior = []) ↔ _
@@ -325,7 +325,7 @@ theorem navajo_eq_agree :
 
 theorem preimage_sibilantClass_navajo :
     List.map Hansson2010.sibilantClass ⁻¹' navajo =
-      Hansson2010.navajoSibilantHarmony.language := by
+      Hansson2010.navajoSibilantHarmony.language 2 := by
   rw [navajo_eq_agree, Hansson2010.language_eq_preimage]
 
 /-- Alveolar immediately before postalveolar on the sibilant tier, the adjacency Tsuut'ina
@@ -336,13 +336,13 @@ instance : DecidableRel antPostForbidden := fun _ _ ↦ inferInstanceAs (Decidab
 
 /-- In Tsuut'ina asymmetric harmony ([cook-1978]) an alveolar sibilant is not followed on the
 tier by a postalveolar one, `¬[sʃ]_{s,ʃ}`. -/
-def tsuutinaGrammar : TierStrictlyLocalGrammar 2 (Option Bool) :=
+def tsuutinaGrammar : TierStrictlyLocalGrammar (Option Bool) :=
   TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden (·.isSome)
 
 /-- The Tsuut'ina language. -/
-def tsuutina : Language (Option Bool) := tsuutinaGrammar.language
+def tsuutina : Language (Option Bool) := tsuutinaGrammar.language 2
 
-theorem tsuutina_isTierStrictlyLocal : IsTierStrictlyLocal 2 tsuutina := ⟨tsuutinaGrammar, rfl⟩
+theorem tsuutina_isTierStrictlyLocal : tsuutina.IsTierStrictlyLocal 2 := ⟨tsuutinaGrammar, rfl⟩
 
 /-- The accepted witness `ʃᵏ⁺¹sᵏ⁺¹`. -/
 private abbrev tsuutinaIn (k : ℕ) : List (Option Bool) :=
@@ -361,7 +361,7 @@ private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Bool) :
 
 private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
   show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-    (·.isSome)).language
+    (·.isSome)).language 2
   rw [mem_ofForbiddenPairs_language_iff]
   have h_filter : (tsuutinaIn k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaIn k := by
     unfold tsuutinaIn sandwich
@@ -382,7 +382,7 @@ private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
 
 private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
   show ¬ (tsuutinaOut k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-    (·.isSome)).language)
+    (·.isSome)).language 2)
   rw [mem_ofForbiddenPairs_language_iff]
   have h_filter : (tsuutinaOut k).filter (fun x ↦ decide (x.isSome = true)) = tsuutinaOut k := by
     unfold tsuutinaOut sandwich

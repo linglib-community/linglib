@@ -263,7 +263,7 @@ strictly local grammars lack and the blocking strictly piecewise grammars lack
 ([aksenova-rawski-graf-heinz-2024]; for the latter,
 `McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
-    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Licit · ·) p.OnTier).language := by
+    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Licit · ·) p.OnTier).language 2 := by
   simp only [mem_ofForbiddenPairs_language_iff, Pattern.Harmonic, Pattern.tier,
     not_not]
 
@@ -277,7 +277,7 @@ image, under the tier projection, of agreement among the values. -/
 theorem Pattern.harmonic_iff_map_project_mem [DecidableEq V] (p : Pattern α V)
     (hp : ∀ s, p.OnTier s → p.participation s = .participating ∧ (p.value s).isSome)
     (w : List α) :
-    p.Harmonic w ↔ w.map p.project ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language := by
+    p.Harmonic w ↔ w.map p.project ∈ (ofForbiddenPairs (· ≠ ·) (·.isSome)).language 2 := by
   have hproj : ∀ s, p.OnTier s → p.project s = p.value s := fun s hs ↦ ite_eq_left hs
   rw [harmonic_iff_mem_tsl, map_mem_ofForbiddenPairs_language_iff]
   refine Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun s ↦ ?_)

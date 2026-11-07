@@ -111,6 +111,22 @@ theorem syntacticClass_eq_iff {u v : List α} :
     L.syntacticClass u = L.syntacticClass v ↔ ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L :=
   toSyntacticMonoid_eq_iff.trans syntacticCon_iff
 
+theorem syntacticClass_eq_one_iff {u : List α} :
+    L.syntacticClass u = 1 ↔ ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ y ∈ L := by
+  rw [← syntacticClass_nil L, syntacticClass_eq_iff]
+  simp
+
+/-- Erasing letters whose syntactic class is the identity preserves the syntactic class. -/
+theorem syntacticClass_filter {p : α → Bool} (h : ∀ a, ¬ p a → L.syntacticClass [a] = 1) :
+    ∀ w : List α, L.syntacticClass (w.filter p) = L.syntacticClass w
+  | [] => rfl
+  | a :: w => by
+    rw [← List.singleton_append, List.filter_append, syntacticClass_append, syntacticClass_append,
+      syntacticClass_filter h w]
+    by_cases ha : p a
+    · simp [ha]
+    · simp [ha, h a ha]
+
 theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L :=
   Con.mem_iff_of_syntactic (M := FreeMonoid α) (toSyntacticMonoid_eq_iff.mp h)
