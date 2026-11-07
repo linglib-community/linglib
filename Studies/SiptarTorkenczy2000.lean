@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Fragments.Hungarian.Phonology
 public import Linglib.Data.Wordlist.SiptarTorkenczy2000
 
@@ -294,15 +294,15 @@ def Suffix.segments : Suffix → Quality → Option (List String)
   | .iness, .frontUnrounded => some ["b", "e", "n"]
   | _, _ => none
 
-/-- The word of a stem and a suffix concatenates the stem's melody, its floating features and
-then its prelinked features over its nodes, with the suffix's melody, a LAB over the suffix
+/-- The word of a stem and a suffix concatenates the stem's morph, its floating features and
+then its prelinked features over its nodes, with the suffix's morph, a LAB over the suffix
 node when the suffix has one. -/
 def word (s : Stem) (x : Suffix) : Word :=
   let prelinked : List (Place × ℕ) := s.nodes.zipIdx.flatMap fun (v, i) ↦ v.2.map (·, i)
   let n := s.floating.length
-  Form.melody .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
+  Form.morph .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
       (prelinked.zipIdx.map fun ((q, j) : (Place × ℕ) × ℕ) ↦ (n + j, q.2)).toFinset *
-    Form.melody .suffix (if x.hasLab then [.lab] else []) [x.node]
+    Form.morph .suffix (if x.hasLab then [.lab] else []) [x.node]
       (if x.hasLab then {(0, 0)} else ∅)
 
 /-- The slot of the suffix node, the last node of the word. -/

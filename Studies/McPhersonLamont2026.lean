@@ -5,9 +5,8 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.Tone.Constraints
-public import Linglib.Phonology.Tone.Grammatical
 public import Linglib.Fragments.Poko.Tone
-public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Mathlib.Tactic.Linarith
 
@@ -98,48 +97,48 @@ def derivationRL : HSDerivation (Candidate fig3Input) where
 /-- The LR final form `[kāk rī dō]`: all floating Hs deleted (fig. 3 thick line). -/
 def attestedForm : Candidate fig3Input :=
   fig3
-    |>.deleteTierElem 1   -- delete H-kak
-    |>.deleteTierElem 3   -- delete H-ri
-    |>.deleteTierElem 5   -- delete H-do
+    |>.delete 1   -- delete H-kak
+    |>.delete 3   -- delete H-ri
+    |>.delete 5   -- delete H-do
 
 /-- The RL final form `*[kāk rī dó]` (fig. 3; RL evaluation as in the two-stem eq. 61). -/
 def starredForm : Candidate fig3Input :=
   fig3
-    |>.deleteTierElem 5    -- step 1: delete H-do
+    |>.delete 5    -- step 1: delete H-do
     |>.insertLink 3 2  -- step 2: dock H-ri to do (TBU 2)
-    |>.deleteTierElem 1    -- step 3: delete H-kak
-    |>.deleteTierElem 4    -- step 4: delete M-do (repair *FALL contour)
+    |>.delete 1    -- step 3: delete H-kak
+    |>.delete 4    -- step 4: delete M-do (repair *FALL contour)
 
 /-! ### Step witnesses -/
 
 -- (60b)
 theorem fig3_LR_step1 :
-    derivationLR.stepOptimum fig3 = {fig3.deleteTierElem 1} := by decide
+    derivationLR.stepOptimum fig3 = {fig3.delete 1} := by decide
 
 theorem fig3_LR_step2 :
-    derivationLR.stepOptimum (fig3.deleteTierElem 1) =
-      {(fig3.deleteTierElem 1).deleteTierElem 3} := by decide
+    derivationLR.stepOptimum (fig3.delete 1) =
+      {(fig3.delete 1).delete 3} := by decide
 
 theorem fig3_LR_step3 :
-    derivationLR.stepOptimum ((fig3.deleteTierElem 1).deleteTierElem 3) =
-      {((fig3.deleteTierElem 1).deleteTierElem 3).deleteTierElem 5} := by decide
+    derivationLR.stepOptimum ((fig3.delete 1).delete 3) =
+      {((fig3.delete 1).delete 3).delete 5} := by decide
 
 theorem fig3_LR_converged : derivationLR.Converged attestedForm := by decide
 
 theorem fig3_RL_step1 :
-    derivationRL.stepOptimum fig3 = {fig3.deleteTierElem 5} := by decide +kernel
+    derivationRL.stepOptimum fig3 = {fig3.delete 5} := by decide +kernel
 
 theorem fig3_RL_step2 :
-    derivationRL.stepOptimum (fig3.deleteTierElem 5) =
-      {(fig3.deleteTierElem 5).insertLink 3 2} := by decide +kernel
+    derivationRL.stepOptimum (fig3.delete 5) =
+      {(fig3.delete 5).insertLink 3 2} := by decide +kernel
 
 theorem fig3_RL_step3 :
-    derivationRL.stepOptimum ((fig3.deleteTierElem 5).insertLink 3 2) =
-      {((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1} := by decide
+    derivationRL.stepOptimum ((fig3.delete 5).insertLink 3 2) =
+      {((fig3.delete 5).insertLink 3 2).delete 1} := by decide
 
 theorem fig3_RL_step4 :
-    derivationRL.stepOptimum (((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
-      {(((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by
+    derivationRL.stepOptimum (((fig3.delete 5).insertLink 3 2).delete 1) =
+      {(((fig3.delete 5).insertLink 3 2).delete 1).delete 4} := by
   decide
 
 theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
@@ -158,7 +157,7 @@ def derivationParallel : HSDerivation (Candidate fig3Input) where
 
 theorem parallel_optimum_three_way_tie :
     derivationParallel.stepOptimum fig3 =
-      {fig3.deleteTierElem 1, fig3.deleteTierElem 3, fig3.deleteTierElem 5} := by
+      {fig3.delete 1, fig3.delete 3, fig3.delete 5} := by
   decide
 
 theorem parallel_optimum_card_three :
@@ -193,7 +192,7 @@ def derivationLR : HSDerivation (Candidate eq24Input) := lrDerivation eq24Input
 def attestedForm : Candidate eq24Input :=
   eq24
     |>.insertLink 2 2      -- dock H-rī rightward to nā
-    |>.deleteTierElem 3    -- delete M-nā (repair HM contour)
+    |>.delete 3    -- delete M-nā (repair HM contour)
 
 -- (24d)
 theorem eq24_step1 :
@@ -202,7 +201,7 @@ theorem eq24_step1 :
 -- (24g)
 theorem eq24_step2 :
     derivationLR.stepOptimum (eq24.insertLink 2 2) =
-      {(eq24.insertLink 2 2).deleteTierElem 3} := by decide
+      {(eq24.insertLink 2 2).delete 3} := by decide
 
 theorem eq24_converged : derivationLR.Converged attestedForm := by decide
 
@@ -225,11 +224,11 @@ def eq21 : Candidate eq21Input := .input _
 def derivationLR : HSDerivation (Candidate eq21Input) := lrDerivation eq21Input
 
 /-- Attested `[nān rī]`: the floating H deletes. -/
-def attestedForm : Candidate eq21Input := eq21.deleteTierElem 2
+def attestedForm : Candidate eq21Input := eq21.delete 2
 
 -- (21b)
 theorem eq21_step1 :
-    derivationLR.stepOptimum eq21 = {eq21.deleteTierElem 2} := by decide
+    derivationLR.stepOptimum eq21 = {eq21.delete 2} := by decide
 
 -- (21d)
 theorem eq21_converged : derivationLR.Converged attestedForm := by decide
@@ -253,11 +252,11 @@ def eq27 : Candidate eq27Input := .input _
 def derivationLR : HSDerivation (Candidate eq27Input) := lrDerivation eq27Input
 
 /-- Attested `[kāk kǎ]`: H-kāk deletes; the MH contour survives. -/
-def attestedForm : Candidate eq27Input := eq27.deleteTierElem 1
+def attestedForm : Candidate eq27Input := eq27.delete 1
 
 -- (27b)
 theorem eq27_step1 :
-    derivationLR.stepOptimum eq27 = {eq27.deleteTierElem 1} := by decide
+    derivationLR.stepOptimum eq27 = {eq27.delete 1} := by decide
 
 -- (27e)
 theorem eq27_converged : derivationLR.Converged attestedForm := by decide
@@ -342,7 +341,7 @@ def ercFor {u : Form ℕ} (winner loser : Candidate u) : ERC (Fin 4) :=
 namespace Eq57
 
 /-- (57b), the rival of the attested `Eq24.attestedForm` (57c): the floating H of rī deletes. -/
-def loser : Candidate Eq24.eq24Input := Eq24.eq24.deleteTierElem 2
+def loser : Candidate Eq24.eq24Input := Eq24.eq24.delete 2
 
 -- (57c)
 theorem faithfulness_attestedForm (i : Fin 4) :
@@ -367,10 +366,10 @@ instance : NeZero eq58Input.lower.length := ⟨by decide⟩
 def eq58 : Candidate eq58Input := .input _
 
 /-- (58c), attested `[kāk rī]`: both floating Hs delete. -/
-def attestedForm : Candidate eq58Input := (eq58.deleteTierElem 1).deleteTierElem 3
+def attestedForm : Candidate eq58Input := (eq58.delete 1).delete 3
 
 /-- (58b): the H of kāk docks onto rī, whose M and H both delete. -/
-def loser : Candidate eq58Input := ((eq58.insertLink 1 1).deleteTierElem 2).deleteTierElem 3
+def loser : Candidate eq58Input := ((eq58.insertLink 1 1).delete 2).delete 3
 
 -- (58c)
 theorem faithfulness_attestedForm (i : Fin 4) :
@@ -434,41 +433,3 @@ theorem weighted_HG_inadequate :
 /-! ### Deferred: GEN shift and insert-and-associate ops, L% boundary tone, §§3.3–3.4 tableaux -/
 
 end McPhersonLamont2026
-
-/-! ### `Candidate` strictly extends the [rolle-2018] overwrite encoding -/
-
-namespace Autosegmental
-
-open Tone (TBU TRN)
-
-variable {S M : Type*}
-
-/-- Embed a `Tone.overwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
-def Form.ofTBUList (host : List (TBU S)) (m : M) : Form S TRN M :=
-  .melody m (host.map TBU.tone) (host.map TBU.seg)
-    ((List.range host.length).map fun i ↦ (i, i)).toFinset
-
-theorem Form.ofTBUList_linksTo_subsingleton (host : List (TBU S)) (m : M)
-    (i : Fin (Form.ofTBUList host m).lower.length) :
-    ((Candidate.input (Form.ofTBUList host m)).linksTo i).length ≤ 1 := by
-  have h_all : ∀ n ∈ ((Candidate.input (Form.ofTBUList host m)).linksTo i).map Fin.val,
-      n = i.val := fun n hn ↦ by
-    obtain ⟨k, hk, rfl⟩ := List.mem_map.1 hn
-    have := Candidate.mem_linksTo.1 hk
-    rw [Candidate.input_links] at this
-    obtain ⟨a, -, ha⟩ := List.mem_map.1 (List.mem_toFinset.1 (Form.mem_links_melody.1 this))
-    simp only [Prod.mk.injEq] at ha
-    omega
-  have h_count := List.count_eq_length.mpr fun b hb ↦ (h_all b hb).symm
-  have := List.nodup_iff_count_le_one.mp
-    (((Candidate.input (Form.ofTBUList host m)).nodup_linksTo i).map Fin.val_injective) i.val
-  rw [List.length_map] at h_count
-  omega
-
-theorem Candidate.exists_multi_tone_TBU :
-    ∃ u : Form Unit TRN Unit, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
-  ⟨.melody () [.H, .L] [()] ∅,
-    (Candidate.input _).insertLink ⟨0, by decide⟩ ⟨0, by decide⟩
-      |>.insertLink ⟨1, by decide⟩ ⟨0, by decide⟩, ⟨0, by decide⟩, by decide⟩
-
-end Autosegmental

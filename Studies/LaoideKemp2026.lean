@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Phonology.Autosegmental.Skeleton
-public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.StrictCV.Skeleton
 public import Mathlib.Tactic.DeriveFintype
@@ -121,7 +121,7 @@ variable {M : Type*} (m : M)
 
 /-- An exponent of floating material has objects on the melodic tier and no skeleton. -/
 abbrev floating (objs : List Autosegment) : Form M :=
-  .melody m objs [] ∅
+  .morph m objs [] ∅
 
 /-- The historic-tense marker ((18)) is a floating `d` followed by `{L}`. -/
 abbrev historic : Form M := floating m [.seg .d, .L]
@@ -134,7 +134,7 @@ abbrev lenition : Form M := floating m [.L]
 abbrev prothetic (s : Segment) : Form M := floating m [.seg s]
 
 /-- An empty CV unit, the left edge of a word that resists mutation (§6.2). -/
-def emptyCV : Form M := .melody m [] [.C, .V] ∅
+def emptyCV : Form M := .morph m [] [.C, .V] ∅
 
 variable {m} (s : Form M)
 
@@ -206,7 +206,7 @@ def dock (k : Fin u.upper.length) : Candidate u :=
   match nextSlot c k with
   | some i =>
     if u.upper[k].value = .L then
-      (fOn c i).elim (c.insertLink k i) (c.insertLink k i).deleteTierElem
+      (fOn c i).elim (c.insertLink k i) (c.insertLink k i).delete
     else c.insertLink k i
   | none => c
 
@@ -250,7 +250,7 @@ theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k
     · exact Candidate.isFloating_insertLink
     have hj' : ¬ c.IsFloating j' :=
       fun h ↦ h.2 (Candidate.isLinked_iff.2 ⟨_, mem_links_of_fOn_eq_some hf⟩)
-    simp only [Option.elim, Candidate.isFloating_deleteTierElem, Candidate.isFloating_insertLink]
+    simp only [Option.elim, Candidate.isFloating_delete, Candidate.isFloating_insertLink]
     exact ⟨fun h ↦ h.2, fun ⟨hjk, hj⟩ ↦ ⟨fun he ↦ hj' (he ▸ hj), hjk, hj⟩⟩
   · exact Candidate.isFloating_insertLink
 
@@ -259,7 +259,7 @@ theorem links_dock_subset {i : Fin u.lower.length} (hi : nextSlot c k = some i) 
   simp only [dock, hi]
   split_ifs
   · rcases fOn c i with _ | j'
-    exacts [Finset.Subset.refl _, Candidate.links_deleteTierElem_subset]
+    exacts [Finset.Subset.refl _, Candidate.links_delete_subset]
   · exact Finset.Subset.refl _
 
 theorem val_eq_zero_of_mem_nextSlot (h : leftIndices c.links k = ∅) {i : Fin u.lower.length}
@@ -346,10 +346,10 @@ variable {m m' : M} {objs : List Autosegment} {s : Form M}
 private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' * s)).links) :
     objs.length ≤ p.1.val ∧ 2 ≤ p.2.val := by
   rcases Form.mem_links_concat.1 hp with ⟨q, hq, -⟩ | ⟨q, hq, h₁, h₂⟩
-  · exact absurd (Form.mem_links_melody.1 hq) (Finset.notMem_empty _)
+  · simp at hq
   rcases Form.mem_links_concat.1 hq with ⟨r, hr, -⟩ | ⟨r, hr, h₃, h₄⟩
-  · exact absurd (Form.mem_links_melody.1 hr) (Finset.notMem_empty _)
-  simp only [floating, emptyCV, Form.melody_upper, Form.melody_lower, List.length_map,
+  · simp [emptyCV] at hr
+  simp only [floating, emptyCV, Form.morph_upper, Form.morph_lower, List.length_map,
     List.length_cons, List.length_nil] at h₁ h₂ h₄
   omega
 
@@ -382,7 +382,7 @@ private theorem le_of_canDock (h : Blocked c) {k : Fin _} (hk : CanDock c k) :
   have hi0 : i.val ≠ 0 := fun h0 ↦ by
     have hu : 0 < StrictCV.units (floating m objs * (emptyCV m' * s)) := by
       simp only [StrictCV.units, Form.mul_eq_concat, Form.concat_lower, floating, emptyCV,
-        Form.melody_lower, List.map_nil, List.map_cons, List.nil_append, List.length_cons,
+        Form.morph_lower, List.map_nil, List.map_cons, List.nil_append, List.length_cons,
         List.cons_append]
       omega
     obtain rfl : i = StrictCV.onset _ ⟨0, hu⟩ := Fin.ext (by simp [StrictCV.onset, h0])
@@ -463,40 +463,40 @@ inductive Morpheme
 
 /-- *bog* 'move', consonant-initial (Figure 1a). -/
 def bog : Form Morpheme :=
-  .melody .root [.seg .b, .seg .o, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
+  .morph .root [.seg .b, .seg .o, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
 
 /-- The vowel-initial *ól* 'drink', whose first C-slot is empty (Figure 1b). -/
-def ól : Form Morpheme := .melody .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(0, 1), (1, 2)}
+def ól : Form Morpheme := .morph .root [.seg .ó, .seg .l] [.C, .V, .C, .V] {(0, 1), (1, 2)}
 
 /-- *fág* 'leave', *f*-initial (Figure 1c). -/
 def fág : Form Morpheme :=
-  .melody .root [.seg .f, .seg .á, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
+  .morph .root [.seg .f, .seg .á, .seg .g] [.C, .V, .C, .V] {(0, 0), (1, 1), (2, 2)}
 
 /-- *freagair* 'answer', with the initial cluster *fr-* (Figure 2b). -/
 def freagair : Form Morpheme :=
-  .melody .root [.seg .f, .seg .r, .seg .ea] [.C, .V, .C, .V] {(0, 0), (1, 2), (2, 3)}
+  .morph .root [.seg .f, .seg .r, .seg .ea] [.C, .V, .C, .V] {(0, 0), (1, 2), (2, 3)}
 
 /-- *rith* 'run', *r*-initial (Figure 2a). -/
-def rith : Form Morpheme := .melody .root [.seg .r, .seg .i] [.C, .V] {(0, 0), (1, 1)}
+def rith : Form Morpheme := .morph .root [.seg .r, .seg .i] [.C, .V] {(0, 0), (1, 1)}
 
 /-- *imigh* 'go away', vowel-initial (Table 2). -/
-def imigh : Form Morpheme := .melody .root [.seg .i] [.C, .V] {(0, 1)}
+def imigh : Form Morpheme := .morph .root [.seg .i] [.C, .V] {(0, 1)}
 
 /-- *fás* 'grow', *f*-initial (Table 2). -/
-def fás : Form Morpheme := .melody .root [.seg .f, .seg .á] [.C, .V] {(0, 0), (1, 1)}
+def fás : Form Morpheme := .morph .root [.seg .f, .seg .á] [.C, .V] {(0, 0), (1, 1)}
 
 /-- *fan* 'stay', *f*-initial (Table 2). -/
-def fan : Form Morpheme := .melody .root [.seg .f, .seg .a] [.C, .V] {(0, 0), (1, 1)}
+def fan : Form Morpheme := .morph .root [.seg .f, .seg .a] [.C, .V] {(0, 0), (1, 1)}
 
 /-- *athair* 'father', vowel-initial ((19)). -/
-def athair : Form Morpheme := .melody .root [.seg .a] [.C, .V] {(0, 1)}
+def athair : Form Morpheme := .morph .root [.seg .a] [.C, .V] {(0, 1)}
 
 /-- *fear* 'man', *f*-initial (fn. 10). -/
-def fear : Form Morpheme := .melody .root [.seg .f, .seg .ea] [.C, .V] {(0, 0), (1, 1)}
+def fear : Form Morpheme := .morph .root [.seg .f, .seg .ea] [.C, .V] {(0, 0), (1, 1)}
 
 /-- A particle whose consonant and vowel fill one CV unit. -/
 def particle (m : Morpheme) (consonant vowel : Segment) : Form Morpheme :=
-  .melody m [.seg consonant, .seg vowel] [.C, .V] {(0, 0), (1, 1)}
+  .morph m [.seg consonant, .seg vowel] [.C, .V] {(0, 0), (1, 1)}
 
 /-- The negative particle *ní*, with `{L}` at its right edge ((3)). -/
 def ní : Form Morpheme := particle .neg .n .í * lenition Morpheme.neg
