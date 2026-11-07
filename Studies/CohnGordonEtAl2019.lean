@@ -1,358 +1,601 @@
 module
 
-public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
 public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Pragmatics.RSA.Uniform
+public import Mathlib.Data.List.ReduceOption
 
 /-!
 # Cohn-Gordon, Goodman and Potts (2019): An Incremental Iterated Response Model of Pragmatics
 
-Iterated response models compute pragmatic reasoning over complete utterances; the paper
-moves the reasoning inside the utterance. Utterances are word sequences from a closed set,
-an incremental semantics scores a prefix at a referent by the fraction of its complete
-extensions true of the referent among those true of some referent (§2.2), a word-level
-literal listener renormalizes that score (eq. 4), a word-level speaker best-responds at
-each prefix (eq. 5, with probability distributed evenly over words with viable
-continuations when no continuation is true), and the chain rule multiplies the word
-choices into an utterance-level speaker (eq. 7). On the Figure 1 reference game the
-architectures come apart: the global speaker prefers the fully informative *red dress*
-for the red dress while the incremental product prefers bare *dress* (Figures 1b, 1e),
-and upon hearing *red* the incremental listener already favours the red hat at 0.64,
-the anticipatory implicature (Figure 1d). The abstract two-letter game of Figure 3
-separates the architectures even at equal global informativity. Any complete utterance
-true of its referent is weakly informative, in that the literal listener assigns the referent
-at least chance probability, which is the paper's certificate for greedy word-by-word
-unrolling (§2.4).
-
-With a cost of one per word and none for the STOP token (§3.1), the global speaker
-prefers the bare noun in English and Spanish alike, but the incremental speaker is
-indifferent between *dress* and *red dress* while preferring *vestido* to *vestido
-rojo*: after *red* the English speaker is committed to the over-modified continuation,
-after *vestido* the Spanish speaker may stop, which is Rubio-Fernández's over-modification
-asymmetry between adjective–noun and noun–adjective languages. Hearing *tall* in
-Sedivy's display, the incremental pragmatic listener favours the tall cup over the tall
-pitcher at 0.6, since a speaker referring to the pitcher had no use for the modifier
-(§3.2); the implicature cancels, since after *tall pitcher* the listener excludes every
-referent but the pitcher.
+A prefix followed by a word, or by the end of the utterance, means the share of its complete
+continuations true of a referent, and the chain rule over the word-level speaker's choices makes
+her an autoregressive sequence model whose string law, like the global speaker's, is [a
+distribution over complete utterances](##ReferenceGame.stringMeasure_incS1_setOf_true); her
+[greedy unrolling is weakly informative](##ReferenceGame.IsGreedy.isWeaklyInformative). The two
+speakers [disagree about the red dress](##global_prefers_red_dress_incremental_prefers_dress) and
+about redundant adjectives in English but [agree in Spanish](##Spanish.incremental_eq_global),
+and the listener who hears *red* [anticipates the red hat](##listener_anticipation).
 
 ## Implementation notes
 
-* The reference game carries an utterance-level Boolean semantics, as the paper's
-  incremental semantics is "defined in terms of a global semantics and the set of
-  available complete utterances" (§2.2); word-conjunctive semantics is a constructor,
-  since Figure 3's semantics is not compositional.
-* Word-level agents are the kernel pipeline at prefix-indexed graded meanings; the
-  uniform prior and the viable-extension denominator cancel in the literal listener, so
-  every cell is a ratio of extension counts, which `decide` evaluates.
-* Chain-rule trajectory probabilities are real-valued products of speaker masses, so the
-  §3.1 comparisons are real arithmetic in the content-word cost factor `exp (-c)`, the
-  paper's cost of one generalized to any positive cost.
-* Kernels are noncomputable, so the greedy unroller is a per-referent table, certified
-  to land in the utterance set and to be true of its target, which is all that §2.4's bound
-  uses.
+* The paper's STOP token is the end symbol `none` of the sequence model, so a complete utterance
+  may begin another and no game needs a stop word.
+* A context that continues toward no utterance true of any referent, which no string of positive
+  probability reaches, ends the string; the paper does not define the speaker there.
+* The cost of one per word is generalized to any `c`; before the utterance can end, a cost that
+  every word shares cancels, so Sedivy's display is evaluated at every `c`.
+
+## Errata
+
+* Figure 1e prints 0.42 and 0.20 for the red dress's *dress* and *red object*, where eq. (7) over
+  Figure 1c gives [3/7 and 4/21](##figureOne_incremental_values), 0.43 and 0.19.
+* p. 84 calls the letter forced after *A* "B" while giving p(A | [A], W1) = 1.0; it is
+  [*A*](##figureThree_incremental_values).
+* §3.2 reports the tall cup's 0.6 as the probability of "the tall glass".
+* §3.2's cancellation after *tall pitcher* [holds for the listener whose prior is her posterior
+  after *tall*](##Sedivy.afterTallPitcher_eq_one); eq. (6) as printed leaves the pitcher
+  [at 1/2](##Sedivy.l1_tall_pitcher).
 
 ## TODO
 
-* §4's TUNA-corpus comparison (the share of two-word optima under each architecture) is
-  an experiment over corpus trials, not formalizable content.
-* The general §2.4 claim that greedy unrolling always terminates in a true complete
-  utterance is argued informally in the paper; here it is certified for Figure 1.
+* §4 compares the two speakers' optimal two-word utterances over the TUNA trials, which needs the
+  corpus coded by attributes.
 
 ## References
 
-* [R. Cohn-Gordon, N. D. Goodman and C. Potts, *An Incremental Iterated Response Model
-  of Pragmatics* (2019)][cohn-gordon-goodman-potts-2019]
-* [P. Rubio-Fernández, *How Redundant Are Redundant Color Adjectives? An Efficiency-Based
-  Analysis of Color Overspecification* (2016)][rubio-fernandez-2016]
-* [J. C. Sedivy, *Implicature During Real Time Conversation: A View from Language
-  Processing Research* (2007)][sedivy-2007]
+* [cohn-gordon-goodman-potts-2019]
+* [rubio-fernandez-2016]
+* [sedivy-2007]
 -/
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA
+open MeasureTheory ProbabilityTheory RSA AutoregressiveSequenceModel
 open scoped ENNReal
 
 namespace CohnGordonEtAl2019
 
-/-! ### Reference games and the incremental semantics (§2.2) -/
+section Stop
 
-/-- A reference game (Figure 1a) has a closed set of complete utterances over words `U`, an
-utterance-level Boolean semantics, and the referents on display. -/
-structure ReferenceGame (U W : Type) where
-  /-- The closed set of available complete utterances. -/
+variable {U : Type*}
+
+/-- A complete utterance closed by the end symbol `none`, the paper's STOP token. -/
+def stopped (u : List U) : List (Option U) := u.map some ++ [none]
+
+@[simp] theorem length_stopped (u : List U) : (stopped u).length = u.length + 1 := by
+  simp [stopped]
+
+@[simp] theorem reduceOption_stopped (u : List U) : (stopped u).reduceOption = u := by
+  induction u with
+  | nil => rfl
+  | cons a u ih => simpa [stopped] using ih
+
+theorem map_some_append_prefix_stopped_iff {c u : List U} {o : Option U} :
+    c.map some ++ [o] <+: stopped u ↔ o = none ∧ u = c ∨ ∃ a, o = some a ∧ c ++ [a] <+: u := by
+  induction c generalizing u with
+  | nil => cases u <;> cases o <;> simp [stopped, eq_comm]
+  | cons x c ih =>
+    cases u with
+    | nil => simp [stopped]
+    | cons b u =>
+      simp only [stopped, List.map_cons, List.cons_append, List.cons_prefix_cons, Option.some.injEq,
+        List.cons.injEq] at ih ⊢
+      rw [ih]
+      constructor
+      · rintro ⟨rfl, h | ⟨a, rfl, h⟩⟩
+        · exact .inl ⟨h.1, rfl, h.2⟩
+        · exact .inr ⟨a, rfl, rfl, h⟩
+      · rintro (⟨h, rfl, rfl⟩ | ⟨a, rfl, rfl, h⟩)
+        · exact ⟨rfl, .inl ⟨h, rfl⟩⟩
+        · exact ⟨rfl, .inr ⟨a, rfl, h⟩⟩
+
+@[simp] theorem map_some_append_none_prefix_stopped_iff {c u : List U} :
+    c.map some ++ [none] <+: stopped u ↔ u = c := by
+  simp [map_some_append_prefix_stopped_iff]
+
+@[simp] theorem map_some_append_some_prefix_stopped_iff {c u : List U} {a : U} :
+    c.map some ++ [some a] <+: stopped u ↔ c ++ [a] <+: u := by
+  simp [map_some_append_prefix_stopped_iff]
+
+theorem exists_map_some_append_prefix_stopped_iff {c u : List U} :
+    (∃ o, c.map some ++ [o] <+: stopped u) ↔ c <+: u := by
+  simp only [map_some_append_prefix_stopped_iff]
+  constructor
+  · rintro ⟨o, ⟨-, rfl⟩ | ⟨a, -, h⟩⟩
+    · exact List.prefix_refl _
+    · exact (List.prefix_append _ _).trans h
+  · rintro ⟨_ | ⟨a, t⟩, rfl⟩
+    · exact ⟨none, .inl ⟨rfl, by simp⟩⟩
+    · exact ⟨some a, .inr ⟨a, rfl, by simp⟩⟩
+
+/-- The cost of §3.1: `c` for each word and nothing for the end symbol. -/
+def wordCost (c : ℝ) : Option U → ℝ := fun o ↦ o.elim 0 fun _ ↦ c
+
+@[simp] theorem wordCost_none (c : ℝ) : wordCost c (none : Option U) = 0 := rfl
+
+@[simp] theorem wordCost_some (c : ℝ) (a : U) : wordCost c (some a) = c := rfl
+
+end Stop
+
+/-! ### Reference games and the incremental semantics -/
+
+/-- A reference game has a closed set of complete utterances over the words `U` and a global
+semantics giving the referents each complete utterance is true of. -/
+structure ReferenceGame (U W : Type*) where
+  /-- The available complete utterances. -/
   utterances : List (List U)
-  /-- The global semantics `⟦·⟧` gives the truth of a complete utterance at a referent. -/
-  sem : List U → W → Bool
-  /-- The referents on display. -/
-  worlds : List W
+  /-- The global semantics `⟦·⟧`: the referents a complete utterance is true of. -/
+  sem : List U → Finset W
 
 namespace ReferenceGame
 
-variable {U W : Type}
+variable {U W : Type*}
 
-/-- A game whose semantics is word-conjunctive, from a lexicon of word extensions. -/
-def ofLexicon (applies : U → W → Bool) (utts : List (List U)) (ws : List W) :
+/-- A game whose semantics is word-conjunctive, from the extension of each word. -/
+def ofLexicon [Fintype W] [DecidableEq W] (ext : U → Finset W) (utts : List (List U)) :
     ReferenceGame U W :=
-  ⟨utts, fun u r ↦ u.all fun w ↦ applies w r, ws⟩
+  ⟨utts, fun u ↦ Finset.univ.filter fun r ↦ ∀ a ∈ u, r ∈ ext a⟩
 
-private theorem sum_map_ite {α : Type*} (l : List α) (p : α → Bool) :
-    (l.map fun a ↦ if p a then (1 : ℝ) else 0).sum = l.countP p := by
+private theorem sum_map_ite {α : Type*} (l : List α) (p : α → Prop) [DecidablePred p] :
+    (l.map fun a ↦ if p a then (1 : ℝ) else 0).sum = l.countP (p ·) := by
   induction l with
   | nil => simp
   | cons a l ih => by_cases h : p a <;> simp [h, ih, add_comm]
 
-variable [DecidableEq U] (g : ReferenceGame U W)
+variable [DecidableEq U] [DecidableEq W] (g : ReferenceGame U W) {c : List U} {o : Option U}
+  {r : W}
 
-/-- The number of complete extensions of `pfx` true of `r`. -/
-def trueExts (pfx : List U) (r : W) : ℕ :=
-  (g.utterances.filter fun u ↦ pfx.isPrefixOf u && g.sem u r).length
+/-- The number of complete utterances true of `r` that `c` followed by `o` begins. -/
+def trueExts (c : List U) (o : Option U) (r : W) : ℕ :=
+  g.utterances.countP fun u ↦ c.map some ++ [o] <+: stopped u ∧ r ∈ g.sem u
 
-/-- The number of complete extensions of `pfx` true of some referent on display. -/
-def viableExts (pfx : List U) : ℕ :=
-  (g.utterances.filter fun u ↦ pfx.isPrefixOf u && g.worlds.any fun r ↦ g.sem u r).length
+/-- The number of complete utterances true of some referent that `c` followed by `o` begins. -/
+def viableExts (c : List U) (o : Option U) : ℕ :=
+  g.utterances.countP fun u ↦ c.map some ++ [o] <+: stopped u ∧ (g.sem u).Nonempty
 
-theorem trueExts_le_viableExts (hw : ∀ r : W, r ∈ g.worlds) (pfx : List U) (r : W) :
-    g.trueExts pfx r ≤ g.viableExts pfx := by
-  simp only [trueExts, viableExts, ← List.countP_eq_length_filter]
-  exact List.countP_mono_left fun u _ h ↦ by
-    rw [Bool.and_eq_true] at h ⊢
-    exact ⟨h.1, List.any_eq_true.mpr ⟨r, hw r, h.2⟩⟩
+theorem trueExts_le_viableExts (c : List U) (o : Option U) (r : W) :
+    g.trueExts c o r ≤ g.viableExts c o :=
+  List.countP_mono_left fun _ _ h ↦ by
+    simp only [decide_eq_true_eq] at h ⊢
+    exact ⟨h.1, r, h.2⟩
 
-/-- The complete utterances true of some referent on display. -/
-def viable : List (List U) :=
-  g.utterances.filter fun u ↦ g.worlds.any fun r ↦ g.sem u r
+theorem trueExts_ne_zero_iff :
+    g.trueExts c o r ≠ 0 ↔ ∃ u ∈ g.utterances, c.map some ++ [o] <+: stopped u ∧ r ∈ g.sem u := by
+  rw [trueExts, ← Nat.pos_iff_ne_zero, List.countP_pos_iff]
+  simp only [decide_eq_true_eq]
 
-/-- The incremental semantics `⟦pfx⟧(r)` (§2.2) is the string meaning of the prefix at the truth
-of the complete utterances, the fraction of the viable extensions of `pfx` that are true of
-`r`. -/
-noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
-  ENNReal.ofReal (stringMeaning g.viable (fun u r ↦ if g.sem u r then 1 else 0) pfx r)
+omit [DecidableEq W] in
+theorem viableExts_ne_zero_iff :
+    g.viableExts c o ≠ 0 ↔
+      ∃ u ∈ g.utterances, c.map some ++ [o] <+: stopped u ∧ (g.sem u).Nonempty := by
+  rw [viableExts, ← Nat.pos_iff_ne_zero, List.countP_pos_iff]
+  simp only [decide_eq_true_eq]
 
-theorem incSem_eq_div {r : W} (hr : r ∈ g.worlds) (pfx : List U) :
-    g.incSem pfx r = (g.trueExts pfx r : ℝ≥0∞) / (g.viableExts pfx : ℝ≥0∞) := by
-  have hp (u : List U) : decide (pfx <+: u) = pfx.isPrefixOf u := by
-    rw [Bool.eq_iff_iff]; simp
-  have ht : (continuations g.viable pfx).countP (g.sem · r) = g.trueExts pfx r := by
-    rw [continuations, viable, List.filter_filter, List.countP_filter, trueExts,
-      ← List.countP_eq_length_filter]
-    refine List.countP_congr fun u _ ↦ ?_
-    by_cases hs : g.sem u r
-    · simp [hs, hp, List.any_eq_true.mpr ⟨r, hr, hs⟩]
-    · simp [hs]
-  have hv : (continuations g.viable pfx).length = g.viableExts pfx := by
-    rw [continuations, viable, List.filter_filter, viableExts]
-    simp only [hp]
-  rw [incSem, stringMeaning, sum_map_ite, ht, hv]
-  rcases Nat.eq_zero_or_pos (g.viableExts pfx) with h0 | hpos
-  · have : g.trueExts pfx r = 0 := Nat.le_zero.mp (h0 ▸ by
-      rw [← ht, ← hv]; exact List.countP_le_length)
+/-- The complete utterances true of some referent, closed by the end symbol. -/
+def viable : List (List (Option U)) :=
+  (g.utterances.filter fun u ↦ (g.sem u).Nonempty).map stopped
+
+/-- The incremental semantics `⟦c + o⟧(r)` (§2.2) is the string meaning of `c` followed by `o`
+among the closed utterances true of some referent: the fraction of them that are true of `r`. -/
+noncomputable def incSem (c : List U) (o : Option U) (r : W) : ℝ≥0∞ :=
+  ENNReal.ofReal (stringMeaning g.viable
+    (fun s r ↦ if r ∈ g.sem s.reduceOption then 1 else 0) (c.map some ++ [o]) r)
+
+theorem incSem_eq_div (c : List U) (o : Option U) (r : W) :
+    g.incSem c o r = (g.trueExts c o r : ℝ≥0∞) / (g.viableExts c o : ℝ≥0∞) := by
+  set p := c.map some ++ [o]
+  have hc : continuations g.viable p =
+      (g.utterances.filter fun u ↦ p <+: stopped u ∧ (g.sem u).Nonempty).map stopped := by
+    rw [continuations, viable, List.filter_map, List.filter_filter]
+    congr 1
+  have ht : ((continuations g.viable p).map fun s ↦
+      if r ∈ g.sem s.reduceOption then (1 : ℝ) else 0).sum = g.trueExts c o r := by
+    rw [hc, List.map_map]
+    simp only [Function.comp_def, reduceOption_stopped]
+    rw [sum_map_ite, List.countP_filter, trueExts]
+    exact congrArg _ (List.countP_congr fun u _ ↦ by
+      simp only [Bool.and_eq_true, decide_eq_true_eq]
+      exact ⟨fun h ↦ ⟨h.2.1, h.1⟩, fun h ↦ ⟨h.2, h.1, r, h.2⟩⟩)
+  have hv : (continuations g.viable p).length = g.viableExts c o := by
+    rw [hc, List.length_map, viableExts, List.countP_eq_length_filter]
+  rw [incSem, stringMeaning, ht, hv]
+  rcases Nat.eq_zero_or_pos (g.viableExts c o) with h0 | hpos
+  · have : g.trueExts c o r = 0 := Nat.le_zero.mp (h0 ▸ g.trueExts_le_viableExts c o r)
     simp [h0, this]
   · rw [ENNReal.ofReal_div_of_pos (Nat.cast_pos.2 hpos), ENNReal.ofReal_natCast,
       ENNReal.ofReal_natCast]
+
+/-- A context is a dead end for `r` (§2.2) when no continuation of it is true of `r`. -/
+def DeadEnd (c : List U) (r : W) : Prop :=
+  ∀ o, g.trueExts c o r = 0
+
+theorem not_deadEnd_iff : ¬ g.DeadEnd c r ↔ ∃ u ∈ g.utterances, c <+: u ∧ r ∈ g.sem u := by
+  rw [DeadEnd, not_forall]
+  constructor
+  · rintro ⟨o, ho⟩
+    obtain ⟨u, hu, h, hr⟩ := (g.trueExts_ne_zero_iff).1 ho
+    exact ⟨u, hu, exists_map_some_append_prefix_stopped_iff.1 ⟨o, h⟩, hr⟩
+  · rintro ⟨u, hu, hp, hr⟩
+    obtain ⟨o, h⟩ := exists_map_some_append_prefix_stopped_iff.2 hp
+    exact ⟨o, (g.trueExts_ne_zero_iff).2 ⟨u, hu, h, hr⟩⟩
+
+theorem not_deadEnd_append_of_trueExts_ne_zero {a : U} (h : g.trueExts c (some a) r ≠ 0) :
+    ¬ g.DeadEnd (c ++ [a]) r := by
+  obtain ⟨u, hu, hp, hr⟩ := (g.trueExts_ne_zero_iff).1 h
+  exact (g.not_deadEnd_iff).2 ⟨u, hu, map_some_append_some_prefix_stopped_iff.1 hp, hr⟩
+
+theorem mem_of_trueExts_none_ne_zero (h : g.trueExts c none r ≠ 0) :
+    c ∈ g.utterances ∧ r ∈ g.sem c := by
+  obtain ⟨u, hu, hp, hr⟩ := (g.trueExts_ne_zero_iff).1 h
+  obtain rfl := map_some_append_none_prefix_stopped_iff.1 hp
+  exact ⟨hu, hr⟩
+
+theorem trueExts_none_eq_zero (hc : c ∉ g.utterances) (r : W) : g.trueExts c none r = 0 :=
+  not_not.1 fun h ↦ hc (g.mem_of_trueExts_none_ne_zero h).1
+
+/-- The symbols that continue `c` toward a complete utterance true of some referent. -/
+def viableNext [Fintype U] (c : List U) : Finset (Option U) :=
+  Finset.univ.filter fun o ↦ g.viableExts c o ≠ 0
 
 variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 
 /-! ### The global model (§2.1) -/
 
 /-- The complete utterances of the game, as a type. -/
-def Complete : Type := {u : List U // u ∈ g.utterances}
+abbrev Complete : Type _ := {u : List U // u ∈ g.utterances}
 
 instance : Fintype g.Complete :=
   Fintype.subtype g.utterances.toFinset fun _ ↦ List.mem_toFinset
 
-instance : MeasurableSpace g.Complete := ⊤
-instance : DiscreteMeasurableSpace g.Complete := ⟨fun _ ↦ trivial⟩
-instance : DecidableEq g.Complete := Subtype.instDecidableEq
+instance : DiscreteMeasurableSpace g.Complete :=
+  ⟨fun s ↦ ⟨Subtype.val '' s, trivial, Set.preimage_image_eq _ Subtype.val_injective⟩⟩
 
-/-- The global literal listener (eq. 1) conditions the uniform prior on the utterance's
-truth. -/
+/-- The global literal listener (eq. 1) is uniform on the referents the utterance is true of. -/
 noncomputable def globalL0 : Kernel g.Complete W :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u r ↦ if g.sem u.val r then 1 else 0
+  listener (uniformOn Set.univ) (truthful fun u : g.Complete ↦ (g.sem u.val : Set W))
 
-instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
-/-- The global pragmatic speaker (eq. 2). -/
-noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
-  speaker 1 cost g.globalL0 Measure.dirac
-
-/-- An utterance costs the sum of its words' costs (§3.1). -/
-def uttCost (cost : U → ℝ) (u : List U) : ℝ := (u.map cost).sum
+instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 theorem globalL0_apply (u : g.Complete) (r : W) :
-    g.globalL0 u {r}
-      = (if g.sem u.val r then 1 else 0)
-        / ((Finset.univ.filter fun r' ↦ g.sem u.val r').card : ℝ≥0∞) := by
-  have : Nonempty W := ⟨r⟩
-  rw [globalL0, Kernel.ofDensity_uniformOn_apply_singleton]
-  congr 1
-  rw [Finset.sum_boole]
+    g.globalL0 u {r} = if r ∈ g.sem u.val then ((g.sem u.val).card : ℝ≥0∞)⁻¹ else 0 :=
+  listener_uniformOn_truthful_apply_singleton (fun u : g.Complete ↦ g.sem u.val) u r
 
--- §2.4
-theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
-    ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
-  rw [globalL0_apply, ite_eq_left htrue]
-  calc ((Fintype.card W : ℝ≥0∞))⁻¹
-      ≤ (((Finset.univ.filter fun r' ↦ g.sem u.val r').card : ℕ) : ℝ≥0∞)⁻¹ := by
-        refine ENNReal.inv_le_inv' ?_
-        exact_mod_cast (Finset.card_filter_le _ _).trans_eq Finset.card_univ
-    _ = 1 / _ := (one_div _).symm
+/-- An utterance is weakly informative about `r` (§2.4) when the global literal listener gives
+`r` at least chance probability. -/
+def IsWeaklyInformative (u : g.Complete) (r : W) : Prop :=
+  (Fintype.card W : ℝ≥0∞)⁻¹ ≤ g.globalL0 u {r}
+
+theorem isWeaklyInformative_of_mem {u : g.Complete} (h : r ∈ g.sem u.val) :
+    g.IsWeaklyInformative u r := by
+  rw [IsWeaklyInformative, globalL0_apply, ite_eq_left h]
+  exact ENNReal.inv_le_inv.2 (by exact_mod_cast Finset.card_le_univ _)
+
+/-- An utterance costs the sum of the costs of its words and of the end symbol (§3.1). -/
+def uttCost (cost : Option U → ℝ) (u : List U) : ℝ := ((stopped u).map cost).sum
+
+omit [DecidableEq U] in
+@[simp] theorem uttCost_wordCost (c : ℝ) (u : List U) : uttCost (wordCost c) u = u.length * c := by
+  induction u with
+  | nil => simp [uttCost, stopped]
+  | cons a u ih => simp_all [uttCost, stopped]; ring
+
+/-- The global pragmatic speaker (eq. 2) soft-maximizes the global literal listener's
+probability of the referent less the utterance's cost. -/
+noncomputable def globalS1 (cost : Option U → ℝ) : Kernel W g.Complete :=
+  speaker 1 (fun u ↦ uttCost cost u.val) g.globalL0 Measure.dirac
+
+instance (cost : Option U → ℝ) : IsFiniteKernel (g.globalS1 cost) :=
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
+
+omit [DecidableEq W] in
+theorem globalS1_zero : g.globalS1 0 = speaker 1 0 g.globalL0 Measure.dirac := by
+  rw [globalS1]
+  congr 1
+  funext u
+  simp [uttCost, Pi.zero_def]
+
+theorem globalS1_real_of_pair {cost : Option U → ℝ} {u u' : g.Complete} (huu' : u ≠ u')
+    (hu : r ∈ g.sem u.val)
+    (hu' : r ∈ g.sem u'.val) (hcard : (g.sem u.val).card = (g.sem u'.val).card)
+    (hsupp : ∀ v : g.Complete, r ∈ g.sem v.val → v = u ∨ v = u') :
+    (g.globalS1 cost r).real {u} = Real.sigmoid (uttCost cost u'.val - uttCost cost u.val) := by
+  have hne (v : g.Complete) (hv : r ∈ g.sem v.val) : g.globalL0 v {r} ≠ 0 := by
+    rw [globalL0_apply, ite_eq_left hv]
+    exact ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _)
+  rw [globalS1, speaker_dirac_real_singleton_of_pair one_pos huu' (hne u hu) (hne u' hu')
+    fun v hv ↦ hsupp v (not_not.1 fun h ↦ hv (by rw [globalL0_apply, ite_eq_right h]))]
+  rw [globalL0_apply, globalL0_apply, ite_eq_left hu, ite_eq_left hu', hcard]
+  congr 1
+  ring
+
+omit [DecidableEq W] in
+theorem map_globalS1_apply_singleton {cost : Option U → ℝ} {x : List U} (hx : x ∈ g.utterances) :
+    (g.globalS1 cost r).map Subtype.val {x} = g.globalS1 cost r {⟨x, hx⟩} := by
+  rw [Measure.map_apply .of_discrete (measurableSet_singleton x)]
+  congr 1
+  ext v
+  exact ⟨fun h ↦ Subtype.ext h, fun h ↦ h ▸ rfl⟩
 
 /-! ### The word-level pipeline (eqs. 4–6) -/
 
 variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
 
-/-- The incremental literal listener at context `ctx` (eq. 4) reweights the uniform prior by
-`⟦ctx ++ [u]⟧`. -/
-noncomputable def l0 (ctx : List U) : Kernel U W :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u ↦ g.incSem (ctx ++ [u])
+/-- The incremental literal listener at the context `c` (eq. 4) reweights the uniform prior by
+`⟦c + o⟧`. -/
+noncomputable def l0 (c : List U) : Kernel (Option U) W :=
+  Kernel.ofDensity (uniformOn Set.univ) fun o ↦ g.incSem c o
 
-instance (ctx : List U) : IsFiniteKernel (g.l0 ctx) :=
+instance (c : List U) : IsFiniteKernel (g.l0 c) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
-theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
-    g.l0 ctx u {r}
-      = (g.trueExts (ctx ++ [u]) r : ℝ≥0∞) / (∑ r', (g.trueExts (ctx ++ [u]) r' : ℕ) : ℕ) := by
+theorem l0_apply (c : List U) (o : Option U) (r : W) :
+    g.l0 c o {r} = (g.trueExts c o r : ℝ≥0∞) / (∑ r', g.trueExts c o r' : ℕ) := by
   have : Nonempty W := ⟨r⟩
   rw [l0, Kernel.ofDensity_uniformOn_apply_singleton]
-  simp_rw [g.incSem_eq_div (hw _)]
+  simp_rw [g.incSem_eq_div]
   push_cast
-  rcases Nat.eq_zero_or_pos (g.viableExts (ctx ++ [u])) with hv | hv
-  · have ht : ∀ r' : W, g.trueExts (ctx ++ [u]) r' = 0 := fun r' ↦
-      Nat.le_zero.mp (hv ▸ g.trueExts_le_viableExts hw _ r')
+  rcases Nat.eq_zero_or_pos (g.viableExts c o) with hv | hv
+  · have ht : ∀ r' : W, g.trueExts c o r' = 0 := fun r' ↦
+      Nat.le_zero.mp (hv ▸ g.trueExts_le_viableExts c o r')
     simp [ht]
   · simp_rw [div_eq_mul_inv, ← Finset.sum_mul]
     exact ENNReal.mul_div_mul_right _ _
       (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
       (ENNReal.inv_ne_top.mpr (by exact_mod_cast hv.ne'))
 
-/-- A context `ctx` is a dead end for `r` (§2.2) when no continuation of it is true of `r`. -/
-def DeadEnd (ctx : List U) (r : W) : Prop :=
-  ∀ u : U, g.trueExts (ctx ++ [u]) r = 0
+theorem l0_apply_ne_zero (ht : g.trueExts c o r ≠ 0) : g.l0 c o {r} ≠ 0 := by
+  rw [l0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨by exact_mod_cast ht, ENNReal.natCast_ne_top _⟩
 
-instance (ctx : List U) (r : W) : Decidable (g.DeadEnd ctx r) :=
-  inferInstanceAs (Decidable (∀ u : U, g.trueExts (ctx ++ [u]) r = 0))
+theorem l0_apply_eq_zero (ht : g.trueExts c o r = 0) : g.l0 c o {r} = 0 := by
+  rw [l0_apply, ht, Nat.cast_zero, ENNReal.zero_div]
 
-/-- The word-level speaker at context `ctx` (eq. 5) is the best response to the incremental
-literal listener. At a dead end, probability is distributed evenly over the words with viable
-continuations. -/
-noncomputable def s1 (cost : U → ℝ) (ctx : List U) : Kernel W U :=
+theorem l0_real (c : List U) (o : Option U) (r : W) :
+    (g.l0 c o {r}).toReal = (g.trueExts c o r : ℝ) / (∑ r', g.trueExts c o r' : ℕ) := by
+  rw [l0_apply, ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
+
+instance (c : List U) (r : W) : Decidable (g.DeadEnd c r) :=
+  inferInstanceAs (Decidable (∀ o, g.trueExts c o r = 0))
+
+/-- At a dead end the speaker spreads her choice evenly over the symbols that continue toward a
+complete utterance true of some referent (§2.2), and ends a string that has none. -/
+noncomputable def deadEndChoice (c : List U) : Measure (Option U) :=
+  if (g.viableNext c).Nonempty then uniformOn ↑(g.viableNext c) else Measure.dirac none
+
+instance (c : List U) : IsProbabilityMeasure (g.deadEndChoice c) := by
+  rw [deadEndChoice]
+  split_ifs with h
+  · exact isProbabilityMeasure_uniformOn (Finset.finite_toSet _) (Finset.coe_nonempty.2 h)
+  · infer_instance
+
+/-- The word-level speaker at the context `c` (eq. 5) best responds to the incremental literal
+listener, and away from her referent's utterances makes the dead-end choice. -/
+noncomputable def s1 (cost : Option U → ℝ) (c : List U) : Kernel W (Option U) :=
   Kernel.ofFunOfCountable fun r ↦
-    if g.DeadEnd ctx r then
-      uniformOn ↑(Finset.univ.filter fun u : U ↦ 0 < g.viableExts (ctx ++ [u]))
-    else speaker 1 cost (g.l0 ctx) Measure.dirac r
+    if g.DeadEnd c r then g.deadEndChoice c else speaker 1 cost (g.l0 c) Measure.dirac r
 
-theorem s1_apply {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ) :
-    g.s1 cost ctx r = speaker 1 cost (g.l0 ctx) Measure.dirac r := by
+variable {cost : Option U → ℝ}
+
+theorem s1_apply (hnd : ¬ g.DeadEnd c r) :
+    g.s1 cost c r = speaker 1 cost (g.l0 c) Measure.dirac r := by
   rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_right hnd]
 
-theorem s1_apply_deadEnd {ctx : List U} {r : W} (hd : g.DeadEnd ctx r) (cost : U → ℝ) :
-    g.s1 cost ctx r
-      = uniformOn ↑(Finset.univ.filter fun u : U ↦ 0 < g.viableExts (ctx ++ [u])) := by
+theorem s1_apply_deadEnd (hd : g.DeadEnd c r) : g.s1 cost c r = g.deadEndChoice c := by
   rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_left hd]
 
-instance (cost : U → ℝ) (ctx : List U) : IsFiniteKernel (g.s1 cost ctx) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun r ↦ by
-    rw [s1, Kernel.ofFunOfCountable_apply]
-    split_ifs with h
-    · exact prob_le_one
-    · exact Kernel.ofWeights_apply_univ_le_one _ r⟩⟩
+instance (cost : Option U → ℝ) (c : List U) : IsMarkovKernel (g.s1 cost c) := ⟨fun r ↦ by
+  by_cases hd : g.DeadEnd c r
+  · rw [s1_apply_deadEnd g hd]; infer_instance
+  · rw [s1_apply g hd]
+    obtain ⟨o, ho⟩ := not_forall.1 hd
+    exact isProbabilityMeasure_speaker_dirac zero_le_one _ _ ⟨o, g.l0_apply_ne_zero ho⟩⟩
 
-/-- The incremental pragmatic listener at context `ctx` (eq. 6) inverts the word-level speaker
+/-- The incremental pragmatic listener at the context `c` (eq. 6) inverts the word-level speaker
 against the uniform prior. -/
-noncomputable def l1 (cost : U → ℝ) (ctx : List U) : Kernel U W :=
-  RSA.listener (uniformOn Set.univ) (g.s1 cost ctx)
+noncomputable def l1 (cost : Option U → ℝ) (c : List U) : Kernel (Option U) W :=
+  listener (uniformOn Set.univ) (g.s1 cost c)
 
-instance (cost : U → ℝ) (ctx : List U) : IsFiniteKernel (g.l1 cost ctx) :=
-  inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
+instance (cost : Option U → ℝ) (c : List U) : IsFiniteKernel (g.l1 cost c) :=
+  inferInstanceAs (IsFiniteKernel (listener _ _))
 
-/-- The utterance-level incremental speaker (eq. 7) is the chain-rule product of the
-word-level speaker's choices along the utterance. -/
-noncomputable def s1Utt (cost : U → ℝ) (r : W) (u : List U) : ℝ :=
-  chain (g.s1 cost) r [] u
+/-- The utterance-level incremental speaker for `r` (eq. 7) is the autoregressive sequence model
+whose choice after each context is the word-level speaker's, so that the probability of an
+utterance is the chain-rule product of her word choices and of her choice to end it. -/
+noncomputable def incS1 (cost : Option U → ℝ) (r : W) : AutoregressiveSequenceModel U where
+  next := Kernel.ofFunOfCountable fun c ↦ g.s1 cost c r
+  isMarkovKernel_next := ⟨fun c ↦ by rw [Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
-    (u : U) :
-    (g.s1 cost ctx r).real {u}
-      = (g.l0 ctx u {r}).toReal * Real.exp (-cost u)
-        / ∑ u', (g.l0 ctx u' {r}).toReal * Real.exp (-cost u') := by
-  rw [s1_apply g hnd, speaker_dirac_real_singleton zero_le_one]
-  simp only [ENNReal.rpow_one, one_mul]
+@[simp] theorem next_incS1 (cost : Option U → ℝ) (r : W) (c : List U) :
+    (g.incS1 cost r).next c = g.s1 cost c r :=
+  Kernel.ofFunOfCountable_apply _ _
+
+/-! ### The speaker produces true utterances, and only finitely long ones -/
+
+theorem trueExts_ne_zero_of_s1_ne_zero (hnd : ¬ g.DeadEnd c r) (h : g.s1 cost c r {o} ≠ 0) :
+    g.trueExts c o r ≠ 0 := by
+  refine fun ht ↦ h ?_
+  rw [s1_apply g hnd]
+  exact speaker_dirac_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero ht)
+
+theorem mem_of_stringProb_ne_zero (hr : ∃ u ∈ g.utterances, r ∈ g.sem u) {x : List U}
+    (h : (g.incS1 cost r).stringProb x ≠ 0) : x ∈ g.utterances ∧ r ∈ g.sem x := by
+  obtain ⟨u, hu, hr⟩ := hr
+  rw [stringProb, prefixProb, next_incS1] at h
+  have hx : ¬ g.DeadEnd x r := by
+    simpa using (g.incS1 cost r).induction_of_condPrefixProb_ne_zero (P := (¬ g.DeadEnd · r))
+      (fun c a hc ha ↦ g.not_deadEnd_append_of_trueExts_ne_zero
+        (g.trueExts_ne_zero_of_s1_ne_zero hc (by rwa [next_incS1] at ha)))
+      ((g.not_deadEnd_iff).2 ⟨u, hu, List.nil_prefix, hr⟩) (left_ne_zero_of_mul h)
+  exact g.mem_of_trueExts_none_ne_zero
+    (g.trueExts_ne_zero_of_s1_ne_zero hx (right_ne_zero_of_mul h))
+
+theorem exists_prefix_of_s1_ne_zero {a : U} (h : g.s1 cost c r {some a} ≠ 0) :
+    ∃ u ∈ g.utterances, c ++ [a] <+: u := by
+  by_cases hd : g.DeadEnd c r
+  · rw [s1_apply_deadEnd g hd, deadEndChoice] at h
+    split_ifs at h with hn
+    · have hm : some a ∈ g.viableNext c := by
+        by_contra hm
+        exact h (by rw [uniformOn_finset_apply_singleton, ite_eq_right hm])
+      obtain ⟨u, hu, hp, -⟩ := (g.viableExts_ne_zero_iff).1 (Finset.mem_filter.1 hm).2
+      exact ⟨u, hu, map_some_append_some_prefix_stopped_iff.1 hp⟩
+    · exact absurd (by simp) h
+  · obtain ⟨u, hu, hp, -⟩ := (g.trueExts_ne_zero_iff).1 (g.trueExts_ne_zero_of_s1_ne_zero hd h)
+    exact ⟨u, hu, map_some_append_some_prefix_stopped_iff.1 hp⟩
+
+theorem isTight_incS1 (cost : Option U → ℝ) (r : W) : (g.incS1 cost r).IsTight := by
+  refine (g.incS1 cost r).isTight_of_survival_eq_zero
+    (n := (g.utterances.map List.length).sum + 1)
+    (ENNReal.tsum_eq_zero.2 fun ⟨x, hx⟩ ↦ not_not.1 fun h ↦ ?_)
+  obtain h' | ⟨u, hu, hp⟩ := (g.incS1 cost r).induction_of_condPrefixProb_ne_zero
+    (P := fun c ↦ c = [] ∨ ∃ u ∈ g.utterances, c <+: u)
+    (fun c a _ ha ↦ .inr (g.exists_prefix_of_s1_ne_zero (by rwa [next_incS1] at ha))) (.inl rfl) h
+  · obtain rfl : x = [] := h'
+    simp at hx
+  · have := hp.length_le.trans (List.le_sum_of_mem (List.mem_map_of_mem hu))
+    rw [List.nil_append, hx] at this
+    omega
+
+/-- When some utterance is true of `r`, the utterance-level incremental speaker is, like the
+global speaker, a probability distribution over the complete utterances true of `r` (§2.4). -/
+theorem stringMeasure_incS1_setOf_true (hr : ∃ u ∈ g.utterances, r ∈ g.sem u) :
+    (g.incS1 cost r).stringMeasure {x | x ∈ g.utterances ∧ r ∈ g.sem x} = 1 := by
+  have := (g.incS1 cost r).isTight_iff_isProbabilityMeasure.1 (g.isTight_incS1 cost r)
+  refine (prob_compl_eq_zero_iff .of_discrete).1 (ae_iff.1 (ae_iff_of_countable.2 fun x hx ↦ ?_))
+  rw [stringMeasure_singleton] at hx
+  exact g.mem_of_stringProb_ne_zero hr hx
+
+/-! ### Greedy unrolling (§2.3–2.4) -/
+
+/-- A string is the greedy unrolling for `r` (§2.3) when each of its words, and the end that
+closes it, is a most probable choice of the word-level speaker after the words before it. -/
+def IsGreedy (cost : Option U → ℝ) (r : W) (x : List U) : Prop :=
+  ∀ i : Fin (stopped x).length, ∀ o,
+    g.s1 cost (x.take i) r {o} ≤ g.s1 cost (x.take i) r {(stopped x)[i]}
+
+private theorem apply_ne_zero_of_forall_le {α : Type*} [MeasurableSpace α] [Countable α]
+    {μ : Measure α} [IsProbabilityMeasure μ] {a : α} (h : ∀ b, μ {b} ≤ μ {a}) : μ {a} ≠ 0 :=
+  fun h0 ↦ let ⟨b, hb⟩ := Measure.exists_measure_singleton_ne_zero μ
+  hb (nonpos_iff_eq_zero.1 (h0 ▸ h b))
+
+theorem IsGreedy.stringProb_ne_zero {x : List U} (h : g.IsGreedy cost r x) :
+    (g.incS1 cost r).stringProb x ≠ 0 := by
+  rw [stringProb, prefixProb, condPrefixProb_eq_prod]
+  refine mul_ne_zero (Finset.prod_ne_zero_iff.2 fun i _ ↦ ?_) ?_
+  · have := h ⟨i, by simp [Nat.lt_succ_of_lt i.2]⟩
+    simp only [stopped] at this
+    simpa using apply_ne_zero_of_forall_le this
+  · have := h ⟨x.length, by simp⟩
+    simp only [stopped, List.take_length] at this
+    rw [next_incS1]
+    exact apply_ne_zero_of_forall_le (by simpa using this)
+
+/-- A greedily unrolled utterance is a complete utterance true of its referent, and so weakly
+informative about it (§2.4). -/
+theorem IsGreedy.isWeaklyInformative (hr : ∃ u ∈ g.utterances, r ∈ g.sem u) {x : List U}
+    (h : g.IsGreedy cost r x) : ∃ hx : x ∈ g.utterances, g.IsWeaklyInformative ⟨x, hx⟩ r :=
+  have h' := g.mem_of_stringProb_ne_zero hr h.stringProb_ne_zero
+  ⟨h'.1, g.isWeaklyInformative_of_mem h'.2⟩
 
 /-! ### Evaluation lemmas -/
 
-theorem l0_apply_ne_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {u : U} {r : W}
-    (ht : g.trueExts (ctx ++ [u]) r ≠ 0) : g.l0 ctx u {r} ≠ 0 := by
-  rw [l0_apply g hw, ne_eq, ENNReal.div_eq_zero_iff, not_or]
-  exact ⟨by exact_mod_cast ht, ENNReal.natCast_ne_top _⟩
-
-theorem l0_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {u : U} {r : W}
-    (ht : g.trueExts (ctx ++ [u]) r = 0) : g.l0 ctx u {r} = 0 := by
-  rw [l0_apply g hw, ht, Nat.cast_zero, ENNReal.zero_div]
-
-theorem l0_real (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
-    (g.l0 ctx u {r}).toReal
-      = (g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ) := by
-  rw [l0_apply g hw, ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
-
-theorem s1_real_lt_iff {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
-    {u₀ : U} (h0 : g.l0 ctx u₀ {r} ≠ 0) {u u' : U} :
-    (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r).real {u'} ↔
-      g.l0 ctx u {r} * ENNReal.ofReal (Real.exp (-cost u))
-        < g.l0 ctx u' {r} * ENNReal.ofReal (Real.exp (-cost u')) := by
-  rw [s1_apply g hnd, speaker_dirac_real_singleton_lt_iff zero_le_one ⟨u₀, h0⟩]
+theorem s1_real_singleton (hnd : ¬ g.DeadEnd c r) (o : Option U) :
+    (g.s1 cost c r).real {o} = (g.l0 c o {r}).toReal * Real.exp (-cost o)
+      / ∑ o', (g.l0 c o' {r}).toReal * Real.exp (-cost o') := by
+  rw [s1_apply g hnd, speaker_dirac_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, one_mul]
 
-theorem s1_apply_ne_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
-    (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ} (ht : g.trueExts (ctx ++ [u]) r ≠ 0) :
-    g.s1 cost ctx r {u} ≠ 0 := by
-  rw [s1_apply g hnd]
-  exact speaker_dirac_apply_singleton_ne_zero zero_le_one (g.l0_apply_ne_zero hw ht)
-
-theorem s1_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
-    (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ)
-    (ht : g.trueExts (ctx ++ [u]) r = 0) : g.s1 cost ctx r {u} = 0 := by
-  rw [s1_apply g hnd]
-  exact speaker_dirac_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero hw ht)
-
-theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
-    (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ} (ht : g.trueExts (ctx ++ [u]) r ≠ 0)
-    (hother : ∀ u' ≠ u, g.trueExts (ctx ++ [u']) r = 0) :
-    g.s1 cost ctx r {u} = 1 := by
-  rw [s1_apply g hnd]
-  exact speaker_dirac_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero hw ht)
-    fun u' hu' ↦ g.l0_apply_eq_zero hw (hother u' hu')
-
-theorem l1_real_lt_iff {cost : U → ℝ} {ctx : List U} {u : U} {r r' : W} :
-    (g.l1 cost ctx u).real {r} < (g.l1 cost ctx u).real {r'} ↔
-      (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r').real {u} :=
-  RSA.listener_uniformOn_real_lt_iff _ u r r'
-
-theorem l1_real_singleton {cost : U → ℝ} {ctx : List U} {u : U} (r : W) :
-    (g.l1 cost ctx u).real {r}
-      = (g.s1 cost ctx r).real {u} / ∑ r', (g.s1 cost ctx r').real {u} := by
-  have : Nonempty W := ⟨r⟩
-  simpa [l1] using RSA.listener_uniformOn_univ_real_finset (g.s1 cost ctx) u {r}
-
-theorem s1_real_counts (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W}
-    (hnd : ¬ g.DeadEnd ctx r) (u : U) :
-    (g.s1 0 ctx r).real {u}
-      = ((g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ))
-        / ∑ u', ((g.trueExts (ctx ++ [u']) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u']) r' : ℕ)) := by
+theorem s1_real_counts (hnd : ¬ g.DeadEnd c r) (o : Option U) :
+    (g.s1 0 c r).real {o}
+      = ((g.trueExts c o r : ℝ) / (∑ r', g.trueExts c o r' : ℕ))
+        / ∑ o', ((g.trueExts c o' r : ℝ) / (∑ r', g.trueExts c o' r' : ℕ)) := by
   rw [s1_real_singleton g hnd]
-  simp_rw [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one, l0_real g hw]
+  simp_rw [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one, l0_real]
+
+theorem s1_apply_eq_zero (hnd : ¬ g.DeadEnd c r) (ht : g.trueExts c o r = 0) :
+    g.s1 cost c r {o} = 0 := by
+  rw [s1_apply g hnd]
+  exact speaker_dirac_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero ht)
+
+theorem s1_apply_ne_zero (ht : g.trueExts c o r ≠ 0) : g.s1 cost c r {o} ≠ 0 := by
+  rw [s1_apply g fun hd ↦ ht (hd o)]
+  exact speaker_dirac_apply_singleton_ne_zero zero_le_one (g.l0_apply_ne_zero ht)
+
+theorem s1_apply_eq_one (ht : g.trueExts c o r ≠ 0) (hother : ∀ o' ≠ o, g.trueExts c o' r = 0) :
+    g.s1 cost c r {o} = 1 := by
+  rw [s1_apply g fun hd ↦ ht (hd o)]
+  exact speaker_dirac_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero ht)
+    fun o' ho' ↦ g.l0_apply_eq_zero (hother o' ho')
+
+theorem s1_wordCost (hc : c ∉ g.utterances) (k : ℝ) : g.s1 (wordCost k) c = g.s1 0 c := by
+  have : speaker 1 (wordCost k) (g.l0 c) Measure.dirac = speaker 1 0 (g.l0 c) Measure.dirac := by
+    rw [speaker_dirac_eq_softmax, speaker_dirac_eq_softmax]
+    refine Kernel.softmax_eq_of_add (k := fun _ ↦ -k) fun r o ↦ ?_
+    cases o with
+    | none => simp [g.l0_apply_eq_zero (g.trueExts_none_eq_zero hc r)]
+    | some a => simp [sub_eq_add_neg]
+  simp only [s1, this]
+
+theorem l1_real_lt_iff {o : Option U} {r r' : W} :
+    (g.l1 cost c o).real {r} < (g.l1 cost c o).real {r'} ↔
+      (g.s1 cost c r).real {o} < (g.s1 cost c r').real {o} :=
+  listener_uniformOn_real_lt_iff _ o r r'
+
+theorem l1_real_singleton (o : Option U) (r : W) :
+    (g.l1 cost c o).real {r} = (g.s1 cost c r).real {o} / ∑ r', (g.s1 cost c r').real {o} := by
+  have : Nonempty W := ⟨r⟩
+  simpa [l1] using listener_uniformOn_univ_real_finset (g.s1 cost c) o {r}
+
+theorem s1_real_deadEnd (hd : g.DeadEnd c r) (hn : (g.viableNext c).Nonempty) (o : Option U) :
+    (g.s1 cost c r).real {o} = if o ∈ g.viableNext c then ((g.viableNext c).card : ℝ)⁻¹ else 0 := by
+  rw [s1_apply_deadEnd g hd, deadEndChoice, ite_eq_left hn, uniformOn_finset_real_singleton]
+
+theorem l0_congr {o' : Option U} (h : g.trueExts c o r = g.trueExts c o' r)
+    (h' : ∑ r', g.trueExts c o r' = ∑ r', g.trueExts c o' r') : g.l0 c o {r} = g.l0 c o' {r} := by
+  rw [l0_apply, l0_apply, h, h']
+
+theorem l1_wordCost (hc : c ∉ g.utterances) (k : ℝ) : g.l1 (wordCost k) c = g.l1 0 c := by
+  rw [l1, l1, g.s1_wordCost hc]
+
+theorem s1_real_eq_one (ht : g.trueExts c o r ≠ 0) (hother : ∀ o' ≠ o, g.trueExts c o' r = 0) :
+    (g.s1 cost c r).real {o} = 1 := by
+  rw [measureReal_def, g.s1_apply_eq_one ht hother, ENNReal.toReal_one]
+
+theorem s1_real_eq_zero (hnd : ¬ g.DeadEnd c r) (ht : g.trueExts c o r = 0) :
+    (g.s1 cost c r).real {o} = 0 := by
+  rw [measureReal_def, g.s1_apply_eq_zero hnd ht, ENNReal.toReal_zero]
+
+theorem s1_real_of_pair {o o' : Option U} (hoo' : o ≠ o') (ho : g.trueExts c o r ≠ 0)
+    (heq : g.l0 c o {r} = g.l0 c o' {r}) (hsupp : ∀ v, g.trueExts c v r ≠ 0 → v = o ∨ v = o') :
+    (g.s1 cost c r).real {o} = Real.sigmoid (cost o' - cost o) := by
+  have ho' : g.l0 c o' {r} ≠ 0 := heq ▸ g.l0_apply_ne_zero ho
+  rw [s1_apply g fun hd ↦ ho (hd o), speaker_dirac_real_singleton_of_pair one_pos hoo'
+    (g.l0_apply_ne_zero ho) ho' fun v hv ↦ hsupp v fun ht ↦ hv (g.l0_apply_eq_zero ht), heq]
+  congr 1
+  ring
+
+theorem stringMeasure_incS1_eq_map_globalS1 (hr : ∃ u ∈ g.utterances, r ∈ g.sem u)
+    (h : ∀ u : g.Complete, r ∈ g.sem u.val →
+      (g.incS1 cost r).stringMeasure.real {u.val} = (g.globalS1 cost r).real {u}) :
+    (g.incS1 cost r).stringMeasure = (g.globalS1 cost r).map Subtype.val := by
+  have := (g.incS1 cost r).isTight_iff_isProbabilityMeasure.1 (g.isTight_incS1 cost r)
+  refine Measure.ext_of_singleton fun x ↦ ?_
+  by_cases hm : x ∈ g.utterances
+  · rw [map_globalS1_apply_singleton g hm]
+    by_cases hx : r ∈ g.sem x
+    · exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1
+        (h ⟨x, hm⟩ hx)
+    · rw [stringMeasure_singleton,
+        not_not.1 (mt (g.mem_of_stringProb_ne_zero hr) fun h ↦ hx h.2), globalS1,
+        speaker_dirac_apply_singleton_eq_zero one_pos (by rw [globalL0_apply, ite_eq_right hx])]
+  · rw [stringMeasure_singleton,
+      Measure.map_apply .of_discrete (measurableSet_singleton x),
+      show (Subtype.val ⁻¹' {x} : Set g.Complete) = ∅ from
+        Set.eq_empty_of_forall_notMem fun v hv ↦ hm (hv ▸ v.2),
+      measure_empty, not_not.1 (mt (g.mem_of_stringProb_ne_zero hr) fun h ↦ hm h.1)]
 
 end ReferenceGame
-
-private theorem natCast_div_lt {a b c d : ℕ} (hd : d ≠ 0) (hab : a * d < c * b) :
-    (a : ℝ≥0∞) / (b : ℕ) < (c : ℝ≥0∞) / (d : ℕ) := by
-  have hb : b ≠ 0 := by rintro rfl; simp at hab
-  rw [← ENNReal.toReal_lt_toReal (by finiteness) (by finiteness), ENNReal.toReal_div,
-    ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast, ENNReal.toReal_natCast,
-    ENNReal.toReal_natCast,
-    div_lt_div_iff₀ (by exact_mod_cast Nat.pos_of_ne_zero hb)
-      (by exact_mod_cast Nat.pos_of_ne_zero hd)]
-  exact_mod_cast hab
 
 /-! ### Figure 1: the reference game -/
 
@@ -361,202 +604,166 @@ inductive Word
   | red | dress | object
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Word := ⟨.red⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- The referents of Figure 1a are the red dress R1, the blue dress R2, and the red hat R3. -/
+/-- The referents of Figure 1a are the red dress R1, the blue dress R2 and the red hat R3. -/
 inductive Referent
   | redDress | blueDress | redHat
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Referent := ⟨.redDress⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ ↦ trivial⟩
 
-/-- Figure 1a has three utterances with word-conjunctive semantics over three referents. -/
+/-- Figure 1a: *dress*, *red dress* and *red object*, with word-conjunctive semantics. -/
 def figureOne : ReferenceGame Word Referent :=
   .ofLexicon
-    (fun u r ↦ match u, r with
-      | .red, .redDress | .red, .redHat | .dress, .redDress | .dress, .blueDress
-      | .object, _ => true
-      | _, _ => false)
+    (fun
+      | .red => {.redDress, .redHat}
+      | .dress => {.redDress, .blueDress}
+      | .object => .univ)
     [[.dress], [.red, .dress], [.red, .object]]
-    [.redDress, .blueDress, .redHat]
 
-private theorem fig1_hw : ∀ r : Referent, r ∈ figureOne.worlds := by decide
+private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Option Word → M) :
+    ∑ o, f o = f none + (f (some .red) + (f (some .dress) + f (some .object))) := by
+  rw [Fintype.sum_option, show (Finset.univ : Finset Word) = {.red, .dress, .object} from by
+    decide, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
 
-private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
-    ∑ u, f u = f .red + (f .dress + f .object) := by
-  rw [show (Finset.univ : Finset Word) = {.red, .dress, .object} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
+private theorem nil_counts :
+    figureOne.trueExts [] none .redDress = 0 ∧
+    figureOne.trueExts [] (some .red) .redDress = 2 ∧
+    ∑ r, figureOne.trueExts [] (some .red) r = 3 ∧
+    figureOne.trueExts [] (some .dress) .redDress = 1 ∧
+    ∑ r, figureOne.trueExts [] (some .dress) r = 2 ∧
+    figureOne.trueExts [] (some .object) .redDress = 0 := by
+  decide
 
--- Figure 1c
-theorem adj_first_for_target :
-    (figureOne.s1 0 [] .redDress).real {Word.dress}
-      < (figureOne.s1 0 [] .redDress).real {Word.red} := by
-  rw [figureOne.s1_real_lt_iff (by decide)
-    (figureOne.l0_apply_ne_zero (u := Word.dress) fig1_hw (by decide))]
-  simp only [Pi.zero_apply, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
-  exact natCast_div_lt (by decide) (by decide)
-
--- Figure 1c
-theorem noun_after_adj :
-    (figureOne.s1 0 [.red] .redDress).real {Word.object}
-      < (figureOne.s1 0 [.red] .redDress).real {Word.dress} := by
-  rw [figureOne.s1_real_lt_iff (by decide)
-    (figureOne.l0_apply_ne_zero (u := Word.dress) fig1_hw (by decide))]
-  simp only [Pi.zero_apply, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
-  exact natCast_div_lt (by decide) (by decide)
+private theorem red_counts :
+    figureOne.trueExts [.red] none .redDress = 0 ∧
+    figureOne.trueExts [.red] (some .red) .redDress = 0 ∧
+    figureOne.trueExts [.red] (some .dress) .redDress = 1 ∧
+    ∑ r, figureOne.trueExts [.red] (some .dress) r = 1 ∧
+    figureOne.trueExts [.red] (some .object) .redDress = 1 ∧
+    ∑ r, figureOne.trueExts [.red] (some .object) r = 2 := by
+  decide
 
 -- Figure 1c
-theorem noun_only_for_r2 : figureOne.s1 0 [] .blueDress {Word.dress} = 1 :=
-  figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
-
--- Figure 1c
-theorem adj_only_for_r3 : figureOne.s1 0 [] .redHat {Word.red} = 1 :=
-  figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
-
--- §2.2, Figure 1c
-theorem uniform_after_red_for_r2 :
-    (figureOne.s1 0 [.red] .blueDress).real {Word.dress} = 1 / 2 ∧
-    (figureOne.s1 0 [.red] .blueDress).real {Word.object} = 1 / 2 ∧
-    (figureOne.s1 0 [.red] .blueDress).real {Word.red} = 0 := by
-  have h := figureOne.s1_apply_deadEnd (ctx := [.red]) (r := .blueDress) (by decide) 0
-  refine ⟨?_, ?_, ?_⟩ <;>
-    rw [measureReal_def, h, uniformOn_finset_apply_singleton] <;>
-    · rw [show (Finset.univ.filter fun u : Word ↦
-          0 < figureOne.viableExts ([Word.red] ++ [u])) = {Word.dress, Word.object} from by
-          decide]
-      norm_num [show ({Word.dress, Word.object} : Finset Word).card = 2 from rfl,
-        show (Word.red = Word.dress ∨ Word.red = Word.object) = False from by simp]
-
-/-! ### Figure 1d: the anticipatory implicature -/
-
--- Figures 1c–1e
 theorem s1_figureOne_values :
-    (figureOne.s1 0 [] .redDress).real {Word.red} = 4 / 7 ∧
-    (figureOne.s1 0 [] .redDress).real {Word.dress} = 3 / 7 ∧
-    (figureOne.s1 0 [.red] .redDress).real {Word.dress} = 2 / 3 ∧
-    (figureOne.s1 0 [] .redHat).real {Word.red} = 1 := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · rw [figureOne.s1_real_counts fig1_hw (by decide), sum_word]
-    norm_num [show figureOne.trueExts [Word.red] .redDress = 2 from rfl,
-      show ∑ r', figureOne.trueExts [Word.red] r' = 3 from rfl,
-      show figureOne.trueExts [Word.dress] .redDress = 1 from rfl,
-      show ∑ r', figureOne.trueExts [Word.dress] r' = 2 from rfl,
-      show figureOne.trueExts [Word.object] .redDress = 0 from rfl]
-  · rw [figureOne.s1_real_counts fig1_hw (by decide), sum_word]
-    norm_num [show figureOne.trueExts [Word.red] .redDress = 2 from rfl,
-      show ∑ r', figureOne.trueExts [Word.red] r' = 3 from rfl,
-      show figureOne.trueExts [Word.dress] .redDress = 1 from rfl,
-      show ∑ r', figureOne.trueExts [Word.dress] r' = 2 from rfl,
-      show figureOne.trueExts [Word.object] .redDress = 0 from rfl]
-  · rw [figureOne.s1_real_counts fig1_hw (by decide), sum_word]
-    norm_num [show figureOne.trueExts [Word.red, Word.dress] .redDress = 1 from rfl,
-      show ∑ r', figureOne.trueExts [Word.red, Word.dress] r' = 1 from rfl,
-      show figureOne.trueExts [Word.red, Word.object] .redDress = 1 from rfl,
-      show ∑ r', figureOne.trueExts [Word.red, Word.object] r' = 2 from rfl,
-      show figureOne.trueExts [Word.red, Word.red] .redDress = 0 from rfl]
-  · rw [measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
+    (figureOne.s1 0 [] .redDress).real {some .red} = 4 / 7 ∧
+    (figureOne.s1 0 [] .redDress).real {some .dress} = 3 / 7 ∧
+    (figureOne.s1 0 [.red] .redDress).real {some .dress} = 2 / 3 ∧
+    (figureOne.s1 0 [.red] .redDress).real {some .object} = 1 / 3 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> rw [figureOne.s1_real_counts (by decide), sum_word]
+  · norm_num [nil_counts]
+  · norm_num [nil_counts]
+  · norm_num [red_counts]
+  · norm_num [red_counts]
 
--- Figure 1d
+-- Figure 1c
+theorem uniform_after_red_for_r2 :
+    (figureOne.s1 0 [.red] .blueDress).real {some .dress} = 1 / 2 ∧
+    (figureOne.s1 0 [.red] .blueDress).real {some .object} = 1 / 2 := by
+  constructor <;> rw [figureOne.s1_real_deadEnd (by decide) (by decide), ite_eq_left (by decide),
+    show (figureOne.viableNext [.red]).card = 2 from by decide] <;> norm_num
+
+private theorem forced_r1 :
+    (figureOne.s1 0 [.dress] .redDress).real {none} = 1 ∧
+    (figureOne.s1 0 [.red, .dress] .redDress).real {none} = 1 ∧
+    (figureOne.s1 0 [.red, .object] .redDress).real {none} = 1 :=
+  ⟨figureOne.s1_real_eq_one (by decide) (by decide),
+    figureOne.s1_real_eq_one (by decide) (by decide),
+    figureOne.s1_real_eq_one (by decide) (by decide)⟩
+
+-- Figure 1e
+theorem figureOne_incremental_values :
+    (figureOne.incS1 0 .redDress).stringMeasure.real {[.dress]} = 3 / 7 ∧
+    (figureOne.incS1 0 .redDress).stringMeasure.real {[.red, .dress]} = 8 / 21 ∧
+    (figureOne.incS1 0 .redDress).stringMeasure.real {[.red, .object]} = 4 / 21 := by
+  obtain ⟨h1, h2, h3, h4⟩ := s1_figureOne_values
+  obtain ⟨e1, e2, e3⟩ := forced_r1
+  simp only [stringMeasure_real_singleton, prefixProb, toReal_condPrefixProb_cons,
+    condPrefixProb_nil, ENNReal.toReal_one, ReferenceGame.next_incS1, List.nil_append,
+    List.cons_append, h1, h2, h3, h4,
+    e1, e2, e3]
+  norm_num
+
+/-- For the red dress the global speaker prefers the fully informative *red dress* to *dress*,
+while the incremental speaker prefers *dress*. -/
+theorem global_prefers_red_dress_incremental_prefers_dress :
+    (figureOne.globalS1 0 .redDress).real {⟨[.dress], by decide⟩}
+        < (figureOne.globalS1 0 .redDress).real {⟨[.red, .dress], by decide⟩} ∧
+      (figureOne.incS1 0 .redDress).stringMeasure.real {[.red, .dress]}
+        < (figureOne.incS1 0 .redDress).stringMeasure.real {[.dress]} := by
+  refine ⟨?_, ?_⟩
+  · rw [ReferenceGame.globalS1_zero]
+    exact speaker_uniformOn_dirac_real_singleton_lt_of_card_lt
+      (fun u : figureOne.Complete ↦ figureOne.sem u.val) one_pos (by decide) (by decide)
+      (by decide)
+  · rw [figureOne_incremental_values.1, figureOne_incremental_values.2.1]
+    norm_num
+
+/-- Hearing *red*, the incremental pragmatic listener favours the red hat at 7/11 over the red
+dress at 4/11: the speaker referring to the red dress could have said *dress*. -/
 theorem listener_anticipation :
-    (figureOne.l1 0 [] .red).real {Referent.redDress}
-      < (figureOne.l1 0 [] .red).real {Referent.redHat} := by
-  rw [figureOne.l1_real_lt_iff]
-  rw [s1_figureOne_values.1, measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
-  norm_num
+    (figureOne.l1 0 [] (some .red)).real {.redHat} = 7 / 11 ∧
+    (figureOne.l1 0 [] (some .red)).real {.redDress} = 4 / 11 := by
+  have hR2 : (figureOne.s1 0 [] .blueDress).real {some .red} = 0 :=
+    figureOne.s1_real_eq_zero (by decide) (by decide)
+  have hR3 : (figureOne.s1 0 [] .redHat).real {some .red} = 1 :=
+    figureOne.s1_real_eq_one (by decide) (by decide)
+  have hsum : ∑ r, (figureOne.s1 0 [] r).real {some Word.red} = 11 / 7 := by
+    rw [show (Finset.univ : Finset Referent) = {.redDress, .blueDress, .redHat} from by decide,
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+      s1_figureOne_values.1, hR2, hR3]
+    norm_num
+  constructor <;> rw [figureOne.l1_real_singleton, hsum]
+  · rw [hR3]; norm_num
+  · rw [s1_figureOne_values.1]; norm_num
 
-private theorem r2_never_opens_red : (figureOne.s1 0 [] .blueDress).real {Word.red} = 0 := by
-  rw [figureOne.s1_real_counts fig1_hw (by decide)]
-  norm_num [show figureOne.trueExts [Word.red] .blueDress = 0 from rfl]
+-- §2.3, §2.4
+theorem isGreedy_red_dress : figureOne.IsGreedy 0 .redDress [.red, .dress] := by
+  obtain ⟨h1, h2, h3, h4⟩ := s1_figureOne_values
+  have z (c : List Word) (o : Option Word) (hnd : ¬ figureOne.DeadEnd c .redDress)
+      (ht : figureOne.trueExts c o .redDress = 0) : (figureOne.s1 0 c .redDress).real {o} = 0 :=
+    figureOne.s1_real_eq_zero hnd ht
+  intro i o
+  fin_cases i
+  · refine (ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _)).1 ?_
+    change (figureOne.s1 0 [] .redDress).real {o} ≤ (figureOne.s1 0 [] .redDress).real {some .red}
+    rcases o with _ | (_ | _ | _)
+    · rw [z [] none (by decide) (by decide), h1]; norm_num
+    · exact le_rfl
+    · rw [h1, h2]; norm_num
+    · rw [z [] _ (by decide) (by decide), h1]; norm_num
+  · refine (ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _)).1 ?_
+    change (figureOne.s1 0 [.red] .redDress).real {o}
+      ≤ (figureOne.s1 0 [.red] .redDress).real {some .dress}
+    rcases o with _ | (_ | _ | _)
+    · rw [z [.red] none (by decide) (by decide), h3]; norm_num
+    · rw [z [.red] _ (by decide) (by decide), h3]; norm_num
+    · exact le_rfl
+    · rw [h3, h4]; norm_num
+  · change figureOne.s1 0 [.red, .dress] .redDress {o}
+      ≤ figureOne.s1 0 [.red, .dress] .redDress {none}
+    rw [figureOne.s1_apply_eq_one (o := none) (by decide) (by decide)]
+    exact prob_le_one
 
--- Figure 1d
-theorem listener_anticipation_value :
-    (figureOne.l1 0 [] .red).real {Referent.redHat} = 7 / 11 := by
-  rw [figureOne.l1_real_singleton,
-    show (Finset.univ : Finset Referent) = {.redDress, .blueDress, .redHat} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
-    s1_figureOne_values.1, r2_never_opens_red, measureReal_def, adj_only_for_r3,
-    ENNReal.toReal_one]
-  norm_num
+-- §2.3
+theorem not_isGreedy_dress : ¬ figureOne.IsGreedy 0 .redDress [.dress] := fun h ↦ by
+  have := (ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _)).2
+    (h ⟨0, by decide⟩ (some .red))
+  change (figureOne.s1 0 [] .redDress).real {some .red}
+    ≤ (figureOne.s1 0 [] .redDress).real {some .dress} at this
+  rw [s1_figureOne_values.1, s1_figureOne_values.2.1] at this
+  norm_num at this
 
-/-! ### Figure 1e: the chain-rule wedge -/
-
--- Figure 1b, Figure 1e
-theorem incremental_prefers_bare_noun :
-    figureOne.s1Utt 0 .redDress [.red, .dress] < figureOne.s1Utt 0 .redDress [.dress] := by
-  obtain ⟨h1, h2, h3, -⟩ := s1_figureOne_values
-  simp only [ReferenceGame.s1Utt, chain_cons, chain_nil, List.nil_append, mul_one]
-  rw [h1, h2, h3]
-  norm_num
-
-/-! ### The global model on Figure 1 (§2.1, Figure 1b) -/
-
-theorem fig1_mem_dress : [Word.dress] ∈ figureOne.utterances := by decide
-theorem fig1_mem_redDress : [Word.red, Word.dress] ∈ figureOne.utterances := by decide
-
--- Figure 1b
-theorem global_prefers_red_dress :
-    (figureOne.globalS1 0 .redDress).real {⟨[.dress], fig1_mem_dress⟩}
-      < (figureOne.globalS1 0 .redDress).real {⟨[.red, .dress], fig1_mem_redDress⟩} := by
-  have key : ∀ (u : figureOne.Complete),
-      figureOne.globalL0 u {Referent.redDress}
-        = (if figureOne.sem u.val .redDress then 1 else 0)
-          / ((Finset.univ.filter fun r' ↦ figureOne.sem u.val r').card : ℝ≥0∞) :=
-    fun u ↦ figureOne.globalL0_apply u .redDress
-  refine (speaker_dirac_real_singleton_lt_iff zero_le_one
-    ⟨⟨[.red, .dress], fig1_mem_redDress⟩, by
-      rw [key]
-      norm_num [show figureOne.sem [Word.red, Word.dress] .redDress = true from rfl,
-        show (Finset.univ.filter fun r' ↦
-          figureOne.sem [Word.red, Word.dress] r').card = 1 from rfl]⟩).mpr ?_
-  simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
-    ENNReal.ofReal_one, mul_one, key]
-  rw [show figureOne.sem [Word.dress] .redDress = true from rfl,
-    show figureOne.sem [Word.red, Word.dress] .redDress = true from rfl,
-    show (Finset.univ.filter fun r' ↦ figureOne.sem [Word.dress] r').card = 2 from rfl,
-    show (Finset.univ.filter fun r' ↦ figureOne.sem [Word.red, Word.dress] r').card = 1
-      from rfl, Nat.cast_one, Nat.cast_ofNat, div_one]
-  exact ENNReal.half_lt_self one_ne_zero ENNReal.one_ne_top
-
-/-! ### §2.4: greedy unrolling and weak informativity -/
-
-/-- The greedy unrolling of Figure 1 (§2.3) takes the word-by-word argmax trajectory per
-referent. -/
-def greedyUnroll : Referent → List Word
-  | .redDress => [.red, .dress]
-  | .blueDress => [.dress]
-  | .redHat => [.red, .object]
-
-theorem greedyUnroll_complete (r : Referent) : greedyUnroll r ∈ figureOne.utterances := by
-  cases r <;> decide
-
-theorem greedyUnroll_true (r : Referent) : figureOne.sem (greedyUnroll r) r = true := by
-  cases r <;> decide
-
--- Figure 1, §2.4
-theorem greedyUnroll_weakly_informative (r : Referent) :
-    ((Fintype.card Referent : ℝ≥0∞))⁻¹
-      ≤ figureOne.globalL0 ⟨greedyUnroll r, greedyUnroll_complete r⟩ {r} :=
-  figureOne.globalL0_ge_inv_card (greedyUnroll_true r)
-
-/-! ### Figure 3: the abstract two-letter game
-
-Four utterances AA, AB, BA, BB over two worlds; every pair is true except (AB, W1). The
-global speaker is indifferent among W1's three true utterances, while the chain rule
-prefers AA: choosing A first costs informativity (AB is false of W1), but the second
-letter is then forced, and 2/5 · 1 beats 3/5 · 1/2. -/
+/-! ### Figure 3: the abstract two-letter game -/
 
 /-- The two letters. -/
 inductive Letter
   | A | B
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Letter := ⟨.A⟩
 instance : MeasurableSpace Letter := ⊤
 instance : DiscreteMeasurableSpace Letter := ⟨fun _ ↦ trivial⟩
 
@@ -565,293 +772,249 @@ inductive AbstractWorld
   | W1 | W2
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty AbstractWorld := ⟨.W1⟩
 instance : MeasurableSpace AbstractWorld := ⊤
 instance : DiscreteMeasurableSpace AbstractWorld := ⟨fun _ ↦ trivial⟩
 
-/-- In Figure 3's game the semantics is a table, not word-conjunctive. -/
+/-- Figure 3: four two-letter utterances, all true except *AB* at W1, a table that is not
+word-conjunctive. -/
 def figureThree : ReferenceGame Letter AbstractWorld where
   utterances := [[.A, .A], [.A, .B], [.B, .A], [.B, .B]]
-  sem u r := !(decide (u = [.A, .B]) && decide (r = .W1))
-  worlds := [.W1, .W2]
+  sem u := if u = [.A, .B] then {.W2} else .univ
 
-private theorem fig3_hw : ∀ r : AbstractWorld, r ∈ figureThree.worlds := by decide
-
-private theorem sum_letter {M : Type*} [AddCommMonoid M] (f : Letter → M) :
-    ∑ u, f u = f .A + f .B := by
-  rw [show (Finset.univ : Finset Letter) = {.A, .B} from by decide,
+private theorem sum_letter {M : Type*} [AddCommMonoid M] (f : Option Letter → M) :
+    ∑ o, f o = f none + (f (some .A) + f (some .B)) := by
+  rw [Fintype.sum_option, show (Finset.univ : Finset Letter) = {.A, .B} from by decide,
     Finset.sum_insert (by decide), Finset.sum_singleton]
 
--- (0.4), (0.3), Figure 3
-theorem figureThree_incremental_prefers_AA :
-    figureThree.s1Utt 0 .W1 [.B, .A] < figureThree.s1Utt 0 .W1 [.A, .A] := by
-  simp only [ReferenceGame.s1Utt, chain_cons, chain_nil, List.nil_append, mul_one]
-  rw [figureThree.s1_real_counts fig3_hw (by decide), sum_letter,
-    figureThree.s1_real_counts fig3_hw (by decide), sum_letter,
-    figureThree.s1_real_counts fig3_hw (by decide), sum_letter,
-    figureThree.s1_real_counts fig3_hw (by decide), sum_letter]
-  norm_num [show figureThree.trueExts [Letter.A] .W1 = 1 from by decide,
-    show figureThree.trueExts [Letter.B] .W1 = 2 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.A] r' = 3 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.B] r' = 4 from by decide,
-    show figureThree.trueExts [Letter.A, Letter.A] .W1 = 1 from by decide,
-    show figureThree.trueExts [Letter.A, Letter.B] .W1 = 0 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.A, Letter.A] r' = 2 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.A, Letter.B] r' = 1 from by decide,
-    show figureThree.trueExts [Letter.B, Letter.A] .W1 = 1 from by decide,
-    show figureThree.trueExts [Letter.B, Letter.B] .W1 = 1 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.B, Letter.A] r' = 2 from by decide,
-    show ∑ r', figureThree.trueExts [Letter.B, Letter.B] r' = 2 from by decide]
+private theorem fig3_counts :
+    figureThree.trueExts [] none .W1 = 0 ∧
+    figureThree.trueExts [] (some .A) .W1 = 1 ∧ ∑ r, figureThree.trueExts [] (some .A) r = 3 ∧
+    figureThree.trueExts [] (some .B) .W1 = 2 ∧ ∑ r, figureThree.trueExts [] (some .B) r = 4 ∧
+    figureThree.trueExts [.B] none .W1 = 0 ∧
+    figureThree.trueExts [.B] (some .A) .W1 = 1 ∧ ∑ r, figureThree.trueExts [.B] (some .A) r = 2 ∧
+    figureThree.trueExts [.B] (some .B) .W1 = 1 ∧
+    ∑ r, figureThree.trueExts [.B] (some .B) r = 2 := by
+  decide
 
-theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
-theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
+-- Figure 3
+theorem figureThree_incremental_values :
+    (figureThree.incS1 0 .W1).stringMeasure.real {[.A, .A]} = 2 / 5 ∧
+    (figureThree.incS1 0 .W1).stringMeasure.real {[.A, .B]} = 0 ∧
+    (figureThree.incS1 0 .W1).stringMeasure.real {[.B, .A]} = 3 / 10 ∧
+    (figureThree.incS1 0 .W1).stringMeasure.real {[.B, .B]} = 3 / 10 := by
+  have hA : (figureThree.s1 0 [] .W1).real {some .A} = 2 / 5 := by
+    rw [figureThree.s1_real_counts (by decide), sum_letter]; norm_num [fig3_counts]
+  have hB : (figureThree.s1 0 [] .W1).real {some .B} = 3 / 5 := by
+    rw [figureThree.s1_real_counts (by decide), sum_letter]; norm_num [fig3_counts]
+  have hBA : (figureThree.s1 0 [.B] .W1).real {some .A} = 1 / 2 := by
+    rw [figureThree.s1_real_counts (by decide), sum_letter]; norm_num [fig3_counts]
+  have hBB : (figureThree.s1 0 [.B] .W1).real {some .B} = 1 / 2 := by
+    rw [figureThree.s1_real_counts (by decide), sum_letter]; norm_num [fig3_counts]
+  have hAA : (figureThree.s1 0 [.A] .W1).real {some .A} = 1 :=
+    figureThree.s1_real_eq_one (by decide) (by decide)
+  have hAB : (figureThree.s1 0 [.A] .W1).real {some .B} = 0 :=
+    figureThree.s1_real_eq_zero (by decide) (by decide)
+  have e1 : (figureThree.s1 0 [.A, .A] .W1).real {none} = 1 :=
+    figureThree.s1_real_eq_one (by decide) (by decide)
+  have e2 : (figureThree.s1 0 [.B, .A] .W1).real {none} = 1 :=
+    figureThree.s1_real_eq_one (by decide) (by decide)
+  have e3 : (figureThree.s1 0 [.B, .B] .W1).real {none} = 1 :=
+    figureThree.s1_real_eq_one (by decide) (by decide)
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    simp only [stringMeasure_real_singleton, prefixProb, toReal_condPrefixProb_cons,
+      condPrefixProb_nil, ENNReal.toReal_one, ReferenceGame.next_incS1, List.nil_append,
+      List.cons_append, hA, hB, hAA, hAB, hBA, hBB, e1, e2, e3] <;>
+    norm_num
 
 -- Figure 3
 theorem figureThree_global_indifferent :
-    figureThree.globalS1 0 .W1 {⟨[.A, .A], fig3_mem_AA⟩}
-      = figureThree.globalS1 0 .W1 {⟨[.B, .A], fig3_mem_BA⟩} := by
-  have key : ∀ (u : figureThree.Complete), figureThree.sem u.val .W1 = true →
-      (Finset.univ.filter fun r' ↦ figureThree.sem u.val r').card = 2 →
-      figureThree.globalL0 u {AbstractWorld.W1} = 1 / 2 := by
-    intro u htrue hcard
-    rw [figureThree.globalL0_apply, htrue, hcard, ite_eq_left rfl, Nat.cast_ofNat]
-  rw [ReferenceGame.globalS1, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton,
-    key ⟨[.A, .A], fig3_mem_AA⟩ (by decide) (by decide),
-    key ⟨[.B, .A], fig3_mem_BA⟩ (by decide) (by decide)]
-  simp only [Pi.zero_apply]
+    figureThree.globalS1 0 .W1 {⟨[.A, .A], by decide⟩}
+      = figureThree.globalS1 0 .W1 {⟨[.B, .A], by decide⟩} ∧
+    figureThree.globalS1 0 .W1 {⟨[.B, .A], by decide⟩}
+      = figureThree.globalS1 0 .W1 {⟨[.B, .B], by decide⟩} := by
+  have h (u v : figureThree.Complete) (h : figureThree.sem u.val = figureThree.sem v.val) :
+      figureThree.globalS1 0 .W1 {u} = figureThree.globalS1 0 .W1 {v} := by
+    rw [ReferenceGame.globalS1_zero, speaker_dirac_zero_apply_singleton,
+      speaker_dirac_zero_apply_singleton, figureThree.globalL0_apply, figureThree.globalL0_apply,
+      h]
+  exact ⟨h _ _ (by decide), h _ _ (by decide)⟩
 
-/-! ### §3.1: over-modification and the STOP token
+/-! ### Over-modification and the end of the utterance (§3.1)
 
-English: a red dress R1 and a blue hat R2, utterances *dress*, *red dress*, *hat*,
-*blue hat*, each closed by STOP. Every content word carries the same cost `c` and STOP
-is free. The incremental speaker is indifferent between *dress* and *red dress* at every
-`c`: the first choice weighs *dress* and *red* equally, and each continuation is then
-forced. Spanish puts the noun first, so *vestido* alone opens R1's utterances; the choice
-between STOP and *rojo* is then cost-driven, and any dispreference for longer utterances
-(`0 < c`) yields the paper's preference for the bare noun — at `c = 1`, 0.73 against
-0.27. -/
+English speakers add redundant colour adjectives more often than Spanish speakers
+[rubio-fernandez-2016]. -/
 
 namespace English
 
-/-- English puts the adjective before the noun, and STOP closes the utterance. -/
+/-- English puts the adjective before the noun. -/
 inductive Word
-  | dress | red | hat | blue | stop
+  | dress | red | hat | blue
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Word := ⟨.dress⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- The two referents are a red dress and a blue hat. -/
+/-- The referents are a red dress and a blue hat. -/
 inductive Referent
   | redDress | blueHat
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Referent := ⟨.redDress⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ ↦ trivial⟩
 
-/-- The English game has adjective–noun order and STOP-terminated utterances. -/
+/-- The English game: *dress*, *red dress*, *hat* and *blue hat*. -/
 def game : ReferenceGame Word Referent :=
   .ofLexicon
-    (fun u r ↦ match u, r with
-      | .dress, .redDress | .red, .redDress | .hat, .blueHat | .blue, .blueHat
-      | .stop, _ => true
-      | _, _ => false)
-    [[.dress, .stop], [.red, .dress, .stop], [.hat, .stop], [.blue, .hat, .stop]]
-    [.redDress, .blueHat]
-
-theorem sem_append_stop (u : List Word) (r : Referent) :
-    game.sem (u ++ [.stop]) r = game.sem u r := by
-  simp only [game, ReferenceGame.ofLexicon, List.all_append, List.all_cons, List.all_nil,
-    Bool.and_true]
-
-theorem utterances_stop_terminated :
-    ∀ u ∈ game.utterances, u.getLast? = some Word.stop := by decide
-
-/-- Under the cost of §3.1 every content word costs `c` and STOP nothing. -/
-def cost (c : ℝ) : Word → ℝ := fun u ↦ if u = .stop then 0 else c
-
-private theorem hw : ∀ r : Referent, r ∈ game.worlds := by decide
-
-private theorem step1 (c : ℝ) (u : Word) (hu : u = .dress ∨ u = .red) :
-    (game.s1 (cost c) [] .redDress).real {u} = 1 / 2 := by
-  rw [game.s1_real_singleton (by decide)]
-  rw [show (Finset.univ : Finset Word) = {.dress, .red, .hat, .blue, .stop} from by decide]
-  repeat rw [Finset.sum_insert (by decide)]
-  rw [Finset.sum_singleton]
-  have hd : (game.l0 [] .dress {Referent.redDress}).toReal = 1 := by
-    rw [game.l0_real hw]
-    norm_num [show game.trueExts [Word.dress] .redDress = 1 from by decide,
-      show ∑ r', game.trueExts [Word.dress] r' = 1 from by decide]
-  have hr : (game.l0 [] .red {Referent.redDress}).toReal = 1 := by
-    rw [game.l0_real hw]
-    norm_num [show game.trueExts [Word.red] .redDress = 1 from by decide,
-      show ∑ r', game.trueExts [Word.red] r' = 1 from by decide]
-  have hz : ∀ u' ∈ [Word.hat, Word.blue, Word.stop],
-      (game.l0 [] u' {Referent.redDress}).toReal = 0 := by
-    intro u' hu'
-    fin_cases hu' <;>
-      · rw [game.l0_apply_eq_zero hw (by decide), ENNReal.toReal_zero]
-  have hc : ∀ u' : Word, u' ≠ .stop → Real.exp (-cost c u') = Real.exp (-c) := fun u' hu' ↦ by
-    rw [cost, ite_eq_right hu']
-  rcases hu with rfl | rfl <;>
-    · rw [hd, hr, hz .hat (by decide), hz .blue (by decide), hz .stop (by decide),
-        hc .dress (by decide), hc .red (by decide)]
-      rw [div_eq_div_iff (by positivity) two_ne_zero]
-      ring
-
-private theorem forced_dress_after_red (c : ℝ) :
-    game.s1 (cost c) [.red] .redDress {Word.dress} = 1 :=
-  game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
-
-private theorem forced_stop_after_dress (c : ℝ) :
-    game.s1 (cost c) [.dress] .redDress {Word.stop} = 1 :=
-  game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
-
-private theorem forced_stop_after_red_dress (c : ℝ) :
-    game.s1 (cost c) [.red, .dress] .redDress {Word.stop} = 1 :=
-  game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
+    (fun
+      | .dress | .red => {.redDress}
+      | .hat | .blue => {.blueHat})
+    [[.dress], [.red, .dress], [.hat], [.blue, .hat]]
 
 -- §3.1
 theorem incremental_indifferent (c : ℝ) :
-    game.s1Utt (cost c) .redDress [.dress, .stop]
-      = game.s1Utt (cost c) .redDress [.red, .dress, .stop] := by
-  simp only [ReferenceGame.s1Utt, chain_cons, chain_nil, List.nil_append,
-    List.cons_append, mul_one]
-  rw [step1 c .dress (Or.inl rfl), step1 c .red (Or.inr rfl), measureReal_def,
-    forced_stop_after_dress, measureReal_def, forced_dress_after_red, measureReal_def,
-    forced_stop_after_red_dress]
-  norm_num
-
-theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
-theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
-  decide
+    (game.incS1 (wordCost c) .redDress).stringMeasure.real {[.dress]} = 1 / 2 ∧
+    (game.incS1 (wordCost c) .redDress).stringMeasure.real {[.red, .dress]} = 1 / 2 := by
+  have hd : (game.s1 (wordCost c) [] .redDress).real {some .dress} = 1 / 2 := by
+    rw [game.s1_real_of_pair (o' := some .red) (by decide) (by decide)
+      (game.l0_congr (by decide) (by decide)) (by decide)]
+    norm_num [Real.sigmoid_zero]
+  have hr : (game.s1 (wordCost c) [] .redDress).real {some .red} = 1 / 2 := by
+    rw [game.s1_real_of_pair (o' := some .dress) (by decide) (by decide)
+      (game.l0_congr (by decide) (by decide)) (by decide)]
+    norm_num [Real.sigmoid_zero]
+  have e1 : (game.s1 (wordCost c) [.dress] .redDress).real {none} = 1 :=
+    game.s1_real_eq_one (by decide) (by decide)
+  have e2 : (game.s1 (wordCost c) [.red] .redDress).real {some .dress} = 1 :=
+    game.s1_real_eq_one (by decide) (by decide)
+  have e3 : (game.s1 (wordCost c) [.red, .dress] .redDress).real {none} = 1 :=
+    game.s1_real_eq_one (by decide) (by decide)
+  constructor <;>
+    simp only [stringMeasure_real_singleton, prefixProb, toReal_condPrefixProb_cons,
+      condPrefixProb_nil, ENNReal.toReal_one, ReferenceGame.next_incS1, List.nil_append,
+      List.cons_append, hd, hr, e1, e2, e3] <;>
+    norm_num
 
 -- §3.1
-theorem global_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
-    (game.globalS1 (fun u ↦ ReferenceGame.uttCost (cost c) u.val) .redDress).real
-        {⟨[.red, .dress, .stop], mem_redDress⟩}
-      < (game.globalS1 (fun u ↦ ReferenceGame.uttCost (cost c) u.val) .redDress).real
-        {⟨[.dress, .stop], mem_dress⟩} := by
-  have hL : ∀ u : game.Complete, game.sem u.val .redDress = true →
-      (Finset.univ.filter fun r' ↦ game.sem u.val r').card = 1 →
-      game.globalL0 u {Referent.redDress} = 1 := by
-    intro u htrue hcard
-    rw [game.globalL0_apply, htrue, hcard, ite_eq_left rfl, Nat.cast_one, div_one]
-  have hc1 : ReferenceGame.uttCost (cost c) [Word.dress, Word.stop] = c := by
-    simp [ReferenceGame.uttCost, cost]
-  have hc2 : ReferenceGame.uttCost (cost c) [Word.red, Word.dress, Word.stop] = c + c := by
-    simp [ReferenceGame.uttCost, cost]
-  refine (speaker_dirac_real_singleton_lt_iff zero_le_one
-    ⟨⟨[.dress, .stop], mem_dress⟩, by rw [hL _ (by decide) (by decide)]; exact one_ne_zero⟩).mpr ?_
-  simp only [ENNReal.rpow_one, one_mul]
-  rw [hL _ (by decide) (by decide), hL _ (by decide) (by decide), one_mul, one_mul, hc1, hc2,
-    ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _)]
-  exact Real.exp_lt_exp.2 (by linarith)
+theorem global_values (c : ℝ) :
+    (game.globalS1 (wordCost c) .redDress).real {⟨[.dress], by decide⟩} = Real.sigmoid c ∧
+    (game.globalS1 (wordCost c) .redDress).real {⟨[.red, .dress], by decide⟩}
+      = Real.sigmoid (-c) := by
+  have hs : ∀ v : game.Complete, Referent.redDress ∈ game.sem v.val →
+      v = ⟨[.dress], by decide⟩ ∨ v = ⟨[.red, .dress], by decide⟩ := by decide
+  constructor
+  · rw [game.globalS1_real_of_pair (u' := ⟨[.red, .dress], by decide⟩) (by decide) (by decide)
+      (by decide) (by decide) hs]
+    congr 1
+    simp only [ReferenceGame.uttCost_wordCost, List.length_cons, List.length_nil]
+    push_cast
+    ring
+  · rw [game.globalS1_real_of_pair (u' := ⟨[.dress], by decide⟩) (by decide) (by decide)
+      (by decide) (by decide) fun v hv ↦ (hs v hv).symm]
+    congr 1
+    simp only [ReferenceGame.uttCost_wordCost, List.length_cons, List.length_nil]
+    push_cast
+    ring
+
+-- §3.1
+theorem incremental_ne_global {c : ℝ} (hc : c ≠ 0) :
+    (game.incS1 (wordCost c) .redDress).stringMeasure
+      ≠ (game.globalS1 (wordCost c) .redDress).map Subtype.val := fun h ↦ by
+  have := congrArg (fun μ : Measure (List Word) ↦ μ.real {[Word.dress]}) h
+  rw [(incremental_indifferent c).1, measureReal_def,
+    game.map_globalS1_apply_singleton (by decide), ← measureReal_def, (global_values c).1] at this
+  exact hc (Real.sigmoid_strictMono.injective (by rw [Real.sigmoid_zero, ← this]; norm_num))
 
 end English
 
 namespace Spanish
 
-/-- Spanish puts the noun before the adjective, and STOP closes the utterance. -/
+/-- Spanish puts the adjective after the noun. -/
 inductive Word
-  | vestido | rojo | sombrero | azul | stop
+  | vestido | rojo | sombrero | azul
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Word := ⟨.vestido⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- The Spanish game over the same referents has noun–adjective order and STOP-terminated
-utterances. -/
+/-- The Spanish game over the same referents: *vestido*, *vestido rojo*, *sombrero* and
+*sombrero azul*. -/
 def game : ReferenceGame Word English.Referent :=
   .ofLexicon
-    (fun u r ↦ match u, r with
-      | .vestido, .redDress | .rojo, .redDress | .sombrero, .blueHat
-      | .azul, .blueHat | .stop, _ => true
-      | _, _ => false)
-    [[.vestido, .stop], [.vestido, .rojo, .stop], [.sombrero, .stop],
-      [.sombrero, .azul, .stop]]
-    [.redDress, .blueHat]
+    (fun
+      | .vestido | .rojo => {.redDress}
+      | .sombrero | .azul => {.blueHat})
+    [[.vestido], [.vestido, .rojo], [.sombrero], [.sombrero, .azul]]
 
-/-- The §3.1 cost, as in English. -/
-def cost (c : ℝ) : Word → ℝ := fun u ↦ if u = .stop then 0 else c
-
-private theorem hw : ∀ r : English.Referent, r ∈ game.worlds := by decide
-
-private theorem forced_vestido (c : ℝ) : game.s1 (cost c) [] .redDress {Word.vestido} = 1 :=
-  game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
-
-private theorem forced_stop_after_rojo (c : ℝ) :
-    game.s1 (cost c) [.vestido, .rojo] .redDress {Word.stop} = 1 :=
-  game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
-
-private theorem step2 (c : ℝ) :
-    (game.s1 (cost c) [.vestido] .redDress).real {Word.stop} = 1 / (1 + Real.exp (-c)) ∧
-    (game.s1 (cost c) [.vestido] .redDress).real {Word.rojo} =
-      Real.exp (-c) / (1 + Real.exp (-c)) := by
-  have hs : (game.l0 [.vestido] .stop {English.Referent.redDress}).toReal = 1 := by
-    rw [game.l0_real hw]
-    norm_num [show game.trueExts [Word.vestido, Word.stop] .redDress = 1 from by decide,
-      show ∑ r', game.trueExts [Word.vestido, Word.stop] r' = 1 from by decide]
-  have hr : (game.l0 [.vestido] .rojo {English.Referent.redDress}).toReal = 1 := by
-    rw [game.l0_real hw]
-    norm_num [show game.trueExts [Word.vestido, Word.rojo] .redDress = 1 from by decide,
-      show ∑ r', game.trueExts [Word.vestido, Word.rojo] r' = 1 from by decide]
-  have hz : ∀ u' ∈ [Word.vestido, Word.sombrero, Word.azul],
-      (game.l0 [.vestido] u' {English.Referent.redDress}).toReal = 0 := by
-    intro u' hu'
-    fin_cases hu' <;>
-      · rw [game.l0_apply_eq_zero hw (by decide), ENNReal.toReal_zero]
-  have hcs : Real.exp (-cost c .stop) = 1 := by simp [cost]
-  have hcr : Real.exp (-cost c .rojo) = Real.exp (-c) := by simp [cost]
-  have hpos : (0 : ℝ) < 1 + Real.exp (-c) := by positivity
+private theorem incremental_real (c : ℝ) {r : English.Referent} {n a : Word}
+    (h0 : game.trueExts [] (some n) r ≠ 0) (h0' : ∀ o ≠ some n, game.trueExts [] o r = 0)
+    (h1 : game.trueExts [n] none r ≠ 0) (h2 : game.trueExts [n] (some a) r ≠ 0)
+    (hl : game.l0 [n] none {r} = game.l0 [n] (some a) {r})
+    (hs : ∀ v, game.trueExts [n] v r ≠ 0 → v = none ∨ v = some a)
+    (h3 : game.trueExts [n, a] none r ≠ 0) (h3' : ∀ o ≠ none, game.trueExts [n, a] o r = 0) :
+    (game.incS1 (wordCost c) r).stringMeasure.real {[n]} = Real.sigmoid c ∧
+    (game.incS1 (wordCost c) r).stringMeasure.real {[n, a]} = Real.sigmoid (-c) := by
+  have e0 := game.s1_real_eq_one (cost := wordCost c) h0 h0'
+  have e3 := game.s1_real_eq_one (cost := wordCost c) h3 h3'
+  have hn := game.s1_real_of_pair (cost := wordCost c) (o' := some a) (by simp) h1 hl hs
+  have ha := game.s1_real_of_pair (cost := wordCost c) (o' := none) (by simp) h2 hl.symm
+    fun v hv ↦ (hs v hv).symm
   constructor <;>
-    · rw [game.s1_real_singleton (by decide)]
-      rw [show (Finset.univ : Finset Word) = {.vestido, .rojo, .sombrero, .azul, .stop} from
-        by decide]
-      repeat rw [Finset.sum_insert (by decide)]
-      rw [Finset.sum_singleton, hs, hr, hz .vestido (by decide), hz .sombrero (by decide),
-        hz .azul (by decide), hcs, hcr]
-      rw [div_eq_div_iff (by positivity) hpos.ne']
-      ring
+    simp only [stringMeasure_real_singleton, prefixProb, toReal_condPrefixProb_cons,
+      condPrefixProb_nil, ENNReal.toReal_one, ReferenceGame.next_incS1, List.nil_append,
+      List.cons_append, e0, e3, hn, ha] <;>
+    simp
 
--- §3.1
-theorem incremental_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
-    game.s1Utt (cost c) .redDress [.vestido, .rojo, .stop]
-      < game.s1Utt (cost c) .redDress [.vestido, .stop] := by
-  obtain ⟨hstop, hrojo⟩ := step2 c
-  simp only [ReferenceGame.s1Utt, chain_cons, chain_nil, List.nil_append,
-    List.cons_append, mul_one]
-  rw [measureReal_def (μ := game.s1 (cost c) [] .redDress), forced_vestido,
-    measureReal_def (μ := game.s1 (cost c) [.vestido, .rojo] .redDress),
-    forced_stop_after_rojo, hstop, hrojo]
-  simp only [ENNReal.toReal_one, one_mul, mul_one]
-  rw [div_lt_div_iff_of_pos_right (by positivity)]
-  exact Real.exp_lt_one_iff.2 (by linarith)
+private theorem global_real (c : ℝ) {r : English.Referent} {u u' : game.Complete}
+    (hl : u.val.length = 1) (hl' : u'.val.length = 2) (huu' : u ≠ u') (hu : r ∈ game.sem u.val)
+    (hu' : r ∈ game.sem u'.val) (hcard : (game.sem u.val).card = (game.sem u'.val).card)
+    (hs : ∀ v : game.Complete, r ∈ game.sem v.val → v = u ∨ v = u') :
+    (game.globalS1 (wordCost c) r).real {u} = Real.sigmoid c ∧
+    (game.globalS1 (wordCost c) r).real {u'} = Real.sigmoid (-c) := by
+  rw [game.globalS1_real_of_pair huu' hu hu' hcard hs,
+    game.globalS1_real_of_pair huu'.symm hu' hu hcard.symm fun v hv ↦ (hs v hv).symm]
+  simp only [ReferenceGame.uttCost_wordCost, hl, hl']
+  constructor <;> congr 1 <;> push_cast <;> ring
+
+/-- In Spanish the incremental speaker is the global speaker: after the noun she may end the
+utterance, so the choice between *vestido* and *vestido rojo* is the global one, the sigmoid of
+the adjective's cost, 0.73 at the paper's cost of one. -/
+theorem incremental_eq_global (c : ℝ) (r : English.Referent) :
+    (game.incS1 (wordCost c) r).stringMeasure = (game.globalS1 (wordCost c) r).map Subtype.val := by
+  refine game.stringMeasure_incS1_eq_map_globalS1 (by cases r <;> decide) fun u hu ↦ ?_
+  cases r
+  · have hs : ∀ v : game.Complete, English.Referent.redDress ∈ game.sem v.val →
+        v = ⟨[.vestido], by decide⟩ ∨ v = ⟨[.vestido, .rojo], by decide⟩ := by decide
+    obtain ⟨i1, i2⟩ := incremental_real c (r := .redDress) (n := .vestido) (a := .rojo)
+      (by decide) (by decide) (by decide) (by decide) (game.l0_congr (by decide) (by decide))
+      (by decide) (by decide) (by decide)
+    obtain ⟨g1, g2⟩ := global_real c rfl rfl (by decide) (by decide) (by decide) (by decide) hs
+    rcases hs u hu with rfl | rfl
+    · exact i1.trans g1.symm
+    · exact i2.trans g2.symm
+  · have hs : ∀ v : game.Complete, English.Referent.blueHat ∈ game.sem v.val →
+        v = ⟨[.sombrero], by decide⟩ ∨ v = ⟨[.sombrero, .azul], by decide⟩ := by decide
+    obtain ⟨i1, i2⟩ := incremental_real c (r := .blueHat) (n := .sombrero) (a := .azul)
+      (by decide) (by decide) (by decide) (by decide) (game.l0_congr (by decide) (by decide))
+      (by decide) (by decide) (by decide)
+    obtain ⟨g1, g2⟩ := global_real c rfl rfl (by decide) (by decide) (by decide) (by decide) hs
+    rcases hs u hu with rfl | rfl
+    · exact i1.trans g1.symm
+    · exact i2.trans g2.symm
 
 end Spanish
 
-/-! ### §3.2: the anticipatory implicature in Sedivy's display
+/-! ### The anticipatory implicature in Sedivy's display (§3.2)
 
-A tall cup, a short cup, a tall pitcher and a key; utterances *tall cup*, *short cup*,
-*tall pitcher*, *cup*, *pitcher*, *key*. Upon hearing *tall* the incremental pragmatic
-listener favours the tall cup at 3/5 against the tall pitcher at 2/5: a speaker meaning the
-pitcher had *pitcher* alone, so *tall* was a third of her choices, while the cup's speaker,
-whose bare *cup* is ambiguous with the short cup, uses *tall* half the time. The §3.1 cost
-is common to every content word, so it cancels within each row, and the scene is evaluated
-at zero cost. The implicature cancels: were the next word *pitcher*,
-the listener who has updated on *tall* excludes every referent but the pitcher. -/
+Listeners who hear *tall* in a display of a tall and a short cup, a tall pitcher and a key look
+to the tall cup before the noun [sedivy-2007]. -/
 
 namespace Sedivy
 
-/-- The scene's words are the two scalar adjectives and three category nouns. -/
+/-- The scene's words are two scalar adjectives and three nouns. -/
 inductive Word
   | tall | short | cup | pitcher | key
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Word := ⟨.tall⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
@@ -860,100 +1023,111 @@ inductive Referent
   | tallCup | shortCup | tallPitcher | key
   deriving DecidableEq, Fintype, Repr
 
-instance : Nonempty Referent := ⟨.tallCup⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ ↦ trivial⟩
 
-/-- Sedivy's display is a reference game with six utterances and word-conjunctive
-semantics. -/
+/-- Sedivy's display: *tall cup*, *short cup*, *tall pitcher*, *cup*, *pitcher* and *key*. -/
 def game : ReferenceGame Word Referent :=
   .ofLexicon
-    (fun u r ↦ match u, r with
-      | .tall, .tallCup | .tall, .tallPitcher | .short, .shortCup | .cup, .tallCup
-      | .cup, .shortCup | .pitcher, .tallPitcher | .key, .key => true
-      | _, _ => false)
+    (fun
+      | .tall => {.tallCup, .tallPitcher}
+      | .short => {.shortCup}
+      | .cup => {.tallCup, .shortCup}
+      | .pitcher => {.tallPitcher}
+      | .key => {.key})
     [[.tall, .cup], [.short, .cup], [.tall, .pitcher], [.cup], [.pitcher], [.key]]
-    [.tallCup, .shortCup, .tallPitcher, .key]
 
-private theorem hw : ∀ r : Referent, r ∈ game.worlds := by decide
-
-private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
-    ∑ u, f u = f .tall + (f .short + (f .cup + (f .pitcher + f .key))) := by
-  rw [show (Finset.univ : Finset Word) = {.tall, .short, .cup, .pitcher, .key} from by decide]
+private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Option Word → M) :
+    ∑ o, f o = f none + (f (some .tall) + (f (some .short) + (f (some .cup)
+      + (f (some .pitcher) + f (some .key))))) := by
+  rw [Fintype.sum_option, show (Finset.univ : Finset Word) = {.tall, .short, .cup, .pitcher, .key}
+    from by decide]
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
 
-theorem s1_tall_values :
-    (game.s1 0 [] .tallCup).real {Word.tall} = 1 / 2 ∧
-    (game.s1 0 [] .tallPitcher).real {Word.tall} = 1 / 3 ∧
-    (game.s1 0 [] .shortCup).real {Word.tall} = 0 ∧
-    (game.s1 0 [] .key).real {Word.tall} = 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    · rw [game.s1_real_counts hw (by decide), sum_word]
-      norm_num [show game.trueExts [Word.tall] .tallCup = 1 from by decide,
-        show game.trueExts [Word.tall] .tallPitcher = 1 from by decide,
-        show game.trueExts [Word.tall] .shortCup = 0 from by decide,
-        show game.trueExts [Word.tall] .key = 0 from by decide,
-        show ∑ r', game.trueExts [Word.tall] r' = 2 from by decide,
-        show game.trueExts [Word.short] .tallCup = 0 from by decide,
-        show game.trueExts [Word.short] .tallPitcher = 0 from by decide,
-        show game.trueExts [Word.cup] .tallCup = 1 from by decide,
-        show game.trueExts [Word.cup] .tallPitcher = 0 from by decide,
-        show ∑ r', game.trueExts [Word.cup] r' = 2 from by decide,
-        show game.trueExts [Word.pitcher] .tallCup = 0 from by decide,
-        show game.trueExts [Word.pitcher] .tallPitcher = 1 from by decide,
-        show ∑ r', game.trueExts [Word.pitcher] r' = 1 from by decide,
-        show game.trueExts [Word.key] .tallCup = 0 from by decide,
-        show game.trueExts [Word.key] .tallPitcher = 0 from by decide]
-
--- §3.2
-theorem listener_prefers_tall_cup :
-    (game.l1 0 [] .tall).real {Referent.tallPitcher}
-      < (game.l1 0 [] .tall).real {Referent.tallCup} := by
-  rw [game.l1_real_lt_iff, s1_tall_values.1, s1_tall_values.2.1]
-  norm_num
-
--- §3.2
-theorem listener_tall_values :
-    (game.l1 0 [] .tall).real {Referent.tallCup} = 3 / 5 ∧
-    (game.l1 0 [] .tall).real {Referent.tallPitcher} = 2 / 5 := by
-  obtain ⟨h1, h2, h3, h4⟩ := s1_tall_values
-  have hsum : ∑ r', (game.s1 0 [] r').real {Word.tall} = 5 / 6 := by
-    rw [show (Finset.univ : Finset Referent) = {.tallCup, .shortCup, .tallPitcher, .key}
-      from by decide]
-    repeat rw [Finset.sum_insert (by decide)]
-    rw [Finset.sum_singleton, h1, h2, h3, h4]
-    norm_num
-  constructor <;>
-    · rw [game.l1_real_singleton, hsum]
-      first | rw [h1] | rw [h2]
-      norm_num
-
-/-- The listener who has heard *tall* and then hears *pitcher* takes the posterior of the
-word-level speaker at context *tall* against the updated prior. -/
-noncomputable def afterTallPitcher : Measure Referent :=
-  RSA.listener (game.l1 0 [] .tall) (game.s1 0 [.tall]) .pitcher
-
-theorem afterTallPitcher_eq_one : afterTallPitcher {Referent.tallPitcher} = 1 := by
-  have hcup : game.s1 0 [.tall] .tallCup {Word.pitcher} = 0 :=
-    game.s1_apply_eq_zero hw (by decide) 0 (by decide)
-  have hpit : game.s1 0 [.tall] .tallPitcher {Word.pitcher} = 1 :=
-    game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
-  have hprior : ∀ r, r = Referent.shortCup ∨ r = .key → game.l1 0 [] .tall {r} = 0 := by
-    rintro r (rfl | rfl) <;>
-      exact RSA.listener_apply_singleton_eq_zero
-        (game.s1_apply_eq_zero hw (by decide) 0 (by decide))
-  have hpos : game.l1 0 [] .tall {Referent.tallPitcher} ≠ 0 :=
-    RSA.listener_apply_singleton_ne_zero (uniformOn_univ_singleton_ne_zero _)
-      (game.s1_apply_ne_zero hw (by decide) (by decide))
-  rw [afterTallPitcher, RSA.listener_apply_singleton_eq_div, Measure.comp_apply_singleton,
-    show (Finset.univ : Finset Referent) = {.tallCup, .shortCup, .tallPitcher, .key}
-      from by decide]
+private theorem sum_referent {M : Type*} [AddCommMonoid M] (f : Referent → M) :
+    ∑ r, f r = f .tallCup + (f .shortCup + (f .tallPitcher + f .key)) := by
+  rw [show (Finset.univ : Finset Referent) = {.tallCup, .shortCup, .tallPitcher, .key} from by
+    decide]
   repeat rw [Finset.sum_insert (by decide)]
-  rw [Finset.sum_singleton, hcup, hpit, hprior .shortCup (Or.inl rfl),
-    hprior .key (Or.inr rfl), mul_zero, zero_mul, zero_mul, mul_one, zero_add, add_zero,
-    zero_add]
+  rw [Finset.sum_singleton]
+
+private theorem tall_counts :
+    game.trueExts [] none .tallCup = 0 ∧ game.trueExts [] none .tallPitcher = 0 ∧
+    game.trueExts [] (some .tall) .tallCup = 1 ∧ game.trueExts [] (some .tall) .tallPitcher = 1 ∧
+    ∑ r, game.trueExts [] (some .tall) r = 2 ∧
+    game.trueExts [] (some .short) .tallCup = 0 ∧ game.trueExts [] (some .short) .tallPitcher = 0 ∧
+    game.trueExts [] (some .cup) .tallCup = 1 ∧ game.trueExts [] (some .cup) .tallPitcher = 0 ∧
+    ∑ r, game.trueExts [] (some .cup) r = 2 ∧
+    game.trueExts [] (some .pitcher) .tallCup = 0 ∧
+    game.trueExts [] (some .pitcher) .tallPitcher = 1 ∧
+    ∑ r, game.trueExts [] (some .pitcher) r = 1 ∧
+    game.trueExts [] (some .key) .tallCup = 0 ∧ game.trueExts [] (some .key) .tallPitcher = 0 := by
+  decide
+
+-- §3.2
+theorem s1_tall_values :
+    (game.s1 0 [] .tallCup).real {some .tall} = 1 / 2 ∧
+    (game.s1 0 [] .tallPitcher).real {some .tall} = 1 / 3 ∧
+    (game.s1 0 [] .shortCup).real {some .tall} = 0 ∧
+    (game.s1 0 [] .key).real {some .tall} = 0 := by
+  refine ⟨?_, ?_, game.s1_real_eq_zero (by decide) (by decide),
+    game.s1_real_eq_zero (by decide) (by decide)⟩ <;>
+    rw [game.s1_real_counts (by decide), sum_word] <;> norm_num [tall_counts]
+
+-- §3.2
+theorem listener_tall_values (c : ℝ) :
+    (game.l1 (wordCost c) [] (some .tall)).real {.tallCup} = 3 / 5 ∧
+    (game.l1 (wordCost c) [] (some .tall)).real {.tallPitcher} = 2 / 5 := by
+  obtain ⟨h1, h2, h3, h4⟩ := s1_tall_values
+  have hsum : ∑ r, (game.s1 0 [] r).real {some Word.tall} = 5 / 6 := by
+    rw [sum_referent, h1, h2, h3, h4]
+    norm_num
+  rw [game.l1_wordCost (c := []) (by decide)]
+  constructor <;> rw [game.l1_real_singleton, hsum]
+  · rw [h1]; norm_num
+  · rw [h2]; norm_num
+
+/-- The listener who has heard *tall* and then hears *pitcher*, with her posterior after *tall*
+as her prior. -/
+noncomputable def afterTallPitcher (c : ℝ) : Measure Referent :=
+  listener (game.l1 (wordCost c) [] (some .tall)) (game.s1 (wordCost c) [.tall]) (some .pitcher)
+
+-- §3.2
+theorem afterTallPitcher_eq_one (c : ℝ) : afterTallPitcher c {.tallPitcher} = 1 := by
+  rw [afterTallPitcher, game.l1_wordCost (c := []) (by decide),
+    game.s1_wordCost (c := [.tall]) (by decide)]
+  have hcup : game.s1 0 [.tall] .tallCup {some .pitcher} = 0 :=
+    game.s1_apply_eq_zero (by decide) (by decide)
+  have hpit : game.s1 0 [.tall] .tallPitcher {some .pitcher} = 1 :=
+    game.s1_apply_eq_one (by decide) (by decide)
+  have hprior (r : Referent) (hr : r = .shortCup ∨ r = .key) :
+      game.l1 0 [] (some .tall) {r} = 0 := by
+    rcases hr with rfl | rfl <;>
+      exact listener_apply_singleton_eq_zero (game.s1_apply_eq_zero (by decide) (by decide))
+  have hpos : game.l1 0 [] (some .tall) {Referent.tallPitcher} ≠ 0 :=
+    listener_apply_singleton_ne_zero (uniformOn_univ_singleton_ne_zero _)
+      (game.s1_apply_ne_zero (by decide))
+  rw [listener_apply_singleton_eq_div, Measure.comp_apply_singleton, sum_referent, hcup, hpit,
+    hprior .shortCup (.inl rfl), hprior .key (.inr rfl)]
+  simp only [mul_zero, zero_mul, mul_one, zero_add, add_zero]
   exact ENNReal.div_self hpos (measure_ne_top _ _)
+
+-- §3.2, eq. (6)
+theorem l1_tall_pitcher (c : ℝ) :
+    (game.l1 (wordCost c) [.tall] (some .pitcher)).real {.tallPitcher} = 1 / 2 := by
+  have hdead (r : Referent) (hd : game.DeadEnd [.tall] r) :
+      (game.s1 0 [.tall] r).real {some .pitcher} = 1 / 2 := by
+    rw [game.s1_real_deadEnd hd (by decide), ite_eq_left (by decide),
+      show (game.viableNext [.tall]).card = 2 from by decide]
+    norm_num
+  have hpit : (game.s1 0 [.tall] .tallPitcher).real {some .pitcher} = 1 :=
+    game.s1_real_eq_one (by decide) (by decide)
+  have hsum : ∑ r, (game.s1 0 [.tall] r).real {some Word.pitcher} = 2 := by
+    rw [sum_referent, game.s1_real_eq_zero (r := .tallCup) (by decide) (by decide),
+      hdead .shortCup (by decide), hpit, hdead .key (by decide)]
+    norm_num
+  rw [game.l1_wordCost (c := [.tall]) (by decide), game.l1_real_singleton, hsum, hpit]
 
 end Sedivy
 
