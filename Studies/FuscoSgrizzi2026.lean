@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
-public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Modality.Background
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
@@ -76,20 +76,24 @@ section Semantics
 
 variable {I V W : Type*}
 
+/-- The inertia worlds of a state, `INERTIA(s)` of (25), are the best worlds of the state's
+circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]): `bestWorlds`
+with the state in place of a world. -/
+def inertiaWorlds (circumstances inertia : V → Set (W → Prop)) (s : V) : Set W :=
+  (premisePreorder (inertia s)).minimals {w | sInf (circumstances s) w}
+
 /-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
-worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
-[kratzer-2013]), with the eventuality argument of its complement closed over what the state
-causes. -/
-def aP (circumstances : V → Background W) (inertia : V → Background W)
-    (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) (w : W) : Prop :=
-  necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
+worlds, with the eventuality argument of its complement closed over what the state causes. -/
+def aP (circumstances inertia : V → Set (W → Prop)) (causeStar : W → SetRel V V)
+    (P : W → V → Prop) (s : V) : Prop :=
+  □[.ofSuccessors (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
 
 -- (134) [grano-2024]
-theorem aP_bot (circumstances : V → Background W) (causeStar : W → SetRel V V)
-    (P : W → V → Prop) (s : V) (w : W) :
-    aP circumstances (fun _ ↦ ⊥) causeStar P s w ↔
-      Grano2024.sbjvCausal (fun s w' ↦ w ~[(circumstances s).accessible] w') causeStar P s :=
-  necessity_bot_iff ..
+theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → SetRel V V)
+    (P : W → V → Prop) (s : V) :
+    aP circumstances (fun _ ↦ ∅) causeStar P s ↔
+      Grano2024.sbjvCausal (fun s ↦ sInf (circumstances s)) causeStar P s := by
+  simp [aP, inertiaWorlds, Grano2024.sbjvCausal, ModalLogic.Box]
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
 def diP (con : V → Option (Set W)) (Q : W → Prop) (s : V) : Prop :=
@@ -111,8 +115,7 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances : V → Background W)
-  (inertia : V → Background W)
+variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances inertia : V → Set (W → Prop))
   (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V) (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the
@@ -121,11 +124,11 @@ def beliefReport : Prop := F.convincere (fun s ↦ diP con (closure P) s) x y e 
 
 /-- The intention report is *convincere* with the *a*-complement. -/
 def intentionReport : Prop :=
-  F.convincere (fun s ↦ aP circumstances inertia causeStar P s w) x y e w
+  F.convincere (fun s ↦ aP circumstances inertia causeStar P s) x y e w
 
 theorem intention_causal (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → causedClosure causeStar s P w' :=
+      ∀ w' ∈ inertiaWorlds circumstances inertia s, causedClosure causeStar s P w' :=
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
@@ -135,7 +138,7 @@ theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', s ~[causeStar w'] e' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → ∃ e', τ s < τ e' ∧ P w' e' :=
+      ∀ w' ∈ inertiaWorlds circumstances inertia s, ∃ e', τ s < τ e' ∧ P w' e' :=
   let ⟨s, hc, ha⟩ := intention_causal F circumstances inertia causeStar P x y e w h
   ⟨s, hc, fun w' hw' ↦ let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
 
