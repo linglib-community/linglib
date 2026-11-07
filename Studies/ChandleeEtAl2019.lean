@@ -35,7 +35,7 @@ tree models of section 2.
 namespace ChandleeEtAl2019
 
 open FirstOrder.Language Subregular Subregular.WordModel Phonology Hansson2010 List
-open Subregular.TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff_forall_sublist_pair)
+open TierStrictlyLocalGrammar (mem_ofForbiddenPairs_language_iff_forall_sublist_pair)
 
 /-- The signature of feature-labelled models of segment words. -/
 abbrev featureLanguage : FirstOrder.Language := wordLanguage (Phonology.Feature × Bool)
@@ -119,7 +119,7 @@ theorem antPost_occurs_sibilant_pairs :
 /-! ### Symmetric harmony -/
 
 theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
-    w ∈ navajoSibilantHarmony.language ↔
+    w ∈ navajoSibilantHarmony.language 2 ↔
       ¬ antPost.Occurs (WordModel w (· < ·)) ∧ ¬ postAnt.Occurs (WordModel w (· < ·)) := by
   have htrans : ∀ a b c : Segment, OnTier a → OnTier b → OnTier c →
       ¬ a .anterior ≠ b .anterior → ¬ b .anterior ≠ c .anterior → ¬ a .anterior ≠ c .anterior :=
@@ -148,7 +148,7 @@ theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
     · exact absurd hv (h.1 a b hab hu)
     · rfl
 
-theorem esh_s_mem_language : [esh, s] ∈ language ∧ [esh, s] ∉ navajoSibilantHarmony.language := by
+theorem esh_s_mem_language : [esh, s] ∈ language ∧ [esh, s] ∉ navajoSibilantHarmony.language 2 := by
   refine ⟨(mem_language_iff _).2 fun h ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨a, b, hab, ha, -⟩ := (diagram_pair_occurs_iff _ _ _).1 h
     obtain ⟨rfl, -⟩ := List.cons_eq_cons.1 (hab.eq_of_length rfl)
