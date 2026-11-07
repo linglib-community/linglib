@@ -30,6 +30,10 @@
       [
         "item",
         "some (determiner)"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Determiner some marks the referent as unknown to the speaker, unlike someone and something. The book prints the continuation in parentheses: (*and I know which one).",
@@ -66,6 +70,10 @@
       [
         "item",
         "some (determiner)"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The continuation presupposes that the speaker can identify the referent. The book prints the continuation in parentheses: (*and I know which one).",
@@ -102,6 +110,10 @@
       [
         "series",
         "some-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The speaker expects a positive answer, so some is used. The context is the reason the book prints in parentheses after the question.",
@@ -138,6 +150,10 @@
       [
         "series",
         "any-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The speaker expects a negative answer, so only any can be used. The context is the reason the book prints in parentheses after the question.",
@@ -174,6 +190,10 @@
       [
         "series",
         "some-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The context paraphrases the book's prose on conditional promises and warnings.",
@@ -210,6 +230,10 @@
       [
         "series",
         "any-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The context paraphrases the book's prose on conditional promises and warnings. The book stars this alternative inside the example.",
@@ -246,6 +270,10 @@
       [
         "series",
         "any-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The context paraphrases the book's prose on conditional promises and warnings.",
@@ -282,6 +310,10 @@
       [
         "series",
         "some-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The context paraphrases the book's prose on conditional promises and warnings. The book stars this alternative inside the example.",
@@ -602,6 +634,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
@@ -634,6 +670,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function. The book stars this alternative inside the example; the translation is the example's.",
@@ -666,6 +706,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -698,6 +742,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -730,6 +778,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -762,6 +814,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -794,6 +850,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -826,6 +886,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -858,6 +922,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -890,6 +958,10 @@
       [
         "series",
         "je"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -922,6 +994,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -954,6 +1030,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -990,6 +1070,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1026,6 +1110,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1062,6 +1150,10 @@
       [
         "series",
         "etwas-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1094,6 +1186,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1130,6 +1226,10 @@
       [
         "series",
         "je"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed.",
@@ -1162,6 +1262,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "Stressed; jeder is generally preferred.",
@@ -1194,6 +1298,10 @@
       [
         "series",
         "jeder"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1226,6 +1334,10 @@
       [
         "series",
         "jeder"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1258,6 +1370,10 @@
       [
         "series",
         "jeder"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
@@ -1290,6 +1406,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1322,6 +1442,10 @@
       [
         "series",
         "jeder"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1354,6 +1478,10 @@
       [
         "series",
         "irgend-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "",
@@ -1386,6 +1514,10 @@
       [
         "series",
         "n-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The n-series does not co-occur with verbal negation.",
@@ -1418,6 +1550,10 @@
       [
         "series",
         "n-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series.",
@@ -1450,6 +1586,10 @@
       [
         "series",
         "n-"
+      ],
+      [
+        "method",
+        "introspection"
       ]
     ],
     "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series.",
@@ -3647,6 +3787,10 @@
       [
         "series",
         "koii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -3720,6 +3864,10 @@
       [
         "series",
         "bhii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -3777,6 +3925,10 @@
       [
         "series",
         "koii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Under direct negation the bhii-series seems to be preferred.",
@@ -3838,6 +3990,10 @@
       [
         "series",
         "bhii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Under direct negation the bhii-series seems to be preferred.",
@@ -3891,6 +4047,10 @@
       [
         "series",
         "koii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -4156,6 +4316,10 @@
       [
         "series",
         "koii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -4213,6 +4377,10 @@
       [
         "series",
         "bhii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The bhii-series is more emphatic in questions and conditionals. The book glosses this kisii-ko 'someone'.",
@@ -4481,6 +4649,10 @@
       [
         "series",
         "bhii"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -7282,6 +7454,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, Luke 8:46; the book labels the example simply specific.",
@@ -7331,6 +7507,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The book labels the example simply specific.",
@@ -7388,6 +7568,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, John 13:29.",
@@ -7429,6 +7613,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, Mark 8:23.",
@@ -7498,6 +7686,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, Matthew 21:3.",
@@ -7567,6 +7759,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, John 9:32.",
@@ -7616,6 +7812,10 @@
       [
         "series",
         "generic noun"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, Mark 16:8; bare generic nouns only postverbally under direct negation.",
@@ -7669,6 +7869,10 @@
       [
         "series",
         "CL-o CL-ote"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -7718,6 +7922,10 @@
       [
         "series",
         "CL-o CL-ote"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, John 11:49.",
@@ -7779,6 +7987,10 @@
       [
         "series",
         "CL-o CL-ote"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, Hebrews 1:5; a rhetorical question, with emphatic value.",
@@ -7840,6 +8052,10 @@
       [
         "series",
         "CL-o CL-ote"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "New Testament, John 14:14.",
@@ -7893,6 +8109,10 @@
       [
         "series",
         "-γac"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The -γac-series is restricted to specific functions.",
@@ -7942,6 +8162,10 @@
       [
         "series",
         "-γac"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The -γac-series is restricted to the specific functions.",
@@ -8085,6 +8309,10 @@
       [
         "series",
         "-me"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -8130,6 +8358,10 @@
       [
         "series",
         "-me"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -8415,6 +8647,10 @@
       [
         "series",
         "ara-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "In the direct-negation function, one of the three negative series (ara-, vera-, nura-) is used, normally together with verbal negation (though this may optionally be omitted).",
@@ -8509,6 +8745,10 @@
       [
         "item",
         "nura-"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Ar is the unmarked negator, ver contains an additional semantic component of possibility, and nu is used in prohibitive sentences.",
@@ -8570,6 +8810,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Imperative.",
@@ -8623,6 +8867,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "A context of uncertainty or inference.",
@@ -8680,6 +8928,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
@@ -8733,6 +8985,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
@@ -8786,6 +9042,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -8883,6 +9143,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
@@ -9282,6 +9546,10 @@
       [
         "series",
         "yě"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
@@ -9335,6 +9603,10 @@
       [
         "series",
         "dōu"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The dōu- and yě-series occur only preverbally and are used interchangeably.",
@@ -10179,6 +10451,10 @@
       [
         "series",
         "-pis"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "The -pis-series is also used in the negative functions.",
@@ -10281,6 +10557,10 @@
       [
         "series",
         "-pis"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -10529,6 +10809,10 @@
       [
         "series",
         "-ka"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Distributive.",
@@ -10582,6 +10866,10 @@
       [
         "series",
         "-ka"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -10700,6 +10988,10 @@
       [
         "series",
         "-ka"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -10932,6 +11224,10 @@
       [
         "series",
         "-mo"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "",
@@ -11370,6 +11666,10 @@
       [
         "series",
         "bare interrogative"
+      ],
+      [
+        "method",
+        "description"
       ]
     ],
     "comment": "Hortative.",
