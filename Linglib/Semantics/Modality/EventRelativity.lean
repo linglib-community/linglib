@@ -7,12 +7,12 @@ public import Linglib.Logic.Modal.Defs
 
 An event-relative modal has an accessibility relation from events to worlds, and its event
 variable is bound by [the closest binder above it](##Modality.ModalPosition.binder): aspect,
-which binds the event the verb phrase describes, for a modal below aspect, and the speech event
-or an attitude event for a modal above it. Speech and attitude events have propositional content,
-given by a content function `con : E → Option (Set W)` that is undefined at an event without
-content. The epistemic relation `contentAccessible con` relates an event to the worlds compatible
-with its content, and epistemic necessity and possibility are `□` and `◇` along it, [universal and
-existential over the content](##Modality.box_contentAccessible_iff).
+which binds the event the verb phrase describes, for a low modal below aspect, and the speech
+event or an attitude event for a high modal above tense. Speech and attitude events have
+propositional content, given by a content function `con : E → Option (Set W)` that is undefined
+at an event without content. The epistemic relation `contentAccessible con` relates an event to
+the worlds compatible with its content, and epistemic necessity and possibility are `□` and `◇`
+along it, [universal and existential over the content](##Modality.box_contentAccessible_iff).
 
 ## Implementation notes
 
@@ -45,17 +45,18 @@ inductive EventBinder
 /-- The two positions of a modal in its clause. -/
 inductive ModalPosition
   /-- Right above tense, out of reach of the clause's aspect. -/
-  | aboveAsp
+  | high
   /-- Right above the verb phrase, below aspect. -/
-  | belowAsp
+  | low
   deriving DecidableEq, Repr
 
-/-- The closest binder above a modal is aspect, binding the event the verb phrase describes, for
-a modal below aspect, and for a modal above aspect the event `outer` the clause is anchored to:
-the speech event in a matrix clause, the attitude event in the complement of an attitude verb. -/
+/-- The closest binder above a modal is the clause's aspect, binding the event the verb phrase
+describes, for a low modal, and for a high modal the binder above the clause, which anchors it to
+the event `outer`: the speech event in a matrix clause, and in a complement the event of the
+embedding verb, which the matrix aspect binds. -/
 def ModalPosition.binder : ModalPosition → EventBinder → EventBinder
-  | aboveAsp, outer => outer
-  | belowAsp, _ => .vpEvent
+  | high, outer => outer
+  | low, _ => .vpEvent
 
 /-! ### The epistemic accessibility relation -/
 

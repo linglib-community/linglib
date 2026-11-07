@@ -50,8 +50,8 @@ reaches (`rows_predicted`).
 
 ## Errata
 
-* (26) writes the vP as `λe.λw.Have-a-Child(e, w′) ∧ Agent(e, PRO, w)`, crossing the world
-  variables (23a) keeps together; `diP` reads both conjuncts at the content world.
+* The top nodes of (25) and (26) read `Have-a-Child(e, w) ∧ Agent(e, PRO, w′)`, and the vP of (26)
+  the reverse, crossing world variables (23a) keeps together; `aP` and `diP` read both at `w′`.
 
 ## References
 

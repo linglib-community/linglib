@@ -127,7 +127,7 @@ theorem modVolitional_lt_aspHabitual : Cartography.Head.modVolitional < .aspHabi
 since the VP event of (59) lacks content (section 6.3). -/
 theorem epistemic_high_iff {con : E → Option (Set W)} {ev : EventBinder → E}
     (hs : (con (ev .speechAct)).isSome) (hv : con (ev .vpEvent) = none) (pos : ModalPosition) :
-    (con (ev (pos.binder .speechAct))).isSome ↔ pos = .aboveAsp := by
+    (con (ev (pos.binder .speechAct))).isSome ↔ pos = .high := by
   cases pos <;> simp [ModalPosition.binder, hs, hv]
 
 end Hacquard2010

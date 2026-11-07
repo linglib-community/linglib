@@ -86,10 +86,12 @@ def perfective (occurs : E → W → Prop) (τ : E → Set T) (w : W) (t : Set T
 
 /-- A root modal below aspect (75) takes the event aspect quantifies over as its event variable
 and binds the world in which that event is described. -/
-def rootPossibility (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop := ∃ w' ∈ f e, Q e w'
+def rootPossibility (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop :=
+  ◇[.ofSuccessors f] (Q e) e
 
 /-- The necessity modal below aspect (87). -/
-def rootNecessity (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop := ∀ w' ∈ f e, Q e w'
+def rootNecessity (f : E → Set W) (Q : E → W → Prop) (e : E) : Prop :=
+  □[.ofSuccessors f] (Q e) e
 
 /-- Event Identification across Worlds (76) says that an event that occurs in two worlds and is
 a `Q`-event in one is a `Q`-event in the other. -/
@@ -171,17 +173,17 @@ def positionPerspective (pos : ModalPosition) : TemporalPerspective :=
 -- the two readings of (201) are [condoravdi-2002]'s two scopes of the modal and the perfect
 open Condoravdi2002 (Scope) in
 example :
-    positionPerspective .aboveAsp = Scope.modalPerf.perspective ∧
-    positionPerspective .belowAsp = Scope.perfModal.perspective :=
+    positionPerspective .high = Scope.modalPerf.perspective ∧
+    positionPerspective .low = Scope.perfModal.perspective :=
   ⟨rfl, rfl⟩
 
 -- (201)
 theorem position_determines_perspective :
-    positionPerspective .aboveAsp ≠ positionPerspective .belowAsp := nofun
+    positionPerspective .high ≠ positionPerspective .low := nofun
 
 theorem embedding_shifts_perspective :
-    binderPerspective (ModalPosition.aboveAsp.binder .attitude) ≠
-      binderPerspective (ModalPosition.aboveAsp.binder .speechAct) := nofun
+    binderPerspective (ModalPosition.high.binder .attitude) ≠
+      binderPerspective (ModalPosition.high.binder .speechAct) := nofun
 
 /-- The aspect-bound epistemic reading of a modal over an attitude complement (248c), (248d).
 There was an attitude state of the subject within the reference time, and some world
