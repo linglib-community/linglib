@@ -345,12 +345,8 @@ variable {m m' : M} {objs : List Autosegment} {s : Form M}
 
 private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' * s)).links) :
     objs.length ≤ p.1.val ∧ 2 ≤ p.2.val := by
-  rcases Form.mem_links_concat.1 hp with ⟨q, hq, -⟩ | ⟨q, hq, h₁, h₂⟩
-  · simp at hq
-  rcases Form.mem_links_concat.1 hq with ⟨r, hr, -⟩ | ⟨r, hr, h₃, h₄⟩
-  · simp [emptyCV] at hr
-  simp only [floating, emptyCV, Form.morph_upper, Form.morph_lower, List.length_map,
-    List.length_cons, List.length_nil] at h₁ h₂ h₄
+  have h := Form.mem_links.1 hp
+  simp [floating, emptyCV, Prod.ext_iff] at h
   omega
 
 private theorem zero_notMem_domains

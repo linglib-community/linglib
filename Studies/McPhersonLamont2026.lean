@@ -430,6 +430,30 @@ theorem weighted_HG_inadequate :
   norm_num at h₁ h₂
   linarith
 
+/-! ### Well-formed inputs -/
+
+private theorem isNonCrossing_stem (x : ℕ) :
+    ∀ u ∈ [kak x, ri x, «do» x, nan x, na x, ka x, ili x, ne x],
+      IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, kak, ri,
+    «do», nan, na, ka, ili, ne, Form.lines_morph]
+  decide
+
+-- Every tableau input obeys the No-Crossing Constraint, its stems doing so and concatenation
+-- preserving it; GEN then never draws a crossing line (`Candidate.isNonCrossing_links_of_mem_gen`).
+theorem isNonCrossing_inputs :
+    ∀ u ∈ [Fig3.fig3Input, Eq24.eq24Input, Eq21.eq21Input, Eq27.eq27Input, Eq30.eq30Input,
+      Eq22.eq22Input, Eq58.eq58Input], IsNonCrossing (u.lines : SetRel ℕ ℕ) := by
+  have s := isNonCrossing_stem
+  have c := Form.isNonCrossing_lines_concat (S := List Phonology.Segment) (T := TRN) (M := ℕ)
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+  exact ⟨c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
+    c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
+    c _ _ (s 0 _ (by simp)) (s 1 _ (by simp)), c _ _ (s 0 _ (by simp)) (s 1 _ (by simp)),
+    c _ _ (s 0 _ (by simp)) (s 1 _ (by simp)),
+    c _ _ (c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))) (s 2 _ (by simp)),
+    c _ _ (s 0 _ (by simp)) (s 1 _ (by simp))⟩
+
 /-! ### Deferred: GEN shift and insert-and-associate ops, L% boundary tone, §§3.3–3.4 tableaux -/
 
 end McPhersonLamont2026

@@ -26,6 +26,7 @@ product of its morphs.
 * `Sponsored α M`: a tier element with the morpheme that sponsors it.
 * `Form S T M`: a representation with slots in `S`, autosegments in `T`, and sponsors in `M`;
   `Form.concat` and `Form.empty` make the forms a monoid.
+* `Form.links`: the lines of a form as pairs of its positions, which candidates edit.
 * `Form.morph`: the morph of a morpheme, from its autosegments, its slots, and its lines.
 * `Form.IsTautomorphemic`: a line whose autosegment and slot share a sponsor.
 * `Form.toAR`: the representation a form presents, through `AR.ofWords`.
@@ -35,15 +36,16 @@ product of its morphs.
 * `Form.noCrossing_toAR_iff`: the presented representation obeys the NCC iff the lines are
   non-crossing.
 * `Form.toARHom`: presentation is a monoid hom from forms to representations.
-* `Form.isNonCrossing_links_concat`: concatenation preserves the No-Crossing Constraint.
+* `Form.isNonCrossing_lines_concat`: concatenation preserves the No-Crossing Constraint.
 
 ## Implementation notes
 
-Positions are elements of `Fin` over the tier lengths, so every line is in bounds, and numerals
-for positions of a concrete form need a `NeZero` instance for its tier lengths, which a study
-supplies by `decide`. `Form.morph` takes its lines as pairs of natural numbers and drops those
-out of range, as `SimpleGraph.fromEdgeSet` drops loops. `Form.toAR` needs the three label types
-in one universe, as `TwoTier` does.
+A form stores its lines as pairs of natural numbers with a proof that they are in range, as a
+`Finset` stores a multiset with a proof that it has no duplicates, so concatenation is a union
+and a shift. `Form.links` views the lines as pairs of positions in `Fin` over the tier lengths,
+whose numerals need a `NeZero` instance that a study supplies by `decide`. `Form.morph` drops the
+pairs out of range, as `SimpleGraph.fromEdgeSet` drops loops. `Form.toAR` needs the three label
+types in one universe, as `TwoTier` does.
 
 ## References
 
@@ -77,40 +79,59 @@ structure Sponsored (α M : Type*) where
   morpheme : M
   deriving DecidableEq, Repr
 
+/-- The element relabeled by `φ`, with the same sponsor. -/
+def Sponsored.map {α β M : Type*} (φ : α → β) (x : Sponsored α M) : Sponsored β M :=
+  ⟨φ x.value, x.morpheme⟩
+
+@[simp] theorem Sponsored.value_map {α β M : Type*} (φ : α → β) (x : Sponsored α M) :
+    (x.map φ).value = φ x.value := rfl
+
+@[simp] theorem Sponsored.morpheme_map {α β M : Type*} (φ : α → β) (x : Sponsored α M) :
+    (x.map φ).morpheme = x.morpheme := rfl
+
 /-- A `Form S T M` is a two-tier autosegmental representation with slots in `S`, autosegments
-in `T`, and sponsors in `M`. Its association lines run from positions of the upper tier to
-positions of the lower tier. -/
-structure Form (S T M : Type*) where
+in `T`, and sponsors in `M`. Its association lines are pairs of a position of the upper tier
+and a position of the lower tier. -/
+@[ext] structure Form (S T M : Type*) where
   /-- The upper tier, of autosegments in tier order. -/
   upper : List (Sponsored T M)
   /-- The lower tier, of slots in tier order. -/
   lower : List (Sponsored S M)
-  /-- The association lines, each from an autosegment to a slot. -/
-  links : Finset (Fin upper.length × Fin lower.length)
+  /-- The association lines, each from a position of the upper tier to one of the lower. -/
+  lines : Finset (ℕ × ℕ)
+  lt_of_mem_lines {p : ℕ × ℕ} : p ∈ lines → p.1 < upper.length ∧ p.2 < lower.length
 
 namespace Form
 
 variable {S T M : Type*} (f g : Form S T M)
 
-/-- Forms are compared tier by tier and then on their lines, which live over the same
-positions once the tiers agree. -/
-instance [DecidableEq S] [DecidableEq T] [DecidableEq M] : DecidableEq (Form S T M)
-  | ⟨u, l, ls⟩, ⟨u', l', ls'⟩ =>
-    if h : u = u' then
-      if h' : l = l' then by subst h h'; exact decidable_of_iff (ls = ls') (by simp)
-      else isFalse fun he ↦ h' (congrArg lower he)
-    else isFalse fun he ↦ h (congrArg upper he)
+instance [DecidableEq S] [DecidableEq T] [DecidableEq M] : DecidableEq (Form S T M) :=
+  fun _ _ ↦ decidable_of_iff _ Form.ext_iff.symm
 
-theorem ext {f g : Form S T M} (hu : f.upper = g.upper) (hl : f.lower = g.lower)
-    (h : ∀ p, p ∈ f.links ↔
-      (finCongr (congrArg List.length hu) p.1, finCongr (congrArg List.length hl) p.2)
-        ∈ g.links) : f = g := by
-  obtain ⟨u, l, ls⟩ := f
-  obtain ⟨u', l', ls'⟩ := g
-  cases hu
-  cases hl
-  simp only [finCongr_refl, Equiv.refl_apply] at h
-  rw [Finset.ext_iff.2 h]
+/-- The lines of a form as pairs of its positions, the view that candidates edit. -/
+def links : Finset (Fin f.upper.length × Fin f.lower.length) :=
+  Finset.univ.filter fun p ↦ (p.1.val, p.2.val) ∈ f.lines
+
+variable {f} in
+@[simp] theorem mem_links {p : Fin f.upper.length × Fin f.lower.length} :
+    p ∈ f.links ↔ (p.1.val, p.2.val) ∈ f.lines := by
+  simp [links]
+
+theorem map_links : f.links.map (Fin.valEmbedding.prodMap Fin.valEmbedding) = f.lines := by
+  ext ⟨a, b⟩
+  simp only [Finset.mem_map, mem_links, Function.Embedding.prodMap, Prod.exists,
+    Function.Embedding.coeFn_mk, Prod.map, Fin.valEmbedding_apply, Prod.mk.injEq]
+  constructor
+  · rintro ⟨k, i, h, rfl, rfl⟩
+    exact h
+  · intro h
+    exact ⟨⟨a, (f.lt_of_mem_lines h).1⟩, ⟨b, (f.lt_of_mem_lines h).2⟩, h, rfl, rfl⟩
+
+theorem isNonCrossing_lines_iff :
+    IsNonCrossing (f.lines : SetRel ℕ ℕ) ↔
+      IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
+  rw [← map_links, Finset.coe_map, isNonCrossing_image]
+  rfl
 
 /-! ### Morphemes -/
 
@@ -140,96 +161,61 @@ instance [DecidableEq M] (l : Fin f.upper.length × Fin f.lower.length) :
 Concatenation juxtaposes the tiers and shifts the right factor's lines past the left factor's
 tiers, so the forms are a monoid with the empty form as unit. -/
 
-/-- The positions of `a` as the left block of `a ++ b`. -/
-def castAppend {α : Type*} (a b : List α) : Fin a.length ↪ Fin (a ++ b).length :=
-  ⟨fun i ↦ ⟨i, by simp; omega⟩, fun _ _ h ↦ Fin.ext (Fin.mk.inj h)⟩
+/-- `shift a b` moves a line `a` positions along the upper tier and `b` along the lower. -/
+def shift (a b : ℕ) : ℕ × ℕ ↪ ℕ × ℕ := (addLeftEmbedding a).prodMap (addLeftEmbedding b)
 
-/-- The positions of `b` as the right block of `a ++ b`. -/
-def natAddAppend {α : Type*} (a b : List α) : Fin b.length ↪ Fin (a ++ b).length :=
-  ⟨fun i ↦ ⟨a.length + i, by simp⟩, fun _ _ h ↦ Fin.ext (by have := Fin.mk.inj h; omega)⟩
-
-@[simp] theorem val_castAppend {α : Type*} {a b : List α} (i : Fin a.length) :
-    (castAppend a b i : ℕ) = i := rfl
-
-@[simp] theorem val_natAddAppend {α : Type*} {a b : List α} (i : Fin b.length) :
-    (natAddAppend a b i : ℕ) = a.length + i := rfl
+@[simp] theorem shift_apply (a b : ℕ) (p : ℕ × ℕ) : shift a b p = (a + p.1, b + p.2) := rfl
 
 /-- `concat f g` juxtaposes the tiers of `f` and `g` and shifts the lines of `g` past the tiers
 of `f`. -/
 def concat : Form S T M where
   upper := f.upper ++ g.upper
   lower := f.lower ++ g.lower
-  links :=
-    f.links.map ((castAppend f.upper g.upper).prodMap (castAppend f.lower g.lower)) ∪
-      g.links.map ((natAddAppend f.upper g.upper).prodMap (natAddAppend f.lower g.lower))
+  lines := f.lines ∪ g.lines.map (shift f.upper.length f.lower.length)
+  lt_of_mem_lines {p} hp := by
+    simp only [Finset.mem_union, Finset.mem_map] at hp
+    rcases hp with hp | ⟨q, hq, rfl⟩
+    · have := f.lt_of_mem_lines hp
+      simp only [List.length_append]
+      omega
+    · have := g.lt_of_mem_lines hq
+      simp only [shift_apply, List.length_append]
+      omega
 
 /-- The empty form has empty tiers and no lines. -/
-def empty : Form S T M := ⟨[], [], ∅⟩
+def empty : Form S T M := ⟨[], [], ∅, nofun⟩
 
 @[simp] theorem concat_upper : (f.concat g).upper = f.upper ++ g.upper := rfl
 
 @[simp] theorem concat_lower : (f.concat g).lower = f.lower ++ g.lower := rfl
 
+@[simp] theorem concat_lines :
+    (f.concat g).lines = f.lines ∪ g.lines.map (shift f.upper.length f.lower.length) := rfl
+
 @[simp] theorem empty_upper : (empty : Form S T M).upper = [] := rfl
 
 @[simp] theorem empty_lower : (empty : Form S T M).lower = [] := rfl
 
-@[simp] theorem empty_links : (empty : Form S T M).links = ∅ := rfl
-
-variable {f g} in
-theorem mem_links_concat {p : Fin (f.concat g).upper.length × Fin (f.concat g).lower.length} :
-    p ∈ (f.concat g).links ↔
-      (∃ q ∈ f.links, q.1.val = p.1.val ∧ q.2.val = p.2.val) ∨
-        ∃ q ∈ g.links, f.upper.length + q.1.val = p.1.val ∧
-          f.lower.length + q.2.val = p.2.val := by
-  obtain ⟨p₁, p₂⟩ := p
-  simp [concat, Finset.mem_map, Function.Embedding.prodMap, Prod.ext_iff, Fin.ext_iff]
+@[simp] theorem empty_lines : (empty : Form S T M).lines = ∅ := rfl
 
 theorem concat_assoc (h : Form S T M) : (f.concat g).concat h = f.concat (g.concat h) := by
-  refine ext (List.append_assoc ..) (List.append_assoc ..) fun p ↦ ?_
-  have e₁ : (f.concat g).upper.length = f.upper.length + g.upper.length :=
-    List.length_append ..
-  have e₂ : (f.concat g).lower.length = f.lower.length + g.lower.length :=
-    List.length_append ..
-  rw [mem_links_concat (f := f.concat g) (g := h), mem_links_concat (f := f) (g := g.concat h)]
-  simp only [finCongr_apply, Fin.val_cast]
-  constructor
-  · rintro (⟨q, hq, h₁, h₂⟩ | ⟨q, hq, h₁, h₂⟩)
-    · rcases mem_links_concat.1 hq with ⟨r, hr, h₃, h₄⟩ | ⟨r, hr, h₃, h₄⟩
-      · exact .inl ⟨r, hr, by omega, by omega⟩
-      · exact .inr ⟨(castAppend _ _ r.1, castAppend _ _ r.2),
-          mem_links_concat.2 (.inl ⟨r, hr, rfl, rfl⟩), by simp; omega, by simp; omega⟩
-    · exact .inr ⟨(natAddAppend _ _ q.1, natAddAppend _ _ q.2),
-        mem_links_concat.2 (.inr ⟨q, hq, rfl, rfl⟩), by simp; omega, by simp; omega⟩
-  · rintro (⟨q, hq, h₁, h₂⟩ | ⟨q, hq, h₁, h₂⟩)
-    · exact .inl ⟨(castAppend _ _ q.1, castAppend _ _ q.2),
-        mem_links_concat.2 (.inl ⟨q, hq, rfl, rfl⟩), by simp; omega, by simp; omega⟩
-    · rcases mem_links_concat.1 hq with ⟨r, hr, h₃, h₄⟩ | ⟨r, hr, h₃, h₄⟩
-      · exact .inl ⟨(natAddAppend _ _ r.1, natAddAppend _ _ r.2),
-          mem_links_concat.2 (.inr ⟨r, hr, rfl, rfl⟩), by simp; omega, by simp; omega⟩
-      · exact .inr ⟨r, hr, by omega, by omega⟩
+  refine Form.ext (List.append_assoc ..) (List.append_assoc ..) ?_
+  simp only [concat_lines, concat_upper, concat_lower, List.length_append, Finset.map_union,
+    Finset.map_map, Finset.union_assoc]
+  congr 3
+  ext <;> simp [Nat.add_assoc]
 
 theorem empty_concat : empty.concat f = f := by
-  refine ext (List.nil_append _) (List.nil_append _) fun p ↦ ?_
-  rw [mem_links_concat]
-  constructor
-  · rintro (⟨q, hq, -⟩ | ⟨q, hq, h₁, h₂⟩)
-    · exact absurd hq (Finset.notMem_empty _)
-    · convert hq using 1
-      exact Prod.ext (Fin.ext (by simpa using h₁.symm)) (Fin.ext (by simpa using h₂.symm))
-  · intro hp
-    exact .inr ⟨_, hp, by simp, by simp⟩
+  ext p
+  · simp
+  · simp
+  · simp [Finset.mem_map]
 
 theorem concat_empty : f.concat empty = f := by
-  refine ext (List.append_nil _) (List.append_nil _) fun p ↦ ?_
-  rw [mem_links_concat]
-  constructor
-  · rintro (⟨q, hq, h₁, h₂⟩ | ⟨q, hq, -⟩)
-    · convert hq using 1
-      exact Prod.ext (Fin.ext (by simp; omega)) (Fin.ext (by simp; omega))
-    · exact absurd hq (Finset.notMem_empty _)
-  · intro hp
-    exact .inl ⟨_, hp, by simp, by simp⟩
+  ext p
+  · simp
+  · simp
+  · simp
 
 /-- Forms are a monoid under concatenation, with the empty form as unit. -/
 instance instMonoid : Monoid (Form S T M) where
@@ -242,31 +228,6 @@ instance instMonoid : Monoid (Form S T M) where
 @[simp] theorem mul_eq_concat : f * g = f.concat g := rfl
 
 @[simp] theorem one_eq_empty : (1 : Form S T M) = empty := rfl
-
-/-! ### The presented representation
-
-A form presents the two-tier representation `AR.ofWords` builds from its tiers and its lines in
-`ℕ` coordinates. -/
-
-/-- The lines of a form in `ℕ` coordinates. -/
-def lines : Finset (ℕ × ℕ) := f.links.map (Fin.valEmbedding.prodMap Fin.valEmbedding)
-
-variable {f} in
-@[simp] theorem mem_lines {p : ℕ × ℕ} :
-    p ∈ f.lines ↔ ∃ q ∈ f.links, (q.1 : ℕ) = p.1 ∧ (q.2 : ℕ) = p.2 := by
-  obtain ⟨p₁, p₂⟩ := p
-  simp [lines, Function.Embedding.prodMap, Prod.ext_iff]
-
-theorem lt_of_mem_lines {p : ℕ × ℕ} (h : p ∈ f.lines) :
-    p.1 < f.upper.length ∧ p.2 < f.lower.length := by
-  obtain ⟨q, -, h₁, h₂⟩ := mem_lines.1 h
-  exact ⟨h₁ ▸ q.1.isLt, h₂ ▸ q.2.isLt⟩
-
-theorem isNonCrossing_lines_iff :
-    IsNonCrossing (f.lines : SetRel ℕ ℕ) ↔
-      IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
-  rw [lines, Finset.coe_map, isNonCrossing_image]
-  rfl
 
 /-! ### Morphs -/
 
@@ -286,28 +247,24 @@ phonology hands partially linked morphs, such as the Poko stem /Mᴴ/, to the po
 def morph : Form S T M where
   upper := upper.map (⟨·, m⟩)
   lower := lower.map (⟨·, m⟩)
-  links := Finset.univ.filter fun p ↦ (p.1.val, p.2.val) ∈ lines
+  lines := lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length
+  lt_of_mem_lines h := by simpa using (Finset.mem_filter.1 h).2
 
 @[simp] theorem morph_upper : (morph m upper lower lines).upper = upper.map (⟨·, m⟩) := rfl
 
 @[simp] theorem morph_lower : (morph m upper lower lines).lower = lower.map (⟨·, m⟩) := rfl
 
-variable {m upper lower lines} in
-@[simp] theorem mem_links_morph {p} :
-    p ∈ (morph m upper lower lines).links ↔ (p.1.val, p.2.val) ∈ lines := by
-  simp [morph]
-
 /-- The lines of a morph are the given pairs within range of its tiers. -/
 @[simp] theorem lines_morph :
     (morph m upper lower lines).lines =
-      lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length := by
-  ext ⟨a, b⟩
-  simp only [mem_lines, mem_links_morph, Finset.mem_filter]
-  constructor
-  · rintro ⟨⟨k, i⟩, h, rfl, rfl⟩
-    exact ⟨h, by simpa using k.isLt, by simpa using i.isLt⟩
-  · rintro ⟨h, ha, hb⟩
-    exact ⟨(⟨a, by simpa⟩, ⟨b, by simpa⟩), h, rfl, rfl⟩
+      lines.filter fun p ↦ p.1 < upper.length ∧ p.2 < lower.length := rfl
+
+variable {m upper lower lines} in
+@[simp] theorem mem_links_morph {p : Fin (morph m upper lower lines).upper.length ×
+    Fin (morph m upper lower lines).lower.length} :
+    p ∈ (morph m upper lower lines).links ↔ (p.1.val, p.2.val) ∈ lines := by
+  rw [mem_links, lines_morph, Finset.mem_filter, and_iff_left_iff_imp]
+  exact fun _ ↦ ⟨by simpa using p.1.isLt, by simpa using p.2.isLt⟩
 
 @[simp] theorem links_morph_empty : (morph m upper lower ∅ : Form S T M).links = ∅ :=
   Finset.eq_empty_of_forall_notMem fun _ h ↦ Finset.notMem_empty _ (mem_links_morph.1 h)
@@ -336,32 +293,27 @@ def toAR : AR (TwoTier (Sponsored T M) (Sponsored S M)) :=
     ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
 /-- The presented representation obeys the NCC iff the lines are non-crossing. -/
-theorem noCrossing_toAR_iff :
-    f.toAR.NoCrossing ↔
-      IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
+theorem noCrossing_toAR_iff : f.toAR.NoCrossing ↔ IsNonCrossing (f.lines : SetRel ℕ ℕ) := by
   refine AR.noCrossing_ofWords_iff.trans ?_
-  rw [← isNonCrossing_lines_iff]
   congr! 1
   ext ⟨p, q⟩
-  simp only [Set.mem_ofPred_eq, Finset.mem_coe]
   exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
 theorem toAR_concat : (f.concat g).toAR = f.toAR * g.toAR :=
   AR.ext_of_true_false rfl rfl fun p q ↦ by
     rw [AR.link_mul]
-    simp only [link_toAR, word_toAR_true, word_toAR_false, mem_lines, mem_links_concat]
+    simp only [link_toAR, word_toAR_true, word_toAR_false, concat_lines, Finset.mem_union,
+      Finset.mem_map, shift_apply, Prod.ext_iff]
     constructor
-    · rintro ⟨r, (⟨s, hs, h₁, h₂⟩ | ⟨s, hs, h₁, h₂⟩), rfl, rfl⟩
-      · exact .inl ⟨s, hs, h₁, h₂⟩
-      · exact .inr ⟨by omega, by omega, s, hs, by omega, by omega⟩
-    · rintro (⟨s, hs, h₁, h₂⟩ | ⟨hp, hq, s, hs, h₁, h₂⟩)
-      · exact ⟨(castAppend _ _ s.1, castAppend _ _ s.2), .inl ⟨s, hs, rfl, rfl⟩,
-          by simpa using h₁, by simpa using h₂⟩
-      · exact ⟨(natAddAppend _ _ s.1, natAddAppend _ _ s.2), .inr ⟨s, hs, rfl, rfl⟩,
-          by simp; omega, by simp; omega⟩
+    · rintro (h | ⟨⟨a, b⟩, h, rfl, rfl⟩)
+      · exact .inl h
+      · exact .inr ⟨by omega, by omega, by simpa using h⟩
+    · rintro (h | ⟨hp, hq, h⟩)
+      · exact .inl h
+      · exact .inr ⟨_, h, by omega, by omega⟩
 
 theorem toAR_empty : (empty : Form S T M).toAR = 1 :=
-  AR.ext_of_true_false rfl rfl fun p q ↦ by simp [lines, empty]
+  AR.ext_of_true_false rfl rfl fun p q ↦ by simp
 
 /-- Presentation is a monoid hom from forms to representations. -/
 @[simps] def toARHom : Form S T M →* AR (TwoTier (Sponsored T M) (Sponsored S M)) where
@@ -371,11 +323,9 @@ theorem toAR_empty : (empty : Form S T M).toAR = 1 :=
 
 /-- Concatenation preserves the No-Crossing Constraint, as concatenation of representations
 does ([jardine-2016b] Theorem 4). -/
-theorem isNonCrossing_links_concat
-    (h₁ : IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)))
-    (h₂ : IsNonCrossing (g.links : SetRel (Fin g.upper.length) (Fin g.lower.length))) :
-    IsNonCrossing ((f.concat g).links :
-      SetRel (Fin (f.concat g).upper.length) (Fin (f.concat g).lower.length)) := by
+theorem isNonCrossing_lines_concat (h₁ : IsNonCrossing (f.lines : SetRel ℕ ℕ))
+    (h₂ : IsNonCrossing (g.lines : SetRel ℕ ℕ)) :
+    IsNonCrossing ((f.concat g).lines : SetRel ℕ ℕ) := by
   rw [← noCrossing_toAR_iff, toAR_concat]
   exact ((noCrossing_toAR_iff f).2 h₁).mul ((noCrossing_toAR_iff g).2 h₂)
 

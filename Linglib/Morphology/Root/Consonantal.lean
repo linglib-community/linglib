@@ -13,8 +13,9 @@ public import Linglib.Phonology.OCP
 A consonantal root is the ordered melody of consonants that a root-and-pattern morphology stores
 apart from its vocalism and its template, the nonconcatenative counterpart of a linear `Morph`.
 The type of segments is a parameter, so that a root may be a list of feature bundles, of IPA
-symbols or of coarser classes. In autosegmental terms a root is an unlinked melody on the
-consonantal tier, and `TemplateMatch` associates it with a template.
+symbols or of coarser classes. In autosegmental terms a root is a morph whose melody lies unlinked
+on a plane of its own, and the conventions of `Morphology/Morphotactics/Association.lean` associate
+it with a template.
 
 The roots of other programs live under their owners: a morphological core is a morph of a primary
 word (`Morphology.IsCore`), and `DistributedMorphology.Root` and `ArgumentStructure.Root` are the

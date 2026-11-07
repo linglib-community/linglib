@@ -25,6 +25,10 @@ consonant left unexplained, and the No-Crossing Constraint keeps it out of the h
 * The derivations run over the squib's transcription. `fragment_roots` shows that its roots,
   read as segments, are the Hebrew and Amharic fragments' roots, the alternating stops of √kl
   and √skt realized as stops by Arad's rule.
+* The root and the feminine morph share the consonantal plane, the morph's t after the radicals
+  as (10c) draws them, so the No-Crossing Constraint on intrusion is the constraint on that plane.
+  The template, a morph in its own right (p. 433), carries the vocalization on the vocalic plane.
+  *Misalignment reads the sponsors: a root element is nonfinal when a root element follows it.
 * `segClass` lets a plain C-slot host a glide but no vowel and a [+c] slot only consonants, and
   `merge` states the squib's mergers d + j to ʤ, ä + a to a and ä + i to e.
 * The medial geminate of the Amharic PFV is prespecified ({C C} in (7)). The suffix consonant
@@ -55,32 +59,35 @@ open Morphology Autosegmental
 
 variable {α : Type*}
 
+/-- The planes of a stem (10c): the consonantal melody, root and suffix, and the template's
+vocalization. -/
+inductive Plane where
+  | consonantal
+  | vocalic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The morphemes of a stem: the root, the feminine morph √(a)t, and the template, which is a
+derivational morph in its own right (p. 433). -/
+inductive Morpheme where
+  | root
+  | suffix
+  | template
+  deriving DecidableEq, Repr
+
+open MultiplanarForm
+
 /-! ### *Misalignment -/
 
 /-- `Misaligned m` holds when some nonfinal root element is associated to the template-final slot,
-which *Misalignment (2), (6b) bans. -/
-def Misaligned (m : TemplateMatch α) : Prop :=
-  ∃ a ∈ m.associations,
-    a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧ a.slotIndex + 1 = m.template.length
+which *Misalignment (2), (6b) bans. The root's elements precede the suffix's on the consonantal
+plane, so a root element is nonfinal when a root element follows it. -/
+def Misaligned (m : MultiplanarForm Plane Slot α Morpheme) : Prop :=
+  ∃ l ∈ m.lines .consonantal, (m.upper .consonantal)[l.1]?.map (·.morpheme) = some .root ∧
+    (m.upper .consonantal)[l.1 + 1]?.map (·.morpheme) = some .root ∧
+      l.2 + 1 = m.template.length
 
-instance (m : TemplateMatch α) : Decidable (Misaligned m) :=
-  inferInstanceAs (Decidable (∃ a ∈ m.associations, _))
-
-theorem misaligned_append (m : TemplateMatch α) (l : List Association) :
-    Misaligned { m with associations := m.associations ++ l } ↔
-      Misaligned m ∨ ∃ a ∈ l, a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧
-        a.slotIndex + 1 = m.template.length := by
-  simp only [Misaligned, List.mem_append, or_and_right, exists_or]
-
--- (8), (10)
-theorem misaligned_append_affix (m : TemplateMatch α) (l : List Association)
-    (h : ∀ a ∈ l, a.source = .affix) :
-    Misaligned { m with associations := m.associations ++ l } ↔ Misaligned m := by
-  rw [misaligned_append, or_iff_left]
-  rintro ⟨a, ha, hr, -⟩
-  exact absurd (h a ha) (by rw [hr]; decide)
-
-/-! ### Segments, patterns, and association -/
+instance (m : MultiplanarForm Plane Slot α Morpheme) : Decidable (Misaligned m) :=
+  inferInstanceAs (Decidable (∃ _ ∈ m.lines .consonantal, _))
 
 /-- The classes the [+consonantal] specification of a C-slot separates. -/
 inductive SegClass where
@@ -124,7 +131,7 @@ structure Pattern where
   category : Category
   /-- The vocalization and its association lines. -/
   vocalism : List String := []
-  vocLines : List Association := []
+  vocLines : List (ℕ × ℕ) := []
   /-- Segmental material preceding and following the skeleton. -/
   pre : List String := []
   post : List String := []
@@ -136,117 +143,172 @@ structure Pattern where
   /-- An unsatisfied final syllable is deleted (7a). -/
   truncates : Bool := false
 
-/-- The root associated with the C-slots by the conventions, one to one from left to right
-with the final radical spreading onto leftover slots, plus the pattern's vocalization lines. -/
-def lines (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
-  (({ root := r, vocalism := p.vocalism, template := p.template, associations := [] } :
-    TemplateMatch String).associate .root).link p.vocLines
+/-- The template of a pattern, a morph of its slots and its vocalization with the vocalization's
+lines (p. 433). -/
+def Pattern.morph (p : Pattern) : MultiplanarForm Plane Slot String Morpheme :=
+  (ofSlots .template p.template * ofMelody .vocalic .template p.vocalism :
+    MultiplanarForm Plane Slot String Morpheme).link .vocalic p.vocLines
 
-/-- `m.Admits a` says that the slot's specification admits the segment. A [+c] slot hosts consonants
-only ((4), (7), (13)), and a plain C-slot anything but a vowel. -/
-def Admits (p : Pattern) (m : TemplateMatch String) (a : Association) : Prop :=
-  match m.template[a.slotIndex]?, m.segmentAt a with
+/-- The root associated with the C-slots by the conventions, one to one from left to right
+with the final radical spreading onto leftover slots, under the pattern's vocalization. -/
+def lines (p : Pattern) (r : ConsonantalRoot String) : MultiplanarForm Plane Slot String Morpheme :=
+  (ofMelody Plane.consonantal Morpheme.root r.segments * p.morph).associate .consonantal .C
+
+/-- `m.Admits l` says that the slot's specification admits the segment of the consonantal line
+`l`. A [+c] slot hosts consonants only ((4), (7), (13)), and a plain C-slot anything but a
+vowel. -/
+def Admits (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) : Prop :=
+  match m.template[l.2]?, ((m.upper .consonantal)[l.1]?).map (·.value) with
   | some .C, some x =>
-    if a.slotIndex ∈ p.consonantal then segClass x = .consonant else segClass x ≠ .vowel
+    if l.2 ∈ p.consonantal then segClass x = .consonant else segClass x ≠ .vowel
   | _, _ => True
 
-instance (p : Pattern) (m : TemplateMatch String) (a : Association) :
-    Decidable (Admits p m a) := by
+instance (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) :
+    Decidable (Admits p m l) := by
   unfold Admits; split <;> infer_instance
 
 /-- The V-slots flanking slot `i`. -/
-def flankingV (m : TemplateMatch String) (i : Nat) : List Nat :=
+def flankingV (m : MultiplanarForm Plane Slot String Morpheme) (i : Nat) : List Nat :=
   [i - 1, i + 1].filter fun s ↦ m.template[s]? = some .V
 
 /-- The vocalization line at slot `s`. -/
-def vocAt (m : TemplateMatch String) (s : Nat) : Option Association :=
-  m.associations.find? fun a ↦ a.source == .vocalism && a.slotIndex == s
+def vocAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : Option (ℕ × ℕ) :=
+  ((List.range (m.upper .vocalic).length).find? fun k ↦ (k, s) ∈ m.lines .vocalic).map (·, s)
 
 /-- `join` places a barred root element. A glide joins the slot of the consonant on its left where
 the pattern's language does that, Amharic and not Hebrew (7). A nonconsonantal radical merges with
 the vocalization on the V-slots flanking its slot, the vocalization element spreading to a flanking
 V-slot it did not occupy, so that the merger "occupies the two vocalic positions around the C
 position" (13b–c). -/
-def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMatch String :=
-  match (m.segmentAt a).map segClass with
+def join (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) (l : ℕ × ℕ) :
+    MultiplanarForm Plane Slot String Morpheme :=
+  match ((m.upper .consonantal)[l.1]?).map (segClass ·.value) with
   | some .glide =>
     if p.joinsGlide then
-      match m.leftLine .root a.slotIndex with
-      | some b =>
-        { m with associations := m.associations ++ [⟨.root, a.melodyIndex, b.slotIndex⟩] }
+      match m.leftLine .consonantal l.2 with
+      | some b => m.link .consonantal [(l.1, b.2)]
       | none => m
     else m
   | some .vowel =>
-    let vs := flankingV m a.slotIndex
+    let vs := flankingV m l.2
     match vs.findSome? (vocAt m) with
     | some v =>
-      { m with associations := m.associations ++ vs.map (fun s ↦ ⟨.root, a.melodyIndex, s⟩) ++
-          (vs.filter fun s ↦ (vocAt m s).isNone).map fun s ↦ ⟨.vocalism, v.melodyIndex, s⟩ }
+      (m.link .consonantal (vs.map (l.1, ·))).link .vocalic
+        ((vs.filter fun s ↦ (vocAt m s).isNone).map (v.1, ·))
     | none => m
   | _ => m
 
+/-- The consonantal lines of a match, by melody position and then slot. -/
+def consonantalLines (m : MultiplanarForm Plane Slot String Morpheme) : List (ℕ × ℕ) :=
+  (List.range (m.upper .consonantal).length).flatMap fun k ↦
+    ((List.range m.lower.length).filter fun s ↦ (k, s) ∈ m.lines .consonantal).map (k, ·)
+
 /-- Association under the slot specifications removes the rejected lines and joins or merges their
 elements as the pattern's language allows. -/
-def associate (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
+def associate (p : Pattern) (r : ConsonantalRoot String) :
+    MultiplanarForm Plane Slot String Morpheme :=
   let m := lines p r
-  (m.associations.filter fun a ↦ ¬ Admits p m a).foldl (join p)
-    { m with associations := m.associations.filter (Admits p m ·) }
+  ((consonantalLines m).filter fun l ↦ ¬ Admits p m l).foldl (join p)
+    (m.filterLines .consonantal (Admits p m ·))
 
 /-! ### Intrusion -/
 
-/-- The consonantal melody of a base merged with a suffix, root elements then the suffix's, in
-the coordinates of `Autosegmental.IsNonCrossing`. -/
-def melodyLinks (m : TemplateMatch String) : Finset (Nat × Nat) :=
-  m.links .root ∪ (m.links .affix).image fun p ↦ (p.1 + m.root.arity, p.2)
+/-- The feminine morph √(a)t, whose vowel does not surface, so that it carries only t. -/
+def suffixMorph : MultiplanarForm Plane Slot String Morpheme := ofMelody .consonantal .suffix ["t"]
 
-/-- The feminine morph √(a)t merged with the base, its consonant associated to slot `s`. -/
-def intrudeAt (m : TemplateMatch String) (s : Nat) : TemplateMatch String :=
-  { m with affix := ["t"], associations := m.associations ++ [⟨.affix, 0, s⟩] }
+/-- The feminine morph merged with the base, its consonant associated to slot `s`. The base's root
+and the morph share the consonantal plane, the morph's t after the radicals (10c). -/
+def intrudeAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
+    MultiplanarForm Plane Slot String Morpheme :=
+  (m * suffixMorph).link .consonantal [((m.upper .consonantal).length, s)]
 
-theorem melodyLinks_intrudeAt (m : TemplateMatch String) (s : Nat) :
-    melodyLinks (intrudeAt m s) = insert (m.root.arity, s) (melodyLinks m) := by
-  ext p
-  simp [melodyLinks, intrudeAt, TemplateMatch.links, List.filter_append]
+theorem lines_intrudeAt_subset (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
+    (intrudeAt m s).lines .consonantal ⊆
+      insert ((m.upper .consonantal).length, s) (m.lines .consonantal) := by
+  intro l hl
+  rw [intrudeAt, link, mem_addLines] at hl
+  simp only [suffixMorph, mul_eq_concat, concat_lines, ofMelody_lines, Finset.map_empty,
+    Finset.union_empty, List.mem_toFinset, List.mem_singleton] at hl
+  rw [Finset.mem_insert]
+  tauto
 
 /-- Intrusion (10b–c) associates the morph's consonant from right to left to the rightmost vacant
 C-slot, provided that slot lies in its window, so that its line crosses none of the root's;
 otherwise the consonant floats (13b–c). -/
-def intrude (m : TemplateMatch String) : TemplateMatch String :=
+def intrude (m : MultiplanarForm Plane Slot String Morpheme) :
+    MultiplanarForm Plane Slot String Morpheme :=
   match m.unfilledCSlots.max? with
   | some s =>
-    if s ∈ window (melodyLinks m : SetRel ℕ ℕ) m.root.arity then intrudeAt m s
-    else { m with affix := ["t"] }
-  | none => { m with affix := ["t"] }
+    if s ∈ window (m.lines .consonantal : SetRel ℕ ℕ) (m.upper .consonantal).length then
+      intrudeAt m s
+    else m * suffixMorph
+  | none => m * suffixMorph
 
-theorem misaligned_intrudeAt (m : TemplateMatch String) (s : Nat) :
+theorem misaligned_mul_suffixMorph (m : MultiplanarForm Plane Slot String Morpheme)
+    {L : List (ℕ × ℕ)} (hL : ∀ l ∈ L, (m.upper .consonantal).length ≤ l.1) :
+    Misaligned ((m * suffixMorph).link .consonantal L) ↔ Misaligned m := by
+  have hroot (k : ℕ) :
+      ((m.upper .consonantal ++ [⟨"t", .suffix⟩])[k]?.map (·.morpheme) = some .root) ↔
+        (m.upper .consonantal)[k]?.map (·.morpheme) = some .root := by
+    rcases lt_or_ge k (m.upper .consonantal).length with h | h
+    · rw [List.getElem?_append_left h]
+    · rw [List.getElem?_append_right h, List.getElem?_eq_none h, List.getElem?_singleton]
+      split_ifs <;> simp
+  have hupper : ((m * suffixMorph).link .consonantal L).upper .consonantal =
+      m.upper .consonantal ++ [⟨"t", .suffix⟩] := by
+    simp [link, suffixMorph]
+  have htemplate : ((m * suffixMorph).link .consonantal L).template = m.template := by
+    simp [link, suffixMorph, template]
+  simp only [Misaligned, hupper, htemplate, hroot]
+  constructor
+  · rintro ⟨l, hl, h1, h2, h3⟩
+    rw [link, mem_addLines] at hl
+    simp only [suffixMorph, mul_eq_concat, concat_lines, ofMelody_lines, Finset.map_empty,
+      Finset.union_empty, List.mem_toFinset, true_and] at hl
+    rcases hl with hl | ⟨hl, -⟩
+    · exact ⟨l, hl, h1, h2, h3⟩
+    · rw [List.getElem?_eq_none (hL l hl)] at h1
+      simp at h1
+  · rintro ⟨l, hl, h⟩
+    refine ⟨l, ?_, h⟩
+    rw [link, mem_addLines]
+    simp [suffixMorph, hl]
+
+theorem misaligned_intrudeAt (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) :
     Misaligned (intrudeAt m s) ↔ Misaligned m :=
-  misaligned_append_affix m [⟨.affix, 0, s⟩] (by simp)
+  misaligned_mul_suffixMorph m (by simp)
 
 -- (8), (10)
-theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) ↔ Misaligned m := by
+theorem misaligned_intrude (m : MultiplanarForm Plane Slot String Morpheme) :
+    Misaligned (intrude m) ↔ Misaligned m := by
+  have h := misaligned_mul_suffixMorph m (L := []) (by simp)
   unfold intrude
   split
   · split
     · exact misaligned_intrudeAt m _
-    · exact Iff.rfl
-  · exact Iff.rfl
+    · simpa [link] using h
+  · simpa [link] using h
 
-/-- The intruder's line never crosses a root line, so intrusion keeps the merged melody
+/-- The intruder's line never crosses a root line, so intrusion keeps the consonantal plane
 non-crossing. -/
-theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
-    (h : IsNonCrossing (melodyLinks m : SetRel ℕ ℕ)) :
-    IsNonCrossing (melodyLinks (intrude m) : SetRel ℕ ℕ) := by
+theorem isNonCrossing_lines_intrude (m : MultiplanarForm Plane Slot String Morpheme)
+    (h : IsNonCrossing (m.lines .consonantal : SetRel ℕ ℕ)) :
+    IsNonCrossing ((intrude m).lines .consonantal : SetRel ℕ ℕ) := by
+  have hsuf : (m * suffixMorph).lines .consonantal = m.lines .consonantal := by
+    simp [suffixMorph]
   unfold intrude
   split
   · split
-    · rw [melodyLinks_intrudeAt, Finset.coe_insert, isNonCrossing_insert_iff_mem_window]
+    · refine IsNonCrossing.subset (Finset.coe_subset.2 (lines_intrudeAt_subset m _)) ?_
+      rw [Finset.coe_insert, isNonCrossing_insert_iff_mem_window]
       exact ⟨h, ‹_›⟩
-    · exact h
-  · exact h
+    · rwa [hsuf]
+  · rwa [hsuf]
 
 /-- The derivation of a root in a pattern is association under the slot specifications followed, for
 a nominal base whose template is unsatisfied, by merger of the feminine morph ((10b), (11)). -/
-def derive (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
+def derive (p : Pattern) (r : ConsonantalRoot String) :
+    MultiplanarForm Plane Slot String Morpheme :=
   let m := associate p r
   if p.category = .noun ∧ ¬ m.allCSlotsFilled then intrude m else m
 
@@ -257,14 +319,13 @@ theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
 
 /-! ### Realization -/
 
-/-- `hosted m s` lists the segments slot `s` hosts, vocalization first, then root, then affix lines.
--/
-def hosted (m : TemplateMatch String) (s : Nat) : List String :=
-  [AssocSource.vocalism, .root, .affix].flatMap fun src ↦
-    (m.associations.filter fun a ↦ a.source == src && a.slotIndex == s).filterMap m.segmentAt
+/-- `hosted m s` lists the segments slot `s` hosts, vocalization first, then the consonantal
+melody, root before suffix. -/
+def hosted (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : List String :=
+  (m.hostedOn .vocalic s ++ m.hostedOn .consonantal s).map (·.value)
 
 /-- `realizeSlot m s` merges the segments slot `s` hosts onto the first. -/
-def realizeSlot (m : TemplateMatch String) (s : Nat) : Option String :=
+def realizeSlot (m : MultiplanarForm Plane Slot String Morpheme) (s : Nat) : Option String :=
   match hosted m s with
   | [] => none
   | x :: xs => some (xs.foldl merge x)
@@ -286,7 +347,7 @@ def collapse : Bool → List (Slot × Option String) → List String
 
 /-- Truncation (7a) deletes the final syllable, the final C-slot and the V-slot before it, when the
 pattern truncates and that slot is vacant. -/
-def truncate (p : Pattern) (m : TemplateMatch String) : Skeleton :=
+def truncate (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) : Skeleton :=
   match m.unfilledCSlots.max?, m.template.cSlots.max? with
   | some s, some s' =>
     if p.truncates ∧ s = s' then m.template.take (s - 1) else m.template
@@ -294,7 +355,7 @@ def truncate (p : Pattern) (m : TemplateMatch String) : Skeleton :=
 
 /-- The surface segments of a match in a pattern are the realized slots, a filled prespecified
 geminate slot counting twice ({C C} in (7)), between the pattern's outer material. -/
-def realize (p : Pattern) (m : TemplateMatch String) : List String :=
+def realize (p : Pattern) (m : MultiplanarForm Plane Slot String Morpheme) : List String :=
   p.pre ++ collapse false ((truncate p m).zipIdx.flatMap fun (c, i) ↦
     let e := (c, realizeSlot m i)
     if p.geminate = some i ∧ e.2.isSome then [e, e] else [e]) ++ p.post
@@ -352,36 +413,36 @@ def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
 /-- The PST.3MSG template CaCaC[+c] ((3)–(4)), vocalization a,a. -/
 def hebrewPst : Pattern :=
   { template := [.C, .V, .C, .V, .C], consonantal := [4], category := .verb, vocalism := ["a"],
-    vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 3⟩] }
+    vocLines := [(0, 1), (0, 3)] }
 
 /-- The action-noun template QTiLa (3). -/
 def hebrewQtila : Pattern :=
   { template := [.C, .C, .V, .C, .V], category := .noun, vocalism := ["i", "a"],
-    vocLines := [⟨.vocalism, 0, 2⟩, ⟨.vocalism, 1, 4⟩] }
+    vocLines := [(0, 2), (1, 4)] }
 
 /-- The passive-participle template QaTuL (3). -/
 def hebrewQatul : Pattern :=
   { template := [.C, .V, .C, .V, .C], category := .adjective, vocalism := ["a", "u"],
-    vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 1, 3⟩] }
+    vocLines := [(0, 1), (1, 3)] }
 
 /-- The resultative nominal template taQTiL[+c] ((9)–(10)) has its fixed ta before the skeleton. -/
 def hebrewTaqtil : Pattern :=
   { template := [.C, .C, .V, .C], consonantal := [3], category := .noun, vocalism := ["i"],
-    vocLines := [⟨.vocalism, 0, 2⟩], pre := ["ta"] }
+    vocLines := [(0, 2)], pre := ["ta"] }
 
 -- (3a–b), (1)
 theorem klt_kl_satisfy :
     (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
     (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
-    ⟨.root, 1, 4⟩ ∈ (derive hebrewPst kl).associations := by
+    (1, 4) ∈ (derive hebrewPst kl).lines .consonantal := by
   decide
 
 /-- For √klj the final [+c] slot stays vacant, since spreading would misalign the l ((4), (6)). -/
 theorem klj_spread_misaligned :
     (derive hebrewPst klj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive hebrewPst klj) ∧
-    Misaligned ((derive hebrewPst klj).spread .root) ∧
-    realize hebrewPst ((derive hebrewPst klj).spread .root) = ["k", "a", "l", "a", "l"] := by
+    Misaligned ((derive hebrewPst klj).spread .consonantal .C) ∧
+    realize hebrewPst ((derive hebrewPst klj).spread .consonantal .C) = ["k", "a", "l", "a", "l"] := by
   decide
 
 -- (3c)
@@ -393,8 +454,8 @@ theorem klj_qtila_qatul :
 -- (10)
 theorem dmj_taqtil :
     (associate hebrewTaqtil dmj).unfilledCSlots = [3] ∧
-    Misaligned ((associate hebrewTaqtil dmj).spread .root) ∧
-    ⟨.affix, 0, 3⟩ ∈ (derive hebrewTaqtil dmj).associations ∧
+    Misaligned ((associate hebrewTaqtil dmj).spread .consonantal .C) ∧
+    (derive hebrewTaqtil dmj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
     (derive hebrewTaqtil dmj).allCSlotsFilled ∧
     ¬ Misaligned (derive hebrewTaqtil dmj) := by
   decide
@@ -406,27 +467,27 @@ slot [+c] and the person suffix -ä outside; a barred glide joins the consonant 
 unsatisfied final syllable is truncated (7a). -/
 def amharicPfv : Pattern :=
   { template := [.C, .V, .C, .V, .C], consonantal := [4], category := .verb, vocalism := ["ä"],
-    vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 3⟩], post := ["-ä"], geminate := some 2,
+    vocLines := [(0, 1), (0, 3)], post := ["-ä"], geminate := some 2,
     joinsGlide := true, truncates := true }
 
 /-- The GRND stem CäCC[+c] with the subject suffix -o ((5), (8)). -/
 def amharicGrnd : Pattern :=
   { template := [.C, .V, .C, .C], consonantal := [3], category := .noun, vocalism := ["ä"],
-    vocLines := [⟨.vocalism, 0, 1⟩], post := ["-o"], joinsGlide := true }
+    vocLines := [(0, 1)], post := ["-o"], joinsGlide := true }
 
 /-- The INF has the prefix mä- and, in Strict CV terms (13), the skeleton CVC[+c]VC[+c] with ä on
 the second V-slot. -/
 def amharicInf : Pattern :=
   { template := [.C, .V, .C, .V, .C], consonantal := [2, 4], category := .noun,
     vocalism := ["ä"],
-    vocLines := [⟨.vocalism, 0, 3⟩], pre := ["mä"], joinsGlide := true }
+    vocLines := [(0, 3)], pre := ["mä"], joinsGlide := true }
 
 -- (7)
 theorem fdj_pfv :
-    ⟨.root, 2, 2⟩ ∈ (derive amharicPfv fdj).associations ∧
+    (2, 2) ∈ (derive amharicPfv fdj).lines .consonantal ∧
     (derive amharicPfv fdj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive amharicPfv fdj) ∧
-    Misaligned ((derive amharicPfv fdj).spread .root) := by
+    Misaligned ((derive amharicPfv fdj).spread .consonantal .C) := by
   decide
 
 -- (5b) [broselow-1984]
@@ -437,10 +498,10 @@ theorem wd_pfv :
 
 -- (8)
 theorem fdj_grnd :
-    ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd fdj).associations ∧
+    (derive amharicGrnd fdj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
     (derive amharicGrnd fdj).allCSlotsFilled ∧
     ¬ Misaligned (derive amharicGrnd fdj) ∧
-    IsNonCrossing (melodyLinks (derive amharicGrnd fdj) : SetRel ℕ ℕ) := by
+    (derive amharicGrnd fdj).toAR.NoCrossing := by
   decide
 
 -- (13a), (13b–c)
@@ -448,9 +509,9 @@ theorem inf_intrusion :
     (associate amharicInf sma).unfilledCSlots = [4] ∧
     (associate amharicInf sam).unfilledCSlots = [2] ∧
     (associate amharicInf hid).unfilledCSlots = [2] ∧
-    ⟨.affix, 0, 4⟩ ∈ (derive amharicInf sma).associations ∧
-    2 ∉ window (melodyLinks (associate amharicInf sam)) sam.arity ∧
-    2 ∉ window (melodyLinks (associate amharicInf hid)) hid.arity ∧
+    (derive amharicInf sma).hostedOn .consonantal 4 = [⟨"t", .suffix⟩] ∧
+    2 ∉ window ((associate amharicInf sam).lines .consonantal : SetRel ℕ ℕ) sam.arity ∧
+    2 ∉ window ((associate amharicInf hid).lines .consonantal : SetRel ℕ ℕ) hid.arity ∧
     (derive amharicInf sam).unfilledCSlots = [2] ∧
     (derive amharicInf hid).unfilledCSlots = [2] ∧
     ¬ Misaligned (derive amharicInf sam) ∧
@@ -617,7 +678,7 @@ def NounRow.Derived (r : NounRow) : Prop :=
   match r.root with
   | some ρ =>
     surfaceChars hebrewTaqtil ρ = r.form.toList ∧
-      (r.gender = .Fem ↔ (derive hebrewTaqtil ρ).affix ≠ [])
+      (r.gender = .Fem ↔ ∃ x ∈ (derive hebrewTaqtil ρ).upper .consonantal, x.morpheme = .suffix)
   | none => True
 
 instance (r : NounRow) : Decidable r.Derived := by
