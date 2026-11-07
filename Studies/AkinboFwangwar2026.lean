@@ -217,10 +217,10 @@ def cand : Candidate input := .input _
 /-- The candidates (24a)–(24e): `(wùlàʃ)₁ M₂`, `(wùlàʃ)₁`, `(wù)₁(lāʃ)₂`, `(wū)₂(làʃ)₁`, and
 `(wūlāʃ)₂`. -/
 def candA : Candidate input := cand
-def candB : Candidate input := cand.deleteTierElem 1
+def candB : Candidate input := cand.delete 1
 def candC : Candidate input := cand.deleteLink 0 1 |>.insertLink 1 1
 def candD : Candidate input := cand.deleteLink 0 0 |>.insertLink 1 0
-def candE : Candidate input := cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1
+def candE : Candidate input := cand.delete 0 |>.insertLink 1 0 |>.insertLink 1 1
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE]
 
@@ -256,17 +256,17 @@ def cand : Candidate input := .input _
 
 /-- The candidates (25a)–(25g): `(háŋláɣáp)₁`, `(hāŋlā)₂(ɣáp)₁`, `(háŋláɣáp)₃`, `(hāŋlāɣāp)₂`,
 `(hāŋlā)₂(ɣáp)₃`, `(hāŋ)₂(láɣáp)₃`, and `(hāŋ)₂(lá)₁(ɣáp)₃`. -/
-def candA : Candidate input := cand.deleteTierElem 1 |>.deleteTierElem 2
+def candA : Candidate input := cand.delete 1 |>.delete 2
 def candB : Candidate input :=
-  cand.deleteLink 0 0 |>.deleteLink 0 1 |>.insertLink 1 0 |>.insertLink 1 1 |>.deleteTierElem 2
+  cand.deleteLink 0 0 |>.deleteLink 0 1 |>.insertLink 1 0 |>.insertLink 1 1 |>.delete 2
 def candC : Candidate input :=
-  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
+  cand.delete 0 |>.delete 1 |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
 def candD : Candidate input :=
-  cand.deleteTierElem 0 |>.deleteTierElem 2 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 1 2
+  cand.delete 0 |>.delete 2 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 1 2
 def candE : Candidate input :=
-  cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 2 2
+  cand.delete 0 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 2 2
 def candF : Candidate input :=
-  cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 2 1 |>.insertLink 2 2
+  cand.delete 0 |>.insertLink 1 0 |>.insertLink 2 1 |>.insertLink 2 2
 def candG : Candidate input :=
   cand.deleteLink 0 0 |>.deleteLink 0 2 |>.insertLink 1 0 |>.insertLink 2 2
 
@@ -314,14 +314,14 @@ def candB : Candidate input :=
 def candC : Candidate input :=
   cand.deleteLink 0 0 |>.insertLink 2 0 |>.deleteLink 1 2 |>.insertLink 3 2
 def candD : Candidate input :=
-  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
+  cand.delete 0 |>.delete 1 |>.insertLink 2 0 |>.insertLink 2 1
     |>.insertLink 3 2 |>.insertLink 3 3
-def candE : Candidate input := cand.deleteTierElem 0 |>.insertLink 2 0 |>.insertLink 3 1
+def candE : Candidate input := cand.delete 0 |>.insertLink 2 0 |>.insertLink 3 1
 def candF : Candidate input :=
-  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
+  cand.delete 0 |>.delete 1 |>.insertLink 2 0 |>.insertLink 2 1
     |>.insertLink 2 2 |>.insertLink 3 3
 def candG : Candidate input :=
-  cand.deleteLink 0 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 0 2 |>.insertLink 3 3
+  cand.deleteLink 0 0 |>.delete 1 |>.insertLink 2 0 |>.insertLink 0 2 |>.insertLink 3 3
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 

@@ -206,7 +206,7 @@ def dock (k : Fin u.upper.length) : Candidate u :=
   match nextSlot c k with
   | some i =>
     if u.upper[k].value = .L then
-      (fOn c i).elim (c.insertLink k i) (c.insertLink k i).deleteTierElem
+      (fOn c i).elim (c.insertLink k i) (c.insertLink k i).delete
     else c.insertLink k i
   | none => c
 
@@ -250,7 +250,7 @@ theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k
     · exact Candidate.isFloating_insertLink
     have hj' : ¬ c.IsFloating j' :=
       fun h ↦ h.2 (Candidate.isLinked_iff.2 ⟨_, mem_links_of_fOn_eq_some hf⟩)
-    simp only [Option.elim, Candidate.isFloating_deleteTierElem, Candidate.isFloating_insertLink]
+    simp only [Option.elim, Candidate.isFloating_delete, Candidate.isFloating_insertLink]
     exact ⟨fun h ↦ h.2, fun ⟨hjk, hj⟩ ↦ ⟨fun he ↦ hj' (he ▸ hj), hjk, hj⟩⟩
   · exact Candidate.isFloating_insertLink
 
@@ -259,7 +259,7 @@ theorem links_dock_subset {i : Fin u.lower.length} (hi : nextSlot c k = some i) 
   simp only [dock, hi]
   split_ifs
   · rcases fOn c i with _ | j'
-    exacts [Finset.Subset.refl _, Candidate.links_deleteTierElem_subset]
+    exacts [Finset.Subset.refl _, Candidate.links_delete_subset]
   · exact Finset.Subset.refl _
 
 theorem val_eq_zero_of_mem_nextSlot (h : leftIndices c.links k = ∅) {i : Fin u.lower.length}

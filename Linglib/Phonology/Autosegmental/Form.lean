@@ -68,8 +68,8 @@ in one universe, as `TwoTier` does.
 namespace Autosegmental
 
 /-- A `Sponsored α M` is a tier element of type `α` together with the morpheme of type `M`
-    that sponsors it. On the upper tier the element is an autosegment, on the lower tier a
-    slot. -/
+that sponsors it. On the upper tier the element is an autosegment, on the lower tier a
+slot. -/
 structure Sponsored (α M : Type*) where
   /-- The autosegment or slot. -/
   value : α
@@ -268,7 +268,6 @@ theorem isNonCrossing_lines_iff :
   rw [lines, Finset.coe_map, isNonCrossing_image]
   rfl
 
-
 /-! ### Morphs -/
 
 section Morph
@@ -312,14 +311,6 @@ variable {m upper lower lines} in
 
 @[simp] theorem links_morph_empty : (morph m upper lower ∅ : Form S T M).links = ∅ :=
   Finset.eq_empty_of_forall_notMem fun _ h ↦ Finset.notMem_empty _ (mem_links_morph.1 h)
-
-@[simp] theorem morph_upper_morpheme (k : Fin (morph m upper lower lines).upper.length) :
-    (morph m upper lower lines).upper[k].morpheme = m := by
-  rw [Fin.getElem_fin]; simp [morph]
-
-@[simp] theorem morph_lower_morpheme (i : Fin (morph m upper lower lines).lower.length) :
-    (morph m upper lower lines).lower[i].morpheme = m := by
-  rw [Fin.getElem_fin]; simp [morph]
 
 end Morph
 

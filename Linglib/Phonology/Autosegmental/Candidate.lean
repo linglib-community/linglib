@@ -65,7 +65,7 @@ variable {S T M : Type*} {u : Form S T M} (c : Candidate u) {k j : Fin u.upper.l
 instance : DecidableEq (Candidate u) := fun _ _ ↦ decidable_of_iff _ Candidate.ext_iff.symm
 
 /-- `input u` is the faithful candidate of `u`, with nothing deleted and the form's lines as
-    its surface lines. -/
+its surface lines. -/
 @[simps] def input (u : Form S T M) : Candidate u := ⟨∅, u.links⟩
 
 /-! ### Surface predicates -/
@@ -73,23 +73,18 @@ instance : DecidableEq (Candidate u) := fun _ _ ↦ decidable_of_iff _ Candidate
 /-- Autosegment `k` is linked when it bears a surface line. -/
 def IsLinked (k : Fin u.upper.length) : Prop := ∃ l ∈ c.links, l.1 = k
 
-/-- Slot `i` is linked when it bears a surface line. -/
-def IsLinkedLower (i : Fin u.lower.length) : Prop := ∃ l ∈ c.links, l.2 = i
-
 /-- Autosegment `k` is floating when it is not deleted and bears no surface line. -/
 def IsFloating (k : Fin u.upper.length) : Prop := k ∉ c.deleted ∧ ¬ c.IsLinked k
 
 /-- `insertedLinks c` is the set of surface lines absent from the form, which GEN has
-    inserted and `DEP` counts. -/
+inserted and `DEP` counts. -/
 def insertedLinks : Finset (Fin u.upper.length × Fin u.lower.length) := c.links \ u.links
 
 /-- `deletedLinks c` is the set of the form's lines absent from the surface, which GEN has
-    deleted and `MAX` counts. -/
+deleted and `MAX` counts. -/
 def deletedLinks : Finset (Fin u.upper.length × Fin u.lower.length) := u.links \ c.links
 
 instance : Decidable (c.IsLinked k) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-instance : Decidable (c.IsLinkedLower i) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 instance : Decidable (c.IsFloating k) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -97,9 +92,6 @@ variable {c}
 
 theorem isLinked_iff : c.IsLinked k ↔ ∃ i, (k, i) ∈ c.links :=
   ⟨fun ⟨⟨_, i⟩, h, rfl⟩ ↦ ⟨i, h⟩, fun ⟨_, h⟩ ↦ ⟨_, h, rfl⟩⟩
-
-theorem isLinkedLower_iff : c.IsLinkedLower i ↔ ∃ k, (k, i) ∈ c.links :=
-  ⟨fun ⟨⟨k, _⟩, h, rfl⟩ ↦ ⟨k, h⟩, fun ⟨_, h⟩ ↦ ⟨_, h, rfl⟩⟩
 
 @[simp] theorem mem_insertedLinks : l ∈ c.insertedLinks ↔ l ∈ c.links ∧ l ∉ u.links :=
   Finset.mem_sdiff
@@ -125,7 +117,7 @@ def linksTo (i : Fin u.lower.length) : List (Fin u.upper.length) :=
   (List.finRange u.upper.length).filter fun k ↦ (k, i) ∈ c.links
 
 /-- `tierValues c i` lists the values of the autosegments linked to slot `i` on the surface,
-    in tier order. -/
+in tier order. -/
 def tierValues (i : Fin u.lower.length) : List T :=
   (c.linksTo i).map fun k ↦ u.upper[k].value
 
@@ -152,9 +144,8 @@ theorem nodup_linksTo (i : Fin u.lower.length) : (c.linksTo i).Nodup :=
 
 variable (c)
 
-/-- `deleteTierElem c k` deletes autosegment `k` on the surface, together with every surface
-    line it bears. -/
-@[simps] def deleteTierElem (k : Fin u.upper.length) : Candidate u :=
+/-- `delete c k` deletes autosegment `k` on the surface, with every surface line it bears. -/
+@[simps] def delete (k : Fin u.upper.length) : Candidate u :=
   ⟨insert k c.deleted, c.links.filter (·.1 ≠ k)⟩
 
 /-- `insertLink c k i` inserts the surface line from autosegment `k` to slot `i`. -/
@@ -167,23 +158,18 @@ variable (c)
 
 variable {c}
 
-@[simp] theorem isLinked_deleteTierElem :
-    (c.deleteTierElem k).IsLinked j ↔ j ≠ k ∧ c.IsLinked j := by
-  simp only [isLinked_iff, deleteTierElem_links, Finset.mem_filter]
+@[simp] theorem isLinked_delete :
+    (c.delete k).IsLinked j ↔ j ≠ k ∧ c.IsLinked j := by
+  simp only [isLinked_iff, delete_links, Finset.mem_filter]
   aesop
 
 @[simp] theorem isLinked_insertLink : (c.insertLink k i).IsLinked j ↔ j = k ∨ c.IsLinked j := by
   simp only [isLinked_iff, insertLink_links, Finset.mem_insert, Prod.mk.injEq]
   aesop
 
-@[simp] theorem isLinkedLower_insertLink {i' : Fin u.lower.length} :
-    (c.insertLink k i).IsLinkedLower i' ↔ i' = i ∨ c.IsLinkedLower i' := by
-  simp only [isLinkedLower_iff, insertLink_links, Finset.mem_insert, Prod.mk.injEq]
-  aesop
-
-@[simp] theorem isFloating_deleteTierElem :
-    (c.deleteTierElem k).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
-  simp only [IsFloating, deleteTierElem_deleted, Finset.mem_insert, isLinked_deleteTierElem]
+@[simp] theorem isFloating_delete :
+    (c.delete k).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
+  simp only [IsFloating, delete_deleted, Finset.mem_insert, isLinked_delete]
   tauto
 
 @[simp] theorem isFloating_insertLink :
@@ -191,7 +177,7 @@ variable {c}
   simp only [IsFloating, insertLink_deleted, isLinked_insertLink]
   tauto
 
-theorem links_deleteTierElem_subset : (c.deleteTierElem k).links ⊆ c.links :=
+theorem links_delete_subset : (c.delete k).links ⊆ c.links :=
   Finset.filter_subset _ _
 
 theorem links_subset_insertLink : c.links ⊆ (c.insertLink k i).links :=
@@ -204,16 +190,16 @@ section Gen
 variable {c' : Candidate u}
 
 /-- `gen c` is the one-step GEN of harmonic serialism. It contains `c` itself, the deletion of
-    each undeleted autosegment, and each line from a floating autosegment to a slot in its
-    window, which crosses no surface line; insert-and-associate and shift are omitted. -/
+each undeleted autosegment, and each line from a floating autosegment to a slot in its
+window, which crosses no surface line; insert-and-associate and shift are omitted. -/
 def gen (c : Candidate u) : Finset (Candidate u) :=
   insert c <|
-    (Finset.univ.filter (· ∉ c.deleted)).image c.deleteTierElem ∪
+    (Finset.univ.filter (· ∉ c.deleted)).image c.delete ∪
       ((Finset.univ.filter c.IsFloating ×ˢ Finset.univ).filter
         fun p ↦ p.2 ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) p.1).image
           fun p ↦ c.insertLink p.1 p.2
 
-theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.deleteTierElem k) ∨
+theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.delete k) ∨
     ∃ k i, c.IsFloating k ∧
       i ∈ window (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) k ∧
         c' = c.insertLink k i := by
@@ -223,7 +209,7 @@ theorem mem_gen : c' ∈ c.gen ↔ c' = c ∨ (∃ k ∉ c.deleted, c' = c.delet
 
 @[simp] theorem self_mem_gen : c ∈ c.gen := Finset.mem_insert_self _ _
 
-theorem deleteTierElem_mem_gen (hd : k ∉ c.deleted) : c.deleteTierElem k ∈ c.gen :=
+theorem delete_mem_gen (hd : k ∉ c.deleted) : c.delete k ∈ c.gen :=
   mem_gen.2 (.inr (.inl ⟨k, hd, rfl⟩))
 
 theorem insertLink_mem_gen (hk : c.IsFloating k)
@@ -236,14 +222,14 @@ theorem deleted_subset_of_mem_gen (hc : c' ∈ c.gen) : c.deleted ⊆ c'.deleted
   exacts [subset_rfl, Finset.subset_insert _ _, subset_rfl]
 
 /-- GEN is closed on the No-Crossing Constraint, since deletion shrinks the surface lines and
-    each inserted line ends in its node's window. -/
+each inserted line ends in its node's window. -/
 theorem isNonCrossing_links_of_mem_gen
     (h : IsNonCrossing (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)))
     (hc : c' ∈ c.gen) :
     IsNonCrossing (c'.links : SetRel (Fin u.upper.length) (Fin u.lower.length)) := by
   rcases mem_gen.1 hc with rfl | ⟨_, -, rfl⟩ | ⟨_, _, -, hx, rfl⟩
   · exact h
-  · exact h.subset (Finset.coe_subset.2 links_deleteTierElem_subset)
+  · exact h.subset (Finset.coe_subset.2 links_delete_subset)
   · simpa using h.insert_of_mem_window hx
 
 end Gen
