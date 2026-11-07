@@ -8,6 +8,7 @@ public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Fragments.English.Inflection
 public import Linglib.Fragments.English.Adpositions
+public import Linglib.Fragments.English.Verbs.Infinitive
 
 /-!
 # English verbs
