@@ -225,8 +225,7 @@ theorem carlson_mem_image_iff {S E Stage Place Time : Type*} [Preorder E]
     {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (h : M.R ○ inst ⊆ M.R)
     (hk : ∀ ⦃t⦄, t ~[M.R] k → t ~[M.R ○ inst] k) (P : Set Stage) :
     k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
-  (Carlson1977.Model.mem_image_iff h hk P).trans
-    ⟨fun ⟨x, hx, hxk⟩ ↦ ⟨x, (hinst x).1 hxk, hx⟩, fun ⟨x, hxu, hx⟩ ↦ ⟨x, hx, (hinst x).2 hxu⟩⟩
+  Set.ext hinst ▸ Carlson1977.Model.mem_image_iff h hk P
 
 /-- Two dogs, `0` and `1`, and a cat, `2`, each with one stage at its own place; an individual is
 a set of animals, and a stage realizes each individual containing its animal. -/
