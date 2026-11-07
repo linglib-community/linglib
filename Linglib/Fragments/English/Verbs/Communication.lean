@@ -48,11 +48,16 @@ def tell : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.tell, .transferOfMessage}
 
-/-- "claim" — communication verb, speaker doesn't endorse -/
+/-- "claim" — communication verb, speaker doesn't endorse. What its subject claims is a
+representational attitude, doxastic in kind ([anand-hacquard-2013]), and it takes a finite
+clause or an infinitive its subject controls (*claimed to be rich*). -/
 def claim : Verb where
   morphs := [.root "claim"]
   speechActVerb := true
-  valency := .ofFrame ArgumentFrame.finiteClause
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+    (controllers := [none, some 0])
+  opaqueContext := true
+  attitude := some (.doxastic .doxastic)
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say}
 
