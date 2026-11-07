@@ -79,6 +79,16 @@ structure Sponsored (α M : Type*) where
   morpheme : M
   deriving DecidableEq, Repr
 
+/-- The element relabeled by `φ`, with the same sponsor. -/
+def Sponsored.map {α β M : Type*} (φ : α → β) (x : Sponsored α M) : Sponsored β M :=
+  ⟨φ x.value, x.morpheme⟩
+
+@[simp] theorem Sponsored.value_map {α β M : Type*} (φ : α → β) (x : Sponsored α M) :
+    (x.map φ).value = φ x.value := rfl
+
+@[simp] theorem Sponsored.morpheme_map {α β M : Type*} (φ : α → β) (x : Sponsored α M) :
+    (x.map φ).morpheme = x.morpheme := rfl
+
 /-- A `Form S T M` is a two-tier autosegmental representation with slots in `S`, autosegments
 in `T`, and sponsors in `M`. Its association lines are pairs of a position of the upper tier
 and a position of the lower tier. -/

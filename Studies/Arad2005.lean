@@ -60,7 +60,8 @@ single out the natural pairs.
 
 namespace Arad2005
 
-open Morphology Autosegmental DistributedMorphology
+open Morphology Autosegmental MultiplanarForm DistributedMorphology
+open McCarthy1981 (Morpheme)
 
 variable {α β : Type*}
 
@@ -115,18 +116,20 @@ def Binyan.erasure : Binyan → Bool
 
 /-- `place pre t r` puts the prefix `pre` on the leftmost slots of `t`, with the root `r` not yet
 associated. -/
-def place (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) : TemplateMatch α where
-  root := r
-  affix := pre
-  template := t
-  associations := (List.range pre.length).map fun k ↦ ⟨.affix, k, k⟩
+def place (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) :
+    MultiplanarForm Morpheme Slot α Morpheme :=
+  let m : MultiplanarForm Morpheme Slot α Morpheme :=
+    ofMelody .root .root r.segments * ofMelody .affix .affix pre * ofSlots .template t
+  m.link .affix ((List.range pre.length).map fun k ↦ (k, k))
 
 /-- The consonantism of a binyan places its prefix, associates the root by the conventions and,
 under Erasure, applies the conventions again ([mccarthy-1981]). -/
-def consonantism (px : Prefixes α) (b : Binyan) (r : ConsonantalRoot α) : TemplateMatch α :=
-  let m := (place (b.prefix px) b.template r).associate .root
+def consonantism (px : Prefixes α) (b : Binyan) (r : ConsonantalRoot α) :
+    MultiplanarForm Morpheme Slot α Morpheme :=
+  let m := (place (b.prefix px) b.template r).associate .root .C
   if b.erasure then
-    (((McCarthy1981.erasure m).associateOneToOne .root).associateRemaining .root).spread .root
+    (((McCarthy1981.erasure m).associateOneToOne .root .C).associateRemaining .root .C).spread
+      .root .C
   else m
 
 /-! ### Voice (25) -/
@@ -198,43 +201,42 @@ theorem realizeVoice_isSome :
 
 /-- `vocalize` associates a vocalism with the consonantism by the conventions. -/
 def vocalize (px : Prefixes α) (v : Vowel → α) (b : Binyan) (vs : List Vowel)
-    (r : ConsonantalRoot α) : TemplateMatch α :=
-  ({ consonantism px b r with vocalism := vs.map v }).associate .vocalism
+    (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
+  (ofMelody Morpheme.vocalism Morpheme.vocalism (vs.map v) * consonantism px b r).associate .vocalism .V
 
 /-- The stem of a root-derived verb has the binyan under v, Voice's vowels in its context and the
 root associated with it (p. 43). It is `none` where Voice has no exponent. -/
 def stem (px : Prefixes α) (v : Vowel → α) (b : Binyan) (voice : Voice)
-    (r : ConsonantalRoot α) : Option (TemplateMatch α) :=
+    (r : ConsonantalRoot α) : Option (MultiplanarForm Morpheme Slot α Morpheme) :=
   (realizeVoice b voice).map fun x ↦ vocalize px v x.1 x.2 r
 
 /-! ### Spirantization and degemination (pp. 28–29) -/
 
-/-- `sameElement a b` says that two lines come from one melodic element. -/
-def sameElement (a b : Association) : Bool :=
-  a.source == b.source && a.melodyIndex == b.melodyIndex
-
-/-- `linked m` lists each slot with its first line and that line's segment. -/
-def linked (m : TemplateMatch α) : List (ℕ × Association × α) :=
+/-- `linked m` lists each slot with the melodic element linked to it, as its plane and position,
+and that element's segment. -/
+def linked (m : MultiplanarForm Morpheme Slot α Morpheme) : List (ℕ × (Morpheme × ℕ) × α) :=
   (List.range m.template.length).filterMap fun i ↦
-    (m.associations.find? (·.slotIndex == i)).bind fun a ↦ (m.segmentAt a).map (i, a, ·)
+    (m.linkAt? i).bind fun e ↦ (m.segmentAt i).map (i, e, ·)
 
 /-- `spirantize f m` realizes each segment by `f`, given whether it follows a V-slot and is not
 the first slot of a geminate, whose element also occupies the next slot. -/
-def spirantize (f : Bool → α → α) (m : TemplateMatch α) : List (ℕ × Association × α) :=
+def spirantize (f : Bool → α → α) (m : MultiplanarForm Morpheme Slot α Morpheme) :
+    List (ℕ × (Morpheme × ℕ) × α) :=
   let l := linked m
   l.zipIdx.map fun ((i, a, x), j) ↦
     let postVocalic := 0 < i && m.template[i - 1]? == some .V
     let geminate := match l[j + 1]? with
-      | some (_, b, _) => sameElement a b
+      | some (_, b, _) => a == b
       | none => false
     (i, a, f (postVocalic && !geminate) x)
 
 /-- Since Modern Hebrew has no geminates (p. 28), slots linked to one element surface once. -/
-def degeminate (l : List (ℕ × Association × α)) : List α :=
-  (l.destutter fun p q ↦ !sameElement p.2.1 q.2.1).map (·.2.2)
+def degeminate (l : List (ℕ × (Morpheme × ℕ) × α)) : List α :=
+  (l.destutter fun p q ↦ p.2.1 ≠ q.2.1).map (·.2.2)
 
 /-- `surface f m` is the stem spirantized by `f` and degeminated. -/
-def surface (f : Bool → α → α) (m : TemplateMatch α) : List α := degeminate (spirantize f m)
+def surface (f : Bool → α → α) (m : MultiplanarForm Morpheme Slot α Morpheme) : List α :=
+  degeminate (spirantize f m)
 
 /-- `verb` is the surface of the stem of a root-derived verb. -/
 def verb (px : Prefixes α) (v : Vowel → α) (f : Bool → α → α) (b : Binyan) (voice : Voice)
@@ -243,7 +245,8 @@ def verb (px : Prefixes α) (v : Vowel → α) (f : Bool → α → α) (b : Bin
 
 /-- `surfaceDegeminatedFirst` applies the rules in the order the book rules out, degemination before
 the spirantization of whatever follows a vowel. -/
-def surfaceDegeminatedFirst (isV : α → Bool) (f : Bool → α → α) (m : TemplateMatch α) : List α :=
+def surfaceDegeminatedFirst (isV : α → Bool) (f : Bool → α → α)
+    (m : MultiplanarForm Morpheme Slot α Morpheme) : List α :=
   let w := degeminate (linked m)
   w.zipIdx.map fun (x, j) ↦ f (0 < j && (w[j - 1]?.map isV).getD false) x
 
@@ -289,15 +292,16 @@ def Mishqal.vowels : Mishqal → List Vowel
 /-- The stem of a root-derived noun associates the root and the mišqal's own vowels with its
 template. -/
 def nounStem (px : Prefixes α) (v : Vowel → α) (q : Mishqal) (r : ConsonantalRoot α) :
-    TemplateMatch α :=
-  ({ (place (q.prefix px) q.template r).associate .root with
-    vocalism := q.vowels.map v }).associate .vocalism
+    MultiplanarForm Morpheme Slot α Morpheme :=
+  (ofMelody Morpheme.vocalism Morpheme.vocalism (q.vowels.map v) *
+    (place (q.prefix px) q.template r).associate .root .C).associate .vocalism .V
 
 /-! ### Relabeling -/
 
 theorem place_map (f : α → β) (pre : List α) (t : Skeleton) (r : ConsonantalRoot α) :
     place (pre.map f) t (r.map f) = (place pre t r).map f := by
-  simp [place, TemplateMatch.map, ConsonantalRoot.map]
+  simp only [place, mul_eq_concat, ← link_map, map_concat, map_ofMelody, map_ofSlots,
+    ConsonantalRoot.segments_map, List.length_map]
 
 theorem prefix_map (f : α → β) (px : Prefixes α) (b : Binyan) :
     b.prefix (px.map f) = (b.prefix px).map f := by
@@ -305,19 +309,14 @@ theorem prefix_map (f : α → β) (px : Prefixes α) (b : Binyan) :
 
 theorem consonantism_map (f : α → β) (px : Prefixes α) (b : Binyan) (r : ConsonantalRoot α) :
     consonantism (px.map f) b (r.map f) = (consonantism px b r).map f := by
-  simp only [consonantism, prefix_map, place_map, TemplateMatch.associate_map]
-  split <;> simp only [McCarthy1981.erasure_map, TemplateMatch.associateOneToOne_map,
-    TemplateMatch.associateRemaining_map, TemplateMatch.spread_map]
+  simp only [consonantism, prefix_map, place_map, associate_map]
+  split <;> simp only [McCarthy1981.erasure_map, associateOneToOne_map, associateRemaining_map,
+    spread_map]
 
 theorem vocalize_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (b : Binyan)
     (vs : List Vowel) (r : ConsonantalRoot α) :
     vocalize (px.map f) (f ∘ v) b vs (r.map f) = (vocalize px v b vs r).map f := by
-  have h : ({ consonantism (px.map f) b (r.map f) with vocalism := vs.map (f ∘ v) } :
-      TemplateMatch β) = ({ consonantism px b r with vocalism := vs.map v }).map f := by
-    rw [consonantism_map, ← List.map_map]
-    rfl
-  unfold vocalize
-  rw [h, TemplateMatch.associate_map]
+  simp only [vocalize, ← associate_map, map_mul, map_ofMelody, List.map_map, ← consonantism_map]
 
 theorem stem_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (b : Binyan) (voice : Voice)
     (r : ConsonantalRoot α) :
@@ -331,38 +330,30 @@ theorem nounStem_map (f : α → β) (px : Prefixes α) (v : Vowel → α) (q : 
     (r : ConsonantalRoot α) :
     nounStem (px.map f) (f ∘ v) q (r.map f) = (nounStem px v q r).map f := by
   have hq : q.prefix (px.map f) = (q.prefix px).map f := by cases q <;> rfl
-  have h : ({ (place (q.prefix (px.map f)) q.template (r.map f)).associate .root with
-      vocalism := q.vowels.map (f ∘ v) } : TemplateMatch β) =
-      ({ (place (q.prefix px) q.template r).associate .root with
-        vocalism := q.vowels.map v }).map f := by
-    rw [hq, place_map, TemplateMatch.associate_map, ← List.map_map]
-    rfl
-  unfold nounStem
-  rw [h, TemplateMatch.associate_map]
+  simp only [nounStem, hq, ← associate_map, map_mul, map_ofMelody, List.map_map, ← place_map]
 
-theorem linked_map (f : α → β) (m : TemplateMatch α) :
+theorem linked_map (f : α → β) (m : MultiplanarForm Morpheme Slot α Morpheme) :
     linked (m.map f) = (linked m).map fun (i, a, x) ↦ (i, a, f x) := by
-  simp only [linked, TemplateMatch.template_map, TemplateMatch.associations_map,
-    List.map_filterMap, TemplateMatch.segmentAt_map]
+  simp only [linked, template_map, linkAt?_map, segmentAt_map, List.map_filterMap]
   congr 1
   funext i
-  cases m.associations.find? (·.slotIndex == i) with
+  cases m.linkAt? i with
   | none => rfl
-  | some a => cases h : m.segmentAt a <;> simp [h]
+  | some a => cases m.segmentAt i <;> simp
 
 theorem spirantize_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
-    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : TemplateMatch α) :
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : MultiplanarForm Morpheme Slot α Morpheme) :
     spirantize f' (m.map g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, h x) := by
-  simp only [spirantize, linked_map, TemplateMatch.template_map, List.zipIdx_map, List.map_map,
+  simp only [spirantize, linked_map, template_map, List.zipIdx_map, List.map_map,
     List.getElem?_map]
   refine List.map_congr_left fun ⟨⟨i, a, x⟩, j⟩ _ ↦ ?_
   rcases hj : (linked m)[j + 1]? with _ | ⟨_, b, _⟩ <;> simp [hj, hf]
 
 theorem surface_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
-    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : TemplateMatch α) :
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : MultiplanarForm Morpheme Slot α Morpheme) :
     surface f' (m.map g) = (surface f m).map h := by
   simp only [surface, degeminate, spirantize_map g h f f' hf]
-  rw [← List.map_destutter (f := fun x : ℕ × Association × α ↦ (x.1, x.2.1, h x.2.2))
+  rw [← List.map_destutter (f := fun x : ℕ × (Morpheme × ℕ) × α ↦ (x.1, x.2.1, h x.2.2))
     fun _ _ _ _ ↦ Iff.rfl, List.map_map, List.map_map]
   rfl
 
@@ -411,7 +402,7 @@ theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
         (label px (fun _ ↦ x) [w, x, y, z] x) := by
     rw [← consonantism_map]
     rfl
-  rw [h₃, h₄, TemplateMatch.spellout_map, TemplateMatch.spellout_map]
+  rw [h₃, h₄, spellout_map, spellout_map]
   have : (consonantism numeralPx .cvccvc ⟨[0, 1, 2]⟩).spellout = [0, 1, 1, 2] ∧
       (consonantism numeralPx .cvccvc ⟨[0, 1, 2, 3]⟩).spellout = [0, 1, 2, 3] := by decide
   rw [this.1, this.2]
@@ -419,8 +410,8 @@ theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
 
 -- (24), §2.5
 theorem freeBearers_vocalism (px : Prefixes α) (v : Vowel → α) (x y z : α) :
-    (∀ b : Binyan, ((consonantism px b ⟨[x, y, z]⟩).freeBearers .vocalism).length = 2) ∧
-      ∀ q : Mishqal, (nounStem px v q ⟨[x, y, z]⟩).freeBearers .vocalism = [] := by
+    (∀ b : Binyan, ((consonantism px b ⟨[x, y, z]⟩).freeBearers .V).length = 2) ∧
+      ∀ q : Mishqal, (nounStem px v q ⟨[x, y, z]⟩).freeBearers .V = [] := by
   have hb : ∀ b, consonantism px b ⟨[x, y, z]⟩ =
       (consonantism numeralPx b ⟨[0, 1, 2]⟩).map (label px v [x, y, z] x) := fun b ↦ by
     rw [← consonantism_map]
@@ -429,7 +420,7 @@ theorem freeBearers_vocalism (px : Prefixes α) (v : Vowel → α) (x y z : α) 
       (nounStem numeralPx numeralVowel q ⟨[0, 1, 2]⟩).map (label px v [x, y, z] x) := fun q ↦ by
     rw [← nounStem_map, numeralPx_map, label_comp_numeralVowel]
     rfl
-  simp only [hb, hq, TemplateMatch.freeBearers_map]
+  simp only [hb, hq, freeBearers_map]
   decide
 
 /-! ### The data -/

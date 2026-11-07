@@ -30,6 +30,7 @@ lines of both factors, and form a monoid.
 
 * `AR.link_mul`: the lines of a concatenation are those of its factors, the right factor's
   shifted past the left one.
+* `AR.commute_of_disjoint_support`: representations on disjoint tiers commute.
 * `AR.NoCrossing.mul`, `AR.NoCrossing.map`: concatenation and monotone moves preserve the
   No-Crossing Constraint.
 
@@ -37,6 +38,7 @@ lines of both factors, and form a monoid.
 
 * [goldsmith-1976]
 * [coleman-local-1991]
+* [mccarthy-1989]
 * [jardine-heinz-2015]
 * [jardine-2019]
 -/
@@ -238,6 +240,52 @@ instance : Monoid (AR τ) where
   one_mul X := ext rfl fun i j p q ↦ by simp [link_mul]
   mul_one X := ext (funext fun i ↦ List.append_nil _) fun i j p q ↦ by
     simp only [link_mul, not_link_one, and_false, or_false]
+
+variable (X) in
+/-- The support of a representation, the tiers whose words are nonempty. -/
+def support : Set ι := {i | X.word i ≠ []}
+
+@[simp] theorem mem_support {i : ι} : i ∈ X.support ↔ X.word i ≠ [] := .rfl
+
+@[simp] theorem support_mul : (X * Y).support = X.support ∪ Y.support := by
+  ext i
+  simp only [mem_support, word_mul, ne_eq, List.append_eq_nil_iff, not_and_or, Set.mem_union]
+
+@[simp] theorem support_one : (1 : AR τ).support = ∅ := by
+  ext i
+  simp
+
+theorem Link.mem_support_left {i j : ι} {p q : ℕ} (h : X.Link i j p q) : i ∈ X.support :=
+  List.ne_nil_of_length_pos (Nat.zero_lt_of_lt h.lt_left)
+
+theorem Link.mem_support_right {i j : ι} {p q : ℕ} (h : X.Link i j p q) : j ∈ X.support :=
+  List.ne_nil_of_length_pos (Nat.zero_lt_of_lt h.lt_right)
+
+/-- Representations with disjoint supports commute: concatenation orders material only within a
+tier, so morphs on separate planes are unordered ([mccarthy-1989], p. 73). -/
+theorem commute_of_disjoint_support (h : Disjoint X.support Y.support) : Commute X Y := by
+  have hX {i j : ι} {p q : ℕ} (hl : X.Link i j p q) : Y.word i = [] ∧ Y.word j = [] :=
+    ⟨not_not.1 (Set.disjoint_left.1 h hl.mem_support_left),
+      not_not.1 (Set.disjoint_left.1 h hl.mem_support_right)⟩
+  have hY {i j : ι} {p q : ℕ} (hl : Y.Link i j p q) : X.word i = [] ∧ X.word j = [] :=
+    ⟨not_not.1 (Set.disjoint_right.1 h hl.mem_support_left),
+      not_not.1 (Set.disjoint_right.1 h hl.mem_support_right)⟩
+  refine ext (funext fun i ↦ ?_) fun i j p q ↦ ?_
+  · by_cases hx : X.word i = []
+    · simp [hx]
+    · simp [not_not.1 (Set.disjoint_left.1 h hx)]
+  · simp only [link_mul]
+    constructor
+    · rintro (hl | ⟨-, -, hl⟩)
+      · obtain ⟨hi, hj⟩ := hX hl
+        exact .inr ⟨by simp [hi], by simp [hj], by simpa [hi, hj] using hl⟩
+      · obtain ⟨hi, hj⟩ := hY hl
+        exact .inl (by simpa [hi, hj] using hl)
+    · rintro (hl | ⟨-, -, hl⟩)
+      · obtain ⟨hi, hj⟩ := hY hl
+        exact .inr ⟨by simp [hi], by simp [hj], by simpa [hi, hj] using hl⟩
+      · obtain ⟨hi, hj⟩ := hX hl
+        exact .inl (by simpa [hi, hj] using hl)
 
 /-- The word on tier `i`, as a monoid hom. -/
 def wordHom (i : ι) : AR τ →* FreeMonoid (τ i) where
