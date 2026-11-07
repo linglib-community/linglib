@@ -8,8 +8,6 @@ public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Aspectual
 public import Linglib.Fragments.English.Verbs.Implicative
 public import Linglib.Fragments.English.Verbs.Communication
 
@@ -39,19 +37,17 @@ matrix reference time](##table3), as [the aspect rows bear out](##aspect_rows).
   utterance time, which the paper takes to be very short, are instants, which properly contain no
   run time, and an adverbial such as *at 5 p.m.* restricts a reference time to an instant (`D`).
   Statives project no aspect (p. 428). The evaluation time of *woll* and the NOW are one instant.
-* The class of an infinitive is read off the attitude its verb expresses on the infinitive's frame
-  in the English fragment (`classOf`), as Table 4 groups the verbs: preferential for the future,
-  doxastic for the propositional, none for the tenseless. *Believe* and *expect* take it in an
-  exceptional-case-marking frame, and *seem* with an experiencer, overt (70a) or understood (70d),
-  is doxastic. A row's matrix reference time and aspect are stated where it is paired.
-* The sequence-of-tense rows run on linearized witnesses over a study lexicon that pronounce their
+* Each row's class, matrix reference time and aspect are stated where it is paired. The
+  sequence-of-tense rows run on linearized witnesses over a study lexicon that pronounce their
   sentences (`Minimalist.SpellsOut`), each chain read off the witness's pronounced tense items.
 
 ## TODO
 
-* The fragment gives a verb one attitude on each frame, so the propositional reading that *expect*
-  has beside its future one on the same frames (60) is not represented; the rows of (61) are fine
-  on the future reading.
+* Table 4 assigns each verb its classes. Read from the attitudes of the English fragment, the
+  preferential *decide*, *want*, *promise* and *expect* are its future verbs and the doxastic
+  *believe* its propositional one, but the fragment gives *claim* no attitude, *expect* neither an
+  infinitival frame nor its propositional reading (60), *begin* no infinitival frame and *seem* no
+  attitude holder (70), so the rows state their classes.
 * Ogihara's rule deletes the past of *would* optionally where the paper makes deletion obligatory,
   so the readings of (28b) are not paired; nor are the futurate progressive of (6e), the finite
   rows of (50), the double-access sentences of (58) and the embedded sequence of tense of (59).
@@ -264,40 +260,11 @@ and a *would* is not, since the local tense feature of *would*'s past is then th
 theorem not_silent_would : Licensed will (composition .futureIrrealis) ∧ ¬ Licensed will would := by
   decide
 
-/-! ### The verbs, Table 4 -/
-
-/-- The class of the infinitive a verb takes in the frame `fr`, read off the attitude it expresses
-there as Table 4 groups the verbs: a preferential attitude takes a future irrealis infinitive, a
-doxastic one a propositional infinitive, and a verb with no attitude holder a tenseless simultaneous
-one. -/
-def classOf (v : English.Verbs.Verb) (fr : ArgumentFrame) : InfinitivalTenseClass :=
-  match v.attitudeOn fr with
-  | some (.preferential _) => .futureIrrealis
-  | some (.doxastic _) => .propositional
-  | none => .tenseless
+/-! ### The rows -/
 
 section Rows
 
 open Examples
-open English.Verbs (decide_ want promise expect believe claim manage try_ begin_ seem ecmFrame
-  raisingExperiencerFrame)
-
--- Table 4: the classes read off the English fragment are the paper's, each on a frame of the verb
-theorem table4 :
-    (.infinitival ∈ decide_.valency.frames ∧ classOf decide_ .infinitival = .futureIrrealis) ∧
-      (.infinitival ∈ want.valency.frames ∧ classOf want .infinitival = .futureIrrealis) ∧
-      (.infinitival ∈ promise.valency.frames ∧ classOf promise .infinitival = .futureIrrealis) ∧
-      (.infinitival ∈ expect.valency.frames ∧ classOf expect .infinitival = .futureIrrealis) ∧
-      (ecmFrame ∈ expect.valency.frames ∧ classOf expect ecmFrame = .futureIrrealis) ∧
-      (ecmFrame ∈ believe.valency.frames ∧ classOf believe ecmFrame = .propositional) ∧
-      (.infinitival ∈ claim.valency.frames ∧ classOf claim .infinitival = .propositional) ∧
-      (.infinitival ∈ manage.valency.frames ∧ classOf manage .infinitival = .tenseless) ∧
-      (.infinitival ∈ try_.valency.frames ∧ classOf try_ .infinitival = .tenseless) ∧
-      (.raising ∈ begin_.valency.frames ∧ classOf begin_ .raising = .tenseless) ∧
-      (.raising ∈ seem.valency.frames ∧ classOf seem .raising = .tenseless) ∧
-      (raisingExperiencerFrame ∈ seem.valency.frames ∧
-        classOf seem raisingExperiencerFrame = .propositional) := by
-  decide
 
 /-- The utterance time, the instant `0`. -/
 def present : NonemptyInterval ℤ := .pure 0
@@ -305,72 +272,70 @@ def present : NonemptyInterval ℤ := .pure 0
 /-- Yesterday, an extended interval before the utterance time. -/
 def yesterday : NonemptyInterval ℤ := ⟨(-2, -1), by decide⟩
 
-/-- The aspect rows: with each verb's class read off the fragment, a perfective infinitive is fine
-after *woll* and under a past *seem* or *try*, and out under a propositional attitude, a present
-*seem* or *try*, or an adverbial naming an instant, where the progressive and statives are fine;
-finite clauses pattern alike (45), (49). -/
+/-- The aspect rows: with the classes the paper gives their verbs, a perfective infinitive is
+fine after *woll* and under a past *seem*, *try* or *begin*, and out under a propositional
+attitude, a present *seem* or *try*, or an adverbial naming an instant, where the progressive
+and statives are fine; finite clauses pattern alike (45), (49). -/
 theorem aspect_rows :
     -- (1a), (2a), (53a), (61a): *decide*, *expect* to VP
-    (Available present 0 (classOf decide_ .infinitival) (some .perfective) .univ ↔
+    (Available present 0 .futureIrrealis (some .perfective) .univ ↔
         ex_1.judgment = .acceptable) ∧
-      (Available present 0 (classOf decide_ .infinitival) (some .perfective) .univ ↔
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
         ex_3.judgment = .acceptable) ∧
-      (Available present 0 (classOf expect .infinitival) (some .perfective) .univ ↔
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
         ex_29.judgment = .acceptable) ∧
-      (Available present 0 (classOf expect ecmFrame) (some .perfective) .univ ↔
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
         ex_43.judgment = .acceptable) ∧
       -- (53b): *expect to work at 5 p.m. tomorrow*
-      (Available present 0 (classOf expect .infinitival) (some .perfective) {.pure 1} ↔
+      (Available present 0 .futureIrrealis (some .perfective) {.pure 1} ↔
         ex_30.judgment = .acceptable) ∧
       -- (2b), (3b), (55a), (55b), (56b): *believe*, *claim* to VP
-      (Available yesterday (-1) (classOf believe ecmFrame) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_4.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf claim .infinitival) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_6.judgment = .acceptable) ∧
-      (Available present 0 (classOf believe ecmFrame) (some .perfective) .univ ↔
+      (Available present 0 .propositional (some .perfective) .univ ↔
         ex_31.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf believe ecmFrame) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_32.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf claim .infinitival) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_35.judgment = .acceptable) ∧
       -- (1b), (3a), (55c): statives under *believe* and *claim*
-      (Available present 0 (classOf believe ecmFrame) none .univ ↔
-        ex_2.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf claim .infinitival) none .univ ↔
-        ex_5.judgment = .acceptable) ∧
-      (Available present 0 (classOf believe ecmFrame) none .univ ↔
-        ex_33.judgment = .acceptable) ∧
-      -- (55e), (56e), (70a): progressives under a propositional attitude
-      (Available yesterday (-1) (classOf believe ecmFrame) (some .imperfective) .univ ↔
+      (Available present 0 .propositional none .univ ↔ ex_2.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional none .univ ↔ ex_5.judgment = .acceptable) ∧
+      (Available present 0 .propositional none .univ ↔ ex_33.judgment = .acceptable) ∧
+      -- (55e), (56e), (61b), (70a): progressives under a propositional attitude
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
         ex_34.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf claim .infinitival) (some .imperfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
         ex_36.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf seem raisingExperiencerFrame) (some .imperfective)
-          .univ ↔ ex_52.judgment = .acceptable) ∧
-      -- (61b): the progressive under *expect*, fine on its future reading too
-      (Available present 0 (classOf expect ecmFrame) (some .imperfective) .univ ↔
+      (Available present 0 .propositional (some .imperfective) .univ ↔
         ex_44.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
+        ex_52.judgment = .acceptable) ∧
       -- (70b), (70d): *seem* with an overt or understood attitude holder
-      (Available yesterday (-1) (classOf seem raisingExperiencerFrame) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_53.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf seem raisingExperiencerFrame) (some .perfective) .univ ↔
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
         ex_54.judgment = .acceptable) ∧
-      -- (57), (67), (68a), (69): *seem* and *try* without an attitude holder
-      (Available present 0 (classOf seem .raising) (some .perfective) .univ ↔
+      -- (57a): a present *seem*, read either way
+      (Available present 0 .tenseless (some .perfective) .univ ∨
+          Available present 0 .propositional (some .perfective) .univ ↔
         ex_37.judgment = .acceptable) ∧
-      (Available present 0 (classOf seem .raising) (some .imperfective) .univ ↔
+      -- (57b), (57c), (67c), (67d), (68a), (69a), (69b): *seem*, *try* without an attitude holder
+      (Available present 0 .tenseless (some .imperfective) .univ ↔
         ex_38.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf seem .raising) (some .perfective) .univ ↔
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
         ex_39.judgment = .acceptable) ∧
-      (Available present 0 (classOf seem .raising) (some .perfective) .univ ↔
+      (Available present 0 .tenseless (some .perfective) .univ ↔
         ex_47.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf seem .raising) (some .perfective) .univ ↔
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
         ex_48.judgment = .acceptable) ∧
-      (Available (.pure (-2 : ℤ)) (-2) (classOf seem .raising) (some .perfective) .univ ↔
+      (Available (.pure (-2 : ℤ)) (-2) .tenseless (some .perfective) .univ ↔
         ex_49.judgment = .acceptable) ∧
-      (Available yesterday (-1) (classOf try_ .infinitival) (some .perfective) .univ ↔
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
         ex_50.judgment = .acceptable) ∧
-      (Available present 0 (classOf try_ .infinitival) (some .perfective) .univ ↔
+      (Available present 0 .tenseless (some .perfective) .univ ↔
         ex_51.judgment = .acceptable) ∧
       -- (45a), (45b), (45c), (49a): finite present, past, future, and a past at an instant
       (Admits (some .perfective) (.pure (0 : ℤ)) ↔ ex_23.judgment = .acceptable) ∧
@@ -378,44 +343,33 @@ theorem aspect_rows :
       (Admits (some .perfective) (⟨(1, 2), by decide⟩ : NonemptyInterval ℤ) ↔
         ex_25.judgment = .acceptable) ∧
       (Admits (some .perfective) (.pure (-2 : ℤ)) ↔ ex_26.judgment = .acceptable) := by
-  obtain ⟨⟨-, hdec⟩, -, -, ⟨-, hexp⟩, ⟨-, hexp'⟩, ⟨-, hbel⟩, ⟨-, hcla⟩, -, ⟨-, htry⟩, -,
-    ⟨-, hseem⟩, ⟨-, hseem'⟩⟩ := table4
+  have hf : Available present 0 .futureIrrealis (some .perfective) .univ :=
+    available_futureIrrealis _
   have hf' : ¬ Available present 0 .futureIrrealis (some .perfective) {.pure 1} :=
     not_available_perfective _ fun _ h ↦ h ▸ rfl
-  simp only [hdec, hexp, hexp', hbel, hcla, htry, hseem, hseem', hf', available_futureIrrealis,
-    available_propositional_iff, available_tenseless_iff, admits_perfective_iff,
-    admits_imperfective, admits_none, Set.mem_univ, true_and, NonemptyInterval.IsPoint]
+  simp only [hf, hf', available_propositional_iff, available_tenseless_iff,
+    admits_perfective_iff, admits_imperfective, admits_none, Set.mem_univ, true_and,
+    NonemptyInterval.IsPoint]
   and_intros <;> decide
 
-/-- The orientation rows: with each verb's class read off the fragment, a future infinitive places
-its event after the matrix event, even before the utterance time, where *will* places it after the
-utterance time and a simultaneous infinitive at the matrix event's time; *would*, its past
-deleted, is relative like the infinitive. -/
+/-- The orientation rows: a future infinitive places its event after the matrix event, even before
+the utterance time, where *will* places it after the utterance time and a simultaneous infinitive
+at the matrix event's time; *would*, its past deleted, is relative like the infinitive. -/
 theorem orientation_rows :
     -- (6a), (9b), (12a): *decided*, *is expected* to VP
-    (Locates 0 (composition (classOf decide_ .infinitival)) (-1 : ℤ) 1 ↔
-        ex_7.judgment = .acceptable) ∧
-      (Locates 0 (composition (classOf expect ecmFrame)) (0 : ℤ) 1 ↔
-        ex_11.judgment = .acceptable) ∧
-      (Locates 0 (composition (classOf decide_ .infinitival)) (-7 : ℤ) (-1) ↔
-        ex_12.judgment = .acceptable) ∧
+    (Locates 0 (composition .futureIrrealis) (-1 : ℤ) 1 ↔ ex_7.judgment = .acceptable) ∧
+      (Locates 0 (composition .futureIrrealis) (0 : ℤ) 1 ↔ ex_11.judgment = .acceptable) ∧
+      (Locates 0 (composition .futureIrrealis) (-7 : ℤ) (-1) ↔ ex_12.judgment = .acceptable) ∧
       -- (12b): *decided … that he will go … yesterday*
       (Locates 0 will (-7 : ℤ) (-1) ↔ ex_13.judgment = .acceptable) ∧
       -- (22a): *decided … that she would go … yesterday*, with the past of *would* deleted
       (Locates 0 [.null, .woll] (-7 : ℤ) (-1) ↔ ex_16.judgment = .acceptable) ∧
       -- (6b), (6d), (66a), (66b): *tried*, *claimed*, *managed*, *began* to VP tomorrow
-      (Locates 0 (composition (classOf try_ .infinitival)) (-1 : ℤ) 1 ↔
-        ex_8.judgment = .acceptable) ∧
-      (Locates 0 (composition (classOf claim .infinitival)) (-1 : ℤ) 1 ↔
-        ex_9.judgment = .acceptable) ∧
-      (Locates 0 (composition (classOf manage .infinitival)) (-1 : ℤ) 1 ↔
-        ex_45.judgment = .acceptable) ∧
-      (Locates 0 (composition (classOf begin_ .raising)) (-1 : ℤ) 1 ↔
-        ex_46.judgment = .acceptable) := by
-  obtain ⟨⟨-, hdec⟩, -, -, -, ⟨-, hexp'⟩, -, ⟨-, hcla⟩, ⟨-, hman⟩, ⟨-, htry⟩, ⟨-, hbeg⟩, -, -⟩ :=
-    table4
-  simp only [hdec, hexp', hcla, hman, htry, hbeg, composition, locates_woll, locates_will,
-    locates_null_woll, locates_nil]
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_8.judgment = .acceptable) ∧
+      (Locates 0 (composition .propositional) (-1 : ℤ) 1 ↔ ex_9.judgment = .acceptable) ∧
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_45.judgment = .acceptable) ∧
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_46.judgment = .acceptable) := by
+  simp only [composition, locates_woll, locates_will, locates_null_woll, locates_nil]
   decide
 
 -- (14), (28b), (29a): a higher past lets the past of *would* delete, and *will* does not

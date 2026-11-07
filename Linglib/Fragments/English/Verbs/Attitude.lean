@@ -86,21 +86,13 @@ def notice : Verb where
 
 /-! ### Doxastic Attitude -/
 
-/-- The exceptional-case-marking frame: an infinitival clause with an overt accusative subject, as
-in *believe Julia to be a princess* and *expect the bridge to collapse*. -/
-def ecmFrame : ArgumentFrame :=
-  ⟨some .nominal,
-    [.clausal (coding := some .infinitive) (embeddedSubject := some (.overt (some .acc)))]⟩
-
 /-- "believe" — doxastic attitude verb, creates opaque context. It is gradable, measuring the
 holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-2016];
 [koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
-The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
-finite clause it takes an infinitive with an accusative subject (*believe Julia to be a princess*).
--/
+The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. -/
 def believe : Verb where
   morphs := [.root "believe"]
-  valency := .ofFrames [ArgumentFrame.finiteClause, ecmFrame]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   scaleDimension := some .confidence
   passivizable := false
@@ -199,12 +191,10 @@ def pray : Verb where
   attitude := some (.preferential .positive)
   levinClasses := {LevinClass.long}
 
-/-- "expect" — preferential attitude verb, taking a finite clause, an infinitive its subject
-controls (*expect to win*) or one with an accusative subject (*expect the bridge to collapse*). -/
+/-- "expect" — preferential attitude verb -/
 def expect : Verb where
   morphs := [.root "expect"]
-  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival, ecmFrame]
-    (controllers := [none, some 0])
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true

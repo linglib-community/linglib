@@ -114,20 +114,13 @@ def neglect : Verb where
 
 /-! ### Raising -/
 
-/-- The raising frame with an experiencer, *seem to his parents to be writing*: no external
-argument, a *to*-phrase and an infinitival clause. -/
-def raisingExperiencerFrame : ArgumentFrame :=
-  ⟨none, [.adposition (some Adpositions.to_) (some .dat), .clausal (coding := some .infinitive)]⟩
-
 /-- *seem* is a raising verb, with no external argument of its own, so its subject gets no
-    θ-role from it. With an experiencer it reports the experiencer's view, a doxastic attitude
-    of an attitude holder ([wurmbrand-2014] (70)). -/
+    θ-role from it. -/
 def seem : Verb where
   morphs := [.root "seem"]
-  valency := .of [(ArgumentFrame.raising, [0]), (raisingExperiencerFrame, [1, 0])]
+  valency := .ofFrame ArgumentFrame.raising
   vendlerClass := some .state
   passivizable := false
-  readings := [{ frame := raisingExperiencerFrame, attitude := some (.doxastic .doxastic) }]
 
 /-! ### Prerequisite implicatives -/
 

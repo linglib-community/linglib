@@ -18,9 +18,7 @@ the infinitival marker *to* is `English.Auxiliaries.toInf`.
 
 *for* requires an overt accusative subject right after it (*for her to be interviewed*), a
 requirement the selection relation reads off the position alone, so every infinitival frame
-takes *for*, the raising and control frames included. So does the exceptional-case-marking frame,
-whose complement has an accusative subject but no complementizer (*believe her to be*, *\*believe
-for her to be*), so that *believe* is listed with *for*.
+takes *for*, the raising and control frames included.
 
 ## References
 
@@ -80,8 +78,7 @@ theorem infinitivalQuestion_takes :
 theorem typers_know : Verbs.know.typers complementizers = [that, if_, whether] := by
   decide
 
--- *for* by the exceptional-case-marking frame, which the relation cannot tell from a *for*-clause
-theorem typers_believe : Verbs.believe.typers complementizers = [that, for_] := by
+theorem typers_believe : Verbs.believe.typers complementizers = [that] := by
   decide
 
 theorem typers_wonder : Verbs.wonder.typers complementizers = [if_, whether] := by
