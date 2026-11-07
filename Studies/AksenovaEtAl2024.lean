@@ -408,11 +408,9 @@ private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
 /-- No single tier carries Kikongo's two harmonies (§34.3.3), by [lambert-2023]'s method. -/
 theorem kikongo_not_isTierStrictlyLocal (k : ℕ) : ¬ kikongo.IsTierStrictlyLocal k :=
   fun h ↦ by
-    obtain ⟨T, _, hinv, hL⟩ := h.exists_tier
-    have hT (a : KikongoSeg) (u v : List KikongoSeg)
-        (h : ¬ (u ++ a :: v ∈ kikongo ↔ u ++ v ∈ kikongo)) : T a :=
-      by_contra fun ha ↦ h (hinv u v a ha)
-    have he := hT .e [.i] [] (by decide)
+    obtain ⟨T, hinv, hL⟩ := h.exists_tier
+    have he : T .e := by_contra fun he ↦
+      absurd (Language.syntacticClass_eq_one_iff.1 (hinv .e he) [.i] []) (by decide)
     have hx : (List.replicate (k - 1) KikongoSeg.e).filter (T ·) = List.replicate (k - 1) .e := by
       simp [he]
     exact (mem_kikongo_window .n .l rfl rfl (k - 1)).1

@@ -25,9 +25,12 @@ middles with one projection](##Language.isTierStrictlyLocal_iff_exists_tier).
 ## Implementation notes
 
 The projection is `List.filter` by the `decide` of the tier, already a `Bool` tier in the sense
-of `Language.IsTierBased`. It is padded with `k - 1` boundaries on each side, as in Lambert's
-anchored models. Under Heinz, Rawal and Tanner's single boundary, a word whose projection has
-fewer than `k - 2` symbols has no `k`-factors and so lies in every language of width `k`.
+of `Language.IsTierBased`, and Lambert's characterization quantifies over `Bool` tiers as that
+does. A symbol is freely insertable and deletable when its syntactic class is the identity, the
+algebraic form of Lambert's self-loops on every state of the canonical automaton. The projection
+is padded with `k - 1` boundaries on each side, as in Lambert's anchored models. Under Heinz,
+Rawal and Tanner's single boundary, a word whose projection has fewer than `k - 2` symbols has
+no `k`-factors and so lies in every language of width `k`.
 
 ## Errata
 
@@ -73,9 +76,11 @@ def language (k : ℕ) (G : TierStrictlyLocalGrammar α) : Language α :=
 @[simp] lemma mem_language : w ∈ G.language k ↔ w.filter (G.tier ·) ∈ G.permitted.language k :=
   Iff.rfl
 
-theorem mem_language_append_cons_of_not_tier {a : α} (ha : ¬ G.tier a) (u v : List α) :
-    u ++ a :: v ∈ G.language k ↔ u ++ v ∈ G.language k := by
-  simp [List.filter_append, ha]
+/-- A symbol off the tier is freely insertable and deletable: its syntactic class is the
+identity. -/
+theorem syntacticClass_eq_one_of_not_tier {a : α} (ha : ¬ G.tier a) :
+    (G.language k).syntacticClass [a] = 1 :=
+  Language.syntacticClass_eq_one_iff.2 fun u v ↦ by simp [List.filter_append, ha]
 
 end TierStrictlyLocalGrammar
 
@@ -97,35 +102,29 @@ theorem IsStrictlyLocal.toIsTierStrictlyLocal (h : L.IsStrictlyLocal k) :
   obtain ⟨G, rfl⟩ := h
   exact ⟨⟨fun _ ↦ True, G⟩, by ext w; simp⟩
 
-/-- A tier-based strictly local language in which every symbol is visible, deleting it from some
-string changing membership, is strictly local, since its tier is the whole alphabet. -/
+/-- A tier-based strictly local language in which no symbol is freely insertable and deletable is
+strictly local, since its tier is then the whole alphabet. -/
 theorem IsTierStrictlyLocal.isStrictlyLocal (h : L.IsTierStrictlyLocal k)
-    (hvis : ∀ a, ∃ u v, ¬ (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) : L.IsStrictlyLocal k := by
+    (hvis : ∀ a, L.syntacticClass [a] ≠ 1) : L.IsStrictlyLocal k := by
   obtain ⟨G, rfl⟩ := h
-  have htier (a : α) : G.tier a := by
-    by_contra ha
-    obtain ⟨u, v, huv⟩ := hvis a
-    exact huv (G.mem_language_append_cons_of_not_tier ha u v)
   refine ⟨G.permitted, Set.ext fun w ↦ ?_⟩
-  rw [TierStrictlyLocalGrammar.mem_language,
-    List.filter_eq_self.2 fun a _ ↦ decide_eq_true (htier a)]
+  rw [TierStrictlyLocalGrammar.mem_language, List.filter_eq_self.2 fun a _ ↦ decide_eq_true <|
+    Decidable.not_not.1 fun ha ↦ hvis a (G.syntacticClass_eq_one_of_not_tier ha)]
 
 /-! ## Lambert's characterization -/
 
 /-- `L` is closed under `T`-preprojective suffix substitution at width `k`
 ([lambert-2023], Definition 1) when two members whose middles project to one tier string of at
 least `k - 1` symbols admit the crossover of their suffixes. -/
-def PreprojectiveSuffixSubstitutionClosed (L : Language α) (T : α → Prop) [DecidablePred T]
-    (k : ℕ) : Prop :=
-  ∀ u₁ x₁ v₁ u₂ x₂ v₂ : List α, x₁.filter (T ·) = x₂.filter (T ·) →
-    k - 1 ≤ (x₁.filter (T ·)).length → u₁ ++ x₁ ++ v₁ ∈ L → u₂ ++ x₂ ++ v₂ ∈ L →
-      u₁ ++ x₁ ++ v₂ ∈ L
+def PreprojectiveSuffixSubstitutionClosed (L : Language α) (T : α → Bool) (k : ℕ) : Prop :=
+  ∀ u₁ x₁ v₁ u₂ x₂ v₂ : List α, x₁.filter T = x₂.filter T → k - 1 ≤ (x₁.filter T).length →
+    u₁ ++ x₁ ++ v₁ ∈ L → u₂ ++ x₂ ++ v₂ ∈ L → u₁ ++ x₁ ++ v₂ ∈ L
 
 theorem IsTierStrictlyLocal.exists_tier (h : L.IsTierStrictlyLocal k) :
-    ∃ (T : α → Prop) (_ : DecidablePred T), (∀ u v a, ¬ T a → (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) ∧
+    ∃ T : α → Bool, (∀ a, ¬ T a → L.syntacticClass [a] = 1) ∧
       L.PreprojectiveSuffixSubstitutionClosed T k := by
   obtain ⟨G, rfl⟩ := h
-  refine ⟨G.tier, inferInstance, fun u v a ha ↦ G.mem_language_append_cons_of_not_tier ha u v,
+  refine ⟨(G.tier ·), fun a ha ↦ G.syntacticClass_eq_one_of_not_tier (by simpa using ha),
     fun u₁ x₁ v₁ u₂ x₂ v₂ hx hlen h₁ h₂ ↦ ?_⟩
   have hSSC := (show (G.permitted.language k).IsStrictlyLocal k from ⟨_, rfl⟩)
     |>.suffixSubstitutionClosed
@@ -138,41 +137,36 @@ theorem IsTierStrictlyLocal.exists_tier (h : L.IsTierStrictlyLocal k) :
   simpa only [List.append_assoc] using
     hSSC (u₁.filter _ ++ p.rdrop (k - 1)) (v₁.filter _)
       (u₂.filter _ ++ p.rdrop (k - 1)) (v₂.filter _) (p.rtake (k - 1))
-      (by simp; omega) (by simpa only [List.append_assoc] using h₁)
+      (by simpa using hlen) (by simpa only [List.append_assoc] using h₁)
       (by simpa only [List.append_assoc] using h₂)
 
 /-- **Lambert's characterization of the tier-based strictly local languages**
 ([lambert-2023], Theorem 1). For `2 ≤ k`, a language is tier-based strictly `k`-local exactly
-when some tier has freely insertable and deletable off-tier symbols and closes the language
-under preprojective suffix substitution. -/
+when some tier has freely insertable and deletable off-tier symbols, their syntactic class being
+the identity, and closes the language under preprojective suffix substitution. -/
 theorem isTierStrictlyLocal_iff_exists_tier (hk : 2 ≤ k) :
     L.IsTierStrictlyLocal k ↔
-      ∃ (T : α → Prop) (_ : DecidablePred T),
-        (∀ u v a, ¬ T a → (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) ∧
-          L.PreprojectiveSuffixSubstitutionClosed T k := by
-  refine ⟨IsTierStrictlyLocal.exists_tier, fun ⟨T, _, hinv, hL⟩ ↦ ?_⟩
-  have hfilter (u w : List α) : u ++ w ∈ L ↔ u ++ w.filter (T ·) ∈ L := by
+      ∃ T : α → Bool, (∀ a, ¬ T a → L.syntacticClass [a] = 1) ∧
+        L.PreprojectiveSuffixSubstitutionClosed T k := by
+  refine ⟨IsTierStrictlyLocal.exists_tier, fun ⟨T, hinv, hL⟩ ↦ ?_⟩
+  have hfilter (u w : List α) : u ++ w ∈ L ↔ u ++ w.filter T ∈ L := by
     induction w generalizing u with
     | nil => rfl
     | cons a w ih =>
       by_cases ha : T a
       · simpa [ha] using ih (u ++ [a])
-      · simpa [ha] using (hinv u w a ha).trans (ih u)
+      · simpa [ha] using (syntacticClass_eq_one_iff.1 (hinv a ha) u w).trans (ih u)
   let S : Language α := {v | v ∈ L ∧ ∀ a ∈ v, T a}
   have hS : S.IsStrictlyLocal k := by
     refine (isStrictlyLocal_iff_suffixSubstitutionClosed hk).2
-      fun u₁ v₁ u₂ v₂ x hx ⟨h₁, h₁T⟩ ⟨h₂, h₂T⟩ ↦ ⟨?_, ?_⟩
-    · have hxT : x.filter (T ·) = x := List.filter_eq_self.2 fun a ha ↦
-        decide_eq_true (h₁T a (by simp [ha]))
-      exact hL u₁ x v₁ u₂ x v₂ rfl (by rw [hxT, hx]) h₁ h₂
-    · intro a ha
-      simp only [List.mem_append] at ha
-      rcases ha with (ha | ha) | ha
-      · exact h₁T a (by simp [ha])
-      · exact h₁T a (by simp [ha])
-      · exact h₂T a (by simp [ha])
+      fun u₁ v₁ u₂ v₂ x hx ⟨h₁, h₁T⟩ ⟨h₂, h₂T⟩ ↦ ⟨?_, fun a ha ↦ ?_⟩
+    · refine hL u₁ x v₁ u₂ x v₂ rfl ?_ h₁ h₂
+      rw [List.filter_eq_self.2 fun a ha ↦ h₁T a (by simp [ha]), hx]
+    · rcases List.mem_append.1 ha with ha | ha
+      · exact h₁T a (List.mem_append_left _ ha)
+      · exact h₂T a (List.mem_append_right _ ha)
   obtain ⟨G, hG⟩ := hS
-  refine ⟨⟨T, G⟩, Set.ext fun w ↦ ?_⟩
+  refine ⟨⟨(T · = true), G⟩, Set.ext fun w ↦ ?_⟩
   rw [TierStrictlyLocalGrammar.mem_language, hG]
   constructor
   · rintro ⟨h, -⟩

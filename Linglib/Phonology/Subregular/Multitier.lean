@@ -73,11 +73,8 @@ def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
 
 namespace IsTierBased
 
-theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L := by
-  refine ⟨fun _ ↦ true, L, ?_, h⟩
-  ext w
-  show w ∈ L ↔ List.filter (fun _ ↦ true) w ∈ L
-  rw [List.filter_true]
+theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L :=
+  ⟨fun _ ↦ true, L, by simp only [List.filter_true]; rfl, h⟩
 
 /-- Monotonicity in the base class. -/
 theorem mono (h : ∀ L, 𝒞 L → 𝒟 L) (hL : IsTierBased 𝒞 L) : IsTierBased 𝒟 L := by
