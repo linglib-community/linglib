@@ -50,6 +50,7 @@ def ppOptions : Options :=
     |>.setBool `pp.proofs true
     |>.setBool `pp.funBinderTypes true
     |>.setBool `pp.deepTerms true
+    |>.setBool `pp.fieldNotation.generalized false
     |>.set `pp.maxSteps (1000000 : Nat)
     |>.set `format.width (100 : Nat)
 

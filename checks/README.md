@@ -98,6 +98,44 @@ by renaming an instance it uses, also makes the sign-off stale.
   axiom that `native_decide` adds, which trusts the compiler. The status line still shows the
   sign-off, since a statement can be faithful without being proved.
 
+## Glosses
+
+A reviewer who does not read Lean can ask for a gloss of each item's statement:
+
+```
+python3 scripts/checks.py gloss SOURCE --command CMD [--items ex-22,ex-23] > glosses.md
+```
+
+A gloss is written by a model, in English, from the item's statement closure alone. It lists
+each declaration's parameters, hypotheses and conclusion, says the whole in one sentence,
+describes the definitions it uses, and notes anything odd, such as a hypothesis that seems unused
+or a statement that is trivially true. The gloss is blind. The model has no tools and no access to
+files, docstrings or the source, and the declarations' own names and the study's namespace are
+hidden, so it works from the definitions' bodies and says what the Lean says, not what it is meant
+to say. A missing hypothesis or a quantifier the wrong way round then shows as a difference between
+the gloss and the source.
+
+A gloss is an aid to reading the Lean, not a substitute for it, and never evidence for a sign-off.
+It can be wrong, and its observations sometimes go beyond what it has worked out.
+
+`gloss` works with any model. `--command` is a shell command, run from the repository root, that
+reads the text to gloss on standard input and the prompt (`scripts/checks/gloss-prompt.md`) from
+the file named by `$GLOSS_PROMPT`, and writes the gloss to standard output. For example, with
+Claude Code, or with Simon Willison's [`llm`](https://llm.datasette.io), which reaches most hosted
+and local models through plugins:
+
+```
+--command "scripts/checks/gloss-claude.sh claude-sonnet-5-5"
+--command 'llm -m gpt-5 --no-log -s "$(cat "$GLOSS_PROMPT")"'
+```
+
+The command must give the model nothing but the prompt and the text: no tools, no files, no memory
+of earlier sessions. `gloss-claude.sh` turns these off for Claude Code and runs it in an empty
+directory; `llm` offers no tools unless asked to. There is no default command: a gloss of every item
+of a paper costs a fair share of a usage limit, and a larger model costs more, so the choice is the
+reviewer's. Glosses are cached in `.cache/checks/glosses/` by the command, the prompt and the exact
+text glossed, so a gloss is rewritten only when one of these changes.
+
 ## The reviewed core
 
 `core` lists the declarations of the checked items, with the project definitions their statements

@@ -32,11 +32,19 @@ Usage, from the repository root:
     python3 scripts/checks.py core [--json]
     python3 scripts/checks.py sign SOURCE (--all | --items ID,ID,...) --by GITHUB_HANDLE
     python3 scripts/checks.py selftest   # after changing `checkClosure` or Lean
+    python3 scripts/checks.py gloss SOURCE --command CMD [--items ID,ID,...]
+
+`gloss` prints, for each item, a blind English gloss of its Lean statement, to help a reviewer who
+does not read Lean. A model of the reviewer's choice, run by the shell command CMD, writes it from
+the statement closure alone, with the declarations' names hidden and no access to docstrings,
+files or tools, so that it says what the Lean says rather than what it is meant to say. A gloss is an aid to review and never evidence for a
+sign-off: the sign-off is of the Lean. Glosses are cached in `.cache/checks/glosses/`.
 
 Sign-offs are made by people. `sign` refuses to run inside an agent session (`CLAUDECODE`).
 """
 
 import argparse
+import concurrent.futures
 import datetime
 import hashlib
 import json
@@ -362,6 +370,121 @@ def cmd_sign(args):
     return 0
 
 
+GLOSS_PROMPT = ROOT / "scripts" / "checks" / "gloss-prompt.md"
+GLOSS_CACHE = ROOT / ".cache" / "checks" / "glosses"
+
+
+def gloss_input(item, data):
+    """The text a gloss is written from, and the names it hides.
+
+    The item's declarations become T1, T2, …, followed by the project declarations their statements
+    use, each after those it mentions. The namespace of the study the declarations come from is
+    dropped, since it names the source. Docstrings are left out."""
+    nodes = data["nodes"]
+    targets = item["decls"]
+    closure = set()
+    for name in targets:
+        closure.update(data["roots"][name]["closure"])
+    names = sorted(closure - set(targets))
+    studies = {nodes[n]["module"].split(".")[-1] for n in [*targets, *names]
+               if nodes[n]["module"].startswith("Studies.")}
+    table = {t: f"T{i + 1}" for i, t in enumerate(targets)}
+    for n in names:
+        if n.split(".")[0] in studies:
+            table[n] = n.split(".", 1)[1]
+    keys = sorted(table, key=len, reverse=True)
+    pattern = re.compile(r"(?<![\w.])(" + "|".join(map(re.escape, keys)) + r")(?![\w])")
+    hide = lambda text: pattern.sub(lambda m: table[m.group(1)], text)
+
+    mentions = {n: {m for m in names if m != n and re.search(
+        r"(?<![\w.])" + re.escape(m) + r"(?![\w])", nodes[n]["text"])} for n in names}
+    order, done = [], set()
+    def visit(n, path=()):
+        if n in done or n in path:
+            return
+        for m in sorted(mentions[n]):
+            visit(m, path + (n,))
+        done.add(n)
+        order.append(n)
+    for n in names:
+        visit(n)
+
+    parts = ["## Target declarations\n"]
+    for t in targets:
+        parts.append(f"### {table[t]} ({nodes[t]['kind']})\n```lean\n{hide(nodes[t]['text'])}\n```\n")
+    parts.append("## Project declarations the targets use\n")
+    for n in order:
+        parts.append(f"### {hide(n)} ({nodes[n]['kind']})\n```lean\n{hide(nodes[n]['text'])}\n```\n")
+    return "\n".join(parts), {table[t]: t for t in targets}
+
+
+def write_gloss(text, command):
+    """A gloss of `text` by the shell command `command`, which reads the text on standard input and
+    the prompt from the file named by `$GLOSS_PROMPT`, and writes the gloss to standard output."""
+    out = subprocess.run(command, shell=True, input=text, cwd=ROOT, capture_output=True, text=True,
+                         env={**os.environ, "GLOSS_PROMPT": str(GLOSS_PROMPT)})
+    gloss = out.stdout.strip()
+    if out.returncode or not gloss.startswith("### T1"):
+        detail = (gloss or out.stderr).strip()
+        raise RuntimeError(detail.splitlines()[0] if detail else f"exit {out.returncode}")
+    return gloss
+
+
+def cmd_gloss(args):
+    sources = load_sources([args.source])
+    items = [i for i in sources[args.source]["items"] if i.get("decls")]
+    if args.items:
+        wanted = args.items.split(",")
+        unknown = set(wanted) - {i["id"] for i in items}
+        if unknown:
+            sys.exit(f"no item with declarations: {', '.join(sorted(unknown))}")
+        items = [i for i in items if i["id"] in wanted]
+    data = closures(sorted({d for i in items for d in i["decls"]}))
+    missing = sorted(d for i in items for d in i["decls"] if not data["roots"][d]["found"])
+    if missing:
+        sys.exit("declarations not found: " + ", ".join(missing))
+
+    prompt = GLOSS_PROMPT.read_text(encoding="utf-8")
+    GLOSS_CACHE.mkdir(parents=True, exist_ok=True)
+    jobs = {}
+    for item in items:
+        text, names = gloss_input(item, data)
+        key = hashlib.sha256("\0".join([args.command, prompt, text]).encode()).hexdigest()[:16]
+        jobs[item["id"]] = (key, text, names)
+
+    def ensure(cid):
+        key, text, names = jobs[cid]
+        path = GLOSS_CACHE / f"{key}.json"
+        if path.exists() and not args.refresh:
+            return
+        gloss = write_gloss(text, args.command)
+        path.write_text(json.dumps({"command": args.command, "input": text, "names": names,
+                                    "gloss": gloss}, ensure_ascii=False, indent=1),
+                        encoding="utf-8")
+
+    failed = {}
+    with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:
+        futures = {pool.submit(ensure, cid): cid for cid in jobs}
+        for f in concurrent.futures.as_completed(futures):
+            try:
+                f.result()
+            except RuntimeError as e:
+                failed[futures[f]] = str(e)
+
+    for item in items:
+        cid = item["id"]
+        print(f"# {args.source}/{cid}: {item.get('label', '')}\n")
+        if cid in failed:
+            print(f"_No gloss: {failed[cid]}_\n")
+            continue
+        entry = json.loads((GLOSS_CACHE / f"{jobs[cid][0]}.json").read_text(encoding="utf-8"))
+        print(", ".join(f"{t} is `{n}`" for t, n in entry["names"].items()) + ".\n")
+        print(entry["gloss"] + "\n")
+    for cid, err in failed.items():
+        print(f"{args.source}/{cid}: no gloss: {err}", file=sys.stderr)
+    return 1 if failed else 0
+
+
 # Groups of declarations in `scripts/checks/ChecksFixture.lean` whose terms must all be equal
 # (True), since they differ only in proofs, bound names or binder annotations, or all differ
 # (False), since what they say differs.
@@ -423,6 +546,15 @@ def main():
     g.add_argument("--items", help="comma-separated item ids")
     p.add_argument("--by", required=True, help="your GitHub handle")
     p.set_defaults(func=cmd_sign)
+    p = sub.add_parser("gloss", help="blind English glosses of the items' Lean statements")
+    p.add_argument("source")
+    p.add_argument("--items", help="comma-separated item ids (default: every item)")
+    p.add_argument("--command", required=True,
+                   help="shell command that writes a gloss: text on stdin, prompt file in "
+                        "$GLOSS_PROMPT, gloss on stdout (see checks/README.md)")
+    p.add_argument("--jobs", type=int, default=4, help="glosses written at once")
+    p.add_argument("--refresh", action="store_true", help="rewrite cached glosses")
+    p.set_defaults(func=cmd_gloss)
     p = sub.add_parser("selftest", help="check that the hash changes exactly when it should")
     p.set_defaults(func=cmd_selftest)
     args = parser.parse_args()
