@@ -14,7 +14,8 @@ A Hamblin set `H : Set (Set W)` is a set of propositions. The theories that
 take a question to denote such a set locate "the answer at world `w`" by an
 operator on the members of `H` true at `w`:
 
-- `trueAnswers H w`, the [karttunen-1977] set of true members;
+- `trueAnswers H w`, the [karttunen-1977] set of true members, a veridical question intension
+  (`IsVeridical`): each answer it gives at a world holds there;
 - `weakAnswer H w`, their intersection, the weakly exhaustive answer of
   [heim-1994] (Ans₁) and [beck-rullmann-1999];
 - `strongAnswer H w`, the worlds deciding every member as `w` does, the
@@ -95,6 +96,12 @@ def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
     p ∈ trueAnswers H w ↔ p ∈ H ∧ w ∈ p := Iff.rfl
 
 theorem trueAnswers_subset : trueAnswers H w ⊆ H := fun _ h => h.1
+
+/-- A question intension, a set of answers at each world, is veridical when each answer it gives at
+`w` holds at `w`. -/
+def IsVeridical (q : W → Set (Set W)) : Prop := ∀ w, ∀ p ∈ q w, w ∈ p
+
+theorem isVeridical_trueAnswers : IsVeridical (trueAnswers H) := fun _ _ hp ↦ hp.2
 
 theorem iUnion_trueAnswers : ⋃ w, trueAnswers H w = {p ∈ H | p.Nonempty} := by
   ext p

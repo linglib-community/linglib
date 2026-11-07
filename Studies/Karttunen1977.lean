@@ -12,18 +12,21 @@ of its true answers, the propositions among its alternatives that hold at the wo
 evaluation, which is `Question.trueAnswers` of the question's Hamblin set. The yes/no rule
 (26) gives *whether p* the alternatives `p` and its negation, so that at each world the
 question denotes the singleton of the true one (`trueAnswers_pair`); the WH-quantification
-rule (33) gives *which girl sleeps* one alternative per girl, so that the question denotes the
-propositions that a sleeping girl sleeps, (34), and the empty set when no girl sleeps
-(`trueAnswers_image_eq_empty_iff`), the existential implicature the paper leaves to
+rule (33) gives *which girl sleeps* one alternative per girl, the common noun read at the world
+of evaluation, so that the question denotes there the propositions that a sleeping girl sleeps,
+(34) (`wh`), and the empty set when no girl sleeps (`wh_eq_empty_iff`), the existential
+implicature the paper leaves to
 [karttunen-peters-1976] in its footnote 13. Since every member of the denotation is true, a
 verb like *tell* is veridical with an indirect question where it is not with a *that*-clause,
 (19) (`told_true`).
 
 Footnote 11's meaning postulate relates the question-embedding *know* to the
 proposition-embedding one: an agent knows a question when she knows each of its true answers,
-and knows that it has none when it has none (`Knows`). The first conjunct is the substrate's
-`Question.KnowsAnswer`, knowledge of the intersection of the true answers, and the second is
-what keeps knowledge of an empty question from being trivial (`knows_iff_of_no_witness`).
+and knows that it has none when it has none (`Knows`). The postulate quantifies over question
+intensions, and `wh` is not the true answers of one Hamblin set, since its alternatives change
+with the girls. On a Hamblin set the first conjunct is the substrate's `Question.KnowsAnswer`,
+knowledge of the intersection of the true answers, and the second is what keeps knowledge of an
+empty question from being trivial (`knows_wh_iff_of_no_witness`).
 Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
 (`knows_pair_iff`).
 
@@ -32,10 +35,10 @@ Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
 The substrate's `Question` is a downward-closed set of propositions whose alternatives
 `Question.alt` are its maximal members, so `Question.polar` and `Question.which` reproduce
 the paper's alternative sets only up to maximality: the polar identification holds for a
-non-trivial proposition (`trueAnswers_alt_polar`) and the wh one when the answers form an
-antichain (`trueAnswers_alt_which`). The paper's syntax, the proto-questions and the rules
-building questions from them, is not represented, nor are the multiple-wh and scope
-ambiguities of its later sections.
+non-trivial proposition (`trueAnswers_alt_polar`) and the wh one when the domain is fixed
+across worlds and the answers form an antichain (`trueAnswers_alt_which`). The paper's syntax,
+the proto-questions and the rules building questions from them, is not represented, nor are the
+multiple-wh and scope ambiguities of its later sections.
 
 ## References
 
@@ -80,24 +83,35 @@ theorem trueAnswers_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.uni
     trueAnswers (alt (polar p)) w = trueAnswers {p, pᶜ} w := by
   rw [alt_polar_of_nontrivial hne hnu]
 
-variable {E : Type*} (D : Set E) (P : E → Set W)
+variable {E : Type*} (S P : E → Set W)
+
+/-- The WH-quantification rule (33) makes *which S P* denote at `w` the true ones among the
+propositions that `x` is `P`, for each `x` that is `S` at `w`, (34b): the common noun is
+extensional, read at the world of evaluation. -/
+def wh (w : W) : Set (Set W) := trueAnswers (P '' {x | w ∈ S x}) w
 
 -- (34)
-theorem mem_trueAnswers_image_iff (q : Set W) :
-    q ∈ trueAnswers (P '' D) w ↔ ∃ e ∈ D, w ∈ P e ∧ q = P e := by
-  simp only [mem_trueAnswers, Set.mem_image]
+theorem mem_wh_iff {q : Set W} : q ∈ wh S P w ↔ ∃ x, w ∈ S x ∧ w ∈ P x ∧ q = P x := by
+  simp only [wh, mem_trueAnswers, Set.mem_image, Set.mem_ofPred_eq]
   constructor
-  · rintro ⟨⟨e, he, rfl⟩, hw⟩
-    exact ⟨e, he, hw, rfl⟩
-  · rintro ⟨e, he, hw, rfl⟩
-    exact ⟨⟨e, he, rfl⟩, hw⟩
+  · rintro ⟨⟨x, hx, rfl⟩, hw⟩
+    exact ⟨x, hx, hw, rfl⟩
+  · rintro ⟨x, hx, hw, rfl⟩
+    exact ⟨⟨x, hx, rfl⟩, hw⟩
+
+theorem wh_eq_image : wh S P w = P '' {x | w ∈ S x ∧ w ∈ P x} := by
+  rw [wh, trueAnswers_image]
+  rfl
+
+theorem isVeridical_wh : IsVeridical (wh S P) := fun w ↦ isVeridical_trueAnswers _ w
 
 /-- When no girl sleeps, the question denotes the empty set: the existential implicature of
 footnote 13 is not part of the denotation. -/
-theorem trueAnswers_image_eq_empty_iff :
-    trueAnswers (P '' D) w = ∅ ↔ ∀ e ∈ D, w ∉ P e := by
-  simp only [Set.eq_empty_iff_forall_notMem, mem_trueAnswers_image_iff, not_exists, not_and]
-  exact ⟨fun h e he hw ↦ h (P e) e he hw rfl, fun h _ e he hw _ ↦ h e he hw⟩
+theorem wh_eq_empty_iff : wh S P w = ∅ ↔ ∀ x, w ∈ S x → w ∉ P x := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_wh_iff, not_exists, not_and]
+  exact ⟨fun h x hx hw ↦ h (P x) x hx hw rfl, fun h _ x hx hw _ ↦ h x hx hw⟩
+
+variable (D : Set E)
 
 theorem trueAnswers_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
     trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by
@@ -112,23 +126,23 @@ theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w
 variable (Dox : SetRel W W)
 
 /-- Footnote 11's meaning postulate, with the proposition-embedding *know* read through the
-agent's doxastic alternatives `Dox`, says that the agent knows every true answer and, when there
-is none, knows that there is none. -/
-def Knows (H : Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
-  KnowsAnswer H w Dox ∧ (trueAnswers H w = ∅ → w ∈ Dox.core {v | trueAnswers H v = ∅})
+agent's doxastic alternatives `Dox`, says that the agent knows every answer the question `q` gives
+at `w` and, when it gives none, knows that it gives none. -/
+def Knows (q : W → Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
+  w ∈ Dox.core (⋂₀ q w) ∧ (q w = ∅ → w ∈ Dox.core {v | q v = ∅})
 
 /-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
 theorem knows_pair_iff (p : Set W) :
-    Knows {p, pᶜ} w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
+    Knows (trueAnswers {p, pᶜ}) w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
   by_cases h : w ∈ p
-  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
-  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
+  · simp [Knows, trueAnswers_pair_of_mem w h, h]
+  · simp [Knows, trueAnswers_pair_of_notMem w h, h]
 
-theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
-    Knows (P '' D) w Dox ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
-  have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h
-  simp only [Knows, KnowsAnswer, weakAnswer, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
-    true_and, true_imp_iff, trueAnswers_image_eq_empty_iff, SetRel.mem_core,
-    Set.mem_ofPred_eq]
+/-- When no girl sleeps, knowing which girl sleeps is believing that no girl sleeps, where the
+girls are those of each belief world. -/
+theorem knows_wh_iff_of_no_witness (h : ∀ x, w ∈ S x → w ∉ P x) :
+    Knows (wh S P) w Dox ↔ ∀ v, w ~[Dox] v → ∀ x, v ∈ S x → v ∉ P x := by
+  simp only [Knows, (wh_eq_empty_iff w S P).2 h, Set.sInter_empty, SetRel.core_univ,
+    Set.mem_univ, true_and, true_imp_iff, SetRel.mem_core, Set.mem_ofPred_eq, wh_eq_empty_iff]
 
 end Karttunen1977
