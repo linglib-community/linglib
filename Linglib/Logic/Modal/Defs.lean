@@ -98,6 +98,16 @@ theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
 
+/-- A proposition that does not vary with the world is necessary at `w` when it is true or `w`
+accesses no world. -/
+theorem box_const {c : Prop} : □[R] (fun _ ↦ c) w ↔ (w ∈ R.dom → c) :=
+  ⟨fun h ⟨v, hv⟩ ↦ h v hv, fun h v hv ↦ h ⟨v, hv⟩⟩
+
+/-- A proposition that does not vary with the world is possible at `w` when it is true and `w`
+accesses some world. -/
+theorem diamond_const {c : Prop} : ◇[R] (fun _ ↦ c) w ↔ w ∈ R.dom ∧ c :=
+  ⟨fun ⟨v, hv, hc⟩ ↦ ⟨⟨v, hv⟩, hc⟩, fun ⟨⟨v, hv⟩, hc⟩ ↦ ⟨v, hv, hc⟩⟩
+
 /-- Necessity at `w` depends on its argument at a set of worlds exactly when the set contains every
 world `w` accesses. -/
 theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
