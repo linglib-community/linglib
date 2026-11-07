@@ -15,10 +15,11 @@ of the fragment bears out](##controllerSlot_mem_coreSlots).
 
 ## Implementation notes
 
-* A frame records the slot whose subject an open complement shares
-  (`ArgumentFrame.ComplementSubject`), and a diathesis whether a participant fills it, under equi,
-  or none does, under raising. The subject, object and second object are the frame's core slots
-  (`ArgumentFrame.coreSlots`), its objects in the order of its complements.
+* A diathesis records the slot a complement's subject depends on (`Diathesis.control`) and
+  whether a participant fills it, under equi, or none does, under raising. The subject, object and
+  second object are the frame's core slots (`ArgumentFrame.coreSlots`), its objects in the order of
+  its complements. That the dependent is unpronounced in an open complement, as English's are, is
+  the fragment's record of its subject (`English.Verbs.toInfinitive`).
 * The control of adjuncts, which c-structure induces, and anaphoric control, of a closed
   complement's own unexpressed subject, are not encoded: the fragment's open complements are all
   lexically controlled.

@@ -17,9 +17,9 @@ verb takes a typer when some complement or frame does. All decidable. A
 typer records the [noonan-2007] coding and the sentence types it types, and
 the realization its clause's own subject must have, so the relation lives on
 those three axes (`takes_iff_typer_axes`): matching needs positive evidence
-on one of them, and a non-clausal position takes nothing. A typer types a
-closed clause, so an open complement, whose subject is a matrix argument's,
-takes no typer that requires a subject, as *for* requires an overt one.
+on one of them, and a non-clausal position takes nothing. A complement whose
+subject is unpronounced takes no typer requiring a pronounced one, as *for*
+requires an overt accusative subject.
 Selection is by these features alone, so two typers recording the same
 coding, sentence types and subject are taken by the same predicates; a
 lexical restriction beyond them, as of Bulgarian *deto* to some emotive
@@ -90,7 +90,7 @@ end ArgumentFrame.Position
 def Complementizer.axes (z : Complementizer) : ArgumentFrame.Position.Axes
   | .coding => z.coding
   | .types => z.types
-  | .subject => z.subject.map .own
+  | .subject => z.subject
   | .relation | .adposition | .interp => ⊥
 
 namespace Complementizer
@@ -102,13 +102,12 @@ variable {z : Complementizer} {f : ArgumentFrame.Position.Axes}
 /-- A bundle is consistent with a typer's exactly on the coding, types and subject axes. -/
 theorem compat_axes_iff (f : ArgumentFrame.Position.Axes) :
     Compat f z.axes ↔ Compat (f .coding) z.coding ∧ Compat (f .types) z.types ∧
-      Compat (f .subject) (z.subject.map .own) := by
+      Compat (f .subject) z.subject := by
   rw [compat_pi_iff]
   exact ⟨fun h ↦ ⟨h _, h _, h _⟩, fun ⟨hc, hf, hs⟩ a ↦ by
     cases a <;> first | exact hc | exact hf | exact hs | exact compat_bot _⟩
 
-theorem axes_subject_eq_bot_iff : z.axes .subject = ⊥ ↔ z.subject = none :=
-  show z.subject.map _ = none ↔ _ from Option.map_eq_none_iff
+theorem axes_subject_eq_bot_iff : z.axes .subject = ⊥ ↔ z.subject = none := Iff.rfl
 
 /-- A bundle overlaps a typer's exactly on the coding, types and subject axes. -/
 theorem overlap_axes_iff (f : ArgumentFrame.Position.Axes) :
@@ -132,10 +131,10 @@ namespace ArgumentFrame.Position
 
 variable {p q : Position} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
 
-/-- The clausal position `z` types is closed, with `z`'s coding and sentence types and its own
-    subject of the realization `s` the selecting predicate requires, else that `z` requires. -/
+/-- The clausal position `z` types, with `z`'s coding and sentence types and the subject
+    realization `s` the selecting predicate requires, else that `z` requires. -/
 def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : Position :=
-  .clausal z.coding z.types ((s.orElse fun _ ↦ z.subject).map .own)
+  .clausal z.coding z.types (s.orElse fun _ ↦ z.subject)
 
 @[simp] theorem kind_typedBy : (typedBy z s).kind = .clausal := rfl
 
@@ -143,8 +142,7 @@ def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : P
 
 @[simp] theorem types_typedBy : (typedBy z s).types = z.types := rfl
 
-@[simp] theorem subject?_typedBy :
-    (typedBy z s).subject? = (s.orElse fun _ ↦ z.subject).map .own := rfl
+@[simp] theorem subject?_typedBy : (typedBy z s).subject? = s.orElse fun _ ↦ z.subject := rfl
 
 @[simp] theorem relation?_typedBy : (typedBy z s).relation? = none := rfl
 
@@ -172,7 +170,7 @@ theorem takes_iff :
 theorem takes_iff_typer_axes :
     p.Takes z ↔
       (Compat (p.axes .coding) z.coding ∧ Compat (p.axes .types) z.types ∧
-          Compat (p.axes .subject) (z.subject.map .own)) ∧
+          Compat (p.axes .subject) z.subject) ∧
         ((p.axes .coding ≠ ⊥ ∧ z.coding ≠ none) ∨ (p.axes .types ≠ ⊥ ∧ z.types ≠ ⊥) ∨
           (p.axes .subject ≠ ⊥ ∧ z.subject ≠ none)) :=
   and_congr (Complementizer.compat_axes_iff _) (Complementizer.overlap_axes_iff _)

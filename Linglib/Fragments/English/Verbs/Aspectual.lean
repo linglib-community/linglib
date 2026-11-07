@@ -69,12 +69,12 @@ def begin_ : Verb where
   past := "began"
   pastPart := "begun"
   doubling := true
-  valency := .of
-    [(ArgumentFrame.gerund, [0, 1]),
-     (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.infinitival, [1])]
-    (controllers := [some 0]) (raised := [none, none, none, some .external])
+  valency := .ofLinks
+    [(ArgumentFrame.gerund, [some 0, some 1]),
+     (ArgumentFrame.np, [some 0, some 1]),
+     (ArgumentFrame.intransitive, [some 1]),
+     (toInfinitive, [none, some 1])]
+    (controls := [some .external, none, none, some .external])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception

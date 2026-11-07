@@ -21,7 +21,7 @@ open Morphology
 
 /-- A bare complement whose subject is controlled by a matrix argument. -/
 def controlled : ArgumentFrame.Position :=
-  .clausal (coding := some .infinitive)
+  .clausal (coding := some .infinitive) (subject := some .null)
 
 /-- The frame of a controlled complement alone. -/
 def controlledFrame : ArgumentFrame := { complements := [controlled] }

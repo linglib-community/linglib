@@ -79,7 +79,7 @@ clause-embedding verbs). -/
 embedded-subject case. -/
 def nominalizedFrame : ArgumentFrame :=
   { complements := [.clausal (coding := some .nominalized)
-      (subject := some (.own (.overt (some .gen))))] }
+      (subject := some (.overt (some .gen)))] }
 
 /-- *hanaxa* 'think', translated 'remember' with a nominalized complement (§4.4.3): one verb,
 whose nominalized complement carries a presupposition that the event it describes started

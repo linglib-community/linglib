@@ -6,6 +6,7 @@ public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
 public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Control.Basic
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
 public import Linglib.Data.Examples.Readers
@@ -370,6 +371,30 @@ theorem realization_exact :
     (∃ row ∈ rowsIn .future .ungrammatical, shows row .subjectTone) ∧
     ∃ row ∈ rowsIn .subjunctive .ungrammatical, ¬ shows row .verbTone := by
   decide +kernel
+
+/-! ### Against movement (§3.6.2) -/
+
+/-- The occupants of the two sites of a `ni`-clause's control dependency: a lexical controller and
+the pronoun subject. -/
+inductive Occupant where
+  | lexicalDP
+  | pronoun
+  deriving DecidableEq
+
+/-- The occupants of (63a) and (64)'s sites with a lexical controller: the controller in the matrix
+subject, the pronoun in the subject of the `ni`-clause. -/
+def occupant : ArgumentFrame.Site → Occupant
+  | .subjectOf _ => .pronoun
+  | .slot _ => .lexicalDP
+
+-- §3.6.2, (64): the Fragment's *kai* 'remember' makes the subject of its `ni`-clause depend on its
+-- own subject, but that subject is a pronoun, never a copy of a lexical controller, so the
+-- dependency shares no occupants, as a chain of copies would
+theorem kai_not_movement :
+    ∃ d ∈ kai.valency.diatheses, ¬ IsExhaustive occupant d.controlRel :=
+  ⟨_, List.mem_cons_self .., not_isExhaustive_of_mismatch (P := (· = .lexicalDP))
+    ((Diathesis.slot_subjectOf_mem_controlRel (s := .external) (i := 0)).2 (by decide)) rfl
+    (by decide)⟩
 
 /-! ### Deriving the overt pronoun -/
 

@@ -90,11 +90,10 @@ end ComplementType
 
 /-! ### Subject and size -/
 
-/-- The realization of a complement clause's own subject: unexpressed, as under arbitrary
-control, or overt, optionally with a fixed case. Genitive marking on the subject is
+/-- The realization of a complement clause's subject: unpronounced, as under control or raising,
+or overt, optionally with a fixed case. Genitive marking on the subject is
 [noonan-2007]'s criterion for the nominalized complement type, and the genitive subjects of Buryat
-nominalized clauses are a modern instance ([bondarenko-2022]). A clause whose subject is that of a
-matrix argument has none of its own (`ArgumentFrame.ComplementSubject`). -/
+nominalized clauses are a modern instance ([bondarenko-2022]). -/
 inductive EmbeddedSubject where
   | null
   | overt (subjCase : Option Case)

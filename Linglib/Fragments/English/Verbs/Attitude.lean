@@ -94,8 +94,9 @@ finite clause it takes an infinitive whose subject it raises to its object, an o
 participant of its own (*believe Julia to be a princess*; [noonan-2007] §2.2). -/
 def believe : Verb where
   morphs := [.root "believe"]
-  valency := .ofFrames [.finiteClause, ArgumentFrame.infinitival.withObject]
-    (raised := [none, some (.complement 0)])
+  valency := .ofLinks
+    [(.finiteClause, [some 0, some 1]), (toInfinitive.withObject, [some 0, none, some 1])]
+    (controls := [none, some (.complement 0)])
   vendlerClass := some .state
   scaleDimension := some .confidence
   passivizable := false
@@ -134,7 +135,7 @@ def doubt : Verb where
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : Verb where
   morphs := [.root "want"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -148,7 +149,7 @@ def want : Verb where
     the complement's event argument. -/
 def intend : Verb where
   morphs := [.root "intend"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -162,7 +163,7 @@ def intend : Verb where
     ([fusco-sgrizzi-2026]). -/
 def decide_ : Verb where
   morphs := [.root "decide"]
-  valency := .ofFrames [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  valency := .ofFrames [toInfinitive, ArgumentFrame.finiteClause]
     (controllers := [some 0])
   vendlerClass := some .achievement
   opaqueContext := true
@@ -172,7 +173,7 @@ def decide_ : Verb where
     or an infinitive its subject controls (*hope to leave*). -/
 def hope : Verb where
   morphs := [.root "hope"]
-  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
@@ -186,7 +187,7 @@ def hope : Verb where
     infinitive its subject controls (*pray to be saved*). -/
 def pray : Verb where
   morphs := [.root "pray"]
-  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  valency := .ofFrames [ArgumentFrame.finiteClause, toInfinitive]
     (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
@@ -199,8 +200,10 @@ controls (*expect to win*), or one whose subject it raises to its object (*expec
 collapse*). -/
 def expect : Verb where
   morphs := [.root "expect"]
-  valency := .ofFrames [.finiteClause, .infinitival, ArgumentFrame.infinitival.withObject]
-    (controllers := [none, some 0]) (raised := [none, none, some (.complement 0)])
+  valency := .ofLinks
+    [(.finiteClause, [some 0, some 1]), (toInfinitive, [some 0, some 1]),
+      (toInfinitive.withObject, [some 0, none, some 1])]
+    (controls := [none, some .external, some (.complement 0)])
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
