@@ -234,9 +234,10 @@ def lawn : Carlson1977.Model (Fin 3) (Finset (Fin 3)) (Fin 3) Unit where
   time := fun _ ↦ ()
 
 theorem lawn_realizedByInstances (k : Finset (Fin 3)) :
-    lawn.RealizedByInstances {p | p.1 ≤ p.2} k := fun t ↦
-  ⟨fun ht ↦ ⟨{t}, show ({t} : Finset (Fin 3)) ≤ {t} from le_rfl, ht⟩,
-    fun ⟨x, htx, hxk⟩ ↦ (show ({t} : Finset (Fin 3)) ≤ x from htx).trans hxk⟩
+    lawn.RealizedByInstances {p | p.1 ≤ p.2} k :=
+  Carlson1977.Model.realizedByInstances_iff.2 fun t ↦
+    ⟨fun ht ↦ ⟨{t}, show ({t} : Finset (Fin 3)) ≤ {t} from le_rfl, ht⟩,
+      fun ⟨x, htx, hxk⟩ ↦ (show ({t} : Finset (Fin 3)) ≤ x from htx).trans hxk⟩
 
 /-- *Dogs are sitting on my lawn* gives *Mammals are sitting on my lawn* (119): when Carlson's
 instances of two kinds are the instances of their concepts, a state passes from a kind to any kind

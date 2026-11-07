@@ -71,10 +71,11 @@ variable (M : Model Stage Ind Place Time)
 /-- The stages at the place `p` at the time `t`, those of which the paper's `At(z, p)` holds. -/
 def located (p : Place) (t : Time) : Set Stage := {s | M.place s = p ∧ M.time s = t}
 
-/-- The places an individual occupies at the time `t`, those of its stages `M.R.preimage {x}`
-then. -/
-def placesAt (x : Ind) (t : Time) : Set Place :=
-  M.place '' (M.R.preimage {x} ∩ {s | M.time s = t})
+/-- The stages of an individual, `λx R(x, j)` (p. 449). -/
+def stages (x : Ind) : Set Stage := M.R.preimage {x}
+
+/-- The places an individual occupies at the time `t`, those of its stages then. -/
+def placesAt (x : Ind) (t : Time) : Set Place := M.place '' (M.stages x ∩ {s | M.time s = t})
 
 /-- An individual is spatially bounded when it "can only be in one place at a time" (p. 451), as
 particular individuals are and kinds are not. -/
@@ -85,6 +86,13 @@ being the relevant places. -/
 def Everywhere (t : Time) (x : Ind) : Prop := ∀ p, x ∈ M.R.image (M.located p t)
 
 variable {M} {x k k' : Ind} {t : Time}
+
+@[simp] theorem mem_stages {s : Stage} : s ∈ M.stages x ↔ s ~[M.R] x :=
+  ⟨fun ⟨_, rfl, h⟩ ↦ h, fun h ↦ ⟨x, rfl, h⟩⟩
+
+-- p. 449: *Jake is sick* is `∃y[R(y, j) ∧ sick'(y)]`, an existential over his stages
+theorem mem_image_iff_some {P : Set Stage} : x ∈ M.R.image P ↔ Det.some (M.stages x) P :=
+  ⟨fun ⟨s, hs, hsx⟩ ↦ ⟨s, mem_stages.2 hsx, hs⟩, fun ⟨s, hsx, hs⟩ ↦ ⟨s, hs, mem_stages.1 hsx⟩⟩
 
 theorem everywhere_iff_placesAt_eq_univ : M.Everywhere t x ↔ M.placesAt x t = Set.univ := by
   rw [Set.eq_univ_iff_forall]
@@ -107,21 +115,28 @@ theorem not_some_everywhere [Nontrivial Place] {N : Set Ind}
 `x ~[inst] k` says that `x` is an instance of the kind `k`. -/
 
 variable (M) in
-/-- The kind `k` is realized by its instances when its stages are exactly theirs: a stage of an
+/-- A kind is realized by its instances when its stages are the union of theirs: a stage of an
 instance is a stage of the kind, since "If there are some of a kind present, then this counts as
 the presence of that kind" (p. 451), and a stage of the kind is a stage of some instance
 (p. 452). -/
 def RealizedByInstances (inst : SetRel Ind Ind) (k : Ind) : Prop :=
-  ∀ s, s ~[M.R] k ↔ s ~[M.R ○ inst] k
+  M.stages k = ⋃ (x) (_ : x ~[inst] k), M.stages x
 
 variable {inst : SetRel Ind Ind}
+
+theorem realizedByInstances_iff :
+    M.RealizedByInstances inst k ↔ ∀ s, s ~[M.R] k ↔ s ~[M.R ○ inst] k := by
+  simp only [RealizedByInstances, Set.ext_iff, mem_stages, Set.mem_iUnion, exists_prop]
+  exact forall_congr' fun s ↦ iff_congr .rfl
+    ⟨fun ⟨x, hxk, hsx⟩ ↦ ⟨x, hsx, hxk⟩, fun ⟨x, hsx, hxk⟩ ↦ ⟨x, hxk, hsx⟩⟩
 
 /-- A state holds of a kind exactly when it holds of some of its instances, so *Dogs are sick*
 means *Some dogs are sick*, the existential coming from the predicate (p. 451). -/
 theorem mem_image_iff (hk : M.RealizedByInstances inst k) (P : Set Stage) :
-    k ∈ M.R.image P ↔ Det.some {x | x ~[inst] k} (M.R.image P) :=
-  ⟨fun ⟨s, hs, hsk⟩ ↦ let ⟨x, hsx, hxk⟩ := (hk s).1 hsk; ⟨x, hxk, s, hs, hsx⟩,
-    fun ⟨x, hxk, s, hs, hsx⟩ ↦ ⟨s, hs, (hk s).2 ⟨x, hsx, hxk⟩⟩⟩
+    k ∈ M.R.image P ↔ Det.some {x | x ~[inst] k} (M.R.image P) := by
+  rw [mem_image_iff_some, hk, Det.some, Set.iUnion₂_inter, Set.nonempty_iUnion]
+  exact exists_congr fun x ↦ Set.nonempty_iUnion.trans <|
+    exists_prop.trans (and_congr_right fun _ ↦ mem_image_iff_some.symm)
 
 /-- A state passes from a kind to any kind containing its instances, so *Dogs are sitting on my
 lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn* (119). -/
@@ -209,7 +224,7 @@ def model : Model Dog Individual Dog Unit where
   time := fun _ ↦ ()
 
 theorem model_realizedByInstances {k : Individual} (hk : k = .dogs ∨ k = .mammals) :
-    model.RealizedByInstances ofKind k := fun s ↦
+    model.RealizedByInstances ofKind k := Model.realizedByInstances_iff.2 fun s ↦
   ⟨fun _ ↦ ⟨.dog s, .inl rfl, s, rfl, hk⟩, fun ⟨_, _, _, _, hk⟩ ↦ .inr hk⟩
 
 theorem model_everywhere_dogs : model.Everywhere () .dogs :=
