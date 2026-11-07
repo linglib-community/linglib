@@ -14,8 +14,9 @@ properties hold of the kind and his states of its stages, so a state holds of a 
 [it holds of some of its instances](##Model.mem_image_iff), and it [passes to any kind containing
 them](##Model.mem_image_of_mem_image). That existential lies in the predicate and takes narrowest
 scope: only a name [commutes with negation and universal quantification](##some_scopeless_iff),
-belief that a kind is present [is belief that some instance is](##Model.box_mem_image_iff), and a
-kind, unlike a particular individual, [can be everywhere](##Model.everywhere_iff).
+belief that a kind is present [is belief that some instance
+is](##Model.individual_believed_iff), and a kind, unlike a particular individual, [can be
+everywhere](##Model.everywhere_iff).
 
 ## Implementation notes
 
@@ -103,50 +104,60 @@ theorem not_some_everywhere [Nontrivial Place] {N : Set Ind}
 
 /-! ### Kinds and their instances
 
-`x ~[inst] k` says that `x` is an instance of the kind `k`. Two hypotheses link their stages: a
-stage of an instance is a stage of the kind, since "If there are some of a kind present, then this
-counts as the presence of that kind" (p. 451), and a stage of the kind is a stage of some instance
+`x ~[inst] k` says that `x` is an instance of the kind `k`. -/
+
+variable (M) in
+/-- The kind `k` is realized by its instances when its stages are exactly theirs: a stage of an
+instance is a stage of the kind, since "If there are some of a kind present, then this counts as
+the presence of that kind" (p. 451), and a stage of the kind is a stage of some instance
 (p. 452). -/
+def RealizedByInstances (inst : SetRel Ind Ind) (k : Ind) : Prop :=
+  ∀ s, s ~[M.R] k ↔ s ~[M.R ○ inst] k
 
 variable {inst : SetRel Ind Ind}
 
 /-- A state holds of a kind exactly when it holds of some of its instances, so *Dogs are sick*
 means *Some dogs are sick*, the existential coming from the predicate (p. 451). -/
-theorem mem_image_iff (h : M.R ○ inst ⊆ M.R) (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k)
-    (P : Set Stage) : k ∈ M.R.image P ↔ Det.some {x | x ~[inst] k} (M.R.image P) :=
-  ⟨fun ⟨s, hs, hsk⟩ ↦ let ⟨x, hsx, hxk⟩ := hk hsk; ⟨x, hxk, s, hs, hsx⟩,
-    fun ⟨x, hxk, s, hs, hsx⟩ ↦ ⟨s, hs, h ⟨x, hsx, hxk⟩⟩⟩
+theorem mem_image_iff (hk : M.RealizedByInstances inst k) (P : Set Stage) :
+    k ∈ M.R.image P ↔ Det.some {x | x ~[inst] k} (M.R.image P) :=
+  ⟨fun ⟨s, hs, hsk⟩ ↦ let ⟨x, hsx, hxk⟩ := (hk s).1 hsk; ⟨x, hxk, s, hs, hsx⟩,
+    fun ⟨x, hxk, s, hs, hsx⟩ ↦ ⟨s, hs, (hk s).2 ⟨x, hsx, hxk⟩⟩⟩
 
 /-- A state passes from a kind to any kind containing its instances, so *Dogs are sitting on my
 lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn* (119). -/
-theorem mem_image_of_mem_image (h : M.R ○ inst ⊆ M.R)
-    (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k) (hsub : ∀ ⦃x⦄, x ~[inst] k → x ~[inst] k')
+theorem mem_image_of_mem_image (hk : M.RealizedByInstances inst k)
+    (hk' : M.RealizedByInstances inst k') (hsub : ∀ ⦃x⦄, x ~[inst] k → x ~[inst] k')
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
-  let ⟨x, hxk, s, hs, hsx⟩ := (mem_image_iff h hk P).1 hP
-  ⟨s, hs, h ⟨x, hsx, hsub hxk⟩⟩
+  (mem_image_iff hk' P).2 <| ((mem_image_iff hk P).1 hP).mono (Set.inter_subset_inter_left _ hsub)
 
 /-- A kind is everywhere exactly when at every place some of its instances are there, the
 universal over places outscoping the existential in *Dogs are everywhere* (135c). -/
-theorem everywhere_iff (h : M.R ○ inst ⊆ M.R) (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k) :
+theorem everywhere_iff (hk : M.RealizedByInstances inst k) :
     M.Everywhere t k ↔ ∀ p, Det.some {x | x ~[inst] k} (M.R.image (M.located p t)) :=
-  forall_congr' fun _ ↦ mem_image_iff h hk _
+  forall_congr' fun _ ↦ mem_image_iff hk _
 
 /-! ### Opacity
 
 Belief is necessity along a doxastic accessibility `B`, and a state varies with the world, holding
-at `v` of the stages `P v`. *Max believes some dogs are here* (131) has a transparent reading,
-`Det.some N {x | □[B] (fun v ↦ x ∈ M.R.image (P v)) w}`, and an opaque one,
-`□[B] (fun v ↦ Det.some N (M.R.image (P v))) w`. *Max believes dogs are here* (132) is the name of
-the kind applied to the property of being believed to have a stage here, which by the rigidity of
-the name is belief that the kind has a stage here (p. 452). -/
+at `v` of the stages `P v`. -/
 
-/-- Belief that a kind is in a state is belief that some of its instances are, so *Max believes dogs
-are here* has the opaque reading of *Max believes some dogs are here* (p. 452). -/
-theorem box_mem_image_iff {W : Type*} (h : M.R ○ inst ⊆ M.R)
-    (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k) (B : SetRel W W) (P : W → Set Stage) (w : W) :
-    □[B] (fun v ↦ k ∈ M.R.image (P v)) w ↔
+variable {W : Type*}
+
+variable (M) in
+/-- The individuals believed at `w` to have a stage in `P`, the property
+`λx Bel'(^∃y[R(y, x) ∧ P(y)])(m)` of (132') (p. 452). *Max believes some dogs are here* (131) has
+the transparent reading `Det.some N (M.believed B P w)` and the opaque reading
+`□[B] (fun v ↦ Det.some N (M.R.image (P v))) w`. -/
+def believed (B : SetRel W W) (P : W → Set Stage) (w : W) : Set Ind :=
+  {x | □[B] (fun v ↦ x ∈ M.R.image (P v)) w}
+
+/-- *Max believes dogs are here*, the name of the kind applied to the property of being believed to
+have a stage here, is the opaque reading of *Max believes some dogs are here* (p. 452). -/
+theorem individual_believed_iff (hk : M.RealizedByInstances inst k) (B : SetRel W W)
+    (P : W → Set Stage) (w : W) :
+    individual k (M.believed B P w) ↔
       □[B] (fun v ↦ Det.some {x | x ~[inst] k} (M.R.image (P v))) w :=
-  forall₂_congr fun v _ ↦ mem_image_iff h hk (P v)
+  forall₂_congr fun v _ ↦ mem_image_iff hk (P v)
 
 end Model
 
@@ -156,10 +167,7 @@ A proper name commutes with negation and with universal quantification, and by
 `Quantifier.exists_eq_individual_iff` nothing else does. *Cats are here and cats are not here*,
 (134), is a contradiction because `λx ¬∃y[R(y, x) ∧ Here'(y)](c)` is `¬∃y[R(y, c) ∧ Here'(y)]`
 (p. 453), the name commuting with the negation; *Everyone read books on caterpillars*, (23), has
-one reading because the name commutes with the universal. *Buildings will collapse in Berlin
-tomorrow, and will burn in Boston the day after*, (59), means (58) because the name commutes with
-the conjunction of two states, each with its own existential over stages: the predicate is
-`R.image P ∩ R.image Q`, which only contains `R.image (P ∩ Q)`. -/
+one reading because the name commutes with the universal. -/
 
 /-- An existential over a noun commutes with negation and with universal quantification exactly
 when the noun has one member. -/
@@ -200,13 +208,9 @@ def model : Model Dog Individual Dog Unit where
   place := id
   time := fun _ ↦ ()
 
-theorem model_comp_subset : model.R ○ ofKind ⊆ model.R := by
-  rintro ⟨s, k⟩ ⟨x, -, d, rfl, hk⟩
-  exact Or.inr hk
-
-theorem model_stages_of_kind {k : Individual} (hk : k = .dogs ∨ k = .mammals) :
-    ∀ ⦃s⦄, s ~[model.R] k → s ~[model.R ○ ofKind] k :=
-  fun s _ ↦ ⟨.dog s, Or.inl rfl, s, rfl, hk⟩
+theorem model_realizedByInstances {k : Individual} (hk : k = .dogs ∨ k = .mammals) :
+    model.RealizedByInstances ofKind k := fun s ↦
+  ⟨fun _ ↦ ⟨.dog s, .inl rfl, s, rfl, hk⟩, fun ⟨_, _, _, _, hk⟩ ↦ .inr hk⟩
 
 theorem model_everywhere_dogs : model.Everywhere () .dogs :=
   fun p ↦ ⟨p, ⟨rfl, rfl⟩, Or.inr (Or.inl rfl)⟩
@@ -225,17 +229,18 @@ not the image of any property of stages. -/
 example : {Individual.dogs} ∉ Set.range model.R.image := by
   rintro ⟨P, hP⟩
   have hd : Individual.dogs ∈ model.R.image P := hP ▸ rfl
-  have := Model.mem_image_of_mem_image (k' := .mammals) model_comp_subset
-    (model_stages_of_kind (.inl rfl)) (fun _ ⟨d, hx, _⟩ ↦ ⟨d, hx, .inr rfl⟩) hd
+  have := Model.mem_image_of_mem_image (model_realizedByInstances (.inl rfl))
+    (model_realizedByInstances (k := .mammals) (.inr rfl)) (fun _ ⟨d, hx, _⟩ ↦ ⟨d, hx, .inr rfl⟩) hd
   rw [hP] at this
   cases this
 
--- (132), p. 452: in each of Max's alternatives, the worlds `d`, the stage of the dog `d` is here,
--- so he believes dogs are here but believes of no dog that it is here
-theorem model_believes_not_transparent :
-    □[⊤] (fun d : Dog ↦ Individual.dogs ∈ model.R.image {d}) Dog.rex ∧
-      ¬ Det.some {x | x ~[ofKind] .dogs}
-        {x | □[⊤] (fun d : Dog ↦ x ∈ model.R.image {d}) Dog.rex} := by
+/-- The individuals Max believes to have a stage here, when his alternatives are all the worlds,
+which are the dogs, and at the world `d` the stage of the dog `d` is here. -/
+def believedHere : Set Individual := model.believed ⊤ (fun d : Dog ↦ {d}) .rex
+
+-- (132), p. 452: Max believes dogs are here but believes of no dog that it is here
+theorem believedHere_dogs :
+    individual Individual.dogs believedHere ∧ ¬ Det.some {x | x ~[ofKind] .dogs} believedHere := by
   refine ⟨fun d _ ↦ ⟨d, rfl, .inr (.inl rfl)⟩, ?_⟩
   rintro ⟨_, ⟨d, rfl, -⟩, hd⟩
   obtain ⟨d', hd'⟩ := exists_ne d
@@ -252,27 +257,25 @@ theorem judgments_119_120 :
         Examples.ex_119.judgment = .acceptable) ∧
       ((∀ Q : Set Individual, .dogs ∈ Q → .mammals ∈ Q) ↔
         Examples.ex_120.judgment = .acceptable) :=
-  ⟨iff_of_true (fun _ ↦ Model.mem_image_of_mem_image (k' := .mammals) model_comp_subset
-      (model_stages_of_kind (.inl rfl)) fun _ ⟨d, hx, _⟩ ↦ ⟨d, hx, .inr rfl⟩) rfl,
+  ⟨iff_of_true (fun _ ↦ Model.mem_image_of_mem_image (model_realizedByInstances (.inl rfl))
+      (model_realizedByInstances (k := .mammals) (.inr rfl))
+      fun _ ⟨d, hx, _⟩ ↦ ⟨d, hx, .inr rfl⟩) rfl,
     iff_of_false (fun h ↦ nomatch h {.dogs} rfl) (by decide)⟩
 
--- (131), (132), p. 452: the two readings of (131) differ, and the translation of (132) has the
--- opaque one and not the transparent one
+-- (131), (132), p. 452: the two readings of (131) differ, and (132) has the opaque one and not
+-- the transparent one
 theorem readings_131_132 :
     (□[⊤] (fun d ↦ Det.some {x | x ~[ofKind] .dogs} (model.R.image {d})) Dog.rex ∧
-        ¬ Det.some {x | x ~[ofKind] .dogs}
-          {x | □[⊤] (fun d : Dog ↦ x ∈ model.R.image {d}) Dog.rex} ↔
+        ¬ Det.some {x | x ~[ofKind] .dogs} believedHere ↔
       Examples.ex_131.readings = [("transparent", .acceptable), ("opaque", .acceptable)]) ∧
-    ((□[⊤] (fun d : Dog ↦ Individual.dogs ∈ model.R.image {d}) Dog.rex ↔
+    ((individual .dogs believedHere ↔
         □[⊤] (fun d ↦ Det.some {x | x ~[ofKind] .dogs} (model.R.image {d})) Dog.rex) ↔
       Examples.ex_132.readings.lookup "opaque" = some .acceptable) ∧
-    ((□[⊤] (fun d : Dog ↦ Individual.dogs ∈ model.R.image {d}) Dog.rex →
-        Det.some {x | x ~[ofKind] .dogs}
-          {x | □[⊤] (fun d : Dog ↦ x ∈ model.R.image {d}) Dog.rex}) ↔
+    ((individual .dogs believedHere → Det.some {x | x ~[ofKind] .dogs} believedHere) ↔
       Examples.ex_132.readings.lookup "transparent" = some .acceptable) := by
-  have hop := Model.box_mem_image_iff model_comp_subset (model_stages_of_kind (.inl rfl))
-    ⊤ (fun d : Dog ↦ {d}) Dog.rex
-  obtain ⟨hb, htr⟩ := model_believes_not_transparent
+  have hop := Model.individual_believed_iff (model_realizedByInstances (.inl rfl)) ⊤
+    (fun d : Dog ↦ {d}) Dog.rex
+  obtain ⟨hb, htr⟩ := believedHere_dogs
   exact ⟨iff_of_true ⟨hop.1 hb, htr⟩ rfl, iff_of_true hop rfl,
     iff_of_false (fun h ↦ htr (h hb)) (by decide)⟩
 
