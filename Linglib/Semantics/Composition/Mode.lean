@@ -16,7 +16,8 @@ mode through an effect: Map Left and Map Right apply it under the effect of a da
 App applies it to the results of two daughters with one effect, merging their effects, Unit Left
 and Unit Right give a daughter that expects a computation the pure computation of a value, and
 Join flattens a result with two layers of one effect. A pair of types may then compose in several
-ways, and [the mode their types select is always basic](##Ty.isBasic_of_mode?_eq_some). Under the
+ways, while [the basic modes selected are exactly those that apply](##Ty.mode?_eq_some_iff), at
+most one to any two types. Under the
 reader of worlds, von Fintel and Heim's intensional application is application mapped over the
 function's reader, which gives the function its argument's whole intension, while Unit Right gives
 it the constant intension of the argument's value.
@@ -36,11 +37,10 @@ it the constant intension of the argument's value.
 
 ## Implementation notes
 
-The daughters' types select the first mode that applies among functional application, predicate
-modification and event identification. In any family of
-values indexed by types, [composing commutes with every map of families that commutes with the
-modes](##combine?_map), and [the type of the result depends only on the daughters'
-types](##combine?_map_fst). `Ty.mode?` selects among the basic modes only and is computed by
+Predicate modification applies at the sorts the literature argues for, not at every predicate
+type (`Mode.PredicateSort`). In any family of values indexed by types, [composing commutes with
+every map of families that commutes with the modes](##combine?_map), and [the type of the result
+depends only on the daughters' types](##combine?_map_fst). `Ty.mode?` selects among the basic modes only and is computed by
 the kernel, so a tree's denotation reduces by `rfl`; `Ty.modes`, which also lifts modes through
 effects, is defined by well-founded recursion and computed by `simp`.
 
@@ -58,6 +58,20 @@ effects, is defined by well-founded recursion and computed by `simp`.
 
 namespace Montague
 
+/-- The sorts whose predicates predicate modification intersects: individuals
+([heim-kratzer-1998]), eventualities ([wellwood-2015]), and pluralities, the sets of individuals
+of which collective predicates hold ([winter-2001b]). -/
+inductive Mode.PredicateSort : Ty → Prop
+  /-- Predicates of individuals. -/
+  | individual : PredicateSort .e
+  /-- Predicates of eventualities. -/
+  | eventuality : PredicateSort .v
+  /-- Predicates of pluralities. -/
+  | plurality : PredicateSort (.e ⇒ .t)
+
+attribute [simp] Mode.PredicateSort.individual Mode.PredicateSort.eventuality
+  Mode.PredicateSort.plurality
+
 /-- The composition modes, typed by the two daughters and the mother, are functional application,
 predicate modification of two predicates of one sort, event identification of a role head with a
 predicate of eventualities, Kratzer's (23) ([kratzer-1996]), and the meta-modes lifting a mode
@@ -67,8 +81,8 @@ inductive Mode : Ty → Ty → Ty → Type where
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
   /-- Functional application, the right daughter the function. -/
   | functionalRight {σ τ : Ty} : Mode σ (σ ⇒ τ) τ
-  /-- Predicate modification, the intersection of two predicates of a sort. -/
-  | predicateModification {σ : Ty} : Mode (σ ⇒ .t) (σ ⇒ .t) (σ ⇒ .t)
+  /-- Predicate modification, the intersection of two predicates of a sort it applies to. -/
+  | predicateModification {σ : Ty} (h : Mode.PredicateSort σ) : Mode (σ ⇒ .t) (σ ⇒ .t) (σ ⇒ .t)
   /-- Event identification, the role head the left daughter. -/
   | eventIdentificationLeft : Mode (.e ⇒ .v ⇒ .t) (.v ⇒ .t) (.e ⇒ .v ⇒ .t)
   /-- Event identification, the role head the right daughter. -/
@@ -110,9 +124,9 @@ def functionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ
 ([wellwood-2015]), or of pluralities, the sets of individuals of which collective predicates hold
 ([winter-2001b]). -/
 def predicateModification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
-  | .fn .e .t, .fn .e .t => some ⟨_, predicateModification⟩
-  | .fn .v .t, .fn .v .t => some ⟨_, predicateModification⟩
-  | .fn (.fn .e .t) .t, .fn (.fn .e .t) .t => some ⟨_, predicateModification⟩
+  | .fn .e .t, .fn .e .t => some ⟨_, predicateModification .individual⟩
+  | .fn .v .t, .fn .v .t => some ⟨_, predicateModification .eventuality⟩
+  | .fn (.fn .e .t) .t, .fn (.fn .e .t) .t => some ⟨_, predicateModification .plurality⟩
   | _, _ => none
 
 /-- Event identification applies to a role head and an eventuality predicate, in either order. -/
@@ -123,9 +137,10 @@ def eventIdentification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ�
 
 end Mode
 
-/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose is the
-first that applies of functional application (with the left daughter as the function first),
-predicate modification and event identification. -/
+/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose: the
+basic mode that applies, functional application in either order, predicate modification or event
+identification. [Exactly the basic modes are selected](##Ty.mode?_eq_some_iff), and at most one
+applies, so the order in which they are tried is immaterial. -/
 def Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
   Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|>
     Mode.predicateModification? σ₁ σ₂ <|> Mode.eventIdentification? σ₁ σ₂
@@ -140,14 +155,12 @@ def Mode.IsBasic {σ₁ σ₂ τ : Ty} : Mode σ₁ σ₂ τ → Prop
   | .mapRight _ | .mapLeft _ | .ap _ | .unitRight _ | .unitLeft _ | .join _ => False
   | _ => True
 
-/-- The mode two daughters' types select is basic. -/
-theorem Ty.isBasic_of_mode?_eq_some {σ₁ σ₂ : Ty} {p : Σ τ, Mode σ₁ σ₂ τ}
-    (h : σ₁.mode? σ₂ = some p) : p.2.IsBasic := by
-  simp only [Ty.mode?, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff] at h
-  rcases h with h | ⟨-, h | ⟨-, h | ⟨-, h⟩⟩⟩ <;>
-    simp only [Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-      Mode.eventIdentification?] at h <;>
-    split at h <;> (try split_ifs at h with hσ) <;> cases h <;> (try subst hσ) <;> trivial
+/-- At most one basic mode composes two daughters of given types. -/
+instance {σ₁ σ₂ : Ty} :
+    Subsingleton (Σ τ, {m : Mode σ₁ σ₂ τ // m.IsBasic}) := by
+  constructor
+  rintro ⟨τ, m, hm⟩ ⟨τ', m', hm'⟩
+  cases m <;> cases m' <;> first | rfl | exact hm.elim | exact hm'.elim
 
 /-- The join of a mode whose result has two layers of one effect, and none otherwise. -/
 def Mode.join? {σ₁ σ₂ : Ty} : (Σ τ, Mode σ₁ σ₂ τ) → Option (Σ τ, Mode σ₁ σ₂ τ)
@@ -205,20 +218,39 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
   cases σ with
   | fn a b =>
     simp only [functionalLeft?]
-    split_ifs with h
-    · have := congrArg sizeOf h
-      simp only [Ty.fn.sizeOf_spec] at this
-      omega
-    · rfl
+    exact dif_neg fun h ↦ by cases h
   | _ => rfl
 
 @[simp] theorem mode?_fn_right (σ τ : Ty) : σ.mode? (σ ⇒ τ) = some ⟨τ, functionalRight⟩ := by
   simp only [Ty.mode?, functionalLeft?_self_fn, functionalRight?, ↓reduceDIte,
     Option.orElse_eq_orElse, Option.orElse_eq_or, Option.none_or, Option.some_or]
 
-@[simp] theorem mode?_predicateModification :
-    (Ty.e ⇒ .t).mode? (.e ⇒ .t) = some ⟨_, predicateModification⟩ := by
-  simp [Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
+@[simp] theorem mode?_predicateModification {σ : Ty} (h : PredicateSort σ) :
+    (σ ⇒ .t).mode? (σ ⇒ .t) = some ⟨_, predicateModification h⟩ := by
+  cases h <;> rfl
+
+/-- The modes two daughters' types select are exactly the basic modes. -/
+theorem _root_.Montague.Ty.mode?_eq_some_iff {σ₁ σ₂ : Ty} {p : Σ τ, Mode σ₁ σ₂ τ} :
+    σ₁.mode? σ₂ = some p ↔ p.2.IsBasic := by
+  refine ⟨fun h ↦ ?_, fun hp ↦ ?_⟩
+  · simp only [Ty.mode?, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff]
+      at h
+    rcases h with h | ⟨-, h | ⟨-, h | ⟨-, h⟩⟩⟩ <;>
+      simp only [Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
+        Mode.eventIdentification?] at h <;>
+      split at h <;> (try split_ifs at h with hσ) <;> cases h <;> (try subst hσ) <;> trivial
+  · obtain ⟨τ, m⟩ := p
+    cases m with
+    | functionalLeft => exact mode?_fn_left _ _
+    | functionalRight => exact mode?_fn_right _ _
+    | predicateModification h => cases h <;> rfl
+    | eventIdentificationLeft => rfl
+    | eventIdentificationRight => rfl
+    | _ => exact hp.elim
+
+theorem _root_.Montague.Ty.isSome_mode?_iff {σ₁ σ₂ : Ty} :
+    (σ₁.mode? σ₂).isSome ↔ ∃ p : Σ τ, Mode σ₁ σ₂ τ, p.2.IsBasic := by
+  simp only [Option.isSome_iff_exists, Ty.mode?_eq_some_iff]
 
 /-! ### Denotation -/
 
@@ -232,7 +264,7 @@ given to a daughter that expects one, or the flattening `μ` of its two layers. 
     Ty.Domain E W τ S
   | _, _, _, functionalLeft, f, a => f a
   | _, _, _, functionalRight, a, f => f a
-  | _, _, _, predicateModification, p, q => Modifier.intersective p q
+  | _, _, _, predicateModification _, p, q => Modifier.intersective p q
   | _, _, _, eventIdentificationLeft, f, p => ArgumentStructure.eventIdentification f p
   | _, _, _, eventIdentificationRight, p, f => ArgumentStructure.eventIdentification f p
   | _, _, _, mapRight (f := f) m, a, b => Eff.map f (fun y ↦ m.eval a y) b
@@ -288,7 +320,7 @@ def evalKleisli : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → M (Ty.Domai
     M (Ty.DomainM M E W σ₂ S) → M (Ty.DomainM M E W τ S)
   | _, _, _, functionalLeft, f, a => f >>= fun fv ↦ a >>= fv
   | _, _, _, functionalRight, a, f => f >>= fun fv ↦ a >>= fv
-  | _, _, _, predicateModification, p, q => do
+  | _, _, _, predicateModification _, p, q => do
       let P ← p; let Q ← q; pure fun x ↦ do let a ← P x; let b ← Q x; pure (a ∧ b)
   | _, _, _, eventIdentificationLeft, f, p => do
       let F ← f; let P ← p; pure fun x ↦ do
@@ -371,21 +403,10 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
     combine? op ⟨σ, a⟩ ⟨σ ⇒ τ, f⟩ = some ⟨τ, op functionalRight a f⟩ := by
   simp [combine?]
 
-@[simp] theorem combine?_predicateModification
-    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.e ⇒ .t)) :
-    combine? op ⟨.e ⇒ .t, p⟩ ⟨.e ⇒ .t, q⟩ = some ⟨.e ⇒ .t, op predicateModification p q⟩ := by
-  simp [combine?]
-
-@[simp] theorem combine?_predicateModification_v
-    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.v ⇒ .t)) :
-    combine? op ⟨.v ⇒ .t, p⟩ ⟨.v ⇒ .t, q⟩ = some ⟨.v ⇒ .t, op predicateModification p q⟩ := by
-  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
-
-@[simp] theorem combine?_predicateModification_et
-    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V ((.e ⇒ .t) ⇒ .t)) :
-    combine? op ⟨(.e ⇒ .t) ⇒ .t, p⟩ ⟨(.e ⇒ .t) ⇒ .t, q⟩ =
-      some ⟨(.e ⇒ .t) ⇒ .t, op predicateModification p q⟩ := by
-  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
+@[simp] theorem combine?_predicateModification {σ : Ty} (h : PredicateSort σ)
+    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (σ ⇒ .t)) :
+    combine? op ⟨σ ⇒ .t, p⟩ ⟨σ ⇒ .t, q⟩ = some ⟨σ ⇒ .t, op (predicateModification h) p q⟩ := by
+  simp [combine?, mode?_predicateModification h]
 
 @[simp] theorem combine?_eventIdentificationLeft
     (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (f : V (.e ⇒ .v ⇒ .t))

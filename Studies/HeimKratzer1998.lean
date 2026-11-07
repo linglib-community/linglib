@@ -299,7 +299,7 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
     rfl
   | pm _ _ ih₁ ih₂ =>
     rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Mode.combine?_predicateModification]
+      Mode.combine?_predicateModification .individual]
     rfl
   | trace => rfl
   | @pa g n c body τ F _ ih =>

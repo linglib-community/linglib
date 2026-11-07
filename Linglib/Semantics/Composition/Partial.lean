@@ -154,7 +154,7 @@ theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.
     Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
-  rw [Mode.combine?_predicateModification]
+  rw [Mode.combine?_predicateModification .individual]
   simp [Mode.evalKleisli, Part.bind_eq_bind, Part.bind_some_eq_map]
 
 theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.e ⇒ .v ⇒ .t) S)

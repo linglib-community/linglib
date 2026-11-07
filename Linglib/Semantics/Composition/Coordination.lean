@@ -82,7 +82,7 @@ theorem combine?_predicateModification_eq_reading {c : Coordinator} (hc : c.role
     Mode.combine? Mode.evalM ⟨.e ⇒ .t, x⟩ ⟨.e ⇒ .t, y⟩ =
       (Mode.combine? Mode.evalM (c.reading (.e ⇒ .t) trivial) ⟨.e ⇒ .t, y⟩).bind fun d ↦
         Mode.combine? Mode.evalM ⟨.e ⇒ .t, x⟩ d := by
-  rw [combine?_reading, Mode.combine?_predicateModification]
+  rw [combine?_reading, Mode.combine?_predicateModification .individual]
   have h : (Modifier.intersective : Ty.Domain E W (.e ⇒ .t) → _) = fun p q ↦
       letI := Ty.Domain.completeBooleanAlgebra E W (.e ⇒ .t) trivial; c.denote {p, q} := by
     funext p q; simp [Modifier.intersective, Coordinator.denote_of_conjunctive hc]
