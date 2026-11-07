@@ -3,7 +3,6 @@ module
 public import Linglib.Core.Probability.AutoregressiveSequenceModel.Tight
 public import Linglib.Pragmatics.RSA.Incremental
 public import Linglib.Pragmatics.RSA.Uniform
-public import Mathlib.Data.List.ReduceOption
 
 /-!
 # Cohn-Gordon, Goodman and Potts (2019): An Incremental Iterated Response Model of Pragmatics
@@ -56,58 +55,9 @@ open scoped ENNReal
 
 namespace CohnGordonEtAl2019
 
-section Stop
+section Cost
 
 variable {U : Type*}
-
-/-- A complete utterance closed by the end symbol `none`, the paper's STOP token. -/
-def stopped (u : List U) : List (Option U) := u.map some ++ [none]
-
-@[simp] theorem length_stopped (u : List U) : (stopped u).length = u.length + 1 := by
-  simp [stopped]
-
-@[simp] theorem reduceOption_stopped (u : List U) : (stopped u).reduceOption = u := by
-  induction u with
-  | nil => rfl
-  | cons a u ih => simpa [stopped] using ih
-
-theorem map_some_append_prefix_stopped_iff {c u : List U} {o : Option U} :
-    c.map some ++ [o] <+: stopped u ↔ o = none ∧ u = c ∨ ∃ a, o = some a ∧ c ++ [a] <+: u := by
-  induction c generalizing u with
-  | nil => cases u <;> cases o <;> simp [stopped, eq_comm]
-  | cons x c ih =>
-    cases u with
-    | nil => simp [stopped]
-    | cons b u =>
-      simp only [stopped, List.map_cons, List.cons_append, List.cons_prefix_cons, Option.some.injEq,
-        List.cons.injEq] at ih ⊢
-      rw [ih]
-      constructor
-      · rintro ⟨rfl, h | ⟨a, rfl, h⟩⟩
-        · exact .inl ⟨h.1, rfl, h.2⟩
-        · exact .inr ⟨a, rfl, rfl, h⟩
-      · rintro (⟨h, rfl, rfl⟩ | ⟨a, rfl, rfl, h⟩)
-        · exact ⟨rfl, .inl ⟨h, rfl⟩⟩
-        · exact ⟨rfl, .inr ⟨a, rfl, h⟩⟩
-
-@[simp] theorem map_some_append_none_prefix_stopped_iff {c u : List U} :
-    c.map some ++ [none] <+: stopped u ↔ u = c := by
-  simp [map_some_append_prefix_stopped_iff]
-
-@[simp] theorem map_some_append_some_prefix_stopped_iff {c u : List U} {a : U} :
-    c.map some ++ [some a] <+: stopped u ↔ c ++ [a] <+: u := by
-  simp [map_some_append_prefix_stopped_iff]
-
-theorem exists_map_some_append_prefix_stopped_iff {c u : List U} :
-    (∃ o, c.map some ++ [o] <+: stopped u) ↔ c <+: u := by
-  simp only [map_some_append_prefix_stopped_iff]
-  constructor
-  · rintro ⟨o, ⟨-, rfl⟩ | ⟨a, -, h⟩⟩
-    · exact List.prefix_refl _
-    · exact (List.prefix_append _ _).trans h
-  · rintro ⟨_ | ⟨a, t⟩, rfl⟩
-    · exact ⟨none, .inl ⟨rfl, by simp⟩⟩
-    · exact ⟨some a, .inr ⟨a, rfl, by simp⟩⟩
 
 /-- The cost of §3.1: `c` for each word and nothing for the end symbol. -/
 def wordCost (c : ℝ) : Option U → ℝ := fun o ↦ o.elim 0 fun _ ↦ c
@@ -116,7 +66,7 @@ def wordCost (c : ℝ) : Option U → ℝ := fun o ↦ o.elim 0 fun _ ↦ c
 
 @[simp] theorem wordCost_some (c : ℝ) (a : U) : wordCost c (some a) = c := rfl
 
-end Stop
+end Cost
 
 /-! ### Reference games and the incremental semantics -/
 
@@ -172,24 +122,22 @@ theorem viableExts_ne_zero_iff :
   rw [viableExts, ← Nat.pos_iff_ne_zero, List.countP_pos_iff]
   simp only [decide_eq_true_eq]
 
-/-- The complete utterances true of some referent, closed by the end symbol. -/
-def viable : List (List (Option U)) :=
-  (g.utterances.filter fun u ↦ (g.sem u).Nonempty).map stopped
-
-/-- The incremental semantics `⟦c + o⟧(r)` (§2.2) is the string meaning of `c` followed by `o`
-among the closed utterances true of some referent: the fraction of them that are true of `r`. -/
+/-- The incremental semantics `⟦c + o⟧(r)` (§2.2) is the incremental meaning of `c` followed by
+`o` among the complete utterances true of some referent: the fraction of them that are true of
+`r`. -/
 noncomputable def incSem (c : List U) (o : Option U) (r : W) : ℝ≥0∞ :=
-  ENNReal.ofReal (stringMeaning g.viable
-    (fun s r ↦ if r ∈ g.sem s.reduceOption then 1 else 0) (c.map some ++ [o]) r)
+  ENNReal.ofReal (incrementalMeaning (g.utterances.filter fun u ↦ (g.sem u).Nonempty)
+    (fun u r ↦ if r ∈ g.sem u then 1 else 0) c o r)
 
 theorem incSem_eq_div (c : List U) (o : Option U) (r : W) :
     g.incSem c o r = (g.trueExts c o r : ℝ≥0∞) / (g.viableExts c o : ℝ≥0∞) := by
   set p := c.map some ++ [o]
-  have hc : continuations g.viable p =
+  have hc : continuations ((g.utterances.filter fun u ↦ (g.sem u).Nonempty).map stopped) p =
       (g.utterances.filter fun u ↦ p <+: stopped u ∧ (g.sem u).Nonempty).map stopped := by
-    rw [continuations, viable, List.filter_map, List.filter_filter]
+    rw [continuations, List.filter_map, List.filter_filter]
     congr 1
-  have ht : ((continuations g.viable p).map fun s ↦
+  have ht : ((continuations ((g.utterances.filter fun u ↦ (g.sem u).Nonempty).map stopped) p).map
+      fun s ↦
       if r ∈ g.sem s.reduceOption then (1 : ℝ) else 0).sum = g.trueExts c o r := by
     rw [hc, List.map_map]
     simp only [Function.comp_def, reduceOption_stopped]
@@ -197,9 +145,10 @@ theorem incSem_eq_div (c : List U) (o : Option U) (r : W) :
     exact congrArg _ (List.countP_congr fun u _ ↦ by
       simp only [Bool.and_eq_true, decide_eq_true_eq]
       exact ⟨fun h ↦ ⟨h.2.1, h.1⟩, fun h ↦ ⟨h.2, h.1, r, h.2⟩⟩)
-  have hv : (continuations g.viable p).length = g.viableExts c o := by
+  have hv : (continuations ((g.utterances.filter fun u ↦ (g.sem u).Nonempty).map stopped)
+      p).length = g.viableExts c o := by
     rw [hc, List.length_map, viableExts, List.countP_eq_length_filter]
-  rw [incSem, stringMeaning, ht, hv]
+  rw [incSem, incrementalMeaning, stringMeaning, ht, hv]
   rcases Nat.eq_zero_or_pos (g.viableExts c o) with h0 | hpos
   · have : g.trueExts c o r = 0 := Nat.le_zero.mp (h0 ▸ g.trueExts_le_viableExts c o r)
     simp [h0, this]
@@ -399,16 +348,15 @@ noncomputable def l1 (cost : Option U → ℝ) (c : List U) : Kernel (Option U) 
 instance (cost : Option U → ℝ) (c : List U) : IsFiniteKernel (g.l1 cost c) :=
   inferInstanceAs (IsFiniteKernel (listener _ _))
 
-/-- The utterance-level incremental speaker for `r` (eq. 7) is the autoregressive sequence model
-whose choice after each context is the word-level speaker's, so that the probability of an
-utterance is the chain-rule product of her word choices and of her choice to end it. -/
-noncomputable def incS1 (cost : Option U → ℝ) (r : W) : AutoregressiveSequenceModel U where
-  next := Kernel.ofFunOfCountable fun c ↦ g.s1 cost c r
-  isMarkovKernel_next := ⟨fun c ↦ by rw [Kernel.ofFunOfCountable_apply]; infer_instance⟩
+/-- The utterance-level incremental speaker for `r` (eq. 7) chooses each word, and the end of the
+utterance, as the word-level speaker does, so that the probability of an utterance is the
+chain-rule product of her choices. -/
+noncomputable def incS1 (cost : Option U → ℝ) (r : W) : AutoregressiveSequenceModel U :=
+  incrementalSpeaker (g.s1 cost) r
 
 @[simp] theorem next_incS1 (cost : Option U → ℝ) (r : W) (c : List U) :
     (g.incS1 cost r).next c = g.s1 cost c r :=
-  Kernel.ofFunOfCountable_apply _ _
+  next_incrementalSpeaker
 
 /-! ### The speaker produces true utterances, and only finitely long ones -/
 

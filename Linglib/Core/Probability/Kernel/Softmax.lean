@@ -78,6 +78,9 @@ noncomputable def softmax (score : α → β → EReal) : Kernel α β :=
 instance (score : α → β → EReal) : IsFiniteKernel (softmax score) :=
   inferInstanceAs (IsFiniteKernel (ofWeights _))
 
+instance (score : α → β → EReal) (a : α) : IsZeroOrProbabilityMeasure (softmax score a) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (ofWeights _ a))
+
 theorem isMarkovKernel_softmax (h0 : ∀ w, ∃ u, score w u ≠ ⊥)
     (htop : ∀ w u, score w u ≠ ⊤) : IsMarkovKernel (softmax score) :=
   isMarkovKernel_ofWeights (fun w ↦ (h0 w).imp fun _ hu ↦ mt EReal.exp_eq_zero_iff.mp hu)

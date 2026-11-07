@@ -23,8 +23,9 @@ counterpart of the scene with the two semantic values exchanged.
 
 ## Implementation notes
 
-* The word-level speaker `step` is the speaker of Degen and colleagues at the string meaning, so
-  the redundancy step is their comparison of the redundant with the sufficient expression.
+* The word-level speaker `step` is the speaker of Degen and colleagues at the incremental meaning,
+  so the redundancy step is their comparison of the redundant with the sufficient expression.
+* The stop token is the end symbol `none` of the speaker's sequence model.
 * A scene lists three pins in the order of the paper's first figure, with the target last.
 * The costs are any that give a word and its counterpart the same cost. The paper charges each
   adjective 0.1 and the noun and the stop token nothing.
@@ -49,32 +50,29 @@ counterpart of the scene with the two semantic values exchanged.
 
 namespace WaldonDegen2021
 
-open MeasureTheory ProbabilityTheory RSA DegenEtAl2020
+open MeasureTheory ProbabilityTheory RSA DegenEtAl2020 AutoregressiveSequenceModel
 
 /-! ### Words and their meanings -/
 
-/-- The words of the reference game, with a stop token that closes an utterance. -/
+/-- The words of the reference game. -/
 inductive Word where
   | blue
   | red
   | big
   | small
   | pin
-  | stop
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- A word is true of a pin of a given size and colour. The noun and the stop token are true of
-every pin. -/
+/-- A word is true of a pin of a given size and colour. The noun is true of every pin. -/
 def Word.Holds : Word → Size × Color → Prop
   | .big, r => r.1 = .big
   | .small, r => r.1 = .small
   | .blue, r => r.2 = .blue
   | .red, r => r.2 = .red
   | .pin, _ => True
-  | .stop, _ => True
 
 instance : ∀ (w : Word) (r : Size × Color), Decidable (w.Holds r)
   | .big, r => inferInstanceAs (Decidable (r.1 = .big))
@@ -82,14 +80,13 @@ instance : ∀ (w : Word) (r : Size × Color), Decidable (w.Holds r)
   | .blue, r => inferInstanceAs (Decidable (r.2 = .blue))
   | .red, r => inferInstanceAs (Decidable (r.2 = .red))
   | .pin, _ => inferInstanceAs (Decidable True)
-  | .stop, _ => inferInstanceAs (Decidable True)
 
 /-- The semantic value of a word is `vs` for a size adjective, `vc` for a colour adjective, and
-one for the noun and the stop token. -/
+one for the noun. -/
 def value (vs vc : ℝ) : Word → ℝ
   | .big | .small => vs
   | .blue | .red => vc
-  | .pin | .stop => 1
+  | .pin => 1
 
 /-- In the continuous lexicon a word holds of a pin it is true of to the degree of its semantic
 value, and of any other pin to the complementary degree. -/
@@ -99,15 +96,13 @@ def lexicon (vs vc : ℝ) (w : Word) (r : Size × Color) : ℝ := noisy (value v
 
 /-- English puts size, then colour, before the noun. -/
 def english : List (List Word) :=
-  [[.blue, .pin, .stop], [.red, .pin, .stop], [.big, .pin, .stop], [.small, .pin, .stop],
-   [.small, .blue, .pin, .stop], [.small, .red, .pin, .stop],
-   [.big, .blue, .pin, .stop], [.big, .red, .pin, .stop]]
+  [[.blue, .pin], [.red, .pin], [.big, .pin], [.small, .pin],
+   [.small, .blue, .pin], [.small, .red, .pin], [.big, .blue, .pin], [.big, .red, .pin]]
 
 /-- Postnominal Spanish puts colour, then size, after the noun. -/
 def spanish : List (List Word) :=
-  [[.pin, .blue, .stop], [.pin, .red, .stop], [.pin, .big, .stop], [.pin, .small, .stop],
-   [.pin, .blue, .small, .stop], [.pin, .red, .small, .stop],
-   [.pin, .blue, .big, .stop], [.pin, .red, .big, .stop]]
+  [[.pin, .blue], [.pin, .red], [.pin, .big], [.pin, .small],
+   [.pin, .blue, .small], [.pin, .red, .small], [.pin, .blue, .big], [.pin, .red, .big]]
 
 /-- A scene shows three pins, of which the third is the target. -/
 abbrev Scene := Fin 3 → Size × Color
@@ -163,30 +158,38 @@ end Meaning
 
 /-! ### The incremental speaker -/
 
-/-- At a context the incremental speaker is the speaker of Degen and colleagues against a
-listener who interprets the context extended by the next word as a string. -/
-noncomputable def step (α : ℝ) (cost : Word → ℝ) (vs vc : ℝ) (L : List (List Word)) (s : Scene)
-    (ctx : List Word) : Kernel (Fin 3) Word :=
-  S1 α cost fun w i ↦ stringMeaning (alternatives L s) (meaning vs vc s) (ctx ++ [w]) i
+/-- At a context the word-level speaker is the speaker of Degen and colleagues against a listener
+who interprets the context followed by the next word, or by the end of the utterance, as a
+string. -/
+noncomputable def step (α : ℝ) (cost : Option Word → ℝ) (vs vc : ℝ) (L : List (List Word))
+    (s : Scene) (ctx : List Word) : Kernel (Fin 3) (Option Word) :=
+  S1 α cost fun o i ↦ incrementalMeaning (alternatives L s) (meaning vs vc s) ctx o i
 
-/-- The probability of an utterance for the target is the product of its word choices. -/
-noncomputable def production (α : ℝ) (cost : Word → ℝ) (vs vc : ℝ) (L : List (List Word))
-    (s : Scene) (u : List Word) : ℝ :=
-  chain (step α cost vs vc L s) target [] u
+instance (α : ℝ) (cost : Option Word → ℝ) (vs vc : ℝ) (L : List (List Word)) (s : Scene)
+    (ctx : List Word) (i : Fin 3) : IsZeroOrProbabilityMeasure (step α cost vs vc L s ctx i) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (speaker _ _ _ _ i))
+
+/-- The production of the target is the incremental speaker of `step`, an autoregressive model of
+utterances whose probability is the product of its word choices and of the choice to stop. -/
+noncomputable def production (α : ℝ) (cost : Option Word → ℝ) (vs vc : ℝ) (L : List (List Word))
+    (s : Scene) : AutoregressiveSequenceModel Word :=
+  incrementalSpeaker (step α cost vs vc L s) target
 
 /-! ### Spanish as the mirror image of English -/
 
-/-- The counterpart of a word exchanges size with colour, and the noun, which closes the
-adjectives of an English utterance, with the stop token, which closes those of a Spanish one. -/
-def mirror : Word → Word
-  | .small => .blue
-  | .blue => .small
-  | .big => .red
-  | .red => .big
-  | .pin => .stop
-  | .stop => .pin
+/-- The counterpart of a symbol exchanges size with colour, and the noun, which closes the
+adjectives of an English utterance, with the end of the utterance, which closes those of a Spanish
+one. -/
+def mirror : Option Word → Option Word
+  | some .small => some .blue
+  | some .blue => some .small
+  | some .big => some .red
+  | some .red => some .big
+  | some .pin => none
+  | none => some .pin
 
-theorem mirror_mirror (w : Word) : mirror (mirror w) = w := by cases w <;> rfl
+theorem mirror_mirror (o : Option Word) : mirror (mirror o) = o := by
+  rcases o with _ | _ | _ | _ | _ | _ <;> rfl
 
 /-- The counterpart of a pin exchanges its size with its colour, small with blue and big with
 red. -/
@@ -199,7 +202,7 @@ def swap : Size × Color → Size × Color
 /-- The Spanish counterpart of an English utterance puts the noun first and the counterparts of
 the adjectives after it. -/
 def mirrorUtterance (u : List Word) : List Word :=
-  .pin :: u.dropLast.dropLast.map mirror ++ [.stop]
+  .pin :: u.dropLast.filterMap (mirror ∘ some)
 
 theorem cs_eq_swap_ss (i : Fin 3) : cs i = swap (ss i) := by revert i; decide
 
@@ -213,105 +216,113 @@ theorem alternatives_spanish_ss :
 
 section Mirror
 
-variable {vs vc α : ℝ} {cost : Word → ℝ} {s s' : Scene}
-
-theorem lexicon_mirror (w : Word) (r : Size × Color) :
-    lexicon vs vc (mirror w) (swap r) = lexicon vc vs w r := by
-  obtain ⟨_ | _, _ | _⟩ := r <;> cases w <;> simp [lexicon, value, Word.Holds, mirror, swap]
+variable {vs vc α : ℝ} {cost : Option Word → ℝ} {s s' : Scene}
 
 theorem meaning_mirror (hs : ∀ i, s' i = swap (s i)) {u : List Word} (hu : u ∈ english)
     (i : Fin 3) : meaning vs vc s' (mirrorUtterance u) i = meaning vc vs s u i := by
-  have hpin (a b : ℝ) (r : Size × Color) : lexicon a b .pin r = 1 := by
-    simp [lexicon, value, Word.Holds, noisy]
-  have hstop (a b : ℝ) (r : Size × Color) : lexicon a b .stop r = 1 := by
-    simp [lexicon, value, Word.Holds, noisy]
   simp only [english, List.mem_cons, List.not_mem_nil, or_false] at hu
-  rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [mirrorUtterance, meaning, prodMeaning, hs, lexicon_mirror, hpin, hstop]
+  simp only [meaning, hs]
+  generalize s i = r
+  obtain ⟨_ | _, _ | _⟩ := r <;> rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [mirrorUtterance, mirror, prodMeaning, lexicon, value, Word.Holds, swap, noisy] <;> ring
 
-private theorem step_mirror (hcost : ∀ w, cost (mirror w) = cost w)
+private theorem step_mirror (hcost : ∀ o, cost (mirror o) = cost o)
     (hs : ∀ i, s' i = swap (s i))
     (hperm : (alternatives spanish s').Perm ((alternatives english s).map mirrorUtterance))
     {ctx ctx' : List Word}
-    (hpfx : ∀ w, ∀ u ∈ alternatives english s,
-      (ctx' ++ [mirror w]) <+: mirrorUtterance u ↔ (ctx ++ [w]) <+: u)
-    (w : Word) (i : Fin 3) :
-    step α cost vs vc spanish s' ctx' i {mirror w} = step α cost vc vs english s ctx i {w} := by
+    (hpfx : ∀ o, ∀ u ∈ alternatives english s,
+      ctx'.map some ++ [mirror o] <+: stopped (mirrorUtterance u) ↔
+        ctx.map some ++ [o] <+: stopped u)
+    (o : Option Word) (i : Fin 3) :
+    step α cost vs vc spanish s' ctx' i {mirror o} = step α cost vc vs english s ctx i {o} := by
   have := S1_apply_singleton_of_equiv (Function.Involutive.toPerm mirror mirror_mirror) α cost
-    (m := fun w i ↦ stringMeaning (alternatives english s) (meaning vc vs s) (ctx ++ [w]) i)
-    (m' := fun w i ↦ stringMeaning (alternatives spanish s') (meaning vs vc s') (ctx' ++ [w]) i)
-    (fun v ↦ funext fun i ↦ stringMeaning_eq_of_perm_map mirrorUtterance hperm (hpfx v)
-      fun u hu ↦ meaning_mirror hs (List.mem_filter.1 hu).1 i) i w
+    (m := fun o i ↦ incrementalMeaning (alternatives english s) (meaning vc vs s) ctx o i)
+    (m' := fun o i ↦ incrementalMeaning (alternatives spanish s') (meaning vs vc s') ctx' o i)
+    (fun v ↦ funext fun i ↦ stringMeaning_eq_of_perm_map
+      (fun t ↦ stopped (mirrorUtterance t.reduceOption))
+      ((hperm.map stopped).trans (.of_eq (by simp [List.map_map, Function.comp_def])))
+      (fun _ hu ↦ by
+        obtain ⟨u, hu', rfl⟩ := List.mem_map.1 hu
+        simpa using hpfx v u hu')
+      fun _ hu ↦ by
+        obtain ⟨u, hu', rfl⟩ := List.mem_map.1 hu
+        simpa using meaning_mirror hs (List.mem_filter.1 hu').1 i) i o
   rw [show cost ∘ ⇑(Function.Involutive.toPerm mirror mirror_mirror) = cost from
     funext hcost] at this
   exact this
 
-private theorem stringMeaning_nonneg' (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc) (hc1 : vc ≤ 1)
-    (L : List (List Word)) (s : Scene) (ctx : List Word) (v : Word) (i : Fin 3) :
-    0 ≤ stringMeaning (alternatives L s) (meaning vs vc s) (ctx ++ [v]) i :=
-  stringMeaning_nonneg fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s u i
+private theorem incrementalMeaning_nonneg (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) (L : List (List Word)) (s : Scene) (ctx : List Word) (o : Option Word)
+    (i : Fin 3) : 0 ≤ incrementalMeaning (alternatives L s) (meaning vs vc s) ctx o i :=
+  stringMeaning_nonneg fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s _ i
 
-private theorem step_real_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
-    (hc1 : vc ≤ 1) {L : List (List Word)} {ctx u : List Word} {w : Word}
-    (h : ∀ v, v ≠ w → continuations (alternatives L s) (ctx ++ [v]) = [])
-    (hu : u ∈ continuations (alternatives L s) (ctx ++ [w])) (hpos : 0 < meaning vs vc s u target) :
-    (step α cost vs vc L s ctx target).real {w} = 1 :=
-  S1_real_eq_one hα (stringMeaning_nonneg' hs0 hs1 hc0 hc1 L s ctx)
-    (stringMeaning_pos (fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s u target) hu hpos)
+private theorem step_apply_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hc1 : vc ≤ 1) {L : List (List Word)} {ctx u : List Word} {o : Option Word}
+    (h : ∀ v, v ≠ o → continuations ((alternatives L s).map stopped) (ctx.map some ++ [v]) = [])
+    (hu : stopped u ∈ continuations ((alternatives L s).map stopped) (ctx.map some ++ [o]))
+    (hpos : 0 < meaning vs vc s u target) :
+    step α cost vs vc L s ctx target {o} = 1 :=
+  (ENNReal.toReal_eq_one_iff _).1 <| S1_real_eq_one hα
+    (incrementalMeaning_nonneg hs0 hs1 hc0 hc1 L s ctx)
+    (stringMeaning_pos (fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s _ target) hu
+      (by simpa using hpos))
     fun v hv ↦ stringMeaning_of_continuations_eq_nil (h v hv) _
 
 private theorem meaning_small_blue (ht : s target = (.small, .blue)) :
-    meaning vs vc s [.small, .blue, .pin, .stop] target = vs * vc := by
+    meaning vs vc s [.small, .blue, .pin] target = vs * vc := by
   simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ht]
 
 private theorem meaning_pin_blue_small (ht : s target = (.small, .blue)) :
-    meaning vs vc s [.pin, .blue, .small, .stop] target = vc * vs := by
+    meaning vs vc s [.pin, .blue, .small] target = vc * vs := by
   simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ht]
 
-private theorem production_mirror (hα : 0 < α) (hcost : ∀ w, cost (mirror w) = cost w)
+private theorem production_mirror (hα : 0 < α) (hcost : ∀ o, cost (mirror o) = cost o)
     (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc) (hc1 : vc ≤ 1) (hs : ∀ i, s' i = swap (s i))
     (ht : s target = (.small, .blue)) (ht' : s' target = (.small, .blue))
     (hperm : (alternatives spanish s').Perm ((alternatives english s).map mirrorUtterance))
-    (hchoice : ∀ w, ∀ u ∈ alternatives english s,
-      ([Word.pin] ++ [mirror w]) <+: mirrorUtterance u ↔ ([] ++ [w]) <+: u)
-    (hredundancy : ∀ w, ∀ u ∈ alternatives english s,
-      ([Word.pin, Word.blue] ++ [mirror w]) <+: mirrorUtterance u ↔ ([Word.small] ++ [w]) <+: u)
-    (he3 : ∀ v, v ≠ Word.pin →
-      continuations (alternatives english s) ([Word.small, Word.blue] ++ [v]) = [])
-    (he3' : [Word.small, Word.blue, Word.pin, Word.stop] ∈
-      continuations (alternatives english s) ([Word.small, Word.blue] ++ [Word.pin]))
-    (he4 : ∀ v, v ≠ Word.stop →
-      continuations (alternatives english s) ([Word.small, Word.blue, Word.pin] ++ [v]) = [])
-    (he4' : [Word.small, Word.blue, Word.pin, Word.stop] ∈
-      continuations (alternatives english s) ([Word.small, Word.blue, Word.pin] ++ [Word.stop]))
-    (hs1' : ∀ v, v ≠ Word.pin → continuations (alternatives spanish s') ([] ++ [v]) = [])
-    (hs1'' : [Word.pin, Word.blue, Word.small, Word.stop] ∈
-      continuations (alternatives spanish s') ([] ++ [Word.pin]))
-    (hs4 : ∀ v, v ≠ Word.stop →
-      continuations (alternatives spanish s') ([Word.pin, Word.blue, Word.small] ++ [v]) = [])
-    (hs4' : [Word.pin, Word.blue, Word.small, Word.stop] ∈
-      continuations (alternatives spanish s') ([Word.pin, Word.blue, Word.small] ++ [Word.stop])) :
-    production α cost vs vc spanish s' [.pin, .blue, .small, .stop] =
-      production α cost vc vs english s [.small, .blue, .pin, .stop] := by
-  have h1 : step α cost vs vc spanish s' [.pin] target {.blue} =
-      step α cost vc vs english s [] target {.small} :=
-    step_mirror hcost hs hperm hchoice .small target
-  have h2 : step α cost vs vc spanish s' [.pin, .blue] target {.small} =
-      step α cost vc vs english s [.small] target {.blue} :=
-    step_mirror hcost hs hperm hredundancy .blue target
-  have e3 : (step α cost vc vs english s [.small, .blue] target).real {.pin} = 1 :=
-    step_real_eq_one hα hc0 hc1 hs0 hs1 he3 he3' (by rw [meaning_small_blue ht]; positivity)
-  have e4 : (step α cost vc vs english s [.small, .blue, .pin] target).real {.stop} = 1 :=
-    step_real_eq_one hα hc0 hc1 hs0 hs1 he4 he4' (by rw [meaning_small_blue ht]; positivity)
-  have s1 : (step α cost vs vc spanish s' [] target).real {.pin} = 1 :=
-    step_real_eq_one hα hs0 hs1 hc0 hc1 hs1' hs1''
-      (by rw [meaning_pin_blue_small ht']; positivity)
-  have s4 : (step α cost vs vc spanish s' [.pin, .blue, .small] target).real {.stop} = 1 :=
-    step_real_eq_one hα hs0 hs1 hc0 hc1 hs4 hs4'
-      (by rw [meaning_pin_blue_small ht']; positivity)
-  simp only [production, chain_cons, chain_nil, List.nil_append, List.cons_append, mul_one]
-  rw [s1, s4, e3, e4, measureReal_def, measureReal_def, h1, h2, ← measureReal_def,
-    ← measureReal_def]
+    (hchoice : ∀ o, ∀ u ∈ alternatives english s,
+      [Word.pin].map some ++ [mirror o] <+: stopped (mirrorUtterance u) ↔
+        ([] : List Word).map some ++ [o] <+: stopped u)
+    (hredundancy : ∀ o, ∀ u ∈ alternatives english s,
+      [Word.pin, .blue].map some ++ [mirror o] <+: stopped (mirrorUtterance u) ↔
+        [Word.small].map some ++ [o] <+: stopped u)
+    (he3 : ∀ v, v ≠ some .pin → continuations ((alternatives english s).map stopped)
+      ([Word.small, .blue].map some ++ [v]) = [])
+    (he3' : stopped [.small, .blue, .pin] ∈ continuations ((alternatives english s).map stopped)
+      ([Word.small, .blue].map some ++ [some .pin]))
+    (he4 : ∀ v, v ≠ none → continuations ((alternatives english s).map stopped)
+      ([Word.small, .blue, .pin].map some ++ [v]) = [])
+    (he4' : stopped [.small, .blue, .pin] ∈ continuations ((alternatives english s).map stopped)
+      ([Word.small, .blue, .pin].map some ++ [none]))
+    (hs1' : ∀ v, v ≠ some .pin → continuations ((alternatives spanish s').map stopped)
+      (([] : List Word).map some ++ [v]) = [])
+    (hs1'' : stopped [.pin, .blue, .small] ∈ continuations ((alternatives spanish s').map stopped)
+      (([] : List Word).map some ++ [some .pin]))
+    (hs4 : ∀ v, v ≠ none → continuations ((alternatives spanish s').map stopped)
+      ([Word.pin, .blue, .small].map some ++ [v]) = [])
+    (hs4' : stopped [.pin, .blue, .small] ∈ continuations ((alternatives spanish s').map stopped)
+      ([Word.pin, .blue, .small].map some ++ [none])) :
+    (production α cost vs vc spanish s').stringMeasure {[.pin, .blue, .small]} =
+      (production α cost vc vs english s).stringMeasure {[.small, .blue, .pin]} := by
+  have h1 : step α cost vs vc spanish s' [.pin] target {some .blue} =
+      step α cost vc vs english s [] target {some .small} :=
+    step_mirror hcost hs hperm hchoice (some .small) target
+  have h2 : step α cost vs vc spanish s' [.pin, .blue] target {some .small} =
+      step α cost vc vs english s [.small] target {some .blue} :=
+    step_mirror hcost hs hperm hredundancy (some .blue) target
+  have e3 := step_apply_eq_one (cost := cost) hα hc0 hc1 hs0 hs1 he3 he3'
+    (by rw [meaning_small_blue ht]; positivity)
+  have e4 := step_apply_eq_one (cost := cost) hα hc0 hc1 hs0 hs1 he4 he4'
+    (by rw [meaning_small_blue ht]; positivity)
+  have s1 := step_apply_eq_one (cost := cost) hα hs0 hs1 hc0 hc1 hs1' hs1''
+    (by rw [meaning_pin_blue_small ht']; positivity)
+  have s4 := step_apply_eq_one (cost := cost) hα hs0 hs1 hc0 hc1 hs4 hs4'
+    (by rw [meaning_pin_blue_small ht']; positivity)
+  simp only [stringMeasure_singleton, stringProb, prefixProb, condPrefixProb_cons,
+    condPrefixProb_nil, production, next_incrementalSpeaker_apply_some, List.nil_append,
+    List.cons_append, mul_one]
+  rw [next_incrementalSpeaker_of_ne_zero fun h ↦ by simp [h] at s4,
+    next_incrementalSpeaker_of_ne_zero fun h ↦ by simp [h] at e4, s1, s4, e3, e4, h1, h2]
   ring
 
 /-- For the small blue pin, *pin blue small* in the colour-sufficient scene of Spanish is as
@@ -319,10 +330,10 @@ likely as *small blue pin* in the size-sufficient scene of English with the sema
 size and colour exchanged. With equal values, and so with Boolean meanings, redundant size in
 Spanish is as likely as redundant colour in English. -/
 theorem spanish_cs_production_eq_english_ss (hα : 0 < α)
-    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hcost : ∀ o, cost (mirror o) = cost o) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
-    production α cost vs vc spanish cs [.pin, .blue, .small, .stop] =
-      production α cost vc vs english ss [.small, .blue, .pin, .stop] :=
+    (production α cost vs vc spanish cs).stringMeasure {[.pin, .blue, .small]} =
+      (production α cost vc vs english ss).stringMeasure {[.small, .blue, .pin]} :=
   production_mirror hα hcost hs0 hs1 hc0 hc1 cs_eq_swap_ss rfl rfl alternatives_spanish_cs
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide)
@@ -331,10 +342,10 @@ theorem spanish_cs_production_eq_english_ss (hα : 0 < α)
 as *small blue pin* in the colour-sufficient scene of English with the semantic values exchanged.
 With equal values redundant colour in Spanish is as likely as redundant size in English. -/
 theorem spanish_ss_production_eq_english_cs (hα : 0 < α)
-    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hcost : ∀ o, cost (mirror o) = cost o) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
-    production α cost vs vc spanish ss [.pin, .blue, .small, .stop] =
-      production α cost vc vs english cs [.small, .blue, .pin, .stop] :=
+    (production α cost vs vc spanish ss).stringMeasure {[.pin, .blue, .small]} =
+      (production α cost vc vs english cs).stringMeasure {[.small, .blue, .pin]} :=
   production_mirror hα hcost hs0 hs1 hc0 hc1 ss_eq_swap_cs rfl rfl alternatives_spanish_ss
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide)
@@ -346,27 +357,29 @@ with a probability that is a logistic function of the log of the gain of the red
 less its cost over the noun's. -/
 theorem english_step_eq_sigmoid (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
-    (step α cost vs vc english ss [.small] target).real {.blue} =
-      Real.sigmoid (α * (Real.log (gain 1 vs vc) - (cost .blue - cost .pin))) := by
-  have hb (i : Fin 3) : stringMeaning (alternatives english ss) (meaning vs vc ss)
-      ([.small] ++ [.blue]) i = meaning vs vc ss [.small, .blue, .pin, .stop] i :=
-    stringMeaning_of_continuations_eq_singleton (by decide) i
-  have hp (i : Fin 3) : stringMeaning (alternatives english ss) (meaning vs vc ss)
-      ([.small] ++ [.pin]) i = meaning vs vc ss [.small, .pin, .stop] i :=
-    stringMeaning_of_continuations_eq_singleton (by decide) i
-  have hdead : ∀ v, v ≠ .blue → v ≠ .pin →
-      continuations (alternatives english ss) ([.small] ++ [v]) = [] := by decide
-  have hpt : meaning vs vc ss [.small, .pin, .stop] target = vs := by
+    (step α cost vs vc english ss [.small] target).real {some .blue} =
+      Real.sigmoid (α * (Real.log (gain 1 vs vc) - (cost (some .blue) - cost (some .pin)))) := by
+  have hb (i : Fin 3) : incrementalMeaning (alternatives english ss) (meaning vs vc ss) [.small]
+      (some .blue) i = meaning vs vc ss [.small, .blue, .pin] i := by
+    rw [incrementalMeaning, stringMeaning_of_continuations_eq_singleton
+      (u := stopped [.small, .blue, .pin]) (by decide), reduceOption_stopped]
+  have hp (i : Fin 3) : incrementalMeaning (alternatives english ss) (meaning vs vc ss) [.small]
+      (some .pin) i = meaning vs vc ss [.small, .pin] i := by
+    rw [incrementalMeaning, stringMeaning_of_continuations_eq_singleton
+      (u := stopped [.small, .pin]) (by decide), reduceOption_stopped]
+  have hdead : ∀ v, v ≠ some .blue → v ≠ some .pin → continuations
+      ((alternatives english ss).map stopped) ([Word.small].map some ++ [v]) = [] := by decide
+  have hpt : meaning vs vc ss [.small, .pin] target = vs := by
     simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
-  have hbs : ∑ i, meaning vs vc ss [.small, .blue, .pin, .stop] i = 1 - vs + vs * vc := by
+  have hbs : ∑ i, meaning vs vc ss [.small, .blue, .pin] i = 1 - vs + vs * vc := by
     simp [Fin.sum_univ_three, meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
     ring
-  have hps : ∑ i, meaning vs vc ss [.small, .pin, .stop] i = 2 - vs := by
+  have hps : ∑ i, meaning vs vc ss [.small, .pin] i = 2 - vs := by
     simp [Fin.sum_univ_three, meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ss]
     ring
   have h1 : 0 < 1 - vs + vs * vc := by nlinarith
-  rw [step, S1_real_of_pair hα (u' := .pin) (by decide)
-      (stringMeaning_nonneg' hs0 hs1 hc0 hc1 english ss [.small])
+  rw [step, S1_real_of_pair hα (u' := some .pin) (by decide)
+      (incrementalMeaning_nonneg hs0 hs1 hc0 hc1 english ss [.small])
       (by rw [hb, meaning_small_blue (s := ss) rfl]; positivity) (by rwa [hp, hpt])
       (fun v hv ↦ by
         by_contra h
@@ -377,8 +390,8 @@ theorem english_step_eq_sigmoid (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (
     (div_pos hs0 (by linarith)).ne', div_div_eq_gain_one hs0 hs1 hc0]
 
 theorem boolean_english_step (hα : 0 < α) :
-    (step α cost 1 1 english ss [.small] target).real {.blue} =
-      Real.sigmoid (-(α * (cost .blue - cost .pin))) := by
+    (step α cost 1 1 english ss [.small] target).real {some .blue} =
+      Real.sigmoid (-(α * (cost (some .blue) - cost (some .pin)))) := by
   rw [english_step_eq_sigmoid hα one_pos le_rfl one_pos le_rfl, gain_one_left one_ne_zero,
     Real.log_one, zero_sub, mul_neg]
 
@@ -386,13 +399,13 @@ theorem boolean_english_step (hα : 0 < α) :
 speaker adds the redundant colour after *small* exactly when size is noisier than colour. With
 equal values, and so with Boolean meanings, the two steps are equally likely. -/
 theorem spanish_size_step_lt_english_color_step_iff (hα : 0 < α)
-    (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
+    (hcost : ∀ o, cost (mirror o) = cost o) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
-    (step α cost vs vc spanish cs [.pin, .blue] target).real {.small} <
-      (step α cost vs vc english ss [.small] target).real {.blue} ↔ vs < vc := by
-  have h : step α cost vs vc spanish cs [.pin, .blue] target {.small} =
-      step α cost vc vs english ss [.small] target {.blue} :=
-    step_mirror hcost cs_eq_swap_ss alternatives_spanish_cs (by decide) .blue target
+    (step α cost vs vc spanish cs [.pin, .blue] target).real {some .small} <
+      (step α cost vs vc english ss [.small] target).real {some .blue} ↔ vs < vc := by
+  have h : step α cost vs vc spanish cs [.pin, .blue] target {some .small} =
+      step α cost vc vs english ss [.small] target {some .blue} :=
+    step_mirror hcost cs_eq_swap_ss alternatives_spanish_cs (by decide) (some .blue) target
   rw [measureReal_def, h, ← measureReal_def, english_step_eq_sigmoid hα hc0 hc1 hs0 hs1,
     english_step_eq_sigmoid hα hs0 hs1 hc0 hc1, Real.sigmoid_lt_iff, mul_lt_mul_iff_right₀ hα,
     sub_lt_sub_iff_right, Real.log_lt_log_iff (gain_pos hc0 hc1 hs0 hs1)

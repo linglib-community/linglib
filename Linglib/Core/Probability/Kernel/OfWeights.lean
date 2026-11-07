@@ -68,6 +68,17 @@ theorem ofWeights_apply_univ_le_one (w : α → β → ℝ≥0∞) (a : α) :
 instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) :=
   ⟨⟨1, ENNReal.one_lt_top, ofWeights_apply_univ_le_one w⟩⟩
 
+instance (w : α → β → ℝ≥0∞) (a : α) : IsZeroOrProbabilityMeasure (ofWeights w a) := by
+  have h : ofWeights w a Set.univ = (∑ b, w a b)⁻¹ * ∑ b, w a b := by
+    show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ = _
+    simp only [Measure.smul_apply, Measure.finsetSum_apply, measure_univ, smul_eq_mul, mul_one]
+  refine ⟨h ▸ ?_⟩
+  rcases eq_or_ne (∑ b, w a b) 0 with h0 | h0
+  · simp [h0]
+  rcases eq_or_ne (∑ b, w a b) ∞ with htop | htop
+  · simp [htop]
+  · exact .inr (ENNReal.inv_mul_cancel h0 htop)
+
 theorem isProbabilityMeasure_ofWeights {w : α → β → ℝ≥0∞} {a : α} (h0 : ∃ b, w a b ≠ 0)
     (htop : ∀ b, w a b ≠ ∞) : IsProbabilityMeasure (ofWeights w a) := by
   refine ⟨?_⟩
