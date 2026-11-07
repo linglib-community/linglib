@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.HeKaiserIskarous2025
-public import Linglib.Pragmatics.RSA.Wonkiness
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -423,136 +423,213 @@ theorem fuzzySpeaker_pos_lt_null (θ : Sigmoid) {n : ℝ} (hn0 : 0 ≤ n) (hn1 :
 
 /-! ### The wonky-world model (§5) and the funky model (§6)
 
-The listener of (16) infers the state together with the world under the measured prior on states.
-Under the speaker `s.standardSpeaker` of each world's prior she is the listener of the wonky-world
-model; under `s.fuzzySpeaker θ n` she is the funky listener of (18) to (22), whose speaker in the
-normal world is the fuzzy one (`Wonkiness.speaker_apply`). -/
+The world is wonky (`true`) or normal (`false`), and the prior over states in each world is
+`Kernel.boolKernel`. Under the speaker `s.standardSpeaker` of each world's prior the listener of
+(16) is the wonky listener; under `s.fuzzySpeaker θ n` she is the funky listener of (18) to (22),
+whose speaker in the normal world is the fuzzy one. -/
 
-variable (ν : Measure Wonkiness) (S : Measure State → Kernel State Utterance)
+variable (ν : Measure Bool) (S : Measure State → Kernel State Utterance)
 
-/-- The wonky listener of (16) infers the state and the world, the states under the measured
-prior and the worlds under `ν`. -/
-noncomputable def wonkyListener : Kernel Utterance (State × Wonkiness) :=
-  listener (s.prior.prod ν) (Wonkiness.speaker S s.prior)
+/-- The prior over states in each world, (5): the measured prior in the normal world and the
+uniform prior in the wonky one. -/
+noncomputable def worldPrior : Kernel Bool State := Kernel.boolKernel s.prior (uniformOn Set.univ)
+
+instance : IsMarkovKernel s.worldPrior :=
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set State)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  inferInstanceAs (IsMarkovKernel (Kernel.boolKernel _ _))
+
+theorem worldPrior_ne_zero (w : Bool) (st : State) : s.worldPrior w {st} ≠ 0 := by
+  cases w
+  · exact s.prior_ne_zero st
+  · exact uniformOn_univ_singleton_ne_zero st
+
+theorem worldPrior_false_real (st : State) : (s.worldPrior false).real {st} = s.statePrior st :=
+  s.prior_real_singleton st
+
+theorem worldPrior_true_real (st : State) : (s.worldPrior true).real {st} = 1 / 2 := by
+  rw [worldPrior, Kernel.boolKernel_true, uniformOn_univ_real_singleton,
+    show Fintype.card State = 2 from rfl]
+  norm_num
+
+/-- The wonky listener of (16) infers the state and the world, the states under the measured prior
+and the worlds under `ν`, where in each world the speaker addresses that world's prior, (14) and
+(15). -/
+noncomputable def wonkyListener : Kernel Utterance (State × Bool) :=
+  listener (s.prior.prod ν) fun p ↦ S (s.worldPrior p.2) p.1
 
 /-- The wonkiness after a state's sentence is the listener's posterior belief in the wonky
 world. -/
-noncomputable def wonkiness (st : State) : ℝ := (s.wonkyListener ν S st.utterance).snd.real {.wonky}
+noncomputable def wonkiness (st : State) : ℝ := (s.wonkyListener ν S st.utterance).snd.real {true}
 
 /-- The expected typicality of (17) is the probability of the state under the common ground the
 sentence leaves, each world's prior weighted by the listener's posterior over the worlds. -/
 noncomputable def expectedTypicality (st : State) : ℝ :=
-  (Wonkiness.prior s.prior ∘ₘ (s.wonkyListener ν S st.utterance).snd).real {st}
+  (s.worldPrior ∘ₘ (s.wonkyListener ν S st.utterance).snd).real {st}
 
-theorem prior_normal_real (st : State) :
-    (Wonkiness.prior s.prior .normal).real {st} = s.statePrior st :=
-  s.prior_real_singleton st
-
-theorem prior_wonky_real (st : State) : (Wonkiness.prior s.prior .wonky).real {st} = 1 / 2 := by
-  rw [Wonkiness.prior_wonky, uniformOn_univ_real_singleton, show Fintype.card State = 2 from rfl]
-  norm_num
-
-theorem expectedTypicality_eq [∀ π, IsFiniteKernel (S π)] (st : State)
+theorem expectedTypicality_eq (st : State)
     [IsProbabilityMeasure (s.wonkyListener ν S st.utterance)] :
     s.expectedTypicality ν S st =
       s.statePrior st + s.wonkiness ν S st * (1 / 2 - s.statePrior st) := by
-  have h1 : (s.wonkyListener ν S st.utterance).snd.real {.normal} +
-      (s.wonkyListener ν S st.utterance).snd.real {.wonky} = 1 := by
-    rw [← Wonkiness.sum_univ fun b ↦ (s.wonkyListener ν S st.utterance).snd.real {b},
+  have h1 : (s.wonkyListener ν S st.utterance).snd.real {true} +
+      (s.wonkyListener ν S st.utterance).snd.real {false} = 1 := by
+    rw [← Fintype.sum_bool fun w ↦ (s.wonkyListener ν S st.utterance).snd.real {w},
       sum_measureReal_singleton_eq_one]
-  rw [expectedTypicality, Measure.comp_real_singleton, Wonkiness.sum_univ, prior_normal_real,
-    prior_wonky_real, wonkiness]
+  rw [expectedTypicality, Measure.comp_real_singleton, Fintype.sum_bool, worldPrior_true_real,
+    worldPrior_false_real, wonkiness]
   linear_combination s.statePrior st * h1
 
-theorem likelihood_standardSpeaker_wonkiness (b : Wonkiness) (st : State) :
-    Wonkiness.likelihood s.standardSpeaker s.prior st.utterance b =
-      s.statePrior st * Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance -
-        Real.log ((Wonkiness.prior s.prior b).real {st}))) := by
-  have hπ := Wonkiness.prior_apply_singleton_ne_zero (s.prior_ne_zero st) b
-  have h0 (st' : State) (h : st' ≠ st) :
-      (s.standardSpeaker (Wonkiness.prior s.prior b) st').real {st.utterance} = 0 :=
-    speaker_listener_truthful_dirac_real_singleton_eq_zero s.α_pos s.cost _ extension
-      (not_mem_extension_utterance h)
-  rw [Wonkiness.likelihood, sum_state]
-  cases st
-  · rw [h0 .neg (by decide), mul_zero, add_zero, prior_real_singleton, standardSpeaker,
-      s.speaker_truthful_real _ hπ]
-  · rw [h0 .pos (by decide), mul_zero, zero_add, prior_real_singleton, standardSpeaker,
-      s.speaker_truthful_real _ hπ]
+/-- The speaker under a prior averaged over the measured prior on states. -/
+private noncomputable def averaged (π : Measure State) : Measure Utterance :=
+  ∑ st, s.prior {st} • S π st
 
-theorem likelihood_standardSpeaker_normal_lt_wonky_iff (st : State) :
-    Wonkiness.likelihood s.standardSpeaker s.prior st.utterance .normal <
-        Wonkiness.likelihood s.standardSpeaker s.prior st.utterance .wonky ↔
+variable [∀ π, IsFiniteKernel (S π)]
+
+private instance (π : Measure State) : IsFiniteMeasure (s.averaged S π) :=
+  ⟨by
+    rw [averaged, Measure.finsetSum_apply]
+    exact ENNReal.sum_lt_top.2 fun _ _ ↦ by
+      rw [Measure.smul_apply, smul_eq_mul]
+      exact ENNReal.mul_lt_top (measure_lt_top _ _) (measure_lt_top _ _)⟩
+
+private theorem averaged_real (π : Measure State) (u : Utterance) :
+    (s.averaged S π).real {u} = ∑ st, s.statePrior st * (S π st).real {u} := by
+  rw [averaged, measureReal_def, Measure.finsetSum_apply]
+  simp only [Measure.smul_apply, smul_eq_mul]
+  rw [ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  exact Finset.sum_congr rfl fun st _ ↦ by
+    rw [ENNReal.toReal_mul, ← measureReal_def, prior_real_singleton, measureReal_def]
+
+omit [∀ π, IsFiniteKernel (S π)] in
+/-- The listener's belief about the world is the listener of the speaker of each world averaged
+over the states. -/
+private theorem wonkiness_eq_listener (st : State) :
+    s.wonkiness ν S st =
+      (listener ν (Kernel.boolKernel (s.averaged S s.prior) (s.averaged S (uniformOn Set.univ)))
+        st.utterance).real {true} := by
+  rw [wonkiness, show (s.wonkyListener ν S st.utterance).snd =
+      (s.wonkyListener ν S).snd st.utterance from (Kernel.snd_apply _ _).symm, wonkyListener,
+    listener_prod_snd]
+  congr 3
+  funext w
+  cases w <;> rfl
+
+private theorem averaged_standardSpeaker_real (π : Measure State) [IsProbabilityMeasure π]
+    (hπ : ∀ st, π {st} ≠ 0) (st : State) :
+    (s.averaged s.standardSpeaker π).real {st.utterance} =
+      s.statePrior st * Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance -
+        Real.log (π.real {st}))) := by
+  have h0 (st' : State) (h : st' ≠ st) : (s.standardSpeaker π st').real {st.utterance} = 0 :=
+    speaker_listener_truthful_dirac_real_singleton_eq_zero s.α_pos s.cost π extension
+      (not_mem_extension_utterance h)
+  rw [averaged_real, sum_state]
+  cases st
+  · rw [h0 .neg (by decide), mul_zero, add_zero, standardSpeaker,
+      s.speaker_truthful_real π (hπ _)]
+  · rw [h0 .pos (by decide), mul_zero, zero_add, standardSpeaker,
+      s.speaker_truthful_real π (hπ _)]
+
+private theorem averaged_standardSpeaker_pos (π : Measure State) [IsProbabilityMeasure π]
+    (hπ : ∀ st, π {st} ≠ 0) (st : State) :
+    0 < (s.averaged s.standardSpeaker π).real {st.utterance} := by
+  rw [averaged_standardSpeaker_real _ _ hπ]
+  exact mul_pos (s.statePrior_pos st) (Real.sigmoid_pos _)
+
+private theorem averaged_standardSpeaker_lt_iff (st : State) :
+    (s.averaged s.standardSpeaker s.prior).real {st.utterance} <
+        (s.averaged s.standardSpeaker (uniformOn Set.univ)).real {st.utterance} ↔
       1 / 2 < s.statePrior st := by
-  rw [likelihood_standardSpeaker_wonkiness, likelihood_standardSpeaker_wonkiness,
-    prior_normal_real, prior_wonky_real, mul_lt_mul_iff_of_pos_left (s.statePrior_pos st),
-    Real.sigmoid_lt_iff, mul_lt_mul_iff_of_pos_left s.α_pos, sub_lt_sub_iff_left,
+  have hu : (uniformOn Set.univ : Measure State).real {st} = 1 / 2 := s.worldPrior_true_real st
+  rw [averaged_standardSpeaker_real _ _ s.prior_ne_zero,
+    averaged_standardSpeaker_real _ _ uniformOn_univ_singleton_ne_zero, prior_real_singleton, hu,
+    mul_lt_mul_iff_of_pos_left (s.statePrior_pos st), Real.sigmoid_lt_iff,
+    mul_lt_mul_iff_of_pos_left s.α_pos, sub_lt_sub_iff_left,
     Real.log_lt_log_iff (by norm_num) (s.statePrior_pos st)]
 
-variable [IsProbabilityMeasure ν] (hn : ν {.normal} ≠ 0) (hw : ν {.wonky} ≠ 0)
+private theorem averaged_standardSpeaker_gt_iff (st : State) :
+    (s.averaged s.standardSpeaker (uniformOn Set.univ)).real {st.utterance} <
+        (s.averaged s.standardSpeaker s.prior).real {st.utterance} ↔
+      s.statePrior st < 1 / 2 := by
+  have hu : (uniformOn Set.univ : Measure State).real {st} = 1 / 2 := s.worldPrior_true_real st
+  rw [averaged_standardSpeaker_real _ _ s.prior_ne_zero,
+    averaged_standardSpeaker_real _ _ uniformOn_univ_singleton_ne_zero, prior_real_singleton, hu,
+    mul_lt_mul_iff_of_pos_left (s.statePrior_pos st), Real.sigmoid_lt_iff,
+    mul_lt_mul_iff_of_pos_left s.α_pos, sub_lt_sub_iff_left,
+    Real.log_lt_log_iff (s.statePrior_pos st) (by norm_num)]
+
+/-- The channel from the world to the state's sentence: the standard speaker of each world
+averaged over the states. -/
+private noncomputable abbrev channel : Kernel Bool Utterance :=
+  Kernel.boolKernel (s.averaged s.standardSpeaker s.prior)
+    (s.averaged s.standardSpeaker (uniformOn Set.univ))
+
+variable [IsProbabilityMeasure ν] (hn : ν {false} ≠ 0) (hw : ν {true} ≠ 0)
+
+omit [IsProbabilityMeasure ν] in
+include hw in
+private theorem comp_channel_ne_zero (st : State) : (s.channel ∘ₘ ν) {st.utterance} ≠ 0 :=
+  Measure.comp_apply_singleton_ne_zero _ _ hw
+    (ENNReal.toReal_pos_iff.1
+      (s.averaged_standardSpeaker_pos _ uniformOn_univ_singleton_ne_zero st)).1.ne'
+
+include hw in
+private theorem wonkiness_eq_posterior (st : State) :
+    s.wonkiness ν s.standardSpeaker st = ((s.channel†ν) st.utterance).real {true} := by
+  rw [wonkiness_eq_listener, listener_apply_eq_posterior _ _ (s.comp_channel_ne_zero ν hw st)]
+
 include hn hw
 
 /-- The listener revises toward the wonky world after a state's sentence exactly when that state's
 prior exceeds one half, whatever the costs (§5.3, Figure 6), as after *The house doesn't have a
 ballroom*. -/
 theorem lt_wonkiness_iff (st : State) :
-    ν.real {.wonky} < s.wonkiness ν s.standardSpeaker st ↔ 1 / 2 < s.statePrior st := by
-  rw [wonkiness, wonkyListener, Wonkiness.lt_listener_prod_snd_real_wonky_iff _ _ _ _ hn hw,
-    likelihood_standardSpeaker_normal_lt_wonky_iff s]
+    ν.real {true} < s.wonkiness ν s.standardSpeaker st ↔ 1 / 2 < s.statePrior st := by
+  rw [s.wonkiness_eq_posterior ν hw, real_lt_posterior_real_singleton_iff_of_pair _ ν
+      (by decide : true ≠ false) (fun b _ ↦ by cases b <;> simp) (s.comp_channel_ne_zero ν hw st)
+      hw hn, Kernel.boolKernel_false, Kernel.boolKernel_true, averaged_standardSpeaker_lt_iff]
 
 -- §5.3, Figure 6
 theorem wonkiness_lt_iff (st : State) :
-    s.wonkiness ν s.standardSpeaker st < ν.real {.wonky} ↔ s.statePrior st < 1 / 2 := by
-  have hL (b : Wonkiness) : 0 < Wonkiness.likelihood s.standardSpeaker s.prior st.utterance b := by
-    rw [likelihood_standardSpeaker_wonkiness]
-    exact mul_pos (s.statePrior_pos st) (Real.sigmoid_pos _)
-  rw [wonkiness, wonkyListener, Wonkiness.listener_prod_snd_real_wonky_lt_iff _ _ _ _ hn hw
-      (add_pos (hL _) (hL _)), likelihood_standardSpeaker_wonkiness,
-    likelihood_standardSpeaker_wonkiness, prior_normal_real, prior_wonky_real,
-    mul_lt_mul_iff_of_pos_left (s.statePrior_pos st), Real.sigmoid_lt_iff,
-    mul_lt_mul_iff_of_pos_left s.α_pos, sub_lt_sub_iff_left,
-    Real.log_lt_log_iff (s.statePrior_pos st) (by norm_num)]
+    s.wonkiness ν s.standardSpeaker st < ν.real {true} ↔ s.statePrior st < 1 / 2 := by
+  rw [s.wonkiness_eq_posterior ν hw, posterior_real_singleton_lt_iff_of_pair _ ν
+      (by decide : true ≠ false) (fun b _ ↦ by cases b <;> simp) (s.comp_channel_ne_zero ν hw st)
+      hw hn, Kernel.boolKernel_false, Kernel.boolKernel_true, averaged_standardSpeaker_gt_iff]
 
 omit hn in
 theorem isProbabilityMeasure_wonkyListener (st : State) :
     IsProbabilityMeasure (s.wonkyListener ν s.standardSpeaker st.utterance) :=
-  isProbabilityMeasure_listener_of_ne_zero (w := (st, Wonkiness.wonky)) _ _
+  isProbabilityMeasure_listener_of_ne_zero (w := (st, true)) _ _
     (by
       rw [← Set.singleton_prod_singleton, Measure.prod_prod]
       exact mul_ne_zero (s.prior_ne_zero st) hw)
     (by
-      rw [Wonkiness.speaker_apply, standardSpeaker, speaker,
+      rw [standardSpeaker, speaker,
         speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff s.α_pos]
-      exact ⟨by rw [extension_utterance]; rfl,
-        Wonkiness.prior_apply_singleton_ne_zero (s.prior_ne_zero st) _⟩)
+      exact ⟨by rw [extension_utterance]; rfl, s.worldPrior_ne_zero _ st⟩)
 
+omit hn in
 theorem wonkiness_pos (st : State) : 0 < s.wonkiness ν s.standardSpeaker st := by
-  have hL (b : Wonkiness) : 0 < Wonkiness.likelihood s.standardSpeaker s.prior st.utterance b := by
-    rw [likelihood_standardSpeaker_wonkiness]
-    exact mul_pos (s.statePrior_pos st) (Real.sigmoid_pos _)
-  have hn' : 0 < ν.real {.normal} := ENNReal.toReal_pos hn (measure_ne_top _ _)
-  have hw' : 0 < ν.real {.wonky} := ENNReal.toReal_pos hw (measure_ne_top _ _)
-  rw [wonkiness, wonkyListener, Wonkiness.listener_prod_snd_real_wonky]
-  have := hL .normal
-  have := hL .wonky
-  positivity
+  rw [s.wonkiness_eq_posterior ν hw, posterior_real_singleton _ _ (s.comp_channel_ne_zero ν hw st)]
+  exact div_pos (mul_pos (ENNReal.toReal_pos hw (measure_ne_top _ _))
+    (s.averaged_standardSpeaker_pos _ uniformOn_univ_singleton_ne_zero st))
+    (ENNReal.toReal_pos (s.comp_channel_ne_zero ν hw st) (measure_ne_top _ _))
 
 /-- The typicality the listener infers from a state's sentence rises above the state's prior
 exactly when her belief in the wonky world falls (§5.3): a typicality inference where a sentence
 describes a state of prior below one half, an atypicality inference where its prior is above. -/
 theorem statePrior_lt_expectedTypicality_iff (st : State) :
     s.statePrior st < s.expectedTypicality ν s.standardSpeaker st ↔
-      s.wonkiness ν s.standardSpeaker st < ν.real {.wonky} := by
+      s.wonkiness ν s.standardSpeaker st < ν.real {true} := by
   have := s.isProbabilityMeasure_wonkyListener ν hw st
   rw [expectedTypicality_eq, lt_add_iff_pos_right,
-    mul_pos_iff_of_pos_left (s.wonkiness_pos ν hn hw st), sub_pos, s.wonkiness_lt_iff ν hn hw]
+    mul_pos_iff_of_pos_left (s.wonkiness_pos ν hw st), sub_pos, s.wonkiness_lt_iff ν hn hw]
 
 -- §5.3
 theorem expectedTypicality_lt_statePrior_iff (st : State) :
     s.expectedTypicality ν s.standardSpeaker st < s.statePrior st ↔
-      ν.real {.wonky} < s.wonkiness ν s.standardSpeaker st := by
+      ν.real {true} < s.wonkiness ν s.standardSpeaker st := by
   have := s.isProbabilityMeasure_wonkyListener ν hw st
-  have hW := s.wonkiness_pos ν hn hw st
+  have hW := s.wonkiness_pos ν hw st
   rw [expectedTypicality_eq, add_lt_iff_neg_left,
     show s.wonkiness ν s.standardSpeaker st * (1 / 2 - s.statePrior st) < 0 ↔
       1 / 2 - s.statePrior st < 0 from
@@ -564,10 +641,16 @@ omit hn hw in
 theorem wonkiness_neg_eq_pos {s' : Setting} (hα : s.α = s'.α) (hc : s.cost = s'.cost)
     (hp : s'.statePrior .neg = s.statePrior .pos) (hcost : s.cost .pos = s.cost .neg) :
     s'.wonkiness ν s'.standardSpeaker .neg = s.wonkiness ν s.standardSpeaker .pos := by
-  rw [wonkiness, wonkiness, wonkyListener, wonkyListener, Wonkiness.listener_prod_snd_real_wonky,
-    Wonkiness.listener_prod_snd_real_wonky]
-  simp only [likelihood_standardSpeaker_wonkiness, prior_normal_real, prior_wonky_real, ← hα,
-    ← hc, hp]
+  have hu (t : Setting) (st : State) : (uniformOn Set.univ : Measure State).real {st} = 1 / 2 :=
+    t.worldPrior_true_real st
+  rw [wonkiness_eq_listener, wonkiness_eq_listener, listener_real_singleton,
+    listener_real_singleton, Fintype.sum_bool, Fintype.sum_bool]
+  simp only [Kernel.boolKernel_true, Kernel.boolKernel_false]
+  rw [s'.averaged_standardSpeaker_real _ s'.prior_ne_zero,
+    s'.averaged_standardSpeaker_real _ uniformOn_univ_singleton_ne_zero,
+    s.averaged_standardSpeaker_real _ s.prior_ne_zero,
+    s.averaged_standardSpeaker_real _ uniformOn_univ_singleton_ne_zero, prior_real_singleton,
+    prior_real_singleton, hu s, hu s', ← hα, ← hc, hp]
   simp only [State.utterance, hcost]
 
 end Setting
