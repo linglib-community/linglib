@@ -13,7 +13,8 @@ public import Mathlib.Data.Finset.Powerset
 # Elbourne (2026): Adjectives without syntactic categories
 
 Elbourne replaces syntactic categories by semantic types in a grammar that composes by functional
-application alone, and gives every adjective the type ⟨eit,eit⟩ of a function on noun meanings.
+application alone, and gives every adjective the type ⟨eit,eit⟩ of a function on noun meanings,
+which [admits no other rule of composition](##isSome_mode?_iff) even where one exists.
 [Nothing that takes a noun merges with an adjective](##not_merges_of_takes_noun), which excludes
 *Every red is attractive*, while [a copula takes just the adjectives without compulsory
 features](##merges_copula_iff), which excludes *The president is former*. The copula applies the
@@ -150,6 +151,20 @@ def Merges (f : Features) (σ : Ty) : Prop :=
     (Mode.functionalLeft? σ (eit i ⇒ eit i)).isSome ∧ f.Selectable
 
 variable {i} {f : Features}
+
+/-- Even in a grammar with predicate modification and event identification, an adjective of type
+⟨eit,eit⟩ composes only by functional application, taking a noun or taken by its sister, so that
+the type alone keeps predicate modification out of attributive position (§3.1). -/
+theorem isSome_mode?_iff (σ : Ty) :
+    ((eit i ⇒ eit i).mode? σ).isSome ↔ σ = eit i ∨ ∃ ρ, σ = ((eit i ⇒ eit i) ⇒ ρ) := by
+  unfold eit
+  rw [Ty.isSome_mode?_iff]
+  constructor
+  · rintro ⟨⟨τ, m⟩, hm⟩
+    cases m <;> first | exact .inl rfl | exact .inr ⟨_, rfl⟩ | exact hm.elim
+  · rintro (rfl | ⟨ρ, rfl⟩)
+    · exact ⟨⟨_, .functionalLeft⟩, trivial⟩
+    · exact ⟨⟨_, .functionalRight⟩, trivial⟩
 
 -- §3.1: an adjective takes a noun in attributive position by its `E_R`.
 theorem merges_noun_iff : Merges i f (eit i) ↔ Selector.eR ∈ f.compulsory ∪ f.optional := by

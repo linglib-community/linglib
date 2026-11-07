@@ -183,7 +183,7 @@ def Mode.readback {n : ℕ} : ∀ {σ₁ σ₂ τ : Ty},
       Ty.SyntacticDomain L α τ n
   | _, _, _, .functionalLeft, f, a => f n le_rfl a
   | _, _, _, .functionalRight, a, f => f n le_rfl a
-  | _, _, _, .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
+  | _, _, _, .predicateModification _, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
   | _, _, _, .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
       f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
   | _, _, _, .eventIdentificationRight, p, f => fun k hk x j hj e i hi ↦
@@ -280,7 +280,7 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
     exact ih ha fun k hk ys hys _ x _ ↦ hb k hk ys hys PUnit.unit (Eff.pure _ x) trivial
   | functionalLeft => exact ha n le_rfl xs rfl b b' hb
   | functionalRight => exact hb n le_rfl xs rfl a a' ha
-  | predicateModification =>
+  | predicateModification _ =>
     intro k hk ys hys x c hx j hj zs hzs
     simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
       Modifier.intersective_apply, Pi.inf_apply, inf_Prop_eq]

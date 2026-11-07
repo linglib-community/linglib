@@ -179,7 +179,7 @@ theorem Mode.rel_evalKleisli (hρ : KleisliRelator ρ) : ∀ {σ₁ σ₂ τ : T
       (Mode.evalKleisli (M := M') (E := E') (W := W') (S := S') m)
   | _, _, _, .functionalLeft => fun _ _ hf _ _ ha ↦ hρ.bind hf fun _ _ hv ↦ hρ.bind ha hv
   | _, _, _, .functionalRight => fun _ _ ha _ _ hf ↦ hρ.bind hf fun _ _ hv ↦ hρ.bind ha hv
-  | _, _, _, .predicateModification => fun _ _ hp _ _ hq ↦
+  | _, _, _, .predicateModification _ => fun _ _ hp _ _ hq ↦
       hρ.bind hp fun _ _ hP ↦ hρ.bind hq fun _ _ hQ ↦ hρ.pure fun _ _ hx ↦
         hρ.bind (hP hx) fun _ _ ha ↦ hρ.bind (hQ hx) fun _ _ hb ↦ hρ.pure (and_congr ha hb)
   | _, _, _, .eventIdentificationLeft => fun _ _ hf _ _ hp ↦
