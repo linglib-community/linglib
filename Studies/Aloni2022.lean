@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Team.BSML.Enrichment
 public import Linglib.Logic.Team.BSML.Negation
 public import Linglib.Logic.Team.BSML.Classical
+public import Linglib.Logic.Team.BSML.ExpressiveCompleteness
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -31,10 +32,12 @@ of §7 beyond its countermodel (63b) are out of scope.
 
 @[expose] public section
 
+universe u
+
 namespace Aloni2022
 
 open BSML
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel PointedTeam)
 
 variable {W : Type*} [DecidableEq W] {A : Type*} {M : KripkeModel W A} {α β φ : Formula A}
   {t : Finset W}
@@ -105,6 +108,20 @@ theorem epistemicContradiction (hSB : Team.IsStateBased M.access t)
   Finset.eq_empty_of_forall_notMem fun w hw ↦
     have ⟨_, ⟨hsupp, _, hv⟩, hs⟩ := h.1 w hw
     Finset.disjoint_right.mp (disjoint_of_support_of_antiSupport hsupp h.2) (hSB w hw ▸ hs hv) hv
+
+-- fn. 21 (p. 5:21): the conditions of Definition 5 are not closed under bisimulation, so no
+-- BSML formula defines them.
+theorem setOf_isIndisputable_notMem_range_support :
+    {p : PointedTeam.{u} A | Team.IsIndisputable p.model.access p.team} ∉
+      Set.range fun φ : Formula A ↦ {p : PointedTeam.{u} A | support p.model φ p.team} :=
+  fun ⟨φ, h⟩ ↦ ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable <|
+    (congrArg ModalLogic.BoundedBisimInvariant h).mp (boundedBisimInvariant_support φ)
+
+theorem setOf_isStateBased_notMem_range_support :
+    {p : PointedTeam.{u} A | Team.IsStateBased p.model.access p.team} ∉
+      Set.range fun φ : Formula A ↦ {p : PointedTeam.{u} A | support p.model φ p.team} :=
+  fun ⟨φ, h⟩ ↦ ModalLogic.not_boundedBisimInvariant_setOf_isStateBased <|
+    (congrArg ModalLogic.BoundedBisimInvariant h).mp (boundedBisimInvariant_support φ)
 
 /-! ### The four-world illustrations
 

@@ -299,12 +299,7 @@ theorem worldType_sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) (k : â
   | zero => funext w; cases w <;> rfl
   | succ k ih =>
     funext w
-    cases w <;>
-    Â· refine Prod.ext rfl ?_
-      change Finset.image _ (Finset.map _ _) = Finset.image _ _
-      rw [ih]
-      ext
-      simp
+    cases w <;> exact Prod.ext rfl (by ext; simp [worldType, ih])
 
 /-- The Hintikka formula of the type of `w` holds at `w'` exactly when `w'` is `k`-bisimilar to `w`
 ([aloni-anttila-yang-2024] Theorem 3.3). -/

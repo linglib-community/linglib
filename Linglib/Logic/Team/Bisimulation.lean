@@ -14,7 +14,8 @@ invariant under `r` when teams related in this way agree on them. Every connecti
 `Team/Operations.lean` preserves invariance, the modalities one step down a chain of relations,
 so a team logic whose evaluation is a fold over these connectives is invariant under bounded
 bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.PointedTeam) is
-[invariant under bounded bisimulation](##ModalLogic.BoundedBisimInvariant) across models.
+[invariant under bounded bisimulation](##ModalLogic.BoundedBisimInvariant) across models; Aloni's
+indisputability and state-basedness are not, so no such logic defines them.
 
 ## Main definitions
 
@@ -31,6 +32,8 @@ bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.Poi
   `Team.Invariant.possLax`, `Team.Invariant.necImage`: the modalities preserve invariance one
   step down.
 * `Set.LiftRel.exists_finset_union_eq`: the lifting transports splits of a team.
+* `ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable`,
+  `ModalLogic.not_boundedBisimInvariant_setOf_isStateBased`: Aloni's conditions are not invariant.
 
 ## Implementation notes
 
@@ -39,7 +42,9 @@ every atom of the atom type, which is the paper's notion when that type is the f
 
 ## References
 
+* [aloni-2022]
 * [aloni-anttila-yang-2024]
+* [anttila-2021]
 * [anttila-2025]
 * [anttila-haggblom-yang-2025]
 * [vaananen-2008]
@@ -284,5 +289,51 @@ universe u
 def BoundedBisimInvariant (P : Set (PointedTeam.{u} Atom)) : Prop :=
   ∃ k : ℕ, ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom,
     StateBisim k p.model p.team p'.model p'.team → p' ∈ P
+
+/-! ### Aloni's conditions are not invariant -/
+
+/-- Two worlds that each see only themselves and make no atom true, the looping worlds of
+[anttila-2021] Figure 3.1. -/
+private def loops : KripkeModel (ULift.{u} Bool) Atom where
+  access w := {w}
+  val _ _ := False
+
+private theorem worldBisim_loops (k : ℕ) (w w' : ULift.{u} Bool) :
+    WorldBisim k (loops (Atom := Atom)) w loops w' := by
+  induction k generalizing w w' with
+  | zero => exact fun _ ↦ Iff.rfl
+  | succ k ih =>
+    refine ⟨fun _ ↦ Iff.rfl, ?_⟩
+    simpa only [loops, Finset.coe_singleton, Set.liftRel_singleton] using ih w w'
+
+/-- At every depth `k`, a team of one looping world is state-based, and the team of both is
+`k`-bisimilar to it but not indisputable ([anttila-2021] p. 46). -/
+private theorem exists_stateBisim_isStateBased_not_isIndisputable (k : ℕ) :
+    ∃ p p' : PointedTeam.{u} Atom, StateBisim k p.model p.team p'.model p'.team ∧
+      Team.IsStateBased p.model.access p.team ∧
+      ¬ Team.IsIndisputable p'.model.access p'.team :=
+  ⟨⟨ULift Bool, loops, {⟨true⟩}⟩, ⟨ULift Bool, loops, {⟨true⟩, ⟨false⟩}⟩,
+    ⟨fun _ _ ↦ ⟨⟨true⟩, by simp, worldBisim_loops k _ _⟩,
+      fun _ _ ↦ ⟨⟨true⟩, by simp, worldBisim_loops k _ _⟩⟩,
+    by simp [Team.IsStateBased, loops],
+    fun h ↦ by simpa [loops] using h ⟨true⟩ (by simp) ⟨false⟩ (by simp)⟩
+
+/-- Indisputability is not invariant under bisimulation at any depth, so no logic whose
+formulas express invariant classes defines it ([aloni-2022] fn. 21). -/
+theorem not_boundedBisimInvariant_setOf_isIndisputable :
+    ¬ BoundedBisimInvariant
+      {p : PointedTeam.{u} Atom | Team.IsIndisputable p.model.access p.team} :=
+  fun ⟨k, h⟩ ↦
+    have ⟨p, p', hb, hs, hn⟩ := exists_stateBisim_isStateBased_not_isIndisputable (Atom := Atom) k
+    hn (h p hs.isIndisputable p' hb)
+
+/-- State-basedness is not invariant under bisimulation at any depth, so no logic whose
+formulas express invariant classes defines it ([aloni-2022] fn. 21). -/
+theorem not_boundedBisimInvariant_setOf_isStateBased :
+    ¬ BoundedBisimInvariant
+      {p : PointedTeam.{u} Atom | Team.IsStateBased p.model.access p.team} :=
+  fun ⟨k, h⟩ ↦
+    have ⟨p, p', hb, hs, hn⟩ := exists_stateBisim_isStateBased_not_isIndisputable (Atom := Atom) k
+    hn (h p hs p' hb).isIndisputable
 
 end ModalLogic
