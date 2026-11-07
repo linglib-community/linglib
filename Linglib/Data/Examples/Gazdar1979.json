@@ -1,0 +1,102 @@
+[
+  {
+    "id": "gazdar1979_18",
+    "source": {
+      "bibkey": "gazdar-1979",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John did it or Mary did it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not both",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "'can have the pragmatic exclusive disjunction interpretation induced by the scalar im-plicature K¬(20)' (p. 136).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gazdar1979_19",
+    "source": {
+      "bibkey": "gazdar-1979",
+      "paperLabel": "(19)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John did it or Mary did it or both of them did it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not both",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "'never has this interpretation' (p. 136); truth-functionally equivalent to (18).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gazdar1979_21",
+    "source": {
+      "bibkey": "gazdar-1979",
+      "paperLabel": "(21)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some of the students were there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Carries the scalar implicature [K¬(23)], which (22) does not (p. 136).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gazdar1979_22",
+    "source": {
+      "bibkey": "gazdar-1979",
+      "paperLabel": "(22)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some, if not all, of the students were there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not all",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "'will not carry the scalar implicature [K¬(23)]' (p. 136); same truth conditions as (21).",
+    "verified": "page-image"
+  }
+]

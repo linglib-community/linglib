@@ -104,7 +104,7 @@ its form is defensible, true at some world of a model. -/
 
 section Relational
 
-open Hintikka1962 Hintikka1962.Formula Discourse
+open EpistemicLogic EpistemicLogic.Formula Hintikka1962 Discourse
 
 /-- The atomic sentence *it is raining*. -/
 local notation "𝐩" => (Formula.atom () : Formula Unit (Option Role))
@@ -119,15 +119,15 @@ def supposed : List (Datum × Formula Unit (Option Role)) :=
 
 -- (3), p. 992
 theorem defensible_relational_contra : Defensible {∼𝐩 ⋏ P 𝐈 𝐩} :=
-  mUndecided.defensible_of_sat (w := 0) (by decide)
+  defensible_of_sat mUndecided (w := 0) (by decide)
 
 -- Section 2
 theorem supposed_defensible : ∀ r ∈ supposed, Defensible {r.2} := by
   simp only [supposed, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
     and_true]
-  exact ⟨mUndecided.defensible_of_sat (w := 1) (by decide), defensible_relational_contra,
-    mUndecided.defensible_of_sat (w := 1) (by decide),
-    mUndecided.defensible_of_sat (w := 1) (by decide), defensible_relational_contra⟩
+  exact ⟨defensible_of_sat mUndecided (w := 1) (by decide), defensible_relational_contra,
+    defensible_of_sat mUndecided (w := 1) (by decide),
+    defensible_of_sat mUndecided (w := 1) (by decide), defensible_relational_contra⟩
 
 /-- Section 2: the relational semantics gives the epistemic contradiction supposed in (8) the
 form of the Moore-paradoxical sentence supposed in (15), so it cannot separate their judgments. -/
@@ -140,7 +140,7 @@ theorem relational_conflates :
 theorem moore_defensible_epistemicallyIndefensible :
     (Defensible {𝐩 ⋏ ∼K 𝐈 𝐩} ∧ EpistemicallyIndefensible 𝐈 (𝐩 ⋏ ∼K 𝐈 𝐩)) ∧
       (Defensible {∼𝐩 ⋏ P 𝐈 𝐩} ∧ EpistemicallyIndefensible 𝐈 (∼𝐩 ⋏ P 𝐈 𝐩)) :=
-  ⟨⟨mUndecided.defensible_of_sat (w := 1) (by decide), indefensible_K_moore 𝐈 𝐩⟩,
+  ⟨⟨defensible_of_sat mUndecided (w := 1) (by decide), indefensible_K_moore 𝐈 𝐩⟩,
     defensible_relational_contra, indefensible_singleton.2 fun S _ _ μ hμ h ↦ by
       obtain ⟨-, h₂⟩ := S.and hμ (S.know hμ h)
       obtain ⟨ν, hν, hμν, hp⟩ := S.P_star hμ h₂
