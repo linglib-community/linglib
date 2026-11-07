@@ -12,9 +12,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"]
-    ],
+    "paperFeatures": [],
     "comment": "A future irrealis infinitive.",
     "verified": "page-image"
   },
@@ -31,9 +29,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"]
-    ],
+    "paperFeatures": [],
     "comment": "A propositional infinitive.",
     "verified": "page-image"
   },
@@ -50,10 +46,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"],
-      ["episodic", "possible"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -72,10 +65,7 @@
       {"form": "Leo believed Julia to be bringing the toys right then.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["episodic", "impossible"]
-    ],
+    "paperFeatures": [],
     "comment": "A bare episodic verb phrase is out; the progressive rescues it.",
     "verified": "page-image"
   },
@@ -93,7 +83,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["class", "propositional"],
       ["syntax", "control"]
     ],
     "comment": "A propositional control infinitive.",
@@ -114,10 +103,7 @@
       {"form": "Leo claimed to eat dinner.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["episodic", "impossible"]
-    ],
+    "paperFeatures": [],
     "comment": "Without the adverbial the complement is generic.",
     "verified": "page-image"
   },
@@ -134,9 +120,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -155,9 +139,7 @@
       {"form": "Yesterday, John tried to leave.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"]
-    ],
+    "paperFeatures": [],
     "comment": "No future adverbial in a simultaneous infinitive.",
     "verified": "page-image"
   },
@@ -174,9 +156,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -215,7 +195,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["class", "future"],
       ["syntax", "ECM"]
     ],
     "comment": "A future infinitive under passive expect with an inanimate subject: raising, not control.",
@@ -234,10 +213,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"],
-      ["future", "relative"]
-    ],
+    "paperFeatures": [],
     "comment": "Infinitival future is relative: the party precedes the utterance time.",
     "verified": "page-image"
   },
@@ -256,9 +232,7 @@
       {"form": "Leo decided a week ago that he will go to the party.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["future", "absolute"]
-    ],
+    "paperFeatures": [],
     "comment": "Finite will is absolute.",
     "verified": "page-image"
   },
@@ -275,9 +249,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper leaves the lowest clause open with an ellipsis.",
     "verified": "page-image"
   },
@@ -294,9 +266,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["would", "temporal"]
-    ],
+    "paperFeatures": [],
     "comment": "Temporal would under will is out; a conditional would is fine.",
     "verified": "page-image"
   },
@@ -313,9 +283,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["would", "relative"]
-    ],
+    "paperFeatures": [],
     "comment": "would, past plus woll, is relative.",
     "verified": "page-image"
   },
@@ -335,9 +303,7 @@
       {"name": "simultaneous (SOT)", "judgment": "unacceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["SOT", "blocked"]
-    ],
+    "paperFeatures": [],
     "comment": "The present of will intervenes between the two pasts.",
     "verified": "page-image"
   },
@@ -356,9 +322,7 @@
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["SOT", "applies"]
-    ],
+    "paperFeatures": [],
     "comment": "The tenseless infinitive does not intervene.",
     "verified": "page-image"
   },
@@ -377,9 +341,7 @@
     "readings": [
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["SOT", "applies"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -399,9 +361,7 @@
       {"name": "simultaneous (SOT)", "judgment": "acceptable"},
       {"name": "shifted past", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["would", "obligatory SOT"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -418,10 +378,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["would", "temporal"],
-      ["SOT", "blocked"]
-    ],
+    "paperFeatures": [],
     "comment": "would's past must delete, and no past is above it.",
     "verified": "page-image"
   },
@@ -441,9 +398,7 @@
       {"name": "simultaneous (SOT)", "judgment": "unacceptable"},
       {"name": "shifted past", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["SOT", "blocked"]
-    ],
+    "paperFeatures": [],
     "comment": "Against a silent would in the infinitive: a past there would license deletion.",
     "verified": "page-image"
   },
@@ -462,10 +417,7 @@
       {"form": "Leo sings in the shower.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["tense", "present"],
-      ["episodic", "impossible"]
-    ],
+    "paperFeatures": [],
     "comment": "The bare present is only habitual.",
     "verified": "page-image"
   },
@@ -482,10 +434,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["tense", "past"],
-      ["episodic", "possible"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -502,10 +451,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["tense", "future"],
-      ["episodic", "possible"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -524,9 +470,7 @@
       {"form": "John was singing in the shower when the mailman arrived.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["reference time", "restricted"]
-    ],
+    "paperFeatures": [],
     "comment": "Out unless inchoative: the when-clause restricts the reference time to a short interval.",
     "verified": "page-image"
   },
@@ -583,10 +527,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"],
-      ["aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -605,10 +546,7 @@
       {"form": "I don't think so. He expects to be working at 5 p.m. tomorrow.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "future"],
-      ["reference time", "restricted"]
-    ],
+    "paperFeatures": [],
     "comment": "The adverbial restricts the reference time to an instant.",
     "verified": "page-image"
   },
@@ -625,10 +563,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -645,10 +580,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "A past matrix does not help: the reference time is the attitude holder's NOW.",
     "verified": "page-image"
   },
@@ -665,10 +597,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["predicate", "stative"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -685,10 +614,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["aspect", "imperfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -706,7 +632,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["class", "propositional"],
       ["syntax", "control"]
     ],
     "comment": "",
@@ -725,10 +650,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "propositional"],
-      ["aspect", "imperfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -745,10 +667,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["matrix tense", "present"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -765,10 +684,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["aspect", "imperfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -785,10 +701,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["matrix tense", "past"]
-    ],
+    "paperFeatures": [],
     "comment": "A past matrix reference time is extended enough to include the event.",
     "verified": "page-image"
   },
@@ -903,9 +816,7 @@
       {"form": "Yesterday, John managed to sing.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -925,7 +836,6 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["class", "tenseless simultaneous"],
       ["syntax", "raising"]
     ],
     "comment": "",
@@ -946,10 +856,7 @@
       {"form": "The bridge seems to be trembling right now.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["matrix tense", "present"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -966,10 +873,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["matrix tense", "past"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -988,9 +892,7 @@
       {"form": "Leo seemed to be singing at 5 p.m. yesterday.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["reference time", "restricted"]
-    ],
+    "paperFeatures": [],
     "comment": "Out unless inchoative: the adverbial restricts the matrix reference time.",
     "verified": "page-image"
   },
@@ -1007,10 +909,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["class", "tenseless simultaneous"],
-      ["matrix tense", "past"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1029,9 +928,7 @@
       {"form": "John is trying to eat his breakfast right now.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["matrix aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "The matrix verb itself cannot be a bare episodic present.",
     "verified": "page-image"
   },
@@ -1048,10 +945,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["attitude holder", "overt"],
-      ["aspect", "imperfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -1068,10 +962,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["attitude holder", "overt"],
-      ["aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time.",
     "verified": "page-image"
   },
@@ -1088,10 +979,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["attitude holder", "understood"],
-      ["aspect", "perfective"]
-    ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   }
