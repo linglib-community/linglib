@@ -37,7 +37,7 @@ and not the bare head's. -/
 theorem referentiallySupported_some_iff :
     ReferentiallySupported N (some M) ↔
       ∃ e, iota (Modifier.intersective M N) = some e ∧ iota N ≠ some e := by
-  refine ⟨fun ⟨h, hN⟩ ↦ ?_, fun ⟨e, he, hN⟩ ↦ ⟨by simp [he], ?_⟩⟩
+  refine ⟨fun ⟨h, hN⟩ ↦ ?_, fun ⟨e, he, hN⟩ ↦ ⟨Option.isSome_iff_exists.2 ⟨e, he⟩, ?_⟩⟩
   · obtain ⟨e, he⟩ := Option.isSome_iff_exists.1 h
     exact ⟨e, he, by simp [hN]⟩
   · refine Option.eq_none_iff_forall_ne_some.2 fun e' he' ↦ hN ?_

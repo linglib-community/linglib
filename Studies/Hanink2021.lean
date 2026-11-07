@@ -99,7 +99,8 @@ relative builds. -/
 theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
     idxBind n (openClause n P ψ) g = Modifier.intersective P (lambdaAbsG n ψ g) := by
   funext x
-  simp only [idxBind, lambdaAbsG, openClause, Function.update_self, Modifier.intersective_apply]
+  simp only [idxBind, lambdaAbsG, openClause, Function.update_self, Modifier.intersective_apply,
+    Pi.inf_apply, inf_Prop_eq]
 
 /-- The silent D over the bound clause (72) refers to what the definite over the externally headed
 relative (60) refers to. -/

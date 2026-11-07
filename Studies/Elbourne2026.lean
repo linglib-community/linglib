@@ -18,8 +18,8 @@ application alone, and gives every adjective the type ⟨eit,eit⟩ of a functio
 *Every red is attractive*, while [a copula takes just the adjectives without compulsory
 features](##merges_copula_iff), which excludes *The president is former*. The copula applies the
 adjective to the trivial noun, where [a privative adjective is a
-contradiction](##copula_eq_bot_of_isPrivative), and [two adjectives commute just when the outer
-one is intersective](##comp_intersective_comm_iff), a difference of scope rather than of type.
+contradiction](##copula_eq_bot_of_isPrivative), and [*former* and an intersective adjective
+differ in their two orders](##exists_not_commute_former), a difference of scope rather than type.
 
 ## Implementation notes
 
@@ -80,6 +80,8 @@ structure Features where
   compulsory : Finset Selector
   /-- Features an entry may enter the derivation with or without. -/
   optional : Finset Selector
+  /-- A feature of an entry is either compulsory or optional. -/
+  disjoint : Disjoint compulsory optional := by decide
 
 namespace Features
 
@@ -114,16 +116,24 @@ theorem takesNoun_iff (f : Features) : f.TakesNoun ↔ Selector.eR ∈ f.compuls
     exact ⟨_, ⟨f.optional, Finset.Subset.refl _, rfl⟩, h⟩
 
 /-- *cute* (8) has an optional `E_R`, as most adjectives do (§3.2), *red* (37) among them. -/
-def cute : Features := ⟨∅, {Selector.eR}⟩
+def cute : Features where
+  compulsory := ∅
+  optional := {Selector.eR}
 
 /-- *former* and *mere* (§3.2) have a compulsory `E_R`. -/
-def former : Features := ⟨{Selector.eR}, ∅⟩
+def former : Features where
+  compulsory := {Selector.eR}
+  optional := ∅
 
 /-- Russian short-form adjectives (§4.2) have no selector features. -/
-def shortForm : Features := ⟨∅, ∅⟩
+def shortForm : Features where
+  compulsory := ∅
+  optional := ∅
 
 /-- Russian long-form adjectives (§4.2) have optional `E_R` and `E_L`. -/
-def longForm : Features := ⟨∅, {Selector.eR, Selector.eL}⟩
+def longForm : Features where
+  compulsory := ∅
+  optional := {Selector.eR, Selector.eL}
 
 end Features
 
@@ -143,32 +153,42 @@ variable {i} {f : Features}
 
 -- §3.1: an adjective takes a noun in attributive position by its `E_R`.
 theorem merges_noun_iff : Merges i f (eit i) ↔ Selector.eR ∈ f.compulsory ∪ f.optional := by
-  simp [Merges, Mode.functionalLeft?, eit, Features.takesNoun_iff]
+  simp [Merges, eit, Features.takesNoun_iff]
 
 /-- Whatever takes an adjective as its argument, such as the copula with its tense, of type
 ⟨⟨eit,eit⟩,eit⟩, takes just the adjectives without compulsory features. The types work out for
 *The president is former* (42), and the compulsory `E_R` of *former* excludes it. -/
 theorem merges_copula_iff (ρ : Ty) : Merges i f ((eit i ⇒ eit i) ⇒ ρ) ↔ f.compulsory = ∅ := by
-  simp [Merges, Mode.functionalLeft?, eit, Features.selectable_iff]
+  simp [Merges, eit, Features.selectable_iff]
 
 /-- Nothing that takes a noun merges with an adjective in either role, neither a determiner, of
 type ⟨eit,⟨eit,it⟩⟩, nor the second meaning (32) of *a*, of type ⟨eit,⟨eit,eit⟩⟩. This excludes
 *Joe is a former* (36) and *Every red is attractive* (37) by type alone. -/
 theorem not_merges_of_takes_noun (ρ : Ty) : ¬ Merges i f (eit i ⇒ ρ) := by
-  simp [Merges, Mode.functionalLeft?, eit]
+  simp [Merges, eit]
+
+/-- A row on the position of an adjective, read as the merge of the adjective with its sister. -/
+structure Row where
+  /-- The example. -/
+  datum : Datum
+  /-- The features of its adjective. -/
+  features : Features
+  /-- The type of the adjective's sister. -/
+  sister : Ty
 
 variable (i)
 
-/-- The rows on the positions of adjectives, each with its adjective's features and the type of
-the sister it merges with: the copula with its tense, a determiner, or a noun. -/
-def distribution : List (Datum × Features × Ty) :=
-  [(ex_28, .cute, (eit i ⇒ eit i) ⇒ eit i), (ex_36, .former, eit i ⇒ eit i ⇒ i ⇒ .t),
-    (ex_37, .cute, eit i ⇒ eit i ⇒ i ⇒ .t), (ex_42, .former, (eit i ⇒ eit i) ⇒ eit i),
-    (ex_45, .former, eit i), (ex_64_long, .longForm, (eit i ⇒ eit i) ⇒ eit i),
-    (ex_64_short, .shortForm, (eit i ⇒ eit i) ⇒ eit i), (ex_65a, .longForm, eit i),
-    (ex_65b, .shortForm, eit i)]
+/-- The rows on the positions of adjectives, the sister being the copula with its tense, a
+determiner, or a noun. -/
+def distribution : List Row :=
+  [⟨ex_28, .cute, (eit i ⇒ eit i) ⇒ eit i⟩, ⟨ex_36, .former, eit i ⇒ eit i ⇒ i ⇒ .t⟩,
+    ⟨ex_37, .cute, eit i ⇒ eit i ⇒ i ⇒ .t⟩, ⟨ex_42, .former, (eit i ⇒ eit i) ⇒ eit i⟩,
+    ⟨ex_45, .former, eit i⟩, ⟨ex_64_long, .longForm, (eit i ⇒ eit i) ⇒ eit i⟩,
+    ⟨ex_64_short, .shortForm, (eit i ⇒ eit i) ⇒ eit i⟩, ⟨ex_65a, .longForm, eit i⟩,
+    ⟨ex_65b, .shortForm, eit i⟩]
 
-theorem rows_merge : ∀ r ∈ distribution i, (r.1.judgment = .acceptable ↔ Merges i r.2.1 r.2.2) := by
+theorem rows_merge :
+    ∀ r ∈ distribution i, (r.datum.judgment = .acceptable ↔ Merges i r.features r.sister) := by
   simp only [distribution, List.forall_mem_cons, List.not_mem_nil, false_imp_iff, implies_true,
     and_true, merges_noun_iff, merges_copula_iff, not_merges_of_takes_noun, iff_false]
   decide
@@ -202,12 +222,20 @@ quantificational *a* are `Quantifier.Det.some`. -/
 def atTime (D : Quantifier.Det E) (f g : I → E → Prop) (t : I) : Prop :=
   D {x | f t x} {x | g t x}
 
+@[simp] theorem atTime_every {f g : I → E → Prop} {t : I} :
+    atTime Quantifier.Det.every f g t ↔ ∀ x, f t x → g t x :=
+  Iff.rfl
+
+@[simp] theorem atTime_some {f g : I → E → Prop} {t : I} :
+    atTime Quantifier.Det.some f g t ↔ ∃ x, f t x ∧ g t x :=
+  Iff.rfl
+
 -- (31)–(33): *a dog* under its second meaning (32) and the copula, and Montague's quantificational
 -- *a* with the *is* of identity, give the same truth conditions.
 theorem fido_is_a_dog (R : I → I → Prop) (dog : I → E → Prop) (o : E) (t : I) :
     copula R (intersective dog) t o ↔
       ∃ t', R t' t ∧ atTime Quantifier.Det.some dog (fun _ y ↦ o = y) t' := by
-  simp [copula_intersective, atTime, Quantifier.Det.some, Set.Nonempty]
+  simp [copula_intersective]
 
 /-- Under the copula a privative adjective holds of nothing, since it maps the trivial noun to a
 property disjoint from it. *The president is former* (42), whose types work out, is a
@@ -215,9 +243,8 @@ contradiction on the meaning (44) of *former*, a semantic explanation §3.2 leav
 privative *fake* needs the index or the deleted noun of footnote 31 for *That fur is fake*. -/
 theorem copula_eq_bot_of_isPrivative {G : Modifier (I → E → Prop)} (hG : IsPrivative G)
     (R : I → I → Prop) : copula R G = ⊥ := by
-  have h : G ⊤ = ⊥ := disjoint_top.mp (hG ⊤)
   funext t x
-  simp [copula, h]
+  simp [copula, hG.map_top]
 
 -- (42)
 theorem copula_former [LT I] (R : I → I → Prop) : copula R (former : Modifier (I → E → Prop)) = ⊥ :=
@@ -265,8 +292,7 @@ theorem inverse_scope [LT I] (woman donkey : I → E → Prop) (inspection : S �
         (littleV F (transitive F cul inspection (· < ·) x)) t) t ↔
       ∃ x, donkey t x ∧ ∀ y, woman t y →
         ∃ e, inspection e ∧ F.theme x e ∧ cul e < t ∧ F.agent y e := by
-  simp only [atTime, Quantifier.Det.some, Quantifier.Det.every, Set.Nonempty, Set.subset_def,
-    Set.mem_inter_iff, Set.mem_ofPred_eq, littleV, transitive, and_assoc]
+  simp only [atTime_every, atTime_some, littleV, transitive, and_assoc]
 
 -- (14), (22)–(23)
 theorem surface_scope [LT I] (woman donkey : I → E → Prop) (inspection : S → Prop) (t : I) :
@@ -274,8 +300,7 @@ theorem surface_scope [LT I] (woman donkey : I → E → Prop) (inspection : S �
         (fun t x ↦ littleV F (transitive F cul inspection (· < ·) x) t y) t) t ↔
       ∀ y, woman t y → ∃ x, donkey t x ∧
         ∃ e, inspection e ∧ F.theme x e ∧ cul e < t ∧ F.agent y e := by
-  simp only [atTime, Quantifier.Det.some, Quantifier.Det.every, Set.Nonempty, Set.subset_def,
-    Set.mem_inter_iff, Set.mem_ofPred_eq, littleV, transitive, and_assoc]
+  simp only [atTime_every, atTime_some, littleV, transitive, and_assoc]
 
 -- (55)–(58): *everyone* (56a) is *every* restricted to persons.
 theorem everyone_entered_a_local_bar [LT I] (person bar : I → E → Prop)
@@ -284,32 +309,31 @@ theorem everyone_entered_a_local_bar [LT I] (person bar : I → E → Prop)
         (fun t y ↦ littleV F (transitive F cul entering (· < ·) y) t x) t) t ↔
       ∀ x, person t x → ∃ y, bar t y ∧ near t y x ∧
         ∃ e, entering e ∧ F.theme y e ∧ cul e < t ∧ F.agent x e := by
-  simp only [atTime, Quantifier.Det.some, Quantifier.Det.every, Set.Nonempty, Set.subset_def,
-    Set.mem_inter_iff, Set.mem_ofPred_eq, localTo, intersective_apply₂, littleV, transitive,
-    and_assoc, and_left_comm (a := near t _ _)]
+  simp only [atTime_every, atTime_some, localTo, intersective_apply, Pi.inf_apply, inf_Prop_eq,
+    littleV, transitive, and_assoc, and_left_comm (a := near t _ _)]
 
 /-! ### Replies to criticisms -/
 
-/-- Two adjectives give the same meaning in either order, for every noun, exactly when the outer
-one is intersective. This is McNally and Boleda's observation on *jove presumpte assassí* 'young
-alleged murderer' (92a) and *presumpte jove assassí* (92b), and makes their difference one of
-scope between two functions of one type. -/
-theorem comp_intersective_comm_iff {M : Modifier (I → E → Prop)} :
-    (∀ Y, M ∘ intersective Y = intersective Y ∘ M) ↔ IsIntersective M := by
-  rw [isIntersective_iff_map_inf]
-  refine ⟨fun h N Y ↦ ?_, fun h Y ↦ funext fun N ↦ ?_⟩
-  · rw [inf_comm N, inf_comm (M N)]
-    exact congrFun (h Y) N
-  · change M (Y ⊓ N) = Y ⊓ M N
-    rw [inf_comm Y N, inf_comm Y (M N)]
-    exact h N Y
+/-- *former*, the fragment's non-subsective adjective, and some intersective adjective give
+different meanings in their two orders, as *presumpte* 'alleged' and *jove* 'young' do in *jove
+presumpte assassí* (92a) and *presumpte jove assassí* (92b). An adjective commutes with every
+intersective one just when it is intersective itself, so the difference is one of scope between
+two functions of one type. -/
+theorem exists_not_commute_former [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
+    ∃ Y, ¬ Function.Commute (former : Modifier (I → E → Prop)) (intersective Y) := by
+  simpa [isIntersective_iff_forall_commute] using
+    fun hi : IsIntersective (former : Modifier (I → E → Prop)) ↦
+      former_not_isSubsective h hi.isSubsective
 
--- (92): an intersective *jove* commits the speaker to youth when it is outermost; innermost it
--- does so under an outer adjective, for every noun, exactly when that adjective is subsective,
--- which *presumpte* 'alleged' is not.
-theorem forall_map_intersective_le_iff {M : Modifier (I → E → Prop)} :
-    (∀ Y N, M (intersective Y N) ≤ Y) ↔ IsSubsective M :=
-  ⟨fun h N ↦ by simpa [intersective] using h N N, fun h _ _ ↦ (h _).trans inf_le_left⟩
+-- (92): an intersective adjective outside *former* is asserted, but inside it need not hold,
+-- since *former* is not subsective.
+theorem exists_former_intersective_not [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
+    ∃ (Y N : I → E → Prop) (s : I) (x : E), former (intersective Y N) s x ∧ ¬ Y s x := by
+  by_contra hc
+  refine former_not_isSubsective (E := E) h
+    (isSubsective_iff_forall_map_inf_le.mpr fun Y N s x hs ↦ ?_)
+  by_contra hY
+  exact hc ⟨Y, N, s, x, hs, hY⟩
 
 variable {D : Type*}
 
@@ -330,8 +354,8 @@ theorem pos_gradable [LT D] (standard : (D → Modifier (I → E → Prop)) → 
     pos standard (gradable P) =
       intersective fun t x ↦ ∃ d, standard (gradable P) < d ∧ P t x d := by
   funext N t x
-  simp only [pos, gradable, intersective_apply₂]
-  exact propext ⟨fun ⟨d, hd, h, hN⟩ ↦ ⟨⟨d, hd, h⟩, hN⟩, fun ⟨⟨d, hd, h⟩, hN⟩ ↦ ⟨d, hd, h, hN⟩⟩
+  simp only [pos, gradable, intersective_apply, Pi.inf_apply, inf_Prop_eq, ← and_assoc,
+    exists_and_right]
 
 end Meanings
 

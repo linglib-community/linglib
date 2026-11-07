@@ -44,10 +44,6 @@ namespace Modifier
 
 variable {W E : Type*} {adj : Modifier (W → E → Prop)}
 
-@[simp] theorem intersective_apply₂ (Q N : W → E → Prop) (w : W) (x : E) :
-    intersective Q N w x ↔ Q w x ∧ N w x :=
-  Iff.rfl
-
 /-- A modifier of intensional properties is intersective if and only if it conjoins every noun
 with one fixed property, as *gray* does. -/
 theorem isIntersective_iff_exists_forall :

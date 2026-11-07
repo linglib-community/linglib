@@ -106,7 +106,7 @@ theorem iota_woman_eq_none_iff (c : ReferentialContext) :
   cases c <;> simp
 
 theorem iota_relativeClause_isSome (c : ReferentialContext) :
-    (iota (Modifier.intersective {.rescued} c.Woman)).isSome := by
+    (iota ({.rescued} ∩ c.Woman)).isSome := by
   have hw : .rescued ∈ c.Woman := by cases c <;> simp [Woman]
   rw [iota_isSome_iff]
   exact ⟨.rescued, ⟨rfl, hw⟩, fun _ h ↦ h.1⟩

@@ -33,7 +33,8 @@ disjoint from every singleton argument is irreflexivity.
 
 ## Main results
 
-* `Modifier.isIntersective_iff_map_inf`: the intersective modifiers are those commuting with meets.
+* `Modifier.isIntersective_iff_map_inf`, `Modifier.isIntersective_iff_forall_commute`: the
+  intersective modifiers are those commuting with meets, and with every intersective modifier.
 * `Modifier.isExtensive_pointwise_iff`, `isSubsective_pointwise_iff`: the classes of a
   pointwise modifier, read off its map.
 * `Modifier.isPrivative_pointwise_iff`: a pointwise modifier is privative only when its
@@ -72,6 +73,11 @@ theorem IsPrivative.eq_bot [PartialOrder α] [OrderBot α] {m : Modifier α}
     (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
   le_bot_iff.mp (hp x le_rfl (hs x))
 
+/-- A privative modifier maps the top element to the bottom, as nothing is a fake entity. -/
+theorem IsPrivative.map_top [PartialOrder α] [BoundedOrder α] {m : Modifier α}
+    (hp : IsPrivative m) : m ⊤ = ⊥ :=
+  disjoint_top.mp (hp ⊤)
+
 section SemilatticeInf
 
 variable [SemilatticeInf α]
@@ -88,8 +94,7 @@ theorem IsIntersective.isSubsective {m : Modifier α} (h : IsIntersective m) :
 meaning of restrictive relative clauses, intersective adjectives and manner adverbs. -/
 def intersective (q : α) : Modifier α := (q ⊓ ·)
 
-@[simp] theorem intersective_apply {β : Type*} (P Q : β → Prop) (x : β) :
-    intersective P Q x = (P x ∧ Q x) := rfl
+@[simp] theorem intersective_apply (q x : α) : intersective q x = q ⊓ x := rfl
 
 theorem intersective_comm (q r : α) : intersective q r = intersective r q :=
   inf_comm q r
@@ -102,6 +107,23 @@ and it is then the meet with its value at `⊤`. -/
 theorem isIntersective_iff_map_inf [OrderTop α] {m : Modifier α} :
     IsIntersective m ↔ ∀ x q, m (x ⊓ q) = m x ⊓ q :=
   ⟨fun ⟨r, hr⟩ x q ↦ by simp only [hr, inf_assoc], fun h ↦ ⟨m ⊤, fun x ↦ by simpa using h ⊤ x⟩⟩
+
+/-- A modifier is intersective exactly when it commutes with every intersective modifier, so that
+the order of an intersective modifier and another one matters only when the other is not
+intersective. -/
+theorem isIntersective_iff_forall_commute [OrderTop α] {m : Modifier α} :
+    IsIntersective m ↔ ∀ q, Function.Commute m (intersective q) := by
+  rw [isIntersective_iff_map_inf]
+  refine ⟨fun h q x ↦ ?_, fun h x q ↦ ?_⟩
+  · rw [intersective_apply, intersective_apply, inf_comm q x, h, inf_comm]
+  · rw [inf_comm x q, inf_comm (m x) q]
+    exact h q x
+
+/-- A modifier is subsective exactly when what it yields from the meet of `q` with anything lies
+below `q`, so that an intersective modifier under a subsective one still holds. -/
+theorem isSubsective_iff_forall_map_inf_le {m : Modifier α} :
+    IsSubsective m ↔ ∀ q x, m (q ⊓ x) ≤ q :=
+  ⟨fun h _ _ ↦ (h _).trans inf_le_left, fun h x ↦ by simpa using h x x⟩
 
 end SemilatticeInf
 
