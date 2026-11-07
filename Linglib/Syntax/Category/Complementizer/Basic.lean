@@ -67,6 +67,9 @@ structure Complementizer where
   coding : Option Clause.ComplementType := none
   /-- The sentence types of the clauses this morpheme types. -/
   types : Clause.Selection := ⊥
+  /-- The realization the subject of the clause it types must have, as *for* requires an overt
+  accusative one ([huddleston-pullum-2002] ch. 14 §1.4.1). -/
+  subject : Option Clause.EmbeddedSubject := none
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/

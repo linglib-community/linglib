@@ -31,7 +31,7 @@ open ArgumentStructure Aspect
     -/
 def manage : Verb where
   morphs := [.root "manage"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -39,7 +39,7 @@ def manage : Verb where
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
 def fail : Verb where
   morphs := [.root "fail"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
@@ -47,7 +47,7 @@ def fail : Verb where
 /-- "try" — subject control, no entailment -/
 def try_ : Verb where
   morphs := [.root "try"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .activity
   passivizable := false
   levinClasses := {LevinClass.amuse}
@@ -57,7 +57,7 @@ def try_ : Verb where
     so control is obligatorily *de se* ([landau-2015] table (36)). -/
 def persuade : Verb where
   morphs := [.root "persuade"]
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
+  valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   opaqueContext := true
   attitude := some (.preferential .positive)
@@ -69,8 +69,8 @@ def persuade : Verb where
 def promise : Verb where
   morphs := [.root "promise"]
   valency := .of
-    [(ArgumentFrame.infinitival, [0, 1]),
-     (ArgumentFrame.infinitival.withObject, [0, 2, 1]),
+    [(toInfinitive, [0, 1]),
+     (toInfinitive.withObject, [0, 2, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1])]
@@ -83,7 +83,7 @@ def promise : Verb where
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : Verb where
   morphs := [.root "remember"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -98,7 +98,7 @@ def forget : Verb where
   past := "forgot"
   pastPart := "forgotten"
   doubling := true
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
@@ -107,20 +107,28 @@ def forget : Verb where
     implicatives, so neglecting to lock the door entails not locking it. -/
 def neglect : Verb where
   morphs := [.root "neglect"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .negative, .some .positive⟩
 
 /-! ### Raising -/
 
-/-- *seem* is a raising verb, with no external argument of its own, so its subject gets no
-    θ-role from it. -/
+/-- The frame of an experiencer *to*-phrase and an infinitive, *seem to his parents to be
+writing*. -/
+def experiencerFrame : ArgumentFrame :=
+  { toInfinitive with
+    complements := .adposition (some Adpositions.to_) (some .dat) :: toInfinitive.complements }
+
+/-- *seem* is a raising verb, raising into a subject that is no participant of its own. With an
+    experiencer it reports the experiencer's view, a doxastic attitude ([wurmbrand-2014] (70)). -/
 def seem : Verb where
   morphs := [.root "seem"]
-  valency := .ofFrame ArgumentFrame.raising
+  valency := .ofLinks [(toInfinitive, [none, some 0]), (experiencerFrame, [none, some 1, some 0])]
+    (controls := [some .external, some .external])
   vendlerClass := some .state
   passivizable := false
+  readings := [{ frame := experiencerFrame, attitude := some (.doxastic .doxastic) }]
 
 /-! ### Prerequisite implicatives -/
 
@@ -135,7 +143,7 @@ occasioning eventuality in a parallel way the authors draw and then set apart. -
     26). -/
 def dare : Verb where
   morphs := [.root "dare"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -145,7 +153,7 @@ def dare : Verb where
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : Verb where
   morphs := [.root "bother"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -159,7 +167,7 @@ def bother : Verb where
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : Verb where
   morphs := [.root "hesitate"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .activity
   passivizable := false
   implicative := ⟨⊥, .some .positive⟩
@@ -169,7 +177,7 @@ def hesitate : Verb where
     venturing to speak entails speaking. -/
 def venture : Verb where
   morphs := [.root "venture"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -178,7 +186,7 @@ def venture : Verb where
     condescending to help entails helping. -/
 def condescend : Verb where
   morphs := [.root "condescend"]
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
@@ -188,7 +196,7 @@ def condescend : Verb where
     as *It happened to rain* shows. -/
 def happen : Verb where
   morphs := [.root "happen"]
-  valency := .ofFrame ArgumentFrame.raising
+  valency := .ofLinks [(toInfinitive, [none, some 0])] (controls := [some .external])
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
   levinClasses := {LevinClass.occurrence}

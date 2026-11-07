@@ -2,58 +2,62 @@ module
 
 public import Mathlib.Algebra.Order.Ring.Int
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Tense.Defs
-public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Studies.Ogihara1996
 public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Verbs.Implicative
 public import Linglib.Fragments.English.Verbs.Communication
-public import Linglib.Data.Examples.Readers
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives
 
-This file formalizes [wurmbrand-2014]'s account of the temporal composition of English
-infinitival complements. Three classes are distinguished by whether a bare, nonprogressive
-verb phrase can be episodic: future infinitives allow it, propositional attitude infinitives
-never do, and tenseless simultaneous infinitives allow it depending on the matrix tense
-(`InfinitivalTenseClass`). The distribution is derived from viewpoint aspect. Perfective
-aspect includes the event time in the reference time and imperfective the reverse
-(`Perfective`), and an episodic eventive predicate occupies an extended interval, so
-perfective fails whenever the reference time is an instant (`not_perfective_of_isPoint`).
-Each class fixes the embedded reference time (`ReferenceTime`): the future modal *woll* shifts
-it to an unrestricted interval after the evaluation time, a propositional attitude imposes the
-holder's NOW, an instant, and a tenseless simultaneous infinitive inherits the matrix reference
-time, an instant under present tense and an extended interval under past. The three rows of
-the paper's table follow (`Episodic`), and a verb ambiguous between classes, like *seem*, is
-episodic exactly when one of its classes is (`Verb.Episodic`).
-
-Future infinitives are tenseless: finite *will* is present tense plus *woll* and *would* is
-past plus *woll* (`Composition`), so finite future is absolute while infinitival future is
-relative to the matrix event (`infinitival_relative`), and infinitives are invisible to the
-sequence-of-tense rule, whose local tense feature skips them (`localTense`): a past under an
-infinitive under past deletes, a past under *will* does not, and a silent *would* in the
-infinitive would wrongly license deletion under a *will* matrix (`silent_would_wrong`).
+Wurmbrand argues that English infinitives have no tense of their own. A future infinitive carries
+the future modal *woll* without the present tense of *will*, so [its future is relative where
+*will*'s is absolute](##orientation_rows), it is [no silent *would*](##not_silent_would), and [a
+past below it can be simultaneous](##sot_rows). A simultaneous infinitive takes the attitude
+holder's NOW or the matrix reference time as its reference time, and since perfective aspect puts
+the event properly inside the reference time, [a bare episodic verb phrase is always possible in a
+future infinitive, never in a propositional one, and in a tenseless one only under an extended
+matrix reference time](##table3), as [the aspect rows bear out](##aspect_rows).
 
 ## Implementation notes
 
-Times are the nonempty intervals of a linear order; an instant is an interval whose endpoints
-coincide. The evaluation time of *woll* and the attitude holder's NOW are one instant
-parameter, and adverbials that restrict a reference time to an instant fall under the same
-lemma as the NOW. The obligatory deletion of *would*'s past is taken as the paper does, as a
-lexical requirement. The `…_rows` fits read the episodic, aspect and sequence-of-tense rows on
-integer time, episodicity decided by the table's three theorems and the tense stack recognized
-in each sentence's words against the forms the English fragment declares or realizes. Each
-sequence-of-tense row also carries a linearized witness over a study lexicon that pronounces
-the row's sentence (`Minimalist.SpellsOut`) and whose tense spine is that recognized stack.
+* The tense morphemes, their features and the SOT rule (23), which the paper adopts from Ogihara,
+  are those of `Studies/Ogihara1996`: *will* is the present over *woll* and *would* the past over
+  it, both read off `Tense.Form`, and a future infinitive is *woll* alone (21b). A reading is
+  Ogihara's position of the deepest clause's time against the time of the clause above it.
+* Ogihara's chains read the English present as relative, and (21a) needs it absolute, so the event
+  times a clause allows (`Locates`) put the time below *-s* at the utterance time and the time
+  below any other morpheme in that morpheme's cell. These times are points, as in the cells.
+* Reference times are nonempty intervals. (47) prints the perfective with proper inclusion and the
+  imperfective, Pancheva's `Aspect.UNBOUNDED`, with inclusion. The attitude holder's NOW and the
+  utterance time, which the paper takes to be very short, are instants, which properly contain no
+  run time, and an adverbial such as *at 5 p.m.* restricts a reference time to an instant (`D`).
+  Statives project no aspect (p. 428). The evaluation time of *woll* and the NOW are one instant.
+* Each row's class, matrix reference time and aspect are stated where it is paired. The
+  sequence-of-tense rows run on linearized witnesses over a study lexicon that pronounce their
+  sentences (`Minimalist.SpellsOut`), each chain read off the witness's pronounced tense items.
+
+## TODO
+
+* Table 4 assigns each verb its classes. Read from the attitudes of the English fragment, the
+  preferential *decide*, *want*, *promise* and *expect* are its future verbs and the doxastic
+  *believe* its propositional one, but the fragment gives *claim* no attitude, *expect* neither an
+  infinitival frame nor its propositional reading (60), *begin* no infinitival frame and *seem* no
+  attitude holder (70), so the rows state their classes.
+* Ogihara's rule deletes the past of *would* optionally where the paper makes deletion obligatory,
+  so the readings of (28b) are not paired; nor are the futurate progressive of (6e), the finite
+  rows of (50), the double-access sentences of (58) and the embedded sequence of tense of (59).
 
 ## References
 
 * [wurmbrand-2014]
 * [ogihara-1996]
 * [abusch-1988]
+* [pancheva-von-stechow-2004]
 * [wurmbrand-2001]
 * [landau-2000]
 -/
@@ -62,305 +66,321 @@ the row's sentence (`Minimalist.SpellsOut`) and whose tense spine is that recogn
 
 namespace Wurmbrand2014
 
-open scoped Denotes
+open Ogihara1996 (Morpheme readings lf)
 
-/-- The three classes of infinitival complement by tense behaviour. Future irrealis infinitives,
-*decide*, *want* and *plan*, are tenseless with *woll* and future-oriented; propositional
-infinitives, *believe* and *claim*, are anchored to the attitude holder's now; restructuring
-infinitives, *try*, *begin* and *seem*, have no attitude holder and take the matrix reference
-time. -/
+/-- The three classes of infinitive of Table 3. A future irrealis infinitive, under *decide* or
+*expect*, carries *woll*; a propositional attitude infinitive, under *believe* or *claim*, takes the
+attitude holder's NOW as its reference time; a tenseless simultaneous infinitive, under *seem*,
+*try*, *manage* or *begin*, has no attitude holder and takes the matrix reference time. -/
 inductive InfinitivalTenseClass
   | futureIrrealis
   | propositional
-  | restructuring
-  deriving DecidableEq, Repr, Inhabited
+  | tenseless
+  deriving DecidableEq, Repr
 
-/-- The structural size of each class, the modal layer of *woll* for a future irrealis
-infinitive, a TP for a propositional one and a bare vP for a restructuring one, the modal and
-tense layers sharing a level of the functional sequence. -/
-def InfinitivalTenseClass.complementSize : InfinitivalTenseClass → Minimalist.ComplementSize
-  | .futureIrrealis => .modP
-  | .propositional => .tP
-  | .restructuring => .vP
+/-! ### Aspect, (46) and (47) -/
 
-open Tense Minimalist
-
-/-! ### Viewpoint aspect -/
+/-- The aspect heads of (46) that the account turns on. -/
+inductive Asp
+  | perfective
+  | imperfective
+  deriving DecidableEq
 
 section Aspect
 
-variable {T : Type*} [LinearOrder T]
+variable {T W E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
-/-- Perfective aspect includes the event time in the reference time. -/
-def Perfective (e r : NonemptyInterval T) : Prop := e ≤ r
+/-- The relation (47) of an aspect between the reference time `t` and an event's run time `s`: the
+perfective puts the run time properly inside the reference time, the imperfective the reference
+time inside the run time. -/
+def Asp.rel : Asp → NonemptyInterval T → NonemptyInterval T → Prop
+  | .perfective, t, s => s < t
+  | .imperfective, t, s => t ≤ s
 
-/-- Imperfective aspect includes the reference time in the event time. -/
-def Imperfective (e r : NonemptyInterval T) : Prop := r ≤ e
+/-- An aspect maps a predicate of events to the reference times standing in its relation to the run
+time of an event of the predicate, (47). -/
+def Asp.denote (a : Asp) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
+  Aspect.ofRel a.rel P
 
-theorem not_perfective_of_isPoint {e r : NonemptyInterval T} (he : ¬ e.IsPoint)
-    (hr : r.IsPoint) : ¬ Perfective e r := by
-  intro h
-  rw [Perfective, NonemptyInterval.le_def] at h
-  exact he (le_antisymm e.fst_le_snd (h.2.trans (hr.symm.le.trans h.1)))
+-- (47a) is Pancheva's non-strict imperfective
+theorem denote_imperfective (P : W → E → Prop) :
+    Asp.imperfective.denote P = Aspect.UNBOUNDED P := rfl
 
-theorem imperfective_pure_of_mem {e : NonemptyInterval T} {t : T} (h : t ∈ e) :
-    Imperfective e (NonemptyInterval.pure t) := by
-  rw [Imperfective, NonemptyInterval.le_def]
-  exact NonemptyInterval.mem_def.mp h
+/-- A reference time admits a verb phrase of aspect `a` when the run time of some eventuality stands
+in the aspect's relation to it; a stative projects no aspect and admits every reference time. -/
+def Admits : Option Asp → NonemptyInterval T → Prop
+  | none, _ => True
+  | some a, r => r ∈ a.denote (fun (_ : Unit) (_ : NonemptyInterval T) ↦ True) ()
 
-/-! ### The reference time of an infinitive -/
+variable {r : NonemptyInterval T}
 
-variable (matrixR : NonemptyInterval T) (now : T)
+-- (47b): no run time lies properly inside an instant
+theorem admits_perfective_iff : Admits (some .perfective) r ↔ ¬ r.IsPoint := by
+  refine ⟨fun ⟨s, hs, _⟩ hr ↦ ?_, fun hr ↦ ⟨.pure r.fst, ?_, trivial⟩⟩
+  · have hs : s < r := hs
+    have hr : r.fst = r.snd := hr
+    have hle := NonemptyInterval.le_def.1 hs.le
+    have h₁ : s.fst = r.fst := le_antisymm (s.fst_le_snd.trans (hle.2.trans hr.ge)) hle.1
+    have h₂ : s.snd = r.snd := le_antisymm hle.2 ((hr.symm.trans h₁.symm).le.trans s.fst_le_snd)
+    exact hs.ne (NonemptyInterval.ext (Prod.ext h₁ h₂))
+  · show NonemptyInterval.pure r.fst < r
+    exact lt_of_le_of_ne (NonemptyInterval.le_def.2 ⟨le_rfl, r.fst_le_snd⟩)
+      fun h ↦ hr (congrArg (fun x : NonemptyInterval T ↦ x.snd) h)
 
-/-- The reference time each class assigns the embedded aspect, given the matrix reference
-time and the evaluation instant: after *woll*, any interval after the evaluation time; under a
-propositional attitude, the holder's NOW; in a tenseless simultaneous infinitive, the matrix
-reference time. -/
-def ReferenceTime : InfinitivalTenseClass → NonemptyInterval T → Prop
-  | .futureIrrealis, r => now < r.fst
-  | .propositional, r => r = NonemptyInterval.pure now
-  | .restructuring, r => r = matrixR
+@[simp] theorem admits_none (r : NonemptyInterval T) : Admits none r := trivial
 
-/-- A bare episodic verb phrase is available when some reference time of the class includes
-an extended event time. -/
-def Episodic (c : InfinitivalTenseClass) : Prop :=
-  ∃ r, ReferenceTime matrixR now c r ∧
-    ∃ e : NonemptyInterval T, ¬ e.IsPoint ∧ Perfective e r
+@[simp] theorem admits_imperfective (r : NonemptyInterval T) : Admits (some .imperfective) r :=
+  ⟨r, (le_rfl : r ≤ r), trivial⟩
 
-theorem episodic_futureIrrealis [NoMaxOrder T] : Episodic matrixR now .futureIrrealis := by
-  obtain ⟨a, ha⟩ := exists_gt now
-  obtain ⟨b, hb⟩ := exists_gt a
-  exact ⟨⟨(a, b), hb.le⟩, ha, ⟨(a, b), hb.le⟩, hb.ne, le_rfl⟩
-
-theorem not_episodic_propositional : ¬ Episodic matrixR now .propositional := by
-  rintro ⟨r, rfl, e, he, h⟩
-  exact not_perfective_of_isPoint he (show (NonemptyInterval.pure now).IsPoint from rfl) h
-
-theorem episodic_restructuring_iff :
-    Episodic matrixR now .restructuring ↔ ¬ matrixR.IsPoint := by
-  constructor
-  · rintro ⟨r, rfl, e, he, h⟩ hp
-    exact not_perfective_of_isPoint he hp h
-  · exact fun h ↦ ⟨matrixR, rfl, matrixR, h, le_rfl⟩
-
-/-- Episodicity is decided by the three cells of the table: always available after *woll*, never
-at the holder's NOW, and at the matrix reference time exactly when it is extended. -/
-instance [NoMaxOrder T] [DecidableEq T] (c : InfinitivalTenseClass) :
-    Decidable (Episodic matrixR now c) :=
-  match c with
-  | .futureIrrealis => .isTrue (episodic_futureIrrealis matrixR now)
-  | .propositional => .isFalse (not_episodic_propositional matrixR now)
-  | .restructuring =>
-      decidable_of_iff (¬ matrixR.fst = matrixR.snd) (episodic_restructuring_iff matrixR now).symm
-
-/-! ### Verbs -/
-
-/-- The infinitive-taking verbs of the paper's table. -/
-inductive Verb where
-  | decide
-  | want
-  | promise
-  | expect
-  | claim
-  | believe
-  | try_
-  | begin_
-  | manage
-  | seem
-  deriving DecidableEq, Repr
-
-/-- The classes a verb's infinitive may belong to. *Expect* is future or, as a belief,
-propositional; *seem* is tenseless simultaneous or, with an attitude holder, propositional. -/
-def Verb.classes : Verb → List InfinitivalTenseClass
-  | .decide | .want | .promise => [.futureIrrealis]
-  | .expect => [.futureIrrealis, .propositional]
-  | .claim | .believe => [.propositional]
-  | .try_ | .begin_ | .manage => [.restructuring]
-  | .seem => [.restructuring, .propositional]
-
-/-- A verb's infinitive has an episodic reading when one of its classes does. -/
-def Verb.Episodic (v : Verb) : Prop :=
-  ∃ c ∈ v.classes, Wurmbrand2014.Episodic matrixR now c
-
-theorem believe_not_episodic : ¬ Verb.believe.Episodic matrixR now := by
-  rintro ⟨c, hc, h⟩
-  simp only [Verb.classes, List.mem_singleton] at hc
-  exact not_episodic_propositional matrixR now (hc ▸ h)
-
-theorem seem_episodic_iff : Verb.seem.Episodic matrixR now ↔ ¬ matrixR.IsPoint := by
-  constructor
-  · rintro ⟨c, hc, h⟩
-    simp only [Verb.classes, List.mem_cons, List.not_mem_nil, or_false] at hc
-    rcases hc with rfl | rfl
-    · exact (episodic_restructuring_iff matrixR now).mp h
-    · exact absurd h (not_episodic_propositional matrixR now)
-  · exact fun h ↦ ⟨.restructuring, by simp [Verb.classes],
-      (episodic_restructuring_iff matrixR now).mpr h⟩
-
-theorem decide_episodic [NoMaxOrder T] : Verb.decide.Episodic matrixR now :=
-  ⟨.futureIrrealis, by simp [Verb.classes], episodic_futureIrrealis matrixR now⟩
+theorem not_admits_perfective_pure (t : T) : ¬ Admits (some .perfective) (.pure t) :=
+  fun h ↦ admits_perfective_iff.1 h rfl
 
 end Aspect
 
-/-! ### Temporal composition -/
+/-! ### The reference time of an infinitive, §4 -/
 
-/-- The temporal composition of a clause is an optional tense feature together with whether the
-future modal *woll* is present. -/
-structure Composition where
-  tense : Option (Finset Ordering)
-  woll : Bool
-  deriving DecidableEq
+section ReferenceTime
 
-/-- Finite *will* is present tense plus *woll*. -/
-def will : Composition := ⟨some ⟦present⟧, true⟩
+variable {T : Type*} [LinearOrder T] (matrixR : NonemptyInterval T) (now : T)
 
-/-- Finite *would* is past tense plus *woll*. -/
-def would : Composition := ⟨some ⟦past⟧, true⟩
+/-- The reference time each class assigns the embedded aspect, given the matrix reference time and
+the evaluation instant: after *woll*, any interval after the evaluation time; under a propositional
+attitude, the holder's NOW; in a tenseless simultaneous infinitive, the matrix reference time. -/
+def ReferenceTime : InfinitivalTenseClass → NonemptyInterval T → Prop
+  | .futureIrrealis, r => now < r.fst
+  | .propositional, r => r = .pure now
+  | .tenseless, r => r = matrixR
 
-/-- An infinitive has no tense, with or without *woll*. -/
-def infinitive (woll : Bool) : Composition := ⟨none, woll⟩
+/-- A verb phrase of aspect `a` is available in an infinitive of class `c` when some reference time
+the class assigns, among the reference times `D` its adverbials allow, admits it. -/
+def Available (c : InfinitivalTenseClass) (a : Option Asp) (D : Set (NonemptyInterval T)) :
+    Prop :=
+  ∃ r ∈ D, ReferenceTime matrixR now c r ∧ Admits a r
 
-/-- The composition of each class is tenseless, with *woll* in the future class only. -/
-def composition : InfinitivalTenseClass → Composition
-  | .futureIrrealis => infinitive true
-  | .propositional | .restructuring => infinitive false
+variable {matrixR now} {a : Option Asp} {D : Set (NonemptyInterval T)}
 
-theorem woll_iff_modP (c : InfinitivalTenseClass) :
-    (composition c).woll = true ↔ c.complementSize = .modP := by
-  cases c <;> decide
+theorem available_propositional_iff :
+    Available matrixR now .propositional a D ↔ .pure now ∈ D ∧ Admits a (.pure now) := by
+  simp [Available, ReferenceTime]
 
-section Future
+theorem available_tenseless_iff :
+    Available matrixR now .tenseless a D ↔ matrixR ∈ D ∧ Admits a matrixR := by
+  simp [Available, ReferenceTime]
 
-variable {T : Type*} [LinearOrder T]
+theorem available_futureIrrealis [NoMaxOrder T] (a : Option Asp) :
+    Available matrixR now .futureIrrealis a .univ := by
+  obtain ⟨x, hx⟩ := exists_gt now
+  obtain ⟨y, hy⟩ := exists_gt x
+  have hr : ¬ (⟨(x, y), hy.le⟩ : NonemptyInterval T).IsPoint := hy.ne
+  refine ⟨⟨(x, y), hy.le⟩, trivial, hx, ?_⟩
+  match a with
+  | none => trivial
+  | some .perfective => exact admits_perfective_iff.2 hr
+  | some .imperfective => exact admits_imperfective _
 
-/-- A composition with *woll* locates its event after the utterance time when present tense is
-present and after the evaluation time otherwise. -/
-def Composition.Locates (c : Composition) (utterance eval e : T) : Prop :=
-  c.woll = true ∧ if c.tense = some ⟦present⟧ then utterance < e else eval < e
+-- (49), (53b), (68): an adverbial naming an instant excludes the perfective in every class
+theorem not_available_perfective (c : InfinitivalTenseClass) (hD : ∀ r ∈ D, r.IsPoint) :
+    ¬ Available matrixR now c (some .perfective) D :=
+  fun ⟨r, hr, _, h⟩ ↦ admits_perfective_iff.1 h (hD r hr)
 
-theorem will_absolute {utterance eval e : T} (h : will.Locates utterance eval e) :
-    utterance < e := by
-  simpa [will, Composition.Locates] using h.2
+/-- Table 3: a bare episodic verb phrase, which is perfective, is possible in a future infinitive,
+never in a propositional attitude infinitive, and in a tenseless simultaneous infinitive exactly
+when the matrix reference time is extended, as under a past matrix but not a present one. -/
+theorem table3 [NoMaxOrder T] :
+    Available matrixR now .futureIrrealis (some .perfective) .univ ∧
+      ¬ Available matrixR now .propositional (some .perfective) D ∧
+      (Available matrixR now .tenseless (some .perfective) .univ ↔ ¬ matrixR.IsPoint) := by
+  refine ⟨available_futureIrrealis _, fun h ↦ ?_, ?_⟩
+  · exact not_admits_perfective_pure now (available_propositional_iff.1 h).2
+  · simp [available_tenseless_iff, admits_perfective_iff]
 
-theorem infinitival_relative [DenselyOrdered T] {utterance eval : T} (h : eval < utterance) :
-    ∃ e, (infinitive true).Locates utterance eval e ∧ e < utterance := by
-  obtain ⟨e, h₁, h₂⟩ := exists_between h
-  exact ⟨e, ⟨rfl, by simpa [infinitive] using h₁⟩, h₂⟩
+end ReferenceTime
 
-end Future
+/-! ### Temporal composition and the sequence of tense, §3 -/
 
-/-! ### Sequence of tense -/
+/-- Finite *will*, the present tense over *woll* (21a). -/
+def will : List Morpheme := Morpheme.ofForm .english Tense.Form.future
 
-/-- The local tense feature of an embedded tense is the nearest tense feature above it,
-infinitives contributing none. -/
-def localTense : List (Option (Finset Ordering)) → Option (Finset Ordering)
-  | [] => none
-  | some f :: _ => some f
-  | none :: rest => localTense rest
+/-- Finite *would*, the past tense over *woll*. -/
+def would : List Morpheme := Morpheme.ofForm .english (Tense.Form.simplePast.under .infinitive)
 
-/-- Ogihara's rule lets an embedded tense delete when its local tense feature is the same
-feature. -/
-def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Ordering) : Bool :=
-  match localTense above with
-  | some m => decide (m = embedded)
-  | none => false
+@[simp] theorem will_eq : will = [.s, .woll] := rfl
 
-theorem sot_will_blocks : sotApplies [will.tense, some ⟦past⟧] ⟦past⟧ = false := by decide
+@[simp] theorem would_eq : would = [.ed, .woll] := rfl
 
-theorem sot_infinitive_transparent :
-    sotApplies [(infinitive true).tense, some ⟦past⟧] ⟦past⟧ = true := by
+/-- The temporal composition of an infinitive: *woll* without tense in a future infinitive (21b),
+nothing in a simultaneous one. -/
+def composition : InfinitivalTenseClass → List Morpheme
+  | .futureIrrealis => [.woll]
+  | .propositional | .tenseless => []
+
+section Locates
+
+variable {T : Type*} [LinearOrder T] {u t e : T}
+
+/-- The times at which a clause with the tense morphemes `ms` places its event, at the local
+evaluation time `t` and the utterance time `u`: the absolute present *-s* moves to the utterance
+time (21a), and every other morpheme to a time standing in its cell to the time above. -/
+def Locates (u : T) : List Morpheme → T → T → Prop
+  | [], t, e => e = t
+  | .s :: ms, _, e => Locates u ms u e
+  | m :: ms, t, e => ∃ t', compare t' t ∈ m.cell ∧ Locates u ms t' e
+
+theorem locates_nil : Locates u [] t e ↔ e = t := .rfl
+
+theorem locates_woll : Locates u [.woll] t e ↔ t < e := by
+  simp [Locates, Morpheme.cell, Morpheme.tenses, Tense.denote_future, compare_gt_iff_gt]
+
+theorem locates_will : Locates u will t e ↔ u < e := by
+  simpa [Locates] using locates_woll (u := u) (t := u) (e := e)
+
+theorem locates_null_woll : Locates u [.null, .woll] t e ↔ t < e := by
+  simp [Locates, Morpheme.cell, Morpheme.tenses, Tense.denote_present, Tense.denote_future,
+    compare_gt_iff_gt]
+
+end Locates
+
+/-- The past of *would* deletes under the SOT rule, as *would* requires (29): below the morphemes
+`above`, outermost first, its forms at LF include the null tense. -/
+def WouldLicensed (above : List Morpheme) : Prop :=
+  Morpheme.null ∈ ((lf none (above ++ would)).drop above.length).head?.getD ∅
+
+instance : DecidablePred WouldLicensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- A clause with the tense morphemes `ms` below `above` is licensed unless it is a *would* whose
+past cannot delete. -/
+def Licensed (above ms : List Morpheme) : Prop := ms = would → WouldLicensed above
+
+instance (above ms : List Morpheme) : Decidable (Licensed above ms) :=
+  inferInstanceAs (Decidable (_ → _))
+
+/-- An infinitive is no silent *would*, (29) against (30): under *will* a future infinitive is fine
+and a *would* is not, since the local tense feature of *would*'s past is then the present of
+*will*, and the past cannot delete as *would* requires. -/
+theorem not_silent_would : Licensed will (composition .futureIrrealis) ∧ ¬ Licensed will would := by
   decide
 
-theorem sot_would : sotApplies [would.tense, some ⟦past⟧] ⟦past⟧ = true := by decide
+/-! ### The rows -/
 
-theorem sot_will_infinitive : sotApplies [(infinitive true).tense, will.tense] ⟦past⟧ = false := by
-  decide
-
-theorem silent_would_wrong : sotApplies [would.tense, will.tense] ⟦past⟧ = true := by decide
-
-/-- *would*'s past must delete: it is licensed only below a past. -/
-def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies above ⟦past⟧ = true
-
-instance : DecidablePred WouldLicensed := fun _ ↦ inferInstanceAs (Decidable (_ = true))
-
-theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some ⟦past⟧] := by decide
-
-/-! ### The data -/
-
-section Data
+section Rows
 
 open Examples
 
-/-- A bare-episodic test row: its infinitival class, or for a finite baseline its tense, with
-the reference time the matrix provides, on integer time. -/
-def episodicTest? (e : Datum) : Option (InfinitivalTenseClass × NonemptyInterval ℤ) := do
-  guard ((e.feature? "episodic").isSome)
-  match e.feature? "class", e.feature? "tense" with
-  | some "future", _ => some (.futureIrrealis, .pure 0)
-  | some "propositional", _ => some (.propositional, .pure 0)
-  | none, some "present" => some (.restructuring, .pure 0)
-  | none, some "past" => some (.restructuring, ⟨(-1, 0), by omega⟩)
-  | none, some "future" => some (.restructuring, ⟨(0, 1), by omega⟩)
-  | _, _ => none
+/-- The utterance time, the instant `0`. -/
+def present : NonemptyInterval ℤ := .pure 0
 
--- (2), (3), (45)
-theorem episodic_rows : Datum.Checks episodicTest?
-    (fun p ↦ .ofProp (Episodic p.2 (0 : ℤ) p.1)) Examples.all 6 := by
+/-- Yesterday, an extended interval before the utterance time. -/
+def yesterday : NonemptyInterval ℤ := ⟨(-2, -1), by decide⟩
+
+/-- The aspect rows: with the classes the paper gives their verbs, a perfective infinitive is
+fine after *woll* and under a past *seem*, *try* or *begin*, and out under a propositional
+attitude, a present *seem* or *try*, or an adverbial naming an instant, where the progressive
+and statives are fine; finite clauses pattern alike (45), (49). -/
+theorem aspect_rows :
+    -- (1a), (2a), (53a), (61a): *decide*, *expect* to VP
+    (Available present 0 .futureIrrealis (some .perfective) .univ ↔
+        ex_1.judgment = .acceptable) ∧
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
+        ex_3.judgment = .acceptable) ∧
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
+        ex_29.judgment = .acceptable) ∧
+      (Available present 0 .futureIrrealis (some .perfective) .univ ↔
+        ex_43.judgment = .acceptable) ∧
+      -- (53b): *expect to work at 5 p.m. tomorrow*
+      (Available present 0 .futureIrrealis (some .perfective) {.pure 1} ↔
+        ex_30.judgment = .acceptable) ∧
+      -- (2b), (3b), (55a), (55b), (56b): *believe*, *claim* to VP
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_4.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_6.judgment = .acceptable) ∧
+      (Available present 0 .propositional (some .perfective) .univ ↔
+        ex_31.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_32.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_35.judgment = .acceptable) ∧
+      -- (1b), (3a), (55c): statives under *believe* and *claim*
+      (Available present 0 .propositional none .univ ↔ ex_2.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional none .univ ↔ ex_5.judgment = .acceptable) ∧
+      (Available present 0 .propositional none .univ ↔ ex_33.judgment = .acceptable) ∧
+      -- (55e), (56e), (61b), (70a): progressives under a propositional attitude
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
+        ex_34.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
+        ex_36.judgment = .acceptable) ∧
+      (Available present 0 .propositional (some .imperfective) .univ ↔
+        ex_44.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .imperfective) .univ ↔
+        ex_52.judgment = .acceptable) ∧
+      -- (70b), (70d): *seem* with an overt or understood attitude holder
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_53.judgment = .acceptable) ∧
+      (Available yesterday (-1) .propositional (some .perfective) .univ ↔
+        ex_54.judgment = .acceptable) ∧
+      -- (57a): a present *seem*, read either way
+      (Available present 0 .tenseless (some .perfective) .univ ∨
+          Available present 0 .propositional (some .perfective) .univ ↔
+        ex_37.judgment = .acceptable) ∧
+      -- (57b), (57c), (67c), (67d), (68a), (69a), (69b): *seem*, *try* without an attitude holder
+      (Available present 0 .tenseless (some .imperfective) .univ ↔
+        ex_38.judgment = .acceptable) ∧
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
+        ex_39.judgment = .acceptable) ∧
+      (Available present 0 .tenseless (some .perfective) .univ ↔
+        ex_47.judgment = .acceptable) ∧
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
+        ex_48.judgment = .acceptable) ∧
+      (Available (.pure (-2 : ℤ)) (-2) .tenseless (some .perfective) .univ ↔
+        ex_49.judgment = .acceptable) ∧
+      (Available yesterday (-1) .tenseless (some .perfective) .univ ↔
+        ex_50.judgment = .acceptable) ∧
+      (Available present 0 .tenseless (some .perfective) .univ ↔
+        ex_51.judgment = .acceptable) ∧
+      -- (45a), (45b), (45c), (49a): finite present, past, future, and a past at an instant
+      (Admits (some .perfective) (.pure (0 : ℤ)) ↔ ex_23.judgment = .acceptable) ∧
+      (Admits (some .perfective) yesterday ↔ ex_24.judgment = .acceptable) ∧
+      (Admits (some .perfective) (⟨(1, 2), by decide⟩ : NonemptyInterval ℤ) ↔
+        ex_25.judgment = .acceptable) ∧
+      (Admits (some .perfective) (.pure (-2 : ℤ)) ↔ ex_26.judgment = .acceptable) := by
+  have hf : Available present 0 .futureIrrealis (some .perfective) .univ :=
+    available_futureIrrealis _
+  have hf' : ¬ Available present 0 .futureIrrealis (some .perfective) {.pure 1} :=
+    not_available_perfective _ fun _ h ↦ h ▸ rfl
+  simp only [hf, hf', available_propositional_iff, available_tenseless_iff,
+    admits_perfective_iff, admits_imperfective, admits_none, Set.mem_univ, true_and,
+    NonemptyInterval.IsPoint]
+  and_intros <;> decide
+
+/-- The orientation rows: a future infinitive places its event after the matrix event, even before
+the utterance time, where *will* places it after the utterance time and a simultaneous infinitive
+at the matrix event's time; *would*, its past deleted, is relative like the infinitive. -/
+theorem orientation_rows :
+    -- (6a), (9b), (12a): *decided*, *is expected* to VP
+    (Locates 0 (composition .futureIrrealis) (-1 : ℤ) 1 ↔ ex_7.judgment = .acceptable) ∧
+      (Locates 0 (composition .futureIrrealis) (0 : ℤ) 1 ↔ ex_11.judgment = .acceptable) ∧
+      (Locates 0 (composition .futureIrrealis) (-7 : ℤ) (-1) ↔ ex_12.judgment = .acceptable) ∧
+      -- (12b): *decided … that he will go … yesterday*
+      (Locates 0 will (-7 : ℤ) (-1) ↔ ex_13.judgment = .acceptable) ∧
+      -- (22a): *decided … that she would go … yesterday*, with the past of *would* deleted
+      (Locates 0 [.null, .woll] (-7 : ℤ) (-1) ↔ ex_16.judgment = .acceptable) ∧
+      -- (6b), (6d), (66a), (66b): *tried*, *claimed*, *managed*, *began* to VP tomorrow
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_8.judgment = .acceptable) ∧
+      (Locates 0 (composition .propositional) (-1 : ℤ) 1 ↔ ex_9.judgment = .acceptable) ∧
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_45.judgment = .acceptable) ∧
+      (Locates 0 (composition .tenseless) (-1 : ℤ) 1 ↔ ex_46.judgment = .acceptable) := by
+  simp only [composition, locates_woll, locates_will, locates_null_woll, locates_nil]
   decide
 
-/-- An aspect test row: whether its aspect is perfective, with its class and reference time; a
-*seem* with an overt or understood attitude holder is propositional, (70), and the tenseless
-simultaneous row (57b) sits under a present matrix, an instant. -/
-def aspectTest? (e : Datum) : Option (Bool × InfinitivalTenseClass × NonemptyInterval ℤ) := do
-  let perf ← e.parse? "aspect" [("perfective", true), ("imperfective", false)]
-  match e.feature? "class", e.feature? "attitude holder" with
-  | some "future", _ => some (perf, .futureIrrealis, .pure 0)
-  | some "propositional", _ => some (perf, .propositional, .pure 0)
-  | some "tenseless simultaneous", _ => some (perf, .restructuring, .pure 0)
-  | none, some _ => some (perf, .propositional, .pure 0)
-  | _, _ => none
-
--- (53), (57), (70)
-theorem aspect_rows : Datum.Checks aspectTest?
-    (fun p ↦ if p.1 then .ofProp (Episodic p.2.2 (0 : ℤ) p.2.1) else .accepted)
-    Examples.all 9 := by
+-- (14), (28b), (29a): a higher past lets the past of *would* delete, and *will* does not
+theorem would_rows :
+    (Licensed will (composition .futureIrrealis) ↔ ex_14.judgment = .acceptable) ∧
+      (Licensed will would ↔ ex_15.judgment = .acceptable) ∧
+      (Licensed [.ed] would ↔ ex_20.judgment = .acceptable) ∧
+      (Licensed will would ↔ ex_21.judgment = .acceptable) := by
   decide
 
-/-- The tense stack above the lowest past, nearest first, recognized in the sentence's words:
-every lexical condition is a form the English fragment declares or realizes — *promised* and
-*promise* are `English.Verbs.promise.realize` at its past and base cells, *will* and *would* the
-auxiliary entries, and *to tell* the infinitival marker `toInf` with `tell.realize .base`. -/
-def stackOfForm? (e : Datum) : Option (List (Option (Finset Ordering))) :=
-  let ts := Gloss.tokens e.primaryText
-  let has (f : String) : Bool := Gloss.containsForm ts f
-  let willF := English.Auxiliaries.will.form
-  let wouldF := English.Auxiliaries.would.form
-  let toF := English.Auxiliaries.toInf.form
-  let tellB := English.Verbs.tell.realize .base
-  if has (willF ++ " " ++ English.Verbs.promise.realize .base) then
-    if has wouldF then some [Wurmbrand2014.will.tense]
-    else if has (toF ++ " " ++ tellB) then
-      some [(infinitive true).tense, Wurmbrand2014.will.tense]
-    else none
-  else if has (English.Verbs.promise.realize .past) then
-    if has (willF ++ " " ++ tellB) then some [Wurmbrand2014.will.tense, some ⟦past⟧]
-    else if has (wouldF ++ " " ++ tellB) then some [Wurmbrand2014.would.tense, some ⟦past⟧]
-    else if has (toF ++ " " ++ tellB) then some [(infinitive true).tense, some ⟦past⟧]
-    else none
-  else none
-
-/-- A sequence-of-tense row: its stack with the paper's applies/blocked verdict. -/
-def sotTest? (e : Datum) : Option (List (Option (Finset Ordering)) × Bool) := do
-  pure (← stackOfForm? e,
-    ← e.parse? "SOT" [("applies", true), ("blocked", false)])
-
--- (24), (30)
-theorem sot_rows :
-    (∀ e ∈ Examples.all, ∀ p ∈ sotTest? e, sotApplies p.1 ⟦past⟧ = p.2) ∧
-      Datum.ReadCount sotTest? Examples.all 5 := by
-  decide +kernel
-
-end Data
+end Rows
 
 /-! ### Recognition by witness
 
@@ -406,19 +426,33 @@ def liThat' : LexicalItem.Token := ⟨liThat.item, 8⟩
 /-- *were*, the embedded past. -/
 def liWere : LexicalItem.Token := ⟨.of .T [] "were", 9⟩
 
+/-- *me*. -/
 def liMe : LexicalItem.Token := ⟨.of .D [] "me", 10⟩
+/-- *he*. -/
 def liHe : LexicalItem.Token := ⟨.of .D [] "he", 11⟩
+/-- *his*. -/
 def liHis : LexicalItem.Token := ⟨.of .D [] "his", 12⟩
+/-- *mother*. -/
 def liMother : LexicalItem.Token := ⟨.of .N [] "mother", 13⟩
+/-- *they*. -/
 def liThey : LexicalItem.Token := ⟨.of .D [] "they", 14⟩
+/-- *having*. -/
 def liHaving : LexicalItem.Token := ⟨.of .V [] "having", 15⟩
+/-- *their*. -/
 def liTheir : LexicalItem.Token := ⟨.of .D [] "their", 16⟩
+/-- *last*. -/
 def liLast : LexicalItem.Token := ⟨.of .A [] "last", 17⟩
+/-- *meal*. -/
 def liMeal : LexicalItem.Token := ⟨.of .N [] "meal", 18⟩
+/-- *together*. -/
 def liTogether : LexicalItem.Token := ⟨.of .P [] "together", 19⟩
+/-- *yesterday*. -/
 def liYesterday : LexicalItem.Token := ⟨.of .P [] "yesterday", 20⟩
+/-- *tomorrow*. -/
 def liTomorrow : LexicalItem.Token := ⟨.of .P [] "tomorrow", 21⟩
+/-- *tonight*. -/
 def liTonight : LexicalItem.Token := ⟨.of .P [] "tonight", 22⟩
+/-- *when*. -/
 def liWhen : LexicalItem.Token := ⟨.of .C [] "when", 23⟩
 
 /-- The study lexicon of the sequence-of-tense sentences, the witness tokens' items. -/
@@ -460,19 +494,19 @@ def w30a : LinearizedSyntacticObject :=
   liJohn * (liWill * (liPromise * (liMe * (liTonight * (liTo *
     wTell (liThat * (wMeal * liWhen)))))))
 
-/-- The tense a token contributes: the finite pasts, the modal compositions, and the tenseless
-infinitival marker. -/
-def tenseOf (tok : LexicalItem.Token) : Option (Option (Finset Ordering)) :=
-  if tok = liPromised ∨ tok = liWere then some (some ⟦past⟧)
-  else if tok = liWill then some Wurmbrand2014.will.tense
-  else if tok = liWould then some Wurmbrand2014.would.tense
-  else if tok = liTo then some (infinitive true).tense
+/-- The tense morphemes a token contributes to its clause: the past *-ed*, *will*, *would*, and
+*woll* for the infinitival marker of a future infinitive. -/
+def tenseOf (tok : LexicalItem.Token) : Option (List Morpheme) :=
+  if tok = liPromised ∨ tok = liWere then some [.ed]
+  else if tok = liWill then some will
+  else if tok = liWould then some would
+  else if tok = liTo then some (composition .futureIrrealis)
   else none
 
-/-- The stack above a witness's lowest tense: its tense items in pronounced order, the lowest
-dropped, nearest first. -/
-def tenseSpine (t : LinearizedSyntacticObject) : List (Option (Finset Ordering)) :=
-  (((Minimalist.pfYield t).filterMap fun tok ↦ tenseOf tok).dropLast).reverse
+/-- The chain of a witness: the tense morphemes of its clauses, outermost first, in pronounced
+order. -/
+def chainOf (t : LinearizedSyntacticObject) : List (List Morpheme) :=
+  (Minimalist.pfYield t).filterMap tenseOf
 
 /-- The five sequence-of-tense rows with their witnesses. -/
 def witnessRows : List (Datum × LinearizedSyntacticObject) :=
@@ -483,7 +517,22 @@ theorem witnesses_spell : ∀ p ∈ witnessRows,
       (Minimalist.pfPhon p.2).flatMap (Gloss.tokens ·) = Gloss.tokens p.1.primaryText := by
   decide +kernel
 
-theorem witnesses_spine : ∀ p ∈ witnessRows, ∀ s ∈ sotTest? p.1, tenseSpine p.2 = s.1 := by
+/-- The sequence-of-tense rows (24), (25), (27) and (30), on the chains their witnesses pronounce:
+a past under a past can be simultaneous through *would* or a future infinitive, which has no
+tense to intervene, but not through *will*, whose present intervenes, and under *will* a past is
+only shifted. -/
+theorem sot_rows :
+    (.eq ∈ readings (chainOf w24a) ↔
+        ex_17.readings.lookup "simultaneous (SOT)" = some .acceptable) ∧
+      (.lt ∈ readings (chainOf w24a) ↔ ex_17.readings.lookup "shifted past" = some .acceptable) ∧
+      (.eq ∈ readings (chainOf w25a) ↔
+        ex_18.readings.lookup "simultaneous (SOT)" = some .acceptable) ∧
+      (.eq ∈ readings (chainOf w27a) ↔
+        ex_19.readings.lookup "simultaneous (SOT)" = some .acceptable) ∧
+      (.eq ∈ readings (chainOf w30a) ↔
+        ex_22.readings.lookup "simultaneous (SOT)" = some .acceptable) ∧
+      (.lt ∈ readings (chainOf w30a) ↔
+        ex_22.readings.lookup "shifted past" = some .acceptable) := by
   decide +kernel
 
 end Witness

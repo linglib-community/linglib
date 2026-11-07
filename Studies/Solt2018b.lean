@@ -32,7 +32,7 @@ Solt's other 2018 paper, the multidimensionality chapter, is formalized in
 * [solt-2015]
 * [schwarzschild-2006]
 * [ahn-sauerland-2017]
-* [carlson-1977]
+* [carlson-1977a]
 * [milsark-1977]
 -/
 

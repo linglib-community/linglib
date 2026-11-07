@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Fragments.English.Verbs.Infinitive
 
 /-!
 # English copular predicates
@@ -58,7 +59,7 @@ and asserts only the subject's capacity for it, a stative that perfective aspect
 instance of the action (Proposal (7.10), §7.2). -/
 def able : ClauseEmbeddingAdjective where
   form := "able"
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
+  valency := .ofFrame toInfinitive (controller := some 0)
   implicative := ⟨⊥, .some .negative⟩
 
 /-- *be annoyed (that p)*. -/

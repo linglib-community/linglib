@@ -12,8 +12,8 @@ Besides the sentence types it selects (`Clause.Selection`), a clausal argument p
 three properties of its complement clause. Noonan's cross-linguistic survey of complementation
 sorts complement clauses into six complement types by the part of speech of the predicate, the
 relation of the subject to the predicate, and the inflectional categories the clause carries. The
-subject of a complement is obligatorily null, as under control, or overt. The size of a complement
-is the semantic sort it denotes, which fixes the structure it needs.
+subject of a complement clause, where it has one of its own, is overt or unexpressed. The size
+of a complement is the semantic sort it denotes, which fixes the structure it needs.
 
 ## Main definitions
 
@@ -22,7 +22,7 @@ is the semantic sort it denotes, which fixes the structure it needs.
   subject.
 * `Clause.ComplementType.IsSentenceLike`: the complement type is sentence-like, its predicate
   related to its arguments as in a main clause.
-* `Clause.EmbeddedSubject`: the subject requirement of a complement clause.
+* `Clause.EmbeddedSubject`: the realization of a complement clause's own subject.
 * `Clause.Size`: the semantic size of a complement clause, ordered by containment.
 
 ## Implementation notes
@@ -90,12 +90,12 @@ end ComplementType
 
 /-! ### Subject and size -/
 
-/-- The subject of an embedded clause is obligatorily null, as in control complements, or
-overt, optionally with a fixed case. Genitive marking on the subject is [noonan-2007]'s criterion
-for the nominalized complement type, and the genitive subjects of Buryat nominalized clauses are
-a modern instance ([bondarenko-2022]). -/
+/-- The realization of a complement clause's subject: unpronounced, as under control or raising,
+or overt, optionally with a fixed case. Genitive marking on the subject is
+[noonan-2007]'s criterion for the nominalized complement type, and the genitive subjects of Buryat
+nominalized clauses are a modern instance ([bondarenko-2022]). -/
 inductive EmbeddedSubject where
-  | obligatorilyNull
+  | null
   | overt (subjCase : Option Case)
   deriving DecidableEq, Repr
 
