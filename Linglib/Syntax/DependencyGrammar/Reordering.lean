@@ -69,17 +69,18 @@ def Graph.reorderRank (x : Fin n) : Fin n :=
 
 variable {g v σ}
 
-theorem Graph.reorderKey_injective : Function.Injective (g.reorderKey v σ) := fun x y h ↦ by
+private theorem Graph.reorderKey_injective : Function.Injective (g.reorderKey v σ) := fun x y h ↦ by
   simpa [Graph.reorderKey] using congrArg (fun k ↦ (ofLex (ofLex k).2).2) h
 
-theorem Graph.reorderRank_lt_of_lt {x y : Fin n}
+private theorem Graph.reorderRank_lt_of_lt {x y : Fin n}
     (h : g.reorderKey v σ x < g.reorderKey v σ y) : g.reorderRank v σ x < g.reorderRank v σ y := by
   simp only [Graph.reorderRank, Fin.mk_lt_mk]
   refine card_lt_card ((ssubset_iff_of_subset
     (monotone_filter_right _ fun z _ (hz : g.reorderKey v σ z < _) ↦ hz.trans h)).2
     ⟨x, by simp [h], by simp⟩)
 
-theorem Graph.reorderRank_injective : Function.Injective (g.reorderRank v σ) := fun x y h ↦ by
+private theorem Graph.reorderRank_injective : Function.Injective (g.reorderRank v σ) := by
+  intro x y h
   rcases lt_trichotomy (g.reorderKey v σ x) (g.reorderKey v σ y) with hk | hk | hk
   · exact absurd h (Graph.reorderRank_lt_of_lt hk).ne
   · exact Graph.reorderKey_injective hk
@@ -99,7 +100,8 @@ def Graph.reorderPerm : Equiv.Perm (Fin n) :=
 /-- The graph with the dependents of `v` reordered by `σ`, each phrase moving as a block. -/
 def Graph.reorderDependents : Graph L n := g.map (g.reorderPerm v σ)
 
-@[simp] theorem Graph.reorderPerm_apply (x : Fin n) : g.reorderPerm v σ x = g.reorderRank v σ x :=
+private theorem Graph.reorderPerm_apply (x : Fin n) :
+    g.reorderPerm v σ x = g.reorderRank v σ x :=
   rfl
 
 /-! ### Block lemmas (forests) -/
@@ -223,7 +225,7 @@ section Rank
 
 variable {g v}
 
-theorem Graph.reorderKey_lt_iff_of_mem {x y : Fin n} (hx : x ∈ g.yield v) :
+private theorem Graph.reorderKey_lt_iff_of_mem {x y : Fin n} (hx : x ∈ g.yield v) :
     g.reorderKey v σ y < g.reorderKey v σ x ↔
       (y ∉ g.yield v ∧ y < v) ∨
         (y ∈ g.yield v ∧
@@ -245,7 +247,7 @@ theorem Graph.reorderKey_lt_iff_of_mem {x y : Fin n} (hx : x ∈ g.yield v) :
   · have hyv : y ≠ v := fun h ↦ hy (h ▸ ReflTransGen.refl)
     simp [hy, hyv]
 
-theorem Graph.reorderKey_lt_iff_of_notMem {x y : Fin n} (hx : x ∉ g.yield v) :
+private theorem Graph.reorderKey_lt_iff_of_notMem {x y : Fin n} (hx : x ∉ g.yield v) :
     g.reorderKey v σ y < g.reorderKey v σ x ↔
       (y ∉ g.yield v ∧ y < x) ∨ (y ∈ g.yield v ∧ v < x) := by
   have hxv : x ≠ v := fun h ↦ hx (h ▸ ReflTransGen.refl)
@@ -285,14 +287,14 @@ private theorem Graph.reorderRank_of_mem {x : Fin n} (hx : x ∈ g.yield v) :
   · refine disjoint_union_right.2 ⟨disjoint_filter.2 fun y _ h₁ h₂ ↦ h₁.1 h₂.1,
       disjoint_filter.2 fun y _ h₁ h₂ ↦ h₁.1 h₂.1⟩
 
-theorem Graph.reorderRank_of_notMem {x : Fin n} (hx : x ∉ g.yield v) :
+private theorem Graph.reorderRank_of_notMem {x : Fin n} (hx : x ∉ g.yield v) :
     (g.reorderRank v σ x : ℕ) = #{y | y ∉ g.yield v ∧ y < x} + #{y | y ∈ g.yield v ∧ v < x} := by
   simp only [Graph.reorderRank]
   rw [filter_congr fun y _ ↦ Graph.reorderKey_lt_iff_of_notMem σ hx, filter_or,
     card_union_of_disjoint]
   exact disjoint_filter.2 fun y _ h₁ h₂ ↦ h₁.1 h₂.1
 
-theorem Graph.reorderRank_of_notMem_eq {x : Fin n} (hx : x ∉ g.yield v)
+private theorem Graph.reorderRank_of_notMem_eq {x : Fin n} (hx : x ∉ g.yield v)
     (τ : Equiv.Perm (g.siblings v)) : g.reorderRank v σ x = g.reorderRank v τ x :=
   Fin.ext (by rw [Graph.reorderRank_of_notMem σ hx, Graph.reorderRank_of_notMem τ hx])
 
@@ -313,7 +315,7 @@ theorem Graph.lt_iff_lt_of_notMem_yield {x y : Fin n} (hx : x ∈ g.yield v) (hy
 
 include hF
 
-theorem Graph.reorderRank_one (x : Fin n) : g.reorderRank v 1 x = x := by
+private theorem Graph.reorderRank_one (x : Fin n) : g.reorderRank v 1 x = x := by
   ext
   rw [← Fin.card_Iio x]
   simp only [Graph.reorderRank]
@@ -340,9 +342,23 @@ theorem Graph.reorderRank_one (x : Fin n) : g.reorderRank v 1 x = x := by
       · exact absurd (this.2 (lt_of_le_of_ne (not_lt.1 h') hxv)) (lt_asymm h)
     · simp [hy]
 
-theorem Graph.reorderRank_of_notMem_yield {x : Fin n} (hx : x ∉ g.yield v) :
+private theorem Graph.reorderRank_of_notMem_yield {x : Fin n} (hx : x ∉ g.yield v) :
     g.reorderRank v σ x = x := by
   rw [Graph.reorderRank_of_notMem_eq σ hx 1, Graph.reorderRank_one hF hP]
+
+variable {σ} in
+/-- Positions outside the yield of `v` keep their place. -/
+theorem Graph.reorderPerm_apply_of_notMem_yield {x : Fin n} (hx : x ∉ g.yield v) :
+    g.reorderPerm v σ x = x :=
+  Graph.reorderRank_of_notMem_yield σ hF hP hx
+
+theorem Graph.reorderPerm_one : g.reorderPerm v 1 = 1 :=
+  Equiv.ext (Graph.reorderRank_one hF hP)
+
+/-- Reordering by the identity leaves the graph as it was. -/
+theorem Graph.reorderDependents_one : g.reorderDependents v 1 = g := by
+  rw [Graph.reorderDependents, Graph.reorderPerm_one hF hP]
+  rfl
 
 end One
 
@@ -382,10 +398,7 @@ private theorem off_self : off g v v = 0 := by
 
 private theorem size_eq_phraseLength {c : g.siblings v} (hc : (c : Fin n) ≠ v) :
     size g v c = g.phraseLength c := by
-  have hadj : g.Adj v c := by
-    rcases mem_insert.1 c.2 with h | h
-    · exact absurd h hc
-    · exact Graph.mem_children.1 h
+  have hadj : g.Adj v c := (Graph.mem_siblings_iff.1 c.2).resolve_left hc
   rw [size, Graph.phraseLength]
   congr 1
   ext y
@@ -399,10 +412,7 @@ private theorem size_eq_phraseLength {c : g.siblings v} (hc : (c : Fin n) ≠ v)
 
 private theorem off_lt_size {c : g.siblings v} (hc : (c : Fin n) ≠ v) :
     off g v c < size g v c := by
-  have hadj : g.Adj v c := by
-    rcases mem_insert.1 c.2 with h | h
-    · exact absurd h hc
-    · exact Graph.mem_children.1 h
+  have hadj : g.Adj v c := (Graph.mem_siblings_iff.1 c.2).resolve_left hc
   have hcc : (g.blockHead v c) = c := Subtype.ext (Graph.blockHead_eq_of_mem_yield hF hadj .refl)
   rw [off, size, hcc]
   refine card_lt_card ((ssubset_iff_of_subset (monotone_filter_right _ fun y _ h ↦ ⟨h.1, h.2.1⟩)).2
@@ -412,84 +422,39 @@ private theorem off_lt_size {c : g.siblings v} (hc : (c : Fin n) ≠ v) :
 
 omit hF in
 private theorem before_eq_sum (c : g.siblings v) :
-    before g v σ c = ∑ d with (nr d) < (nr c), size g v d := by
-  rw [before, card_eq_sum_card_fiberwise (f := g.blockHead v) (t := {d | (nr d) < (nr c)})
-    (fun y hy ↦ by simpa using (mem_filter.1 hy).2.2)]
+    before g v σ c = ∑ d with Precedes (σ.trans (g.siblingArrangement v)) d c, size g v d := by
+  rw [before, card_eq_sum_card_fiberwise (f := g.blockHead v)
+    (t := {d | Precedes (σ.trans (g.siblingArrangement v)) d c})
+    fun y hy ↦ mem_filter.2 ⟨mem_univ _, (mem_filter.1 hy).2.2⟩]
   refine sum_congr rfl fun d hd ↦ ?_
-  rw [size]
-  congr 1
-  ext y
-  simp only [mem_filter, mem_univ, true_and] at hd ⊢
-  constructor
-  · rintro ⟨⟨hy, -⟩, h⟩; exact ⟨hy, h⟩
-  · rintro ⟨hy, h⟩; exact ⟨⟨hy, h ▸ hd⟩, h⟩
+  rw [size, filter_filter]
+  exact congrArg card (filter_congr fun y _ ↦
+    ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, h.2 ▸ (mem_filter.1 hd).2⟩, h.2⟩⟩)
 
 omit hF in
 private theorem nr_injective : Function.Injective fun c ↦ (nr c) :=
   (g.siblingRank_strictMono v).injective.comp σ.injective
 
+/-- Between the head and `c`, the boundary distance counts the words of the blocks. -/
+private theorem boundaryDist_eq_size (c : g.siblings v) :
+    boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c =
+      boundaryDist (σ.trans (g.siblingArrangement v)) (size g v) v' c :=
+  boundaryDist_congr _ fun _ hd _ ↦ (size_eq_phraseLength hF fun e ↦ hd (Subtype.ext e)).symm
+
 private theorem before_eq_of_lt {c : g.siblings v} (hvc : (nr v') < (nr c)) :
     before g v σ c = before g v σ v' +
       boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
-  have hcv : c ≠ v' := fun h ↦ lt_irrefl _ (h ▸ hvc)
-  rw [boundaryDist, ite_eq_right hcv.symm, before_eq_sum, before_eq_sum, sum_filter, sum_filter,
-    sum_filter]
-  rw [← size_self hF, show ∑ x, (if (nr x) < (nr c) then size g v x else 0) =
-      ∑ x, ((if (nr x) < (nr v') then size g v x else 0) + (if x = v' then size g v x else 0) +
-        (if Precedes (σ.trans (g.siblingArrangement v)) v' x ∧
-          Precedes (σ.trans (g.siblingArrangement v)) x c ∨
-          Precedes (σ.trans (g.siblingArrangement v)) c x ∧
-          Precedes (σ.trans (g.siblingArrangement v)) x v' then g.phraseLength x else 0)) from ?_]
-  · simp only [sum_add_distrib, sum_ite_eq', mem_univ, ite_true]
-    ring
-  refine sum_congr rfl fun d _ ↦ ?_
-  by_cases hd : d = v'
-  · subst hd
-    simp [hvc, Precedes]
-  · have hne : (nr d) ≠ (nr v') := fun h ↦ hd (nr_injective σ h)
-    have hdv : (d : Fin n) ≠ v := fun h ↦ hd (Subtype.ext h)
-    simp only [Precedes, Equiv.trans_apply, ite_eq_right hd, add_zero]
-    change (if (nr d) < (nr c) then size g v d else 0) =
-      (if (nr d) < (nr v') then size g v d else 0) +
-        if (nr v') < (nr d) ∧ (nr d) < (nr c) ∨ (nr c) < (nr d) ∧ (nr d) < (nr v') then
-          g.phraseLength d else 0
-    rw [← size_eq_phraseLength hF hdv]
-    have h1 := lt_or_gt_of_ne hne
-    split_ifs <;> first | rfl | omega
+  have h : Precedes (σ.trans (g.siblingArrangement v)) v' c := hvc
+  rw [boundaryDist_eq_size σ hF, before_eq_sum, before_eq_sum, sum_precedes_of_precedes _ h,
+    boundaryDist_of_precedes _ h, size_self hF, add_assoc]
 
 private theorem before_eq_of_gt {c : g.siblings v} (hcv : (nr c) < (nr v')) :
     before g v σ v' + 1 = before g v σ c + size g v c +
       boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
-  have hcv' : c ≠ v' := fun h ↦ lt_irrefl _ (h ▸ hcv)
-  rw [boundaryDist, ite_eq_right hcv'.symm, before_eq_sum, before_eq_sum, sum_filter, sum_filter,
-    sum_filter]
-  rw [show ∑ x, (if (nr x) < (nr v') then size g v x else 0) =
-      ∑ x, ((if (nr x) < (nr c) then size g v x else 0) + (if x = c then size g v x else 0) +
-        (if Precedes (σ.trans (g.siblingArrangement v)) v' x ∧
-          Precedes (σ.trans (g.siblingArrangement v)) x c ∨
-          Precedes (σ.trans (g.siblingArrangement v)) c x ∧
-          Precedes (σ.trans (g.siblingArrangement v)) x v' then g.phraseLength x else 0)) from ?_]
-  · simp only [sum_add_distrib, sum_ite_eq', mem_univ, ite_true]
-    ring
-  refine sum_congr rfl fun d _ ↦ ?_
-  by_cases hd : d = c
-  · subst hd
-    simp [hcv, Precedes]
-  · have hne : (nr d) ≠ (nr c) := fun h ↦ hd (nr_injective σ h)
-    simp only [Precedes, Equiv.trans_apply, ite_eq_right hd, add_zero]
-    by_cases hdv : d = v'
-    · subst hdv
-      simp [lt_asymm hcv]
-    have hdv' : (d : Fin n) ≠ v := fun h ↦ hdv (Subtype.ext h)
-    change (if (nr d) < (nr v') then size g v d else 0) =
-      (if (nr d) < (nr c) then size g v d else 0) +
-        if (nr v') < (nr d) ∧ (nr d) < (nr c) ∨ (nr c) < (nr d) ∧ (nr d) < (nr v') then
-          g.phraseLength d else 0
-    rw [← size_eq_phraseLength hF hdv']
-    have h1 := lt_or_gt_of_ne hne
-    have hne' : (nr d) ≠ (nr v') := fun h ↦ hdv (nr_injective σ h)
-    have h2 := lt_or_gt_of_ne hne'
-    split_ifs <;> first | rfl | omega
+  have h : Precedes (σ.trans (g.siblingArrangement v)) c v' := hcv
+  rw [boundaryDist_eq_size σ hF, boundaryDist_comm, before_eq_sum, before_eq_sum,
+    sum_precedes_of_precedes _ h, boundaryDist_of_precedes _ h]
+  ring
 
 /-! #### Per-arc identities -/
 
@@ -566,10 +531,7 @@ private theorem Graph.dist_reorderRank_add_boundaryDist (c : g.siblings v) :
   by_cases hcv : c = v'
   · subst hcv; simp
   have hcv' : (c : Fin n) ≠ v := fun h ↦ hcv (Subtype.ext h)
-  have hadj : g.Adj v c := by
-    rcases mem_insert.1 c.2 with h | h
-    · exact absurd h hcv'
-    · exact Graph.mem_children.1 h
+  have hadj : g.Adj v c := (Graph.mem_siblings_iff.1 c.2).resolve_left hcv'
   have hcY : (c : Fin n) ∈ g.yield v := ReflTransGen.single hadj
   have hbc : g.blockHead v c = c := Subtype.ext (Graph.blockHead_eq_of_mem_yield hF hadj .refl)
   rw [Graph.reorderRank_head (σ := σ) hF hP hσ]

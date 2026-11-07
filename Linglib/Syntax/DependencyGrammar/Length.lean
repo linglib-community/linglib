@@ -144,6 +144,46 @@ theorem boundaryDist_comm : a.boundaryDist ℓ x y = a.boundaryDist ℓ y x := b
 @[simp] theorem boundaryDist_mirror : a.mirror.boundaryDist ℓ x y = a.boundaryDist ℓ x y := by
   simp only [boundaryDist, precedes_mirror, and_comm, or_comm]
 
+variable {a x y}
+
+/-- The distance reads only the lengths of the elements strictly between its ends. -/
+theorem boundaryDist_congr {ℓ' : α → ℕ} (h : ∀ c, c ≠ x → c ≠ y → ℓ c = ℓ' c) :
+    a.boundaryDist ℓ x y = a.boundaryDist ℓ' x y := by
+  unfold boundaryDist
+  split_ifs
+  · rfl
+  refine congrArg (1 + ·) (sum_congr rfl fun c hc ↦ h c ?_ ?_) <;>
+    · rintro rfl
+      simp [Precedes] at hc
+
+theorem boundaryDist_of_precedes (h : a.Precedes x y) :
+    a.boundaryDist ℓ x y = 1 + ∑ c with a.Precedes x c ∧ a.Precedes c y, ℓ c := by
+  rw [boundaryDist, ite_eq_right fun e ↦ (e ▸ h).asymm (e ▸ h)]
+  exact congrArg _ (sum_congr (filter_congr fun c _ ↦ or_iff_left fun hc ↦
+    h.asymm (hc.1.trans hc.2)) fun _ _ ↦ rfl)
+
+/-- The weight before `y` is the weight before `x`, then `x`, then the weight between them. -/
+theorem sum_precedes_of_precedes (w : α → ℕ) (h : a.Precedes x y) :
+    ∑ d with a.Precedes d y, w d =
+      ∑ d with a.Precedes d x, w d + w x + ∑ d with a.Precedes x d ∧ a.Precedes d y, w d := by
+  have e : univ.filter (fun d ↦ a.Precedes d y ∧ ¬ a.Precedes d x) =
+      insert x (univ.filter fun d ↦ a.Precedes x d ∧ a.Precedes d y) := by
+    ext d
+    simp only [mem_filter, mem_univ, true_and, mem_insert]
+    by_cases hdx : d = x
+    · rw [hdx]
+      exact ⟨fun _ ↦ .inl rfl, fun _ ↦ ⟨h, fun h' ↦ h'.asymm h'⟩⟩
+    · have := a.injective.ne hdx
+      simp only [hdx, false_or, Precedes, Fin.lt_def, ne_eq, Fin.ext_iff] at this h ⊢
+      omega
+  rw [← sum_filter_add_sum_filter_not {d | a.Precedes d y} (a.Precedes · x), filter_filter,
+    filter_filter, e,
+    sum_insert (by simp [Precedes]), add_assoc]
+  exact congrArg (· + _) (sum_congr (filter_congr fun d _ ↦ and_iff_right_of_imp (·.trans h))
+    fun _ _ ↦ rfl)
+
+variable (a x y)
+
 section Behaghel
 
 variable {a x}
@@ -151,27 +191,11 @@ variable {a x}
 theorem sum_boundaryDist_after :
     ∑ c ∈ a.after x, a.boundaryDist ℓ x c =
       #(a.after x) + ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
-  have hx : ∀ c ∈ a.after x, a.boundaryDist ℓ x c =
-      1 + ∑ c' with a.Precedes x c' ∧ a.Precedes c' c ∨ a.Precedes c c' ∧ a.Precedes c' x,
-        ℓ c' := by
-    intro c hc
-    rw [boundaryDist, ite_eq_right]
-    rintro rfl
-    exact notMem_after_self hc
-  rw [sum_congr rfl hx]
+  rw [sum_congr rfl fun c hc ↦ boundaryDist_of_precedes ℓ (mem_after.1 hc)]
   simp only [sum_add_distrib, sum_const, smul_eq_mul, mul_one, add_right_inj]
-  calc ∑ c ∈ a.after x, ∑ d with a.Precedes x d ∧ a.Precedes d c ∨ a.Precedes c d ∧
-          a.Precedes d x, ℓ d
+  calc ∑ c ∈ a.after x, ∑ d with a.Precedes x d ∧ a.Precedes d c, ℓ d
       = ∑ c ∈ a.after x, ∑ d ∈ a.after x with a.Precedes d c, ℓ d := by
-        refine sum_congr rfl fun c hc ↦ ?_
-        rw [mem_after] at hc
-        rw [after, filter_filter]
-        refine sum_congr (filter_congr fun d _ ↦ ?_) fun _ _ ↦ rfl
-        constructor
-        · rintro (h | ⟨h₁, h₂⟩)
-          · exact h
-          · exact absurd (hc.trans h₁) h₂.asymm
-        · exact Or.inl
+        simp only [after, filter_filter]
     _ = ∑ d ∈ a.after x, ∑ c ∈ a.after x with a.Precedes d c, ℓ d := by
         simp only [sum_filter]
         rw [Finset.sum_comm]
@@ -532,8 +556,11 @@ theorem Graph.phraseLength_eq_ncard (c : Fin n) : g.phraseLength c = (g.yield c)
 
 variable {g v}
 
+theorem Graph.mem_siblings_iff {w : Fin n} : w ∈ g.siblings v ↔ w = v ∨ g.Adj v w := by
+  simp [Graph.siblings]
+
 theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings v :=
-  mem_insert_of_mem (by simpa using h)
+  Graph.mem_siblings_iff.2 (.inr h)
 
 @[simp] theorem Graph.siblingArrangement_precedes {c d : g.siblings v} :
     (g.siblingArrangement v).Precedes c d ↔ (c : Fin n) < d :=
