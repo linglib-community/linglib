@@ -89,10 +89,13 @@ def notice : Verb where
 /-- "believe" — doxastic attitude verb, creates opaque context. It is gradable, measuring the
 holder's degree of certainty in the complement ([hawthorne-rothschild-spectre-2016];
 [koev-2026] (3), (7)–(10)), and takes the maximizers *fully*, *completely* and *entirely* ((12)).
-The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. -/
+The fragment enters it on the confidence scale of *certain*, *sure* and *confident*. Besides a
+finite clause it takes an infinitive whose subject it raises to its object, an object that is no
+participant of its own (*believe Julia to be a princess*; [noonan-2007] §2.2). -/
 def believe : Verb where
   morphs := [.root "believe"]
-  valency := .ofFrame ArgumentFrame.finiteClause
+  valency := .ofFrames [.finiteClause, ArgumentFrame.infinitival.withObject]
+    (raised := [none, some (.complement 0)])
   vendlerClass := some .state
   scaleDimension := some .confidence
   passivizable := false
@@ -191,10 +194,13 @@ def pray : Verb where
   attitude := some (.preferential .positive)
   levinClasses := {LevinClass.long}
 
-/-- "expect" — preferential attitude verb -/
+/-- "expect" — preferential attitude verb, taking a finite clause, an infinitive its subject
+controls (*expect to win*), or one whose subject it raises to its object (*expect the bridge to
+collapse*). -/
 def expect : Verb where
   morphs := [.root "expect"]
-  valency := .ofFrame ArgumentFrame.finiteClause
+  valency := .ofFrames [.finiteClause, .infinitival, ArgumentFrame.infinitival.withObject]
+    (controllers := [none, some 0]) (raised := [none, none, some (.complement 0)])
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true

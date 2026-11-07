@@ -114,13 +114,21 @@ def neglect : Verb where
 
 /-! ### Raising -/
 
-/-- *seem* is a raising verb, with no external argument of its own, so its subject gets no
-    θ-role from it. -/
+/-- The frame of an experiencer *to*-phrase and an infinitive, *seem to his parents to be
+writing*. -/
+def experiencerFrame : ArgumentFrame :=
+  ⟨some .nominal, [.adposition (some Adpositions.to_) (some .dat),
+    .clausal (coding := some .infinitive)]⟩
+
+/-- *seem* is a raising verb, raising into a subject that is no participant of its own. With an
+    experiencer it reports the experiencer's view, a doxastic attitude ([wurmbrand-2014] (70)). -/
 def seem : Verb where
   morphs := [.root "seem"]
-  valency := .ofFrame ArgumentFrame.raising
+  valency := .of [(.infinitival, [0]), (experiencerFrame, [1, 0])]
+    (raised := [some .external, some .external])
   vendlerClass := some .state
   passivizable := false
+  readings := [{ frame := experiencerFrame, attitude := some (.doxastic .doxastic) }]
 
 /-! ### Prerequisite implicatives -/
 
@@ -188,7 +196,7 @@ def condescend : Verb where
     as *It happened to rain* shows. -/
 def happen : Verb where
   morphs := [.root "happen"]
-  valency := .ofFrame ArgumentFrame.raising
+  valency := .ofFrame .infinitival (raised := some .external)
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
   levinClasses := {LevinClass.occurrence}

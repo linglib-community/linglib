@@ -62,7 +62,8 @@ def start : Verb where
   phasal := some .inception
   levinClasses := {LevinClass.begin}
 
-/-- "begin" — phasal inception -/
+/-- "begin" — phasal inception, raising into its subject before an infinitive (*the bridge began to
+tremble*). -/
 def begin_ : Verb where
   morphs := [.root "begin"]
   past := "began"
@@ -71,8 +72,9 @@ def begin_ : Verb where
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.intransitive, [1])]
-    (controllers := [some 0])
+     (ArgumentFrame.intransitive, [1]),
+     (ArgumentFrame.infinitival, [1])]
+    (controllers := [some 0]) (raised := [none, none, none, some .external])
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception

@@ -13,24 +13,34 @@ An *argument frame* of a predicate is its external argument, if any, and its com
 positions in order. A *position* is nominal, adpositional, clausal, implicit, incorporated or
 expletive, and records what the predicate selects there: the type of case (in Blake's sense) and
 the adposition of an adpositional position; Noonan's coding, the sentence types and the subject
-requirement of a clausal one; the interpretation of an implicit one. Positions and frames are
-partially ordered by refinement, so a schematic frame lies below every frame instantiating it.
+of a clausal one; the interpretation of an implicit one. Positions and frames are partially
+ordered by refinement, so a schematic frame lies below every frame instantiating it.
+
+A clausal complement is closed or open in Bresnan's sense: a closed complement has a subject of
+its own, overt or unexpressed, while an open complement has none, its subject being that of the
+slot of the frame that controls it (`ComplementSubject`). Whether a participant of the predicate
+fills that slot, under equi, or none does, under raising, is a fact about the predicate's
+diatheses, not the frame.
 
 ## Main definitions
 
 * `ImplicitInterp`: the interpretation of an unexpressed argument.
+* `ArgumentFrame.ComplementSubject`: the subject of a clausal complement, its own or a slot's.
 * `ArgumentFrame.Position`: an argument position, with its selectional axes.
 * `ArgumentFrame.Position.kind`, `Position.axes`: a position's category and recorded axes.
 * `ArgumentFrame`: an external argument and complements, ordered by refinement.
 * `ArgumentFrame.Slot`, `ArgumentFrame.coreSlots`, `ArgumentFrame.argumentRole`: argument slots,
   the core ones, and their comparative S/A/P/R/T roles.
+* `ArgumentFrame.controllerSlot?`, `ArgumentFrame.controlledBy`: the slot controlling the frame's
+  open complement, and the frame with its clausal complements open to a slot.
 * `ArgumentFrame.leaveImplicit`, `withObject`: a complement left unexpressed; an object added.
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, …: frames.
 
 ## Implementation notes
 
 The external argument is the subject position of the surface clause, `none` for a predicate that
-selects no subject (an impersonal passive, a raising predicate). An unaccusative verb's sole
+selects no subject, as an impersonal passive; a raising predicate selects a subject that none of
+its participants fills. An unaccusative verb's sole
 argument is its subject; unaccusativity is a property of the verb's diatheses
 (`Verb.IsUnaccusative`). The type of case of an adpositional position is that of the value its
 use marks (`Position.adposition`), not of every value the adposition marks: a grammaticised
@@ -39,13 +49,16 @@ the *at* of *laugh at* (p. 654) is not spatial. The roles S, A, P, R and T are
 computed from the frame's coding
 (`ArgumentFrame.argumentRole`), never stored. `ArgumentFrame` is not under `Verb` because
 complement-taking is cross-categorial: Noonan's complement-taking predicates include adjectives
-and nouns. Control is a participant of a diathesis (`Diathesis.controller`); attitude and opacity
-are recorded on `Clause.Embedding.Reading`, the selection of clause-typers on `Verb.Takes`, and
-Deal's CP-external shells in `Studies/Deal2026.lean`.
+and nouns. Functional control is the subject a complement shares with a slot, recorded on the
+complement, and only a subject is so shared; the controller is the participant in that slot
+(`Diathesis.controller`). Attitude and opacity are recorded on `Clause.Embedding.Reading`, the
+selection of clause-typers on `Verb.Takes`, and Deal's CP-external shells in
+`Studies/Deal2026.lean`.
 
 ## References
 
 * [blake-2001]
+* [bresnan-1982]
 * [bruening-2021]
 * [comrie-1978]
 * [creissels-2024]
@@ -75,11 +88,32 @@ inductive ImplicitInterp where
 
 namespace ArgumentFrame
 
+/-- An argument slot of a frame is the external argument or the `i`-th complement. -/
+inductive Slot where
+  | external
+  | complement (i : ℕ)
+  deriving DecidableEq, Repr
+
+/-- The subject of a clausal complement ([bresnan-1982]). A closed complement has its own, overt or
+unexpressed; an open complement has none, its subject being that of the slot that functionally
+controls it. -/
+inductive ComplementSubject where
+  /-- The complement's own subject, in a closed complement. -/
+  | own (s : Clause.EmbeddedSubject)
+  /-- The subject of the slot `s`, in an open complement. -/
+  | shared (s : Slot)
+  deriving DecidableEq, Repr
+
+/-- The slot sharing its subject with the complement, if the complement is open. -/
+def ComplementSubject.slot? : ComplementSubject → Option Slot
+  | .own _ => none
+  | .shared s => some s
+
 /-- An argument position of a frame is nominal; adpositional, with the type of case marked and the
-adposition selected; clausal, with the coding, the sentence types and the subject requirement
-selected; implicit, an unexpressed argument with its interpretation; incorporated, a bare noun
-incorporated or pseudo-incorporated into the verb, expressing the argument without projecting a
-noun phrase ([creissels-2024] §17.1); or expletive. Every axis is optional, and `none` or `⊥`
+adposition selected; clausal, with the coding, the sentence types and the subject selected;
+implicit, an unexpressed argument with its interpretation; incorporated, a bare noun incorporated
+or pseudo-incorporated into the verb, expressing the argument without projecting a noun phrase
+([creissels-2024] §17.1); or expletive. Every axis is optional, and `none` or `⊥`
 selects nothing. -/
 inductive Position where
   | nominal
@@ -87,7 +121,7 @@ inductive Position where
       (adposition : Option Adposition := none)
   | clausal (coding : Option Clause.ComplementType := none)
       (types : Clause.Selection := ⊥)
-      (embeddedSubject : Option Clause.EmbeddedSubject := none)
+      (subject : Option ComplementSubject := none)
   | implicit (interp : Option ImplicitInterp := none)
   | incorporated
   | expletive
@@ -111,8 +145,8 @@ def types : Position → Clause.Selection
   | clausal _ t _ => t
   | _ => ⊥
 
-/-- The position's recorded subject requirement, if clausal. -/
-def embeddedSubject? : Position → Option Clause.EmbeddedSubject
+/-- The position's recorded subject, if clausal. -/
+def subject? : Position → Option ComplementSubject
   | clausal _ _ e => e
   | _ => none
 
@@ -176,7 +210,7 @@ instance : DecidablePred IsFinite := fun p ↦ inferInstanceAs (Decidable (∃ c
 inductive Axis where
   | coding
   | types
-  | embeddedSubject
+  | subject
   | relation
   | adposition
   | interp
@@ -187,7 +221,7 @@ selection of sentence types. -/
 def Axis.Carrier : Axis → Type
   | coding => Flat Clause.ComplementType
   | types => Clause.Selection
-  | embeddedSubject => Flat Clause.EmbeddedSubject
+  | subject => Flat ComplementSubject
   | relation => Flat Case.Kind
   | adposition => Flat Adposition
   | interp => Flat ImplicitInterp
@@ -195,7 +229,7 @@ def Axis.Carrier : Axis → Type
 instance : ∀ a : Axis, PartialOrder a.Carrier
   | .coding => inferInstanceAs (PartialOrder (Flat Clause.ComplementType))
   | .types => inferInstanceAs (PartialOrder Clause.Selection)
-  | .embeddedSubject => inferInstanceAs (PartialOrder (Flat Clause.EmbeddedSubject))
+  | .subject => inferInstanceAs (PartialOrder (Flat ComplementSubject))
   | .relation => inferInstanceAs (PartialOrder (Flat Case.Kind))
   | .adposition => inferInstanceAs (PartialOrder (Flat Adposition))
   | .interp => inferInstanceAs (PartialOrder (Flat ImplicitInterp))
@@ -203,7 +237,7 @@ instance : ∀ a : Axis, PartialOrder a.Carrier
 instance : ∀ a : Axis, OrderBot a.Carrier
   | .coding => inferInstanceAs (OrderBot (Flat Clause.ComplementType))
   | .types => inferInstanceAs (OrderBot Clause.Selection)
-  | .embeddedSubject => inferInstanceAs (OrderBot (Flat Clause.EmbeddedSubject))
+  | .subject => inferInstanceAs (OrderBot (Flat ComplementSubject))
   | .relation => inferInstanceAs (OrderBot (Flat Case.Kind))
   | .adposition => inferInstanceAs (OrderBot (Flat Adposition))
   | .interp => inferInstanceAs (OrderBot (Flat ImplicitInterp))
@@ -211,7 +245,7 @@ instance : ∀ a : Axis, OrderBot a.Carrier
 instance : ∀ a : Axis, PartialUnify a.Carrier
   | .coding => inferInstanceAs (PartialUnify (Flat Clause.ComplementType))
   | .types => inferInstanceAs (PartialUnify Clause.Selection)
-  | .embeddedSubject => inferInstanceAs (PartialUnify (Flat Clause.EmbeddedSubject))
+  | .subject => inferInstanceAs (PartialUnify (Flat ComplementSubject))
   | .relation => inferInstanceAs (PartialUnify (Flat Case.Kind))
   | .adposition => inferInstanceAs (PartialUnify (Flat Adposition))
   | .interp => inferInstanceAs (PartialUnify (Flat ImplicitInterp))
@@ -219,7 +253,7 @@ instance : ∀ a : Axis, PartialUnify a.Carrier
 instance : ∀ a : Axis, DecidableEq a.Carrier
   | .coding => inferInstanceAs (DecidableEq (Flat Clause.ComplementType))
   | .types => inferInstanceAs (DecidableEq Clause.Selection)
-  | .embeddedSubject => inferInstanceAs (DecidableEq (Flat Clause.EmbeddedSubject))
+  | .subject => inferInstanceAs (DecidableEq (Flat ComplementSubject))
   | .relation => inferInstanceAs (DecidableEq (Flat Case.Kind))
   | .adposition => inferInstanceAs (DecidableEq (Flat Adposition))
   | .interp => inferInstanceAs (DecidableEq (Flat ImplicitInterp))
@@ -227,7 +261,7 @@ instance : ∀ a : Axis, DecidableEq a.Carrier
 instance : ∀ a : Axis, DecidableLE a.Carrier
   | .coding => inferInstanceAs (DecidableLE (Flat Clause.ComplementType))
   | .types => inferInstanceAs (DecidableLE Clause.Selection)
-  | .embeddedSubject => inferInstanceAs (DecidableLE (Flat Clause.EmbeddedSubject))
+  | .subject => inferInstanceAs (DecidableLE (Flat ComplementSubject))
   | .relation => inferInstanceAs (DecidableLE (Flat Case.Kind))
   | .adposition => inferInstanceAs (DecidableLE (Flat Adposition))
   | .interp => inferInstanceAs (DecidableLE (Flat ImplicitInterp))
@@ -240,7 +274,7 @@ abbrev Axes := ∀ a : Axis, a.Carrier
 def axes (p : Position) : Axes
   | .coding => p.coding?
   | .types => p.types
-  | .embeddedSubject => p.embeddedSubject?
+  | .subject => p.subject?
   | .relation => p.relation?
   | .adposition => p.adposition?
   | .interp => p.interp?
@@ -250,12 +284,12 @@ theorem eq_of_kind_eq_of_axes_eq {p q : Position} (hk : p.kind = q.kind)
   have h := fun a ↦ congrFun ha a
   have hc := h .coding
   have hf := h .types
-  have he := h .embeddedSubject
+  have he := h .subject
   have hr := h .relation
   have hp := h .adposition
   have hi := h .interp
   cases p <;> cases q <;>
-    simp_all [kind, axes, coding?, types, embeddedSubject?, relation?, adposition?, interp?]
+    simp_all [kind, axes, coding?, types, subject?, relation?, adposition?, interp?]
 
 /-- A position refines another, `p ≤ q`, when the two are of one kind and every axis `p`
     records, `q` records with the same value. -/
@@ -301,12 +335,6 @@ instance : DecidableLE ArgumentFrame := fun f g ↦
   inferInstanceAs (Decidable (f.external = g.external ∧ List.Forall₂ _ _ _))
 
 /-! ### Slots -/
-
-/-- An argument slot of a frame is the external argument or the `i`-th complement. -/
-inductive Slot where
-  | external
-  | complement (i : ℕ)
-  deriving DecidableEq, Repr
 
 variable (fr : ArgumentFrame)
 
@@ -397,6 +425,16 @@ def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame 
 verb before its infinitive or small clause in *persuade him to leave* or *make him leave*. -/
 def withObject : ArgumentFrame := { fr with complements := .nominal :: fr.complements }
 
+/-- The slot that functionally controls the frame's open complement, the first if several are
+open. -/
+def controllerSlot? : Option Slot := fr.complements.findSome? fun p ↦ p.subject?.bind (·.slot?)
+
+/-- The frame with its clausal complements open, their subject that of the slot `s`. -/
+def controlledBy (s : Slot) : ArgumentFrame :=
+  { fr with complements := fr.complements.map fun
+      | .clausal c t _ => .clausal c t (some (.shared s))
+      | p => p }
+
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
 def codings : List Clause.ComplementType := fr.complements.filterMap (·.coding?)
 
@@ -457,13 +495,10 @@ complement, as an object-experiencer psychological verb (*It worried Peti that .
 def clausalSubject : ArgumentFrame :=
   ⟨some (.clausal (coding := some .indicative) (types := .only .declarative)), [.nominal]⟩
 
-/-- Infinitival clause. Who the embedded subject is varies by verb (equi-deletion, raising, or
-    adposition-marked overt subjects, [noonan-2007] §1.3.4), so it is recorded on the verb's
-    diathesis (`Diathesis.controller`), not here. -/
+/-- Infinitival clause, its subject unrecorded. Its subject is equi-deleted, raised, or marked by an
+    adposition ([noonan-2007] §1.3.4): open to a slot of the frame under equi and raising
+    (`controlledBy`), its own under adposition marking. -/
 def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
-
-/-- The raising frame has an infinitival clause and no external argument. -/
-def raising : ArgumentFrame := ⟨none, [.clausal (coding := some .infinitive)]⟩
 
 /-- Gerund / nominalized clause. -/
 def gerund : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩

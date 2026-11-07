@@ -14,9 +14,11 @@ file checks three of the chapter's generalizations against the English verb frag
 chapter's examples.
 
 Equi-deletion, the deletion of a complement subject coreferential with a matrix argument, always
-leaves a complement that is not sentence-like (§2.1). No complement of an English verb that a
-participant controls is indicative or subjunctive (`not_isSentenceLike_of_controlled`), and *hope*
-takes a controlled infinitive beside an uncontrolled indicative (`hope_diatheses`).
+leaves a complement that is not sentence-like (§2.1), and so does raising, the placement of a
+complement's subject in a slot of the matrix (§2.2): no open complement of an English verb, one
+whose subject is a matrix slot's, is indicative or subjunctive (`not_isSentenceLike_of_open`).
+*Hope* takes a controlled infinitive beside an uncontrolled indicative (`hope_diatheses`), and
+*believe* raises where *force*, on the same frame, controls (`believe_raises_force_controls`).
 
 Negative raising, the reading of a matrix negation in the complement, is confined to propositional
 attitude, desiderative and modal predicates (§2.7). *Think*, *believe* and *want* allow it in
@@ -49,12 +51,12 @@ a reduced complement and *wish* an indicative (`want_wish_codings`), as the chap
 
 ## TODO
 
-* Raising also leaves a complement that is not sentence-like (§2.2).
 * Table 2.3 distributes realis and irrealis modality over complement roles, which neither the
   fragment nor the rows record.
-* The fragment's *believe* lacks the infinitive of (260), *I believe Zeke to be an idiot*, which
-  §3.1.2 discusses as an exception to the association of infinitives with dtr, and its *see*
-  lacks the immediate-perception use (347), *I saw Floyd leave*, beside the knowledge use (346).
+* The infinitive of *believe* in (260), *I believe Zeke to be an idiot*, is the exception §3.1.2
+  makes to the association of infinitives with dtr, which no theorem here states, and the
+  fragment's *see* lacks the immediate-perception use (347), *I saw Floyd leave*, beside the
+  knowledge use (346).
 
 ## References
 
@@ -65,18 +67,27 @@ a reduced complement and *wish* an indicative (`want_wish_codings`), as the chap
 
 namespace Noonan2007
 
-open English.Verbs (verbs hope think believe want regret wish)
+open English.Verbs (verbs hope think believe want regret wish force)
 
 /-! ### Equi-deletion -/
 
-/-- Equi-deletion always results in a non-sentence-like complement ([noonan-2007] §2.1). No
-complement of an English verb that a participant controls is sentence-like. -/
-theorem not_isSentenceLike_of_controlled : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
-    d.controller.isSome → ∀ c ∈ d.codings, ¬ c.IsSentenceLike := by
+/-- Equi-deletion and raising always result in a non-sentence-like complement ([noonan-2007]
+§2.1, §2.2): no open complement of an English verb, its subject a matrix slot's whether a
+participant fills that slot or none does, is sentence-like. -/
+theorem not_isSentenceLike_of_open : ∀ v ∈ verbs, ∀ d ∈ v.valency.diatheses,
+    d.controllerSlot? ≠ none → ∀ c ∈ d.codings, ¬ c.IsSentenceLike := by
   decide +kernel
 
-/-- *hope* takes an indicative complement nobody controls and an infinitive its subject controls,
-equi-deleted as in *Zeke wants to plant the corn* (106). -/
+/-- *Believe* raises the subject of its infinitive to its object, (121), where the object of
+*force* is an argument of its own that controls the infinitive, (110): the two share a frame and
+differ in whether a participant fills its object slot (§2.2). -/
+theorem believe_raises_force_controls :
+    ∃ d ∈ believe.valency.diatheses, ∃ d' ∈ force.valency.diatheses,
+      d.toArgumentFrame = d'.toArgumentFrame ∧ d.IsRaising ∧ d'.controllerRole = some .P := by
+  decide
+
+-- *hope* takes an indicative complement nobody controls and an infinitive its subject controls,
+-- equi-deleted as in *Zeke wants to plant the corn* (106)
 theorem hope_diatheses : hope.valency.diatheses.map (fun d ↦ (d.controller.isSome, d.codings)) =
     [(false, [.indicative]), (true, [.infinitive])] := by
   decide

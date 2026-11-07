@@ -128,7 +128,7 @@ def qwa : Verb where
 /-- *raʁež'a* 'begin', a raising predicate over an infinitive ((54)). -/
 def raghezha : Verb where
   morphs := [.root "raʁež'a"]
-  valency := .ofFrame ArgumentFrame.raising
+  valency := .ofFrame .infinitival (raised := some .external)
 
 /-- The predicates with per-predicate data in the paper. -/
 def verbs : List Verb := [gwepshesa, chewepcha, she, gwereqwe, qwa, raghezha]
