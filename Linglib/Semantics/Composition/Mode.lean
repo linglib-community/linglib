@@ -185,6 +185,22 @@ namespace Mode
   simp only [Ty.mode?, functionalLeft?, ↓reduceDIte, Option.orElse_eq_orElse, Option.orElse_eq_or,
     Option.some_or]
 
+/-- Forward functional application applies just when the left daughter is a function on the
+right one. -/
+@[simp] theorem isSome_functionalLeft?_iff {σ₁ σ₂ : Ty} :
+    (functionalLeft? σ₁ σ₂).isSome ↔ ∃ τ, σ₁ = (σ₂ ⇒ τ) := by
+  cases σ₁ with
+  | fn σ τ => by_cases h : σ = σ₂ <;> simp [functionalLeft?, h]
+  | _ => simp [functionalLeft?]
+
+/-- Backward functional application applies just when the right daughter is a function on the
+left one. -/
+@[simp] theorem isSome_functionalRight?_iff {σ₁ σ₂ : Ty} :
+    (functionalRight? σ₁ σ₂).isSome ↔ ∃ τ, σ₂ = (σ₁ ⇒ τ) := by
+  cases σ₂ with
+  | fn σ τ => by_cases h : σ = σ₁ <;> simp [functionalRight?, h]
+  | _ => simp [functionalRight?]
+
 theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = none := by
   cases σ with
   | fn a b =>

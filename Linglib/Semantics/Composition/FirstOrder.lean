@@ -283,7 +283,7 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
   | predicateModification =>
     intro k hk ys hys x c hx j hj zs hzs
     simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
-      Modifier.intersective_apply]
+      Modifier.intersective_apply, Pi.inf_apply, inf_Prop_eq]
     exact and_congr (ha k hk ys hys x c hx j hj zs hzs) (hb k hk ys hys x c hx j hj zs hzs)
   | eventIdentificationLeft =>
     intro k hk ys hys x c hx j hj zs hzs e d he i hi us hus
