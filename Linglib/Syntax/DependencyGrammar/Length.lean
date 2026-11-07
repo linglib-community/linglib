@@ -21,13 +21,13 @@ public import Mathlib.Algebra.Order.Ring.Nat
 The length of a dependency is the distance in words between head and dependent. This file defines
 the total dependency length of a graph, transports a graph along a permutation of its positions,
 and defines the distance from a head to the nearest word of a dependent's yield, dependency length
-measured to the boundary of the dependent's phrase. On a projective tree that distance is one
+measured to the boundary of the dependent's phrase. On a projective forest that distance is one
 more than the sizes of the yields of the sibling dependents between head and dependent: it is the
 block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks. Summed over the elements
 after a head, the block measure weighs each element's length by the number of elements farther
-out, so by the rearrangement inequality an order whose lengths grow outward is shortest: this is
-Behaghel's law of growing constituents, and its mirror image orders long before short before a
-final head.
+out, so by the rearrangement inequality an order whose lengths grow outward is shortest. This is
+the short-before-long order that dependency length minimization predicts after a head, and its
+mirror image orders long before short before a final head.
 
 ## Main definitions
 
@@ -42,17 +42,18 @@ final head.
 ## Main results
 
 * `Graph.totalLength_map`: transport along an isometry preserves total dependency length.
-* `Graph.yieldDist_eq_one_add_sum`: on a projective tree, the yield distance from a head to a
+* `Graph.yieldDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
-* `WordOrder.Arrangement.sum_boundaryDist_after_le`: Behaghel's law, no rearrangement of the
-  elements after a head is shorter than the order whose lengths grow outward.
-* `Graph.sum_yieldDist_eq_sum_boundaryDist`: on a projective tree a head's yield distances are
+* `WordOrder.Arrangement.sum_boundaryDist_after_le`: no rearrangement of the elements after a
+  head is shorter than the order whose lengths grow outward.
+* `Graph.sum_yieldDist_eq_sum_boundaryDist`: on a projective forest a head's yield distances are
   the boundary distances of its sibling arrangement with phrase lengths.
 
 ## References
 
 * [behaghel-1909]
 * [futrell-levy-gibson-2020]
+* [gildea-temperley-2007]
 * [fedzechkina-chu-jaeger-2018]
 -/
 
@@ -194,9 +195,11 @@ theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
     (precedes_trans_iff_of_notMem_after hσ hx).2, (precedes_trans_iff_of_notMem_after hσ hc).1,
     (precedes_trans_iff_of_notMem_after hσ hc).2]
 
-/-- Behaghel's law of growing constituents ([behaghel-1909]). When the lengths of the elements
-after `x` grow outward (`ℓ` monovaries with rank, short before long), no rearrangement of them
-shortens the distance from `x` to them. -/
+/-- When the lengths of the elements after `x` grow outward (`ℓ` monovaries with rank, short
+before long), no rearrangement of them shortens the distance from `x` to them: the nesting of
+dependents by length of [gildea-temperley-2007]. [futrell-levy-gibson-2020] derive from it
+Behaghel's law of growing constituents in head-initial contexts; [behaghel-1909] states the law for
+the conjuncts of a coordination (pp. 110, 139). -/
 theorem sum_boundaryDist_after_le (h : MonovaryOn ℓ a (a.after x)) :
     ∑ c ∈ a.after x, a.boundaryDist ℓ x c ≤
       ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
@@ -405,16 +408,16 @@ private theorem card_between {a b : Fin n} (hab : a ≠ b) :
     simp only [Nat.dist, Fin.lt_def] at h ⊢
     omega
 
-/-- On a projective tree the distance from a head to the nearest word of a dependent's phrase is
+/-- On a projective forest the distance from a head to the nearest word of a dependent's phrase is
 one more than the phrase sizes of the dependents between them. -/
-theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h : g.Adj v w) :
+theorem Graph.yieldDist_eq_one_add_sum (hF : g.IsForest) (hP : g.IsProjective) (h : g.Adj v w) :
     g.yieldDist v w = 1 + ∑ u ∈ g.children v with (v < u ∧ u < w ∨ w < u ∧ u < v),
       (g.yield u).ncard := by
   classical
   obtain ⟨m, hmY, hm⟩ := Finset.exists_mem_eq_inf' (g.toFinset_yield_nonempty w)
     fun x ↦ Nat.dist v x
   have hmY : m ∈ g.yield w := by simpa using hmY
-  have hvY := hT.not_dominates_of_adj h
+  have hvY := hF.not_dominates_of_adj h
   have hmin : ∀ y ∈ g.yield w, Nat.dist v m ≤ Nat.dist v y := fun y hy ↦
     hm ▸ Finset.inf'_le _ (by simpa using hy)
   have hgap : ∀ y ∈ g.yield w, ¬ (v < y ∧ y < m ∨ m < y ∧ y < v) := by
@@ -447,8 +450,8 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
       obtain ⟨u, hvu, hxu⟩ := g.exists_adj_mem_yield hxv hne
       have hxY : x ∉ g.yield w := fun hxY ↦ hgap x hxY hx
       have huw : u ≠ w := by rintro rfl; exact hxY hxu
-      have hdis := hT.disjoint_yield_of_adj hvu h huw
-      have hb := (hP u).between hxu (ReflTransGen.refl) hx (hT.not_dominates_of_adj hvu)
+      have hdis := hF.disjoint_yield_of_adj hvu h huw
+      have hb := (hP u).between hxu (ReflTransGen.refl) hx (hF.not_dominates_of_adj hvu)
         (Set.disjoint_right.1 hdis hmY)
       have hs := hside w ReflTransGen.refl
       refine ⟨u, by simpa using hvu, ?_, hxu⟩
@@ -457,7 +460,7 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
     · rintro ⟨u, hu, hb, hxu⟩
       have hvu : g.Adj v u := by simpa using hu
       have huw : u ≠ w := by rintro rfl; simp at hb
-      have hdis := hT.disjoint_yield_of_adj hvu h huw
+      have hdis := hF.disjoint_yield_of_adj hvu h huw
       have huY : u ∉ g.yield w := Set.disjoint_left.1 hdis ReflTransGen.refl
       have hs := hside w ReflTransGen.refl
       -- u lies strictly between v and m
@@ -466,10 +469,10 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
           huY ((hP w).uIcc_subset hmY ReflTransGen.refl (Set.mem_uIcc.2 hc))
         simp only [Fin.lt_def, Fin.le_def] at hb hs hmw ⊢
         omega
-      exact (hP u).between ReflTransGen.refl hxu hum (hT.not_dominates_of_adj hvu)
+      exact (hP u).between ReflTransGen.refl hxu hum (hF.not_dominates_of_adj hvu)
         (Set.disjoint_right.1 hdis hmY)
   have hvm : v ≠ m := fun e ↦ hvY (e ▸ hmY)
-  have hT' : (Finset.univ.filter fun x ↦ v < x ∧ x < m ∨ m < x ∧ x < v) =
+  have hfilter : (Finset.univ.filter fun x ↦ v < x ∧ x < m ∨ m < x ∧ x < v) =
       (g.children v |>.filter fun u ↦ v < u ∧ u < w ∨ w < u ∧ u < v).biUnion
         fun u ↦ Finset.univ.filter (· ∈ g.yield u) := by
     ext x
@@ -482,8 +485,8 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
     intro u hu u' hu' hne
     simp only [Finset.coe_filter, Set.mem_ofPred_eq, Graph.mem_children] at hu hu'
     simpa [Function.onFun, Finset.disjoint_filter] using
-      Set.disjoint_left.1 (hT.disjoint_yield_of_adj hu.1 hu'.1 hne)
-  rw [Graph.yieldDist, hm, ← card_between hvm, hT', Finset.card_biUnion hdisj, add_comm]
+      Set.disjoint_left.1 (hF.disjoint_yield_of_adj hu.1 hu'.1 hne)
+  rw [Graph.yieldDist, hm, ← card_between hvm, hfilter, Finset.card_biUnion hdisj, add_comm]
   congr 1
   refine Finset.sum_congr rfl fun u _ ↦ ?_
   rw [Set.ncard_eq_toFinset_card']
@@ -536,31 +539,31 @@ theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings
     (g.siblingArrangement v).Precedes c d ↔ (c : Fin n) < d :=
   (g.siblingRank_strictMono v).lt_iff_lt.trans Subtype.coe_lt_coe.symm
 
-theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w : Fin n}
+theorem Graph.yieldDist_eq_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) {w : Fin n}
     (h : g.Adj v w) :
     g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
       ⟨v, g.self_mem_siblings v⟩ ⟨w, Graph.mem_siblings_of_adj h⟩ := by
-  have hvw : v ≠ w := hT.ne_of_adj h
-  rw [Graph.yieldDist_eq_one_add_sum hT hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
+  have hvw : v ≠ w := hF.ne_of_adj h
+  rw [Graph.yieldDist_eq_one_add_sum hF hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
   congr 1
   simp only [Graph.siblingArrangement_precedes, Graph.phraseLength_eq_ncard, sum_filter]
   refine Eq.trans ?_ (sum_coe_sort (g.siblings v)
     fun c ↦ if v < c ∧ c < w ∨ w < c ∧ c < v then (g.yield c).ncard else 0).symm
-  rw [Graph.siblings, sum_insert (by simpa using hT.not_adj_self), ite_eq_right (by simp),
+  rw [Graph.siblings, sum_insert (by simpa using hF.not_adj_self), ite_eq_right (by simp),
     zero_add]
 
 /-- The sum of a head's yield distances is the head's measure in the sibling arrangement. -/
-theorem Graph.sum_yieldDist_eq_sum_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) :
+theorem Graph.sum_yieldDist_eq_sum_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) :
     ∑ w ∈ g.children v, g.yieldDist v w =
       ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
         ⟨v, g.self_mem_siblings v⟩ c := by
   rw [← sum_erase univ (Arrangement.boundaryDist_self ..)]
   refine sum_bij' (fun w hw ↦ ⟨w, Graph.mem_siblings_of_adj (by simpa using hw)⟩)
     (fun c _ ↦ c.1) (fun w hw ↦ ?_) (fun c hc ↦ ?_) (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
-    fun w hw ↦ Graph.yieldDist_eq_boundaryDist hT hP (by simpa using hw)
+    fun w hw ↦ Graph.yieldDist_eq_boundaryDist hF hP (by simpa using hw)
   · simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq]
     rintro rfl
-    exact hT.not_adj_self (by simpa using hw)
+    exact hF.not_adj_self (by simpa using hw)
   · obtain ⟨c, hc'⟩ := c
     simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq] at hc
     simpa [Graph.siblings, hc] using hc'
