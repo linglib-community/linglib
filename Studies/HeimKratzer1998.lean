@@ -57,7 +57,7 @@ open scoped Denotes
 /-! ### Model and lexicon
 
 `toyModel` is a small extensional model with four entities (John, Mary, a pizza and a book), one
-world, and a signature of two constants and eight content relations, which `toyStructure`
+world, and a signature of four constants and eight content relations, which `toyStructure`
 interprets as equalities on the entities. The fragment is of the kind the book interprets, with
 proper names, intransitive and transitive verbs, and common nouns. The words `toyWords`
 translate English word forms to symbols, and the lexicon `toyLexicon` and the denotations
@@ -81,6 +81,8 @@ inductive ToyEntity where
 inductive toyFunc : ℕ → Type
   | john : toyFunc 0
   | mary : toyFunc 0
+  | pizza : toyFunc 0
+  | book : toyFunc 0
   deriving DecidableEq
 
 /-- The relation symbols of the toy signature are the content words at their arities. -/
@@ -109,6 +111,8 @@ abbrev toyStructure : toyLang.Structure ToyEntity where
     match f with
     | .john => .john
     | .mary => .mary
+    | .pizza => .pizza
+    | .book => .book
   RelMap {n} r v :=
     match r, v with
     | .sleep, v => v 0 = .john
@@ -133,6 +137,8 @@ symbols elaborate without unfolding `toyLang`. -/
 
 abbrev johnConst : toyLang.Constants := .john
 abbrev maryConst : toyLang.Constants := .mary
+abbrev pizzaConst : toyLang.Constants := .pizza
+abbrev bookConst : toyLang.Constants := .book
 abbrev sleepRel : toyLang.Relations 1 := .sleep
 abbrev laughRel : toyLang.Relations 1 := .laugh
 abbrev studentRel : toyLang.Relations 1 := .student
