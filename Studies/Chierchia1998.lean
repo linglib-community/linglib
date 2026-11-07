@@ -222,11 +222,9 @@ open scoped SetRel
 once his instances of the kind are the instances of its concept. -/
 theorem carlson_mem_image_iff {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k : E} {κ : S → Option E}
-    {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (h : M.R ○ inst ⊆ M.R)
-    (hk : ∀ ⦃t⦄, t ~[M.R] k → t ~[M.R ○ inst] k) (P : Set Stage) :
-    k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
-  (Carlson1977.Model.mem_image_iff h hk P).trans
-    ⟨fun ⟨x, hx, hxk⟩ ↦ ⟨x, (hinst x).1 hxk, hx⟩, fun ⟨x, hxu, hx⟩ ↦ ⟨x, hx, (hinst x).2 hxu⟩⟩
+    {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (hk : M.RealizedByInstances inst k)
+    (P : Set Stage) : k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
+  Set.ext hinst ▸ Carlson1977.Model.mem_image_iff hk P
 
 /-- Two dogs, `0` and `1`, and a cat, `2`, each with one stage at its own place; an individual is
 a set of animals, and a stage realizes each individual containing its animal. -/
@@ -235,9 +233,11 @@ def lawn : Carlson1977.Model (Fin 3) (Finset (Fin 3)) (Fin 3) Unit where
   place := id
   time := fun _ ↦ ()
 
-theorem lawn_comp_subset : lawn.R ○ {p | p.1 ≤ p.2} ⊆ lawn.R := by
-  rintro ⟨t, k⟩ ⟨x, htx, hxk⟩
-  exact (show ({t} : Finset (Fin 3)) ≤ x from htx).trans hxk
+theorem lawn_realizedByInstances (k : Finset (Fin 3)) :
+    lawn.RealizedByInstances {p | p.1 ≤ p.2} k :=
+  Carlson1977.Model.realizedByInstances_iff.2 fun t ↦
+    ⟨fun ht ↦ ⟨{t}, show ({t} : Finset (Fin 3)) ≤ {t} from le_rfl, ht⟩,
+      fun ⟨x, htx, hxk⟩ ↦ (show ({t} : Finset (Fin 3)) ≤ x from htx).trans hxk⟩
 
 /-- *Dogs are sitting on my lawn* gives *Mammals are sitting on my lawn* (119): when Carlson's
 instances of two kinds are the instances of their concepts, a state passes from a kind to any kind
@@ -246,11 +246,11 @@ first is an instance of the second. -/
 theorem carlson_119 {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k k' : E}
     {κ κ' : S → Option E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s)
-    (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up κ' s) (h : M.R ○ inst ⊆ M.R)
-    (hk : ∀ ⦃t⦄, t ~[M.R] k → t ~[M.R ○ inst] k) (hsub : Kind.up κ s ⊆ Kind.up κ' s)
-    {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P := by
-  obtain ⟨x, hx, t, ht, htx⟩ := (carlson_mem_image_iff hinst h hk P).1 hP
-  exact ⟨t, ht, h ⟨x, htx, (hinst' x).2 (hsub hx)⟩⟩
+    (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up κ' s) (hk : M.RealizedByInstances inst k)
+    (hk' : M.RealizedByInstances inst k') (hsub : Kind.up κ s ⊆ Kind.up κ' s)
+    {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
+  (carlson_mem_image_iff hinst' hk' P).2 <|
+    ((carlson_mem_image_iff hinst hk P).1 hP).mono (Set.inter_subset_inter_left _ hsub)
 
 /-- On `lawn`, with the part-of relation as the instance relation, the dogs and the mammals meet
 the conditions of (119). -/
@@ -259,7 +259,7 @@ example (P : Set (Fin 3)) (h : ({0, 1} : Finset (Fin 3)) ∈ lawn.R.image P) :
   carlson_119 (M := lawn) (inst := {p | p.1 ≤ p.2}) (k := ({0, 1} : Finset (Fin 3)))
     (k' := Finset.univ) (κ := fun _ : Unit ↦ some ({0, 1} : Finset (Fin 3)))
     (κ' := fun _ ↦ some Finset.univ) (s := ()) (fun _ ↦ Iff.rfl) (fun _ ↦ Iff.rfl)
-    lawn_comp_subset (fun _ ht ↦ ⟨_, ht, by simp⟩) (fun x _ ↦ Finset.subset_univ x) h
+    (lawn_realizedByInstances _) (lawn_realizedByInstances _) (fun x _ ↦ Finset.subset_univ x) h
 
 /-- States do not pass the other way: with the cat on the lawn, *Mammals are sitting on my lawn*
 is true and *Dogs are sitting on my lawn* false. -/

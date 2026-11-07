@@ -57,12 +57,15 @@ the German word order facts that Diesing describes, (8) and (125) (`word_order_r
 * The alternatives of the episodic existential reading (92b), sketched in footnote 20, are not
   formalized.
 * The facts of §4.4 (non-kind bare plurals, association with *only*, statives, locatives) are
-  discussion only, and the contrast (133) with definite subjects is left open by the paper.
+  discussion only, and the contrast (133) with definite subjects is left open by the paper. Its
+  stative restriction (119a) denies *Children are sick* an existential reading, where Carlson's
+  1977 paper, (128), gives physically ill *sick* one (`Carlson1977.Model.mem_image_iff`).
 
 ## References
 
 * [magri-2009]
 * [fox-2007]
+* [carlson-1977a]
 * [carlson-1977]
 * [musan-1995]
 * [diesing-1992]
@@ -463,7 +466,7 @@ end Universal
 section GermanWordOrder
 
 
-/-- Common knowledge about the predicate of a row, by (70) from the level ([carlson-1977]) its
+/-- Common knowledge about the predicate of a row, by (70) from the level ([carlson-1977a]) its
 `predicate_level` feature records: an individual-level predicate is permanent, a stage-level one
 unconstrained. -/
 def commonKnowledgeOf (row : Datum) : Option (Set (Fireman → Fin 3 → Prop)) :=

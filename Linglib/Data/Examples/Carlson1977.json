@@ -1,0 +1,131 @@
+[
+  {
+    "id": "carlson1977_119",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(119)"},
+    "language": "stan1293",
+    "primaryText": "Dogs are sitting on my lawn. All dogs are mammals. Therefore: Mammals are sitting on my lawn.",
+    "discourseSegments": [
+      "Dogs are sitting on my lawn.",
+      "All dogs are mammals.",
+      "Therefore: Mammals are sitting on my lawn."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The inference appears to be valid, as it would be with the indefinite plural an existential (p. 445).",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_120",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(120)"},
+    "language": "stan1293",
+    "primaryText": "Dogs are good pets. All dogs are mammals. Therefore: Mammals are good pets.",
+    "discourseSegments": [
+      "Dogs are good pets.",
+      "All dogs are mammals.",
+      "Therefore: Mammals are good pets."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "An invalid argument, a case of overgeneralization (p. 445). The second premise is printed without its period.",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_131",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(131)"},
+    "language": "stan1293",
+    "primaryText": "Max believes some dogs are here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "transparent", "judgment": "acceptable"},
+      {"name": "opaque", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "Exhibits a transparent reading, with 'some dogs' outside the scope of 'believes', (131') (p. 452); the opaque reading is the one (132) shares.",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_132",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(132)"},
+    "language": "stan1293",
+    "primaryText": "Max believes dogs are here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "transparent", "judgment": "unacceptable"},
+      {"name": "opaque", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "Has only the narrow scope reading: Max's belief has nothing to do with particular dogs (p. 452).",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_135a",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(135a)"},
+    "language": "stan1293",
+    "primaryText": "Jake is everywhere.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Cannot receive a normal literal interpretation, though not ill-formed; a hyperbolic use is set aside (pp. 453-454).",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_135b",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(135b)"},
+    "language": "stan1293",
+    "primaryText": "Some dog is everywhere.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Strange in the way (135a) is, 'some dog' read as a particular dog and the kind reading set aside (p. 454).",
+    "verified": "page-image"
+  },
+  {
+    "id": "carlson1977_135c",
+    "source": {"bibkey": "carlson-1977", "paperLabel": "(135c)"},
+    "language": "stan1293",
+    "primaryText": "Dogs are everywhere.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Read literally, of a world like ours, in which a particular individual can be in only one place at a time, and with dogs at every relevant place.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Not strange: the kind has some realization in every relevant place (p. 454).",
+    "verified": "page-image"
+  }
+]
