@@ -433,19 +433,19 @@ include hP
 
 theorem speaker_literal_wab_a :
     (speaker P literal s .wab).real {.a} = s.logistic (s.cAndB + Real.log (P.real {.wab})) := by
-  rw [speaker_real_singleton_of_pair P hP literal s (v := .aAndB) (by decide) rfl rfl
-    (by decide)]
-  simp (disch := decide) only [L0_literal_a, L0_eq_one P hP literal, ENNReal.toReal_one,
-    Real.log_one, Setting.cost, ← measureReal_def]
-  congr 1; ring
+  rw [speaker, L0, RSA.speaker_listener_truthful_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
+    literal.extension (hP .wab) (u := .aAndB) (by decide)
+    (literal.extension_eq_singleton (by decide)) (literal.extension_eq_univ (by decide))
+    fun v hv ↦ by rw [Meaning.mem_extension] at hv; revert hv; cases v <;> decide]
+  simp only [Setting.logistic, Setting.cost, sub_zero]
 
 theorem speaker_literal_wa_a :
     (speaker P literal s .wa).real {.a} = s.logistic (s.cAndNotB + Real.log (P.real {.wa})) := by
-  rw [speaker_real_singleton_of_pair P hP literal s (v := .aAndNotB) (by decide) rfl rfl
-    (by decide)]
-  simp (disch := decide) only [L0_literal_a, L0_eq_one P hP literal, ENNReal.toReal_one,
-    Real.log_one, Setting.cost, ← measureReal_def]
-  congr 1; ring
+  rw [speaker, L0, RSA.speaker_listener_truthful_dirac_real_singleton_of_eq_univ s.lam_pos s.cost P
+    literal.extension (hP .wa) (u := .aAndNotB) (by decide)
+    (literal.extension_eq_singleton (by decide)) (literal.extension_eq_univ (by decide))
+    fun v hv ↦ by rw [Meaning.mem_extension] at hv; revert hv; cases v <;> decide]
+  simp only [Setting.logistic, Setting.cost, sub_zero]
 
 end ClosedForms
 
