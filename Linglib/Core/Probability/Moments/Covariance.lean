@@ -27,9 +27,10 @@ exceeds the product of the sums divided by the sample size.
 
 ## Main declarations
 
-* `Monovary.integral_mul_integral_le_measureReal_univ_mul_integral`,
-  `Antivary.measureReal_univ_mul_integral_le_integral_mul_integral`: Chebyshev's integral
-  inequality on a finite measure and its dual.
+* `MonovaryOn.integral_mul_integral_le_measureReal_univ_mul_integral`,
+  `AntivaryOn.measureReal_univ_mul_integral_le_integral_mul_integral`: Chebyshev's integral
+  inequality on a finite measure and its dual, for variables that monovary on a set of full
+  measure, with `Monovary` and `Antivary` forms.
 * `Monovary.covariance_nonneg`, `Antivary.covariance_nonpos`: the covariance forms.
 * `covariance_uniformOn_univ`, `covariance_uniformOn_univ_pos_iff`: the sample covariance under
   the uniform measure on a finite type and the sign of its numerator.
@@ -37,8 +38,9 @@ exceeds the product of the sums divided by the sample size.
 ## Implementation notes
 
 The proof integrates `0 ≤ (X ω - X ω') * (Y ω - Y ω')`, pointwise nonnegative by
-`Monovary.sub_mul_sub_nonneg`, over the product measure `μ.prod μ`, where it expands to twice
-the covariance defect. The dual follows by negating `X`.
+`MonovaryOn.sub_mul_sub_nonneg` wherever both coordinates lie in the set, so almost everywhere
+for the product measure `μ.prod μ`, where it expands to twice the covariance defect. The dual
+follows by negating `X`.
 -/
 
 public section
@@ -53,9 +55,10 @@ variable [IsFiniteMeasure μ] (hX : Integrable X μ) (hY : Integrable Y μ)
   (hXY : Integrable (X * Y) μ)
 include hX hY hXY
 
-/-- **Chebyshev's integral inequality**: when `X` and `Y` monovary, the product of their
-integrals is at most the total mass times the integral of their product. -/
-theorem Monovary.integral_mul_integral_le_measureReal_univ_mul_integral (h : Monovary X Y) :
+/-- **Chebyshev's integral inequality**: when `X` and `Y` monovary on a set of full measure, the
+product of their integrals is at most the total mass times the integral of their product. -/
+theorem MonovaryOn.integral_mul_integral_le_measureReal_univ_mul_integral {s : Set Ω}
+    (h : MonovaryOn X Y s) (hs : ∀ᵐ ω ∂μ, ω ∈ s) :
     (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ ≤ μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ := by
   have h₁ := hXY.mul_prod (μ := μ) (ν := μ) (integrable_const (1 : ℝ))
   have h₂ := hX.mul_prod (μ := μ) (ν := μ) hY
@@ -72,16 +75,28 @@ theorem Monovary.integral_mul_integral_le_measureReal_univ_mul_integral (h : Mon
     · simp only [Pi.mul_apply, Pi.one_apply, integral_const, smul_eq_mul, mul_one]; ring
     all_goals first | exact h₁ | exact h₂ | exact h₃ | exact h₄ | exact h₁.sub h₂ | exact h₃.sub h₄
   have h₀ : 0 ≤ ∫ z, (X z.1 - X z.2) * (Y z.1 - Y z.2) ∂(μ.prod μ) :=
-    integral_nonneg fun z ↦ h.sub_mul_sub_nonneg z.2 z.1
+    integral_nonneg_of_ae <| (Measure.quasiMeasurePreserving_fst.ae hs).mp <|
+      (Measure.quasiMeasurePreserving_snd.ae hs).mono fun z h₂ h₁ ↦ h.sub_mul_sub_nonneg h₂ h₁
   linarith
 
-/-- **Chebyshev's integral inequality**: when `X` and `Y` antivary, the product of their
-integrals is at least the total mass times the integral of their product. -/
-theorem Antivary.measureReal_univ_mul_integral_le_integral_mul_integral (h : Antivary X Y) :
+theorem Monovary.integral_mul_integral_le_measureReal_univ_mul_integral (h : Monovary X Y) :
+    (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ ≤ μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ :=
+  (h.monovaryOn _).integral_mul_integral_le_measureReal_univ_mul_integral hX hY hXY
+    (ae_of_all _ Set.mem_univ)
+
+/-- **Chebyshev's integral inequality**: when `X` and `Y` antivary on a set of full measure, the
+product of their integrals is at least the total mass times the integral of their product. -/
+theorem AntivaryOn.measureReal_univ_mul_integral_le_integral_mul_integral {s : Set Ω}
+    (h : AntivaryOn X Y s) (hs : ∀ᵐ ω ∂μ, ω ∈ s) :
     μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ ≤ (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ := by
-  have := (monovary_neg_left.2 h).integral_mul_integral_le_measureReal_univ_mul_integral
-    hX.neg hY (by simpa only [neg_mul] using hXY.neg)
+  have := h.neg_left.integral_mul_integral_le_measureReal_univ_mul_integral
+    hX.neg hY (by simpa only [neg_mul] using hXY.neg) hs
   simpa only [Pi.neg_apply, neg_mul, integral_neg, mul_neg, neg_le_neg_iff] using this
+
+theorem Antivary.measureReal_univ_mul_integral_le_integral_mul_integral (h : Antivary X Y) :
+    μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ ≤ (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ :=
+  (h.antivaryOn _).measureReal_univ_mul_integral_le_integral_mul_integral hX hY hXY
+    (ae_of_all _ Set.mem_univ)
 
 end FiniteMeasure
 

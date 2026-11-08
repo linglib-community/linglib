@@ -227,6 +227,19 @@ theorem listener_real_singleton (u : U) (w : W) :
       μ.real {w} * (S w).real {u} / ∑ w', μ.real {w'} * (S w').real {u} := by
   simpa using listener_real_finset μ S u {w}
 
+/-- Bayes' rule in odds form: the posterior odds of two states are their prior odds times the ratio
+of the masses they give the utterance, at every utterance, heard or not. -/
+theorem listener_real_singleton_div (u : U) (w₁ w₂ : W) :
+    (listener μ S u).real {w₁} / (listener μ S u).real {w₂} =
+      μ.real {w₁} * (S w₁).real {u} / (μ.real {w₂} * (S w₂).real {u}) := by
+  rw [listener_real_singleton, listener_real_singleton]
+  rcases eq_or_ne (∑ w, μ.real {w} * (S w).real {u}) 0 with h | h
+  · have h0 (w : W) : μ.real {w} * (S w).real {u} = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg fun w _ ↦ mul_nonneg measureReal_nonneg
+        measureReal_nonneg).1 h w (Finset.mem_univ w)
+    simp only [h0, zero_div]
+  · exact div_div_div_cancel_right₀ h _ _
+
 /-- The listener prefers the event with the greater prior-weighted production probability, at
 every utterance, heard or not. -/
 theorem listener_real_finset_lt_iff (u : U) (E₁ E₂ : Finset W) :
@@ -1259,6 +1272,13 @@ theorem speaker_listener_truthful_dirac_apply_singleton_eq_zero (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
     speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 0 :=
   speaker_dirac_apply_singleton_eq_zero hα (listener_truthful_apply_singleton_of_notMem μ sem h)
+
+/-- A speaker who knows the state says only what is true there. -/
+theorem ae_speaker_listener_truthful_dirac_mem (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+    (sem : U → Set W) (w : W) :
+    ∀ᵐ u ∂speaker α C (listener μ (truthful sem)) Measure.dirac w, w ∈ sem u :=
+  ae_iff_of_countable.2 fun _ hu ↦
+    by_contra fun h ↦ hu (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h)
 
 theorem speaker_listener_truthful_dirac_real_singleton_eq_zero (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :

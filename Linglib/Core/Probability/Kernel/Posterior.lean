@@ -28,7 +28,8 @@ given an observation of a state drawn from the prior leaves the prior invariant.
 * `ProbabilityTheory.posterior_real_singleton_lt_posterior_of_pair`: under priors carried by
   two atoms, the posterior at an atom is strictly increasing in its prior mass.
 * `ProbabilityTheory.integral_le_integral_posterior`: conditioning on an observation raises
-  the expectation of a statistic that monovaries with the observation's likelihood.
+  the expectation of a statistic that monovaries with the observation's likelihood on the
+  states of positive prior mass.
 -/
 
 public section
@@ -196,22 +197,24 @@ theorem integral_posterior (f : Ω → ℝ) :
 variable [IsProbabilityMeasure μ] {f : Ω → ℝ}
 
 /-- Conditioning on an observation raises the expectation of a statistic that monovaries with
-the observation's likelihood. -/
-theorem integral_le_integral_posterior (hf : Monovary f fun ω ↦ (κ ω).real {x}) :
+the observation's likelihood on the states of positive prior mass. -/
+theorem integral_le_integral_posterior
+    (hf : MonovaryOn f (fun ω ↦ (κ ω).real {x}) {ω | μ {ω} ≠ 0}) :
     ∫ ω, f ω ∂μ ≤ ∫ ω, f ω ∂((κ†μ) x) := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
   rw [integral_posterior κ μ hx, le_div_iff₀ hm, Measure.comp_real_singleton_eq_integral]
   simpa [probReal_univ] using
     hf.integral_mul_integral_le_measureReal_univ_mul_integral (μ := μ) .of_finite .of_finite
-      .of_finite
+      .of_finite (ae_iff_of_countable.2 fun _ h ↦ h)
 
-theorem integral_posterior_le_integral (hf : Antivary f fun ω ↦ (κ ω).real {x}) :
+theorem integral_posterior_le_integral
+    (hf : AntivaryOn f (fun ω ↦ (κ ω).real {x}) {ω | μ {ω} ≠ 0}) :
     ∫ ω, f ω ∂((κ†μ) x) ≤ ∫ ω, f ω ∂μ := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
   rw [integral_posterior κ μ hx, div_le_iff₀ hm, Measure.comp_real_singleton_eq_integral]
   simpa [probReal_univ] using
     hf.measureReal_univ_mul_integral_le_integral_mul_integral (μ := μ) .of_finite .of_finite
-      .of_finite
+      .of_finite (ae_iff_of_countable.2 fun _ h ↦ h)
 
 end Expectation
 
