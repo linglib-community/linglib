@@ -1,6 +1,8 @@
 module
 
+public import Linglib.Core.Order.OrdConnected
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Tactic.DeriveFintype
@@ -17,9 +19,10 @@ theory. The series themselves are `IndefinitePronoun.Series`.
 
 ## Main declarations
 
-* `Indefinite.HaspelmathFunction`: the nine functions, with the book's numbering `number` and the
-  neighbours `adjacent` of each on the map.
-* `Indefinite.implicationalMap`: the map as a `SimpleGraph`.
+* `Indefinite.HaspelmathFunction`: the nine functions, with the book's numbering `number`.
+* `Indefinite.implicationalMap`: the map as a `SimpleGraph`, from the ten edges `mapEdges` of
+  the book's figure. The map carries nothing beyond the regions it admits
+  (`adj_iff_connected_pair`).
 * `Indefinite.SpecificityFunction`: the specific known, specific unknown and non-specific
   functions in the order the map chains them, with their embedding `toFunction` in the map and
   the ones a region covers, `specificityFunctions`. A set of them is an interval unless it has
@@ -79,10 +82,22 @@ def number : HaspelmathFunction → ℕ
   | .comparative => 8
   | .freeChoice => 9
 
-/-- `adjacent f` lists the neighbours of `f` on the map. The map is a chain from specific known
-through specific unknown to irrealis, which feeds two parallel tracks, question to indirect
-negation to direct negation and conditional to comparative to free choice, the tracks joined at
-question and conditional and at indirect negation and comparative.
+theorem number_injective : Function.Injective number := by decide
+
+end HaspelmathFunction
+
+/-- The ten edges of the implicational map, the lines of [haspelmath-1997]'s figure, each stated
+once as an unordered pair. -/
+def mapEdges : Finset (Sym2 HaspelmathFunction) :=
+  {s(.specificKnown, .specificUnknown), s(.specificUnknown, .irrealis),
+    s(.irrealis, .question), s(.irrealis, .conditional), s(.question, .conditional),
+    s(.question, .indirectNeg), s(.conditional, .comparative), s(.indirectNeg, .directNeg),
+    s(.indirectNeg, .comparative), s(.comparative, .freeChoice)}
+
+/-- The implicational map is the graph on the functions whose edges are `mapEdges`: a chain from
+specific known through specific unknown to irrealis, which feeds two parallel tracks, question to
+indirect negation to direct negation and conditional to comparative to free choice, the tracks
+joined at question and conditional and at indirect negation and comparative.
 
 ```
                       (4) question —— (6) indirect neg —— (7) direct neg
@@ -92,33 +107,29 @@ question and conditional and at indirect negation and comparative.
                       (5) conditional — (8) comparative — (9) free choice
 ```
 -/
-def adjacent : HaspelmathFunction → List HaspelmathFunction
-  | .specificKnown   => [.specificUnknown]
-  | .specificUnknown => [.specificKnown, .irrealis]
-  | .irrealis        => [.specificUnknown, .question, .conditional]
-  | .question        => [.irrealis, .conditional, .indirectNeg]
-  | .conditional     => [.irrealis, .question, .comparative]
-  | .indirectNeg     => [.question, .directNeg, .comparative]
-  | .directNeg       => [.indirectNeg]
-  | .comparative     => [.conditional, .indirectNeg, .freeChoice]
-  | .freeChoice      => [.comparative]
+def implicationalMap : SimpleGraph HaspelmathFunction :=
+  .fromEdgeSet ↑mapEdges
 
-end HaspelmathFunction
-
-/-- The implicational map is the graph on the functions with the edges of
-`HaspelmathFunction.adjacent`. -/
-def implicationalMap : SimpleGraph HaspelmathFunction where
-  Adj f g := g ∈ f.adjacent
-  symm.symm := by decide
-  loopless.irrefl := by decide
-
-instance : DecidableRel implicationalMap.Adj :=
-  fun f g ↦ inferInstanceAs (Decidable (g ∈ f.adjacent))
+instance : DecidableRel implicationalMap.Adj := fun f g ↦
+  inferInstanceAs (Decidable (s(f, g) ∈ (↑mapEdges : Set (Sym2 HaspelmathFunction)) ∧ f ≠ g))
 
 @[simp]
 theorem implicationalMap_adj {f g : HaspelmathFunction} :
-    implicationalMap.Adj f g ↔ g ∈ f.adjacent :=
-  Iff.rfl
+    implicationalMap.Adj f g ↔ s(f, g) ∈ mapEdges ∧ f ≠ g := by
+  rw [implicationalMap, SimpleGraph.fromEdgeSet_adj, Finset.mem_coe]
+
+/-- The ten pairs of `mapEdges` are exactly the map's edges: none is a loop and none repeats. -/
+theorem edgeFinset_implicationalMap : implicationalMap.edgeFinset = mapEdges := by
+  decide
+
+/-- The map carries nothing beyond the regions it admits: two functions are adjacent exactly
+when the pair of them is a connected region, so the graph and its family of regions determine
+each other. -/
+theorem adj_iff_connected_pair {f g : HaspelmathFunction} :
+    implicationalMap.Adj f g ↔ f ≠ g ∧ (implicationalMap.induce {f, g}).Connected := by
+  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
+  revert f g
+  decide +kernel
 
 /-! ### The specificity functions -/
 
@@ -139,6 +150,8 @@ namespace SpecificityFunction
 instance : LinearOrder SpecificityFunction :=
   LinearOrder.lift' SpecificityFunction.ctorIdx (by decide)
 
+instance : LocallyFiniteOrder SpecificityFunction := Fintype.toLocallyFiniteOrder
+
 /-- A set of specificity functions is an interval exactly when it does not have the two ends
 without the middle. -/
 theorem ordConnected_iff {s : Set SpecificityFunction} :
@@ -151,9 +164,6 @@ theorem ordConnected_iff {s : Set SpecificityFunction} :
       | exact absurd hac (by decide)
       | exact absurd hcb (by decide)
 
-instance (s : Finset SpecificityFunction) : Decidable (s : Set SpecificityFunction).OrdConnected :=
-  decidable_of_iff' _ ordConnected_iff
-
 /-- `toFunction` embeds the specificity functions in the map, the non-specific function as the
 irrealis one. -/
 def toFunction : SpecificityFunction → HaspelmathFunction
@@ -162,6 +172,13 @@ def toFunction : SpecificityFunction → HaspelmathFunction
   | .nonSpecific => .irrealis
 
 theorem toFunction_injective : Function.Injective toFunction := by decide
+
+/-- `toFunction` embeds the chain in the map as an induced path: two specificity functions are
+adjacent on the map exactly when they are neighbours in the chain. -/
+theorem adj_toFunction_iff {u v : SpecificityFunction} :
+    implicationalMap.Adj u.toFunction v.toFunction ↔
+      (SimpleGraph.hasse SpecificityFunction).Adj u v := by
+  revert u v; decide
 
 end SpecificityFunction
 
