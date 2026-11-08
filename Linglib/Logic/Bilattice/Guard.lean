@@ -109,7 +109,7 @@ theorem guard_of_top_kLE [BoundedOrder B] [BoundedOrder (Know B)] [InvolutiveCom
 end Interlaced
 
 /-- The guard of a consistent value is consistent ([fitting-1994] §9). -/
-theorem IsConsistent.guard [Preorder B] [Top B] [Compl B] [Lattice (Know B)] [Conflation B]
+theorem IsConsistent.guard [Top B] [Compl B] [Lattice (Know B)] [InvolutiveCompl (Know B)]
     {y : B} (hy : IsConsistent y) (x : B) : IsConsistent (Bilattice.guard x y) :=
   hy.anti (guard_kLE_right x y)
 

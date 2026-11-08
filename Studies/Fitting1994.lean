@@ -232,19 +232,21 @@ variable {B : Type*}
 
 -- Theorem 9.2: the exact values are not closed under `⊗`
 theorem exists_not_isExact_kInf [Lattice B] [BoundedOrder B] [Lattice (Know B)]
-    [BoundedOrder (Know B)] [IsInterlaced B] [Conflation B] (h : (⊥ : Know B) ≠ ⊤) :
+    [BoundedOrder (Know B)] [IsInterlaced B] [InvolutiveCompl (Know B)] [Conflation B]
+    (h : (⊥ : Know B) ≠ ⊤) :
     ∃ x y : B, IsExact x ∧ IsExact y ∧ ¬ IsExact (x ⊓ₖ y) :=
   ⟨⊤, ⊥, conf_top, conf_bot, top_kInf_bot (B := B) ▸ not_isExact_ofKnow_bot h⟩
 
 -- Theorem 9.2: nor under `⊕`
 theorem exists_not_isExact_kSup [Lattice B] [BoundedOrder B] [Lattice (Know B)]
-    [BoundedOrder (Know B)] [IsInterlaced B] [Conflation B] (h : (⊥ : Know B) ≠ ⊤) :
+    [BoundedOrder (Know B)] [IsInterlaced B] [InvolutiveCompl (Know B)] [Conflation B]
+    (h : (⊥ : Know B) ≠ ⊤) :
     ∃ x y : B, IsExact x ∧ IsExact y ∧ ¬ IsExact (x ⊔ₖ y) :=
   ⟨⊤, ⊥, conf_top, conf_bot, top_kSup_bot (B := B) ▸ not_isExact_ofKnow_top h⟩
 
 /-- Two values below a common consistent value have a consistent gullibility (Theorem 9.3). The
 bound alone suffices: consistency passes down the knowledge order. -/
-theorem isConsistent_kSup [Preorder B] [Lattice (Know B)] [Conflation B] {x y z : B}
+theorem isConsistent_kSup [Lattice (Know B)] [InvolutiveCompl (Know B)] {x y z : B}
     (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) :=
   hz.anti (sup_le (α := Know B) hxz hyz)
 
@@ -271,7 +273,7 @@ variable [Negation B] in
 theorem lorW_kLE_lorW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorW x y ≤ₖ lorW x' y' :=
   inf_le_inf (α := Know B) (lorL_kLE_lorL hx hy) (lorL_kLE_lorL hy hx)
 
-variable [Conflation B]
+variable [InvolutiveCompl (Know B)] [Conflation B]
 
 /-! The consistent values are closed under the Lisp and weak connectives (p. 128). -/
 

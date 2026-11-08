@@ -78,7 +78,7 @@ def Fml.eval (v : α → B) : Fml α → B
 
 section Conflation
 
-variable [Conflation B] [NegConfComm B]
+variable [InvolutiveCompl (Know B)] [Conflation B] [NegConfComm B]
 
 theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
     ∀ φ : Fml α, IsExact (φ.eval v)
@@ -146,7 +146,7 @@ end Bifilter
 
 section Logics
 
-variable [Lattice B] [InvolutiveCompl B] [Lattice (Know B)] [Conflation B]
+variable [Lattice B] [InvolutiveCompl B] [Lattice (Know B)] [InvolutiveCompl (Know B)]
 
 /-- A value is strictly designated when it is designated and exact ([fitting-2021] Def 8.7.1). -/
 def StrictlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsExact a
@@ -190,14 +190,14 @@ instance {F : PrimeBifilter B} [DecidablePred (· ∈ F)]
 
 section Interlaced
 
-variable [Negation B] [IsInterlaced B] [NegConfComm B]
+variable [Conflation B] [Negation B] [IsInterlaced B] [NegConfComm B]
 
 theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     STValid F Γ Δ ↔ CValid F Γ Δ := by
   refine ⟨fun h ↦ h.comap (fun v ↦ ⟨v, fun p ↦ (v.2 p).isAnticonsistent⟩) (fun _ _ _ ↦ id)
     fun v ψ _ hψ ↦ ⟨hψ.1, eval_isExact v.2 ψ⟩, fun h ↦ ?_⟩
   choose e he hle using fun (v : {v : α → B // ∀ p, IsAnticonsistent (v p)}) p ↦
-    (v.2 p).exists_exact_kLE
+    (v.2 p).exists_isExact_kLE
   refine h.comap (fun v ↦ ⟨e v, he v⟩) (fun v φ _ hφ ↦ ?_) fun v ψ _ hψ ↦
     ⟨F.mem_of_kLE hψ.1 (eval_kLE_eval (hle v) ψ), eval_isAnticonsistent v.2 ψ⟩
   rwa [(eval_isExact (he v) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]

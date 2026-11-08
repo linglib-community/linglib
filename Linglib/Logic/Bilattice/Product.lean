@@ -35,7 +35,8 @@ mathlib has no bilattices.
   constructor and projections.
 * the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the `InvolutiveCompl` and
   `Negation` instances it underlies.
-* `Bilattice.Product.conflation`: the conflation induced by an involution of the factor.
+* the `InvolutiveCompl (Know (L ⊙ L))` instance: Fitting's conflation, induced by an involutive
+  complement of the factor, with the `Conflation` instance it underlies.
 
 ## Main results
 
@@ -226,26 +227,23 @@ end Negation
 
 /-! ### Conflation
 
-Swapping the coordinates and applying an order-reversing involution of the factor to each is a
-conflation of `L ⊙ L` ([fitting-1994] §7, [fitting-2021] §8.8). An involutive complement of the
-factor gives the conflation instance, which commutes with Ginsberg negation, and the exact,
-consistent and anticonsistent values read off the coordinates. -/
+Swapping the coordinates and complementing each in the factor is a conflation of `L ⊙ L`
+([fitting-1994] §7, [fitting-2021] §8.8): an involutive complement of the knowledge order that
+preserves the truth order and commutes with Ginsberg negation. The exact, consistent and
+anticonsistent values read off the coordinates. -/
 
 section Conflation
 
-/-- The conflation `⟨a, b⟩ ↦ ⟨f b, f a⟩` of `L ⊙ L` induced by an order-reversing involution `f`
-of the factor. -/
-abbrev conflation [Preorder L] (f : L → L) (hf : Function.Involutive f) (ha : Antitone f) :
-    Conflation (L ⊙ L) where
-  conf x := mk (f x.con) (f x.pro)
-  conf_conf x := ext (hf x.pro) (hf x.con)
-  conf_le_conf h := ⟨ha h.2, ha h.1⟩
-  conf_kLE_conf h := ⟨ha h.2, ha h.1⟩
-
 variable [Preorder L] [InvolutiveCompl L]
 
+/-- Fitting's conflation `⟨a, b⟩ ↦ ⟨bᶜ, aᶜ⟩`, the involutive complement of the knowledge order. -/
+instance : InvolutiveCompl (Know (L ⊙ L)) where
+  compl x := toKnow (mk (ofKnow x).conᶜ (ofKnow x).proᶜ)
+  compl_compl _ := ext (InvolutiveCompl.compl_compl _) (InvolutiveCompl.compl_compl _)
+  compl_le_compl h := ⟨InvolutiveCompl.compl_le_compl h.2, InvolutiveCompl.compl_le_compl h.1⟩
+
 instance : Conflation (L ⊙ L) :=
-  conflation (·ᶜ) InvolutiveCompl.compl_compl InvolutiveCompl.compl_anti
+  ⟨fun h ↦ ⟨InvolutiveCompl.compl_le_compl h.2, InvolutiveCompl.compl_le_compl h.1⟩⟩
 
 instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
 
