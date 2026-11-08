@@ -157,7 +157,7 @@ local notation "L₀" => listener (uniformOn (Set.univ : Set W)) (truthful fun u
 /-- The literal listener at a uniform prior (eq. 5) is uniform on the extension of the
 utterance. -/
 theorem listener_uniformOn_truthful_apply (u : U) : L₀ u = uniformOn ↑(sem u) := by
-  rw [listener_truthful_apply, uniformOn_cond Set.finite_univ .of_discrete, Set.univ_inter]
+  rw [listener_truthful_apply, uniformOn_univ_cond]
 
 section
 

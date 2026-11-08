@@ -146,8 +146,8 @@ theorem uniformOn_univ_cond_apply [Fintype W] (s t : Set W) [DecidablePred (· �
   have hc : ∀ u : Set W, ∀ [DecidablePred (· ∈ u)],
       Measure.count u = ((Finset.univ.filter (· ∈ u)).card : ℝ≥0∞) := fun u _ ↦
     (congrArg Measure.count (by ext; simp)).trans (Measure.count_apply_finset _)
-  rw [MeasureTheory.uniformOn_cond Set.finite_univ MeasurableSet.of_discrete, Set.univ_inter,
-    uniformOn, cond_apply MeasurableSet.of_discrete, div_eq_mul_inv, mul_comm, hc, hc]
+  rw [uniformOn_univ_cond, uniformOn, cond_apply MeasurableSet.of_discrete, div_eq_mul_inv,
+    mul_comm, hc, hc]
 
 theorem expectedValue_uniformOn_univ [Fintype W] (R : ι → Set W) (φ : Set W)
     [DecidablePred (· ∈ φ)] [∀ i, DecidablePred (· ∈ (φ ∩ R i))] :

@@ -763,8 +763,8 @@ variable [MeasurableSpace E] [MeasurableSingletonClass E] {X P : Finset E}
 
 -- (51), (52)
 theorem uniformOn_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = #X / #P := by
-  rw [uniformOn_apply_of_finite P.finite_toSet, Set.inter_eq_right.2 (Finset.coe_subset.2 h),
-    Set.ncard_coe_finset, Set.ncard_coe_finset]
+  classical
+  rw [uniformOn_apply_finset, Finset.inter_eq_right.2 h]
 
 -- (43)
 theorem uniformOn_eq_zero_iff_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = 0 ↔ X = ∅ := by
@@ -774,9 +774,9 @@ theorem uniformOn_eq_zero_iff_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X 
 -- (41)
 theorem uniformOn_eq_inv_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
     uniformOn (P : Set E) X = (#P : ℝ≥0∞)⁻¹ ↔ #X = 1 := by
-  have := uniformOn_eq_inv_ncard_iff (t := X) P.finite_toSet (Finset.coe_nonempty.2 hP)
-  rwa [Set.inter_eq_right.2 (Finset.coe_subset.2 h), Set.ncard_coe_finset,
-    Set.ncard_coe_finset] at this
+  rw [uniformOn_of_subset h, ENNReal.div_eq_inv_mul,
+    ENNReal.mul_eq_left (ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _))
+      (ENNReal.inv_ne_top.2 (by exact_mod_cast hP.card_pos.ne')), Nat.cast_eq_one]
 
 -- (44)
 theorem uniformOn_eq_one_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
@@ -789,9 +789,8 @@ theorem witnessType_propAtLeast_iff [Fintype E] {P : E → Prop} [DecidablePred 
     (hd : 0 < d) (hX : X ⊆ ({x | P x} : Finset E)) (hP : 0 < #{x | P x}) :
     WitnessType P (.propAtLeast n d) X ↔
       (n / d : ℝ≥0∞) ≤ uniformOn (({x | P x} : Finset E) : Set E) X := by
-  rw [le_uniformOn_iff (Finset.finite_toSet _) (Finset.coe_nonempty.2 (Finset.card_pos.1 hP)),
-    Set.inter_eq_right.2 (Finset.coe_subset.2 hX), Set.ncard_coe_finset, Set.ncard_coe_finset,
-    ← ENNReal.mul_div_right_comm,
+  rw [uniformOn_of_subset hX, ENNReal.le_div_iff_mul_le (.inl (by exact_mod_cast hP.ne'))
+      (.inl (ENNReal.natCast_ne_top _)), ← ENNReal.mul_div_right_comm,
     ENNReal.div_le_iff (by simpa using hd.ne') (by simp), ← Nat.cast_mul, ← Nat.cast_mul,
     Nat.cast_le, mul_comm _ d]
   exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hX, hP, h⟩⟩
