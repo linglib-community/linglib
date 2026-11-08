@@ -4,6 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfLifespan
 public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.Reference.Definiteness
 public import Studies.Dowty1991
 public import Linglib.Data.Examples.Readers
 
@@ -20,7 +21,8 @@ characterizations of the case regions.
 
 The paper's remarks on differential object marking, deferred to Grimm (2005), and on the size of
 the nominative or ergative region in a given language are not formalized. Definiteness is the
-paper's three-step hierarchy (14), the referring feature being the one that entails existence.
+substrate scale, the paper's three-step hierarchy (14), and the referring feature, the one that
+entails existence, is its cut at the specific indefinites.
 The entailments of a node, which subject selection counts, are its agentivity and persistence
 features (`entailmentCount`). The subject of *kiss* dominates its object at any common
 persistence level, since kissing changes neither (`kiss_subject_dominates`).
@@ -222,29 +224,24 @@ whose existence is not entailed, the bottom node of the lattice; the accusative 
 the node of existential persistence (beginning). An opacity-creating verb entails nothing for
 its object, so the noun phrase decides: a referring one exists when the event begins. -/
 
-/-- The definiteness hierarchy (14), on which a specific indefinite is referring, a definite
-referring and given, and a non-specific indefinite neither. -/
-inductive Definiteness where
-  | nonSpecificIndefinite
-  | specificIndefinite
-  | definite
-  deriving DecidableEq, Repr
+/-- The referring feature of the definiteness hierarchy (14a), on which a specific indefinite is
+referring, a definite referring and given, and a non-specific indefinite neither: the cut of the
+definiteness scale at the specific indefinites. -/
+def Referring (d : Definiteness) : Prop := .specific ≤ d
 
-/-- The referring feature of (14a). -/
-def Definiteness.Referring (d : Definiteness) : Prop := d ≠ .nonSpecificIndefinite
-
-instance (d : Definiteness) : Decidable d.Referring := inferInstanceAs (Decidable (_ ≠ _))
+instance (d : Definiteness) : Decidable (Referring d) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
 /-- The lowest node an object of an opacity-creating verb can occupy with a noun phrase of the
 given definiteness: the maximal patient once existence is entailed, the bottom otherwise. -/
 def opacityObject (d : Definiteness) : ParticipantType :=
-  if d.Referring then maximalPatient else ⊥
+  if Referring d then maximalPatient else ⊥
 
 /-- The object is in the accusative region iff the noun phrase refers, and otherwise at the bottom
 node of the governed genitive (12). -/
 theorem genitive_accusative_alternation (d : Definiteness) :
-    ((opacityObject d).toCaseRegion = .accAbs ↔ d.Referring) ∧
-      (opacityObject d = ⊥ ↔ ¬ d.Referring) := by
+    ((opacityObject d).toCaseRegion = .accAbs ↔ Referring d) ∧
+      (opacityObject d = ⊥ ↔ ¬ Referring d) := by
   cases d <;> decide
 
 theorem genitive_outside_region (n : ParticipantType) (h : n.InTransitiveRegion) :

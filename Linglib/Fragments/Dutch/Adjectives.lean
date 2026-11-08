@@ -67,7 +67,7 @@ instance (a : Adjective) : Decidable a.Declines := inferInstanceAs (Decidable (_
 /-- An attributive adjective takes the ending unless its noun phrase is indefinite and its head
 noun neuter and not plural. -/
 def TakesEnding (d : Definiteness) (g : Gender.Value) (n : Number) : Prop :=
-  d = .definite ∨ g = .common ∨ n = .plural
+  .definite ≤ d ∨ g = .common ∨ n = .plural
 
 instance (d : Definiteness) (g : Gender.Value) (n : Number) : Decidable (TakesEnding d g n) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
@@ -75,7 +75,8 @@ instance (d : Definiteness) (g : Gender.Value) (n : Number) : Decidable (TakesEn
 /-- `attributive a d g n` is the form of `a` before a noun of gender `g` and number `n` in a noun
 phrase of definiteness `d`: the inflected form where the adjective declines and the phrase
 takes the ending, and the bare form otherwise. -/
-def attributive (a : Adjective) (d : Definiteness) (g : Gender.Value) (n : Number) : String :=
+def attributive (a : Adjective) (d : Definiteness) (g : Gender.Value) (n : Number) :
+    String :=
   match a.inflected with
   | some f => if TakesEnding d g n then f else a.form
   | none => a.form
@@ -100,9 +101,9 @@ theorem attributive_of_not_declines {a : Adjective} (h : ¬ a.Declines) (d g n) 
 
 /-- Before a neuter singular or non-count noun in an indefinite noun phrase the ending is
 absent. -/
-@[simp] theorem attributive_indefinite_neuter_singular (a : Adjective) :
-    attributive a .indefinite .neuter .singular = a.form := by
-  rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
+@[simp] theorem attributive_indefinite_neuter_singular (a : Adjective) {d : Definiteness}
+    (hd : d < .definite) : attributive a d .neuter .singular = a.form := by
+  rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding, not_le.2 hd]
 
 /-- `heid a` is the noun in *-heid* derived from `a`, which is of common gender. -/
 def heid (a : Adjective) : String := a.form ++ "heid"
@@ -139,24 +140,25 @@ def gouden : Adjective := { form := "gouden" }
 /-- The neuter *paard* takes the bare form in an indefinite singular phrase only, *een oud paard*,
 *het oude paard*, *oude paarden*. -/
 theorem oud_paard :
-    attributive oud .indefinite Nouns.paard.gender .singular = "oud" ∧
+    (∀ d < Definiteness.definite, attributive oud d Nouns.paard.gender .singular = "oud") ∧
       attributive oud .definite Nouns.paard.gender .singular = "oude" ∧
-      attributive oud .indefinite Nouns.paard.gender .plural = "oude" := by
+      ∀ d < Definiteness.definite, attributive oud d Nouns.paard.gender .plural = "oude" := by
   decide
 
 theorem oud_stoel :
-    attributive oud .indefinite Nouns.stoel.gender .singular = "oude" ∧
+    (∀ d < Definiteness.definite, attributive oud d Nouns.stoel.gender .singular = "oude") ∧
       attributive oud .definite Nouns.stoel.gender .singular = "oude" := by
   decide
 
 theorem lekker_bier_rijst :
-    attributive lekker .indefinite Nouns.bier.gender .singular = "lekker" ∧
+    (∀ d < Definiteness.definite, attributive lekker d Nouns.bier.gender .singular = "lekker") ∧
       attributive lekker .definite Nouns.bier.gender .singular = "lekkere" ∧
-      attributive lekker .indefinite Nouns.rijst.gender .singular = "lekkere" := by
+      ∀ d < Definiteness.definite,
+        attributive lekker d Nouns.rijst.gender .singular = "lekkere" := by
   decide
 
 theorem oranje_jas_gouden_ring :
-    attributive oranje .indefinite Nouns.jas.gender .singular = "oranje" ∧
+    (∀ d < Definiteness.definite, attributive oranje d Nouns.jas.gender .singular = "oranje") ∧
       attributive gouden .definite Nouns.ring.gender .singular = "gouden" := by
   decide
 

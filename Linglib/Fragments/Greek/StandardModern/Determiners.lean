@@ -20,12 +20,12 @@ namespace Greek.StandardModern.Determiners
 
 /-- The definite article with the given form. -/
 def definite (form : String) : Article :=
-  { form, definiteness := .definite, exponent := .dedicatedMorpheme
+  { form, definiteness := {.definite}, exponent := .dedicatedMorpheme
     uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The indefinite article with the given form. -/
 def indefinite (form : String) : Article :=
-  { form, definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form, definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- *o* — the masculine singular definite article. -/
 def o : Article := definite "o"

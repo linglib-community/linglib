@@ -32,12 +32,12 @@ namespace Akan.Determiners
 
 /-- The definite *nó* marks a familiar referent. -/
 def no : Article :=
-  { form := "nó", definiteness := .definite, exponent := .dedicatedMorpheme,
+  { form := "nó", definiteness := {.definite}, exponent := .dedicatedMorpheme,
     uses := {.anaphoric} }
 
 /-- The indefinite *bí* is translated 'a certain'. -/
 def bi : Article :=
-  { form := "bí", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "bí", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- The determiners. -/
 def inventory : Determiner.Inventory := [.article no, .article bi]

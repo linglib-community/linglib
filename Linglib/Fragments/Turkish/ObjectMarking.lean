@@ -40,18 +40,18 @@ namespace Turkish.ObjectMarking
 
 /-- The accusative marks a direct object that is definite or a specific indefinite, whatever its
 animacy. -/
-def accusative : Set DefinitenessDegree := Set.Ici .specific
+def accusative : Set Definiteness := Set.Ici .specific
 
 instance : DecidablePred (· ∈ accusative) := fun d ↦
   inferInstanceAs (Decidable (d ∈ Set.Ici _))
 
 /-- An object must stand immediately before the verb when it is unmarked. -/
-def MustBePreverbal (d : DefinitenessDegree) : Prop := d ∉ accusative
+def MustBePreverbal (d : Definiteness) : Prop := d ∉ accusative
 
 instance : DecidablePred MustBePreverbal := fun d ↦ inferInstanceAs (Decidable (d ∉ accusative))
 
 /-- Only a non-specific indefinite is confined to the preverbal position. -/
-theorem mustBePreverbal_iff (d : DefinitenessDegree) : MustBePreverbal d ↔ d = .nonSpecific := by
+theorem mustBePreverbal_iff (d : Definiteness) : MustBePreverbal d ↔ d = .nonSpecific := by
   cases d <;> decide
 
 end Turkish.ObjectMarking

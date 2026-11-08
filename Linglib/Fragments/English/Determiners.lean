@@ -110,7 +110,7 @@ not a generalized quantifier. -/
 
 /-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]. -/
 def the : Article :=
-  { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
+  { form := "the", definiteness := {.definite}, exponent := .dedicatedMorpheme
   , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The weak form of *the*, /ðə/ before a consonant and /ði/ before a vowel, though some speakers
@@ -127,7 +127,8 @@ def indefinite : Phonology.Onset → String
 
 /-- *A* is the singular indefinite article, under its form before a consonant. -/
 def a : Article :=
-  { form := indefinite .consonant, definiteness := .indefinite, exponent := .dedicatedMorpheme,
+  { form := indefinite .consonant, definiteness := {.nonSpecific, .specific},
+    exponent := .dedicatedMorpheme,
     numberRestriction := some .singular }
 
 open English.Phonology in

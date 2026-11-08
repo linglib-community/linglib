@@ -25,9 +25,10 @@ namespace Cantonese.Determiners
 /-- The Cantonese determiners are the syncretic [Clf-N] definite, the
     [jat-Clf-N] indefinite, and the demonstrative paradigm (*nei*). -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
+  [ .article { form := "Clf-N", definiteness := {.definite}, exponent := .classifierPhrase,
                uses := {.immediateSituation, .largerSituation, .anaphoric} },
-    .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
+    .article { form := "jat-Clf-N", definiteness := {.nonSpecific, .specific},
+               exponent := .numeralClassifier },
     .demonstrative { form := "nei", deixis := Person.first.participantSets } ]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide

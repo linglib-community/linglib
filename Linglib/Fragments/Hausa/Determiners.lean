@@ -34,17 +34,17 @@ namespace Hausa.Determiners
 
 /-- The definite suffix *-n*, for a uniquely identifiable referent. -/
 def n : Article :=
-  { form := "-n", definiteness := .definite, exponent := .dedicatedMorpheme,
+  { form := "-n", definiteness := {.definite}, exponent := .dedicatedMorpheme,
     uses := {.largerSituation} }
 
 /-- The anaphoric *ɗîn*, for a discourse-old referent. -/
 def din : Article :=
-  { form := "ɗîn", definiteness := .definite, exponent := .dedicatedMorpheme,
+  { form := "ɗîn", definiteness := {.definite}, exponent := .dedicatedMorpheme,
     uses := {.anaphoric} }
 
 /-- The specific indefinite *wani*. -/
 def wani : Article :=
-  { form := "wani", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "wani", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- The distributive universal *kōwànè* 'every, each', masculine. -/
 def kowane : QuantificationalDeterminer := { form := "kōwànè", numberRestriction := some .singular }

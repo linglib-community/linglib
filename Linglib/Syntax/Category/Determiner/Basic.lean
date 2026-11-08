@@ -25,12 +25,12 @@ with its own account of when a presupposition is marked.
 ## Main declarations
 
 * `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
-* `Article` records definiteness, the exponent, the definite uses the article obligatorily
-  expones and the number it selects; `DemonstrativeDeterminer`, `QuantificationalDeterminer` and
-  `PossessiveDeterminer` are the other specializations.
+* `Article` records the degrees of definiteness it can mark, the exponent, the definite uses it
+  obligatorily expones and the number it selects; `DemonstrativeDeterminer`,
+  `QuantificationalDeterminer` and `PossessiveDeterminer` are the other specializations.
 * `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
-  is its kind together with an article's definiteness, `Entry.strengths` the strengths it
-  marks, and `Entry.Selects` the numbers of the nominals it applies to.
+  is its kind, `Entry.definiteness` and `Entry.strengths` the degrees and strengths it marks,
+  and `Entry.Selects` the numbers of the nominals it applies to.
 * `Determiner.Inventory` is a language's declared inventory, and `Inventory.strengths` the
   strengths its entries mark; `Inventory.Marks` and `Inventory.IsSyncretic` lift the entry
   predicates.
@@ -97,8 +97,9 @@ end Determiner
 /-- An article is the definite or indefinite determiner. Its `uses` are the definite uses it
 obligatorily expones, and they are empty for an indefinite. -/
 structure Article extends Determiner where
-  /-- The article is definite or indefinite. -/
-  definiteness : Definiteness
+  /-- The degrees of definiteness of the nominals the article can mark: the definite degree for a
+  definite article and both indefinite degrees for a plain indefinite one. -/
+  definiteness : Finset Definiteness
   /-- The exponent of the article. -/
   exponent : Determiner.Exponent
   /-- The definite uses the article obligatorily expones. -/
@@ -147,9 +148,9 @@ inductive Entry where
 
 namespace Entry
 
-/-- The kind of an entry records an article's definiteness and nothing else. -/
+/-- The kind of an entry. -/
 inductive Kind where
-  | article (d : Definiteness)
+  | article
   | demonstrative
   | quantifier
   | possessive
@@ -157,10 +158,16 @@ inductive Kind where
 
 /-- The kind of an entry. -/
 def kind : Entry → Kind
-  | .article a => .article a.definiteness
+  | .article _ => .article
   | .demonstrative _ => .demonstrative
   | .quantifier _ => .quantifier
   | .possessive _ => .possessive
+
+/-- The degrees of definiteness an entry can mark are an article's; a demonstrative, quantifier
+or possessive marks none by its lexicon. -/
+def definiteness : Entry → Finset Definiteness
+  | .article a => a.definiteness
+  | .demonstrative _ | .quantifier _ | .possessive _ => ∅
 
 /-- The definite uses an entry obligatorily expones are an article's `uses`; a demonstrative,
 quantifier or possessive expones none by its lexicon. -/
@@ -252,7 +259,7 @@ nominal needs no determiner, a unique or anaphoric definite needs an entry marki
 strength, and an indefinite, demonstrative or possessive needs an entry of that kind. -/
 def Realizes : NominalKind → Prop
   | .bare => True
-  | .indefinite => ∃ e ∈ ds, e.kind = .article .indefinite
+  | .indefinite => ∃ e ∈ ds, ∃ d ∈ e.definiteness, d < .definite
   | .unique => ds.Marks .uniqueness
   | .anaphoric => ds.Marks .familiarity
   | .demonstrative => ∃ e ∈ ds, e.kind = .demonstrative

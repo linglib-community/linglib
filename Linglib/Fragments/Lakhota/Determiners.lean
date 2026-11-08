@@ -38,11 +38,12 @@ namespace Lakhota.Determiners
 /-- The Lakhota determiners are the general definite *kiŋ*, the
     anaphoric-only definite *k'uŋ*, and the specific indefinite *waŋ*. -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
+  [ .article { form := "kiŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation, .anaphoric} },
-    .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
+    .article { form := "k'uŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} },
-    .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme,
+    .article { form := "waŋ", definiteness := {.nonSpecific, .specific},
+               exponent := .dedicatedMorpheme,
                numberRestriction := some .singular } ]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide

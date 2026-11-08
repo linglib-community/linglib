@@ -28,20 +28,20 @@ namespace Farsi.Determiners
 
 /-- *yek* یک 'one' marks an indefinite. -/
 def yek : Article :=
-  { form := "yek", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "yek", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- *ye* یه is the informal form of *yek*. -/
 def ye : Article :=
-  { form := "ye", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "ye", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- The enclitic *-i* ـی marks an indefinite on the noun. -/
 def i : Article :=
-  { form := "-i", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "-i", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme }
 
 /-- *čand-ta* چندتا 'some', the quantity word *čand* with the classifier *-ta*, marks a plural
 indefinite. -/
 def candTa : Article :=
-  { form := "čand-ta", definiteness := .indefinite, exponent := .numeralClassifier,
+  { form := "čand-ta", definiteness := {.nonSpecific, .specific}, exponent := .numeralClassifier,
     numberRestriction := some .plural }
 
 end Farsi.Determiners

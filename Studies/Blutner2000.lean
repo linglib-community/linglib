@@ -6,7 +6,6 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Reference.Definiteness
 
 /-!
 # Blutner (2000): Some aspects of optimality in natural language interpretation
@@ -278,20 +277,20 @@ theorem strength_local_height_intermediate :
 context neutral about cars both continuations have the same outcome, but only the definite
 accommodates. -/
 
-/-- AvoidA penalizes the presuppositional definite, which accommodates the car, and not its
-non-triggering indefinite alternative, which introduces it. -/
-def accidentAvoidA : Definiteness × Unit → ℕ
-  | (.definite, _) => 1
-  | (.indefinite, _) => 0
+/-- AvoidA penalizes the presuppositional definite (`true`), which accommodates the car, and not
+its non-triggering indefinite alternative (`false`), which introduces it. -/
+def accidentAvoidA : Bool × Unit → ℕ
+  | (true, _) => 1
+  | (false, _) => 0
 
 theorem accommodation_blocked :
-    superoptimal (Finset.univ : Finset (Definiteness × Unit)) accidentAvoidA =
-      {(.indefinite, ())} := by
+    superoptimal (Finset.univ : Finset (Bool × Unit)) accidentAvoidA =
+      {(false, ())} := by
   decide
 
 theorem accommodation_blocked_is_Q :
-    Blocks (·.2 = ·.2) accidentAvoidA ↑(Finset.univ : Finset (Definiteness × Unit))
-      (.definite, ()) := by
+    Blocks (·.2 = ·.2) accidentAvoidA ↑(Finset.univ : Finset (Bool × Unit))
+      (true, ()) := by
   decide
 
 end Blutner2000

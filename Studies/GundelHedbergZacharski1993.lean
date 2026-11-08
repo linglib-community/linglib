@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Discourse.Givenness
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Mandarin.Determiners
@@ -65,6 +64,40 @@ namespace GundelHedbergZacharski1993
 
 open Discourse
 
+/-! ### The Givenness Hierarchy -/
+
+/-- A cognitive status is a tier of the Givenness Hierarchy, a condition on a referent that a
+referring form signals. A referent with a status has every lower one. -/
+inductive CognitiveStatus where
+  /-- The referent is at the current center of attention, as zero and unstressed pronouns
+  require. -/
+  | inFocus
+  /-- The referent is represented in current short-term memory (*that*, *this*, *this N*). -/
+  | activated
+  /-- The addressee already has a representation of the referent in memory, long-term or
+  short-term, and so can uniquely identify it (*that N*). -/
+  | familiar
+  /-- The addressee can identify the speaker's intended referent from the nominal alone
+  (*the N*). -/
+  | uniquelyIdentifiable
+  /-- The speaker intends to refer to a particular object (indefinite *this N*). -/
+  | referential
+  /-- The addressee can access a representation of the type of object described (*a N*). -/
+  | typeIdentifiable
+  deriving DecidableEq, Repr, Fintype, Inhabited
+
+/-- The rank of a status, higher for the more restrictive. -/
+def CognitiveStatus.rank : CognitiveStatus → ℕ
+  | .inFocus              => 5
+  | .activated            => 4
+  | .familiar             => 3
+  | .uniquelyIdentifiable => 2
+  | .referential          => 1
+  | .typeIdentifiable     => 0
+
+-- p. 276: each status entails every lower one.
+instance : LinearOrder CognitiveStatus := LinearOrder.lift' CognitiveStatus.rank (by decide)
+
 /-! ### Table 1 -/
 
 /-- A kind of referring form: the forms of different languages that Table 1 aligns. -/
@@ -90,7 +123,7 @@ inductive Form.Kind where
   deriving DecidableEq, Fintype
 
 /-- Table 1: the forms of a language, each with the highest status it is listed under. -/
-def table1 : Language → List (Form.Kind × GivennessStatus)
+def table1 : Language → List (Form.Kind × CognitiveStatus)
   | .chinese =>
     [(.zero, .inFocus), (.pronoun, .inFocus), (.stressedPronoun, .activated),
      (.demonstrative Mandarin.Determiners.zhe.deixis, .activated),
@@ -132,7 +165,7 @@ def table1 : Language → List (Form.Kind × GivennessStatus)
      (.bareN, .typeIdentifiable)]
 
 /-- The status a form of a language requires, if Table 1 lists it. -/
-def required (l : Language) (k : Form.Kind) : Option GivennessStatus := (table1 l).lookup k
+def required (l : Language) (k : Form.Kind) : Option CognitiveStatus := (table1 l).lookup k
 
 /-- Corresponding forms of the five languages require the same status, unless they are
 demonstrative determiners. -/
@@ -157,6 +190,18 @@ theorem activated_le_of_pronominal :
 -- p. 285
 theorem required_eq_inFocus :
     ∀ l k, required l k = some .inFocus → k = .zero ∨ k = .pronoun := by
+  decide +kernel
+
+-- fn. 4: a noun phrase is definite when its form requires a uniquely identifiable referent, so
+-- every English form is definite but *a N* and indefinite *this N*, as the fragment marks *the*
+-- and *a*.
+theorem uniquelyIdentifiable_le_iff_english :
+    (∀ k, ∀ s ∈ required .english k,
+      .uniquelyIdentifiable ≤ s ↔ k ≠ .indefiniteN ∧ k ≠ .indefiniteThisN) ∧
+    (∀ s ∈ required .english .definiteN,
+      .uniquelyIdentifiable ≤ s ↔ .definite ∈ English.Determiners.the.definiteness) ∧
+    ∀ s ∈ required .english .indefiniteN,
+      .uniquelyIdentifiable ≤ s ↔ .definite ∈ English.Determiners.a.definiteness := by
   decide +kernel
 
 /-! ### The corpus -/
@@ -198,7 +243,7 @@ def Form.kinds : Form → List Form.Kind
   | .yiN | .aN | .unN => [.indefiniteN]
 
 /-- The status a column records. -/
-def Status.toGivennessStatus : Status → GivennessStatus
+def Status.toCognitiveStatus : Status → CognitiveStatus
   | .inFocus => .inFocus
   | .activated => .activated
   | .familiar => .familiar
@@ -207,12 +252,12 @@ def Status.toGivennessStatus : Status → GivennessStatus
   | .typeIdentifiable => .typeIdentifiable
 
 /-- The status a printed form requires in a language, the weakest its kinds require. -/
-def requiredOf (l : Language) (f : Form) : Option GivennessStatus :=
+def requiredOf (l : Language) (f : Form) : Option CognitiveStatus :=
   (f.kinds.filterMap (required l)).min?
 
 /-- The referent of a cell meets the status its form requires. -/
 def Cell.Meets (c : Cell) : Prop :=
-  ∀ r ∈ requiredOf c.language c.form, r ≤ c.status.toGivennessStatus
+  ∀ r ∈ requiredOf c.language c.form, r ≤ c.status.toCognitiveStatus
 
 instance : DecidablePred Cell.Meets := fun c ↦
   inferInstanceAs (Decidable (∀ r ∈ requiredOf c.language c.form, _))
@@ -239,7 +284,7 @@ that meets their requirement, and only there. -/
 theorem attested_iff :
     ∀ p ∈ [(Language.english, Form.theN), (.english, .thatPronoun), (.russian, .bare),
       (.russian, .etoN)], ∀ s : Status,
-        Attested p.1 p.2 s ↔ ∀ r ∈ requiredOf p.1 p.2, r ≤ s.toGivennessStatus := by
+        Attested p.1 p.2 s ↔ ∀ r ∈ requiredOf p.1 p.2, r ≤ s.toCognitiveStatus := by
   decide +kernel
 
 /-- The tokens of the cells satisfying `p`. -/
@@ -278,7 +323,7 @@ instance : DecidablePred Form.Full := fun f ↦
 
 /-- The tokens of a form in a language whose referent is at least familiar. -/
 def familiarTokens (l : Language) (f : Form) : ℕ :=
-  tokens fun c ↦ c.language = l ∧ c.form = f ∧ .familiar ≤ c.status.toGivennessStatus
+  tokens fun c ↦ c.language = l ∧ c.form = f ∧ .familiar ≤ c.status.toCognitiveStatus
 
 /-- In every language the most frequent full noun phrase for a familiar referent is the least
 restrictive one with a definite reading, the definite article where the language has one and a
@@ -291,7 +336,7 @@ theorem familiar_mostFrequent (l : Language) :
 
 /-- The tokens of full noun phrases in a language whose referent is at least familiar. -/
 def fullFamiliarTokens (l : Language) : ℕ :=
-  tokens fun c ↦ c.language = l ∧ c.form.Full ∧ .familiar ≤ c.status.toGivennessStatus
+  tokens fun c ↦ c.language = l ∧ c.form.Full ∧ .familiar ≤ c.status.toCognitiveStatus
 
 -- p. 299
 theorem familiar_share_gt :

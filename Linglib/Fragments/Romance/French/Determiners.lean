@@ -58,14 +58,14 @@ def toujours : QuantificationalDeterminer :=
 /-- *un* — indefinite article, singular. -/
 def un : Article :=
   { form := "un"
-  , definiteness := .indefinite
+  , definiteness := {.nonSpecific, .specific}
   , exponent := .dedicatedMorpheme
   , numberRestriction := some .singular }
 
 /-- *les* — definite plural article. -/
 def les : Article :=
   { form := "les"
-  , definiteness := .definite
+  , definiteness := {.definite}
   , exponent := .dedicatedMorpheme
   , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
