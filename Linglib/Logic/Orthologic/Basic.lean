@@ -20,7 +20,7 @@ canonical valuation shows that a consequence holding in every ortholattice is de
 The Lindenbaum–Tarski algebra is `Antisymmetrization F (· ≤ ·)` for the consequence preorder,
 mathlib's free functor from preorders to partial orders, so the quotient and its order come for
 free. It is built once for any orthologic, and the epistemic orthologic of
-`Logic/Orthologic/EpistemicOrthologic.lean` reuses it.
+`Logic/Orthologic/Epistemic/Basic.lean` reuses it.
 
 ## References
 

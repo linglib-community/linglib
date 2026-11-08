@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Logic.Orthologic.EpistemicFrame
-public import Linglib.Logic.Orthologic.EpistemicOrthologic
+public import Linglib.Logic.Orthologic.Epistemic.Extension
+public import Linglib.Logic.Orthologic.Epistemic.Basic
 public import Linglib.Core.Order.Interval.Fintype
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod

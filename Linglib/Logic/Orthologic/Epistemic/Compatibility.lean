@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Logic.Orthologic.Compatibility
-public import Linglib.Logic.Orthologic.Epistemic
+public import Linglib.Logic.Orthologic.Epistemic.Ortholattice
 
 /-!
 # Modal compatibility frames

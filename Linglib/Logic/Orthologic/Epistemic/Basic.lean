@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Orthologic.Basic
-public import Linglib.Logic.Orthologic.Epistemic
+public import Linglib.Logic.Orthologic.Epistemic.Ortholattice
 
 /-!
 # The epistemic orthologic

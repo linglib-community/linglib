@@ -22,8 +22,8 @@ algebra, it makes `□` the identity.
 The paper's modal ortholattice is not a new structure: `□` is a bundled `InfTopHom L L`, since
 one lattice carries many modalities, and `IsEpistemic box` is the `Prop` that it is factive and
 satisfies the law. The frame semantics producing epistemic ortholattices is
-`Logic/Orthologic/ModalFrame.lean`, and the logic they characterize is
-`Logic/Orthologic/EpistemicOrthologic.lean`.
+`Logic/Orthologic/Epistemic/Compatibility.lean`, and the logic they characterize is
+`Logic/Orthologic/Epistemic/Basic.lean`.
 
 ## References
 

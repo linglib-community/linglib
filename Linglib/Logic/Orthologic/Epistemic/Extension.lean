@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Orthologic.ModalFrame
+public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Interval.Basic
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.Finset.Lattice.Fold
