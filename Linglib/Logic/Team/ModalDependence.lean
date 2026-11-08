@@ -308,9 +308,7 @@ theorem boundedBisimInvariant_support (φ : Formula Atom) :
 team and are invariant under bounded bisimulation. -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        IsLowerSet (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} :=
+      {P | Fiberwise (fun T ↦ IsLowerSet T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} :=
   Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩,
     boundedBisimInvariant_support φ⟩
 

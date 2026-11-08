@@ -1,33 +1,25 @@
 module
 
 public import Linglib.Logic.Team.BSML.Classical
-public import Linglib.Logic.Team.Bisimulation
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Fintype.Prod
+public import Linglib.Logic.Team.WorldType
 
 /-!
 # Characteristic formulas for BSML
 
-The world type of depth `k` of a world, over `n` atoms enumerated by `e`, records the truth values
-of these atoms and, for positive `k`, the set of depth `k - 1` types of the world's successors.
-Each type has a characteristic (Hintikka) formula, an `NE`-free formula that holds at a world
-exactly when the world has that type. Two worlds have the same type exactly when they are
-`k`-bisimilar, once `e` enumerates every atom. The strong Hintikka formula of a set of types `T` is
-supported by a team exactly when the types of its worlds are those in `T`.
+Each world type of `Team/WorldType.lean` has a characteristic (Hintikka) formula, an `NE`-free
+formula that holds at a world exactly when the world has that type. The strong Hintikka formula of
+a set of types `T` is supported by a team exactly when the types of its worlds are those in `T`.
 
 ## Main definitions
 
 * `verum`, `bigConj`, `bigDisj`, `bigDisjNE`: `⊤` as `p ∨ ¬p`, finite conjunction and
   disjunction, and finite disjunction with each disjunct conjoined with `NE`.
-* `WorldType n k`, `worldType e M k w`: the world types, and the type of a world.
 * `hintikka e k τ`, `strongHintikka e T`: the Hintikka formulas of a type and of a set of types.
 * `typeDisj e S`: the disjunction of the Hintikka formulas of a set of types.
 
 ## Main results
 
 * `realize_hintikka_iff`: the Hintikka formula of `τ` holds at `w` iff `w` has type `τ`.
-* `worldType_eq_iff_worldBisim`: two worlds have the same type iff they are `k`-bisimilar.
-* `image_worldType_eq_iff_stateBisim`: two teams have the same types iff they are `k`-bisimilar.
 * `realize_hintikka_worldType_iff`: the Hintikka formula of `w`'s type holds at `w'` iff `w'` is
   `k`-bisimilar to `w`.
 * `support_strongHintikka_iff`: a team supports the strong Hintikka formula of `T` iff the types
@@ -135,45 +127,7 @@ theorem modalDepth_bigDisj {L : List (Formula Atom)} {k : ℕ} (hL : ∀ x ∈ L
 /-- `bigDisjNE L` is the disjunction of the formulas of `L`, each conjoined with `NE`. -/
 def bigDisjNE (L : List (Formula Atom)) : Formula Atom := bigDisj (L.map fun x ↦ .conj x .ne)
 
-/-! ### World types -/
-
-/-- A world type of depth `k` over `n` atoms gives the truth values of the atoms and, at positive
-depth, the set of the depth `k - 1` types of the successors. -/
-def WorldType (n : ℕ) : ℕ → Type
-  | 0 => Fin n → Bool
-  | k + 1 => (Fin n → Bool) × Finset (WorldType n k)
-
-namespace WorldType
-
-variable {n : ℕ}
-
-noncomputable instance instDecidableEq (k : ℕ) : DecidableEq (WorldType n k) := Classical.decEq _
-
-noncomputable instance instFintype : (k : ℕ) → Fintype (WorldType n k)
-  | 0 => inferInstanceAs (Fintype (Fin n → Bool))
-  | k + 1 => @instFintypeProd _ _ _ (@Finset.fintype _ (instFintype k))
-
-/-- `τ.val` gives the truth values of the atoms at the type `τ`. -/
-def val : {k : ℕ} → WorldType n k → Fin n → Bool
-  | 0, a => a
-  | _ + 1, τ => τ.1
-
-end WorldType
-
 variable {n : ℕ} (e : Fin n → Atom)
-
-open scoped Classical in
-/-- `worldType e M k w` is the type of depth `k` of the world `w`, over the atoms enumerated
-by `e`. -/
-noncomputable def worldType (M : KripkeModel W Atom) : (k : ℕ) → W → WorldType n k
-  | 0, w => fun i ↦ decide (M.val (e i) w)
-  | k + 1, w => (fun i ↦ decide (M.val (e i) w), (M.access w).image (worldType M k))
-
-open scoped Classical in
-omit [Inhabited Atom] in
-theorem val_worldType (M : KripkeModel W Atom) :
-    ∀ (k : ℕ) (w : W), (worldType e M k w).val = fun i ↦ decide (M.val (e i) w)
-  | 0, _ | _ + 1, _ => rfl
 
 /-! ### Hintikka formulas -/
 
@@ -262,44 +216,6 @@ theorem realize_hintikka_iff (M : KripkeModel W Atom) :
       fun h ↦ ⟨fun σ hσ ↦ (h σ).mpr hσ, fun v hv ↦ ⟨_, (h _).mp ⟨v, hv, rfl⟩, rfl⟩⟩⟩
     obtain ⟨x, hx, rfl⟩ := h₂ v hv
     exact hσ ▸ hx
-
-omit [Inhabited Atom] in
-/-- Two worlds have the same type exactly when they are `k`-bisimilar, once `e` enumerates every
-atom. -/
-theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeModel W Atom}
-    {M' : KripkeModel W' Atom} :
-    ∀ (k : ℕ) (w : W) (w' : W'), worldType e M k w = worldType e M' k w' ↔ WorldBisim k M w M' w'
-  | 0, w, w' => by
-    rw [worldType, worldType, funext_iff, WorldBisim]
-    simp only [decide_eq_decide]
-    exact (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm
-  | k + 1, w, w' => by
-    rw [worldType, worldType, Prod.ext_iff, funext_iff, WorldBisim, ← Finset.coe_inj,
-      Finset.coe_image, Finset.coe_image, ← Set.liftRel_iff_image_eq]
-    simp only [decide_eq_decide]
-    exact and_congr (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm
-      ⟨.imp (worldType_eq_iff_worldBisim he k _ _).1,
-        .imp (worldType_eq_iff_worldBisim he k _ _).2⟩
-
-omit [Inhabited Atom] in
-/-- Two teams have the same types exactly when they are `k`-bisimilar, once `e` enumerates every
-atom. -/
-theorem image_worldType_eq_iff_stateBisim (he : Function.Surjective e) {k : ℕ}
-    {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {s : Finset W} {s' : Finset W'} :
-    s.image (worldType e M k) = s'.image (worldType e M' k) ↔ StateBisim k M s M' s' := by
-  rw [← Finset.coe_inj, Finset.coe_image, Finset.coe_image, ← Set.liftRel_iff_image_eq]
-  exact ⟨.imp (worldType_eq_iff_worldBisim he k _ _).1,
-    .imp (worldType_eq_iff_worldBisim he k _ _).2⟩
-
-omit [Inhabited Atom] in
-/-- The type of a world of a disjoint union is its type in its summand. -/
-theorem worldType_sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) (k : ℕ) :
-    worldType e (M.sum M') k = Sum.elim (worldType e M k) (worldType e M' k) := by
-  induction k with
-  | zero => funext w; cases w <;> rfl
-  | succ k ih =>
-    funext w
-    cases w <;> exact Prod.ext rfl (by ext; simp [worldType, ih])
 
 /-- The Hintikka formula of the type of `w` holds at `w'` exactly when `w'` is `k`-bisimilar to `w`
 ([aloni-anttila-yang-2024] Theorem 3.3). -/

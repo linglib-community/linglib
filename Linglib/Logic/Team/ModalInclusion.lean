@@ -355,9 +355,7 @@ empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-
 -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} :=
+      {P | Fiberwise (fun T ↦ SupClosed T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} :=
   Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨supClosed_support M φ, support_empty M φ⟩,
     boundedBisimInvariant_support φ⟩
 
@@ -367,9 +365,7 @@ The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `�
 -/
 theorem range_support_ssubset_of_subsingleton [Subsingleton Atom] [Nonempty Atom] :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} := by
+      {P | Fiberwise (fun T ↦ SupClosed T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} := by
   refine ⟨range_support_subset, fun h ↦ ?_⟩
   inhabit Atom
   let Q : Set (PointedTeam.{u} Atom) := {q | q.team = ∅ ∨ ∃ w ∈ q.team, q.model.val default w}

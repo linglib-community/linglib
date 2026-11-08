@@ -15,13 +15,18 @@ invariant under `r` when teams related in this way agree on them. Every connecti
 so a team logic whose evaluation is a fold over these connectives is invariant under bounded
 bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.PointedTeam) is
 [invariant under bounded bisimulation](##ModalLogic.BoundedBisimInvariant) across models; Aloni's
-indisputability and state-basedness are not, so no such logic defines them.
+indisputability and state-basedness are not, so no such logic defines them. The expressive power
+of each team logic is a class of invariant properties that meet a closure condition
+[in every model](##ModalLogic.Fiberwise).
 
 ## Main definitions
 
 * `Team.Invariant r P P'`: teams related by the lifting of `r` agree on `P` and `P'`.
 * `ModalLogic.WorldBisim k M w M' w'`: `k`-bisimilarity of pointed Kripke models.
 * `ModalLogic.StateBisim k M s M' s'`: its lifting to teams.
+* `ModalLogic.BisimInvariantAt k P`, `ModalLogic.BoundedBisimInvariant P`: invariance of a class
+  of pointed team models under `k`-bisimulation, and for some `k`.
+* `ModalLogic.Fiberwise C P`: in every model, the teams in `P` meet the condition `C`.
 
 ## Main results
 
@@ -284,11 +289,23 @@ def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeMod
 
 universe u
 
-/-- A class of pointed team models is invariant under bounded bisimulation when, for some depth
-`k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
+/-- A class of pointed team models is invariant under `k`-bisimulation when it is closed under
+`k`-bisimilarity across models. -/
+def BisimInvariantAt (k : ℕ) (P : Set (PointedTeam.{u} Atom)) : Prop :=
+  ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom, StateBisim k p.model p.team p'.model p'.team → p' ∈ P
+
+/-- A class of pointed team models is invariant under bounded bisimulation when it is invariant
+under `k`-bisimulation for some depth `k` ([anttila-2025] Definition 2.3.9). -/
 def BoundedBisimInvariant (P : Set (PointedTeam.{u} Atom)) : Prop :=
-  ∃ k : ℕ, ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom,
-    StateBisim k p.model p.team p'.model p'.team → p' ∈ P
+  ∃ k, BisimInvariantAt k P
+
+/-- A class of pointed team models meets a condition `C` on team properties **fiberwise** when
+in every model the teams it holds of meet `C`. The expressive power of a team logic is a class
+of invariant properties that meet such a condition, union closure for one logic and downward
+closure for another. -/
+def Fiberwise (C : ∀ {W : Type u} [DecidableEq W], Team.TeamProperty W → Prop)
+    (P : Set (PointedTeam.{u} Atom)) : Prop :=
+  ∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom), C (PointedTeam.mk W M ⁻¹' P)
 
 /-! ### Aloni's conditions are not invariant -/
 
