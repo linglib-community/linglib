@@ -992,7 +992,7 @@
       "Lexeme_ID": "car",
       "Cell": "nom",
       "Form": "auto",
-      "Segments": ["auto"],
+      "Morphs": ["auto"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1000,7 +1000,7 @@
       "Lexeme_ID": "car",
       "Cell": "gen",
       "Form": "auton",
-      "Segments": ["auto", "n"],
+      "Morphs": ["auto", "n"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1008,7 +1008,7 @@
       "Lexeme_ID": "him_her",
       "Cell": "acc",
       "Form": "hänet",
-      "Segments": ["häne", "t"],
+      "Morphs": ["häne", "t"],
       "Comment": "The accusative ending is confined to the personal pronouns and kuka.",
       "Source": ["karlsson-2017[§3.1]"]
     },
@@ -1017,7 +1017,7 @@
       "Lexeme_ID": "whom",
       "Cell": "acc",
       "Form": "kenet",
-      "Segments": ["kene", "t"],
+      "Morphs": ["kene", "t"],
       "Source": ["karlsson-2017[§13.3.2]"]
     },
     {
@@ -1025,7 +1025,7 @@
       "Lexeme_ID": "us",
       "Cell": "acc_pl",
       "Form": "meidät",
-      "Segments": ["me", "i", "dät"],
+      "Morphs": ["me", "i", "dät"],
       "Source": ["karlsson-2017[§13.3.2]"]
     },
     {
@@ -1033,7 +1033,7 @@
       "Lexeme_ID": "you_pl",
       "Cell": "acc_pl",
       "Form": "teidät",
-      "Segments": ["te", "i", "dät"],
+      "Morphs": ["te", "i", "dät"],
       "Source": ["karlsson-2017[§13.3.2]"]
     },
     {
@@ -1041,7 +1041,7 @@
       "Lexeme_ID": "them",
       "Cell": "acc_pl",
       "Form": "heidät",
-      "Segments": ["he", "i", "dät"],
+      "Morphs": ["he", "i", "dät"],
       "Source": ["karlsson-2017[§13.3.2]"]
     },
     {
@@ -1049,7 +1049,7 @@
       "Lexeme_ID": "milk",
       "Cell": "part",
       "Form": "maitoa",
-      "Segments": ["maito", "a"],
+      "Morphs": ["maito", "a"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1057,7 +1057,7 @@
       "Lexeme_ID": "water",
       "Cell": "part",
       "Form": "vettä",
-      "Segments": ["vet", "tä"],
+      "Morphs": ["vet", "tä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1065,7 +1065,7 @@
       "Lexeme_ID": "family",
       "Cell": "part",
       "Form": "perhettä",
-      "Segments": ["perhe", "ttä"],
+      "Morphs": ["perhe", "ttä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1073,7 +1073,7 @@
       "Lexeme_ID": "car",
       "Cell": "ine",
       "Form": "autossa",
-      "Segments": ["auto", "ssa"],
+      "Morphs": ["auto", "ssa"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1081,7 +1081,7 @@
       "Lexeme_ID": "car",
       "Cell": "ela",
       "Form": "autosta",
-      "Segments": ["auto", "sta"],
+      "Morphs": ["auto", "sta"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1089,7 +1089,7 @@
       "Lexeme_ID": "car",
       "Cell": "ill",
       "Form": "autoon",
-      "Segments": ["auto", "on"],
+      "Morphs": ["auto", "on"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1097,7 +1097,7 @@
       "Lexeme_ID": "country",
       "Cell": "ill",
       "Form": "maahan",
-      "Segments": ["maa", "han"],
+      "Morphs": ["maa", "han"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1105,7 +1105,7 @@
       "Lexeme_ID": "porvoo",
       "Cell": "ill",
       "Form": "Porvooseen",
-      "Segments": ["Porvoo", "seen"],
+      "Morphs": ["Porvoo", "seen"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1113,7 +1113,7 @@
       "Lexeme_ID": "table",
       "Cell": "ade",
       "Form": "pöydällä",
-      "Segments": ["pöydä", "llä"],
+      "Morphs": ["pöydä", "llä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1121,7 +1121,7 @@
       "Lexeme_ID": "table",
       "Cell": "abl",
       "Form": "pöydältä",
-      "Segments": ["pöydä", "ltä"],
+      "Morphs": ["pöydä", "ltä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1129,7 +1129,7 @@
       "Lexeme_ID": "table",
       "Cell": "allat",
       "Form": "pöydälle",
-      "Segments": ["pöydä", "lle"],
+      "Morphs": ["pöydä", "lle"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1137,7 +1137,7 @@
       "Lexeme_ID": "teacher",
       "Cell": "ess",
       "Form": "opettajana",
-      "Segments": ["opettaja", "na"],
+      "Morphs": ["opettaja", "na"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1145,7 +1145,7 @@
       "Lexeme_ID": "teacher",
       "Cell": "transl",
       "Form": "opettajaksi",
-      "Segments": ["opettaja", "ksi"],
+      "Morphs": ["opettaja", "ksi"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1153,7 +1153,7 @@
       "Lexeme_ID": "wife",
       "Cell": "com_px1sg",
       "Form": "vaimoineni",
-      "Segments": ["vaimo", "ine", "ni"],
+      "Morphs": ["vaimo", "ine", "ni"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1161,7 +1161,7 @@
       "Lexeme_ID": "passport",
       "Cell": "abess",
       "Form": "passitta",
-      "Segments": ["passi", "tta"],
+      "Morphs": ["passi", "tta"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1169,7 +1169,7 @@
       "Lexeme_ID": "foot",
       "Cell": "inst",
       "Form": "jalan",
-      "Segments": ["jala", "n"],
+      "Morphs": ["jala", "n"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1177,7 +1177,7 @@
       "Lexeme_ID": "book",
       "Cell": "nom_px1sg",
       "Form": "kirjani",
-      "Segments": ["kirja", "ni"],
+      "Morphs": ["kirja", "ni"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1185,7 +1185,7 @@
       "Lexeme_ID": "book",
       "Cell": "nom_px2sg",
       "Form": "kirjasi",
-      "Segments": ["kirja", "si"],
+      "Morphs": ["kirja", "si"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1193,7 +1193,7 @@
       "Lexeme_ID": "book",
       "Cell": "nom_px3sg",
       "Form": "kirjansa",
-      "Segments": ["kirja", "nsa"],
+      "Morphs": ["kirja", "nsa"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1201,7 +1201,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "nom",
       "Form": "pullo",
-      "Segments": ["pullo"],
+      "Morphs": ["pullo"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1209,7 +1209,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine",
       "Form": "pullossa",
-      "Segments": ["pullo", "ssa"],
+      "Morphs": ["pullo", "ssa"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1217,7 +1217,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "nom_px1sg",
       "Form": "pulloni",
-      "Segments": ["pullo", "ni"],
+      "Morphs": ["pullo", "ni"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1225,7 +1225,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ela_px1sg",
       "Form": "pullostani",
-      "Segments": ["pullo", "sta", "ni"],
+      "Morphs": ["pullo", "sta", "ni"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1233,7 +1233,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "ine",
       "Form": "hyllyssä",
-      "Segments": ["hylly", "ssä"],
+      "Morphs": ["hylly", "ssä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1241,7 +1241,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "ade",
       "Form": "hyllyllä",
-      "Segments": ["hylly", "llä"],
+      "Morphs": ["hylly", "llä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1249,7 +1249,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "nom_px2sg",
       "Form": "hyllysi",
-      "Segments": ["hylly", "si"],
+      "Morphs": ["hylly", "si"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1257,7 +1257,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "allat_px2sg",
       "Form": "hyllyllesi",
-      "Segments": ["hylly", "lle", "si"],
+      "Morphs": ["hylly", "lle", "si"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1265,7 +1265,7 @@
       "Lexeme_ID": "house",
       "Cell": "ill",
       "Form": "taloon",
-      "Segments": ["talo", "on"],
+      "Morphs": ["talo", "on"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1273,7 +1273,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "nom_px3sg",
       "Form": "hyllynsä",
-      "Segments": ["hylly", "nsä"],
+      "Morphs": ["hylly", "nsä"],
       "Comment": "Also 'their shelf'.",
       "Source": ["karlsson-2017[§3.1]"]
     },
@@ -1282,7 +1282,7 @@
       "Lexeme_ID": "hand",
       "Cell": "ine_px1sg",
       "Form": "kädessäni",
-      "Segments": ["käde", "ssä", "ni"],
+      "Morphs": ["käde", "ssä", "ni"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1290,7 +1290,7 @@
       "Lexeme_ID": "hand",
       "Cell": "ill",
       "Form": "käteen",
-      "Segments": ["käte", "en"],
+      "Morphs": ["käte", "en"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1298,7 +1298,7 @@
       "Lexeme_ID": "hand",
       "Cell": "ill_px2sg",
       "Form": "käteesi",
-      "Segments": ["käte", "e", "si"],
+      "Morphs": ["käte", "e", "si"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1306,7 +1306,7 @@
       "Lexeme_ID": "hand",
       "Cell": "part",
       "Form": "kättä",
-      "Segments": ["kät", "tä"],
+      "Morphs": ["kät", "tä"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1314,7 +1314,7 @@
       "Lexeme_ID": "say",
       "Cell": "nom_infa",
       "Form": "sanoa",
-      "Segments": ["sano", "a"],
+      "Morphs": ["sano", "a"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1322,7 +1322,7 @@
       "Lexeme_ID": "eat",
       "Cell": "nom_infa",
       "Form": "syödä",
-      "Segments": ["syö", "dä"],
+      "Morphs": ["syö", "dä"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1330,7 +1330,7 @@
       "Lexeme_ID": "run",
       "Cell": "nom_infa",
       "Form": "juosta",
-      "Segments": ["juos", "ta"],
+      "Morphs": ["juos", "ta"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1338,7 +1338,7 @@
       "Lexeme_ID": "run",
       "Cell": "transl_infa_px1pl",
       "Form": "juostaksemme",
-      "Segments": ["juos", "ta", "kse", "mme"],
+      "Morphs": ["juos", "ta", "kse", "mme"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1346,7 +1346,7 @@
       "Lexeme_ID": "say",
       "Cell": "ine_infe_px1sg",
       "Form": "sanoessani",
-      "Segments": ["sano", "e", "ssa", "ni"],
+      "Morphs": ["sano", "e", "ssa", "ni"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1354,7 +1354,7 @@
       "Lexeme_ID": "eat",
       "Cell": "ine_infe_px1pl",
       "Form": "syödessämme",
-      "Segments": ["syö", "de", "ssä", "mme"],
+      "Morphs": ["syö", "de", "ssä", "mme"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1362,7 +1362,7 @@
       "Lexeme_ID": "run",
       "Cell": "inst_infe",
       "Form": "juosten",
-      "Segments": ["juos", "te", "n"],
+      "Morphs": ["juos", "te", "n"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1370,7 +1370,7 @@
       "Lexeme_ID": "eat",
       "Cell": "ade_infma",
       "Form": "syömällä",
-      "Segments": ["syö", "mä", "llä"],
+      "Morphs": ["syö", "mä", "llä"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1378,7 +1378,7 @@
       "Lexeme_ID": "say",
       "Cell": "abess_infma",
       "Form": "sanomatta",
-      "Segments": ["sano", "ma", "tta"],
+      "Morphs": ["sano", "ma", "tta"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1386,7 +1386,7 @@
       "Lexeme_ID": "say",
       "Cell": "ill_infma",
       "Form": "sanomaan",
-      "Segments": ["sano", "ma", "an"],
+      "Morphs": ["sano", "ma", "an"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1394,7 +1394,7 @@
       "Lexeme_ID": "speak",
       "Cell": "transl_infa_px2sg",
       "Form": "puhuaksesi",
-      "Segments": ["puhu", "a", "kse", "si"],
+      "Morphs": ["puhu", "a", "kse", "si"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1402,7 +1402,7 @@
       "Lexeme_ID": "speak",
       "Cell": "ade_infma",
       "Form": "puhumalla",
-      "Segments": ["puhu", "ma", "lla"],
+      "Morphs": ["puhu", "ma", "lla"],
       "Source": ["karlsson-2017[§3.3]"]
     },
     {
@@ -1410,7 +1410,7 @@
       "Lexeme_ID": "car",
       "Cell": "ade_px1sg",
       "Form": "autollani",
-      "Segments": ["auto", "lla", "ni"],
+      "Morphs": ["auto", "lla", "ni"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1418,7 +1418,7 @@
       "Lexeme_ID": "car",
       "Cell": "ela_px2sg",
       "Form": "autostasi",
-      "Segments": ["auto", "sta", "si"],
+      "Morphs": ["auto", "sta", "si"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1426,7 +1426,7 @@
       "Lexeme_ID": "car",
       "Cell": "ill_px1sg",
       "Form": "autooni",
-      "Segments": ["auto", "o", "ni"],
+      "Morphs": ["auto", "o", "ni"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1434,7 +1434,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px1sg",
       "Form": "laukkuni",
-      "Segments": ["laukku", "ni"],
+      "Morphs": ["laukku", "ni"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1442,7 +1442,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px2sg",
       "Form": "laukkusi",
-      "Segments": ["laukku", "si"],
+      "Morphs": ["laukku", "si"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1450,7 +1450,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px3sg",
       "Form": "laukkunsa",
-      "Segments": ["laukku", "nsa"],
+      "Morphs": ["laukku", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1458,7 +1458,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px1pl",
       "Form": "laukkumme",
-      "Segments": ["laukku", "mme"],
+      "Morphs": ["laukku", "mme"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1466,7 +1466,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px2pl",
       "Form": "laukkunne",
-      "Segments": ["laukku", "nne"],
+      "Morphs": ["laukku", "nne"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1474,7 +1474,7 @@
       "Lexeme_ID": "bag",
       "Cell": "nom_px3pl",
       "Form": "laukkunsa",
-      "Segments": ["laukku", "nsa"],
+      "Morphs": ["laukku", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1482,7 +1482,7 @@
       "Lexeme_ID": "house",
       "Cell": "part_px3sg",
       "Form": "taloaan",
-      "Segments": ["talo", "a", "an"],
+      "Morphs": ["talo", "a", "an"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1490,7 +1490,7 @@
       "Lexeme_ID": "guest",
       "Cell": "ess_px3pl",
       "Form": "vieraanaan",
-      "Segments": ["vieraa", "na", "an"],
+      "Morphs": ["vieraa", "na", "an"],
       "Comment": "'as their guest'",
       "Source": ["karlsson-2017[§14.1]"]
     },
@@ -1499,7 +1499,7 @@
       "Lexeme_ID": "get",
       "Cell": "transl_infa_px3sg",
       "Form": "saadakseen",
-      "Segments": ["saa", "da", "kse", "en"],
+      "Morphs": ["saa", "da", "kse", "en"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1507,7 +1507,7 @@
       "Lexeme_ID": "house",
       "Cell": "ine_px3pl",
       "Form": "talossaan",
-      "Segments": ["talo", "ssa", "an"],
+      "Morphs": ["talo", "ssa", "an"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1515,7 +1515,7 @@
       "Lexeme_ID": "car",
       "Cell": "ade_px3sg",
       "Form": "autollaan",
-      "Segments": ["auto", "lla", "an"],
+      "Morphs": ["auto", "lla", "an"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1523,7 +1523,7 @@
       "Lexeme_ID": "father",
       "Cell": "allat_px3pl",
       "Form": "isälleen",
-      "Segments": ["isä", "lle", "en"],
+      "Morphs": ["isä", "lle", "en"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1531,7 +1531,7 @@
       "Lexeme_ID": "mother",
       "Cell": "abl_px3sg",
       "Form": "äidiltään",
-      "Segments": ["äidi", "ltä", "än"],
+      "Morphs": ["äidi", "ltä", "än"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1539,7 +1539,7 @@
       "Lexeme_ID": "mother",
       "Cell": "part_px3sg",
       "Form": "äitiään",
-      "Segments": ["äiti", "ä", "än"],
+      "Morphs": ["äiti", "ä", "än"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1547,7 +1547,7 @@
       "Lexeme_ID": "house",
       "Cell": "ill_px3pl",
       "Form": "taloonsa",
-      "Segments": ["talo", "o", "nsa"],
+      "Morphs": ["talo", "o", "nsa"],
       "Comment": "'into their house'",
       "Source": ["karlsson-2017[§14.1]"]
     },
@@ -1556,7 +1556,7 @@
       "Lexeme_ID": "car",
       "Cell": "nom_px3sg",
       "Form": "autonsa",
-      "Segments": ["auto", "nsa"],
+      "Morphs": ["auto", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1564,7 +1564,7 @@
       "Lexeme_ID": "father",
       "Cell": "ill_px3pl",
       "Form": "isäänsä",
-      "Segments": ["isä", "ä", "nsä"],
+      "Morphs": ["isä", "ä", "nsä"],
       "Comment": "Also the partitive singular.",
       "Source": ["karlsson-2017[§14.1]"]
     },
@@ -1573,7 +1573,7 @@
       "Lexeme_ID": "mother",
       "Cell": "nom_px3sg",
       "Form": "äitinsä",
-      "Segments": ["äiti", "nsä"],
+      "Morphs": ["äiti", "nsä"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1581,7 +1581,7 @@
       "Lexeme_ID": "say",
       "Cell": "transl_infa_px1sg",
       "Form": "sanoakseni",
-      "Segments": ["sano", "a", "kse", "ni"],
+      "Morphs": ["sano", "a", "kse", "ni"],
       "Source": ["karlsson-2017[§22.2.2]"]
     },
     {
@@ -1589,7 +1589,7 @@
       "Lexeme_ID": "live",
       "Cell": "transl_infa_px1pl",
       "Form": "elääksemme",
-      "Segments": ["elä", "ä", "kse", "mme"],
+      "Morphs": ["elä", "ä", "kse", "mme"],
       "Source": ["karlsson-2017[§22.2.2]"]
     },
     {
@@ -1597,7 +1597,7 @@
       "Lexeme_ID": "meet",
       "Cell": "transl_infa_px2sg",
       "Form": "tavataksesi",
-      "Segments": ["tavat", "a", "kse", "si"],
+      "Morphs": ["tavat", "a", "kse", "si"],
       "Source": ["karlsson-2017[§22.2.2]"]
     },
     {
@@ -1605,7 +1605,7 @@
       "Lexeme_ID": "drink",
       "Cell": "transl_infa_px3sg",
       "Form": "juodakseen",
-      "Segments": ["juo", "da", "kse", "en"],
+      "Morphs": ["juo", "da", "kse", "en"],
       "Source": ["karlsson-2017[§22.2.2]"]
     },
     {
@@ -1613,7 +1613,7 @@
       "Lexeme_ID": "be",
       "Cell": "transl_infa_px2pl",
       "Form": "ollaksenne",
-      "Segments": ["ol", "la", "kse", "nne"],
+      "Morphs": ["ol", "la", "kse", "nne"],
       "Source": ["karlsson-2017[§22.2.2]"]
     },
     {
@@ -1621,7 +1621,7 @@
       "Lexeme_ID": "rest",
       "Cell": "ine_infma",
       "Form": "lepäämässä",
-      "Segments": ["lepää", "mä", "ssä"],
+      "Morphs": ["lepää", "mä", "ssä"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1629,7 +1629,7 @@
       "Lexeme_ID": "rest",
       "Cell": "ill_infma",
       "Form": "lepäämään",
-      "Segments": ["lepää", "mä", "än"],
+      "Morphs": ["lepää", "mä", "än"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1637,7 +1637,7 @@
       "Lexeme_ID": "pull",
       "Cell": "ade_infma",
       "Form": "vetämällä",
-      "Segments": ["vetä", "mä", "llä"],
+      "Morphs": ["vetä", "mä", "llä"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1645,7 +1645,7 @@
       "Lexeme_ID": "mention",
       "Cell": "abess_infma",
       "Form": "mainitsematta",
-      "Segments": ["mainitse", "ma", "tta"],
+      "Morphs": ["mainitse", "ma", "tta"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1653,7 +1653,7 @@
       "Lexeme_ID": "do",
       "Cell": "ela_infma",
       "Form": "tekemästä",
-      "Segments": ["teke", "mä", "stä"],
+      "Morphs": ["teke", "mä", "stä"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1661,7 +1661,7 @@
       "Lexeme_ID": "come",
       "Cell": "inst_infma",
       "Form": "tuleman",
-      "Segments": ["tule", "ma", "n"],
+      "Morphs": ["tule", "ma", "n"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1669,7 +1669,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "nom_pl",
       "Form": "pullot",
-      "Segments": ["pullo", "t"],
+      "Morphs": ["pullo", "t"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1677,7 +1677,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "nom_kin",
       "Form": "pullokin",
-      "Segments": ["pullo", "kin"],
+      "Morphs": ["pullo", "kin"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1685,7 +1685,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ela_pl",
       "Form": "pulloista",
-      "Segments": ["pullo", "i", "sta"],
+      "Morphs": ["pullo", "i", "sta"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1693,7 +1693,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine_han",
       "Form": "pullossahan",
-      "Segments": ["pullo", "ssa", "han"],
+      "Morphs": ["pullo", "ssa", "han"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1701,7 +1701,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "nom_pl_kin",
       "Form": "pullotkin",
-      "Segments": ["pullo", "t", "kin"],
+      "Morphs": ["pullo", "t", "kin"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1709,7 +1709,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine_px2sg_ko",
       "Form": "pullossasiko",
-      "Segments": ["pullo", "ssa", "si", "ko"],
+      "Morphs": ["pullo", "ssa", "si", "ko"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1717,7 +1717,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine_pl_px1pl",
       "Form": "pulloissamme",
-      "Segments": ["pullo", "i", "ssa", "mme"],
+      "Morphs": ["pullo", "i", "ssa", "mme"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1725,7 +1725,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ela_pl_kaan",
       "Form": "pulloistakaan",
-      "Segments": ["pullo", "i", "sta", "kaan"],
+      "Morphs": ["pullo", "i", "sta", "kaan"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1733,7 +1733,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine_pl_px2pl_kin",
       "Form": "pulloissannekin",
-      "Segments": ["pullo", "i", "ssa", "nne", "kin"],
+      "Morphs": ["pullo", "i", "ssa", "nne", "kin"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1741,7 +1741,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "abl_ko",
       "Form": "hyllyltäkö",
-      "Segments": ["hylly", "ltä", "kö"],
+      "Morphs": ["hylly", "ltä", "kö"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1749,7 +1749,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "nom_pl_ko",
       "Form": "hyllytkö",
-      "Segments": ["hylly", "t", "kö"],
+      "Morphs": ["hylly", "t", "kö"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1757,7 +1757,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "gen_han",
       "Form": "hyllynhän",
-      "Segments": ["hylly", "n", "hän"],
+      "Morphs": ["hylly", "n", "hän"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1765,7 +1765,7 @@
       "Lexeme_ID": "house",
       "Cell": "nom_px3sg_ko",
       "Form": "talonsako",
-      "Segments": ["talo", "nsa", "ko"],
+      "Morphs": ["talo", "nsa", "ko"],
       "Comment": "Also 'their house?'.",
       "Source": ["karlsson-2017[§3.1]"]
     },
@@ -1774,7 +1774,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "ade_pl_px1pl",
       "Form": "hyllyillämme",
-      "Segments": ["hylly", "i", "llä", "mme"],
+      "Morphs": ["hylly", "i", "llä", "mme"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1782,7 +1782,7 @@
       "Lexeme_ID": "hand",
       "Cell": "nom",
       "Form": "käsi",
-      "Segments": ["käsi"],
+      "Morphs": ["käsi"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1790,7 +1790,7 @@
       "Lexeme_ID": "hand",
       "Cell": "nom_pl",
       "Form": "kädet",
-      "Segments": ["käde", "t"],
+      "Morphs": ["käde", "t"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1798,7 +1798,7 @@
       "Lexeme_ID": "hand",
       "Cell": "ine_pl_px1pl_han",
       "Form": "käsissämmehän",
-      "Segments": ["käs", "i", "ssä", "mme", "hän"],
+      "Morphs": ["käs", "i", "ssä", "mme", "hän"],
       "Source": ["karlsson-2017[§3.1]"]
     },
     {
@@ -1806,7 +1806,7 @@
       "Lexeme_ID": "rest",
       "Cell": "ill_infma_ko",
       "Form": "lepäämäänkö",
-      "Segments": ["lepää", "mä", "än", "kö"],
+      "Morphs": ["lepää", "mä", "än", "kö"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1814,7 +1814,7 @@
       "Lexeme_ID": "pull",
       "Cell": "ade_infma_kin",
       "Form": "vetämälläkin",
-      "Segments": ["vetä", "mä", "llä", "kin"],
+      "Morphs": ["vetä", "mä", "llä", "kin"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1822,7 +1822,7 @@
       "Lexeme_ID": "mention",
       "Cell": "abess_infma_kaan",
       "Form": "mainitsemattakaan",
-      "Segments": ["mainitse", "ma", "tta", "kaan"],
+      "Morphs": ["mainitse", "ma", "tta", "kaan"],
       "Source": ["karlsson-2017[§22.4.1]"]
     },
     {
@@ -1830,7 +1830,7 @@
       "Lexeme_ID": "learn",
       "Cell": "transl_infa_px3sg_han",
       "Form": "oppiakseenhan",
-      "Segments": ["oppi", "a", "kse", "en", "han"],
+      "Morphs": ["oppi", "a", "kse", "en", "han"],
       "Comment": "Also 'in order for them to learn'.",
       "Source": ["karlsson-2017[§22.2.2]"]
     },
@@ -1839,7 +1839,7 @@
       "Lexeme_ID": "country",
       "Cell": "part_px1pl",
       "Form": "maatamme",
-      "Segments": ["maa", "ta", "mme"],
+      "Morphs": ["maa", "ta", "mme"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1847,7 +1847,7 @@
       "Lexeme_ID": "son",
       "Cell": "nom_px2pl_kin",
       "Form": "poikannekin",
-      "Segments": ["poika", "nne", "kin"],
+      "Morphs": ["poika", "nne", "kin"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1855,7 +1855,7 @@
       "Lexeme_ID": "mother",
       "Cell": "abl_px1sg_han",
       "Form": "äidiltänihän",
-      "Segments": ["äidi", "ltä", "ni", "hän"],
+      "Morphs": ["äidi", "ltä", "ni", "hän"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1863,7 +1863,7 @@
       "Lexeme_ID": "father",
       "Cell": "allat_px2sg_ko",
       "Form": "isällesikö",
-      "Segments": ["isä", "lle", "si", "kö"],
+      "Morphs": ["isä", "lle", "si", "kö"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1871,7 +1871,7 @@
       "Lexeme_ID": "country",
       "Cell": "ill_px1pl",
       "Form": "maahamme",
-      "Segments": ["maa", "ha", "mme"],
+      "Morphs": ["maa", "ha", "mme"],
       "Comment": "The source glosses the form 'into her/his/their country'.",
       "Source": ["karlsson-2017[§14.1]"]
     },
@@ -1880,7 +1880,7 @@
       "Lexeme_ID": "family",
       "Cell": "part_px3sg",
       "Form": "perhettään",
-      "Segments": ["perhe", "ttä", "än"],
+      "Morphs": ["perhe", "ttä", "än"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1888,7 +1888,7 @@
       "Lexeme_ID": "house",
       "Cell": "part_pl_px3sg",
       "Form": "talojaan",
-      "Segments": ["talo", "j", "a", "an"],
+      "Morphs": ["talo", "j", "a", "an"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1896,7 +1896,7 @@
       "Lexeme_ID": "ring",
       "Cell": "part_pl_px3sg",
       "Form": "renkaitaan",
-      "Segments": ["renka", "i", "ta", "an"],
+      "Morphs": ["renka", "i", "ta", "an"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1904,7 +1904,7 @@
       "Lexeme_ID": "head",
       "Cell": "part_px3sg",
       "Form": "päätään",
-      "Segments": ["pää", "tä", "än"],
+      "Morphs": ["pää", "tä", "än"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1912,7 +1912,7 @@
       "Lexeme_ID": "house",
       "Cell": "part_px3sg",
       "Form": "taloansa",
-      "Segments": ["talo", "a", "nsa"],
+      "Morphs": ["talo", "a", "nsa"],
       "Comment": "The archaic alternative to talo-a-an.",
       "Source": ["karlsson-2017[§14.1]"]
     },
@@ -1921,7 +1921,7 @@
       "Lexeme_ID": "fish",
       "Cell": "nom_px3sg",
       "Form": "kalansa",
-      "Segments": ["kala", "nsa"],
+      "Morphs": ["kala", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1929,7 +1929,7 @@
       "Lexeme_ID": "fish",
       "Cell": "ill_px3sg",
       "Form": "kalaansa",
-      "Segments": ["kala", "a", "nsa"],
+      "Morphs": ["kala", "a", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1937,7 +1937,7 @@
       "Lexeme_ID": "fish",
       "Cell": "part_px3sg",
       "Form": "kalaansa",
-      "Segments": ["kala", "a", "nsa"],
+      "Morphs": ["kala", "a", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1945,7 +1945,7 @@
       "Lexeme_ID": "fish",
       "Cell": "ill_pl_px3sg",
       "Form": "kaloihinsa",
-      "Segments": ["kalo", "i", "hi", "nsa"],
+      "Morphs": ["kalo", "i", "hi", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     },
     {
@@ -1953,7 +1953,7 @@
       "Lexeme_ID": "house",
       "Cell": "ine_pl",
       "Form": "taloissa",
-      "Segments": ["talo", "i", "ssa"],
+      "Morphs": ["talo", "i", "ssa"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -1961,7 +1961,7 @@
       "Lexeme_ID": "house",
       "Cell": "ill_pl",
       "Form": "taloihin",
-      "Segments": ["talo", "i", "hin"],
+      "Morphs": ["talo", "i", "hin"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -1969,7 +1969,7 @@
       "Lexeme_ID": "house",
       "Cell": "ess_pl",
       "Form": "taloina",
-      "Segments": ["talo", "i", "na"],
+      "Morphs": ["talo", "i", "na"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -1977,7 +1977,7 @@
       "Lexeme_ID": "house",
       "Cell": "allat_pl",
       "Form": "taloille",
-      "Segments": ["talo", "i", "lle"],
+      "Morphs": ["talo", "i", "lle"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -1985,7 +1985,7 @@
       "Lexeme_ID": "house",
       "Cell": "transl_pl",
       "Form": "taloiksi",
-      "Segments": ["talo", "i", "ksi"],
+      "Morphs": ["talo", "i", "ksi"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -1993,7 +1993,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "part_pl",
       "Form": "hyllyjä",
-      "Segments": ["hylly", "j", "ä"],
+      "Morphs": ["hylly", "j", "ä"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2001,7 +2001,7 @@
       "Lexeme_ID": "shelf",
       "Cell": "gen_pl",
       "Form": "hyllyjen",
-      "Segments": ["hylly", "j", "en"],
+      "Morphs": ["hylly", "j", "en"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2009,7 +2009,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "part_pl",
       "Form": "pulloja",
-      "Segments": ["pullo", "j", "a"],
+      "Morphs": ["pullo", "j", "a"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2017,7 +2017,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "gen_pl",
       "Form": "pullojen",
-      "Segments": ["pullo", "j", "en"],
+      "Morphs": ["pullo", "j", "en"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2025,7 +2025,7 @@
       "Lexeme_ID": "girl",
       "Cell": "part_pl",
       "Form": "tyttöjä",
-      "Segments": ["tyttö", "j", "ä"],
+      "Morphs": ["tyttö", "j", "ä"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2033,7 +2033,7 @@
       "Lexeme_ID": "girl",
       "Cell": "gen_pl",
       "Form": "tyttöjen",
-      "Segments": ["tyttö", "j", "en"],
+      "Morphs": ["tyttö", "j", "en"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2041,7 +2041,7 @@
       "Lexeme_ID": "bottle",
       "Cell": "ine_pl",
       "Form": "pulloissa",
-      "Segments": ["pullo", "i", "ssa"],
+      "Morphs": ["pullo", "i", "ssa"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2049,7 +2049,7 @@
       "Lexeme_ID": "country",
       "Cell": "ine_pl",
       "Form": "maissa",
-      "Segments": ["ma", "i", "ssa"],
+      "Morphs": ["ma", "i", "ssa"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2057,7 +2057,7 @@
       "Lexeme_ID": "cross",
       "Cell": "ine_pl",
       "Form": "risteissä",
-      "Segments": ["riste", "i", "ssä"],
+      "Morphs": ["riste", "i", "ssä"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2065,7 +2065,7 @@
       "Lexeme_ID": "stone",
       "Cell": "ine_pl",
       "Form": "kivissä",
-      "Segments": ["kiv", "i", "ssä"],
+      "Morphs": ["kiv", "i", "ssä"],
       "Source": ["karlsson-2017[§5.4]"]
     },
     {
@@ -2073,7 +2073,7 @@
       "Lexeme_ID": "child",
       "Cell": "part_pl",
       "Form": "lapsia",
-      "Segments": ["laps", "i", "a"],
+      "Morphs": ["laps", "i", "a"],
       "Source": ["karlsson-2017[§8.4]"]
     },
     {
@@ -2081,7 +2081,7 @@
       "Lexeme_ID": "house",
       "Cell": "gen_pl",
       "Form": "talojen",
-      "Segments": ["talo", "j", "en"],
+      "Morphs": ["talo", "j", "en"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2089,7 +2089,7 @@
       "Lexeme_ID": "boy",
       "Cell": "part_pl",
       "Form": "poikia",
-      "Segments": ["poik", "i", "a"],
+      "Morphs": ["poik", "i", "a"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2097,7 +2097,7 @@
       "Lexeme_ID": "boy",
       "Cell": "gen_pl",
       "Form": "poikien",
-      "Segments": ["poik", "i", "en"],
+      "Morphs": ["poik", "i", "en"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2105,7 +2105,7 @@
       "Lexeme_ID": "book",
       "Cell": "part_pl",
       "Form": "kirjoja",
-      "Segments": ["kirjo", "j", "a"],
+      "Morphs": ["kirjo", "j", "a"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2113,7 +2113,7 @@
       "Lexeme_ID": "book",
       "Cell": "gen_pl",
       "Form": "kirjojen",
-      "Segments": ["kirjo", "j", "en"],
+      "Morphs": ["kirjo", "j", "en"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2121,7 +2121,7 @@
       "Lexeme_ID": "day",
       "Cell": "part_pl",
       "Form": "päiviä",
-      "Segments": ["päiv", "i", "ä"],
+      "Morphs": ["päiv", "i", "ä"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2129,7 +2129,7 @@
       "Lexeme_ID": "day",
       "Cell": "gen_pl",
       "Form": "päivien",
-      "Segments": ["päiv", "i", "en"],
+      "Morphs": ["päiv", "i", "en"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2137,7 +2137,7 @@
       "Lexeme_ID": "hand",
       "Cell": "gen_pl",
       "Form": "käsien",
-      "Segments": ["käs", "i", "en"],
+      "Morphs": ["käs", "i", "en"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2145,7 +2145,7 @@
       "Lexeme_ID": "country",
       "Cell": "part_pl",
       "Form": "maita",
-      "Segments": ["ma", "i", "ta"],
+      "Morphs": ["ma", "i", "ta"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2153,7 +2153,7 @@
       "Lexeme_ID": "country",
       "Cell": "gen_pl",
       "Form": "maiden",
-      "Segments": ["ma", "i", "den"],
+      "Morphs": ["ma", "i", "den"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2161,7 +2161,7 @@
       "Lexeme_ID": "country",
       "Cell": "gen_pl",
       "Form": "maitten",
-      "Segments": ["ma", "i", "tten"],
+      "Morphs": ["ma", "i", "tten"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2169,7 +2169,7 @@
       "Lexeme_ID": "road",
       "Cell": "part_pl",
       "Form": "teitä",
-      "Segments": ["te", "i", "tä"],
+      "Morphs": ["te", "i", "tä"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2177,7 +2177,7 @@
       "Lexeme_ID": "road",
       "Cell": "gen_pl",
       "Form": "teiden",
-      "Segments": ["te", "i", "den"],
+      "Morphs": ["te", "i", "den"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2185,7 +2185,7 @@
       "Lexeme_ID": "obstacle",
       "Cell": "gen_pl",
       "Form": "esteitten",
-      "Segments": ["este", "i", "tten"],
+      "Morphs": ["este", "i", "tten"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2193,7 +2193,7 @@
       "Lexeme_ID": "state",
       "Cell": "gen_pl",
       "Form": "valtioiden",
-      "Segments": ["valtio", "i", "den"],
+      "Morphs": ["valtio", "i", "den"],
       "Source": ["karlsson-2017[§13.1.2]"]
     },
     {
@@ -2201,7 +2201,7 @@
       "Lexeme_ID": "fish",
       "Cell": "gen_pl_px3sg",
       "Form": "kalojensa",
-      "Segments": ["kalo", "je", "nsa"],
+      "Morphs": ["kalo", "je", "nsa"],
       "Source": ["karlsson-2017[§14.1]"]
     }
   ]

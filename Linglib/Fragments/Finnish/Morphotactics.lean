@@ -34,6 +34,7 @@ vowel the third person is usually -Vn, as in *talo-ssa-an* 'in his house', besid
   their exponents and their order.
 * `Finnish.Nominal.WellFormed`: the strings of endings that make a word.
 * `Finnish.Nominal.realize`: the surface forms of a stem with a string of endings.
+* `Finnish.Nominal.endings`: the endings of a number and a case.
 * `Finnish.Infinitive.endings`: the endings of an infinitive in a case.
 
 ## Main results
@@ -266,6 +267,12 @@ def continuations (w : List Segment) (num : numberSystem.values) (c : Option Cas
 /-- The surface forms of the stem `w` with the endings `es`. -/
 def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Segment) :=
   (continuations w (numberSystem.value .singular) none es).map surface
+
+/-- The endings of the number `num` and the case `c`: the nominative plural -t, or the plural -i
+before the case ending, which the nominative lacks. -/
+def endings (num : numberSystem.values) (c : Case) : List (Σ σ, Exponent σ) :=
+  numberSystem.elim (if c = .nom then [] else [⟨_, .case c⟩])
+    (if c = .nom then [⟨_, .nominativePlural⟩] else [⟨_, .plural⟩, ⟨_, .case c⟩]) (n := num)
 
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
