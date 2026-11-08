@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Logic.Orthologic.Compatibility
-public import Linglib.Logic.Orthologic.Epistemic
+public import Linglib.Logic.Orthologic.Epistemic.Ortholattice
 
 /-!
 # Modal compatibility frames
@@ -215,11 +215,10 @@ theorem isKnowable_iff_wittgensteinLaw [R.IsRefl] :
     exact h A A.isExtent_extent hA
   · exact coe_eq_empty.mpr (h (.ofIsExtent _ A hA) (coe_eq_empty.mp hnec))
 
-/-- Over a reflexive relation with Knowability the modal ortholattice satisfies Wittgenstein's
-Law, so it is an epistemic ortholattice ([holliday-mandelkern-2024] Proposition 4.27). -/
-theorem wittgensteinLaw_necHom [R.IsRefl] [IsKnowable F R] :
-    WittgensteinLaw (F.necHom R) :=
-  (isKnowable_iff_wittgensteinLaw F R).mp inferInstance
+/-- Over a reflexive relation with Knowability the modal ortholattice is an epistemic
+ortholattice ([holliday-mandelkern-2024] Propositions 4.25 and 4.27). -/
+theorem isEpistemic_necHom [R.IsRefl] [IsKnowable F R] : IsEpistemic (F.necHom R) :=
+  ⟨necHom_le R, (isKnowable_iff_wittgensteinLaw F R).mp inferInstance⟩
 
 end Compatibility
 

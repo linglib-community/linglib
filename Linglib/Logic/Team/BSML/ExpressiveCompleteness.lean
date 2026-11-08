@@ -14,7 +14,7 @@ bounded bisimulation; [convexity cannot be dropped](##BSML.range_support_ssubset
 `NE`-free fragment, classical modal logic, is [complete for the flat
 classes](##BSML.range_support_neFree_eq) and [expresses strictly
 less](##BSML.range_support_neFree_ssubset). An invariant class reads only [the depth `k` world types
-of a team](##BSML.image_worldType_eq_iff_stateBisim), so [a convex union-closed property of sets of
+of a team](##ModalLogic.mem_iff_types_mem_image), so [a convex union-closed property of sets of
 types is one formula across all models](##BSML.exists_formula_iff_image_mem).
 
 ## Implementation notes
@@ -125,8 +125,7 @@ bisimulation: the teams holding both a `p`-world and a `¬p`-world, with the emp
 class, but no convex one ([anttila-2025] Fact 2.3.19, p. 30). -/
 theorem range_support_ssubset_supClosed [Nonempty Atom] :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
+      {P | Fiberwise (fun T ↦ SupClosed T) P ∧ BoundedBisimInvariant P} := by
   refine ⟨Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ supClosed_support M φ,
     boundedBisimInvariant_support φ⟩, fun h ↦ ?_⟩
   inhabit Atom
@@ -182,34 +181,18 @@ invariant under bounded bisimulation: the remark after [anttila-2025] Theorem 3.
 the conclusion of [aloni-anttila-yang-2024] reports as [knudstorp-2023]'s unpublished result. -/
 theorem range_support_eq :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) =
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        (PointedTeam.mk W M ⁻¹' P).OrdConnected ∧ SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧
-        BoundedBisimInvariant P} := by
+      {P | Fiberwise (fun T ↦ T.OrdConnected ∧ SupClosed T) P ∧ BoundedBisimInvariant P} := by
   refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
     ⟨fun M ↦ ⟨ordConnected_support M φ, supClosed_support M φ⟩,
       boundedBisimInvariant_support φ⟩) ?_
   rintro P ⟨hclosed, k, hk⟩
   inhabit Atom
   obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin Atom
-  let τ (p : PointedTeam.{u} Atom) := p.team.image (worldType e.symm p.model k)
-  have hmem {p} : p ∈ P ↔ τ p ∈ τ '' P := ⟨Set.mem_image_of_mem τ, fun ⟨q, hq, h⟩ ↦
-    hk q hq p ((image_worldType_eq_iff_stateBisim e.symm.surjective).1 h)⟩
-  have hc : (τ '' P).OrdConnected := ⟨by
-    rintro _ ⟨q, hq, rfl⟩ _ ⟨⟨W, M, s₂⟩, h₂, rfl⟩ σ ⟨hqσ, hσ⟩
-    obtain ⟨s, hs, rfl⟩ := Finset.subset_image_iff.1 hσ
-    obtain ⟨s₁, hs₁, h₁⟩ := Finset.subset_image_iff.1 hqσ
-    exact ⟨⟨W, M, s⟩, (hclosed M).1.out (hmem.2 ⟨q, hq, h₁.symm⟩) h₂ ⟨hs₁, hs⟩, rfl⟩⟩
-  have hs : SupClosed (τ '' P) := by
-    rintro _ ⟨⟨W₁, M₁, s₁⟩, h₁, rfl⟩ _ ⟨⟨W₂, M₂, s₂⟩, h₂, rfl⟩
-    have h₁' : (s₁.map .inl).image (worldType e.symm (M₁.sum M₂) k) =
-        s₁.image (worldType e.symm M₁ k) := by ext; simp [worldType_sum]
-    have h₂' : (s₂.map .inr).image (worldType e.symm (M₁.sum M₂) k) =
-        s₂.image (worldType e.symm M₂ k) := by ext; simp [worldType_sum]
-    have h : s₁.map .inl ⊔ s₂.map .inr ∈ PointedTeam.mk _ (M₁.sum M₂) ⁻¹' P :=
-      (hclosed _).2 (hmem.2 ⟨_, h₁, h₁'.symm⟩) (hmem.2 ⟨_, h₂, h₂'.symm⟩)
-    exact ⟨_, h, by simp only [τ, Finset.sup_eq_union, Finset.image_union, h₁', h₂']⟩
-  obtain ⟨φ, hφ⟩ := exists_formula_iff_image_mem.{u} e.symm _ hc hs
-  exact ⟨φ, Set.ext fun p ↦ (hφ p.model p.team).trans hmem.symm⟩
+  have he := e.symm.surjective
+  obtain ⟨φ, hφ⟩ := exists_formula_iff_image_mem.{u} e.symm _
+    (ordConnected_image_types he hk fun M ↦ (hclosed M).1)
+    (supClosed_image_types he hk fun M ↦ (hclosed M).2)
+  exact ⟨φ, Set.ext fun p ↦ (hφ p.model p.team).trans (mem_iff_types_mem_image he hk).symm⟩
 
 /-- The `NE`-free fragment of BSML is expressively complete for the flat classes invariant under
 bounded bisimulation ([aloni-anttila-yang-2024] Proposition 3.13; [anttila-2025] Proposition 2.3.13,
@@ -217,8 +200,7 @@ p. 27). -/
 theorem range_support_neFree_eq :
     (Set.range fun φ : {φ : Formula Atom // φ.NEFree} ↦
         {p : PointedTeam.{u} Atom | support p.model φ.1 p.team}) =
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        IsFlat (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
+      {P | Fiberwise (fun T ↦ IsFlat T) P ∧ BoundedBisimInvariant P} := by
   refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
     ⟨fun M ↦ isFlat_support_of_neFree φ.2 M, boundedBisimInvariant_support φ.1⟩) ?_
   rintro P ⟨hflat, k, hk⟩

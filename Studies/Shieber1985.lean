@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Algebra.FreeMonoid.Basic
 public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -153,21 +154,22 @@ theorem isRegular_caseSorted : caseSorted.IsRegular := by
 
 /-- `eraseFrame` is the homomorphism of note 5, which erases `w`, `x` and `y`; it also erases `z`,
 which does not occur in `r`. -/
-def eraseFrame : Letter → List Letter
-  | a => [a] | b => [b] | c => [c] | d => [d] | _ => []
+def eraseFrame : FreeMonoid Letter →* FreeMonoid Letter :=
+  FreeMonoid.filter (· ∈ [a, b, c, d])
 
-theorem flatMap_eraseFrame_clause (p q r u : ℕ) : (clause p q r u).flatMap eraseFrame =
+theorem toList_eraseFrame_clause (p q r u : ℕ) : (eraseFrame (.ofList (clause p q r u))).toList =
     replicate p a ++ replicate q b ++ replicate r c ++ replicate u d := by
-  simp [clause, eraseFrame, flatMap_replicate]
+  simp [clause, eraseFrame]
 
 theorem stringMap_eraseFrame_crossSerial :
     stringMap eraseFrame crossSerial = ambncmdn a b c d := by
   ext l
+  rw [mem_stringMap]
   constructor
   · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
-    exact ⟨m, n, (flatMap_eraseFrame_clause m n m n).symm⟩
+    exact ⟨m, n, (toList_eraseFrame_clause m n m n).symm⟩
   · rintro ⟨m, n, rfl⟩
-    exact ⟨_, ⟨m, n, rfl⟩, flatMap_eraseFrame_clause m n m n⟩
+    exact ⟨_, ⟨m, n, rfl⟩, toList_eraseFrame_clause m n m n⟩
 
 theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree := fun h ↦
   not_isContextFree_ambncmdn (by decide) (stringMap_eraseFrame_crossSerial ▸ h.stringMap eraseFrame)
@@ -177,23 +179,23 @@ theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree := fun h �
 The homomorphism `eraseCase` identifies the accusative and the dative, sending both objects to
 `a` and both verbs to `c`, and erases the frame. -/
 
-/-- `eraseCase` sends both objects to `a`, both verbs to `c`, and every other letter to the
-empty string. -/
-def eraseCase : Letter → List Letter
-  | a | b => [a] | c | d => [c] | _ => []
+/-- `eraseCase` erases the frame and then sends both objects to `a` and both verbs to `c`. -/
+def eraseCase : FreeMonoid Letter →* FreeMonoid Letter :=
+  (FreeMonoid.map fun | b => a | d => c | ℓ => ℓ).comp eraseFrame
 
-theorem flatMap_eraseCase_clause (p q r u : ℕ) :
-    (clause p q r u).flatMap eraseCase = replicate (p + q) a ++ replicate (r + u) c := by
-  simp [clause, eraseCase, flatMap_replicate]
+theorem toList_eraseCase_clause (p q r u : ℕ) :
+    (eraseCase (.ofList (clause p q r u))).toList = replicate (p + q) a ++ replicate (r + u) c := by
+  simp [eraseCase, toList_eraseFrame_clause]
   rw [← append_assoc, replicate_append_replicate]
 
 theorem stringMap_eraseCase_crossSerial : stringMap eraseCase crossSerial = anbn a c := by
   ext l
+  rw [mem_stringMap]
   constructor
   · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
-    exact ⟨m + n, (flatMap_eraseCase_clause m n m n).symm⟩
+    exact ⟨m + n, (toList_eraseCase_clause m n m n).symm⟩
   · rintro ⟨k, rfl⟩
-    exact ⟨_, ⟨k, 0, rfl⟩, by simpa using flatMap_eraseCase_clause k 0 k 0⟩
+    exact ⟨_, ⟨k, 0, rfl⟩, by simpa using toList_eraseCase_clause k 0 k 0⟩
 
 /-- Without the case distinction the cross-serial clauses are context-free: identifying the
 cases sends `w aᵐ bⁿ x cᵐ dⁿ y` to `aᵐ⁺ⁿ cᵐ⁺ⁿ`. -/
@@ -244,10 +246,12 @@ theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clau
     (.of_forall fun n ↦ ?_) ?_
     (((hL.map f).inf_isRegular isRegular_caseSorted).stringMap eraseFrame)
   · obtain ⟨s, hs, he⟩ := hmem n
-    exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, flatMap_eraseFrame_clause n n n n⟩
-  · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
+    exact mem_stringMap.2
+      ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, toList_eraseFrame_clause n n n n⟩
+  · intro _ hw
+    obtain ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩ := mem_stringMap.1 hw
     have := hle s hs (he ▸ clause_mem_schema p q r u)
-    simpa [he, count_clause, flatMap_eraseFrame_clause, count_replicate] using this
+    simpa [he, count_clause, toList_eraseFrame_clause, count_replicate] using this
 
 /-! ### The claims are consistent and not idle -/
 

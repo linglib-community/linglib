@@ -30,6 +30,8 @@ of this form. A tree is licensed exactly when each of its local trees is
 * `RoseTree.licensed_node_iff`: a tree is licensed when its root's local tree satisfies `R` and
   its children are licensed; `RoseTree.Licensed.induction` is the induction principle.
 * `RoseTree.Licensed.of_getElem?`: licensing passes to subtrees.
+* `RoseTree.Licensed.numLeaves_le_pow_height_sub_one`: a tree whose nodes have at most `b`
+  children has at most `b ^ (height - 1)` leaves.
 * `RoseTree.Licensed.replaceAt`: replacing a subtree by a licensed tree with the same root value
   keeps the tree licensed.
 * `RoseTree.licensed_of_perm`: a relation that ignores the order of the children licenses
@@ -95,6 +97,27 @@ theorem Licensed.induction {motive : (t : RoseTree α) → t.Licensed R → Prop
 theorem Licensed.mono {R' : α → List α → Prop} (h : ∀ a ks, R a ks → R' a ks) {t : RoseTree α}
     (ht : t.Licensed R) : t.Licensed R' :=
   fun s hs ↦ h _ _ (ht s hs)
+
+/-- A tree whose nodes have at most `b` children has at most `b ^ (height - 1)` leaves. -/
+theorem Licensed.numLeaves_le_pow_height_sub_one {b : ℕ} {t : RoseTree α}
+    (ht : t.Licensed fun _ ks ↦ ks.length ≤ b) : t.numLeaves ≤ b ^ (t.height - 1) := by
+  induction ht using Licensed.induction with
+  | node a cs hb _ ih =>
+    rcases eq_or_ne cs [] with rfl | hne
+    · simp
+    obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
+    have hlt d (hd : d ∈ cs) : d.height < (node a cs).height := height_lt_of_mem (t := node a cs) hd
+    have hb : cs.length ≤ b := by simpa using hb
+    have hd d (hd : d ∈ cs) : d.numLeaves ≤ b ^ ((node a cs).height - 2) :=
+      (ih d hd).trans (Nat.pow_le_pow_right ((List.length_pos_of_mem hc).trans_le hb)
+        (by have := hlt d hd; omega))
+    have := hlt c hc
+    have := height_pos c
+    rw [numLeaves_node_of_ne_nil a hne]
+    calc (cs.map numLeaves).sum ≤ cs.length * b ^ ((node a cs).height - 2) := by
+          simpa using List.sum_le_length_nsmul _ _ (List.forall_mem_map.2 hd)
+      _ ≤ b * b ^ ((node a cs).height - 2) := Nat.mul_le_mul_right _ hb
+      _ = b ^ ((node a cs).height - 1) := by rw [← Nat.pow_succ']; congr 1; omega
 
 theorem Licensed.of_isSubtree {s t : RoseTree α} (ht : t.Licensed R) (hs : IsSubtree s t) :
     s.Licensed R :=

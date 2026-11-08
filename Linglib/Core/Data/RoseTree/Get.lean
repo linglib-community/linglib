@@ -195,6 +195,14 @@ theorem exists_getElem?_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.heigh
       exact ⟨s, by simp only [List.take_succ_cons, getElem?_cons, hj,
         Option.bind_some, hs], by omega⟩
 
+theorem height_le_of_getElem? {t s : RoseTree α} {p : List ℕ} (h : t[p]? = some s) :
+    s.height ≤ t.height := by
+  induction p generalizing t with
+  | nil => exact (Option.some.inj h).symm ▸ Nat.le_refl _
+  | cons i p ih =>
+    obtain ⟨c, hc, hcs⟩ := getElem?_cons_eq_some_iff.mp h
+    exact (ih hcs).trans (height_lt_of_mem (List.mem_of_getElem? hc)).le
+
 theorem numNodes_lt_of_mem {t c : RoseTree α} (h : c ∈ t.children) : c.numNodes < t.numNodes := by
   cases t with
   | node a cs =>

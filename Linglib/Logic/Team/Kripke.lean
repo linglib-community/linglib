@@ -7,13 +7,13 @@ public import Linglib.Logic.Modal.Defs
 # Kripke models
 
 A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
-at which it is true. The team-semantic modal logics (BSML, QBSML, modal dependence and inclusion
-logic, InqML) evaluate formulas on these models. `KripkeModel.accessible` reads the successor
-sets as the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take.
+at which it is true. BSML and modal dependence and inclusion logic evaluate formulas on these
+models, and InqML on the inquisitive models they induce. `KripkeModel.accessible` reads the
+successor sets as the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take.
 
-The file also states Aloni's two conditions on the accessibility relation relative to a team,
-which distinguish epistemic from deontic modals: indisputability, that every world of the team
-sees the same worlds, and state-basedness, that every world of the team sees exactly the team.
+The file also states Aloni's two conditions on a successor function relative to a team, which
+distinguish epistemic from deontic modals: indisputability, that every world of the team sees the
+same worlds, and state-basedness, that every world of the team sees exactly the team.
 
 ## Main definitions
 
@@ -27,8 +27,10 @@ The sources take any relation `R ⊆ W × W` and a valuation `V : X → ℘(W)`
 ([aloni-anttila-yang-2024] Definition 2.2). Successor sets here are `Finset`s, since the team
 clauses evaluate subformulas on `R[w]` as a team; frames are therefore image-finite. The
 valuation is `Prop`-valued, and decision procedures for support take `[DecidableRel M.val]`.
-Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21); [anttila-2021]
-Definition 3.3.1 (p. 46) restates them up to bisimilarity of the successor sets.
+Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21): they are
+[not invariant at any depth](##ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable), so no
+team logic defines them. [anttila-2021] Definition 3.3.1 (p. 46) restates them up to
+bisimilarity of the successor sets.
 
 ## References
 
@@ -41,6 +43,8 @@ Definition 3.3.1 (p. 46) restates them up to bisimilarity of the successor sets.
 
 @[expose] public section
 
+universe u
+
 namespace ModalLogic
 
 /-- A **Kripke model** over worlds `W` and atoms `Atom` has successor sets and a valuation. -/
@@ -50,13 +54,31 @@ structure KripkeModel (W : Type*) (Atom : Type*) where
   /-- `val p w` says that the atom `p` is true at the world `w`. -/
   val : Atom → W → Prop
 
-variable {W : Type*} {Atom : Type*}
+variable {W W' : Type*} {Atom : Type*}
 
 /-- The disjoint union of two Kripke models. -/
-def KripkeModel.sum {W' : Type*} (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) :
+def KripkeModel.sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) :
     KripkeModel (W ⊕ W') Atom where
   access := Sum.elim (fun w ↦ (M.access w).map .inl) (fun w ↦ (M'.access w).map .inr)
   val p := Sum.elim (M.val p) (M'.val p)
+
+section Sum
+
+variable {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+
+@[simp] theorem KripkeModel.sum_access_inl (w : W) :
+    (M.sum M').access (.inl w) = (M.access w).map .inl := rfl
+
+@[simp] theorem KripkeModel.sum_access_inr (w : W') :
+    (M.sum M').access (.inr w) = (M'.access w).map .inr := rfl
+
+@[simp] theorem KripkeModel.sum_val_inl (p : Atom) (w : W) :
+    (M.sum M').val p (.inl w) ↔ M.val p w := .rfl
+
+@[simp] theorem KripkeModel.sum_val_inr (p : Atom) (w : W') :
+    (M.sum M').val p (.inr w) ↔ M'.val p w := .rfl
+
+end Sum
 
 open SetRel in
 /-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
@@ -72,10 +94,8 @@ open SetRel in
 instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
   inferInstanceAs (Decidable (v ∈ M.access w))
 
-universe u
-
-/-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
-([anttila-2025] Definition 2.3.9). -/
+/-- A **pointed team model** is a Kripke model with a team on it, the pointed state model of
+[anttila-2025] (p. 23); a class of them is a state property (Definition 2.3.9). -/
 structure PointedTeam (Atom : Type*) where
   /-- The worlds of the model. -/
   World : Type u

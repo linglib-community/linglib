@@ -3,15 +3,14 @@ module
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Truthmaker.Bilateral
 
 /-!
 # Bilateral state-based modal logic
 
 This file defines Aloni's bilateral state-based modal logic (BSML). A formula is evaluated at
 teams, finite sets of worlds of a Kripke model, and is both supported (`⊨`) and anti-supported
-(`⫤`) by teams, so its meaning in a model is a bilateral proposition, the pair of its supporting
-and its anti-supporting teams. Negation swaps the two. The non-emptiness atom `NE`, supported
+(`⫤`) by teams, so its meaning in a model is the pair of its supporting and its anti-supporting
+teams. Negation swaps the two. The non-emptiness atom `NE`, supported
 exactly by the non-empty teams, is the source of the free-choice effects.
 
 ## Main definitions
@@ -25,11 +24,11 @@ exactly by the non-empty teams, is the source of the free-choice effects.
 
 ## Implementation notes
 
-A meaning is a `Truthmaker.BilProp` of teams and negation is its involution `-`, so double
-negation and the dualities of `∧` with `∨` and of `◇` with `□` hold by `rfl`, and two formulas
-are strongly equivalent exactly when their meanings are equal (`stronglyEquivalent_iff`). Each
-clause applies an operation of `Team/Operations.lean`, so the closure properties in
-`Properties.lean` follow from the closure lemmas of each connective.
+A meaning is a pair in the product bilattice `TeamProperty W ⊙ TeamProperty W` and negation is
+its swap `ᶜ`, so double negation and the dualities of `∧` with `∨` and of `◇` with `□` hold by
+`rfl`, and two formulas are strongly equivalent exactly when their meanings are equal
+(`stronglyEquivalent_iff`). Each clause applies a connective of `Team/Operations.lean`, so the
+closure properties in `Properties.lean` follow from the closure lemmas of each connective.
 
 ## References
 
@@ -44,7 +43,8 @@ open scoped SetFamily
 namespace BSML
 
 open ModalLogic (KripkeModel PointedTeam)
-open Truthmaker (BilProp)
+open Team (TeamProperty)
+open scoped Bilattice
 
 /-! ### Formulas -/
 
@@ -135,28 +135,29 @@ def Formula.strongFalsum [Inhabited Atom] : Formula Atom :=
 
 variable {W : Type*} [DecidableEq W]
 
-/-- The meaning of a formula in a model is the bilateral proposition whose verifiers are the
-teams that support it and whose falsifiers are the teams that anti-support it
-([aloni-2022] Definition 2). The split clauses are the pointwise sups `⊻` of teams. -/
-def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
-  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
-  | .ne => ⟨Team.ne, {∅}⟩
-  | .neg φ => -φ.den M
-  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, (φ.den M).fal ⊻ (ψ.den M).fal⟩
-  | .disj φ ψ => ⟨(φ.den M).ver ⊻ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
-  | .poss φ => ⟨Team.poss M.access (φ.den M).ver, Team.nec M.access (φ.den M).fal⟩
+/-- The meaning of a formula in a model is the pair of the teams that support it and the teams
+that anti-support it ([aloni-2022] Definition 2). -/
+def Formula.den (M : KripkeModel W Atom) : Formula Atom → TeamProperty W ⊙ TeamProperty W
+  | .atom p => Team.flatPair (M.val p)
+  | .ne => .mk Team.ne {∅}
+  | .neg φ => (φ.den M)ᶜ
+  | .conj φ ψ => Team.conj (φ.den M) (ψ.den M)
+  | .disj φ ψ => Team.disj (φ.den M) (ψ.den M)
+  | .poss φ => (φ.den M).map (Team.poss M.access) (Team.nec M.access)
 
-/-- A team supports `φ`, `M, t ⊨ φ`, when it is a verifier of the meaning of `φ`. -/
+/-- A team supports `φ`, `M, t ⊨ φ`, when it is in the support coordinate of the meaning of
+`φ`. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  t ∈ (φ.den M).ver
+  t ∈ (φ.den M).pro
 
-/-- A team anti-supports `φ`, `M, t ⫤ φ`, when it is a falsifier of the meaning of `φ`. -/
+/-- A team anti-supports `φ`, `M, t ⫤ φ`, when it is in the anti-support coordinate of the
+meaning of `φ`. -/
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  t ∈ (φ.den M).fal
+  t ∈ (φ.den M).con
 
 variable (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W)
 
-@[simp] theorem Formula.den_neg : φ.neg.den M = -φ.den M := rfl
+@[simp] theorem Formula.den_neg : φ.neg.den M = (φ.den M)ᶜ := rfl
 
 @[simp] lemma support_neg : support M (.neg φ) t ↔ antiSupport M φ t := Iff.rfl
 
@@ -173,16 +174,16 @@ lemma empty_supports_atom (p : Atom) : support M (.atom p) ∅ :=
 /-- The weak contradiction is supported only by the empty team and anti-supported by every
 team, the meaning of the primitive `⊥` of [aloni-anttila-yang-2024]. -/
 theorem Formula.den_falsum [Inhabited Atom] :
-    (Formula.falsum : Formula Atom).den M = ⟨{∅}, .univ⟩ := by
-  refine BilProp.ext (Set.ext fun t ↦ ⟨fun ⟨h₁, h₂⟩ ↦ ?_, ?_⟩) ?_
+    (Formula.falsum : Formula Atom).den M = .mk {∅} .univ := by
+  refine Bilattice.Product.ext (Set.ext fun t ↦ ⟨fun ⟨h₁, h₂⟩ ↦ ?_, ?_⟩) ?_
   · exact Finset.eq_empty_iff_forall_notMem.mpr fun w hw ↦ h₂ w hw (h₁ w hw)
   · rintro rfl; exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
   · exact Set.eq_univ_of_forall fun t ↦ Team.mem_flat_sups_flat.mpr fun w _ ↦ (em' _)
 
 /-- The strong contradiction is supported by no team and anti-supported by every team. -/
 theorem Formula.den_strongFalsum [Inhabited Atom] :
-    (Formula.strongFalsum : Formula Atom).den M = ⟨∅, .univ⟩ := by
-  refine BilProp.ext (Set.eq_empty_of_forall_notMem fun t ⟨h, hne⟩ ↦ ?_) ?_
+    (Formula.strongFalsum : Formula Atom).den M = .mk ∅ .univ := by
+  refine Bilattice.Product.ext (Set.eq_empty_of_forall_notMem fun t ⟨h, hne⟩ ↦ ?_) ?_
   · rw [Formula.den_falsum] at h
     exact hne.ne_empty h
   · refine Set.eq_univ_of_forall fun t ↦ ⟨t, ?_, ∅, rfl, Finset.union_empty t⟩
@@ -233,15 +234,16 @@ def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
 model. -/
 theorem stronglyEquivalent_iff : StronglyEquivalent φ ψ ↔
     ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom), φ.den M = ψ.den M where
-  mp h W _ M := BilProp.ext (Set.ext fun t ↦ h.1 ⟨W, M, t⟩) (Set.ext fun t ↦ h.2 ⟨W, M, t⟩)
-  mpr h := ⟨fun p ↦ .of_eq (congrArg (p.team ∈ ·.ver) (h p.World p.model)),
-    fun p ↦ .of_eq (congrArg (p.team ∈ ·.fal) (h p.World p.model))⟩
+  mp h W _ M := Bilattice.Product.ext (Set.ext fun t ↦ h.1 ⟨W, M, t⟩)
+    (Set.ext fun t ↦ h.2 ⟨W, M, t⟩)
+  mpr h := ⟨fun p ↦ .of_eq (congrArg (p.team ∈ ·.pro) (h p.World p.model)),
+    fun p ↦ .of_eq (congrArg (p.team ∈ ·.con) (h p.World p.model))⟩
 
 /-! ### Decidability -/
 
 /-- Support and anti-support are decidable on a finite model, by recursion on the formula. -/
 def Formula.decidableMemDen [Fintype W] [DecidableRel M.val] :
-    (φ : Formula Atom) → DecidablePred (· ∈ (φ.den M).ver) × DecidablePred (· ∈ (φ.den M).fal)
+    (φ : Formula Atom) → DecidablePred (· ∈ (φ.den M).pro) × DecidablePred (· ∈ (φ.den M).con)
   | .atom p => (fun t ↦ inferInstanceAs (Decidable (t ∈ Team.flat (M.val p))),
       fun t ↦ inferInstanceAs (Decidable (t ∈ Team.flat fun w ↦ ¬ M.val p w)))
   | .ne => (fun t ↦ inferInstanceAs (Decidable t.Nonempty),
@@ -250,22 +252,22 @@ def Formula.decidableMemDen [Fintype W] [DecidableRel M.val] :
   | .conj φ ψ =>
     letI := (φ.decidableMemDen).1; letI := (ψ.decidableMemDen).1
     letI := (φ.decidableMemDen).2; letI := (ψ.decidableMemDen).2
-    (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).ver ∩ (ψ.den M).ver)),
-      fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).fal ⊻ (ψ.den M).fal)))
+    (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).pro ∩ (ψ.den M).pro)),
+      fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).con ⊻ (ψ.den M).con)))
   | .disj φ ψ =>
     letI := (φ.decidableMemDen).1; letI := (ψ.decidableMemDen).1
     letI := (φ.decidableMemDen).2; letI := (ψ.decidableMemDen).2
-    (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).ver ⊻ (ψ.den M).ver)),
-      fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).fal ∩ (ψ.den M).fal)))
+    (fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).pro ⊻ (ψ.den M).pro)),
+      fun t ↦ inferInstanceAs (Decidable (t ∈ (φ.den M).con ∩ (ψ.den M).con)))
   | .poss φ =>
     letI := (φ.decidableMemDen).1; letI := (φ.decidableMemDen).2
-    (fun t ↦ inferInstanceAs (Decidable (t ∈ Team.poss M.access (φ.den M).ver)),
-      fun t ↦ inferInstanceAs (Decidable (t ∈ Team.nec M.access (φ.den M).fal)))
+    (fun t ↦ inferInstanceAs (Decidable (t ∈ Team.poss M.access (φ.den M).pro)),
+      fun t ↦ inferInstanceAs (Decidable (t ∈ Team.nec M.access (φ.den M).con)))
 
-instance [Fintype W] [DecidableRel M.val] : DecidablePred (· ∈ (φ.den M).ver) :=
+instance [Fintype W] [DecidableRel M.val] : DecidablePred (· ∈ (φ.den M).pro) :=
   (φ.decidableMemDen M).1
 
-instance [Fintype W] [DecidableRel M.val] : DecidablePred (· ∈ (φ.den M).fal) :=
+instance [Fintype W] [DecidableRel M.val] : DecidablePred (· ∈ (φ.den M).con) :=
   (φ.decidableMemDen M).2
 
 end BSML

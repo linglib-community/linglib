@@ -23,9 +23,9 @@ Yang distinguish equivalence from strong equivalence.
 
 ## Implementation notes
 
-The laws hold by `rfl` as identities of meaning: negation is the involution of
-`Truthmaker.BilProp`, the anti-support clause of each connective is the support clause of its
-De Morgan dual, and `□` abbreviates `¬◇¬`. Replacement is the compositionality of
+The laws hold by `rfl` as identities of meaning: negation is the swap `ᶜ` of
+`TeamProperty W ⊙ TeamProperty W`, the anti-support clause of each connective is the support
+clause of its De Morgan dual, and `□` abbreviates `¬◇¬`. Replacement is the compositionality of
 `Formula.den`.
 
 ## References
@@ -139,7 +139,7 @@ theorem StronglyEquivalent.subst [DecidableEq Atom] {ψ : Formula Atom}
   induction θ with
   | atom q => by_cases hq : q = p <;> simp [Formula.subst, hq, h W M]
   | ne => rfl
-  | neg θ ih => exact congrArg Neg.neg ih
+  | neg θ ih => exact congrArg (·ᶜ) ih
   | conj θ η ih₁ ih₂ | disj θ η ih₁ ih₂ => simp only [Formula.subst, Formula.den, ih₁, ih₂]
   | poss θ ih => simp only [Formula.subst, Formula.den, ih]
 
