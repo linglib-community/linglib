@@ -172,7 +172,7 @@ theorem limitAssumption : LimitAssumption circumstances desires w₀ :=
 
 /-- Decide a verdict of the limit-free operators through the best worlds. -/
 scoped macro "decide_verdict" : tactic =>
-  `(tactic| (simp only [humanPossibility, humanNecessity_iff_necessity limitAssumption,
+  `(tactic| (simp only [humanPossibility_iff_not_humanNecessity_not, humanNecessity_iff_necessity limitAssumption,
       necessity, ModalLogic.Box, mem_bestAccessible, mem_bestWorlds_iff, forall_eq_or_imp,
       forall_eq]; decide))
 

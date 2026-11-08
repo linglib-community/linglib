@@ -67,8 +67,7 @@ theorem conditionalNecessity_iff_mem_variablyStrictImp :
 theorem conditionalPossibility_iff_mem_might :
     conditionalPossibility f g α β w ↔ w ∈ might (variablyStrictImp (f.accessibleWorlds)
       (fun w ↦ premisePreorder (g w))) {v | α v} {v | β v} := by
-  rw [conditionalPossibility, humanPossibility, humanNecessity,
-    Background.accessibleWorlds_restrict]
+  rw [conditionalPossibility, humanPossibility, Background.accessibleWorlds_restrict]
   rfl
 
 variable {f g α β w}
