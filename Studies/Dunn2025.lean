@@ -286,7 +286,7 @@ theorem sign_integral_standardizedDistance {T : Finset P} (hT : T.Nonempty) :
   have : Nonempty P := ⟨hT.choose⟩
   have := isProbabilityMeasure_uniformOn T.finite_toSet hT
   exact sign_integral_standardize .of_discrete
-    (uniformOn_absolutelyContinuous_of_subset Set.finite_univ (Set.subset_univ _)) .of_finite
+    (absolutelyContinuous_uniformOn_univ _) .of_finite
 
 end Pipeline
 

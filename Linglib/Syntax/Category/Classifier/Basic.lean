@@ -25,6 +25,8 @@ a noun are the remaining cases of `Realization`.
 
 * `Classifier`: the lexical entry, a morph with its script and gloss.
 * `Classifier.Parameter`: the semantic parameters.
+* `Classifier.Parameter.Class`, `Classifier.Parameter.toClass`: the three large classes of
+  parameter.
 * `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Device`, `Classifier.Device.ofScope`:
   the nine kinds of device as the classification of a locus by the constituent it characterizes.
 * `Classifier.Realization`, `Classifier.realization`: the realizations, and the realization of an
@@ -48,6 +50,7 @@ gender system are `Gender.AssignmentSystem`.
 * [aikhenvald-2000], §1.5, §2.3, §10.5, §11.1, Tables 15.1–15.3
 * [corbett-1991]
 * [allan-1977]
+* [denny-1976]
 -/
 
 @[expose] public section
@@ -112,6 +115,27 @@ inductive Parameter where
   /-- Colour, perceptually salient but never a basis for noun categorization. -/
   | colour
   deriving DecidableEq, Repr, Fintype
+
+/-- The three large classes the semantic parameters fall into, which [denny-1976] calls social,
+physical and functional interaction. -/
+inductive Parameter.Class where
+  /-- Animacy, with the divisions of animates by humanness, sex, status and kinship. -/
+  | animacy
+  /-- The physical properties of an entity, inherent or, as an arrangement, temporary. -/
+  | physical
+  /-- How an entity is used or handled. -/
+  | function
+  deriving DecidableEq, Repr, Fintype
+
+/-- The class of a parameter. An inherent nature has to do with both the material and the
+function of an entity and falls in neither class alone; the speech register is not a property of
+the referent, and colour is never encoded, so neither has a class. -/
+def Parameter.toClass : Parameter → Option Parameter.Class
+  | .animacy | .humanness | .sex | .socialStatus | .kinship => some .animacy
+  | .shape | .direction | .interioricity | .boundedness | .size | .consistency | .constitution
+  | .material | .arrangement | .quanta => some .physical
+  | .function => some .function
+  | .nature | .register | .colour => none
 
 /-! ### Kinds of device, by locus and constituent -/
 

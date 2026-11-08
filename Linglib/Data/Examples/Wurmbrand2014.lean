@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future")] }
+    paperFeatures := [] }
 
 def ex_2 : Datum :=
   { id := "wurmbrand2014_2"
@@ -39,7 +39,7 @@ def ex_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional")] }
+    paperFeatures := [] }
 
 def ex_3 : Datum :=
   { id := "wurmbrand2014_3"
@@ -52,7 +52,7 @@ def ex_3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future"), ("episodic", "possible")] }
+    paperFeatures := [] }
 
 def ex_4 : Datum :=
   { id := "wurmbrand2014_4"
@@ -65,7 +65,7 @@ def ex_4 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Leo believed Julia to be bringing the toys right then.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "propositional"), ("episodic", "impossible")] }
+    paperFeatures := [] }
 
 def ex_5 : Datum :=
   { id := "wurmbrand2014_5"
@@ -78,7 +78,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("syntax", "control")] }
+    paperFeatures := [("syntax", "control")] }
 
 def ex_6 : Datum :=
   { id := "wurmbrand2014_6"
@@ -91,7 +91,7 @@ def ex_6 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Leo claimed to eat dinner.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "propositional"), ("episodic", "impossible")] }
+    paperFeatures := [] }
 
 def ex_7 : Datum :=
   { id := "wurmbrand2014_7"
@@ -104,7 +104,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future")] }
+    paperFeatures := [] }
 
 def ex_8 : Datum :=
   { id := "wurmbrand2014_8"
@@ -117,7 +117,7 @@ def ex_8 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Yesterday, John tried to leave.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous")] }
+    paperFeatures := [] }
 
 def ex_9 : Datum :=
   { id := "wurmbrand2014_9"
@@ -130,7 +130,7 @@ def ex_9 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional")] }
+    paperFeatures := [] }
 
 def ex_10 : Datum :=
   { id := "wurmbrand2014_10"
@@ -156,7 +156,7 @@ def ex_11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future"), ("syntax", "ECM")] }
+    paperFeatures := [("syntax", "ECM")] }
 
 def ex_12 : Datum :=
   { id := "wurmbrand2014_12"
@@ -169,7 +169,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future"), ("future", "relative")] }
+    paperFeatures := [] }
 
 def ex_13 : Datum :=
   { id := "wurmbrand2014_13"
@@ -182,7 +182,7 @@ def ex_13 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Leo decided a week ago that he will go to the party.", .acceptable)]
     readings := []
-    paperFeatures := [("future", "absolute")] }
+    paperFeatures := [] }
 
 def ex_14 : Datum :=
   { id := "wurmbrand2014_14"
@@ -195,7 +195,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future")] }
+    paperFeatures := [] }
 
 def ex_15 : Datum :=
   { id := "wurmbrand2014_15"
@@ -208,7 +208,7 @@ def ex_15 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("would", "temporal")] }
+    paperFeatures := [] }
 
 def ex_16 : Datum :=
   { id := "wurmbrand2014_16"
@@ -221,7 +221,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("would", "relative")] }
+    paperFeatures := [] }
 
 def ex_17 : Datum :=
   { id := "wurmbrand2014_17"
@@ -234,7 +234,7 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
-    paperFeatures := [("SOT", "blocked")] }
+    paperFeatures := [] }
 
 def ex_18 : Datum :=
   { id := "wurmbrand2014_18"
@@ -247,7 +247,7 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .acceptable)]
-    paperFeatures := [("SOT", "applies")] }
+    paperFeatures := [] }
 
 def ex_19 : Datum :=
   { id := "wurmbrand2014_19"
@@ -260,7 +260,7 @@ def ex_19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .acceptable)]
-    paperFeatures := [("SOT", "applies")] }
+    paperFeatures := [] }
 
 def ex_20 : Datum :=
   { id := "wurmbrand2014_20"
@@ -273,7 +273,7 @@ def ex_20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .acceptable), ("shifted past", .unacceptable)]
-    paperFeatures := [("would", "obligatory SOT")] }
+    paperFeatures := [] }
 
 def ex_21 : Datum :=
   { id := "wurmbrand2014_21"
@@ -286,7 +286,7 @@ def ex_21 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("would", "temporal"), ("SOT", "blocked")] }
+    paperFeatures := [] }
 
 def ex_22 : Datum :=
   { id := "wurmbrand2014_22"
@@ -299,7 +299,7 @@ def ex_22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
-    paperFeatures := [("SOT", "blocked")] }
+    paperFeatures := [] }
 
 def ex_23 : Datum :=
   { id := "wurmbrand2014_23"
@@ -312,7 +312,7 @@ def ex_23 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Leo sings in the shower.", .acceptable)]
     readings := []
-    paperFeatures := [("tense", "present"), ("episodic", "impossible")] }
+    paperFeatures := [] }
 
 def ex_24 : Datum :=
   { id := "wurmbrand2014_24"
@@ -325,7 +325,7 @@ def ex_24 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("tense", "past"), ("episodic", "possible")] }
+    paperFeatures := [] }
 
 def ex_25 : Datum :=
   { id := "wurmbrand2014_25"
@@ -338,7 +338,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("tense", "future"), ("episodic", "possible")] }
+    paperFeatures := [] }
 
 def ex_26 : Datum :=
   { id := "wurmbrand2014_26"
@@ -351,7 +351,7 @@ def ex_26 : Datum :=
     judgment := .ungrammatical
     alternatives := [("John was singing in the shower when the mailman arrived.", .acceptable)]
     readings := []
-    paperFeatures := [("reference time", "restricted")] }
+    paperFeatures := [] }
 
 def ex_27 : Datum :=
   { id := "wurmbrand2014_27"
@@ -390,7 +390,7 @@ def ex_29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "future"), ("aspect", "perfective")] }
+    paperFeatures := [] }
 
 def ex_30 : Datum :=
   { id := "wurmbrand2014_30"
@@ -403,7 +403,7 @@ def ex_30 : Datum :=
     judgment := .ungrammatical
     alternatives := [("I don't think so. He expects to be working at 5 p.m. tomorrow.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "future"), ("reference time", "restricted")] }
+    paperFeatures := [] }
 
 def ex_31 : Datum :=
   { id := "wurmbrand2014_31"
@@ -416,7 +416,7 @@ def ex_31 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("aspect", "perfective")] }
+    paperFeatures := [] }
 
 def ex_32 : Datum :=
   { id := "wurmbrand2014_32"
@@ -429,7 +429,7 @@ def ex_32 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("aspect", "perfective")] }
+    paperFeatures := [] }
 
 def ex_33 : Datum :=
   { id := "wurmbrand2014_33"
@@ -442,7 +442,7 @@ def ex_33 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("predicate", "stative")] }
+    paperFeatures := [] }
 
 def ex_34 : Datum :=
   { id := "wurmbrand2014_34"
@@ -455,7 +455,7 @@ def ex_34 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("aspect", "imperfective")] }
+    paperFeatures := [] }
 
 def ex_35 : Datum :=
   { id := "wurmbrand2014_35"
@@ -468,7 +468,7 @@ def ex_35 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("syntax", "control")] }
+    paperFeatures := [("syntax", "control")] }
 
 def ex_36 : Datum :=
   { id := "wurmbrand2014_36"
@@ -481,7 +481,7 @@ def ex_36 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "propositional"), ("aspect", "imperfective")] }
+    paperFeatures := [] }
 
 def ex_37 : Datum :=
   { id := "wurmbrand2014_37"
@@ -494,7 +494,7 @@ def ex_37 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "present")] }
+    paperFeatures := [] }
 
 def ex_38 : Datum :=
   { id := "wurmbrand2014_38"
@@ -507,7 +507,7 @@ def ex_38 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("aspect", "imperfective")] }
+    paperFeatures := [] }
 
 def ex_39 : Datum :=
   { id := "wurmbrand2014_39"
@@ -520,7 +520,7 @@ def ex_39 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
+    paperFeatures := [] }
 
 def ex_40 : Datum :=
   { id := "wurmbrand2014_40"
@@ -598,7 +598,7 @@ def ex_45 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Yesterday, John managed to sing.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous")] }
+    paperFeatures := [] }
 
 def ex_46 : Datum :=
   { id := "wurmbrand2014_46"
@@ -611,7 +611,7 @@ def ex_46 : Datum :=
     judgment := .ungrammatical
     alternatives := [("The bridge began to tremble.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("syntax", "raising")] }
+    paperFeatures := [("syntax", "raising")] }
 
 def ex_47 : Datum :=
   { id := "wurmbrand2014_47"
@@ -624,7 +624,7 @@ def ex_47 : Datum :=
     judgment := .ungrammatical
     alternatives := [("The bridge seems to be trembling right now.", .acceptable)]
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "present")] }
+    paperFeatures := [] }
 
 def ex_48 : Datum :=
   { id := "wurmbrand2014_48"
@@ -637,7 +637,7 @@ def ex_48 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
+    paperFeatures := [] }
 
 def ex_49 : Datum :=
   { id := "wurmbrand2014_49"
@@ -650,7 +650,7 @@ def ex_49 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Leo seemed to be singing at 5 p.m. yesterday.", .acceptable)]
     readings := []
-    paperFeatures := [("reference time", "restricted")] }
+    paperFeatures := [] }
 
 def ex_50 : Datum :=
   { id := "wurmbrand2014_50"
@@ -663,7 +663,7 @@ def ex_50 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
+    paperFeatures := [] }
 
 def ex_51 : Datum :=
   { id := "wurmbrand2014_51"
@@ -676,7 +676,7 @@ def ex_51 : Datum :=
     judgment := .ungrammatical
     alternatives := [("John is trying to eat his breakfast right now.", .acceptable)]
     readings := []
-    paperFeatures := [("matrix aspect", "perfective")] }
+    paperFeatures := [] }
 
 def ex_52 : Datum :=
   { id := "wurmbrand2014_52"
@@ -689,7 +689,7 @@ def ex_52 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("attitude holder", "overt"), ("aspect", "imperfective")] }
+    paperFeatures := [] }
 
 def ex_53 : Datum :=
   { id := "wurmbrand2014_53"
@@ -702,7 +702,7 @@ def ex_53 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("attitude holder", "overt"), ("aspect", "perfective")] }
+    paperFeatures := [] }
 
 def ex_54 : Datum :=
   { id := "wurmbrand2014_54"
@@ -715,7 +715,7 @@ def ex_54 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("attitude holder", "understood"), ("aspect", "perfective")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54]
 

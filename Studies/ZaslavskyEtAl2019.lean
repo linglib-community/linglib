@@ -222,13 +222,8 @@ theorem clusterPrior_apply_singleton (f : C → W) (c : C) :
     clusterPrior f {c} = (#(univ.image f) : ℝ≥0∞)⁻¹ * ((f ⁻¹' {f c}).ncard : ℝ≥0∞)⁻¹ := by
   rw [clusterPrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
     sum_eq_single_of_mem (f c) (mem_image_of_mem f (mem_univ c)), smul_eq_mul]
-  · rw [uniformOn, cond_apply (measurable_of_finite f (measurableSet_singleton _)),
-      Set.inter_eq_right.mpr (Set.singleton_subset_iff.mpr (mem_preimage_self f c)),
-      Measure.count_singleton, mul_one, Measure.count_apply_finite _ (Set.toFinite _),
-      ← Set.ncard_eq_toFinset_card]
-  · intro w _ hw
-    rw [uniformOn, cond_apply (measurable_of_finite f (measurableSet_singleton _)),
-      Set.inter_singleton_eq_empty.mpr (fun h => hw h.symm), measure_empty, mul_zero]
+  · rw [uniformOn_apply_singleton_of_mem (Set.toFinite _) (mem_preimage_self f c)]
+  · exact fun w _ hw ↦ uniformOn_apply_singleton_of_notMem fun h ↦ hw h.symm
 
 instance (f : C → W) : IsProbabilityMeasure (clusterPrior f) := by
   have hk : (#(univ.image f) : ℝ≥0∞) ≠ 0 := by

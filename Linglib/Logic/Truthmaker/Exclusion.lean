@@ -98,6 +98,7 @@ verify none of the propositions.
 @[expose] public section
 
 open SetFamily
+open scoped Bilattice
 
 namespace Truthmaker
 
@@ -457,7 +458,7 @@ variable {P : LowerSet S}
 /-- Under classical exclusion, a single state paired with its exclusionary negation is
 exclusive. -/
 theorem ClassicalExclusion.exclusive (h : ClassicalExclusion excl P) (p : S) :
-    (BilProp.mk {p} (exclusionaryNeg excl {p})).Exclusive P := by
+    Exclusive P (.mk {p} (exclusionaryNeg excl {p})) := by
   intro s hs t ht hpt
   rw [Set.mem_singleton_iff.1 hs] at hpt
   replace ht : t ∈ exclusionaryNeg excl {p} := ht
@@ -468,7 +469,7 @@ theorem ClassicalExclusion.exclusive (h : ClassicalExclusion excl P) (p : S) :
 /-- Under classical exclusion, a single state paired with its exclusionary negation is
 exhaustive. -/
 theorem ClassicalExclusion.exhaustive (h : ClassicalExclusion excl P) (p : S) :
-    (BilProp.mk {p} (exclusionaryNeg excl {p})).Exhaustive P := by
+    Exhaustive P (.mk {p} (exclusionaryNeg excl {p})) := by
   intro s hs
   by_cases hsp : s ⊔ p ∈ P
   · exact .inl ⟨p, rfl, hsp⟩

@@ -11,11 +11,17 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 /-!
 # Conditional probability
 
-Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: monotonicity in
-the conditioning event, real-valued forms, pushforwards and products, invariance under scaling
-with the composition of two Bayesian updates, and nested events: ratios, the chain rule, and
-conditioning up to null sets.
-`[UPSTREAM]` candidates for `Mathlib/Probability/ConditionalProbability.lean`.
+Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: the real-valued
+form of `cond_apply`, pushforwards and products, invariance under scaling with the composition
+of two Bayesian updates, and nested events: ratios, the chain rule, and conditioning up to null
+sets.
+
+## Implementation notes
+
+The real-valued, scaling and nested-event lemmas are `[UPSTREAM]` candidates for
+`Mathlib/Probability/ConditionalProbability.lean` and compile under its imports. The pushforward,
+product and density lemmas need `AEMeasurable.restrict`, `Measure.prod` and
+`Measure.withDensity`, which that file does not import.
 -/
 
 public section
@@ -28,12 +34,6 @@ open scoped ENNReal ProbabilityTheory
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {s : Set Ω}
-
-theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u₁)
-    (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : e ∩ u₁ ⊆ u₂) : μ[|u₁] e ≤ μ[|u₂] e := by
-  have h : e ∩ u₁ = e ∩ u₂ := Set.inter_congr_left (fun _ hw ↦ hsub hw.2) hent
-  rw [cond_apply hu₁, cond_apply hu₂, Set.inter_comm u₁, Set.inter_comm u₂, h]
-  exact mul_le_mul_left (ENNReal.inv_le_inv.mpr (measure_mono hsub)) _
 
 theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
     μ[|s].real e = μ.real (s ∩ e) / μ.real s := by
@@ -81,10 +81,8 @@ theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (h
       (μ.withDensity (f * g))[|Set.univ] := by
   rw [withDensity_mul μ hf hg]
   rcases eq_or_ne (μ.withDensity f Set.univ) 0 with h0 | h0
-  · have hz : (0 : Measure Ω).withDensity g = 0 :=
-      Measure.ext fun s hs ↦ by rw [withDensity_apply _ hs]; simp
-    rw [Measure.measure_univ_eq_zero.1 h0,
-      cond_eq_zero_of_meas_eq_zero (μ := (0 : Measure Ω)) (s := Set.univ) (by simp), hz]
+  · rw [Measure.measure_univ_eq_zero.1 h0,
+      cond_eq_zero_of_meas_eq_zero (μ := (0 : Measure Ω)) (s := Set.univ) (by simp)]
   · have hc : (μ.withDensity f)[|Set.univ] = (μ.withDensity f Set.univ)⁻¹ • μ.withDensity f := by
       rw [cond, Measure.restrict_univ]
     rw [hc, withDensity_smul_measure,
@@ -132,10 +130,8 @@ theorem ae_cond_mem_iff (hs : MeasurableSet s) : (∀ᵐ x ∂μ[|s], x ∈ t) �
   rfl
 
 theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
-    μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t := by
-  refine ⟨fun h ↦ ?_, fun h ↦ cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩
-  have h0 : μ[|s] tᶜ = 0 := h (by rw [cond_apply ht, Set.inter_compl_self, measure_empty, mul_zero])
-  rw [cond_apply hs, mul_eq_zero, ENNReal.inv_eq_zero] at h0
-  exact ae_le_set.2 (h0.resolve_left (measure_ne_top _ _))
+    μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t :=
+  ⟨fun h ↦ (ae_cond_mem_iff hs).1 (h.ae_le (ae_cond_mem ht)), fun h ↦
+    cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩
 
 end ProbabilityTheory

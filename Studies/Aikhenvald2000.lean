@@ -98,7 +98,7 @@ The masculine gender and a default class are the unmarked members of the other s
 def HasUnmarkedMember : Language → Prop
   | mandarin => ∃ c ∈ Mandarin.Classifiers.classifiers,
       ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → n.Takes c
-  | japanese => ∃ r : Downing1996.Row, r.params = []
+  | japanese => ∃ p ∈ Downing1996.coding, p.2 = []
   | french | italian | xhosa | shona | swahili => True
 
 /-- The preferred semantic parameters (the book's (I)). Sex and animacy for the Romance genders,
@@ -110,7 +110,7 @@ def semantics : Language → Finset Parameter
   | french | italian => {.sex, .animacy}
   | xhosa | shona | swahili => {.humanness, .animacy}
   | mandarin => {.animacy, .shape}
-  | japanese => (Finset.univ : Finset Downing1996.Row).biUnion (·.params.toFinset)
+  | japanese => (Downing1996.coding.flatMap (·.2)).toFinset
 
 /-- The language marks number obligatorily. -/
 def ObligatoryNumber : Language → Prop
@@ -173,7 +173,7 @@ theorem numeralClassifier_general :
   | .mandarin, _ =>
     ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers],
       fun _ _ h ↦ Mandarin.Nouns.Noun.takes_ge h⟩
-  | .japanese, _ => ⟨.tsu, rfl⟩
+  | .japanese, _ => ⟨(Japanese.Classifiers.tsu, []), by decide, rfl⟩
 
 /-! ### Preferred semantics -/
 

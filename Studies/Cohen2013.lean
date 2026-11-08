@@ -286,8 +286,8 @@ theorem readings_neededAndBought_unlifted (g : Assignment E) :
     Set.mem_singleton_iff, Mode.combine?, Option.map_eq_some_iff]
   rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
     ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
-  have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
-  have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
+  have b₁ := Ty.mode?_eq_some_iff.mp hm₁
+  have b₂ := Ty.mode?_eq_some_iff.mp hm₂
   clear hm₁ hm₂
   cases m₁
   all_goals try simp only [Mode.IsBasic] at b₁
@@ -305,10 +305,10 @@ theorem readings_neededAndBought (g : Assignment E) :
   constructor
   · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, hb, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
       ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, ⟨ρ₄, m₄⟩, hm₄, rfl⟩
-    have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
-    have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
-    have b₃ := Ty.isBasic_of_mode?_eq_some hm₃
-    have b₄ := Ty.isBasic_of_mode?_eq_some hm₄
+    have b₁ := Ty.mode?_eq_some_iff.mp hm₁
+    have b₂ := Ty.mode?_eq_some_iff.mp hm₂
+    have b₃ := Ty.mode?_eq_some_iff.mp hm₃
+    have b₄ := Ty.mode?_eq_some_iff.mp hm₄
     clear hm₁ hm₂ hm₃ hm₄
     rcases hb with rfl | rfl <;> cases m₁
     all_goals try simp only [Mode.IsBasic] at b₁
@@ -340,11 +340,11 @@ theorem readings_neededButDidntBuy (g : Assignment E) :
   · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ₂, h₂⟩, rfl⟩, _, ⟨_, ⟨⟨τ₁, h₁⟩, rfl⟩, _, hb,
       ⟨ρ₁, m₁⟩, hm₁, rfl⟩, ⟨ρ₂, m₂⟩, hm₂, rfl⟩, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, _, rfl, ⟨ρ₄, m₄⟩, hm₄, rfl⟩,
       ⟨ρ₅, m₅⟩, hm₅, rfl⟩
-    have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
-    have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
-    have b₃ := Ty.isBasic_of_mode?_eq_some hm₃
-    have b₄ := Ty.isBasic_of_mode?_eq_some hm₄
-    have b₅ := Ty.isBasic_of_mode?_eq_some hm₅
+    have b₁ := Ty.mode?_eq_some_iff.mp hm₁
+    have b₂ := Ty.mode?_eq_some_iff.mp hm₂
+    have b₃ := Ty.mode?_eq_some_iff.mp hm₃
+    have b₄ := Ty.mode?_eq_some_iff.mp hm₄
+    have b₅ := Ty.mode?_eq_some_iff.mp hm₅
     clear hm₁ hm₂ hm₃ hm₄ hm₅
     rcases hb with rfl | rfl <;> cases m₁
     all_goals try simp only [Mode.IsBasic] at b₁

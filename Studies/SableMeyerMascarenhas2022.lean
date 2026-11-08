@@ -196,8 +196,7 @@ abbrev Exor : Set World := (((A ∩ B) \ C) ∪ (C \ (A ∩ B))) ∩ A
 theorem flat_posterior :
     (uniformOn (univ : Set World))[|E].real B = 2 / 3 ∧
       (uniformOn (univ : Set World))[|E].real C = 2 / 3 := by
-  rw [uniformOn_cond finite_univ .of_discrete, univ_inter, uniformOn_real_apply,
-    uniformOn_real_apply]
+  rw [uniformOn_univ_cond, uniformOn_real_apply, uniformOn_real_apply]
   have h1 : (E ∩ B).ncard = 2 := by rw [Set.ncard_eq_toFinset_card']; decide
   have h2 : (E ∩ C).ncard = 2 := by rw [Set.ncard_eq_toFinset_card']; decide
   have h3 : E.ncard = 3 := by rw [Set.ncard_eq_toFinset_card']; decide
@@ -206,8 +205,7 @@ theorem flat_posterior :
 theorem exclusive_posterior :
     (uniformOn (univ : Set World))[|Exor].real B = 1 / 2 ∧
       (uniformOn (univ : Set World))[|Exor].real C = 1 / 2 := by
-  rw [uniformOn_cond finite_univ .of_discrete, univ_inter, uniformOn_real_apply,
-    uniformOn_real_apply]
+  rw [uniformOn_univ_cond, uniformOn_real_apply, uniformOn_real_apply]
   have h1 : (Exor ∩ B).ncard = 1 := by rw [Set.ncard_eq_toFinset_card']; decide
   have h2 : (Exor ∩ C).ncard = 1 := by rw [Set.ncard_eq_toFinset_card']; decide
   have h3 : Exor.ncard = 2 := by rw [Set.ncard_eq_toFinset_card']; decide
@@ -351,10 +349,10 @@ private theorem indepSet_attic_brake : IndepSet attic brake (uniformOn univ) := 
   decide
 
 private theorem uniformOn_ne_zero {s : Set Situation} (hs : s.Nonempty) : uniformOn univ s ≠ 0 :=
-  by rw [Ne, uniformOn_eq_zero_iff finite_univ, univ_inter]; exact hs.ne_empty
+  (uniformOn_ne_zero_iff finite_univ).2 (by rwa [univ_inter])
 
 theorem confirmationD_car_brake : confirmationD (uniformOn univ) car brake = 2 / 21 := by
-  rw [confirmationD, uniformOn_cond finite_univ .of_discrete, univ_inter, uniformOn_real_apply,
+  rw [confirmationD, uniformOn_univ_cond, uniformOn_real_apply,
     uniformOn_univ_real_apply, card_situation,
     show (brake ∩ car).ncard = 8 by rw [Set.ncard_eq_toFinset_card']; decide,
     show brake.ncard = 12 by rw [Set.ncard_eq_toFinset_card']; decide,

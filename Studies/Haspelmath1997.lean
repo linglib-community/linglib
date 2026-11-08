@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Indefinite
 public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Haspelmath1997
@@ -42,9 +43,9 @@ occur, and the series of eighteen languages of the 40-language sample as Appendi
 `Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to be
 independent of adjacency. A connected region with a second function contains a neighbour of each of
 its functions, so a series covering a leaf of the map (specific known, direct negation, free choice)
-covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the specific-known case is the
-ban on the ABA syncretism, so a connected region covers an interval of the three specificity
-functions (`ordConnected_specificityFunctions`).
+covers the leaf's only neighbour (`mem_of_neighborFinset_eq_singleton`); the specific-known case
+is the ban on the ABA syncretism, so a connected region covers an interval of the three
+specificity functions (`ordConnected_specificityFunctions`).
 
 The map itself is explained by the features of §5.6, binary properties of the functions such as
 specificity and the scope of negation: the functions sharing a value of a feature form a contiguous
@@ -97,11 +98,11 @@ for on the strength of the map (Yakut *da* and Mandarin bare interrogatives unde
 the Swahili comparative). For those cells `sample_connected` restates the map; it tests the
 adjacency requirement on the others. Every language's series are those of its Fragment.
 
-## TODO
+## Errata
 
-* The book counts 95 geometrically possible combinations under the adjacency requirement; the
-  encoded map has 108 connected regions, and no reading of the edges of Fig. 4.4 recovers the
-  book's count.
+* The book counts 95 geometrically possible combinations under the adjacency requirement, against
+  37 attested; the map of Fig. 4.4 has 108 connected regions, and no variant of the figure
+  dropping up to three of its edges, or adding any, has 95.
 
 ## References
 
@@ -119,16 +120,18 @@ open Indefinite
 
 variable {s : Finset HaspelmathFunction} {f g : HaspelmathFunction}
 
-theorem mem_of_adjacent_eq_singleton (h : (implicationalMap.induce ↑s).Connected)
-    (hs : s.Nontrivial) (hf : f ∈ s) (hfg : f.adjacent = [g]) : g ∈ s := by
+theorem mem_of_neighborFinset_eq_singleton (h : (implicationalMap.induce ↑s).Connected)
+    (hs : s.Nontrivial) (hf : f ∈ s) (hfg : implicationalMap.neighborFinset f = {g}) : g ∈ s := by
   have := hs.coe_sort
   obtain ⟨⟨g', hg'⟩, hadj⟩ := h.preconnected.exists_adj_of_nontrivial ⟨f, hf⟩
-  rw [SimpleGraph.induce_adj, implicationalMap_adj, hfg, List.mem_singleton] at hadj
-  exact hadj ▸ hg'
+  have hmem : g' ∈ implicationalMap.neighborFinset f :=
+    SimpleGraph.mem_neighborFinset .. |>.2 (SimpleGraph.induce_adj.1 hadj)
+  rw [hfg, Finset.mem_singleton] at hmem
+  exact hmem ▸ hg'
 
 theorem specificUnknown_mem_of_specificKnown_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .specificKnown ∈ s) : .specificUnknown ∈ s :=
-  mem_of_adjacent_eq_singleton h hs hf rfl
+  mem_of_neighborFinset_eq_singleton h hs hf (by decide)
 
 theorem specificUnknown_mem_of_irrealis_mem (h : (implicationalMap.induce ↑s).Connected)
     (hk : .specificKnown ∈ s) (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
@@ -142,11 +145,32 @@ theorem ordConnected_specificityFunctions (h : (implicationalMap.induce ↑s).Co
 
 theorem indirectNeg_mem_of_directNeg_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .directNeg ∈ s) : .indirectNeg ∈ s :=
-  mem_of_adjacent_eq_singleton h hs hf rfl
+  mem_of_neighborFinset_eq_singleton h hs hf (by decide)
 
 theorem comparative_mem_of_freeChoice_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .freeChoice ∈ s) : .comparative ∈ s :=
-  mem_of_adjacent_eq_singleton h hs hf rfl
+  mem_of_neighborFinset_eq_singleton h hs hf (by decide)
+
+/-! ### The specificity functions on the definiteness continuum
+
+Haspelmath's Fig. 3.2 places the indefinite functions on the definiteness continuum: a specific
+indefinite is known or unknown to the speaker, a non-specific one is unknown in principle, and a
+definite, known to speaker and hearer, lies beyond the indefinite functions. -/
+
+/-- The degree of definiteness of a specificity function: both specific functions mark a
+specific indefinite, the non-specific function a non-specific one. The map's order runs away
+from the definite end of the continuum (`antitone_definitenessDegree`), and no indefinite
+function reaches the definite degree, which adds knowledge of the hearer. -/
+def definitenessDegree : SpecificityFunction → DefinitenessDegree
+  | .specificKnown | .specificUnknown => .specific
+  | .nonSpecific => .nonSpecific
+
+theorem antitone_definitenessDegree : Antitone definitenessDegree := by
+  intro a b; revert a b; decide
+
+theorem definitenessDegree_ne_definite (u : SpecificityFunction) :
+    definitenessDegree u ≠ .definite := by
+  cases u <;> decide
 
 /-! ### The features behind the map
 
@@ -269,6 +293,8 @@ theorem carries_antiMorphic_iff {c : LicensingContext}
   · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
   · exact fun h ↦ absurd (holds_denyVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
 
+/-- Among the licensing contexts realizing a negation function, anti-additivity holds of every
+licenser but *doubt*'s, not believing the complement, which is only downward entailing. -/
 theorem carries_antiAdditive_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
     c.licenser.Carries .antiAdditive ↔ c ≠ .doubtVerb := by
@@ -518,6 +544,8 @@ def sample : List (List Series) :=
   [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
     italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
+/-- Every series of the eighteen sample languages covers a connected region of the map, the
+book's adjacency requirement. -/
 theorem sample_connected :
     ∀ p ∈ sample, ∀ e ∈ p, (implicationalMap.induce ↑e.functions).Connected := by
   simp only [SimpleGraph.connected_iff_exists_forall_reachable]
@@ -583,10 +611,14 @@ instance (e : Datum) (label : String) : Decidable (Covers e label) :=
 instance (e : Datum) (label : String) : Decidable (Excludes e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
+/-- Every acceptable example of the book illustrates a function that the figure of its series
+covers. -/
 theorem acceptable_covers :
     ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ e.features "series", Covers e l := by
   decide +kernel
 
+/-- Every ungrammatical example given out of context illustrates a function that the figure of
+its series leaves outside. -/
 theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
       ∀ l ∈ e.features "series", Excludes e l := by

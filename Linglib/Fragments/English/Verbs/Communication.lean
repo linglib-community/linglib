@@ -48,11 +48,12 @@ def tell : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.tell, .transferOfMessage}
 
-/-- "claim" — communication verb, speaker doesn't endorse -/
+/-- "claim" — communication verb, speaker doesn't endorse. It takes a finite clause or an
+infinitive its subject controls (*claimed to be rich*). -/
 def claim : Verb where
   morphs := [.root "claim"]
   speechActVerb := true
-  valency := .ofFrame ArgumentFrame.finiteClause
+  valency := .ofFrames [.finiteClause, toInfinitive] (controllers := [none, some 0])
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say}
 

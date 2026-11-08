@@ -750,9 +750,9 @@ def conjunctFeatures (g : String) : Morphology.Features :=
 feminines take the feminine and anything else the masculine. -/
 def sloveneGender (gs : List (Flat UD.Gender)) : Option UD.Gender :=
   ((gs.mapM fun (g : Option UD.Gender) ↦ g.bind fun
-      | .Masc => some Slovene.Value.masc | .Fem => some .fem | .Neut => some .neut
-      | .Com => none).bind (ResolutionRule.resolve Slovene.rules)).map fun
-    | .masc => .Masc | .fem => .Fem | .neut => .Neut
+      | .Masc => some Slovenian.Gender.Value.masculine | .Fem => some .feminine
+      | .Neut => some .neuter | .Com => none).bind (ResolutionRule.resolve Slovene.rules)).map fun
+    | .masculine => .Masc | .feminine => .Fem | .neuter => .Neut
 
 section Fits
 

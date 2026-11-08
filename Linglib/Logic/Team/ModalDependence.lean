@@ -21,7 +21,8 @@ team, but the dependence atom breaks union closure.
 ## Main definitions
 
 * `Formula`: atoms, dependence atoms, `¬`, `∧`, split `∨` and `◇`.
-* `eval`: bilateral evaluation, with `support` and `antiSupport`.
+* `Formula.den`: the pair of supporting and anti-supporting teams, with `support` and
+  `antiSupport`.
 * `Formula.modalDepth`: the nesting depth of `◇`.
 * `Formula.DepFree`, `Realize`: the fragment without dependence atoms, and classical truth.
 
@@ -29,16 +30,18 @@ team, but the dependence atom breaks union closure.
 
 * `isLowerSet_support`, `support_empty`: support is downward closed and contains `∅`.
 * `not_supClosed_dep_of_witness`: the dependence atom is not union-closed.
-* `support_iff_forall_realize`: without dependence atoms, support is pointwise classical truth.
-* `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
+* `den_of_depFree`: without dependence atoms, a formula means the flat pair of its classical
+  truth.
+* `invariant_den`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 * `range_support_subset`: the classes of pointed team models MDL expresses are downward closed,
   contain the empty team and are invariant under bounded bisimulation.
 
 ## Implementation notes
 
-`eval` is a fold over the operations of `Team/Operations.lean` and the dependence atom
-`Team.dep`, with Väänänen's single-witness and image modalities. The disjunction clause is the
-split `t₁ ∪ t₂ = t`, which is equivalent to Väänänen's `t ⊆ t₁ ∪ t₂` under downward closure.
+`Formula.den` is a fold over the bilateral connectives of `Team/Operations.lean` and the
+dependence atom `Team.dep`, with Väänänen's single-witness and image modalities. The disjunction
+clause is the split `t₁ ∪ t₂ = t`, which is equivalent to Väänänen's `t ⊆ t₁ ∪ t₂` under downward
+closure.
 
 ## TODO
 
@@ -63,6 +66,8 @@ namespace ModalLogic.Dependence
 variable {W : Type*} {Atom : Type*}
 
 open ModalLogic (KripkeModel)
+open Team (TeamProperty)
+open scoped Bilattice
 
 /-! ### Syntax (Definition 1.1) -/
 
@@ -115,34 +120,25 @@ variable [DecidableEq W]
 
 /-! ### Semantics (Definition 4.1) -/
 
-/-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008], p. 245).
-`eval M true φ t` is support (Player II); `eval M false φ t` is
-anti-support (Player I). Negation flips polarity (clause (T5)).
+/-- The meaning of an MDL formula in a model is the pair of the teams that support it and the
+teams that anti-support it ([vaananen-2008] Definition 4.1, p. 245). Negation swaps the two
+(clause (T5)). The `◇` clauses (T8) and (T9) are Väänänen's single-witness and image modalities,
+which diverge from BSML's per-world ones on properties that are not union-closed. -/
+def Formula.den (M : KripkeModel W Atom) : Formula Atom → TeamProperty W ⊙ TeamProperty W
+  | .atom p => Team.flatPair (M.val p)
+  | .dep xs y => .mk ((↑) ⁻¹' Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)) {∅}
+  | .neg ψ => (ψ.den M)ᶜ
+  | .conj ψ₁ ψ₂ => Team.conj (ψ₁.den M) (ψ₂.den M)
+  | .disj ψ₁ ψ₂ => Team.disj (ψ₁.den M) (ψ₂.den M)
+  | .poss ψ => (ψ.den M).map (Team.possWitness M.access) (Team.necImage M.access)
 
-The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
-BSML's per-world form; the two formulations diverge for non-union-
-closed logics like MDL. -/
-def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,        t => t ∈ Team.flat (M.val p)
-  | false, .atom p,        t => t ∈ Team.flat fun w ↦ ¬ M.val p w
-  | true,  .dep xs y,      t => (t : Set W) ∈ Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)
-  | false, .dep _ _,       t => t ∈ ({∅} : Team.TeamProperty W)
-  | true,  .neg ψ,         t => eval M false ψ t
-  | false, .neg ψ,         t => eval M true ψ t
-  | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,    t => t ∈ {s | eval M false ψ₁ s} ⊻ {s | eval M false ψ₂ s}
-  | true,  .disj ψ₁ ψ₂,    t => t ∈ {s | eval M true ψ₁ s} ⊻ {s | eval M true ψ₂ s}
-  | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
-  | true,  .poss ψ,        t => t ∈ Team.possWitness M.access {s | eval M true ψ s}
-  | false, .poss ψ,        t => t ∈ Team.necImage M.access {s | eval M false ψ s}
-
-/-- Support is evaluation in the positive polarity. -/
+/-- A team supports `φ` when it is in the support coordinate of the meaning of `φ`. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  eval M true φ t
+  t ∈ (φ.den M).pro
 
-/-- Anti-support is evaluation in the negative polarity. -/
+/-- A team anti-supports `φ` when it is in the anti-support coordinate of the meaning of `φ`. -/
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  eval M false φ t
+  t ∈ (φ.den M).con
 
 @[simp] lemma support_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
     support M (.atom p) t ↔ ∀ w ∈ t, M.val p w := Iff.rfl
@@ -155,7 +151,8 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.dep xs y) t ↔
       ∀ w₁ ∈ t, ∀ w₂ ∈ t,
         (∀ x ∈ xs, M.val x w₁ ↔ M.val x w₂) → (M.val y w₁ ↔ M.val y w₂) := by
-  simp only [support, eval, Team.mem_dep, Finset.mem_coe, List.map_inj_left, eq_iff_iff]
+  simp only [support, Formula.den, Bilattice.Product.pro_mk, Set.mem_preimage, Team.mem_dep,
+    Finset.mem_coe, List.map_inj_left, eq_iff_iff]
 
 @[simp] lemma antiSupport_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
@@ -200,9 +197,9 @@ def Formula.modalDepth : Formula Atom → ℕ
 
 /-! ### Lemma 4.2: Downward closure -/
 
-private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
-    (M : KripkeModel W Atom) :
-    IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
+/-- Support and anti-support are downward closed. -/
+theorem isLowerSet_den (M : KripkeModel W Atom) (φ : Formula Atom) :
+    IsLowerSet (φ.den M).pro ∧ IsLowerSet (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
   | dep xs y =>
@@ -216,19 +213,16 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
 /-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2, p. 245). -/
 theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
-  (support_and_antiSupport_isLowerSet φ M).1
+  (isLowerSet_den M φ).1
 
 /-! ### Empty team property -/
 
-private theorem support_and_antiSupport_empty
-    (φ : Formula Atom) (M : KripkeModel W Atom) :
-    support M φ ∅ ∧ antiSupport M φ ∅ := by
+/-- The empty team supports and anti-supports every formula. -/
+theorem empty_mem_den (M : KripkeModel W Atom) (φ : Formula Atom) :
+    ∅ ∈ (φ.den M).pro ∧ ∅ ∈ (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
-  | dep xs y =>
-    refine ⟨?_, rfl⟩
-    simp only [support, eval, Finset.coe_empty]
-    exact Team.empty_mem_dep
+  | dep xs y => exact ⟨by simp, rfl⟩
   | neg ψ ih => exact ih.symm
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Set.bot_mem_sups ih₁.2 ih₂.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Set.bot_mem_sups ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
@@ -237,7 +231,7 @@ private theorem support_and_antiSupport_empty
 /-- Every MDL formula is supported on the empty team. -/
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ :=
-  (support_and_antiSupport_empty φ M).1
+  (empty_mem_den M φ).1
 
 /-! ### Dep breaks union closure (the defining feature) -/
 
@@ -247,7 +241,8 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by
   have hs (w : W) : support M (.dep [p] q) {w} := by
-    simp only [support, eval, Finset.coe_singleton]
+    simp only [support, Formula.den, Bilattice.Product.pro_mk, Set.mem_preimage,
+      Finset.coe_singleton]
     exact Team.singleton_mem_dep w
   exact hq <| (support_dep M [p] q _).1 (h (hs w₁) (hs w₂)) w₁ (by simp) w₂ (by simp)
     (by simpa using hp)
@@ -262,33 +257,28 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 
 /-- Teams that are `k`-bisimilar agree on every MDL formula of modal depth at most `k`, in both
 polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
-theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
-    Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
-  induction φ generalizing k b with
-  | atom p =>
-    cases b
-    · exact Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
-    · exact Team.invariant_flat fun _ _ h ↦ h.val_iff p
+theorem invariant_den {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
+    Team.Invariant (WorldBisim k M · M' ·) (φ.den M).pro (φ.den M').pro ∧
+      Team.Invariant (WorldBisim k M · M' ·) (φ.den M).con (φ.den M').con := by
+  induction φ generalizing k with
+  | atom p => exact ⟨Team.invariant_flat fun _ _ h ↦ h.val_iff p,
+      Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)⟩
   | dep xs y =>
-    cases b
-    · exact Team.invariant_singleton_empty
-    · exact Team.invariant_dep (fun _ _ h ↦ List.map_congr_left fun x _ ↦ propext (h.val_iff x))
-        fun _ _ h ↦ propext (h.val_iff y)
-  | neg ψ ih => cases b <;> exact ih hd _
+    exact ⟨Team.invariant_dep (fun _ _ h ↦ List.map_congr_left fun x _ ↦ propext (h.val_iff x))
+      fun _ _ h ↦ propext (h.val_iff y), Team.invariant_singleton_empty⟩
+  | neg ψ ih => exact (ih hd).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).sups (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.inter (ih₂ hd₂).1, (ih₁ hd₁).2.sups (ih₂ hd₂).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
-    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).sups (ih₂ hd₂ _)]
+    exact ⟨(ih₁ hd₁).1.sups (ih₂ hd₂).1, (ih₁ hd₁).2.inter (ih₂ hd₂).2⟩
   | poss ψ ih =>
     obtain _ | k := k
     · exact absurd hd (Nat.not_succ_le_zero _)
     have ih := ih (Nat.le_of_succ_le_succ hd)
-    cases b
-    · exact (ih _).necImage fun _ _ h ↦ h.2
-    · exact (ih _).possWitness (fun _ _ h ↦ h.2) (isLowerSet_support M ψ)
-        (isLowerSet_support M' ψ)
+    exact ⟨ih.1.possWitness (fun _ _ h ↦ h.2) (isLowerSet_support M ψ) (isLowerSet_support M' ψ),
+      ih.2.necImage fun _ _ h ↦ h.2⟩
 
 end Bisimulation
 
@@ -302,15 +292,13 @@ universe u
 depth. -/
 theorem boundedBisimInvariant_support (φ : Formula Atom) :
     BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
-  ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
+  ⟨φ.modalDepth, fun _ hp _ hb ↦ ((invariant_den φ le_rfl).1 hb).1 hp⟩
 
 /-- MDL expresses only classes of pointed team models that are downward closed, contain the empty
 team and are invariant under bounded bisimulation. -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        IsLowerSet (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} :=
+      {P | Fiberwise (fun T ↦ IsLowerSet T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} :=
   Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩,
     boundedBisimInvariant_support φ⟩
 
@@ -326,43 +314,28 @@ section Classical
 
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
 
-theorem eval_iff_forall_realize (hD : φ.DepFree) (b : Bool) (t : Finset W) :
-    eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
-  induction φ generalizing b t with
-  | atom p => cases b <;> simp [eval, Realize]
+/-- The meaning of a `dep`-free formula is the flat pair of its classical truth. Each case is the
+commutation of a connective with `Team.flatPair`. -/
+theorem den_of_depFree (hD : φ.DepFree) : φ.den M = Team.flatPair (Realize M φ) := by
+  induction φ with
+  | atom p => rfl
   | dep xs y => exact hD.elim
-  | neg ψ ih =>
-    cases b
-    · simpa [eval, Realize] using ih hD true t
-    · simpa [eval, Realize] using ih hD false t
+  | neg ψ ih => exact (congrArg (·ᶜ) (ih hD)).trans (Team.compl_flatPair _)
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_flat_sups_flat.trans ?_
-      simp [Realize, imp_iff_not_or]
-    · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and]
+    exact (congrArg₂ Team.conj (ih₁ hD.1) (ih₂ hD.2)).trans (Team.conj_flatPair _ _)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    cases b
-    · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and, not_or]
-    · simp only [eval, ih₁ hD.1, ih₂ hD.2]
-      refine Team.mem_flat_sups_flat.trans ?_
-      simp [Realize]
+    exact (congrArg₂ Team.disj (ih₁ hD.1) (ih₂ hD.2)).trans (Team.disj_flatPair _ _)
   | poss ψ ih =>
-    cases b
-    · simp only [eval, ih hD false]
-      refine Team.mem_necImage_flat.trans ?_
-      simp [realize_poss]
-    · simp only [eval, ih hD true]
-      refine Team.mem_possWitness_flat.trans ?_
-      simp [realize_poss]
+    exact (congrArg (·.map (Team.possWitness M.access) (Team.necImage M.access)) (ih hD)).trans
+      (Team.map_possWitness_necImage_flatPair _ _)
 
 theorem support_iff_forall_realize (hD : φ.DepFree) :
-    support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
-  simpa using eval_iff_forall_realize hD true t
+    support M φ t ↔ ∀ w ∈ t, Realize M φ w :=
+  .of_eq (congrArg (t ∈ ·.pro) (den_of_depFree hD))
 
 theorem antiSupport_iff_forall_not_realize (hD : φ.DepFree) :
-    antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w := by
-  simpa using eval_iff_forall_realize hD false t
+    antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w :=
+  .of_eq (congrArg (t ∈ ·.con) (den_of_depFree hD))
 
 theorem support_singleton_iff_realize (hD : φ.DepFree) : support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hD]

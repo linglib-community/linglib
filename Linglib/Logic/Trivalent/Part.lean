@@ -12,13 +12,22 @@ public import Mathlib.Data.Part
 # Partial propositions and three-valued truth
 
 A presuppositional meaning is carried either by a partial proposition `Part Prop`, as in Heim and
-Kratzer's composition engine, or by a three-valued one, `Trivalent`. `Trivalent.ofPart` maps the
-first carrier onto the second, sending an undefined value to `undefined` and a defined one to its
-classical value, so theorems proved over either carrier transfer to the other.
+Kratzer's composition engine, or by a three-valued one, `Trivalent`. The two carriers are
+equivalent: `Trivalent.toPart` sends `undefined` to `Part.none` and a defined value to its
+classical proposition, `Trivalent.ofPart` inverts it, and the knowledge order is `Part`'s order,
+so theorems proved over either carrier transfer to the other.
+
+Read in `Part`, transplication is the partiality monad's assertion, the Middle Kleene connectives
+evaluate left to right by `bind`, and the Weak Kleene ones evaluate both operands by the
+applicative lift. The Strong Kleene connectives are no such evaluation, since an undefined first
+operand need not absorb.
 
 ## Main definitions
 
+* `Trivalent.toPart`: a value as a partial proposition.
 * `Trivalent.ofPart`: the three-valued value of a partial proposition.
+* `Trivalent.equivPart`, `Trivalent.orderIsoPart`: the two carriers are equivalent, and the
+  knowledge order is `Part`'s.
 
 ## Main results
 
@@ -27,18 +36,29 @@ classical value, so theorems proved over either carrier transfer to the other.
   the three values of `ofPart`.
 * `Trivalent.ofPart_map_not`, `Trivalent.ofPart_ite_some_false`: negation and enrichment by a
   two-valued condition transport along `ofPart`.
-* `Trivalent.ofPart_map_toPart`: the partial-Boolean reading `toPart` is a section of `ofPart`.
+* `Trivalent.toPart_transplication`, `Trivalent.toPart_meetMiddle`, `Trivalent.toPart_meetWeak`:
+  transplication, Middle Kleene and Weak Kleene as evaluation in the partiality monad.
 * `Trivalent.gapExt_ofPart`: pointwise, the gap is the set of undefined points.
 
 ## References
 
 * [heim-kratzer-1998]
 * [beaver-krahmer-2001]
+* [blamey-1986]
+* [peters-1979]
 -/
 
 @[expose] public section
 
 namespace Trivalent
+
+open Bilattice
+
+/-- A value as a partial proposition: `undefined` is `Part.none`. -/
+def toPart : Trivalent → Part Prop
+  | .false => Part.some False
+  | .undefined => Part.none
+  | .true => Part.some True
 
 open Classical in
 /-- The three-valued value of a partial proposition is `undefined` where it is undefined and
@@ -92,11 +112,55 @@ theorem ofPart_ite_some_false (R : Prop) [Decidable R] (p : Part Prop) :
     ofPart (if R then p else Part.some False) = ofProp R ⊓ ofPart p := by
   split_ifs with h <;> simp [ofProp, h]
 
-/-- The two partial readings agree: reading a value as a partial Boolean and then as a partial
-proposition returns the value. -/
-@[simp] theorem ofPart_map_toPart (a : Trivalent) :
-    ofPart ((toPart a).map (· = Bool.true)) = a := by
+@[simp] theorem ofPart_toPart (a : Trivalent) : ofPart (toPart a) = a := by
   cases a <;> simp [toPart]
+
+@[simp] theorem toPart_ofPart (p : Part Prop) : toPart (ofPart p) = p := by
+  cases h : ofPart p
+  · obtain ⟨a, ha, hna⟩ := ofPart_eq_false_iff.1 h
+    exact (Part.eq_some_iff.2 (eq_false hna ▸ ha)).symm
+  · exact (Part.eq_none_iff'.2 (ofPart_eq_undefined_iff.1 h)).symm
+  · obtain ⟨a, ha, hya⟩ := ofPart_eq_true_iff.1 h
+    exact (Part.eq_some_iff.2 (eq_true hya ▸ ha)).symm
+
+/-- Three-valued truth and partial propositions are equivalent carriers. -/
+noncomputable def equivPart : Trivalent ≃ Part Prop where
+  toFun := toPart
+  invFun := ofPart
+  left_inv := ofPart_toPart
+  right_inv := toPart_ofPart
+
+/-- The knowledge order is `Part`'s order on partial propositions. -/
+theorem toPart_le_toPart {a b : Trivalent} : toPart a ≤ toPart b ↔ a ≤ₖ b := by
+  show (∀ i, i ∈ toPart a → i ∈ toPart b) ↔ _
+  cases a <;> cases b <;> simp [toPart, kLE_iff] <;>
+    first | exact ⟨False, id⟩ | exact ⟨True, trivial⟩
+
+/-- The knowledge order on three-valued truth is `Part`'s order on partial propositions. -/
+noncomputable def orderIsoPart : Know Trivalent ≃o Part Prop where
+  toEquiv := ofKnow.trans equivPart
+  map_rel_iff' := toPart_le_toPart
+
+/-- Transplication is the partiality monad's assertion: require the presupposition, then return
+the value. -/
+theorem toPart_transplication (a b : Trivalent) :
+    toPart (transplication a b) = Part.assert (a = .true) fun _ ↦ toPart b := by
+  cases a
+  · rw [Part.assert_neg (by decide)]; rfl
+  · rw [Part.assert_neg (by decide)]; rfl
+  · rw [Part.assert_pos rfl]; rfl
+
+open Classical in
+/-- Middle Kleene conjunction evaluates left to right, consulting the second operand only once
+the first is true. -/
+theorem toPart_meetMiddle (a b : Trivalent) :
+    toPart (meetMiddle a b) = toPart a >>= fun p ↦ if p then toPart b else pure False := by
+  cases a <;> cases b <;> simp [toPart, meetMiddle, Part.bind_some, Part.bind_none]
+
+/-- Weak Kleene conjunction evaluates both operands. -/
+theorem toPart_meetWeak (a b : Trivalent) :
+    toPart (meetWeak a b) = (· ∧ ·) <$> toPart a <*> toPart b := by
+  cases a <;> cases b <;> simp [toPart, meetWeak, Seq.seq]
 
 /-- Pointwise, the gap of a partial proposition's three-valued value is where it is undefined. -/
 theorem gapExt_ofPart {W : Type*} (p : W → Part Prop) :

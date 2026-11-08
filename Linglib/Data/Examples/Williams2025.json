@@ -13,7 +13,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["complement", "finite clause"],
       ["reading", "cognition"],
       ["presupposition", "John stopped by the flower shop"]
     ],
@@ -34,7 +33,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["complement", "plain infinitive"],
       ["reading", "psych-action"],
       ["presupposition", "John was supposed to stop by the flower shop"],
       ["presupposition", "If John stopped by the flowershop, it is because he remembered to do it."]
@@ -58,11 +56,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "PRO-ing gerund"],
-      ["test", "contradiction"],
-      ["denied", "obligation"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose that John had to stop by the flowershop.",
     "verified": "page-image"
   },
@@ -82,11 +76,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect gerund"],
-      ["test", "contradiction"],
-      ["denied", "obligation"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose that John had to stop by the flowershop.",
     "verified": "page-image"
   },
@@ -106,11 +96,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "PRO-ing gerund"],
-      ["test", "contradiction"],
-      ["denied", "event"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes that John stopped by the flower shop.",
     "verified": "page-image"
   },
@@ -130,11 +116,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect gerund"],
-      ["test", "contradiction"],
-      ["denied", "event"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes that John stopped by the flower shop.",
     "verified": "page-image"
   },
@@ -159,11 +141,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "finite clause"],
-      ["test", "contradiction"],
-      ["denied", "obligation"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. The paper glosses and translates (11) and (11a) separately. Does not presuppose that Juan had to stop by the flower shop.",
     "verified": "page-image"
   },
@@ -183,11 +161,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "plain infinitive"],
-      ["test", "contradiction"],
-      ["denied", "obligation"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes Juan had to stop by the flower shop.",
     "verified": "page-image"
   },
@@ -207,11 +181,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect infinitive"],
-      ["test", "contradiction"],
-      ["denied", "obligation"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose Juan had to stop by the flower shop.",
     "verified": "page-image"
   },
@@ -231,11 +201,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect infinitive"],
-      ["test", "contradiction"],
-      ["denied", "event"]
-    ],
+    "paperFeatures": [],
     "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes Juan stopped by the flower shop.",
     "verified": "page-image"
   },
@@ -254,9 +220,7 @@
       {"form": "John claimed to have stopped by the flower shop.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect infinitive"]
-    ],
+    "paperFeatures": [],
     "comment": "English bans perfect infinitives with forget; printed as John {*forgot/claimed}.",
     "verified": "page-image"
   },
@@ -276,10 +240,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "finite clause"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -299,10 +260,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "finite clause"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -322,10 +280,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "PRO-ing gerund"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -345,10 +300,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "PRO-ing gerund"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -368,10 +320,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect infinitive"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -391,10 +340,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "perfect infinitive"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "The embedded event must start before the forgetting.",
     "verified": "page-image"
   },
@@ -414,10 +360,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "plain infinitive"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed with indices: Mary₁'s twin₂ told her₁ to call her₂ back. The obligation, not the call, must start before the forgetting.",
     "verified": "page-image"
   },
@@ -437,10 +380,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["complement", "plain infinitive"],
-      ["test", "pre-existence"]
-    ],
+    "paperFeatures": [],
     "comment": "Printed with indices: Mary₁'s twin₂ told her₁ to call her₂ back. The obligation, not the call, must start before the forgetting.",
     "verified": "page-image"
   }

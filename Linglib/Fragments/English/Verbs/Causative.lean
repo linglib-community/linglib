@@ -29,7 +29,7 @@ open ArgumentStructure Aspect
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb where
   morphs := [.root "cause"]
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
+  valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
   levinClasses := {LevinClass.engender}
@@ -67,7 +67,7 @@ def get_caus : Verb where
   morphs := [.root "get"]
   past := "got"
   pastPart := "gotten"
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
+  valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   senseTag := .causative
   levinExcluded := {LevinClass.get}
@@ -75,7 +75,7 @@ def get_caus : Verb where
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb where
   morphs := [.root "force"]
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
+  valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
 

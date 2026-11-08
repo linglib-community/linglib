@@ -35,9 +35,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "3.2"],
-      ["entry", "cute"],
-      ["position", "predicative"]
+      ["section", "3.2"]
     ],
     "comment": "The copula [BE PAST] takes the adjective without its optional E_R feature; the truth conditions (30) are that Fido was cute at some earlier time.",
     "verified": "page-image"
@@ -75,9 +73,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "3.2"],
-      ["entry", "former"],
-      ["position", "predicative"]
+      ["section", "3.2"]
     ],
     "comment": "Predicted by the null-noun ENTITY analysis to mean that Joe is a former entity. Excluded here twice over: the article cannot combine with something of type ⟨eit,eit⟩, and former bears a compulsory E_R feature.",
     "verified": "page-image"
@@ -115,9 +111,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "3.2"],
-      ["entry", "former"],
-      ["position", "predicative"]
+      ["section", "3.2"]
     ],
     "comment": "The types work out, so the exclusion is syntactic: former, like mere, bears a compulsory E_R feature, and Argument Interpretability keeps the copula from selecting it.",
     "verified": "page-image"
@@ -160,9 +154,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "3.4"],
-      ["entry", "former"],
-      ["position", "attributive"]
+      ["section", "3.4"]
     ],
     "comment": "The truth conditions (46): at some earlier time John was not a judge but had been one before that; both conditions are asserted.",
     "verified": "page-image"
@@ -253,6 +245,7 @@
     "id": "elbourne2026_64_long",
     "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (48)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(64)"},
+    "method": "description",
     "language": "russ1263",
     "primaryText": "Zimnie noči budut dolgimi.",
     "discourseSegments": [],
@@ -265,9 +258,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "4.2"],
-      ["entry", "long form"],
-      ["position", "predicative"]
+      ["section", "4.2"]
     ],
     "comment": "The long form in predicative position.",
     "verified": "page-image"
@@ -276,6 +267,7 @@
     "id": "elbourne2026_64_short",
     "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (48)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(64)"},
+    "method": "description",
     "language": "russ1263",
     "primaryText": "Zimnie noči budut dolgi.",
     "discourseSegments": [],
@@ -288,9 +280,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "4.2"],
-      ["entry", "short form"],
-      ["position", "predicative"]
+      ["section", "4.2"]
     ],
     "comment": "The short form in predicative position.",
     "verified": "page-image"
@@ -299,6 +289,7 @@
     "id": "elbourne2026_65a",
     "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (46a)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(65a)"},
+    "method": "description",
     "language": "russ1263",
     "primaryText": "xorošaja teorija",
     "discourseSegments": [],
@@ -311,9 +302,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "4.2"],
-      ["entry", "long form"],
-      ["position", "attributive"]
+      ["section", "4.2"]
     ],
     "comment": "The long form in attributive position.",
     "verified": "page-image"
@@ -322,6 +311,7 @@
     "id": "elbourne2026_65b",
     "source": {"bibkey": "morzycki-2015", "paperLabel": "ch. 2, (46b)"},
     "reportedIn": {"bibkey": "elbourne-2026", "paperLabel": "(65b)"},
+    "method": "description",
     "language": "russ1263",
     "primaryText": "xoroša teorija",
     "discourseSegments": [],
@@ -334,9 +324,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "4.2"],
-      ["entry", "short form"],
-      ["position", "attributive"]
+      ["section", "4.2"]
     ],
     "comment": "The short form cannot appear in attributive position: on the present theory it has no E_R or E_L feature with which to take a noun.",
     "verified": "page-image"
@@ -505,7 +493,6 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "excellent small brown cardboard box", "judgment": "acceptable"},
       {"form": "cardboard brown small excellent box", "judgment": "questionable"}
     ],
     "readings": [],

@@ -51,10 +51,9 @@ shared inventory that lexical entries cite.
   imperative, the generic and the free relative are all necessities, and the clausal comparative
   and *too … to* both exceed the clause's degrees.
 * The inventory is the contexts the library gives a semantics, not an exhaustive list. It realizes
-  six of Haspelmath's nine functions; the irrealis non-specific function, where nonveridical rather
-  than downward-entailing operators license, has no context yet, and neither do many licensers of
-  the downward-entailing literature, such as negative adverbs, *neither … nor*, the restrictor of
-  *no* or *not every*.
+  seven of Haspelmath's nine functions, the necessity modal and the imperative realizing the
+  irrealis non-specific one; many licensers of the downward-entailing literature are still
+  missing, such as negative adverbs, *neither … nor*, the restrictor of *no* or *not every*.
 * *Before* is Anscombe's universal reading, *before ever*. *Too … to* is the
   subject's degree exceeding every degree at which the infinitive holds, after Meier. *Doubt* is not
   believing and *deny* asserting the negation, over a doxastic or assertoric accessibility.
@@ -174,14 +173,18 @@ inductive LicensingContext where
   | freeRelative
   deriving DecidableEq, Fintype, Repr
 
-/-- The function of [haspelmath-1997]'s implicational map a construction realizes, if any. -/
+/-- The function of [haspelmath-1997]'s implicational map a construction realizes, if any.
+The necessity modal and the imperative are irrealis non-specific environments: the book finds
+free-choice items unacceptable under necessity, in striking contrast to possibility, and in
+imperatives acceptable only when the imperative is read as a permission. -/
 def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | negation => some .directNeg
   | withoutClause | doubtVerb | denyVerb => some .indirectNeg
   | clausalComparative => some .comparative
   | conditionalAntecedent => some .conditional
   | question => some .question
-  | modalPossibility | modalNecessity | imperative | generic | freeRelative => some .freeChoice
+  | modalNecessity | imperative => some .irrealis
+  | modalPossibility | generic | freeRelative => some .freeChoice
   | nobody | few | atMost | universalRestrictor | beforeClause | tooTo | onlyFocus | adversative
   | superlative | sinceTemporal => none
 

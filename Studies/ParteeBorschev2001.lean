@@ -151,7 +151,7 @@ theorem freeRelationOnly_refuted :
 -- A possessive of type ⟨e,t⟩ composes with a CN by predicate modification and with a TCN not at
 -- all, while a TCN takes its possessor by application.
 theorem possessive_modes :
-    Ty.et.mode? Ty.et = some ⟨_, .predicateModification⟩ ∧ Ty.et.mode? Ty.eet = none ∧
+    Ty.et.mode? Ty.et = some ⟨_, .predicateModification .individual⟩ ∧ Ty.et.mode? Ty.eet = none ∧
       Ty.eet.mode? .e = some ⟨_, .functionalLeft⟩ :=
   ⟨rfl, rfl, rfl⟩
 

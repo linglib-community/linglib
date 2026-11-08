@@ -7,7 +7,7 @@ module
 
 public import Linglib.Fragments.Poko.Phonology
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Phonology.Autosegmental.Form
 
 /-!
 # Poko tone
@@ -22,9 +22,9 @@ missing: [mcpherson-2022] accounts for the gap with the edge constraints Non-Ini
 Non-Final(L), each evaluated over the melody and over the tones linked to the stem, and
 [mcpherson-lamont-2026] suggest an extreme response to the OCP.
 
-The entries are the stems of [mcpherson-lamont-2026]'s tableaux. Each is a melody over the
-stem's syllables with its lexical pre-linking, in which the H of an `M^H` stem is the one
-unlinked, floating element ([rolle-2018]). Every stem ends in a vowel underlyingly, but a
+The entries are the stems of [mcpherson-lamont-2026]'s tableaux. Each is a morph, the stem's
+melody over its syllables with its lexical pre-linking, in which the H of an `M^H` stem is the
+one unlinked, floating element ([rolle-2018]). Every stem ends in a vowel underlyingly, but a
 polysyllabic stem loses its final vowel except phrase-finally and the vowel's tone moves to
 the syllable before it, so the pronouns enter the tableaux in their reduced forms. A phrase is
 the product of its stems in the concatenation monoid.
@@ -60,32 +60,32 @@ variable {M : Type*} (x : M)
 
 /-- /kāk^H/, the 3SG.M pronoun, as possessor 'his' and subject 'he' ((12a), (12c)); the reduced
 form of /kākā^H/ ([mcpherson-dryer-2021] (7)). -/
-def kak : Form M := .melody x [.M, .H] [[k, a, k]] {(0, 0)}
+def kak : Form M := .morph x [.M, .H] [[k, a, k]] {(0, 0)}
 
 /-- /rī^H/ 'pig' ((12)). -/
-def ri : Form M := .melody x [.M, .H] [[r, i]] {(0, 0)}
+def ri : Form M := .morph x [.M, .H] [[r, i]] {(0, 0)}
 
 /-- /dō^H/ 'get' ((12b), (12c)). -/
-def «do» : Form M := .melody x [.M, .H] [[d, o]] {(0, 0)}
+def «do» : Form M := .morph x [.M, .H] [[d, o]] {(0, 0)}
 
 /-! ### `M` stems -/
 
 /-- /nān/, the 1SG pronoun, as possessor 'my' and subject 'I' ((19), (22)); the reduced form of
 /nānē/ ((1a)). -/
-def nan : Form M := .melody x [.M] [[n, a, n]] {(0, 0)}
+def nan : Form M := .morph x [.M] [[n, a, n]] {(0, 0)}
 
 /-- /nā/ 'eat (1SG)' ((22b)). -/
-def na : Form M := .melody x [.M] [[n, a]] {(0, 0)}
+def na : Form M := .morph x [.M] [[n, a]] {(0, 0)}
 
 /-! ### Contour, disyllabic and toneless stems -/
 
 /-- /kǎ/ 'friend', its M and H both linked to its one syllable ((3), (26a)). -/
-def ka : Form M := .melody x [.M, .H] [[k, a]] {(0, 0), (1, 0)}
+def ka : Form M := .morph x [.M, .H] [[k, a]] {(0, 0), (1, 0)}
 
 /-- /ìlí/ 'bamboo', L on the first syllable and H on the second ((1b), (28a)). -/
-def ili : Form M := .melody x [.L, .H] [[i], [l, i]] {(0, 0), (1, 1)}
+def ili : Form M := .morph x [.L, .H] [[i], [l, i]] {(0, 0), (1, 1)}
 
 /-- /ne/ 'make (1SG)', toneless ((22a)). -/
-def ne : Form M := .melody x [] [[n, e]] ∅
+def ne : Form M := .morph x [] [[n, e]] ∅
 
 end Poko

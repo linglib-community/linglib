@@ -116,6 +116,13 @@ theorem resolve_cons :
     resolve (r :: rs) cs = resolve rs cs := by
   simp [resolve_cons, h]
 
+/-- A rule that applies only where the next rule applies, selecting the same form, is
+redundant. -/
+theorem resolve_cons_cons_of_applies_imp {r' : ResolutionRule α G}
+    (h : r.Applies cs → r'.Applies cs) (ho : r.out = r'.out) :
+    resolve (r :: r' :: rs) cs = resolve (r' :: rs) cs := by
+  by_cases hr : r.Applies cs <;> simp [resolve_cons, hr, h, ho]
+
 theorem resolve_append : resolve (rs ++ rs') cs = (resolve rs cs).or (resolve rs' cs) := by
   simp [resolve, List.find?_append, Option.map_or]
 

@@ -201,7 +201,8 @@ of a word is multitier reverse definite with window `k`, as a finite union of in
 tier-based reverse definite languages. -/
 theorem isBTK_of_forall_take_filter_eq [Finite α]
     (h : ∀ w w' : List α,
-      (∀ T : α → Bool, (w.filter T).take k = (w'.filter T).take k) → (w ∈ L ↔ w' ∈ L)) :
+      (∀ (T : α → Prop) [DecidablePred T], (w.filter T).take k = (w'.filter T).take k) →
+        (w ∈ L ↔ w' ∈ L)) :
     IsBTK k L := by
   let Φ : List α → (α → Bool) → List α := fun w T ↦ (w.filter T).take k
   have : Finite (Φ '' L) := Set.Finite.to_subtype <|
@@ -214,10 +215,10 @@ theorem isBTK_of_forall_take_filter_eq [Finite α]
     refine Iff.trans ?_ Language.mem_iSup.symm
     refine ⟨fun hw ↦ ⟨⟨Φ w, w, hw, rfl⟩, Set.mem_iInter.2 fun _ ↦ rfl⟩, ?_⟩
     rintro ⟨⟨_, w', hw', rfl⟩, hT⟩
-    exact (h w w' fun T ↦ Set.mem_iInter.1 hT T).2 hw'
+    exact (h w w' fun T _ ↦ Set.mem_iInter.1 hT fun a ↦ decide (T a)).2 hw'
   rw [e]
   exact BooleanSubalgebra.iSup_mem fun p ↦ BooleanSubalgebra.iInf_mem fun T ↦
-    IsBTC.base ⟨T, {v | v.take k = (p : (α → Bool) → List α) T}, rfl,
+    IsBTC.base ⟨(T · = true), inferInstance, {v | v.take k = (p : (α → Bool) → List α) T}, rfl,
       isReverseDefinite_setOf_left k {(p : (α → Bool) → List α) T}⟩
 
 section Converse
@@ -274,7 +275,7 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
       (∀ c, Nat.card L.SyntacticMonoid ≤ β c + u.count c) →
       (∀ c, Nat.card L.SyntacticMonoid ≤ β c + u'.count c) →
       L.syntacticClass u = L.syntacticClass u' →
-      (∀ T : α → Bool, (∀ a, T a = true → β a ≠ 0) →
+      (∀ (T : α → Prop) [DecidablePred T], (∀ a, T a → β a ≠ 0) →
         (w.filter T).take k = (w'.filter T).take k) →
       L.syntacticClass (u ++ w) = L.syntacticClass (u' ++ w') := by
   intro k
@@ -289,27 +290,22 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
   | succ k ih =>
     intro β u u' w w' hk hu hu' huu' hw
     -- the letters with budget left, and the words restricted to them
-    set p : α → Bool := fun a ↦ decide (β a ≠ 0) with hp
-    have hpT : ∀ T : α → Bool, (∀ a, T a = true → β a ≠ 0) → ∀ v : List α,
-        (v.filter p).filter T = v.filter T := fun T hT v ↦ by
+    have hpT : ∀ (T : α → Prop) [DecidablePred T], (∀ a, T a → β a ≠ 0) → ∀ v : List α,
+        (v.filter (β · ≠ 0)).filter T = v.filter T := fun T _ hT v ↦ by
       rw [List.filter_filter]
-      exact List.filter_congr fun a _ ↦ by
-        cases hTa : T a <;> simp [hp, hTa, hT a]
-    have hwp := hw p (fun a ha ↦ by simpa [hp] using ha)
+      exact List.filter_congr fun a _ ↦ by by_cases hTa : T a <;> simp [hTa, hT a]
+    have hwp := hw (β · ≠ 0) fun _ ↦ id
     rw [← syntacticClass_append_filter h β u w (fun c hc ↦ by simpa [hc] using hu c),
       ← syntacticClass_append_filter h β u' w' (fun c hc ↦ by simpa [hc] using hu' c)]
-    have hpp : ∀ v : List α, (v.filter p).filter p = v.filter p := fun v ↦
-      hpT p (fun a ha ↦ by simpa [hp] using ha) v
-    rw [← hpp w, ← hpp w', hpT p (fun a ha ↦ by simpa [hp] using ha),
-      hpT p (fun a ha ↦ by simpa [hp] using ha)] at hwp
-    rcases hwf : w.filter p with _ | ⟨c, r⟩ <;> rcases hwf' : w'.filter p with _ | ⟨c', r'⟩ <;>
+    rcases hwf : w.filter (β · ≠ 0) with _ | ⟨c, r⟩ <;>
+      rcases hwf' : w'.filter (β · ≠ 0) with _ | ⟨c', r'⟩ <;>
       rw [hwf, hwf'] at hwp
     · simpa using huu'
     · simp at hwp
     · simp at hwp
     obtain ⟨rfl, hr⟩ := List.cons_eq_cons.1 hwp
     have hc : β c ≠ 0 := by
-      simpa [hp] using List.of_mem_filter (hwf ▸ List.mem_cons_self : c ∈ w.filter p)
+      simpa using List.of_mem_filter (hwf ▸ List.mem_cons_self : c ∈ w.filter (β · ≠ 0))
     -- spend one unit of `c`'s budget
     have hsum : ∑ a, Function.update β c (β c - 1) a + 1 = ∑ a, β a := by
       rw [Finset.sum_update_of_mem (Finset.mem_univ c), Finset.sdiff_singleton_eq_erase,
@@ -323,8 +319,8 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
         · have := hv d; simp [Function.update_of_ne hd, List.count_append]; omega
     rw [show u ++ c :: r = u ++ [c] ++ r by simp, show u' ++ c :: r' = u' ++ [c] ++ r' by simp]
     refine ih _ _ _ r r' (by omega) (hinv u hu) (hinv u' hu')
-      (by rw [syntacticClass_append, syntacticClass_append, huu']) fun T hT ↦ ?_
-    have hT' : ∀ a, T a = true → β a ≠ 0 := fun a ha ↦ by
+      (by rw [syntacticClass_append, syntacticClass_append, huu']) fun T _ hT ↦ ?_
+    have hT' : ∀ a, T a → β a ≠ 0 := fun a ha ↦ by
       have := hT a ha
       by_cases hac : a = c
       · subst hac; rw [Function.update_self] at this; omega
@@ -332,8 +328,8 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
     have := hw T hT'
     rw [← hpT T hT' w, ← hpT T hT' w', hwf, hwf'] at this
     by_cases hTc : T c
-    · simpa [List.filter_cons_of_pos hTc] using this
-    · simpa [List.filter_cons_of_neg hTc, List.take_take] using
+    · simpa [List.filter_cons, hTc] using this
+    · simpa [List.filter_cons, hTc, List.take_take] using
         congrArg (List.take k) this
 
 end Converse
@@ -346,7 +342,7 @@ theorem isBTK_of_mem_languages_multitierReverseDefiniteVariety [Fintype α]
   refine isBTK_of_forall_take_filter_eq fun w w' hww' ↦ mem_iff_of_syntacticClass_eq ?_
   simpa using syntacticClass_append_eq_of_take_filter_eq h.2 _
     (fun _ ↦ Nat.card L.SyntacticMonoid) [] [] w w' (by simp) (by simp) (by simp) rfl
-    fun T _ ↦ hww' T
+    fun T _ _ ↦ hww' T
 
 /-- Over a finite alphabet, a language is multitier reverse definite exactly when its syntactic
 monoid is, which is Lambert's (62). -/

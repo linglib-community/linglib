@@ -235,7 +235,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RA"],
-      ["suffixes", "RAR"]
+      ["suffixes", "RA(R)"]
     ],
     "comment": "The doubled -an- is underlined in the source.",
     "verified": "page-image"
@@ -276,10 +276,10 @@
     "readings": [],
     "paperFeatures": [
       ["root", "mang"],
-      ["scope", "IR"],
+      ["scope", "RI"],
       ["suffixes", "IR"]
     ],
-    "comment": "Printed with '(=REC-INT)': synonymous with the REC-INT order (fn. 3).",
+    "comment": "Printed with '(=REC-INT)': synonymous with the REC-INT order (fn. 3). The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
     "verified": "page-image"
   },
   {
@@ -400,7 +400,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "ARA"],
-      ["suffixes", "ARAR"]
+      ["suffixes", "ARA(R)"]
     ],
     "comment": "The doubled -an- is underlined in the source.",
     "verified": "page-image"
@@ -582,9 +582,10 @@
     "readings": [],
     "paperFeatures": [
       ["root", "mang"],
-      ["scope", "IA"],
+      ["scope", "AI"],
       ["suffixes", "IA"]
     ],
+    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
     "verified": "page-image"
   },
   {
@@ -623,9 +624,10 @@
     "readings": [],
     "paperFeatures": [
       ["root", "mang"],
-      ["scope", "IP"],
+      ["scope", "PI"],
       ["suffixes", "IP"]
     ],
+    "comment": "The scope gives the intensive, an adverbial, widest scope, as p. 359 assumes; fn. 16 derives the form by circumscription.",
     "verified": "page-image"
   },
   {
@@ -825,7 +827,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RCPA"],
-      ["suffixes", "RCPAR"]
+      ["suffixes", "RCPA(R)"]
     ],
     "comment": "Labeled RCPA(R); the doubled -an- is underlined in the source.",
     "verified": "page-image"
@@ -846,9 +848,9 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RCPAI"],
-      ["suffixes", "RCPARI"]
+      ["suffixes", "RCPA(R)I"]
     ],
-    "comment": "Labeled RCPARI.",
+    "comment": "Labeled RCPARI; its doubled -an-, underlined in (12c), is printed without the underline fn. 2 promises.",
     "verified": "page-image"
   },
   {
@@ -971,7 +973,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RCA"],
-      ["suffixes", "RCAR"]
+      ["suffixes", "RCA(R)"]
     ],
     "verified": "page-image"
   },
@@ -1011,7 +1013,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RCPA"],
-      ["suffixes", "RCPAR"]
+      ["suffixes", "RCPA(R)"]
     ],
     "verified": "page-image"
   },
@@ -1031,7 +1033,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RA"],
-      ["suffixes", "RAR"]
+      ["suffixes", "RA(R)"]
     ],
     "verified": "page-image"
   },
@@ -1051,7 +1053,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RAA"],
-      ["suffixes", "RARAR"]
+      ["suffixes", "RA(R)A(R)"]
     ],
     "comment": "Marked ?* in the source, recorded as questionable.",
     "verified": "page-image"
@@ -1072,7 +1074,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RAAA"],
-      ["suffixes", "RARARAR"]
+      ["suffixes", "RA(R)A(R)A(R)"]
     ],
     "verified": "page-image"
   },
@@ -1092,7 +1094,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RACA"],
-      ["suffixes", "RARCAR"]
+      ["suffixes", "RA(R)CA(R)"]
     ],
     "comment": "The source glosses it also 'cause to tie e.o. with [sth.] at [s.pl.]'.",
     "verified": "page-image"
@@ -1558,7 +1560,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RAC"],
-      ["suffixes", "RARC"]
+      ["suffixes", "RA(R)C"]
     ],
     "verified": "page-image"
   },
@@ -1578,7 +1580,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RAC"],
-      ["suffixes", "RCAR"]
+      ["suffixes", "RCA(R)"]
     ],
     "verified": "page-image"
   },
@@ -1598,7 +1600,7 @@
     "paperFeatures": [
       ["root", "mang"],
       ["scope", "RAC"],
-      ["suffixes", "CRAR"]
+      ["suffixes", "CRA(R)"]
     ],
     "verified": "page-image"
   },

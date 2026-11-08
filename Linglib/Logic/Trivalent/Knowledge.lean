@@ -8,7 +8,6 @@ module
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Bilattice.Involution
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Data.Part
 
 /-!
 # The knowledge order on three-valued truth
@@ -20,16 +19,9 @@ strong connectives are monotone for it, which is Kleene's regularity condition, 
 Kleene connectives are not even monotone for the truth order. The knowledge order has meets but no
 top: Kleene's values lack the glut of Belnap's four values, of which they are the consistent part.
 
-Read in mathlib's `Part`, a value is a partial Boolean and the knowledge order is `Part`'s. There
-transplication is the partiality monad's assertion, the Middle Kleene connectives evaluate left to
-right by `bind`, and the Weak Kleene ones evaluate both operands by the applicative lift. The
-Strong Kleene connectives are no such evaluation, since an undefined first operand need not
-absorb.
-
 ## Main definitions
 
 * the `PartialOrder`, `OrderBot` and `SemilatticeInf` instances on `Know Trivalent`.
-* `Trivalent.toPart`: a value as a partial Boolean.
 
 ## Main results
 
@@ -43,14 +35,10 @@ absorb.
 * `Trivalent.toKnow_supervaluation`: over a nonempty family, the supervaluation is the knowledge
   meet of the classical values, so shrinking the family can only add information
   (`Trivalent.supervaluation_kLE_supervaluation`).
-* `Trivalent.toPart_kLE_toPart`, `Trivalent.toPart_transplication`, `Trivalent.toPart_meetMiddle`,
-  `Trivalent.toPart_meetWeak`: the partial-Boolean reading.
 
 ## References
 
 * [kleene-1952]
-* [blamey-1986]
-* [peters-1979]
 -/
 
 @[expose] public section
@@ -156,42 +144,5 @@ theorem supervaluation_kLE_supervaluation {α : Type*} {s t : Finset α} (P : α
     supervaluation t P ≤ₖ supervaluation s P := by
   rw [kLE_def, toKnow_supervaluation P hs, toKnow_supervaluation P (hs.mono h)]
   exact Finset.inf'_mono _ h hs
-
-/-! ### Partial Booleans -/
-
-/-- A value as a partial Boolean in mathlib's `Part`: `undefined` is `Part.none`. -/
-def toPart : Trivalent → Part Bool
-  | .false => Part.some Bool.false
-  | .undefined => Part.none
-  | .true => Part.some Bool.true
-
-theorem toPart_injective : Function.Injective toPart := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [toPart, Part.some_ne_none, Part.none_ne_some]
-
-/-- The knowledge order is `Part`'s order on partial Booleans. -/
-theorem toPart_kLE_toPart {a b : Trivalent} : toPart a ≤ toPart b ↔ a ≤ₖ b := by
-  show (∀ i, i ∈ toPart a → i ∈ toPart b) ↔ _
-  cases a <;> cases b <;> simp [toPart, kLE_iff]
-
-/-- Transplication is the partiality monad's assertion: require the presupposition, then return
-the value. -/
-theorem toPart_transplication (a b : Trivalent) :
-    toPart (transplication a b) = Part.assert (a = .true) fun _ ↦ toPart b := by
-  cases a
-  · rw [Part.assert_neg (by decide)]; rfl
-  · rw [Part.assert_neg (by decide)]; rfl
-  · rw [Part.assert_pos rfl]; rfl
-
-/-- Middle Kleene conjunction evaluates left to right, consulting the second operand only once
-the first is true. -/
-theorem toPart_meetMiddle (a b : Trivalent) :
-    toPart (meetMiddle a b) = toPart a >>= fun p ↦ if p then toPart b else pure Bool.false := by
-  cases a <;> cases b <;> simp [toPart, meetMiddle, Part.bind_some, Part.bind_none]
-
-/-- Weak Kleene conjunction evaluates both operands. -/
-theorem toPart_meetWeak (a b : Trivalent) :
-    toPart (meetWeak a b) = (· && ·) <$> toPart a <*> toPart b := by
-  cases a <;> cases b <;> simp [toPart, meetWeak, Seq.seq, Part.bind_some, Part.bind_none]
 
 end Trivalent

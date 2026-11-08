@@ -16,12 +16,14 @@ the infinitival marker *to* is `English.Auxiliaries.toInf`.
 
 ## TODO
 
-*for* requires an overt accusative subject right after it (*for her to be interviewed*), a
-requirement the selection relation reads off the position alone, so every infinitival frame
-takes *for*, the raising and control frames included.
+No entry records a closed infinitive with an overt subject, so no verb takes *for*: the
+*for*-clauses of *arrange* (*arranged for them to go by bus*, [huddleston-pullum-2002] p. 1178)
+and of *want* and *expect*, whose *for* deletes right after the verb ([chomsky-1981] p. 69),
+await their frames.
 
 ## References
 
+* [chomsky-1981]
 * [huddleston-pullum-2002]
 * [noonan-2007]
 -/
@@ -57,6 +59,7 @@ def for_ : Complementizer where
   morphs := [.free "for"]
   coding := some .infinitive
   types := .only .declarative
+  subject := some (.overt (some .acc))
   verbForm := some .Inf
 
 /-- The complementizers. -/

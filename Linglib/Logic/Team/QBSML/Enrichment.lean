@@ -18,7 +18,7 @@ distribution and free-choice facts proved in `Logic/Team/QBSML/FreeChoice.lean`.
 
 ## Main results
 
-* `QBSML.eval_of_eval_enrich`: enrichment strengthens an `NE`-free formula in both
+* `QBSML.den_enrich_subset`: enrichment strengthens an `NE`-free formula in both
   polarities, the first-order form of Aloni's Fact 1.
 * `QBSML.antiSupport_conj_ne`: anti-support of `φ ∧ NE` is anti-support of `φ`.
 * `QBSML.support_enrich_nec_iff`: support of the enriched derived `□φ` is enriched support of
@@ -62,7 +62,7 @@ def Formula.enrich : Formula Var Const Pred → Formula Var Const Pred
 
 variable {W Domain : Type*} [DecidableEq W] [DecidableEq Var] [Fintype Var]
   [DecidableEq Domain] [Fintype Domain] {M : Model W Domain Const Pred}
-  {φ : Formula Var Const Pred} {s : Finset (Index W Var Domain)} {pol : Bool}
+  {φ : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
 
 theorem nonempty_of_support_enrich (h : support M φ.enrich s) : s.Nonempty := by
   cases φ with
@@ -83,51 +83,38 @@ theorem antiSupport_conj_ne (M : Model W Domain Const Pred) (φ : Formula Var Co
 
 /-- Enrichment strengthens an `NE`-free formula in both polarities, the first-order form of
 Aloni's Fact 1. -/
-theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol φ.enrich s) : eval M pol φ s := by
-  induction hNE generalizing pol s with
-  | pred P x =>
-    cases pol
-    · exact (antiSupport_conj_ne M _ s).mp h
-    · exact h.1
-  | predc P c =>
-    cases pol
-    · exact (antiSupport_conj_ne M _ s).mp h
-    · exact h.1
-  | neg _ ih =>
-    cases pol
-    · exact ih (pol := true) ((antiSupport_conj_ne M _ s).mp h)
-    · exact ih (pol := false) h.1
+theorem den_enrich_subset (hNE : φ.NEFree) :
+    (φ.enrich.den M).pro ⊆ (φ.den M).pro ∧ (φ.enrich.den M).con ⊆ (φ.den M).con := by
+  induction hNE with
+  | pred P x | predc P c => exact ⟨fun _ h ↦ h.1, fun s h ↦ (antiSupport_conj_ne M _ s).mp h⟩
+  | neg _ ih => exact ⟨fun _ h ↦ ih.2 h.1, fun s h ↦ ih.1 ((antiSupport_conj_ne M _ s).mp h)⟩
   | conj _ _ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := (antiSupport_conj_ne M _ s).mp h
-      exact ⟨t₁, ih₁ h₁, t₂, ih₂ h₂, ht⟩
-    · exact ⟨ih₁ h.1.1, ih₂ h.1.2⟩
+    refine ⟨fun _ h ↦ ⟨ih₁.1 h.1.1, ih₂.1 h.1.2⟩, fun s h ↦ ?_⟩
+    obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := (antiSupport_conj_ne M _ s).mp h
+    exact ⟨t₁, ih₁.2 h₁, t₂, ih₂.2 h₂, ht⟩
   | disj _ _ ih₁ ih₂ =>
-    cases pol
-    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ s).mp h
-      exact ⟨ih₁ h₁, ih₂ h₂⟩
+    refine ⟨fun _ h ↦ ?_, fun s h ↦ ?_⟩
     · obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := h.1
-      exact ⟨t₁, ih₁ h₁, t₂, ih₂ h₂, ht⟩
+      exact ⟨t₁, ih₁.1 h₁, t₂, ih₂.1 h₂, ht⟩
+    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ s).mp h
+      exact ⟨ih₁.2 h₁, ih₂.2 h₂⟩
   | poss _ ih =>
-    cases pol
-    · exact fun i hi ↦ ih ((antiSupport_conj_ne M _ s).mp h i hi)
-    · exact fun i hi ↦ (h.1 i hi).imp fun _ ⟨⟨h', hne⟩, hX⟩ ↦ ⟨⟨ih h', hne⟩, hX⟩
+    exact ⟨fun _ h i hi ↦ (h.1 i hi).imp fun _ ⟨⟨h', hne⟩, hX⟩ ↦ ⟨⟨ih.1 h', hne⟩, hX⟩,
+      fun s h i hi ↦ ih.2 ((antiSupport_conj_ne M _ s).mp h i hi)⟩
   | exi x _ ih =>
-    cases pol
-    · exact ih ((antiSupport_conj_ne M _ s).mp h)
-    · exact h.1.imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih h'⟩
+    exact ⟨fun _ h ↦ h.1.imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih.1 h'⟩,
+      fun s h ↦ ih.2 ((antiSupport_conj_ne M _ s).mp h)⟩
   | univ x _ ih =>
-    cases pol
-    · exact ((antiSupport_conj_ne M _ s).mp h).imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih h'⟩
-    · exact ih h.1
+    exact ⟨fun _ h ↦ ih.1 h.1, fun s h ↦
+      ((antiSupport_conj_ne M _ s).mp h).imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih.2 h'⟩⟩
 
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M φ.enrich s) :
     support M φ s :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).1 h
 
 theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
-  eval_of_eval_enrich hNE h
+  (den_enrich_subset hNE).2 h
 
 /-! ### The enriched derived `□` -/
 

@@ -119,7 +119,6 @@ CaviraniVandenWyngaerd2026
 ChampollionAlsopGrosu2019
 ChampollionBernard2024
 ChanShen2026
-ChandleeEtAl2019
 Charlow2019
 Charlow2020
 Charlow2021
@@ -147,7 +146,6 @@ Clements1985
 CobrerosEtAl2012
 Cohen1999
 CohenKrifka2014
-CohnGordonEtAl2019
 Condoravdi2002
 CondoravdiLauer2016
 Coon2019
@@ -165,7 +163,6 @@ Cummins2015
 CumminsFranke2021
 DAmbrosioHedden2024
 DaleReiter1995
-DalrympleEtAl1998
 DalrympleHaug2024
 DavidsonGagne2022
 Dayal2004
@@ -199,7 +196,6 @@ EgreRossiSprenger2026b
 EgreRossiSprenger2026c
 Egressy2026
 Elbourne2013
-Elbourne2026
 Elliott2020
 Elliott2025
 Embick2010
@@ -264,22 +260,18 @@ Haspelmath2021c
 Haspelmath2023
 HaugDalrymple2020
 HawkinsEtAl2025
-HeKaiserIskarous2025
 Heim1983
 Heim1994a
-Heim1994b
 HeimKratzer1998
 HeimLasnikMay1991
 HeitmeierChuangBaayen2026
 HerbstrittFranke2019
 Herce2023
-Hintikka1962
 HollidayIcard2013
 HollidayMandelkern2024
 HoulihanEtAl2023
 HuangSpelkeSnedeker2013
 Hyman2003
-HymanMchombo1992
 IatridouEtAl2001
 IatridouZeijlstra2021
 ImelGuoSteinertThrelkeld2026
@@ -505,7 +497,6 @@ WechslerZlatic2000
 Wilder2013
 Wood2015
 Wood2023
-Wurmbrand2014
 Xiang2022
 Yagi2025
 YingEtAl2025

@@ -53,7 +53,7 @@ Rose and Walker's Agreement by Correspondence is in `Studies/RoseWalker2004.lean
 namespace Hansson2010
 
 open Subregular Phonology Phonology.Harmony Data.PHOIBLE
-open Subregular.TierStrictlyLocalGrammar (map_mem_ofForbiddenPairs_language_iff
+open TierStrictlyLocalGrammar (map_mem_ofForbiddenPairs_language_iff
   mem_ofForbiddenPairs_language_iff ofForbiddenPairs_language_congr)
 
 /-! ### The harmony tier -/
@@ -151,17 +151,17 @@ theorem onTier_of_mem_sibilants {w : List Segment} {x : Segment} (h : x ∈ sibi
 
 /-- The surface phonotactic of section 2.4.1.1 requires adjacent sibilants on the tier to agree
 in [anterior]. -/
-abbrev navajoSibilantHarmony : TierStrictlyLocalGrammar 2 Segment :=
+abbrev navajoSibilantHarmony : TierStrictlyLocalGrammar Segment :=
   TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y ↦ x .anterior ≠ y .anterior) OnTier
 
-theorem isTierStrictlyLocal : Language.IsTierStrictlyLocal 2 navajoSibilantHarmony.language :=
+theorem isTierStrictlyLocal : (navajoSibilantHarmony.language 2).IsTierStrictlyLocal 2 :=
   ⟨_, rfl⟩
 
-theorem isBTSL : Language.IsBTSL 2 navajoSibilantHarmony.language :=
+theorem isBTSL : Language.IsBTSL 2 (navajoSibilantHarmony.language 2) :=
   isTierStrictlyLocal.toIsBTSL
 
 theorem mem_language_iff (w : List Segment) :
-    w ∈ navajoSibilantHarmony.language ↔
+    w ∈ navajoSibilantHarmony.language 2 ↔
       ∀ x ∈ sibilants w, ∀ y ∈ sibilants w, x .anterior = y .anterior := by
   have : IsTrans Segment (fun x y ↦ x .anterior = y .anterior) := ⟨fun _ _ _ ↦ Eq.trans⟩
   have : Std.Symm (fun x y : Segment ↦ x .anterior = y .anterior) := ⟨fun _ _ ↦ Eq.symm⟩
@@ -170,10 +170,10 @@ theorem mem_language_iff (w : List Segment) :
   exact ⟨fun h ↦ h.pairwise.forall_of_forall fun _ _ ↦ rfl,
     fun h ↦ (List.pairwise_of_forall_mem_list h).isChain⟩
 
-theorem language_eq_preimage : navajoSibilantHarmony.language =
-    List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language := by
+theorem language_eq_preimage : navajoSibilantHarmony.language 2 =
+    List.map sibilantClass ⁻¹' (TierStrictlyLocalGrammar.agree (·.isSome)).language 2 := by
   ext w
-  show _ ↔ w.map sibilantClass ∈ (TierStrictlyLocalGrammar.agree (·.isSome)).language
+  show _ ↔ w.map sibilantClass ∈ (TierStrictlyLocalGrammar.agree (·.isSome)).language 2
   rw [TierStrictlyLocalGrammar.agree, map_mem_ofForbiddenPairs_language_iff]
   exact Eq.to_iff (congrArg (w ∈ ·) (ofForbiddenPairs_language_congr (fun _ ↦ Iff.rfl)
     fun x y hx hy ↦ by rw [sibilantClass_of_onTier hx, sibilantClass_of_onTier hy]))
@@ -234,7 +234,7 @@ theorem trigger_anticipatory (w : List Segment) : trigger (anticipatory w) = tri
         Option.bind_some, harmonize_some hx, sibilantClass_setFeature hx]
 
 theorem anticipatory_mem_language (w : List Segment) :
-    anticipatory w ∈ navajoSibilantHarmony.language := by
+    anticipatory w ∈ navajoSibilantHarmony.language 2 := by
   rw [mem_language_iff, anticipatory, sibilants_map_harmonize]
   rcases ht : trigger w with _ | v
   · simp [(trigger_eq_none_iff w).1 ht]
@@ -244,7 +244,7 @@ theorem anticipatory_mem_language (w : List Segment) :
     simp [Segment.setFeature]
 
 theorem anticipatory_eq_self_of_mem {w : List Segment}
-    (h : w ∈ navajoSibilantHarmony.language) : anticipatory w = w := by
+    (h : w ∈ navajoSibilantHarmony.language 2) : anticipatory w = w := by
   rw [mem_language_iff] at h
   refine (List.map_congr_left fun x hx ↦ ?_).trans (List.map_id w)
   by_cases hon : OnTier x
@@ -261,7 +261,7 @@ theorem anticipatory_eq_self_of_mem {w : List Segment}
   · exact harmonize_of_not_onTier hon
 
 theorem mem_language_iff_anticipatory_eq (w : List Segment) :
-    w ∈ navajoSibilantHarmony.language ↔ anticipatory w = w :=
+    w ∈ navajoSibilantHarmony.language 2 ↔ anticipatory w = w :=
   ⟨anticipatory_eq_self_of_mem, fun h ↦ h ▸ anticipatory_mem_language w⟩
 
 -- (4)
@@ -303,11 +303,11 @@ theorem perseveratory_rows :
   decide
 
 -- (6a)
-theorem ur_ex6a_ii_violates : ur Examples.ex6a_ii ∉ navajoSibilantHarmony.language := by
+theorem ur_ex6a_ii_violates : ur Examples.ex6a_ii ∉ navajoSibilantHarmony.language 2 := by
   rw [mem_language_iff_anticipatory_eq]
   decide
 
-theorem sr_ex6a_ii_legal : sr Examples.ex6a_ii ∈ navajoSibilantHarmony.language := by
+theorem sr_ex6a_ii_legal : sr Examples.ex6a_ii ∈ navajoSibilantHarmony.language 2 := by
   rw [mem_language_iff_anticipatory_eq]
   decide
 
@@ -345,7 +345,7 @@ theorem pattern_project : navajo.pattern.project = sibilantClass := by
     exact (Option.not_isSome_iff_eq_none.mp h).symm
 
 theorem harmonic_iff_mem_language (w : List Segment) :
-    navajo.pattern.Harmonic w ↔ w ∈ navajoSibilantHarmony.language := by
+    navajo.pattern.Harmonic w ↔ w ∈ navajoSibilantHarmony.language 2 := by
   rw [navajo.pattern.harmonic_iff_map_project_mem (fun x hx ↦ (saturated x hx).2) w,
     pattern_project, language_eq_preimage]
   rfl

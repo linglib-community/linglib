@@ -317,15 +317,6 @@ theorem ordConnected_requires_iff_connected {V E : Type*} [Nontrivial E] {v x : 
       (implicationalMap.induce ↑(t.profile.image SpecificityFunction.toFunction)).Connected :=
   (IndefiniteType.ordConnected_requires_iff hvx).trans connected_profile_iff.symm
 
-/-- Whether a set of positions on a line of three is contiguous. -/
-@[instance_reducible]
-private def decidableOrdConnectedFin (s : Finset (Fin 3)) :
-    Decidable (s : Set (Fin 3)).OrdConnected :=
-  decidable_of_iff (∀ a ∈ s, ∀ b ∈ s, ∀ c, a ≤ c → c ≤ b → c ∈ s)
-    ⟨fun h ↦ ⟨fun _ ha _ hb _ hc ↦ h _ ha _ hb _ hc.1 hc.2⟩,
-      fun h _ ha _ hb _ h₁ h₂ ↦ h.out ha hb ⟨h₁, h₂⟩⟩
-
-attribute [local instance] decidableOrdConnectedFin in
 /-- The map orders the uses as convexity requires. On an ordering `σ` of the three uses, every
 type whose uses are contiguous has a convex requirement exactly when `σ` is the map's order or its
 reverse; on any other ordering the specific known and the non-specific use are contiguous, and

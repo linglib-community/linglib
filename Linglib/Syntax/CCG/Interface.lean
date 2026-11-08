@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.CCG.Derivation
-public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Term
 
 /-!
 # The CCG syntax-semantics interface
@@ -12,20 +12,22 @@ potential rather than meaning. Since a `Derivation` is indexed by its category, 
 interpretation needs no run-time category checks: a rule instance `X/Y Yβ ⇒ Xβ` composes its
 daughters' meanings beneath the arguments `β`, Curry's combinator `Bⁿ` for `n` the length of `β`,
 so application is function application and first-order composition is Steedman's `B`.
-Type-raising and coordination are lexical, so their meanings (the Montague lift, generalized
-conjunction) come from the lexicon. A lexicon returns meanings at the queried category, so the
-interface is sound by typing rather than by a theorem.
+A lexical entry pairs a word and a category with a logical form, a term of the category's type
+over a signature of constants, and a model interprets the constants, so the lexicon is the same
+in every model. Type-raising and coordination are lexical, so their logical forms (the Montague
+lift, generalized conjunction) are entries' terms. A derivation over the lexicon always has a
+meaning.
 
 ## Main definitions
 
 * `CCG.Cat.toTy`: the semantic type of a category under a typing of its atoms.
-* `CCG.SemLexicon`: a semantic lexicon, giving a word an optional meaning at each category.
+* `CCG.LexEntry`: a lexical entry, a word with a category and a logical form.
 * `CCG.composeUnder`: composition beneath an argument sequence, Curry's `Bⁿ`.
-* `CCG.Derivation.interp`: the meaning of a derivation, `none` only when a word is missing from
-  the lexicon.
+* `CCG.Derivation.interp`: the meaning of a derivation in an interpretation of the constants.
 
 ## Main statements
 
+* `CCG.Derivation.isSome_interp`: a derivation over the lexicon has a meaning.
 * `CCG.Derivation.interp_fcomp_assoc`, `CCG.Derivation.interp_fapp_fcomp` and their backward
   mirrors: in every rule system, reassociating a composition-application chain does not change
   its interpretation, the source of CCG's spurious ambiguity.
@@ -34,6 +36,7 @@ interface is sound by typing rather than by a theorem.
 
 * [steedman-2000]
 * [steedman-2019]
+* [montague-1973]
 * [karttunen-1989]
 * [pareschi-steedman-1987]
 -/
@@ -63,11 +66,37 @@ def Cat.toTy (τ : α → Ty) : Cat α → Ty
 /-! ### Derivation interpretation -/
 
 variable (T) in
-/-- A semantic lexicon gives a word an optional meaning at each category, of that category's
-type under the atom typing `τ`. Type-raised and coordinating entries carry the meanings of
-type-raising and coordination. -/
-def SemLexicon (τ : α → Ty) (E W : Type) :=
-  T → (c : Cat α) → Option (Ty.Domain E W (c.toTy τ))
+/-- A lexical entry pairs a word with a category and a logical form, a term of the category's
+type under the atom typing `τ`, over the constants `K` with variables typed by `Γ`, as
+[steedman-2000] writes an entry `word := category : logical form`. -/
+structure LexEntry (τ : α → Ty) (Γ : ℕ → Ty) (K : Ty → Type*) where
+  /-- The word. -/
+  word : T
+  /-- The category of the word. -/
+  cat : Cat α
+  /-- The logical form of the word at its category. -/
+  lf : Term Γ K (cat.toTy τ)
+
+namespace LexEntry
+
+variable {τ : α → Ty} {Γ : ℕ → Ty} {K : Ty → Type*}
+
+/-- The word and category of an entry, the pair a syntactic lexicon lists. -/
+def toPair (e : LexEntry T τ Γ K) : T × Cat α := (e.word, e.cat)
+
+variable [DecidableEq T] [DecidableEq α]
+
+/-- The logical form of the first entry of `L` for the word `t` at the category `c`. -/
+def lookup (L : List (LexEntry T τ Γ K)) (t : T) (c : Cat α) : Option (Term Γ K (c.toTy τ)) :=
+  L.findSome? fun e ↦ if h : e.word = t ∧ e.cat = c then some (h.2 ▸ e.lf) else none
+
+theorem isSome_lookup {L : List (LexEntry T τ Γ K)} {t : T} {c : Cat α}
+    (h : (t, c) ∈ L.map toPair) : (lookup L t c).isSome := by
+  obtain ⟨e, he, hp⟩ := List.mem_map.1 h
+  simp only [toPair, Prod.mk.injEq] at hp
+  exact List.findSome?_isSome_iff.2 ⟨e, he, by simp [hp]⟩
+
+end LexEntry
 
 /-- `composeUnder τ β f g` composes `f` with `g` beneath the arguments `β`, Curry's combinator
 `Bⁿ` for `n` the length of `β`: it takes the arguments of `g`, outermost first, and applies `f`
@@ -88,13 +117,30 @@ def Rule.sem (τ : α → Ty) {E W : Type} {R : RuleSystem α} : {l r c : Cat α
   | _, _, _, .forward β _, f, g => composeUnder τ β f g
   | _, _, _, .backward β _, g, f => composeUnder τ β f g
 
-/-- `d.interp lex` is the meaning of the derivation `d`. A leaf takes its meaning from `lex`
-and a rule node combines its daughters' meanings by `Rule.sem`, so the result is `none` only
-when a word is missing from the lexicon. -/
-def Derivation.interp {R : RuleSystem α} {τ : α → Ty} {E W : Type} (lex : SemLexicon T τ E W) :
-    {c : Cat α} → Derivation T R c → Option (Ty.Domain E W (c.toTy τ))
-  | _, .lex f c => lex f c
-  | _, .node ru d₁ d₂ => do some (ru.sem τ (← d₁.interp lex) (← d₂.interp lex))
+section Interp
+
+variable [DecidableEq T] [DecidableEq α] {R : RuleSystem α} {τ : α → Ty} {Γ : ℕ → Ty}
+  {K : Ty → Type*} {E W : Type} (L : List (LexEntry T τ Γ K))
+  (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty) (g : ∀ n, Ty.Domain E W (Γ n))
+
+/-- `d.interp L I g` is the meaning of the derivation `d` over the lexicon `L` when the constants
+denote by `I` and the variables by `g`. A leaf denotes the value of its logical form, and a rule
+node combines its daughters' meanings by `Rule.sem`. -/
+def Derivation.interp : {c : Cat α} → Derivation T R c → Option (Ty.Domain E W (c.toTy τ))
+  | _, .lex t c => (LexEntry.lookup L t c).map (·.eval I g)
+  | _, .node ru d₁ d₂ => do some (ru.sem τ (← d₁.interp) (← d₂.interp))
+
+/-- A derivation whose leaves are entries of the lexicon has a meaning. -/
+theorem Derivation.isSome_interp {c : Cat α} (d : Derivation T R c)
+    (h : d.LexIn (L.map LexEntry.toPair)) : (d.interp L I g).isSome := by
+  induction d with
+  | lex t c => simpa [interp] using LexEntry.isSome_lookup h
+  | node ru d₁ d₂ ih₁ ih₂ =>
+    obtain ⟨m₁, hm₁⟩ := Option.isSome_iff_exists.1 (ih₁ h.1)
+    obtain ⟨m₂, hm₂⟩ := Option.isSome_iff_exists.1 (ih₂ h.2)
+    simp [interp, hm₁, hm₂]
+
+end Interp
 
 /-! ### Spurious ambiguity
 
@@ -107,7 +153,9 @@ nodes cannot change what a constituent means, and the matching-entry tests of
 
 section SpuriousAmbiguity
 
-variable {R : RuleSystem α} {τ : α → Ty} {E W : Type} (lex : SemLexicon T τ E W)
+variable [DecidableEq T] [DecidableEq α] {R : RuleSystem α} {τ : α → Ty} {Γ : ℕ → Ty}
+  {K : Ty → Type*} {E W : Type} (L : List (LexEntry T τ Γ K))
+  (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty) (g : ∀ n, Ty.Domain E W (Γ n))
 
 /-- Reassociating a forward-composition chain preserves its interpretation, since composition
 is associative. -/
@@ -116,11 +164,11 @@ theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (d₃ : Derivation T R (.rslash z p w)) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
     (h₂ : R x ⟨.right, n, z⟩ [⟨.right, p, w⟩]) (h₃ : R y ⟨.right, n, z⟩ [⟨.right, p, w⟩])
     (h₄ : R x ⟨.right, m, y⟩ [⟨.right, p, w⟩]) :
-    (Derivation.fcomp (.fcomp d₁ d₂ h₁) d₃ h₂).interp lex
-      = (Derivation.fcomp d₁ (.fcomp d₂ d₃ h₃) h₄).interp lex := by
+    (Derivation.fcomp (.fcomp d₁ d₂ h₁) d₃ h₂).interp L I g
+      = (Derivation.fcomp d₁ (.fcomp d₂ d₃ h₃) h₄).interp L I g := by
   simp only [Derivation.interp]
-  rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
-    rcases d₃.interp lex with _ | m₃ <;> rfl
+  rcases d₁.interp L I g with _ | m₁ <;> rcases d₂.interp L I g with _ | m₂ <;>
+    rcases d₃.interp L I g with _ | m₃ <;> rfl
 
 /-- Composing and then applying has the interpretation of applying twice, since
 `(f ∘ g) x = f (g x)`. -/
@@ -128,33 +176,33 @@ theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
     (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
     (d₃ : Derivation T R z) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
     (h₂ : R x ⟨.right, n, z⟩ []) (h₃ : R y ⟨.right, n, z⟩ []) (h₄ : R x ⟨.right, m, y⟩ []) :
-    (Derivation.fapp (.fcomp d₁ d₂ h₁) d₃ h₂).interp lex
-      = (Derivation.fapp d₁ (.fapp d₂ d₃ h₃) h₄).interp lex := by
+    (Derivation.fapp (.fcomp d₁ d₂ h₁) d₃ h₂).interp L I g
+      = (Derivation.fapp d₁ (.fapp d₂ d₃ h₃) h₄).interp L I g := by
   simp only [Derivation.interp]
-  rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
-    rcases d₃.interp lex with _ | m₃ <;> rfl
+  rcases d₁.interp L I g with _ | m₁ <;> rcases d₂.interp L I g with _ | m₂ <;>
+    rcases d₃.interp L I g with _ | m₃ <;> rfl
 
 theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (d₁ : Derivation T R (.lslash y p z)) (d₂ : Derivation T R (.lslash x n y))
     (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [⟨.left, p, z⟩])
     (h₂ : R w ⟨.left, m, x⟩ [⟨.left, p, z⟩]) (h₃ : R w ⟨.left, m, x⟩ [⟨.left, n, y⟩])
     (h₄ : R w ⟨.left, n, y⟩ [⟨.left, p, z⟩]) :
-    (Derivation.bcomp (.bcomp d₁ d₂ h₁) d₃ h₂).interp lex
-      = (Derivation.bcomp d₁ (.bcomp d₂ d₃ h₃) h₄).interp lex := by
+    (Derivation.bcomp (.bcomp d₁ d₂ h₁) d₃ h₂).interp L I g
+      = (Derivation.bcomp d₁ (.bcomp d₂ d₃ h₃) h₄).interp L I g := by
   simp only [Derivation.interp]
-  rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
-    rcases d₃.interp lex with _ | m₃ <;> rfl
+  rcases d₁.interp L I g with _ | m₁ <;> rcases d₂.interp L I g with _ | m₂ <;>
+    rcases d₃.interp L I g with _ | m₃ <;> rfl
 
 theorem Derivation.interp_bapp_bcomp {x y w : Cat α} {m n : Modality}
     (d₁ : Derivation T R y) (d₂ : Derivation T R (.lslash x n y))
     (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [])
     (h₂ : R w ⟨.left, m, x⟩ []) (h₃ : R w ⟨.left, m, x⟩ [⟨.left, n, y⟩])
     (h₄ : R w ⟨.left, n, y⟩ []) :
-    (Derivation.bapp (.bapp d₁ d₂ h₁) d₃ h₂).interp lex
-      = (Derivation.bapp d₁ (.bcomp d₂ d₃ h₃) h₄).interp lex := by
+    (Derivation.bapp (.bapp d₁ d₂ h₁) d₃ h₂).interp L I g
+      = (Derivation.bapp d₁ (.bcomp d₂ d₃ h₃) h₄).interp L I g := by
   simp only [Derivation.interp]
-  rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
-    rcases d₃.interp lex with _ | m₃ <;> rfl
+  rcases d₁.interp L I g with _ | m₁ <;> rcases d₂.interp L I g with _ | m₂ <;>
+    rcases d₃.interp L I g with _ | m₃ <;> rfl
 
 end SpuriousAmbiguity
 

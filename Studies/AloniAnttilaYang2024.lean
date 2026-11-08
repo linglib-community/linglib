@@ -38,7 +38,8 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [DecidableEq W'] {Atom : Type*}
 
 open ModalLogic (KripkeModel WorldBisim)
-open Truthmaker (BilProp)
+open Team (TeamProperty)
+open scoped Bilattice
 
 /-! ### Syntax and semantics -/
 
@@ -111,24 +112,25 @@ instance : (φ : Formula Atom) → Decidable φ.EmptFree
 
 end Formula
 
-/-- The meaning of a formula in a model (Definition 2.3) is the bilateral proposition of the
-teams that support it and the teams that anti-support it. -/
-def Formula.den (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
-  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
-  | .bot => ⟨{∅}, .univ⟩
-  | .ne => ⟨Team.ne, {∅}⟩
-  | .neg φ => -φ.den M
-  | .conj φ ψ => ⟨(φ.den M).ver ∩ (ψ.den M).ver, (φ.den M).fal ⊻ (ψ.den M).fal⟩
-  | .disj φ ψ => ⟨(φ.den M).ver ⊻ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
-  | .gdisj φ ψ => ⟨(φ.den M).ver ∪ (ψ.den M).ver, (φ.den M).fal ∩ (ψ.den M).fal⟩
-  | .empt φ => ⟨(φ.den M).ver ∪ {∅}, (φ.den M).fal⟩
-  | .poss φ => ⟨Team.poss M.access (φ.den M).ver, Team.nec M.access (φ.den M).fal⟩
+/-- The meaning of a formula in a model (Definition 2.3) is the pair of the teams that support it
+and the teams that anti-support it. Global disjunction is the join of the truth order, supported
+by the teams supporting either disjunct and anti-supported by those anti-supporting both. -/
+def Formula.den (M : KripkeModel W Atom) : Formula Atom → TeamProperty W ⊙ TeamProperty W
+  | .atom p => Team.flatPair (M.val p)
+  | .bot => .mk {∅} .univ
+  | .ne => .mk Team.ne {∅}
+  | .neg φ => (φ.den M)ᶜ
+  | .conj φ ψ => Team.conj (φ.den M) (ψ.den M)
+  | .disj φ ψ => Team.disj (φ.den M) (ψ.den M)
+  | .gdisj φ ψ => φ.den M ⊔ ψ.den M
+  | .empt φ => .mk ((φ.den M).pro ∪ {∅}) (φ.den M).con
+  | .poss φ => (φ.den M).map (Team.poss M.access) (Team.nec M.access)
 
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  t ∈ (φ.den M).ver
+  t ∈ (φ.den M).pro
 
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  t ∈ (φ.den M).fal
+  t ∈ (φ.den M).con
 
 variable (M : KripkeModel W Atom) (φ ψ χ : Formula Atom) (t : Finset W)
 
@@ -174,7 +176,7 @@ theorem support_poss_gdisj :
 /-! ### Closure properties (Fact 2.7) -/
 
 private theorem empty_mem_den_of_neFree (hNE : φ.NEFree) :
-    ∅ ∈ (φ.den M).ver ∧ ∅ ∈ (φ.den M).fal := by
+    ∅ ∈ (φ.den M).pro ∧ ∅ ∈ (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
   | bot => exact ⟨rfl, trivial⟩
@@ -197,7 +199,7 @@ private theorem union_inter_of_union_eq {s t t₁ t₂ : Finset W} (h : t₁ ∪
   exact Finset.inter_eq_right.mpr hsub
 
 private theorem isLowerSet_den_of_neFree (hNE : φ.NEFree) :
-    IsLowerSet (φ.den M).ver ∧ IsLowerSet (φ.den M).fal := by
+    IsLowerSet (φ.den M).pro ∧ IsLowerSet (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
   | bot => exact ⟨Team.isLowerSet_singleton_empty, isLowerSet_univ⟩
@@ -218,7 +220,7 @@ theorem isLowerSet_support_of_neFree (hNE : φ.NEFree) :
   (isLowerSet_den_of_neFree M φ hNE).1
 
 private theorem supClosed_den_of_gdFree (hGD : φ.GDFree) :
-    SupClosed (φ.den M).ver ∧ SupClosed (φ.den M).fal := by
+    SupClosed (φ.den M).pro ∧ SupClosed (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨Team.supClosed_flat _, Team.supClosed_flat _⟩
   | bot => exact ⟨Team.supClosed_singleton_empty, supClosed_univ⟩
@@ -351,13 +353,13 @@ theorem den_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).den M = φ.den M := by
   induction φ with
   | atom p => rfl
   | ne => rfl
-  | neg ψ ih => exact congrArg Neg.neg ih
+  | neg ψ ih => exact congrArg (·ᶜ) ih
   | conj ψ₁ ψ₂ ih₁ ih₂ => simp only [ofBSML, Formula.den, BSML.Formula.den, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ => simp only [ofBSML, Formula.den, BSML.Formula.den, ih₁, ih₂]
   | poss ψ ih => simp only [ofBSML, Formula.den, BSML.Formula.den, ih]
 
 theorem support_ofBSML (φ : BSML.Formula Atom) : support M (ofBSML φ) t ↔ BSML.support M φ t :=
-  .of_eq (congrArg (t ∈ ·.ver) (den_ofBSML M φ))
+  .of_eq (congrArg (t ∈ ·.pro) (den_ofBSML M φ))
 
 /-- Narrow-scope free choice, `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`, transported from
 [aloni-2022] along the embedding. -/
@@ -379,8 +381,8 @@ def Formula.modalDepth : Formula Atom → ℕ
 polarities (Theorem 3.8). -/
 theorem invariant_den {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : ℕ}
     (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
-    Team.Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧
-      Team.Invariant (WorldBisim k M · M' ·) (φ.den M).fal (φ.den M').fal := by
+    Team.Invariant (WorldBisim k M · M' ·) (φ.den M).pro (φ.den M').pro ∧
+      Team.Invariant (WorldBisim k M · M' ·) (φ.den M).con (φ.den M').con := by
   induction φ generalizing k with
   | atom p => exact ⟨Team.invariant_flat fun _ _ h ↦ h.val_iff p,
       Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)⟩

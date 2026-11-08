@@ -12,13 +12,15 @@ public import Mathlib.Algebra.FreeMonoid.Basic
 /-!
 # Filtering the letters of a free monoid
 
-`FreeMonoid.filter p` keeps the letters satisfying `p` and erases the others. It is the monoid
-endomorphism that `List.filter p` induces on `FreeMonoid α`, and unlike `FreeMonoid.map` it is
-erasing: it can send a nonempty word to `1`.
+This file defines `FreeMonoid.filter p`, the endomorphism of `FreeMonoid α` that keeps the
+letters satisfying `p` and erases the others, induced by `List.filter`. Where `FreeMonoid.map f`
+sends each letter to a letter, `FreeMonoid.filter p` sends each letter to itself or to `1`: in
+Pin's classification of morphisms between free monoids it is length-decreasing rather than
+length-preserving, so it can send a nonempty word to `1`.
 
 ## Main definitions
 
-* `FreeMonoid.filter`: the erasing endomorphism keeping the letters that satisfy `p`.
+* `FreeMonoid.filter`: the endomorphism keeping the letters that satisfy `p`.
 
 ## References
 
@@ -29,7 +31,7 @@ erasing: it can send a nonempty word to `1`.
 
 namespace FreeMonoid
 
-variable {α : Type*} (p : α → Bool)
+variable {α : Type*} (p : α → Prop) [DecidablePred p]
 
 /-- The endomorphism of the free monoid keeping the letters that satisfy `p`. -/
 def filter : FreeMonoid α →* FreeMonoid α where
@@ -39,6 +41,7 @@ def filter : FreeMonoid α →* FreeMonoid α where
 
 @[simp] theorem toList_filter (w : FreeMonoid α) : (filter p w).toList = w.toList.filter p := rfl
 
-@[simp] theorem filter_ofList (w : List α) : filter p (ofList w) = ofList (w.filter p) := rfl
+@[simp] theorem filter_of (x : α) : filter p (of x) = if p x then of x else 1 := by
+  by_cases h : p x <;> simp [filter, h]
 
 end FreeMonoid

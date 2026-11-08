@@ -616,6 +616,9 @@ variable (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) 
 
 instance : IsFiniteKernel (speaker α C L b) := inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
+instance : IsZeroOrProbabilityMeasure (speaker α C L b o) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.softmax _ o))
+
 theorem speaker_apply_univ_le_one : speaker α C L b o Set.univ ≤ 1 := by
   rw [speaker_eq_ofWeights]
   exact Kernel.ofWeights_apply_univ_le_one _ o
@@ -1262,6 +1265,38 @@ theorem speaker_listener_truthful_dirac_real_singleton_eq_zero (hα : 0 < α)
     (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} = 0 := by
   rw [measureReal_def, speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h,
     ENNReal.toReal_zero]
+
+section SingletonUniv
+
+variable (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsProbabilityMeasure μ] (sem : U → Set W)
+  (hμ : μ {w} ≠ 0) {u' : U} (huu' : u ≠ u') (hu : sem u = {w}) (hu' : sem u' = Set.univ)
+  (hsupp : ∀ v, w ∈ sem v → v = u ∨ v = u')
+include hα hμ huu' hu hu' hsupp
+
+/-- A speaker who knows the state and can say only what is true there alone or what is true
+everywhere says the first with the logistic probability of the cost it adds, less the log prior
+of the state, discounted. -/
+theorem speaker_listener_truthful_dirac_real_singleton_of_eq_singleton :
+    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} =
+      Real.sigmoid (α * (C u' - C u - Real.log (μ.real {w}))) := by
+  have h1 := listener_truthful_apply_singleton_of_eq_singleton μ sem hu hμ
+  have h2 := listener_truthful_apply_singleton_of_eq_univ μ sem hu' w
+  rw [speaker_dirac_real_singleton_of_pair hα huu' (h1 ▸ one_ne_zero) (h2 ▸ hμ) fun v hv ↦
+      hsupp v ((listener_truthful_apply_singleton_ne_zero_iff μ sem v w).1 hv).1,
+    h1, h2, ENNReal.toReal_one, Real.log_one, ← measureReal_def]
+  congr 1; ring
+
+theorem speaker_listener_truthful_dirac_real_singleton_of_eq_univ :
+    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u'} =
+      Real.sigmoid (α * (C u - C u' + Real.log (μ.real {w}))) := by
+  have h1 := listener_truthful_apply_singleton_of_eq_singleton μ sem hu hμ
+  have h2 := listener_truthful_apply_singleton_of_eq_univ μ sem hu' w
+  rw [speaker_dirac_real_singleton_of_pair hα huu'.symm (h2 ▸ hμ) (h1 ▸ one_ne_zero) fun v hv ↦
+      (hsupp v ((listener_truthful_apply_singleton_ne_zero_iff μ sem v w).1 hv).1).symm,
+    h1, h2, ENNReal.toReal_one, Real.log_one, ← measureReal_def]
+  congr 1; ring
+
+end SingletonUniv
 
 theorem speaker_listener_truthful_dirac_congr (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)

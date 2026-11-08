@@ -9,12 +9,17 @@ This file gives the nouns of Adamson and Anagnostopoulou's Bosnian/Croatian/Serb
 with its grammatical gender and the gender it restricts its referents to where it does: the
 conjuncts of their examples of resolved agreement, *muškarac i žena* 'the man and the woman',
 *znanje i intuicija* 'knowledge and intuition' and *selo i brdo* 'village and hill' ((68)–(70)),
-and the nouns of their Table 1, *žena*, *čovek*, *mleko*, *knjiga* and *pesak*. Their analysis of
-the neuter as a mass gender is in `Studies/AdamsonAnagnostopoulou2025.lean`.
+and the nouns of their Table 1, *žena*, *čovek*, *mleko*, *knjiga* and *pesak*; and the
+inanimates of Corbett's examples of resolution with neuter and feminine conjuncts, *mesto* 'place'
+and *značenje* 'importance', and the feminines *opreznost*, *suptilnost*, *pedanterija*,
+*nebriga*, *lakomislenost*, *štula* and *štaka*. Their analysis of the neuter as a mass gender is
+in `Studies/AdamsonAnagnostopoulou2025.lean`, and the stages of resolution Corbett reads off these
+nouns in `Studies/Corbett1991.lean`.
 
 ## References
 
 * [adamson-anagnostopoulou-2025]
+* [corbett-1991]
 -/
 
 @[expose] public section
@@ -69,5 +74,43 @@ def pesak : GenderedNoun Value := { form := "pesak", gloss := "sand", gender := 
 
 /-- *mleko* 'milk'. -/
 def mleko : GenderedNoun Value := { form := "mleko", gloss := "milk", gender := .neuter }
+
+/-- *mesto* 'place'. -/
+def mesto : GenderedNoun Value := { form := "mesto", gloss := "place", gender := .neuter }
+
+/-- *značenje* 'importance'. -/
+def znacenje : GenderedNoun Value :=
+  { form := "značenje", gloss := "importance", gender := .neuter }
+
+/-- *opreznost* 'discretion'. -/
+def opreznost : GenderedNoun Value :=
+  { form := "opreznost", gloss := "discretion", gender := .feminine }
+
+/-- *suptilnost* 'subtlety'. -/
+def suptilnost : GenderedNoun Value :=
+  { form := "suptilnost", gloss := "subtlety", gender := .feminine }
+
+/-- *pedanterija* 'pedantry'. -/
+def pedanterija : GenderedNoun Value :=
+  { form := "pedanterija", gloss := "pedantry", gender := .feminine }
+
+/-- *nebriga* 'carelessness'. -/
+def nebriga : GenderedNoun Value :=
+  { form := "nebriga", gloss := "carelessness", gender := .feminine }
+
+/-- *lakomislenost* 'capriciousness'. -/
+def lakomislenost : GenderedNoun Value :=
+  { form := "lakomislenost", gloss := "capriciousness", gender := .feminine }
+
+/-- *štula* 'wooden leg'. -/
+def stula : GenderedNoun Value := { form := "štula", gloss := "wooden leg", gender := .feminine }
+
+/-- *štaka* 'crutch'. -/
+def staka : GenderedNoun Value := { form := "štaka", gloss := "crutch", gender := .feminine }
+
+/-- The nouns of the file. -/
+def allNouns : List (GenderedNoun Value) :=
+  [muskarac, zena, covek, znanje, intuicija, selo, brdo, knjiga, pesak, mleko, mesto, znacenje,
+    opreznost, suptilnost, pedanterija, nebriga, lakomislenost, stula, staka]
 
 end Serbian.Gender

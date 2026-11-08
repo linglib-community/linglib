@@ -445,6 +445,9 @@ def imbaburaHighlandQuichua : Glottocode := "imba1240"
 /-- Standard Indonesian, `indo1316` (ISO 639-3 `ind`). -/
 def standardIndonesian : Glottocode := "indo1316"
 
+/-- Ineseño, `ines1240` (ISO 639-3 `inz`). -/
+def ineseño : Glottocode := "ines1240"
+
 /-- Ingush, `ingu1240` (ISO 639-3 `inh`). -/
 def ingush : Glottocode := "ingu1240"
 

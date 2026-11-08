@@ -242,10 +242,8 @@ theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : L
     have h := (listener_truthful_eq_ofDensity (uniformOn (extSeq ext us : Set R))
       fun u' ↦ ((ext u' (extSeq ext us) : Set R))).symm
     simp only [l0, sharp]
-    rw [ih, supp_uniformOn, h, listener_truthful_apply, extSeq, Finset.coe_inter, uniformOn,
-      uniformOn, cond_cond_eq_cond_inter' .of_discrete .of_discrete
-        (by rw [Measure.count_apply_finite _ (Finset.finite_toSet _)]
-            exact ENNReal.natCast_ne_top _)]
+    rw [ih, supp_uniformOn, h, listener_truthful_apply, extSeq, Finset.coe_inter,
+      uniformOn_cond (Finset.finite_toSet _) .of_discrete]
 
 theorem l0_single_lt_iff [DecidableEq R] (ext : U → Finset R → Finset R)
     (ha : r ∈ ext a Finset.univ)
@@ -324,8 +322,8 @@ theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 <
   have : Nonempty R := ⟨r⟩
   have hl0 : ∀ us, r ∈ extSeq (fun u _ => ext u) us →
       l0 (uniformOn Set.univ) (sharp fun u _ => ext u) us {r} ≠ 0 := fun us hus => by
-    rw [l0_indicator, uniformOn_finset_apply_singleton, ite_eq_left hus]
-    exact ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _)
+    rw [l0_indicator]
+    exact (uniformOn_ne_zero_iff (Finset.finite_toSet _)).2 ⟨r, hus, rfl⟩
   have hu : ∀ us, r ∈ extSeq (fun u _ => ext u) us →
       utility (uniformOn Set.univ) (sharp fun u _ => ext u) β cost us r ≠ 0 := fun us hus =>
     mul_ne_zero ((ENNReal.rpow_eq_zero_iff_of_pos hβ).not.2 (hl0 us hus)) (hcost0 _)

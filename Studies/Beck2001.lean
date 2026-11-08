@@ -68,8 +68,10 @@ asserted distinctness [is trivial or idle](##inSitu_dichotomy).
   where non-overlap and non-identity come apart.
 * The exception readings as closure at the covered part of the antecedent, which repairs (130a).
 * The contextual definite (155a), (165) to (170); Partitioned Strong Reciprocity from situations
-  (190) to (192); the Strongest Meaning Hypothesis over (219); the scope facts (207) to (214); the
-  cumulative homogeneity of (228).
+  (190) to (192); the scope facts (207) to (214); the cumulative homogeneity of (228).
+* The Strongest Meaning Hypothesis over (219): footnote 15's split relation has Strong but not
+  situation-based Weak Reciprocity, so the hypothesis can rank the two only with the support
+  condition in the context.
 
 ## References
 
@@ -1025,6 +1027,22 @@ theorem forall_not_inclusiveAlternativeOrdering_iff [DecidableEq α] (R : α →
     obtain hR | hR := hR
     · exact h x (hX hx) y (hX hy) hne hR
     · exact h y (hX hy) x (hX hx) hne.symm hR
+
+-- (220), (221): under *none of them* the weakest reading gives the strongest sentence, so the
+-- hypothesis over Dalrymple et al.'s readings denies any relating among the group
+theorem isLeast_none {I : Set (α → α → Prop)}
+    (h : ∃ R ∈ I, ∀ a ∈ A, ∀ b ∈ A, a ≠ b → ¬ R a b) :
+    IsLeast (Set.range (fun q ↦ {R | ∀ X ⊆ A, ¬ Recip q R X}) ∩ {p | (p ∩ I).Nonempty})
+      {R | ∀ a ∈ A, ∀ b ∈ A, a ≠ b → ¬ R a b} := by
+  classical
+  have e : {R : α → α → Prop | ∀ X ⊆ A, ¬ Recip (.tot, .alternative) R X} =
+      {R | ∀ a ∈ A, ∀ b ∈ A, a ≠ b → ¬ R a b} :=
+    Set.ext fun R ↦ forall_not_inclusiveAlternativeOrdering_iff R
+  rw [← e]
+  obtain ⟨R, hRI, hR⟩ := h
+  exact IsLeast.isLeast_range_inter ⟨⟨R, (forall_not_inclusiveAlternativeOrdering_iff R).2 hR,
+    hRI⟩, fun q _ ↦ (by decide : ∀ q : Coverage × Direction, (.tot, .alternative) ≤ q) q⟩
+    fun _ _ hq _ hR X hX hr ↦ hR X hX (recip_antitone hq hr)
 
 end Alternative
 

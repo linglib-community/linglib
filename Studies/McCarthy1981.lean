@@ -8,16 +8,17 @@ public import Linglib.Data.Wordlist.McCarthy1981
 /-!
 # McCarthy (1981): A Prosodic Theory of Nonconcatenative Morphology
 
-This file formalizes McCarthy's analysis of the Classical Arabic verb. A verb stem
-is a prosodic template of C- and V-slots with a consonantal root, a vowel melody and affixal
-material on separate autosegmental tiers, and the melodies are associated with the slots by the
-universal conventions of `Morphology.TemplateMatch.associate`. The language-particular
+This file formalizes McCarthy's analysis of the Classical Arabic verb. A verb stem is the product
+of its morphs, a prosodic template of C- and V-slots with a consonantal root, a vowel melody and
+affixal material each on a plane of its own, and the melodies are associated with the slots by
+the universal conventions of `Autosegmental.MultiplanarForm.associate`. The language-particular
 apparatus is the template schema (14), the affixes and their placement, the Eighth Binyan Flop
 (19) and Erasure (24), together with the vowel melodies (39)–(43) and Vowel Association (41).
 With it the derivation produces every form of the paper's table of the triliteral root ktb in
 fifteen binyanim and the quadriliteral root dḥrj in four, in the perfective, imperfective and
 participle, active and passive (`forms_derived`), except the participles of the first binyan,
-which the paper leaves to McCarthy (1979).
+which the paper leaves to McCarthy (1979). Every stem obeys the No-Crossing Constraint plane by
+plane, and no slot has two lines (`noCrossing_stem`).
 
 Gemination is one root element linked to several slots: the medial radical of the second
 binyan, after Erasure and respreading, and the final radical of a biliteral root, which the
@@ -37,8 +38,9 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 * The forms are compared in the paper's transcription; `stem_map` carries a derivation over to
   the segments of the Arabic fragment, and `seg` reads the transcription as those segments.
 * The consonantism of a stem is derived first and the prefix [CV] of imperfectives and
-  participles added after it, so the root never reaches the prefixal C, which the participle
-  fills with m and which the table's imperfectives, stems without agreement, leave empty.
+  participles multiplied on its left, so the root never reaches the prefixal C. The participle's
+  m lies on the prefix's plane, linked to that C, and the table's imperfectives, stems without
+  agreement, leave it empty.
 * The first convention associates any number of unassociated elements one to one, as the
   paper's placement of a single affix on the leftmost C-slot (16)–(18) requires. It is then
   the first convention, not the second as on p. 395, that restores the fourth radical of a
@@ -55,7 +57,7 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 
 @[expose] public section
 
-open Morphology Autosegmental Arabic.ModernStandard
+open Morphology Autosegmental MultiplanarForm Arabic.ModernStandard
 
 namespace McCarthy1981
 
@@ -150,6 +152,17 @@ inductive Placement where
   | flop
   | fixed (slots : List ℕ)
 
+/-- The morphemes of a stem: the root, the vocalism, the binyan's affix and template, and the
+prefix [CV] of imperfectives and participles (p. 400). Each melody lies on the plane of its
+morpheme, the tiers being morphologically determined (p. 383). -/
+inductive Morpheme where
+  | root
+  | vocalism
+  | affix
+  | template
+  | «prefix»
+  deriving DecidableEq, Repr, Fintype
+
 /-- What the grammar specifies for a binyan (pp. 392–393), namely its template, its affix and
 where the affix goes, whether Erasure (24) applies, and the tier that respreads after
 Erasure (30). -/
@@ -163,7 +176,7 @@ structure Spec (α : Type*) where
   /-- Whether Erasure applies. -/
   erasure : Bool := false
   /-- The tier that respreads after Erasure. -/
-  respread : AssocSource := .root
+  respread : Morpheme := .root
 
 /-- The specification of a binyan, with `plusSeg` the realization of the [+seg] slot of XI. -/
 def spec (ax : Affixes α) (plusSeg : Slot) : Binyan → Spec α
@@ -201,38 +214,38 @@ def Spec.map (f : α → β) (sp : Spec α) : Spec β :=
 
 /-- The Eighth Binyan Flop (19) moves an affix line on the first of two adjacent C-slots to the
 second. -/
-def flop (m : TemplateMatch α) : TemplateMatch α :=
+def flop (m : MultiplanarForm Morpheme Slot α Morpheme) : MultiplanarForm Morpheme Slot α Morpheme :=
   match m.template with
-  | .C :: .C :: _ => { m with associations := m.associations.map fun a ↦
-      if a.source == .affix && a.slotIndex == 0 then { a with slotIndex := 1 } else a }
+  | .C :: .C :: _ => (m.delink .affix 0).link .affix
+      (((List.range (m.upper .affix).length).filter fun k ↦ (k, 0) ∈ m.lines .affix).map (·, 1))
   | _ => m
 
+/-- The root, the affix and the template of a binyan, unassociated: the product of their morphs. -/
+def morphs (sp : Spec α) (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
+  ofMelody .root .root r.segments * ofMelody .affix .affix sp.affix * ofSlots .template sp.template
+
 /-- The affixes of a binyan placed before the root associates (p. 389). -/
-def placeAffixes (sp : Spec α) (r : ConsonantalRoot α) : TemplateMatch α :=
-  let m : TemplateMatch α :=
-    { root := r
-      affix := sp.affix
-      template := sp.template
-      associations := [] }
+def placeAffixes (sp : Spec α) (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
   match sp.placement with
-  | .leftmost => m.associateOneToOne .affix
-  | .flop => flop (m.associateOneToOne .affix)
-  | .fixed slots => m.link (slots.zipIdx.map fun (i, k) ↦ ⟨.affix, k, i⟩)
+  | .leftmost => (morphs sp r).associateOneToOne .affix .C
+  | .flop => flop ((morphs sp r).associateOneToOne .affix .C)
+  | .fixed slots => (morphs sp r).link .affix (slots.zipIdx.map fun (i, k) ↦ (k, i))
 
 /-- Erasure (24), generalized (p. 393), removes the root line on the C-slot of the final
 CVC. -/
-def erasure (m : TemplateMatch α) : TemplateMatch α :=
+def erasure (m : MultiplanarForm Morpheme Slot α Morpheme) :
+    MultiplanarForm Morpheme Slot α Morpheme :=
   m.delink .root (m.template.length - 3)
 
 /-- The consonantism of a binyan, with the affixes placed, the root associated by the
 conventions, and, where Erasure applies, the conventions again with the binyan's respreading
 tier. -/
 def consonantism (ax : Affixes α) (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
-    TemplateMatch α :=
+    MultiplanarForm Morpheme Slot α Morpheme :=
   let sp := spec ax plusSeg b
-  let m := (placeAffixes sp r).associate .root
+  let m := (placeAffixes sp r).associate .root .C
   if sp.erasure then
-    (((erasure m).associateOneToOne .root).associateRemaining .root).spread sp.respread
+    (((erasure m).associateOneToOne .root .C).associateRemaining .root .C).spread sp.respread .C
   else m
 
 /-! ### The vocalism -/
@@ -279,49 +292,40 @@ def melody (abl : Ablaut) : Category → Binyan → List Vowel
   | .partActive, _ => [.u, .a, .i]
   | .partPassive, _ => [.u, .a]
 
-/-- The prefix [CV] moves every line two slots right. -/
-def prefixCV (m : TemplateMatch α) : TemplateMatch α :=
-  { m with
-    template := [.C, .V] ++ m.template
-    associations := m.associations.map fun a ↦ { a with slotIndex := a.slotIndex + 2 } }
+/-- The prefix [CV] of imperfectives and participles, the participle's m linked to its C-slot
+(p. 400). -/
+def prefixMorph (ax : Affixes α) (c : Category) : MultiplanarForm Morpheme Slot α Morpheme :=
+  if c.participle then
+    (ofSlots .prefix [.C, .V] * ofMelody .prefix .prefix [ax.m] :
+      MultiplanarForm Morpheme Slot α Morpheme).link .prefix [(0, 0)]
+  else ofSlots .prefix [.C, .V]
 
-/-- Rule (14b) on a match deletes the middle V-slot of CVCVCVC and moves the lines after it left. -/
-def elideMatch (m : TemplateMatch α) : TemplateMatch α :=
-  if m.template = cvcvcvc then
-    { m with
-      template := cvccvc
-      associations := (m.associations.filter (·.slotIndex != 3)).map fun a ↦
-        if 3 < a.slotIndex then { a with slotIndex := a.slotIndex - 1 } else a }
-  else m
-
-/-- The participle's m on the prefixal C-slot, before the binyan's affixes. -/
-def prefixM (ax : Affixes α) (m : TemplateMatch α) : TemplateMatch α :=
-  { m with
-    affix := ax.m :: m.affix
-    associations := ⟨.affix, 0, 0⟩ :: m.associations.map fun a ↦
-      if a.source == .affix then { a with melodyIndex := a.melodyIndex + 1 } else a }
+/-- Rule (14b) on a match deletes the middle V-slot of CVCVCVC with its lines. -/
+def elideMatch (m : MultiplanarForm Morpheme Slot α Morpheme) :
+    MultiplanarForm Morpheme Slot α Morpheme :=
+  if m.template = cvcvcvc then m.eraseSlot 3 else m
 
 /-- Vowel Association (41) links an i ending the melody to the final V-slot first. -/
-def vowelAssociation (mel : List Vowel) (m : TemplateMatch α) : TemplateMatch α :=
+def vowelAssociation (mel : List Vowel) (m : MultiplanarForm Morpheme Slot α Morpheme) :
+    MultiplanarForm Morpheme Slot α Morpheme :=
   match mel.getLast?, m.template.vSlots.getLast? with
-  | some .i, some s => m.link [⟨.vocalism, mel.length - 1, s⟩]
+  | some .i, some s => m.link .vocalism [(mel.length - 1, s)]
   | _, _ => m
 
-/-- The stem of a cell, built from the consonantism, the prefix of imperfectives and participles
-with rule (14b), the participle's m, and the melody associated by (41) and the conventions. -/
+/-- The stem of a cell: the consonantism, with the prefix of imperfectives and participles and
+rule (14b), and the vocalism associated by (41) and the conventions. -/
 def stem (ax : Affixes α) (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
-    (r : ConsonantalRoot α) : TemplateMatch α :=
+    (r : ConsonantalRoot α) : MultiplanarForm Morpheme Slot α Morpheme :=
   let m := consonantism ax (if r.arity = 4 then .C else .V) b r
-  let m := if c.prefixed then elideMatch (prefixCV m) else m
-  let m := if c.participle then prefixM ax m else m
+  let m := if c.prefixed then elideMatch (prefixMorph ax c * m) else m
   let mel := melody abl c b
-  (vowelAssociation mel { m with vocalism := mel.map v }).associate .vocalism
+  (vowelAssociation mel (ofMelody .vocalism .vocalism (mel.map v) * m)).associate .vocalism .V
 
 /-! ### The derivation never looks at the melody -/
 
 section Map
 
-variable (f : α → β) (ax : Affixes α) (m : TemplateMatch α)
+variable (f : α → β) (ax : Affixes α) (m : MultiplanarForm Morpheme Slot α Morpheme)
 
 theorem spec_map (plusSeg : Slot) (b : Binyan) :
     spec (ax.map f) plusSeg b = (spec ax plusSeg b).map f := by
@@ -329,55 +333,63 @@ theorem spec_map (plusSeg : Slot) (b : Binyan) :
 
 theorem flop_map : flop (m.map f) = (flop m).map f := by
   unfold flop
-  simp only [TemplateMatch.template_map]
-  split <;> rfl
+  rw [template_map]
+  split
+  · simp only [map_upper, List.length_map, map_lines, delink_map, link_map]
+  · rfl
+
+theorem morphs_map (sp : Spec α) (r : ConsonantalRoot α) :
+    morphs (sp.map f) (r.map f) = (morphs sp r).map f := by
+  simp only [morphs, Spec.map, mul_eq_concat, map_concat, map_ofMelody, map_ofSlots,
+    ConsonantalRoot.segments_map]
 
 theorem placeAffixes_map (sp : Spec α) (r : ConsonantalRoot α) :
     placeAffixes (sp.map f) (r.map f) = (placeAffixes sp r).map f := by
   obtain ⟨t, af, pl, er, rs⟩ := sp
-  have h : ({ root := r.map f, affix := af.map f, template := t, associations := [] } :
-      TemplateMatch β) =
-      ({ root := r, affix := af, template := t, associations := [] } : TemplateMatch α).map f :=
-    rfl
-  cases pl <;> simp only [placeAffixes, Spec.map, h, TemplateMatch.associateOneToOne_map,
-    flop_map, TemplateMatch.link_map]
+  have h := morphs_map f ⟨t, af, pl, er, rs⟩ r
+  simp only [Spec.map] at h
+  cases pl <;> simp only [placeAffixes, Spec.map, h, associateOneToOne_map, flop_map, link_map]
 
 theorem erasure_map : erasure (m.map f) = (erasure m).map f := rfl
 
 theorem consonantism_map (plusSeg : Slot) (b : Binyan) (r : ConsonantalRoot α) :
     consonantism (ax.map f) plusSeg b (r.map f) = (consonantism ax plusSeg b r).map f := by
-  simp only [consonantism, spec_map, placeAffixes_map, TemplateMatch.associate_map,
-    Spec.erasure_map, Spec.respread_map]
-  split <;> simp only [erasure_map, TemplateMatch.associateOneToOne_map,
-    TemplateMatch.associateRemaining_map, TemplateMatch.spread_map]
+  simp only [consonantism, spec_map, placeAffixes_map, associate_map, Spec.erasure_map,
+    Spec.respread_map]
+  split <;> simp only [erasure_map, associateOneToOne_map, associateRemaining_map, spread_map]
 
-theorem prefixCV_map : prefixCV (m.map f) = (prefixCV m).map f := rfl
+theorem prefixMorph_map (c : Category) :
+    prefixMorph (ax.map f) c = (prefixMorph ax c).map f := by
+  unfold prefixMorph
+  split
+  · simp only [mul_eq_concat, ← link_map, map_concat, map_ofSlots, map_ofMelody, Affixes.map,
+      List.map_cons, List.map_nil]
+  · rfl
 
 theorem elideMatch_map : elideMatch (m.map f) = (elideMatch m).map f := by
   unfold elideMatch
-  simp only [TemplateMatch.template_map]
+  rw [template_map]
   split <;> rfl
-
-theorem prefixM_map : prefixM (ax.map f) (m.map f) = (prefixM ax m).map f := by
-  simp [prefixM, TemplateMatch.map, Affixes.map]
 
 theorem vowelAssociation_map (mel : List Vowel) :
     vowelAssociation mel (m.map f) = (vowelAssociation mel m).map f := by
   unfold vowelAssociation
-  simp only [TemplateMatch.template_map]
-  split <;> rfl
+  rw [template_map]
+  split
+  · exact link_map ..
+  · rfl
 
 theorem stem_map (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
     (r : ConsonantalRoot α) :
     stem (ax.map f) (f ∘ v) abl c b (r.map f) = (stem ax v abl c b r).map f := by
-  have hvoc (m : TemplateMatch α) (mel : List Vowel) :
-      { m.map f with vocalism := mel.map (f ∘ v) } = ({ m with vocalism := mel.map v }).map f := by
-    simp [TemplateMatch.map]
   have harity : (r.map f).arity = r.arity := by simp [ConsonantalRoot.arity]
+  have hvoc (m : MultiplanarForm Morpheme Slot α Morpheme) (mel : List Vowel) :
+      ofMelody Morpheme.vocalism Morpheme.vocalism (mel.map (f ∘ v)) * m.map f =
+        (ofMelody Morpheme.vocalism Morpheme.vocalism (mel.map v) * m).map f := by
+    rw [map_mul, map_ofMelody, List.map_map]
   simp only [stem, harity, consonantism_map]
-  split <;> split <;>
-    simp only [prefixCV_map, elideMatch_map, prefixM_map, hvoc, vowelAssociation_map,
-      TemplateMatch.associate_map]
+  split <;> simp only [prefixMorph_map, ← map_mul, elideMatch_map, hvoc, vowelAssociation_map,
+    associate_map]
 
 end Map
 
@@ -408,10 +420,10 @@ private theorem spellout_eq {p : Slot} {b : Binyan} {xs : List α} {r : Consonan
     (hr : r.map (label ax xs) = ⟨xs⟩) {out : List ℕ}
     (h : (consonantism numeralAffixes p b r).spellout = out) :
     (consonantism ax p b ⟨xs⟩).spellout = out.map (label ax xs) := by
-  rw [consonantism_eq_map ax hr, TemplateMatch.spellout_map, h]
+  rw [consonantism_eq_map ax hr, spellout_map, h]
 
 private theorem linkCount_eq {p : Slot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
-    (hr : r.map (label ax xs) = ⟨xs⟩) (s : AssocSource) (k : ℕ) :
+    (hr : r.map (label ax xs) = ⟨xs⟩) (s : Morpheme) (k : ℕ) :
     (consonantism ax p b ⟨xs⟩).linkCount s k =
       (consonantism numeralAffixes p b r).linkCount s k := by
   rw [consonantism_eq_map ax hr]
@@ -459,7 +471,7 @@ theorem consonantism_quinqueliteral :
     (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).spellout = [v, w, x, y] ∧
       (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).unassociated .root = [4] :=
   ⟨spellout_eq ax (r := ⟨[0, 1, 2, 3, 4]⟩) rfl (out := [0, 1, 2, 3]) (by decide), by
-    rw [consonantism_eq_map ax (r := ⟨[0, 1, 2, 3, 4]⟩) rfl, TemplateMatch.unassociated_map]
+    rw [consonantism_eq_map ax (r := ⟨[0, 1, 2, 3, 4]⟩) rfl, unassociated_map]
     decide⟩
 
 end Symbolic
@@ -526,7 +538,7 @@ def Cell.Covered (x : Cell) : Prop := ¬(x.binyan = .I ∧ x.category.participle
 instance (x : Cell) : Decidable x.Covered := inferInstanceAs (Decidable ¬_)
 
 /-- The stem of a cell in the paper's transcription. -/
-def Cell.stem (x : Cell) : TemplateMatch String :=
+def Cell.stem (x : Cell) : MultiplanarForm Morpheme Slot String Morpheme :=
   McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut x.category x.binyan x.root
 
 theorem isSome_cell? : ∀ f ∈ Wordlist.all, (cell? f).isSome := by decide +kernel
@@ -542,13 +554,16 @@ theorem forms_uncovered :
       ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
   decide +kernel
 
-theorem orderedOn_stem :
-    (∀ b c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
+-- p. 383 [mccarthy-1981]
+theorem noCrossing_stem :
+    (∀ b c, (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c b
+        ⟨["k", "t", "b"]⟩).toAR.NoCrossing ∧
       (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c b
-        ⟨["k", "t", "b"]⟩).OrderedOn s) ∧
-    ∀ q, ∀ c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
-      (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c (.ofQuadriliteral q)
-        ⟨["d", "ḥ", "r", "j"]⟩).OrderedOn s := by
+        ⟨["k", "t", "b"]⟩).NoManyToOne) ∧
+    ∀ q c, (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c
+        (.ofQuadriliteral q) ⟨["d", "ḥ", "r", "j"]⟩).toAR.NoCrossing ∧
+      (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c
+        (.ofQuadriliteral q) ⟨["d", "ḥ", "r", "j"]⟩).NoManyToOne := by
   decide +kernel
 
 /-- The paper's transcription as segments of the Arabic fragment, where j is ج, ğ is غ, y the glide,
@@ -569,7 +584,7 @@ theorem forms_derived_seg : ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered
     (McCarthy1981.stem (transcribedAffixes.map seg) (seg ∘ Vowel.transcription) ktbAblaut
       x.category x.binyan (x.root.map seg)).spellout = f.segments.map seg := by
   intro f hf x hx hc
-  rw [stem_map, TemplateMatch.spellout_map]
+  rw [stem_map, spellout_map]
   exact congrArg _ (forms_derived f hf x hx hc)
 
 /-! ### The OCP and Metathesis -/
@@ -591,20 +606,19 @@ theorem isOCPClean_roots :
 
 /-- The structural description of Metathesis (37) holds when the C-slots `i` and `i + 2` on
 either side of a V-slot are linked to one melodic element, which has no line left of `i`. -/
-def MetathesisSite (m : TemplateMatch α) (i : ℕ) : Prop :=
-  m.template[i + 1]? = some .V ∧ ∃ a ∈ m.associations, a.slotIndex = i ∧
-    (∃ b ∈ m.associations, b.slotIndex = i + 2 ∧ b.source = a.source ∧
-      b.melodyIndex = a.melodyIndex) ∧
-    ∀ c ∈ m.associations, c.source = a.source → c.melodyIndex = a.melodyIndex → i ≤ c.slotIndex
+def MetathesisSite (m : MultiplanarForm Morpheme Slot α Morpheme) (i : ℕ) : Prop :=
+  m.template[i + 1]? = some .V ∧ ∃ p, ∃ l ∈ m.lines p, l.2 = i ∧ (l.1, i + 2) ∈ m.lines p ∧
+    ∀ l' ∈ m.lines p, l'.1 = l.1 → i ≤ l'.2
 
-instance (m : TemplateMatch α) (i : ℕ) : Decidable (MetathesisSite m i) := by
+instance (m : MultiplanarForm Morpheme Slot α Morpheme) (i : ℕ) :
+    Decidable (MetathesisSite m i) := by
   unfold MetathesisSite; infer_instance
 
 /-- The sites of Metathesis in a match. -/
-def metathesisSites (m : TemplateMatch α) : List ℕ :=
+def metathesisSites (m : MultiplanarForm Morpheme Slot α Morpheme) : List ℕ :=
   (List.range m.template.length).filter (MetathesisSite m ·)
 
-theorem metathesisSite_iff (m : TemplateMatch α) (i : ℕ) :
+theorem metathesisSite_iff (m : MultiplanarForm Morpheme Slot α Morpheme) (i : ℕ) :
     MetathesisSite m i ↔ i ∈ metathesisSites m := by
   refine ⟨fun h ↦ List.mem_filter.2 ⟨List.mem_range.2 ?_, decide_eq_true h⟩,
     fun h ↦ of_decide_eq_true (List.mem_filter.1 h).2⟩
@@ -613,7 +627,7 @@ theorem metathesisSite_iff (m : TemplateMatch α) (i : ℕ) :
   obtain ⟨hlt, -⟩ := this
   exact Nat.lt_of_succ_lt hlt
 
-theorem metathesisSites_map (f : α → β) (m : TemplateMatch α) :
+theorem metathesisSites_map (f : α → β) (m : MultiplanarForm Morpheme Slot α Morpheme) :
     metathesisSites (m.map f) = metathesisSites m := rfl
 
 section Metathesis

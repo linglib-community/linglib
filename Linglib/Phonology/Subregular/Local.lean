@@ -11,12 +11,14 @@ permitted `k`-factors cuts it out, and locally `k`-testable when membership depe
 set of `k`-factors. Over words ordered by successor these are the strictly local and the locally
 testable stringsets, and over words ordered by precedence the strictly piecewise and the piecewise
 testable ones. A strictly local set is a core of the relation between a member and its
-factors, so its canonical grammar is the image of the set under that relation.
+factors, so its canonical grammar is the image of the set under that relation, and the strictly
+local sets are the closed sets of the closure operator of that Galois connection.
 
 ## Main definitions
 
 * `FirstOrder.Language.IsStrictlyLocal`, `FirstOrder.Language.IsLocallyTestable`: the strictly
   local and the locally testable sets of members of a family of structures.
+* `FirstOrder.Language.strictlyLocalClosure`: the least strictly local set containing a set.
 
 ## Main statements
 
@@ -62,6 +64,23 @@ theorem isStrictlyLocal_iff_eq_core_image :
     L.IsStrictlyLocal M k S ↔ S = (SetRel.ofSuccessors fun i ↦ L.factors k (M i)).core
       ((SetRel.ofSuccessors fun i ↦ L.factors k (M i)).image S) :=
   (SetRel.image_core_gc (R := SetRel.ofSuccessors fun i ↦ L.factors k (M i))).exists_eq_u S
+
+variable (L M k) in
+/-- The strictly `k`-local closure of a set of members: the members all of whose factors occur in
+its members. -/
+def strictlyLocalClosure : ClosureOperator (Set ι) :=
+  (SetRel.image_core_gc (R := SetRel.ofSuccessors fun i ↦ L.factors k (M i))).closureOperator
+
+theorem mem_strictlyLocalClosure {i : ι} :
+    i ∈ L.strictlyLocalClosure M k S ↔ L.factors k (M i) ⊆ ⋃ j ∈ S, L.factors k (M j) := by
+  simp only [strictlyLocalClosure, GaloisConnection.closureOperator_apply,
+    SetRel.image_ofSuccessors, SetRel.mem_core_ofSuccessors]
+
+/-- The strictly local sets are the closed sets of the strictly local closure. -/
+theorem isStrictlyLocal_iff_isClosed :
+    L.IsStrictlyLocal M k S ↔ (L.strictlyLocalClosure M k).IsClosed S := by
+  rw [isStrictlyLocal_iff_eq_core_image, ClosureOperator.isClosed_iff, eq_comm]
+  rfl
 
 /-- A set is strictly local exactly when it contains every member whose factors all occur in its
 members. -/

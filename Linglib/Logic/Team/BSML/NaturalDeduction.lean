@@ -25,7 +25,7 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 
 ## Main results
 
-* `Formula.Context.ver_den_fill`: the split behind the translation rules.
+* `Formula.Context.pro_den_fill`: the split behind the translation rules.
 * `soundness`, `consequence_of_derives`: what is derivable is a consequence; the converse is in
   `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
@@ -100,10 +100,10 @@ def Distributive : Context Atom → Prop
 
 /-- At a distributive position, the teams supporting `C.fill ψ` are those supporting
 `C.fill (ψ ∧ NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024], before Definition 4.33). -/
-theorem ver_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
+theorem pro_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
     ∀ {C : Context Atom}, C.Distributive →
-      ((C.fill ψ).den M).ver =
-        ((C.fill (.conj ψ .ne)).den M).ver ∪ ((C.fill (.conj ψ .falsum)).den M).ver
+      ((C.fill ψ).den M).pro =
+        ((C.fill (.conj ψ .ne)).den M).pro ∪ ((C.fill (.conj ψ .falsum)).den M).pro
   | hole, _ => by
     ext s
     change _ ↔ (_ ∧ s.Nonempty) ∨ (_ ∧ support M .falsum s)
@@ -111,16 +111,18 @@ theorem ver_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Ato
     exact Iff.rfl
   | conjLeft C θ, hC => by
     change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
-    rw [ver_den_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
+    rw [pro_den_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
   | conjRight θ C, hC => by
     change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
-    rw [ver_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
+    rw [pro_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
   | disjLeft C θ, hC => by
-    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
-    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_left]
+    change (Team.disj _ _).pro = (Team.disj _ _).pro ∪ (Team.disj _ _).pro
+    simp only [Team.pro_disj]
+    rw [pro_den_fill M ψ (C := C) hC, Set.sups_union_left]
   | disjRight θ C, hC => by
-    change _ ⊻ _ = _ ⊻ _ ∪ _ ⊻ _
-    rw [ver_den_fill M ψ (C := C) hC, Set.sups_union_right]
+    change (Team.disj _ _).pro = (Team.disj _ _).pro ∪ (Team.disj _ _).pro
+    simp only [Team.pro_disj]
+    rw [pro_den_fill M ψ (C := C) hC, Set.sups_union_right]
   | poss _, hC | nec _, hC => hC.elim
 
 end Formula.Context
@@ -316,19 +318,19 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     exact ⟨M.access w, ih₁ s (fun γ hγ ↦ hΓ γ (.inl hγ)) w hw, t, hψ, sup_eq_left.mpr hsub⟩
   | @neTrs Γ Δ₁ Δ₂ ψ χ C hC _ _ _ ih ih₁ ih₂ =>
     intro s hΓ
-    have h : s ∈ ((C.fill ψ).den M).ver := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
-    rw [Formula.Context.ver_den_fill M ψ hC] at h
+    have h : s ∈ ((C.fill ψ).den M).pro := ih s fun γ hγ ↦ hΓ γ (.inl (.inl hγ))
+    rw [Formula.Context.pro_den_fill M ψ hC] at h
     rcases h with h | h
     · exact ih₁ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inl (.inr hγ))]
     · exact ih₂ s <| by rintro γ (rfl | hγ); exacts [h, hΓ γ (.inr hγ)]
   | @possNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ poss M.access ((C.fill ψ).den M).ver := ih s hΓ
-    rwa [Formula.Context.ver_den_fill M ψ hC, poss_union] at h
+    have h : s ∈ poss M.access ((C.fill ψ).den M).pro := ih s hΓ
+    rwa [Formula.Context.pro_den_fill M ψ hC, poss_union] at h
   | @necNeTrs Γ ψ C hC _ ih =>
     intro s hΓ
-    have h : s ∈ nec M.access ((C.fill ψ).den M).ver := ih s hΓ
-    rwa [Formula.Context.ver_den_fill M ψ hC, nec_union] at h
+    have h : s ∈ nec M.access ((C.fill ψ).den M).pro := ih s hΓ
+    rwa [Formula.Context.pro_den_fill M ψ hC, nec_union] at h
 
 /-- Derivability from a finite set implies consequence. -/
 theorem consequence_of_derives {Γ : Finset (Formula Atom)} (h : ↑Γ ⊢ φ) : Γ ⊨ φ :=

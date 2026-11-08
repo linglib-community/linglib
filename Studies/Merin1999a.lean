@@ -444,8 +444,8 @@ theorem isPresupposed_iff {μ : Measure W} [IsProbabilityMeasure μ] {a : Set W}
     calc μ a = μ[|a] a := by rw [h]
       _ = 1 := cond_apply_self h0 (measure_ne_top _ _)
   · intro h1
-    rw [IsPresupposed, ProbabilityTheory.cond, h1, inv_one, one_smul,
-      Measure.restrict_eq_self_of_ae_mem (mem_ae_iff.mpr ((prob_compl_eq_zero_iff ha).mpr h1))]
+    rw [IsPresupposed, cond_congr_set (ae_eq_univ.2 ((prob_compl_eq_zero_iff ha).2 h1)),
+      cond_univ]
 
 variable {ctx : Context W} {a : Set W}
 

@@ -328,11 +328,10 @@ theorem not_isStrictlyLocal_ASL_utp (k : ℕ) : ¬ (ASL utpGrammar).IsStrictlyLo
     (List.replicate (k - 1) .L) (by simp) (by simpa using mem_ASL_utp_HL_replicate (k - 1))
     (by simpa using mem_ASL_utp_replicate_H (k - 1)))
 
-theorem ASL_utp_visible :
-    ∀ a : Sym, ∃ u v, ¬ (u ++ a :: v ∈ ASL utpGrammar ↔ u ++ v ∈ ASL utpGrammar)
-  | .H => ⟨[.H, .L], [], by decide⟩
-  | .L => ⟨[.H], [.H], by decide⟩
-  | .F => ⟨[], [], by decide⟩
+theorem ASL_utp_visible : ∀ a : Sym, (ASL utpGrammar).syntacticClass [a] ≠ 1
+  | .H => fun h ↦ absurd (Language.syntacticClass_eq_one_iff.1 h [.H, .L] []) (by decide)
+  | .L => fun h ↦ absurd (Language.syntacticClass_eq_one_iff.1 h [.H] [.H]) (by decide)
+  | .F => fun h ↦ absurd (Language.syntacticClass_eq_one_iff.1 h [] []) (by decide)
 
 /-- `L_UTP` is not tier-based strictly local at any width (Theorem 3). -/
 theorem not_isTierStrictlyLocal_ASL_utp (k : ℕ) : ¬ (ASL utpGrammar).IsTierStrictlyLocal k :=

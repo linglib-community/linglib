@@ -12,24 +12,12 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 /-!
 # The language `{aⁿbⁿcⁿ | n ∈ ℕ}`
 
-For letters `a`, `b` and `c`, `Language.anbncn a b c` is the language of the words consisting of
-`n` copies of `a`, then `n` copies of `b`, then `n` copies of `c`. For distinct letters it is not
-context-free, the standard application of the pumping lemma: a window of the pumped word
-`aᵖbᵖcᵖ` no longer than `p` cannot meet both the `a` block and the `c` block, so pumping it out
-leaves the count of `a` or of `c` at `p` while removing letters.
-
-The argument shows more: a language that contains `aⁿbⁿcⁿ` for infinitely many `n`, and whose
-words all have as many `a` as `b` as `c`, is not context-free.
-
-## Main definitions
-
-* `Language.anbncn a b c`: the language `{aⁿbⁿcⁿ | n ∈ ℕ}`.
-
-## Main results
-
-* `Language.not_isContextFree_of_replicate_mem_of_count_eq`: a language containing infinitely
-  many of the words `aⁿbⁿcⁿ`, whose words have as many `a` as `b` as `c`, is not context-free.
-* `Language.not_isContextFree_anbncn`: for distinct letters, `{aⁿbⁿcⁿ}` is not context-free.
+This file defines `Language.anbncn a b c`, the language of the words consisting of `n` copies of
+`a`, then `n` copies of `b`, then `n` copies of `c`. For distinct letters it is
+[not context-free](##Language.not_isContextFree_anbncn), the standard application of the pumping
+lemma, and the argument shows more: [a language containing `aⁿbⁿcⁿ` for infinitely many `n`, whose
+words have as many `a` as `b` as `c`, is not
+context-free](##Language.not_isContextFree_of_replicate_mem_of_count_eq).
 
 ## References
 
@@ -80,22 +68,15 @@ theorem not_isContextFree_of_replicate_mem_of_count_eq (h : [a, b, c].Nodup)
   have hca := congr(count a $hw)
   have hcb := congr(count b $hw)
   have hcc := congr(count c $hw)
-  simp [count_replicate, hab, hac, hbc, hab.symm, hac.symm, hbc.symm] at h0 hca hcb hcc
-  have hz : ∀ s, s ∉ v ++ x ++ y → v.count s = 0 ∧ x.count s = 0 ∧ y.count s = 0 := fun s hs ↦
-    ⟨count_eq_zero.mpr fun h ↦ hs (by simp [h]), count_eq_zero.mpr fun h ↦ hs (by simp [h]),
-      count_eq_zero.mpr fun h ↦ hs (by simp [h])⟩
-  have key : v.count a + y.count a = 0 ∧ v.count b + y.count b = 0 ∧
-      v.count c + y.count c = 0 := by
-    rcases hout.imp (hz _) (hz _) with ⟨_, _, _⟩ | ⟨_, _, _⟩ <;> omega
-  have hsub : ∀ e ∈ v ++ y, e = a ∨ e = b ∨ e = c := fun e he ↦ by
-    have := hwin.subset (by simp at he ⊢; tauto)
-    simp only [mem_append, mem_replicate] at this
-    tauto
-  have hnil : v ++ y = [] := eq_nil_iff_forall_not_mem.2 fun e he ↦
-    count_eq_zero.1
-      (by rcases hsub e he with rfl | rfl | rfl <;> simp only [count_append] <;> omega) he
-  obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hnil
-  simp at hvy
+  simp [count_replicate, hab, hac, hbc, Ne.symm] at h0 hca hcb hcc
+  have hz : ∀ s, s ∉ v ++ x ++ y → v.count s = 0 ∧ y.count s = 0 := fun s hs ↦
+    ⟨count_eq_zero.mpr fun h ↦ hs (by simp [h]), count_eq_zero.mpr fun h ↦ hs (by simp [h])⟩
+  obtain ⟨e, he⟩ := exists_mem_of_ne_nil (v ++ y) hvy
+  have hpos := count_pos_iff.2 he
+  have he' := hwin.subset (show e ∈ v ++ x ++ y by simp at he ⊢; tauto)
+  simp only [count_append, mem_append, mem_replicate] at hpos he'
+  rcases hout.imp (hz _) (hz _) with ⟨_, _⟩ | ⟨_, _⟩ <;>
+    rcases he' with (⟨-, rfl⟩ | ⟨-, rfl⟩) | ⟨-, rfl⟩ <;> omega
 
 /-- For distinct letters, `{aⁿbⁿcⁿ}` is not context-free. -/
 theorem not_isContextFree_anbncn (h : [a, b, c].Nodup) : ¬ (anbncn a b c).IsContextFree := by
@@ -103,6 +84,6 @@ theorem not_isContextFree_anbncn (h : [a, b, c].Nodup) : ¬ (anbncn a b c).IsCon
   refine not_isContextFree_of_replicate_mem_of_count_eq h
     (.of_forall replicate_append_replicate_append_replicate_mem_anbncn) ?_
   rintro _ ⟨n, rfl⟩
-  simp [count_replicate, hab, hac, hbc, hab.symm, hac.symm, hbc.symm]
+  simp [count_replicate, hab, hac, hbc, Ne.symm]
 
 end Language

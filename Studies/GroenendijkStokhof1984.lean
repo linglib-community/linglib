@@ -188,7 +188,7 @@ theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (
 /-- Knowing the answer to a partition satisfies Karttunen's meaning postulate for *know* on the
 Hamblin set, both its clause for the true answers and its clause for an empty set of them. -/
 theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (partition H) w R) :
-    Karttunen1977.Knows H w R := by
+    Karttunen1977.Knows (trueAnswers H) w R := by
   refine ⟨knowsAnswer_of_mem_core_strongAnswer (by rwa [strongAnswer_eq_cell]), fun h₀ v hv ↦ ?_⟩
   show trueAnswers H v = ∅
   rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
@@ -220,8 +220,9 @@ def johnBelieves : SetRel Bool Bool := {p | p.2 = false}
 /-- Karttunen's postulate counts John as knowing who walks though he believes Suzy walks too,
 against (VIII), and not as knowing who doesn't walk, against (X) (chapter II, pp. 86–88). -/
 theorem karttunen_knows :
-    Karttunen1977.Knows (Set.range walk) true john ∧ true ∈ johnBelieves.core (walk .suzy) ∧
-      ¬ Karttunen1977.Knows (Set.range fun x ↦ (walk x)ᶜ) true john := by
+    Karttunen1977.Knows (trueAnswers (Set.range walk)) true john ∧
+      true ∈ johnBelieves.core (walk .suzy) ∧
+      ¬ Karttunen1977.Knows (trueAnswers (Set.range fun x ↦ (walk x)ᶜ)) true john := by
   refine ⟨⟨fun v _ ↦ ?_, fun h ↦ absurd h (Set.nonempty_iff_ne_empty.1
       ⟨walk .bill, ⟨.bill, rfl⟩, trivial⟩)⟩, fun _ h ↦ h, fun ⟨h, _⟩ ↦ ?_⟩
   · rintro p ⟨⟨x, rfl⟩, hx⟩

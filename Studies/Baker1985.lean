@@ -202,7 +202,9 @@ inductive CausativeType
 /-- A language's settings are its causative type and whether its passive can promote the second
 of two objects (58). -/
 structure Grammar where
+  /-- The causative type. -/
   causative : CausativeType
+  /-- Whether the passive can promote the second of two objects. -/
   passiveSecond : Bool := false
   deriving DecidableEq, Repr
 

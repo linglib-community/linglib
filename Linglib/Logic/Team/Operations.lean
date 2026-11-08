@@ -5,6 +5,7 @@ public import Mathlib.Order.Hom.BoundedLattice
 public import Linglib.Core.Data.Set.Sups
 public import Mathlib.Data.Finset.Lattice.Union
 public import Linglib.Logic.Team.Closure
+public import Linglib.Logic.Bilattice.Product
 
 /-!
 # Team operations
@@ -21,6 +22,8 @@ disjunction is the pointwise sup `P ⊻ Q` of `Finset α`, so its closure proper
 * `Team.flat`, `Team.ne`, `Team.nec`, `Team.poss`: the atoms, `NE` and modalities of BSML.
 * `Team.biUnionHom`, `Team.possWitness`, `Team.necImage`, `Team.possLax`: the modal
   clauses of modal dependence and inclusion logic, and the quantifier clauses of QBSML.
+* `Team.conj`, `Team.disj`, `Team.flatPair`: bilateral conjunction and split disjunction on
+  pairs of support and anti-support properties, and the meaning of a classical formula.
 
 ## Main results
 
@@ -28,6 +31,9 @@ disjunction is the pointwise sup `P ⊻ Q` of `Finset α`, so its closure proper
   `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat`: `flat` commutes with each
   connective.
 * `Team.poss_union`, `Team.nec_union`: the flat modalities send unions to split disjunctions.
+* `Team.compl_flatPair`, `Team.conj_flatPair`, `Team.disj_flatPair`,
+  `Team.map_poss_nec_flatPair`: each bilateral connective sends flat pairs to flat pairs, and so
+  do the pairs of image modalities.
 
 ## Implementation notes
 
@@ -316,5 +322,81 @@ theorem mem_necImage_flat : t ∈ necImage R (flat p) ↔ ∀ x ∈ t, ∀ y ∈
 theorem necImage_flat (R : α → Finset α) (p : α → Prop) :
     necImage R (flat p) = flat fun x ↦ ∀ y ∈ R x, p y :=
   Set.ext fun _ ↦ mem_necImage_flat
+
+/-! ### Bilateral connectives
+
+A bilateral logic gives a formula a support and an anti-support property, a pair in
+`TeamProperty α ⊙ TeamProperty α` whose negation `ᶜ` swaps the two. Conjunction intersects the
+supports and splits the anti-supports, and disjunction is its De Morgan dual. A modality acts on
+the two coordinates by a pair of operations (`Bilattice.Product.map`). A classical formula means
+the flat pair of its truth, and each connective sends flat pairs to flat pairs. -/
+
+open scoped Bilattice
+open Bilattice.Product (map)
+
+/-- A team supports `A ∧ B` when it supports both, and anti-supports it when it splits into a part
+anti-supporting each. -/
+def conj (A B : TeamProperty α ⊙ TeamProperty α) : TeamProperty α ⊙ TeamProperty α :=
+  .mk (A.pro ∩ B.pro) (A.con ⊻ B.con)
+
+/-- Split disjunction `A ∨ B`, the De Morgan dual `¬(¬A ∧ ¬B)` of conjunction. -/
+def disj (A B : TeamProperty α ⊙ TeamProperty α) : TeamProperty α ⊙ TeamProperty α :=
+  (conj Aᶜ Bᶜ)ᶜ
+
+/-- The flat pair of `p` is supported by the teams throughout which `p` holds and anti-supported
+by those throughout which it fails. -/
+def flatPair (p : α → Prop) : TeamProperty α ⊙ TeamProperty α :=
+  .mk (flat p) (flat fun x ↦ ¬ p x)
+
+section Flat
+
+omit [DecidableEq α]
+
+variable (p : α → Prop) (R : α → Finset α)
+
+@[simp] theorem pro_flatPair : (flatPair p).pro = flat p := rfl
+@[simp] theorem con_flatPair : (flatPair p).con = flat fun x ↦ ¬ p x := rfl
+
+theorem compl_flatPair : (flatPair p)ᶜ = flatPair fun x ↦ ¬ p x :=
+  Bilattice.Product.ext rfl <| congrArg flat <| funext fun _ ↦ propext not_not.symm
+
+theorem map_poss_nec_flatPair :
+    (flatPair p).map (poss R) (nec R) = flatPair fun x ↦ ∃ y ∈ R x, p y :=
+  Bilattice.Product.ext (poss_flat R p) <| (nec_flat R fun x ↦ ¬ p x).trans <| by
+    simp only [con_flatPair, not_exists, not_and]
+
+end Flat
+
+section Bilateral
+
+variable (A B : TeamProperty α ⊙ TeamProperty α) (p q : α → Prop) (R : α → Finset α)
+
+@[simp] theorem pro_conj : (conj A B).pro = A.pro ∩ B.pro := rfl
+@[simp] theorem con_conj : (conj A B).con = A.con ⊻ B.con := rfl
+@[simp] theorem pro_disj : (disj A B).pro = A.pro ⊻ B.pro := rfl
+@[simp] theorem con_disj : (disj A B).con = A.con ∩ B.con := rfl
+@[simp] theorem compl_conj : (conj A B)ᶜ = disj Aᶜ Bᶜ := rfl
+@[simp] theorem compl_disj : (disj A B)ᶜ = conj Aᶜ Bᶜ := rfl
+
+theorem conj_flatPair : conj (flatPair p) (flatPair q) = flatPair fun x ↦ p x ∧ q x :=
+  Bilattice.Product.ext (flat_inter p q) <|
+    (flat_sups_flat (fun x ↦ ¬ p x) fun x ↦ ¬ q x).trans <| by
+      simp only [con_flatPair, not_and_or]
+
+theorem disj_flatPair : disj (flatPair p) (flatPair q) = flatPair fun x ↦ p x ∨ q x :=
+  Bilattice.Product.ext (flat_sups_flat p q) <|
+    (flat_inter (fun x ↦ ¬ p x) fun x ↦ ¬ q x).trans <| by simp only [con_flatPair, not_or]
+
+theorem map_possWitness_necImage_flatPair :
+    (flatPair p).map (possWitness R) (necImage R) = flatPair fun x ↦ ∃ y ∈ R x, p y :=
+  Bilattice.Product.ext (possWitness_flat R p) <| (necImage_flat R fun x ↦ ¬ p x).trans <| by
+    simp only [con_flatPair, not_exists, not_and]
+
+theorem map_possLax_necImage_flatPair :
+    (flatPair p).map (possLax R) (necImage R) = flatPair fun x ↦ ∃ y ∈ R x, p y :=
+  Bilattice.Product.ext (possLax_flat R p) <| (necImage_flat R fun x ↦ ¬ p x).trans <| by
+    simp only [con_flatPair, not_exists, not_and]
+
+end Bilateral
 
 end Team

@@ -8,6 +8,7 @@ public import Linglib.Core.GroupTheory.Perm.MinOn
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Prod.Basic
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Order.Extension.Linear
 public import Mathlib.Order.Preorder.Finite
 

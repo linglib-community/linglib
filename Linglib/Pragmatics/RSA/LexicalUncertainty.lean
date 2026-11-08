@@ -5,22 +5,25 @@ public import Linglib.Pragmatics.RSA.Basic
 /-!
 # Lexical uncertainty
 
-In the lexical-uncertainty model of [bergen-levy-goodman-2016], speaker and listener share a
+In the lexical-uncertainty model of Bergen, Levy and Goodman, speaker and listener share a
 prior over lexica. The speaker uses one lexicon and addresses its literal listener, and the
 pragmatic listener, unsure which, inverts the speaker of each lexicon. With the lexicon a
 coordinate of the state, she is `RSA.listener` at the product of the prior over states and the
 prior over lexica. The paper states her belief about the state as the listener of the speaker
-averaged over lexica, and [the two presentations agree](##listener_prod_fst). A state is possible
-after an utterance exactly when it has positive prior and some lexicon of positive prior has its
-speaker produce the utterance there
+averaged over lexica, and [the two presentations agree](##listener_prod_fst); her belief about
+the lexicon is [the listener of the speaker averaged over states](##listener_prod_snd). A state
+is possible after an utterance exactly when it has positive prior and some lexicon of positive
+prior has its speaker produce the utterance there
 ([the union of the lexica's supports](##listener_prod_fst_apply_singleton_ne_zero_iff)).
 
-Nothing requires the latent to be a lexicon: a threshold, a comparison class, a scope reading or
-a question under discussion that the speaker knows and the listener does not enters the same way.
+Nothing requires the latent to be a lexicon: a threshold, a comparison class, a scope reading, a
+question under discussion or the prior that the speaker knows and the listener does not enters
+the same way.
 
 ## Main statements
 
 * `RSA.listener_prod_fst`
+* `RSA.listener_prod_snd`
 * `RSA.listener_prod_fst_apply_singleton_ne_zero_iff`
 
 ## References
@@ -53,6 +56,24 @@ theorem listener_prod_fst (μ : Measure A) (ν : Measure B) (S : A × B → Meas
   congr 1
   · ring
   · exact congrArg _ <| Finset.sum_congr rfl fun _ _ ↦ Finset.sum_congr rfl fun _ _ ↦ by ring
+
+/-- Against a product prior, the second marginal of the listener, her belief about the latent, is
+the listener of the speaker averaged over the first coordinate by its prior. -/
+theorem listener_prod_snd (μ : Measure A) (ν : Measure B) (S : A × B → Measure U) :
+    (listener (μ.prod ν) S).snd = listener ν fun b ↦ ∑ a, μ {a} • S (a, b) := by
+  ext u : 1
+  refine Measure.ext_of_singleton fun b ↦ ?_
+  change (listener (μ.prod ν) S u).snd {b} = _
+  simp_rw [Measure.snd_apply_singleton, listener_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul,
+    Fintype.sum_prod_type, ← Set.singleton_prod_singleton, Measure.prod_prod,
+    Measure.finsetSum_apply, Measure.smul_apply, smul_eq_mul]
+  congr 1
+  · rw [Finset.sum_mul]
+    exact Finset.sum_congr rfl fun _ _ ↦ by ring
+  · rw [Finset.sum_comm]
+    exact congrArg _ <| Finset.sum_congr rfl fun _ _ ↦ by
+      rw [Finset.sum_mul]
+      exact Finset.sum_congr rfl fun _ _ ↦ by ring
 
 variable (μ : Measure A) [IsFiniteMeasure μ] (ν : Measure B) [IsFiniteMeasure ν]
   (S : A × B → Measure U) [∀ p, IsFiniteMeasure (S p)] (u : U) (a : A)

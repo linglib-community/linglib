@@ -44,11 +44,11 @@ open Subregular Hansson2010
 /-! ### Transparent harmony: Navajo is SP_2 as well as TSL_2 -/
 
 theorem navajoSibilantHarmony_lang_isSP2 :
-    navajoSibilantHarmony.language.IsStrictlyPiecewise 2 := by
+    (navajoSibilantHarmony.language 2).IsStrictlyPiecewise 2 := by
   rw [language_eq_preimage]
   exact (TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise _).preimage_map _
 
-theorem navajoSibilantHarmony_language_eq_strictlyPiecewise : navajoSibilantHarmony.language =
+theorem navajoSibilantHarmony_language_eq_strictlyPiecewise : navajoSibilantHarmony.language 2 =
     List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 := by
   rw [language_eq_preimage, TierStrictlyLocalGrammar.agree_language_eq_strictlyPiecewise]
 
@@ -96,9 +96,9 @@ instance : DecidableRel BSeg.Mixed :=
 /-- The schematic blocking language has harmony across transparent material, halted by a
 blocker. -/
 def blockingLang : Language BSeg :=
-  (TierStrictlyLocalGrammar.ofForbiddenPairs BSeg.Mixed BSeg.onTier).language
+  (TierStrictlyLocalGrammar.ofForbiddenPairs BSeg.Mixed BSeg.onTier).language 2
 
-theorem blockingLang_isTSL2 : Language.IsTierStrictlyLocal 2 blockingLang :=
+theorem blockingLang_isTSL2 : blockingLang.IsTierStrictlyLocal 2 :=
   ⟨_, rfl⟩
 
 theorem transparent_not_mem : [BSeg.ant, .transparent, .post] ∉ blockingLang := by
@@ -116,7 +116,7 @@ theorem blockingLang_not_isStrictlyPiecewise (k : ℕ) :
 
 theorem exists_isTierStrictlyLocal_not_isStrictlyPiecewise :
     ∃ L : Language BSeg,
-      Language.IsTierStrictlyLocal 2 L ∧ ∀ k, ¬ L.IsStrictlyPiecewise k :=
+      L.IsTierStrictlyLocal 2 ∧ ∀ k, ¬ L.IsStrictlyPiecewise k :=
   ⟨blockingLang, blockingLang_isTSL2, blockingLang_not_isStrictlyPiecewise⟩
 
 end McMullin2016

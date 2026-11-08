@@ -25,7 +25,7 @@ adjective and noun within the predicate, is `Corbett2000.PredicateTarget`.
 ## Main definitions
 
 * `Agreement.Position`: the four positions, a chain from the personal pronoun up.
-* `Agreement.Kind`: syntactic or semantic agreement.
+* `Agreement.Kind`: syntactic or semantic agreement, the former below the latter.
 * `Agreement.Availability`: the five degrees of availability of semantic agreement, from
   syntactic only to semantic only, linearly ordered.
 * `Agreement.RespectsHierarchy`: a map recorded at some positions of a hierarchy is
@@ -77,6 +77,10 @@ inductive Kind where
   | semantic
   deriving DecidableEq, Repr, Fintype
 
+/-- Syntactic agreement lies below semantic agreement, so that a map to agreements is
+monotone when it never trades semantic agreement for syntactic. -/
+instance : LinearOrder Kind := LinearOrder.lift' Kind.ctorIdx (by decide)
+
 /-- The availability of semantic agreement at a position of a hierarchy, the five categories
 of [corbett-1991]'s summary of hybrid nouns, ordered by the likelihood of semantic
 agreement. -/
@@ -121,6 +125,11 @@ instance [Fintype ι] [DecidableLE ι] [DecidableLE α] (f : ι → Option α) :
 theorem respectsHierarchy_some_comp_iff_antitone {g : ι → α} :
     RespectsHierarchy (some ∘ g) ↔ Antitone g := by
   simp [RespectsHierarchy, Antitone]
+
+/-- A map respecting a hierarchy respects it along any monotone map into it. -/
+theorem RespectsHierarchy.comp_monotone {κ : Type*} [Preorder κ] {f : ι → Option α}
+    (hf : RespectsHierarchy f) {g : κ → ι} (hg : Monotone g) : RespectsHierarchy (f ∘ g) :=
+  fun _ _ h ↦ hf (hg h)
 
 end Hierarchy
 

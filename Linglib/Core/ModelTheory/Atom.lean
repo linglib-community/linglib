@@ -2,6 +2,8 @@ module
 
 public import Mathlib.Algebra.Group.Action.End
 public import Mathlib.Algebra.Group.Action.Pointwise.Set.Basic
+public import Mathlib.Basic.Finite.Prod
+public import Mathlib.Basic.Finite.Sigma
 public import Mathlib.ModelTheory.Semantics
 public import Mathlib.Order.Concept
 
@@ -82,6 +84,16 @@ def toFormula (a : L.Atom α) : L.Formula α := a.rel.formula (Term.var ∘ a.ar
 @[simp] theorem realize_toFormula {a : L.Atom α} {v : α → M} :
     a.toFormula.Realize v ↔ a.Realize v := by
   simp [toFormula, Realize, Function.comp_def]
+
+/-- An atom is a relation symbol together with its arguments. -/
+def equivSigma : L.Atom α ≃ Σ R : Σ n, L.Relations n, Fin R.1 → α where
+  toFun a := ⟨⟨_, a.rel⟩, a.args⟩
+  invFun p := ⟨p.1.2, p.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+instance [Finite (Σ n, L.Relations n)] [Finite α] : Finite (L.Atom α) :=
+  .of_equiv _ equivSigma.symm
 
 /-- Permutations of the variables act on atoms by renaming. -/
 instance : MulAction (Equiv.Perm α) (L.Atom α) where
