@@ -763,8 +763,8 @@ variable [MeasurableSpace E] [MeasurableSingletonClass E] {X P : Finset E}
 
 -- (51), (52)
 theorem uniformOn_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = #X / #P := by
-  rw [uniformOn_apply_of_finite P.finite_toSet, Set.inter_eq_right.2 (Finset.coe_subset.2 h),
-    Set.ncard_coe_finset, Set.ncard_coe_finset]
+  classical
+  rw [uniformOn_apply_finset, Finset.inter_eq_right.2 h]
 
 -- (43)
 theorem uniformOn_eq_zero_iff_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = 0 ↔ X = ∅ := by

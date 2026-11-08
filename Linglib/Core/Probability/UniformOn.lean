@@ -1,17 +1,19 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Mathlib.Probability.Distributions.Uniform
 public import Mathlib.Probability.UniformOn
-public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # The uniform measure on a finite set
 
 `ProbabilityTheory.uniformOn s` gives `t` the proportion $|s ∩ t| / |s|$, and is `0` when `s` is
-infinite. This file evaluates it in `ℝ≥0∞` and on reals, identifies it on a finset with
-`MeasureTheory.Measure.uniformOfFinset`, and computes its almost-everywhere filter, the principal
-filter of `s`. On `Set.univ` of a finite type that filter is `⊤`, so the uniform measure there
-dominates every measure.
+infinite. This file evaluates it in `ℝ≥0∞` and on reals, at points, finsets and predicates, and
+computes its almost-everywhere filter, the principal filter of `s`. On `Set.univ` of a finite type
+that filter is `⊤`, so the uniform measure there dominates every measure.
 
 ## TODO
 
@@ -29,6 +31,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω] {s t : 
 
 /-! ### Proportions -/
 
+/-- The uniform measure on `s` gives `t` the proportion of `s` lying in `t`. An infinite `s` makes
+both sides `0`. -/
 theorem uniformOn_apply (s t : Set Ω) : uniformOn s t = (s ∩ t).encard / s.encard := by
   rcases s.finite_or_infinite with hs | hs
   · rw [uniformOn, cond_apply hs.measurableSet, Measure.count_apply hs.measurableSet,
@@ -75,6 +79,7 @@ theorem uniformOn_univ_cond [Finite Ω] (t : Set Ω) :
 
 /-! ### Null sets -/
 
+/-- A set is conull for the uniform measure on a finite set `s` exactly when it contains `s`. -/
 theorem ae_uniformOn (hs : s.Finite) : ae (uniformOn s) = 𝓟 s := by
   ext t
   rw [mem_ae_iff, mem_principal, uniformOn_eq_zero_iff hs, ← sdiff_eq, sdiff_eq_empty]
@@ -84,30 +89,13 @@ theorem uniformOn_absolutelyContinuous_of_subset (ht : t.Finite) (hst : s ⊆ t)
   rw [← Measure.ae_le_iff_absolutelyContinuous, ae_uniformOn ht, ae_uniformOn (ht.subset hst)]
   exact principal_mono.2 hst
 
-@[simp]
-theorem ae_uniformOn_univ [Finite Ω] : ae (uniformOn (univ : Set Ω)) = ⊤ := by
-  rw [ae_uniformOn finite_univ, principal_univ]
-
-theorem absolutelyContinuous_uniformOn_univ [Finite Ω] (μ : Measure Ω) : μ ≪ uniformOn univ :=
-  (le_top.trans_eq ae_uniformOn_univ.symm).absolutelyContinuous_of_ae
-
-theorem uniformOn_univ_singleton_ne_zero [Finite Ω] (ω : Ω) : uniformOn (univ : Set Ω) {ω} ≠ 0 :=
-  (uniformOn_ne_zero_iff finite_univ).2 ⟨ω, trivial, rfl⟩
-
 /-! ### Finsets -/
-
-theorem uniformOn_eq_uniformOfFinset (s : Finset Ω) :
-    uniformOn (s : Set Ω) = Measure.uniformOfFinset s := by
-  classical
-  ext t -
-  have : (s : Set Ω) ∩ t = ↑(s.filter (· ∈ t)) := by ext; simp
-  rw [Measure.uniformOfFinset_apply, uniformOn, cond_apply s.measurableSet,
-    Measure.count_apply_finset, this, Measure.count_apply_finset, ENNReal.div_eq_inv_mul]
 
 theorem uniformOn_finset_apply_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
     uniformOn ↑s {ω} = if ω ∈ s then (#s : ℝ≥0∞)⁻¹ else 0 := by
-  rw [uniformOn_eq_uniformOfFinset]
-  convert Measure.uniformOfFinset_apply_singleton ω
+  rw [← Finset.coe_singleton, uniformOn_apply_finset]
+  split_ifs with h <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
+    div_eq_mul_inv]
 
 theorem uniformOn_finset_real_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
     (uniformOn (s : Set Ω)).real {ω} = if ω ∈ s then (#s : ℝ)⁻¹ else 0 := by
@@ -116,8 +104,9 @@ theorem uniformOn_finset_real_singleton [DecidableEq Ω] (s : Finset Ω) (ω : �
 
 theorem uniformOn_finset_setOf (s : Finset Ω) (p : Ω → Prop) [DecidablePred p] :
     uniformOn (s : Set Ω) {ω | p ω} = #(s.filter p) / #s := by
-  rw [uniformOn_eq_uniformOfFinset, Measure.uniformOfFinset_apply]
-  congr
+  classical
+  rw [← uniformOn_inter_self s.finite_toSet, show (s : Set Ω) ∩ {ω | p ω} = ↑(s.filter p) by
+    ext; simp, uniformOn_apply_finset, Finset.inter_eq_right.2 (Finset.filter_subset _ _)]
 
 theorem uniformOn_finset_real_setOf (s : Finset Ω) (p : Ω → Prop) [DecidablePred p] :
     (uniformOn (s : Set Ω)).real {ω | p ω} = #(s.filter p) / #s := by
@@ -125,6 +114,22 @@ theorem uniformOn_finset_real_setOf (s : Finset Ω) (p : Ω → Prop) [Decidable
     ENNReal.toReal_natCast]
 
 /-! ### The uniform measure on a finite type -/
+
+section Finite
+
+variable [Finite Ω]
+
+theorem uniformOn_univ_singleton_ne_zero (ω : Ω) : uniformOn (univ : Set Ω) {ω} ≠ 0 :=
+  (uniformOn_ne_zero_iff finite_univ).2 ⟨ω, trivial, rfl⟩
+
+@[simp]
+theorem ae_uniformOn_univ : ae (uniformOn (univ : Set Ω)) = ⊤ := by
+  rw [ae_uniformOn finite_univ, principal_univ]
+
+theorem absolutelyContinuous_uniformOn_univ (μ : Measure Ω) : μ ≪ uniformOn univ :=
+  (le_top.trans_eq ae_uniformOn_univ.symm).absolutelyContinuous_of_ae
+
+end Finite
 
 section Fintype
 
