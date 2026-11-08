@@ -225,13 +225,6 @@ theorem not_restrictorMonotone_few : ¬ (few : Det (Fin 3)).RestrictorMonotone :
     h _ (Set.subset_univ _)
   revert this; decide
 
--- (56)–(57), p. 152: the restrictor of *most*, box IV; its other direction is
--- `Quantifier.Det.not_restrictorMonotone_most`.
-theorem not_restrictorAntitone_most : ¬ (most : Det (Fin 3)).RestrictorAntitone := fun h ↦ by
-  have : most Set.univ {x : Fin 3 | x ≠ 2} → most {x : Fin 3 | x = 2} {x | x ≠ 2} :=
-    h _ (Set.subset_univ _)
-  revert this; decide
-
 -- (51), box VI
 theorem exactly_neither :
     ¬ (exactly 1 : Det (Fin 2)).RestrictorMonotone ∧
@@ -369,6 +362,7 @@ theorem isTrigger_iff (e : Expression) : e.IsTrigger ↔ e ∈ triggers := by
     | atMostThree =>
       exact iff_of_true ((isTrigger_det_iff _).2 fun _ _ A ↦ restrictorAntitone_atMost 3 A)
         (by decide)
+    -- (56)–(57), p. 152: the restrictor of *most*, box IV.
     | mostDet => exact hdet _ (by decide) fun h ↦ not_restrictorAntitone_most fun B ↦ h (Fin 3) B
     | fewDet => exact hdet _ (by decide) fun h ↦ not_restrictorAntitone_few fun B ↦ h (Fin 3) B
   | qnp d =>

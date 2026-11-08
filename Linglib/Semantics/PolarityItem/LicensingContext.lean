@@ -636,6 +636,26 @@ theorem licensesFreeChoice_modalPossibility : modalPossibility.licenser.Licenses
     rw [Exhaustification.antiExh_preimage_biUnion witnessAt branching Finset.univ_nonempty]
     exact Set.mem_iInter₂.2 fun d _ ↦ ⟨d.succ, rfl, rfl, d.succ_ne_zero⟩⟩
 
+/-- Necessity is upward entailing. -/
+theorem isStrawsonUE_necessityFamily : (Licenser.modal necessityFamily).IsStrawsonUE :=
+  fun _ ↦ SetRel.core_mono
+
+/-- Possibility is upward entailing. -/
+theorem isStrawsonUE_modalPossibility : modalPossibility.licenser.IsStrawsonUE :=
+  fun _ ↦ SetRel.preimage_mono
+
+/-- Necessity is not downward entailing: at a world that accesses itself it is the identity. -/
+theorem not_holds_anti_necessityFamily : ¬ (Licenser.modal necessityFamily).Holds .anti :=
+  fun h ↦ by
+    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    simp [Set.subset_def, SetRel.core] at this
+
+/-- Possibility is not downward entailing: at a world that accesses itself it is the identity. -/
+theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .anti :=
+  fun h ↦ by
+    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    simp [Set.subset_def, SetRel.preimage] at this
+
 end LicensingContext
 
 end PolarityItem
