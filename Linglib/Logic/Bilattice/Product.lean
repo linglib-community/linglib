@@ -13,35 +13,18 @@ public import Mathlib.Order.SupClosed
 /-!
 # The Ginsberg–Fitting product bilattice
 
-The product `L ⊙ R` of two lattices, the fundamental bilattice construction, carries pairs
-`(a, b)` recording evidence for (`a ∈ L`) and against (`b ∈ R`) a proposition, ordered two ways.
+This file defines the Ginsberg–Fitting product `L ⊙ R` of two lattices, the fundamental bilattice
+construction, whose pairs `(a, b)` record evidence for (`a ∈ L`) and against (`b ∈ R`) a
+proposition. Its truth order, more for and less against, is that of `L × Rᵒᵈ`, the carrier; its
+knowledge order, more evidence both ways, is that of `L × R` on the synonym `Know (L ⊙ R)`; and it
+is interlaced. On the diagonal `L ⊙ L`, swapping the coordinates is Ginsberg's negation, and
+swapping them while complementing each in the factor is Fitting's conflation, under which
+[the exact values are the pairs `(a, aᶜ)`](##Product.isExact_iff). Avron credits the
+construction to Ginsberg, generalized by Fitting.
 
-* The truth order, more for and less against, is the carrier's `≤`. The type is
-  `L ⊙ R := L × Rᵒᵈ`, so the `Prod` and `OrderDual` instances provide the truth lattice, its
-  bounds `t = (⊤, ⊥)` and `f = (⊥, ⊤)`, and distributivity.
-* The knowledge order, more evidence both ways, is the plain `Prod` order, installed on the
-  synonym `Know (L ⊙ R)`.
+## Implementation notes
 
-The `IsInterlaced (L ⊙ R)` instance packages the four monotonicity laws, so the product is an
-interlaced bilattice. On the diagonal `L ⊙ L`, swapping the coordinates is Ginsberg's negation.
-Avron credits the construction to Ginsberg, generalized by Fitting. `[UPSTREAM]` candidate:
-mathlib has no bilattices.
-
-## Main definitions
-
-* `Bilattice.Product` (`L ⊙ R`): the carrier, with truth-order instances from `L × Rᵒᵈ` and
-  knowledge-order instances on `Know (L ⊙ R)` from `L × R`.
-* `Bilattice.Product.mk`, `Bilattice.Product.pro`, `Bilattice.Product.con`: the plain-coordinate
-  constructor and projections.
-* the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the `InvolutiveCompl` and
-  `Negation` instances it underlies.
-* the `InvolutiveCompl (Know (L ⊙ L))` instance: Fitting's conflation, induced by an involutive
-  complement of the factor, with the `Conflation` instance it underlies.
-
-## Main results
-
-* `Bilattice.Product.isExact_iff`, `Bilattice.Product.isConsistent_iff`,
-  `Bilattice.Product.isAnticonsistent_iff`: the three classes in coordinates.
+`[UPSTREAM]` candidate: mathlib has no bilattices.
 
 ## References
 
@@ -242,8 +225,8 @@ instance : InvolutiveCompl (Know (L ⊙ L)) where
   compl_compl _ := ext (InvolutiveCompl.compl_compl _) (InvolutiveCompl.compl_compl _)
   compl_le_compl h := ⟨InvolutiveCompl.compl_le_compl h.2, InvolutiveCompl.compl_le_compl h.1⟩
 
-instance : Conflation (L ⊙ L) :=
-  ⟨fun h ↦ ⟨InvolutiveCompl.compl_le_compl h.2, InvolutiveCompl.compl_le_compl h.1⟩⟩
+instance : Conflation (L ⊙ L) where
+  compl_kLE_compl h := ⟨InvolutiveCompl.compl_le_compl h.2, InvolutiveCompl.compl_le_compl h.1⟩
 
 instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
 

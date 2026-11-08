@@ -13,7 +13,7 @@ of the knowledge order, on the synonym `Know B`, that preserves the truth order.
 over `InvolutiveCompl`, which supplies each order's De Morgan laws. A value `a` is consistent when
 `a ≤ₖ −a`, anticonsistent when `−a ≤ₖ a` and exact when `−a = a`, abstracting the value spaces of
 Kleene's, Priest's and classical logic; each class is closed under the truth operations, and
-[every consistent value lies below an exact one](##IsConsistent.exists_kLE_isExact).
+[every consistent value lies below an exact one](##IsConsistent.kLE_sup_conf).
 
 ## References
 
@@ -36,7 +36,7 @@ section Negation
 
 /-- A negation ([avron-1996] Def 2.3): the complement `ᶜ`, involutive (i) and reversing the truth
 order (ii) by `InvolutiveCompl`, also preserves the knowledge order (iii). -/
-class Negation (B : Type u) [Compl B] [Preorder (Know B)] : Prop where
+class Negation (B : Type u) [Compl B] [LE (Know B)] : Prop where
   /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
   compl_kLE_compl : ∀ {a b : B}, a ≤ₖ b → aᶜ ≤ₖ bᶜ
 
@@ -44,9 +44,9 @@ export Negation (compl_kLE_compl)
 
 variable [LE B] [InvolutiveCompl B]
 
-section Preorder
+section LE
 
-variable [Preorder (Know B)] [Negation B]
+variable [LE (Know B)] [Negation B]
 
 theorem compl_kLE_compl_iff {a b : B} : aᶜ ≤ₖ bᶜ ↔ a ≤ₖ b :=
   ⟨fun h ↦ by simpa only [InvolutiveCompl.compl_compl] using compl_kLE_compl h,
@@ -60,7 +60,9 @@ def Negation.knowIso : Know B ≃o Know B where
   right_inv _ := congrArg toKnow (InvolutiveCompl.compl_compl _)
   map_rel_iff' := compl_kLE_compl_iff
 
-end Preorder
+end LE
+
+section Lattice
 
 variable [Lattice (Know B)] [Negation B]
 
@@ -74,9 +76,30 @@ theorem compl_kInf (a b : B) : (a ⊓ₖ b)ᶜ = aᶜ ⊓ₖ bᶜ :=
 theorem compl_kSup (a b : B) : (a ⊔ₖ b)ᶜ = aᶜ ⊔ₖ bᶜ :=
   toKnow.injective (Negation.knowIso.map_sup (toKnow a) (toKnow b))
 
+end Lattice
+
+section Bounds
+
+variable [PartialOrder (Know B)] [BoundedOrder (Know B)] [Negation B]
+
+/-- Negation fixes the knowledge bounds, `∼⊤ = ⊤` (note following [avron-1996] Def 2.3). -/
+@[simp] theorem compl_ofKnow_top : (ofKnow (⊤ : Know B))ᶜ = ofKnow ⊤ :=
+  congrArg ofKnow Negation.knowIso.map_top
+
+/-- `∼⊥ = ⊥` (note following [avron-1996] Def 2.3). -/
+@[simp] theorem compl_ofKnow_bot : (ofKnow (⊥ : Know B))ᶜ = ofKnow ⊥ :=
+  congrArg ofKnow Negation.knowIso.map_bot
+
+end Bounds
+
 end Negation
 
-/-! ### Conflation -/
+/-! ### Conflation
+
+A conflation is the negation of the dual bilattice `Know B`: an involutive complement of the
+knowledge order that preserves the truth order. Its laws for the knowledge order are those of
+`InvolutiveCompl (Know B)`, and its laws for the truth order are the negation laws read on
+`Know B`. -/
 
 section Conflation
 
@@ -86,13 +109,9 @@ def conf [Compl (Know B)] (a : B) : B := ofKnow (toKnow a)ᶜ
 
 @[simp] theorem toKnow_conf [Compl (Know B)] (a : B) : toKnow (conf a) = (toKnow a)ᶜ := rfl
 
-/-- A conflation ([fitting-2021] §8.4): the involutive complement `conf` of the knowledge order also
-preserves the truth order (Con-2). -/
-class Conflation (B : Type u) [LE B] [Compl (Know B)] : Prop where
-  /-- Conflation preserves the truth order (Con-2). -/
-  conf_le_conf : ∀ {a b : B}, a ≤ b → conf a ≤ conf b
-
-export Conflation (conf_le_conf)
+/-- A conflation ([fitting-2021] §8.4) is a negation of the dual bilattice `Know B`: the involutive
+complement `conf` of the knowledge order also preserves the truth order (Con-2). -/
+class Conflation (B : Type u) [LE B] [Compl (Know B)] : Prop extends Negation (Know B)
 
 /-- Negation and conflation commute (Con-4). -/
 class NegConfComm (B : Type u) [Compl B] [Compl (Know B)] : Prop where
@@ -100,11 +119,13 @@ class NegConfComm (B : Type u) [Compl B] [Compl (Know B)] : Prop where
 
 export NegConfComm (compl_conf)
 
+/-! #### The knowledge order -/
+
 @[simp] theorem conf_conf [LE (Know B)] [InvolutiveCompl (Know B)] (a : B) : conf (conf a) = a :=
   InvolutiveCompl.compl_compl (toKnow a)
 
 /-- Conflation reverses the knowledge order (Con-1). -/
-theorem conf_kLE_conf [Preorder (Know B)] [InvolutiveCompl (Know B)] {a b : B} (h : a ≤ₖ b) :
+theorem conf_kLE_conf [LE (Know B)] [InvolutiveCompl (Know B)] {a b : B} (h : a ≤ₖ b) :
     conf b ≤ₖ conf a :=
   InvolutiveCompl.compl_le_compl h
 
@@ -136,53 +157,52 @@ variable [PartialOrder (Know B)] [BoundedOrder (Know B)] [InvolutiveCompl (Know 
 
 end KnowBounds
 
+/-! #### The truth order, by duality -/
+
 section Truth
 
 variable [LE B] [LE (Know B)] [InvolutiveCompl (Know B)] [Conflation B]
 
-theorem conf_le_conf_iff {a b : B} : conf a ≤ conf b ↔ a ≤ b :=
-  ⟨fun h ↦ by simpa only [conf_conf] using conf_le_conf h, conf_le_conf⟩
+/-- Conflation preserves the truth order (Con-2). -/
+theorem conf_le_conf {a b : B} (h : a ≤ b) : conf a ≤ conf b :=
+  compl_kLE_compl (B := Know B) (a := toKnow a) (b := toKnow b) h
 
-/-- Conflation as an automorphism of the truth order. -/
-def Conflation.orderIso : B ≃o B where
-  toFun := conf
-  invFun := conf
-  left_inv := conf_conf
-  right_inv := conf_conf
-  map_rel_iff' := conf_le_conf_iff
+theorem conf_le_conf_iff {a b : B} : conf a ≤ conf b ↔ a ≤ b :=
+  compl_kLE_compl_iff (B := Know B) (a := toKnow a) (b := toKnow b)
 
 end Truth
+
+section TruthLattice
+
+variable [Lattice B] [LE (Know B)] [InvolutiveCompl (Know B)] [Conflation B]
+
+/-- `−(a ∧ b) = −a ∧ −b` ([fitting-2021] §8.4, (CDeM-1)), the dual of `compl_kInf`. -/
+theorem conf_inf (a b : B) : conf (a ⊓ b) = conf a ⊓ conf b :=
+  congrArg ofKnow (compl_kInf (B := Know B) (toKnow a) (toKnow b))
+
+/-- `−(a ∨ b) = −a ∨ −b` ([fitting-2021] §8.4, (CDeM-2)), the dual of `compl_kSup`. -/
+theorem conf_sup (a b : B) : conf (a ⊔ b) = conf a ⊔ conf b :=
+  congrArg ofKnow (compl_kSup (B := Know B) (toKnow a) (toKnow b))
+
+end TruthLattice
 
 section TruthBounds
 
 variable [PartialOrder B] [BoundedOrder B] [LE (Know B)] [InvolutiveCompl (Know B)]
   [Conflation B]
 
-@[simp] theorem conf_top : conf (⊤ : B) = ⊤ := Conflation.orderIso.map_top
+/-- Conflation fixes the truth bounds, the dual of `compl_ofKnow_top`. -/
+@[simp] theorem conf_top : conf (⊤ : B) = ⊤ := congrArg ofKnow (compl_ofKnow_top (B := Know B))
 
-@[simp] theorem conf_bot : conf (⊥ : B) = ⊥ := Conflation.orderIso.map_bot
+@[simp] theorem conf_bot : conf (⊥ : B) = ⊥ := congrArg ofKnow (compl_ofKnow_bot (B := Know B))
 
 end TruthBounds
-
-section TruthLattice
-
-variable [Lattice B] [LE (Know B)] [InvolutiveCompl (Know B)] [Conflation B]
-
-/-- `−(a ∧ b) = −a ∧ −b` ([fitting-2021] §8.4, (CDeM-1)). -/
-theorem conf_inf (a b : B) : conf (a ⊓ b) = conf a ⊓ conf b :=
-  Conflation.orderIso.map_inf a b
-
-/-- `−(a ∨ b) = −a ∨ −b` ([fitting-2021] §8.4, (CDeM-2)). -/
-theorem conf_sup (a b : B) : conf (a ⊔ b) = conf a ⊔ conf b :=
-  Conflation.orderIso.map_sup a b
-
-end TruthLattice
 
 /-! #### The consistent, anticonsistent and exact values -/
 
 section Classes
 
-variable [Preorder (Know B)] [Compl (Know B)]
+variable [LE (Know B)] [Compl (Know B)]
 
 /-- Consistent values, `a ≤ₖ −a` ([fitting-2021] Def 8.5.1): the abstract form
 of the Kleene value space. -/
@@ -196,12 +216,6 @@ def IsAnticonsistent (a : B) : Prop := conf a ≤ₖ a
 value space, the fixed points of conflation. -/
 abbrev IsExact (a : B) : Prop := Function.IsFixedPt conf a
 
-theorem IsExact.isConsistent {a : B} (h : IsExact a) : IsConsistent a := by
-  rw [IsConsistent, h.eq]
-
-theorem IsExact.isAnticonsistent {a : B} (h : IsExact a) : IsAnticonsistent a := by
-  rw [IsAnticonsistent, h.eq]
-
 instance [DecidableRel (kLE (B := B))] : DecidablePred (IsConsistent (B := B)) :=
   fun a ↦ inferInstanceAs (Decidable (a ≤ₖ conf a))
 
@@ -211,6 +225,14 @@ instance [DecidableRel (kLE (B := B))] : DecidablePred (IsAnticonsistent (B := B
 end Classes
 
 /-! The facts that read only the knowledge order. -/
+
+theorem IsExact.isConsistent [Preorder (Know B)] [Compl (Know B)] {a : B} (h : IsExact a) :
+    IsConsistent a := by
+  rw [IsConsistent, h.eq]
+
+theorem IsExact.isAnticonsistent [Preorder (Know B)] [Compl (Know B)] {a : B} (h : IsExact a) :
+    IsAnticonsistent a := by
+  rw [IsAnticonsistent, h.eq]
 
 /-- The consistent values form a lower set of the knowledge order. -/
 theorem IsConsistent.anti [Preorder (Know B)] [InvolutiveCompl (Know B)] {a b : B}
@@ -293,19 +315,19 @@ theorem IsAnticonsistent.sup {a b : B} (ha : IsAnticonsistent a)
   rw [IsAnticonsistent, conf_sup]
   exact sup_kLE_sup ha hb
 
-/-- Every consistent value `a` is knowledge-below an exact value, `a ∨ −a`
-([fitting-2021] Prop 8.5.3). -/
-theorem IsConsistent.exists_kLE_isExact {a : B} (ha : IsConsistent a) :
-    ∃ b : B, IsExact b ∧ a ≤ₖ b :=
-  ⟨_, isExact_sup_conf a, by simpa only [sup_idem] using sup_kLE_sup (kLE_refl a) ha⟩
-
-/-- Every anticonsistent value `a` is knowledge-above an exact value, `a ∧ −a`
-([fitting-2021] Prop 8.5.3). -/
-theorem IsAnticonsistent.exists_isExact_kLE {a : B} (ha : IsAnticonsistent a) :
-    ∃ b : B, IsExact b ∧ b ≤ₖ a :=
-  ⟨_, isExact_inf_conf a, by simpa only [inf_idem] using inf_kLE_inf (kLE_refl a) ha⟩
-
 end Interlaced
+
+/-- A consistent value lies knowledge-below the exact value `a ∨ −a` ([fitting-2021]
+Prop 8.5.3). -/
+theorem IsConsistent.kLE_sup_conf [Lattice B] [Lattice (Know B)] [IsInterlaced B]
+    [Compl (Know B)] {a : B} (ha : IsConsistent a) : a ≤ₖ a ⊔ conf a := by
+  simpa only [sup_idem] using sup_kLE_sup (kLE_refl a) ha
+
+/-- An anticonsistent value lies knowledge-above the exact value `a ∧ −a` ([fitting-2021]
+Prop 8.5.3). -/
+theorem IsAnticonsistent.inf_conf_kLE [Lattice B] [Lattice (Know B)] [IsInterlaced B]
+    [Compl (Know B)] {a : B} (ha : IsAnticonsistent a) : a ⊓ conf a ≤ₖ a := by
+  simpa only [inf_idem] using inf_kLE_inf (kLE_refl a) ha
 
 section ClassesCompl
 
@@ -315,7 +337,7 @@ variable [Compl B] [Compl (Know B)] [NegConfComm B]
 theorem IsExact.compl {a : B} (ha : IsExact a) : IsExact aᶜ :=
   (compl_conf a).symm.trans (congrArg _ ha.eq)
 
-variable [Preorder (Know B)] [Negation B]
+variable [LE (Know B)] [Negation B]
 
 theorem IsConsistent.compl {a : B} (ha : IsConsistent a) : IsConsistent aᶜ := by
   rw [IsConsistent, ← compl_conf]

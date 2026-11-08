@@ -196,11 +196,11 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     STValid F Γ Δ ↔ CValid F Γ Δ := by
   refine ⟨fun h ↦ h.comap (fun v ↦ ⟨v, fun p ↦ (v.2 p).isAnticonsistent⟩) (fun _ _ _ ↦ id)
     fun v ψ _ hψ ↦ ⟨hψ.1, eval_isExact v.2 ψ⟩, fun h ↦ ?_⟩
-  choose e he hle using fun (v : {v : α → B // ∀ p, IsAnticonsistent (v p)}) p ↦
-    (v.2 p).exists_isExact_kLE
-  refine h.comap (fun v ↦ ⟨e v, he v⟩) (fun v φ _ hφ ↦ ?_) fun v ψ _ hψ ↦
+  have hle (v : {v : α → B // ∀ p, IsAnticonsistent (v p)}) p := (v.2 p).inf_conf_kLE
+  refine h.comap (fun v ↦ ⟨fun p ↦ v.1 p ⊓ conf (v.1 p), fun p ↦ isExact_inf_conf _⟩)
+    (fun v φ _ hφ ↦ ?_) fun v ψ _ hψ ↦
     ⟨F.mem_of_kLE hψ.1 (eval_kLE_eval (hle v) ψ), eval_isAnticonsistent v.2 ψ⟩
-  rwa [(eval_isExact (he v) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]
+  rwa [(eval_isExact (fun _ ↦ isExact_inf_conf _) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]
 
 end Interlaced
 
