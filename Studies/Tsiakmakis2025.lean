@@ -80,7 +80,7 @@ variable {f g}
 
 theorem not_possibility_compl_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g p) :
     ¬ possibility f g (· ∈ pᶜ) w :=
-  (duality f g (· ∈ p) w).1 h
+  (necessity_iff_not_possibility_not f g (· ∈ p) w).1 h
 
 /-- The ignorance of a *min*-free question, (55b): both alternatives hold in some best world. -/
 def Ignorant (p : Set W) (w : W) : Prop :=

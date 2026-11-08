@@ -49,6 +49,7 @@ necessity and slight possibility are not formalized here.
 
 * [kratzer-1977]
 * [kratzer-1981]
+* [kratzer-1991]
 * [kratzer-2012]
 * [portner-rubinstein-2020]
 -/
@@ -152,13 +153,15 @@ theorem necessity_and_left {f g : Background W} {p q : W → Prop} {w : W}
 
 /-! ### Human necessity
 
-[kratzer-1981]'s official definition needs no Limit Assumption, asking each accessible world to
-see, at least as good, a witness below which only `p`-worlds occur. It is the necessity of
+Kratzer's official definition, in the version of [kratzer-1991] that revises [kratzer-1981], needs
+no Limit Assumption, asking each accessible world to see, at least as good, a witness below which
+only `p`-worlds occur. It is the necessity of
 ordering semantics over the accessible worlds ranked by the ordering source, and `necessity`,
 universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 
 /-- Human necessity holds when every accessible world has an accessible world at least as good,
-below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). -/
+below which `p` holds throughout: necessity in Definition 6 of [kratzer-1991] and in
+[kratzer-2012], human necessity in [kratzer-1981]'s terms. -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   {v | p v} ∈ OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w)
 
@@ -196,15 +199,15 @@ theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     humanNecessity f g p w :=
   OrderingSemantics.mem_necessityFilter_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
-/-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
-quantification over the best worlds. -/
+/-- Under the Limit Assumption, human necessity is exactly universal quantification over the best
+worlds. -/
 theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) :
     humanNecessity f g p w ↔ necessity f g p w :=
   ⟨necessity_of_humanNecessity, humanNecessity_of_necessity hlim⟩
 
 /-- Human possibility is the dual of `humanNecessity`, holding when the negation is not a human
-necessity ([kratzer-2012]). -/
+necessity, Definition 8 of [kratzer-1991]. -/
 def humanPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ¬ humanNecessity f g (fun v ↦ ¬ p v) w
 
@@ -230,7 +233,8 @@ section GoodPossibility
 variable {f g : Background W} {p q : W → Prop} {w : W}
 
 /-- Good possibility holds when some accessible world sees only `p`-worlds among the accessible
-worlds at least as good as itself, so that `p` holds throughout a branch of the ordering. -/
+worlds at least as good as itself, so that `p` holds throughout a branch of the ordering,
+Definition 7 of [kratzer-1991]. -/
 def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   OrderingSemantics.IsGoodPossibility (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
 
@@ -365,15 +369,10 @@ theorem accessible_bot (w w' : W) : w ~[(⊥ : Background W).accessible] w' := b
 
 /-! ### Modal axioms -/
 
-theorem duality (f g : Background W) (p : W → Prop) (w : W) :
+theorem necessity_iff_not_possibility_not (f g : Background W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' ↦ ¬ p w') w := by
   rw [necessity, possibility, not_diamond]
   simp [Box]
-
-theorem necessity_K (f g : Background W) (p q : W → Prop) (w : W)
-    (hImpl : necessity f g (fun w' ↦ p w' → q w') w) (hP : necessity f g p w) :
-    necessity f g q w :=
-  box_K hImpl hP
 
 theorem Background.IsTotallyRealistic.necessity_le_id {f : Background W}
     (hTotal : f.IsTotallyRealistic) (g : Background W) : necessity f g ≤ id := by

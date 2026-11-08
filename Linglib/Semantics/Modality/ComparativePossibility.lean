@@ -41,12 +41,13 @@ namespace ComparativePossibility
 variable {α : Type*}
 
 /-- `Lewis r A B` says that `A` is at least as possible as `B`: every world of `B` is
-`r`-dominated by some world of `A`, that is `B` lies in the image of `A` under `r`. -/
+`r`-dominated by some world of `A`, that is `B` lies in the image of `A` under `r`. Over the
+accessible worlds ranked by an ordering source it is Definition 9 of [kratzer-1991]. -/
 def Lewis (r : α → α → Prop) (A B : Set α) : Prop :=
   B ⊆ SetRel.image {p : α × α | r p.1 p.2} A
 
 /-- `Kratzer r A B` says that `A` is at least as good a possibility as `B` in Kratzer's revised
-sense: no world of `B \ A` strictly dominates every world of `A \ B` (Kratzer 2012, p. 41). -/
+sense: no world of `B \ A` strictly dominates every world of `A \ B` ([kratzer-2012], p. 41). -/
 def Kratzer (r : α → α → Prop) (A B : Set α) : Prop :=
   ¬ ∃ b ∈ B \ A, ∀ a ∈ A \ B, AsymmRel r b a
 
