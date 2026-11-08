@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.PFun
+public import Linglib.Core.Data.Part
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Composition.LogicalRelation
@@ -27,6 +28,9 @@ failure, as distinct from uninterpretability, where the types do not compose.
   lacking a value.
 * `Montague.Ty.Lifts`, `Montague.Denotation.Lifts`: the relation of a total denotation to a
   partial one lifting it, with `Montague.Ty.Domain.toPartial` the lift at a first-order type.
+* `Montague.PartRel`: the relation between two partial values, defined together and related where
+  defined, under which [two related lexicons give every tree related
+  denotations](##PhraseStructure.Tree.interpPartial_rel).
 
 ## Implementation notes
 
@@ -49,6 +53,11 @@ records definedness alternative by alternative and leaves open how it projects t
 -/
 
 @[expose] public section
+
+/-- A lifted predicate is defined everywhere, with the value `True` exactly where it holds. -/
+@[simp] theorem PFun.true_mem_lift {α : Type*} (p : α → Prop) (a : α) :
+    True ∈ PFun.lift p a ↔ p a := by
+  simp [PFun.lift, Part.mem_some_iff]
 
 namespace Montague
 
@@ -133,29 +142,47 @@ section Composition
 
 variable {E W : Type} {S : Sorts}
 
-/-! ### Composition of defined daughters
+/-! ### Composition
 
-A mode's partial value on defined daughters, in the `Part.bind` and `Part.map` form a study
-compares with. -/
+A mode's partial value is a `Part.bind` of its daughters' values, defined or not, so `simp`
+evaluates a tree through the engine without unfolding `Mode.evalKleisli`; on defined daughters the
+binds reduce to the `Part.map` forms below. -/
+
+@[simp] theorem Mode.evalPartial_functionalLeft {σ τ : Ty} (f : Part (Ty.PDomain E W (σ ⇒ τ) S))
+    (a : Part (Ty.PDomain E W σ S)) :
+    (Mode.functionalLeft : Mode (σ ⇒ τ) σ τ).evalPartial f a = f.bind fun g ↦ a.bind g :=
+  rfl
+
+@[simp] theorem Mode.evalPartial_functionalRight {σ τ : Ty} (a : Part (Ty.PDomain E W σ S))
+    (f : Part (Ty.PDomain E W (σ ⇒ τ) S)) :
+    (Mode.functionalRight : Mode σ (σ ⇒ τ) τ).evalPartial a f = f.bind fun g ↦ a.bind g :=
+  rfl
+
+@[simp] theorem Mode.evalPartial_predicateModification {σ : Ty} (h : Mode.PredicateSort σ)
+    (p q : Part (Ty.PDomain E W (σ ⇒ .t) S)) :
+    (Mode.predicateModification h).evalPartial p q = p.bind fun P ↦ q.bind fun Q ↦
+      .some fun x ↦ (P x).bind fun a ↦ (Q x).bind fun b ↦ .some (a ∧ b) :=
+  rfl
+
 
 theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
     (a : Ty.PDomain E W σ S) :
     Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W S) ⟨σ, Part.some a⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_left]; simp [Mode.evalKleisli, Part.bind_eq_bind]
+  simp
 
 theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ S)
     (f : Ty.PDomain E W (σ ⇒ τ) S) :
     Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W S) ⟨σ ⇒ τ, Part.some f⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_right]; simp [Mode.evalKleisli, Part.bind_eq_bind]
+  simp
 
 theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) S) :
     Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
   rw [Mode.combine?_predicateModification .individual]
-  simp [Mode.evalKleisli, Part.bind_eq_bind, Part.bind_some_eq_map]
+  simp [Part.bind_some_eq_map]
 
 theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.e ⇒ .v ⇒ .t) S)
     (P : Ty.PDomain E W (.v ⇒ .t) S) :
@@ -314,6 +341,66 @@ theorem lifts_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder) (w 
 
 end Total
 
+/-! ### Two partial models
+
+Two partial values are related when both are defined or both undefined, with related values where
+defined. The relation respects the engine, so two lexicons related word by word give every tree
+related denotations (`PhraseStructure.Tree.interpPartial_rel`), and in particular the same
+presupposition failures. -/
+
+section Relate
+
+/-- The relator between two partial values: defined together, with related values. -/
+def PartRel {α β : Type} (R : α → β → Prop) (x : Part α) (y : Part β) : Prop :=
+  (x.Dom ↔ y.Dom) ∧ ∀ hx hy, R (x.get hx) (y.get hy)
+
+theorem PartRel.true_mem_iff {x y : Part Prop} (h : PartRel Iff x y) : True ∈ x ↔ True ∈ y := by
+  refine ⟨fun ⟨hx, hv⟩ ↦ ⟨h.1.1 hx, ?_⟩, fun ⟨hy, hv⟩ ↦ ⟨h.1.2 hy, ?_⟩⟩
+  · exact eq_true ((h.2 hx (h.1.1 hx)).1 (of_eq_true hv))
+  · exact eq_true ((h.2 (h.1.2 hy) hy).2 (of_eq_true hv))
+
+/-- `PartRel` respects units, binds and the flattening of alternatives. -/
+theorem KleisliRelator.partRel : KleisliRelator (M := Part) (M' := Part) PartRel := by
+  refine ⟨fun h ↦ ⟨Iff.rfl, fun _ _ ↦ h⟩, ?_, ?_⟩
+  · rintro _ _ _ _ R Q x y f g ⟨hd, hr⟩ hf
+    simp only [Part.bind_eq_bind]
+    refine ⟨⟨fun h ↦ ?_, fun h ↦ ?_⟩, fun hx hy ↦ ?_⟩
+    · obtain ⟨hx, h⟩ := Part.bind_dom.1 h
+      exact Part.bind_dom.2 ⟨hd.1 hx, (hf (hr hx (hd.1 hx))).1.1 h⟩
+    · obtain ⟨hy, h⟩ := Part.bind_dom.1 h
+      exact Part.bind_dom.2 ⟨hd.2 hy, (hf (hr (hd.2 hy) hy)).1.2 h⟩
+    obtain ⟨hx₁, hfx⟩ := Part.bind_dom.1 hx
+    obtain ⟨hy₁, hgy⟩ := Part.bind_dom.1 hy
+    rw [Part.get_eq_of_mem (Part.mem_bind_iff.2 ⟨_, Part.get_mem hx₁, Part.get_mem hfx⟩) hx,
+      Part.get_eq_of_mem (Part.mem_bind_iff.2 ⟨_, Part.get_mem hy₁, Part.get_mem hgy⟩) hy]
+    exact (hf (hr hx₁ hy₁)).2 hfx hgy
+  · rintro _ _ R x y ⟨hd, hr⟩
+    by_cases hx : x.Dom
+    · have hy := hd.1 hx
+      have mem_iff {γ : Type} {z : Part (Set (Part γ))} (hz : z.Dom) (p : Part γ) :
+          p ∈ FlattenAlternatives.flatten z ↔ p ∈ z.get hz := by
+        refine ⟨?_, fun h ↦ .inl ⟨_, Part.get_mem hz, h⟩⟩
+        rintro (⟨s, hs, h⟩ | ⟨h, -⟩)
+        · exact Part.get_eq_of_mem hs hz ▸ h
+        · exact absurd hz h
+      obtain ⟨h₁, h₂⟩ := hr hx hy
+      exact ⟨fun p hp ↦ (h₁ p ((mem_iff hx p).1 hp)).imp fun _ ⟨hq, hpq⟩ ↦
+          ⟨(mem_iff hy _).2 hq, hpq⟩,
+        fun q hq ↦ (h₂ q ((mem_iff hy q).1 hq)).imp fun _ ⟨hp, hpq⟩ ↦ ⟨(mem_iff hx _).2 hp, hpq⟩⟩
+    · have hy : ¬ y.Dom := fun hy ↦ hx (hd.2 hy)
+      have none_iff {γ : Type} {z : Part (Set (Part γ))} (hz : ¬ z.Dom) (p : Part γ) :
+          p ∈ FlattenAlternatives.flatten z ↔ p = Part.none := by
+        refine ⟨?_, fun h ↦ .inr ⟨hz, h⟩⟩
+        rintro (⟨_, hs, _⟩ | ⟨-, h⟩)
+        · exact absurd (Part.dom_iff_mem.2 ⟨_, hs⟩) hz
+        · exact h
+      have hnone : PartRel R (Part.none : Part _) Part.none :=
+        ⟨Iff.rfl, fun h ↦ absurd h Part.not_none_dom⟩
+      exact ⟨fun p hp ↦ ⟨Part.none, (none_iff hy _).2 rfl, (none_iff hx p).1 hp ▸ hnone⟩,
+        fun q hq ↦ ⟨Part.none, (none_iff hx _).2 rfl, (none_iff hy q).1 hq ▸ hnone⟩⟩
+
+end Relate
+
 end Montague
 
 namespace PhraseStructure.Tree
@@ -422,6 +509,21 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   · show Denotation.Lifts _ ⟨τ, u'.evalPartial (Γ := individualIndices) (fun c ↦ c) g⟩
     rw [hz]
     exact .mk hl
+
+/-- Two lexicons related word by word at `PartRel` give every tree related denotations, defined
+together: the fundamental lemma for the partial engine across two models. -/
+theorem interpPartial_rel {E' W' : Type} {S' : Sorts} {r : Ty.BaseRel E E' W W' S S'}
+    {lex : L → Option (PDenotation E W S)} {lex' : L → Option (PDenotation E' W' S')}
+    (hlex : ∀ w d', lex' w = some d' →
+      ∃ c, lex w = some ⟨d'.1, c⟩ ∧ PartRel (Ty.LiftRel PartRel r d'.1) c d'.2)
+    {g : Assignment E} {g' : Assignment E'} (hg : ∀ n, r.e (g n) (g' n)) (t : Tree C L)
+    {d' : PDenotation E' W' S'} (h : interpPartial lex' g' t = some d') :
+    ∃ c, interpPartial lex g t = some ⟨d'.1, c⟩ ∧ PartRel (Ty.LiftRel PartRel r d'.1) c d'.2 := by
+  obtain ⟨⟨τ, u'⟩, ht', rfl⟩ := Option.map_eq_some_iff.1 h
+  obtain ⟨u, hu, hr⟩ := translate_rel (K' := fun ty ↦ Part (Ty.PDomain E' W' ty S'))
+    (R := fun ty c c' ↦ PartRel (Ty.LiftRel PartRel r ty) c c') lex hlex t ht'
+  exact ⟨_, by simp [interpPartial, realize, hu],
+    hr.rel_realize_kleisli KleisliRelator.partRel (fun _ _ h ↦ h) hg⟩
 
 /-- A lexicon lifting a total one has no presupposition failures. -/
 theorem not_presupFailure_of_lifts

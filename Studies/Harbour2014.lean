@@ -88,11 +88,7 @@ theorem atomize_region (hS : ∀ k, S k → B.card ≤ k) :
   · exact (Finset.eq_of_subset_of_card_le hts (h.2.2 ht.2 (Finset.card_le_card hts))).ge
 
 theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
-  have h : (fun t : Finset α ↦ ¬ IsBot t) = region ∅ (fun k ↦ ¬ IsBot k) := by
-    ext t; simp [region, isBot_iff_eq_bot]
-  show atomize (fun t : Finset α ↦ ¬ IsBot t) s ↔ atomize (fun k : ℕ ↦ ¬ IsBot k) s.card
-  rw [h, atomize_region fun _ _ ↦ Nat.zero_le _]
-  simp [region]
+  rw [atom_finset_iff_card_eq_one, atom_iff_eq_one]
 
 variable [DecidableEq α]
 

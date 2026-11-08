@@ -30,7 +30,10 @@ existence and uniqueness of a member, which Coppock and Beaver separate, the art
 uniqueness and existence coming from the type shift that makes a description an argument. Sharvy
 generalizes the article to individuals ordered by part-of, and Chierchia adopts the
 generalization; Krifka, following Link, writes σ for the largest member and defines it as
-ιx[S(x) ∧ ∀x′[S(x′) → x′ ⊑ x]], which is `iota {d | IsGreatest X d}`.
+ιx[S(x) ∧ ∀x′[S(x′) → x′ ⊑ x]], which is `iota {d | IsGreatest X d}`. Winter factors σ the same
+way, as a choice function on singletons, here `iota`, after *sup*, which sends a set to its members
+that bound it, `{d | IsGreatest X d}`, that is `X ∩ upperBounds X`; Bale and Khanjian put the two
+on different heads.
 
 ## References
 
@@ -41,6 +44,8 @@ generalization; Krifka, following Link, writes σ for the largest member and def
 * [chierchia-1998]
 * [link-1983]
 * [krifka-2026]
+* [winter-2001b]
+* [bale-khanjian-2014]
 -/
 
 @[expose] public section
