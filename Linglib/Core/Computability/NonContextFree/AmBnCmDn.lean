@@ -78,7 +78,7 @@ theorem not_isContextFree_of_replicate_mem_of_count_le (h : [a, b, c, d].Nodup)
   simp [count_replicate, hab, hac, had, hbc, hbd, hcd, Ne.symm] at ha hb hc hd
   have hz : ∀ s, s ∉ v ++ x ++ y → v.count s = 0 ∧ y.count s = 0 := fun s hs ↦
     ⟨count_eq_zero.mpr fun h ↦ hs (by simp [h]), count_eq_zero.mpr fun h ↦ hs (by simp [h])⟩
-  obtain ⟨e, he⟩ := exists_mem_of_ne_nil (v ++ y) (by rw [← length_pos_iff, length_append]; omega)
+  obtain ⟨e, he⟩ := exists_mem_of_ne_nil (v ++ y) hvy
   have hpos := count_pos_iff.2 he
   have he' := hwin.subset (show e ∈ v ++ x ++ y by simp at he ⊢; tauto)
   simp only [count_append, mem_append, mem_replicate] at hpos he'

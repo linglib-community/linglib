@@ -40,7 +40,7 @@ open RoseTree List
 def Language.HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
   ∃ p : ℕ, 0 < p ∧ ∀ w ∈ L, p ≤ w.length →
     ∃ u v x y z : List α, w = u ++ v ++ x ++ y ++ z ∧ (v ++ x ++ y).length ≤ p ∧
-      1 ≤ v.length + y.length ∧
+      v ++ y ≠ [] ∧
       ∀ i : ℕ, u ++ (replicate i v).flatten ++ x ++ (replicate i y).flatten ++ z ∈ L
 
 namespace ContextFreeGrammar
@@ -156,9 +156,8 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     exact houter.length_yield_le.trans
       (Nat.pow_le_pow_right (Nat.zero_lt_of_lt g.two_le_maxBranch) (by omega))
   · -- replacing `outer` by `inner` would give a smaller tree with the same yield
-    by_contra hvy
-    obtain ⟨rfl, rfl⟩ : v = [] ∧ y = [] :=
-      ⟨length_eq_zero_iff.1 (by omega), length_eq_zero_iff.1 (by omega)⟩
+    intro hvy
+    obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hvy
     obtain ⟨i, rest, rfl⟩ := exists_cons_of_ne_nil hpr
     have := hmin _ (ht₁.replaceAt hpo (houter.of_getElem? hpri) hv)
       (by rw [hyu', ← hy₁, hyu, hyv]; simp) (by rw [value_replaceAt hpo hv, hr₁])
