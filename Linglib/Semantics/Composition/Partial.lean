@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.PFun
+public import Linglib.Core.Data.Part
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Composition.LogicalRelation
@@ -141,29 +142,47 @@ section Composition
 
 variable {E W : Type} {S : Sorts}
 
-/-! ### Composition of defined daughters
+/-! ### Composition
 
-A mode's partial value on defined daughters, in the `Part.bind` and `Part.map` form a study
-compares with. -/
+A mode's partial value is a `Part.bind` of its daughters' values, defined or not, so `simp`
+evaluates a tree through the engine without unfolding `Mode.evalKleisli`; on defined daughters the
+binds reduce to the `Part.map` forms below. -/
+
+@[simp] theorem Mode.evalPartial_functionalLeft {σ τ : Ty} (f : Part (Ty.PDomain E W (σ ⇒ τ) S))
+    (a : Part (Ty.PDomain E W σ S)) :
+    (Mode.functionalLeft : Mode (σ ⇒ τ) σ τ).evalPartial f a = f.bind fun g ↦ a.bind g :=
+  rfl
+
+@[simp] theorem Mode.evalPartial_functionalRight {σ τ : Ty} (a : Part (Ty.PDomain E W σ S))
+    (f : Part (Ty.PDomain E W (σ ⇒ τ) S)) :
+    (Mode.functionalRight : Mode σ (σ ⇒ τ) τ).evalPartial a f = f.bind fun g ↦ a.bind g :=
+  rfl
+
+@[simp] theorem Mode.evalPartial_predicateModification {σ : Ty} (h : Mode.PredicateSort σ)
+    (p q : Part (Ty.PDomain E W (σ ⇒ .t) S)) :
+    (Mode.predicateModification h).evalPartial p q = p.bind fun P ↦ q.bind fun Q ↦
+      .some fun x ↦ (P x).bind fun a ↦ (Q x).bind fun b ↦ .some (a ∧ b) :=
+  rfl
+
 
 theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
     (a : Ty.PDomain E W σ S) :
     Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W S) ⟨σ, Part.some a⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_left]; simp [Mode.evalKleisli, Part.bind_eq_bind]
+  simp
 
 theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ S)
     (f : Ty.PDomain E W (σ ⇒ τ) S) :
     Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W S) ⟨σ ⇒ τ, Part.some f⟩ =
       some ⟨τ, f a⟩ := by
-  rw [Mode.combine?_fn_right]; simp [Mode.evalKleisli, Part.bind_eq_bind]
+  simp
 
 theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) S) :
     Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
   rw [Mode.combine?_predicateModification .individual]
-  simp [Mode.evalKleisli, Part.bind_eq_bind, Part.bind_some_eq_map]
+  simp [Part.bind_some_eq_map]
 
 theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.e ⇒ .v ⇒ .t) S)
     (P : Ty.PDomain E W (.v ⇒ .t) S) :

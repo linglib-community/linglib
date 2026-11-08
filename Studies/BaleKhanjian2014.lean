@@ -135,6 +135,10 @@ theorem mem_sup {x : E} : x ∈ sup X ↔ IsGreatest X x := .rfl
 
 theorem sup_subsingleton : (sup X).Subsingleton := fun _ ha _ hb ↦ IsGreatest.unique ha hb
 
+-- the choice function adds no presupposition to that of *sup*
+@[simp] theorem iota_sup_isSome_iff : (iota (sup X)).isSome ↔ (sup X).Nonempty :=
+  sup_subsingleton.iota_isSome_iff
+
 variable {α : Type*} {B : Finset α} {k : ℕ}
 
 theorem sup_card_le : sup {x | x ⊆ B ∧ k ≤ x.card} = {x | x = B ∧ k ≤ B.card} := by
@@ -259,14 +263,12 @@ variable {α : Type} {B : Finset α} {n : NumberHead}
 /-- The partial denotations of the morphemes over the boys `B`. The number heads, *sup* and the
 numeral modify a predicate through its extension; *sup* is defined where the extension contains its
 supremum, and +DEF where it has one member. The verb and the existential are not interpreted. -/
-noncomputable def lex (B : Finset α) : Morpheme → Option (PDenotation (Finset α) Unit) :=
-  open scoped Classical in fun
+noncomputable def lex (B : Finset α) : Morpheme → Option (PDenotation (Finset α) Unit)
   | .boy => some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ boy B))⟩
   | .num n => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
       .some fun P ↦ .some (PFun.lift (· ∈ n.denote {x | True ∈ P x}))⟩
-  | .def_ => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some fun P ↦
-      if (sup {x | True ∈ P x}).Nonempty then .some (PFun.lift (· ∈ sup {x | True ∈ P x}))
-      else .none⟩
+  | .def_ => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some fun P ↦ Part.restrict (sup {x | True ∈ P x}).Nonempty
+      (.some (PFun.lift (· ∈ sup {x | True ∈ P x}))) fun _ ↦ trivial⟩
   | .plusDef => some ⟨(.e ⇒ .t) ⇒ .e, .some fun P ↦ ↑(iota {x | True ∈ P x})⟩
   | .two => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
       .some fun P ↦ .some (PFun.lift (· ∈ numeral 2 {x | True ∈ P x}))⟩
@@ -274,36 +276,26 @@ noncomputable def lex (B : Finset α) : Morpheme → Option (PDenotation (Finset
 
 /-- The presupposition of a tree: the sets of boys over which it has a defined value. -/
 def defined (t : Tree Cat Morpheme) : Set (Finset α) :=
-  {B | ∃ d, interpPartial (lex B) (fun _ ↦ ∅) t = some d ∧ d.2.Dom}
+  {B | (interpPartial (lex B) (fun _ ↦ ∅) t).elim False (·.2.Dom)}
 
-theorem mem_defined_of_eq {t : Tree Cat Morpheme} {d : PDenotation (Finset α) Unit}
-    (h : interpPartial (lex B) (fun _ ↦ ∅) t = some d) : B ∈ defined t ↔ d.2.Dom :=
-  ⟨fun ⟨_, h', hd⟩ ↦ (Option.some.inj (h.symm.trans h')) ▸ hd, fun hd ↦ ⟨d, h, hd⟩⟩
+theorem mem_defined_iff {t : Tree Cat Morpheme} :
+    B ∈ defined t ↔ ∃ d, interpPartial (lex B) (fun _ ↦ ∅) t = some d ∧ d.2.Dom := by
+  rw [defined, Set.mem_ofPred_eq]
+  cases interpPartial (lex B) (fun _ ↦ ∅) t <;> simp
 
 theorem interpPartial_numP :
     interpPartial (lex B) (fun _ ↦ ∅) (numP n) =
       some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ n.denote (boy B)))⟩ := by
-  simp [numP, lex, Mode.evalKleisli, Part.bind_eq_bind]
+  simp [numP, lex]
 
-open scoped Classical in
 theorem interpPartial_numPStar :
     interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) = some ⟨.e ⇒ .t,
-      if (sup (n.denote (boy B))).Nonempty then .some (PFun.lift (· ∈ sup (n.denote (boy B))))
-      else .none⟩ := by
-  simp [numPStar, interpPartial_numP, lex, Mode.evalKleisli, Part.bind_eq_bind]
-
-theorem interpPartial_numPStar_of_nonempty (h : (sup (n.denote (boy B))).Nonempty) :
-    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) =
-      some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ sup (n.denote (boy B))))⟩ := by
-  rw [interpPartial_numPStar, ite_eq_left h]
-
-theorem interpPartial_numPStar_of_not (h : ¬ (sup (n.denote (boy B))).Nonempty) :
-    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) = some ⟨.e ⇒ .t, .none⟩ := by
-  rw [interpPartial_numPStar, ite_eq_right h]
+      Part.restrict (sup (n.denote (boy B))).Nonempty
+        (.some (PFun.lift (· ∈ sup (n.denote (boy B))))) fun _ ↦ trivial⟩ := by
+  simp [numPStar, interpPartial_numP, lex]
 
 theorem mem_defined_numPStar : B ∈ defined (numPStar n) ↔ (sup (n.denote (boy B))).Nonempty := by
-  rw [mem_defined_of_eq interpPartial_numPStar]
-  split_ifs with h <;> simp [h]
+  simp [defined, interpPartial_numPStar]
 
 -- p. 22: the singular NumP* presupposes a boy, the plural two
 theorem defined_numPStar_sg : defined (α := α) (numPStar .sg) = {B | 1 ≤ B.card} :=
@@ -323,31 +315,21 @@ theorem defined_numPStar_pl_ssubset [Nonempty α] :
 -- the determiner adds no presupposition to NumP*
 theorem defined_definiteDP : defined (α := α) (definiteDP n) = defined (numPStar n) := by
   ext B
-  rw [mem_defined_numPStar]
-  by_cases h : (sup (n.denote (boy B))).Nonempty
-  · rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (sup (n.denote (boy B))))⟩) (by
-      simp [definiteDP, interpPartial_numPStar_of_nonempty h, lex, Mode.evalKleisli,
-        Part.bind_eq_bind])]
-    exact (Part.ofOption_dom _).trans sup_subsingleton.iota_isSome_iff
-  · rw [mem_defined_of_eq (d := ⟨.e, .none⟩) (by
-      simp [definiteDP, interpPartial_numPStar_of_not h, lex, Mode.evalKleisli,
-        Part.bind_eq_bind])]
-    exact iff_of_false Part.not_none_dom h
+  simp [defined, definiteDP, interpPartial_numPStar, lex]
 
 theorem defined_bareDP_sg : defined (α := α) (bareDP .sg) = {B | B.card = 1} := by
   ext B
-  rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (NumberHead.sg.denote (boy B)))⟩) (by
-    simp [bareDP, interpPartial_numP, lex, Mode.evalKleisli, Part.bind_eq_bind])]
-  refine (Part.ofOption_dom _).trans (iota_isSome_iff.trans ?_)
-  rw [denote_sg_boy, Set.mem_ofPred_eq, Finset.card_eq_one]
+  simp only [defined, bareDP, Set.mem_ofPred_eq]
+  simp [interpPartial_numP, lex, iota_isSome_iff, denote_sg_boy, Finset.card_eq_one]
   constructor
   · rintro ⟨x, ⟨hxB, hx⟩, huniq⟩
-    have hB := huniq B ⟨subset_rfl, hx.trans (Finset.card_le_card hxB)⟩
-    obtain ⟨a, ha⟩ := Finset.one_le_card.1 hx
-    exact ⟨a, ((huniq {a} ⟨Finset.singleton_subset_iff.2 (hxB ha), by simp⟩).trans hB.symm).symm⟩
+    have hB := huniq B ⟨subset_rfl, hx.mono hxB⟩
+    obtain ⟨a, ha⟩ := hx
+    exact ⟨a, hB.trans
+      (huniq {a} ⟨Finset.singleton_subset_iff.2 (hxB ha), Finset.singleton_nonempty a⟩).symm⟩
   · rintro ⟨a, rfl⟩
-    exact ⟨{a}, ⟨subset_rfl, by simp⟩, fun y ⟨hy, hy1⟩ ↦
-      (Finset.subset_singleton_iff.1 hy).resolve_left (Finset.one_le_card.1 hy1).ne_empty⟩
+    exact ⟨{a}, ⟨subset_rfl, Finset.singleton_nonempty a⟩, fun y ⟨hy, hy1⟩ ↦
+      (Finset.subset_singleton_iff.1 hy).resolve_left hy1.ne_empty⟩
 
 -- p. 22: either numeral definite presupposes exactly two boys
 theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} := by
@@ -358,18 +340,8 @@ theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} 
     cases n
     exacts [⟨1, by omega, denote_sg_boy⟩, ⟨2, le_rfl, denote_pl_boy⟩]
   obtain ⟨k, hk2, hden⟩ := hk
-  by_cases h : (sup (n.denote (boy B))).Nonempty
-  · rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (numeral 2 (sup (n.denote (boy B)))))⟩) (by
-      simp [numeralDP, interpPartial_numPStar_of_nonempty h, lex, Mode.evalKleisli,
-        Part.bind_eq_bind])]
-    refine (Part.ofOption_dom _).trans (hsub.iota_isSome_iff.trans ?_)
-    rw [hden, sup_card_le]
-    exact ⟨fun ⟨_, ⟨rfl, _⟩, h⟩ ↦ h, fun (h : B.card = 2) ↦ ⟨B, ⟨rfl, by omega⟩, h⟩⟩
-  · rw [mem_defined_of_eq (d := ⟨.e, .none⟩) (by
-      simp [numeralDP, interpPartial_numPStar_of_not h, lex, Mode.evalKleisli,
-        Part.bind_eq_bind])]
-    rw [hden, nonempty_sup_card_le] at h
-    exact iff_of_false Part.not_none_dom fun (h2 : B.card = 2) ↦ h (by omega)
+  simp [defined, numeralDP, interpPartial_numPStar, lex, hsub.iota_isSome_iff, hden, sup_card_le]
+  exact ⟨fun ⟨_, _, ⟨rfl, _⟩, h⟩ ↦ h, fun h ↦ ⟨⟨B, rfl, by omega⟩, B, ⟨rfl, by omega⟩, h⟩⟩
 
 /-! ### Symmetry
 
@@ -468,12 +440,7 @@ private theorem lex_rel (B : Finset α) (w : Morpheme) (d' : PDenotation (Finset
     have hsup := (transports_of_liftRel hP).sup
     have hne : (sup {x | True ∈ P x}).Nonempty ↔ (sup {x | True ∈ P' x}).Nonempty :=
       ⟨fun ⟨x, hx⟩ ↦ ⟨_, (hsup x).1 hx⟩, fun ⟨y, hy⟩ ↦ ⟨_, (hsup.mem_iff' y).1 hy⟩⟩
-    dsimp only
-    split_ifs with h₁ h₂ h₂
-    · exact partRel_some (liftRel_lift hsup)
-    · exact absurd (hne.1 h₁) h₂
-    · exact absurd (hne.2 h₂) h₁
-    · exact partRel_none
+    exact ⟨hne, fun _ _ ↦ liftRel_lift hsup⟩
   · refine ⟨_, rfl, partRel_some fun P P' hP ↦ ?_⟩
     have hi := (transports_of_liftRel hP).iota
     dsimp only
@@ -485,10 +452,10 @@ private theorem lex_rel (B : Finset α) (w : Morpheme) (d' : PDenotation (Finset
 
 private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
     (h : B.map σ.toEmbedding ∈ defined t) : B ∈ defined t := by
-  obtain ⟨d', hd', hdom⟩ := h
+  obtain ⟨d', hd', hdom⟩ := mem_defined_iff.1 h
   obtain ⟨c, hc, hrel⟩ := interpPartial_rel (r := rel σ) (lex_rel (σ := σ) B) (g := fun _ ↦ ∅)
     (g' := fun _ ↦ ∅) (fun _ ↦ (Finset.map_empty _).symm) t hd'
-  exact ⟨_, hc, hrel.1.2 hdom⟩
+  exact mem_defined_iff.2 ⟨_, hc, hrel.1.2 hdom⟩
 
 end Symmetry
 
@@ -590,7 +557,8 @@ theorem good_lex (hB : 2 ≤ B.card) {c : Cat} {w : Morpheme}
     cases h
     refine .modifier fun P hP ↦ ?_
     have hsup : B ∈ sup {x | True ∈ P x} := ⟨hP.self, fun x hx ↦ hP.le x hx⟩
-    exact ⟨PFun.lift (· ∈ sup {x | True ∈ P x}), ite_eq_left ⟨B, hsup⟩, fun _ ↦ trivial,
+    exact ⟨PFun.lift (· ∈ sup {x | True ∈ P x}), Part.eq_some_iff.2 (by simpa using ⟨B, hsup⟩),
+      fun _ ↦ trivial,
       by simpa using hsup, fun x hx ↦ hP.le x (show x ∈ sup {x | True ∈ P x} by simpa using hx).1⟩
   | plusDef | exists_ | two | run => cases c <;> simp [IsNominalLabel] at hw
 
@@ -626,14 +594,16 @@ theorem defined_eq_empty_or_subset {ψ : Tree Cat Morpheme}
       (lex B w).map (·.1) = (lex B' w).map (·.1) := by
     cases w <;> rfl
   by_cases hu : Uninterpretable (lex (∅ : Finset α)) (fun _ ↦ ∅) ψ
-  · refine .inl (Set.eq_empty_of_forall_notMem fun B ⟨d, hd, _⟩ ↦ ?_)
+  · refine .inl (Set.eq_empty_of_forall_notMem fun B hB ↦ ?_)
+    obtain ⟨d, hd, -⟩ := mem_defined_iff.1 hB
     have := (uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).1 hu
     rw [Uninterpretable, hd] at this
     cases this
   · refine .inr fun B hB ↦ ?_
     obtain ⟨d, hd⟩ := Option.ne_none_iff_exists'.1
       ((uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).not.1 hu)
-    exact ⟨d, hd, (good_of_licensed hB (licensed_of_mem_structuralAlternatives h) hd).dom⟩
+    exact mem_defined_iff.2
+      ⟨d, hd, (good_of_licensed hB (licensed_of_mem_structuralAlternatives h) hd).dom⟩
 
 end Alternatives
 
