@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Logic.Equiv.Fintype
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
@@ -42,11 +43,8 @@ exactly one boy, and [strengthening against it leaves nothing](##strengthen_defi
 
 ## TODO
 
-`mem_defined_iff_of_card_eq`, that a tree's definedness depends on the boys only through their
-number, wants a relation between two runs of the partial engine (a `KleisliRelator` at `Part` and
-`Part`, related at the permutations of the individuals), which `Composition/Partial.lean` lacks. The
-scope of indefinites under negation, which motivates the structures, the plural in a restrictor and
-in a bound possessive, and competition by informativeness are not modelled.
+The scope of indefinites under negation, which motivates the structures, the plural in a
+restrictor and in a bound possessive, and competition by informativeness are not modelled.
 
 ## References
 
@@ -373,12 +371,133 @@ theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} 
     rw [hden, nonempty_sup_card_le] at h
     exact iff_of_false Part.not_none_dom fun (h2 : B.card = 2) ↦ h (by omega)
 
+/-! ### Symmetry
+
+A permutation of the individuals carries each world to another of the same size, and the lexicon
+over the one to the lexicon over the other, morpheme by morpheme, so the engine gives every tree
+the same definedness in both (`PhraseStructure.Tree.interpPartial_rel`). -/
+
+section Symmetry
+
+variable (σ : Equiv.Perm α)
+
+/-- `X'` is `X` carried along `σ`. -/
+private def Transports (X X' : Set (Finset α)) : Prop :=
+  ∀ x, x ∈ X ↔ x.map σ.toEmbedding ∈ X'
+
+private theorem map_symm_map (x : Finset α) :
+    (x.map σ.toEmbedding).map σ.symm.toEmbedding = x := by
+  simp [Finset.map_map]
+
+private theorem map_map_symm (x : Finset α) :
+    (x.map σ.symm.toEmbedding).map σ.toEmbedding = x := by
+  simp [Finset.map_map]
+
+variable {σ} {X X' : Set (Finset α)}
+
+private theorem Transports.mem_iff' (h : Transports σ X X') (y : Finset α) :
+    y ∈ X' ↔ y.map σ.symm.toEmbedding ∈ X := by
+  rw [h, map_map_symm]
+
+private theorem transports_boy (B : Finset α) :
+    Transports σ (boy B) (boy (B.map σ.toEmbedding)) := fun x ↦ by
+  simp only [mem_boy, Finset.map_subset_map, Finset.card_map]
+
+private theorem Transports.denote (h : Transports σ X X') (n : NumberHead) :
+    Transports σ (n.denote X) (n.denote X') := fun x ↦ by
+  cases n
+  · exact h x
+  · simp only [NumberHead.denote, Set.mem_ofPred_eq, nonAtomsOf, atom_finset_iff_card_eq_one,
+      Finset.card_map]
+    exact and_congr_left' (h x)
+
+private theorem Transports.numeral (h : Transports σ X X') (k : ℕ) :
+    Transports σ (numeral k X) (numeral k X') := fun x ↦ by
+  simp only [BaleKhanjian2014.numeral, Set.mem_sep_iff, Finset.card_map]
+  exact and_congr_left' (h x)
+
+private theorem Transports.sup (h : Transports σ X X') : Transports σ (sup X) (sup X') := by
+  intro x
+  refine ⟨fun ⟨hx, hub⟩ ↦ ⟨(h x).1 hx, fun y hy ↦ ?_⟩, fun ⟨hx, hub⟩ ↦ ⟨(h x).2 hx, fun y hy ↦ ?_⟩⟩
+  · rw [← map_map_symm σ y]
+    exact Finset.map_subset_map.2 (hub ((h.mem_iff' y).1 hy))
+  · exact Finset.map_subset_map.1 (hub ((h y).1 hy))
+
+private theorem Transports.iota (h : Transports σ X X') :
+    (_root_.iota X).map (·.map σ.toEmbedding) = _root_.iota X' := by
+  rcases hX : _root_.iota X with _ | x
+  · refine (iota_eq_none_iff.2 fun ⟨y, hy, huniq⟩ ↦ iota_eq_none_iff.1 hX ⟨_, (h.mem_iff' y).1 hy,
+      fun z hz ↦ ?_⟩).symm
+    rw [← map_symm_map σ z, huniq _ ((h z).1 hz)]
+  · obtain ⟨hx, huniq⟩ := iota_eq_some_iff.1 hX
+    refine (iota_eq_some_iff.2 ⟨(h x).1 hx, fun y hy ↦ ?_⟩).symm
+    rw [← map_map_symm σ y, huniq _ ((h.mem_iff' y).1 hy)]
+
+/-- Individuals related along `σ`. -/
+private def rel (σ : Equiv.Perm α) : Ty.BaseRel (Finset α) (Finset α) Unit Unit {} {} :=
+  ⟨fun x y ↦ y = x.map σ.toEmbedding, Eq, Eq, Eq⟩
+
+private theorem transports_of_liftRel {P P' : Finset α →. Prop}
+    (h : Ty.LiftRel PartRel (rel σ) (.e ⇒ .t) P P') :
+    Transports σ {x | True ∈ P x} {x | True ∈ P' x} := fun _ ↦
+  (h rfl).true_mem_iff
+
+private theorem liftRel_lift (h : Transports σ X X') :
+    Ty.LiftRel PartRel (rel σ) (.e ⇒ .t) (PFun.lift (· ∈ X)) (PFun.lift (· ∈ X')) := by
+  rintro x _ rfl
+  exact ⟨Iff.rfl, fun _ _ ↦ h x⟩
+
+private theorem partRel_some {ty : Ty} {a a' : Ty.PDomain (Finset α) Unit ty}
+    (h : Ty.LiftRel PartRel (rel σ) ty a a') : PartRel (Ty.LiftRel PartRel (rel σ) ty) (.some a)
+      (.some a') :=
+  ⟨Iff.rfl, fun _ _ ↦ h⟩
+
+private theorem partRel_none {ty : Ty} :
+    PartRel (Ty.LiftRel PartRel (rel σ) ty) (Part.none : Part (Ty.PDomain (Finset α) Unit ty))
+      Part.none :=
+  ⟨Iff.rfl, fun h ↦ absurd h Part.not_none_dom⟩
+
+private theorem lex_rel (B : Finset α) (w : Morpheme) (d' : PDenotation (Finset α) Unit)
+    (h : lex (B.map σ.toEmbedding) w = some d') :
+    ∃ c, lex B w = some ⟨d'.1, c⟩ ∧ PartRel (Ty.LiftRel PartRel (rel σ) d'.1) c d'.2 := by
+  cases w <;> cases h
+  · exact ⟨_, rfl, partRel_some (liftRel_lift (transports_boy B))⟩
+  · exact ⟨_, rfl, partRel_some fun _ _ hP ↦
+      partRel_some (liftRel_lift ((transports_of_liftRel hP).denote _))⟩
+  · refine ⟨_, rfl, partRel_some fun P P' hP ↦ ?_⟩
+    have hsup := (transports_of_liftRel hP).sup
+    have hne : (sup {x | True ∈ P x}).Nonempty ↔ (sup {x | True ∈ P' x}).Nonempty :=
+      ⟨fun ⟨x, hx⟩ ↦ ⟨_, (hsup x).1 hx⟩, fun ⟨y, hy⟩ ↦ ⟨_, (hsup.mem_iff' y).1 hy⟩⟩
+    dsimp only
+    split_ifs with h₁ h₂ h₂
+    · exact partRel_some (liftRel_lift hsup)
+    · exact absurd (hne.1 h₁) h₂
+    · exact absurd (hne.2 h₂) h₁
+    · exact partRel_none
+  · refine ⟨_, rfl, partRel_some fun P P' hP ↦ ?_⟩
+    have hi := (transports_of_liftRel hP).iota
+    dsimp only
+    rcases hX : iota {x | True ∈ P x} with _ | _
+    · rw [← hi, hX]; exact partRel_none
+    · rw [← hi, hX]; exact partRel_some rfl
+  · exact ⟨_, rfl, partRel_some fun _ _ hP ↦
+      partRel_some (liftRel_lift ((transports_of_liftRel hP).numeral 2))⟩
+
+private theorem mem_defined_of_map {B : Finset α} {t : Tree Cat Morpheme}
+    (h : B.map σ.toEmbedding ∈ defined t) : B ∈ defined t := by
+  obtain ⟨d', hd', hdom⟩ := h
+  obtain ⟨c, hc, hrel⟩ := interpPartial_rel (r := rel σ) (lex_rel (σ := σ) B) (g := fun _ ↦ ∅)
+    (g' := fun _ ↦ ∅) (fun _ ↦ (Finset.map_empty _).symm) t hd'
+  exact ⟨_, hc, hrel.1.2 hdom⟩
+
+end Symmetry
+
 -- a tree's presupposition depends on the boys only through their number
 theorem mem_defined_iff_of_card_eq {B' : Finset α} (h : B.card = B'.card)
     (t : Tree Cat Morpheme) : B ∈ defined t ↔ B' ∈ defined t := by
-  -- TODO: a permutation of `α` taking `B` to `B'` relates the two lexicons morpheme by morpheme,
-  -- and the relation, a `KleisliRelator` at `Part` and `Part`, passes through `interpPartial`.
-  sorry
+  obtain ⟨σ, rfl⟩ := Equiv.Perm.exists_map_finset_eq B B' h
+  refine ⟨fun hB ↦ mem_defined_of_map (σ := σ.symm) ?_, mem_defined_of_map (σ := σ)⟩
+  rwa [map_symm_map]
 
 end Interpretation
 

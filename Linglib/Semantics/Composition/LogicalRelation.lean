@@ -14,7 +14,8 @@ alternatives when each alternative in either has a related alternative in the ot
 `pure`, `bind` and the flattening of alternatives. Between values this is
 [the fundamental lemma for the modes](##Mode.rel_eval), so
 [terms with related constants and assignments have related values](##Term.rel_eval), and at type
-$t$ a sentence holds in one model exactly when it holds in the other. Between values and partial
+$t$ a sentence holds in one model exactly when it holds in the other; under any relator, [so do
+their computations](##Term.Rel.rel_realize_kleisli). Between values and partial
 values it is the preservation of definedness in `Composition/Partial.lean`. Abstraction under the
 set effect [does not preserve the relation](##Term.not_liftRel_distribute).
 
@@ -239,6 +240,21 @@ theorem Term.rel_eval {Γ : ℕ → Ty} {K : Ty → Type*}
     (fun ty ↦ Ty.LiftRel (fun R ↦ R) r ty)
     hc (fun _ _ h ↦ h) (fun _ _ h _ _ hx ↦ h _ _ hx) (fun m _ _ _ _ ha hb ↦ Mode.rel_eval m ha hb) t
     hg
+
+/-- The fundamental lemma at a relator: under two Kleisli interpretations, a term has related
+values when its constants and the assignments are related. -/
+theorem Term.Rel.rel_realize_kleisli (hρ : KleisliRelator ρ) {Γ : ℕ → Ty} {K K' : Ty → Type*}
+    {I : ∀ {ty : Ty}, K ty → M (Ty.DomainM M E W ty S)}
+    {I' : ∀ {ty : Ty}, K' ty → M' (Ty.DomainM M' E' W' ty S')} {Rc : ∀ ty : Ty, K ty → K' ty → Prop}
+    (hc : ∀ {ty : Ty} (c : K ty) (c' : K' ty), Rc ty c c' → ρ (Ty.LiftRel ρ r ty) (I c) (I' c'))
+    {ty : Ty} {t : Term Γ K ty} {t' : Term Γ K' ty} (ht : Term.Rel Rc t t')
+    {g : ∀ n, Ty.DomainM M E W (Γ n) S} {g' : ∀ n, Ty.DomainM M' E' W' (Γ n) S'}
+    (hg : ∀ n, Ty.LiftRel ρ r (Γ n) (g n) (g' n)) :
+    ρ (Ty.LiftRel ρ r ty) (t.realize (.kleisli M I) g) (t'.realize (.kleisli M' I') g') :=
+  ht.realize (A := .kleisli M I) (B := .kleisli M' I') (fun ty ↦ ρ (Ty.LiftRel ρ r ty))
+    (fun ty ↦ Ty.LiftRel ρ r ty) hc (fun _ _ h ↦ hρ.pure h)
+    (fun _ _ h ↦ hρ.pure fun _ _ hx ↦ h _ _ hx)
+    (fun m _ _ _ _ ha hb ↦ Mode.rel_evalKleisli hρ m ha hb) hg
 
 /-- Abstraction under the set effect does not preserve the lifting. Along the map from `Bool` to a
 point, the two families below are pointwise equal, yet the identity function, a choice from the
