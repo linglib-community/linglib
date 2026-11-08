@@ -94,10 +94,7 @@ variable [Lattice B] [Lattice (Know B)] [IsInterlaced B]
 /-- The guard is monotone in the truth order in its second argument ([fitting-1994] §5). -/
 theorem guard_le_guard_right [Top B] [Compl B] {x y z : B} (h : y ≤ z) :
     guard x y ≤ guard x z :=
-  have hc : ∀ a b : B, a ⊓ₖ b = b ⊓ₖ a := fun _ _ ↦ congrArg ofKnow (inf_comm _ _)
-  calc guard x y = y ⊓ₖ (x ⊓ₖ ⊤ ⊔ₖ (x ⊓ₖ ⊤)ᶜ) := hc ..
-    _ ≤ z ⊓ₖ (x ⊓ₖ ⊤ ⊔ₖ (x ⊓ₖ ⊤)ᶜ) := IsInterlaced.kInf_tmono h _
-    _ = guard x z := hc ..
+  kInf_le_kInf le_rfl h
 
 /-- A first argument that is at least true passes the second through ([fitting-1994] §5). -/
 theorem guard_of_top_kLE [BoundedOrder B] [BoundedOrder (Know B)] [InvolutiveCompl B] {x : B}

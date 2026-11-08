@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Bilattice.Representation
 public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Consequence
@@ -16,13 +17,14 @@ over anticonsistent valuations, `C⟨B, F⟩` reads both strictly over exact val
 validate the same sequents (Proposition 8.7.2, `stValid_iff_cValid`), yet cut is locally valid
 only in the second (Proposition 8.7.3, `cut_not_local_stValid`).
 
-The examples come from products `L ⊙ L` of De Morgan algebras: the exact values of `L ⊙ L` are
-`L` (Proposition 8.8.3, `exactIso`), `D × L` is a prime bifilter for every prime filter `D`
-(Lemma 8.9.2, `PrimeFilter.prod`), and `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` itself
-(Proposition 8.9.3, `cValid_prod_iff`). Hence every logical De Morgan algebra has a
-strict/tolerant counterpart with the same consequence relation (Proposition 8.10.1,
-`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `SignType`, and `FDE`
-from `FOUR` (Examples 8.10.2–8.10.5).
+The examples come from products `L ⊙ L` of De Morgan algebras. The exact values of an interlaced
+bilattice with conflation are the first factor of its representation as a product (Lemma 8.8.2,
+`exactIsoIci`), so those of `L ⊙ L` are `L` (Proposition 8.8.3, `exactIso`). `D × L` is a prime
+bifilter for every prime filter `D` (Lemma 8.9.2, `PrimeFilter.prod`), and `C⟨L ⊙ L, D × L⟩` is
+the logic `⟨L, D⟩` itself (Proposition 8.9.3, `cValid_prod_iff`). Hence every logical De Morgan
+algebra has a strict/tolerant counterpart with the same consequence relation (Proposition 8.10.1,
+`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `SignType`, and `FDE` from
+`FOUR` (Examples 8.10.2–8.10.5).
 
 ## Implementation notes
 
@@ -33,13 +35,22 @@ from `FOUR` (Examples 8.10.2–8.10.5).
   `STValid` and `CValid` are `Consequence.MixedConsequence` over the anticonsistent and exact
   valuations and `LValid` over all valuations into `L`, so Propositions 8.7.2 and 8.9.3 are pairs
   of model correspondences (`Consequence.MixedConsequence.comap`).
-* Lemma 8.8.2, the general interlaced-bilattice route to Proposition 8.8.3, is not formalized;
-  the proposition is proved in coordinates for the product.
+* Lemma 8.8.2 assumes a negation that its proof never uses, so `exactIsoIci` drops it. Its six
+  items are the inverse laws and the monotonicity of one order isomorphism.
 * Locators use the chapter's numbering, `8.n` for the preprint's `§n`.
+
+## Errata
+
+* §8.8 takes the second factor of the representation to be `{x ∧ ⊥ | x ∈ B}` under the
+  restriction of `≤t`. Avron's factor carries the reverse order (`Bilattice.productIso`): under
+  `≤t` the map `x ↦ (x ∨ ⊥, x ∧ ⊥)` is not truth-monotone, and as the factors are unique up to
+  isomorphism, the representation then holds only when that factor is self-dual. The slip is
+  read from the author's preprint.
 
 ## References
 
 * [fitting-2021]
+* [avron-1996]
 * [cobreros-etal-2012]
 * [arieli-avron-1996]
 * [arieli-avron-1998]
@@ -230,6 +241,34 @@ theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know 
 
 end Logics
 
+/-! ### The exact values and the representation (§8.8) -/
+
+section Exact
+
+variable [Lattice B] [BoundedOrder B] [Lattice (Know B)] [BoundedOrder (Know B)] [IsInterlaced B]
+  [InvolutiveCompl (Know B)] [Conflation B]
+
+/-- In an interlaced bilattice with conflation, `x ↦ x ∨ ⊥` maps the exact values isomorphically
+onto `L_B`, the first factor of the representation, with inverse `y ↦ y ∧ −y`
+([fitting-2021] Lemma 8.8.2 and the proof of Prop 8.8.3). -/
+def exactIsoIci : {x : B // IsExact x} ≃o Set.Ici (ofKnow ⊥ : B) :=
+  Equiv.toOrderIso
+    { toFun x := ⟨x.1 ⊔ ofKnow ⊥, le_sup_right⟩
+      invFun y := ⟨y.1 ⊓ conf y.1, isExact_inf_conf y.1⟩
+      left_inv x := Subtype.ext <| by
+        dsimp only
+        rw [conf_sup, x.2.eq, conf_ofKnow_bot, sup_ofKnow_bot_inf_sup_ofKnow_top]
+      right_inv y := Subtype.ext <| by
+        have h : conf y.1 ⊔ ofKnow ⊥ = ⊤ := top_le_iff.1 <|
+          (ofKnow_top_sup_ofKnow_bot (B := B)).symm.trans_le <| sup_le_sup_right
+            ((conf_ofKnow_bot (B := B)).symm.trans_le (conf_le_conf y.2)) _
+        dsimp only
+        rw [inf_sup_ofKnow_bot, sup_eq_left.2 y.2, h, inf_top_eq] }
+    (fun _ _ h ↦ sup_le_sup_right h _)
+    fun _ _ h ↦ inf_le_inf h (conf_le_conf h)
+
+end Exact
+
 /-! ### Products of De Morgan algebras (§§8.8–8.9) -/
 
 section DeMorgan
@@ -240,17 +279,12 @@ section ExactIso
 
 variable [BoundedOrder L] [InvolutiveCompl L]
 
-/-- The exact members of `L ⊙ L` are the pairs `⟨a, aᶜ⟩`, and under the truth order they are `L`
-([fitting-2021] Prop 8.8.3). -/
-def exactIso : {x : L ⊙ L // IsExact x} ≃o L where
-  toFun x := x.1.pro
-  invFun a := ⟨mk a aᶜ, (Product.isExact_iff _).2 rfl⟩
-  left_inv x := Subtype.ext (Product.ext rfl ((Product.isExact_iff _).1 x.2).symm)
-  right_inv _ := rfl
-  map_rel_iff' {x y} := by
-    show x.1.pro ≤ y.1.pro ↔ x ≤ y
-    rw [← Subtype.coe_le_coe, le_def, (Product.isExact_iff _).1 x.2,
-      (Product.isExact_iff _).1 y.2, InvolutiveCompl.compl_le_compl_iff_le, and_self]
+/-- Under the truth order the exact members of `L ⊙ L` are `L` ([fitting-2021] Prop 8.8.3): they
+are its `L_B` by Lemma 8.8.2, and the `L_B` of a product is its first factor. -/
+def exactIso : {x : L ⊙ L // IsExact x} ≃o L := exactIsoIci.trans Product.iciIso
+
+@[simp] theorem exactIso_apply (x : {x : L ⊙ L // IsExact x}) : exactIso x = x.1.pro :=
+  sup_bot_eq _
 
 end ExactIso
 
