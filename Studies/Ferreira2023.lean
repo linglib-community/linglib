@@ -109,8 +109,8 @@ theorem prop_of_mem_accessibleWorlds_revise {w' : W}
   · exact absurd h hn
   · exact Preorder.minimals_subset _ _ h
 
-theorem strongNecessity_revise (sim : Background W) (h : strongNecessity f g q w) :
-    strongNecessity (revise sim f q) g q w := by
+theorem necessity_revise (sim : Background W) (h : necessity f g q w) :
+    necessity (revise sim f q) g q w := by
   intro w' hw'
   by_cases hmem : w' ∈ f.accessibleWorlds w
   · exact h w' (Preorder.mem_minimals_of_subset (subset_accessibleWorlds_revise sim f q w) hw' hmem)
@@ -229,7 +229,7 @@ def snXg (f g : Background W) (p q : W → Prop) (w : W) : Prop :=
 ordering source of [von-fintel-iatridou-2008] being the revision's target. -/
 theorem snXg_iff_weakNecessity (f g : Background W) (p q : W → Prop)
     (w : W) : snXg f g p q w ↔ weakNecessity f g (fun _ ↦ {p}) q w := by
-  rw [snXg, bestOf_starstar, weakNecessity, bestWorlds]
+  rw [snXg, bestOf_starstar, weakNecessity_iff, bestWorlds]
 
 /-- A vertex of the square (134) records whether the modal base and the ordering source are
 X-marked. -/
@@ -257,14 +257,14 @@ def Vertex.necessity (v : Vertex) (sim f : Background W)
 
 theorem Vertex.necessity_xg_false (xf : Bool) :
     Vertex.necessity ⟨xf, false⟩ sim f g p q w ↔
-      strongNecessity (Vertex.base ⟨xf, false⟩ sim f q) g q w := by
+      Modality.necessity (Vertex.base ⟨xf, false⟩ sim f q) g q w := by
   simp only [Vertex.necessity, Bool.false_eq_true, ite_false, bestOf_strictlyBetter,
-    strongNecessity, necessity_iff, bestWorlds]
+    necessity_iff, bestWorlds]
 
 theorem Vertex.necessity_xg_true (xf : Bool) :
     Vertex.necessity ⟨xf, true⟩ sim f g p q w ↔
       weakNecessity (Vertex.base ⟨xf, true⟩ sim f q) g (fun _ ↦ {p}) q w := by
-  simp only [Vertex.necessity, ite_true, bestOf_starstar, weakNecessity, bestWorlds]
+  simp only [Vertex.necessity, ite_true, bestOf_starstar, weakNecessity_iff, bestWorlds]
 
 /-! ### The entailment order of the square ((29), (82)) -/
 
@@ -284,11 +284,11 @@ theorem Vertex.Entails.trans {u v x : Vertex} (h₁ : u.Entails v) (h₂ : v.Ent
 -- (29)
 theorem Vertex.entails_xg (xf : Bool) : Vertex.Entails ⟨xf, false⟩ ⟨xf, true⟩ :=
   fun _ _ _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_true xf).2
-    (strong_entails_weak _ _ _ _ _ ((Vertex.necessity_xg_false xf).1 h))
+    (weakNecessity_of_necessity ((Vertex.necessity_xg_false xf).1 h))
 
 theorem Vertex.entails_xf : Vertex.Entails ⟨false, false⟩ ⟨true, false⟩ :=
   fun _ sim _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_false true).2
-    (strongNecessity_revise sim ((Vertex.necessity_xg_false false).1 h))
+    (necessity_revise sim ((Vertex.necessity_xg_false false).1 h))
 
 theorem Vertex.entails_of_sn : ∀ v, Vertex.Entails ⟨false, false⟩ v
   | ⟨false, false⟩ => .refl _
@@ -332,11 +332,11 @@ private theorem M1_acc (sim : Background Bool) (v : Vertex) :
 private theorem M1_iff (sim : Background Bool) (v : Vertex) :
     v.necessity sim ⊥ ⊥ (· = true) (· = true) true ↔ v.xg = true := by
   obtain ⟨xf, _ | _⟩ := v
-  · rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds_bot,
+  · rw [Vertex.necessity_xg_false, necessity_iff, bestWorlds_bot,
       M1_acc]
     simp only [Bool.false_eq_true, iff_false, not_forall]
     exact ⟨false, Set.mem_univ _, Bool.false_ne_true⟩
-  · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds_bot, M1_acc,
+  · rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds_bot, M1_acc,
       minimals_eq_singleton (Set.mem_univ _)]
     simp
 
@@ -363,13 +363,13 @@ private theorem M2_iff (v : Vertex) :
       v.xf = true := by
   have hft : ¬ Vertex.necessity ⟨false, true⟩ simB (fun _ ↦ {(· = false)})
       (fun _ ↦ {(· = true)}) (· = true) (· = true) true := by
-    rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+    rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
     simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
     rw [M2_acc, minimals_singleton, minimals_singleton]
     simp
   have htf : Vertex.necessity ⟨true, false⟩ simB (fun _ ↦ {(· = false)})
       (fun _ ↦ {(· = true)}) (· = true) (· = true) true := by
-    rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds]
+    rw [Vertex.necessity_xg_false, necessity_iff, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
     rw [Preorder.minimals_ofCriteria_eq ⟨true, M2_mem, by simp⟩]
     exact fun w' hw' ↦ hw'.2 _ (Set.mem_singleton _)
@@ -407,7 +407,7 @@ private theorem accessibleWorlds_revise_f₃ :
   decide
 
 private theorem M3_ft : Vertex.necessity ⟨false, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
-  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
   rw [accessibleWorlds_f₃, minimals_pair_g₃,
     minimals_eq_singleton (S := {0, 1}) (b := 1) (by simp)]
@@ -415,7 +415,7 @@ private theorem M3_ft : Vertex.necessity ⟨false, true⟩ sim₃ f₃ g₃ (· 
   exact Or.inl rfl
 
 private theorem M3_not_tt : ¬ Vertex.necessity ⟨true, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
-  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
   simp only [Vertex.base, ↓reduceIte]
   rw [accessibleWorlds_revise_f₃, minimals_univ_g₃]
   have h0 : (0 : Fin 3) ∈ (premisePreorder {(· = 1)}).minimals ({0, 2} : Set (Fin 3)) := by
@@ -471,7 +471,7 @@ def interpret (φ : ModalForce) (f g : Background W) (p q : W → Prop)
   match φ with
   | .possibility => possibility f g q w
   | .weakNecessity => snXg f g p q w
-  | .necessity => strongNecessity f g q w
+  | .necessity => necessity f g q w
 
 /-- The Portuguese necessity modal at each vertex (135). X-marking the ordering source is
 lexical, from *ter que* to *dever*, and X-marking the modal base is the past imperfect. -/
@@ -623,7 +623,7 @@ theorem Conjunct.holds_iff_evalP (c : Conjunct) (f g : Background W)
   obtain ⟨φ, m, n⟩ := c
   cases φ <;> cases m <;> cases n <;>
     simp [Conjunct.holds, Conjunct.evalP, interpret, profile, snXg_iff_weakNecessity,
-      weakNecessity, strongNecessity]
+      weakNecessity_iff]
 
 section twoWorlds
 
@@ -937,7 +937,7 @@ private theorem minimals_workday_pair :
 
 theorem deve_guess (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim ⊥ normal workday atOffice w := by
-  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
   rw [Background.accessibleWorlds_bot, minimals_normal_univ, minimals_workday_pair]
   rintro _ rfl
@@ -948,11 +948,11 @@ theorem devia_81 (w : Day) :
     ¬ Vertex.necessity ⟨false, true⟩ sim checked normal workday atOffice w ∧
       Vertex.necessity ⟨true, true⟩ sim checked normal workday atOffice w := by
   constructor
-  · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  · rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
     simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
     rw [accessibleWorlds_checked, minimals_normal_away, minimals_singleton]
     exact fun h ↦ Bool.false_ne_true (h _ rfl)
-  · rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  · rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
     rw [accessibleWorlds_revise_checked, minimals_normal_univ, minimals_workday_pair]
     rintro _ rfl
@@ -961,7 +961,7 @@ theorem devia_81 (w : Day) :
 /-- On a holiday (80) the suspension adds only holiday worlds, and *devia* is false. -/
 theorem not_devia_80 (w : Day) :
     ¬ Vertex.necessity ⟨true, true⟩ sim holidayInfo normal workday atOffice w := by
-  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
   simp only [Vertex.base, ↓reduceIte]
   rw [accessibleWorlds_revise_holidayInfo, minimals_normal_holiday, minimals_singleton]
   exact fun h ↦ Bool.false_ne_true (h _ rfl)
@@ -971,7 +971,7 @@ would wrongly make *devia* true (footnote 18). -/
 theorem revise_workday_80 (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim (revise sim holidayInfo workday) normal workday atOffice
       w := by
-  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
+  rw [Vertex.necessity_xg_true, weakNecessity_iff, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
   rw [accessibleWorlds_revise_workday, minimals_normal_univ, minimals_workday_pair]
   rintro _ rfl

@@ -49,6 +49,7 @@ necessity and slight possibility are not formalized here.
 
 * [kratzer-1977]
 * [kratzer-1981]
+* [kratzer-1991]
 * [kratzer-2012]
 * [portner-rubinstein-2020]
 -/
@@ -118,6 +119,22 @@ def necessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
 def possibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ◇[bestAccessible f g] p w
 
+@[simp]
+theorem simpleNecessity_iff (f : Background W) (p : W → Prop) (w : W) :
+    simpleNecessity f p w ↔ ∀ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
+
+@[simp]
+theorem simplePossibility_iff (f : Background W) (p : W → Prop) (w : W) :
+    simplePossibility f p w ↔ ∃ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
+
+@[simp]
+theorem necessity_iff (f g : Background W) (p : W → Prop) (w : W) :
+    necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' := Iff.rfl
+
+@[simp]
+theorem possibility_iff (f g : Background W) (p : W → Prop) (w : W) :
+    possibility f g p w ↔ ∃ w' ∈ bestWorlds f g w, p w' := Iff.rfl
+
 theorem necessity_mono {f g : Background W} {p q : W → Prop} {w : W}
     (hpq : p ≤ q) (h : necessity f g p w) : necessity f g q w :=
   box_mono (bestAccessible f g) hpq w h
@@ -136,13 +153,15 @@ theorem necessity_and_left {f g : Background W} {p q : W → Prop} {w : W}
 
 /-! ### Human necessity
 
-[kratzer-1981]'s official definition needs no Limit Assumption, asking each accessible world to
-see, at least as good, a witness below which only `p`-worlds occur. It is the necessity of
+Kratzer's official definition, in the version of [kratzer-1991] that revises [kratzer-1981], needs
+no Limit Assumption, asking each accessible world to see, at least as good, a witness below which
+only `p`-worlds occur. It is the necessity of
 ordering semantics over the accessible worlds ranked by the ordering source, and `necessity`,
 universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 
 /-- Human necessity holds when every accessible world has an accessible world at least as good,
-below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). -/
+below which `p` holds throughout: necessity in Definition 6 of [kratzer-1991] and in
+[kratzer-2012], human necessity in [kratzer-1981]'s terms. -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   {v | p v} ∈ OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w)
 
@@ -180,15 +199,15 @@ theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     humanNecessity f g p w :=
   OrderingSemantics.mem_necessityFilter_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
-/-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
-quantification over the best worlds. -/
+/-- Under the Limit Assumption, human necessity is exactly universal quantification over the best
+worlds. -/
 theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) :
     humanNecessity f g p w ↔ necessity f g p w :=
   ⟨necessity_of_humanNecessity, humanNecessity_of_necessity hlim⟩
 
 /-- Human possibility is the dual of `humanNecessity`, holding when the negation is not a human
-necessity ([kratzer-2012]). -/
+necessity, Definition 8 of [kratzer-1991]. -/
 def humanPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ¬ humanNecessity f g (fun v ↦ ¬ p v) w
 
@@ -214,7 +233,8 @@ section GoodPossibility
 variable {f g : Background W} {p q : W → Prop} {w : W}
 
 /-- Good possibility holds when some accessible world sees only `p`-worlds among the accessible
-worlds at least as good as itself, so that `p` holds throughout a branch of the ordering. -/
+worlds at least as good as itself, so that `p` holds throughout a branch of the ordering,
+Definition 7 of [kratzer-1991]. -/
 def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   OrderingSemantics.IsGoodPossibility (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
 
@@ -243,42 +263,21 @@ unified background `f ⊔ g`, and the forces that read the ordering collapse to 
 over the unified background. -/
 
 theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
-    simpleNecessity (f ⊔ g) p w := by
-  obtain ⟨u, -, hp⟩ := h
-  show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
-  intro v hv
-  rw [Background.accessibleWorlds_sup] at hv
-  exact hp v hv.1 ((Preorder.ofCriteria_le_iff _ _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+    simpleNecessity (f ⊔ g) p w := fun v hv ↦
+  let ⟨u, _, hp⟩ := h
+  let hv := (Background.accessibleWorlds_sup f g w).subset hv
+  hp v hv.1 (le_of_mem_accessibleWorlds hv.2 u)
 
 theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
-    simpleNecessity (f ⊔ g) p w := by
-  show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
-  intro v hv
-  rw [Background.accessibleWorlds_sup] at hv
-  obtain ⟨_, -, -, hall⟩ := h v hv.1
-  exact hall v hv.1 ((Preorder.ofCriteria_le_iff _ _ _ _).2 fun r hr _ ↦ hv.2 r hr)
+    simpleNecessity (f ⊔ g) p w := fun v hv ↦
+  let hv := (Background.accessibleWorlds_sup f g w).subset hv
+  let ⟨_, _, _, hall⟩ := h v hv.1
+  hall v hv.1 (le_of_mem_accessibleWorlds hv.2 _)
 
-section Unified
-
-variable {b : W} (hb : b ∈ (f ⊔ g).accessibleWorlds w)
-include hb
-
-private theorem mem_of_mem_sup : b ∈ f.accessibleWorlds w :=
-  ((Background.accessibleWorlds_sup f g w).subset hb).1
-
-private theorem le_of_mem_sup (v : W) : (b ≤[g w] v) :=
-  fun r hr _ ↦ ((Background.accessibleWorlds_sup f g w).subset hb).2 r hr
-
-private theorem simpleNecessity_sup_iff_of_mem :
-    simpleNecessity (f ⊔ g) p w ↔
-      ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] b) → v ∈ {v | p v} := by
-  have hb' := (Background.accessibleWorlds_sup f g w).subset hb
-  show (∀ v ∈ (f ⊔ g).accessibleWorlds w, p v) ↔ _
-  rw [Background.accessibleWorlds_sup]
-  exact ⟨fun h v hv hvb ↦ h v ⟨hv, fun r hr ↦ hvb r hr (hb'.2 r hr)⟩,
-    fun h v hv ↦ h v hv.1 fun r hr _ ↦ hv.2 r hr⟩
-
-end Unified
+private theorem simpleNecessity_sup_iff {b : W} (hb : b ∈ g.accessibleWorlds w) :
+    simpleNecessity (f ⊔ g) p w ↔ ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] b) → v ∈ {v | p v} := by
+  simp only [simpleNecessity_iff, Background.accessibleWorlds_sup, Set.mem_inter_iff, and_imp,
+    mem_accessibleWorlds_iff_le hb, Set.mem_ofPred_eq]
 
 variable (h : ((f ⊔ g).accessibleWorlds w).Nonempty)
 include h
@@ -288,14 +287,16 @@ necessity over the unified backgrounds. -/
 theorem goodPossibility_iff_simpleNecessity_sup :
     goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
-  (OrderingSemantics.isGoodPossibility_iff_of_least (mem_of_mem_sup hb)
-    fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
+  let hb := (Background.accessibleWorlds_sup f g w).subset hb
+  (OrderingSemantics.isGoodPossibility_iff_of_least hb.1
+    fun v _ ↦ le_of_mem_accessibleWorlds hb.2 v).trans (simpleNecessity_sup_iff hb.2).symm
 
 theorem humanNecessity_iff_simpleNecessity_sup :
     humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
-  (OrderingSemantics.mem_necessityFilter_iff_of_least (mem_of_mem_sup hb)
-    fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
+  let hb := (Background.accessibleWorlds_sup f g w).subset hb
+  (OrderingSemantics.mem_necessityFilter_iff_of_least hb.1
+    fun v _ ↦ le_of_mem_accessibleWorlds hb.2 v).trans (simpleNecessity_sup_iff hb.2).symm
 
 theorem goodPossibility_iff_humanNecessity :
     goodPossibility f g p w ↔ humanNecessity f g p w :=
@@ -304,22 +305,6 @@ theorem goodPossibility_iff_humanNecessity :
 end GoodPossibility
 
 /-! ### Characterization lemmas -/
-
-@[simp]
-theorem simpleNecessity_iff (f : Background W) (p : W → Prop) (w : W) :
-    simpleNecessity f p w ↔ ∀ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
-
-@[simp]
-theorem simplePossibility_iff (f : Background W) (p : W → Prop) (w : W) :
-    simplePossibility f p w ↔ ∃ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
-
-@[simp]
-theorem necessity_iff (f g : Background W) (p : W → Prop) (w : W) :
-    necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' := Iff.rfl
-
-@[simp]
-theorem possibility_iff (f g : Background W) (p : W → Prop) (w : W) :
-    possibility f g p w ↔ ∃ w' ∈ bestWorlds f g w, p w' := Iff.rfl
 
 /-- Simple necessity is consequence from the premises at the world, `⋂f(w) ⊆ p`, Definition 5 of
 [kratzer-1977]. -/
@@ -384,15 +369,10 @@ theorem accessible_bot (w w' : W) : w ~[(⊥ : Background W).accessible] w' := b
 
 /-! ### Modal axioms -/
 
-theorem duality (f g : Background W) (p : W → Prop) (w : W) :
+theorem necessity_iff_not_possibility_not (f g : Background W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' ↦ ¬ p w') w := by
   rw [necessity, possibility, not_diamond]
   simp [Box]
-
-theorem necessity_K (f g : Background W) (p q : W → Prop) (w : W)
-    (hImpl : necessity f g (fun w' ↦ p w' → q w') w) (hP : necessity f g p w) :
-    necessity f g q w :=
-  box_K hImpl hP
 
 theorem Background.IsTotallyRealistic.necessity_le_id {f : Background W}
     (hTotal : f.IsTotallyRealistic) (g : Background W) : necessity f g ≤ id := by
