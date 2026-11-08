@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.HarmonicGrammar.IntersectingFamilies
-public import Linglib.Discourse.Givenness
+public import Linglib.Discourse.DiscourseStatus
 public import Linglib.Data.Examples.ArnoldEtAl2000
 public import Linglib.Data.Examples.Readers
 public import Studies.Hawkins1994
@@ -23,9 +23,9 @@ end weight does](##sum_crd_verbPhrase_sub), [as the paper counts](##crd_ex5_ex8)
 
 ## Implementation notes
 
-* Newness is the paper's coding after Prince: given if the referent was mentioned before in the
-  agenda item or the exchange, inferables counted as given. `BinaryGivenness` is read here as
-  that coding, discourse-old against discourse-new, not as identifiability.
+* Newness is the paper's coding after Prince, `DiscourseStatus`: given if the referent was
+  mentioned before in the agenda item or the exchange, with inferables counted as given, which
+  Prince keeps apart as a third status.
 * Heaviness enters as the difference in words, the measure the paper takes; its regressions bin
   the difference into three categories for the dative alternation and five for heavy NP shift.
   For heavy NP shift the theme is the direct object and the goal the prepositional phrase, and
@@ -48,7 +48,7 @@ end weight does](##sum_crd_verbPhrase_sub), [as the paper counts](##crd_ex5_ex8)
 
 namespace ArnoldEtAl2000
 
-open OptimalityTheory HarmonicGrammar Discourse Real
+open OptimalityTheory HarmonicGrammar Real
 
 /-! ### The grammar -/
 
@@ -57,7 +57,7 @@ structure Phrase where
   /-- Its length in words. -/
   words : ℕ
   /-- Its discourse status. -/
-  discourse : BinaryGivenness
+  discourse : DiscourseStatus
   deriving DecidableEq
 
 /-- A postverbal pair: theme and goal for the dative alternation, direct object and
@@ -88,7 +88,7 @@ def heavyFirst : Constraint (ℕ × ℕ) := fun c ↦ c.1 - c.2
 
 /-- Given before new, on the statuses of two constituents in the order spoken: a new constituent
 before a given one. -/
-def newFirst : Constraint (BinaryGivenness × BinaryGivenness) :=
+def newFirst : Constraint (DiscourseStatus × DiscourseStatus) :=
   Constraint.binary (· = (.new, .given))
 
 /-- The construction's own cost: a violation for the theme-last order whatever the
@@ -174,15 +174,15 @@ theorem factorsThrough_newDiff_iff :
 /-! ### Interaction -/
 
 /-- The pair of a length and a givenness profile. -/
-def pair (l : ℕ × ℕ) (s : BinaryGivenness × BinaryGivenness) : Pair :=
+def pair (l : ℕ × ℕ) (s : DiscourseStatus × DiscourseStatus) : Pair :=
   (⟨l.1, s.1⟩, ⟨l.2, s.2⟩)
 
 /-- The four pairs crossing two givenness profiles, the rows, with two length profiles, the
 columns. -/
-def cross (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) : Square Pair :=
+def cross (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) : Square Pair :=
   ⟨pair l s, pair l' s, pair l s', pair l' s'⟩
 
-theorem independent_cross (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) :
+theorem independent_cross (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) :
     (cross l l' s s').Independent con .themeLast .goalLast := by
   intro k
   fin_cases k
@@ -190,7 +190,7 @@ theorem independent_cross (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryG
 
 /-- Newness and heaviness do not interact in the log-odds of the theme-last order, as in the
 corpus regressions; the experiment's interaction lies outside the grammar. -/
-theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : BinaryGivenness × BinaryGivenness) :
+theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) :
     (cross l l' s s').interaction (fun p ↦ logit (themeLastProb wH wN wB p)) = 0 := by
   simpa only [logit_themeLastProb] using
     (independent_cross l l' s s').interaction_harmonyScore_sub (weights wH wN wB)

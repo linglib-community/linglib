@@ -4,7 +4,7 @@ public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2021
 public import Linglib.Data.Statistics.Haspelmath2021
-public import Linglib.Discourse.Givenness
+public import Linglib.Discourse.DiscourseStatus
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Reference.Animacy
@@ -51,7 +51,7 @@ explanation the paper argues for.
   The single-argument universal's restriction to flagging is not encoded, since the paper applies
   "longer coding" to the Georgian reinforced pronoun and the Makassarese applicative itself, and
   the index-based person-role constraint is omitted.
-* `BinaryGivenness` is the scale of discourse-given over discourse-new, which the paper also calls
+* `DiscourseStatus` is the scale of discourse-given over discourse-new, which the paper also calls
   topicality, so Persian's topical indefinite P counts as given.
 * Coding length is an `ℕ` count of special coding elements. The universals are stated over any
   preorder, and the alternation universal is the scenario universal read with the usage rate of
@@ -98,7 +98,7 @@ open OrderDual (toDual)
 Each scale is a linear order whose greater element is the more prominent. The person scale
 of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
 without its optional specific-indefinite level is `Definiteness`, with Eastern
-Khanty's specific P (37) read at the definite end; the givenness scale is `BinaryGivenness`;
+Khanty's specific P (37) read at the definite end; the givenness scale is `DiscourseStatus`;
 and the focus scale of (8b), background above focus, is the dual of focus marking,
 `Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
 
@@ -351,12 +351,12 @@ theorem inverseUniversal_of_scenarioUniversal {v : Scenario α → L} (h : Scena
 /-- Universals 13 (62) and 14 (63) say that across the givenness scenarios of A and P, or of R and
 T, the usage rate `rate` of the longer alternant, the passive or the dative, is lowest when the
 higher-ranked argument is given and the lower-ranked one new. -/
-def GivennessAlternationUniversal (rate : Scenario BinaryGivenness → F) : Prop :=
+def GivennessAlternationUniversal (rate : Scenario DiscourseStatus → F) : Prop :=
   ∀ s, rate ⟨.given, .new⟩ ≤ rate s
 
 -- (61), §10.1
 theorem givennessAlternationUniversal_of_scenarioUniversal
-    {rate : Scenario BinaryGivenness → F} (h : ScenarioUniversal rate) :
+    {rate : Scenario DiscourseStatus → F} (h : ScenarioUniversal rate) :
     GivennessAlternationUniversal rate :=
   fun _ ↦ scenarioUniversal_iff_antitone.1 h le_top
 
@@ -439,7 +439,7 @@ def sakhaP : Definiteness → ℕ := atLeast .definite
 def sardinianP : Animacy → ℕ := atLeast .human
 
 /-- Persian flags a topical P with `-râ`, as in (19). -/
-def persianP : BinaryGivenness → ℕ := atLeast .given
+def persianP : DiscourseStatus → ℕ := atLeast .given
 
 /-- Abruzzese flags a locuphoric P with `a`, as in (20). -/
 def abruzzeseP : Person.Class → ℕ := atLeast .participant
@@ -826,7 +826,7 @@ def Definiteness.table : List (String × Definiteness) :=
   [("definite", .definite), ("indefinite", .indefinite), ("def", .definite), ("indef", .indefinite)]
 
 /-- The givenness tags of the rows. -/
-def BinaryGivenness.table : List (String × BinaryGivenness) := [("given", .given), ("new", .new)]
+def DiscourseStatus.table : List (String × DiscourseStatus) := [("given", .given), ("new", .new)]
 
 /-- The focus tags of the rows lie on the focus scale of (8b), which ranks background above focus as
 the dual of the focus-marking order. -/
@@ -848,7 +848,7 @@ theorem rows_splitP_splitA :
       Reproduces (rows .nuorese "P" "animacy") (prominence? Animacy.table) sardinianP ∧
       -- Punjabi's split is Sakha's, definiteness-conditioned P flagging (§4.1.2)
       Reproduces (rows .easternPanjabi "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
-      Reproduces (rows .westernFarsi "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
+      Reproduces (rows .westernFarsi "P" "givenness") (prominence? DiscourseStatus.table) persianP ∧
       Reproduces (rows .continentalSouthernItalian "P" "person") (prominence? Person.Class.table)
         abruzzeseP ∧
       Reproduces (rows .takale "A" "person") (prominence? Person.Class.table) godoberiA ∧

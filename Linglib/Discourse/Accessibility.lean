@@ -41,7 +41,7 @@ words, clitics, inflection and zero.
 The scale is the paper's ordering of its English form classes, taken as data; informativity and
 rigidity are not individually antitone along it, and which comparisons the criteria predict
 jointly is the business of `Studies/Ariel2001.lean`. The cognitive statuses of referents, as against the
-forms that code them, are `Discourse.GivennessStatus`.
+forms that code them, are `CognitiveStatus`.
 
 ## References
 

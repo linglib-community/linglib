@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Discourse.Givenness
+public import Linglib.Discourse.GivennessHierarchy
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Mandarin.Determiners
@@ -90,7 +90,7 @@ inductive Form.Kind where
   deriving DecidableEq, Fintype
 
 /-- Table 1: the forms of a language, each with the highest status it is listed under. -/
-def table1 : Language → List (Form.Kind × GivennessStatus)
+def table1 : Language → List (Form.Kind × CognitiveStatus)
   | .chinese =>
     [(.zero, .inFocus), (.pronoun, .inFocus), (.stressedPronoun, .activated),
      (.demonstrative Mandarin.Determiners.zhe.deixis, .activated),
@@ -132,7 +132,7 @@ def table1 : Language → List (Form.Kind × GivennessStatus)
      (.bareN, .typeIdentifiable)]
 
 /-- The status a form of a language requires, if Table 1 lists it. -/
-def required (l : Language) (k : Form.Kind) : Option GivennessStatus := (table1 l).lookup k
+def required (l : Language) (k : Form.Kind) : Option CognitiveStatus := (table1 l).lookup k
 
 /-- Corresponding forms of the five languages require the same status, unless they are
 demonstrative determiners. -/
@@ -158,6 +158,20 @@ theorem activated_le_of_pronominal :
 theorem required_eq_inFocus :
     ∀ l k, required l k = some .inFocus → k = .zero ∨ k = .pronoun := by
   decide +kernel
+
+/-- A noun phrase is definite when its form requires its referent to be at least uniquely
+identifiable. -/
+def definiteness (s : CognitiveStatus) : Definiteness :=
+  if .uniquelyIdentifiable ≤ s then .definite else .indefinite
+
+-- fn. 4: every English form but *a N* and indefinite *this N* is definite, and the articles are
+-- as definite as the fragment's *the* and *a*.
+theorem definiteness_english :
+    (∀ k, ∀ s ∈ required .english k,
+      definiteness s = .indefinite ↔ k = .indefiniteN ∨ k = .indefiniteThisN) ∧
+    (required .english .definiteN).map definiteness = some English.Determiners.the.definiteness ∧
+    (required .english .indefiniteN).map definiteness = some English.Determiners.a.definiteness :=
+  by decide +kernel
 
 /-! ### The corpus -/
 
@@ -198,7 +212,7 @@ def Form.kinds : Form → List Form.Kind
   | .yiN | .aN | .unN => [.indefiniteN]
 
 /-- The status a column records. -/
-def Status.toGivennessStatus : Status → GivennessStatus
+def Status.toCognitiveStatus : Status → CognitiveStatus
   | .inFocus => .inFocus
   | .activated => .activated
   | .familiar => .familiar
@@ -207,12 +221,12 @@ def Status.toGivennessStatus : Status → GivennessStatus
   | .typeIdentifiable => .typeIdentifiable
 
 /-- The status a printed form requires in a language, the weakest its kinds require. -/
-def requiredOf (l : Language) (f : Form) : Option GivennessStatus :=
+def requiredOf (l : Language) (f : Form) : Option CognitiveStatus :=
   (f.kinds.filterMap (required l)).min?
 
 /-- The referent of a cell meets the status its form requires. -/
 def Cell.Meets (c : Cell) : Prop :=
-  ∀ r ∈ requiredOf c.language c.form, r ≤ c.status.toGivennessStatus
+  ∀ r ∈ requiredOf c.language c.form, r ≤ c.status.toCognitiveStatus
 
 instance : DecidablePred Cell.Meets := fun c ↦
   inferInstanceAs (Decidable (∀ r ∈ requiredOf c.language c.form, _))
@@ -239,7 +253,7 @@ that meets their requirement, and only there. -/
 theorem attested_iff :
     ∀ p ∈ [(Language.english, Form.theN), (.english, .thatPronoun), (.russian, .bare),
       (.russian, .etoN)], ∀ s : Status,
-        Attested p.1 p.2 s ↔ ∀ r ∈ requiredOf p.1 p.2, r ≤ s.toGivennessStatus := by
+        Attested p.1 p.2 s ↔ ∀ r ∈ requiredOf p.1 p.2, r ≤ s.toCognitiveStatus := by
   decide +kernel
 
 /-- The tokens of the cells satisfying `p`. -/
@@ -278,7 +292,7 @@ instance : DecidablePred Form.Full := fun f ↦
 
 /-- The tokens of a form in a language whose referent is at least familiar. -/
 def familiarTokens (l : Language) (f : Form) : ℕ :=
-  tokens fun c ↦ c.language = l ∧ c.form = f ∧ .familiar ≤ c.status.toGivennessStatus
+  tokens fun c ↦ c.language = l ∧ c.form = f ∧ .familiar ≤ c.status.toCognitiveStatus
 
 /-- In every language the most frequent full noun phrase for a familiar referent is the least
 restrictive one with a definite reading, the definite article where the language has one and a
@@ -291,7 +305,7 @@ theorem familiar_mostFrequent (l : Language) :
 
 /-- The tokens of full noun phrases in a language whose referent is at least familiar. -/
 def fullFamiliarTokens (l : Language) : ℕ :=
-  tokens fun c ↦ c.language = l ∧ c.form.Full ∧ .familiar ≤ c.status.toGivennessStatus
+  tokens fun c ↦ c.language = l ∧ c.form.Full ∧ .familiar ≤ c.status.toCognitiveStatus
 
 -- p. 299
 theorem familiar_share_gt :
