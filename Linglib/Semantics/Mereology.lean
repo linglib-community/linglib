@@ -370,6 +370,9 @@ theorem atom_singleton {β : Type*} (b : β) : Atom ({b} : Finset β) :=
 theorem atom_finset_iff {β : Type*} {s : Finset β} : Atom s ↔ ∃ b, s = {b} := by
   rw [atom_iff_isAtom, Finset.isAtom_iff]
 
+theorem atom_finset_iff_card_eq_one {β : Type*} {s : Finset β} : Atom s ↔ s.card = 1 :=
+  atom_finset_iff.trans Finset.card_eq_one.symm
+
 /-- The atomic parts of a finite set are its singletons. -/
 theorem atomsBelow_finset {β : Type*} (s : Finset β) :
     atomsBelow s = (fun b ↦ ({b} : Finset β)) '' ↑s := by
