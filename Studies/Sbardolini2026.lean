@@ -71,20 +71,20 @@ open Classical in
 /-- The sentence that `x` is `F`. -/
 noncomputable def atom (x : E) : W → Trivalent := fun w ↦ .ofProp (F x w)
 
-/-- (3a): *Mary drank anything* entails *Mary drank the Chianti*. -/
+-- (3a): *Mary drank anything* entails *Mary drank the Chianti*.
 theorem posExt_any_subset (c : E) : posExt (any F) ⊆ posExt (atom F c) := fun w hw ↦ by
   simp only [mem_posExt, any, atom] at hw ⊢
   split_ifs at hw
   simp_all
 
-/-- (3b): *Mary didn't drink anything* entails *Mary didn't drink the Barolo*. -/
+-- (3b): *Mary didn't drink anything* entails *Mary didn't drink the Barolo*.
 theorem posExt_compl_any_subset (b : E) : posExt (any F)ᶜ ⊆ posExt (atom F b)ᶜ := fun w hw ↦ by
   simp only [mem_posExt, Pi.compl_apply, compl_eq_true_iff, any, atom] at hw ⊢
   split_ifs at hw
   simp_all
 
-/-- (3c), the contrapositive of (3b), is not truth preserving: *Mary drank the Barolo* does not
-entail *Mary drank anything* where she did not drink the Chianti. -/
+-- (3c), the contrapositive of (3b), is not truth preserving: *Mary drank the Barolo* does not
+-- entail *Mary drank anything* where she did not drink the Chianti.
 theorem not_posExt_atom_subset {b c : E} {w : W} (hb : F b w) (hc : ¬ F c w) :
     ¬ posExt (atom F b) ⊆ posExt (any F) := fun h ↦ by
   have := h (show w ∈ posExt (atom F b) by simp [atom, hb])
@@ -125,8 +125,8 @@ theorem IsSUM.isStrawsonUE [Lattice α] {f : α → W → Trivalent} (h : IsSUM 
     h {p} (Finset.singleton_nonempty p) q (by simpa using hpq) w (by simpa using hp) hq
 
 open Classical in
-/-- Without presuppositions, an environment is SUM when it is monotone and closed under meets,
-the upward monotonicity of [sbardolini-2026]'s §3 for any number of premises. -/
+-- Without presuppositions, an environment is SUM when it is monotone and closed under meets,
+-- the upward monotonicity of [sbardolini-2026]'s §3 for any number of premises.
 theorem isSUM_ofProp_iff [Lattice α] {g : α → W → Prop} :
     IsSUM (fun x w ↦ Trivalent.ofProp (g x w)) ↔
       Monotone g ∧ ∀ x y w, g x w → g y w → g (x ⊓ y) w := by
@@ -190,52 +190,52 @@ section Table
 variable {E W : Type*}
 
 open Classical in
-/-- *\*Mary ate any pizza*: predication is SUM. -/
+-- *\*Mary ate any pizza*: predication is SUM.
 theorem isSUM_predication (x : E) : IsSUM fun F : Set E ↦ fun _ : W ↦ Trivalent.ofProp (x ∈ F) :=
   isSUM_ofProp_iff.2 ⟨fun _ _ h _ hx ↦ h hx, fun _ _ _ hF hG ↦ ⟨hF, hG⟩⟩
 
 open Classical in
-/-- *Mary didn't eat any pizza*: negation is not SUM. -/
+-- *Mary didn't eat any pizza*: negation is not SUM.
 theorem not_isSUM_negation [Nonempty W] (x : E) :
     ¬ IsSUM fun F : Set E ↦ fun _ : W ↦ Trivalent.ofProp (x ∉ F) :=
   not_isSUM_of_isStrawsonDE (.of_antitone (a := fun F _ ↦ x ∉ F)
     (fun _ _ h _ hG hF ↦ hG (Set.mem_of_mem_of_subset hF h)) fun _ _ _ ↦ by simp)
     (Set.empty_subset {x}) (w := Classical.arbitrary W) (by simp) (by simp) (by simp)
 
-/-- *\*Everyone who left ate any pizza* and *\*Mary must drink anything*: the scope of *every*
-and necessity are SUM. -/
+-- *\*Everyone who left ate any pizza* and *\*Mary must drink anything*: the scope of *every*
+-- and necessity are SUM.
 theorem isSUM_every (A : Set E) (R : SetRel W W) :
     IsSUM (scope (W := W) Det.every A) ∧ IsSUM (modal Det.every R) :=
   ⟨isSUM_scope_of_filtrating Det.filtrating_every A,
     isSUM_modal_of_filtrating Det.filtrating_every R⟩
 
-/-- *Everyone who ate any pizza left*: the restrictor of *every* is not SUM. -/
+-- *Everyone who ate any pizza left*: the restrictor of *every* is not SUM.
 theorem not_isSUM_restrictor_every [Nonempty W] {x : E} {B : Set E} (hx : x ∉ B) :
     ¬ IsSUM (restrictor (W := W) Det.every B) :=
   not_isSUM_of_isStrawsonDE (isStrawsonDE_ofProp_iff.2 fun _ _ h _ hG ↦ h.trans hG)
     (Set.empty_subset {x}) (w := Classical.arbitrary W) (by simp [restrictor])
     (by simp [restrictor]) (by simp [restrictor, Det.every, hx])
 
-/-- *\*Someone who left ate any pizza* has an environment SUM for one premise. -/
+-- *\*Someone who left ate any pizza* has an environment SUM for one premise.
 theorem isStrawsonUE_scope_some (A : Set E) : IsStrawsonUE (scope (W := W) Det.some A) :=
   isStrawsonUE_ofProp_iff.2 fun _ _ h _ ↦ Det.monotone_some A h
 
-/-- With two premises, the scope of *some* over a restrictor with two members is not SUM. -/
+-- With two premises, the scope of *some* over a restrictor with two members is not SUM.
 theorem not_isSUM_scope_some [Nonempty W] {A : Set E} {a b : E} (ha : a ∈ A) (hb : b ∈ A)
     (hab : a ≠ b) : ¬ IsSUM (scope (W := W) Det.some A) := fun h ↦ by
   classical
   have := h {{a}, {b}} (by simp) ∅ (by simp [Finset.inf'_insert, hab]) (Classical.arbitrary W)
   simp [scope, Det.some, ha, hb] at this
 
-/-- With two premises, the restrictor of *some* over a scope with two members is not SUM. -/
+-- With two premises, the restrictor of *some* over a scope with two members is not SUM.
 theorem not_isSUM_restrictor_some [Nonempty W] {B : Set E} {a b : E} (ha : a ∈ B) (hb : b ∈ B)
     (hab : a ≠ b) : ¬ IsSUM (restrictor (W := W) Det.some B) := fun h ↦ by
   classical
   have := h {{a}, {b}} (by simp) ∅ (by simp [Finset.inf'_insert, hab]) (Classical.arbitrary W)
   simp [restrictor, Det.some, ha, hb] at this
 
-/-- With two premises, the scope of *most* over three professors is not SUM: *most* of them are
-in `{0, 1}` and *most* in `{1, 2}`, but only one is in both. -/
+-- With two premises, the scope of *most* over three professors is not SUM: *most* of them are
+-- in `{0, 1}` and *most* in `{1, 2}`, but only one is in both.
 theorem not_isSUM_scope_most [Nonempty W] :
     ¬ IsSUM (scope (W := W) Det.most (Set.univ : Set (Fin 3))) := fun h ↦ by
   classical
@@ -245,19 +245,19 @@ theorem not_isSUM_scope_most [Nonempty W] :
   simp [scope] at this
   revert this; decide
 
-/-- *Most professors who ate any pizza left*: the restrictor of *most* is not SUM. -/
+-- *Most professors who ate any pizza left*: the restrictor of *most* is not SUM.
 theorem not_isSUM_restrictor_most [Nonempty W] :
     ¬ ∀ B : Set (Fin 3), IsSUM (restrictor (W := W) Det.most B) := fun h ↦
   Det.not_restrictorMonotone_most fun B _ _ hFG hF ↦
     isStrawsonUE_ofProp_iff.1 (h B).isStrawsonUE hFG (Classical.arbitrary W) hF
 
-/-- *If Mary drank anything, she got sick*: the antecedent of a conditional is not SUM. -/
+-- *If Mary drank anything, she got sick*: the antecedent of a conditional is not SUM.
 theorem not_isSUM_antecedent :
     ¬ IsSUM fun p : Set Bool ↦
       Conditional.horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {Bool.true} :=
   fun h ↦ Conditional.not_isStrawsonUE_horizonCounterfactual h.isStrawsonUE
 
-/-- *\*If Mary got sick, she drank anything*: the consequent of a conditional is SUM. -/
+-- *\*If Mary got sick, she drank anything*: the consequent of a conditional is SUM.
 theorem isSUM_consequent {I : Type*} (horizon : I → Set W) (p : Set W) :
     IsSUM (Conditional.horizonCounterfactual horizon p) := by
   intro s hs y hy i hall _
@@ -265,8 +265,8 @@ theorem isSUM_consequent {I : Type*} (horizon : I → Set W) (p : Set W) :
   exact ⟨(hall _ hs.choose_spec).1, (Finset.inf'_induction hs id (p := (horizon i ∩ p ⊆ ·))
     (fun _ ha _ hb ↦ Set.subset_inter ha hb) fun x hx ↦ (hall x hx).2).trans hy⟩
 
-/-- *\*Zero or more students read anything* and *\*At most one and at least three students read
-anything*: a tautology and a contradiction are SUM. -/
+-- *\*Zero or more students read anything* and *\*At most one and at least three students read
+-- anything*: a tautology and a contradiction are SUM.
 theorem isSUM_tautology_contradiction (A : Set E) :
     IsSUM (scope (W := W) (Det.atLeast 0) A) ∧
       IsSUM (scope (W := W) (Det.atMost 1 ⊓ Det.atLeast 3) A) :=
@@ -274,8 +274,8 @@ theorem isSUM_tautology_contradiction (A : Set E) :
     isSUM_ofProp_iff.2 ⟨fun _ _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num),
       fun _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num)⟩⟩
 
-/-- *\*The student with any books sold them* has an environment SUM for one premise: *the novel
-was long* and *there was exactly one book* entail *the book was long* (19). -/
+-- *\*The student with any books sold them* has an environment SUM for one premise: *the novel
+-- was long* and *there was exactly one book* entail *the book was long* (19).
 theorem isStrawsonUE_definite_restrictor (B : Set E) :
     IsStrawsonUE fun F ↦ definite (W := W) F B := by
   intro F G hFG w hF hG
@@ -287,15 +287,15 @@ theorem isStrawsonUE_definite_restrictor (B : Set E) :
   obtain rfl := (iota_eq_some_iff.1 hiG).2 e (hFG (iota_eq_some_iff.1 hiF).1)
   simpa [hiF, hiG] using hF
 
-/-- With two premises, the restrictor of the singular definite is not SUM: *the novel* and *the
-cookbook* can be long while *the poem* is not, though nothing is both a novel and a cookbook. -/
+-- With two premises, the restrictor of the singular definite is not SUM: *the novel* and *the
+-- cookbook* can be long while *the poem* is not, though nothing is both a novel and a cookbook.
 theorem not_isSUM_definite_restrictor [Nonempty W] {B : Set E} {a b c : E} (ha : a ∈ B)
     (hb : b ∈ B) (hc : c ∉ B) (hab : a ≠ b) : ¬ IsSUM fun F ↦ definite (W := W) F B := fun h ↦ by
   classical
   have := h {{a}, {b}} (by simp) {c} (by simp [Finset.inf'_insert, hab]) (Classical.arbitrary W)
   simp [definite, presupOfReferent, ha, hb, hc] at this
 
-/-- *\*The student sold any books*: the scope of the singular definite is SUM. -/
+-- *\*The student sold any books*: the scope of the singular definite is SUM.
 theorem isSUM_definite_scope (A : Set E) : IsSUM (definite (W := W) A) := by
   intro s hs y hy w hall hdef
   simp only [definite, presupOfReferent] at hall hdef ⊢
@@ -304,8 +304,8 @@ theorem isSUM_definite_scope (A : Set E) : IsSUM (definite (W := W) A) := by
   simp only [hiA, Option.elim_some, Trivalent.ofProp_eq_true_iff] at hall ⊢
   exact hy (Finset.inf'_induction hs id (p := (e ∈ ·)) (fun _ ha _ hb ↦ ⟨ha, hb⟩) hall)
 
-/-- *\*It is Mary who sold any books*: the cleft, which presupposes that exactly one thing is `F`
-and says that it is `x`, is SUM, being the singular definite with scope `{x}` (20a). -/
+-- *\*It is Mary who sold any books*: the cleft, which presupposes that exactly one thing is `F`
+-- and says that it is `x`, is SUM, being the singular definite with scope `{x}` (20a).
 theorem isSUM_cleft (x : E) : IsSUM fun F ↦ definite (W := W) F {x} := by
   intro s hs y hy w hall hdef
   simp only [definite, presupOfReferent] at hall hdef ⊢
@@ -320,15 +320,15 @@ theorem isSUM_cleft (x : E) : IsSUM fun F ↦ definite (W := W) F {x} := by
   simpa [hiy] using ((iota_eq_some_iff.1 hiy).2 x
     (hy (Finset.inf'_induction hs id (p := (x ∈ ·)) (fun _ ha _ hb ↦ ⟨ha, hb⟩) hx))).symm
 
-/-- *Only Mary sold any books*: *only x* is not SUM, since *only John saw a small bird* and *John
-saw a bird* do not entail *only John saw a bird* (22a). -/
+-- *Only Mary sold any books*: *only x* is not SUM, since *only John saw a small bird* and *John
+-- saw a bird* do not entail *only John saw a bird* (22a).
 theorem not_isSUM_only [Nonempty W] {x y : E} (hxy : x ≠ y) :
     ¬ IsSUM fun F : Set E ↦ Focus.only (· = ·) Set.univ (fun j ↦ {_w : W | j ∈ F}) x := fun h ↦
   Presupposition.not_isStrawsonUE (p := {x}) (q := {x, y}) (w := Classical.arbitrary W)
     (by simp) (by simp [Focus.only]) (by simp [Focus.only, hxy]) h.isStrawsonUE
 
-/-- *John is sorry that Mary sold any books*: *sorry that* is not SUM, since *sorry that Robin
-bought a Civic* does not Strawson-entail *sorry that Robin bought a car* (22c). -/
+-- *John is sorry that Mary sold any books*: *sorry that* is not SUM, since *sorry that Robin
+-- bought a Civic* does not Strawson-entail *sorry that Robin bought a car* (22c).
 theorem not_isSUM_regret :
     ¬ IsSUM (Desire.BestWorlds.regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ)
       (fun _ ↦ {(· = 1)})) :=
@@ -362,9 +362,9 @@ theorem tautology {E : Type} (A : Set E) :
     fun h ↦ (Licenser.carries_ofOperator_iff.1 h).2 fun _ _ _ _ ↦ Nat.zero_le _,
     (isSUM_tautology_contradiction A).1⟩
 
-/-- *\*Mary must drink anything*: necessity carries no strength of negation, being upward
-entailing, and is SUM, so von Fintel's condition and the Harmony hypothesis alike exclude *any*
-under it. -/
+-- *\*Mary must drink anything*: necessity carries no strength of negation, being upward
+-- entailing, and is SUM, so von Fintel's condition and the Harmony hypothesis alike exclude *any*
+-- under it.
 theorem necessity {W : Type} (R : SetRel W W) :
     ¬ (Licenser.modal LicensingContext.necessityFamily).Carries .weak ∧
       IsSUM (modal Det.every R) :=
@@ -379,13 +379,13 @@ section Errata
 
 variable {W : Type*}
 
-/-- *Mary might drink anything*: `◇` is `some` over the accessible worlds, upward entailing for
-one premise as the scope of *some* is, so the n = 1 condition of footnotes 6 and 7 predicts it
-ungrammatical. -/
+-- *Mary might drink anything*: `◇` is `some` over the accessible worlds, upward entailing for
+-- one premise as the scope of *some* is, so the n = 1 condition of footnotes 6 and 7 predicts it
+-- ungrammatical.
 theorem isStrawsonUE_modal_some (R : SetRel W W) : IsStrawsonUE (modal Det.some R) :=
   isStrawsonUE_ofProp_iff.2 fun _ _ h _ ↦ Det.monotone_some _ h
 
-/-- With two premises, `◇` over two accessible worlds is not SUM, as (11a) shows. -/
+-- With two premises, `◇` over two accessible worlds is not SUM, as (11a) shows.
 theorem not_isSUM_modal_some {R : SetRel W W} {w u v : W} (hu : (w, u) ∈ R) (hv : (w, v) ∈ R)
     (huv : u ≠ v) : ¬ IsSUM (modal Det.some R) := fun h ↦ by
   classical
