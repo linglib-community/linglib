@@ -66,34 +66,35 @@ def target : Grammatical → Component
 @[simp] theorem target_subjunctive : subjunctive.target = .preferential := rfl
 
 /-- The indicative is simple necessity over the context set and the subjunctive is local
-necessity under the ordering. -/
-def interp : Grammatical → State W → (W → Prop) → Prop
-  | .indicative, c, p => c.toOrderedInformationState.boxCs p
-  | .subjunctive, c, p => c.toOrderedInformationState.localNecessity p
+necessity, good possibility under the ordering. -/
+def interp : Grammatical → OrderedInformationState W → (W → Prop) → Prop
+  | .indicative, σ, p => σ.boxCs p
+  | .subjunctive, σ, p => OrderingSemantics.IsGoodPossibility σ.order σ.info {v | p v}
 
-@[simp] theorem interp_indicative (c : State W) (p : W → Prop) :
-    indicative.interp c p = c.toOrderedInformationState.boxCs p := rfl
+@[simp] theorem interp_indicative (σ : OrderedInformationState W) (p : W → Prop) :
+    indicative.interp σ p = σ.boxCs p := rfl
 
-@[simp] theorem interp_subjunctive (c : State W) (p : W → Prop) :
-    subjunctive.interp c p = c.toOrderedInformationState.localNecessity p := rfl
+@[simp] theorem interp_subjunctive (σ : OrderedInformationState W) (p : W → Prop) :
+    subjunctive.interp σ p = OrderingSemantics.IsGoodPossibility σ.order σ.info {v | p v} := rfl
 
 /-- When the context set has a world at least as normal as all of its worlds, each mood is the
-necessity modal of the component it targets. -/
+necessity modal of the component it targets. Without one they come apart, as when two
+incomparable optimal worlds each make a different proposition locally necessary. -/
 theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
     (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
-    m.interp c p ↔ m.target.boxOn c p := by
+    m.interp c.toOrderedInformationState p ↔ m.target.boxOn c p := by
   cases m
   · exact Iff.rfl
-  · exact OrderedInformationState.localNecessity_iff_boxLe hb hleast p
+  · exact (OrderingSemantics.isGoodPossibility_iff_of_least hb hleast).trans
+      (OrderingSemantics.minimals_subset_iff_of_least hb hleast).symm
 
 /-- Every world is in the context set, and `false`, the one `sepProp`-world, is the one optimal
 world. -/
-def sepState : State Bool :=
-  State.ofOrderedInformationState ⟨Set.univ, .ofCriterion State.sepProp⟩
+def sepState : OrderedInformationState Bool := ⟨Set.univ, .ofCriterion State.sepProp⟩
 
 /-- The indicative and the subjunctive disagree on some state and proposition. -/
-theorem indicative_ne_subjunctive :
-    ∃ (c : State Bool) (p : Bool → Prop), subjunctive.interp c p ∧ ¬ indicative.interp c p :=
+theorem indicative_ne_subjunctive : ∃ (σ : OrderedInformationState Bool) (p : Bool → Prop),
+    subjunctive.interp σ p ∧ ¬ indicative.interp σ p :=
   ⟨sepState, State.sepProp, ⟨false, Set.mem_univ false, fun _ _ hv ↦ hv rfl⟩,
     fun h ↦ Bool.noConfusion (h true (Set.mem_univ true))⟩
 

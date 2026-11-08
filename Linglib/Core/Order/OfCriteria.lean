@@ -115,6 +115,14 @@ theorem satisfied_subset_iff (sat : α → C → Prop) (criteria : Set C) (a b :
     satisfied sat criteria a ⊆ satisfied sat criteria b ↔ (ofCriteria sat criteria).le b a :=
   (ofCriteria_le_iff_subset sat criteria b a).symm
 
+/-- Two elements are equivalent under the criteria-derived preorder exactly when they satisfy the
+same criteria. -/
+theorem antisymmRel_ofCriteria_iff {sat : α → C → Prop} {criteria : Set C} {a b : α} :
+    AntisymmRel (ofCriteria sat criteria).le a b ↔
+      satisfied sat criteria a = satisfied sat criteria b :=
+  ((satisfied_subset_iff sat criteria b a).symm.and (satisfied_subset_iff sat criteria a b).symm)
+    |>.trans (and_comm.trans Set.Subset.antisymm_iff.symm)
+
 instance (sat : α → C → Prop) (l : List C) [DecidableEq C] [∀ a c, Decidable (sat a c)]
     (a b : α) : Decidable (satisfied sat {c | c ∈ l} a ≤ satisfied sat {c | c ∈ l} b) :=
   decidable_of_iff (∀ c ∈ l, sat a c → sat b c) (by

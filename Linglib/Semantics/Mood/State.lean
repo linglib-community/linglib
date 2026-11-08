@@ -358,10 +358,6 @@ theorem necessity_iff_boxLe (p : W → Prop) (w : W) :
     necessity f g p w ↔ (stateAt f g w).boxLe p :=
   Iff.rfl
 
-theorem goodPossibility_iff_localNecessity (p : W → Prop) (w : W) :
-    goodPossibility f g p w ↔ (stateAt f g w).localNecessity p :=
-  Iff.rfl
-
 theorem isFixedPt_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
     Function.IsFixedPt (·.assert p) (stateAt f g w) ↔ simpleNecessity f p w :=
   OrderedInformationState.isFixedPt_assert_iff

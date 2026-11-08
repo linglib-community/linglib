@@ -78,10 +78,10 @@ def Content.target : Content W → Component
   | .single _ => .informational
   | .pair _ _ => .preferential
 
-/-- The mood state a content induces at a world. -/
-def Content.state : Content W → W → State W
-  | .single f, w => .ofOrderedInformationState (stateAt f ⊥ w)
-  | .pair g f, w => .ofOrderedInformationState (stateAt f g w)
+/-- The ordered information state a content induces at a world. -/
+def Content.state : Content W → W → DynamicSemantics.OrderedInformationState W
+  | .single f => stateAt f ⊥
+  | .pair g f => stateAt f g
 
 /-- The Spanish moods relate a clause to a world through the force of the mood applied to the
 content. A mood and a content that target different components do not combine. -/
@@ -310,12 +310,10 @@ theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : W → 
   refine ⟨fun ⟨u, hu, hp⟩ ↦ ?_, fun ⟨_, ⟨b, hb, hX⟩, hp⟩ ↦ ⟨b, hb.1, fun v hv hvb ↦ ?_⟩⟩
   · obtain ⟨b, hb, hbu⟩ := hlim u hu
     exact ⟨_, ⟨b, hb, rfl⟩, fun v ⟨hv, hvb⟩ ↦ hp v hv.1
-      (o.le_trans _ _ _ ((Preorder.satisfied_subset_iff _ _ _ _).1 hvb.ge) hbu)⟩
-  · have hbv := hb.2 hv hvb
-    refine hp v (hX ▸ ⟨⟨hv, fun ⦃z⦄ hz hzv ↦ o.le_trans _ _ _ hvb
-      (hb.2 hz (o.le_trans _ _ _ hzv hvb))⟩, ?_⟩)
-    exact ((Preorder.satisfied_subset_iff _ _ _ _).2 hbv).antisymm
-      ((Preorder.satisfied_subset_iff _ _ _ _).2 hvb)
+      (o.le_trans _ _ _ (Preorder.antisymmRel_ofCriteria_iff.2 hvb).1 hbu)⟩
+  · exact hp v (hX ▸ ⟨⟨hv, fun ⦃z⦄ hz hzv ↦ o.le_trans _ _ _ hvb
+      (hb.2 hz (o.le_trans _ _ _ hzv hvb))⟩,
+      Preorder.antisymmRel_ofCriteria_iff.1 ⟨hvb, hb.2 hv hvb⟩⟩)
 
 -- Appendix B as printed: no set holds exactly the pairs of best worlds with the same premises.
 theorem not_exists_printed_bestSet (w : World) : ¬ ∃ X : Set World, ∀ u v,
