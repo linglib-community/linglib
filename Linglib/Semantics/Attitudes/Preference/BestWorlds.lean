@@ -67,9 +67,9 @@ section Want
 
 /-- `Want A dom p` holds when every best world of `dom` under the ordering source `A` is a
 `p`-world. -/
-def Want (A : Set (W → Prop)) (dom p : Set W) : Prop := (premisePreorder A).minimals dom ⊆ p
+def Want (A : Set (Set W)) (dom p : Set W) : Prop := (premisePreorder A).minimals dom ⊆ p
 
-variable {A : Set (W → Prop)} {dom p q : Set W}
+variable {A : Set (Set W)} {dom p q : Set W}
 
 theorem want_iff : Want A dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, (z ≤[A] w) → (w ≤[A] z)) → w ∈ p :=
   ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
@@ -98,7 +98,7 @@ end Want
 
 section Entries
 
-variable (dox base : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
+variable (dox base : W → Set W) (g : W → Set (Set W)) (p : Set W)
 
 open Classical in
 /-- *a wants p* presupposes that the domain `base` contains both `p`-worlds and non-`p`-worlds
@@ -165,7 +165,7 @@ namespace Desire.BestWorlds
 
 open Modality Presupposition Trivalent
 
-variable {W : Type*} (dox base : W → Set W) (g : W → Set (W → Prop))
+variable {W : Type*} (dox base : W → Set W) (g : W → Set (Set W))
 
 /-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
 theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
@@ -178,8 +178,8 @@ theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
 
 /-- *Glad* is not Strawson downward entailing ([von-fintel-1999], §3.3). -/
 theorem not_isStrawsonDE_glad :
-    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
-  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
+  have hb : (premisePreorder {{(1 : Fin 3)}}).minimals (Set.univ : Set (Fin 3)) = {1} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
@@ -206,8 +206,8 @@ Civic* ([von-fintel-1999]'s (30)). -/
 theorem not_antitone_posExt_regret :
     ¬ Antitone fun p : Set Bool ↦
       Trivalent.posExt
-        (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {(· = Bool.false)}) p) := by
-  have hb : (premisePreorder {(· = Bool.false)}).minimals ({Bool.false, Bool.true} : Set Bool) =
+        (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {{Bool.false}}) p) := by
+  have hb : (premisePreorder {{Bool.false}}).minimals ({Bool.false, Bool.true} : Set Bool) =
       {Bool.false} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨Bool.false, by simp, by simp⟩]
     ext
@@ -219,8 +219,8 @@ theorem not_antitone_posExt_regret :
 a Golf*, defined and false when the subject prefers the Golf. The subject believes world `0` and
 prefers world `1`. -/
 theorem not_isStrawsonUE_regret :
-    ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
-  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
+  have hb : (premisePreorder {{(1 : Fin 3)}}).minimals (Set.univ : Set (Fin 3)) = {1} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp

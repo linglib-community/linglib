@@ -68,7 +68,7 @@ open Modality
 abbrev World := Bool × Bool
 
 /-- Roger was elected chief. -/
-def chief : World → Prop := (·.1 = true)
+def chief : Set World := {w | w.1 = true}
 
 /-- The rumor exists. -/
 def rumor : World → Prop := (·.2 = true)
@@ -76,7 +76,7 @@ def rumor : World → Prop := (·.2 = true)
 /-- As evidence of things, the rumor makes the background at `w` record its status in `w`, so
 the accessible worlds are those with a counterpart of the actual rumor, or with none if there is
 none. -/
-def evidence : Background World := fun w ↦ {fun v ↦ v.2 = w.2}
+def evidence : Background World := fun w ↦ {{v | v.2 = w.2}}
 
 /-- As a source of information, the rumor makes the background list its content. -/
 def content : Background World := Function.const World {chief}
@@ -86,7 +86,8 @@ scoped macro "decide_worlds" : tactic =>
   `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.Box,
       ModalLogic.Diamond, Background.mem_accessible, Background.mem_accessibleWorlds,
       Background.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
-      Set.mem_singleton_iff, forall_eq, false_implies, implies_true, and_true]) <;>
+      Set.mem_singleton_iff, Set.mem_ofPred_eq, forall_eq, false_implies, implies_true,
+      and_true]) <;>
       decide))
 
 theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
@@ -94,14 +95,14 @@ theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
 theorem content_not_realistic : ¬ content.IsRealistic := by decide_worlds
 
 -- (8b)
-theorem sollen_holds (w : World) : simpleNecessity content chief w := by
+theorem sollen_holds (w : World) : simpleNecessity content (· ∈ chief) w := by
   decide_worlds
 
 -- (8a)
-theorem not_must_chief (w : World) : ¬ simpleNecessity evidence chief w := by
+theorem not_must_chief (w : World) : ¬ simpleNecessity evidence (· ∈ chief) w := by
   revert w; decide_worlds
 
-theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w := by
+theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence (· ∈ chief) w := by
   revert h w; decide_worlds
 
 -- (8a)
@@ -210,12 +211,11 @@ abbrev World := Fin 4
 
 /-- The ordering source of §2.4, `{w₃}`, `{w₂, w₃}` and `{w₁, w₂, w₃}` at every world, which
 induces the ranking `O₁` of §2.5. -/
-def ideal : Background World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
+def ideal : Background World := fun _ ↦ {Set.Ici 3, Set.Ici 2, Set.Ici 1}
 
 theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤ w := by
   simp only [Preorder.ofCriteria_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
-      forall_eq_or_imp,
-    forall_eq]
+    forall_eq_or_imp, forall_eq, Set.mem_Ici]
   fin_omega
 
 /-- Kratzer's probability measure gives `wᵢ` the probability `2ⁱ/15`. -/
@@ -252,11 +252,11 @@ theorem betterPossibility_iff (p q : Set World) :
 
 /-- The ordering source `{w₂}`, `{w₂, w₃}`, `{w₁, w₂, w₃}`, which induces the ranking `O₂`,
 `w₂ < w₃ < w₁ < w₀`. -/
-def swapped : Background World := fun _ ↦ {(· = 2), (2 ≤ ·), (1 ≤ ·)}
+def swapped : Background World := fun _ ↦ {{2}, Set.Ici 2, Set.Ici 1}
 
 /-- The ordering source `{w₂, w₃}`, `{w₁, w₂, w₃}` of p. 46, which induces the ranking `O₃`,
 `w₂, w₃ < w₁ < w₀`, with a tie. -/
-def tied : Background World := fun _ ↦ {(2 ≤ ·), (1 ≤ ·)}
+def tied : Background World := fun _ ↦ {Set.Ici 2, Set.Ici 1}
 
 theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
   ext x

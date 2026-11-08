@@ -127,7 +127,7 @@ theorem exists_not_isRational_atBotOn :
     Preorder.ofLE (fun w v ↦ w = v ∨ w = 0 ∧ v = 2) (fun _ ↦ Or.inl rfl) (by decide)
   have hle : ∀ w v, p.le w v ↔ w = v ∨ w = 0 ∧ v = 2 := fun _ _ ↦ Iff.rfl
   refine ⟨p, fun h ↦ ?_⟩
-  letI := p
+  let := p
   simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
   have h₁ : p.minimals Set.univ ⊆ {0, 1} := fun w hw ↦ by
     have := hw.2 (Set.mem_univ 0)
@@ -150,16 +150,16 @@ theorem exists_not_isRational_atBotOn :
 is preferential. -/
 theorem isPreferential_minimals {p : Preorder W} (hp : WellFounded p.lt) :
     IsPreferential fun φ ψ ↦ p.minimals φ ⊆ ψ := by
-  letI := p
-  haveI : WellFoundedLT W := hp
+  let := p
+  have : WellFoundedLT W := hp
   have h := isPreferential_atBotOn (id : W → W)
   simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
   exact h
 
 theorem isRational_minimals {p : Preorder W} (hp : WellFounded p.lt) [Std.Total p.le] :
     IsRational fun φ ψ ↦ p.minimals φ ⊆ ψ := by
-  letI := p
-  haveI : WellFoundedLT W := hp
+  let := p
+  have : WellFoundedLT W := hp
   have h := isRational_atBotOn (id : W → W)
   simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
   exact h
@@ -313,7 +313,7 @@ theorem isRational_and_iff_exists_atBotOn_eq [Finite W] :
   refine ⟨p, hp, ?_⟩
   rw [e]
   funext φ ψ
-  letI := p
+  let := p
   rw [atBotOn_eq_principal_of_wellFoundedLT, mem_principal]
   exact congrArg (· ⊆ ψ) (congrFun hpC φ)
 

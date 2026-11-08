@@ -247,7 +247,7 @@ theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
 /-! ### §1.5 Lifting an order on worlds -/
 
 /-- The ordering source `{{w₀}}`, under which `w₀` alone is best. -/
-def onlyBest (w₀ : W) : Set (W → Prop) := {(· = w₀)}
+def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
   simp [onlyBest, Preorder.ofCriteria_le_iff]
@@ -258,7 +258,7 @@ theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w�
     forall_const, onlyBest_le, Set.mem_singleton_iff]
   exact ⟨fun h ↦ h w₀ (fun _ ↦ rfl) rfl, fun hx _ _ _ ↦ hx⟩
 
-theorem must_bestWorlds [Finite W] (O : Set (W → Prop)) (w : W) :
+theorem must_bestWorlds [Finite W] (O : Set (Set W)) (w : W) :
     Yalcin2010.must O (bestWorlds ⊥ (fun _ ↦ O) w) w :=
   humanNecessity_of_necessity (.of_finite _ _ _) fun _ hv ↦ hv
 
@@ -317,7 +317,7 @@ theorem not_exists_lift :
 
 /-- Under Kratzer's *must* the m-lifting refutes (35) in every finite model in which fewer than
 half the worlds are best (p. 664). -/
-theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (W → Prop)) (w : W)
+theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (Set W)) (w : W)
     (h : (bestWorlds ⊥ (fun _ ↦ O) w).ncard < (bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
     ¬MustToProbably (MatchingLift (premisePreorder O).le) (Yalcin2010.must O · w) :=
   fun hV6 ↦ absurd (hV6 _ (must_bestWorlds O w)).1.ncard_le (not_le.2 h)
@@ -526,8 +526,7 @@ theorem bridge1_thin_margin :
 
 /-- An ordering source on four worlds whose two best worlds each dominate only one of the other
 two. -/
-def crossed : Set (Fin 4 → Prop) :=
-  {(· ∈ ({0, 2} : Set (Fin 4))), (· ∈ ({1, 3} : Set (Fin 4))), (· ∈ ({0, 1} : Set (Fin 4)))}
+def crossed : Set (Set (Fin 4)) := {{0, 2}, {1, 3}, {0, 1}}
 
 theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
     ((u = 0 ∨ u = 2) → (v = 0 ∨ v = 2)) ∧ ((u = 1 ∨ u = 3) → (v = 1 ∨ v = 3)) ∧

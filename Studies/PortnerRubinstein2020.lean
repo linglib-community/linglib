@@ -231,17 +231,17 @@ branch of the ordering and neither holds at every best world. -/
 abbrev World := Bool × Bool
 
 /-- The speaker marries Alice. -/
-def marriesAlice (w : World) : Prop := w.1 = true
+def marriesAlice : Set World := {w | w.1 = true}
 
 /-- The speaker marries Sue. -/
-def marriesSue (w : World) : Prop := w.2 = true
+def marriesSue : Set World := {w | w.2 = true}
 
 /-- The beliefs⁺ rule out marrying both. -/
-def doxPlus : Background World := fun _ ↦ {fun w ↦ ¬ (marriesAlice w ∧ marriesSue w)}
+def doxPlus : Background World := fun _ ↦ {(marriesAlice ∩ marriesSue)ᶜ}
 
 /-- The beliefs are that the speaker marries exactly one of them. -/
 def dox : Background World :=
-  fun _ ↦ {fun w ↦ marriesAlice w ∨ marriesSue w, fun w ↦ ¬ (marriesAlice w ∧ marriesSue w)}
+  fun _ ↦ {marriesAlice ∪ marriesSue, (marriesAlice ∩ marriesSue)ᶜ}
 
 /-- The desires are to marry Alice and to marry Sue. -/
 def bul : Background World := fun _ ↦ {marriesAlice, marriesSue}
@@ -281,7 +281,7 @@ theorem bestWorlds_want_alice_eq_false (w : World) :
     simp [bestWorlds_doxPlus_bul]
   exact Desire.BestWorlds.want_eq_false_iff.2
     ⟨⟨⟨(true, false), by simp [doxPlus, marriesAlice, marriesSue], rfl⟩, (false, true), hS.1,
-      nofun⟩, fun h ↦ nomatch (h hS : marriesAlice (false, true))⟩
+      nofun⟩, fun h ↦ nomatch (h hS : (false, true) ∈ marriesAlice)⟩
 
 -- fn. 22: the desires are consistent together but not with the beliefs, and local necessity
 -- over them makes each marriage hoped for
@@ -300,7 +300,7 @@ theorem hope_alice_and_hope_sue (w : World) :
 source. -/
 def bestSets (f g : Background W) (w : W) : Set (Set W) :=
   {X | ∃ b ∈ bestWorlds f g w, X = {v ∈ bestWorlds f g w |
-    Preorder.satisfied (fun v q ↦ q v) (g w) v = Preorder.satisfied (fun v q ↦ q v) (g w) b}}
+    Preorder.satisfied (· ∈ ·) (g w) v = Preorder.satisfied (· ∈ ·) (g w) b}}
 
 -- Appendix B: under the Limit Assumption local necessity is truth throughout a best set.
 theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : W → Prop} {w : W}
@@ -317,15 +317,14 @@ theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : W → 
 
 -- Appendix B as printed: no set holds exactly the pairs of best worlds with the same premises.
 theorem not_exists_printed_bestSet (w : World) : ¬ ∃ X : Set World, ∀ u v,
-    u ∈ X ∧ v ∈ X ↔ Preorder.satisfied (fun v q ↦ q v) (bul w) u =
-      Preorder.satisfied (fun v q ↦ q v) (bul w) v ∧
+    u ∈ X ∧ v ∈ X ↔ Preorder.satisfied (· ∈ ·) (bul w) u = Preorder.satisfied (· ∈ ·) (bul w) v ∧
       u ∈ bestWorlds doxPlus bul w ∧ v ∈ bestWorlds doxPlus bul w := by
   rintro ⟨X, hX⟩
   have hA : ((true, false) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have hS : ((false, true) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
   have heq := ((hX _ _).1 ⟨((hX _ _).2 ⟨rfl, hA, hA⟩).1, ((hX _ _).2 ⟨rfl, hS, hS⟩).1⟩).1
-  have h : marriesAlice ∈ Preorder.satisfied (fun v q ↦ q v) (bul w) ((false, true) : World) :=
+  have h : marriesAlice ∈ Preorder.satisfied (· ∈ ·) (bul w) ((false, true) : World) :=
     heq ▸ ⟨by simp [bul], rfl⟩
-  exact nomatch (h.2 : marriesAlice (false, true))
+  exact nomatch (h.2 : (false, true) ∈ marriesAlice)
 
 end PortnerRubinstein2020

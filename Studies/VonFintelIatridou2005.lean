@@ -54,7 +54,7 @@ namespace VonFintelIatridou2005
 
 open Modality Conditional.Restrictor
 
-variable {W : Type*} {f g : Background W} {p q : W → Prop} {w : W}
+variable {W : Type*} {f g : Background W} {w : W}
 
 /-! ### The obvious analysis and the Hoboken problem (§3) -/
 
@@ -73,10 +73,10 @@ inductive Hoboken
 
 namespace Hoboken
 
-abbrev wantHarlem : Hoboken → Prop := fun w ↦ w = wantA ∨ w = wantPath
+abbrev wantHarlem : Set Hoboken := {wantA, wantPath}
 abbrev takeA : Hoboken → Prop := fun w ↦ w = wantA ∨ w = otherA
-abbrev goHoboken : Hoboken → Prop := fun w ↦ w = wantPath ∨ w = otherPath
-abbrev goHarlem : Hoboken → Prop := takeA
+abbrev goHoboken : Set Hoboken := {wantPath, otherPath}
+abbrev goHarlem : Set Hoboken := {w | takeA w}
 
 /-- The actual goal in every world is to go to Hoboken. -/
 abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
@@ -104,8 +104,8 @@ inductive Conflict
 namespace Conflict
 
 abbrev takeA : Conflict → Prop := (· = aTrain)
-abbrev goHarlem : Conflict → Prop := takeA
-abbrev goHoboken : Conflict → Prop := (· = pathTrain)
+abbrev goHarlem : Set Conflict := {w | takeA w}
+abbrev goHoboken : Set Conflict := {pathTrain}
 
 /-- Sæbø's ordering source (14) is the actual goal of going to Hoboken with the hypothetical
 goal of going to Harlem added. -/
@@ -137,10 +137,10 @@ inductive Nested
 
 namespace Nested
 
-abbrev wantHarlem : Nested → Prop := fun w ↦ w = bothPath ∨ w = bothA
+abbrev wantHarlem : Set Nested := {bothPath, bothA}
 abbrev takeA : Nested → Prop := (· = bothA)
-abbrev goHoboken : Nested → Prop := fun w ↦ w = actual ∨ w = bothPath
-abbrev goHarlem : Nested → Prop := takeA
+abbrev goHoboken : Set Nested := {actual, bothPath}
+abbrev goHarlem : Set Nested := {w | takeA w}
 
 /-- The goals of each world are Hoboken in the actual world and both in the others. -/
 def goals : Background Nested
@@ -169,17 +169,21 @@ end Nested
 
 /-! ### Designated goals (§6) -/
 
+section DesignatedGoals
+
+variable {p : Set W} {q : W → Prop}
+
 /-- *To p, have to q* (24b) holds when every accessible world achieving the designated goal `p`
 is a `q`-world. -/
-def haveTo (f : Background W) (p q : W → Prop) (w : W) : Prop :=
+def haveTo (f : Background W) (p : Set W) (q : W → Prop) (w : W) : Prop :=
   conditionalNecessity f ⊥ p q w
 
 /-- *To p, ought to q* (24a) holds when every accessible world achieving the designated goal `p`
 that is best by the ancillary considerations `g` is a `q`-world. -/
-def oughtTo (f g : Background W) (p q : W → Prop) (w : W) : Prop :=
+def oughtTo (f g : Background W) (p : Set W) (q : W → Prop) (w : W) : Prop :=
   conditionalNecessity f g p q w
 
-theorem haveTo_iff : haveTo f p q w ↔ ∀ v ∈ f.accessibleWorlds w, p v → q v :=
+theorem haveTo_iff : haveTo f p q w ↔ ∀ v ∈ f.accessibleWorlds w, v ∈ p → q v :=
   (restrictor_eq_strict f p q w).trans Conditional.mem_strictImp_forall
 
 theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := fun u hu ↦
@@ -188,13 +192,15 @@ theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := fun u hu �
       (Background.mem_accessibleWorlds_restrict.1 hz).2⟩
 
 -- (34)
-theorem haveTo_of_imp (h : ∀ v, p v → q v) : haveTo f p q w :=
+theorem haveTo_of_imp (h : ∀ v ∈ p, q v) : haveTo f p q w :=
   haveTo_iff.2 fun v _ hp ↦ h v hp
+
+end DesignatedGoals
 
 -- (23)
 theorem exists_oughtTo_not_haveTo :
-    oughtTo (⊥ : Background Bool) (fun _ ↦ {(· = true)}) (fun _ ↦ True) (· = true) true ∧
-      ¬ haveTo (⊥ : Background Bool) (fun _ ↦ True) (· = true) true := by
+    oughtTo (⊥ : Background Bool) (fun _ ↦ {{true}}) .univ (· = true) true ∧
+      ¬ haveTo (⊥ : Background Bool) .univ (· = true) true := by
   simp only [oughtTo, conditionalNecessity_iff_necessity_of_finite,
     haveTo_iff, necessity_iff, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
@@ -219,11 +225,10 @@ inductive Ruud
 namespace Ruud
 
 abbrev takeA : Ruud → Prop := (· = aTrain)
-abbrev meetRuud : Ruud → Prop := takeA
+abbrev meetRuud : Set Ruud := {w | takeA w}
 
 theorem not_haveTo_and_oughtTo :
-    ¬ haveTo ⊥ (fun _ ↦ True) takeA aTrain ∧
-      oughtTo ⊥ (fun _ ↦ {meetRuud}) (fun _ ↦ True) takeA aTrain := by
+    ¬ haveTo ⊥ .univ takeA aTrain ∧ oughtTo ⊥ (fun _ ↦ {meetRuud}) .univ takeA aTrain := by
   simp only [oughtTo, conditionalNecessity_iff_necessity_of_finite,
     haveTo_iff, necessity_iff, bestWorlds,
     Preorder.mem_minimals_iff, Background.mem_accessibleWorlds, Background.restrict,
@@ -248,10 +253,10 @@ inductive Pedro
 
 namespace Pedro
 
-abbrev goHarlem : Pedro → Prop := fun w ↦ w = aTrain ∨ w = cTrainKiss
-abbrev kissPedro : Pedro → Prop := (· = cTrainKiss)
+abbrev goHarlem : Set Pedro := {aTrain, cTrainKiss}
+abbrev kissPedro : Set Pedro := {cTrainKiss}
 
-theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem kissPedro aTrain := by
+theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem (· ∈ kissPedro) aTrain := by
   simp only [oughtTo, conditionalNecessity_iff_necessity_of_finite,
     necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
@@ -263,23 +268,24 @@ end Pedro
 
 /-- By (42), `q` is an essential part of a way of achieving `p` when some premises together with
 `q` entail `p` over the modal base while without `q` they do not. -/
-def IsEssentialPart (f : Background W) (p q : W → Prop) (w : W) : Prop :=
-  ∃ P : Set (W → Prop), sInf (insert q (f w ∪ P)) ≤ p ∧ ¬ sInf (f w ∪ P) ≤ p
+def IsEssentialPart (f : Background W) (p q : Set W) (w : W) : Prop :=
+  ∃ P : Set (Set W), ⋂₀ insert q (f w ∪ P) ⊆ p ∧ ¬ ⋂₀ (f w ∪ P) ⊆ p
 
 /-- Over arbitrary premises any prejacent is an essential part (42) once some accessible world lacks
 both the prejacent and the goal. -/
-theorem isEssentialPart_of_exists (h : ∃ v ∈ f.accessibleWorlds w, ¬ q v ∧ ¬ p v) :
+theorem isEssentialPart_of_exists {p q : Set W} (h : ∃ v ∈ f.accessibleWorlds w, v ∉ q ∧ v ∉ p) :
     IsEssentialPart f p q w := by
   obtain ⟨v, hv, hq, hp⟩ := h
-  refine ⟨{fun u ↦ p u ∨ ¬ q u}, fun u hu ↦ ?_, fun hall ↦ hp (hall v ?_)⟩
-  · simp only [sInf_insert, sInf_union, sInf_singleton, Pi.inf_apply, inf_Prop_eq] at hu
+  refine ⟨{p ∪ qᶜ}, fun u hu ↦ ?_, fun hall ↦ hp (hall ?_)⟩
+  · simp only [Set.sInter_insert, Set.sInter_union, Set.sInter_singleton, Set.mem_inter_iff,
+      Set.mem_union, Set.mem_compl_iff] at hu
     exact hu.2.2.resolve_right (not_not.2 hu.1)
-  · simp only [sInf_union, sInf_singleton, Pi.inf_apply, inf_Prop_eq]
+  · rw [Set.sInter_union, Set.sInter_singleton]
     exact ⟨hv, Or.inr hq⟩
 
 -- (42)
 theorem Pedro.isEssentialPart_kissPedro :
     IsEssentialPart ⊥ Pedro.goHarlem Pedro.kissPedro Pedro.aTrain :=
-  isEssentialPart_of_exists ⟨Pedro.home, by simp, by decide⟩
+  isEssentialPart_of_exists ⟨Pedro.home, by simp, by simp, by simp⟩
 
 end VonFintelIatridou2005

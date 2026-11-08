@@ -91,7 +91,7 @@ theorem prejacent_of_humanNecessity_bot {W : Type*} {f : Background W} (hf : f.I
 
 -- (41), p. 57: an ordering source of less reliable information frees *must* from its prejacent.
 theorem must_without_prejacent :
-    humanNecessity (⊥ : Background Bool) (Function.const Bool {(· = true)}) (· = true) false :=
+    humanNecessity (⊥ : Background Bool) (Function.const Bool {{true}}) (· = true) false :=
   humanNecessity_iff.2 fun _ _ ↦ ⟨true, by simp, by simp [Preorder.ofCriteria_le_iff],
     fun z _ hz ↦ by simpa [Preorder.ofCriteria_le_iff] using hz⟩
 
@@ -101,7 +101,7 @@ theorem must_without_prejacent :
 -- of everything known she will not.
 theorem can_circumstantial_not_epistemic :
     simplePossibility (⊥ : Background Bool) (· = true) false ∧
-      ¬ simplePossibility (fun w ↦ {(· = w)}) (· = true) false := by
+      ¬ simplePossibility (fun w ↦ {{w}}) (· = true) false := by
   simp [simplePossibility_iff]
 
 /-! ### Practical inference -/
@@ -113,21 +113,22 @@ abbrev World := Bool × Bool
 def w₀ : World := (false, false)
 
 /-- The relevant circumstances are that the speaker becomes mayor only by going to the pub. -/
-def circumstances : Background World := Function.const World {fun w ↦ w.1 = true → w.2 = true}
+def circumstances : Background World := Function.const World {{w | w.1 = true → w.2 = true}}
 
 /-- In the first inference all the speaker wants is to become mayor. -/
-def wantsOffice : Background World := Function.const World {fun w ↦ w.1 = true}
+def wantsOffice : Background World := Function.const World {{w | w.1 = true}}
 
 /-- In the second the speaker wants to become mayor and to avoid the pub. -/
 def desires : Background World :=
-  Function.const World {fun w ↦ w.1 = true, fun w ↦ w.2 = false}
+  Function.const World {{w | w.1 = true}, {w | w.2 = false}}
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
   `(tactic| (simp only [Background.mem_accessibleWorlds, Preorder.ofCriteria_le_iff,
       circumstances, desires, wantsOffice, Function.const_apply, Set.mem_insert_iff,
-      Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, false_implies, implies_true, and_true,
-      Pi.sup_apply, Set.sup_eq_union, Set.mem_union, or_imp, forall_and]; try decide))
+      Set.mem_singleton_iff, Set.mem_ofPred_eq, forall_eq_or_imp, forall_eq, false_implies,
+      implies_true, and_true, Pi.sup_apply, Set.sup_eq_union, Set.mem_union, or_imp,
+      forall_and]; try decide))
 
 -- p. 65: the two backgrounds being consistent, what is necessary is what follows from their union.
 theorem must_pub_of_wants_office : humanNecessity circumstances wantsOffice (·.2 = true) w₀ := by
@@ -197,7 +198,7 @@ as the earlier analysis of [kratzer-1977] does, makes it possible to become mayo
 since a maximal consistent subset contains all that is wanted, and the two-background analysis
 rightly does not (p. 67). -/
 theorem facts_have_priority :
-    Kratzer1977.CanInView (circumstances ⊔ desires) (fun w ↦ w.2 = false ∧ w.1 = true) w₀ ∧
+    Kratzer1977.CanInView (circumstances ⊔ desires) {w | w.2 = false ∧ w.1 = true} w₀ ∧
       ¬ humanPossibility circumstances desires (fun w ↦ w.2 = false ∧ w.1 = true) w₀ := by
   refine ⟨Kratzer1977.canInView_iff_humanPossibility.2
     (humanPossibility_of_goodPossibility (goodPossibility_iff.2 ⟨(true, false), by simp, ?_⟩)),
@@ -215,8 +216,8 @@ open Conditional.Restrictor
 -- p. 68: the paper gives this for the empty ordering source; a totally realistic base leaves at
 -- most the world of evaluation to rank, whatever the ordering source.
 theorem material_implication {W : Type*} {f g : Background W} (hf : f.IsTotallyRealistic)
-    (α β : W → Prop) (w : W) : conditionalNecessity f g α β w ↔ (α w → β w) := by
-  have hacc (u : W) : u ∈ (f.restrict α).accessibleWorlds w ↔ u = w ∧ α u := by
+    (α : Set W) (β : W → Prop) (w : W) : conditionalNecessity f g α β w ↔ (w ∈ α → β w) := by
+  have hacc (u : W) : u ∈ (f.restrict α).accessibleWorlds w ↔ u = w ∧ u ∈ α := by
     rw [Background.mem_accessibleWorlds_restrict, hf w]
     rfl
   have hrefl (u : W) : u ≤[g w] u := @le_refl _ (premisePreorder (g w)) u
@@ -229,16 +230,16 @@ theorem material_implication {W : Type*} {f g : Background W} (hf : f.IsTotallyR
     exact ⟨u, hu, hrefl u, fun z hz _ ↦ by obtain ⟨rfl, -⟩ := (hacc z).1 hz; exact h hα⟩
 
 -- p. 69
-theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
-    conditionalNecessity ⊥ ⊥ α β w ↔ ∀ v, α v → β v := by
+theorem strict_implication {W : Type*} (α : Set W) (β : W → Prop) (w : W) :
+    conditionalNecessity ⊥ ⊥ α β w ↔ ∀ v ∈ α, β v := by
   rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, Background.accessibleWorlds_bot]
   simp
 
 -- p. 69: where the antecedent is true, a counterfactual, with an empty base and a totally realistic
 -- ordering source, is the mirror image of material implication.
 theorem counterfactual_of_antecedent {W : Type*} {g : Background W} (hg : g.IsTotallyRealistic)
-    {α β : W → Prop} {w : W} (hα : α w) : conditionalNecessity ⊥ g α β w ↔ β w := by
-  have htrue : ∀ p ∈ g w, p w := Background.mem_accessibleWorlds.1 (by rw [hg w]; rfl)
+    {α : Set W} {β : W → Prop} {w : W} (hα : w ∈ α) : conditionalNecessity ⊥ g α β w ↔ β w := by
+  have htrue : ∀ p ∈ g w, w ∈ p := Background.mem_accessibleWorlds.1 (by rw [hg w]; rfl)
   have hbelow (z : W) (hz : z ≤[g w] w) : z = w := by
     have hz' : z ∈ g.accessibleWorlds w := Background.mem_accessibleWorlds.2 fun p hp ↦
       (Preorder.ofCriteria_le_iff ..).1 hz p hp (htrue p hp)
@@ -253,10 +254,10 @@ theorem counterfactual_of_antecedent {W : Type*} {g : Background W} (hg : g.IsTo
   · exact (Preorder.ofCriteria_le_iff ..).2 fun p hp _ ↦ htrue p hp
 
 /-- Two totally realistic backgrounds at a world: its facts severally, `g₁`, and jointly, `g₂`. -/
-def factsSeverally : Background World := fun w ↦ {fun v ↦ v.1 = w.1, fun v ↦ v.2 = w.2}
+def factsSeverally : Background World := fun w ↦ {{v | v.1 = w.1}, {v | v.2 = w.2}}
 
 /-- The facts of a world jointly. -/
-def factsJointly : Background World := fun w ↦ {fun v ↦ v = w}
+def factsJointly : Background World := fun w ↦ {{w}}
 
 theorem isTotallyRealistic_factsSeverally : factsSeverally.IsTotallyRealistic := fun w ↦ by
   ext v
@@ -267,10 +268,8 @@ theorem isTotallyRealistic_factsJointly : factsJointly.IsTotallyRealistic := fun
   simp [factsJointly]
 
 -- p. 70: `g₁(w) = {r, s}` and `g₂(w) = {r ∩ s}` order `u`, with `r` only, and `v`, with neither.
-theorem ordering_differs {W : Type*} {r s : W → Prop} {u v : W} (hr : r u) (hs : ¬ s u)
-    (hr' : ¬ r v) :
-    (v ≤[({fun x ↦ r x ∧ s x} : Set (W → Prop))] u) ∧
-      ¬ (v ≤[({r, s} : Set (W → Prop))] u) := by
+theorem ordering_differs {W : Type*} {r s : Set W} {u v : W} (hr : u ∈ r) (hs : u ∉ s)
+    (hr' : v ∉ r) : (v ≤[{r ∩ s}] u) ∧ ¬ (v ≤[{r, s}] u) := by
   simp [Preorder.ofCriteria_le_iff, hr, hs, hr']
 
 /-- Decide a claim about a conditional over a finite set of worlds. -/
@@ -279,18 +278,18 @@ scoped macro "decide_conditional" : tactic =>
       mem_bestAccessible, mem_bestWorlds, Background.mem_accessibleWorlds_restrict,
       Background.accessibleWorlds_bot, Set.mem_univ, true_and, Preorder.ofCriteria_le_iff,
       factsSeverally, factsJointly, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
-      forall_eq, Prod.forall, Bool.forall_bool]; simp))
+      Set.mem_ofPred_eq, forall_eq, Prod.forall, Bool.forall_bool]; simp))
 
 /-- The vagueness of counterfactuals (p. 70): two totally realistic ordering sources that differ
 only in how they carve up the facts disagree on a counterfactual, whereas as modal bases they agree
 on every material implication. -/
 theorem counterfactual_vague :
-    (conditionalNecessity ⊥ factsSeverally (fun w ↦ ¬ (w.1 = true ∧ w.2 = true))
+    (conditionalNecessity ⊥ factsSeverally {w | ¬ (w.1 = true ∧ w.2 = true)}
         (fun w ↦ w.1 = true ∨ w.2 = true) (true, true) ∧
-      ¬ conditionalNecessity ⊥ factsJointly (fun w ↦ ¬ (w.1 = true ∧ w.2 = true))
+      ¬ conditionalNecessity ⊥ factsJointly {w | ¬ (w.1 = true ∧ w.2 = true)}
         (fun w ↦ w.1 = true ∨ w.2 = true) (true, true)) ∧
-      ∀ (α β : World → Prop) (w : World), conditionalNecessity factsSeverally ⊥ α β w ↔
-        conditionalNecessity factsJointly ⊥ α β w :=
+      ∀ (α : Set World) (β : World → Prop) (w : World),
+        conditionalNecessity factsSeverally ⊥ α β w ↔ conditionalNecessity factsJointly ⊥ α β w :=
   ⟨⟨by decide_conditional, by decide_conditional⟩, fun α β w ↦
     (material_implication isTotallyRealistic_factsSeverally α β w).trans
       (material_implication isTotallyRealistic_factsJointly α β w).symm⟩
@@ -312,23 +311,19 @@ inductive Redress where
 abbrev Situation := Option Redress
 
 /-- Someone was treated unjustly. -/
-def injustice (s : Situation) : Prop := s.isSome = true
+def injustice : Set Situation := {s | s.isSome = true}
 
 /-- The injustice was amended for. -/
-def amended (s : Situation) : Prop := s = some .amended
+def amended : Set Situation := {some .amended}
 
 /-- The one treated unjustly was reduced to silence. -/
-def silenced (s : Situation) : Prop := s = some .silenced
-
-instance : DecidablePred injustice := fun s ↦ inferInstanceAs (Decidable (s.isSome = true))
-instance : DecidablePred amended := fun s ↦ inferInstanceAs (Decidable (s = some .amended))
-instance : DecidablePred silenced := fun s ↦ inferInstanceAs (Decidable (s = some .silenced))
+def silenced : Set Situation := {some .silenced}
 
 /-- What is morally commanded is that there be no injustice and that any injustice be amended for. A
 situation with amended injustice is not ideal, but it is closer to the ideal than one where the
 victim is reduced to silence (p. 71). -/
 def morallyCommanded : Background Situation :=
-  Function.const Situation {fun s ↦ ¬ injustice s, fun s ↦ injustice s → amended s}
+  Function.const Situation {injusticeᶜ, {s | s ∈ injustice → s ∈ amended}}
 
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
@@ -338,32 +333,32 @@ scoped macro "decide_situations" : tactic =>
       true_and, Preorder.ofCriteria_le_iff, morallyCommanded, Function.const_apply,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, false_implies,
       implies_true, and_true, injustice, amended, silenced, Background.restrict, Pi.bot_apply,
-      Set.bot_eq_empty, Set.mem_empty_iff_false, or_false]; decide))
+      Set.bot_eq_empty, Set.mem_empty_iff_false, or_false, Set.mem_ofPred_eq, Set.mem_compl_iff,
+      Set.mem_union, Set.mem_inter_iff]; decide))
 
 /-- On the traditional analysis, with the worlds where the moral ideals are all realized accessible,
 (75) makes (76) and (77) both vacuously true (p. 71). On the paper's it does not: with an empty base
 restricted by the antecedent and the ordering source of what is morally commanded, (75) and (76) are
 true and (77) is false. -/
 theorem deontic_conditionals :
-    (simpleNecessity morallyCommanded (fun s ↦ ¬ injustice s) none ∧
-      simpleNecessity morallyCommanded (fun s ↦ injustice s → amended s) none ∧
-      simpleNecessity morallyCommanded (fun s ↦ injustice s → silenced s) none) ∧
-    necessity ⊥ morallyCommanded (fun s ↦ ¬ injustice s) none ∧
-    conditionalNecessity ⊥ morallyCommanded injustice amended none ∧
-    ¬ conditionalNecessity ⊥ morallyCommanded injustice silenced none := by
-  have h : simpleNecessity morallyCommanded (fun s ↦ ¬ injustice s) none := by decide_situations
+    (simpleNecessity morallyCommanded (· ∉ injustice) none ∧
+      simpleNecessity morallyCommanded (fun s ↦ s ∈ injustice → s ∈ amended) none ∧
+      simpleNecessity morallyCommanded (fun s ↦ s ∈ injustice → s ∈ silenced) none) ∧
+    necessity ⊥ morallyCommanded (· ∉ injustice) none ∧
+    conditionalNecessity ⊥ morallyCommanded injustice (· ∈ amended) none ∧
+    ¬ conditionalNecessity ⊥ morallyCommanded injustice (· ∈ silenced) none := by
+  have h : simpleNecessity morallyCommanded (· ∉ injustice) none := by decide_situations
   refine ⟨⟨h, traditional_vacuous _ _ _ _ h, traditional_vacuous _ _ _ _ h⟩, ?_, ?_, ?_⟩
   all_goals decide_situations
 
 /-! #### Inference patterns -/
 
 -- p. 72: with the empty ordering source the patterns hold.
-theorem inference_patterns_of_bot {W : Type*} (f : Background W) (α β γ : W → Prop) (w : W) :
-    (conditionalNecessity f ⊥ α β w → conditionalNecessity f ⊥ (fun v ↦ α v ∧ γ v) β w) ∧
-    (conditionalNecessity f ⊥ α β w → conditionalNecessity f ⊥ β γ w →
-      conditionalNecessity f ⊥ α γ w) ∧
-    (conditionalNecessity f ⊥ α β w →
-      conditionalNecessity f ⊥ (fun v ↦ ¬ β v) (fun v ↦ ¬ α v) w) := by
+theorem inference_patterns_of_bot {W : Type*} (f : Background W) (α β γ : Set W) (w : W) :
+    (conditionalNecessity f ⊥ α (· ∈ β) w → conditionalNecessity f ⊥ (α ∩ γ) (· ∈ β) w) ∧
+    (conditionalNecessity f ⊥ α (· ∈ β) w → conditionalNecessity f ⊥ β (· ∈ γ) w →
+      conditionalNecessity f ⊥ α (· ∈ γ) w) ∧
+    (conditionalNecessity f ⊥ α (· ∈ β) w → conditionalNecessity f ⊥ βᶜ (· ∈ αᶜ) w) := by
   simp only [conditionalNecessity, humanNecessity_bot_iff, simpleNecessity_iff,
     Background.mem_accessibleWorlds_restrict]
   exact ⟨fun h v hv ↦ h v ⟨hv.1, hv.2.1⟩, fun h h' v hv ↦ h' v ⟨hv.1, h v hv⟩,
@@ -375,14 +370,14 @@ silenced was treated unjustly, and an injustice must be amended for, but a silen
 and an injustice must leave things just, but a situation that is not just need not be free of
 injustice. -/
 theorem inference_patterns_fail :
-    (conditionalNecessity ⊥ morallyCommanded injustice amended none ∧
-      ¬ conditionalNecessity ⊥ morallyCommanded (fun s ↦ injustice s ∧ silenced s) amended none) ∧
-    (conditionalNecessity ⊥ morallyCommanded silenced injustice none ∧
-      conditionalNecessity ⊥ morallyCommanded injustice amended none ∧
-      ¬ conditionalNecessity ⊥ morallyCommanded silenced amended none) ∧
-    (conditionalNecessity ⊥ morallyCommanded injustice (fun s ↦ injustice s → amended s) none ∧
-      ¬ conditionalNecessity ⊥ morallyCommanded (fun s ↦ ¬ (injustice s → amended s))
-        (fun s ↦ ¬ injustice s) none) := by
+    (conditionalNecessity ⊥ morallyCommanded injustice (· ∈ amended) none ∧
+      ¬ conditionalNecessity ⊥ morallyCommanded (injustice ∩ silenced) (· ∈ amended) none) ∧
+    (conditionalNecessity ⊥ morallyCommanded silenced (· ∈ injustice) none ∧
+      conditionalNecessity ⊥ morallyCommanded injustice (· ∈ amended) none ∧
+      ¬ conditionalNecessity ⊥ morallyCommanded silenced (· ∈ amended) none) ∧
+    (conditionalNecessity ⊥ morallyCommanded injustice (fun s ↦ s ∈ injustice → s ∈ amended) none ∧
+      ¬ conditionalNecessity ⊥ morallyCommanded {s | ¬ (s ∈ injustice → s ∈ amended)}
+        (· ∉ injustice) none) := by
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_, ?_⟩, ?_, ?_⟩
   all_goals decide_situations
 
@@ -400,11 +395,11 @@ theorem rows_verdicts :
     (Examples.five.verdict = some true ↔
       humanPossibility circumstances desires (·.2 = false) w₀) ∧
     (Examples.ex_75.verdict = some true ↔
-      necessity ⊥ morallyCommanded (fun s ↦ ¬ injustice s) none) ∧
+      necessity ⊥ morallyCommanded (· ∉ injustice) none) ∧
     (Examples.ex_76.verdict = some true ↔
-      conditionalNecessity ⊥ morallyCommanded injustice amended none) ∧
+      conditionalNecessity ⊥ morallyCommanded injustice (· ∈ amended) none) ∧
     (Examples.ex_77.verdict = some true ↔
-      conditionalNecessity ⊥ morallyCommanded injustice silenced none) := by
+      conditionalNecessity ⊥ morallyCommanded injustice (· ∈ silenced) none) := by
   obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := practical_inference
   obtain ⟨-, h₇₅, h₇₆, h₇₇⟩ := deontic_conditionals
   exact ⟨iff_of_true rfl must_pub_of_wants_office, iff_of_false (by decide) h₁,

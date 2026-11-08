@@ -130,7 +130,7 @@ end Flat
 section Relational
 
 theorem possibility_of_isRealistic {f g : Background W} {p : W → Prop}
-    {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, q w) (hp : p w) : possibility f g p w :=
+    {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, w ∈ q) (hp : p w) : possibility f g p w :=
   ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
 
 /-- Realism of the base alone does not make best-worlds possibility veridical, so (14) needs
@@ -138,7 +138,7 @@ more than (14b): the actual world must be among the best-ranked. -/
 theorem exists_not_possibility :
     ∃ (f g : Background Bool) (p : Bool → Prop) (w : Bool),
       f.IsRealistic ∧ p w ∧ ¬ possibility f g p w :=
-  ⟨⊥, fun _ ↦ {(· = true)}, (· = false), false, fun _ ↦ by simp, rfl,
+  ⟨⊥, fun _ ↦ {{true}}, (· = false), false, fun _ ↦ by simp, rfl,
     fun ⟨v, hvb, hv⟩ ↦ by
       obtain ⟨_, hbest⟩ := mem_bestWorlds.1 (mem_bestAccessible.1 hvb)
       have h := hbest true (accessible_bot _ _)

@@ -80,10 +80,10 @@ def crossing (v : Bus) (e : NonemptyInterval ℕ) : Prop := v = .crosses ∧ e =
 def walkIntoBus (v : Bus) (e : NonemptyInterval ℕ) : Prop := v = .hit ∧ e = iv 0 2
 
 /-- `NI(e)`: Max is not hit by a bus and does not turn around. -/
-def notInterrupted : Background Bus := fun _ ↦ {(· ≠ .hit), (· ≠ .turnsAround)}
+def notInterrupted : Background Bus := fun _ ↦ {{.hit}ᶜ, {.turnsAround}ᶜ}
 
 /-- The base (42) for the description that mentions the bus: a bus is on a path to hit Max. -/
-def withBus : Background Bus := fun _ ↦ {(· = .hit)}
+def withBus : Background Bus := fun _ ↦ {{.hit}}
 
 open Classical in
 /-- `Circ(e, P)` (41), (42): facts about Max alone, unless the description mentions the bus. -/
@@ -151,10 +151,10 @@ inductive Army
 def wipeOut (v : Army) (e : NonemptyInterval ℕ) : Prop := v = .wipesOut ∧ e = iv 0 10
 
 /-- `NI(e)`: Mary defeats the soldiers she fights, a few dozen and then the whole army. -/
-def defeatsSoldiers : Background Army := fun _ ↦ {(· ≠ .killedEarly), (· = .wipesOut)}
+def defeatsSoldiers : Background Army := fun _ ↦ {{.killedEarly}ᶜ, {.wipesOut}}
 
 /-- The circumstances of an ordinary Mary, whose abilities rule out defeating the whole army. -/
-def ordinary : Background Army := fun _ ↦ {(· ≠ .wipesOut)}
+def ordinary : Background Army := fun _ ↦ {{.wipesOut}ᶜ}
 
 theorem not_prog_ordinary (w : Army) :
     ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
@@ -166,7 +166,7 @@ theorem not_prog_ordinary (w : Army) :
     cases v
     · exact absurd rfl hv'
     · exact (premisePreorder _).le_refl _
-    · exact absurd rfl (hle (· ≠ Army.killedEarly) (by simp [defeatsSoldiers]) (by decide))
+    · exact absurd rfl (hle {.killedEarly}ᶜ (by simp [defeatsSoldiers]) (by simp))
   obtain ⟨_, -, h1, -⟩ := h _ hbest
   exact absurd h1 (by decide)
 

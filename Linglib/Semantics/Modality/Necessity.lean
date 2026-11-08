@@ -79,12 +79,11 @@ def bestAccessible (f g : Background W) : SetRel W W :=
     w ~[f.accessible] w' ↔ w' ∈ f.accessibleWorlds w := .rfl
 
 /-- The background of a relation, whose one premise at `w` is to be an `R`-successor of `w`. -/
-def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {(w ~[R] ·)}
+def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {{v | w ~[R] v}}
 
 @[simp] theorem Background.accessibleWorlds_ofRel (R : SetRel W W) (w : W) :
-    (Background.ofRel R).accessibleWorlds w = {v | w ~[R] v} := by
-  ext
-  simp [Background.ofRel]
+    (Background.ofRel R).accessibleWorlds w = {v | w ~[R] v} :=
+  Set.sInter_singleton _
 
 @[simp] theorem Background.accessible_ofRel (R : SetRel W W) :
     (Background.ofRel R).accessible = R := by
@@ -318,14 +317,14 @@ end GoodPossibility
 
 /-- Simple necessity is consequence from the premises at the world, `⋂f(w) ⊆ p`, Definition 5 of
 [kratzer-1977]. -/
-theorem simpleNecessity_iff_sInf_le (f : Background W) (p : W → Prop) (w : W) :
-    simpleNecessity f p w ↔ sInf (f w) ≤ p := Iff.rfl
+theorem simpleNecessity_iff_sInter_subset (f : Background W) (p : W → Prop) (w : W) :
+    simpleNecessity f p w ↔ ⋂₀ f w ⊆ {v | p v} := Iff.rfl
 
 /-- Simple possibility is compatibility with the premises at the world, `⋂f(w) ∩ p ≠ ∅`,
 Definition 6 of [kratzer-1977]. -/
 theorem simplePossibility_iff_not_disjoint (f : Background W) (p : W → Prop) (w : W) :
-    simplePossibility f p w ↔ ¬ Disjoint (sInf (f w)) p := by
-  simp [simplePossibility_iff, Pi.disjoint_iff, Prop.disjoint_iff, not_forall]
+    simplePossibility f p w ↔ ¬ Disjoint (⋂₀ f w) {v | p v} := by
+  simp [simplePossibility_iff, Set.not_disjoint_iff]
 
 @[simp] theorem necessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     necessity f ⊥ p w ↔ simpleNecessity f p w := by
@@ -337,8 +336,8 @@ theorem simpleNecessity_mono {f f' : Background W} {p : W → Prop} {w : W} (h :
     (hNec : simpleNecessity f p w) : simpleNecessity f' p w :=
   fun w' hw' ↦ hNec w' (Background.accessibleWorlds_anti h hw')
 
-theorem not_necessity_insert {f g : Background W} {p q r : W → Prop} {w u : W}
-    (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u)
+theorem not_necessity_insert {f g : Background W} {p q : Set W} {r : W → Prop} {w u : W}
+    (hq : q ∈ g w) (hpq : ∀ v ∈ q, v ∉ p) (hu : u ∈ bestWorlds f g w) (huq : u ∈ q)
     (hur : ¬ r u) : ¬ necessity f (fun v ↦ insert p (g v)) r w :=
   fun h ↦ hur (h u (mem_bestWorlds_insert hq hpq hu huq))
 

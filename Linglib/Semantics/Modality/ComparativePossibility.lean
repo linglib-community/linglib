@@ -154,7 +154,7 @@ exactly when the `t`-points of `s` are more possible than its other points. -/
 theorem exists_forall_le_iff_asymmRel_lewis :
     (∃ v ∈ s, ∀ w ∈ s, f w ≤ f v → w ∈ t) ↔
       AsymmRel (Lewis fun a b ↦ f a ≤ f b) (s ∩ t) (s \ t) := by
-  haveI : Std.Total fun a b : W ↦ f a ≤ f b := ⟨fun a b ↦ total_of (· ≤ ·) (f a) (f b)⟩
+  have : Std.Total fun a b : W ↦ f a ≤ f b := ⟨fun a b ↦ total_of (· ≤ ·) (f a) (f b)⟩
   rw [asymmRel_lewis_iff]
   refine ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨v, ⟨hv, hvt v hv le_rfl⟩, fun b hb ↦ ?_⟩,
     fun ⟨a, ha, h⟩ ↦ ⟨a, ha.1, fun w hw hwa ↦ by_contra fun hwt ↦ (h w ⟨hw, hwt⟩).2 hwa⟩⟩

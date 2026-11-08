@@ -486,11 +486,11 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
   induction h generalizing w with
   | taut h => exact h (fun B ↦ w ∈ eval access ord V B) (fun _ ↦ Iff.rfl) fun _ _ ↦ Iff.rfl
   | a3 φ =>
-    letI := ord w
+    let := ord w
     rw [mem_eval_corner]
     exact mem_of_superset self_mem_atBotOn Set.inter_subset_right
   | a4 φ ψ =>
-    letI := ord w
+    let := ord w
     rw [mem_eval_imp, mem_eval_corner, mem_eval_corner, eval_neg]
     intro h
     have hbot : (∅ : Set W) ∈ atBotOn id (access w ∩ (eval access ord V φ)ᶜ) := by
@@ -500,7 +500,7 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     exact mem_of_superset self_mem_atBotOn fun x hx ↦
       by_contra fun hxφ ↦ Set.eq_empty_iff_forall_notMem.1 hemp x ⟨hx.1, hxφ⟩
   | a5 φ ψ χ =>
-    letI := ord w
+    let := ord w
     simp only [Formula.or, mem_eval_imp, eval_neg, Set.mem_compl_iff]
     intro hfr
     have e : atBotOn id (access w ∩ eval access ord V φ ∩ eval access ord V ψ) =
@@ -515,7 +515,7 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     obtain ⟨v, -, -, hvψ⟩ := h w ⟨hL.mem w, hφ⟩
     exact hvψ w ⟨hL.mem w, hφ⟩ (hL.le w v)
   | a7 φ ψ hL' =>
-    letI := ord w
+    let := ord w
     rw [mem_eval_imp, eval_and, mem_eval_corner]
     rintro ⟨hφ, hψ⟩
     have hc := hL.isCentered hL'
@@ -533,7 +533,7 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     · obtain ⟨v, hv⟩ := hL.2 w _ h
       have hmin : v ∈ (ord w).minimals (access w ∩ eval access ord V φ) := by
         rw [hv]; exact Set.mem_singleton v
-      letI := ord w
+      let := ord w
       have hv' : {x | MinimalFor (· ∈ access w ∩ eval access ord V φ) id x} = {v} := hv
       rw [atBotOn_eq_principal (f := id) fun u hu ↦
         ⟨v, hmin, (Preorder.mem_minimals_iff_forall_le.1 hmin).2 u hu⟩, hv',

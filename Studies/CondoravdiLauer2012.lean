@@ -234,9 +234,9 @@ theorem weak_affirmation_compl [Nontrivial W] :
 /-! ### To-Do Lists -/
 
 -- §5.2 [portner-2007]
-theorem todo_not_must {f g : Background W} {φ ψ : W → Prop} {u : W}
-    (hψ : ψ ∈ g w) (hφψ : ∀ v, ψ v → ¬ φ v) (hu : u ∈ bestWorlds f g w) (huψ : ψ u) :
-    ¬ necessity f (fun v ↦ insert φ (g v)) φ w :=
+theorem todo_not_must {f g : Background W} {φ ψ : Set W} {u : W}
+    (hψ : ψ ∈ g w) (hφψ : ∀ v ∈ ψ, v ∉ φ) (hu : u ∈ bestWorlds f g w) (huψ : u ∈ ψ) :
+    ¬ necessity f (fun v ↦ insert φ (g v)) (· ∈ φ) w :=
   not_necessity_insert hψ hφψ hu huψ (hφψ u huψ)
 
 /-! ### Commitments as mood states

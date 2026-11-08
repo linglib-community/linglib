@@ -54,44 +54,41 @@ open Modality
 
 section Definitions
 
-variable {W : Type*} {f : Background W} {φ : W → Prop} {i : W} {A B : Set (W → Prop)}
+variable {W : Type*} {f : Background W} {φ : Set W} {i : W} {A B : Set (Set W)}
 
 /-- The consistent subsets of a premise set, the set `X` over which Definitions 7 and 8
 quantify. -/
-def consistentSubsets (A : Set (W → Prop)) : Set (Set (W → Prop)) := {B | B ⊆ A ∧ sInf B ≠ ⊥}
+def consistentSubsets (A : Set (Set W)) : Set (Set (Set W)) := {B | B ⊆ A ∧ (⋂₀ B).Nonempty}
 
 /-- Definition 7: *must φ in view of f* holds at `i` when, `X` being the set of all consistent
 subsets of `f i`, "there is for every set in `X` a superset in `X` from which `φ` follows";
 in the revised version,
 `ν(p, f) = {w ∈ W : ∀A[A ∈ X_f(w) → ∃B[B ∈ X_f(w) & A ⊆ B & ⋂B ⊆ p]]}`. -/
-def MustInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
-  ∀ B ∈ consistentSubsets (f i), ∃ C ∈ consistentSubsets (f i), B ⊆ C ∧ sInf C ≤ φ
+def MustInView (f : Background W) (φ : Set W) (i : W) : Prop :=
+  ∀ B ∈ consistentSubsets (f i), ∃ C ∈ consistentSubsets (f i), B ⊆ C ∧ ⋂₀ C ⊆ φ
 
 /-- Definition 8: *can φ in view of f* holds at `i` when "there is a set in `X` such that `φ` is
 (logically) compatible with all its supersets in `X`"; in the revised version,
 `μ(p, f) = {w ∈ W : ∃A[A ∈ X_f(w) & ∀B[[B ∈ X_f(w) & A ⊆ B] → consistent(B ∪ {p})]]}`. -/
-def CanInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
-  ∃ B ∈ consistentSubsets (f i), ∀ C ∈ consistentSubsets (f i), B ⊆ C → ¬ Disjoint (sInf C) φ
-
-private theorem sInf_ne_bot_iff : sInf B ≠ ⊥ ↔ ∃ w, ∀ x ∈ B, x w := by
-  simp [Function.ne_iff]
+def CanInView (f : Background W) (φ : Set W) (i : W) : Prop :=
+  ∃ B ∈ consistentSubsets (f i), ∀ C ∈ consistentSubsets (f i), B ⊆ C → ¬ Disjoint (⋂₀ C) φ
 
 /-- Definition 7 is necessity over the empty modal base with `f` as ordering source: a world
 stands for the premises it verifies, and a consistent subset for the worlds verifying it. This is
 the modal case of [lewis-1981]'s equivalence of premise and ordering semantics. -/
-theorem mustInView_iff_humanNecessity : MustInView f φ i ↔ humanNecessity ⊥ f φ i := by
+theorem mustInView_iff_humanNecessity : MustInView f φ i ↔ humanNecessity ⊥ f (· ∈ φ) i := by
   rw [humanNecessity, Filter.Eventually, Background.accessibleWorlds_bot, Filter.atBotOn_ofCriteria,
     Filter.mem_atBotOn_satisfied_iff]
-  simp [MustInView, consistentSubsets, sInf_ne_bot_iff, Pi.le_def, and_assoc]
+  simp [MustInView, consistentSubsets, Set.Nonempty, Set.subset_def, and_assoc]
 
 theorem canInView_iff_not_mustInView_compl : CanInView f φ i ↔ ¬ MustInView f φᶜ i := by
-  simp only [CanInView, MustInView, ← le_compl_iff_disjoint_right, not_forall, not_exists, not_and,
-    exists_prop]
+  simp only [CanInView, MustInView, ← Set.subset_compl_iff_disjoint_right, not_forall, not_exists,
+    not_and, exists_prop]
 
 theorem mustInView_iff_not_canInView_compl : MustInView f φ i ↔ ¬ CanInView f φᶜ i := by
   rw [canInView_iff_not_mustInView_compl, compl_compl, not_not]
 
-theorem canInView_iff_humanPossibility : CanInView f φ i ↔ humanPossibility ⊥ f φ i :=
+theorem canInView_iff_humanPossibility : CanInView f φ i ↔ humanPossibility ⊥ f (· ∈ φ) i :=
   canInView_iff_not_mustInView_compl.trans (not_congr mustInView_iff_humanNecessity)
 
 /-- Whatever must be the case under Definition 7 can be under Definition 8, on every premise set:
@@ -107,36 +104,39 @@ theorem canInView_of_mustInView [Nonempty W] (h : MustInView f φ i) : CanInView
   exact fun h' ↦ let ⟨_, hφ, hnφ⟩ := Filter.nonempty_of_mem (Filter.inter_mem h h'); hnφ hφ
 
 -- On a consistent premise set Definition 7 is Definition 5, consequence from the premises
-theorem mustInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
-    MustInView f φ i ↔ simpleNecessity f φ i := by
+theorem mustInView_iff_of_consistent (h : (⋂₀ f i).Nonempty) :
+    MustInView f φ i ↔ simpleNecessity f (· ∈ φ) i := by
   rw [mustInView_iff_humanNecessity, humanNecessity_iff_simpleNecessity_sup, bot_sup_eq]
-  simpa [bot_sup_eq, Set.Nonempty] using sInf_ne_bot_iff.1 h
+  rw [bot_sup_eq]
+  exact h
 
 -- Definition 8 is Definition 6 on a consistent premise set
-theorem canInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
-    CanInView f φ i ↔ simplePossibility f φ i := by
+theorem canInView_iff_of_consistent (h : (⋂₀ f i).Nonempty) :
+    CanInView f φ i ↔ simplePossibility f (· ∈ φ) i := by
   simp [canInView_iff_not_mustInView_compl, mustInView_iff_of_consistent h]
 
 -- The relation first tried and rejected as too strict, consequence from every consistent subset,
 -- holds only of a tautology, since the empty set is a consistent subset (p. 350)
-theorem forall_consistentSubsets_sInf_le_iff [Nonempty W] :
-    (∀ B ∈ consistentSubsets A, sInf B ≤ φ) ↔ φ = ⊤ :=
-  ⟨fun h ↦ top_le_iff.1 (sInf_empty (α := W → Prop) ▸ h ∅ ⟨A.empty_subset, by simp⟩),
-    fun h _ _ ↦ h ▸ le_top⟩
+theorem forall_consistentSubsets_sInter_subset_iff [Nonempty W] :
+    (∀ B ∈ consistentSubsets A, ⋂₀ B ⊆ φ) ↔ φ = .univ :=
+  ⟨fun h ↦ Set.univ_subset_iff.1 (Set.sInter_empty ▸ h ∅ ⟨A.empty_subset, by simp⟩),
+    fun h _ _ ↦ h ▸ Set.subset_univ _⟩
 
 -- Definition 8, as the paper argues (8) and (9)
 theorem canInView_of_mem (hB : B ∈ consistentSubsets (f i)) (hφ : φ ∈ B) : CanInView f φ i :=
-  ⟨B, hB, fun _ hC hBC hd ↦ hC.2 (hd.eq_bot_of_le (sInf_le (hBC hφ)))⟩
+  ⟨B, hB, fun _ hC hBC hd ↦
+    let ⟨_, hx⟩ := hC.2
+    Set.disjoint_left.1 hd hx (Set.sInter_subset_of_mem (hBC hφ) hx)⟩
 
 -- A premise must hold when every world is bettered by one where it holds
-theorem mustInView_of_forall_exists_le (hφ : φ ∈ f i) (h : ∀ u, ∃ v, (v ≤[f i] u) ∧ φ v) :
+theorem mustInView_of_forall_exists_le (hφ : φ ∈ f i) (h : ∀ u, ∃ v, (v ≤[f i] u) ∧ v ∈ φ) :
     MustInView f φ i :=
   mustInView_iff_humanNecessity.2 fun u _ ↦
     let ⟨v, hvu, hv⟩ := h u
     ⟨v, by simp, hvu, fun _ _ hzv ↦ hzv φ hφ hv⟩
 
 -- A best world where `φ` fails refutes *must φ*
-theorem not_mustInView_of_mem_bestWorlds {u : W} (hu : u ∈ bestWorlds ⊥ f i) (hφ : ¬ φ u) :
+theorem not_mustInView_of_mem_bestWorlds {u : W} (hu : u ∈ bestWorlds ⊥ f i) (hφ : u ∉ φ) :
     ¬ MustInView f φ i :=
   fun h ↦ hφ (necessity_of_humanNecessity (mustInView_iff_humanNecessity.1 h) u hu)
 
@@ -148,10 +148,10 @@ end Definitions
 abbrev World := Bool × Bool
 
 /-- The first issue holds. -/
-def p : World → Prop := (·.1 = true)
+def p : Set World := {w | w.1 = true}
 
 /-- The second issue holds. -/
-def q : World → Prop := (·.2 = true)
+def q : Set World := {w | w.2 = true}
 
 /-! ### The New Zealand judgments
 
@@ -160,26 +160,27 @@ damage they inflict on young trees, the Auckland judgment (11); and `qᶜ` the W
 judgment (12). -/
 
 /-- What the New Zealand judgments provide. -/
-def judgments : Set (World → Prop) := {p, q, qᶜ}
+def judgments : Set (Set World) := {p, q, qᶜ}
 
-theorem judgments_inconsistent : sInf judgments = ⊥ := by
-  funext w; simp [judgments]
+theorem judgments_inconsistent : ⋂₀ judgments = ∅ :=
+  Set.eq_empty_of_forall_notMem fun w hw ↦ by simp [judgments, q] at hw
 
 -- Definition 5 makes (7) true
 theorem simpleNecessity_compl_p (w : World) :
-    simpleNecessity (Function.const World judgments) pᶜ w := by
-  rw [simpleNecessity_iff_sInf_le, Function.const_apply, judgments_inconsistent]; exact bot_le
+    simpleNecessity (Function.const World judgments) (· ∈ pᶜ) w := by
+  rw [simpleNecessity_iff_sInter_subset, Function.const_apply, judgments_inconsistent]
+  exact Set.empty_subset _
 
 -- Definition 6 makes (8) false
 theorem not_simplePossibility_q (w : World) :
-    ¬ simplePossibility (Function.const World judgments) q w := by
+    ¬ simplePossibility (Function.const World judgments) (· ∈ q) w := by
   rw [simplePossibility_iff_not_disjoint, Function.const_apply, judgments_inconsistent, not_not]
-  exact disjoint_bot_left
+  exact Set.empty_disjoint _
 
 -- The rejected relation: `p` does not follow from every consistent subset (p. 350)
-example : ¬ ∀ B ∈ consistentSubsets judgments, sInf B ≤ p := by
-  rw [forall_consistentSubsets_sInf_le_iff]
-  exact fun h ↦ by simpa [p] using congrFun h (false, false)
+example : ¬ ∀ B ∈ consistentSubsets judgments, ⋂₀ B ⊆ p := by
+  rw [forall_consistentSubsets_sInter_subset_iff]
+  exact fun h ↦ by simpa [p] using (Set.ext_iff.1 h (false, false)).2 trivial
 
 /-- (6), *murder must be a crime*, is true under Definition 7: making murder a crime leaves every
 other judgment as it was. -/
@@ -190,19 +191,16 @@ theorem must_p (w : World) : MustInView (Function.const World judgments) p w :=
 -- (7) is false under Definition 7: no consistent superset of `{p, q}` implies `pᶜ` (p. 351)
 theorem not_must_compl_p (w : World) : ¬ MustInView (Function.const World judgments) pᶜ w :=
   canInView_iff_not_mustInView_compl.1 <| canInView_of_mem (B := {p, q})
-    ⟨by simp [judgments, Set.insert_subset_iff], sInf_ne_bot_iff.2 ⟨(true, true), by simp [p, q]⟩⟩
-    (by simp)
+    ⟨by simp [judgments, Set.insert_subset_iff], ⟨(true, true), by simp [p, q]⟩⟩ (by simp)
 
 /-- (8), *deer can be personally responsible*, is true under Definition 8: the Auckland judgment
 is a consistent subset by itself. -/
 theorem can_q (w : World) : CanInView (Function.const World judgments) q w :=
-  canInView_of_mem (B := {q})
-    ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, true), by simp [q]⟩⟩ rfl
+  canInView_of_mem (B := {q}) ⟨by simp [judgments], ⟨(true, true), by simp [q]⟩⟩ rfl
 
 -- (9) is true under Definition 8, symmetrically
 theorem can_compl_q (w : World) : CanInView (Function.const World judgments) qᶜ w :=
-  canInView_of_mem (B := {qᶜ})
-    ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, false), by simp [q]⟩⟩ rfl
+  canInView_of_mem (B := {qᶜ}) ⟨by simp [judgments], ⟨(true, false), by simp [q]⟩⟩ rfl
 
 -- (13) is false under Definition 8, by (6)
 theorem not_can_compl_p (w : World) : ¬ CanInView (Function.const World judgments) pᶜ w :=
@@ -211,21 +209,21 @@ theorem not_can_compl_p (w : World) : ¬ CanInView (Function.const World judgmen
 /-! ### The Whare Wananga recommendations (§2.3)
 
 `p` is that the pupils practise striding and `q` that they practise flying. Te Miti's
-recommendation is read once as the single proposition (14), `p ⊓ q`, and once as the two
+recommendation is read once as the single proposition (14), `p ∩ q`, and once as the two
 propositions `p` and `q`; Te Kini's is (15), `pᶜ`. -/
 
 /-- Te Miti's recommendation as one proposition, with Te Kini's. -/
-def recommendations : Set (World → Prop) := {p ⊓ q, pᶜ}
+def recommendations : Set (Set World) := {p ∩ q, pᶜ}
 
 /-- Te Miti's recommendation as two propositions, with Te Kini's. -/
-def recommendations' : Set (World → Prop) := {p, q, pᶜ}
+def recommendations' : Set (Set World) := {p, q, pᶜ}
 
 -- (16) is false on the first reading: a world where the pupils neither stride nor fly is best,
 -- the only recommendation it keeps being Te Kini's (p. 353)
 theorem not_must_q (w : World) : ¬ MustInView (Function.const World recommendations) q w := by
   refine not_mustInView_of_mem_bestWorlds (u := (false, false)) ⟨by simp, fun v _ hv ↦ ?_⟩
     (by simp [q])
-  have hpv : ¬ p v := hv pᶜ (by simp [recommendations]) (by simp [p])
+  have hpv : v ∉ p := hv pᶜ (by simp [recommendations]) (by simp [p])
   rintro x (rfl | rfl) hxv
   · exact absurd hxv.1 hpv
   · simp [p]

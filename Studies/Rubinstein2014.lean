@@ -72,22 +72,22 @@ structure Backgrounds (W : Type*) where
 
 /-- A set of priorities is consistent with the circumstances at `w` when some accessible world
 verifies all of them. -/
-def ConsistentWith (b : Backgrounds W) (w : W) (X : Set (W → Prop)) : Prop :=
-  ∃ v ∈ b.circumstances.accessibleWorlds w, ∀ q ∈ X, q v
+def ConsistentWith (b : Backgrounds W) (w : W) (X : Set (Set W)) : Prop :=
+  ∃ v ∈ b.circumstances.accessibleWorlds w, ∀ q ∈ X, v ∈ q
 
 /-- The maximal sets of promoted priorities consistent with the circumstances (39), the sets
 [frank-1996]'s compatibility-restricted union adds to the circumstances. -/
-def extensions (b : Backgrounds W) (w : W) : Set (Set (W → Prop)) :=
+def extensions (b : Backgrounds W) (w : W) : Set (Set (Set W)) :=
   {X | Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X}
 
 /-- The favored worlds (40), the accessible worlds verifying some maximal consistent set of
 promoted priorities. -/
 def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
-  ⋃ X ∈ extensions b w, {u ∈ b.circumstances.accessibleWorlds w | ∀ q ∈ X, q u}
+  ⋃ X ∈ extensions b w, {u ∈ b.circumstances.accessibleWorlds w | ∀ q ∈ X, u ∈ q}
 
 /-- The promoted priorities a world verifies. -/
-def verified (b : Backgrounds W) (w u : W) : Set (W → Prop) :=
-  Preorder.satisfied (fun v q ↦ q v) {q | q ∈ b.nonNegotiable w} u
+def verified (b : Backgrounds W) (w u : W) : Set (Set W) :=
+  Preorder.satisfied (· ∈ ·) {q | q ∈ b.nonNegotiable w} u
 
 variable {b : Backgrounds W} {p : W → Prop} {w : W}
 
@@ -103,8 +103,8 @@ theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b
       fun q' hq' ↦ ⟨hYh (hXY hq'), hvY q' (hXY hq')⟩)) ⟨hYh hq, hvY q hq⟩⟩
 
 /-- A world verifying a maximal consistent extension is best. -/
-theorem mem_bestWorlds_of_extension {X : Set (W → Prop)} {u : W} (hX : X ∈ extensions b w)
-    (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, q u) :
+theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extensions b w)
+    (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, u ∈ q) :
     u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
   have hX' : Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X := hX
   refine ⟨hu, fun v hv hvu ↦ atLeastAsGoodAs_iff_verified_subset.2 fun q hq ↦ ⟨hq.1, huX q ?_⟩⟩
@@ -171,7 +171,7 @@ instance {ι κ : Type*} [Fintype ι] [DecidableEq κ] (commitment : ι → Fins
 
 /-- With `γ` the negotiable ideal and live among the favored worlds, *should γ* holds and *should
 ¬γ* fails (§3.4.2). -/
-theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {γ})
+theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {{v | γ v}})
     (hlive : ∃ v ∈ favoredWorlds b w, γ v) :
     weakNecessity b γ w ∧ ¬ weakNecessity b (fun v ↦ ¬ γ v) w := by
   obtain ⟨v, hv, hγv⟩ := hlive
@@ -181,7 +181,7 @@ theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {γ})
 /-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
 both are live, *not should γ* yields *should ¬γ*. -/
 theorem weakNecessity_neg_of_not {γ : W → Prop}
-    (hchoice : b.negotiable w = {γ} ∨ b.negotiable w = {fun v ↦ ¬ γ v})
+    (hchoice : b.negotiable w = {{v | γ v}} ∨ b.negotiable w = {{v | ¬ γ v}})
     (hγ : ∃ v ∈ favoredWorlds b w, γ v) (hnγ : ∃ v ∈ favoredWorlds b w, ¬ γ v)
     (h : ¬ weakNecessity b γ w) : weakNecessity b (fun v ↦ ¬ γ v) w := by
   rcases hchoice with hc | hc
@@ -203,9 +203,9 @@ reported. -/
 abbrev Revenue := Bool × Bool
 
 /-- The content of a clause. -/
-def Ideal.holds : Ideal → Revenue → Prop
-  | .domestic, v => v.1 = true
-  | .international, v => v.2 = true
+def Ideal.holds : Ideal → Set Revenue
+  | .domestic => {v | v.1 = true}
+  | .international => {v | v.2 = true}
 
 /-- The participants of the dialogue (46). -/
 inductive Participant
@@ -232,7 +232,7 @@ def commitmentAfter : Participant → Finset Ideal := fun _ ↦ {.domestic, .int
 def reportAll (v : Revenue) : Prop := v.1 = true ∧ v.2 = true
 
 private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
-    favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, i.holds v} := by
+    favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, v ∈ i.holds} := by
   have hall : (true, true) ∈ (ofIdeals h g).circumstances.accessibleWorlds w := by
     show (true, true) ∈ Background.accessibleWorlds ⊥ w
     rw [Background.accessibleWorlds_bot]; exact Set.mem_univ _

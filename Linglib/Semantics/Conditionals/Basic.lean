@@ -344,7 +344,7 @@ antecedent-worlds at least as close ([lewis-1973b] §2.3). -/
 theorem mem_variablyStrictImp_iff_exists [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔ access i ∩ p = ∅ ∨
       ∃ v ∈ access i ∩ p, ∀ w ∈ access i ∩ p, (ord i).le w v → w ∈ q := by
-  letI := ord i
+  let := ord i
   rw [mem_variablyStrictImp]
   rcases (access i ∩ p).eq_empty_or_nonempty with h | h
   · exact iff_of_true (fun u hu ↦ absurd (h ▸ hu) (Set.notMem_empty u)) (.inl h)
@@ -377,7 +377,7 @@ theorem mem_variablyStrictImp_iff_mem_orderingImp
     (hlim : ∀ B : Set W, (access i ∩ B).Nonempty → ((ord i).minimals (access i ∩ B)).Nonempty) :
     i ∈ variablyStrictImp access ord p q ↔ i ∈ orderingImp access ord p q := by
   refine ⟨fun h ↦ variablyStrictImp_subset_orderingImp h, fun hi ↦ ?_⟩
-  letI := ord i
+  let := ord i
   refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun h hh ↦ ?_) hi
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ p | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
   exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
@@ -408,7 +408,7 @@ theorem closestImp_eq_variablyStrictImp [∀ w, Std.Total (ord w).le]
     closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q := by
   refine subset_antisymm (fun w hw ↦ ?_) variablyStrictImp_subset_closestImp
   rw [mem_variablyStrictImp, Set.univ_inter]
-  letI := ord w
+  let := ord w
   refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun u hu ↦ ?_) hw
   obtain ⟨v, hv⟩ := hlim w ⟨u, hu⟩
   exact ⟨v, hv, (Preorder.mem_minimals_iff_forall_le.1 hv).2 u hu⟩
@@ -456,11 +456,11 @@ theorem isPreferential_variablyStrictImp {ord : I → Preorder W} :
   rightWeakening h hψχ := Filter.mem_of_superset (f := @Filter.atBotOn W W (ord i) id _) h hψχ
   and h h' := Filter.inter_mem (f := @Filter.atBotOn W W (ord i) id _) h h'
   or h h' := by
-    letI := ord i
+    let := ord i
     rw [mem_variablyStrictImp, Set.inter_union_distrib_left]
     exact Filter.atBotOn_union_le (Filter.mem_sup.2 ⟨h, h'⟩)
   cautiousMonotonicity h h' := by
-    letI := ord i
+    let := ord i
     rw [mem_variablyStrictImp, ← Set.inter_assoc, Filter.atBotOn_inter_of_mem h]
     exact h'
 
@@ -468,7 +468,7 @@ theorem isRational_variablyStrictImp {ord : I → Preorder W} [Std.Total (ord i)
     Nonmonotonic.IsRational fun p q ↦ i ∈ variablyStrictImp access ord p q where
   toIsPreferential := isPreferential_variablyStrictImp
   rationalMonotonicity h h' := by
-    letI := ord i
+    let := ord i
     rw [mem_variablyStrictImp, ← Set.inter_assoc, Filter.atBotOn_inter_of_frequently h']
     exact Filter.mem_inf_of_left h
 
@@ -489,7 +489,7 @@ theorem exists_not_isRational_closestImp :
       ¬ Nonmonotonic.IsRational fun p q ↦ (0 : Fin 3) ∈ closestImp ord p q := by
   obtain ⟨p, hp⟩ := Nonmonotonic.exists_not_isRational_atBotOn
   refine ⟨fun _ ↦ p, ?_⟩
-  letI := p
+  let := p
   simp only [Filter.atBotOn_eq_principal_of_wellFoundedLT, Filter.mem_principal,
     minimalFor_id] at hp
   exact hp

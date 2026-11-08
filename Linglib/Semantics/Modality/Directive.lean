@@ -62,7 +62,7 @@ theorem weakNecessity_of_necessity {f g g' : Background W} {p : W → Prop} {w :
 theorem exists_weakNecessity_not_necessity :
     ∃ (f g g' : Background Bool) (p : Bool → Prop) (w : Bool),
       weakNecessity f g g' p w ∧ ¬ necessity f g p w := by
-  refine ⟨⊥, ⊥, fun _ ↦ {(· = true)}, (· = true), true, ?_, fun h ↦ nomatch h false (by simp)⟩
+  refine ⟨⊥, ⊥, fun _ ↦ {{true}}, (· = true), true, ?_, fun h ↦ nomatch h false (by simp)⟩
   simp [weakNecessity_iff, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff]
 
 end Modality.Directive

@@ -45,7 +45,7 @@ namespace Conditional.Restrictor
 
 open Modality
 
-variable {W : Type*} (f g : Background W) (α β : W → Prop) (w : W)
+variable {W : Type*} (f g : Background W) (α : Set W) (β : W → Prop) (w : W)
 
 /-- *If α, must β* on the restrictor analysis is human necessity over the modal base restricted
 by α. -/
@@ -59,14 +59,14 @@ def conditionalPossibility : Prop := humanPossibility (f.restrict α) g β w
 preorders the ordering source induces. -/
 theorem conditionalNecessity_iff_mem_variablyStrictImp :
     conditionalNecessity f g α β w ↔ w ∈ variablyStrictImp (f.accessibleWorlds)
-      (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
+      (fun w ↦ premisePreorder (g w)) α {v | β v} := by
   rw [conditionalNecessity, humanNecessity, Background.accessibleWorlds_restrict]
   rfl
 
 /-- *If α, might β* is the *might* of the variably strict conditional. -/
 theorem conditionalPossibility_iff_mem_might :
     conditionalPossibility f g α β w ↔ w ∈ might (variablyStrictImp (f.accessibleWorlds)
-      (fun w ↦ premisePreorder (g w))) {v | α v} {v | β v} := by
+      (fun w ↦ premisePreorder (g w))) α {v | β v} := by
   rw [conditionalPossibility, humanPossibility, Background.accessibleWorlds_restrict]
   rfl
 
@@ -95,7 +95,7 @@ theorem conditionalPossibility_iff_possibility (hlim : LimitAssumption (f.restri
 
 theorem conditionalNecessity_iff_mem_orderingImp (hlim : LimitAssumption (f.restrict α) g w) :
     conditionalNecessity f g α β w ↔
-      w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
+      w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) α {v | β v} := by
   rw [conditionalNecessity_iff_necessity hlim, necessity_iff, mem_orderingImp, bestWorlds,
     Background.accessibleWorlds_restrict]
   rfl
@@ -106,17 +106,17 @@ variable (f α β w)
 worlds. -/
 theorem restrictor_eq_strict :
     conditionalNecessity f ⊥ α β w ↔
-      w ∈ strictImp (f.accessibleWorlds) {v | α v} {v | β v} := by
+      w ∈ strictImp (f.accessibleWorlds) α {v | β v} := by
   rw [conditionalNecessity, humanNecessity_bot_iff, simpleNecessity_iff, mem_strictImp]
   simp [-Background.mem_accessibleWorlds, Set.subset_def, and_imp]
 
-theorem vacuous_conditional (h : ∀ w', w' ∈ f.accessibleWorlds w → ¬ α w') :
+theorem vacuous_conditional (h : ∀ w' ∈ f.accessibleWorlds w, w' ∉ α) :
     conditionalNecessity f g α β w := fun u hu ↦
   absurd (Background.mem_accessibleWorlds_restrict.1 hu).2
     (h u (Background.mem_accessibleWorlds_restrict.1 hu).1)
 
 theorem material_from_restrictor (hTotal : f.accessibleWorlds w = {w}) :
-    conditionalNecessity f ⊥ α β w ↔ (α w → β w) := by
+    conditionalNecessity f ⊥ α β w ↔ (w ∈ α → β w) := by
   rw [restrictor_eq_strict, mem_strictImp_forall, hTotal]
   simp
 

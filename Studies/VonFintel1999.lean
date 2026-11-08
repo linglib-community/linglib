@@ -57,11 +57,11 @@ variable {W ι : Type*}
 
 section Attitudes
 
-variable (dox rel : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
+variable (dox rel : W → Set W) (g : W → Set (Set W)) (p : Set W)
 
 /-- `X` is better than `Y` when every `X`-world is strictly better than every `Y`-world under the
 ordering source `A`. -/
-def Better (A : Set (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
+def Better (A : Set (Set W)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
 
 open Classical in
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
@@ -87,9 +87,9 @@ the actual one, where the Civic bought is a lemon, `1` is where a good Civic is 
 where none is; the subject believes `0`, wants the good Civic, and is not glad that a Civic was
 bought, since `0` is no better than `2`. -/
 theorem not_gladBetter_of_want :
-    ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Fin 3 → Prop)) (p : Set (Fin 3))
+    ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Set (Fin 3))) (p : Set (Fin 3))
       (w : Fin 3), dox w ⊆ p ∧ want rel g p w = .true ∧ gladBetter dox rel g p w = .false := by
-  refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, ?_, ?_⟩
+  refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {{1}}, {0, 1}, 0, by simp, ?_, ?_⟩
   · refine want_eq_true_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
     simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
@@ -117,7 +117,7 @@ theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
 paper keeps the best-worlds `regret`. World `2` is the preferred one; the subject believes `0`
 and is sorry about `{0, 1}` but not about `{0}`, since `1` is no better than `0`. -/
 theorem not_isStrawsonDE_regretBetter :
-    ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {(· = 2)})) :=
+    ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {{2}})) :=
   fun h ↦ by
     have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
         simp only [regretBetter, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
@@ -169,10 +169,10 @@ end Only
 /-- With a genuine ordering source, the antecedent of Kratzer's conditional necessity is not
 downward entailing (73). -/
 theorem not_antitone_conditionalNecessity :
-    ¬ Antitone fun α : Fin 2 → Prop ↦
-      {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {(· = 0)}) α (· = 0) w} :=
+    ¬ Antitone fun α : Set (Fin 2) ↦
+      {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {{0}}) α (· = 0) w} :=
   fun h ↦ by
-    have := @h (· = 1) (fun _ ↦ True) (fun _ _ ↦ trivial) 0
+    have := @h {1} .univ (Set.subset_univ _) 0
     simp only [Restrictor.conditionalNecessity_iff_necessity_of_finite, necessity_iff, bestWorlds,
       Preorder.mem_minimals_iff,
       Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,

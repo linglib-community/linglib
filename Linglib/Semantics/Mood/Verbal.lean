@@ -84,7 +84,7 @@ incomparable optimal worlds each make a different proposition locally necessary.
 theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
     (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
     m.interp c.toOrderedInformationState p ↔ m.target.boxOn c p := by
-  letI := c.order
+  let := c.order
   cases m
   · exact Iff.rfl
   · exact ⟨fun ⟨v, hv, hp⟩ ↦ (Filter.setOf_minimalFor_subset_iff_of_least (f := id) (t := {w | p w})

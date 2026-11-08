@@ -94,8 +94,8 @@ theorem ev_eq_undefined_of_known (h : Known f w p) : Ev f g p w = .undefined :=
 theorem gapExt_compl_ev : Trivalent.gapExt (Ev f g p)ᶜ = Trivalent.gapExt (Ev f g p) := by
   ext w; simp
 
-theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, q u)
-    (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
+theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, u ∈ q)
+    (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, u ∈ q) → p u) : necessity f g p w := by
   rw [necessity_iff]
   intro u hu
   rw [bestWorlds, Preorder.minimals_ofCriteria_eq hex] at hu
@@ -108,7 +108,7 @@ theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ f.accessibleWorlds w
 
 /-- The evidential is defined when the speaker knows some proposition and does not know `p`, as the
 present perfect supplies (Section 5.2). -/
-theorem ev_ne_undefined_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
+theorem ev_ne_undefined_of_perfect {p' : Set W} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
     Ev f g p w ≠ .undefined := by
   simp [Ev, show (f w).Nonempty from ⟨_, hp'⟩, hnot]
 
@@ -116,7 +116,7 @@ theorem ev_ne_undefined_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : 
 theorem ev_not_entails :
     ∃ (f : Background (Fin 2)) (g : Background (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
       Ev f g p w = .true ∧ ¬ p w := by
-  refine ⟨fun _ ↦ {fun _ ↦ True}, fun _ ↦ {fun u ↦ u = 1}, (· = 1), 0, ?_, by decide⟩
+  refine ⟨fun _ ↦ {.univ}, fun _ ↦ {{1}}, (· = 1), 0, ?_, by decide⟩
   simp only [Ev, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
   refine ⟨⟨by simp, ?_⟩, ?_⟩
   · intro h

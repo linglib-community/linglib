@@ -211,7 +211,7 @@ sum, and the event indicating a disposition happens at time `0`. -/
 section Model
 
 /-- The gnomic modal base, whose one premise is to be the alternative `true`. -/
-def gnomic : NonemptyInterval ℕ → Background Bool := fun _ _ ↦ {(· = true)}
+def gnomic : NonemptyInterval ℕ → Background Bool := fun _ _ ↦ {{true}}
 
 /-- The event indicating a disposition, at time `0`. -/
 def indicating : Bool → NonemptyInterval ℕ → Prop := fun _ e ↦ e = .pure 0
