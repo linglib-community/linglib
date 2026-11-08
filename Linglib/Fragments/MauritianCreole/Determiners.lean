@@ -22,7 +22,7 @@ namespace MauritianCreole.Determiners
 /-- The Mauritian Creole determiner inventory is the single strong definite
     *la*. -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
+  [ .article { form := "la", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} } ]
 
 theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide

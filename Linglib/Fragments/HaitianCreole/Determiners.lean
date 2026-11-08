@@ -25,7 +25,7 @@ namespace HaitianCreole.Determiners
 /-- The Haitian Creole determiner inventory is the single syncretic definite
     *la*. -/
 def inventory : Determiner.Inventory :=
-  [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
+  [ .article { form := "la", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation, .anaphoric} } ]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide

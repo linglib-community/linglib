@@ -199,9 +199,9 @@ theorem uniquelyIdentifiable_le_iff_english :
     (∀ k, ∀ s ∈ required .english k,
       .uniquelyIdentifiable ≤ s ↔ k ≠ .indefiniteN ∧ k ≠ .indefiniteThisN) ∧
     (∀ s ∈ required .english .definiteN,
-      .uniquelyIdentifiable ≤ s ↔ English.Determiners.the.definiteness = .definite) ∧
+      .uniquelyIdentifiable ≤ s ↔ .definite ∈ English.Determiners.the.definiteness) ∧
     ∀ s ∈ required .english .indefiniteN,
-      .uniquelyIdentifiable ≤ s ↔ English.Determiners.a.definiteness = .definite := by
+      .uniquelyIdentifiable ≤ s ↔ .definite ∈ English.Determiners.a.definiteness := by
   decide +kernel
 
 /-! ### The corpus -/

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Locality.Phase
@@ -66,11 +65,11 @@ namespace ShenHuang2026
 open Minimalist Minimalist.Linearization ArgumentStructure
 
 /-- A cell of the factorial design (20), (21) fixes whether the wh-phrase is fronted, as in
-English, or stays in situ, as in Mandarin; the definiteness of the object DP the wh-element sits
-in, the demonstrative being specific; and whether the main verb is a verb of creation. -/
+English, or stays in situ, as in Mandarin; whether the object DP the wh-element sits in is
+definite, the demonstrative being specific; and whether the main verb is a verb of creation. -/
 structure Config where
   fronted : Bool
-  object : Definiteness
+  definiteObject : Bool
   creation : Bool
   deriving DecidableEq, Repr
 
@@ -95,19 +94,19 @@ def a : LexicalItem.Token := ⟨.of .D [.N] "a", 4⟩
 def verb : LexicalItem.Token := ⟨.of .V [.D], 5⟩
 
 /-- The determiner of the object is the demonstrative when it is definite. -/
-def determiner : Definiteness → LexicalItem.Token
-  | .definite => that
-  | .indefinite => a
+def determiner : Bool → LexicalItem.Token
+  | true => that
+  | false => a
 
 /-- The object DP of (25) has the wh-phrase in the complement of the determiner. -/
-def dp (o : Definiteness) : LinearizedSyntacticObject := determiner o * (book * (about * wh))
+def dp (o : Bool) : LinearizedSyntacticObject := determiner o * (book * (about * wh))
 
 /-- The verb phrase of (25). -/
-def vp (o : Definiteness) : LinearizedSyntacticObject := verb * dp o
+def vp (o : Bool) : LinearizedSyntacticObject := verb * dp o
 
 /-- The wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any phase the
 determiner heads (5). -/
-theorem impenetrable (o : Definiteness) :
+theorem impenetrable (o : Bool) :
     (vp o : SyntacticObject).WithinComplement (determiner o) wh := by
   cases o <;> decide
 
@@ -121,36 +120,36 @@ theorem edge_not_impenetrable :
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of
 *about*. -/
-def extracted (o : Definiteness) : LinearizedSyntacticObject :=
+def extracted (o : Bool) : LinearizedSyntacticObject :=
   wh * (verb * (determiner o * (book * (about * .traceOf wh))))
 
 /-- The LF-movement analysis of an in-situ wh-phrase ([huang-1982b], §5.2) puts a deleted copy
 above the pronounced one. -/
-def covert (o : Definiteness) : LinearizedSyntacticObject := .traceOf wh * vp o
+def covert (o : Bool) : LinearizedSyntacticObject := .traceOf wh * vp o
 
 /-- Covert movement leaves the string of the in-situ object. -/
-example (o : Definiteness) : pfPhon (covert o) = pfPhon (vp o) := by
+example (o : Bool) : pfPhon (covert o) = pfPhon (vp o) := by
   cases o <;> decide
 
 /-- The object of a cell is the wh-phrase extracted, or in situ, bound by an operator after
 [li-1992]. -/
 def Config.tree (c : Config) : LinearizedSyntacticObject :=
-  if c.fronted then extracted c.object else vp c.object
+  if c.fronted then extracted c.definiteObject else vp c.definiteObject
 
 /-- The object of a cell on the LF-movement analysis of wh-in-situ. -/
 def Config.covertTree (c : Config) : LinearizedSyntacticObject :=
-  if c.fronted then extracted c.object else covert c.object
+  if c.fronted then extracted c.definiteObject else covert c.definiteObject
 
 /-! ### The two constraints -/
 
 /-- On the DP phasehood account (§2.1) the demonstrative heads a phase, which a verb of creation
 collapses by incorporating it. -/
 def Config.phaseHead (c : Config) : Option LexicalItem.Token :=
-  if c.object = .definite ∧ c.creation = false then some that else none
+  if c.definiteObject = true ∧ c.creation = false then some that else none
 
 /-- The demonstrative-marked DP is the specific one, in [fiengo-1987]'s sense of familiar. -/
 def Config.specific (c : Config) : Option SyntacticObject :=
-  if c.object = .definite then some (dp c.object) else none
+  if c.definiteObject = true then some (dp c.definiteObject) else none
 
 /-- The PIC (4) is violated in `t` when a link of the wh-phrase's chain leaves the phase that the
 cell's determiner heads, from its interior. -/
@@ -183,18 +182,18 @@ theorem violatesPIC_iff_not_accessible (c : Config) :
 
 theorem pic_violated_iff (c : Config) :
     Constraint.Violated .pic c ↔
-      c.fronted = true ∧ c.object = .definite ∧ c.creation = false := by
+      c.fronted = true ∧ c.definiteObject = true ∧ c.creation = false := by
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
 -- §3, §5.2, Table 2
 theorem violatesPIC_covertTree_iff (c : Config) :
-    c.ViolatesPIC c.covertTree ↔ c.object = .definite ∧ c.creation = false := by
+    c.ViolatesPIC c.covertTree ↔ c.definiteObject = true ∧ c.creation = false := by
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
 theorem specificity_violated_iff (c : Config) :
-    Constraint.Violated .specificity c ↔ c.object = .definite := by
+    Constraint.Violated .specificity c ↔ c.definiteObject = true := by
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
@@ -215,20 +214,20 @@ def specificity : Finset Constraint := {.specificity}
 def combined : Finset Constraint := {.pic, .specificity}
 
 theorem violations_indefinite (account : Finset Constraint) (fronted v : Bool) :
-    violations account ⟨fronted, .indefinite, v⟩ = 0 :=
+    violations account ⟨fronted, false, v⟩ = 0 :=
   Finset.card_eq_zero.mpr (Finset.filter_eq_empty_iff.mpr fun k _ ↦ by
     cases k <;> cases fronted <;> cases v <;> decide)
 
 /-- An account predicts a definite island effect for a fronted or an in-situ wh-phrase and a verb
 class when the definite object violates more of its constraints than the indefinite one. -/
 def IslandEffect (account : Finset Constraint) (fronted v : Bool) : Prop :=
-  violations account ⟨fronted, .indefinite, v⟩ < violations account ⟨fronted, .definite, v⟩
+  violations account ⟨fronted, false, v⟩ < violations account ⟨fronted, true, v⟩
 
 /-- An account predicts a verb-of-creation effect for a fronted or an in-situ wh-phrase when a
 verb of creation lowers the count for a definite object; an indefinite one violates nothing
 either way. -/
 def VOCEffect (account : Finset Constraint) (fronted : Bool) : Prop :=
-  violations account ⟨fronted, .definite, true⟩ < violations account ⟨fronted, .definite, false⟩
+  violations account ⟨fronted, true, true⟩ < violations account ⟨fronted, true, false⟩
 
 instance (account : Finset Constraint) (fronted v : Bool) :
     Decidable (IslandEffect account fronted v) := inferInstanceAs (Decidable (_ < _))
@@ -269,7 +268,7 @@ theorem observed_iff (account : Finset Constraint) : Observed account ↔ accoun
 /-- The configuration an example's features record. -/
 def Config.ofDatum (ex : Datum) : Option Config := do
   let f ← ex.parse? "wh" [("fronted", true), ("inSitu", false)]
-  let o ← ex.parse? "object" [("definite", Definiteness.definite), ("indefinite", .indefinite)]
+  let o ← ex.parse? "object" [("definite", true), ("indefinite", false)]
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨f, o, v⟩
 
@@ -374,13 +373,13 @@ def IsVerbOfCreation (v : English.Verbs.Verb) : Prop :=
 instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidable (v.form ∈ _))
 
 /-- The configuration of an item whose main verb is a Fragment entry. -/
-def Config.ofVerb (fronted : Bool) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
+def Config.ofVerb (fronted : Bool) (o : Bool) (v : English.Verbs.Verb) : Config :=
   ⟨fronted, o, decide (IsVerbOfCreation v)⟩
 
 -- (25)
 theorem read_write :
-    violations combined (Config.ofVerb true .definite English.Verbs.read) = 2 ∧
-      violations combined (Config.ofVerb true .definite English.Verbs.write) = 1 := by
+    violations combined (Config.ofVerb true true English.Verbs.read) = 2 ∧
+      violations combined (Config.ofVerb true true English.Verbs.write) = 1 := by
   decide
 
 end ShenHuang2026

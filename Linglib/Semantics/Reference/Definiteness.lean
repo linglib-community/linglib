@@ -7,10 +7,10 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Definiteness
 
-This file gives the frame-free vocabulary of definiteness. A nominal is definite or indefinite,
-as Heim distinguishes them, and on the continuum of definiteness, or specificity, that Comrie,
-Aissen and Haspelmath share, a definite ranks above a specific indefinite above a non-specific
-one. Farkas and Brasoveanu take specificity to be stability of reference across alternatives,
+This file gives the frame-free vocabulary of definiteness. The definiteness of a nominal places
+it on the scale that Comrie, Aissen and Haspelmath share, a definite above a specific indefinite
+above a non-specific one, and definite against indefinite is the cut of that scale at its top
+rung. Farkas and Brasoveanu take specificity to be stability of reference across alternatives,
 scopal, epistemic or partitive according to the alternatives.
 A definite article has one of two strengths, uniqueness and familiarity, after Schwarz, ordered
 uniqueness below familiarity since the strong article narrows the weak one. The strength a use of a
@@ -21,9 +21,7 @@ as data here; which strengths a language's determiner inventory marks is derived
 
 ## Main definitions
 
-* `Definiteness`: definite or indefinite, as a two-element bounded linear order.
-* `DefinitenessDegree`: the continuum of definiteness, whose definites are the cut
-  `Set.Ici .definite`.
+* `Definiteness`: the definiteness scale, whose definites are the cut `Set.Ici .definite`.
 * `DefiniteDescription.Strength`, `NominalKind`: the strength of a definite article
   and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
 * `DefiniteDescription.Use`, `DefiniteDescription.Bridging`: the uses of a definite
@@ -38,7 +36,6 @@ as data here; which strengths a language's determiner inventory marks is derived
 * [schwarz-2009]
 * [schwarz-2013]
 * [hawkins-1978]
-* [heim-1982]
 * [jenks-2018]
 * [moroney-2021]
 * [patel-grosz-grosz-2017]
@@ -46,59 +43,29 @@ as data here; which strengths a language's determiner inventory marks is derived
 
 @[expose] public section
 
-/-- A nominal is definite or indefinite. A definite retrieves a unique or familiar referent, an
-indefinite introduces a new one ([heim-1982]). -/
+/-- The definiteness of a nominal ranks a definite above a specific indefinite above a
+non-specific indefinite, the definiteness scale of [haspelmath-2021] and that of [aissen-2003]
+without its pronoun and proper-name rungs; definite against indefinite is its cut at the
+definites. A specific indefinite has stable reference across the alternatives a language's marking
+tracks, scopal, epistemic or partitive; [farkas-brasoveanu-2020] leave open where each kind sits
+on the scale, so a consumer states which it means. -/
 inductive Definiteness where
-  | indefinite
-  | definite
-  deriving DecidableEq, Repr, Fintype
-
-namespace Definiteness
-
-/-- The rank on the definiteness scale, higher for definite. -/
-def rank : Definiteness → ℕ
-  | .indefinite => 0
-  | .definite   => 1
-
-/-- The order `indefinite < definite` is the definiteness scale of differential argument marking
-in its binary form ([aissen-2003]). -/
-instance : LinearOrder Definiteness := LinearOrder.lift' rank (by decide)
-
-/-- `⊥ = indefinite`, `⊤ = definite`. -/
-instance : BoundedOrder Definiteness where
-  top := .definite
-  le_top := by decide
-  bot := .indefinite
-  bot_le := by decide
-
-instance : IsSimpleOrder Definiteness where
-  exists_pair_ne := ⟨.indefinite, .definite, by decide⟩
-  eq_bot_or_eq_top := by decide
-
-end Definiteness
-
-/-- The degree of definiteness of a nominal ranks a definite above a specific indefinite above a
-non-specific indefinite, the definiteness scale of [aissen-2003] without its pronoun and
-proper-name rungs. A specific indefinite has stable reference across the alternatives a
-language's marking tracks, scopal, epistemic or partitive; [farkas-brasoveanu-2020] leave open
-where each kind sits on the scale, so a consumer states which it means. -/
-inductive DefinitenessDegree where
   | nonSpecific
   | specific
   | definite
   deriving DecidableEq, Repr, Fintype
 
-namespace DefinitenessDegree
+namespace Definiteness
 
-/-- The rank on the continuum, 0 for a non-specific indefinite up to 2 for a definite. -/
-def rank : DefinitenessDegree → ℕ
+/-- The rank on the scale, 0 for a non-specific indefinite up to 2 for a definite. -/
+def rank : Definiteness → ℕ
   | .nonSpecific => 0
   | .specific => 1
   | .definite => 2
 
-instance : LinearOrder DefinitenessDegree := LinearOrder.lift' rank (by decide)
+instance : LinearOrder Definiteness := LinearOrder.lift' rank (by decide)
 
-end DefinitenessDegree
+end Definiteness
 
 namespace DefiniteDescription
 

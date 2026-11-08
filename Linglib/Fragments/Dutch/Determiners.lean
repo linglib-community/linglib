@@ -82,13 +82,13 @@ theorem faithful : Gender.Faithful singular :=
 /-- The definite article *de* ~ *het* is one syncretic definite over the [schwarz-2009] use
 types. -/
 def de : Article :=
-  { form := plural .definite, definiteness := .definite, exponent := .dedicatedMorpheme
+  { form := plural .definite, definiteness := {.definite}, exponent := .dedicatedMorpheme
     uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- The indefinite article *een* occurs with singular count nouns, since indefinite plural and
 mass noun phrases are bare. -/
 def een : Article :=
-  { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme,
+  { form := "een", definiteness := {.nonSpecific, .specific}, exponent := .dedicatedMorpheme,
     numberRestriction := some .singular }
 
 /-- The negative article *geen* occurs with singular, plural and mass nouns alike, and the

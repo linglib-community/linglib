@@ -21,12 +21,12 @@ namespace Fering.Determiners
 
 /-- The A-form *a/at* expones the uses on which its referent is unique in the situation. -/
 def aForm : Article :=
-  { form := "a", definiteness := .definite, exponent := .dedicatedMorpheme,
+  { form := "a", definiteness := {.definite}, exponent := .dedicatedMorpheme,
     uses := {.immediateSituation, .largerSituation} }
 
 /-- The D-form *di/det* expones the uses on which it refers back to an antecedent. -/
 def dForm : Article :=
-  { form := "di", definiteness := .definite, exponent := .dedicatedMorpheme,
+  { form := "di", definiteness := {.definite}, exponent := .dedicatedMorpheme,
     uses := {.anaphoric} }
 
 /-- The Fering determiners are the A-form and the D-form of the definite article. -/
