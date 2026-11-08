@@ -21,8 +21,8 @@ as data here; which strengths a language's determiner inventory marks is derived
 ## Main definitions
 
 * `Definiteness`: definite or indefinite, as a two-element bounded linear order.
-* `DefinitenessDegree`: the continuum of definiteness, with its cut
-  `DefinitenessDegree.definiteness`.
+* `DefinitenessDegree`: the continuum of definiteness, whose definites are the cut
+  `Set.Ici .definite`.
 * `DefiniteDescription.Strength`, `NominalKind`: the strength of a definite article
   and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
 * `DefiniteDescription.Use`, `DefiniteDescription.Bridging`: the uses of a definite
@@ -94,13 +94,6 @@ def rank : DefinitenessDegree → ℕ
   | .definite => 2
 
 instance : LinearOrder DefinitenessDegree := LinearOrder.lift' rank (by decide)
-
-/-- A degree is definite at the top of the continuum and indefinite below it. -/
-def definiteness (d : DefinitenessDegree) : Definiteness :=
-  if .definite ≤ d then .definite else .indefinite
-
-theorem definiteness_monotone : Monotone definiteness := by
-  intro a b; revert a b; decide
 
 end DefinitenessDegree
 

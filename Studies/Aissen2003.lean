@@ -85,16 +85,10 @@ def nominality (d : DefinitenessScale) : Nominality := d.dimensions.1
 /-- The degree of definiteness of a position, pronouns and names being definite. -/
 def degree (d : DefinitenessScale) : DefinitenessDegree := d.dimensions.2
 
-/-- The definiteness of a position, definite for pronouns, names and definite NPs. -/
-def definiteness (d : DefinitenessScale) : Definiteness := d.degree.definiteness
-
 theorem nominality_monotone : Monotone nominality := by
   intro a b; revert a b; decide
 
 theorem degree_monotone : Monotone degree := by
-  intro a b; revert a b; decide
-
-theorem definiteness_monotone : Monotone definiteness := by
   intro a b; revert a b; decide
 
 end DefinitenessScale
@@ -125,7 +119,7 @@ theorem catalan_pitjantjatjara_nominality (a : Animacy) (d : DefinitenessScale) 
 abbrev hebrewDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .definite)
 
 theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
-    (a, d) ∈ hebrewDOM ↔ d.definiteness = .definite := by
+    (a, d) ∈ hebrewDOM ↔ .definite ≤ d.degree := by
   revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
