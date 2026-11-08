@@ -13,9 +13,9 @@ A `k`-factor is a connected structure on at most `k` elements, presented by a se
 its atoms there, that is, when its canonical structure maps homomorphically into the structure.
 Homomorphisms are the weak ones of mathlib, so a factor may leave a relation unsaid, and a factor
 occurring in a structure occurs in every structure it maps into. One factor is a subfactor of
-another when it occurs in the other's canonical structure; this preorder is the subfactor order
-of Chandlee, Eyraud, Heinz, Jardine and Rawski, and the factors of a structure form a lower set
-in it.
+another when the structure it presents maps homomorphically into the other's; this preorder is the
+subfactor order of Chandlee, Eyraud, Heinz, Jardine and Rawski, and the factors of a structure
+form a lower set in it.
 
 ## Main definitions
 
@@ -60,7 +60,7 @@ structure on at most `k` elements. -/
 structure Factor (k : ℕ) where
   /-- The number of variables. -/
   {n : ℕ}
-  le : n ≤ k
+  n_le : n ≤ k
   /-- The atoms. -/
   atoms : Set (L.Atom (Fin n))
   preconnected : (Atom.gaifman atoms).Preconnected
@@ -90,25 +90,28 @@ section Order
 
 variable [L.IsRelational]
 
-/-- One factor is a subfactor of another when it occurs in the structure the other presents. -/
+/-- One factor is a subfactor of another when the structure it presents maps homomorphically
+into the structure the other presents. -/
 instance : Preorder (L.Factor k) where
-  le f g := f.Occurs (Atom.Canonical g.atoms)
-  le_refl f := ⟨_, Atom.Canonical.of_mem_realizers f.atoms⟩
-  le_trans _ _ _ hfg := fun ⟨v, hv⟩ ↦ hfg.hom ((Atom.Canonical.homEquiv _).symm ⟨v, hv⟩)
+  le f g := Nonempty (Atom.Canonical f.atoms →[L] Atom.Canonical g.atoms)
+  le_refl _ := ⟨Hom.id L _⟩
+  le_trans _ _ _ := fun ⟨φ⟩ ⟨ψ⟩ ↦ ⟨ψ.comp φ⟩
 
 theorem le_iff_occurs : f ≤ g ↔ f.Occurs (Atom.Canonical g.atoms) :=
-  .rfl
+  occurs_iff_nonempty_hom.symm
 
 /-- A subfactor of a factor occurring in a structure occurs in it. -/
-theorem Occurs.of_le (h : f ≤ g) : g.Occurs M → f.Occurs M :=
-  fun ⟨v, hv⟩ ↦ h.hom ((Atom.Canonical.homEquiv _).symm ⟨v, hv⟩)
+theorem Occurs.of_le (h : f ≤ g) (hg : g.Occurs M) : f.Occurs M :=
+  let ⟨φ⟩ := h
+  let ⟨ψ⟩ := occurs_iff_nonempty_hom.1 hg
+  occurs_iff_nonempty_hom.2 ⟨ψ.comp φ⟩
 
 end Order
 
 /-- Over finitely many atoms on each number of variables, there are finitely many `k`-factors. -/
 instance [∀ n, Finite (L.Atom (Fin n))] : Finite (L.Factor k) :=
   .of_injective (β := Σ n : Fin (k + 1), Set (L.Atom (Fin n)))
-    (fun f ↦ ⟨⟨f.n, Nat.lt_succ_of_le f.le⟩, f.atoms⟩) <| by
+    (fun f ↦ ⟨⟨f.n, Nat.lt_succ_of_le f.n_le⟩, f.atoms⟩) <| by
       rintro ⟨_, A, _⟩ ⟨_, B, _⟩ h
       simp only [Sigma.mk.injEq, Fin.mk.injEq] at h
       obtain ⟨rfl, h⟩ := h

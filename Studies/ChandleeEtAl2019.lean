@@ -3,6 +3,7 @@ module
 public import Studies.Hansson2010
 public import Linglib.Data.Examples.ChandleeEtAl2019
 public import Linglib.Phonology.Subregular.WordModel
+public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 
@@ -11,12 +12,13 @@ public import Mathlib.Order.UpperLower.Closure
 
 The paper orders the connected structures in models of strings by the subfactor relation and asks
 a learner for the most general grammar of forbidden subfactors consistent with a sample. The
-factors of a word form a lower set under the subfactor preorder, so [a grammar forbids every
-superfactor of what it forbids](##language_upperClosure), and [the minimal factors no datum
-contains are the grammar the learner seeks](##isAdequate_mostGeneral). For segments, [one
-feature-labelled subfactor lies below the four sibilant pairs](##antPost_le_diagram) a conventional
-model forbids one by one, and [sorts the paper's Samala words](##sibilantsOf_mem_language_iff);
-Hansson's symmetric harmony needs [its mirror image too](##navajoSibilantHarmony_language_eq).
+factors of a word form a lower set in that order, and the strictly local sets are the closed sets
+of a closure operator, so [the minimal forbidden factors generate the closure of the
+sample](##isAdequate_mostGeneral), uniquely so [up to equivalent
+factors](##IsAdequate.image_toAntisymmetrization). For segments, [one feature-labelled subfactor
+lies below the four sibilant pairs](##antPost_le_diagram) and [sorts the paper's Samala
+words](##sibilantsOf_mem_language_iff); symmetric harmony needs [its mirror
+image](##navajoSibilantHarmony_language_eq).
 
 ## Implementation notes
 
@@ -31,6 +33,8 @@ Hansson's symmetric harmony needs [its mirror image too](##navajoSibilantHarmony
   (`abGrammar_errata`).
 * Section 6: that grammar and the grammar forbidding aa, bb, ac, bc, cc, ca and cb differ on the
   word c (`abGrammar_errata`).
+* Remark 1: the `k`-subfactors of a word longer than `k` need not be directed (ab and bc in abc,
+  `k = 2`), so they form no principal ideal.
 
 ## References
 
@@ -52,7 +56,7 @@ section Grammar
 open FirstOrder.Language
 
 variable {L : FirstOrder.Language} {ι : Type*} {M : ι → Type*} [∀ i, L.Structure (M i)] {k : ℕ}
-  {i : ι} {G : Set (L.Factor k)}
+  {i : ι} {D : Set ι} {G : Set (L.Factor k)}
 
 variable (M) in
 /-- The language of a grammar, Definition 8: the members none of whose `k`-factors the grammar
@@ -66,6 +70,28 @@ theorem mem_language_iff : i ∈ language M G ↔ ∀ g ∈ G, ¬ g.Occurs (M i)
 theorem isStrictlyLocal_language (G : Set (L.Factor k)) : L.IsStrictlyLocal M k (language M G) :=
   ⟨Gᶜ, Set.ext fun _ ↦ Set.subset_compl_iff_disjoint_right.symm⟩
 
+-- Criteria 1 and 2 of Definition 9: the language covers the sample and lies in every strictly
+-- local set that does.
+theorem language_eq_strictlyLocalClosure_iff :
+    language M G = L.strictlyLocalClosure M k D ↔
+      D ⊆ language M G ∧ ∀ S, L.IsStrictlyLocal M k S → D ⊆ S → language M G ⊆ S := by
+  set c := L.strictlyLocalClosure M k
+  refine ⟨fun h ↦ ⟨h ▸ c.le_closure D, fun S hS hDS ↦ h ▸ c.closure_min hDS
+    (isStrictlyLocal_iff_isClosed.1 hS)⟩, fun ⟨h₁, h₂⟩ ↦ le_antisymm ?_ ?_⟩
+  · exact h₂ _ (isStrictlyLocal_iff_isClosed.2 (c.isClosed_closure D)) (c.le_closure D)
+  · exact c.closure_min h₁ (isStrictlyLocal_iff_isClosed.1 (isStrictlyLocal_language G))
+
+variable (L M k) in
+/-- The forbidden factors of a sample, section 6: the factors of members that no datum
+contains. -/
+def forbidden (D : Set ι) : Set (L.Factor k) :=
+  (⋃ i, L.factors k (M i)) \ ⋃ d ∈ D, L.factors k (M d)
+
+theorem subset_forbidden (hG : G ⊆ ⋃ i, L.factors k (M i)) (hD : D ⊆ language M G) :
+    G ⊆ forbidden L M k D := fun _ hg ↦ ⟨hG hg, fun h ↦
+  let ⟨_, hd, hgd⟩ := Set.mem_iUnion₂.1 h
+  Set.disjoint_left.1 (hD hd) hgd hg⟩
+
 variable [L.IsRelational]
 
 -- Proposition 3
@@ -73,44 +99,63 @@ theorem language_upperClosure (G : Set (L.Factor k)) :
     language M (upperClosure G : Set (L.Factor k)) = language M G :=
   Set.ext fun _ ↦ isLowerSet_factors.disjoint_upperClosure_right
 
+variable (L M k) in
+/-- The most general grammar of a sample: its minimal forbidden factors. -/
+def mostGeneral (D : Set ι) : Set (L.Factor k) :=
+  {g | Minimal (· ∈ forbidden L M k D) g}
+
 variable (M) in
-/-- A grammar of factors of members is adequate to a sample, Definition 9, when its language
-covers the sample, is the least strictly local set that does, and its factors lie below those of
-every other such grammar. -/
+/-- A grammar of factors of members is adequate to a sample, Definition 9, when its language is the
+sample's strictly local closure and its factors lie below those of every other such grammar. -/
 structure IsAdequate (D : Set ι) (G : Set (L.Factor k)) : Prop where
   /-- The grammar consists of factors of members, as Definition 8 requires. -/
   subset_factors : G ⊆ ⋃ i, L.factors k (M i)
-  /-- Criterion 1: the language covers the sample. -/
-  subset_language : D ⊆ language M G
-  /-- Criterion 2: the language is the least strictly local set covering the sample. -/
-  language_subset : ∀ S, L.IsStrictlyLocal M k S → D ⊆ S → language M G ⊆ S
+  /-- Criteria 1 and 2, by `language_eq_strictlyLocalClosure_iff`. -/
+  language_eq : language M G = L.strictlyLocalClosure M k D
   /-- Criterion 3: each factor of another grammar meeting criteria 1 and 2 lies above one of
   this grammar's. -/
-  exists_le : ∀ G' ⊆ ⋃ i, L.factors k (M i), D ⊆ language M G' →
-    (∀ S, L.IsStrictlyLocal M k S → D ⊆ S → language M G' ⊆ S) → ∀ g' ∈ G', ∃ g ∈ G, g ≤ g'
+  exists_le : ∀ G' ⊆ ⋃ i, L.factors k (M i), language M G' = L.strictlyLocalClosure M k D →
+    ∀ g' ∈ G', ∃ g ∈ G, g ≤ g'
 
-variable (L M k) in
-/-- The minimal factors that occur in some member but in no datum. -/
-def mostGeneral (D : Set ι) : Set (L.Factor k) :=
-  {g | Minimal (· ∈ (⋃ i, L.factors k (M i)) \ ⋃ d ∈ D, L.factors k (M d)) g}
+theorem exists_mem_mostGeneral_le [WellFoundedLT (L.Factor k)] {f : L.Factor k}
+    (hf : f ∈ forbidden L M k D) : ∃ g ∈ mostGeneral L M k D, g ≤ f :=
+  let ⟨g, hgf, hg⟩ := exists_minimal_le_of_wellFoundedLT _ f hf
+  ⟨g, hg, hgf⟩
 
-/-- The minimal factors that occur in some member but in no datum are adequate to the sample,
-which is what Theorem 1 asks of the grammar the learning algorithm returns. -/
+theorem language_mostGeneral [WellFoundedLT (L.Factor k)] (D : Set ι) :
+    language M (mostGeneral L M k D) = L.strictlyLocalClosure M k D := by
+  ext i
+  rw [mem_strictlyLocalClosure]
+  refine ⟨fun hi f hf ↦ by_contra fun hfD ↦ ?_,
+    fun h ↦ Set.disjoint_right.2 fun g hg hgi ↦ hg.prop.2 (h hgi)⟩
+  obtain ⟨g, hg, hgf⟩ := exists_mem_mostGeneral_le ⟨Set.mem_iUnion.2 ⟨i, hf⟩, hfD⟩
+  exact Set.disjoint_left.1 hi (isLowerSet_factors hgf hf) hg
+
+/-- The minimal forbidden factors of a sample are adequate to it, which is what Theorem 1 asks of
+the grammar the learning algorithm returns. -/
 theorem isAdequate_mostGeneral [WellFoundedLT (L.Factor k)] (D : Set ι) :
-    IsAdequate M D (mostGeneral L M k D) := by
-  have key {f : L.Factor k} (hf : f ∈ (⋃ i, L.factors k (M i)) \ ⋃ d ∈ D, L.factors k (M d)) :
-      ∃ g ∈ mostGeneral L M k D, g ≤ f :=
-    let ⟨g, hgf, hg⟩ := exists_minimal_le_of_wellFoundedLT _ f hf
-    ⟨g, hg, hgf⟩
-  refine ⟨fun g hg ↦ hg.prop.1, fun d hd ↦ Set.disjoint_right.2 fun g hg hgd ↦
-    hg.prop.2 (Set.mem_biUnion hd hgd), fun S hS hDS i hi ↦ ?_, fun G' hG' hD _ g' hg' ↦ ?_⟩
-  · refine isStrictlyLocal_iff.1 hS i fun f hf ↦ by_contra fun hfS ↦ ?_
-    obtain ⟨g, hg, hgf⟩ := key ⟨Set.mem_iUnion.2 ⟨i, hf⟩,
-      fun h ↦ hfS (Set.biUnion_mono hDS (fun _ _ ↦ subset_rfl) h)⟩
-    exact Set.disjoint_left.1 hi (isLowerSet_factors hgf hf) hg
-  · refine key ⟨hG' hg', fun h ↦ ?_⟩
-    obtain ⟨d, hd, hgd⟩ := Set.mem_iUnion₂.1 h
-    exact Set.disjoint_left.1 (hD hd) hgd hg'
+    IsAdequate M D (mostGeneral L M k D) :=
+  ⟨fun _ hg ↦ hg.prop.1, language_mostGeneral D, fun _ hG' h _ hg' ↦
+    exists_mem_mostGeneral_le
+      (subset_forbidden hG' (h ▸ (L.strictlyLocalClosure M k).le_closure D) hg')⟩
+
+/-- Up to equivalent factors, an adequate grammar of pairwise incomparable factors is the most
+general grammar. -/
+theorem IsAdequate.image_toAntisymmetrization [WellFoundedLT (L.Factor k)]
+    (hG : IsAdequate M D G) (hanti : IsAntichain (· ≤ ·) G) :
+    toAntisymmetrization (· ≤ ·) '' G = toAntisymmetrization (· ≤ ·) '' mostGeneral L M k D := by
+  have hF := subset_forbidden hG.subset_factors
+    (hG.language_eq ▸ (L.strictlyLocalClosure M k).le_closure D)
+  have hle (m) (hm : m ∈ mostGeneral L M k D) : ∃ g ∈ G, g ≤ m :=
+    hG.exists_le _ (fun _ hg ↦ hg.prop.1) (language_mostGeneral D) m hm
+  refine subset_antisymm (Set.image_mono fun g hg ↦ ⟨hF hg, fun f hf hfg ↦ ?_⟩) ?_
+  · obtain ⟨m, hm, hmf⟩ := exists_mem_mostGeneral_le hf
+    obtain ⟨g', hg', hg'm⟩ := hle m hm
+    obtain rfl := hanti.eq hg' hg ((hg'm.trans hmf).trans hfg)
+    exact hg'm.trans hmf
+  · rintro _ ⟨m, hm, rfl⟩
+    obtain ⟨g, hg, hgm⟩ := hle m hm
+    exact ⟨g, hg, (toAntisymmetrization_eq _ _ _).2 ⟨hgm, hm.2 (hF hg) hgm⟩⟩
 
 end Grammar
 
@@ -182,8 +227,8 @@ theorem diagram_pair_le_iff (d e x y : Segment) :
   exact ⟨hd, he⟩
 
 theorem mem_language_pair_iff {x y : Segment} {G : Set (featureLanguage.Factor 2)} :
-    [x, y] ∈ language (WordModel · (· < ·)) G ↔ ∀ g ∈ G, ¬ g ≤ diagram _ [x, y] le_rfl :=
-  mem_language_iff
+    [x, y] ∈ language (WordModel · (· < ·)) G ↔ ∀ g ∈ G, ¬ g ≤ diagram _ [x, y] le_rfl := by
+  simp only [mem_language_iff, le_diagram_iff]
 
 /-- Each of the four sibilant pairs a conventional model forbids separately lies above the one
 feature-labelled subfactor, which the grammar of section 5.2 forbids instead. -/
@@ -259,8 +304,6 @@ theorem navajoSibilantHarmony_language_eq :
     ← forall_and]
   exact forall₂_congr fun a b ↦ imp_congr_right fun _ ↦ pair_agree_iff a b
 
-/-- The grammar of the paper's subfactor alone admits ʃ…s, which the symmetric harmony
-forbids. -/
 theorem esh_s_mem_language :
     [esh, s] ∈ language (WordModel · (· < ·)) {antPost} ∧
       [esh, s] ∉ navajoSibilantHarmony.language 2 := by

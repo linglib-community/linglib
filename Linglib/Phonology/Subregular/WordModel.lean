@@ -17,7 +17,8 @@ A word model is a word as a relational structure: its positions, each carrying t
 symbol, related by an ordering of the positions. In the conventional model a symbol is its own one
 label; in a feature-labelled model, Chandlee, Eyraud, Heinz, Jardine and Rawski's for segments, it
 carries the values of its features, so that a position of a factor stands for a natural class.
-Two orderings recover the two strict classes of stringsets as strictly local sets of word models. Under precedence, a factor occurring in a word
+Two orderings recover the two strict classes of stringsets as strictly local sets of word models.
+Under precedence, a factor occurring in a word
 occurs in the subsequence its occurrence picks out, and a subsequence is itself a factor, its
 positive diagram, so the strictly local sets are the strictly piecewise stringsets. Under
 successor, the covering relation of the positions, an occurrence of a `k`-factor spans fewer than
@@ -182,7 +183,7 @@ theorem exists_sublist_of_occurs [Labelling α P] {k : ℕ} {f : (wordLanguage P
   · refine List.sublist_iff_exists_fin_orderEmbedding_get_eq.2
       ⟨OrderEmbedding.ofStrictMono (fun i ↦ I.orderEmbOfFin rfl (Fin.cast hlen i))
         fun i j h ↦ (I.orderEmbOfFin rfl).lt_iff_lt.2 h, fun i ↦ by simp; rfl⟩
-  · exact hlen.le.trans ((Finset.card_image_le.trans (by simp)).trans f.le)
+  · exact hlen.le.trans ((Finset.card_image_le.trans (by simp)).trans f.n_le)
   · refine ⟨fun x ↦ Fin.cast hlen.symm ((I.orderIsoOfFin rfl).symm ⟨u x, hmem x⟩),
       mem_realizers_of (fun x ↦ ?_) (fun x y h ↦ ?_) hv⟩
     · change List.get _ _ = w.get (u x)
@@ -195,7 +196,7 @@ the labels `P`: every atom its positions satisfy. -/
 def diagram (P : Type*) [Labelling α P] (s : List α) {k : ℕ} (hs : s.length ≤ k) :
     (wordLanguage P).Factor k where
   n := s.length
-  le := hs
+  n_le := hs
   atoms := {a | a.Realize (M := WordModel s (· < ·)) id}
   preconnected x y := by
     rcases lt_trichotomy x y with h | rfl | h
@@ -239,13 +240,13 @@ theorem diagram_occurs_iff {s : List α} {k : ℕ} (hs : s.length ≤ k) :
 /-- The subfactors of a word's diagram are the factors occurring in the word. -/
 theorem le_diagram_iff [Labelling α P] {s : List α} {k : ℕ} (hs : s.length ≤ k)
     {f : (wordLanguage P).Factor k} : f ≤ diagram P s hs ↔ f.Occurs (WordModel s (· < ·)) :=
-  .rfl
+  Factor.le_iff_occurs
 
 /-- Under precedence one word's diagram is a subfactor of another's exactly when the word is a
 subsequence of the other, [chandlee-eyraud-heinz-jardine-rawski-2019]'s Proposition 2. -/
 theorem diagram_le_diagram_iff {s : List α} {k : ℕ} (hs : s.length ≤ k) (hw : w.length ≤ k) :
     diagram α s hs ≤ diagram α w hw ↔ s <+ w :=
-  diagram_occurs_iff hs
+  (le_diagram_iff hw).trans (diagram_occurs_iff hs)
 
 theorem diagram_singleton_occurs_iff [Labelling α P] {d : α} {k : ℕ} (hk : [d].length ≤ k) :
     (diagram P [d] hk).Occurs (WordModel w (· < ·)) ↔
@@ -347,7 +348,7 @@ theorem le_add_of_occurs {k : ℕ} {f : (wordLanguage P).Factor k}
   have hlen := p.toPath.2.length_lt
   simp only [Fintype.card_fin] at hlen
   have := walk p.toPath.1
-  have := f.le
+  have := f.n_le
   omega
 
 end UnitSteps
@@ -387,7 +388,7 @@ theorem exists_infix_of_occurs {k : ℕ} {u : List β} {f : (wordLanguage P).Fac
   have hm (a) : ((r a₀).toFin : ℕ) ≤ (r a).toFin := ha₀ ▸ Finset.inf'_le _ (Finset.mem_univ a)
   have hspan := le_add_of_occurs covBy_unit hr
   set m := ((r a₀).toFin : ℕ)
-  have hk : 1 ≤ k := hpos.trans_le f.le
+  have hk : 1 ≤ k := hpos.trans_le f.n_le
   have hlt (a) : ((r a).toFin : ℕ) - m < ((u.drop m).take k).length := by
     have := hspan a a₀
     have := (r a).toFin.2
@@ -413,7 +414,7 @@ positions, each carrying the labels of its symbol. -/
 def succDiagram (P : Type*) [Labelling β P] (c : List β) {k : ℕ} (hc : c.length ≤ k) :
     (wordLanguage P).Factor k where
   n := c.length
-  le := hc
+  n_le := hc
   atoms := {a | a.Realize (M := WordModel c (· ⋖ ·)) id}
   preconnected x y := by
     have hpos : 0 < c.length := x.pos
@@ -489,13 +490,13 @@ theorem succDiagram_occurs_iff {c u : List β} {k : ℕ} (hc : c.length ≤ k) :
 /-- The subfactors of a word's successor diagram are the factors occurring in the word. -/
 theorem le_succDiagram_iff {c : List β} {k : ℕ} (hc : c.length ≤ k)
     {f : (wordLanguage P).Factor k} : f ≤ succDiagram P c hc ↔ f.Occurs (WordModel c (· ⋖ ·)) :=
-  .rfl
+  Factor.le_iff_occurs
 
 /-- Under successor one word's diagram is a subfactor of another's exactly when the word is an
 infix of the other, [chandlee-eyraud-heinz-jardine-rawski-2019]'s Proposition 1. -/
 theorem succDiagram_le_succDiagram_iff {c u : List β} {k : ℕ} (hc : c.length ≤ k)
     (hu : u.length ≤ k) : succDiagram β c hc ≤ succDiagram β u hu ↔ c <:+: u :=
-  succDiagram_occurs_iff hc
+  (le_succDiagram_iff hu).trans (succDiagram_occurs_iff hc)
 
 theorem factors_eq_iff_infix {k : ℕ} {u u' : List β} :
     (wordLanguage β).factors k (WordModel u (· ⋖ ·)) =
