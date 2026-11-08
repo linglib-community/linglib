@@ -164,6 +164,7 @@ theorem toList_eraseFrame_clause (p q r u : ℕ) : (eraseFrame (.ofList (clause 
 theorem stringMap_eraseFrame_crossSerial :
     stringMap eraseFrame crossSerial = ambncmdn a b c d := by
   ext l
+  rw [mem_stringMap]
   constructor
   · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
     exact ⟨m, n, (toList_eraseFrame_clause m n m n).symm⟩
@@ -189,6 +190,7 @@ theorem toList_eraseCase_clause (p q r u : ℕ) :
 
 theorem stringMap_eraseCase_crossSerial : stringMap eraseCase crossSerial = anbn a c := by
   ext l
+  rw [mem_stringMap]
   constructor
   · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
     exact ⟨m + n, (toList_eraseCase_clause m n m n).symm⟩
@@ -244,8 +246,10 @@ theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clau
     (.of_forall fun n ↦ ?_) ?_
     (((hL.map f).inf_isRegular isRegular_caseSorted).stringMap eraseFrame)
   · obtain ⟨s, hs, he⟩ := hmem n
-    exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, toList_eraseFrame_clause n n n n⟩
-  · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
+    exact mem_stringMap.2
+      ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, toList_eraseFrame_clause n n n n⟩
+  · intro _ hw
+    obtain ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩ := mem_stringMap.1 hw
     have := hle s hs (he ▸ clause_mem_schema p q r u)
     simpa [he, count_clause, toList_eraseFrame_clause, count_replicate] using this
 

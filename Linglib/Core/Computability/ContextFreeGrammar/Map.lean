@@ -6,27 +6,23 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar
-public import Mathlib.Algebra.FreeMonoid.Basic
+public import Linglib.Core.Computability.Language
 
 /-!
 # Context-free languages are closed under string homomorphisms
 
-A string homomorphism is a monoid homomorphism `φ : FreeMonoid T →* FreeMonoid T'`, fixed by the
-word `φ (of a)` it assigns to each letter. It induces a semiring homomorphism
-`Language.stringMap φ` on languages, compatibly with the identity and with composition, and a map
-of letters `f` induces `Language.map f` through `FreeMonoid.map f`. The image of a context-free
-language is context-free: replace every terminal `a` in every rule by the word `φ (of a)`.
+A string homomorphism `φ : FreeMonoid T →* FreeMonoid T'` is fixed by the word `φ (of a)` it
+assigns to each letter, and acts on languages by `Language.stringMap φ`. The image of a
+context-free language is context-free: replace every terminal `a` in every rule by the word
+`φ (of a)`.
 
 ## Main definitions
 
-* `Language.stringMap`: the image of a language under a string homomorphism.
 * `Symbol.applyHom`, `ContextFreeRule.applyHom`, `ContextFreeGrammar.applyHom`: a string
   homomorphism applied to a symbol, a rule and a grammar.
 
 ## Main results
 
-* `Language.stringMap_id`, `Language.stringMap_stringMap`, `Language.stringMap_map`: the image
-  respects identities and composition, and extends `Language.map`.
 * `ContextFreeGrammar.applyHom_language`: the image grammar generates the image language.
 * `Language.IsContextFree.stringMap`: closure under string homomorphisms, and
   `Language.IsContextFree.map` under maps of letters.
@@ -38,36 +34,7 @@ language is context-free: replace every terminal `a` in every rule by the word `
 
 @[expose] public section
 
-variable {T T' T'' N : Type*}
-
-namespace Language
-
-/-- The image of a language under a string homomorphism `φ`; `Language.map` is the case of a map
-of letters (`Language.stringMap_map`). -/
-def stringMap (φ : FreeMonoid T →* FreeMonoid T') : Language T →+* Language T' where
-  toFun := Set.image fun w ↦ (φ (.ofList w)).toList
-  map_zero' := Set.image_empty _
-  map_one' := Set.image_singleton.trans <| by rw [FreeMonoid.ofList_nil, map_one]; rfl
-  map_add' := Set.image_union _
-  map_mul' _ _ := Set.image_image2_distrib fun _ _ ↦ by
-    rw [FreeMonoid.ofList_append, map_mul, FreeMonoid.toList_mul]
-
-@[simp] theorem mem_stringMap {φ : FreeMonoid T →* FreeMonoid T'} {L : Language T}
-    {w : List T'} : w ∈ stringMap φ L ↔ ∃ v ∈ L, (φ (.ofList v)).toList = w := Iff.rfl
-
-@[simp] theorem stringMap_id (L : Language T) : stringMap (MonoidHom.id _) L = L :=
-  Set.image_id L
-
-theorem stringMap_stringMap (ψ : FreeMonoid T' →* FreeMonoid T'')
-    (φ : FreeMonoid T →* FreeMonoid T') (L : Language T) :
-    stringMap ψ (stringMap φ L) = stringMap (ψ.comp φ) L :=
-  Set.image_image ..
-
-@[simp] theorem stringMap_map (f : T → T') (L : Language T) :
-    stringMap (FreeMonoid.map f) L = map f L :=
-  rfl
-
-end Language
+variable {T T' N : Type*}
 
 namespace Symbol
 
@@ -232,4 +199,4 @@ theorem Language.IsContextFree.stringMap (φ : FreeMonoid T →* FreeMonoid T') 
 /-- Context-free languages are closed under maps of letters. -/
 theorem Language.IsContextFree.map (f : T → T') {L : Language T} (hL : L.IsContextFree) :
     (Language.map f L).IsContextFree :=
-  Language.stringMap_map f L ▸ hL.stringMap _
+  Language.stringMap_map f ▸ hL.stringMap _
