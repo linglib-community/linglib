@@ -19,7 +19,7 @@ existing files in the same area.
 3. Build takes ~5 minutes on a warm cache. `sorry`s in the codebase
    are intentional placeholders for in-progress proofs.
 
-## Four entry points
+## Three entry points
 
 ### Formalize a paper
 
@@ -35,7 +35,7 @@ A study file typically:
   ranking, whatever the paper specifies — in Lean syntax.
 - Proves the predictions the paper claims, using the encoded model.
 - Cites the paper in the module docstring with `@cite{key}` (add the
-  BibTeX entry to `blog/references.bib` first).
+  BibTeX entry to `references.bib` first).
 
 Look at any existing file under `Studies/` for a template —
 `Studies/Jenks2018.lean` (definiteness) and
@@ -56,31 +56,7 @@ represented (most non-Indo-European languages outside our existing
 sample), a small contribution here goes a long way. See an existing
 fragment (e.g. `Fragments/Mayan/Tseltalan.lean`) for the schema.
 
-### Pick something off the wishlist
-
-The [wishlist](https://linglib.io/wishlist/) is a
-curated list of theorems, papers, languages, and tools we'd love to
-see formalized — modeled on Lean's
-[1000+ theorems](https://leanprover-community.github.io/1000.html).
-Items are tagged by difficulty (A: quick win · B: moderate · C: hard ·
-D: blocked on upstream).
-
-To claim an item before starting,
-[open a tracking issue](https://github.com/linglib-community/linglib/issues/new)
-linking the wishlist line so others know you're working on it. To
-add a new wish, send a PR editing
-[`blog/content/wishlist.md`](blog/content/wishlist.md).
-
-If you find a stub whose statement seems wrong (the underlying claim
-doesn't hold, or the formalization mis-states the empirical claim),
-that's also a valuable contribution — open an issue explaining the
-problem.
-
-### Write a post or report a problem
-
-The [`blog/`](blog/) directory accepts posts on formalization
-decisions, comparisons of frameworks, write-ups of completed work,
-or critical readings of existing files.
+### Report a problem
 
 If a definition seems wrong, a theorem trivializes the empirical
 content, or you spot an inconsistency between two theories that
@@ -99,9 +75,9 @@ module docstring placed *after* the `import` statements (Lean
 requires imports to come first).
 
 **Citations.** Cite papers with `@cite{key}`; never inline
-`Author (Year)`. Add the BibTeX entry to `blog/references.bib` first
+`Author (Year)`. Add the BibTeX entry to `references.bib` first
 using `lastname-lastname-year` keys, and validate with
-`python3 blog/scripts/gen_bibliography.py --check`. The rendered
+`python3 scripts/gen_bibliography_page.py --check`. The rendered
 bibliography is a build artifact (regenerated in CI) — don't commit it.
 
 **Proof style.** Prefer structural tactics (`exact`, `simp only`,
