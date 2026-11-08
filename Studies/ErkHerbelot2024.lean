@@ -500,12 +500,8 @@ theorem starSDS_poe (α : ℝ) (hα : 0 < α) :
   exact congrArg _ (marryTheme_apply_singleton c)
 
 private theorem uniformOn_mul_marryFiller_ne_top (s : StarScenario) (c : StarConcept) :
-    uniformOn (↑(starScenario s) : Set StarConcept) {c} * marryFiller c ≠ ∞ := by
-  refine ENNReal.mul_ne_top ?_ (by cases c <;> simp only [marryFiller] <;> finiteness)
-  rw [uniformOn_finset_apply_singleton]
-  split_ifs with h
-  · exact ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨c, h⟩).ne')
-  · exact ENNReal.zero_ne_top
+    uniformOn (↑(starScenario s) : Set StarConcept) {c} * marryFiller c ≠ ∞ :=
+  ENNReal.mul_ne_top (measure_ne_top _ _) (by cases c <;> simp only [marryFiller] <;> finiteness)
 
 private theorem starSDS_poe_real (α : ℝ) (hα : 0 < α) (s : StarScenario) (r : StarRole)
     (p : StarConcept → Prop) [DecidablePred p] :
@@ -652,9 +648,7 @@ theorem marryTheme_prefers_person (α : ℝ) (hα : 0 < α) :
 theorem stargazing_prefers_sun (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).scenario .STARGAZING).real {.STAR_PERSON} <
       ((starSDS α hα).scenario .STARGAZING).real {.STAR_SUN} := by
-  simp +decide only [starSDS_scenario, measureReal_def, uniformOn_finset_apply_singleton,
-    ↓reduceIte, ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_zero,
-    star_cards]
+  simp +decide only [starSDS_scenario, uniformOn_finset_real_singleton, ↓reduceIte, star_cards]
   norm_num
 
 -- Figure 6

@@ -90,9 +90,8 @@ omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype A]
 omit [Fintype Ω] [MeasurableSpace Ω] [MeasurableSingletonClass Ω] in
 theorem mixedPayoff_uniformOn [DecidableEq A] (s : Finset A) (ω : Ω) :
     mixedPayoff U (uniformOn ↑s) ω = (∑ a ∈ s, U a ω) / s.card := by
-  simp only [mixedPayoff_eq_sum, measureReal_def, uniformOn_finset_apply_singleton,
-    apply_ite ENNReal.toReal, ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_zero,
-    ite_mul, zero_mul, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_div]
+  simp only [mixedPayoff_eq_sum, uniformOn_finset_real_singleton, ite_mul, zero_mul,
+    Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_div]
   exact Finset.sum_congr rfl fun a _ ↦ by ring
 
 theorem expectedPayoff_eq_sum_sum (P : Measure Ω) [IsFiniteMeasure P] (μ : Measure A)
@@ -203,7 +202,7 @@ instance : IsProbabilityMeasure J.uniformPreferred :=
 omit [Fintype Ω] in
 theorem uniformPreferred_real_singleton (φ : Act ι) :
     J.uniformPreferred.real {φ} = if J.Preferred φ then 1 / (J.preferredCard : ℝ) else 0 := by
-  rw [measureReal_def, uniformPreferred, uniformOn_finset_apply_singleton]
+  rw [uniformPreferred, uniformOn_finset_real_singleton]
   by_cases h : J.Preferred φ <;> simp [h, preferredCard]
 
 omit [Fintype Ω] in

@@ -413,7 +413,7 @@ noncomputable def goodness (pr : MeasureTheory.Measure W) (V : W → ℝ) (φ : 
 end Goodness
 
 attribute [local simp] goodness expectedValue_eq_sum Finset.sum_filter Fintype.sum_prod_type
-  Fintype.sum_bool MeasureTheory.uniformOn_univ_real_singleton
+  Fintype.sum_bool ProbabilityTheory.uniformOn_univ_real_singleton
 
 /-! ### The Smith scenario -/
 

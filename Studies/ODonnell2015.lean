@@ -537,12 +537,12 @@ another's must assign lower probability to each of those forms, on average, and 
 form preserves the preference. The book quotes [kiparsky-1973]'s formulation, preferring `r₂` when
 `Inputs(r₂) ⊂ Inputs(r₁)`, which is `Morphology.ExponenceRule`'s specificity order.
 
-A rule's support is the domain of an `DomainRule`, and when each rule generates its
-domain uniformly the preference holds at every shared form, not only on average: a properly
-narrower domain gives each of its forms more probability
-(`MeasureTheory.uniformOn_finset_real_singleton_lt_of_ssubset`). A rule maximizing the
-probability of a form among the rules generating it is then an Elsewhere winner, since higher
-probability is a smaller domain and a smaller domain contained in another is equal to it. -/
+A rule's support is the domain of an `DomainRule`, and when each rule generates its domain
+uniformly the preference holds at every shared form, not only on average: a properly narrower
+domain [gives each of its forms more
+probability](##uniformOn_real_singleton_lt_of_ssubset). A rule maximizing the probability of a
+form among the rules generating it is then an Elsewhere winner, since higher probability is a
+smaller domain and a smaller domain contained in another is equal to it. -/
 
 section ProbabilisticElsewhere
 
@@ -558,6 +558,19 @@ theorem selectByCard_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx
 
 variable [MeasurableSpace Ctx] [MeasurableSingletonClass Ctx]
 
+private theorem uniformOn_real_singleton_le_iff {s t : Finset Ctx} {c : Ctx} (hs : c ∈ s)
+    (ht : c ∈ t) :
+    (uniformOn (s : Set Ctx)).real {c} ≤ (uniformOn (t : Set Ctx)).real {c} ↔ t.card ≤ s.card := by
+  rw [uniformOn_finset_real_singleton, uniformOn_finset_real_singleton, ite_eq_left hs,
+    ite_eq_left ht, inv_le_inv₀ (by exact_mod_cast Finset.card_pos.2 ⟨c, hs⟩)
+      (by exact_mod_cast Finset.card_pos.2 ⟨c, ht⟩), Nat.cast_le]
+
+theorem uniformOn_real_singleton_lt_of_ssubset {s t : Finset Ctx} {c : Ctx} (h : t ⊂ s)
+    (hc : c ∈ t) :
+    (uniformOn (s : Set Ctx)).real {c} < (uniformOn (t : Set Ctx)).real {c} :=
+  lt_of_not_ge fun hle ↦
+    (Finset.card_lt_card h).not_ge ((uniformOn_real_singleton_le_iff hc (h.1 hc)).1 hle)
+
 /-- **Elsewhere selection is maximum-likelihood inference.** A rule that gives a form at least the
 probability any other rule generating it does, each rule generating its domain uniformly, is an
 Elsewhere winner at that form (§5.5.3). -/
@@ -569,7 +582,7 @@ theorem isElsewhereWinner_of_forall_uniformOn_le {v : RuleSet (DomainRule Ctx F)
   refine ⟨⟨hrv, hrc⟩, fun s ⟨hsv, hsc⟩ (hle : s.dom ⊆ r.dom) ↦ ?_⟩
   have hsc : c ∈ s.dom := hsc
   exact (Finset.eq_of_subset_of_card_le hle
-    ((uniformOn_finset_real_singleton_le_iff hsc hrc).mp (hmax s hsv hsc))).symm.subset
+    ((uniformOn_real_singleton_le_iff hsc hrc).mp (hmax s hsv hsc))).symm.subset
 
 end ProbabilisticElsewhere
 
