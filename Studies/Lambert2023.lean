@@ -67,7 +67,7 @@ freely insertable it lies on every tier, so suffix substitution across a middle 
 `a b⋯b b` and `b b⋯b a` to `a b⋯b a`. Lambert's middle has `k - 1` symbols; it has `k + 1` here
 so that the argument covers every width. -/
 theorem abaFree_not_isTierStrictlyLocal (k : ℕ) : ¬ abaFree.IsTierStrictlyLocal k := fun h ↦ by
-  obtain ⟨T, hinv, hL⟩ := h.exists_tier
+  obtain ⟨T, _, hinv, hL⟩ := h.exists_tier
   have hb : T .b := by_contra fun hb ↦
     absurd (syntacticClass_eq_one_iff.1 (hinv .b hb) [.a] [.a]) (by decide)
   have hx : (List.replicate (k + 1) Sym.b).filter T = List.replicate (k + 1) .b := by simp [hb]
@@ -150,6 +150,7 @@ private theorem evalFrom_eq_of_getLast? (q : State) {x : List Sym} {t : Sym}
 theorem fig3_preprojectiveSuffixSubstitutionClosed :
     fig3.PreprojectiveSuffixSubstitutionClosed (· ≠ .d) 2 := by
   intro u₁ x₁ v₁ u₂ x₂ v₂ hx hlen h₁ h₂
+  beta_reduce at hx hlen
   obtain ⟨t, ht⟩ : ∃ t, (x₁.filter (· ≠ .d)).getLast? = some t := by
     rw [← Option.isSome_iff_exists, List.getLast?_isSome]
     exact List.ne_nil_of_length_pos (by omega)
@@ -172,7 +173,7 @@ the state after a middle with a tier symbol depends only on its last one, so suf
 such middles. -/
 theorem fig3_isTierStrictlyLocal : fig3.IsTierStrictlyLocal 2 :=
   (isTierStrictlyLocal_iff_exists_tier le_rfl).2
-    ⟨(· ≠ .d), fun x hx ↦ fig3_syntacticClass_eq_one_iff.2 (by simpa using hx),
+    ⟨(· ≠ .d), inferInstance, fun x hx ↦ fig3_syntacticClass_eq_one_iff.2 (by simpa using hx),
       fig3_preprojectiveSuffixSubstitutionClosed⟩
 
 /-- **The salient symbols are the least tier** (§4.1). Figure 3's stringset is generated at

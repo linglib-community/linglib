@@ -148,7 +148,7 @@ def culminativity : Language Syl :=
   {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
 theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
-  ⟨_, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
+  ⟨(Syl.isStressed ·), _, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
 
 theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     ¬ culminativity.IsGeneralizedDefinite k := by
@@ -163,19 +163,19 @@ theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
     simp [Syl.isStressed]
 
 /-- Culminative stress-final ((13a)) is `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressFinalCulminative : Language Syl := iban ⊓ tierWord Syl.isStressed [.stressed]
+def stressFinalCulminative : Language Syl := iban ⊓ tierWord (Syl.isStressed ·) [.stressed]
 
 theorem stressFinalCulminative_isBTD : IsBTD 2 stressFinalCulminative :=
   IsBTC.inter (isBTD_ofSuffix _ (by decide)) (isBTD_tierWord _ _ (by decide))
 
 /-- Culminative stress-penult ((13b)) is `(σ́σ⋉ ∨ ⋊σ́⋉) ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressPenultCulminative : Language Syl := amara ⊓ tierWord Syl.isStressed [.stressed]
+def stressPenultCulminative : Language Syl := amara ⊓ tierWord (Syl.isStressed ·) [.stressed]
 
 theorem stressPenultCulminative_isBTD : IsBTD 2 stressPenultCulminative :=
   IsBTC.inter (IsBTC.of_class amara_isDefinite) (isBTD_tierWord _ _ (by decide))
 
 /-- Culminative stress-initial ((13c)) is `⋊σ́ ∧ [⋊σ́⋉]_{σ́}`. -/
-def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStressed [.stressed]
+def stressInitialCulminative : Language Syl := finnish ⊓ tierWord (Syl.isStressed ·) [.stressed]
 
 theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
   IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
@@ -226,7 +226,7 @@ def QSyl.isHeavy : QSyl → Bool
 
 /-- A word has exactly one primary stress, `[⋊σ́⋉]_{σ́}`. -/
 def oneStress : Language QSyl :=
-  tierWord QSyl.isStressed [.lightStressed] ⊔ tierWord QSyl.isStressed [.heavyStressed]
+  tierWord (QSyl.isStressed ·) [.lightStressed] ⊔ tierWord (QSyl.isStressed ·) [.heavyStressed]
 
 theorem oneStress_isBTD : IsBTD 2 oneStress :=
   IsBTC.union (isBTD_tierWord _ _ (by decide)) (isBTD_tierWord _ _ (by decide))
@@ -236,8 +236,8 @@ theorem oneStress_isBTK : IsBTK 2 oneStress :=
 
 /-- Amele ((20), [roberts-1987]) stresses the leftmost heavy syllable, else the leftmost. -/
 def amele : Language QSyl :=
-  oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
-    (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
+  oneStress ⊓ (tierPrefix (QSyl.isHeavy ·) [.heavyStressed] ⊔
+    (tierWord (QSyl.isHeavy ·) [] ⊓ ofPrefix [.lightStressed]))
 
 theorem amele_isBTK : IsBTK 2 amele :=
   IsBTC.inter oneStress_isBTK (IsBTC.union (isBTK_tierPrefix _ _ (by decide))
@@ -245,8 +245,8 @@ theorem amele_isBTK : IsBTK 2 amele :=
 
 /-- Golin ((23), [bunn-bunn-1970]) stresses the rightmost heavy syllable, else the rightmost. -/
 def golin : Language QSyl :=
-  oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
-    (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
+  oneStress ⊓ (tierSuffix (QSyl.isHeavy ·) [.heavyStressed] ⊔
+    (tierWord (QSyl.isHeavy ·) [] ⊓ ofSuffix [.lightStressed]))
 
 theorem golin_isBTD : IsBTD 2 golin :=
   IsBTC.inter oneStress_isBTD (IsBTC.union (isBTD_tierSuffix _ _ (by decide))
@@ -254,8 +254,8 @@ theorem golin_isBTD : IsBTD 2 golin :=
 
 /-- Kwak'wala ((26), [grubb-1969]) stresses the leftmost heavy syllable, else the rightmost. -/
 def kwakwala : Language QSyl :=
-  oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
-    (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
+  oneStress ⊓ (tierPrefix (QSyl.isHeavy ·) [.heavyStressed] ⊔
+    (tierWord (QSyl.isHeavy ·) [] ⊓ ofSuffix [.lightStressed]))
 
 theorem kwakwala_isBTLI : IsBTLI 2 kwakwala :=
   IsBTC.inter oneStress_isBTD.toIsBTLI
@@ -265,8 +265,8 @@ theorem kwakwala_isBTLI : IsBTLI 2 kwakwala :=
 
 /-- Chuvash ((29), [krueger-1961]) stresses the rightmost heavy syllable, else the leftmost. -/
 def chuvash : Language QSyl :=
-  oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
-    (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
+  oneStress ⊓ (tierSuffix (QSyl.isHeavy ·) [.heavyStressed] ⊔
+    (tierWord (QSyl.isHeavy ·) [] ⊓ ofPrefix [.lightStressed]))
 
 theorem chuvash_isBTLI : IsBTLI 2 chuvash :=
   IsBTC.inter oneStress_isBTD.toIsBTLI
@@ -293,7 +293,7 @@ def isPosterior (c : Option Bool) : Bool := c == some false
 
 /-- In Navajo ((30)) the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
 def navajo : Language (Option Bool) :=
-  tierWord isAnterior [] ⊔ tierWord isPosterior []
+  tierWord (isAnterior ·) [] ⊔ tierWord (isPosterior ·) []
 
 theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
 
@@ -352,11 +352,11 @@ private abbrev tsuutinaIn (k : ℕ) : List (Option Bool) :=
 private abbrev tsuutinaOut (k : ℕ) : List (Option Bool) :=
   sandwich k (some false) [some true, some false] k (some true)
 
-private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Bool) :
+private lemma tsuutina_tierAffixes (k : ℕ) (T : Option Bool → Prop) [DecidablePred T] :
     Edge.left.takeAt k ((tsuutinaIn k).filter T) = Edge.left.takeAt k ((tsuutinaOut k).filter T) ∧
     Edge.right.takeAt k ((tsuutinaIn k).filter T) =
       Edge.right.takeAt k ((tsuutinaOut k).filter T) := by
-  cases h_post : T (some false) <;> cases h_ant : T (some true) <;>
+  by_cases h_post : T (some false) <;> by_cases h_ant : T (some true) <;>
     simp [rtake_eq_reverse_take_reverse, h_post, h_ant, ← replicate_succ, take_append_of_le_length]
 
 private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
@@ -442,14 +442,16 @@ def UyghurSeg.isSuffixBack : UyghurSeg → Bool
 /-- In Uyghur backness harmony ((35)) the suffix agrees with the rightmost harmonizing vowel, or
 failing that with the rightmost dorsal, each implication `φ → ψ` written `φᶜ ⊔ ψ`. -/
 def uyghur : Language UyghurSeg :=
-  ((tierSuffix UyghurSeg.isHarmonizingVowel [.frontVowel])ᶜ ⊔
-      tierWord UyghurSeg.isSuffixBack []) ⊓
-    ((tierSuffix UyghurSeg.isHarmonizingVowel [.backVowel])ᶜ ⊔
-      tierWord UyghurSeg.isSuffixFront []) ⊓
-    ((tierWord UyghurSeg.isHarmonizingVowel [] ⊓ tierSuffix UyghurSeg.isDorsal [.frontDorsal])ᶜ ⊔
-      tierWord UyghurSeg.isSuffixBack []) ⊓
-    ((tierWord UyghurSeg.isHarmonizingVowel [] ⊓ tierSuffix UyghurSeg.isDorsal [.backDorsal])ᶜ ⊔
-      tierWord UyghurSeg.isSuffixFront [])
+  ((tierSuffix (UyghurSeg.isHarmonizingVowel ·) [.frontVowel])ᶜ ⊔
+      tierWord (UyghurSeg.isSuffixBack ·) []) ⊓
+    ((tierSuffix (UyghurSeg.isHarmonizingVowel ·) [.backVowel])ᶜ ⊔
+      tierWord (UyghurSeg.isSuffixFront ·) []) ⊓
+    ((tierWord (UyghurSeg.isHarmonizingVowel ·) [] ⊓
+        tierSuffix (UyghurSeg.isDorsal ·) [.frontDorsal])ᶜ ⊔
+      tierWord (UyghurSeg.isSuffixBack ·) []) ⊓
+    ((tierWord (UyghurSeg.isHarmonizingVowel ·) [] ⊓
+        tierSuffix (UyghurSeg.isDorsal ·) [.backDorsal])ᶜ ⊔
+      tierWord (UyghurSeg.isSuffixFront ·) [])
 
 /-- Uyghur backness harmony is multitier definite (§4.3), since every literal is a tier
 suffix. -/
@@ -512,10 +514,10 @@ private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .hi
 private abbrev toneOut (k : ℕ) : List Tone :=
   sandwich k .low [.low, .high, .low, .high, .low] k .low
 
-private lemma tone_tierAffixes (k : ℕ) (T : Tone → Bool) :
+private lemma tone_tierAffixes (k : ℕ) (T : Tone → Prop) [DecidablePred T] :
     Edge.left.takeAt k ((toneIn k).filter T) = Edge.left.takeAt k ((toneOut k).filter T) ∧
     Edge.right.takeAt k ((toneIn k).filter T) = Edge.right.takeAt k ((toneOut k).filter T) := by
-  cases h_low : T .low <;> cases h_high : T .high <;>
+  by_cases h_low : T .low <;> by_cases h_high : T .high <;>
     simp [rtake_eq_reverse_take_reverse, h_low, h_high]
 
 private lemma tone_indist (k : ℕ) :
@@ -568,7 +570,7 @@ private lemma high_high_sublist_iff (w : List Tone) :
 
 -- §5.3
 theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
-  refine ⟨Tone.isHigh, {xs | xs = [] ∨ xs = [.high]}, ?_,
+  refine ⟨(Tone.isHigh ·), inferInstance, {xs | xs = [] ∨ xs = [.high]}, ?_,
     Or.inl ((Set.finite_singleton _).insert _)⟩
   ext w
   show ¬ [Tone.high, .high] <+ w ↔ w.filter Tone.isHigh = [] ∨ w.filter Tone.isHigh = [.high]
@@ -592,7 +594,7 @@ theorem kagoshima_isPiecewiseTestable : kagoshima.IsPiecewiseTestable 3 :=
 
 /-- By tiers ((43)), Kagoshima Japanese is `[⋊h⋉]_{h} ∧ (hℓ⋉ ∨ h⋉)`. -/
 def kagoshimaTier : Language Tone :=
-  tierWord Tone.isHigh [.high] ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
+  tierWord (Tone.isHigh ·) [.high] ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
 
 theorem kagoshimaTier_isBTD : IsBTD 2 kagoshimaTier :=
   IsBTC.inter (isBTD_tierWord _ _ (by decide))
@@ -611,7 +613,7 @@ theorem chuave_isLocallyTestable : chuave.IsLocallyTestable 1 := by
   exact singleton_sublist.trans
     ⟨fun h ↦ let ⟨s, t, e⟩ := append_of_mem h; ⟨s, t, by simp [e]⟩, fun ⟨_, _, e⟩ ↦ e ▸ by simp⟩
 
-theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
+theorem chuave_eq_compl_tierWord : chuave = (tierWord (Tone.isHigh ·) [])ᶜ := by
   ext w
   show [Tone.high] <+ w ↔ ¬ w.filter Tone.isHigh = []
   rw [singleton_sublist, filter_eq_nil_iff]
@@ -624,7 +626,7 @@ theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
     · exact ha
 
 theorem chuave_isBTN : IsBTN chuave :=
-  chuave_eq_compl_tierWord ▸ IsBTC.compl (isBTN_tierWord Tone.isHigh [])
+  chuave_eq_compl_tierWord ▸ IsBTC.compl (isBTN_tierWord (Tone.isHigh ·) [])
 
 /-- The seven fully specified Karanga Shona stems (§5.6, [odden-1984]). -/
 def karangaShort : Language Tone :=
@@ -635,9 +637,9 @@ def karangaShort : Language Tone :=
 or a high-toned root `⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. -/
 def karangaShona : Language Tone :=
   karangaShort ⊔
-    (ofPrefix [.low, .high, .high, .low] ⊓ tierWord Tone.isHigh [.high, .high]) ⊔
+    (ofPrefix [.low, .high, .high, .low] ⊓ tierWord (Tone.isHigh ·) [.high, .high]) ⊔
     (ofPrefix [.high, .high, .high, .low] ⊓ ofSuffix [.low, .high] ⊓
-      tierWord Tone.isHigh [.high, .high, .high, .high])
+      tierWord (Tone.isHigh ·) [.high, .high, .high, .high])
 
 /-- The Karanga Shona verb stem is multitier generalized definite (§5.6, refining
 [jardine-2020]), and needs both tier prefixes and tier suffixes. -/
