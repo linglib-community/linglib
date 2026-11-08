@@ -37,15 +37,20 @@ algebra has a strict/tolerant counterpart with the same consequence relation (Pr
   of model correspondences (`Consequence.MixedConsequence.comap`).
 * Lemma 8.8.2 assumes a negation that its proof never uses, so `exactIsoIci` drops it. Its six
   items are the inverse laws and the monotonicity of one order isomorphism.
-* Locators use the chapter's numbering, `8.n` for the preprint's `§n`.
 
 ## Errata
 
-* §8.8 takes the second factor of the representation to be `{x ∧ ⊥ | x ∈ B}` under the
+* §8.4 (p. 173) states the bounds of an interlaced bilattice with the operations exchanged, as
+  `f ∧ t = ⊥`, `f ∨ t = ⊤`, `⊥ ⊗ ⊤ = f` and `⊥ ⊕ ⊤ = t`. Interlacing gives `f ⊗ t = ⊥`,
+  `f ⊕ t = ⊤`, `⊥ ∧ ⊤ = f` and `⊥ ∨ ⊤ = t` (`Bilattice.top_kInf_bot` and its kin); in `FOUR`,
+  `f ∧ t = f`.
+* §8.8 (p. 182) takes the second factor of the representation to be `{x ∧ ⊥ | x ∈ B}` under the
   restriction of `≤t`. Avron's factor carries the reverse order (`Bilattice.productIso`): under
   `≤t` the map `x ↦ (x ∨ ⊥, x ∧ ⊥)` is not truth-monotone, and as the factors are unique up to
-  isomorphism, the representation then holds only when that factor is self-dual. The slip is
-  read from the author's preprint.
+  isomorphism, the representation then holds only when that factor is self-dual.
+* The proof of Lemma 8.8.2(2) (p. 183) cites Corollary 2.8 of [avron-1996], the number in Avron's
+  preprint; the published paper numbers it Corollary 3.8
+  (`Bilattice.sup_ofKnow_bot_inf_sup_ofKnow_top`).
 
 ## References
 
