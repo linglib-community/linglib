@@ -113,9 +113,10 @@ theorem real_cond_Iic {a c : ℕ} (hca : c ≤ a) (ha : a ≤ 200) :
 /-! ### Truth conditions -/
 
 theorem cond_moreThan100_le_moreThan110 :
-    prior[|Ioi 100] (Ioi 120) ≤ prior[|Ioi 110] (Ioi 120) :=
-  cond_le_cond_of_subset _ .of_discrete .of_discrete (Ioi_subset_Ioi (by norm_num))
-    (inter_subset_left.trans (Ioi_subset_Ioi (by norm_num)))
+    prior[|Ioi 100] (Ioi 120) ≤ prior[|Ioi 110] (Ioi 120) := by
+  rw [cond_apply_of_subset .of_discrete (Ioi_subset_Ioi (by norm_num)),
+    cond_apply_of_subset .of_discrete (Ioi_subset_Ioi (by norm_num))]
+  exact ENNReal.div_le_div_left (measure_mono (Ioi_subset_Ioi (by norm_num))) _
 
 theorem bayesFactor_moreThan100_lt_moreThan110 :
     bayesFactor success (Ioi 100) < bayesFactor success (Ioi 110) :=
