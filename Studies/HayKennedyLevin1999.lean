@@ -29,7 +29,8 @@ open-range adjectives are checked against the scales of the English fragment.
 
 * Degrees form a densely ordered abelian group, whose addition extends the paper's degree addition
   (15), defined only when a summand is positive. The maximal scale value is a degree `top` rather
-  than a top element, and density makes "some amount" and *slightly* unbounded.
+  than a top element. On a dense scale the difference values admitted by "some amount" and by a
+  monotone decreasing modifier have infimum zero, so neither is bounded.
 * In a group, INCREASE (16) is the differential comparative of the argument at the end of the
   event with itself at the start (`increase_iff_differentialComparative`).
 * A modifier's difference values are the degrees that stand in a `Comparison` to its
@@ -105,7 +106,7 @@ variable [AddCommGroup δ] [LinearOrder δ]
 /-- A set of difference values is **bounded** when it has a positive lower bound. Once that
     much change has happened the truth conditions are met, so the event has an endpoint and the
     predicate is telic (§3.1). -/
-def IsBounded (D : Set δ) : Prop := ∃ b, 0 < b ∧ b ∈ lowerBounds D
+def IsBounded (D : Set δ) : Prop := ∃ b > 0, b ∈ lowerBounds D
 
 /-- The implicit difference value "some amount" is any positive degree ((9a)). -/
 def someAmount : Set δ := Comparison.gt.interval 0
@@ -135,20 +136,21 @@ theorem isBounded_completely [IsOrderedAddMonoid δ] {top i : δ} (hi : i < top)
 theorem isBounded_significantly {s : δ} (hs : 0 < s) : IsBounded (significantly s) :=
   ⟨s, hs, fun _ hd ↦ hd⟩
 
+theorem not_isBounded_of_isGLB {D : Set δ} (h : IsGLB D 0) : ¬ IsBounded D :=
+  fun ⟨_, hb, hlow⟩ ↦ hb.not_ge (h.2 hlow)
+
 -- §3.1
-theorem not_isBounded_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet D)
-    {d : δ} (hd : d ∈ D) (hd₀ : 0 < d) : ¬ IsBounded (D ∩ someAmount) := by
-  rintro ⟨b, hb, hlow⟩
-  obtain ⟨c, hc₀, hc⟩ := exists_between (lt_min hb hd₀)
-  exact (hlow (mem_inter (hD (lt_min_iff.1 hc).2.le hd) hc₀)).not_gt (lt_min_iff.1 hc).1
+theorem isGLB_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet D) {d : δ}
+    (hd : d ∈ D) (hd₀ : 0 < d) : IsGLB (D ∩ someAmount) 0 :=
+  (isGLB_Ioo hd₀).of_subset_of_superset isGLB_Ioi (fun _ hx ↦ ⟨hD hx.2.le hd, hx.1⟩)
+    inter_subset_right
 
 theorem not_isBounded_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     ¬ IsBounded (slightly s) :=
-  not_isBounded_inter_someAmount (isLowerSet_Iic s) (mem_Iic.2 le_rfl) hs
+  not_isBounded_of_isGLB <| isGLB_inter_someAmount (isLowerSet_Iic s) self_mem_Iic hs
 
 theorem not_isBounded_someAmount [DenselyOrdered δ] : ¬ IsBounded (someAmount (δ := δ)) :=
-  fun h ↦ h.elim fun b hb ↦
-    not_isBounded_inter_someAmount isLowerSet_univ (mem_univ b) hb.1 (by rwa [univ_inter])
+  not_isBounded_of_isGLB isGLB_Ioi
 
 /-! ### Readings (§3.2–§3.4) -/
 
