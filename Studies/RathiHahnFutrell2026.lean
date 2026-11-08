@@ -324,9 +324,8 @@ theorem measurePreserving_advance :
 theorem cond_fst (j : Fin k) :
     (stream k P)[|Prod.fst ⁻¹' {j}] = (Measure.dirac j).prod (Measure.infinitePi fun _ ↦ P) := by
   have hk : (k : ℝ≥0∞) ≠ 0 := by exact_mod_cast NeZero.ne k
-  rw [ProbabilityTheory.cond, ← Set.prod_univ, stream, ← Measure.prod_restrict,
-    Measure.restrict_singleton, Measure.restrict_univ, Measure.prod_prod, measure_univ, mul_one,
-    uniformOn_univ_apply_singleton, Fintype.card_fin, Measure.prod_smul_left, smul_smul, inv_inv,
+  rw [stream, cond_prod_preimage_fst, ProbabilityTheory.cond, Measure.restrict_singleton,
+    uniformOn_univ_apply_singleton, Fintype.card_fin, smul_smul, inv_inv,
     ENNReal.mul_inv_cancel hk (ENNReal.natCast_ne_top k), one_smul]
 
 theorem entropy_fst : H[Prod.fst ; stream k P] = log k := by

@@ -383,8 +383,8 @@ theorem prefixProb_eq_of_next_eq {M : AutoregressiveSequenceModel α}
     rw [prefixProb_concat, ih]
     rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
     · rw [h0, zero_mul, measure_mono_null hsub h0]
-    rw [h x h0, next_ofMeasure_apply_some, cond_apply_of_subset .of_discrete hsub,
-      ENNReal.mul_div_cancel h0 (measure_ne_top _ _)]
+    rw [h x h0, next_ofMeasure_apply_some, mul_comm, cond_mul_eq_inter .of_discrete,
+      Set.inter_eq_right.2 hsub]
 
 variable (μ) in
 theorem prefixProb_ofMeasure (x : List α) : (ofMeasure μ).prefixProb x = μ {y | x <+: y} :=
@@ -412,8 +412,8 @@ theorem stringMeasure_eq_of_next_eq {M : AutoregressiveSequenceModel α}
   rw [stringMeasure_singleton, stringProb, prefixProb_eq_of_next_eq h]
   rcases eq_or_ne (μ {y | x <+: y}) 0 with h0 | h0
   · rw [h0, zero_mul, measure_mono_null hsub h0]
-  rw [h x h0, next_ofMeasure_apply_none μ h0, cond_apply_of_subset .of_discrete hsub,
-    ENNReal.mul_div_cancel h0 (measure_ne_top _ _)]
+  rw [h x h0, next_ofMeasure_apply_none μ h0, mul_comm, cond_mul_eq_inter .of_discrete,
+    Set.inter_eq_right.2 hsub]
 
 variable (μ) in
 theorem stringMeasure_ofMeasure : (ofMeasure μ).stringMeasure = μ :=

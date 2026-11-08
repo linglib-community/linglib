@@ -5,7 +5,7 @@ public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
-public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Core.Probability.ConditionalProbability
 public import Mathlib.Probability.UniformOn
 
 /-!
@@ -260,9 +260,8 @@ theorem longAdjacent_ae_eq_headInitial (hlang : ∀ᵐ x ∂P, x.2 ∈ language 
 
 theorem measureReal_cond_long {c : Constituent} (hc : c ≠ .verb) (s : Set Production) :
     (P[|long c]).real s = 2 * P.real (long c ∩ s) := by
-  rw [measureReal_def, cond_apply (.of_discrete), ENNReal.toReal_mul,
-    ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, measureReal_long hscene hc]
-  norm_num
+  rw [cond_real_apply _ .of_discrete, measureReal_long hscene hc]
+  ring
 
 end Marginal
 

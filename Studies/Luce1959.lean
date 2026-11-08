@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Processing.Psychophysics.SignalDetection
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Constructions.List
@@ -285,8 +285,7 @@ private theorem measure_eq_of_singleton {μ ν : Measure A} {T : Finset A} (hμ 
 
 private theorem measureReal_cond_singleton {μ : Measure A} {S : Finset A} {a : A} (ha : a ∈ S) :
     (μ[|↑S]).real {a} = μ.real {a} / μ.real ↑S := by
-  rw [measureReal_def, cond_apply S.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha),
-    ENNReal.toReal_mul, ENNReal.toReal_inv, measureReal_def, measureReal_def, inv_mul_eq_div]
+  rw [cond_real_apply _ S.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha)]
 
 /-- A system has a ratio scale if a measure `μ` with positive finite point masses gives every `P_T`
 by conditioning on `T` (Theorem 3, p. 23). -/
