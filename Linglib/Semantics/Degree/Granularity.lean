@@ -9,7 +9,7 @@ public import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Core.Algebra.Order.Round
-public import Linglib.Core.Order.Interval.Set.LinearOrder
+public import Linglib.Core.Order.Bounds.Basic
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Semantics.Questions.Partition.Basic
 

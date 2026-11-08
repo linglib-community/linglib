@@ -1,7 +1,7 @@
 module
 
+public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Core.Order.Interval.Set.LinearOrder
 public import Linglib.Semantics.Negation.Polarity
 
 /-!
@@ -72,16 +72,12 @@ theorem compareWith_little (i j : Set D) : compareWith compl i j ↔ j ⊂ i :=
 /-- A positive extent is never properly included in a negative one, so the literal reading of *Mary
 is taller than John is short* is true on no scale ([kennedy-2001]). -/
 theorem not_crossPolar (a b : D) : ¬ compareWith id (Set.Iic a) (Set.Ioi b) :=
-  fun h ↦ Set.not_Iic_subset_Ioi a b h.subset
+  fun h ↦ (h.subset (min_le_left a b)).not_ge (min_le_right a b)
 
 /-- The other order fails too whenever the scale has no greatest degree: *John is shorter than Mary
 is tall* read literally would need every degree above John's height to lie below Mary's. -/
-theorem not_crossPolar' [NoMaxOrder D] (a b : D) :
-    ¬ compareWith id (Set.Ioi a) (Set.Iic b) := by
-  intro h
-  obtain ⟨d, hd⟩ := exists_gt (max a b)
-  exact absurd (h.subset ((le_max_left a b).trans_lt hd))
-    (not_le.mpr ((le_max_right a b).trans_lt hd))
+theorem not_crossPolar' [NoMaxOrder D] (a b : D) : ¬ compareWith id (Set.Ioi a) (Set.Iic b) :=
+  fun h ↦ not_bddAbove_Ioi a ⟨b, h.subset⟩
 
 /-- Under the reinterpretation, with the negation in the degree phrase, both intervals compared are
 positive extents, and the comparison is the subcomparative of [schwarzschild-wilkinson-2002], the
