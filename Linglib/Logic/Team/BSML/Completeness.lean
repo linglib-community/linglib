@@ -2,23 +2,20 @@ module
 
 public import Linglib.Logic.Team.BSML.NaturalDeduction
 public import Linglib.Logic.Team.BSML.Characteristic
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Completeness of natural deduction for BSML
 
 The natural deduction system `Derives` of `NaturalDeduction.lean` is complete: a consequence that
 holds on every model is derivable from finitely many premises. The proof follows the normal-form
-strategy of Aloni, Anttila and Yang. The world types of `Characteristic.lean` are the worlds of one
-universal model, and each type's Hintikka formula holds exactly at it there. A set of
+strategy of Aloni, Anttila and Yang. The world types of `Team/WorldType.lean` are the worlds of
+one universal model, and each type's Hintikka formula holds exactly at it there. A set of
 types `T` has the strong Hintikka formula `θ_T`, the disjunction of the formulas `χ_τ ∧ NE`, which
 derives every formula the team `T` supports. Conversely, the `⊥NE`-translation rules split every
 formula into the cases `θ_T` for the teams supporting it.
 
 ## Main definitions
 
-* `univModel e`: the model whose worlds are the world types.
 * `Splits A S`: `A` splits into the cases `S`.
 
 ## Main results
@@ -51,7 +48,8 @@ compactness they derive from it, needs models with arbitrary successor sets.
 
 namespace BSML
 
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel WorldType worldType univModel univModel_val univModel_access_succ
+  worldType_univModel)
 
 variable {Atom : Type*} [Inhabited Atom] {Γ : Set (Formula Atom)} {φ ψ χ α : Formula Atom}
   {L L' : List (Formula Atom)}
@@ -265,44 +263,9 @@ theorem Derives.poss_of_nec_bigDisjNE (hL : L ≠ []) (h : Γ ⊢ Formula.nec (b
 
 /-! ### The universal model -/
 
-variable {n : ℕ} (e : Fin n → Atom)
+variable {n : ℕ} {e : Fin n → Atom}
 
-/-- In the universal model each type is a world, whose successors are its successor types. -/
-noncomputable def univModel : KripkeModel (Σ k, WorldType n k) Atom where
-  access
-    | ⟨0, _⟩ => ∅
-    | ⟨k + 1, τ⟩ => τ.2.image fun σ ↦ ⟨k, σ⟩
-  val p w := ∃ i, e i = p ∧ w.2.val i = true
-
-noncomputable instance : DecidableRel (univModel e).val := fun _ _ ↦ Classical.dec _
-
-/-- `world k τ` is the type `τ` as a world of the universal model. -/
-def WorldType.world (k : ℕ) (τ : WorldType n k) : Σ k, WorldType n k := ⟨k, τ⟩
-
-theorem WorldType.world_injective (k : ℕ) : Function.Injective (world (n := n) k) := fun _ _ h ↦ by
-  simpa [world] using h
-
-open WorldType
-
-variable {e}
-
-omit [Inhabited Atom] in
-theorem univModel_val (he : Function.Injective e) (i : Fin n) (w : Σ k, WorldType n k) :
-    (univModel e).val (e i) w ↔ w.2.val i = true := by
-  simp [univModel, he.eq_iff]
-
-omit [Inhabited Atom] in
-theorem univModel_access_succ {k : ℕ} (τ : WorldType n (k + 1)) :
-    (univModel e).access (world (k + 1) τ) = τ.2.image (world k) := rfl
-
-omit [Inhabited Atom] in
-theorem worldType_univModel (he : Function.Injective e) :
-    ∀ (k : ℕ) (τ : WorldType n k), worldType e (univModel e) k (world k τ) = τ
-  | 0, a => funext fun i ↦ by simp [worldType, univModel_val he, world, WorldType.val]
-  | k + 1, τ => by
-    rw [worldType, univModel_access_succ, Finset.image_image]
-    refine Prod.ext (funext fun i ↦ by simp [univModel_val he, world, WorldType.val]) ?_
-    simp only [Function.comp_def, worldType_univModel he k, Finset.image_id']
+open ModalLogic.WorldType
 
 theorem realize_hintikka (he : Function.Injective e) (k : ℕ) (τ τ' : WorldType n k) :
     Realize (univModel e) (hintikka e k τ) (world k τ') ↔ τ' = τ := by

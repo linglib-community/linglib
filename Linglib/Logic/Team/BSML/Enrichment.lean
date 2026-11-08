@@ -54,7 +54,8 @@ open scoped SetFamily
 namespace BSML
 
 open ModalLogic (KripkeModel PointedTeam)
-open Truthmaker (BilProp)
+open Team (TeamProperty)
+open scoped Bilattice
 
 variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
   {φ ψ : Formula Atom} {t : Finset W}
@@ -92,7 +93,7 @@ theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t :
 /-- Enrichment strengthens an `NE`-free formula in both polarities: every team that supports or
 anti-supports `[φ]⁺` supports or anti-supports `φ` (Fact 1). -/
 theorem den_enrich_subset (hNE : φ.NEFree) :
-    ((enrich φ).den M).ver ⊆ (φ.den M).ver ∧ ((enrich φ).den M).fal ⊆ (φ.den M).fal := by
+    ((enrich φ).den M).pro ⊆ (φ.den M).pro ∧ ((enrich φ).den M).con ⊆ (φ.den M).con := by
   induction φ with
   | ne => exact hNE.elim
   | atom p => exact ⟨fun _ h ↦ h.1, fun t h ↦ (antiSupport_conj_ne M _ t).mp h⟩
@@ -171,19 +172,19 @@ def ConsequencePlus (φ ψ : Formula Atom) : Prop :=
 /-- The meaning of a formula in BSML*, where `∅` is not among the possible states
 ([aloni-2022] §6.3.1): each part of a split is non-empty, and the other clauses are those of
 `Formula.den`. -/
-def Formula.denStar (M : KripkeModel W Atom) : Formula Atom → BilProp (Finset W)
-  | .atom p => ⟨Team.flat (M.val p), Team.flat fun w ↦ ¬ M.val p w⟩
-  | .ne => ⟨Team.ne, {∅}⟩
-  | .neg φ => -φ.denStar M
-  | .conj φ ψ => ⟨(φ.denStar M).ver ∩ (ψ.denStar M).ver,
-      ((φ.denStar M).fal ∩ Team.ne) ⊻ ((ψ.denStar M).fal ∩ Team.ne)⟩
-  | .disj φ ψ => ⟨((φ.denStar M).ver ∩ Team.ne) ⊻ ((ψ.denStar M).ver ∩ Team.ne),
-      (φ.denStar M).fal ∩ (ψ.denStar M).fal⟩
-  | .poss φ => ⟨Team.poss M.access (φ.denStar M).ver, Team.nec M.access (φ.denStar M).fal⟩
+def Formula.denStar (M : KripkeModel W Atom) : Formula Atom → TeamProperty W ⊙ TeamProperty W
+  | .atom p => Team.flatPair (M.val p)
+  | .ne => .mk Team.ne {∅}
+  | .neg φ => (φ.denStar M)ᶜ
+  | .conj φ ψ => .mk ((φ.denStar M).pro ∩ (ψ.denStar M).pro)
+      (((φ.denStar M).con ∩ Team.ne) ⊻ ((ψ.denStar M).con ∩ Team.ne))
+  | .disj φ ψ => .mk (((φ.denStar M).pro ∩ Team.ne) ⊻ ((ψ.denStar M).pro ∩ Team.ne))
+      ((φ.denStar M).con ∩ (ψ.denStar M).con)
+  | .poss φ => (φ.denStar M).map (Team.poss M.access) (Team.nec M.access)
 
 /-- BSML* support. -/
 abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
-  t ∈ (φ.denStar M).ver
+  t ∈ (φ.denStar M).pro
 
 /-- In BSML*, `ψ` is a consequence of `φ` when every pointed team model with a non-empty team
 supporting `φ` supports `ψ`. -/
@@ -203,12 +204,12 @@ theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
       fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have e₁ : ((enrich ψ₁).den M).ver = (ψ₁.denStar M).ver ∩ Team.ne :=
+    have e₁ : ((enrich ψ₁).den M).pro = (ψ₁.denStar M).pro ∩ Team.ne :=
       Set.ext fun _ ↦ ih₁ hNE.1 hPos.1
-    have e₂ : ((enrich ψ₂).den M).ver = (ψ₂.denStar M).ver ∩ Team.ne :=
+    have e₂ : ((enrich ψ₂).den M).pro = (ψ₂.denStar M).pro ∩ Team.ne :=
       Set.ext fun _ ↦ ih₂ hNE.2 hPos.2
-    change t ∈ _ ⊻ _ ∧ t.Nonempty ↔ _
-    rw [e₁, e₂]
+    change t ∈ (Team.disj _ _).pro ∧ t.Nonempty ↔ _
+    rw [Team.pro_disj, e₁, e₂]
     exact Iff.rfl
   | poss ψ ih =>
     have ih := fun s ↦ ih (t := s) hNE hPos

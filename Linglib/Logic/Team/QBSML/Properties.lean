@@ -18,14 +18,14 @@ translation is classically satisfied at every index of the state.
 * `isFlat_support_of_neFree`: `NE`-free formulas are flat.
 * `Formula.toModal`, `support_iff_forall_realize`: Aloni and van Ormondt's Proposition 4.1, a
   state supports an `NE`-free formula iff its modal translation holds at every index.
-* `eval_mapAtoms_iff`: replacing atoms by bilaterally equivalent formulas preserves support.
+* `den_mapAtoms`: replacing atoms by formulas with the same meaning preserves meaning.
 
 ## Implementation notes
 
-Each closure property is proved for both polarities by induction on the formula, each case the
-lemma of its operation in `Team/Operations.lean`. The quantifier cases are those of the box and
-the lax diamond of modal inclusion logic, both of which preserve union closure; the strict
-diamond does not ([anttila-haggblom-yang-2025] p. 759).
+Each closure property is proved for both coordinates of `Formula.den` by induction on the
+formula, each case the lemma of its operation in `Team/Operations.lean`. The quantifier cases are
+those of the box and the lax diamond of modal inclusion logic, both of which preserve union
+closure; the strict diamond does not ([anttila-haggblom-yang-2025] p. 759).
 
 ## References
 
@@ -53,9 +53,9 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [F
 Each case is the closure lemma of its operation from `Team/Operations.lean`, and negation swaps
 the two polarities. -/
 
-private theorem support_and_antiSupport_supClosed (φ : Formula Var Const Pred)
-    (M : Model W Domain Const Pred) :
-    SupClosed {s | support M φ s} ∧ SupClosed {s | antiSupport M φ s} := by
+/-- Support and anti-support are union closed. -/
+theorem supClosed_den (M : Model W Domain Const Pred) (φ : Formula Var Const Pred) :
+    SupClosed (φ.den M).pro ∧ SupClosed (φ.den M).con := by
   induction φ with
   | pred P x => exact ⟨supClosed_flat _, supClosed_flat _⟩
   | predc P c => exact ⟨supClosed_flat _, supClosed_flat _⟩
@@ -72,13 +72,11 @@ private theorem support_and_antiSupport_supClosed (φ : Formula Var Const Pred)
 does not use the hypothesis. -/
 theorem supClosed_support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred) :
     SupClosed {s : Finset (Index W Var Domain) | support M φ s} :=
-  (support_and_antiSupport_supClosed φ M).1
+  (supClosed_den M φ).1
 
-private theorem support_and_antiSupport_empty_of_neFree
-    {φ : Formula Var Const Pred} (hNE : φ.NEFree)
-    (M : Model W Domain Const Pred) :
-    support M φ (∅ : Finset (Index W Var Domain)) ∧
-    antiSupport M φ (∅ : Finset (Index W Var Domain)) := by
+/-- The empty state supports and anti-supports every `NE`-free formula. -/
+theorem empty_mem_den_of_neFree {φ : Formula Var Const Pred} (hNE : φ.NEFree)
+    (M : Model W Domain Const Pred) : ∅ ∈ (φ.den M).pro ∧ ∅ ∈ (φ.den M).con := by
   induction hNE with
   | pred P x => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
   | predc P c => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
@@ -92,11 +90,11 @@ private theorem support_and_antiSupport_empty_of_neFree
 theorem support_empty_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     support M φ ∅ :=
-  (support_and_antiSupport_empty_of_neFree hNE M).1
+  (empty_mem_den_of_neFree hNE M).1
 
-private theorem support_and_antiSupport_isLowerSet_of_neFree
-    {φ : Formula Var Const Pred} (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
-    IsLowerSet {s | support M φ s} ∧ IsLowerSet {s | antiSupport M φ s} := by
+/-- Support and anti-support of an `NE`-free formula are downward closed. -/
+theorem isLowerSet_den_of_neFree {φ : Formula Var Const Pred} (hNE : φ.NEFree)
+    (M : Model W Domain Const Pred) : IsLowerSet (φ.den M).pro ∧ IsLowerSet (φ.den M).con := by
   induction hNE with
   | pred P x => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
   | predc P c => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
@@ -112,7 +110,7 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
 theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
-  (support_and_antiSupport_isLowerSet_of_neFree hNE M).1
+  (isLowerSet_den_of_neFree hNE M).1
 
 /-! ### Flatness corollary -/
 
@@ -195,24 +193,17 @@ theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
 
 /-! ### Atom substitution salva veritate -/
 
-/-- Replacing each atom by a formula with the same support and anti-support preserves support
-and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
-theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
-    {fp : Pred → Var → Formula Var Const Pred}
+/-- Replacing each atom by a formula with the same meaning preserves meaning; [yan-2023]'s
+reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
+theorem den_mapAtoms (M : Model W Domain Const Pred) {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}
-    (hfp : ∀ (P : Pred) (x : Var) (b : Bool)
-      (s : Finset (Index W Var Domain)),
-      eval M b (fp P x) s ↔ eval M b (.pred P x) s)
-    (hfc : ∀ (P : Pred) (c : Const) (b : Bool)
-      (s : Finset (Index W Var Domain)),
-      eval M b (fc P c) s ↔ eval M b (.predc P c) s)
-    (φ : Formula Var Const Pred) :
-    ∀ (b : Bool) (s : Finset (Index W Var Domain)),
-      eval M b (φ.mapAtoms fp fc) s ↔ eval M b φ s := by
+    (hfp : ∀ P x, (fp P x).den M = (Formula.pred P x).den M)
+    (hfc : ∀ P c, (fc P c).den M = (Formula.predc P c).den M) (φ : Formula Var Const Pred) :
+    (φ.mapAtoms fp fc).den M = φ.den M := by
   induction φ with
   | pred P x => exact hfp P x
   | predc P c => exact hfc P c
-  | _ => intro b s; cases b <;> simp only [Formula.mapAtoms, eval, *]
+  | _ => simp only [Formula.mapAtoms, Formula.den, *]
 
 /-! ### Upward monotonicity of the NE-free fragment -/
 
@@ -277,82 +268,84 @@ section Realize
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-private theorem setOf_eval_eq_flat {φ : Formula Var Const Pred} (hNE : φ.NEFree)
-    (M : Model W Domain Const Pred) (b : Bool) :
-    {t | eval M b φ t} = Team.flat fun j ↦ eval M b φ {j} := by
-  ext t
-  cases b
-  · exact antiSupport_iff_forall_singleton hNE M t
-  · exact support_iff_forall_singleton hNE M t
+private theorem pro_den_eq_flat {φ : Formula Var Const Pred} (hNE : φ.NEFree)
+    (M : Model W Domain Const Pred) : (φ.den M).pro = Team.flat fun j ↦ {j} ∈ (φ.den M).pro :=
+  Set.ext (support_iff_forall_singleton hNE M)
 
-private theorem eval_singleton_iff_realize (M : Model W Domain Const Pred)
-    {φ : Formula Var Const Pred} (hNE : φ.NEFree) (b : Bool) {i : Index W Var Domain}
+private theorem con_den_eq_flat {φ : Formula Var Const Pred} (hNE : φ.NEFree)
+    (M : Model W Domain Const Pred) : (φ.den M).con = Team.flat fun j ↦ {j} ∈ (φ.den M).con :=
+  Set.ext (antiSupport_iff_forall_singleton hNE M)
+
+private theorem singleton_mem_den_iff_realize (M : Model W Domain Const Pred)
+    {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
-    eval M b φ {i} ↔ (φ.toModal.Realize M i.world v ↔ b) := by
-  induction hNE generalizing b i v with
+    ({i} ∈ (φ.den M).pro ↔ φ.toModal.Realize M i.world v) ∧
+      ({i} ∈ (φ.den M).con ↔ ¬ φ.toModal.Realize M i.world v) := by
+  induction hNE generalizing i v with
   | pred P x =>
     rw [Formula.toModal, ModalFormula.realize_rel₁, Term.realizeAt_var]
-    cases b <;> simp [eval, hv]
+    constructor <;> simp [Formula.den, hv]
   | predc P c =>
     rw [Formula.toModal, ModalFormula.realize_rel₁, ModalStructure.realizeAt_constants]
-    cases b <;> simp [eval]
-  | neg _ ih => cases b <;> simp [eval, Formula.toModal, ih _ hv]
+    constructor <;> simp [Formula.den]
+  | neg _ ih => simp [Formula.den, Formula.toModal, (ih hv).1, (ih hv).2]
   | conj h₁ h₂ ih₁ ih₂ =>
-    cases b
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_flat_sups_flat]
-      simp only [Finset.mem_singleton, forall_eq, ih₁ _ hv, ih₂ _ hv, Formula.toModal,
-        ModalFormula.realize_inf, Bool.false_eq_true, iff_false]
-      exact not_and_or.symm
-    · simp [eval, ih₁ _ hv, ih₂ _ hv, Formula.toModal]
+    refine ⟨by simp [Formula.den, (ih₁ hv).1, (ih₂ hv).1, Formula.toModal], ?_⟩
+    simp only [Formula.den, Team.con_conj]
+    rw [con_den_eq_flat h₁, con_den_eq_flat h₂, Team.mem_flat_sups_flat]
+    simp only [Finset.mem_singleton, forall_eq, (ih₁ hv).2, (ih₂ hv).2, Formula.toModal,
+      ModalFormula.realize_inf]
+    exact not_and_or.symm
   | disj h₁ h₂ ih₁ ih₂ =>
-    cases b
-    · simp [eval, ih₁ _ hv, ih₂ _ hv, Formula.toModal, not_or]
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h₁, setOf_eval_eq_flat h₂, Team.mem_flat_sups_flat]
-      simp [ih₁ _ hv, ih₂ _ hv, Formula.toModal]
+    refine ⟨?_, by simp [Formula.den, (ih₁ hv).2, (ih₂ hv).2, Formula.toModal, not_or]⟩
+    simp only [Formula.den, Team.pro_disj]
+    rw [pro_den_eq_flat h₁, pro_den_eq_flat h₂, Team.mem_flat_sups_flat]
+    simp [(ih₁ hv).1, (ih₂ hv).1, Formula.toModal]
   | poss h ih =>
-    have := fun b (w : W) ↦ ih b (i := (w, i.2)) hv
-    simp only [Index.world] at this
-    cases b
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.nec_flat]
-      simp [Index.world, Index.assign, this, Formula.toModal]
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.poss_flat]
-      simp [Index.world, Index.assign, this, Formula.toModal]
+    have h₁ := fun w : W ↦ (ih (i := (w, i.2)) hv).1
+    have h₂ := fun w : W ↦ (ih (i := (w, i.2)) hv).2
+    simp only [Index.world] at h₁ h₂
+    constructor
+    · simp only [Formula.den, Bilattice.Product.pro_map]
+      rw [pro_den_eq_flat h, Team.poss_flat]
+      simp [Index.world, Index.assign, h₁, Formula.toModal]
+    · simp only [Formula.den, Bilattice.Product.con_map]
+      rw [con_den_eq_flat h, Team.nec_flat]
+      simp [Index.world, Index.assign, h₂, Formula.toModal]
   | exi x h ih =>
-    have := fun b d ↦ ih b (update_refines hv x d)
-    cases b
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.mem_necImage_flat]
-      simp [this, Formula.toModal]
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.mem_possLax_flat]
-      simp [this, Formula.toModal]
+    have h₁ := fun d ↦ (ih (update_refines hv x d)).1
+    have h₂ := fun d ↦ (ih (update_refines hv x d)).2
+    constructor
+    · simp only [Formula.den, Bilattice.Product.pro_map]
+      rw [pro_den_eq_flat h, Team.mem_possLax_flat]
+      simp [h₁, Formula.toModal]
+    · simp only [Formula.den, Bilattice.Product.con_map]
+      rw [con_den_eq_flat h, Team.mem_necImage_flat]
+      simp [h₂, Formula.toModal]
   | univ x h ih =>
-    have := fun b d ↦ ih b (update_refines hv x d)
-    cases b
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.mem_possLax_flat]
-      simp [this, Formula.toModal]
-    · simp only [eval]
-      rw [setOf_eval_eq_flat h, Team.mem_necImage_flat]
-      simp [this, Formula.toModal]
+    have h₁ := fun d ↦ (ih (update_refines hv x d)).1
+    have h₂ := fun d ↦ (ih (update_refines hv x d)).2
+    constructor
+    · simp only [Formula.den, Bilattice.Product.pro_map]
+      rw [pro_den_eq_flat h, Team.mem_necImage_flat]
+      simp [h₁, Formula.toModal]
+    · simp only [Formula.den, Bilattice.Product.con_map]
+      rw [con_den_eq_flat h, Team.mem_possLax_flat]
+      simp [h₂, Formula.toModal]
 
 /-- A singleton state supports an `NE`-free formula iff its translation is satisfied at the
 index's world ([aloni-vanormondt-2023] Proposition 4.1, singleton case). -/
 theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = ↑(v y)) :
-    support M φ {i} ↔ φ.toModal.Realize M i.world v := by
-  simpa using eval_singleton_iff_realize M hNE true hv
+    support M φ {i} ↔ φ.toModal.Realize M i.world v :=
+  (singleton_mem_den_iff_realize M hNE hv).1
 
 theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} (hNE : φ.NEFree) {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = ↑(v y)) :
-    antiSupport M φ {i} ↔ ¬ φ.toModal.Realize M i.world v := by
-  simpa using eval_singleton_iff_realize M hNE false hv
+    antiSupport M φ {i} ↔ ¬ φ.toModal.Realize M i.world v :=
+  (singleton_mem_den_iff_realize M hNE hv).2
 
 /-- A state supports an `NE`-free formula iff its translation is satisfied at every index, that
 is, `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023] Proposition

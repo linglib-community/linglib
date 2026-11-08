@@ -37,8 +37,8 @@ symbol its only inclusion atoms are trivial, so every formula is flat.
 * `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 * `range_support_subset`: the classes of pointed team models the logic expresses are union closed,
   contain the empty team and are invariant under bounded bisimulation.
-* `support_iff_forall_realize`: when every inclusion atom is trivial, support is pointwise
-  classical truth.
+* `setOf_support_of_inclTrivial`, `support_iff_forall_realize`: when every inclusion atom is
+  trivial, support is pointwise classical truth.
 * `range_support_ssubset_of_subsingleton`: in one propositional symbol that inclusion is strict.
 
 ## Implementation notes
@@ -309,28 +309,30 @@ section Classical
 
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
 
-/-- On formulas whose inclusion atoms are trivial, support is pointwise classical truth. -/
-theorem support_iff_forall_realize (hI : φ.InclTrivial) (t : Finset W) :
-    support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
-  induction φ generalizing t with
-  | atom p => simp [support, eval, Realize]
-  | bot => simp [support, eval, Realize, Finset.eq_empty_iff_forall_notMem]
+/-- On formulas whose inclusion atoms are trivial, the teams supporting a formula are the flat
+property of its classical truth. Each case is the commutation of a connective with `Team.flat`. -/
+theorem setOf_support_of_inclTrivial (hI : φ.InclTrivial) :
+    {t | support M φ t} = Team.flat (Realize M φ) := by
+  induction φ with
+  | atom p => rfl
+  | bot => exact Set.ext fun t ↦ Finset.eq_empty_iff_forall_notMem
   | incl xys =>
-    exact iff_of_true ((support_incl M _ _).2 fun w hw ↦
+    exact Set.ext fun t ↦ iff_of_true ((support_incl M _ _).2 fun w hw ↦
       ⟨w, hw, fun xy hxy ↦ by rw [hI xy hxy]⟩) fun _ _ ↦ trivial
   | neg ψ ih =>
-    simp only [support, eval, Team.mem_flat, Realize]
-    exact forall₂_congr fun w _ ↦ not_congr ((ih hI {w}).trans (by simp))
-  | conj ψ₁ ψ₂ ih₁ ih₂ => simp [support, eval, ih₁ hI.1, ih₂ hI.2, Realize, forall_and]
+    exact congrArg Team.flat <| funext fun w ↦ propext <| not_congr <|
+      (Set.ext_iff.1 (ih hI) {w}).trans <| by simp
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    exact (congrArg₂ (· ∩ ·) (ih₁ hI.1) (ih₂ hI.2)).trans (Team.flat_inter _ _)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    simp only [support, eval, ih₁ hI.1, ih₂ hI.2]
-    exact Team.mem_flat_sups_flat.trans (by simp [Realize])
-  | poss ψ ih =>
-    simp only [support, eval, ih hI]
-    exact Team.mem_possLax_flat.trans (by simp [realize_poss])
-  | nec ψ ih =>
-    simp only [support, eval, ih hI]
-    exact Team.mem_necImage_flat.trans (by simp [realize_nec])
+    exact (congrArg₂ (· ⊻ ·) (ih₁ hI.1) (ih₂ hI.2)).trans (Team.flat_sups_flat _ _)
+  | poss ψ ih => exact (congrArg (Team.possLax M.access) (ih hI)).trans (Team.possLax_flat _ _)
+  | nec ψ ih => exact (congrArg (Team.necImage M.access) (ih hI)).trans (Team.necImage_flat _ _)
+
+/-- On formulas whose inclusion atoms are trivial, support is pointwise classical truth. -/
+theorem support_iff_forall_realize (hI : φ.InclTrivial) (t : Finset W) :
+    support M φ t ↔ ∀ w ∈ t, Realize M φ w :=
+  Set.ext_iff.1 (setOf_support_of_inclTrivial hI) t
 
 theorem support_singleton_iff_realize (hI : φ.InclTrivial) :
     support M φ {w} ↔ Realize M φ w := by
@@ -355,9 +357,7 @@ empty team and are invariant under bounded bisimulation ([anttila-haggblom-yang-
 -/
 theorem range_support_subset :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊆
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} :=
+      {P | Fiberwise (fun T ↦ SupClosed T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} :=
   Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ ⟨supClosed_support M φ, support_empty M φ⟩,
     boundedBisimInvariant_support φ⟩
 
@@ -367,9 +367,7 @@ The extended variant of [anttila-haggblom-yang-2025] expresses it by the atom `�
 -/
 theorem range_support_ssubset_of_subsingleton [Subsingleton Atom] [Nonempty Atom] :
     (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
-      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
-        SupClosed (PointedTeam.mk W M ⁻¹' P) ∧ ∅ ∈ PointedTeam.mk W M ⁻¹' P) ∧
-        BoundedBisimInvariant P} := by
+      {P | Fiberwise (fun T ↦ SupClosed T ∧ ∅ ∈ T) P ∧ BoundedBisimInvariant P} := by
   refine ⟨range_support_subset, fun h ↦ ?_⟩
   inhabit Atom
   let Q : Set (PointedTeam.{u} Atom) := {q | q.team = ∅ ∨ ∃ w ∈ q.team, q.model.val default w}
