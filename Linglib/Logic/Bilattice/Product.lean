@@ -33,6 +33,7 @@ mathlib has no bilattices.
   knowledge-order instances on `Know (L ⊙ R)` from `L × R`.
 * `Bilattice.Product.mk`, `Bilattice.Product.pro`, `Bilattice.Product.con`: the plain-coordinate
   constructor and projections.
+* `Bilattice.Product.map`: a pair of maps applied coordinatewise.
 * the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the `InvolutiveCompl` and
   `Negation` instances it underlies.
 * `Bilattice.Product.conflation`: the conflation induced by an involution of the factor.
@@ -80,6 +81,21 @@ def con (x : L ⊙ R) : R := OrderDual.ofDual x.2
 
 @[ext] theorem ext {x y : L ⊙ R} (h₁ : x.pro = y.pro) (h₂ : x.con = y.con) : x = y :=
   Prod.ext h₁ (congrArg OrderDual.toDual h₂)
+
+section Map
+
+variable {L' R' : Type*}
+
+/-- Apply `f` to the evidence for and `g` to the evidence against. -/
+def map (f : L → L') (g : R → R') (x : L ⊙ R) : L' ⊙ R' := mk (f x.pro) (g x.con)
+
+variable (f : L → L') (g : R → R') (x : L ⊙ R)
+
+@[simp] theorem pro_map : (map f g x).pro = f x.pro := rfl
+@[simp] theorem con_map : (map f g x).con = g x.con := rfl
+@[simp] theorem map_mk (a : L) (b : R) : map f g (mk a b) = mk (f a) (g b) := rfl
+
+end Map
 
 /-! ### The truth order
 
@@ -209,6 +225,8 @@ instance : Compl (L ⊙ L) := ⟨fun x ↦ mk x.con x.pro⟩
 @[simp] theorem con_compl (x : L ⊙ L) : xᶜ.con = x.pro := rfl
 @[simp] theorem mk_compl (a b : L) : (mk a b)ᶜ = mk b a := rfl
 @[simp] protected theorem compl_compl (x : L ⊙ L) : xᶜᶜ = x := rfl
+
+theorem compl_map {L' : Type*} (f g : L → L') (x : L ⊙ L) : (map f g x)ᶜ = map g f xᶜ := rfl
 
 protected theorem compl_le_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ y) : yᶜ ≤ xᶜ := ⟨h.2, h.1⟩
 

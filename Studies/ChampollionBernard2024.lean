@@ -33,7 +33,7 @@ exclusion classical (`classicalExclusion_possible`). Cumulativity of exclusion a
 verifiers of `¬(P ∧ Q)` that Ciardelli, Zhang and Champollion's counterfactual data call for
 (`neg_sups_neg_subset`). In the canonical frame a literal excludes its mirror image. There the
 derived possibility is Fine's consistency (`Truthmaker.Canonical.possible_excl`), negation recovers
-Fine's falsifiers (`neg_ver_atom`, `neg_ver_conj_atom`), and the axioms hold.
+Fine's falsifiers (`neg_pro_atom`, `neg_pro_conj_atom`), and the axioms hold.
 
 ## Implementation notes
 
@@ -59,6 +59,7 @@ language (Theorems 9.8–9.9) are not formalized.
 @[expose] public section
 
 open SetFamily Truthmaker
+open scoped Bilattice
 
 namespace ChampollionBernard2024
 
@@ -140,12 +141,12 @@ theorem mem_upperClosure_neg_iff (hH : Harmony excl) (hR : PossibleFusion excl) 
   ⟨fun hn hφ ↦ not_mem_upperClosure_neg hw.prop hφ hn,
     (mem_upperClosure_or_neg hH hR hw φ).resolve_left⟩
 
-theorem exclusive_mk_neg (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exclusive (possible excl) :=
-  BilProp.exclusive_iff.2 fun _ hs hφ ↦ not_mem_upperClosure_neg hs hφ
+theorem exclusive_mk_neg (φ : Set E) : Exclusive (possible excl) (.mk φ (neg excl φ)) :=
+  exclusive_iff.2 fun _ hs hφ ↦ not_mem_upperClosure_neg hs hφ
 
 theorem exhaustive_mk_neg (hC : Cosmopolitan excl) (hH : Harmony excl) (hR : PossibleFusion excl)
-    (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exhaustive (possible excl) :=
-  (BilProp.exhaustive_iff hC).2 fun _ hw ↦ mem_upperClosure_or_neg hH hR hw φ
+    (φ : Set E) : Exhaustive (possible excl) (.mk φ (neg excl φ)) :=
+  (exhaustive_iff hC).2 fun _ hw ↦ mem_upperClosure_or_neg hH hR hw φ
 
 /-! ### Emergent exclusion and de Morgan's law -/
 
@@ -266,8 +267,8 @@ open Truthmaker.Canonical
 
 variable {α : Type*}
 
-theorem neg_ver_atom (a : α) : neg Canonical.excl (atom a).ver = (atom a).fal := by
-  rw [ver_atom, fal_atom, neg_singleton]
+theorem neg_pro_atom (a : α) : neg Canonical.excl (atom a).pro = (atom a).con := by
+  rw [pro_atom, con_atom, neg_singleton]
   ext e
   constructor
   · rintro ⟨_, hg, x, rfl, rfl⟩
@@ -279,9 +280,9 @@ theorem neg_ver_atom (a : α) : neg Canonical.excl (atom a).ver = (atom a).fal :
 
 /-- In the canonical frame, the negation of a conjunction of two atoms is verified exactly by its
 falsifiers, so de Morgan's law holds there (§9). -/
-theorem neg_ver_conj_atom (a b : α) :
-    neg Canonical.excl ((atom a).conj (atom b)).ver = ((atom a).conj (atom b)).fal := by
-  rw [BilProp.ver_conj, BilProp.fal_conj, ver_atom, ver_atom, fal_atom, fal_atom,
+theorem neg_pro_conj_atom (a b : α) :
+    neg Canonical.excl (conj (atom a) (atom b)).pro = (conj (atom a) (atom b)).con := by
+  rw [pro_conj, con_conj, pro_atom, pro_atom, con_atom, con_atom,
     Set.singleton_sups_singleton, neg_singleton]
   ext e
   constructor
@@ -310,16 +311,16 @@ theorem cosmopolitan_canonicalExcl : Cosmopolitan (Canonical.excl (α := α)) :=
   rw [possible_excl]
   exact fun _ ↦ exists_le_maximal_possible
 
-theorem mk_neg_ver_atom (a : α) :
-    BilProp.mk (atom a).ver (neg Canonical.excl (atom a).ver) = atom a := by
-  rw [neg_ver_atom]
+theorem mk_neg_pro_atom (a : α) :
+    Bilattice.Product.mk (atom a).pro (neg Canonical.excl (atom a).pro) = atom a := by
+  rw [neg_pro_atom, Bilattice.Product.mk_pro_con]
 
 /- Fine's classicality of the canonical atoms follows from the exclusion axioms. -/
-example (a : α) : (atom a).Exclusive Canonical.possible :=
-  possible_excl ▸ mk_neg_ver_atom a ▸ exclusive_mk_neg _
+example (a : α) : Exclusive Canonical.possible (atom a) :=
+  possible_excl ▸ mk_neg_pro_atom a ▸ exclusive_mk_neg _
 
-example (a : α) : (atom a).Exhaustive Canonical.possible :=
-  possible_excl ▸ mk_neg_ver_atom a ▸
+example (a : α) : Exhaustive Canonical.possible (atom a) :=
+  possible_excl ▸ mk_neg_pro_atom a ▸
     exhaustive_mk_neg cosmopolitan_canonicalExcl harmony_canonicalExcl
       possibleFusion_excl _
 

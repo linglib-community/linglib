@@ -23,11 +23,11 @@ Distributivity [cannot be dropped](##M3.not_faithful).
 
 Truth sets are mathlib's operations on `Set S`: $\langle\mathrm{sup}\rangle$ is `⊻`,
 $\langle\mathrm{sup}^*\rangle$ is `supClosure`, and `MIL.P` is `upperClosure`, the inexact
-verification of truthmaker semantics. Support and antisupport form a `Truthmaker.BilProp`. The
-forth condition is proved from `Defines.of_le`, without the paper's decomposition of a point into
-parts defining valuations; only the back condition and the atomic cases use the decomposition. The
-fullness model is the whole powerset rather than that of the team, since a translation inspects
-only the points below its point of evaluation.
+verification of truthmaker semantics. Support and antisupport form a pair in the product bilattice
+`⊙`, as do verifiers and falsifiers. The forth condition is proved from `Defines.of_le`, without
+the paper's decomposition of a point into parts defining valuations; only the back condition and
+the atomic cases use the decomposition. The fullness model is the whole powerset rather than that
+of the team, since a translation inspects only the points below its point of evaluation.
 
 ## Errata
 
@@ -52,7 +52,7 @@ completeness), and the K3 variant whose map is the analogue of Birkhoff's.
 @[expose] public section
 
 open scoped SetFamily
-open Truthmaker (BilProp)
+open scoped Bilattice
 
 namespace AloniEtAl2026
 
@@ -142,16 +142,16 @@ namespace Formula
 
 variable [Fintype Atom]
 
-/-- The bilateral meaning of a BSL formula: `ver` is the set of teams supporting it and `fal` the
+/-- The bilateral meaning of a BSL formula: `pro` is the set of teams supporting it and `con` the
 set of teams antisupporting it. A team supports `♦φ` when a nonempty subteam supports `φ`. -/
-def den : Formula Atom → BilProp (Finset (Atom → Bool))
-  | atom p => ⟨Team.flat (· p = true), Team.flat (· p = false)⟩
-  | bot => ⟨{∅}, Set.univ⟩
-  | ne => ⟨Team.ne, {∅}⟩
-  | neg φ => -φ.den
-  | disj φ ψ => ⟨φ.den.ver ⊻ ψ.den.ver, φ.den.fal ∩ ψ.den.fal⟩
-  | conj φ ψ => ⟨φ.den.ver ∩ ψ.den.ver, φ.den.fal ⊻ ψ.den.fal⟩
-  | diamond φ => ⟨upperClosure (φ.den.ver ∩ Team.ne), φ.den.fal⟩
+def den : Formula Atom → Team.TeamProperty (Atom → Bool) ⊙ Team.TeamProperty (Atom → Bool)
+  | atom p => .mk (Team.flat (· p = true)) (Team.flat (· p = false))
+  | bot => .mk {∅} Set.univ
+  | ne => .mk Team.ne {∅}
+  | neg φ => (φ.den)ᶜ
+  | disj φ ψ => Team.disj φ.den ψ.den
+  | conj φ ψ => Team.conj φ.den ψ.den
+  | diamond φ => .mk ↑(upperClosure (φ.den.pro ∩ Team.ne)) φ.den.con
 
 end Formula
 
@@ -461,7 +461,7 @@ private theorem mem_sups_iff {A B : Set S} {A' B' : Set (Finset (Atom → Bool))
 /-- Lemma 4.11: under $\Gamma$, the translation of a formula is true at a point exactly when the
 team of the point supports the formula, and likewise for antisupport. -/
 theorem mem_den_tr (φ : Formula Atom) (hy : y ∈ den V gamma) :
-    (y ∈ den V φ.trPos ↔ G V y ∈ φ.den.ver) ∧ (y ∈ den V φ.trNeg ↔ G V y ∈ φ.den.fal) := by
+    (y ∈ den V φ.trPos ↔ G V y ∈ φ.den.pro) ∧ (y ∈ den V φ.trNeg ↔ G V y ∈ φ.den.con) := by
   induction φ generalizing y with
   | atom p => exact ⟨mem_den_lit_iff_G_mem hy, mem_den_lit_iff_G_mem hy⟩
   | bot => exact ⟨mem_den_neNeg_iff_G_eq_empty hy, iff_of_true (by simp [Formula.trNeg]) trivial⟩
@@ -541,13 +541,13 @@ theorem G_teamVal [Nonempty Atom] (t : Finset (Atom → Bool)) : G teamVal t = t
 /-- Theorem 4.15: an entailment holds in BSL exactly when its translation holds under $\Gamma$ in
 every distributive semilattice model. -/
 theorem consequence_iff [Nonempty Atom] (φ ψ : Formula Atom) :
-    φ.den.ver ⊆ ψ.den.ver ↔
+    φ.den.pro ⊆ ψ.den.pro ↔
       ∀ (S : Type u) [SemilatticeSup S] [IsDistribSemilatticeSup S] (V : Atom × Bool → Set S),
         den V gamma ∩ den V φ.trPos ⊆ den V ψ.trPos := by
   refine ⟨fun h S _ _ V x ⟨hΓ, hφ⟩ ↦ (mem_den_tr ψ hΓ).1.2 (h ((mem_den_tr φ hΓ).1.1 hφ)),
     fun h t ht ↦ ?_⟩
   have hΓ := mem_den_gamma_teamVal t
-  have key (χ : Formula Atom) : t ∈ den teamVal χ.trPos ↔ t ∈ χ.den.ver := by
+  have key (χ : Formula Atom) : t ∈ den teamVal χ.trPos ↔ t ∈ χ.den.pro := by
     simpa only [G_teamVal] using (mem_den_tr χ hΓ).1
   exact (key ψ).1 (h _ teamVal ⟨hΓ, (key φ).2 ht⟩)
 
@@ -562,8 +562,8 @@ variable [Fintype Atom]
 open Formula in
 -- the free choice inference and its cancellation under negation, §3.1
 theorem free_choice (α β : Formula Atom) :
-    (diamond (disj (conj α ne) (conj β ne))).den.ver ⊆ (diamond α).den.ver ∧
-      (neg (diamond (disj (conj α ne) (conj β ne)))).den.ver ⊆ (neg (diamond α)).den.ver := by
+    (diamond (disj (conj α ne) (conj β ne))).den.pro ⊆ (diamond α).den.pro ∧
+      (neg (diamond (disj (conj α ne) (conj β ne)))).den.pro ⊆ (neg (diamond α)).den.pro := by
   refine ⟨fun t ht ↦ ?_, fun t ht ↦ ?_⟩
   · obtain ⟨s, ⟨hs, -⟩, hst⟩ := mem_upperClosure.1 ht
     obtain ⟨a, ⟨haα, hane⟩, b, -, rfl⟩ := Set.mem_sups.1 hs
@@ -574,8 +574,8 @@ theorem free_choice (α β : Formula Atom) :
 
 -- footnote 11: support and antisupport sets are weak ideals, closed under joins and convex
 theorem supClosed_ordConnected_den (φ : Formula Atom) :
-    (SupClosed φ.den.ver ∧ φ.den.ver.OrdConnected) ∧
-      (SupClosed φ.den.fal ∧ φ.den.fal.OrdConnected) := by
+    (SupClosed φ.den.pro ∧ φ.den.pro.OrdConnected) ∧
+      (SupClosed φ.den.con ∧ φ.den.con.OrdConnected) := by
   induction φ with
   | atom p =>
     exact ⟨⟨Team.supClosed_flat _, Team.ordConnected_flat _⟩, Team.supClosed_flat _,
@@ -600,7 +600,7 @@ theorem supClosed_ordConnected_den (φ : Formula Atom) :
 -- footnote 11: the support sets of BSL are regular propositions in Fine's sense
 theorem isClosed_regularClosure_den [DecidableEq Atom] (φ : Formula Atom) :
     letI : CompleteLattice (Finset (Atom → Bool)) := Fintype.toCompleteLattice _
-    Truthmaker.regularClosure.IsClosed φ.den.ver :=
+    Truthmaker.regularClosure.IsClosed φ.den.pro :=
   letI : CompleteLattice (Finset (Atom → Bool)) := Fintype.toCompleteLattice _
   Truthmaker.isClosed_regularClosure_iff_of_finite.2 (supClosed_ordConnected_den φ).1
 
@@ -704,7 +704,7 @@ open MIL (den) in
 /-- Footnote 20: the BSL entailment `p ∨ p ⊨ p` has a translation that fails under $\Gamma$ on the
 non-distributive lattice $M_3$. -/
 theorem M3.not_faithful :
-    (Formula.disj (.atom ()) (.atom ())).den.ver ⊆ (Formula.atom ()).den.ver ∧
+    (Formula.disj (.atom ()) (.atom ())).den.pro ⊆ (Formula.atom ()).den.pro ∧
       ¬ den M3.valuation gamma ∩ den M3.valuation (Formula.disj (.atom ()) (.atom ())).trPos ⊆
         den M3.valuation (Formula.atom ()).trPos := by
   refine ⟨Set.sups_subset_self.2 (Team.isFlat_flat _).supClosed, fun h ↦ ?_⟩
@@ -747,11 +747,11 @@ namespace TSFormula
 variable {S : Type*} [SemilatticeSup S]
 
 /-- The bilateral proposition a truthmaker formula expresses at a valuation `V = (V⁺, V⁻)`. -/
-def den (V : Atom × Bool → Set S) : TSFormula Atom → BilProp S
-  | atom p => ⟨V (p, true), V (p, false)⟩
-  | neg φ => -φ.den V
-  | conj φ ψ => (φ.den V).conj (ψ.den V)
-  | disj φ ψ => (φ.den V).disj (ψ.den V)
+def den (V : Atom × Bool → Set S) : TSFormula Atom → Set S ⊙ Set S
+  | atom p => .mk (V (p, true)) (V (p, false))
+  | neg φ => (φ.den V)ᶜ
+  | conj φ ψ => Truthmaker.conj (φ.den V) (ψ.den V)
+  | disj φ ψ => Truthmaker.disj (φ.den V) (ψ.den V)
 
 mutual
 
@@ -776,7 +776,7 @@ end TSFormula
 -- Theorem 2.1: the translation of a truthmaker formula is true at its verifiers
 theorem TSFormula.den_tr {S : Type*} [SemilatticeSup S] (V : Atom × Bool → Set S)
     (φ : TSFormula Atom) :
-    MIL.den V φ.trPos = (φ.den V).ver ∧ MIL.den V φ.trNeg = (φ.den V).fal := by
+    MIL.den V φ.trPos = (φ.den V).pro ∧ MIL.den V φ.trNeg = (φ.den V).con := by
   induction φ with
   | atom p => exact ⟨rfl, rfl⟩
   | neg φ ih => exact ⟨ih.2, ih.1⟩

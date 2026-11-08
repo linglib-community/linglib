@@ -26,7 +26,7 @@ non-classical behaviour.
 * `State.extendUniversal`, `State.extendFunctional`: the extensions `s[x]` and `s[x/h]`.
 * `Formula`, `Formula.nec`, `Formula.NEFree`: formulas, the derived `□`, the `NE`-free fragment.
 * `Model`, `Model.ofMonadic`: models over the monadic signature with constants.
-* `eval`, `support`, `antiSupport`: bilateral evaluation.
+* `Formula.den`, `support`, `antiSupport`: the pair of supporting and anti-supporting states.
 
 ## Main statements
 
@@ -34,8 +34,9 @@ non-classical behaviour.
 
 ## Implementation notes
 
-* The paper takes `□` primitive and derives `◇`; we invert this, so `eval`'s `poss` clauses are
-  the paper's derived `◇`-clauses. Predicates are monadic, as in all of the paper's examples.
+* The paper takes `□` primitive and derives `◇`; we invert this, so the `poss` clause of
+  `Formula.den` is the paper's derived `◇`-clause. Predicates are monadic, as in all of the
+  paper's examples.
 * The paper's existential clause is the lax diamond over the variants (`support_exi_iff`), the
   lax quantifier of the paper's fn. 10; the universal clause `s[x] ⊨ φ` is the box over them.
 * The paper's requirement that the indices of a state share an assignment domain is not
@@ -59,6 +60,8 @@ open scoped SetFamily
 namespace QBSML
 
 open FirstOrder
+open Team (TeamProperty)
+open scoped Bilattice
 
 variable {W Var Domain : Type*}
 
@@ -209,7 +212,7 @@ variable {s : Finset (Index W Var Domain)} {x : Var} {j : Index W Var Domain}
 /-- A state is in the lax diamond of a property over the `x`-variants iff one of its functional
 `x`-extensions is in it. -/
 theorem State.mem_possLax_variants_iff [Fintype Domain]
-    {P : Team.TeamProperty (Index W Var Domain)} :
+    {P : TeamProperty (Index W Var Domain)} :
     s ∈ Team.possLax (Index.variants x) P ↔
       ∃ h : Index W Var Domain → Finset Domain,
         (∀ i ∈ s, (h i).Nonempty) ∧ State.extendFunctional s x h ∈ P where
@@ -349,44 +352,37 @@ section Evaluation
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- Bilateral evaluation ([aloni-vanormondt-2023] Definition 4.9): `eval M true φ s` is support
-`M, s ⊨ φ` and `eval M false φ s` is anti-support `M, s ⫤ φ`. -/
-def eval (M : Model W Domain Const Pred) :
-    Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
-  | true,  .pred P x, s =>
-      s ∈ Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ M.relInterp₁ (predSymb P) i.world d
-  | false, .pred P x, s =>
-      s ∈ Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
-  | true,  .predc P c, s =>
-      s ∈ Team.flat fun i ↦
-        M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
-  | false, .predc P c, s =>
-      s ∈ Team.flat fun i ↦
-        ¬ M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
-  | true,  .ne, s => s ∈ Team.ne
-  | false, .ne, s => s ∈ ({∅} : Team.TeamProperty (Index W Var Domain))
-  | true,  .neg ψ, s => eval M false ψ s
-  | false, .neg ψ, s => eval M true ψ s
-  | true,  .conj φ ψ, s => eval M true φ s ∧ eval M true ψ s
-  | false, .conj φ ψ, s => s ∈ {t | eval M false φ t} ⊻ {t | eval M false ψ t}
-  | true,  .disj φ ψ, s => s ∈ {t | eval M true φ t} ⊻ {t | eval M true ψ t}
-  | false, .disj φ ψ, s => eval M false φ s ∧ eval M false ψ s
-  | true,  .poss ψ, s => s ∈ Team.poss (Index.successors M.access) {t | eval M true ψ t}
-  | false, .poss ψ, s => s ∈ Team.nec (Index.successors M.access) {t | eval M false ψ t}
-  | true,  .univ x ψ, s => s ∈ Team.necImage (Index.variants x) {t | eval M true ψ t}
-  | false, .univ x ψ, s => s ∈ Team.possLax (Index.variants x) {t | eval M false ψ t}
-  | true,  .exi x ψ, s => s ∈ Team.possLax (Index.variants x) {t | eval M true ψ t}
-  | false, .exi x ψ, s => s ∈ Team.necImage (Index.variants x) {t | eval M false ψ t}
+/-- The meaning of a formula in a model is the pair of the states that support it and the states
+that anti-support it ([aloni-vanormondt-2023] Definition 4.9). A predicate applied to a variable
+holds of the indices that assign the variable a value in its extension, and fails at those that
+assign one outside it; an index leaving the variable unassigned does neither. -/
+def Formula.den (M : Model W Domain Const Pred) :
+    Formula Var Const Pred → TeamProperty (Index W Var Domain) ⊙ TeamProperty (Index W Var Domain)
+  | .pred P x => .mk
+      (Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ M.relInterp₁ (predSymb P) i.world d)
+      (Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ ¬ M.relInterp₁ (predSymb P) i.world d)
+  | .predc P c => Team.flatPair fun i ↦
+      M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
+  | .ne => .mk Team.ne {∅}
+  | .neg ψ => (ψ.den M)ᶜ
+  | .conj φ ψ => Team.conj (φ.den M) (ψ.den M)
+  | .disj φ ψ => Team.disj (φ.den M) (ψ.den M)
+  | .poss ψ =>
+    (ψ.den M).map (Team.poss (Index.successors M.access)) (Team.nec (Index.successors M.access))
+  | .exi x ψ => (ψ.den M).map (Team.possLax (Index.variants x)) (Team.necImage (Index.variants x))
+  | .univ x ψ =>
+    (ψ.den M).map (Team.necImage (Index.variants x)) (Team.possLax (Index.variants x))
 
-/-- Support: positive evaluation. -/
+/-- A state supports `φ` when it is in the support coordinate of the meaning of `φ`. -/
 abbrev support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
-  eval M true φ s
+  s ∈ (φ.den M).pro
 
-/-- Anti-support: negative evaluation. -/
+/-- A state anti-supports `φ` when it is in the anti-support coordinate of the meaning of
+`φ`. -/
 abbrev antiSupport (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
-  eval M false φ s
+  s ∈ (φ.den M).con
 
 @[simp] lemma support_neg (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl

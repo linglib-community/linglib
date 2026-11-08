@@ -27,8 +27,8 @@ respect to compatibility (`maximal_iff_weakMaximalCompat`, Claim 5).
 
 The falsifiers of an atomic formula are the states exactly incompatible with all its verifiers,
 and the connectives follow Fine's bilateral clauses (`denote`). Every verifier of a formula is
-then inexactly incompatible with every falsifier (`conflict_of_mem_ver_of_mem_fal`, Theorem 1), so
-no possible state verifies a contradiction (`not_mem_possible_of_mem_ver_conj_neg`, Corollary 1).
+then inexactly incompatible with every falsifier (`conflict_of_mem_pro_of_mem_con`, Theorem 1), so
+no possible state verifies a contradiction (`not_mem_possible_of_mem_pro_conj_neg`, Corollary 1).
 
 ## Implementation notes
 
@@ -48,6 +48,7 @@ about it concern. The applications to first-degree entailment, the Routley star 
 @[expose] public section
 
 open SetFamily Truthmaker
+open scoped Bilattice
 
 namespace PlebaniRosellaSaitta2022
 
@@ -134,16 +135,16 @@ variable (excl) in
 /-- The bilateral proposition a formula expresses when `V` assigns verifiers to the atoms. An atom
 is falsified by the states exactly incompatible with all its verifiers, and the connectives follow
 Fine's bilateral clauses (def. 8). -/
-def denote (V : A → Set S) : Formula A → BilProp S
-  | .atom a => ⟨V a, {s | ∀ t ∈ V a, excl s t}⟩
-  | .neg φ => -denote V φ
-  | .conj φ ψ => (denote V φ).conj (denote V ψ)
-  | .disj φ ψ => (denote V φ).disj (denote V ψ)
+def denote (V : A → Set S) : Formula A → Set S ⊙ Set S
+  | .atom a => .mk (V a) {s | ∀ t ∈ V a, excl s t}
+  | .neg φ => (denote V φ)ᶜ
+  | .conj φ ψ => Truthmaker.conj (denote V φ) (denote V ψ)
+  | .disj φ ψ => Truthmaker.disj (denote V φ) (denote V ψ)
 
 /-- Every verifier of a formula is inexactly incompatible with every falsifier of it
 (Theorem 1). -/
-theorem conflict_of_mem_ver_of_mem_fal [Std.Symm excl] (V : A → Set S) (φ : Formula A)
-    (hs : s ∈ (denote excl V φ).ver) (ht : t ∈ (denote excl V φ).fal) : Conflict excl s t := by
+theorem conflict_of_mem_pro_of_mem_con [Std.Symm excl] (V : A → Set S) (φ : Formula A)
+    (hs : s ∈ (denote excl V φ).pro) (ht : t ∈ (denote excl V φ).con) : Conflict excl s t := by
   induction φ generalizing s t with
   | atom a => exact (Conflict.of_excl (ht s hs)).symm
   | neg φ ih => exact (ih ht hs).symm
@@ -159,9 +160,9 @@ theorem conflict_of_mem_ver_of_mem_fal [Std.Symm excl] (V : A → Set S) (φ : F
     · exact (ihψ hs hb).mono le_rfl le_sup_right
 
 /-- No possible state verifies a contradiction (Corollary 1). -/
-theorem not_mem_possible_of_mem_ver_conj_neg [Std.Symm excl] (V : A → Set S) (φ : Formula A)
-    (hs : s ∈ (denote excl V (.conj φ (.neg φ))).ver) : s ∉ possible excl := by
+theorem not_mem_possible_of_mem_pro_conj_neg [Std.Symm excl] (V : A → Set S) (φ : Formula A)
+    (hs : s ∈ (denote excl V (.conj φ (.neg φ))).pro) : s ∉ possible excl := by
   obtain ⟨a, ha, b, hb, rfl⟩ := hs
-  exact fun hp ↦ hp ((conflict_of_mem_ver_of_mem_fal V φ ha hb).mono le_sup_left le_sup_right)
+  exact fun hp ↦ hp ((conflict_of_mem_pro_of_mem_con V φ ha hb).mono le_sup_left le_sup_right)
 
 end PlebaniRosellaSaitta2022

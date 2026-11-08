@@ -57,7 +57,7 @@ properties, `NE` and `{∅}` under `∩` and `⊻`. -/
 theorem den_induction {C : TeamProperty W → Prop} (flat : ∀ p, C (Team.flat p))
     (ne : C Team.ne) (empty : C {∅}) (inter : ∀ {P Q}, C P → C Q → C (P ∩ Q))
     (sups : ∀ {P Q}, C P → C Q → C (P ⊻ Q)) (M : KripkeModel W Atom)
-    (φ : Formula Atom) : C (φ.den M).ver ∧ C (φ.den M).fal := by
+    (φ : Formula Atom) : C (φ.den M).pro ∧ C (φ.den M).con := by
   induction φ with
   | atom p => exact ⟨flat _, flat _⟩
   | ne => exact ⟨ne, empty⟩
@@ -110,8 +110,8 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 /-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
 polarities ([aloni-anttila-yang-2024] Theorem 3.8). -/
 theorem invariant_den {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
-    Invariant (WorldBisim k M · M' ·) (φ.den M).ver (φ.den M').ver ∧
-      Invariant (WorldBisim k M · M' ·) (φ.den M).fal (φ.den M').fal := by
+    Invariant (WorldBisim k M · M' ·) (φ.den M).pro (φ.den M').pro ∧
+      Invariant (WorldBisim k M · M' ·) (φ.den M).con (φ.den M').con := by
   induction φ generalizing k with
   | atom p => exact ⟨invariant_flat fun _ _ h ↦ h.val_iff p,
       invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)⟩

@@ -20,7 +20,7 @@ the enriched premise the enriched conclusion is unsupported (`ross_blocked`, `as
 is overt, the reinterpretation function of Definition 32 supplies one: a predicate with a
 contextually salient sub-predicate is read as the disjunction of the predicate within the
 sub-predicate and outside it (`reinterpret`), which stays NE-free and is bilaterally
-equivalent to the original (`reinterpret_neFree`, `eval_reinterpret_iff`) yet parts from it
+equivalent to the original (`reinterpret_neFree`, `den_reinterpret`) yet parts from it
 under enrichment (`asher_concl_enriched`, `asher_blocked`).
 
 ## Implementation notes
@@ -33,7 +33,7 @@ under enrichment (`asher_concl_enriched`, `asher_blocked`).
   subset of the predicate's, is checked against the global model (`IsSubPred`): within the
   agent's desire worlds it must fail, since blocking requires every trip there to be free. The
   relation `sub` that triggers reinterpretation is therefore a contextual parameter, and
-  `eval_reinterpret_iff` holds for any choice of it.
+  `den_reinterpret` holds for any choice of it.
 * The premise of Asher's puzzle is `□∃x(FREE x ∧ TRIP x)`, the paper's `□∃x FREE x`
   unabbreviated after its footnote reading the generalisation as conjunction elimination; the
   conclusion `◇∃x ¬FREE x` of (27d) is `◇∃x(¬FREE x ∧ TRIP x)`.
@@ -127,13 +127,11 @@ section SalvaVeritate
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 variable (M : Model W Domain Const Pred)
 
-private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
-    (s : Finset (Index W Var Domain)) :
-    eval M b (Formula.disj (within P Q x) (without P Q x)) s ↔ eval M b (Formula.pred Q x) s := by
+private theorem den_within_disj_without (P Q : Pred) (x : Var) :
+    (Formula.disj (within P Q x) (without P Q x)).den M = (Formula.pred Q x).den M := by
   classical
-  cases b with
-  | true =>
-    constructor
+  refine Bilattice.Product.ext (Set.ext fun s ↦ ?_) (Set.ext fun s ↦ ?_)
+  · constructor
     · rintro ⟨t₁, ⟨-, hQ₁⟩, t₂, ⟨-, hQ₂⟩, hsplit⟩ i hi
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
@@ -152,8 +150,7 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
         push Not at hncond
         exact hncond
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
-  | false =>
-    constructor
+  · constructor
     · rintro ⟨⟨t₁, hnP, t₂, hnQ₁, hsplit₁⟩, ⟨u₁, hP, u₂, hnQ₂, hsplit₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
@@ -167,15 +164,13 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
       exact ⟨⟨∅, support_empty_of_neFree (.neg (.pred P x)) M, s, h, bot_sup_eq s⟩,
         ⟨∅, support_empty_of_neFree (.pred P x) M, s, h, bot_sup_eq s⟩⟩
 
-private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
-    (s : Finset (Index W Var Domain)) :
-    eval M b (Formula.disj (.conj (.predc P c) (.predc Q c))
-        (.conj (.neg (.predc P c)) (.predc Q c))) s ↔
-      eval M b (Formula.predc Q c) s := by
+private theorem den_predc_disj (P Q : Pred) (c : Const) :
+    (Formula.disj (.conj (.predc P c) (.predc Q c))
+        (.conj (.neg (.predc P c)) (.predc Q c)) : Formula Var Const Pred).den M =
+      (Formula.predc Q c).den M := by
   classical
-  cases b with
-  | true =>
-    constructor
+  refine Bilattice.Product.ext (Set.ext fun s ↦ ?_) (Set.ext fun s ↦ ?_)
+  · constructor
     · rintro ⟨t₁, ⟨-, hQ₁⟩, t₂, ⟨-, hQ₂⟩, hsplit⟩ i hi
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
@@ -189,8 +184,7 @@ private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
       · exact λ i hi => (Finset.mem_filter.mp hi).2
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
-  | false =>
-    constructor
+  · constructor
     · rintro ⟨⟨t₁, hnP, t₂, hnQ₁, hsplit₁⟩, ⟨u₁, hP, u₂, hnQ₂, hsplit₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
@@ -204,26 +198,26 @@ private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
   (s : Finset (Index W Var Domain))
 
-theorem eval_reinterpret_iff (b : Bool) : eval M b (reinterpret sub P φ) s ↔ eval M b φ s :=
-  eval_mapAtoms_iff M
-    (λ Q x b s => by
-      show eval M b (if sub P Q then _ else _) s ↔ _
+theorem den_reinterpret : (reinterpret sub P φ).den M = φ.den M :=
+  den_mapAtoms M
+    (fun Q x ↦ by
+      show Formula.den M (if sub P Q then _ else _) = _
       split
-      · exact eval_within_disj_without M P Q x b s
-      · exact Iff.rfl)
-    (λ Q c b s => by
-      show eval M b (if sub P Q then _ else _) s ↔ _
+      · exact den_within_disj_without M P Q x
+      · rfl)
+    (fun Q c ↦ by
+      show Formula.den M (if sub P Q then _ else _) = _
       split
-      · exact eval_predc_disj M P Q c b s
-      · exact Iff.rfl)
-    φ b s
+      · exact den_predc_disj M P Q c
+      · rfl)
+    φ
 
 theorem support_reinterpret_iff : support M (reinterpret sub P φ) s ↔ support M φ s :=
-  eval_reinterpret_iff M sub P φ s true
+  .of_eq (congrArg (s ∈ ·.pro) (den_reinterpret M sub P φ))
 
 theorem antiSupport_reinterpret_iff :
     antiSupport M (reinterpret sub P φ) s ↔ antiSupport M φ s :=
-  eval_reinterpret_iff M sub P φ s false
+  .of_eq (congrArg (s ∈ ·.con) (den_reinterpret M sub P φ))
 
 end SalvaVeritate
 

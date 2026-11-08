@@ -100,38 +100,30 @@ theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w 
 
 variable [DecidableEq W] {t : Finset W}
 
-/-- The meaning of an `NE`-free formula is the pair of flat properties of its truth and its
-falsity: a team supports it iff it is true at each world of the team, and anti-supports it iff it
-is false at each ([anttila-2021] Proposition 2.2.16). -/
-theorem den_of_neFree (hNE : φ.NEFree) :
-    φ.den M = ⟨Team.flat (Realize M φ), Team.flat fun w ↦ ¬ Realize M φ w⟩ := by
+/-- The meaning of an `NE`-free formula is the flat pair of its classical truth: a team supports
+it iff it is true at each world of the team, and anti-supports it iff it is false at each
+([anttila-2021] Proposition 2.2.16). Each case is the commutation of a connective with
+`Team.flatPair`. -/
+theorem den_of_neFree (hNE : φ.NEFree) : φ.den M = Team.flatPair (Realize M φ) := by
   induction φ with
   | atom p => rfl
   | ne => exact hNE.elim
-  | neg ψ ih => ext t <;> simp [ih hNE]
+  | neg ψ ih => exact (congrArg (·ᶜ) (ih hNE)).trans (Team.compl_flatPair _)
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    ext t
-    · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and]
-    · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
-      refine Team.mem_flat_sups_flat.trans ?_
-      simp [imp_iff_not_or]
+    exact (congrArg₂ Team.conj (ih₁ hNE.1) (ih₂ hNE.2)).trans (Team.conj_flatPair _ _)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    ext t
-    · simp only [Formula.den, ih₁ hNE.1, ih₂ hNE.2]
-      exact Team.mem_flat_sups_flat
-    · simp [Formula.den, ih₁ hNE.1, ih₂ hNE.2, forall_and, not_or]
+    exact (congrArg₂ Team.disj (ih₁ hNE.1) (ih₂ hNE.2)).trans (Team.disj_flatPair _ _)
   | poss ψ ih =>
-    ext t
-    · simp [Formula.den, ih hNE, Team.exists_nonempty_subset_forall_iff, realize_poss]
-    · simp [Formula.den, ih hNE, realize_poss]
+    exact (congrArg (·.map (Team.poss M.access) (Team.nec M.access)) (ih hNE)).trans
+      (Team.map_poss_nec_flatPair _ _)
 
 theorem support_iff_forall_realize (hNE : φ.NEFree) :
     support M φ t ↔ ∀ w ∈ t, Realize M φ w :=
-  .of_eq (congrArg (t ∈ ·.ver) (den_of_neFree hNE))
+  .of_eq (congrArg (t ∈ ·.pro) (den_of_neFree hNE))
 
 theorem antiSupport_iff_forall_not_realize (hNE : φ.NEFree) :
     antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w :=
-  .of_eq (congrArg (t ∈ ·.fal) (den_of_neFree hNE))
+  .of_eq (congrArg (t ∈ ·.con) (den_of_neFree hNE))
 
 /-- A singleton team supports an `NE`-free formula iff its world realizes it,
 `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
