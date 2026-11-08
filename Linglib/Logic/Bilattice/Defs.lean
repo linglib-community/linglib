@@ -6,22 +6,14 @@ public import Mathlib.Order.BoundedOrder.Lattice
 /-!
 # Bilattices
 
-A bilattice ([avron-1996] Def 2.1) is one carrier with two lattice orders, a **truth** order `≤`
-and a **knowledge** order `≤ₖ`. It is interlaced when the meet and join of each order are
-monotone for the other order, a condition due to [fitting-1990].
-
-The truth lattice is the carrier's own `[Lattice B]`. The knowledge lattice lives on the type
-synonym `Know B`, a distinct type head (cf. `OrderDual`), so both can be instances at once. On
-`B` itself the knowledge meet and join, Fitting's consensus `⊗` and gullibility `⊕`, are written
-`⊓ₖ` and `⊔ₖ`.
-
-## Main definitions
-
-* `Bilattice.Know`, `Bilattice.toKnow`, `Bilattice.ofKnow`: the knowledge-order synonym and its
-  casts.
-* `Bilattice.kInf`, `Bilattice.kSup`, `Bilattice.kLE`: the knowledge meet `⊓ₖ`, join `⊔ₖ` and
-  order `≤ₖ`.
-* `Bilattice.IsInterlaced`: the four interlacing laws.
+This file defines bilattices. A bilattice is one carrier with two lattice orders, a truth order `≤`
+and a knowledge order `≤ₖ`; it is interlaced, in Fitting's sense, when the meet and join of each
+order are monotone for the other order. The truth lattice is the carrier's own `[Lattice B]`, and
+the knowledge lattice lives on the type synonym `Know B` (cf. `OrderDual`), where the knowledge
+meet and join, Fitting's consensus `⊗` and gullibility `⊕`, are `⊓ₖ` and `⊔ₖ`. `Know B` is
+itself the bilattice with the two orders exchanged, and `Bᵒᵈ` the one with the truth order
+reversed, so a theorem about bilattices read on either is a dual theorem, as
+[the bounds](##ofKnow_top_inf_ofKnow_bot) illustrate.
 
 ## References
 
@@ -52,6 +44,29 @@ def ofKnow : Know B ≃ B := Equiv.refl B
 
 instance [DecidableEq B] : DecidableEq (Know B) := inferInstanceAs (DecidableEq B)
 
+/-! ### The dual bilattice
+
+The knowledge order of `Know B` is the truth order of `B`, so `Know B` is the bilattice with the
+two orders exchanged. -/
+
+instance [LE B] : LE (Know (Know B)) := inferInstanceAs (LE B)
+instance [Preorder B] : Preorder (Know (Know B)) := inferInstanceAs (Preorder B)
+instance [PartialOrder B] : PartialOrder (Know (Know B)) := inferInstanceAs (PartialOrder B)
+instance [Lattice B] : Lattice (Know (Know B)) := inferInstanceAs (Lattice B)
+instance [LE B] [BoundedOrder B] : BoundedOrder (Know (Know B)) := inferInstanceAs (BoundedOrder B)
+
+/-! ### The truth-dual bilattice
+
+Reversing the truth order and keeping the knowledge order gives the bilattice `Bᵒᵈ`. -/
+
+instance [LE (Know B)] : LE (Know Bᵒᵈ) := inferInstanceAs (LE (Know B))
+instance [Preorder (Know B)] : Preorder (Know Bᵒᵈ) := inferInstanceAs (Preorder (Know B))
+instance [PartialOrder (Know B)] : PartialOrder (Know Bᵒᵈ) :=
+  inferInstanceAs (PartialOrder (Know B))
+instance [Lattice (Know B)] : Lattice (Know Bᵒᵈ) := inferInstanceAs (Lattice (Know B))
+instance [LE (Know B)] [BoundedOrder (Know B)] : BoundedOrder (Know Bᵒᵈ) :=
+  inferInstanceAs (BoundedOrder (Know B))
+
 section Defs
 
 variable [Lattice (Know B)]
@@ -71,22 +86,22 @@ end Defs
 
 section KLE
 
-variable [Preorder (Know B)]
-
 /-- Knowledge order `≤_k`. -/
-def kLE (x y : B) : Prop := toKnow x ≤ toKnow y
+def kLE [LE (Know B)] (x y : B) : Prop := toKnow x ≤ toKnow y
 
 @[inherit_doc] scoped infix:50 " ≤ₖ " => kLE
 
-theorem kLE_def {x y : B} : x ≤ₖ y ↔ toKnow x ≤ toKnow y := Iff.rfl
+theorem kLE_def [LE (Know B)] {x y : B} : x ≤ₖ y ↔ toKnow x ≤ toKnow y := Iff.rfl
+
+instance [LE (Know B)] [DecidableLE (Know B)] : DecidableRel (kLE (B := B)) :=
+  fun x y => inferInstanceAs (Decidable (toKnow x ≤ toKnow y))
+
+variable [Preorder (Know B)]
 
 @[refl] theorem kLE_refl (x : B) : x ≤ₖ x := le_rfl
 theorem kLE_trans {x y z : B} (h₁ : x ≤ₖ y) (h₂ : y ≤ₖ z) : x ≤ₖ z := le_trans h₁ h₂
 
 instance : Trans (kLE (B := B)) (kLE (B := B)) (kLE (B := B)) := ⟨kLE_trans⟩
-
-instance [DecidableLE (Know B)] : DecidableRel (kLE (B := B)) :=
-  fun x y => inferInstanceAs (Decidable (toKnow x ≤ toKnow y))
 
 end KLE
 
@@ -115,6 +130,20 @@ class IsInterlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
   /-- knowledge join `⊔ₖ` is `≤_t`-monotone -/
   kSup_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊔ₖ z) ≤ y ⊔ₖ z
 
+/-- Interlacing is symmetric in the two orders. -/
+instance [Lattice B] [Lattice (Know B)] [IsInterlaced B] : IsInterlaced (Know B) where
+  inf_kmono h z := IsInterlaced.kInf_tmono (B := B) h (ofKnow z)
+  sup_kmono h z := IsInterlaced.kSup_tmono (B := B) h (ofKnow z)
+  kInf_tmono h z := IsInterlaced.inf_kmono (B := B) h (ofKnow z)
+  kSup_tmono h z := IsInterlaced.sup_kmono (B := B) h (ofKnow z)
+
+/-- Interlacing survives reversing the truth order. -/
+instance [Lattice B] [Lattice (Know B)] [IsInterlaced B] : IsInterlaced Bᵒᵈ where
+  inf_kmono h z := IsInterlaced.sup_kmono (B := B) h (OrderDual.ofDual z)
+  sup_kmono h z := IsInterlaced.inf_kmono (B := B) h (OrderDual.ofDual z)
+  kInf_tmono h z := IsInterlaced.kInf_tmono (B := B) h (OrderDual.ofDual z)
+  kSup_tmono h z := IsInterlaced.kSup_tmono (B := B) h (OrderDual.ofDual z)
+
 section Interlaced
 
 variable [Lattice B] [Lattice (Know B)] [IsInterlaced B]
@@ -132,6 +161,14 @@ theorem sup_kLE_sup {a b c d : B} (h₁ : a ≤ₖ b) (h₂ : c ≤ₖ d) : a �
     _ = c ⊔ b := sup_comm ..
     _ ≤ₖ d ⊔ b := IsInterlaced.sup_kmono h₂ b
     _ = b ⊔ d := sup_comm ..
+
+/-- The knowledge meet is truth-monotone in both arguments, the dual of `inf_kLE_inf`. -/
+theorem kInf_le_kInf {a b c d : B} (h₁ : a ≤ b) (h₂ : c ≤ d) : a ⊓ₖ c ≤ b ⊓ₖ d :=
+  inf_kLE_inf (B := Know B) (a := toKnow a) (b := toKnow b) (c := toKnow c) (d := toKnow d) h₁ h₂
+
+/-- The knowledge join is truth-monotone in both arguments, the dual of `sup_kLE_sup`. -/
+theorem kSup_le_kSup {a b c d : B} (h₁ : a ≤ b) (h₂ : c ≤ d) : a ⊔ₖ c ≤ b ⊔ₖ d :=
+  sup_kLE_sup (B := Know B) (a := toKnow a) (b := toKnow b) (c := toKnow c) (d := toKnow d) h₁ h₂
 
 /-! #### The four bounds
 
@@ -157,21 +194,11 @@ theorem top_kSup_bot : (⊤ : B) ⊔ₖ ⊥ = ofKnow ⊤ :=
     (calc ofKnow ⊤ = ofKnow ⊤ ⊔ₖ ⊥ := congrArg ofKnow (top_sup_eq _).symm
       _ ≤ ⊤ ⊔ₖ ⊥ := IsInterlaced.kSup_tmono le_top ⊥)
 
-theorem ofKnow_top_inf_ofKnow_bot : ofKnow ⊤ ⊓ ofKnow ⊥ = (⊥ : B) :=
-  kLE_antisymm
-    (calc ofKnow ⊤ ⊓ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊓ ⊥ :=
-        inf_kLE_inf (kLE_refl _) (bot_le (α := Know B))
-      _ = ⊥ := inf_bot_eq _)
-    (calc (⊥ : B) = ⊥ ⊓ ofKnow ⊥ := (bot_inf_eq _).symm
-      _ ≤ₖ ofKnow ⊤ ⊓ ofKnow ⊥ := inf_kLE_inf (le_top (α := Know B)) (kLE_refl _))
+/-- The dual of `top_kInf_bot`. -/
+theorem ofKnow_top_inf_ofKnow_bot : ofKnow ⊤ ⊓ ofKnow ⊥ = (⊥ : B) := top_kInf_bot (B := Know B)
 
-theorem ofKnow_top_sup_ofKnow_bot : ofKnow ⊤ ⊔ ofKnow ⊥ = (⊤ : B) :=
-  kLE_antisymm
-    (calc ofKnow ⊤ ⊔ ofKnow ⊥ ≤ₖ ofKnow ⊤ ⊔ ⊤ :=
-        sup_kLE_sup (kLE_refl _) (bot_le (α := Know B))
-      _ = ⊤ := sup_top_eq _)
-    (calc (⊤ : B) = ⊤ ⊔ ofKnow ⊥ := (top_sup_eq _).symm
-      _ ≤ₖ ofKnow ⊤ ⊔ ofKnow ⊥ := sup_kLE_sup (le_top (α := Know B)) (kLE_refl _))
+/-- The dual of `top_kSup_bot`. -/
+theorem ofKnow_top_sup_ofKnow_bot : ofKnow ⊤ ⊔ ofKnow ⊥ = (⊤ : B) := top_kSup_bot (B := Know B)
 
 end Interlaced
 

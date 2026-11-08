@@ -81,9 +81,12 @@ abbrev PRESUP := Fin 3 ⊙ Fin 3
 /-- The degree `½` of the chain `{0, ½, 1}`. -/
 abbrev half : Fin 3 := 1
 
-/-- Fitting's conflation on `PRESUP` (Definition 3.4), complementing each coordinate on the chain
-by `Fin.rev`. -/
-instance : Conflation PRESUP := Product.conflation Fin.rev Fin.rev_involutive Fin.rev_anti
+/-- The chain `{0, ½, 1}` complemented by `x ↦ 1 - x`, the reversal `Fin.rev`. Through it `PRESUP`
+carries Fitting's conflation (Definition 3.4), complementing each coordinate. -/
+instance : InvolutiveCompl (Fin 3) where
+  compl := Fin.rev
+  compl_compl := Fin.rev_rev
+  compl_le_compl := Fin.rev_le_rev.2
 
 namespace PRESUP
 
