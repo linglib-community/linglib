@@ -15,21 +15,6 @@ points below it. This is [an order embedding](##OrthoConcept.principalEmbedding)
 [every concept is the image of the join of its extent](##OrthoConcept.principal_sSup_extent), it
 is [an order isomorphism](##OrthoConcept.principalIso).
 
-## Main definitions
-
-* `JoinDense V`: every element of `L` is the least upper bound of the elements of `V` below it.
-* `OrthoConcept.Orthogonal V`: the orthogonality relation `a ≤ bᶜ` on the nonzero elements of
-  `V`, and `OrthoConcept V` its concepts.
-* `OrthoConcept.principal V`: the concept of the points below an element.
-* `OrthoConcept.principalEmbedding`, `OrthoConcept.principalIso`: `principal V` as an order
-  embedding for join-dense `V`, and as an order isomorphism on a complete lattice.
-
-## Main statements
-
-* `OrthoConcept.principal_le_principal`, `principal_inf`, `principal_sup`, `principal_compl`:
-  `principal V` preserves and reflects the order and preserves the ortholattice operations.
-* `OrthoConcept.principal_surjective`: on a complete lattice every concept is principal.
-
 ## Implementation notes
 
 The representation is the converse of the construction of an ortholattice from an orthogonality
@@ -38,6 +23,9 @@ ortholattice laws are needed only for orthogonality to be irreflexive, which mak
 ortholattice. Surjectivity needs no join-density, which only makes the order reflected. The names
 follow mathlib's `DedekindCut`, the concepts of `≤`, with its `principal`, `principalEmbedding`
 and `principalIso`; `OrthoConcept` is the library's name for the concepts of orthogonality.
+With `V` all of `L` the concepts are the MacNeille completion of `L`. The representation by proper
+filters in `Core/Order/Ortholattice/ProperFilter.lean` gives the canonical completion instead, and
+carries operators that elements need not.
 
 ## References
 
@@ -49,7 +37,7 @@ and `principalIso`; `OrthoConcept` is the library's name for the concepts of ort
 open Order Set
 
 /-- A set `V` is join-dense in `L` when every element is the least upper bound of the elements
-    of `V` below it. -/
+of `V` below it. -/
 def JoinDense {L : Type*} [Preorder L] (V : Set L) : Prop :=
   ∀ a : L, IsLUB (V ∩ Set.Iic a) a
 
@@ -62,7 +50,7 @@ omit [InvolutiveCompl L] in
 abbrev Point (V : Set L) : Type _ := ↥(V \ {⊥})
 
 /-- Two points are orthogonal when one lies below the complement of the other
-    ([maclaren-1964] Theorem 2.5). -/
+([maclaren-1964] Theorem 2.5). -/
 def Orthogonal (V : Set L) (a b : Point V) : Prop := a.1 ≤ b.1ᶜ
 
 @[simp] theorem orthogonal_iff {V : Set L} {a b : Point V} :
@@ -77,7 +65,7 @@ instance [IsOrtholattice L] (V : Set L) : Std.Irrefl (Orthogonal V) :=
 end OrthoConcept
 
 /-- The **orthogonality concepts** over `V` are the concepts of orthogonality on the nonzero
-    elements of `V`, the closed sets of [maclaren-1964]'s representation. -/
+elements of `V`, the closed sets of [maclaren-1964]'s representation. -/
 abbrev OrthoConcept {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L] (V : Set L) :
     Type _ :=
   Concept (OrthoConcept.Point V) (OrthoConcept.Point V) (OrthoConcept.Orthogonal V)
@@ -183,7 +171,7 @@ namespace OrthoConcept
 variable {L : Type*} [CompleteLattice L] [InvolutiveCompl L] {V : Set L}
 
 /-- On a complete lattice a concept is the principal concept of the join of its extent
-    ([maclaren-1964] Theorems 2.4 and 2.5). -/
+([maclaren-1964] Theorems 2.4 and 2.5). -/
 theorem principal_sSup_extent (c : OrthoConcept V) :
     principal V (sSup (Subtype.val '' c.extent)) = c := by
   refine (congrArg (Concept.ofObjects (Orthogonal V)) ?_).trans Concept.ofObjects_extent
@@ -200,7 +188,7 @@ theorem principal_surjective : Function.Surjective (principal V) :=
   fun c ↦ ⟨_, principal_sSup_extent c⟩
 
 /-- On a complete lattice with a join-dense `V`, `principal V` is an order isomorphism onto the
-    concepts of orthogonality ([maclaren-1964] Theorems 2.4 and 2.5). -/
+concepts of orthogonality ([maclaren-1964] Theorems 2.4 and 2.5). -/
 noncomputable def principalIso (hV : JoinDense V) : L ≃o OrthoConcept V :=
   OrderIso.ofSurjective (principalEmbedding hV) principal_surjective
 
