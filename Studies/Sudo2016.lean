@@ -82,37 +82,39 @@ noncomputable def atomCount (P : W → E → Prop) (w : W) (x : E) : ℕ := {y |
 and *human* of the paper's (4) and (8). -/
 abbrev Sortal (W E : Type*) := W → E → Prop
 
+open Classical in
 /-- A sortal classifier applied to a numeral, the paper's (4) and (7b), is at each world a
 trivalent property presupposing the plural closure of the sortal and asserting that the
 argument has the numeral's number of sortal atoms. -/
-noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → SignType :=
-  {x | AlgClosure (c w) x}.indicator fun x ↦ SignType.ofProp (atomCount c w x = n w)
+noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → Trivalent := fun x ↦
+  Trivalent.transplication (Trivalent.ofProp (AlgClosure (c w) x))
+    (Trivalent.ofProp (atomCount c w x = n w))
 
 /-- The ∪-operator of the paper's (10) maps a numeral to its property correlate, having that
 many atomic parts. -/
 def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ atomCount atomic w x = n w
 
-@[simp] theorem Sortal.apply_eq_zero_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = 0 ↔ ¬ AlgClosure (c w) x := by
+@[simp] theorem Sortal.apply_eq_undefined_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
+    c.apply n w x = .undefined ↔ ¬ AlgClosure (c w) x := by
   simp [Sortal.apply]
 
-@[simp] theorem Sortal.apply_eq_one_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = 1 ↔ AlgClosure (c w) x ∧ up c n w x := by
+@[simp] theorem Sortal.apply_eq_true_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
+    c.apply n w x = .true ↔ AlgClosure (c w) x ∧ up c n w x := by
   simp [Sortal.apply, up]
 
-@[simp] theorem Sortal.apply_eq_neg_one_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = -1 ↔ AlgClosure (c w) x ∧ ¬ up c n w x := by
+@[simp] theorem Sortal.apply_eq_false_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
+    c.apply n w x = .false ↔ AlgClosure (c w) x ∧ ¬ up c n w x := by
   simp [Sortal.apply, up]
 
 open Classical in
 /-- Predicate Modification with a presupposed modifier, the paper's (6), conjoins the noun
 with the assertion and projects the presupposition. -/
-noncomputable def modify (P : E → SignType) (N : E → Prop) : E → SignType :=
-  fun x ↦ (P x).meetWeak (SignType.ofProp (N x))
+noncomputable def modify (P : E → Trivalent) (N : E → Prop) : E → Trivalent :=
+  fun x ↦ (P x).meetWeak (Trivalent.ofProp (N x))
 
 -- (7c)
-theorem modify_sortal_ne_zero (c : Sortal W E) (n : W → ℕ) (w : W) {x : E}
-    (h : AlgClosure (c w) x) : modify (c.apply n w) (AlgClosure (c w)) x ≠ 0 := by
+theorem modify_sortal_ne_undefined (c : Sortal W E) (n : W → ℕ) (w : W) {x : E}
+    (h : AlgClosure (c w) x) : modify (c.apply n w) (AlgClosure (c w)) x ≠ .undefined := by
   simp [modify, h]
 
 /-! ### The ∩-operator -/
@@ -135,7 +137,7 @@ theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → 
 /-- On the plural closure of its sortal, a numeral-classifier phrase holds of exactly the sums with
 the numeral's number of atoms (25). -/
 theorem isDown_sortal (c : Sortal W E) (n : W → ℕ) :
-    ∀ w x, AlgClosure (c w) x → (c.apply n w x = 1 ↔ atomCount c w x = n w) :=
+    ∀ w x, AlgClosure (c w) x → (c.apply n w x = .true ↔ atomCount c w x = n w) :=
   fun _ _ hx ↦ by simp [hx, up]
 
 /-! ### Blocking -/
@@ -148,14 +150,14 @@ inductive PredicateOf (hasClassifiers : Prop) (atomic : Sortal W E) (n : W → �
   | up (h : ¬ hasClassifiers) : PredicateOf hasClassifiers atomic n (up atomic n)
   | classifier (c : Sortal W E) :
       PredicateOf hasClassifiers atomic n
-        fun w x ↦ c.apply n w x = 1
+        fun w x ↦ c.apply n w x = .true
 
 /-- With classifiers in the lexicon, every predicate use of a numeral goes through a classifier and
 its sortal presupposition ((15), (16)). -/
 theorem predicateOf_iff_of_hasClassifiers {hasClassifiers : Prop} (h : hasClassifiers)
     (atomic : Sortal W E) (n : W → ℕ) (P : W → E → Prop) :
     PredicateOf hasClassifiers atomic n P ↔
-      ∃ c : Sortal W E, P = fun w x ↦ c.apply n w x = 1 := by
+      ∃ c : Sortal W E, P = fun w x ↦ c.apply n w x = .true := by
   constructor
   · rintro (⟨hno⟩ | ⟨c⟩)
     · exact absurd h hno
@@ -177,7 +179,7 @@ theorem japanese_has_classifiers : Chierchia1998.Language.HasClassifiers .japane
 theorem predicateOf_iff_japanese {W E : Type*} [SemilatticeSup E] (atomic : Sortal W E)
     (n : W → ℕ) (P : W → E → Prop) :
     PredicateOf (Chierchia1998.Language.HasClassifiers .japanese) atomic n P ↔
-      ∃ c : Sortal W E, P = fun w x ↦ c.apply n w x = 1 :=
+      ∃ c : Sortal W E, P = fun w x ↦ c.apply n w x = .true :=
   predicateOf_iff_of_hasClassifiers japanese_has_classifiers atomic n P
 
 /-! ### Witnesses on the set-based ontology -/
@@ -205,9 +207,9 @@ theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
   rw [atomCount, this, Set.ncard_coe_finset,
     Finset.card_image_of_injective _ Finset.singleton_injective]
 
-theorem singletonSortal_apply_ne_zero_iff (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
-    (singletonSortal P).apply n () x ≠ 0 ↔ x.Nonempty ∧ ∀ a ∈ x, P a := by
-  rw [Ne, Sortal.apply_eq_zero_iff, not_not,
+theorem singletonSortal_apply_ne_undefined_iff (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
+    (singletonSortal P).apply n () x ≠ .undefined ↔ x.Nonempty ∧ ∀ a ∈ x, P a := by
+  rw [Ne, Sortal.apply_eq_undefined_iff, not_not,
     algClosure_iff_of_subset_range_singleton fun y hy ↦ by
     obtain ⟨a, hy, _⟩ := hy; exact ⟨a, hy.symm⟩]
   simp [singletonSortal]
@@ -240,15 +242,16 @@ instance : DecidablePred Ind.flower := fun a ↦ by cases a <;> unfold Ind.flowe
 def rin : Sortal Unit (Finset Ind) := singletonSortal Ind.flower
 
 theorem rin_three :
-    rin.apply (numeral 3) () {.f1, .f2, .f3} = 1 ∧ rin.apply (numeral 3) () {.f1, .f2} = -1 := by
-  have h x := singletonSortal_apply_ne_zero_iff Ind.flower (numeral 3) x
-  simp only [ne_eq, Sortal.apply_eq_zero_iff, not_not] at h
-  refine ⟨Sortal.apply_eq_one_iff.2 ⟨(h _).2 (by decide), ?_⟩,
-    Sortal.apply_eq_neg_one_iff.2 ⟨(h _).2 (by decide), ?_⟩⟩ <;>
+    rin.apply (numeral 3) () {.f1, .f2, .f3} = .true ∧
+      rin.apply (numeral 3) () {.f1, .f2} = .false := by
+  have h x := singletonSortal_apply_ne_undefined_iff Ind.flower (numeral 3) x
+  simp only [ne_eq, Sortal.apply_eq_undefined_iff, not_not] at h
+  refine ⟨Sortal.apply_eq_true_iff.2 ⟨(h _).2 (by decide), ?_⟩,
+    Sortal.apply_eq_false_iff.2 ⟨(h _).2 (by decide), ?_⟩⟩ <;>
     simp only [up, rin, atomCount_finset, numeral] <;> decide
 
-theorem rin_not_human : rin.apply (numeral 1) () {.h1} = 0 := by
-  rw [← not_ne_iff, rin, singletonSortal_apply_ne_zero_iff]; decide
+theorem rin_not_human : rin.apply (numeral 1) () {.h1} = .undefined := by
+  rw [← not_ne_iff, rin, singletonSortal_apply_ne_undefined_iff]; decide
 
 /-- Four books form two pairs, the paper's remark on (9). -/
 theorem four_books_two_pairs : groupApply 2 2 ({.b1, .b2, .b3, .b4} : Finset Ind) :=

@@ -24,8 +24,8 @@ conjunction is [modal disjunction under de Morgan's laws](##ElliottSudo2025.neg_
   worlds instead; [the two agree at initial states](##ElliottSudo2025.existsNegative_eq_of_initial),
   where the article computes its examples.
 * The parts (92) of a disjunction's positive update are the substrate's `firstPart` and
-  `secondPart` at `1`, and those of a conjunction's negative update, which the article leaves to
-  the reader, the same at `-1`. The derivations (93) and (94) are Elliott's (31) and (32), the
+  `secondPart` at `true`, and those of a conjunction's negative update, which the article leaves
+  to the reader, the same at `false`. The derivations (93) and (94) are Elliott's (31) and (32), the
   updates (70) and (66) of the bathroom disjunction his (33) and (35), and the failure (62) of
   Egli's theorem in the negative dimension his (41b), all in `Elliott2023`.
 
@@ -157,7 +157,8 @@ to be responsible for some point of the positive update of plain disjunction; th
 is that of plain disjunction. -/
 noncomputable def disjModal (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E where
   positive s :=
-    if (firstPart 1 φ ψ s).Nonempty ∧ (secondPart 1 φ ψ s).Nonempty then (φ ⊕ ψ).positive s else ∅
+    if (firstPart .true φ ψ s).Nonempty ∧ (secondPart .true φ ψ s).Nonempty then (φ ⊕ ψ).positive s
+    else ∅
   negative := (φ ⊕ ψ).negative
 
 @[inherit_doc] notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
@@ -168,13 +169,14 @@ for some point of the negative update of plain conjunction. -/
 noncomputable def conjModal (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E where
   positive := (φ ⊙ ψ).positive
   negative s :=
-    if (firstPart (-1) φ ψ s).Nonempty ∧ (secondPart (-1) φ ψ s).Nonempty then (φ ⊙ ψ).negative s
+    if (firstPart .false φ ψ s).Nonempty ∧ (secondPart .false φ ψ s).Nonempty then
+      (φ ⊙ ψ).negative s
     else ∅
 
 theorem fc_preconditions (φ ψ : BilateralUpdate W V E) (h : Possible (φ ∨ᶠᶜ ψ) s) :
-    (firstPart 1 φ ψ s).Nonempty ∧ (secondPart 1 φ ψ s).Nonempty := by
+    (firstPart .true φ ψ s).Nonempty ∧ (secondPart .true φ ψ s).Nonempty := by
   unfold Possible disjModal at h
-  by_cases hc : (firstPart 1 φ ψ s).Nonempty ∧ (secondPart 1 φ ψ s).Nonempty
+  by_cases hc : (firstPart .true φ ψ s).Nonempty ∧ (secondPart .true φ ψ s).Nonempty
   · exact hc
   · simp only [hc, ↓reduceIte] at h
     exact (Set.not_nonempty_empty h).elim
@@ -184,7 +186,7 @@ theorem neg_conjModal (φ ψ : BilateralUpdate W V E) : ~(conjModal φ ψ) = dis
   ext s : 2
   · simp only [positive_neg, conjModal, disjModal, ← neg_conj]
     congr 1
-    simp only [firstPart_neg, secondPart_neg]
+    simp only [firstPart_neg, secondPart_neg, Trivalent.compl_true]
   · simp [conjModal, disjModal, ← neg_conj]
 
 section Atomic
@@ -192,28 +194,28 @@ section Atomic
 variable (c t : W → Prop)
 
 theorem firstPart_atom :
-    firstPart 1 (atom c) (atom t) s = (atom c (V := V) (E := E)).positive s := by
+    firstPart .true (atom c) (atom t) s = (atom c (V := V) (E := E)).positive s := by
   ext p
-  simp only [mem_firstPart, update_one]
+  simp only [mem_firstPart, update_true]
   refine ⟨fun ⟨b, hp⟩ ↦ ?_, fun hp ↦ ?_⟩
   · cases b <;> simp_all [update, unknownUpdate_atom]
   · by_cases h : t p.world
-    exacts [⟨1, by simp [hp, h]⟩, ⟨-1, by simp [hp, h]⟩]
+    exacts [⟨.true, by simp [hp, h]⟩, ⟨.false, by simp [hp, h]⟩]
 
 theorem secondPart_atom :
-    secondPart 1 (atom c) (atom t) s = (atom t (V := V) (E := E)).positive s := by
+    secondPart .true (atom c) (atom t) s = (atom t (V := V) (E := E)).positive s := by
   ext p
-  simp only [mem_secondPart, update_one, mem_positive_atom]
+  simp only [mem_secondPart, update_true, mem_positive_atom]
   refine ⟨fun ⟨a, hp, h⟩ ↦ ⟨?_, h⟩, fun ⟨hp, h⟩ ↦ ?_⟩
   · cases a <;> simp_all [update, unknownUpdate_atom]
   · by_cases hc : c p.world
-    exacts [⟨1, by simp [hp, hc], h⟩, ⟨-1, by simp [hp, hc], h⟩]
+    exacts [⟨.true, by simp [hp, hc], h⟩, ⟨.false, by simp [hp, hc], h⟩]
 
 -- (84)
 theorem possible_disjModal_atom_iff :
     Possible (atom c ∨ᶠᶜ atom t) s ↔ Possible (atom c) s ∧ Possible (atom t) s := by
-  have key : (firstPart 1 (atom c) (atom t) s).Nonempty ∧
-      (secondPart 1 (atom c) (atom t) s).Nonempty ↔
+  have key : (firstPart .true (atom c) (atom t) s).Nonempty ∧
+      (secondPart .true (atom c) (atom t) s).Nonempty ↔
         ((atom c (V := V) (E := E)).positive s).Nonempty ∧
           ((atom t (V := V) (E := E)).positive s).Nonempty := by
     rw [firstPart_atom, secondPart_atom]
@@ -417,8 +419,8 @@ end PartialFamiliarity
 -- (121)
 theorem distributive_preconditions [DecidableEq V] (φ ψ : BilateralUpdate W V E) (y : V)
     (h : Possible (forall_ y (φ ∨ᶠᶜ ψ)) s) :
-    (firstPart 1 φ ψ (State.randomAssign s y)).Nonempty ∧
-      (secondPart 1 φ ψ (State.randomAssign s y)).Nonempty := by
+    (firstPart .true φ ψ (State.randomAssign s y)).Nonempty ∧
+      (secondPart .true φ ψ (State.randomAssign s y)).Nonempty := by
   obtain ⟨p, -, -, q, hq, -⟩ := h
   exact fc_preconditions φ ψ ⟨q, hq⟩
 
@@ -471,9 +473,9 @@ theorem ex116 :
 -- (130)
 theorem negative_modal_conjunction (φ ψ : BilateralUpdate W V E)
     (h : Possible (~(conjModal φ ψ)) s) :
-    (firstPart (-1) φ ψ s).Nonempty ∧ (secondPart (-1) φ ψ s).Nonempty := by
+    (firstPart .false φ ψ s).Nonempty ∧ (secondPart .false φ ψ s).Nonempty := by
   rw [neg_conjModal] at h
-  simpa only [firstPart_neg, secondPart_neg] using fc_preconditions _ _ h
+  simpa only [firstPart_neg, secondPart_neg, Trivalent.compl_true] using fc_preconditions _ _ h
 
 -- (131)
 theorem dual_permission (φ ψ : BilateralUpdate W V E) (hφ : CCP.IsEliminative φ.positive)

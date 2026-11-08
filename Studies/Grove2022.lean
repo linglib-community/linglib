@@ -25,7 +25,7 @@ the at-issue content reconstructing by Left Identity (`believeGlobal_eq_some_tru
 ## Implementation notes
 
 The truth-value type is `Bool`, so the possibly undefined truth values are `Option Bool`, the
-library's `SignType` in monadic form, and the predicates of the models are decidable
+library's `Trivalent` in monadic form, and the predicates of the models are decidable
 propositions turned into truth values by `decide`. The universal of (27) quantifies over a whole
 type and is defined classically. The readings are stated for arbitrary index and entity types,
 the trigger *his wetsuit* being an `Iₚ I E` value, so the presupposition theorems are general

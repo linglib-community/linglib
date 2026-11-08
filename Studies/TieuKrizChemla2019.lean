@@ -150,23 +150,23 @@ theorem Reading.construals_nonempty (r : Reading) : r.construals.Nonempty := by
 /-- The value of the definite sentence at a polarity under a reading is the supervaluation over
 the reading's construals. -/
 def Reading.value [DecidableEq Atom] (r : Reading) (p : Polarity) :
-    (Finset Atom → SignType) :=
-  fun w ↦ SignType.supervaluation r.construals (·.Holds x p w)
+    (Finset Atom → Trivalent) :=
+  fun w ↦ Trivalent.supervaluation r.construals (·.Holds x p w)
 
 /-- The values of the positive and the negative sentence in a GAP context under each reading,
 Figure 2 and the group definitions of Table 8. -/
-def Reading.gapPattern : Reading → SignType × SignType
-  | .quantified ⟨.existential, .low⟩ => (1, -1)
-  | .quantified ⟨.existential, .wide⟩ => (1, 1)
-  | .quantified ⟨.universal, .low⟩ => (-1, 1)
-  | .quantified ⟨.universal, .wide⟩ => (-1, -1)
-  | .homogeneous => (0, 0)
-  | .scopeAmbiguous => (-1, 0)
+def Reading.gapPattern : Reading → Trivalent × Trivalent
+  | .quantified ⟨.existential, .low⟩ => (.true, .false)
+  | .quantified ⟨.existential, .wide⟩ => (.true, .true)
+  | .quantified ⟨.universal, .low⟩ => (.false, .true)
+  | .quantified ⟨.universal, .wide⟩ => (.false, .false)
+  | .homogeneous => (.undefined, .undefined)
+  | .scopeAmbiguous => (.false, .undefined)
 
 /-- A binary judgment accepts exactly the true sentences, collapsing the intermediate reward
 into the minimal one. -/
 def Reading.binaryPattern (r : Reading) : Bool × Bool :=
-  r.gapPattern.map (fun v ↦ decide (v = 1)) fun v ↦ decide (v = 1)
+  r.gapPattern.map (fun v ↦ decide (v = .true)) fun v ↦ decide (v = .true)
 
 /-! ### Predictions -/
 
@@ -208,27 +208,27 @@ theorem value_of_isGap (hw : IsGap x w) (r : Reading) :
 negative one false, as the clearly true and clearly false controls of both experiments require.
 -/
 theorem value_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (r : Reading) :
-    (r.value x .positive w, r.value x .negative w) = (1, -1) := by
+    (r.value x .positive w, r.value x .negative w) = (.true, .false) := by
   simp only [Reading.value, Construal.holds_of_subset hx hw,
-    SignType.supervaluation_const r.construals_nonempty]
+    Trivalent.supervaluation_const r.construals_nonempty]
   simp
 
 /-- Where no object has the property all readings make the positive sentence false and the
 negative one true. -/
 theorem value_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (r : Reading) :
-    (r.value x .positive w, r.value x .negative w) = (-1, 1) := by
+    (r.value x .positive w, r.value x .negative w) = (.false, .true) := by
   simp only [Reading.value, Construal.holds_of_disjoint hx hw,
-    SignType.supervaluation_const r.construals_nonempty]
+    Trivalent.supervaluation_const r.construals_nonempty]
   simp
 
 @[simp] theorem value_quantified (c : Construal) (p : Polarity) (w : Finset Atom) :
     (Reading.quantified c).value x p w = .ofProp (c.Holds x p w) :=
-  SignType.supervaluation_singleton _ c
+  Trivalent.supervaluation_singleton _ c
 
 theorem value_negative_of_low {r : Reading} (h : ∀ c ∈ r.construals, c.scope = .low)
-    (w : Finset Atom) : r.value x .negative w = -r.value x .positive w := by
-  rw [Reading.value, Reading.value, ← SignType.supervaluation_not _ r.construals_nonempty]
-  refine SignType.supervaluation_congr fun c hc ↦ ?_
+    (w : Finset Atom) : r.value x .negative w = (r.value x .positive w)ᶜ := by
+  rw [Reading.value, Reading.value, ← Trivalent.supervaluation_not _ r.construals_nonempty]
+  refine Trivalent.supervaluation_congr fun c hc ↦ ?_
   obtain ⟨_ | _, _⟩ := c <;> cases h _ hc <;> rfl
 
 /-- The homogeneous reading is the trivalent plural `barePlural`, the supervaluation over the
@@ -237,9 +237,9 @@ theorem value_homogeneous (hx : x.Nonempty) :
     Reading.homogeneous.value x .positive = barePlural (· ∈ ·) x := by
   funext w
   obtain ⟨b, hb⟩ := hx
-  apply SignType.eq_of_eq_zero_iff_of_eq_one_iff <;>
-    simp [Reading.value, Reading.construals, barePlural, SignType.supervaluation_eq_zero_iff,
-      SignType.supervaluation_eq_one_iff, Construal.Holds, Construal.gq, Force.gq, Det.some,
+  apply Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff <;>
+    simp [Reading.value, Reading.construals, barePlural, Trivalent.supervaluation_eq_undefined_iff,
+      Trivalent.supervaluation_eq_true_iff, Construal.Holds, Construal.gq, Force.gq, Det.some,
       Det.every, Set.Nonempty, Finset.subset_iff] <;>
     grind
 
@@ -260,22 +260,22 @@ variable [DecidableEq Atom]
 /-- A participant who reads the definite homogeneously but reverses the positive judgment to
 obtain the negative one, weak negation (fn 23), responds as a universal participant. -/
 theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
-    -SignType.ofProp (Reading.homogeneous.value x .positive w = 1) =
+    (Trivalent.ofProp (Reading.homogeneous.value x .positive w = .true))ᶜ =
       (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
   rw [value_homogeneous hx, value_negative_of_low (by simp [Reading.construals])]
   simp [barePlural, Construal.Holds, Construal.gq, Force.gq, Det.every,
-    SignType.supervaluation_eq_one_iff, Finset.subset_iff]
+    Trivalent.supervaluation_eq_true_iff, Finset.subset_iff]
 
 -- (19), (20)
 theorem domainRestriction_of_isGap (hw : IsGap x w) :
-    Reading.homogeneous.value (x.filter (· ∈ w)) .positive w = 1 ∧
-      Reading.homogeneous.value (x.filter (· ∉ w)) .negative w = 1 := by
+    Reading.homogeneous.value (x.filter (· ∈ w)) .positive w = .true ∧
+      Reading.homogeneous.value (x.filter (· ∉ w)) .negative w = .true := by
   obtain ⟨⟨a, ha, haw⟩, b, hb, hbw⟩ := hw
   rw [value_negative_of_low (by simp [Reading.construals]),
     value_homogeneous ⟨a, Finset.mem_filter.2 ⟨ha, haw⟩⟩,
     value_homogeneous ⟨b, Finset.mem_filter.2 ⟨hb, hbw⟩⟩]
-  simp only [barePlural, neg_eq_iff_eq_neg, SignType.supervaluation_eq_one_iff,
-    SignType.supervaluation_eq_neg_one_iff, Finset.mem_filter]
+  simp only [barePlural, Trivalent.compl_eq_true_iff, Trivalent.supervaluation_eq_true_iff,
+    Trivalent.supervaluation_eq_false_iff, Finset.mem_filter]
   exact ⟨fun _ h ↦ h.2, ⟨b, Finset.mem_filter.2 ⟨hb, hbw⟩⟩, fun _ h ↦ h.2⟩
 
 end

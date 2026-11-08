@@ -137,24 +137,24 @@ open Classical in
 /-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
 the agent in the event. The evaluation point of the trivalent proposition is the event. -/
 noncomputable def parAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
-    (x : Entity) : E → SignType :=
-  {e | High x e}.indicator fun e ↦ SignType.ofProp (init x e)
+    (x : Entity) : E → Trivalent :=
+  fun e ↦ Trivalent.transplication (Trivalent.ofProp (High x e)) (Trivalent.ofProp (init x e))
 
 open Classical in
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
 noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
-    (x : Entity) : E → SignType :=
-  {e | ¬ High x e}.indicator fun e ↦ SignType.ofProp (init x e)
+    (x : Entity) : E → Trivalent :=
+  fun e ↦ Trivalent.transplication (Trivalent.ofProp (¬ High x e)) (Trivalent.ofProp (init x e))
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-theorem agentive_eq_one_iff_of_ne_zero (e : E) :
-    (parAgentive init High x e ≠ 0 → (parAgentive init High x e = 1 ↔ init x e)) ∧
-      (deAgentive init High x e ≠ 0 → (deAgentive init High x e = 1 ↔ init x e)) := by
+theorem agentive_eq_true_iff_of_ne_undefined (e : E) :
+    (parAgentive init High x e ≠ .undefined → (parAgentive init High x e = .true ↔ init x e)) ∧
+      (deAgentive init High x e ≠ .undefined → (deAgentive init High x e = .true ↔ init x e)) := by
   simp_all [parAgentive, deAgentive]
 
-theorem parAgentive_ne_zero_iff (e : E) :
-    parAgentive init High x e ≠ 0 ↔ deAgentive init High x e = 0 := by
+theorem parAgentive_ne_undefined_iff (e : E) :
+    parAgentive init High x e ≠ .undefined ↔ deAgentive init High x e = .undefined := by
   simp [parAgentive, deAgentive]
 
 end Passive

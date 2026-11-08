@@ -473,22 +473,22 @@ variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 open Classical in
 /-- The chapter's Czech FALSUM (44) is defined when the attitude holder considers the
 prejacent possible, and true when it is not in the common ground. -/
-noncomputable def falsumCz : W → SignType :=
-  {w | ModalLogic.Diamond epi (· ∈ p) w}.indicator fun w ↦ SignType.ofProp (p ∉ cg w)
+noncomputable def falsumCz : W → Trivalent := fun w ↦
+  Trivalent.transplication (.ofProp (ModalLogic.Diamond epi (· ∈ p) w)) (.ofProp (p ∉ cg w))
 
 /-- The question (45) over the Czech FALSUM asks whether the prejacent is outside the common
 ground. -/
 def falsumCzQuestion : Question W := polar {w | p ∉ cg w}
 
-theorem falsumCz_eq_zero_iff (w : W) :
-    falsumCz epi cg p w = 0 ↔ ModalLogic.Box epi (· ∉ p) w := by
+theorem falsumCz_eq_undefined_iff (w : W) :
+    falsumCz epi cg p w = .undefined ↔ ModalLogic.Box epi (· ∉ p) w := by
   simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]
 
 /-- [repp-2013]'s FALSUM (22b) makes the Czech operator true wherever defined when the
 knowledge-then-goals relation is reflexive. -/
-theorem falsumCz_eq_one_of_falsum [(epi ○ conv).IsRefl] {w : W}
-    (h : □[epi ○ conv] (p ∉ cg ·) w) (hw : falsumCz epi cg p w ≠ 0) :
-    falsumCz epi cg p w = 1 := by
+theorem falsumCz_eq_true_of_falsum [(epi ○ conv).IsRefl] {w : W}
+    (h : □[epi ○ conv] (p ∉ cg ·) w) (hw : falsumCz epi cg p w ≠ .undefined) :
+    falsumCz epi cg p w = .true := by
   simp_all [falsumCz, ModalLogic.box_T h]
 
 end Falsum

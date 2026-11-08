@@ -41,7 +41,7 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 
 * Worlds are witness cardinalities, as in `TieuEtAl2020`, and the conceivable cardinalities are a
   parameter, so the presupposition is constant across worlds. A negated indefinite is a trivalent
-  proposition `ℕ → SignType`, undefined where its presupposition fails.
+  proposition `ℕ → Trivalent`, undefined where its presupposition fails.
 * A production is a negated indefinite of some number or another strategy (`none`), the three
   categories of Figure 2, and the hypotheses concern the productions conditioned on the
   indefinites, the second analysis of footnote 8. Figure 2 is a plot, so no share is typed.
@@ -172,23 +172,24 @@ open Classical in
 /-- The negated indefinite of number `n`, where the conceivable witness cardinalities are `K`,
 asserts that there is no witness and presupposes that a cardinality its number fits is
 conceivable, (7). -/
-noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → SignType :=
-  {_k | (K ∩ inference n).Nonempty}.indicator fun k ↦ SignType.ofProp (k ∈ weakᶜ)
+noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → Trivalent := fun k ↦
+  Trivalent.transplication (Trivalent.ofProp (K ∩ inference n).Nonempty)
+    (Trivalent.ofProp (k ∈ weakᶜ))
 
-theorem negated_ne_zero_iff {K : Set ℕ} {n : Number} {k : ℕ} :
-    negated K n k ≠ 0 ↔ (K ∩ inference n).Nonempty := by
+theorem negated_ne_undefined_iff {K : Set ℕ} {n : Number} {k : ℕ} :
+    negated K n k ≠ .undefined ↔ (K ∩ inference n).Nonempty := by
   simp [negated]
 
-theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ 0)
-    (h' : negated K n' k ≠ 0) : negated K n k = negated K n' k := by
+theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ .undefined)
+    (h' : negated K n' k ≠ .undefined) : negated K n k = negated K n' k := by
   simp_all [negated]
 
 -- §2
-theorem support_negated_projects (K : Set ℕ) (n : Number) (q : ℕ → SignType) :
-    Function.support (-negated K n) = Function.support (negated K n) ∧
-      Function.support (fun k ↦ (-negated K n k).joinMiddle (q k)) ⊆
-        Function.support (negated K n) :=
-  ⟨by ext; simp, fun k hk ha ↦ hk (by simp [ha])⟩
+theorem compl_gapExt_negated_projects (K : Set ℕ) (n : Number) (q : ℕ → Trivalent) :
+    (Trivalent.gapExt ((negated K n)ᶜ))ᶜ = (Trivalent.gapExt (negated K n))ᶜ ∧
+      (Trivalent.gapExt (fun k ↦ ((negated K n k)ᶜ).joinMiddle (q k)))ᶜ ⊆
+        (Trivalent.gapExt (negated K n))ᶜ :=
+  ⟨by ext; simp, fun k hk ha ↦ hk (by simp [Trivalent.mem_gapExt.1 ha])⟩
 
 /-- A book has at most one table of contents. -/
 def tableOfContents : Set ℕ := Set.Iic 1
@@ -198,18 +199,20 @@ def chapters : Set ℕ := {1}ᶜ
 
 -- (5)
 theorem negated_tableOfContents :
-    negated tableOfContents .singular 0 ≠ 0 ∧ negated tableOfContents .plural 0 = 0 := by
-  refine ⟨negated_ne_zero_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩,
+    negated tableOfContents .singular 0 ≠ .undefined ∧
+      negated tableOfContents .plural 0 = .undefined := by
+  refine ⟨negated_ne_undefined_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩,
     not_not.1 fun h ↦ ?_⟩
-  obtain ⟨k, hk, h⟩ := negated_ne_zero_iff.1 h
+  obtain ⟨k, hk, h⟩ := negated_ne_undefined_iff.1 h
   simp only [tableOfContents, inference_plural, strong, Set.mem_Iic, Set.mem_ofPred_eq] at hk h
   omega
 
 -- (6)
 theorem negated_chapters :
-    negated chapters .plural 0 ≠ 0 ∧ negated chapters .singular 0 = 0 := by
-  refine ⟨negated_ne_zero_iff.2 ⟨2, by simp [chapters], by simp [strong]⟩, not_not.1 fun h ↦ ?_⟩
-  obtain ⟨_, hk, h⟩ := negated_ne_zero_iff.1 h
+    negated chapters .plural 0 ≠ .undefined ∧ negated chapters .singular 0 = .undefined := by
+  refine ⟨negated_ne_undefined_iff.2 ⟨2, by simp [chapters], by simp [strong]⟩,
+    not_not.1 fun h ↦ ?_⟩
+  obtain ⟨_, hk, h⟩ := negated_ne_undefined_iff.1 h
   exact hk (by simpa [singular] using h)
 
 /-- The rows name the nouns, each standing for its conceivable cardinalities. -/
@@ -237,7 +240,7 @@ private theorem bookRows_eq :
 
 -- (5), (6)
 theorem bookRows_judgment :
-    ∀ r ∈ bookRows, r.judgment = .acceptable ↔ negated r.noun r.number 0 ≠ 0 := by
+    ∀ r ∈ bookRows, r.judgment = .acceptable ↔ negated r.noun r.number 0 ≠ .undefined := by
   rw [bookRows_eq]
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   exact ⟨by simpa using negated_tableOfContents.1, by simpa using negated_tableOfContents.2,
@@ -291,9 +294,9 @@ resume it, (23). -/
 def Useful (K : Set ℕ) (n : Number) : Prop := ∃ k ∈ K, Usable n k
 
 /-- Preferring useful referents, (23), yields the conceivability presupposition (7). -/
-theorem useful_iff_negated_ne_zero {n : Number} (hn : n ∈ numberSystem.values) (K : Set ℕ)
-    (k : ℕ) : Useful K n ↔ negated K n k ≠ 0 := by
-  simp only [negated_ne_zero_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
+theorem useful_iff_negated_ne_undefined {n : Number} (hn : n ∈ numberSystem.values) (K : Set ℕ)
+    (k : ℕ) : Useful K n ↔ negated K n k ≠ .undefined := by
+  simp only [negated_ne_undefined_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
 -- (23)
 theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ inference .singular).Nonempty)
@@ -471,16 +474,16 @@ theorem ineffability_singular_add_plural (μ : Measure ℕ) [IsFiniteMeasure μ]
 
 /-- A number's conceivability presupposition holds iff its chance of ineffability is not one (§6).
 -/
-theorem negated_ne_zero_iff_ineffability_ne_one (μ : Measure ℕ) [IsFiniteMeasure μ]
+theorem negated_ne_undefined_iff_ineffability_ne_one (μ : Measure ℕ) [IsFiniteMeasure μ]
     (hμ : μ weak ≠ 0) (n : Number) (w : ℕ) :
-    negated {k | μ {k} ≠ 0} n w ≠ 0 ↔ ineffability μ n ≠ 1 := by
+    negated {k | μ {k} ≠ 0} n w ≠ .undefined ↔ ineffability μ n ≠ 1 := by
   have := cond_isProbabilityMeasure hμ
   rw [ineffability, ← (prob_le_one (μ := μ[|weak])).lt_iff_ne, prob_compl_eq_one_sub .of_discrete,
     ENNReal.sub_lt_self_iff ENNReal.one_ne_top, cond_apply .of_discrete,
     Set.inter_eq_right.2 (inference_subset_weak n)]
   simp only [pos_iff_ne_zero, ne_eq, mul_eq_zero, ENNReal.inv_eq_zero, measure_ne_top, false_or]
   rw [← Set.biUnion_of_singleton (inference n), measure_biUnion_null_iff (Set.to_countable _)]
-  simp [negated_ne_zero_iff, Set.Nonempty, and_comm]
+  simp [negated_ne_undefined_iff, Set.Nonempty, and_comm]
 
 /-- A best guess under the witness distribution `μ` is an English number minimizing the chance of
 ineffability (§5.3). -/

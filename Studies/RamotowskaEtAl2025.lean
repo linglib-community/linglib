@@ -83,9 +83,9 @@ def Quant.IsPositive : Quant → Prop
   | .none | .notAll => False
 
 /-- The selectional theory's verdict in a mixed scenario is fixed by force alone. -/
-def Force.verdict : Force → SignType
-  | .universal => (-1)
-  | .existential => 1
+def Force.verdict : Force → Trivalent
+  | .universal => (.false)
+  | .existential => .true
 
 /-- The quantifier applied to a domain and a predicate. -/
 def Quant.eval {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) : Prop :=
@@ -102,12 +102,12 @@ instance {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) [DecidablePr
 /-- The quantifier projects through the players' trivalent values by the Kleene meet for the
 universal quantifiers and the Kleene join for the existential ones, over the values or their
 negations. -/
-def Quant.aggregate {ι : Type*} (q : Quant) (D : Finset ι) (v : ι → SignType) : SignType :=
+def Quant.aggregate {ι : Type*} (q : Quant) (D : Finset ι) (v : ι → Trivalent) : Trivalent :=
   match q with
   | .all => D.inf v
-  | .none => D.inf fun d ↦ -v d
+  | .none => D.inf fun d ↦ (v d)ᶜ
   | .some => D.sup v
-  | .notAll => D.sup fun d ↦ -v d
+  | .notAll => D.sup fun d ↦ (v d)ᶜ
 
 variable {W ι : Type*} (ord : W → Preorder W) (A : Set W) (w : W) (D : Finset ι) (B : ι → Set W)
 
@@ -142,12 +142,12 @@ instance (q : Quant) : DecidablePred (· ∈ {v : W | q.eval D fun d ↦ v ∈ B
 
 /-- The selectional theory (5) takes the selectional counterfactual of the quantified sentence,
 the sentence evaluated at the selected world and supervaluated over the candidate selections. -/
-def selectional (q : Quant) : SignType :=
+def selectional (q : Quant) : Trivalent :=
   selectionalCounterfactual ord A {v | q.eval D fun d ↦ v ∈ B d} w
 
 /-- On the homogeneity theory (6) each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
-noncomputable def homogeneity (q : Quant) : SignType :=
+noncomputable def homogeneity (q : Quant) : Trivalent :=
   q.aggregate D fun d ↦ homogeneityCounterfactual ord A (B d) w
 
 /-- The implicature theory (§8) pairs the basic existential meaning (23) with its exhaustified
@@ -168,13 +168,13 @@ variable {ord A w D B}
 the universal, selectional and homogeneity theories respectively. -/
 theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
     w ∉ closestImp ord A (B d) ∧
-      selectionalCounterfactual ord A (B d) w = 0 ∧
-      homogeneityCounterfactual ord A (B d) w = 0 := by
+      selectionalCounterfactual ord A (B d) w = .undefined ∧
+      homogeneityCounterfactual ord A (B d) w = .undefined := by
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
   have hnot : w ∉ closestImp ord A (B d) := fun hall ↦ hB₂ (hall hw₂)
   have hnot' : w ∉ closestImp ord A (B d)ᶜ := fun hnone ↦ hnone hw₁ hB₁
-  exact ⟨hnot, selectionalCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩,
-    homogeneityCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩⟩
+  exact ⟨hnot, selectionalCounterfactual_eq_undefined_iff.2 ⟨hnot, hnot'⟩,
+    homogeneityCounterfactual_eq_undefined_iff.2 ⟨hnot, hnot'⟩⟩
 
 theorem universal_polarity (h : Mixed ord A w D B) (q : Quant) :
     universal ord A w D B q ↔ ¬ q.IsPositive := by
@@ -196,28 +196,28 @@ theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
     selectional ord A w D B q = q.force.verdict := by
   obtain ⟨v, hv⟩ := h.closest_nonempty
   cases q
-  · exact selectionalCounterfactual_eq_neg_one_iff.2 ⟨fun hall ↦
+  · exact selectionalCounterfactual_eq_false_iff.2 ⟨fun hall ↦
       let ⟨d, hd, hB⟩ := (h.worlds v hv).2; hB (hall hv d hd),
       fun w' hw' (hall : ∀ d ∈ D, w' ∈ B d) ↦
         let ⟨d, hd, hB⟩ := (h.worlds w' hw').2; hB (hall d hd)⟩
-  · exact selectionalCounterfactual_eq_neg_one_iff.2 ⟨fun hnone ↦
+  · exact selectionalCounterfactual_eq_false_iff.2 ⟨fun hnone ↦
       let ⟨d, hd, hB⟩ := (h.worlds v hv).1; hnone hv d hd hB,
       fun w' hw' (hnone : ∀ d ∈ D, w' ∉ B d) ↦
         let ⟨d, hd, hB⟩ := (h.worlds w' hw').1; hnone d hd hB⟩
-  · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').1
-  · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').2
+  · exact selectionalCounterfactual_eq_true_iff.2 fun w' hw' ↦ (h.worlds w' hw').1
+  · exact selectionalCounterfactual_eq_true_iff.2 fun w' hw' ↦ (h.worlds w' hw').2
 
 theorem selectional_determinate (h : Mixed ord A w D B) (q : Quant) :
-    selectional ord A w D B q ≠ 0 := by
+    selectional ord A w D B q ≠ .undefined := by
   rw [selectional_force h]
   cases q <;> simp [Quant.force, Force.verdict]
 
 theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
-    homogeneity ord A w D B q = 0 := by
-  have hv : ∀ d ∈ D, homogeneityCounterfactual ord A (B d) w = 0 := fun d hd ↦
+    homogeneity ord A w D B q = .undefined := by
+  have hv : ∀ d ∈ D, homogeneityCounterfactual ord A (B d) w = .undefined := fun d hd ↦
     (unembedded h hd).2.2
-  have hn : ∀ d ∈ D, -homogeneityCounterfactual ord A (B d) w = 0 :=
-    fun d hd ↦ by rw [hv d hd, SignType.neg_zero]
+  have hn : ∀ d ∈ D, (homogeneityCounterfactual ord A (B d) w)ᶜ = .undefined :=
+    fun d hd ↦ by rw [hv d hd, Trivalent.compl_undefined]
   cases q
   · exact (Finset.inf_congr rfl hv).trans (Finset.inf_const h.nonempty _)
   · exact (Finset.inf_congr rfl hn).trans (Finset.inf_const h.nonempty _)
@@ -245,7 +245,7 @@ variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ A)]
 
 theorem dissociation (h : Mixed ord A w D B) {v : W}
     (hv : (∃ d ∈ D, v ∈ B d) ∧ ∃ d ∈ D, v ∉ B d) (q : Quant) :
-    SignType.supervaluation D (v ∈ B ·) = 0 ∧ selectional ord A w D B q ≠ 0 :=
-  ⟨(SignType.supervaluation_eq_zero_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
+    Trivalent.supervaluation D (v ∈ B ·) = .undefined ∧ selectional ord A w D B q ≠ .undefined :=
+  ⟨(Trivalent.supervaluation_eq_undefined_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
 
 end RamotowskaEtAl2025

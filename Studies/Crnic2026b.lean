@@ -18,7 +18,7 @@ pruned to one alternative outside the domain of *only*, it is [the weak
 entry](##exhOnly_singleton_eq). For an atomic prejacent [only the full domain satisfies the
 Weakening Constraint](##weakening_iff), so pruning surfaces where the full domain [leaves the
 assertion uninformative](##table_2). Unpruned, the analysis of exceptives is [von Fintel's least
-exception set](##pex_but_no_eq_one_iff).
+exception set](##pex_but_no_eq_true_iff).
 
 ## Implementation notes
 
@@ -40,7 +40,7 @@ exception set](##pex_but_no_eq_one_iff).
   context, with each *only*-alternative restricted to it by preimage (`onlyCtx`).
 * The ranking (58) of Informativity, `Presupposition.PostAccommodationInformative`, over Weakening
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
-  `posSupport`.
+  `Trivalent.posExt`.
 
 ## Errata
 
@@ -105,11 +105,12 @@ open Classical in
 /-- (9): `exh` over a sentence `S X` whose focus alternatives are `S Y` for `Y ∈ F` presupposes
 that those built on the pluralities in its domain `R` that are innocently excludable are false,
 and asserts `S X`. -/
-noncomputable def pex (X : Finset α) : Finset α → SignType :=
-  (excludesIE (S '' F) (S X) (S '' R)).indicator fun w ↦ SignType.ofProp (w ∈ S X)
+noncomputable def pex (X : Finset α) : Finset α → Trivalent := fun w ↦
+  Trivalent.transplication (Trivalent.ofProp (w ∈ excludesIE (S '' F) (S X) (S '' R)))
+    (Trivalent.ofProp (w ∈ S X))
 
 /-- (10): `exh` over the *only*-sentence. -/
-noncomputable abbrev exhOnly (X : Finset α) : Finset α → SignType := pex F R (only F C) X
+noncomputable abbrev exhOnly (X : Finset α) : Finset α → Trivalent := pex F R (only F C) X
 
 variable {F C} in
 theorem mem_exh_Ici (X : Finset α) : X ∈ exh (Ici '' F) (Ici X) :=
@@ -151,25 +152,25 @@ theorem isInnocentlyExcludable_only_iff (hY : Y ∈ F) :
     only_subset_only_iff]
 
 open Classical in
-theorem exhOnly_eq_indicator (hR : R ⊆ F) : exhOnly F C R X =
-    {w | ∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y}.indicator
-      fun w ↦ SignType.ofProp (w ∈ only F C X) := by
+theorem exhOnly_eq_transplication (hR : R ⊆ F) : exhOnly F C R X = fun w ↦
+    Trivalent.transplication (Trivalent.ofProp (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y))
+      (Trivalent.ofProp (w ∈ only F C X)) := by
+  funext w
   rw [exhOnly, pex, excludesIE_eq_excludes ⟨X, mem_exh_only⟩, inter_eq_right.2 (image_mono hR)]
-  congr 1
-  ext w
+  congr 2
   simp [only_subset_only_iff]
 
-theorem exhOnly_ne_zero_iff (hR : R ⊆ F) :
-    exhOnly F C R X w ≠ 0 ↔ ∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y := by
-  simp [exhOnly_eq_indicator R hR]
+theorem exhOnly_ne_undefined_iff (hR : R ⊆ F) :
+    exhOnly F C R X w ≠ .undefined ↔ ∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y := by
+  simp [exhOnly_eq_transplication R hR]
 
-theorem exhOnly_eq_one_iff (hR : R ⊆ F) :
-    exhOnly F C R X w = 1 ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∈ only F C X := by
-  simp [exhOnly_eq_indicator R hR]
+theorem exhOnly_eq_true_iff (hR : R ⊆ F) :
+    exhOnly F C R X w = .true ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∈ only F C X := by
+  simp [exhOnly_eq_transplication R hR]
 
-theorem exhOnly_eq_neg_one_iff (hR : R ⊆ F) :
-    exhOnly F C R X w = -1 ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∉ only F C X := by
-  simp [exhOnly_eq_indicator R hR]
+theorem exhOnly_eq_false_iff (hR : R ⊆ F) :
+    exhOnly F C R X w = .false ↔ (∀ Y ∈ R, w ∈ only F C Y → X ∈ only F C Y) ∧ w ∉ only F C X := by
+  simp [exhOnly_eq_transplication R hR]
 
 variable (F C) in
 /-- The pluralities on which the excludable alternatives of the *only*-sentence are built. -/
@@ -178,10 +179,10 @@ def excludable (X : Finset α) : Set (Finset α) := {Y ∈ F | X ∉ only F C Y}
 -- (32): the domain of `exh` matters only through its excludable alternatives
 theorem exhOnly_inter_excludable (hR : R ⊆ F) :
     exhOnly F C (R ∩ excludable F C X) X = exhOnly F C R X := by
-  rw [exhOnly_eq_indicator _ (inter_subset_left.trans hR), exhOnly_eq_indicator R hR]
-  congr 1
-  ext w
-  exact ⟨fun h Y hY hw ↦ by_contra fun hX ↦ hX (h Y ⟨hY, hR hY, hX⟩ hw),
+  rw [exhOnly_eq_transplication _ (inter_subset_left.trans hR), exhOnly_eq_transplication R hR]
+  funext w
+  congr 2
+  exact propext ⟨fun h Y hY hw ↦ by_contra fun hX ↦ hX (h Y ⟨hY, hR hY, hX⟩ hw),
     fun h Y hY ↦ h Y hY.1⟩
 
 -- (13): with the alternatives for everyone but an atom of the prejacent, `exh` presupposes it
@@ -200,24 +201,25 @@ the entry of [horn-1969] for *only* on the entailment scale, (13). -/
 theorem exhOnly_eq_only [Fintype α] [DecidableEq α] (hX : X ∈ C) (hC : C ⊆ F)
     (hsingle : ∀ x ∈ X, {x} ∈ C) (hco : ∀ x ∈ X, Finset.univ.erase x ∈ F) :
     exhOnly F C F X = Focus.only (· ⊆ ·) (Ici '' C) id (Ici X) := by
-  rw [Focus.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_indicator F subset_rfl,
+  rw [Focus.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_transplication F subset_rfl,
     only_eq_excludes hC]
-  congr 1
-  ext w
-  exact forall_mem_only_iff hC hsingle hco
+  funext w
+  congr 2
+  exact propext (forall_mem_only_iff hC hsingle hco)
 
 open Classical in
 /-- Pruning the domain of `exh` to one alternative outside the domain of *only* leaves the
 presupposition that some alternative in the domain of *only* holds, the weak entry of
 [horn-1996], (44), (54), (82). -/
 theorem exhOnly_singleton_eq (hX : X ∈ C) (hC : C ⊆ F) (hY : Y ∈ F) (h : ∀ Z ∈ C, ¬ Z ⊆ Y) :
-    exhOnly F C {Y} X = (⋃₀ (Ici '' C)).indicator
-      fun w ↦ SignType.ofProp (w ∈ excludes (Ici '' C) (Ici X)) := by
-  rw [exhOnly_eq_indicator _ (singleton_subset_iff.2 hY), only_eq_excludes hC]
-  congr 1
+    exhOnly F C {Y} X = fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ ⋃₀ (Ici '' C)))
+      (Trivalent.ofProp (w ∈ excludes (Ici '' C) (Ici X))) := by
+  rw [exhOnly_eq_transplication _ (singleton_subset_iff.2 hY), only_eq_excludes hC]
   have hXY : X ∉ only F C Y := fun hm ↦ h X hX ((mem_only_of_subset hC).1 hm X hX subset_rfl)
-  ext w
-  simp only [mem_ofPred_eq, mem_singleton_iff, forall_eq]
+  funext w
+  congr 2
+  apply propext
+  simp only [mem_singleton_iff, forall_eq]
   rw [imp_iff_not hXY, mem_only_of_subset hC]
   simp only [not_forall, exists_prop, sUnion_image, mem_iUnion₂, mem_Ici]
   exact ⟨fun ⟨Z, hZ, hZw, _⟩ ↦ ⟨Z, hZ, hZw⟩, fun ⟨Z, hZ, hZw⟩ ↦ ⟨Z, hZ, hZw, h Z hZ⟩⟩
@@ -229,12 +231,12 @@ variable (F C) in
 excludable alternatives conveys more after accommodation. -/
 def Weakening (X : Finset α) : Prop :=
   ∀ R', R ⊂ R' → R' ⊆ excludable F C X →
-    ¬ posSupport (exhOnly F C R X) ⊆ posSupport (exhOnly F C R' X)
+    ¬ Trivalent.posExt (exhOnly F C R X) ⊆ Trivalent.posExt (exhOnly F C R' X)
 
-theorem posSupport_exhOnly {x : α} (hR : R.Nonempty) (hRE : R ⊆ excludable F C {x}) :
-    posSupport (exhOnly F C R {x}) = Ici {x} ∩ only F C {x} := by
+theorem posExt_exhOnly {x : α} (hR : R.Nonempty) (hRE : R ⊆ excludable F C {x}) :
+    Trivalent.posExt (exhOnly F C R {x}) = Ici {x} ∩ only F C {x} := by
   ext w
-  rw [mem_posSupport, exhOnly_eq_one_iff R (hRE.trans (sep_subset _ _)), mem_inter_iff]
+  rw [Trivalent.mem_posExt, exhOnly_eq_true_iff R (hRE.trans (sep_subset _ _)), mem_inter_iff]
   refine and_congr_left fun hw ↦ ⟨fun h ↦ by_contra fun hxw ↦ ?_,
     fun hxw Y _ hwY ↦ mem_only.2 fun Z hZ hZx ↦ mem_only.1 hwY Z hZ (hZx.trans hxw)⟩
   obtain ⟨Y, hY⟩ := hR
@@ -247,7 +249,7 @@ after accommodation, so the Weakening Constraint admits the full domain alone, (
 theorem weakening_iff {x : α} (hR : R.Nonempty) (hRE : R ⊆ excludable F C {x}) :
     Weakening F C R {x} ↔ R = excludable F C {x} := by
   refine ⟨fun h ↦ by_contra fun hne ↦ h _ (hRE.ssubset_of_ne hne) subset_rfl ?_, ?_⟩
-  · rw [posSupport_exhOnly R hR hRE, posSupport_exhOnly _ (hR.mono hRE) subset_rfl]
+  · rw [posExt_exhOnly R hR hRE, posExt_exhOnly _ (hR.mono hRE) subset_rfl]
   · rintro rfl R' hlt hR'
     exact absurd (hlt.trans_subset hR') (ssubset_irrefl _)
 
@@ -275,16 +277,16 @@ theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z �
 
 /-- Without pruning, `exh` over *no `A` but `X`* is true exactly where `X` is the exception set of
 [von-fintel-1993], given that `X` lies within the restrictor, (102)–(106), (114). -/
-theorem pex_but_no_eq_one_iff [Fintype α] [DecidableEq α]
+theorem pex_but_no_eq_true_iff [Fintype α] [DecidableEq α]
     (hF : ∀ Z : Finset α, Z.Nonempty → Z ∈ F) (hXA : X ⊆ A)
     (hco : ∀ x ∈ X, (Finset.univ.erase x).Nonempty) :
-    pex F F (but no A) X w = 1 ↔ Exceptive.IsExceptionSet no (A : Set α) X w := by
+    pex F F (but no A) X w = .true ↔ Exceptive.IsExceptionSet no (A : Set α) X w := by
   have hsingle : ∀ x ∈ X, {x} ∈ {Z ∈ F | Z ⊆ A} := fun x hx ↦
     ⟨hF _ (Finset.singleton_nonempty x), Finset.singleton_subset_iff.2 (hXA hx)⟩
   rw [show but no A = only F {Z ∈ F | Z ⊆ A} from funext fun _ ↦
     but_no_eq_only fun a _ ↦ hF _ (Finset.singleton_nonempty a)]
-  change exhOnly F {Z ∈ F | Z ⊆ A} F X w = 1 ↔ _
-  rw [exhOnly_eq_one_iff F subset_rfl, forall_mem_only_iff (sep_subset _ _) hsingle
+  change exhOnly F {Z ∈ F | Z ⊆ A} F X w = .true ↔ _
+  rw [exhOnly_eq_true_iff F subset_rfl, forall_mem_only_iff (sep_subset _ _) hsingle
     fun x hx ↦ hF _ (hco x hx), mem_only_of_subset (sep_subset _ _),
     Exceptive.isExceptionSet_no_iff, Set.ext_iff]
   simp only [Set.inf_eq_inter, Set.mem_inter_iff, Finset.mem_coe, mem_sep_iff]
@@ -366,9 +368,9 @@ theorem exhOnly_gal : exhOnly party partyOnly party {gal} =
 
 -- (50)–(54)
 open Classical in
-theorem exhOnly_charlie : exhOnly party partyOnly {{charlie}} {gal} =
-    (⋃₀ (Ici '' partyOnly)).indicator
-      fun w ↦ SignType.ofProp (w ∈ excludes (Ici '' partyOnly) (Ici {gal})) :=
+theorem exhOnly_charlie : exhOnly party partyOnly {{charlie}} {gal} = fun w ↦
+    Trivalent.transplication (Trivalent.ofProp (w ∈ ⋃₀ (Ici '' partyOnly)))
+      (Trivalent.ofProp (w ∈ excludes (Ici '' partyOnly) (Ici {gal}))) :=
   exhOnly_singleton_eq (by simp [partyOnly]) partyOnly_subset (Finset.singleton_nonempty _)
     (by rintro _ (rfl | rfl | rfl) <;> decide)
 
@@ -386,7 +388,7 @@ theorem table_1 :
   have hC : {charlie} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
   refine ⟨Presupposition.postAccommodationInformative_iff.2 ⟨{gal, tal}, mem_univ _, ?_⟩,
     (weakening_iff _ ⟨_, hE⟩ subset_rfl).2 rfl, fun h ↦ ?_⟩
-  · rw [exhOnly_gal, Focus.only_eq_neg_one_iff]
+  · rw [exhOnly_gal, Focus.only_eq_false_iff]
     simp [partyOnly]
   · have := ((weakening_iff _ (singleton_nonempty _) (singleton_subset_iff.2 hC)).1 h).ge hE
     simp at this
@@ -455,10 +457,10 @@ theorem table_2 :
     ¬ Weakening ranks ladder {{nonAcademic}} {grad} := by
   refine ⟨?_, ?_, fun h ↦ ?_⟩
   · rw [Presupposition.postAccommodationInformative_iff]
-    simp [exhOnly_eq_neg_one_iff _ subset_rfl, mem_only_ladder, mem_ranks, oneRank]
+    simp [exhOnly_eq_false_iff _ subset_rfl, mem_only_ladder, mem_ranks, oneRank]
     decide
   · rw [Presupposition.postAccommodationInformative_iff]
-    simp [exhOnly_eq_neg_one_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
+    simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge
       (show {postdoc} ∈ excludable ranks ladder {grad} by simp [excludable_ranks])
@@ -470,17 +472,16 @@ theorem pruned_postdoc :
     Presupposition.PostAccommodationInformative oneRank
       (exhOnly ranks ladder {{postdoc}} {grad}) ∧
     ¬ Weakening ranks ladder {{postdoc}} {grad} ∧ ∀ w ∈ oneRank,
-      (-exhOnly ranks ladder {{nonAcademic}} {grad} w = 1 ↔ w = {postdoc} ∨ w = {professor}) ∧
-      (-exhOnly ranks ladder {{postdoc}} {grad} w = 1 ↔ w = {professor}) := by
+      ((exhOnly ranks ladder {{nonAcademic}} {grad} w)ᶜ = .true ↔ w = {postdoc} ∨ w = {professor}) ∧
+      ((exhOnly ranks ladder {{postdoc}} {grad} w)ᶜ = .true ↔ w = {professor}) := by
   refine ⟨?_, fun h ↦ ?_, ?_⟩
   · rw [Presupposition.postAccommodationInformative_iff]
-    simp [exhOnly_eq_neg_one_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
+    simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
   · have := ((weakening_iff _ (singleton_nonempty _) (by simp [excludable_ranks])).1 h).ge
       (show {nonAcademic} ∈ excludable ranks ladder {grad} by simp [excludable_ranks])
     simp at this
-  · simp [neg_eq_iff_eq_neg, exhOnly_eq_neg_one_iff _ (singleton_subset_ranks _), mem_only_ladder,
-      oneRank]
+  · simp [exhOnly_eq_false_iff _ (singleton_subset_ranks _), mem_only_ladder, oneRank]
     decide
 
 /-! ### Relevance closed under the Boolean operations -/

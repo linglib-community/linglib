@@ -395,31 +395,32 @@ end SimpleDisjunction
 open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
-noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → SignType :=
-  {w | ∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r}.indicator
-    fun w ↦ SignType.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
+noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r))
+    (Trivalent.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q))
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
-theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) :
-    Function.support (only (fcAlts R a b) (R.preimage (a ∪ b))) =
+theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
+    (hF : FreeChoiceWitnesses R a b) :
+    (Trivalent.gapExt (only (fcAlts R a b) (R.preimage (a ∪ b))))ᶜ =
       R.preimage a ∩ R.preimage b := by
   ext w
-  simp only [Function.mem_support, ne_eq, only, Set.indicator_apply_eq_zero,
-    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
+  simp only [Trivalent.mem_compl_gapExt, ne_eq, only, Trivalent.transplication_eq_undefined_iff,
+    Trivalent.ofProp_ne_undefined, or_false, Trivalent.ofProp_eq_true_iff, not_not,
     isInnocentlyIncludable_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
-theorem posSupport_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
+theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
     (hII : ∀ r, IsInnocentlyIncludable ALT φ r ↔ r = φ) :
-    posSupport (only ALT φ) =
-      posSupport (Focus.only (· ⊆ ·) ALT id φ) := by
-  rw [Focus.posSupport_only_subset hφ]
+    Trivalent.posExt (only ALT φ) =
+      Trivalent.posExt (Focus.only (· ⊆ ·) ALT id φ) := by
+  rw [Focus.posExt_only_subset hφ]
   ext w
-  simp only [mem_posSupport, only, Trivalent.indicator_apply_eq_one_iff,
-    SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, forall_eq, hIE,
+  simp only [Trivalent.mem_posExt, only, Trivalent.transplication_eq_true_iff,
+    Trivalent.ofProp_eq_true_iff, hII, forall_eq, hIE,
     and_imp, mem_exh]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,
     fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hne hwq ↦ hne (h q hq hwq)⟩⟩

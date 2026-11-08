@@ -16,7 +16,7 @@ elements, each with a lexical specification that fixes what it can embed and wha
 (`profile`). *oti*, *an*, and *pu* merge outside the clause, as the internal argument of the
 matrix verb, and take a proposition: *oti* is an indefinite over propositions, *an* an
 indefinite that is a polarity item, and *pu* a definite, which is why a *pu*-clause is factive,
-its content presupposed and projecting through negation (`puClause_ne_zero_iff`,
+its content presupposed and projecting through negation (`puClause_ne_undefined_iff`,
 `pu_projects_through_negation`), while the *oti*-clause of the same verb carries only the weak,
 deniable presupposition the verb supplies. *na* merges inside the clause and reopens the
 subject position, so a *na*-clause is a property rather than a proposition and cannot be
@@ -94,24 +94,26 @@ variable {W : Type*}
 open Classical in
 /-- The *oti*-clause is an indefinite over propositions, asserting its content without
 presupposition. -/
-noncomputable def otiClause (p : Set W) : W → SignType := fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def otiClause (p : Set W) : W → Trivalent := fun w ↦ Trivalent.ofProp (w ∈ p)
 
+open Classical in
 /-- The *pu*-clause is a definite over propositions, presupposing the proposition it locates and
 so true wherever it is defined. -/
-noncomputable def puClause (p : Set W) : W → SignType := p.indicator 1
+noncomputable def puClause (p : Set W) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) .true
 
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
-theorem puClause_ne_zero_iff (p : Set W) (w : W) : puClause p w ≠ 0 ↔ w ∈ p := by
+theorem puClause_ne_undefined_iff (p : Set W) (w : W) : puClause p w ≠ .undefined ↔ w ∈ p := by
   simp [puClause]
 
 theorem pu_projects_through_negation (p : Set W) (w : W) :
-    ((-puClause p) w ≠ 0 ↔ w ∈ p) ∧ (-otiClause p) w ≠ 0 := by
+    ((puClause p)ᶜ w ≠ .undefined ↔ w ∈ p) ∧ (otiClause p)ᶜ w ≠ .undefined := by
   simp [puClause, otiClause]
 
-theorem posSupport_puClause_subset (p : Set W) :
-    posSupport (puClause p) ⊆ posSupport (otiClause p) := fun w hw ↦ by
+theorem posExt_puClause_subset (p : Set W) :
+    Trivalent.posExt (puClause p) ⊆ Trivalent.posExt (otiClause p) := fun w hw ↦ by
   simp_all [puClause, otiClause]
 
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=

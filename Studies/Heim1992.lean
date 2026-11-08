@@ -48,7 +48,7 @@ open DynamicSemantics PartialUpdate CCP.Partial Presupposition Desire.Conditiona
 
 section Belief
 
-variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p : W → SignType)
+variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p : W → Trivalent)
   (c : Set W)
 
 /-- By rule (18), `c + a believes φ` is defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`,
@@ -58,47 +58,49 @@ def believes : CCP.Partial W :=
 
 theorem admits_believes_ofTrivalent :
     (believes Dox a (ofTrivalent p)).Admits c ↔
-      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w :=
+      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ) w :=
   Iff.rfl
 
 -- (3)
 theorem admits_believes_iff :
     (believes Dox a (ofTrivalent p)).Admits c ↔
-      (SetRel.ofSuccessors (Dox a)).image c ⊆ Function.support p :=
+      (SetRel.ofSuccessors (Dox a)).image c ⊆ (Trivalent.gapExt p)ᶜ :=
   (SetRel.image_subset_iff (R := .ofSuccessors (Dox a))).symm
 
 open Classical in
 /-- On atomic complements (18) is static, presupposing that `a` believes `φ`'s presupposition and
 asserting that `a` believes `φ` (24). -/
 theorem believes_ofTrivalent :
-    believes Dox a (ofTrivalent p) = ofTrivalent
-      ({w | ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w}.indicator
-        fun w ↦ SignType.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = 1) w)) := by
+    believes Dox a (ofTrivalent p) = ofTrivalent fun w ↦ Trivalent.transplication
+      (Trivalent.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ (Trivalent.gapExt p)ᶜ) w))
+      (Trivalent.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = .true) w)) := by
   funext c
   refine Part.ext' ?_ fun h _ ↦ Set.ext fun w ↦ ?_
   · simp [believes, ofTrivalent, Set.subset_def, ModalLogic.Box, admits_ofTrivalent]
   · simp only [believes, mem_ofTrivalent_self, Set.mem_ofPred_eq, ModalLogic.Box,
-      SetRel.mem_ofSuccessors, Function.mem_support, ne_eq, ofTrivalent_get,
-      Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff, Set.sep_and,
+      SetRel.mem_ofSuccessors, Trivalent.mem_compl_gapExt, ne_eq, ofTrivalent_get,
+      Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff, Set.sep_and,
       Set.mem_inter_iff, iff_and_self, and_imp]
     exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 
 -- (20), (22)
 theorem believes_too_admits (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
-    (seq (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m)))
-      (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c :=
-  ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun _ hw v hv ↦ by
-    simpa [Set.indicator_apply_ne_zero] using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
+    (seq (believes Dox a (ofTrivalent fun w ↦ Trivalent.ofProp (w ∈ m)))
+      (believes Dox a (ofTrivalent fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ m))
+        (Trivalent.ofProp (w ∈ s))))).Admits c :=
+  ⟨fun _ _ _ _ ↦ Trivalent.ofProp_ne_undefined, fun _ hw v hv ↦ by
+    simpa using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
 
 -- (25)
 theorem doubt_too_admits_iff (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
-    (seq (neg (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m))))
-      (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c ↔
+    (seq (neg (believes Dox a (ofTrivalent fun w ↦ Trivalent.ofProp (w ∈ m))))
+      (believes Dox a (ofTrivalent fun w ↦
+        Trivalent.transplication (Trivalent.ofProp (w ∈ m)) (Trivalent.ofProp (w ∈ s))))).Admits c ↔
       ∀ w ∈ c, Dox a w ⊆ m := by
   refine ⟨fun ⟨_, h⟩ w hw ↦ ?_,
-    fun h ↦ ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun w hw ↦ (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩
+    fun h ↦ ⟨fun _ _ _ _ ↦ Trivalent.ofProp_ne_undefined, fun w hw ↦ (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩
   · by_contra hm
-    refine hm ((h w ⟨hw, fun hS ↦ hm fun v hv ↦ ?_⟩).trans Set.support_indicator_subset)
+    refine hm ((h w ⟨hw, fun hS ↦ hm fun v hv ↦ ?_⟩).trans fun v hv ↦ by simpa using hv)
     simpa using (mem_ofTrivalent_self _ _).1 hS.2 v hv
   · exact (mem_ofTrivalent_self _ _).2 fun v hv ↦ by simpa using h w hw.1 hv
 
@@ -111,7 +113,7 @@ theorem admits_knows :
   exists_prop
 
 theorem admits_of_admits_knows (h : (knows Dox a (ofTrivalent p)).Admits c) :
-    c ⊆ Function.support p :=
+    c ⊆ (Trivalent.gapExt p)ᶜ :=
   supports.admits h.fst
 
 end Belief
@@ -128,7 +130,8 @@ inductive CelloWorld where
 def celloDox (_ : Unit) (_ : CelloWorld) : Set CelloWorld := {.owns}
 
 /-- `Patrick sells his cello` (1) presupposes that he owns one. -/
-noncomputable def sellsCello : CelloWorld → SignType := ({.owns} : Set CelloWorld).indicator 1
+def sellsCello (w : CelloWorld) : Trivalent :=
+  Trivalent.transplication (Trivalent.ofProp (w = .owns)) .true
 
 /-- Where Patrick lacks a cello but believes he owns one, `Patrick believes he is selling his
 cello` is admitted and `Patrick knows he is selling his cello` is not, since `celloDox` is not

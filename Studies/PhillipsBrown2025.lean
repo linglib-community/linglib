@@ -87,8 +87,9 @@ def Defined : Prop :=
 open Classical in
 /-- Question-based *want* as a trivalent proposition, with its definedness conditions as
 presupposition. -/
-noncomputable def want : W → SignType :=
-  {_w | Defined N s bel p}.indicator fun _ ↦ SignType.ofProp (Want G s bel p)
+noncomputable def want : W → Trivalent :=
+  fun _ ↦ Trivalent.transplication (Trivalent.ofProp (Defined N s bel p))
+    (Trivalent.ofProp (Want G s bel p))
 
 section Decidable
 
@@ -134,9 +135,9 @@ theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell
 `want p` entails `want q` for `p ⊆ q`. -/
 theorem want_strawsonEntails (hpq : p ⊆ q) :
     strawsonEntails (want G N s bel p) (want G N s bel q) := fun _ hp hq ↦ by
-  simp_all only [want, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero, SignType.ofProp_ne_zero,
-    imp_false, not_not, Set.ofPred_true, Set.mem_univ, Set.indicator_of_mem]
+  simp_all only [want, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff, ne_eq,
+    Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
+    true_and]
   exact hp.2.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/

@@ -238,22 +238,22 @@ variable {W T : Type*} [LinearOrder T]
 
 open Classical in
 /-- *A before B* at a world, (45), defined where `B` has an earliest time in the world. -/
-noncomputable def beforeP (A B : Set (W × T)) : W → SignType :=
-  {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
-    fun w ↦ SignType.ofProp (uniform (· < ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
+noncomputable def beforeP (A B : Set (W × T)) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ e, IsLeast {t | (w, t) ∈ B} e))
+    (Trivalent.ofProp (uniform (· < ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B}))
 
 open Classical in
 /-- *A after B* at a world, (45), defined where `B` has an earliest time in the world. -/
-noncomputable def afterP (A B : Set (W × T)) : W → SignType :=
-  {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
-    fun w ↦ SignType.ofProp (uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
+noncomputable def afterP (A B : Set (W × T)) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ e, IsLeast {t | (w, t) ∈ B} e))
+    (Trivalent.ofProp (uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B}))
 
 /-- The uniform *before* is Strawson downward entailing in its temporal clause. -/
 theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   intro _ _ hB w hq hp
-  simp only [beforeP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
-    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff] at hq hp ⊢
+  simp only [beforeP, Trivalent.transplication_eq_true_iff, ne_eq,
+    Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
+    Trivalent.ofProp_eq_true_iff] at hq hp ⊢
   obtain ⟨e, he⟩ := hp
   obtain ⟨-, t, ht, _, he', hlt⟩ := hq
   exact ⟨⟨e, he⟩, t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
@@ -261,9 +261,9 @@ theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
 /-- The uniform *after* is Strawson upward entailing in its temporal clause. -/
 theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) := by
   intro _ _ hB w hp hq
-  simp only [afterP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
-    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff] at hq hp ⊢
+  simp only [afterP, Trivalent.transplication_eq_true_iff, ne_eq,
+    Trivalent.transplication_eq_undefined_iff, Trivalent.ofProp_ne_undefined, or_false, not_not,
+    Trivalent.ofProp_eq_true_iff] at hq hp ⊢
   obtain ⟨e', he'⟩ := hq
   obtain ⟨-, t, ht, _, he, hlt⟩ := hp
   exact ⟨⟨e', he'⟩, t, ht, e', he', (he'.2 (hB he.1)).trans_lt hlt⟩

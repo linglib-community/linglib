@@ -21,7 +21,7 @@ downward entailing operators (43)–(44), and reinforceable (45d).
 
 The paper derives it from an anti-singleton constraint (53)–(54) on the subset selection
 function *algún* takes (`algún`), which excludes the singleton restrictors of (47)/(49)
-(`algún_ne_one_of_singleton`). The competitors (58) are the singleton subdomains; their
+(`algún_ne_true_of_singleton`). The competitors (58) are the singleton subdomains; their
 falsity under a necessity modal (59) gives Modal Variation (`modalVariation_of_box`),
 and under a possibility modal, where some competitor must be true
 (`exists_singleton_of_diamond`), the anti-exhaustivity implicatures (67)–(68) do
@@ -69,21 +69,21 @@ def IsAntiSingleton (f : Finset E → Finset E) : Prop := ∀ P, (f P).card ≠ 
 open Classical in
 /-- *un* (50) quantifies existentially over the subdomain that `f` selects from `P`. -/
 noncomputable def un (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) :
-    W → SignType :=
-  fun w ↦ SignType.ofProp (∃ x ∈ f P, Q w x)
+    W → Trivalent :=
+  fun w ↦ Trivalent.ofProp (∃ x ∈ f P, Q w x)
 
 open Classical in
 /-- *algún* (54) is *un*, defined only for an anti-singleton `f`. -/
 noncomputable def algún (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) :
-    W → SignType :=
-  {_w | IsAntiSingleton f}.indicator (un f P Q)
+    W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (IsAntiSingleton f)) (un f P Q w)
 
 /-- On a singleton restrictor (46)–(49) an anti-singleton selection returns no domain, so
 *algún*'s claim cannot be true where *un*'s can. -/
-theorem algún_ne_one_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆ P)
-    {P : Finset E} (hP : P.card = 1) (Q : W → E → Prop) (w : W) : algún f P Q w ≠ 1 := by
-  simp only [algún, un, ne_eq, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff, not_and]
+theorem algún_ne_true_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆ P)
+    {P : Finset E} (hP : P.card = 1) (Q : W → E → Prop) (w : W) : algún f P Q w ≠ .true := by
+  simp only [algún, un, ne_eq, Trivalent.transplication_eq_true_iff,
+    Trivalent.ofProp_eq_true_iff, not_and]
   intro h
   have : f P = ∅ := Finset.card_eq_zero.1 <|
     Nat.lt_one_iff.1 <| lt_of_le_of_ne (hP ▸ Finset.card_le_card (hf P)) (h P)
@@ -229,7 +229,7 @@ def detClass? (e : Datum) : Option DetClass :=
 
 /-- A singleton restrictor or an identity-revealing continuation is rejected exactly by a
 determiner with a modal component, whose anti-singleton selection returns no domain
-(`algún_ne_one_of_singleton`) and whose Modal Variation the revealed identity contradicts
+(`algún_ne_true_of_singleton`) and whose Modal Variation the revealed identity contradicts
 (`not_modalVariation_of_box_witnesses`). -/
 def DetClass.band : DetClass → Judgment.Band
   | .modal => .rejected

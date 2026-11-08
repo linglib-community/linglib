@@ -78,7 +78,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
 
 namespace CoppockBeaver2015
 
-open SignType Trivalent DynamicSemantics
+open Trivalent DynamicSemantics
 
 variable {E W : Type*}
 
@@ -86,104 +86,105 @@ variable {E W : Type*}
 
 /-- A predicate is weakly unique, the paper's `|P| ≤ 1`, when its positive extension is a
 subsingleton. -/
-def WeakUnique (P : E → SignType) : Prop := (posSupport P).Subsingleton
+def WeakUnique (P : E → Trivalent) : Prop := (posExt P).Subsingleton
 
-instance [Fintype E] [DecidableEq E] (P : (E → SignType)) : Decidable (WeakUnique P) := by
+instance [Fintype E] [DecidableEq E] (P : (E → Trivalent)) : Decidable (WeakUnique P) := by
   unfold WeakUnique Set.Subsingleton; infer_instance
 
 /-- Nothing other than `x` is a `P` — the exclusive component of *only* (57). -/
-def Exclusive (P : (E → SignType)) (x : E) : Prop := ∀ y, y ≠ x → P y ≠ 1
+def Exclusive (P : (E → Trivalent)) (x : E) : Prop := ∀ y, y ≠ x → P y ≠ .true
 
 instance [Fintype E] [DecidableEq E] : DecidableRel (Exclusive (E := E)) :=
-  fun P x ↦ inferInstanceAs (Decidable (∀ y, y ≠ x → P y ≠ 1))
+  fun P x ↦ inferInstanceAs (Decidable (∀ y, y ≠ x → P y ≠ .true))
 
-theorem not_exclusive_iff {P : (E → SignType)} {x : E} :
-    ¬ Exclusive P x ↔ ∃ y, y ≠ x ∧ P y = 1 := by
+theorem not_exclusive_iff {P : (E → Trivalent)} {x : E} :
+    ¬ Exclusive P x ↔ ∃ y, y ≠ x ∧ P y = .true := by
   simp [Exclusive]
 
-theorem exclusive_iff_subset_singleton {P : (E → SignType)} {x : E} :
-    Exclusive P x ↔ posSupport P ⊆ {x} :=
+theorem exclusive_iff_subset_singleton {P : (E → Trivalent)} {x : E} :
+    Exclusive P x ↔ posExt P ⊆ {x} :=
   ⟨fun h y hy ↦ not_not.1 fun hyx ↦ h y hyx hy, fun h _ hyx hy ↦ hyx (h hy)⟩
 
 /-- The Weak Fregean definite article (50) returns the restrictor, presupposing weak
 uniqueness and no existence. -/
-def the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (ofProp (WeakUnique P) ⊔ 0) (P x)
+def the [DecidablePred (WeakUnique (E := E))] (P : (E → Trivalent)) : (E → Trivalent) :=
+  fun x ↦ meetWeak (ofProp (WeakUnique P) ⊔ .undefined) (P x)
 
 /-- The indefinite article (65) is an identity on predicates. -/
-def an (P : (E → SignType)) : (E → SignType) := P
+def an (P : (E → Trivalent)) : (E → Trivalent) := P
 
 /-- Adjectival *only* (57) presupposes the prejacent and asserts exclusivity. -/
-def only [DecidableRel (Exclusive (E := E))] (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (P x ⊔ 0) (ofProp (Exclusive P x))
+def only [DecidableRel (Exclusive (E := E))] (P : (E → Trivalent)) : (E → Trivalent) :=
+  fun x ↦ meetWeak (P x ⊔ .undefined) (ofProp (Exclusive P x))
 
 section Only
 
-variable [DecidableRel (Exclusive (E := E))] {P : (E → SignType)} {x : E}
+variable [DecidableRel (Exclusive (E := E))] {P : (E → Trivalent)} {x : E}
 
-theorem only_eq_one_iff : only P x = 1 ↔ P x = 1 ∧ Exclusive P x := by simp [only]
+theorem only_eq_true_iff : only P x = .true ↔ P x = .true ∧ Exclusive P x := by simp [only]
 
-theorem only_eq_neg_one_iff : only P x = -1 ↔ P x = 1 ∧ ∃ y, y ≠ x ∧ P y = 1 := by
-  simp only [only, meetWeak_eq_neg_one_iff, sup_zero_ne_neg_one, sup_zero_eq_zero_iff,
-    ofProp_eq_neg_one_iff, not_exclusive_iff, false_and, false_or, ne_eq, not_not]
+theorem only_eq_false_iff : only P x = .false ↔ P x = .true ∧ ∃ y, y ≠ x ∧ P y = .true := by
+  simp only [only, meetWeak_eq_false_iff, sup_undefined_ne_false, sup_undefined_eq_undefined_iff,
+    ofProp_eq_false_iff, not_exclusive_iff, false_and, false_or, ne_eq, not_not]
 
-theorem only_eq_zero_iff : only P x = 0 ↔ P x ≠ 1 := by simp [only, nonpos_iff_ne_one]
+theorem only_eq_undefined_iff : only P x = .undefined ↔ P x ≠ .true := by
+  simp [only, le_undefined_iff_ne_true]
 
-theorem weakUnique_only (P : (E → SignType)) : WeakUnique (only P) := fun _ hx y hy ↦
-  not_not.1 fun h ↦ (only_eq_one_iff.1 hx).2 y (Ne.symm h) (only_eq_one_iff.1 hy).1
+theorem weakUnique_only (P : (E → Trivalent)) : WeakUnique (only P) := fun _ hx y hy ↦
+  not_not.1 fun h ↦ (only_eq_true_iff.1 hx).2 y (Ne.symm h) (only_eq_true_iff.1 hy).1
 
 end Only
 
 section The
 
-variable [DecidablePred (WeakUnique (E := E))] {P : (E → SignType)} {x : E}
+variable [DecidablePred (WeakUnique (E := E))] {P : (E → Trivalent)} {x : E}
 
 theorem the_eq_of_weakUnique (h : WeakUnique P) : the P = P := by
   funext x; simp [the, h]
 
-theorem the_eq_zero_of_not_weakUnique (h : ¬ WeakUnique P) (x : E) : the P x = 0 := by
+theorem the_eq_undefined_of_not_weakUnique (h : ¬ WeakUnique P) (x : E) : the P x = .undefined := by
   simp [the, h]
 
-theorem the_eq_zero_iff : the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 := by
-  simp [the, nonpos_iff_ne_one]
+theorem the_eq_undefined_iff : the P x = .undefined ↔ ¬ WeakUnique P ∨ P x = .undefined := by
+  simp [the, le_undefined_iff_ne_true]
 
-theorem the_ne_zero_iff : the P x ≠ 0 ↔ WeakUnique P ∧ P x ≠ 0 := by
-  rw [ne_eq, the_eq_zero_iff, not_or, not_not]
+theorem the_ne_undefined_iff : the P x ≠ .undefined ↔ WeakUnique P ∧ P x ≠ .undefined := by
+  rw [ne_eq, the_eq_undefined_iff, not_or, not_not]
 
 -- (45), (46)
-theorem neg_the_eq_zero_iff : -the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 :=
-  SignType.neg_eq_zero_iff.trans the_eq_zero_iff
+theorem compl_the_eq_undefined_iff : (the P x)ᶜ = .undefined ↔ ¬ WeakUnique P ∨ P x = .undefined :=
+  Trivalent.compl_eq_undefined_iff.trans the_eq_undefined_iff
 
 -- (13)
-theorem the_neg_one (x : E) : the (fun _ ↦ -1) x = -1 :=
+theorem the_false (x : E) : the (fun _ ↦ .false) x = .false :=
   congrFun (the_eq_of_weakUnique fun _ h ↦ by simp at h) x
 
 -- (45a)
-theorem neg_the_neg_one (x : E) : -the (fun _ ↦ -1) x = 1 := by rw [the_neg_one]; rfl
+theorem compl_the_false (x : E) : (the (fun _ ↦ .false) x)ᶜ = .true := by rw [the_false]; rfl
 
 -- (114), (115)
-theorem eq_of_the_eq_one {a b : E} (ha : the P a = 1) (hb : the P b = 1) : a = b := by
-  have hne : the P a ≠ 0 := by rw [ha]; decide
-  have hU : WeakUnique P := (the_ne_zero_iff.1 hne).1
+theorem eq_of_the_eq_true {a b : E} (ha : the P a = .true) (hb : the P b = .true) : a = b := by
+  have hne : the P a ≠ .undefined := by rw [ha]; decide
+  have hU : WeakUnique P := (the_ne_undefined_iff.1 hne).1
   rw [the_eq_of_weakUnique hU] at ha hb
   exact hU ha hb
 
 variable [DecidableRel (Exclusive (E := E))]
 
 -- (60)
-theorem the_only (P : (E → SignType)) : the (only P) = only P :=
+theorem the_only (P : (E → Trivalent)) : the (only P) = only P :=
   the_eq_of_weakUnique (weakUnique_only P)
 
 /-- *x is not the only P* is true exactly when `x` is a `P` and so is something else, the
 anti-uniqueness inference (64). -/
 theorem anti_uniqueness :
-    -the (only P) x = 1 ↔ P x = 1 ∧ ∃ y, y ≠ x ∧ P y = 1 := by
-  rw [the_only, SignType.neg_eq_one_iff, only_eq_neg_one_iff]
+    (the (only P) x)ᶜ = .true ↔ P x = .true ∧ ∃ y, y ≠ x ∧ P y = .true := by
+  rw [the_only, Trivalent.compl_eq_true_iff, only_eq_false_iff]
 
 /-- The presupposition of *only* projects through negation (63), so *x is not the only P* is
 undefined exactly when `x` is no `P`. -/
-theorem anti_uniqueness_presup : -the (only P) x = 0 ↔ P x ≠ 1 := by
-  rw [the_only, SignType.neg_eq_zero_iff, only_eq_zero_iff]
+theorem anti_uniqueness_presup : (the (only P) x)ᶜ = .undefined ↔ P x ≠ .true := by
+  rw [the_only, Trivalent.compl_eq_undefined_iff, only_eq_undefined_iff]
 
 end The
 
@@ -197,26 +198,26 @@ pointwise. -/
 
 open Classical in
 /-- `|P| ≤ 1` as a formula is `∀x[P(x) → ∀y[P(y) → x = y]]`. -/
-noncomputable def atMostOneFormula (P : (E → SignType)) : SignType :=
-  forallHaug fun x ↦ joinWeak (-P x) (forallHaug fun y ↦ joinWeak (-P y) (ofProp (x = y)))
+noncomputable def atMostOneFormula (P : (E → Trivalent)) : Trivalent :=
+  forallHaug fun x ↦ joinWeak (P x)ᶜ (forallHaug fun y ↦ joinWeak (P y)ᶜ (ofProp (x = y)))
 
 open Classical in
 /-- The exclusive component of *only* as a formula is `∀y[x ≠ y → ¬P(y)]`. -/
-noncomputable def exclusiveFormula (P : (E → SignType)) (x : E) : SignType :=
-  forallHaug fun y ↦ joinWeak (-ofProp (x ≠ y)) (-P y)
+noncomputable def exclusiveFormula (P : (E → Trivalent)) (x : E) : Trivalent :=
+  forallHaug fun y ↦ joinWeak (ofProp (x ≠ y))ᶜ (P y)ᶜ
 
-theorem atMostOne_eq_ofProp {P : E → SignType} [Decidable (WeakUnique P)]
-    (h : ∃ x, P x ≠ 0) :
+theorem atMostOne_eq_ofProp {P : E → Trivalent} [Decidable (WeakUnique P)]
+    (h : ∃ x, P x ≠ .undefined) :
     atMostOneFormula P = ofProp (WeakUnique P) := by
   obtain ⟨x₀, hx₀⟩ := h
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · simp only [atMostOneFormula, forallHaug_eq_zero_iff, joinWeak_eq_zero_iff,
-      SignType.neg_eq_zero_iff, ofProp_ne_zero, or_false, iff_false]
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · simp only [atMostOneFormula, forallHaug_eq_undefined_iff, joinWeak_eq_undefined_iff,
+      Trivalent.compl_eq_undefined_iff, ofProp_ne_undefined, or_false, iff_false]
     exact fun hall ↦ (hall x₀).elim hx₀ fun hy ↦ hx₀ (hy x₀)
-  · simp only [atMostOneFormula, forallHaug_eq_one_iff, joinWeak_eq_zero_iff,
-      joinWeak_eq_neg_one_iff, SignType.neg_eq_zero_iff, SignType.neg_eq_neg_one_iff,
-      forallHaug_eq_zero_iff, forallHaug_eq_neg_one_iff, ofProp_ne_zero, ofProp_eq_one_iff,
-      ofProp_eq_neg_one_iff, or_false, ne_eq]
+  · simp only [atMostOneFormula, forallHaug_eq_true_iff, joinWeak_eq_undefined_iff,
+      joinWeak_eq_false_iff, Trivalent.compl_eq_undefined_iff, Trivalent.compl_eq_false_iff,
+      forallHaug_eq_undefined_iff, forallHaug_eq_false_iff, ofProp_ne_undefined, ofProp_eq_true_iff,
+      ofProp_eq_false_iff, or_false, ne_eq]
     constructor
     · rintro ⟨-, hu⟩ x hx y hy
       by_contra hxy
@@ -226,24 +227,24 @@ theorem atMostOne_eq_ofProp {P : E → SignType} [Decidable (WeakUnique P)]
         fun x ⟨hx, y, hy, hxy⟩ ↦ hxy (hu hx hy)⟩
 
 -- (50)
-theorem the_eq_meetWeak_atMostOne [DecidablePred (WeakUnique (E := E))] (P : E → SignType)
+theorem the_eq_meetWeak_atMostOne [DecidablePred (WeakUnique (E := E))] (P : E → Trivalent)
     (x : E) :
-    the P x = meetWeak (atMostOneFormula P ⊔ 0) (P x) := by
-  by_cases h : ∃ y, P y ≠ 0
+    the P x = meetWeak (atMostOneFormula P ⊔ .undefined) (P x) := by
+  by_cases h : ∃ y, P y ≠ .undefined
   · rw [atMostOne_eq_ofProp h]; rfl
   · push Not at h
-    simp only [the, h x, meetWeak_zero_right]
+    simp only [the, h x, meetWeak_undefined_right]
 
-theorem exclusiveFormula_eq_ofProp {P : (E → SignType)} {x : E} [Decidable (Exclusive P x)]
-    (h : P x = 1) :
+theorem exclusiveFormula_eq_ofProp {P : (E → Trivalent)} {x : E} [Decidable (Exclusive P x)]
+    (h : P x = .true) :
     exclusiveFormula P x = ofProp (Exclusive P x) := by
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · simp only [exclusiveFormula, forallHaug_eq_zero_iff, joinWeak_eq_zero_iff,
-      SignType.neg_eq_zero_iff, ofProp_ne_zero, false_or, iff_false]
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · simp only [exclusiveFormula, forallHaug_eq_undefined_iff, joinWeak_eq_undefined_iff,
+      Trivalent.compl_eq_undefined_iff, ofProp_ne_undefined, false_or, iff_false]
     exact fun hall ↦ by simpa [h] using hall x
-  · simp only [exclusiveFormula, forallHaug_eq_one_iff, joinWeak_eq_zero_iff,
-      joinWeak_eq_neg_one_iff, SignType.neg_eq_zero_iff, SignType.neg_eq_neg_one_iff,
-      ofProp_ne_zero, ofProp_eq_one_iff, false_or, ne_eq]
+  · simp only [exclusiveFormula, forallHaug_eq_true_iff, joinWeak_eq_undefined_iff,
+      joinWeak_eq_false_iff, Trivalent.compl_eq_undefined_iff, Trivalent.compl_eq_false_iff,
+      ofProp_ne_undefined, ofProp_eq_true_iff, false_or, ne_eq]
     constructor
     · rintro ⟨-, he⟩ y hyx hy
       exact he y ⟨Ne.symm hyx, hy⟩
@@ -251,11 +252,11 @@ theorem exclusiveFormula_eq_ofProp {P : (E → SignType)} {x : E} [Decidable (Ex
       exact ⟨⟨x, by simp [h]⟩, fun y ⟨hxy, hy⟩ ↦ he y (Ne.symm hxy) hy⟩
 
 -- (57)
-theorem only_eq_meetWeak_exclusiveFormula [DecidableRel (Exclusive (E := E))] (P : (E → SignType))
-    (x : E) : only P x = meetWeak (P x ⊔ 0) (exclusiveFormula P x) := by
-  by_cases h : P x = 1
+theorem only_eq_meetWeak_exclusiveFormula [DecidableRel (Exclusive (E := E))] (P : (E → Trivalent))
+    (x : E) : only P x = meetWeak (P x ⊔ .undefined) (exclusiveFormula P x) := by
+  by_cases h : P x = .true
   · rw [exclusiveFormula_eq_ofProp h]; rfl
-  · rw [only_eq_zero_iff.2 h, sup_zero_eq_zero_iff.2 h, meetWeak_zero_left]
+  · rw [only_eq_undefined_iff.2 h, sup_undefined_eq_undefined_iff.2 h, meetWeak_undefined_left]
 
 /-! ### The exclusive schema
 
@@ -295,14 +296,14 @@ theorem only_answer_apply [DecidableRel (Exclusive (E := E))] (w : Set E)
     [DecidablePred (· ∈ w)] (x : E) :
     Focus.only (· ⊆ ·) (Set.range answer) id (answer {x}) w =
       only (fun y ↦ ofProp (y ∈ w)) x := by
-  have hw : (posSupport fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_one_iff
+  have hw : (posExt fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_true_iff
   have hiff : Exclusive (fun y ↦ ofProp (y ∈ w)) x ↔ w ⊆ {x} := by
     rw [exclusive_iff_subset_singleton, hw]
-  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [Focus.only_eq_zero_iff, only_eq_zero_iff, ne_eq, ofProp_eq_one_iff,
+  refine eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_
+  · rw [Focus.only_eq_undefined_iff, only_eq_undefined_iff, ne_eq, ofProp_eq_true_iff,
       not_iff_not]
     exact mem_atLeast_answer
-  · rw [Focus.only_eq_one_iff, only_eq_one_iff, ofProp_eq_one_iff]
+  · rw [Focus.only_eq_true_iff, only_eq_true_iff, ofProp_eq_true_iff]
     exact and_congr mem_atLeast_answer (mem_atMost_answer.trans hiff.symm)
 
 end Schema
@@ -310,21 +311,21 @@ end Schema
 /-! ### Presupposition profiles of the entries in Table 1 -/
 
 /-- An entry presupposes uniqueness when it is classical only on weakly unique restrictors. -/
-def PresupposesUniqueness (D : (E → SignType) → (E → SignType)) : Prop :=
-  ∀ P x, D P x ≠ 0 → WeakUnique P
+def PresupposesUniqueness (D : (E → Trivalent) → (E → Trivalent)) : Prop :=
+  ∀ P x, D P x ≠ .undefined → WeakUnique P
 
 /-- An entry presupposes existence when it is classical only on nonempty restrictors. -/
-def PresupposesExistence (D : (E → SignType) → (E → SignType)) : Prop :=
-  ∀ P x, D P x ≠ 0 → (posSupport P).Nonempty
+def PresupposesExistence (D : (E → Trivalent) → (E → Trivalent)) : Prop :=
+  ∀ P x, D P x ≠ .undefined → (posExt P).Nonempty
 
-theorem not_presupposesUniqueness_of_ne_zero [Nontrivial E]
-    {D : (E → SignType) → E → SignType} {x : E}
-    (h : D (fun _ ↦ 1) x ≠ 0) : ¬ PresupposesUniqueness D := fun hD ↦
+theorem not_presupposesUniqueness_of_ne_undefined [Nontrivial E]
+    {D : (E → Trivalent) → E → Trivalent} {x : E}
+    (h : D (fun _ ↦ .true) x ≠ .undefined) : ¬ PresupposesUniqueness D := fun hD ↦
   let ⟨_, _, hab⟩ := exists_pair_ne E
   hab (hD _ x h rfl rfl)
 
-theorem not_presupposesExistence_of_ne_zero {D : (E → SignType) → (E → SignType)} {x : E}
-    (h : D (fun _ ↦ -1) x ≠ 0) : ¬ PresupposesExistence D := fun hD ↦ by
+theorem not_presupposesExistence_of_ne_undefined {D : (E → Trivalent) → (E → Trivalent)} {x : E}
+    (h : D (fun _ ↦ .false) x ≠ .undefined) : ¬ PresupposesExistence D := fun hD ↦ by
   obtain ⟨y, hy⟩ := hD _ x h
   simp at hy
 
@@ -332,116 +333,116 @@ section Rivals
 
 open Classical in
 /-- The Russellian predicative entry (52a) asserts existence and uniqueness. -/
-noncomputable def theRussellian (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (ofProp (∃! y, P y = 1)) (P x)
+noncomputable def theRussellian (P : (E → Trivalent)) : (E → Trivalent) :=
+  fun x ↦ meetWeak (ofProp (∃! y, P y = .true)) (P x)
 
 open Classical in
 /-- The Fregean predicative entry (52b) presupposes existence and uniqueness. -/
-noncomputable def theFregean (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (P x)
+noncomputable def theFregean (P : (E → Trivalent)) : (E → Trivalent) :=
+  fun x ↦ meetWeak (ofProp (∃! y, P y = .true) ⊔ .undefined) (P x)
 
 open Classical in
 /-- The Russellian quantificational entry (53a) asserts unique existence of the restrictor. -/
-noncomputable def theRussellianGQ (P Q : (E → SignType)) : SignType :=
-  meetWeak (ofProp (∃! y, P y = 1)) (ofProp (posSupport P ⊆ posSupport Q))
+noncomputable def theRussellianGQ (P Q : (E → Trivalent)) : Trivalent :=
+  meetWeak (ofProp (∃! y, P y = .true)) (ofProp (posExt P ⊆ posExt Q))
 
 open Classical in
 /-- The Fregean quantificational entry (53b) presupposes unique existence of the restrictor. -/
-noncomputable def theFregeanGQ (P Q : (E → SignType)) : SignType :=
-  meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (ofProp (posSupport P ⊆ posSupport Q))
+noncomputable def theFregeanGQ (P Q : (E → Trivalent)) : Trivalent :=
+  meetWeak (ofProp (∃! y, P y = .true) ⊔ .undefined) (ofProp (posExt P ⊆ posExt Q))
 
 open Classical in
 /-- Partee's `be` lowers a generalized quantifier to a predicate. -/
-noncomputable def be (G : (E → SignType) → SignType) : E → SignType :=
+noncomputable def be (G : (E → Trivalent) → Trivalent) : E → Trivalent :=
   fun x ↦ G (fun y ↦ ofProp (y = x))
 
 open Classical in
 /-- Partee's *ident* applied to the individual-denoting Fregean entry yields the property of
 being the unique `P`, undefined when there is none (Table 2). -/
-noncomputable def identIota (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ (_root_.iota {y | P y = 1}).elim 0 fun j ↦ ofProp (x = j)
+noncomputable def identIota (P : (E → Trivalent)) : (E → Trivalent) :=
+  fun x ↦ (_root_.iota {y | P y = .true}).elim .undefined fun j ↦ ofProp (x = j)
 
 theorem presupposesUniqueness_the [DecidablePred (WeakUnique (E := E))] :
     PresupposesUniqueness (the (E := E)) :=
-  fun _ _ h ↦ (the_ne_zero_iff.1 h).1
+  fun _ _ h ↦ (the_ne_undefined_iff.1 h).1
 
 theorem not_presupposesExistence_the [Nonempty E] [DecidablePred (WeakUnique (E := E))] :
     ¬ PresupposesExistence (the (E := E)) :=
-  not_presupposesExistence_of_ne_zero (x := Classical.arbitrary E) (by rw [the_neg_one]; decide)
+  not_presupposesExistence_of_ne_undefined (x := Classical.arbitrary E) (by rw [the_false]; decide)
 
 theorem not_presupposesUniqueness_theRussellian [Nontrivial E] :
     ¬ PresupposesUniqueness (theRussellian (E := E)) :=
-  not_presupposesUniqueness_of_ne_zero (x := Classical.arbitrary E) (by simp [theRussellian])
+  not_presupposesUniqueness_of_ne_undefined (x := Classical.arbitrary E) (by simp [theRussellian])
 
 theorem not_presupposesExistence_theRussellian [Nonempty E] :
     ¬ PresupposesExistence (theRussellian (E := E)) :=
-  not_presupposesExistence_of_ne_zero (x := Classical.arbitrary E) (by simp [theRussellian])
+  not_presupposesExistence_of_ne_undefined (x := Classical.arbitrary E) (by simp [theRussellian])
 
-theorem theFregean_ne_zero_iff {P : (E → SignType)} {x : E} :
-    theFregean P x ≠ 0 ↔ (∃! y, P y = 1) ∧ P x ≠ 0 := by
+theorem theFregean_ne_undefined_iff {P : (E → Trivalent)} {x : E} :
+    theFregean P x ≠ .undefined ↔ (∃! y, P y = .true) ∧ P x ≠ .undefined := by
   simp [theFregean, not_or]
 
 theorem presupposesUniqueness_theFregean : PresupposesUniqueness (theFregean (E := E)) :=
-  fun _ _ h _ ha _ hb ↦ (theFregean_ne_zero_iff.1 h).1.unique ha hb
+  fun _ _ h _ ha _ hb ↦ (theFregean_ne_undefined_iff.1 h).1.unique ha hb
 
 theorem presupposesExistence_theFregean : PresupposesExistence (theFregean (E := E)) :=
-  fun _ _ h ↦ (theFregean_ne_zero_iff.1 h).1.exists
+  fun _ _ h ↦ (theFregean_ne_undefined_iff.1 h).1.exists
 
 -- Table 2
 theorem not_presupposesUniqueness_be_theRussellianGQ [Nontrivial E] :
-    ¬ PresupposesUniqueness (fun P : (E → SignType) ↦ be (theRussellianGQ P)) :=
-  not_presupposesUniqueness_of_ne_zero (x := Classical.arbitrary E)
+    ¬ PresupposesUniqueness (fun P : (E → Trivalent) ↦ be (theRussellianGQ P)) :=
+  not_presupposesUniqueness_of_ne_undefined (x := Classical.arbitrary E)
     (by simp [be, theRussellianGQ])
 
 theorem not_presupposesExistence_be_theRussellianGQ [Nonempty E] :
-    ¬ PresupposesExistence (fun P : (E → SignType) ↦ be (theRussellianGQ P)) :=
-  not_presupposesExistence_of_ne_zero (x := Classical.arbitrary E)
+    ¬ PresupposesExistence (fun P : (E → Trivalent) ↦ be (theRussellianGQ P)) :=
+  not_presupposesExistence_of_ne_undefined (x := Classical.arbitrary E)
     (by simp [be, theRussellianGQ])
 
-theorem be_theFregeanGQ_ne_zero_iff {P : (E → SignType)} {x : E} :
-    be (theFregeanGQ P) x ≠ 0 ↔ ∃! y, P y = 1 := by
+theorem be_theFregeanGQ_ne_undefined_iff {P : (E → Trivalent)} {x : E} :
+    be (theFregeanGQ P) x ≠ .undefined ↔ ∃! y, P y = .true := by
   simp [be, theFregeanGQ]
 
 theorem presupposesUniqueness_be_theFregeanGQ :
-    PresupposesUniqueness (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h _ ha _ hb ↦
-  (be_theFregeanGQ_ne_zero_iff.1 h).unique ha hb
+    PresupposesUniqueness (fun P : (E → Trivalent) ↦ be (theFregeanGQ P)) := fun _ _ h _ ha _ hb ↦
+  (be_theFregeanGQ_ne_undefined_iff.1 h).unique ha hb
 
 theorem presupposesExistence_be_theFregeanGQ :
-    PresupposesExistence (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h ↦
-  (be_theFregeanGQ_ne_zero_iff.1 h).exists
+    PresupposesExistence (fun P : (E → Trivalent) ↦ be (theFregeanGQ P)) := fun _ _ h ↦
+  (be_theFregeanGQ_ne_undefined_iff.1 h).exists
 
-theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
-    identIota P x ≠ 0 ↔ ∃! y, P y = 1 := by
+theorem identIota_ne_undefined_iff {P : (E → Trivalent)} {x : E} :
+    identIota P x ≠ .undefined ↔ ∃! y, P y = .true := by
   classical
-  refine Iff.trans ?_ (_root_.iota_isSome_iff (s := {y | P y = 1}))
+  refine Iff.trans ?_ (_root_.iota_isSome_iff (s := {y | P y = .true}))
   rw [identIota]
-  cases _root_.iota {y | P y = 1} <;> simp
+  cases _root_.iota {y | P y = .true} <;> simp
 
 -- Table 2
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
-  fun _ _ h _ ha _ hb ↦ (identIota_ne_zero_iff.1 h).unique ha hb
+  fun _ _ h _ ha _ hb ↦ (identIota_ne_undefined_iff.1 h).unique ha hb
 
 theorem presupposesExistence_identIota : PresupposesExistence (identIota (E := E)) :=
-  fun _ _ h ↦ (identIota_ne_zero_iff.1 h).exists
+  fun _ _ h ↦ (identIota_ne_undefined_iff.1 h).exists
 
 /-- Under the Fregean entry *x is not the only P* is never true (§2.2.3), since the
 presupposition that there is exactly one only `P` is inconsistent with the assertion that
 `x`, a `P`, is not one. The Weak Fregean entry has no such clash (`anti_uniqueness`). -/
-theorem no_anti_uniqueness_fregean [DecidableRel (Exclusive (E := E))] (P : E → SignType)
+theorem no_anti_uniqueness_fregean [DecidableRel (Exclusive (E := E))] (P : E → Trivalent)
     (x : E) :
-    -theFregean (only P) x ≠ 1 := by
+    (theFregean (only P) x)ᶜ ≠ .true := by
   classical
   intro h
-  rw [SignType.neg_eq_one_iff, theFregean] at h
-  by_cases hu : ∃! y, only P y = 1
-  · rw [ofProp_eq_one_iff.2 hu, SignType.one_sup, meetWeak_one_left] at h
+  rw [Trivalent.compl_eq_true_iff, theFregean] at h
+  by_cases hu : ∃! y, only P y = .true
+  · rw [ofProp_eq_true_iff.2 hu, Trivalent.true_sup, meetWeak_true_left] at h
     obtain ⟨y, hy, -⟩ := hu
-    obtain ⟨hx, z, hzx, hz⟩ := only_eq_neg_one_iff.1 h
-    have hy' := only_eq_one_iff.1 hy
+    obtain ⟨hx, z, hzx, hz⟩ := only_eq_false_iff.1 h
+    have hy' := only_eq_true_iff.1 hy
     by_cases hyx : y = x
     · subst hyx; exact hy'.2 z hzx hz
     · exact hy'.2 x (Ne.symm hyx) hx
-  · rw [ofProp_eq_neg_one_iff.2 hu, SignType.neg_one_sup, meetWeak_zero_left] at h
+  · rw [ofProp_eq_false_iff.2 hu, Trivalent.false_sup, meetWeak_undefined_left] at h
     exact absurd h (by decide)
 
 end Rivals
@@ -450,30 +451,30 @@ end Rivals
 
 /-- Two entries are classically equivalent (70) when, on bivalent restrictors, they agree
 wherever both are classical. -/
-def ClassicallyEquivalent (α β : (E → SignType) → (E → SignType)) : Prop :=
-  ∀ P : E → SignType, IsBivalent P → ∀ x, α P x ≠ 0 → β P x ≠ 0 → α P x = β P x
+def ClassicallyEquivalent (α β : (E → Trivalent) → (E → Trivalent)) : Prop :=
+  ∀ P : E → Trivalent, IsBivalent P → ∀ x, α P x ≠ .undefined → β P x ≠ .undefined → α P x = β P x
 
 /-- `α` is presuppositionally at least as strong as `β` when, on bivalent restrictors,
 wherever `α` is classical so is `β`. As printed, (71) quantifies the other way
 around, which with (72) would have the indefinite dominate the definite; the paper's own
 derivation of the opposite on the same page needs this transposition. -/
-def AtLeastAsStrong (α β : (E → SignType) → (E → SignType)) : Prop :=
-  ∀ P : E → SignType, IsBivalent P → ∀ x, α P x ≠ 0 → β P x ≠ 0
+def AtLeastAsStrong (α β : (E → Trivalent) → (E → Trivalent)) : Prop :=
+  ∀ P : E → Trivalent, IsBivalent P → ∀ x, α P x ≠ .undefined → β P x ≠ .undefined
 
 /-- `α` presuppositionally dominates `β` (72) when the two are classically equivalent and
 `α` is strictly stronger. -/
-def Dominates (α β : (E → SignType) → (E → SignType)) : Prop :=
+def Dominates (α β : (E → Trivalent) → (E → Trivalent)) : Prop :=
   ClassicallyEquivalent α β ∧ AtLeastAsStrong α β ∧ ¬ AtLeastAsStrong β α
 
 /-- The definite article dominates the indefinite. -/
 theorem the_dominates_an [Nontrivial E] [DecidablePred (WeakUnique (E := E))] :
     Dominates (the (E := E)) an := by
   refine ⟨fun P _ x h _ ↦ ?_, fun P hP x _ ↦ ?_, fun h ↦ ?_⟩
-  · rw [the_eq_of_weakUnique (the_ne_zero_iff.1 h).1]; rfl
-  · exact (isBivalent_iff_forall_ne_zero P).1 hP x
+  · rw [the_eq_of_weakUnique (the_ne_undefined_iff.1 h).1]; rfl
+  · exact (isBivalent_iff_forall_ne_undefined P).1 hP x
   · obtain ⟨x, y, hxy⟩ := exists_pair_ne E
-    have := h (fun _ ↦ 1) (fun _ ↦ .inl rfl) x (by simp [an])
-    exact hxy ((the_ne_zero_iff.1 this).1 rfl rfl)
+    have := h (fun _ ↦ .true) (fun _ ↦ .inl rfl) x (by simp [an])
+    exact hxy ((the_ne_undefined_iff.1 this).1 rfl rfl)
 
 /-- Under Maximize Presupposition (75), `α` blocks its competitor `β` in context `C` and
 derivation `D`, the sentence meaning as a function of the article's meaning, when `α`
@@ -481,27 +482,27 @@ dominates `β` and the two derivations update `C` alike; the update of a context
 meaning (74) is the substrate's Heimian partial update `CCP.Partial.ofTrivalent`. Clause (i),
 competitorhood, is glossed in the appendix as classical equivalence with a high-frequency
 item and is carried by `Dominates`. -/
-def Blocks (C : Set W) (D : ((E → SignType) → E → SignType) → W → SignType)
-    (α β : (E → SignType) → E → SignType) :
+def Blocks (C : Set W) (D : ((E → Trivalent) → E → Trivalent) → W → Trivalent)
+    (α β : (E → Trivalent) → E → Trivalent) :
     Prop :=
   Dominates α β ∧ CCP.Partial.ofTrivalent (D α) C = CCP.Partial.ofTrivalent (D β) C
 
 section Derivations
 
-variable [DecidablePred (WeakUnique (E := E))] {C : Set W} (F : W → (E → SignType) → SignType)
-  (π : W → (E → SignType))
+variable [DecidablePred (WeakUnique (E := E))] {C : Set W} (F : W → (E → Trivalent) → Trivalent)
+  (π : W → (E → Trivalent))
 
 theorem blocks_of_weakUnique [Nontrivial E] (h : ∀ w ∈ C, WeakUnique (π w)) :
     Blocks C (fun α w ↦ F w (α (π w))) the an :=
   ⟨the_dominates_an,
     CCP.Partial.ofTrivalent_congr fun w hw ↦ congrArg (F w) (the_eq_of_weakUnique (h w hw))⟩
 
-theorem not_blocks_of_not_weakUnique (hF : ∀ w, F w (fun _ ↦ 0) = 0) {w : W}
-    (hw : w ∈ C) (h : ¬ WeakUnique (π w)) (hdom : ∀ w ∈ C, F w (π w) ≠ 0) :
+theorem not_blocks_of_not_weakUnique (hF : ∀ w, F w (fun _ ↦ .undefined) = .undefined) {w : W}
+    (hw : w ∈ C) (h : ¬ WeakUnique (π w)) (hdom : ∀ w ∈ C, F w (π w) ≠ .undefined) :
     ¬ Blocks C (fun α w ↦ F w (α (π w))) the an := by
   intro hb
   have hd : (CCP.Partial.ofTrivalent (fun w ↦ F w (the (π w))) C).Dom := hb.2 ▸ hdom
-  exact hd hw (by simp only [funext (the_eq_zero_of_not_weakUnique h), hF])
+  exact hd hw (by simp only [mem_gapExt, funext (the_eq_undefined_of_not_weakUnique h), hF])
 
 variable [DecidableRel (Exclusive (E := E))]
 
@@ -522,7 +523,7 @@ theorem sentence_the_only_eq_an_only :
 level, although `an_only_blocked` blocks it at expression level, so Maximize Presupposition
 must compare expressions rather than sentences. -/
 theorem not_blocked_sentence_an_only :
-    ¬ {w | F w (the (only (π w))) ≠ 0} ⊂ {w | F w (an (only (π w))) ≠ 0} :=
+    ¬ {w | F w (the (only (π w))) ≠ .undefined} ⊂ {w | F w (an (only (π w))) ≠ .undefined} :=
   fun hss ↦ hss.ne <| Set.ext fun w ↦ by
     simp only [Set.mem_ofPred_eq, congrFun (sentence_the_only_eq_an_only (F := F) (π := π)) w]
 
@@ -531,109 +532,111 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84) returns the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : (E → SignType)) : Option E := _root_.iota {x | P x = 1}
+noncomputable def iota (P : (E → Trivalent)) : Option E := _root_.iota {x | P x = .true}
 
-theorem iota_isSome_iff (P : (E → SignType)) : (iota P).isSome ↔ ∃! x, P x = 1 :=
+theorem iota_isSome_iff (P : (E → Trivalent)) : (iota P).isSome ↔ ∃! x, P x = .true :=
   _root_.iota_isSome_iff
 
-theorem iota_eq_none_iff (P : (E → SignType)) : iota P = none ↔ ¬ ∃! x, P x = 1 := by
+theorem iota_eq_none_iff (P : (E → Trivalent)) : iota P = none ↔ ¬ ∃! x, P x = .true := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
 
 -- (14)
-theorem iota_neg_one : iota (fun _ ↦ -1 : (E → SignType)) = none :=
+theorem iota_false : iota (fun _ ↦ .false : (E → Trivalent)) = none :=
   (iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by simp at hx
 
-theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) :
+theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → Trivalent)) :
     iota (the P) = iota P := by
   by_cases h : WeakUnique P
   · rw [the_eq_of_weakUnique h]
   · rw [(iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by
-        simp [the_eq_zero_of_not_weakUnique h] at hx,
+        simp [the_eq_undefined_of_not_weakUnique h] at hx,
       (iota_eq_none_iff _).2 fun hu ↦ h fun _ ha _ hb ↦ hu.unique ha hb]
 
 -- (87), (86)
-theorem elim_iota_ne_zero_iff (P : (E → SignType)) (f : E → SignType) (hf : ∀ x, f x ≠ 0) :
-    (iota P).elim 0 f ≠ 0 ↔ ∃! x, P x = 1 := by
+theorem elim_iota_ne_undefined_iff (P : (E → Trivalent)) (f : E → Trivalent)
+    (hf : ∀ x, f x ≠ .undefined) :
+    (iota P).elim .undefined f ≠ .undefined ↔ ∃! x, P x = .true := by
   rw [← iota_isSome_iff]
   cases iota P <;> simp [hf]
 
 /-- The existential shift (85) asserts a common satisfier of restrictor and scope. -/
-noncomputable def ex (P Q : (E → SignType)) : SignType := existsHaug (fun x ↦ meetWeak (P x) (Q x))
+noncomputable def ex (P Q : (E → Trivalent)) : Trivalent :=
+  existsHaug (fun x ↦ meetWeak (P x) (Q x))
 
-theorem ex_zero_left (Q : (E → SignType)) : ex (fun _ ↦ 0) Q = 0 :=
-  existsHaug_eq_zero_iff.2 fun _ ↦ meetWeak_zero_left _
+theorem ex_undefined_left (Q : (E → Trivalent)) : ex (fun _ ↦ .undefined) Q = .undefined :=
+  existsHaug_eq_undefined_iff.2 fun _ ↦ meetWeak_undefined_left _
 
 /-- The type shift of footnote 26 scopes an argument quantifier inside the modified
 description — the further existential within the nominal that intervenes between the
 determiner and the exclusive. -/
-def scopeInside (T : E → E → SignType) (Q : (E → SignType) → SignType)
-    (M : (E → SignType) → E → SignType) :
-    (E → SignType) :=
+def scopeInside (T : E → E → Trivalent) (Q : (E → Trivalent) → Trivalent)
+    (M : (E → Trivalent) → E → Trivalent) :
+    (E → Trivalent) :=
   fun x ↦ Q fun z ↦ M (fun y ↦ T z y) x
 
 -- §3.2
-theorem not_update_dom_iota {C : Set W} {π : W → (E → SignType)} (G : W → E → SignType) {w : W}
-    (hw : w ∈ C) (h : ¬ ∃! x, π w x = 1) :
-    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim 0 (G w)) C).Dom := fun hd ↦
-  hd hw (show (iota (π w)).elim 0 (G w) = 0 by
+theorem not_update_dom_iota {C : Set W} {π : W → (E → Trivalent)} (G : W → E → Trivalent) {w : W}
+    (hw : w ∈ C) (h : ¬ ∃! x, π w x = .true) :
+    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (G w)) C).Dom := fun hd ↦
+  hd hw (show (iota (π w)).elim .undefined (G w) = .undefined by
     rw [(iota_eq_none_iff _).2 h]
     rfl)
 
 /-- Where every world of the context has exactly one satisfier, the determinate and the
 indeterminate readings update the context alike (§3.4). -/
-theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → SignType)}
+theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → Trivalent)}
     (hπ : ∀ w ∈ C, IsBivalent (π w)) (hQ : ∀ w ∈ C, IsBivalent (Q w))
-    (h : ∀ w ∈ C, ∃! x, π w x = 1) :
-    CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim 0 (Q w)) C =
+    (h : ∀ w ∈ C, ∃! x, π w x = .true) :
+    CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (Q w)) C =
       CCP.Partial.ofTrivalent (fun w ↦ ex (π w) (Q w)) C := by
   refine CCP.Partial.ofTrivalent_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
   have hi : iota (π w) = some x := iota_eq_some_iff.2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
-  refine (eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_).symm
-  · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, (hπ w hw).ne_zero,
-      (hQ w hw).ne_zero, or_self]
+  refine (eq_of_eq_undefined_iff_of_eq_true_iff ?_ ?_).symm
+  · simp only [existsHaug_eq_undefined_iff, meetWeak_eq_undefined_iff, (hπ w hw).ne_undefined,
+      (hQ w hw).ne_undefined, or_self]
     exact iff_of_false (fun h' ↦ h' x) id
-  · simp only [existsHaug_eq_one_iff, meetWeak_eq_one_iff]
+  · simp only [existsHaug_eq_true_iff, meetWeak_eq_true_iff]
     exact ⟨fun ⟨y, hy, hq⟩ ↦ hu y hy ▸ hq, fun hq ↦ ⟨x, hx, hq⟩⟩
 
 /-- An indefinite the definite fails to block has no defined update under iota, so there are no
 determinate indefinites (§3.3). -/
 theorem no_determinate_indefinites [Nontrivial E] [DecidablePred (WeakUnique (E := E))]
-    (F : W → (E → SignType) → SignType) (π : W → E → SignType) (G : W → E → SignType)
+    (F : W → (E → Trivalent) → Trivalent) (π : W → E → Trivalent) (G : W → E → Trivalent)
     {C : Set W}
     (h : ¬ Blocks C (fun α w ↦ F w (α (π w))) the an) :
-    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim 0 (G w)) C).Dom := fun hd ↦
+    ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim .undefined (G w)) C).Dom := fun hd ↦
   h <| blocks_of_weakUnique F π fun _ hw _ ha _ hb ↦
     (not_not.1 fun hu ↦ not_update_dom_iota G hw hu hd).unique ha hb
 
 section AntiUniqueness
 
 variable [DecidablePred (WeakUnique (E := E))] [DecidableRel (Exclusive (E := E))]
-  {P Q : (E → SignType)}
+  {P Q : (E → Trivalent)}
 
 -- (89), (94)
-theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
-    -ex (the (only P)) Q =
-      meetWeak (existsHaug fun x ↦ P x ⊔ 0)
-        (-existsHaug fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x))) := by
+theorem compl_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
+    (ex (the (only P)) Q)ᶜ =
+      meetWeak (existsHaug fun x ↦ P x ⊔ .undefined)
+        (existsHaug fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x)))ᶜ := by
   have hψ : IsBivalent (fun x : E ↦ meetWeak (ofProp (Exclusive P x)) (Q x)) :=
-    (isBivalent_iff_forall_ne_zero _).2 fun x ↦ by simp [hQ.ne_zero x]
+    (isBivalent_iff_forall_ne_undefined _).2 fun x ↦ by simp [hQ.ne_undefined x]
   rw [ex, the_only]
   simp only [only, meetWeak_assoc]
   rw [existsHaug_meetWeak_presuppose hP hψ,
-    neg_meetWeak_of_ne_neg_one (existsHaug_presuppose_ne_neg_one _)]
+    compl_meetWeak_of_ne_false (existsHaug_presuppose_ne_false _)]
 
 -- §3.2
 theorem argumental_anti_uniqueness_presup (hQ : IsBivalent Q) :
-    -ex (the (only P)) Q = 0 ↔ ∀ x, P x ≠ 1 := by
-  simp [ex, the_only, only, hQ.ne_zero, nonpos_iff_ne_one]
+    (ex (the (only P)) Q)ᶜ = .undefined ↔ ∀ x, P x ≠ .true := by
+  simp [ex, the_only, only, hQ.ne_undefined, le_undefined_iff_ne_true]
 
 -- (80a)
 theorem argumental_anti_uniqueness (hQ : IsBivalent Q) :
-    -ex (the (only P)) Q = 1 ↔
-      (∃ x, P x = 1) ∧ ∀ x, P x = 1 → Exclusive P x → Q x ≠ 1 := by
-  simp [ex, the_only, only, hQ.ne_zero]
+    (ex (the (only P)) Q)ᶜ = .true ↔
+      (∃ x, P x = .true) ∧ ∀ x, P x = .true → Exclusive P x → Q x ≠ .true := by
+  simp [ex, the_only, only, hQ.ne_undefined]
 
 end AntiUniqueness
 
@@ -642,29 +645,30 @@ end AntiUniqueness
 /-- The sortal-to-relational shift (129) sends a noun to the `P`s possessed by `y`. The
 appendix's TS3 prints the possessor arguments in the opposite order; the main text's is
 followed. -/
-def toRelational (poss : E → E → SignType) (P : (E → SignType)) (y : E) : (E → SignType) :=
+def toRelational (poss : E → E → Trivalent) (P : (E → Trivalent)) (y : E) : (E → Trivalent) :=
   fun x ↦ meetWeak (P x) (poss x y)
 
 -- §4.1, §4.3
-theorem isBivalent_toRelational {poss : E → E → SignType} {P : E → SignType}
+theorem isBivalent_toRelational {poss : E → E → Trivalent} {P : E → Trivalent}
     (hP : IsBivalent P)
-    (hposs : ∀ x y, poss x y ≠ 0) (y : E) : IsBivalent (toRelational poss P y) :=
-  (isBivalent_iff_forall_ne_zero _).2 fun x ↦ by simp [toRelational, hP.ne_zero x, hposs x y]
+    (hposs : ∀ x y, poss x y ≠ .undefined) (y : E) : IsBivalent (toRelational poss P y) :=
+  (isBivalent_iff_forall_ne_undefined _).2 fun x ↦ by
+    simp [toRelational, hP.ne_undefined x, hposs x y]
 
 -- §4
 theorem possessive_not_competitor [DecidableEq E]
-    [DecidablePred (WeakUnique (E := E))] {poss : E → E → SignType} {x y : E}
-    (h : poss x y = -1) : ¬ ClassicallyEquivalent (fun P ↦ toRelational poss P y) the := by
+    [DecidablePred (WeakUnique (E := E))] {poss : E → E → Trivalent} {x y : E}
+    (h : poss x y = .false) : ¬ ClassicallyEquivalent (fun P ↦ toRelational poss P y) the := by
   intro hc
   have hU : WeakUnique (fun z : E ↦ ofProp (z = x)) := fun a ha b hb ↦
-    (ofProp_eq_one_iff.1 ha).trans (ofProp_eq_one_iff.1 hb).symm
-  have h₁ : toRelational poss (fun z ↦ ofProp (z = x)) y x = -1 := by
-    show meetWeak (ofProp (x = x)) (poss x y) = -1
-    rw [ofProp_eq_one_iff.2 rfl, meetWeak_one_left, h]
-  have h₂ : the (fun z ↦ ofProp (z = x)) x = 1 := by
-    rw [the_eq_of_weakUnique hU]; exact ofProp_eq_one_iff.2 rfl
+    (ofProp_eq_true_iff.1 ha).trans (ofProp_eq_true_iff.1 hb).symm
+  have h₁ : toRelational poss (fun z ↦ ofProp (z = x)) y x = .false := by
+    show meetWeak (ofProp (x = x)) (poss x y) = .false
+    rw [ofProp_eq_true_iff.2 rfl, meetWeak_true_left, h]
+  have h₂ : the (fun z ↦ ofProp (z = x)) x = .true := by
+    rw [the_eq_of_weakUnique hU]; exact ofProp_eq_true_iff.2 rfl
   have := hc (fun z ↦ ofProp (z = x))
-    ((isBivalent_iff_forall_ne_zero _).2 fun _ ↦ ofProp_ne_zero)
+    ((isBivalent_iff_forall_ne_undefined _).2 fun _ ↦ ofProp_ne_undefined)
     x (by dsimp only; rw [h₁]; decide) (by rw [h₂]; decide)
   dsimp only at this
   rw [h₁, h₂] at this
@@ -672,12 +676,12 @@ theorem possessive_not_competitor [DecidableEq E]
 
 -- (134)
 theorem possessive_anti_uniqueness [DecidableRel (Exclusive (E := E))]
-    {poss : E → E → SignType} {P Q : E → SignType} (hQ : IsBivalent Q)
-    (hposs : ∀ x y, poss x y ≠ 0) (y : E) :
-    -ex (toRelational poss (only P) y) Q = 1 ↔
-      (∃ x, P x = 1) ∧
-        ∀ x, P x = 1 → Exclusive P x → poss x y = 1 → Q x ≠ 1 := by
-  simp [ex, toRelational, only, hQ.ne_zero, hposs]
+    {poss : E → E → Trivalent} {P Q : E → Trivalent} (hQ : IsBivalent Q)
+    (hposs : ∀ x y, poss x y ≠ .undefined) (y : E) :
+    (ex (toRelational poss (only P) y) Q)ᶜ = .true ↔
+      (∃ x, P x = .true) ∧
+        ∀ x, P x = .true → Exclusive P x → poss x y = .true → Q x ≠ .true := by
+  simp [ex, toRelational, only, hQ.ne_undefined, hposs]
 
 /-! ### The paper's models
 
@@ -696,21 +700,21 @@ inductive World | oneBook | twoBooks
   deriving DecidableEq, Fintype
 
 /-- At one world Frida wrote one book; at the other, two. -/
-def wrote : World → (Book → SignType)
-  | .oneBook, .one => 1
-  | .oneBook, .two => -1
-  | .twoBooks, _ => 1
+def wrote : World → (Book → Trivalent)
+  | .oneBook, .one => .true
+  | .oneBook, .two => .false
+  | .twoBooks, _ => .true
 
 /-- The speaker is reading the first book. -/
-def reading (_ : World) : (Book → SignType) := fun b ↦ ofProp (b = .one)
+def reading (_ : World) : (Book → Trivalent) := fun b ↦ ofProp (b = .one)
 
 /-- `sentence α` interprets *I'm now reading (a/the) book she wrote* with the description
 shifted existentially. -/
-noncomputable def sentence (α : (Book → SignType) → (Book → SignType)) : (World → SignType) :=
+noncomputable def sentence (α : (Book → Trivalent) → (Book → Trivalent)) : (World → Trivalent) :=
   fun w ↦ ex (α (wrote w)) (reading w)
 
-private theorem sentence_an_eq_one (w : World) : sentence an w = 1 :=
-  existsHaug_eq_one_iff.2 ⟨.one, by cases w <;> decide⟩
+private theorem sentence_an_eq_true (w : World) : sentence an w = .true :=
+  existsHaug_eq_true_iff.2 ⟨.one, by cases w <;> decide⟩
 
 -- (73b)
 theorem blocks_of_one : Blocks {World.oneBook} sentence the an :=
@@ -718,9 +722,9 @@ theorem blocks_of_one : Blocks {World.oneBook} sentence the an :=
 
 -- (73a)
 theorem not_blocks_of_open : ¬ Blocks Set.univ sentence the an :=
-  not_blocks_of_not_weakUnique (fun w P ↦ ex P (reading w)) wrote (fun w ↦ ex_zero_left _)
+  not_blocks_of_not_weakUnique (fun w P ↦ ex P (reading w)) wrote (fun w ↦ ex_undefined_left _)
     (Set.mem_univ World.twoBooks) (by decide) fun w _ ↦
-      ne_of_eq_of_ne (sentence_an_eq_one w) (by decide)
+      ne_of_eq_of_ne (sentence_an_eq_true w) (by decide)
 
 end Frida
 
@@ -732,22 +736,22 @@ inductive Ind | crash₁ | crash₂ | scott | sam
 instance : Nontrivial Ind := ⟨⟨.scott, .sam, by decide⟩⟩
 
 /-- `crash` holds of the two crash individuals. -/
-def crash : (Ind → SignType) := fun z ↦ ofProp (z = .crash₁ ∨ z = .crash₂)
+def crash : (Ind → Trivalent) := fun z ↦ ofProp (z = .crash₁ ∨ z = .crash₂)
 
 /-- Each crash has a single survivor, Scott of the first and Sam of the second. -/
-def survived (z : Ind) : (Ind → SignType) :=
+def survived (z : Ind) : (Ind → Trivalent) :=
   fun y ↦ ofProp ((z = .crash₁ ∧ y = .scott) ∨ (z = .crash₂ ∧ y = .sam))
 
 /-- In *only survivor of a plane crash* (69), the type shift of footnote 26 scopes the crash
 inside the description. -/
-noncomputable def onlySurvivor : (Ind → SignType) :=
+noncomputable def onlySurvivor : (Ind → Trivalent) :=
   scopeInside survived (fun M ↦ existsHaug fun z ↦ meetWeak (crash z) (M z)) only
 
-private theorem onlySurvivor_scott : onlySurvivor .scott = 1 :=
-  existsHaug_eq_one_iff.2 ⟨.crash₁, by decide⟩
+private theorem onlySurvivor_scott : onlySurvivor .scott = .true :=
+  existsHaug_eq_true_iff.2 ⟨.crash₁, by decide⟩
 
-private theorem onlySurvivor_sam : onlySurvivor .sam = 1 :=
-  existsHaug_eq_one_iff.2 ⟨.crash₂, by decide⟩
+private theorem onlySurvivor_sam : onlySurvivor .sam = .true :=
+  existsHaug_eq_true_iff.2 ⟨.crash₂, by decide⟩
 
 theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := fun h ↦
   absurd (h onlySurvivor_scott onlySurvivor_sam) (by decide)
@@ -756,12 +760,12 @@ theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := fun h ↦
 inside the description, (68). -/
 theorem an_only_survivor_not_blocked :
     ¬ Blocks Set.univ (fun α (_ : Unit) ↦ α onlySurvivor .scott) the an :=
-  not_blocks_of_not_weakUnique (fun (_ : Unit) (P : (Ind → SignType)) ↦ P .scott)
+  not_blocks_of_not_weakUnique (fun (_ : Unit) (P : (Ind → Trivalent)) ↦ P .scott)
     (fun _ ↦ onlySurvivor) (fun _ ↦ rfl) (Set.mem_univ ()) not_weakUnique_onlySurvivor
     fun _ _ ↦ ne_of_eq_of_ne onlySurvivor_scott (by decide)
 
 /-- The high-scope derivation places the crash above the article. -/
-noncomputable def high (α : (Ind → SignType) → (Ind → SignType)) (_ : Unit) : SignType :=
+noncomputable def high (α : (Ind → Trivalent) → (Ind → Trivalent)) (_ : Unit) : Trivalent :=
   existsHaug fun z ↦ meetWeak (crash z) (α (only (survived z)) .scott)
 
 private theorem high_the_eq_high_an : high the = high an := by
@@ -797,13 +801,13 @@ inductive Item | this | that
   deriving DecidableEq, Fintype
 
 /-- `restrictors` maps a row's `restrictor` feature to its predicate. -/
-def restrictors : List (String × (Item → SignType)) :=
-  [("uniqueIfAny", fun _ ↦ -1), ("multiple", fun _ ↦ 1), ("only", only (fun _ ↦ 1))]
+def restrictors : List (String × (Item → Trivalent)) :=
+  [("uniqueIfAny", fun _ ↦ .false), ("multiple", fun _ ↦ .true), ("only", only (fun _ ↦ .true))]
 
 /-- A predicative-definite row is acceptable exactly when the definite of its restrictor is
 classical of the subject. -/
 theorem restrictor_rows : ∀ row ∈ Examples.all, ∀ P ∈ row.parse? "restrictor" restrictors,
-    (row.judgment = .acceptable ↔ the P .this ≠ 0) := by
+    (row.judgment = .acceptable ↔ the P .this ≠ .undefined) := by
   decide +kernel
 
 end Scenario
@@ -813,9 +817,9 @@ namespace Lobner
 /-- `expressions` maps a row's expression, a predicative definite, indefinite, or possessive
 with a single possessor, to the predicate it forms from the noun in the scenario where both
 subjects satisfy it. -/
-def expressions : List (String × (Scenario.Item → SignType)) :=
-  [("predicativeDefinite", the fun _ ↦ 1), ("predicativeIndefinite", an fun _ ↦ 1),
-   ("predicativePossessive", toRelational (fun _ _ ↦ 1) (fun _ ↦ 1) .this)]
+def expressions : List (String × (Scenario.Item → Trivalent)) :=
+  [("predicativeDefinite", the fun _ ↦ .true), ("predicativeIndefinite", an fun _ ↦ .true),
+   ("predicativePossessive", toRelational (fun _ _ ↦ .true) (fun _ ↦ .true) .this)]
 
 /-- `verdicts` reads a row's verdict as whether its test forces the two subjects to
 coincide. -/
@@ -824,11 +828,11 @@ def verdicts : List (String × Bool) :=
    ("notEquivalent", false)]
 
 /-- With both subjects satisfying the noun, a row's test verdict is coincidence of the two
-subjects exactly for the definite (`eq_of_the_eq_one`), the predicative tests
+subjects exactly for the definite (`eq_of_the_eq_true`), the predicative tests
 (114)–(115). -/
 theorem rows : ∀ row ∈ Examples.all, ∀ p ∈ row.parse? "expression" expressions,
     ∀ v ∈ row.parse? "verdict" verdicts,
-      (v = true ↔ ∀ a b, meetWeak (p a) (p b) = 1 → a = b) := by
+      (v = Bool.true ↔ ∀ a b, meetWeak (p a) (p b) = .true → a = b) := by
   decide +kernel
 
 end Lobner

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Basic.Sign
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
@@ -84,74 +84,79 @@ theorem unknownUpdate_neg (φ : BilateralUpdate W V E) (s) :
   simp only [unknownUpdate, neg, Set.mem_ofPred_eq,
     and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
-/-- The update at a truth value: positive at `1`, negative at `-1` and unknown at `0`. -/
-def update (φ : BilateralUpdate W V E) : SignType → CCP (Possibility W V (Flat E))
-  | .pos => φ.positive
-  | .neg => φ.negative
-  | .zero => φ.unknownUpdate
+/-- The update at a truth value: positive at `true`, negative at `false` and unknown at
+`undefined`. -/
+def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Flat E))
+  | .true => φ.positive
+  | .false => φ.negative
+  | .undefined => φ.unknownUpdate
 
-@[simp] theorem update_one (φ : BilateralUpdate W V E) : φ.update 1 = φ.positive := rfl
-@[simp] theorem update_neg_one (φ : BilateralUpdate W V E) : φ.update (-1) = φ.negative := rfl
-@[simp] theorem update_zero (φ : BilateralUpdate W V E) : φ.update 0 = φ.unknownUpdate := rfl
+@[simp] theorem update_true (φ : BilateralUpdate W V E) : φ.update .true = φ.positive := rfl
+@[simp] theorem update_false (φ : BilateralUpdate W V E) : φ.update (.false) = φ.negative := rfl
+@[simp] theorem update_undefined (φ : BilateralUpdate W V E) :
+    φ.update .undefined = φ.unknownUpdate := rfl
 
 /-- Negation negates the truth value at which a sentence updates. -/
-theorem update_neg (φ : BilateralUpdate W V E) (a : SignType) : (~φ).update a = φ.update (-a) := by
+theorem update_neg (φ : BilateralUpdate W V E) (a : Trivalent) : (~φ).update a = φ.update (aᶜ) := by
   cases a
-  exacts [funext (unknownUpdate_neg φ), rfl, rfl]
+  exacts [rfl, funext (unknownUpdate_neg φ), rfl]
 
 /-! ### Static updates -/
 
 /-- The static update of a trivalent proposition over points: it keeps the points where the
 proposition is true, positively, and where it is false, negatively. -/
-def ofTrivalent (v : Possibility W V (Flat E) → SignType) : BilateralUpdate W V E where
-  positive := CCP.up (posSupport v)
-  negative := CCP.up (negSupport v)
+def ofTrivalent (v : Possibility W V (Flat E) → Trivalent) : BilateralUpdate W V E where
+  positive := CCP.up (Trivalent.posExt v)
+  negative := CCP.up (Trivalent.negExt v)
 
-variable {v : Possibility W V (Flat E) → SignType}
+variable {v : Possibility W V (Flat E) → Trivalent}
 
-@[simp] theorem mem_positive_ofTrivalent : p ∈ (ofTrivalent v).positive s ↔ p ∈ s ∧ v p = 1 :=
+@[simp] theorem mem_positive_ofTrivalent : p ∈ (ofTrivalent v).positive s ↔ p ∈ s ∧ v p = .true :=
   Iff.rfl
 
-@[simp] theorem mem_negative_ofTrivalent : p ∈ (ofTrivalent v).negative s ↔ p ∈ s ∧ v p = -1 :=
+@[simp] theorem mem_negative_ofTrivalent : p ∈ (ofTrivalent v).negative s ↔ p ∈ s ∧ v p = .false :=
   Iff.rfl
 
-theorem positive_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = 0) : (ofTrivalent v).positive s = ∅ :=
+theorem positive_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
+    (ofTrivalent v).positive s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
-theorem negative_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = 0) : (ofTrivalent v).negative s = ∅ :=
+theorem negative_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
+    (ofTrivalent v).negative s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, h1⟩ ↦ by simp [h p hp] at h1
 
 /-- Where a trivalent proposition is undefined throughout, every point is unknown. -/
-theorem unknownUpdate_ofTrivalent_of_eq_zero (h : ∀ p ∈ s, v p = 0) :
+theorem unknownUpdate_ofTrivalent_of_eq_undefined (h : ∀ p ∈ s, v p = .undefined) :
     (ofTrivalent v).unknownUpdate s = s := by
   ext p
-  simp [unknownUpdate, positive_ofTrivalent_of_eq_zero h, negative_ofTrivalent_of_eq_zero h]
+  simp [unknownUpdate, positive_ofTrivalent_of_eq_undefined h,
+      negative_ofTrivalent_of_eq_undefined h]
 
 /-- Where a trivalent proposition is defined throughout, no point is unknown. -/
-theorem unknownUpdate_ofTrivalent_of_ne_zero (h : ∀ p ∈ s, v p ≠ 0) :
+theorem unknownUpdate_ofTrivalent_of_ne_undefined (h : ∀ p ∈ s, v p ≠ .undefined) :
     (ofTrivalent v).unknownUpdate s = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun p ⟨hp, hpos, hneg⟩ ↦ ?_
   match hv : v p with
-  | .pos => exact hpos (subset_lowerClosure ⟨hp, hv⟩)
-  | .neg => exact hneg (subset_lowerClosure ⟨hp, hv⟩)
-  | .zero => exact h p hp hv
+  | .true => exact hpos (subset_lowerClosure ⟨hp, hv⟩)
+  | .false => exact hneg (subset_lowerClosure ⟨hp, hv⟩)
+  | .undefined => exact h p hp hv
 
 open scoped Classical in
 /-- A worldly atom: the proposition at the world of a point. -/
 noncomputable def atom (pred : W → Prop) : BilateralUpdate W V E :=
-  ofTrivalent fun p ↦ SignType.ofProp (pred p.world)
+  ofTrivalent fun p ↦ Trivalent.ofProp (pred p.world)
 
 open scoped Classical in
 /-- Unary predication at `t`: undefined where `t` is, and otherwise the predicate at its value. -/
 noncomputable def pred1 (P : E → W → Prop) (t : V) : BilateralUpdate W V E :=
-  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ SignType) 0
-    (fun e ↦ SignType.ofProp (P e p.world)) (p.assignment t)
+  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined
+    (fun e ↦ Trivalent.ofProp (P e p.world)) (p.assignment t)
 
 open scoped Classical in
 /-- Binary predication at `t₁` and `t₂`: undefined where either is. -/
 noncomputable def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : BilateralUpdate W V E :=
-  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ SignType) 0 (fun e₁ ↦
-    Flat.recBotCoe (C := fun _ ↦ SignType) 0 (fun e₂ ↦ SignType.ofProp (P e₁ e₂ p.world))
+  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined (fun e₁ ↦
+    Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined (fun e₂ ↦ Trivalent.ofProp (P e₁ e₂ p.world))
       (p.assignment t₂)) (p.assignment t₁)
 
 @[simp] theorem mem_positive_atom {pred : W → Prop} :
@@ -196,7 +201,7 @@ theorem negative_atom (pred : W → Prop) (s : Set (Possibility W V (Flat E))) :
 
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
     (atom pred (V := V) (E := E)).unknownUpdate s = ∅ :=
-  unknownUpdate_ofTrivalent_of_ne_zero fun _ _ ↦ by simp
+  unknownUpdate_ofTrivalent_of_ne_undefined fun _ _ ↦ by simp
 
 theorem neg_pred1 (P : E → W → Prop) (t : V) :
     ~(pred1 P t) = pred1 (fun e w ↦ ¬ P e w) t := by
@@ -215,49 +220,50 @@ variable {x : V}
 
 theorem positive_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).positive s = ∅ :=
-  positive_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  positive_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 theorem negative_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).negative s = ∅ :=
-  negative_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  negative_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 theorem unknownUpdate_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).unknownUpdate s = s :=
-  unknownUpdate_ofTrivalent_of_eq_zero fun p hp ↦ by simp [hx p hp]
+  unknownUpdate_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
 
 /-! ### Connectives -/
 
-/-- The lift of a binary truth function `f`: at `1` and `-1`, the union over the cells of the table
-with that value of the update by `φ` at the row's value followed by `ψ` at the column's. -/
-def lift (f : SignType → SignType → SignType) (φ ψ : BilateralUpdate W V E) :
+/-- The lift of a binary truth function `f`: at `true` and `false`, the union over the cells of the
+table with that value of the update by `φ` at the row's value followed by `ψ` at the column's. -/
+def lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralUpdate W V E) :
     BilateralUpdate W V E where
-  positive s := ⋃ (a) (b) (_ : f a b = 1), ψ.update b (φ.update a s)
-  negative s := ⋃ (a) (b) (_ : f a b = -1), ψ.update b (φ.update a s)
+  positive s := ⋃ (a) (b) (_ : f a b = .true), ψ.update b (φ.update a s)
+  negative s := ⋃ (a) (b) (_ : f a b = .false), ψ.update b (φ.update a s)
 
-variable {f : SignType → SignType → SignType}
+variable {f : Trivalent → Trivalent → Trivalent}
 
 @[simp] theorem mem_positive_lift :
-    p ∈ (lift f φ ψ).positive s ↔ ∃ a b, f a b = 1 ∧ p ∈ ψ.update b (φ.update a s) := by
+    p ∈ (lift f φ ψ).positive s ↔ ∃ a b, f a b = .true ∧ p ∈ ψ.update b (φ.update a s) := by
   simp [lift]
 
 @[simp] theorem mem_negative_lift :
-    p ∈ (lift f φ ψ).negative s ↔ ∃ a b, f a b = -1 ∧ p ∈ ψ.update b (φ.update a s) := by
+    p ∈ (lift f φ ψ).negative s ↔ ∃ a b, f a b = .false ∧ p ∈ ψ.update b (φ.update a s) := by
   simp [lift]
 
 /-- Negating a lift lifts the dual truth function to the negated operands. -/
-theorem neg_lift (f : SignType → SignType → SignType) (φ ψ : BilateralUpdate W V E) :
-    ~(lift f φ ψ) = lift (fun a b ↦ -f (-a) (-b)) (~φ) (~ψ) := by
-  have key (c : SignType) (p) (s) : (∃ a b, f a b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
-      ∃ a b, -f (-a) (-b) = -c ∧ p ∈ (~ψ).update b ((~φ).update a s) := by
-    simp only [update_neg, neg_inj]
-    exact ⟨fun ⟨a, b, h, hp⟩ ↦ ⟨-a, -b, by simpa using h, by simpa using hp⟩,
-      fun ⟨a, b, h, hp⟩ ↦ ⟨-a, -b, h, hp⟩⟩
+theorem neg_lift (f : Trivalent → Trivalent → Trivalent) (φ ψ : BilateralUpdate W V E) :
+    ~(lift f φ ψ) = lift (fun a b ↦ (f (aᶜ) (bᶜ))ᶜ) (~φ) (~ψ) := by
+  have key (c : Trivalent) (p) (s) : (∃ a b, f a b = c ∧ p ∈ ψ.update b (φ.update a s)) ↔
+      ∃ a b, (f (aᶜ) (bᶜ))ᶜ = cᶜ ∧ p ∈ (~ψ).update b ((~φ).update a s) := by
+    simp only [update_neg, InvolutiveCompl.compl_inj_iff]
+    exact ⟨fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, bᶜ, by simpa using h, by simpa using hp⟩,
+      fun ⟨a, b, h, hp⟩ ↦ ⟨aᶜ, bᶜ, h, hp⟩⟩
   ext s p
   · change p ∈ (lift f φ ψ).negative s ↔ _
-    rw [mem_negative_lift, mem_positive_lift, key (-1)]
+    rw [mem_negative_lift, mem_positive_lift, key (.false)]
     simp
   · change p ∈ (lift f φ ψ).positive s ↔ _
-    rw [mem_positive_lift, mem_negative_lift, key 1]
+    rw [mem_positive_lift, mem_negative_lift, key .true]
+    simp
 
 /-- Conjunction lifts strong Kleene conjunction. -/
 def conj (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E := lift (· ⊓ ·) φ ψ
@@ -282,59 +288,60 @@ def disj (φ ψ : BilateralUpdate W V E) : BilateralUpdate W V E := lift (· ⊔
 /-- De Morgan: `¬(φ ∨ ψ)` is `¬φ ∧ ¬ψ`, in both dimensions. -/
 theorem neg_disj (φ ψ : BilateralUpdate W V E) : ~(φ ⊕ ψ) = (~φ) ⊙ (~ψ) := by
   rw [disj, neg_lift]
-  simp only [SignType.neg_sup, _root_.neg_neg]
+  simp only [Trivalent.compl_sup, Trivalent.compl_compl]
   rfl
 
 /-- De Morgan: `¬(φ ∧ ψ)` is `¬φ ∨ ¬ψ`, in both dimensions. -/
 theorem neg_conj (φ ψ : BilateralUpdate W V E) : ~(φ ⊙ ψ) = (~φ) ⊕ (~ψ) := by
   rw [conj, neg_lift]
-  simp only [SignType.neg_inf, _root_.neg_neg]
+  simp only [Trivalent.compl_inf, Trivalent.compl_compl]
   rfl
 
 /-! ### Responsibility -/
 
 /-- The part of a compound's update at `v` that its first operand is responsible for: the cells
 where the first operand has value `v`. -/
-def firstPart (v : SignType) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
+def firstPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
     Set (Possibility W V (Flat E)) :=
   ⋃ b, ψ.update b (φ.update v s)
 
 /-- The part of a compound's update at `v` that its second operand is responsible for: the cells
 where the second operand has value `v`. -/
-def secondPart (v : SignType) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
+def secondPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
     Set (Possibility W V (Flat E)) :=
   ⋃ a, ψ.update v (φ.update a s)
 
-@[simp] theorem mem_firstPart {v : SignType} :
+@[simp] theorem mem_firstPart {v : Trivalent} :
     p ∈ firstPart v φ ψ s ↔ ∃ b, p ∈ ψ.update b (φ.update v s) :=
   Set.mem_iUnion
 
-@[simp] theorem mem_secondPart {v : SignType} :
+@[simp] theorem mem_secondPart {v : Trivalent} :
     p ∈ secondPart v φ ψ s ↔ ∃ a, p ∈ ψ.update v (φ.update a s) :=
   Set.mem_iUnion
 
 /-- A disjunction is verified by its first or its second disjunct. -/
-theorem positive_disj_eq_union : (φ ⊕ ψ).positive s = firstPart 1 φ ψ s ∪ secondPart 1 φ ψ s := by
+theorem positive_disj_eq_union :
+    (φ ⊕ ψ).positive s = firstPart .true φ ψ s ∪ secondPart .true φ ψ s := by
   ext p
-  simp only [disj, mem_positive_lift, SignType.sup_eq_one_iff, Set.mem_union, mem_firstPart,
+  simp only [disj, mem_positive_lift, Trivalent.sup_eq_true_iff, Set.mem_union, mem_firstPart,
     mem_secondPart]
   constructor
   · rintro ⟨a, b, h | h, hp⟩ <;> subst h
     exacts [.inl ⟨b, hp⟩, .inr ⟨a, hp⟩]
   · rintro (⟨b, hp⟩ | ⟨a, hp⟩)
-    exacts [⟨1, b, .inl rfl, hp⟩, ⟨a, 1, .inr rfl, hp⟩]
+    exacts [⟨.true, b, .inl rfl, hp⟩, ⟨a, .true, .inr rfl, hp⟩]
 
-theorem firstPart_neg (v : SignType) (φ ψ : BilateralUpdate W V E) (s) :
-    firstPart v (~φ) (~ψ) s = firstPart (-v) φ ψ s := by
+theorem firstPart_neg (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s) :
+    firstPart v (~φ) (~ψ) s = firstPart (vᶜ) φ ψ s := by
   ext p
   simp only [mem_firstPart, update_neg]
-  exact ⟨fun ⟨b, hp⟩ ↦ ⟨-b, hp⟩, fun ⟨b, hp⟩ ↦ ⟨-b, by simpa using hp⟩⟩
+  exact ⟨fun ⟨b, hp⟩ ↦ ⟨bᶜ, hp⟩, fun ⟨b, hp⟩ ↦ ⟨bᶜ, by simpa using hp⟩⟩
 
-theorem secondPart_neg (v : SignType) (φ ψ : BilateralUpdate W V E) (s) :
-    secondPart v (~φ) (~ψ) s = secondPart (-v) φ ψ s := by
+theorem secondPart_neg (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s) :
+    secondPart v (~φ) (~ψ) s = secondPart (vᶜ) φ ψ s := by
   ext p
   simp only [mem_secondPart, update_neg]
-  exact ⟨fun ⟨a, hp⟩ ↦ ⟨-a, hp⟩, fun ⟨a, hp⟩ ↦ ⟨-a, by simpa using hp⟩⟩
+  exact ⟨fun ⟨a, hp⟩ ↦ ⟨aᶜ, hp⟩, fun ⟨a, hp⟩ ↦ ⟨aᶜ, by simpa using hp⟩⟩
 
 /-! ### Quantifiers -/
 

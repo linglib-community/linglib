@@ -62,7 +62,7 @@ def ofReferent (referent : W → Option E) : Nominal Unit W E where
 where a referent is selected and applying `scope` to it there. It is `presupOfReferent` over
 `nd.selector c`, so any `presupOfReferent`-built denotation is a `resolve`, by `rfl`. -/
 noncomputable def resolve (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
-    W → SignType :=
+    W → Trivalent :=
   presupOfReferent (nd.selector c) scope
 
 theorem ofReferent_resolve (referent : W → Option E) (scope : E → W → Prop) :
@@ -75,19 +75,20 @@ the two presuppositions conjoined. For a definite the intrinsic presupposition i
 `toTrivalent` and `resolve` agree; for a pronoun the conjoined presupposition is where the
 φ-features project. -/
 noncomputable def toTrivalent (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
-    W → SignType :=
-  {w | nd.presup c w}.indicator (nd.resolve scope c)
+    W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (nd.presup c w)) (nd.resolve scope c w)
 
 section Values
 
 variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
-@[simp] theorem resolve_eq_zero_iff : nd.resolve scope c w = 0 ↔ nd.selector c w = none :=
-  presupOfReferent_eq_zero_iff
+@[simp] theorem resolve_eq_undefined_iff :
+    nd.resolve scope c w = .undefined ↔ nd.selector c w = none :=
+  presupOfReferent_eq_undefined_iff
 
-@[simp] theorem toTrivalent_eq_zero_iff :
-    nd.toTrivalent scope c w = 0 ↔ (nd.presup c w → nd.selector c w = none) := by
-  simp [toTrivalent]
+@[simp] theorem toTrivalent_eq_undefined_iff :
+    nd.toTrivalent scope c w = .undefined ↔ (nd.presup c w → nd.selector c w = none) := by
+  simp [toTrivalent, imp_iff_not_or]
 
 end Values
 

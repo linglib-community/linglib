@@ -28,7 +28,7 @@ coincide and competition cannot separate them (`strengthen_second_of_degenerate`
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
 presupposition universally (`JE`), whose truth on a bivalent scope is Link's distributivity
-operator (`je_eq_one_iff_D`, `je_eq_one_iff_forall`). The indefinite projects existentially
+operator (`je_eq_true_iff_D`, `je_eq_true_iff_forall`). The indefinite projects existentially
 (`aSem`), so *every boy invited his sister* requires every boy to have a sister while *a boy
 invited his sister* requires one (`projection_asymmetry`), and the weak plural makes *Lina
 didn't harvest tomatoes* entail *Lina didn't harvest a tomato*
@@ -156,7 +156,7 @@ end Person
 
 /-- The indefinite projects its scope's presupposition existentially, defined when the scope is
 defined of some individual of the restrictor and true when it is true of one. -/
-noncomputable def aSem (R : E → Prop) (S : E → SignType) : SignType :=
+noncomputable def aSem (R : E → Prop) (S : E → Trivalent) : Trivalent :=
   existsHaug fun x : {x // R x} ↦ S x
 
 section Every
@@ -166,31 +166,31 @@ variable [PartialOrder E]
 /-- `JE`, the quantificational part of *every*, ranges over the atomic parts of a group
 individual `X`, presupposing the scope predicate is defined at each and asserting it holds
 at each. -/
-noncomputable def JE (X : E) (P : E → SignType) : SignType :=
+noncomputable def JE (X : E) (P : E → Trivalent) : Trivalent :=
   forallWeak fun a : {a // Atom a ∧ a ≤ X} ↦ P a
 
-theorem je_eq_one_iff_forall {R Q : E → Prop} [DecidablePred Q] {maxR : E}
+theorem je_eq_true_iff_forall {R Q : E → Prop} [DecidablePred Q] {maxR : E}
     (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR) :
-    JE maxR (fun x ↦ SignType.ofProp (Q x)) = 1 ↔ ∀ x, R x → Q x := by
+    JE maxR (fun x ↦ Trivalent.ofProp (Q x)) = .true ↔ ∀ x, R x → Q x := by
   simp [JE, hR]
 
-theorem projection_asymmetry {boys a₁ a₂ : E} {R : E → Prop} {S : E → SignType}
-    (ha₂ : Atom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ 0) (hdom₂ : S a₂ = 0) :
-    aSem R S ≠ 0 ∧ JE boys S = 0 :=
-  ⟨fun h ↦ hdom₁ (existsHaug_eq_zero_iff.1 h ⟨a₁, hR₁⟩),
-    forallWeak_eq_zero_iff.2 ⟨⟨a₂, ha₂, h₂⟩, hdom₂⟩⟩
+theorem projection_asymmetry {boys a₁ a₂ : E} {R : E → Prop} {S : E → Trivalent}
+    (ha₂ : Atom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ .undefined) (hdom₂ : S a₂ = .undefined) :
+    aSem R S ≠ .undefined ∧ JE boys S = .undefined :=
+  ⟨fun h ↦ hdom₁ (existsHaug_eq_undefined_iff.1 h ⟨a₁, hR₁⟩),
+    forallWeak_eq_undefined_iff.2 ⟨⟨a₂, ha₂, h₂⟩, hdom₂⟩⟩
 
 theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} [DecidablePred harvest]
-    (h : aSem starR (fun x ↦ SignType.ofProp (harvest x)) = -1)
-    (hsg : aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ SignType.ofProp (harvest x)) ≠ 0) :
-    aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ SignType.ofProp (harvest x)) = -1 := by
+    (h : aSem starR (fun x ↦ Trivalent.ofProp (harvest x)) = .false)
+    (hsg : aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) ≠ .undefined) :
+    aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) = .false := by
   simp_all [aSem]
 
 end Every
 
-theorem je_eq_one_iff_D [SemilatticeSup E] (X : E) (P : E → Prop) [DecidablePred P] :
-    JE X (fun x ↦ SignType.ofProp (P x)) = 1 ↔ D P X := by
-  simp only [JE, forallWeak_eq_one_iff, SignType.ofProp_eq_one_iff, Subtype.forall, and_imp, D]
+theorem je_eq_true_iff_D [SemilatticeSup E] (X : E) (P : E → Prop) [DecidablePred P] :
+    JE X (fun x ↦ Trivalent.ofProp (P x)) = .true ↔ D P X := by
+  simp only [JE, forallWeak_eq_true_iff, Trivalent.ofProp_eq_true_iff, Subtype.forall, and_imp, D]
   exact forall_congr' fun _ ↦ imp.swap
 
 /-! ### Gender agreement in Czech coordinations -/

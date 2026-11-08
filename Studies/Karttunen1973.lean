@@ -79,7 +79,7 @@ plugs.
 
 namespace Karttunen1973
 
-open SignType Trivalent
+open Trivalent (ofProp transplication)
 
 universe u
 
@@ -107,10 +107,10 @@ theorem compl_map_compl : (·ᶜ) <$> (·ᶜ) <$> A = A :=
 theorem truth_subset_of_mem (h : C ∈ A.log) : A.truth ⊆ C :=
   fun _ hw ↦ hw.2 C h
 
-/-- The sentence of a trivalent proposition asserts its positive extension and presupposes its
-support. -/
-def ofTrivalent (p : W → SignType) : Presupposing W (Set W) :=
-  Writer.mk (posSupport p) [Function.support p]
+/-- The sentence of a trivalent proposition asserts its positive extension and presupposes where
+it is defined. -/
+def ofTrivalent (p : W → Trivalent) : Presupposing W (Set W) :=
+  Writer.mk (Trivalent.posExt p) [(Trivalent.gapExt p)ᶜ]
 
 end Presupposing
 
@@ -419,18 +419,20 @@ theorem univ_mem_log_disj_filters (F : Set (Set Bool)) :
 
 section TruthFunctional
 
-variable (p q : W → SignType) (w : W)
+variable (p q : W → Trivalent) (w : W)
 
 -- (34a) [bochvar-1938]
-theorem meetWeak_ne_zero_iff : (p w).meetWeak (q w) ≠ 0 ↔ p w ≠ 0 ∧ q w ≠ 0 := by
+theorem meetWeak_ne_undefined_iff :
+    (p w).meetWeak (q w) ≠ .undefined ↔ p w ≠ .undefined ∧ q w ≠ .undefined := by
   simp
 
 -- (34d), fn. 18
-theorem meetWeak_ofProp_ne_zero : (ofProp (p w = 1)).meetWeak (ofProp (q w = 1)) ≠ 0 := by
+theorem meetWeak_ofProp_ne_undefined :
+    (ofProp (p w = .true)).meetWeak (ofProp (q w = .true)) ≠ .undefined := by
   simp
 
 -- (34b)
-theorem inf_ne_zero_of_eq_neg_one (hf : p w = -1) : (p ⊓ q) w ≠ 0 := by
+theorem inf_ne_undefined_of_eq_false (hf : p w = .false) : (p ⊓ q) w ≠ .undefined := by
   simp [hf]
 
 end TruthFunctional
@@ -450,15 +452,15 @@ abbrev capitalParis : Set France := {.parisKing, .parisNoKing}
 abbrev hasKing : Set France := {.parisKing, .marseilleKing}
 
 /-- `The king of France is bald`, which presupposes a king; the assertion is idealized. -/
-noncomputable def kingBald : France → SignType := hasKing.indicator 1
+def kingBald (w : France) : Trivalent := transplication (ofProp (w ∈ hasKing)) .true
 
-private theorem support_kingBald : Function.support kingBald = hasKing := by
+private theorem compl_gapExt_kingBald : (Trivalent.gapExt kingBald)ᶜ = hasKing := by
   ext w; by_cases h : w ∈ hasKing <;> simp [kingBald, h]
 
 -- (35), (35a), (35b)
 theorem inf_kingBald_35 :
-    ofProp (France.parisNoKing ∈ capitalParis) ⊓ kingBald .parisNoKing = 0 ∧
-      ofProp (France.parisNoKing ∉ capitalParis) ⊓ kingBald .parisNoKing = -1 := by
+    ofProp (France.parisNoKing ∈ capitalParis) ⊓ kingBald .parisNoKing = .undefined ∧
+      ofProp (France.parisNoKing ∉ capitalParis) ⊓ kingBald .parisNoKing = .false := by
   simp [kingBald]
 
 -- (17), (35)
@@ -468,7 +470,7 @@ theorem hasKing_mem_log_conj_35 :
       hasKing ∈ (conj (· ⊆ ·) (.ofTrivalent fun w ↦ ofProp (w ∉ capitalParis))
         (.ofTrivalent kingBald)).log := by
   have hk : hasKing ∈ (Presupposing.ofTrivalent kingBald).log := by
-    simp [Presupposing.ofTrivalent, support_kingBald]
+    simp [Presupposing.ofTrivalent, compl_gapExt_kingBald]
   refine ⟨(mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩),
     (mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩)⟩
   · exact absurd (h (show France.parisNoKing ∈ _ by
@@ -478,7 +480,7 @@ theorem hasKing_mem_log_conj_35 :
 
 -- (35b)
 theorem meetMiddle_35b :
-    (ofProp (France.parisNoKing ∉ capitalParis)).meetMiddle (kingBald .parisNoKing) = -1 := by
+    (ofProp (France.parisNoKing ∉ capitalParis)).meetMiddle (kingBald .parisNoKing) = .false := by
   simp [kingBald]
 
 /-! ### Propositional attitudes (§11)

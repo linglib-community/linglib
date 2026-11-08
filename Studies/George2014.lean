@@ -62,7 +62,7 @@ says *perm-quantifier* for *pc-determiner*. Propositions 5 and 7 say `Q` for `D`
 
 namespace George2014
 
-open Quantifier Quantifier.Det SignType SimpleGraph
+open Quantifier Quantifier.Det SimpleGraph
 open Trivalent hiding UniversalEntailment UniversalAntiEntailment UniversalPresupposition
 
 variable {α : Type*} {Q : Quantifier α}

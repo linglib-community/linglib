@@ -49,7 +49,7 @@ variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set
 /-! ### The exclusive *yak('i)*, section 7.1 -/
 
 /-- *Not only Dimza built a house* still entails that Dimza built a house (29). -/
-theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C id p w ≠ 0) : w ∈ p :=
+theorem prejacent_projects {w : W} (h : (only (· ⊆ ·) C id p w)ᶜ ≠ .undefined) : w ∈ p :=
   atLeast_subset_subset (by simpa using h)
 
 /-- The answers of (11) are the nonempty conjunctions of a set of atomic answers. -/
@@ -58,10 +58,10 @@ def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
 
 /-- On the entailment scale over conjunctions of atomic answers, *yak('i)* is true exactly where the
 prejacent is the only true atom ((166) and (25)). -/
-theorem posSupport_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    posSupport (only (· ⊆ ·) (conjunctions atoms) id p) = exh atoms p := by
+theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    Trivalent.posExt (only (· ⊆ ·) (conjunctions atoms) id p) = exh atoms p := by
   ext w
-  rw [mem_posSupport, only_eq_one_iff]
+  rw [Trivalent.mem_posExt, only_eq_true_iff]
   constructor
   · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
     refine ⟨hq hw, fun r hr hwr x hx ↦ ?_⟩
@@ -78,13 +78,14 @@ theorem posSupport_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
 open Classical in
 /-- *ke('e)* 'also' (45) makes no truth-conditional contribution and presupposes a salient
 antecedent about a different topic situation, one that need not itself be true (46). -/
-noncomputable def ke (salient : Set (Set W)) (topic : Set W → T) : W → SignType :=
-  {_w | ∃ q ∈ salient, topic q ≠ topic p}.indicator fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def ke (salient : Set (Set W)) (topic : Set W → T) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (∃ q ∈ salient, topic q ≠ topic p))
+    (Trivalent.ofProp (w ∈ p))
 
 /-- When every salient antecedent is anaphoric to the host's topic situation, as parallel
 background-marked antecedents are by default, *ke('e)* is undefined ((44) and (49)). -/
-theorem ke_eq_zero_of_anaphoric {salient : Set (Set W)} {topic : Set W → T}
-    (h : ∀ q ∈ salient, topic q = topic p) (w : W) : ke p salient topic w = 0 := by
+theorem ke_eq_undefined_of_anaphoric {salient : Set (Set W)} {topic : Set W → T}
+    (h : ∀ q ∈ salient, topic q = topic p) (w : W) : ke p salient topic w = .undefined := by
   simpa [ke] using h
 
 /-! ### The scalar *har('i)*, section 7.2 -/
@@ -96,13 +97,14 @@ def CImpl (CG q : Set W) : Prop := ¬ CG ⊆ q ∧ CG ∩ p ⊆ q
 open Classical in
 /-- *har('i)* 'even' (17) asserts the prejacent and presupposes that some contextual implication
 of it ranks highest among its alternatives on the salient scale. -/
-noncomputable def har (CG : Set W) (alt : Set W → Set (Set W)) : W → SignType :=
-  {w | ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q'}.indicator fun w ↦
-    SignType.ofProp (w ∈ p)
+noncomputable def har (CG : Set W) (alt : Set W → Set (Set W)) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication
+    (Trivalent.ofProp (∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q'))
+    (Trivalent.ofProp (w ∈ p))
 
 theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
-    (hp : w ∈ p) (h : har S p CG alt w ≠ 0) : ∃ q, CImpl p CG q ∧ w ∈ q :=
-  let ⟨q, hq, _⟩ := Set.mem_of_indicator_ne_zero h
+    (hp : w ∈ p) (h : har S p CG alt w ≠ .undefined) : ∃ q, CImpl p CG q ∧ w ∈ q :=
+  let ⟨q, hq, _⟩ : ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q' := by simpa [har] using h
   ⟨q, hq, hq.2 ⟨hw, hp⟩⟩
 
 end Grubic2015
