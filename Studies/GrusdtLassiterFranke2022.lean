@@ -267,27 +267,27 @@ theorem L0_real_conjAC (s : State) : (L0 .conjAC).real {s} = 0 := by
   rw [L0_apply, ext_conjAC, uniformOn_empty_meas]; rfl
 
 theorem L0_real_conditional_s1 : (L0 .conditional).real {.s1} = 1 / 2 := by
-  rw [L0_apply, ext_conditional, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_conditional, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_real_conditional_s2 : (L0 .conditional).real {.s2} = 1 / 2 := by
-  rw [L0_apply, ext_conditional, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_conditional, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_real_conditional_s3 : (L0 .conditional).real {.s3} = 0 := by
-  rw [L0_apply, ext_conditional, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_conditional, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_real_C_s1 : (L0 .C).real {.s1} = 1 := by
-  rw [L0_apply, ext_C, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_C, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_real_C_s2 : (L0 .C).real {.s2} = 0 := by
-  rw [L0_apply, ext_C, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_C, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_real_C_s3 : (L0 .C).real {.s3} = 0 := by
-  rw [L0_apply, ext_C, measureReal_def, uniformOn_finset_apply_singleton]
+  rw [L0_apply, ext_C, uniformOn_finset_real_singleton]
   simp
 
 theorem L0_ne_top (u : Utt) (s : State) : L0 u {s} ≠ ⊤ := by

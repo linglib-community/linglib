@@ -21,7 +21,7 @@ report and inference readings comes from the ordering source (`necessity_of_beli
 evidential does not entail its prejacent, as *must* does not, (9). Section 5 derives the
 presupposition from the present perfect: the consequent state of the event is known at speech
 time, giving the evidence, and the event itself is not, giving its indirectness
-(`ev_ne_zero_of_perfect`), and the domain of quantification lies within the epistemically
+(`ev_ne_undefined_of_perfect`), and the domain of quantification lies within the epistemically
 accessible worlds, so that unlike the counterfactual inference of the past the evidential meaning
 is no implicature (`bestWorlds_subset_accessible`).
 
@@ -60,36 +60,38 @@ open Classical in
 propositions the speaker counts as indirect evidence, and `g` assigns the speaker's beliefs about
 that evidence. The presupposition is that there is such evidence and that it does not establish `p`,
 and the assertion is that `p` holds in every accessible world closest to the beliefs. -/
-noncomputable def Ev (f g : Background W) (p : W → Prop) : W → SignType :=
-  {w | (f w).Nonempty ∧ ¬ Known f w p}.indicator fun w ↦ SignType.ofProp (necessity f g p w)
+noncomputable def Ev (f g : Background W) (p : W → Prop) : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp ((f w).Nonempty ∧ ¬ Known f w p))
+    (Trivalent.ofProp (necessity f g p w))
 
 open Classical in
 /-- Epistemic *must* is the same necessity over what is known, with no presupposition about the kind
 of evidence. -/
-noncomputable def must (f g : Background W) (p : W → Prop) : W → SignType :=
-  fun w ↦ SignType.ofProp (necessity f g p w)
+noncomputable def must (f g : Background W) (p : W → Prop) : W → Trivalent :=
+  fun w ↦ Trivalent.ofProp (necessity f g p w)
 
 variable {f f' g : Background W} {p : W → Prop} {w : W}
 
 -- (8a)
-theorem ev_eq_must_of_ne_zero (h : Ev f g p w ≠ 0) : Ev f g p w = must f g p w := by
-  rw [Ev, Set.indicator_apply_ne_zero] at h
-  rw [Ev, Set.indicator_of_mem h.1, must]
+theorem ev_eq_must_of_ne_undefined (h : Ev f g p w ≠ .undefined) : Ev f g p w = must f g p w := by
+  simp only [Ev, ne_eq, Trivalent.transplication_eq_undefined_iff, not_or, not_not,
+    Trivalent.ofProp_eq_true_iff] at h
+  simp [Ev, must, h.1]
 
 -- (10), (11)
 theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   Background.accessibleWorlds_anti h
 
 -- (12), (13)
-theorem ev_eq_zero_of_no_evidence (h : f w = ∅) : Ev f g p w = 0 :=
-  Set.indicator_of_notMem (fun hp ↦ hp.1.ne_empty h) _
+theorem ev_eq_undefined_of_no_evidence (h : f w = ∅) : Ev f g p w = .undefined :=
+  Trivalent.transplication_eq_undefined_iff.2 (.inl (by simp [h]))
 
 -- (14)
-theorem ev_eq_zero_of_known (h : Known f w p) : Ev f g p w = 0 :=
-  Set.indicator_of_notMem (fun hp ↦ hp.2 h) _
+theorem ev_eq_undefined_of_known (h : Known f w p) : Ev f g p w = .undefined :=
+  Trivalent.transplication_eq_undefined_iff.2 (.inl (by simp [h]))
 
 -- (15), (16)
-theorem support_neg_ev : Function.support (-Ev f g p) = Function.support (Ev f g p) := by
+theorem gapExt_compl_ev : Trivalent.gapExt (Ev f g p)ᶜ = Trivalent.gapExt (Ev f g p) := by
   ext w; simp
 
 theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, q u)
@@ -106,18 +108,16 @@ theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ f.accessibleWorlds w
 
 /-- The evidential is defined when the speaker knows some proposition and does not know `p`, as the
 present perfect supplies (Section 5.2). -/
-theorem ev_ne_zero_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
-    Ev f g p w ≠ 0 := by
-  rw [Ev, Set.indicator_of_mem (s := {w | (f w).Nonempty ∧ ¬ Known f w p}) ⟨⟨_, hp'⟩, hnot⟩]
-  simp
+theorem ev_ne_undefined_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
+    Ev f g p w ≠ .undefined := by
+  simp [Ev, show (f w).Nonempty from ⟨_, hp'⟩, hnot]
 
 -- (9)
 theorem ev_not_entails :
     ∃ (f : Background (Fin 2)) (g : Background (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
-      Ev f g p w = 1 ∧ ¬ p w := by
+      Ev f g p w = .true ∧ ¬ p w := by
   refine ⟨fun _ ↦ {fun _ ↦ True}, fun _ ↦ {fun u ↦ u = 1}, (· = 1), 0, ?_, by decide⟩
-  simp only [Ev, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
-    SignType.ofProp_eq_one_iff]
+  simp only [Ev, Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
   refine ⟨⟨by simp, ?_⟩, ?_⟩
   · intro h
     exact absurd (h 0 (by simp)) (by decide)

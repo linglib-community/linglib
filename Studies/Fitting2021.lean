@@ -23,7 +23,7 @@ bilattice with conflation are the first factor of its representation as a produc
 bifilter for every prime filter `D` (Lemma 8.9.2, `PrimeFilter.prod`), and `C⟨L ⊙ L, D × L⟩` is
 the logic `⟨L, D⟩` itself (Proposition 8.9.3, `cValid_prod_iff`). Hence every logical De Morgan
 algebra has a strict/tolerant counterpart with the same consequence relation (Proposition 8.10.1,
-`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `SignType`, and `FDE` from
+`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `Trivalent`, and `FDE` from
 `FOUR` (Examples 8.10.2–8.10.5).
 
 ## Implementation notes
@@ -419,7 +419,7 @@ instance : DecidablePred (· ∈ classicalFilter) := fun b ↦ inferInstanceAs (
 
 /-- The designated values `{t, ⊤}` of `FOUR` ([fitting-2021] Example 8.7.4) are `{true} × Bool`
 ([fitting-2021] Example 8.10.2). -/
-abbrev fourBifilter : PrimeBifilter FOUR := classicalFilter.prod
+noncomputable abbrev fourBifilter : PrimeBifilter FOUR := classicalFilter.prod
 
 theorem mem_fourBifilter_iff : ∀ x : FOUR, x ∈ fourBifilter ↔ x = FOUR.T ∨ x = FOUR.I := by
   decide
@@ -443,69 +443,72 @@ theorem four_cut_not_local {α : Type*} (p : α) :
       STSatisfies fourBifilter v ([] : List (Fml α)) [] :=
   cut_not_local_prod classicalFilter p
 
-/-- `K3`, Kleene's strong three-valued logic, is `SignType` with `{1}` designated
+/-- `K3`, Kleene's strong three-valued logic, is `Trivalent` with `{true}` designated
 ([fitting-2021] Example 8.10.3). -/
-def k3Filter : PrimeFilter SignType where
-  carrier := {a | a = 1}
-  nonempty := ⟨1, rfl⟩
-  ne_univ h := absurd (h ▸ Set.mem_univ (-1)) (by decide)
+def k3Filter : PrimeFilter Trivalent where
+  carrier := {a | a = .true}
+  nonempty := ⟨.true, rfl⟩
+  ne_univ h := absurd (h ▸ Set.mem_univ Trivalent.false) (by decide)
   inf_mem_iff {a b} := by revert a b; decide
   sup_mem_iff {a b} := by revert a b; decide
 
-instance : DecidablePred (· ∈ k3Filter) := fun a ↦ inferInstanceAs (Decidable (a = 1))
+instance : DecidablePred (· ∈ k3Filter) := fun a ↦ inferInstanceAs (Decidable (a = .true))
 
-/-- `LP`, the logic of paradox of [priest-1979], is `SignType` with `{0, 1}` (Fitting's `{½, 1}`)
-designated ([fitting-2021] Example 8.10.4). -/
-def lpFilter : PrimeFilter SignType where
-  carrier := {a | a ≠ -1}
-  nonempty := ⟨1, by decide⟩
-  ne_univ h := absurd (h ▸ Set.mem_univ (-1)) (by decide)
+/-- `LP`, the logic of paradox of [priest-1979], is `Trivalent` with `{undefined, true}`
+(Fitting's `{½, 1}`) designated ([fitting-2021] Example 8.10.4). -/
+def lpFilter : PrimeFilter Trivalent where
+  carrier := {a | a ≠ .false}
+  nonempty := ⟨.true, by decide⟩
+  ne_univ h := absurd (h ▸ Set.mem_univ Trivalent.false) (by decide)
   inf_mem_iff {a b} := by revert a b; decide
   sup_mem_iff {a b} := by revert a b; decide
 
-instance : DecidablePred (· ∈ lpFilter) := fun a ↦ inferInstanceAs (Decidable (a ≠ -1))
+instance : DecidablePred (· ∈ lpFilter) := fun a ↦ inferInstanceAs (Decidable (a ≠ .false))
 
-/-- The bilattice `NINE = SignType ⊙ SignType` of Figure 4 ([fitting-2021] Example 8.10.3). -/
-abbrev NINE := SignType ⊙ SignType
+/-- The bilattice `NINE = Trivalent ⊙ Trivalent` of Figure 4 ([fitting-2021] Example 8.10.3). -/
+abbrev NINE := Trivalent ⊙ Trivalent
 
 -- §8.5 [fitting-2021]
 theorem nine_isExact_iff : ∀ x : NINE,
-    IsExact x ↔ x = mk (-1) 1 ∨ x = mk 0 0 ∨ x = mk 1 (-1) := by
+    IsExact x ↔ x = mk .false .true ∨ x = mk .undefined .undefined ∨ x = mk .true .false := by
   decide
 
 -- §8.5 [fitting-2021]
 theorem nine_isConsistent_iff : ∀ x : NINE, IsConsistent x ↔ IsExact x ∨
-    x = mk (-1) 0 ∨ x = mk (-1) (-1) ∨ x = mk 0 (-1) := by
+    x = mk .false .undefined ∨ x = mk .false .false ∨ x = mk .undefined .false := by
   decide
 
 -- §8.5 [fitting-2021]
 theorem nine_isAnticonsistent_iff : ∀ x : NINE, IsAnticonsistent x ↔ IsExact x ∨
-    x = mk 0 1 ∨ x = mk 1 1 ∨ x = mk 1 0 := by
+    x = mk .undefined .true ∨ x = mk .true .true ∨ x = mk .true .undefined := by
   decide
 
 -- Examples 8.7.5 and 8.10.4 [fitting-2021]
 theorem nine_bifilters : (∀ x : NINE, x ∈ k3Filter.prod ↔
-      x = mk 1 (-1) ∨ x = mk 1 0 ∨ x = mk 1 1) ∧
-    ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk 0 (-1) ∨ x = mk 1 (-1) ∨
-      x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
+      x = mk .true .false ∨ x = mk .true .undefined ∨ x = mk .true .true) ∧
+    ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk .undefined .false ∨ x = mk .true .false ∨
+      x = mk .undefined .undefined ∨ x = mk .true .undefined ∨ x = mk .undefined .true ∨
+      x = mk .true .true := by
   decide
 
 -- Example 8.7.5 [fitting-2021]
-theorem k3_strict_iff : ∀ x : NINE, StrictlyDesignated k3Filter.prod x ↔ x = mk 1 (-1) := by
+theorem k3_strict_iff :
+    ∀ x : NINE, StrictlyDesignated k3Filter.prod x ↔ x = mk .true .false := by
   decide
 
 -- Example 8.10.4 [fitting-2021]
 theorem lp_designated : (∀ x : NINE, StrictlyDesignated lpFilter.prod x ↔
-      x = mk 0 0 ∨ x = mk 1 (-1)) ∧
-    ∀ x : NINE, TolerantlyDesignated lpFilter.prod x ↔ x = mk 1 (-1) ∨
-      x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
+      x = mk .undefined .undefined ∨ x = mk .true .false) ∧
+    ∀ x : NINE, TolerantlyDesignated lpFilter.prod x ↔ x = mk .true .false ∨
+      x = mk .undefined .undefined ∨ x = mk .true .undefined ∨ x = mk .undefined .true ∨
+      x = mk .true .true := by
   decide
 
 -- Example 8.10.4 [fitting-2021]
 theorem lp_explosion_fails :
     ¬ STValid lpFilter.prod [.atom true, .not (.atom true)] [.atom false] := fun h ↦
-  absurd (h ⟨fun b ↦ if b then mk 0 0 else mk (-1) 1, by decide⟩ (by decide))
-    (by decide)
+  absurd (h ⟨fun b ↦ if b then mk .undefined .undefined else mk .false .true, by decide⟩
+    (by decide)) (by decide)
 
 /-- `FDE` is the logical De Morgan algebra `FOUR` under the truth order with `{t, ⊤}` designated
 ([fitting-2021] Example 8.10.5). -/

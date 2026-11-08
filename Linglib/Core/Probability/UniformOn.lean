@@ -1,166 +1,162 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Probability.UniformOn
-public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
-# The uniform measure on a finite type
+# The uniform measure on a finite set
 
-Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons, finite
-sets and predicates, in `ℝ≥0∞` and on reals. On a finite type its almost-everywhere filter is
-`⊤`, so it dominates every measure.
+`ProbabilityTheory.uniformOn s` gives `t` the proportion $|s ∩ t| / |s|$, and is `0` when `s` is
+infinite. This file evaluates it in `ℝ≥0∞` and on reals, at points, finsets and predicates, and
+computes its almost-everywhere filter, the principal filter of `s`. On `Set.univ` of a finite type
+that filter is `⊤`, so the uniform measure there dominates every measure.
+
+## TODO
+
+Choose a simp normal form for the evaluations at points, as mathlib's `uniformOfFinset` does.
 -/
 
 public section
 
-open MeasureTheory ProbabilityTheory
-open scoped ENNReal
+open MeasureTheory Filter Set
+open scoped ENNReal Finset
 
-namespace MeasureTheory
+namespace ProbabilityTheory
 
-private theorem ncard_ne_zero_of_nonempty {W : Type*} {s : Set W} (hs : s.Finite)
-    (hne : s.Nonempty) :
-    (s.ncard : ℝ≥0∞) ≠ 0 := by
-  simpa using ((Set.ncard_pos hs).2 hne).ne'
+variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω] {s t : Set Ω} {ω : Ω}
 
-variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W]
+/-! ### Proportions -/
 
-theorem uniformOn_finset_apply_singleton [DecidableEq W] (A : Finset W) (w : W) :
-    uniformOn ↑A {w} = if w ∈ A then (A.card : ℝ≥0∞)⁻¹ else 0 := by
-  rw [← Finset.coe_singleton, uniformOn_apply_finset]
-  by_cases h : w ∈ A <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
-    div_eq_mul_inv]
+/-- The uniform measure on `s` gives `t` the proportion of `s` lying in `t`. An infinite `s` makes
+both sides `0`. -/
+theorem uniformOn_apply (s t : Set Ω) : uniformOn s t = (s ∩ t).encard / s.encard := by
+  rcases s.finite_or_infinite with hs | hs
+  · rw [uniformOn, cond_apply hs.measurableSet, Measure.count_apply hs.measurableSet,
+      Measure.count_apply (hs.inter_of_left t).measurableSet, ENNReal.div_eq_inv_mul]
+  · simp [uniformOn_eq_zero.2 (.inl hs), hs.encard_eq]
 
-theorem uniformOn_finset_real_singleton [DecidableEq W] (A : Finset W) (w : W) :
-    (uniformOn (A : Set W)).real {w} = if w ∈ A then (A.card : ℝ)⁻¹ else 0 := by
-  rw [measureReal_def, uniformOn_finset_apply_singleton]
-  split_ifs <;> simp
-
-theorem uniformOn_finset_real_singleton_le_iff [DecidableEq W] {A B : Finset W} {w : W}
-    (hA : w ∈ A) (hB : w ∈ B) :
-    (uniformOn (A : Set W)).real {w} ≤ (uniformOn (B : Set W)).real {w} ↔ B.card ≤ A.card := by
-  rw [uniformOn_finset_real_singleton, uniformOn_finset_real_singleton, ite_eq_left hA,
-    ite_eq_left hB, inv_le_inv₀ (by exact_mod_cast Finset.card_pos.mpr ⟨w, hA⟩)
-      (by exact_mod_cast Finset.card_pos.mpr ⟨w, hB⟩), Nat.cast_le]
-
-theorem uniformOn_finset_real_singleton_lt_of_ssubset [DecidableEq W] {A B : Finset W} {w : W}
-    (h : B ⊂ A) (hw : w ∈ B) :
-    (uniformOn (A : Set W)).real {w} < (uniformOn (B : Set W)).real {w} :=
-  lt_of_not_ge fun hle ↦
-    (Finset.card_lt_card h).not_ge ((uniformOn_finset_real_singleton_le_iff hw (h.1 hw)).mp hle)
-
-theorem uniformOn_real_apply_of_finite {s : Set W} (hs : s.Finite) (e : Set W) :
-    (uniformOn s).real e = (s ∩ e).ncard / s.ncard := by
-  rw [measureReal_def, uniformOn, cond_apply hs.measurableSet,
-    Measure.count_apply_finite _ (hs.inter_of_left _), Measure.count_apply_finite _ hs,
-    ← Set.ncard_eq_toFinset_card _ (hs.inter_of_left _), ← Set.ncard_eq_toFinset_card _ hs,
-    ENNReal.toReal_mul,
-    ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
-
-theorem uniformOn_real_apply [Finite W] (s e : Set W) :
-    (uniformOn s).real e = (s ∩ e).ncard / s.ncard :=
-  uniformOn_real_apply_of_finite s.toFinite e
-
-theorem uniformOn_finset_real_setOf [Finite W] (A : Finset W) (p : W → Prop) [DecidablePred p] :
-    (uniformOn (A : Set W)).real {w | p w} = (A.filter p).card / A.card := by
-  rw [uniformOn_real_apply, Set.ncard_coe_finset]
-  congr 2
-  rw [← Set.ncard_coe_finset, Finset.coe_filter]
-  rfl
-
-theorem uniformOn_absolutelyContinuous_of_subset {A B : Set W} (hB : B.Finite) (hAB : A ⊆ B) :
-    uniformOn A ≪ uniformOn B := fun s hs ↦ by
-  rw [uniformOn_eq_zero_iff hB] at hs
-  rw [uniformOn_eq_zero_iff (hB.subset hAB)]
-  exact Set.eq_empty_of_subset_empty (hs ▸ Set.inter_subset_inter_left s hAB)
-
-/-! ### Proportions of a finite set
-
-On a finite set `s` the uniform measure gives `t` the proportion `|s ∩ t| / |s|`, so a bound on the
-measure is a bound on `|s ∩ t|` scaled by `|s|`. -/
-
-section Finite
-
-variable {s t : Set W}
-
-theorem uniformOn_apply_of_finite (hs : s.Finite) (t : Set W) :
+theorem uniformOn_apply_of_finite (hs : s.Finite) (t : Set Ω) :
     uniformOn s t = (s ∩ t).ncard / s.ncard := by
-  rw [uniformOn, cond_apply hs.measurableSet, Measure.count_apply_finite _ hs,
-    Measure.count_apply_finite _ (hs.inter_of_left t), ← Set.ncard_eq_toFinset_card _ hs,
-    ← Set.ncard_eq_toFinset_card _ (hs.inter_of_left t), ENNReal.div_eq_inv_mul]
+  rw [uniformOn_apply, ← hs.cast_ncard_eq, ← (hs.inter_of_left t).cast_ncard_eq]
+  simp only [ENat.toENNReal_coe]
 
-theorem uniformOn_finset_setOf (F : Finset W) (p : W → Prop) [DecidablePred p] :
-    uniformOn (F : Set W) {x | p x} = (F.filter p).card / F.card := by
-  have : (F : Set W) ∩ {x | p x} = ↑(F.filter p) := by rw [Finset.coe_filter]; rfl
-  rw [uniformOn_apply_of_finite F.finite_toSet, this, Set.ncard_coe_finset, Set.ncard_coe_finset]
+theorem uniformOn_real_apply_of_finite (hs : s.Finite) (t : Set Ω) :
+    (uniformOn s).real t = (s ∩ t).ncard / s.ncard := by
+  rw [measureReal_def, uniformOn_apply_of_finite hs, ENNReal.toReal_div, ENNReal.toReal_natCast,
+    ENNReal.toReal_natCast]
 
-theorem le_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
-    θ ≤ uniformOn s t ↔ θ * s.ncard ≤ (s ∩ t).ncard := by
-  rw [uniformOn_apply_of_finite hs, ENNReal.le_div_iff_mul_le
-    (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
+theorem uniformOn_real_apply [Finite Ω] (s t : Set Ω) :
+    (uniformOn s).real t = (s ∩ t).ncard / s.ncard :=
+  uniformOn_real_apply_of_finite s.toFinite t
+
+theorem uniformOn_ne_zero_iff (hs : s.Finite) : uniformOn s t ≠ 0 ↔ (s ∩ t).Nonempty :=
+  (uniformOn_eq_zero_iff hs).not.trans nonempty_iff_ne_empty.symm
+
+theorem uniformOn_eq_one_iff (hs : s.Finite) (hne : s.Nonempty) : uniformOn s t = 1 ↔ s ⊆ t :=
+  ⟨pred_true_of_uniformOn_eq_one, uniformOn_eq_one_of hs hne⟩
+
+theorem uniformOn_apply_singleton_of_mem (hs : s.Finite) (hω : ω ∈ s) :
+    uniformOn s {ω} = (s.ncard : ℝ≥0∞)⁻¹ := by
+  rw [uniformOn_apply_of_finite hs, inter_singleton_of_mem hω, ncard_singleton, Nat.cast_one,
+    one_div]
+
+theorem uniformOn_apply_singleton_of_notMem (hω : ω ∉ s) : uniformOn s {ω} = 0 := by
+  rw [uniformOn, cond_apply' (measurableSet_singleton ω), inter_singleton_of_notMem hω,
+    measure_empty, mul_zero]
 
 theorem uniformOn_cond (hs : s.Finite) (ht : MeasurableSet t) :
     (uniformOn s)[|t] = uniformOn (s ∩ t) := by
   rw [uniformOn, uniformOn,
     cond_cond_eq_cond_inter' hs.measurableSet ht (Measure.count_apply_lt_top.2 hs).ne]
 
-theorem uniformOn_univ_cond [Finite W] (A : Set W) :
-    (uniformOn (Set.univ : Set W))[|A] = uniformOn A := by
-  rw [uniformOn_cond Set.finite_univ (Set.toFinite A).measurableSet, Set.univ_inter]
+theorem uniformOn_univ_cond [Finite Ω] (t : Set Ω) :
+    (uniformOn (univ : Set Ω))[|t] = uniformOn t := by
+  rw [uniformOn_cond finite_univ t.toFinite.measurableSet, univ_inter]
 
-theorem uniformOn_eq_one_iff (hs : s.Finite) (hne : s.Nonempty) : uniformOn s t = 1 ↔ s ⊆ t :=
-  ⟨pred_true_of_uniformOn_eq_one, uniformOn_eq_one_of hs hne⟩
+/-! ### Null sets -/
 
-theorem uniformOn_eq_inv_ncard_iff (hs : s.Finite) (hne : s.Nonempty) :
-    uniformOn s t = (s.ncard : ℝ≥0∞)⁻¹ ↔ (s ∩ t).ncard = 1 := by
-  rw [uniformOn_apply_of_finite hs, ENNReal.div_eq_inv_mul]
-  nth_rewrite 2 [← mul_one (s.ncard : ℝ≥0∞)⁻¹]
-  rw [ENNReal.mul_right_inj (by simp) (by simpa using ncard_ne_zero_of_nonempty hs hne),
-    Nat.cast_eq_one]
+/-- A set is conull for the uniform measure on a finite set `s` exactly when it contains `s`. -/
+theorem ae_uniformOn (hs : s.Finite) : ae (uniformOn s) = 𝓟 s := by
+  ext t
+  rw [mem_ae_iff, mem_principal, uniformOn_eq_zero_iff hs, ← sdiff_eq, sdiff_eq_empty]
 
-end Finite
+theorem uniformOn_absolutelyContinuous_of_subset (ht : t.Finite) (hst : s ⊆ t) :
+    uniformOn s ≪ uniformOn t := by
+  rw [← Measure.ae_le_iff_absolutelyContinuous, ae_uniformOn ht, ae_uniformOn (ht.subset hst)]
+  exact principal_mono.2 hst
+
+/-! ### Finsets -/
+
+theorem uniformOn_finset_apply_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
+    uniformOn ↑s {ω} = if ω ∈ s then (#s : ℝ≥0∞)⁻¹ else 0 := by
+  rw [← Finset.coe_singleton, uniformOn_apply_finset]
+  split_ifs with h <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
+    div_eq_mul_inv]
+
+theorem uniformOn_finset_real_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
+    (uniformOn (s : Set Ω)).real {ω} = if ω ∈ s then (#s : ℝ)⁻¹ else 0 := by
+  rw [measureReal_def, uniformOn_finset_apply_singleton]
+  split_ifs <;> simp
+
+theorem uniformOn_finset_setOf (s : Finset Ω) (p : Ω → Prop) [DecidablePred p] :
+    uniformOn (s : Set Ω) {ω | p ω} = #(s.filter p) / #s := by
+  classical
+  rw [← uniformOn_inter_self s.finite_toSet, show (s : Set Ω) ∩ {ω | p ω} = ↑(s.filter p) by
+    ext; simp, uniformOn_apply_finset, Finset.inter_eq_right.2 (Finset.filter_subset _ _)]
+
+theorem uniformOn_finset_real_setOf (s : Finset Ω) (p : Ω → Prop) [DecidablePred p] :
+    (uniformOn (s : Set Ω)).real {ω | p ω} = #(s.filter p) / #s := by
+  rw [measureReal_def, uniformOn_finset_setOf, ENNReal.toReal_div, ENNReal.toReal_natCast,
+    ENNReal.toReal_natCast]
 
 /-! ### The uniform measure on a finite type -/
 
-variable [Fintype W]
+section Finite
 
-theorem uniformOn_univ_apply_singleton (w : W) :
-    uniformOn (Set.univ : Set W) {w} = (Fintype.card W : ℝ≥0∞)⁻¹ := by
-  rw [uniformOn_univ, Measure.count_singleton, one_div]
+variable [Finite Ω]
 
-theorem uniformOn_univ_singleton_ne_zero (w : W) : uniformOn (Set.univ : Set W) {w} ≠ 0 := by
-  rw [uniformOn_univ_apply_singleton]
-  exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+theorem uniformOn_univ_singleton_ne_zero (ω : Ω) : uniformOn (univ : Set Ω) {ω} ≠ 0 :=
+  (uniformOn_ne_zero_iff finite_univ).2 ⟨ω, trivial, rfl⟩
 
 @[simp]
-theorem ae_uniformOn_univ : ae (uniformOn (Set.univ : Set W)) = ⊤ :=
-  ae_eq_top.2 uniformOn_univ_singleton_ne_zero
+theorem ae_uniformOn_univ : ae (uniformOn (univ : Set Ω)) = ⊤ := by
+  rw [ae_uniformOn finite_univ, principal_univ]
 
-theorem absolutelyContinuous_uniformOn_univ (μ : Measure W) : μ ≪ uniformOn Set.univ :=
+theorem absolutelyContinuous_uniformOn_univ (μ : Measure Ω) : μ ≪ uniformOn univ :=
   (le_top.trans_eq ae_uniformOn_univ.symm).absolutelyContinuous_of_ae
 
-theorem uniformOn_univ_singleton_eq (w w' : W) :
-    uniformOn (Set.univ : Set W) {w} = uniformOn Set.univ {w'} := by
+end Finite
+
+section Fintype
+
+variable [Fintype Ω]
+
+theorem uniformOn_univ_apply_singleton (ω : Ω) :
+    uniformOn (univ : Set Ω) {ω} = (Fintype.card Ω : ℝ≥0∞)⁻¹ := by
+  rw [uniformOn_univ, Measure.count_singleton, one_div]
+
+theorem uniformOn_univ_real_singleton (ω : Ω) :
+    (uniformOn (univ : Set Ω)).real {ω} = (Fintype.card Ω : ℝ)⁻¹ := by
+  rw [measureReal_def, uniformOn_univ_apply_singleton, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
+theorem uniformOn_univ_singleton_eq (ω ω' : Ω) :
+    uniformOn (univ : Set Ω) {ω} = uniformOn univ {ω'} := by
   rw [uniformOn_univ_apply_singleton, uniformOn_univ_apply_singleton]
 
-theorem uniformOn_univ_real_singleton (w : W) :
-    (uniformOn (Set.univ : Set W)).real {w} = (Fintype.card W : ℝ)⁻¹ := by
-  rw [measureReal_def, uniformOn_univ, Measure.count_singleton, one_div,
-    ENNReal.toReal_inv, ENNReal.toReal_natCast]
+theorem uniformOn_univ_real_apply (s : Set Ω) :
+    (uniformOn (univ : Set Ω)).real s = s.ncard / Fintype.card Ω := by
+  rw [uniformOn_real_apply, univ_inter, ncard_univ, Nat.card_eq_fintype_card]
 
-theorem uniformOn_univ_real_coe_finset (s : Finset W) :
-    (uniformOn (Set.univ : Set W)).real ↑s = s.card / Fintype.card W := by
-  rw [measureReal_def, uniformOn_univ, Measure.count_apply_finset, ENNReal.toReal_div,
-    ENNReal.toReal_natCast, ENNReal.toReal_natCast]
-
-theorem uniformOn_univ_real_apply (A : Set W) :
-    (uniformOn (Set.univ : Set W)).real A = A.ncard / Fintype.card W := by
-  rw [uniformOn_real_apply, Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
-
-theorem uniformOn_univ_le_iff [Nonempty W] {A B : Set W} :
-    uniformOn (Set.univ : Set W) A ≤ uniformOn Set.univ B ↔ A.ncard ≤ B.ncard := by
+theorem uniformOn_univ_le_iff [Nonempty Ω] :
+    uniformOn (univ : Set Ω) s ≤ uniformOn univ t ↔ s.ncard ≤ t.ncard := by
   rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
     ← measureReal_def, uniformOn_univ_real_apply, uniformOn_univ_real_apply,
     div_le_div_iff_of_pos_right (by exact_mod_cast Fintype.card_pos), Nat.cast_le]
 
-end MeasureTheory
+end Fintype
+
+end ProbabilityTheory

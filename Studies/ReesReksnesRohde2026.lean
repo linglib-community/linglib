@@ -159,7 +159,7 @@ inference under a uniform prior. -/
 example : (uniformOn (Set.univ : Set Past)).real {.different} <
     (((Speaker.spoke ⟨fun | .same => 0 | .different => 1, 1⟩)†(uniformOn Set.univ)) true).real
       {.different} := by
-  have hd := uniformOn_univ_singleton_ne_zero (W := Past) .different
+  have hd := uniformOn_univ_singleton_ne_zero (Ω := Past) .different
   refine (Speaker.prior_lt_posterior_iff _ ?_ (uniformOn_univ_singleton_ne_zero _) hd).2
     ⟨show (0 : ℝ) < 1 by norm_num, le_rfl⟩
   rw [Speaker.spoke_comp_apply_true]

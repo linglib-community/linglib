@@ -5,16 +5,17 @@ public import Linglib.Logic.Trivalent.Pointwise
 /-!
 # Presupposition in trivalent semantics
 
-A sentence with a presupposition denotes a trivalent proposition `W → SignType`, true or false
-where its presupposition holds and `0` where it fails. A trigger presupposing `A` and asserting
-`B` is the indicator `{w | A w}.indicator fun w ↦ ofProp (B w)`, its presupposition is its support
-`Function.support p`, and it holds at `w` when `p w = 1`. Theories of projection differ in their
-connectives: the classical connectives are Weak Kleene (`SignType.meetWeak`), Karttunen's filtering
-connectives are Peters' Middle Kleene (`SignType.meetMiddle`, `SignType.joinMiddle`), Bochvar's
-truth operator is `fun w ↦ ofProp (p w = 1)`, and the rival Strong Kleene and Belnap connectives
-are `⊓`, `⊔`, `SignType.meetBelnap` and `SignType.joinBelnap`. Each projection rule is a
-characterization of its connective (`SignType.meetMiddle_eq_zero_iff` for Karttunen's filtering
-conjunction), and quantified presuppositions project by the trivalent quantifiers of
+A sentence with a presupposition denotes a trivalent proposition `W → Trivalent`, true or false
+where its presupposition holds and undefined where it fails. A trigger presupposing `A` and
+asserting `B` is the transplication `fun w ↦ transplication (ofProp (A w)) (ofProp (B w))`, its
+presupposition is where it is defined, `(Trivalent.gapExt p)ᶜ`, and it holds at `w` when
+`p w = .true`. Theories of projection differ in their
+connectives: the classical connectives are Weak Kleene (`Trivalent.meetWeak`), Karttunen's filtering
+connectives are Peters' Middle Kleene (`Trivalent.meetMiddle`, `Trivalent.joinMiddle`), Bochvar's
+truth operator is `fun w ↦ ofProp (p w = .true)`, and the rival Strong Kleene and Belnap connectives
+are `⊓`, `⊔`, `Trivalent.meetBelnap` and `Trivalent.joinBelnap`. Each projection rule is a
+characterization of its connective (`Trivalent.meetMiddle_eq_undefined_iff` for Karttunen's
+filtering conjunction), and quantified presuppositions project by the trivalent quantifiers of
 `Logic/Trivalent/Pointwise.lean`. Two-dimensional accounts, which read an assertion where its
 presupposition fails, use `TwoDim` (`Semantics/ConventionalImplicature.lean`).
 
@@ -52,25 +53,27 @@ variable {W : Type*}
 /-- Strawson entailment ([von-fintel-1999]) requires `q` to be true wherever `p` is true and `q`
 is defined, the conclusion's presupposition being a premise added to the entailment rather than
 something the entailment delivers. -/
-def strawsonEntails (p q : W → SignType) : Prop := ∀ w, p w = 1 → q w ≠ 0 → q w = 1
+def strawsonEntails (p q : W → Trivalent) : Prop :=
+  ∀ w, p w = .true → q w ≠ .undefined → q w = .true
 
 /-- Strawson entailment is the disjointness of the premise's truth and the conclusion's falsity. -/
-theorem strawsonEntails_iff_disjoint {p q : W → SignType} :
-    strawsonEntails p q ↔ Disjoint (posSupport p) (negSupport q) := by
+theorem strawsonEntails_iff_disjoint {p q : W → Trivalent} :
+    strawsonEntails p q ↔ Disjoint (Trivalent.posExt p) (Trivalent.negExt q) := by
   rw [Set.disjoint_left]
   refine forall_congr' fun w ↦ ⟨fun h hp hq ↦ ?_, fun h hp hq ↦ ?_⟩
-  · simp only [mem_posSupport, mem_negSupport] at hp hq
+  · simp only [Trivalent.mem_posExt, Trivalent.mem_negExt] at hp hq
     simp [hq] at h; exact h hp
-  · simp only [mem_posSupport, mem_negSupport] at h
+  · simp only [Trivalent.mem_posExt, Trivalent.mem_negExt] at h
     cases hw : q w <;> simp_all
 
 /-- Strawson entailment is not transitive, since an undefined middle term discharges both premises
 vacuously, the well-known failure of [von-fintel-1999]'s notion; so it supports no `Preorder`. -/
 theorem strawsonEntails_not_trans :
-    ¬ ∀ p q r : Unit → SignType,
+    ¬ ∀ p q r : Unit → Trivalent,
       strawsonEntails p q → strawsonEntails q r → strawsonEntails p r := by
   intro h
-  have := h 1 0 (-1) (fun _ _ h ↦ absurd rfl h) (fun _ h ↦ by simp at h) () rfl (by simp)
+  have := h (fun _ ↦ .true) (fun _ ↦ .undefined) (fun _ ↦ .false) (fun _ _ h ↦ absurd rfl h)
+    (fun _ h ↦ by simp at h) () rfl (by simp)
   simp at this
 
 /-! ### Definite descriptions -/
@@ -81,36 +84,36 @@ value at the referent where one is selected and undefined elsewhere. Every defin
 instantiates the selector, with the Russellian iota `iota` over a restrictor, over the
 restrictor conjoined with identity to an antecedent, or with Donnellan's attributive use. -/
 noncomputable def presupOfReferent {E : Type*} (referent : W → Option E) (scope : E → W → Prop) :
-    W → SignType :=
-  fun w ↦ (referent w).elim 0 fun e ↦ SignType.ofProp (scope e w)
+    W → Trivalent :=
+  fun w ↦ (referent w).elim .undefined fun e ↦ Trivalent.ofProp (scope e w)
 
 section PresupOfReferent
 
 variable {E : Type*} {referent : W → Option E} {scope : E → W → Prop} {w : W}
 
-@[simp] theorem presupOfReferent_eq_zero_iff :
-    presupOfReferent referent scope w = 0 ↔ referent w = none := by
+@[simp] theorem presupOfReferent_eq_undefined_iff :
+    presupOfReferent referent scope w = .undefined ↔ referent w = none := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
-@[simp] theorem presupOfReferent_eq_one_iff :
-    presupOfReferent referent scope w = 1 ↔ ∃ e, referent w = some e ∧ scope e w := by
+@[simp] theorem presupOfReferent_eq_true_iff :
+    presupOfReferent referent scope w = .true ↔ ∃ e, referent w = some e ∧ scope e w := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
-@[simp] theorem presupOfReferent_eq_neg_one_iff :
-    presupOfReferent referent scope w = -1 ↔ ∃ e, referent w = some e ∧ ¬ scope e w := by
+@[simp] theorem presupOfReferent_eq_false_iff :
+    presupOfReferent referent scope w = .false ↔ ∃ e, referent w = some e ∧ ¬ scope e w := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
 /-- Negation is a hole for the presupposition of a definite. -/
 theorem presupOfReferent_not :
-    presupOfReferent referent (fun e w ↦ ¬ scope e w) w = -presupOfReferent referent scope w :=
-  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp)
+    presupOfReferent referent (fun e w ↦ ¬ scope e w) w = (presupOfReferent referent scope w)ᶜ :=
+  Trivalent.eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
 
 theorem presupOfReferent_of_some {e : E} (h : referent w = some e) :
-    presupOfReferent referent scope w = SignType.ofProp (scope e w) := by
+    presupOfReferent referent scope w = Trivalent.ofProp (scope e w) := by
   simp [presupOfReferent, h]
 
 theorem presupOfReferent_of_none (h : referent w = none) :
-    presupOfReferent referent scope w = 0 := by
+    presupOfReferent referent scope w = .undefined := by
   simp [presupOfReferent, h]
 
 end PresupOfReferent

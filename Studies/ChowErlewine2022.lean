@@ -113,7 +113,7 @@ def TeachWorld.taught (w : TeachWorld) : Individual → Taught
 /-- An LF parse is an operator spine over a scalar leaf. The leaf carries the denotation of the
 scalar item and of its Horn-scale mate, both predicated of a focus individual `F`. -/
 inductive Parse (F W : Type) where
-  | lex (den alt : F → (W → SignType))
+  | lex (den alt : F → (W → Trivalent))
   | exh (t : Parse F W)
   | not (t : Parse F W)
   | also (t : Parse F W)
@@ -125,33 +125,33 @@ variable {F W : Type} [Fintype W] [DecidableEq W]
 strong Kleene (a presupposition hole), and *also* presupposes that its scope holds of the salient
 focus alternative `sal x` ([chow-erlewine-2022] section 2, following Kripke and Heim). -/
 def Parse.interpWithMate (sal : F → F) :
-    Parse F W → F → (W → SignType) × (W → SignType)
+    Parse F W → F → (W → Trivalent) × (W → Trivalent)
   | .lex den alt, x => (den x, alt x)
   | .not t, x =>
       let (p, q) := t.interpWithMate sal x
-      (fun w ↦ -p w, fun w ↦ -q w)
+      (fun w ↦ (p w)ᶜ, fun w ↦ (q w)ᶜ)
   | .exh t, x =>
       let (p, q) := t.interpWithMate sal x
       (Trivalent.exh2 (fun _ : Unit ↦ q) p, Trivalent.exh2 (fun _ : Unit ↦ p) q)
   | .also t, x =>
       let pres := t.interpWithMate sal (sal x)
       let (p, q) := t.interpWithMate sal x
-      (fun w ↦ if pres.1 w = 1 then p w else 0,
-       fun w ↦ if pres.2 w = 1 then q w else 0)
+      (fun w ↦ if pres.1 w = .true then p w else .undefined,
+       fun w ↦ if pres.2 w = .true then q w else .undefined)
 
 /-- The trivalent interpretation of a parse, about the focus individual `x`. -/
-def Parse.interp (sal : F → F) (t : Parse F W) (x : F) : (W → SignType) :=
+def Parse.interp (sal : F → F) (t : Parse F W) (x : F) : (W → Trivalent) :=
   (t.interpWithMate sal x).1
 
 /-- The parse's presuppositions are met throughout a context when no context world leaves it
 undefined. Antecedent contexts are the worlds compatible with the antecedent sentence, including
 that sentence's own implicatures. -/
 def Parse.FelicitousIn (sal : F → F) (t : Parse F W) (x : F) (ctx : Finset W) : Prop :=
-  ∀ w ∈ ctx, t.interp sal x w ≠ 0
+  ∀ w ∈ ctx, t.interp sal x w ≠ .undefined
 
 instance (sal : F → F) (t : Parse F W) (x : F) (ctx : Finset W) :
     Decidable (t.FelicitousIn sal x ctx) :=
-  inferInstanceAs (Decidable (∀ w ∈ ctx, t.interp sal x w ≠ 0))
+  inferInstanceAs (Decidable (∀ w ∈ ctx, t.interp sal x w ≠ .undefined))
 
 /-! ### Adjunction sites and generalization (9) -/
 
@@ -176,8 +176,8 @@ adjunction position with `i` operators above it; a site commands the trigger iff
 `i ≤ triggerDepth`. The trigger interprets in its base position throughout, so movement (the
 paper's (7)) shows up only in `triggerDepth`. -/
 structure BaseClause (F W : Type) where
-  den : F → (W → SignType)
-  alt : F → (W → SignType)
+  den : F → (W → Trivalent)
+  alt : F → (W → Trivalent)
   ops : List ClauseOp
   triggerDepth : ℕ
 
@@ -257,10 +257,10 @@ def SITrigger.feature : SITrigger → ExhFeature
 /-! ### Section 2: the *also* diagnostic with disjunction -/
 
 /-- "teaches Arabic or Basque", of the focus individual. -/
-def orLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofProp (w.taught x).either
+def orLex : Individual → (TeachWorld → Trivalent) := fun x w ↦ .ofProp (w.taught x).either
 
 /-- "teaches Arabic and Basque", of the focus individual. -/
-def andLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofProp (w.taught x).both
+def andLex : Individual → (TeachWorld → Trivalent) := fun x w ↦ .ofProp (w.taught x).both
 
 /-- The base clause of (3) is *[Nina]F also teaches Arabic or Basque*, with *also* above the
 in-situ trigger. -/
@@ -276,22 +276,22 @@ def antecedent (p : Taught → Bool) : Finset TeachWorld :=
 
 -- (1)
 theorem exh_or_direct :
-    ∀ w, (Parse.exh teachOr.leaf).interp Individual.other .nina w = 1 ↔
+    ∀ w, (Parse.exh teachOr.leaf).interp Individual.other .nina w = .true ↔
       w.nina.exactlyOne := by decide
 
 -- (4)
 theorem also_exh_presup :
-    ∀ w, (teachOr.withExhAt 1).interp Individual.other .nina w ≠ 0 ↔
+    ∀ w, (teachOr.withExhAt 1).interp Individual.other .nina w ≠ .undefined ↔
       w.mira.exactlyOne := by decide
 
 -- (5)
 theorem exh_over_also_presup :
-    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w ≠ 0 ↔
+    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w ≠ .undefined ↔
       w.mira.both := by decide
 
 -- (5)
 theorem exh_over_also_true_iff :
-    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w = 1 ↔
+    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w = .true ↔
       (w.mira.both ∧ w.nina.either ∧ ¬ w.nina.both) := by decide
 
 -- (3)
@@ -327,7 +327,7 @@ theorem negConj_site :
 
 -- (18b)
 theorem si_under_also_true_iff :
-    ∀ w, (negConj.withExhAt 1).interp Individual.other .nina w = 1 ↔
+    ∀ w, (negConj.withExhAt 1).interp Individual.other .nina w = .true ↔
       (w.mira.exactlyOne ∧ w.nina.exactlyOne) := by decide
 
 -- (16), (18b)

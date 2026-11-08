@@ -48,7 +48,7 @@ and, below a common consistent bound, [under gullibility](##isConsistent_kSup).
 
 @[expose] public section
 
-open Bilattice Product SignType
+open Bilattice Product Trivalent
 
 namespace Fitting1994
 
@@ -108,26 +108,26 @@ end Strong
 
 /-- On Kleene's values the guarded conjunction is the Lisp conjunction, the Middle Kleene
 `meetMiddle` (pp. 120–121). -/
-theorem landL_toFour : ∀ a b : SignType, landL (toFour a) (toFour b) =
-    toFour (SignType.meetMiddle a b) := by decide
+theorem landL_toFour : ∀ a b : Trivalent, landL (toFour a) (toFour b) =
+    toFour (Trivalent.meetMiddle a b) := by decide
 
 -- pp. 120–121
-theorem lorL_toFour : ∀ a b : SignType, lorL (toFour a) (toFour b) =
-    toFour (SignType.joinMiddle a b) := by decide
+theorem lorL_toFour : ∀ a b : Trivalent, lorL (toFour a) (toFour b) =
+    toFour (Trivalent.joinMiddle a b) := by decide
 
 /-- On Kleene's values the consensus of the two Lisp evaluation orders is Weak Kleene
 conjunction (p. 121). -/
-theorem landW_toFour : ∀ a b : SignType, landW (toFour a) (toFour b) =
-    toFour (SignType.meetWeak a b) := by decide
+theorem landW_toFour : ∀ a b : Trivalent, landW (toFour a) (toFour b) =
+    toFour (Trivalent.meetWeak a b) := by decide
 
 -- p. 121
-theorem lorW_toFour : ∀ a b : SignType, lorW (toFour a) (toFour b) =
-    toFour (SignType.joinWeak a b) := by decide
+theorem lorW_toFour : ∀ a b : Trivalent, lorW (toFour a) (toFour b) =
+    toFour (Trivalent.joinWeak a b) := by decide
 
 -- p. 121: Lisp conjunction distributes over Lisp disjunction on Kleene's values
-theorem meetMiddle_joinMiddle_distrib : ∀ a b c : SignType,
-    SignType.meetMiddle a (SignType.joinMiddle b c) =
-      SignType.joinMiddle (SignType.meetMiddle a b) (SignType.meetMiddle a c) := by
+theorem meetMiddle_joinMiddle_distrib : ∀ a b c : Trivalent,
+    Trivalent.meetMiddle a (Trivalent.joinMiddle b c) =
+      Trivalent.joinMiddle (Trivalent.meetMiddle a b) (Trivalent.meetMiddle a c) := by
   decide
 
 -- p. 121: but not on `FOUR`, with `P = R = ⊤` and `Q = ⊥`

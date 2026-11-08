@@ -78,21 +78,21 @@ variable {W : Type*}
     `c` updated by `S` is true in `w`, and is not true otherwise. -/
 def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
-theorem trueWrt_ofTrivalent {p : W → SignType} {c : Set W} {w : W} (hw : w ∈ c)
-    (h : (ofTrivalent p).Admits c) : TrueWrt (ofTrivalent p) c w ↔ p w = 1 :=
+theorem trueWrt_ofTrivalent {p : W → Trivalent} {c : Set W} {w : W} (hw : w ∈ c)
+    (h : (ofTrivalent p).Admits c) : TrueWrt (ofTrivalent p) c w ↔ p w = .true :=
   ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
 
 variable (king son bald : W → Prop)
 
 open Classical in
 /-- *The king has a son* (1) presupposes a king and asserts that he has a son. -/
-noncomputable def kingHasSon : W → SignType :=
-  {w | king w}.indicator fun w ↦ SignType.ofProp (son w)
+noncomputable def kingHasSon : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (king w)) (Trivalent.ofProp (son w))
 
 open Classical in
 /-- *The king's son is bald* (2) presupposes a king with a son. -/
-noncomputable def kingsSonBald : W → SignType :=
-  {w | king w ∧ son w}.indicator fun w ↦ SignType.ofProp (bald w)
+noncomputable def kingsSonBald : W → Trivalent :=
+  fun w ↦ Trivalent.transplication (Trivalent.ofProp (king w ∧ son w)) (Trivalent.ofProp (bald w))
 
 /-- (3) "If the king has a son, the king's son is bald", by (14). -/
 noncomputable def ifKingHasSon : CCP.Partial W :=
@@ -110,13 +110,13 @@ theorem king_admits_iff (c : Set W) :
 open Classical in
 -- (3), (1)
 theorem king_presupposes :
-    Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (king w)) :=
+    Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ Trivalent.ofProp (king w)) :=
   (presupposes_ofProp_iff _ _).2 fun c h ↦ (king_admits_iff c).1 h
 
 open Classical in
 -- (3)
 theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
-    ¬ Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (son w)) := by
+    ¬ Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ Trivalent.ofProp (son w)) := by
   rw [presupposes_ofProp_iff]
   obtain ⟨w, hk, hs⟩ := h
   intro hp
@@ -145,15 +145,17 @@ theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).
 theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ p :=
   fun _ hw ↦ (isEliminative_neg φ _ _ h hw).2
 
+open Classical in
 /-- Under the local option, (16) entails only that France has no king or he did not come. -/
 theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
-    (h : c' ∈ localNeg (ofTrivalent (p.indicator fun w ↦ SignType.ofProp (came w))) p c) :
+    (h : c' ∈ localNeg (ofTrivalent fun w ↦
+      Trivalent.transplication (Trivalent.ofProp (w ∈ p)) (Trivalent.ofProp (came w))) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
   obtain ⟨t, ht, rfl⟩ := (Part.mem_map_iff _).1 h
   obtain ⟨-, rfl⟩ := (mem_ofTrivalent _ _ _).1 ht
   ext w
   simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff,
-    Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
+    Trivalent.transplication_eq_true_iff, Trivalent.ofProp_eq_true_iff]
   tauto
 
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=
@@ -509,7 +511,7 @@ assigns the sentence. Here the rule is the conjunction filter of `Karttunen1973.
 entailment from the context incremented with the first conjunct. -/
 
 -- [karttunen-1974-presupposition], (4a), (7) and the proof that (8) iff (9), pp. 183–186
-theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
+theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → Trivalent) :
     (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)
         (.ofTrivalent q)).log, c ⊆ C := by
@@ -521,9 +523,9 @@ theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
     · exact hp
     · exact absurd (fun w ⟨hw, ha, _⟩ ↦ hq ⟨hw, ha⟩) hf
   · intro h
-    have hp : c ⊆ Function.support p := h _ (.inl rfl)
+    have hp : c ⊆ (Trivalent.gapExt p)ᶜ := h _ (.inl rfl)
     refine ⟨hp, fun w ⟨hw, ha⟩ ↦ ?_⟩
-    by_cases hf : c ∩ (Karttunen1973.Presupposing.ofTrivalent p).truth ⊆ Function.support q
+    by_cases hf : c ∩ (Karttunen1973.Presupposing.ofTrivalent p).truth ⊆ (Trivalent.gapExt q)ᶜ
     · exact hf ⟨hw, ha, fun t ht ↦ List.mem_singleton.1 ht ▸ hp hw⟩
     · exact h _ (.inr ⟨rfl, hf⟩) hw
 

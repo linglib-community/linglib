@@ -29,9 +29,9 @@ semantics into a dynamic account of accommodation.
   only through presupposition failure. The three logics index one connective constructor,
   so that the floating-A machinery counts surface occurrences; the paper's definitions of
   the middle and weak connectives in strong Kleene terms are theorems.
-* Transplication is `SignType.transplication`, by the paper's truth table, presupposition
-  first as in Blamey's `π / φ`; the interdefinability formula over ∂, which is `p ⊔ 0` on
-  values, is `SignType.transplication_eq`. The assertion operator `A` is `ofProp (a = 1)` and
+* Transplication is `Trivalent.transplication`, by the paper's truth table, presupposition
+  first as in Blamey's `π / φ`; the interdefinability formula over ∂, which is `p ⊔ .undefined` on
+  values, is `Trivalent.transplication_eq`. The assertion operator `A` is `ofProp (a = .true)` and
   meta-denial is its composite with negation.
 * Incoherence counts non-presuppositional subformula occurrences. Reproducing the paper's
   printed degrees requires not substituting inside the argument of an assertion operator,
@@ -78,30 +78,30 @@ semantics into a dynamic account of accommodation.
 
 namespace BeaverKrahmer2001
 
-open SignType (ofProp meetMiddle joinMiddle meetWeak joinWeak transplication)
+open Trivalent (ofProp meetMiddle joinMiddle meetWeak joinWeak transplication)
 
 /-! ### Transplication, assertion, denial
 
 The binary presupposition operator is [blamey-1986]'s transplication. The unary ∂ it is
 interdefinable with is Beaver's ([beaver-1992]); it keeps truth and sends falsity to the gap,
-so `∂p` is `p ⊔ 0`. The assertion operator `A` is Bochvar's ([bochvar-1938]); it says that
-its argument is true, so `Aa` is `ofProp (a = 1)`. -/
+so `∂p` is `p ⊔ .undefined`. The assertion operator `A` is Bochvar's ([bochvar-1938]); it says
+that its argument is true, so `Aa` is `ofProp (a = .true)`. -/
 
 /-- Meta-denial asserts falsity, `D = A ∘ ¬`. -/
-def metaDeny (a : SignType) : SignType := ofProp (-a = 1)
+def metaDeny (a : Trivalent) : Trivalent := ofProp (aᶜ = .true)
 
 /-- The maximal presupposition of a value is that it is defined, `P = A ∨ D`. -/
-def presupVal (a : SignType) : SignType := ofProp (a = 1) ⊔ metaDeny a
+def presupVal (a : Trivalent) : Trivalent := ofProp (a = .true) ⊔ metaDeny a
 
-theorem presupVal_eq_one_iff (a : SignType) : presupVal a = 1 ↔ a ≠ 0 := by
+theorem presupVal_eq_true_iff (a : Trivalent) : presupVal a = .true ↔ a ≠ .undefined := by
   cases a <;> decide
 
-theorem presupVal_ne_zero (a : SignType) : presupVal a ≠ 0 := by cases a <;> decide
+theorem presupVal_ne_undefined (a : Trivalent) : presupVal a ≠ .undefined := by cases a <;> decide
 
 /-! ### The three Kleene logics
 
-Strong Kleene is the lattice structure of `SignType`; the middle (Peters) and weak
-(Bochvar-internal) connectives are `SignType.meetMiddle` and `SignType.meetWeak` with
+Strong Kleene is the lattice structure of `Trivalent`; the middle (Peters) and weak
+(Bochvar-internal) connectives are `Trivalent.meetMiddle` and `Trivalent.meetWeak` with
 their joins. The paper cites the middle connectives from the 1975 *Texas Linguistic Forum*
 version of [peters-1979], and the name *middle Kleene* is [krahmer-1994]'s. The conditional
 of each logic is the derived form `¬a ∨ b`. -/
@@ -113,113 +113,113 @@ inductive Connective | conj | disj | imp
   deriving DecidableEq, Fintype, Repr
 
 /-- The conjunction of each logic. -/
-def Kleene.meet : Kleene → SignType → SignType → SignType
+def Kleene.meet : Kleene → Trivalent → Trivalent → Trivalent
   | .strong => (· ⊓ ·)
   | .middle => meetMiddle
   | .weak => meetWeak
 
 /-- The disjunction of each logic. -/
-def Kleene.join : Kleene → SignType → SignType → SignType
+def Kleene.join : Kleene → Trivalent → Trivalent → Trivalent
   | .strong => (· ⊔ ·)
   | .middle => joinMiddle
   | .weak => joinWeak
 
 /-- The truth table of a connective in a logic, with the conditional the derived
 `¬a ∨ b`; the tables match the paper's for all three logics. -/
-def Connective.eval : Connective → Kleene → SignType → SignType → SignType
+def Connective.eval : Connective → Kleene → Trivalent → Trivalent → Trivalent
   | .conj, k => k.meet
   | .disj, k => k.join
-  | .imp, k => fun a b ↦ k.join (-a) b
+  | .imp, k => fun a b ↦ k.join aᶜ b
 
 /-- The connectives of each logic as the substrate's truth tables, with the conditional `¬a ∨ b`;
 these are the strong, Middle and Weak Kleene connectives (`Kleene.connectives_strong`, …). -/
 def Kleene.connectives (k : Kleene) : Trivalent.Connectives :=
-  ⟨k.meet, k.join, fun a b ↦ k.join (-a) b⟩
+  ⟨k.meet, k.join, fun a b ↦ k.join aᶜ b⟩
 
 theorem Kleene.connectives_strong : Kleene.strong.connectives = .strongKleene := rfl
 theorem Kleene.connectives_middle : Kleene.middle.connectives = .middleKleene := rfl
 theorem Kleene.connectives_weak : Kleene.weak.connectives = .weakKleene := rfl
 
-theorem meetMiddle_eq (a b : SignType) :
-    meetMiddle a b = (a ⊓ b) ⊔ (a ⊓ -a) := by
+theorem meetMiddle_eq (a b : Trivalent) :
+    meetMiddle a b = (a ⊓ b) ⊔ (a ⊓ aᶜ) := by
   cases a <;> cases b <;> decide
 
-theorem joinMiddle_eq (a b : SignType) :
-    joinMiddle a b = (a ⊔ b) ⊓ (a ⊔ -a) := by
+theorem joinMiddle_eq (a b : Trivalent) :
+    joinMiddle a b = (a ⊔ b) ⊓ (a ⊔ aᶜ) := by
   cases a <;> cases b <;> decide
 
-theorem impMiddle_eq (a b : SignType) :
-    Connective.eval .imp .middle a b = (-a ⊔ b) ⊓ (a ⊔ -a) := by
+theorem impMiddle_eq (a b : Trivalent) :
+    Connective.eval .imp .middle a b = (aᶜ ⊔ b) ⊓ (a ⊔ aᶜ) := by
   cases a <;> cases b <;> decide
 
-theorem meetWeak_eq (a b : SignType) :
-    meetWeak a b = (a ⊓ b) ⊔ (a ⊓ -a) ⊔ (b ⊓ -b) := by
+theorem meetWeak_eq (a b : Trivalent) :
+    meetWeak a b = (a ⊓ b) ⊔ (a ⊓ aᶜ) ⊔ (b ⊓ bᶜ) := by
   cases a <;> cases b <;> decide
 
-theorem joinWeak_eq (a b : SignType) :
-    joinWeak a b = (a ⊔ b) ⊓ (a ⊔ -a) ⊓ (b ⊔ -b) := by
+theorem joinWeak_eq (a b : Trivalent) :
+    joinWeak a b = (a ⊔ b) ⊓ (a ⊔ aᶜ) ⊓ (b ⊔ bᶜ) := by
   cases a <;> cases b <;> decide
 
-theorem impWeak_eq (a b : SignType) :
+theorem impWeak_eq (a b : Trivalent) :
     Connective.eval .imp .weak a b =
-      (-a ⊔ b) ⊓ (a ⊔ -a) ⊓ (b ⊔ -b) := by
+      (aᶜ ⊔ b) ⊓ (a ⊔ aᶜ) ⊓ (b ⊔ bᶜ) := by
   cases a <;> cases b <;> decide
 
 /-! ### Projection at the value level -/
 
-theorem presupVal_neg (a : SignType) : presupVal (-a) = presupVal a := by
+theorem presupVal_compl (a : Trivalent) : presupVal aᶜ = presupVal a := by
   cases a <;> decide
 
-theorem presupVal_transplication (p a : SignType) :
-    presupVal (transplication p a) = ofProp (p = 1) ⊓ presupVal a := by
+theorem presupVal_transplication (p a : Trivalent) :
+    presupVal (transplication p a) = ofProp (p = .true) ⊓ presupVal a := by
   cases a <;> cases p <;> decide
 
-theorem presupVal_imp_strong (a b : SignType) :
+theorem presupVal_imp_strong (a b : Trivalent) :
     presupVal (Connective.eval .imp .strong a b) =
-      (presupVal a ⊔ ofProp (b = 1)) ⊓ (metaDeny a ⊔ presupVal b) := by
+      (presupVal a ⊔ ofProp (b = .true)) ⊓ (metaDeny a ⊔ presupVal b) := by
   cases a <;> cases b <;> decide
 
-theorem presupVal_imp_middle (a b : SignType) :
+theorem presupVal_imp_middle (a b : Trivalent) :
     presupVal (Connective.eval .imp .middle a b) =
       presupVal a ⊓ (metaDeny a ⊔ presupVal b) := by
   cases a <;> cases b <;> decide
 
-theorem presupVal_imp_weak (a b : SignType) :
+theorem presupVal_imp_weak (a b : Trivalent) :
     presupVal (Connective.eval .imp .weak a b) = presupVal a ⊓ presupVal b := by
   cases a <;> cases b <;> decide
 
-theorem presupVal_join_strong (a b : SignType) :
+theorem presupVal_join_strong (a b : Trivalent) :
     presupVal (a ⊔ b) =
-      (presupVal a ⊔ ofProp (b = 1)) ⊓ (presupVal b ⊔ ofProp (a = 1)) := by
+      (presupVal a ⊔ ofProp (b = .true)) ⊓ (presupVal b ⊔ ofProp (a = .true)) := by
   cases a <;> cases b <;> decide
 
-theorem presupVal_join_middle (a b : SignType) :
-    presupVal (joinMiddle a b) = presupVal a ⊓ (ofProp (a = 1) ⊔ presupVal b) := by
+theorem presupVal_join_middle (a b : Trivalent) :
+    presupVal (joinMiddle a b) = presupVal a ⊓ (ofProp (a = .true) ⊔ presupVal b) := by
   cases a <;> cases b <;> decide
 
-theorem presupVal_join_weak (a b : SignType) :
+theorem presupVal_join_weak (a b : Trivalent) :
     presupVal (joinWeak a b) = presupVal a ⊓ presupVal b := by
   cases a <;> cases b <;> decide
 
 /-- Bochvar's cancelling (external) negation. -/
-def cancelNeg : SignType → SignType
-  | .pos => -1
-  | .neg => 1
-  | .zero => 1
+def cancelNeg : Trivalent → Trivalent
+  | .true => .false
+  | .false => .true
+  | .undefined => .true
 
-theorem cancelNeg_eq_neg_metaAssert (a : SignType) :
-    cancelNeg a = -ofProp (a = 1) := by
+theorem cancelNeg_eq_compl_metaAssert (a : Trivalent) :
+    cancelNeg a = (ofProp (a = .true))ᶜ := by
   cases a <;> rfl
 
 /-- No single trivalent disjunction both projects the left disjunct's presupposition and
 cancels it against a denying right disjunct, on the paper's own schema for the Soames
 disjunctions. -/
 theorem no_disjunction_table_projects_and_cancels :
-    ¬ ∃ f : SignType → SignType → SignType,
+    ¬ ∃ f : Trivalent → Trivalent → Trivalent,
       (∀ π γ δ : Bool,
-        f (transplication (ofProp π) (ofProp γ)) (ofProp δ) ≠ 0 ↔ π = true) ∧
+        f (transplication (ofProp π) (ofProp γ)) (ofProp δ) ≠ .undefined ↔ π = true) ∧
       ∀ π γ : Bool,
-        f (transplication (ofProp π) (ofProp γ)) (-ofProp π) ≠ 0 := by
+        f (transplication (ofProp π) (ofProp γ)) (ofProp π)ᶜ ≠ .undefined := by
   rintro ⟨f, h18, h21⟩
   exact Bool.false_ne_true ((h18 false true true).1 (h21 false true))
 
@@ -246,23 +246,23 @@ namespace Formula
 variable {Atom : Type*}
 
 /-- Evaluation into three-valued truth. -/
-def eval (V : Valuation Atom) : Formula Atom → SignType
+def eval (V : Valuation Atom) : Formula Atom → Trivalent
   | atom a => ofProp (V a)
-  | neg φ => -eval V φ
+  | neg φ => (eval V φ)ᶜ
   | conn c k φ ψ => c.eval k (eval V φ) (eval V ψ)
   | transpl φ π => transplication (eval V π) (eval V φ)
-  | assert φ => ofProp (eval V φ = 1)
+  | assert φ => ofProp (eval V φ = .true)
 
 @[simp] theorem eval_atom (V : Valuation Atom) (a : Atom) :
     eval V (atom a) = ofProp (V a) := rfl
 @[simp] theorem eval_neg (V : Valuation Atom) (φ : Formula Atom) :
-    eval V (neg φ) = -eval V φ := rfl
+    eval V (neg φ) = (eval V φ)ᶜ := rfl
 @[simp] theorem eval_conn (V : Valuation Atom) (c k) (φ ψ : Formula Atom) :
     eval V (conn c k φ ψ) = c.eval k (eval V φ) (eval V ψ) := rfl
 @[simp] theorem eval_transpl (V : Valuation Atom) (φ π : Formula Atom) :
     eval V (transpl φ π) = transplication (eval V π) (eval V φ) := rfl
 @[simp] theorem eval_assert (V : Valuation Atom) (φ : Formula Atom) :
-    eval V (assert φ) = ofProp (eval V φ = 1) := rfl
+    eval V (assert φ) = ofProp (eval V φ = .true) := rfl
 
 /-- The substrate's formulas embed, with every connective read in one logic. -/
 def ofFormula (k : Kleene) : Trivalent.Formula Atom → Formula Atom
@@ -289,18 +289,18 @@ def presup (φ : Formula Atom) : Formula Atom := conn .disj .strong (assert φ) 
 theorem eval_presup (V : Valuation Atom) (φ : Formula Atom) :
     eval V (presup φ) = presupVal (eval V φ) := rfl
 
-theorem presup_ne_zero (V : Valuation Atom) (φ : Formula Atom) :
-    eval V (presup φ) ≠ 0 := by
-  rw [eval_presup]; exact presupVal_ne_zero _
+theorem presup_ne_undefined (V : Valuation Atom) (φ : Formula Atom) :
+    eval V (presup φ) ≠ .undefined := by
+  rw [eval_presup]; exact presupVal_ne_undefined _
 
 /-- Two formulas are equivalent when they evaluate alike at every valuation. -/
 def Equiv (φ ψ : Formula Atom) : Prop := ∀ V, eval V φ = eval V ψ
 
 /-- Entailment preserves truth. -/
-def Entails (φ ψ : Formula Atom) : Prop := ∀ V, eval V φ = 1 → eval V ψ = 1
+def Entails (φ ψ : Formula Atom) : Prop := ∀ V, eval V φ = .true → eval V ψ = .true
 
 /-- `φ` presupposes `π` when `φ` is undefined wherever `π` is untrue. -/
-def Presupposes (φ π : Formula Atom) : Prop := ∀ V, eval V π ≠ 1 → eval V φ = 0
+def Presupposes (φ π : Formula Atom) : Prop := ∀ V, eval V π ≠ .true → eval V φ = .undefined
 
 section DecidableDefs
 variable [Fintype Atom] [DecidableEq Atom]
@@ -343,11 +343,11 @@ theorem presupposes_iff_entails (φ π : Formula Atom) :
 
 theorem presupposes_presup (φ : Formula Atom) : Presupposes φ (presup φ) := fun V h ↦ by
   by_contra hne
-  exact h ((presupVal_eq_one_iff _).2 hne)
+  exact h ((presupVal_eq_true_iff _).2 hne)
 
 theorem presup_strongest {φ π : Formula Atom} (h : Presupposes φ π) :
     Entails (presup φ) π := fun V hV ↦ by
-  rw [eval_presup, presupVal_eq_one_iff] at hV
+  rw [eval_presup, presupVal_eq_true_iff] at hV
   by_contra hne
   exact hV (h V hne)
 
@@ -355,22 +355,22 @@ theorem presup_strongest {φ π : Formula Atom} (h : Presupposes φ π) :
 
 The twelve equivalences of the paper's Fact 1 rewrite `A` and `D` through every
 constructor, so `Pφ` reduces to a transplication-free classical formula. Under `eval`, `A`
-is `ofProp (a = 1)` and the ∂ inside a transplication is `p ⊔ 0`, so each row is an identity
-between those expressions. -/
+is `ofProp (a = .true)` and the ∂ inside a transplication is `p ⊔ .undefined`, so each row is an
+identity between those expressions. -/
 
 theorem assert_atom (a : Atom) : Equiv (assert (atom a)) (atom a) := fun V ↦ by
-  show ofProp (ofProp (V a) = 1) = ofProp (V a)
+  show ofProp (ofProp (V a) = .true) = ofProp (V a)
   cases V a <;> rfl
 
 theorem deny_atom (a : Atom) : Equiv (deny (atom a)) (neg (atom a)) := fun V ↦ by
-  show ofProp ((-ofProp (V a)) = 1) = -ofProp (V a)
+  show ofProp ((ofProp (V a))ᶜ = .true) = (ofProp (V a))ᶜ
   cases V a <;> rfl
 
 theorem assert_neg (φ : Formula Atom) : Equiv (assert (neg φ)) (deny φ) := fun _ ↦ rfl
 
 theorem deny_neg (φ : Formula Atom) : Equiv (deny (neg φ)) (assert φ) := fun V ↦ by
-  show ofProp ((- -eval V φ) = 1) = ofProp (eval V φ = 1)
-  rw [neg_neg]
+  show ofProp ((eval V φ)ᶜᶜ = .true) = ofProp (eval V φ = .true)
+  rw [Trivalent.compl_compl]
 
 theorem assert_conj (φ ψ : Formula Atom) :
     Equiv (assert (conn .conj .strong φ ψ)) (conn .conj .strong (assert φ) (assert ψ)) :=
@@ -398,20 +398,20 @@ theorem deny_imp (φ ψ : Formula Atom) :
 
 theorem assert_transpl (φ π : Formula Atom) :
     Equiv (assert (transpl φ π)) (conn .conj .strong (assert π) (assert φ)) := fun V ↦ by
-  simp [SignType.transplication_eq, Connective.eval, Kleene.meet]
+  simp [Trivalent.transplication_eq, Connective.eval, Kleene.meet]
 
 theorem deny_transpl (φ π : Formula Atom) :
     Equiv (deny (transpl φ π)) (conn .conj .strong (assert π) (deny φ)) := fun V ↦ by
-  simp [deny, SignType.transplication_eq, Connective.eval, Kleene.meet, inf_comm]
+  simp [deny, Trivalent.transplication_eq, Connective.eval, Kleene.meet, inf_comm]
 
 theorem eval_neg_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (neg (assert φ)) = cancelNeg (eval V φ) := by
-  rw [eval_neg, eval_assert, cancelNeg_eq_neg_metaAssert]
+  rw [eval_neg, eval_assert, cancelNeg_eq_compl_metaAssert]
 
 /-! ### Projection at formula level -/
 
 theorem presup_neg (φ : Formula Atom) : Equiv (presup (neg φ)) (presup φ) := fun V ↦ by
-  simp [eval_presup, presupVal_neg]
+  simp [eval_presup, presupVal_compl]
 
 theorem presup_transpl (φ π : Formula Atom) :
     Equiv (presup (transpl φ π)) (conn .conj .strong (assert π) (presup φ)) := fun V ↦ by
@@ -490,15 +490,15 @@ def top [Inhabited Atom] : Formula Atom :=
 /-- The language's own contradiction. -/
 def bot [Inhabited Atom] : Formula Atom := neg top
 
-theorem eval_top [Inhabited Atom] (V : Valuation Atom) : eval V top = 1 := by
+theorem eval_top [Inhabited Atom] (V : Valuation Atom) : eval V top = .true := by
   simp only [top, eval_conn, eval_neg, eval_atom, Connective.eval, Kleene.join]
   cases V default <;> decide
 
-theorem eval_bot [Inhabited Atom] (V : Valuation Atom) : eval V bot = -1 := by
+theorem eval_bot [Inhabited Atom] (V : Valuation Atom) : eval V bot = .false := by
   simp [bot, eval_top]
 
 /-- Two formulas are true together at every valuation. -/
-def TrueIff (φ ψ : Formula Atom) : Prop := ∀ V, eval V φ = 1 ↔ eval V ψ = 1
+def TrueIff (φ ψ : Formula Atom) : Prop := ∀ V, eval V φ = .true ↔ eval V ψ = .true
 
 variable [Inhabited Atom] [Fintype Atom] [DecidableEq Atom]
 
@@ -518,7 +518,7 @@ def inconsistency (φ : Formula Atom) : ℕ :=
 def incoherence (φ : Formula Atom) : ℕ := nonInformativity φ + inconsistency φ
 
 /-- A formula is defined when it is somewhere classical. -/
-def Defined (φ : Formula Atom) : Prop := ∃ V, eval V φ ≠ 0
+def Defined (φ : Formula Atom) : Prop := ∃ V, eval V φ ≠ .undefined
 
 instance {φ : Formula Atom} : Decidable (Defined φ) := inferInstanceAs (Decidable (∃ _, _))
 
@@ -573,7 +573,7 @@ def preferred : Formula Atom :=
 
 /-- The preferred translation of the denial presupposes nothing, so cancellation is
 derived. -/
-theorem denial_presupposes_nothing : ∀ V, eval V (presup preferred) = 1 := by decide
+theorem denial_presupposes_nothing : ∀ V, eval V (presup preferred) = .true := by decide
 
 end KingOfFrance
 
@@ -608,7 +608,7 @@ def preferred : Formula Atom :=
 
 /-- Although the weak conditional is cumulative, the preferred translation presupposes
 nothing, so the conditional's apparent presupposition is filtered by preference. -/
-theorem regret_conditional_presupposes_nothing : ∀ V, eval V (presup preferred) = 1 := by
+theorem regret_conditional_presupposes_nothing : ∀ V, eval V (presup preferred) = .true := by
   decide
 
 end SadRegret
@@ -643,27 +643,27 @@ variable {W : Type*}
 /-- The paper's `update ξ σ τ` says, in its own vocabulary, that `σ` supports the
 presupposition `P ∘ ξ` throughout and that `τ` is `σ` intersected with the asserted
 content `A ∘ ξ`. -/
-theorem update_iff (ξ : (W → SignType)) (σ τ : Set W) :
+theorem update_iff (ξ : (W → Trivalent)) (σ τ : Set W) :
     (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' ↔
-      σ ⊆ {i | presupVal (ξ i) = 1} ∧ τ = σ ∩ {i | ofProp (ξ i = 1) = 1} := by
+      σ ⊆ {i | presupVal (ξ i) = .true} ∧ τ = σ ∩ {i | ofProp (ξ i = .true) = .true} := by
   show τ ∈ CCP.Partial.ofTrivalent ξ σ ↔ _
   rw [CCP.Partial.mem_ofTrivalent]
   refine and_congr (forall₂_congr fun i _ ↦ ?_) ?_
-  · rw [Set.mem_ofPred_eq, presupVal_eq_one_iff, Function.mem_support]
-  · have e : {w ∈ σ | ξ w = 1} = σ ∩ {i | ofProp (ξ i = 1) = 1} :=
+  · rw [Set.mem_ofPred_eq, presupVal_eq_true_iff, Trivalent.mem_compl_gapExt]
+  · have e : {w ∈ σ | ξ w = .true} = σ ∩ {i | ofProp (ξ i = .true) = .true} :=
       Set.ext fun i ↦ by simp
     rw [e]
 
-theorem hearer_update (ξ : (W → SignType)) (cgs : Set (Set W)) (τ : Set W) :
+theorem hearer_update (ξ : (W → Trivalent)) (cgs : Set (Set W)) (τ : Set W) :
     τ ∈ (CCP.Partial.ofTrivalent ξ).image cgs ↔
       ∃ σ ∈ cgs, (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' :=
   PFun.mem_image _ _ _
 
 /-- The two-stage procedure filters out the candidate common grounds incompatible with
 the presuppositions, then updates each remaining one with the assertion. -/
-theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (Set W)) :
+theorem hearer_update_filters_then_asserts (ξ : (W → Trivalent)) (cgs : Set (Set W)) :
     (CCP.Partial.ofTrivalent ξ).image cgs =
-      (fun σ ↦ σ ∩ posSupport ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
+      (fun σ ↦ σ ∩ Trivalent.posExt ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
   ext τ
   rw [PFun.mem_image]
   constructor
@@ -675,7 +675,7 @@ theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (S
 
 /-- A hearer making no assumptions updates from the full powerset; two sentences compose
 by sequencing the updates. -/
-theorem monologue (ξ₁ ξ₂ : (W → SignType)) :
+theorem monologue (ξ₁ ξ₂ : (W → Trivalent)) :
     (CCP.Partial.ofTrivalent ξ₂).image ((CCP.Partial.ofTrivalent ξ₁).image Set.univ) =
       (PartialUpdate.seq (CCP.Partial.ofTrivalent ξ₁) (CCP.Partial.ofTrivalent ξ₂)).image
         Set.univ :=

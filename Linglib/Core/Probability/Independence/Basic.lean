@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.UniformOn
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.Independence.Basic
 
 /-!

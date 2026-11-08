@@ -53,8 +53,8 @@ def gaps : Eval.Experiment Account (Embedding × Condition) Bool where
     | none => none
     | some vs =>
       if vs.isEmpty then none
-      else if vs.all (· = 0) then some true
-      else if vs.all (· ≠ 0) then some false
+      else if vs.all (· = .undefined) then some true
+      else if vs.all (· ≠ .undefined) then some false
       else none
 
 /-- Table 2 found a gap in every GAP and GAP?? configuration and none in the GAP? one, setting aside

@@ -121,24 +121,24 @@ def causative : Template .event := .cause .effector .achievement
 and at `causative` the repetitive reading over the causation. -/
 noncomputable def againAt (t : Template σ)
     (R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)) (P : Entity → State → Prop)
-    (y x : Entity) : σ.Carrier State Event → SignType :=
+    (y x : Entity) : σ.Carrier State Event → Trivalent :=
   again R (t.denote M P ⊤ y x)
 
 variable {M}
 
-theorem exists_denote_of_againAt_ne_zero {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
+theorem exists_denote_of_againAt_ne_undefined {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
     {R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)} {w : σ.Carrier State Event}
-    (h : againAt M t R P y x w ≠ 0) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
-  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_ne_zero_iff.1 h)
+    (h : againAt M t R P y x w ≠ .undefined) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
+  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_ne_undefined_iff.1 h)
 
-theorem diamond_vCause_of_againAt_causative_ne_zero {R : SetRel Event Event} {w : Event}
-    (h : againAt M causative R P y x w ≠ 0) : ◇[R] (M.vCause (M.vBecome P x)) w :=
-  diamond_mono R (fun _ h ↦ h.2) w (again_ne_zero_iff.1 h)
+theorem diamond_vCause_of_againAt_causative_ne_undefined {R : SetRel Event Event} {w : Event}
+    (h : againAt M causative R P y x w ≠ .undefined) : ◇[R] (M.vCause (M.vBecome P x)) w :=
+  diamond_mono R (fun _ h ↦ h.2) w (again_ne_undefined_iff.1 h)
 
-theorem diamond_become_of_againAt_state_ne_zero {R : SetRel State State} {s : State}
-    (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ 0) :
+theorem diamond_become_of_againAt_state_ne_undefined {R : SetRel State State} {s : State}
+    (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ .undefined) :
     ◇[R] (◇[M.become] ⊤) s :=
-  diamond_mono R (hres x) s (again_ne_zero_iff.1 h)
+  diamond_mono R (hres x) s (again_ne_undefined_iff.1 h)
 
 /-- The three attachment sites of *again* (27). -/
 inductive Site
@@ -347,7 +347,7 @@ diagnostic, with `R` relating a state to the earlier ones. -/
 def Diagnostic.Passes (R : SetRel State State) (P : Entity → State → Prop) (Q : Event → Prop)
     (x : Entity) : Diagnostic → Prop
   | .changeDenial => ∃ s, DeniesChange M P x s
-  | .restitutive => ∃ s, againAt M .state R P x x s ≠ 0 ∧ ¬ ◇[R] (◇[M.become] ⊤) s
+  | .restitutive => ∃ s, againAt M .state R P x x s ≠ .undefined ∧ ¬ ◇[R] (◇[M.become] ⊤) s
   | .actionDenial => ∃ s, P x s ∧ ¬ ◇[M.become] (□[M.cause.inv] Q) s
 
 end Diagnostics
@@ -369,9 +369,9 @@ theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
   fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
 
 theorem forged_restitutive :
-    againAt forged .state {p | p.2 < p.1} sharp () () true ≠ 0 ∧
+    againAt forged .state {p | p.2 < p.1} sharp () () true ≠ .undefined ∧
       ¬ ◇[{p | p.2 < p.1}] (◇[forged.become] ⊤) true :=
-  ⟨Presupposition.again_ne_zero_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
+  ⟨Presupposition.again_ne_undefined_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
     fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
 private theorem forged_respects {ks : Root.Kinds} (hr : Root.Kind.result ∉ close ks) :
@@ -403,7 +403,7 @@ theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
   | restitutive =>
     simp only [Diagnostic.detects, Finset.singleton_subset_iff]
     exact ⟨fun ⟨_, _, _, _, _, _, hR, _, ha, hn⟩ hr ↦
-      hn (diamond_become_of_againAt_state_ne_zero (hR.entailsChange hr) ha),
+      hn (diamond_become_of_againAt_state_ne_undefined (hR.entailsChange hr) ha),
       fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, {p | p.2 < p.1}, forged_respects hr, true,
         forged_restitutive⟩⟩
   | actionDenial =>
@@ -487,7 +487,7 @@ def site? (d : Datum) : Option Site :=
   d.parse? "attachment" [("root", .root), ("v_become", .vBecome), ("v_cause", .vCause)]
 
 -- (25), (27): each reading of *Mary flattened the rug again* is available, *again* attaching
--- at a subterm of the causative template (see `exists_denote_of_againAt_ne_zero`)
+-- at a subterm of the causative template (see `exists_denote_of_againAt_ne_undefined`)
 theorem attachment_rows : ∀ d ∈ Examples.all, ∀ s ∈ site? d,
     d.judgment = .acceptable ∧ s.template.2.IsSubterm causative := by
   have h : ∀ d ∈ Examples.all, ∀ s ∈ site? d, d.judgment = .acceptable := by decide

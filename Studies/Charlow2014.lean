@@ -835,17 +835,17 @@ def toSet (Q : E → W → Prop) : Set (E × W) := {xw | Q xw.1 xw.2}
 identity scale is true at `(x, w)`. -/
 def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
   P.ordinary ∈ P.alternatives ∧
-    _root_.Focus.only (· = ·) P.alternatives toSet P.ordinary (x, w) = 1
+    _root_.Focus.only (· = ·) P.alternatives toSet P.ordinary (x, w) = .true
 
 /-- `also P` holds of `x` at `w` when the VP's value is among its alternatives and the additive on
 the identity scale is true at `(x, w)`. -/
 def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
   P.ordinary ∈ P.alternatives ∧
-    _root_.Focus.additive (· = ·) P.alternatives toSet P.ordinary (x, w) = 1
+    _root_.Focus.additive (· = ·) P.alternatives toSet P.ordinary (x, w) = .true
 
 theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     only P x w ↔ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary} := by
-  simp only [only, _root_.Focus.only_eq_one_iff, _root_.Focus.mem_atLeast,
+  simp only [only, _root_.Focus.only_eq_true_iff, _root_.Focus.mem_atLeast,
     _root_.Focus.mem_atMost, mem_toSet, Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨ho, ⟨_, -, hw, rfl⟩, hmax⟩
@@ -855,7 +855,7 @@ theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
 
 theorem also_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     also P x w ↔ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w} := by
-  simp only [also, _root_.Focus.additive_eq_one_iff,
+  simp only [also, _root_.Focus.additive_eq_true_iff,
     _root_.Focus.mem_additivePresup, mem_toSet]
   constructor
   · rintro ⟨ho, ⟨Q, hQ, hQw, hne⟩, hw⟩
