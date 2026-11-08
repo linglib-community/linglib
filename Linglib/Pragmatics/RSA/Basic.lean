@@ -227,6 +227,19 @@ theorem listener_real_singleton (u : U) (w : W) :
       μ.real {w} * (S w).real {u} / ∑ w', μ.real {w'} * (S w').real {u} := by
   simpa using listener_real_finset μ S u {w}
 
+/-- Bayes' rule in odds form: the posterior odds of two states are their prior odds times the ratio
+of the masses they give the utterance, at every utterance, heard or not. -/
+theorem listener_real_singleton_div (u : U) (w₁ w₂ : W) :
+    (listener μ S u).real {w₁} / (listener μ S u).real {w₂} =
+      μ.real {w₁} * (S w₁).real {u} / (μ.real {w₂} * (S w₂).real {u}) := by
+  rw [listener_real_singleton, listener_real_singleton]
+  rcases eq_or_ne (∑ w, μ.real {w} * (S w).real {u}) 0 with h | h
+  · have h0 (w : W) : μ.real {w} * (S w).real {u} = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg fun w _ ↦ mul_nonneg measureReal_nonneg
+        measureReal_nonneg).1 h w (Finset.mem_univ w)
+    simp only [h0, zero_div]
+  · exact div_div_div_cancel_right₀ h _ _
+
 /-- The listener prefers the event with the greater prior-weighted production probability, at
 every utterance, heard or not. -/
 theorem listener_real_finset_lt_iff (u : U) (E₁ E₂ : Finset W) :
