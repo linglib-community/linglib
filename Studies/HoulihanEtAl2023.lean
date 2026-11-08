@@ -302,16 +302,14 @@ variable (S : Setting) (U : Player → Action → ℝ) {Ω : Type*} [MeasurableS
 theorem priorExpectation_le_expectation_cooperate
     (hf : Monovary (f ∘ p) fun ω ↦ U (p ω) .cooperate - U (p ω) .defect) :
     priorExpectation μ p f ≤ S.expectation U p μ f .cooperate := by
-  refine integral_le_integral_posterior _ μ (S.comp_plan_ne_zero U p μ _) ?_
-  intro i j hij
+  refine integral_le_integral_posterior _ μ (S.comp_plan_ne_zero U p μ _) fun i _ j _ hij ↦ ?_
   simp only [plan_real, policy_eq_sigmoid, Action.other_cooperate] at hij
   exact hf ((mul_lt_mul_iff_of_pos_left S.lam_pos).1 (Real.sigmoid_lt_iff.1 hij))
 
 theorem expectation_defect_le_priorExpectation
     (hf : Monovary (f ∘ p) fun ω ↦ U (p ω) .cooperate - U (p ω) .defect) :
     S.expectation U p μ f .defect ≤ priorExpectation μ p f := by
-  refine integral_posterior_le_integral _ μ (S.comp_plan_ne_zero U p μ _) ?_
-  intro i j hij
+  refine integral_posterior_le_integral _ μ (S.comp_plan_ne_zero U p μ _) fun i _ j _ hij ↦ ?_
   simp only [plan_real, policy_eq_sigmoid, Action.other_defect] at hij
   have h := (mul_lt_mul_iff_of_pos_left S.lam_pos).1 (Real.sigmoid_lt_iff.1 hij)
   exact hf (by linarith)

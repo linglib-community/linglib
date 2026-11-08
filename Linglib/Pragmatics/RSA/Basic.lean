@@ -1273,6 +1273,13 @@ theorem speaker_listener_truthful_dirac_apply_singleton_eq_zero (hα : 0 < α)
     speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 0 :=
   speaker_dirac_apply_singleton_eq_zero hα (listener_truthful_apply_singleton_of_notMem μ sem h)
 
+/-- A speaker who knows the state says only what is true there. -/
+theorem ae_speaker_listener_truthful_dirac_mem (hα : 0 < α) (C : U → ℝ) (μ : Measure W)
+    (sem : U → Set W) (w : W) :
+    ∀ᵐ u ∂speaker α C (listener μ (truthful sem)) Measure.dirac w, w ∈ sem u :=
+  ae_iff_of_countable.2 fun _ hu ↦
+    by_contra fun h ↦ hu (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h)
+
 theorem speaker_listener_truthful_dirac_real_singleton_eq_zero (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
     (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} = 0 := by

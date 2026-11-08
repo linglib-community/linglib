@@ -72,6 +72,12 @@ theorem exp_neg_surprisal (h : μ {s} ≤ 1) : EReal.exp (-(surprisal μ s : ERe
 @[simp] theorem surprisal_eq_zero_iff : surprisal μ s = 0 ↔ 1 ≤ μ {s} := by
   rw [surprisal, EReal.toENNReal_eq_zero_iff, EReal.neg_le, neg_zero, ENNReal.zero_le_log_iff]
 
+/-- Of two points of mass at most one, the less probable is the more surprising. -/
+theorem surprisal_lt_surprisal_iff {t : S} (hs : μ {s} ≤ 1) (ht : μ {t} ≤ 1) :
+    surprisal μ s < surprisal μ t ↔ μ {t} < μ {s} := by
+  rw [← exp_neg_surprisal hs, ← exp_neg_surprisal ht, EReal.exp_strictMono.lt_iff_lt,
+    EReal.neg_lt_neg_iff, EReal.coe_ennreal_lt_coe_ennreal_iff]
+
 theorem surprisal_of_ne_zero (h₀ : μ {s} ≠ 0) (h : μ {s} ≠ ∞) :
     surprisal μ s = ENNReal.ofReal (-Real.log (μ.real {s})) := by
   rw [surprisal, ENNReal.log_pos_real h₀ h, ← EReal.coe_neg, EReal.real_coe_toENNReal,
