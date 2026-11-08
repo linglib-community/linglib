@@ -80,7 +80,7 @@ private theorem sInf_ne_bot_iff : sInf B ≠ ⊥ ↔ ∃ w, ∀ x ∈ B, x w := 
 stands for the premises it verifies, and a consistent subset for the worlds verifying it. This is
 the modal case of [lewis-1981]'s equivalence of premise and ordering semantics. -/
 theorem mustInView_iff_humanNecessity : MustInView f φ i ↔ humanNecessity ⊥ f φ i := by
-  rw [humanNecessity, Background.accessibleWorlds_bot,
+  rw [humanNecessity, Filter.Eventually, Background.accessibleWorlds_bot,
     OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
   simp [MustInView, consistentSubsets, sInf_ne_bot_iff, Pi.le_def, and_assoc]
 

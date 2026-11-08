@@ -163,7 +163,7 @@ universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 below which `p` holds throughout: necessity in Definition 6 of [kratzer-1991] and in
 [kratzer-2012], human necessity in [kratzer-1981]'s terms. -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  {v | p v} ∈ OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w)
+  ∀ᶠ v in OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w), p v
 
 theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
     humanNecessity f g p w ↔ ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
@@ -209,12 +209,17 @@ theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
 /-- Human possibility is the dual of `humanNecessity`, holding when the negation is not a human
 necessity, Definition 8 of [kratzer-1991]. -/
 def humanPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  ¬ humanNecessity f g (fun v ↦ ¬ p v) w
+  ∃ᶠ v in OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w), p v
+
+theorem humanPossibility_iff_not_humanNecessity_not {f g : Background W} {p : W → Prop} {w : W} :
+    humanPossibility f g p w ↔ ¬ humanNecessity f g (fun v ↦ ¬ p v) w :=
+  Iff.rfl
 
 theorem humanPossibility_iff_possibility {f g : Background W}
     {p : W → Prop} {w : W} (hlim : LimitAssumption f g w) :
     humanPossibility f g p w ↔ possibility f g p w := by
-  rw [humanPossibility, humanNecessity_iff_necessity hlim, necessity, possibility, not_box]
+  rw [humanPossibility_iff_not_humanNecessity_not, humanNecessity_iff_necessity hlim, necessity,
+    possibility, not_box]
   simp [Diamond]
 
 theorem humanNecessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :

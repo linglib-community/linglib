@@ -172,9 +172,9 @@ theorem limitAssumption : LimitAssumption circumstances desires w₀ :=
 
 /-- Decide a verdict of the limit-free operators through the best worlds. -/
 scoped macro "decide_verdict" : tactic =>
-  `(tactic| (simp only [humanPossibility, humanNecessity_iff_necessity limitAssumption,
-      necessity, ModalLogic.Box, mem_bestAccessible, mem_bestWorlds_iff, forall_eq_or_imp,
-      forall_eq]; decide))
+  `(tactic| (simp only [humanPossibility_iff_not_humanNecessity_not,
+      humanNecessity_iff_necessity limitAssumption, necessity, ModalLogic.Box, mem_bestAccessible,
+      mem_bestWorlds_iff, forall_eq_or_imp, forall_eq]; decide))
 
 /-- Of the five conclusions (p. 66), the speaker may conclude neither that they must go to the pub,
 nor that they must stay away, nor that they could become mayor without going, and may conclude that
