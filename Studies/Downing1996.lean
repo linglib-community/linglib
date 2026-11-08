@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Japanese.Nouns
 public import Linglib.Fragments.Japanese.Pronouns
-public import Linglib.Discourse.Givenness
+public import Studies.GundelHedbergZacharski1993
 public import Linglib.Data.Examples.Downing1996
 public import Linglib.Data.Examples.Readers
 
@@ -16,7 +16,7 @@ category, the division [matches her labels](##cohesion_eq_label), and Denny's hy
 the classifiers she cites for it](##params_toClass). The plural suffixes *-tachi* and *-ra* are
 not facultative: their use [rises with animacy and referentiality](##pluralMarking_monotone), [as
 her judgments bear out](##plural_rows), and since they mark individuals the hearer can identify,
-[no new group is introduced with them](##licensed_new_cons_iff).
+[no new group is introduced with them](##licensed_cons_iff).
 
 ## Implementation notes
 
@@ -57,6 +57,7 @@ are under a quarter of the core and extended inventories needs the whole extende
 * [greenberg-1972]
 * [smith-stark-1974]
 * [lambrecht-1994]
+* [gundel-hedberg-zacharski-1993]
 -/
 
 @[expose] public section
@@ -357,35 +358,39 @@ both on *sono futari-no otoko-no ko-tachi* 'those two boys' (2b). -/
 abbrev Mention := Finset Individuator
 
 /-- A sequence of mentions of a group is licensed when the group is identifiable to the hearer
-([lambrecht-1994]) at every plural-marked mention: at the first as the context makes it, and after
-it, since a mention makes the group identifiable. -/
-def Licensed : Discourse.BinaryGivenness → List Mention → Prop
+([lambrecht-1994]), at least uniquely identifiable on the Givenness Hierarchy
+([gundel-hedberg-zacharski-1993]), at every plural-marked mention: at the first as the context
+makes it, and after it, since a mention makes the group identifiable. -/
+def Licensed : GundelHedbergZacharski1993.CognitiveStatus → List Mention → Prop
   | _, [] => True
-  | g, m :: s => (.pluralMarker ∈ m → g = .given) ∧ Licensed .given s
+  | s, m :: l => (.pluralMarker ∈ m → .uniquelyIdentifiable ≤ s) ∧ Licensed .uniquelyIdentifiable l
 
-instance instDecidableLicensed : ∀ g s, Decidable (Licensed g s)
+instance instDecidableLicensed : ∀ s l, Decidable (Licensed s l)
   | _, [] => isTrue trivial
-  | g, m :: s =>
-    have := instDecidableLicensed .given s
-    decidable_of_iff ((.pluralMarker ∈ m → g = .given) ∧ Licensed .given s) Iff.rfl
+  | s, m :: l =>
+    have := instDecidableLicensed .uniquelyIdentifiable l
+    decidable_of_iff
+      ((.pluralMarker ∈ m → .uniquelyIdentifiable ≤ s) ∧ Licensed .uniquelyIdentifiable l) Iff.rfl
 
-theorem licensed_given : ∀ s, Licensed .given s
+theorem licensed_uniquelyIdentifiable : ∀ l, Licensed .uniquelyIdentifiable l
   | [] => trivial
-  | _ :: s => ⟨fun _ ↦ rfl, licensed_given s⟩
+  | _ :: l => ⟨fun _ ↦ le_rfl, licensed_uniquelyIdentifiable l⟩
 
 /-- A group the hearer cannot yet identify is tracked by a licensed sequence of mentions exactly
 when its introduction carries no plural marker: it is introduced bare or with a classifier phrase,
 and the plural marker then maintains it, since a plural-marked introduction would be like an
 initial mention with a definite article in English. -/
-theorem licensed_new_cons_iff {m : Mention} {s : List Mention} :
-    Licensed .new (m :: s) ↔ .pluralMarker ∉ m := by
-  simp [Licensed, licensed_given]
+theorem licensed_cons_iff {s : GundelHedbergZacharski1993.CognitiveStatus}
+    (hs : s < .uniquelyIdentifiable) {m : Mention} {l : List Mention} :
+    Licensed s (m :: l) ↔ .pluralMarker ∉ m := by
+  simp [Licensed, licensed_uniquelyIdentifiable, not_le.2 hs]
 
 -- p. 215: no group is introduced with the plural marker and then counted with a classifier
 -- phrase, though the classifier phrase may be repeated.
-example : ¬ Licensed .new [{.pluralMarker}, {.classifierPhrase}] := by decide
+example : ¬ Licensed .referential [{.pluralMarker}, {.classifierPhrase}] := by decide
 
-example : Licensed .new [{.classifierPhrase}, {.pluralMarker}, {.classifierPhrase}] := by decide
+example : Licensed .referential [{.classifierPhrase}, {.pluralMarker}, {.classifierPhrase}] := by
+  decide
 
 /-- The mentions of the groups of (16) and (23) and of (43) of Chapter 8: *otoko-ga iku-nin-mo*
 'men, any number', then *kare-ra* 'they' and *ano otoko-tachi* 'those men'; *iku-nin-mo-no onna*
@@ -397,8 +402,8 @@ def chains : List (Datum × List Mention) :=
     (Examples.ex_8_43, [{.classifierPhrase}, {.classifierPhrase, .pluralMarker}])]
 
 -- (16), (23), and (43) of Chapter 8
-theorem chains_licensed :
-    ∀ p ∈ chains, p.1.judgment.band = .ofProp (Licensed .new p.2) := by
+theorem chains_licensed : ∀ p ∈ chains, ∀ s : GundelHedbergZacharski1993.CognitiveStatus,
+    s < .uniquelyIdentifiable → p.1.judgment.band = .ofProp (Licensed s p.2) := by
   decide
 
 end Downing1996

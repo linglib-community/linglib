@@ -170,7 +170,8 @@ theorem bestWorlds_orderingSource {f : Background W} {v : W}
   have h : (f ⊔ orderingSource P a).accessibleWorlds v =
       f.accessibleWorlds v ∩ ⋂₀ (P a v).maximals := by
     rw [Background.accessibleWorlds_sup]
-    rfl
+    exact congrArg (f.accessibleWorlds v ∩ ·)
+      (Set.ext fun _ ↦ Background.mem_accessibleWorlds.trans Set.mem_sInter.symm)
   rw [bestWorlds_eq_accessibleWorlds_sup (h ▸ hC.inter_sInter_maximals_nonempty), h]
 
 private theorem mem_bestWorlds_bot_restrict {α : W → Prop} {v : W} (hα : α v) :
@@ -635,11 +636,11 @@ theorem should_train :
     refine ⟨⟨.clear, .train⟩, ?_⟩
     rw [Background.accessibleWorlds_sup]
     exact ⟨Background.mem_accessibleWorlds_restrict.2 ⟨by simp, mem_maximals_discrete rfl⟩,
-      fun _ hp ↦ by rw [Set.mem_singleton_iff.1 hp]⟩
+      Background.mem_accessibleWorlds.2 fun _ hp ↦ by rw [Set.mem_singleton_iff.1 hp]⟩
   rw [bestWorlds_eq_accessibleWorlds_sup hc, Background.accessibleWorlds_sup] at hv
   obtain ⟨ht, hr⟩ := mem_fHist.1 hu
   rcases hn noon (mem_maximals_discrete rfl) with h | ⟨h, -⟩
-  · exact absurd h (hr (ht.trans (hv.2 _ rfl)))
+  · exact absurd h (hr (ht.trans (Background.mem_accessibleWorlds.1 hv.2 _ rfl)))
   · exact h
 
 /-- (83b) is true: with repairs on the tracks only a ride gets the addressee there by noon. -/

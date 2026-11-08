@@ -134,7 +134,7 @@ def weakNecessity (b : Backgrounds W) (p : W → Prop) (w : W) : Prop :=
 ordering source. -/
 theorem strongNecessity_iff :
     strongNecessity b p w ↔
-      Modality.Directive.strongNecessity b.circumstances b.nonNegotiable p w := by
+      necessity b.circumstances b.nonNegotiable p w := by
   rw [strongNecessity, favoredWorlds_eq_bestWorlds]; rfl
 
 /-- Weak necessity is [von-fintel-iatridou-2008]'s with promoted priorities as primary and
@@ -142,17 +142,16 @@ negotiable ones as secondary ordering source, differing only in presupposition (
 theorem weakNecessity_iff :
     weakNecessity b p w ↔
       Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable p w := by
-  rw [weakNecessity, favoredWorlds_eq_bestWorlds]; rfl
+  rw [weakNecessity, favoredWorlds_eq_bestWorlds, Modality.Directive.weakNecessity_iff]
 
 theorem strong_entails_weak (h : strongNecessity b p w) : weakNecessity b p w :=
-  weakNecessity_iff.2
-    (Modality.Directive.strong_entails_weak _ _ _ _ _ (strongNecessity_iff.1 h))
+  weakNecessity_iff.2 (Modality.Directive.weakNecessity_of_necessity (strongNecessity_iff.1 h))
 
-theorem weak_not_entails_strong :
-    ¬ ∀ (W : Type) (b : Backgrounds W) (p : W → Prop) (w : W),
-        weakNecessity b p w → strongNecessity b p w :=
-  fun h ↦ Modality.Directive.weak_not_entails_strong fun W f g g' p w hw ↦
-    strongNecessity_iff.1 (h W ⟨f, g, g'⟩ p w (weakNecessity_iff.2 hw))
+theorem exists_weakNecessity_not_strongNecessity :
+    ∃ (b : Backgrounds Bool) (p : Bool → Prop) (w : Bool),
+      weakNecessity b p w ∧ ¬ strongNecessity b p w :=
+  let ⟨f, g, g', p, w, hw, hn⟩ := Modality.Directive.exists_weakNecessity_not_necessity
+  ⟨⟨f, g, g'⟩, p, w, weakNecessity_iff.2 hw, fun h ↦ hn (strongNecessity_iff.1 h)⟩
 
 theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = ∅) :
     weakNecessity b p w ↔ strongNecessity b p w := by

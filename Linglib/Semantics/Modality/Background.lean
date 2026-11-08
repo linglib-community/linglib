@@ -68,9 +68,8 @@ theorem accessibleWorlds_anti (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.a
   Set.eq_univ_of_forall fun _ ↦ by simp [accessibleWorlds]
 
 theorem accessibleWorlds_sup (f g : Background W) (w : W) :
-    (f ⊔ g).accessibleWorlds w = {v ∈ f.accessibleWorlds w | ∀ p ∈ g w, p v} := by
-  ext v
-  simp [or_imp, forall_and]
+    (f ⊔ g).accessibleWorlds w = f.accessibleWorlds w ∩ g.accessibleWorlds w :=
+  Set.ext fun _ ↦ by simp [or_imp, forall_and]
 
 /-- A background is realistic when every world is accessible from itself, verifying its own
 premises. -/
@@ -119,6 +118,23 @@ notation:50 w " ≤[" A "] " z => @LE.le _ (@Preorder.toLE _ (premisePreorder A)
 /-- `w <[A] z` says that `w` is strictly better than `z` under the ordering source `A`. -/
 notation:50 w " <[" A "] " z => @LT.lt _ (@Preorder.toLT _ (premisePreorder A)) w z
 
+section Accessible
+
+variable {g : Background W} {w b v : W}
+
+/-- A world verifying every premise of an ordering source is at least as good as every world. -/
+theorem le_of_mem_accessibleWorlds (hb : b ∈ g.accessibleWorlds w) (v : W) : b ≤[g w] v :=
+  fun _ hr _ ↦ Background.mem_accessibleWorlds.1 hb _ hr
+
+/-- The worlds verifying every premise of an ordering source are those at least as good as one of
+them. -/
+theorem mem_accessibleWorlds_iff_le (hb : b ∈ g.accessibleWorlds w) :
+    v ∈ g.accessibleWorlds w ↔ (v ≤[g w] b) :=
+  ⟨fun hv ↦ le_of_mem_accessibleWorlds hv b, fun hvb ↦ Background.mem_accessibleWorlds.2
+    fun _ hr ↦ hvb _ hr (Background.mem_accessibleWorlds.1 hb _ hr)⟩
+
+end Accessible
+
 /-- Adding a premise to an ordering source meets its ordering with the ordering of that premise. -/
 theorem premisePreorder_insert (φ : W → Prop) (A : Set (W → Prop)) :
     premisePreorder (insert φ A) = premisePreorder A ⊓ .ofCriterion φ :=
@@ -148,7 +164,9 @@ theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
     (h : ((f ⊔ g).accessibleWorlds w).Nonempty) :
     bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
   rw [Background.accessibleWorlds_sup] at h ⊢
-  exact Preorder.minimals_ofCriteria_eq h
+  obtain ⟨b, hbf, hbg⟩ := h
+  rw [bestWorlds, Preorder.minimals_ofCriteria_eq ⟨b, hbf, Background.mem_accessibleWorlds.1 hbg⟩]
+  exact Set.ext fun _ ↦ and_congr_right' Background.mem_accessibleWorlds.symm
 
 theorem mem_bestWorlds_insert {f g : Background W} {p q : W → Prop} {w u : W}
     (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u) :

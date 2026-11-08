@@ -122,7 +122,7 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-- An argument's prominence is its person, animacy and degree of definiteness, ordered
 componentwise. -/
-abbrev Prominence := Person.Class × Animacy × DefinitenessDegree
+abbrev Prominence := Person.Class × Animacy × Definiteness
 
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/
@@ -134,7 +134,7 @@ structure Marking where
   /-- The argument's animacy, where the marking consults it. -/
   animacy : Option Animacy
   /-- The argument's degree of definiteness, where the marking consults it. -/
-  definiteness : Option DefinitenessDegree
+  definiteness : Option Definiteness
   /-- Whether the position takes the special marking always, sometimes or never. -/
   overtness : Overtness
   deriving DecidableEq
@@ -154,7 +154,7 @@ def Marking.ofRow (row : Datum) : List Marking :=
     [(ArgumentRole.A, "A."), (.P, "P.")].filterMap fun (role, p) ↦ do
       let a := row.parse? (p ++ "animacy") animacyNames
       return ⟨role, a.map Prod.fst, a.map Prod.snd,
-        row.parse? (p ++ "definiteness") [("definite", DefinitenessDegree.definite),
+        row.parse? (p ++ "definiteness") [("definite", Definiteness.definite),
           ("indefiniteSpecific", .specific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
           [("marked", Overtness.obligatory), ("optional", .optional), ("unmarked", .excluded)]⟩

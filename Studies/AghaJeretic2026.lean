@@ -120,8 +120,9 @@ theorem crosslinguistic_tests :
 domain has at most one world ([horn-2001], §2.5). -/
 theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
-      ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton :=
-  ModalLogic.box_not_of_not_box_at_iff
+      ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton := by
+  simp only [weakNecessity_iff]
+  exact ModalLogic.box_not_of_not_box_at_iff
     (R := .ofSuccessors fun _ ↦ (premisePreorder (g' w)).minimals (bestWorlds f g w)) (w := w)
 
 /-! ### Scope under negation ((18)–(20)) -/

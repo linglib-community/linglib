@@ -18,7 +18,7 @@ informative, rigid and unattenuated it is, and these criteria jointly [order eve
 as the scale does, except against a short definite description](##lt_of_criteria_lt);
 [attenuation alone never runs against the scale](##attenuation_mono). The rival theories fall
 short of it: the Givenness Hierarchy [gives four of its forms one
-status](##givennessStatus_eq_activated), and Centering's Rule 1 [holds whenever every center is
+status](##cognitiveStatus_eq_activated), and Centering's Rule 1 [holds whenever every center is
 lexical](##pronominalizationConstraint_of_lexical), so it does not predict the repeated-name
 penalty, and [fails where the discourse topic is pronominal beside a lexical backward-looking
 center](##not_pronominalizationConstraint_accused).
@@ -160,19 +160,19 @@ def givennessKind (l : AccessibilityLevel) : Option Form.Kind :=
   | _, _ => none
 
 /-- The status Gundel et al. code an English form of the scale for. -/
-def givennessStatus (l : AccessibilityLevel) : Option GivennessStatus :=
+def cognitiveStatus (l : AccessibilityLevel) : Option CognitiveStatus :=
   (givennessKind l).bind (required .english)
 
 /-- The Givenness Hierarchy codes *this N*, *that*, *this* and stressed *IT* for one status,
 activated, though the scale ranks them apart. -/
-theorem givennessStatus_eq_activated :
+theorem cognitiveStatus_eq_activated :
     [proxDemNP, distalDem, proxDem, stressedPron].Pairwise (· < ·) ∧
-      ∀ l ∈ [proxDemNP, distalDem, proxDem, stressedPron], givennessStatus l = some .activated := by
+      ∀ l ∈ [proxDemNP, distalDem, proxDem, stressedPron], cognitiveStatus l = some .activated := by
   decide
 
 -- p. 64
-theorem uniquelyIdentifiable_le_of_givennessStatus (s : GivennessStatus)
-    (h : ∀ r ∈ givennessStatus unstressedPron, r ≤ s) : .uniquelyIdentifiable ≤ s :=
+theorem uniquelyIdentifiable_le_of_cognitiveStatus (s : CognitiveStatus)
+    (h : ∀ r ∈ cognitiveStatus unstressedPron, r ≤ s) : .uniquelyIdentifiable ≤ s :=
   le_trans (by decide) (h .inFocus rfl)
 
 -- p. 64

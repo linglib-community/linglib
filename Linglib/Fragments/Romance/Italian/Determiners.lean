@@ -213,14 +213,14 @@ theorem QuantityWord.forall_agree_eq_iff :
 oriented, and *quello*, which is not (§5.3, p. 83); and the quantificational determiners. -/
 def inventory : Determiner.Inventory :=
   [ .article
-      { form := definite (.sg, .masculine) .consonant, definiteness := .definite,
+      { form := definite (.sg, .masculine) .consonant, definiteness := {.definite},
         exponent := .dedicatedMorpheme,
         uses := {.immediateSituation, .largerSituation, .anaphoric} },
     .article
-      { form := indefinite .masculine .consonant, definiteness := .indefinite,
+      { form := indefinite .masculine .consonant, definiteness := {.nonSpecific, .specific},
         exponent := .dedicatedMorpheme, numberRestriction := some .singular },
     .article
-      { form := partitive (.sg, .masculine) .consonant, definiteness := .indefinite,
+      { form := partitive (.sg, .masculine) .consonant, definiteness := {.nonSpecific, .specific},
         exponent := .dedicatedMorpheme },
     .demonstrative { form := questo (.sg, .masculine), deixis := Person.first.participantSets },
     .demonstrative

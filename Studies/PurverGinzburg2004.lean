@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Data.Examples.PurverGinzburg2004
 public import Mathlib.Data.Finset.SDiff
 public import Mathlib.Data.Finset.Union
@@ -128,10 +127,10 @@ def cn : Sign := .word {.property} ∅
 def det : Sign := .word {.relation} ∅
 
 /-- A quantified noun phrase contributes the witness set its determiner picks out of the noun's
-property (72). A definite use abstracts it and an indefinite use stores it. -/
-def np : Definiteness → Sign
-  | .definite => .phrase {.individual} ∅ cn {det}
-  | .indefinite => .phrase {.individual} {.individual} cn {det}
+property (72). A definite use (`true`) abstracts it and an indefinite use stores it. -/
+def np : Bool → Sign
+  | true => .phrase {.individual} ∅ cn {det}
+  | false => .phrase {.individual} {.individual} cn {det}
 
 /-- An attributive definite contributes the value of a function at a situation, and abstracts
 the function and the situation in place of that value (48). -/
@@ -139,9 +138,9 @@ def attributive : Sign := .phrase {.individual} ∅ cn {det} (params := {.functi
 
 /-- On the generalized-quantifier alternative the content is a quantifier, and a definite use
 abstracts a witness set of it (66). -/
-def gq : Definiteness → Sign
-  | .definite => .phrase {.quantifier} ∅ cn {det} (params := {.individual})
-  | .indefinite => .phrase {.quantifier} ∅ cn {det} (params := ∅)
+def gq : Bool → Sign
+  | true => .phrase {.quantifier} ∅ cn {det} (params := {.individual})
+  | false => .phrase {.quantifier} ∅ cn {det} (params := ∅)
 
 /-- A monotone decreasing noun phrase contributes a reference set with its complement and
 stores `store`. It stores both when existentially quantified (92) and neither when referential
@@ -152,18 +151,18 @@ def pair (store : Finset Kind) : Sign := .phrase {.individual, .complement} stor
 theorem strong_cn : cn.Strong := Sign.strong_word_iff.2 (Finset.disjoint_empty_right _)
 
 /-- Definite noun phrases hold the strong hypothesis (§4.4.2). -/
-theorem strong_np : (np .definite).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
+theorem strong_np : (np true).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
 
 -- §4.2
-theorem indefinite_no_referent : Kind.individual ∉ (np .indefinite).cparams := by decide
+theorem indefinite_no_referent : Kind.individual ∉ (np false).cparams := by decide
 
 -- §4.4.1
-theorem cparams_gq (d : Definiteness) : (gq d).cparams = (np d).cparams := by
+theorem cparams_gq (d : Bool) : (gq d).cparams = (np d).cparams := by
   cases d <;> decide
 
 /-- The generalized-quantifier alternative never lets a reprise query its content, so it holds
 only the weak hypothesis (§4.4.1). -/
-theorem not_strong_gq (d : Definiteness) : ¬ (gq d).Strong := by cases d <;> decide
+theorem not_strong_gq (d : Bool) : ¬ (gq d).Strong := by cases d <;> decide
 
 -- §4.1.3
 theorem not_strong_attributive : ¬ attributive.Strong := by decide
@@ -181,9 +180,9 @@ and universals have the sign of a definite, since the paper distinguishes defini
 content being a contextual parameter (§4.2.2, §4.3). -/
 def signOfNP : List (String × Sign) :=
   [("cn", cn), ("bareSingular", cn),
-    ("demonstrative", np .definite), ("pronoun", np .definite), ("definite", np .definite),
-    ("specificIndefinite", np .definite), ("universal", np .definite),
-    ("indefinite", np .indefinite), ("negative", np .indefinite), ("wh", np .indefinite),
+    ("demonstrative", np true), ("pronoun", np true), ("definite", np true),
+    ("specificIndefinite", np true), ("universal", np true),
+    ("indefinite", np false), ("negative", np false), ("wh", np false),
     ("attributiveDefinite", attributive), ("determiner", det),
     ("monotoneDecreasing", pair {.individual, .complement}),
     ("monotoneDecreasingReferential", pair ∅)]

@@ -79,9 +79,9 @@ theorem hausa_two_articles :
 situationally unique referents ((30), (31)), and *k'uŋ* as the anaphoric strong article, 'the
 above-mentioned'. -/
 def lakhotaWeakStrongConstrual : Determiner.Inventory :=
-  [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
+  [ .article { form := "kiŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation} },
-    .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
+    .article { form := "k'uŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} } ]
 
 theorem construal_two_articles :

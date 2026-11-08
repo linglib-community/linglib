@@ -141,7 +141,7 @@ def Lexicalizes : Entry → CovertShift → Prop
       (bare R).toNominal ∈ a.denotations R d
   | .article a, .iotaAnaphoric => ∀ (E W : Type) (R : Restrictor E W) (d : ℕ),
       (anaphoric R d).toNominal ∈ a.denotations R d
-  | .article a, .exists => a.definiteness = .indefinite
+  | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
   | .demonstrative dem, .iota => ∀ (E W P T : Type) [PartialOrder E]
       (c : Kaplan.Context W E P T) (χ : SetRel E E) (R : Restrictor E W) (d : ℕ),
       dem.denote R d c χ = (bare R).toNominal
@@ -240,8 +240,8 @@ theorem lexicalizes_iotaAnaphoric_iff (e : Entry) :
       uses])
 
 theorem lexicalizes_exists_iff (e : Entry) :
-    e.Lexicalizes .exists ↔ e.kind = .article .indefinite := by
-  cases e <;> simp [Lexicalizes, kind]
+    e.Lexicalizes .exists ↔ ∃ d ∈ e.definiteness, d < .definite := by
+  cases e <;> simp [Lexicalizes, definiteness]
 
 theorem not_lexicalizes_down (e : Entry) : ¬ e.Lexicalizes .down := by
   cases e <;> exact id

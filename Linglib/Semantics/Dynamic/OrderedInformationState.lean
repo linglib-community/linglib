@@ -43,7 +43,6 @@ coreference of Groenendijk, Stokhof and Veltman.
 * [R. C. Stalnaker, *Assertion* (1978)][stalnaker-1978]
 * [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
 * [D. F. Farkas, *Assertion, belief and mood choice* (2003)][farkas-2003]
-* [portner-rubinstein-2020]
 -/
 
 @[expose] public section
@@ -116,22 +115,6 @@ with no better-ranked competitor. This is Portner's semantics of *want*, the Kra
 and bouletic necessity, and the condition that *presumably* tests. -/
 def boxLe (σ : OrderedInformationState W) (p : W → Prop) : Prop :=
   ∀ w ∈ σ.optimal, p w
-
-/-- Local necessity holds of `p` when some world of the information sees only `p`-worlds among the
-worlds of the information at least as normal as itself, so that `p` holds throughout a branch of
-the pattern. This is good possibility in ordering semantics, Portner and Rubinstein's force of the
-subjunctive. -/
-def localNecessity (σ : OrderedInformationState W) (p : W → Prop) : Prop :=
-  OrderingSemantics.IsGoodPossibility σ.order σ.info {v | p v}
-
-/-- When the information has a world at least as normal as all of its worlds, local necessity is
-preferential necessity. Without one they come apart, as when two incomparable optimal worlds each
-make a different proposition locally necessary while neither is preferentially necessary. -/
-theorem localNecessity_iff_boxLe {b : W} (hb : b ∈ σ.info)
-    (hleast : ∀ v ∈ σ.info, σ.order.le b v) (p : W → Prop) :
-    σ.localNecessity p ↔ σ.boxLe p :=
-  (OrderingSemantics.isGoodPossibility_iff_of_least hb hleast).trans
-    (OrderingSemantics.minimals_subset_iff_of_least hb hleast).symm
 
 /-! ### Updates -/
 

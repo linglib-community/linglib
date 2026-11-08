@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.Haspelmath2025a
 public import Linglib.Data.Examples.Languages
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Semantics.Reference.Definiteness
+public import Studies.Haspelmath2021
 public import Linglib.Syntax.Case.Spatial
 public import Linglib.Data.Examples.Readers
 public import Studies.Heine1997
@@ -87,11 +87,11 @@ second nominal, and a locopossessional clause its domain and the definiteness of
 that is located or possessed. -/
 inductive Construction where
   /-- Two nominals in correspondence. -/
-  | duonominal (second : Definiteness)
+  | duonominal (second : Haspelmath2021.BinaryDefiniteness)
   /-- A property ascribed to the subject, *The bird is small*. -/
   | attributional
   /-- A clause about location or possession, [clark-1978]'s locationals. -/
-  | locopossessional (domain : Domain) (d : Definiteness)
+  | locopossessional (domain : Domain) (d : Haspelmath2021.BinaryDefiniteness)
   /-- Existence regardless of location, *God exists*. -/
   | hyparctic
   deriving DecidableEq, Repr, Fintype

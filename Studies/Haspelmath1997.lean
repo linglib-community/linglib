@@ -159,17 +159,17 @@ definite, known to speaker and hearer, lies beyond the indefinite functions. -/
 
 /-- The degree of definiteness of a specificity function: both specific functions mark a
 specific indefinite, the non-specific function a non-specific one. The map's order runs away
-from the definite end of the continuum (`antitone_definitenessDegree`), and no indefinite
+from the definite end of the continuum (`antitone_definiteness`), and no indefinite
 function reaches the definite degree, which adds knowledge of the hearer. -/
-def definitenessDegree : SpecificityFunction → DefinitenessDegree
+def definiteness : SpecificityFunction → Definiteness
   | .specificKnown | .specificUnknown => .specific
   | .nonSpecific => .nonSpecific
 
-theorem antitone_definitenessDegree : Antitone definitenessDegree := by
+theorem antitone_definiteness : Antitone definiteness := by
   intro a b; revert a b; decide
 
-theorem definitenessDegree_ne_definite (u : SpecificityFunction) :
-    definitenessDegree u ≠ .definite := by
+theorem definiteness_ne_definite (u : SpecificityFunction) :
+    definiteness u ≠ .definite := by
   cases u <;> decide
 
 /-! ### The features behind the map

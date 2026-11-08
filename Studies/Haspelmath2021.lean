@@ -1,10 +1,10 @@
 module
 
+public import Mathlib.Order.Atoms.Finite
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2021
 public import Linglib.Data.Statistics.Haspelmath2021
-public import Linglib.Discourse.Givenness
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Reference.Animacy
@@ -51,7 +51,7 @@ explanation the paper argues for.
   The single-argument universal's restriction to flagging is not encoded, since the paper applies
   "longer coding" to the Georgian reinforced pronoun and the Makassarese applicative itself, and
   the index-based person-role constraint is omitted.
-* `BinaryGivenness` is the scale of discourse-given over discourse-new, which the paper also calls
+* Givenness is `Bool`, discourse-given (`true`) over discourse-new, which the paper also calls
   topicality, so Persian's topical indefinite P counts as given.
 * Coding length is an `ℕ` count of special coding elements. The universals are stated over any
   preorder, and the alternation universal is the scenario universal read with the usage rate of
@@ -97,8 +97,8 @@ open OrderDual (toDual)
 
 Each scale is a linear order whose greater element is the more prominent. The person scale
 of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
-without its optional specific-indefinite level is `Definiteness`, with Eastern
-Khanty's specific P (37) read at the definite end; the givenness scale is `BinaryGivenness`;
+without its optional specific-indefinite level is `BinaryDefiniteness`, with Eastern
+Khanty's specific P (37) read at the definite end; the givenness scale is `Bool`, given above new;
 and the focus scale of (8b), background above focus, is the dual of focus marking,
 `Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
 
@@ -125,6 +125,31 @@ instance : BoundedOrder BinaryNominality where
 
 instance : IsSimpleOrder BinaryNominality where
   exists_pair_ne := ⟨.fullNominal, .personForm, by decide⟩
+  eq_bot_or_eq_top := by decide
+
+/-- The definiteness scale of (8b) without its optional specific-indefinite level, the ternary
+`Definiteness` cut at the definites. -/
+inductive BinaryDefiniteness where
+  | indefinite
+  | definite
+  deriving DecidableEq, Fintype, Repr
+
+/-- Rank on the binary definiteness scale. -/
+def BinaryDefiniteness.rank : BinaryDefiniteness → ℕ
+  | .indefinite => 0
+  | .definite => 1
+
+instance : LinearOrder BinaryDefiniteness := LinearOrder.lift' BinaryDefiniteness.rank (by decide)
+
+/-- `⊥ = indefinite`, `⊤ = definite`. -/
+instance : BoundedOrder BinaryDefiniteness where
+  top := .definite
+  le_top := by decide
+  bot := .indefinite
+  bot_le := by decide
+
+instance : IsSimpleOrder BinaryDefiniteness where
+  exists_pair_ne := ⟨.indefinite, .definite, by decide⟩
   eq_bot_or_eq_top := by decide
 
 /-- The animacy scale of (8a) without its optional animal level, the ternary `Animacy` cut at the
@@ -351,12 +376,12 @@ theorem inverseUniversal_of_scenarioUniversal {v : Scenario α → L} (h : Scena
 /-- Universals 13 (62) and 14 (63) say that across the givenness scenarios of A and P, or of R and
 T, the usage rate `rate` of the longer alternant, the passive or the dative, is lowest when the
 higher-ranked argument is given and the lower-ranked one new. -/
-def GivennessAlternationUniversal (rate : Scenario BinaryGivenness → F) : Prop :=
-  ∀ s, rate ⟨.given, .new⟩ ≤ rate s
+def GivennessAlternationUniversal (rate : Scenario Bool → F) : Prop :=
+  ∀ s, rate ⟨true, false⟩ ≤ rate s
 
 -- (61), §10.1
 theorem givennessAlternationUniversal_of_scenarioUniversal
-    {rate : Scenario BinaryGivenness → F} (h : ScenarioUniversal rate) :
+    {rate : Scenario Bool → F} (h : ScenarioUniversal rate) :
     GivennessAlternationUniversal rate :=
   fun _ ↦ scenarioUniversal_iff_antitone.1 h le_top
 
@@ -433,13 +458,13 @@ theorem singleArgumentUniversal_of_frequencies {f : Frequency} (hf : f ∈ frequ
 /-! ### Single-argument splits (§4, §5) -/
 
 /-- Sakha flags a definite P with the accusative, as in (2); Punjabi's `nũũ` (18) is alike. -/
-def sakhaP : Definiteness → ℕ := atLeast .definite
+def sakhaP : BinaryDefiniteness → ℕ := atLeast .definite
 
 /-- Nuorese Sardinian flags a human P with `a`, as in (17). -/
 def sardinianP : Animacy → ℕ := atLeast .human
 
 /-- Persian flags a topical P with `-râ`, as in (19). -/
-def persianP : BinaryGivenness → ℕ := atLeast .given
+def persianP : Bool → ℕ := atLeast true
 
 /-- Abruzzese flags a locuphoric P with `a`, as in (20). -/
 def abruzzeseP : Person.Class → ℕ := atLeast .participant
@@ -476,13 +501,13 @@ def neoAramaicR : BinaryNominality → ℕ := below .personForm
 def yakkhaR : BinaryAnimacy → ℕ := below .animate
 
 /-- Wolof flags an indefinite R with `ci`, as in (31). -/
-def wolofR : Definiteness → ℕ := below .definite
+def wolofR : BinaryDefiniteness → ℕ := below .definite
 
 /-- Ewe flags a person-form T with the serial verb `tsɔ́`, as in (32). -/
 def eweT : BinaryNominality → ℕ := atLeast .personForm
 
 /-- Akan flags a definite T with the serial verb `de`, as in (33). -/
-def akanT : Definiteness → ℕ := atLeast .definite
+def akanT : BinaryDefiniteness → ℕ := atLeast .definite
 
 /-- Georgian requires the reinforced form (`šeni tavi`) for a locuphoric T, as in (34). -/
 def georgianT : Person.Class → ℕ := atLeast .participant
@@ -531,7 +556,7 @@ def yurokP (s : Scenario Person.Class) : ℕ :=
 def sahaptinA : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- Eastern Khanty flags A with the ergative when P is specific, as in (37). -/
-def khantyA : Scenario Definiteness → ℕ := atLeast .definite ∘ Scenario.low
+def khantyA : Scenario BinaryDefiniteness → ℕ := atLeast .definite ∘ Scenario.low
 
 /-- Spanish flags P with `a` when the construction is not animacy-downstream, as in (38), which
 subsumes the human P of §4.1.1. -/
@@ -671,7 +696,7 @@ theorem universal11_itonama : InverseUniversal itonamaV :=
 
 /-- Makassarese requires the applicative `-ang` on the verb when T is a definite nominal or a
 person form, as in (56), a rule on the definiteness and the nominality of T together. -/
-def makassarV (x : Definiteness × BinaryNominality) : ℕ :=
+def makassarV (x : BinaryDefiniteness × BinaryNominality) : ℕ :=
   max (atLeast .definite x.1) (atLeast .personForm x.2)
 
 -- §9
@@ -728,7 +753,7 @@ def antiEfficientA : Markᵒᵈ → ℕ := atLeast (toDual .unfeatured)
 
 /-- The hypothetical language of §11.3 puts the accusative on every indefinite P and zero coding on
 a definite P. -/
-def antiEfficientP : Definiteness → ℕ := below .definite
+def antiEfficientP : BinaryDefiniteness → ℕ := below .definite
 
 -- §11.3
 theorem antiEfficient_violates :
@@ -822,11 +847,11 @@ def Animacy.table : List (String × Animacy) :=
   [("human", .human), ("animate", .animate), ("inanimate", .inanimate)]
 
 /-- The definiteness tags of the rows. -/
-def Definiteness.table : List (String × Definiteness) :=
+def BinaryDefiniteness.table : List (String × BinaryDefiniteness) :=
   [("definite", .definite), ("indefinite", .indefinite), ("def", .definite), ("indef", .indefinite)]
 
 /-- The givenness tags of the rows. -/
-def BinaryGivenness.table : List (String × BinaryGivenness) := [("given", .given), ("new", .new)]
+def givennessTable : List (String × Bool) := [("given", true), ("new", false)]
 
 /-- The focus tags of the rows lie on the focus scale of (8b), which ranks background above focus as
 the dual of the focus-marking order. -/
@@ -838,17 +863,18 @@ def Nominality.table : List (String × Nominality) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
 /-- The definiteness and the nominality of a Makassarese row's T. -/
-def makassarProminence? (e : Datum) : Option (Definiteness × BinaryNominality) := do
-  pure (← e.parse? "definiteness" Definiteness.table,
+def makassarProminence? (e : Datum) : Option (BinaryDefiniteness × BinaryNominality) := do
+  pure (← e.parse? "definiteness" BinaryDefiniteness.table,
     ← e.parse? "nominality" BinaryNominality.table)
 
 -- §4.1, §4.2
 theorem rows_splitP_splitA :
-    Reproduces (rows .sakha "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
+    Reproduces (rows .sakha "P" "definiteness") (prominence? BinaryDefiniteness.table) sakhaP ∧
       Reproduces (rows .nuorese "P" "animacy") (prominence? Animacy.table) sardinianP ∧
       -- Punjabi's split is Sakha's, definiteness-conditioned P flagging (§4.1.2)
-      Reproduces (rows .easternPanjabi "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
-      Reproduces (rows .westernFarsi "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
+      Reproduces (rows .easternPanjabi "P" "definiteness") (prominence? BinaryDefiniteness.table)
+        sakhaP ∧
+      Reproduces (rows .westernFarsi "P" "givenness") (prominence? givennessTable) persianP ∧
       Reproduces (rows .continentalSouthernItalian "P" "person") (prominence? Person.Class.table)
         abruzzeseP ∧
       Reproduces (rows .takale "A" "person") (prominence? Person.Class.table) godoberiA ∧
@@ -863,9 +889,9 @@ theorem rows_splitR_splitT :
     Reproduces (rows .christianTelkepe "R" "nominality") (prominence? BinaryNominality.table)
         neoAramaicR ∧
       Reproduces (rows .yakkha "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
-      Reproduces (rows .wolof "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
+      Reproduces (rows .wolof "R" "definiteness") (prominence? BinaryDefiniteness.table) wolofR ∧
       Reproduces (rows .ewe "T" "nominality") (prominence? BinaryNominality.table) eweT ∧
-      Reproduces (rows .akan "T" "definiteness") (prominence? Definiteness.table) akanT ∧
+      Reproduces (rows .akan "T" "definiteness") (prominence? BinaryDefiniteness.table) akanT ∧
       Reproduces (rows .georgian "T" "person") (prominence? Person.Class.table) georgianT ∧
       Reproduces (rows .makasar "T" "definiteness and nominality") makassarProminence?
         makassarV := by
@@ -877,7 +903,8 @@ theorem rows_scenario :
     Reproduces (rows .teop "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows .southernYukaghir "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows .sahaptin "A" "person") (scenario? Person.Class.table) sahaptinA ∧
-      Reproduces (rows .eastKhanty "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
+      Reproduces (rows .eastKhanty "A" "definiteness") (scenario? BinaryDefiniteness.table)
+        khantyA ∧
       Reproduces (rows .spanish "P" "animacy") (scenario? Animacy.table) spanishP ∧
       Reproduces (rows .bulgarian "R" "person") (scenario? Person.Class.table) bulgarianR ∧
       Reproduces (rows .shambala "R" "person") (scenario? Person.Class.table) shambalaR ∧
