@@ -135,8 +135,7 @@ theorem inf_sup_le_iff :
       coe_eq_empty.1 <| Set.eq_empty_of_forall_notMem fun z hz ↦ hne ⟨z, hz⟩
     exact (F.ortho_iff x y).1
       (mem_compl_ofObject_iff.1 (extent_subset_extent_iff.2 (h _ _ hd) (mem_ofObject_self y))) hxy
-  refine extent_subset_extent_iff.1 fun y hy ↦ ?_
-  change y ∈ ((Aᶜ : F.Regular) : Set S)
+  refine SetLike.coe_subset_coe.1 fun y hy ↦ ?_
   rw [coe_compl, F.mem_upperPolar_ortho]
   intro z hyz hzA
   obtain ⟨w, hwy, hwz⟩ := h y z hyz

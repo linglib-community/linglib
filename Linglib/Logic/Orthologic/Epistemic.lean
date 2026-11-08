@@ -10,34 +10,20 @@ public import Linglib.Core.Order.Ortholattice
 This file defines epistemic ortholattices, Holliday and Mandelkern's algebraic semantics for
 `must` and `might`. A modal ortholattice is an ortholattice with a necessity operator `□`
 preserving `⊓` and `⊤`, and its possibility operator `◇a = ¬□¬a` preserves `⊔` and `⊥`. It is
-*T* when `□a ≤ a`, and *epistemic* when it is T and satisfies Wittgenstein's Law `¬a ∧ ◇a = 0`,
-which makes "`p`, but it might be that not `p`" a contradiction.
-
-The law is what forces ortholattices on the account. In a Boolean algebra it makes `◇¬a` entail
-`¬a`, and with T it makes `□` the identity. In an ortholattice, where `a ⊓ b = ⊥` need not give
-`b ≤ aᶜ`, it is compatible with a non-trivial `□`.
-
-## Main definitions
-
-* `Orthologic.diamondHom`: `◇a = ¬□¬a` as a map preserving `⊔` and `⊥`.
-* `Orthologic.WittgensteinLaw`: `¬a ∧ ◇a = 0`.
-
-## Main results
-
-* `Orthologic.wittgensteinLaw_iff`: the law in the form `a ∧ ◇¬a = 0`.
-* `Orthologic.wittgensteinLaw_iff_eq_bot`: with T, the law holds iff `□a = 0` implies `a = 0`.
-* `Orthologic.WittgensteinLaw.disjoint_diamondHom_iterate`: with T, `a ∧ ◇ⁿ¬a = 0` for every `n`.
-* `Orthologic.diamondHom_le_box_diamondHom`: 4 and `a ≤ □◇a` give 5, `◇a ≤ □◇a`.
-* `Orthologic.wittgensteinLaw_iff_diamondHom_compl_le`, `Orthologic.WittgensteinLaw.eq_id`: the
-  collapse when `ᶜ` is a pseudocomplement, as in a Boolean algebra.
+*epistemic* when `□a ≤ a` (T) and Wittgenstein's Law `¬a ∧ ◇a = 0` holds, which makes "`p`,
+but it might be that not `p`" a contradiction. Over T the law [says that `a = 0` whenever
+`□a = 0`](##Orthologic.wittgensteinLaw_iff_eq_bot), and it makes [every `a ∧ ◇ⁿ¬a`
+zero](##Orthologic.IsEpistemic.disjoint_diamondHom_iterate). The law is what forces ortholattices
+on the account: [when `ᶜ` is a pseudocomplement](##Orthologic.IsEpistemic.eq_id), as in a Boolean
+algebra, it makes `□` the identity.
 
 ## Implementation notes
 
 The paper's modal ortholattice is not a new structure: `□` is a bundled `InfTopHom L L`, since
-one lattice carries many modalities, and T is the hypothesis `∀ a, box a ≤ a`. An epistemic
-ortholattice is the conjunction of T and `WittgensteinLaw`. The frame semantics producing
-epistemic ortholattices is `Logic/Orthologic/ModalFrame.lean`, and the logic they characterize
-is `Logic/Orthologic/EpistemicOrthologic.lean`.
+one lattice carries many modalities, and `IsEpistemic box` is the `Prop` that it is factive and
+satisfies the law. The frame semantics producing epistemic ortholattices is
+`Logic/Orthologic/ModalFrame.lean`, and the logic they characterize is
+`Logic/Orthologic/EpistemicOrthologic.lean`.
 
 ## References
 
@@ -61,12 +47,9 @@ variable {box : InfTopHom L L}
 
 @[simp] theorem diamondHom_apply (a : L) : diamondHom box a = (box aᶜ)ᶜ := rfl
 
-theorem diamondHom_iterate_compl (n : ℕ) (a : L) : (diamondHom box)^[n] aᶜ = (box^[n] a)ᶜ := by
-  induction n generalizing a with
-  | zero => rfl
-  | succ n ih =>
-    rw [Function.iterate_succ_apply, Function.iterate_succ_apply, diamondHom_apply,
-      InvolutiveCompl.compl_compl, ih]
+theorem diamondHom_iterate_compl (n : ℕ) (a : L) : (diamondHom box)^[n] aᶜ = (box^[n] a)ᶜ :=
+  (Function.Semiconj.iterate_right (f := (·ᶜ)) (fun b ↦ by
+    rw [diamondHom_apply, InvolutiveCompl.compl_compl]) n a).symm
 
 /-- With 4, the principle `a ≤ □◇a` yields 5, `◇a ≤ □◇a` ([holliday-mandelkern-2024] Definition 3.19
 and the proof of Theorem 5.7.3). -/
@@ -105,37 +88,45 @@ theorem eq_bot_of_box_eq_bot {a : L} (h : box a = ⊥) : a = ⊥ := by
 
 end WittgensteinLaw
 
-section T
-
-variable [IsOrtholattice L] (hT : ∀ a, box a ≤ a)
-include hT
+variable (box) in
+/-- `box` makes `L` an *epistemic ortholattice* when it is factive, `□a ≤ a` (T), and satisfies
+Wittgenstein's Law ([holliday-mandelkern-2024] Definitions 3.17 and 3.18). -/
+structure IsEpistemic : Prop where
+  apply_le (a : L) : box a ≤ a
+  wittgensteinLaw : WittgensteinLaw box
 
 /-- Over T, Wittgenstein's Law holds iff `□a = 0` implies `a = 0` ([holliday-mandelkern-2024] after
 Lemma 3.25). -/
-theorem wittgensteinLaw_iff_eq_bot : WittgensteinLaw box ↔ ∀ a, box a = ⊥ → a = ⊥ := by
+theorem wittgensteinLaw_iff_eq_bot [IsOrtholattice L] (hT : ∀ a, box a ≤ a) :
+    WittgensteinLaw box ↔ ∀ a, box a = ⊥ → a = ⊥ := by
   refine ⟨fun hW _ ↦ hW.eq_bot_of_box_eq_bot, fun h ↦ wittgensteinLaw_iff.mpr fun a ↦ ?_⟩
   refine disjoint_iff.mpr (h _ (le_bot_iff.mp ?_))
   rw [map_inf]
   exact ((IsOrtholattice.disjoint_compl_right (box a)).mono_right (hT _)).le_bot
 
-/-- Under Wittgenstein's Law, the generalized Wittgenstein sentences `a ∧ ◇ⁿ¬a` are contradictions
-([holliday-mandelkern-2024] Fact 3.28). -/
-theorem WittgensteinLaw.disjoint_compl_box_iterate (hW : WittgensteinLaw box) :
-    ∀ n (a : L), Disjoint a (box^[n] a)ᶜ
+namespace IsEpistemic
+
+variable [IsOrtholattice L] (h : IsEpistemic box)
+include h
+
+/-- In an epistemic ortholattice `a ∧ ¬□ⁿa = 0` for every `n`, by induction from
+`eq_bot_of_box_eq_bot`. -/
+theorem disjoint_compl_box_iterate : ∀ n (a : L), Disjoint a (box^[n] a)ᶜ
   | 0, a => IsOrtholattice.disjoint_compl_right a
   | n + 1, a => by
     rw [Function.iterate_succ_apply, disjoint_iff]
-    refine hW.eq_bot_of_box_eq_bot (le_bot_iff.mp ?_)
+    refine h.wittgensteinLaw.eq_bot_of_box_eq_bot (le_bot_iff.mp ?_)
     rw [map_inf]
-    exact ((disjoint_compl_box_iterate hW n (box a)).mono_right (hT _)).le_bot
+    exact ((disjoint_compl_box_iterate n (box a)).mono_right (h.apply_le _)).le_bot
 
-/-- This is Fact 3.28 in the paper's form `a ∧ ◇ⁿ¬a = 0`. -/
-theorem WittgensteinLaw.disjoint_diamondHom_iterate (hW : WittgensteinLaw box) (n : ℕ) (a : L) :
+/-- In an epistemic ortholattice the generalized Wittgenstein sentences `a ∧ ◇ⁿ¬a` are
+contradictions ([holliday-mandelkern-2024] Fact 3.28). -/
+theorem disjoint_diamondHom_iterate (n : ℕ) (a : L) :
     Disjoint a ((diamondHom box)^[n] aᶜ) := by
   rw [diamondHom_iterate_compl]
-  exact hW.disjoint_compl_box_iterate hT n a
+  exact h.disjoint_compl_box_iterate n a
 
-end T
+end IsEpistemic
 
 section Pseudocomplement
 
@@ -158,12 +149,11 @@ theorem wittgensteinLaw_iff_diamondHom_compl_le [IsOrtholattice L] :
   · simpa only [diamondHom_apply, InvolutiveCompl.compl_compl] using
       (IsOrtholattice.disjoint_compl_right a).mono_right h
 
-/-- When `ᶜ` is a pseudocomplement, with T Wittgenstein's Law makes `□` the identity, so a Boolean
-algebra has no non-trivial epistemic modality. -/
-theorem WittgensteinLaw.eq_id (hW : WittgensteinLaw box) (hT : ∀ a, box a ≤ a) :
-    box = InfTopHom.id L :=
-  InfTopHom.ext fun a ↦ (hT a).antisymm <|
-    InvolutiveCompl.compl_le_compl_iff_le.mp (hp _ _ (hW.disjoint_compl_box a))
+/-- When `ᶜ` is a pseudocomplement, an epistemic `□` is the identity, so a Boolean algebra has no
+non-trivial epistemic modality. -/
+theorem IsEpistemic.eq_id (h : IsEpistemic box) : box = InfTopHom.id L :=
+  InfTopHom.ext fun a ↦ (h.apply_le a).antisymm <|
+    InvolutiveCompl.compl_le_compl_iff_le.mp (hp _ _ (h.wittgensteinLaw.disjoint_compl_box a))
 
 end Pseudocomplement
 

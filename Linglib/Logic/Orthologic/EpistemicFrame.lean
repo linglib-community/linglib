@@ -21,7 +21,7 @@ of this *epistemic frame* form an S5 epistemic ortholattice, the *epistemic exte
 sending complements to orthocomplements. On an embedded proposition the modals reduce to `B`:
 `b` must be the case at `[a, i]` iff `i ≤ b`, and might be iff `a` is not disjoint from `b`. So
 `◇b` strictly extends `b` whenever `b` is neither `⊥` nor `⊤`, a modality that Wittgenstein's
-Law rules out on a Boolean algebra (`Orthologic.WittgensteinLaw.eq_id`). On embedded propositions
+Law rules out on a Boolean algebra (`Orthologic.IsEpistemic.eq_id`). On embedded propositions
 the extension also validates principles that the logic EO+ does not derive, among them
 restricted diamond distributivity.
 

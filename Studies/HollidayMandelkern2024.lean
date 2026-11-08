@@ -155,14 +155,11 @@ theorem not_entail_box : x2 ∈ P ∧ x2 ∉ bP := by decide
 /-- EO does not derive `◇¬p ⊢ ¬p` (§1), by soundness (Theorem 3.26) for the Scale's epistemic
 ortholattice (Proposition 4.27). -/
 theorem not_derivable_dia_neg_neg :
-    ¬ EDerivable (ModalFormula.dia (.neg (.var ()))) (.neg (.var ()) : ModalFormula Unit) := by
+    ¬ EDerivable (ModalFormula.diamond (.neg (.var ()))) (.neg (.var ()) : ModalFormula Unit) := by
   intro h
-  have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
-    (Compatibility.necHom_le access) (Compatibility.wittgensteinLaw_necHom frame access) h
-    fun _ ↦ embed ({0} : Coin)
-  change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
-    ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
-  simp only [ModalFormula.eval_dia, Compatibility.coe_diamondHom_necHom, ModalFormula.eval,
+  have hle := SetLike.coe_subset_coe.mpr <| ModalFormula.sound
+    (Compatibility.isEpistemic_necHom frame access) h fun _ ↦ embed ({0} : Coin)
+  simp only [ModalFormula.eval_diamond, Compatibility.coe_diamondHom_necHom, ModalFormula.eval,
     Concept.coe_compl, coe_embed] at hle
   exact diamond_neg_not_entail_neg.2 (hle diamond_neg_not_entail_neg.1)
 
@@ -170,11 +167,8 @@ theorem not_derivable_dia_neg_neg :
 theorem not_derivable_box :
     ¬ EDerivable (.var ()) (ModalFormula.box (.var ()) : ModalFormula Unit) := by
   intro h
-  have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
-    (Compatibility.necHom_le access) (Compatibility.wittgensteinLaw_necHom frame access) h
-    fun _ ↦ embed ({0} : Coin)
-  change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
-    ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
+  have hle := SetLike.coe_subset_coe.mpr <| ModalFormula.sound
+    (Compatibility.isEpistemic_necHom frame access) h fun _ ↦ embed ({0} : Coin)
   simp only [ModalFormula.eval, Compatibility.coe_necHom, coe_embed] at hle
   exact not_entail_box.2 (hle not_entail_box.1)
 
@@ -198,8 +192,7 @@ theorem orthomodularity_fails : ¬ IsOrthomodularLattice frame.Regular := by
   let p : frame.Regular := embed ({0} : Coin)
   have coe_dp : (diamondHom (frame.necHom access) p : Set Poss) = dP :=
     Compatibility.coe_diamondHom_necHom access p
-  have hle : p ≤ diamondHom (frame.necHom access) p := Concept.extent_subset_extent_iff.mp <| by
-    change (p : Set Poss) ⊆ (diamondHom (frame.necHom access) p : Set Poss)
+  have hle : p ≤ diamondHom (frame.necHom access) p := SetLike.coe_subset_coe.mp <| by
     rw [coe_dp]
     exact (by decide : ∀ x : Poss, x ∈ P → x ∈ dP)
   have hx3 : x3 ∈ ((p ⊔ pᶜ ⊓ diamondHom (frame.necHom access) p : frame.Regular) : Set Poss) := by
@@ -235,9 +228,7 @@ theorem pseudocomplementation_fails : ¬ ∀ a b : frame.Regular, Disjoint a b �
     Concept.coe_eq_empty.1 <| by
       rw [Concept.coe_inf, coe_dnp, coe_embed]
       exact wittgenstein.2
-  have hle := Concept.extent_subset_extent_iff.mpr (h _ _ hd)
-  change (diamondHom (frame.necHom access) pᶜ : Set Poss) ⊆ ((pᶜ : frame.Regular) : Set Poss)
-    at hle
+  have hle := SetLike.coe_subset_coe.mpr (h _ _ hd)
   rw [coe_dnp, Concept.coe_compl, coe_embed] at hle
   exact diamond_neg_not_entail_neg.2 (hle diamond_neg_not_entail_neg.1)
 

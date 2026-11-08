@@ -115,6 +115,10 @@ instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
   coe c := c.extent
   coe_injective _ _ h := extent_injective h
 
+/-- The order on concepts is inclusion of extents, so `SetLike.coe_subset_coe` applies. -/
+instance {r : S → S → Prop} : IsConcreteLE (Concept S S r) S where
+  le_iff := extent_subset_extent_iff.symm
+
 theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ :=
   Set.disjoint_univ.1 (Concept.intent_bot (r := r) ▸ (⊥ : Concept S S r).disjoint_extent_intent)
 
