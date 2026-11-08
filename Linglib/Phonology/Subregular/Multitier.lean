@@ -280,7 +280,7 @@ theorem IsBTC.mem_languageVariety {𝒱 : Monoid.LanguageVariety} (h𝒞 : ∀ L
     (h : IsBTC 𝒞 L) : L ∈ 𝒱 α :=
   BooleanSubalgebra.closure_le.2 (by
     rintro _ ⟨T, L', rfl, hL'⟩
-    exact 𝒱.comap_mem (FreeMonoid.filter T) (h𝒞 L' hL')) h
+    exact 𝒱.comap_mem (FreeMonoid.filter (T ·)) (h𝒞 L' hL')) h
 
 /-- The multitier closure of a star-free base class is star-free. -/
 theorem IsBTC.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsBTC 𝒞 L) : L.IsStarFree :=

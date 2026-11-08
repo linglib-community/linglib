@@ -185,7 +185,7 @@ theorem IsTierStrictlyLocal.exists_salient_tier (h : L.IsTierStrictlyLocal k) :
     ⟨fun a ↦ (G.language k).syntacticClass [a] ≠ 1, G.permitted⟩
   refine ⟨G', Set.ext fun w ↦ ?_, fun _ ↦ Iff.rfl⟩
   have hw := mem_iff_of_syntacticClass_eq
-    (syntacticClass_filter (p := (G'.tier ·)) (fun a ha ↦ by simpa [G'] using ha) w)
+    (syntacticClass_filter (p := G'.tier) (fun a ha ↦ by simpa [G'] using ha) w)
   rw [TierStrictlyLocalGrammar.mem_language, ← hw, TierStrictlyLocalGrammar.mem_language,
     List.filter_eq_self.2 fun a ha ↦ decide_eq_true
       (G.tier_of_syntacticClass_ne_one (of_decide_eq_true (List.mem_filter.1 ha).2))]
