@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Discourse.GivennessHierarchy
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Mandarin.Determiners
@@ -64,6 +63,40 @@ least](##familiar_mostFrequent).
 namespace GundelHedbergZacharski1993
 
 open Discourse
+
+/-! ### The Givenness Hierarchy -/
+
+/-- A cognitive status is a tier of the Givenness Hierarchy, a condition on a referent that a
+referring form signals. A referent with a status has every lower one. -/
+inductive CognitiveStatus where
+  /-- The referent is at the current center of attention, as zero and unstressed pronouns
+  require. -/
+  | inFocus
+  /-- The referent is represented in current short-term memory (*that*, *this*, *this N*). -/
+  | activated
+  /-- The addressee already has a representation of the referent in memory, long-term or
+  short-term, and so can uniquely identify it (*that N*). -/
+  | familiar
+  /-- The addressee can identify the speaker's intended referent from the nominal alone
+  (*the N*). -/
+  | uniquelyIdentifiable
+  /-- The speaker intends to refer to a particular object (indefinite *this N*). -/
+  | referential
+  /-- The addressee can access a representation of the type of object described (*a N*). -/
+  | typeIdentifiable
+  deriving DecidableEq, Repr, Fintype, Inhabited
+
+/-- The rank of a status, higher for the more restrictive. -/
+def CognitiveStatus.rank : CognitiveStatus → ℕ
+  | .inFocus              => 5
+  | .activated            => 4
+  | .familiar             => 3
+  | .uniquelyIdentifiable => 2
+  | .referential          => 1
+  | .typeIdentifiable     => 0
+
+-- p. 276: each status entails every lower one.
+instance : LinearOrder CognitiveStatus := LinearOrder.lift' CognitiveStatus.rank (by decide)
 
 /-! ### Table 1 -/
 
@@ -159,19 +192,17 @@ theorem required_eq_inFocus :
     ∀ l k, required l k = some .inFocus → k = .zero ∨ k = .pronoun := by
   decide +kernel
 
-/-- A noun phrase is definite when its form requires its referent to be at least uniquely
-identifiable. -/
-def definiteness (s : CognitiveStatus) : Definiteness :=
-  if .uniquelyIdentifiable ≤ s then .definite else .indefinite
-
--- fn. 4: every English form but *a N* and indefinite *this N* is definite, and the articles are
--- as definite as the fragment's *the* and *a*.
-theorem definiteness_english :
+-- fn. 4: a noun phrase is definite when its form requires a uniquely identifiable referent, so
+-- every English form is definite but *a N* and indefinite *this N*, as the fragment marks *the*
+-- and *a*.
+theorem uniquelyIdentifiable_le_iff_english :
     (∀ k, ∀ s ∈ required .english k,
-      definiteness s = .indefinite ↔ k = .indefiniteN ∨ k = .indefiniteThisN) ∧
-    (required .english .definiteN).map definiteness = some English.Determiners.the.definiteness ∧
-    (required .english .indefiniteN).map definiteness = some English.Determiners.a.definiteness :=
-  by decide +kernel
+      .uniquelyIdentifiable ≤ s ↔ k ≠ .indefiniteN ∧ k ≠ .indefiniteThisN) ∧
+    (∀ s ∈ required .english .definiteN,
+      .uniquelyIdentifiable ≤ s ↔ English.Determiners.the.definiteness = .definite) ∧
+    ∀ s ∈ required .english .indefiniteN,
+      .uniquelyIdentifiable ≤ s ↔ English.Determiners.a.definiteness = .definite := by
+  decide +kernel
 
 /-! ### The corpus -/
 

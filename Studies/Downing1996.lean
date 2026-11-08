@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Japanese.Nouns
 public import Linglib.Fragments.Japanese.Pronouns
-public import Linglib.Discourse.GivennessHierarchy
+public import Studies.GundelHedbergZacharski1993
 public import Linglib.Data.Examples.Downing1996
 public import Linglib.Data.Examples.Readers
 
@@ -57,6 +57,7 @@ are under a quarter of the core and extended inventories needs the whole extende
 * [greenberg-1972]
 * [smith-stark-1974]
 * [lambrecht-1994]
+* [gundel-hedberg-zacharski-1993]
 -/
 
 @[expose] public section
@@ -357,9 +358,10 @@ both on *sono futari-no otoko-no ko-tachi* 'those two boys' (2b). -/
 abbrev Mention := Finset Individuator
 
 /-- A sequence of mentions of a group is licensed when the group is identifiable to the hearer
-([lambrecht-1994]), at least uniquely identifiable, at every plural-marked mention: at the first as
-the context makes it, and after it, since a mention makes the group identifiable. -/
-def Licensed : CognitiveStatus → List Mention → Prop
+([lambrecht-1994]), at least uniquely identifiable on the Givenness Hierarchy
+([gundel-hedberg-zacharski-1993]), at every plural-marked mention: at the first as the context
+makes it, and after it, since a mention makes the group identifiable. -/
+def Licensed : GundelHedbergZacharski1993.CognitiveStatus → List Mention → Prop
   | _, [] => True
   | s, m :: l => (.pluralMarker ∈ m → .uniquelyIdentifiable ≤ s) ∧ Licensed .uniquelyIdentifiable l
 
@@ -378,8 +380,9 @@ theorem licensed_uniquelyIdentifiable : ∀ l, Licensed .uniquelyIdentifiable l
 when its introduction carries no plural marker: it is introduced bare or with a classifier phrase,
 and the plural marker then maintains it, since a plural-marked introduction would be like an
 initial mention with a definite article in English. -/
-theorem licensed_cons_iff {s : CognitiveStatus} (hs : s < .uniquelyIdentifiable)
-    {m : Mention} {l : List Mention} : Licensed s (m :: l) ↔ .pluralMarker ∉ m := by
+theorem licensed_cons_iff {s : GundelHedbergZacharski1993.CognitiveStatus}
+    (hs : s < .uniquelyIdentifiable) {m : Mention} {l : List Mention} :
+    Licensed s (m :: l) ↔ .pluralMarker ∉ m := by
   simp [Licensed, licensed_uniquelyIdentifiable, not_le.2 hs]
 
 -- p. 215: no group is introduced with the plural marker and then counted with a classifier
@@ -399,7 +402,7 @@ def chains : List (Datum × List Mention) :=
     (Examples.ex_8_43, [{.classifierPhrase}, {.classifierPhrase, .pluralMarker}])]
 
 -- (16), (23), and (43) of Chapter 8
-theorem chains_licensed : ∀ p ∈ chains, ∀ s : CognitiveStatus,
+theorem chains_licensed : ∀ p ∈ chains, ∀ s : GundelHedbergZacharski1993.CognitiveStatus,
     s < .uniquelyIdentifiable → p.1.judgment.band = .ofProp (Licensed s p.2) := by
   decide
 

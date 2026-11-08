@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Phonology.HarmonicGrammar.IntersectingFamilies
-public import Linglib.Discourse.DiscourseStatus
 public import Linglib.Data.Examples.ArnoldEtAl2000
 public import Linglib.Data.Examples.Readers
 public import Studies.Hawkins1994
@@ -23,7 +22,7 @@ end weight does](##sum_crd_verbPhrase_sub), [as the paper counts](##crd_ex5_ex8)
 
 ## Implementation notes
 
-* Newness is the paper's coding after Prince, `DiscourseStatus`: given if the referent was
+* Newness is the paper's coding after Prince, `Phrase.given`: given if the referent was
   mentioned before in the agenda item or the exchange, with inferables counted as given, which
   Prince keeps apart as a third status.
 * Heaviness enters as the difference in words, the measure the paper takes; its regressions bin
@@ -56,8 +55,8 @@ open OptimalityTheory HarmonicGrammar Real
 structure Phrase where
   /-- Its length in words. -/
   words : ℕ
-  /-- Its discourse status. -/
-  discourse : DiscourseStatus
+  /-- Whether it is given, discourse-old. -/
+  given : Bool
   deriving DecidableEq
 
 /-- A postverbal pair: theme and goal for the dative alternation, direct object and
@@ -88,8 +87,8 @@ def heavyFirst : Constraint (ℕ × ℕ) := fun c ↦ c.1 - c.2
 
 /-- Given before new, on the statuses of two constituents in the order spoken: a new constituent
 before a given one. -/
-def newFirst : Constraint (DiscourseStatus × DiscourseStatus) :=
-  Constraint.binary (· = (.new, .given))
+def newFirst : Constraint (Bool × Bool) :=
+  Constraint.binary (· = (false, true))
 
 /-- The construction's own cost: a violation for the theme-last order whatever the
 constituents, the intercept of the paper's regressions. -/
@@ -99,7 +98,7 @@ def starThemeLast : Constraint Candidate := Constraint.binary (·.2 = .themeLast
 construction's cost the order itself. -/
 def con : ConstraintSet Candidate (Fin 3) :=
   ![heavyFirst ∘ Prod.map Phrase.words Phrase.words ∘ linearize,
-    newFirst ∘ Prod.map Phrase.discourse Phrase.discourse ∘ linearize, starThemeLast]
+    newFirst ∘ Prod.map Phrase.given Phrase.given ∘ linearize, starThemeLast]
 
 /-- The weights: `wH` for heaviness, `wN` for newness, `wB` for the construction's baseline. -/
 def weights (wH wN wB : ℝ) : Fin 3 → ℝ := ![wH, wN, wB]
@@ -115,7 +114,7 @@ def heavyDiff (p : Pair) : ℝ := (p.1.words : ℝ) - p.2.words
 with the goal first, `1` when the theme is new and the goal given, `-1` in the mirror case, `0`
 otherwise. -/
 def newDiff (p : Pair) : ℝ :=
-  (newFirst (p.1.discourse, p.2.discourse) : ℝ) - newFirst (p.2.discourse, p.1.discourse)
+  (newFirst (p.1.given, p.2.given) : ℝ) - newFirst (p.2.given, p.1.given)
 
 variable {wH wN wB : ℝ}
 
@@ -162,27 +161,27 @@ theorem factorsThrough_heavyDiff_iff :
     (themeLastProb wH wN wB).FactorsThrough heavyDiff ↔ wN = 0 := by
   refine ⟨fun h ↦ ?_, fun h p q hpq ↦ by simp only [themeLastProb_eq, h, zero_mul, hpq]⟩
   simpa [themeLastProb_eq, heavyDiff, newDiff, newFirst] using
-    @h (⟨0, .new⟩, ⟨0, .given⟩) (⟨0, .given⟩, ⟨0, .given⟩) (by simp [heavyDiff])
+    @h (⟨0, false⟩, ⟨0, true⟩) (⟨0, true⟩, ⟨0, true⟩) (by simp [heavyDiff])
 
 -- and a function of the newness difference alone exactly when heaviness has no weight
 theorem factorsThrough_newDiff_iff :
     (themeLastProb wH wN wB).FactorsThrough newDiff ↔ wH = 0 := by
   refine ⟨fun h ↦ ?_, fun h p q hpq ↦ by simp only [themeLastProb_eq, h, zero_mul, hpq]⟩
   simpa [themeLastProb_eq, heavyDiff, newDiff] using
-    @h (⟨1, .given⟩, ⟨0, .given⟩) (⟨0, .given⟩, ⟨0, .given⟩) (by simp [newDiff])
+    @h (⟨1, true⟩, ⟨0, true⟩) (⟨0, true⟩, ⟨0, true⟩) (by simp [newDiff])
 
 /-! ### Interaction -/
 
 /-- The pair of a length and a givenness profile. -/
-def pair (l : ℕ × ℕ) (s : DiscourseStatus × DiscourseStatus) : Pair :=
+def pair (l : ℕ × ℕ) (s : Bool × Bool) : Pair :=
   (⟨l.1, s.1⟩, ⟨l.2, s.2⟩)
 
 /-- The four pairs crossing two givenness profiles, the rows, with two length profiles, the
 columns. -/
-def cross (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) : Square Pair :=
+def cross (l l' : ℕ × ℕ) (s s' : Bool × Bool) : Square Pair :=
   ⟨pair l s, pair l' s, pair l s', pair l' s'⟩
 
-theorem independent_cross (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) :
+theorem independent_cross (l l' : ℕ × ℕ) (s s' : Bool × Bool) :
     (cross l l' s s').Independent con .themeLast .goalLast := by
   intro k
   fin_cases k
@@ -190,7 +189,7 @@ theorem independent_cross (l l' : ℕ × ℕ) (s s' : DiscourseStatus × Discour
 
 /-- Newness and heaviness do not interact in the log-odds of the theme-last order, as in the
 corpus regressions; the experiment's interaction lies outside the grammar. -/
-theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : DiscourseStatus × DiscourseStatus) :
+theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : Bool × Bool) :
     (cross l l' s s').interaction (fun p ↦ logit (themeLastProb wH wN wB p)) = 0 := by
   simpa only [logit_themeLastProb] using
     (independent_cross l l' s s').interaction_harmonyScore_sub (weights wH wN wB)
@@ -199,18 +198,18 @@ theorem interaction_logit_eq_zero (l l' : ℕ × ℕ) (s s' : DiscourseStatus ×
 that heaviness and the construction's baseline make without it: the pattern of the corpus
 figures, which the paper reads as interacting constraints. -/
 theorem themeLastProb_new_sub_given_lt_iff (hN : 0 < wN) (m n m' n' : ℕ) :
-    themeLastProb wH wN wB (⟨m', .new⟩, ⟨n', .given⟩) -
-        themeLastProb wH wN wB (⟨m', .given⟩, ⟨n', .new⟩) <
-      themeLastProb wH wN wB (⟨m, .new⟩, ⟨n, .given⟩) -
-        themeLastProb wH wN wB (⟨m, .given⟩, ⟨n, .new⟩) ↔
+    themeLastProb wH wN wB (⟨m', false⟩, ⟨n', true⟩) -
+        themeLastProb wH wN wB (⟨m', true⟩, ⟨n', false⟩) <
+      themeLastProb wH wN wB (⟨m, false⟩, ⟨n, true⟩) -
+        themeLastProb wH wN wB (⟨m, true⟩, ⟨n, false⟩) ↔
       |wH * ((m : ℝ) - n) - wB| < |wH * ((m' : ℝ) - n') - wB| := by
-  have hnew (k l : ℕ) : themeLastProb wH wN wB (⟨k, .new⟩, ⟨l, .given⟩) =
+  have hnew (k l : ℕ) : themeLastProb wH wN wB (⟨k, false⟩, ⟨l, true⟩) =
       sigmoid (wH * ((k : ℝ) - l) - wB + wN) := by
     rw [themeLastProb_eq]
     congr 1
     simp [heavyDiff, newDiff, newFirst]
     ring
-  have hgiven (k l : ℕ) : themeLastProb wH wN wB (⟨k, .given⟩, ⟨l, .new⟩) =
+  have hgiven (k l : ℕ) : themeLastProb wH wN wB (⟨k, true⟩, ⟨l, false⟩) =
       sigmoid (wH * ((k : ℝ) - l) - wB - wN) := by
     rw [themeLastProb_eq]
     congr 1
@@ -224,7 +223,7 @@ theorem themeLastProb_new_sub_given_lt_iff (hN : 0 < wN) (m n m' n' : ℕ) :
 -- against the attested order, which is less probable than with constituents alike
 theorem themeLastProb_lt_themeLastProb_of_lt_of_new_of_given {p : Pair} (q : Phrase)
     (hH : 0 ≤ wH) (hw : 0 < wH + wN) (hl : p.2.words < p.1.words)
-    (hth : p.1.discourse = .new) (hgl : p.2.discourse = .given) :
+    (hth : p.1.given = false) (hgl : p.2.given = true) :
     themeLastProb wH wN wB (q, q) < themeLastProb wH wN wB p := by
   have hd : (1 : ℝ) ≤ p.1.words - p.2.words := by
     rw [le_sub_iff_add_le']
