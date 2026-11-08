@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
-public import Mathlib.Algebra.Order.BigOperators.Group.List
-public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
@@ -76,25 +74,11 @@ variable {T : Type*} {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
 /-- A licensed tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
 theorem length_yield_le (ht : t.Licensed g.Licenses) :
     t.yield.length ≤ g.maxBranch ^ (t.height - 1) := by
-  induction ht using RoseTree.Licensed.grammar_induction with
-  | terminal a => simp
-  | nonterminal A cs hrule _ ih =>
-    cases cs with
-    | nil => simp
-    | cons c cs =>
-      set h := (node (Symbol.nonterminal A) (c :: cs)).height
-      have hpos : 1 < h :=
-        Nat.lt_of_le_of_lt (height_pos c) (height_lt_of_mem (t := node _ (c :: cs)) (by simp))
-      have hb : 0 < g.maxBranch := Nat.zero_lt_of_lt g.two_le_maxBranch
-      rw [yield_node_nonterminal, length_flatten, map_map]
-      calc ((c :: cs).map (length ∘ yield)).sum
-          ≤ (c :: cs).length * g.maxBranch ^ (h - 2) := by
-            simpa [Function.comp_def] using sum_le_length_nsmul _ (g.maxBranch ^ (h - 2))
-              (forall_mem_map.2 fun d hd ↦ (ih d hd).trans (Nat.pow_le_pow_right hb (by
-                have := height_lt_of_mem (t := node (.nonterminal A) (c :: cs)) hd; omega)))
-        _ ≤ g.maxBranch * g.maxBranch ^ (h - 2) :=
-            Nat.mul_le_mul_right _ (by simpa using g.length_output_le_maxBranch hrule)
-        _ = g.maxBranch ^ (h - 1) := by rw [← Nat.pow_succ']; congr 1; omega
+  refine (length_filterMap_le _ _).trans <| (length_leafList t).trans_le <|
+    numLeaves_le_pow_height_sub_one <| ht.mono fun s ks h ↦ ?_
+  cases s with
+  | terminal => exact (show ks = [] from h) ▸ Nat.zero_le _
+  | nonterminal A => exact g.length_output_le_maxBranch (r := ⟨A, ks⟩) h
 
 /-- A licensed tree with at least `pumpingConstant` terminals is taller than the number of rules
 plus one. -/
@@ -114,8 +98,8 @@ theorem exists_repeat_of_lt_height (ht : t.Licensed g.Licenses)
       outer.height ≤ g.rules.card + 2 := by
   obtain ⟨p, hp, hpath⟩ := exists_getElem?_height_sub t (t.height - 2) (by omega)
   set off := t.height - 2 - g.rules.card
-  obtain ⟨t₀, ht₀, -⟩ := hpath off (by omega)
-  set q := p.drop off with hq
+  obtain ⟨t₀, ht₀, ht₀h⟩ := hpath off (by omega)
+  set q := p.drop off
   have hql : q.length = g.rules.card := by simp [q, hp]; omega
   have hpq : p = p.take off ++ q := (take_append_drop off p).symm
   obtain ⟨e, he, heh⟩ := hpath p.length hp.le
@@ -132,9 +116,8 @@ theorem exists_repeat_of_lt_height (ht : t.Licensed g.Licenses)
     simp [hql] at this
     omega
   · rwa [hqj, getElem?_append, hi, Option.bind_some] at hj
-  · obtain ⟨s, hs, hsh⟩ := hpath (off + i) (by omega)
-    rw [take_add, ← hq, hpo, Option.some.injEq] at hs
-    rw [hs, hsh]; omega
+  · have := height_le_of_getElem? hi
+    omega
 
 /-- Grafting a tree in place of a proper subtree with the same root symbol, `n` times over, pumps
 the terminals `v` and `y` around the subtree `n` times. -/
