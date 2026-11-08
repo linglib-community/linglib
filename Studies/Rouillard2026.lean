@@ -3,7 +3,6 @@ module
 public import Mathlib.Algebra.Order.Ring.NNRat
 public import Mathlib.Data.NNRat.BigOperators
 public import Mathlib.MeasureTheory.Measure.AddContent
-public import Linglib.Core.Order.Bounds.Basic
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Negation.Polarity
@@ -342,7 +341,8 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ eTIA μ (uPerfFrame P s) n →
       w ∈ eTIA μ (uPerfFrame P s) m from Set.ext fun w ↦ ⟨h n m hm w, h m n hn w⟩
   rintro n m hm w ⟨-, -, e, ⟨he, l, hls, hle⟩, -⟩
-  obtain ⟨hel, hse⟩ := (Ioo_subset_Icc_iff hls).1 hle
+  have hel := (isGLB_Ioo hls).2 fun _ hx ↦ (hle hx).1
+  have hse := (isLUB_Ioo hls).2 fun _ hx ↦ (hle hx).2
   obtain ⟨l', -, hl'm⟩ := IsTimeMeasure.exists_Ioc_eq μ s m
   have hl's : l' < s := IsTimeMeasure.pos_iff.1 (hm.trans_eq hl'm.symm)
   obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he

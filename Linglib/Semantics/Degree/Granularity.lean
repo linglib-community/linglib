@@ -9,7 +9,6 @@ public import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Core.Algebra.Order.Round
-public import Linglib.Core.Order.Bounds.Basic
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Semantics.Questions.Partition.Basic
 
@@ -83,8 +82,9 @@ theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ 
     (h₂ : IsGranularity γ₂ w₂) (hlt : w₁ < w₂) (s t : D) : ¬ γ₂ t ⊆ γ₁ s := fun hsub ↦ by
   obtain ⟨a, ha, -⟩ := h₂.exists_Ioo_subset_subset_Icc t
   obtain ⟨b, -, hb⟩ := h₁.exists_Ioo_subset_subset_Icc s
-  obtain ⟨hab, hba⟩ := (Ioo_subset_Icc_iff (lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt))).1
-    ((ha.trans hsub).trans hb)
+  have hw : a < a + w₂ := lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt)
+  have hab : b ≤ a := (isGLB_Ioo hw).2 fun _ hx ↦ (hb (hsub (ha hx))).1
+  have hba : a + w₂ ≤ b + w₁ := (isLUB_Ioo hw).2 fun _ hx ↦ (hb (hsub (ha hx))).2
   exact not_le.2 hlt ((add_le_add_iff_left b).1 ((add_le_add_left hab w₂).trans hba))
 
 end IsGranularity
