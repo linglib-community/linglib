@@ -3,6 +3,7 @@ module
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Reference.Iota
@@ -15,30 +16,37 @@ public import Linglib.Data.Examples.Readers
 Western Armenian singular nouns have general number and plurals are strictly plural, yet a
 definite singular denotes a single individual. The singular indefinite is a bare noun phrase, so
 the plural indefinite, which has a determiner phrase, is [no structural
-alternative](##pluralIndefinite_not_mem_structuralAlternatives) to it and does not compete. The
-singular and plural definites differ in the number head alone, and Maximize Presupposition against
-the plural [makes the singular definite strictly singular](##strengthen_presup_sg). Under a
-numeral the two heads mean the same, but applied where the definite marker meets the number phrase
-Maximize Presupposition [still rules out the singular](##minimalFor_presup_iff). The purely syntactic
-account, whose null singular is $[+\text{atomic}]$, leaves [a numeral on a singular nothing to
-count](##numeral_atomsOf_eq_empty).
+alternative](##pluralIndefinite_not_mem_structuralAlternatives) to it and does not compete. In a
+definite the marker *-n* applies *sup* to the number phrase, and Maximize Presupposition there,
+against the plural alternative, [makes the singular strictly singular](##strengthen_numPStar_sg).
+Under a numeral the two definites presuppose the same, but at the number phrase Maximize
+Presupposition [still rules out the singular](##minimalFor_defined_numPStar_iff). The purely
+syntactic account, whose null singular is $[+\text{atomic}]$, leaves [a numeral on a singular
+nothing to count](##numeral_atomsOf_eq_empty).
 
 ## Implementation notes
 
-A world is the set of boys, and a presupposition the set of worlds where a constituent is
-defined. The plural is Harbour's $[-\text{atomic}]$, and the paper's *sup* is the set of greatest
-members, so that the definite, its σ, is `iota` after *sup*, the factoring of
-`Linglib/Semantics/Reference/Iota.lean`. The definite marker is the number-phrase modifier of the
-paper's final analysis, which it shows to be interpreted as the determiner of its first analysis
-is. The allomorphs *-n* and *-ə* are one morpheme and the verb's agreement is spelled out with the
-subject, so a plural alternative replaces the number head and nothing else, as the paper derives
-it. The number head and the numeral have their own categories; the paper leaves the numeral and the
-adjoined definite marker unlabelled, and the marker is `D` here, as where the paper labels it.
+Trees are interpreted by the partial engine of `Linglib/Semantics/Composition/Partial.lean`, over
+worlds that are sets of boys, and a tree's presupposition is the set of worlds where it is defined.
+The plural is Harbour's $[-\text{atomic}]$, the paper's *sup* is the set of greatest members, and
+the null determiner +DEF is `iota`, the factoring of `Linglib/Semantics/Reference/Iota.lean`. The
+allomorphs *-n* and *-ə* are one morpheme and the verb's agreement is spelled out with the subject,
+so a plural alternative replaces the number head alone, as the paper derives it. The number head,
+the numeral and the adjoined definite marker have their own categories; the paper leaves the last
+two unlabelled, and as a determiner the marker could be replaced by +DEF.
+
+The paper puts Maximize Presupposition below the determiner to separate the numeral definites. With
+the marker adjoined to the number phrase, that placement is needed for the bare singular definite
+too: at the determiner phrase, +DEF over the bare number phrase is an alternative presupposing
+exactly one boy, and [strengthening against it leaves nothing](##strengthen_definiteDP_sg_eq_empty).
 
 ## TODO
 
-The scope of indefinites under negation, which motivates the structures, the plural in a
-restrictor and in a bound possessive, and competition by informativeness are not modelled.
+`mem_defined_iff_of_card_eq`, that a tree's definedness depends on the boys only through their
+number, wants a relation between two runs of the partial engine (a `KleisliRelator` at `Part` and
+`Part`, related at the permutations of the individuals), which `Composition/Partial.lean` lacks. The
+scope of indefinites under negation, which motivates the structures, the plural in a restrictor and
+in a bound possessive, and competition by informativeness are not modelled.
 
 ## References
 
@@ -56,7 +64,7 @@ restrictor and in a bound possessive, and competition by informativeness are not
 
 namespace BaleKhanjian2014
 
-open Mereology Number Presupposition PhraseStructure Tree
+open Mereology Number Presupposition PhraseStructure Tree Montague
 
 /-! ### Denotations -/
 
@@ -115,9 +123,9 @@ theorem numeral_atomsOf_eq_empty {k : ℕ} (hk : k ≠ 1) (X : Set (Finset α)) 
 
 end Denotations
 
-/-! ### The definite -/
+/-! ### The supremum -/
 
-section Definite
+section Sup
 
 variable {E : Type*} [PartialOrder E] {X : Set E}
 
@@ -128,10 +136,6 @@ def sup (X : Set E) : Set E := X ∩ upperBounds X
 theorem mem_sup {x : E} : x ∈ sup X ↔ IsGreatest X x := .rfl
 
 theorem sup_subsingleton : (sup X).Subsingleton := fun _ ha _ hb ↦ IsGreatest.unique ha hb
-
--- the choice function adds no presupposition to that of *sup*
-theorem iota_sup_isSome_iff : (iota (sup X)).isSome ↔ (sup X).Nonempty :=
-  sup_subsingleton.iota_isSome_iff
 
 variable {α : Type*} {B : Finset α} {k : ℕ}
 
@@ -147,53 +151,17 @@ theorem nonempty_sup_card_le : (sup {x | x ⊆ B ∧ k ≤ x.card}).Nonempty ↔
   rw [sup_card_le]
   exact ⟨fun ⟨_, h⟩ ↦ h.2, fun h ↦ ⟨B, rfl, h⟩⟩
 
-/-- The presupposition of NumP* (39), the definite marker on the number phrase with head `n`:
-the sets of boys over which the number phrase contains its supremum. -/
-def presup (n : NumberHead) : Set (Finset α) := {B | (sup (n.denote (boy B))).Nonempty}
-
--- p. 22: at least one boy for the singular, at least two for the plural
-theorem presup_sg : presup (α := α) .sg = {B | 1 ≤ B.card} :=
-  Set.ext fun _ ↦ by rw [presup, Set.mem_ofPred_eq, denote_sg_boy, nonempty_sup_card_le]; rfl
-
-theorem presup_pl : presup (α := α) .pl = {B | 2 ≤ B.card} :=
-  Set.ext fun _ ↦ by rw [presup, Set.mem_ofPred_eq, denote_pl_boy, nonempty_sup_card_le]; rfl
-
-theorem presup_pl_ssubset_presup_sg [Nonempty α] : presup (α := α) .pl ⊂ presup .sg := by
-  rw [presup_sg, presup_pl]
-  refine ⟨fun _ h ↦ (by omega : 1 ≤ 2).trans h, fun h ↦ ?_⟩
-  obtain ⟨a⟩ := ‹Nonempty α›
-  have : 2 ≤ ({a} : Finset α).card := h (by simp)
-  simp at this
-
-/-- The presupposition of the definite numeral phrase (39): `iota` applies to the groups of two
-in NumP*. -/
-def numeralPresup (n : NumberHead) : Set (Finset α) :=
-  {B | (iota (numeral 2 (sup (n.denote (boy B))))).isSome}
-
--- p. 22: either way, exactly two boys
-theorem numeralPresup_eq (n : NumberHead) : numeralPresup (α := α) n = {B | B.card = 2} := by
-  ext B
-  have hsub {X : Set (Finset α)} : (numeral 2 (sup X)).Subsingleton :=
-    sup_subsingleton.anti fun _ h ↦ h.1
-  have key {k : ℕ} (hk : k ≤ 2) :
-      (numeral 2 (sup {x | x ⊆ B ∧ k ≤ x.card})).Nonempty ↔ B.card = 2 := by
-    rw [sup_card_le]
-    exact ⟨fun ⟨_, ⟨rfl, _⟩, h⟩ ↦ h, fun h ↦ ⟨B, ⟨rfl, by omega⟩, h⟩⟩
-  rw [numeralPresup, Set.mem_ofPred_eq, hsub.iota_isSome_iff]
-  cases n
-  · rw [denote_sg_boy]; exact key (by omega)
-  · rw [denote_pl_boy]; exact key le_rfl
-
-end Definite
+end Sup
 
 /-! ### Structures -/
 
-/-- The categories of the paper's trees: the noun, the number head, the numeral, the determiner,
-the verb, and the clause. -/
+/-- The categories of the paper's trees: the noun, the number head, the numeral, the adjoined
+definite marker, the determiner, the verb, and the clause. -/
 inductive Cat
   | N
   | Num
   | Numeral
+  | Def
   | D
   | V
   | S
@@ -222,7 +190,8 @@ def Morpheme.cat : Morpheme → Cat
   | .boy => .N
   | .num _ => .Num
   | .two => .Numeral
-  | .def_ | .plusDef | .exists_ => .D
+  | .def_ => .Def
+  | .plusDef | .exists_ => .D
   | .run => .V
 
 /-- The lexicon the substitutions draw on: every morpheme under its category. -/
@@ -235,23 +204,19 @@ def numP (n : NumberHead) : Tree Cat Morpheme :=
 
 /-- NumP*, the definite marker adjoined to the number phrase (37a). -/
 def numPStar (n : NumberHead) : Tree Cat Morpheme :=
-  .adjoin .Num [numP n, .terminal .D .def_]
+  .adjoin .Num [numP n, .terminal .Def .def_]
 
-/-- *Dəgha-n vaze-ts* 'the boy ran' (11b), (37a), and its plural. -/
-def definite (n : NumberHead) : Tree Cat Morpheme :=
-  .node .S [.node .D [numPStar n, .terminal .D .plusDef], .node .V [.terminal .V .run]]
+/-- The definite *dəgha-n* 'the boy' (11b) and its plural, +DEF over NumP* (37a). -/
+def definiteDP (n : NumberHead) : Tree Cat Morpheme :=
+  .node .D [numPStar n, .terminal .D .plusDef]
 
-/-- *Yergu dəgha-n vaze-ts* (14a) and *yergu dəgha-ner-ə vaze-ts-in* (14b), the numeral above
-NumP* (39). -/
-def numeralDefinite (n : NumberHead) : Tree Cat Morpheme :=
-  .node .S [.node .D [.adjoin .Num [.terminal .Numeral .two, numPStar n], .terminal .D .plusDef],
-    .node .V [.terminal .V .run]]
+/-- +DEF over the bare number phrase, the definite marker deleted. -/
+def bareDP (n : NumberHead) : Tree Cat Morpheme :=
+  .node .D [numP n, .terminal .D .plusDef]
 
-/-- *Yergu dəgha vaze-ts* (10a) and *yergu dəgha-ner vaze-ts-in* (10b), determiner phrases with
-the null existential (33). -/
-def numeralIndefinite (n : NumberHead) : Tree Cat Morpheme :=
-  .node .S [.node .D [.terminal .D .exists_, .adjoin .Num [.terminal .Numeral .two, numP n]],
-    .node .V [.terminal .V .run]]
+/-- *Yergu dəgha-n* (14a) and *yergu dəgha-ner-ə* (14b), the numeral above NumP* (39). -/
+def numeralDP (n : NumberHead) : Tree Cat Morpheme :=
+  .node .D [.adjoin .Num [.terminal .Numeral .two, numPStar n], .terminal .D .plusDef]
 
 /-- *Dəgha vaze-ts* (3), a bare noun phrase whose existential force the verb supplies (21). -/
 def singularIndefinite : Tree Cat Morpheme :=
@@ -261,6 +226,12 @@ def singularIndefinite : Tree Cat Morpheme :=
 def pluralIndefinite : Tree Cat Morpheme :=
   .node .S [.node .D [.terminal .D .exists_, numP .pl], .node .V [.terminal .V .run]]
 
+/-- *Yergu dəgha vaze-ts* (10a) and *yergu dəgha-ner vaze-ts-in* (10b), determiner phrases with
+the null existential (33). -/
+def numeralIndefinite (n : NumberHead) : Tree Cat Morpheme :=
+  .node .S [.node .D [.terminal .D .exists_, .adjoin .Num [.terminal .Numeral .two, numP n]],
+    .node .V [.terminal .V .run]]
+
 /-- The singular indefinite does not compete with the plural indefinite: the plural has a
 determiner phrase, and neither the singular nor the lexicon has one (p. 16). -/
 theorem pluralIndefinite_not_mem_structuralAlternatives :
@@ -269,70 +240,363 @@ theorem pluralIndefinite_not_mem_structuralAlternatives :
     (phrase_preservation _ .D (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
       (by decide) h)
 
-/-- The number heads that compete with `n` in the construction `t`: those whose structure is a
-structural alternative of the structure with `n`. -/
-def alts (t : NumberHead → Tree Cat Morpheme) (n : NumberHead) : Set NumberHead :=
-  t ⁻¹' structuralAlternatives lexicon (t n)
+-- p. 17: replacing the number head gives the plural alternative
+theorem leafSubst_mem_structuralAlternatives {t : NumberHead → Tree Cat Morpheme}
+    (ht : t .pl = (t .sg).leafSubst (.num .sg) (.num .pl) .Num) (hwf : (t .sg).IsWellFormed) :
+    t .pl ∈ structuralAlternatives lexicon (t .sg) :=
+  ht ▸ horn_alternatives_are_structural lexicon (t .sg) _ _ _
+    (Finset.mem_image.2 ⟨.num .pl, Finset.mem_univ _, rfl⟩) hwf
 
--- p. 17: replacing the number head gives the alternative
-theorem alts_eq_univ {t : NumberHead → Tree Cat Morpheme}
-    (ht : ∀ n m, t m = (t n).leafSubst (.num n) (.num m) .Num) (hwf : ∀ n, (t n).IsWellFormed)
-    (n : NumberHead) : alts t n = Set.univ :=
-  Set.eq_univ_of_forall fun m ↦ by
-    rw [alts, Set.mem_preimage, ht n m]
-    exact horn_alternatives_are_structural lexicon (t n) _ _ _
-      (Finset.mem_image.2 ⟨.num m, Finset.mem_univ _, rfl⟩) (hwf n)
+-- (33): with a numeral the plural indefinite is an alternative, but it means the same
+theorem numeralIndefinite_mem_structuralAlternatives :
+    numeralIndefinite .pl ∈ structuralAlternatives lexicon (numeralIndefinite .sg) :=
+  leafSubst_mem_structuralAlternatives (by decide) (by decide)
 
-theorem alts_numPStar : alts numPStar = fun _ ↦ Set.univ :=
-  funext <| alts_eq_univ (by decide) (by decide)
+/-! ### Interpretation -/
 
-theorem alts_definite : alts definite = fun _ ↦ Set.univ :=
-  funext <| alts_eq_univ (by decide) (by decide)
+section Interpretation
 
-theorem alts_numeralDefinite : alts numeralDefinite = fun _ ↦ Set.univ :=
-  funext <| alts_eq_univ (by decide) (by decide)
+variable {α : Type} {B : Finset α} {n : NumberHead}
 
-theorem alts_numeralIndefinite : alts numeralIndefinite = fun _ ↦ Set.univ :=
-  funext <| alts_eq_univ (by decide) (by decide)
+/-- The partial denotations of the morphemes over the boys `B`. The number heads, *sup* and the
+numeral modify a predicate through its extension; *sup* is defined where the extension contains its
+supremum, and +DEF where it has one member. The verb and the existential are not interpreted. -/
+noncomputable def lex (B : Finset α) : Morpheme → Option (PDenotation (Finset α) Unit) :=
+  open scoped Classical in fun
+  | .boy => some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ boy B))⟩
+  | .num n => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
+      .some fun P ↦ .some (PFun.lift (· ∈ n.denote {x | True ∈ P x}))⟩
+  | .def_ => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some fun P ↦
+      if (sup {x | True ∈ P x}).Nonempty then .some (PFun.lift (· ∈ sup {x | True ∈ P x}))
+      else .none⟩
+  | .plusDef => some ⟨(.e ⇒ .t) ⇒ .e, .some fun P ↦ ↑(iota {x | True ∈ P x})⟩
+  | .two => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
+      .some fun P ↦ .some (PFun.lift (· ∈ numeral 2 {x | True ∈ P x}))⟩
+  | .exists_ | .run => none
+
+/-- The presupposition of a tree: the sets of boys over which it has a defined value. -/
+def defined (t : Tree Cat Morpheme) : Set (Finset α) :=
+  {B | ∃ d, interpPartial (lex B) (fun _ ↦ ∅) t = some d ∧ d.2.Dom}
+
+theorem mem_defined_of_eq {t : Tree Cat Morpheme} {d : PDenotation (Finset α) Unit}
+    (h : interpPartial (lex B) (fun _ ↦ ∅) t = some d) : B ∈ defined t ↔ d.2.Dom :=
+  ⟨fun ⟨_, h', hd⟩ ↦ (Option.some.inj (h.symm.trans h')) ▸ hd, fun hd ↦ ⟨d, h, hd⟩⟩
+
+theorem interpPartial_numP :
+    interpPartial (lex B) (fun _ ↦ ∅) (numP n) =
+      some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ n.denote (boy B)))⟩ := by
+  simp [numP, lex, Mode.evalKleisli, Part.bind_eq_bind]
+
+open scoped Classical in
+theorem interpPartial_numPStar :
+    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) = some ⟨.e ⇒ .t,
+      if (sup (n.denote (boy B))).Nonempty then .some (PFun.lift (· ∈ sup (n.denote (boy B))))
+      else .none⟩ := by
+  simp [numPStar, interpPartial_numP, lex, Mode.evalKleisli, Part.bind_eq_bind]
+
+theorem interpPartial_numPStar_of_nonempty (h : (sup (n.denote (boy B))).Nonempty) :
+    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) =
+      some ⟨.e ⇒ .t, .some (PFun.lift (· ∈ sup (n.denote (boy B))))⟩ := by
+  rw [interpPartial_numPStar, ite_eq_left h]
+
+theorem interpPartial_numPStar_of_not (h : ¬ (sup (n.denote (boy B))).Nonempty) :
+    interpPartial (lex B) (fun _ ↦ ∅) (numPStar n) = some ⟨.e ⇒ .t, .none⟩ := by
+  rw [interpPartial_numPStar, ite_eq_right h]
+
+theorem mem_defined_numPStar : B ∈ defined (numPStar n) ↔ (sup (n.denote (boy B))).Nonempty := by
+  rw [mem_defined_of_eq interpPartial_numPStar]
+  split_ifs with h <;> simp [h]
+
+-- p. 22: the singular NumP* presupposes a boy, the plural two
+theorem defined_numPStar_sg : defined (α := α) (numPStar .sg) = {B | 1 ≤ B.card} :=
+  Set.ext fun _ ↦ mem_defined_numPStar.trans (by rw [denote_sg_boy, nonempty_sup_card_le]; rfl)
+
+theorem defined_numPStar_pl : defined (α := α) (numPStar .pl) = {B | 2 ≤ B.card} :=
+  Set.ext fun _ ↦ mem_defined_numPStar.trans (by rw [denote_pl_boy, nonempty_sup_card_le]; rfl)
+
+theorem defined_numPStar_pl_ssubset [Nonempty α] :
+    defined (α := α) (numPStar .pl) ⊂ defined (numPStar .sg) := by
+  rw [defined_numPStar_sg, defined_numPStar_pl]
+  refine ⟨fun _ h ↦ (by omega : 1 ≤ 2).trans h, fun h ↦ ?_⟩
+  obtain ⟨a⟩ := ‹Nonempty α›
+  have : 2 ≤ ({a} : Finset α).card := h (by simp)
+  simp at this
+
+-- the determiner adds no presupposition to NumP*
+theorem defined_definiteDP : defined (α := α) (definiteDP n) = defined (numPStar n) := by
+  ext B
+  rw [mem_defined_numPStar]
+  by_cases h : (sup (n.denote (boy B))).Nonempty
+  · rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (sup (n.denote (boy B))))⟩) (by
+      simp [definiteDP, interpPartial_numPStar_of_nonempty h, lex, Mode.evalKleisli,
+        Part.bind_eq_bind])]
+    exact (Part.ofOption_dom _).trans sup_subsingleton.iota_isSome_iff
+  · rw [mem_defined_of_eq (d := ⟨.e, .none⟩) (by
+      simp [definiteDP, interpPartial_numPStar_of_not h, lex, Mode.evalKleisli,
+        Part.bind_eq_bind])]
+    exact iff_of_false Part.not_none_dom h
+
+theorem defined_bareDP_sg : defined (α := α) (bareDP .sg) = {B | B.card = 1} := by
+  ext B
+  rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (NumberHead.sg.denote (boy B)))⟩) (by
+    simp [bareDP, interpPartial_numP, lex, Mode.evalKleisli, Part.bind_eq_bind])]
+  refine (Part.ofOption_dom _).trans (iota_isSome_iff.trans ?_)
+  rw [denote_sg_boy, Set.mem_ofPred_eq, Finset.card_eq_one]
+  constructor
+  · rintro ⟨x, ⟨hxB, hx⟩, huniq⟩
+    have hB := huniq B ⟨subset_rfl, hx.trans (Finset.card_le_card hxB)⟩
+    obtain ⟨a, ha⟩ := Finset.one_le_card.1 hx
+    exact ⟨a, ((huniq {a} ⟨Finset.singleton_subset_iff.2 (hxB ha), by simp⟩).trans hB.symm).symm⟩
+  · rintro ⟨a, rfl⟩
+    exact ⟨{a}, ⟨subset_rfl, by simp⟩, fun y ⟨hy, hy1⟩ ↦
+      (Finset.subset_singleton_iff.1 hy).resolve_left (Finset.one_le_card.1 hy1).ne_empty⟩
+
+-- p. 22: either numeral definite presupposes exactly two boys
+theorem defined_numeralDP : defined (α := α) (numeralDP n) = {B | B.card = 2} := by
+  ext B
+  have hsub {X : Set (Finset α)} : (numeral 2 (sup X)).Subsingleton :=
+    sup_subsingleton.anti fun _ h ↦ h.1
+  have hk : ∃ k ≤ 2, n.denote (boy B) = {x | x ⊆ B ∧ k ≤ x.card} := by
+    cases n
+    exacts [⟨1, by omega, denote_sg_boy⟩, ⟨2, le_rfl, denote_pl_boy⟩]
+  obtain ⟨k, hk2, hden⟩ := hk
+  by_cases h : (sup (n.denote (boy B))).Nonempty
+  · rw [mem_defined_of_eq (d := ⟨.e, ↑(iota (numeral 2 (sup (n.denote (boy B)))))⟩) (by
+      simp [numeralDP, interpPartial_numPStar_of_nonempty h, lex, Mode.evalKleisli,
+        Part.bind_eq_bind])]
+    refine (Part.ofOption_dom _).trans (hsub.iota_isSome_iff.trans ?_)
+    rw [hden, sup_card_le]
+    exact ⟨fun ⟨_, ⟨rfl, _⟩, h⟩ ↦ h, fun (h : B.card = 2) ↦ ⟨B, ⟨rfl, by omega⟩, h⟩⟩
+  · rw [mem_defined_of_eq (d := ⟨.e, .none⟩) (by
+      simp [numeralDP, interpPartial_numPStar_of_not h, lex, Mode.evalKleisli,
+        Part.bind_eq_bind])]
+    rw [hden, nonempty_sup_card_le] at h
+    exact iff_of_false Part.not_none_dom fun (h2 : B.card = 2) ↦ h (by omega)
+
+-- a tree's presupposition depends on the boys only through their number
+theorem mem_defined_iff_of_card_eq {B' : Finset α} (h : B.card = B'.card)
+    (t : Tree Cat Morpheme) : B ∈ defined t ↔ B' ∈ defined t := by
+  -- TODO: a permutation of `α` taking `B` to `B'` relates the two lexicons morpheme by morpheme,
+  -- and the relation, a `KleisliRelator` at `Part` and `Part`, passes through `interpPartial`.
+  sorry
+
+end Interpretation
+
+/-! ### The alternatives of NumP* -/
+
+section Alternatives
+
+variable {α : Type} {B : Finset α} {n : NumberHead}
+
+/-- The labels of the number phrase: phrases of the noun, the number head and the definite marker,
+and *dəgha*, the number heads and the definite marker under their categories. -/
+def IsNominalLabel : Label Cat Morpheme → Prop
+  | .terminal .N .boy | .terminal .Num (.num _) | .terminal .Def .def_ => True
+  | .phrase c _ => c = .N ∨ c = .Num ∨ c = .Def
+  | _ => False
+
+instance : DecidablePred IsNominalLabel := fun l ↦ by
+  unfold IsNominalLabel; split <;> infer_instance
+
+theorem IsNominalLabel.cat {l : Label Cat Morpheme} (h : IsNominalLabel l) :
+    l.cat = .N ∨ l.cat = .Num ∨ l.cat = .Def := by
+  unfold IsNominalLabel at h; split at h <;> simp_all [Label.cat]
+
+-- no operation brings a determiner, a numeral or a verb into NumP*
+theorem licensed_of_mem_structuralAlternatives {ψ : Tree Cat Morpheme}
+    (h : ψ ∈ structuralAlternatives lexicon (numPStar n)) : ψ.Licensed fun l _ ↦ IsNominalLabel l :=
+  licensed_of_atMostAsComplex_of_cat (K := fun c ↦ c = .N ∨ c = .Num ∨ c = .Def)
+    (fun _ _ h ↦ h.cat) (forall_mem_substitutionSource.2 ⟨by decide, by cases n <;> decide⟩)
+    (fun _ _ _ _ h ↦ h) (fun _ _ _ _ _ _ _ h ↦ h) (fun _ _ _ _ _ h ↦ h) (by cases n <;> decide) h
+
+/-- A predicate is good over the boys `B` when it is total, true of `B`, and true only of parts of
+`B`. -/
+structure GoodPred (B : Finset α) (P : Finset α →. Prop) : Prop where
+  dom : ∀ x, (P x).Dom
+  self : True ∈ P B
+  le : ∀ x, True ∈ P x → x ⊆ B
+
+/-- A value is good over the boys `B` when it is a good predicate, or a modifier taking good
+predicates to good predicates. -/
+inductive Good (B : Finset α) : PDenotation (Finset α) Unit → Prop
+  | pred {P : Finset α →. Prop} : GoodPred B P → Good B ⟨.e ⇒ .t, .some P⟩
+  | modifier {F : (Finset α →. Prop) → Part (Finset α →. Prop)} :
+      (∀ P, GoodPred B P → ∃ Q, F P = .some Q ∧ GoodPred B Q) →
+        Good B ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, .some F⟩
+
+theorem Good.dom {d : PDenotation (Finset α) Unit} (h : Good B d) : d.2.Dom := by
+  cases h <;> trivial
+
+theorem Good.combine? {d₁ d₂ d : PDenotation (Finset α) Unit} (h₁ : Good B d₁) (h₂ : Good B d₂)
+    (h : Mode.combine? Mode.evalPartial d₁ d₂ = some d) : Good B d := by
+  rcases h₁ with @⟨P, hP⟩ | @⟨F, hF⟩ <;> rcases h₂ with @⟨Q, hQ⟩ | @⟨G, hG⟩
+  · rw [Mode.combine?_evalPartial_predicateModification] at h
+    cases h
+    refine .pred ⟨fun x ↦ ⟨hP.dom x, hQ.dom x⟩, ?_, fun x hx ↦ ?_⟩
+    · exact Part.mem_bind_iff.2 ⟨True, hP.self, (Part.mem_map_iff _).2 ⟨True, hQ.self, by simp⟩⟩
+    · obtain ⟨a, ha, hm⟩ := Part.mem_bind_iff.1 hx
+      obtain ⟨b, -, hab⟩ := (Part.mem_map_iff _).1 hm
+      exact hP.le x ((eq_true (of_eq_true hab).1) ▸ ha)
+  · rw [Mode.combine?_evalPartial_fn_right] at h
+    obtain ⟨R, hR, hgood⟩ := hG P hP
+    cases h
+    rw [hR]
+    exact .pred hgood
+  · rw [Mode.combine?_evalPartial_fn_left] at h
+    obtain ⟨R, hR, hgood⟩ := hF Q hQ
+    cases h
+    rw [hR]
+    exact .pred hgood
+  · cases h
+
+theorem good_lex (hB : 2 ≤ B.card) {c : Cat} {w : Morpheme}
+    (hw : IsNominalLabel (.terminal c w)) {d : PDenotation (Finset α) Unit}
+    (h : lex B w = some d) : Good B d := by
+  have hB' : B ∈ boy B := mem_boy.2 ⟨subset_rfl, by omega⟩
+  cases w with
+  | boy =>
+    cases h
+    exact .pred ⟨fun _ ↦ trivial, by simpa using hB', fun x hx ↦ (mem_boy.1 (by simpa using hx)).1⟩
+  | num m =>
+    cases h
+    refine .modifier fun P hP ↦ ⟨_, rfl, fun _ ↦ trivial, ?_, fun x hx ↦ ?_⟩
+    · cases m
+      · exact (PFun.true_mem_lift _ _).2 hP.self
+      · simpa [NumberHead.denote, nonAtomsOf, atom_finset_iff_card_eq_one, hP.self] using
+          (by omega : B.card ≠ 1)
+    · cases m <;> simp [NumberHead.denote, nonAtomsOf] at hx
+      · exact hP.le x hx
+      · exact hP.le x hx.1
+  | def_ =>
+    cases h
+    refine .modifier fun P hP ↦ ?_
+    have hsup : B ∈ sup {x | True ∈ P x} := ⟨hP.self, fun x hx ↦ hP.le x hx⟩
+    exact ⟨PFun.lift (· ∈ sup {x | True ∈ P x}), ite_eq_left ⟨B, hsup⟩, fun _ ↦ trivial,
+      by simpa using hsup, fun x hx ↦ hP.le x (show x ∈ sup {x | True ∈ P x} by simpa using hx).1⟩
+  | plusDef | exists_ | two | run => cases c <;> simp [IsNominalLabel] at hw
+
+theorem good_of_licensed (hB : 2 ≤ B.card) {t : Tree Cat Morpheme}
+    (ht : t.Licensed fun l _ ↦ IsNominalLabel l) {d : PDenotation (Finset α) Unit}
+    (h : interpPartial (lex B) (fun _ ↦ ∅) t = some d) : Good B d := by
+  induction t using Tree.rec' generalizing d with
+  | terminal c w =>
+    rw [interpPartial_terminal] at h
+    exact good_lex hB ht.rel_root h
+  | phrase c k cs ih =>
+    match cs, ih, ht, h with
+    | [t], ih, ht, h =>
+      rw [interpPartial_phrase_unary] at h
+      exact ih t (by simp) (ht.of_mem (by simp)) h
+    | [t₁, t₂], ih, ht, h =>
+      rw [interpPartial_phrase_binary] at h
+      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.1 h
+      exact (ih t₁ (by simp) (ht.of_mem (by simp)) h₁).combine?
+        (ih t₂ (by simp) (ht.of_mem (by simp)) h₂) h
+    | [], _, _, h => cases h
+    | _ :: _ :: _ :: _, _, _, h => cases h
+  | trace n c => exact absurd ht.rel_root id
+  | bind n c t _ => exact absurd ht.rel_root id
+  | junk l cs hl _ => rw [interpPartial_junk _ _ hl] at h; cases h
+
+-- every alternative of NumP* is uninterpretable, or defined wherever there are two boys
+theorem defined_eq_empty_or_subset {ψ : Tree Cat Morpheme}
+    (h : ψ ∈ structuralAlternatives lexicon (numPStar n)) :
+    defined (α := α) ψ = ∅ ∨ {B : Finset α | 2 ≤ B.card} ⊆ defined ψ := by
+  have htypes (B B' : Finset α) (w : Morpheme) :
+      (lex B w).map (·.1) = (lex B' w).map (·.1) := by
+    cases w <;> rfl
+  by_cases hu : Uninterpretable (lex (∅ : Finset α)) (fun _ ↦ ∅) ψ
+  · refine .inl (Set.eq_empty_of_forall_notMem fun B ⟨d, hd, _⟩ ↦ ?_)
+    have := (uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).1 hu
+    rw [Uninterpretable, hd] at this
+    cases this
+  · refine .inr fun B hB ↦ ?_
+    obtain ⟨d, hd⟩ := Option.ne_none_iff_exists'.1
+      ((uninterpretable_congr _ (lex B) _ (fun _ ↦ ∅) (htypes ∅ B) ψ).not.1 hu)
+    exact ⟨d, hd, (good_of_licensed hB (licensed_of_mem_structuralAlternatives h) hd).dom⟩
+
+end Alternatives
 
 /-! ### Maximize Presupposition -/
 
 section Competition
 
-variable {α : Type*}
+variable {α : Type}
 
-/-- Strengthened against the plural definite, the singular definite *dəgha-n* presupposes a
+/-- At NumP*, strengthened against its alternatives, the singular definite *dəgha-n* presupposes a
 single boy (11b). -/
-theorem strengthen_presup_sg [Nonempty α] :
-    strengthen (alts definite) presup .sg = {B : Finset α | B.card = 1} := by
-  rw [strengthen_eq_sdiff (ψ := .pl) (by simp [alts_definite]) presup_pl_ssubset_presup_sg
-    fun χ _ h ↦ by cases χ; exacts [absurd rfl h.ne, le_rfl], presup_sg, presup_pl]
+theorem strengthen_numPStar_sg [Nonempty α] :
+    strengthen (structuralAlternatives lexicon) defined (numPStar .sg) =
+      {B : Finset α | B.card = 1} := by
+  have hpl : numPStar .pl ∈ structuralAlternatives lexicon (numPStar .sg) :=
+    leafSubst_mem_structuralAlternatives (by decide) (by decide)
   ext B
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq]
-  omega
+  rw [mem_strengthen_iff, defined_numPStar_sg]
+  simp only [Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨h1, h⟩
+    have h2 : ¬ 2 ≤ B.card := fun h2 ↦ h _ hpl (by rw [defined_numPStar_pl]; exact h2)
+      (by rw [← defined_numPStar_sg]; exact defined_numPStar_pl_ssubset)
+    omega
+  · intro h1
+    refine ⟨h1.ge, fun ψ hψ hB hss ↦ ?_⟩
+    rcases defined_eq_empty_or_subset hψ with h0 | h2
+    · rw [h0] at hB; exact hB
+    · refine hss.not_subset fun B' (hB' : 1 ≤ B'.card) ↦ ?_
+      rcases hB'.eq_or_lt with h' | h'
+      · exact (mem_defined_iff_of_card_eq (h1.trans h') ψ).1 hB
+      · exact h2 (show 2 ≤ B'.card from h')
 
--- p. 22: the numeral definites presuppose the same, so competition over the whole phrase is inert
-theorem strengthen_numeralPresup (n : NumberHead) :
-    strengthen (alts numeralDefinite) numeralPresup n = numeralPresup (α := α) n :=
-  strengthen_eq_self fun m _ h ↦ h.ne (by rw [numeralPresup_eq, numeralPresup_eq])
-
-/-- Maximize Presupposition applied at NumP* rules out the singular under a numeral on a definite
-(14a) and keeps the plural (14b): wherever the definite numeral phrase is defined, so is the
-plural's stronger local presupposition (p. 23). -/
-theorem minimalFor_presup_iff [Nonempty α] {c : Set (Finset α)} {n : NumberHead}
-    (hc : c ⊆ numeralPresup n) :
-    MinimalFor (· ∈ insert n (alts numPStar n) ∩ presup ⁻¹' Set.Ici c) (presup (α := α)) n ↔
-      n = .pl := by
-  rw [numeralPresup_eq] at hc
-  have hpl : c ⊆ presup .pl := hc.trans fun B h ↦ by rw [presup_pl]; exact h.ge
-  rw [minimalFor_preimage_Ici_iff, alts_numPStar]
+/-- Maximize Presupposition at NumP* rules out the singular under a numeral on a definite (14a)
+and keeps the plural (14b): wherever the definite numeral phrase is defined, so is the plural's
+stronger local presupposition (p. 23). -/
+theorem minimalFor_defined_numPStar_iff [Nonempty α] {c : Set (Finset α)} {n : NumberHead}
+    (hc : c ⊆ defined (numeralDP n)) (hne : c.Nonempty) :
+    MinimalFor (· ∈ insert (numPStar n) (structuralAlternatives lexicon (numPStar n)) ∩
+      defined (α := α) ⁻¹' Set.Ici c) (defined (α := α)) (numPStar n) ↔ n = .pl := by
+  rw [defined_numeralDP] at hc
+  have hpl : c ⊆ defined (numPStar .pl) := hc.trans fun B h ↦ by
+    rw [defined_numPStar_pl]; exact h.ge
+  rw [minimalFor_preimage_Ici_iff]
   cases n
   · simp only [reduceCtorEq, iff_false, not_and, not_forall]
-    exact fun _ ↦ ⟨.pl, trivial, presup_pl_ssubset_presup_sg, fun h ↦ h hpl⟩
-  · refine iff_of_true ⟨hpl, fun m _ h ↦ ?_⟩ rfl
-    cases m
-    · exact absurd presup_pl_ssubset_presup_sg.subset h.not_subset
-    · exact absurd rfl h.ne
+    exact fun _ ↦ ⟨numPStar .pl, leafSubst_mem_structuralAlternatives (by decide) (by decide),
+      defined_numPStar_pl_ssubset, fun h ↦ h hpl⟩
+  · refine iff_of_true ⟨hpl, fun ψ hψ hss hcψ ↦ ?_⟩ rfl
+    rcases defined_eq_empty_or_subset hψ with h0 | h2
+    · obtain ⟨B, hB⟩ := hne
+      rw [h0] at hcψ; exact hcψ hB
+    · exact hss.not_subset (by rw [defined_numPStar_pl]; exact h2)
+
+/-- At the determiner phrase, Maximize Presupposition over the structures of the final analysis
+would leave the singular definite no context: its alternatives include the plural, presupposing
+two boys, and +DEF over the bare number phrase, presupposing exactly one. -/
+theorem strengthen_definiteDP_sg_eq_empty [Nontrivial α] :
+    strengthen (structuralAlternatives lexicon) defined (definiteDP .sg) =
+      (∅ : Set (Finset α)) := by
+  classical
+  have hpl : definiteDP .pl ∈ structuralAlternatives lexicon (definiteDP .sg) :=
+    leafSubst_mem_structuralAlternatives (by decide) (by decide)
+  have hbare : bareDP .sg ∈ structuralAlternatives lexicon (definiteDP .sg) :=
+    .single (StructuralOp.inChild ⟨0, by simp⟩
+      (StructuralOp.contract (child := numP .sg) (by simp) rfl))
+  obtain ⟨a, b, hab⟩ := exists_pair_ne α
+  have hpair : ({a, b} : Finset α).card = 2 := Finset.card_pair hab
+  refine Set.eq_empty_of_forall_notMem fun B hB ↦ ?_
+  rw [mem_strengthen_iff, defined_definiteDP, defined_numPStar_sg] at hB
+  obtain ⟨h1 : 1 ≤ B.card, h⟩ := hB
+  rcases h1.eq_or_lt with h' | h'
+  · refine h _ hbare (by rw [defined_bareDP_sg]; exact h'.symm)
+      ⟨fun B' hB' ↦ ?_, fun hss ↦ ?_⟩
+    · rw [defined_bareDP_sg] at hB'
+      exact (show B'.card = 1 from hB').ge
+    · have := hss (show 1 ≤ ({a, b} : Finset α).card by omega)
+      rw [defined_bareDP_sg] at this
+      exact absurd (show ({a, b} : Finset α).card = 1 from this) (by omega)
+  · refine h _ hpl (by rw [defined_definiteDP, defined_numPStar_pl]; exact h') ?_
+    rw [defined_definiteDP, ← defined_numPStar_sg]
+    exact defined_numPStar_pl_ssubset
 
 end Competition
 
@@ -377,14 +641,16 @@ def numeralDefinite? (r : Datum) : Option NumberHead :=
     r.parse? "number" [("SG", .sg), ("PL", .pl)]
   else none
 
--- (14): the rows fit Maximize Presupposition at NumP*, in any context for a group of two
-theorem rows_numeralDefinite {c : Set (Finset Boy)} (hc : c ⊆ {B | B.card = 2}) :
+-- (14): with John and Brad the boys, the rows fit Maximize Presupposition at NumP*
+theorem rows_numeralDefinite :
     (∀ r ∈ Examples.all, ∀ n ∈ numeralDefinite? r,
-      (MinimalFor (· ∈ insert n (alts numPStar n) ∩ presup ⁻¹' Set.Ici c) (presup (α := Boy)) n ↔
-        r.judgment = .acceptable)) ∧
+      (MinimalFor (· ∈ insert (numPStar n) (structuralAlternatives lexicon (numPStar n)) ∩
+        defined (α := Boy) ⁻¹' Set.Ici {.univ}) (defined (α := Boy)) (numPStar n) ↔
+          r.judgment = .acceptable)) ∧
     Datum.ReadCount numeralDefinite? Examples.all 2 := by
   refine ⟨fun r hr n hn ↦ ?_, by decide +kernel⟩
-  rw [minimalFor_presup_iff (by rwa [numeralPresup_eq])]
+  rw [minimalFor_defined_numPStar_iff (by rw [defined_numeralDP]; rintro _ rfl; decide)
+    (Set.singleton_nonempty _)]
   revert n
   revert r
   decide +kernel

@@ -329,14 +329,12 @@ noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) S :=
 
 theorem the_dom (P : E →. Prop) : (the (W := W) (S := S) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
 
-@[simp] theorem true_mem_lift (P : E → Prop) (x : E) : True ∈ PFun.lift P x ↔ P x := by
-  simp [PFun.lift, Part.mem_some_iff]
-
 theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
     the (W := W) (S := S) (PFun.lift P) = Part.some a := by
-  have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (true_mem_lift P a).mpr ((h a).mpr rfl),
-    fun y hy ↦ (h y).mp ((true_mem_lift P y).mp hy)⟩
-  exact Part.eq_some_iff.mpr ⟨hu, (h _).mp ((true_mem_lift P _).mp (Classical.choose_spec hu).1)⟩
+  have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (PFun.true_mem_lift P a).mpr ((h a).mpr rfl),
+    fun y hy ↦ (h y).mp ((PFun.true_mem_lift P y).mp hy)⟩
+  exact Part.eq_some_iff.mpr
+    ⟨hu, (h _).mp ((PFun.true_mem_lift P _).mp (Classical.choose_spec hu).1)⟩
 
 end FregeanArticle
 
@@ -364,8 +362,8 @@ theorem the_student_fails :
   refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
   · rw [interpPartial_phrase_binary, interpPartial_terminal, interpPartial_terminal]
     exact Mode.combine?_evalPartial_fn_left the (PFun.lift student)
-  have hj := huniq .john ((true_mem_lift _ _).mpr (.inl rfl))
-  have hm := huniq .mary ((true_mem_lift _ _).mpr (.inr rfl))
+  have hj := huniq .john ((PFun.true_mem_lift _ _).mpr (.inl rfl))
+  have hm := huniq .mary ((PFun.true_mem_lift _ _).mpr (.inr rfl))
   exact ToyEntity.noConfusion (hj.trans hm.symm)
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/

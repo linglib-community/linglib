@@ -150,14 +150,17 @@ section Licensed
 
 variable {source : Set (Tree C W)} {R : Tree.Label C W → List (Tree.Label C W) → Prop}
 
-private theorem licensed_of_op (h_source : ∀ s ∈ source, s.Licensed R)
+private theorem licensed_of_op {K : C → Prop} (hK : ∀ l ks, R l ks → K (Label.cat l))
+    (h_source : ∀ s ∈ source, K (Tree.cat s) → s.Licensed R)
     (h_delete : ∀ l ks i, l.IsPhrase → R l ks → R l (ks.eraseIdx i))
     (h_set : ∀ l ks (i : ℕ) k (hi : i < ks.length), l.IsPhrase → Label.cat k = Label.cat ks[i] →
       R l ks → R l (ks.set i k))
     (h_bind : ∀ n c k k', Label.cat k' = Label.cat k → R (.bind n c) [k] → R (.bind n c) [k'])
     {φ ψ : Tree C W} (h : StructuralOp source φ ψ) (hφ : φ.Licensed R) : ψ.Licensed R := by
   induction h with
-  | subst _ hs => exact h_source _ hs
+  | @subst φ _ hc hs =>
+    obtain ⟨l, cs⟩ := φ
+    exact h_source _ hs (hc ▸ hK _ _ hφ.rel_root)
   | @delete l cs i hl =>
     obtain ⟨hr, hc⟩ := RoseTree.licensed_node_iff.1 hφ
     refine RoseTree.licensed_node_iff.2
@@ -178,9 +181,13 @@ private theorem licensed_of_op (h_source : ∀ s ∈ source, s.Licensed R)
     refine RoseTree.licensed_node_iff.2 ⟨h_bind n c _ _ hstep.cat_eq hr, ?_⟩
     simpa using ih (hc body (by simp))
 
-/-- A tree no more complex than a licensed tree over a licensed source is licensed, when the local
-trees survive deleting a daughter and replacing one by another of its category. -/
-theorem licensed_of_atMostAsComplex (h_source : ∀ s ∈ source, s.Licensed R)
+/-- A tree no more complex than a licensed tree is licensed, when the local trees survive deleting
+a daughter and replacing one by another of its category, and the source items are licensed whose
+category `K` admits, `K` holding of the category of every node `R` licenses: no other item can
+replace a constituent. -/
+theorem licensed_of_atMostAsComplex_of_cat {K : C → Prop}
+    (hK : ∀ l ks, R l ks → K (Label.cat l))
+    (h_source : ∀ s ∈ source, K (Tree.cat s) → s.Licensed R)
     (h_delete : ∀ l ks i, l.IsPhrase → R l ks → R l (ks.eraseIdx i))
     (h_set : ∀ l ks (i : ℕ) k (hi : i < ks.length), l.IsPhrase → Label.cat k = Label.cat ks[i] →
       R l ks → R l (ks.set i k))
@@ -188,7 +195,18 @@ theorem licensed_of_atMostAsComplex (h_source : ∀ s ∈ source, s.Licensed R)
     {φ ψ : Tree C W} (hφ : φ.Licensed R) (h : atMostAsComplex source ψ φ) : ψ.Licensed R := by
   induction h with
   | refl => exact hφ
-  | tail _ h ih => exact licensed_of_op h_source h_delete h_set h_bind h ih
+  | tail _ h ih => exact licensed_of_op hK h_source h_delete h_set h_bind h ih
+
+/-- A tree no more complex than a licensed tree over a licensed source is licensed, when the local
+trees survive deleting a daughter and replacing one by another of its category. -/
+theorem licensed_of_atMostAsComplex (h_source : ∀ s ∈ source, s.Licensed R)
+    (h_delete : ∀ l ks i, l.IsPhrase → R l ks → R l (ks.eraseIdx i))
+    (h_set : ∀ l ks (i : ℕ) k (hi : i < ks.length), l.IsPhrase → Label.cat k = Label.cat ks[i] →
+      R l ks → R l (ks.set i k))
+    (h_bind : ∀ n c k k', Label.cat k' = Label.cat k → R (.bind n c) [k] → R (.bind n c) [k'])
+    {φ ψ : Tree C W} (hφ : φ.Licensed R) (h : atMostAsComplex source ψ φ) : ψ.Licensed R :=
+  licensed_of_atMostAsComplex_of_cat (K := fun _ ↦ True) (fun _ _ _ ↦ trivial)
+    (fun s hs _ ↦ h_source s hs) h_delete h_set h_bind hφ h
 
 end Licensed
 

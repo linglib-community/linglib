@@ -50,6 +50,11 @@ records definedness alternative by alternative and leaves open how it projects t
 
 @[expose] public section
 
+/-- A lifted predicate is defined everywhere, with the value `True` exactly where it holds. -/
+@[simp] theorem PFun.true_mem_lift {α : Type*} (p : α → Prop) (a : α) :
+    True ∈ PFun.lift p a ↔ p a := by
+  simp [PFun.lift, Part.mem_some_iff]
+
 namespace Montague
 
 /-- Partial denotation domains, `Ty.DomainM` at `Part`: a function is defined at an argument where a
