@@ -149,13 +149,13 @@ end Ordering
 private theorem notMem_variablyStrictImp_empty :
     () ∉ variablyStrictImp (fun _ ↦ univ) (fun _ ↦ (inferInstance : Preorder ℤ)) univ ∅ :=
   fun h ↦ by
-    rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter] at h
+    rw [mem_variablyStrictImp, Filter.mem_atBotOn] at h
     obtain ⟨v, hv, -, hvt⟩ := h 0 ⟨trivial, trivial⟩
     exact hvt v hv le_rfl
 
 private theorem mem_variablyStrictImp_Iic (n : ℤ) :
     () ∈ variablyStrictImp (fun _ ↦ univ) (fun _ ↦ (inferInstance : Preorder ℤ)) univ (Iic n) := by
-  rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter]
+  rw [mem_variablyStrictImp, Filter.mem_atBotOn]
   exact fun u _ ↦ ⟨min u n, ⟨trivial, trivial⟩, min_le_left u n,
     fun _ _ hw ↦ hw.trans (min_le_right u n)⟩
 

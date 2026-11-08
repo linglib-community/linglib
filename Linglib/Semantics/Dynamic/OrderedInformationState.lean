@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Semantics.Dynamic.Consequence
 
 /-!

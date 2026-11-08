@@ -80,8 +80,8 @@ private theorem sInf_ne_bot_iff : sInf B ≠ ⊥ ↔ ∃ w, ∀ x ∈ B, x w := 
 stands for the premises it verifies, and a consistent subset for the worlds verifying it. This is
 the modal case of [lewis-1981]'s equivalence of premise and ordering semantics. -/
 theorem mustInView_iff_humanNecessity : MustInView f φ i ↔ humanNecessity ⊥ f φ i := by
-  rw [humanNecessity, Filter.Eventually, Background.accessibleWorlds_bot,
-    OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
+  rw [humanNecessity, Filter.Eventually, Background.accessibleWorlds_bot, Filter.atBotOn_ofCriteria,
+    Filter.mem_atBotOn_satisfied_iff]
   simp [MustInView, consistentSubsets, sInf_ne_bot_iff, Pi.le_def, and_assoc]
 
 theorem canInView_iff_not_mustInView_compl : CanInView f φ i ↔ ¬ MustInView f φᶜ i := by
@@ -100,9 +100,10 @@ necessary. -/
 theorem canInView_of_mustInView [Nonempty W] (h : MustInView f φ i) : CanInView f φ i := by
   rw [mustInView_iff_humanNecessity] at h
   rw [canInView_iff_not_mustInView_compl, mustInView_iff_humanNecessity]
-  have : (OrderingSemantics.necessityFilter (premisePreorder (f i))
+  have : (@Filter.atBotOn W W (premisePreorder (f i)) id
       ((⊥ : Background W).accessibleWorlds i)).NeBot :=
-    OrderingSemantics.necessityFilter_neBot_iff.2 (by simp)
+    letI := premisePreorder (f i)
+    Filter.atBotOn_neBot_iff.2 (by simp)
   exact fun h' ↦ let ⟨_, hφ, hnφ⟩ := Filter.nonempty_of_mem (Filter.inter_mem h h'); hnφ hφ
 
 -- On a consistent premise set Definition 7 is Definition 5, consequence from the premises

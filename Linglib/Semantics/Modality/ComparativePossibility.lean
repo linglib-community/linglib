@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Antisymmetrization
+public import Linglib.Core.Order.Filter.AtBotOn
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Defs.Unbundled
 public import Mathlib.Order.RelClasses
@@ -26,6 +27,8 @@ single `A`-world strictly dominating every `B`-world.
 * `ComparativePossibility.asymmRel_lewis_iff`: the strict part over a total relation.
 * `ComparativePossibility.kratzer_iff_lewis_sdiff`: the revised notion over a total relation.
 * `ComparativePossibility.kratzer_sdiff_sdiff_iff`: the revised notion sees only the differences.
+* `ComparativePossibility.mem_atBotOn_iff_asymmRel_lewis`: over a total ranking, truth toward the
+  bottom of a domain is comparative possibility.
 
 ## References
 
@@ -139,5 +142,34 @@ theorem kratzer_union_of_disjoint (hB : Disjoint A B) (hC : Disjoint A C) (hAB :
       hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
   · exact hAC ⟨b, ⟨hb, hbA⟩, fun a ha ↦
       hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
+
+/-! ### Comparative possibility and the bottom of a ranking -/
+
+section Ranking
+
+variable {W β : Type*} [Preorder β] [Std.Total (α := β) (· ≤ ·)] {f : W → β} {s t : Set W}
+
+/-- Over a total ranking, `t` holds at every point of `s` ranked at or below some point of `s`
+exactly when the `t`-points of `s` are more possible than its other points. -/
+theorem exists_forall_le_iff_asymmRel_lewis :
+    (∃ v ∈ s, ∀ w ∈ s, f w ≤ f v → w ∈ t) ↔
+      AsymmRel (Lewis fun a b ↦ f a ≤ f b) (s ∩ t) (s \ t) := by
+  haveI : Std.Total fun a b : W ↦ f a ≤ f b := ⟨fun a b ↦ total_of (· ≤ ·) (f a) (f b)⟩
+  rw [asymmRel_lewis_iff]
+  refine ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨v, ⟨hv, hvt v hv le_rfl⟩, fun b hb ↦ ?_⟩,
+    fun ⟨a, ha, h⟩ ↦ ⟨a, ha.1, fun w hw hwa ↦ by_contra fun hwt ↦ (h w ⟨hw, hwt⟩).2 hwa⟩⟩
+  have hbv : ¬ f b ≤ f v := fun hbv ↦ hb.2 (hvt b hb.1 hbv)
+  exact ⟨(total_of (· ≤ ·) (f v) (f b)).resolve_right hbv, hbv⟩
+
+/-- Over a total ranking, `t` holds toward the bottom of `s` exactly when `s` is empty or the
+`t`-points of `s` are more possible than its other points. -/
+theorem mem_atBotOn_iff_asymmRel_lewis :
+    t ∈ Filter.atBotOn f s ↔ s = ∅ ∨ AsymmRel (Lewis fun a b ↦ f a ≤ f b) (s ∩ t) (s \ t) := by
+  rcases s.eq_empty_or_nonempty with rfl | hs
+  · exact iff_of_true (fun _ hu ↦ hu.elim) (.inl rfl)
+  · rw [Filter.mem_atBotOn_iff_exists hs, exists_forall_le_iff_asymmRel_lewis,
+      or_iff_right hs.ne_empty]
+
+end Ranking
 
 end ComparativePossibility

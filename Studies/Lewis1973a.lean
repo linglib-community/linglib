@@ -212,9 +212,8 @@ theorem mem_variablyStrictImp_iff_solve_update {ord : U → Preorder (∀ v, α 
   have hlt (x : ∀ v, α v) (hx : x c = b) (hne : x ≠ M.solve [c ← b] u) :
       M.solve [c ← b] u < x :=
     hord _ _ (score_solve_update_lt hx hne)
-  have h : OrderingSemantics.necessityFilter (ord u) {x | x c = b} =
-      pure (M.solve [c ← b] u) :=
-    OrderingSemantics.necessityFilter_eq_pure (solve_update_self ⊥ c b u)
+  have h : @Filter.atBotOn _ _ (ord u) id {x | x c = b} = pure (M.solve [c ← b] u) :=
+    Filter.atBotOn_eq_pure (solve_update_self ⊥ c b u)
       (fun x hx ↦ by
         rcases eq_or_ne x (M.solve [c ← b] u) with rfl | hne
         exacts [le_rfl, (hlt x hx hne).le])

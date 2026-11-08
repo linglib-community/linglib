@@ -129,7 +129,7 @@ evaluation they verify, as [lewis-1981] showed of premise semantics in general. 
 theorem would_consistentPremiseSets_iff {F : S → Set (Set S)} :
     Would (consistentPremiseSets (F w) p) q ↔
       w ∈ variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ .ofCriteria (· ∈ ·) (F v)) p q := by
-  rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
+  rw [mem_variablyStrictImp, Filter.atBotOn_ofCriteria, Filter.mem_atBotOn_satisfied_iff]
   refine ⟨fun h B hB ⟨u, ⟨hu, hup⟩, huB⟩ ↦ ?_, fun h A ⟨hA, hpA, u, hu, huA⟩ ↦ ?_⟩
   · obtain ⟨A', ⟨hA', hpA', v, hv, hvA'⟩, hBA', hA'q⟩ := h (insert p B)
       ⟨insert_subset_insert hB, mem_insert p B, u, hu, forall_mem_insert.2 ⟨hup, huB⟩⟩

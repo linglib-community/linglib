@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Semantics.Modality.OrderingSemantics
+public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Logic.Modal.Basic
 
 /-!
@@ -14,9 +15,9 @@ Kratzer's own definition, human necessity, needs no Limit Assumption: each acces
 see, at least as good, a witness below which only `p`-worlds occur. It is universal
 quantification over the best worlds exactly under the Limit Assumption, which every finite frame
 satisfies. Good possibility asks for one such witness, so `p` may hold on one branch of the
-ordering and its rival on another; Portner and Rubinstein call it local necessity. Both are the
-forces of ordering semantics (`OrderingSemantics`) over the accessible worlds ranked by the
-ordering source. When the ordering source is consistent with the modal base, the two
+ordering and its rival on another; Portner and Rubinstein call it local necessity. Human
+necessity is truth toward the bottom of the ordering source's ranking of the accessible worlds,
+the filter `Filter.atBotOn`. When the ordering source is consistent with the modal base, the two
 backgrounds unify into one and both forces become simple necessity over their union.
 
 ## Main definitions
@@ -163,7 +164,7 @@ universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 below which `p` holds throughout: necessity in Definition 6 of [kratzer-1991] and in
 [kratzer-2012], human necessity in [kratzer-1981]'s terms. -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  ∀ᶠ v in OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w), p v
+  ∀ᶠ v in @Filter.atBotOn W W (premisePreorder (g w)) id (f.accessibleWorlds w), p v
 
 theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
     humanNecessity f g p w ↔ ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
@@ -172,7 +173,7 @@ theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
 
 theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
     {w : W} (h : humanNecessity f g p w) : necessity f g p w :=
-  fun _ hv ↦ OrderingSemantics.minimals_subset_of_mem_necessityFilter h hv
+  fun _ hv ↦ letI := premisePreorder (g w); Filter.setOf_minimalFor_subset_of_mem_atBotOn h hv
 
 /-- The Limit Assumption holds at `w` when every accessible world sees a best world at least as
 good. -/
@@ -197,7 +198,8 @@ theorem LimitAssumption.bot (f : Background W) (w : W) : LimitAssumption f ⊥ w
 theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) (h : necessity f g p w) :
     humanNecessity f g p w :=
-  OrderingSemantics.mem_necessityFilter_of_minimals_subset hlim fun _ hv ↦ h _ hv
+  letI := premisePreorder (g w)
+  Filter.mem_atBotOn_of_setOf_minimalFor_subset hlim fun _ hv ↦ h _ hv
 
 /-- Under the Limit Assumption, human necessity is exactly universal quantification over the best
 worlds. -/
@@ -209,7 +211,7 @@ theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
 /-- Human possibility is the dual of `humanNecessity`, holding when the negation is not a human
 necessity, Definition 8 of [kratzer-1991]. -/
 def humanPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  ∃ᶠ v in OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w), p v
+  ∃ᶠ v in @Filter.atBotOn W W (premisePreorder (g w)) id (f.accessibleWorlds w), p v
 
 theorem humanPossibility_iff_not_humanNecessity_not {f g : Background W} {p : W → Prop} {w : W} :
     humanPossibility f g p w ↔ ¬ humanNecessity f g (fun v ↦ ¬ p v) w :=
@@ -241,7 +243,7 @@ variable {f g : Background W} {p q : W → Prop} {w : W}
 worlds at least as good as itself, so that `p` holds throughout a branch of the ordering,
 Definition 7 of [kratzer-1991]. -/
 def goodPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  OrderingSemantics.IsGoodPossibility (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
+  ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → p v
 
 theorem goodPossibility_iff : goodPossibility f g p w ↔
     ∃ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → p v :=
@@ -249,11 +251,12 @@ theorem goodPossibility_iff : goodPossibility f g p w ↔
 
 theorem goodPossibility_mono (h : ∀ v, p v → q v) :
     goodPossibility f g p w → goodPossibility f g q w :=
-  fun hp ↦ hp.mono fun v ↦ h v
+  fun ⟨u, hu, hp⟩ ↦ ⟨u, hu, fun v hv hvu ↦ h v (hp v hv hvu)⟩
 
 theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
     (h : humanNecessity f g p w) : goodPossibility f g p w :=
-  OrderingSemantics.isGoodPossibility_of_mem_necessityFilter h hne
+  letI := premisePreorder (g w)
+  Filter.exists_of_mem_atBotOn h hne
 
 theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     goodPossibility f ⊥ p w ↔ (f.accessibleWorlds w).Nonempty ∧ simpleNecessity f p w :=
@@ -291,16 +294,18 @@ include h
 necessity over the unified backgrounds. -/
 theorem goodPossibility_iff_simpleNecessity_sup :
     goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w :=
-  let ⟨_, hb⟩ := h
+  let ⟨b, hb⟩ := h
   let hb := (Background.accessibleWorlds_sup f g w).subset hb
-  (OrderingSemantics.isGoodPossibility_iff_of_least hb.1
-    fun v _ ↦ le_of_mem_accessibleWorlds hb.2 v).trans (simpleNecessity_sup_iff hb.2).symm
+  (simpleNecessity_sup_iff hb.2).trans ⟨fun hs ↦ ⟨b, hb.1, hs⟩, fun ⟨u, _, hp⟩ v hv hvb ↦
+    hp v hv ((premisePreorder (g w)).le_trans _ _ _ hvb (le_of_mem_accessibleWorlds hb.2 u))⟩
+    |>.symm
 
 theorem humanNecessity_iff_simpleNecessity_sup :
     humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w :=
+  letI := premisePreorder (g w)
   let ⟨_, hb⟩ := h
   let hb := (Background.accessibleWorlds_sup f g w).subset hb
-  (OrderingSemantics.mem_necessityFilter_iff_of_least hb.1
+  (Filter.mem_atBotOn_iff_of_least hb.1
     fun v _ ↦ le_of_mem_accessibleWorlds hb.2 v).trans (simpleNecessity_sup_iff hb.2).symm
 
 theorem goodPossibility_iff_humanNecessity :

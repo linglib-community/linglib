@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Modality.OrderingSemantics
+public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Core.Order.Minimals
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Sum.Order
@@ -15,19 +16,20 @@ weakening, cut, cautious monotonicity and Or, and Lehmann and Magidor call a pre
 and `φ |~ ψ` holds when the minimal `φ`-states satisfy `ψ`, under a smoothness condition that for
 models whose states are the worlds is the Limit Assumption.
 
-The consequence relation of a preorder on worlds is here membership in the filter of necessities
-of ordering semantics, which needs no such condition: following Burgess it is preferential over
-every preorder, and it is rational over every total one. Under well-foundedness it is the relation
-of the minimal worlds, which without well-foundedness can fail cautious monotonicity. On finitely
-many worlds every rational relation preserving consistency is the relation of a total preorder.
+The consequence relation of a ranking of worlds is here membership in the filter `Filter.atBotOn`
+of what holds toward the bottom of the ranking, which needs no such condition: following Burgess it
+is preferential over every ranking, and it is rational over every total one. Under
+well-foundedness it is the relation of the minimal worlds, which without well-foundedness can fail
+cautious monotonicity. On finitely many worlds every rational relation preserving consistency is
+the relation of a total preorder.
 
 ## Main statements
 
-* `Nonmonotonic.isPreferential_necessityFilter`: every preorder defines a preferential relation.
-* `Nonmonotonic.isRational_necessityFilter`: every total preorder defines a rational relation.
+* `Nonmonotonic.isPreferential_atBotOn`: every ranking defines a preferential relation.
+* `Nonmonotonic.isRational_atBotOn`: every total ranking defines a rational relation.
 * `Nonmonotonic.exists_not_isPreferential_minimals`: the minimal worlds need well-foundedness.
 * `Nonmonotonic.exists_minimals_eq_iff`: rational choice is choice of the most normal worlds.
-* `Nonmonotonic.isRational_and_iff_exists_necessityFilter_eq`: completeness on finite worlds.
+* `Nonmonotonic.isRational_and_iff_exists_atBotOn_eq`: completeness on finite worlds.
 
 ## Implementation notes
 
@@ -35,9 +37,9 @@ many worlds every rational relation preserving consistency is the relation of a 
   and Magidor, and cut from the fields of `IsPreferential` (`IsPreferential.cut`).
 * Propositions are sets of worlds, so left logical equivalence holds by extensionality and is
   not a field.
-* A preorder is a term rather than an instance, as for `Preorder.minimals`, because ordering
-  sources, ranking functions and epistemic states each determine their own order on the same
-  worlds.
+* The consequence relation is that of a ranking `f : W → β` into a preordered type, so that
+  ordering sources, ranking functions and epistemic states each determine their own order on the
+  same worlds; a preorder on the worlds is the ranking `id` under that order.
 
 ## References
 
@@ -54,9 +56,9 @@ many worlds every rational relation preserving consistency is the relation of a 
 
 namespace Nonmonotonic
 
-open OrderingSemantics Filter
+open Filter
 
-variable {W : Type*} {r : Set W → Set W → Prop} {p : Preorder W} {φ ψ χ : Set W}
+variable {W : Type*} {r : Set W → Set W → Prop} {φ ψ χ : Set W}
 
 /-- A consequence relation between propositions is *preferential* when it satisfies the rules
 of system P. -/
@@ -97,35 +99,36 @@ theorem cut (h : IsPreferential r) (hψ : r φ ψ) (hχ : r (φ ∩ ψ) χ) : r 
 
 end IsPreferential
 
-/-! ### The necessity relation of a preorder -/
+/-! ### The consequence relation of a ranking -/
 
-/-- The consequence relation of a preorder, under which `ψ` follows from `φ` when it is a
-necessity over the `φ`-worlds, is preferential, with no Limit Assumption ([burgess-1981]). -/
-theorem isPreferential_necessityFilter (p : Preorder W) :
-    IsPreferential fun φ ψ ↦ ψ ∈ necessityFilter p φ where
-  refl _ := self_mem_necessityFilter
+/-- The consequence relation of a ranking, under which `ψ` follows from `φ` when it holds toward
+the bottom of the ranking on the `φ`-worlds, is preferential, with no Limit Assumption
+([burgess-1981]). -/
+theorem isPreferential_atBotOn {β : Type*} [Preorder β] (f : W → β) :
+    IsPreferential fun φ ψ ↦ ψ ∈ atBotOn f φ where
+  refl _ := self_mem_atBotOn
   rightWeakening := mem_of_superset
   and := inter_mem
-  or h h' := necessityFilter_union_le (mem_sup.2 ⟨h, h'⟩)
-  cautiousMonotonicity h h' := (necessityFilter_inter_of_mem h).le h'
+  or h h' := atBotOn_union_le (mem_sup.2 ⟨h, h'⟩)
+  cautiousMonotonicity h h' := (atBotOn_inter_of_mem h).le h'
 
-/-- The consequence relation of a total preorder is rational. -/
-theorem isRational_necessityFilter [Std.Total p.le] :
-    IsRational fun φ ψ ↦ ψ ∈ necessityFilter p φ where
-  toIsPreferential := isPreferential_necessityFilter p
-  rationalMonotonicity h h' := (necessityFilter_inter_of_frequently h').le (mem_inf_of_left h)
+/-- The consequence relation of a total ranking is rational. -/
+theorem isRational_atBotOn {β : Type*} [Preorder β] [Std.Total (α := β) (· ≤ ·)] (f : W → β) :
+    IsRational fun φ ψ ↦ ψ ∈ atBotOn f φ where
+  toIsPreferential := isPreferential_atBotOn f
+  rationalMonotonicity h h' := (atBotOn_inter_of_frequently h').le (mem_inf_of_left h)
 
 /-- Totality cannot be dropped. Let `0` be more normal than `2` and `1` comparable to
 neither. Then normally `0` or `1` holds and it is not normal that `0` holds, yet given `1` or
 `2` it is not normal that `0` or `1` holds, since `2` is then minimal. -/
-theorem exists_not_isRational_necessityFilter :
-    ∃ p : Preorder (Fin 3), ¬ IsRational fun φ ψ ↦ ψ ∈ necessityFilter p φ := by
+theorem exists_not_isRational_atBotOn :
+    ∃ p : Preorder (Fin 3), ¬ IsRational fun φ ψ ↦ ψ ∈ @atBotOn _ _ p id φ := by
   let p : Preorder (Fin 3) :=
     Preorder.ofLE (fun w v ↦ w = v ∨ w = 0 ∧ v = 2) (fun _ ↦ Or.inl rfl) (by decide)
   have hle : ∀ w v, p.le w v ↔ w = v ∨ w = 0 ∧ v = 2 := fun _ _ ↦ Iff.rfl
   refine ⟨p, fun h ↦ ?_⟩
-  simp only [necessityFilter_eq_principal_of_wellFounded (letI := p; wellFounded_lt),
-    mem_principal] at h
+  letI := p
+  simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
   have h₁ : p.minimals Set.univ ⊆ {0, 1} := fun w hw ↦ by
     have := hw.2 (Set.mem_univ 0)
     simp only [hle] at this
@@ -145,15 +148,21 @@ theorem exists_not_isRational_necessityFilter :
 
 /-- Under well-foundedness the relation of the minimal worlds is the necessity relation, and so
 is preferential. -/
-theorem isPreferential_minimals (hp : WellFounded p.lt) :
+theorem isPreferential_minimals {p : Preorder W} (hp : WellFounded p.lt) :
     IsPreferential fun φ ψ ↦ p.minimals φ ⊆ ψ := by
-  simpa only [necessityFilter_eq_principal_of_wellFounded hp, mem_principal] using
-    isPreferential_necessityFilter p
+  letI := p
+  haveI : WellFoundedLT W := hp
+  have h := isPreferential_atBotOn (id : W → W)
+  simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
+  exact h
 
-theorem isRational_minimals (hp : WellFounded p.lt) [Std.Total p.le] :
+theorem isRational_minimals {p : Preorder W} (hp : WellFounded p.lt) [Std.Total p.le] :
     IsRational fun φ ψ ↦ p.minimals φ ⊆ ψ := by
-  simpa only [necessityFilter_eq_principal_of_wellFounded hp, mem_principal] using
-    isRational_necessityFilter (p := p)
+  letI := p
+  haveI : WellFoundedLT W := hp
+  have h := isRational_atBotOn (id : W → W)
+  simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
+  exact h
 
 /-- Well-foundedness cannot be dropped from the relation of the minimal worlds. Let the integers
 descend without a least element beside a world comparable to no other, which is then the only
@@ -285,12 +294,12 @@ end Selection
 
 /-- On finitely many worlds a consistency-preserving relation is rational exactly when it is the
 consequence relation of a total preorder on the worlds. -/
-theorem isRational_and_iff_exists_necessityFilter_eq [Finite W] :
+theorem isRational_and_iff_exists_atBotOn_eq [Finite W] :
     (IsRational r ∧ ∀ φ, r φ ∅ → φ = ∅) ↔
-      ∃ p : Preorder W, Std.Total p.le ∧ (fun φ ψ ↦ ψ ∈ necessityFilter p φ) = r := by
-  refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, _, e⟩ ↦ e ▸ ⟨isRational_necessityFilter,
+      ∃ p : Preorder W, Std.Total p.le ∧ (fun φ ψ ↦ ψ ∈ @atBotOn _ _ p id φ) = r := by
+  refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, _, e⟩ ↦ e ▸ ⟨isRational_atBotOn id,
     fun φ hφ ↦ Set.not_nonempty_iff_eq_empty.1 fun hne ↦
-      (necessityFilter_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hφ)⟩⟩
+      (atBotOn_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hφ)⟩⟩
   have hsInter : ∀ φ, r φ (⋂₀ {ψ | r φ ψ}) := fun φ ↦ by
     refine Set.Finite.induction_on_subset (motive := fun t _ ↦ r φ (⋂₀ t)) _ (Set.toFinite _)
       ?_ fun hψ _ _ ht ↦ ?_
@@ -304,7 +313,8 @@ theorem isRational_and_iff_exists_necessityFilter_eq [Finite W] :
   refine ⟨p, hp, ?_⟩
   rw [e]
   funext φ ψ
-  rw [necessityFilter_eq_principal_of_wellFounded (letI := p; wellFounded_lt), mem_principal]
+  letI := p
+  rw [atBotOn_eq_principal_of_wellFoundedLT, mem_principal]
   exact congrArg (· ⊆ ψ) (congrFun hpC φ)
 
 end Nonmonotonic
