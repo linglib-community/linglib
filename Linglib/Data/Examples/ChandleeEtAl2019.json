@@ -1,0 +1,42 @@
+[
+  {
+    "id": "chandleeetal2019_hasxintilawas",
+    "source": {
+      "bibkey": "chandlee-eyraud-heinz-jardine-rawski-2019",
+      "paperLabel": "section 5.2"
+    },
+    "language": "ines1240",
+    "primaryText": "hasxintilawas",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["section", "5.2"]],
+    "comment": "Samala, s…s; the paper cites Hansson (2010) for the pattern.",
+    "reportedIn": null,
+    "verified": "page-image"
+  },
+  {
+    "id": "chandleeetal2019_hasxintilawaesh",
+    "source": {
+      "bibkey": "chandlee-eyraud-heinz-jardine-rawski-2019",
+      "paperLabel": "section 5.2"
+    },
+    "language": "ines1240",
+    "primaryText": "hasxintilawaʃ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [["section", "5.2"]],
+    "comment": "Samala, s…ʃ; the paper cites Hansson (2010) for the pattern.",
+    "reportedIn": null,
+    "verified": "page-image"
+  }
+]
