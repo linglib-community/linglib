@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "bibkey": "kehler-rohde-2019",
+    "method": "experiment",
+    "description": "A passage-completion experiment crossing the type of a relative clause on the direct object of an object-biased implicit-causality verb (one inviting the inference of a cause of the matrix event or not) with the prompt (a pronoun or nothing). The free-prompt continuations estimate the next-mention prior and the production rates, the pronoun-prompt continuations the interpretation bias. Table 4 compares the observed rate of pronominal reference to the object with the rates predicted by the Bayesian, Mirror and Expectancy models, and the fits of the three models over participant and item means. The PDF read is the accepted manuscript, whose pagination differs from the journal's. The rates are printed without the leading zero."
+  },
+  "types": [
+    {
+      "name": "RC",
+      "doc": "The relative clause on the direct object of the context sentence.",
+      "levels": [
+        {
+          "name": "explanation",
+          "label": "ExplRC",
+          "doc": "the relative clause invites the inference of a cause of the matrix event"
+        },
+        {
+          "name": "noExplanation",
+          "label": "NoExplRC",
+          "doc": "the relative clause invites no such inference"
+        }
+      ]
+    },
+    {
+      "name": "Model",
+      "doc": "The three models of the interpretation bias the paper compares.",
+      "levels": [
+        {
+          "name": "bayesian",
+          "label": "Bayesian",
+          "doc": "the next-mention prior reweighted by the production rate, equation (3)"
+        },
+        {
+          "name": "mirror",
+          "label": "Mirror",
+          "doc": "the normalized production rate, equation (10)"
+        },
+        {
+          "name": "expectancy",
+          "label": "Expectancy",
+          "doc": "the next-mention prior, equation (11)"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "objectReference",
+      "structure": "ObjectReference",
+      "doc": "the observed and model-predicted rates at which a pronoun prompt is interpreted as referring to the object, by relative clause.",
+      "locator": "Table 4",
+      "verified": "page-image",
+      "key": [
+        "rc"
+      ],
+      "columns": [
+        {
+          "name": "rc",
+          "type": "RC",
+          "doc": "The relative clause."
+        },
+        {
+          "name": "actual",
+          "type": "decimal",
+          "doc": "The observed rate."
+        },
+        {
+          "name": "bayesian",
+          "type": "decimal",
+          "doc": "The rate the Bayesian Model predicts."
+        },
+        {
+          "name": "mirror",
+          "type": "decimal",
+          "doc": "The rate the Mirror Model predicts."
+        },
+        {
+          "name": "expectancy",
+          "type": "decimal",
+          "doc": "The rate the Expectancy Model predicts."
+        }
+      ],
+      "rows": [
+        {
+          "rc": "ExplRC",
+          "actual": "0.215",
+          "bayesian": "0.229",
+          "mirror": "0.321",
+          "expectancy": "0.385"
+        },
+        {
+          "rc": "NoExplRC",
+          "actual": "0.410",
+          "bayesian": "0.373",
+          "mirror": "0.334",
+          "expectancy": "0.542"
+        }
+      ]
+    },
+    {
+      "name": "fit",
+      "structure": "Fit",
+      "doc": "the R² of each model's predictions against the observed interpretation biases, over participant and over item means.",
+      "locator": "Table 4",
+      "verified": "page-image",
+      "key": [
+        "model"
+      ],
+      "columns": [
+        {
+          "name": "model",
+          "type": "Model",
+          "doc": "The model."
+        },
+        {
+          "name": "participants",
+          "type": "decimal",
+          "doc": "The R² over participant means."
+        },
+        {
+          "name": "items",
+          "type": "decimal",
+          "doc": "The R² over item means."
+        }
+      ],
+      "rows": [
+        {
+          "model": "Bayesian",
+          "participants": "0.48",
+          "items": "0.49"
+        },
+        {
+          "model": "Mirror",
+          "participants": "0.34",
+          "items": "0.42"
+        },
+        {
+          "model": "Expectancy",
+          "participants": "0.14",
+          "items": "0.12"
+        }
+      ]
+    }
+  ]
+}
