@@ -30,6 +30,8 @@ is on `ModalFormula`.
 
 @[expose] public section
 
+universe u
+
 namespace Orthologic
 
 /-! ### Epistemic orthologics -/
@@ -162,7 +164,7 @@ inductive EDerivable {Var : Type*} : ModalFormula Var → ModalFormula Var → P
 
 namespace ModalFormula
 
-variable {Var : Type*}
+variable {Var : Type u} {φ ψ : ModalFormula Var}
 
 /-- The connectives of the modal language share the symbols of the lattice operations, as in
 [holliday-mandelkern-2024]. -/
@@ -228,8 +230,8 @@ end eval
 
 /-- EO-consequences hold in every epistemic ortholattice under every valuation
 ([holliday-mandelkern-2024] Theorem 3.26, soundness). -/
-theorem sound [IsOrtholattice L] {bx : InfTopHom L L} (hE : IsEpistemic bx)
-    {φ ψ : ModalFormula Var} (h : EDerivable φ ψ) (v : Var → L) :
+theorem sound [IsOrtholattice L] {bx : InfTopHom L L} (hE : IsEpistemic bx) (h : EDerivable φ ψ)
+    (v : Var → L) :
     eval bx v φ ≤ eval bx v ψ := by
   induction h with
   | top_intro φ => exact le_top
@@ -263,11 +265,9 @@ theorem eval_canonicalVal (φ : ModalFormula Var) :
   | and φ ψ ihφ ihψ => rw [eval, ihφ, ihψ]; rfl
   | box φ ih => rw [eval, ih]; rfl
 
-universe u
-
 /-- A consequence holding in every epistemic ortholattice under every valuation is derivable in EO
 ([holliday-mandelkern-2024] Theorem 3.26, completeness). -/
-theorem complete {Var : Type u} {φ ψ : ModalFormula Var}
+theorem complete
     (h : ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L] [IsOrtholattice L]
       (bx : InfTopHom L L), IsEpistemic bx → ∀ v : Var → L, eval bx v φ ≤ eval bx v ψ) :
     EDerivable φ ψ := by
@@ -276,7 +276,7 @@ theorem complete {Var : Type u} {φ ψ : ModalFormula Var}
 
 /-- EO is sound and complete for epistemic ortholattices ([holliday-mandelkern-2024]
 Theorem 3.26). -/
-theorem derivable_iff {Var : Type u} {φ ψ : ModalFormula Var} :
+theorem derivable_iff :
     EDerivable φ ψ ↔ ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
       [IsOrtholattice L] (bx : InfTopHom L L), IsEpistemic bx →
         ∀ v : Var → L, eval bx v φ ≤ eval bx v ψ :=

@@ -29,6 +29,8 @@ free. It is built once for any orthologic, and the epistemic orthologic of
 
 @[expose] public section
 
+universe u
+
 namespace Orthologic
 
 /-! ### Syntax -/
@@ -214,7 +216,8 @@ end Formula
 
 /-! ### Evaluation, soundness and completeness -/
 
-variable {Var : Type*} {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+variable {Var : Type u} {φ ψ : Formula Var} {L : Type*} [Lattice L] [BoundedOrder L]
+  [InvolutiveCompl L]
 
 /-- The value of a formula in an ortholattice under a valuation `v : Var → L`
 ([holliday-mandelkern-2024] Definition 3.10). -/
@@ -236,7 +239,7 @@ def Formula.eval (v : Var → L) : Formula Var → L
 
 /-- Derivable consequences hold in every ortholattice under every valuation
 ([holliday-mandelkern-2024] Theorem 3.13, soundness). -/
-theorem sound [IsOrtholattice L] {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var → L) :
+theorem sound [IsOrtholattice L] (h : φ ⊢ ψ) (v : Var → L) :
     Formula.eval v φ ≤ Formula.eval v ψ := by
   induction h with
   | top_intro φ => exact le_top
@@ -262,11 +265,9 @@ theorem Formula.eval_canonicalVal (φ : Formula Var) :
   | neg φ ih => rw [eval, ih]; rfl
   | and φ ψ ihφ ihψ => rw [eval, ihφ, ihψ]; rfl
 
-universe u
-
 /-- A consequence holding in every ortholattice under every valuation is derivable
 ([holliday-mandelkern-2024] Theorem 3.13, completeness). -/
-theorem complete {Var : Type u} {φ ψ : Formula Var}
+theorem complete
     (h : ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
       [IsOrtholattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ) :
     φ ⊢ ψ := by
@@ -275,7 +276,7 @@ theorem complete {Var : Type u} {φ ψ : Formula Var}
 
 /-- Derivability is consequence in every ortholattice ([holliday-mandelkern-2024]
 Theorem 3.13). -/
-theorem derivable_iff {Var : Type u} {φ ψ : Formula Var} :
+theorem derivable_iff :
     φ ⊢ ψ ↔ ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
       [IsOrtholattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ :=
   ⟨fun h _ _ _ _ _ v ↦ sound h v, complete⟩

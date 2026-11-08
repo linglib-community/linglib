@@ -46,7 +46,7 @@ variable {Var : Type u} {S : Type u}
 /-! ### Support in a compatibility model -/
 
 /-- Support in the compatibility model `(F, V)`: `s` supports `¬φ` when no possibility compatible
-    with `s` supports `φ` ([holliday-mandelkern-2024] Definition 4.15). -/
+with `s` supports `φ` ([holliday-mandelkern-2024] Definition 4.15). -/
 def Support (F : Compatibility S) (V : Var → F.Regular) (s : S) : Formula Var → Prop
   | .top => True
   | .var p => s ∈ V p
@@ -54,7 +54,7 @@ def Support (F : Compatibility S) (V : Var → F.Regular) (s : S) : Formula Var 
   | .and φ ψ => Support F V s φ ∧ Support F V s ψ
 
 /-- The supporters of `φ` are its algebraic value in the regular propositions, so in particular
-    they form a regular set ([holliday-mandelkern-2024] Lemma 4.16). -/
+they form a regular set ([holliday-mandelkern-2024] Lemma 4.16). -/
 theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
     (φ : Formula Var) : {s | Support F V s φ} = ((Formula.eval V φ : F.Regular) : Set S) := by
   induction φ with
@@ -70,15 +70,18 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
 
 /-! ### Frame consequence, soundness, completeness -/
 
+variable {φ ψ : Formula Var}
+
+variable (φ ψ) in
 /-- `ψ` is a semantic consequence of `φ` over compatibility frames when in every model every
-    possibility supporting `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
-def FrameConsequence (φ ψ : Formula Var) : Prop :=
+possibility supporting `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
+def FrameConsequence : Prop :=
   ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular) (s : S),
     Support F V s φ → Support F V s ψ
 
 @[inherit_doc] scoped infix:50 " ⊨ᶠ " => FrameConsequence
 
-theorem frameConsequence_iff_eval {φ ψ : Formula Var} :
+theorem frameConsequence_iff_eval :
     (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular),
       Formula.eval V φ ≤ Formula.eval V ψ := by
   refine ⟨fun h S F V ↦ ?_, fun h S F V s hs ↦ ?_⟩
@@ -89,26 +92,26 @@ theorem frameConsequence_iff_eval {φ ψ : Formula Var} :
     exact hsub hs
 
 /-- Derivability is sound for frame consequence ([holliday-mandelkern-2024] Theorem 4.19). -/
-theorem frame_sound {φ ψ : Formula Var} (h : φ ⊢ ψ) : φ ⊨ᶠ ψ :=
+theorem frame_sound (h : φ ⊢ ψ) : φ ⊨ᶠ ψ :=
   frameConsequence_iff_eval.mpr fun _ V ↦ sound h V
 
+variable {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L] [IsOrtholattice L]
+
 /-- The canonical frame of an ortholattice over `V`: two nonzero elements of `V` are compatible
-    when neither lies below the complement of the other, the representation of [maclaren-1964]
-    ([holliday-mandelkern-2024] Theorem 4.13). -/
-def Compatibility.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-    [IsOrtholattice L] (V : Set L) : Compatibility (Point V) where
+when neither lies below the complement of the other, the representation of [maclaren-1964]
+([holliday-mandelkern-2024] Theorem 4.13). -/
+def Compatibility.ofOrtholattice (V : Set L) : Compatibility (Point V) where
   compat a b := ¬ Orthogonal V a b
   compat_refl := ⟨fun a ↦ Std.Irrefl.irrefl (r := Orthogonal V) a⟩
   compat_symm := ⟨fun _ _ h h' ↦ h (Std.Symm.symm _ _ h')⟩
   ortho := Orthogonal V
   ortho_iff _ _ := not_not.symm
 
-@[simp] theorem Compatibility.ofOrtholattice_compat {L : Type*} [Lattice L] [BoundedOrder L]
-    [InvolutiveCompl L] [IsOrtholattice L] {V : Set L} {a b : Point V} :
+@[simp] theorem Compatibility.ofOrtholattice_compat {V : Set L} {a b : Point V} :
     (Compatibility.ofOrtholattice V).compat a b ↔ ¬ a.1 ≤ b.1ᶜ := Iff.rfl
 
-theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-    [IsOrtholattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
+omit [IsOrtholattice L] in
+theorem eval_map {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
     Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) := by
   induction φ with
   | top => simp only [Formula.eval, principal_top hV]
@@ -117,7 +120,7 @@ theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
   | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, principal_inf hV]
 
 /-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19). -/
-theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by
+theorem frame_complete (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by
   apply Orthologic.complete
   intro L _ _ _ _ v
   have hjd : JoinDense (Set.univ : Set L) := fun a ↦ (Set.univ_inter (Set.Iic a)).symm ▸ isLUB_Iic
@@ -127,8 +130,8 @@ theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := b
   exact (principal_le_principal hjd).mp hframe
 
 /-- Derivability is consequence over all compatibility frames, Goldblatt's completeness theorem
-    ([holliday-mandelkern-2024] Theorem 4.19). -/
-theorem derivable_iff_frameConsequence {φ ψ : Formula Var} :
+([holliday-mandelkern-2024] Theorem 4.19). -/
+theorem derivable_iff_frameConsequence :
     φ ⊢ ψ ↔ φ ⊨ᶠ ψ :=
   ⟨frame_sound, frame_complete⟩
 

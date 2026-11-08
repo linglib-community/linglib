@@ -77,14 +77,17 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (R : SetRel S S) [IsRReg
 
 /-! ### Consequence over epistemic compatibility frames -/
 
+variable {φ ψ : ModalFormula Var}
+
+variable (φ ψ) in
 /-- `ψ` is a consequence of `φ` over epistemic compatibility frames, the R-regular, reflexive
 frames with Knowability, when in every model on such a frame every possibility supporting `φ`
 supports `ψ` ([holliday-mandelkern-2024] Definition 4.36 for the class of Definition 4.26). -/
-def FrameConsequence (φ ψ : ModalFormula Var) : Prop :=
+def FrameConsequence : Prop :=
   ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S) [IsRRegular F R] [R.IsRefl]
     [IsKnowable F R] (V : Var → F.Regular) (s : S), Support F R V s φ → Support F R V s ψ
 
-theorem frameConsequence_iff_eval {φ ψ : ModalFormula Var} :
+theorem frameConsequence_iff_eval :
     FrameConsequence φ ψ ↔ ∀ {S : Type u} (F : Compatibility S) (R : SetRel S S)
       [IsRRegular F R] [R.IsRefl] [IsKnowable F R] (V : Var → F.Regular),
         eval (F.necHom R) V φ ≤ eval (F.necHom R) V ψ := by
@@ -96,7 +99,7 @@ theorem frameConsequence_iff_eval {φ ψ : ModalFormula Var} :
     exact hsub hs
 
 /-- EO is sound for epistemic compatibility frames ([holliday-mandelkern-2024] Theorem 4.37). -/
-theorem frame_sound {φ ψ : ModalFormula Var} (h : EDerivable φ ψ) : FrameConsequence φ ψ :=
+theorem frame_sound (h : EDerivable φ ψ) : FrameConsequence φ ψ :=
   frameConsequence_iff_eval.mpr fun F R _ _ _ V ↦ sound (Compatibility.isEpistemic_necHom F R) h V
 
 end ModalFormula
@@ -287,10 +290,9 @@ namespace ModalFormula
 
 open Compatibility
 
-variable {Var : Type u}
+variable {Var : Type u} {φ ψ : ModalFormula Var}
 
-theorem eval_filterEmbed {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-    [IsOrtholattice L] {box : InfTopHom L L} [IsRRegular (ofFilters L) (access box)]
+theorem eval_filterEmbed {box : InfTopHom L L} [IsRRegular (ofFilters L) (access box)]
     (hT : ∀ a, box a ≤ a) (v : Var → L) (φ : ModalFormula Var) :
     eval ((ofFilters L).necHom (access box)) (fun p ↦ filterEmbed (v p)) φ =
       filterEmbed (eval box v φ) := by
@@ -303,7 +305,7 @@ theorem eval_filterEmbed {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCo
 
 /-- Consequence over epistemic compatibility frames implies derivability in EO
 ([holliday-mandelkern-2024] Theorem 4.37). -/
-theorem frame_complete {φ ψ : ModalFormula Var} (h : FrameConsequence φ ψ) : EDerivable φ ψ := by
+theorem frame_complete (h : FrameConsequence φ ψ) : EDerivable φ ψ := by
   refine complete fun {L} _ _ _ _ box hE v ↦ ?_
   have := isRRegular_ofFilters hE.apply_le
   have := isRefl_access hE.apply_le
@@ -315,7 +317,7 @@ theorem frame_complete {φ ψ : ModalFormula Var} (h : FrameConsequence φ ψ) :
 
 /-- EO is sound and complete for epistemic compatibility frames ([holliday-mandelkern-2024]
 Theorem 4.37). -/
-theorem derivable_iff_frameConsequence {φ ψ : ModalFormula Var} :
+theorem derivable_iff_frameConsequence :
     EDerivable φ ψ ↔ FrameConsequence φ ψ :=
   ⟨frame_sound, frame_complete⟩
 
