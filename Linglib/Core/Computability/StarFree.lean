@@ -127,7 +127,7 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
 
 /-- Star-free languages are closed under preimage by erasure, the instance of `IsStarFree.comap`
 for `FreeMonoid.filter p`, which erases the letters failing `p`. -/
-theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
+theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Prop) [DecidablePred p] :
     IsStarFree {w | w.filter p ∈ L} :=
   h.comap (FreeMonoid.filter p)
 
