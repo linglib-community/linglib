@@ -160,8 +160,9 @@ def cond (φ ψ : FCP W V M) : FCP W V M := neg (φ.seq (neg ψ))
 
 /-- An indefinite at card `x`: defined only if `x` is novel (the Novelty
 Condition), then random assignment at `x` followed by the body. Indefinites
-do not quantify; they open a card. [heim-1991] later derives novelty from
-Maximize Presupposition rather than stipulating it. -/
+do not quantify; they open a card. [heim-1991], on a uniqueness analysis of the definite, bars
+the indefinite article where the definite's presupposition is known to hold and suggests that a
+maxim to presuppose as much as possible derives the ban. -/
 def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
   fun F : State W V M ↦ Part.assert (State.Novel F x) fun _ ↦ body (F.randomAssign x)
 

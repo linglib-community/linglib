@@ -1,0 +1,50 @@
+[
+  {
+    "id": "roberts2003_enriched_definite",
+    "source": {
+      "bibkey": "roberts-2003",
+      "paperLabel": "(33)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A strange man lives here (and another one lives down the block). If the strange man who lives here sees a cat, he screams.",
+    "discourseSegments": [
+      "A strange man lives here (and another one lives down the block).",
+      "If the strange man who lives here sees a cat, he screams."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Kadmon's (1990) example as Roberts quotes it (p. 311): the descriptive content 'strange man who lives here' singles out one of the two strange men the discourse has introduced.",
+    "verified": "page-image"
+  },
+  {
+    "id": "roberts2003_two_strange_men",
+    "source": {
+      "bibkey": "roberts-2003",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A strange man lives here, and another one lives down the block. This situation makes me very nervous. If the strange man sees a cat, he screams. The other one never says anything at all.",
+    "discourseSegments": [
+      "A strange man lives here, and another one lives down the block.",
+      "This situation makes me very nervous.",
+      "If the strange man sees a cat, he screams.",
+      "The other one never says anything at all."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed with # before 'If the strange man sees a cat' (p. 312): the content 'strange man' fails to distinguish the two discourse referents, so the definite fails informational uniqueness, which familiarity alone could not explain.",
+    "verified": "page-image"
+  }
+]
