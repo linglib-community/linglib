@@ -37,6 +37,7 @@ graph encoded here; see the TODO of `Studies/Haspelmath1997.lean`.
 ## References
 
 * [haspelmath-1997]
+* [farkas-brasoveanu-2020]
 -/
 
 @[expose] public section
@@ -135,7 +136,9 @@ theorem adj_iff_connected_pair {f g : HaspelmathFunction} :
 
 /-- The three functions at the specific end of the map, which differ in whether the indefinite
 has a specific referent and in whether the speaker can identify it. They are ordered as the map
-chains them, from specific known through specific unknown to non-specific. -/
+chains them, from specific known through specific unknown to non-specific. The two specific
+functions differ in epistemic specificity ([farkas-brasoveanu-2020]), whether the referent is
+fixed across what the speaker believes. -/
 inductive SpecificityFunction where
   /-- The speaker has the referent in mind. -/
   | specificKnown

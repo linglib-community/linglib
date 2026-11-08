@@ -10,7 +10,8 @@ public import Mathlib.Tactic.DeriveFintype
 This file gives the frame-free vocabulary of definiteness. A nominal is definite or indefinite,
 as Heim distinguishes them, and on the continuum of definiteness, or specificity, that Comrie,
 Aissen and Haspelmath share, a definite ranks above a specific indefinite above a non-specific
-one; Farkas and Brasoveanu separate the kinds of specificity, scopal, epistemic and partitive.
+one. Farkas and Brasoveanu take specificity to be stability of reference across alternatives,
+scopal, epistemic or partitive according to the alternatives.
 A definite article has one of two strengths, uniqueness and familiarity, after Schwarz, ordered
 uniqueness below familiarity since the strong article narrows the weak one. The strength a use of a
 definite calls for, after Hawkins and Schwarz, and the strength of a bridging relation are recorded
@@ -77,8 +78,10 @@ instance : IsSimpleOrder Definiteness where
 end Definiteness
 
 /-- The degree of definiteness of a nominal ranks a definite above a specific indefinite above a
-non-specific indefinite. A specific indefinite is one of whichever kind of specificity a
-language's marking tracks. -/
+non-specific indefinite, the definiteness scale of [aissen-2003] without its pronoun and
+proper-name rungs. A specific indefinite has stable reference across the alternatives a
+language's marking tracks, scopal, epistemic or partitive; [farkas-brasoveanu-2020] leave open
+where each kind sits on the scale, so a consumer states which it means. -/
 inductive DefinitenessDegree where
   | nonSpecific
   | specific
