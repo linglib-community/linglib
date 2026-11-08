@@ -12,7 +12,8 @@ order, and `x ↦ (x ∨ ⊥, x ∧ ⊥)` is [an isomorphism of bilattices](##pr
 `L_B ⊙ R_B` with inverse `(a, b) ↦ a ⊕ b`. The proof rests on one interval law, that
 [a value knowledge-between `a` and `b` lies truth-below `a ∨ b`](##le_sup_of_kLE_of_kLE), whose
 readings on `Bᵒᵈ` and `Know B` make the two orders [agree on `L_B`](##kLE_iff_le_of_ofKnow_bot_le)
-and inverse on `R_B`. Conversely, [the `L_B` of a product `L ⊙ R` is `L`](##Product.iciIso).
+and inverse on `R_B`. With a negation the factors coincide, [`B ≅ L_B ⊙ L_B`](##negProductIso),
+and conversely [the `L_B` of a product `L ⊙ R` is `L`](##Product.iciIso).
 
 ## References
 
@@ -128,9 +129,70 @@ theorem inf_sup_ofKnow_bot (x y : B) :
     x ⊓ y ⊔ ofKnow ⊥ = (x ⊔ ofKnow ⊥) ⊓ (y ⊔ ofKnow ⊥) :=
   congrArg (fun p ↦ (p.pro : B)) (productIso.map_inf x y)
 
+/-! #### Negation -/
+
+variable [InvolutiveCompl B] [Negation B]
+
+/-- With a negation the two factors coincide: `x ↦ (x ∨ ⊥, ¬x ∨ ⊥)`, whose evidence against `x`
+is the evidence for `¬x`, represents `B` as `L_B ⊙ L_B` under Ginsberg's negation
+([avron-1996] Prop 4.7). -/
+def negProductIso : B ≃o Set.Ici (ofKnow ⊥ : B) ⊙ Set.Ici (ofKnow ⊥ : B) :=
+  Equiv.toOrderIso
+    { toFun x := Product.mk ⟨x ⊔ ofKnow ⊥, le_sup_right⟩ ⟨xᶜ ⊔ ofKnow ⊥, le_sup_right⟩
+      invFun p := p.pro.1 ⊔ₖ p.con.1ᶜ
+      left_inv x := by
+        show (x ⊔ ofKnow ⊥) ⊔ₖ (xᶜ ⊔ ofKnow ⊥)ᶜ = x
+        rw [InvolutiveCompl.compl_sup, InvolutiveCompl.compl_compl, compl_ofKnow_bot]
+        exact sup_ofKnow_bot_kSup_inf_ofKnow_bot x
+      right_inv p := Product.ext
+        (Subtype.ext (kSup_sup_ofKnow_bot p.pro.2
+          ((InvolutiveCompl.compl_le_compl p.con.2).trans_eq compl_ofKnow_bot)))
+        (Subtype.ext <| by
+          show (p.pro.1 ⊔ₖ p.con.1ᶜ)ᶜ ⊔ ofKnow ⊥ = p.con.1
+          rw [compl_kSup, InvolutiveCompl.compl_compl]
+          exact (congrArg (fun z ↦ ofKnow z ⊔ (ofKnow ⊥ : B)) (sup_comm _ _)).trans
+            (kSup_sup_ofKnow_bot p.con.2
+              ((InvolutiveCompl.compl_le_compl p.pro.2).trans_eq compl_ofKnow_bot))) }
+    (fun _ _ h ↦ ⟨sup_le_sup_right h _, sup_le_sup_right (InvolutiveCompl.compl_le_compl h) _⟩)
+    fun _ _ h ↦ kSup_le_kSup h.1 (InvolutiveCompl.compl_le_compl h.2)
+
+theorem negProductIso_apply (x : B) : negProductIso x =
+    Product.mk ⟨x ⊔ ofKnow ⊥, le_sup_right⟩ ⟨xᶜ ⊔ ofKnow ⊥, le_sup_right⟩ := rfl
+
+@[simp] theorem negProductIso_compl (x : B) : negProductIso xᶜ = (negProductIso x)ᶜ := by
+  simp only [negProductIso_apply, Product.mk_compl, InvolutiveCompl.compl_compl]
+
+theorem negProductIso_kLE_iff {x y : B} : negProductIso x ≤ₖ negProductIso y ↔ x ≤ₖ y := by
+  have h (z : B) : zᶜ ⊔ ofKnow ⊥ = (z ⊓ ofKnow ⊥)ᶜ := by
+    rw [InvolutiveCompl.compl_inf, compl_ofKnow_bot]
+  refine Iff.trans (and_congr_right' ?_) (productIso_kLE_iff (x := x) (y := y))
+  show xᶜ ⊔ ofKnow ⊥ ≤ yᶜ ⊔ ofKnow ⊥ ↔ y ⊓ ofKnow ⊥ ≤ x ⊓ ofKnow ⊥
+  rw [h, h, InvolutiveCompl.compl_le_compl_iff_le]
+
 end Bounded
 
 end Interlaced
+
+/-! ### Maps of the knowledge order -/
+
+section KnowledgeMaps
+
+variable {C : Type*} [LE B] [LE C] [Lattice (Know B)] [Lattice (Know C)] (e : B ≃o C)
+  (he : ∀ {a b : B}, e a ≤ₖ e b ↔ a ≤ₖ b)
+
+/-- The knowledge-order isomorphism of a truth-order isomorphism that preserves and reflects
+`≤ₖ`. -/
+def knowIso : Know B ≃o Know C := ⟨ofKnow.trans (e.toEquiv.trans toKnow), he⟩
+
+include he in
+theorem map_kInf_of_kLE_iff (a b : B) : e (a ⊓ₖ b) = e a ⊓ₖ e b :=
+  congrArg ofKnow ((knowIso e he).map_inf (toKnow a) (toKnow b))
+
+include he in
+theorem map_kSup_of_kLE_iff (a b : B) : e (a ⊔ₖ b) = e a ⊔ₖ e b :=
+  congrArg ofKnow ((knowIso e he).map_sup (toKnow a) (toKnow b))
+
+end KnowledgeMaps
 
 namespace Product
 

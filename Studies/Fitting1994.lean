@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Bilattice.Guard
+public import Linglib.Logic.Bilattice.Representation
 
 /-!
 # Fitting (1994): Kleene's three valued logics and their children
@@ -11,15 +12,19 @@ connective `P : Q`, which is `Q` when `P` is at least true and `⊥` otherwise, 
 four-valued [Lisp](##landL_toFour) and [weak Kleene](##landW_toFour) connectives that agree with
 the three-valued ones on Kleene's values. The guard and the new connectives make sense in any
 bilattice with negation, where the consistent values stay [closed under them](##isConsistent_landW)
-and, below a common consistent bound, [under gullibility](##isConsistent_kSup). For a linear `L`
-[an equivalence holds in `L ⊙ L` exactly when it holds in `FOUR`](##equivalent_iff_four).
+and, below a common consistent bound, [under gullibility](##isConsistent_kSup).
+[An equivalence holds in a bilinear bilattice exactly when it holds in
+`FOUR`](##Bilinear.equivalent_iff_four).
 
 ## Implementation notes
 
 * Formulas are evaluated in any bilattice with negation; restriction, requirement and
-  equivalence read them in `FOUR`. The tableaux and the representation theorems are not
-  formalized, so the collapse theorem is stated for products of bounded linear lattices, with
-  `ofFour` embedding `FOUR` and `θ_⊤` reading it back.
+  equivalence read them in `FOUR`. The tableaux are not formalized.
+* Theorem 10.5 is proved as Fitting proves it: for a product `L ⊙ L` of a linear lattice, with
+  `ofFour` embedding `FOUR` and `θ_⊤` reading it back, and then for any bilinear bilattice through
+  the representation (`Bilattice.negProductIso`). Avron's representation needs only interlacing,
+  where Fitting assumes distributivity, and the theorem assumes a nontrivial bilattice, since a
+  one-element bilattice validates every equivalence.
 * The Lisp and weak connectives are definitions on values whose formula counterparts evaluate to
   them by `rfl`, so the collapse covers Fitting's whole list of connectives.
 * The guard is `Bilattice.guard`, defined by Fitting's characterization in the bilattice
@@ -176,6 +181,21 @@ variable (v : Atom → B) (φ ψ : Formula Atom)
 @[simp] theorem eval_lorL : eval v (lorL φ ψ) = Fitting1994.lorL (eval v φ) (eval v ψ) := rfl
 @[simp] theorem eval_landW : eval v (landW φ ψ) = Fitting1994.landW (eval v φ) (eval v ψ) := rfl
 @[simp] theorem eval_lorW : eval v (lorW φ ψ) = Fitting1994.lorW (eval v φ) (eval v ψ) := rfl
+
+theorem eval_comp {C : Type*} [Lattice C] [Top C] [Compl C] [Lattice (Know C)] (f : B → C)
+    (hinf : ∀ x y, f (x ⊓ y) = f x ⊓ f y) (hsup : ∀ x y, f (x ⊔ y) = f x ⊔ f y)
+    (hcompl : ∀ x, f xᶜ = (f x)ᶜ) (hkInf : ∀ x y, f (x ⊓ₖ y) = f x ⊓ₖ f y)
+    (hkSup : ∀ x y, f (x ⊔ₖ y) = f x ⊔ₖ f y)
+    (hguard : ∀ x y, f (Bilattice.guard x y) = Bilattice.guard (f x) (f y)) :
+    eval (f ∘ v) φ = f (eval v φ) := by
+  induction φ with
+  | atom _ => rfl
+  | inf φ ψ ihφ ihψ => simp only [eval, ihφ, ihψ, hinf]
+  | sup φ ψ ihφ ihψ => simp only [eval, ihφ, ihψ, hsup]
+  | neg φ ih => simp only [eval, ih, hcompl]
+  | kInf φ ψ ihφ ihψ => simp only [eval, ihφ, ihψ, hkInf]
+  | kSup φ ψ ihφ ihψ => simp only [eval, ihφ, ihψ, hkSup]
+  | guard φ ψ ihφ ihψ => simp only [eval, ihφ, ihψ, hguard]
 
 /-- `X` restricts `Y` when, under every valuation in `FOUR`, `Y` is at most true (`⊥` or `true`)
 whenever `X` is (Definition 4.2). -/
@@ -369,15 +389,9 @@ variable {Atom : Type*}
 
 -- Lemma 10.4
 theorem eval_theta [BoundedOrder L] (v : Atom → L ⊙ L) (φ : Formula Atom) :
-    Formula.eval (theta a ∘ v) φ = theta a (Formula.eval v φ) := by
-  induction φ with
-  | atom _ => rfl
-  | inf φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, theta_inf]
-  | sup φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, theta_sup]
-  | neg φ ih => simp only [Formula.eval, ih, theta_compl]
-  | kInf φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, theta_kInf]
-  | kSup φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, theta_kSup]
-  | guard φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, theta_guard]
+    Formula.eval (theta a ∘ v) φ = theta a (Formula.eval v φ) :=
+  Formula.eval_comp v φ _ (theta_inf a) (theta_sup a) (theta_compl a) (theta_kInf a)
+    (theta_kSup a) fun x y ↦ theta_guard a x y
 
 variable {a x y}
 
@@ -407,8 +421,7 @@ theorem theta_top_ofFour [Nontrivial L] (z : FOUR) : theta (⊤ : L) (ofFour z) 
   · show decide ((⊤ : L) ≤ if z.con then ⊤ else ⊥) = z.con
     cases z.con <;> simp
 
-/-- An equivalence is valid in the bilinear product `L ⊙ L` iff it is valid in `FOUR`, so bilinear
-bilattices validate no new equivalences (Theorem 10.5). -/
+-- Theorem 10.5 for the products `L ⊙ L` of a linear `L`
 theorem equivalent_iff_four [Nontrivial L] (φ ψ : Formula Atom) :
     (∀ v : Atom → L ⊙ L, Formula.eval v φ = Formula.eval v ψ) ↔ Formula.Equivalent φ ψ := by
   constructor
@@ -425,5 +438,53 @@ theorem equivalent_iff_four [Nontrivial L] (φ ψ : Formula Atom) :
     exact ha (by rw [← eval_theta, ← eval_theta, h])
 
 end Theta
+
+/-! ### Bilinear bilattices through the representation
+
+Fitting proves Theorem 10.5 for a distributive bilattice by representing it as `L ⊙ L`; Avron's
+representation of interlaced bilattices with negation (`Bilattice.negProductIso`) lets the same
+argument run for any interlaced one. -/
+
+section Representation
+
+variable {B Atom : Type*} [Lattice B] [Lattice (Know B)] [IsInterlaced B] [BoundedOrder (Know B)]
+
+-- Proposition 10.2
+theorem Bilinear.total_Ici (hB : Bilinear B) : Std.Total (α := Set.Ici (ofKnow ⊥ : B)) (· ≤ ·) where
+  total a b := by
+    rcases hB a b with h | h | h | h
+    · exact .inl h
+    · exact .inr h
+    · exact .inl ((kLE_iff_le_of_ofKnow_bot_le a.2 b.2).1 h)
+    · exact .inr ((kLE_iff_le_of_ofKnow_bot_le b.2 a.2).1 h)
+
+variable [BoundedOrder B] [InvolutiveCompl B] [Negation B]
+
+theorem eval_negProductIso (v : Atom → B) (φ : Formula Atom) :
+    Formula.eval (negProductIso ∘ v) φ = negProductIso (Formula.eval v φ) :=
+  have hkInf := map_kInf_of_kLE_iff negProductIso negProductIso_kLE_iff
+  have hkSup := map_kSup_of_kLE_iff negProductIso negProductIso_kLE_iff
+  Formula.eval_comp v φ _ negProductIso.map_inf negProductIso.map_sup negProductIso_compl hkInf
+    hkSup fun x y ↦ by
+      simp only [Bilattice.guard, hkInf, hkSup, negProductIso_compl, OrderIso.map_top]
+
+/-- An equivalence is valid in a nontrivial bilinear interlaced bilattice with negation iff it is
+valid in `FOUR`, so bilinear bilattices validate no new equivalences (Theorem 10.5). -/
+theorem Bilinear.equivalent_iff_four [Nontrivial B] (hB : Bilinear B) (φ ψ : Formula Atom) :
+    (∀ v : Atom → B, Formula.eval v φ = Formula.eval v ψ) ↔ Formula.Equivalent φ ψ := by
+  classical
+  have := hB.total_Ici
+  let _ : LinearOrder (Set.Ici (ofKnow ⊥ : B)) := Lattice.toLinearOrder _
+  have : Nontrivial (Set.Ici (ofKnow ⊥ : B)) := not_subsingleton_iff_nontrivial.1 fun _ ↦
+    let ⟨_, _, hxy⟩ := exists_pair_ne B
+    hxy (negProductIso.injective (Product.ext (Subsingleton.elim _ _) (Subsingleton.elim _ _)))
+  rw [← Fitting1994.equivalent_iff_four (L := Set.Ici (ofKnow ⊥ : B))]
+  refine ⟨fun h w ↦ ?_, fun h v ↦ negProductIso.injective ?_⟩
+  · have hw : negProductIso ∘ (negProductIso.symm ∘ w) = w :=
+      funext fun _ ↦ negProductIso.apply_symm_apply _
+    rw [← hw, eval_negProductIso, eval_negProductIso, h]
+  · rw [← eval_negProductIso, ← eval_negProductIso, h]
+
+end Representation
 
 end Fitting1994
