@@ -17,9 +17,12 @@ blocked by at least some strength, so that Dutch *ooit* 'ever', having both, is 
 *licenses* an item when the licenser it places over the item carries the strength the item needs,
 licenses free choice and the item is a free choice item, or is a question and the item a weak
 negative polarity item; it *anti-licenses* an item when its licenser holds the blocking strength
-outright. A non-trivial classical context [blocks the positive polarity items of a strength exactly
-where it licenses the negative ones](##PolarityItem.Licenser.antiLicenses_iff_licenses), and an
-antimorphic context [blocks them all](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
+outright. An item so spans an interval of strengths, from what it needs to what blocks it, and a
+non-trivial classical context [admits it exactly when its strength lies in that
+interval](##PolarityItem.Licenser.admits_iff_carried_mem_Ico); it [blocks the positive polarity
+items of a strength exactly where it licenses the negative
+ones](##PolarityItem.Licenser.antiLicenses_iff_licenses), and an antimorphic context [blocks them
+all](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 
 ## Implementation notes
 
@@ -76,6 +79,16 @@ abbrev IsPPI (e : PolarityItem) : Prop := e.antiLicensor.isSome
 
 /-- An item is a **free choice item** when the generic contexts license it. -/
 abbrev IsFCI (e : PolarityItem) : Prop := e.freeChoice = true
+
+/-- The strength of negation an item needs, `⊥` if it needs none. -/
+def requirement (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
+  e.licensor.elim ⊥ fun s ↦
+    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
+
+/-- The strength of negation that blocks an item, `⊤` if none does. -/
+def blocker (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
+  e.antiLicensor.elim ⊤ fun s ↦
+    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
 
 end PolarityItem
 
@@ -145,12 +158,37 @@ theorem Licenses.of_licensor_le (he : e.licensor = some r) (he' : e'.licensor = 
 
 /-- A non-trivial classical context blocks the positive polarity items of a strength exactly where
 it licenses the negative polarity items of that strength, the mirror image of
-[vanderwouden-1997]'s (181) and table (182). -/
+[vanderwouden-1997]'s (181). -/
 theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE)
     (h : e.antiLicensor = e'.licensor) :
     (classical F).AntiLicenses e ↔ (classical F).Licenses e' := by
   simp only [AntiLicenses, Licenses, h, carries_classical_iff, and_iff_left hn, LicensesFreeChoice,
     LicensesByRelevance, false_and, or_false]
+
+/-- A licensing context without the free-choice and the relevance routes licenses an item exactly
+when it carries what the item needs. -/
+theorem licenses_iff_requirement_le (hfc : ¬ L.LicensesFreeChoice)
+    (hrel : ¬ L.LicensesByRelevance) : L.Licenses e ↔ e.IsNPI ∧ e.requirement ≤ L.carried := by
+  rcases h : e.licensor with _ | r
+  · simp [Licenses, IsNPI, hfc, hrel, h]
+  · simp [Licenses, IsNPI, requirement, hfc, hrel, h, coe_le_carried_iff]
+
+/-- A context blocks an item exactly when it holds what blocks the item. -/
+theorem antiLicenses_iff_blocker_le : L.AntiLicenses e ↔ e.blocker ≤ L.held := by
+  rcases h : e.antiLicensor with _ | r
+  · simp [AntiLicenses, blocker, h, not_le.2 held_lt_top]
+  · simp [AntiLicenses, blocker, h, coe_le_held_iff]
+
+/-- A non-trivial classical context admits an item that is not a free choice item exactly when the
+strength it carries lies between what the item needs and what blocks it; the rows of
+[vanderwouden-1997]'s table (182) are the strengths and its columns the items' intervals. -/
+theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) (hf : ¬ e.IsFCI) :
+    (classical F).Admits e ↔ (classical F).carried ∈ Set.Ico e.requirement e.blocker := by
+  rw [Set.mem_Ico, Admits, licenses_iff_requirement_le id id, antiLicenses_iff_blocker_le,
+    ← carried_classical hn, not_le]
+  rcases h : e.licensor with _ | r
+  · simp [IsNPI, IsFCI, requirement, h, hf]
+  · simp [IsNPI, h]
 
 /-- An antimorphic context blocks every positive polarity item, [vanderwouden-1997]'s (169). -/
 theorem antiLicenses_iff_isPPI (h : L.Holds .antiAddMult) : L.AntiLicenses e ↔ e.IsPPI :=

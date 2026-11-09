@@ -24,16 +24,16 @@ public import Mathlib.Basic.Rel
 A licensing context is a construction that can host a polarity item. It places a licenser over the
 item and realizes a function of Haspelmath's implicational map, where it realizes one, and what its
 licenser carries is a theorem about the operators it denotes. Clausal negation is anti-morphic.
-*Nobody*, the restrictor of a universal, *without*, *deny*, *before*, *too … to* and the clausal
-comparative are anti-additive and no more, and *doubt* downward entailing and no more, all but
-*before* by composing negation with a positive operator that is not additive. *Few* and *at
-most* are scalar: downward entailing, and not even that once exhaustified against the stronger *no*
-and *at most n − 1*, the determiner exhaustification `Quantifier.Det.exhaustified`. Every downward
-entailing context is so non-trivially. Focus *only*, adversatives, superlatives, conditional
-antecedents and temporal *since* are downward entailing only modulo their presuppositions, the
-modals, imperatives, generics and free relatives are modal licensers, and questions license by
-relevance. A study can state the theory of a licenser of its own; the named constructions are the
-shared inventory that lexical entries cite.
+*Nobody*, the restrictors of a universal and of *no*, *without*, *deny*, negation over a neg-raising
+attitude, *before*, *too … to* and the clausal comparative are anti-additive and no more, and
+*doubt* downward entailing and no more, all but *before* by composing negation with a positive
+operator that is not additive. *Few* and *at most* are scalar: downward entailing, and not even that
+once exhaustified against the stronger *no* and *at most n − 1*, the determiner exhaustification
+`Quantifier.Det.exhaustified`. Every downward entailing context is so non-trivially. Focus *only*,
+adversatives, superlatives, conditional antecedents and temporal *since* are downward entailing only
+modulo their presuppositions, the modals, imperatives, generics and free relatives are modal
+licensers, and questions license by relevance. A study can state the theory of a licenser of its
+own; the named constructions are the shared inventory that lexical entries cite.
 
 ## Main declarations
 
@@ -51,11 +51,12 @@ shared inventory that lexical entries cite.
   computable data with decidable equality, while the licenser, often defined classically, is a
   function of the name. Distinct constructions can share a licenser: the necessity modal, the
   imperative, the generic and the free relative are all necessities, and the clausal comparative
-  and *too … to* both exceed the clause's degrees.
+  and *too … to* both exceed the clause's degrees, and *deny* and negation over a neg-raising
+  attitude both assert the attitude of the negated complement.
 * The inventory is the contexts the library gives a semantics, not an exhaustive list. It realizes
   seven of Haspelmath's nine functions, the necessity modal and the imperative realizing the
   irrealis non-specific one; many licensers of the downward-entailing literature are still
-  missing, such as negative adverbs, *neither … nor*, the restrictor of *no* or *not every*.
+  missing, such as negative adverbs, *neither … nor* or *not every*.
 * *Before* is Anscombe's universal reading, *before ever*. *Too … to* is the
   subject's degree exceeding every degree at which the infinitive holds, after Meier. *Doubt* is not
   believing and *deny* asserting the negation, over a doxastic or assertoric accessibility.
@@ -80,6 +81,7 @@ shared inventory that lexical entries cite.
 * [kadmon-landman-1993]
 * [van-rooy-2003-npi]
 * [haspelmath-1997]
+* [gajewski-2007]
 -/
 
 @[expose] public section
@@ -158,6 +160,9 @@ inductive LicensingContext where
   | atMost
   /-- The restrictor of a universal, as in *everyone who*, over a scope false of something. -/
   | universalRestrictor
+  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope true of something.
+  -/
+  | noRestrictor
   /-- A *without*-phrase, the matrix predicate holding without the phrase's. -/
   | withoutClause
   /-- A *before*-clause, Anscombe's universal *before*. -/
@@ -170,6 +175,10 @@ inductive LicensingContext where
   | doubtVerb
   /-- A verb of denying, as in *she denied that*, which asserts the negation of its complement. -/
   | denyVerb
+  /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*,
+  read with the attitude's excluded middle as the attitude over the negated complement
+  ([gajewski-2007]). -/
+  | superordinateNegation
   /-- The scope of focus *only*, von Fintel's *only*. -/
   | onlyFocus
   /-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
@@ -200,14 +209,14 @@ free-choice items unacceptable under necessity, in striking contrast to possibil
 imperatives acceptable only when the imperative is read as a permission. -/
 def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | negation => some .directNeg
-  | withoutClause | doubtVerb | denyVerb => some .indirectNeg
+  | withoutClause | doubtVerb | denyVerb | superordinateNegation => some .indirectNeg
   | clausalComparative => some .comparative
   | conditionalAntecedent => some .conditional
   | question => some .question
   | modalNecessity | imperative => some .irrealis
   | modalPossibility | generic | freeRelative => some .freeChoice
-  | nobody | few | atMost | universalRestrictor | beforeClause | tooTo | onlyFocus | adversative
-  | superlative | sinceTemporal => none
+  | nobody | few | atMost | universalRestrictor | noRestrictor | beforeClause | tooTo | onlyFocus
+  | adversative | superlative | sinceTemporal => none
 
 namespace LicensingContext
 
@@ -365,6 +374,8 @@ noncomputable def licenser : LicensingContext → Licenser
         fun p ↦ Det.exhaustified (Det.atMost p.n) {Det.atMost (p.n - 1)} p.A⟩
   | universalRestrictor => .classical
       ⟨NonuniversalPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
+  | noRestrictor => .classical
+      ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
   | withoutClause => .classical
       ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
   | beforeClause => .classical
@@ -372,7 +383,7 @@ noncomputable def licenser : LicensingContext → Licenser
   | clausalComparative | tooTo => .classical exceedsFamily
   | doubtVerb => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
-  | denyVerb => .classical
+  | denyVerb | superordinateNegation => .classical
       ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
   | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
       fun p P ↦ Focus.only (· = ·) Set.univ P p.x⟩
@@ -480,6 +491,16 @@ theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     ⟨⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩, not_holdsFor_additive_every (a := true)
       (b := false) (Set.notMem_empty _) (Set.notMem_empty _) (by decide)⟩
 
+/-- The restrictor of *no* is the scope of a universal over the scope, after negation, since *no*
+is symmetric. -/
+theorem holds_noRestrictor_iff {s : Negation.Strength} :
+    noRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
+  Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : NonemptyPredicate ↦
+    Det.every p.A) (fun _ ↦ funext fun _ ↦ propext Set.subset_compl_comm)
+    (fun p ↦ holdsFor_mult_every p.nonempty)
+    ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩, not_holdsFor_additive_every (a := true) (b := false)
+      trivial trivial (by decide)⟩
+
 theorem holds_withoutClause_iff {s : Negation.Strength} :
     withoutClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : Predicate ↦ (p.A ⊓ ·))
@@ -553,6 +574,10 @@ theorem not_isStrawsonUE_atMost : ¬ atMost.licenser.IsStrawsonUE :=
 theorem not_isStrawsonUE_universalRestrictor : ¬ universalRestrictor.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨⟨Unit, ∅⟩, ⟨(), Set.notMem_empty ()⟩⟩,
     fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) (Set.mem_univ ())⟩
+
+theorem not_isStrawsonUE_noRestrictor : ¬ noRestrictor.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+    fun h ↦ h (bot_le (a := ⊤)) (Set.empty_subset _) (Set.mem_univ ()) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Unit, Set.univ⟩, fun h ↦
@@ -716,6 +741,8 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
       not_holds_exhaustified_atMost)
   | universalRestrictor => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_universalRestrictor fun _ ↦ holds_universalRestrictor_iff)
+  | noRestrictor => decidable_of_iff' _ (carries_classical_iff_le
+      not_isStrawsonUE_noRestrictor fun _ ↦ holds_noRestrictor_iff)
   | withoutClause => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_withoutClause fun _ ↦ holds_withoutClause_iff)
   | beforeClause => decidable_of_iff' _ (carries_classical_iff_le
@@ -724,7 +751,7 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
       not_isStrawsonUE_exceedsFamily fun _ ↦ holds_exceedsFamily_iff)
   | doubtVerb => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_doubtVerb fun _ ↦ holds_doubtVerb_iff)
-  | denyVerb => decidable_of_iff' _ (carries_classical_iff_le
+  | denyVerb | superordinateNegation => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_denyVerb fun _ ↦ holds_denyVerb_iff)
   | onlyFocus => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_onlyFocus
       not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
@@ -750,11 +777,12 @@ instance (c : LicensingContext) (s : Negation.Strength) :
   | few => decidable_of_iff' _ holds_few_iff
   | atMost => decidable_of_iff' _ holds_atMost_iff
   | universalRestrictor => decidable_of_iff' _ holds_universalRestrictor_iff
+  | noRestrictor => decidable_of_iff' _ holds_noRestrictor_iff
   | withoutClause => decidable_of_iff' _ holds_withoutClause_iff
   | beforeClause => decidable_of_iff' _ holds_beforeClause_iff
   | clausalComparative | tooTo => decidable_of_iff' _ holds_exceedsFamily_iff
   | doubtVerb => decidable_of_iff' _ holds_doubtVerb_iff
-  | denyVerb => decidable_of_iff' _ holds_denyVerb_iff
+  | denyVerb | superordinateNegation => decidable_of_iff' _ holds_denyVerb_iff
   | onlyFocus => isFalse (not_holds_toProjectivitySignature not_holds_onlyFocus)
   | adversative => isFalse (not_holds_toProjectivitySignature not_holds_adversative)
   | superlative => isFalse (not_holds_toProjectivitySignature not_holds_superlative)
@@ -771,15 +799,17 @@ instance (c : LicensingContext) : Decidable c.licenser.LicensesFreeChoice :=
   | modalPossibility => isTrue licensesFreeChoice_modalPossibility
   | modalNecessity | imperative | generic | freeRelative =>
     isTrue licensesFreeChoice_necessityFamily
-  | negation | nobody | few | atMost | universalRestrictor | withoutClause | beforeClause
-  | clausalComparative | tooTo | doubtVerb | denyVerb | onlyFocus | adversative | superlative
+  | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
+  | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
+  | onlyFocus | adversative | superlative
   | conditionalAntecedent | sinceTemporal | question => isFalse id
 
 instance (c : LicensingContext) : Decidable c.licenser.LicensesByRelevance :=
   match c with
   | question => isTrue licensesByRelevance_question
-  | negation | nobody | few | atMost | universalRestrictor | withoutClause | beforeClause
-  | clausalComparative | tooTo | doubtVerb | denyVerb | onlyFocus | adversative | superlative
+  | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
+  | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
+  | onlyFocus | adversative | superlative
   | conditionalAntecedent | sinceTemporal | modalPossibility | modalNecessity | imperative
   | generic | freeRelative => isFalse id
 

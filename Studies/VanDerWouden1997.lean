@@ -71,7 +71,7 @@ theorem verb_strengths :
     fun h ↦ absurd (LicensingContext.holds_doubtVerb_iff (s := .antiAdditive) |>.1 h) (by decide)⟩
 
 /-- The context a row names: for (184) by its strength, *weinig* 'few', *geen van* 'none of' and
-*niet*; for *hoeven* by the named context, the restrictor of *geen* having none. -/
+*niet*; for *hoeven* by the named context. -/
 def Context.ofKey : String → Option Context
   | "notMonotoneDecreasing" => some .positive
   | "monotoneDecreasing" => some (.named .few)
@@ -82,7 +82,8 @@ def Context.ofKey : String → Option Context
   | "conditionalAntecedent" => some (.named .conditionalAntecedent)
   | "clausalComparative" => some (.named .clausalComparative)
   | "superlative" => some (.named .superlative)
-  | "doubtVerb" => some (.named .doubtVerb)
+  | "noRestrictor" => some (.named .noRestrictor)
+  | "superordinateNegation" => some (.named .superordinateNegation)
   | "beforeClause" => some (.named .beforeClause)
   | _ => none
 

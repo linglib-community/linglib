@@ -91,7 +91,7 @@ def ex_228d : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("item", "hoeven"), ("context", "geenRestrictor")] }
+    paperFeatures := [("item", "hoeven"), ("context", "noRestrictor")] }
 
 def ex_229b : Datum :=
   { id := "vanderwouden1997_229b"
@@ -169,7 +169,7 @@ def ex_234c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "hoeven"), ("context", "doubtVerb")] }
+    paperFeatures := [("item", "hoeven"), ("context", "superordinateNegation")] }
 
 def ex_234e : Datum :=
   { id := "vanderwouden1997_234e"

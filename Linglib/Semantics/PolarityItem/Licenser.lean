@@ -346,6 +346,70 @@ theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
   | antiAdditive | antiMorphic =>
     exact iff_of_false (fun hc ↦ not_holds_toProjectivitySignature h hc.2) (by decide)
 
+/-! ### The strengths a licenser carries and holds
+
+The strengths a licenser carries form a lower set of the chain of strengths, and so do those it
+holds outright, so each set is fixed by its greatest element. These are taken in the chain extended
+by a least element, for none, and a greatest, above every strength, where the requirement and the
+blocker of a polarity item also live. -/
+
+open scoped Classical in
+/-- The greatest strength of negation a licenser carries, `⊥` if it carries none. -/
+noncomputable def carried (L : Licenser) : WithBot (WithTop Negation.Strength) :=
+  (Finset.univ.filter L.Carries).sup
+    fun s ↦ ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
+
+open scoped Classical in
+/-- The greatest strength of negation a licenser holds outright, `⊥` if it holds none. -/
+noncomputable def held (L : Licenser) : WithBot (WithTop Negation.Strength) :=
+  (Finset.univ.filter fun s : Negation.Strength ↦ L.Holds s.toProjectivitySignature).sup
+    fun s ↦ ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
+
+private theorem coe_le_sup_filter_iff {P : Negation.Strength → Prop} [DecidablePred P]
+    (hP : ∀ ⦃s t : Negation.Strength⦄, P s → t ≤ s → P t) :
+    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) ≤
+      (Finset.univ.filter P).sup (fun t ↦
+        ((t : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))) ↔ P s := by
+  rw [Finset.le_sup_iff (WithBot.bot_lt_coe _)]
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, WithBot.coe_le_coe, WithTop.coe_le_coe]
+  exact ⟨fun ⟨_, ht, hst⟩ ↦ hP ht hst, fun h ↦ ⟨s, h, le_rfl⟩⟩
+
+private theorem sup_filter_lt_top (P : Negation.Strength → Prop) [DecidablePred P] :
+    (Finset.univ.filter P).sup (fun t ↦
+      ((t : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))) < ⊤ :=
+  (Finset.sup_lt_iff (WithBot.bot_lt_iff_ne_bot.2 (by simp))).2 fun _ _ ↦
+    WithBot.coe_lt_coe.2 (WithTop.coe_lt_top _)
+
+theorem coe_le_carried_iff :
+    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) ≤ L.carried ↔
+      L.Carries s := by
+  classical
+  unfold carried
+  exact coe_le_sup_filter_iff fun _ _ h hts ↦ h.of_le hts
+
+theorem coe_le_held_iff :
+    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) ≤ L.held ↔
+      L.Holds s.toProjectivitySignature := by
+  classical
+  unfold held
+  exact coe_le_sup_filter_iff fun _ _ h hts ↦ Holds.toProjectivitySignature_of_le h hts
+
+theorem carried_lt_top : L.carried < ⊤ := by
+  classical
+  unfold carried
+  exact sup_filter_lt_top _
+
+theorem held_lt_top : L.held < ⊤ := by
+  classical
+  unfold held
+  exact sup_filter_lt_top _
+
+/-- A non-trivial classical licenser carries what it holds. -/
+theorem carried_classical {F : OperatorFamily} (hn : ¬ (classical F).IsStrawsonUE) :
+    (classical F).carried = (classical F).held := by
+  classical
+  simp only [carried, held, carries_classical_iff, and_iff_left hn]
+
 end Licenser
 
 end PolarityItem
