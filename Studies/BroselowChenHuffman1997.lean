@@ -61,49 +61,44 @@ inductive Input
 consonant to none. -/
 def input : Input → MoraicForm Slot
   | .cv =>
-    { melody := [C, V], morae := {.of 1}, moraSegment := {(.of 1, 1)} }
+    .ofLines [C, V] (moraSegment := {(.of 1, 1)})
   | .cvv =>
-    { melody := [C, V], morae := {.of 1, .of 1 1}, moraSegment := {(.of 1, 1), (.of 1 1, 1)} }
+    .ofLines [C, V] (moraSegment := {(.of 1, 1), (.of 1 1, 1)})
   | .cvc =>
-    { melody := [C, V, C], morae := {.of 1}, moraSegment := {(.of 1, 1)} }
+    .ofLines [C, V, C] (moraSegment := {(.of 1, 1)})
   | .cvvc =>
-    { melody := [C, V, C], morae := {.of 1, .of 1 1},
-      moraSegment := {(.of 1, 1), (.of 1 1, 1)} }
+    .ofLines [C, V, C] (moraSegment := {(.of 1, 1), (.of 1 1, 1)})
 
 /-- An open syllable with a short vowel. -/
 def openShort : MoraicForm Slot :=
-  { melody := [C, V], syllables := {1}, morae := {.of 1}, syllableMora := {(1, .of 1)},
-    syllableSegment := {(1, 0)}, moraSegment := {(.of 1, 1)} }
+  .ofLines [C, V] (syllableMora := {(1, .of 1)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1)})
 
 /-- An open syllable with a long vowel. -/
 def openLong : MoraicForm Slot :=
-  { melody := [C, V], syllables := {1}, morae := {.of 1, .of 1 1},
-    syllableMora := {(1, .of 1), (1, .of 1 1)}, syllableSegment := {(1, 0)},
-    moraSegment := {(.of 1, 1), (.of 1 1, 1)} }
+  .ofLines [C, V] (syllableMora := {(1, .of 1), (1, .of 1 1)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1), (.of 1 1, 1)})
 
 /-- A closed syllable whose coda heads a mora of its own ((29a)), which is also the long vowel
 shortened before a moraic coda ((29e)). -/
 def closedMoraic : MoraicForm Slot :=
-  { melody := [C, V, C], syllables := {1}, morae := {.of 1, .of 2},
-    syllableMora := {(1, .of 1), (1, .of 2)}, syllableSegment := {(1, 0)},
-    moraSegment := {(.of 1, 1), (.of 2, 2)} }
+  .ofLines [C, V, C] (syllableMora := {(1, .of 1), (1, .of 2)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1), (.of 2, 2)})
 
 /-- A closed syllable whose coda shares the vowel's mora ((29b)). -/
 def closedShared : MoraicForm Slot :=
-  { melody := [C, V, C], syllables := {1}, morae := {.of 1}, syllableMora := {(1, .of 1)},
-    syllableSegment := {(1, 0)}, moraSegment := {(.of 1, 1), (.of 1, 2)} }
+  .ofLines [C, V, C] (syllableMora := {(1, .of 1)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1), (.of 1, 2)})
 
 /-- A trimoraic syllable, a long vowel and a moraic coda ((29c)). -/
 def trimoraic : MoraicForm Slot :=
-  { melody := [C, V, C], syllables := {1}, morae := {.of 1, .of 1 1, .of 2},
-    syllableMora := {(1, .of 1), (1, .of 1 1), (1, .of 2)}, syllableSegment := {(1, 0)},
-    moraSegment := {(.of 1, 1), (.of 1 1, 1), (.of 2, 2)} }
+  .ofLines [C, V, C] (syllableMora := {(1, .of 1), (1, .of 1 1), (1, .of 2)})
+    (syllableSegment := {(1, 0)}) (moraSegment := {(.of 1, 1), (.of 1 1, 1), (.of 2, 2)})
 
 /-- A long vowel whose second mora the coda shares ((29d)). -/
 def longShared : MoraicForm Slot :=
-  { melody := [C, V, C], syllables := {1}, morae := {.of 1, .of 1 1},
-    syllableMora := {(1, .of 1), (1, .of 1 1)}, syllableSegment := {(1, 0)},
-    moraSegment := {(.of 1, 1), (.of 1 1, 1), (.of 1 1, 2)} }
+  .ofLines [C, V, C] (syllableMora := {(1, .of 1), (1, .of 1 1)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1), (.of 1 1, 1), (.of 1 1, 2)})
 
 /-- The candidates of each input. -/
 def gen : Input → Finset (MoraicForm Slot)
@@ -129,7 +124,7 @@ def syllBin {α : Type*} : Constraint (MoraicForm α) := fun X ↦
 
 /-- NOCMORA (27c): a violation for each mora whose head is a consonant. -/
 def noCMora : Constraint (MoraicForm Slot × MoraicForm Slot) := fun p ↦
-  (p.2.morae.filter fun m ↦ p.2.melody[m.slot]? = some C).card
+  (p.2.morae.filter fun m ↦ p.2.head m = some C).card
 
 /-- MORAFAITH (28): a violation for each segment linked to a different number of morae in the
 input and in the output. -/
@@ -233,31 +228,27 @@ theorem notMem_range : antiLevantine ∉ Set.range (system.language (n := 4)) �
 
 /-- An intervocalic geminate, which is underlyingly moraic ((33)). -/
 def geminate : MoraicForm Slot :=
-  { melody := [V, C, V], morae := {.of 0, .of 1, .of 2},
-    moraSegment := {(.of 0, 0), (.of 1, 1), (.of 2, 2)} }
+  .ofLines [V, C, V] (moraSegment := {(.of 0, 0), (.of 1, 1), (.of 2, 2)})
 
 /-- An intervocalic single consonant ((34)). -/
 def single : MoraicForm Slot :=
-  { melody := [V, C, V], morae := {.of 0, .of 2}, moraSegment := {(.of 0, 0), (.of 2, 2)} }
+  .ofLines [V, C, V] (moraSegment := {(.of 0, 0), (.of 2, 2)})
 
 /-- The consonant shares the preceding vowel's mora and is the onset of the next syllable
 ((33a), (34a)). -/
 def sharedOnset : MoraicForm Slot :=
-  { melody := [V, C, V], syllables := {0, 2}, morae := {.of 0, .of 2},
-    syllableMora := {(0, .of 0), (2, .of 2)}, syllableSegment := {(2, 1)},
-    moraSegment := {(.of 0, 0), (.of 0, 1), (.of 2, 2)} }
+  .ofLines [V, C, V] (syllableMora := {(0, .of 0), (2, .of 2)}) (syllableSegment := {(2, 1)})
+    (moraSegment := {(.of 0, 0), (.of 0, 1), (.of 2, 2)})
 
 /-- The consonant is only the onset of the next syllable ((33b), (34b)). -/
 def plainOnset : MoraicForm Slot :=
-  { melody := [V, C, V], syllables := {0, 2}, morae := {.of 0, .of 2},
-    syllableMora := {(0, .of 0), (2, .of 2)}, syllableSegment := {(2, 1)},
-    moraSegment := {(.of 0, 0), (.of 2, 2)} }
+  .ofLines [V, C, V] (syllableMora := {(0, .of 0), (2, .of 2)}) (syllableSegment := {(2, 1)})
+    (moraSegment := {(.of 0, 0), (.of 2, 2)})
 
 /-- The consonant heads a mora of its own and is the onset of the next syllable ((33c)). -/
 def moraicOnset : MoraicForm Slot :=
-  { melody := [V, C, V], syllables := {0, 2}, morae := {.of 0, .of 1, .of 2},
-    syllableMora := {(0, .of 0), (0, .of 1), (2, .of 2)}, syllableSegment := {(2, 1)},
-    moraSegment := {(.of 0, 0), (.of 1, 1), (.of 2, 2)} }
+  .ofLines [V, C, V] (syllableMora := {(0, .of 0), (0, .of 1), (2, .of 2)})
+    (syllableSegment := {(2, 1)}) (moraSegment := {(.of 0, 0), (.of 1, 1), (.of 2, 2)})
 
 /-- Under the Malayalam ranking a geminate keeps its mora by sharing the preceding vowel's,
 leaving the syllable before it light ((33)), while a single consonant stays a bare onset ((34)):

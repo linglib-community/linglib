@@ -75,11 +75,14 @@ structure Candidate where
   /-- The prosodic structure of the output. -/
   form : MoraicForm Segment
 
-/-- The candidate with correspondence `io` and the prosodic structure `X` over the output string
-of `io`. -/
-def Candidate.ofIO (io : Correspondence BinaryRole Segment) (X : MoraicForm Segment) :
-    Candidate :=
-  ⟨io, { X with melody := io.form .rhs }⟩
+/-- The candidate with correspondence `io` whose output form, over the output string of `io`, has
+the given lines. -/
+def Candidate.ofIO (io : Correspondence BinaryRole Segment)
+    (wordSyllable : Finset (ℕ × ℕ) := ∅) (syllableMora : Finset (ℕ × Mora) := ∅)
+    (wordSegment : Finset (ℕ × ℕ) := ∅) (syllableSegment : Finset (ℕ × ℕ) := ∅)
+    (moraSegment : Finset (Mora × ℕ) := ∅) : Candidate :=
+  ⟨io, .ofLines (io.form .rhs) wordSyllable syllableMora wordSegment syllableSegment
+    moraSegment⟩
 
 section Classes
 
@@ -91,12 +94,12 @@ def HasAt (P : Segment → Prop) (i : ℕ) : Prop := ∃ h : i < X.melody.length
 instance (P : Segment → Prop) [DecidablePred P] (i : ℕ) : Decidable (HasAt X P i) :=
   inferInstanceAs (Decidable (∃ h : i < X.melody.length, P X.melody[i]))
 
-/-- Mora `m` is linked to a single segment, and that segment is in the class `P`. -/
+/-- Mora `m` is linked to its head alone, and its head is in the class `P`. -/
 def BearsOnly (P : Segment → Prop) (m : Mora) : Prop :=
-  ∃ i ∈ X.moraSpan m, X.moraSpan m = {i} ∧ HasAt X P i
+  X.moraSpan m = {m.slot} ∧ ∃ x ∈ X.head m, P x
 
 instance (P : Segment → Prop) [DecidablePred P] (m : Mora) : Decidable (BearsOnly X P m) :=
-  inferInstanceAs (Decidable (∃ i ∈ X.moraSpan m, _))
+  inferInstanceAs (Decidable (_ ∧ ∃ x ∈ X.head m, P x))
 
 end Classes
 
@@ -174,17 +177,13 @@ inductive C15 | a | b | c | d
 /-- The candidates of (15): the coda bears the mora (a), the interior vowel bears it (b), the
 syllable has none (c), and the vowel and coda share it (d). -/
 def cand15 : C15 → Candidate
-  | .a => .ofIO (.identity input15)
-      { syllables := {1}, morae := {.of 2}, syllableMora := {(1, .of 2)},
-        syllableSegment := {(1, 0), (1, 1)}, moraSegment := {(.of 2, 2)} }
-  | .b => .ofIO (.identity input15)
-      { syllables := {1}, morae := {.of 1}, syllableMora := {(1, .of 1)},
-        syllableSegment := {(1, 0), (1, 2)}, moraSegment := {(.of 1, 1)} }
-  | .c => .ofIO (.identity input15)
-      { syllables := {1}, syllableSegment := {(1, 0), (1, 1), (1, 2)} }
-  | .d => .ofIO (.identity input15)
-      { syllables := {1}, morae := {.of 1}, syllableMora := {(1, .of 1)},
-        syllableSegment := {(1, 0)}, moraSegment := {(.of 1, 1), (.of 1, 2)} }
+  | .a => .ofIO (.identity input15) (syllableMora := {(1, .of 2)})
+    (syllableSegment := {(1, 0), (1, 1)}) (moraSegment := {(.of 2, 2)})
+  | .b => .ofIO (.identity input15) (syllableMora := {(1, .of 1)})
+    (syllableSegment := {(1, 0), (1, 2)}) (moraSegment := {(.of 1, 1)})
+  | .c => .ofIO (.identity input15) (syllableSegment := {(1, 0), (1, 1), (1, 2)})
+  | .d => .ofIO (.identity input15) (syllableMora := {(1, .of 1)}) (syllableSegment := {(1, 0)})
+    (moraSegment := {(.of 1, 1), (.of 1, 2)})
 
 /-- The input of (16), /kɘki/ 'sun'. -/
 def input16 : List Segment := [k, «ɘ», k, i]
@@ -196,15 +195,12 @@ inductive C16 | a | b | c
 /-- The candidates of (16): the medial /k/ geminates (a), the first syllable has no mora (b),
 and the interior vowel bears it (c). -/
 def cand16 : C16 → Candidate
-  | .a => .ofIO (.identity input16)
-      { syllables := {1, 3}, morae := {.of 2, .of 3}, syllableMora := {(1, .of 2), (3, .of 3)},
-        syllableSegment := {(1, 0), (1, 1), (3, 2)}, moraSegment := {(.of 2, 2), (.of 3, 3)} }
-  | .b => .ofIO (.identity input16)
-      { syllables := {1, 3}, morae := {.of 3}, syllableMora := {(3, .of 3)},
-        syllableSegment := {(1, 0), (1, 1), (3, 2)}, moraSegment := {(.of 3, 3)} }
-  | .c => .ofIO (.identity input16)
-      { syllables := {1, 3}, morae := {.of 1, .of 3}, syllableMora := {(1, .of 1), (3, .of 3)},
-        syllableSegment := {(1, 0), (3, 2)}, moraSegment := {(.of 1, 1), (.of 3, 3)} }
+  | .a => .ofIO (.identity input16) (syllableMora := {(1, .of 2), (3, .of 3)})
+    (syllableSegment := {(1, 0), (1, 1), (3, 2)}) (moraSegment := {(.of 2, 2), (.of 3, 3)})
+  | .b => .ofIO (.identity input16) (syllableMora := {(3, .of 3)})
+    (syllableSegment := {(1, 0), (1, 1), (3, 2)}) (moraSegment := {(.of 3, 3)})
+  | .c => .ofIO (.identity input16) (syllableMora := {(1, .of 1), (3, .of 3)})
+    (syllableSegment := {(1, 0), (3, 2)}) (moraSegment := {(.of 1, 1), (.of 3, 3)})
 
 /-- The input of (17), /ð̞aka/ 'muena tree'. -/
 def input17 : List Segment := [«ð̞», a, k, a]
@@ -215,13 +211,10 @@ inductive C17 | a | b
 
 /-- The candidates of (17): no gemination after the peripheral vowel (a), and gemination (b). -/
 def cand17 : C17 → Candidate
-  | .a => .ofIO (.identity input17)
-      { syllables := {1, 3}, morae := {.of 1, .of 3}, syllableMora := {(1, .of 1), (3, .of 3)},
-        syllableSegment := {(1, 0), (3, 2)}, moraSegment := {(.of 1, 1), (.of 3, 3)} }
-  | .b => .ofIO (.identity input17)
-      { syllables := {1, 3}, morae := {.of 1, .of 2, .of 3},
-        syllableMora := {(1, .of 1), (1, .of 2), (3, .of 3)}, syllableSegment := {(1, 0), (3, 2)},
-        moraSegment := {(.of 1, 1), (.of 2, 2), (.of 3, 3)} }
+  | .a => .ofIO (.identity input17) (syllableMora := {(1, .of 1), (3, .of 3)})
+    (syllableSegment := {(1, 0), (3, 2)}) (moraSegment := {(.of 1, 1), (.of 3, 3)})
+  | .b => .ofIO (.identity input17) (syllableMora := {(1, .of 1), (1, .of 2), (3, .of 3)})
+    (syllableSegment := {(1, 0), (3, 2)}) (moraSegment := {(.of 1, 1), (.of 2, 2), (.of 3, 3)})
 
 /-- The input of (19), /pakɘ#ta/, an interior vowel at the end of a word before /ta/. -/
 def input19 : List Segment := [p, a, k, «ɘ», t, a]
@@ -233,16 +226,13 @@ inductive C19 | a | b
 /-- The candidates of (19): the interior vowel deletes (a), and the following word's first
 consonant geminates to close its syllable (b). -/
 def cand19 : C19 → Candidate
-  | .a => .ofIO (.eraseIdx input19 ⟨3, by decide⟩)
-      { words := {1, 4}, syllables := {1, 4}, morae := {.of 1, .of 4},
-        wordSyllable := {(1, 1), (4, 4)}, syllableMora := {(1, .of 1), (4, .of 4)},
-        syllableSegment := {(1, 0), (1, 2), (4, 3)}, moraSegment := {(.of 1, 1), (.of 4, 4)} }
-  | .b => .ofIO (.identity input19)
-      { words := {1, 5}, syllables := {1, 3, 5}, morae := {.of 1, .of 4, .of 5},
-        wordSyllable := {(1, 1), (1, 3), (5, 5)},
-        syllableMora := {(1, .of 1), (3, .of 4), (5, .of 5)},
-        syllableSegment := {(1, 0), (3, 2), (3, 3), (5, 4)},
-        moraSegment := {(.of 1, 1), (.of 4, 4), (.of 5, 5)} }
+  | .a => .ofIO (.eraseIdx input19 ⟨3, by decide⟩) (wordSyllable := {(1, 1), (4, 4)})
+    (syllableMora := {(1, .of 1), (4, .of 4)}) (syllableSegment := {(1, 0), (1, 2), (4, 3)})
+    (moraSegment := {(.of 1, 1), (.of 4, 4)})
+  | .b => .ofIO (.identity input19) (wordSyllable := {(1, 1), (1, 3), (5, 5)})
+    (syllableMora := {(1, .of 1), (3, .of 4), (5, .of 5)})
+    (syllableSegment := {(1, 0), (3, 2), (3, 3), (5, 4)})
+    (moraSegment := {(.of 1, 1), (.of 4, 4), (.of 5, 5)})
 
 /-- The input of (21), /kɘɾutɘk/ 'kind of fish'. -/
 def input21 : List Segment := [k, «ɘ», «ɾ», u, t, «ɘ», k]
@@ -254,25 +244,18 @@ inductive C21 | a | b | c | d
 /-- The candidates of (21): the tap is a moraic coda (a), an onset after a moraic interior vowel
 (b), an onset after a moraless syllable (c), and a geminate (d). -/
 def cand21 : C21 → Candidate
-  | .a => .ofIO (.identity input21)
-      { syllables := {1, 3, 5}, morae := {.of 2, .of 3, .of 6},
-        syllableMora := {(1, .of 2), (3, .of 3), (5, .of 6)},
-        syllableSegment := {(1, 0), (1, 1), (5, 4), (5, 5)},
-        moraSegment := {(.of 2, 2), (.of 3, 3), (.of 6, 6)} }
-  | .b => .ofIO (.identity input21)
-      { syllables := {1, 3, 5}, morae := {.of 1, .of 3, .of 6},
-        syllableMora := {(1, .of 1), (3, .of 3), (5, .of 6)},
-        syllableSegment := {(1, 0), (3, 2), (5, 4), (5, 5)},
-        moraSegment := {(.of 1, 1), (.of 3, 3), (.of 6, 6)} }
-  | .c => .ofIO (.identity input21)
-      { syllables := {1, 3, 5}, morae := {.of 3, .of 6}, syllableMora := {(3, .of 3), (5, .of 6)},
-        syllableSegment := {(1, 0), (1, 1), (3, 2), (5, 4), (5, 5)},
-        moraSegment := {(.of 3, 3), (.of 6, 6)} }
-  | .d => .ofIO (.identity input21)
-      { syllables := {1, 3, 5}, morae := {.of 2, .of 3, .of 6},
-        syllableMora := {(1, .of 2), (3, .of 3), (5, .of 6)},
-        syllableSegment := {(1, 0), (1, 1), (3, 2), (5, 4), (5, 5)},
-        moraSegment := {(.of 2, 2), (.of 3, 3), (.of 6, 6)} }
+  | .a => .ofIO (.identity input21) (syllableMora := {(1, .of 2), (3, .of 3), (5, .of 6)})
+    (syllableSegment := {(1, 0), (1, 1), (5, 4), (5, 5)})
+    (moraSegment := {(.of 2, 2), (.of 3, 3), (.of 6, 6)})
+  | .b => .ofIO (.identity input21) (syllableMora := {(1, .of 1), (3, .of 3), (5, .of 6)})
+    (syllableSegment := {(1, 0), (3, 2), (5, 4), (5, 5)})
+    (moraSegment := {(.of 1, 1), (.of 3, 3), (.of 6, 6)})
+  | .c => .ofIO (.identity input21) (syllableMora := {(3, .of 3), (5, .of 6)})
+    (syllableSegment := {(1, 0), (1, 1), (3, 2), (5, 4), (5, 5)})
+    (moraSegment := {(.of 3, 3), (.of 6, 6)})
+  | .d => .ofIO (.identity input21) (syllableMora := {(1, .of 2), (3, .of 3), (5, .of 6)})
+    (syllableSegment := {(1, 0), (1, 1), (3, 2), (5, 4), (5, 5)})
+    (moraSegment := {(.of 2, 2), (.of 3, 3), (.of 6, 6)})
 
 -- The candidates are well formed and free of crossing lines.
 theorem wellFormed_noCrossing_cand :
