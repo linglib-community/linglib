@@ -9,9 +9,10 @@ Typed schema for a book's catalogue of verb classes: for each class, the section
 the book prints, its members, and its properties, each an alternation of the book's catalogue of
 alternations, named by its section number, or a further property. A property is a numbered example
 line of the class's entry, so it carries the mark the book puts before an example (`Judgment`), and
-it applies to the members the book's qualification leaves it (`Scope.AppliesTo`). Generated
-catalogues live in `Data/VerbClasses/<Book>.lean`, emitted from the canonical `<Book>.json` by
-`scripts/gen_verb_classes.py`.
+it applies to the members the book's qualification leaves it (`Scope.AppliesTo`). A verb's record
+(`IndexEntry`) lists the classes whose member lists carry it. Generated catalogues live in
+`Data/VerbClasses/<Book>.lean` and `Data/VerbClasses/<Book>/`, emitted from the canonical
+`<Book>.json` by `scripts/gen_verb_classes.py`.
 
 This is data: it imports from `Linglib/` only the marks of `Data/Examples` and states no theorems.
 The vocabulary is that of Levin's catalogue: an alternation is named by its section number in her
@@ -119,6 +120,14 @@ structure PropertyLine where
   judgment : Judgment
   scope : Scope
   qualifier : Option String
+  deriving DecidableEq, Repr
+
+/-- A verb as the book's catalogue lists it: its spelling, the classes `C` whose member lists carry
+it, and those of them that mark it as doubtful. -/
+structure IndexEntry (C : Type*) where
+  form : String
+  classes : List C
+  doubtful : List C
   deriving DecidableEq, Repr
 
 /-- A verb class as the book describes it has the section number and title the book prints, the

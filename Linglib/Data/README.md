@@ -128,18 +128,22 @@ at fixed sentence lengths, as a paper prints them (values as scaled integers).
 
 ### Verb class catalogues
 
-A book's catalogue of verb classes, one entry per class in the book's order: the section number
-and title it prints, the page on which the class begins, the members by citation form and those
-the book marks as doubtful, and the property table, each line naming an alternation by its section
-number in the book's catalogue of alternations or a further property, with the book's diacritic,
-scope and any further qualifier. The vocabulary is Levin's (1993); a catalogue with another
-vocabulary needs its own schema. `LevinClass.entry` reads a class's entry by constructor index,
-checked against the section numbers.
+A book's catalogue of verb classes, one entry per class in the book's order, as the class pages
+print it: the section number and title, the page on which the class begins, the members by
+citation form and those the book marks as doubtful, and the property table, each line naming an
+alternation by its section number in the book's catalogue of alternations or a further property,
+with the book's mark, the members it applies to and any further qualifier. The vocabulary is
+Levin's (1993); a catalogue with another vocabulary needs its own schema. The generator resolves
+every reference: it emits the enumeration of the classes (`LevinClass`, with each class's section
+number), the class pages (`LevinClass.entry`), and the inverse of the member lists, one record per
+verb with the classes listing it, which an English verb entry names in its `levin` field, so no
+proof joins verbs to classes by spelling.
 
 - **Schema**: `Linglib/Data/VerbClasses/Schema.lean`
 - **Generator**: `scripts/gen_verb_classes.py` (`--check` verifies sync; alternation numbers are
   validated against `DiathesisAlternation.number`)
-- **Input/Output**: `Linglib/Data/VerbClasses/{Book}.json` → `{Book}.lean`
+- **Input/Output**: `Linglib/Data/VerbClasses/{Book}.json` → `{Book}/Class.lean` (the
+  enumeration), `{Book}/Index.lean` (one record per verb) and `{Book}.lean` (the class pages)
 
 ### Hiatus resolution samples
 

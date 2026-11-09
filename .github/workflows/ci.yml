@@ -66,9 +66,6 @@ jobs:
       - name: Check that the bibliography page renders every entry's TeX
         run: python3 scripts/gen_bibliography_page.py --check
 
-      - name: Check English verbs' Levin classes against the member lists
-        run: python3 scripts/check_levin_classes.py
-
       - name: Validate example data as CLDF
         run: |
           python3 -m venv "$RUNNER_TEMP/cldf-venv"

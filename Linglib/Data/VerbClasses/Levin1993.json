@@ -1,9 +1,14 @@
 {
  "book": "Levin1993",
  "bibkey": "levin-1993",
+ "enum": {
+  "namespace": "ArgumentStructure",
+  "name": "LevinClass"
+ },
  "description": "The verb classes of Part II of Levin's English Verb Classes and Alternations, one per class page with a member list, in the book's order: the section number and title the book prints, the book page on which the class begins, the members by citation form, with her parenthetical glosses dropped, and those she marks with a question mark, and the property table. A property line names an alternation by its section number in Part One or a further property of the page, with the mark the page puts before it, the members it applies to ('some verbs', 'most verbs', 'except kill'), and any further qualifier it prints. An attested family heading is the Part One subsection that lists the class: an unqualified 'Causative Alternation' is Part One's other causative alternations (1.1.2.3), as the book states in 1.1.2, and an attested 'Locative Alternation' is the spray/load, wipe or swarm alternation whose Part One list carries the class; the unintentional-interpretation headings that print a reflexive and a body-part sub-line are two lines. The lists and tables were checked against the book's pages.",
  "classes": [
   {
+   "id": "put",
    "number": "9.1",
    "title": "Put Verbs",
    "page": 111,
@@ -62,6 +67,7 @@
    ]
   },
   {
+   "id": "putInSpatialConfiguration",
    "number": "9.2",
    "title": "Verbs of Putting in a Spatial Configuration",
    "page": 112,
@@ -117,6 +123,7 @@
    ]
   },
   {
+   "id": "funnel",
    "number": "9.3",
    "title": "Funnel Verbs",
    "page": 113,
@@ -188,6 +195,7 @@
    ]
   },
   {
+   "id": "putDirection",
    "number": "9.4",
    "title": "Verbs of Putting with a Specified Direction",
    "page": 114,
@@ -247,6 +255,7 @@
    ]
   },
   {
+   "id": "pour",
    "number": "9.5",
    "title": "Pour Verbs",
    "page": 115,
@@ -319,6 +328,7 @@
    ]
   },
   {
+   "id": "coil",
    "number": "9.6",
    "title": "Coil Verbs",
    "page": 116,
@@ -392,6 +402,7 @@
    ]
   },
   {
+   "id": "sprayLoad",
    "number": "9.7",
    "title": "Spray/Load Verbs",
    "page": 117,
@@ -510,6 +521,7 @@
    ]
   },
   {
+   "id": "fill",
    "number": "9.8",
    "title": "Fill Verbs",
    "page": 119,
@@ -649,6 +661,7 @@
    ]
   },
   {
+   "id": "butter",
    "number": "9.9",
    "title": "Butter Verbs",
    "page": 120,
@@ -805,6 +818,7 @@
    ]
   },
   {
+   "id": "pocket",
    "number": "9.10",
    "title": "Pocket Verbs",
    "page": 121,
@@ -896,6 +910,7 @@
    ]
   },
   {
+   "id": "remove",
    "number": "10.1",
    "title": "Remove Verbs",
    "page": 122,
@@ -969,6 +984,7 @@
    ]
   },
   {
+   "id": "banish",
    "number": "10.2",
    "title": "Banish Verbs",
    "page": 123,
@@ -1014,6 +1030,7 @@
    ]
   },
   {
+   "id": "clear",
    "number": "10.3",
    "title": "Clear Verbs",
    "page": 124,
@@ -1095,6 +1112,7 @@
    ]
   },
   {
+   "id": "wipeManner",
    "number": "10.4.1",
    "title": "Manner Subclass",
    "page": 125,
@@ -1204,6 +1222,7 @@
    ]
   },
   {
+   "id": "wipeInstrument",
    "number": "10.4.2",
    "title": "Instrument Subclass",
    "page": 127,
@@ -1291,6 +1310,7 @@
    ]
   },
   {
+   "id": "steal",
    "number": "10.5",
    "title": "Verbs of Possessional Deprivation: Steal Verbs",
    "page": 128,
@@ -1383,6 +1403,7 @@
    ]
   },
   {
+   "id": "cheat",
    "number": "10.6",
    "title": "Verbs of Possessional Deprivation: Cheat Verbs",
    "page": 129,
@@ -1466,6 +1487,7 @@
    ]
   },
   {
+   "id": "pit",
    "number": "10.7",
    "title": "Pit Verbs",
    "page": 130,
@@ -1536,6 +1558,7 @@
    ]
   },
   {
+   "id": "debone",
    "number": "10.8",
    "title": "Debone Verbs",
    "page": 130,
@@ -1615,6 +1638,7 @@
    ]
   },
   {
+   "id": "mine",
    "number": "10.9",
    "title": "Mine Verbs",
    "page": 131,
@@ -1646,6 +1670,7 @@
    ]
   },
   {
+   "id": "send",
    "number": "11.1",
    "title": "Send Verbs",
    "page": 132,
@@ -1726,6 +1751,7 @@
    ]
   },
   {
+   "id": "slide",
    "number": "11.2",
    "title": "Slide Verbs",
    "page": 133,
@@ -1789,6 +1815,7 @@
    ]
   },
   {
+   "id": "bringTake",
    "number": "11.3",
    "title": "Bring and Take",
    "page": 134,
@@ -1857,6 +1884,7 @@
    ]
   },
   {
+   "id": "carry",
    "number": "11.4",
    "title": "Carry Verbs",
    "page": 135,
@@ -1926,6 +1954,7 @@
    ]
   },
   {
+   "id": "drive",
    "number": "11.5",
    "title": "Drive Verbs",
    "page": 136,
@@ -1994,6 +2023,7 @@
    ]
   },
   {
+   "id": "pushPull",
    "number": "12",
    "title": "Verbs of Exerting Force: Push/Pull Verbs",
    "page": 137,
@@ -2070,6 +2100,7 @@
    ]
   },
   {
+   "id": "give",
    "number": "13.1",
    "title": "Give Verbs",
    "page": 138,
@@ -2123,6 +2154,7 @@
    ]
   },
   {
+   "id": "contribute",
    "number": "13.2",
    "title": "Contribute Verbs",
    "page": 138,
@@ -2179,6 +2211,7 @@
    ]
   },
   {
+   "id": "futureHaving",
    "number": "13.3",
    "title": "Verbs of Future Having",
    "page": 139,
@@ -2236,6 +2269,7 @@
    ]
   },
   {
+   "id": "fulfilling",
    "number": "13.4.1",
    "title": "Verbs of Fulfilling",
    "page": 140,
@@ -2265,6 +2299,7 @@
    ]
   },
   {
+   "id": "equip",
    "number": "13.4.2",
    "title": "Equip Verbs",
    "page": 141,
@@ -2303,6 +2338,7 @@
    ]
   },
   {
+   "id": "get",
    "number": "13.5.1",
    "title": "Get Verbs",
    "page": 141,
@@ -2390,6 +2426,7 @@
    ]
   },
   {
+   "id": "obtain",
    "number": "13.5.2",
    "title": "Obtain Verbs",
    "page": 142,
@@ -2463,6 +2500,7 @@
    ]
   },
   {
+   "id": "exchange",
    "number": "13.6",
    "title": "Verbs of Exchange",
    "page": 143,
@@ -2497,6 +2535,7 @@
    ]
   },
   {
+   "id": "berry",
    "number": "13.7",
    "title": "Berry Verbs",
    "page": 144,
@@ -2532,6 +2571,7 @@
    "properties": []
   },
   {
+   "id": "learn",
    "number": "14",
    "title": "Learn Verbs",
    "page": 144,
@@ -2548,6 +2588,7 @@
    "properties": []
   },
   {
+   "id": "hold",
    "number": "15.1",
    "title": "Hold Verbs",
    "page": 145,
@@ -2593,6 +2634,7 @@
    ]
   },
   {
+   "id": "keep",
    "number": "15.2",
    "title": "Keep Verbs",
    "page": 145,
@@ -2622,6 +2664,7 @@
    ]
   },
   {
+   "id": "conceal",
    "number": "16",
    "title": "Verbs of Concealment",
    "page": 146,
@@ -2652,6 +2695,7 @@
    ]
   },
   {
+   "id": "throw",
    "number": "17.1",
    "title": "Throw Verbs",
    "page": 146,
@@ -2757,6 +2801,7 @@
    ]
   },
   {
+   "id": "pelt",
    "number": "17.2",
    "title": "Pelt Verbs",
    "page": 147,
@@ -2818,6 +2863,7 @@
    ]
   },
   {
+   "id": "hit",
    "number": "18.1",
    "title": "Hit Verbs",
    "page": 148,
@@ -2972,6 +3018,7 @@
    ]
   },
   {
+   "id": "swat",
    "number": "18.2",
    "title": "Swat Verbs",
    "page": 150,
@@ -3073,6 +3120,7 @@
    ]
   },
   {
+   "id": "spank",
    "number": "18.3",
    "title": "Spank Verbs",
    "page": 151,
@@ -3188,6 +3236,7 @@
    ]
   },
   {
+   "id": "nonAgentiveImpact",
    "number": "18.4",
    "title": "Non-Agentive Verbs of Impact by Contact",
    "page": 153,
@@ -3228,6 +3277,7 @@
    ]
   },
   {
+   "id": "poke",
    "number": "19",
    "title": "Poke Verbs",
    "page": 154,
@@ -3315,6 +3365,7 @@
    ]
   },
   {
+   "id": "touch",
    "number": "20",
    "title": "Verbs of Contact: Touch Verbs",
    "page": 155,
@@ -3438,6 +3489,7 @@
    ]
   },
   {
+   "id": "cut",
    "number": "21.1",
    "title": "Cut Verbs",
    "page": 156,
@@ -3557,6 +3609,7 @@
    ]
   },
   {
+   "id": "carve",
    "number": "21.2",
    "title": "Carve Verbs",
    "page": 157,
@@ -3664,6 +3717,7 @@
    ]
   },
   {
+   "id": "mix",
    "number": "22.1",
    "title": "Mix Verbs",
    "page": 159,
@@ -3750,6 +3804,7 @@
    ]
   },
   {
+   "id": "amalgamate",
    "number": "22.2",
    "title": "Amalgamate Verbs",
    "page": 160,
@@ -3866,6 +3921,7 @@
    ]
   },
   {
+   "id": "shake",
    "number": "22.3",
    "title": "Shake Verbs",
    "page": 161,
@@ -3952,6 +4008,7 @@
    ]
   },
   {
+   "id": "tape",
    "number": "22.4",
    "title": "Tape Verbs",
    "page": 162,
@@ -4094,6 +4151,7 @@
    ]
   },
   {
+   "id": "cling",
    "number": "22.5",
    "title": "Cling Verbs",
    "page": 164,
@@ -4137,6 +4195,7 @@
    ]
   },
   {
+   "id": "separate",
    "number": "23.1",
    "title": "Separate Verbs",
    "page": 165,
@@ -4229,6 +4288,7 @@
    ]
   },
   {
+   "id": "split",
    "number": "23.2",
    "title": "Split Verbs",
    "page": 166,
@@ -4320,6 +4380,7 @@
    ]
   },
   {
+   "id": "disassemble",
    "number": "23.3",
    "title": "Disassemble Verbs",
    "page": 167,
@@ -4400,6 +4461,7 @@
    ]
   },
   {
+   "id": "differ",
    "number": "23.4",
    "title": "Differ Verbs",
    "page": 167,
@@ -4442,6 +4504,7 @@
    ]
   },
   {
+   "id": "color",
    "number": "24",
    "title": "Verbs of Coloring",
    "page": 168,
@@ -4483,6 +4546,7 @@
    ]
   },
   {
+   "id": "imageImpression",
    "number": "25.1",
    "title": "Verbs of Image Impression",
    "page": 169,
@@ -4538,6 +4602,7 @@
    ]
   },
   {
+   "id": "scribble",
    "number": "25.2",
    "title": "Scribble Verbs",
    "page": 170,
@@ -4595,6 +4660,7 @@
    ]
   },
   {
+   "id": "illustrate",
    "number": "25.3",
    "title": "Illustrate Verbs",
    "page": 171,
@@ -4648,6 +4714,7 @@
    ]
   },
   {
+   "id": "transcribe",
    "number": "25.4",
    "title": "Transcribe Verbs",
    "page": 171,
@@ -4684,6 +4751,7 @@
    ]
   },
   {
+   "id": "build",
    "number": "26.1",
    "title": "Build Verbs",
    "page": 173,
@@ -4796,6 +4864,7 @@
    ]
   },
   {
+   "id": "grow",
    "number": "26.2",
    "title": "Grow Verbs",
    "page": 174,
@@ -4842,6 +4911,7 @@
    ]
   },
   {
+   "id": "prepare",
    "number": "26.3",
    "title": "Verbs of Preparing",
    "page": 175,
@@ -4907,6 +4977,7 @@
    ]
   },
   {
+   "id": "create",
    "number": "26.4",
    "title": "Create Verbs",
    "page": 175,
@@ -4975,6 +5046,7 @@
    ]
   },
   {
+   "id": "knead",
    "number": "26.5",
    "title": "Knead Verbs",
    "page": 176,
@@ -5044,6 +5116,7 @@
    ]
   },
   {
+   "id": "turn",
    "number": "26.6",
    "title": "Turn Verbs",
    "page": 177,
@@ -5112,6 +5185,7 @@
    ]
   },
   {
+   "id": "performance",
    "number": "26.7",
    "title": "Performance Verbs",
    "page": 178,
@@ -5179,6 +5253,7 @@
    ]
   },
   {
+   "id": "engender",
    "number": "27",
    "title": "Engender Verbs",
    "page": 179,
@@ -5206,6 +5281,7 @@
    ]
   },
   {
+   "id": "calve",
    "number": "28",
    "title": "Calve Verbs",
    "page": 180,
@@ -5225,6 +5301,7 @@
    "properties": []
   },
   {
+   "id": "appoint",
    "number": "29.1",
    "title": "Appoint Verbs",
    "page": 181,
@@ -5277,6 +5354,7 @@
    ]
   },
   {
+   "id": "characterize",
    "number": "29.2",
    "title": "Characterize Verbs",
    "page": 181,
@@ -5364,6 +5442,7 @@
    ]
   },
   {
+   "id": "dub",
    "number": "29.3",
    "title": "Dub Verbs",
    "page": 182,
@@ -5417,6 +5496,7 @@
    ]
   },
   {
+   "id": "declare",
    "number": "29.4",
    "title": "Declare Verbs",
    "page": 182,
@@ -5467,6 +5547,7 @@
    ]
   },
   {
+   "id": "conjecture",
    "number": "29.5",
    "title": "Conjecture Verbs",
    "page": 183,
@@ -5512,6 +5593,7 @@
    ]
   },
   {
+   "id": "masquerade",
    "number": "29.6",
    "title": "Masquerade Verbs",
    "page": 183,
@@ -5531,6 +5613,7 @@
    "properties": []
   },
   {
+   "id": "orphan",
    "number": "29.7",
    "title": "Orphan Verbs",
    "page": 184,
@@ -5561,6 +5644,7 @@
    ]
   },
   {
+   "id": "captain",
    "number": "29.8",
    "title": "Captain Verbs",
    "page": 184,
@@ -5608,6 +5692,7 @@
    "properties": []
   },
   {
+   "id": "see",
    "number": "30.1",
    "title": "See Verbs",
    "page": 185,
@@ -5657,6 +5742,7 @@
    ]
   },
   {
+   "id": "sight",
    "number": "30.2",
    "title": "Sight Verbs",
    "page": 186,
@@ -5703,6 +5789,7 @@
    ]
   },
   {
+   "id": "peer",
    "number": "30.3",
    "title": "Peer Verbs",
    "page": 187,
@@ -5730,6 +5817,7 @@
    "properties": []
   },
   {
+   "id": "stimulusSubjectPerception",
    "number": "30.4",
    "title": "Stimulus Subject Perception Verbs",
    "page": 187,
@@ -5754,6 +5842,7 @@
    ]
   },
   {
+   "id": "amuse",
    "number": "31.1",
    "title": "Amuse Verbs",
    "page": 189,
@@ -6064,6 +6153,7 @@
    ]
   },
   {
+   "id": "admire",
    "number": "31.2",
    "title": "Admire Verbs",
    "page": 191,
@@ -6192,6 +6282,7 @@
    ]
   },
   {
+   "id": "marvel",
    "number": "31.3",
    "title": "Marvel Verbs",
    "page": 192,
@@ -6269,6 +6360,7 @@
    ]
   },
   {
+   "id": "appeal",
    "number": "31.4",
    "title": "Appeal Verbs",
    "page": 193,
@@ -6293,6 +6385,7 @@
    ]
   },
   {
+   "id": "want",
    "number": "32.1",
    "title": "Want Verbs",
    "page": 194,
@@ -6347,6 +6440,7 @@
    ]
   },
   {
+   "id": "long",
    "number": "32.2",
    "title": "Long Verbs",
    "page": 194,
@@ -6381,6 +6475,7 @@
    ]
   },
   {
+   "id": "judgment",
    "number": "33",
    "title": "Judgment Verbs",
    "page": 195,
@@ -6504,6 +6599,7 @@
    ]
   },
   {
+   "id": "assessment",
    "number": "34",
    "title": "Verbs of Assessment",
    "page": 196,
@@ -6541,6 +6637,7 @@
    ]
   },
   {
+   "id": "hunt",
    "number": "35.1",
    "title": "Hunt Verbs",
    "page": 197,
@@ -6568,6 +6665,7 @@
    ]
   },
   {
+   "id": "search",
    "number": "35.2",
    "title": "Search Verbs",
    "page": 198,
@@ -6601,6 +6699,7 @@
    "properties": []
   },
   {
+   "id": "stalk",
    "number": "35.3",
    "title": "Stalk Verbs",
    "page": 198,
@@ -6614,6 +6713,7 @@
    "properties": []
   },
   {
+   "id": "investigate",
    "number": "35.4",
    "title": "Investigate Verbs",
    "page": 198,
@@ -6638,6 +6738,7 @@
    "properties": []
   },
   {
+   "id": "rummage",
    "number": "35.5",
    "title": "Rummage Verbs",
    "page": 199,
@@ -6667,6 +6768,7 @@
    "properties": []
   },
   {
+   "id": "ferret",
    "number": "35.6",
    "title": "Ferret Verbs",
    "page": 199,
@@ -6680,6 +6782,7 @@
    "properties": []
   },
   {
+   "id": "correspond",
    "number": "36.1",
    "title": "Correspond Verbs",
    "page": 200,
@@ -6783,6 +6886,7 @@
    ]
   },
   {
+   "id": "marry",
    "number": "36.2",
    "title": "Marry Verbs",
    "page": 201,
@@ -6834,6 +6938,7 @@
    ]
   },
   {
+   "id": "meet",
    "number": "36.3",
    "title": "Meet Verbs",
    "page": 201,
@@ -6882,6 +6987,7 @@
    ]
   },
   {
+   "id": "transferOfMessage",
    "number": "37.1",
    "title": "Verbs of Transfer of a Message",
    "page": 202,
@@ -6920,6 +7026,7 @@
    ]
   },
   {
+   "id": "tell",
    "number": "37.2",
    "title": "Tell",
    "page": 203,
@@ -6994,6 +7101,7 @@
    ]
   },
   {
+   "id": "mannerOfSpeaking",
    "number": "37.3",
    "title": "Verbs of Manner of Speaking",
    "page": 204,
@@ -7142,6 +7250,7 @@
    ]
   },
   {
+   "id": "instrumentOfCommunication",
    "number": "37.4",
    "title": "Verbs of Instrument of Communication",
    "page": 206,
@@ -7211,6 +7320,7 @@
    ]
   },
   {
+   "id": "talk",
    "number": "37.5",
    "title": "Talk Verbs",
    "page": 207,
@@ -7276,6 +7386,7 @@
    ]
   },
   {
+   "id": "chitchat",
    "number": "37.6",
    "title": "Chitchat Verbs",
    "page": 208,
@@ -7344,6 +7455,7 @@
    ]
   },
   {
+   "id": "say",
    "number": "37.7",
    "title": "Say Verbs",
    "page": 209,
@@ -7387,6 +7499,7 @@
    ]
   },
   {
+   "id": "complain",
    "number": "37.8",
    "title": "Complain Verbs",
    "page": 210,
@@ -7441,6 +7554,7 @@
    ]
   },
   {
+   "id": "advise",
    "number": "37.9",
    "title": "Advise Verbs",
    "page": 211,
@@ -7496,6 +7610,7 @@
    ]
   },
   {
+   "id": "animalSound",
    "number": "38",
    "title": "Verbs of Sounds Made by Animals",
    "page": 212,
@@ -7600,6 +7715,7 @@
    ]
   },
   {
+   "id": "eat",
    "number": "39.1",
    "title": "Eat Verbs",
    "page": 213,
@@ -7655,6 +7771,7 @@
    ]
   },
   {
+   "id": "chew",
    "number": "39.2",
    "title": "Chew Verbs",
    "page": 214,
@@ -7702,6 +7819,7 @@
    ]
   },
   {
+   "id": "gobble",
    "number": "39.3",
    "title": "Gobble Verbs",
    "page": 214,
@@ -7745,6 +7863,7 @@
    ]
   },
   {
+   "id": "devour",
    "number": "39.4",
    "title": "Devour Verbs",
    "page": 215,
@@ -7785,6 +7904,7 @@
    ]
   },
   {
+   "id": "dine",
    "number": "39.5",
    "title": "Dine Verbs",
    "page": 215,
@@ -7821,6 +7941,7 @@
    ]
   },
   {
+   "id": "gorge",
    "number": "39.6",
    "title": "Gorge Verbs",
    "page": 216,
@@ -7858,6 +7979,7 @@
    ]
   },
   {
+   "id": "feed",
    "number": "39.7",
    "title": "Verbs of Feeding",
    "page": 216,
@@ -7883,6 +8005,7 @@
    ]
   },
   {
+   "id": "hiccup",
    "number": "40.1.1",
    "title": "Hiccup Verbs",
    "page": 217,
@@ -7930,6 +8053,7 @@
    ]
   },
   {
+   "id": "breathe",
    "number": "40.1.2",
    "title": "Breathe Verbs",
    "page": 218,
@@ -7983,6 +8107,7 @@
    ]
   },
   {
+   "id": "exhale",
    "number": "40.1.3",
    "title": "Exhale Verbs",
    "page": 218,
@@ -8011,6 +8136,7 @@
    ]
   },
   {
+   "id": "nonverbalExpression",
    "number": "40.2",
    "title": "Verbs of Nonverbal Expression",
    "page": 219,
@@ -8095,6 +8221,7 @@
    ]
   },
   {
+   "id": "wink",
    "number": "40.3.1",
    "title": "Wink Verbs",
    "page": 220,
@@ -8157,6 +8284,7 @@
    ]
   },
   {
+   "id": "crane",
    "number": "40.3.2",
    "title": "Crane Verbs",
    "page": 221,
@@ -8248,6 +8376,7 @@
    ]
   },
   {
+   "id": "curtsey",
    "number": "40.3.3",
    "title": "Curtsey Verbs",
    "page": 222,
@@ -8289,6 +8418,7 @@
    ]
   },
   {
+   "id": "snooze",
    "number": "40.4",
    "title": "Snooze Verbs",
    "page": 222,
@@ -8334,6 +8464,7 @@
    ]
   },
   {
+   "id": "flinch",
    "number": "40.5",
    "title": "Flinch Verbs",
    "page": 223,
@@ -8381,6 +8512,7 @@
    ]
   },
   {
+   "id": "bodyInternalStateOfExistence",
    "number": "40.6",
    "title": "Verbs of Body-Internal States of Existence",
    "page": 223,
@@ -8410,6 +8542,7 @@
    ]
   },
   {
+   "id": "suffocate",
    "number": "40.7",
    "title": "Suffocate Verbs",
    "page": 224,
@@ -8455,6 +8588,7 @@
    ]
   },
   {
+   "id": "pain",
    "number": "40.8.1",
    "title": "Pain Verbs",
    "page": 224,
@@ -8488,6 +8622,7 @@
    ]
   },
   {
+   "id": "tingle",
    "number": "40.8.2",
    "title": "Tingle Verbs",
    "page": 225,
@@ -8521,6 +8656,7 @@
    ]
   },
   {
+   "id": "hurt",
    "number": "40.8.3",
    "title": "Hurt Verbs",
    "page": 225,
@@ -8554,6 +8690,7 @@
    "properties": []
   },
   {
+   "id": "changeOfBodilyState",
    "number": "40.8.4",
    "title": "Verbs of Change of Bodily State",
    "page": 226,
@@ -8587,6 +8724,7 @@
    ]
   },
   {
+   "id": "dress",
    "number": "41.1.1",
    "title": "Dress Verbs",
    "page": 227,
@@ -8630,6 +8768,7 @@
    ]
   },
   {
+   "id": "groom",
    "number": "41.1.2",
    "title": "Groom Verbs",
    "page": 228,
@@ -8652,6 +8791,7 @@
    ]
   },
   {
+   "id": "floss",
    "number": "41.2.1",
    "title": "Floss Verbs",
    "page": 228,
@@ -8686,6 +8826,7 @@
    ]
   },
   {
+   "id": "braid",
    "number": "41.2.2",
    "title": "Braid Verbs",
    "page": 229,
@@ -8747,6 +8888,7 @@
    ]
   },
   {
+   "id": "simpleDressing",
    "number": "41.3.1",
    "title": "Simple Verbs of Dressing",
    "page": 229,
@@ -8770,6 +8912,7 @@
    ]
   },
   {
+   "id": "dressingWell",
    "number": "41.3.2",
    "title": "Verbs of Dressing Well",
    "page": 229,
@@ -8793,6 +8936,7 @@
    ]
   },
   {
+   "id": "beingDressed",
    "number": "41.3.3",
    "title": "Verbs of Being Dressed",
    "page": 230,
@@ -8817,6 +8961,7 @@
    ]
   },
   {
+   "id": "murder",
    "number": "42.1",
    "title": "Murder Verbs",
    "page": 230,
@@ -8889,6 +9034,7 @@
    ]
   },
   {
+   "id": "poison",
    "number": "42.2",
    "title": "Poison Verbs",
    "page": 232,
@@ -8952,6 +9098,7 @@
    ]
   },
   {
+   "id": "lightEmission",
    "number": "43.1",
    "title": "Verbs of Light Emission",
    "page": 233,
@@ -9043,6 +9190,7 @@
    ]
   },
   {
+   "id": "soundEmission",
    "number": "43.2",
    "title": "Verbs of Sound Emission",
    "page": 234,
@@ -9241,6 +9389,7 @@
    ]
   },
   {
+   "id": "smellEmission",
    "number": "43.3",
    "title": "Verbs of Smell Emission",
    "page": 236,
@@ -9279,6 +9428,7 @@
    ]
   },
   {
+   "id": "substanceEmission",
    "number": "43.4",
    "title": "Verbs of Substance Emission",
    "page": 237,
@@ -9386,6 +9536,7 @@
    ]
   },
   {
+   "id": "destroy",
    "number": "44",
    "title": "Destroy Verbs",
    "page": 239,
@@ -9483,6 +9634,7 @@
    ]
   },
   {
+   "id": "break_",
    "number": "45.1",
    "title": "Break Verbs",
    "page": 241,
@@ -9598,6 +9750,7 @@
    ]
   },
   {
+   "id": "bend",
    "number": "45.2",
    "title": "Bend Verbs",
    "page": 242,
@@ -9687,6 +9840,7 @@
    ]
   },
   {
+   "id": "cooking",
    "number": "45.3",
    "title": "Cooking Verbs",
    "page": 243,
@@ -9807,6 +9961,7 @@
    ]
   },
   {
+   "id": "otherChangeOfState",
    "number": "45.4",
    "title": "Other Alternating Verbs of Change of State",
    "page": 244,
@@ -10178,6 +10333,7 @@
    ]
   },
   {
+   "id": "entitySpecificChangeOfState",
    "number": "45.5",
    "title": "Verbs of Entity-Specific Change of State",
    "page": 246,
@@ -10237,6 +10393,7 @@
    ]
   },
   {
+   "id": "calibratableChangeOfState",
    "number": "45.6",
    "title": "Verbs of Calibratable Changes of State",
    "page": 247,
@@ -10330,6 +10487,7 @@
    ]
   },
   {
+   "id": "lodge",
    "number": "46",
    "title": "Lodge Verbs",
    "page": 248,
@@ -10404,6 +10562,7 @@
    ]
   },
   {
+   "id": "exist",
    "number": "47.1",
    "title": "Exist Verbs",
    "page": 249,
@@ -10489,6 +10648,7 @@
    ]
   },
   {
+   "id": "entitySpecificModeOfBeing",
    "number": "47.2",
    "title": "Verbs of Entity-Specific Modes of Being",
    "page": 250,
@@ -10594,6 +10754,7 @@
    ]
   },
   {
+   "id": "modeOfBeingInvolvingMotion",
    "number": "47.3",
    "title": "Verbs of Modes of Being Involving Motion",
    "page": 251,
@@ -10686,6 +10847,7 @@
    ]
   },
   {
+   "id": "soundExistence",
    "number": "47.4",
    "title": "Verbs of Sound Existence",
    "page": 252,
@@ -10757,6 +10919,7 @@
    ]
   },
   {
+   "id": "swarm",
    "number": "47.5.1",
    "title": "Swarm Verbs",
    "page": 253,
@@ -10815,6 +10978,7 @@
    ]
   },
   {
+   "id": "herd",
    "number": "47.5.2",
    "title": "Herd Verbs",
    "page": 254,
@@ -10865,6 +11029,7 @@
    ]
   },
   {
+   "id": "bulge",
    "number": "47.5.3",
    "title": "Bulge Verbs",
    "page": 254,
@@ -10897,6 +11062,7 @@
    ]
   },
   {
+   "id": "spatialConfiguration",
    "number": "47.6",
    "title": "Verbs of Spatial Configuration",
    "page": 255,
@@ -10984,6 +11150,7 @@
    ]
   },
   {
+   "id": "meander",
    "number": "47.7",
    "title": "Meander Verbs",
    "page": 256,
@@ -11030,6 +11197,7 @@
    ]
   },
   {
+   "id": "contiguousLocation",
    "number": "47.8",
    "title": "Verbs of Contiguous Location",
    "page": 257,
@@ -11099,6 +11267,7 @@
    ]
   },
   {
+   "id": "appear",
    "number": "48.1.1",
    "title": "Appear Verbs",
    "page": 258,
@@ -11182,6 +11351,7 @@
    ]
   },
   {
+   "id": "reflexiveAppearance",
    "number": "48.1.2",
    "title": "Reflexive Verbs of Appearance",
    "page": 259,
@@ -11237,6 +11407,7 @@
    ]
   },
   {
+   "id": "disappearance",
    "number": "48.2",
    "title": "Verbs of Disappearance",
    "page": 260,
@@ -11290,6 +11461,7 @@
    ]
   },
   {
+   "id": "occurrence",
    "number": "48.3",
    "title": "Verbs of Occurrence",
    "page": 260,
@@ -11334,6 +11506,7 @@
    ]
   },
   {
+   "id": "bodyInternalMotion",
    "number": "49",
    "title": "Verbs of Body-Internal Motion",
    "page": 261,
@@ -11393,6 +11566,7 @@
    ]
   },
   {
+   "id": "assumePosition",
    "number": "50",
    "title": "Verbs of Assuming a Position",
    "page": 262,
@@ -11440,6 +11614,7 @@
    ]
   },
   {
+   "id": "inherentlyDirectedMotion",
    "number": "51.1",
    "title": "Verbs of Inherently Directed Motion",
    "page": 263,
@@ -11523,6 +11698,7 @@
    ]
   },
   {
+   "id": "leave",
    "number": "51.2",
    "title": "Leave Verbs",
    "page": 264,
@@ -11545,6 +11721,7 @@
    ]
   },
   {
+   "id": "roll",
    "number": "51.3.1",
    "title": "Roll Verbs",
    "page": 264,
@@ -11612,6 +11789,7 @@
    ]
   },
   {
+   "id": "run",
    "number": "51.3.2",
    "title": "Run Verbs",
    "page": 265,
@@ -11833,6 +12011,7 @@
    ]
   },
   {
+   "id": "vehicleName",
    "number": "51.4.1",
    "title": "Verbs That Are Vehicle Names",
    "page": 267,
@@ -11912,6 +12091,7 @@
    ]
   },
   {
+   "id": "nonVehicleName",
    "number": "51.4.2",
    "title": "Verbs That Are Not Vehicle Names",
    "page": 268,
@@ -11962,6 +12142,7 @@
    ]
   },
   {
+   "id": "waltz",
    "number": "51.5",
    "title": "Waltz Verbs",
    "page": 268,
@@ -12021,6 +12202,7 @@
    ]
   },
   {
+   "id": "chase",
    "number": "51.6",
    "title": "Chase Verbs",
    "page": 269,
@@ -12048,6 +12230,7 @@
    ]
   },
   {
+   "id": "accompany",
    "number": "51.7",
    "title": "Accompany Verbs",
    "page": 270,
@@ -12074,6 +12257,7 @@
    ]
   },
   {
+   "id": "avoid",
    "number": "52",
    "title": "Avoid Verbs",
    "page": 270,
@@ -12093,6 +12277,7 @@
    "properties": []
   },
   {
+   "id": "linger",
    "number": "53.1",
    "title": "Verbs of Lingering",
    "page": 271,
@@ -12121,6 +12306,7 @@
    ]
   },
   {
+   "id": "rush",
    "number": "53.2",
    "title": "Verbs of Rushing",
    "page": 271,
@@ -12145,6 +12331,7 @@
    ]
   },
   {
+   "id": "register",
    "number": "54.1",
    "title": "Register Verbs",
    "page": 272,
@@ -12179,6 +12366,7 @@
    ]
   },
   {
+   "id": "cost",
    "number": "54.2",
    "title": "Cost Verbs",
    "page": 272,
@@ -12212,6 +12400,7 @@
    ]
   },
   {
+   "id": "fit",
    "number": "54.3",
    "title": "Fit Verbs",
    "page": 273,
@@ -12233,6 +12422,7 @@
    "properties": []
   },
   {
+   "id": "price",
    "number": "54.4",
    "title": "Price Verbs",
    "page": 273,
@@ -12261,6 +12451,7 @@
    ]
   },
   {
+   "id": "bill",
    "number": "54.5",
    "title": "Bill Verbs",
    "page": 274,
@@ -12301,6 +12492,7 @@
    ]
   },
   {
+   "id": "begin",
    "number": "55.1",
    "title": "Begin Verbs",
    "page": 274,
@@ -12336,6 +12528,7 @@
    ]
   },
   {
+   "id": "complete",
    "number": "55.2",
    "title": "Complete Verbs",
    "page": 275,
@@ -12360,6 +12553,7 @@
    ]
   },
   {
+   "id": "weekend",
    "number": "56",
    "title": "Weekend Verbs",
    "page": 275,
@@ -12373,6 +12567,7 @@
    "properties": []
   },
   {
+   "id": "weather",
    "number": "57",
    "title": "Weather Verbs",
    "page": 276,

@@ -17,18 +17,18 @@ manner-of-speaking class, *whisper*, *shout*, *mumble* and the rest, with *speak
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect
+open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Communication -/
 
 /-- "say" — communication verb, not factive -/
 def say : Verb where
   morphs := [.root "say"]
+  levin := some Levin1993.Index.say
   past := "said"
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
-  levinClasses := {LevinClass.say}
 
 /-- "tell" — communication verb with recipient.
     Also ditransitive ("tell me a story"). The direct object may be implicit in the double
@@ -36,6 +36,7 @@ def say : Verb where
     indefinite ([bruening-2021]). -/
 def tell : Verb where
   morphs := [.root "tell"]
+  levin := some Levin1993.Index.tell
   past := "told"
   speechActVerb := true
   valency := .of
@@ -46,16 +47,15 @@ def tell : Verb where
      ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 1 (some .indef),
        [0, 1, 2])]
   vendlerClass := some .achievement
-  levinClasses := {LevinClass.tell, .transferOfMessage}
 
 /-- "claim" — communication verb, speaker doesn't endorse. It takes a finite clause or an
 infinitive its subject controls (*claimed to be rich*). -/
 def claim : Verb where
   morphs := [.root "claim"]
+  levin := some Levin1993.Index.claim
   speechActVerb := true
   valency := .ofFrames [.finiteClause, toInfinitive] (controllers := [none, some 0])
   vendlerClass := some .achievement
-  levinClasses := {LevinClass.say}
 
 /-! ### Manner of Speaking (Levin 37.3)
 
@@ -64,142 +64,141 @@ Manner-of-speaking verbs specify how something is said. -/
 /-- "whisper" — Levin 37.3 Manner of Speaking verbs. -/
 def whisper : Verb where
   morphs := [.root "whisper"]
+  levin := some Levin1993.Index.whisper
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking}
 
 /-- "murmur" — Levin 37.3 Manner of Speaking verbs. -/
 def murmur : Verb where
   morphs := [.root "murmur"]
+  levin := some Levin1993.Index.murmur
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission}
 
 /-- "shout" — Levin 37.3 Manner of Speaking verbs. -/
 def shout : Verb where
   morphs := [.root "shout"]
+  levin := some Levin1993.Index.shout
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking}
 
 /-- "cry" — Levin 37.3 Manner of Speaking verbs. -/
 def cry : Verb where
   morphs := [.root "cry"]
+  levin := some Levin1993.Index.cry
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.breathe, .mannerOfSpeaking, .marvel, .nonverbalExpression,
-    .soundEmission}
 
 /-- "scream" — Levin 37.3 Manner of Speaking verbs. -/
 def scream : Verb where
   morphs := [.root "scream"]
+  levin := some Levin1993.Index.scream
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.animalSound, .mannerOfSpeaking, .soundEmission}
 
 /-- "mumble" — Levin 37.3 Manner of Speaking verbs. -/
 def mumble : Verb where
   morphs := [.root "mumble"]
+  levin := some Levin1993.Index.mumble
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking}
 
 /-- "mutter" — Levin 37.3 Manner of Speaking verbs. -/
 def mutter : Verb where
   morphs := [.root "mutter"]
+  levin := some Levin1993.Index.mutter
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking}
 
 /-- "shriek" — Levin 37.3 Manner of Speaking verbs. -/
 def shriek : Verb where
   morphs := [.root "shriek"]
+  levin := some Levin1993.Index.shriek
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission}
 
 /-- "yell" — Levin 37.3 Manner of Speaking verbs. -/
 def yell : Verb where
   morphs := [.root "yell"]
+  levin := some Levin1993.Index.yell
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.animalSound, .mannerOfSpeaking}
 
 /-- "groan" — Levin 37.3 Manner of Speaking verbs. -/
 def groan : Verb where
   morphs := [.root "groan"]
+  levin := some Levin1993.Index.groan
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.mannerOfSpeaking, .nonverbalExpression, .soundEmission}
 
 /-- "grumble" — Levin 37.3 Manner of Speaking verbs. -/
 def grumble : Verb where
   morphs := [.root "grumble"]
+  levin := some Levin1993.Index.grumble
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.complain, .mannerOfSpeaking}
 
 /-- "hiss" — Levin 37.3 Manner of Speaking verbs. -/
 def hiss : Verb where
   morphs := [.root "hiss"]
+  levin := some Levin1993.Index.hiss
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.animalSound, .mannerOfSpeaking, .soundEmission}
 
 /-- "sigh" — Levin 40.2 Nonverbal Expression verbs. -/
 def sigh : Verb where
   morphs := [.root "sigh"]
+  levin := some Levin1993.Index.sigh
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.nonverbalExpression}
 
 /-- "whimper" — Levin 37.3 Manner of Speaking verbs. -/
 def whimper : Verb where
   morphs := [.root "whimper"]
+  levin := some Levin1993.Index.whimper
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.animalSound, .mannerOfSpeaking}
 
 /-- "snap" — Levin 37.3 Manner of Speaking verbs. -/
 def snap : Verb where
   morphs := [.root "snap"]
+  levin := some Levin1993.Index.snap
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
-  levinClasses := {LevinClass.animalSound, .break_, .crane, .mannerOfSpeaking, .soundEmission}
 
 /-- "speak" — Levin 37.5 Talk verbs. -/
 def speak : Verb where
   morphs := [.root "speak"]
+  levin := some Levin1993.Index.speak
   past := "spoke"
   pastPart := "spoken"
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
   passivizable := false
-  levinClasses := {LevinClass.talk}
 
 /-- "talk" — Levin 37.5 Talk verbs. -/
 def talk : Verb where
   morphs := [.root "talk"]
+  levin := some Levin1993.Index.talk
   speechActVerb := true
   valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
   passivizable := false
-  levinClasses := {LevinClass.talk}
 
 end English.Verbs

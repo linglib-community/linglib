@@ -8,7 +8,6 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability
@@ -176,13 +175,6 @@ Language-specific fragments extend this with morphological fields appropriate to
 system.
 -/
 structure Verb extends Verb.ArgStructure, Verb.Aspect, Clause.Embedding where
-  /-- The [levin-1993] classes whose member lists carry the citation form, for the English
-      entries; the classes are Levin's, so entries for other languages carry none. A verb Levin
-      cross-lists carries every class, and a study chooses a sense by membership. -/
-  levinClasses : Finset LevinClass := ∅
-  /-- Levin classes that list the citation form in a sense this entry is not, and so are left
-      out of `levinClasses`. -/
-  levinExcluded : Finset LevinClass := ∅
   /-- The meaning of the verb's root, the kinds of lexical entailment it carries, read rather
   than the verb's Levin classes. The default `{}` is the unannotated root. -/
   root : ArgumentStructure.Root := {}

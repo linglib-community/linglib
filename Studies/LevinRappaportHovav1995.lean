@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Data.Examples.LevinRappaportHovav1995
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Romance.Italian.Verbs

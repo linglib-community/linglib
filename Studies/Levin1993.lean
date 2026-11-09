@@ -289,23 +289,23 @@ def changeOfStateClasses : Finset LevinClass :=
     .calibratableChangeOfState}
 
 theorem mem_changeOfStateClasses_iff (c : LevinClass) :
-    c ∈ changeOfStateClasses ↔ "45.".toList <+: c.numberString.toList := by
+    c ∈ changeOfStateClasses ↔ [45] <+: c.number := by
   revert c
   decide +kernel
 
 /-- The entailments of a causee, the entry's own or else a change of state when Levin classes the
 verb with the verbs of change of state. -/
-def causeeProfile? (v : Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
+def causeeProfile? (v : English.Verbs.Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
   v.valency.profiles.get i <|>
     if Disjoint v.levinClasses changeOfStateClasses then none else some {.changeOfState}
 
 /-- A verb shows an alternation when the alternation's schema relates two of its diatheses and the
 profile of each causee meets the alternation's condition. -/
-def Shows (v : Verb) (a : DiathesisAlternation) : Prop :=
+def Shows (v : English.Verbs.Verb) (a : DiathesisAlternation) : Prop :=
   ∃ σ ∈ schema? a, ∃ c ∈ v.valency.diatheses, ∃ d ∈ v.valency.diatheses, σ.Relates c d ∧
     ∀ i, IsCausee c d i → ∃ θ ∈ causeeProfile? v i, CauseeCondition a θ
 
-instance (v : Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
+instance (v : English.Verbs.Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, ∃ _ ∈ _, _ ∧ ∀ _, _ → _))
 
 /-- The alternations with a frame-pair schema. -/
@@ -321,14 +321,14 @@ theorem isSome_schema?_iff (a : DiathesisAlternation) : (schema? a).isSome ↔ a
 theorem shows_class_alternations :
     ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
       ∀ a ∈ schematized, ∀ l ∈ c.properties, l.scope.AppliesTo v.form →
-        (l.Names a → l.judgment = .acceptable → Shows v.toVerb a) ∧
-          (l.Stars a → ¬ Shows v.toVerb a) := by
+        (l.Names a → l.judgment = .acceptable → Shows v a) ∧
+          (l.Stars a → ¬ Shows v a) := by
   decide +kernel
 
 open English.Verbs in
 theorem run_shatter :
-    (Shows run.toVerb .inducedAction ∧ ¬ Shows run.toVerb .causativeInchoative) ∧
-      Shows shatter.toVerb .causativeInchoative ∧ ¬ Shows shatter.toVerb .inducedAction := by
+    (Shows run .inducedAction ∧ ¬ Shows run .causativeInchoative) ∧
+      Shows shatter .causativeInchoative ∧ ¬ Shows shatter .inducedAction := by
   decide
 
 end Levin1993
