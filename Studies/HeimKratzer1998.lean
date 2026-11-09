@@ -51,7 +51,7 @@ open scoped Assignment
 open PhraseStructure
 open PhraseStructure.Tree
 open Quantifier Quantifier.Det
-open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
+open Quantifier.Polyadic (iterate iterate_every_some_of_some_every)
 open scoped Denotes
 
 /-! ### Model and lexicon
@@ -602,11 +602,11 @@ def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every Det.some person person fun x y ↦ Toy.sees y x
+  iterate every Det.some person person fun x y ↦ Toy.sees y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every Det.some person person fun x y ↦ Toy.sees y x
+  iterate Det.some every person person fun y x ↦ Toy.sees y x
 
 theorem surface_scope_true : surfaceScopeProp := by
   rintro x (rfl | rfl)

@@ -63,7 +63,7 @@ namespace Asudeh2022
 
 open Quantifier
 open Quantifier.Det (every)
-open Quantifier.Polyadic (surfaceScope inverseScope)
+open Quantifier.Polyadic (iterate)
 
 /-! ### Proofs as linear terms -/
 
@@ -916,13 +916,13 @@ def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
 /-- The surface proof means the surface-scope reading, every person loving some person. -/
 theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     surface.eval (scopeEnv person love) =
-      surfaceScope every Det.some person person fun x y ↦ love y x :=
+      iterate every Det.some person person fun x y ↦ love y x :=
   rfl
 
 /-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
 theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     inverse.eval (scopeEnv person love) =
-      inverseScope every Det.some person person fun x y ↦ love y x :=
+      iterate Det.some every person person fun y x ↦ love y x :=
   rfl
 
 open HeimKratzer1998.Toy (person sees) in
