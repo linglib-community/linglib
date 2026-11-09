@@ -505,23 +505,25 @@ variable [DecidableEq V]
 open Classical in
 /-- The partial embedding with domain `X` reading the total assignment `f'`. -/
 private noncomputable def restrictTotal (X : Set V) (f' : V → M) : PartialAssign V M :=
-  fun x => if x ∈ X then ↑(f' x) else ⊥
+  PartialAssign.ofSubtype (X.domRestrict f')
 
+open Classical in
 omit [DecidableEq V] in
 private theorem restrictTotal_of_mem {X : Set V} {f' : V → M} {x : V} (hx : x ∈ X) :
-    restrictTotal X f' x = ↑(f' x) := by
-  simp [restrictTotal, hx]
+    restrictTotal X f' x = ↑(f' x) :=
+  PartialAssign.ofSubtype_apply_of_mem _ hx
 
+open Classical in
 omit [DecidableEq V] in
 private theorem restrictTotal_of_notMem {X : Set V} {f' : V → M} {x : V} (hx : x ∉ X) :
-    restrictTotal X f' x = ⊥ := by
-  simp [restrictTotal, hx]
+    restrictTotal X f' x = ⊥ :=
+  PartialAssign.ofSubtype_apply_of_notMem _ hx
 
+open Classical in
 omit [DecidableEq V] in
 private theorem domain_restrictTotal (X : Set V) (f' : V → M) :
-    (restrictTotal X f').domain = X := by
-  ext x
-  by_cases hx : x ∈ X <;> simp [restrictTotal, hx]
+    (restrictTotal X f').domain = X :=
+  PartialAssign.domain_ofSubtype _
 
 private theorem verifies_restrictTotal {X U : Finset V} {cs : List (Condition L V)}
     (hXU : Disjoint X U)

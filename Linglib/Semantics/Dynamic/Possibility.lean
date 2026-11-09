@@ -275,21 +275,15 @@ theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
     by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;> simp [hx, hy]
 
 open Classical in
-/-- Partial points with domain `X` are exactly world–`X`-assignment
-pairs. -/
+/-- Partial points with domain `X` are exactly world–`X`-assignment pairs, by
+`PartialAssign.domainEquiv` on the assignment. -/
 noncomputable def domainEquiv (X : Set V) :
     {p : Possibility W V (Flat M) // p.domain = X} ≃ W × (X → M) where
-  toFun p := (p.1.world, fun v => (p.1.assignment v.1).get (p.2.superset v.2))
-  invFun e := ⟨⟨e.1, fun v => if h : v ∈ X then ↑(e.2 ⟨v, h⟩) else ⊥⟩, by
-    ext v; by_cases h : v ∈ X <;> simp [h]⟩
-  left_inv p := Subtype.ext <| Possibility.ext rfl <| funext fun v => by
-    by_cases h : v ∈ X
-    · simp only [h, dite_true]
-      exact Flat.coe_get _ _
-    · simp only [h, dite_false]
-      by_contra hne
-      exact h (p.2.subset (Ne.symm hne))
-  right_inv _ := by ext <;> simp
+  toFun p := (p.1.world, PartialAssign.domainEquiv X ⟨p.1.assignment, p.2⟩)
+  invFun e := ⟨⟨e.1, PartialAssign.ofSubtype e.2⟩, PartialAssign.domain_ofSubtype e.2⟩
+  left_inv p := Subtype.ext <| Possibility.ext rfl <|
+    congrArg Subtype.val ((PartialAssign.domainEquiv X).left_inv ⟨p.1.assignment, p.2⟩)
+  right_inv e := Prod.ext rfl ((PartialAssign.domainEquiv X).right_inv e.2)
 
 theorem restrict_domainEquiv_symm (h : Y ⊆ X) (e : W × (X → M)) :
     ((domainEquiv X).symm e).1.restrict Y =

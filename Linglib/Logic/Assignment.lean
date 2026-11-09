@@ -7,78 +7,68 @@ public import Linglib.Core.Order.Flat
 /-!
 # Variable assignments
 
-A *variable assignment* maps variables to values. Three registers share
-this file: total assignments (Tarski-style, [heim-kratzer-1998],
-[henkin-monk-tarski-1971]), partial assignments (variables may be
-unvalued, [spector-2026], [beaver-krahmer-2001]), and plural assignments
-(sets of partial assignments — the information states of plural dynamic
-semantics, [van-den-berg-1996], [brasoveanu-2008],
-[haug-dalrymple-2020]).
+A variable assignment gives values to variables. In first-order logic and in Dynamic Predicate
+Logic an assignment is total, a Tarskian valuation of every variable; in Heim and Kratzer's
+composition rules, in DRT and in partial dynamic logics it is partial, defined on the variables the
+discourse has introduced. A plural information state is a set of assignments, total in
+Brasoveanu's compositional system and partial in van den Berg's.
 
 ## Main definitions
 
-* `Assignment E`: total assignments `ℕ → E`, on the Heim–Kratzer
-  ℕ-register.
+* `Assignment E`: total assignments `ℕ → E`, indexed by numerals.
 * `PartialAssign Var D`: partial assignments `Var → Flat D`, ordered by extension, with
-  `PartialAssign.domain` the variables an assignment values and `PartialAssign.single x d` the
-  assignment valuing `x` alone.
+  `PartialAssign.domain` the variables an assignment values, `PartialAssign.update` the modified
+  assignment and `PartialAssign.single x d` the assignment valuing `x` alone.
+* `PartialAssign.domainEquiv`: the partial assignments with domain `X` are the functions on `X`.
 * `PluralAssign Var D`: sets of partial assignments, with `PluralAssign.value` the values a
-  variable takes across them and `PluralAssign.restrict` the restriction of
-  [Spector][spector-2026]. A variable takes a single value `d` when its values are `{d}`, Spector's
-  *atomic*.
+  variable takes across them and `PluralAssign.restrict` the substate where it takes a given value.
 
 ## Main results
 
 * `PartialAssign.le_iff_eqOn_domain`: one assignment extends another when it agrees with it on
   the other's domain.
+* `PartialAssign.domain_update`: the modified assignment adds its variable to the domain.
 * `PartialAssign.covBy_iff_exists_update`: one assignment covers another when it values exactly
   one more variable, the counterpart of `Set.covBy_iff_exists_insert`.
-* `PartialAssign.forall_domain_eq_iff`: the assignments with a given domain are the functions on it
-  (`PartialAssign.ofSubtype`).
-* `PluralAssign.value_eq_singleton_iff`: a single value as [Spector][spector-2026] states it.
+* `PluralAssign.value_eq_singleton_iff`: a variable has a single value in a plural assignment.
 * `PluralAssign.value_restrict_eq_singleton_iff`: a nonempty restriction of a variable to a value
   gives it that single value.
 
 ## Notation
 
-* `g[n ↦ x]`: `Function.update g n x`, the assignment modification of
-  [Heim and Kratzer][heim-kratzer-1998], scoped to `Assignment` (`open scoped Assignment`).
+* `g[n ↦ x]`: `Function.update g n x`, overwriting the value of a total assignment, scoped to
+  `Assignment` (`open scoped Assignment`).
 
 ## Implementation notes
 
-* `PartialAssign` takes values in `Flat D`, the decidable counterpart of
-  mathlib's partial values `Part D` with the same order
-  (`Flat.le_iff_ofOption_le`): `Part`-valued partiality would forfeit
-  `DecidableEq` on assignments, which `Finset`-state systems (QBSML) and
-  `decide`-checked studies need. The pointwise order is extension, `⊥` is
-  the assignment valuing nothing, `g x = ⊥` says `x` is unvalued and
-  `g x = ↑d` that it has the value `d`; there is no wrapper predicate.
-* Update is mathlib's `Function.update`; `PartialAssign.update` only
-  fuses the coercion (cf. `Finsupp.update`), and its lemmas are one-step
-  consequences of the `Function.update_*` laws.
+* `PartialAssign` is [van den Berg][van-den-berg-1996]'s partial assignment, a function into
+  values or an undefined value, with his extension order: `⊥` is undefined, and the pointwise flat
+  order is extension. `Flat D` is the decidable counterpart of mathlib's partial values `Part D`
+  with the same order (`Flat.le_iff_ofOption_le`); `Part`-valued partiality would forfeit
+  `DecidableEq` on assignments, which `Finset`-state systems (QBSML) and `decide`-checked studies
+  need.
+* The assignments of [Heim and Kratzer][heim-kratzer-1998] are `PartialAssign ℕ D`, and their
+  modified assignment is `PartialAssign.update`, whose domain gains the modified index
+  (`PartialAssign.domain_update`). `Assignment E` and `g[n ↦ x]` are the total, overwriting
+  counterparts.
+* Update is mathlib's `Function.update`; `PartialAssign.update` only fuses the coercion (cf.
+  `Finsupp.update`), and its lemmas are one-step consequences of the `Function.update_*` laws.
 * Random assignment `[x]`, relating assignments that agree off `x`, is
   `DynamicSemantics.Update.randomAssign` at the function-type register structure; it is not
   redefined here.
-* Use these names only for the variable-binding role — the state that
-  quantifiers `update` and free variables look up. A `ℕ → E` that is not
-  variable-binding state (interpretation tables, lookup arrays) should
-  stay a plain function type.
+* Use these names only for the variable-binding role — the state that quantifiers `update` and
+  free variables look up. A `ℕ → E` that is not variable-binding state (interpretation tables,
+  lookup arrays) should stay a plain function type.
 
 ## References
 
-* [I. Heim, A. Kratzer, *Semantics in Generative Grammar* (1998)][heim-kratzer-1998]
-* [L. Henkin, J. D. Monk and A. Tarski, *Cylindric algebras, part I*
-  (1971)][henkin-monk-tarski-1971]
-* [B. Spector, *Trivalence and transparency: A non-dynamic approach to anaphora*
-  (2026)][spector-2026]
-* [D. Beaver, E. Krahmer, *A Partial Account of Presupposition Projection*
-  (2001)][beaver-krahmer-2001]
-* [M. H. van den Berg, *Some aspects of the internal structure of discourse: the dynamics of
-  nominal anaphora* (1996)][van-den-berg-1996]
-* [A. Brasoveanu, *Donkey pluralities: plural information states versus non-atomic
-  individuals* (2008)][brasoveanu-2008]
-* [D. T. T. Haug and M. Dalrymple, *Reciprocity: Anaphora, scope, and quantification*
-  (2020)][haug-dalrymple-2020]
+* [groenendijk-stokhof-1991]
+* [heim-kratzer-1998]
+* [henkin-monk-tarski-1971]
+* [van-den-berg-1996]
+* [brasoveanu-2008]
+* [haug-dalrymple-2020]
+* [spector-2026]
 -/
 
 @[expose] public section
@@ -87,14 +77,14 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
 
 /-- `Assignment E` is the type of total variable assignments, sending each index in `ℕ` to a value
 in `E`: an entity for entity pronouns, a situation index for situation pronouns, a time for
-temporal variables. -/
-abbrev Assignment (E : Type*) := Nat → E
+temporal variables. Heim and Kratzer index by numerals too, but their assignments are partial,
+`PartialAssign ℕ E`. -/
+abbrev Assignment (E : Type*) := ℕ → E
 
 namespace Assignment
 
-/-- `g[n ↦ x]` is the assignment sending `n` to `x` and agreeing with `g` elsewhere, the
-assignment modification of [Heim and Kratzer][heim-kratzer-1998]. It is notation for
-`Function.update g n x`. -/
+/-- `g[n ↦ x]` is the assignment sending `n` to `x` and agreeing with `g` elsewhere, overwriting
+any value `g` gave `n`. It is notation for `Function.update g n x`. -/
 scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
 
 end Assignment
@@ -102,7 +92,8 @@ end Assignment
 /-! ### Partial assignments -/
 
 /-- `PartialAssign Var D` is the type of partial assignments of values in `D` to variables in
-`Var`: `g x = ⊥` when `g` leaves `x` unvalued, and `g ≤ h` when `h` extends `g`. -/
+`Var`: `g x = ⊥` when `g` leaves `x` unvalued, and `g ≤ h` when `h` extends `g`, the partial
+assignments and assignment extension of [van den Berg][van-den-berg-1996] (Definition 4.1, (39)). -/
 abbrev PartialAssign (Var D : Type*) := Var → Flat D
 
 namespace PartialAssign
@@ -132,13 +123,10 @@ theorem domain_mono (hgh : g ≤ h) : g.domain ⊆ h.domain :=
   fun x hx ↦ ne_bot_of_le_ne_bot hx (hgh x)
 
 theorem eq_of_le_of_domain_subset (hgh : g ≤ h) (hdom : h.domain ⊆ g.domain) : h = g :=
-  le_antisymm (Pi.le_def.mpr fun x => by
-    by_cases hx : g x = ⊥
-    · have hhx : h x = ⊥ := by
-        by_contra hhx
-        exact hdom hhx hx
-      exact hhx ▸ bot_le
-    · exact (le_iff_eqOn_domain.mp hgh hx).ge) hgh
+  le_antisymm (fun x ↦ by
+    rcases eq_or_ne (h x) ⊥ with hx | hx
+    · rw [hx]; exact bot_le
+    · exact (le_iff_eqOn_domain.1 hgh (hdom hx)).ge) hgh
 
 theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
   simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
@@ -151,24 +139,37 @@ variable {X : Set Var} [DecidablePred (· ∈ X)]
 def ofSubtype (b : X → D) : PartialAssign Var D :=
   fun x ↦ if h : x ∈ X then ↑(b ⟨x, h⟩) else ⊥
 
+@[simp] theorem ofSubtype_apply_of_mem (b : X → D) (h : x ∈ X) : ofSubtype b x = ↑(b ⟨x, h⟩) := by
+  simp [ofSubtype, h]
+
+@[simp] theorem ofSubtype_apply_of_notMem (b : X → D) (h : x ∉ X) : ofSubtype b x = ⊥ := by
+  simp [ofSubtype, h]
+
 @[simp] theorem domain_ofSubtype (b : X → D) : (ofSubtype b).domain = X := by
   ext x
-  change ofSubtype b x ≠ ⊥ ↔ x ∈ X
-  unfold ofSubtype
-  split_ifs with h
-  · exact iff_of_true Flat.coe_ne_bot h
-  · exact iff_of_false (· rfl) h
+  by_cases h : x ∈ X <;> simp [h]
 
+variable (X) in
 /-- The partial assignments with domain `X` are the functions on `X`. -/
+def domainEquiv : {g : PartialAssign Var D // g.domain = X} ≃ (X → D) where
+  toFun g x := (g.1 x).get ((Set.ext_iff.1 g.2 x).2 x.2)
+  invFun b := ⟨ofSubtype b, domain_ofSubtype b⟩
+  left_inv g := Subtype.ext <| funext fun x ↦ by
+    dsimp only
+    by_cases h : x ∈ X
+    · rw [ofSubtype_apply_of_mem _ h, Flat.coe_get]
+    · rw [ofSubtype_apply_of_notMem _ h]
+      exact (not_not.1 fun hne ↦ h ((Set.ext_iff.1 g.2 x).1 hne)).symm
+  right_inv b := funext fun x ↦ Flat.coe_injective <| by
+    dsimp only
+    rw [Flat.coe_get, ofSubtype_apply_of_mem _ x.2]
+
 theorem forall_domain_eq_iff {P : PartialAssign Var D → Prop} :
     (∀ g, g.domain = X → P g) ↔ ∀ b : X → D, P (ofSubtype b) := by
   refine ⟨fun h b ↦ h _ (domain_ofSubtype b), fun h g hg ↦ ?_⟩
-  convert h fun x ↦ (g x).get (show (x : Var) ∈ g.domain from hg ▸ x.2)
-  funext x
-  unfold ofSubtype
-  split_ifs with hx
-  · simp
-  · exact not_not.1 fun hne ↦ hx (hg ▸ (show x ∈ g.domain from hne))
+  obtain ⟨b, hb⟩ : ∃ b, ofSubtype b = g :=
+    ⟨domainEquiv X ⟨g, hg⟩, congrArg Subtype.val ((domainEquiv X).left_inv ⟨g, hg⟩)⟩
+  exact hb ▸ h b
 
 theorem exists_domain_eq_iff {P : PartialAssign Var D → Prop} :
     (∃ g, g.domain = X ∧ P g) ↔ ∃ b : X → D, P (ofSubtype b) := by
@@ -180,7 +181,8 @@ end OfSubtype
 
 variable [DecidableEq Var]
 
-/-- `g.update x d` sends `x` to `d` and agrees with `g` elsewhere. -/
+/-- `g.update x d` sends `x` to `d` and agrees with `g` elsewhere, the modified assignment of
+[Heim and Kratzer][heim-kratzer-1998] ((13); `domain_update`). -/
 def update (g : PartialAssign Var D) (x : Var) (d : D) :
     PartialAssign Var D :=
   Function.update g x ↑d
@@ -226,9 +228,6 @@ theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x 
 def single (x : Var) (d : D) : PartialAssign Var D :=
   update ⊥ x d
 
-theorem bot_update (x : Var) (d : D) : (⊥ : PartialAssign Var D).update x d = single x d :=
-  rfl
-
 @[simp] theorem single_eq_same {d : D} : single x d x = ↑d :=
   update_self ..
 
@@ -242,9 +241,10 @@ end PartialAssign
 
 /-! ### Plural assignments -/
 
-/-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments, which are
-the plural information states of [van den Berg][van-den-berg-1996] and the assignment sets of
-[Spector][spector-2026]. -/
+/-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments: the plural
+information states of [van den Berg][van-den-berg-1996] and the plural assignments of
+[Spector][spector-2026]. [Brasoveanu][brasoveanu-2008]'s plural information states are sets of total
+assignments ([Haug and Dalrymple][haug-dalrymple-2020] note the difference). -/
 abbrev PluralAssign (Var D : Type*) := Set (PartialAssign Var D)
 
 namespace PluralAssign
@@ -278,7 +278,7 @@ theorem value_mono (h : G ⊆ H) : G.value x ⊆ H.value x :=
 
 /-! #### Restriction -/
 
-/-- `G.restrict x a` is the set of assignments in `G` sending `x` to `a`, the $G_{x=a}$ of
+/-- `G.restrict x a` is the substate of `G` whose assignments send `x` to `a`, written $G_{x=a}$ by
 [Spector][spector-2026] (§6.2). -/
 def restrict (G : PluralAssign Var D) (x : Var) (a : D) : PluralAssign Var D :=
   {g ∈ G | g x = ↑a}
@@ -297,8 +297,8 @@ theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value 
 /-! #### Single values -/
 
 /-- `x` has the single value `d` in `G` exactly when some assignment in `G` sends `x` to `d` and
-every assignment in `G` that values `x` sends it to `d`, the form in which [Spector][spector-2026]
-states his *atomic*. -/
+every assignment in `G` that values `x` sends it to `d`. [Spector][spector-2026]'s `atomic(x)`
+(§6.3) holds when the values of `x` are a single atom. -/
 theorem value_eq_singleton_iff :
     G.value x = {d} ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
   refine Set.eq_singleton_iff_unique_mem.trans ⟨fun ⟨hex, hall⟩ ↦ ⟨hex, fun g hg hne ↦ ?_⟩,
