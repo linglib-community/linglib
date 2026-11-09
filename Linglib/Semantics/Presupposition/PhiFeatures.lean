@@ -200,31 +200,42 @@ theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : b.exact ⊤ x) : x ∈
     · trivial
     · trivial
 
-/-- The singular is defined of the atoms; the plural, the dual, an absent value and a value
-without a bundle restrict nothing. -/
-def dom (n : Option Number) : Set E :=
-  (n.bind Bundle.ofNumber).elim Set.univ Bundle.dom
+/-- The singular is defined of the atoms; any other value, and an absent one, restricts
+nothing. -/
+def dom : Option Number → Set E
+  | some .singular => {x | Atom x}
+  | _ => Set.univ
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := by
-  simp [dom, Bundle.ofNumber, Bundle.singular, Bundle.dom, Finset.filter_insert,
-    Finset.filter_singleton, Feature.dom, atomsOf]
+@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := Iff.rfl
 
-@[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := by
-  simp [dom, Bundle.ofNumber, Bundle.dual, Bundle.dom, Finset.filter_insert,
-    Finset.filter_singleton, Feature.dom]
+@[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := rfl
 
-@[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
-  simp [dom, Bundle.ofNumber, Bundle.plural, Bundle.dom, Finset.filter_insert,
-    Finset.filter_singleton]
+@[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := rfl
+
+/-- Of the features only `[+atomic]` restricts, so a bundle is defined where the singular is if
+it carries `[+atomic]` and everywhere otherwise. -/
+theorem Bundle.dom_eq (b : Bundle) :
+    Bundle.dom (E := E) b = if (.atomic, true) ∈ b then Number.dom (some .singular) else Set.univ := by
+  ext x
+  simp only [Bundle.dom, Finset.inf_eq_iInf, Set.iInf_eq_iInter, Set.mem_iInter,
+    Finset.mem_filter, and_imp, Prod.forall]
+  split_ifs with h
+  · refine ⟨fun H ↦ ?_, fun hx f v _ hv ↦ ?_⟩
+    · simpa [Feature.dom, atomsOf] using H .atomic true h rfl
+    · subst hv
+      cases f <;> simp_all [Feature.dom, atomsOf]
+  · refine iff_of_true (fun f v hf hv ↦ ?_) trivial
+    subst hv
+    cases f <;> simp_all [Feature.dom]
 
 /-- Only the singular restricts. -/
 theorem dom_eq_univ_of_ne_singular {n : Option Number} (h : n ≠ some .singular) :
     dom (E := E) n = Set.univ := by
   rcases n with _ | n
   · rfl
-  · cases n <;> first | exact absurd rfl h | rfl | simp
+  · cases n <;> first | exact absurd rfl h | rfl
 
 /-- The alternatives of a number value under Maximize Presupposition: a value competes with the
 singular and the plural, and an absent value, which carries no number, with nothing. -/
