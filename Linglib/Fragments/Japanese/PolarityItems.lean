@@ -51,17 +51,12 @@ def dareMo : PolarityItem :=
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItem :=
   { form := Indefinites.dareDemo.form
-  , freeChoice := true
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
+  , freeChoice := true }
 
 /-! ### Licensing -/
 
 theorem dareMo_licensing_characterized (c : LicensingContext) :
     c.licenser.Licenses dareMo ↔ c.licenser.Carries .antiMorphic :=
   Licenser.licenses_iff_carries rfl (by decide) (by decide)
-
-theorem dareDemo_licensing_sound :
-    ∀ c ∈ dareDemo.licensingContexts, c.licenser.Admits dareDemo := by
-  decide
 
 end Japanese.PolarityItems

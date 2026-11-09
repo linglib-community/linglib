@@ -44,10 +44,6 @@ conditionals and in the restrictors of *alle* 'all' and *geen* 'no' ([vanderwoud
 (235)); fine too under a negated *geloven* 'believe', (234c). -/
 def hoeven : PolarityItem :=
   { form := "hoeven"
-  , licensor := some .weak
-  , licensingContexts :=
-      [.negation, .few, .nobody, .clausalComparative, .superlative, .beforeClause,
-        .superordinateNegation]
-  , excludedContexts := [.question, .conditionalAntecedent, .universalRestrictor, .noRestrictor] }
+  , licensor := some .weak }
 
 end Dutch.PolarityItems
