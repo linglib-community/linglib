@@ -25,8 +25,7 @@ DRSs](##DRT.Context.Cover.coe_conditions_toDRS_glue).
 
 ## Implementation notes
 
-Compatibility is tested on contexts with fresh referents for the arguments of a relation, so
-amalgamation assumes that `V` has as many referents as each arity in the vocabulary;
+Amalgamation needs as many referents as each arity in the vocabulary, so
 `isSheaf_literalCoverage` assumes `V` infinite, like the paper's variables.
 
 ## References
@@ -45,32 +44,40 @@ universe u v w
 
 variable {L : Language.{u, v}} {V : Type w} {c : Context L V} {R : Presieve c}
 
-/-! ### Test contexts -/
+/-! ### Comparing literals
+
+Compatibility speaks of restrictions along maps out of a common context, not of literals. To
+compare a literal `l` of one member with a literal `m` of another that renames to the same literal,
+`freshCtx r e` supplies that context: its literal `freshLit r e p` has pairwise distinct
+arguments, so `freshHom` maps it onto both `l` and `m`. Distinct arguments need as many referents
+as the arity of `r`, the hypothesis amalgamation carries. -/
 
 namespace Literal
 
 variable [DecidableEq V]
 
-/-- `testCtx r e` has the one relation symbol `r` and the referents `e 0, …, e (n - 1)`. -/
-private def testCtx (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) : Context L V :=
+/-- `freshCtx r e` has the one relation symbol `r` and the distinct referents
+`e 0, …, e (n - 1)`. -/
+private def freshCtx (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) : Context L V :=
   ⟨{r}, Finset.univ.map e⟩
 
-/-- `testLit r e p` is the literal `±r(e 0, …, e (n - 1))`. -/
-private def testLit (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) (p : Bool) :
-    Literal (testCtx r e) :=
+/-- `freshLit r e p` is the literal `±r(e 0, …, e (n - 1))`. -/
+private def freshLit (r : Σ n, L.Relations n) (e : Fin r.1 ↪ V) (p : Bool) :
+    Literal (freshCtx r e) :=
   ⟨⟨r, Finset.mem_singleton_self r⟩, fun k ↦ ⟨e k, Finset.mem_map_of_mem _ (Finset.mem_univ k)⟩,
     p⟩
 
-/-- `testHom e hr a` sends `e k` to `a k`. -/
-private def testHom {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
-    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) : testCtx r e ⟶ d :=
+/-- `freshHom e hr a` sends `e k` to `a k`. -/
+private def freshHom {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
+    (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) : freshCtx r e ⟶ d :=
   ⟨Finset.singleton_subset_iff.2 hr, fun t ↦
     a (e.invOfMemRange ⟨t, by obtain ⟨k, -, hk⟩ := Finset.mem_map.1 t.2; exact ⟨k, hk⟩⟩)⟩
 
-private theorem testLit_map {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
+/-- `freshHom` maps `freshLit` onto any literal of `r` with the same sign. -/
+private theorem freshLit_map {r : Σ n, L.Relations n} (e : Fin r.1 ↪ V) {d : Context L V}
     (hr : r ∈ d.vocab) (a : Fin r.1 → d.vars) (p : Bool) :
-    (testLit r e p).map (testHom e hr a) = ⟨⟨r, hr⟩, a, p⟩ := by
-  simp only [testLit, testHom, map, Function.comp_def,
+    (freshLit r e p).map (freshHom e hr a) = ⟨⟨r, hr⟩, a, p⟩ := by
+  simp only [freshLit, freshHom, map, Function.comp_def,
     Function.Embedding.right_inv_of_invOfMemRange]
 
 end Literal
@@ -133,6 +140,8 @@ section LiteralSets
 
 variable {x : FamilyOfElements (literalSets L V) R}
 
+/-- In a compatible family, a literal of one member belongs to it when it renames to the same
+literal as a literal belonging to another member. -/
 theorem mem_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
     {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {l : Literal Y₁} {m : Literal Y₂}
     (hlm : l.map f₁ = m.map f₂) (hm : m ∈ x f₂ h₂) (e : Fin l.rel.1.1 ↪ V) : l ∈ x f₁ h₁ := by
@@ -140,9 +149,9 @@ theorem mem_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : 
   obtain ⟨⟨r', hr'⟩, a', p'⟩ := m
   obtain ⟨h₁', h₂', rfl⟩ := Literal.mk.inj hlm
   obtain rfl : r = r' := congrArg Subtype.val h₁'
-  have hc := hx (testHom e hr a) (testHom e hr' a') h₁ h₂ (Context.hom_ext (funext fun t ↦ by
-    simpa [testHom] using congrFun (eq_of_heq h₂') _))
-  simpa [testLit_map] using (congrArg (testLit r e p ∈ ·) hc).mpr (by simpa [testLit_map])
+  have hc := hx (freshHom e hr a) (freshHom e hr' a') h₁ h₂ (Context.hom_ext (funext fun t ↦ by
+    simpa [freshHom] using congrFun (eq_of_heq h₂') _))
+  simpa [freshLit_map] using (congrArg (freshLit r e p ∈ ·) hc).mpr (by simpa [freshLit_map])
 
 /-- `amalgamate x` holds the renamings of the literals of the members of `x`. -/
 noncomputable def amalgamate (x : FamilyOfElements (literalSets L V) R) : Finset (Literal c) := by
