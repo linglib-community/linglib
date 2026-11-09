@@ -6,6 +6,7 @@ public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Clause.Basic
 
 /-!
 # Wilder (2013): English emphatic *do*
@@ -32,8 +33,9 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * A row's contrastive-topic accent is a stimulus column, not composed, as is the form of the
   question the sentence directly answers. Yes-answers are read apart, as the test the paper
   compares contrastive-topic sentences with.
-* The account excludes a contrastive topic from interrogative clauses, with Büring, so it rejects
-  an interrogative complement on two grounds, the paper citing only the Yes-answer one there.
+* An environment's sentence type is that of the general clause API. The account excludes a
+  contrastive topic from interrogative clauses, with Büring, so it rejects an interrogative
+  complement on two grounds, the paper citing only the Yes-answer one there.
 * Wilder's star marks a sentence unacceptable with the intonation shown, and the rows record it
   as printed.
 
@@ -42,6 +44,9 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * The Givenness of the unfocused subject and verb phrase, which with existential type shifting
   must find specific antecedents where the clause needs none, and the optionality of *do* in
   contrastive-topic sentences are not formalized.
+* The contrast of *believe*-type with factive complements is Hooper and Thompson's assertive versus
+  non-assertive embedding, which the general clause API lacks: its embedding contexts are those of
+  interrogative embedding, so both complements are subordinated declaratives there.
 
 ## References
 
@@ -332,25 +337,45 @@ inductive Kind
   | ct (k : Constituent) (a : Answers)
   deriving DecidableEq, Repr
 
-/-- The clause types of sections 3.5 and 3.6. -/
+/-- The clause types of sections 3.5 and 3.6: a root clause of a sentence type, a declarative
+complement of the *believe* type, an interrogative complement of a sentence type, a factive
+complement, a cleft, a restrictive relative, an adverbial clause, and a root declarative with a
+preposed object. -/
 inductive Environment
-  | root | believeComplement | interrogativeComplement | factiveComplement | itCleft
-  | restrictiveRelative | adverbialClause | whSubjectQuestion | objectPreposing
+  | root (t : Clause.SentenceType)
+  | believeComplement
+  | interrogativeComplement (t : Clause.SentenceType)
+  | factiveComplement | itCleft | restrictiveRelative | adverbialClause | objectPreposing
   deriving DecidableEq, Repr
 
-/-- The clause is interrogative, a *wh*-question or an interrogative complement. -/
+/-- The sentence type of the clause a sentence stands in, where the clause is typed: a root clause
+or an interrogative complement has its type and a complement clause of a verb is declarative,
+while a cleft, a relative and an adverbial clause are not typed. -/
+def Environment.sentenceType? : Environment → Option Clause.SentenceType
+  | .root t | .interrogativeComplement t => some t
+  | .believeComplement | .factiveComplement | .objectPreposing => some .declarative
+  | .itCleft | .restrictiveRelative | .adverbialClause => none
+
+/-- The clause a sentence stands in is interrogative. -/
 def Environment.IsInterrogative (e : Environment) : Prop :=
-  e = .whSubjectQuestion ∨ e = .interrogativeComplement
+  ∃ t ∈ e.sentenceType?, t.IsInterrogative
 
-instance : DecidablePred Environment.IsInterrogative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred Environment.IsInterrogative := fun e ↦
+  inferInstanceAs (Decidable (∃ t ∈ e.sentenceType?, _))
 
-/-- The environment a row names. -/
+/-- The environment a row names, a *wh*-subject question being a root constituent question and an
+interrogative complement carrying its sentence type. -/
 def environment? (ex : Datum) : Option Environment :=
-  ex.parse? "environment" [("root", .root), ("believeComplement", .believeComplement),
-    ("interrogativeComplement", .interrogativeComplement),
-    ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
-    ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
-    ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
+  match ex.feature? "environment" with
+  | some "root" => some (.root .declarative)
+  | some "whSubjectQuestion" => some (.root .constituent)
+  | some "interrogativeComplement" => .interrogativeComplement <$>
+      ex.parse? "sentenceType" [("polar", .polar), ("constituent", .constituent)]
+  | some e => [("believeComplement", Environment.believeComplement),
+      ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
+      ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
+      ("objectPreposing", .objectPreposing)].lookup e
+  | none => none
 
 /-- The sentence and environment of an emphatic *do* row. -/
 def sentence? (ex : Datum) : Option (Kind × Environment) := do

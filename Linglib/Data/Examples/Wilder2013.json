@@ -271,7 +271,8 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "interrogativeComplement"]
+      ["environment", "interrogativeComplement"],
+      ["sentenceType", "polar"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -291,6 +292,7 @@
     "paperFeatures": [
       ["pattern", "CT"],
       ["environment", "interrogativeComplement"],
+      ["sentenceType", "polar"],
       ["ctConstituent", "vp"]
     ],
     "comment": "",
@@ -311,6 +313,7 @@
     "paperFeatures": [
       ["pattern", "CT"],
       ["environment", "interrogativeComplement"],
+      ["sentenceType", "polar"],
       ["ctConstituent", "subject"]
     ],
     "comment": "",
@@ -330,7 +333,8 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "interrogativeComplement"]
+      ["environment", "interrogativeComplement"],
+      ["sentenceType", "constituent"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -350,6 +354,7 @@
     "paperFeatures": [
       ["pattern", "CT"],
       ["environment", "interrogativeComplement"],
+      ["sentenceType", "constituent"],
       ["ctConstituent", "vp"]
     ],
     "comment": "",
@@ -818,7 +823,8 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "yesAnswer"],
-      ["environment", "interrogativeComplement"]
+      ["environment", "interrogativeComplement"],
+      ["sentenceType", "polar"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
     "verified": "page-image"
@@ -837,7 +843,8 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "yesAnswer"],
-      ["environment", "interrogativeComplement"]
+      ["environment", "interrogativeComplement"],
+      ["sentenceType", "constituent"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
     "verified": "page-image"
