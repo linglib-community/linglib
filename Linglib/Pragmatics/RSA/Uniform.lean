@@ -7,39 +7,28 @@ public import Linglib.Core.Probability.UniformOn
 /-!
 # Rational speech acts at a uniform prior
 
-Franke and Bergen's model has finitely many states, Boolean meanings, a uniform prior and no
-cost. Its literal listener is then uniform on the extension of the utterance, and its speaker
-weighs each true utterance by the inverse size of its extension to the power of her rationality.
-Her masses are ratios of inverse-power sums over informativity profiles, the multisets of
-extension sizes of the utterances true at a state, so a comparison between two states is a
-comparison of multisets of naturals. It holds at every rationality when one multiset dominates
-the other, and at a natural rationality it is an inequality of naturals.
-
-## Main definitions
-
-* `RSA.profile sem A w`: the extension sizes of the utterances in `A` true at `w`.
-
-## Main results
-
-* `RSA.listener_uniformOn_truthful_apply`: the literal listener is uniform on the extension.
-* `RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt`: of two true utterances the
-  speaker prefers the one with the smaller extension.
-* `RSA.speaker_uniformOn_dirac_real_finset_lt_of_strictDominates`: the speaker is likelier to
-  choose within a set of utterances at one state than at another, at every rationality, when the
-  products of their profiles are ordered by dominance.
-* `RSA.listener_speaker_uniformOn_real_singleton_lt_of_strictDominates`: the pragmatic listener's
-  preference between two states under the same condition.
+With finitely many states, Boolean meanings and a uniform prior, the literal listener is
+[uniform on the extension](##RSA.listener_uniformOn_truthful_apply) of what she hears, and the
+speaker who knows the state weighs a true utterance by the inverse size of its extension to the
+power of her rationality, so she [prefers the smaller of two true
+extensions](##RSA.speaker_uniformOn_dirac_real_singleton_lt_iff). Her normalizer at a state is the
+inverse-power sum of its profile, the multiset of extension sizes of the utterances true there, so
+comparing two states is comparing multisets of naturals: the comparison holds at every rationality
+when one profile [dominates the
+other](##RSA.speaker_uniformOn_dirac_real_finset_lt_of_strictDominates), and at a natural
+rationality it is an inequality of naturals.
 
 ## Implementation notes
 
-* There are no new kernels. The literal listener is `RSA.listener` at the uniform prior and the
-  truthful channel, and the speaker is `RSA.speaker` at no cost; this file abbreviates them
-  `L₀` and `S₁[α]`.
+* There are no new kernels: the literal listener is `RSA.listener` at the uniform prior and the
+  truthful channel, and the speaker is `RSA.speaker` at no cost, abbreviated `L₀` and `S₁[α]`.
+  What holds at every prior is proved in `Linglib.Pragmatics.RSA.Basic` and specialized here.
 * Meanings are `Finset`-valued, so that extension sizes, and with them the hypotheses of the
   comparison lemmas, are decidable.
 * The comparison lemmas are stated for the speaker's mass on a set of utterances. The pragmatic
   listener is the case of a singleton, and the listener who hears only the form of the speaker's
   choice the case of the fibre of the form.
+* Equation numbers are Franke and Bergen's.
 
 ## References
 
@@ -76,6 +65,9 @@ theorem profile_eq_zero_iff : profile sem A w = 0 ↔ ∀ u ∈ A, w ∉ sem u :
 theorem card_mem_profile {u : U} (hu : u ∈ A) (h : w ∈ sem u) : (sem u).card ∈ profile sem A w :=
   Multiset.mem_map_of_mem _ (Finset.mem_filter.2 ⟨hu, h⟩)
 
+theorem invPowSum_profile_ne_top {α : ℝ} (hα : 0 ≤ α) : (profile sem A w).invPowSum α ≠ ∞ :=
+  Multiset.invPowSum_ne_top hα zero_notMem_profile
+
 variable (sem A w) in
 theorem profile_add_profile_compl [Fintype U] [DecidableEq U] :
     profile sem A w + profile sem Aᶜ w = profile sem Finset.univ w := by
@@ -90,14 +82,6 @@ theorem profile_le_profile_univ [Fintype U] [DecidableEq U] :
   profile_add_profile_compl sem A w ▸ le_self_add
 
 end Profile
-
-private theorem support_nonempty {W X : Type*} [Fintype W] [MeasurableSpace W]
-    [MeasurableSingletonClass W] {b : X → Measure W} {x : X} [IsProbabilityMeasure (b x)]
-    {S : Finset W} (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) : S.Nonempty := by
-  by_contra h
-  refine one_ne_zero (α := ℝ≥0∞) ?_
-  rw [← measure_univ (μ := b x), ← Finset.coe_univ, ← sum_measure_singleton]
-  exact Finset.sum_eq_zero fun w _ ↦ not_not.1 fun hw ↦ h ⟨w, (hS w).1 hw⟩
 
 private theorem sum_div_lt_sum_div_of_cleared {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b z : ι → ℕ} (hb : ∀ i, b i ≠ 0 → z i ≠ 0)
@@ -119,30 +103,19 @@ private theorem sum_div_lt_sum_div_of_cleared {ι : Type*} [Fintype ι] [Decidab
   rw [← mul_lt_mul_iff_left₀ (Finset.prod_pos fun j _ ↦ hz j), key, key]
   exact_mod_cast hlt
 
-section
+private theorem ae_mem_iff {W : Type*} [MeasurableSpace W] [Countable W]
+    [MeasurableSingletonClass W] {μ : Measure W} {S : Finset W} (hS : ∀ w, μ {w} ≠ 0 ↔ w ∈ S)
+    (t : Set W) : (∀ᵐ w ∂μ, w ∈ t) ↔ ↑S ⊆ t := by
+  rw [ae_iff_of_countable]
+  exact ⟨fun h v hv ↦ h v ((hS v).2 hv), fun h v hv ↦ h ((hS v).1 hv)⟩
 
-variable {W U : Type*} (sem : U → Finset W) {α : ℝ} {w : W} {u : U}
+private theorem natCast_inv_rpow_ne_zero {n : ℕ} (hn : n ≠ 0) (α : ℝ) :
+    ((n : ℝ≥0∞)⁻¹) ^ α ≠ 0 := by
+  simp [ENNReal.rpow_eq_zero_iff, hn]
 
-private theorem inv_card_rpow_pos (h : w ∈ sem u) (α : ℝ) : (0 : ℝ) < ((sem u).card : ℝ)⁻¹ ^ α :=
-  Real.rpow_pos_of_pos (inv_pos.2 (Nat.cast_pos.2 (Finset.card_pos.2 ⟨w, h⟩))) α
-
-variable [DecidableEq W]
-
-variable {sem} in
-private theorem ite_inv_card_rpow_ne_top (hα : 0 ≤ α) :
-    (if w ∈ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) ≠ ∞ := by
-  split_ifs with h
-  exacts [ENNReal.rpow_ne_top_of_nonneg hα (ENNReal.inv_ne_top.2 (Nat.cast_ne_zero.2
-    (Finset.card_ne_zero_of_mem h))), ENNReal.zero_ne_top]
-
-private theorem toReal_invPowSum_profile (hα : 0 ≤ α) (A : Finset U) (w : W) :
-    ((profile sem A w).invPowSum α).toReal =
-      ∑ u ∈ A, if w ∈ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0 := by
-  rw [Multiset.invPowSum_toReal hα zero_notMem_profile, profile, Multiset.map_map,
-    ← Finset.sum_filter, Finset.sum_eq_multiset_sum]
-  rfl
-
-end
+private theorem natCast_inv_rpow_ne_top {n : ℕ} (hn : n ≠ 0) (α : ℝ) :
+    ((n : ℝ≥0∞)⁻¹) ^ α ≠ ∞ := by
+  simp [ENNReal.rpow_eq_top_iff, hn]
 
 section Model
 
@@ -190,6 +163,23 @@ theorem speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : 
   rw [speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα]
   exact and_iff_left (uniformOn_univ_singleton_ne_zero w)
 
+/-- Of two utterances true at a state, the speaker prefers the one with the smaller extension, at
+every positive rationality: the qualitative claim of eq. 7, and at a uniform prior the preference
+for the utterance of smaller prior mass. -/
+theorem speaker_uniformOn_dirac_real_singleton_lt_iff (hα : 0 < α) {w : W} {u u' : U}
+    (h : w ∈ sem u) (h' : w ∈ sem u') :
+    (S₁[α] w).real {u} < (S₁[α] w).real {u'} ↔ (sem u').card < (sem u).card := by
+  have : Nonempty W := ⟨w⟩
+  rw [speaker_zero_listener_truthful_real_singleton_lt_iff (sem := fun v ↦ (sem v : Set W))
+    (u := u) (u' := u') hα (absolutelyContinuous_uniformOn_univ _)
+    ((ae_dirac_iff .of_discrete).2 h) ((ae_dirac_iff .of_discrete).2 h'), ← not_le,
+    uniformOn_univ_le_iff, not_le, Set.ncard_coe_finset, Set.ncard_coe_finset]
+
+theorem speaker_uniformOn_dirac_real_singleton_lt_of_card_lt (hα : 0 < α) {w : W} {u u' : U}
+    (h : w ∈ sem u) (h' : w ∈ sem u') (hcard : (sem u').card < (sem u).card) :
+    (S₁[α] w).real {u} < (S₁[α] w).real {u'} :=
+  (speaker_uniformOn_dirac_real_singleton_lt_iff sem hα h h').2 hcard
+
 variable [DecidableEq W]
 
 private theorem sum_rpow_listener (hα : 0 < α) (A : Finset U) (w : W) :
@@ -205,129 +195,84 @@ theorem speaker_uniformOn_dirac_apply_finset (hα : 0 < α) (w : W) (A : Finset 
   simp_rw [speaker_dirac_zero_apply_singleton, div_eq_mul_inv]
   rw [← Finset.sum_mul, sum_rpow_listener sem hα, sum_rpow_listener sem hα]
 
-/-- The speaker weighs each true utterance by the inverse size of its extension to the power
-`α` (eq. 7). -/
+/-- The speaker weighs each true utterance by the inverse size of its extension to the power `α`,
+and normalizes by the inverse-power sum of the profile of the state (eq. 7). -/
 theorem speaker_uniformOn_dirac_apply_singleton (hα : 0 < α) (w : W) (u : U) :
     S₁[α] w {u} = (if w ∈ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
-      ∑ u', if w ∈ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
-  simp only [speaker_dirac_zero_apply_singleton, listener_uniformOn_truthful_apply_singleton,
-    apply_ite (· ^ α), ENNReal.zero_rpow_of_pos hα]
+      (profile sem Finset.univ w).invPowSum α := by
+  rw [speaker_dirac_zero_apply_singleton, sum_rpow_listener sem hα]
+  simp only [listener_uniformOn_truthful_apply_singleton, apply_ite (· ^ α),
+    ENNReal.zero_rpow_of_pos hα]
 
-theorem speaker_uniformOn_dirac_real_singleton (hα : 0 < α) (w : W) (u : U) :
-    (S₁[α] w).real {u} = (if w ∈ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
-      ∑ u', if w ∈ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 := by
-  rw [measureReal_def, speaker_uniformOn_dirac_apply_singleton sem hα, ENNReal.toReal_div,
-    ENNReal.toReal_sum fun u' _ ↦ ite_inv_card_rpow_ne_top hα.le]
-  simp only [apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
-    ENNReal.toReal_inv, ENNReal.toReal_natCast]
-
-/-- Of two true utterances, the speaker produces the one with the smaller extension more often
-at every positive rationality, the qualitative claim of eq. 7. -/
-theorem speaker_uniformOn_dirac_real_singleton_lt_of_card_lt (hα : 0 < α) {w : W} {u u' : U}
-    (h : w ∈ sem u) (h' : w ∈ sem u') (hcard : (sem u').card < (sem u).card) :
-    (S₁[α] w).real {u} < (S₁[α] w).real {u'} := by
-  rw [speaker_uniformOn_dirac_real_singleton sem hα, speaker_uniformOn_dirac_real_singleton sem hα,
-    ite_eq_left h, ite_eq_left h', ← toReal_invPowSum_profile sem hα.le]
-  exact div_lt_div_of_pos_right (Real.rpow_lt_rpow (by positivity)
-      (inv_strictAnti₀ (Nat.cast_pos.2 (Finset.card_pos.2 ⟨w, h'⟩)) (Nat.cast_lt.2 hcard)) hα)
-    (ENNReal.toReal_pos (Multiset.invPowSum_pos hα.le fun h0 ↦
-        profile_eq_zero_iff.1 h0 u (Finset.mem_univ u) h).ne'
-      (Multiset.invPowSum_ne_top hα.le zero_notMem_profile))
+theorem speaker_uniformOn_dirac_apply_singleton_eq_of_card_eq (hα : 0 < α) {w : W} {u u' : U}
+    (h : w ∈ sem u) (h' : w ∈ sem u') (hcard : (sem u).card = (sem u').card) :
+    S₁[α] w {u} = S₁[α] w {u'} := by
+  rw [speaker_uniformOn_dirac_apply_singleton sem hα,
+    speaker_uniformOn_dirac_apply_singleton sem hα, ite_eq_left h, ite_eq_left h', hcard]
 
 theorem speaker_uniformOn_dirac_apply_singleton_of_profile_eq (hα : 0 < α) {w w' : W}
     (hprof : profile sem Finset.univ w = profile sem Finset.univ w') {u : U} (h : w ∈ sem u)
     (h' : w' ∈ sem u) : S₁[α] w {u} = S₁[α] w' {u} := by
-  rw [speaker_dirac_zero_apply_singleton, speaker_dirac_zero_apply_singleton,
-    sum_rpow_listener sem hα, sum_rpow_listener sem hα, hprof,
-    listener_uniformOn_truthful_apply_singleton, listener_uniformOn_truthful_apply_singleton,
-    ite_eq_left h, ite_eq_left h']
+  rw [speaker_uniformOn_dirac_apply_singleton sem hα,
+    speaker_uniformOn_dirac_apply_singleton sem hα, ite_eq_left h, ite_eq_left h', hprof]
 
 theorem speaker_uniformOn_dirac_real_singleton_lt_iff_invPowSum (hα : 0 < α) {w w' : W} {u : U}
     (h : w ∈ sem u) (h' : w' ∈ sem u) :
     (S₁[α] w').real {u} < (S₁[α] w).real {u} ↔
       (profile sem Finset.univ w).invPowSum α < (profile sem Finset.univ w').invPowSum α := by
-  have htop (s : W) : (profile sem Finset.univ s).invPowSum α ≠ ∞ :=
-    Multiset.invPowSum_ne_top hα.le zero_notMem_profile
-  have hpos (s : W) (hs : s ∈ sem u) : 0 < ((profile sem Finset.univ s).invPowSum α).toReal :=
-    ENNReal.toReal_pos (Multiset.invPowSum_pos hα.le fun h0 ↦
-      profile_eq_zero_iff.1 h0 u (Finset.mem_univ u) hs).ne' (htop s)
-  rw [speaker_uniformOn_dirac_real_singleton sem hα, speaker_uniformOn_dirac_real_singleton sem hα,
-    ← toReal_invPowSum_profile sem hα.le, ← toReal_invPowSum_profile sem hα.le, ite_eq_left h,
-    ite_eq_left h', ← ENNReal.toReal_lt_toReal (htop w) (htop w')]
-  exact div_lt_div_iff_of_pos_left (inv_card_rpow_pos sem h α) (hpos w' h') (hpos w h)
+  have hcard := Finset.card_ne_zero_of_mem h
+  rw [measureReal_def, measureReal_def, ENNReal.toReal_lt_toReal (measure_ne_top _ _)
+      (measure_ne_top _ _), speaker_uniformOn_dirac_apply_singleton sem hα,
+    speaker_uniformOn_dirac_apply_singleton sem hα, ite_eq_left h, ite_eq_left h',
+    ENNReal.div_lt_div_iff_right (natCast_inv_rpow_ne_zero hcard α)
+      (natCast_inv_rpow_ne_top hcard α)]
 
 theorem speaker_uniformOn_dirac_real_singleton_lt_of_ssubset (hα : 0 < α) {w w' : W} {u : U}
     (h : w ∈ sem u) (hsub : Finset.univ.filter (w ∈ sem ·) ⊂ Finset.univ.filter (w' ∈ sem ·)) :
-    (S₁[α] w').real {u} < (S₁[α] w).real {u} := by
-  have hmono (v : U) (hv : w ∈ sem v) : w' ∈ sem v := by simpa using hsub.1 (by simpa using hv)
-  have hnonneg (s : W) (v : U) :
-      (0 : ℝ) ≤ if s ∈ sem v then ((sem v).card : ℝ)⁻¹ ^ α else 0 := by
-    split_ifs with hv
-    exacts [(inv_card_rpow_pos sem hv α).le, le_rfl]
-  obtain ⟨v₀, hv₀', hv₀⟩ := Finset.exists_of_ssubset hsub
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv₀' hv₀
-  rw [speaker_uniformOn_dirac_real_singleton sem hα, speaker_uniformOn_dirac_real_singleton sem hα,
-    ite_eq_left h, ite_eq_left (hmono u h)]
-  refine div_lt_div_of_pos_left (inv_card_rpow_pos sem h α) (Finset.sum_pos' (fun v _ ↦ hnonneg w v)
-    ⟨u, Finset.mem_univ u, by rw [ite_eq_left h]; exact inv_card_rpow_pos sem h α⟩)
-    (Finset.sum_lt_sum (fun v _ ↦ ?_) ⟨v₀, Finset.mem_univ v₀, ?_⟩)
-  · by_cases hv : w ∈ sem v
-    · rw [ite_eq_left hv, ite_eq_left (hmono v hv)]
-    · rw [ite_eq_right hv]
-      exact hnonneg w' v
-  · rw [ite_eq_right hv₀, ite_eq_left hv₀']
-    exact inv_card_rpow_pos sem hv₀' α
+    (S₁[α] w').real {u} < (S₁[α] w).real {u} :=
+  (speaker_uniformOn_dirac_real_singleton_lt_iff_invPowSum sem hα h
+    (by simpa using hsub.1 (by simpa using h))).2 <|
+    Multiset.invPowSum_lt_invPowSum hα.le (Multiset.map_lt_map (Finset.val_lt_iff.2 hsub))
+      zero_notMem_profile
 
 theorem speaker_uniformOn_dirac_real_singleton_of_profile_replicate (hα : 0 < α) {w : W} {u : U}
     {m n : ℕ} (hprof : profile sem Finset.univ w = Multiset.replicate m n) (h : w ∈ sem u) :
     (S₁[α] w).real {u} = (m : ℝ)⁻¹ := by
   have hn : (sem u).card = n :=
     Multiset.eq_of_mem_replicate (hprof ▸ card_mem_profile (Finset.mem_univ u) h)
-  rw [speaker_uniformOn_dirac_real_singleton sem hα, ← toReal_invPowSum_profile sem hα.le,
-    ite_eq_left h, hprof, hn, Multiset.invPowSum_replicate, ENNReal.toReal_mul,
-    ENNReal.toReal_natCast, ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast,
-    div_mul_eq_div_div_swap, div_self (hn ▸ inv_card_rpow_pos sem h α).ne', one_div]
+  have hn0 : n ≠ 0 := hn ▸ Finset.card_ne_zero_of_mem h
+  rw [measureReal_def, speaker_uniformOn_dirac_apply_singleton sem hα, ite_eq_left h, hprof, hn,
+    Multiset.invPowSum_replicate]
+  nth_rw 1 [← one_mul ((n : ℝ≥0∞)⁻¹ ^ α)]
+  rw [ENNReal.mul_div_mul_right _ _ (natCast_inv_rpow_ne_zero hn0 α)
+    (natCast_inv_rpow_ne_top hn0 α), one_div, ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
+/-- As her rationality vanishes, the speaker chooses evenly among the utterances true at the
+state. -/
 theorem tendsto_speaker_uniformOn_dirac_real_singleton_nhdsGT_zero (w : W) (u : U) :
     Filter.Tendsto (fun α : ℝ ↦ (S₁[α] w).real {u}) (nhdsWithin 0 (Set.Ioi 0))
       (nhds ((if w ∈ sem u then 1 else 0) / ((Finset.univ.filter (w ∈ sem ·)).card : ℝ))) := by
-  have hlim (v : U) :
-      Filter.Tendsto (fun α : ℝ ↦ if w ∈ sem v then ((sem v).card : ℝ)⁻¹ ^ α else 0)
-        (nhdsWithin 0 (Set.Ioi 0)) (nhds (if w ∈ sem v then 1 else 0)) := by
-    split_ifs with h
-    · have := (Real.continuous_const_rpow (inv_card_rpow_pos sem h 1).ne').tendsto 0
-      rw [Real.rpow_one] at this
-      simpa using this.mono_left nhdsWithin_le_nhds
-    · exact tendsto_const_nhds
-  have hsum : Filter.Tendsto
-      (fun α : ℝ ↦ ∑ v, if w ∈ sem v then ((sem v).card : ℝ)⁻¹ ^ α else 0)
-      (nhdsWithin 0 (Set.Ioi 0)) (nhds ((Finset.univ.filter (w ∈ sem ·)).card : ℝ)) := by
-    simpa [Finset.sum_boole] using tendsto_finsetSum Finset.univ fun v _ ↦ hlim v
-  by_cases h0 : (Finset.univ.filter (w ∈ sem ·)).card = 0
-  · have hu : w ∉ sem u := fun h ↦
-      Finset.card_ne_zero_of_mem (Finset.mem_filter.2 ⟨Finset.mem_univ u, h⟩) h0
-    rw [ite_eq_right hu, zero_div]
-    refine tendsto_const_nhds.congr' ?_
-    filter_upwards [self_mem_nhdsWithin] with α hα
-    rw [speaker_uniformOn_dirac_real_singleton sem hα, ite_eq_right hu, zero_div]
-  · refine Filter.Tendsto.congr' ?_ ((hlim u).div hsum (by exact_mod_cast h0))
-    filter_upwards [self_mem_nhdsWithin] with α hα
-    rw [speaker_uniformOn_dirac_real_singleton sem hα]
-    rfl
+  classical
+  have hset : {v | L₀ v {w} ≠ 0} = ↑(Finset.univ.filter (w ∈ sem ·)) := by
+    ext v
+    simp [listener_truthful_apply_singleton_ne_zero_iff, uniformOn_univ_singleton_ne_zero]
+  simpa only [hset, uniformOn_finset_real_singleton, Finset.mem_filter, Finset.mem_univ, true_and,
+    ite_div, one_div, zero_div] using
+    tendsto_speaker_dirac_real_singleton_nhdsGT_zero (L := L₀) 0 w u
 
 theorem speaker_uniformOn_dirac_real_singleton_divPowSum {k D : ℕ} [NeZero k] [NeZero D] {w : W}
     (hdvd : ∀ n ∈ profile sem Finset.univ w, n ∣ D) (u : U) :
     (S₁[(k : ℝ)] w).real {u} = ((if w ∈ sem u then (D / (sem u).card) ^ k else 0 : ℕ) : ℝ) /
       ((profile sem Finset.univ w).divPowSum D k : ℝ) := by
   have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
-  have hD : (D : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne D)
-  rw [speaker_uniformOn_dirac_real_singleton sem hα, ← toReal_invPowSum_profile sem hα.le,
+  rw [measureReal_def, speaker_uniformOn_dirac_apply_singleton sem hα, ENNReal.toReal_div,
     Multiset.invPowSum_toReal_eq (NeZero.ne D) k hdvd]
   split_ifs with h
   · have hcard : (sem u).card ∣ D := hdvd _ (card_mem_profile (Finset.mem_univ u) h)
-    rw [Real.rpow_natCast, Nat.cast_pow, Nat.cast_div hcard (Nat.cast_ne_zero.2
-      (Finset.card_ne_zero_of_mem h)), div_pow, inv_pow, div_div_eq_mul_div, inv_mul_eq_div]
-  · rw [Nat.cast_zero, zero_div, zero_div]
+    rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast, Real.rpow_natCast,
+      Nat.cast_pow, Nat.cast_div hcard (Nat.cast_ne_zero.2 (Finset.card_ne_zero_of_mem h)),
+      div_pow, inv_pow, div_div_eq_mul_div, inv_mul_eq_div]
+  · rw [ENNReal.toReal_zero, Nat.cast_zero, zero_div, zero_div]
 
 end Speaker
 
@@ -339,45 +284,53 @@ with weight the inverse size of its extension to the power `α`. -/
 
 section Belief
 
-variable [DecidableEq W] {X : Type*} {α : ℝ} {b : X → Measure W} {x : X}
-  [IsProbabilityMeasure (b x)] {S : Finset W}
+variable {X : Type*} [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] {α : ℝ}
+  {b : X → Measure W} {x : X} [IsProbabilityMeasure (b x)] {S : Finset W}
 
-private theorem weight_eq (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
-    (b x).geomMean (fun w ↦ L₀ u {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * (0 : U → ℝ) u))) =
-      if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
-  rw [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  split_ifs with h
-  · rw [Measure.geomMean_of_forall_eq fun w hw ↦ by
-      rw [listener_uniformOn_truthful_apply_singleton, ite_eq_left (h ((hS w).1 hw))]]
-  · obtain ⟨w, hw, hwu⟩ := Finset.not_subset.1 h
-    rw [Measure.geomMean_eq_zero_iff.2 ⟨w, (hS w).2 hw, by
-      rw [listener_uniformOn_truthful_apply_singleton, ite_eq_right hwu]⟩,
-      ENNReal.zero_rpow_of_pos hα]
+/-- A speaker whose belief entails exactly the utterances true at a state speaks as one who knows
+that state. -/
+theorem speaker_uniformOn_apply_eq_dirac (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) {w : W}
+    (h : ∀ u, S ⊆ sem u ↔ w ∈ sem u) : speaker α 0 L₀ b x = S₁[α] w :=
+  (speaker_listener_truthful_apply_eq_iff hα (absolutelyContinuous_uniformOn_univ _)
+    (absolutelyContinuous_uniformOn_univ _)).2 fun u ↦ by
+      rw [ae_mem_iff hS, ae_dirac_iff .of_discrete, Finset.coe_subset, Finset.mem_coe, h u]
 
-variable [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X]
+variable [DecidableEq W]
 
+/-- A speaker with a belief of support `S` weighs each utterance true throughout `S` by the
+inverse size of its extension to the power `α`: the uniform case of
+`RSA.speaker_listener_truthful_apply_singleton`. -/
 theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
     speaker α 0 L₀ b x {u} = (if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
       ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
-  simp only [speaker_apply_singleton, weight_eq sem hα hS]
+  have : Nonempty W := nonempty_of_isProbabilityMeasure (b x)
+  have hW : (Fintype.card W : ℝ≥0∞) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
+  have key (v : U) : {v | ∀ᵐ w ∂b x, w ∈ (sem v : Set W)}.indicator (fun v ↦
+        (uniformOn Set.univ (sem v : Set W))⁻¹ ^ α *
+          ENNReal.ofReal (Real.exp (-(α * (0 : U → ℝ) v)))) v =
+      (Fintype.card W : ℝ≥0∞) ^ α * if S ⊆ sem v then ((sem v).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
+    simp only [Set.indicator, Set.mem_ofPred_eq, ae_mem_iff hS, Finset.coe_subset, Pi.zero_apply,
+      mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+    split_ifs
+    · rw [uniformOn_univ, Measure.count_apply_finset, ENNReal.inv_div (.inl (by simp)) (.inl hW),
+        div_eq_mul_inv, ENNReal.mul_rpow_of_nonneg _ _ hα.le]
+    · rw [mul_zero]
+  rw [speaker_listener_truthful_apply_singleton hα (absolutelyContinuous_uniformOn_univ _), key,
+    Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum, ENNReal.mul_div_mul_left _ _
+      (ENNReal.rpow_pos (pos_iff_ne_zero.2 hW) (by simp)).ne'
+      (ENNReal.rpow_ne_top_of_nonneg hα.le (by simp))]
 
 theorem speaker_uniformOn_real_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
     (speaker α 0 L₀ b x).real {u} = (if S ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
       ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 := by
+  have hS0 : S.Nonempty := (ae_iff_of_countable.2 fun w hw ↦ (hS w).1 hw).exists
   have hne (u' : U) : (if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0) ≠ ∞ := by
     split_ifs with h
-    exacts [ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 (Nat.cast_ne_zero.2
-      (Finset.card_ne_zero.2 ((support_nonempty hS).mono h)))), ENNReal.zero_ne_top]
+    exacts [natCast_inv_rpow_ne_top (Finset.card_ne_zero.2 (hS0.mono h)) α, ENNReal.zero_ne_top]
   rw [measureReal_def, speaker_uniformOn_apply_singleton sem hα hS, ENNReal.toReal_div,
     ENNReal.toReal_sum fun u' _ ↦ hne u']
   simp only [apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
     ENNReal.toReal_inv, ENNReal.toReal_natCast]
-
-theorem speaker_uniformOn_apply_eq_dirac (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) {w : W}
-    (h : ∀ u, S ⊆ sem u ↔ w ∈ sem u) : speaker α 0 L₀ b x = S₁[α] w :=
-  Measure.ext_of_singleton fun u ↦ by
-    simp only [speaker_uniformOn_apply_singleton sem hα hS,
-      speaker_uniformOn_dirac_apply_singleton sem hα, h]
 
 end Belief
 
@@ -398,16 +351,15 @@ theorem speaker_uniformOn_dirac_real_finset_lt_iff (hα : 0 < α) (A : Finset U)
     (S₁[α] w₁).real ↑A < (S₁[α] w₂).real ↑A ↔
       (profile sem A w₁).invPowSum α * (profile sem Finset.univ w₂).invPowSum α <
         (profile sem A w₂).invPowSum α * (profile sem Finset.univ w₁).invPowSum α := by
-  have htop (B : Finset U) (w : W) : (profile sem B w).invPowSum α ≠ ∞ :=
-    Multiset.invPowSum_ne_top hα.le zero_notMem_profile
   rw [measureReal_def, measureReal_def,
     ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _),
     speaker_uniformOn_dirac_apply_finset sem hα, speaker_uniformOn_dirac_apply_finset sem hα,
-    ENNReal.div_lt_iff (.inl (Multiset.invPowSum_pos hα.le h₁).ne') (.inl (htop _ _))]
+    ENNReal.div_lt_iff (.inl (Multiset.invPowSum_pos hα.le h₁).ne')
+      (.inl (invPowSum_profile_ne_top hα.le))]
   rcases eq_or_ne (profile sem Finset.univ w₂) 0 with h₂ | h₂
   · simp [h₂, Multiset.le_zero.1 (h₂ ▸ profile_le_profile_univ (A := A))]
   · rw [div_eq_mul_inv, mul_right_comm, ← div_eq_mul_inv, ENNReal.lt_div_iff_mul_lt
-      (.inl (Multiset.invPowSum_pos hα.le h₂).ne') (.inl (htop _ _))]
+      (.inl (Multiset.invPowSum_pos hα.le h₂).ne') (.inl (invPowSum_profile_ne_top hα.le))]
 
 /-- The speaker is likelier to choose within `A` at `w₂` than at `w₁`, at every positive
 rationality, when the products of profiles are ordered by strict dominance. -/
@@ -415,8 +367,6 @@ theorem speaker_uniformOn_dirac_real_finset_lt_of_strictDominates (hα : 0 < α)
     (h : ((profile sem A w₂).prodMul (profile sem Aᶜ w₁)).StrictDominates
       ((profile sem A w₁).prodMul (profile sem Aᶜ w₂))) :
     (S₁[α] w₁).real ↑A < (S₁[α] w₂).real ↑A := by
-  have htop (B : Finset U) (w : W) : (profile sem B w).invPowSum α ≠ ∞ :=
-    Multiset.invPowSum_ne_top hα.le zero_notMem_profile
   have h₁ : profile sem Finset.univ w₁ ≠ 0 := fun h0 ↦ h.ne_zero <|
     Multiset.prodMul_eq_zero_iff.2 <| .inr <| Multiset.le_zero.1 (h0 ▸ profile_le_profile_univ)
   have hodds : (profile sem A w₁).invPowSum α * (profile sem Aᶜ w₂).invPowSum α <
@@ -427,7 +377,8 @@ theorem speaker_uniformOn_dirac_real_finset_lt_of_strictDominates (hα : 0 < α)
     ← profile_add_profile_compl sem A w₁, ← profile_add_profile_compl sem A w₂,
     Multiset.invPowSum_add, Multiset.invPowSum_add, mul_add, mul_add,
     mul_comm ((profile sem A w₂).invPowSum α)]
-  exact ENNReal.add_lt_add_left (ENNReal.mul_ne_top (htop _ _) (htop _ _)) hodds
+  exact ENNReal.add_lt_add_left (ENNReal.mul_ne_top (invPowSum_profile_ne_top hα.le)
+    (invPowSum_profile_ne_top hα.le)) hodds
 
 theorem speaker_uniformOn_dirac_real_finset_lt_of_divPowSum {k D : ℕ} [NeZero k] [NeZero D]
     (hdvd₁ : ∀ n ∈ profile sem Finset.univ w₁, n ∣ D)
@@ -436,8 +387,7 @@ theorem speaker_uniformOn_dirac_real_finset_lt_of_divPowSum {k D : ℕ} [NeZero 
       (profile sem A w₂).divPowSum D k * (profile sem Finset.univ w₁).divPowSum D k) :
     (S₁[(k : ℝ)] w₁).real ↑A < (S₁[(k : ℝ)] w₂).real ↑A := by
   have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
-  have htop (B : Finset U) (w : W) : (profile sem B w).invPowSum k ≠ ∞ :=
-    Multiset.invPowSum_ne_top hα.le zero_notMem_profile
+  have htop (B : Finset U) (w : W) := invPowSum_profile_ne_top (sem := sem) (A := B) (w := w) hα.le
   have hsub (w : W) (n : ℕ) (hn : n ∈ profile sem A w) : n ∈ profile sem Finset.univ w :=
     Multiset.mem_of_le profile_le_profile_univ hn
   rw [speaker_uniformOn_dirac_real_finset_lt_iff sem hα A w₂ (Multiset.ne_zero_of_divPowSum_ne_zero

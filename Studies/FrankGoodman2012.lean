@@ -130,17 +130,17 @@ theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 <
     ((RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
       ⟨h, uniformOn_univ_singleton_ne_zero _⟩)) (measure_ne_top _ _)
 
-variable [DecidableEq E]
-
-theorem literal_apply_singleton (w : Word C S) (r : E) :
-    literal M w {r} = if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.card : ℝ≥0∞)⁻¹ else 0 :=
-  RSA.listener_uniformOn_truthful_apply_singleton _ w r
-
 /-- By the size principle, of two words true of an object the speaker prefers the one with the
 smaller extension. -/
 theorem size_principle (hα : 0 < α) (h₁ : r ∈ ⟦w₁⟧ᴹ) (h₂ : r ∈ ⟦w₂⟧ᴹ)
     (h : ⟦w₂⟧ᴹ.card < ⟦w₁⟧ᴹ.card) : (speaker M α r).real {w₁} < (speaker M α r).real {w₂} :=
   RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα h₁ h₂ h
+
+variable [DecidableEq E]
+
+theorem literal_apply_singleton (w : Word C S) (r : E) :
+    literal M w {r} = if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.card : ℝ≥0∞)⁻¹ else 0 :=
+  RSA.listener_uniformOn_truthful_apply_singleton _ w r
 
 /-- Of two objects a word is true of, the speaker uses the word more for the one whose other
 feature more objects share, the object whose alternative word is the less informative. -/
