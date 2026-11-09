@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Slavic.Czech.Determiners
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Czech polarity items

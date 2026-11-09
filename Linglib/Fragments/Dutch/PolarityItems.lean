@@ -38,12 +38,15 @@ def ooit : PolarityItem :=
   , licensor := some .weak
   , antiLicensor := some .antiMorphic }
 
-/-- *hoeven* 'need', a weak negative polarity item, at home in every monotone decreasing context
-but out in questions, in conditionals and in the restrictor of *alle* 'all'
-([vanderwouden-1997]). -/
+/-- *hoeven* 'need', a weak negative polarity item, fine under monotone decreasing operators,
+anti-additive noun phrases, comparatives, superlatives and *before*, but out in questions, in
+conditionals and in the restrictor of *alle* 'all' ([vanderwouden-1997]'s table (235)); fine too
+under a negated *geloven* 'believe', (234c). -/
 def hoeven : PolarityItem :=
   { form := "hoeven"
   , licensor := some .weak
-  , excludedContexts := [.question, .universalRestrictor] }
+  , licensingContexts :=
+      [.negation, .few, .nobody, .clausalComparative, .superlative, .beforeClause, .doubtVerb]
+  , excludedContexts := [.question, .conditionalAntecedent, .universalRestrictor] }
 
 end Dutch.PolarityItems

@@ -129,4 +129,40 @@ theorem toProjectivitySignature_le_toProjectivitySignature {s t : Strength} :
 theorem toProjectivitySignature_antitone : Antitone toProjectivitySignature :=
   fun _ _ h ↦ toProjectivitySignature_le_toProjectivitySignature.2 h
 
+/-! ### The strength of a negation composite
+
+A map composed with negation has the strengths dual to the positive classes of the map, since
+negation is its own inverse among the signatures. -/
+
+section Composite
+
+open ProjectivitySignature
+
+variable {ι : Type*} {α γ β : ι → Type*} [∀ i, Lattice (α i)] [∀ i, BoundedOrder (α i)]
+  [∀ i, BooleanAlgebra (γ i)] [∀ i, Lattice (β i)] [∀ i, BoundedOrder (β i)] {s : Strength}
+
+/-- Maps that are multiplicative maps after negation, not all of them additive, hold exactly the
+strengths up to anti-additive. -/
+theorem forall_holdsFor_iff_le_antiAdditive {f g : ∀ i, γ i → β i}
+    (hfg : ∀ i, f i = g i ∘ compl) (hg : ∀ i, mult.HoldsFor (g i))
+    (hn : ∃ i, ¬ additive.HoldsFor (g i)) :
+    (∀ i, s.toProjectivitySignature.HoldsFor (f i)) ↔ s ≤ antiAdditive := by
+  simp only [hfg, holdsFor_comp_compl_iff]
+  cases s
+  · exact iff_of_true (fun i ↦ (hg i).of_le (by decide)) (by decide)
+  · exact iff_of_true (fun i ↦ (hg i).of_le (by decide)) le_rfl
+  · exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi ((h i).of_le (by decide))) (by decide)
+
+/-- Negation after monotone maps, not all of them additive, holds exactly weak strength. -/
+theorem forall_holdsFor_iff_le_weak {f g : ∀ i, α i → γ i} (hfg : ∀ i, f i = compl ∘ g i)
+    (hg : ∀ i, mono.HoldsFor (g i)) (hn : ∃ i, ¬ additive.HoldsFor (g i)) :
+    (∀ i, s.toProjectivitySignature.HoldsFor (f i)) ↔ s ≤ weak := by
+  simp only [hfg, holdsFor_compl_comp_iff]
+  cases s
+  · exact iff_of_true (fun i ↦ (hg i).of_le (by decide)) le_rfl
+  all_goals
+    exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi ((h i).of_le (by decide))) (by decide)
+
+end Composite
+
 end Negation.Strength

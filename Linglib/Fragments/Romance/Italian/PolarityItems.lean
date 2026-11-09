@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Romance.Italian.Indefinites
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Italian polarity items

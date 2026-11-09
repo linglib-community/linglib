@@ -285,26 +285,14 @@ open PolarityItem LicensingContext
 theorem carries_antiMorphic_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
     c.licenser.Carries .antiMorphic ↔ c.haspelmath = some .directNeg := by
-  cases c <;> simp [LicensingContext.haspelmath, Feature.marked] at hc ⊢
-  · exact Licenser.carries_classical_iff.2
-      ⟨holds_negation .antiMorphic, not_isStrawsonUE_negation⟩
-  · exact fun h ↦ absurd (holds_withoutClause_iff.1 (Licenser.carries_classical_iff.1 h).1)
-      (by decide)
-  · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
-  · exact fun h ↦ absurd (holds_denyVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
+  revert c; decide
 
 /-- Among the licensing contexts realizing a negation function, anti-additivity holds of every
 licenser but *doubt*'s, not believing the complement, which is only downward entailing. -/
 theorem carries_antiAdditive_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
     c.licenser.Carries .antiAdditive ↔ c ≠ .doubtVerb := by
-  cases c <;> simp [LicensingContext.haspelmath, Feature.marked] at hc ⊢
-  · exact Licenser.carries_classical_iff.2
-      ⟨holds_negation .antiAdditive, not_isStrawsonUE_negation⟩
-  · exact Licenser.carries_classical_iff.2
-      ⟨holds_withoutClause_iff.2 le_rfl, not_isStrawsonUE_withoutClause⟩
-  · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
-  · exact Licenser.carries_classical_iff.2 ⟨holds_denyVerb_iff.2 le_rfl, not_isStrawsonUE_denyVerb⟩
+  revert c; decide
 
 end Licensing
 

@@ -73,6 +73,8 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Exhaustification MeasureTheory
 
+namespace Licenser
+
 /-- A family of operators between bounded lattices, indexed by what a construction leaves open. -/
 structure OperatorFamily where
   /-- What the construction leaves open. -/
@@ -129,13 +131,15 @@ structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
+end Licenser
+
 /-- The operator that a construction places over the position of a polarity item is classical,
 scalar (with its enrichment), into trivalent propositions, modal, or a question. -/
 inductive Licenser : Type 2 where
-  | classical (F : OperatorFamily)
-  | scalar (F : ScalarFamily)
-  | strawson (F : PresupposingFamily)
-  | modal (F : ModalFamily)
+  | classical (F : Licenser.OperatorFamily)
+  | scalar (F : Licenser.ScalarFamily)
+  | strawson (F : Licenser.PresupposingFamily)
+  | modal (F : Licenser.ModalFamily)
   | question
 
 /-- A context licenses polarity items by strengthening, as a generic context licensing free choice
@@ -314,6 +318,14 @@ theorem carries_classical_iff {F : OperatorFamily} :
     exact ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦
       ⟨⟨isStrawsonDE_of_holds_anti (h.1.toProjectivitySignature_of_le (s := .weak) (by decide)),
         h.2⟩, h.1⟩⟩
+
+/-- A non-trivial classical licenser holding exactly the strengths up to `s₀` carries exactly
+those. -/
+theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
+    (hn : ¬ (classical F).IsStrawsonUE)
+    (h : ∀ s, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+    (classical F).Carries s ↔ s ≤ s₀ := by
+  rw [carries_classical_iff, h, and_iff_left hn]
 
 theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
     (h : L.Holds s₀.toProjectivitySignature)

@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Blok2015
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Dutch.NumeralModifiers
 public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.UpperLower.Basic
@@ -160,7 +160,7 @@ theorem forall_interactiveSincerity_atMost_iff :
 /-- The licenser a sentence raising `P` places over its scope, indexed by its finite restrictor:
 the cardinal quantifier of what the sentence asserts. -/
 def scopeLicenser (P : Set (Set ℕ)) : Licenser :=
-  .classical ⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
+  .classical ⟨LicensingContext.FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
     fun p ↦ (NumberTree.cardinal (⋃₀ P)).toDet p.A⟩
 
 section Monotonicity
@@ -206,7 +206,7 @@ theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
         (by simp [toDet_sUnion_atMost, Det.atMost_apply])
       simp [toDet_sUnion_atMost, Det.atMost_apply] at this
 
-private theorem admits_hoeven_iff {F : OperatorFamily} :
+private theorem admits_hoeven_iff {F : Licenser.OperatorFamily} :
     (Licenser.classical F).Admits Dutch.PolarityItems.hoeven ↔
       (Licenser.classical F).Carries .weak := by
   rw [Licenser.admits_iff_licenses rfl (Or.inl rfl)]

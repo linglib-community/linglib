@@ -4,7 +4,7 @@ public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Japanese.Determiners
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Fragments.German.PolarityItems
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002
@@ -323,7 +323,7 @@ ungrammatical, so selectivity rather than strength excludes it. -/
 theorem negation_licenses_irgendein :
     LicensingContext.negation.licenser.Licenses German.PolarityItems.irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=
-  ⟨by simp [German.PolarityItems.irgendein, PolarityItem.IsNPI], rfl⟩
+  ⟨by decide, rfl⟩
 
 theorem irgendein_haspelmath :
     ∀ s ∈ Haspelmath1997.german, s.toSeries = German.Indefinites.irgendSeries →

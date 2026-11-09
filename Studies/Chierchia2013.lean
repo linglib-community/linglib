@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Natural.Projection
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Fragments.English.PolarityItems
@@ -157,50 +157,12 @@ def Position.context : Position → Option LicensingContext
   | .imperative => some .imperative
   | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope => none
 
-theorem carries_weak_conditionalAntecedent :
-    LicensingContext.conditionalAntecedent.licenser.Carries .weak :=
-  ⟨LicensingContext.isStrawsonDE_conditionalAntecedent,
-    LicensingContext.not_isStrawsonUE_conditionalAntecedent⟩
-
-theorem carries_weak_universalRestrictor :
-    LicensingContext.universalRestrictor.licenser.Carries .weak :=
-  Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_universalRestrictor_iff (s := .weak)).2
-    (by decide), LicensingContext.not_isStrawsonUE_universalRestrictor⟩
-
-theorem carries_weak_negation : LicensingContext.negation.licenser.Carries .weak :=
-  Licenser.carries_classical_iff.2
-    ⟨LicensingContext.holds_negation .weak, LicensingContext.not_isStrawsonUE_negation⟩
-
-theorem carries_weak_nobody : LicensingContext.nobody.licenser.Carries .weak :=
-  Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_nobody_iff (s := .weak)).2 (by decide),
-    LicensingContext.not_isStrawsonUE_nobody⟩
-
-theorem carries_weak_doubtVerb : LicensingContext.doubtVerb.licenser.Carries .weak :=
-  Licenser.carries_classical_iff.2
-    ⟨LicensingContext.holds_doubtVerb_iff.2 le_rfl, LicensingContext.not_isStrawsonUE_doubtVerb⟩
-
-theorem not_carries_weak_modalPossibility :
-    ¬ LicensingContext.modalPossibility.licenser.Carries .weak :=
-  fun h ↦ h.2 LicensingContext.isStrawsonUE_modalPossibility
-
-theorem not_carries_weak_imperative : ¬ LicensingContext.imperative.licenser.Carries .weak :=
-  fun h ↦ h.2 LicensingContext.isStrawsonUE_necessityFamily
-
 /-- A position is downward entailing when it is a licensing context whose licenser carries weak
 strength. -/
 def Position.Downward (p : Position) : Prop := ∃ c ∈ p.context, c.licenser.Carries .weak
 
-instance : DecidablePred Position.Downward
-  | .conditionalAntecedent => isTrue ⟨_, rfl, carries_weak_conditionalAntecedent⟩
-  | .universalRestrictor => isTrue ⟨_, rfl, carries_weak_universalRestrictor⟩
-  | .negation => isTrue ⟨_, rfl, carries_weak_negation⟩
-  | .nobody => isTrue ⟨_, rfl, carries_weak_nobody⟩
-  | .doubtVerb => isTrue ⟨_, rfl, carries_weak_doubtVerb⟩
-  | .modalPossibility => isFalse fun ⟨_, h, hc⟩ ↦
-      not_carries_weak_modalPossibility (Option.some_inj.1 h ▸ hc)
-  | .imperative => isFalse fun ⟨_, h, hc⟩ ↦ not_carries_weak_imperative (Option.some_inj.1 h ▸ hc)
-  | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
-    isFalse fun ⟨_, h, _⟩ ↦ nomatch h
+instance : DecidablePred Position.Downward :=
+  fun p ↦ inferInstanceAs (Decidable (∃ c ∈ p.context, _))
 
 /-- A downward-entailing position is antitone, any other upward entailing. -/
 def Position.polarity (p : Position) : SignType := if p.Downward then -1 else 1
@@ -209,15 +171,8 @@ def Position.polarity (p : Position) : SignType := if p.Downward then -1 else 1
 def Position.Licenses (p : Position) (e : PolarityItem) : Prop :=
   ∃ c ∈ p.context, c.licenser.Licenses e
 
-theorem Position.licenses_iff {p : Position} {c : LicensingContext} (h : p.context = some c)
-    {e : PolarityItem} : p.Licenses e ↔ c.licenser.Licenses e := by
-  simp [Position.Licenses, h]
-
-instance : ∀ p : Position, DecidablePred p.Licenses
-  | .conditionalAntecedent | .universalRestrictor | .negation | .nobody | .doubtVerb
-  | .modalPossibility | .imperative => fun _ ↦ decidable_of_iff' _ (Position.licenses_iff rfl)
-  | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
-    fun _ ↦ isFalse fun ⟨_, h, _⟩ ↦ nomatch h
+instance (p : Position) : DecidablePred p.Licenses :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ c ∈ p.context, _))
 
 theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
     pos.Licenses English.PolarityItems.ever := by
@@ -232,10 +187,7 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
       c.licenser.LicensesFreeChoice := by
   have hfc : c.licenser.LicensesFreeChoice →
       ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
-    cases c <;> first
-      | exact fun h ↦ (h : False).elim
-      | exact fun _ ↦ ⟨fun h ↦ h.2 LicensingContext.isStrawsonUE_modalPossibility, id⟩
-      | exact fun _ ↦ ⟨fun h ↦ h.2 LicensingContext.isStrawsonUE_necessityFamily, id⟩
+    revert c; decide
   have ha : c.licenser.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
       c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
     simp [PolarityItem.Licenser.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]

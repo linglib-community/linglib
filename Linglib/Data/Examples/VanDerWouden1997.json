@@ -7,9 +7,8 @@
     "primaryText": "Een van de kinderen gaat ooit bij oma op bezoek.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
-      ["gaat", "goes"], ["ooit", "ever"], ["bij", "with"], ["oma", "granny"],
-      ["op", "on"], ["bezoek", "visit"]
+      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"], ["gaat", "goes"],
+      ["ooit", "ever"], ["bij", "with"], ["oma", "granny"], ["op", "on"], ["bezoek", "visit"]
     ],
     "translation": "",
     "context": "",
@@ -54,9 +53,8 @@
     "primaryText": "Geen van de kinderen gaat ooit bij oma op bezoek.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Geen", "none"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
-      ["gaat", "goes"], ["ooit", "ever"], ["bij", "with"], ["oma", "granny"],
-      ["op", "on"], ["bezoek", "visit"]
+      ["Geen", "none"], ["van", "of"], ["de", "the"], ["kinderen", "children"], ["gaat", "goes"],
+      ["ooit", "ever"], ["bij", "with"], ["oma", "granny"], ["op", "on"], ["bezoek", "visit"]
     ],
     "translation": "None of the children ever visits granny.",
     "context": "",
@@ -78,9 +76,9 @@
     "primaryText": "Een van de kinderen gaat niet ooit bij oma op bezoek.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
-      ["gaat", "goes"], ["niet", "not"], ["ooit", "ever"], ["bij", "with"],
-      ["oma", "granny"], ["op", "on"], ["bezoek", "visit"]
+      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"], ["gaat", "goes"],
+      ["niet", "not"], ["ooit", "ever"], ["bij", "with"], ["oma", "granny"], ["op", "on"],
+      ["bezoek", "visit"]
     ],
     "translation": "",
     "context": "",
@@ -92,6 +90,216 @@
       ["context", "antimorphic"]
     ],
     "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_228b",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(228b)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Alle boeren die geslagen hoeven te worden bezitten een ezel.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alle", "All"], ["boeren", "farmers"], ["die", "that"], ["geslagen", "beaten"],
+      ["hoeven", "need"], ["te", "to"], ["worden", "become"], ["bezitten", "own"], ["een", "a"],
+      ["ezel", "donkey"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "universalRestrictor"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_228d",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(228d)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Geen boer die een ezel hoeft te bezitten wordt geslagen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Geen", "No"], ["boer", "farmer"], ["die", "who"], ["een", "a"], ["ezel", "donkey"],
+      ["hoeft", "needs"], ["te", "to"], ["bezitten", "own"], ["wordt", "is"],
+      ["geslagen", "beaten"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "geenRestrictor"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_229b",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(229b)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Hoef je huiswerk te maken?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hoef", "Need"], ["je", "you"], ["huiswerk", "homework"], ["te", "to"], ["maken", "do"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "question"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_229d",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(229d)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Als je huiswerk hoeft te maken mag je geen tv kijken.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Als", "If"], ["je", "you"], ["huiswerk", "homework"], ["hoeft", "need"], ["te", "to"],
+      ["maken", "do"], ["mag", "may"], ["je", "you"], ["geen", "no"], ["tv", "tv"],
+      ["kijken", "watch"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "conditionalAntecedent"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_232a",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(232a)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Hij rijdt harder dan hij hoeft.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hij", "He"], ["rijdt", "drives"], ["harder", "faster"], ["dan", "than"], ["hij", "he"],
+      ["hoeft", "needs"]
+    ],
+    "translation": "He drives faster than he needs to.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "clausalComparative"]
+    ],
+    "comment": "Several of van der Wouden's informants reject this (fn. 110); table (235) has it OK.",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_233a",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(233a)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Dit is de laatste student die we hoeven te bestraffen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dit", "This"], ["is", "is"], ["de", "the"], ["laatste", "last"], ["student", "student"],
+      ["die", ""], ["we", "we"], ["hoeven", "need"], ["te", "to"], ["bestraffen", "punish"]
+    ],
+    "translation": "This is the last student we have to punish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "superlative"]
+    ],
+    "comment": "Several of van der Wouden's informants reject this (fn. 110); table (235) has it OK.",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_234a",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(234a)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Alles wat we hoeven te weten staat in dit boek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alles", "Everything"], ["wat", "which"], ["we", "we"], ["hoeven", "need"], ["te", "to"],
+      ["weten", "know"], ["staat", "stands"], ["in", "in"], ["dit", "this"], ["boek", "book"]
+    ],
+    "translation": "This book contains everything we need to know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "universalRestrictor"]
+    ],
+    "comment": "Several of van der Wouden's informants reject this (fn. 110); table (235) has it OK.",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_234c",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(234c)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Ik geloof niet, dat we nog iemand hoeven te waarschuwen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ik", "I"], ["geloof", "believe"], ["niet", "not"], ["dat", "that"], ["we", "we"],
+      ["nog", "still"], ["iemand", "anybody"], ["hoeven", "need"], ["te", "to"],
+      ["waarschuwen", "warn"]
+    ],
+    "translation": "I don't believe we still need to warn anyone (else).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "doubtVerb"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_234e",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(234e)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Ik heb nog een uur voordat ik weg hoef.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ik", "I"], ["heb", "have"], ["nog", "still"], ["een", "an"], ["uur", "hour"],
+      ["voordat", "before"], ["ik", "I"], ["weg", "away"], ["hoef", "need"]
+    ],
+    "translation": "I have still an hour left before I have to go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "hoeven"],
+      ["context", "beforeClause"]
+    ],
+    "comment": "Several of van der Wouden's informants reject this (fn. 110); table (235) has it OK.",
     "verified": "page-image"
   }
 ]

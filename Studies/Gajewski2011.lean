@@ -8,7 +8,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Data.Examples.Gajewski2011
 public import Linglib.Data.Examples.Readers
@@ -208,7 +208,7 @@ theorem licensed_iff_licenses (L : Licenser) (s : Strength) {c : PolarityItem.Li
     (hc : L.context = some c) : Licensed L s ↔ c.licenser.Licenses s.item := by
   rw [licensed_iff]
   cases L <;> cases s <;> simp only [Licenser.context, Option.some.injEq, reduceCtorEq] at hc <;>
-    subst hc <;> simp [Strength.item, English.PolarityItems.ever, English.PolarityItems.inYears]
+    subst hc <;> decide
 
 /-! ### Intolerance -/
 

@@ -48,6 +48,10 @@ theorem ProjectivitySignature.mem_classPairs {p : Function.End α × Projectivit
     p ∈ ProjectivitySignature.classPairs α ↔ p.2.HoldsFor p.1 :=
   Iff.rfl
 
+/-- Negation as a layer: complementation, anti-morphic. -/
+def negation {P : Type*} [BooleanAlgebra P] : ProjectivitySignature.classPairs P :=
+  ⟨(compl, .antiAddMult), ProjectivitySignature.holdsFor_antiAddMult_compl⟩
+
 theorem ProjectivitySignature.holdsFor_list_prod {l : List (Function.End α × ProjectivitySignature)}
     (h : ∀ p ∈ l, p.2.HoldsFor p.1) : l.prod.2.HoldsFor l.prod.1 :=
   list_prod_mem (S := ProjectivitySignature.classPairs α) h
