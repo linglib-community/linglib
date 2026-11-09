@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Korean.Indefinites
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 
 /-!
 # Korean polarity items

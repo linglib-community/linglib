@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.MaidenRobustelli2007
 public import Linglib.Data.Examples.Readers
 

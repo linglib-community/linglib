@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Mandarin.Indefinites
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 
 /-!
 # Mandarin polarity-sensitive items

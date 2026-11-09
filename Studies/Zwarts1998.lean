@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Dutch.PolarityItems
 public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.Zwarts1998
 public import Linglib.Data.Examples.Readers
 

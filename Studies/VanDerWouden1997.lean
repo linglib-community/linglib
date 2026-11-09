@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.VanDerWouden1997
 public import Linglib.Data.Examples.Readers
 
@@ -109,7 +109,7 @@ theorem hoeven_extraRestrictions :
     ∀ (l a : Option Negation.Strength) (fc : Bool),
       ¬ ∀ d ∈ Examples.all, d.feature? "item" = some "hoeven" →
         ∀ c ∈ (d.feature? "context").bind Context.ofKey,
-          (d.judgment = .acceptable ↔ c.Admits ⟨"hoeven", l, a, fc, [], []⟩) := by
+          (d.judgment = .acceptable ↔ c.Admits ⟨"hoeven", l, a, fc⟩) := by
   decide +kernel
 
 end VanDerWouden1997

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Romance.Spanish.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.ButtEtAl2019
 public import Linglib.Data.Examples.Readers
 

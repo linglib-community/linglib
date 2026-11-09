@@ -47,7 +47,7 @@ own; the named constructions are the shared inventory that lexical entries cite.
 
 ## Implementation notes
 
-* A context is a name, so the lexical entries that list the contexts an item is attested in are
+* A context is a name, so a study linking an example to the context it stands in links
   computable data with decidable equality, while the licenser, often defined classically, is a
   function of the name. Distinct constructions can share a licenser: the necessity modal, the
   imperative, the generic and the free relative are all necessities, and the clausal comparative
@@ -812,6 +812,20 @@ instance (c : LicensingContext) : Decidable c.licenser.LicensesByRelevance :=
   | onlyFocus | adversative | superlative
   | conditionalAntecedent | sinceTemporal | modalPossibility | modalNecessity | imperative
   | generic | freeRelative => isFalse id
+
+/-! ### Deciding licensing at the named contexts
+
+The instances are indexed by the context rather than its licenser, so that a computable definition
+deciding an item against a named context does not compute the licenser. -/
+
+instance (c : LicensingContext) : DecidablePred c.licenser.Licenses :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+instance (c : LicensingContext) : DecidablePred c.licenser.AntiLicenses :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+instance (c : LicensingContext) : DecidablePred c.licenser.Admits :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 end LicensingContext
 
