@@ -10,6 +10,11 @@ of uncertain information frequent in newspaper reports, which marks information 
 another source that the speaker does not vouch for. The conditional's other meanings, future in
 the past, hypothesis and counterfactual, make this use an evidentiality strategy.
 
+## TODO
+
+The conditional's form is cited here rather than read off its paradigm, which `French.Verbs`
+does not yet give.
+
 ## References
 
 * [aikhenvald-2004]
@@ -26,7 +31,7 @@ def evidentials : List Evidential := []
 *aurait*. -/
 def conditional : Evidential := { morphs := [.suff "rait"], covers := {.hearsay, .quotative} }
 
-/-- The evidentiality strategies. -/
+/-- The evidentiality strategies, the conditional alone. -/
 def strategies : List Evidential := [conditional]
 
 end French.Evidentiality

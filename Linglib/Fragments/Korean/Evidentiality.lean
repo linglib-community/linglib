@@ -17,10 +17,7 @@ evidentials, are taken as modal, and the inventory records none of them.
 
 Aikhenvald took the retrospective *-te*, which validates past perception, observation or
 experience, as not a primarily evidential form, and the constructions for talking about other
-people's feelings as evidentiality strategies. WALS codes the language as having indirect
-evidentials only; no term of the inventory covers the senses alone. Cumming's tense-evidential
-paradigm, after Lee, composes the acquisition cells of *-te* and *-ney* with tense in
-`Studies/Cumming2026.lean`.
+people's feelings as evidentiality strategies.
 
 ## Implementation notes
 
@@ -31,10 +28,8 @@ Forms are in the Yale romanization. A form is cited by one of its variants: *-ta
 
 * [sohn-2018]
 * [aikhenvald-2004], §4.6
-* [de-haan-2013]
 * [lee-2011]
 * [lee-2013]
-* [cumming-2026]
 -/
 
 @[expose] public section

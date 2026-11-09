@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 
@@ -20,8 +22,11 @@ of a main clause, *ruft … an*, and is joined to the non-finite forms, with the
 verb and the *zu* of the infinitive after it: *angerufen*, *anzurufen*. The present participle is
 the infinitive with *-d*, *kaufend* and *ankommend*, in all but the irregular verbs. The present
 tense has the
-endings *-e*, *-st*, *-t*, *-en*, *-t* and *-en* in weak and strong verbs alike. The rules and the
-examples are Durrell's.
+endings *-e*, *-st*, *-t*, *-en*, *-t* and *-en* in weak and strong verbs alike. The Konjunktiv I,
+the present subjunctive, adds *-e*, *-est*, *-e*, *-en*, *-et* and *-en* to the root of every verb
+but *sein*, with none of the vowel changes of the present, so that *es gebe* stands beside
+*es gibt*; in practice it differs from the present indicative only in the third person singular.
+The rules and the examples are Durrell's.
 
 ## Main definitions
 
@@ -32,6 +37,8 @@ examples are Durrell's.
 * `German.Conjugation.Stem.inseparable`, `German.Conjugation.Stem.separable`: the stem of a verb
   with an inseparable prefix or a separable particle.
 * `German.Conjugation.weakPresent`: the present tense of a weak verb.
+* `German.Conjugation.konjunktivIEndings`, `German.Conjugation.konjunktivI`: the endings of the
+  Konjunktiv I and its simple form.
 
 ## Implementation notes
 
@@ -39,6 +46,8 @@ The rules read the spelling. A root in *-ier* is taken to be the suffix of the v
 and an *h* after a vowel, as in *lohnen*, marks vowel length and is not a consonant. Irregular
 weak verbs, the vowel changes of strong verbs in the present and the verbs stressed off their first
 syllable for other reasons are not covered: their forms are given as those of a strong verb.
+Two departures from the Konjunktiv I endings are not covered either: the *-e-* that a root in
+*-el* usually drops before *-e*, as in *es segle*, and the forms of *sein*, as *sei* and *seien*.
 
 ## References
 
@@ -148,6 +157,18 @@ def weakPresent (inf : String) : Person × Number → Option String
   | (.first, .plural) | (.third, .plural) => some inf
   | _ => none
 
+/-- The endings of the Konjunktiv I, the present subjunctive, which every verb but *sein* adds
+to its root. -/
+def konjunktivIEndings : Agreement.Paradigm Morphology.Morph :=
+  [(.personNumber .first .singular, .suff "e"), (.personNumber .second .singular, .suff "est"),
+   (.personNumber .third .singular, .suff "e"), (.personNumber .first .plural, .suff "en"),
+   (.personNumber .second .plural, .suff "et"), (.personNumber .third .plural, .suff "en")]
+
+/-- `konjunktivI inf c` is the Konjunktiv I of the verb with the infinitive `inf`, other than
+*sein*, in the cell `c`: the root of the infinitive with the ending of the cell. -/
+def konjunktivI (inf : String) (c : Agreement.Bundle) : Option String :=
+  (konjunktivIEndings.realize c).map (root inf ++ ·.form)
+
 /-! ### Examples -/
 
 /-- *kaufen* 'buy' and *arbeiten* 'work' are weak, the latter with the linking *-e-*, and
@@ -173,6 +194,15 @@ example :
       ((weak "studieren").separable "ein").pastParticiple = "einstudiert" ∧
       ((strong "stehen" "steht" "stand" "gestanden").inseparable "ver").pastParticiple =
         "verstanden" := by
+  decide
+
+/-- The Konjunktiv I of the strong *geben* 'give' is *gebe* in the third person singular, without
+the vowel change of *gibt*, and that of *können* 'can' is *könnest* in the second; in the first
+person plural *haben* 'have' has its infinitive. -/
+example :
+    konjunktivI "geben" (.personNumber .third .singular) = some "gebe" ∧
+      konjunktivI "können" (.personNumber .second .singular) = some "könnest" ∧
+      konjunktivI "haben" (.personNumber .first .plural) = some "haben" := by
   decide
 
 end German.Conjugation

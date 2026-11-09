@@ -30,6 +30,7 @@ as *c'on* 'like', have the third in every series.
 
 * `Georgian.setA`, `Georgian.setB`: the two sets of agreement affixes.
 * `Georgian.Series`, `Georgian.VerbClass`: the series of the tenses and the classes of verbs.
+* `Georgian.Screeve`, `Georgian.Screeve.series`: the screeves and the series of each.
 * `Georgian.Pattern`: the case and the agreement set of the subject and the objects, with the
   three patterns `Pattern.nominative`, `Pattern.ergative` and `Pattern.inverse`.
 * `Georgian.pattern`: the pattern of each class in each series.
@@ -104,6 +105,30 @@ inductive Series where
   | aorist
   | perfect
   deriving DecidableEq, Repr, Fintype
+
+/-- The screeves, the tense and mood forms of the verb, by Hewitt's names; the aorist
+subjunctive is the optative. -/
+inductive Screeve where
+  | presentIndicative
+  | imperfect
+  | presentSubjunctive
+  | future
+  | conditional
+  | futureSubjunctive
+  | aorist
+  | aoristSubjunctive
+  | perfect
+  | pluperfect
+  | thirdSubjunctive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The series of a screeve: the first has the present and future sub-series, the second the
+aorist and its subjunctive, the third the perfect, the pluperfect and the third subjunctive. -/
+def Screeve.series : Screeve → Series
+  | .presentIndicative | .imperfect | .presentSubjunctive | .future | .conditional
+  | .futureSubjunctive => .present
+  | .aorist | .aoristSubjunctive => .aorist
+  | .perfect | .pluperfect | .thirdSubjunctive => .perfect
 
 /-- The classes of verbs, by their case marking and agreement. -/
 inductive VerbClass where

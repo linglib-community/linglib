@@ -11,7 +11,6 @@ English has no grammatical evidentials: information source is conveyed lexically
 ## References
 
 * [aikhenvald-2004]
-* [de-haan-2013]
 -/
 
 @[expose] public section

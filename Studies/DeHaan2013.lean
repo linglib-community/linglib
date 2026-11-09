@@ -7,7 +7,6 @@ public import Linglib.Fragments.Georgian.Evidentiality
 public import Linglib.Fragments.German.Evidentiality
 public import Linglib.Fragments.Japanese.Evidentiality
 public import Linglib.Fragments.Korean.Evidentiality
-public import Linglib.Fragments.Mandarin.Evidentiality
 public import Linglib.Fragments.Romance.French.Evidentiality
 
 /-!
@@ -112,21 +111,20 @@ theorem value?_eq_none_iff_of_realizes {es : List Evidential} {k : Aikhenvald200
 
 /-- The Fragment languages on the map. -/
 inductive Language
-  | english | mandarin | german | french | japanese | korean | georgian | westGreenlandic
-  | abkhaz | turkish | bulgarian | aymara | tariana | tuyuca | kashaya
+  | english | german | french | japanese | korean | georgian | westGreenlandic | abkhaz
+  | turkish | bulgarian | aymara | tariana | tuyuca | kashaya
   deriving DecidableEq, Repr, Fintype
 
 /-- The WALS code of a language. -/
 def Language.walsCode : Language → String
-  | .english => "eng" | .mandarin => "mnd" | .german => "ger" | .french => "fre"
-  | .japanese => "jpn" | .korean => "kor" | .georgian => "geo" | .westGreenlandic => "grw"
-  | .abkhaz => "abk" | .turkish => "tur" | .bulgarian => "bul" | .aymara => "aym"
-  | .tariana => "tar" | .tuyuca => "tuy" | .kashaya => "ksh"
+  | .english => "eng" | .german => "ger" | .french => "fre" | .japanese => "jpn"
+  | .korean => "kor" | .georgian => "geo" | .westGreenlandic => "grw" | .abkhaz => "abk"
+  | .turkish => "tur" | .bulgarian => "bul" | .aymara => "aym" | .tariana => "tar"
+  | .tuyuca => "tuy" | .kashaya => "ksh"
 
 /-- A language's evidentials, from its Fragment; for Kashaya, those of a spontaneous remark. -/
 def Language.evidentials : Language → List Evidential
   | .english => English.Evidentiality.evidentials
-  | .mandarin => Mandarin.Evidentiality.evidentials
   | .german => German.Evidentiality.evidentials
   | .french => French.Evidentiality.evidentials
   | .japanese => Japanese.Evidentiality.evidentials
@@ -146,7 +144,8 @@ def Language.strategies : Language → List Evidential
   | .german => German.Evidentiality.strategies
   | .french => French.Evidentiality.strategies
   | .georgian => Georgian.Evidentiality.strategies
-  | _ => []
+  | .english | .japanese | .korean | .westGreenlandic | .abkhaz | .turkish | .bulgarian
+  | .aymara | .tariana | .tuyuca | .kashaya => []
 
 /-- The Turkish past *-dI*, which the chapter glosses as a direct evidential, taken as a
 firsthand term for what the speaker saw. -/

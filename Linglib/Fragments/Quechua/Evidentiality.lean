@@ -5,9 +5,8 @@ public import Linglib.Semantics.Evidential.Defs
 /-!
 # Quechua (Cuzco) evidentiality
 
-Cuzco Quechua has a three-choice system of Aikhenvald's type B1, the canonical Andean system:
-direct *-mi*, reportative *-si* and conjectural *-chá*, second-position enclitics on finite
-clauses.
+Cuzco Quechua has three evidentials, the canonical Andean system: direct *-mi*, reportative *-si*
+and conjectural *-chá*, second-position enclitics on finite clauses.
 
 ## References
 
@@ -20,10 +19,16 @@ namespace Quechua.Evidentiality
 
 open Evidential
 
-/-- Direct *-mi*, reportative *-si* and conjectural *-chá*. -/
-def evidentials : List Evidential :=
-  [ { morphs := [.encl "mi"], covers := {.visual, .sensory} },
-    { morphs := [.encl "si"], covers := {.hearsay, .quotative} },
-    { morphs := [.encl "chá"], covers := {.inference, .assumption} } ]
+/-- The direct *-mi*. -/
+def direct : Evidential := { morphs := [.encl "mi"], covers := {.visual, .sensory} }
+
+/-- The reportative *-si*. -/
+def reportative : Evidential := { morphs := [.encl "si"], covers := {.hearsay, .quotative} }
+
+/-- The conjectural *-chá*. -/
+def conjectural : Evidential := { morphs := [.encl "chá"], covers := {.inference, .assumption} }
+
+/-- The evidentials: direct, reportative and conjectural. -/
+def evidentials : List Evidential := [direct, reportative, conjectural]
 
 end Quechua.Evidentiality

@@ -12,6 +12,7 @@ public import Linglib.Fragments.Tuyuca.Evidentiality
 public import Linglib.Fragments.Tariana.Evidentiality
 public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Fragments.WestGreenlandic.Evidentiality
+public import Linglib.Fragments.Georgian.Evidentiality
 public import Linglib.Data.Examples.Aikhenvald2004
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -222,6 +223,13 @@ theorem quechua : Realizes Quechua.Evidentiality.evidentials .B1 := by decide
 theorem tuyuca : Realizes Tuyuca.Evidentiality.evidentials .D1 := by decide
 
 theorem tariana : Realizes Tariana.Evidentiality.evidentials .D1 := by decide
+
+/-- Georgian, whose perfect is a strategy on Aikhenvald's reading, has no system of evidentials;
+read as an evidential, as most grammars read it, the perfect makes one of the kind A2. -/
+theorem georgian (k : Kind) :
+    ¬ Realizes Georgian.Evidentiality.evidentials k ∧
+      Realizes Georgian.Evidentiality.strategies .A2 :=
+  ⟨not_realizes_nil k, by decide⟩
 
 open Kashaya.Evidentiality in
 theorem kashaya_spontaneous (a : Aspect.Perfectivity) (k : Kind) :

@@ -9,8 +9,7 @@ West Greenlandic codes information source in scattered fashion: evidential meani
 by derivational suffixes that stand in opposition to suffixes unrelated to information source,
 by an enclitic and by a particle, and they form no single paradigm. Aikhenvald, after Fortescue,
 counts three synonymous reported evidentials, the sentential suffix *-nirar-*, the enclitic
-*-guuq* and the particle *unnia*, which the inventory records. WALS codes the language as having
-indirect evidentials only.
+*-guuq* and the particle *unnia*, which the inventory records.
 
 ## TODO
 
@@ -22,7 +21,6 @@ Fortescue's description of which sources each covers.
 
 * [aikhenvald-2004]
 * [fortescue-2003]
-* [de-haan-2013]
 -/
 
 @[expose] public section

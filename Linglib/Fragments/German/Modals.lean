@@ -15,17 +15,19 @@ possibility that something is so, and in colloquial German permission; *dürfen*
 *mögen* possibility, in formal registers; *müssen* necessity or compulsion and logical deduction;
 *sollen* obligation; *wollen* desire or intention. *sollte* expresses a possible obligation and
 logical probability, 'should' or 'ought to', and is listed apart from *sollen* for its weaker
-force. The senses are Durrell's.
+force. In its present tense *sollen* also reports a rumour, 'is said to', and *wollen* a claim
+of the subject's, usually with the implication that it is false; these are their evidential
+extensions. The senses are Durrell's.
 
 ## Implementation notes
 
 The senses are read as flavors in the usual way: ability as circumstantial, permission and
 obligation as deontic, possibility, deduction and probability as epistemic, and desire as
-bouletic. Senses that are not flavors are left out: the liking of *mögen*, the intention and
-prediction of *sollen*, and the reports of *sollen* and claims of *wollen*, which are evidential
-and are recorded among the German evidentiality strategies.
-The probability that *dürfen* expresses in its Konjunktiv II *dürfte* belongs to that form and is
-not a sense of *dürfen*.
+bouletic. Senses that are neither flavors nor evidential are left out: the liking of *mögen*
+and the intention and prediction of *sollen*. The report of *sollen* covers hearsay, its source
+unnamed, and the claim of *wollen* the quotative, its source the subject. The probability that
+*dürfen* expresses in its Konjunktiv II *dürfte* belongs to that form and is not a sense of
+*dürfen*, and the report, confined to the present of *sollen*, is not a sense of *sollte*.
 
 ## References
 
@@ -68,17 +70,20 @@ def muessen : ModalAuxiliary where
   features := infinitive
   meaning := {.necessity} ×ˢ {.deontic, .epistemic}
 
-/-- *sollen* 'be supposed to' is a deontic necessity modal. -/
+/-- *sollen* 'be supposed to' is a deontic necessity modal, and reports a rumour, 'is said to'. -/
 def sollen : ModalAuxiliary where
   form := "sollen"
   features := infinitive
   meaning := {.necessity} ×ˢ {.deontic}
+  evidential := {.hearsay}
 
-/-- *wollen* 'want to' is a bouletic necessity modal. -/
+/-- *wollen* 'want to' is a bouletic necessity modal, and reports a claim of the subject's,
+'claims to'. -/
 def wollen : ModalAuxiliary where
   form := "wollen"
   features := infinitive
   meaning := {.necessity} ×ˢ {.bouletic}
+  evidential := {.quotative}
 
 /-- *sollte* 'should, ought to', the Konjunktiv II of *sollen*, is a weak necessity modal of
 obligation and of logical probability. -/

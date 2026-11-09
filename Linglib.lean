@@ -467,7 +467,6 @@ import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.Determiners
-import Linglib.Fragments.Mandarin.Evidentiality
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.PolarityItems

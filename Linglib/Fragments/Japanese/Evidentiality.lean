@@ -14,8 +14,7 @@ evidentials, and whether *yō* and *mitai* also have direct evidential uses is o
 inventory records neither.
 
 Aikhenvald, after Aoki, counts these as optional devices rather than a unitary grammatical
-category of evidentiality, allowing at most that the reported form makes an A3 system of its
-own. WALS codes the language as having indirect evidentials only.
+category of evidentiality, allowing at most that the reported form makes a system of its own.
 
 ## Implementation notes
 
@@ -25,7 +24,6 @@ Forms are in the Hepburn romanization, and a form that inflects is cited in its 
 
 * [narrog-yang-2018]
 * [aikhenvald-2004], §3.3
-* [de-haan-2013]
 -/
 
 @[expose] public section
