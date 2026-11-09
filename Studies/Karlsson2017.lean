@@ -5,7 +5,6 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Wordlist.Karlsson2017
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Morphology.Word.UD
-public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Negation.Polarity
 
 /-!
@@ -22,7 +21,8 @@ printed object of each of the grammar's examples in the case the rules assign](#
 
 ## Implementation notes
 
-* Resultative and irresultative action are the telic and atelic values of `Aspect.Telicity`.
+* Resultativity is the grammar's own notion, whether the action leads to a result, and is not
+  identified with telicity.
 * The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
@@ -39,8 +39,6 @@ printed object of each of the grammar's examples in the case the rules assign](#
 
 @[expose] public section
 
-open Aspect
-
 namespace Karlsson2017
 
 /-- The kind of nominal serving as object, as the total-object rules of section 13.3.2 tell them
@@ -56,6 +54,13 @@ inductive Clause
   | finite | imperative | passive | obligation | infinitival
   deriving DecidableEq, Repr
 
+/-- Whether the action leads to an 'important' final result (section 12.2.2, rule 2a), as
+*Tyttö luk-i kirja-n* 'The girl read (= completed reading) a/the book' does and *Tyttö luk-i
+kirja-a* 'The girl was reading a/the book' does not. -/
+inductive Resultativity
+  | resultative | irresultative
+  deriving DecidableEq, Repr
+
 /-- The quantity an object expresses (section 12.2.2, rule 3): a whole or a definite quantity, or
 an indefinite, non-limited quantity, as divisible and plural words express. It is not the
 definiteness of the object: *Osta-n jäätelö-n* 'I('ll) buy an/the ice-cream' expresses a definite
@@ -69,7 +74,7 @@ resultativity of the action, the quantity the object expresses, its kind of nomi
 and the type of its clause. -/
 structure Object where
   polarity : Polarity
-  telicity : Telicity
+  resultativity : Resultativity
   quantity : Quantity
   nominal : Nominal
   number : Finnish.Nominal.numberSystem.values
@@ -81,7 +86,7 @@ namespace Object
 /-- The partitive conditions of section 12.2.2: a negative sentence, an irresultative action and
 an indefinite quantity. -/
 def IsPartitive (o : Object) : Prop :=
-  o.polarity = .negative ∨ o.telicity = .atelic ∨ o.quantity = .indefinite
+  o.polarity = .negative ∨ o.resultativity = .irresultative ∨ o.quantity = .indefinite
 
 instance : DecidablePred IsPartitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
@@ -113,13 +118,14 @@ theorem case_eq_part_iff (o : Object) : o.case = .part ↔ o.IsPartitive := by
 /-- A total object needs an affirmative sentence, a resultative action and a definite quantity,
 all three. -/
 theorem case_ne_part_iff (o : Object) :
-    o.case ≠ .part ↔ o.polarity = .positive ∧ o.telicity = .telic ∧ o.quantity = .definite := by
+    o.case ≠ .part ↔ o.polarity = .positive ∧ o.resultativity = .resultative ∧
+      o.quantity = .definite := by
   rcases o with ⟨_ | _, _ | _, _ | _, _, _, _⟩ <;> simp [case_eq_part_iff, IsPartitive]
 
 /-- In an affirmative sentence about a definite quantity the object is partitive exactly when the
 action is irresultative: the case marks the aspect (section 12.2.2, rule 2a). -/
-theorem part_iff_atelic {o : Object} (hp : o.polarity = .positive) (hq : o.quantity = .definite) :
-    o.case = .part ↔ o.telicity = .atelic := by
+theorem part_iff_irresultative {o : Object} (hp : o.polarity = .positive) (hq : o.quantity = .definite) :
+    o.case = .part ↔ o.resultativity = .irresultative := by
   simp [case_eq_part_iff, IsPartitive, hp, hq]
 
 end Object
@@ -152,7 +158,8 @@ instance (r : Row) (c : Finnish.Case) : Decidable (r.Realizes c) :=
 /-- A row read through the grammar's terms, failing on a term it does not use. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let p ← e.parse? "negated" [("yes", Polarity.negative), ("no", .positive)]
-  let t ← e.parse? "aspect" [("resultative", Telicity.telic), ("irresultative", .atelic)]
+  let t ← e.parse? "aspect" [("resultative", Resultativity.resultative),
+    ("irresultative", .irresultative)]
   let q ← e.parse? "quantity" [("definite", Quantity.definite), ("indefinite", .indefinite)]
   let n ← e.parse? "nominal" [("personalPronoun", Nominal.personalPronoun),
     ("numeral", .numeral), ("other", .other)]
