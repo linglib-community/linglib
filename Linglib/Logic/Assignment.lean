@@ -33,6 +33,8 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   the other's domain.
 * `PartialAssign.covBy_iff_exists_update`: one assignment covers another when it values exactly
   one more variable, the counterpart of `Set.covBy_iff_exists_insert`.
+* `PartialAssign.forall_domain_eq_iff`: the assignments with a given domain are the functions on it
+  (`PartialAssign.ofSubtype`).
 * `PluralAssign.value_eq_singleton_iff`: a single value as [Spector][spector-2026] states it.
 * `PluralAssign.value_restrict_eq_singleton_iff`: a nonempty restriction of a variable to a value
   gives it that single value.
@@ -140,6 +142,41 @@ theorem eq_of_le_of_domain_subset (hgh : g ≤ h) (hdom : h.domain ⊆ g.domain)
 
 theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
   simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
+
+section OfSubtype
+
+variable {X : Set Var} [DecidablePred (· ∈ X)]
+
+/-- `ofSubtype b` values the variables of `X` by `b` and leaves the others unvalued. -/
+def ofSubtype (b : X → D) : PartialAssign Var D :=
+  fun x ↦ if h : x ∈ X then ↑(b ⟨x, h⟩) else ⊥
+
+@[simp] theorem domain_ofSubtype (b : X → D) : (ofSubtype b).domain = X := by
+  ext x
+  change ofSubtype b x ≠ ⊥ ↔ x ∈ X
+  unfold ofSubtype
+  split_ifs with h
+  · exact iff_of_true Flat.coe_ne_bot h
+  · exact iff_of_false (· rfl) h
+
+/-- The partial assignments with domain `X` are the functions on `X`. -/
+theorem forall_domain_eq_iff {P : PartialAssign Var D → Prop} :
+    (∀ g, g.domain = X → P g) ↔ ∀ b : X → D, P (ofSubtype b) := by
+  refine ⟨fun h b ↦ h _ (domain_ofSubtype b), fun h g hg ↦ ?_⟩
+  convert h fun x ↦ (g x).get (show (x : Var) ∈ g.domain from hg ▸ x.2)
+  funext x
+  unfold ofSubtype
+  split_ifs with hx
+  · simp
+  · exact not_not.1 fun hne ↦ hx (hg ▸ (show x ∈ g.domain from hne))
+
+theorem exists_domain_eq_iff {P : PartialAssign Var D → Prop} :
+    (∃ g, g.domain = X ∧ P g) ↔ ∃ b : X → D, P (ofSubtype b) := by
+  rw [← not_iff_not]
+  simp only [not_exists, not_and]
+  exact forall_domain_eq_iff
+
+end OfSubtype
 
 variable [DecidableEq Var]
 

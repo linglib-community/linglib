@@ -20,8 +20,8 @@ sufficient sets [drop the door's button](##electronic_differs). *Nur is opening 
 * An equation is read on a situation by `CausalModel.ForcedBy`: its value is the one on which every
   completion of the parents' settled values agrees in every context, the supervaluation. The paper
   calls its tables strong Kleene; the two readings differ on an equation such as $p \vee \neg p$.
-* Necessity quantifies over the consistent situations over the same variables. These are the
-  reassignments of the situation (`forall_domain_eq_iff`), which decides it.
+* Necessity quantifies over the consistent situations over the same variables, which are decided
+  through their values on those variables (`PartialAssign.forall_domain_eq_iff`).
 * Times form any preorder; the door's histories put the reference time at 1 and the interval just
   before it at 0.
 * Each sufficient set for non-culmination is the only consistent situation over its variables
@@ -176,32 +176,6 @@ theorem not_init_const {T : Type*} [Preorder T] {c : V} {s : PartialAssign V Boo
   rintro ⟨-, -, v, b, -, hs, t', ht', h⟩
   exact h t' ⟨le_rfl, ht'⟩ hs
 
-/-- The situation over the variables of `s` that gives them the values of `b`. -/
-def reassign (s : PartialAssign V Bool) (b : s.domain → Bool) : PartialAssign V Bool :=
-  fun v ↦ if h : v ∈ s.domain then ↑(b ⟨v, h⟩) else ⊥
-
-theorem domain_reassign (s : PartialAssign V Bool) (b : s.domain → Bool) :
-    (reassign s b).domain = s.domain := by
-  ext v
-  change reassign s b v ≠ ⊥ ↔ s v ≠ ⊥
-  unfold reassign
-  split_ifs with h
-  · exact iff_of_true Flat.coe_ne_bot h
-  · exact iff_of_false (· rfl) h
-
--- the situations over the variables of `s` are its reassignments
-theorem forall_domain_eq_iff {s : PartialAssign V Bool} {P : PartialAssign V Bool → Prop} :
-    (∀ s', s'.domain = s.domain → P s') ↔ ∀ b, P (reassign s b) := by
-  refine ⟨fun h b ↦ h _ (domain_reassign s b), fun h s' hs' ↦ ?_⟩
-  convert h fun v ↦ (s' v).unbotD false
-  funext v
-  have hv : s' v = ⊥ ↔ s v = ⊥ := not_iff_not.1 (Set.ext_iff.1 hs' v)
-  unfold reassign
-  split_ifs with h
-  · obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 (mt hv.1 h)
-    simp [ha, Flat.unbotD_coe]
-  · exact hv.2 (not_not.1 h)
-
 variable [DecidableEq V]
 
 /-- With its effect erased, a sufficient set forces the effect in the Kleene development, so it is
@@ -216,10 +190,6 @@ theorem IsSufficient.isSufficientSet [M.IsAcyclic] {S : PartialAssign V Bool} {y
 section Decidable
 
 variable [Fintype V]
-
-instance (s : PartialAssign V Bool) (P : PartialAssign V Bool → Prop) [DecidablePred P] :
-    Decidable (∀ s', s'.domain = s.domain → P s') :=
-  decidable_of_iff _ forall_domain_eq_iff.symm
 
 variable [Fintype U] [DecidableRel M.graph.Adj]
 

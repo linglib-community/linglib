@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Pi
 public import Linglib.Semantics.Causation.CausalModel.Development
+public import Linglib.Logic.Assignment
 
 /-!
 # Causal sufficiency and causal necessity
@@ -225,6 +226,18 @@ instance: a `Fintype` instance on `Flat` would change how `decide` evaluates fla
 functions, so necessity installs this one locally. -/
 @[reducible] def fintypePartialAssignment : Fintype (∀ v, Flat (α v)) :=
   inferInstanceAs (Fintype (∀ v, Option (α v)))
+
+/-- Over finitely many variables of a finite type, a claim about every partial assignment with a
+given domain is decided by the values on that domain. -/
+instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
+    [DecidablePred (· ∈ X)] (P : PartialAssign Var D → Prop) [DecidablePred P] :
+    Decidable (∀ g, PartialAssign.domain g = X → P g) :=
+  decidable_of_iff _ PartialAssign.forall_domain_eq_iff.symm
+
+instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
+    [DecidablePred (· ∈ X)] (P : PartialAssign Var D → Prop) [DecidablePred P] :
+    Decidable (∃ g, PartialAssign.domain g = X ∧ P g) :=
+  decidable_of_iff _ PartialAssign.exists_domain_eq_iff.symm
 
 instance (r : (∀ v, Flat (α v)) → (∀ v, Flat (α v)) → Prop) [∀ s s', Decidable (r s s')]
     (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :
