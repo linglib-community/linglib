@@ -42,8 +42,7 @@ open PolarityItem
 [haspelmath-1997]. -/
 def kukaan : PolarityItem :=
   { form := Indefinites.kukaan.form
-  , licensor := some .weak
-  , licensingContexts := [.question, .negation] }
+  , licensor := some .weak }
 
 /-! ### FCI -/
 

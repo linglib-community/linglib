@@ -28,15 +28,8 @@ open PolarityItem
 def piPis : PolarityItem :=
   { form := Indefinites.piPis.form
   , licensor := some .weak
-  , freeChoice := true
-  , licensingContexts :=
-      [.negation, .question, .conditionalAntecedent, .clausalComparative,
-       .modalPossibility, .imperative, .generic] }
+  , freeChoice := true }
 
 /-! ### Verification -/
-
-theorem piPis_licensing_sound :
-    ∀ c ∈ piPis.licensingContexts, c.licenser.Admits piPis := by
-  decide
 
 end Quechua.PolarityItems

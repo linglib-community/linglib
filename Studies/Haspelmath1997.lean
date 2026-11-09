@@ -30,6 +30,17 @@ public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.Finnish.PolarityItems
+public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Fragments.HindiUrdu.PolarityItems
+public import Linglib.Fragments.Hungarian.PolarityItems
+public import Linglib.Fragments.Japanese.PolarityItems
+public import Linglib.Fragments.Korean.PolarityItems
+public import Linglib.Fragments.Mandarin.PolarityItems
+public import Linglib.Fragments.Quechua.PolarityItems
+public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Fragments.Slavic.Russian.PolarityItems
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -611,5 +622,80 @@ theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
       ∀ l ∈ e.features "series", Excludes e l := by
   decide +kernel
+
+/-! ### The regions against the licensing theory
+
+A figure records where a series is possible, which for a polarity-sensitive series is where the
+licensing theory of `Semantics/PolarityItem` should admit its members. The theory admits an item in
+a function when some named context realizing the function admits it, and an item belongs to the
+series whose members include its form. -/
+
+section LicensingTheory
+
+open PolarityItem
+
+/-- The functions in which the licensing theory admits an item: those some named context realizing
+the function admits it in. -/
+def theoryRegion (e : PolarityItem) : Finset HaspelmathFunction :=
+  Finset.univ.filter fun f ↦ ∃ c : LicensingContext, c.haspelmath = some f ∧ c.licenser.Admits e
+
+/-- The region of the series of a paradigm whose members include an item's form. -/
+def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFunction) :=
+  (ss.find? fun s ↦ ∃ p ∈ s.members, p.form = e.form).map (·.functions)
+
+-- the theory reproduces the regions of the series of negative concord, of Korean *-to* once it
+-- needs an anti-additive context, and of the general series of Quechua and Hindi
+theorem regionOf_eq_theoryRegion :
+    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki), (mandarin, Mandarin.PolarityItems.sheiDou),
+      (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo),
+      (quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
+      (hindi, HindiUrdu.PolarityItems.kuchBhii)],
+      regionOf p.1 p.2 = some (theoryRegion p.2) := by
+  decide +kernel
+
+-- the free-choice route admits every free-choice item under necessity, the irrealis function,
+-- where the book finds free-choice series unacceptable; for these items it is the only difference
+theorem regionOf_eq_theoryRegion_sdiff_irrealis :
+    ∀ p ∈ [(english, English.PolarityItems.any), (japanese, Japanese.PolarityItems.dareDemo),
+      (korean, Korean.PolarityItems.nwukwuNa), (russian, Russian.PolarityItems.ktoUgodno)],
+      .irrealis ∈ theoryRegion p.2 ∧
+        regionOf p.1 p.2 = some (theoryRegion p.2 \ {.irrealis}) := by
+  decide +kernel
+
+-- a weak class admits an item in every downward-entailing context and in questions, where the book
+-- excludes series from direct negation, taken by the negative series (Hungarian *sem-*, Russian
+-- *ni-*, German *kein*), from questions, conditionals or comparatives; it does not admit a weak
+-- negative polarity item in the irrealis function, where Russian *-libo* and the Mandarin bare
+-- interrogatives occur, nor any item in the specific functions, which no named context realizes
+theorem regionOf_eq_theoryRegion_sdiff_union :
+    regionOf hungarian Hungarian.PolarityItems.akárki =
+        some (theoryRegion Hungarian.PolarityItems.akárki \ {.irrealis, .question, .directNeg}) ∧
+    regionOf hungarian Hungarian.PolarityItems.bárki =
+        some (theoryRegion Hungarian.PolarityItems.bárki \ {.irrealis, .question, .directNeg}) ∧
+    regionOf mandarin Mandarin.PolarityItems.renhe =
+        some (theoryRegion Mandarin.PolarityItems.renhe \ {.irrealis, .question, .conditional}) ∧
+    regionOf finnish Finnish.PolarityItems.kukaan =
+        some (theoryRegion Finnish.PolarityItems.kukaan \ {.conditional}) ∧
+    regionOf italian Italian.PolarityItems.nessuno =
+        some (theoryRegion Italian.PolarityItems.nessuno \ {.conditional, .comparative}) ∧
+    regionOf russian Russian.PolarityItems.ktoLibo =
+        some (theoryRegion Russian.PolarityItems.ktoLibo \ {.directNeg} ∪ {.irrealis}) ∧
+    regionOf mandarin Mandarin.PolarityItems.shei =
+        some (theoryRegion Mandarin.PolarityItems.shei \ {.comparative} ∪ {.irrealis}) ∧
+    regionOf mandarin Mandarin.PolarityItems.shenme =
+        some (theoryRegion Mandarin.PolarityItems.shenme \ {.comparative} ∪ {.irrealis}) ∧
+    regionOf german German.PolarityItems.irgendein =
+        some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪ {.specificUnknown}) := by
+  decide +kernel
+
+-- Japanese *dare-mo* is a strict negative concord item in the Fragment's sources, licensed by
+-- clausemate negation, where the book draws *-mo* over indirect negation and the comparative too,
+-- with *omow-ana-i* 'not think' (A286)
+theorem dareMo_region :
+    regionOf japanese Japanese.PolarityItems.dareMo =
+      some (theoryRegion Japanese.PolarityItems.dareMo ∪ {.indirectNeg, .comparative}) := by
+  decide +kernel
+
+end LicensingTheory
 
 end Haspelmath1997

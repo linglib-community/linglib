@@ -35,33 +35,28 @@ open PolarityItem
 /-- *nikdo* 'nobody', the human concord item. -/
 def nikdo : PolarityItem :=
   { form := "nikdo"
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *nic* 'nothing', the non-human concord item. -/
 def nic : PolarityItem :=
   { form := "nic"
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *nikdy* 'never', the temporal concord item. -/
 def nikdy : PolarityItem :=
   { form := "nikdy"
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *nikam* 'nowhere (to)', the directional concord item. -/
 def nikam : PolarityItem :=
   { form := "nikam"
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
 questions ([stankova-2026]). -/
 def zadny : PolarityItem :=
   { form := Determiners.zadny.form
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- The strict concord items. -/
 def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]

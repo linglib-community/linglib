@@ -42,8 +42,7 @@ open PolarityItem
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
   { form := Indefinites.dareMo.form
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-! ### FCI -/
 
@@ -63,10 +62,6 @@ theorem dareMo_licensing_characterized (c : LicensingContext) :
 
 theorem dareDemo_licensing_sound :
     ∀ c ∈ dareDemo.licensingContexts, c.licenser.Admits dareDemo := by
-  decide
-
-theorem dareMo_dareDemo_licensing_disjoint :
-    ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by
   decide
 
 end Japanese.PolarityItems
