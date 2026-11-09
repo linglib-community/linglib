@@ -1,23 +1,43 @@
 module
 
-public import Linglib.Syntax.Minimalist.Theta.Basic
 public import Linglib.Syntax.Minimalist.Theta.Realize
+public import Linglib.Syntax.Minimalist.Derivation.Basic
 
 /-!
 # Marcolli and Larson (2025): Theta Theory, Operads and Coloring
 
-This file runs the theta bud system of `Syntax/Minimalist/Theta` on the paper's worked examples.
-The ditransitive *Brian gave the book to Mary*, whose verb assigns agent, theme and goal with
-theme before goal, is derivable as a bare comb, satisfies the theta criterion, and once anchored
-in lexical items belongs to the language of unbalanced theta structures and realizes to its bare
-Merge structure. A movement landing site admits only the non-theta root. Siloni's parasitic
-assignment is a dual-receiver generator that the standard rules lack and the *se* marking adds.
+The ditransitive *give* assigns agent, theme and goal, theme above goal in the hierarchy. Its
+lexically anchored comb [satisfies the theta criterion](##giveComb_satisfiesCriterion). In *Mary
+gave a book to John* the verb precedes its internal arguments because Internal Merge has moved it
+to a non-theta position, its grid staying at the trace: the colored tree [is an unbalanced theta
+structure](##gaveMoved_mem_language) that [realizes as Internal Merge of the verb followed by
+External Merge of the subject](##realize_gaveMoved), and [no coloring lets the verb land in a
+theta position](##gaveRaised_notMem_language).
+
+## Implementation notes
+
+The trace of the moved verb is a leaf anchored by the verb's trace, as the contraction quotient
+of Internal Merge leaves it, colored by the verb's grid. Sentences take the non-theta root.
+
+## Errata
+
+* The bare theta structures need not satisfy the theta criterion, against the paper's lemma:
+  [one comb filling an argument slot of another](##knowsLeft_not_satisfiesCriterion) leaves two
+  leaves with giver grids. The proof establishes the recursive criterion of its later section.
+* The criterion as printed asks only that each received role occur in the head's grid, which two
+  agent arguments of an agent-theme head pass; its gloss asks for the bijection encoded here.
+* The comb generators end with a role $\theta_{I,n}$ beyond the hierarchy
+  $\theta_{I,1} > \dots > \theta_{I,n-1}$ the paper fixes for them.
+
+## TODO
+
+* The balanced theta structures, cut at the first non-theta position on every path, and the
+  head-function characterization of the bare structures; the Mandarin oblique object, moved twice.
 
 ## References
 
 * [marcolli-larson-2025]
 * [marcolli-chomsky-berwick-2025]
-* [siloni-2012]
 -/
 
 @[expose] public section
@@ -26,121 +46,141 @@ open ArgumentStructure
 
 namespace MarcolliLarson2025
 
-open Minimalist Minimalist.Theta
-open Bud.Tree (cherry)
+open Minimalist Minimalist.Theta SyntacticObject
+open LexicalItem (Token)
 
-/-- The example's internal theta hierarchy, in which theme outranks goal, per the ditransitive
-grid the paper builds for *give*. -/
+/-- The internal theta hierarchy of *give*, in which theme outranks goal. -/
 def giveHier : ThetaRole → ThetaRole → Prop :=
   fun a b ↦ a = .theme ∧ b = .goal
 
-/-- The *give* comb, in which agent, theme and goal discharge one node at a time below the head
-leaf carrying the full giver grid. -/
-def giveComb : Bud.Tree (Color Unit) :=
-  comb [] .agent [.theme, .goal]
+/-- The grid of *give*: agent, then the internal roles in hierarchy order. -/
+abbrev giveGrid : List ThetaRole := [.agent, .theme, .goal]
 
-theorem giveComb_derivable :
-    (system (L := Unit) giveHier).Derives (.leaf .nontheta) giveComb :=
-  comb_derivable [] .agent [.theme, .goal] (List.isChain_pair.mpr ⟨rfl, rfl⟩)
+/-- The spine of the *give* comb below the agent's residue: theme and goal discharge one vertex at
+a time above the head leaf, anchored by `v`, which carries the full grid. -/
+def giveSpine (book toJohn v : Token ⊕ Option Token) : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  .node (.free ([.agent].map .up)) (.leaf (.lex book [.down .theme]))
+    (.node (.free ([.agent, .theme].map .up)) (.leaf (.lex toJohn [.down .goal]))
+      (.leaf (.lex v (giveGrid.map .up))))
 
-theorem giveComb_thetaLocal : giveComb.NodeLocal (ThetaLocal (L := Unit) giveHier) :=
-  (Bud.System.ofCherries_derives_leaf_iff.1 giveComb_derivable).2
+theorem isSpine_giveSpine (book toJohn v : Token ⊕ Option Token) :
+    IsSpine giveHier [.agent] (giveSpine book toJohn v) :=
+  .discharge (ρ := .theme) (by simp) rfl
+    (.discharge (ρ := .goal) (by simp [giveHier]) rfl (.head rfl))
 
-theorem giveComb_criterion : SatisfiesCriterion giveComb :=
-  comb_satisfiesCriterion [] .agent [.theme, .goal]
+variable (mary gave book toJohn : Token)
 
-/-- A movement landing site over the residual agent grid. -/
-def moveRule : Bud.Tree (Color Unit) :=
-  cherry .nontheta (.free (upGrid [.agent])) .emptyTree
+/-- The *give* comb of *Mary gave a book to John* before movement. -/
+def giveComb : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  .node .nontheta (.leaf (.lex (.inl mary) [.down .agent]))
+    (giveSpine (.inl book) (.inl toJohn) (.inl gave))
 
-theorem moveRule_mem : moveRule ∈ (system (L := Unit) giveHier).rules :=
-  Bud.System.cherry_mem_ofCherries.2 ⟨[], rfl, .inl (.move _ (by simp))⟩
+theorem isComb_giveComb : IsComb giveHier (giveComb mary gave book toJohn) :=
+  .mk [] rfl (isSpine_giveSpine ..)
 
-theorem eq_nontheta_of_cherry_mem {c : Color Unit}
-    (h : cherry c (.free (upGrid [.agent])) .emptyTree ∈ (system giveHier).rules) :
-    c = .nontheta :=
-  (Bud.System.cherry_mem_ofCherries.1 h).eq_nontheta (.inr rfl)
+theorem giveComb_mem_language : giveComb mary gave book toJohn ∈ (system giveHier).language :=
+  ⟨Color.isTerminal_free, (isComb_giveComb ..).derives, by simp [giveComb, giveSpine]⟩
 
-/-! ### A language-specific generator: parasitic assignment
+/-- The *give* comb discharges the verb's grid one role per vertex, so the verb's leaf is the
+head and agent, theme and goal each go to one argument ([marcolli-larson-2025], (3.8)). -/
+theorem giveComb_satisfiesCriterion : SatisfiesCriterion (giveComb mary gave book toJohn) :=
+  (isComb_giveComb ..).satisfiesCriterion
 
-[siloni-2012]'s syntactic reciprocalization assigns a retained internal role together with the
-external role to one argument, a last resort licensed by the *se* morphology. In the coloring
-model this is a dual-receiver generator: one argument receives two roles against a dual-giver
-residue, as in the ECM derivation where *Jean* ends with the matrix experiencer role and the
-embedded verb's retained agent role. -/
+theorem realize_giveComb :
+    realize (giveComb mary gave book toJohn) =
+      ↑(merge (.leaf mary) (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave)))) :=
+  rfl
 
-/-- Parasitic assignment as a generator, at which a dual-receiver argument discharges a
-dual-giver residue in one step. -/
-def parasiticGen : Bud.Tree (Color Unit) :=
-  cherry .nontheta (.free [.down .experiencer, .down .agent])
-    (.free (upGrid [.experiencer, .agent]))
+/-! ### Movement to a non-theta position -/
 
-theorem parasiticGen_notMem : parasiticGen ∉ (system (L := Unit) giveHier).rules := by
-  rw [parasiticGen, Bud.System.cherry_mem_ofCherries]
-  rintro ⟨g₀, hc, hg | hg⟩ <;> cases hg <;>
-    simp_all [upGrid, PolarizedRole.up, PolarizedRole.down]
+/-- [marcolli-larson-2025]'s Example 4.7, *Mary gave a book to John*: Internal Merge has moved the
+verb beside the agent's residue, keeping its grid under a non-theta root over the empty tree, and
+the trace it leaves keeps the grid too. -/
+def gaveMoved : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  .node .nontheta (.leaf (.lex (.inl mary) [.down .agent]))
+    (.node (.free ([.agent].map .up))
+      (.node .nontheta (.leaf (.lex (.inl gave) (giveGrid.map .up))) (.leaf .emptyTree))
+      (giveSpine (.inl book) (.inl toJohn) (.inr (some gave))))
 
-/-- The *se*-marked grammar, the system extended by the parasitic generator. -/
-def seSystem : Bud.System (Color Unit) :=
-  { system giveHier with rules := insert parasiticGen (system giveHier).rules }
+/-- The moved structure of *Mary gave a book to John* is an unbalanced theta structure, built by
+colored Merge: the verb merges with the empty tree under a non-theta root, that landing site
+attaches as an adjunct to the agent's residue, and the subject closes the projection
+([marcolli-larson-2025], Example 4.7). -/
+theorem gaveMoved_mem_language : gaveMoved mary gave book toJohn ∈ (system giveHier).language :=
+  ⟨Color.isTerminal_free,
+    .node (Bud.System.cherry_mem_ofCherries.2 ⟨_, rfl, .inl (.close [] .agent rfl rfl)⟩) .refl
+      (.node (Bud.System.cherry_mem_ofCherries.2 ⟨_, rfl, .inr (.adjunct _)⟩)
+        (.node (Bud.System.cherry_mem_ofCherries.2 ⟨_, rfl, .inl (.move _ (by simp))⟩) .refl .refl)
+        ((isSpine_giveSpine ..).derives (by simp))),
+    by simp [gaveMoved, giveSpine]⟩
 
-/-- With the marking, the dual-role discharge is derivable: *Jean* ends with both the matrix
-experiencer role and the retained embedded agent role. -/
-theorem parasiticGen_derivable : seSystem.Derives (.leaf .nontheta) parasiticGen :=
-  Bud.System.Produces.single ⟨_, Set.mem_insert .., 0, rfl, rfl⟩
+/-- The moved structure realizes to Internal Merge of the verb in the object of the comb's spine,
+followed by External Merge of the subject: the verb is pronounced in the landing site and leaves
+its trace where its grid was injected ([marcolli-larson-2025], Example 4.7). -/
+theorem realize_gaveMoved (hb : book ≠ gave) (hj : toJohn ≠ gave) :
+    realize (gaveMoved mary gave book toJohn) = ↑(merge (.leaf mary)
+      ((Step.im (.leaf gave)).apply (merge (.leaf book) (merge (.leaf toJohn) (.leaf gave))))) := by
+  rw [Step.apply_im, deleteAccessible, headTrace, selHead_leaf, Option.elim,
+    replace_merge_of_ne (leaf_ne_merge _ _ _).symm, replace_merge_of_ne (leaf_ne_merge _ _ _).symm,
+    replace_of_val_eq_leaf (leaf_val book) (by simpa using hb),
+    replace_of_val_eq_leaf (leaf_val toJohn) (by simpa using hj), replace_self,
+    merge_comm _ (.leaf gave)]
+  rfl
 
-/-- Without the marking, the dual-role configuration is underivable: the structure is
-movement-free and its root receives no role, so the sole-role invariant forbids the
-dual-receiver argument. The sole-role requirement of [siloni-2012]'s "I"-reading account. -/
-theorem parasiticGen_not_derivable :
-    ¬ (system (L := Unit) giveHier).Derives (.leaf .nontheta) parasiticGen := by
+/-- Internal Merge cannot move the verb to a theta position: if the verb keeps its grid beside the
+agent's residue, as the trace does, no color of the vertex joining them is a generator, since the
+grid would be counted twice ([marcolli-larson-2025], Proposition 4.4). -/
+theorem gaveRaised_notMem_language (c : Color (Token ⊕ Option Token)) :
+    .node .nontheta (.leaf (.lex (.inl mary) [.down .agent]))
+        (.node c (.leaf (.lex (.inl gave) (giveGrid.map .up)))
+          (giveSpine (.inl book) (.inl toJohn) (.inr (some gave)))) ∉
+      (system giveHier).language := by
   intro h
-  have := derives_soleReceiver h
-    (Color.soleReceiver_of_receiverCount_le (g := []) rfl (by simp [receiverCount]))
-    (by simp [parasiticGen]) (.free [.down .experiencer, .down .agent])
-    (by simp [parasiticGen]) _ rfl
-  simp [receiverCount, PolarizedRole.down] at this
+  obtain ⟨-, ⟨-, -, ⟨g₀, rfl, hg | hg⟩, -⟩, -⟩ := Bud.System.mem_ofCherries_language_iff.1 h <;>
+    cases hg <;> simp_all [giveSpine]
 
-/-! ### Realization -/
+/-! ### A bare theta structure the criterion rejects -/
 
-theorem giveComb_adjunct_derivable :
-    (system (L := Unit) giveHier).Derives (.leaf .nontheta)
-      (.node .nontheta giveComb (.leaf .nontheta)) :=
-  .node (Bud.System.cherry_mem_ofCherries.2 ⟨[], rfl, .inl (.adjunct [])⟩) giveComb_derivable .refl
+variable (brian knows left : Token)
 
-variable (brian gave theBook toMary : LexicalItem.Token)
+/-- The comb of *know* with its theme slot open, itself received as a theme. -/
+def knowsComb : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  .node (.free [.down .theme]) (.leaf (.lex (.inl brian) [.down .experiencer]))
+    (.node (.free ([.experiencer].map .up)) (.leaf (.free [.down .theme]))
+      (.leaf (.lex (.inl knows) ([.experiencer, .theme].map .up))))
 
-/-- The lexically anchored *give* comb. -/
-def anchoredGiveComb : Bud.Tree (Color LexicalItem.Token) :=
-  .node .nontheta (.leaf (.lex brian [.down .agent]))
-    (.node (.free (upGrid [.agent])) (.leaf (.lex theBook [.down .theme]))
-      (.node (.free (upGrid [.agent, .theme]))
-        (.leaf (.lex toMary [.down .goal]))
-        (.leaf (.lex gave (upGrid [.agent, .theme, .goal])))))
+/-- The comb of *Mary left*, received as a theme. -/
+def leftComb : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  .node (.free [.down .theme]) (.leaf (.lex (.inl mary) [.down .agent]))
+    (.leaf (.lex (.inl left) ([.agent].map .up)))
 
-/-- The anchored *give* comb is an unbalanced theta structure: its root is initial, its leaves
-are lexical, and each vertex discharges one role of the verb's grid. -/
-theorem anchoredGiveComb_mem_language :
-    anchoredGiveComb brian gave theBook toMary ∈ (system giveHier).language := by
-  refine Bud.System.mem_ofCherries_language_iff.2
-    ⟨by simp [anchoredGiveComb], ⟨?_, trivial, ⟨_, rfl, ?_⟩, trivial, ⟨_, rfl, ?_⟩, trivial, trivial⟩,
-      by simp [anchoredGiveComb, Color.IsTerminal]⟩
-  · exact ⟨[], rfl, .inl (.close [] .agent (by simp) (by simp [upGrid]))⟩
-  · exact .inl (.discharge [.agent] .theme (by simp) (by simp) (by simp) (by simp [upGrid]))
-  · exact .inl <| .discharge [.agent, .theme] .goal (by simp) (by simp [giveHier]) (by simp)
-      (by simp [upGrid])
+/-- *Brian knows Mary left*, embedded as a theme: the comb of *Mary left* grafted at the theme
+slot of the comb of *know*. -/
+def knowsLeft : Bud.Tree (Color (Token ⊕ Option Token)) :=
+  (knowsComb brian knows).graft 1 (leftComb mary left)
 
-theorem realize_anchoredGiveComb :
-    realize (anchoredGiveComb brian gave theBook toMary) =
-      some ((SyntacticObject.leaf brian).merge
-        ((SyntacticObject.leaf theBook).merge
-          ((SyntacticObject.leaf toMary).merge
-            (SyntacticObject.leaf gave)))) := rfl
+theorem knowsLeft_mem_language (hier : ThetaRole → ThetaRole → Prop) :
+    knowsLeft mary brian knows left ∈ (bareSystem hier).language := by
+  refine ⟨⟨List.cons_ne_nil _ _, Color.isTerminal_free⟩,
+    .tail (.single ⟨knowsComb brian knows, ⟨?_, by simp [knowsComb]⟩, 0, rfl, rfl⟩)
+      ⟨leftComb mary left, ⟨?_, by simp [leftComb]⟩, 1, rfl, rfl⟩, ?_⟩
+  · exact .mk _ rfl (.discharge (ρ := .theme) (by simp) rfl (.head rfl))
+  · exact .mk _ (ρE := .agent) rfl (.head rfl)
+  · simp [knowsLeft, knowsComb, leftComb, Bud.Tree.graft_node]
 
-theorem realize_anchored_move_landing :
-    realize (.node .nontheta (anchoredGiveComb brian gave theBook toMary)
-        (.leaf .emptyTree)) =
-      realize (anchoredGiveComb brian gave theBook toMary) :=
-  realize_node_emptyTree_right
+example (hier : ThetaRole → ThetaRole → Prop) :
+    knowsLeft mary brian knows left ∈ (system hier).language :=
+  language_bareSystem_subset (knowsLeft_mem_language ..)
+
+/-- [marcolli-larson-2025]'s Lemma 3.11 states that the bare theta structures satisfy the theta
+criterion of its Definition 3.10, which its Theorem 3.14 then uses to single them out among the
+unbalanced structures. But *Brian knows Mary left* is a bare theta structure whose leaves *know*
+and *left* both carry giver grids, while the criterion allows a single head. -/
+theorem knowsLeft_not_satisfiesCriterion :
+    ¬ SatisfiesCriterion (knowsLeft mary brian knows left) := fun h ↦ by
+  have h2 : ((knowsLeft mary brian knows left).inputs.map Color.receiver? :
+      Multiset (Option ThetaRole)).count none = 2 := rfl
+  have := h.count_none
+  omega
 
 end MarcolliLarson2025

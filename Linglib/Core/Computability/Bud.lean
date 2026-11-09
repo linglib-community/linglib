@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Algebra.Free
 public import Mathlib.Data.List.Lemmas
 public import Mathlib.Logic.Relation
 
@@ -22,6 +23,7 @@ partial composition grafts a tree onto a leaf.
 
 * `Bud.Tree`: binary trees with a color at every vertex.
 * `Bud.Tree.graft`: grafting onto the `i`-th leaf, the partial composition of the operad.
+* `Bud.Tree.prune`: the free-magma element a tree builds from its inputs, its colors forgotten.
 * `Bud.System.Derives`, `Bud.System.language`: derivability and the generated language.
 * `Bud.System.ofCherries`: the system whose rules are the cherries, single binary vertices,
   with colors in a given relation.
@@ -30,6 +32,8 @@ partial composition grafts a tree onto a leaf.
 
 * `Bud.System.Derives.graft`: a derivation can be carried out at any input of a larger tree.
 * `Bud.System.Derives.node`: joining derivable trees under a cherry rule is derivable.
+* `Bud.System.Derives.of_rules`: a system derives whatever another derives once it derives the
+  other's rules.
 * `Bud.System.ofCherries_derives_leaf_iff`: in a system of cherries, a tree is derivable from the
   unit of its root color iff every vertex and its two children form a rule.
 
@@ -106,6 +110,19 @@ theorem getElem?_inputs_node {l r : Tree Ω} :
   split_ifs with h
   · exact List.getElem?_append_left (by simpa using h)
   · rw [inputs_node, List.getElem?_append_right (by simpa using h), length_inputs]
+
+/-- The pruning of a tree to the free magma on its input colors, forgetting the colors of its
+vertices: the shape of the operation together with its inputs. -/
+def prune : Tree Ω → FreeMagma Ω
+  | leaf c => .of c
+  | node _ l r => l.prune * r.prune
+
+@[simp] theorem prune_leaf : (leaf c).prune = .of c := rfl
+
+@[simp] theorem prune_node {l r : Tree Ω} : (node c l r).prune = l.prune * r.prune := rfl
+
+@[simp] theorem length_prune (x : Tree Ω) : x.prune.length = x.numInputs := by
+  induction x <;> simp [*]
 
 /-- The cherry of color `c` over the inputs `a` and `b`, a single binary vertex. -/
 def cherry (c a b : Ω) : Tree Ω := node c (leaf a) (leaf b)
@@ -287,6 +304,21 @@ colored Merge of the cherry's colors. -/
 theorem Derives.node (hc : cherry c a b ∈ B.rules) (hl : B.Derives (leaf a) l)
     (hr : B.Derives (leaf b) r) : B.Derives (leaf c) (node c l r) :=
   (Produces.single ⟨_, hc, 0, rfl, rfl⟩).trans ((hl.node_left c _).trans (hr.node_right c l))
+
+/-- A grafting step of `B` is a derivation of `B'` when `B'` derives every rule of `B` from the unit
+of its output color. -/
+theorem Produces.derives_of_rules {B' : System Ω} (h : ∀ r ∈ B.rules, B'.Derives (leaf r.out) r)
+    (hxy : B.Produces x y) : B'.Derives x y := by
+  obtain ⟨r, hr, i, hi, rfl⟩ := hxy
+  simpa [graft_unit hi] using (h r hr).graft (x := x) (lt_numInputs_of_getElem?_eq_some hi)
+
+/-- A system that derives every rule of `B` from the unit of its output color derives whatever `B`
+derives. -/
+theorem Derives.of_rules {B' : System Ω} (h : ∀ r ∈ B.rules, B'.Derives (leaf r.out) r)
+    (hxy : B.Derives x y) : B'.Derives x y := by
+  induction hxy with
+  | refl => rfl
+  | tail _ hyz ih => exact ih.trans (hyz.derives_of_rules h)
 
 theorem Derives.nodeLocal (hB : ∀ r ∈ B.rules, r.NodeLocal P) (h : B.Derives x y)
     (hx : x.NodeLocal P) : y.NodeLocal P := by
