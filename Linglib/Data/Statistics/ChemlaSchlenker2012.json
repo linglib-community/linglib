@@ -286,6 +286,57 @@
       ]
     },
     {
+      "name": "experiment1BootstrapTests",
+      "structure": "Experiment1BootstrapTest",
+      "doc": "the bootstrap test comparing the two inferences from a target sentence in Experiment 1; the footnote prints one bound for all five sentences.",
+      "locator": "fn. 21, p. 205",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "canonical",
+          "p": "< 0.012"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "p": "< 0.012"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "p": "< 0.012"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "p": "< 0.012"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "p": "< 0.012"
+        }
+      ]
+    },
+    {
       "name": "experiment2Targets",
       "structure": "Experiment2Target",
       "doc": "the mean acceptability of a target sentence in Experiment 2.",
@@ -636,6 +687,42 @@
           "f": "11",
           "p": "< 0.01",
           "eta2": "0.29"
+        }
+      ]
+    },
+    {
+      "name": "experiment4NonparametricTests",
+      "structure": "Experiment4NonparametricTest",
+      "doc": "the non-parametric test comparing the two inferences from a target sentence in Experiment 4, printed only for the inverse if- and or-sentences.",
+      "locator": "§3.3.3, p. 212",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "inverse",
+          "p": "0.085"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "p": "0.030"
         }
       ]
     },

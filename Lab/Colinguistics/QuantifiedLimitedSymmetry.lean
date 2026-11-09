@@ -390,20 +390,27 @@ def limitedSymmetry : Theory :=
   ⟨fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Formula.occurrences I F),
     some fun _ _ _ J C c ↦ Kalomoiros2023.LimitedSymmetry C (QuantifiedClause.occurrences J c)⟩
 
-/-- On Chemla and Schlenker's inferential experiments, Limited Symmetry is right on every cell where
-the difference between the inferences is significant, as the registered account is. -/
-theorem verdict_chemlaSchlenker2012 (k : _root_.ChemlaSchlenker2012.Construction)
-    (o : _root_.ChemlaSchlenker2012.Order) :
-    ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
-        (if k = .unlessSentence ∧ o = .canonical then .silent else .correct) ∧
-      ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
-        if (k = .unlessSentence ↔ o = .canonical) then .silent else .correct := by
+/-- On Chemla and Schlenker's inferential experiments, under every linking hypothesis that favors
+the predicted option, Limited Symmetry is right wherever a test establishes the advantage of one
+inference, as the registered account is: on every contrast of Experiment 1 by either test, and on
+Experiment 4 everywhere but the inverse *if*- and *or*-sentences, which the ANOVA leaves
+inconclusive. -/
+theorem verdict_chemlaSchlenker2012 {ℓ} (hℓ : ℓ ∈ ChemlaSchlenker2012.favoring)
+    (m : ChemlaSchlenker2012.Method) (c : ChemlaSchlenker2012.Cell) :
+    ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ limitedSymmetry c =
+        .correct ∧
+      ChemlaSchlenker2012.experiment4.verdict (ChemlaSchlenker2012.rule .anova) ℓ
+          limitedSymmetry c =
+        if c = .ifInverse ∨ c = .orInverse then .silent else .correct := by
   -- Limited Symmetry accepts a formula as the registered account does.
-  have h1 : ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
-      ChemlaSchlenker2012.experiment1.verdict Account.limitedSymmetry.theory (k, o) := rfl
-  have h4 : ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
-      ChemlaSchlenker2012.experiment4.verdict Account.limitedSymmetry.theory (k, o) := rfl
-  rw [h1, h4, ChemlaSchlenker2012.verdict_experiment1, ChemlaSchlenker2012.verdict_experiment4]
+  have h1 : ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ
+      limitedSymmetry c = ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ
+        Account.limitedSymmetry.theory c := rfl
+  have h4 : ChemlaSchlenker2012.experiment4.verdict (ChemlaSchlenker2012.rule .anova) ℓ
+      limitedSymmetry c = ChemlaSchlenker2012.experiment4.verdict
+        (ChemlaSchlenker2012.rule .anova) ℓ Account.limitedSymmetry.theory c := rfl
+  rw [h1, h4, ChemlaSchlenker2012.verdict_experiment1 hℓ,
+    ChemlaSchlenker2012.verdict_experiment4 hℓ]
   simp [Account.incremental]
 
 /-- On Chemla's first experiment, Limited Symmetry is wrong with every presupposition accommodated
