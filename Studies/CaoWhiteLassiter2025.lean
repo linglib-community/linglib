@@ -205,7 +205,7 @@ theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProba
   have h' := h.1.2
   rw [Function.update_idem] at h'
   have hall : {u | M[c ← x].solve u e = y} = Set.univ :=
-    Set.eq_univ_of_forall fun u ↦ by simpa [impose_update_bot] using h'.solve_impose_eq u
+    Set.eq_univ_of_forall h'.solve_intervene_singleton_eq
   rw [suf_bot, hall, MeasureTheory.measure_univ]
 
 end Model

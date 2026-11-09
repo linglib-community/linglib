@@ -38,6 +38,7 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
 * `Flat.compat_iff` — slot compatibility (`Compat`), characterized
 * `Flat.unify_eq_top_of_ne` — distinct atoms do not unify (the
   non-distributivity witness)
+* `Flat.pi_le_iff` — the order on families of slots, as extension of partial assignments
 -/
 
 @[expose] public section
@@ -379,5 +380,16 @@ atoms have no upper bound, so the join the law would require is undefined. -/
 
 theorem unify_eq_top_of_ne [DecidableEq α] (h : a ≠ b) : Flat.unify (↑a : Flat α) ↑b = ⊤ := by
   rw [unify_coe_coe, ite_eq_right h]
+
+/-! ### Families of slots -/
+
+/-- A family of slots lies below another exactly when the other agrees with it wherever it is
+committed: the extension order of partial assignments. -/
+theorem pi_le_iff {ι : Type*} {β : ι → Type*} {s t : ∀ i, Flat (β i)} :
+    s ≤ t ↔ ∀ i, s i ≠ ⊥ → t i = s i := by
+  refine forall_congr' fun i ↦ ?_
+  cases s i with
+  | bot => simp
+  | coe b => simp [coe_le_iff]
 
 end Flat

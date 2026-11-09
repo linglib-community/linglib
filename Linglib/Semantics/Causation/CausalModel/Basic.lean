@@ -11,13 +11,13 @@ submodel is the world an intervention brings about, and read as a counterfactual
 variable would have had, had the intervened variables been held at their values. Galles and Pearl
 show that these counterfactuals satisfy composition, effectiveness and reversibility, and that in
 a recursive model the first two are complete; all three hold here. A submodel is itself an acyclic
-model, so each law is stated once, for an arbitrary model. An observation picks out the contexts
-whose actual world agrees with it; conditioning a counterfactual on evidence restricts it to them.
+model, so each law is stated once, for an arbitrary model. An observation is a situation, a
+partial assignment of values, and picks out the contexts whose actual world agrees with it;
+conditioning a counterfactual on evidence restricts it to them.
 
 ## Main definitions
 
 * `CausalModel.contexts`: the contexts in which an observation holds
-* `CausalModel.impose`: an observation imposed as an intervention
 
 ## Main results
 
@@ -26,7 +26,6 @@ whose actual world agrees with it; conditioning a counterfactual on evidence res
 * `CausalModel.solve_intervene_of_not_reflTransGen`: an intervention leaves every variable that
   no intervened variable is an ancestor of as it was
 * `CausalModel.solve_eq_of_solve_intervene_of_solve_intervene`: reversibility
-* `CausalModel.mem_contexts_iff`: an observation holds exactly where imposing it changes nothing
 
 ## Implementation notes
 
@@ -34,16 +33,20 @@ Galles and Pearl state composition as the claim that holding a variable at the v
 under an intervention changes nothing. In the submodel of that intervention this is consistency,
 and it needs no statement of its own.
 
-## TODO
-
-Observations are still partial assignments, imposed as interventions by their own submodel
-alongside the submodels of interventions. Evidence as a set of worlds, after Halpern's primitive
-events and the teams of Barbero and Sandu, is the candidate for their carrier.
+An observation is a situation in the sense of Schulz and Nadathur, a function to values or the
+undetermined value, `∀ v, Flat (α v)`, and one situation extends another (a supersituation) in the
+pointwise flat order, `Flat.pi_le_iff`. The situation of an intervention holding `X` at `x` is the
+everywhere undetermined situation updated on `X`, `Function.updateFinset ⊥ X fun v ↦ ↑(x v)`, as
+Schulz builds the situation of a set of literals; `[c ← x]` is its case for one variable. The
+contexts of an observation are the subteam of Barbero and Sandu: conditioning on it filters
+contexts, where an intervention changes the model.
 
 ## References
 
 * [galles-pearl-1998]
 * [halpern-2000]
+* [schulz-2011]
+* [nadathur-2023-implicatives]
 * [barbero-sandu-2021]
 -/
 
@@ -117,37 +120,7 @@ end Intervention
 
 section Observation
 
-variable (M) in
-/-- `M.impose s` imposes the observation `s` as an intervention, holding each variable `s` settles
-at its value and keeping every other equation. -/
-def impose (s : ∀ v, Flat (α v)) : CausalModel U V α where
-  graph := M.graph
-  eqn v u y := (s v).unbotD (M.eqn v u y)
-  dependsOn_eqn v u _ _ h := congrArg (Flat.unbotD · (s v)) (M.dependsOn_eqn v u h)
-
-instance [hM : M.IsAcyclic] (s : ∀ v, Flat (α v)) : (M.impose s).IsAcyclic :=
-  hM
-
-/-- Imposing the observation that settles `c` alone is intervening on `c`. -/
-theorem impose_update_bot [DecidableEq V] (c : V) (a : α c) :
-    M.impose (Function.update ⊥ c ↑a) = M[c ← a] := by
-  show CausalModel.mk _ _ _ = CausalModel.mk _ _ _
-  congr 1
-  funext v u y
-  rcases eq_or_ne v c with rfl | hv
-  · simp [Function.updateFinset]
-    exact (uniqueElim_default (α := fun i : ({v} : Finset V) ↦ α i) a).symm
-  · simp [Function.updateFinset, hv, step]
-
 variable [∀ v, Nonempty (α v)] [M.IsAcyclic] {s : ∀ v, Flat (α v)} {u : U}
-
-theorem solve_impose_of_eq_coe {v : V} {x : α v} (h : s v = ↑x) (u : U) :
-    (M.impose s).solve u v = x := by
-  rw [solve_apply]; exact congrArg (Flat.unbotD _) h
-
-theorem solve_impose_of_eq_bot {v : V} (h : s v = ⊥) (u : U) :
-    (M.impose s).solve u v = M.eqn v u ((M.impose s).solve u) := by
-  rw [solve_apply]; exact congrArg (Flat.unbotD _) h
 
 variable (M) in
 /-- `M.contexts s` is the set of contexts in which the observation `s` holds, those whose actual
@@ -159,21 +132,6 @@ def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ fun v ↦ ↑(M.solv
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
 
 theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
-
-/-- Consistency for observations: an observation holds in a context exactly when imposing it there
-changes nothing. -/
-theorem mem_contexts_iff : u ∈ M.contexts s ↔ (M.impose s).solve u = M.solve u := by
-  refine ⟨fun hu ↦ (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm, fun h v ↦ ?_⟩
-  · show (s v).unbotD (M.eqn v u (M.solve u)) = M.solve u v
-    rw [← solve_apply]
-    cases hs : s v with
-    | bot => rfl
-    | coe a => exact Flat.coe_le_coe.1 (hs ▸ hu v)
-  · show s v ≤ ↑(M.solve u v)
-    rw [← h]
-    cases hs : s v with
-    | bot => exact bot_le
-    | coe a => rw [solve_impose_of_eq_coe hs]
 
 theorem mem_contexts_update [DecidableEq V] (hu : u ∈ M.contexts s) {c : V} {x : α c}
     (hx : M.solve u c = x) : u ∈ M.contexts (Function.update s c ↑x) :=

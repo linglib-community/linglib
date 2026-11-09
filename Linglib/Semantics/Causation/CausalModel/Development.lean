@@ -19,9 +19,9 @@ what has been decided about its parents alone.
 Both are fixed points of maps that compute each variable from its parents
 (`WellFounded.fixedPoint`). The strict development settles less than the Kleene one
 (`CausalModel.Forced.of_causallyEntails`), and the Kleene one is sound: what it forces holds in
-every context when the observation is imposed as an intervention
-(`CausalModel.Forced.solve_impose_eq`), and in every context where the observation holds
-(`CausalModel.Forced.solve_eq`).
+every context where the observation holds (`CausalModel.Forced.solve_eq`), and, from the situation
+an intervention settles, in every context under that intervention
+(`CausalModel.Forced.solve_intervene_eq`).
 
 ## Main definitions
 
@@ -32,8 +32,8 @@ every context when the observation is imposed as an intervention
 
 * `CausalModel.forced_iff`, `CausalModel.causallyEntails_iff`: the defining equations
 * `CausalModel.Forced.of_causallyEntails`: the strict development settles less
-* `CausalModel.Forced.solve_impose_eq`, `CausalModel.Forced.solve_eq`: soundness for
-  the observation imposed as an intervention and for the observation holding
+* `CausalModel.Forced.solve_eq`, `CausalModel.Forced.solve_intervene_eq`: soundness for the
+  observation holding and for an intervention, from the situation it settles
 * `CausalModel.causallyEntails_congr`: the strict development of a variable reads the
   observation only at its ancestors
 * `CausalModel.CausallyEntails.parent_eq`: a settled variable settles each parent to the value
@@ -173,32 +173,61 @@ theorem causallyEntails_iff_iterate_card [Fintype V] :
 
 variable [∀ v, Nonempty (α v)]
 
-/-- The Kleene development is sound. What it forces from `s` holds in every context when `s` is
-imposed as an intervention. -/
-theorem Forced.solve_impose_eq (h : M.Forced s v x) (u : U) :
-    (M.impose s).solve u v = x := by
-  induction v using hM.induction with
-  | _ v ih =>
-    rcases forced_iff.1 h with hs | ⟨hs, h⟩
-    · exact solve_impose_of_eq_coe hs u
-    · rw [solve_impose_of_eq_bot hs u]
-      exact h u _ fun w hw _ hz ↦ ih w hw hz
-
-/-- The strict development is sound for the interventional reading. -/
-theorem CausallyEntails.solve_impose_eq (h : M.CausallyEntails s v x) (u : U) :
-    (M.impose s).solve u v = x :=
-  (Forced.of_causallyEntails h).solve_impose_eq u
-
 /-- The Kleene development is sound for the observational reading. What it forces from `s` holds
 in every context where `s` holds. -/
 theorem Forced.solve_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
     M.solve u v = x := by
-  rw [← mem_contexts_iff.1 hu]; exact h.solve_impose_eq u
+  induction v using hM.induction with
+  | _ v ih =>
+    rcases forced_iff.1 h with hs | ⟨-, h⟩
+    · exact (Flat.coe_le_coe.1 (hs ▸ hu v)).symm
+    · rw [solve_apply]
+      exact h u _ fun w hw _ hz ↦ ih w hw hz
 
 /-- The strict development is sound for the observational reading. -/
 theorem CausallyEntails.solve_eq (h : M.CausallyEntails s v x) {u : U}
     (hu : u ∈ M.contexts s) : M.solve u v = x :=
   (Forced.of_causallyEntails h).solve_eq hu
+
+section Intervention
+
+variable [DecidableEq V] {X : Finset V} {ξ : ∀ v : X, α v}
+
+/-- The Kleene development is sound for the interventional reading. What it forces from the
+situation an intervention settles holds in every context under that intervention. -/
+theorem Forced.solve_intervene_eq (h : M.Forced (Function.updateFinset ⊥ X fun w ↦ ↑(ξ w)) v x)
+    (u : U) : (M.intervene X ξ).solve u v = x := by
+  induction v using hM.induction with
+  | _ v ih =>
+    rcases forced_iff.1 h with hs | ⟨hs, h⟩
+    · by_cases hv : v ∈ X
+      · simp only [Function.updateFinset, hv, dite_true, Flat.coe_inj] at hs
+        exact (solve_intervene_of_mem hv).trans hs
+      · simp [Function.updateFinset, hv] at hs
+    · have hv : v ∉ X := fun hv ↦ by simp [Function.updateFinset, hv] at hs
+      rw [solve_intervene_of_notMem hv]
+      exact h u _ fun w hw _ hz ↦ ih w hw hz
+
+/-- The strict development is sound for the interventional reading. -/
+theorem CausallyEntails.solve_intervene_eq
+    (h : M.CausallyEntails (Function.updateFinset ⊥ X fun w ↦ ↑(ξ w)) v x) (u : U) :
+    (M.intervene X ξ).solve u v = x :=
+  (Forced.of_causallyEntails h).solve_intervene_eq u
+
+/-- For one variable the situation of the intervention is `[c ← a]`. -/
+theorem CausallyEntails.solve_intervene_singleton_eq {c : V} {a : α c}
+    (h : M.CausallyEntails [c ← a] v x) (u : U) : M[c ← a].solve u v = x := by
+  have : ([c ← a] : ∀ v, Flat (α v)) =
+      Function.updateFinset ⊥ {c} fun w ↦ ↑((uniqueElim a : ∀ w : ({c} : Finset V), α w) w) := by
+    rw [show ([c ← a] : ∀ v, Flat (α v)) = Function.update ⊥ c ↑a from rfl,
+      Function.update_eq_updateFinset]
+    congr 1
+    funext ⟨w, hw⟩
+    obtain rfl := Finset.mem_singleton.1 hw
+    rfl
+  exact CausallyEntails.solve_intervene_eq (this ▸ h) u
+
+end Intervention
 
 /-- When the context reaches the model only at its roots, an observation whose development settles
 every root develops, in a context where it holds, to that context's actual world. -/
