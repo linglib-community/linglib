@@ -90,6 +90,13 @@ theorem invPowSum_ne_top (hα : 0 ≤ α) (hs : 0 ∉ s) : s.invPowSum α ≠ �
     exact_mod_cast Nat.one_le_iff_ne_zero.2 fun h ↦ hs (h ▸ hn)
   simpa using ENNReal.rpow_le_rpow (ENNReal.inv_le_one.2 hn') hα
 
+theorem invPowSum_lt_invPowSum (hα : 0 ≤ α) (h : s < t) (ht : 0 ∉ t) :
+    s.invPowSum α < t.invPowSum α := by
+  obtain ⟨r, rfl⟩ := le_iff_exists_add.1 h.le
+  rw [invPowSum_add]
+  exact ENNReal.lt_add_right (invPowSum_ne_top hα fun h0 ↦ ht (mem_add.2 (.inl h0)))
+    (invPowSum_pos hα fun hr ↦ h.ne (by rw [hr, add_zero])).ne'
+
 /-! ### Domination -/
 
 /-- A multiset `t` dominates `s` when some submultiset of `t` matches `s` entry for entry, each

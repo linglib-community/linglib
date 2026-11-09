@@ -1340,28 +1340,49 @@ theorem speaker_listener_truthful_dirac_le_of_subset (hα : 0 < α)
       (dirac_absolutelyContinuous hw')
       (fun v hv ↦ ae_dirac_mem_iff.2 (hsub v (ae_dirac_mem_iff.1 hv))) (ae_dirac_mem_iff.2 hu)
 
+omit [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] in
+private theorem exp_utility_dirac (C : U → ℝ) (L : U → Measure W) (w : W) (u : U) :
+    EReal.exp (utility C L (Measure.dirac w) u) = L u {w} * ENNReal.ofReal (Real.exp (-C u)) := by
+  rw [utility_dirac, sub_eq_add_neg, EReal.exp_add, ENNReal.exp_log, ← EReal.coe_neg,
+    EReal.exp_coe]
+
+omit [Fintype U] [MeasurableSingletonClass U] in
+private theorem utility_dirac_ne_top [IsFiniteKernel L] (C : U → ℝ) (w : W) (u : U) :
+    utility C L (Measure.dirac w) u ≠ ⊤ := by
+  rw [ne_eq, ← EReal.exp_eq_top_iff, exp_utility_dirac]
+  exact ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
+
 open Filter Topology in
 /-- As rationality grows, the speaker puts all her mass on the utterance whose listener mass,
 discounted by its cost, is greatest at `w`, so the fully rational speaker maximizes the utility. -/
 theorem tendsto_speaker_dirac_real_singleton_atTop [IsFiniteKernel L] (hu : L u {w} ≠ 0)
     (hmax : ∀ u' ≠ u, (L u' {w}).toReal * Real.exp (-C u') < (L u {w}).toReal * Real.exp (-C u)) :
     Tendsto (fun α ↦ (speaker α C L Measure.dirac w).real {u}) atTop (𝓝 1) := by
-  have hexp (v : U) : EReal.exp (utility C L (Measure.dirac w) v) =
-      L v {w} * ENNReal.ofReal (Real.exp (-C v)) := by
-    rw [utility_dirac, sub_eq_add_neg, EReal.exp_add, ENNReal.exp_log, ← EReal.coe_neg,
-      EReal.exp_coe]
   refine Kernel.tendsto_softmax_mul_real_singleton_atTop
-    (V := fun w u ↦ utility C L (Measure.dirac w) u) (w := w) ?_ ?_ fun v hv ↦ ?_
-  · rw [ne_eq, ← EReal.exp_eq_zero_iff, hexp]
+    (V := fun w u ↦ utility C L (Measure.dirac w) u) (w := w) ?_ (utility_dirac_ne_top C w u)
+    fun v hv ↦ ?_
+  · rw [ne_eq, ← EReal.exp_eq_zero_iff, exp_utility_dirac]
     exact mul_ne_zero hu (ofReal_exp_ne_zero _)
-  · rw [ne_eq, ← EReal.exp_eq_top_iff, hexp]
-    exact ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
   · have hne (x : U) : L x {w} * ENNReal.ofReal (Real.exp (-C x)) ≠ ∞ :=
       ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
-    rw [← EReal.exp_lt_exp_iff, hexp, hexp, ← ENNReal.toReal_lt_toReal (hne v) (hne u),
-      ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_ofReal (Real.exp_pos _).le,
-      ENNReal.toReal_ofReal (Real.exp_pos _).le]
+    rw [← EReal.exp_lt_exp_iff, exp_utility_dirac, exp_utility_dirac,
+      ← ENNReal.toReal_lt_toReal (hne v) (hne u), ENNReal.toReal_mul, ENNReal.toReal_mul,
+      ENNReal.toReal_ofReal (Real.exp_pos _).le, ENNReal.toReal_ofReal (Real.exp_pos _).le]
     exact hmax v hv
+
+open Filter Topology in
+/-- As rationality vanishes, the speaker who knows the state chooses evenly among the utterances
+her listener can interpret there, whatever their costs. -/
+theorem tendsto_speaker_dirac_real_singleton_nhdsGT_zero [IsFiniteKernel L] (C : U → ℝ) (w : W)
+    (u : U) : Tendsto (fun α ↦ (speaker α C L Measure.dirac w).real {u}) (𝓝[>] 0)
+      (𝓝 ((uniformOn {v | L v {w} ≠ 0}).real {u})) := by
+  have hset : {v | utility C L (Measure.dirac w) v ≠ ⊥} = {v | L v {w} ≠ 0} := Set.ext fun v ↦ by
+    rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, ne_eq, ← EReal.exp_eq_zero_iff, exp_utility_dirac,
+      mul_eq_zero, not_or]
+    exact and_iff_left (ofReal_exp_ne_zero _)
+  rw [← hset]
+  exact Kernel.tendsto_softmax_mul_real_singleton_nhdsGT_zero
+    (V := fun w u ↦ utility C L (Measure.dirac w) u) (utility_dirac_ne_top C w) u
 
 theorem speaker_listener_truthful_dirac_zero_real_singleton_of_pair (hα : 0 < α)
     (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)

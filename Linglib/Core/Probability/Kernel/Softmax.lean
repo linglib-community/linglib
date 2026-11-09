@@ -29,8 +29,10 @@ both ranks the points and says which of them are available.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
   of one is the logistic function of the score difference.
-* `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_atTop`: at a growing rationality the
-  rule concentrates on the strict maximizer of the utility.
+* `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_atTop`,
+  `ProbabilityTheory.Kernel.tendsto_softmax_mul_real_singleton_nhdsGT_zero`: at a growing
+  rationality the rule concentrates on the strict maximizer of the utility, and at a vanishing one
+  it is uniform on the available points.
 * `ProbabilityTheory.Kernel.softmax_eq_tilted`,
   `ProbabilityTheory.Kernel.isGreatest_freeEnergy_softmax`: a row is the uniform measure on the
   available points tilted by the score, and so maximizes the expected score less the divergence
@@ -185,26 +187,69 @@ private theorem tendsto_rpow_div_sum_rpow_atTop {m : β → ℝ} {u : β} (hm0 :
   rw [Finset.sum_ite_eq' Finset.univ u, ite_eq_left (Finset.mem_univ u)] at hlim
   simpa using (hlim.inv₀ one_ne_zero).congr' hform
 
+private theorem softmax_mul_real_singleton {V : α → β → EReal} {w : α} (hV : ∀ v, V w v ≠ ⊤)
+    {r : ℝ} (hr : 0 ≤ r) (u : β) :
+    (softmax (fun x a ↦ (r : EReal) * V x a) w).real {u} =
+      (EReal.exp (V w u)).toReal ^ r / ∑ v, (EReal.exp (V w v)).toReal ^ r := by
+  have hexp (v : β) : EReal.exp ((r : EReal) * V w v) = EReal.exp (V w v) ^ r := by
+    rw [mul_comm, EReal.exp_mul]
+  rw [softmax, ofWeights_real_singleton _ _ fun v ↦
+    hexp v ▸ ENNReal.rpow_ne_top_of_nonneg hr (mt EReal.exp_eq_top_iff.1 (hV v))]
+  simp only [hexp, ENNReal.toReal_rpow]
+
 /-- As the rationality grows, the rule puts all its mass on the strict maximizer of the utility. -/
 theorem tendsto_softmax_mul_real_singleton_atTop {V : α → β → EReal} {w : α} {u : β}
     (hu : V w u ≠ ⊥) (hutop : V w u ≠ ⊤) (hmax : ∀ v ≠ u, V w v < V w u) :
     Tendsto (fun r : ℝ ↦ (softmax (fun x a ↦ (r : EReal) * V x a) w).real {u}) atTop (𝓝 1) := by
-  have htop (v : β) : EReal.exp (V w v) ≠ ∞ := by
-    refine mt EReal.exp_eq_top_iff.1 fun h ↦ ?_
+  have hV (v : β) : V w v ≠ ⊤ := by
     by_cases hv : v = u
-    · exact hutop (hv ▸ h)
-    · exact not_top_lt (h ▸ hmax v hv)
+    exacts [hv ▸ hutop, (hmax v hv).ne_top]
+  have htop (v : β) : EReal.exp (V w v) ≠ ∞ := mt EReal.exp_eq_top_iff.1 (hV v)
   have hu0 : 0 < (EReal.exp (V w u)).toReal :=
     ENNReal.toReal_pos (mt EReal.exp_eq_zero_iff.1 hu) (htop u)
   refine (tendsto_rpow_div_sum_rpow_atTop (m := fun v ↦ (EReal.exp (V w v)).toReal)
     (fun _ ↦ ENNReal.toReal_nonneg) hu0 fun v hv ↦ ?_).congr' ?_
   · exact (ENNReal.toReal_lt_toReal (htop v) (htop u)).2 (EReal.exp_lt_exp_iff.2 (hmax v hv))
   · filter_upwards [eventually_ge_atTop 0] with r hr
-    have hexp (v : β) : EReal.exp ((r : EReal) * V w v) = EReal.exp (V w v) ^ r := by
-      rw [mul_comm, EReal.exp_mul]
-    rw [softmax, ofWeights_real_singleton _ _ fun v ↦
-      hexp v ▸ ENNReal.rpow_ne_top_of_nonneg hr (htop v)]
-    simp only [hexp, ENNReal.toReal_rpow]
+    rw [softmax_mul_real_singleton hV hr]
+
+/-- As the rationality vanishes, the rule spreads its mass evenly over the points of score above
+`⊥`. -/
+theorem tendsto_softmax_mul_real_singleton_nhdsGT_zero {V : α → β → EReal} {w : α}
+    (hV : ∀ v, V w v ≠ ⊤) (u : β) :
+    Tendsto (fun r : ℝ ↦ (softmax (fun x a ↦ (r : EReal) * V x a) w).real {u}) (𝓝[>] 0)
+      (𝓝 ((uniformOn {v | V w v ≠ ⊥}).real {u})) := by
+  classical
+  have hzero {v : β} (hv : V w v = ⊥) :
+      ∀ᶠ r in 𝓝[>] (0 : ℝ), (EReal.exp (V w v)).toReal ^ r = 0 := by
+    filter_upwards [self_mem_nhdsWithin] with r hr
+    rw [hv, EReal.exp_bot, ENNReal.toReal_zero, Real.zero_rpow (ne_of_gt hr)]
+  have hlim (v : β) : Tendsto (fun r : ℝ ↦ (EReal.exp (V w v)).toReal ^ r) (𝓝[>] 0)
+      (𝓝 (if V w v ≠ ⊥ then 1 else 0)) := by
+    split_ifs with hv
+    · have h0 : (EReal.exp (V w v)).toReal ≠ 0 := (ENNReal.toReal_pos
+        (mt EReal.exp_eq_zero_iff.1 hv) (mt EReal.exp_eq_top_iff.1 (hV v))).ne'
+      simpa using ((Real.continuous_const_rpow h0).tendsto 0).mono_left nhdsWithin_le_nhds
+    · exact tendsto_const_nhds.congr' ((hzero (not_not.1 hv)).mono fun _ h ↦ h.symm)
+  have hform : (fun r : ℝ ↦ (EReal.exp (V w u)).toReal ^ r / ∑ v, (EReal.exp (V w v)).toReal ^ r)
+      =ᶠ[𝓝[>] 0] fun r ↦ (softmax (fun x a ↦ (r : EReal) * V x a) w).real {u} := by
+    filter_upwards [self_mem_nhdsWithin] with r hr
+    rw [softmax_mul_real_singleton hV (le_of_lt hr)]
+  rw [show {v | V w v ≠ ⊥} = ↑(Finset.univ.filter (V w · ≠ ⊥)) by ext; simp,
+    uniformOn_finset_real_singleton]
+  refine Tendsto.congr' hform ?_
+  by_cases hu : V w u = ⊥
+  · rw [ite_eq_right (by simpa using hu)]
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [hzero hu] with r hr
+    rw [hr, zero_div]
+  · have hu' : u ∈ Finset.univ.filter (V w · ≠ ⊥) := by simpa using hu
+    have hsum := tendsto_finsetSum Finset.univ fun v _ ↦ hlim v
+    rw [Finset.sum_boole] at hsum
+    have h := (hlim u).div hsum (Nat.cast_ne_zero.2 (Finset.card_ne_zero_of_mem hu'))
+    rw [ite_eq_left hu, one_div] at h
+    rw [ite_eq_left hu']
+    exact h
 
 end Limit
 

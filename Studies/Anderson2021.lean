@@ -251,13 +251,12 @@ noncomputable abbrev cg₁ : Measure World := uniformOn Set.univ
 theorem s1_turn1_informativity :
     (S1 cg₁ .nancy).real {.studyScience} = 0 ∧
     (S1 cg₁ .nancy).real {.null} < (S1 cg₁ .nancy).real {.studyHumanity} ∧
-    (S1 cg₁ .nancy).real {.studyHumanity} = (S1 cg₁ .nancy).real {.likeOutdoors} := by
-  refine ⟨speaker_listener_truthful_dirac_real_singleton_eq_zero one_pos _ _ _ (by decide),
+    (S1 cg₁ .nancy).real {.studyHumanity} = (S1 cg₁ .nancy).real {.likeOutdoors} :=
+  ⟨speaker_listener_truthful_dirac_real_singleton_eq_zero one_pos _ _ _ (by decide),
     speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem one_pos (by decide) (by decide)
-      (by decide), ?_⟩
-  rw [speaker_uniformOn_dirac_real_singleton sem one_pos,
-    speaker_uniformOn_dirac_real_singleton sem one_pos, ite_eq_left (by decide),
-    ite_eq_left (by decide), show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
+      (by decide),
+    congrArg ENNReal.toReal (speaker_uniformOn_dirac_apply_singleton_eq_of_card_eq sem one_pos
+      (by decide) (by decide) (by decide))⟩
 
 theorem profile_eq (w w' : World) : profile sem Finset.univ w = profile sem Finset.univ w' := by
   cases w <;> cases w' <;> decide
