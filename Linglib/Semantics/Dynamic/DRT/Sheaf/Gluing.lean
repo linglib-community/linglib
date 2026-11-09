@@ -140,18 +140,15 @@ section LiteralSets
 
 variable {x : FamilyOfElements (literalSets L V) R}
 
-/-- In a compatible family, a literal of one member belongs to it when it renames to the same
-literal as a literal belonging to another member. -/
-theorem mem_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
-    {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {l : Literal Y₁} {m : Literal Y₂}
-    (hlm : l.map f₁ = m.map f₂) (hm : m ∈ x f₂ h₂) (e : Fin l.rel.1.1 ↪ V) : l ∈ x f₁ h₁ := by
-  obtain ⟨⟨r, hr⟩, a, p⟩ := l
-  obtain ⟨⟨r', hr'⟩, a', p'⟩ := m
-  obtain ⟨h₁', h₂', rfl⟩ := Literal.mk.inj hlm
-  obtain rfl : r = r' := congrArg Subtype.val h₁'
-  have hc := hx (freshHom e hr a) (freshHom e hr' a') h₁ h₂ (Context.hom_ext (funext fun t ↦ by
-    simpa [freshHom] using congrFun (eq_of_heq h₂') _))
-  simpa [freshLit_map] using (congrArg (freshLit r e p ∈ ·) hc).mpr (by simpa [freshLit_map])
+/-- Members of a compatible family agree on literals whose arguments the presieve identifies. -/
+theorem mem_iff_of_compatible (hx : x.Compatible) {Y₁ Y₂ : Context L V} {f₁ : Y₁ ⟶ c}
+    {f₂ : Y₂ ⟶ c} (h₁ : R f₁) (h₂ : R f₂) {r : Σ n, L.Relations n} (hr₁ : r ∈ Y₁.vocab)
+    (hr₂ : r ∈ Y₂.vocab) {a₁ : Fin r.1 → Y₁.vars} {a₂ : Fin r.1 → Y₂.vars}
+    (ha : f₁.map ∘ a₁ = f₂.map ∘ a₂) (p : Bool) (e : Fin r.1 ↪ V) :
+    ⟨⟨r, hr₁⟩, a₁, p⟩ ∈ x f₁ h₁ ↔ ⟨⟨r, hr₂⟩, a₂, p⟩ ∈ x f₂ h₂ := by
+  have := hx (freshHom e hr₁ a₁) (freshHom e hr₂ a₂) h₁ h₂
+    (Context.hom_ext (funext fun t ↦ by simpa [freshHom] using congrFun ha _))
+  simpa [freshLit_map] using congrArg (freshLit r e p ∈ ·) this
 
 /-- `amalgamate x` holds the renamings of the literals of the members of `x`. -/
 noncomputable def amalgamate (x : FamilyOfElements (literalSets L V) R) : Finset (Literal c) := by
@@ -170,8 +167,13 @@ theorem isAmalgamation_amalgamate (hx : x.Compatible)
     change Literal.preimage f (amalgamate x) = x f hf
     ext l
     simp only [mem_preimage, mem_amalgamate]
-    exact ⟨fun ⟨Z, g, hg, m, hm, h⟩ ↦ mem_of_compatible hx hf hg h.symm hm
-      (hc _ (f.incl l.rel.2)).some, fun hl ↦ ⟨Y, f, hf, l, hl, rfl⟩⟩
+    refine ⟨fun ⟨Z, g, hg, m, hm, h⟩ ↦ ?_, fun hl ↦ ⟨Y, f, hf, l, hl, rfl⟩⟩
+    obtain ⟨⟨r, hr⟩, a, p⟩ := l
+    obtain ⟨⟨r', hr'⟩, a', p'⟩ := m
+    obtain ⟨h₁, h₂, rfl⟩ := Literal.mk.inj h
+    obtain rfl : r' = r := congrArg Subtype.val h₁
+    exact (mem_iff_of_compatible hx hf hg hr hr' (eq_of_heq h₂).symm _
+      (hc _ (f.incl hr)).some).2 hm
 
 theorem isSeparatedFor_literalSets (hR : R ∈ literalPrecoverage L V c) :
     R.IsSeparatedFor (literalSets L V) := fun _ t₁ t₂ h₁ h₂ ↦ by
