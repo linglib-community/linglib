@@ -1,36 +1,31 @@
 module
 
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Order.Basic
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
 
-This file formalizes the stimulus clips of Majid, Boster and Bowerman and the English
-descriptions they report. Speakers of twenty-eight languages described sixty-one clips of
-separation events, and a correspondence analysis of which clips shared a verb found four
-dimensions across the forty-three agentive cutting-and-breaking clips: the predictability of
-the locus of separation, tearing, snapping against smashing, and poking a hole. A clip is
-described by what the paper states about it, as a region of the substrate's `Root.Content`.
-
-## Main definitions
-
-* `stimulus`: the instrument, object dimensionality and result the paper states for a clip
-* `tearing`, `pullingYarn`, `snapping`, `smashing`: the clips named for Dimensions 2 and 3
+This file formalizes the stimulus clips of Majid, Boster and Bowerman. Speakers of twenty-eight
+languages described sixty-one clips of separation events, and a correspondence analysis of which
+clips shared a verb found four dimensions across the forty-three agentive cutting-and-breaking
+clips: the predictability of the locus of separation, tearing, snapping against smashing, and
+poking a hole. A clip is described by what the paper states about it, and [its place on the first
+dimension is a function neither of the instrument nor of the object](##dim1_not_factorsThrough).
 
 ## Implementation notes
 
-Clips are the appendix numbers. A dimension the paper leaves unstated is unconstrained, so a
-root is compatible with a clip (`Root.Content.Overlaps`) when its regions contain the stated
-values. The paper classes rope as one-dimensional but not yarn, which is coded like rope.
-Positions on the first dimension enter only through the order the text states.
+Clips are the appendix numbers. A dimension the paper leaves unstated is `none`. The paper classes
+rope as one-dimensional but not yarn, which is coded like rope. Positions on the first dimension
+enter only through the order the text states.
 
 ## TODO
 
-The per-language naming data are not in the paper. Its illustrations need fragments with
-separation roots: the placement of the karate chop by Chontal, Hindi and Jalonke, and the
-Yélî Dnye tearing verb's extension to carrots split along the grain (§3.1). The English
-fragment lacks the change-of-state *snap* (its *snap* is the manner-of-speaking verb) and the
-*smash*, *stab* and *bodge* the paper reports.
+The per-language naming data are not in the paper. Its illustrations need naming rows: the
+placement of the karate chop by Chontal, Hindi and Jalonke, the English verbs (*tear* for the
+tearing and yarn-pulling clips, distinct from *cut* and *break*; *snap* and *smash*, or *break*
+for both), and the Yélî Dnye tearing verb's extension to carrots split along the grain (§3.1).
 
 ## References
 
@@ -41,9 +36,28 @@ fragment lacks the change-of-state *snap* (its *snap* is the manner-of-speaking 
 
 namespace MajidBosterBowerman2008
 
-open ArgumentStructure.Root ArgumentStructure.Root.Content English English.Verbs
-
 /-! ### Clips -/
+
+/-- The instrument of a clip (§2.2): the hands, a hammer, or a knife. -/
+inductive Instrument where
+  | hands
+  | hammer
+  | knife
+  deriving DecidableEq
+
+/-- The dimensionality of the object acted on (§2.2): one-dimensional as rope or a carrot,
+two-dimensional as cloth or a plate, three-dimensional as a melon or a pot. -/
+inductive Dimensionality where
+  | one
+  | two
+  | three
+  deriving DecidableEq
+
+/-- What the paper states about a clip, `none` where it is silent. -/
+structure Stimulus where
+  instrument : Option Instrument := none
+  dimensionality : Option Dimensionality := none
+  deriving DecidableEq
 
 /-- In the tearing clips cloth is torn by hand, completely (clip 1) or halfway (clip 36).
 Dimension 2 sets them apart from all other clips (§3.1). -/
@@ -57,25 +71,20 @@ def pullingYarn : Finset ℕ := {35, 38}
 rigid object into two pieces. They form one pole of Dimension 3 (§3.1). -/
 def snapping : Finset ℕ := {25, 19, 57, 5}
 
-/-- In the smashing clips (40, 39, 21, 31) a blow fragments a rigid object into many pieces.
-They form the other pole of Dimension 3 (§3.1). -/
+/-- In the smashing clips (40, 39, 21, 31) a hammer blow fragments a rigid object into many
+pieces. They form the other pole of Dimension 3 (§3.1). -/
 def smashing : Finset ℕ := {40, 39, 21, 31}
 
-/-- `stimulus c` is what the paper states about clip `c`, as a region of root content. The
-hands tear cloth, pull yarn apart and snap one-dimensional objects, a hammer fragments the
-smashed objects, and clips 10 and 32 cut a carrot, one of the paper's one-dimensional objects
-(§2.2), with a knife and with a karate chop. -/
-def stimulus (c : ℕ) : Content :=
-  if c ∈ tearing then
-    { instrument := {.hands}, resultGeometry := {.separation}, patientDimensionality := {.twoD} }
-  else if c ∈ pullingYarn then
-    { instrument := {.hands}, resultGeometry := {.separation}, patientDimensionality := {.oneD} }
-  else if c ∈ snapping then
-    { instrument := {.hands}, resultGeometry := {.fracture}, patientDimensionality := {.oneD} }
-  else if c ∈ smashing then
-    { instrument := {.bluntImpact}, resultGeometry := {.fragmentation} }
-  else if c = 10 then { instrument := {.sharpBlade}, patientDimensionality := {.oneD} }
-  else if c = 32 then { instrument := {.hands}, patientDimensionality := {.oneD} }
+/-- `stimulus c` is what the paper states about clip `c`. The hands tear cloth, pull yarn apart
+and snap one-dimensional objects, a hammer fragments the smashed objects, and clips 10 and 32 cut
+a carrot, one of the paper's one-dimensional objects (§2.2), with a knife and with a karate
+chop. -/
+def stimulus (c : ℕ) : Stimulus :=
+  if c ∈ tearing then ⟨some .hands, some .two⟩
+  else if c ∈ pullingYarn ∨ c ∈ snapping then ⟨some .hands, some .one⟩
+  else if c ∈ smashing then ⟨some .hammer, none⟩
+  else if c = 10 then ⟨some .knife, some .one⟩
+  else if c = 32 then ⟨some .hands, some .one⟩
   else {}
 
 /-! ### The first dimension -/
@@ -84,26 +93,7 @@ def stimulus (c : ℕ) : Content :=
 theorem dim1_not_factorsThrough {P : Type*} [Preorder P] (pos : ℕ → P)
     (h₁ : pos 10 < pos 32) (h₂ : pos 32 < pos 19) :
     ¬ pos.FactorsThrough (fun c ↦ (stimulus c).instrument) ∧
-      ¬ pos.FactorsThrough (fun c ↦ (stimulus c).patientDimensionality) :=
+      ¬ pos.FactorsThrough (fun c ↦ (stimulus c).dimensionality) :=
   ⟨fun h ↦ h₂.ne (h (by decide)), fun h ↦ h₁.ne (h (by decide))⟩
-
-/-! ### English -/
-
-/-- The fragment's *tear* is compatible with the tearing and yarn-pulling clips (§3.1, Dimension 2).
--/
-theorem tear_overlaps_stimulus :
-    ∀ c ∈ tearing ∪ pullingYarn, tear_.root.content.Overlaps (stimulus c) := by
-  decide
-
-/-- The fragment's *cut* and *break* reject the tearing clips (§3.1). -/
-theorem not_cut_not_break_of_tearing : ∀ c ∈ tearing,
-    ¬ cut.root.content.Overlaps (stimulus c) ∧ ¬ break_.root.content.Overlaps (stimulus c) := by
-  decide
-
-/-- The fragment's *break* is compatible with the snapping and smashing clips (§3.1, Dimension 3;
-§3.1.1). -/
-theorem break_overlaps_stimulus :
-    ∀ c ∈ snapping ∪ smashing, break_.root.content.Overlaps (stimulus c) := by
-  decide
 
 end MajidBosterBowerman2008

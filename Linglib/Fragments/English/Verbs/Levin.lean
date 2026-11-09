@@ -239,10 +239,6 @@ def cut : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  root := { content := {
-    resultGeometry := {.surfaceBreach}
-    instrument := {.sharpBlade}
-  } }
   levinClasses := {LevinClass.amuse, .braid, .build, .cut, .hurt, .meander, .split}
 
 /-- "chop" — Levin 21.2 Carve verbs. -/

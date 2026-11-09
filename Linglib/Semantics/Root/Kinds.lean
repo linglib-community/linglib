@@ -8,8 +8,8 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Root kind signatures
 
-Which templatic components a root entails, the coarse, between-class half of a
-root's meaning; the fine, within-class half is `Root.Content`. The root typology
+Which templatic components a root entails, the part of a root's meaning that fixes its
+class. The root typology
 of Beavers and Koontz-Garboden (§5.4.1) records which of four kinds of
 lexical entailment a root carries — state, manner, result, cause —
 under two collocational restrictions, that a change entails a state and a cause

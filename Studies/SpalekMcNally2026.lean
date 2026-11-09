@@ -1,101 +1,197 @@
 module
 
+public import Linglib.Data.Examples.SpalekMcNally2026
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Spalek & McNally (2026): The Anatomy of a Verb
 
-This file formalizes the contrastive analysis of English *tear* and Spanish *rasgar* of Spalek and
-McNally. The two verbs are counterparts in comparative lexical databases and share an event
-structure: both are simple result verbs of Levin's break class describing a minimal, binary-scale
-change, the partly uncontrolled loss of integrity of a whole, with a causative alternation and no
-agentive intransitive use. They differ in root content, the fine within-class half of a root's
-meaning beside its templatic kinds in the sense of Beavers and Koontz-Garboden: *rasgar* requires a
-flimsy or insubstantial patient and implies a linear, gash-like separation without much force, where
-*tear* takes patients of any robustness, implies separation in contrary directions, often with
-force, and is compatible with careful action. Figurative extensions follow the root content, the
-case complementary to the event-structural contrasts of McNally and Spalek's 2022 paper: *rasgar*
-disturbs fragile states, silence and darkness, and describes linear movement through an
-insubstantial medium; *tear* rends with force and describes fast motion along a path. In the
-bidirectional parallel corpus the verbs are asymmetric translation equivalents: *rasgar* is one of
-the rarer renderings of *tear*, whose most frequent counterpart is *arrancar*, while *tear* is the
-usual rendering of *rasgar*.
-
-The root contents are the fragment entries' `root.content`, regions of the substrate's
-`Root.Content` space, and the paper's examples are points of it, `Root.Content.Situation`s, a
-described event's value on every dimension. A root admits a situation when the situation lies
-in its region, and the substrate's `overlaps_iff_exists_mem` identifies `Overlaps` with the
-existence of a situation both roots admit, the zone in which the verbs are intertranslatable.
-The paper's contrasts are situations one root admits and the other rejects: the chunk of bread
-(14), the engraved cement (16b), the carefully torn foil (17), the rooster and the silence (18),
-and the ball tearing through the rough (23); the soft contact lenses (16a) are admitted by both.
+English *tear* and Spanish *rasgar* are counterparts in lexical databases and share an event
+structure: both are result verbs that [take part in the causative
+alternation](##hasCausativeAlternation_tear_rasgar). They differ in root content, which the paper
+describes by the patient, the motion that effects the change, its result, the force involved and
+the agent's control. Read as conditions on described events, the two contents [exclude each
+other](##disjoint_tearContent_rasgarContent), since *tear* implies separation in contrary
+directions and *rasgar* linear motion, yet the verbs translate each other where a description
+[leaves the motion open](##lenses_verdicts), as tearing soft contact lenses does.
 
 ## Implementation notes
 
-The translation counts of the paper's Tables 1 and 2 are reported in prose. Each contrast
-situation is fixed on the dimension the paper names for it and agrees with the contact
-lenses elsewhere, inside both roots' regions, so that each verdict turns on the named
-dimension alone: robustness for the bread, result geometry for the cement, agent control
-for the foil, robustness and force for the silence, force for the rough.
+* An example is a description, the set of events agreeing with what the paper states about it on
+  some dimensions; a verb fits an example when its content meets the description. Each contrast
+  is a description that one content meets and the other misses.
+* The paper's implications are read as conditions. *Tear*'s "often with some force" is not one;
+  outside the literal separation domain *tear* needs contrary motion or considerable force, the
+  two sources the paper gives for its figurative uses. *Rasgar*'s slight force is a consequence
+  the paper draws from its patient, entered as a condition.
+* The paper finds *tear the silence* extremely rare but not impossible and *tear the darkness*
+  odd; the darkness of (18b) carries the contrast.
+* The translation counts of the paper's Tables 1 and 2 are not encoded.
 
 ## References
 
 * [spalek-mcnally-2026]
-* [mcnally-spalek-2022]
-* [beavers-koontz-garboden-2020]
-* [levin-1993]
 -/
 
 @[expose] public section
 
 namespace SpalekMcNally2026
 
-open ArgumentStructure.Root ArgumentStructure.Root.Content English Spanish.Verbs English.Verbs
+open Examples
 
-/-! ### The paper's situations -/
+/-! ### Event structure -/
 
-/-- Tearing soft contact lenses with one's nails (16a) separates a flimsy patient by a moderate,
-linear force. -/
-def lenses : Situation :=
-  ⟨.moderate, .unidirectional, .hands, .neutral, .separation, .flimsy, .twoD⟩
+/-- Both verbs have an intransitive use describing a change and a simple transitive use (§3.1). -/
+theorem hasCausativeAlternation_tear_rasgar :
+    English.Verbs.tear_.valency.HasCausativeAlternation ∧
+      Spanish.Verbs.rasgar.valency.HasCausativeAlternation := by
+  decide
 
-/-- Tearing a chunk off a slice of bread (14) has a robust patient. -/
-def bread : Situation := { lenses with patientRobustness := .robust }
+/-! ### Described events -/
 
-/-- An awl engraving cement (16b) makes a gash on a surface, with no separation in contrary
+/-- What a use describes (§3.3): the separation of a patient, the literal domain; the disturbance of
+a state, as in (18) and (20); or motion along a path or through a medium, as in (19) and (23). -/
+inductive Domain where
+  | separation
+  | state
+  | motion
+  deriving DecidableEq, Fintype
+
+/-- The substance of the patient (p. 94): insubstantial, as silence or darkness; flimsy, as a sheet
+or soft contact lenses; or a thick solid, as bread. -/
+inductive Patient where
+  | insubstantial
+  | flimsy
+  | thickSolid
+  deriving DecidableEq, Fintype
+
+/-- How the change is effected (p. 95): by separation in contrary directions or by linear
+motion. -/
+inductive Motion where
+  | contrary
+  | linear
+  deriving DecidableEq, Fintype
+
+/-- The result (p. 94): a separation of the patient, or a gash on its surface without a hole. -/
+inductive Result where
+  | separation
+  | gash
+  deriving DecidableEq, Fintype
+
+/-- The force or energy, typically speed, involved (pp. 98–99). -/
+inductive Force where
+  | slight
+  | considerable
+  deriving DecidableEq, Fintype
+
+/-- The agent's control over the change (p. 96): enough to carry the action out carefully, or
+less. -/
+inductive Control where
+  | careful
+  | uncontrolled
+  deriving DecidableEq, Fintype
+
+/-- A described event, a value on each dimension. -/
+structure Event where
+  domain : Domain
+  patient : Patient
+  motion : Motion
+  result : Result
+  force : Force
+  control : Control
+  deriving DecidableEq, Fintype
+
+/-! ### Root content -/
+
+/-- The content of *tear*: separation in contrary directions (p. 95) or, outside the separation
+domain, considerable force (pp. 98–99). -/
+def tearContent : Finset Event :=
+  {e | e.motion = .contrary ∨ e.domain ≠ .separation ∧ e.force = .considerable}
+
+/-- The content of *rasgar*: a flimsy or insubstantial patient, or a gash on a thicker one
+(p. 94), linear motion (p. 95), no careful control (p. 96), and slight force (p. 99). -/
+def rasgarContent : Finset Event :=
+  {e | (e.patient ≠ .thickSolid ∨ e.result = .gash) ∧ e.motion = .linear ∧
+    e.control = .uncontrolled ∧ e.force = .slight}
+
+/-- No event is both a tearing and a *rasgar* event: the contents disagree on the motion. -/
+theorem disjoint_tearContent_rasgarContent : Disjoint tearContent rasgarContent := by
+  decide
+
+/-! ### The paper's examples -/
+
+/-- Tearing soft contact lenses with one's nails (16a) separates a flimsy patient. -/
+def lenses : Finset Event := {e | e.domain = .separation ∧ e.patient = .flimsy}
+
+/-- Tearing a chunk off a slice of bread (14) separates a thick solid without a gash, which is
+why *rasgar* cannot describe it (p. 94). The contrary motion the paper also notes (p. 95) would
+rule *rasgar* out on its own and is left open. -/
+def bread : Finset Event :=
+  {e | e.domain = .separation ∧ e.patient = .thickSolid ∧ e.result = .separation}
+
+/-- An awl engraving cement (16b) leaves a gash on a thick solid, without separation in contrary
 directions. -/
-def cement : Situation := { lenses with resultGeometry := .surfaceBreach }
+def cement : Finset Event :=
+  {e | e.domain = .separation ∧ e.patient = .thickSolid ∧ e.result = .gash ∧ e.motion = .linear}
 
-/-- Children carefully tearing tin foil (17) control the action. -/
-def foil : Situation := { lenses with agentControl := .compatible }
+/-- Children carefully tearing tin foil (17) control the separation. -/
+def foil : Finset Event := {e | e.domain = .separation ∧ e.control = .careful}
 
-/-- A rooster tearing the silence of the dawn (18) disturbs a fragile state with the least
-force. -/
-def silence : Situation := { lenses with force := .low, patientRobustness := .insubstantial }
+/-- A sudden blaze disturbing the darkness (18b) disturbs a fragile state with little force and
+nothing like contrary motion (pp. 97–98). -/
+def darkness : Finset Event :=
+  {e | e.domain = .state ∧ e.patient = .insubstantial ∧ e.motion ≠ .contrary ∧
+    e.force = .slight}
 
-/-- A ball tearing through the rough (23) moves with considerable energy. -/
-def rough : Situation := { lenses with force := .high }
+/-- A melody moving through the silence of empty streets (19a) moves linearly through an
+insubstantial medium, and not especially fast or violently (p. 97). -/
+def melody : Finset Event :=
+  {e | e.domain = .motion ∧ e.patient = .insubstantial ∧ e.motion = .linear ∧
+    e.force = .slight}
 
-theorem lenses_admitted : lenses ∈ tear_.root.content ∧ lenses ∈ rasgar.root.content := by
+/-- A ball tearing through the rough (23a) moves along a path with considerable energy, without
+disrupting the space it moves through (p. 99). -/
+def rough : Finset Event :=
+  {e | e.domain = .motion ∧ e.motion = .linear ∧ e.force = .considerable}
+
+/-- Both contents meet the description of (16a), which leaves the motion open, so the verbs are
+translation equivalents there (p. 95). -/
+theorem lenses_verdicts : ¬ Disjoint tearContent lenses ∧
+    (¬ Disjoint rasgarContent lenses ↔ ex_16a.judgment = .acceptable) := by
   decide
 
-theorem roots_overlap : tear_.root.content.Overlaps rasgar.root.content :=
-  overlaps_iff_exists_mem.2 ⟨lenses, lenses_admitted⟩
-
-theorem bread_contrast : bread ∈ tear_.root.content ∧ bread ∉ rasgar.root.content := by
+-- (14), p. 95
+theorem bread_verdicts : (¬ Disjoint tearContent bread ↔ ex_14a.judgment = .acceptable) ∧
+    (¬ Disjoint rasgarContent bread ↔ ex_14b.judgment = .acceptable) := by
   decide
 
-theorem cement_contrast : cement ∉ tear_.root.content ∧ cement ∈ rasgar.root.content := by
+-- (16b), p. 95
+theorem cement_verdicts : Disjoint tearContent cement ∧
+    (¬ Disjoint rasgarContent cement ↔ ex_16b.judgment = .acceptable) := by
   decide
 
-theorem foil_contrast : foil ∈ tear_.root.content ∧ foil ∉ rasgar.root.content := by
+-- (17), p. 96
+theorem foil_verdicts : (¬ Disjoint tearContent foil ↔ ex_17a.judgment = .acceptable) ∧
+    (¬ Disjoint rasgarContent foil ↔ ex_17b.judgment = .acceptable) := by
   decide
 
-theorem silence_contrast : silence ∉ tear_.root.content ∧ silence ∈ rasgar.root.content := by
+-- (18b), pp. 97–98
+theorem darkness_verdicts : Disjoint tearContent darkness ∧
+    (¬ Disjoint rasgarContent darkness ↔ ex_18b.judgment = .acceptable) := by
   decide
 
-theorem rough_contrast : rough ∈ tear_.root.content ∧ rough ∉ rasgar.root.content := by
+-- (19a), pp. 97, 99
+theorem melody_verdicts : Disjoint tearContent melody ∧
+    (¬ Disjoint rasgarContent melody ↔ ex_19a.judgment = .acceptable) := by
+  decide
+
+-- (23a), p. 99
+theorem rough_verdicts : (¬ Disjoint tearContent rough ↔ ex_23a.judgment = .acceptable) ∧
+    Disjoint rasgarContent rough := by
   decide
 
 end SpalekMcNally2026
