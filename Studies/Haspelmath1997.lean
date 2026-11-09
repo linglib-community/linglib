@@ -23,6 +23,7 @@ public import Linglib.Fragments.Latin.Indefinites
 public import Linglib.Fragments.Latvian.Indefinites
 public import Linglib.Fragments.Mandarin.Indefinites
 public import Linglib.Fragments.Quechua.Indefinites
+public import Linglib.Fragments.Romance.French.Indefinites
 public import Linglib.Fragments.Romance.Italian.Indefinites
 public import Linglib.Fragments.Slavic.Russian.Indefinites
 public import Linglib.Fragments.Swahili.Indefinites
@@ -39,6 +40,7 @@ public import Linglib.Fragments.Japanese.PolarityItems
 public import Linglib.Fragments.Korean.PolarityItems
 public import Linglib.Fragments.Mandarin.PolarityItems
 public import Linglib.Fragments.Quechua.PolarityItems
+public import Linglib.Fragments.Romance.French.PolarityItems
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Fragments.Slavic.Russian.PolarityItems
 
@@ -48,7 +50,7 @@ public import Linglib.Fragments.Slavic.Russian.PolarityItems
 This file formalizes Haspelmath's implicational map of indefinite functions and the claims
 made over it: the adjacency requirement that every indefinite series cover a connected region of
 the nine-function map, the two further principles of §4.5 restricting which connected regions
-occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
+occur, and the series of nineteen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
 `Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to be
@@ -70,7 +72,7 @@ set aside (`carries_antiAdditive_iff`).
 The paradigms verify the adjacency requirement (`sample_connected`), the overlap of series that the
 book holds against contrast-based accounts of grammatical meaning (`sample_overlap`), and the
 human/non-human distinction the book finds practically everywhere, which only the Latvian
-*kaut*-series lacks (`disjoint_forms_person_thing`). The book's examples for fifteen of the
+*kaut*-series lacks (`disjoint_forms_person_thing`). The book's examples for sixteen of the
 languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each variant the book
 prints in a line; the figures cover the acceptable rows and exclude the starred ones
 (`acceptable_covers`, `ungrammatical_excludes`).
@@ -87,7 +89,7 @@ comparative, which the book restricts to equative standards, and Swahili CL-o CL
 comparative the book predicts without data; both are the book's own map-driven analyses. Series
 that are not pronouns in the book's sense (Georgian free-choice *nebismieri*, Turkish *kimse*,
 the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover all nine
-functions.
+functions, as is French *-conque*, which Fig. A.9 does not draw, with its examples.
 
 The features of §5.6 do not make the map a subgraph of a hypercube on their values: irrealis and
 question are adjacent and differ in scalarity and in the reversal of the scale, which classifies
@@ -385,7 +387,7 @@ theorem excluded_violate :
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
   decide +kernel
 
-/-! ### Eighteen languages of the 40-language sample -/
+/-! ### Nineteen languages of the 40-language sample -/
 
 /-- A `Series` is an indefinite series with the region of the map that its figure in Appendix A
 encloses. Its name is the book's, by which the examples are tagged. -/
@@ -486,6 +488,14 @@ def hindi : List Series :=
   [ { HindiUrdu.Indefinites.koiiSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
     { HindiUrdu.Indefinites.bhiiSeries with functions := region [3, 4, 5, 6, 7, 8, 9] } ]
 
+/-- The French series (A.9) are *quelque-* 12345, *personne* 45678, *que ce soit* 456789 and
+*n'importe* 89. -/
+def french : List Series :=
+  [ { French.Indefinites.quelqueSeries with functions := region [1, 2, 3, 4, 5] },
+    { French.Indefinites.personneSeries with functions := region [4, 5, 6, 7, 8] },
+    { French.Indefinites.queCeSoitSeries with functions := region [4, 5, 6, 7, 8, 9] },
+    { French.Indefinites.nImporteSeries with functions := region [8, 9] } ]
+
 /-- The Italian series (A.10) are *qualche-* 123456, *nessuno* 467 (questions but not
 conditionals) and *-unque* 89. -/
 def italian : List Series :=
@@ -538,12 +548,12 @@ def swahili : List Series :=
   [ { Swahili.Indefinites.genericNounSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
     { Swahili.Indefinites.oOteSeries with functions := region [4, 5, 6, 7, 8, 9] } ]
 
-/-- The eighteen languages. -/
+/-- The nineteen languages. -/
 def sample : List (List Series) :=
   [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
-    italian, finnish, korean, hungarian, georgian, quechua, swahili ]
+    french, italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
-/-- Every series of the eighteen sample languages covers a connected region of the map, the
+/-- Every series of the nineteen sample languages covers a connected region of the map, the
 book's adjacency requirement. -/
 theorem sample_connected :
     ∀ p ∈ sample, ∀ e ∈ p, (implicationalMap.induce ↑e.functions).Connected := by
@@ -555,8 +565,8 @@ theorem sample_principles :
   decide
 
 theorem sample_overlap :
-    ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
-      korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
+    ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, french, italian,
+      finnish, korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
 theorem disjoint_forms_person_thing :
@@ -581,8 +591,8 @@ example rows. -/
 def paradigm? (l : Glottocode) : Option (List Series) :=
   List.lookup l [(.english, english), (.russian, russian), (.latvian, latvian),
     (.german, german), (.japanese, japanese), (.mandarinChinese, mandarin),
-    (.turkish, turkish), (.hindi, hindi), (.italian, italian), (.finnish, finnish),
-    (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
+    (.turkish, turkish), (.hindi, hindi), (.french, french), (.italian, italian),
+    (.finnish, finnish), (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
     (.huaylasAncashQuechua, quechua), (.swahili, swahili)]
 
 /-- The functions by the names the example rows give them. -/
@@ -649,7 +659,8 @@ theorem regionOf_eq_theoryRegion :
     ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki), (mandarin, Mandarin.PolarityItems.sheiDou),
       (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo),
       (quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
-      (hindi, HindiUrdu.PolarityItems.kuchBhii)],
+      (hindi, HindiUrdu.PolarityItems.kuchBhii), (french, French.PolarityItems.personne),
+      (french, French.PolarityItems.rien), (french, French.PolarityItems.jamais)],
       regionOf p.1 p.2 = some (theoryRegion p.2) := by
   decide +kernel
 
