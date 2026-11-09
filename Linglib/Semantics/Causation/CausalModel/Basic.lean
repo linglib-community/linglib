@@ -22,10 +22,11 @@ restricts it to them.
 
 * `CausalModel.dependsOn_solve`: the solution at a variable reads only the intervention at its
   ancestors
-* `CausalModel.solve_eq_of_le_of_le_world`: composition
+* `CausalModel.solve_eq_of_le_of_le_world`, `CausalModel.solve_eq_solve_iff_le_world`: composition
+  and its converse
 * `CausalModel.le_world`: effectiveness
 * `CausalModel.solve_eq_of_solve_update_of_solve_update`: reversibility
-* `CausalModel.solve_eq_solve_bot_of_mem_contexts`: consistency
+* `CausalModel.mem_contexts_iff_solve_eq`: consistency and its converse
 
 ## Implementation notes
 
@@ -51,15 +52,9 @@ section Intervention
 
 /-- The solution at a variable reads the intervention only at the variable and its ancestors. -/
 theorem dependsOn_solve (u : U) (v : V) :
-    DependsOn (M.solve · u v) {w | ReflTransGen M.graph.Adj w v} := by
-  induction v using hM.induction with
-  | _ v ih =>
-    intro I J h
-    dsimp only
-    rw [solve_apply, solve_apply, h v .refl]
-    congr 1
-    exact M.dependsOn_eqn v u fun w (hw : M.graph.Adj w v) ↦
-      ih w hw fun w' hw' ↦ h w' (hw'.tail hw)
+    DependsOn (M.solve · u v) {w | ReflTransGen M.graph.Adj w v} := fun I J h ↦
+  WellFounded.fixedPoint_congr (dependsOn_step I u) (dependsOn_step J u) fun w hw _ ↦ by
+    rw [step_apply, step_apply, h w hw]
 
 variable (M) in
 /-- `M.world I u` is the world the intervention `I` brings about in the context `u`, its solution
@@ -85,6 +80,12 @@ theorem solve_eq_of_le_of_le_world {I J : ∀ v, Flat (α v)} {u : U} (hIJ : I �
   cases h : J v with
   | bot => exact (solve_of_eq_bot (le_bot_iff.1 (h ▸ hIJ v)) u).symm
   | coe a => exact Flat.coe_le_coe.1 (h ▸ hJ v)
+
+/-- An extension of an intervention leaves its solution unchanged exactly when the extension holds
+in the world the intervention brings about. -/
+theorem solve_eq_solve_iff_le_world {I J : ∀ v, Flat (α v)} {u : U} (hIJ : I ≤ J) :
+    M.solve J u = M.solve I u ↔ J ≤ M.world I u :=
+  ⟨fun h v ↦ by rw [world_apply, ← h]; exact le_world J u v, solve_eq_of_le_of_le_world hIJ⟩
 
 variable [DecidableEq V]
 
@@ -140,10 +141,10 @@ theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
 
 variable {s : ∀ v, Flat (α v)} {u : U}
 
-/-- Consistency: in a context where the observation `s` holds, imposing it as an intervention
-changes nothing. -/
-theorem solve_eq_solve_bot_of_mem_contexts (hu : u ∈ M.contexts s) : M.solve s u = M.solve ⊥ u :=
-  solve_eq_of_le_of_le_world bot_le hu
+/-- Consistency: the observation `s` holds in a context exactly when imposing it there as an
+intervention changes nothing. -/
+theorem mem_contexts_iff_solve_eq : u ∈ M.contexts s ↔ M.solve s u = M.solve ⊥ u :=
+  (solve_eq_solve_iff_le_world bot_le).symm
 
 theorem mem_contexts_update [DecidableEq V] (hu : u ∈ M.contexts s) {c : V} {x : α c}
     (hx : M.solve ⊥ u c = x) : u ∈ M.contexts (Function.update s c ↑x) :=

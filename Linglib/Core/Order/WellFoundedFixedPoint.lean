@@ -13,7 +13,8 @@ map whose `i`-th coordinate depends only on the coordinates `r`-below `i`, that 
 `DependsOn (F · i) {j | r j i}`. This file proves that `F` has exactly one fixed point,
 `WellFounded.fixedPoint`, built by well-founded recursion, and that iterating `F` from any family
 reaches it once the number of iterations exceeds a ranking of `r`, which in a finite index type
-is its cardinality. Fixed points of two such maps compare when the maps do.
+is its cardinality. Fixed points of two such maps agree where the maps agree, and compare when the
+maps do.
 
 ## Main definitions
 
@@ -25,6 +26,8 @@ is its cardinality. Fixed points of two such maps compare when the maps do.
   fixed point
 * `WellFounded.fixedPoint_eq_iterate`, `WellFounded.fixedPoint_eq_iterate_card`: iteration reaches
   it past a ranking
+* `WellFounded.fixedPoint_congr`: fixed points agree at an index where the maps agree at it and
+  below it
 * `WellFounded.fixedPoint_le_fixedPoint`: fixed points are ordered as the maps are
 -/
 
@@ -102,6 +105,17 @@ theorem fixedPoint_eq_iterate_card [Fintype ι] (x : ∀ i, β i) :
     hr.fixedPoint F = F^[Fintype.card ι] x :=
   let ⟨rk, hrk⟩ := exists_relHom_lt_card hr
   fixedPoint_eq_iterate hF rk hrk x
+
+omit hF in
+/-- Maps that agree at every index at or below `i` have fixed points that agree at `i`. -/
+theorem fixedPoint_congr (hF : ∀ i, DependsOn (F · i) {j | r j i})
+    (hG : ∀ i, DependsOn (G · i) {j | r j i}) {i : ι}
+    (h : ∀ j, Relation.ReflTransGen r j i → ∀ x, F x j = G x j) :
+    hr.fixedPoint F i = hr.fixedPoint G i := by
+  induction i using hr.induction with
+  | _ i ih =>
+    rw [fixedPoint_apply hF, fixedPoint_apply hG, h i .refl]
+    exact hG i fun j (hj : r j i) ↦ ih j hj fun k hk ↦ h k (hk.tail hj)
 
 omit hF in
 /-- Fixed points are ordered as the maps are. If `F x ≤ G y` whenever `x ≤ y`, the fixed point of

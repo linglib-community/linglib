@@ -152,16 +152,9 @@ theorem CausallyEntails.parent_settled (h : M.CausallyEntails s v x) (hv : s v =
 /-- Observations that agree on a variable and all its ancestors settle it alike. -/
 theorem causallyEntails_congr {t : ∀ v, Flat (α v)}
     (h : ∀ w, Relation.ReflTransGen M.graph.Adj w v → s w = t w) :
-    M.CausallyEntails s v x ↔ M.CausallyEntails t v x := by
-  induction v using hM.induction with
-  | _ v ih =>
-    have hpar : ∀ w, M.graph.Adj w v → ∀ z, M.CausallyEntails s w z ↔ M.CausallyEntails t w z :=
-      fun w hw _ ↦ ih w hw fun w' hw' ↦ h w' (hw'.tail hw)
-    rw [causallyEntails_iff, causallyEntails_iff, h v .refl]
-    exact or_congr_right (and_congr_right fun _ ↦ and_congr
-      (forall₂_congr fun w hw ↦ exists_congr (hpar w hw))
-      (forall₂_congr fun _ _ ↦ imp_congr_left (forall₂_congr fun w hw ↦
-        forall_congr' fun z ↦ imp_congr_left (hpar w hw z))))
+    M.CausallyEntails s v x ↔ M.CausallyEntails t v x :=
+  Iff.of_eq <| congrFun (WellFounded.fixedPoint_congr (dependsOn_entailsStep s)
+    (dependsOn_entailsStep t) fun w hw _ ↦ by unfold entailsStep; rw [h w hw]) x
 
 theorem causallyEntails_update_of_not_reflTransGen [DecidableEq V] {c : V}
     (h : ¬ Relation.ReflTransGen M.graph.Adj c v) (y : Flat (α c)) :
@@ -199,7 +192,7 @@ theorem CausallyEntails.solve_eq_of_intervene (h : M.CausallyEntails s v x) (u :
 in every context where `s` holds. -/
 theorem Forced.solve_bot_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
     M.solve ⊥ u v = x := by
-  rw [← solve_eq_solve_bot_of_mem_contexts hu]; exact h.solve_eq_of_intervene u
+  rw [← mem_contexts_iff_solve_eq.1 hu]; exact h.solve_eq_of_intervene u
 
 /-- The strict development is sound for the observational reading. -/
 theorem CausallyEntails.solve_bot_eq (h : M.CausallyEntails s v x) {u : U}
