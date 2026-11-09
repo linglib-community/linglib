@@ -4,6 +4,7 @@ public import Mathlib.CategoryTheory.Monad.Adjunction
 public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
+public import Linglib.Semantics.Composition.EffectGrammar
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -32,7 +33,7 @@ semantics is built on.
 * `mapL`, `mapR`, `structuredApp`, `joinMode`: the map, structured application and join modes
 * `Output`, `outputInput`: the storing effect `W` and the adjunction `W ⊣ R`
 * `counitMode`, `eject`, `ejectL`, `ejectR`: the modes an adjunction adds
-* `Ty`, `Eff`, `Combine`: the type-driven grammar of the book's Appendix B
+* `Reads`, `InputFree`: a type still requests a datum, or reads nothing anywhere
 
 ## Implementation notes
 
@@ -43,15 +44,9 @@ supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
-monad are mathlib's. The grammar's `Ty` has computation types `comp f a` for all four effects.
-The composition engine has them for reading and for indeterminacy (`Montague.Eff`), with Map
-Left and Right, Structured App, Unit Left and Right and Join (`Montague.Mode`) and every
-derivation of a tree (`Montague.Ty.modes`, `PhraseStructure.Tree.translations`), but not for
-storing or for quantifying over contexts, and it has no co-unit, eject or lowering. The grammar
-here therefore keeps its own types, for those two effects, the modes they bring, and the side
-condition on storing. As in Appendix B, a writer is applicative exactly when its datum is `t`,
-every applicative effect of the grammar is monadic, and the only adjunction is `W i ⊣ R i`. Base
-types are `e` and `t`.
+monad are mathlib's. The type-driven grammar is the library's `Composition.Mode` over the standard
+basic modes, and the interpreter is `Composition.Ty.combine`, checked here against the outputs
+the book prints. The base sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -59,11 +54,9 @@ April 2025.
 ## TODO
 
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
-  their types; the grammar here has no syntax trees.
-* The denotations of derivations, the book's interpreter of section 5.5: `Combine` is a `Prop`,
-  and the interpreter is `Montague.Mode` with `Montague.Ty.modes`, which covers reading and
-  indeterminacy with every mode but co-unit, eject and lowering. Moving this grammar onto it needs
-  the storing and quantification effects and those three modes.
+  their types; the derivations here are over types, not syntax trees.
+* The modes over Lean's classes, `mapL`, `counitMode` and the rest, are not yet shown to be the
+  meanings `Composition.Mode.eval` gives the grammar's modes at each effect.
 
 ## References
 
@@ -319,145 +312,171 @@ theorem ejectL_structuredApp_joinMode_mapR {M : Type u → Type u} [Monad M] [La
 /-! ### The type-driven grammar
 
 Appendix B implements the grammar as a function from the types of two daughters to the modes
-that combine them and the types they yield. `Combine l r u` says that some mode combines a left
-daughter of type `l` with a right daughter of type `r` into a result of type `u`. -/
+that combine them and the types they yield, `Composition.Ty.combine` here. -/
 
-mutual
+open Composition
 
-/-- The types of the grammar. -/
-inductive Ty where
-  | e
-  | t
-  | fn (a b : Ty)
-  /-- A computation with effect `f` and value type `a`. -/
-  | comp (f : Eff) (a : Ty)
-
-/-- The effects of the grammar. -/
-inductive Eff where
-  /-- Indeterminacy. -/
-  | S
-  /-- Reading a datum of type `i`. -/
-  | R (i : Ty)
-  /-- Storing a datum of type `o`. -/
-  | W (o : Ty)
-  /-- Quantifying over contexts with result type `r`. -/
-  | C (r : Ty)
-
-end
-
-namespace Eff
-
-/-- An effect is applicative, and then also monadic, unless it stores something other than a
-truth value, since only `t` is a monoid. -/
-def IsApplicative : Eff → Prop
-  | W o => o = .t
-  | _ => True
-
-/-- `f ⊣ g`: storing a datum is left adjoint to reading one of the same type, which is
-`outputInput`. -/
-def Adjoint : Eff → Eff → Prop
-  | W o, R i => o = i
-  | _, _ => False
-
-/-- `g` has a left adjoint. -/
-def IsRightAdjoint (g : Eff) : Prop := ∃ f, Adjoint f g
+variable {B : Type}
 
 /-- The reading effects. -/
-def IsReader : Eff → Prop
-  | R _ => True
+def IsReader : Eff B → Prop
+  | .R _ => True
   | _ => False
 
-theorem not_isReader_of_adjoint {f g : Eff} (h : Adjoint f g) : ¬ f.IsReader := by
-  cases f <;> cases g <;> simp_all [Adjoint, IsReader]
-
-end Eff
-
-open Ty Eff
-
-mutual
-
-/-- The binary modes: the basic combinators and the higher-order modes of Figure 10. -/
-inductive Binary : Ty → Ty → Ty → Prop
-  | fa {a b} : Binary (fn a b) a b
-  | ba {a b} : Binary a (fn a b) b
-  | pm {a} : Binary (fn a t) (fn a t) (fn a t)
-  | mapR {l r u f} : Combine l r u → Binary l (comp f r) (comp f u)
-  | mapL {l r u f} : Combine l r u → Binary (comp f l) r (comp f u)
-  | app {l r u f} : f.IsApplicative → Combine l r u → Binary (comp f l) (comp f r) (comp f u)
-  | unitR {l l' r u f} : f.IsApplicative → Combine (fn l l') r u →
-      Binary (fn (comp f l) l') r u
-  | unitL {l r r' u f} : f.IsApplicative → Combine l (fn r r') u →
-      Binary l (fn (comp f r) r') u
-  | counit {l r u f g} : f.Adjoint g → Combine l r u → Binary (comp f l) (comp g r) u
-  | ejectR {l r r' u g} : g.IsRightAdjoint → Combine l (comp g (fn r r')) u →
-      Binary l (fn r (comp g r')) u
-  | ejectL {l l' r u g} : g.IsRightAdjoint → Combine (comp g (fn l l')) r u →
-      Binary (fn l (comp g l')) r u
-
-/-- The book's `combine`: a binary mode, possibly followed by a join or a closure. -/
-inductive Combine : Ty → Ty → Ty → Prop
-  | bin {l r u} : Binary l r u → Combine l r u
-  | join {l r a f} : f.IsApplicative → Binary l r (comp f (comp f a)) → Combine l r (comp f a)
-  | lower {l r a} : Binary l r (comp (C a) a) → Combine l r a
-
-end
-
 /-- The type still requests a datum: a reading effect at a strictly positive position. -/
-def Ty.Reads : Ty → Prop
-  | fn _ b => b.Reads
-  | comp f a => f.IsReader ∨ a.Reads
+def Reads : Ty B → Prop
+  | .fn _ b => Reads b
+  | .comp f a => IsReader f ∨ Reads a
   | _ => False
 
 /-- No reading effect anywhere in the type. -/
-def Ty.InputFree : Ty → Prop
-  | fn a b => a.InputFree ∧ b.InputFree
-  | comp f a => ¬ f.IsReader ∧ a.InputFree
+def InputFree : Ty B → Prop
+  | .fn a b => InputFree a ∧ InputFree b
+  | .comp f a => ¬ IsReader f ∧ InputFree a
   | _ => True
 
-theorem Ty.InputFree.not_reads : ∀ {a : Ty}, a.InputFree → ¬ a.Reads
-  | fn _ b, h => not_reads (a := b) h.2
-  | comp _ a, h => fun h' => h'.elim h.1 (not_reads (a := a) h.2)
-  | e, _ => id
-  | t, _ => id
+theorem InputFree.not_reads : ∀ {a : Ty B}, InputFree a → ¬ Reads a
+  | .fn _ b, h => not_reads (a := b) h.2
+  | .comp _ a, h => fun h' ↦ h'.elim h.1 (not_reads (a := a) h.2)
+  | .t, _ => id
+  | .base _, _ => id
 
-mutual
-
-theorem Binary.reads {l r u : Ty} : Binary l r u → l.Reads → r.InputFree → u.Reads
-  | .fa, hl, _ => hl
-  | .ba, hl, hr => absurd hl hr.1.not_reads
-  | .pm, hl, _ => hl
-  | .mapR h, hl, hr => .inr (h.reads hl hr.2)
-  | .mapL h, hl, hr => hl.imp_right (h.reads · hr)
-  | .app _ h, hl, hr => .inr (h.reads (hl.resolve_left hr.1) hr.2)
-  | .unitR _ h, hl, hr => h.reads hl hr
-  | .unitL _ h, hl, hr => h.reads hl ⟨hr.1.2, hr.2⟩
-  | .counit hfg h, hl, hr => h.reads (hl.resolve_left (not_isReader_of_adjoint hfg)) hr.2
-  | .ejectR _ h, hl, hr => h.reads hl ⟨hr.2.1, hr.1, hr.2.2⟩
-  | .ejectL _ h, hl, hr => h.reads hl hr
+theorem Standard.reads : ∀ {l r u : Ty B}, Standard l r u → Reads l → InputFree r → Reads u
+  | _, _, _, .fa, hl, _ => hl
+  | _, _, _, .ba, hl, hr => absurd hl hr.1.not_reads
+  | _, _, _, .pm, hl, _ => hl
 
 /-- Crossover (section 5.2): a left daughter that reads, combined with a right daughter that
 reads nothing, yields a type that still reads, whatever the modes. Only the co-unit mode removes
 a reading effect, and it takes the reader from the right daughter. -/
-theorem Combine.reads {l r u : Ty} : Combine l r u → l.Reads → r.InputFree → u.Reads
-  | .bin h, hl, hr => h.reads hl hr
-  | .join _ h, hl, hr => (h.reads hl hr).elim .inl id
-  | .lower h, hl, hr => (h.reads hl hr).resolve_left id
+theorem Mode.reads {Rule : Ty B → Ty B → Ty B → Type}
+    (hbasic : ∀ {l r u : Ty B}, Rule l r u → Reads l → InputFree r → Reads u) :
+    ∀ {l r u : Ty B}, Mode Rule l r u → Reads l → InputFree r → Reads u
+  | _, _, _, .basic b, hl, hr => hbasic b hl hr
+  | _, _, _, .mapR m, hl, hr => .inr (Mode.reads hbasic m hl hr.2)
+  | _, _, _, .mapL m, hl, hr => hl.imp_right (Mode.reads hbasic m · hr)
+  | _, _, _, .ap _ m, hl, hr => .inr (Mode.reads hbasic m (hl.resolve_left hr.1) hr.2)
+  | _, _, _, .unitR _ m, hl, hr => Mode.reads hbasic m hl hr
+  | _, _, _, .unitL _ m, hl, hr => Mode.reads hbasic m hl ⟨hr.1.2, hr.2⟩
+  | _, _, _, .counit _, _, hr => absurd trivial hr.1
+  | _, _, _, .ejectR _, _, hr => absurd trivial hr.2.1
+  | _, _, _, .ejectL m, hl, hr => Mode.reads hbasic m hl hr
+  | _, _, _, .join _ m, hl, hr => (Mode.reads hbasic m hl hr).elim .inl id
+  | _, _, _, .lower m, hl, hr => (Mode.reads hbasic m hl hr).resolve_left id
 
-end
+/-- The base sort of the book's interpreter. -/
+abbrev e : Ty Unit := .base ()
 
-/-- An antecedent followed by a pronoun combines into a pure truth value by `C <` (section 5.5). -/
-example : Combine (comp (W e) e) (comp (R e) (fn e t)) t := .bin (.counit rfl (.bin .ba))
+/-- An antecedent followed by a pronoun combines into a pure truth value by `C <`
+(section 5.5). -/
+example : Mode Standard (.comp (.W e) e) (.comp (.R e) (e ⇒ .t)) .t := .counit (.basic .ba)
 
 /-- An indefinite antecedent binds into an indefinite, `J F̄ C F̃ <` (5.12). -/
-example : Combine (comp S (comp (W e) e)) (comp (R e) (comp S (fn e t))) (comp S t) :=
-  .join trivial (.mapL (.bin (.counit rfl (.bin (.mapR (.bin .ba))))))
+example : Mode Standard (.comp .S (.comp (.W e) e)) (.comp (.R e) (.comp .S (e ⇒ .t)))
+    (.comp .S .t) :=
+  .join trivial (.mapL (.counit (.mapR (.basic .ba))))
 
 /-- A pronoun before its would-be antecedent stays unresolved (5.13), (5.14). -/
-example {u : Ty} (h : Combine (comp (R e) e) (comp S (comp (W e) (fn e t))) u) : u.Reads :=
-  h.reads (.inl trivial) ⟨id, id, trivial, trivial⟩
+example {u : Ty Unit}
+    (m : Mode Standard (.comp (.R e) e) (.comp .S (.comp (.W e) (e ⇒ .t))) u) : Reads u :=
+  Mode.reads Standard.reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
 
-example {u : Ty} (h : Combine (comp (R e) (comp S e)) (comp (C t) (comp (W e) (fn e t))) u) :
-    u.Reads :=
-  h.reads (.inl trivial) ⟨id, id, trivial, trivial⟩
+example {u : Ty Unit}
+    (m : Mode Standard (.comp (.R e) (.comp .S e)) (.comp (.C .t) (.comp (.W e) (e ⇒ .t))) u) :
+    Reads u :=
+  Mode.reads Standard.reads m (.inl trivial) ⟨id, id, trivial, trivial⟩
+
+/-! ### The interpreter
+
+`Ty.combine` on the type combinations the book runs its interpreter on, with the modes named as
+the book prints them. -/
+
+/-- The names of the standard modes. -/
+inductive Name
+  | FA | BA | PM
+  deriving DecidableEq, Repr
+
+/-- The name of a standard mode. -/
+def Name.of : {l r u : Ty Unit} → Standard l r u → Name
+  | _, _, _, .fa => .FA
+  | _, _, _, .ba => .BA
+  | _, _, _, .pm => .PM
+
+/-- The interpreter's output for two types: the modes that combine them, in the book's order,
+each with the type it yields. -/
+def combine (l r : Ty Unit) : List (Mode.Shape Name × Ty Unit) :=
+  (Ty.combine (standard Unit) l r).map fun p ↦ (p.2.shape Name.of, p.1)
+
+section Interpreter
+
+local notation "FA" => Mode.Shape.basic Name.FA
+local notation "BA" => Mode.Shape.basic Name.BA
+local notation "S" => Ty.comp Eff.S
+local notation "R" => Ty.comp (Eff.R e)
+local notation "W" => Ty.comp (Eff.W e)
+local notation "C" => Ty.comp (Eff.C Ty.t)
+local notation "T" => (Ty.t : Ty Unit)
+
+-- section 3.6: a closure operator and its prejacent
+theorem combine_closure : combine (S T ⇒ T) (S T) =
+    [(FA, T), (.mapR (.unitR FA), S T), (.unitR (.mapR FA), S T)] := by decide
+
+-- section 5.5: storing before reading binds
+theorem combine_store_read : combine (W e) (R (e ⇒ T)) =
+    [(.mapR (.mapL BA), R (W T)), (.mapL (.mapR BA), W (R T)), (.counit BA, T)] := by decide
+
+-- section 5.5: reading before storing does not
+theorem combine_read_store : combine (R e) (W (e ⇒ T)) =
+    [(.mapR (.mapL BA), W (R T)), (.mapL (.mapR BA), R (W T))] := by decide
+
+-- section 5.5: lowering
+theorem combine_lower : combine (T ⇒ T) (C T) = [(.mapR FA, C T), (.lower (.mapR FA), T)] := by
+  decide
+
+-- section 5.3.4: the bind of the state monad is among the modes
+theorem mem_combine_state :
+    (.mapL (.ejectR (.counit BA)), R (W T)) ∈ combine (R (W e)) (e ⇒ R (W T)) := by decide
+
+-- section 5.3.4: and so is the bind of dynamic state
+theorem mem_combine_dynamic : (.mapL (.join (.mapL (.ejectR (.counit BA)))), R (S (W T))) ∈
+    combine (R (S (W e))) (e ⇒ R (S (W T))) := by decide
+
+-- section 5.5: an indefinite binding into an indefinite
+theorem mem_combine_indefinites :
+    (.join (.mapL (.counit (.mapR BA))), S T) ∈ combine (S (W e)) (R (S (e ⇒ T))) := by decide
+
+end Interpreter
+
+/-! ### Scope
+
+Two quantifiers combine by Structured App, in their surface order, or by the two orders of the
+maps followed by Join, of which the one that maps over the right daughter last gives the object
+wide scope (4.45). -/
+
+section Scope
+
+variable {E : Type} (admires : E → E → Prop)
+
+local notation "D" => fun _ : Unit ↦ E
+local notation "C" => Ty.comp (Eff.C Ty.t)
+
+/-- *Admires everyone*: application mapped over the object. -/
+def admiresEveryone : (C (e ⇒ .t) : Ty Unit).Dom D :=
+  (Mode.mapR (.basic .fa) : Mode Standard (e ⇒ e ⇒ .t) (C e) (C (e ⇒ .t))).eval D
+    (Standard.eval D) admires fun c ↦ ∀ x, c x
+
+/-- The surface order: someone admires everyone. -/
+theorem eval_ap_iff :
+    ((Mode.ap trivial (.basic .ba) : Mode Standard (C e) (C (e ⇒ .t)) (C .t)).eval D
+      (Standard.eval D) (fun c ↦ ∃ y, c y) (admiresEveryone admires)) id ↔
+      ∃ y, ∀ x, admires x y := Iff.rfl
+
+/-- The inverse order: everyone is admired by someone. -/
+theorem eval_join_mapR_mapL_iff :
+    ((Mode.join trivial (.mapR (.mapL (.basic .ba))) :
+      Mode Standard (C e) (C (e ⇒ .t)) (C .t)).eval D (Standard.eval D) (fun c ↦ ∃ y, c y)
+        (admiresEveryone admires)) id ↔ ∀ x, ∃ y, admires x y := Iff.rfl
+
+end Scope
 
 end BumfordCharlow2026
