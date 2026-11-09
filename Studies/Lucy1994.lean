@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Semantics.ArgumentStructure.SalienceClass
 public import Linglib.Morphology.Exponence.Select
 public import Linglib.Data.Wordlist.Lucy1994

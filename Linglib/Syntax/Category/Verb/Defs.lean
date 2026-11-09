@@ -13,7 +13,7 @@ public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability
 public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Morphology.Morph
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Ellipsis
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Data.Examples.Kalyakin2026
 public import Linglib.Data.Examples.Readers
 
