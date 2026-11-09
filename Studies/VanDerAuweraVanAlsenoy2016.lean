@@ -107,12 +107,12 @@ postverbal negative indefinite, excluded (the formula V), optional ((N) V) or ob
 ordered as the strictness scale, and `none` when the position is unavailable, the asterisk of the
 formulas. -/
 structure System where
-  preverbal : Option Clause.Occurrence
-  postverbal : Option Clause.Occurrence
+  preverbal : Option Obligatoriness
+  postverbal : Option Obligatoriness
   deriving DecidableEq, Repr
 
 /-- A pattern with both positions available, the systems of Tables 6 and 9. -/
-abbrev Pattern := Clause.Occurrence × Clause.Occurrence
+abbrev Pattern := Obligatoriness × Obligatoriness
 
 /-- The system of a pattern. -/
 def Pattern.toSystem (p : Pattern) : System := ⟨some p.1, some p.2⟩

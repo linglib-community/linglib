@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Fragments.HindiUrdu.Case
 
@@ -83,13 +84,12 @@ def clauseController (a : Alignment.AlignmentType) (t : CaseCategory)
     (lex : ArgumentRole → Option Case) (xs : List ArgumentRole) : Option ArgumentRole :=
   controller t xs ((Rules.ofAlignment a).assign lex xs)
 
-/-- Whether an argument controls agreement in a clause of the given alignment, in a language
-whose least accessible category is `t`. -/
-def controls (a : Alignment.AlignmentType) (t : CaseCategory) : ArgumentRole → Bool
-  | .S => clauseController a t (fun _ ↦ none) [.S] = some .S
-  | .A => clauseController a t (fun _ ↦ none) [.A, .P] = some .A
-  | .P => clauseController a t (fun _ ↦ none) [.A, .P] = some .P
-  | .R | .T => false
+/-- Whether the argument bearing role `r` controls agreement in some clause of the given
+alignment, in a language whose least accessible category is `t`, the arguments of a clause
+listed from the external one down. -/
+def controls (a : Alignment.AlignmentType) (t : CaseCategory) (r : ArgumentRole) : Bool :=
+  decide (∃ v : ArgumentStructure.Valency,
+    clauseController a t (fun _ ↦ none) ([.external, .internal].filterMap v.role) = some r)
 
 /-! ### The predicted agreement alignments -/
 

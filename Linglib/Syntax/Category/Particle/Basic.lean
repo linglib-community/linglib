@@ -51,7 +51,7 @@ structure Particle where
   script : Option String := none
   /-- Host/position class; `none` when the source records no placement. -/
   position : Option Particle.Position := none
-  /-- The recorded occurrence of the particle in each cell; `none` where the source records
+  /-- How far the particle is required in each cell; `none` where the source records
       nothing. -/
   distribution : Clause.Distribution := .empty
   deriving DecidableEq

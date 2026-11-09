@@ -103,16 +103,17 @@ abbrev german : V2Grammar :=
 /-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
 abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
 
-/-- The heads other than Imp⁰ that a variety sets at the occurrences in `s`: the root clause-type
-heads read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ off the embedded cells of its
+/-- The heads other than Imp⁰ that a variety sets where verb second's obligatoriness is in `s`:
+the root clause-type heads read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ off the
+embedded cells of its
 distribution `bare` in clauses without a complementizer, which by default records nothing. Imp⁰ is
 left out, since Westergaard diagnoses it by an overt subject the verb precedes rather than by the
 verb's place at the left edge. -/
-def heads (s : Set Occurrence) (d : Distribution) (bare : Distribution := .empty) :
+def heads (s : Set Obligatoriness) (d : Distribution) (bare : Distribution := .empty) :
     V2Grammar :=
   {c ∈ d.preimage s | c.2 = .matrix ∧ c.1 ≠ .imperative} ∪ {c ∈ bare.preimage s | c.2 ≠ .matrix}
 
-instance {s : Set Occurrence} [DecidablePred (· ∈ s)] {d bare : Distribution} :
+instance {s : Set Obligatoriness} [DecidablePred (· ∈ s)] {d bare : Distribution} :
     DecidablePred (· ∈ heads s d bare) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∨ _ ∧ _))
 
@@ -239,9 +240,9 @@ def cellOf (r : Datum) : Option (SentenceType × EmbeddingContext) :=
     | none => (r.feature? "wh").map fun _ ↦ root .constituent
   cell.map fun c ↦ (r.parse? "embedding" [("bridge verb", .quasiSubordinated)]).elim c (c.1, ·)
 
-/-- The orders a row's `order` feature attests, as an occurrence of verb movement: the moved
+/-- The orders a row's `order` feature attests, as the obligatoriness of verb movement: the moved
 order alone, as in V2 and in the V1 of a yes/no-question, the unmoved one alone, or both. -/
-def orderOf (r : Datum) : Option Occurrence :=
+def orderOf (r : Datum) : Option Obligatoriness :=
   r.parse? "order"
     [("V2", .obligatory), ("V1", .obligatory), ("non-V2", .excluded), ("non-V2 or V2", .optional),
       ("V2 or non-V2", .optional)]

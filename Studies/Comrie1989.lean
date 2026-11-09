@@ -33,7 +33,7 @@ its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_synt
   the five logically possible systems are the five alignments of `Alignment.marking_cases`.
 * A marking row records, for each argument the book discusses, the scales the book invokes for
   that language and whether its position takes the special marking always, sometimes or never
-  (`Alignment.Overtness`), and covers every value of a scale it does not cite. A language's rows
+  (`Obligatoriness`), and covers every value of a scale it does not cite. A language's rows
   follow the information flow when a graded marking fitting the componentwise order of person,
   animacy and definiteness (`Alignment.FitsGraded`), A's overtness falling and P's rising, takes
   each row's value on what it covers. By `exists_monotone_forall_eq_iff` such a marking exists
@@ -136,7 +136,7 @@ structure Marking where
   /-- The argument's degree of definiteness, where the marking consults it. -/
   definiteness : Option Definiteness
   /-- Whether the position takes the special marking always, sometimes or never. -/
-  overtness : Overtness
+  overtness : Obligatoriness
   deriving DecidableEq
 
 /-- The animacy labels of the rows, read as person and animacy apart, the speech-act
@@ -157,7 +157,7 @@ def Marking.ofRow (row : Datum) : List Marking :=
         row.parse? (p ++ "definiteness") [("definite", Definiteness.definite),
           ("indefiniteSpecific", .specific), ("nonSpecific", .nonSpecific)],
         ← row.parse? (p ++ "marked")
-          [("marked", Overtness.obligatory), ("optional", .optional), ("unmarked", .excluded)]⟩
+          [("marked", Obligatoriness.obligatory), ("optional", .optional), ("unmarked", .excluded)]⟩
   else []
 
 /-- The prominences a marking covers: every value of a scale it does not cite. -/
@@ -192,7 +192,7 @@ instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := decidable_of_if
 prominence order, A's overtness falling and P's rising, each with its own cut-offs, takes every
 row's value throughout the prominences the row covers. -/
 def FollowsFlow (rows : List Datum) : Prop :=
-  ∃ μ : ArgumentRole → Prominence → Overtness, FitsGraded μ ∧ ∀ ρ ∈ [ArgumentRole.A, .P],
+  ∃ μ : ArgumentRole → Prominence → Obligatoriness, FitsGraded μ ∧ ∀ ρ ∈ [ArgumentRole.A, .P],
     ∀ m ∈ rows.flatMap Marking.ofRow, m.role = ρ → ∀ c ∈ m.cell, μ ρ c = m.overtness
 
 section FollowsFlow
@@ -200,9 +200,9 @@ section FollowsFlow
 variable {L : List Marking} {ρ : ArgumentRole}
 
 theorem followsFlow_iff {rows : List Datum} : FollowsFlow rows ↔
-    (∃ f : Prominence → Overtness, Antitone f ∧
+    (∃ f : Prominence → Obligatoriness, Antitone f ∧
       ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .A → ∀ c ∈ m.cell, f c = m.overtness) ∧
-    ∃ f : Prominence → Overtness, Monotone f ∧
+    ∃ f : Prominence → Obligatoriness, Monotone f ∧
       ∀ m ∈ rows.flatMap Marking.ofRow, m.role = .P → ∀ c ∈ m.cell, f c = m.overtness := by
   refine ⟨fun ⟨μ, ⟨hA, hP⟩, h⟩ ↦ ⟨⟨μ .A, hA, h .A (by simp)⟩, ⟨μ .P, hP, h .P (by simp)⟩⟩,
     fun ⟨⟨f, hf, hf'⟩, g, hg, hg'⟩ ↦ ⟨fun r ↦ if r = .A then f else g, ⟨hf, hg⟩, ?_⟩⟩
@@ -210,7 +210,7 @@ theorem followsFlow_iff {rows : List Datum} : FollowsFlow rows ↔
   exact ⟨hf', hg'⟩
 
 theorem exists_monotone_iff :
-    (∃ f : Prominence → Overtness, Monotone f ∧
+    (∃ f : Prominence → Obligatoriness, Monotone f ∧
       ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.overtness) ↔
       ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m.AtMost m' → m.overtness ≤ m'.overtness := by
   have h := exists_monotone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
@@ -219,7 +219,7 @@ theorem exists_monotone_iff :
   exact h
 
 theorem exists_antitone_iff :
-    (∃ f : Prominence → Overtness, Antitone f ∧
+    (∃ f : Prominence → Obligatoriness, Antitone f ∧
       ∀ m ∈ L, m.role = ρ → ∀ c ∈ m.cell, f c = m.overtness) ↔
       ∀ m ∈ L, m.role = ρ → ∀ m' ∈ L, m'.role = ρ → m'.AtMost m → m.overtness ≤ m'.overtness := by
   have h := exists_antitone_forall_eq_iff (t := (L.filter (·.role = ρ)).toFinset)
