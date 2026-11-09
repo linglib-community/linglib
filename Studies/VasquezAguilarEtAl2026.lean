@@ -5,6 +5,7 @@ public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Mora
 public import Linglib.Phonology.Segmental.NaturalClass
+public import Studies.BroselowChenHuffman1997
 public import Studies.Hayes1989
 
 /-!
@@ -42,6 +43,7 @@ moraless syllable of Piuma Paiwan and Northwest Mari, and the moraic interior vo
 ## References
 
 * [vasquez-aguilar-etal-2026]
+* [broselow-chen-huffman-1997]
 * [hayes-1989]
 * [prince-smolensky-1993]
 * [mccarthy-prince-1995]
@@ -106,9 +108,9 @@ def headedness : Constraint Candidate := fun c ↦
 def starMu (P : Segment → Prop) [DecidablePred P] : Constraint Candidate := fun c ↦
   (c.form.morae.filter (BearsOnly c.form P)).card
 
-/-- NOSHAREDMORA: a violation for each mora linked to more than one segment. -/
-def noSharedMora : Constraint Candidate := fun c ↦
-  (c.form.morae.filter fun m ↦ 1 < (c.form.moraSpan m).card).card
+/-- NOSHAREDMORA, from [broselow-chen-huffman-1997]: a violation for each mora linked to more
+than one segment. -/
+def noSharedMora : Constraint Candidate := BroselowChenHuffman1997.noSharedMora.comap (·.form)
 
 /-- ONSET: a violation for each syllable without an onset. -/
 def onset : Constraint Candidate := fun c ↦

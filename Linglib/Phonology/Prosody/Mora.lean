@@ -12,15 +12,15 @@ segment `i` occupies slot `i`: prosodic words, syllables and morae. Each tier of
 the tier below, and a node of any tier may also be linked to segments directly, so that an onset
 or a non-moraic nucleus is linked to its syllable and an extrasyllabic consonant to its word. The
 mora is the unit of weight ([hyman-1985], [hayes-1989]): the weight of a syllable is its number
-of morae and the length of a segment its number of association lines, so that a long vowel is
-one segment under two morae and a geminate one consonant under a mora of one syllable and the
-onset of the next.
+of morae. In the one-root theory of length of [hayes-1989] a long segment is one segment with two
+association lines, a long vowel under two morae and a geminate under a mora of one syllable and
+the onset of the next; in the two-root theory of [selkirk-1990] it is two segments.
 
 Nothing ties a mora to a nucleus. A syllable may have no mora, as a minor syllable has none
 ([shih-2018]); a coda may share the vowel's mora ([broselow-chen-huffman-1997]) or be linked to
-the syllable itself; a mora may dominate a segment but no syllable ([topintzi-zimmermann-2025]);
-and in Shiwilu a syllable whose nucleus is the interior vowel has its coda's mora as its only
-one ([vasquez-aguilar-etal-2026]).
+the syllable itself ([selkirk-1990]); a mora may dominate a segment but no syllable
+([topintzi-zimmermann-2025]); and in Shiwilu a syllable whose nucleus is the interior vowel has
+its coda's mora as its only one ([vasquez-aguilar-etal-2026]).
 
 ## Main definitions
 
@@ -29,8 +29,10 @@ one ([vasquez-aguilar-etal-2026]).
   syllable.
 * `MoraicForm.moraSpan`, `MoraicForm.yield`, `MoraicForm.wordYield`: the slots a mora, a
   syllable and a word dominate.
-* `MoraicForm.weight`, `MoraicForm.onset`, `MoraicForm.lineCount`: the weight and the onset of a
-  syllable, and the length of a segment.
+* `MoraicForm.weight`, `MoraicForm.onset`, `MoraicForm.coda`: the weight, the onset and the coda
+  of a syllable.
+* `MoraicForm.moraeAt`, `MoraicForm.lineCount`: the morae linked to a segment, and its number of
+  lines.
 * `MoraicForm.free`, `MoraicForm.stranded`: the morae no syllable dominates, and those that
   dominate nothing.
 * `MoraicForm.WellFormed`, `MoraicForm.NoCrossing`: lines join nodes and slots that are present,
@@ -68,6 +70,7 @@ one ([vasquez-aguilar-etal-2026]).
 * [hyman-1985]
 * [hayes-1989]
 * [sagey-1986]
+* [selkirk-1990]
 * [zec-1995]
 * [broselow-chen-huffman-1997]
 * [shih-2018]
@@ -159,18 +162,23 @@ def weight (s : ℕ) : ℕ := #(X.moraeOf s)
 /-- The onset of syllable `s`: the slots it dominates before its nucleus. -/
 def onset (s : ℕ) : Finset ℕ := (X.yield s).filter (· < s)
 
+/-- The coda of syllable `s`: the slots it dominates after its nucleus. -/
+def coda (s : ℕ) : Finset ℕ := (X.yield s).filter (s < ·)
+
+/-- The morae linked to the segment at slot `i`. -/
+def moraeAt (i : ℕ) : Finset Mora := X.morae.bipartiteBelow (fun m i ↦ (m, i) ∈ X.moraSegment) i
+
 /-- The morae no syllable dominates. -/
 def free : Finset Mora := X.morae.filter fun m ↦ ∀ s ∈ X.syllables, (s, m) ∉ X.syllableMora
 
 /-- The morae linked to no segment, such as those stranded by deletion. -/
 def stranded : Finset Mora := X.morae.filter (X.moraSpan · = ∅)
 
-/-- The length of the segment at slot `i` is its number of association lines: one for a short
-segment, two for a long vowel or a geminate. -/
+/-- The number of association lines at slot `i`: the length of its segment in a one-root theory
+of length ([hayes-1989]), one for a short segment and two for a long vowel or a geminate. -/
 def lineCount (i : ℕ) : ℕ :=
   #(X.words.bipartiteBelow (fun w i ↦ (w, i) ∈ X.wordSegment) i) +
-    #(X.syllables.bipartiteBelow (fun s i ↦ (s, i) ∈ X.syllableSegment) i) +
-    #(X.morae.bipartiteBelow (fun m i ↦ (m, i) ∈ X.moraSegment) i)
+    #(X.syllables.bipartiteBelow (fun s i ↦ (s, i) ∈ X.syllableSegment) i) + #(X.moraeAt i)
 
 variable {X}
 
@@ -194,6 +202,10 @@ variable {X}
 @[simp] theorem mem_moraSpan {m : Mora} {i : ℕ} :
     i ∈ X.moraSpan m ↔ i ∈ X.slots ∧ (m, i) ∈ X.moraSegment :=
   mem_bipartiteAbove _
+
+@[simp] theorem mem_moraeAt {m : Mora} {i : ℕ} :
+    m ∈ X.moraeAt i ↔ m ∈ X.morae ∧ (m, i) ∈ X.moraSegment :=
+  mem_bipartiteBelow _
 
 theorem mem_yield {s i : ℕ} :
     i ∈ X.yield s ↔ i ∈ X.syllableSpan s ∨ ∃ m ∈ X.moraeOf s, i ∈ X.moraSpan m := by
