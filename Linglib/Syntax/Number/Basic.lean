@@ -52,31 +52,30 @@ inductive Number where
       unlike a noncountable noun, which lacks the contrast ([grimm-2018],
       `Studies/Grimm2018.lean`). -/
   | general
-  /-- The singular denotes exactly one individual, `[+atomic, +minimal]`. -/
+  /-- The singular is for exactly one individual. -/
   | singular
-  /-- The dual denotes exactly two, `[−atomic, +minimal]`. -/
+  /-- The dual is for exactly two. -/
   | dual
-  /-- The trial denotes exactly three, recursive `[+minimal]` on the plural region. -/
+  /-- The trial is for exactly three. -/
   | trial
-  /-- The paucal denotes a few, with an indeterminate boundary, `[−additive]`. -/
+  /-- The paucal is for a few, with no fixed upper boundary. -/
   | paucal
-  /-- The plural denotes more than one, the residual value, `[−atomic]` or `[+additive]`. -/
+  /-- The plural is for more individuals than the system's other values cover, the residual
+      value. -/
   | plural
-  /-- The greater paucal is indeterminate and larger than the paucal, `[−additive +additive]`,
-      a second bounded region above the paucal. -/
+  /-- The greater paucal is for more than the paucal, again with no fixed boundary. -/
   | greaterPaucal
-  /-- The greater plural denotes abundance, `[+additive]` above a high cut. -/
+  /-- The greater plural is for an abundance. -/
   | greaterPlural
-  /-- The minimal is `[+minimal]` without `[±atomic]`, covering atoms and minimal non-atoms
-      alike, unlike the singular. -/
+  /-- The minimal is for the smallest group of its person: one individual, or the speaker and the
+      addressee alone in the first person inclusive. -/
   | minimal
-  /-- The augmented is `[−minimal]` without `[±atomic]`, the complement of the minimal. -/
+  /-- The augmented is for a group larger than the minimal of its person. -/
   | augmented
-  /-- The unit augmented is recursive `[+minimal]` on the augmented region, the minimal
-      non-minimal, unlike the dual. -/
+  /-- The unit augmented is for the minimal group of its person and one more. -/
   | unitAugmented
-  /-- The global plural denotes every instance in the domain of discourse, the cut of
-      `[±additive]` at the top of the lattice, tentative in [harbour-2014]. -/
+  /-- The global plural is for every instance in the domain of discourse, tentative in
+      [harbour-2014]. -/
   | globalPlural
   deriving DecidableEq, Repr, Fintype
 
