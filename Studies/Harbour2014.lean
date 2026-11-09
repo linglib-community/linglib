@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Core.Order.Concept
 public import Studies.Corbett2000
