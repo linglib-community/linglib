@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Root.PropertyConcept
+public import Linglib.Semantics.PropertyConcept
 public import Linglib.Syntax.Category.Verb.Defs
 
 /-!

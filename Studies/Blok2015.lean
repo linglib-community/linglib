@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Blok2015
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Dutch.NumeralModifiers
 public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Quantification.Counting
 public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.UpperLower.Basic

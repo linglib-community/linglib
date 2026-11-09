@@ -135,7 +135,7 @@
     "readings": [],
     "paperFeatures": [
       ["item", "hoeven"],
-      ["context", "geenRestrictor"]
+      ["context", "noRestrictor"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -274,7 +274,7 @@
     "readings": [],
     "paperFeatures": [
       ["item", "hoeven"],
-      ["context", "doubtVerb"]
+      ["context", "superordinateNegation"]
     ],
     "comment": "",
     "verified": "page-image"

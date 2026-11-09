@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Root.Kinds
 
 /-!
 # Interpretations of the event-structure primitives

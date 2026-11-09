@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.VanDerWouden1997
 public import Linglib.Data.Examples.Readers
 
@@ -71,7 +71,7 @@ theorem verb_strengths :
     fun h ↦ absurd (LicensingContext.holds_doubtVerb_iff (s := .antiAdditive) |>.1 h) (by decide)⟩
 
 /-- The context a row names: for (184) by its strength, *weinig* 'few', *geen van* 'none of' and
-*niet*; for *hoeven* by the named context, the restrictor of *geen* having none. -/
+*niet*; for *hoeven* by the named context. -/
 def Context.ofKey : String → Option Context
   | "notMonotoneDecreasing" => some .positive
   | "monotoneDecreasing" => some (.named .few)
@@ -82,7 +82,8 @@ def Context.ofKey : String → Option Context
   | "conditionalAntecedent" => some (.named .conditionalAntecedent)
   | "clausalComparative" => some (.named .clausalComparative)
   | "superlative" => some (.named .superlative)
-  | "doubtVerb" => some (.named .doubtVerb)
+  | "noRestrictor" => some (.named .noRestrictor)
+  | "superordinateNegation" => some (.named .superordinateNegation)
   | "beforeClause" => some (.named .beforeClause)
   | _ => none
 
@@ -108,7 +109,7 @@ theorem hoeven_extraRestrictions :
     ∀ (l a : Option Negation.Strength) (fc : Bool),
       ¬ ∀ d ∈ Examples.all, d.feature? "item" = some "hoeven" →
         ∀ c ∈ (d.feature? "context").bind Context.ofKey,
-          (d.judgment = .acceptable ↔ c.Admits ⟨"hoeven", l, a, fc, [], []⟩) := by
+          (d.judgment = .acceptable ↔ c.Admits ⟨"hoeven", l, a, fc⟩) := by
   decide +kernel
 
 end VanDerWouden1997

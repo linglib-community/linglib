@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Slavic.Russian.Indefinites
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 
 /-!
 # Russian polarity items
@@ -37,8 +37,7 @@ open PolarityItem
 conditionals, comparatives and under indirect negation. -/
 def ktoLibo : PolarityItem :=
   { form := Indefinites.ktoLibo.form
-  , licensor := some .weak
-  , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative] }
+  , licensor := some .weak }
 
 /-! ### The *ni-* series -/
 
@@ -46,30 +45,26 @@ def ktoLibo : PolarityItem :=
 ne prišël* 'nobody came'. -/
 def nikto : PolarityItem :=
   { form := Indefinites.nikto.form
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *ničego* (ничего) 'nothing', the non-human negative concord item, *ničego ne videl* '(he) saw
 nothing'. -/
 def nichego : PolarityItem :=
   { form := "ničego"
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-- *nikogda* (никогда) 'never', the temporal negative concord item, *nikogda ne prixodil* '(he)
 never came'. -/
 def nikogda : PolarityItem :=
   { form := (Indefinites.ni Pronouns.kogda).form
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-! ### Free choice -/
 
 /-- *kto ugodno* (кто угодно) 'anyone at all', a free-choice item. -/
 def ktoUgodno : PolarityItem :=
   { form := Indefinites.ktoUgodno.form
-  , freeChoice := true
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
+  , freeChoice := true }
 
 /-! ### The entries -/
 
@@ -86,9 +81,5 @@ theorem niSeries_licensing_characterized :
   simp only [List.mem_cons, List.not_mem_nil, or_false] at he
   rcases he with rfl | rfl | rfl <;>
     exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
-
-theorem russian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
-  decide
 
 end Russian.PolarityItems

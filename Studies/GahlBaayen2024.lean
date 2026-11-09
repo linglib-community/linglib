@@ -72,7 +72,7 @@ theorem toyForms_eq :
     toyForms = ![![1, 1, 1, 1, 0, 0], ![0, 0, 1, 1, 1, 1], ![1, 1, 1, 1, 0, 0]] := by
   funext i j
   fin_cases i <;> fin_cases j <;>
-    simp +decide [toyForms, cueVector, multiHot, Matrix.cons_val_two]
+    simp +decide [toyForms, cueVector_apply, Matrix.cons_val_two]
 
 /-- The semantic vectors of (1) give *time*, *lime* and *thyme* two arbitrary dimensions. -/
 def semanticVectors : Matrix (Fin 3) (Fin 2) ℚ :=
@@ -110,7 +110,7 @@ private def ratC : Matrix (Fin 3) (Fin 6) ℚ :=
 private def ratQ : Matrix (Fin 3) (Fin 3) ℚ := diagonal ![100, 10, 1]
 
 private theorem toyC_eq : toyC = ratC.map (Rat.castHom ℝ) := by
-  ext i j; simp [toyC, ratC, toyForms, cueVector, multiHot, apply_ite]
+  ext i j; simp [toyC, ratC, toyForms, cueVector_apply, apply_ite]
 
 private theorem toyQ_eq : toyQ = ratQ.map (Rat.castHom ℝ) := by
   rw [toyQ, ratQ, diagonal_map (map_zero _)]
@@ -290,7 +290,8 @@ def vocabulary : Fin 9 → Word :=
   ![.my, .time, .is, .short, .good, .fragrant, .thyme, .lime, .bad]
 
 /-- The utterance-by-word matrix `U` multiple-hot encodes each utterance over the vocabulary. -/
-def U : Matrix (Fin 5) (Fin 9) ℝ := Matrix.of fun i ↦ multiHot vocabulary (· ∈ utterance i)
+def U : Matrix (Fin 5) (Fin 9) ℝ :=
+  Matrix.of fun i ↦ (vocabulary ⁻¹' {w | w ∈ utterance i}).indicator 1
 
 /-! The arithmetic of the toy corpus is decided over `ℤ` and cast into `ℝ`. -/
 
@@ -298,7 +299,7 @@ private def intU : Matrix (Fin 5) (Fin 9) ℤ :=
   Matrix.of fun i j ↦ if vocabulary j ∈ utterance i then 1 else 0
 
 private theorem U_eq_map : U = intU.map (Int.castRingHom ℝ) := by
-  ext i j; simp [U, intU, multiHot, apply_ite]
+  ext i j; simp [U, intU, Set.indicator_apply, apply_ite]
 
 /-- The word-to-word map `W` of (6) is `U⁺U = Uᵀ(UUᵀ)⁻¹U`, the pseudoinverse solution of
 `UW = U` (A8). -/

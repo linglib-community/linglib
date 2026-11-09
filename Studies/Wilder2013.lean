@@ -496,17 +496,6 @@ def link? (ex : Datum) : Option Link := (links.find? (·.1.id = ex.id)).map (·.
 -- Every row is linked, in the order of the data.
 theorem links_ids : links.map (·.1.id) = Examples.all.map (·.id) := by decide
 
-/-- The words of a text, lowercased: its maximal runs of letters and apostrophes. -/
-def words (s : String) : List (List Char) :=
-  go (s.toList.map Char.toLower) []
-where
-  /-- The words of `cs`, the current word being `w` reversed. -/
-  go : List Char → List Char → List (List Char)
-    | [], w => if w = [] then [] else [w.reverse]
-    | c :: cs, w =>
-      if c.isAlpha || c = '\'' then go cs (c :: w)
-      else if w = [] then go cs [] else w.reverse :: go cs []
-
 /-- The written forms of a typer: the morphs of a complementizer, or an interrogative word. -/
 def Typer.forms : Typer → List String
   | .complementizer c => c.morphs.map (·.form)
@@ -526,9 +515,9 @@ instance (h : Host) (ws : List (List Char)) : Decidable (h.Attested ws) := by
 /-- The items a link names occur in the row: those of its host and its answer particle in the
 sentence, and the interrogative word of its context's question in the context. -/
 def Link.Attested (l : Link) (ex : Datum) : Prop :=
-  l.host.Attested (words ex.primaryText) ∧
-    (∀ p ∈ l.particle, p.form.toList ∈ words ex.primaryText) ∧
-    ∀ w ∈ l.contextWh, w.form.toList ∈ words ex.context
+  l.host.Attested (Datum.wordsOf ex.primaryText) ∧
+    (∀ p ∈ l.particle, p.form.toList ∈ Datum.wordsOf ex.primaryText) ∧
+    ∀ w ∈ l.contextWh, w.form.toList ∈ Datum.wordsOf ex.context
 
 instance (l : Link) (ex : Datum) : Decidable (l.Attested ex) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))

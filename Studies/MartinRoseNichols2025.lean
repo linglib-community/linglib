@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Pragmatics.Bidirectional
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Root.Kinds
 
 /-!
 # Verbal roots
