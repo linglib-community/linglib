@@ -77,7 +77,7 @@ structure Object where
   resultativity : Resultativity
   quantity : Quantity
   nominal : Nominal
-  number : Finnish.Nominal.numberSystem.values
+  number : Finnish.Nominal.numberSystem
   clause : Clause
   deriving DecidableEq
 
@@ -96,7 +96,7 @@ def totalCase (o : Object) : Finnish.Case :=
   | .personalPronoun => .acc
   | .numeral => .nom
   | .other =>
-    Finnish.Nominal.numberSystem.elim (if o.clause = .finite then .gen else .nom) .nom
+    Number.elim Finnish.Nominal.numberSystem (if o.clause = .finite then .gen else .nom) .nom
       (n := o.number)
 
 /-- The case of the object: the partitive under any partitive condition, and otherwise the
@@ -104,7 +104,7 @@ total-object case (section 13.3.1). -/
 def case (o : Object) : Finnish.Case := if o.IsPartitive then .part else o.totalCase
 
 theorem totalCase_ne_part (o : Object) : o.totalCase ≠ .part := by
-  unfold totalCase Number.System.elim
+  unfold totalCase Number.elim
   split <;> (try split_ifs) <;> decide
 
 /-- The partitive is the stronger object case: the object is partitive exactly under a partitive
@@ -163,8 +163,8 @@ def Row.ofDatum (e : Datum) : Option Row := do
   let q ← e.parse? "quantity" [("definite", Quantity.definite), ("indefinite", .indefinite)]
   let n ← e.parse? "nominal" [("personalPronoun", Nominal.personalPronoun),
     ("numeral", .numeral), ("other", .other)]
-  let num ← e.parse? "number" [("singular", Finnish.Nominal.numberSystem.value .singular),
-    ("plural", Finnish.Nominal.numberSystem.value .plural)]
+  let num ← e.parse? "number" [("singular", ⟨.singular, by decide⟩),
+    ("plural", ⟨.plural, by decide⟩)]
   let cl ← e.parse? "clause" [("finite", Clause.finite), ("imperative", .imperative),
     ("passive", .passive), ("obligation", .obligation), ("infinitival", .infinitival)]
   let w := (← e.feature? "object").toList
@@ -224,9 +224,9 @@ def cliticOf : Wordlist.Clitic → Clitic
   | .kAAn => .kAAn
 
 /-- The number of a cell, the singular unless the cell is plural. -/
-def numberOf (c : Wordlist.Cell) : Nominal.numberSystem.values :=
-  if (c.number : Option UD.Number) = some .Plur then Nominal.numberSystem.value .plural
-  else Nominal.numberSystem.value .singular
+def numberOf (c : Wordlist.Cell) : Nominal.numberSystem :=
+  if (c.number : Option UD.Number) = some .Plur then ⟨.plural, by decide⟩
+  else ⟨.singular, by decide⟩
 
 /-- The word of a form of the tables in the case `c`: the stem the grammar segments off, then
 the function ending of its infinitive, the endings of its number and of `c`, its possessive

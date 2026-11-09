@@ -33,14 +33,14 @@ inductive Gender where
 
 /-- Bayso nouns have a singular, a paucal and a plural, and a general number outside the
 system. -/
-def numberSystem : Number.System :=
-  { values := {.singular, .paucal, .plural}, hasGeneral := true }
+def numberSystem : Finset Number :=
+  {.singular, .paucal, .plural}
 
 /-- The numbers a noun has a form for, the general and the values of the system. -/
-def nounNumbers : Finset Number := insert .general numberSystem.values
+def nounNumbers : Finset Number := insert .general numberSystem
 
 /-- Pronouns distinguish the singular and the plural. -/
-def pronounNumberSystem : Number.System := .singularPlural
+def pronounNumberSystem : Finset Number := {.singular, .plural}
 
 /-- The three forms of an agreeing verb, labelled from the pronouns that take them:
 *hudure* 'slept' masculine, *hudurte* feminine, *hudureene* plural. -/
@@ -51,8 +51,8 @@ inductive Concord where
   deriving DecidableEq, Repr, Fintype
 
 /-- A pronoun takes its gender's concord in the singular and the plural concord in the plural. -/
-def Gender.pronounConcord (g : Gender) : pronounNumberSystem.values → Concord :=
-  pronounNumberSystem.elim (match g with | .masc => .masc | .fem => .fem) .plural
+def Gender.pronounConcord (g : Gender) : pronounNumberSystem → Concord :=
+  Number.elim pronounNumberSystem (match g with | .masc => .masc | .fem => .fem) .plural
 
 /-- A noun takes its gender's concord in the general and the singular, the plural concord in the
 paucal, and the masculine concord in the plural. -/

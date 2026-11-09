@@ -62,11 +62,11 @@ inductive AdjForm where
   deriving DecidableEq, Repr, Fintype
 
 /-- Romanian distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The ending an agreeing adjective takes with each gender, in each number. -/
-def Value.adjForm (g : Value) : numberSystem.values → AdjForm :=
-  numberSystem.elim (match g with | .masc => .zero | .fem => .ă | .neut => .zero)
+def Value.adjForm (g : Value) : numberSystem → AdjForm :=
+  Number.elim numberSystem (match g with | .masc => .zero | .fem => .ă | .neut => .zero)
     (match g with | .masc => .i | .fem => .e | .neut => .e)
 
 theorem faithful_adjForm : Gender.Faithful Value.adjForm := by decide

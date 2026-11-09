@@ -43,17 +43,17 @@ open Russian.Agreement (longEnding)
 /-- `relativePronoun g a n c` is the form of the relative pronoun with a head of gender `g`,
 subgender `a` and number `n` in the case `c`, the stem *kotor-* with the endings of a hard-stem
 adjective ([wade-2020] §121, §123). -/
-def relativePronoun (g : Gender.Value) (a : Gender.Animacy) (n : Gender.numberSystem.values)
+def relativePronoun (g : Gender.Value) (a : Gender.Animacy) (n : Gender.numberSystem)
     (c : Case) : String :=
   "kotor" ++ (longEnding g a n c).form
 
 /-- The relative pronoun has one form for the nominative and the accusative exactly in the neuter
 singular and, with an inanimate head, outside the feminine singular. -/
 theorem relativePronoun_nom_eq_acc_iff (g : Gender.Value) (a : Gender.Animacy)
-    (n : Gender.numberSystem.values) :
+    (n : Gender.numberSystem) :
     relativePronoun g a n .nom = relativePronoun g a n .acc ↔
-      g = .neut ∧ n = Gender.numberSystem.value .singular ∨
-        a = .inanimate ∧ (g ≠ .fem ∨ n = Gender.numberSystem.value .plural) := by
+      g = .neut ∧ n = ⟨.singular, by decide⟩ ∨
+        a = .inanimate ∧ (g ≠ .fem ∨ n = ⟨.plural, by decide⟩) := by
   revert g a n; decide
 
 /-- The relative pronoun *kotoryj*, in the case of the relativized position, introduces a clause
@@ -72,8 +72,8 @@ def relativizers : List Relativizer := [relKotoryj]
 *devuška, kotoraja ljubit Džona* 'the girl who likes John' (pp. 65–66), and [keenan-comrie-1979]'s
 (87) and (88) (p. 344), with the feminine animate *devuška*. -/
 example :
-    relativePronoun .fem .animate (Gender.numberSystem.value .singular) .acc = "kotoruju" ∧
-      relativePronoun .fem .animate (Gender.numberSystem.value .singular) .nom = "kotoraja" := by
+    relativePronoun .fem .animate ⟨.singular, by decide⟩ .acc = "kotoruju" ∧
+      relativePronoun .fem .animate ⟨.singular, by decide⟩ .nom = "kotoraja" := by
   decide
 
 end Russian

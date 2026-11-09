@@ -54,36 +54,36 @@ inductive Gender where
   deriving DecidableEq, Repr, Fintype
 
 /-- Coastal Marind distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The distal demonstrative *Vpe*, by gender and number ([olsson-2021] Table 4.2). -/
-def demonstrative (g : Gender) : numberSystem.values → String :=
-  numberSystem.elim (match g with | .gI | .gIII => "e-pe" | .gII => "u-pe" | .gIV => "i-pe")
+def demonstrative (g : Gender) : numberSystem → String :=
+  Number.elim numberSystem (match g with | .gI | .gIII => "e-pe" | .gII => "u-pe" | .gIV => "i-pe")
     (match g with | .gIII => "e-pe" | .gI | .gII | .gIV => "i-pe")
 
 /-- The similative postposition *hV* 'like', which is *hu* for gender II in the singular and *hi*
 otherwise ([olsson-2021] §3.3). -/
-def similative (g : Gender) : numberSystem.values → String :=
-  numberSystem.elim (match g with | .gII => "hu" | .gI | .gIII | .gIV => "hi") "hi"
+def similative (g : Gender) : numberSystem → String :=
+  Number.elim numberSystem (match g with | .gII => "hu" | .gI | .gIII | .gIV => "hi") "hi"
 
 /-- The adjective *ak-k* 'light (in weight)', by gender and number ([olsson-2021] Table 3.3). -/
-def light (g : Gender) : numberSystem.values → String :=
-  numberSystem.elim
+def light (g : Gender) : numberSystem → String :=
+  Number.elim numberSystem
     (match g with | .gI => "akek" | .gII => "akuk" | .gIII => "akak" | .gIV => "akik")
     (match g with | .gIII => "akak" | .gI | .gII | .gIV => "akik")
 
 /-- The suppletive adjective 'small', by gender and number ([olsson-2021] Table 3.5), the one
 target that distinguishes number in genders III and IV. -/
-def small (g : Gender) : numberSystem.values → String :=
-  numberSystem.elim
+def small (g : Gender) : numberSystem → String :=
+  Number.elim numberSystem
     (match g with | .gI | .gIII => "papes" | .gII => "papus" | .gIV => "papis")
     (match g with | .gIII => "wasasuɣ" | .gI | .gII | .gIV => "isahih")
 
 /-- The noun *nanVh* 'face', by the gender and number of the one whose face it is: the one
 noun with overt alternation among the three that take their referent's gender, Olsson's
 inherited gender ([olsson-2021] §5.2.3). -/
-def face (g : Gender) : numberSystem.values → String :=
-  numberSystem.elim (match g with | .gII => "nanuh" | .gI | .gIII | .gIV => "nanih") "nanih"
+def face (g : Gender) : numberSystem → String :=
+  Number.elim numberSystem (match g with | .gII => "nanuh" | .gI | .gIII | .gIV => "nanih") "nanih"
 
 /-! ### Agreement patterns -/
 
@@ -92,8 +92,8 @@ the singular and I, II and IV sharing *i-pe* only in the plural ([olsson-2021] �
 theorem faithful_demonstrative : Gender.Faithful demonstrative := by decide
 
 theorem crossed_demonstrative :
-    Gender.Crossed (demonstrative · (numberSystem.value .singular))
-      (demonstrative · (numberSystem.value .plural)) := by
+    Gender.Crossed (demonstrative · ⟨.singular, by decide⟩)
+      (demonstrative · ⟨.plural, by decide⟩) := by
   decide
 
 theorem injective_demonstrative_iff (g : Gender) :
@@ -109,26 +109,26 @@ def Gender.pluralGender : Gender → Gender
   | _ => .gIV
 
 theorem demonstrative_plural (g : Gender) :
-    demonstrative g (numberSystem.value .plural) =
-      demonstrative g.pluralGender (numberSystem.value .singular) := by cases g <;> rfl
+    demonstrative g ⟨.plural, by decide⟩ =
+      demonstrative g.pluralGender ⟨.singular, by decide⟩ := by cases g <;> rfl
 
 theorem similative_plural (g : Gender) :
-    similative g (numberSystem.value .plural) =
-      similative g.pluralGender (numberSystem.value .singular) := by cases g <;> rfl
+    similative g ⟨.plural, by decide⟩ =
+      similative g.pluralGender ⟨.singular, by decide⟩ := by cases g <;> rfl
 
 theorem light_plural (g : Gender) :
-    light g (numberSystem.value .plural) =
-      light g.pluralGender (numberSystem.value .singular) := by cases g <;> rfl
+    light g ⟨.plural, by decide⟩ =
+      light g.pluralGender ⟨.singular, by decide⟩ := by cases g <;> rfl
 
 theorem face_plural (g : Gender) :
-    face g (numberSystem.value .plural) =
-      face g.pluralGender (numberSystem.value .singular) := by cases g <;> rfl
+    face g ⟨.plural, by decide⟩ =
+      face g.pluralGender ⟨.singular, by decide⟩ := by cases g <;> rfl
 
 theorem injective_small (g : Gender) : Function.Injective (small g) := by
   cases g <;> decide
 
 theorem small_plural {g : Gender} (hg : g ≠ .gIII) :
-    small g (numberSystem.value .plural) = small .gIV (numberSystem.value .plural) := by
+    small g ⟨.plural, by decide⟩ = small .gIV ⟨.plural, by decide⟩ := by
   cases g <;> first | rfl | exact absurd rfl hg
 
 /-- A noun with its gender. -/

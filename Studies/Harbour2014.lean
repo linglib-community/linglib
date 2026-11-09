@@ -19,7 +19,7 @@ cooccur (23). A sociosemantic convention fixes the height of the cut `[±additiv
 A parameter setting generates a number system, the feature bundles with nonempty denotation, and
 the typology of Table 3 and the implications of Table 1 are claims about these systems. Without
 `[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
-`Number.System.ofCard` gives](##Harbour2014.Setting.number_eq_ofCard), so conjoined noun phrases
+`Number.ofCard` gives](##Harbour2014.Setting.number_eq_ofCard), so conjoined noun phrases
 resolve to the value of the sum of their cardinalities; [an approximative value rules such
 resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 
@@ -630,10 +630,9 @@ theorem mem_system {σ : Setting} {p : ℕ} {b : Bundle} :
 def values (σ : Setting) (c : Convention) (p : ℕ) : List Number :=
   (σ.system p).map (Bundle.label c)
 
-/-- A setting's third-person system as a `Number.System` sets general number apart. -/
-def toSystem (σ : Setting) (c : Convention) : Number.System where
-  values := ((σ.values c 0).filter (· ≠ .general)).toFinset
-  hasGeneral := decide (.general ∈ σ.values c 0)
+/-- A setting's third-person system, general number lying outside it. -/
+def toSystem (σ : Setting) (c : Convention) : Finset Number :=
+  ((σ.values c 0).filter (· ≠ .general)).toFinset
 
 end Setting
 
@@ -768,14 +767,14 @@ instance (s : Finset Number) : Decidable (SatisfiesTable1 s) := by
 /-- Every legitimate setting satisfies Table 1 except `{±additive(*), ±minimal*}`, two lacunae of
 Table 3 whose unit augmented has no augmented. -/
 theorem satisfiesTable1_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    σ.Legitimate → (SatisfiesTable1 (σ.toSystem c).values ↔
+    σ.Legitimate → (SatisfiesTable1 (σ.toSystem c) ↔
       ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
   decide +kernel
 
 -- Table 1 [corbett-2000]
-theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem.values := by
+theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.values
+  change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 
@@ -784,24 +783,24 @@ section Table3
 /-- Table 3 pairs each setting and convention with the system of its example language, as
 [corbett-2000] records it where it does, or of a lacuna; Banyun's row is left out. -/
 def table3 : List (Setting × Convention × Finset Number) :=
-  [(⟨.inactive, .inactive, .inactive⟩, .none, Corbett2000.piraha.values),
+  [(⟨.inactive, .inactive, .inactive⟩, .none, Corbett2000.piraha),
    (⟨.active, .inactive, .inactive⟩, .none, {.singular, .plural}),  -- Svan
    (⟨.inactive, .active, .inactive⟩, .none, {.minimal, .augmented}),  -- Winnebago
-   (⟨.inactive, .recursive, .inactive⟩, .none, Corbett2000.rembarrnga.values),
+   (⟨.inactive, .recursive, .inactive⟩, .none, Corbett2000.rembarrnga),
    (⟨.active, .active, .inactive⟩, .none, {.singular, .dual, .plural}),  -- Kiowa
-   (⟨.active, .inactive, .active⟩, .one .low, Corbett2000.bayso.toSystem.values),
+   (⟨.active, .inactive, .active⟩, .one .low, Corbett2000.bayso.toSystem),
    (⟨.active, .inactive, .active⟩, .one .high, {.singular, .plural, .greaterPlural}),  -- Fula
    (⟨.inactive, .active, .active⟩, .one .low, {.minimal, .paucal, .plural}),  -- Mebengokre
-   (⟨.active, .recursive, .inactive⟩, .none, Corbett2000.larike.toSystem.values),
+   (⟨.active, .recursive, .inactive⟩, .none, Corbett2000.larike.toSystem),
    (⟨.inactive, .recursive, .active⟩, .one .low, {.minimal, .unitAugmented, .paucal, .plural}),
    (⟨.inactive, .active, .recursive⟩, .two .low, {.minimal, .paucal, .greaterPaucal, .plural}),
    (⟨.inactive, .recursive, .recursive⟩, .two .low,
      {.minimal, .unitAugmented, .paucal, .greaterPaucal, .plural}),
-   (⟨.active, .active, .active⟩, .one .low, Corbett2000.yimas.toSystem.values),
-   (⟨.active, .active, .active⟩, .one .high, Corbett2000.mokilese.toSystem.values),
-   (⟨.active, .recursive, .active⟩, .one .low, Corbett2000.marshallese.toSystem.values),
-   (⟨.active, .active, .recursive⟩, .two .low, Corbett2000.sursurunga.toSystem.values),
-   (⟨.active, .active, .recursive⟩, .two .high, Corbett2000.meleFila.toSystem.values),
+   (⟨.active, .active, .active⟩, .one .low, Corbett2000.yimas.toSystem),
+   (⟨.active, .active, .active⟩, .one .high, Corbett2000.mokilese.toSystem),
+   (⟨.active, .recursive, .active⟩, .one .low, Corbett2000.marshallese.toSystem),
+   (⟨.active, .active, .recursive⟩, .two .low, Corbett2000.sursurunga.toSystem),
+   (⟨.active, .active, .recursive⟩, .two .high, Corbett2000.meleFila.toSystem),
    (⟨.active, .recursive, .recursive⟩, .two .low,
      {.singular, .dual, .trial, .paucal, .greaterPaucal, .plural})]
 
@@ -810,7 +809,7 @@ def table3 : List (Setting × Convention × Finset Number) :=
 attribute [local instance high] List.decidableBAll
 
 /-- Every row of Table 3 is generated. -/
-theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1).values = r.2.2 := by
+theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1) = r.2.2 := by
   decide +kernel
 
 -- Table 3
@@ -827,7 +826,7 @@ attribute concepts, the markedness order of number derived from the features. -/
 a setting generates the numbers of its system. -/
 def Generates (p : {p : Setting × Convention // p.2.Fits p.1.additive ∧ p.1.Legitimate})
     (v : Number) : Prop :=
-  v ∈ (p.1.1.toSystem p.1.2).values
+  v ∈ (p.1.1.toSystem p.1.2)
 
 /-- A number requires another when its attribute concept lies below the other's, the implication
 schema (34). -/
@@ -835,7 +834,7 @@ abbrev Requires (b a : Number) : Prop :=
   Concept.ofAttribute Generates b ≤ Concept.ofAttribute Generates a
 
 theorem requires_iff {b a : Number} : Requires b a ↔ ∀ σ : Setting, ∀ c : Convention,
-    c.Fits σ.additive → σ.Legitimate → b ∈ (σ.toSystem c).values → a ∈ (σ.toSystem c).values := by
+    c.Fits σ.additive → σ.Legitimate → b ∈ (σ.toSystem c) → a ∈ (σ.toSystem c) := by
   rw [Requires, Concept.ofAttribute_le_ofAttribute_iff]
   exact ⟨fun h σ c hc hσ ↦ h (x := ⟨(σ, c), hc, hσ⟩), fun h ⦃p⦄ ↦ h p.1.1 p.1.2 p.2.1 p.2.2⟩
 
@@ -850,7 +849,7 @@ def derivedImplications : List (Number × Number) :=
 /-- The settings derive each implication of `derivedImplications`. -/
 theorem requires_of_mem_derivedImplications : ∀ e ∈ derivedImplications, Requires e.1 e.2 := by
   have h : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
-      ∀ e ∈ derivedImplications, e.1 ∈ (σ.toSystem c).values → e.2 ∈ (σ.toSystem c).values := by
+      ∀ e ∈ derivedImplications, e.1 ∈ (σ.toSystem c) → e.2 ∈ (σ.toSystem c) := by
     decide +kernel
   exact fun e he ↦ requires_iff.2 fun σ c hc hσ ↦ h σ c hc hσ e he
 
@@ -869,7 +868,7 @@ theorem mem_table3_of_requires {b a : Number} (h : Requires b a) {r} (hr : r ∈
 /-- Every system of [corbett-2000]'s sequences of choices is a lower set of the order the settings
 induce, having with a number every number that number requires. -/
 theorem mem_of_requires_corbett (c : Corbett2000.Choices) {b a : Number} (h : Requires b a)
-    (hb : b ∈ c.toSystem.values) : a ∈ c.toSystem.values := by
+    (hb : b ∈ c.toSystem) : a ∈ c.toSystem := by
   have key : ∀ b a : Number, (∀ r ∈ table3, b ∈ r.2.2 → a ∈ r.2.2) →
       ∀ s : Corbett2000.Shape, b ∈ s.values → a ∈ s.values := by
     decide +kernel
@@ -878,10 +877,10 @@ theorem mem_of_requires_corbett (c : Corbett2000.Choices) {b a : Number} (h : Re
 
 theorem mem_of_requires_minimalAugmented {b a : Number} (h : Requires b a) :
     ∀ ns ∈ [Corbett2000.piraha, Corbett2000.rembarrnga, Corbett2000.ilocano],
-      b ∈ ns.values → a ∈ ns.values := by
+      b ∈ ns → a ∈ ns := by
   have key : ∀ b a : Number, (∀ r ∈ table3, b ∈ r.2.2 → a ∈ r.2.2) →
       ∀ ns ∈ [Corbett2000.piraha, Corbett2000.rembarrnga, Corbett2000.ilocano],
-        b ∈ ns.values → a ∈ ns.values := by
+        b ∈ ns → a ∈ ns := by
     decide +kernel
   exact key b a fun _ hr ↦ mem_table3_of_requires h hr
 
@@ -964,18 +963,18 @@ theorem number_eq_of_collapse {lo hi : ℕ} (h : 4 < lo) (σ : Setting) (c : Con
 /-- The settings derive Table 1's trial requiring the dual and dual the singular: the
 determinate values of every system are an initial segment. -/
 theorem toSystem_determinateInitial : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    (σ.toSystem c).DeterminateInitial := by
+    Number.DeterminateInitial (σ.toSystem c) := by
   decide +kernel
 
 -- p. 213
 /-- Without `[±additive]` and with `[±atomic]`, a setting gives a referent of `k` individuals the
 determinate value of `k` if its system has one and the plural otherwise, the value
-`Number.System.ofCard` gives. -/
+`Number.ofCard` gives. -/
 theorem number_eq_ofCard (σ : Setting) (hd : σ.additive = .inactive)
     (ha : σ.atomic ≠ .inactive) {lo hi : ℕ} (h : 4 < lo) (k : ℕ+) :
-    σ.number .none lo hi k = (σ.toSystem .none).ofCard k := by
+    σ.number .none lo hi k = Number.ofCard (σ.toSystem .none) k := by
   have ref : ∀ σ : Setting, σ.additive = .inactive → σ.atomic ≠ .inactive → ∀ j < 6,
-      σ.number .none 5 6 j.succPNat = (σ.toSystem .none).ofCard j.succPNat := by
+      σ.number .none 5 6 j.succPNat = Number.ofCard (σ.toSystem .none) j.succPNat := by
     decide +kernel
   have hk := k.pos
   have hc6 : collapse lo hi k ≤ 6 := by unfold collapse; split_ifs <;> omega
@@ -987,8 +986,8 @@ theorem number_eq_ofCard (σ : Setting) (hd : σ.additive = .inactive)
   · congr 1
     exact PNat.eq (by rw [Nat.succPNat_coe, Nat.succ_eq_add_one, hj, collapse, ite_eq_left hk4])
   · have : 4 ≤ collapse lo hi k := by unfold collapse; split_ifs <;> omega
-    rw [Number.System.ofCard_of_three_lt (show 3 < (k : ℕ) by omega),
-      Number.System.ofCard_of_three_lt (show 3 < j + 1 by omega)]
+    rw [Number.ofCard_of_three_lt (show 3 < (k : ℕ) by omega),
+      Number.ofCard_of_three_lt (show 3 < j + 1 by omega)]
 
 /-- With `[±additive]` and a cut above five, no function of the conjuncts' values gives a
 coordination's: two cardinalities just below the cut share a cell, but adding one individual
@@ -1036,7 +1035,7 @@ theorem factorsThrough_number_iff (σ : Setting) (c : Convention) (hc : c.Fits �
       · rfl
       all_goals exact hc.elim
     rw [funext (number_eq_ofCard σ hd ha (by omega))]
-    exact Number.System.determinateInitial_iff_factorsThrough.1
+    exact Number.determinateInitial_iff_factorsThrough.1
       (toSystem_determinateInitial σ .none (hd ▸ trivial))
 
 end Setting

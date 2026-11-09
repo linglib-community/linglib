@@ -5,8 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.PNat.Congruence
 public import Linglib.Syntax.Number.Basic
+public import Mathlib.Data.PNat.Basic
+public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
@@ -17,14 +18,12 @@ determinate value of `n` if the system has one and the plural otherwise. A targe
 conjoined noun phrases takes the value of the group they form, whose cardinality is the sum of
 theirs: in Slovene the dual for two singulars and the plural otherwise. The group's value is a
 function of the conjuncts' values [exactly when the determinate values are an initial
-segment](##Number.System.determinateInitial_iff_factorsThrough) of singular, dual and trial,
-[exactly when the cells are intervals](##Number.System.determinateInitial_iff_ordConnected), and
-[`resolve` is that function](##Number.System.resolve_ofCard). Of the partitions into intervals,
-only those into single cardinalities up to some bound and one cell above admit such a function
-(`PNat.factorsThrough_add_iff`), so a bounded cell of several cardinalities precludes it. A
-target's value is a function of its controller's [exactly when the controller's system has every
-determinate value of the target's](##Number.System.factorsThrough_ofCard_iff), as a Modern Hebrew
-verb takes the plural with a dual noun.
+segment](##Number.determinateInitial_iff_factorsThrough) of singular, dual and trial, [exactly
+when the cells are intervals](##Number.determinateInitial_iff_ordConnected), and [`resolve` is
+that function](##Number.resolve_ofCard). A target's value is a function of its controller's
+[exactly when the controller's system has every determinate value of the
+target's](##Number.factorsThrough_ofCard_iff), as a Modern Hebrew verb takes the plural with a
+dual noun.
 
 ## Implementation notes
 
@@ -37,14 +36,13 @@ resolution by values.
 approximative value has no boundary fixed by the system (the Bayso paucal is for two to about
 six), and the minimal and augmented are relative to person, so neither is a class the labels cut
 out. `resolve` and `coarsen` send them, as they send the plural, to the plural; no theorem here
-reaches them.
+reaches them. In Harbour's settings an approximative value rules resolution out
+(`Studies/Harbour2014.lean`).
 
 ## TODO
 
 * Minimal–augmented systems, where the speaker and the addressee, each minimal, sum to the
   minimal inclusive, want person and number resolved together.
-* Resolution in systems with an approximative value, where no function of the conjuncts' values
-  gives the group's.
 
 ## References
 
@@ -57,101 +55,98 @@ reaches them.
 
 @[expose] public section
 
-namespace Number.System
+namespace Number
 
-variable (ns : System)
+variable (s : Finset Number)
 
-/-- `ns.ofCard n` is the value a system gives a referent of `n` individuals, the determinate
-value of that cardinality if the system has it and the plural otherwise. -/
+/-- `ofCard s n` is the value the system `s` gives a referent of `n` individuals, the
+determinate value of `n` if `s` has it and the plural otherwise. -/
 def ofCard (n : ℕ+) : Number :=
-  if fromCard n ∈ ns.values then fromCard n else .plural
-
-/-- `ns.resolve a b` is the resolved number of two conjuncts, the value of the sum of their
-cardinalities; a conjunct with no fixed cardinality makes it plural. -/
-def resolve (a b : Number) : Number :=
-  match a.exactCard, b.exactCard with
-  | some m, some n => ns.ofCard (m + n)
-  | _, _ => .plural
-
-/-- `ns.coarsen v` is the value a system gives the referent of a value `v` of another system,
-the value of its cardinality if `v` has one and the plural otherwise. -/
-def coarsen (v : Number) : Number :=
-  match v.exactCard with
-  | some n => ns.ofCard n
+  match fromCard? n with
+  | some v => if v ∈ s then v else .plural
   | none => .plural
 
-variable {ns} {n : ℕ+} {v : Number}
+/-- `resolve s a b` is the resolved number of two conjuncts, the value of the sum of their
+cardinalities; a conjunct with no fixed cardinality makes it plural. -/
+def resolve (a b : Number) : Number :=
+  (Option.map₂ (· + ·) a.exactCard b.exactCard).elim .plural (ofCard s)
+
+/-- `coarsen s v` is the value the system `s` gives the referent of a value `v` of another
+system, the value of its cardinality if `v` has one and the plural otherwise. -/
+def coarsen (v : Number) : Number :=
+  v.exactCard.elim .plural (ofCard s)
+
+variable {s} {n : ℕ+} {v : Number}
+
+private theorem not_isDeterminate_plural : ¬ Number.plural.IsDeterminate := by decide
 
 /-! ### The value of a cardinality -/
 
-theorem ofCard_of_mem (h : fromCard n ∈ ns.values) : ns.ofCard n = fromCard n := ite_eq_left h
-
-theorem ofCard_of_notMem (h : fromCard n ∉ ns.values) : ns.ofCard n = .plural := ite_eq_right h
-
-theorem isDeterminate_ofCard :
-    (ns.ofCard n).IsDeterminate ↔ n ≤ 3 ∧ fromCard n ∈ ns.values := by
-  by_cases h : fromCard n ∈ ns.values
-  · simpa [ofCard_of_mem h, h] using isDeterminate_fromCard
-  · simp [ofCard_of_notMem h, h, IsDeterminate]
-
-theorem exactCard_ofCard (h : (ns.ofCard n).IsDeterminate) :
-    (ns.ofCard n).exactCard = some n := by
-  obtain ⟨hn, hv⟩ := isDeterminate_ofCard.1 h
-  rw [ofCard_of_mem hv, exactCard_eq_some_iff]
-  exact ⟨hn, rfl⟩
-
 /-- A system uses a determinate value for its cardinality alone. -/
 theorem ofCard_eq_iff (hv : v.IsDeterminate) :
-    ns.ofCard n = v ↔ v ∈ ns.values ∧ v.exactCard = some n := by
-  rw [exactCard_eq_some_iff]
-  refine ⟨fun h ↦ ?_, fun ⟨hv, hn, h⟩ ↦ h ▸ ofCard_of_mem (h ▸ hv)⟩
-  subst h
-  obtain ⟨hn, hv⟩ := isDeterminate_ofCard.1 hv
-  exact ⟨ofCard_of_mem hv ▸ hv, hn, (ofCard_of_mem hv).symm⟩
+    ofCard s n = v ↔ v ∈ s ∧ v.exactCard = some n := by
+  rw [← fromCard?_eq_some_iff]
+  unfold ofCard
+  rcases fromCard? n with _ | w
+  · exact ⟨fun (h : Number.plural = v) ↦ absurd (h ▸ hv) not_isDeterminate_plural,
+      fun ⟨_, h⟩ ↦ nomatch h⟩
+  · by_cases hw : w ∈ s
+    · simp only [hw, ↓reduceIte, Option.some.injEq]
+      exact ⟨fun h ↦ h ▸ ⟨hw, rfl⟩, fun ⟨_, h⟩ ↦ h⟩
+    · simp only [hw, ↓reduceIte, Option.some.injEq]
+      exact ⟨fun h ↦ absurd (h ▸ hv) not_isDeterminate_plural, fun ⟨h, e⟩ ↦ absurd (e ▸ h) hw⟩
+
+theorem isDeterminate_ofCard : (ofCard s n).IsDeterminate ↔ ∃ v ∈ s, v.exactCard = some n :=
+  ⟨fun h ↦ ⟨_, (ofCard_eq_iff h).1 rfl⟩, fun ⟨_, hv, hn⟩ ↦
+    (ofCard_eq_iff (Option.isSome_iff_exists.2 ⟨n, hn⟩)).2 ⟨hv, hn⟩ ▸
+      Option.isSome_iff_exists.2 ⟨n, hn⟩⟩
+
+theorem exactCard_ofCard (h : (ofCard s n).IsDeterminate) : (ofCard s n).exactCard = some n :=
+  ((ofCard_eq_iff h).1 rfl).2
 
 /-- Every value a system gives is determinate or the plural. -/
-theorem ofCard_eq_plural_iff : ns.ofCard n = .plural ↔ ¬ (ns.ofCard n).IsDeterminate := by
-  refine ⟨fun h hd ↦ by rw [h] at hd; exact hd, fun h ↦ ?_⟩
-  by_cases hv : fromCard n ∈ ns.values
-  · rw [ofCard_of_mem hv]
-    exact fromCard_of_three_lt (not_le.1 fun h3 ↦ h (isDeterminate_ofCard.2 ⟨h3, hv⟩))
-  · exact ofCard_of_notMem hv
+theorem ofCard_eq_plural_iff : ofCard s n = .plural ↔ ¬ (ofCard s n).IsDeterminate := by
+  refine ⟨fun h hd ↦ not_isDeterminate_plural (h ▸ hd), fun h ↦ ?_⟩
+  unfold ofCard at h ⊢
+  rcases hf : fromCard? n with _ | w
+  · rfl
+  · by_cases hw : w ∈ s
+    · simp only [hf, hw, ↓reduceIte] at h
+      exact absurd (Option.isSome_iff_exists.2 ⟨n, fromCard?_eq_some_iff.1 hf⟩) h
+    · simp [hw]
 
 /-- A system uses the plural for the cardinalities none of its values is fixed to. -/
-theorem ofCard_eq_plural_iff_forall :
-    ns.ofCard n = .plural ↔ ∀ v ∈ ns.values, v.exactCard ≠ some n := by
-  refine ⟨fun h v hv hn ↦ ?_, fun h ↦ ofCard_eq_plural_iff.2 fun hd ↦
-    h _ ((ofCard_eq_iff hd).1 rfl).1 (exactCard_ofCard hd)⟩
-  have hd := isDeterminate_of_exactCard_eq_some hn
-  rw [(ofCard_eq_iff hd).2 ⟨hv, hn⟩] at h
-  subst h
-  exact hd
+theorem ofCard_eq_plural_iff_forall : ofCard s n = .plural ↔ ∀ v ∈ s, v.exactCard ≠ some n := by
+  rw [ofCard_eq_plural_iff, isDeterminate_ofCard]
+  push Not
+  rfl
 
-theorem ofCard_of_three_lt (h : 3 < n) : ns.ofCard n = .plural :=
-  ofCard_eq_plural_iff.2 fun hd ↦ (isDeterminate_ofCard.1 hd).1.not_gt h
+theorem ofCard_of_three_lt (h : 3 < n) : ofCard s n = .plural := by
+  simp [ofCard, fromCard?_eq_none_iff.2 h]
 
 /-! ### The cells of a system -/
 
 /-- The determinate values of a system are an initial segment exactly when the cardinalities it
 gives a determinate value are. -/
 theorem determinateInitial_iff_isLowerSet :
-    ns.DeterminateInitial ↔ IsLowerSet {n | (ns.ofCard n).IsDeterminate} := by
+    DeterminateInitial s ↔ IsLowerSet {n | (ofCard s n).IsDeterminate} := by
   simp only [IsLowerSet, Set.mem_ofPred_eq, isDeterminate_ofCard]
-  refine ⟨fun h n m hmn ⟨hn, hv⟩ ↦ ⟨hmn.trans hn, h _ hv n (exactCard_eq_some_iff.2 ⟨hn, rfl⟩)
-    m (Finset.mem_Icc.2 ⟨one_le, hmn⟩)⟩, fun h v hv n hn m hm ↦ ?_⟩
-  obtain ⟨hn3, rfl⟩ := exactCard_eq_some_iff.1 hn
-  exact (h (Finset.mem_Icc.1 hm).2 ⟨hn3, hv⟩).2
+  refine ⟨fun h n m hmn ⟨v, hv, hn⟩ ↦ ?_, fun h v hv n hn m hm w hw ↦ ?_⟩
+  · obtain ⟨w, hw⟩ := exists_fromCard?_eq_some (hmn.trans (le_three_of_exactCard_eq_some hn))
+    exact ⟨w, h v hv n hn m (Finset.mem_Icc.2 ⟨one_le, hmn⟩) w hw, fromCard?_eq_some_iff.1 hw⟩
+  · obtain ⟨w', hw', hm'⟩ := h (Finset.mem_Icc.1 hm).2 ⟨v, hv, hn⟩
+    rwa [Option.some_injective _ ((fromCard?_eq_some_iff.2 hm').symm.trans hw)] at hw'
 
 /-- The determinate values of a system are an initial segment exactly when its cells are
 intervals of cardinalities. -/
 theorem determinateInitial_iff_ordConnected :
-    ns.DeterminateInitial ↔ ∀ v, (ns.ofCard ⁻¹' {v}).OrdConnected := by
+    DeterminateInitial s ↔ ∀ v, (ofCard s ⁻¹' {v}).OrdConnected := by
   rw [determinateInitial_iff_isLowerSet]
-  have hpl : ns.ofCard ⁻¹' {.plural} = {n | (ns.ofCard n).IsDeterminate}ᶜ :=
+  have hpl : ofCard s ⁻¹' {.plural} = {n | (ofCard s n).IsDeterminate}ᶜ :=
     Set.ext fun _ ↦ ofCard_eq_plural_iff
   refine ⟨fun h v ↦ ?_, fun h n m hmn hn ↦ ?_⟩
   · by_cases hv : v.IsDeterminate
-    · have hs : (ns.ofCard ⁻¹' {v}).Subsingleton := fun x hx y hy ↦ by
+    · have hs : (ofCard s ⁻¹' {v}).Subsingleton := fun x hx y hy ↦ by
         rw [Set.mem_preimage, Set.mem_singleton_iff] at hx hy
         have ex := exactCard_ofCard (hx ▸ hv)
         rwa [hx, ← hy, exactCard_ofCard (hy ▸ hv), Option.some_inj, eq_comm] at ex
@@ -165,37 +160,37 @@ theorem determinateInitial_iff_ordConnected :
         rw [Set.mem_preimage, Set.mem_singleton_iff] at hx
         exact hx ▸ ofCard_eq_plural_iff.2 (hx ▸ hv)
   · by_contra hm
-    have h4 : ns.ofCard 4 = .plural := ofCard_of_three_lt (by decide)
+    have h4 : ofCard s 4 = .plural := ofCard_of_three_lt (by decide)
     exact ofCard_eq_plural_iff.1 ((h .plural).out (ofCard_eq_plural_iff.2 hm) h4
-      ⟨hmn, (isDeterminate_ofCard.1 hn).1.trans (by decide)⟩) hn
+      ⟨hmn, (le_three_of_exactCard_eq_some (exactCard_ofCard hn)).trans (by decide)⟩) hn
 
 /-! ### Resolution -/
 
-theorem resolve_comm (a b : Number) : ns.resolve a b = ns.resolve b a := by
+theorem resolve_comm (a b : Number) : resolve s a b = resolve s b a := by
   unfold resolve
-  cases a.exactCard <;> cases b.exactCard <;> simp [add_comm]
+  rw [Option.map₂_comm (g := (· + ·)) fun a b ↦ add_comm a b]
 
 theorem resolve_of_not_isDeterminate_left {a : Number} (ha : ¬ a.IsDeterminate) (b : Number) :
-    ns.resolve a b = .plural := by
-  simp [resolve, exactCard_eq_none_iff.2 ha]
+    resolve s a b = .plural := by
+  simp [resolve, Option.not_isSome_iff_eq_none.1 ha]
 
 theorem resolve_of_not_isDeterminate_right (a : Number) {b : Number} (hb : ¬ b.IsDeterminate) :
-    ns.resolve a b = .plural := by
+    resolve s a b = .plural := by
   rw [resolve_comm, resolve_of_not_isDeterminate_left hb]
 
-@[simp] theorem resolve_plural_left (b : Number) : ns.resolve .plural b = .plural :=
-  resolve_of_not_isDeterminate_left id b
+@[simp] theorem resolve_plural_left (b : Number) : resolve s .plural b = .plural :=
+  resolve_of_not_isDeterminate_left not_isDeterminate_plural b
 
-@[simp] theorem resolve_plural_right (a : Number) : ns.resolve a .plural = .plural :=
-  resolve_of_not_isDeterminate_right a id
+@[simp] theorem resolve_plural_right (a : Number) : resolve s a .plural = .plural :=
+  resolve_of_not_isDeterminate_right a not_isDeterminate_plural
 
 /-- In a system whose determinate values are an initial segment of singular, dual and trial,
 conjuncts of `m` and `n` individuals resolve to the value of `m + n`. -/
-theorem resolve_ofCard (h : ns.DeterminateInitial) (m n : ℕ+) :
-    ns.resolve (ns.ofCard m) (ns.ofCard n) = ns.ofCard (m + n) := by
-  by_cases hd : (ns.ofCard m).IsDeterminate ∧ (ns.ofCard n).IsDeterminate
-  · rw [resolve, exactCard_ofCard hd.1, exactCard_ofCard hd.2]
-  have hp : ns.resolve (ns.ofCard m) (ns.ofCard n) = .plural := by
+theorem resolve_ofCard (h : DeterminateInitial s) (m n : ℕ+) :
+    resolve s (ofCard s m) (ofCard s n) = ofCard s (m + n) := by
+  by_cases hd : (ofCard s m).IsDeterminate ∧ (ofCard s n).IsDeterminate
+  · simp [resolve, exactCard_ofCard hd.1, exactCard_ofCard hd.2]
+  have hp : resolve s (ofCard s m) (ofCard s n) = .plural := by
     rcases not_and_or.1 hd with hd | hd
     · exact resolve_of_not_isDeterminate_left hd _
     · exact resolve_of_not_isDeterminate_right _ hd
@@ -207,8 +202,8 @@ theorem resolve_ofCard (h : ns.DeterminateInitial) (m n : ℕ+) :
 the values of cardinalities, exactly when its determinate values are an initial segment of
 singular, dual and trial. A system with a dual and no singular fails: it gives one individual and
 four alike the plural, but one more makes two, which is dual, and five, which is plural. -/
-theorem determinateInitial_iff_factorsThrough : ns.DeterminateInitial ↔
-    (fun p : ℕ+ × ℕ+ ↦ ns.ofCard (p.1 + p.2)).FactorsThrough (Prod.map ns.ofCard ns.ofCard) := by
+theorem determinateInitial_iff_factorsThrough : DeterminateInitial s ↔
+    (fun p : ℕ+ × ℕ+ ↦ ofCard s (p.1 + p.2)).FactorsThrough (Prod.map (ofCard s) (ofCard s)) := by
   refine ⟨fun h ⟨a, b⟩ ⟨c, d⟩ hp ↦ ?_, fun H ↦ ?_⟩
   · simp only [Prod.map, Prod.mk.injEq] at hp
     simp only [← resolve_ofCard h, hp.1, hp.2]
@@ -222,50 +217,43 @@ theorem determinateInitial_iff_factorsThrough : ns.DeterminateInitial ↔
   exact ofCard_eq_plural_iff.1 (e.trans (ofCard_of_three_lt
     (lt_of_lt_of_le (by decide) (PNat.lt_add_right 4 (n - m)).le))) hn
 
-/-- In a system whose determinate values are an initial segment, the cardinalities up to some
-`k` have cells of their own and those above share one. -/
-theorem exists_ofCard_eq_ofCard_iff (h : ns.DeterminateInitial) :
-    ∃ k : ℕ, ∀ m n, ns.ofCard m = ns.ofCard n ↔ m = n ∨ k < m ∧ k < n :=
-  (PNat.factorsThrough_add_iff (determinateInitial_iff_ordConnected.1 h)).1
-    (determinateInitial_iff_factorsThrough.1 h)
-
 /-- Any number of conjuncts, resolved in order, give the value of the sum of their
 cardinalities. -/
-theorem foldl_resolve_ofCard (h : ns.DeterminateInitial) (m : ℕ+) (ms : List ℕ+) :
-    (ms.map ns.ofCard).foldl ns.resolve (ns.ofCard m) = ns.ofCard (ms.foldl (· + ·) m) := by
+theorem foldl_resolve_ofCard (h : DeterminateInitial s) (m : ℕ+) (ms : List ℕ+) :
+    (ms.map (ofCard s)).foldl (resolve s) (ofCard s m) = ofCard s (ms.foldl (· + ·) m) := by
   induction ms generalizing m with
   | nil => rfl
   | cons x xs ih => simp [resolve_ofCard h, ih]
 
 /-! ### Coarsening -/
 
-theorem coarsen_of_not_isDeterminate (hv : ¬ v.IsDeterminate) : ns.coarsen v = .plural := by
-  simp [coarsen, exactCard_eq_none_iff.2 hv]
+theorem coarsen_of_not_isDeterminate (hv : ¬ v.IsDeterminate) : coarsen s v = .plural := by
+  simp [coarsen, Option.not_isSome_iff_eq_none.1 hv]
 
-private theorem ofCard_eq_plural_of_subset {src tgt : System}
-    (h : ∀ v ∈ tgt.values, v.IsDeterminate → v ∈ src.values)
-    (hn : ¬ (src.ofCard n).IsDeterminate) : tgt.ofCard n = .plural :=
+variable {src tgt : Finset Number}
+
+private theorem ofCard_eq_plural_of_subset (h : ∀ v ∈ tgt, v.IsDeterminate → v ∈ src)
+    (hn : ¬ (ofCard src n).IsDeterminate) : ofCard tgt n = .plural :=
   ofCard_eq_plural_iff.2 fun htd ↦ hn <| ((ofCard_eq_iff htd).2
     ⟨h _ ((ofCard_eq_iff htd).1 rfl).1 htd, exactCard_ofCard htd⟩).symm ▸ htd
 
 /-- A target's value is a function of its controller's exactly when the controller's system has
 every determinate value of the target's. -/
-theorem factorsThrough_ofCard_iff {src tgt : System} :
-    tgt.ofCard.FactorsThrough src.ofCard ↔ ∀ v ∈ tgt.values, v.IsDeterminate → v ∈ src.values := by
+theorem factorsThrough_ofCard_iff :
+    (ofCard tgt).FactorsThrough (ofCard src) ↔ ∀ v ∈ tgt, v.IsDeterminate → v ∈ src := by
   refine ⟨fun H v hv hd ↦ ?_, fun h a b hab ↦ ?_⟩
   · by_contra hs
-    obtain ⟨c, hc⟩ := Option.ne_none_iff_exists'.1 (exactCard_eq_none_iff.not.2 (not_not.2 hd))
-    have hsrc : src.ofCard c = src.ofCard 4 := by
+    obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 hd
+    have hsrc : ofCard src c = ofCard src 4 := by
       rw [ofCard_of_three_lt (n := 4) (by decide), ofCard_eq_plural_iff]
       intro hd'
-      have hv' : src.ofCard c = v :=
-        (exactCard_eq_some_iff.1 (exactCard_ofCard hd')).2.symm.trans (exactCard_eq_some_iff.1 hc).2
+      have hv' : ofCard src c = v := Option.some_injective _ <|
+        (fromCard?_eq_some_iff.2 (exactCard_ofCard hd')).symm.trans (fromCard?_eq_some_iff.2 hc)
       exact hs (hv' ▸ ((ofCard_eq_iff hd').1 rfl).1)
     have e := H hsrc
     rw [(ofCard_eq_iff hd).2 ⟨hv, hc⟩, ofCard_of_three_lt (n := 4) (by decide)] at e
-    subst e
-    exact hd
-  · by_cases hd : (src.ofCard a).IsDeterminate
+    exact not_isDeterminate_plural (e ▸ hd)
+  · by_cases hd : (ofCard src a).IsDeterminate
     · have ex := exactCard_ofCard hd
       rw [hab, exactCard_ofCard (hab ▸ hd), Option.some_inj] at ex
       rw [ex]
@@ -273,11 +261,10 @@ theorem factorsThrough_ofCard_iff {src tgt : System} :
 
 /-- A target shows the value of its controller's referent when the controller's system has
 every determinate value of the target's. -/
-theorem coarsen_ofCard {src tgt : System}
-    (h : ∀ v ∈ tgt.values, v.IsDeterminate → v ∈ src.values) (n : ℕ+) :
-    tgt.coarsen (src.ofCard n) = tgt.ofCard n := by
-  by_cases hd : (src.ofCard n).IsDeterminate
-  · rw [coarsen, exactCard_ofCard hd]
+theorem coarsen_ofCard (h : ∀ v ∈ tgt, v.IsDeterminate → v ∈ src) (n : ℕ+) :
+    coarsen tgt (ofCard src n) = ofCard tgt n := by
+  by_cases hd : (ofCard src n).IsDeterminate
+  · simp [coarsen, exactCard_ofCard hd]
   · rw [coarsen_of_not_isDeterminate hd, ofCard_eq_plural_of_subset h hd]
 
-end Number.System
+end Number

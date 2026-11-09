@@ -59,20 +59,20 @@ inductive Article where
   deriving DecidableEq, Repr, Fintype
 
 /-- Teop distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
-instance : Nontrivial numberSystem.values :=
-  ⟨⟨numberSystem.value .singular, numberSystem.value .plural, by decide⟩⟩
+instance : Nontrivial numberSystem :=
+  ⟨⟨⟨.singular, by decide⟩, ⟨.plural, by decide⟩, by decide⟩⟩
 
 /-- The basic article of a noun, by class and number. -/
-def headArticle (c : NounClass) : numberSystem.values → Article :=
-  numberSystem.elim (match c with | .e => .e | .a => .a | .o => .o)
+def headArticle (c : NounClass) : numberSystem → Article :=
+  Number.elim numberSystem (match c with | .e => .e | .a => .a | .o => .o)
     (match c with | .e | .a => .o | .o => .a)
 
 /-- The article of an adjective or numeral agreeing with a noun, by the noun's class and
 number. -/
-def targetArticle (c : NounClass) : numberSystem.values → Article :=
-  numberSystem.elim (match c with | .e | .a => .a | .o => .o)
+def targetArticle (c : NounClass) : numberSystem → Article :=
+  Number.elim numberSystem (match c with | .e | .a => .a | .o => .o)
     (match c with | .e | .a => .o | .o => .a)
 
 /-- A Teop noun with its class. -/

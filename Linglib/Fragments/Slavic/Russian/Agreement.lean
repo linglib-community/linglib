@@ -46,7 +46,7 @@ tripartition, the singular and the plural, the genders with their subgenders, an
 and it distinguishes no definiteness. -/
 abbrev Value : Dimension → Type
   | .person => {p : Person // ¬ p.MarksClusivity}
-  | .number => Gender.numberSystem.values
+  | .number => Gender.numberSystem
   | .gender => Gender.Value × Gender.Animacy
   | .case => Case
   | .definiteness => Unit
@@ -58,7 +58,7 @@ abbrev Cell := (d : Dimension) → Value d
 inflection depart. -/
 private def base : Cell
   | .person => ⟨.third, by decide⟩
-  | .number => Gender.numberSystem.value .singular
+  | .number => ⟨.singular, by decide⟩
   | .gender => (.masc, .inanimate)
   | .case => .nom
   | .definiteness => ()
@@ -110,9 +110,9 @@ def LongEnding.form : LongEnding → String
 
 /-- The ending of the hard-stem long adjective *nóvyj* 'new' by the gender and subgender of its
 controller, its number and its case, the table of [wade-2020] §145. -/
-def longEnding (g : Gender.Value) (a : Gender.Animacy) (n : Gender.numberSystem.values)
+def longEnding (g : Gender.Value) (a : Gender.Animacy) (n : Gender.numberSystem)
     (c : Case) : LongEnding :=
-  Gender.numberSystem.elim (n := n)
+  Number.elim Gender.numberSystem (n := n)
     (match g, a, c with
       | .masc, _, .nom => .yj
       | .masc, .animate, .acc => .ogo
@@ -142,23 +142,23 @@ def longAdjective : Target Value LongEnding :=
     (by
       simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
       exact ⟨⟨base, (.fem, .inanimate), by decide⟩,
-        ⟨base, Gender.numberSystem.value .plural, by decide⟩, ⟨base, .gen, by decide⟩⟩)
+        ⟨base, ⟨.plural, by decide⟩, by decide⟩, ⟨base, .gen, by decide⟩⟩)
 
 /-- The animate accusative of the long adjective is its genitive exactly in the masculine
 singular and the plural ([wade-2020] §47). -/
-theorem longEnding_animate_acc_eq_gen_iff (g : Gender.Value) (n : Gender.numberSystem.values) :
+theorem longEnding_animate_acc_eq_gen_iff (g : Gender.Value) (n : Gender.numberSystem) :
     longEnding g .animate n .acc = longEnding g .animate n .gen ↔ g = .masc ∨ n.1 = .plural := by
   revert g n
   decide
 
-theorem longEnding_inanimate_acc_eq_nom_iff (g : Gender.Value) (n : Gender.numberSystem.values) :
+theorem longEnding_inanimate_acc_eq_nom_iff (g : Gender.Value) (n : Gender.numberSystem) :
     longEnding g .inanimate n .acc = longEnding g .inanimate n .nom ↔
       g ≠ .fem ∨ n.1 = .plural := by
   revert g n
   decide
 
 theorem injective_longEnding_nom (a : Gender.Animacy) :
-    Injective (longEnding · a (Gender.numberSystem.value .singular) .nom) := by
+    Injective (longEnding · a ⟨.singular, by decide⟩ .nom) := by
   cases a <;> decide
 
 /-! ### The short adjective -/
@@ -176,8 +176,8 @@ inductive ShortEnding where
   deriving DecidableEq, Repr, Fintype
 
 /-- The ending of the short adjective *suróv* 'severe' by gender and number ([wade-2020] §159). -/
-def shortEnding (g : Gender.Value) : Gender.numberSystem.values → ShortEnding :=
-  Gender.numberSystem.elim (match g with | .masc => .zero | .fem => .a | .neut => .o) .y
+def shortEnding (g : Gender.Value) : Gender.numberSystem → ShortEnding :=
+  Number.elim Gender.numberSystem (match g with | .masc => .zero | .fem => .a | .neut => .o) .y
 
 /-- The short adjective, used predicatively ([wade-2020] §144), inflects for gender and
 number. -/
@@ -187,7 +187,7 @@ def shortAdjective : Target Value ShortEnding :=
     (by
       simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
       exact ⟨⟨base, (.fem, .inanimate), by decide⟩,
-        ⟨base, Gender.numberSystem.value .plural, by decide⟩⟩)
+        ⟨base, ⟨.plural, by decide⟩, by decide⟩⟩)
 
 /-! ### The finite verb -/
 
@@ -225,8 +225,8 @@ inductive NonpastEnding where
 
 /-- The nonpast ending by conjugation, person and number ([wade-2020] §213). Clusivity is not
 distinguished, so both first persons take the first person's ending. -/
-def nonpastEnding (k : Conjugation) (p : Person) : Gender.numberSystem.values → NonpastEnding :=
-  Gender.numberSystem.elim
+def nonpastEnding (k : Conjugation) (p : Person) : Gender.numberSystem → NonpastEnding :=
+  Number.elim Gender.numberSystem
     (match k, p with
       | .first, .second => .eš'
       | .first, .third => .et
@@ -249,7 +249,7 @@ def nonpastVerb (k : Conjugation) : Target Value NonpastEnding :=
     (by
       simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
       exact ⟨⟨base, ⟨.first, by decide⟩, by cases k <;> decide⟩,
-        ⟨base, Gender.numberSystem.value .plural, by cases k <;> decide⟩⟩)
+        ⟨base, ⟨.plural, by decide⟩, by cases k <;> decide⟩⟩)
 
 /-- The endings of the past tense, added to its *-l-*. -/
 inductive PastEnding where
@@ -264,8 +264,8 @@ inductive PastEnding where
   deriving DecidableEq, Repr, Fintype
 
 /-- The past ending by gender and number ([wade-2020] §230). -/
-def pastEnding (g : Gender.Value) : Gender.numberSystem.values → PastEnding :=
-  Gender.numberSystem.elim (match g with | .masc => .zero | .fem => .a | .neut => .o) .i
+def pastEnding (g : Gender.Value) : Gender.numberSystem → PastEnding :=
+  Number.elim Gender.numberSystem (match g with | .masc => .zero | .fem => .a | .neut => .o) .i
 
 /-- The past finite verb is predicative and inflects for gender and number, *ja pisal* or *ja
 pisala* 'I was writing' by the speaker's gender ([wade-2020] §230). -/
@@ -275,9 +275,9 @@ def pastVerb : Target Value PastEnding :=
     (by
       simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
       exact ⟨⟨base, (.fem, .inanimate), by decide⟩,
-        ⟨base, Gender.numberSystem.value .plural, by decide⟩⟩)
+        ⟨base, ⟨.plural, by decide⟩, by decide⟩⟩)
 
-theorem injective_pastEnding : Injective (pastEnding · (Gender.numberSystem.value .singular)) := by
+theorem injective_pastEnding : Injective (pastEnding · ⟨.singular, by decide⟩) := by
   decide
 
 end Russian.Agreement
