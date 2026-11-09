@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Natural.Projection
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Fragments.English.PolarityItems

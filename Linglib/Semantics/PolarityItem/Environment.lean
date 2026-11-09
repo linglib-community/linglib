@@ -205,46 +205,45 @@ end Path
 
 /-! ### Licensing -/
 
-section Acceptable
+namespace Environment
 
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P]
+  (e : Environment σ P) {s : Negation.Strength}
 
-/-- An item is acceptable under an operator over its position when the operator carries the
-strength of negation that licenses the item and does not carry the strength that blocks it. -/
-def Acceptable (π : PolarityItem) (f : σ → P) : Prop :=
-  (∀ s ∈ π.licensor, (Licenser.ofOperator f).Carries s) ∧
-    ∀ s ∈ π.antiLicensor, ¬(Licenser.ofOperator f).Carries s
+/-- An environment of negative sign holds weak strength outright. -/
+theorem holds_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) :
+    (Licenser.ofOperator e).Holds Negation.Strength.weak.toProjectivitySignature :=
+  fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.2 (e.antitone_of_sign_eq_neg_one h)
 
-variable {π : PolarityItem} {f : σ → P} {s : Negation.Strength}
+/-- An environment of positive sign holds no strength outright, once it is not constant. -/
+theorem not_holds_of_sign_eq_one (h : e.signature.sign = 1) (hne : e ⊥ ≠ e ⊤) :
+    ¬ (Licenser.ofOperator e).Holds s.toProjectivitySignature :=
+  Licenser.not_holds_toProjectivitySignature fun ha ↦ hne <| le_antisymm
+    (e.monotone_of_sign_eq_one h bot_le) (ProjectivitySignature.holdsFor_anti_iff.1 (ha ⟨⟩) bot_le)
 
-theorem acceptable_of_licensor (hl : π.licensor = some s) (ha : π.antiLicensor = none)
-    (h : (Licenser.ofOperator f).Carries s) : π.Acceptable f :=
-  ⟨fun _ h' ↦ Option.mem_some_iff.1 (hl ▸ h') ▸ h, fun _ h' ↦ absurd (ha ▸ h') nofun⟩
-
-theorem acceptable_of_antiLicensor (hl : π.licensor = none) (ha : π.antiLicensor = some s)
-    (h : ¬(Licenser.ofOperator f).Carries s) : π.Acceptable f :=
-  ⟨fun _ h' ↦ absurd (hl ▸ h') nofun, fun _ h' ↦ Option.mem_some_iff.1 (ha ▸ h') ▸ h⟩
-
-end Acceptable
+end Environment
 
 namespace Path
 
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
   {s : Negation.Strength} {π : PolarityItem}
 
-/-- The licensing condition: the item is acceptable in some domain. -/
+/-- The licensing condition: some domain admits the item. -/
 def Licenses (π : PolarityItem) : Prop :=
-  ∃ t ∈ p.layers.tails, π.Acceptable (p.environment t)
+  ∃ t ∈ p.layers.tails, (Licenser.ofOperator (p.environment t)).Admits π
 
 /-- An item that a strength licenses is anti-licensed when every domain has positive sign. -/
 theorem not_licenses_of_mem_licensor (hs : s ∈ π.licensor)
-    (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) : ¬p.Licenses π :=
-  fun ⟨t, ht, ha⟩ ↦ (p.environment t).not_carries_of_sign_eq_one (h t ht) (ha.1 s hs)
+    (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) : ¬p.Licenses π := by
+  rintro ⟨t, ht, ha⟩
+  obtain ⟨r, hr, hc⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := ha.1 (.inl (Option.isSome_iff_exists.2 ⟨s, hs⟩))
+  exact (p.environment t).not_carries_of_sign_eq_one (h t ht) hc
 
-/-- An item that a strength blocks is anti-licensed when every domain carries it. -/
+/-- An item that a strength blocks is anti-licensed when every domain holds it. -/
 theorem not_licenses_of_mem_antiLicensor (hs : s ∈ π.antiLicensor)
-    (h : ∀ t ∈ p.layers.tails, (p.environment t).Carries s) : ¬p.Licenses π := fun ⟨t, ht, ha⟩ ↦
-  ha.2 s hs (h t ht)
+    (h : ∀ t ∈ p.layers.tails,
+      (Licenser.ofOperator (p.environment t)).Holds s.toProjectivitySignature) :
+    ¬p.Licenses π := fun ⟨t, ht, ha⟩ ↦ ha.2 ⟨s, hs, h t ht⟩
 
 end Path
 

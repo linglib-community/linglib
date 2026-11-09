@@ -1,13 +1,13 @@
 module
 
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # German polarity-sensitive items
 
 This file defines the German polarity-sensitive items: the indefinite *irgendein*, the modal
 *brauchen* 'need' and the punctual *erst* 'only then'. The licensing theory of
-`Semantics/PolarityItem/Licensing.lean` predicts which environments license each.
+`Semantics/PolarityItem/Basic.lean` predicts which environments license each.
 
 *Irgendein* is an existential indefinite with free-choice effects under modals. Kratzer and
 Shimoyama attest it under possibility and necessity modals, under negative quantifiers such as

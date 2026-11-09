@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Logic.Natural.ProjectivitySignature
-public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Genericity.Normality

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Data.Examples.VanDerWouden1997
 public import Linglib.Data.Examples.Readers
 

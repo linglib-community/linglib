@@ -10,8 +10,8 @@ public import Studies.Chierchia2004
 
 This file formalizes the localist, environment-based theory of polarity items: an item is
 evaluated in its domains, the constituents containing it and the polarity head of their own
-clause, and it is acceptable only if it is acceptable in some domain, one carrying the strength of
-negation that licenses it and lacking the strength that blocks it. For *quoi que ce soit*, *any*
+clause, and it is acceptable only if some domain admits it, its operator carrying the strength of
+negation that licenses it and not holding the strength that blocks it. For *quoi que ce soit*, *any*
 and, as the paper concludes, *some*, that strength is downward entailment. A second
 downward-entailing expression in a domain undoes the first, so [*quoi que ce soit* and *some* are
 anti-licensed and licensed again](##Homer2021.flipFlop) as such expressions stack up, and [*some*
@@ -224,19 +224,19 @@ theorem not_licenses_notImpossible : ¬notImpossible.Licenses quoiQueCeSoit :=
 
 theorem licenses_impossibleNot : impossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
-    acceptable_of_licensor rfl rfl <|
+    Licenser.admits_of_carries rfl rfl <|
       Environment.carries_weak_of_sign_eq_neg_one _ (by simp [impossibleNot]; decide)
         (by simp [impossibleNot])⟩
 
 theorem licenses_notImpossibleNot : notImpossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
-    acceptable_of_licensor rfl rfl <|
+    Licenser.admits_of_carries rfl rfl <|
       Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
         (by simp [notImpossibleNot])⟩
 
 theorem licenses_ifImpossible : ifImpossible.Licenses quoiQueCeSoit :=
   ⟨[impossible, 1, 1], by simp [ifImpossible],
-    acceptable_of_licensor rfl rfl <|
+    Licenser.admits_of_carries rfl rfl <|
       Environment.carries_weak_of_sign_eq_neg_one _ (by simp [ifImpossible]; decide)
         (by simp [ifImpossible])⟩
 
@@ -244,45 +244,49 @@ theorem not_licenses_clausemateNot : ¬clausemateNot.Licenses someItem :=
   clausemateNot.not_licenses_of_mem_antiLicensor rfl fun t ht ↦ by
     simp [clausemateNot] at ht
     rcases ht with rfl | rfl <;>
-      exact Environment.carries_weak_of_sign_eq_neg_one _ (by simp [clausemateNot]; decide)
-        (by simp [clausemateNot])
+      exact Environment.holds_weak_of_sign_eq_neg_one _ (by simp [clausemateNot]; decide)
 
 theorem licenses_notClaim : notClaim.Licenses someItem :=
   ⟨[], by simp,
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [notClaim]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [notClaim]; decide)
+        (by simp [notClaim]; exact Set.empty_ne_univ)⟩
 
 theorem licenses_impossibleBare : impossibleBare.Licenses someItem :=
   ⟨[], by simp,
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [impossibleBare]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [impossibleBare]; decide)
+        (by simp [impossibleBare]; exact Set.empty_ne_univ)⟩
 
 theorem licenses_notSureNot : notSureNot.Licenses someItem :=
   ⟨[negation * necessity, 1, 1], by simp [notSureNot],
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [notSureNot]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [notSureNot]; decide)
+        (by simp [notSureNot]; exact Set.empty_ne_univ)⟩
 
 theorem licenses_impossibleNot_some : impossibleNot.Licenses someItem :=
   ⟨[impossible, 1, 1], by simp [impossibleNot],
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [impossibleNot]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [impossibleNot]; decide)
+        (by simp [impossibleNot]; exact Set.empty_ne_univ)⟩
 
 theorem not_licenses_notImpossibleNot_some : ¬notImpossibleNot.Licenses someItem :=
   notImpossibleNot.not_licenses_of_mem_antiLicensor rfl fun t ht ↦ by
     simp [notImpossibleNot] at ht
     rcases ht with rfl | rfl | rfl | rfl | rfl <;>
-      exact Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
-        (by simp [notImpossibleNot])
+      exact Environment.holds_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
 
 theorem licenses_ifNot : ifNot.Licenses someItem :=
   ⟨[conditional consequent, 1], by simp [ifNot],
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [ifNot, conditional]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [ifNot, conditional]; decide)
+        (by simp [ifNot, conditional, consequent, Set.eq_univ_iff_forall])⟩
 
 theorem licenses_notThatImpossibleNot : notThatImpossibleNot.Licenses someItem :=
   ⟨[impossible, 1, 1], by simp [notThatImpossibleNot],
-    acceptable_of_antiLicensor rfl rfl <|
-      Environment.not_carries_of_sign_eq_one _ (by simp [notThatImpossibleNot]; decide)⟩
+    Licenser.admits_of_not_holds rfl (by decide) rfl <|
+      Environment.not_holds_of_sign_eq_one _ (by simp [notThatImpossibleNot]; decide)
+        (by simp [notThatImpossibleNot]; exact Set.empty_ne_univ)⟩
 
 theorem antitone_notThatImpossibleNot :
     Antitone (notThatImpossibleNot.environment notThatImpossibleNot.layers) :=
@@ -331,9 +335,9 @@ theorem notImpossibleNot_someone :
     notImpossibleNot.Licenses English.PolarityItems.someone ∧
       ¬notImpossibleNot.Licenses someItem := by
   refine ⟨⟨[negation * impossible, 1, 1], by simp [notImpossibleNot, embedded, path],
-    acceptable_of_antiLicensor rfl rfl fun hc ↦ ?_⟩, not_licenses_notImpossibleNot_some⟩
-  exact not_isAntiAdditive_notImpossibleNot
-    (ProjectivitySignature.holdsFor_antiAdd_iff.1 ((Environment.carries_iff _).1 hc).1).1
+    Licenser.admits_of_not_holds rfl (by decide) rfl fun h ↦ ?_⟩,
+    not_licenses_notImpossibleNot_some⟩
+  exact not_isAntiAdditive_notImpossibleNot (ProjectivitySignature.holdsFor_antiAdd_iff.1 (h ⟨⟩)).1
 
 /-! ### Disruption by scalar implicatures -/
 
@@ -403,11 +407,10 @@ noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
     ProjectivitySignature.holdsFor_anti_iff.2 antitone_notConn_disj⟩,
     [1]⟩
 
-theorem not_carries_notAnd {t : List (ProjectivitySignature.classPairs (Set World))}
+theorem not_holds_notAnd {t : List (ProjectivitySignature.classPairs (Set World))}
     (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
-    ¬(notAnd.environment t).Carries s := fun hc ↦ by
-  have ha := ProjectivitySignature.holdsFor_anti_iff.1
-    (((notAnd.environment t).carries_iff.1 hc).1.of_le (by cases s <;> decide))
+    ¬(Licenser.ofOperator (notAnd.environment t)).Holds s.toProjectivitySignature := fun hh ↦ by
+  have ha := ProjectivitySignature.holdsFor_anti_iff.1 ((hh ⟨⟩).of_le (by cases s <;> decide))
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)
@@ -420,17 +423,20 @@ theorem carries_notOr {t : List (ProjectivitySignature.classPairs (Set World))}
     refine Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notOr]; decide) ?_ <;>
     simp [notOr, notConn_disj_strong, wine_ne_univ]
 
-theorem not_licenses_notAnd : ¬notAnd.Licenses English.PolarityItems.any :=
-  fun ⟨_, ht, ha⟩ ↦ not_carries_notAnd ht (ha.1 .weak rfl)
+theorem not_licenses_notAnd : ¬notAnd.Licenses English.PolarityItems.any := by
+  rintro ⟨_, ht, ha⟩
+  obtain ⟨_, -, hc⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := ha.1 (.inl rfl)
+  exact not_holds_notAnd ht (Licenser.carries_classical_iff.1 hc).1
 
 theorem licenses_notAnd : notAnd.Licenses someItem :=
-  ⟨[], by simp, acceptable_of_antiLicensor rfl rfl (not_carries_notAnd (by simp))⟩
+  ⟨[], by simp, Licenser.admits_of_not_holds rfl (by decide) rfl (not_holds_notAnd (by simp))⟩
 
 theorem licenses_notOr : notOr.Licenses English.PolarityItems.any :=
-  ⟨[], by simp, acceptable_of_licensor rfl rfl (carries_notOr (by simp))⟩
+  ⟨[], by simp, Licenser.admits_of_carries rfl rfl (carries_notOr (by simp))⟩
 
 theorem not_licenses_notOr : ¬notOr.Licenses someItem :=
-  notOr.not_licenses_of_mem_antiLicensor rfl fun _ ht ↦ carries_notOr ht
+  notOr.not_licenses_of_mem_antiLicensor rfl fun _ ht ↦
+    (Licenser.carries_classical_iff.1 (carries_notOr ht)).1
 
 /-- *John didn't drink wine and …* is downward entailing with respect to the indefinite, but not
 once strengthened by its implicature that John drank one of them, so *any* is anti-licensed and
@@ -490,7 +496,7 @@ def env (i : ι) (j : ℕ) (Q : Quantifier (Fin 2)) : Clause :=
   L.meaning j (Function.update (fun _ ↦ someOne) i Q)
 
 /-- The item `i` is acceptable in the constituent `j`. -/
-def Acceptable (i : ι) (j : ℕ) : Prop := (L.item i).Acceptable (L.env i j)
+def Acceptable (i : ι) (j : ℕ) : Prop := (Licenser.ofOperator (L.env i j)).Admits (L.item i)
 
 mutual
 
@@ -537,22 +543,23 @@ section Acceptability
 variable {f : Quantifier (Fin 2) → Clause}
 
 theorem acceptable_any_iff :
-    English.PolarityItems.any.Acceptable f ↔ Antitone f ∧ ¬Monotone f := by
-  refine ⟨fun h ↦ ?_, fun h ↦ acceptable_of_licensor rfl rfl ?_⟩
-  · obtain ⟨ha, hm⟩ := Licenser.carries_ofOperator_iff.1 (h.1 .weak rfl)
+    (Licenser.ofOperator f).Admits English.PolarityItems.any ↔ Antitone f ∧ ¬Monotone f := by
+  refine ⟨fun h ↦ ?_, fun h ↦ Licenser.admits_of_carries rfl rfl ?_⟩
+  · obtain ⟨_, -, hc⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := h.1 (.inl rfl)
+    obtain ⟨ha, hm⟩ := Licenser.carries_ofOperator_iff.1 hc.weak
     exact ⟨ProjectivitySignature.holdsFor_anti_iff.1 ha, hm⟩
   · exact Licenser.carries_ofOperator_iff.2 ⟨ProjectivitySignature.holdsFor_anti_iff.2 h.1, h.2⟩
 
-theorem acceptable_someItem_iff : someItem.Acceptable f ↔ ¬(Antitone f ∧ ¬Monotone f) := by
-  refine ⟨fun h hc ↦ h.2 .weak rfl (Licenser.carries_ofOperator_iff.2
-    ⟨ProjectivitySignature.holdsFor_anti_iff.2 hc.1, hc.2⟩),
-    fun h ↦ acceptable_of_antiLicensor rfl rfl ?_⟩
-  exact fun hc ↦ h (by
-    obtain ⟨ha, hm⟩ := Licenser.carries_ofOperator_iff.1 hc
-    exact ⟨ProjectivitySignature.holdsFor_anti_iff.1 ha, hm⟩)
+-- (43): *some* is acceptable in a constituent exactly when the constituent is not downward
+-- entailing with respect to it
+theorem acceptable_someItem_iff : (Licenser.ofOperator f).Admits someItem ↔ ¬Antitone f := by
+  rw [Licenser.admits_iff_not_antiLicenses (by decide) (by decide),
+    Licenser.antiLicenses_iff_holds (r := .weak) rfl]
+  exact not_congr ⟨fun h ↦ ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩),
+    fun h _ ↦ ProjectivitySignature.holdsFor_anti_iff.2 h⟩
 
-theorem not_antitone_and_not_monotone (h : Monotone f) : ¬(Antitone f ∧ ¬Monotone f) :=
-  fun hc ↦ hc.2 h
+theorem not_antitone_of_monotone (h : Monotone f) (hne : f ⊥ ≠ f ⊤) : ¬Antitone f :=
+  fun ha ↦ hne (le_antisymm (h bot_le) (ha bot_le))
 
 theorem not_monotone_of_antitone (h : Antitone f) (hne : f ⊥ ≠ f ⊤) : ¬Monotone f := fun hm ↦
   hne (le_antisymm (hm bot_le) (h bot_le))
@@ -721,13 +728,15 @@ section Acceptability
 variable {f : Quantifier (Fin 2) → Clause}
 
 theorem not_acceptable_any_of_monotone (h : Monotone f) :
-    ¬English.PolarityItems.any.Acceptable f := fun ha ↦ (acceptable_any_iff.1 ha).2 h
+    ¬(Licenser.ofOperator f).Admits English.PolarityItems.any :=
+  fun ha ↦ (acceptable_any_iff.1 ha).2 h
 
-theorem not_acceptable_someItem (h : Antitone f ∧ ¬Monotone f) : ¬someItem.Acceptable f :=
+theorem not_acceptable_someItem (h : Antitone f) : ¬(Licenser.ofOperator f).Admits someItem :=
   fun ha ↦ acceptable_someItem_iff.1 ha h
 
-theorem acceptable_someItem_of_monotone (h : Monotone f) : someItem.Acceptable f :=
-  acceptable_someItem_iff.2 (not_antitone_and_not_monotone h)
+theorem acceptable_someItem_of_monotone (h : Monotone f) (hne : f ⊥ ≠ f ⊤) :
+    (Licenser.ofOperator f).Admits someItem :=
+  acceptable_someItem_iff.2 (not_antitone_of_monotone h hne)
 
 end Acceptability
 
@@ -743,14 +752,15 @@ theorem not_licensed_impossibleSomeoneAnything : ¬impossibleSomeoneAnything.Lic
     · exact ⟨0, by decide, Nat.zero_le _, h0⟩
   · obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hj2
     have h1 : ¬impossibleSomeoneAnything.Acceptable 1 (k + 3) :=
-      not_acceptable_someItem (antitone_impossibleSubjObj_env_one k)
+      not_acceptable_someItem (antitone_impossibleSubjObj_env_one k).1
     fin_cases i
     · exact ⟨1, by decide, by simp [impossibleSomeoneAnything, impossibleSubjObj], h1⟩
     · exact absurd ha h1
 
 theorem marked_impossibleAnyoneSomething : impossibleAnyoneSomething.Marked 0 0 :=
   .intro le_rfl (by decide) (acceptable_someItem_of_monotone
-    (monotone_impossibleSubjObj_env (by decide))) fun i' hi' hp ↦ by
+    (monotone_impossibleSubjObj_env (by decide)) (show (fun x ↦ did₂ x ⊥) ≠ fun x ↦ did₂ x ⊤ by
+      rw [did₂_fun_bot, did₂_fun_top]; exact bot_ne_top)) fun i' hi' hp ↦ by
     fin_cases i'
     · exact absurd rfl hi'
     · exact absurd hp (by decide)
@@ -771,7 +781,7 @@ theorem not_licensedSimultaneously_impossibleAnyoneSomething :
   rcases le_or_gt j 2 with hj2 | hj2
   · exact not_acceptable_any_of_monotone (monotone_impossibleSubjObj_env hj2) ha
   · obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hj2
-    exact not_acceptable_someItem (antitone_impossibleSubjObj_env_zero k)
+    exact not_acceptable_someItem (antitone_impossibleSubjObj_env_zero k).1
       (h' 0 (by decide) (Nat.zero_le _))
 
 /-- With *some* and *any* entangled, *it is impossible that someone stole anything* is
@@ -799,7 +809,7 @@ theorem not_licensed_impossibleNotSomeoneAnything :
         interval_cases j <;> exact ⟨ha', not_monotone_of_antitone ha'
           (compl_bot_ne_top (f := fun Q ↦ subject Q fun x ↦ did₂ x someOne) (subject_bot _)
             (subject_top _))⟩
-      exact not_acceptable_someItem hc
+      exact not_acceptable_someItem hc.1
     fin_cases i
     · exact ⟨1, by decide, Nat.zero_le _, h1⟩
     · exact absurd ha h1
@@ -829,7 +839,7 @@ theorem licensed_impossibleSomeoneNotAnything : impossibleSomeoneNotAnything.Lic
   fin_cases i
   · exact ⟨0, marked_impossibleSomeoneNotAnything⟩
   · refine ⟨1, .intro le_rfl (by decide) (acceptable_someItem_of_monotone
-      (f := fun Q ↦ subject Q fun x ↦ (did₂ x someOne)ᶜ) (monotone_subject_left _))
+      (f := fun Q ↦ subject Q fun x ↦ (did₂ x someOne)ᶜ) (monotone_subject_left _) (by simp))
       fun i' hi' _ ↦ ?_⟩
     fin_cases i'
     · exact .marked (by decide) marked_impossibleSomeoneNotAnything
@@ -894,7 +904,7 @@ theorem not_licensed_notSureSomeoneAnything : ¬notSureSomeoneAnything.Licensed 
     · exact ⟨0, by decide, Nat.zero_le _, h0⟩
   · obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hj2
     have h1 : ¬notSureSomeoneAnything.Acceptable 1 (k + 3) :=
-      not_acceptable_someItem (antitone_notSureSubjObj_env_one k)
+      not_acceptable_someItem (antitone_notSureSubjObj_env_one k).1
     fin_cases i
     · exact ⟨1, by decide, Nat.zero_le _, h1⟩
     · exact absurd ha h1
@@ -906,8 +916,10 @@ theorem licensed_notSureSubjObj_someone :
   have h0 : (notSureSubjObj English.PolarityItems.any English.PolarityItems.someone).Acceptable
       0 3 := acceptable_any_iff.2 (antitone_notSureSubjObj_env_zero 0)
   have h1 : (notSureSubjObj English.PolarityItems.any English.PolarityItems.someone).Acceptable
-      1 3 := acceptable_of_antiLicensor rfl rfl fun hc ↦ not_isAntiAdditive_notSureSubjObj_env
-    (ProjectivitySignature.holdsFor_antiAdd_iff.1 (Licenser.carries_ofOperator_iff.1 hc).1).1
+      1 3 := Licenser.admits_of_not_holds rfl (by decide) rfl fun h ↦
+    not_isAntiAdditive_notSureSubjObj_env (obj := English.PolarityItems.any)
+      (subj := English.PolarityItems.someone)
+      (ProjectivitySignature.holdsFor_antiAdd_iff.1 (h ⟨⟩)).1
   intro i
   refine ⟨3, .intro (by fin_cases i <;> decide) (by decide) (by fin_cases i <;> assumption)
     fun i' hi' _ ↦ .acceptable ?_⟩

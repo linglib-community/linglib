@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Hungarian.Indefinites
-public import Linglib.Semantics.PolarityItem.Licensing
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Hungarian polarity items
