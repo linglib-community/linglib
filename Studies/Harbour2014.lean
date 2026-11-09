@@ -17,11 +17,16 @@ numbers. Each feature acts on a lattice of atoms and their sums, and the same tw
 govern all three: whether a feature is active on Number⁰ (22) and whether its two values may
 cooccur (23). A sociosemantic convention fixes the height of the cut `[±additive]` induces (14).
 A parameter setting generates a number system, the feature bundles with nonempty denotation, and
-the typology of Table 3 and the implications of Table 1 are claims about these systems.
+the typology of Table 3 and the implications of Table 1 are claims about these systems. Without
+`[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
+`Number.System.ofCard` gives](##Harbour2014.Setting.number_eq_ofCard), so conjoined noun phrases
+resolve to the value of the sum of their cardinalities; [an approximative value rules such
+resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 
 ## Main definitions
 
 * `Setting`, `Convention`: parameter settings and the placement of the cuts.
+* `Setting.number`: the value a setting gives a third-person referent of `k` individuals.
 * `Setting.cell`: the region of a person lattice a bundle denotes in a setting.
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
@@ -934,6 +939,107 @@ theorem meleFila_classes :
         fun b ↦ (.minimal, false) ∈ b ∧ (.additive, false) ∈ b).map
           (Bundle.label (.two .high))).Perm [.paucal, .plural] := by
   decide +kernel
+
+/-! ### The value of a cardinality and resolution
+
+The third-person cells partition the positive cardinalities, so a referent of `k` individuals
+takes the label of the bundle whose cell holds it. -/
+
+namespace Setting
+
+/-- The value a setting gives a third-person referent of `k` individuals, the label of the bundle
+whose cell holds `k`; the cells are disjoint (`disjoint_cell`). -/
+def number (σ : Setting) (c : Convention) (lo hi : ℕ) (k : ℕ+) : Number :=
+  ((σ.bundles.find? fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).Mem b k)).map
+    (Bundle.label c)).getD .general
+
+theorem number_eq_of_collapse {lo hi : ℕ} (h : 4 < lo) (σ : Setting) (c : Convention)
+    {k j : ℕ+} (hj : (j : ℕ) = collapse lo hi k) : σ.number c lo hi k = σ.number c 5 6 j := by
+  have e : (fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).Mem b k)) =
+      fun b ↦ decide (σ.cell id 5 6 (Strata.ray 0).Mem b j) :=
+    funext fun b ↦ decide_eq_decide.2 ((cell_collapse h (Nat.zero_le 2) σ b k).trans (by rw [hj]))
+  simp only [number, e]
+
+-- p. 213
+/-- The settings derive Table 1's trial requiring the dual and dual the singular: the
+determinate values of every system are an initial segment. -/
+theorem toSystem_determinateInitial : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    (σ.toSystem c).DeterminateInitial := by
+  decide +kernel
+
+-- p. 213
+/-- Without `[±additive]` and with `[±atomic]`, a setting gives a referent of `k` individuals the
+determinate value of `k` if its system has one and the plural otherwise, the value
+`Number.System.ofCard` gives. -/
+theorem number_eq_ofCard (σ : Setting) (hd : σ.additive = .inactive)
+    (ha : σ.atomic ≠ .inactive) {lo hi : ℕ} (h : 4 < lo) (k : ℕ+) :
+    σ.number .none lo hi k = (σ.toSystem .none).ofCard k := by
+  have ref : ∀ σ : Setting, σ.additive = .inactive → σ.atomic ≠ .inactive → ∀ j < 6,
+      σ.number .none 5 6 j.succPNat = (σ.toSystem .none).ofCard j.succPNat := by
+    decide +kernel
+  have hk := k.pos
+  have hc6 : collapse lo hi k ≤ 6 := by unfold collapse; split_ifs <;> omega
+  have hc1 : 1 ≤ collapse lo hi k := by unfold collapse; split_ifs <;> omega
+  obtain ⟨j, hj⟩ : ∃ j : ℕ, j + 1 = collapse lo hi k := ⟨collapse lo hi k - 1, by omega⟩
+  rw [number_eq_of_collapse h σ .none (j := j.succPNat) (by rw [Nat.succPNat_coe]; exact hj),
+    ref σ hd ha j (by omega)]
+  by_cases hk4 : (k : ℕ) ≤ 4
+  · congr 1
+    exact PNat.eq (by rw [Nat.succPNat_coe, Nat.succ_eq_add_one, hj, collapse, ite_eq_left hk4])
+  · have : 4 ≤ collapse lo hi k := by unfold collapse; split_ifs <;> omega
+    rw [Number.System.ofCard_of_three_lt (show 3 < (k : ℕ) by omega),
+      Number.System.ofCard_of_three_lt (show 3 < j + 1 by omega)]
+
+/-- With `[±additive]` and a cut above five, no function of the conjuncts' values gives a
+coordination's: two cardinalities just below the cut share a cell, but adding one individual
+to each puts one on either side of it. -/
+theorem not_factorsThrough_number (σ : Setting) (c : Convention) (hc : c.Fits σ.additive)
+    (hσ : σ.Legitimate) (hd : σ.additive ≠ .inactive) {lo hi : ℕ} (h₁ : 5 < lo) (h₂ : lo < hi) :
+    ¬ (fun p : ℕ+ × ℕ+ ↦ σ.number c lo hi (p.1 + p.2)).FactorsThrough
+      (Prod.map (σ.number c lo hi) (σ.number c lo hi)) := by
+  have ref : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
+      σ.additive ≠ .inactive → σ.number c 5 6 4 ≠ σ.number c 5 6 5 := by
+    decide +kernel
+  have below (x : ℕ+) (hx : lo - 2 ≤ (x : ℕ)) (hx' : (x : ℕ) < lo) :
+      σ.number c lo hi x = σ.number c 5 6 4 :=
+    number_eq_of_collapse (by omega) σ c (show 4 = collapse lo hi x by
+      unfold collapse; split_ifs <;> omega)
+  have atLo : σ.number c lo hi ⟨lo, by omega⟩ = σ.number c 5 6 5 :=
+    number_eq_of_collapse (by omega) σ c (show 5 = collapse lo hi lo by
+      unfold collapse; split_ifs <;> omega)
+  intro H
+  have e := @H (⟨lo - 2, by omega⟩, 1) (⟨lo - 1, by omega⟩, 1) (by
+    simp only [Prod.map, Prod.mk.injEq, and_true]
+    rw [below ⟨lo - 2, by omega⟩ le_rfl (by simp; omega),
+      below ⟨lo - 1, by omega⟩ (by simp; omega) (by simp; omega)])
+  have e₁ : (⟨lo - 2, by omega⟩ : ℕ+) + 1 = ⟨lo - 1, by omega⟩ :=
+    PNat.eq (show lo - 2 + 1 = lo - 1 by omega)
+  have e₂ : (⟨lo - 1, by omega⟩ : ℕ+) + 1 = ⟨lo, by omega⟩ :=
+    PNat.eq (show lo - 1 + 1 = lo by omega)
+  dsimp only at e
+  rw [e₁, e₂, below ⟨lo - 1, by omega⟩ (by simp; omega) (by simp; omega), atLo] at e
+  exact ref σ c hc hσ hd e
+
+/-- A setting with `[±atomic]` and its cuts above five gives a coordination a value that its
+conjuncts' values determine exactly when it lacks `[±additive]`, approximative values
+excluding it. -/
+theorem factorsThrough_number_iff (σ : Setting) (c : Convention) (hc : c.Fits σ.additive)
+    (hσ : σ.Legitimate) (ha : σ.atomic ≠ .inactive) {lo hi : ℕ} (h₁ : 5 < lo) (h₂ : lo < hi) :
+    (fun p : ℕ+ × ℕ+ ↦ σ.number c lo hi (p.1 + p.2)).FactorsThrough
+      (Prod.map (σ.number c lo hi) (σ.number c lo hi)) ↔ σ.additive = .inactive := by
+  refine ⟨fun H ↦ ?_, fun hd ↦ ?_⟩
+  · by_contra hd
+    exact not_factorsThrough_number σ c hc hσ hd h₁ h₂ H
+  · obtain rfl : c = .none := by
+      rw [hd] at hc
+      cases c
+      · rfl
+      all_goals exact hc.elim
+    rw [funext (number_eq_ofCard σ hd ha (by omega))]
+    exact Number.System.determinateInitial_iff_factorsThrough.1
+      (toSystem_determinateInitial σ .none (hd ▸ trivial))
+
+end Setting
 
 end Harbour2014
 
