@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Composition.Readings
+public import Linglib.Semantics.Composition.QuantifierRaising
 public import Linglib.Semantics.Composition.Extensional
 public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.FirstOrder
@@ -51,7 +52,7 @@ open scoped Assignment
 open PhraseStructure
 open PhraseStructure.Tree
 open Quantifier Quantifier.Det
-open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
+open Quantifier.Polyadic (iterate iterate_every_some_of_some_every)
 open scoped Denotes
 
 /-! ### Model and lexicon
@@ -264,21 +265,25 @@ inductive Denotes (lex : L → Option (Denotation E W)) :
   | tn {g : Assignment E} {c : C} {w : L} {d : Denotation E W} (h : lex w = some d) :
       Denotes lex g (.terminal c w) d
   /-- By Non-Branching Nodes, a node denotes what its only daughter does. -/
-  | nn {g : Assignment E} {c : C} {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) :
-      Denotes lex g (.node c (t :: [])) d
+  | nn {g : Assignment E} {c : C} {k : PhraseKind} {t : Tree C L} {d : Denotation E W}
+      (h : Denotes lex g t d) :
+      Denotes lex g (.phrase c k (t :: [])) d
   /-- By Functional Application, a node whose left daughter is the function denotes its value. -/
-  | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {f : Ty.Domain E W (σ ⇒ τ)}
+  | faLeft {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {σ τ : Ty}
+      {f : Ty.Domain E W (σ ⇒ τ)}
       {a : Ty.Domain E W σ} (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, f⟩) (h₂ : Denotes lex g t₂ ⟨σ, a⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨τ, f a⟩
   /-- By Functional Application, a node whose right daughter is the function denotes its value. -/
-  | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.Domain E W σ}
+  | faRight {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L} {σ τ : Ty}
+      {a : Ty.Domain E W σ}
       {f : Ty.Domain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, a⟩)
       (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, f⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨τ, f a⟩
   /-- By Predicate Modification, two sister predicates conjoin. -/
-  | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.Domain E W (.e ⇒ .t)}
+  | pm {g : Assignment E} {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L}
+      {P Q : Ty.Domain E W (.e ⇒ .t)}
       (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, P⟩) (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Q⟩) :
-      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨.e ⇒ .t, fun x ↦ P x ∧ Q x⟩
+      Denotes lex g (.phrase c k (t₁ :: t₂ :: [])) ⟨.e ⇒ .t, fun x ↦ P x ∧ Q x⟩
   /-- By the Traces and Pronouns Rule, a trace denotes the value of its index. -/
   | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, g n⟩
   /-- By Predicate Abstraction, a binder abstracts over its index in the body. -/
@@ -574,39 +579,70 @@ end RelativeClause
 
 /-! ### Quantifier scope
 
-Quantifier Raising (§7.3) leaves a trace and a binder index, so a raised quantifier takes the
-abstracted predicate as its scope. The two QR trees of "every person sees some person" compute
-its two scope readings. -/
+A quantifier in object position is of the wrong type for its verb, so the sentence as it is
+pronounced has no denotation. Quantifier Raising (§7.3) leaves a trace and a binder index, so a
+raised quantifier takes the abstracted predicate as its scope, and the two orders in which the
+quantifiers of *every person sees some person* raise give its two scope readings. -/
 
-/-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]`
-has the reading ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
+/-- *Every person*. -/
+def everyPerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person"))
+
+/-- *Some person*. -/
+def somePerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))
+
+/-- *Every person sees some person* as it is pronounced. -/
+def sentence : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin everyPerson (.bin (.leaf (.inr "sees")) somePerson)
+
+/-- The object quantifier cannot combine with the verb where it stands. -/
+theorem interp_sentence : interp lex g₀ sentence = none := rfl
+
+/-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]`,
+the object raised and then the subject over it, has the reading
+∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
 def tree_surface : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin
-    (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
-    (.binder 1
-      (.bin
-        (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
-        (.binder 2
-          (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
+  (sentence.raiseOf 2 somePerson).raiseOf 1 everyPerson
 
-/-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`
-has the reading ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
+/-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`,
+the subject raised and then the object over it, has the reading
+∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
 def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin
-    (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
-    (.binder 2
-      (.bin
-        (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
-        (.binder 1
-          (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
+  (sentence.raiseOf 1 everyPerson).raiseOf 2 somePerson
+
+theorem isLogicalForm_tree_surface : IsLogicalForm ⊥ sentence tree_surface :=
+  ((IsLogicalForm.refl sentence).raiseOf rfl (passesNoIsland_bot _ _) 2).raiseOf rfl
+    (passesNoIsland_bot _ _) 1
+
+theorem isLogicalForm_tree_inverse : IsLogicalForm ⊥ sentence tree_inverse :=
+  ((IsLogicalForm.refl sentence).raiseOf rfl (passesNoIsland_bot _ _) 1).raiseOf rfl
+    (passesNoIsland_bot _ _) 2
+
+/-- A name's trace has the name's own type, so raising *John* in *John sleeps* changes nothing. -/
+example : interp toyLexicon g₀ ((tree% [⟨"John"⟩ ⟨"sleeps"⟩] : Tree Unit String).raise 1 ([0])) =
+    interp toyLexicon g₀ (tree% [⟨"John"⟩ ⟨"sleeps"⟩]) :=
+  interpWith_raise (v := ToyEntity.john) rfl (by decide) (by decide) (by decide) rfl
+
+/-- Raising needs a new index. In `[every person [1 [t₂ [sees t₁]]]]` the object trace is bound by
+*every person*; raising `t₂` under that binder with the index 1 again captures the object trace,
+and the quantifier's variable no longer occurs in its scope. -/
+example :
+    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
+      [λ 1 [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]]]) =
+        some ⟨Ty.t, every person fun x ↦ Toy.sees x .john⟩ ∧
+    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
+      [λ 1 ((tree% [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]).raise 1 ([0]))]]) =
+        some ⟨Ty.t, every person fun _ ↦ Toy.sees .john .john⟩ :=
+  ⟨rfl, rfl⟩
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every Det.some person person fun x y ↦ Toy.sees y x
+  iterate every Det.some person person fun x y ↦ Toy.sees y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every Det.some person person fun x y ↦ Toy.sees y x
+  iterate Det.some every person person fun y x ↦ Toy.sees y x
 
 theorem surface_scope_true : surfaceScopeProp := by
   rintro x (rfl | rfl)

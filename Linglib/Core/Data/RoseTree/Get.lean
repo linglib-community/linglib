@@ -469,6 +469,16 @@ theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
     (t.positionedSubtrees.map Prod.fst).Nodup :=
   List.pairwise_map.mpr ((pairwise_lt_positionedSubtrees t).imp fun h he ↦ (he ▸ h).false)
 
+/-- The address of the first subtree of `t`, in preorder, equal to `s`. -/
+def addressOf? [DecidableEq α] (t s : RoseTree α) : Option (List ℕ) :=
+  (t.positionedSubtrees.find? (·.2 = s)).map (·.1.toList)
+
+theorem getElem?_of_addressOf? [DecidableEq α] {t s : RoseTree α} {p : List ℕ}
+    (h : t.addressOf? s = some p) : t[p]? = some s := by
+  obtain ⟨⟨q, s'⟩, hf, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain rfl : s' = s := by simpa using List.find?_some hf
+  exact mem_positionedSubtrees.mp (List.mem_of_find?_eq_some hf)
+
 /-! ### The leaves with their addresses -/
 
 /-- `positionedLeaves t` lists the leaves of `t` from left to right, each with its address. -/

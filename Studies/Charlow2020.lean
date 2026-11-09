@@ -151,7 +151,7 @@ theorem exceptional_scope :
 theorem exceptional_scope_eq_wide :
     (rel >>= fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
       rel >>= fun x ↦ closureCond cond (pure (dies x)) (pure house) := by
-  simp only [bind_assoc, pure_bind]
+  simp only [LawfulMonad.bind_assoc, pure_bind]
 
 -- (13)
 theorem narrow_scope :

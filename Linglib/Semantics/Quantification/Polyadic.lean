@@ -17,7 +17,8 @@ each villager and some friend of each townsman hate each other*. Peters and West
 all three, and de Swart and Sag analyse negative concord as the resumption of *no*.
 
 A sentence with two quantifiers has two linear scope readings, which are the two orders of
-iteration.
+iteration, [the two orders in which one quantifier takes scope over the
+other](##Quantifier.Polyadic.iterate_iff_curry).
 
 Iteration is composition with the accusative extension `acc`, which applies a quantifier to the
 rows of a relation, so a function from relations to truth values is
@@ -36,8 +37,6 @@ interchangeable](##Quantifier.Polyadic.Reducible.exists_interchangeable).
   quantifier, and the functions from relations to truth values that are compositions of quantifiers.
 * `Quantifier.Polyadic.resume`: the binary resumption `Q⟨x, y⟩ R(x, y)` of a quantifier.
 * `Quantifier.Polyadic.branch`: the branching of two quantifiers, witnessed by choice functions.
-* `Quantifier.Polyadic.surfaceScope`, `Quantifier.Polyadic.inverseScope`: the two linear scope
-  readings of a two-quantifier sentence.
 
 ## Main results
 
@@ -83,6 +82,9 @@ def acc (Q : Quantifier α) (R : α → α → Prop) : Set α := {x | Q {y | R x
 /-- The iteration `Q₁x Q₂y R(x, y)` nests `Q₂` in the scope of `Q₁`, so that *every student
 read some book* is `iterate every student some book read`. -/
 def iterate (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop := Q₁ A (acc (Q₂ B) R)
+
+/-- Iteration is the first quantifier taking scope over the second. -/
+theorem iterate_iff_curry : iterate Q₁ Q₂ A B R ↔ (Q₁ A).curry (Q₂ B) {p | R p.1 p.2} := .rfl
 
 /-- The branching of `Q₁` and `Q₂` evaluates them independently, neither in the scope of the
 other. There are choice functions `f` and `g` such that `Q₁` holds of the `x` related to their
@@ -130,15 +132,10 @@ end Resumption
 
 /-! ### Scope order -/
 
-/-- The surface-scope reading of a two-quantifier sentence, on which the first quantifier
-outscopes the second. -/
-def surfaceScope (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop :=
-  iterate Q₁ Q₂ A B R
-
-/-- The inverse-scope reading of a two-quantifier sentence, on which the second quantifier
-outscopes the first. -/
-def inverseScope (Q₁ Q₂ : Det α) (A B : Set α) (R : α → α → Prop) : Prop :=
-  iterate Q₂ Q₁ B A fun y x ↦ R x y
+/-- The two scope orders of a two-quantifier sentence are the two orders of iteration, the second
+with the relation's arguments exchanged. -/
+theorem iterate_flip_iff_map_swap_curry :
+    iterate Q₂ Q₁ B A (flip R) ↔ ((Q₂ B).curry (Q₁ A)).map Prod.swap {p | R p.1 p.2} := .rfl
 
 /-- An existential scoping over a universal entails the universal scoping over the existential,
 so the two linear readings of an *every*/*some* pair are nested. -/
