@@ -5,6 +5,7 @@ public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Fragments.Taos.Agreement
+public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Person.Features
 public import Linglib.Phonology.RuleInteraction
 
@@ -67,81 +68,38 @@ and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
 
 namespace Middleton2026
 
-open Minimalist DistributedMorphology RuleInteraction
+open Minimalist DistributedMorphology RuleInteraction Number
 
 /-! ### Inherent and natural number
 
-The noun classes of the appendix's Table 21 follow Harbour: a D head's `[±atomic]` and
-`[±minimal]` receive values from the noun's class and from its natural number, D shows the join
-of the two, and inverse agreement is a feature valued both ways. Harbour's `[±singular]` and
+The noun classes of the appendix's Table 21 follow Harbour: a D head receives values of
+`[±atomic]` and `[±minimal]` from the noun's class and from its natural number, its bundle is the
+union of the two, and inverse agreement is a bundle carrying both values of a feature, the
+configuration that on Number⁰ is Harbour's feature recursion. Harbour's `[±singular]` and
 `[±augmented]` ([harbour-2011] Table 2) are `[±atomic]` and the negation of `[±minimal]`. -/
 
-/-- The values a D head has received in `[±atomic]` and `[±minimal]`. -/
-structure Valuation where
-  /-- The values received in `[±atomic]`. -/
-  atomic : Finset Bool
-  /-- The values received in `[±minimal]`. -/
-  minimal : Finset Bool
-  deriving DecidableEq
-
-
-namespace Valuation
-
-/-- No values received. -/
-instance : EmptyCollection Valuation := ⟨⟨∅, ∅⟩⟩
-
-/-- A valuation as the pair of its value sets. -/
-def toProd (v : Valuation) : Finset Bool × Finset Bool := (v.atomic, v.minimal)
-
-theorem toProd_injective : Function.Injective toProd := fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by
-  cases h; rfl
-
-/-- One valuation is below another when each feature has received fewer values. -/
-instance : LE Valuation := ⟨fun a b ↦ a.toProd ≤ b.toProd⟩
-
-instance : LT Valuation := ⟨fun a b ↦ a.toProd < b.toProd⟩
-
-instance : DecidableLE Valuation := fun a b ↦
-  inferInstanceAs (Decidable (a.atomic ⊆ b.atomic ∧ a.minimal ⊆ b.minimal))
-
-/-- The values received from either of two valuations. -/
-instance : Max Valuation := ⟨fun a b ↦ ⟨a.atomic ∪ b.atomic, a.minimal ∪ b.minimal⟩⟩
-
-instance : SemilatticeSup Valuation :=
-  toProd_injective.semilatticeSup _ Iff.rfl Iff.rfl fun _ _ ↦ rfl
-
-@[simp] theorem atomic_sup (a b : Valuation) : (a ⊔ b).atomic = a.atomic ∪ b.atomic := rfl
-@[simp] theorem minimal_sup (a b : Valuation) : (a ⊔ b).minimal = a.minimal ∪ b.minimal := rfl
-
-/-- The valuation a natural number contributes, [harbour-2011]'s decomposition (Table 2). -/
-def ofNumber : Number → Valuation
-  | .singular => ⟨{true}, {true}⟩
-  | .dual => ⟨{false}, {true}⟩
-  | .plural => ⟨{false}, {false}⟩
+/-- The bundle a natural number contributes in a system with a dual, [harbour-2011]'s
+decomposition (Table 2). -/
+def natural : Number → Bundle
+  | .singular => {(.atomic, true), (.minimal, true)}
+  | .dual => {(.atomic, false), (.minimal, true)}
+  | .plural => {(.atomic, false), (.minimal, false)}
   | _ => ∅
 
-/-- Some feature has received both values. -/
-def IsInverse (v : Valuation) : Prop := v.atomic = Finset.univ ∨ v.minimal = Finset.univ
-
-instance : DecidablePred IsInverse := fun v ↦
-  inferInstanceAs (Decidable (v.atomic = Finset.univ ∨ v.minimal = Finset.univ))
-
-/-- The agreement category a valuation shows: inverse when a feature is valued both ways,
-otherwise the number its values spell, if any. -/
-def category (v : Valuation) : Option Number.Inverse.Category :=
-  if v.IsInverse then some .inverse
-  else if v = ofNumber .singular then some .singular
-  else if v = ofNumber .dual then some .dual
-  else if v = ofNumber .plural then some .plural
+/-- The agreement category a D head shows: inverse when its bundle carries both values of a
+feature, otherwise the number the bundle spells, if any. -/
+def category (b : Bundle) : Option Number.Inverse.Category :=
+  if ∃ f, b.CarriesBoth f then some .inverse
+  else if b = natural .singular then some .singular
+  else if b = natural .dual then some .dual
+  else if b = natural .plural then some .plural
   else none
 
-theorem category_ofNumber_singular : (ofNumber .singular).category = some .singular := by decide
+theorem category_natural_singular : category (natural .singular) = some .singular := by decide
 
-theorem category_ofNumber_dual : (ofNumber .dual).category = some .dual := by decide
+theorem category_natural_dual : category (natural .dual) = some .dual := by decide
 
-theorem category_ofNumber_plural : (ofNumber .plural).category = some .plural := by decide
-
-end Valuation
+theorem category_natural_plural : category (natural .plural) = some .plural := by decide
 
 /-! ### Noun classes
 
@@ -149,46 +107,46 @@ The four classes by inherent number ([harbour-2003], [harbour-2011]; appendix Ta
 'one or two', 'two or more', 'two', and 'any number'. -/
 
 /-- Class I, inherently `[+minimal]`: 'one or two'. -/
-def classI : Valuation := ⟨∅, {true}⟩
+def classI : Bundle := {(.minimal, true)}
 
 /-- Class II, inherently `[−atomic]`: 'two or more'. -/
-def classII : Valuation := ⟨{false}, ∅⟩
+def classII : Bundle := {(.atomic, false)}
 
 /-- Class III, inherently `[−atomic +minimal]`: 'two'. -/
-def classIII : Valuation := ⟨{false}, {true}⟩
+def classIII : Bundle := {(.atomic, false), (.minimal, true)}
 
 /-- Class IV, with no inherent number: 'any number'. -/
-def classIV : Valuation := ∅
+def classIV : Bundle := ∅
 
 /-- Class I agrees singular, dual, inverse for one, two, and more referents. -/
 theorem classI_category :
-    (classI ⊔ .ofNumber .singular).category = some .singular ∧
-      (classI ⊔ .ofNumber .dual).category = some .dual ∧
-      (classI ⊔ .ofNumber .plural).category = some .inverse := by
+    category (classI ∪ natural .singular) = some .singular ∧
+      category (classI ∪ natural .dual) = some .dual ∧
+      category (classI ∪ natural .plural) = some .inverse := by
   decide
 
 theorem classII_category :
-    (classII ⊔ .ofNumber .singular).category = some .inverse ∧
-      (classII ⊔ .ofNumber .dual).category = some .dual ∧
-      (classII ⊔ .ofNumber .plural).category = some .plural := by
+    category (classII ∪ natural .singular) = some .inverse ∧
+      category (classII ∪ natural .dual) = some .dual ∧
+      category (classII ∪ natural .plural) = some .plural := by
   decide
 
 theorem classIII_category :
-    (classIII ⊔ .ofNumber .singular).category = some .inverse ∧
-      (classIII ⊔ .ofNumber .dual).category = some .dual ∧
-      (classIII ⊔ .ofNumber .plural).category = some .inverse := by
+    category (classIII ∪ natural .singular) = some .inverse ∧
+      category (classIII ∪ natural .dual) = some .dual ∧
+      category (classIII ∪ natural .plural) = some .inverse := by
   decide
 
 theorem classIV_category :
-    (classIV ⊔ .ofNumber .singular).category = some .singular ∧
-      (classIV ⊔ .ofNumber .dual).category = some .dual ∧
-      (classIV ⊔ .ofNumber .plural).category = some .plural := by
+    category (classIV ∪ natural .singular) = some .singular ∧
+      category (classIV ∪ natural .dual) = some .dual ∧
+      category (classIV ∪ natural .plural) = some .plural := by
   decide
 
-/-- Every inverse valuation of Table 21 contains the dual's values. -/
+/-- Every inverse bundle of Table 21 contains the dual's values. -/
 theorem dual_le_inverse :
     ∀ c ∈ [classI, classII, classIII, classIV], ∀ n ∈ [Number.singular, .dual, .plural],
-    (c ⊔ .ofNumber n).IsInverse → Valuation.ofNumber .dual ≤ c ⊔ .ofNumber n := by
+    (∃ f, Bundle.CarriesBoth (c ∪ natural n) f) → natural .dual ⊆ c ∪ natural n := by
   decide
 
 /-! ### Features and arguments
@@ -245,17 +203,17 @@ abbrev Arg := List Feat
 def personFeats (p : Person) : Arg :=
   [.participant (decide (.participant ∈ p.toFeatures)), .author (decide (.author ∈ p.toFeatures))]
 
-/-- A valuation bears Harbour's number features (2), each with the values it has received. -/
-def valuationFeats (v : Valuation) : Arg :=
-  ([true, false].filter (· ∈ v.atomic)).map .atomic ++
-    ([true, false].filter (· ∈ v.minimal)).map .minimal
+/-- A bundle bears Harbour's number features (2), each with the values it carries. -/
+def bundleFeats (b : Bundle) : Arg :=
+  ([true, false].filter fun v ↦ (Feature.atomic, v) ∈ b).map .atomic ++
+    ([true, false].filter fun v ↦ (Feature.minimal, v) ∈ b).map .minimal
 
-/-- An agreement category bears the features of its natural number's valuation; the inverse bears
+/-- An agreement category bears the features of its natural number's bundle; the inverse bears
 the one feature `Feat.inverse` (see the implementation notes). -/
 def numberFeats : Number.Inverse.Category → Arg
-  | .singular => valuationFeats (.ofNumber .singular)
-  | .dual => valuationFeats (.ofNumber .dual)
-  | .plural => valuationFeats (.ofNumber .plural)
+  | .singular => bundleFeats (natural .singular)
+  | .dual => bundleFeats (natural .dual)
+  | .plural => bundleFeats (natural .plural)
   | .inverse => [.inverse]
 
 def first : Arg := personFeats .first
@@ -268,7 +226,7 @@ def inverse : Arg := numberFeats .inverse
 
 namespace Arg
 
-/-- `a` has `f`, an inverse valuation containing the dual's values (`dual_le_inverse`). -/
+/-- `a` has `f`, an inverse bundle containing the dual's values (`dual_le_inverse`). -/
 def Has (a : Arg) (f : Feat) : Prop := f ∈ a ∨ .inverse ∈ a ∧ f ∈ dual
 
 instance (a : Arg) : DecidablePred a.Has := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))

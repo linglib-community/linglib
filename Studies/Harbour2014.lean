@@ -4,6 +4,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Core.Order.Concept
+public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Studies.Corbett2000
 public import Linglib.Data.Examples.Readers
 
@@ -372,16 +373,30 @@ instance : ∀ c a, Decidable (Convention.Fits c a)
 /-- A bundle is labelled with the descriptive name of its number (p. 201), after Table 3. -/
 def Bundle.label (c : Convention) (b : Bundle) : Number :=
   if (.atomic, true) ∈ b then .singular
-  else if (.minimal, true) ∈ b then
-    if (.minimal, false) ∈ b then (if (.atomic, false) ∈ b then .trial else .unitAugmented)
-    else if (.atomic, false) ∈ b then .dual else .minimal
-  else if (.additive, false) ∈ b then
-    if (.additive, true) ∈ b then (if c = .two .low then .greaterPaucal else .plural)
-    else if c = .one .high then .plural else .paucal
+  else if b.CarriesBoth .minimal then (if (.atomic, false) ∈ b then .trial else .unitAugmented)
+  else if (.minimal, true) ∈ b then (if (.atomic, false) ∈ b then .dual else .minimal)
+  else if b.CarriesBoth .additive then (if c = .two .low then .greaterPaucal else .plural)
+  else if (.additive, false) ∈ b then (if c = .one .high then .plural else .paucal)
   else if (.additive, true) ∈ b then
     (if c = .one .high ∨ c = .two .high then .greaterPlural else .plural)
   else if (.minimal, false) ∈ b ∧ (.atomic, false) ∉ b then .augmented
   else if b = ∅ then .general else .plural
+
+/-- A bundle is labelled singular exactly when it carries `[+atomic]`. -/
+theorem Bundle.label_eq_singular_iff {c : Convention} {b : Bundle} :
+    Bundle.label c b = .singular ↔ (.atomic, true) ∈ b := by
+  unfold Bundle.label
+  split_ifs <;> simp_all
+
+/-- Only `[+atomic]` restricts and only the singular carries it, so in every system a bundle is
+defined where its label is. -/
+theorem Bundle.dom_eq_dom_label {E : Type*} [PartialOrder E] (c : Convention) (b : Bundle) :
+    Bundle.dom (E := E) b = Number.dom (some (Bundle.label c b)) := by
+  rw [Bundle.dom_eq]
+  split_ifs with h
+  · rw [Bundle.label_eq_singular_iff.2 h]
+  · exact (Number.dom_eq_univ_of_ne_singular fun e ↦
+      h (Bundle.label_eq_singular_iff.1 (Option.some_injective _ e))).symm
 
 /-! ### The strata of a bundle (§§2.2, 4.3) -/
 

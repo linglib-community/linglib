@@ -13,21 +13,25 @@ public import Linglib.Semantics.Plurality.Number
 # Signed number bundles
 
 Harbour's number features are bivalent, and a bundle is the set of its signed values, so the empty
-bundle, which carries no number, differs from `[−atomic, −minimal]`. Which values a bundle carries
-depends on the number system: the plural of English is `[−atomic]`, that of a language with a dual
-`[−atomic, −minimal]`. A bundle [denotes a region](##Number.Bundle.exact) by applying the region
-operators of its features in a fixed order. The containment of `[+atomic]` in `[+minimal]` then
-follows from the semantics: [`[+atomic, −minimal]` denotes
-nothing](##Number.Bundle.not_exact_atomic_nonMinimal), as Harbour observes.
+bundle, which carries no number, differs from `[−atomic, −minimal]`. A bundle [denotes a
+region](##Number.Bundle.exact) by applying the region operators of its features in a fixed order.
+The containment of `[+atomic]` in `[+minimal]` then follows from the semantics: [`[+atomic,
+−minimal]` denotes nothing](##Number.Bundle.not_exact_atomic_nonMinimal), as Harbour observes. A
+bundle may [carry both values of a feature](##Number.Bundle.CarriesBoth): on Number⁰ under feature
+recursion, as the trial carries `[+minimal −minimal]`, and on a D head whose values come from a
+noun's class and its natural number, where Kiowa-Tanoan spells the conflict out as inverse.
 
 ## Implementation notes
 
-`Bundle.ofNumber` gives the bundles of the singular, the dual and the plural in a system with both
-`[±atomic]` and `[±minimal]`. `Number.dom` reads their positive values alone. The features of person
-and gender are still the privative chains of `Person.Features` and `Gender.Features`.
+Which bundle a number value names is a claim about a system, not about the value: the plural of
+English is `[−atomic]`, that of a language with a dual `[−atomic, −minimal]`. So there is no map
+from `Number` to bundles here; `Studies/Harbour2014.lean` labels the bundles of each setting. The
+features of person and gender are still the privative chains of `Person.Features` and
+`Gender.Features`.
 
 ## References
 
+* [harbour-2011]
 * [harbour-2014], §5.1, p. 213
 * [harbour-2016], §9.5, pp. 222–223
 -/
@@ -51,22 +55,11 @@ abbrev Bundle := Finset (Feature × Bool)
 
 namespace Bundle
 
-/-- The singular of a system with a dual, `[+atomic, +minimal]`. -/
-def singular : Bundle := {(.atomic, true), (.minimal, true)}
+/-- `b.CarriesBoth f` holds when `b` carries both values of `f`. -/
+def CarriesBoth (b : Bundle) (f : Feature) : Prop := (f, true) ∈ b ∧ (f, false) ∈ b
 
-/-- The dual, `[−atomic, +minimal]`. -/
-def dual : Bundle := {(.atomic, false), (.minimal, true)}
-
-/-- The plural of a system with a dual, `[−atomic, −minimal]`. -/
-def plural : Bundle := {(.atomic, false), (.minimal, false)}
-
-/-- The bundle of a basic number value; the values that need feature recursion or additivity have
-none. -/
-def ofNumber : Number → Option Bundle
-  | .singular => some singular
-  | .dual => some dual
-  | .plural => some plural
-  | _ => none
+instance (b : Bundle) : DecidablePred b.CarriesBoth := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `b.step v f` applies `f` when the bundle `b` carries the signed feature `v`. -/
 def step {X : Type*} (b : Bundle) (v : Feature × Bool) (f : X → X) (x : X) : X :=
