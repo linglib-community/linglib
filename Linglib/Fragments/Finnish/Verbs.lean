@@ -165,7 +165,8 @@ def infinitiveForms (v : Verb) (i : Infinitive) (c : Case) : List (List Segment)
 
 @[simp] theorem infinitiveForms_nom (v : Verb) (i : Infinitive) :
     v.infinitiveForms i .nom = [v.infinitive i] := by
-  simp [infinitiveForms, infinitive, Infinitive.endings, Nominal.realize, Nominal.continuations]
+  simp [infinitiveForms, infinitive, Infinitive.endings, Nominal.realize, Nominal.continuations,
+    Nominal.caseEndings, Declension.endings, Nominal.BeforePossessive]
 
 end Verb
 
