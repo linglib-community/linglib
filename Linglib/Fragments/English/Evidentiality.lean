@@ -18,7 +18,7 @@ English has no grammatical evidentials: information source is conveyed lexically
 
 namespace English.Evidentiality
 
-/-- No evidentials; lexical strategies only. -/
+/-- English has no evidentials. -/
 def evidentials : List Evidential := []
 
 end English.Evidentiality

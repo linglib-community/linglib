@@ -22,7 +22,8 @@ force. The senses are Durrell's.
 The senses are read as flavors in the usual way: ability as circumstantial, permission and
 obligation as deontic, possibility, deduction and probability as epistemic, and desire as
 bouletic. Senses that are not flavors are left out: the liking of *mögen*, the intention and
-prediction of *sollen*, and the reports of *sollen* and claims of *wollen*, which are evidential.
+prediction of *sollen*, and the reports of *sollen* and claims of *wollen*, which are evidential
+and are recorded among the German evidentiality strategies.
 The probability that *dürfen* expresses in its Konjunktiv II *dürfte* belongs to that form and is
 not a sense of *dürfen*.
 
