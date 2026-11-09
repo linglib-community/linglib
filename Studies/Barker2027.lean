@@ -81,62 +81,58 @@ instance (a b : Tree Cat Word) : Decidable (everyIsland a b) :=
 
 /-! ### The examples -/
 
-/-- A row with its tree and the address of the embedded quantifier. -/
+/-- A row with its tree and the embedded quantifier. -/
 structure Case where
   /-- The article's example. -/
   row : Datum
   /-- The sentence as it is pronounced. -/
   tree : Tree Cat Word
-  /-- The address of the embedded quantifier. -/
-  mover : List ℕ
+  /-- The embedded quantifier. -/
+  mover : Tree Cat Word
+
+/-- The address of the embedded quantifier in the sentence. -/
+def Case.address (c : Case) : List ℕ := (c.tree.addressOf? c.mover).getD []
 
 /-- The embedded quantifier can raise to the edge of the sentence, where it outscopes the
 subject. -/
 def Case.InverseScope (I : Tree Cat Word → Tree Cat Word → Prop) (c : Case) : Prop :=
-  c.tree.PassesNoIsland I c.mover
+  c.tree.PassesNoIsland I c.address
 
 instance (I : Tree Cat Word → Tree Cat Word → Prop) [∀ a b, Decidable (I a b)] (c : Case) :
     Decidable (c.InverseScope I) :=
-  inferInstanceAs (Decidable (c.tree.PassesNoIsland I c.mover))
+  inferInstanceAs (Decidable (c.tree.PassesNoIsland I c.address))
+
+/-- A word that is not a determiner entry is its string. -/
+local instance : Coe String Word := ⟨.inr⟩
 
 /-- *Everyone*, the determiner *every* with *one*. -/
-def everyone : Tree Cat Word :=
-  .node .N (.terminal .Det (.inl every) :: .terminal .N (.inr "one") :: [])
+def everyone : Tree Cat Word := ltree% [N [Det ⟨.inl every⟩] [N "one"]]
+
+/-- *Each speaker*. -/
+def eachSpeaker : Tree Cat Word := ltree% [N [Det ⟨.inl each⟩] [N "speaker"]]
 
 /-- (18a) *Someone asked [everyone to leave]*. -/
 def ex18a : Case where
   row := Examples.ex_18a
-  tree := .node .S (.terminal .Pron (.inr "someone") ::
-    .node .V (.terminal .V (.inr "asked") ::
-      .node .Neg (everyone ::
-        .node .Neg (.terminal .Neg (.inr "to") :: .terminal .V (.inr "leave") :: []) :: []) ::
-      []) :: [])
-  mover := 1 :: 1 :: 0 :: []
+  tree := ltree% [S [Pron "someone"] [V [V "asked"] [Neg (everyone) [Neg [Neg "to"] [V "leave"]]]]]
+  mover := everyone
 
 /-- (18b) *Someone thought [everyone left]*. -/
 def ex18b : Case where
   row := Examples.ex_18b
-  tree := .node .S (.terminal .Pron (.inr "someone") ::
-    .node .V (.terminal .V (.inr "thought") ::
-      .node .S (everyone :: .terminal .V (.inr "left") :: []) :: []) :: [])
-  mover := 1 :: 1 :: 0 :: []
+  tree := ltree% [S [Pron "someone"] [V [V "thought"] [S (everyone) [V "left"]]]]
+  mover := everyone
 
 /-- (20b) *A student made sure that [each speaker had a ride]*. -/
 def ex20b : Case where
   row := Examples.ex_20b
-  tree := .node .S (
-    .node .N (.terminal .Det (.inr "a") :: .terminal .N (.inr "student") :: []) ::
-    .node .V (.terminal .V (.inr "made") :: .terminal .Adj (.inr "sure") ::
-      .node .C (.terminal .C (.inr "that") ::
-        .node .S (
-          .node .N (.terminal .Det (.inl each) :: .terminal .N (.inr "speaker") :: []) ::
-          .node .V (.terminal .V (.inr "had") ::
-            .node .N (.terminal .Det (.inr "a") :: .terminal .N (.inr "ride") :: []) :: []) ::
-          []) :: []) :: []) :: [])
-  mover := 1 :: 2 :: 1 :: 0 :: []
+  tree := ltree% [S [N [Det "a"] [N "student"]]
+    [V [V "made"] [Adj "sure"]
+      [C [C "that"] [S (eachSpeaker) [V [V "had"] [N [Det "a"] [N "ride"]]]]]]]
+  mover := eachSpeaker
 
 /-- The examples with trees. -/
-def cases : List Case := ex18a :: ex18b :: ex20b :: []
+def cases : List Case := [ex18a, ex18b, ex20b]
 
 /-! ### What the theories predict -/
 
@@ -161,9 +157,8 @@ theorem not_fits_ofReadings (P : Finset Quantifier.Det.Symbol → Prop) (Q : Cat
   obtain rfl : everyone = a := Option.some.inj ha
   obtain ⟨⟨d, hd, hP⟩, hQ⟩ := hI
   obtain rfl : d = every := by simpa [determiners, everyone] using hd
-  have hP' : ∃ d ∈ determiners (.node .N
-      (.terminal .Det (.inl each) :: .terminal .N (.inr "speaker") :: [])), P d.readings :=
-    ⟨each, by simp [determiners], hP⟩
+  have hP' : ∃ d ∈ determiners eachSpeaker, P d.readings :=
+    ⟨each, by simp [determiners, eachSpeaker], hP⟩
   have hk3 : k < 3 := hk
   obtain rfl | rfl : k = 1 ∨ k = 2 := by omega
   · obtain rfl := Option.some.inj hb
@@ -181,7 +176,7 @@ theorem rows_everyIsland : ∀ c ∈ cases,
 /-- Under that theory the tree of (20b) with *each speaker* raised to its edge is one of its
 logical forms. -/
 theorem isLogicalForm_ex20b :
-    IsLogicalForm everyIsland ex20b.tree (ex20b.tree.raise 1 ex20b.mover) :=
-  (IsLogicalForm.refl _).raise rfl (by decide) 1
+    IsLogicalForm everyIsland ex20b.tree (ex20b.tree.raiseOf 1 eachSpeaker) :=
+  (IsLogicalForm.refl _).raiseOf (p := ex20b.address) rfl (by decide) 1
 
 end Barker2027

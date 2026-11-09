@@ -196,6 +196,34 @@ macro_rules
   | `(tree% [$x $y]) => `(PhraseStructure.Tree.bin (tree% $x) (tree% $y))
   | `(tree% [λ $n $x]) => `(PhraseStructure.Tree.binder $n (tree% $x))
 
+/-! ### Labelled-bracket notation
+
+`ltree%` writes a tree with categories in labelled-bracket style: `[S x y z]` is the phrase of
+category `.S` over `x`, `y` and `z`, `[N ⟨w⟩]` the word `w` of category `.N`, `[N "w"]` the same
+for a string, `[λ n S x]` the binder of index `n` and category `.S` over `x`, and `(t)` the tree
+`t`, such as a trace. -/
+
+/-- The syntax of `ltree%`. -/
+declare_syntax_cat labelledTree
+
+syntax "(" term ")" : labelledTree
+syntax "[" ident "⟨" term "⟩" "]" : labelledTree
+syntax "[" ident str "]" : labelledTree
+syntax "[" ident labelledTree+ "]" : labelledTree
+syntax "[" "λ" num ident labelledTree "]" : labelledTree
+
+/-- A tree with categories in labelled-bracket notation. -/
+syntax "ltree%" labelledTree : term
+
+macro_rules
+  | `(ltree% ($t)) => `($t)
+  | `(ltree% [$c:ident ⟨$w⟩]) => `(PhraseStructure.Tree.terminal (.$c:ident) $w)
+  | `(ltree% [$c:ident $s:str]) => `(PhraseStructure.Tree.terminal (.$c:ident) $s)
+  | `(ltree% [$c:ident $xs:labelledTree*]) =>
+    `(PhraseStructure.Tree.node (.$c:ident) ([$[ltree% $xs],*]))
+  | `(ltree% [λ $n $c:ident $x]) =>
+    `(PhraseStructure.Tree.bind $n (.$c:ident) (ltree% $x))
+
 /-- The category at the root. -/
 def cat (t : Tree C W) : C := t.value.cat
 

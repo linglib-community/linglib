@@ -584,11 +584,17 @@ pronounced has no denotation. Quantifier Raising (§7.3) leaves a trace and a bi
 raised quantifier takes the abstracted predicate as its scope, and the two orders in which the
 quantifiers of *every person sees some person* raise give its two scope readings. -/
 
+/-- *Every person*. -/
+def everyPerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person"))
+
+/-- *Some person*. -/
+def somePerson : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))
+
 /-- *Every person sees some person* as it is pronounced. -/
 def sentence : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  .bin (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
-    (.bin (.leaf (.inr "sees"))
-      (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))))
+  .bin everyPerson (.bin (.leaf (.inr "sees")) somePerson)
 
 /-- The object quantifier cannot combine with the verb where it stands. -/
 theorem interp_sentence : interp lex g₀ sentence = none := rfl
@@ -597,20 +603,20 @@ theorem interp_sentence : interp lex g₀ sentence = none := rfl
 the object raised and then the subject over it, has the reading
 ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
 def tree_surface : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  (sentence.raise 2 ([1, 1])).raise 1 ([1, 0, 0])
+  (sentence.raiseOf 2 somePerson).raiseOf 1 everyPerson
 
 /-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`,
 the subject raised and then the object over it, has the reading
 ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
 def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
-  (sentence.raise 1 ([0])).raise 2 ([1, 0, 1, 1])
+  (sentence.raiseOf 1 everyPerson).raiseOf 2 somePerson
 
 theorem isLogicalForm_tree_surface : IsLogicalForm ⊥ sentence tree_surface :=
-  ((IsLogicalForm.refl sentence).raise rfl (passesNoIsland_bot _ _) 2).raise rfl
+  ((IsLogicalForm.refl sentence).raiseOf rfl (passesNoIsland_bot _ _) 2).raiseOf rfl
     (passesNoIsland_bot _ _) 1
 
 theorem isLogicalForm_tree_inverse : IsLogicalForm ⊥ sentence tree_inverse :=
-  ((IsLogicalForm.refl sentence).raise rfl (passesNoIsland_bot _ _) 1).raise rfl
+  ((IsLogicalForm.refl sentence).raiseOf rfl (passesNoIsland_bot _ _) 1).raiseOf rfl
     (passesNoIsland_bot _ _) 2
 
 /-- A name's trace has the name's own type, so raising *John* in *John sleeps* changes nothing. -/

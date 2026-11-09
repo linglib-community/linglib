@@ -19,7 +19,8 @@ or raise what contains one, as in May's and Heim and Kratzer's theories.
 ## Main definitions
 
 * `PhraseStructure.Tree.bindersAbove`: the indices of the binders dominating a position.
-* `PhraseStructure.Tree.raise`: the constituent at an address raised to the edge of the tree.
+* `PhraseStructure.Tree.raise`, `PhraseStructure.Tree.raiseOf`: the constituent at an address,
+  or a given constituent, raised to the edge of the tree.
 * `PhraseStructure.Tree.PassesNoIsland`: a constituent crosses no island on its way to the edge.
 * `PhraseStructure.Tree.Raises`: one step of raising, within any subtree, under a theory of
   islands.
@@ -81,6 +82,16 @@ theorem raise_of_getElem? {t a : Tree C W} {p : List ℕ} (h : t[p]? = some a) (
 theorem raise_of_getElem?_eq_none {t : Tree C W} {p : List ℕ} (h : t[p]? = none) (n : ℕ) :
     t.raise n p = t := by
   simp [raise, h]
+
+/-- Quantifier Raising of the first occurrence of the constituent `a`. -/
+def raiseOf [DecidableEq C] [DecidableEq W] (t : Tree C W) (n : ℕ) (a : Tree C W) : Tree C W :=
+  match t.addressOf? a with
+  | some p => t.raise n p
+  | none => t
+
+theorem raiseOf_of_addressOf? [DecidableEq C] [DecidableEq W] {t a : Tree C W} {p : List ℕ}
+    (h : t.addressOf? a = some p) (n : ℕ) : t.raiseOf n a = t.raise n p := by
+  simp [raiseOf, h]
 
 /-- Raising permutes the terminals: the raised constituent is fronted and nothing is added or
 lost. -/
@@ -159,6 +170,13 @@ protected theorem raise {t t' a : Tree C W} {p : List ℕ} (h : IsLogicalForm I 
     (ha : t'[p]? = some a) (hI : t'.PassesNoIsland I p) (n : ℕ) :
     IsLogicalForm I t (t'.raise n p) :=
   .tail h (raises_raise ha hI n)
+
+/-- A tree with a given constituent raised to its edge is a logical form of it. -/
+protected theorem raiseOf [DecidableEq C] [DecidableEq W] {t t' a : Tree C W} {p : List ℕ}
+    (h : IsLogicalForm I t t') (ha : t'.addressOf? a = some p) (hI : t'.PassesNoIsland I p)
+    (n : ℕ) : IsLogicalForm I t (t'.raiseOf n a) := by
+  rw [raiseOf_of_addressOf? ha]
+  exact h.raise (RoseTree.getElem?_of_addressOf? ha) hI n
 
 /-- With more islands, a tree has fewer logical forms. -/
 protected theorem mono (h : I ≤ I') {t t' : Tree C W} (ht : IsLogicalForm I' t t') :
