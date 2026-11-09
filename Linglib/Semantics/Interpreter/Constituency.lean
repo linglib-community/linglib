@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Semantics.Composition.EffectGrammar
+public import Linglib.Semantics.Interpreter.Mode
 
 /-!
 # The bare structure of a constituency tree
@@ -25,7 +25,7 @@ node a plain node or, at a category that is an island, an island.
 
 namespace PhraseStructure.Tree
 
-open Composition Composition.Grammar
+open Interpreter Interpreter.Grammar
 
 variable {C L : Type}
 

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Composition.Effect
-public import Linglib.Semantics.Composition.Grammar
+public import Linglib.Semantics.Interpreter.Effect
+public import Linglib.Semantics.Interpreter.Basic
 
 /-!
 # The effect-driven grammar
@@ -15,16 +15,16 @@ and `Ty.combine` lists them all.
 
 ## Main definitions
 
-* `Composition.BasicModes`: a theory's basic modes of combination and their selection by type.
-* `Composition.Standard`: forward and backward application and predicate modification.
-* `Composition.Mode`: the basic modes closed under the meta-modes.
-* `Composition.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Composition.Ty.combine`: every mode by which two types combine, the book's `combine`.
-* `Composition.Abstraction`, `Composition.Assignments`: abstraction over an index, and traces.
-* `Composition.Node`, `Composition.effectSelection`: what the semantics reads off a node, and the
+* `Interpreter.BasicModes`: a theory's basic modes of combination and their selection by type.
+* `Interpreter.Standard`: forward and backward application and predicate modification.
+* `Interpreter.Mode`: the basic modes closed under the meta-modes.
+* `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
+* `Interpreter.Ty.combine`: every mode by which two types combine, the book's `combine`.
+* `Interpreter.Abstraction`, `Interpreter.Assignments`: abstraction over an index, and traces.
+* `Interpreter.Node`, `Interpreter.effectDriven`: what the semantics reads off a node, and the
   rules each kind of node admits.
-* `Composition.envSensitiveSelection`: Heim and Kratzer's grammar as a selection of those rules.
-* `Composition.effectGrammar`: the grammar whose binary rules are the modes.
+* `Interpreter.envSensitive`: Heim and Kratzer's grammar as a selection of those rules.
+* `Interpreter.effectGrammar`: the grammar whose binary rules are the modes.
 
 ## Implementation notes
 
@@ -44,7 +44,7 @@ interpretation, is not proved.
 
 @[expose] public section
 
-namespace Composition
+namespace Interpreter
 
 variable {B : Type}
 
@@ -316,20 +316,21 @@ def effectGrammar (Rule : Ty B → Ty B → Ty B → Type) (Shift : Ty B → Ty 
   Unary := Shift
   Binary := Mode Rule
 
-/-- The interpretation of the effect-driven grammar, from the meanings of the basic modes and of
+/-- The model of the effect-driven grammar, from the meanings of the basic modes and of
 the type shifts. -/
-def effectGrammar.interpretation (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
+def effectGrammar.model (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
     {Shift : Ty B → Ty B → Type}
     (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D)
     (shift : ∀ {a b : Ty B}, Shift a b → a.Dom D → b.Dom D) :
-    (effectGrammar Rule Shift).Interpretation (Ty.Dom D) where
+    (effectGrammar Rule Shift).Model (Ty.Dom D) where
   unary := shift
   binary m := m.eval D basic
 
-/-- The rules a node admits: every mode that combines its daughters, kept at an island only if
-its result is evaluated, and abstraction at an index over what reads assignments. -/
-def effectSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
-    Grammar.Selection (effectGrammar basics.Rule (Abstraction g x)) Node where
+/-- The effect-driven interpreter: a node admits every mode that combines its daughters, kept
+at an island only if its result is evaluated, and abstraction at an index over what reads
+assignments. -/
+def effectDriven [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
+    Interpreter (effectGrammar basics.Rule (Abstraction g x)) Node where
   unary
     | .index n, .comp (.R i) b =>
       if h : i = g then [⟨.comp (.R g) (x ⇒ b), h ▸ .index n b⟩] else []
@@ -338,12 +339,12 @@ def effectSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
     | .island, l, r => (Ty.combine basics l r).filter (·.1.Evaluated)
     | _, l, r => Ty.combine basics l r
 
-/-- The rules of the environment-sensitive grammar of Heim and Kratzer, the book's Figure 5: every
+/-- The environment-sensitive interpreter of Heim and Kratzer, the book's Figure 5: every
 constituent reads an assignment, sisters combine by a basic mode on their results at one
 assignment, and an index abstracts. At most one rule applies to a node. -/
-def envSensitiveSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
-    Grammar.Selection (effectGrammar basics.Rule (Abstraction g x)) Node where
-  unary := (effectSelection basics g x).unary
+def envSensitive [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
+    Interpreter (effectGrammar basics.Rule (Abstraction g x)) Node where
+  unary := (effectDriven basics g x).unary
   binary
     | _, .comp (.R i) l, .comp (.R j) r =>
       if h : i = g ∧ j = g then
@@ -356,4 +357,4 @@ def envSensitiveSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
 def Assignments.const (_ : Assignments D g x) {a : Ty B} (m : a.Dom D) : Σ a : Ty B, a.Dom D :=
   ⟨.comp (.R g) a, fun _ ↦ m⟩
 
-end Composition
+end Interpreter

@@ -14,17 +14,17 @@ appositive stores a comment, a *wh*-phrase returns one of several values, and a 
 consults its continuation. A computation type is an effect applied to the type of its result.
 Each effect is a functor, and each but storing at a type with no way of merging two stored
 contents is applicative and a monad; storing is left adjoint to reading, and
-[reading distributes over functions](##Composition.Eff.eject).
+[reading distributes over functions](##Interpreter.Eff.eject).
 
 ## Main definitions
 
-* `Composition.Ty`, `Composition.Eff`: the types over a set of base sorts, and the effects.
-* `Composition.Ty.Dom`, `Composition.Eff.F`: the domain of a type and the carrier of an effect,
+* `Interpreter.Ty`, `Interpreter.Eff`: the types over a set of base sorts, and the effects.
+* `Interpreter.Ty.Dom`, `Interpreter.Eff.F`: the domain of a type and the carrier of an effect,
   given the domains of the base sorts.
-* `Composition.Eff.IsApplicative`: the effects with a unit and an application.
-* `Composition.Eff.map`, `Composition.Eff.pure`, `Composition.Eff.seq`, `Composition.Eff.join`:
+* `Interpreter.Eff.IsApplicative`: the effects with a unit and an application.
+* `Interpreter.Eff.map`, `Interpreter.Eff.pure`, `Interpreter.Eff.seq`, `Interpreter.Eff.join`:
   the operations of an effect.
-* `Composition.Eff.counit`, `Composition.Eff.eject`, `Composition.Eff.lower`: the co-unit of
+* `Interpreter.Eff.counit`, `Interpreter.Eff.eject`, `Interpreter.Eff.lower`: the co-unit of
   storing and reading, the ejection of reading from a function, and the lowering of a
   continuation at its own result type.
 
@@ -43,7 +43,7 @@ are not effects here: the book derives them from storing and reading.
 
 @[expose] public section
 
-namespace Composition
+namespace Interpreter
 
 mutual
 
@@ -172,4 +172,4 @@ theorem map_map (f : Eff B) (g : α → β) {γ : Type} (h : β → γ) (x : F D
 
 end Eff
 
-end Composition
+end Interpreter

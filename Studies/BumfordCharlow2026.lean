@@ -4,7 +4,7 @@ public import Mathlib.CategoryTheory.Monad.Adjunction
 public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
-public import Linglib.Semantics.Composition.EffectGrammar
+public import Linglib.Semantics.Interpreter.Mode
 
 /-!
 # Bumford and Charlow 2026: effect-driven interpretation
@@ -44,8 +44,8 @@ supplement effect, whose log is a monoid, is `Core/Control/Monad/Writer.lean`.
 
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
-monad are mathlib's. The type-driven grammar is the library's `Composition.Mode` over the standard
-basic modes, and the interpreter is `Composition.Ty.combine`, checked here against the outputs
+monad are mathlib's. The type-driven grammar is the library's `Interpreter.Mode` over the standard
+basic modes, and the interpreter is `Interpreter.Ty.combine`, checked here against the outputs
 the book prints. The base sort is `e`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
@@ -56,7 +56,7 @@ April 2025.
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
   their types; the derivations here are over types, not syntax trees.
 * The modes over Lean's classes, `mapL`, `counitMode` and the rest, are not yet shown to be the
-  meanings `Composition.Mode.eval` gives the grammar's modes at each effect.
+  meanings `Interpreter.Mode.eval` gives the grammar's modes at each effect.
 
 ## References
 
@@ -312,9 +312,9 @@ theorem ejectL_structuredApp_joinMode_mapR {M : Type u → Type u} [Monad M] [La
 /-! ### The type-driven grammar
 
 Appendix B implements the grammar as a function from the types of two daughters to the modes
-that combine them and the types they yield, `Composition.Ty.combine` here. -/
+that combine them and the types they yield, `Interpreter.Ty.combine` here. -/
 
-open Composition
+open Interpreter
 
 variable {B : Type}
 
