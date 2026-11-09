@@ -19,7 +19,9 @@ but *doubt*, on his own sketch of it as not believing the complement, is only mo
 (`verb_strengths`). With *ooit*'s Fragment entry every judgment of his (184) is the licensing
 theory's (`judgments_predicted`). An entry that were only a negative polarity item, as on the
 analysis with two items *ooit*, would be admitted under *niet*, against (184d)
-(`negativeOnly_admits_niet`).
+(`negativeOnly_admits_niet`). *Hoeven* 'need', a weak negative polarity item, is out in questions,
+conditionals and the restrictor of *alle* 'all', downward-entailing contexts all, so [no class of
+item fits his table (235)](##VanDerWouden1997.hoeven_extraRestrictions).
 
 ## References
 
@@ -32,21 +34,17 @@ namespace VanDerWouden1997
 
 open PolarityItem Dutch.PolarityItems
 
-/-- The contexts of (184), a positive clause, *weinig* 'few', *geen van* 'none of' and *niet*. -/
+/-- The context of a row: a positive clause, or a named licensing context. -/
 inductive Context where
   | positive
-  | weinig
-  | geenVan
-  | niet
+  | named (c : LicensingContext)
   deriving DecidableEq, Repr
 
-/-- A positive clause admits the items that need no licensing, and each operator admits what its
-licensing context admits. -/
+/-- A positive clause admits the items that need no licensing, and a named context what its
+licenser admits. -/
 def Context.Admits : Context → PolarityItem → Prop
   | .positive, e => ¬ (e.IsNPI ∨ e.IsFCI)
-  | .weinig, e => LicensingContext.few.licenser.Admits e
-  | .geenVan, e => LicensingContext.nobody.licenser.Admits e
-  | .niet, e => LicensingContext.negation.licenser.Admits e
+  | .named c, e => c.licenser.Admits e
 
 instance (c : Context) : DecidablePred c.Admits := by
   intro e; cases c <;> dsimp only [Context.Admits] <;> infer_instance
@@ -72,23 +70,45 @@ theorem verb_strengths :
     LicensingContext.holds_doubtVerb_iff (s := .weak) |>.2 le_rfl,
     fun h ↦ absurd (LicensingContext.holds_doubtVerb_iff (s := .antiAdditive) |>.1 h) (by decide)⟩
 
-/-- The context a row's class names. -/
+/-- The context a row names: for (184) by its strength, *weinig* 'few', *geen van* 'none of' and
+*niet*; for *hoeven* by the named context, the restrictor of *geen* having none. -/
 def Context.ofKey : String → Option Context
   | "notMonotoneDecreasing" => some .positive
-  | "monotoneDecreasing" => some .weinig
-  | "antiAdditive" => some .geenVan
-  | "antimorphic" => some .niet
+  | "monotoneDecreasing" => some (.named .few)
+  | "antiAdditive" => some (.named .nobody)
+  | "antimorphic" => some (.named .negation)
+  | "universalRestrictor" => some (.named .universalRestrictor)
+  | "question" => some (.named .question)
+  | "conditionalAntecedent" => some (.named .conditionalAntecedent)
+  | "clausalComparative" => some (.named .clausalComparative)
+  | "superlative" => some (.named .superlative)
+  | "doubtVerb" => some (.named .doubtVerb)
+  | "beforeClause" => some (.named .beforeClause)
   | _ => none
 
-/-- Every row of (184) is on *ooit*, names its context, and is acceptable exactly when the
-context admits *ooit*'s Fragment entry. -/
+/-- Every row of (184) on *ooit* names its context, and is acceptable exactly when the context
+admits *ooit*'s Fragment entry. -/
 theorem judgments_predicted :
-    ∀ d ∈ Examples.all, d.feature? "item" = some "ooit" ∧
+    ∀ d ∈ Examples.all, d.feature? "item" = some "ooit" →
       ∃ c ∈ (d.feature? "context").bind Context.ofKey,
         (d.judgment = .acceptable ↔ c.Admits ooit) := by
   decide +kernel
 
-theorem negativeOnly_admits_niet : Context.niet.Admits { ooit with antiLicensor := none } := by
+theorem negativeOnly_admits_niet :
+    (Context.named .negation).Admits { ooit with antiLicensor := none } := by
   decide
+
+/-- No class of polarity item is admitted wherever van der Wouden accepts *hoeven* and refused
+wherever he stars it: the theory admits *hoeven* in every named context of (228)–(234), questions,
+conditionals and the restrictor of *alle* included, so his extra restrictions on it lie outside
+the strength classes. -/
+theorem hoeven_extraRestrictions :
+    (∀ d ∈ Examples.all, d.feature? "item" = some "hoeven" →
+      ∀ c ∈ (d.feature? "context").bind Context.ofKey, c.Admits hoeven) ∧
+    ∀ (l a : Option Negation.Strength) (fc : Bool),
+      ¬ ∀ d ∈ Examples.all, d.feature? "item" = some "hoeven" →
+        ∀ c ∈ (d.feature? "context").bind Context.ofKey,
+          (d.judgment = .acceptable ↔ c.Admits ⟨"hoeven", l, a, fc, [], []⟩) := by
+  decide +kernel
 
 end VanDerWouden1997
