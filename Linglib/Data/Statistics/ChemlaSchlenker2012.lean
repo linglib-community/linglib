@@ -135,6 +135,26 @@ def experiment1Tests : List Experiment1Test :=
    ⟨.orSentence, .inverse, 17, ⟨66, 1⟩, ⟨.lt, ⟨5, 2⟩⟩, ⟨22, 2⟩⟩,
    ⟨.unlessSentence, .inverse, 17, ⟨22, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨36, 2⟩⟩]
 
+/-- A row of fn. 21, p. 205: the bootstrap test comparing the two inferences from a target
+sentence in Experiment 1; the footnote prints one bound for all five sentences. -/
+structure Experiment1BootstrapTest where
+  /-- The connective of the target sentence. -/
+  construction : Construction
+  /-- The order of the trigger and the filtering clause. -/
+  order : Order
+  /-- The p-value. -/
+  p : PValue
+  deriving DecidableEq, Repr
+
+/-- The 5 rows of fn. 21, p. 205, in the paper's order; from an experiment; checked against the
+page images. -/
+def experiment1BootstrapTests : List Experiment1BootstrapTest :=
+  [⟨.ifSentence, .canonical, ⟨.lt, ⟨12, 3⟩⟩⟩,
+   ⟨.ifSentence, .inverse, ⟨.lt, ⟨12, 3⟩⟩⟩,
+   ⟨.orSentence, .canonical, ⟨.lt, ⟨12, 3⟩⟩⟩,
+   ⟨.orSentence, .inverse, ⟨.lt, ⟨12, 3⟩⟩⟩,
+   ⟨.unlessSentence, .inverse, ⟨.lt, ⟨12, 3⟩⟩⟩]
+
 /-- A row of Table 5, p. 209: the mean acceptability of a target sentence in Experiment 2. -/
 structure Experiment2Target where
   /-- The connective of the target sentence. -/
@@ -253,6 +273,23 @@ def experiment4Tests : List Experiment4Test :=
    ⟨.orSentence, .canonical, 16, ⟨23, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨37, 2⟩⟩,
    ⟨.orSentence, .inverse, 16, ⟨42, 1⟩, ⟨.eq, ⟨56, 3⟩⟩, ⟨17, 2⟩⟩,
    ⟨.unlessSentence, .inverse, 16, ⟨11, 0⟩, ⟨.lt, ⟨1, 2⟩⟩, ⟨29, 2⟩⟩]
+
+/-- A row of §3.3.3, p. 212: the non-parametric test comparing the two inferences from a target
+sentence in Experiment 4, printed only for the inverse if- and or-sentences. -/
+structure Experiment4NonparametricTest where
+  /-- The connective of the target sentence. -/
+  construction : Construction
+  /-- The order of the trigger and the filtering clause. -/
+  order : Order
+  /-- The p-value. -/
+  p : PValue
+  deriving DecidableEq, Repr
+
+/-- The 2 rows of §3.3.3, p. 212, in the paper's order; from an experiment; checked against the
+page images. -/
+def experiment4NonparametricTests : List Experiment4NonparametricTest :=
+  [⟨.ifSentence, .inverse, ⟨.eq, ⟨85, 3⟩⟩⟩,
+   ⟨.orSentence, .inverse, ⟨.eq, ⟨30, 3⟩⟩⟩]
 
 /-- A row of Table 8, p. 214: the mean acceptability of a target sentence in Experiment 5. -/
 structure Experiment5Target where

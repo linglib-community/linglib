@@ -7,7 +7,8 @@ Writes every verdict that `Eval` and `Lab` prove as JSON, for `scripts/gen_eval_
 this file after a line importing every module of the two libraries. The export reads the theorems
 whose statements are equations about an `Eval.Experiment`: a verdict `X.verdict T c = v`, an
 observation `X.observed c = o`, the stipulations of a parser `π.stipulations = {…}`, or two parsers
-that parse alike. A theorem whose variables range over finite enumerations, such as the accounts or
+that parse alike. A verdict on an `Eval.Contrasts`, `X.verdict δ ℓ T c = v`, names its decision rule
+`δ` as the variant and records its linking hypothesis `ℓ` beside it. A theorem whose variables range over finite enumerations, such as the accounts or
 the cells of a design, is instantiated at each of their values, and each right-hand side is reduced
 to a constructor by Lean. So the page shows what the theorems say and nothing typed by hand, and a
 new experiment reaches the page through its theorems alone. A theorem that rests on `sorry` stops
@@ -183,6 +184,7 @@ def assignments : List (List Name) → List (List Expr)
 def isClaim (e : Expr) : Bool :=
   match e.eq? with
   | some (_, l, _) => l.isAppOfArity `Eval.Experiment.verdict 7 ||
+      l.isAppOfArity `Eval.Contrasts.verdict 10 ||
       l.isAppOfArity `Eval.Experiment.observed 5 || l.isAppOfArity `Eval.Parser.stipulations 4 ||
       l.isAppOfArity `Eval.Parser.parse 6
   | none => false
@@ -202,6 +204,21 @@ def readClaim (thm : Name) (claim : Expr) (out : Out) : MetaM Out := do
   let some (_, l, r) := claim.eq? | return out
   let src := toJson thm.toString
   let args := l.getAppArgs
+  if l.isAppOfArity `Eval.Contrasts.verdict 10 then
+    -- A verdict that names its auxiliaries: the decision rule is the variant, and the linking
+    -- hypothesis, named by its head constant, is recorded beside it.
+    let X ← nameOf args[5]!
+    let δ ← nameOf args[6]!
+    let ℓ := (args[7]!.getAppFn.constName?).getD .anonymous
+    let (T, _) ← theoryOf args[8]!
+    let c ← cellOf args[9]!
+    let names := ((c ++ [δ, ℓ]).foldl (·.insert ·) out.names).insert X |>.insert T
+    let theories := if out.theories.contains T then out.theories
+      else out.theories.insert T (theoryTerm args[8]!)
+    return { out with names, theories, verdicts := out.verdicts.push <| Json.mkObj [
+      ("experiment", toJson X.toString), ("theory", toJson T.toString),
+      ("variant", toJson (some δ.toString)), ("linking", toJson ℓ.toString),
+      ("cell", toJson (c.map Name.toString)), ("verdict", ← ctorTree r), ("theorem", src)] }
   if l.isAppOfArity `Eval.Experiment.verdict 7 then
     let X ← nameOf args[4]!
     let (T, v) ← theoryOf args[5]!

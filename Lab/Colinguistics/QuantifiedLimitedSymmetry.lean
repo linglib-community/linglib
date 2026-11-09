@@ -35,10 +35,10 @@ followed by every good final of the clause, and then the end of the sentence
 (`QuantifiedClause.Env.continuations`). For a trigger that is the restrictor, or its negation, these
 are the two parsing points above (`limitedSymmetry_trigger_iff`, `limitedSymmetry_not_trigger_iff`).
 With Kalomoiros's constraint on formulas, this makes a theory that `Eval` scores like a registered
-account (`limitedSymmetry`). It is right on every tested cell of Chemla and Schlenker's inferential
-experiments, and on Chemla's first experiment it shares Transparency's verdicts: wrong with every
-presupposition accommodated in the context, right by Chemla's stipulations and by his one-step rule
-(`verdict_chemla2009a`).
+account (`limitedSymmetry`). It is right on every cell of Chemla and Schlenker's inferential
+experiments where the difference between the inferences is significant, and on Chemla's first
+experiment it shares Transparency's verdicts: wrong with every presupposition accommodated in the
+context, right by Chemla's stipulations and by his one-step rule (`verdict_chemla2009a`).
 
 ## Main statements
 
@@ -390,21 +390,28 @@ def limitedSymmetry : Theory :=
   ⟨fun I C F ↦ Kalomoiros2023.LimitedSymmetry C (Formula.occurrences I F),
     some fun _ _ _ J C c ↦ Kalomoiros2023.LimitedSymmetry C (QuantifiedClause.occurrences J c)⟩
 
-/-- On Chemla and Schlenker's inferential experiments, Limited Symmetry is right on every tested
-cell, as the registered account is. -/
-theorem verdict_chemlaSchlenker2012 (k : _root_.ChemlaSchlenker2012.Construction)
-    (o : _root_.ChemlaSchlenker2012.Order) :
-    ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
-        (if k = .unlessSentence ∧ o = .canonical then .silent else .correct) ∧
-      ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
-        if k = .unlessSentence ∧ o = .canonical then .silent else .correct := by
+/-- On Chemla and Schlenker's inferential experiments, under every linking hypothesis that favors
+the predicted option, Limited Symmetry is right wherever a test establishes the advantage of one
+inference, as the registered account is: on every contrast of Experiment 1 by either test, and on
+Experiment 4 everywhere but the inverse *if*- and *or*-sentences, which the ANOVA leaves
+inconclusive. -/
+theorem verdict_chemlaSchlenker2012 {ℓ} (hℓ : ℓ ∈ ChemlaSchlenker2012.favoring)
+    (m : ChemlaSchlenker2012.Method) (c : ChemlaSchlenker2012.Cell) :
+    ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ limitedSymmetry c =
+        .correct ∧
+      ChemlaSchlenker2012.experiment4.verdict (ChemlaSchlenker2012.rule .anova) ℓ
+          limitedSymmetry c =
+        if c = .ifInverse ∨ c = .orInverse then .silent else .correct := by
   -- Limited Symmetry accepts a formula as the registered account does.
-  have h1 : ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
-      ChemlaSchlenker2012.experiment1.verdict Account.limitedSymmetry.theory (k, o) := rfl
-  have h4 : ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
-      ChemlaSchlenker2012.experiment4.verdict Account.limitedSymmetry.theory (k, o) := rfl
-  rw [h1, h4, ChemlaSchlenker2012.verdict_experiment1, ChemlaSchlenker2012.verdict_experiment4]
-  simp [ChemlaSchlenker2012.incremental]
+  have h1 : ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ
+      limitedSymmetry c = ChemlaSchlenker2012.experiment1.verdict (ChemlaSchlenker2012.rule m) ℓ
+        Account.limitedSymmetry.theory c := rfl
+  have h4 : ChemlaSchlenker2012.experiment4.verdict (ChemlaSchlenker2012.rule .anova) ℓ
+      limitedSymmetry c = ChemlaSchlenker2012.experiment4.verdict
+        (ChemlaSchlenker2012.rule .anova) ℓ Account.limitedSymmetry.theory c := rfl
+  rw [h1, h4, ChemlaSchlenker2012.verdict_experiment1 hℓ,
+    ChemlaSchlenker2012.verdict_experiment4 hℓ]
+  simp [Account.incremental]
 
 /-- On Chemla's first experiment, Limited Symmetry is wrong with every presupposition accommodated
 in the context, and right by §4.1.2's stipulations and by the one-step rule. -/
