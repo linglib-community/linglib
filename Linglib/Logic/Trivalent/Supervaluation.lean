@@ -152,6 +152,11 @@ theorem supervaluationOn_eq_undefined_iff :
   unfold supervaluationOn
   split_ifs <;> simp_all
 
+theorem nontrivial_of_supervaluationOn_eq_undefined (h : supervaluationOn s P = .undefined) :
+    s.Nontrivial :=
+  let ⟨⟨a, ha, hPa⟩, b, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
+  Set.nontrivial_of_mem_mem_ne ha hb fun e ↦ hPb (e ▸ hPa)
+
 theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
     supervaluationOn s P = supervaluationOn s Q := by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_

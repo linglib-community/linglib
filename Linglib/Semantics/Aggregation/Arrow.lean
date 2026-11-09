@@ -125,7 +125,7 @@ theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : 
       linarith [hv i hi]
     · simp only [v', ite_true, ite_eq_right hzy, ite_eq_right hi]
       linarith [le_max_right (v x i) (v z i)]
-  have := hW.1 v'
+  have := hW.transitive v'
   have h₃ : AsymmRel (a v') x z := (h v' hG hG').trans_le (hP v' y z hyz).1
   exact ⟨(hI v' v x z hx hz).1 h₃.1, fun hzx' ↦ h₃.2 ((hI v' v z x hz hx).2 hzx')⟩
 
@@ -150,7 +150,7 @@ theorem decisiveOn_of_almost' (hW : WeakOrderValued a) (hP : WeakPareto a) (hI :
   have hG' : ∀ i ∉ G, v' x i < v' y i := fun i hi ↦ by
     simp only [v', ite_true, ite_eq_right hxy.symm, ite_eq_right hi]
     linarith [min_le_right (v z i) (v y i)]
-  have := hW.1 v'
+  have := hW.transitive v'
   have h₃ : AsymmRel (a v') z y := (hP v' z x hzx').trans_le (h v' hG hG').1
   exact ⟨(hI v' v z y hz hy).1 h₃.1, fun hyz ↦ h₃.2 ((hI v' v y z hy hz).2 hyz)⟩
 
@@ -212,7 +212,7 @@ theorem exists_decisive_ssubset (hO : Invariant ordinal a) (hW : WeakOrderValued
     by_cases hji : j = i
     · subst hji; simp [v, hxz.symm, hxy.symm, hyz.symm]
     · simp [v, hji, hj, hyz.symm]
-  have := hW.1 v
+  have := hW.transitive v
   by_cases hxz' : AsymmRel (a v) x z
   · refine ⟨{i}, Finset.ssubset_iff_subset_ne.2 ⟨Finset.singleton_subset_iff.2 hi, ?_⟩, ?_⟩
     · rintro rfl
@@ -234,7 +234,7 @@ theorem exists_decisive_ssubset (hO : Invariant ordinal a) (hW : WeakOrderValued
         fun h' ↦ hxz'.2 ((iff_of_pattern hO hI fun j ↦ ⟨(hpat j).2, (hpat j).1⟩).1 h')⟩
   · have hzx : a v z x := by
       by_contra hzx
-      exact hxz' ⟨((hW.2 v).total x z).resolve_right hzx, hzx⟩
+      exact hxz' ⟨((hW.complete v).total x z).resolve_right hzx, hzx⟩
     have hyx : AsymmRel (a v) y x := hyz'.trans_le hzx
     refine ⟨G.erase i, Finset.erase_ssubset hi, ?_⟩
     have hne : (G.erase i).Nonempty := by
@@ -287,9 +287,7 @@ theorem exists_isDictator (hO : Invariant ordinal a) (hW : WeakOrderValued a)
   exact ⟨i, fun v p q h ↦ hG.2 v p q fun j hj ↦ (Finset.mem_singleton.1 hj) ▸ h⟩
 
 /-- Arrow's theorem is an impossibility, since no rule meets all of Arrow's conditions. -/
-theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) :
-    ¬ (Invariant ordinal a ∧ WeakOrderValued a ∧ WeakPareto a ∧ Independent a ∧
-      NonDictatorial a) :=
+theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) : ¬ Arrovian ordinal a :=
   fun ⟨hO, hW, hP, hI, hD⟩ ↦ let ⟨i, hi⟩ := exists_isDictator hO hW hP hI h₃; hD i hi
 
 end Arrow

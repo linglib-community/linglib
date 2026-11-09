@@ -149,6 +149,9 @@ theorem eq_of_eq_true_iff_of_eq_false_iff {a b : Trivalent} (h₁ : a = .true �
 @[simp] theorem undefined_le_iff_ne_false {a : Trivalent} : .undefined ≤ a ↔ a ≠ .false := by
   cases a <;> decide
 
+theorem eq_undefined_iff {a : Trivalent} : a = .undefined ↔ a ≠ .true ∧ a ≠ .false := by
+  rw [le_antisymm_iff, le_undefined_iff_ne_true, undefined_le_iff_ne_false]
+
 theorem sup_true (a : Trivalent) : a ⊔ .true = .true := by cases a <;> rfl
 theorem true_sup (a : Trivalent) : .true ⊔ a = .true := by cases a <;> rfl
 theorem inf_false (a : Trivalent) : a ⊓ .false = .false := by cases a <;> rfl
