@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Semantics.Interpreter.Mode
+public import Linglib.Semantics.Composition.Interpreter.Mode
 
 /-!
 # The bare structure of a constituency tree

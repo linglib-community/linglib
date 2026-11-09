@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Interpreter.Effect
-public import Linglib.Semantics.Interpreter.Basic
+public import Linglib.Semantics.Composition.Interpreter.Effect
+public import Linglib.Semantics.Composition.Interpreter.Basic
 
 /-!
 # The effect-driven grammar
@@ -316,15 +316,14 @@ def effectGrammar (Rule : Ty B → Ty B → Ty B → Type) (Shift : Ty B → Ty 
   Unary := Shift
   Binary := Mode Rule
 
-/-- The model of the effect-driven grammar, from the meanings of the basic modes and of
-the type shifts. -/
-def effectGrammar.model (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
+/-- The structure of the effect-driven grammar, from the meanings of the basic modes and of the
+type shifts. -/
+def effectGrammar.structure (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
     {Shift : Ty B → Ty B → Type}
     (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D)
     (shift : ∀ {a b : Ty B}, Shift a b → a.Dom D → b.Dom D) :
-    (effectGrammar Rule Shift).Model (Ty.Dom D) where
-  unary := shift
-  binary m := m.eval D basic
+    (effectGrammar Rule Shift).language.Structure (Ty.Dom D) :=
+  Grammar.structure shift fun m ↦ m.eval D basic
 
 /-- The effect-driven interpreter: a node admits every mode that combines its daughters, kept
 at an island only if its result is evaluated, and abstraction at an index over what reads
