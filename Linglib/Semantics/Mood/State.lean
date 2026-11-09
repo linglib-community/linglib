@@ -40,8 +40,9 @@ of what the open question settles within the context set.
   entails the polar question whether `p` relative to the context set.
 * `Mood.State.isAdditive_assert`, `Mood.State.isAdditive_promote`,
   `Mood.State.isAdditive_inquire`: the three updates are additive.
-* `Mood.simpleNecessity_iff_boxCs`, `Mood.necessity_iff_boxLe`: Kratzer's simple and human
-  necessity are the two modals of the induced state, as Portner glosses his (3).
+* `Mood.eventually_simpleNecessity_iff_boxCs`, `Mood.forall_mem_bestWorlds_iff_boxLe`: Kratzer's
+  simple necessity and truth at the best worlds are the two modals of the induced state, as
+  Portner glosses his (3).
 
 ## Implementation notes
 
@@ -350,16 +351,16 @@ def stateAt (w : W) : OrderedInformationState W :=
 
 theorem bestWorlds_eq_optimal (w : W) : bestWorlds f g w = (stateAt f g w).optimal := rfl
 
-theorem simpleNecessity_iff_boxCs (p : W → Prop) (w : W) :
-    simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
+theorem eventually_simpleNecessity_iff_boxCs (p : W → Prop) (w : W) :
+    (∀ᶠ v in simpleNecessity f w, p v) ↔ (stateAt f g w).boxCs p :=
   Iff.rfl
 
-theorem necessity_iff_boxLe (p : W → Prop) (w : W) :
-    necessity f g p w ↔ (stateAt f g w).boxLe p :=
+theorem forall_mem_bestWorlds_iff_boxLe (p : W → Prop) (w : W) :
+    (∀ v ∈ bestWorlds f g w, p v) ↔ (stateAt f g w).boxLe p :=
   Iff.rfl
 
-theorem isFixedPt_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
-    Function.IsFixedPt (·.assert p) (stateAt f g w) ↔ simpleNecessity f p w :=
+theorem isFixedPt_assert_iff_eventually_simpleNecessity (p : W → Prop) (w : W) :
+    Function.IsFixedPt (·.assert p) (stateAt f g w) ↔ ∀ᶠ v in simpleNecessity f w, p v :=
   OrderedInformationState.isFixedPt_assert_iff
 
 theorem isRealistic_iff_mem_stateAt_info : f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=

@@ -27,7 +27,7 @@ conditional of the theory layer (`Conditional.variablyStrictImp`), the necessity
 semantics over the antecedent-worlds of the field. It entails OF
 (`Conditional.variablyStrictImp_subset_orderingImp`), is OF under the Limit Assumption
 (`Conditional.mem_variablyStrictImp_iff_mem_orderingImp`), and under comparability is the truth
-condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_isGoodPossibility`). Its
+condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_exists`). Its
 premise counterpart P, on which every nonempty premise set consistent with the antecedent is
 included in one that implies the consequent together with it, is the same conditional of the
 induced ordering frame (`neutralPremiseImp_eq_variablyStrictImp`).
@@ -189,7 +189,7 @@ evaluate every counterfactual alike: truth condition P is the variably strict co
 theorem neutralPremiseImp_eq_variablyStrictImp :
     neutralPremiseImp H A C = variablyStrictImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
   ext i
-  rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
+  rw [mem_variablyStrictImp, Filter.atBotOn_ofCriteria, Filter.mem_atBotOn_satisfied_iff]
   refine ⟨fun h B hB ⟨u, ⟨⟨c, hc, huc⟩, huA⟩, huB⟩ ↦ ?_, fun h J hJ ⟨c, hc⟩ ↦ ?_⟩
   · obtain ⟨K, ⟨hK, v, hvA, hvK⟩, hBK, hKC⟩ := h (insert c B)
       ⟨Set.insert_subset hc hB, u, huA, Set.forall_mem_insert.2 ⟨huc, huB⟩⟩ ⟨c, B.mem_insert c⟩

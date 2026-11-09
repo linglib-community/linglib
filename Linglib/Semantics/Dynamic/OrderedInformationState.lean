@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Semantics.Dynamic.Consequence
 
 /-!
@@ -207,12 +206,12 @@ theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : OrderedInformationS
 so that a pattern learnt from the minimal state ranks `w` below `v` when every rule that holds
 at `v` holds at `w`, as Veltman glosses patterns. -/
 theorem foldl_promote_order (ps : List (W → Prop)) (σ : OrderedInformationState W) :
-    (ps.foldl promote σ).order = σ.order ⊓ Modality.premisePreorder {p | p ∈ ps} := by
+    (ps.foldl promote σ).order = σ.order ⊓ Preorder.ofCriteria (fun w p ↦ p w) {p | p ∈ ps} := by
   induction ps generalizing σ with
   | nil => simp
   | cons p ps ih =>
     rw [List.foldl_cons, ih, promote_order, show {q | q ∈ p :: ps} = insert p {q | q ∈ ps} by
-      ext; simp, Modality.premisePreorder_insert, inf_assoc, inf_comm (Preorder.ofCriterion p)]
+      ext; simp, Preorder.ofCriteria_insert, inf_assoc, inf_comm (Preorder.ofCriterion p)]
 
 end OrderedInformationState
 

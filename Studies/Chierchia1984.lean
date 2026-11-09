@@ -67,10 +67,10 @@ abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
 background, whose controller has the property throughout the best accessible worlds. -/
 def ControlVerb.ofKratzer (base ordering : Background W)
     (controller : Args → E) : ControlVerb E W Args where
-  sem P args w := necessity base ordering (P (controller args)) w
+  sem P args w := ∀ w' ∈ bestWorlds base ordering w, P (controller args) w'
   controller := controller
   accessible _ w := bestWorlds base ordering w
-  control _ _ _ := necessity_iff _ _ _ _
+  control _ _ _ := Iff.rfl
 
 variable (v : ControlVerb E W Args)
 

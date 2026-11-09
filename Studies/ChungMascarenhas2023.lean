@@ -37,8 +37,8 @@ classical account verify all of (15a)–(15c), and `expectedValue_inA_lt_inA_blo
 footnote 17's observation that blocking neither stays above the expected utility of
 indifference. The modal conjunction fallacy (34) and modal base-rate neglect (41) are theorems
 about `must` over every measure realizing the paper's printed conditional probabilities, each
-with a finite witness model; the Kratzer row of Table 2 is `Modality.necessity_and_left`,
-conjunction elimination, which the expected-value `must` escapes.
+with a finite witness model; the Kratzer row of Table 2 is `Filter.inter_mem_iff` for
+`Modality.humanNecessity`, conjunction elimination, which the expected-value `must` escapes.
 
 ## Implementation notes
 
@@ -449,22 +449,22 @@ open Modality in
 /-- Given best worlds (fn 1) and the miners in one of the shafts, the three *ought* claims of (15)
 are unsatisfiable on [kratzer-1991]'s account (16). -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
-    (w : V) (inA inB bA bB bN : V → Prop)
+    (w : V) (inA inB bA bB bN : Set V)
     (hbest : (bestWorlds f g w).Nonempty)
-    (hcover : ∀ v ∈ f.accessibleWorlds w, inA v ∨ inB v)
-    (hA : ∀ v, bA v → ¬ bN v) (hB : ∀ v, bB v → ¬ bN v) :
-    ¬ (necessity f g bN w ∧ necessity (f.restrict inA) g bA w ∧
-        necessity (f.restrict inB) g bB w) := by
+    (hcover : ∀ v ∈ f.accessibleWorlds w, v ∈ inA ∨ v ∈ inB)
+    (hA : ∀ v ∈ bA, v ∉ bN) (hB : ∀ v ∈ bB, v ∉ bN) :
+    ¬ (bestWorlds f g w ⊆ bN ∧ bestWorlds (f.restrict inA) g w ⊆ bA ∧
+        bestWorlds (f.restrict inB) g w ⊆ bB) := by
   rintro ⟨hN, hAB, hBB⟩
   obtain ⟨v, hv⟩ := hbest
   have hacc : v ∈ f.accessibleWorlds w := Preorder.minimals_subset _ _ hv
-  have key : ∀ α : V → Prop, α v → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
+  have key : ∀ α : Set V, v ∈ α → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
     Preorder.mem_minimals_of_subset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1)
       hv
       (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)
   rcases hcover v hacc with h | h
-  · exact hA v (hAB v (key inA h)) (hN v hv)
-  · exact hB v (hBB v (key inB h)) (hN v hv)
+  · exact hA v (hAB (key inA h)) (hN hv)
+  · exact hB v (hBB (key inB h)) (hN hv)
 
 end Miners
 

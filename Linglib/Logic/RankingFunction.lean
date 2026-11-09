@@ -233,14 +233,13 @@ theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, aPart κ A w = 0 :
 
 /-! ### The induced consequence relation -/
 
-/-- `B` follows from `A` in `κ` when it is a necessity over `A` in the ranked model
-`Preorder.lift κ`, under which `w` is at least as normal as `v` when its rank is at most that of
-`v`. Ranks being well-founded, this is truth at the `A`-worlds of least rank. -/
-def Entails (A B : Set W) : Prop := B ∈ OrderingSemantics.necessityFilter (Preorder.lift κ) A
+/-- `B` follows from `A` in `κ` when it holds toward the bottom of the ranks of the `A`-worlds.
+Ranks being well-founded, this is truth at the `A`-worlds of least rank. -/
+def Entails (A B : Set W) : Prop := B ∈ Filter.atBotOn κ A
 
 theorem entails_iff_minimals_subset : Entails κ A B ↔ (Preorder.lift κ).minimals A ⊆ B := by
-  rw [Entails, OrderingSemantics.necessityFilter_eq_principal_of_wellFounded
-    (Preorder.wellFounded_lt_lift κ), Filter.mem_principal]
+  rw [Entails, Filter.atBotOn_eq_principal_of_wellFoundedLT, Filter.mem_principal]
+  exact Iff.rfl
 
 theorem entails_iff_forall_least :
     Entails κ A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ w ≤ κ v) → w ∈ B :=
@@ -295,7 +294,7 @@ instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
 
 /-- The consequence relation of a ranking function is rational. -/
 theorem isRational_entails : Nonmonotonic.IsRational (Entails κ) :=
-  Nonmonotonic.isRational_necessityFilter
+  Nonmonotonic.isRational_atBotOn κ
 
 end Grading
 

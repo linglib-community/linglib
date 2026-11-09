@@ -22,7 +22,7 @@ more specific node overrides one specified at a less specific node. The definiti
 order alone. Two incomparable specifiers with different values, as in the Nixon diamond, leave a
 node with both values. Each is a credulous conclusion, and a skeptical reasoner draws neither. A
 value is a skeptical conclusion when it is the only value inherited, which on a well-founded
-taxonomy is preferential consequence (`mem_necessityFilter_iff_inherited_subset`). A node
+taxonomy is preferential consequence (`mem_atBotOn_iff_inherited_subset`). A node
 inherits at most one value when the specifiers above it form a chain, as in a single-parent
 hierarchy, or when no node lies below two specifiers, as with the members of a choice set. The
 procedural account climbs the taxonomy from the node and takes the first value found. It agrees
@@ -46,7 +46,7 @@ such as the order of ascending degree by which inheritance networks build their 
 * `DefaultInheritance.mem_inherited_of_find?_eq_some`,
   `DefaultInheritance.find?_bind_eq_of_inherited_eq_singleton`: a bottom-up search returns an
   inherited value, the only one when there is no conflict.
-* `DefaultInheritance.mem_necessityFilter_iff_inherited_subset`: skeptical inheritance as
+* `DefaultInheritance.mem_atBotOn_iff_inherited_subset`: skeptical inheritance as
   preferential consequence.
 
 ## Implementation notes
@@ -168,11 +168,9 @@ end Search
 /-- A node inherits no value but `v`, the skeptical conclusion, exactly when its specifiers
 preferentially entail specifying `v`: on a well-founded hierarchy, its most specific specifiers all
 specify `v`. -/
-theorem mem_necessityFilter_iff_inherited_subset [WellFoundedLT α] :
-    {m | att m = some v} ∈ OrderingSemantics.necessityFilter inferInstance (specifiers att a) ↔
-      inherited att a ⊆ {v} := by
-  rw [OrderingSemantics.necessityFilter_eq_principal_of_wellFounded wellFounded_lt,
-    Filter.mem_principal]
+theorem mem_atBotOn_iff_inherited_subset [WellFoundedLT α] :
+    {m | att m = some v} ∈ Filter.atBotOn id (specifiers att a) ↔ inherited att a ⊆ {v} := by
+  rw [Filter.atBotOn_eq_principal_of_wellFoundedLT, Filter.mem_principal]
   refine ⟨fun h w ⟨m, hm, hw⟩ ↦ ?_, fun h m hm ↦ ?_⟩
   · have : att m = some v := h hm
     rw [hw, Option.some_inj] at this

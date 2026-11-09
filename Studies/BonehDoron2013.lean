@@ -105,11 +105,11 @@ modality in the matrix. -/
 def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
     (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
   (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) Z).gen {z | ext z ≤ i ∧ Q w z}
-    {z | simpleNecessity (mb i) (P · z) w}
+    {z | ∀ᶠ v in simpleNecessity (mb i) w, P v z}
 
 theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
     {P Q : W → Z → Prop} {i : NonemptyInterval T} {w : W} :
-    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → simpleNecessity (mb i) (P · z) w :=
+    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → ∀ᶠ v in simpleNecessity (mb i) w, P v z :=
   ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h z hz ↦ h z hz.1 hz.2⟩
 
 -- The second disjunct of (22b) holds of every restriction, through the empty restrictor.
@@ -211,7 +211,7 @@ sum, and the event indicating a disposition happens at time `0`. -/
 section Model
 
 /-- The gnomic modal base, whose one premise is to be the alternative `true`. -/
-def gnomic : NonemptyInterval ℕ → Background Bool := fun _ _ ↦ {(· = true)}
+def gnomic : NonemptyInterval ℕ → Background Bool := fun _ _ ↦ {{true}}
 
 /-- The event indicating a disposition, at time `0`. -/
 def indicating : Bool → NonemptyInterval ℕ → Prop := fun _ e ↦ e = .pure 0
@@ -291,7 +291,7 @@ theorem actualization_rows :
         false ↔ Examples.ex42c.feature? "truthValue" = some "true") := by
   refine ⟨iff_of_true ⟨habit, le_rfl, hab_of_single_trip.1⟩ (by decide),
     iff_of_true ⟨⟨habit, rfl, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩,
-      gen_iff.2 fun _ _ h _ _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩
+      gen_iff.2 fun _ _ h ↦ .of_forall fun _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩
   rintro ⟨i, ⟨⟨hlt, ⟨_, ⟨rfl, -⟩, h₁⟩, _, ⟨rfl, -⟩, h₂⟩, -⟩, -⟩
   rw [Event.τ_nonemptyInterval, NonemptyInterval.mem_pure] at h₁ h₂
   exact hlt.ne (h₁.trans h₂.symm)

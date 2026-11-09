@@ -250,7 +250,7 @@ structure OrdState (W : Type*) where
   /-- The worlds compatible with what the state-holder knows. -/
   base : Set W
   /-- The propositions that rank the worlds of the base. -/
-  ordering : Set (W → Prop)
+  ordering : Set (Set W)
 
 namespace OrdState
 
@@ -263,11 +263,11 @@ worlds the optimal worlds. -/
 def toOrderedInformationState (i : OrdState W) : OrderedInformationState W :=
   ⟨i.base, premisePreorder i.ordering⟩
 
-theorem best_singleton {d p : Set W} (h : (d ∩ p).Nonempty) : best ⟨d, {(· ∈ p)}⟩ = d ∩ p := by
+theorem best_singleton {d p : Set W} (h : (d ∩ p).Nonempty) : best ⟨d, {p}⟩ = d ∩ p := by
   obtain ⟨w, hwd, hwp⟩ := h
   simpa [best, Set.sep_mem_eq] using
-    Preorder.minimals_ofCriteria_eq (sat := fun w (q : W → Prop) ↦ q w) (criteria := {(· ∈ p)})
-      (s := d) ⟨w, hwd, by simpa using hwp⟩
+    Preorder.minimals_ofCriteria_eq (sat := (· ∈ ·)) (criteria := {p}) (s := d)
+      ⟨w, hwd, by simpa using hwp⟩
 
 end OrdState
 
@@ -281,7 +281,7 @@ def mustOrd (p : Set W) : OrdState W → W → Prop := fun i _ ↦ i.best ⊆ p
 
 theorem compatible_mightOrd : Compatible OrdState.base (mightOrd p) c ↔ (c.base ∩ p).Nonempty := by
   refine ⟨fun ⟨_, hc', ⟨v, hv⟩, h⟩ ↦ ?_, fun h ↦
-    ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, h.mono Set.inter_subset_left, fun _ _ ↦ ?_⟩⟩
+    ⟨⟨c.base, {p}⟩, subset_rfl, h.mono Set.inter_subset_left, fun _ _ ↦ ?_⟩⟩
   · obtain ⟨m, hm, hmp⟩ := h v hv
     exact ⟨m, hc' (Preorder.minimals_subset _ _ hm), hmp⟩
   · rwa [mightOrd, OrdState.best_singleton h, Set.inter_assoc, Set.inter_self]
@@ -290,7 +290,7 @@ open scoped Classical in
 /-- The update of *might p* adds `p` to the ordering source of a compatible context and
 otherwise empties the modal base. -/
 noncomputable def mightOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
-  if (c.base ∩ p).Nonempty then ⟨c.base, insert (· ∈ p) c.ordering⟩ else ⟨∅, c.ordering⟩
+  if (c.base ∩ p).Nonempty then ⟨c.base, insert p c.ordering⟩ else ⟨∅, c.ordering⟩
 
 /-- On a compatible context the update of *might p* is Veltman's update with *normally p*, the
 promotion of Portner's To-Do List, on the epistemic ordering source. -/
@@ -304,13 +304,13 @@ theorem commensurate_mightOrdUpdate [Finite W] (p : Set W) :
     Commensurate OrdState.base (mightOrd p) (mightOrdUpdate p) := by
   intro c hc _ _
   have h := compatible_mightOrd.1 hc
-  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder (insert (· ∈ p) c.ordering))
+  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder (insert p c.ordering))
     (s := c.base ∩ p) h
   rw [mightOrdUpdate, ite_eq_left h]
   refine ⟨m, ?_, (Preorder.minimals_subset _ _ hm).2⟩
   rw [Preorder.mem_minimals_iff] at hm
   exact (Preorder.mem_minimals_iff (p := premisePreorder _)).2
-    ⟨hm.1.1, fun v hv hvm ↦ hm.2 ⟨hv, hvm (· ∈ p) (Set.mem_insert _ _) hm.1.2⟩ hvm⟩
+    ⟨hm.1.1, fun v hv hvm ↦ hm.2 ⟨hv, hvm p (Set.mem_insert _ _) hm.1.2⟩ hvm⟩
 
 /-! ### *must* under the ordering semantics -/
 
@@ -319,16 +319,16 @@ open scoped Classical in
 removes the propositions disjoint from `p`, and otherwise empties the modal base. -/
 noncomputable def mustOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
   if (c.base ∩ p).Nonempty then
-    ⟨c.base, insert (· ∈ p) {q ∈ c.ordering | ∃ w ∈ p, q w}⟩
+    ⟨c.base, insert p {q ∈ c.ordering | ∃ w ∈ p, w ∈ q}⟩
   else ⟨∅, c.ordering⟩
 
 theorem mk_singleton_mem_MI_mustOrd {d : Set W} (h : (d ∩ p).Nonempty) :
-    (⟨d, {(· ∈ p)}⟩ : OrdState W) ∈ MI OrdState.base (mustOrd p) :=
+    (⟨d, {p}⟩ : OrdState W) ∈ MI OrdState.base (mustOrd p) :=
   fun _ _ ↦ (OrdState.best_singleton h).trans_subset Set.inter_subset_right
 
 theorem compatible_mustOrd [Finite W] :
     Compatible OrdState.base (mustOrd p) c ↔ (c.base ∩ p).Nonempty := by
-  refine ⟨fun ⟨c', hc', ⟨v, hv⟩, h⟩ ↦ ?_, fun h ↦ ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl,
+  refine ⟨fun ⟨c', hc', ⟨v, hv⟩, h⟩ ↦ ?_, fun h ↦ ⟨⟨c.base, {p}⟩, subset_rfl,
     h.mono Set.inter_subset_left, mk_singleton_mem_MI_mustOrd h⟩⟩
   obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder c'.ordering) (s := c'.base) ⟨v, hv⟩
   exact ⟨m, hc' (Preorder.minimals_subset _ _ hm), h v hv hm⟩
@@ -343,17 +343,17 @@ local macro "decide_states" : tactic =>
 
 theorem must_needs_prejacent :
     (⟨Set.univ, ∅⟩ : OrdState (Fin 3)) ∉ MI OrdState.base (mustOrd {0, 1}) ∧
-      (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∈
+      (⟨Set.univ, {{0, 1}}⟩ : OrdState (Fin 3)) ∈
         MI OrdState.base (mustOrd {0, 1}) := by
   decide_states
 
 theorem must_needs_removal :
-    (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3))), (· ∈ ({2} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∉
+    (⟨Set.univ, {{0, 1}, {2}}⟩ : OrdState (Fin 3)) ∉
       MI OrdState.base (mustOrd {0, 1}) := by
   decide_states
 
 theorem mustOrdUpdate_removal :
-    mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, {(· ∈ ({2} : Set (Fin 3)))}⟩ ∈
+    mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, {{2}}⟩ ∈
       MI OrdState.base (mustOrd {0, 1}) := by
   rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩,
     Set.sep_eq_empty_iff_mem_false.2 (by simp), insert_empty_eq]
@@ -362,7 +362,7 @@ theorem mustOrdUpdate_removal :
 theorem not_commensurate_mustOrdUpdate :
     ¬ Commensurate OrdState.base (mustOrd ({0, 1} : Set (Fin 3))) (mustOrdUpdate {0, 1}) := by
   intro h
-  have hc := h ⟨Set.univ, {(· ∈ ({1, 2} : Set (Fin 3))), (· ∈ ({0, 2} : Set (Fin 3)))}⟩
+  have hc := h ⟨Set.univ, {{1, 2}, {0, 2}}⟩
     (compatible_mustOrd.2 ⟨0, Set.mem_univ _, by simp⟩)
   rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩,
     Set.sep_eq_self_iff_mem_true.2 (by simp)] at hc
@@ -377,7 +377,7 @@ theorem MI_diamond_eq_MI_might {R : Set W → SetRel W W} (hR : ∀ i, ∀ w ∈
     exists_congr fun v ↦ and_congr_left' (Set.ext_iff.1 (hR i w hw) v)
 
 theorem MI_relational_eq_MI_mightOrd {f : OrdState W → W → Set W}
-    {g : OrdState W → W → Set (W → Prop)} (hf : ∀ i, ∀ w ∈ i.base, f i w = i.base)
+    {g : OrdState W → W → Set (Set W)} (hf : ∀ i, ∀ w ∈ i.base, f i w = i.base)
     (hg : ∀ i, ∀ w ∈ i.base, g i w = i.ordering) (p : Set W) :
     MI OrdState.base (fun i w ↦ ((premisePreorder (g i w)).minimals (f i w) ∩ p).Nonempty) =
       MI OrdState.base (mightOrd p) :=

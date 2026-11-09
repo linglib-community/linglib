@@ -55,13 +55,13 @@ open Modality
 
 section Claims
 
-variable {W : Type*} (f : Background W) (p : W → Prop)
+variable {W : Type*} (f : Background W) (p : Set W)
 
 /-- The claim a modal of force `fo` makes about `p` over the base `f`: simple possibility, or
 simple necessity for the universal forces. -/
 def claim : ModalForce → Set W
-  | .possibility => {w | simplePossibility f p w}
-  | .weakNecessity | .necessity => {w | simpleNecessity f p w}
+  | .possibility => {w | simplePossibility f w p}
+  | .weakNecessity | .necessity => {w | p ∈ simpleNecessity f w}
 
 /-- In a context of polarity `π`, the claim of force `g` is stronger than that of `fo`:
 necessity is the stronger claim in an upward-entailing context, possibility under negation. -/
@@ -79,7 +79,7 @@ theorem smul_claim_subset (hf : ModalLogic.IsSerial f.accessible) {π : Polarity
     (h : StrongerIn π g fo) : π • claim f p g ⊆ π • claim f p fo := by
   have hnec : claim f p .necessity ⊆ claim f p .possibility := fun w hw ↦
     let ⟨v, hv⟩ := hf.serial w
-    ⟨v, hv, hw v hv⟩
+    simplePossibility_iff.2 ⟨v, hv, hw hv⟩
   cases π <;> cases g <;> cases fo <;>
     first
     | exact absurd h (by decide)
@@ -102,7 +102,7 @@ end Claims
 the force `g` when, in every consistent model, it is appropriate wherever a modal of force `g`
 with a scale, as in English, is. -/
 def ServesFor (π : Polarity) (fo : ModalForce) (s : Prop) (g : ModalForce) : Prop :=
-  ∀ (W : Type) (f : Background W), ModalLogic.IsSerial f.accessible → ∀ p : W → Prop,
+  ∀ (W : Type) (f : Background W), ModalLogic.IsSerial f.accessible → ∀ p : Set W,
     Appropriate f p π g True ⊆ Appropriate f p π fo s
 
 /-- A modal serves for its own force, and without a scalemate for any force whose claim is
@@ -114,7 +114,7 @@ instance (π : Polarity) (fo : ModalForce) (s : Prop) [Decidable s] (g : ModalFo
     Decidable (Usable π fo s g) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-variable {W : Type*} {f : Background W} {p : W → Prop}
+variable {W : Type*} {f : Background W} {p : Set W}
 
 theorem appropriate_classical (π : Polarity) (fo : ModalForce) (s : Prop) :
     Appropriate f p π fo.classical s = Appropriate f p π fo s := by
@@ -130,11 +130,12 @@ variable {π : Polarity} {fo g : ModalForce} {s : Prop}
 
 /-- Decides membership in the two-world model. -/
 local macro "twoWorlds" : tactic =>
-  `(tactic| (simp_all [Appropriate, claim, StrongerIn, bothAccessible,
+  `(tactic| (simp_all [Appropriate, claim, StrongerIn, bothAccessible, mem_simpleNecessity,
+    simplePossibility_iff, Set.subset_def,
     ModalForce.classical, ModalForce.dual, ModalForce.rank, Preorder.lift_le_iff,
     Preorder.lift_lt_iff]; done))
 
-private theorem not_servesFor_of (p : Bool → Prop)
+private theorem not_servesFor_of (p : Set Bool)
     (hin : true ∈ Appropriate bothAccessible p π g True)
     (hout : true ∉ Appropriate bothAccessible p π fo s) : ¬ ServesFor π fo s g :=
   fun h ↦ hout (h Bool bothAccessible isSerial_bothAccessible p hin)
@@ -149,9 +150,9 @@ theorem servesFor_iff : ServesFor π fo s g ↔ Usable π fo s g := by
     cases π <;> cases fo <;> cases g <;> try exact absurd rfl hne
     all_goals try have hs : s := by_contra fun hs ↦ hsg hs (by decide)
     all_goals first
-      | refine not_servesFor_of (fun _ ↦ True) ?_ ?_ h <;> clear h <;> twoWorlds
-      | refine not_servesFor_of (fun b ↦ b = true) ?_ ?_ h <;> clear h <;> twoWorlds
-      | refine not_servesFor_of (fun _ ↦ False) ?_ ?_ h <;> clear h <;> twoWorlds
+      | refine not_servesFor_of .univ ?_ ?_ h <;> clear h <;> twoWorlds
+      | refine not_servesFor_of {true} ?_ ?_ h <;> clear h <;> twoWorlds
+      | refine not_servesFor_of ∅ ?_ ?_ h <;> clear h <;> twoWorlds
   · rintro (h | ⟨hs, h⟩) W f hf p w hw
     · rw [← appropriate_classical (fo := g), ← h, appropriate_classical] at hw
       exact ⟨hw.1, fun _ ↦ hw.2 trivial⟩

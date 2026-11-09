@@ -247,7 +247,7 @@ theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
 /-! ### §1.5 Lifting an order on worlds -/
 
 /-- The ordering source `{{w₀}}`, under which `w₀` alone is best. -/
-def onlyBest (w₀ : W) : Set (W → Prop) := {(· = w₀)}
+def onlyBest (w₀ : W) : Set (Set W) := {{w₀}}
 
 theorem onlyBest_le (w₀ v u : W) : (v ≤[onlyBest w₀] u) ↔ (u = w₀ → v = w₀) := by
   simp [onlyBest, Preorder.ofCriteria_le_iff]
@@ -258,9 +258,10 @@ theorem bestWorlds_onlyBest (w₀ w : W) : bestWorlds ⊥ (fun _ ↦ onlyBest w�
     forall_const, onlyBest_le, Set.mem_singleton_iff]
   exact ⟨fun h ↦ h w₀ (fun _ ↦ rfl) rfl, fun hx _ _ _ ↦ hx⟩
 
-theorem must_bestWorlds [Finite W] (O : Set (W → Prop)) (w : W) :
-    Yalcin2010.must O (bestWorlds ⊥ (fun _ ↦ O) w) w :=
-  humanNecessity_of_necessity (.of_finite _ _ _) fun _ hv ↦ hv
+theorem must_bestWorlds [Finite W] (O : Set (Set W)) (w : W) :
+    Yalcin2010.must O (bestWorlds ⊥ (fun _ ↦ O) w) w := by
+  rw [Yalcin2010.must, humanNecessity_eq_principal_of_finite]
+  exact Filter.mem_principal_self _
 
 theorem must_onlyBest [Finite W] (w₀ w : W) : Yalcin2010.must (onlyBest w₀) {w₀} w :=
   bestWorlds_onlyBest w₀ w ▸ must_bestWorlds _ w
@@ -317,7 +318,7 @@ theorem not_exists_lift :
 
 /-- Under Kratzer's *must* the m-lifting refutes (35) in every finite model in which fewer than
 half the worlds are best (p. 664). -/
-theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (W → Prop)) (w : W)
+theorem not_mustToProbably_of_ncard_lt [Finite W] (O : Set (Set W)) (w : W)
     (h : (bestWorlds ⊥ (fun _ ↦ O) w).ncard < (bestWorlds ⊥ (fun _ ↦ O) w)ᶜ.ncard) :
     ¬MustToProbably (MatchingLift (premisePreorder O).le) (Yalcin2010.must O · w) :=
   fun hV6 ↦ absurd (hV6 _ (must_bestWorlds O w)).1.ncard_le (not_le.2 h)
@@ -526,8 +527,7 @@ theorem bridge1_thin_margin :
 
 /-- An ordering source on four worlds whose two best worlds each dominate only one of the other
 two. -/
-def crossed : Set (Fin 4 → Prop) :=
-  {(· ∈ ({0, 2} : Set (Fin 4))), (· ∈ ({1, 3} : Set (Fin 4))), (· ∈ ({0, 1} : Set (Fin 4)))}
+def crossed : Set (Set (Fin 4)) := {{0, 2}, {1, 3}, {0, 1}}
 
 theorem crossed_le (v u : Fin 4) : (v ≤[crossed] u) ↔
     ((u = 0 ∨ u = 2) → (v = 0 ∨ v = 2)) ∧ ((u = 1 ∨ u = 3) → (v = 1 ∨ v = 3)) ∧
@@ -564,29 +564,29 @@ def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ici θ
 /-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
 def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi (1 - θ)
 
-theorem quant_must (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : humanNecessity f ⊥ (· ∈ A) w) :
+theorem quant_must (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : A ∈ humanNecessity f ⊥ w) :
     ∀ᵐ v ∂P, v ∈ A :=
-  hP.mono fun v hv ↦ (humanNecessity_bot_iff f _ w).1 h v hv
+  hP.mono fun _ hv ↦ (humanNecessity_bot f w ▸ h : A ∈ simpleNecessity f w) hv
 
 theorem quant_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : P A ≠ 0) :
-    humanPossibility f ⊥ (· ∈ A) w := fun hn ↦
+    humanPossibility f ⊥ w A := fun hn ↦
   h (measure_eq_zero_iff_ae_notMem.2 (quant_must P (A := Aᶜ) hP hn))
 
 theorem quant_moreLikely_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w)
-    (h : AsymmRel (inducedGe P) A B) : humanPossibility f ⊥ (· ∈ A) w :=
+    (h : AsymmRel (inducedGe P) A B) : humanPossibility f ⊥ w A :=
   quant_might P hP fun h0 ↦ h.2 (by simp [inducedGe, h0])
 
 variable [IsProbabilityMeasure P]
 
 theorem quant_mustToProbably [DiscreteMeasurableSpace W]
     (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    MustToProbably (inducedGe P) (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) := fun A h ↦ by
+    MustToProbably (inducedGe P) (fun A ↦ A ∈ humanNecessity f ⊥ w) := fun A h ↦ by
   have h0 : P Aᶜ = 0 := quant_must P hP h
   have h1 := (prob_compl_eq_zero_iff (.of_discrete : MeasurableSet A)).1 h0
   refine ⟨?_, ?_⟩ <;> simp [inducedGe, h0, h1]
 
 theorem rows_35 [DiscreteMeasurableSpace W] (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    (MustToProbably (inducedGe P) (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) ↔
+    (MustToProbably (inducedGe P) (fun A ↦ A ∈ humanNecessity f ⊥ w) ↔
         Examples.ex35.judgment = .acceptable) ∧
       ¬(MustToProbably (MatchingLift (premisePreorder (onlyBest 0)).le)
           (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) ↔
@@ -605,8 +605,8 @@ theorem probMust_one_iff_ae [DiscreteMeasurableSpace W] : probMust P 1 A ↔ ∀
 is the set of worlds of positive probability (p. 676). -/
 theorem probMust_one_iff_humanNecessity [DiscreteMeasurableSpace W] [Countable W]
     (hf : f.accessibleWorlds w = {v | P {v} ≠ 0}) :
-    probMust P 1 A ↔ humanNecessity f ⊥ (· ∈ A) w := by
-  rw [probMust_one_iff_ae, ae_iff_of_countable, humanNecessity_bot_iff, simpleNecessity_iff, hf]
+    probMust P 1 A ↔ A ∈ humanNecessity f ⊥ w := by
+  rw [probMust_one_iff_ae, ae_iff_of_countable, humanNecessity_bot, mem_simpleNecessity, hf]
   rfl
 
 theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :

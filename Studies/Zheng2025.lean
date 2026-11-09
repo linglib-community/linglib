@@ -68,42 +68,39 @@ open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficie
 section Felicity
 
 variable {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ : Measure W)
-  (k : Kernel W) (u : Set (W → Prop)) {D : Type*} {n : ℕ}
+  (K U : Set (Set W)) {D : Type*} {n : ℕ}
 
 /-- The evidence in `K` is unexpected given the prior state `U`, (11ii). -/
-def unexpected : Prop :=
-  Disjoint k.base {w | sInf u w}
+def Unexpected : Prop := Disjoint (⋂₀ K) (⋂₀ U)
 
 /-- *Nandao φ?* is felicitous iff some evidence in `K` is positively relevant to `φ` under the
 prior `μ`, the evidence is unexpected given `U`, and `φ` is not directly settled in `K`, (11). -/
-def nandaoFelicitous (φ : Set W) : Prop :=
-  (∃ p ∈ k.props, posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) ∧ unexpected k u ∧
-    ¬ k.directlySettles (· ∈ φ)
+def NandaoFelicitous (φ : Set W) : Prop :=
+  (∃ X ∈ K, posRelevant ⟨φ, .of_discrete, μ⟩ X) ∧ Unexpected K U ∧ ¬ DirectlySettles K φ
 
 /-- *Nandao Q?* is felicitous iff some evidence in `K` is positively relevant to every
 instantiation of the highlighted property `f` of `Q`, the evidence is unexpected, and no
 instantiation is directly settled in `K`, (13). -/
-def nandaoQFelicitous (f : Property D W n) : Prop :=
-  (∃ p ∈ k.props, ∀ φ ∈ instantiations f, posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) ∧
-    unexpected k u ∧ ∀ φ ∈ instantiations f, ¬ k.directlySettles (· ∈ φ)
+def NandaoQFelicitous (f : Property D W n) : Prop :=
+  (∃ X ∈ K, ∀ φ ∈ instantiations f, posRelevant ⟨φ, .of_discrete, μ⟩ X) ∧
+    Unexpected K U ∧ ∀ φ ∈ instantiations f, ¬ DirectlySettles K φ
 
 /-- (13) for a polar question is (11), and §4 excludes a why-question with another sufficient
 answer. -/
 theorem nandaoQFelicitous_zero (f : Property D W 0) :
-    nandaoQFelicitous μ k u f ↔ nandaoFelicitous μ k u (f default) := by
-  simp [nandaoQFelicitous, nandaoFelicitous, instantiations_zero]
+    NandaoQFelicitous μ K U f ↔ NandaoFelicitous μ K U (f default) := by
+  simp [NandaoQFelicitous, NandaoFelicitous, instantiations_zero]
 
 theorem not_nandaoQFelicitous_of_not_posRelevant {f : Property D W n} {φ : Set W}
-    (hφ : φ ∈ instantiations f) (h : ∀ p ∈ k.props, ¬ posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) :
-    ¬ nandaoQFelicitous μ k u f := by
-  rintro ⟨⟨p, hp, hall⟩, -, -⟩
-  exact h p hp (hall φ hφ)
+    (hφ : φ ∈ instantiations f) (h : ∀ X ∈ K, ¬ posRelevant ⟨φ, .of_discrete, μ⟩ X) :
+    ¬ NandaoQFelicitous μ K U f := by
+  rintro ⟨⟨X, hX, hall⟩, -, -⟩
+  exact h X hX (hall φ hφ)
 
 /-- Where a context sits in Sudo's grid for `φ`: the relevance signs of the evidence and of the
 speaker's beliefs. -/
-noncomputable def situation (φ : Set W) (beliefs : Set (W → Prop)) : Situation :=
-  (relevanceSign ⟨φ, .of_discrete, μ⟩ k.base,
-    relevanceSign ⟨φ, .of_discrete, μ⟩ {w | sInf beliefs w})
+noncomputable def situation (φ : Set W) (beliefs : Set (Set W)) : Situation :=
+  (relevanceSign ⟨φ, .of_discrete, μ⟩ (⋂₀ K), relevanceSign ⟨φ, .of_discrete, μ⟩ (⋂₀ beliefs))
 
 end Felicity
 
@@ -176,36 +173,36 @@ instance : MeasurableSpace World := ⊤
 instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
 /-- B's coat drips. -/
-abbrev wetCoat : World → Prop := fun w ↦ w = .rain ∨ w = .sprinkler
+abbrev wetCoat : Set World := {w | w = .rain ∨ w = .sprinkler}
 
 /-- It is raining outside, the prejacent. -/
-abbrev isRaining : World → Prop := (· = .rain)
+abbrev isRaining : Set World := {w | w = .rain}
 
 /-- A's belief that it is not raining. -/
-abbrev notRaining : World → Prop := fun w ↦ w ≠ .rain
+abbrev notRaining : Set World := isRainingᶜ
 
 /-- The default expectation that coats are dry. -/
-abbrev dryCoat : World → Prop := fun w ↦ ¬ wetCoat w
+abbrev dryCoat : Set World := wetCoatᶜ
 
 /-- The kernel carrying the direct evidence of the wet coat. -/
-def raincoatK : Kernel World := ⟨{wetCoat}⟩
+def raincoatK : Set (Set World) := {wetCoat}
 
 /-- A context of the scenario: the evidence, A's beliefs, and the default expectations, which
 with the beliefs are the prior state. -/
 structure RaincoatContext where
-  evidence : Kernel World
-  beliefs : Set (World → Prop)
-  defaults : Set (World → Prop)
+  evidence : Set (Set World)
+  beliefs : Set (Set World)
+  defaults : Set (Set World)
 
 namespace RaincoatContext
 
 /-- *Nandao waimian xiayu-le ma?* is felicitous in the context. -/
 def Felicitous (c : RaincoatContext) : Prop :=
-  nandaoFelicitous .count c.evidence (c.beliefs ∪ c.defaults) {w | isRaining w}
+  NandaoFelicitous .count c.evidence (c.beliefs ∪ c.defaults) isRaining
 
 /-- The context's place in Sudo's grid. -/
 noncomputable def situation (c : RaincoatContext) : Situation :=
-  Zheng2025.situation .count c.evidence {w | isRaining w} c.beliefs
+  Zheng2025.situation .count c.evidence isRaining c.beliefs
 
 end RaincoatContext
 
@@ -216,74 +213,70 @@ def believesDry : RaincoatContext := ⟨raincoatK, {notRaining}, {dryCoat}⟩
 def noBelief : RaincoatContext := ⟨raincoatK, ∅, {dryCoat}⟩
 
 /-- Context 2 of (5): B enters without the raincoat. -/
-def noEvidence : RaincoatContext := ⟨⟨∅⟩, ∅, {dryCoat}⟩
+def noEvidence : RaincoatContext := ⟨∅, ∅, {dryCoat}⟩
 
 /-- Context 3 of (5): A thinks it will not rain, and B enters without the raincoat. -/
-def believesDryNoEvidence : RaincoatContext := ⟨⟨∅⟩, {notRaining}, {dryCoat}⟩
+def believesDryNoEvidence : RaincoatContext := ⟨∅, {notRaining}, {dryCoat}⟩
 
 /-- The dripping raincoat when A already expects a wet coat, as in context 2 of (6). -/
 def expectsWet : RaincoatContext := ⟨raincoatK, ∅, {wetCoat}⟩
 
 private theorem relevanceSign_isRaining (e : Set World) :
-    relevanceSign ⟨{w | isRaining w}, .of_discrete, .count⟩ e =
-      SignType.sign (({w | isRaining w} ∩ e).ncard * {w | isRaining w}ᶜ.ncard -
-        ({w | isRaining w}ᶜ ∩ e).ncard * {w | isRaining w}.ncard : ℤ) :=
-  relevanceSign_count_eq (topic := {w | isRaining w}) e ⟨.rain, rfl⟩ ⟨.dry, by simp⟩
+    relevanceSign ⟨isRaining, .of_discrete, .count⟩ e =
+      SignType.sign ((isRaining ∩ e).ncard * isRainingᶜ.ncard -
+        (isRainingᶜ ∩ e).ncard * isRaining.ncard : ℤ) :=
+  relevanceSign_count_eq (topic := isRaining) e ⟨.rain, rfl⟩ ⟨.dry, by simp⟩
 
-private theorem posRelevant_wetCoat :
-    posRelevant ⟨{w | isRaining w}, .of_discrete, .count⟩ {w | wetCoat w} := by
+private theorem posRelevant_wetCoat : posRelevant ⟨isRaining, .of_discrete, .count⟩ wetCoat := by
   rw [← relevanceSign_eq_one_iff, relevanceSign_isRaining]
   simp only [Set.ncard_eq_toFinset_card']
   decide
 
 private theorem felicitous_of_unexpected {c : RaincoatContext} (hk : c.evidence = raincoatK)
-    (hu : ∀ w, wetCoat w → ¬ sInf (c.beliefs ∪ c.defaults) w) : c.Felicitous := by
+    (hu : ∀ w ∈ wetCoat, w ∉ ⋂₀ (c.beliefs ∪ c.defaults)) : c.Felicitous := by
   refine ⟨⟨wetCoat, by simp [hk, raincoatK], posRelevant_wetCoat⟩, ?_, ?_⟩
-  · simp only [unexpected, hk, raincoatK, Kernel.base_singleton, Set.disjoint_left]
-    exact fun w hw ↦ hu w hw
-  · simp only [hk, raincoatK, Kernel.directlySettles_singleton, Set.mem_ofPred_eq,
-      Set.ofPred_subset_ofPred, Set.disjoint_left]
-    decide
+  · simpa [Unexpected, hk, raincoatK, Set.disjoint_left] using hu
+  · simp [hk, raincoatK, Set.subset_def, Set.disjoint_left]
 
-private theorem not_felicitous_of_empty {c : RaincoatContext} (hk : c.evidence = ⟨∅⟩) :
+private theorem not_felicitous_of_empty {c : RaincoatContext} (hk : c.evidence = ∅) :
     ¬ c.Felicitous := by
-  rintro ⟨⟨p, hp, -⟩, -, -⟩
-  simp [hk] at hp
+  rintro ⟨⟨X, hX, -⟩, -, -⟩
+  simp [hk] at hX
 
 theorem felicitous_believesDry : believesDry.Felicitous :=
   felicitous_of_unexpected rfl fun w hw h ↦ by
-    simp only [believesDry, Set.singleton_union, sInf_insert, sInf_singleton, Pi.inf_apply,
-      inf_Prop_eq] at h
+    simp only [believesDry, Set.singleton_union, Set.sInter_insert, Set.sInter_singleton,
+      Set.mem_inter_iff] at h
     exact h.2 hw
 
 theorem felicitous_noBelief : noBelief.Felicitous :=
   felicitous_of_unexpected rfl fun w hw h ↦ by
-    simp only [noBelief, Set.empty_union, sInf_singleton] at h
+    simp only [noBelief, Set.empty_union, Set.sInter_singleton] at h
     exact h hw
 
 theorem not_felicitous_expectsWet : ¬ expectsWet.Felicitous := by
   rintro ⟨-, hInc, -⟩
-  exact Set.disjoint_left.mp hInc (show World.rain ∈ raincoatK.base by simp [raincoatK, wetCoat])
-    (by simp [expectsWet, wetCoat])
+  exact Set.disjoint_left.mp hInc (show World.rain ∈ ⋂₀ raincoatK by simp [raincoatK])
+    (by simp [expectsWet])
 
 theorem situation_believesDry : believesDry.situation = (1, -1) := by
-  simp only [RaincoatContext.situation, situation, believesDry, raincoatK, Kernel.base_singleton,
-    sInf_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  simp only [RaincoatContext.situation, situation, believesDry, raincoatK, Set.sInter_singleton,
+    relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_noBelief : noBelief.situation = (1, 0) := by
-  simp only [RaincoatContext.situation, situation, noBelief, raincoatK, Kernel.base_singleton,
-    sInf_empty, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  simp only [RaincoatContext.situation, situation, noBelief, raincoatK, Set.sInter_singleton,
+    Set.sInter_empty, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_noEvidence : noEvidence.situation = (0, 0) := by
-  simp only [RaincoatContext.situation, situation, noEvidence, Kernel.base, sInf_empty,
+  simp only [RaincoatContext.situation, situation, noEvidence, Set.sInter_empty,
     relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_believesDryNoEvidence : believesDryNoEvidence.situation = (0, -1) := by
-  simp only [RaincoatContext.situation, situation, believesDryNoEvidence, Kernel.base,
-    sInf_empty, sInf_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  simp only [RaincoatContext.situation, situation, believesDryNoEvidence, Set.sInter_empty,
+    Set.sInter_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 /-- In the contexts of (2), (3) and (5), the question is felicitous exactly when the context's

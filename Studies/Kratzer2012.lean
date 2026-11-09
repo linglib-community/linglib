@@ -68,25 +68,26 @@ open Modality
 abbrev World := Bool × Bool
 
 /-- Roger was elected chief. -/
-def chief : World → Prop := (·.1 = true)
+def chief : Set World := {w | w.1 = true}
 
 /-- The rumor exists. -/
-def rumor : World → Prop := (·.2 = true)
+def rumor : Set World := {w | w.2 = true}
 
 /-- As evidence of things, the rumor makes the background at `w` record its status in `w`, so
 the accessible worlds are those with a counterpart of the actual rumor, or with none if there is
 none. -/
-def evidence : Background World := fun w ↦ {fun v ↦ v.2 = w.2}
+def evidence : Background World := fun w ↦ {{v | v.2 = w.2}}
 
 /-- As a source of information, the rumor makes the background list its content. -/
 def content : Background World := Function.const World {chief}
 
 /-- Decide a claim about the backgrounds over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.Box,
-      ModalLogic.Diamond, Background.mem_accessible, Background.mem_accessibleWorlds,
+  `(tactic| ((try simp only [mem_simpleNecessity, simplePossibility_iff, Set.subset_def,
+      Background.mem_accessibleWorlds,
       Background.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
-      Set.mem_singleton_iff, forall_eq, false_implies, implies_true, and_true]) <;>
+      Set.mem_singleton_iff, Set.mem_ofPred_eq, forall_eq, false_implies, implies_true,
+      and_true]) <;>
       decide))
 
 theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
@@ -94,21 +95,21 @@ theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
 theorem content_not_realistic : ¬ content.IsRealistic := by decide_worlds
 
 -- (8b)
-theorem sollen_holds (w : World) : simpleNecessity content chief w := by
+theorem sollen_holds (w : World) : chief ∈ simpleNecessity content w := by
   decide_worlds
 
 -- (8a)
-theorem not_must_chief (w : World) : ¬ simpleNecessity evidence chief w := by
+theorem not_must_chief (w : World) : chief ∉ simpleNecessity evidence w := by
   revert w; decide_worlds
 
-theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w := by
+theorem can_chief (w : World) (h : w ∈ rumor) : simplePossibility evidence w chief := by
   revert h w; decide_worlds
 
 -- (8a)
-theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : Background W)
-    (hf : ∀ w, rumor w → rumor ∈ f w ∧ reliable ∈ f w)
-    (hrel : ∀ v, reliable v → rumor v → chief v) (w : W) (hw : rumor w) :
-    simpleNecessity f chief w := fun v hv ↦
+theorem must_of_reliable {W : Type*} (rumor chief reliable : Set W) (f : Background W)
+    (hf : ∀ w ∈ rumor, rumor ∈ f w ∧ reliable ∈ f w)
+    (hrel : ∀ v ∈ reliable, v ∈ rumor → v ∈ chief) (w : W) (hw : w ∈ rumor) :
+    chief ∈ simpleNecessity f w := fun v hv ↦
   have hv := Background.mem_accessibleWorlds.1 hv
   hrel v (hv reliable (hf w hw).2) (hv rumor (hf w hw).1)
 
@@ -187,20 +188,20 @@ theorem kratzer_iff_measure_le_iff [LinearOrder α] :
 end Measures
 
 -- §2.5
-theorem humanNecessity_iff_humanPossibility {W : Type*} {f g : Background W}
-    {w : W} (p : W → Prop) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
+theorem mem_humanNecessity_iff_humanPossibility {W : Type*} {f g : Background W}
+    {w : W} (s : Set W) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
     (htot : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (u ≤[g w] v) ∨ (v ≤[g w] u))
     (hanti : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w,
       (u ≤[g w] v) → (v ≤[g w] u) → u = v) :
-    humanNecessity f g p w ↔ humanPossibility f g p w := by
+    s ∈ humanNecessity f g w ↔ humanPossibility f g w s := by
   obtain ⟨u, hu⟩ := hne
   obtain ⟨v, hv, -⟩ := hlim u hu
   have hbest : ∀ x ∈ bestWorlds f g w, x = v := fun x hx ↦
     (htot x hx.1 v hv.1).elim (fun h ↦ hanti x hx.1 v hv.1 h (hv.2 hx.1 h))
       (fun h ↦ hanti x hx.1 v hv.1 (hx.2 hv.1 h) h)
-  rw [humanNecessity_iff_necessity hlim, humanPossibility_iff_possibility hlim, necessity_iff,
-    possibility_iff]
-  exact ⟨fun h ↦ ⟨v, hv, h v hv⟩,
+  rw [humanNecessity_eq_principal hlim, Filter.mem_principal,
+    humanPossibility_iff_exists_bestWorlds hlim]
+  exact ⟨fun h ↦ ⟨v, hv, h hv⟩,
     fun ⟨x, hx, hpx⟩ y hy ↦ (hbest y hy).trans (hbest x hx).symm ▸ hpx⟩
 
 /-! #### The toy example of §2.4 -/
@@ -210,12 +211,11 @@ abbrev World := Fin 4
 
 /-- The ordering source of §2.4, `{w₃}`, `{w₂, w₃}` and `{w₁, w₂, w₃}` at every world, which
 induces the ranking `O₁` of §2.5. -/
-def ideal : Background World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
+def ideal : Background World := fun _ ↦ {Set.Ici 3, Set.Ici 2, Set.Ici 1}
 
 theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤ w := by
   simp only [Preorder.ofCriteria_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
-      forall_eq_or_imp,
-    forall_eq]
+    forall_eq_or_imp, forall_eq, Set.mem_Ici]
   fin_omega
 
 /-- Kratzer's probability measure gives `wᵢ` the probability `2ⁱ/15`. -/
@@ -252,11 +252,11 @@ theorem betterPossibility_iff (p q : Set World) :
 
 /-- The ordering source `{w₂}`, `{w₂, w₃}`, `{w₁, w₂, w₃}`, which induces the ranking `O₂`,
 `w₂ < w₃ < w₁ < w₀`. -/
-def swapped : Background World := fun _ ↦ {(· = 2), (2 ≤ ·), (1 ≤ ·)}
+def swapped : Background World := fun _ ↦ {{2}, Set.Ici 2, Set.Ici 1}
 
 /-- The ordering source `{w₂, w₃}`, `{w₁, w₂, w₃}` of p. 46, which induces the ranking `O₃`,
 `w₂, w₃ < w₁ < w₀`, with a tie. -/
-def tied : Background World := fun _ ↦ {(2 ≤ ·), (1 ≤ ·)}
+def tied : Background World := fun _ ↦ {Set.Ici 2, Set.Ici 1}
 
 theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
   ext x
@@ -283,59 +283,59 @@ theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   revert x
   decide
 
-private theorem humanNecessity_iff_forall {g : Background World} (p : World → Prop) :
-    humanNecessity ⊥ g p 0 ↔ ∀ v ∈ bestWorlds ⊥ g 0, p v := by
-  rw [humanNecessity_iff_necessity (.of_finite _ _ _), necessity_iff]
+private theorem mem_humanNecessity_iff_forall {g : Background World} (s : Set World) :
+    s ∈ humanNecessity ⊥ g 0 ↔ ∀ v ∈ bestWorlds ⊥ g 0, v ∈ s := by
+  rw [humanNecessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def]
 
-private theorem humanPossibility_iff_exists {g : Background World} (p : World → Prop) :
-    humanPossibility ⊥ g p 0 ↔ ∃ v ∈ bestWorlds ⊥ g 0, p v := by
-  rw [humanPossibility_iff_possibility (.of_finite _ _ _), possibility_iff]
+private theorem humanPossibility_iff_exists {g : Background World} (s : Set World) :
+    humanPossibility ⊥ g 0 s ↔ ∃ v ∈ bestWorlds ⊥ g 0, v ∈ s :=
+  humanPossibility_iff_exists_bestWorlds (.of_finite _ _ _)
 
 -- §2.5
-theorem humanNecessity_iff (p : World → Prop) :
-    humanNecessity ⊥ ideal p 0 ↔ 8 / 15 ≤ prob {w | p w} := by
+theorem mem_humanNecessity_iff (s : Set World) :
+    s ∈ humanNecessity ⊥ ideal 0 ↔ 8 / 15 ≤ prob s := by
   classical
-  have h : ∀ s : Finset World, 8 ≤ ∑ i ∈ s, 2 ^ (i : ℕ) ↔ 3 ∈ s := by decide
-  rw [humanNecessity_iff_forall, bestWorlds_ideal, ← Set.coe_toFinset {w | p w}, prob_coe,
+  have h : ∀ t : Finset World, 8 ≤ ∑ i ∈ t, 2 ^ (i : ℕ) ↔ 3 ∈ t := by decide
+  rw [mem_humanNecessity_iff_forall, bestWorlds_ideal, ← Set.coe_toFinset s, prob_coe,
     ← not_lt, ENNReal.div_lt_div_iff_left (by norm_num) (by norm_num),
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 8), Nat.cast_lt, not_lt, h, Set.mem_toFinset]
   simp
 
 -- §2.5
-theorem humanPossibility_iff (p : World → Prop) :
-    humanPossibility ⊥ ideal p 0 ↔ 8 / 15 ≤ prob {w | p w} := by
-  refine (humanNecessity_iff_humanPossibility p (.of_finite _ _ _)
+theorem humanPossibility_iff (s : Set World) :
+    humanPossibility ⊥ ideal 0 s ↔ 8 / 15 ≤ prob s := by
+  refine (mem_humanNecessity_iff_humanPossibility s (.of_finite _ _ _)
     ⟨0, by simp [Background.accessibleWorlds_bot]⟩ (fun u _ v _ ↦ ?_)
-    (fun u _ v _ h h' ↦ ?_)).symm.trans (humanNecessity_iff p)
+    (fun u _ v _ h h' ↦ ?_)).symm.trans (mem_humanNecessity_iff s)
   · simp only [atLeastAsGoodAs_ideal_iff]
     exact le_total v u
   · exact le_antisymm ((atLeastAsGoodAs_ideal_iff 0 v u).1 h')
       ((atLeastAsGoodAs_ideal_iff 0 u v).1 h)
 
 -- p. 44
-theorem humanNecessity_tied_iff (p : World → Prop) :
-    humanNecessity ⊥ tied p 0 ↔ p 2 ∧ p 3 := by
-  simp [humanNecessity_iff_forall, bestWorlds_tied]
+theorem mem_humanNecessity_tied_iff (s : Set World) :
+    s ∈ humanNecessity ⊥ tied 0 ↔ 2 ∈ s ∧ 3 ∈ s := by
+  simp [mem_humanNecessity_iff_forall, bestWorlds_tied]
 
 -- p. 44
-theorem humanNecessity_tied_iff_and (p : World → Prop) :
-    humanNecessity ⊥ tied p 0 ↔
-      humanNecessity ⊥ ideal p 0 ∧ humanNecessity ⊥ swapped p 0 := by
-  simp [humanNecessity_iff_forall, bestWorlds_tied, bestWorlds_ideal, bestWorlds_swapped,
+theorem mem_humanNecessity_tied_iff_and (s : Set World) :
+    s ∈ humanNecessity ⊥ tied 0 ↔
+      s ∈ humanNecessity ⊥ ideal 0 ∧ s ∈ humanNecessity ⊥ swapped 0 := by
+  simp [mem_humanNecessity_iff_forall, bestWorlds_tied, bestWorlds_ideal, bestWorlds_swapped,
     and_comm]
 
 -- p. 45
-theorem humanPossibility_and_iff (p : World → Prop) :
-    humanPossibility ⊥ ideal p 0 ∧ humanPossibility ⊥ swapped p 0 ↔
-      humanNecessity ⊥ ideal p 0 ∧ humanNecessity ⊥ swapped p 0 := by
-  simp [humanNecessity_iff_forall, humanPossibility_iff_exists, bestWorlds_ideal,
+theorem humanPossibility_and_iff (s : Set World) :
+    humanPossibility ⊥ ideal 0 s ∧ humanPossibility ⊥ swapped 0 s ↔
+      s ∈ humanNecessity ⊥ ideal 0 ∧ s ∈ humanNecessity ⊥ swapped 0 := by
+  simp [mem_humanNecessity_iff_forall, humanPossibility_iff_exists, bestWorlds_ideal,
     bestWorlds_swapped]
 
 -- p. 45
-theorem merelyPossible_tied_iff (p : World → Prop) :
-    (humanPossibility ⊥ tied p 0 ∧ ¬ humanNecessity ⊥ tied p 0) ↔
-      Xor (p 2) (p 3) := by
-  simp only [humanNecessity_tied_iff, humanPossibility_iff_exists, bestWorlds_tied,
+theorem merelyPossible_tied_iff (s : Set World) :
+    (humanPossibility ⊥ tied 0 s ∧ s ∉ humanNecessity ⊥ tied 0) ↔
+      Xor (2 ∈ s) (3 ∈ s) := by
+  simp only [mem_humanNecessity_tied_iff, humanPossibility_iff_exists, bestWorlds_tied,
     Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
   rw [xor_iff_or_and_not_and]
 
@@ -356,23 +356,23 @@ instance : IsProbabilityMeasure probTied where
     exact ENNReal.div_self (by norm_num) (by norm_num)
 
 -- p. 46
-theorem humanNecessity_tied_iff_probTied (p : World → Prop) :
-    humanNecessity ⊥ tied p 0 ↔ 8 / 11 ≤ probTied {w | p w} := by
+theorem mem_humanNecessity_tied_iff_probTied (s : Set World) :
+    s ∈ humanNecessity ⊥ tied 0 ↔ 8 / 11 ≤ probTied s := by
   classical
-  have h : ∀ s : Finset World, 8 ≤ ∑ i ∈ s, (![1, 2, 4, 4] : World → ℕ) i ↔ 2 ∈ s ∧ 3 ∈ s := by
+  have h : ∀ t : Finset World, 8 ≤ ∑ i ∈ t, (![1, 2, 4, 4] : World → ℕ) i ↔ 2 ∈ t ∧ 3 ∈ t := by
     decide
-  rw [humanNecessity_tied_iff, ← Set.coe_toFinset {w | p w}, probTied_coe, ← not_lt,
+  rw [mem_humanNecessity_tied_iff, ← Set.coe_toFinset s, probTied_coe, ← not_lt,
     ENNReal.div_lt_div_iff_left (by norm_num) (by norm_num),
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 8), Nat.cast_lt, not_lt, h]
   simp
 
 -- p. 46
-theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
-    humanPossibility ⊥ tied p 0 ↔ 4 / 11 ≤ probTied {w | p w} := by
+theorem humanPossibility_tied_iff_probTied (s : Set World) :
+    humanPossibility ⊥ tied 0 s ↔ 4 / 11 ≤ probTied s := by
   classical
-  have h : ∀ s : Finset World, 4 ≤ ∑ i ∈ s, (![1, 2, 4, 4] : World → ℕ) i ↔ 2 ∈ s ∨ 3 ∈ s := by
+  have h : ∀ t : Finset World, 4 ≤ ∑ i ∈ t, (![1, 2, 4, 4] : World → ℕ) i ↔ 2 ∈ t ∨ 3 ∈ t := by
     decide
-  rw [humanPossibility_iff_exists, bestWorlds_tied, ← Set.coe_toFinset {w | p w}, probTied_coe,
+  rw [humanPossibility_iff_exists, bestWorlds_tied, ← Set.coe_toFinset s, probTied_coe,
     ← not_lt, ENNReal.div_lt_div_iff_left (by norm_num) (by norm_num),
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 4), Nat.cast_lt, not_lt, h]
   simp

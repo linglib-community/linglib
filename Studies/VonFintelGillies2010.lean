@@ -60,99 +60,66 @@ open Modality
 abbrev World := Bool × Bool
 
 /-- (25a) `P`: there is no wet rain gear. -/
-abbrev noWetGear : World → Prop := (·.1 = false)
+abbrev noWetGear : Set World := {w | w.1 = false}
 
 /-- (25b) `Q`: it is raining. -/
-abbrev raining : World → Prop := (·.2 = true)
+abbrev raining : Set World := {w | w.2 = true}
 
 /-- `P ∪ Q`: rain gear is wet only if it is raining. -/
-abbrev onlyRainWets : World → Prop := fun w ↦ noWetGear w ∨ raining w
+abbrev onlyRainWets : Set World := noWetGear ∪ raining
 
 /-- `W \ P`: there is wet rain gear. -/
-abbrev wetGear : World → Prop := fun w ↦ ¬ noWetGear w
+abbrev wetGear : Set World := noWetGearᶜ
 
 /-- The kernel `{P ∪ Q, W \ P}` of Figure 3(a): wet rain gear, with rain its only cause. -/
-def wetGearK : Kernel World := ⟨{onlyRainWets, wetGear}⟩
+def wetGearK : Set (Set World) := {onlyRainWets, wetGear}
 
 /-- The kernel `{P ∪ Q, Q}` of Figure 3(b): the rain itself. -/
-def rainK : Kernel World := ⟨{onlyRainWets, raining}⟩
+def rainK : Set (Set World) := {onlyRainWets, raining}
 
 /-- A one-proposition kernel, rain the only cause of wet gear, whose base properly contains
-`⟦raining⟧`. -/
-def onlyRainWetsK : Kernel World := ⟨{onlyRainWets}⟩
+`raining`. -/
+def onlyRainWetsK : Set (Set World) := {onlyRainWets}
 
-theorem wetGearK_base : wetGearK.base = ({(true, true)} : Set World) := by
-  ext w
-  rcases w with ⟨_ | _, _ | _⟩ <;> simp [wetGearK]
+theorem sInter_wetGearK : ⋂₀ wetGearK = {(true, true)} := by
+  ext ⟨_ | _, _ | _⟩ <;> simp [wetGearK]
 
-theorem raining_unsettled : ¬ wetGearK.directlySettles raining := by
-  rintro ⟨x, hx, hxor⟩
-  rcases hx with rfl | hx'
-  · rcases hxor with h_sub | h_disj
-    · exact (show ¬ raining (false, false) from by decide)
-        (h_sub (show onlyRainWets (false, false) from by decide))
-    · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
-        (show raining (true, true) from by decide)
-  · obtain rfl : x = wetGear := hx'
-    rcases hxor with h_sub | h_disj
-    · exact (show ¬ raining (true, false) from by decide)
-        (h_sub (show wetGear (true, false) from by decide))
-    · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
-        (show raining (true, true) from by decide)
+theorem raining_unsettled : ¬ DirectlySettles wetGearK raining := by
+  simp [DirectlySettles, wetGearK, Set.subset_def, Set.disjoint_left, Prod.forall]
 
-theorem raining_follows : wetGearK.FollowsFrom raining := by
-  rw [Kernel.followsFrom_iff, wetGearK_base]
-  rintro w rfl
-  rfl
+theorem raining_follows : ⋂₀ wetGearK ⊆ raining := by
+  simp [sInter_wetGearK]
 
 theorem must_raining_eq_one (w : World) : kernelMust wetGearK raining w = .true :=
   kernelMust_eq_true_iff.2 ⟨raining_unsettled, raining_follows⟩
 
-theorem rainK_settles_raining : rainK.directlySettles raining :=
+theorem rainK_settles_raining : DirectlySettles rainK raining :=
   ⟨raining, by simp [rainK], Or.inl subset_rfl⟩
 
 /-! ### Deep theorems -/
 
 theorem entailment_settling_gap :
-    ∃ (k : Kernel World) (φ : World → Prop),
-      k.FollowsFrom φ ∧ ¬ k.directlySettles φ :=
+    ∃ (K : Set (Set World)) (P : Set World), ⋂₀ K ⊆ P ∧ ¬ DirectlySettles K P :=
   ⟨wetGearK, raining, raining_follows, raining_unsettled⟩
 
 -- §4.1, (6), (7)
 theorem indirectness_neq_weakness (w : World) :
     kernelMust wetGearK raining w = .true ∧ kernelMust rainK raining w = .undefined ∧
-      kernelMust onlyRainWetsK raining w = .false := by
-  refine ⟨must_raining_eq_one w, kernelMust_eq_undefined_iff.2 rainK_settles_raining,
-    kernelMust_eq_false_iff.2 ⟨?_, ?_⟩⟩
-  · rintro ⟨x, hx, hxor⟩
-    obtain rfl : x = onlyRainWets := hx
-    rcases hxor with h_sub | h_disj
-    · exact (show ¬ raining (false, false) from by decide)
-        (h_sub (show onlyRainWets (false, false) from by decide))
-    · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
-        (show raining (true, true) from by decide)
-  · intro h
-    have hw : ((false, false) : World) ∈ onlyRainWetsK.base :=
-      Kernel.mem_base.mpr fun p hp ↦ by
-        obtain rfl : p = onlyRainWets := hp; decide
-    exact (by decide : ¬ raining (false, false)) (h _ hw)
+      kernelMust onlyRainWetsK raining w = .false :=
+  ⟨must_raining_eq_one w, kernelMust_eq_undefined_iff.2 rainK_settles_raining,
+    kernelMust_eq_false_iff.2 (by
+      simp [onlyRainWetsK, Set.subset_def, Set.disjoint_left, Prod.forall])⟩
 
-variable {W : Type*} (k : Kernel W)
+variable {W : Type*} (K : Set (Set W))
 
-theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
-    (hReal : w ∈ k.base)
-    (hCond : φ w → kernelMust k ψ w = .true)
-    (hPhi : φ w) :
-    ψ w :=
-  Modality.must_entails_prejacent k ψ w hReal (kernelMust_eq_true_iff.1 (hCond hPhi)).2
+theorem modus_ponens_with_must {P Q : Set W} {w : W} (hReal : w ∈ ⋂₀ K)
+    (hCond : w ∈ P → kernelMust K Q w = .true) (hP : w ∈ P) : w ∈ Q :=
+  (kernelMust_eq_true_iff.1 (hCond hP)).2 hReal
 
-theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
-    (hMust : kernelMust k φ w = .true) :
-    kernelMight k (fun w' ↦ ¬ φ w') w = .false := by
-  obtain ⟨hs, hf⟩ := kernelMust_eq_true_iff.1 hMust
-  refine kernelMight_eq_false_iff.2 ⟨(Kernel.directlySettles_not k φ).not.2 hs, ?_⟩
-  rintro ⟨w', hw', hφneg⟩
-  exact hφneg (hf w' hw')
+theorem must_perhaps_contradiction {P : Set W} {w : W} (hMust : kernelMust K P w = .true) :
+    kernelMight K Pᶜ w = .false :=
+  let ⟨hs, hf⟩ := kernelMust_eq_true_iff.1 hMust
+  kernelMight_eq_false_iff.2 ⟨directlySettles_compl.not.2 hs, fun ⟨_, hv, hvP⟩ ↦ hvP (hf hv)⟩
 
 /-! ### Implementation 2: settling by partitions (Definition 7, §7.2)
 
@@ -161,36 +128,30 @@ the pairs of `S` that agree on `P`, and `P` is an *issue* in `S` iff
 `S[P] = S`. The subject matter S_K determined by a kernel is the refinement
 `S_o[P₁]…[Pₙ]` of the universal relation along each kernel proposition —
 equivalently, the relation "agrees on every `X ∈ K`". Implementation 2:
-K directly settles P iff P is an issue in S_K. -/
+K directly settles P iff P is an issue in S_K, that is, S_K decides P. -/
 
 /-- The subject matter `S_K` of a kernel, relating worlds that agree on every
-    proposition in `K`. -/
+proposition in `K`. -/
 def subjectMatter : Setoid W where
-  r w v := ∀ p ∈ k.props, (p w ↔ p v)
-  iseqv := ⟨fun _ _ _ ↦ Iff.rfl, fun h p hp ↦ (h p hp).symm,
-    fun h h' p hp ↦ (h p hp).trans (h' p hp)⟩
+  r w v := ∀ X ∈ K, (w ∈ X ↔ v ∈ X)
+  iseqv := ⟨fun _ _ _ ↦ Iff.rfl, fun h X hX ↦ (h X hX).symm,
+    fun h h' X hX ↦ (h X hX).trans (h' X hX)⟩
 
-/-- `P` is an *issue* in a subject matter `S` when `S`-equivalent worlds never
-    disagree on `P`. -/
-def IsIssue (s : Setoid W) (φ : W → Prop) : Prop := s.Decides {w | φ w}
+/-- `K` settles `P` by partition when `P` is an issue in `S_K`. -/
+def SettlesByPartition (P : Set W) : Prop := (subjectMatter K).Decides P
 
-/-- `K` settles `P` by partition iff `P` is an issue in `S_K`. -/
-def settlesByPartition (φ : W → Prop) : Prop :=
-  IsIssue (subjectMatter k) φ
+theorem subjectMatter_rel_sInter {v w : W} (hv : v ∈ ⋂₀ K) (hw : w ∈ ⋂₀ K) :
+    (subjectMatter K).r v w := fun X hX ↦
+  iff_of_true (Set.mem_sInter.1 hv X hX) (Set.mem_sInter.1 hw X hX)
 
-theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base) :
-    (subjectMatter k).r v w := fun p hp ↦
-  iff_of_true (Kernel.mem_base.mp hv p hp) (Kernel.mem_base.mp hw p hp)
-
-theorem partition_implies_entailment (φ : W → Prop)
-    (h : settlesByPartition k φ) :
-    k.FollowsFrom φ ∨ k.FollowsFrom (fun w ↦ ¬ φ w) := by
-  rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
-  · exact Or.inl fun w hw ↦ absurd (hEmpty ▸ hw) (Set.notMem_empty w)
-  · exact (Classical.em (φ w₀)).imp
-      (fun hφ v hv ↦ (Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
-      (fun hφ v hv hφv ↦
-        hφ ((Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mpr hφv))
+theorem SettlesByPartition.sInter_subset_or {P : Set W} (h : SettlesByPartition K P) :
+    ⋂₀ K ⊆ P ∨ ⋂₀ K ⊆ Pᶜ := by
+  rcases (⋂₀ K).eq_empty_or_nonempty with hEmpty | ⟨w₀, hw₀⟩
+  · exact Or.inl (hEmpty ▸ Set.empty_subset P)
+  · exact (em (w₀ ∈ P)).imp
+      (fun hP _ hv ↦ (Setoid.decides_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mp hP)
+      (fun hP _ hv hvP ↦
+        hP ((Setoid.decides_iff.1 h w₀ _ (subjectMatter_rel_sInter K hw₀ hv)).mpr hvP))
 
 /-! ### Non-equivalence of the two implementations (§7.2)
 
@@ -200,49 +161,33 @@ settles propositions that K-propositions determine jointly while no single one s
 base of the wet-gear kernel. Under both, the wet rain gear leaves the weather unsettled while
 entailing it. -/
 
-private theorem not_settles_onlyRainWets :
-    ¬ settlesByPartition ⟨{noWetGear}⟩ onlyRainWets := by
+private theorem not_settles_onlyRainWets : ¬ SettlesByPartition {noWetGear} onlyRainWets := by
   intro h
-  have h' := Setoid.decides_iff.1 h (true, true) (true, false) (fun p hp ↦ by
-    obtain rfl : p = noWetGear := hp; decide)
-  exact absurd (h'.mp (by decide)) (by decide)
+  have h' := Setoid.decides_iff.1 h (true, true) (true, false) fun X hX ↦ by
+    rw [Set.mem_singleton_iff.1 hX]; simp
+  simp at h'
 
 -- §7.2
 theorem explicit_not_implies_partition :
-    ∃ (k : Kernel World) (φ : World → Prop),
-      k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
-  ⟨⟨{noWetGear}⟩, onlyRainWets, ⟨noWetGear, by simp, Or.inl fun _ hw ↦ Or.inl hw⟩,
+    ∃ (K : Set (Set World)) (P : Set World), DirectlySettles K P ∧ ¬ SettlesByPartition K P :=
+  ⟨{noWetGear}, onlyRainWets, directlySettles_singleton.2 (.inl Set.subset_union_left),
     not_settles_onlyRainWets⟩
 
 theorem partition_not_implies_explicit :
-    ∃ (k : Kernel World) (φ : World → Prop),
-      settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
-  refine ⟨wetGearK, fun w ↦ wetGear w ∧ raining w, Setoid.decides_iff.2 fun w v h ↦ ?_, ?_⟩
+    ∃ (K : Set (Set World)) (P : Set World), SettlesByPartition K P ∧ ¬ DirectlySettles K P := by
+  refine ⟨wetGearK, wetGear ∩ raining, Setoid.decides_iff.2 fun w v h ↦ ?_, ?_⟩
   · have h1 := h onlyRainWets (by simp [wetGearK])
     have h2 := h wetGear (by simp [wetGearK])
     revert h1 h2
-    rcases w with ⟨_ | _, _ | _⟩ <;> rcases v with ⟨_ | _, _ | _⟩ <;> decide
-  · rintro ⟨x, hx, hxor⟩
-    rcases hx with rfl | hx'
-    · rcases hxor with h_sub | h_disj
-      · exact (show ¬ (wetGear (false, false) ∧ raining (false, false)) from by decide)
-          (h_sub (show onlyRainWets (false, false) from by decide))
-      · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
-          (show wetGear (true, true) ∧ raining (true, true) from by decide)
-    · obtain rfl : x = wetGear := hx'
-      rcases hxor with h_sub | h_disj
-      · exact (show ¬ (wetGear (true, false) ∧ raining (true, false)) from by decide)
-          (h_sub (show wetGear (true, false) from by decide))
-      · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
-          (show wetGear (true, true) ∧ raining (true, true) from by decide)
+    rcases w with ⟨_ | _, _ | _⟩ <;> rcases v with ⟨_ | _, _ | _⟩ <;> simp
+  · simp [DirectlySettles, wetGearK, Set.subset_def, Set.disjoint_left, Prod.forall]
 
 -- §7.2, Figure 5(a)
 theorem entailment_not_implies_partition :
-    ∃ (k : Kernel World) (φ : World → Prop),
-      k.FollowsFrom φ ∧ ¬ settlesByPartition k φ := by
+    ∃ (K : Set (Set World)) (P : Set World), ⋂₀ K ⊆ P ∧ ¬ SettlesByPartition K P := by
   refine ⟨wetGearK, raining, raining_follows, fun h ↦ ?_⟩
-  have h' := Setoid.decides_iff.1 h (false, true) (false, false) (fun p hp ↦ by
-    rcases hp with rfl | rfl <;> decide)
-  exact absurd (h'.mp (by decide)) (by decide)
+  have h' := Setoid.decides_iff.1 h (false, true) (false, false) fun X hX ↦ by
+    rcases hX with rfl | rfl <;> simp
+  simp at h'
 
 end VonFintelGillies2010

@@ -56,8 +56,8 @@ def NonfinalPart (e e' : E) : Prop := e ≤ e' ∧ (τ e).NonfinalSubinterval (�
 circumstantial base `circ e P` under the ordering source `ni e`, the propositions that `e` is not
 interrupted, some event of type `P` includes `e` as a nonfinal part. -/
 def InProgress (circ : E → (W → E → Prop) → Background W) (ni : E → Background W) (e : E)
-    (P : W → E → Prop) : W → Prop :=
-  necessity (circ e P) (ni e) fun v ↦ ∃ e', NonfinalPart e e' ∧ P v e'
+    (P : W → E → Prop) (w : W) : Prop :=
+  ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
 
 /-- The progressive of `P` holds at the run times of the events in progress toward `P`. -/
 def PROG (circ : E → (W → E → Prop) → Background W) (ni : E → Background W)
@@ -70,7 +70,7 @@ variable {circ : E → (W → E → Prop) → Background W} {ni : E → Backgrou
 theorem inProgress_iff :
     InProgress circ ni e P w ↔
       ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
-  necessity_iff ..
+  .rfl
 
 theorem mem_PROG : t ∈ PROG circ ni P w ↔ ∃ e, InProgress circ ni e P w ∧ τ e = t := Iff.rfl
 
@@ -80,7 +80,7 @@ theorem NonfinalPart.lt (h : NonfinalPart e e') : τ e < τ e' := h.2.lt
 event of type `P`. -/
 theorem InProgress.exists_of_isTotallyRealistic (hf : (circ e P).IsTotallyRealistic)
     (h : InProgress circ ni e P w) : ∃ e', NonfinalPart e e' ∧ P w e' :=
-  hf.necessity_le_id (ni e) _ w h
+  h w (hf.bestWorlds_eq_singleton (ni e) w ▸ rfl)
 
 /-- Over totally realistic modal bases the progressive falls inside the imperfective over the world
 of evaluation alone. -/

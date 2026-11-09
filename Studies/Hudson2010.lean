@@ -205,8 +205,8 @@ theorem inherited_war_nixon : inherited war .nixon = {.accepts, .rejects} := by
 neither. -/
 theorem not_entails_war_nixon (s : Stance) :
     {m | war m = some s} ∉
-      OrderingSemantics.necessityFilter inferInstance (specifiers war .nixon) := by
-  rw [mem_necessityFilter_iff_inherited_subset, inherited_war_nixon]
+      Filter.atBotOn id (specifiers war .nixon) := by
+  rw [mem_atBotOn_iff_inherited_subset, inherited_war_nixon]
   cases s <;> simp
 
 theorem search_war_nixon :

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.OrderingSemantics
+public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Core.Order.Filter.Ultrafilter
 public import Studies.Stalnaker1968
 public import Mathlib.Data.Nat.Dist
@@ -16,7 +16,7 @@ accessible `p`-worlds come closer, `q` eventually holds at all of them. The prim
 layer's conditional over accessibility and similarity preorders (`Conditional.variablyStrictImp`),
 whose spheres are [exactly Lewis's systems of spheres](##isSystemOfSpheres_iff). It [verifies
 every stage of a Sobel sequence](##sobel); for a line over an inch, with no closest length, it is
-[truth near an inch on the right](##necessityFilter_line). Stalnaker's theory is the case in which
+[truth near an inch on the right](##atBotOn_line). Stalnaker's theory is the case in which
 [similarity well-orders the accessible worlds](##stalnakerAssumption_iff), and Lewis's
 [axiomatizations of the V-logics are sound](##Provable.sound).
 
@@ -48,7 +48,7 @@ holds by definition, and Deduction within Conditionals takes the conjunction of 
 
 namespace Lewis1973b
 
-open Conditional OrderingSemantics Filter Set Topology
+open Conditional Filter Set Topology
 
 variable {I W : Type*} {access : I → Set W} {ord : I → Preorder W} {i : I} {p q : Set W}
   {A S : Set W} {𝒮 : Set (Set W)} {j k : W}
@@ -204,7 +204,8 @@ theorem forall_spheres_iff_lewis {r : Preorder W} [Std.Total r.le] :
 theorem mem_variablyStrictImp_iff_asymmRel_lewis [Std.Total (ord i).le] :
     i ∈ variablyStrictImp access ord p q ↔ access i ∩ p = ∅ ∨
       AsymmRel (ComparativePossibility.Lewis (ord i).le) (access i ∩ p ∩ q) ((access i ∩ p) \ q) :=
-  mem_necessityFilter_iff_asymmRel_lewis
+  letI := ord i
+  ComparativePossibility.mem_atBotOn_iff_asymmRel_lewis
 
 -- p. 54: `φ ≼ ψ` is `(φ ∨ ψ) ◇⇒ φ`, the *might* counterfactual unless its antecedent is
 -- impossible (§1.6)
@@ -240,8 +241,8 @@ theorem sobel (n : ℕ) :
   have hle (u v : ℕ) : (natSim 0).le u v ↔ u ≤ v := by
     change Nat.dist u 0 ≤ Nat.dist v 0 ↔ _
     rw [Nat.dist_zero_right, Nat.dist_zero_right]
-  have hpure : necessityFilter (natSim 0) (Ici n) = pure n :=
-    necessityFilter_eq_pure (mem_Ici.2 le_rfl) (fun u hu ↦ (hle n u).2 hu)
+  have hpure : atBotOn (Nat.dist · 0) (Ici n) = pure n :=
+    atBotOn_eq_pure (mem_Ici.2 le_rfl) (fun u hu ↦ (hle n u).2 hu)
       fun u hu hun ↦ le_antisymm ((hle u n).1 hun) hu
   simp [mem_variablyStrictImp, hpure]
 
@@ -263,11 +264,11 @@ private theorem lineSim_le_iff (ha : a ≤ 1) {x y : ℝ} (hx : 1 < x) (hy : 1 <
   rw [abs_of_pos (by linarith), abs_of_pos (by linarith), sub_le_sub_iff_right]
 
 /-- *If the line were over an inch long, it would be `q`* is true when `q` holds of every length
-over an inch close enough to an inch: the necessities over the antecedent are the neighbourhoods
-of an inch on the right (§1.4). -/
-theorem necessityFilter_line (ha : a ≤ 1) : necessityFilter (lineSim a) (Ioi 1) = 𝓝[>] 1 := by
+over an inch close enough to an inch: what holds toward the closest lengths over an inch is what
+holds in the neighbourhoods of an inch on the right (§1.4). -/
+theorem atBotOn_line (ha : a ≤ 1) : atBotOn (fun x ↦ |x - a|) (Ioi 1) = 𝓝[>] 1 := by
   ext t
-  rw [mem_necessityFilter_iff_isGoodPossibility nonempty_Ioi,
+  rw [mem_atBotOn_iff_exists nonempty_Ioi,
     mem_nhdsGT_iff_exists_Ioc_subset]
   exact exists_congr fun v ↦ and_congr_right fun hv ↦
     ⟨fun h x hx ↦ h x hx.1 ((lineSim_le_iff ha hx.1 hv).2 hx.2),
@@ -275,24 +276,25 @@ theorem necessityFilter_line (ha : a ≤ 1) : necessityFilter (lineSim a) (Ioi 1
 
 -- p. 20: no closest length over an inch
 theorem minimals_lineSim (ha : a ≤ 1) : (lineSim a).minimals (Ioi 1) = ∅ :=
-  eq_empty_of_forall_notMem fun m hm ↦ lt_irrefl m <| (minimals_subset_of_mem_necessityFilter
-    (t := Ioo 1 m) (by rw [necessityFilter_line ha]; exact Ioo_mem_nhdsGT hm.1) hm).2
+  eq_empty_of_forall_notMem fun m hm ↦ lt_irrefl m <| (setOf_minimalFor_subset_of_mem_atBotOn
+    (f := fun x ↦ |x - a|) (t := Ioo 1 m) (by rw [atBotOn_line ha]; exact Ioo_mem_nhdsGT hm.1)
+    hm).2
 
 theorem closestImp_line (ha : a ≤ 1) (q : Set ℝ) : a ∈ closestImp lineSim (Ioi 1) q :=
   mem_closestImp_of_closest_eq_empty (minimals_lineSim ha)
 
 theorem not_mem_variablyStrictImp_line_two (ha : a ≤ 1) :
     a ∉ variablyStrictImp (fun _ ↦ .univ) lineSim (Ioi 1) {2} := fun h ↦ by
-  rw [mem_variablyStrictImp, univ_inter, necessityFilter_line ha] at h
+  rw [mem_variablyStrictImp, univ_inter, atBotOn_lift, atBotOn_line ha] at h
   obtain ⟨_, rfl, hx⟩ := Filter.nonempty_of_mem (inter_mem h (Ioo_mem_nhdsGT one_lt_two))
   exact lt_irrefl _ hx.2
 
 -- §3.4: conditional excluded middle at an antecedent
 theorem forall_mem_variablyStrictImp_or_compl_iff :
     (∀ q, i ∈ variablyStrictImp access ord p q ∨ i ∈ variablyStrictImp access ord p qᶜ) ↔
-      necessityFilter (ord i) (access i ∩ p) = ⊥ ∨
-        IsAtom (necessityFilter (ord i) (access i ∩ p)) :=
-  show (∀ q, q ∈ necessityFilter _ _ ∨ qᶜ ∈ necessityFilter _ _) ↔ _ from
+      @atBotOn W W (ord i) id (access i ∩ p) = ⊥ ∨
+        IsAtom (@atBotOn W W (ord i) id (access i ∩ p)) :=
+  show (∀ q, q ∈ @atBotOn W W (ord i) id _ ∨ qᶜ ∈ @atBotOn W W (ord i) id _) ↔ _ from
     Filter.forall_mem_or_compl_mem_iff
 
 -- Conditional excluded middle fails for the line although lengths over an inch are never tied.
@@ -302,7 +304,7 @@ theorem not_cem_line (ha : a ≤ 1) :
       a ∉ variablyStrictImp (fun _ ↦ .univ) lineSim (Ioi 1) (range ((↑) : ℚ → ℝ))ᶜ := by
   refine ⟨fun x hx y hy hxy hyx ↦
     ((lineSim_le_iff ha hx hy).1 hxy).antisymm ((lineSim_le_iff ha hy hx).1 hyx), ?_, ?_⟩ <;>
-    rw [mem_variablyStrictImp, univ_inter, necessityFilter_line ha,
+    rw [mem_variablyStrictImp, univ_inter, atBotOn_lift, atBotOn_line ha,
       mem_nhdsGT_iff_exists_Ioc_subset] <;>
     rintro ⟨u, hu, hsub⟩
   · obtain ⟨c, hc, h1c, hcu⟩ := exists_irrational_btwn hu
@@ -394,7 +396,7 @@ def eval (access : W → Set W) (ord : W → Preorder W) (V : α → Set W) : Fo
 
 theorem mem_eval_corner {A B : Formula α} :
     w ∈ eval access ord V (A.corner B) ↔
-      eval access ord V B ∈ necessityFilter (ord w) (access w ∩ eval access ord V A) :=
+      eval access ord V B ∈ @atBotOn W W (ord w) id (access w ∩ eval access ord V A) :=
   Iff.rfl
 
 @[simp] theorem eval_and {A B : Formula α} :
@@ -484,23 +486,26 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
   induction h generalizing w with
   | taut h => exact h (fun B ↦ w ∈ eval access ord V B) (fun _ ↦ Iff.rfl) fun _ _ ↦ Iff.rfl
   | a3 φ =>
+    let := ord w
     rw [mem_eval_corner]
-    exact mem_of_superset self_mem_necessityFilter Set.inter_subset_right
+    exact mem_of_superset self_mem_atBotOn Set.inter_subset_right
   | a4 φ ψ =>
+    let := ord w
     rw [mem_eval_imp, mem_eval_corner, mem_eval_corner, eval_neg]
     intro h
-    have hbot : (∅ : Set W) ∈ necessityFilter (ord w) (access w ∩ (eval access ord V φ)ᶜ) := by
-      simpa using inter_mem h (mem_of_superset self_mem_necessityFilter Set.inter_subset_right)
+    have hbot : (∅ : Set W) ∈ atBotOn id (access w ∩ (eval access ord V φ)ᶜ) := by
+      simpa using inter_mem h (mem_of_superset self_mem_atBotOn Set.inter_subset_right)
     have hemp : access w ∩ (eval access ord V φ)ᶜ = ∅ := Set.not_nonempty_iff_eq_empty.1
-      fun hne ↦ (necessityFilter_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hbot)
-    exact mem_of_superset self_mem_necessityFilter fun x hx ↦
+      fun hne ↦ (atBotOn_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hbot)
+    exact mem_of_superset self_mem_atBotOn fun x hx ↦
       by_contra fun hxφ ↦ Set.eq_empty_iff_forall_notMem.1 hemp x ⟨hx.1, hxφ⟩
   | a5 φ ψ χ =>
+    let := ord w
     simp only [Formula.or, mem_eval_imp, eval_neg, Set.mem_compl_iff]
     intro hfr
-    have e : necessityFilter (ord w) (access w ∩ eval access ord V φ ∩ eval access ord V ψ) =
-        necessityFilter (ord w) (access w ∩ eval access ord V φ) ⊓ 𝓟 (eval access ord V ψ) :=
-      necessityFilter_inter_of_frequently hfr
+    have e : atBotOn id (access w ∩ eval access ord V φ ∩ eval access ord V ψ) =
+        atBotOn id (access w ∩ eval access ord V φ) ⊓ 𝓟 (eval access ord V ψ) :=
+      atBotOn_inter_of_frequently hfr
     rw [mem_eval_iff, mem_eval_corner, mem_eval_corner, eval_and, ← Set.inter_assoc, e,
       mem_inf_principal]
     rfl
@@ -510,11 +515,12 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     obtain ⟨v, -, -, hvψ⟩ := h w ⟨hL.mem w, hφ⟩
     exact hvψ w ⟨hL.mem w, hφ⟩ (hL.le w v)
   | a7 φ ψ hL' =>
+    let := ord w
     rw [mem_eval_imp, eval_and, mem_eval_corner]
     rintro ⟨hφ, hψ⟩
     have hc := hL.isCentered hL'
     have hw : w ∈ access w ∩ eval access ord V φ := ⟨hL.mem w, hφ⟩
-    refine (mem_necessityFilter_iff_of_least hw fun v _ ↦ hc.le w v).2 fun x _ hxw ↦ ?_
+    refine (mem_atBotOn_iff_of_least hw fun v _ ↦ hc.le w v).2 fun x _ hxw ↦ ?_
     by_contra hxψ
     have hne : w ≠ x := fun e ↦ hxψ (e ▸ hψ)
     exact hc.not_le hne hxw
@@ -527,8 +533,10 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     · obtain ⟨v, hv⟩ := hL.2 w _ h
       have hmin : v ∈ (ord w).minimals (access w ∩ eval access ord V φ) := by
         rw [hv]; exact Set.mem_singleton v
-      rw [necessityFilter_eq_principal fun u hu ↦
-        ⟨v, hmin, (Preorder.mem_minimals_iff_forall_le.1 hmin).2 u hu⟩, hv,
+      let := ord w
+      have hv' : {x | MinimalFor (· ∈ access w ∩ eval access ord V φ) id x} = {v} := hv
+      rw [atBotOn_eq_principal (f := id) fun u hu ↦
+        ⟨v, hmin, (Preorder.mem_minimals_iff_forall_le.1 hmin).2 u hu⟩, hv',
         mem_principal, mem_principal, Set.singleton_subset_iff, Set.singleton_subset_iff]
       exact id
   | mp _ _ ihab iha => exact ihab w (iha w)

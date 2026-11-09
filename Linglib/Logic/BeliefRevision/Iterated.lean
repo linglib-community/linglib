@@ -333,9 +333,11 @@ theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
 /-- The preorder of a state encodes its conditional beliefs, since `β` is accepted given `α`
 exactly when the least `α`-worlds are `β`-worlds, that is, when `β` is a necessity over `α`. -/
 theorem Faithful.accepts_iff (h : r.Faithful ord) :
-    r.Accepts Ψ α β ↔ β ∈ OrderingSemantics.necessityFilter (ord Ψ) α := by
-  rw [Accepts, h.bel_revise, OrderingSemantics.necessityFilter_eq_principal_of_wellFounded
-    (h.wellFounded Ψ), Filter.mem_principal]
+    r.Accepts Ψ α β ↔ β ∈ @Filter.atBotOn W W (ord Ψ) id α := by
+  rw [Accepts, h.bel_revise,
+    @Filter.atBotOn_eq_principal_of_wellFoundedLT W W (ord Ψ) id α (h.wellFounded Ψ),
+    Filter.mem_principal]
+  exact Iff.rfl
 
 /-- A state accepts `β` given a satisfiable `α` iff some `α ∩ β`-world is strictly more plausible
 than every `α \ β`-world (Lemma 10). -/

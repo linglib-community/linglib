@@ -67,7 +67,7 @@ comparative is Lewis's lift of it. -/
 
 section Kratzer
 
-variable {W : Type*} (O : Set (W → Prop))
+variable {W : Type*} (O : Set (Set W))
 
 instance : IsPreorder W (premisePreorder O).le where
   refl := (premisePreorder O).le_refl
@@ -79,25 +79,25 @@ abbrev likelihood : Set W → Set W → Prop := Lewis (premisePreorder O).le
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
-  humanNecessity ⊥ (fun _ ↦ O) (· ∈ A) w
+  A ∈ humanNecessity ⊥ (fun _ ↦ O) w
 
 /-- Epistemic *might* at `w` is human possibility, the dual of `must`. -/
 def might (A : Set W) (w : W) : Prop :=
-  humanPossibility ⊥ (fun _ ↦ O) (· ∈ A) w
+  humanPossibility ⊥ (fun _ ↦ O) w A
 
 /-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  humanNecessity (Background.restrict ⊥ (· ∈ A)) (fun _ ↦ O) (· ∈ B) w
+  B ∈ humanNecessity (Background.restrict ⊥ A) (fun _ ↦ O) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, humanNecessity_iff, Background.accessibleWorlds_bot]
+  simp [must, mem_humanNecessity, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, humanNecessity_iff, Background.mem_accessibleWorlds_restrict,
+  simp only [ifThen, mem_humanNecessity, Background.mem_accessibleWorlds_restrict,
     Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
@@ -165,19 +165,19 @@ theorem kratzer_V12 : ComplementTransfer (likelihood O) :=
 
 end Kratzer
 
-theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood (∅ : Set (Fin 2 → Prop))) := by
+theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood (∅ : Set (Set (Fin 2)))) := by
   intro h
   exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, (fun _ h ↦ h.elim)⟩) probably_top).2
     fun _ _ ↦ ⟨1, by simp, (fun _ h ↦ h.elim)⟩
 
 theorem kratzer_refutes_E1 :
-    ¬Conjunctivitis (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}) := by
+    ¬Conjunctivitis (likelihood ({{0, 1}, {2, 3}} : Set (Set (Fin 4)))) := by
   intro h
-  have hle : ∀ v u : Fin 4, (v ≤[{(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}] u)
+  have hle : ∀ v u : Fin 4, (v ≤[({{0, 1}, {2, 3}} : Set (Set (Fin 4)))] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
         (u ∈ ({2, 3} : Set (Fin 4)) → v ∈ ({2, 3} : Set (Fin 4))) := fun v u ↦ by
     simp [Preorder.ofCriteria_le_iff]
-  have hφ : Probably (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))})
+  have hφ : Probably (likelihood ({{0, 1}, {2, 3}} : Set (Set (Fin 4))))
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩
     · simp only [Set.mem_ofPred_eq]
@@ -192,7 +192,7 @@ theorem kratzer_refutes_E1 :
       simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
       have : u = 1 := by omega
       subst this; simp at hu2
-  have hψ : Probably (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))})
+  have hψ : Probably (likelihood ({{0, 1}, {2, 3}} : Set (Set (Fin 4))))
       {1, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨1, by simp, ?_⟩, fun hc ↦ ?_⟩
     · simp only [Set.mem_ofPred_eq]

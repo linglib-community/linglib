@@ -43,39 +43,26 @@ construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation
 open Modality VonFintelGillies2010
 
 /-- `⟦not raining⟧`. -/
-abbrev notRaining : World → Prop := fun w ↦ ¬ raining w
+abbrev notRaining : Set World := rainingᶜ
 
-variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
+variable {W : Type*} (K : Set (Set W)) (P : Set W) (w : W)
 
 -- Observation 5
-theorem cant_might_exclusion (hCant : kernelCant k φ w = .true) : kernelMight k φ w = .false := by
+theorem cant_might_exclusion (hCant : kernelCant K P w = .true) : kernelMight K P w = .false := by
   rw [kernelMight_eq_compl_kernelCant, Pi.compl_apply, hCant, Trivalent.compl_true]
 
-theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = .true) : ¬ φ w :=
-  must_entails_prejacent k _ w hReal (kernelMust_eq_true_iff.1 hTrue).2
+theorem cant_entails_negation (hReal : w ∈ ⋂₀ K) (hTrue : kernelCant K P w = .true) : w ∉ P :=
+  (kernelMust_eq_true_iff.1 hTrue).2 hReal
 
 theorem cant_dilemma_resolved :
-    (true, true) ∈ wetGearK.base ∧ kernelCant wetGearK notRaining (true, true) = .true ∧
-      kernelMight wetGearK notRaining (true, true) = .false ∧ ¬ notRaining (true, true) := by
+    (true, true) ∈ ⋂₀ wetGearK ∧ kernelCant wetGearK notRaining (true, true) = .true ∧
+      kernelMight wetGearK notRaining (true, true) = .false ∧ (true, true) ∉ notRaining := by
   have hCant : kernelCant wetGearK notRaining (true, true) = .true := by
-    refine kernelMust_eq_true_iff.2 ⟨?_, ?_⟩
-    · rintro ⟨x, hx, hxor⟩
-      rcases hx with rfl | hx'
-      · rcases hxor with h_sub | h_disj
-        · exact h_sub (show onlyRainWets (false, false) from by decide) (by decide)
-        · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
-            (show ¬ notRaining (true, true) from by decide)
-      · obtain rfl : x = wetGear := hx'
-        rcases hxor with h_sub | h_disj
-        · exact h_sub (show wetGear (true, false) from by decide) (by decide)
-        · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
-            (show ¬ notRaining (true, true) from by decide)
-    · rw [Kernel.followsFrom_iff, wetGearK_base]
-      rintro w rfl
-      decide
-  exact ⟨by rw [wetGearK_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
+    simpa only [kernelCant, notRaining, compl_compl] using must_raining_eq_one _
+  exact ⟨by simp [sInter_wetGearK], hCant, cant_might_exclusion _ _ _ hCant, by simp⟩
 
 theorem cant_direct_evidence_infelicity (w : World) : kernelCant rainK notRaining w = .undefined :=
-  kernelMust_eq_undefined_iff.2 ⟨raining, by simp [rainK], Or.inl fun _ hw hn ↦ hn hw⟩
+  kernelMust_eq_undefined_iff.2 <| by
+    simpa only [notRaining, compl_compl] using rainK_settles_raining
 
 end VonFintelGillies2021

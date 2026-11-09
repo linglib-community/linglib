@@ -175,12 +175,12 @@ def streetBase : (Crossing → NonemptyInterval ℕ → Prop) → NonemptyInterv
 /-- `NI`: John is not interrupted. -/
 def notInterrupted : (Crossing → NonemptyInterval ℕ → Prop) → NonemptyInterval ℕ →
     Background Crossing :=
-  fun _ _ _ ↦ {(· ≠ .stopped)}
+  fun _ _ _ ↦ {{.stopped}ᶜ}
 
 /-- The Atlantic (46): the facts about John and the ocean exclude his getting across. -/
 def atlanticBase : (Crossing → NonemptyInterval ℕ → Prop) → NonemptyInterval ℕ →
     Background Crossing :=
-  fun _ _ _ ↦ {(· ≠ .crosses)}
+  fun _ _ _ ↦ {{.crosses}ᶜ}
 
 theorem mem_IMP_street : now ∈ IMP atomize streetBase notInterrupted cross .stopped := by
   rw [mem_IMP_iff]
@@ -242,11 +242,11 @@ def soccerBase : (Soccer → Finset ℕ → Prop) → NonemptyInterval ℕ → B
 
 /-- The facts of (61): John cannot move his legs. -/
 def accidentBase : (Soccer → Finset ℕ → Prop) → NonemptyInterval ℕ → Background Soccer :=
-  fun _ _ _ ↦ {(· = .accident)}
+  fun _ _ _ ↦ {{.accident}}
 
 /-- The ordering source (60): nothing interrupts John's playing. -/
 def keepsPlaying : (Soccer → Finset ℕ → Prop) → NonemptyInterval ℕ → Background Soccer :=
-  fun _ _ _ ↦ {(· ≠ .accident)}
+  fun _ _ _ ↦ {{.accident}ᶜ}
 
 theorem pl_playSoccer : PL (playSoccer .plays) ({0, 2, 4, 6} : Finset ℕ) := by
   refine ⟨⟨⟨0, by decide⟩, subset_rfl⟩, {({0, 2} : Finset ℕ), ({4, 6} : Finset ℕ)},

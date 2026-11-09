@@ -269,11 +269,12 @@ end Conflict
 /-! ### The classic semantics (59) -/
 
 omit [DecidableEq W] in
-open Modality ModalLogic in
+open Modality in
 -- (59)
-theorem classic_agglomerates {f g : Background W} {φ ψ : W → Prop} {w : W}
-    (hφ : necessity f g φ w) (hψ : necessity f g ψ w) : necessity f g (φ ⊓ ψ) w := by
-  rw [necessity, box_inf]; exact ⟨hφ, hψ⟩
+theorem classic_agglomerates {f g : Background W} {φ ψ : Set W} {w : W}
+    (hφ : φ ∈ humanNecessity f g w) (hψ : ψ ∈ humanNecessity f g w) :
+    φ ∩ ψ ∈ humanNecessity f g w :=
+  Filter.inter_mem hφ hψ
 
 /-! ### The Office (§8.1) -/
 

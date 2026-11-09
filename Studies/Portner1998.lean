@@ -80,10 +80,10 @@ def crossing (v : Bus) (e : NonemptyInterval ℕ) : Prop := v = .crosses ∧ e =
 def walkIntoBus (v : Bus) (e : NonemptyInterval ℕ) : Prop := v = .hit ∧ e = iv 0 2
 
 /-- `NI(e)`: Max is not hit by a bus and does not turn around. -/
-def notInterrupted : Background Bus := fun _ ↦ {(· ≠ .hit), (· ≠ .turnsAround)}
+def notInterrupted : Background Bus := fun _ ↦ {{.hit}ᶜ, {.turnsAround}ᶜ}
 
 /-- The base (42) for the description that mentions the bus: a bus is on a path to hit Max. -/
-def withBus : Background Bus := fun _ ↦ {(· = .hit)}
+def withBus : Background Bus := fun _ ↦ {{.hit}}
 
 open Classical in
 /-- `Circ(e, P)` (41), (42): facts about Max alone, unless the description mentions the bus. -/
@@ -100,12 +100,12 @@ theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) cros
     have hacc : ((⊥ : Background Bus) ⊔ notInterrupted).accessibleWorlds .hit = {.crosses} := by
       ext v; cases v <;> simp [notInterrupted]
     rw [bestWorlds_eq_accessibleWorlds_sup (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
-  rw [InProgress, necessity_iff, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
+  rw [InProgress, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
   rintro v rfl
   exact ⟨iv 0 3, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
 
 theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit := by
-  rw [InProgress, necessity_iff, circ, ite_eq_left rfl]
+  rw [InProgress, circ, ite_eq_left rfl]
   intro v hv
   have hacc : withBus.accessibleWorlds Bus.hit = {.hit} := by ext u; cases u <;> simp [withBus]
   obtain rfl : v = .hit := by simpa [hacc] using (mem_bestWorlds.1 hv).1
@@ -151,14 +151,14 @@ inductive Army
 def wipeOut (v : Army) (e : NonemptyInterval ℕ) : Prop := v = .wipesOut ∧ e = iv 0 10
 
 /-- `NI(e)`: Mary defeats the soldiers she fights, a few dozen and then the whole army. -/
-def defeatsSoldiers : Background Army := fun _ ↦ {(· ≠ .killedEarly), (· = .wipesOut)}
+def defeatsSoldiers : Background Army := fun _ ↦ {{.killedEarly}ᶜ, {.wipesOut}}
 
 /-- The circumstances of an ordinary Mary, whose abilities rule out defeating the whole army. -/
-def ordinary : Background Army := fun _ ↦ {(· ≠ .wipesOut)}
+def ordinary : Background Army := fun _ ↦ {{.wipesOut}ᶜ}
 
 theorem not_prog_ordinary (w : Army) :
     ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
-  rw [InProgress, necessity_iff]
+  rw [InProgress]
   intro h
   have hbest : Army.killsDozens ∈ bestWorlds ordinary defeatsSoldiers w := by
     refine mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
@@ -166,7 +166,7 @@ theorem not_prog_ordinary (w : Army) :
     cases v
     · exact absurd rfl hv'
     · exact (premisePreorder _).le_refl _
-    · exact absurd rfl (hle (· ≠ Army.killedEarly) (by simp [defeatsSoldiers]) (by decide))
+    · exact absurd rfl (hle {.killedEarly}ᶜ (by simp [defeatsSoldiers]) (by simp))
   obtain ⟨_, -, h1, -⟩ := h _ hbest
   exact absurd h1 (by decide)
 
@@ -175,7 +175,7 @@ theorem prog_hero :
   have hacc : ((⊥ : Background Army) ⊔ defeatsSoldiers).accessibleWorlds .wipesOut =
       {.wipesOut} := by
     ext v; cases v <;> simp [defeatsSoldiers]
-  rw [InProgress, necessity_iff, bestWorlds_eq_accessibleWorlds_sup
+  rw [InProgress, bestWorlds_eq_accessibleWorlds_sup
     (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rintro v rfl
   exact ⟨iv 0 10, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩

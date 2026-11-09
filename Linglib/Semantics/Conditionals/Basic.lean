@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Linglib.Logic.Nonmonotonic.Preferential
-public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Logic.Modal.Defs
 
 /-!
@@ -34,7 +33,7 @@ where the Limit Assumption holds.
 * `variablyStrictImp_subset_orderingImp`, `mem_variablyStrictImp_iff_mem_orderingImp`: the
   variably strict conditional entails truth at the best accessible antecedent-worlds, and is it
   under the Limit Assumption.
-* `mem_variablyStrictImp_iff_isGoodPossibility`: on a total preorder it is Lewis's clause over
+* `mem_variablyStrictImp_iff_exists`: on a total preorder it is Lewis's clause over
   comparative similarity.
 * `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
   be v* holds for every world `v`.
@@ -315,11 +314,11 @@ end Closest
 [lewis-1973b] interprets the counterfactual over an assignment to each world of a set of accessible
 worlds and a total preorder of comparative similarity (§2.3), and a modal base and an ordering
 source ([kratzer-1981]) give each evaluation point the same two items. *If p, q* is true at `i`
-when `q` is a necessity of ordering semantics over the accessible `p`-worlds: every accessible
+when `q` holds toward the bottom of `ord i` on the accessible `p`-worlds: every accessible
 `p`-world has one at least as close all of whose accessible `p`-worlds at least as close are
 `q`-worlds (`variablyStrictImp`). The clause needs neither the Limit Assumption nor a total
 preorder, and on a total preorder it is §2.3's
-(`mem_variablyStrictImp_iff_isGoodPossibility`). Under the Limit Assumption it is truth at the best
+(`mem_variablyStrictImp_iff_exists`). Under the Limit Assumption it is truth at the best
 accessible antecedent-worlds (`orderingImp`), the restrictor analysis of [lewis-1975] and
 [kratzer-1986]. The strict conditional is the case of the
 preorder relating every two worlds (`strictImp_eq_orderingImp`), and the conditional of the
@@ -329,28 +328,28 @@ section Ordering
 
 variable {ord : I → Preorder W}
 
-/-- The variably strict conditional, true at `i` when the consequent is a necessity over the
-accessible antecedent-worlds under the preorder `ord i`. -/
+/-- The variably strict conditional, true at `i` when the consequent holds toward the bottom of
+the preorder `ord i` on the accessible antecedent-worlds. -/
 def variablyStrictImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : Set I :=
-  {i | q ∈ OrderingSemantics.necessityFilter (ord i) (access i ∩ p)}
+  {i | q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p)}
 
 @[simp]
 theorem mem_variablyStrictImp :
-    i ∈ variablyStrictImp access ord p q ↔
-      q ∈ OrderingSemantics.necessityFilter (ord i) (access i ∩ p) :=
+    i ∈ variablyStrictImp access ord p q ↔ q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p) :=
   Iff.rfl
 
 /-- On a total preorder the variably strict conditional holds when no antecedent-world is
 accessible, or some accessible antecedent-world has only consequent-worlds among the accessible
 antecedent-worlds at least as close ([lewis-1973b] §2.3). -/
-theorem mem_variablyStrictImp_iff_isGoodPossibility [Std.Total (ord i).le] :
-    i ∈ variablyStrictImp access ord p q ↔
-      access i ∩ p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord i) (access i ∩ p) q := by
+theorem mem_variablyStrictImp_iff_exists [Std.Total (ord i).le] :
+    i ∈ variablyStrictImp access ord p q ↔ access i ∩ p = ∅ ∨
+      ∃ v ∈ access i ∩ p, ∀ w ∈ access i ∩ p, (ord i).le w v → w ∈ q := by
+  let := ord i
   rw [mem_variablyStrictImp]
   rcases (access i ∩ p).eq_empty_or_nonempty with h | h
   · exact iff_of_true (fun u hu ↦ absurd (h ▸ hu) (Set.notMem_empty u)) (.inl h)
   · rw [or_iff_right h.ne_empty]
-    exact OrderingSemantics.mem_necessityFilter_iff_isGoodPossibility h
+    exact Filter.mem_atBotOn_iff_exists h
 
 /-- The conditional over the best accessible antecedent-worlds, the minimal worlds of
 `access i ∩ p` under the preorder `ord i`. -/
@@ -370,7 +369,7 @@ theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
 
 theorem variablyStrictImp_subset_orderingImp :
     variablyStrictImp access ord p q ⊆ orderingImp access ord p q :=
-  fun _ hi ↦ OrderingSemantics.minimals_subset_of_mem_necessityFilter hi
+  fun i hi ↦ letI := ord i; Filter.setOf_minimalFor_subset_of_mem_atBotOn hi
 
 /-- Under the Limit Assumption at `i`, the variably strict conditional is truth at the best
 accessible antecedent-worlds ([lewis-1973b] §1.4). -/
@@ -379,7 +378,7 @@ theorem mem_variablyStrictImp_iff_mem_orderingImp
     i ∈ variablyStrictImp access ord p q ↔ i ∈ orderingImp access ord p q := by
   refine ⟨fun h ↦ variablyStrictImp_subset_orderingImp h, fun hi ↦ ?_⟩
   let := ord i
-  refine OrderingSemantics.mem_necessityFilter_of_minimals_subset (fun h hh ↦ ?_) hi
+  refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun h hh ↦ ?_) hi
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ p | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
   exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
 
@@ -409,7 +408,8 @@ theorem closestImp_eq_variablyStrictImp [∀ w, Std.Total (ord w).le]
     closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q := by
   refine subset_antisymm (fun w hw ↦ ?_) variablyStrictImp_subset_closestImp
   rw [mem_variablyStrictImp, Set.univ_inter]
-  refine OrderingSemantics.mem_necessityFilter_of_minimals_subset (fun u hu ↦ ?_) hw
+  let := ord w
+  refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun u hu ↦ ?_) hw
   obtain ⟨v, hv⟩ := hlim w ⟨u, hu⟩
   exact ⟨v, hv, (Preorder.mem_minimals_iff_forall_le.1 hv).2 u hu⟩
 
@@ -452,24 +452,24 @@ section Logic
 
 theorem isPreferential_variablyStrictImp {ord : I → Preorder W} :
     Nonmonotonic.IsPreferential fun p q ↦ i ∈ variablyStrictImp access ord p q where
-  refl _ := Filter.mem_of_superset OrderingSemantics.self_mem_necessityFilter
-    Set.inter_subset_right
-  rightWeakening h hψχ :=
-    Filter.mem_of_superset (f := OrderingSemantics.necessityFilter (ord i) _) h hψχ
-  and h h' := Filter.inter_mem (f := OrderingSemantics.necessityFilter (ord i) _) h h'
+  refl _ := letI := ord i; Filter.mem_of_superset Filter.self_mem_atBotOn Set.inter_subset_right
+  rightWeakening h hψχ := Filter.mem_of_superset (f := @Filter.atBotOn W W (ord i) id _) h hψχ
+  and h h' := Filter.inter_mem (f := @Filter.atBotOn W W (ord i) id _) h h'
   or h h' := by
+    let := ord i
     rw [mem_variablyStrictImp, Set.inter_union_distrib_left]
-    exact OrderingSemantics.necessityFilter_union_le (Filter.mem_sup.2 ⟨h, h'⟩)
+    exact Filter.atBotOn_union_le (Filter.mem_sup.2 ⟨h, h'⟩)
   cautiousMonotonicity h h' := by
-    rw [mem_variablyStrictImp, ← Set.inter_assoc, OrderingSemantics.necessityFilter_inter_of_mem h]
+    let := ord i
+    rw [mem_variablyStrictImp, ← Set.inter_assoc, Filter.atBotOn_inter_of_mem h]
     exact h'
 
 theorem isRational_variablyStrictImp {ord : I → Preorder W} [Std.Total (ord i).le] :
     Nonmonotonic.IsRational fun p q ↦ i ∈ variablyStrictImp access ord p q where
   toIsPreferential := isPreferential_variablyStrictImp
   rationalMonotonicity h h' := by
-    rw [mem_variablyStrictImp, ← Set.inter_assoc,
-      OrderingSemantics.necessityFilter_inter_of_frequently h']
+    let := ord i
+    rw [mem_variablyStrictImp, ← Set.inter_assoc, Filter.atBotOn_inter_of_frequently h']
     exact Filter.mem_inf_of_left h
 
 variable {ord : W → Preorder W}
@@ -487,10 +487,11 @@ theorem isRational_closestImp (hwf : WellFounded (ord w).lt) [Std.Total (ord w).
 theorem exists_not_isRational_closestImp :
     ∃ ord : Fin 3 → Preorder (Fin 3),
       ¬ Nonmonotonic.IsRational fun p q ↦ (0 : Fin 3) ∈ closestImp ord p q := by
-  obtain ⟨p, hp⟩ := Nonmonotonic.exists_not_isRational_necessityFilter
+  obtain ⟨p, hp⟩ := Nonmonotonic.exists_not_isRational_atBotOn
   refine ⟨fun _ ↦ p, ?_⟩
-  simp only [OrderingSemantics.necessityFilter_eq_principal_of_wellFounded
-    (letI := p; wellFounded_lt), Filter.mem_principal] at hp
+  let := p
+  simp only [Filter.atBotOn_eq_principal_of_wellFoundedLT, Filter.mem_principal,
+    minimalFor_id] at hp
   exact hp
 
 end Logic
