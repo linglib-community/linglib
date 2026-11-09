@@ -5,9 +5,8 @@ public import Linglib.Semantics.Evidential.Defs
 /-!
 # Aymara evidentiality
 
-Aymara (Jaqi) has a three-choice system of Aikhenvald's type B1, an areal feature shared with
-Quechua: personal knowledge, acquired visually, hearsay (knowledge through language) and
-non-personal knowledge (inferred).
+Aymara (Jaqi) has three evidentials, an areal feature shared with Quechua: personal knowledge,
+acquired visually, hearsay (knowledge through language) and non-personal knowledge (inferred).
 
 ## References
 
@@ -20,10 +19,16 @@ namespace Aymara.Evidentiality
 
 open Evidential
 
-/-- Personal knowledge *-wa*, hearsay *-sa* and non-personal knowledge *-pacha*. -/
-def evidentials : List Evidential :=
-  [ { morphs := [.suff "wa"], covers := {.visual, .sensory} },
-    { morphs := [.suff "sa"], covers := {.hearsay, .quotative} },
-    { morphs := [.suff "pacha"], covers := {.inference, .assumption} } ]
+/-- The personal knowledge *-wa*, acquired visually. -/
+def personal : Evidential := { morphs := [.suff "wa"], covers := {.visual, .sensory} }
+
+/-- The hearsay *-sa*, knowledge through language. -/
+def hearsay : Evidential := { morphs := [.suff "sa"], covers := {.hearsay, .quotative} }
+
+/-- The non-personal knowledge *-pacha*, inferred. -/
+def nonpersonal : Evidential := { morphs := [.suff "pacha"], covers := {.inference, .assumption} }
+
+/-- The evidentials: personal knowledge, hearsay and non-personal knowledge. -/
+def evidentials : List Evidential := [personal, hearsay, nonpersonal]
 
 end Aymara.Evidentiality

@@ -7,6 +7,7 @@ module
 
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Semantics.Evidential.Defs
 public import Linglib.Semantics.Modality.Typology
 
 /-!
@@ -21,23 +22,30 @@ language, English's by the constructions of negation, inversion, code and emphas
 This file provides the entry of a member of such a class, a word form in the cells it is entered
 for with the features those cells share and its register, and the entry of a modal auxiliary,
 an auxiliary that is also a modal item, expressing force–flavor pairs. Per-language fragments
-supply the entries.
+supply the entries. A modal auxiliary may also mark the source of information, as German *sollen*
+reports a rumour; since its main meaning is modal, that evidential extension makes it an
+evidentiality strategy.
 
 ## Main declarations
 
 * `Auxiliary`: the entry.
 * `ModalAuxiliary`: the entry of an auxiliary that is a modal item.
 * `Auxiliary.toWord`: the `AUX` word it spells out.
+* `ModalAuxiliary.toEvidential`, `ModalAuxiliary.strategies`: the evidential extension of a
+  modal auxiliary, and the strategies among a list of them.
 
 ## Implementation notes
 
 An entry is a word form, not a lexeme: English *can* and *could* are two entries, as they are
 two expressions of modal meaning, and English *were* is two, the preterite and the irrealis. A
 syncretic entry, English *are* of the second person and the plurals, carries no person or
-number, and the cells it realizes are read off the paradigm that has it.
+number, and the cells it realizes are read off the paradigm that has it. The evidential
+extension belongs to the auxiliary rather than to the modal item, since a modal adverb with an
+evidential sense is a lexical means, neither an evidential nor a strategy.
 
 ## References
 
+* [aikhenvald-2004]
 * [anderson-2006a]
 * [huddleston-pullum-2002]
 -/
@@ -58,7 +66,10 @@ structure Auxiliary where
 
 /-- A modal auxiliary: an auxiliary that is a modal item, with the force–flavor pairs it
 expresses. -/
-structure ModalAuxiliary extends Auxiliary, ModalItem
+structure ModalAuxiliary extends Auxiliary, ModalItem where
+  /-- The information sources the auxiliary's evidential extension covers, empty when it has
+  none. -/
+  evidential : Finset Evidential.Parameter := ∅
   deriving DecidableEq
 
 attribute [coe] ModalAuxiliary.toAuxiliary
@@ -73,3 +84,17 @@ def toWord (a : Auxiliary) : Word := { form := a.form, cat := .AUX, features := 
 @[simp] theorem toWord_cat (a : Auxiliary) : a.toWord.cat = .AUX := rfl
 
 end Auxiliary
+
+namespace ModalAuxiliary
+
+/-- The evidential extension of a modal auxiliary: its form, with the sources the extension
+covers. -/
+def toEvidential (m : ModalAuxiliary) : Evidential :=
+  { morphs := [.free m.form], covers := m.evidential }
+
+/-- The evidentiality strategies among modal auxiliaries are the extensions of those that have
+one. -/
+def strategies (ms : List ModalAuxiliary) : List Evidential :=
+  (ms.filter (·.evidential.Nonempty)).map toEvidential
+
+end ModalAuxiliary

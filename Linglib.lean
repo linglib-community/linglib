@@ -355,7 +355,6 @@ import Linglib.Fragments.Fering.Determiners
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.Comparison
 import Linglib.Fragments.Finnish.Coordination
-import Linglib.Fragments.Finnish.Evidentiality
 import Linglib.Fragments.Finnish.Infinitives
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Finnish.PolarityItems
@@ -468,7 +467,6 @@ import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.Determiners
-import Linglib.Fragments.Mandarin.Evidentiality
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.PolarityItems

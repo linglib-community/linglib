@@ -25,8 +25,7 @@ assertive enclitic and the main verb in the absolutive, collapses all direct evi
 personal experience *-yowă* against the quotative, and the archaic remote past *-miyă* marks
 personal experience in an irretrievable past. Inferential II *-bi-* is never verb-final: it
 precedes a subordinating suffix, the absolutive or another evidential, so it stands outside the
-mutually exclusive paradigm. WALS codes the language as having direct and indirect evidentials
-(Feature 77A).
+mutually exclusive paradigm.
 
 ## Implementation notes
 
@@ -43,7 +42,6 @@ and touch fall by default to inferential I.
 
 * [oswalt-1986]
 * [aikhenvald-2004]
-* [de-haan-2013]
 -/
 
 @[expose] public section

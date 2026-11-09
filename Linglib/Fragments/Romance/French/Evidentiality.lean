@@ -5,21 +5,33 @@ public import Linglib.Semantics.Evidential.Defs
 /-!
 # French evidentiality
 
-French has no grammatical evidentials: the conditional's reportative use (the journalistic
-conditional) is one of the best-known evidentiality strategies, a non-evidential category with
-an evidential extension, so the inventory is empty. WALS, counting the conditional as a
-grammatical reportative, codes the language as indirect-only.
+French has no evidentials proper. Its conditional has an evidential extension, the conditional
+of uncertain information frequent in newspaper reports, which marks information as taken from
+another source that the speaker does not vouch for. The conditional's other meanings, future in
+the past, hypothesis and counterfactual, make this use an evidentiality strategy.
+
+## TODO
+
+The conditional's form is cited here rather than read off its paradigm, which `French.Verbs`
+does not yet give.
 
 ## References
 
-* [aikhenvald-2004], §4.1
-* [de-haan-2013]
+* [aikhenvald-2004]
 -/
 
 @[expose] public section
 
 namespace French.Evidentiality
 
+/-- French has no evidentials proper. -/
 def evidentials : List Evidential := []
+
+/-- The conditional in its reportative use, cited by its third singular ending, as in
+*aurait*. -/
+def conditional : Evidential := { morphs := [.suff "rait"], covers := {.hearsay, .quotative} }
+
+/-- The evidentiality strategies, the conditional alone. -/
+def strategies : List Evidential := [conditional]
 
 end French.Evidentiality

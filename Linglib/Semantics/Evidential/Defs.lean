@@ -22,8 +22,14 @@ evidential for smell, taste or touch alone, and general knowledge is a meaning a
 evidential may carry, often cast in the visual, rather than a parameter. A term whose source lies
 outside the six, such as the Kashaya performative for the speaker's own act, covers none of
 them. A term covers every parameter its source takes in, so a reported evidential with no
-quotative beside it covers quotation as well as hearsay. Lexical and parenthetical means are
-evidentiality strategies, not evidentials, and an inventory records none.
+quotative beside it covers quotation as well as hearsay. An inventory records evidentials proper,
+whose main meaning is information source. A form whose main meaning is something else, such as a
+perfect, a conditional or a modal verb, may have an evidential extension, which makes it an
+evidentiality strategy; a Fragment lists those apart, as `strategies`, reading each from the
+entry that owns its main meaning where there is one, as a modal verb's from its evidential
+extension. The line between evidentials and strategies is Aikhenvald's, and grammars do not
+always draw it there. Lexical means, such as adverbs and parentheticals, are neither, and a
+Fragment records none.
 
 ## Main definitions
 

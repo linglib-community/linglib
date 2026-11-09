@@ -40,12 +40,21 @@ namespace LhasaTibetan.Evidentiality
 
 open Evidential
 
-/-- The perfective evidentials sensory *-song*, inferential *-bzhag* and factual *-pa red*,
-and the quotative *-za*. -/
-def evidentials : List Evidential :=
-  [ { morphs := [.suff "song"], covers := {.visual, .sensory} },
-    { morphs := [.suff "bzhag"], covers := {.inference} },
-    { morphs := [.suff "pa", .free "red"], covers := {.assumption, .hearsay} },
-    { morphs := [.suff "za"], covers := {.quotative} } ]
+/-- The sensory perfective *-song*: the speaker perceived the event through any of the senses. -/
+def sensory : Evidential := { morphs := [.suff "song"], covers := {.visual, .sensory} }
+
+/-- The inferential perfective *-bzhag*: inferred from direct knowledge of the event's result. -/
+def inferential : Evidential := { morphs := [.suff "bzhag"], covers := {.inference} }
+
+/-- The factual perfective *-pa red*: generic and shared knowledge, inference or assumption of
+high certainty, and unattributable hearsay. -/
+def factual : Evidential :=
+  { morphs := [.suff "pa", .free "red"], covers := {.assumption, .hearsay} }
+
+/-- The quotative *-za*, the depleted verb *zer* 'say', for attributable report. -/
+def quotative : Evidential := { morphs := [.suff "za"], covers := {.quotative} }
+
+/-- The perfective evidentials sensory, inferential and factual, and the quotative. -/
+def evidentials : List Evidential := [sensory, inferential, factual, quotative]
 
 end LhasaTibetan.Evidentiality

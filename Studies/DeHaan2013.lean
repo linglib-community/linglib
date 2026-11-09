@@ -3,40 +3,45 @@ module
 public import Linglib.Data.WALS.Features.F77A
 public import Studies.Aikhenvald2004
 public import Linglib.Fragments.English.Evidentiality
-public import Linglib.Fragments.Finnish.Evidentiality
 public import Linglib.Fragments.Georgian.Evidentiality
 public import Linglib.Fragments.German.Evidentiality
 public import Linglib.Fragments.Japanese.Evidentiality
 public import Linglib.Fragments.Korean.Evidentiality
-public import Linglib.Fragments.Mandarin.Evidentiality
 public import Linglib.Fragments.Romance.French.Evidentiality
 
 /-!
 # de Haan (2013): Semantic Distinctions of Evidentiality
 
-This file formalizes de Haan's WALS map of the semantic distinctions of evidentiality, which
-codes a language as having no grammatical evidentials, indirect evidentials only, or direct and
-indirect ones. A direct evidential marks sensory evidence, an indirect one inference or report.
-Only grammaticalized evidentials count, modal verbs, auxiliaries and particles among them, and no
-language in the sample has direct evidentials without indirect ones.
-
-The value of an inventory is read off what its evidentials cover (`value?`), and an inventory
-of direct evidentials alone has none. On the Fragment languages the map never records fewer
-distinctions than the inventory (`exists_mem_lookup_walsCode`). Where the two differ, the
-inventory has no evidentials, or no direct one, because the Fragments follow Aikhenvald, who
-counts modal and mood forms and the Georgian perfect as evidentiality strategies and reads the
-Turkish and Bulgarian unmarked pasts as evidentiality-neutral. Taking the Turkish witnessed past
-as a direct evidential, as the chapter glosses it, gives the map's value and turns Aikhenvald's
-A2 system into an A1 (`turkish_di`). An inventory realizing one of Aikhenvald's kinds is off the
-map exactly when the kind is A5, auditory against everything else (`value?_eq_none_iff`); its
-one language, Euchee, is on the map without evidentials, coded after Wagner's grammar, which
-takes the auditory *-ke* for a locative (`euchee`).
+De Haan's WALS map codes a language as having no grammatical evidentials, indirect ones only, or
+direct and indirect ones, counting every grammaticalized evidential, auxiliaries and particles
+among them; [an inventory of direct evidentials alone has no value](##value?_eq_none_iff). The
+map's value of each Fragment language is [that of what de Haan counts](##lookup_walsCode): its
+evidentials, its evidentiality strategies, and for Turkish, Bulgarian and Georgian a past read as
+witnessed, which [makes an A1 system](##realizes_A1). Aikhenvald counts the evidentials alone, so
+the map agrees with her [where a language has neither of the others](##lookup_walsCode_of_nil).
+Of her kinds only A5 is off the map, and its one language, Euchee, is [coded without
+evidentials](##euchee), after a grammar that takes the auditory *-ke* for a locative.
 
 ## Implementation notes
 
-The map codes Georgian with direct and indirect evidentials, although the companion chapter on
-coding says that the Georgian aorist, unlike the perfect, has not been formalized as a direct
-evidential. Kashaya is placed on the map by the paradigm of a spontaneous remark.
+The pasts read as witnessed are this file's terms, not Fragment entries, since Aikhenvald reads
+the Turkish *-dI* and the Bulgarian aorist as evidentiality-neutral. The chapter glosses *-dI* as
+a direct evidential and lists Georgian among the languages contrasting witnessed with unwitnessed
+pasts; the map codes Bulgarian after Friedman, whose confirmative past Aikhenvald takes for the
+firsthand of an A1 system. The strategies the Fragments record are grammatical forms, which de
+Haan counts; a complementation strategy, biclausal, he would not. Kashaya is placed on the map by
+the paradigm of a spontaneous remark.
+
+## Errata
+
+The map codes Georgian with direct evidentials, but the companion chapter on coding glosses the
+Georgian aorist as neutral and says that, unlike the perfect, it has not been formalized as a
+direct evidential [de-haan-2013b].
+
+## TODO
+
+Finnish, which the chapter says has evidentials derived from modal verbs, is left out until a
+Fragment records them.
 
 ## References
 
@@ -68,15 +73,35 @@ def ofCovers (cs : List (Finset Parameter)) : Option EvidentialityDistinctions :
 /-- The value of an inventory on the map. -/
 def value? (es : List Evidential) : Option EvidentialityDistinctions := ofCovers (es.map covers)
 
+/-- An inventory is off the map exactly when it has a direct evidential and no indirect one. -/
+theorem value?_eq_none_iff {es : List Evidential} :
+    value? es = none ↔
+      (∃ e ∈ es, e.IsDirect) ∧ ∀ e ∈ es, e.covers ⊆ EvidenceType.attested.block := by
+  rw [value?, ofCovers]
+  split_ifs with h₁ h₂
+  · obtain ⟨_, hc, hn⟩ := h₁
+    obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
+    simp only [false_iff, not_and]
+    exact fun _ h ↦ hn (h e he)
+  · have h : ∀ e ∈ es, e.covers ⊆ EvidenceType.attested.block := fun e he ↦
+      by_contra fun hn ↦ h₁ ⟨_, List.mem_map_of_mem he, hn⟩
+    obtain ⟨_, hc, hn⟩ := h₂
+    obtain ⟨e, he, rfl⟩ := List.mem_map.1 hc
+    simp only [true_iff, IsOfType]
+    exact ⟨⟨e, he, hn, h e he⟩, h⟩
+  · simp only [false_iff, not_and]
+    rintro ⟨e, he, hn, -⟩ -
+    exact h₂ ⟨_, List.mem_map_of_mem he, hn⟩
+
 theorem ofCovers_perm {cs cs' : List (Finset Parameter)} (h : cs.Perm cs') :
     ofCovers cs = ofCovers cs' := by
   simp only [ofCovers, h.mem_iff]
 
-theorem ofCovers_rows_eq_none_iff (k : Aikhenvald2004.Kind) :
+private theorem ofCovers_rows_eq_none_iff (k : Aikhenvald2004.Kind) :
     ∀ r ∈ k.rows, ofCovers (r.map Prod.snd) = none ↔ k = .A5 := by
   revert k; decide +kernel
 
-theorem value?_eq_none_iff {es : List Evidential} {k : Aikhenvald2004.Kind}
+theorem value?_eq_none_iff_of_realizes {es : List Evidential} {k : Aikhenvald2004.Kind}
     (h : Aikhenvald2004.Realizes es k) : value? es = none ↔ k = .A5 := by
   obtain ⟨r, hr, hp⟩ := h
   rw [value?, ofCovers_perm hp]
@@ -86,22 +111,20 @@ theorem value?_eq_none_iff {es : List Evidential} {k : Aikhenvald2004.Kind}
 
 /-- The Fragment languages on the map. -/
 inductive Language
-  | english | mandarin | finnish | german | french | japanese | korean | georgian
-  | westGreenlandic | abkhaz | turkish | bulgarian | aymara | tariana | tuyuca | kashaya
+  | english | german | french | japanese | korean | georgian | westGreenlandic | abkhaz
+  | turkish | bulgarian | aymara | tariana | tuyuca | kashaya
   deriving DecidableEq, Repr, Fintype
 
 /-- The WALS code of a language. -/
 def Language.walsCode : Language → String
-  | .english => "eng" | .mandarin => "mnd" | .finnish => "fin" | .german => "ger"
-  | .french => "fre" | .japanese => "jpn" | .korean => "kor" | .georgian => "geo"
-  | .westGreenlandic => "grw" | .abkhaz => "abk" | .turkish => "tur" | .bulgarian => "bul"
-  | .aymara => "aym" | .tariana => "tar" | .tuyuca => "tuy" | .kashaya => "ksh"
+  | .english => "eng" | .german => "ger" | .french => "fre" | .japanese => "jpn"
+  | .korean => "kor" | .georgian => "geo" | .westGreenlandic => "grw" | .abkhaz => "abk"
+  | .turkish => "tur" | .bulgarian => "bul" | .aymara => "aym" | .tariana => "tar"
+  | .tuyuca => "tuy" | .kashaya => "ksh"
 
 /-- A language's evidentials, from its Fragment; for Kashaya, those of a spontaneous remark. -/
 def Language.evidentials : Language → List Evidential
   | .english => English.Evidentiality.evidentials
-  | .mandarin => Mandarin.Evidentiality.evidentials
-  | .finnish => Finnish.Evidentiality.evidentials
   | .german => German.Evidentiality.evidentials
   | .french => French.Evidentiality.evidentials
   | .japanese => Japanese.Evidentiality.evidentials
@@ -116,31 +139,54 @@ def Language.evidentials : Language → List Evidential
   | .tuyuca => Tuyuca.Evidentiality.evidentials
   | .kashaya => Kashaya.Evidentiality.paradigm .spontaneous .imperfective
 
-theorem value?_isSome (l : Language) : (value? l.evidentials).isSome := by
-  revert l; decide +kernel
+/-- A language's evidentiality strategies, from its Fragment; none where it records none. -/
+def Language.strategies : Language → List Evidential
+  | .german => German.Evidentiality.strategies
+  | .french => French.Evidentiality.strategies
+  | .georgian => Georgian.Evidentiality.strategies
+  | .english | .japanese | .korean | .westGreenlandic | .abkhaz | .turkish | .bulgarian
+  | .aymara | .tariana | .tuyuca | .kashaya => []
 
-theorem exists_mem_lookup_walsCode (l : Language) :
-    ∃ v ∈ allData.lookup l.walsCode, value? l.evidentials = some v ∨
-      l.evidentials = [] ∧ v ≠ .noGrammaticalEvidentials ∨
-      value? l.evidentials = some .indirectOnly ∧ v = .directAndIndirect := by
-  revert l; decide +kernel
-
-theorem westGreenlandic :
-    value? WestGreenlandic.Evidentiality.evidentials = allData.lookup "grw" := by
-  decide +kernel
-
-/-- The Turkish witnessed past *-dI*, which the chapter glosses as a direct evidential and
-Aikhenvald reads as evidentiality-neutral, taken as a firsthand term for what the speaker saw. -/
+/-- The Turkish past *-dI*, which the chapter glosses as a direct evidential, taken as a
+firsthand term for what the speaker saw. -/
 def di : Evidential := { morphs := [.suff "DI"], covers := {.visual} }
 
-theorem turkish_di :
-    value? (di :: Turkish.Evidentiality.evidentials) = allData.lookup "tur" ∧
-      Aikhenvald2004.Realizes (di :: Turkish.Evidentiality.evidentials) .A1 := by
+/-- A past unmarked against the non-firsthand, taken as a firsthand term. -/
+def unmarkedPast : Evidential := { morphs := [], covers := {.visual, .sensory} }
+
+/-- A language's past read as witnessed: the Turkish *-dI*, and the Bulgarian and Georgian
+aorists. -/
+def Language.witnessed : Language → List Evidential
+  | .turkish => [di]
+  | .bulgarian | .georgian => [unmarkedPast]
+  | _ => []
+
+/-- The evidentials de Haan counts in a language. -/
+def Language.counted (l : Language) : List Evidential :=
+  l.witnessed ++ l.evidentials ++ l.strategies
+
+/-- The map's value of each Fragment language is the value of the evidentials de Haan counts in
+it: its evidentials, its evidentiality strategies, and a past read as witnessed. -/
+theorem lookup_walsCode (l : Language) : allData.lookup l.walsCode = value? l.counted := by
+  revert l; decide +kernel
+
+/-- The map's value of a language with no evidentiality strategies and no past read as witnessed
+is the value of its evidentials proper. -/
+theorem lookup_walsCode_of_nil {l : Language} (h : l.strategies = []) (h' : l.witnessed = []) :
+    allData.lookup l.walsCode = value? l.evidentials := by
+  simp [lookup_walsCode, Language.counted, h, h']
+
+/-- Read with its past as witnessed, each of Turkish, Bulgarian and Georgian has an A1 system,
+firsthand against non-firsthand. -/
+theorem realizes_A1 :
+    ∀ l ∈ [Language.turkish, .bulgarian, .georgian], Aikhenvald2004.Realizes l.counted .A1 := by
   decide +kernel
 
+/-- Euchee, the one language with an A5 system, auditory against everything else, has no value
+on the map for its inventory and is coded without evidentials. -/
 theorem euchee :
     value? [Aikhenvald2004.eucheeKe] = none ∧
       allData.lookup "yuc" = some .noGrammaticalEvidentials :=
-  ⟨(value?_eq_none_iff Aikhenvald2004.euchee).2 rfl, by decide +kernel⟩
+  ⟨(value?_eq_none_iff_of_realizes Aikhenvald2004.euchee).2 rfl, by decide +kernel⟩
 
 end DeHaan2013
