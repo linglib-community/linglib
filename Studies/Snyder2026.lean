@@ -121,9 +121,8 @@ def Operator.output : Operator → Ty Base
   | .nom | .iota => .e
 
 /-- The type a chain of type-shifters reaches from a type, if each composes with the last. -/
-def wellTyped : Ty Base → List Operator → Option (Ty Base)
-  | τ, [] => some τ
-  | τ, op :: ops => if τ = op.input then wellTyped op.output ops else none
+def wellTyped (τ : Ty Base) (ops : List Operator) : Option (Ty Base) :=
+  ops.foldlM (fun τ op ↦ if τ = op.input then some op.output else none) τ
 
 /-- The derivation map of each analysis, the diagrams of sections 2 and 5: the chain of
 type-shifters from the lexical meaning to a function, or none where the analysis does not
