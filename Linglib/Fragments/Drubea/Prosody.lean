@@ -367,7 +367,7 @@ theorem loans_aligned : ∀ s ∈ loans, s.IsAligned Prosody.Syllable.pnatMoraCo
 /-- The lax front vowel occurs long only: every syllable it heads is bimoraic. -/
 theorem smallCapitalI_heavy :
     ∀ s ∈ stems, ∀ σ ∈ s.syllables,
-      σ.nucleusSegments = [smallCapitalI] → σ.moraCount = 2 := by
+      σ.nucleus = [smallCapitalI] → σ.moraCount = 2 := by
   decide
 
 end Drubea

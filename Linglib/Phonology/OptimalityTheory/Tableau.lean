@@ -271,6 +271,16 @@ theorem ofRanking_optimal_eq_singleton_iff :
   simp only [optimal_eq_singleton_iff, ofRanking_candidates,
     ofRanking_profile_lt_iff_exists_dominates]
 
+/-- A candidate is the sole winner under every ranking that extends a relation `R` on the
+constraints, such as the Hasse diagram an analysis prints, if against each competitor some
+constraint preferring it is `R`-above every constraint preferring the competitor. -/
+theorem ofRanking_optimal_eq_singleton_of_rel {R : ι → ι → Prop} (hr : R ≤ r.Dominates)
+    (hc : c ∈ candidates)
+    (h : ∀ d ∈ candidates, d ≠ c → ∃ i, con i c < con i d ∧ ∀ j, con j d < con j c → R i j) :
+    (ofRanking con r candidates).optimal = {c} :=
+  ofRanking_optimal_eq_singleton_iff.2 ⟨hc, fun d hd hne ↦
+    (h d hd hne).imp fun i ⟨hi, hj⟩ ↦ ⟨hi, fun j hjd ↦ hr i j (hj j hjd)⟩⟩
+
 /-- A candidate that violates every constraint at least as often as a competitor, and some
 constraint more often, is *harmonically bounded*: it is optimal under no ranking of the
 constraint set. -/
