@@ -12,36 +12,34 @@ public import Linglib.Data.Statistics.AbramskySadrzadeh2014
 # Abramsky and Sadrzadeh (2014): Semantic Unification: A Sheaf Theoretic Approach to Natural Language
 
 Abramsky and Sadrzadeh model basic discourse representation structures as a presheaf on
-contexts, finite vocabularies of relation symbols with finite sets of variables
-(`DRT.presheaf`), and read anaphora resolution as gluing: the local theories of a discourse's
-parts glue along a cover, a choice of which referents to identify, when some global theory
-restricts to each of them.
-
-Proposition 1 claims that a gluing is unique when it exists. The paper's own second example
-refutes it: `John(b)` is invisible to every restriction, so it can be added to the listed gluing
-(`isGluing_beats_insert`). Gluings are unique exactly along covers jointly surjective on
-literals (`DRT.isSeparatedFor_iff`), the covers of the Grothendieck topology the paper asks for
-but leaves aside, for which basic DRSs form a sheaf (`DRT.isSheaf_literalCoverage`). The proof of
-Proposition 1 builds the right candidate, the least gluing (`DRT.Cover.exists_isGluing_iff`): the
-discussion example fails because the candidate does not restrict back, Example 3's merged cover
-because it is inconsistent. The discussion's claim that disjoint vocabularies leave consistency
-as the only obstruction needs injective cover maps (`not_forall_exists_isGluing_of_disjoint`), and
-Example 3's vocabularies are not disjoint: `Man` occurs in two parts.
-
-The probabilistic half composes the presheaf with a distribution functor. A distribution glues a
-family of point masses iff it is carried by the deterministic gluings
-(`map_restrict_eq_dirac_iff`), so the several multivalued gluings of §5.1 are mixtures of
-deterministic ones. In the bananas discourse the corpus frequencies weight the coverings, and the
-image of that distribution along the gluing map ranks *ripe bananas, cheeky monkeys* first
-(`gluingMeasure_le`).
+contexts, finite vocabularies of relation symbols with finite sets of variables, and read anaphora
+resolution as gluing: the local theories of a discourse's parts glue along a cover, a choice of
+which referents to identify, when some global theory restricts to each of them. A family glues
+exactly when it is compatible, the condition their sheaf condition places on families and their
+gluing omits, so the paper's failed gluings are [incompatible families](##not_compatible_failures).
+Gluings are [unique](##not_isSeparatedFor_beats) only along covers jointly surjective on literals,
+the covers of the Grothendieck topology the paper asks for but leaves aside. A distribution over
+global theories glues a family of point masses [iff it is carried by the deterministic
+gluings](##map_restrict_eq_dirac_iff), and in the bananas discourse the corpus frequencies rank
+*ripe bananas, cheeky monkeys* [first](##gluingMeasure_le).
 
 ## Implementation notes
 
-* `Var` is the paper's variable names; the substrate's sheaf theorem assumes infinitely many.
+* `Var` is the paper's variable names, as many as each arity; the substrate's sheaf theorem
+  assumes infinitely many.
 * `D_R` is formalised for probabilities, as image measures (`Measure.map`), not over an
   arbitrary semiring.
 * The corpus frequencies and the printed probabilities are read from
   `Data.Statistics.AbramskySadrzadeh2014`.
+
+## Errata
+
+* p. 6: Proposition 1 fails for Example 2, whose listed gluing [admits
+  `John(b)`](##isGluing_beats_insert).
+* p. 6: under disjoint vocabularies a consistent candidate need not glue [unless the cover maps are
+  injective](##not_forall_exists_isGluing_of_disjoint), and with them every family glues.
+* p. 7: the vocabularies of Example 3 are not disjoint: `Man` occurs in two parts.
+* p. 11: $d(t_4)$ is [printed 0.205 for $10/48$](##gluingProbability_rounds_iff).
 
 ## References
 
@@ -87,7 +85,11 @@ abbrev lang : Language := ⟨fun _ => Empty, Rel⟩
 
 /-- `Var` lists the variables of the paper's examples. -/
 inductive Var | x | y | z | u | v | w | a | b
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
+
+-- `Var` has as many variables as each arity.
+theorem nonempty_fin_embedding_var (r : Σ n, Rel n) : Nonempty (Fin r.1 ↪ Var) :=
+  Function.Embedding.nonempty_of_card_le (by obtain ⟨_, r⟩ := r; cases r <;> decide)
 
 /-- `lit A x̄` is the literal `A(x̄)`, and `lit A x̄ false` is `¬A(x̄)`. -/
 def lit {c : Context lang Var} {n : ℕ} (r : Rel n) (args : Fin n → Var) (pos : Bool := true)
@@ -333,6 +335,15 @@ theorem not_forall_exists_isGluing_of_disjoint :
         Literal.Consistent (C.pushforward x) → ∃ s, C.IsGluing (presheaf lang Var) x s :=
   fun h => absurd (h _ _ collapseCover collapseSections Subsingleton.pairwise (by decide +kernel))
     (by rw [Cover.exists_isGluing_iff]; decide +kernel)
+
+-- The failed gluings of the discussion and of Example 3 come from incompatible families.
+theorem not_compatible_failures :
+    ¬ Presieve.Arrows.Compatible (presheaf lang Var) overlapCover.map overlapSections ∧
+      ¬ Presieve.Arrows.Compatible (presheaf lang Var) mergedCover.map greySections :=
+  ⟨(Cover.exists_isGluing_iff_compatible fun r _ ↦ nonempty_fin_embedding_var r).not.1
+      not_exists_isGluing_overlap,
+    (Cover.exists_isGluing_iff_compatible fun r _ ↦ nonempty_fin_embedding_var r).not.1
+      not_exists_isGluing_merged⟩
 
 /-! ### Multivalued gluing -/
 
