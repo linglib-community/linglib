@@ -5,35 +5,26 @@ public import Mathlib.Algebra.Group.Basic
 public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Basic.IsEmpty.Basic
 public import Mathlib.Data.Set.Operations
+public import Mathlib.Data.Set.Restrict
 public import Mathlib.Tactic.Choose
 
 /-!
 # Proportional analogy
 
 A paradigm system `p : ParadigmSystem L Cell F` gives the form of each lexeme at each cell. It
-is analogical under a class of operations on forms when the forms at any two cells are related by
-one operation of the class, the same for every lexeme, as in *walk : walks = jump : jumps*.
-Under arbitrary operations this says only that the form at each cell determines the form at
-every other cell. Under the translations of an additive group it says that the shift between
-two cells is the same for every lexeme, which holds iff the family is a lexeme part plus a cell
-part.
-
-## Main definitions
-
-* `Morphology.IsAnalogical`: analogy under a class of operations on forms.
-* `Morphology.IsAnalogicallyRegular`: analogy under translations.
-
-## Main statements
-
-* `Morphology.isAnalogical_univ_iff`: analogy under arbitrary operations is mutual
-  determination of the cells.
-* `Morphology.isAnalogicallyRegular_iff`: regularity as equality of differences.
-* `Morphology.isAnalogicallyRegular_iff_exists_add`: regularity as additive separability.
+is [analogical](##IsAnalogical) under a class of operations on forms when the forms at any two
+cells are related by one operation of the class, the same for every lexeme, as in *walk : walks =
+jump : jumps*; under arbitrary operations this says only that [each cell determines every
+other](##isAnalogical_univ_iff). Under translations it says that the shift between two cells is
+the same for every lexeme, which holds iff [the family is a lexeme part plus a cell
+part](##isAnalogicallyRegular_iff_exists_add); within each class of a partition of the lexemes,
+iff [the cell part depends only on the class](##forall_isAnalogicallyRegular_domRestrict_iff).
 
 ## References
 
 * [blevins-2016]
 * [heitmeier-chuang-baayen-2026]
+* [shafaei-bajestan-moradipour-tari-uhrig-baayen-2024]
 -/
 
 @[expose] public section
@@ -105,6 +96,18 @@ theorem isAnalogicallyRegular_iff_exists_add :
     exact ⟨(p · c₀), v, fun l c ↦ by rw [hgp c l, ← hv c]⟩
   · rw [show p = fun l c ↦ a l + b c from funext₂ hab]
     exact isAnalogicallyRegular_add a b
+
+/-- A paradigm system is analogically regular within each class of a partition of its lexemes iff
+it is a lexeme part plus a part fixed by the class and the cell, the shift between two cells
+depending only on the class, as plural semantics shifts by semantic class
+([shafaei-bajestan-moradipour-tari-uhrig-baayen-2024]). -/
+theorem forall_isAnalogicallyRegular_domRestrict_iff {K : Type*} (κ : L → K) :
+    (∀ k, IsAnalogicallyRegular ((κ ⁻¹' {k}).domRestrict p)) ↔
+      ∃ (a : L → F) (b : K → Cell → F), ∀ l c, p l c = a l + b (κ l) c := by
+  refine ⟨fun h ↦ ?_, fun ⟨a, b, hab⟩ k ↦ isAnalogicallyRegular_iff_exists_add.2
+    ⟨fun l ↦ a l, b k, fun ⟨l, hl⟩ c ↦ by rw [Set.domRestrict_apply, hab, hl]⟩⟩
+  choose a b hab using fun k ↦ isAnalogicallyRegular_iff_exists_add.1 (h k)
+  exact ⟨fun l ↦ a (κ l) ⟨l, rfl⟩, b, fun l c ↦ hab (κ l) ⟨l, rfl⟩ c⟩
 
 end AddCommGroup
 
