@@ -103,18 +103,9 @@ def scalarStrategy (p q : Set W) : Strategy W :=
   .node (ofSet (p ∪ q)).query [.leaf (ofSet p).query, .leaf (ofSet q).query]
 
 theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplete := by
-  refine .node_pair (le_def.mpr fun σ hσ ↦ ?_) (.leaf _) (.leaf _)
-  rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node] at hσ
-  obtain ⟨h₁, h₂⟩ := hσ
-  have h₁' : σ ∈ (ofSet p).query := h₁
-  have h₂' : σ ∈ (ofSet q).query := h₂
-  show σ ∈ (ofSet (p ∪ q)).query
-  rw [mem_query, mem_ofSet, info_ofSet] at h₁' h₂' ⊢
-  rcases h₁' with h₁' | h₁' <;> rcases h₂' with h₂' | h₂'
-  · exact Or.inl (h₁'.trans Set.subset_union_left)
-  · exact Or.inl (h₁'.trans Set.subset_union_left)
-  · exact Or.inl (h₂'.trans Set.subset_union_right)
-  · exact Or.inr fun w hw ↦ (Set.compl_union p q).symm ▸ ⟨h₁' hw, h₂' hw⟩
+  refine .node_pair ?_ (.leaf _) (.leaf _)
+  simp only [RoseTree.leaf, RoseTree.value_node, query_ofSet]
+  exact le_polar_union inf_le_left inf_le_right
 
 /-! ### The chapter's examples -/
 

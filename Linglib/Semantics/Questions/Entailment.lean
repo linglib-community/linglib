@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Semantics.Questions.Resolution
+public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # Question entailment
@@ -16,7 +17,8 @@ entails exactly the questions all its alternatives resolve (`IsNormal.le_iff_for
 and between normal questions entailment is inclusion of each alternative in an alternative
 (`IsNormal.le_iff_forall_alt_exists_alt`). A polar question entails exactly the questions both
 its answers resolve (`polar_le_iff`), and so no polar question but itself and the tautology
-(`polar_le_polar_iff`).
+(`polar_le_polar_iff`). The propositions a question decides, those whose polar question it
+entails, form a Boolean subalgebra (`Question.decided`).
 
 The entailment of [groenendijk-stokhof-1984], which [roberts-2012] adopts as her (8), asks
 instead that answering the first question yield a complete answer to the second,
@@ -87,6 +89,35 @@ theorem polar_le_polar_iff {p q : Set W} :
   · rw [(Set.compl_subset_compl.mp hpc).antisymm hp]; exact Or.inl rfl
   · rw [(Set.subset_compl_comm.mp hp).antisymm hpc, polar_compl]; exact Or.inl rfl
   · rw [Set.compl_univ_iff.mp (hcover hp hpc), polar_empty]; exact Or.inr rfl
+
+/-- A question that decides two propositions decides their intersection: a state settling
+whether `p` and whether `q` settles whether both. -/
+theorem le_polar_inter {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
+    Q ≤ polar (p ∩ q) := fun σ hσ ↦ by
+  obtain h | h := mem_polar.1 (hp hσ)
+  · obtain h' | h' := mem_polar.1 (hq hσ)
+    · exact mem_polar.2 (.inl (Set.subset_inter h h'))
+    · exact mem_polar.2 (.inr (h'.trans (Set.compl_subset_compl.2 Set.inter_subset_right)))
+  · exact mem_polar.2 (.inr (h.trans (Set.compl_subset_compl.2 Set.inter_subset_left)))
+
+theorem le_polar_union {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
+    Q ≤ polar (p ∪ q) := by
+  rw [← polar_compl, Set.compl_union]
+  exact le_polar_inter (by rwa [polar_compl]) (by rwa [polar_compl])
+
+/-- The propositions a question decides, those whose polar question it entails, form a Boolean
+subalgebra of the propositions. -/
+def decided (Q : Question W) : BooleanSubalgebra (Set W) where
+  carrier := {p | Q ≤ polar p}
+  supClosed' _ hp _ hq := le_polar_union hp hq
+  infClosed' _ hp _ hq := le_polar_inter hp hq
+  compl_mem' hp := by rwa [Set.mem_ofPred_eq, polar_compl]
+  bot_mem' := by
+    change Q ≤ polar ∅
+    rw [polar_empty]
+    exact le_top
+
+@[simp] theorem mem_decided {p : Set W} : p ∈ Q.decided ↔ Q ≤ polar p := Iff.rfl
 
 /-! ### Complete-answer entailment -/
 

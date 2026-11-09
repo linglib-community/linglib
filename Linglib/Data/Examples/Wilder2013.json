@@ -13,8 +13,7 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "root"],
-      ["antecedent", "assertedNegation"]
+      ["environment", "root"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -73,8 +72,7 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "root"],
-      ["antecedent", "assertedNegation"]
+      ["environment", "root"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -93,8 +91,7 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "root"],
-      ["antecedent", "modal"]
+      ["environment", "root"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -113,8 +110,7 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "root"],
-      ["antecedent", "presupposedNegation"]
+      ["environment", "root"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -133,8 +129,7 @@
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
-      ["environment", "root"],
-      ["antecedent", "parallelNegation"]
+      ["environment", "root"]
     ],
     "comment": "The source prints *have lot of patients*.",
     "verified": "page-image"
@@ -739,7 +734,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "CTwh"],
+      ["pattern", "CT"],
       ["environment", "root"],
       ["ctConstituent", "subject"]
     ],
@@ -759,7 +754,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "CTwh"],
+      ["pattern", "CT"],
       ["environment", "root"],
       ["ctConstituent", "object"]
     ],
@@ -779,7 +774,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "believeComplement"]
     ],
     "comment": "The source parenthesizes the VP after *does*.",
@@ -798,7 +792,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "believeComplement"]
     ],
     "comment": "The source parenthesizes the VP after *does*.",
@@ -817,7 +810,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "interrogativeComplement"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
@@ -836,7 +828,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "interrogativeComplement"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
@@ -855,7 +846,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "factiveComplement"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
@@ -874,7 +864,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "itCleft"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*. The source parenthesizes *precisely*.",
@@ -893,7 +882,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "restrictiveRelative"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
@@ -912,7 +900,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "adverbialClause"]
     ],
     "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
@@ -931,7 +918,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pattern", "yesAnswer"],
       ["environment", "root"]
     ],
     "comment": "The source parenthesizes *Yes*.",

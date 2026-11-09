@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.Verbs.Implicative
 # English attitude verbs
 
 This file defines the English clause-embedding verbs of attitude: the factives *know*, *regret*,
-*realize*, *discover* and *notice*, the doxastics *believe*, *think* and *doubt*, the
+*resent*, *realize*, *discover* and *notice*, the doxastics *believe*, *think* and *doubt*, the
 preferentials *want*, *intend*, *decide*, *hope*, *pray*, *expect*, *wish*, *fear*, *dread* and
 *worry*, the clause-embedding predicates of Degen and Tonhauser's experiments, and the
 question-embedding *wonder*, *ask*, *investigate* and *depend on* with the rogative senses of
@@ -21,6 +21,7 @@ question-embedding *wonder*, *ask*, *investigate* and *depend on* with the rogat
 * [klecha-2016]
 * [hawthorne-rothschild-spectre-2016]
 * [koev-2026]
+* [kiparsky-kiparsky-1970]
 -/
 
 @[expose] public section
@@ -51,6 +52,15 @@ def regret : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
+  attitude := some (.preferential .negative)
+  factivity := some .full
+  levinClasses := {LevinClass.admire}
+
+/-- "resent" — emotive factive, presupposes complement is true ([kiparsky-kiparsky-1970]) -/
+def resent : Verb where
+  morphs := [.root "resent"]
+  valency := .ofFrame ArgumentFrame.finiteClause
+  vendlerClass := some .state
   attitude := some (.preferential .negative)
   factivity := some .full
   levinClasses := {LevinClass.admire}
