@@ -20,6 +20,9 @@ and `Ty.combine` lists them all.
 * `Composition.Mode`: the basic modes closed under the meta-modes.
 * `Composition.Mode.eval`: the meaning of a mode, by the operations of the effects.
 * `Composition.Ty.combine`: every mode by which two types combine, the book's `combine`.
+* `Composition.Abstraction`, `Composition.Assignments`: abstraction over an index, and traces.
+* `Composition.Node`, `Composition.effectSelection`: what the semantics reads off a node, and the
+  rules each kind of node admits.
 * `Composition.effectGrammar`: the grammar whose binary rules are the modes.
 
 ## Implementation notes
@@ -256,17 +259,82 @@ def Ty.combine (l r : Ty B) : List (Σ u, Mode basics.Rule l r u) :=
 
 end Combine
 
-/-- The effect-driven grammar over a theory's basic modes: its binary rules are the modes, and it
-has no unary rules. -/
-def effectGrammar (Rule : Ty B → Ty B → Ty B → Type) : Grammar (Ty B) where
-  Unary _ _ := Empty
+/-! ### Binding, islands and the interface with syntax
+
+A trace reads an assignment, and the index a moved phrase leaves abstracts over the value the
+assignment gives it, an operation on what reads assignments. An island keeps only the meanings
+whose types hold no unclosed continuation. So the syntax owes the semantics a bare structure whose
+nodes are plain, islands, or indices. -/
+
+/-- Abstraction over an index: from a computation that reads an assignment of type `g`, the
+function of the value of type `x` that the assignment gives the index. -/
+inductive Abstraction (g x : Ty B) : Ty B → Ty B → Type
+  /-- Abstraction over the index `n`. -/
+  | index (n : ℕ) (b : Ty B) : Abstraction g x (.comp (.R g) b) (.comp (.R g) (x ⇒ b))
+
+/-- How assignments of type `g` hold values of type `x`. -/
+structure Assignments (D : B → Type) (g x : Ty B) where
+  /-- The value an assignment gives an index. -/
+  get : g.Dom D → ℕ → x.Dom D
+  /-- An assignment modified at an index. -/
+  set : g.Dom D → ℕ → x.Dom D → g.Dom D
+
+variable {D : B → Type} {g x : Ty B}
+
+/-- The meaning of abstraction: the body at the assignment modified at the index. -/
+def Abstraction.eval (A : Assignments D g x) : {a b : Ty B} → Abstraction g x a b →
+    a.Dom D → b.Dom D
+  | _, _, .index n _, body => fun i v ↦ body (A.set i n v)
+
+/-- A trace of index `n` reads the value the assignment gives it. -/
+def Assignments.trace (A : Assignments D g x) (n : ℕ) : Σ a : Ty B, a.Dom D :=
+  ⟨.comp (.R g) x, fun i ↦ A.get i n⟩
+
+/-- A type is evaluated when no continuation in it is still to be closed. -/
+def Ty.Evaluated : Ty B → Bool
+  | .comp (.C _) _ => false
+  | .comp _ a => a.Evaluated
+  | .fn _ b => b.Evaluated
+  | _ => true
+
+/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
+index a moved phrase leaves. -/
+inductive Node where
+  /-- A plain node. -/
+  | branch
+  /-- An island for continuations. -/
+  | island
+  /-- The index `n` of a moved phrase. -/
+  | index (n : ℕ)
+  deriving DecidableEq, Repr
+
+/-- The effect-driven grammar over a theory's basic modes and type shifts: its binary rules are
+the modes. -/
+def effectGrammar (Rule : Ty B → Ty B → Ty B → Type) (Shift : Ty B → Ty B → Type) :
+    Grammar (Ty B) where
+  Unary := Shift
   Binary := Mode Rule
 
-/-- The interpretation of the effect-driven grammar, from the meanings of the basic modes. -/
+/-- The interpretation of the effect-driven grammar, from the meanings of the basic modes and of
+the type shifts. -/
 def effectGrammar.interpretation (D : B → Type) {Rule : Ty B → Ty B → Ty B → Type}
-    (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D) :
-    (effectGrammar Rule).Interpretation (Ty.Dom D) where
-  unary s := s.elim
+    {Shift : Ty B → Ty B → Type}
+    (basic : ∀ {l r u : Ty B}, Rule l r u → l.Dom D → r.Dom D → u.Dom D)
+    (shift : ∀ {a b : Ty B}, Shift a b → a.Dom D → b.Dom D) :
+    (effectGrammar Rule Shift).Interpretation (Ty.Dom D) where
+  unary := shift
   binary m := m.eval D basic
+
+/-- The rules a node admits: every mode that combines its daughters, kept at an island only if
+its result is evaluated, and abstraction at an index over what reads assignments. -/
+def effectSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
+    Grammar.Selection (effectGrammar basics.Rule (Abstraction g x)) Node where
+  unary
+    | .index n, .comp (.R i) b =>
+      if h : i = g then [⟨.comp (.R g) (x ⇒ b), h ▸ .index n b⟩] else []
+    | _, _ => []
+  binary
+    | .island, l, r => (Ty.combine basics l r).filter (·.1.Evaluated)
+    | _, l, r => Ty.combine basics l r
 
 end Composition

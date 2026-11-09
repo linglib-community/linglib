@@ -21,6 +21,10 @@ two compositional systems can express.
 * `Composition.Grammar.Hom`: a translation of types and of rules into derived operations.
 * `Composition.Grammar.Simulates`: over one family of domains, every rule of one grammar is a
   derived operation of another.
+* `Composition.Grammar.Skeleton`, `Composition.Grammar.Selection`: a bare structure, and the rules
+  a node admits by its label and its daughters' types.
+* `Composition.Grammar.Skeleton.derivs`, `Composition.Grammar.Skeleton.meanings`: the derivations
+  over a bare structure, and their values.
 
 ## Implementation notes
 
@@ -223,6 +227,66 @@ protected theorem trans {G₃ : Grammar.{u, v} T} {I'' : Interpretation G₃ D}
     exact ⟨d', fun x y ↦ (hd' _).trans (hd x y)⟩
 
 end Simulates
+
+/-! ### Bare structure and type-driven interpretation
+
+What a type-driven semantics asks of the syntax is a bare structure: the words in their
+constituency and order, with a label at each node. A derivation lies over the bare structure got
+by forgetting its types and keeping the label of each rule, and the readings of a bare structure
+are the derivations over it that a selection of rules, by the label of a node and the types of
+its daughters, admits. -/
+
+/-- A bare structure over node labels `N` and leaves `L`. -/
+inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
+  /-- A leaf. -/
+  | leaf (x : L) : Skeleton N L
+  /-- A unary node. -/
+  | unary (n : N) (s : Skeleton N L) : Skeleton N L
+  /-- A binary node. -/
+  | binary (n : N) (s₁ s₂ : Skeleton N L) : Skeleton N L
+
+/-- The rules a node admits, by its label and the types of its daughters. -/
+structure Selection (G : Grammar.{u, v} T) (N : Type v) where
+  /-- The unary rules a node labelled `n` over a daughter of type `a` admits. -/
+  unary : N → (a : T) → List (Σ b, G.Unary a b)
+  /-- The binary rules a node labelled `n` over daughters of types `l` and `r` admits. -/
+  binary : N → (l r : T) → List (Σ u, G.Binary l r u)
+
+namespace Deriv
+
+/-- The bare structure a derivation lies over, given the label of each rule and the leaf each
+typed leaf is. -/
+def skeleton {N : Type v} {L : Type w} (unaryLabel : ∀ {a b : T}, G.Unary a b → N)
+    (binaryLabel : ∀ {a b c : T}, G.Binary a b c → N) (leafOf : ∀ {a : T}, W a → L) {a : T} :
+    Deriv G W a → Skeleton N L
+  | leaf x => .leaf (leafOf x)
+  | unary s d => .unary (unaryLabel s) (d.skeleton unaryLabel binaryLabel leafOf)
+  | binary m d₁ d₂ =>
+    .binary (binaryLabel m) (d₁.skeleton unaryLabel binaryLabel leafOf)
+      (d₂.skeleton unaryLabel binaryLabel leafOf)
+
+end Deriv
+
+namespace Skeleton
+
+variable {N : Type v} {L : Type w}
+
+/-- The derivations over a bare structure that a selection admits, given the typed leaves each
+word may be. -/
+def derivs (sel : Selection G N) (lex : L → List (Σ a, W a)) :
+    Skeleton N L → List (Σ a, Deriv G W a)
+  | leaf x => (lex x).map fun p ↦ ⟨p.1, .leaf p.2⟩
+  | unary n s => (derivs sel lex s).flatMap fun d ↦
+      (sel.unary n d.1).map fun p ↦ ⟨p.1, .unary p.2 d.2⟩
+  | binary n s₁ s₂ => (derivs sel lex s₁).flatMap fun d₁ ↦ (derivs sel lex s₂).flatMap fun d₂ ↦
+      (sel.binary n d₁.1 d₂.1).map fun p ↦ ⟨p.1, .binary p.2 d₁.2 d₂.2⟩
+
+/-- The meanings of a bare structure: the values of the derivations over it. -/
+def meanings (I : Interpretation G D) (sel : Selection G N) (lex : L → List (Σ a, D a)) :
+    Skeleton N L → List (Σ a, D a) :=
+  fun s ↦ (s.derivs (W := D) sel lex).map fun d ↦ ⟨d.1, d.2.eval I id⟩
+
+end Skeleton
 
 end Grammar
 
