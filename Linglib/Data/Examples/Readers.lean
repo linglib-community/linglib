@@ -25,6 +25,8 @@ the reader reads, so that the fit cannot go silently vacuous.
 * `Datum.byLanguage`: the entry of a table under a row's language, keyed by the `Glottocode`
   constants of `Data/Examples/Languages.lean`.
 * `Datum.digits?`, `Datum.nat?`, `Datum.int?`, `Datum.decimal?`: numerals.
+* `Datum.wordsOf`: the words of a text, the target of a link from a row to the lexical entries it
+  prints.
 * `Datum.bool?`: a truth value written `true` or `false`.
 * `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
   the prose give it.
@@ -100,6 +102,19 @@ def digits? (cs : List Char) : Option ℕ :=
   if cs ≠ [] ∧ cs.all Char.isDigit then
     some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
+
+/-- `wordsOf s` is the words of the text `s`, lowercased: its maximal runs of characters other
+than whitespace and punctuation, so that an apostrophe stays inside a word. -/
+def wordsOf (s : String) : List (List Char) :=
+  go s.toList []
+where
+  /-- The words of `cs`, the word in progress being `w` reversed. -/
+  go : List Char → List Char → List (List Char)
+    | [], w => if w = [] then [] else [w.reverse]
+    | c :: cs, w =>
+      if c.isWhitespace ∨ c ∈ ".,;:?!¿¡…–—\"()[]".toList then
+        if w = [] then go cs [] else w.reverse :: go cs []
+      else go cs (c.toLower :: w)
 
 variable (e : Datum) (key : String)
 

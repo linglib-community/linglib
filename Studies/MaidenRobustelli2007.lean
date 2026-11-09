@@ -61,24 +61,11 @@ def links : List (Datum × Link) :=
     (nemmenoInSogno, ⟨neanche, .negation, "nemmeno"⟩), (nessunoEMai, ⟨mai, .nobody, "mai"⟩),
     (senzaIncontrare, ⟨nessuno, .withoutClause, "nessuno"⟩)]
 
-/-- The words of a text, lowercased: its maximal runs of characters other than spaces and
-punctuation. -/
-def words (s : String) : List (List Char) :=
-  go s.toList []
-where
-  /-- The words of `cs`, the current word being `w` reversed. -/
-  go : List Char → List Char → List (List Char)
-    | [], w => if w = [] then [] else [w.reverse]
-    | c :: cs, w =>
-      if c ∈ [' ', ',', '.', ';', ':', '?', '!'] then
-        if w = [] then go cs [] else w.reverse :: go cs []
-      else go cs (c.toLower :: w)
-
 -- each link's word is a word of its example and part of its entry's form, so a link to the wrong
 -- entry fails
 theorem links_attested :
-    ∀ p ∈ links,
-      p.2.word.toList ∈ words p.1.primaryText ∧ p.2.word.toList <:+: p.2.item.form.toList := by
+    ∀ p ∈ links, p.2.word.toList ∈ Datum.wordsOf p.1.primaryText ∧
+      p.2.word.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
 /-- The licensing theory admits the item of every example in the context it stands in. -/
