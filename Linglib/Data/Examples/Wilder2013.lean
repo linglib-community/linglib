@@ -26,7 +26,7 @@ def ex10b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "assertedNegation")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
 def ex11b : Datum :=
   { id := "wilder2013_ex11b"
@@ -65,7 +65,7 @@ def ex51 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "assertedNegation")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
 def ex52 : Datum :=
   { id := "wilder2013_ex52"
@@ -78,7 +78,7 @@ def ex52 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "modal")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
 def ex53 : Datum :=
   { id := "wilder2013_ex53"
@@ -91,7 +91,7 @@ def ex53 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "presupposedNegation")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
 def ex74b : Datum :=
   { id := "wilder2013_ex74b"
@@ -104,7 +104,7 @@ def ex74b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "parallelNegation")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "root")] }
 
 def ex27a : Datum :=
   { id := "wilder2013_ex27a"
@@ -195,7 +195,7 @@ def ex28a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement"), ("sentenceType", "polar")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
 def ex28b : Datum :=
   { id := "wilder2013_ex28b"
@@ -208,7 +208,7 @@ def ex28b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("sentenceType", "polar"), ("ctConstituent", "vp")] }
+    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
 def ex28c : Datum :=
   { id := "wilder2013_ex28c"
@@ -221,7 +221,7 @@ def ex28c : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("sentenceType", "polar"), ("ctConstituent", "subject")] }
+    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "subject")] }
 
 def ex28d : Datum :=
   { id := "wilder2013_ex28d"
@@ -234,7 +234,7 @@ def ex28d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement"), ("sentenceType", "constituent")] }
+    paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
 def ex28e : Datum :=
   { id := "wilder2013_ex28e"
@@ -247,7 +247,7 @@ def ex28e : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("sentenceType", "constituent"), ("ctConstituent", "vp")] }
+    paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
 def ex29a : Datum :=
   { id := "wilder2013_ex29a"
@@ -507,7 +507,7 @@ def ex113b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "CTwh"), ("environment", "root"), ("ctConstituent", "subject")] }
+    paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "subject")] }
 
 def ex114b : Datum :=
   { id := "wilder2013_ex114b"
@@ -520,7 +520,7 @@ def ex114b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "CTwh"), ("environment", "root"), ("ctConstituent", "object")] }
+    paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "object")] }
 
 def ex126a : Datum :=
   { id := "wilder2013_ex126a"
@@ -533,7 +533,7 @@ def ex126a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "believeComplement")] }
+    paperFeatures := [("environment", "believeComplement")] }
 
 def ex126b : Datum :=
   { id := "wilder2013_ex126b"
@@ -546,7 +546,7 @@ def ex126b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "believeComplement")] }
+    paperFeatures := [("environment", "believeComplement")] }
 
 def ex127a : Datum :=
   { id := "wilder2013_ex127a"
@@ -559,7 +559,7 @@ def ex127a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "interrogativeComplement"), ("sentenceType", "polar")] }
+    paperFeatures := [("environment", "interrogativeComplement")] }
 
 def ex127b : Datum :=
   { id := "wilder2013_ex127b"
@@ -572,7 +572,7 @@ def ex127b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "interrogativeComplement"), ("sentenceType", "constituent")] }
+    paperFeatures := [("environment", "interrogativeComplement")] }
 
 def ex127c : Datum :=
   { id := "wilder2013_ex127c"
@@ -585,7 +585,7 @@ def ex127c : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "factiveComplement")] }
+    paperFeatures := [("environment", "factiveComplement")] }
 
 def ex127d : Datum :=
   { id := "wilder2013_ex127d"
@@ -598,7 +598,7 @@ def ex127d : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "itCleft")] }
+    paperFeatures := [("environment", "itCleft")] }
 
 def ex127e : Datum :=
   { id := "wilder2013_ex127e"
@@ -611,7 +611,7 @@ def ex127e : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "restrictiveRelative")] }
+    paperFeatures := [("environment", "restrictiveRelative")] }
 
 def ex127f : Datum :=
   { id := "wilder2013_ex127f"
@@ -624,7 +624,7 @@ def ex127f : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "adverbialClause")] }
+    paperFeatures := [("environment", "adverbialClause")] }
 
 def ex137c : Datum :=
   { id := "wilder2013_ex137c"
@@ -637,7 +637,7 @@ def ex137c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("pattern", "yesAnswer"), ("environment", "root")] }
+    paperFeatures := [("environment", "root")] }
 
 def all : List Datum := [ex10b, ex11b, ex12b, ex51, ex52, ex53, ex74b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27f, ex28a, ex28b, ex28c, ex28d, ex28e, ex29a, ex29b, ex29c, ex30a, ex30b, ex30c, ex30d, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33a, ex33b, ex40b, ex41b, ex44b, ex45b, ex113b, ex114b, ex126a, ex126b, ex127a, ex127b, ex127c, ex127d, ex127e, ex127f, ex137c]
 

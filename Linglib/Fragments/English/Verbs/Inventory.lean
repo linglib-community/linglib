@@ -33,7 +33,7 @@ open ArgumentStructure Aspect
 def verbs : List Verb :=
   [sleep, sneeze, run, arrive, come, eat, kick, aim, give, put,
    weigh, cover, measure, buy, meet, set_, clarify, sell,
-   leave, see, know, regret, realize, discover, notice, stop,
+   leave, see, know, regret, resent, realize, discover, notice, stop,
    quit, start, begin_, continue_, keep, manage, fail, try_,
    persuade, promise, remember, forget, neglect, believe, think, doubt, want,
    intend, decide_, hope, pray, expect, wish, fear, dread,

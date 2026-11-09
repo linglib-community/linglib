@@ -7,6 +7,11 @@ public import Linglib.Semantics.Focus.Marking
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Clause.Basic
+public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Fragments.English.Verbs.Levin
+public import Linglib.Fragments.English.Complementizers
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.English.Particles
 
 /-!
 # Wilder (2013): English emphatic *do*
@@ -30,12 +35,14 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * Congruence is Roberts's, equality of the focus alternatives with the answers. Rooth's
   containment admits a sentence whose further focus answers the constituent question, as the
   object focus of the paper's *Fred did eat the beans* does, so it cannot reject *do* there.
-* A row's contrastive-topic accent is a stimulus column, not composed, as is the form of the
-  question the sentence directly answers. Yes-answers are read apart, as the test the paper
-  compares contrastive-topic sentences with.
-* An environment's sentence type is that of the general clause API. The account excludes a
-  contrastive topic from interrogative clauses, with Büring, so it rejects an interrogative
-  complement on two grounds, the paper citing only the Yes-answer one there.
+* Each row is linked to the fragment entries its sentence stands under: the embedding verb, the
+  complementizer or interrogative word typing its clause, its context's interrogative word, and
+  *yes*. Its clause type is derived from their fields, the sentence types a typer allows and the
+  verb's factivity, and checked against [the paper's heading](##heading_derived); the linked
+  forms are [checked against its words](##links_attested). Clefts, relatives, adverbial clauses
+  and preposing are structural and name no entry.
+* The account excludes a contrastive topic from interrogative clauses, with Büring, so it rejects
+  an interrogative complement on two grounds, the paper citing only the Yes-answer one there.
 * Wilder's star marks a sentence unacceptable with the intonation shown, and the rows record it
   as printed.
 
@@ -44,9 +51,11 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * The Givenness of the unfocused subject and verb phrase, which with existential type shifting
   must find specific antecedents where the clause needs none, and the optionality of *do* in
   contrastive-topic sentences are not formalized.
+* The example schema records no prosody, so the two patterns and the contrastive-topic
+  constituent, which the paper defines by the printed contour, are still read off row labels.
 * The contrast of *believe*-type with factive complements is Hooper and Thompson's assertive versus
-  non-assertive embedding, which the general clause API lacks: its embedding contexts are those of
-  interrogative embedding, so both complements are subordinated declaratives there.
+  non-assertive embedding, read here off the fragment's factivity; the general clause API has no
+  assertive embedding, its embedding contexts being those of interrogative embedding.
 
 ## References
 
@@ -337,60 +346,218 @@ inductive Kind
   | ct (k : Constituent) (a : Answers)
   deriving DecidableEq, Repr
 
-/-- The clause types of sections 3.5 and 3.6: a root clause of a sentence type, a declarative
-complement of the *believe* type, an interrogative complement of a sentence type, a factive
-complement, a cleft, a restrictive relative, an adverbial clause, and a root declarative with a
-preposed object. -/
-inductive Environment
-  | root (t : Clause.SentenceType)
-  | believeComplement
-  | interrogativeComplement (t : Clause.SentenceType)
-  | factiveComplement | itCleft | restrictiveRelative | adverbialClause | objectPreposing
-  deriving DecidableEq, Repr
+/-! ### What a sentence stands in
 
-/-- The sentence type of the clause a sentence stands in, where the clause is typed: a root clause
-or an interrogative complement has its type and a complement clause of a verb is declarative,
-while a cleft, a relative and an adverbial clause are not typed. -/
-def Environment.sentenceType? : Environment → Option Clause.SentenceType
-  | .root t | .interrogativeComplement t => some t
-  | .believeComplement | .factiveComplement | .objectPreposing => some .declarative
-  | .itCleft | .restrictiveRelative | .adverbialClause => none
+Each row is linked to the fragment entries that embed or type its sentence: the verb whose
+complement it is, the complementizer or interrogative word that types its clause, the interrogative
+word of a constituent question its context asks, and the answer particle it opens with. The clause
+types of sections 3.5 and 3.6 are derived from these, and the paper's heading for a row is a
+target. -/
+
+/-- What types a clause: a complementizer, or the interrogative word of a *wh*-clause. -/
+inductive Typer
+  | complementizer (c : Complementizer)
+  | wh (w : InterrogativePronoun)
+
+/-- The sentence types a typer allows: those its complementizer types, or the constituent
+interrogative. -/
+def Typer.types : Typer → Clause.Selection
+  | .complementizer c => c.types
+  | .wh _ => .only .constituent
+
+/-- What a sentence stands in: a root clause with its interrogative word where it has one, a root
+declarative with a preposed object, the complement of a verb with what types it, a cleft, a
+restrictive relative, or an adverbial clause. -/
+inductive Host
+  | root (wh : Option InterrogativePronoun)
+  | preposed
+  | complement (v : English.Verbs.Verb) (t : Typer)
+  | cleft | relative | adverbial
+
+/-- The clause types of sections 3.5 and 3.6 as the account reads them: a root clause or an
+interrogative complement with the sentence types of its clause, a declarative complement of a verb
+that is not a full factive or of one that is, a cleft, a restrictive relative, an adverbial
+clause, and a root declarative with a preposed object. -/
+inductive Environment
+  | root (s : Clause.Selection)
+  | believeComplement | factiveComplement
+  | interrogativeComplement (s : Clause.Selection)
+  | itCleft | restrictiveRelative | adverbialClause | objectPreposing
+  deriving DecidableEq
+
+/-- The environment of a host: an interrogative word types a root clause as a constituent
+question, a typer types a complement as interrogative or declarative, and a declarative
+complement is factive when its verb is a full factive. -/
+def Host.environment : Host → Environment
+  | .root none => .root (.only .declarative)
+  | .root (some _) => .root (.only .constituent)
+  | .preposed => .objectPreposing
+  | .complement v t =>
+    if t.types.IsInterrogative then .interrogativeComplement t.types
+    else if v.factivity = some .full then .factiveComplement else .believeComplement
+  | .cleft => .itCleft
+  | .relative => .restrictiveRelative
+  | .adverbial => .adverbialClause
 
 /-- The clause a sentence stands in is interrogative. -/
-def Environment.IsInterrogative (e : Environment) : Prop :=
-  ∃ t ∈ e.sentenceType?, t.IsInterrogative
+def Environment.IsInterrogative : Environment → Prop
+  | .root s | .interrogativeComplement s => s.IsInterrogative
+  | _ => False
 
-instance : DecidablePred Environment.IsInterrogative := fun e ↦
-  inferInstanceAs (Decidable (∃ t ∈ e.sentenceType?, _))
+instance : DecidablePred Environment.IsInterrogative := fun e ↦ by
+  cases e <;> unfold Environment.IsInterrogative <;> infer_instance
 
-/-- The environment a row names, a *wh*-subject question being a root constituent question and an
-interrogative complement carrying its sentence type. -/
-def environment? (ex : Datum) : Option Environment :=
-  match ex.feature? "environment" with
-  | some "root" => some (.root .declarative)
-  | some "whSubjectQuestion" => some (.root .constituent)
-  | some "interrogativeComplement" => .interrogativeComplement <$>
-      ex.parse? "sentenceType" [("polar", .polar), ("constituent", .constituent)]
-  | some e => [("believeComplement", Environment.believeComplement),
-      ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
-      ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
-      ("objectPreposing", .objectPreposing)].lookup e
-  | none => none
+/-- The clause type under which the paper gives a row: its headings for (27)–(33) and its
+descriptions of the others. -/
+inductive Heading
+  | root | believeComplement | interrogativeComplement | factiveComplement | itCleft
+  | restrictiveRelative | adverbialClause | whSubjectQuestion | objectPreposing
+  deriving DecidableEq, Repr
 
-/-- The sentence and environment of an emphatic *do* row. -/
+/-- The paper's heading of an environment. -/
+def Environment.heading : Environment → Heading
+  | .root s => if s.IsInterrogative then .whSubjectQuestion else .root
+  | .believeComplement => .believeComplement
+  | .factiveComplement => .factiveComplement
+  | .interrogativeComplement _ => .interrogativeComplement
+  | .itCleft => .itCleft
+  | .restrictiveRelative => .restrictiveRelative
+  | .adverbialClause => .adverbialClause
+  | .objectPreposing => .objectPreposing
+
+/-- The heading a row records. -/
+def heading? (ex : Datum) : Option Heading :=
+  ex.parse? "environment" [("root", .root), ("believeComplement", .believeComplement),
+    ("interrogativeComplement", .interrogativeComplement),
+    ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
+    ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
+    ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
+
+/-- A row's link to the fragment: what its sentence stands in, the interrogative word of the
+constituent question its context asks, and the answer particle it opens with. -/
+structure Link where
+  host : Host
+  contextWh : Option InterrogativePronoun := none
+  particle : Option Particle := none
+
+namespace Host
+
+open English
+
+/-- The complement of a verb introduced by *that*. -/
+def that (v : Verbs.Verb) : Host := .complement v (.complementizer Complementizers.that)
+
+/-- The complement of a verb introduced by *if*. -/
+def if_ (v : Verbs.Verb) : Host := .complement v (.complementizer Complementizers.if_)
+
+/-- The complement of a verb typed by *which*. -/
+def which (v : Verbs.Verb) : Host := .complement v (.wh Pronouns.which)
+
+end Host
+
+/-- A Yes-answer standing in the host. -/
+def Link.yes (h : Host) : Link := { host := h, particle := some English.PolarityParticles.yes }
+
+open English Examples in
+/-- The rows with the items their sentences stand under. -/
+def links : List (Datum × Link) :=
+  [(ex10b, ⟨.root none, none, none⟩), (ex11b, ⟨.root none, none, none⟩),
+    (ex12b, ⟨.root none, none, none⟩), (ex51, ⟨.root none, none, none⟩),
+    (ex52, ⟨.root none, none, none⟩), (ex53, ⟨.root none, none, none⟩),
+    (ex74b, ⟨.root none, none, none⟩),
+    (ex27a, ⟨Host.that Verbs.believe, none, none⟩), (ex27b, ⟨Host.that Verbs.believe, none, none⟩),
+    (ex27c, ⟨Host.that Verbs.believe, none, none⟩), (ex27d, ⟨Host.that Verbs.appear, none, none⟩),
+    (ex27e, ⟨Host.that Verbs.appear, none, none⟩), (ex27f, ⟨Host.that Verbs.seem, none, none⟩),
+    (ex28a, ⟨Host.if_ Verbs.wonder, none, none⟩), (ex28b, ⟨Host.if_ Verbs.wonder, none, none⟩),
+    (ex28c, ⟨Host.if_ Verbs.know, none, none⟩), (ex28d, ⟨Host.which Verbs.ask, none, none⟩),
+    (ex28e, ⟨Host.which Verbs.ask, none, none⟩),
+    (ex29a, ⟨Host.that Verbs.resent, none, none⟩), (ex29b, ⟨Host.that Verbs.resent, none, none⟩),
+    (ex29c, ⟨Host.that Verbs.resent, none, none⟩),
+    (ex30a, ⟨.cleft, none, none⟩), (ex30b, ⟨.cleft, none, none⟩), (ex30c, ⟨.cleft, none, none⟩),
+    (ex30d, ⟨.cleft, none, none⟩),
+    (ex31a, ⟨.relative, none, none⟩), (ex31b, ⟨.relative, none, none⟩),
+    (ex31c, ⟨.relative, none, none⟩), (ex31d, ⟨.relative, none, none⟩),
+    (ex32a, ⟨.adverbial, none, none⟩), (ex32b, ⟨.adverbial, none, none⟩),
+    (ex33a, ⟨.adverbial, none, none⟩), (ex33b, ⟨.adverbial, none, none⟩),
+    (ex40b, ⟨.root (some Pronouns.which), none, none⟩),
+    (ex41b, ⟨.root (some Pronouns.which), none, none⟩),
+    (ex44b, ⟨.preposed, none, none⟩), (ex45b, ⟨.preposed, none, none⟩),
+    (ex113b, ⟨.root none, some Pronouns.what, none⟩),
+    (ex114b, ⟨.root none, some Pronouns.who, none⟩),
+    (ex126a, Link.yes (Host.that Verbs.believe)), (ex126b, Link.yes (Host.that Verbs.appear)),
+    (ex127a, Link.yes (Host.if_ Verbs.wonder)), (ex127b, Link.yes (Host.which Verbs.ask)),
+    (ex127c, Link.yes (Host.that Verbs.resent)), (ex127d, Link.yes .cleft),
+    (ex127e, Link.yes .relative),
+    (ex127f, Link.yes .adverbial), (ex137c, Link.yes (.root none))]
+
+/-- The link of a row. -/
+def link? (ex : Datum) : Option Link := (links.find? (·.1.id = ex.id)).map (·.2)
+
+-- Every row is linked, in the order of the data.
+theorem links_ids : links.map (·.1.id) = Examples.all.map (·.id) := by decide
+
+/-- The words of a text, lowercased: its maximal runs of letters and apostrophes. -/
+def words (s : String) : List (List Char) :=
+  go (s.toList.map Char.toLower) []
+where
+  /-- The words of `cs`, the current word being `w` reversed. -/
+  go : List Char → List Char → List (List Char)
+    | [], w => if w = [] then [] else [w.reverse]
+    | c :: cs, w =>
+      if c.isAlpha || c = '\'' then go cs (c :: w)
+      else if w = [] then go cs [] else w.reverse :: go cs []
+
+/-- The written forms of a typer: the morphs of a complementizer, or an interrogative word. -/
+def Typer.forms : Typer → List String
+  | .complementizer c => c.morphs.map (·.form)
+  | .wh w => [w.form]
+
+/-- The items a host names occur among the words: a morph of the verb begins a word and the forms
+that type its complement are words, or the interrogative word of a root question is a word. -/
+def Host.Attested : Host → List (List Char) → Prop
+  | .root (some w), ws => w.form.toList ∈ ws
+  | .complement v t, ws =>
+    (∃ m ∈ v.morphs, ∃ x ∈ ws, m.form.toList <+: x) ∧ ∀ f ∈ t.forms, f.toList ∈ ws
+  | _, _ => True
+
+instance (h : Host) (ws : List (List Char)) : Decidable (h.Attested ws) := by
+  rcases h with (_ | w) | _ | ⟨v, t⟩ | _ | _ | _ <;> unfold Host.Attested <;> infer_instance
+
+/-- The items a link names occur in the row: those of its host and its answer particle in the
+sentence, and the interrogative word of its context's question in the context. -/
+def Link.Attested (l : Link) (ex : Datum) : Prop :=
+  l.host.Attested (words ex.primaryText) ∧
+    (∀ p ∈ l.particle, p.form.toList ∈ words ex.primaryText) ∧
+    ∀ w ∈ l.contextWh, w.form.toList ∈ words ex.context
+
+instance (l : Link) (ex : Datum) : Decidable (l.Attested ex) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+-- Each row's link is attested in its text, so a link to the wrong verb or typer fails.
+theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
+
+-- The clause type derived from a row's items is the paper's heading for it.
+theorem heading_derived : ∀ p ∈ links, heading? p.1 = some p.2.host.environment.heading := by
+  decide
+
+/-- The sentence and environment of an emphatic *do* row: its pattern and contrastive-topic
+constituent, the form of the question it answers by the interrogative word of its context, and
+the environment its items derive. -/
 def sentence? (ex : Datum) : Option (Kind × Environment) := do
-  let ct (a : Answers) : Option Kind := (Kind.ct · a) <$> ex.parse? "ctConstituent"
-    [("subject", .subject), ("vp", .vp), ("object", .object)]
+  let l ← link? ex
+  let a : Answers := if l.contextWh.isSome then .constituent else .polar
+  let k := ex.parse? "ctConstituent" [("subject", .subject), ("vp", .vp), ("object", .object)]
   let kind ← match ex.feature? "pattern" with
     | some "VF" => some .vf
-    | some "CT" => ct .polar
-    | some "CTwh" => ct .constituent
+    | some "CT" => (Kind.ct · a) <$> k
     | _ => none
-  return (kind, ← environment? ex)
+  return (kind, l.host.environment)
 
-/-- The environment of a row judging a Yes-answer to a polar question. -/
-def yesAnswer? (ex : Datum) : Option Environment :=
-  if ex.feature? "pattern" = some "yesAnswer" then environment? ex else none
+/-- The environment of a row that opens with *yes*, a Yes-answer to a polar question. -/
+def yesAnswer? (ex : Datum) : Option Environment := do
+  let l ← link? ex
+  guard (l.particle = some English.PolarityParticles.yes)
+  return l.host.environment
 
 /-- The paper rejects a Yes-answer to a polar question in the environment, (127). -/
 def RejectsYesAnswer (e : Environment) : Prop :=

@@ -19,7 +19,8 @@ several; singular *they* bears no gender feature, where *he*, *she* and *it* eac
 personal pronoun has a reflexive in *-self* or *-selves*, singular *they* having *themself*
 beside *themselves*. The reciprocals *each other* and *one another* are two-part noun phrases
 rather than dedicated pronouns. The interrogatives ask about a person, a thing, a place, a time
-or a manner. The demonstratives contrast a proximal with a distal form in each number.
+or a manner, or choose among the referents of a noun. The demonstratives contrast a proximal with
+a distal form in each number.
 
 ## Main definitions
 
@@ -234,8 +235,11 @@ def when_ : InterrogativePronoun := { form := "when", ontology := .time }
 /-- The interrogative *how*, for manners. -/
 def how : InterrogativePronoun := { form := "how", ontology := .manner }
 
+/-- The interrogative *which*, a determiner, for a choice among the referents of its noun. -/
+def which : InterrogativePronoun := { form := "which", ontology := .determiner }
+
 /-- The interrogative pronoun inventory. -/
-def interrogatives : Finset InterrogativePronoun := {who, whom, what, where_, when_, how}
+def interrogatives : Finset InterrogativePronoun := {who, whom, what, where_, when_, how, which}
 
 /-! ### Demonstrative pronouns -/
 
