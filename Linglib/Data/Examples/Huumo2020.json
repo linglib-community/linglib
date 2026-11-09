@@ -1,0 +1,675 @@
+[
+  {
+    "id": "huumo2020_17",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin lehden tunnissa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "lehde-n",
+        "paper-ACC"
+      ],
+      [
+        "tunni-ssa",
+        "hour-INE"
+      ]
+    ],
+    "translation": "I read the paper in an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "acc"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_17_for",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin lehden tunnin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "lehde-n",
+        "paper-ACC"
+      ],
+      [
+        "tunni-n",
+        "hour-ACC"
+      ]
+    ],
+    "translation": "I read the paper for an hour.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "acc"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "The variant the example marks in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_18",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Katsoin televisiota tunnin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Katso-i-n",
+        "watch-PST-1SG"
+      ],
+      [
+        "televisio-ta",
+        "television-PAR"
+      ],
+      [
+        "tunni-n",
+        "hour-ACC"
+      ]
+    ],
+    "translation": "I watched TV for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_18_in",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Katsoin televisiota tunnissa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Katso-i-n",
+        "watch-PST-1SG"
+      ],
+      [
+        "televisio-ta",
+        "television-PAR"
+      ],
+      [
+        "tunni-ssa",
+        "hour-INE"
+      ]
+    ],
+    "translation": "I watched TV in an hour.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "The variant the example marks in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_19",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(19)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin lehteä tunnin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "lehte-ä",
+        "paper-PAR"
+      ],
+      [
+        "tunni-n",
+        "hour-ACC"
+      ]
+    ],
+    "translation": "I read the paper for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_27",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(27)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Söin paljon omenoita tunnissa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Sö-i-n",
+        "eat-PST-1SG"
+      ],
+      [
+        "paljon",
+        "a.lot.of"
+      ],
+      [
+        "omeno-i-ta",
+        "apple-PL-PAR"
+      ],
+      [
+        "tunni-ssa",
+        "hour-INE"
+      ]
+    ],
+    "translation": "I ate a lot of apples in an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "mass"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_27_for",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(27)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Söin paljon omenoita tunnin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Sö-i-n",
+        "eat-PST-1SG"
+      ],
+      [
+        "paljon",
+        "a.lot.of"
+      ],
+      [
+        "omeno-i-ta",
+        "apple-PL-PAR"
+      ],
+      [
+        "tunni-n",
+        "hour-ACC"
+      ]
+    ],
+    "translation": "I ate a lot of apples for an hour.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "mass"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "The variant the example marks in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_28",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(28)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Söin omenoita tunnin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Sö-i-n",
+        "eat-PST-1SG"
+      ],
+      [
+        "omeno-i-ta",
+        "apple-PL-PAR"
+      ],
+      [
+        "tunni-n",
+        "hour-ACC"
+      ]
+    ],
+    "translation": "I ate apples for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_28_in",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(28)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Söin omenoita tunnissa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Sö-i-n",
+        "eat-PST-1SG"
+      ],
+      [
+        "omeno-i-ta",
+        "apple-PL-PAR"
+      ],
+      [
+        "tunni-ssa",
+        "hour-INE"
+      ]
+    ],
+    "translation": "I ate apples in an hour.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "none"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "The variant the example marks in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_34",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(34)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin useaa kirjaa päivässä.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "usea-a",
+        "a.number.of-SG.PAR"
+      ],
+      [
+        "kirja-a",
+        "book-SG.PAR"
+      ],
+      [
+        "päivä-ssä",
+        "day-INE"
+      ]
+    ],
+    "translation": "I read from a number of books in one day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "number"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_35",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin useaa kirjaa päivän.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "useaa",
+        "a.number.of-SG.PAR"
+      ],
+      [
+        "kirja-a",
+        "book-SG.PAR"
+      ],
+      [
+        "päivä-n",
+        "day-ACC"
+      ]
+    ],
+    "translation": "I read from a number of books, for one day each.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "number"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_36",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(36)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin usean kirjan päivän.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "usea-n",
+        "a.number.of-SG.ACC"
+      ],
+      [
+        "kirja-n",
+        "book-SG.ACC"
+      ],
+      [
+        "päivä-n",
+        "day-ACC"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "number"
+      ],
+      [
+        "case",
+        "acc"
+      ],
+      [
+        "adverbial",
+        "measure"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_37",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(37)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "Luin usean kirjan päivässä.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lu-i-n",
+        "read-PST-1SG"
+      ],
+      [
+        "usea-n",
+        "a.number.of-SG.ACC"
+      ],
+      [
+        "kirja-n",
+        "book-SG.ACC"
+      ],
+      [
+        "päivä-ssä",
+        "day-INE"
+      ]
+    ],
+    "translation": "I read a number of books (completely), all in one day; each in one day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "number"
+      ],
+      [
+        "case",
+        "acc"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "huumo2020_38",
+    "source": {
+      "bibkey": "huumo-2020",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "selailen päivässä useaa blogia",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "selaile-n",
+        "browse-PRES.1SG"
+      ],
+      [
+        "päivä-ssä",
+        "day-INE"
+      ],
+      [
+        "usea-a",
+        "a.number.of-SG.PAR"
+      ],
+      [
+        "blogi-a",
+        "blog-SG.PAR"
+      ]
+    ],
+    "translation": "I browse a number of blogs in a day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "quantifier",
+        "number"
+      ],
+      [
+        "case",
+        "part"
+      ],
+      [
+        "adverbial",
+        "timeFrame"
+      ]
+    ],
+    "comment": "An attested Internet example; the context brackets it: (Oikein lukemalla luen vain muutamaa blogia, mutta) ... (ja laitan ylös mielenkiintoiset postaukset myöhemmin luettaviksi.)",
+    "verified": "page-image",
+    "method": "corpus"
+  }
+]
