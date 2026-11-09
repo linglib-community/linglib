@@ -55,6 +55,10 @@ instance : BoundedOrder Obligatoriness where
   top := .obligatory
   le_top o := by cases o <;> decide
 
+@[simp] theorem bot_eq_excluded : (⊥ : Obligatoriness) = .excluded := rfl
+
+@[simp] theorem top_eq_obligatory : (⊤ : Obligatoriness) = .obligatory := rfl
+
 /-- The values the presence of the element may take: presence where it is obligatory, absence
 where it is excluded, either where it is optional. -/
 def allowed : Obligatoriness → Finset Bool
@@ -134,6 +138,12 @@ variable {μ} {c : C}
 
 @[simp] theorem mem_possible : c ∈ possible μ ↔ μ c ≠ .excluded := by
   change _ ≤ μ c ↔ _; cases μ c <;> decide
+
+instance : DecidablePred (· ∈ required μ) :=
+  fun c ↦ inferInstanceAs (Decidable (Obligatoriness.obligatory ≤ μ c))
+
+instance : DecidablePred (· ∈ possible μ) :=
+  fun c ↦ inferInstanceAs (Decidable (Obligatoriness.optional ≤ μ c))
 
 theorem required_subset_possible : required μ ⊆ possible μ :=
   fun _ h ↦ le_trans (show Obligatoriness.optional ≤ .obligatory by decide) h
