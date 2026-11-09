@@ -47,7 +47,7 @@ declension](##SerboCroat.not_morphological).
   §8.3 divides the attributive position into the possessive and the rest (`FinePosition`).
 * Number resolution counts the conjuncts, which no resolution rule can
   (`Slovene.numberResolve_ne_resolve`), so it is stated directly and matched to the substrate's
-  `Number.System.resolve`.
+  `Number.resolve`.
 * The judgments are read off the book's glosses: a coordination's target form and its
   conjuncts' genders from their category labels, its nouns by the fragment nouns their glosses
   name, the agreements of stacked targets from their labels. Rows still name the hybrid, target
@@ -396,23 +396,23 @@ open _root_.Romanian.Gender
 
 -- Figure 6.1
 theorem crossed :
-    Gender.Crossed (Value.adjForm · (numberSystem.value .singular))
-      (Value.adjForm · (numberSystem.value .plural)) := by
+    Gender.Crossed (Value.adjForm · ⟨.singular, by decide⟩)
+      (Value.adjForm · ⟨.plural, by decide⟩) := by
   decide
 
 theorem card_range_adjForm :
     Fintype.card (Set.range Value.adjForm) = 3 ∧
-      Fintype.card (Gender.targetGenders Value.adjForm (numberSystem.value .singular)) = 2 ∧
-        Fintype.card (Gender.targetGenders Value.adjForm (numberSystem.value .plural)) = 2 := by
+      Fintype.card (Gender.targetGenders Value.adjForm ⟨.singular, by decide⟩) = 2 ∧
+        Fintype.card (Gender.targetGenders Value.adjForm ⟨.plural, by decide⟩) = 2 := by
   decide
 
 /-- A row's noun, the number its copula shows, *e* 'is' or *sînt* 'are', and the ending of its
 adjective *bun* 'good'. -/
 def adjectiveRow? (row : Datum) :
-    Option (_root_.Romanian.Gender.Noun × numberSystem.values × AdjForm) := do
+    Option (_root_.Romanian.Gender.Noun × numberSystem × AdjForm) := do
   let n ← row.parse? "noun" (allNouns.map fun n ↦ (n.form, n))
-  let v ← row.surfaceTokens.findSome? (List.lookup · [("e", numberSystem.value .singular),
-    ("sînt", numberSystem.value .plural)])
+  let v ← row.surfaceTokens.findSome? (List.lookup · [("e", ⟨.singular, by decide⟩),
+    ("sînt", ⟨.plural, by decide⟩)])
   let f ← row.surfaceTokens.findSome? (List.lookup · [("bun", AdjForm.zero), ("bună", .ă),
     ("buni", .i), ("bune", .e)])
   pure (n, v, f)
@@ -849,8 +849,8 @@ theorem resolve_personRules_pair :
 /-- By the number resolution rules of §9.1.2, two singular conjuncts alone take the dual where
 the system has one, any other coordination with a non-plural conjunct takes the plural, and one
 of plurals alone resolves nothing, so that gender resolution is not triggered. -/
-def numberResolve (ns : Number.System) (cs : List Number) : Option Number :=
-  if .dual ∈ ns.values ∧ cs = [.singular, .singular] then some .dual
+def numberResolve (ns : Finset Number) (cs : List Number) : Option Number :=
+  if .dual ∈ ns ∧ cs = [.singular, .singular] then some .dual
   else if ∀ c ∈ cs, c = .plural then none else some .plural
 
 namespace Tamil
@@ -936,20 +936,21 @@ end French
 namespace Slovene
 
 /-- The numbers of Slovene. -/
-def numbers : Number.System := { values := {.singular, .dual, .plural} }
+def numbers : Finset Number := {.singular, .dual, .plural}
 
 theorem resolve_numbers :
-    ∀ a b, numbers.resolve a b = if a = .singular ∧ b = .singular then .dual else .plural := by
+    ∀ a b,
+      Number.resolve numbers a b = if a = .singular ∧ b = .singular then .dual else .plural := by
   decide
 
 -- p. 264
 theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
     (h : ∃ x ∈ c :: d :: cs, x ≠ .plural) :
-    numberResolve numbers (c :: d :: cs) = some ((d :: cs).foldl numbers.resolve c) := by
-  have hpl : ∀ l : List Number, l.foldl numbers.resolve .plural = .plural := fun l ↦ by
+    numberResolve numbers (c :: d :: cs) = some ((d :: cs).foldl (Number.resolve numbers) c) := by
+  have hpl : ∀ l : List Number, l.foldl (Number.resolve numbers) .plural = .plural := fun l ↦ by
     induction l with
     | nil => rfl
-    | cons x l ih => simpa [resolve_numbers] using ih
+    | cons x l ih => simpa using ih
   have hall : ¬ ∀ x ∈ c :: d :: cs, x = .plural := fun hp ↦ by
     obtain ⟨x, hx, hne⟩ := h; exact hne (hp x hx)
   by_cases hsg : c = .singular ∧ d = .singular ∧ cs = []

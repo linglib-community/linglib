@@ -195,13 +195,13 @@ theorem not_isSublistClosed_wellFormed : ¬ Language.IsSublistClosed {es | WellF
 /-! ### Realization -/
 
 /-- Finnish nominals distinguish the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The endings of the case `c` in the number `num`, where in the plural the genitive is -en, or
 -den or -tten (§13.1.2), the accusative -dät (§13.3.1), the partitive -A or -tA and the illative
 -hVn or -siin. -/
-def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
-  numberSystem.elim (Declension.endings c)
+def caseEndings (num : numberSystem) (c : Case) : List (List Segment) :=
+  Number.elim numberSystem (Declension.endings c)
     (match c with
     | .gen => [[e, n], [d, e, n], [t, t, e, n]]
     | .acc => [[d, ä, t]]
@@ -210,13 +210,13 @@ def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
     | c => Declension.endings c) (n := num)
 
 theorem not_injective_caseEndings_singular :
-    ¬ Function.Injective (caseEndings (numberSystem.value .singular)) := by
+    ¬ Function.Injective (caseEndings ⟨.singular, by decide⟩) := by
   decide
 
 /-- The endings of the two numbers separate the cases, the plural parting the genitive and the
 instructive, which are both -n in the singular. -/
 theorem injective_caseEndings : Function.Injective fun c ↦
-    (caseEndings (numberSystem.value .singular) c, caseEndings (numberSystem.value .plural) c) := by
+    (caseEndings ⟨.singular, by decide⟩ c, caseEndings ⟨.plural, by decide⟩ c) := by
   decide
 
 /-- Before a possessive ending the translative -ksi is -kse, and a final consonant is dropped. -/
@@ -248,14 +248,14 @@ instance (es : List (Σ σ, Exponent σ)) : Decidable (BeforePossessive es) :=
 /-- The underlying forms of the word `w` followed by the endings `es`, where `num` is the number
 the preceding endings mark and `c` the case of the last case ending. The plural -i is -j between two
 vowels (§5.4). -/
-def continuations (w : List Segment) (num : numberSystem.values) (c : Option Case) :
+def continuations (w : List Segment) (num : numberSystem) (c : Option Case) :
     List (Σ σ, Exponent σ) → List (List Segment)
   | [] => [w]
   | ⟨_, .infinitive i⟩ :: es => continuations (i.base w) num c es
   | ⟨_, .nominativePlural⟩ :: es =>
-    continuations (w ++ if BeforePossessive es then [] else [t]) (numberSystem.value .plural) c es
+    continuations (w ++ if BeforePossessive es then [] else [t]) ⟨.plural, by decide⟩ c es
   | ⟨_, .plural⟩ :: es =>
-    (continuations (w ++ [i]) (numberSystem.value .plural) c es).map fun x ↦
+    (continuations (w ++ [i]) ⟨.plural, by decide⟩ c es).map fun x ↦
       if (∃ y ∈ w.getLast?, y.IsVowel) ∧ ∃ y ∈ x[w.length + 1]?, y.IsVowel then x.set w.length j
       else x
   | ⟨_, .case c'⟩ :: es =>
@@ -267,22 +267,22 @@ def continuations (w : List Segment) (num : numberSystem.values) (c : Option Cas
 
 /-- The surface forms of the stem `w` with the endings `es`. -/
 def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Segment) :=
-  (continuations w (numberSystem.value .singular) none es).map surface
+  (continuations w ⟨.singular, by decide⟩ none es).map surface
 
 /-- The endings of the number `num` and the case `c`: the case ending, after the plural -i in the
 plural, and in the nominative plural the -t that realizes both. -/
-def endings (num : numberSystem.values) (c : Case) : List (Σ σ, Exponent σ) :=
-  numberSystem.elim [⟨_, .case c⟩]
+def endings (num : numberSystem) (c : Case) : List (Σ σ, Exponent σ) :=
+  Number.elim numberSystem [⟨_, .case c⟩]
     (if c = .nom then [⟨_, .nominativePlural⟩] else [⟨_, .plural⟩, ⟨_, .case c⟩]) (n := num)
 
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
 house'. -/
 theorem continuations_third :
-    continuations [] (numberSystem.value .singular) none [⟨_, .case .ine⟩,
+    continuations [] ⟨.singular, by decide⟩ none [⟨_, .case .ine⟩,
                                  ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[s, s, A, V, n], [s, s, A, n, s, A]] ∧
-      continuations [] (numberSystem.value .singular) none [⟨_, .case .ill⟩,
+      continuations [] ⟨.singular, by decide⟩ none [⟨_, .case .ill⟩,
                                    ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[V, n, s, A], [h, V, n, s, A], [s, e, e, n, s, A]] := by
   decide

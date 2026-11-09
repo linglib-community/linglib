@@ -121,7 +121,7 @@ instance : DecidablePred MarksClusivity := fun p ↦
 
 The standard tripartition conflates the clusives into the general first person, so a system
 without clusivity gives inclusive and exclusive referents one value, as a system without a dual
-gives a dual referent the plural (`Number.System.coarsen`). -/
+gives a dual referent the plural (`Number.coarsen`). -/
 
 /-- `coarsen` conflates the clusives into the general first person and keeps every other
 value. -/

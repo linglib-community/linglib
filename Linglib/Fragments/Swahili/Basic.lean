@@ -116,15 +116,15 @@ def Gender.pluralClass : Gender → NounClass
   | .genderE => .cl10
 
 /-- Swahili distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The class of a gender in a number. -/
-def Gender.class (g : Gender) : numberSystem.values → NounClass :=
-  numberSystem.elim g.singularClass g.pluralClass
+def Gender.class (g : Gender) : numberSystem → NounClass :=
+  Number.elim numberSystem g.singularClass g.pluralClass
 
 /-- Subject agreement, singular and plural, distinguishes the five genders. -/
 theorem Gender.faithful_subjPrefix :
-    Gender.Faithful fun (g : Gender) (n : numberSystem.values) ↦ subjPrefix (g.class n) := by
+    Gender.Faithful fun (g : Gender) (n : numberSystem) ↦ subjPrefix (g.class n) := by
   decide
 
 /-! ### Subject prefixes of the persons -/

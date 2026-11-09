@@ -164,16 +164,15 @@ def facultativeValues (c : Choices) : List Number :=
   c.divisions.rtake c.facultative
 
 /-- The substrate's system. -/
-def toSystem (c : Choices) : Number.System :=
-  { values := c.values.toFinset, hasGeneral := decide (c.general ≠ .none),
-    facultative := c.facultativeValues.toFinset }
+def toSystem (c : Choices) : Finset Number :=
+  c.values.toFinset
 
 theorem facultativeValues_suffix (c : Choices) : c.facultativeValues <:+ c.divisions :=
   List.rtake_suffix _ _
 
-theorem toSystem_determinateInitial (c : Choices) : c.toSystem.DeterminateInitial := by
+theorem toSystem_determinateInitial (c : Choices) : Number.DeterminateInitial c.toSystem := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.DeterminateInitial
+  change Number.DeterminateInitial (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 theorem paucal_mem_facultativeValues_of_dual_mem (c : Choices)
@@ -248,14 +247,14 @@ def japanese : Choices := { general := .withSingular }
 def hamer : Choices := { greaterPlural := true, general := .separate }
 
 /-- Pirahã has no number at all. -/
-def piraha : Number.System := { values := ∅ }
+def piraha : Finset Number := ∅
 
 /-- Rembarrnga has minimal, unit augmented and augmented, Table 5.18. -/
-def rembarrnga : Number.System :=
-  { values := {.minimal, .unitAugmented, .augmented} }
+def rembarrnga : Finset Number :=
+  {.minimal, .unitAugmented, .augmented}
 
 /-- Ilocano has minimal and augmented, Table 5.20. -/
-def ilocano : Number.System := { values := {.minimal, .augmented} }
+def ilocano : Finset Number := {.minimal, .augmented}
 
 /-! ### The Animacy Hierarchy (chapters 3 and 4) -/
 
@@ -539,7 +538,7 @@ def relative (p : Person) (n : ℕ) : Number :=
 
 theorem unitAugmented_one_more :
     relative .firstInclusive 3 = relative .firstExclusive 2 ∧
-      Number.fromCard 3 ≠ Number.fromCard 2 := by
+      Number.fromCard? 3 ≠ Number.fromCard? 2 := by
   decide
 
 end Rembarrnga
@@ -547,17 +546,17 @@ end Rembarrnga
 namespace Hopi
 
 /-- The pronoun and the verb each mark the singular against the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The pronoun sets the singular against dual and plural, (40) to (42). -/
-def pronounNumber : Number → numberSystem.values
-  | .singular => (numberSystem.value .singular)
-  | _ => (numberSystem.value .plural)
+def pronounNumber : Number → numberSystem
+  | .singular => ⟨.singular, by decide⟩
+  | _ => ⟨.plural, by decide⟩
 
 /-- The verb sets singular and dual against the plural. -/
-def verbNumber : Number → numberSystem.values
-  | .plural => (numberSystem.value .plural)
-  | _ => (numberSystem.value .singular)
+def verbNumber : Number → numberSystem
+  | .plural => ⟨.plural, by decide⟩
+  | _ => ⟨.singular, by decide⟩
 
 theorem constructed :
     ¬ (sgDuPl.map pronounNumber).Nodup ∧ ¬ (sgDuPl.map verbNumber).Nodup ∧
@@ -735,9 +734,9 @@ def resolveNumber (c : Choices) (ns : List Number) : Number :=
 
 theorem resolveNumber_eq_resolve :
     (∀ a ∈ slovene.values, ∀ b ∈ slovene.values,
-      resolveNumber slovene [a, b] = slovene.toSystem.resolve a b) ∧
+      resolveNumber slovene [a, b] = Number.resolve slovene.toSystem a b) ∧
       ∀ a ∈ english.values, ∀ b ∈ english.values,
-        resolveNumber english [a, b] = english.toSystem.resolve a b := by
+        resolveNumber english [a, b] = Number.resolve english.toSystem a b := by
   decide
 
 /-- The features a conjunct's gloss marks, its number being singular where the gloss marks none,
@@ -874,7 +873,7 @@ theorem slave_rows : ∀ row ∈ Examples.all, row.language = .slave →
 -- (1), (3)
 theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = .modernHebrew →
     ∀ c ∈ row.parse? "controller" numberNames, ∀ t ∈ row.parse? "target" numberNames,
-      ({} : Choices).toSystem.coarsen c = t := by
+      Number.coarsen ({} : Choices).toSystem c = t := by
   decide +kernel
 
 -- (12), (14)
@@ -945,9 +944,9 @@ theorem committee_rows : ∀ row ∈ Examples.all, row.language = .english →
 -- (40), (42)
 theorem hopi_rows : ∀ row ∈ Examples.all, row.language = .hopi →
     ∀ p ∈ row.parse? "pronoun"
-      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
+      [("sg", ⟨.singular, by decide⟩), ("pl", ⟨.plural, by decide⟩)],
     ∀ v ∈ row.parse? "verb"
-      [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
+      [("sg", ⟨.singular, by decide⟩), ("pl", ⟨.plural, by decide⟩)],
     ∀ n ∈ row.parse? "number" numberNames,
       Hopi.pronounNumber n = p ∧ Hopi.verbNumber n = v := by
   decide +kernel

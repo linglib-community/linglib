@@ -69,10 +69,10 @@ open scoped DistributedMorphology.VocabularyItem
 /-! ### Features and matrices, sections 3 to 5 -/
 
 /-- Yucatec Maya distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- An argument is a person with a number. -/
-abbrev Argument := Person × numberSystem.values
+abbrev Argument := Person × numberSystem
 
 /-- The person features of (26), [±PSE, ±Auth], as the substrate's [±participant, ±author]
 decomposition of a person. -/
@@ -81,24 +81,24 @@ def personFeatures (p : Person) : Finset FeatureVal :=
     ⟨.author, decide (.author ∈ p.toFeatures)⟩}
 
 /-- Number as the feature [±Pl]. -/
-def number (n : numberSystem.values) : FeatureVal := ⟨.number, n.1⟩
+def number (n : numberSystem) : FeatureVal := ⟨.number, n.1⟩
 
 /-- In an ergative argument's matrix (42), first-person number is a person distinction, singular
 [+PSE, +Auth] and plural [+Auth]. -/
-def ergMatrix (p : Person) (n : numberSystem.values) : Finset FeatureVal :=
+def ergMatrix (p : Person) (n : numberSystem) : Finset FeatureVal :=
   match p with
   | .first =>
-    numberSystem.elim {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩}
+    Number.elim numberSystem {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩}
       {⟨.author, true⟩, ⟨.case, .erg⟩} (n := n)
   | p => personFeatures p ∪ {number n, ⟨.case, .erg⟩}
 
 /-- An argument's matrix for Agr3 is (42) for ergative arguments and for second and third person,
 and for nominative first person the one the assignment (27) presupposes, *-oʔon* 1pl [+PSE, +Auth,
 NOM] and *-en* 1sg [+Auth, NOM]. -/
-def matrix (p : Person) (n : numberSystem.values) (c : Case) : Finset FeatureVal :=
+def matrix (p : Person) (n : numberSystem) (c : Case) : Finset FeatureVal :=
   match p, c with
   | .first, .nom =>
-    numberSystem.elim {⟨.author, true⟩, ⟨.case, .nom⟩}
+    Number.elim numberSystem {⟨.author, true⟩, ⟨.case, .nom⟩}
       {⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩} (n := n)
   | p, .erg => ergMatrix p n
   | p, c => personFeatures p ∪ {number n, ⟨.case, c⟩}
@@ -108,10 +108,10 @@ def matrix (p : Person) (n : numberSystem.values) (c : Case) : Finset FeatureVal
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
 def agr3 : List (VocabularyItem FeatureVal String) :=
   [{⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "oʔon",
-    {⟨.participant, true⟩, number (numberSystem.value .singular), ⟨.case, .nom⟩} ⟷ "etš",
+    {⟨.participant, true⟩, number ⟨.singular, by decide⟩, ⟨.case, .nom⟩} ⟷ "etš",
     {⟨.author, true⟩, ⟨.case, .nom⟩} ⟷ "en",
-    {⟨.participant, true⟩, number (numberSystem.value .plural)} ⟷ "éːš",
-    {number (numberSystem.value .plural)} ⟷ "oʔob", ∅ ⟷ "Ø"]
+    {⟨.participant, true⟩, number ⟨.plural, by decide⟩} ⟷ "éːš",
+    {number ⟨.plural, by decide⟩} ⟷ "oʔob", ∅ ⟷ "Ø"]
 
 /-- The Agr1 Vocabulary Items (43) realize the ergative auxiliary suffix. -/
 def agr1 : List (VocabularyItem FeatureVal String) :=
@@ -158,7 +158,7 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let person := [("1", Person.first), ("2", .second), ("3", .third)]
-  let numbers := [("sg", numberSystem.value .singular), ("pl", numberSystem.value .plural)]
+  let numbers := [("sg", ⟨.singular, by decide⟩), ("pl", ⟨.plural, by decide⟩)]
   let subj ← ex.parse? "subjPerson" person
   let subjPl ← ex.parse? "subjNumber" numbers
   let obj ← match ex.parse? "objPerson" person, ex.parse? "objNumber" numbers with
@@ -201,16 +201,16 @@ theorem aux_prefix_rows :
 /-- In the paradigm (39), second and third person mark only person on the auxiliary and prefix and
 plurality by a verbal suffix ((36) to (38)). -/
 theorem ergative_paradigm (p : Person) (h : p = .second ∨ p = .third) :
-    aux (p, numberSystem.value .singular) = aux (p, numberSystem.value .plural) ∧
-      verbPrefix (p, numberSystem.value .singular) = verbPrefix (p, numberSystem.value .plural) ∧
-      suffixes (p, numberSystem.value .singular) none = [] ∧
-      suffixes (p, numberSystem.value .plural) none ≠ [] := by
+    aux (p, ⟨.singular, by decide⟩) = aux (p, ⟨.plural, by decide⟩) ∧
+      verbPrefix (p, ⟨.singular, by decide⟩) = verbPrefix (p, ⟨.plural, by decide⟩) ∧
+      suffixes (p, ⟨.singular, by decide⟩) none = [] ∧
+      suffixes (p, ⟨.plural, by decide⟩) none ≠ [] := by
   rcases h with rfl | rfl <;> decide
 
 /-- In the paradigm (39), first-person number is marked on the auxiliary and by no verbal suffix, a
 person distinction under (42) ((3), (4)). -/
 theorem first_person_paradigm :
-    aux (.first, numberSystem.value .singular) ≠ aux (.first, numberSystem.value .plural) ∧
+    aux (.first, ⟨.singular, by decide⟩) ≠ aux (.first, ⟨.plural, by decide⟩) ∧
       ∀ pl, suffixes (.first, pl) none = [] := by
   decide
 
@@ -226,11 +226,11 @@ inductive Privative where
 def nodes (ns : List Node) : Finset Privative := ((ns.flatMap Node.below).map .node).toFinset
 
 /-- The specifications (A1), with nominative case on a nominative argument. -/
-def privMatrix (p : Person) (n : numberSystem.values) (c : Case) : Finset Privative :=
+def privMatrix (p : Person) (n : numberSystem) (c : Case) : Finset Privative :=
   let person : List Node := match p with
-    | .first => numberSystem.elim [.participant] [.speaker] (n := n)
-    | .second => numberSystem.elim [.addressee] [.addressee, .group] (n := n)
-    | _ => numberSystem.elim [] [.group] (n := n)
+    | .first => Number.elim numberSystem [.participant] [.speaker] (n := n)
+    | .second => Number.elim numberSystem [.addressee] [.addressee, .group] (n := n)
+    | _ => Number.elim numberSystem [] [.group] (n := n)
   nodes person ∪ if c = .nom then {.nom} else ∅
 
 /-- The Agr1 Vocabulary Items (A2). -/
@@ -268,8 +268,8 @@ theorem privative_aux_prefix :
 /-- The printed (A4) misorders the suffixes of (19), and with *-oʔon* moved to the top it recovers
 every row as (27) does. -/
 theorem privative_suffixes :
-    suffixes' agr3' (.second, numberSystem.value .plural)
-        (some (.first, numberSystem.value .plural)) = ["éːš", "oʔon"] ∧
+    suffixes' agr3' (.second, ⟨.plural, by decide⟩)
+        (some (.first, ⟨.plural, by decide⟩)) = ["éːš", "oʔon"] ∧
       ∀ r ∈ rows, r.judgment = .acceptable ↔ suffixes' agr3'' r.subj r.obj = r.suffixes := by
   decide
 

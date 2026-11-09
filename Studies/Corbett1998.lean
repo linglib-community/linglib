@@ -128,10 +128,10 @@ namespace CoastalMarind
 open _root_.CoastalMarind
 
 -- (6), (9)
-theorem faithful_light : Function.Injective (light · (numberSystem.value .singular)) := by decide
+theorem faithful_light : Function.Injective (light · ⟨.singular, by decide⟩) := by decide
 
 theorem not_faithful_demonstrative :
-    ¬ Function.Injective (demonstrative · (numberSystem.value .singular)) := by
+    ¬ Function.Injective (demonstrative · ⟨.singular, by decide⟩) := by
   decide
 
 end CoastalMarind
@@ -144,13 +144,13 @@ open _root_.Russian.Gender _root_.Russian.Agreement
 
 -- (1), (4)
 theorem convergent :
-    Gender.Convergent (longEnding · .inanimate (numberSystem.value .singular) .nom)
-      (longEnding · .inanimate (numberSystem.value .plural) .nom) := by
+    Gender.Convergent (longEnding · .inanimate ⟨.singular, by decide⟩ .nom)
+      (longEnding · .inanimate ⟨.plural, by decide⟩ .nom) := by
   decide
 
 theorem card_longEnding_pl_lt :
-    Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .plural) .nom)) <
-      Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .singular) .nom)) :=
+    Nat.card (Set.range (longEnding · .inanimate ⟨.plural, by decide⟩ .nom)) <
+      Nat.card (Set.range (longEnding · .inanimate ⟨.singular, by decide⟩ .nom)) :=
   convergent.card_range_lt
 
 theorem gender_mem_inflection_pastVerb :
@@ -166,21 +166,21 @@ open _root_.Somali.Gender
 theorem not_polar_verbPrefix : ¬ Morphology.Polar Value.verbPrefix := by decide
 
 theorem verbPrefix_plural (g : Value) :
-    g.verbPrefix (numberSystem.value .plural) =
-      Value.masc.verbPrefix (numberSystem.value .singular) := by
+    g.verbPrefix ⟨.plural, by decide⟩ =
+      Value.masc.verbPrefix ⟨.singular, by decide⟩ := by
   cases g <;> rfl
 
 theorem article_nin :
-    nin.article (numberSystem.value .plural) = nin.article (numberSystem.value .singular) := rfl
+    nin.article ⟨.plural, by decide⟩ = nin.article ⟨.singular, by decide⟩ := rfl
 
 theorem parallel_article :
-    Gender.Parallel (Value.article · (numberSystem.value .singular))
-      (Value.article · (numberSystem.value .plural)) :=
-  polar_article.parallel (numberSystem.value .singular) (numberSystem.value .plural)
+    Gender.Parallel (Value.article · ⟨.singular, by decide⟩)
+      (Value.article · ⟨.plural, by decide⟩) :=
+  polar_article.parallel ⟨.singular, by decide⟩ ⟨.plural, by decide⟩
 
 theorem convergent_verbPrefix :
-    Gender.Convergent (Value.verbPrefix · (numberSystem.value .singular))
-      (Value.verbPrefix · (numberSystem.value .plural)) := by
+    Gender.Convergent (Value.verbPrefix · ⟨.singular, by decide⟩)
+      (Value.verbPrefix · ⟨.plural, by decide⟩) := by
   decide
 
 end Somali
@@ -290,8 +290,8 @@ end Chichewa
 theorem russian_rows : ∀ row ∈ Examples.all, row.language = .russian →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
-    ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
-      ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
+    ∀ n ∈ row.parse? "number" [("sg", ⟨.singular, by decide⟩),
+      ("pl", ⟨.plural, by decide⟩)],
     ∀ c ∈ row.parse? "case" [("nom", _root_.Russian.Case.nom), ("loc", .loc)],
     ∀ e ∈ row.parse? "ending"
       [("yj", _root_.Russian.Agreement.LongEnding.yj), ("aja", .aja), ("oe", .oe), ("ye", .ye),
@@ -302,8 +302,8 @@ theorem russian_rows : ∀ row ∈ Examples.all, row.language = .russian →
 -- §2.3
 theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = .russian →
     ∀ p ∈ row.parse? "person" [("1", Person.first), ("2", .second), ("3", .third)],
-    ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
-      ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
+    ∀ n ∈ row.parse? "number" [("sg", ⟨.singular, by decide⟩),
+      ("pl", ⟨.plural, by decide⟩)],
     ∀ e ∈ row.parse? "ending"
       [("u", _root_.Russian.Agreement.NonpastEnding.u), ("eš'", .eš'), ("et", .et)],
       e = _root_.Russian.Agreement.nonpastEnding .first p n := by
@@ -314,9 +314,9 @@ theorem marind_rows : ∀ row ∈ Examples.all, row.language = .marind →
     ∀ g ∈ row.parse? "gender"
       [("I", CoastalMarind.Gender.gI), ("II", .gII), ("III", .gIII), ("IV", .gIV)],
       (∀ a ∈ row.feature? "adjective",
-          a = CoastalMarind.light g (CoastalMarind.numberSystem.value .singular)) ∧
+          a = CoastalMarind.light g ⟨.singular, by decide⟩) ∧
         ∀ d ∈ row.feature? "demonstrative",
-          d = CoastalMarind.demonstrative g (CoastalMarind.numberSystem.value .singular) := by
+          d = CoastalMarind.demonstrative g ⟨.singular, by decide⟩ := by
   decide +kernel
 
 -- (17)
@@ -330,8 +330,8 @@ theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = .upperSorbi
 -- (11), (14)
 theorem somali_rows : ∀ row ∈ Examples.all, row.language = .somali →
     ∀ n ∈ row.parse? "noun" (_root_.Somali.Gender.allNouns.map fun n ↦ (n.form, n)),
-    ∀ pl ∈ row.parse? "number" [("sg", _root_.Somali.Gender.numberSystem.value .singular),
-      ("pl", _root_.Somali.Gender.numberSystem.value .plural)],
+    ∀ pl ∈ row.parse? "number" [("sg", ⟨.singular, by decide⟩),
+      ("pl", ⟨.plural, by decide⟩)],
       (∀ a ∈ row.parse? "article" [("kii", _root_.Somali.Gender.Article.kii), ("tii", .tii)],
         a = n.article pl) ∧
       ∀ v ∈ row.parse? "verb" [("y", _root_.Somali.Gender.VerbPrefix.y), ("t", .t)],

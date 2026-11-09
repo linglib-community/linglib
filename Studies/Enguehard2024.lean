@@ -82,21 +82,30 @@ open English.Nouns (numberSystem)
 
 /-! ### The number inference -/
 
-/-- The number inference of a positive indefinite, (1), holds of the witness cardinalities that
-English gives the number. -/
-def inference (n : Number) : Set ℕ := {k | 1 ≤ k ∧ numberSystem.ofCard k = n}
+/-- The number inference of a positive indefinite, (1), holds of the witness cardinalities in the
+cell English gives the number. -/
+def inference (n : Number) : Set ℕ := (↑) '' (Number.ofCard numberSystem ⁻¹' {n})
 
 @[simp] theorem inference_singular : inference .singular = singular := by
   ext k
-  rcases k with _ | _ | _ | _ | k <;>
-    simp [inference, Number.System.ofCard, Number.fromCard, numberSystem, singular]
+  simp [inference, Number.ofCard_eq_iff (v := .singular) (by decide), Number.exactCard,
+    numberSystem, singular, eq_comm]
 
 @[simp] theorem inference_plural : inference .plural = strong := by
   ext k
-  rcases k with _ | _ | _ | _ | k <;>
-    simp [inference, Number.System.ofCard, Number.fromCard, numberSystem, strong]
+  simp only [inference, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
+    Number.ofCard_eq_plural_iff_forall, numberSystem]
+  simp only [Finset.mem_insert, Finset.mem_singleton,
+    forall_eq_or_imp, forall_eq, Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true, and_true, strong, Set.mem_ofPred_eq]
+  refine ⟨fun ⟨p, hp, hk⟩ ↦ hk ▸ ?_, fun hk ↦ ⟨⟨k, by omega⟩, fun h ↦ ?_, rfl⟩⟩
+  · exact lt_of_le_of_ne p.pos fun h ↦ hp (PNat.coe_eq_one_iff.1 h.symm).symm
+  · have := congrArg PNat.val h
+    simp only [PNat.val_ofNat, PNat.mk_coe] at this
+    omega
 
-theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ hk ↦ hk.1
+theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ ⟨p, _, hk⟩ ↦
+  hk ▸ p.pos
 
 theorem compl_weak : weakᶜ = {0} := by
   ext k; simp [weak]
@@ -278,7 +287,7 @@ members, that is, when a third person pronoun bears `n` and, read maximally, its
 def Usable (n : Number) (k : ℕ) : Prop :=
   ∃ p ∈ pronouns, p.person = some .third ∧ p.number = some n ∧ k ∈ inference n
 
-theorem usable_iff {n : Number} (hn : n ∈ numberSystem.values) {k : ℕ} :
+theorem usable_iff {n : Number} (hn : n ∈ numberSystem) {k : ℕ} :
     Usable n k ↔ k ∈ inference n := by
   refine ⟨fun ⟨_, _, _, _, hk⟩ ↦ hk, fun hk ↦ ?_⟩
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
@@ -294,13 +303,13 @@ resume it, (23). -/
 def Useful (K : Set ℕ) (n : Number) : Prop := ∃ k ∈ K, Usable n k
 
 /-- Preferring useful referents, (23), yields the conceivability presupposition (7). -/
-theorem useful_iff_negated_ne_undefined {n : Number} (hn : n ∈ numberSystem.values) (K : Set ℕ)
+theorem useful_iff_negated_ne_undefined {n : Number} (hn : n ∈ numberSystem) (K : Set ℕ)
     (k : ℕ) : Useful K n ↔ negated K n k ≠ .undefined := by
   simp only [negated_ne_undefined_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
 -- (23)
 theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ inference .singular).Nonempty)
-    (hpl : (K ∩ inference .plural).Nonempty) {n : Number} (hn : n ∈ numberSystem.values) :
+    (hpl : (K ∩ inference .plural).Nonempty) {n : Number} (hn : n ∈ numberSystem) :
     ∃ k ∈ K, 1 ≤ k ∧ ¬ Usable n k := by
   rw [inference_singular] at hsg
   rw [inference_plural] at hpl
@@ -388,7 +397,7 @@ theorem H1.not_H2 (h : H1 κ) : ¬ H2 κ :=
 open Presupposition (strengthen)
 
 /-- The English numbers are each other's alternatives. -/
-def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem.values}
+def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem}
 
 /-- In the Maximize Presupposition account of §4.1 the singular presupposes `S` of the condition,
 the plural presupposes nothing, and the values outside English presuppose the impossible. -/
@@ -488,7 +497,7 @@ theorem negated_ne_undefined_iff_ineffability_ne_one (μ : Measure ℕ) [IsFinit
 /-- A best guess under the witness distribution `μ` is an English number minimizing the chance of
 ineffability (§5.3). -/
 def BestGuess (μ : Measure ℕ) (n : Number) : Prop :=
-  IsMinOn (ineffability μ) {m | m ∈ numberSystem.values} n
+  IsMinOn (ineffability μ) {m | m ∈ numberSystem} n
 
 theorem bestGuess_plural_iff (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ weak ≠ 0) :
     BestGuess μ .plural ↔ 1 / 2 ≤ μ[strong | weak] := by
@@ -499,7 +508,7 @@ theorem bestGuess_plural_iff (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ w
   have hpl : ineffability μ .plural = 1 - μ[strong | weak] := by
     rw [← hsum, ENNReal.add_sub_cancel_left (ne_top_of_le_ne_top ENNReal.one_ne_top hle)]
   simp only [BestGuess, IsMinOn, IsMinFilter, Filter.eventually_principal, numberSystem,
-    Number.System.singularPlural_values, Finset.mem_insert, Finset.mem_singleton,
+    Finset.mem_insert, Finset.mem_singleton,
     Set.mem_ofPred_eq, forall_eq_or_imp, forall_eq, le_refl, and_true, hpl, ineffability_singular]
   rw [tsub_le_iff_right, ENNReal.div_le_iff two_ne_zero ENNReal.ofNat_ne_top, mul_two]
 

@@ -304,7 +304,7 @@ theorem determiner_iFem_eq_uFem :
     determiner .n_iFem = some "la" ∧ determiner .n_uFem = some "la" := by decide
 
 theorem structural_faithful (n : Spanish.Gender.Noun) :
-    determiner (nHead n) = some (n.gender.definiteArticle (numberSystem.value .singular)) := by
+    determiner (nHead n) = some (n.gender.definiteArticle ⟨.singular, by decide⟩) := by
   obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     dsimp only [nHead] <;> decide
 

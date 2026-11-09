@@ -60,7 +60,7 @@ def Noun.common (form : String) : Noun :=
 def Noun.mass (form : String) : Noun := { form, gloss := form, counters := ∅ }
 
 /-- English nouns distinguish two numbers, the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The form at a number is the citation form in the singular and the plural where the noun has
 one. -/
@@ -69,7 +69,7 @@ def Noun.realize (n : Noun) : Number → Option String
   | .plural => n.plural
   | _ => none
 
-theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem.values) :
+theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem) :
     n.realize m = none := by
   cases m <;> simp_all [numberSystem, Noun.realize]
 

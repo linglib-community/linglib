@@ -215,9 +215,9 @@ def nounFeatures : NounClass → Finset ArticleFeature
   | _ => ∅
 
 /-- The article inserted by the Subset Principle, by class and number. -/
-def article (c : NounClass) (n : numberSystem.values) : Option Article :=
+def article (c : NounClass) (n : numberSystem) : Option Article :=
   subsetPrinciple articles
-    ⟨classFeatures c ∪ numberSystem.elim ∅ {.pl} (n := n), [], [nounFeatures c]⟩
+    ⟨classFeatures c ∪ Number.elim numberSystem ∅ {.pl} (n := n), [], [nounFeatures c]⟩
 
 theorem article_eq_headArticle : ∀ c pl, article c pl = some (headArticle c pl) := by decide
 
@@ -352,19 +352,19 @@ open _root_.CoastalMarind
 
 theorem name_demonstrative (g : _root_.CoastalMarind.Gender) :
     (inheritedGender PossessionType.inalienable.possessorPosition g).map
-        (demonstrative · (numberSystem.value .singular)) =
-      some (demonstrative g (numberSystem.value .singular)) :=
+        (demonstrative · ⟨.singular, by decide⟩) =
+      some (demonstrative g ⟨.singular, by decide⟩) :=
   rfl
 
 theorem face_inherits :
     (inheritedGender PossessionType.inalienable.possessorPosition .gI).map
-        (face · (numberSystem.value .singular)) =
+        (face · ⟨.singular, by decide⟩) =
         some "nanih" ∧
       (inheritedGender PossessionType.inalienable.possessorPosition .gII).map
-          (face · (numberSystem.value .singular)) =
+          (face · ⟨.singular, by decide⟩) =
         some "nanuh" ∧
-      similative .gI (numberSystem.value .singular) = "hi" ∧
-      similative .gII (numberSystem.value .singular) = "hu" := by
+      similative .gI ⟨.singular, by decide⟩ = "hi" ∧
+      similative .gII ⟨.singular, by decide⟩ = "hu" := by
   decide
 
 end CoastalMarind

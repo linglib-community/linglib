@@ -172,11 +172,11 @@ def allNouns : List Noun :=
 /-! ### The definite article -/
 
 /-- Spanish distinguishes the singular and the plural. -/
-def numberSystem : Number.System := .singularPlural
+def numberSystem : Finset Number := {.singular, .plural}
 
 /-- The definite article a gender takes in each number. -/
-def Value.definiteArticle (g : Value) : numberSystem.values → String :=
-  numberSystem.elim (match g with | .masc => "el" | .fem => "la")
+def Value.definiteArticle (g : Value) : numberSystem → String :=
+  Number.elim numberSystem (match g with | .masc => "el" | .fem => "la")
     (match g with | .masc => "los" | .fem => "las")
 
 /-- The definite article distinguishes the two genders. -/

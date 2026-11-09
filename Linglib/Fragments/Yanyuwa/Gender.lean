@@ -56,7 +56,7 @@ inductive Gender where
   deriving DecidableEq, Repr, Fintype
 
 /-- Yanyuwa distinguishes the singular, the dual and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .dual, .plural} }
+def numberSystem : Finset Number := {.singular, .dual, .plural}
 
 /-- The sex of the speaker. -/
 inductive Speaker where
@@ -77,7 +77,7 @@ def classPrefix : Speaker → Gender → String
 /-- The prefix of an adjective or numeral agreeing with a noun of a class in a number: the
 personal dual *ři-* and plural *li-* with a female or male noun, the class prefix otherwise
 ([kirton-1971b] §1.1). -/
-def agreementPrefix (s : Speaker) (g : Gender) (n : numberSystem.values) : String :=
+def agreementPrefix (s : Speaker) (g : Gender) (n : numberSystem) : String :=
   match g, n.1 with
   | .female, .dual | .male, .dual => "ři-"
   | .female, .plural | .male, .plural => "li-"
