@@ -152,8 +152,8 @@ variable [∀ v, Nonempty (α v)] {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e
 /-- A cause sufficient for an effect relative to a background brings the effect about in every
 context where the background and the cause hold. -/
 theorem CausallySufficient.solve_eq (h : M.CausallySufficient s c x e y) (hu : u ∈ M.contexts s)
-    (hc : M.solve ⊥ u c = x) : M.solve ⊥ u e = y :=
-  h.2.solve_bot_eq (mem_contexts_update hu hc)
+    (hc : M.solve u c = x) : M.solve u e = y :=
+  h.2.solve_eq (mem_contexts_update hu hc)
 
 /-- When the context reaches the model only at its roots, a cause necessary for an effect over the
 exogenous settlements of a background holds in every context where the background and the effect
@@ -161,13 +161,13 @@ hold. Settling every open and unsettled root at its value in the context develop
 context's actual world, so it settles the effect, and necessity makes it settle the cause. -/
 theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
     (h : M.CausallyNecessary M.IsExogenousSettlement s c x e y) (hu : u ∈ M.contexts s)
-    (he : M.solve ⊥ u e = y) : M.solve ⊥ u c = x := by
+    (he : M.solve u e = y) : M.solve u c = x := by
   classical
   obtain ⟨hne, ⟨s', -, hs'e, hent'⟩, hall⟩ := h
   -- settle every open and unsettled root at its value in `u`
   set t : ∀ v, Flat (α v) := fun v ↦
     if s v = ⊥ ∧ (∀ w, ¬ M.graph.Adj w v) ∧ ∀ z, ¬ M.CausallyEntails s v z then
-      ↑(M.solve ⊥ u v) else s v with ht
+      ↑(M.solve u v) else s v with ht
   have hset : M.IsExogenousSettlement s t := by
     refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
     · simp only [ht]; split_ifs with hcond
@@ -191,7 +191,7 @@ theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
   have hroot : ∀ v, (∀ w, ¬ M.graph.Adj w v) → ∃ z, M.CausallyEntails t v z := by
     intro v hv
     by_cases hcond : s v = ⊥ ∧ (∀ w, ¬ M.graph.Adj w v) ∧ ∀ z, ¬ M.CausallyEntails s v z
-    · refine ⟨M.solve ⊥ u v, causallyEntails_iff.2 (.inl ?_)⟩
+    · refine ⟨M.solve u v, causallyEntails_iff.2 (.inl ?_)⟩
       simp only [ht]; split_ifs
       · rfl
     · rcases eq_or_ne (s v) ⊥ with hsv | hsv
@@ -200,7 +200,7 @@ theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
         exact ⟨z, hz.of_isExogenousSettlement hset⟩
       · obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 hsv
         exact ⟨z, (causallyEntails_iff.2 (.inl hz)).of_isExogenousSettlement hset⟩
-  exact (hall t hset hte (he ▸ causallyEntails_solve_bot hroot hut e)).solve_bot_eq hut
+  exact (hall t hset hte (he ▸ causallyEntails_solve hroot hut e)).solve_eq hut
 
 end Contexts
 

@@ -71,7 +71,8 @@ instance [DecidableRel M.graph.Adj] (a b : V) : Decidable (Causes M a b) :=
 /-- A is necessary for B when, in every context and under every intervention that leaves B open
 and turns A off, B is off. -/
 def Necessary (a b : V) : Prop :=
-  ∀ u (I : V → Flat Bool), I b = ⊥ → I a = ↑false → M.solve I u b = false
+  ∀ u (X : Finset V) (x : ∀ v : X, Bool), b ∉ X → ∀ ha : a ∈ X, x ⟨a, ha⟩ = false →
+    (M.intervene X x).solve u b = false
 
 /-- *A enables B* asserts a link from A to B, an accessory variable also linked to B, and A
 necessary for B. -/
@@ -97,7 +98,6 @@ def EqPrevents (s : V → Flat Bool) (a c : V) : Prop :=
 
 variable {M}
 
-omit [DecidableEq V] in
 theorem not_enables_of_forall_adj {a b : V} (h : ∀ x, M.graph.Adj x b → x = a) :
     ¬ Enables M a b := by
   rintro ⟨-, ⟨x, hx, hxb⟩, -⟩
@@ -183,10 +183,10 @@ theorem causes_not_Enables : ¬ Enables causes .A .B :=
 /-- *A enables B* holds of (3), which has the link, the accessory, and the necessity of A, B
 being the conjunction of A and X. -/
 theorem enables_Enables : Enables enables .A .B := by
-  refine ⟨by decide, ⟨.X, by decide, by decide⟩, fun u I hb ha ↦ ?_⟩
-  rw [solve_of_eq_bot hb]
-  show (enables.solve I u .A && enables.solve I u .X) = false
-  rw [solve_of_eq_coe ha, Bool.false_and]
+  refine ⟨by decide, ⟨.X, by decide, by decide⟩, fun u X x hb ha hx ↦ ?_⟩
+  rw [solve_intervene_of_notMem hb]
+  show ((enables.intervene X x).solve u .A && (enables.intervene X x).solve u .X) = false
+  rw [solve_intervene_of_mem ha, hx, Bool.false_and]
 
 theorem enables_not_entails :
     ¬ enables.CausallyEntails [.A ← true] .B true := by

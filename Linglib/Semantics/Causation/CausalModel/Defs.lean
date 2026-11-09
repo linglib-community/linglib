@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Data.Finset.Update
 public import Linglib.Core.Order.Flat
 public import Linglib.Core.Order.WellFoundedFixedPoint
 
@@ -10,23 +11,27 @@ public import Linglib.Core.Order.WellFoundedFixedPoint
 This file defines causal models in the sense of Halpern and Pearl. A causal model has a type `U`
 of exogenous contexts, a value type `α v` for each endogenous variable `v`, a directed graph on
 the variables (mathlib's `Digraph`), and for each variable a structural equation that gives its
-value from the context and the values of its parents in the graph. An intervention holds some
-variables at fixed values, and the others obey their equations (`CausalModel.step`). When the
-graph is well founded, every context and every intervention determine exactly one assignment
-that satisfies the equations, `CausalModel.solve`.
+value from the context and the values of its parents in the graph. When the graph is well
+founded, every context determines exactly one assignment that satisfies the equations,
+`CausalModel.solve`. An intervention holding the variables of a finite set at given values
+replaces their equations by constants, which gives the submodel `CausalModel.intervene`, Pearl's
+`M_x`; its solution is the world the intervention brings about.
 
-The solution is characterized as the unique fixed point of `step`, and it is reached by
-iterating `step` from any assignment once per rank of a ranking of the graph, which is how a
-finite model computes it.
+The solution is characterized as the unique fixed point of one round of the equations, and it is
+reached by iterating that round from any assignment once per rank of a ranking of the graph, which
+is how a finite model computes it.
 
 ## Main definitions
 
 * `CausalModel U V α`: exogenous contexts `U`, a graph, and structural equations
 * `CausalModel.IsAcyclic`: the graph is well founded
 * `CausalModel.ContextAtRoots`: only the roots read the context
-* `CausalModel.step`: one round of the equations, with the intervened variables held fixed
-* `CausalModel.solve`: the solution under an intervention in a context
-* `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, scoped in `CausalModel`
+* `CausalModel.step`: one round of the equations
+* `CausalModel.solve`: the solution in a context
+* `CausalModel.intervene`: the submodel of an intervention, written `M[c ← x, d ← y]` for single
+  variables, scoped in `CausalModel`
+* `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, an observation, scoped in
+  `CausalModel`
 
 ## Main results
 
@@ -42,9 +47,10 @@ An equation reads the whole assignment, and `dependsOn_eqn` says that it only re
 (mathlib's `DependsOn`), so equations are written without the parents' subtype. For a finite
 inductive type of variables the default proof of `dependsOn_eqn` discharges it. The graph is data,
 the edges a paper draws, and bounds what an equation may read rather than recording what it does
-read. An intervention is a partial assignment `∀ v, Flat (α v)`, the variables it settles being the
-intervened ones. The solution is `WellFounded.fixedPoint` of `step`, whose construction fills the
-coordinates an equation ignores arbitrarily, hence `[∀ v, Nonempty (α v)]`.
+read; a submodel keeps the graph, since a constant equation reads nothing. An intervention gives
+values only to the variables it holds, `x : ∀ v : X, α v`, as Pearl's realization of `X` and
+mathlib's `Function.updateFinset` do. The solution is `WellFounded.fixedPoint` of `step`, whose
+construction fills the coordinates an equation ignores arbitrarily, hence `[∀ v, Nonempty (α v)]`.
 
 A concrete model in a study is written to one recipe. The exogenous context is a structure whose
 fields name what the paper leaves to the world (`structure Context where match : Bool`, with
@@ -52,8 +58,8 @@ fields name what the paper leaves to the world (`structure Context where match :
 `Finset (V × V)` (`def edges : Finset (V × V) := {(.match, .fire)}`) with `graph :=
 ⟨fun w v ↦ (w, v) ∈ edges⟩`, adjacency is decided by `fun w v ↦ inferInstanceAs (Decidable
 ((w, v) ∈ edges))`, and acyclicity by `Finite.wellFounded_of_irrefl_transGen (by decide)`.
-Partial assignments are written in the scoped notation, `[c ← x, d ← y]`, and updates of a named
-assignment as `Function.update s c ↑x`. A theorem quantifying over assignments or settlements
+Interventions are written `M[c ← x]`, partial assignments `[c ← x, d ← y]`, and updates of a named
+assignment `Function.update s c ↑x`. A theorem quantifying over assignments or settlements
 (necessity, sufficient sets) is proved structurally through the equations rather than by
 `decide`, which enumerates them.
 
@@ -61,6 +67,7 @@ assignment as `Function.update s c ↑x`. A theorem quantifying over assignments
 
 * [halpern-pearl-2005]
 * [pearl-2000]
+* [bongers-forre-peters-mooij-2021]
 -/
 
 @[expose] public section
@@ -98,100 +105,120 @@ theorem IsAcyclic.of_depth (depth : V → ℕ) (h : ∀ {w v}, M.graph.Adj w v �
 
 /-- `[c ← x]` is the partial assignment settling `c` to `x` and leaving every other variable
 open, in the notation of Halpern and Pearl; `[c ← x, d ← y]` settles both. It serves as an
-intervention and as an observation. -/
+observation. -/
 scoped syntax (name := partialAssignment) "[" (term " ← " term),+ "]" : term
 
 macro_rules (kind := partialAssignment)
   | `([$c ← $x]) => `(Function.update ⊥ $c (Flat.some $x))
   | `([$c ← $x, $[$cs ← $xs],*]) => `(Function.update [$[$cs ← $xs],*] $c (Flat.some $x))
 
-/-- `M.step I u x` applies the equations once in the context `u`. A variable the intervention
-`I` settles takes its intervened value, and any other variable takes the value its equation
-gives to `x`. -/
-def step (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) : ∀ v, α v :=
-  fun v ↦ (I v).unbotD (M.eqn v u x)
+/-- `M.step u y` applies the equations once in the context `u`, each variable taking the value its
+equation gives to `y`. -/
+def step (u : U) (y : ∀ v, α v) : ∀ v, α v :=
+  fun v ↦ M.eqn v u y
 
 variable {M}
 
-theorem step_apply (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) (v : V) :
-    M.step I u x v = (I v).unbotD (M.eqn v u x) := rfl
+theorem step_apply (u : U) (y : ∀ v, α v) (v : V) : M.step u y v = M.eqn v u y := rfl
 
-theorem dependsOn_step (I : ∀ v, Flat (α v)) (u : U) (v : V) :
-    DependsOn (M.step I u · v) {w | M.graph.Adj w v} :=
-  fun _ _ h ↦ congrArg (Flat.unbotD · (I v)) (M.dependsOn_eqn v u h)
-
-theorem iterate_step_apply_eq (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop))
-    (I : ∀ v, Flat (α v)) (u : U) {k : ℕ} {v : V} (hv : r v < k) (x y : ∀ v, α v) :
-    (M.step I u)^[k] x v = (M.step I u)^[k] y v :=
-  WellFounded.iterate_apply_eq_of_dependsOn (dependsOn_step I u) r hv x y
+theorem dependsOn_step (u : U) (v : V) : DependsOn (M.step u · v) {w | M.graph.Adj w v} :=
+  M.dependsOn_eqn v u
 
 section Solve
 
 variable (M) [∀ v, Nonempty (α v)] [hM : M.IsAcyclic]
 
-/-- The solution of the model under the intervention `I` in the context `u`, the unique fixed
-point of `step`. -/
-noncomputable def solve (I : ∀ v, Flat (α v)) (u : U) : ∀ v, α v :=
-  hM.fixedPoint (M.step I u)
+/-- The solution of the model in the context `u`, the unique assignment satisfying every
+equation. -/
+noncomputable def solve (u : U) : ∀ v, α v :=
+  hM.fixedPoint (M.step u)
 
 /-- The solution satisfies the equations. -/
-theorem isFixedPt_solve (I : ∀ v, Flat (α v)) (u : U) :
-    Function.IsFixedPt (M.step I u) (M.solve I u) :=
-  hM.isFixedPt_fixedPoint (dependsOn_step I u)
+theorem isFixedPt_solve (u : U) : Function.IsFixedPt (M.step u) (M.solve u) :=
+  hM.isFixedPt_fixedPoint (dependsOn_step u)
 
 variable {M}
 
 /-- An assignment satisfying the equations is the solution. -/
-theorem eq_solve_of_isFixedPt {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v}
-    (hx : Function.IsFixedPt (M.step I u) x) : x = M.solve I u :=
-  WellFounded.eq_fixedPoint_of_isFixedPt (dependsOn_step I u) hx
+theorem eq_solve_of_isFixedPt {u : U} {x : ∀ v, α v} (hx : Function.IsFixedPt (M.step u) x) :
+    x = M.solve u :=
+  WellFounded.eq_fixedPoint_of_isFixedPt (dependsOn_step u) hx
 
-theorem isFixedPt_iff_eq_solve {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v} :
-    Function.IsFixedPt (M.step I u) x ↔ x = M.solve I u :=
-  WellFounded.isFixedPt_iff_eq_fixedPoint (dependsOn_step I u)
+theorem isFixedPt_iff_eq_solve {u : U} {x : ∀ v, α v} :
+    Function.IsFixedPt (M.step u) x ↔ x = M.solve u :=
+  WellFounded.isFixedPt_iff_eq_fixedPoint (dependsOn_step u)
 
-theorem solve_apply (I : ∀ v, Flat (α v)) (u : U) (v : V) :
-    M.solve I u v = (I v).unbotD (M.eqn v u (M.solve I u)) :=
-  WellFounded.fixedPoint_apply (dependsOn_step I u) v
-
-theorem solve_of_eq_coe {I : ∀ v, Flat (α v)} {v : V} {x : α v} (h : I v = ↑x) (u : U) :
-    M.solve I u v = x := by
-  rw [solve_apply, h, Flat.unbotD_coe]
-
-theorem solve_of_eq_bot {I : ∀ v, Flat (α v)} {v : V} (h : I v = ⊥) (u : U) :
-    M.solve I u v = M.eqn v u (M.solve I u) := by
-  rw [solve_apply, h, Flat.unbotD_bot]
+theorem solve_apply (u : U) (v : V) : M.solve u v = M.eqn v u (M.solve u) :=
+  WellFounded.fixedPoint_apply (dependsOn_step u) v
 
 /-- Iterating the equations from any assignment past a ranking of the graph reaches the
 solution. -/
 theorem solve_eq_iterate (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop)) {n : ℕ}
-    (hn : ∀ v, r v < n) (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
-    M.solve I u = (M.step I u)^[n] x :=
-  WellFounded.fixedPoint_eq_iterate (dependsOn_step I u) r hn x
+    (hn : ∀ v, r v < n) (u : U) (x : ∀ v, α v) : M.solve u = (M.step u)^[n] x :=
+  WellFounded.fixedPoint_eq_iterate (dependsOn_step u) r hn x
 
 /-- In a finite model, iterating the equations once per variable reaches the solution. -/
-theorem solve_eq_iterate_card [Fintype V] (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
-    M.solve I u = (M.step I u)^[Fintype.card V] x :=
-  WellFounded.fixedPoint_eq_iterate_card (dependsOn_step I u) x
+theorem solve_eq_iterate_card [Fintype V] (u : U) (x : ∀ v, α v) :
+    M.solve u = (M.step u)^[Fintype.card V] x :=
+  WellFounded.fixedPoint_eq_iterate_card (dependsOn_step u) x
 
 /-- In a finite model the value of the solution at a variable is decided by iterating the
 equations. It takes priority over the value type's own decidable equality, which cannot evaluate
 `solve`. -/
 instance (priority := high) decidableEqSolve [Fintype V] [∀ v, Inhabited (α v)]
-    [∀ v, DecidableEq (α v)] (I : ∀ v, Flat (α v)) (u : U) (v : V) (x : α v) :
-    Decidable (M.solve I u v = x) :=
-  decidable_of_iff ((M.step I u)^[Fintype.card V] default v = x) <| by
-    rw [solve_eq_iterate_card I u default]
+    [∀ v, DecidableEq (α v)] (u : U) (v : V) (x : α v) : Decidable (M.solve u v = x) :=
+  decidable_of_iff ((M.step u)^[Fintype.card V] default v = x) <| by
+    rw [solve_eq_iterate_card u default]
 
-/-- In a finite model, whether two solutions agree at a variable is decided by iterating the
-equations for both. -/
+/-- In a finite model, whether the solutions of two models agree at a variable is decided by
+iterating the equations of both. -/
 instance (priority := high + 1) decidableEqSolveSolve [Fintype V] [∀ v, Inhabited (α v)]
-    [∀ v, DecidableEq (α v)] (I J : ∀ v, Flat (α v)) (u u' : U) (v : V) :
-    Decidable (M.solve I u v = M.solve J u' v) :=
-  decidable_of_iff ((M.step I u)^[Fintype.card V] default v =
-      (M.step J u')^[Fintype.card V] default v) <| by
-    rw [solve_eq_iterate_card I u default, solve_eq_iterate_card J u' default]
+    [∀ v, DecidableEq (α v)] (N : CausalModel U V α) [N.IsAcyclic] (u u' : U) (v : V) :
+    Decidable (M.solve u v = N.solve u' v) :=
+  decidable_of_iff ((M.step u)^[Fintype.card V] default v =
+      (N.step u')^[Fintype.card V] default v) <| by
+    rw [solve_eq_iterate_card u default, solve_eq_iterate_card u' default]
 
 end Solve
+
+section Intervene
+
+variable [DecidableEq V]
+
+variable (M) in
+/-- The submodel `M.intervene X x` holds the variables of `X` at their values in `x`: their
+equations become constants, and every other equation is kept (Pearl's submodel `M_x`). -/
+def intervene (X : Finset V) (x : ∀ v : X, α v) : CausalModel U V α where
+  graph := M.graph
+  eqn v u y := Function.updateFinset (M.step u y) X x v
+  dependsOn_eqn v u _ _ h := by
+    simp only [Function.updateFinset]
+    split
+    · rfl
+    · exact M.dependsOn_eqn v u h
+
+instance [hM : M.IsAcyclic] (X : Finset V) (x : ∀ v : X, α v) : (M.intervene X x).IsAcyclic :=
+  hM
+
+variable {X : Finset V} {x : ∀ v : X, α v} {v : V}
+
+theorem intervene_eqn_of_mem (h : v ∈ X) (u : U) (y : ∀ v, α v) :
+    (M.intervene X x).eqn v u y = x ⟨v, h⟩ := by
+  simp [intervene, Function.updateFinset, h]
+
+theorem intervene_eqn_of_notMem (h : v ∉ X) (u : U) (y : ∀ v, α v) :
+    (M.intervene X x).eqn v u y = M.eqn v u y := by
+  simp [intervene, Function.updateFinset, h, step]
+
+/-- `M[c ← x]` is the submodel holding `c` at `x`, and `M[c ← x, d ← y]` intervenes on `c` and
+then on `d`. -/
+scoped syntax:max (name := interveneNotation) term noWs "[" (term " ← " term),+ "]" : term
+
+macro_rules (kind := interveneNotation)
+  | `($M[$c ← $x]) => `(CausalModel.intervene $M (singleton $c) (uniqueElim $x))
+  | `($M[$c ← $x, $[$cs ← $xs],*]) =>
+    `((CausalModel.intervene $M (singleton $c) (uniqueElim $x))[$[$cs ← $xs],*])
+
+end Intervene
 
 end CausalModel

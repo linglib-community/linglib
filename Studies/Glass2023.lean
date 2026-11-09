@@ -52,27 +52,27 @@ variable {U V : Type*} (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
 /-- `C = c` is globally sufficient for `E = e` when, in every context and under every background
 leaving `E` open in which `C = c`, `E = e`. -/
 def GloballySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑c → M.solve I u E = e
+  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑c → (M.impose I).solve u E = e
 
 /-- `C = c` is locally sufficient for `E = e` when, in some context and under some background
 leaving `E` open in which `C = c`, `E = e`. -/
 def LocallySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑c ∧ M.solve I u E = e
+  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑c ∧ (M.impose I).solve u E = e
 
 /-- `C = c` is globally necessary for `E = e` when, without it, `E = e` fails in every context and
 under every background leaving `E` open. -/
 def GloballyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑(!c) → M.solve I u E = !e
+  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑(!c) → (M.impose I).solve u E = !e
 
 /-- `C = c` is locally necessary for `E = e` when, without it, `E = e` fails in some context and
 under some background leaving `E` open. -/
 def LocallyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑(!c) ∧ M.solve I u E = !e
+  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑(!c) ∧ (M.impose I).solve u E = !e
 
 /-- *C causes E* is assertable on the state of knowledge `k` when the cause is known and the effect
 holds in every context under every background that keeps what is known and leaves it open. -/
 def Cause (k : V → Flat Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  k C = ↑c ∧ ∀ u (I : V → Flat Bool), k ≤ I → I E = ⊥ → M.solve I u E = e
+  k C = ↑c ∧ ∀ u (I : V → Flat Bool), k ≤ I → I E = ⊥ → (M.impose I).solve u E = e
 
 variable {M} {C E : V} {c e : Bool} {k : V → Flat Bool}
 
@@ -146,11 +146,11 @@ instance : DecidableRel light.graph.Adj := fun w v ↦
 instance : light.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 theorem solve_L {I : V → Flat Bool} (h : I .L = ⊥) (u : Context) :
-    light.solve I u .L = (light.solve I u .S1 && light.solve I u .S2) :=
-  solve_of_eq_bot h u
+    (light.impose I).solve u .L = ((light.impose I).solve u .S1 && (light.impose I).solve u .S2) :=
+  solve_impose_of_eq_bot h u
 
 theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false :=
-  fun u _ hL hS1 ↦ by rw [solve_L hL, solve_of_eq_coe hS1, Bool.false_and]
+  fun u _ hL hS1 ↦ by rw [solve_L hL, solve_impose_of_eq_coe hS1, Bool.false_and]
 
 theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
@@ -177,7 +177,7 @@ theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u I hk hL ↦ ?_⟩
   have h1 : I .S1 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S1 = ↑true) ▸ hk .S1)
   have h2 : I .S2 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S2 = ↑true) ▸ hk .S2)
-  rw [solve_L hL, solve_of_eq_coe h1, solve_of_eq_coe h2]
+  rw [solve_L hL, solve_impose_of_eq_coe h1, solve_impose_of_eq_coe h2]
   rfl
 
 end Light
@@ -194,9 +194,9 @@ theorem glass_nl_diverge_on_bus :
   refine ⟨⟨by decide, fun u I hk hBs ↦ ?_⟩, not_cause⟩
   have hRn : I .Rn = ↑true :=
     Flat.coe_le_iff.1 ((by decide : Function.update s_b .Tr ↑true .Rn = ↑true) ▸ hk .Rn)
-  rw [solve_of_eq_bot hBs]
-  show (busModel.solve I u .Rn || busModel.solve I u .Bk) = true
-  rw [solve_of_eq_coe hRn]
+  rw [solve_impose_of_eq_bot hBs]
+  show ((busModel.impose I).solve u .Rn || (busModel.impose I).solve u .Bk) = true
+  rw [solve_impose_of_eq_coe hRn]
   rfl
 
 end Bus

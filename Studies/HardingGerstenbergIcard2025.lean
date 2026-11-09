@@ -87,21 +87,23 @@ open Classical CausalModel in
 drawn with weights `P`, that intervening on `X` changes FACT. -/
 noncomputable def manipulationReward (P : U → ℝ) (M : CausalModel U V fun _ ↦ Bool)
     [M.IsAcyclic] (X fact : V) : ℝ :=
-  ∑ u, P u * if M.solve [X ← true] u fact ≠ M.solve [X ← false] u fact then 1 else 0
+  ∑ u, P u * if M[X ← true].solve u fact ≠ M[X ← false].solve u fact then 1 else 0
 
 end ManipulationGame
 
 /-! ### Actual causation, the literal meaning of "because" -/
 
+open CausalModel in
 /-- In the context `u`, `cause` is an actual cause of `effect` in witness form when both hold
-and, under some contingency `I` intervening on other variables, the cause is but-for the effect.
-This is [halpern-pearl-2005]'s definition without the restriction on contingencies that the paper
-leaves to any extant account. -/
+and, under some contingency holding a set `W` of variables at values `w`, the cause is but-for the
+effect. This is [halpern-pearl-2005]'s definition without the restriction on contingencies that
+the paper leaves to any extant account. -/
 def actualCause {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
     (u : U) (cause effect : V) : Prop :=
-  M.solve ⊥ u cause = true ∧ M.solve ⊥ u effect = true ∧
-    ∃ I : V → Flat Bool, M.solve (Function.update I cause ↑true) u effect = true ∧
-      M.solve (Function.update I cause ↑false) u effect ≠ true
+  M.solve u cause = true ∧ M.solve u effect = true ∧
+    ∃ (W : Finset V) (w : ∀ v : W, Bool),
+      (M.intervene W w)[cause ← true].solve u effect = true ∧
+        (M.intervene W w)[cause ← false].solve u effect ≠ true
 
 /-! ### Example 3: the late meeting -/
 
@@ -147,19 +149,20 @@ def context : Context := ⟨true, true⟩
 
 -- Example 3
 theorem actualCause_T_semT : actualCause semT context .T .C :=
-  ⟨by decide, by decide, ⊥, by decide, by decide⟩
+  ⟨by decide, by decide, ∅, isEmptyElim, by decide, by decide⟩
 
 theorem actualCause_T_semConj : actualCause semConj context .T .C :=
-  ⟨by decide, by decide, ⊥, by decide, by decide⟩
+  ⟨by decide, by decide, ∅, isEmptyElim, by decide, by decide⟩
 
 theorem actualCause_B_semConj : actualCause semConj context .B .C :=
-  ⟨by decide, by decide, ⊥, by decide, by decide⟩
+  ⟨by decide, by decide, ∅, isEmptyElim, by decide, by decide⟩
 
 -- Example 3
 theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
-  rintro ⟨-, -, I, h1, h2⟩
+  rintro ⟨-, -, W, w, h1, h2⟩
   have hB : ¬ Relation.ReflTransGen semT.graph.Adj .B .C := by decide
-  rw [CausalModel.solve_update_of_not_reflTransGen hB] at h1 h2
+  rw [CausalModel.solve_intervene_singleton_of_not_reflTransGen (M := semT.intervene W w) hB]
+    at h1 h2
   exact h2 h1
 
 /-- The worlds are the tardiness-only model `0` and the conjunctive model `1`. -/

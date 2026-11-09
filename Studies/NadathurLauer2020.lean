@@ -61,20 +61,20 @@ variable {U V : Type*} {α : V → Type*} [DecidableEq V] [∀ v, Nonempty (α v
 causally sufficient for `e = y`, and that the cause occurs in the actual world of the context
 `u`. -/
 def Make (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
-  M.CausallySufficient (Function.update s c ⊥) c x e y ∧ M.solve ⊥ u c = x
+  M.CausallySufficient (Function.update s c ⊥) c x e y ∧ M.solve u c = x
 
 /-- The *cause* entry (25b) says that, with the cause removed from the background `s`, `c = x`
 is causally necessary for `e = y`, and that cause and effect both occur in the actual world of the
 context `u`. -/
 def Cause (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
-  M.CausallyNecessary (· ≤ ·) (Function.update s c ⊥) c x e y ∧ M.solve ⊥ u c = x ∧
-    M.solve ⊥ u e = y
+  M.CausallyNecessary (· ≤ ·) (Function.update s c ⊥) c x e y ∧ M.solve u c = x ∧
+    M.solve u e = y
 
 variable {M}
 
 /-- *Make* entails that the effect occurs (footnote 20). -/
 theorem Make.solve_eq {s : ∀ v, Flat (α v)} {u : U} {c : V} {x : α c} {e : V} {y : α e}
-    (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve ⊥ u e = y :=
+    (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve u e = y :=
   h.1.solve_eq (contexts_anti (update_le_self_iff.2 bot_le) hu) h.2
 
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
@@ -82,13 +82,13 @@ variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq
 
 instance (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) :
     Decidable (Make M s u c x e y) :=
-  haveI : Decidable (M.solve ⊥ u c = x) := decidableEqSolve ⊥ u c x
+  haveI : Decidable (M.solve u c = x) := decidableEqSolve u c x
   inferInstanceAs (Decidable (_ ∧ _))
 
 instance [∀ v, Fintype (α v)] (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V)
     (y : α e) : Decidable (Cause M s u c x e y) :=
-  haveI : Decidable (M.solve ⊥ u c = x) := decidableEqSolve ⊥ u c x
-  haveI : Decidable (M.solve ⊥ u e = y) := decidableEqSolve ⊥ u e y
+  haveI : Decidable (M.solve u c = x) := decidableEqSolve u c x
+  haveI : Decidable (M.solve u e = y) := decidableEqSolve u e y
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 end Entries
