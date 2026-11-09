@@ -157,7 +157,7 @@ stated in (53). -/
 
 section Polarity
 
-open PolarityItem (LicensingContext NonemptyPredicate)
+open PolarityItem (LicensingContext)
 open PolarityItem.LicensingContext
 open scoped Classical
 

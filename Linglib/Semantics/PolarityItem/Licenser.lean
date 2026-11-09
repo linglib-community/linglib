@@ -73,6 +73,8 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Exhaustification MeasureTheory
 
+namespace Licenser
+
 /-- A family of operators between bounded lattices, indexed by what a construction leaves open. -/
 structure OperatorFamily where
   /-- What the construction leaves open. -/
@@ -129,13 +131,15 @@ structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
+end Licenser
+
 /-- The operator that a construction places over the position of a polarity item is classical,
 scalar (with its enrichment), into trivalent propositions, modal, or a question. -/
 inductive Licenser : Type 2 where
-  | classical (F : OperatorFamily)
-  | scalar (F : ScalarFamily)
-  | strawson (F : PresupposingFamily)
-  | modal (F : ModalFamily)
+  | classical (F : Licenser.OperatorFamily)
+  | scalar (F : Licenser.ScalarFamily)
+  | strawson (F : Licenser.PresupposingFamily)
+  | modal (F : Licenser.ModalFamily)
   | question
 
 /-- A context licenses polarity items by strengthening, as a generic context licensing free choice

@@ -209,6 +209,8 @@ def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | nobody | few | atMost | universalRestrictor | beforeClause | tooTo | onlyFocus | adversative
   | superlative | sinceTemporal => none
 
+namespace LicensingContext
+
 /-! ### The parameters of the operator families -/
 
 /-- A domain of individuals and a predicate over it. -/
@@ -343,16 +345,14 @@ structure Ago where
 
 attribute [instance] Ago.ord
 
-namespace LicensingContext
-
 /-! ### The licensers of the contexts -/
 
 /-- The degrees a clause leaves the compared individual above. -/
-abbrev exceedsFamily : OperatorFamily :=
+abbrev exceedsFamily : Licenser.OperatorFamily :=
   ⟨Measured, fun p ↦ Set p.D, fun _ ↦ Prop, fun p Δ ↦ p.μ p.x ∈ strictUpperBounds Δ⟩
 
 /-- Necessity over a frame. -/
-abbrev necessityFamily : ModalFamily := ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.core⟩
+abbrev necessityFamily : Licenser.ModalFamily := ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.core⟩
 
 /-- The licenser a construction places over the position of a polarity item. -/
 noncomputable def licenser : LicensingContext → Licenser

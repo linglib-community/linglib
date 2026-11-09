@@ -177,7 +177,7 @@ theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
 
 section Polarity
 
-open PolarityItem (NonemptyPredicate)
+open PolarityItem.LicensingContext (NonemptyPredicate)
 open scoped Classical
 
 /-- With `MAX` apart from the numeral, *zero* is a scalar licenser, the lower-bound numeral below

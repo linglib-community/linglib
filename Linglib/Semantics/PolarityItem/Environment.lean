@@ -46,10 +46,6 @@ namespace PolarityItem
 
 open NaturalLogic
 
-/-- Sentential negation as a layer: complementation, anti-morphic. -/
-def negation {P : Type*} [BooleanAlgebra P] : ProjectivitySignature.classPairs P :=
-  ⟨(compl, .antiAddMult), ProjectivitySignature.holdsFor_antiAddMult_compl⟩
-
 /-- The environment of a polarity item in a domain: the meaning of the domain as a function of the
 meaning of the item, with a signature whose function class contains it. -/
 @[ext]
@@ -111,30 +107,24 @@ section Carries
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P]
   (e : Environment σ P) {s : Negation.Strength}
 
-/-- An environment carries the strength `s` of negation when its licenser does. -/
-def Carries (s : Negation.Strength) : Prop :=
-  (Licenser.ofOperator e).Carries s
-
-theorem carries_iff : e.Carries s ↔ s.toProjectivitySignature.HoldsFor e ∧ ¬Monotone e :=
-  Licenser.carries_ofOperator_iff
-
 /-- An environment of positive sign carries no strength of negation. -/
-theorem not_carries_of_sign_eq_one (h : e.signature.sign = 1) : ¬e.Carries s := fun hc ↦
-  (e.carries_iff.1 hc).2 (e.monotone_of_sign_eq_one h)
+theorem not_carries_of_sign_eq_one (h : e.signature.sign = 1) :
+    ¬(Licenser.ofOperator e).Carries s := fun hc ↦
+  (Licenser.carries_ofOperator_iff.1 hc).2 (e.monotone_of_sign_eq_one h)
 
 /-- An environment carries the strengths its signature realizes, once it is not constant. -/
 theorem carries_of_le_negationStrength
     (hs : (s : WithBot Negation.Strength) ≤ e.signature.negationStrength) (hne : e ⊥ ≠ e ⊤) :
-    e.Carries s := by
+    (Licenser.ofOperator e).Carries s := by
   have hf := e.holdsFor.of_le (ProjectivitySignature.coe_le_negationStrength_iff.1 hs)
-  refine e.carries_iff.2 ⟨hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
+  refine Licenser.carries_ofOperator_iff.2 ⟨hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
   exact ProjectivitySignature.holdsFor_anti_iff.1
     (hf.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
     bot_le
 
 /-- An environment of negative sign carries weak strength, once it is not constant. -/
 theorem carries_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) (hne : e ⊥ ≠ e ⊤) :
-    e.Carries .weak := by
+    (Licenser.ofOperator e).Carries .weak := by
   obtain ⟨s', hs'⟩ :=
     WithBot.ne_bot_iff_exists.1 ((ProjectivitySignature.negationStrength_ne_bot_iff _).2 h)
   exact e.carries_of_le_negationStrength (hs' ▸ WithBot.coe_le_coe.2 bot_le) hne

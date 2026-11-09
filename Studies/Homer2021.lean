@@ -417,7 +417,7 @@ theorem not_holds_notAnd {t : List (ProjectivitySignature.classPairs (Set World)
 
 theorem carries_notOr {t : List (ProjectivitySignature.classPairs (Set World))}
     (ht : t ∈ notOr.layers.tails) :
-    (notOr.environment t).Carries .weak := by
+    (Licenser.ofOperator (notOr.environment t)).Carries .weak := by
   simp [notOr] at ht
   rcases ht with rfl | rfl <;>
     refine Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notOr]; decide) ?_ <;>
