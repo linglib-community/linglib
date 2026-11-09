@@ -14,9 +14,10 @@ Broekhuis and Corver argue that the traditional classes of Dutch adpositions are
 complement follows the adposition or is raised before it, and [the order yields the four classes
 and no other](##range_linearization). A prepositional phrase and an R-pronoun raise, and a noun
 phrase raises to be read as a path, a condition Helmantel's analysis makes precise. Then [every
-spatial use the grammar records sits where its order puts it](##reads_uses), [an R-pronoun keeps
-the prepositional reading](##reads_rPronoun_iff), and since only a raised complement can leave the
-phrase, [the noun phrase of a circumposition stays inside](##circumposition_extraction). A [path
+spatial use the grammar records sits where its order
+puts it](##exists_reads_of_mem_direction), [an R-pronoun keeps the prepositional
+reading](##reads_rPronoun_iff), and since only a raised complement can leave the phrase, [the noun
+phrase of a circumposition stays inside](##circumposition_extraction). A [path
 complementive makes a verb of motion take *zijn*](##perfect_op).
 
 ## Implementation notes
@@ -80,6 +81,17 @@ inductive ComplementKind where
   | rPronoun
   deriving DecidableEq, Repr, Fintype
 
+/-- A complement that denotes a location: a prepositional phrase, and an R-pronoun, the proform of
+one. A noun phrase does not, and the specifier can read it as a path. -/
+def ComplementKind.IsLocational : ComplementKind → Prop
+  | nominal => False
+  | prePP | rPronoun => True
+
+instance : DecidablePred ComplementKind.IsLocational := fun k ↦ by
+  cases k <;> unfold ComplementKind.IsLocational <;> infer_instance
+
+@[simp] theorem ComplementKind.not_isLocational_nominal : ¬ nominal.IsLocational := id
+
 /-- Where a complement is pronounced in `[FP _ F [P _]]`: in its base position after the
 adposition, or in the specifier of the functional projection FP above it. -/
 inductive Site where
@@ -108,31 +120,28 @@ def Extractable (s : Site) : Prop := s.position < headPosition
 instance : DecidablePred Extractable := fun s ↦
   inferInstanceAs (Decidable (s.position < headPosition))
 
-theorem headDirection_eq_headFinal {s : Site} : s.headDirection = .headFinal ↔ s = .spec := by
-  cases s <;> decide
-
-theorem extractable_iff {s : Site} : s.Extractable ↔ s = .spec := by
-  cases s <;> decide
-
 end Site
 
 /-- The traditional class, read off the head direction of the phrase: the adposition precedes a
-complement in its base position and follows a raised one, and a raised prepositional phrase brings
-its own head before the noun phrase, so that the whole is a circumposition. An R-pronoun counts
-with the prepositions, whose readings it keeps, and an adposition with no complement has no
-class. -/
+complement in its base position and follows a raised noun phrase, and a raised prepositional phrase
+brings its own head before the noun phrase, so that the whole is a circumposition. A raised
+R-pronoun counts with the prepositions, whose readings it keeps, as would a prepositional phrase
+left in its base position; an adposition with no complement has no class. -/
 def linearization : Option ComplementKind → Site → Option Adposition.Linearization
   | none, _ => none
   | some k, s =>
     some <| match k, s.headDirection with
+      | .nominal, .headInitial => .pre
       | .nominal, .headFinal => .post
       | .prePP, .headFinal => .circum
-      | _, _ => .pre
+      | .rPronoun, .headFinal => .pre
+      | .prePP, .headInitial | .rPronoun, .headInitial => .pre
 
 theorem linearization_eq_post_iff {k : ComplementKind} {s : Site} :
     linearization (some k) s = some .post ↔ k = .nominal ∧ s = .spec := by
   cases k <;> cases s <;> decide
 
+-- (62c)
 theorem linearization_eq_circum_iff {k : ComplementKind} {s : Site} :
     linearization (some k) s = some .circum ↔ k = .prePP ∧ s = .spec := by
   cases k <;> cases s <;> decide
@@ -154,19 +163,16 @@ theorem range_linearization :
 /-! ### The condition on raising -/
 
 /-- `Reads c k s r`: a phrase whose adposition has Helmantel's class `c`, with a complement of
-kind `k` at site `s`, has reading `r`. A noun phrase raises to be read as a path in the specifier,
-which the object of a point locative cannot be; otherwise the reading is the adposition's own, with
-the noun phrase in its base position, or with a prepositional phrase or an R-pronoun, which denote
-locations, raised. -/
-def Reads (c : LocativeClass) : ComplementKind → Site → Reading → Prop
-  | .nominal, .spec, r => r = .path ∧ c ≠ .point
-  | .nominal, .base, r => c.Has r
-  | _, .spec, r => c.Has r
-  | _, .base, _ => False
+kind `k` at site `s`, has reading `r`. A locational complement raises and leaves the reading to the
+adposition. A noun phrase either stays in its base position with the adposition's reading or raises
+to be read as a path, which the object of a point locative cannot be. -/
+def Reads (c : LocativeClass) (k : ComplementKind) : Site → Reading → Prop
+  | .base, r => ¬ k.IsLocational ∧ c.Has r
+  | .spec, r => if k.IsLocational then c.Has r else r = .path ∧ c ≠ .point
 
 instance (c : LocativeClass) (k : ComplementKind) (s : Site) (r : Reading) :
     Decidable (Reads c k s r) := by
-  cases k <;> cases s <;> unfold Reads <;> infer_instance
+  cases s <;> unfold Reads <;> infer_instance
 
 variable {c : LocativeClass} {k : ComplementKind} {s : Site} {r : Reading}
 
@@ -176,18 +182,31 @@ theorem reads_path_of_linearization_eq_post (h : Reads c k s r)
   obtain ⟨rfl, rfl⟩ := linearization_eq_post_iff.1 hl
   exact h.1
 
-/-- R-pronominalization is confined to prepositional phrases: an R-pronoun is never read as a path,
-so its phrase has exactly the readings of the adposition's prepositional phrase, and *de wandeling
-er op* 'the hike on it' has only the locational reading of *op de berg* 'on the mountain'. -/
-theorem reads_rPronoun_iff : Reads c .rPronoun s r ↔ s = .spec ∧ Reads c .nominal .base r := by
-  cases s <;> simp [Reads]
+theorem reads_iff_of_isLocational (hk : k.IsLocational) :
+    Reads c k s r ↔ s = .spec ∧ Reads c .nominal .base r := by
+  cases s <;> simp [Reads, hk]
+
+/-- R-pronominalization is confined to prepositional phrases: an R-pronoun is locational and never
+read as a path, so its phrase has exactly the readings of the adposition's prepositional phrase,
+and *de wandeling er op* 'the hike on it' has only the locational reading of *op de berg* 'on the
+mountain'. -/
+theorem reads_rPronoun_iff : Reads c .rPronoun s r ↔ s = .spec ∧ Reads c .nominal .base r :=
+  reads_iff_of_isLocational trivial
 
 /-! ### Extraction -/
+
+/-- An element of kind `k` can leave the phrase of an adposition of class `c` in reading `r` when
+it can stand before the adposition. -/
+def Leaves (c : LocativeClass) (k : ComplementKind) (r : Reading) : Prop :=
+  ∃ s, Reads c k s r ∧ s.Extractable
+
+instance (c : LocativeClass) (k : ComplementKind) (r : Reading) : Decidable (Leaves c k r) := by
+  unfold Leaves; infer_instance
 
 -- (53), (54)
 theorem extractable_iff_of_linearization_eq_pre (h : Reads c k s r)
     (hl : linearization (some k) s = some .pre) : s.Extractable ↔ k = .rPronoun := by
-  cases k <;> cases s <;> simp only [Reads] at h <;> revert hl <;> decide
+  cases k <;> cases s <;> simp [Reads, ComplementKind.IsLocational] at h <;> revert hl <;> decide
 
 -- (58), (60b): a postposition lets its noun phrase go, a circumposition its prepositional phrase
 theorem extractable_of_linearization_ne_pre (hl : linearization (some k) s ≠ some .pre) :
@@ -196,11 +215,18 @@ theorem extractable_of_linearization_ne_pre (hl : linearization (some k) s ≠ s
 
 /-- The reading of the prepositional phrase a circumposition raises: a location, as a
 prepositional complement denotes, unless its adposition is a point locative and has none. -/
-def complementReading (c : LocativeClass) : Reading := if c = .point then .path else .location
+def complementReading : LocativeClass → Reading
+  | .point => .path
+  | .narrow | .extended => .location
 
-theorem not_extractable_of_reads_complementReading
-    (h : Reads c .nominal s (complementReading c)) : ¬ s.Extractable := by
-  revert h; cases c <;> cases s <;> decide
+/-- A circumposition patterns with a preposition under extraction: the prepositional phrase it
+raises keeps its noun phrase in its base position, whatever the class of its adposition, so the
+noun phrase cannot leave the circumpositional phrase while an R-pronoun in its place can. *Jan is
+daar gisteren van af gesprongen* 'Jan jumped off it yesterday' is good, and with *het dak* 'the
+roof' bad. -/
+theorem circumposition_extraction (c : LocativeClass) :
+    ¬ Leaves c .nominal (complementReading c) ∧ Leaves c .rPronoun (complementReading c) := by
+  cases c <;> decide
 
 /-! ### The Dutch lexicon -/
 
@@ -210,35 +236,24 @@ def classed : List (Dutch.Adposition × LocativeClass) :=
     extendedLocatives.map (·, .extended)
 
 /-- The reading of a use whose path has direction `d`. -/
-def reading (d : Spatial.Path.Direction) : Reading := if d = .place then .location else .path
+def reading : Spatial.Path.Direction → Reading
+  | .place => .location
+  | .goal | .source | .route => .path
 
 /-- Every spatial use of Helmantel's prepositions that the grammar records is read at the site its
 order shows, a prepositional use with the noun phrase in its base position and a postpositional one
 with it raised. No point locative such as *naar* 'to' is then a postposition, a narrow locative
 such as *op* is postpositional exactly in its directional use, and an extended locative such as
 *over* 'across' can be directional in either order. -/
-theorem reads_uses : ∀ p ∈ classed, ∀ l, ∀ d ∈ p.1.direction l,
+theorem exists_reads_of_mem_direction : ∀ p ∈ classed, ∀ l, ∀ d ∈ p.1.direction l,
     ∃ s, linearization (some .nominal) s = some l ∧ Reads p.2 .nominal s (reading d) := by
   decide
 
-private theorem circumposition_parts :
+-- (61): every circumposition is one of Helmantel's prepositions and a postposition or particle
+theorem circumposition_parts :
     ∀ a ∈ inventory, a.IsCircumposition → ∃ p ∈ classed, ∃ b ∈ inventory,
       a.morphs = p.1.morphs ++ b.morphs ∧ (b.IsPostposition ∨ b.IsParticle) := by
   decide
-
-/-- A circumposition patterns with a preposition under extraction. Every circumposition of the
-grammar is one of Helmantel's prepositions followed by a postposition or a particle, and the
-prepositional phrase it raises keeps its noun phrase in its base position, so that the noun phrase
-cannot leave the circumpositional phrase while an R-pronoun in its place can: *Jan is daar
-gisteren van af gesprongen* 'Jan jumped off it yesterday', but not with *het dak* 'the roof'. -/
-theorem circumposition_extraction :
-    ∀ a ∈ inventory, a.IsCircumposition → ∃ p ∈ classed, ∃ b ∈ inventory,
-      a.morphs = p.1.morphs ++ b.morphs ∧ (b.IsPostposition ∨ b.IsParticle) ∧
-        (∀ s, Reads p.2 .nominal s (complementReading p.2) → ¬ s.Extractable) ∧
-        Reads p.2 .rPronoun .spec (complementReading p.2) ∧ Site.spec.Extractable :=
-  fun a ha hc ↦ (circumposition_parts a ha hc).imp fun p ⟨hp, b, hb, hm, hb'⟩ ↦
-    ⟨hp, b, hb, hm, hb', fun _ ↦ not_extractable_of_reads_complementReading,
-      by cases p.2 <;> decide, by decide⟩
 
 -- p. 1, p. 9: each simple adposition is a preposition but *af*, *heen*, *toe*, once prepositions
 theorem isPreposition_of_isSimple : ∀ a ∈ inventory, a.IsSimple →
@@ -251,40 +266,40 @@ theorem isPreposition_of_isSimple : ∀ a ∈ inventory, a.IsSimple →
 def locativeClass? (a : Dutch.Adposition) : Option LocativeClass :=
   (classed.find? fun p ↦ p.1.toAdposition = a.toAdposition).map (·.2)
 
-/-- An element of kind `k` can leave the phrase of an adposition of class `c` when some reading
-licenses it at a site before the adposition. -/
-def Leaves (c : LocativeClass) (k : ComplementKind) : Prop :=
-  ∃ s r, Reads c k s r ∧ s.Extractable
+/-- An extraction a row judges. -/
+structure Extraction where
+  /-- The row. -/
+  row : Datum
+  /-- The adposition whose phrase the element leaves. -/
+  adposition : Dutch.Adposition
+  /-- The kind of the element. -/
+  kind : ComplementKind
 
-instance (c : LocativeClass) (k : ComplementKind) : Decidable (Leaves c k) := by
-  unfold Leaves; infer_instance
-
-/-- The extraction rows, each with the adposition whose phrase the element leaves and the kind of
-the element. -/
-def extractions : List (Datum × Dutch.Adposition × ComplementKind) :=
-  [(Examples.ex_56b, naast, .rPronoun), (Examples.ex_57b, boven, .rPronoun),
-    (Examples.ex_58b, in_, .nominal), (Examples.ex_58c, in_, .nominal),
-    (Examples.ex_59b_daar, van, .rPronoun), (Examples.ex_59b_dak, van, .nominal),
-    (Examples.ex_59c_waar, van, .rPronoun), (Examples.ex_59c_dak, van, .nominal)]
+/-- The extraction rows. -/
+def extractions : List Extraction :=
+  [⟨Examples.ex_56b, naast, .rPronoun⟩, ⟨Examples.ex_57b, boven, .rPronoun⟩,
+    ⟨Examples.ex_58b, in_, .nominal⟩, ⟨Examples.ex_58c, in_, .nominal⟩,
+    ⟨Examples.ex_59b_daar, van, .rPronoun⟩, ⟨Examples.ex_59b_dak, van, .nominal⟩,
+    ⟨Examples.ex_59c_waar, van, .rPronoun⟩, ⟨Examples.ex_59c_dak, van, .nominal⟩]
 
 -- (56b)-(59c): each row's adposition is one of its words, and `Leaves` gives its judgment
 theorem extraction_rows : ∀ x ∈ extractions,
-    (∃ t ∈ x.1.glossedTokens, x.2.1.morphs = [.free t.1]) ∧
-      ∃ c ∈ locativeClass? x.2.1, x.1.judgment.band = .ofProp (Leaves c x.2.2) := by
+    (∃ t ∈ x.row.glossedTokens, x.adposition.morphs = [.free t.1]) ∧
+      ∃ c ∈ locativeClass? x.adposition,
+        x.row.judgment.band = .ofProp (∃ r, Leaves c x.kind r) := by
   decide +kernel
 
-/-- The readings of *de wandeling er op* 'the hike on it', in the order the chapter prints them. -/
-def erOpReadings : List Reading := [.location, .path]
+/-- The readings the chapter prints for *de wandeling er op* 'the hike on it'. -/
+def erOpReadings : List (String × Reading) := [("on it", .location), ("up it", .path)]
 
 -- (26c)
-theorem erOp_rows : Examples.ex_26c.readings.length = erOpReadings.length ∧
-    (∃ t ∈ Examples.ex_26c.glossedTokens, op.morphs = [.free t.1]) ∧
-      ∃ c ∈ locativeClass? op, ∀ x ∈ Examples.ex_26c.readings.zip erOpReadings,
-        x.1.2.band = .ofProp (∃ s, Reads c .rPronoun s x.2) := by
+theorem erOp_rows : (∃ t ∈ Examples.ex_26c.glossedTokens, op.morphs = [.free t.1]) ∧
+    ∃ c ∈ locativeClass? op, ∀ x ∈ Examples.ex_26c.readings,
+      ∃ r ∈ erOpReadings.lookup x.1, x.2.band = .ofProp (∃ s, Reads c .rPronoun s r) := by
   decide +kernel
 
 theorem rows_covered :
-    Examples.all.map (·.id) = Examples.ex_26c.id :: extractions.map (·.1.id) := by
+    Examples.all.map (·.id) = Examples.ex_26c.id :: extractions.map (·.row.id) := by
   decide +kernel
 
 /-! ### Directional phrases and the perfect auxiliary -/
@@ -309,10 +324,10 @@ theorem perfect_op (aux : PerfectAuxiliary) :
   ⟨rfl, rfl⟩
 
 -- (22): every postpositional phrase is a path complementive and its verb of motion takes *zijn*
-theorem postP_selects_zijn (aux : PerfectAuxiliary) :
+theorem selection_eq_be_of_isPostposition (aux : PerfectAuxiliary) :
     ∀ a ∈ inventory, a.IsPostposition →
       ∃ d ∈ a.direction .post, (verbClass (reading d)).selection aux = .be :=
-  fun a ha h ↦ (exists_direction_post_ne_place a ha h).imp fun _ ⟨hd, hne⟩ ↦
-    ⟨hd, (selection_verbClass_eq_be_iff aux _).2 (by simp [reading, hne])⟩
+  fun a ha h ↦ (exists_direction_post_ne_place a ha h).imp fun d ⟨hd, hne⟩ ↦
+    ⟨hd, (selection_verbClass_eq_be_iff aux _).2 (by cases d <;> simp_all [reading])⟩
 
 end BroekhuisCorver2026
