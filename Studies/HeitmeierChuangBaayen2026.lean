@@ -24,7 +24,9 @@ inflectional-function vector, the form table of a linear map satisfies proportio
 construction (`Morphology.IsAnalogicallyRegular`). So a table violating analogy is the paradigm
 of no linear mapping and forces positive training loss, and when the lexeme and function
 vectors are jointly independent a table is the paradigm of some linear mapping exactly when it
-is analogically regular. Over word-specific embeddings, by contrast, any table is the paradigm
+is analogically regular. Imputing the lexeme and function vectors from word embeddings by
+regression, as the book does, [returns the embeddings exactly when they are analogically
+regular](##imputed_eq_iff_isAnalogicallyRegular), so imputation regularizes. Over word-specific embeddings, by contrast, any table is the paradigm
 of some linear mapping as soon as the embeddings are linearly independent, which fills the
 irregular-linear cell of Table 16.2. The English past tense at the book's letter-trigram coding
 (§12.9) is the irregular table, *walk, walked* against *go, went*, with the forms taken from
@@ -111,6 +113,46 @@ theorem pos_weightedLoss_of_not_regular {f : ParadigmSystem Lexeme Cell (Fin n �
   refine not_exists_paradigm_eq_of_not_regular σ ε hf
     ⟨G, funext fun l ↦ funext fun c ↦ funext fun j ↦ ?_⟩
   simpa [mul_apply, vecMul, dotProduct] using congrFun (congrFun hint (l, c)) j
+
+/-! ### Imputation
+
+The book imputes vectors for lexemes and inflectional functions from word embeddings as the rows
+of a mapping trained from the matrix `L` of the words' primitives onto the embeddings. -/
+
+section Imputation
+
+variable {ι Prim : Type*} [Fintype ι] [Fintype Prim] [DecidableEq Prim]
+  {prims : ι → Multiset Prim} {S : Matrix ι (Fin d) ℝ} {q : ι → NNReal} {W : Matrix Prim (Fin d) ℝ}
+
+/-- The matrix `L` marks each word's semantic primitives, its row conceptualizing their one-hot
+vectors ((5.1), (5.2); Code 5.9). -/
+def L (prims : ι → Multiset Prim) : Matrix ι Prim ℝ :=
+  of fun i ↦ conceptualize (Pi.single · 1) (prims i)
+
+-- Code 5.9
+theorem forall_conceptualize_eq_iff (hq : ∀ i, 0 < q i) (hW : IsTrained (L prims) S q W) :
+    (∀ i, conceptualize W.row (prims i) = S i) ↔
+      ∃ v : Prim → Fin d → ℝ, ∀ i, conceptualize v (prims i) = S i := by
+  refine ⟨fun h ↦ ⟨W.row, h⟩, fun ⟨v, hv⟩ i ↦ ?_⟩
+  have hL : L prims * of v = S :=
+    ext_row fun i ↦ (conceptualize_row (of v) (prims i)).symm.trans (hv i)
+  rw [conceptualize_row, ← hL]
+  exact congrFun (hW.mul_eq hq (isTrained_of_mul_eq _ _ _ _ hL)) i
+
+end Imputation
+
+/-- Imputing vectors for the lexemes and cells of a paradigm from its word embeddings
+reconstructs the embeddings exactly iff they are analogically regular, imputed meanings being
+regular by construction: imputation regularizes word meanings (Code 5.9, §16.6). -/
+theorem imputed_eq_iff_isAnalogicallyRegular [DecidableEq Lexeme] [DecidableEq Cell]
+    {s : ParadigmSystem Lexeme Cell (Fin d → ℝ)} {q : Lexeme × Cell → NNReal} (hq : ∀ i, 0 < q i)
+    {W : Matrix (Lexeme ⊕ Cell) (Fin d) ℝ}
+    (hW : IsTrained (L fun w ↦ {.inl w.1, .inr w.2}) (of (Function.uncurry s)) q W) :
+    imputed (W.row ∘ .inl) (W.row ∘ .inr) = s ↔ IsAnalogicallyRegular s := by
+  refine ⟨fun h ↦ h ▸ isAnalogicallyRegular_imputed _ _, fun hs ↦ ?_⟩
+  obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hs
+  exact funext₂ fun l c ↦ (forall_conceptualize_eq_iff hq hW).2
+    ⟨Sum.elim a b, fun ⟨l, c⟩ ↦ Eq.trans (by simp) (hab l c).symm⟩ (l, c)
 
 /-! ### Incremental learning
 
@@ -206,7 +248,7 @@ def trigram : Fin 13 → Augmented Char :=
 
 /-- The past-tense form table at the trigram coding takes each verb's form at each cell from
 the fragment. -/
-def pastTense : ParadigmSystem (Fin 2) cells (Fin 13 → ℝ) := fun v c ↦
+noncomputable def pastTense : ParadigmSystem (Fin 2) cells (Fin 13 → ℝ) := fun v c ↦
   cueVector 3 trigram ((verb v).realize c).toList
 
 private theorem mem_cues_walk_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
@@ -222,7 +264,7 @@ private theorem mem_cues_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
 constructed meanings (§12.9). -/
 theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h ↦ by
   have := congrFun (isAnalogicallyRegular_iff.1 h walk go past base) 6
-  simp [pastTense, cueVector, multiHot, mem_cues_iff] at this
+  simp [pastTense, cueVector_apply, mem_cues_iff] at this
 
 /-- The table is nonetheless analogical under arbitrary operations, each form identifying its
 verb, so analogy under translations is strictly stronger. -/
@@ -230,7 +272,7 @@ example : IsAnalogical Set.univ pastTense ∧ ¬ IsAnalogicallyRegular pastTense
   refine ⟨isAnalogical_univ_iff.2 fun c _ ↦ Function.Injective.factorsThrough
     (fun v v' h ↦ ?_) _, pastTense_not_regular⟩
   have := congrFun h 0
-  simp only [pastTense, cueVector, multiHot, mem_cues_walk_iff] at this
+  simp only [pastTense, cueVector_apply, mem_cues_walk_iff] at this
   revert this; fin_cases v <;> fin_cases v' <;> simp
 
 end HeitmeierChuangBaayen2026
