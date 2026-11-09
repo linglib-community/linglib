@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
 
@@ -44,14 +45,14 @@ variable {W V E : Type*}
 negative update `s[φ]⁻`, the result of denying it. -/
 @[ext] structure BilateralUpdate (W V E : Type*) where
   /-- The positive update. -/
-  positive : CCP (Possibility W V (Flat E))
+  positive : CCP (Possibility W V (Part E))
   /-- The negative update. -/
-  negative : CCP (Possibility W V (Flat E))
+  negative : CCP (Possibility W V (Part E))
 
 namespace BilateralUpdate
 
-variable {φ ψ : BilateralUpdate W V E} {s : Set (Possibility W V (Flat E))}
-  {p : Possibility W V (Flat E)}
+variable {φ ψ : BilateralUpdate W V E} {s : Set (Possibility W V (Part E))}
+  {p : Possibility W V (Part E)}
 
 /-! ### Negation and the unknown update -/
 
@@ -70,12 +71,12 @@ def neg (φ : BilateralUpdate W V E) : BilateralUpdate W V E where
 
 /-- The *unknown* update `s[φ]?`: the points of `s` that subsist in neither update. -/
 def unknownUpdate (φ : BilateralUpdate W V E)
-    (s : Set (Possibility W V (Flat E))) : Set (Possibility W V (Flat E)) :=
+    (s : Set (Possibility W V (Part E))) : Set (Possibility W V (Part E)) :=
   {p ∈ s | p ∉ lowerClosure (φ.positive s) ∧ p ∉ lowerClosure (φ.negative s)}
 
 /-- A sentence is *assertable* at `c` when its unknown update there is empty: every point of `c`
 subsists in one of its updates. -/
-def Assertable (φ : BilateralUpdate W V E) (c : Set (Possibility W V (Flat E))) : Prop :=
+def Assertable (φ : BilateralUpdate W V E) (c : Set (Possibility W V (Part E))) : Prop :=
   φ.unknownUpdate c = ∅
 
 theorem unknownUpdate_neg (φ : BilateralUpdate W V E) (s) :
@@ -86,7 +87,7 @@ theorem unknownUpdate_neg (φ : BilateralUpdate W V E) (s) :
 
 /-- The update at a truth value: positive at `true`, negative at `false` and unknown at
 `undefined`. -/
-def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Flat E))
+def update (φ : BilateralUpdate W V E) : Trivalent → CCP (Possibility W V (Part E))
   | .true => φ.positive
   | .false => φ.negative
   | .undefined => φ.unknownUpdate
@@ -105,11 +106,11 @@ theorem update_neg (φ : BilateralUpdate W V E) (a : Trivalent) : (~φ).update a
 
 /-- The static update of a trivalent proposition over points: it keeps the points where the
 proposition is true, positively, and where it is false, negatively. -/
-def ofTrivalent (v : Possibility W V (Flat E) → Trivalent) : BilateralUpdate W V E where
+def ofTrivalent (v : Possibility W V (Part E) → Trivalent) : BilateralUpdate W V E where
   positive := CCP.up (Trivalent.posExt v)
   negative := CCP.up (Trivalent.negExt v)
 
-variable {v : Possibility W V (Flat E) → Trivalent}
+variable {v : Possibility W V (Part E) → Trivalent}
 
 @[simp] theorem mem_positive_ofTrivalent : p ∈ (ofTrivalent v).positive s ↔ p ∈ s ∧ v p = .true :=
   Iff.rfl
@@ -146,18 +147,15 @@ open scoped Classical in
 noncomputable def atom (pred : W → Prop) : BilateralUpdate W V E :=
   ofTrivalent fun p ↦ Trivalent.ofProp (pred p.world)
 
-open scoped Classical in
-/-- Unary predication at `t`: undefined where `t` is, and otherwise the predicate at its value. -/
+/-- Unary predication at `t`: the partial proposition that the predicate holds of the value at
+`t`, undefined where `t` is. -/
 noncomputable def pred1 (P : E → W → Prop) (t : V) : BilateralUpdate W V E :=
-  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined
-    (fun e ↦ Trivalent.ofProp (P e p.world)) (p.assignment t)
+  ofTrivalent fun p ↦ Trivalent.ofPart ((p.assignment t).map fun e ↦ P e p.world)
 
-open scoped Classical in
 /-- Binary predication at `t₁` and `t₂`: undefined where either is. -/
 noncomputable def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : BilateralUpdate W V E :=
-  ofTrivalent fun p ↦ Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined (fun e₁ ↦
-    Flat.recBotCoe (C := fun _ ↦ Trivalent) .undefined (fun e₂ ↦ Trivalent.ofProp (P e₁ e₂ p.world))
-      (p.assignment t₂)) (p.assignment t₁)
+  ofTrivalent fun p ↦ Trivalent.ofPart <|
+    (p.assignment t₁).bind fun e₁ ↦ (p.assignment t₂).map fun e₂ ↦ P e₁ e₂ p.world
 
 @[simp] theorem mem_positive_atom {pred : W → Prop} :
     p ∈ (atom pred).positive s ↔ p ∈ s ∧ pred p.world := by
@@ -168,34 +166,32 @@ noncomputable def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : Bilateral
   simp [atom]
 
 @[simp] theorem mem_positive_pred1 {P : E → W → Prop} {t : V} :
-    p ∈ (pred1 P t).positive s ↔ p ∈ s ∧ ∃ e : E, p.assignment t = ↑e ∧ P e p.world := by
-  simp only [pred1, mem_positive_ofTrivalent]
-  refine and_congr_right fun _ ↦ ?_
-  induction p.assignment t using Flat.recBotCoe <;> simp
+    p ∈ (pred1 P t).positive s ↔ p ∈ s ∧ ∃ e ∈ p.assignment t, P e p.world := by
+  simp only [pred1, mem_positive_ofTrivalent, Trivalent.ofPart_eq_true_iff, Part.mem_map_iff,
+    exists_exists_and_eq_and]
 
 @[simp] theorem mem_negative_pred1 {P : E → W → Prop} {t : V} :
-    p ∈ (pred1 P t).negative s ↔ p ∈ s ∧ ∃ e : E, p.assignment t = ↑e ∧ ¬ P e p.world := by
-  simp only [pred1, mem_negative_ofTrivalent]
-  refine and_congr_right fun _ ↦ ?_
-  induction p.assignment t using Flat.recBotCoe <;> simp
+    p ∈ (pred1 P t).negative s ↔ p ∈ s ∧ ∃ e ∈ p.assignment t, ¬ P e p.world := by
+  simp only [pred1, mem_negative_ofTrivalent, Trivalent.ofPart_eq_false_iff, Part.mem_map_iff,
+    exists_exists_and_eq_and]
 
 @[simp] theorem mem_positive_pred2 {P : E → E → W → Prop} {t₁ t₂ : V} :
-    p ∈ (pred2 P t₁ t₂).positive s ↔ p ∈ s ∧ ∃ e₁ : E, p.assignment t₁ = ↑e₁ ∧
-      ∃ e₂ : E, p.assignment t₂ = ↑e₂ ∧ P e₁ e₂ p.world := by
-  simp only [pred2, mem_positive_ofTrivalent]
-  refine and_congr_right fun _ ↦ ?_
-  induction p.assignment t₁ using Flat.recBotCoe <;>
-    induction p.assignment t₂ using Flat.recBotCoe <;> simp
+    p ∈ (pred2 P t₁ t₂).positive s ↔
+      p ∈ s ∧ ∃ e₁ ∈ p.assignment t₁, ∃ e₂ ∈ p.assignment t₂, P e₁ e₂ p.world := by
+  simp only [pred2, mem_positive_ofTrivalent, Trivalent.ofPart_eq_true_iff, Part.mem_bind_iff,
+    Part.mem_map_iff]
+  exact and_congr_right fun _ ↦ ⟨fun ⟨_, ⟨e₁, h₁, e₂, h₂, rfl⟩, h⟩ ↦ ⟨e₁, h₁, e₂, h₂, h⟩,
+    fun ⟨e₁, h₁, e₂, h₂, h⟩ ↦ ⟨_, ⟨e₁, h₁, e₂, h₂, rfl⟩, h⟩⟩
 
 @[simp] theorem mem_negative_pred2 {P : E → E → W → Prop} {t₁ t₂ : V} :
-    p ∈ (pred2 P t₁ t₂).negative s ↔ p ∈ s ∧ ∃ e₁ : E, p.assignment t₁ = ↑e₁ ∧
-      ∃ e₂ : E, p.assignment t₂ = ↑e₂ ∧ ¬ P e₁ e₂ p.world := by
-  simp only [pred2, mem_negative_ofTrivalent]
-  refine and_congr_right fun _ ↦ ?_
-  induction p.assignment t₁ using Flat.recBotCoe <;>
-    induction p.assignment t₂ using Flat.recBotCoe <;> simp
+    p ∈ (pred2 P t₁ t₂).negative s ↔
+      p ∈ s ∧ ∃ e₁ ∈ p.assignment t₁, ∃ e₂ ∈ p.assignment t₂, ¬ P e₁ e₂ p.world := by
+  simp only [pred2, mem_negative_ofTrivalent, Trivalent.ofPart_eq_false_iff, Part.mem_bind_iff,
+    Part.mem_map_iff]
+  exact and_congr_right fun _ ↦ ⟨fun ⟨_, ⟨e₁, h₁, e₂, h₂, rfl⟩, h⟩ ↦ ⟨e₁, h₁, e₂, h₂, h⟩,
+    fun ⟨e₁, h₁, e₂, h₂, h⟩ ↦ ⟨_, ⟨e₁, h₁, e₂, h₂, rfl⟩, h⟩⟩
 
-theorem negative_atom (pred : W → Prop) (s : Set (Possibility W V (Flat E))) :
+theorem negative_atom (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
     (atom pred (V := V) (E := E)).negative s = {p ∈ s | ¬ pred p.world} :=
   Set.ext fun _ ↦ mem_negative_atom
 
@@ -220,15 +216,15 @@ variable {x : V}
 
 theorem positive_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).positive s = ∅ :=
-  positive_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
+  positive_ofTrivalent_of_eq_undefined fun p hp ↦ Trivalent.ofPart_eq_undefined_iff.2 (hx p hp)
 
 theorem negative_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).negative s = ∅ :=
-  negative_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
+  negative_ofTrivalent_of_eq_undefined fun p hp ↦ Trivalent.ofPart_eq_undefined_iff.2 (hx p hp)
 
 theorem unknownUpdate_pred1_of_novel (P : E → W → Prop) (hx : State.Novel s x) :
     (pred1 P x).unknownUpdate s = s :=
-  unknownUpdate_ofTrivalent_of_eq_undefined fun p hp ↦ by simp [hx p hp]
+  unknownUpdate_ofTrivalent_of_eq_undefined fun p hp ↦ Trivalent.ofPart_eq_undefined_iff.2 (hx p hp)
 
 /-! ### Connectives -/
 
@@ -301,14 +297,14 @@ theorem neg_conj (φ ψ : BilateralUpdate W V E) : ~(φ ⊙ ψ) = (~φ) ⊕ (~ψ
 
 /-- The part of a compound's update at `v` that its first operand is responsible for: the cells
 where the first operand has value `v`. -/
-def firstPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
-    Set (Possibility W V (Flat E)) :=
+def firstPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Part E))) :
+    Set (Possibility W V (Part E)) :=
   ⋃ b, ψ.update b (φ.update v s)
 
 /-- The part of a compound's update at `v` that its second operand is responsible for: the cells
 where the second operand has value `v`. -/
-def secondPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Flat E))) :
-    Set (Possibility W V (Flat E)) :=
+def secondPart (v : Trivalent) (φ ψ : BilateralUpdate W V E) (s : Set (Possibility W V (Part E))) :
+    Set (Possibility W V (Part E)) :=
   ⋃ a, ψ.update v (φ.update a s)
 
 @[simp] theorem mem_firstPart {v : Trivalent} :
@@ -381,8 +377,8 @@ theorem mem_lowerClosure_positive_pred1_randomAssign (P : E → W → Prop) (hp 
     obtain ⟨-, e, -, hP⟩ := mem_positive_pred1.1 hq
     exact ⟨e, (Possibility.le_def.mp hpq).1 ▸ hP⟩
   · rintro ⟨e, hP⟩
-    exact ⟨p.update x ↑e, mem_positive_pred1.2 ⟨⟨p, hp, e, rfl⟩, e, by simp, hP⟩,
-      Possibility.le_update_of_eq_bot (hx p hp) _⟩
+    exact ⟨p.update x (.some e), mem_positive_pred1.2 ⟨⟨p, hp, e, rfl⟩, e, by simp, hP⟩,
+      Possibility.le_update_of_notMem (hx p hp) _⟩
 
 /-- At a novel referent, the denial of `∃x P(x)` keeps the points whose world has no `P`. -/
 theorem negative_exists_pred1 [Nonempty E] (P : E → W → Prop) (hx : State.Novel s x) :

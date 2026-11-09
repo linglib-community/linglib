@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Part
+public import Mathlib.Data.PFun
+public import Linglib.Core.Order.LeftLinear
 
 /-!
 # Values of partial values
@@ -14,6 +15,9 @@ Mirror of `Mathlib/Data/Part.lean`: the domain and the value of `Part.restrict p
 value `o` defined exactly where `p` holds, and the value of a `Part.bind`, as `simp` lemmas. The
 value of a restriction does not depend on the proof of `p`, so `simp` rewrites under it, where it
 cannot under an anonymous `⟨p, fun h ↦ …⟩`.
+
+Partial values are left-linear (`Part.isLeftLinear`): below a defined value lie only itself and
+`⊥`, so two values with a common upper bound are comparable.
 
 Equality and the order of partial values are decidable when their domains are
 (`Part.decidableEqOfDom`, `Part.decidableLEOfDom`), and so are they for families of partial values
@@ -57,11 +61,38 @@ theorem some_le_iff : some a ≤ o ↔ o = some a :=
 theorem some_le_some : some a ≤ some b ↔ a = b := by
   rw [some_le_iff, some_inj, eq_comm]
 
+theorem Dom.mono (h : o ≤ o') (ho : o.Dom) : o'.Dom :=
+  (h _ (get_mem ho)).fst
+
 /-- A partial value below one that is defined only where it is, is equal to it. -/
-theorem eq_of_le (h : o ≤ o') (h' : o' ≠ ⊥ → o ≠ ⊥) : o = o' := by
-  rcases eq_none_or_eq_some o with rfl | ⟨a, rfl⟩
-  · exact (not_not.1 fun hne ↦ h' hne rfl).symm
-  · exact (some_le_iff.1 h).symm
+theorem eq_of_le (h : o ≤ o') (h' : o'.Dom → o.Dom) : o = o' :=
+  ext' ⟨Dom.mono h, h'⟩ fun ho _ ↦ mem_unique (h _ (get_mem ho)) (get_mem _)
+
+/-- A partial value is covered exactly by the defined values above it: the order has height one. -/
+theorem covBy_iff : o ⋖ o' ↔ ¬o.Dom ∧ o'.Dom := by
+  refine ⟨fun h ↦ ⟨fun ho ↦ h.1.ne (eq_of_le h.1.le fun _ ↦ ho), ?_⟩, fun ⟨ho, ho'⟩ ↦ ⟨?_, ?_⟩⟩
+  · by_contra ho'
+    exact h.1.ne (eq_of_le h.1.le fun h' ↦ absurd h' ho')
+  · exact lt_of_le_of_ne (fun a ha ↦ absurd ha.fst ho) fun h ↦ ho (h ▸ ho')
+  · exact fun c hc hc' ↦ hc'.ne (eq_of_le hc'.le fun _ ↦ by_contra fun hc₀ ↦
+      hc.ne (eq_of_le hc.le fun h ↦ absurd h hc₀))
+
+/-- Two partial values are bounded above iff they agree wherever both are defined. -/
+theorem bddAbove_pair_iff : BddAbove ({o, o'} : Set (Part α)) ↔ ∀ a ∈ o, ∀ b ∈ o', a = b := by
+  refine ⟨fun ⟨u, hu⟩ a ha b hb ↦ mem_unique (hu (.inl rfl) _ ha) (hu (.inr rfl) _ hb),
+    fun h ↦ ?_⟩
+  by_cases ho : o.Dom
+  · refine ⟨o, ?_⟩
+    rintro _ (rfl | rfl)
+    exacts [le_rfl, fun b hb ↦ h _ (get_mem ho) b hb ▸ get_mem ho]
+  · refine ⟨o', ?_⟩
+    rintro _ (rfl | rfl)
+    exacts [fun a ha ↦ absurd ha.fst ho, le_rfl]
+
+/-- Partial values are left-linear: below a defined value lie only itself and `⊥`. -/
+instance isLeftLinear : IsLeftLinear (Part α) :=
+  ⟨fun a _ _ ha hb ↦ (em a.Dom).symm.imp (fun h _ hx ↦ absurd hx.fst h) fun h x hx ↦
+    mem_unique (ha _ (get_mem h)) (hb x hx) ▸ get_mem h⟩
 
 end Order
 
@@ -125,3 +156,31 @@ instance Function.updatePartDecidable [DecidableEq ι] (f : ∀ i, Part (β i)) 
   else decidable_of_iff (f i).Dom (by rw [Function.update_of_ne h])
 
 end Pi
+
+/-! ### Partial functions
+
+A partial function `α →. β` is a family `α → Part β`, ordered pointwise by extension, with domain
+`PFun.Dom`. -/
+
+namespace PFun
+
+variable {α β : Type*} {f g : α → Part β}
+
+@[simp] theorem dom_bot : Dom (⊥ : α → Part β) = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ↦ Part.not_none_dom (α := β)
+
+theorem dom_mono (h : f ≤ g) : Dom f ⊆ Dom g := fun a ↦ Part.Dom.mono (h a)
+
+/-- One partial function extends another iff they agree on the other's domain. -/
+theorem le_iff_eqOn_dom : f ≤ g ↔ Set.EqOn f g (Dom f) :=
+  forall_congr' fun _ ↦ Part.le_iff_not_dom_or_eq.trans imp_iff_not_or.symm
+
+theorem eq_of_le_of_dom_subset (h : f ≤ g) (hdom : Dom g ⊆ Dom f) : f = g :=
+  funext fun a ↦ Part.eq_of_le (h a) fun ha ↦ hdom ha
+
+@[simp] theorem dom_update_some [DecidableEq α] (f : α → Part β) (a : α) (b : β) :
+    Dom (Function.update f a (Part.some b)) = insert a (Dom f) := by
+  ext c
+  obtain rfl | hc := eq_or_ne c a <;> simp [*]
+
+end PFun
