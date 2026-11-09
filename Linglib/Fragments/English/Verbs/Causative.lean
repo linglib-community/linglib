@@ -22,22 +22,23 @@ The English periphrastic causatives are *cause*, *make*, *let*, *have*, *get*, *
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect
+open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Causative (Periphrastic) -/
 
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb where
   morphs := [.root "cause"]
+  levin := some Levin1993.Index.cause
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
-  levinClasses := {LevinClass.engender}
 
 /-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
 *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
 def make : Verb where
   morphs := [.root "make"]
+  levin := some Levin1993.Index.make
   past := "made"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
   vendlerClass := some .accomplishment
@@ -47,6 +48,7 @@ def make : Verb where
 /-- *let* is the permissive causative, *let him leave*. -/
 def let_ : Verb where
   morphs := [.root "let"]
+  levin := none
   past := "let"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
   vendlerClass := some .achievement
@@ -54,6 +56,7 @@ def let_ : Verb where
 /-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
 def have_caus : Verb where
   morphs := [.root "have"]
+  levin := none
   thirdSg := "has"
   past := "had"
   valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
@@ -65,6 +68,7 @@ def have_caus : Verb where
 not class it (the *get* of 13.5.1 is the verb of obtaining). -/
 def get_caus : Verb where
   morphs := [.root "get"]
+  levin := some Levin1993.Index.get
   past := "got"
   pastPart := "gotten"
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
@@ -75,6 +79,7 @@ def get_caus : Verb where
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb where
   morphs := [.root "force"]
+  levin := none
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
@@ -82,6 +87,7 @@ def force : Verb where
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb where
   morphs := [.root "prevent"]
+  levin := none
   valency := .ofFrame ArgumentFrame.gerund.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   implicative := ⟨.some .negative, ⊥⟩
@@ -91,14 +97,15 @@ def prevent : Verb where
 /-- "kill" — Levin 42.1 murder verbs. -/
 def kill : Verb where
   morphs := [.root "kill"]
+  levin := some Levin1993.Index.kill
   valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.murder}
 
 /-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
     of how the change comes about ([levin-1993]:241). -/
 def break_ : Verb where
   morphs := [.root "break"]
+  levin := some Levin1993.Index.«break»
   past := "broke"
   pastPart := "broken"
   valency := .of
@@ -106,7 +113,6 @@ def break_ : Verb where
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
   vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.appear, .break_, .cheat, .hurt, .split}
 
 /-- *tear* is a break verb (Levin's 45.1). It implies separation in contrary directions, often
 with some force, is compatible with careful action, and imposes few conditions on its patient, so
@@ -115,6 +121,7 @@ of twenty-eight languages have a verb used only for tearing cloth by hand, and E
 extend *tear* to pulling yarn apart. -/
 def tear_ : Verb where
   morphs := [.root "tear"]
+  levin := some Levin1993.Index.tear
   past := "tore"
   pastPart := "torn"
   valency := .of
@@ -123,6 +130,5 @@ def tear_ : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  levinClasses := {LevinClass.break_, .run, .split}
 
 end English.Verbs

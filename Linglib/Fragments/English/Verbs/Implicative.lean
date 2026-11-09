@@ -22,7 +22,7 @@ with the entailment each carries from its complement.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect
+open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Implicative / Control -/
 
@@ -31,6 +31,7 @@ open ArgumentStructure Aspect
     -/
 def manage : Verb where
   morphs := [.root "manage"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -39,6 +40,7 @@ def manage : Verb where
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
 def fail : Verb where
   morphs := [.root "fail"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -47,16 +49,17 @@ def fail : Verb where
 /-- "try" — subject control, no entailment -/
 def try_ : Verb where
   morphs := [.root "try"]
+  levin := some Levin1993.Index.«try»
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .activity
   passivizable := false
-  levinClasses := {LevinClass.amuse}
 
 /-- "persuade" — object control, "persuade X to VP" with X the agent of VP. A psychological
     attitude verb whose object comes to form an intention; it projects the AUTHOR coordinate,
     so control is obligatorily *de se* ([landau-2015] table (36)). -/
 def persuade : Verb where
   morphs := [.root "persuade"]
+  levin := none
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
   vendlerClass := some .accomplishment
   opaqueContext := true
@@ -68,6 +71,7 @@ def persuade : Verb where
     object frame only, a definite (*Promise me!*; [bruening-2021]). -/
 def promise : Verb where
   morphs := [.root "promise"]
+  levin := some Levin1993.Index.promise
   valency := .of
     [(toInfinitive, [0, 1]),
      (toInfinitive.withObject, [0, 2, 1]),
@@ -78,16 +82,15 @@ def promise : Verb where
   vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential .positive)
-  levinClasses := {LevinClass.futureHaving}
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : Verb where
   morphs := [.root "remember"]
+  levin := some Levin1993.Index.remember
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.characterize}
 
 /-- *forget* with an infinitive is one of [karttunen-1971]'s negative implicatives, so *forgot
     to lock the door* entails *did not lock the door*. The factive sense that takes a finite
@@ -95,6 +98,7 @@ def remember : Verb where
     verb whose plain infinitive carries a covert modal. -/
 def forget : Verb where
   morphs := [.root "forget"]
+  levin := none
   past := "forgot"
   pastPart := "forgotten"
   doubling := true
@@ -107,6 +111,7 @@ def forget : Verb where
     implicatives, so neglecting to lock the door entails not locking it. -/
 def neglect : Verb where
   morphs := [.root "neglect"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -124,6 +129,7 @@ def experiencerFrame : ArgumentFrame :=
     experiencer it reports the experiencer's view, a doxastic attitude ([wurmbrand-2014] (70)). -/
 def seem : Verb where
   morphs := [.root "seem"]
+  levin := none
   valency := .ofLinks [(toInfinitive, [none, some 0]), (experiencerFrame, [none, some 1, some 0])]
     (controls := [some .external, some .external])
   vendlerClass := some .state
@@ -143,6 +149,7 @@ occasioning eventuality in a parallel way the authors draw and then set apart. -
     26). -/
 def dare : Verb where
   morphs := [.root "dare"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -153,11 +160,11 @@ def dare : Verb where
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : Verb where
   morphs := [.root "bother"]
+  levin := some Levin1993.Index.bother
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.amuse, .marvel, .pain}
 
 /-- "hesitate" — polarity-reversing one-way implicative.
     "Amira hesitated to drink a beer" ↛ "Amira did not drink a beer."
@@ -167,16 +174,17 @@ def bother : Verb where
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : Verb where
   morphs := [.root "hesitate"]
+  levin := some Levin1993.Index.hesitate
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .activity
   passivizable := false
   implicative := ⟨⊥, .some .positive⟩
-  levinClasses := {LevinClass.linger}
 
 /-- *venture* is a positive implicative among [karttunen-1971]'s implicative predicates, so
     venturing to speak entails speaking. -/
 def venture : Verb where
   morphs := [.root "venture"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -186,6 +194,7 @@ def venture : Verb where
     condescending to help entails helping. -/
 def condescend : Verb where
   morphs := [.root "condescend"]
+  levin := none
   valency := .ofFrame toInfinitive (controller := some 0)
   vendlerClass := some .achievement
   passivizable := false
@@ -196,9 +205,9 @@ def condescend : Verb where
     as *It happened to rain* shows. -/
 def happen : Verb where
   morphs := [.root "happen"]
+  levin := some Levin1993.Index.happen
   valency := .ofLinks [(toInfinitive, [none, some 0])] (controls := [some .external])
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.occurrence}
 
 end English.Verbs

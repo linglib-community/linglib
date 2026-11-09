@@ -29,20 +29,24 @@ meaning involves more components (`isUpperSet_sensitivity`,
 characterizations of the four verbs meet the conditions exactly where the class pages of Part II
 attest the alternations (`quadruple_mem_sensitivity_of_participates`,
 `quadruple_prediction_matches`). Every
-categorical alternation judgment among the book's examples in `Data/Examples/Levin1993.json`
-agrees with the profile of the verb's class (`participation_matches_profile`). The
+alternation judgment among the book's examples in `Data/Examples/Levin1993.json` is the mark
+that the page of the verb's class gives the alternation wherever a line of the page applies to the
+verb (`participation_matches_profile`), so *kill*, which the starred instrument subject line of
+the murder verbs excepts, shows the alternation the other murder verbs lack. The
 alternations that pair two argument frames are frame-pair schemas (`schema?`), which relate two
 diatheses of a verb when the verb's participants move as the schema says; the induced action
 alternation differs from the causative/inchoative one in the directional phrase of its transitive
 and in its volitional causee (`Shows`, `run_shatter`), and every English fragment verb Levin lists
-has a class whose page it realizes (`shows_class_alternations`).
+has a class whose page it realizes on every line that applies to it
+(`shows_class_alternations`).
 
 ## Implementation notes
 
-Rows record the verb's class by the book's section number and the alternation by name;
-`classOf` and `alternationOf` read them into the substrate's enumerations. A row's
-participation in its alternation is its judgment: an acceptable row attests the alternation, a
-starred row denies it, and a marginal row is categorical in neither direction.
+Rows record the verb, its class by the book's section number and the alternation by name;
+`verbOf`, `classOf` and `alternationOf` read them. A line of a class page applies to a verb when
+the book qualifies it by no share of the class and does not except the verb, so a line for "some
+verbs" predicts nothing of a particular one; a starred family heading, such as "*Causative
+Alternations", applies its asterisk to each alternation of the family.
 
 The Introduction's conditions are necessary ones: a verb shows the body-part possessor ascension
 alternation "only if its meaning involves the notion of contact" (p. 8), and the
@@ -112,9 +116,16 @@ def classOf (e : Datum) : Option LevinClass :=
 def alternationOf (e : Datum) : Option DiathesisAlternation :=
   (e.feature? "alternation").bind alternationOfString
 
+/-- The verb recorded on a row. -/
+def verbOf (e : Datum) : Option String := e.feature? "verb"
+
+/-- Every judgment among the book's examples is the mark of each line of the verb's class that
+names the alternation and applies to the verb, and an asterisk where such a line stars a section
+grouping the alternation. -/
 theorem participation_matches_profile :
-    ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, e.judgment ≠ .marginal →
-      c.Tests a → (c.Participates a ↔ e.judgment = .acceptable) := by
+    ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ m ∈ verbOf e,
+      ∀ l ∈ c.properties, l.scope.AppliesTo m →
+        (l.Names a → e.judgment = l.judgment) ∧ (l.Stars a → e.judgment = .ungrammatical) := by
   decide +kernel
 
 /-! ### The Introduction's quadruple
@@ -162,6 +173,12 @@ theorem not_isUpperSet_sensitivity_causativeInchoative :
 /-- The four diagnostic alternations of the Introduction. -/
 def diagnosticAlternations : List DiathesisAlternation :=
   [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
+
+/-- The *cut* verbs star the causative/inchoative alternation only through their starred family
+heading, "*Causative Alternations". -/
+example : LevinClass.cut.Stars .causativeInchoative ∧
+    ¬ LevinClass.cut.Lists .causativeInchoative .ungrammatical := by
+  decide +kernel
 
 theorem quadruple_profiles_distinct :
     ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
@@ -272,23 +289,23 @@ def changeOfStateClasses : Finset LevinClass :=
     .calibratableChangeOfState}
 
 theorem mem_changeOfStateClasses_iff (c : LevinClass) :
-    c ∈ changeOfStateClasses ↔ "45.".toList <+: c.numberString.toList := by
+    c ∈ changeOfStateClasses ↔ [45] <+: c.number := by
   revert c
   decide +kernel
 
 /-- The entailments of a causee, the entry's own or else a change of state when Levin classes the
 verb with the verbs of change of state. -/
-def causeeProfile? (v : Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
+def causeeProfile? (v : English.Verbs.Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
   v.valency.profiles.get i <|>
     if Disjoint v.levinClasses changeOfStateClasses then none else some {.changeOfState}
 
 /-- A verb shows an alternation when the alternation's schema relates two of its diatheses and the
 profile of each causee meets the alternation's condition. -/
-def Shows (v : Verb) (a : DiathesisAlternation) : Prop :=
+def Shows (v : English.Verbs.Verb) (a : DiathesisAlternation) : Prop :=
   ∃ σ ∈ schema? a, ∃ c ∈ v.valency.diatheses, ∃ d ∈ v.valency.diatheses, σ.Relates c d ∧
     ∀ i, IsCausee c d i → ∃ θ ∈ causeeProfile? v i, CauseeCondition a θ
 
-instance (v : Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
+instance (v : English.Verbs.Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, ∃ _ ∈ _, _ ∧ ∀ _, _ → _))
 
 /-- The alternations with a frame-pair schema. -/
@@ -303,15 +320,15 @@ theorem isSome_schema?_iff (a : DiathesisAlternation) : (schema? a).isSome ↔ a
 
 theorem shows_class_alternations :
     ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
-      ∀ a ∈ schematized, ∀ p ∈ c.properties, p.heading = .alternation a.number →
-        (p.diacritic = .none → p.scope = .all → Shows v.toVerb a) ∧
-          (p.diacritic = .star → ¬ Shows v.toVerb a) := by
+      ∀ a ∈ schematized, ∀ l ∈ c.properties, l.scope.AppliesTo v.form →
+        (l.Names a → l.judgment = .acceptable → Shows v a) ∧
+          (l.Stars a → ¬ Shows v a) := by
   decide +kernel
 
 open English.Verbs in
 theorem run_shatter :
-    (Shows run.toVerb .inducedAction ∧ ¬ Shows run.toVerb .causativeInchoative) ∧
-      Shows shatter.toVerb .causativeInchoative ∧ ¬ Shows shatter.toVerb .inducedAction := by
+    (Shows run .inducedAction ∧ ¬ Shows run .causativeInchoative) ∧
+      Shows shatter .causativeInchoative ∧ ¬ Shows shatter .inducedAction := by
   decide
 
 end Levin1993

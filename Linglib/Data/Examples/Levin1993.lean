@@ -418,6 +418,32 @@ def is_eat : Datum :=
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "instrumentSubject")] }
 
+def is_murder : Datum :=
+  { id := "levin1993_is_murder"
+    source := ⟨"levin-1993", "§42.1 (779a), p. 231"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The dagger murdered Julius Caesar."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := [("Brutus murdered Julius Caesar with a dagger.", .acceptable)]
+    readings := []
+    paperFeatures := [("verb", "murder"), ("levin_class", "42.1"), ("alternation", "instrumentSubject")] }
+
+def is_kill : Datum :=
+  { id := "levin1993_is_kill"
+    source := ⟨"levin-1993", "§42.1 (779b), p. 231"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The DDT killed the insects."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := [("The exterminators killed the insects with DDT.", .acceptable)]
+    readings := []
+    paperFeatures := [("verb", "kill"), ("levin_class", "42.1"), ("alternation", "instrumentSubject")] }
+
 def ia_run : Datum :=
   { id := "levin1993_ia_run"
     source := ⟨"levin-1993", "§1.1.2.2 (25)"⟩
@@ -548,6 +574,6 @@ def sw_swarm : Datum :=
     readings := []
     paperFeatures := [("verb", "swarm"), ("levin_class", "47.5.1"), ("alternation", "swarm")] }
 
-def all : List Datum := [ci_break, mid_break, con_break, bppa_break, ci_cut, mid_cut, con_cut, bppa_cut, ci_hit, mid_hit, con_hit, bppa_hit, ci_touch, mid_touch, con_touch, bppa_touch, con_push, loc_spray, loc_load, dat_send, ben_carve, ss_radiate, mp_carve, uo_eat, uo_devour, uro_meet, ti_develop, ti_appear, li_live, is_break, is_eat, ia_run, ia_appear, ubpo_wave, tt_turn, co_laugh, co_grunt, co_jump, vp_measure, pp_sleep, sw_swarm]
+def all : List Datum := [ci_break, mid_break, con_break, bppa_break, ci_cut, mid_cut, con_cut, bppa_cut, ci_hit, mid_hit, con_hit, bppa_hit, ci_touch, mid_touch, con_touch, bppa_touch, con_push, loc_spray, loc_load, dat_send, ben_carve, ss_radiate, mp_carve, uo_eat, uo_devour, uro_meet, ti_develop, ti_appear, li_live, is_break, is_eat, is_murder, is_kill, ia_run, ia_appear, ubpo_wave, tt_turn, co_laugh, co_grunt, co_jump, vp_measure, pp_sleep, sw_swarm]
 
 end Levin1993.Examples

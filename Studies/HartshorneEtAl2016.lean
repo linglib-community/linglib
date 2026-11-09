@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.List.MinMax
-public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
+public import Linglib.Data.VerbClasses.Levin1993.Class
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Studies.Pesetsky1995
 

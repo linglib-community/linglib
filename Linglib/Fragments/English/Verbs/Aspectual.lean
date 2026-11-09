@@ -18,13 +18,14 @@ adjacent phase.
 
 namespace English.Verbs
 
-open ArgumentStructure Aspect
+open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Change of State -/
 
 /-- "stop" — phasal cessation, presupposes activity was happening -/
 def stop : Verb where
   morphs := [.root "stop"]
+  levin := some Levin1993.Index.stop
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -33,11 +34,11 @@ def stop : Verb where
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .cessation
-  levinClasses := {LevinClass.begin, .lodge}
 
 /-- "quit" — phasal cessation -/
 def quit : Verb where
   morphs := [.root "quit"]
+  levin := some Levin1993.Index.quit
   past := "quit"
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
@@ -47,11 +48,11 @@ def quit : Verb where
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .cessation
-  levinClasses := {LevinClass.complete}
 
 /-- "start" — phasal inception, presupposes activity wasn't happening -/
 def start : Verb where
   morphs := [.root "start"]
+  levin := some Levin1993.Index.start
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -60,12 +61,12 @@ def start : Verb where
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception
-  levinClasses := {LevinClass.begin}
 
 /-- "begin" — phasal inception, raising into its subject before an infinitive (*the bridge began to
 tremble*). -/
 def begin_ : Verb where
   morphs := [.root "begin"]
+  levin := some Levin1993.Index.begin
   past := "began"
   pastPart := "begun"
   doubling := true
@@ -78,11 +79,11 @@ def begin_ : Verb where
   vendlerClass := some .achievement
   passivizable := false
   phasal := some .inception
-  levinClasses := {LevinClass.begin}
 
 /-- "continue" — phasal continuation, presupposes activity was happening -/
 def continue_ : Verb where
   morphs := [.root "continue"]
+  levin := some Levin1993.Index.«continue»
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
@@ -91,11 +92,11 @@ def continue_ : Verb where
   vendlerClass := some .activity
   passivizable := false
   phasal := some .continuation
-  levinClasses := {LevinClass.begin}
 
 /-- "keep" — phasal continuation -/
 def keep : Verb where
   morphs := [.root "keep"]
+  levin := some Levin1993.Index.keep
   past := "kept"
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
@@ -105,6 +106,5 @@ def keep : Verb where
   vendlerClass := some .activity
   passivizable := false
   phasal := some .continuation
-  levinClasses := {LevinClass.begin, .get, .keep}
 
 end English.Verbs
