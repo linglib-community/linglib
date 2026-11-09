@@ -3,6 +3,7 @@
     "id": "assmannetal2023_1",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(1)"},
     "reportedIn": null,
+    "method": "description",
     "language": "guru1271",
     "primaryText": "Á fúrmáyò bà wúm kwálíngálá.",
     "discourseSegments": [],
@@ -27,6 +28,7 @@
     "id": "assmannetal2023_2",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(2)"},
     "reportedIn": null,
+    "method": "description",
     "language": "guru1271",
     "primaryText": "Tí bà ròmb-á gʷéì.",
     "discourseSegments": [],
@@ -52,6 +54,7 @@
     "id": "assmannetal2023_3",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(3)"},
     "reportedIn": null,
+    "method": "description",
     "language": "guru1271",
     "primaryText": "Kóo vùr mɘ́ kãa Mài Dáwà sái tí shí gànyáhú-à.",
     "discourseSegments": [],
@@ -76,6 +79,7 @@
     "id": "assmannetal2023_5",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(5)"},
     "reportedIn": null,
+    "method": "description",
     "language": "guru1271",
     "primaryText": "Tí vún lúurìn nvùrì-à.",
     "discourseSegments": [],
@@ -99,6 +103,7 @@
     "id": "assmannetal2023_fn4_i",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "fn. 4 (i)"},
     "reportedIn": null,
+    "method": "description",
     "language": "guru1271",
     "primaryText": "Tí bà wúr má-ì à báa-sì.",
     "discourseSegments": [],
@@ -218,6 +223,7 @@
     "id": "assmannetal2023_10",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(10)"},
     "reportedIn": null,
+    "method": "description",
     "language": "haus1257",
     "primaryText": "Kandè ta-kèe dafà kiifii.",
     "discourseSegments": [],
@@ -267,6 +273,7 @@
     "id": "assmannetal2023_12",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(12)"},
     "reportedIn": null,
+    "method": "description",
     "language": "haus1257",
     "primaryText": "Kandè (cee) ta-kèe dafà kiifii.",
     "discourseSegments": [],
@@ -374,6 +381,7 @@
     "id": "assmannetal2023_17",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(17)"},
     "reportedIn": null,
+    "method": "description",
     "language": "haus1257",
     "primaryText": "Tankò yaa sàyi kàazaa nèe à kàasuwaa.",
     "discourseSegments": [],
@@ -399,6 +407,7 @@
     "id": "assmannetal2023_18a",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(18a)"},
     "reportedIn": null,
+    "method": "description",
     "language": "nucl1347",
     "primaryText": "Maa-y lekk jën.",
     "discourseSegments": [],
@@ -422,6 +431,7 @@
     "id": "assmannetal2023_18b",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(18b)"},
     "reportedIn": null,
+    "method": "description",
     "language": "nucl1347",
     "primaryText": "Jën laa-y lekk.",
     "discourseSegments": [],
@@ -518,6 +528,7 @@
     "id": "assmannetal2023_37",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(37)"},
     "reportedIn": null,
+    "method": "description",
     "language": "cent2142",
     "primaryText": "Maria-x wawa-r t'ant' chur-i-wa.",
     "discourseSegments": [],
@@ -542,6 +553,7 @@
     "id": "assmannetal2023_38",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(38)"},
     "reportedIn": null,
+    "method": "description",
     "language": "cent2142",
     "primaryText": "Manq'a-k-i-wa.",
     "discourseSegments": [],
@@ -565,6 +577,7 @@
     "id": "assmannetal2023_39",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(39)"},
     "reportedIn": null,
+    "method": "description",
     "language": "cent2142",
     "primaryText": "Jani-wa futbola-ki-t gust-k-i-ti, challwa katu-ña gusta-raki-wa.",
     "discourseSegments": [],
@@ -590,6 +603,7 @@
     "id": "assmannetal2023_41",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(41)"},
     "reportedIn": null,
+    "method": "description",
     "language": "awin1248",
     "primaryText": "Alombah a-pe'-náŋnə ŋgəsáŋə̀.",
     "discourseSegments": [],
@@ -617,6 +631,7 @@
     "id": "assmannetal2023_53",
     "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(53)"},
     "reportedIn": null,
+    "method": "introspection",
     "language": "stan1293",
     "primaryText": "Kim ATE the yogurt.",
     "discourseSegments": [],
@@ -637,6 +652,78 @@
       ["marking", "nuclear stress on verb"]
     ],
     "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt.",
+    "verified": "page-image"
+    },
+  {
+    "id": "assmannetal2023_56",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "haus1257",
+    "primaryText": "A'a, wasu yaara sun saata ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A'a", "no"], ["wasu", "some"], ["yaara", "children"], ["sun", "3PL.PFV"],
+      ["saata", "steal"], ["ta", "3SG.F.O"]
+    ],
+    "translation": "No, some children stole it.",
+    "context": "Can I borrow your car?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject and verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "absolute form"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "assmannetal2023_57a",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(57a)"},
+    "reportedIn": null,
+    "language": "nucl1347",
+    "primaryText": "Alkaati bi jàpp na ko/Jean.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alkaati", "police.officer"], ["bi", "DET"], ["jàpp", "catch"], ["na", "PFV.3SG"],
+      ["ko/Jean", "3SG.O/J."]
+    ],
+    "translation": "The police officer arrested him/Jean.",
+    "context": "What happened to Jean?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject and verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "na"]
+    ],
+    "comment": "The paper glosses na as PFV.3SG here and in (57b), and as FOC.3SG in (20), the same sentence as (57b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "assmannetal2023_59",
+    "source": {"bibkey": "assmann-etal-2023", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "buli1254",
+    "primaryText": "Aayá, (ká) Amoak alé pa dá!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aayá", "no"], ["(ká)", "FOC"], ["Amoak", "Amoak"], ["alé", "FOC"], ["pa", "take"],
+      ["dá", "sell"]
+    ],
+    "translation": "No, Amoak sold it!",
+    "context": "Did Atim eat the mango?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "subject and verb", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["marking", "le after subject"]
+    ],
+    "comment": "The paper labels the answer A.",
     "verified": "page-image"
   }
 ]
