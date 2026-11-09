@@ -9,8 +9,7 @@ public import Linglib.Syntax.Person.Basic
 The Taos (Kiowa-Tanoan, Northern Tiwa) verb carries a prefix that agrees with up to three
 arguments, the agent, the goal and the object, linearized in that order ([watkins-1984]).
 Persons are first, second and third; the agreement categories are singular, dual, plural and
-inverse (`Number.Inverse.Category`), the last being what a D head shows when its inherent and
-natural number value one feature both ways ([harbour-2011]). Objects in the paradigm are third
+inverse (`Number.Inverse.Category`). Objects in the paradigm are third
 person, the dummy object *no*, or a reflexive. The complete paradigm is Table 3 of the online
 appendix to [middleton-2026], from [kontak-kunkel-1987] as corroborated by [harrington-1916],
 transcribed here cell by cell; `form` looks a cell up.
@@ -18,9 +17,6 @@ transcribed here cell by cell; `form` looks a cell up.
 ## Main declarations
 
 * `Taos.Cell`, `Taos.prefixes`, `Taos.form`: the paradigm and its lookup.
-* `Taos.classI` to `Taos.classIV`: the four noun classes by inherent number, with the agreement
-  category each shows for each natural number (`Taos.classI_category` and kin, the appendix's
-  Table 21).
 
 ## Implementation notes
 
@@ -40,8 +36,6 @@ transcribed here cell by cell; `form` looks a cell up.
   and Basque*][middleton-2026]
 * [C. Kontak and J. Kunkel, *Grammar sketch of Northern Tiwa, Taos dialect*][kontak-kunkel-1987]
 * [J. P. Harrington, *The ethnogeography of the Tewa Indians*][harrington-1916]
-* [D. Harbour, *Valence and atomic number*][harbour-2011]
-* [D. Harbour, *The Kiowa case for feature insertion*][harbour-2003]
 * [L. J. Watkins, *A grammar of Kiowa*][watkins-1984]
 -/
 
@@ -374,53 +368,5 @@ def prefixes : List (Cell × String) := [
 
 /-- The prefix of a cell. -/
 def form (c : Cell) : Option String := prefixes.lookup c
-
-/-! ### Noun classes
-
-The four classes by inherent number ([harbour-2003], [harbour-2011]; appendix Table 21):
-'one or two', 'two or more', 'two', and 'any number'. -/
-
-/-- Class I, inherently `[+minimal]`: 'one or two'. -/
-def classI : Valuation := ⟨∅, {true}⟩
-
-/-- Class II, inherently `[−atomic]`: 'two or more'. -/
-def classII : Valuation := ⟨{false}, ∅⟩
-
-/-- Class III, inherently `[−atomic +minimal]`: 'two'. -/
-def classIII : Valuation := ⟨{false}, {true}⟩
-
-/-- Class IV, with no inherent number: 'any number'. -/
-def classIV : Valuation := ∅
-
-/-- Class I agrees singular, dual, inverse for one, two, and more referents. -/
-theorem classI_category :
-    (classI ⊔ .ofNumber .singular).category = some .singular ∧
-      (classI ⊔ .ofNumber .dual).category = some .dual ∧
-      (classI ⊔ .ofNumber .plural).category = some .inverse := by
-  decide
-
-theorem classII_category :
-    (classII ⊔ .ofNumber .singular).category = some .inverse ∧
-      (classII ⊔ .ofNumber .dual).category = some .dual ∧
-      (classII ⊔ .ofNumber .plural).category = some .plural := by
-  decide
-
-theorem classIII_category :
-    (classIII ⊔ .ofNumber .singular).category = some .inverse ∧
-      (classIII ⊔ .ofNumber .dual).category = some .dual ∧
-      (classIII ⊔ .ofNumber .plural).category = some .inverse := by
-  decide
-
-theorem classIV_category :
-    (classIV ⊔ .ofNumber .singular).category = some .singular ∧
-      (classIV ⊔ .ofNumber .dual).category = some .dual ∧
-      (classIV ⊔ .ofNumber .plural).category = some .plural := by
-  decide
-
-/-- Every inverse valuation of Table 21 contains the dual's values. -/
-theorem dual_le_inverse :
-    ∀ c ∈ [classI, classII, classIII, classIV], ∀ n ∈ [Number.singular, .dual, .plural],
-    (c ⊔ .ofNumber n).IsInverse → Valuation.ofNumber .dual ≤ c ⊔ .ofNumber n := by
-  decide
 
 end Taos
