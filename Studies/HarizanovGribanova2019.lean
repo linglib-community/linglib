@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Core.Algebra.Free
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Data.Examples.HarizanovGribanova2019
@@ -307,32 +308,27 @@ instance [DecidableEq H] (spine : List (Amalgam H)) (h x : H) :
 
 /-! ### The clausal spine -/
 
-/-- The heads of the clausal spine in the paper's derivations. -/
-inductive ClausalHead
-  | V | v | Asp | Neg | T | Top
-  deriving DecidableEq, Repr
-
-open ClausalHead
+open Minimalist.Cat
 
 /-- The Russian clause, in which V, v and Asp Raise and T Lowers. -/
-def russian : List (Amalgam ClausalHead) :=
+def russian : List (Amalgam Minimalist.Cat) :=
   [single V (some .raising), single v (some .raising), single Asp (some .raising), single Neg none,
     single T (some .lowering)]
 
 /-- The Danish clause, in which v and T Lower. -/
-def danish : List (Amalgam ClausalHead) :=
+def danish : List (Amalgam Minimalist.Cat) :=
   [single V none, single v (some .lowering), single T (some .lowering)]
 
 /-- The French finite clause, in which V, v and Neg Raise. The negator *pas* is a specifier and
 not on the spine. -/
-def french : List (Amalgam ClausalHead) :=
+def french : List (Amalgam Minimalist.Cat) :=
   [single V (some .raising), single v (some .raising), single Neg (some .raising), single T none]
 
 /-- The German clause, in which V Raises into T. -/
-def german : List (Amalgam ClausalHead) := [single V (some .raising), single T none]
+def german : List (Amalgam Minimalist.Cat) := [single V (some .raising), single T none]
 
 /-- The Hebrew clause with a topic, in which V Raises into T. -/
-def hebrew : List (Amalgam ClausalHead) :=
+def hebrew : List (Amalgam Minimalist.Cat) :=
   [single V (some .raising), single T none, single Top none]
 
 theorem russian_amalgamateSpine :
@@ -376,7 +372,7 @@ theorem skipping :
 
 /-- `spine? r` is the spine of the clause of `r`, a French or Russian finite clause, a Danish
 embedded clause, or a Danish root clause, in which V has moved. -/
-def spine? (r : Datum) : Option (List (Amalgam ClausalHead)) :=
+def spine? (r : Datum) : Option (List (Amalgam Minimalist.Cat)) :=
   List.lookup (r.language, r.feature? "clause")
     [((.french, none), french), ((.russian, none), russian),
       ((.danish, some "embedded"), danish), ((.danish, some "root"), moveToRoot danish V)]
