@@ -1596,6 +1596,654 @@
     "verified": "page-image"
   },
   {
+    "id": "haspelmath1997_fr_A64a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A64a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Quelqu'un m'attend. C'est lui que j'épouserai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone is waiting for me. It's him that I will marry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "quelque-"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A64b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A64b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Quelqu'un est à la porte. Je ne sais pas qui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Somebody is at the door. I don't know who.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "quelque-"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A65",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A65)"
+    },
+    "language": "stan1290",
+    "primaryText": "Elle veut épouser quelqu'un aux cheveux noirs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She wants to marry someone with black hair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "quelque-"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A66a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A66a)"
+    },
+    "language": "stan1290",
+    "primaryText": "As-tu écouté quelque chose?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have you heard anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "quelque-"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A66b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A66b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Si l'art n'était vraiment qu'un prolongement de la vie, valait-il de lui rien sacrifier?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If art were really only a continuation of life, would it be worth sacrificing anything for it?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "personne"
+      ],
+      [
+        "method",
+        "description"
+      ]
+    ],
+    "comment": "A rhetorical question, from Gaatone (1971: 169).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A66c",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A66c)"
+    },
+    "language": "stan1290",
+    "primaryText": "Comment peut-on en conclure quoi que ce soit sur l'ordre de la pensée?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "How can one conclude anything from it about the order of thoughts?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A67a_rien",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A67a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je vous rends responsable si rien s'ébruite dans la presse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hold you responsible if anything transpires in the media.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A67a_quelque",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A67a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je vous rends responsable si quelque chose s'ébruite dans la presse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hold you responsible if anything transpires in the media.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "quelque-"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A67b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A67b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Éveillez-moi s'il arrive quoi que ce soit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wake me up if anything happens.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A68a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A68a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je ne vois rien.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I cannot see anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A68b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A68b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Personne n'a jamais dit rien.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody ever said anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "The book prints n'jamais, without the auxiliary a.",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A68c",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A68c)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je n'ai vu qui que ce soit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I haven't seen anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ],
+      [
+        "method",
+        "description"
+      ]
+    ],
+    "comment": "From Muller (1991: 256).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A69a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A69a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je doute que personne y réussisse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I doubt that anybody will succeed in it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A69b_rien",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A69b)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'hésite à rien écrire sur cela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hesitate to write anything about that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A69b_que",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A69b)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'hésite à écrire quoi que ce soit sur cela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hesitate to write anything about that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A70a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A70a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Il parle mieux qu'aucun orateur.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He speaks better than any orator.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "personne"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A70b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A70b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je préfère de beaucoup fermer les yeux que lui reprocher quoi que ce soit qui puisse vous ennuyer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I much prefer to close my eyes than to blame him for anything that could annoy you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A71",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A71)"
+    },
+    "language": "stan1290",
+    "primaryText": "Vous pouvez dire quoi que ce soit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You can say anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "que ce soit"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A73a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A73a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Tu peux dire n'importe quoi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You can say anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "n'importe"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath1997_fr_A73b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A73b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Le général avait compris assez tôt que cette guerre, plus que n'importe quelle guerre dans le passé, était une guerre de réserves d'hommes et de matériel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The general had understood pretty soon that this war, more than any war in the past, was a war of human and material resources.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.9"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "n'importe"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "haspelmath1997_it_A74",
     "source": {
       "bibkey": "haspelmath-1997",

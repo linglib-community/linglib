@@ -1,0 +1,686 @@
+[
+  {
+    "id": "buttetal2019_noDiceNada",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.3"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "No dice nada",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(S)he says nothing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_nadieDijoNada",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.3"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Nadie dijo nada",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No one said anything",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_noLaHeVisto",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.3"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "No la he visto nunca con nadie",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I've never seen her with anyone",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.3"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_masQueNada",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Más que nada, es taimado",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "More than anything, he's cunning",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_meIrrite",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Me irrité más por eso que por nada",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I got irritated more because of that than because of anything else",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_esfera",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Podría ser la mayor esfera tallada nunca por manos humanas",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It could be the largest sphere ever carved by human hands",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_temprano",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Salió más temprano que nunca",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She went out earlier than ever before",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_tempranoJamas",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Salió más temprano que jamás",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She went out earlier than ever before",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "The book prints the nunca sentence with 'not jamás' (p. 339) and states that jamás cannot appear after comparisons (27.5.6 note 1).",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_capataz",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "y allí un capataz, el mejor que jamás hubiera",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "and a foreman there, the best that ever was",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_complicado",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Este libro es más complicado que ninguno de los que yo he leído",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This book is more complicated than any I've read",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_lista",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Es más lista que ninguno de los otros",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She's cleverer than any of the others",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_tonteria",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "la mayor tontería que haya dicho nadie",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the most stupid thing anyone has said",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (a)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_dudoso",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Es dudoso que nadie pueda pasar por nativo en más de tres idiomas",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's doubtful whether anyone can pass as a native in more than three languages",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_haceMucho",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Hace mucho que nadie me traía flores",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's been a long time since anyone brought me flowers",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_sinNadaNiNadie",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "sin nada ni nadie en el mundo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without anything or anybody in the world",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_seNego",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Se negó siquiera a hablar a nadie de la emisora",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He even refused to talk to anyone from the radio station",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_demasiado",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Es demasiado difícil para que nadie entienda esto",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's too difficult for anyone to understand it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_imposible",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Es imposible ver nada de lo que está sucediendo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's impossible to see anything of what's going on",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_pocos",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Pocos libros dirían nada semejante",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Few books would say anything similar",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_noTolera",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "No tolera que nadie lo contradiga",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He can't stand anyone contradicting him",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_horrible",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Es horrible contar todo esto a nadie",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's horrible to tell all this to anyone",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_noSe",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Yo no sé dónde está nada en esta casa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't know where anything is in this house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (b)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_preguntado",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿A usted cuándo le han preguntado nada?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "When did anyone ask you anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_quienHaVisto",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién ha visto a nadie que trabaje más que él?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who has ever seen anyone who works more than he does?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_despedirme",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Para qué despedirme de nada ni de nadie?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Why should I say goodbye to anyone or anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_pensar",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién puede pensar en nada cuándo se está rodeado de idiotas?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who can think of anything when one's surrounded by idiots?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_julia",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién hubiera pensado nunca que se casaría con Julia?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who would ever have thought he'd have married Julia?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_juliaJamas",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (c)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿Quién hubiera pensado jamás que se casaría con Julia?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who would ever have thought he'd have married Julia?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (c)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_sinNada",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (d)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "He venido sin nada",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I've come without anything",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (d)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_sinNadie",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (d)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "sin nadie que lo cuidara",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without anyone to look after him",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (d)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_antesQueNadie",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (d)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Él tenía la culpa por llegar antes que nadie",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It was his fault for arriving before anyone else",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (d)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_antesDe",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.4 (d)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Esto hay que hacerlo antes de empezar nada",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This must be done before starting anything else",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.4 (d)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_insincero",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.5.5 (a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Si he sido insincero con ninguno de vosotros, decídmelo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If I have been insincere with any of you, tell me so",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.5.5 (a)"]
+    ],
+    "comment": "The book marks ninguno here as literary.",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_noSaleNunca",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.5.6"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "No sale nunca de casa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(S)he never goes out of the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.5.6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_noSaleJamas",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.5.6"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "No sale jamás de casa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(S)he never goes out of the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.5.6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buttetal2019_seVio",
+    "source": {"bibkey": "butt-benjamin-2019", "paperLabel": "27.5.6 (2)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "¿se vio jamás tal cosa?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Was such a thing ever seen?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "27.5.6 (2)"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

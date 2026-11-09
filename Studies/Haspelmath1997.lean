@@ -23,6 +23,7 @@ public import Linglib.Fragments.Latin.Indefinites
 public import Linglib.Fragments.Latvian.Indefinites
 public import Linglib.Fragments.Mandarin.Indefinites
 public import Linglib.Fragments.Quechua.Indefinites
+public import Linglib.Fragments.Romance.French.Indefinites
 public import Linglib.Fragments.Romance.Italian.Indefinites
 public import Linglib.Fragments.Slavic.Russian.Indefinites
 public import Linglib.Fragments.Swahili.Indefinites
@@ -30,6 +31,18 @@ public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.Finnish.PolarityItems
+public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Fragments.HindiUrdu.PolarityItems
+public import Linglib.Fragments.Hungarian.PolarityItems
+public import Linglib.Fragments.Japanese.PolarityItems
+public import Linglib.Fragments.Korean.PolarityItems
+public import Linglib.Fragments.Mandarin.PolarityItems
+public import Linglib.Fragments.Quechua.PolarityItems
+public import Linglib.Fragments.Romance.French.PolarityItems
+public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Fragments.Slavic.Russian.PolarityItems
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -37,7 +50,7 @@ public import Linglib.Data.Examples.Languages
 This file formalizes Haspelmath's implicational map of indefinite functions and the claims
 made over it: the adjacency requirement that every indefinite series cover a connected region of
 the nine-function map, the two further principles of §4.5 restricting which connected regions
-occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
+occur, and the series of nineteen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
 `Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to be
@@ -59,7 +72,7 @@ set aside (`carries_antiAdditive_iff`).
 The paradigms verify the adjacency requirement (`sample_connected`), the overlap of series that the
 book holds against contrast-based accounts of grammatical meaning (`sample_overlap`), and the
 human/non-human distinction the book finds practically everywhere, which only the Latvian
-*kaut*-series lacks (`disjoint_forms_person_thing`). The book's examples for fifteen of the
+*kaut*-series lacks (`disjoint_forms_person_thing`). The book's examples for sixteen of the
 languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each variant the book
 prints in a line; the figures cover the acceptable rows and exclude the starred ones
 (`acceptable_covers`, `ungrammatical_excludes`).
@@ -76,7 +89,7 @@ comparative, which the book restricts to equative standards, and Swahili CL-o CL
 comparative the book predicts without data; both are the book's own map-driven analyses. Series
 that are not pronouns in the book's sense (Georgian free-choice *nebismieri*, Turkish *kimse*,
 the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover all nine
-functions.
+functions, as is French *-conque*, which Fig. A.9 does not draw, with its examples.
 
 The features of §5.6 do not make the map a subgraph of a hypercube on their values: irrealis and
 question are adjacent and differ in scalarity and in the reversal of the scale, which classifies
@@ -374,7 +387,7 @@ theorem excluded_violate :
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
   decide +kernel
 
-/-! ### Eighteen languages of the 40-language sample -/
+/-! ### Nineteen languages of the 40-language sample -/
 
 /-- A `Series` is an indefinite series with the region of the map that its figure in Appendix A
 encloses. Its name is the book's, by which the examples are tagged. -/
@@ -475,6 +488,14 @@ def hindi : List Series :=
   [ { HindiUrdu.Indefinites.koiiSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
     { HindiUrdu.Indefinites.bhiiSeries with functions := region [3, 4, 5, 6, 7, 8, 9] } ]
 
+/-- The French series (A.9) are *quelque-* 12345, *personne* 45678, *que ce soit* 456789, and
+*n'importe* 89. -/
+def french : List Series :=
+  [ { French.Indefinites.quelqueSeries with functions := region [1, 2, 3, 4, 5] },
+    { French.Indefinites.personneSeries with functions := region [4, 5, 6, 7, 8] },
+    { French.Indefinites.queCeSoitSeries with functions := region [4, 5, 6, 7, 8, 9] },
+    { French.Indefinites.nImporteSeries with functions := region [8, 9] } ]
+
 /-- The Italian series (A.10) are *qualche-* 123456, *nessuno* 467 (questions but not
 conditionals) and *-unque* 89. -/
 def italian : List Series :=
@@ -482,8 +503,8 @@ def italian : List Series :=
     { Italian.Indefinites.nessunoSeries with functions := region [4, 6, 7] },
     { Italian.Indefinites.unqueSeries with functions := region [8, 9] } ]
 
-/-- The Finnish series (A.27) are *eräs* 1, *-kin* 2345, *-kaan* 4678, and *hyvänsä* 589 with
-the comparative only as an equative standard. -/
+/-- The Finnish series (A.27) are *eräs* 1, *-kin* 2345, *-kaan* 4678, and *hyvänsä* 589, whose
+comparative function the book restricts to equative standards. -/
 def finnish : List Series :=
   [ { Finnish.Indefinites.eräsSeries with functions := region [1] },
     { Finnish.Indefinites.kinSeries with functions := region [2, 3, 4, 5] },
@@ -527,12 +548,12 @@ def swahili : List Series :=
   [ { Swahili.Indefinites.genericNounSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
     { Swahili.Indefinites.oOteSeries with functions := region [4, 5, 6, 7, 8, 9] } ]
 
-/-- The eighteen languages. -/
+/-- The nineteen languages. -/
 def sample : List (List Series) :=
   [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
-    italian, finnish, korean, hungarian, georgian, quechua, swahili ]
+    french, italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
-/-- Every series of the eighteen sample languages covers a connected region of the map, the
+/-- Every series of the nineteen sample languages covers a connected region of the map, the
 book's adjacency requirement. -/
 theorem sample_connected :
     ∀ p ∈ sample, ∀ e ∈ p, (implicationalMap.induce ↑e.functions).Connected := by
@@ -544,8 +565,8 @@ theorem sample_principles :
   decide
 
 theorem sample_overlap :
-    ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
-      korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
+    ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, french, italian,
+      finnish, korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
 theorem disjoint_forms_person_thing :
@@ -570,8 +591,8 @@ example rows. -/
 def paradigm? (l : Glottocode) : Option (List Series) :=
   List.lookup l [(.english, english), (.russian, russian), (.latvian, latvian),
     (.german, german), (.japanese, japanese), (.mandarinChinese, mandarin),
-    (.turkish, turkish), (.hindi, hindi), (.italian, italian), (.finnish, finnish),
-    (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
+    (.turkish, turkish), (.hindi, hindi), (.french, french), (.italian, italian),
+    (.finnish, finnish), (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
     (.huaylasAncashQuechua, quechua), (.swahili, swahili)]
 
 /-- The functions by the names the example rows give them. -/
@@ -611,5 +632,92 @@ theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
       ∀ l ∈ e.features "series", Excludes e l := by
   decide +kernel
+
+/-! ### The regions against the licensing theory
+
+A figure records the functions in which a series is possible. For a polarity-sensitive series,
+these are the functions in which the licensing theory of `Semantics/PolarityItem` should admit its
+members. The theory admits an item in a function when some named context that realizes the
+function admits the item. An item belongs to the series whose members include its form. -/
+
+section LicensingTheory
+
+open PolarityItem
+
+/-- The functions in which the licensing theory admits an item, namely those functions for which
+some named context realizing the function admits the item. -/
+def theoryRegion (e : PolarityItem) : Finset HaspelmathFunction :=
+  Finset.univ.filter fun f ↦ ∃ c : LicensingContext, c.haspelmath = some f ∧ c.licenser.Admits e
+
+/-- The region of the series of a paradigm whose members include the form of an item. -/
+def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFunction) :=
+  (ss.find? fun s ↦ ∃ p ∈ s.members, p.form = e.form).map (·.functions)
+
+-- The theory reproduces the regions of the negative concord series, of Korean *-to* once it
+-- requires an anti-additive context, and of the general series of Quechua and Hindi.
+theorem regionOf_eq_theoryRegion :
+    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki), (mandarin, Mandarin.PolarityItems.sheiDou),
+      (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo),
+      (quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
+      (hindi, HindiUrdu.PolarityItems.kuchBhii), (french, French.PolarityItems.personne),
+      (french, French.PolarityItems.rien), (french, French.PolarityItems.jamais)],
+      regionOf p.1 p.2 = some (theoryRegion p.2) := by
+  decide +kernel
+
+-- The free-choice route admits every free-choice item under necessity, which realizes the irrealis
+-- function, where the book finds free-choice series unacceptable. For these items this is the only
+-- difference between the two regions.
+theorem regionOf_eq_theoryRegion_sdiff_irrealis :
+    ∀ p ∈ [(english, English.PolarityItems.any), (japanese, Japanese.PolarityItems.dareDemo),
+      (korean, Korean.PolarityItems.nwukwuNa), (russian, Russian.PolarityItems.ktoUgodno)],
+      .irrealis ∈ theoryRegion p.2 ∧
+        regionOf p.1 p.2 = some (theoryRegion p.2 \ {.irrealis}) := by
+  decide +kernel
+
+-- The weak class admits an item in every downward-entailing context and in questions. The
+-- book, however, excludes some of these series from direct negation, which the negative series
+-- take (Hungarian *sem-*, Russian *ni-*, and German *kein*), and others from questions,
+-- conditionals, or comparatives. The weak class does not admit a weak negative polarity item in
+-- the irrealis function, where Russian *-libo* and the Mandarin bare interrogatives occur, and it
+-- admits no item in the specific functions, which no named context realizes.
+theorem regionOf_eq_theoryRegion_sdiff_union :
+    regionOf hungarian Hungarian.PolarityItems.akárki =
+        some (theoryRegion Hungarian.PolarityItems.akárki \ {.irrealis, .question, .directNeg}) ∧
+    regionOf hungarian Hungarian.PolarityItems.bárki =
+        some (theoryRegion Hungarian.PolarityItems.bárki \ {.irrealis, .question, .directNeg}) ∧
+    regionOf mandarin Mandarin.PolarityItems.renhe =
+        some (theoryRegion Mandarin.PolarityItems.renhe \ {.irrealis, .question, .conditional}) ∧
+    regionOf finnish Finnish.PolarityItems.kukaan =
+        some (theoryRegion Finnish.PolarityItems.kukaan \ {.conditional}) ∧
+    regionOf italian Italian.PolarityItems.nessuno =
+        some (theoryRegion Italian.PolarityItems.nessuno \ {.conditional, .comparative}) ∧
+    regionOf russian Russian.PolarityItems.ktoLibo =
+        some (theoryRegion Russian.PolarityItems.ktoLibo \ {.directNeg} ∪ {.irrealis}) ∧
+    regionOf mandarin Mandarin.PolarityItems.shei =
+        some (theoryRegion Mandarin.PolarityItems.shei \ {.comparative} ∪ {.irrealis}) ∧
+    regionOf mandarin Mandarin.PolarityItems.shenme =
+        some (theoryRegion Mandarin.PolarityItems.shenme \ {.comparative} ∪ {.irrealis}) ∧
+    regionOf german German.PolarityItems.irgendein =
+        some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪ {.specificUnknown}) := by
+  decide +kernel
+
+-- In the sources of the Fragment, Japanese *dare-mo* is a strict negative concord item licensed by
+-- clausemate negation. The book, however, also draws *-mo* over indirect negation and the
+-- comparative, with *omow-ana-i* 'not think' (A286).
+theorem dareMo_region :
+    regionOf japanese Japanese.PolarityItems.dareMo =
+      some (theoryRegion Japanese.PolarityItems.dareMo ∪ {.indirectNeg, .comparative}) := by
+  decide +kernel
+
+-- The free-choice route admits Finnish *hyvänsä* under necessity, where the book has no free-choice
+-- series. It does not admit *hyvänsä* in conditionals, where the book has it as the emphatic
+-- alternative to *joku* (A209), nor in the standard of an equative comparison (A214).
+theorem kukaHyvänsä_region :
+    regionOf finnish Finnish.PolarityItems.kukaHyvänsä =
+      some (theoryRegion Finnish.PolarityItems.kukaHyvänsä \ {.irrealis} ∪
+        {.conditional, .comparative}) := by
+  decide +kernel
+
+end LicensingTheory
 
 end Haspelmath1997

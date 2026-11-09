@@ -11,7 +11,7 @@ relative pronouns (*joku*), and two series derived from the interrogatives, the 
 equivalent *tahansa*. *Eräs* 'a certain' is counted a series of its own. The members are those of
 Haspelmath's table, in their usual spelling where he hyphenates (*kuka-an*), with *mitenkään* for
 his *miten-kaan*; his dual determiners (*jompikumpi*) are determiners here. *Kukaan* and *kuka
-tahansa* are also `Finnish.PolarityItems.kukaan` and `Finnish.PolarityItems.kukaTahansa`.
+hyvänsä* are also `Finnish.PolarityItems.kukaan` and `Finnish.PolarityItems.kukaHyvänsä`.
 
 ## References
 

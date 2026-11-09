@@ -8,7 +8,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Data.Examples.Gajewski2011
 public import Linglib.Data.Examples.Readers

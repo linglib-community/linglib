@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Fragments.Japanese.Indefinites
 
 /-!
@@ -42,8 +42,7 @@ open PolarityItem
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
   { form := Indefinites.dareMo.form
-  , licensor := some .antiMorphic
-  , licensingContexts := [.negation] }
+  , licensor := some .antiMorphic }
 
 /-! ### FCI -/
 
@@ -52,21 +51,12 @@ def dareMo : PolarityItem :=
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItem :=
   { form := Indefinites.dareDemo.form
-  , freeChoice := true
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
+  , freeChoice := true }
 
 /-! ### Licensing -/
 
 theorem dareMo_licensing_characterized (c : LicensingContext) :
     c.licenser.Licenses dareMo ↔ c.licenser.Carries .antiMorphic :=
   Licenser.licenses_iff_carries rfl (by decide) (by decide)
-
-theorem dareDemo_licensing_sound :
-    ∀ c ∈ dareDemo.licensingContexts, c.licenser.Admits dareDemo := by
-  decide
-
-theorem dareMo_dareDemo_licensing_disjoint :
-    ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by
-  decide
 
 end Japanese.PolarityItems

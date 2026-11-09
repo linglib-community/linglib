@@ -1,0 +1,439 @@
+[
+  {
+    "id": "maidenrobustelli2007_haiDimenticato",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "8.10"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Hai dimenticato niente?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have you forgotten anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "8.10"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_ceNessuno",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "8.10"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "C'è nessuno lì dentro?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Is there anybody in there?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "8.10"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_ceNiente",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "8.10"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "C'è niente da mangiare?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Is there anything to eat?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "8.10"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonCredo",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non credo che nessuno lo sapesse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think anybody knew.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_senzaNiente",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Mi trovai solo, senza niente che mi aiutasse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I found myself alone without anything to help me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_senzaDentroNessuno",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Torna e vede la bottega aperta senza dentro nessuno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He comes back and sees the shop open without anybody in it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonHaAlcun",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non ha attualmente alcun contratto.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He does not at present have any contract.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonHoVistoAlcuno",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non ho visto alcuno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't see anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_senzaAlcuno",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "9.11"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "senza aver visto alcuno",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without having seen anyone",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "9.11"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonGlieloDaro",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "13.16"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non glielo darò mai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'll never give it to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "13.16"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_haiMaiLetto",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "13.16"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Hai mai letto I promessi sposi?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have you ever read The Betrothed?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "13.16"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_piuDolce",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "13.16"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "E lì conobbi l'uomo più dolce e più grande che abbia mai incontrato.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "And there I met the sweetest and greatest man I have ever encountered.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "13.16"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_affattoSparito",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "13.17"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non sono affatto sparito.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I haven't disappeared at all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "13.17"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_affattoFascista",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "13.17"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "E io vi dico che Carlo non era affatto un fascista.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "And I'm telling you that C was not a fascist at all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "13.17"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_piuCheMai",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "16.7"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Piove più che mai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It rains more than ever.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "16.7"]
+    ],
+    "comment": "The book gives più che mai as an idiomatic fixed expression.",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonEArrivato",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non è arrivato nessuno puntuale.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody arrived on time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonHoAmato",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non ho amato nessuno più di lui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I loved nobody more than him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonVidiNiente",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non vidi niente e non voglio saperne niente.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't see anything and I don't want to know anything about it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nonLHoMai",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non l'ho mai visto senza cappello.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I've never seen him hatless.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_neancheAScuola",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Non si comporta bene neanche a scuola.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He doesn't behave well even at school.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nemmenoInSogno",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Tu mi sembri uno che non farebbe gol nemmeno in sogno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You strike me as someone who couldn't score a goal even in his dreams.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_nessunoEMai",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "18.5"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Nessuno è mai arrivato puntuale.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody has ever arrived on time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "18.5"]
+    ],
+    "comment": "Given in parentheses in the text.",
+    "verified": "page-image"
+  },
+  {
+    "id": "maidenrobustelli2007_senzaIncontrare",
+    "source": {"bibkey": "maiden-robustelli-2007", "paperLabel": "19.1"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Ho viaggiato per chilometri e chilometri senza incontrare nessuno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I travelled kilometres and kilometres without meeting anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "19.1"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

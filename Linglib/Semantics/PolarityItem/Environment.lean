@@ -13,24 +13,25 @@ public import Linglib.Semantics.PolarityItem.Licenser
 /-!
 # Environments of a polarity item
 
-This file defines the environment of a polarity item in a domain, a constituent in which its
-acceptability is evaluated: the meaning of the domain as a function of the meaning of the item,
-together with a signature whose function class contains it. A layer of meaning acts on the
-environment of the domain below it, composing the maps and multiplying the signatures, so along the
-chain of domains from the item to the sentence [each environment is the one below under a
-layer](##PolarityItem.Path.environment_cons), and its sign is the product of the signs below it. An
-environment of negative sign [carries weak
-strength](##PolarityItem.Environment.carries_weak_of_sign_eq_neg_one) and one of positive sign
-[carries none](##PolarityItem.Environment.not_carries_of_sign_eq_one), so an item licensed in one
-domain can be anti-licensed in the next, and licensed again in the one after.
+A *domain* of a polarity item is a constituent in which its acceptability is evaluated. The
+*environment* of the item in a domain is the meaning of the domain as a function of the meaning of
+the item, together with a signature whose function class contains that function. A layer of
+meaning acts on the environment of the domain below it by composing the maps and multiplying the
+signatures. Along the chain of domains from the item to the sentence, [each environment is the
+environment below it under a layer](##PolarityItem.Path.environment_cons), and its sign is the
+product of the signs below it. An environment of negative sign [carries weak
+strength](##PolarityItem.Environment.carries_weak_of_sign_eq_neg_one), and an environment of
+positive sign [carries no strength](##PolarityItem.Environment.not_carries_of_sign_eq_one). An
+item that is licensed in one domain can therefore be anti-licensed in the next domain and licensed
+again in the domain after that.
 
 ## Implementation notes
 
-* The licenser of an environment is the classical licenser of a single operator, whose operators
-  are between lattices in `Type`, so carrying and licensing are stated there.
-* A signature in whose class an environment lies can understate its strength, so showing that a
-  domain does not carry a strength takes meanings of the item on which the environment fails the
-  strength.
+* The licenser of an environment is the classical licenser of a single operator. Its operators
+  are between lattices in `Type`, so carrying and licensing are stated at that universe.
+* A signature whose class contains an environment can understate the strength of the
+  environment. A proof that a domain does not carry a strength therefore requires meanings of the
+  item at which the environment fails that strength.
 
 ## References
 
@@ -46,8 +47,9 @@ namespace PolarityItem
 
 open NaturalLogic
 
-/-- The environment of a polarity item in a domain: the meaning of the domain as a function of the
-meaning of the item, with a signature whose function class contains it. -/
+/-- The environment of a polarity item in a domain. It consists of the meaning of the domain as a
+function of the meaning of the item, together with a signature whose function class contains that
+function. -/
 @[ext]
 structure Environment (σ P : Type*) [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] where
   /-- The meaning of the domain as a function of the meaning of the item. -/
@@ -71,8 +73,8 @@ theorem coe_mk (f : σ → P) (φ : ProjectivitySignature) (h : φ.HoldsFor f) :
     ⇑(⟨f, φ, h⟩ : Environment σ P) = f :=
   rfl
 
-/-- A layer acts on the environment of the domain below it, composing its map with the
-environment and multiplying its signature with the environment's. -/
+/-- A layer acts on the environment of the domain below it by composing its map with the
+environment and multiplying its signature with the signature of the environment. -/
 instance : MulAction (ProjectivitySignature.classPairs P) (Environment σ P) where
   smul l e := ⟨l.1.1 ∘ e, l.1.2 * e.signature,
     (ProjectivitySignature.mem_classPairs.1 l.2).comp e.holdsFor⟩
@@ -112,7 +114,7 @@ theorem not_carries_of_sign_eq_one (h : e.signature.sign = 1) :
     ¬(Licenser.ofOperator e).Carries s := fun hc ↦
   (Licenser.carries_ofOperator_iff.1 hc).2 (e.monotone_of_sign_eq_one h)
 
-/-- An environment carries the strengths its signature realizes, once it is not constant. -/
+/-- A non-constant environment carries every strength that its signature realizes. -/
 theorem carries_of_le_negationStrength
     (hs : (s : WithBot Negation.Strength) ≤ e.signature.negationStrength) (hne : e ⊥ ≠ e ⊤) :
     (Licenser.ofOperator e).Carries s := by
@@ -122,7 +124,7 @@ theorem carries_of_le_negationStrength
     (hf.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
     bot_le
 
-/-- An environment of negative sign carries weak strength, once it is not constant. -/
+/-- A non-constant environment of negative sign carries weak strength. -/
 theorem carries_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) (hne : e ⊥ ≠ e ⊤) :
     (Licenser.ofOperator e).Carries .weak := by
   obtain ⟨s', hs'⟩ :=
@@ -135,8 +137,8 @@ end Environment
 
 /-! ### Paths -/
 
-/-- The path of a polarity item from its minimal domain to the sentence: the environment of the
-minimal domain and the layers between successive domains, outermost first. -/
+/-- The path of a polarity item from its minimal domain to the sentence. It consists of the
+environment of the minimal domain and the layers between successive domains, outermost first. -/
 structure Path (σ P : Type*) [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] where
   /-- The environment of the minimal domain. -/
   minimal : Environment σ P
@@ -148,7 +150,8 @@ namespace Path
 
 variable {σ P : Type*} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
 
-/-- The environment of the domain reached through the layers `t`, on which they act together. -/
+/-- The environment of the domain reached through the layers `t`, which act together on the
+minimal environment. -/
 def environment (t : List (ProjectivitySignature.classPairs P)) : Environment σ P :=
   t.prod • p.minimal
 
@@ -156,7 +159,7 @@ def environment (t : List (ProjectivitySignature.classPairs P)) : Environment σ
 theorem environment_nil : p.environment [] = p.minimal :=
   one_smul _ _
 
-/-- The environment of each domain is that of the one below under a layer. -/
+/-- The environment of each domain is the environment of the domain below it under a layer. -/
 @[simp]
 theorem environment_cons (l : ProjectivitySignature.classPairs P)
     (t : List (ProjectivitySignature.classPairs P)) :
@@ -165,8 +168,8 @@ theorem environment_cons (l : ProjectivitySignature.classPairs P)
 
 section WithAlternatives
 
-/-- The meaning of the domain reached through the layers `t` with its alternatives, when `A` gives
-the alternatives of the minimal domain: the layers apply to each alternative. -/
+/-- The meaning of the domain reached through the layers `t`, together with its alternatives, when
+`A` gives the alternatives of the minimal domain. The layers apply to each alternative. -/
 def withAlternatives (A : σ → Set P) (t : List (ProjectivitySignature.classPairs P)) (x : σ) :
     WithAlternatives P :=
   (t.prod : Function.End P × ProjectivitySignature).1 <$> ⟨p.minimal x, A x⟩
@@ -205,7 +208,7 @@ theorem holds_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) :
     (Licenser.ofOperator e).Holds Negation.Strength.weak.toProjectivitySignature :=
   fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.2 (e.antitone_of_sign_eq_neg_one h)
 
-/-- An environment of positive sign holds no strength outright, once it is not constant. -/
+/-- A non-constant environment of positive sign holds no strength outright. -/
 theorem not_holds_of_sign_eq_one (h : e.signature.sign = 1) (hne : e ⊥ ≠ e ⊤) :
     ¬ (Licenser.ofOperator e).Holds s.toProjectivitySignature :=
   Licenser.not_holds_toProjectivitySignature fun ha ↦ hne <| le_antisymm
@@ -218,18 +221,20 @@ namespace Path
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
   {s : Negation.Strength} {π : PolarityItem}
 
-/-- The licensing condition: some domain admits the item. -/
+/-- The licensing condition, which requires that some domain admit the item. -/
 def Licenses (π : PolarityItem) : Prop :=
   ∃ t ∈ p.layers.tails, (Licenser.ofOperator (p.environment t)).Admits π
 
-/-- An item that a strength licenses is anti-licensed when every domain has positive sign. -/
+/-- An item that a strength licenses is not licensed on a path along which every domain has
+positive sign. -/
 theorem not_licenses_of_mem_licensor (hs : s ∈ π.licensor)
     (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) : ¬p.Licenses π := by
   rintro ⟨t, ht, ha⟩
   obtain ⟨r, hr, hc⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := ha.1 (.inl (Option.isSome_iff_exists.2 ⟨s, hs⟩))
   exact (p.environment t).not_carries_of_sign_eq_one (h t ht) hc
 
-/-- An item that a strength blocks is anti-licensed when every domain holds it. -/
+/-- An item that a strength blocks is not licensed on a path along which every domain holds that
+strength. -/
 theorem not_licenses_of_mem_antiLicensor (hs : s ∈ π.antiLicensor)
     (h : ∀ t ∈ p.layers.tails,
       (Licenser.ofOperator (p.environment t)).Holds s.toProjectivitySignature) :
