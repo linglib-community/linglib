@@ -1,60 +1,163 @@
 module
 
+public import Mathlib.Order.Atoms.Finite
+public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Semantics.Focus.Unalternatives
+public import Studies.Buring2015
 public import Studies.HartmannZimmermann2004
+public import Linglib.Fragments.Hausa.Focus
 public import Linglib.Data.Examples.AssmannEtAl2023
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
 /-!
-# Assmann, Büring, Jordanoska & Prüller 2023: morphosyntactic focus marking
+# Assmann, Büring, Jordanoska and Prüller (2023): Towards a Theory of Morphosyntactic Focus Marking
 
 In languages that mark focus morphosyntactically, each focal marking marks one constituent,
-possibly a phrase or the whole clause, which may then realize any focus within it, and Blocking
-chooses the most specific marking available. A language's focus syncretisms are thereby fixed by
-which constituents have a marking of their own: Gùrùntùm's VP marking serves verb, object and VP
-focus, a disjunctive syncretism, and its clausal marking only clausal focus, an exocentric one.
-Tangale, in the paper's footnotes, follows Hausa in the progressive and Gùrùntùm in the
-perfective, which agrees with Hartmann and Zimmermann's reflex analysis.
+possibly the whole clause, which may realize any focus within it, and Blocking chooses the most
+specific marking available. [Each marking then realizes a continuous section of the
+tree](##ordConnected_usable), and [none of its node's daughters exactly when each has a marking
+of its own](##exocentric_iff), as Gùrùntùm's clausal marking does. English marks the clause by
+default prosody and each default-weak daughter by reversal, and [Büring's unalternative semantics
+is Blocking over that inventory](##target_mem_clause_iff), except that [a focus on subject and
+verb is marked like narrow verb focus](##subject_verb), where the languages whose domain of focal
+marking is the clause [mark it like the clause](##rows_marking).
 
-In English each branching node is a domain of focal marking: default weights mark the node, and
-prosodic reversal its default-weak daughter. Blocking within such a domain is Büring's weak
-restriction, and the restrictions of the domains accumulate by his Propagation, which predicts
-the readings of *Kim ATE the yogurt*.
+## Implementation notes
 
-## Main definitions
+* A focus is the set of its parts, so that non-constituent foci such as subject and verb are
+  foci too; a constituent focus is a singleton.
+* The clause skeleton has subject and VP, and verb and object within VP. Hausa's absolute form and
+  Awing's absence of marking mark the clause, as the paper's default.
+* An exocentric marking is defined by the first of the paper's two formulations, realizing no
+  subconstituent; the second, realizing no one-word focus, agrees with it on every inventory
+  here.
+* The English theorems hold for any meanings of subject, verb and object, and any alternatives
+  to them that differ from them.
 
-* `Node`: the clause skeleton, a tree under constituent containment.
-* `Usable`: a marking usable for a focus, minimal among the inventory's covers of it.
-* `marking`: the usable marking an inventory assigns a focus, with the inventories `guruntum`,
-  `buli`, `hausa`, `wolof`, `aymara`, `awing` and their syncretism tables.
-* `Exocentric`, `Disjunctive`: the two patterns projection theories cannot express.
-* `tangale`, `overt_iff_marking_ne_default`: the Tangale inventories and their agreement with
-  the reflex analysis.
-* `notMem_excluded_iff`: Blocking in an English domain is the restriction of its weights.
-* `rows_marking`, `rows_english`: the paper's examples, each reading realized as predicted.
+## Errata
+
+* (41) is given as cited from [fominyam-simik-2017] (p. 1038), but there object, subject, VP
+  and verb focus each have their own answer ((19)–(22), pp. 1037–1038), the object-focus answer
+  without its subject and with a high final tone on *ŋgəsáŋə́*, and clause focus is not among the
+  types tested. The one answer to five questions is the authors' composite, recorded as printed.
 
 ## TODO
 
-Two rows focus constituents below the skeleton and are not checked: the Gùrùntùm intra-VP
-phrase of footnote 4, whose own marking blocks the VP marking, and the Hausa part-of-subject
-focus of (15).
+* [hartmann-zimmermann-2009] report narrow verb focus with a null object pronoun and no marker at
+  all ((19a), (20a)), which the VP marking does not cover; their account ranks structural
+  constraints on the marker's position above Focus Prominence (Sect. 3.3).
+* Foci below the skeleton: the Gùrùntùm intra-VP phrase of footnote 4, whose own marking blocks
+  the VP marking, the Hausa part-of-subject focus of (15), and the object-internal columns of
+  Table 2.
+* Focality (48) over several domains of focal marking, for the Wolof and Hausa double markings
+  (42) and (43).
 
 ## References
 
 * [assmann-etal-2023]
-* [buring-2015] — unalternative semantics
-* [hartmann-zimmermann-2004] — the Tangale reflex analysis
-* [schwarzschild-1999], [selkirk-1995] — projection and AvoidF
+* [buring-2015]
+* [hartmann-zimmermann-2004]
+* [hartmann-zimmermann-2009]
+* [fominyam-simik-2017]
 -/
 
 @[expose] public section
 
 namespace AssmannEtAl2023
 
-open WithAlternatives UnalternativeSemantics
+open Set WithAlternatives UnalternativeSemantics Buring2015
+
+/-! ### Blocking -/
+
+section Blocking
+
+variable {C : Type*} [PartialOrder C] {inv F : Set C} {m m' d d' f g j : C}
+
+/-- Blocking (45): a marking of constituent `m` is usable for a focus whose parts are `F` when `m`
+is minimal among the constituents of the inventory that contain every part. -/
+def Usable (inv : Set C) (m : C) (F : Set C) : Prop := Minimal (· ∈ inv ∩ upperBounds F) m
+
+theorem usable_iff : Usable inv m F ↔
+    m ∈ inv ∧ (∀ x ∈ F, x ≤ m) ∧ ∀ c ∈ inv, (∀ x ∈ F, x ≤ c) → c ≤ m → c = m := by
+  simp only [Usable, minimal_iff, mem_inter_iff, mem_upperBounds, and_imp, and_assoc, eq_comm]
+
+instance [Fintype C] [DecidableEq C] [DecidableLE C] [DecidablePred (· ∈ inv)]
+    [DecidablePred (· ∈ F)] : Decidable (Usable inv m F) :=
+  decidable_of_iff _ usable_iff.symm
+
+theorem usable_singleton_iff :
+    Usable inv m {f} ↔ m ∈ inv ∧ f ≤ m ∧ ∀ c ∈ inv, f ≤ c → c ≤ m → c = m := by
+  simp [usable_iff]
+
+-- Sect. 6.5
+theorem usable_iff_of_isLUB (h : IsLUB F j) : Usable inv m F ↔ Usable inv m {j} := by
+  have : upperBounds F = Ici j := Set.ext fun c ↦ (isLUB_iff_le_iff.1 h c).symm
+  rw [Usable, Usable, this, upperBounds_singleton]
+
+theorem Usable.of_le (h : Usable inv m {f}) (hfg : f ≤ g) (hgm : g ≤ m) : Usable inv m {g} := by
+  rw [usable_singleton_iff] at *
+  exact ⟨h.1, hgm, fun c hc hgc ↦ h.2.2 c hc (hfg.trans hgc)⟩
+
+/-- The foci a marking realizes form a continuous section of the tree: with two foci it realizes
+every constituent between them (p. 1376). -/
+theorem ordConnected_usable : {f | Usable inv m {f}}.OrdConnected :=
+  ⟨fun _ hf _ hg _ hx ↦ hf.of_le hx.1 (hx.2.trans (usable_singleton_iff.1 hg).2.1)⟩
+
+-- p. 1376
+theorem Usable.unique (hF : IsChain (· ≤ ·) (upperBounds F)) (h : Usable inv m F)
+    (h' : Usable inv m' F) : m = m' :=
+  (hF.total h.prop.2 h'.prop.2).elim (fun hle ↦ (h'.eq_of_ge h.prop hle).symm) (h.eq_of_ge h'.prop)
+
+-- footnote 24
+theorem usable_iff_notMem_of_covBy (hm : m ∈ inv) (hd : d ⋖ m) : Usable inv m {d} ↔ d ∉ inv := by
+  rw [usable_singleton_iff]
+  refine ⟨fun h hd' ↦ hd.ne (h.2.2 d hd' le_rfl hd.le), fun h ↦ ⟨hm, hd.le, fun c hc hdc hcm ↦ ?_⟩⟩
+  obtain rfl | hdc := hdc.eq_or_lt
+  · exact absurd hc h
+  · exact hcm.eq_of_not_lt (hd.2 hdc)
+
+/-- An exocentric marking marks a complex constituent and realizes no focus below it. -/
+def Exocentric (inv : Set C) (m : C) : Prop := ¬ IsMin m ∧ ∀ f, Usable inv m {f} ↔ f = m
+
+/-- A disjunctive marking realizes foci on two disjoint constituents. -/
+def Disjunctive (inv : Set C) (m : C) : Prop :=
+  ∃ a b, ¬ a ≤ b ∧ ¬ b ≤ a ∧ Usable inv m {a} ∧ Usable inv m {b}
+
+section Decidable
+
+variable [Fintype C] [DecidableEq C] [DecidableLE C] [DecidablePred (· ∈ inv)]
+
+instance : Decidable (Exocentric inv m) :=
+  inferInstanceAs (Decidable (¬ (∀ b, b ≤ m → m ≤ b) ∧ ∀ f, Usable inv m {f} ↔ f = m))
+
+instance : Decidable (Disjunctive inv m) :=
+  inferInstanceAs (Decidable (∃ a b, ¬ a ≤ b ∧ ¬ b ≤ a ∧ Usable inv m {a} ∧ Usable inv m {b}))
+
+end Decidable
+
+/-- A marking of a complex constituent is exocentric exactly when each daughter of the
+constituent has a marking of its own (p. 1373). -/
+theorem exocentric_iff [IsStronglyCoatomic C] :
+    Exocentric inv m ↔ ¬ IsMin m ∧ m ∈ inv ∧ ∀ d, d ⋖ m → d ∈ inv := by
+  refine ⟨fun ⟨hm, h⟩ ↦ ⟨hm, ((h m).2 rfl).prop.1, fun d hd ↦ ?_⟩, fun ⟨hmin, hm, h⟩ ↦
+    ⟨hmin, fun f ↦ ⟨fun hu ↦ ?_, ?_⟩⟩⟩
+  · by_contra hd'
+    exact hd.ne ((h d).1 ((usable_iff_notMem_of_covBy ((h m).2 rfl).prop.1 hd).2 hd'))
+  · refine (usable_singleton_iff.1 hu).2.1.eq_of_not_lt fun hf ↦ ?_
+    obtain ⟨d, hfd, hd⟩ := exists_le_covBy_of_lt hf
+    exact hd.ne ((usable_singleton_iff.1 hu).2.2 d (h d hd) hfd hd.le)
+  · rintro rfl
+    exact usable_singleton_iff.2 ⟨hm, le_rfl, fun c _ hc hcm ↦ le_antisymm hcm hc⟩
+
+-- p. 1372
+theorem disjunctive_of_covBy (hm : m ∈ inv) (hd : d ⋖ m) (hd' : d' ⋖ m) (hne : d ≠ d')
+    (h : d ∉ inv) (h' : d' ∉ inv) : Disjunctive inv m :=
+  ⟨d, d', fun hle ↦ hd.2 (hle.lt_of_ne hne) hd'.lt, fun hle ↦ hd'.2 (hle.lt_of_ne hne.symm) hd.lt,
+    (usable_iff_notMem_of_covBy hm hd).2 h, (usable_iff_notMem_of_covBy hm hd').2 h'⟩
+
+end Blocking
 
 /-! ### The clause skeleton -/
 
@@ -76,132 +179,103 @@ instance : PartialOrder Node :=
 instance : DecidableLE Node :=
   decidableLEOfCovers (covers := fun a b : Node ↦ a.parent = some b) [.s, .vp] (by decide)
 
-theorem isChain_Ici (f : Node) : IsChain (· ≤ ·) (Set.Ici f) := fun _ hx _ hy _ ↦
-  Relation.ReflTransGen.total_of_right_unique (fun _ _ _ h h' ↦ Option.some_injective _
-    (h.symm.trans h')) hx hy
+instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance (n : Node) : Decidable (IsMin n) := inferInstanceAs (Decidable (∀ _, _))
+theorem Node.covBy_iff {a b : Node} : a ⋖ b ↔ a.parent = some b := by
+  simp only [CovBy]
+  revert a b
+  decide
 
-/-! ### Usable markings -/
-
-section Usable
-
-variable {C : Type*} [PartialOrder C] {inv : List C} {m m' f g : C}
-
-/-- A marking of constituent `m` is usable for focus `f` when `m` is minimal among the
-constituents of the inventory that contain `f`. -/
-def Usable (inv : List C) (m f : C) : Prop := Minimal (fun c ↦ c ∈ inv ∧ f ≤ c) m
-
-theorem usable_iff : Usable inv m f ↔ m ∈ inv ∧ f ≤ m ∧ ∀ c ∈ inv, f ≤ c → c ≤ m → m = c := by
-  simp only [Usable, minimal_iff, and_assoc, and_imp]
-
-instance [DecidableEq C] [DecidableLE C] : Decidable (Usable inv m f) :=
-  decidable_of_iff _ usable_iff.symm
-
-theorem Usable.of_le (h : Usable inv m f) (hfg : f ≤ g) (hgm : g ≤ m) : Usable inv m g :=
-  h.mono (fun _ hc ↦ ⟨hc.1, hfg.trans hc.2⟩) ⟨h.prop.1, hgm⟩
-
-theorem Usable.unique (hchain : IsChain (· ≤ ·) (Set.Ici f)) (h : Usable inv m f)
-    (h' : Usable inv m' f) : m = m' :=
-  (hchain.total h.prop.2 h'.prop.2).elim (fun hle ↦ (h'.eq_of_ge h.prop hle).symm)
-    (h.eq_of_ge h'.prop)
-
-end Usable
-
-/-! ### Markings -/
-
-/-- The marking an inventory uses for a focus is its usable constituent. -/
-def marking (inv : List Node) (f : Node) : Option Node :=
-  inv.find? fun m ↦ decide (Usable inv m f)
-
-theorem marking_eq_some {inv : List Node} {m f : Node} (h : Usable inv m f) :
-    marking inv f = some m := by
-  have hsome : (inv.find? fun m ↦ decide (Usable inv m f)).isSome :=
-    List.find?_isSome.2 ⟨m, h.prop.1, decide_eq_true h⟩
-  obtain ⟨m', hm'⟩ := Option.isSome_iff_exists.1 hsome
-  have hp := List.find?_some hm'
-  have hu : Usable inv m' f := of_decide_eq_true hp
-  exact hm'.trans (congrArg some (hu.unique (isChain_Ici f) h))
+/-! ### Inventories -/
 
 /-- Gùrùntùm marks the subject by *a* before it, the VP by *a* between verb and object, and
-the clause by clause-final *á*. -/
-def guruntum : List Node := [.sbj, .vp, .s]
+the clause by clause-final *á* (35b). -/
+def guruntum : Finset Node := {.sbj, .vp, .s}
 
 /-- Buli marks the clause by *(à)lē* after the subject, the VP by *ká* before the object, and
-the verb by *kámā* after the VP. -/
-def buli : List Node := [.s, .vp, .v]
+the verb by *kámā* after the VP (35a). -/
+def buli : Finset Node := {.s, .vp, .v}
 
 /-- In Hausa the relative form marks the subject, and the absolute form, the default, marks the
-clause. -/
-def hausa : List Node := [.sbj, .s]
+clause (16). -/
+def hausa : Finset Node := {.sbj, .s}
 
 /-- Wolof marks the subject by *a*, the object by *la* with fronting, the VP by *da(fa)*, and the
-clause by *na* or *ngi*. -/
-def wolof : List Node := [.sbj, .obj, .vp, .s]
+clause by *na* or *ngi* (21). -/
+def wolof : Finset Node := {.sbj, .obj, .vp, .s}
 
 /-- Aymara marks the subject and the object by *-wa* on them, and the clause by *-wa* on the
-verb. -/
-def aymara : List Node := [.sbj, .obj, .s]
+verb (40). -/
+def aymara : Finset Node := {.sbj, .obj, .s}
 
-/-- Awing has no marking but that of the unmarked clause. -/
-def awing : List Node := [.s]
+/-- Awing has no marking but that of the unmarked clause (41). -/
+def awing : Finset Node := {.s}
 
-theorem marking_guruntum :
-    ∀ f, marking guruntum f = some (match f with | .sbj => .sbj | .s => .s | _ => .vp) := by
+-- Table 2
+theorem usable_guruntum (m f : Node) :
+    Usable guruntum m {f} ↔ m = if f ≤ .sbj then .sbj else if f ≤ .vp then .vp else .s := by
+  revert m f; decide
+
+-- Table 2
+theorem usable_buli (m f : Node) :
+    Usable buli m {f} ↔ m = if f ≤ .v then .v else if f ≤ .vp then .vp else .s := by
+  revert m f; decide
+
+-- Table 2
+theorem usable_hausa (m f : Node) : Usable hausa m {f} ↔ m = if f ≤ .sbj then .sbj else .s := by
+  revert m f; decide
+
+-- Table 2
+theorem usable_wolof (m f : Node) :
+    Usable wolof m {f} ↔
+      m = if f ≤ .sbj then .sbj else if f ≤ .obj then .obj else if f ≤ .vp then .vp else .s := by
+  revert m f; decide
+
+-- Table 2
+theorem usable_aymara (m f : Node) :
+    Usable aymara m {f} ↔ m = if f ≤ .sbj then .sbj else if f ≤ .obj then .obj else .s := by
+  revert m f; decide
+
+-- Table 2
+theorem usable_awing (m f : Node) : Usable awing m {f} ↔ m = .s := by
+  revert m f; decide
+
+-- (29), Sect. 4.2.3
+theorem guruntum_exocentric_disjunctive :
+    Exocentric (guruntum : Set Node) .s ∧ Disjunctive (guruntum : Set Node) .vp := by
+  refine ⟨exocentric_iff.2 ⟨fun h ↦ absurd (h (by decide : Node.sbj ≤ .s)) (by decide), by decide,
+    fun d ↦ ?_⟩,
+    disjunctive_of_covBy (d := .v) (d' := .obj) (by decide) (Node.covBy_iff.2 rfl)
+      (Node.covBy_iff.2 rfl) (by decide) (by decide) (by decide)⟩
+  rw [Node.covBy_iff]
+  revert d
   decide
 
-theorem marking_buli :
-    ∀ f, marking buli f =
-      some (match f with | .s | .sbj => .s | .vp | .obj => .vp | .v => .v) := by
-  decide
+/-! ### The Hausa particle -/
 
-theorem marking_hausa : ∀ f, marking hausa f = some (match f with | .sbj => .sbj | _ => .s) := by
-  decide
+/-- The gender of each node of a Hausa clause, given those of its subject and object: a verb, a
+verb phrase and a clause have none. -/
+def hausaGender (sbj obj : Option Hausa.Gender.Value) : Node → Option Hausa.Gender.Value
+  | .sbj => sbj
+  | .obj => obj
+  | _ => none
 
-theorem marking_wolof :
-    ∀ f, marking wolof f =
-      some (match f with | .sbj => .sbj | .obj => .obj | .s => .s | _ => .vp) := by
-  decide
-
-theorem marking_aymara :
-    ∀ f, marking aymara f = some (match f with | .sbj => .sbj | .obj => .obj | _ => .s) := by
-  decide
-
-theorem marking_awing : ∀ f, marking awing f = some .s := by decide
-
-/-! ### Exocentric and disjunctive foci -/
-
-/-- An exocentric marking realizes no focus below the constituent it marks. -/
-def Exocentric (inv : List Node) (m : Node) : Prop :=
-  Usable inv m m ∧ ∀ f, f ≤ m → f ≠ m → ¬ Usable inv m f
-
-instance (inv : List Node) (m : Node) : Decidable (Exocentric inv m) := by
-  unfold Exocentric; infer_instance
-
-/-- A disjunctive marking realizes foci on two disjoint constituents. -/
-def Disjunctive (inv : List Node) (m : Node) : Prop :=
-  ∃ a b, ¬ a ≤ b ∧ ¬ b ≤ a ∧ Usable inv m a ∧ Usable inv m b
-
-instance (inv : List Node) (m : Node) : Decidable (Disjunctive inv m) := by
-  unfold Disjunctive; infer_instance
-
-theorem guruntum_exocentric_disjunctive : Exocentric guruntum .s ∧ Disjunctive guruntum .vp := by
-  decide
-
-theorem not_downward_syncretism : ¬ ∀ m ∈ guruntum, ∃ f, IsMin f ∧ Usable guruntum m f := by
-  decide
-
-theorem usable_vp_of_v {inv : List Node} {m : Node} (h : Usable inv m .v) (hm : Node.vp ≤ m) :
-    Usable inv m .vp :=
-  h.of_le (by decide) hm
+-- (14), (17), p. 1359
+theorem stabilizer_of_usable_obj {m : Node} (h : Usable hausa m {.obj})
+    (gs go : Option Hausa.Gender.Value) :
+    Hausa.stabilizer (hausaGender gs go m) = Hausa.ne ∧
+      Hausa.stabilizer (hausaGender gs (some Hausa.kaza.gender) .obj) = Hausa.ce := by
+  obtain rfl : m = .s := ((usable_hausa m .obj).1 h).trans (by decide)
+  exact ⟨rfl, (Hausa.stabilizer_eq_ce_iff _).2 rfl⟩
 
 /-! ### Tangale and the reflex analysis -/
 
 open HartmannZimmermann2004
 
-/-- Tangale follows Hausa in the progressive, where only subject focus must be marked, and
-Gùrùntùm in the perfective, where verb, VP and object focus share a marking. -/
-def tangale : Tangale.TAM → Option (List Node)
+/-- Tangale follows Hausa in the progressive, where only subject focus must be marked
+(footnote 13), and Gùrùntùm in the perfective, where verb, VP and object focus share a marking
+(footnote 18). -/
+def tangale : Tangale.TAM → Option (Finset Node)
   | .continuous => some hausa
   | .perfective => some guruntum
   | _ => none
@@ -213,98 +287,94 @@ def focusNode : Focused → Node
   | .vp => .vp
   | .object => .obj
 
-/-- A configuration has an overt reflex on the reflex analysis exactly when its marking here is
-not the default clausal one. -/
-theorem overt_iff_marking_ne_default :
+theorem overt_iff_not_usable_s :
     ∀ c : Config, c.WF → ∀ inv ∈ tangale c.tam,
-      ((realize c).Nonempty ↔ marking inv (focusNode c.focused) ≠ some .s) := by
+      ((realize c).Nonempty ↔ ¬ Usable inv .s {focusNode c.focused}) := by
   intro c
   obtain ⟨f, a, t⟩ := c
   cases f <;> cases a <;> cases t <;> decide
 
 /-! ### English -/
 
-/-- The daughters of a branching node, the default-weak one first. -/
-def Node.daughters : Node → Option (Node × Node)
-  | .s => some (.sbj, .vp)
-  | .vp => some (.v, .obj)
+/-- The default-weak daughter of a branching node: English stresses the right daughter by
+default (36a). -/
+def Node.weakDaughter : Node → Option Node
+  | .s => some .sbj
+  | .vp => some .v
   | _ => none
 
-/-- The node that the weights of an English domain with mother `n` and default-weak daughter `w`
-mark as focal. Default weights, which impose a weak restriction, mark the mother, and reversal,
-which imposes a strong one, marks the daughter. -/
-def englishMarking (n w : Node) : Restriction → Node
-  | .weak => n
-  | .strong => w
+/-- English focally marks the clause by default prosody and each default-weak daughter by
+reversal (36b). -/
+def english : Finset Node :=
+  insert .s (Finset.univ.filter fun n ↦ ∃ p : Node, p.weakDaughter = some n)
 
-/-- The constituent of a domain with mother `n` and daughters `w` and `w'` that a target
-focuses, relative to the daughters' literal meanings `a` and `b`, is the daughter that alone
-varies, or the mother when both do. -/
-def localFocus {α β : Type*} [DecidableEq α] [DecidableEq β] (n w w' : Node) (a : α) (b : β)
-    (t : α × β) : Option Node :=
-  if t.1 = a then (if t.2 = b then none else some w') else (if t.2 = b then some w else some n)
+-- Table 2
+theorem usable_english (m f : Node) :
+    Usable english m {f} ↔ m = if f ≤ .sbj then .sbj else if f ≤ .v then .v else .s := by
+  revert m f; decide
 
-private theorem injective2_mk {α β : Type*} : Function.Injective2 (@Prod.mk α β) :=
-  fun _ _ _ _ ↦ Prod.mk.inj
+-- p. 1374, p. 1384
+theorem english_not_exocentric_disjunctive (m : Node) :
+    ¬ Exocentric (english : Set Node) m ∧ ¬ Disjunctive (english : Set Node) m := by
+  revert m; decide
 
-private theorem mem_excluded_left_mk {α β : Type*} {a : α} {b : β} {t : α × β}
-    {ρ : Restriction} : t ∈ excluded Prod.mk a b .left ρ ↔ ((t.1 ≠ a ∧ t.2 = b) ↔ ρ = .weak) := by
-  obtain ⟨x, y⟩ := t
-  cases ρ
-  · simp only [excluded_weak, narrow_left, Set.mem_image2_iff injective2_mk, Set.mem_compl_iff,
-      Set.mem_singleton_iff, iff_true]
-  · simp only [excluded_strong, narrow_left, Set.mem_compl_iff, Set.mem_image2_iff injective2_mk,
-      Set.mem_singleton_iff, reduceCtorEq, iff_false]
+/-- The node a prosody of the clause marks, given restrictions on the subject and on the verb:
+reversal marks the daughter it promotes, and default prosody the clause (49), (52). A reversal
+inside a demoted VP marks nothing. -/
+def marked : Restriction → Restriction → Option Node
+  | .weak, .weak => some .s
+  | .strong, .weak => some .sbj
+  | .weak, .strong => some .v
+  | .strong, .strong => none
 
-/-- In an English domain, whose inventory is the node and its default-weak daughter, the
-restriction of each metrical pattern excludes exactly the targets whose focus Blocking takes from
-the marking the pattern provides. The literal meaning, which focuses nothing, survives only
-default weights. -/
-theorem notMem_excluded_iff {α β : Type*} [DecidableEq α] [DecidableEq β] {n w w' : Node}
-    (h : n.daughters = some (w, w')) (a : α) (b : β) (t : α × β) (ρ : Restriction) :
-    t ∉ excluded Prod.mk a b .left ρ ↔
-      (localFocus n w w' a b t).elim (ρ = .weak) (Usable [n, w] (englishMarking n w ρ)) := by
-  obtain ⟨x, y⟩ := t
-  rw [mem_excluded_left_mk]
-  cases n <;> simp only [Node.daughters, reduceCtorEq, Option.some.injEq, Prod.mk.injEq] at h <;>
-    obtain ⟨rfl, rfl⟩ := h <;> by_cases hx : x = a <;> by_cases hy : y = b <;> cases ρ <;>
-    simp [localFocus, englishMarking, hx, hy] <;> decide
+/-- The node of each of Büring's words. -/
+def wordNode : Word → Node
+  | .subj => .sbj
+  | .verb => .v
+  | .obj => .obj
 
-/-- Individuals. -/
-inductive Ent | kim | sam
-  deriving DecidableEq, Repr, Fintype
+/-- The words a focus on the parts `F` contains. -/
+def words (F : Finset Node) : Finset Word := Finset.univ.filter fun w ↦ ∃ x ∈ F, wordNode w ≤ x
 
-/-- Transitive-verb meanings. -/
-inductive Rel | ate | made
-  deriving DecidableEq, Repr, Fintype
+section English
 
-/-- Object meanings. -/
-inductive Obj | yogurt | pickles
-  deriving DecidableEq, Repr, Fintype
+variable {E R O : Type*} {s s' : E} {v v' : R} {o o' : O}
 
-private theorem bijective_uncurry_mk {α β : Type*} :
-    Function.Bijective (Function.uncurry (@Prod.mk α β)) :=
-  Function.bijective_id
+/-- Büring's unalternative semantics is Blocking over the English inventory: a constituent can be
+the focus of a prosody exactly when the node the prosody marks is usable for it (Sect. 6.4). -/
+theorem target_mem_clause_iff (hs : s' ≠ s) (hv : v' ≠ v) (ho : o' ≠ o) (ρ ρ' : Restriction)
+    (f : Node) :
+    target (s, v, o) (s', v', o') (words {f}) ∈ (clause s v o ρ ρ').alternatives ↔
+      ∃ m ∈ marked ρ ρ', Usable english m {f} := by
+  cases ρ <;> cases ρ' <;>
+    simp only [target_mem_clause_weak_weak s v o hs hv ho, target_mem_clause_weak_strong s v o hv ho,
+      target_mem_clause_strong_weak s v o hs hv ho, alternatives_clause_strong_strong,
+      Set.mem_empty_iff_false,
+      marked, Option.mem_def, Option.some.injEq, reduceCtorEq, false_and, exists_false] <;>
+    revert f <;> decide
 
-/-- *Kim ate the yogurt* with restriction `ρ` on the subject and `ρ'` on the verb. -/
-def kimAteTheYogurt (ρ ρ' : Restriction) : WithAlternatives (Ent × Rel × Obj) :=
-  .node Prod.mk .left ρ (.focused .kim) (.node Prod.mk .left ρ' (.focused .ate) (.focused .yogurt))
+theorem isLUB_sbj_v : IsLUB {Node.sbj, .v} .s := by
+  refine ⟨?_, fun x hx ↦ ?_⟩
+  · simp only [upperBounds_insert, upperBounds_singleton, Set.mem_inter_iff, Set.mem_Ici]
+    decide
+  · simp only [upperBounds_insert, upperBounds_singleton, Set.mem_inter_iff, Set.mem_Ici] at hx
+    revert x
+    decide
 
-theorem alternatives_kimAteTheYogurt :
-    (kimAteTheYogurt .weak .strong).alternatives = Set.univ ×ˢ ({Rel.ate}ᶜ ×ˢ {Obj.yogurt}) := by
-  rw [kimAteTheYogurt, alternatives_node bijective_uncurry_mk, alternatives_map₂,
-    focused_alternatives, alternatives_node bijective_uncurry_mk, alternatives_map₂,
-    focused_alternatives, focused_alternatives]
-  ext ⟨x, r, o⟩
-  simp
-  revert x r o
-  decide
+/-- English marks a focus on subject and verb like narrow verb focus, which Blocking within the
+clause forbids, since the smallest constituent containing both is the clause; in a language whose
+domain of focal marking is the clause, such a focus is marked like the clause (Sect. 6.5). -/
+theorem subject_verb (hv : v' ≠ v) (ho : o' ≠ o) :
+    target (s, v, o) (s', v', o') (words {.sbj, .v}) ∈ (clause s v o .weak .strong).alternatives ∧
+      ¬ Usable (english : Set Node) .v {.sbj, .v} ∧
+      ∀ (inv : Set Node) m, Usable inv m {.sbj, .v} ↔ Usable inv m {.s} := by
+  refine ⟨?_, ?_, fun _ _ ↦ usable_iff_of_isLUB isLUB_sbj_v⟩
+  · rw [target_mem_clause_weak_strong s v o hv ho]
+    decide
+  · rw [usable_iff]
+    decide
 
-/-- The focal target of a focus on the constituents `F` replaces each word within them by its
-alternative. -/
-def englishTarget (F : List Node) : Ent × Rel × Obj :=
-  (if ∃ n ∈ F, .sbj ≤ n then .sam else .kim, if ∃ n ∈ F, .v ≤ n then .made else .ate,
-    if ∃ n ∈ F, .obj ≤ n then .pickles else .yogurt)
+end English
 
 /-! ### The paper's examples -/
 
@@ -317,13 +387,13 @@ def Node.parse? : String → Option Node
   | "clause" => some .s
   | _ => none
 
-/-- The constituents a reading focuses. -/
-def focus? : String → Option (List Node)
-  | "subject and verb" => some [.sbj, .v]
-  | x => (Node.parse? x).map ([·])
+/-- The parts of the focus of a reading. -/
+def focus? : String → Option (Finset Node)
+  | "subject and verb" => some {.sbj, .v}
+  | x => (Node.parse? x).map ({·})
 
 /-- The inventory of a row's language. -/
-def inventory? (r : Datum) : Option (List Node) :=
+def inventory? (r : Datum) : Option (Finset Node) :=
   r.byLanguage [(.guruntumMbaaru, guruntum), (.buliGhana, buli), (.hausa, hausa),
     (.wolof, wolof), (.centralAymara, aymara), (.awing, awing)]
 
@@ -338,25 +408,40 @@ def marked? (r : Datum) : Option Node :=
       (.centralAymara, [("wa on verb", .s)]), (.awing, [("none", .s)])]).bind
     (r.parse? "marking")
 
-/-- The nodes an English row's prosody marks in the clause and in the VP. -/
-def englishMarked? (r : Datum) : Option (Node × Node) :=
-  (r.byLanguage [(.english, [("nuclear stress on verb", (.s, .v))])]).bind (r.parse? "marking")
+/-- The restrictions an English row's prosody puts on the subject and on the verb. -/
+def prosody? (r : Datum) : Option (Restriction × Restriction) :=
+  (r.byLanguage [(.english, [("nuclear stress on verb", (.weak, .strong))])]).bind
+    (r.parse? "marking")
 
-/-- Every reading of a row is realized by the marking the row shows, which is the marking the
-inventory predicts for that focus. -/
+/-- Every reading of a row is acceptable and realized by the marking the row shows, which is
+usable for it in its language's inventory. -/
 theorem rows_marking :
     ∀ r ∈ Examples.all, ∀ inv ∈ inventory? r, ∀ m ∈ marked? r, ∀ x ∈ r.readings,
-      ∀ f ∈ Node.parse? x.1, x.2 = .acceptable ∧ marking inv f = some m := by
+      ∀ F ∈ focus? x.1, x.2 = .acceptable ∧ Usable inv m F := by
   decide
 
-/-- With the clause marked by default weights and the verb by reversal, a reading of the English
-row is acceptable exactly when its focal target survives the restrictions of
-*Kim ATE the yogurt*. -/
-theorem rows_english :
-    ∀ r ∈ Examples.all, englishMarked? r = some (.s, .v) → ∀ x ∈ r.readings, ∀ F ∈ focus? x.1,
-      (x.2 = .acceptable ↔ englishTarget F ∈ (kimAteTheYogurt .weak .strong).alternatives) := by
-  simp only [alternatives_kimAteTheYogurt, Set.mem_prod, Set.mem_univ, Set.mem_compl_iff,
-    Set.mem_singleton_iff, true_and]
+/-- The particle a Hausa row shows. -/
+def particle? (r : Datum) : Option Particle :=
+  (r.byLanguage [(.hausa, [("cee after subject", Hausa.ce), ("nee clause-final", Hausa.ne),
+    ("nee after subject", Hausa.ne), ("nee after object", Hausa.ne)])]).bind
+    (r.parse? "particle")
+
+-- (13), (14), (17)
+theorem rows_stabilizer :
+    ∀ r ∈ Examples.all, marked? r = some .s → ∀ p ∈ particle? r, p = Hausa.stabilizer none := by
   decide
+
+-- (53)
+theorem rows_english {E R O : Type*} {s s' : E} {v v' : R} {o o' : O} (hv : v' ≠ v)
+    (ho : o' ≠ o) :
+    ∀ r ∈ Examples.all, ∀ p ∈ prosody? r, ∀ x ∈ r.readings, ∀ F ∈ focus? x.1,
+      (x.2 = .acceptable ↔
+        target (s, v, o) (s', v', o') (words F) ∈ (clause s v o p.1 p.2).alternatives) := by
+  have h : ∀ r ∈ Examples.all, ∀ p ∈ prosody? r, p = (.weak, .strong) := by decide
+  have h' : ∀ r ∈ Examples.all, (.weak, .strong) ∈ prosody? r → ∀ x ∈ r.readings,
+      ∀ F ∈ focus? x.1, (x.2 = .acceptable ↔ .verb ∈ words F ∧ .obj ∉ words F) := by decide
+  intro r hr p hp
+  obtain rfl := h r hr p hp
+  simpa only [target_mem_clause_weak_strong s v o hv ho] using h' r hr hp
 
 end AssmannEtAl2023

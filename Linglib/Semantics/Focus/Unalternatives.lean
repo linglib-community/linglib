@@ -33,7 +33,7 @@ promotes. Focus Reset leaves a constituent only its literal meaning, as `unfeatu
 
 * `WithAlternatives.alternatives_node`: under a bijective composition, the targets of a node are
   the alternatives of the Roothian composition `map₂` of its daughters, minus what its
-  restriction excludes.
+  restriction excludes; `WithAlternatives.alternatives_node_mk` is its form under pairing.
 * `WithAlternatives.not_wellFormed_node_strong`: a strong restriction excludes the literal
   meaning of its node, against Rooth's containment constraint.
 * `WithAlternatives.alternatives_node_left_strong_eq_empty`: a strong restriction over a sister
@@ -152,6 +152,14 @@ theorem alternatives_node (hop : Bijective (uncurry op)) :
       (map₂ op d₁ d₂).alternatives \ excluded op d₁.ordinary d₂.ordinary e r := by
   rw [alternatives_map₂, node, compl_union, compl_propagated hop, compl_compl, compl_compl,
     sdiff_eq]
+
+/-- With pairing as composition, the targets of a node are the pairs of its daughters' targets
+that its restriction does not exclude. -/
+theorem alternatives_node_mk {d₁ : WithAlternatives α} {d₂ : WithAlternatives β} :
+    (node Prod.mk e r d₁ d₂).alternatives =
+      d₁.alternatives ×ˢ d₂.alternatives \ excluded Prod.mk d₁.ordinary d₂.ordinary e r := by
+  rw [alternatives_node (op := Prod.mk) Function.bijective_id, alternatives_map₂,
+    image2_mk_eq_prod]
 
 theorem alternatives_node_weak_union_strong :
     (node op e .weak d₁ d₂).alternatives ∪ (node op e .strong d₁ d₂).alternatives =
