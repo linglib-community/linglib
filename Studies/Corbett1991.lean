@@ -949,7 +949,7 @@ theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
   have hpl : ∀ l : List Number, l.foldl numbers.resolve .plural = .plural := fun l ↦ by
     induction l with
     | nil => rfl
-    | cons x l ih => simpa [resolve_numbers] using ih
+    | cons x l ih => simpa using ih
   have hall : ¬ ∀ x ∈ c :: d :: cs, x = .plural := fun hp ↦ by
     obtain ⟨x, hx, hne⟩ := h; exact hne (hp x hx)
   by_cases hsg : c = .singular ∧ d = .singular ∧ cs = []

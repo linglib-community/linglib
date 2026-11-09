@@ -82,21 +82,30 @@ open English.Nouns (numberSystem)
 
 /-! ### The number inference -/
 
-/-- The number inference of a positive indefinite, (1), holds of the witness cardinalities that
-English gives the number. -/
-def inference (n : Number) : Set ℕ := {k | 1 ≤ k ∧ numberSystem.ofCard k = n}
+/-- The number inference of a positive indefinite, (1), holds of the witness cardinalities in the
+cell English gives the number. -/
+def inference (n : Number) : Set ℕ := (↑) '' (numberSystem.ofCard ⁻¹' {n})
 
 @[simp] theorem inference_singular : inference .singular = singular := by
   ext k
-  rcases k with _ | _ | _ | _ | k <;>
-    simp [inference, Number.System.ofCard, Number.fromCard, numberSystem, singular]
+  simp [inference, Number.System.ofCard_eq_iff (v := .singular) trivial, Number.exactCard,
+    numberSystem, singular, eq_comm]
 
 @[simp] theorem inference_plural : inference .plural = strong := by
   ext k
-  rcases k with _ | _ | _ | _ | k <;>
-    simp [inference, Number.System.ofCard, Number.fromCard, numberSystem, strong]
+  simp only [inference, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
+    Number.System.ofCard_eq_plural_iff_forall, numberSystem]
+  simp only [Number.System.singularPlural_values, Finset.mem_insert, Finset.mem_singleton,
+    forall_eq_or_imp, forall_eq, Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true, and_true, strong, Set.mem_ofPred_eq]
+  refine ⟨fun ⟨p, hp, hk⟩ ↦ hk ▸ ?_, fun hk ↦ ⟨⟨k, by omega⟩, fun h ↦ ?_, rfl⟩⟩
+  · exact lt_of_le_of_ne p.pos fun h ↦ hp (PNat.coe_eq_one_iff.1 h.symm).symm
+  · have := congrArg PNat.val h
+    simp only [PNat.val_ofNat, PNat.mk_coe] at this
+    omega
 
-theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ hk ↦ hk.1
+theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ ⟨p, _, hk⟩ ↦
+  hk ▸ p.pos
 
 theorem compl_weak : weakᶜ = {0} := by
   ext k; simp [weak]

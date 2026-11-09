@@ -197,7 +197,7 @@ theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n 
 cardinality realizes it only at that cardinality. -/
 theorem exactCard_eq_card_of_mem_ofPersonNumber :
     ∀ p n c, c ∈ ofPersonNumber p n → c.otherCount = 0 →
-      n.exactCard = none ∨ n.exactCard = some c.card := by
+      ∀ k ∈ n.exactCard, (k : ℕ) = c.card := by
   decide
 
 /-- No category is both minimal and augmented, whatever the person values: `[−minimal]` is the

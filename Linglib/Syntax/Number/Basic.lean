@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Data.PNat.Interval
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -95,7 +95,7 @@ instance : DecidablePred IsDeterminate := fun n => by
 
 /-- A determinate value's referent has an exact cardinality, one for the singular, two for the
 dual and three for the trial; the other values have none. -/
-def exactCard : Number → Option Nat
+def exactCard : Number → Option ℕ+
   | .singular => some 1
   | .dual     => some 2
   | .trial    => some 3
@@ -103,11 +103,40 @@ def exactCard : Number → Option Nat
 
 /-- `fromCard n` is the determinate value of cardinality `n`, and the residual plural from
 four on, the greater plural being a value of abundance rather than of four or more. -/
-def fromCard : Nat → Number
+def fromCard (n : ℕ+) : Number :=
+  match (n : ℕ) with
   | 1 => .singular
   | 2 => .dual
   | 3 => .trial
   | _ => .plural
+
+/-- The determinate values are those of the cardinalities up to three. -/
+theorem exactCard_eq_some_iff {v : Number} {n : ℕ+} :
+    v.exactCard = some n ↔ n ≤ 3 ∧ fromCard n = v := by
+  constructor
+  · intro h
+    cases v <;> simp only [exactCard, reduceCtorEq, Option.some.injEq] at h <;> subst h <;> decide
+  · rintro ⟨h, rfl⟩
+    obtain ⟨_ | _ | _ | _ | n, hn⟩ := n
+    · exact absurd hn (by decide)
+    iterate 3 rfl
+    · exact absurd ((PNat.coe_le_coe _ _).2 h) (by show ¬ n + 4 ≤ 3; omega)
+
+theorem exactCard_eq_none_iff {v : Number} : v.exactCard = none ↔ ¬ v.IsDeterminate := by
+  cases v <;> simp [exactCard, IsDeterminate]
+
+theorem isDeterminate_of_exactCard_eq_some {v : Number} {n : ℕ+} (h : v.exactCard = some n) :
+    v.IsDeterminate :=
+  not_not.1 <| mt exactCard_eq_none_iff.2 (by simp [h])
+
+theorem fromCard_of_three_lt {n : ℕ+} (h : 3 < n) : fromCard n = .plural := by
+  have h' : 3 < (n : ℕ) := (PNat.coe_lt_coe 3 n).2 h
+  unfold fromCard
+  split <;> first | rfl | omega
+
+theorem isDeterminate_fromCard {n : ℕ+} : (fromCard n).IsDeterminate ↔ n ≤ 3 :=
+  ⟨fun h ↦ not_lt.1 fun h3 ↦ by rwa [fromCard_of_three_lt h3] at h,
+    fun h ↦ isDeterminate_of_exactCard_eq_some (exactCard_eq_some_iff.2 ⟨h, rfl⟩)⟩
 
 /-! ### Number systems -/
 
@@ -133,7 +162,7 @@ def singularPlural : System := { values := {.singular, .plural} }
 with the value of a cardinality, it has the value of every smaller positive one, as the dual
 requires the singular and the trial the dual ([harbour-2014] Table 1). -/
 def DeterminateInitial (ns : System) : Prop :=
-  ∀ v ∈ ns.values, ∀ m ∈ Finset.Icc 1 (v.exactCard.getD 0), fromCard m ∈ ns.values
+  ∀ v ∈ ns.values, ∀ n ∈ v.exactCard, ∀ m ∈ Finset.Icc 1 n, fromCard m ∈ ns.values
 
 instance : DecidablePred DeterminateInitial := fun _ ↦ by
   unfold DeterminateInitial; infer_instance
