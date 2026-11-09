@@ -36,8 +36,18 @@ marking is the clause [mark it like the clause](##rows_marking).
 * The English theorems hold for any meanings of subject, verb and object, and any alternatives
   to them that differ from them.
 
+## Errata
+
+* (41) is given as cited from [fominyam-simik-2017] (p. 1038), but there object, subject, VP
+  and verb focus each have their own answer ((19)–(22), pp. 1037–1038), the object-focus answer
+  without its subject and with a high final tone on *ŋgəsáŋə́*, and clause focus is not among the
+  types tested. The one answer to five questions is the authors' composite, recorded as printed.
+
 ## TODO
 
+* [hartmann-zimmermann-2009] report narrow verb focus with a null object pronoun and no marker at
+  all ((19a), (20a)), which the VP marking does not cover; their account ranks structural
+  constraints on the marker's position above Focus Prominence (Sect. 3.3).
 * Foci below the skeleton: the Gùrùntùm intra-VP phrase of footnote 4, whose own marking blocks
   the VP marking, the Hausa part-of-subject focus of (15), and the object-internal columns of
   Table 2.
@@ -49,6 +59,8 @@ marking is the clause [mark it like the clause](##rows_marking).
 * [assmann-etal-2023]
 * [buring-2015]
 * [hartmann-zimmermann-2004]
+* [hartmann-zimmermann-2009]
+* [fominyam-simik-2017]
 -/
 
 @[expose] public section
