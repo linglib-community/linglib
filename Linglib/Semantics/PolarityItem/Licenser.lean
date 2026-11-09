@@ -315,6 +315,14 @@ theorem carries_classical_iff {F : OperatorFamily} :
       ⟨⟨isStrawsonDE_of_holds_anti (h.1.toProjectivitySignature_of_le (s := .weak) (by decide)),
         h.2⟩, h.1⟩⟩
 
+/-- A non-trivial classical licenser holding exactly the strengths up to `s₀` carries exactly
+those. -/
+theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
+    (hn : ¬ (classical F).IsStrawsonUE)
+    (h : ∀ s, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+    (classical F).Carries s ↔ s ≤ s₀ := by
+  rw [carries_classical_iff, h, and_iff_left hn]
+
 theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
     (h : L.Holds s₀.toProjectivitySignature)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s.toProjectivitySignature) :

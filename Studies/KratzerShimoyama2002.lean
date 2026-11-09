@@ -323,7 +323,7 @@ ungrammatical, so selectivity rather than strength excludes it. -/
 theorem negation_licenses_irgendein :
     LicensingContext.negation.licenser.Licenses German.PolarityItems.irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=
-  ⟨by simp [German.PolarityItems.irgendein, PolarityItem.IsNPI], rfl⟩
+  ⟨by decide, rfl⟩
 
 theorem irgendein_haspelmath :
     ∀ s ∈ Haspelmath1997.german, s.toSeries = German.Indefinites.irgendSeries →

@@ -208,7 +208,7 @@ theorem licensed_iff_licenses (L : Licenser) (s : Strength) {c : PolarityItem.Li
     (hc : L.context = some c) : Licensed L s ↔ c.licenser.Licenses s.item := by
   rw [licensed_iff]
   cases L <;> cases s <;> simp only [Licenser.context, Option.some.injEq, reduceCtorEq] at hc <;>
-    subst hc <;> simp [Strength.item, English.PolarityItems.ever, English.PolarityItems.inYears]
+    subst hc <;> decide
 
 /-! ### Intolerance -/
 

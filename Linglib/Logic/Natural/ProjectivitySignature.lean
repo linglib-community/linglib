@@ -305,6 +305,23 @@ theorem HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Proje
   obtain ⟨p, hp, q, hq, h⟩ := mem_properties_mul.1 hr
   exact (hf p hp).compose h (hg q hq)
 
+/-- A map after complementation is a σ-function exactly when the map is a `σ * ⊖`-function, since
+`⊖` is its own inverse. -/
+theorem holdsFor_comp_compl_iff {γ : Type*} [BooleanAlgebra γ] {σ : ProjectivitySignature}
+    {g : γ → β} : σ.HoldsFor (g ∘ compl) ↔ (σ * .antiAddMult).HoldsFor g := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · simpa [Function.comp_def] using h.comp (holdsFor_antiAddMult_compl (γ := γ))
+  · simpa [mul_assoc, show antiAddMult * antiAddMult = 1 from rfl] using
+      h.comp (holdsFor_antiAddMult_compl (γ := γ))
+
+/-- Complementation after a map is a σ-function exactly when the map is a `⊖ * σ`-function. -/
+theorem holdsFor_compl_comp_iff {γ : Type*} [BooleanAlgebra γ] {σ : ProjectivitySignature}
+    {f : α → γ} : σ.HoldsFor (compl ∘ f) ↔ (antiAddMult * σ).HoldsFor f := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · simpa [Function.comp_def] using (holdsFor_antiAddMult_compl (γ := γ)).comp h
+  · simpa [← mul_assoc, show antiAddMult * antiAddMult = 1 from rfl] using
+      (holdsFor_antiAddMult_compl (γ := γ)).comp h
+
 /-- A function in the class of a signature of positive sign is monotone. -/
 theorem HoldsFor.monotone_of_sign_eq_one {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) (hs : σ.sign = 1) : Monotone f :=
