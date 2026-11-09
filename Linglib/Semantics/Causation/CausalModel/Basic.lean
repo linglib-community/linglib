@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Causation.CausalModel.Defs
 
 /-!
@@ -117,9 +118,7 @@ theorem solve_eq_of_solve_update_of_solve_update {I : ∀ v, Flat (α v)} {u : U
     (hw : M.solve (Function.update I y ↑a) u w = b) : M.solve I u y = a := by
   by_cases hwy : ReflTransGen M.graph.Adj w y
   · have hyw' : ¬ ReflTransGen M.graph.Adj y w := fun h ↦
-      _root_.asymm (r := TransGen M.graph.Adj)
-        ((reflTransGen_iff_eq_or_transGen.1 hwy).resolve_left hyw)
-        ((reflTransGen_iff_eq_or_transGen.1 h).resolve_left hyw.symm)
+      hyw (h.antisymm (fun _ h ↦ _root_.asymm h h) hwy)
     rw [solve_update_of_not_reflTransGen hyw'] at hw
     rwa [solve_update_of_solve_eq hw] at hy
   · rwa [solve_update_of_not_reflTransGen hwy] at hy

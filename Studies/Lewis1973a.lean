@@ -137,12 +137,6 @@ theorem mem_violations_of_le_divergence (hx : x c ≠ M.solve ⊥ u c)
   change x c ≠ M.eqn c u x
   rwa [M.dependsOn_eqn c u hpar, ← solve_of_eq_bot rfl u]
 
-private theorem rank_le_of_reflTransGen {β : Type*} {r : β → β → Prop} [WellFounded r]
-    {a b : β} (h : ReflTransGen r a b) : WellFounded.rank r a ≤ WellFounded.rank r b := by
-  induction h with
-  | refl => exact le_rfl
-  | tail _ h ih => exact ih.trans (WellFounded.rank_lt_of_rel h).le
-
 theorem score_solve_bot_lt (hx : x ≠ M.solve ⊥ u) : score M u (M.solve ⊥ u) < score M u x := by
   refine Prod.lt_iff.2 (.inl ⟨?_, ?_⟩)
   · rw [score, score, OrderDual.toDual_lt_toDual, divergence_solve_bot]
@@ -172,7 +166,8 @@ private theorem eq_solve_of_violations_subset (hx : x c = b) (h : violations M u
 private theorem divergence_solve_update (hb : b ≠ M.solve ⊥ u c) :
     divergence M u (M.solve [c ← b] u) = WellFounded.rank M.graph.Adj c := by
   refine le_antisymm (divergence_le (by rwa [solve_update_self])) (le_iInf₂ fun v hv ↦ ?_)
-  refine WithTop.coe_le_coe.2 (rank_le_of_reflTransGen (by_contra fun h ↦ hv ?_))
+  refine WithTop.coe_le_coe.2 (ReflTransGen.rank_le (rank := WellFounded.rank M.graph.Adj)
+    (fun _ _ ↦ WellFounded.rank_lt_of_rel) (by_contra fun h ↦ hv ?_ : ReflTransGen _ c v).swap)
   exact solve_update_of_not_reflTransGen h ⊥ _ u
 
 private theorem violations_solve_update (hb : b ≠ M.solve ⊥ u c) :
