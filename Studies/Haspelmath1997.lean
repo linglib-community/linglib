@@ -696,6 +696,15 @@ theorem dareMo_region :
       some (theoryRegion Japanese.PolarityItems.dareMo ∪ {.indirectNeg, .comparative}) := by
   decide +kernel
 
+-- the free-choice route admits Finnish *hyvänsä* under necessity, where the book has no
+-- free-choice series, and not in conditionals, where the book has it as the emphatic alternative
+-- to *joku* (A209), nor in the standard of an equative comparison (A214)
+theorem kukaHyvänsä_region :
+    regionOf finnish Finnish.PolarityItems.kukaHyvänsä =
+      some (theoryRegion Finnish.PolarityItems.kukaHyvänsä \ {.irrealis} ∪
+        {.conditional, .comparative}) := by
+  decide +kernel
+
 end LicensingTheory
 
 end Haspelmath1997
