@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Algebra.Free
 public import Mathlib.Data.List.Lemmas
 public import Mathlib.Logic.Relation
 
@@ -22,6 +23,7 @@ partial composition grafts a tree onto a leaf.
 
 * `Bud.Tree`: binary trees with a color at every vertex.
 * `Bud.Tree.graft`: grafting onto the `i`-th leaf, the partial composition of the operad.
+* `Bud.Tree.prune`: the free-magma element a tree builds from its inputs, its colors forgotten.
 * `Bud.System.Derives`, `Bud.System.language`: derivability and the generated language.
 * `Bud.System.ofCherries`: the system whose rules are the cherries, single binary vertices,
   with colors in a given relation.
@@ -108,6 +110,19 @@ theorem getElem?_inputs_node {l r : Tree Ω} :
   split_ifs with h
   · exact List.getElem?_append_left (by simpa using h)
   · rw [inputs_node, List.getElem?_append_right (by simpa using h), length_inputs]
+
+/-- The pruning of a tree to the free magma on its input colors, forgetting the colors of its
+vertices: the shape of the operation together with its inputs. -/
+def prune : Tree Ω → FreeMagma Ω
+  | leaf c => .of c
+  | node _ l r => l.prune * r.prune
+
+@[simp] theorem prune_leaf : (leaf c).prune = .of c := rfl
+
+@[simp] theorem prune_node {l r : Tree Ω} : (node c l r).prune = l.prune * r.prune := rfl
+
+@[simp] theorem length_prune (x : Tree Ω) : x.prune.length = x.numInputs := by
+  induction x <;> simp [*]
 
 /-- The cherry of color `c` over the inputs `a` and `b`, a single binary vertex. -/
 def cherry (c a b : Ω) : Tree Ω := node c (leaf a) (leaf b)
