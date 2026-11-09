@@ -23,7 +23,7 @@ two compositional systems can express.
   derived operation of another.
 * `Composition.Grammar.Skeleton`, `Composition.Grammar.Selection`: a bare structure, and the rules
   a node admits by its label and its daughters' types.
-* `Composition.Grammar.Skeleton.derivs`, `Composition.Grammar.Skeleton.meanings`: the derivations
+* `Composition.Grammar.Skeleton.derivs`, `Composition.Grammar.Skeleton.values`: the derivations
   over a bare structure, and their values.
 
 ## Implementation notes
@@ -33,7 +33,9 @@ over it, and an interpretation an algebra, as `FirstOrder.Language`, its terms a
 are for one sort. The domains are a parameter of an interpretation, as the carrier is of a
 structure, so that two grammars are compared over the same domains without transport. A derived
 operation is a derivation whose leaves are holes, `One` or `Two`; it may use a hole more than once
-or not at all.
+or not at all. A lexicon gives each word typed items, and their values separately: with the values
+inside the items, as `Skeleton.meanings` has them, a statement whose values are variables is slow
+to check, since the search over types is repeated wherever a type is inspected.
 
 ## References
 
@@ -281,10 +283,22 @@ def derivs (sel : Selection G N) (lex : L → List (Σ a, W a)) :
   | binary n s₁ s₂ => (derivs sel lex s₁).flatMap fun d₁ ↦ (derivs sel lex s₂).flatMap fun d₂ ↦
       (sel.binary n d₁.1 d₂.1).map fun p ↦ ⟨p.1, .binary p.2 d₁.2 d₂.2⟩
 
-/-- The meanings of a bare structure: the values of the derivations over it. -/
+/-- The values of the derivations over a bare structure, for a lexicon of typed items whose
+values `ρ` gives. The derivations are found from the types alone. -/
+def values (I : Interpretation G D) (ρ : ∀ {a : T}, W a → D a) (sel : Selection G N)
+    (lex : L → List (Σ a, W a)) (s : Skeleton N L) : List (Σ a, D a) :=
+  (s.derivs sel lex).map fun d ↦ ⟨d.1, d.2.eval I ρ⟩
+
+/-- The meanings of a bare structure, for a lexicon whose items are their values. -/
 def meanings (I : Interpretation G D) (sel : Selection G N) (lex : L → List (Σ a, D a)) :
     Skeleton N L → List (Σ a, D a) :=
-  fun s ↦ (s.derivs (W := D) sel lex).map fun d ↦ ⟨d.1, d.2.eval I id⟩
+  values I id sel lex
+
+theorem values_eq_of_derivs_eq (I : Interpretation G D) (ρ : ∀ {a : T}, W a → D a)
+    {sel : Selection G N} {lex : L → List (Σ a, W a)} {s : Skeleton N L}
+    {ds : List (Σ a, Deriv G W a)} (h : s.derivs sel lex = ds) :
+    s.values I ρ sel lex = ds.map fun d ↦ ⟨d.1, d.2.eval I ρ⟩ := by
+  rw [values, h]
 
 end Skeleton
 
