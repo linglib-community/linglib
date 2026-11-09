@@ -34,6 +34,7 @@ vowel the third person is usually -Vn, as in *talo-ssa-an* 'in his house', besid
   their exponents and their order.
 * `Finnish.Nominal.WellFormed`: the strings of endings that make a word.
 * `Finnish.Nominal.realize`: the surface forms of a stem with a string of endings.
+* `Finnish.Nominal.endings`: the endings of a number and a case.
 * `Finnish.Infinitive.endings`: the endings of an infinitive in a case.
 
 ## Main results
@@ -112,7 +113,7 @@ inductive Exponent : Slot → Type where
   | nominativePlural : Exponent .number
   /-- The plural -i of the cases other than the nominative. -/
   | plural : Exponent .number
-  /-- A case ending. -/
+  /-- A case ending, the nominative's being empty. -/
   | case (c : Case) : Exponent .case
   /-- A possessive ending, a cell of `Finnish.Possession.endings`. -/
   | possessive (p : Bundle) : Exponent .possession
@@ -151,7 +152,7 @@ def Exponent.infinitive? : Exponent σ → Option Infinitive
   | .infinitive i => some i
   | _ => none
 
-/-- The case of a string of endings, the nominative if none realizes one. -/
+/-- The case of a string of endings, the one its first ending realizing a case realizes. -/
 def caseOf (es : List (Σ σ, Exponent σ)) : Case := (es.findSome? (·.2.case?)).getD .nom
 
 /-- The string of endings has a possessive ending. -/
@@ -160,11 +161,12 @@ def HasPossessive (es : List (Σ σ, Exponent σ)) : Prop := ∃ e ∈ es, e.1 =
 instance (es : List (Σ σ, Exponent σ)) : Decidable (HasPossessive es) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- A string of endings makes a word when they are in the order of the template, no position is
-determined twice, a comitative is followed by a possessive ending, and an infinitive is in one
-of its cases, its translative with a possessive ending. -/
+/-- A string of endings makes a word when they are in the order of the template, every position
+is determined at most once and the case exactly once, the nominative singular by its empty ending,
+a comitative is followed by a possessive ending, and an infinitive is in one of its cases, its
+translative with a possessive ending. -/
 def WellFormed (es : List (Σ σ, Exponent σ)) : Prop :=
-  template.Licensed es ∧ (es.flatMap (·.2.fills)).Nodup ∧
+  template.Licensed es ∧ (es.flatMap (·.2.fills)).Nodup ∧ .case ∈ es.flatMap (·.2.fills) ∧
     (caseOf es = .com → HasPossessive es) ∧
     ∀ i ∈ es.findSome? (·.2.infinitive?),
       caseOf es ∈ i.cases ∧ (i = .a ∧ caseOf es = .transl → HasPossessive es)
@@ -267,6 +269,12 @@ def continuations (w : List Segment) (num : numberSystem.values) (c : Option Cas
 def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Segment) :=
   (continuations w (numberSystem.value .singular) none es).map surface
 
+/-- The endings of the number `num` and the case `c`: the case ending, after the plural -i in the
+plural, and in the nominative plural the -t that realizes both. -/
+def endings (num : numberSystem.values) (c : Case) : List (Σ σ, Exponent σ) :=
+  numberSystem.elim [⟨_, .case c⟩]
+    (if c = .nom then [⟨_, .nominativePlural⟩] else [⟨_, .plural⟩, ⟨_, .case c⟩]) (n := num)
+
 /-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
 house'. -/
@@ -282,17 +290,19 @@ theorem continuations_third :
 /-- With a possessive ending the genitive is the nominative, as in *ove-mme* 'our door, of our
 door'. -/
 theorem realize_gen_possessive (w : List Segment) (p : Bundle) :
-    realize w [⟨_, .case .gen⟩, ⟨_, .possessive p⟩] = realize w [⟨_, .possessive p⟩] := by
+    realize w [⟨_, .case .gen⟩, ⟨_, .possessive p⟩] =
+      realize w [⟨_, .case .nom⟩, ⟨_, .possessive p⟩] := by
   have hn : ¬ n.IsVowel := by decide
   have hg : ¬ EndsInVowel .gen := by decide
+  have h0 : ¬ EndsInVowel .nom := by decide
   simp [realize, continuations, caseEndings, Declension.endings, beforePossessive,
-    BeforePossessive, possessiveForms, hn, hg]
+    BeforePossessive, possessiveForms, hn, hg, h0]
 
 end Nominal
 
 /-- The endings of the infinitive `i` in the case `c` are its function ending and the case
-ending, of which the nominative has none. -/
+ending. -/
 def Infinitive.endings (i : Infinitive) (c : Case) : List (Σ σ, Nominal.Exponent σ) :=
-  ⟨_, .infinitive i⟩ :: if c = .nom then [] else [⟨_, .case c⟩]
+  [⟨_, .infinitive i⟩, ⟨_, .case c⟩]
 
 end Finnish

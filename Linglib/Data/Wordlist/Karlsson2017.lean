@@ -538,7 +538,7 @@ def auto : Form Cell :=
     lexeme := Lexemes.car
     cell := nom
     form := "auto"
-    segments := ["auto"]
+    morphs := ["auto"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -548,7 +548,7 @@ def auton : Form Cell :=
     lexeme := Lexemes.car
     cell := gen
     form := "auton"
-    segments := ["auto", "n"]
+    morphs := ["auto", "n"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -558,7 +558,7 @@ def hanet : Form Cell :=
     lexeme := Lexemes.him_her
     cell := acc
     form := "hänet"
-    segments := ["häne", "t"]
+    morphs := ["häne", "t"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -568,7 +568,7 @@ def kenet : Form Cell :=
     lexeme := Lexemes.whom
     cell := acc
     form := "kenet"
-    segments := ["kene", "t"]
+    morphs := ["kene", "t"]
     source := [
       ⟨"karlsson-2017", "§13.3.2"⟩
     ] }
@@ -578,7 +578,7 @@ def meidat : Form Cell :=
     lexeme := Lexemes.us
     cell := acc_pl
     form := "meidät"
-    segments := ["me", "i", "dät"]
+    morphs := ["me", "i", "dät"]
     source := [
       ⟨"karlsson-2017", "§13.3.2"⟩
     ] }
@@ -588,7 +588,7 @@ def teidat : Form Cell :=
     lexeme := Lexemes.you_pl
     cell := acc_pl
     form := "teidät"
-    segments := ["te", "i", "dät"]
+    morphs := ["te", "i", "dät"]
     source := [
       ⟨"karlsson-2017", "§13.3.2"⟩
     ] }
@@ -598,7 +598,7 @@ def heidat : Form Cell :=
     lexeme := Lexemes.them
     cell := acc_pl
     form := "heidät"
-    segments := ["he", "i", "dät"]
+    morphs := ["he", "i", "dät"]
     source := [
       ⟨"karlsson-2017", "§13.3.2"⟩
     ] }
@@ -608,7 +608,7 @@ def maitoa : Form Cell :=
     lexeme := Lexemes.milk
     cell := part
     form := "maitoa"
-    segments := ["maito", "a"]
+    morphs := ["maito", "a"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -618,7 +618,7 @@ def vetta : Form Cell :=
     lexeme := Lexemes.water
     cell := part
     form := "vettä"
-    segments := ["vet", "tä"]
+    morphs := ["vet", "tä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -628,7 +628,7 @@ def perhetta : Form Cell :=
     lexeme := Lexemes.family
     cell := part
     form := "perhettä"
-    segments := ["perhe", "ttä"]
+    morphs := ["perhe", "ttä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -638,7 +638,7 @@ def autossa : Form Cell :=
     lexeme := Lexemes.car
     cell := ine
     form := "autossa"
-    segments := ["auto", "ssa"]
+    morphs := ["auto", "ssa"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -648,7 +648,7 @@ def autosta : Form Cell :=
     lexeme := Lexemes.car
     cell := ela
     form := "autosta"
-    segments := ["auto", "sta"]
+    morphs := ["auto", "sta"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -658,7 +658,7 @@ def autoon : Form Cell :=
     lexeme := Lexemes.car
     cell := ill
     form := "autoon"
-    segments := ["auto", "on"]
+    morphs := ["auto", "on"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -668,7 +668,7 @@ def maahan : Form Cell :=
     lexeme := Lexemes.country
     cell := ill
     form := "maahan"
-    segments := ["maa", "han"]
+    morphs := ["maa", "han"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -678,7 +678,7 @@ def porvooseen : Form Cell :=
     lexeme := Lexemes.porvoo
     cell := ill
     form := "Porvooseen"
-    segments := ["Porvoo", "seen"]
+    morphs := ["Porvoo", "seen"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -688,7 +688,7 @@ def poydalla : Form Cell :=
     lexeme := Lexemes.table
     cell := ade
     form := "pöydällä"
-    segments := ["pöydä", "llä"]
+    morphs := ["pöydä", "llä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -698,7 +698,7 @@ def poydalta : Form Cell :=
     lexeme := Lexemes.table
     cell := abl
     form := "pöydältä"
-    segments := ["pöydä", "ltä"]
+    morphs := ["pöydä", "ltä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -708,7 +708,7 @@ def poydalle : Form Cell :=
     lexeme := Lexemes.table
     cell := allat
     form := "pöydälle"
-    segments := ["pöydä", "lle"]
+    morphs := ["pöydä", "lle"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -718,7 +718,7 @@ def opettajana : Form Cell :=
     lexeme := Lexemes.teacher
     cell := ess
     form := "opettajana"
-    segments := ["opettaja", "na"]
+    morphs := ["opettaja", "na"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -728,7 +728,7 @@ def opettajaksi : Form Cell :=
     lexeme := Lexemes.teacher
     cell := transl
     form := "opettajaksi"
-    segments := ["opettaja", "ksi"]
+    morphs := ["opettaja", "ksi"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -738,7 +738,7 @@ def vaimoineni : Form Cell :=
     lexeme := Lexemes.wife
     cell := com_px1sg
     form := "vaimoineni"
-    segments := ["vaimo", "ine", "ni"]
+    morphs := ["vaimo", "ine", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -748,7 +748,7 @@ def passitta : Form Cell :=
     lexeme := Lexemes.passport
     cell := abess
     form := "passitta"
-    segments := ["passi", "tta"]
+    morphs := ["passi", "tta"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -758,7 +758,7 @@ def jalan : Form Cell :=
     lexeme := Lexemes.foot
     cell := inst
     form := "jalan"
-    segments := ["jala", "n"]
+    morphs := ["jala", "n"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -768,7 +768,7 @@ def kirjani : Form Cell :=
     lexeme := Lexemes.book
     cell := nom_px1sg
     form := "kirjani"
-    segments := ["kirja", "ni"]
+    morphs := ["kirja", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -778,7 +778,7 @@ def kirjasi : Form Cell :=
     lexeme := Lexemes.book
     cell := nom_px2sg
     form := "kirjasi"
-    segments := ["kirja", "si"]
+    morphs := ["kirja", "si"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -788,7 +788,7 @@ def kirjansa : Form Cell :=
     lexeme := Lexemes.book
     cell := nom_px3sg
     form := "kirjansa"
-    segments := ["kirja", "nsa"]
+    morphs := ["kirja", "nsa"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -798,7 +798,7 @@ def pullo : Form Cell :=
     lexeme := Lexemes.bottle
     cell := nom
     form := "pullo"
-    segments := ["pullo"]
+    morphs := ["pullo"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -808,7 +808,7 @@ def pullossa : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine
     form := "pullossa"
-    segments := ["pullo", "ssa"]
+    morphs := ["pullo", "ssa"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -818,7 +818,7 @@ def pulloni : Form Cell :=
     lexeme := Lexemes.bottle
     cell := nom_px1sg
     form := "pulloni"
-    segments := ["pullo", "ni"]
+    morphs := ["pullo", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -828,7 +828,7 @@ def pullostani : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ela_px1sg
     form := "pullostani"
-    segments := ["pullo", "sta", "ni"]
+    morphs := ["pullo", "sta", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -838,7 +838,7 @@ def hyllyssa : Form Cell :=
     lexeme := Lexemes.shelf
     cell := ine
     form := "hyllyssä"
-    segments := ["hylly", "ssä"]
+    morphs := ["hylly", "ssä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -848,7 +848,7 @@ def hyllylla : Form Cell :=
     lexeme := Lexemes.shelf
     cell := ade
     form := "hyllyllä"
-    segments := ["hylly", "llä"]
+    morphs := ["hylly", "llä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -858,7 +858,7 @@ def hyllysi : Form Cell :=
     lexeme := Lexemes.shelf
     cell := nom_px2sg
     form := "hyllysi"
-    segments := ["hylly", "si"]
+    morphs := ["hylly", "si"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -868,7 +868,7 @@ def hyllyllesi : Form Cell :=
     lexeme := Lexemes.shelf
     cell := allat_px2sg
     form := "hyllyllesi"
-    segments := ["hylly", "lle", "si"]
+    morphs := ["hylly", "lle", "si"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -878,7 +878,7 @@ def taloon : Form Cell :=
     lexeme := Lexemes.house
     cell := ill
     form := "taloon"
-    segments := ["talo", "on"]
+    morphs := ["talo", "on"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -888,7 +888,7 @@ def hyllynsa : Form Cell :=
     lexeme := Lexemes.shelf
     cell := nom_px3sg
     form := "hyllynsä"
-    segments := ["hylly", "nsä"]
+    morphs := ["hylly", "nsä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -898,7 +898,7 @@ def kadessani : Form Cell :=
     lexeme := Lexemes.hand
     cell := ine_px1sg
     form := "kädessäni"
-    segments := ["käde", "ssä", "ni"]
+    morphs := ["käde", "ssä", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -908,7 +908,7 @@ def kateen : Form Cell :=
     lexeme := Lexemes.hand
     cell := ill
     form := "käteen"
-    segments := ["käte", "en"]
+    morphs := ["käte", "en"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -918,7 +918,7 @@ def kateesi : Form Cell :=
     lexeme := Lexemes.hand
     cell := ill_px2sg
     form := "käteesi"
-    segments := ["käte", "e", "si"]
+    morphs := ["käte", "e", "si"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -928,7 +928,7 @@ def katta : Form Cell :=
     lexeme := Lexemes.hand
     cell := part
     form := "kättä"
-    segments := ["kät", "tä"]
+    morphs := ["kät", "tä"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -938,7 +938,7 @@ def sanoa : Form Cell :=
     lexeme := Lexemes.say
     cell := nom_infa
     form := "sanoa"
-    segments := ["sano", "a"]
+    morphs := ["sano", "a"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -948,7 +948,7 @@ def syoda : Form Cell :=
     lexeme := Lexemes.eat
     cell := nom_infa
     form := "syödä"
-    segments := ["syö", "dä"]
+    morphs := ["syö", "dä"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -958,7 +958,7 @@ def juosta : Form Cell :=
     lexeme := Lexemes.run
     cell := nom_infa
     form := "juosta"
-    segments := ["juos", "ta"]
+    morphs := ["juos", "ta"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -968,7 +968,7 @@ def juostaksemme : Form Cell :=
     lexeme := Lexemes.run
     cell := transl_infa_px1pl
     form := "juostaksemme"
-    segments := ["juos", "ta", "kse", "mme"]
+    morphs := ["juos", "ta", "kse", "mme"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -978,7 +978,7 @@ def sanoessani : Form Cell :=
     lexeme := Lexemes.say
     cell := ine_infe_px1sg
     form := "sanoessani"
-    segments := ["sano", "e", "ssa", "ni"]
+    morphs := ["sano", "e", "ssa", "ni"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -988,7 +988,7 @@ def syodessamme : Form Cell :=
     lexeme := Lexemes.eat
     cell := ine_infe_px1pl
     form := "syödessämme"
-    segments := ["syö", "de", "ssä", "mme"]
+    morphs := ["syö", "de", "ssä", "mme"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -998,7 +998,7 @@ def juosten : Form Cell :=
     lexeme := Lexemes.run
     cell := inst_infe
     form := "juosten"
-    segments := ["juos", "te", "n"]
+    morphs := ["juos", "te", "n"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1008,7 +1008,7 @@ def syomalla : Form Cell :=
     lexeme := Lexemes.eat
     cell := ade_infma
     form := "syömällä"
-    segments := ["syö", "mä", "llä"]
+    morphs := ["syö", "mä", "llä"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1018,7 +1018,7 @@ def sanomatta : Form Cell :=
     lexeme := Lexemes.say
     cell := abess_infma
     form := "sanomatta"
-    segments := ["sano", "ma", "tta"]
+    morphs := ["sano", "ma", "tta"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1028,7 +1028,7 @@ def sanomaan : Form Cell :=
     lexeme := Lexemes.say
     cell := ill_infma
     form := "sanomaan"
-    segments := ["sano", "ma", "an"]
+    morphs := ["sano", "ma", "an"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1038,7 +1038,7 @@ def puhuaksesi : Form Cell :=
     lexeme := Lexemes.speak
     cell := transl_infa_px2sg
     form := "puhuaksesi"
-    segments := ["puhu", "a", "kse", "si"]
+    morphs := ["puhu", "a", "kse", "si"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1048,7 +1048,7 @@ def puhumalla : Form Cell :=
     lexeme := Lexemes.speak
     cell := ade_infma
     form := "puhumalla"
-    segments := ["puhu", "ma", "lla"]
+    morphs := ["puhu", "ma", "lla"]
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ] }
@@ -1058,7 +1058,7 @@ def autollani : Form Cell :=
     lexeme := Lexemes.car
     cell := ade_px1sg
     form := "autollani"
-    segments := ["auto", "lla", "ni"]
+    morphs := ["auto", "lla", "ni"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1068,7 +1068,7 @@ def autostasi : Form Cell :=
     lexeme := Lexemes.car
     cell := ela_px2sg
     form := "autostasi"
-    segments := ["auto", "sta", "si"]
+    morphs := ["auto", "sta", "si"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1078,7 +1078,7 @@ def autooni : Form Cell :=
     lexeme := Lexemes.car
     cell := ill_px1sg
     form := "autooni"
-    segments := ["auto", "o", "ni"]
+    morphs := ["auto", "o", "ni"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1088,7 +1088,7 @@ def laukkuni : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px1sg
     form := "laukkuni"
-    segments := ["laukku", "ni"]
+    morphs := ["laukku", "ni"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1098,7 +1098,7 @@ def laukkusi : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px2sg
     form := "laukkusi"
-    segments := ["laukku", "si"]
+    morphs := ["laukku", "si"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1108,7 +1108,7 @@ def laukkunsa_3sg : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px3sg
     form := "laukkunsa"
-    segments := ["laukku", "nsa"]
+    morphs := ["laukku", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1118,7 +1118,7 @@ def laukkumme : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px1pl
     form := "laukkumme"
-    segments := ["laukku", "mme"]
+    morphs := ["laukku", "mme"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1128,7 +1128,7 @@ def laukkunne : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px2pl
     form := "laukkunne"
-    segments := ["laukku", "nne"]
+    morphs := ["laukku", "nne"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1138,7 +1138,7 @@ def laukkunsa_3pl : Form Cell :=
     lexeme := Lexemes.bag
     cell := nom_px3pl
     form := "laukkunsa"
-    segments := ["laukku", "nsa"]
+    morphs := ["laukku", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1148,7 +1148,7 @@ def taloaan : Form Cell :=
     lexeme := Lexemes.house
     cell := part_px3sg
     form := "taloaan"
-    segments := ["talo", "a", "an"]
+    morphs := ["talo", "a", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1158,7 +1158,7 @@ def vieraanaan : Form Cell :=
     lexeme := Lexemes.guest
     cell := ess_px3pl
     form := "vieraanaan"
-    segments := ["vieraa", "na", "an"]
+    morphs := ["vieraa", "na", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1168,7 +1168,7 @@ def saadakseen : Form Cell :=
     lexeme := Lexemes.get
     cell := transl_infa_px3sg
     form := "saadakseen"
-    segments := ["saa", "da", "kse", "en"]
+    morphs := ["saa", "da", "kse", "en"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1178,7 +1178,7 @@ def talossaan : Form Cell :=
     lexeme := Lexemes.house
     cell := ine_px3pl
     form := "talossaan"
-    segments := ["talo", "ssa", "an"]
+    morphs := ["talo", "ssa", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1188,7 +1188,7 @@ def autollaan : Form Cell :=
     lexeme := Lexemes.car
     cell := ade_px3sg
     form := "autollaan"
-    segments := ["auto", "lla", "an"]
+    morphs := ["auto", "lla", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1198,7 +1198,7 @@ def isalleen : Form Cell :=
     lexeme := Lexemes.father
     cell := allat_px3pl
     form := "isälleen"
-    segments := ["isä", "lle", "en"]
+    morphs := ["isä", "lle", "en"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1208,7 +1208,7 @@ def aidiltaan : Form Cell :=
     lexeme := Lexemes.mother
     cell := abl_px3sg
     form := "äidiltään"
-    segments := ["äidi", "ltä", "än"]
+    morphs := ["äidi", "ltä", "än"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1218,7 +1218,7 @@ def aitiaan : Form Cell :=
     lexeme := Lexemes.mother
     cell := part_px3sg
     form := "äitiään"
-    segments := ["äiti", "ä", "än"]
+    morphs := ["äiti", "ä", "än"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1228,7 +1228,7 @@ def talonsa : Form Cell :=
     lexeme := Lexemes.house
     cell := ill_px3pl
     form := "taloonsa"
-    segments := ["talo", "o", "nsa"]
+    morphs := ["talo", "o", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1238,7 +1238,7 @@ def autonsa : Form Cell :=
     lexeme := Lexemes.car
     cell := nom_px3sg
     form := "autonsa"
-    segments := ["auto", "nsa"]
+    morphs := ["auto", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1248,7 +1248,7 @@ def isaansa : Form Cell :=
     lexeme := Lexemes.father
     cell := ill_px3pl
     form := "isäänsä"
-    segments := ["isä", "ä", "nsä"]
+    morphs := ["isä", "ä", "nsä"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1258,7 +1258,7 @@ def aitinsa : Form Cell :=
     lexeme := Lexemes.mother
     cell := nom_px3sg
     form := "äitinsä"
-    segments := ["äiti", "nsä"]
+    morphs := ["äiti", "nsä"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1268,7 +1268,7 @@ def sanoakseni : Form Cell :=
     lexeme := Lexemes.say
     cell := transl_infa_px1sg
     form := "sanoakseni"
-    segments := ["sano", "a", "kse", "ni"]
+    morphs := ["sano", "a", "kse", "ni"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1278,7 +1278,7 @@ def elaaksemme : Form Cell :=
     lexeme := Lexemes.live
     cell := transl_infa_px1pl
     form := "elääksemme"
-    segments := ["elä", "ä", "kse", "mme"]
+    morphs := ["elä", "ä", "kse", "mme"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1288,7 +1288,7 @@ def tavataksesi : Form Cell :=
     lexeme := Lexemes.meet
     cell := transl_infa_px2sg
     form := "tavataksesi"
-    segments := ["tavat", "a", "kse", "si"]
+    morphs := ["tavat", "a", "kse", "si"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1298,7 +1298,7 @@ def juodakseen : Form Cell :=
     lexeme := Lexemes.drink
     cell := transl_infa_px3sg
     form := "juodakseen"
-    segments := ["juo", "da", "kse", "en"]
+    morphs := ["juo", "da", "kse", "en"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1308,7 +1308,7 @@ def ollaksenne : Form Cell :=
     lexeme := Lexemes.be
     cell := transl_infa_px2pl
     form := "ollaksenne"
-    segments := ["ol", "la", "kse", "nne"]
+    morphs := ["ol", "la", "kse", "nne"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1318,7 +1318,7 @@ def lepaamassa : Form Cell :=
     lexeme := Lexemes.rest
     cell := ine_infma
     form := "lepäämässä"
-    segments := ["lepää", "mä", "ssä"]
+    morphs := ["lepää", "mä", "ssä"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1328,7 +1328,7 @@ def lepaamaan : Form Cell :=
     lexeme := Lexemes.rest
     cell := ill_infma
     form := "lepäämään"
-    segments := ["lepää", "mä", "än"]
+    morphs := ["lepää", "mä", "än"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1338,7 +1338,7 @@ def vetamalla : Form Cell :=
     lexeme := Lexemes.pull
     cell := ade_infma
     form := "vetämällä"
-    segments := ["vetä", "mä", "llä"]
+    morphs := ["vetä", "mä", "llä"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1348,7 +1348,7 @@ def mainitsematta : Form Cell :=
     lexeme := Lexemes.mention
     cell := abess_infma
     form := "mainitsematta"
-    segments := ["mainitse", "ma", "tta"]
+    morphs := ["mainitse", "ma", "tta"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1358,7 +1358,7 @@ def tekemasta : Form Cell :=
     lexeme := Lexemes.do
     cell := ela_infma
     form := "tekemästä"
-    segments := ["teke", "mä", "stä"]
+    morphs := ["teke", "mä", "stä"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1368,7 +1368,7 @@ def tuleman : Form Cell :=
     lexeme := Lexemes.come
     cell := inst_infma
     form := "tuleman"
-    segments := ["tule", "ma", "n"]
+    morphs := ["tule", "ma", "n"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1378,7 +1378,7 @@ def pullot : Form Cell :=
     lexeme := Lexemes.bottle
     cell := nom_pl
     form := "pullot"
-    segments := ["pullo", "t"]
+    morphs := ["pullo", "t"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1388,7 +1388,7 @@ def pullokin : Form Cell :=
     lexeme := Lexemes.bottle
     cell := nom_kin
     form := "pullokin"
-    segments := ["pullo", "kin"]
+    morphs := ["pullo", "kin"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1398,7 +1398,7 @@ def pulloista : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ela_pl
     form := "pulloista"
-    segments := ["pullo", "i", "sta"]
+    morphs := ["pullo", "i", "sta"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1408,7 +1408,7 @@ def pullossahan : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine_han
     form := "pullossahan"
-    segments := ["pullo", "ssa", "han"]
+    morphs := ["pullo", "ssa", "han"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1418,7 +1418,7 @@ def pullotkin : Form Cell :=
     lexeme := Lexemes.bottle
     cell := nom_pl_kin
     form := "pullotkin"
-    segments := ["pullo", "t", "kin"]
+    morphs := ["pullo", "t", "kin"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1428,7 +1428,7 @@ def pullossasiko : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine_px2sg_ko
     form := "pullossasiko"
-    segments := ["pullo", "ssa", "si", "ko"]
+    morphs := ["pullo", "ssa", "si", "ko"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1438,7 +1438,7 @@ def pulloissamme : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine_pl_px1pl
     form := "pulloissamme"
-    segments := ["pullo", "i", "ssa", "mme"]
+    morphs := ["pullo", "i", "ssa", "mme"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1448,7 +1448,7 @@ def pulloistakaan : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ela_pl_kaan
     form := "pulloistakaan"
-    segments := ["pullo", "i", "sta", "kaan"]
+    morphs := ["pullo", "i", "sta", "kaan"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1458,7 +1458,7 @@ def pulloissannekin : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine_pl_px2pl_kin
     form := "pulloissannekin"
-    segments := ["pullo", "i", "ssa", "nne", "kin"]
+    morphs := ["pullo", "i", "ssa", "nne", "kin"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1468,7 +1468,7 @@ def hyllyltako : Form Cell :=
     lexeme := Lexemes.shelf
     cell := abl_ko
     form := "hyllyltäkö"
-    segments := ["hylly", "ltä", "kö"]
+    morphs := ["hylly", "ltä", "kö"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1478,7 +1478,7 @@ def hyllytko : Form Cell :=
     lexeme := Lexemes.shelf
     cell := nom_pl_ko
     form := "hyllytkö"
-    segments := ["hylly", "t", "kö"]
+    morphs := ["hylly", "t", "kö"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1488,7 +1488,7 @@ def hyllynhan : Form Cell :=
     lexeme := Lexemes.shelf
     cell := gen_han
     form := "hyllynhän"
-    segments := ["hylly", "n", "hän"]
+    morphs := ["hylly", "n", "hän"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1498,7 +1498,7 @@ def talonsako : Form Cell :=
     lexeme := Lexemes.house
     cell := nom_px3sg_ko
     form := "talonsako"
-    segments := ["talo", "nsa", "ko"]
+    morphs := ["talo", "nsa", "ko"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1508,7 +1508,7 @@ def hyllyillamme : Form Cell :=
     lexeme := Lexemes.shelf
     cell := ade_pl_px1pl
     form := "hyllyillämme"
-    segments := ["hylly", "i", "llä", "mme"]
+    morphs := ["hylly", "i", "llä", "mme"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1518,7 +1518,7 @@ def kasi : Form Cell :=
     lexeme := Lexemes.hand
     cell := nom
     form := "käsi"
-    segments := ["käsi"]
+    morphs := ["käsi"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1528,7 +1528,7 @@ def kadet : Form Cell :=
     lexeme := Lexemes.hand
     cell := nom_pl
     form := "kädet"
-    segments := ["käde", "t"]
+    morphs := ["käde", "t"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1538,7 +1538,7 @@ def kasissammehan : Form Cell :=
     lexeme := Lexemes.hand
     cell := ine_pl_px1pl_han
     form := "käsissämmehän"
-    segments := ["käs", "i", "ssä", "mme", "hän"]
+    morphs := ["käs", "i", "ssä", "mme", "hän"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ] }
@@ -1548,7 +1548,7 @@ def lepaamaanko : Form Cell :=
     lexeme := Lexemes.rest
     cell := ill_infma_ko
     form := "lepäämäänkö"
-    segments := ["lepää", "mä", "än", "kö"]
+    morphs := ["lepää", "mä", "än", "kö"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1558,7 +1558,7 @@ def vetamallakin : Form Cell :=
     lexeme := Lexemes.pull
     cell := ade_infma_kin
     form := "vetämälläkin"
-    segments := ["vetä", "mä", "llä", "kin"]
+    morphs := ["vetä", "mä", "llä", "kin"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1568,7 +1568,7 @@ def mainitsemattakaan : Form Cell :=
     lexeme := Lexemes.mention
     cell := abess_infma_kaan
     form := "mainitsemattakaan"
-    segments := ["mainitse", "ma", "tta", "kaan"]
+    morphs := ["mainitse", "ma", "tta", "kaan"]
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ] }
@@ -1578,7 +1578,7 @@ def oppiakseenhan : Form Cell :=
     lexeme := Lexemes.learn
     cell := transl_infa_px3sg_han
     form := "oppiakseenhan"
-    segments := ["oppi", "a", "kse", "en", "han"]
+    morphs := ["oppi", "a", "kse", "en", "han"]
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ] }
@@ -1588,7 +1588,7 @@ def maatamme : Form Cell :=
     lexeme := Lexemes.country
     cell := part_px1pl
     form := "maatamme"
-    segments := ["maa", "ta", "mme"]
+    morphs := ["maa", "ta", "mme"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1598,7 +1598,7 @@ def poikannekin : Form Cell :=
     lexeme := Lexemes.son
     cell := nom_px2pl_kin
     form := "poikannekin"
-    segments := ["poika", "nne", "kin"]
+    morphs := ["poika", "nne", "kin"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1608,7 +1608,7 @@ def aidiltanihan : Form Cell :=
     lexeme := Lexemes.mother
     cell := abl_px1sg_han
     form := "äidiltänihän"
-    segments := ["äidi", "ltä", "ni", "hän"]
+    morphs := ["äidi", "ltä", "ni", "hän"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1618,7 +1618,7 @@ def isallesiko : Form Cell :=
     lexeme := Lexemes.father
     cell := allat_px2sg_ko
     form := "isällesikö"
-    segments := ["isä", "lle", "si", "kö"]
+    morphs := ["isä", "lle", "si", "kö"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1628,7 +1628,7 @@ def maahamme : Form Cell :=
     lexeme := Lexemes.country
     cell := ill_px1pl
     form := "maahamme"
-    segments := ["maa", "ha", "mme"]
+    morphs := ["maa", "ha", "mme"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1638,7 +1638,7 @@ def perhettaan : Form Cell :=
     lexeme := Lexemes.family
     cell := part_px3sg
     form := "perhettään"
-    segments := ["perhe", "ttä", "än"]
+    morphs := ["perhe", "ttä", "än"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1648,7 +1648,7 @@ def talojaan : Form Cell :=
     lexeme := Lexemes.house
     cell := part_pl_px3sg
     form := "talojaan"
-    segments := ["talo", "j", "a", "an"]
+    morphs := ["talo", "j", "a", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1658,7 +1658,7 @@ def renkaitaan : Form Cell :=
     lexeme := Lexemes.ring
     cell := part_pl_px3sg
     form := "renkaitaan"
-    segments := ["renka", "i", "ta", "an"]
+    morphs := ["renka", "i", "ta", "an"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1668,7 +1668,7 @@ def paataan : Form Cell :=
     lexeme := Lexemes.head
     cell := part_px3sg
     form := "päätään"
-    segments := ["pää", "tä", "än"]
+    morphs := ["pää", "tä", "än"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1678,7 +1678,7 @@ def taloansa : Form Cell :=
     lexeme := Lexemes.house
     cell := part_px3sg
     form := "taloansa"
-    segments := ["talo", "a", "nsa"]
+    morphs := ["talo", "a", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1688,7 +1688,7 @@ def kalansa : Form Cell :=
     lexeme := Lexemes.fish
     cell := nom_px3sg
     form := "kalansa"
-    segments := ["kala", "nsa"]
+    morphs := ["kala", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1698,7 +1698,7 @@ def kalaansa_ill : Form Cell :=
     lexeme := Lexemes.fish
     cell := ill_px3sg
     form := "kalaansa"
-    segments := ["kala", "a", "nsa"]
+    morphs := ["kala", "a", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1708,7 +1708,7 @@ def kalaansa_part : Form Cell :=
     lexeme := Lexemes.fish
     cell := part_px3sg
     form := "kalaansa"
-    segments := ["kala", "a", "nsa"]
+    morphs := ["kala", "a", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1718,7 +1718,7 @@ def kaloihinsa : Form Cell :=
     lexeme := Lexemes.fish
     cell := ill_pl_px3sg
     form := "kaloihinsa"
-    segments := ["kalo", "i", "hi", "nsa"]
+    morphs := ["kalo", "i", "hi", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }
@@ -1728,7 +1728,7 @@ def taloissa : Form Cell :=
     lexeme := Lexemes.house
     cell := ine_pl
     form := "taloissa"
-    segments := ["talo", "i", "ssa"]
+    morphs := ["talo", "i", "ssa"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1738,7 +1738,7 @@ def taloihin : Form Cell :=
     lexeme := Lexemes.house
     cell := ill_pl
     form := "taloihin"
-    segments := ["talo", "i", "hin"]
+    morphs := ["talo", "i", "hin"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1748,7 +1748,7 @@ def taloina : Form Cell :=
     lexeme := Lexemes.house
     cell := ess_pl
     form := "taloina"
-    segments := ["talo", "i", "na"]
+    morphs := ["talo", "i", "na"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1758,7 +1758,7 @@ def taloille : Form Cell :=
     lexeme := Lexemes.house
     cell := allat_pl
     form := "taloille"
-    segments := ["talo", "i", "lle"]
+    morphs := ["talo", "i", "lle"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1768,7 +1768,7 @@ def taloiksi : Form Cell :=
     lexeme := Lexemes.house
     cell := transl_pl
     form := "taloiksi"
-    segments := ["talo", "i", "ksi"]
+    morphs := ["talo", "i", "ksi"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1778,7 +1778,7 @@ def hyllyja : Form Cell :=
     lexeme := Lexemes.shelf
     cell := part_pl
     form := "hyllyjä"
-    segments := ["hylly", "j", "ä"]
+    morphs := ["hylly", "j", "ä"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1788,7 +1788,7 @@ def hyllyjen : Form Cell :=
     lexeme := Lexemes.shelf
     cell := gen_pl
     form := "hyllyjen"
-    segments := ["hylly", "j", "en"]
+    morphs := ["hylly", "j", "en"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1798,7 +1798,7 @@ def pulloja : Form Cell :=
     lexeme := Lexemes.bottle
     cell := part_pl
     form := "pulloja"
-    segments := ["pullo", "j", "a"]
+    morphs := ["pullo", "j", "a"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1808,7 +1808,7 @@ def pullojen : Form Cell :=
     lexeme := Lexemes.bottle
     cell := gen_pl
     form := "pullojen"
-    segments := ["pullo", "j", "en"]
+    morphs := ["pullo", "j", "en"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1818,7 +1818,7 @@ def tyttoja : Form Cell :=
     lexeme := Lexemes.girl
     cell := part_pl
     form := "tyttöjä"
-    segments := ["tyttö", "j", "ä"]
+    morphs := ["tyttö", "j", "ä"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1828,7 +1828,7 @@ def tyttojen : Form Cell :=
     lexeme := Lexemes.girl
     cell := gen_pl
     form := "tyttöjen"
-    segments := ["tyttö", "j", "en"]
+    morphs := ["tyttö", "j", "en"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1838,7 +1838,7 @@ def pulloissa : Form Cell :=
     lexeme := Lexemes.bottle
     cell := ine_pl
     form := "pulloissa"
-    segments := ["pullo", "i", "ssa"]
+    morphs := ["pullo", "i", "ssa"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1848,7 +1848,7 @@ def maissa : Form Cell :=
     lexeme := Lexemes.country
     cell := ine_pl
     form := "maissa"
-    segments := ["ma", "i", "ssa"]
+    morphs := ["ma", "i", "ssa"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1858,7 +1858,7 @@ def risteissa : Form Cell :=
     lexeme := Lexemes.cross
     cell := ine_pl
     form := "risteissä"
-    segments := ["riste", "i", "ssä"]
+    morphs := ["riste", "i", "ssä"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1868,7 +1868,7 @@ def kivissa : Form Cell :=
     lexeme := Lexemes.stone
     cell := ine_pl
     form := "kivissä"
-    segments := ["kiv", "i", "ssä"]
+    morphs := ["kiv", "i", "ssä"]
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ] }
@@ -1878,7 +1878,7 @@ def lapsia : Form Cell :=
     lexeme := Lexemes.child
     cell := part_pl
     form := "lapsia"
-    segments := ["laps", "i", "a"]
+    morphs := ["laps", "i", "a"]
     source := [
       ⟨"karlsson-2017", "§8.4"⟩
     ] }
@@ -1888,7 +1888,7 @@ def talojen : Form Cell :=
     lexeme := Lexemes.house
     cell := gen_pl
     form := "talojen"
-    segments := ["talo", "j", "en"]
+    morphs := ["talo", "j", "en"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1898,7 +1898,7 @@ def poikia : Form Cell :=
     lexeme := Lexemes.boy
     cell := part_pl
     form := "poikia"
-    segments := ["poik", "i", "a"]
+    morphs := ["poik", "i", "a"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1908,7 +1908,7 @@ def poikien : Form Cell :=
     lexeme := Lexemes.boy
     cell := gen_pl
     form := "poikien"
-    segments := ["poik", "i", "en"]
+    morphs := ["poik", "i", "en"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1918,7 +1918,7 @@ def kirjoja : Form Cell :=
     lexeme := Lexemes.book
     cell := part_pl
     form := "kirjoja"
-    segments := ["kirjo", "j", "a"]
+    morphs := ["kirjo", "j", "a"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1928,7 +1928,7 @@ def kirjojen : Form Cell :=
     lexeme := Lexemes.book
     cell := gen_pl
     form := "kirjojen"
-    segments := ["kirjo", "j", "en"]
+    morphs := ["kirjo", "j", "en"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1938,7 +1938,7 @@ def paivia : Form Cell :=
     lexeme := Lexemes.day
     cell := part_pl
     form := "päiviä"
-    segments := ["päiv", "i", "ä"]
+    morphs := ["päiv", "i", "ä"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1948,7 +1948,7 @@ def paivien : Form Cell :=
     lexeme := Lexemes.day
     cell := gen_pl
     form := "päivien"
-    segments := ["päiv", "i", "en"]
+    morphs := ["päiv", "i", "en"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1958,7 +1958,7 @@ def kasien : Form Cell :=
     lexeme := Lexemes.hand
     cell := gen_pl
     form := "käsien"
-    segments := ["käs", "i", "en"]
+    morphs := ["käs", "i", "en"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1968,7 +1968,7 @@ def maita : Form Cell :=
     lexeme := Lexemes.country
     cell := part_pl
     form := "maita"
-    segments := ["ma", "i", "ta"]
+    morphs := ["ma", "i", "ta"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1978,7 +1978,7 @@ def maiden : Form Cell :=
     lexeme := Lexemes.country
     cell := gen_pl
     form := "maiden"
-    segments := ["ma", "i", "den"]
+    morphs := ["ma", "i", "den"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1988,7 +1988,7 @@ def maitten : Form Cell :=
     lexeme := Lexemes.country
     cell := gen_pl
     form := "maitten"
-    segments := ["ma", "i", "tten"]
+    morphs := ["ma", "i", "tten"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -1998,7 +1998,7 @@ def teita : Form Cell :=
     lexeme := Lexemes.road
     cell := part_pl
     form := "teitä"
-    segments := ["te", "i", "tä"]
+    morphs := ["te", "i", "tä"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -2008,7 +2008,7 @@ def teiden : Form Cell :=
     lexeme := Lexemes.road
     cell := gen_pl
     form := "teiden"
-    segments := ["te", "i", "den"]
+    morphs := ["te", "i", "den"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -2018,7 +2018,7 @@ def esteitten : Form Cell :=
     lexeme := Lexemes.obstacle
     cell := gen_pl
     form := "esteitten"
-    segments := ["este", "i", "tten"]
+    morphs := ["este", "i", "tten"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -2028,7 +2028,7 @@ def valtioiden : Form Cell :=
     lexeme := Lexemes.state
     cell := gen_pl
     form := "valtioiden"
-    segments := ["valtio", "i", "den"]
+    morphs := ["valtio", "i", "den"]
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ] }
@@ -2038,7 +2038,7 @@ def kalojensa : Form Cell :=
     lexeme := Lexemes.fish
     cell := gen_pl_px3sg
     form := "kalojensa"
-    segments := ["kalo", "je", "nsa"]
+    morphs := ["kalo", "je", "nsa"]
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ] }

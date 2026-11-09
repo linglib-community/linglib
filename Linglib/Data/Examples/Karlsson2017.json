@@ -33,6 +33,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -40,8 +44,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "teksti=viesti-ä"
       ]
     ],
     "comment": "The book prints \"I don't-won't send\".",
@@ -81,6 +85,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -88,8 +96,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "Leena-a"
       ]
     ],
     "comment": "",
@@ -129,6 +137,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -136,8 +148,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "mieh-i-ä"
       ]
     ],
     "comment": "",
@@ -180,12 +192,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "hän-tä"
       ]
     ],
     "comment": "",
@@ -225,6 +241,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -232,8 +252,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "kirja-a"
       ]
     ],
     "comment": "",
@@ -273,6 +293,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -280,8 +304,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "kirja-n"
       ]
     ],
     "comment": "",
@@ -321,6 +345,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -328,8 +356,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "auto-a"
       ]
     ],
     "comment": "",
@@ -369,6 +397,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -376,8 +408,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "auto-n"
       ]
     ],
     "comment": "",
@@ -417,6 +449,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -424,8 +460,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "lintu-a"
       ]
     ],
     "comment": "",
@@ -465,6 +501,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -472,8 +512,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "linnu-n"
       ]
     ],
     "comment": "",
@@ -513,6 +553,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -520,8 +564,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "mies-tä"
       ]
     ],
     "comment": "",
@@ -564,12 +608,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "minu-a"
       ]
     ],
     "comment": "",
@@ -609,6 +657,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -616,8 +668,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "koir-i-a"
       ]
     ],
     "comment": "",
@@ -657,6 +709,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -664,8 +720,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "jäätelö-ä"
       ]
     ],
     "comment": "",
@@ -705,6 +761,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -712,8 +772,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "jäätelö-n"
       ]
     ],
     "comment": "",
@@ -753,6 +813,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -760,8 +824,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "olut-ta"
       ]
     ],
     "comment": "",
@@ -801,6 +865,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -808,8 +876,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "olue-n"
       ]
     ],
     "comment": "",
@@ -849,6 +917,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -856,8 +928,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "ihmis-i-ä"
       ]
     ],
     "comment": "",
@@ -897,6 +969,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -904,8 +980,8 @@
         "finite"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "ihmise-t"
       ]
     ],
     "comment": "",
@@ -945,6 +1021,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -952,8 +1032,8 @@
         "finite"
       ],
       [
-        "case",
-        "part"
+        "object",
+        "viera-i-ta"
       ]
     ],
     "comment": "",
@@ -993,6 +1073,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1000,8 +1084,8 @@
         "finite"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "vieraa-t"
       ]
     ],
     "comment": "",
@@ -1041,6 +1125,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1048,8 +1136,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "teksti=viesti-n"
       ]
     ],
     "comment": "",
@@ -1089,6 +1177,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1096,8 +1188,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "+maido-n"
       ]
     ],
     "comment": "",
@@ -1137,6 +1229,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1144,8 +1240,8 @@
         "imperative"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "auto"
       ]
     ],
     "comment": "",
@@ -1185,6 +1281,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1192,8 +1292,8 @@
         "passive"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "Tiet>o=konee-t"
       ]
     ],
     "comment": "",
@@ -1233,6 +1333,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1240,8 +1344,8 @@
         "finite"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "auto-t"
       ]
     ],
     "comment": "",
@@ -1284,12 +1388,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "finite"
       ],
       [
-        "case",
-        "acc"
+        "object",
+        "minu-t"
       ]
     ],
     "comment": "",
@@ -1332,12 +1440,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "imperative"
       ],
       [
-        "case",
-        "acc"
+        "object",
+        "minu-t"
       ]
     ],
     "comment": "",
@@ -1380,12 +1492,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "passive"
       ],
       [
-        "case",
-        "acc"
+        "object",
+        "Minu-t"
       ]
     ],
     "comment": "",
@@ -1428,12 +1544,16 @@
         "personalPronoun"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "finite"
       ],
       [
-        "case",
-        "acc"
+        "object",
+        "Kene-t"
       ]
     ],
     "comment": "The interrogative kuka takes the accusative like the personal pronouns.",
@@ -1473,6 +1593,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1480,8 +1604,8 @@
         "finite"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "artikkeli-t"
       ]
     ],
     "comment": "",
@@ -1521,6 +1645,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1528,8 +1656,8 @@
         "imperative"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "lapse-t"
       ]
     ],
     "comment": "",
@@ -1569,6 +1697,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "plural"
       ],
       [
@@ -1576,8 +1708,8 @@
         "passive"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "Lapse-t"
       ]
     ],
     "comment": "",
@@ -1620,12 +1752,16 @@
         "numeral"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "finite"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "kaksi"
       ]
     ],
     "comment": "",
@@ -1668,12 +1804,16 @@
         "numeral"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "imperative"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "kolme"
       ]
     ],
     "comment": "",
@@ -1716,12 +1856,16 @@
         "numeral"
       ],
       [
+        "number",
+        "singular"
+      ],
+      [
         "clause",
         "passive"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "Kolme"
       ]
     ],
     "comment": "",
@@ -1761,6 +1905,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1768,8 +1916,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "digi=kamera-n"
       ]
     ],
     "comment": "",
@@ -1809,6 +1957,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1816,8 +1968,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "lapse-n"
       ]
     ],
     "comment": "",
@@ -1857,6 +2009,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1864,8 +2020,8 @@
         "finite"
       ],
       [
-        "case",
-        "gen"
+        "object",
+        "ikkuna-n"
       ]
     ],
     "comment": "",
@@ -1905,6 +2061,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1912,8 +2072,8 @@
         "imperative"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "lehti"
       ]
     ],
     "comment": "",
@@ -1953,6 +2113,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -1960,8 +2124,8 @@
         "passive"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "kirja"
       ]
     ],
     "comment": "",
@@ -2001,6 +2165,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -2008,8 +2176,8 @@
         "passive"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "Koira"
       ]
     ],
     "comment": "",
@@ -2049,6 +2217,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -2056,8 +2228,8 @@
         "obligation"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "kirja"
       ]
     ],
     "comment": "",
@@ -2097,6 +2269,10 @@
       ],
       [
         "nominal",
+        "other"
+      ],
+      [
+        "number",
         "singular"
       ],
       [
@@ -2104,8 +2280,8 @@
         "infinitival"
       ],
       [
-        "case",
-        "nom"
+        "object",
+        "talo"
       ]
     ],
     "comment": "",
