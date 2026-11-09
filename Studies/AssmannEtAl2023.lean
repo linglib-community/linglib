@@ -6,6 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Relation.ReflTransGen
 public import Studies.Buring2015
 public import Studies.HartmannZimmermann2004
+public import Linglib.Fragments.Hausa.Focus
 public import Linglib.Data.Examples.AssmannEtAl2023
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -32,8 +33,8 @@ marking is the clause [mark it like the clause](##rows_marking).
 * An exocentric marking is defined by the first of the paper's two formulations, realizing no
   subconstituent; the second, realizing no one-word focus, agrees with it on every inventory
   here.
-* The English clause is Büring's *Smith ordered breakfast*, whose targets are those of *Kim ATE
-  the yogurt* (53) up to the names of the words' alternatives.
+* The English theorems hold for any meanings of subject, verb and object, and any alternatives
+  to them that differ from them.
 
 ## TODO
 
@@ -238,6 +239,23 @@ theorem guruntum_exocentric_disjunctive :
   revert d
   decide
 
+/-! ### The Hausa particle -/
+
+/-- The gender of each node of a Hausa clause, given those of its subject and object: a verb, a
+verb phrase and a clause have none. -/
+def hausaGender (sbj obj : Option Hausa.Gender.Value) : Node → Option Hausa.Gender.Value
+  | .sbj => sbj
+  | .obj => obj
+  | _ => none
+
+-- (14), (17), p. 1359
+theorem stabilizer_of_usable_obj {m : Node} (h : Usable hausa m {.obj})
+    (gs go : Option Hausa.Gender.Value) :
+    Hausa.stabilizer (hausaGender gs go m) = Hausa.ne ∧
+      Hausa.stabilizer (hausaGender gs (some Hausa.kaza.gender) .obj) = Hausa.ce := by
+  obtain rfl : m = .s := ((usable_hausa m .obj).1 h).trans (by decide)
+  exact ⟨rfl, (Hausa.stabilizer_eq_ce_iff _).2 rfl⟩
+
 /-! ### Tangale and the reflex analysis -/
 
 open HartmannZimmermann2004
@@ -306,13 +324,20 @@ def wordNode : Word → Node
 /-- The words a focus on the parts `F` contains. -/
 def words (F : Finset Node) : Finset Word := Finset.univ.filter fun w ↦ ∃ x ∈ F, wordNode w ≤ x
 
+section English
+
+variable {E R O : Type*} {s s' : E} {v v' : R} {o o' : O}
+
 /-- Büring's unalternative semantics is Blocking over the English inventory: a constituent can be
 the focus of a prosody exactly when the node the prosody marks is usable for it (Sect. 6.4). -/
-theorem target_mem_clause_iff (ρ ρ' : Restriction) (f : Node) :
-    target (words {f}) ∈ (clause ρ ρ').alternatives ↔ ∃ m ∈ marked ρ ρ', Usable english m {f} := by
+theorem target_mem_clause_iff (hs : s' ≠ s) (hv : v' ≠ v) (ho : o' ≠ o) (ρ ρ' : Restriction)
+    (f : Node) :
+    target (s, v, o) (s', v', o') (words {f}) ∈ (clause s v o ρ ρ').alternatives ↔
+      ∃ m ∈ marked ρ ρ', Usable english m {f} := by
   cases ρ <;> cases ρ' <;>
-    simp only [target_mem_clause_weak_weak, target_mem_clause_weak_strong,
-      target_mem_clause_strong_weak, alternatives_clause_strong_strong, Set.mem_empty_iff_false,
+    simp only [target_mem_clause_weak_weak s v o hs hv ho, target_mem_clause_weak_strong s v o hv ho,
+      target_mem_clause_strong_weak s v o hs hv ho, alternatives_clause_strong_strong,
+      Set.mem_empty_iff_false,
       marked, Option.mem_def, Option.some.injEq, reduceCtorEq, false_and, exists_false] <;>
     revert f <;> decide
 
@@ -327,15 +352,17 @@ theorem isLUB_sbj_v : IsLUB {Node.sbj, .v} .s := by
 /-- English marks a focus on subject and verb like narrow verb focus, which Blocking within the
 clause forbids, since the smallest constituent containing both is the clause; in a language whose
 domain of focal marking is the clause, such a focus is marked like the clause (Sect. 6.5). -/
-theorem subject_verb :
-    target (words {.sbj, .v}) ∈ (clause .weak .strong).alternatives ∧
+theorem subject_verb (hv : v' ≠ v) (ho : o' ≠ o) :
+    target (s, v, o) (s', v', o') (words {.sbj, .v}) ∈ (clause s v o .weak .strong).alternatives ∧
       ¬ Usable (english : Set Node) .v {.sbj, .v} ∧
       ∀ (inv : Set Node) m, Usable inv m {.sbj, .v} ↔ Usable inv m {.s} := by
   refine ⟨?_, ?_, fun _ _ ↦ usable_iff_of_isLUB isLUB_sbj_v⟩
-  · rw [target_mem_clause_weak_strong]
+  · rw [target_mem_clause_weak_strong s v o hv ho]
     decide
   · rw [usable_iff]
     decide
+
+end English
 
 /-! ### The paper's examples -/
 
@@ -381,15 +408,28 @@ theorem rows_marking :
       ∀ F ∈ focus? x.1, x.2 = .acceptable ∧ Usable inv m F := by
   decide
 
+/-- The particle a Hausa row shows. -/
+def particle? (r : Datum) : Option Particle :=
+  (r.byLanguage [(.hausa, [("cee after subject", Hausa.ce), ("nee clause-final", Hausa.ne),
+    ("nee after subject", Hausa.ne), ("nee after object", Hausa.ne)])]).bind
+    (r.parse? "particle")
+
+-- (13), (14), (17)
+theorem rows_stabilizer :
+    ∀ r ∈ Examples.all, marked? r = some .s → ∀ p ∈ particle? r, p = Hausa.stabilizer none := by
+  decide
+
 -- (53)
-theorem rows_english :
+theorem rows_english {E R O : Type*} {s s' : E} {v v' : R} {o o' : O} (hv : v' ≠ v)
+    (ho : o' ≠ o) :
     ∀ r ∈ Examples.all, ∀ p ∈ prosody? r, ∀ x ∈ r.readings, ∀ F ∈ focus? x.1,
-      (x.2 = .acceptable ↔ target (words F) ∈ (clause p.1 p.2).alternatives) := by
+      (x.2 = .acceptable ↔
+        target (s, v, o) (s', v', o') (words F) ∈ (clause s v o p.1 p.2).alternatives) := by
   have h : ∀ r ∈ Examples.all, ∀ p ∈ prosody? r, p = (.weak, .strong) := by decide
   have h' : ∀ r ∈ Examples.all, (.weak, .strong) ∈ prosody? r → ∀ x ∈ r.readings,
       ∀ F ∈ focus? x.1, (x.2 = .acceptable ↔ .verb ∈ words F ∧ .obj ∉ words F) := by decide
   intro r hr p hp
   obtain rfl := h r hr p hp
-  simpa only [target_mem_clause_weak_strong] using h' r hr hp
+  simpa only [target_mem_clause_weak_strong s v o hv ho] using h' r hr hp
 
 end AssmannEtAl2023
