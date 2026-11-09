@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.Woolford1997
 public import Linglib.Fragments.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Obligatoriness
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 public import Mathlib.Data.Finset.Dedup
@@ -334,30 +335,26 @@ theorem denyAt_idxOf (c : AbstractCase) (args : List (Option LexicalCase)) :
 
 /-! ### Assignment and the positions outside VP -/
 
-/-- Whether a language's verbs assign a Case obligatorily, optionally, or not at all. -/
-inductive Assignment where
-  | obligatory
-  | optional
-  | lacking
-  deriving DecidableEq, Repr, Fintype
+/-! Whether a language's verbs assign a Case obligatorily, optionally, or not at all is the
+obligatoriness of that Case, an `Obligatoriness`. -/
 
-variable {a : Assignment}
+variable {a : Obligatoriness}
 
 /-- The numbers of structural accusatives a verb assigns, `m` being the formula's maximum: as many
 as it can as a rule, as in Nez Perce (p. 202), as many as it likes up to that, or none. -/
-def Assignment.counts (m : ℕ) : Assignment → Finset ℕ
+def counts (m : ℕ) : Obligatoriness → Finset ℕ
   | .obligatory => {m}
   | .optional => Finset.range (m + 1)
-  | .lacking => {0}
+  | .excluded => {0}
 
-theorem Assignment.le_of_mem_counts {m n : ℕ} (h : n ∈ a.counts m) : n ≤ m := by
+theorem le_of_mem_counts {m n : ℕ} (h : n ∈ counts m a) : n ≤ m := by
   cases a <;> simp [counts] at h <;> omega
 
 /-- The markings a verb's entry allows a slot with the lexical Case `l`, as in (53), (54), (59). -/
-def Assignment.options (l : LexicalCase) : Assignment → List (Option LexicalCase)
+def options (l : LexicalCase) : Obligatoriness → List (Option LexicalCase)
   | .obligatory => [some l]
   | .optional => [none, some l]
-  | .lacking => [none]
+  | .excluded => [none]
 
 /-- The Case of the highest caseless argument: nominative under a caseless subject, and otherwise,
 the external subject position being full, what the language gives a denied object, `c`, objective
@@ -387,13 +384,13 @@ theorem count_obj_outsideVP_le_one (hc : c.IsFunctional) (args : List (Option Le
 
 /-- The derivations a language allows on a verb's arguments: as many accusatives as its setting
 gives, and the remaining caseless arguments in the positions outside VP, if there are enough. -/
-def derivations (a : Assignment) (c : AbstractCase) (args : List (Option LexicalCase)) : Finset
+def derivations (a : Obligatoriness) (c : AbstractCase) (args : List (Option LexicalCase)) : Finset
     (List AbstractCase) :=
-  ((a.counts (maxAcc args).toNat).filter (args.count none - · ≤ (outsideVP c args).length)).image
+  ((counts (maxAcc args).toNat a).filter (args.count none - · ≤ (outsideVP c args).length)).image
     fun n ↦ assign ((outsideVP c args).take (args.count none - n)) args
 
 theorem mem_derivations :
-    d ∈ derivations a c args ↔ ∃ n ∈ a.counts (maxAcc args).toNat,
+    d ∈ derivations a c args ↔ ∃ n ∈ counts (maxAcc args).toNat a,
       args.count none - n ≤ (outsideVP c args).length ∧
         assign ((outsideVP c args).take (args.count none - n)) args = d := by
   simp [derivations, and_assoc]
@@ -401,7 +398,7 @@ theorem mem_derivations :
 theorem exists_eq_assign_of_mem_derivations (hd : d ∈ derivations a c args) (ha : none ∈ args) :
     ∃ cs, d = assign (highestCase c args :: cs) args := by
   obtain ⟨n, hn, -, rfl⟩ := mem_derivations.1 hd
-  have hle := Assignment.le_of_mem_counts hn
+  have hle := le_of_mem_counts hn
   rw [toNat_maxAcc] at hle
   have hk := List.count_pos_iff.2 ha
   obtain ⟨m, hm⟩ : ∃ m, args.count none - n = m + 1 := ⟨args.count none - n - 1, by omega⟩
@@ -414,7 +411,7 @@ def pattern (c : AbstractCase) (args : List (Option LexicalCase)) : List Abstrac
 theorem derivations_obligatory (c : AbstractCase) (args : List (Option LexicalCase)) :
     derivations .obligatory c args = {pattern c args} := by
   have hlen : 1 ≤ (outsideVP c args).length := by simp [outsideVP]
-  simp only [derivations, Assignment.counts, toNat_maxAcc]
+  simp only [derivations, counts, toNat_maxAcc]
   rw [Finset.filter_singleton]
   by_cases ha : none ∈ args
   · have h1 : args.count none - (args.count none - 1) = 1 := by
@@ -443,7 +440,7 @@ theorem mem_derivations_obligatory_iff (ha : none ∈ args) :
 theorem count_acc_le_of_mem_derivations (hc : c.IsFunctional) (hd : d ∈ derivations a c args) :
     d.count .acc ≤ (maxAcc args).toNat := by
   obtain ⟨n, hn, hle, rfl⟩ := mem_derivations.1 hd
-  have hn' := Assignment.le_of_mem_counts hn
+  have hn' := le_of_mem_counts hn
   rw [toNat_maxAcc] at hn' ⊢
   rw [count_acc_assign _ (fun hm ↦ acc_notMem_outsideVP hc args (List.mem_of_mem_take hm)),
     List.length_take]
@@ -471,7 +468,7 @@ theorem lower_object_not_isLeast :
   ⟨rfl, by decide, fun h ↦ absurd (h.unique (List.isLeast_idxOf (by simp))) (by decide)⟩
 
 -- without accusative the limit of one position has force
-theorem derivations_lacking_of_three : derivations .lacking .obj [none, none, none] = ∅ := by
+theorem derivations_lacking_of_three : derivations .excluded .obj [none, none, none] = ∅ := by
   decide
 
 -- p. 206 (i)
@@ -507,14 +504,14 @@ theorem lexical_acc_notMem (hc : c.IsFunctional) (l : LexicalCase) :
     [.lexical l, .acc] ∉ derivations a c [some l, none] := fun hd ↦ by
   simpa using getElem?_ne_acc_of_mem_derivations (ls := []) (r := []) hc hd
 
--- p. 204: the strong interpretation, `.lacking` under a lexical subject, fails where (24b)
+-- p. 204: the strong interpretation, `.excluded` under a lexical subject, fails where (24b)
 -- succeeds, and inherent accusative rescues it only to overgenerate (pp. 201, 203)
 theorem strong_interpretation :
-    derivations .lacking .obj [some .erg, none, none] = ∅ ∧
+    derivations .excluded .obj [some .erg, none, none] = ∅ ∧
       [.erg, .obj, .acc] ∈ derivations .obligatory .obj [some .erg, none, none] ∧
-      derivations .lacking .obj [some .erg, none, some .acc] = {[.erg, .obj, .lexAcc]} ∧
-      derivations .lacking .obj [some .erg, some .acc] = {[.erg, .lexAcc]} ∧
-      derivations .lacking .obj [some .erg, some .dat, some .acc] = {[.erg, .dat, .lexAcc]} ∧
+      derivations .excluded .obj [some .erg, none, some .acc] = {[.erg, .obj, .lexAcc]} ∧
+      derivations .excluded .obj [some .erg, some .acc] = {[.erg, .lexAcc]} ∧
+      derivations .excluded .obj [some .erg, some .dat, some .acc] = {[.erg, .dat, .lexAcc]} ∧
       AbstractCase.lexAcc.label = .acc := by
   decide
 
@@ -526,21 +523,21 @@ theorem burzio_patterns :
   decide
 
 -- pp. 205-206: one argument, caseless or lexically Cased
-theorem derivations_intransitive (a : Assignment) (c : AbstractCase) (l : LexicalCase) :
+theorem derivations_intransitive (a : Obligatoriness) (c : AbstractCase) (l : LexicalCase) :
     derivations a c [none] = {[.nom]} ∧ derivations a c [some l] = {[.lexical l]} := by
   cases a <;> exact ⟨rfl, rfl⟩
 
 -- p. 202, note 26: nominative-objective without accusative, or beside nominative-accusative
 theorem nom_obj_mem :
-    [.nom, .obj] ∈ derivations .lacking .obj [none, none] ∧
+    [.nom, .obj] ∈ derivations .excluded .obj [none, none] ∧
       [.nom, .obj] ∈ derivations .optional .obj [none, none] ∧
       [.nom, .acc] ∈ derivations .optional .obj [none, none] := by
   decide
 
 -- p. 223 is a slip
 theorem nom_acc_notMem_lacking (c : AbstractCase) :
-    [.nom, .acc] ∉ derivations .lacking c [none, none] := by
-  rw [show derivations .lacking c [none, none] = {[.nom, .obj]} from rfl]
+    [.nom, .acc] ∉ derivations .excluded c [none, none] := by
+  rw [show derivations .excluded c [none, none] = {[.nom, .obj]} from rfl]
   decide
 
 /-! ### Typological variation -/
@@ -549,9 +546,9 @@ theorem nom_acc_notMem_lacking (c : AbstractCase) :
 what a denied object takes, one Case per language, so Hindi's objective *-ko* (notes 17, 43) is
 left out. -/
 structure Setting where
-  ergative : Assignment
-  dative : Assignment
-  accusative : Assignment := .obligatory
+  ergative : Obligatoriness
+  dative : Obligatoriness
+  accusative : Obligatoriness := .obligatory
   deniedObject : AbstractCase := .obj
   /-- The verbs the file's examples need beyond ergative on subjects and dative on goals. -/
   verbs : List (List (Option LexicalCase)) := []
@@ -564,8 +561,8 @@ variable (P : Setting)
 /-- The intransitive, transitive and ditransitive verbs the settings allow, intransitive subjects
 being caseless as in the classic ergative type (p. 190). -/
 def entries : List (List (Option LexicalCase)) :=
-  [none] :: (P.ergative.options .erg).map ([·, none]) ++
-    (P.ergative.options .erg).flatMap (fun s ↦ (P.dative.options .dat).map ([s, ·, none])) ++
+  [none] :: (options .erg P.ergative).map ([·, none]) ++
+    (options .erg P.ergative).flatMap (fun s ↦ (options .dat P.dative).map ([s, ·, none])) ++
     P.verbs
 
 /-- The derivable Case patterns. -/
@@ -589,8 +586,8 @@ def kalkatungu : Setting := { ergative := .obligatory, dative := .optional }
 /-- Icelandic has no ergative, its denied objects are nominative, and some verbs take dative or
 lexical accusative arguments (10b), notes 16 and 18. -/
 def icelandic : Setting where
-  ergative := .lacking
-  dative := .lacking
+  ergative := .excluded
+  dative := .excluded
   deniedObject := .nom
   verbs := [[some .dat], [some .acc], [some .dat, none], [some .dat, some .acc]]
 
@@ -598,14 +595,14 @@ def icelandic : Setting where
 (63). -/
 def hindi : Setting where
   ergative := .optional
-  dative := .lacking
+  dative := .excluded
   deniedObject := .nom
   verbs := [[some .dat, none], [some .erg, some .dat]]
 
 /-- Faroese is like Nez Perce in marking an object after a dative subject objective (note 16). -/
 def faroese : Setting where
-  ergative := .lacking
-  dative := .lacking
+  ergative := .excluded
+  dative := .excluded
   verbs := [[some .dat, none]]
 
 -- (60), and p. 223: there is no parameter of ergativity beyond the verbs' ability to assign it
@@ -614,7 +611,7 @@ theorem patterns_of_settings :
       [.nom, .dat, .acc], [.erg, .obj, .acc], [.erg, .dat, .obj]} ∧
       thangu.patterns = {[.nom], [.erg, .obj], [.erg, .dat, .obj]} ∧
       kalkatungu.patterns = {[.nom], [.erg, .obj], [.erg, .obj, .acc], [.erg, .dat, .obj]} ∧
-      ({ ergative := .lacking, dative := .lacking } : Setting).patterns =
+      ({ ergative := .excluded, dative := .excluded } : Setting).patterns =
         {[.nom], [.nom, .acc], [.nom, .acc, .acc]} := by
   decide
 
@@ -631,20 +628,20 @@ theorem image_label_coreCases :
   decide
 
 -- p. 216: accusative never surfaces in Thangu, whether or not its verbs can assign it
-theorem thangu_accusative_irrelevant (a : Assignment) :
+theorem thangu_accusative_irrelevant (a : Obligatoriness) :
     ({ ergative := .obligatory, dative := .obligatory, accusative := a } : Setting).patterns =
       thangu.patterns := by
   cases a <;> decide
 
 -- (54), (60): the limit of one position outside VP excludes a ditransitive without dative
 theorem dative_not_forced :
-    ({ ergative := .obligatory, dative := .optional, accusative := .lacking } : Setting).patterns =
+    ({ ergative := .obligatory, dative := .optional, accusative := .excluded } : Setting).patterns =
       thangu.patterns := by
   decide
 
 -- pp. 216, 221: lacking accusative does not force ergative, so a Case shortage cannot explain it
 theorem case_shortage_fails :
-    [.nom, .obj] ∈ ({ ergative := .optional, dative := .obligatory, accusative := .lacking } :
+    [.nom, .obj] ∈ ({ ergative := .optional, dative := .obligatory, accusative := .excluded } :
       Setting).patterns := by
   decide
 

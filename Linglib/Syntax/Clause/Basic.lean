@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Core.Relation.SetRel
+public import Linglib.Syntax.Obligatoriness
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.Basic
@@ -23,10 +24,7 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 * `Clause.SentenceType`, `Clause.SentenceType.IsInterrogative`: the sentence types.
 * `Clause.EmbeddingContext`, `Clause.root`, `Clause.embedded`: the embedding contexts and the
   cells of root and subordinated clauses.
-* `Clause.Occurrence`, `Clause.Distribution`: the value of a cell, ordered by how far it is
-  required, and a table of cells.
-* `Clause.Occurrence.allowed`, `Clause.Occurrence.ofAllowed`: the presence values an occurrence
-  allows, and the occurrence allowing a set of them.
+* `Clause.Distribution`: the `Obligatoriness` recorded in each cell.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
 * `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
@@ -110,74 +108,25 @@ A particle's licensing and a language's verb-second grammar are distributions. A
 determines two relations on cells, where the element or process is possible and where it is
 required. -/
 
-/-- An occurrence says whether an element or process is obligatory, optional or excluded in a
-cell. -/
-inductive Occurrence where
-  | obligatory
-  | optional
-  | excluded
-  deriving DecidableEq, Repr, Fintype
-
-namespace Occurrence
-
-/-- The rank of an occurrence, from excluded to obligatory. -/
-def rank : Occurrence → ℕ
-  | .excluded => 0
-  | .optional => 1
-  | .obligatory => 2
-
-/-- Occurrences are ordered by how far the element is required. -/
-instance : LinearOrder Occurrence := .lift' rank (by decide)
-
-instance : BoundedOrder Occurrence where
-  bot := .excluded
-  bot_le o := by cases o <;> decide
-  top := .obligatory
-  le_top o := by cases o <;> decide
-
-/-- The values an occurrence allows the presence of the element to take: presence where it is
-obligatory, absence where it is excluded, either where it is optional. -/
-def allowed : Occurrence → Finset Bool
-  | .obligatory => {true}
-  | .excluded => {false}
-  | .optional => .univ
-
-theorem allowed_injective : Function.Injective allowed := by decide
-
-/-- The occurrence allowing exactly the presence values in `a`: obligatory for presence alone,
-excluded for absence alone, optional for both, and excluded for the empty set. -/
-def ofAllowed (a : Finset Bool) : Occurrence :=
-  if true ∈ a then if false ∈ a then .optional else .obligatory else .excluded
-
-@[simp] theorem ofAllowed_allowed (o : Occurrence) : ofAllowed o.allowed = o := by decide +revert
-
-theorem allowed_ofAllowed {a : Finset Bool} (h : a.Nonempty) : (ofAllowed a).allowed = a := by
-  obtain ⟨b, hb⟩ := h
-  ext x
-  by_cases ht : true ∈ a <;> by_cases hf : false ∈ a <;> cases x <;> cases b <;>
-    simp_all [ofAllowed, allowed]
-
-end Occurrence
-
-/-- A distribution records the occurrence of an element or process in each cell; `none` means
+/-- A distribution records how far an element or process is required in each cell; `none` means
 that the source records nothing for the cell, not that it is excluded. It is a `def`, as `Set` is,
 so that it does not inherit the instances of functions into `Option`, whose `⊔` would keep a cell
 only one of two distributions records. -/
-def Distribution := SentenceType → EmbeddingContext → Option Occurrence
+def Distribution := SentenceType → EmbeddingContext → Option Obligatoriness
 
 namespace Distribution
 
 instance : DecidableEq Distribution :=
-  inferInstanceAs (DecidableEq (SentenceType → EmbeddingContext → Option Occurrence))
+  inferInstanceAs (DecidableEq (SentenceType → EmbeddingContext → Option Obligatoriness))
 
 variable (d : Distribution)
 
 /-- The distribution recording no cell. -/
 def empty : Distribution := fun _ _ ↦ none
 
-/-- The cells whose recorded occurrence lies in `s`, the preimage of `s` under `d` read as a
+/-- The cells whose recorded value lies in `s`, the preimage of `s` under `d` read as a
 partial function on cells. -/
-def preimage (s : Set Occurrence) : SetRel SentenceType EmbeddingContext :=
+def preimage (s : Set Obligatoriness) : SetRel SentenceType EmbeddingContext :=
   {c | ∃ o ∈ s, o ∈ d c.1 c.2}
 
 /-- The cells the source records. -/
@@ -189,7 +138,7 @@ def possible : SetRel SentenceType EmbeddingContext := d.preimage {.excluded}ᶜ
 /-- The cells where the element or process is required. -/
 def required : SetRel SentenceType EmbeddingContext := d.preimage {.obligatory}
 
-variable {d} {s t : Set Occurrence} {c : SentenceType × EmbeddingContext}
+variable {d} {s t : Set Obligatoriness} {c : SentenceType × EmbeddingContext}
 
 @[simp]
 theorem mem_preimage : c ∈ d.preimage s ↔ ∃ o ∈ s, o ∈ d c.1 c.2 := .rfl
@@ -210,7 +159,7 @@ theorem mem_required : c ∈ d.required ↔ d c.1 c.2 = some .obligatory := by
 theorem preimage_mono (h : s ⊆ t) : d.preimage s ⊆ d.preimage t :=
   fun _ ⟨o, hs, ho⟩ ↦ ⟨o, h hs, ho⟩
 
-theorem preimage_subset_recorded (s : Set Occurrence) : d.preimage s ⊆ d.recorded :=
+theorem preimage_subset_recorded (s : Set Obligatoriness) : d.preimage s ⊆ d.recorded :=
   preimage_mono (Set.subset_univ s)
 
 theorem required_subset_possible : d.required ⊆ d.possible := preimage_mono (by simp)
@@ -251,16 +200,16 @@ namespace LeftEdge.Table
 
 variable (T : LeftEdge.Table)
 
-/-- The distribution of a property of left edges: in a recorded cell, the occurrence allowing
+/-- The distribution of a property of left edges: in a recorded cell, the obligatoriness allowing
 the values the property takes on the edges admitted there. -/
-def occurrence (p : LeftEdge → Bool) : Distribution :=
+def distribution (p : LeftEdge → Bool) : Distribution :=
   fun t e ↦ (T t e).map fun s ↦ .ofAllowed (s.image p)
 
 /-- The distribution of verb second. -/
-def verbSecond : Distribution := T.occurrence LeftEdge.verbSecond
+def verbSecond : Distribution := T.distribution LeftEdge.verbSecond
 
 /-- The distribution of the complementizer. -/
-def complementizer : Distribution := T.occurrence LeftEdge.complementizer
+def complementizer : Distribution := T.distribution LeftEdge.complementizer
 
 /-- The left edges with a complementizer, for `b = true`, or without one; a cell admitting none of
 them is unrecorded. -/

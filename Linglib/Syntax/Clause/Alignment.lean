@@ -8,6 +8,7 @@ module
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Obligatoriness
 
 /-!
 # Alignment
@@ -183,29 +184,13 @@ end Conditioned
 /-! ### Graded overtness
 
 Coding may be obligatory under some conditions and optional under others, as in Aissen's three
-zones of overt case marking. A graded marking fits an order on the conditions when A's overtness
-falls along it and P's rises, and this is the fit of `Fits` at every degree. -/
-
-/-- Overt coding of a role under a condition is excluded, optional or obligatory, the three zones
-of [aissen-2003]. -/
-inductive Overtness where
-  | excluded
-  | optional
-  | obligatory
-  deriving DecidableEq, Repr, Fintype
-
-/-- Excluded < optional < obligatory. -/
-instance : LinearOrder Overtness := LinearOrder.lift' (·.ctorIdx) (by decide)
-
-instance : BoundedOrder Overtness where
-  top := .obligatory
-  le_top := by decide
-  bot := .excluded
-  bot_le := by decide
+zones of overt case marking, so a graded marking gives the obligatoriness of a role's overt coding
+under each condition. It fits an order on the conditions when A's overtness falls along it and P's
+rises, and this is the fit of `Fits` at every degree. -/
 
 section Graded
 
-variable {C : Type*} [Preorder C] (μ : ArgumentRole → C → Overtness)
+variable {C : Type*} [Preorder C] (μ : ArgumentRole → C → Obligatoriness)
 
 /-- A graded marking fits an order on its conditions when A's overtness falls along it and P's
 rises. -/
@@ -214,8 +199,8 @@ def FitsGraded : Prop := Antitone (μ .A) ∧ Monotone (μ .P)
 /-- A graded marking fits exactly when, at every degree, the marking overt where the overtness
 reaches that degree fits. -/
 theorem fitsGraded_iff_forall_fits :
-    FitsGraded μ ↔ ∀ k : Overtness, Fits fun r c ↦ if k ≤ μ r c then some () else none := by
-  have h (k : Overtness) (r : ArgumentRole) :
+    FitsGraded μ ↔ ∀ k : Obligatoriness, Fits fun r c ↦ if k ≤ μ r c then some () else none := by
+  have h (k : Obligatoriness) (r : ArgumentRole) :
       overt (fun r c ↦ if k ≤ μ r c then some () else none) r = {c | k ≤ μ r c} := by
     ext; simp
   simp only [FitsGraded, Fits, h, isLowerSet_setOfPred, isUpperSet_setOfPred, forall_and]

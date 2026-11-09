@@ -44,7 +44,6 @@ concept of its own.
 
 namespace ArgumentStructure
 
-
 /-- A core-argument position of the verbal clause: the internal argument
     (complement of the lexical core) or the external argument (specifier
     of Voice, [kratzer-1996]). -/
@@ -57,15 +56,6 @@ inductive ArgPosition where
     contributes; inherits the Boolean lattice of finite sets, and
     introducers compose by `∪`. -/
 abbrev Valency := Finset ArgPosition
-
-/-- `Finset` carries no `Repr`; over the two-element position universe the
-    four valencies render literally. -/
-instance : Repr Valency :=
-  ⟨fun v _ ↦
-    if v = {.internal, .external} then "{internal, external}"
-    else if v = ({.internal} : Valency) then "{internal}"
-    else if v = ({.external} : Valency) then "{external}"
-    else "∅"⟩
 
 namespace Valency
 
@@ -90,14 +80,16 @@ def IsTransitive (v : Valency) : Prop := v = {.internal, .external}
 instance (v : Valency) : Decidable v.IsTransitive :=
   inferInstanceAs (Decidable (_ = _))
 
-theorem isRootValency_inter_isVoiceValency :
-    ∀ v v' : Valency, v.IsRootValency → v'.IsVoiceValency →
-      v ∩ v' = ∅ := by decide
+variable {v v' : Valency}
 
-theorem isTransitive_union_iff :
-    ∀ v v' : Valency, v.IsRootValency → v'.IsVoiceValency →
-      ((v ∪ v').IsTransitive ↔
-        v = {.internal} ∧ v' = {.external}) := by decide
+/-- What a root introduces and what Voice introduces never overlap. -/
+theorem IsRootValency.disjoint (hv : v.IsRootValency) (hv' : v'.IsVoiceValency) :
+    Disjoint v v' :=
+  (Finset.disjoint_singleton.2 (by decide)).mono hv hv'
+
+theorem isTransitive_union_iff (hv : v.IsRootValency) (hv' : v'.IsVoiceValency) :
+    (v ∪ v').IsTransitive ↔ v = {.internal} ∧ v' = {.external} := by
+  revert v v'; decide
 
 /-! ### Comparative roles -/
 

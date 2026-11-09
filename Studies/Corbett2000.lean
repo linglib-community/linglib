@@ -288,7 +288,7 @@ instance : LinearOrder AnimacyHierarchy := LinearOrder.lift' AnimacyHierarchy.ra
 /-- The range of a number value says whether it is distinguished at each position of the
 hierarchy obligatorily, optionally or not at all, ordered by the likelihood of number being
 distinguished. -/
-abbrev Range := AnimacyHierarchy → Clause.Occurrence
+abbrev Range := AnimacyHierarchy → Obligatoriness
 
 namespace Range
 
@@ -847,7 +847,7 @@ def rankNames : List (String × AnimacyHierarchy) :=
     ("lowerAnimate", .lowerAnimate), ("inanimate", .inanimate)]
 
 /-- The markings by name. -/
-def markingNames : List (String × Clause.Occurrence) :=
+def markingNames : List (String × Obligatoriness) :=
   [("obligatory", .obligatory), ("optional", .optional), ("excluded", .excluded)]
 
 -- (24), (28), Table 3.6

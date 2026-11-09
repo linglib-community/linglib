@@ -10,6 +10,7 @@ public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Kawapanan.Shawi.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
+public import Linglib.Syntax.Obligatoriness
 public import Linglib.Syntax.Minimalist.Case.SyntacticObject
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Linearization.Replay
@@ -470,25 +471,18 @@ theorem objectItem_inserted {i : VocabularyItem Feature String} (hi : i ∈ obje
 
 /-! ### Table 4 -/
 
-/-- The three values of a Table 4 cell. -/
-inductive Marking
-  | obligatory
-  | optional
-  | impossible
-  deriving DecidableEq, Repr
-
-/-- Table 4's cell for a subject and an in-situ object records whether the subject is ergative in
-every position open to the object, in some, or in none; number plays no part. -/
-def marking (s o : Person) : Marking :=
-  if ∀ pos ∈ positions o .inSitu, Ergative (s, .minimal) (o, .minimal) pos then .obligatory
-  else if ∃ pos ∈ positions o .inSitu, Ergative (s, .minimal) (o, .minimal) pos then .optional
-  else .impossible
+/-- Table 4's cell for a subject and an in-situ object, the obligatoriness of ergative on the
+subject: obligatory when it is ergative in every position open to the object, optional when in
+some, and excluded when in none; number plays no part. -/
+def marking (s o : Person) : Obligatoriness :=
+  .ofAllowed ((positions o .inSitu).map fun pos ↦
+    decide (Ergative (s, .minimal) (o, .minimal) pos)).toFinset
 
 -- Table 4
 theorem table4 :
     marking .first .second = .obligatory ∧ marking .first .third = .optional ∧
-    marking .second .first = .impossible ∧ marking .second .third = .optional ∧
-    marking .third .first = .impossible ∧ marking .third .second = .impossible ∧
+    marking .second .first = .excluded ∧ marking .second .third = .optional ∧
+    marking .third .first = .excluded ∧ marking .third .second = .excluded ∧
     marking .third .third = .optional := by
   simp only [marking, ergative_iff]
   decide

@@ -237,7 +237,7 @@ open Classical in
 /-- The graded marking of a three-zone system: the object obligatorily marked on `z`, optionally
 on the rest of `w`, and never elsewhere, and no other role marked. -/
 noncomputable def overtness (z w : Set (Animacy × DefinitenessScale)) :
-    ArgumentRole → Animacy × DefinitenessScale → Overtness
+    ArgumentRole → Animacy × DefinitenessScale → Obligatoriness
   | .P, c => if c ∈ z then .obligatory else if c ∈ w then .optional else .excluded
   | _, _ => .excluded
 
