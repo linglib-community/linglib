@@ -116,12 +116,12 @@ def snoresCover : Cover snoresCtx (Fin 2) where
   exists_mem_vocab := by decide +kernel
 
 /-- The local sections are `s₁ = {John(x), sleeps(x)}` and `s₂ = {snores(y)}`. -/
-def snoresSections : ∀ i, Theory (snoresCover.part i)
+def snoresSections : ∀ i, BasicDRS (snoresCover.part i)
   | 0 => ⟨{lit .john (fun _ => .x), lit .sleeps (fun _ => .x)}, by decide +kernel⟩
   | 1 => ⟨{lit .snores (fun _ => .y)}, by decide +kernel⟩
 
 /-- The gluing is `s = {John(z), sleeps(z), snores(z)}`. -/
-def snoresGluing : Theory snoresCtx :=
+def snoresGluing : BasicDRS snoresCtx :=
   ⟨{lit .john (fun _ => .z), lit .sleeps (fun _ => .z), lit .snores (fun _ => .z)},
     by decide +kernel⟩
 
@@ -134,7 +134,7 @@ theorem snoresGluing_eq_glue :
 theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
   rw [snoresGluing_eq_glue]; exact Cover.isGluing_glue _ _ _
 
-theorem snores_unique {s : Theory snoresCtx}
+theorem snores_unique {s : BasicDRS snoresCtx}
     (hs : snoresCover.IsGluing (presheaf lang Var) snoresSections s) : s = snoresGluing :=
   hs.unique (by decide +kernel) isGluing_snores
 
@@ -156,13 +156,13 @@ def beatsCover : Cover beatsCtx (Fin 3) where
 
 /-- The local sections are `s₁ = {John(x)}`, `s₂ = {donkey(y)}` and
 `s₃ = {owns(u, v), beats(u, v)}`. -/
-def beatsSections : ∀ i, Theory (beatsCover.part i)
+def beatsSections : ∀ i, BasicDRS (beatsCover.part i)
   | 0 => ⟨{lit .john (fun _ => .x)}, by decide +kernel⟩
   | 1 => ⟨{lit .donkey (fun _ => .y)}, by decide +kernel⟩
   | 2 => ⟨{lit .owns ![.u, .v], lit .beats ![.u, .v]}, by decide +kernel⟩
 
 /-- The paper's gluing is `s = {John(a), donkey(b), owns(a, b), beats(a, b)}`. -/
-def beatsGluing : Theory beatsCtx :=
+def beatsGluing : BasicDRS beatsCtx :=
   ⟨{lit .john (fun _ => .a), lit .donkey (fun _ => .b), lit .owns ![.a, .b], lit .beats ![.a, .b]},
     by decide +kernel⟩
 
@@ -177,8 +177,8 @@ theorem isGluing_beats : beatsCover.IsGluing (presheaf lang Var) beatsSections b
 
 /-- `s ∪ {John(b)}` is a second gluing, since `John(b)` renames no literal of a part and adding
 it changes no restriction. -/
-def beatsGluing' : Theory beatsCtx :=
-  ⟨insert (lit .john (fun _ => .b)) beatsGluing.lits, by decide +kernel⟩
+def beatsGluing' : BasicDRS beatsCtx :=
+  ⟨insert (lit .john (fun _ => .b)) beatsGluing.1, by decide +kernel⟩
 
 theorem isGluing_beats_insert :
     beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing' := by
@@ -200,7 +200,7 @@ def greyParts : Fin 3 → Context lang Var :=
 
 /-- The local sections are `s₁ = {John(x), Man(x)}`, `s₂ = {donkey(y), ¬Man(y)}` and
 `s₃ = {grey(z)}`. -/
-def greySections : ∀ i, Theory (greyParts i)
+def greySections : ∀ i, BasicDRS (greyParts i)
   | 0 => ⟨{lit .john (fun _ => .x), lit .man (fun _ => .x)}, by decide +kernel⟩
   | 1 => ⟨{lit .donkey (fun _ => .y), lit .man (fun _ => .y) false}, by decide +kernel⟩
   | 2 => ⟨{lit .grey (fun _ => .z)}, by decide +kernel⟩
@@ -231,7 +231,7 @@ def greyCover : Cover greyCtx (Fin 3) where
   exists_mem_vocab := by decide +kernel
 
 /-- The gluing is `s = {John(a), Man(a), donkey(b), ¬Man(b), grey(b)}`. -/
-def greyGluing : Theory greyCtx :=
+def greyGluing : BasicDRS greyCtx :=
   ⟨{lit .john (fun _ => .a), lit .man (fun _ => .a), lit .donkey (fun _ => .b),
     lit .man (fun _ => .b) false, lit .grey (fun _ => .b)}, by decide +kernel⟩
 
@@ -258,7 +258,7 @@ def brokeParts : Fin 2 → Context lang Var :=
 
 /-- The local sections are `s₁ = {John(x), Cup(y), Plate(z), PutOn(x, y, z)}` and
 `s₂ = {Broke(u, v)}`. -/
-def brokeSections : ∀ i, Theory (brokeParts i)
+def brokeSections : ∀ i, BasicDRS (brokeParts i)
   | 0 => ⟨{lit .john (fun _ => .x), lit .cup (fun _ => .y), lit .plate (fun _ => .z),
       lit .putOn ![.x, .y, .z]}, by decide +kernel⟩
   | 1 => ⟨{lit .broke ![.u, .v]}, by decide +kernel⟩
@@ -285,7 +285,7 @@ def brokeCover (b : Broken) : Cover brokeCtx (Fin 2) where
 
 /-- The gluing is `{John(x), Cup(y), Plate(z), PutOn(x, y, z), Broke(x, ·)}`, with the chosen
 antecedent. -/
-def brokeGluing (b : Broken) : Theory brokeCtx :=
+def brokeGluing (b : Broken) : BasicDRS brokeCtx :=
   ⟨{lit .john (fun _ => .x), lit .cup (fun _ => .y), lit .plate (fun _ => .z),
     lit .putOn ![.x, .y, .z],
     lit .broke ![.x, b.var] (h := Fin.forall_fin_two.2 ⟨by cases b <;> decide +kernel, b.var_mem⟩)},
@@ -324,7 +324,7 @@ def overlapCover : Cover overlapCtx (Fin 2) where
   exists_mem_vocab := by decide +kernel
 
 /-- The local sections are `s₁ = {R(x), S(u)}` and `s₂ = {S(y), R(v)}`. -/
-def overlapSections : ∀ i, Theory (overlapCover.part i)
+def overlapSections : ∀ i, BasicDRS (overlapCover.part i)
   | 0 => ⟨{lit .R (fun _ => .x), lit .S (fun _ => .u)}, by decide +kernel⟩
   | 1 => ⟨{lit .S (fun _ => .y), lit .R (fun _ => .v)}, by decide +kernel⟩
 
@@ -341,13 +341,14 @@ def collapseCover : Cover (⟨{⟨1, .R⟩}, {.z}⟩ : Context lang Var) (Fin 1)
   exists_mem_vocab := by decide +kernel
 
 /-- The local section is `s₁ = {R(x)}`. -/
-def collapseSections : ∀ i, Theory (collapseCover.part i)
+def collapseSections : ∀ i, BasicDRS (collapseCover.part i)
   | 0 => ⟨{lit .R (fun _ => .x)}, by decide +kernel⟩
 
 /-- Pairwise disjoint vocabularies and a consistent candidate do not guarantee a gluing, contrary to
 the discussion of Proposition 1. -/
 theorem not_forall_exists_isGluing_of_disjoint :
-    ¬ ∀ (ι : Type) [Fintype ι] (c : Context lang Var) (C : Cover c ι) (x : ∀ i, Theory (C.part i)),
+    ¬ ∀ (ι : Type) [Fintype ι] (c : Context lang Var) (C : Cover c ι)
+      (x : ∀ i, BasicDRS (C.part i)),
       (Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab) →
         Literal.Consistent (C.pushforward x) → ∃ s, C.IsGluing (presheaf lang Var) x s :=
   fun h => absurd (h _ _ collapseCover collapseSections Subsingleton.pairwise (by decide +kernel))
@@ -366,26 +367,27 @@ theorem not_compatible_failures :
 
 section Multivalued
 
-instance {L : Language} {V : Type*} (c : Context L V) : MeasurableSpace (Theory c) := ⊤
+instance {L : Language} {V : Type*} (c : Context L V) : MeasurableSpace (BasicDRS c) := ⊤
 
-instance {L : Language} {V : Type*} (c : Context L V) : DiscreteMeasurableSpace (Theory c) :=
+instance {L : Language} {V : Type*} (c : Context L V) : DiscreteMeasurableSpace (BasicDRS c) :=
   ⟨fun _ => MeasurableSpace.measurableSet_top⟩
 
 variable {L : Language} {V : Type*} [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
-  {c : Context L V} {ι : Type*} {C : Cover c ι} {x : ∀ i, Theory (C.part i)}
+  {c : Context L V} {ι : Type*} {C : Cover c ι} {x : ∀ i, BasicDRS (C.part i)}
 
-/-- A probability measure on global theories glues the point masses `δ_{sᵢ}` in `D ∘ F` iff it
+/-- A probability measure on global DRSs glues the point masses `δ_{sᵢ}` in `D ∘ F` iff it
 is carried by the gluings of the `sᵢ`. -/
-theorem map_restrict_eq_dirac_iff [Countable ι] (d : Measure (Theory c))
+theorem map_restrict_eq_dirac_iff [Countable ι] (d : Measure (BasicDRS c))
     [IsProbabilityMeasure d] :
-    (∀ i, d.map (Theory.restrict (C.map i)) = Measure.dirac (x i)) ↔
+    (∀ i, d.map (BasicDRS.restrict (C.map i)) = Measure.dirac (x i)) ↔
       d {s | ¬ C.IsGluing (presheaf L V) x s} = 0 := by
-  have hmeas (i : ι) : Measurable (Theory.restrict (C.map i) : Theory c → Theory (C.part i)) :=
+  have hmeas (i : ι) :
+      Measurable (BasicDRS.restrict (C.map i) : BasicDRS c → BasicDRS (C.part i)) :=
     measurable_from_top
   constructor
   · intro h
-    have : {s : Theory c | ¬ C.IsGluing (presheaf L V) x s} =
-        ⋃ i, Theory.restrict (C.map i) ⁻¹' {x i}ᶜ := by
+    have : {s : BasicDRS c | ¬ C.IsGluing (presheaf L V) x s} =
+        ⋃ i, BasicDRS.restrict (C.map i) ⁻¹' {x i}ᶜ := by
       ext; simp [Cover.IsGluing]; rfl
     rw [this]
     refine measure_iUnion_null fun i => ?_
@@ -412,7 +414,7 @@ def ripeParts : Fin 3 → Context lang Var :=
 
 /-- The local sections are `s₁ = {John(x), Banana(y), Monkey(z), Gave(x, y, z)}`,
 `s₂ = {Ripe(u)}` and `s₃ = {Cheeky(v)}`. -/
-def ripeSections : ∀ i, Theory (ripeParts i)
+def ripeSections : ∀ i, BasicDRS (ripeParts i)
   | 0 => ⟨{lit .john (fun _ => .x), lit .banana (fun _ => .y), lit .monkey (fun _ => .z),
       lit .gave ![.x, .y, .z]}, by decide +kernel⟩
   | 1 => ⟨{lit .ripe (fun _ => .u)}, by decide +kernel⟩
@@ -437,7 +439,7 @@ def ripeCover (c : Noun × Noun) : Cover ripeCtx (Fin 3) where
   exists_mem_vocab := by decide +kernel
 
 /-- The covering `c` induces the candidate global section `t_c`. -/
-def ripeGluing (c : Noun × Noun) : Theory ripeCtx :=
+def ripeGluing (c : Noun × Noun) : BasicDRS ripeCtx :=
   ⟨{lit .john (fun _ => .x), lit .banana (fun _ => .y), lit .monkey (fun _ => .z),
     lit .gave ![.x, .y, .z], lit .ripe (fun _ => c.1.var) (h := fun _ => c.1.var_mem),
     lit .cheeky (fun _ => c.2.var) (h := fun _ => c.2.var_mem)},
@@ -466,7 +468,7 @@ noncomputable def coveringMeasure : Measure (Noun × Noun) :=
   (∑ c, (score c : ℝ≥0∞))⁻¹ • Measure.ofWeights fun c => (score c : ℝ≥0∞)
 
 /-- The paper's `d ∈ D_R F(L, X)` is the image of the covering distribution along `c ↦ t_c`. -/
-noncomputable def gluingMeasure : Measure (Theory ripeCtx) := coveringMeasure.map ripeGluing
+noncomputable def gluingMeasure : Measure (BasicDRS ripeCtx) := coveringMeasure.map ripeGluing
 
 theorem gluingMeasure_apply (c : Noun × Noun) :
     gluingMeasure {ripeGluing c} = score c / 48 := by

@@ -289,7 +289,7 @@ abbrev nobCtx : Context lang Label :=
   ⟨{⟨1, .ind⟩, ⟨2, .witch⟩, ⟨2, .killedCobsSow⟩}, {.y, .c, .k}⟩
 
 /-- Hob's belief over Hob's context, and the content of Nob's question over Nob's. -/
-def sections : ∀ i, Theory (![hobCtx, nobCtx] i)
+def sections : ∀ i, BasicDRS (![hobCtx, nobCtx] i)
   | 0 => ⟨{lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x]},
       by decide +kernel⟩
   | 1 => ⟨{lit .ind ![.y], lit .witch ![.c, .y], lit .killedCobsSow ![.k, .y]}, by decide +kernel⟩
@@ -323,11 +323,11 @@ def apartCover : Cover apartCtx (Fin 2) where
   exists_mem_vocab := by decide +kernel
 
 /-- The gluing of the two contexts along the aligning cover. -/
-def sameGlue : Theory sameCtx :=
+def sameGlue : BasicDRS sameCtx :=
   ⟨sameCover.pushforward sections, by decide +kernel⟩
 
 /-- The gluing of the two contexts along the cover that keeps the witches apart. -/
-def apartGlue : Theory apartCtx :=
+def apartGlue : BasicDRS apartCtx :=
   ⟨apartCover.pushforward sections, by decide +kernel⟩
 
 theorem isGluing_sameGlue : sameCover.IsGluing (presheaf lang Label) sections sameGlue := by
@@ -339,8 +339,8 @@ theorem isGluing_apartGlue : apartCover.IsGluing (presheaf lang Label) sections 
 /-- Gluing along the aligning cover merges Hob's belief and the content of Nob's question as
 record types. -/
 theorem atom_image_sameGlue :
-    Literal.atom '' (sameGlue.lits : Set (Literal sameCtx)) = hob ∪ nob := by
-  have : sameGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
+    Literal.atom '' (sameGlue.1 : Set (Literal sameCtx)) = hob ∪ nob := by
+  have : sameGlue.1 = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
       lit .killedCobsSow ![.k, .x]} := by decide +kernel
   rw [this]
   ext a
@@ -348,9 +348,9 @@ theorem atom_image_sameGlue :
   tauto
 
 theorem atom_image_apartGlue :
-    Literal.atom '' (apartGlue.lits : Set (Literal apartCtx)) =
+    Literal.atom '' (apartGlue.1 : Set (Literal apartCtx)) =
       hob ∪ Equiv.swap Label.x .y • nob := by
-  have : apartGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
+  have : apartGlue.1 = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
       lit .ind ![.y], lit .witch ![.c, .y], lit .killedCobsSow ![.k, .y]} := by decide +kernel
   rw [this]
   ext a
@@ -385,7 +385,7 @@ glues into a witness of both. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   let _ := system .twoWitches
-  have hw (i) : witnesses i ∈ Literal.realizers Obj ((sections i).lits : Set (Literal _)) := by
+  have hw (i) : witnesses i ∈ Literal.realizers Obj ((sections i).1 : Set (Literal _)) := by
     fin_cases i <;> intro l hl <;>
       simp only [sections, Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton] at hl <;>
       rcases hl with rfl | rfl | rfl <;> simp [Literal.Holds, lit, witnesses, holds]

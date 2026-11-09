@@ -8,11 +8,11 @@ public import Linglib.Semantics.Dynamic.DRT.Verification.Total
 
 A basic DRS is true under an assignment of its context's referents when each literal holds, and its
 realizers, the assignments that make it true, are the [verifying
-embeddings](##DRT.Theory.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on contexts
+embeddings](##DRT.BasicDRS.verifies_toDRS_iff) of the DRS. Assignments form a presheaf on contexts
 that is a sheaf for a presieve [exactly when it is jointly surjective on
 referents](##DRT.isSheafFor_assignments_iff), the first of Abramsky and Sadrzadeh's two conditions
 on covers. An assignment [realizes the least gluing](##DRT.Cover.realizers_pushforward) of a
-family along a cover exactly when its restrictions realize the local theories, so the realizers of
+family along a cover exactly when its restrictions realize the local DRSs, so the realizers of
 the gluing are [the compatible families of local realizers](##DRT.Cover.realizersEquiv).
 
 ## Implementation notes
@@ -81,14 +81,14 @@ theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ S, l.pos) {g : V → M} :
 
 end Literal
 
-namespace Theory
+namespace BasicDRS
 
-variable [L.Structure M] {s : Theory c}
+variable [L.Structure M] {s : BasicDRS c}
 
-/-- An embedding verifies the DRS of a theory exactly when its restriction to the context's
-referents realizes the theory. -/
+/-- An embedding verifies a basic DRS exactly when its restriction to the context's referents
+realizes its literals. -/
 theorem verifies_toDRS_iff {g : V → M} :
-    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ Literal.realizers M (s.lits : Set (Literal c)) := by
+    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ Literal.realizers M (s.1 : Set (Literal c)) := by
   rw [verifiesTotal_iff, Literal.mem_realizers]
   simp only [toDRS, List.mem_map, Finset.mem_toList, forall_exists_index,
     and_imp, forall_apply_eq_imp_iff₂, Finset.mem_coe]
@@ -99,12 +99,12 @@ theorem verifies_toDRS_iff {g : V → M} :
 
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
-theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : Theory c'} {g : c'.vars → M}
-    (h : g ∈ Literal.realizers M (s.lits : Set (Literal c'))) :
-    g ∘ f.map ∈ Literal.realizers M ((s.restrict f).lits : Set (Literal c)) :=
+theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : BasicDRS c'} {g : c'.vars → M}
+    (h : g ∈ Literal.realizers M (s.1 : Set (Literal c'))) :
+    g ∘ f.map ∈ Literal.realizers M ((s.restrict f).1 : Set (Literal c)) :=
   Literal.mem_realizers.2 fun _ hl ↦ Literal.mem_realizers.1 h _ (mem_restrict.1 hl)
 
-end Theory
+end BasicDRS
 
 /-! ### The sheaf of assignments -/
 
@@ -204,12 +204,12 @@ theorem presieve_mem_referentPrecoverage (C : Cover c ι) :
   (ofArrows_mem_comap_jointlySurjectivePrecoverage_iff _).2 C.exists_map_eq
 
 variable [L.Structure M] [Fintype ι] [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
-  (x : ∀ i, Theory (C.part i))
+  (x : ∀ i, BasicDRS (C.part i))
 
 /-- An assignment makes the renamed local literals of a family true exactly when its restriction
-along every cover morphism realizes the local theory. -/
+along every cover morphism realizes the local DRS. -/
 theorem realizers_pushforward : Literal.realizers M (C.pushforward x : Set (Literal c)) =
-    ⋂ i, (· ∘ (C.map i).map) ⁻¹' Literal.realizers M ((x i).lits : Set (Literal (C.part i))) := by
+    ⋂ i, (· ∘ (C.map i).map) ⁻¹' Literal.realizers M ((x i).1 : Set (Literal (C.part i))) := by
   simp only [pushforward, Finset.coe_biUnion, Finset.coe_univ, Set.mem_univ, Set.iUnion_true,
     Finset.coe_image, Literal.realizers_iUnion, Literal.realizers_image_map]
 
@@ -218,7 +218,7 @@ the compatible families of local realizers. -/
 noncomputable def realizersEquiv :
     Literal.realizers M (C.pushforward x : Set (Literal c)) ≃
       {g : Subtype (Arrows.Compatible (assignments L V M) C.map) //
-        ∀ i, g.1 i ∈ Literal.realizers M ((x i).lits : Set (Literal (C.part i)))} :=
+        ∀ i, g.1 i ∈ Literal.realizers M ((x i).1 : Set (Literal (C.part i)))} :=
   (Equiv.ofBijective _ ((isSheafFor_ofArrows_iff_bijective_toCompatible _ _).1
     (isSheafFor_assignments C.presieve_mem_referentPrecoverage))).subtypeEquiv fun g ↦
       (Set.ext_iff.1 (realizers_pushforward x) g).trans Set.mem_iInter
