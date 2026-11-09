@@ -23,6 +23,7 @@ and `Ty.combine` lists them all.
 * `Composition.Abstraction`, `Composition.Assignments`: abstraction over an index, and traces.
 * `Composition.Node`, `Composition.effectSelection`: what the semantics reads off a node, and the
   rules each kind of node admits.
+* `Composition.envSensitiveSelection`: Heim and Kratzer's grammar as a selection of those rules.
 * `Composition.effectGrammar`: the grammar whose binary rules are the modes.
 
 ## Implementation notes
@@ -336,5 +337,23 @@ def effectSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
   binary
     | .island, l, r => (Ty.combine basics l r).filter (·.1.Evaluated)
     | _, l, r => Ty.combine basics l r
+
+/-- The rules of the environment-sensitive grammar of Heim and Kratzer, the book's Figure 5: every
+constituent reads an assignment, sisters combine by a basic mode on their results at one
+assignment, and an index abstracts. At most one rule applies to a node. -/
+def envSensitiveSelection [DecidableEq B] (basics : BasicModes B) (g x : Ty B) :
+    Grammar.Selection (effectGrammar basics.Rule (Abstraction g x)) Node where
+  unary := (effectSelection basics g x).unary
+  binary
+    | _, .comp (.R i) l, .comp (.R j) r =>
+      if h : i = g ∧ j = g then
+        (basics.find l r).map fun p ↦ ⟨.comp (.R g) p.1, by
+          obtain ⟨rfl, rfl⟩ := h; exact .ap trivial (.basic p.2)⟩
+      else []
+    | _, _, _ => []
+
+/-- A word that reads no assignment, as a constant reader. -/
+def Assignments.const (_ : Assignments D g x) {a : Ty B} (m : a.Dom D) : Σ a : Ty B, a.Dom D :=
+  ⟨.comp (.R g) a, fun _ ↦ m⟩
 
 end Composition
