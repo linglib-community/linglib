@@ -103,30 +103,29 @@ abbrev german : V2Grammar :=
 /-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
 abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
 
-/-- The heads other than Imp⁰ that a variety sets where verb second's obligatoriness is in `s`:
-the root clause-type heads read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ off the
-embedded cells of its
-distribution `bare` in clauses without a complementizer, which by default records nothing. Imp⁰ is
-left out, since Westergaard diagnoses it by an overt subject the verb precedes rather than by the
-verb's place at the left edge. -/
-def heads (s : Set Obligatoriness) (d : Distribution) (bare : Distribution := .empty) :
+/-- The heads other than Imp⁰ that a variety sets in a zone of verb second, where it is required
+or where it may occur: the root clause-type heads read off its verb-second distribution `d`, and
+Fin⁰ and Wh⁰ off the embedded cells of its distribution `bare` in clauses without a
+complementizer, which by default records nothing. Imp⁰ is left out, since Westergaard diagnoses it
+by an overt subject the verb precedes rather than by the verb's place at the left edge. -/
+def heads (zone : Distribution → V2Grammar) (d : Distribution) (bare : Distribution := .empty) :
     V2Grammar :=
-  {c ∈ d.preimage s | c.2 = .matrix ∧ c.1 ≠ .imperative} ∪ {c ∈ bare.preimage s | c.2 ≠ .matrix}
+  {c ∈ zone d | c.2 = .matrix ∧ c.1 ≠ .imperative} ∪ {c ∈ zone bare | c.2 ≠ .matrix}
 
-instance {s : Set Obligatoriness} [DecidablePred (· ∈ s)] {d bare : Distribution} :
-    DecidablePred (· ∈ heads s d bare) :=
+instance {zone : Distribution → V2Grammar} [∀ d, DecidablePred (· ∈ zone d)]
+    {d bare : Distribution} : DecidablePred (· ∈ heads zone d bare) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∨ _ ∧ _))
 
 /-- Away from Imp⁰, Table 3.1 sets exactly the heads where verb second is required for Standard
 Norwegian, Standard English, Nordmøre, Belfast English and German. -/
 theorem table_3_1_eq_required :
-    heads {.obligatory} Norwegian.verbSecond (Norwegian.leftEdges.restrict false).verbSecond =
+    heads (·.required) Norwegian.verbSecond (Norwegian.leftEdges.restrict false).verbSecond =
         stdNorwegian ∧
-      heads {.obligatory} English.verbSecond = stdEnglish ∧
-      heads {.obligatory} Norwegian.Nordmore.verbSecond = nordmore ∧
-      heads {.obligatory} English.Belfast.verbSecond
+      heads (·.required) English.verbSecond = stdEnglish ∧
+      heads (·.required) Norwegian.Nordmore.verbSecond = nordmore ∧
+      heads (·.required) English.Belfast.verbSecond
         English.Belfast.verbSecondWithoutComplementizer = belfast \ {root .imperative} ∧
-      heads {.obligatory} German.verbSecond (German.leftEdges.restrict false).verbSecond =
+      heads (·.required) German.verbSecond (German.leftEdges.restrict false).verbSecond =
         german := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
 
@@ -134,8 +133,8 @@ theorem table_3_1_eq_required :
 where it is possible, since Westergaard counts verb second in some exclamatives as movement to
 Excl⁰. -/
 theorem danish_table_3_1 :
-    heads {.obligatory} Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond ⊆ danish ∧
-      heads {.excluded}ᶜ Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond =
+    heads (·.required) Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond ⊆ danish ∧
+      heads (·.possible) Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond =
         danish := by
   refine ⟨fun c ↦ ?_, Set.ext fun c ↦ ?_⟩ <;> revert c <;> decide
 

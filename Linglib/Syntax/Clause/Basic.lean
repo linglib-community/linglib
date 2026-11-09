@@ -124,54 +124,39 @@ variable (d : Distribution)
 /-- The distribution recording no cell. -/
 def empty : Distribution := fun _ _ ↦ none
 
-/-- The cells whose recorded value lies in `s`, the preimage of `s` under `d` read as a
-partial function on cells. -/
-def preimage (s : Set Obligatoriness) : SetRel SentenceType EmbeddingContext :=
-  {c | ∃ o ∈ s, o ∈ d c.1 c.2}
-
 /-- The cells the source records. -/
-def recorded : SetRel SentenceType EmbeddingContext := d.preimage .univ
+def recorded : SetRel SentenceType EmbeddingContext := {c | (d c.1 c.2).isSome}
 
-/-- The cells where the element or process is possible, recorded as anything but excluded. -/
-def possible : SetRel SentenceType EmbeddingContext := d.preimage {.excluded}ᶜ
+/-- The cells where the element or process is required, the zone `Obligatoriness.required` of
+`d` with an unrecorded cell read as excluded, which puts it in neither zone. -/
+def required : SetRel SentenceType EmbeddingContext :=
+  Obligatoriness.required fun c ↦ (d c.1 c.2).getD ⊥
 
-/-- The cells where the element or process is required. -/
-def required : SetRel SentenceType EmbeddingContext := d.preimage {.obligatory}
+/-- The cells where the element or process may occur, the zone `Obligatoriness.possible`. -/
+def possible : SetRel SentenceType EmbeddingContext :=
+  Obligatoriness.possible fun c ↦ (d c.1 c.2).getD ⊥
 
-variable {d} {s t : Set Obligatoriness} {c : SentenceType × EmbeddingContext}
-
-@[simp]
-theorem mem_preimage : c ∈ d.preimage s ↔ ∃ o ∈ s, o ∈ d c.1 c.2 := .rfl
+variable {d} {c : SentenceType × EmbeddingContext}
 
 @[simp]
 theorem mem_recorded : c ∈ d.recorded ↔ d c.1 c.2 ≠ none := by
-  simp [recorded, Option.ne_none_iff_exists']
-
-@[simp]
-theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c.1 c.2, o ≠ .excluded := by
-  simp [possible, and_comm]
+  simp [recorded, Option.isSome_iff_ne_none]
 
 @[simp]
 theorem mem_required : c ∈ d.required ↔ d c.1 c.2 = some .obligatory := by
-  simp [required]
+  simp only [required, Obligatoriness.mem_required]; cases d c.1 c.2 <;> simp
 
-@[gcongr]
-theorem preimage_mono (h : s ⊆ t) : d.preimage s ⊆ d.preimage t :=
-  fun _ ⟨o, hs, ho⟩ ↦ ⟨o, h hs, ho⟩
+@[simp]
+theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c.1 c.2, o ≠ .excluded := by
+  simp only [possible, Obligatoriness.mem_possible]; cases d c.1 c.2 <;> simp
 
-theorem preimage_subset_recorded (s : Set Obligatoriness) : d.preimage s ⊆ d.recorded :=
-  preimage_mono (Set.subset_univ s)
+instance : DecidablePred (· ∈ d.recorded) := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-theorem required_subset_possible : d.required ⊆ d.possible := preimage_mono (by simp)
+instance : DecidablePred (· ∈ d.required) :=
+  inferInstanceAs (DecidablePred (· ∈ Obligatoriness.required _))
 
-instance [DecidablePred (· ∈ s)] : DecidablePred (· ∈ d.preimage s) :=
-  fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
-
-instance : DecidablePred (· ∈ d.recorded) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
-
-instance : DecidablePred (· ∈ d.possible) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
-
-instance : DecidablePred (· ∈ d.required) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
+instance : DecidablePred (· ∈ d.possible) :=
+  inferInstanceAs (DecidablePred (· ∈ Obligatoriness.possible _))
 
 end Distribution
 
