@@ -1,32 +1,36 @@
 module
 
 public import Studies.Kamp1975
-public import Studies.Sassoon2013
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Aggregation.Arrow
 public import Linglib.Semantics.Aggregation.Rules
+public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # D'Ambrosio and Hedden (2024): Multidimensional Adjectives
 
 A context admits a set of aggregation rules, each sending a profile of dimensional values to an
-ordering of objects, and a sentence is determinately true, determinately false or neither as every,
-no or only some admissible rule makes it true. Where two admissible rules sort a pair oppositely
-against the standard, [the delineation comparative leaves the pair incomparable while this one is
-determinately complete and indeterminate](##Context.incompRel_delineation); over the positive
-weightings of the dimensions, [a comparison is indeterminate exactly where the Pareto rule is
-incomplete](##supervaluationOn_utilitarian_eq_undefined_iff). Arrow's conditions [admit no
-rule](##Context.incoherent_of_arrovian), while without weak-ordering outputs [majority rule and the
-Pareto rule both qualify](##Context.vague_of_ordinal) and with cardinal unit comparability [every
-positive weighting does](##Context.vague_of_arrovian_cardinalUnit), so the comparative is vague.
+ordering of objects, and a sentence is determinately true, determinately false or neither as all,
+none or only some of them make it true. Where two admissible rules sort a pair oppositely against
+the standard, [the delineation comparative leaves the pair incomparable while this one is
+determinately complete and indeterminate](##incompRel_delineation); over the positive weightings,
+[a comparison is indeterminate exactly where the Pareto rule is
+incomplete](##supervaluationOn_utilitarian_eq_undefined_iff). Arrow's conditions admit no rule
+(`Aggregation.arrow`), while without weak-ordering outputs [majority rule and the Pareto rule both
+qualify](##nontrivial_ordinal_weakPareto_independent_nonDictatorial) and with cardinal unit
+comparability [every positive weighting does](##nontrivial_arrovian_cardinalUnit), so the
+comparative is vague.
 
 ## Implementation notes
 
 * The verdict on a sentence is `Trivalent.supervaluationOn` over the admissible rules; the paper
-  takes this vocabulary without identifying truth with determinate truth.
+  takes this vocabulary without identifying truth with determinate truth. Rules form a complete
+  lattice, in which *determinately at least as F* is the infimum of the admissible rules.
 * The delineation comparative takes the admissible rules, with the standard fixed, as its
   precisifications, so it is `Kamp1975.kampPreorder`.
+* Sassoon's binding of dimensions is a quantifier over them, *every* dimension for *healthy* and
+  *some* for *sick*; *intelligent* counts the dimensions whose thresholds are met.
 * `Acyclic` is the paper's three-term condition, not Sen's acyclicity, which forbids strict cycles
   of every length; the Condorcet cycle violates both.
 
@@ -36,6 +40,9 @@ positive weighting does](##Context.vague_of_arrovian_cardinalUnit), so the compa
   under cardinal unit comparability, but zero weights fail weak Pareto
   (`Aggregation.not_weakPareto_utilitarian_zero`) and one positive weight makes a dictator
   (`Aggregation.isDictator_utilitarian_single`).
+* Footnote 24 glosses Sen's Pareto extension rule (`Aggregation.paretoExtension`) as ranking `x` at
+  least as high as `y` when `x` is F-er on some dimension, which no object is than itself, though
+  the footnote calls the rule's outputs reflexive.
 * The quantificational comparative cited to Sassoon's 2013 book is on p. 368 of
   [sassoon-2013], the paper's Sassoon 2013b.
 
@@ -60,61 +67,44 @@ positive weighting does](##Context.vague_of_arrovian_cardinalUnit), so the compa
 
 namespace DAmbrosioHedden2024
 
-open Aggregation Finset Trivalent
+open Aggregation Finset Quantifier Trivalent
 
 variable {ι O K : Type*}
 
-/-! ### Contexts -/
+/-! ### Determinacy -/
 
-/-- A context supplies a multidimensional adjective with its admissible aggregation rules and a
-standard object. Relative to an admissible rule `a` and a profile `v`, *x is at least as F as y* is
-`a v x y`, *x is F-er than y* is `AsymmRel (a v) x y`, *x and y are equally F* is
-`AntisymmRel (a v) x y`, and *x is F* is `a v x c.standard`. A sentence true relative to `a`
-exactly when `P a` has the verdict `supervaluationOn c.adm P`. -/
-structure Context (ι O K : Type*) where
-  /-- The aggregation rules the context does not rule out. -/
-  adm : Set (Rule ι O K)
-  /-- The object that sets the standard for the positive form. -/
-  standard : O
+section Determinacy
 
-namespace Context
+variable {A : Set (Rule ι O K)} {v : Profile ι O K} {x y : O}
 
-variable (c : Context ι O K)
+-- p. 260: determinately at least as F is the infimum of the admissible rules
+theorem supervaluationOn_eq_true_iff_sInf :
+    supervaluationOn A (· v x y) = .true ↔ sInf A v x y := by
+  simp [supervaluationOn_eq_true_iff, sInf_apply, iInf_apply]
 
-/-- An adjective is incoherent when no rule is admissible. -/
-def Incoherent : Prop := c.adm = ∅
+theorem supervaluationOn_eq_false_iff_sSup :
+    supervaluationOn A (· v x y) = .false ↔ A.Nonempty ∧ ¬ sSup A v x y := by
+  simp [supervaluationOn_eq_false_iff, sSup_apply, iSup_apply]
 
-/-- The comparative is sharp when exactly one rule is admissible. -/
-def Sharp : Prop := ∃ a, c.adm = {a}
-
-/-- The comparative is vague when more than one rule is admissible. -/
-def Vague : Prop := c.adm.Nontrivial
-
-variable {c}
-
--- §4, p. 263
-theorem incoherent_or_sharp_or_vague : c.Incoherent ∨ c.Sharp ∨ c.Vague :=
-  (Set.subsingleton_or_nontrivial c.adm).elim
-    (fun h ↦ h.eq_empty_or_singleton.imp id Or.inl) (fun h ↦ Or.inr (Or.inr h))
+end Determinacy
 
 /-! ### The delineation comparative -/
 
-/-- The delineation comparative of §2.1, with the admissible rules as precisifications and the
-standard fixed, makes `x` at least as F as `y` iff every admissible rule that makes `y` F makes
-`x` F. -/
-abbrev delineation (c : Context ι O K) (v : Profile ι O K) : Preorder O :=
-  Kamp1975.kampPreorder (fun (a : Rule ι O K) x ↦ a v x c.standard) c.adm
+/-- The delineation comparative of §2.1 takes the admissible rules `A` as precisifications with the
+standard `d` fixed, so that `x` is at least as F as `y` iff every admissible rule that makes `y` F,
+ranking it at least as high as `d`, makes `x` F. -/
+abbrev delineation (A : Set (Rule ι O K)) (d : O) (v : Profile ι O K) : Preorder O :=
+  Kamp1975.kampPreorder (fun (a : Rule ι O K) x ↦ a v x d) A
 
 /-- Where two admissible rules with weak-ordering outputs sort `x` and `y` oppositely against the
 standard, the delineation comparative leaves them incomparable, while it is determinately true that
 one is at least as F as the other and indeterminate which (p. 256). -/
-theorem incompRel_delineation {v : Profile ι O K} {x y : O} {a b : Rule ι O K}
-    (hW : ∀ a ∈ c.adm, WeakOrderValued a) (ha : a ∈ c.adm) (hb : b ∈ c.adm)
-    (hax : a v x c.standard) (hay : ¬ a v y c.standard) (hby : b v y c.standard)
-    (hbx : ¬ b v x c.standard) :
-    IncompRel (c.delineation v).le x y ∧
-      supervaluationOn c.adm (fun a ↦ a v x y ∨ a v y x) = .true ∧
-      supervaluationOn c.adm (fun a ↦ a v x y) = .undefined := by
+theorem incompRel_delineation {A : Set (Rule ι O K)} {d : O} {v : Profile ι O K} {x y : O}
+    {a b : Rule ι O K} (hW : ∀ a ∈ A, WeakOrderValued a) (ha : a ∈ A) (hb : b ∈ A)
+    (hax : a v x d) (hay : ¬ a v y d) (hby : b v y d) (hbx : ¬ b v x d) :
+    IncompRel (delineation A d v).le x y ∧
+      supervaluationOn A (fun a ↦ a v x y ∨ a v y x) = .true ∧
+      supervaluationOn A (· v x y) = .undefined := by
   refine ⟨⟨fun h ↦ hbx (h b hb hby), fun h ↦ hay (h a ha hax)⟩,
     supervaluationOn_eq_true_iff.2 fun a ha ↦ ((hW a ha).complete v).total x y,
     supervaluationOn_eq_undefined_iff.2 ⟨⟨a, ha, ?_⟩, b, hb, fun h ↦ ?_⟩⟩
@@ -122,8 +112,6 @@ theorem incompRel_delineation {v : Profile ι O K} {x y : O} {a b : Rule ι O K}
     exact (((hW a ha).complete v).total x y).resolve_right fun h ↦ hay (_root_.trans h hax)
   · have := (hW b hb).transitive v
     exact hbx (_root_.trans h hby)
-
-end Context
 
 /-! ### The sorites on Suzy's health -/
 
@@ -152,12 +140,12 @@ private theorem sum_health [AddCommMonoid K] (f : Health → K) :
   rw [show (univ : Finset Health) = {.musculoskeletal, .cardiovascular} from by decide,
     sum_pair (by decide)]
 
-variable {c : Context Health Patient K} {w w' : Health → K} {mS mB cB t : K}
+variable {A : Set (Rule Health Patient K)} {w w' : Health → K} {mS mB cB t : K}
 
 -- p. 257: the first Suzy is not at least as healthy as Bill
-theorem supervaluationOn_health_eq_false [Preorder K] (hne : c.adm.Nonempty)
-    (hP : ∀ a ∈ c.adm, WeakPareto a) (hm : mS < mB) (ht : t < cB) :
-    supervaluationOn c.adm (fun a ↦ a (health mS mB cB t) .suzy .bill) = .false :=
+theorem supervaluationOn_health_eq_false [Preorder K] (hne : A.Nonempty)
+    (hP : ∀ a ∈ A, WeakPareto a) (hm : mS < mB) (ht : t < cB) :
+    supervaluationOn A (· (health mS mB cB t) .suzy .bill) = .false :=
   supervaluationOn_eq_false_iff.2 ⟨hne, fun a ha ↦
     (hP a ha _ .bill .suzy fun i ↦ by cases i <;> [exact hm; exact ht]).2⟩
 
@@ -165,68 +153,49 @@ section Sorites
 
 variable [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
+/-- The cardiovascular health at which Suzy draws level with Bill under the weighting `w`. -/
+def cutoff (w : Health → K) (mS mB cB : K) : K :=
+  cB + w .musculoskeletal / w .cardiovascular * (mB - mS)
+
 theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
-    utilitarian w (health mS mB cB t) .suzy .bill ↔
-      cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t := by
-  rw [← mul_le_mul_iff_of_pos_right hw, add_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hw.ne']
+    utilitarian w (health mS mB cB t) .suzy .bill ↔ cutoff w mS mB cB ≤ t := by
+  rw [cutoff, ← mul_le_mul_iff_of_pos_right hw, add_mul, div_mul_eq_mul_div,
+    div_mul_cancel₀ _ hw.ne']
   simp only [utilitarian_apply, dotProduct, sum_health, health]
   constructor <;> intro h <;> linarith
 
 -- p. 257: the Suzys between two weightings' cut-offs are borderline
-theorem supervaluationOn_health_eq_undefined (hw : utilitarian w ∈ c.adm)
-    (hw' : utilitarian w' ∈ c.adm) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
-    (ht : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t)
-    (ht' : t < cB + w' .musculoskeletal / w' .cardiovascular * (mB - mS)) :
-    supervaluationOn c.adm (fun a ↦ a (health mS mB cB t) .suzy .bill) = .undefined :=
+theorem supervaluationOn_health_eq_undefined (hw : utilitarian w ∈ A)
+    (hw' : utilitarian w' ∈ A) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
+    (ht : cutoff w mS mB cB ≤ t) (ht' : t < cutoff w' mS mB cB) :
+    supervaluationOn A (· (health mS mB cB t) .suzy .bill) = .undefined :=
   supervaluationOn_eq_undefined_iff.2 ⟨⟨_, hw, (health_utilitarian_iff hc).2 ht⟩, _, hw',
     fun h ↦ ((health_utilitarian_iff hc').1 h).not_gt ht'⟩
-
--- p. 261, (a): vague and determinately complete and transitive
-theorem vague_and_weakOrderValued (hadm : c.adm = {utilitarian w, utilitarian w'})
-    (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
-    (h : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) <
-      cB + w' .musculoskeletal / w' .cardiovascular * (mB - mS)) :
-    c.Vague ∧ supervaluationOn c.adm WeakOrderValued = .true := by
-  refine ⟨nontrivial_of_supervaluationOn_eq_undefined
-    (supervaluationOn_health_eq_undefined (by simp [hadm]) (by simp [hadm]) hc hc' le_rfl h),
-    supervaluationOn_eq_true_iff.2 fun a ha ↦ ?_⟩
-  rw [hadm] at ha
-  rcases ha with rfl | rfl <;> exact utilitarian_weakOrderValued _
 
 end Sorites
 
 -- p. 261: it can be indeterminate whether the comparative is complete
-theorem supervaluationOn_complete_eq_undefined [Fintype ι] [Field K] [LinearOrder K]
-    [IsStrictOrderedRing K] [Nontrivial ι] [Nontrivial O] {c : Context ι O K} {w : ι → K}
-    (hu : utilitarian w ∈ c.adm) (hp : paretoRule ∈ c.adm) :
-    supervaluationOn c.adm Complete = .undefined :=
+theorem supervaluationOn_completeValued_eq_undefined [Fintype ι] [Field K] [LinearOrder K]
+    [IsStrictOrderedRing K] [Nontrivial ι] [Nontrivial O] {A : Set (Rule ι O K)} {w : ι → K}
+    (hu : utilitarian w ∈ A) (hp : paretoRule ∈ A) :
+    supervaluationOn A CompleteValued = .undefined :=
   supervaluationOn_eq_undefined_iff.2
-    ⟨⟨_, hu, (utilitarian_weakOrderValued w).complete⟩, _, hp, not_complete_paretoRule⟩
-
-/-! ### Arrow's conditions and incoherence -/
-
-/-- An adjective whose admissible rules all meet Arrow's conditions, with three or more objects in
-its domain, is incoherent (p. 264). -/
-theorem Context.incoherent_of_arrovian [Fintype ι] [Fintype O] [Field K] [LinearOrder K]
-    [IsStrictOrderedRing K] (h₃ : 3 ≤ Fintype.card O) (c : Context ι O K)
-    (h : ∀ a ∈ c.adm, Arrovian ordinal a) : c.Incoherent :=
-  Set.eq_empty_of_forall_notMem fun a ha ↦ arrow h₃ a (h a ha)
+    ⟨⟨_, hu, (utilitarian_weakOrderValued w).complete⟩, _, hp, not_completeValued_paretoRule⟩
 
 /-! ### Giving up weak-ordering outputs -/
 
 /-- Without weak-ordering outputs, Arrow's other conditions admit majority rule, complete but not
-transitive, and the Pareto rule, transitive but not complete, so an adjective admitting every rule
-that meets them is vague (p. 265). -/
-theorem Context.vague_of_ordinal [Fintype ι] [LinearOrder K] [Nontrivial ι] [Nontrivial O]
-    [Nontrivial K] (c : Context ι O K)
-    (h : ∀ a, Invariant ordinal a → WeakPareto a → Independent a → NonDictatorial a → a ∈ c.adm) :
-    c.Vague :=
+transitive, and the Pareto rule, transitive but not complete, so an adjective they govern is vague
+(p. 265). -/
+theorem nontrivial_ordinal_weakPareto_independent_nonDictatorial [Fintype ι] [LinearOrder K]
+    [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
+    Set.Nontrivial
+      {a : Rule ι O K | Invariant ordinal a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a} :=
   Set.nontrivial_of_mem_mem_ne
-    (h _ majority_ordinalInvariant majority_weakPareto majority_independent
-      majority_nonDictatorial)
-    (h _ paretoRule_ordinalInvariant paretoRule_strongPareto.weakPareto paretoRule_independent
-      paretoRule_nonDictatorial)
-    fun e ↦ not_complete_paretoRule (e ▸ majority_complete)
+    ⟨majority_ordinalInvariant, majority_weakPareto, majority_independent, majority_nonDictatorial⟩
+    ⟨paretoRule_ordinalInvariant, paretoRule_strongPareto.weakPareto, paretoRule_independent,
+      paretoRule_nonDictatorial⟩
+    fun e ↦ not_completeValued_paretoRule (e ▸ majority_completeValued)
 
 /-- A relation is acyclic, as the paper states it, when two strict steps yield a weak step. -/
 def Acyclic (r : O → O → Prop) : Prop := ∀ x y z, AsymmRel r x y → AsymmRel r y z → r x z
@@ -250,67 +219,59 @@ section Weighted
 variable [Fintype ι] [Field K] [LinearOrder K] [IsStrictOrderedRing K] {v : Profile ι O K}
   {x y : O}
 
-theorem supervaluationOn_utilitarian_eq_true_iff :
-    supervaluationOn (utilitarian '' {w | ∀ i, 0 < w i}) (fun a ↦ a v x y) = .true ↔
-      paretoRule v x y := by
-  rw [supervaluationOn_image, supervaluationOn_eq_true_iff]
-  exact paretoRule_iff_forall_utilitarian.symm
-
-theorem supervaluationOn_utilitarian_eq_false_iff :
-    supervaluationOn (utilitarian '' {w | ∀ i, 0 < w i}) (fun a ↦ a v x y) = .false ↔
-      AsymmRel (paretoRule v) y x := by
-  rw [supervaluationOn_image, supervaluationOn_eq_false_iff,
-    asymmRel_paretoRule_iff_forall_utilitarian]
-  simp only [AsymmRel, Function.comp_apply, Set.mem_ofPred_eq, utilitarian_apply, not_le]
-  exact ⟨fun h c hc ↦ ⟨(h.2 c hc).le, h.2 c hc⟩,
-    fun h ↦ ⟨⟨1, fun _ ↦ one_pos⟩, fun c hc ↦ (h c hc).2⟩⟩
-
 /-- Over the positive weightings of the dimensions, it is indeterminate whether `x` is at least as
 F as `y` exactly when the Pareto rule leaves them incomparable (p. 256, p. 268). -/
 theorem supervaluationOn_utilitarian_eq_undefined_iff :
-    supervaluationOn (utilitarian '' {w | ∀ i, 0 < w i}) (fun a ↦ a v x y) = .undefined ↔
+    supervaluationOn (utilitarian '' {c | ∀ i, 0 < c i}) (· v x y) = .undefined ↔
       IncompRel (paretoRule v) x y := by
-  have key (t : Trivalent) : t = .undefined ↔ t ≠ .true ∧ t ≠ .false := by cases t <;> simp
-  rw [key, Ne, Ne, supervaluationOn_utilitarian_eq_true_iff,
-    supervaluationOn_utilitarian_eq_false_iff]
-  exact and_congr_right fun h ↦ not_congr (and_iff_left h)
+  rw [eq_undefined_iff, Ne, Ne, supervaluationOn_eq_true_iff_sInf,
+    supervaluationOn_eq_false_iff_sSup, sInf_image, sSup_image]
+  simp only [Set.mem_ofPred_eq]
+  rw [← paretoRule_eq_iInf_utilitarian, ← paretoExtension_eq_iSup_utilitarian]
+  simp only [Set.image_nonempty, show {c : ι → K | ∀ i, 0 < c i}.Nonempty from ⟨1, fun _ ↦ one_pos⟩,
+    true_and, not_not, paretoExtension_apply, paretoRule_apply]
+  exact and_congr_right fun h ↦ not_congr (lt_iff_le_not_ge.trans (and_iff_left h))
 
 /-- With cardinal unit comparability in place of ordinal non-comparability, Arrow's conditions
-admit every positively weighted utilitarian rule, so an adjective admitting every rule that meets
-them is vague (p. 268). -/
-theorem Context.vague_of_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial O] (c : Context ι O K)
-    (h : ∀ a, Arrovian cardinalUnit a → a ∈ c.adm) : c.Vague := by
+admit every positively weighted utilitarian rule, so an adjective they govern is vague
+(p. 268). -/
+theorem nontrivial_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial O] :
+    {a : Rule ι O K | Arrovian cardinalUnit a}.Nontrivial := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne O
   obtain ⟨v, -, hv⟩ := exists_incompRel_paretoRule (K := K) hxy (Classical.arbitrary ι)
   refine (nontrivial_of_supervaluationOn_eq_undefined
     (supervaluationOn_utilitarian_eq_undefined_iff.2 hv)).mono ?_
   rintro _ ⟨w, hw, rfl⟩
-  exact h _ (utilitarian_arrovian_cardinalUnit w hw)
+  exact utilitarian_arrovian_cardinalUnit w hw
 
 end Weighted
 
 /-! ### Sassoon's comparatives -/
 
-section Sassoon
+/-- Sassoon's comparative for an adjective that binds its dimensions by the quantifier `Q`: `x` is
+at least as F as `y` when `Q` holds of the dimensions on which `x` ranks at least as high. -/
+def sassoon [LE K] (Q : Quantifier ι) : Rule ι O K := ofRel fun p q ↦ Q {i | q i ≤ p i}
 
-variable [Fintype ι] [LinearOrder K] (θ : ι → K)
+/-- Sassoon's comparative for an adjective that counts its dimensions ranks objects by the number
+of dimensions on which they meet the thresholds `θ`. -/
+def sassoonCounting [Fintype ι] [LE K] [DecidableLE K] (θ : ι → K) : Rule ι O K :=
+  ofRel ((fun p ↦ #{i | θ i ≤ p i}) ⁻¹'o (· ≥ ·))
 
-/-- The comparative the paper attributes to Sassoon for each binding type is universal
-quantification over the dimensions for conjunctive adjectives (*healthy*), existential for
-disjunctive ones (*sick*), and for mixed ones (*intelligent*) counting the dimensions on which
-the thresholds `θ` are met. -/
-def sassoon : Sassoon2013.DimensionBindingType → Rule ι O K
-  | .conjunctive => fun v x y ↦ ∀ i, v y i ≤ v x i
-  | .disjunctive => fun v x y ↦ ∃ i, v y i ≤ v x i
-  | .mixed => fun v x y ↦ #{i | θ i ≤ v y i} ≤ #{i | θ i ≤ v x i}
+-- p. 270: binding every dimension makes the comparative the Pareto rule
+theorem sassoon_every [Preorder K] : (sassoon (Det.every .univ) : Rule ι O K) = paretoRule :=
+  funext fun _ ↦ funext₂ fun _ _ ↦ by
+    simp [sassoon, paretoRule, Det.every, Pi.le_def, Set.eq_univ_iff_forall]
 
--- p. 270: the conjunctive comparative is the Pareto rule, so incomplete
-theorem not_complete_sassoon_conjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
-    ¬ Complete (sassoon θ .conjunctive : Rule ι O K) :=
-  not_complete_paretoRule
+section Linear
 
-theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
-    ¬ StrongPareto (sassoon θ .disjunctive : Rule ι O K) := by
+variable [LinearOrder K]
+
+theorem not_completeValued_sassoon_every [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
+    ¬ CompleteValued (sassoon (Det.every .univ) : Rule ι O K) :=
+  sassoon_every (ι := ι) (O := O) (K := K) ▸ not_completeValued_paretoRule
+
+theorem not_strongPareto_sassoon_some [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
+    ¬ StrongPareto (sassoon (Det.some .univ) : Rule ι O K) := by
   intro h
   obtain ⟨i, j, hij⟩ := exists_pair_ne ι
   obtain ⟨x, y, hxy⟩ := exists_pair_ne O
@@ -321,25 +282,19 @@ theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Non
     simp only [v, hxy, false_and, ite_false]
     split_ifs <;> simp [hk.le]
   have hlt : ∃ l, v x l < v y l := ⟨j, by simp [v, hxy, hij.symm, hk]⟩
-  have hxy' : sassoon θ .disjunctive v x y := ⟨i, by simp [v, hxy]⟩
+  have hxy' : sassoon (Det.some .univ) v x y := ⟨i, trivial, by simp [v, hxy]⟩
   exact ((h v y x).2 (Pi.lt_def.2 ⟨hle, hlt⟩)).2 hxy'
 
-theorem not_weakPareto_sassoon_mixed [Nonempty ι] [Nontrivial O] [NoMaxOrder K] :
-    ¬ WeakPareto (sassoon θ .mixed : Rule ι O K) := by
-  intro h
-  obtain ⟨x, y, hxy⟩ := exists_pair_ne O
+theorem not_weakPareto_sassoonCounting [Fintype ι] [Nonempty ι] [Nontrivial O] [NoMaxOrder K]
+    (θ : ι → K) : ¬ WeakPareto (sassoonCounting θ : Rule ι O K) := by
+  rw [sassoonCounting, weakPareto_ofRel_iff]
   obtain ⟨k, hk⟩ := exists_gt (univ.sup' univ_nonempty θ)
   obtain ⟨k', hk'⟩ := exists_gt k
-  classical
-  let v : Profile ι O K := fun z _ ↦ if z = x then k' else k
-  have hθ : ∀ z i, θ i ≤ v z i := fun z i ↦ by
-    have := (le_sup' θ (mem_univ i)).trans hk.le
-    simp only [v]
-    split_ifs <;> [exact this.trans hk'.le; exact this]
-  have := h v x y fun i ↦ by simp [v, hxy.symm, hk']
-  simp only [AsymmRel, sassoon, filter_true_of_mem (fun i _ ↦ hθ _ i), le_refl, not_true,
-    and_false] at this
+  have hθ (i : ι) : θ i ≤ k := (le_sup' θ (mem_univ i)).trans hk.le
+  intro h
+  have := (h (fun _ ↦ k') (fun _ ↦ k) fun _ ↦ hk').2
+  simp [Order.Preimage, hθ, fun i ↦ (hθ i).trans hk'.le] at this
 
-end Sassoon
+end Linear
 
 end DAmbrosioHedden2024

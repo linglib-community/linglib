@@ -24,22 +24,24 @@ vectors applies such maps separately to each individual (non-comparability), one
 individual (full comparability), or affine maps with a common unit (unit comparability). Arrow's
 conditions, the strong Pareto condition, Pareto indifference and anonymity are predicates on rules.
 
-A rule ranks vectors when each output is the preimage, under the profile, of one relation on
-vectors of values. Every classical rule does, and on three or more objects a rule with preorder
-outputs does exactly when it is independent and Pareto indifferent.
+A rule ranks vectors, `ofRel R`, when each output is the preimage, under the profile, of one
+relation `R` on vectors of values. Every classical rule does, and on three or more objects a rule
+with preorder outputs does exactly when it is independent and Pareto indifferent. `ofRel` carries
+infima and suprema of relations on vectors to those of rules.
 
 ## Main definitions
 
 * `Aggregation.Rule`: a relation on the objects for each profile of values.
 * `Aggregation.Invariant`: invariance under a class of transformation vectors.
 * `Aggregation.ParetoIndifferent`: objects with the same vector of values are indifferent.
+* `Aggregation.ofRel`: the rule that ranks objects by a relation on their vectors of values.
 * `Aggregation.Arrovian`: Arrow's conditions, relative to a class of transformation vectors.
 
 ## Main statements
 
 * `Aggregation.paretoIndifferent_iff_forall_exists_eq_preimage`: Pareto indifference as ranking
   vectors.
-* `Aggregation.independent_and_paretoIndifferent_iff_exists_preimage`: welfarism, one ranking of
+* `Aggregation.independent_and_paretoIndifferent_iff_exists_ofRel`: welfarism, one ranking of
   vectors for every profile.
 
 ## Implementation notes
@@ -203,18 +205,18 @@ vectors of that pair. -/
 def Independent : Prop := ∀ v w x y, v x = w x → v y = w y → (a v x y ↔ a w x y)
 
 /-- Every output is transitive. -/
-def Transitive : Prop := ∀ v, IsTrans α (a v)
+def TransitiveValued : Prop := ∀ v, IsTrans α (a v)
 
 /-- Every output is complete. -/
-def Complete : Prop := ∀ v, Std.Total (a v)
+def CompleteValued : Prop := ∀ v, Std.Total (a v)
 
 /-- Every output is a weak ordering, a complete preorder. -/
 @[mk_iff]
 structure WeakOrderValued : Prop where
   /-- Every output is transitive. -/
-  transitive : Transitive a
+  transitive : TransitiveValued a
   /-- Every output is complete. -/
-  complete : Complete a
+  complete : CompleteValued a
 
 /-- Every output is a quasi-ordering, a preorder. -/
 def QuasiOrderValued : Prop := ∀ v, IsPreorder α (a v)
@@ -271,40 +273,64 @@ structure Arrovian [Preorder K] (T : Set (ι → K → K)) (a : Rule ι α K) : 
 
 /-! ### Rules that rank vectors -/
 
-section Preimage
+/-- The rule that ranks objects by a relation `R` on their vectors of values. -/
+def ofRel (R : (ι → K) → (ι → K) → Prop) : Rule ι α K := fun v ↦ v ⁻¹'o R
 
-variable {R : (ι → K) → (ι → K) → Prop}
+section OfRel
 
-/-- A rule that ranks objects by a relation on their vectors of values is independent. -/
-theorem independent_preimage (R : (ι → K) → (ι → K) → Prop) :
-    Independent (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
-  fun _ _ _ _ hx hy ↦ by simp only [Order.Preimage, hx, hy]
+variable {R : (ι → K) → (ι → K) → Prop} {v : Profile ι α K} {x y : α}
 
-theorem paretoIndifferent_preimage (hR : ∀ p, R p p) :
-    ParetoIndifferent (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+@[simp]
+theorem ofRel_apply : ofRel R v x y ↔ R (v x) (v y) :=
+  Iff.rfl
+
+instance [DecidableRel R] (v : Profile ι α K) : DecidableRel (ofRel R v) :=
+  Order.Preimage.decidable v R
+
+theorem ofRel_iInf {κ : Sort*} (R : κ → (ι → K) → (ι → K) → Prop) :
+    (ofRel (⨅ j, R j) : Rule ι α K) = ⨅ j, ofRel (R j) :=
+  funext fun _ ↦ funext₂ fun _ _ ↦ by simp [iInf_apply]
+
+theorem ofRel_iSup {κ : Sort*} (R : κ → (ι → K) → (ι → K) → Prop) :
+    (ofRel (⨆ j, R j) : Rule ι α K) = ⨆ j, ofRel (R j) :=
+  funext fun _ ↦ funext₂ fun _ _ ↦ by simp [iSup_apply]
+
+theorem independent_ofRel (R : (ι → K) → (ι → K) → Prop) : Independent (ofRel R : Rule ι α K) :=
+  fun _ _ _ _ hx hy ↦ by simp only [ofRel_apply, hx, hy]
+
+theorem paretoIndifferent_ofRel (hR : ∀ p, R p p) : ParetoIndifferent (ofRel R : Rule ι α K) :=
   fun v x y h ↦ ⟨show R (v x) (v y) from h ▸ hR _, show R (v y) (v x) from h ▸ hR _⟩
 
-theorem quasiOrderValued_preimage [IsPreorder (ι → K) R] :
-    QuasiOrderValued (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
-  fun _ ↦ inferInstance
+theorem quasiOrderValued_ofRel [IsPreorder (ι → K) R] : QuasiOrderValued (ofRel R : Rule ι α K) :=
+  fun v ↦ inferInstanceAs (IsPreorder α (v ⁻¹'o R))
 
-theorem weakOrderValued_preimage [IsTrans (ι → K) R] [Std.Total R] :
-    WeakOrderValued (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
-  ⟨fun _ ↦ inferInstance, fun _ ↦ inferInstance⟩
+theorem weakOrderValued_ofRel [IsTrans (ι → K) R] [Std.Total R] :
+    WeakOrderValued (ofRel R : Rule ι α K) :=
+  ⟨fun v ↦ inferInstanceAs (IsTrans α (v ⁻¹'o R)), fun v ↦ inferInstanceAs (Std.Total (v ⁻¹'o R))⟩
 
 /-- A rule that ranks vectors is anonymous when permuting the coordinates leaves the ranking of
 vectors unchanged. -/
-theorem anonymous_preimage (h : ∀ σ : Equiv.Perm ι, (· ∘ σ) ⁻¹'o R = R) :
-    Anonymous (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+theorem anonymous_ofRel (h : ∀ σ : Equiv.Perm ι, (· ∘ σ) ⁻¹'o R = R) :
+    Anonymous (ofRel R : Rule ι α K) :=
   fun σ v ↦ congrArg (v ⁻¹'o ·) (h σ)
 
 /-- A rule that ranks vectors is invariant under a class of transformation vectors when each
 of them, applied coordinatewise, leaves the ranking of vectors unchanged. -/
-theorem invariant_preimage {T : Set (ι → K → K)} (h : ∀ f ∈ T, Pi.map f ⁻¹'o R = R) :
-    Invariant T (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+theorem invariant_ofRel {T : Set (ι → K → K)} (h : ∀ f ∈ T, Pi.map f ⁻¹'o R = R) :
+    Invariant T (ofRel R : Rule ι α K) :=
   fun f hf v ↦ congrArg (v ⁻¹'o ·) (h f hf)
 
-end Preimage
+/-- On two or more objects, a rule that ranks vectors satisfies weak Pareto exactly when its
+ranking of vectors puts a vector strictly above every vector it dominates in each coordinate. -/
+theorem weakPareto_ofRel_iff [Preorder K] [Nontrivial α] :
+    WeakPareto (ofRel R : Rule ι α K) ↔ ∀ p q, StrongLT q p → R p q ∧ ¬ R q p := by
+  refine ⟨fun h p q hpq ↦ ?_, fun h v x y hxy ↦ h _ _ hxy⟩
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  classical
+  have := h (fun z ↦ if z = x then p else q) x y (by simpa [hxy.symm] using hpq)
+  simpa [AsymmRel, hxy.symm] using this
+
+end OfRel
 
 /-! ### Welfarism -/
 
@@ -388,10 +414,9 @@ theorem iff_of_eq_of_ne (h₃ : 3 ≤ ENat.card α) {v w : Profile ι α K} {x y
 
 omit hI hP in
 /-- Welfarism: on three or more objects, a rule with preorder outputs is independent and Pareto
-indifferent exactly when one relation on vectors of values ranks the objects at every profile. -/
-theorem independent_and_paretoIndifferent_iff_exists_preimage (h₃ : 3 ≤ ENat.card α) :
-    Independent a ∧ ParetoIndifferent a ↔
-      ∃ R : (ι → K) → (ι → K) → Prop, ∀ v, a v = v ⁻¹'o R := by
+indifferent exactly when it ranks objects by one relation on their vectors of values. -/
+theorem independent_and_paretoIndifferent_iff_exists_ofRel (h₃ : 3 ≤ ENat.card α) :
+    Independent a ∧ ParetoIndifferent a ↔ ∃ R : (ι → K) → (ι → K) → Prop, a = ofRel R := by
   classical
   have : Nontrivial α := (ENat.one_lt_card_iff_nontrivial α).1 (lt_of_lt_of_le (by simp) h₃)
   obtain ⟨x₀, y₀, h₀⟩ := exists_pair_ne α
@@ -399,15 +424,15 @@ theorem independent_and_paretoIndifferent_iff_exists_preimage (h₃ : 3 ≤ ENat
   · let pr (p q : ι → K) : Profile ι α K := update (fun _ ↦ q) x₀ p
     have hpr₁ (p q) : pr p q x₀ = p := update_self _ _ _
     have hpr₂ (p q) : pr p q y₀ = q := update_of_ne h₀.symm _ _
-    refine ⟨fun p q ↦ a (pr p q) x₀ y₀, fun v ↦ funext₂ fun x y ↦ propext ?_⟩
+    refine ⟨fun p q ↦ a (pr p q) x₀ y₀, funext fun v ↦ funext₂ fun x y ↦ propext ?_⟩
     rcases eq_or_ne x y with rfl | hxy
     · have := hQ v
       exact iff_of_true (refl_of (a v) x) (hP _ _ _ ((hpr₁ _ _).trans (hpr₂ _ _).symm)).1
     · exact iff_of_eq_of_ne hI hP hQ h₃ hxy h₀ (hpr₁ _ _).symm (hpr₂ _ _).symm
-  · obtain rfl : a = fun v ↦ v ⁻¹'o R := funext hR
-    refine ⟨independent_preimage R, paretoIndifferent_preimage fun p ↦ ?_⟩
+  · subst hR
+    refine ⟨independent_ofRel R, paretoIndifferent_ofRel fun p ↦ ?_⟩
     have := hQ fun _ ↦ p
-    exact refl_of ((fun _ : α ↦ p) ⁻¹'o R) x₀
+    exact refl_of (ofRel R (fun _ : α ↦ p)) x₀
 
 end Welfarism
 
