@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
-public import Linglib.Semantics.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Root.Kinds
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Again
