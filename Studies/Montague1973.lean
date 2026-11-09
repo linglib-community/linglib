@@ -357,7 +357,7 @@ variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (
 include h
 
 theorem direct_iff :
-    direct.realize M g i ↔ surfaceScope Det.some Det.every (starIV (M.const woman i))
+    direct.realize M g i ↔ iterate Det.some Det.every (starIV (M.const woman i))
       (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
   have := Nonempty.intro i
   obtain ⟨S, hS⟩ := h.tv_ext love nofun
@@ -367,8 +367,8 @@ theorem direct_iff :
       every_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
 theorem quantifiedIn_iff :
-    quantifiedIn.realize M g i ↔ inverseScope Det.some Det.every (starIV (M.const woman i))
-      (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
+    quantifiedIn.realize M g i ↔ iterate Det.every Det.some (starIV (M.const man i))
+      (starIV (M.const woman i)) (starTV (M.const love i)) := by
   have := Nonempty.intro i
   obtain ⟨S, hS⟩ := h.tv_ext love nofun
   simp only [quantifiedIn, realize, Function.update_self, ← hS]

@@ -218,7 +218,7 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
   cases σ with
   | fn a b =>
     simp only [functionalLeft?]
-    exact dif_neg fun h ↦ by cases h
+    exact dite_eq_right fun h ↦ by cases h
   | _ => rfl
 
 @[simp] theorem mode?_fn_right (σ τ : Ty) : σ.mode? (σ ⇒ τ) = some ⟨τ, functionalRight⟩ := by
