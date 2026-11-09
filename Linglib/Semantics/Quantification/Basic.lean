@@ -234,6 +234,9 @@ theorem compl_some : (Det.some : Det α)ᶜ = no := by
 theorem dual_every : (every : Det α).dual = Det.some := by
   rw [dual, innerNeg_every, ← compl_some, compl_compl]
 
+theorem dual_some : (Det.some : Det α).dual = every := by
+  rw [← dual_every, dual_dual]
+
 /-! ### Strength -/
 
 theorem positiveStrong_every : (every : Det α).PositiveStrong := fun _ ↦ subset_rfl

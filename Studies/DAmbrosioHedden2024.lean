@@ -1,6 +1,7 @@
 module
 
 public import Studies.Kamp1975
+public import Studies.Sassoon2013
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Aggregation.Arrow
 public import Linglib.Semantics.Aggregation.Rules
@@ -29,8 +30,11 @@ comparative is vague.
   lattice, in which *determinately at least as F* is the infimum of the admissible rules.
 * The delineation comparative takes the admissible rules, with the standard fixed, as its
   precisifications, so it is `Kamp1975.kampPreorder`.
-* Sassoon's binding of dimensions is a quantifier over them, *every* dimension for *healthy* and
-  *some* for *sick*; *intelligent* counts the dimensions whose thresholds are met.
+* Sassoon's comparatives bind the dimensions by the determiners of her binding types
+  (`Sassoon2013.DimensionBindingType.dets`). The paper restates her comparative, which she gives
+  for the strict *-er* (`Sassoon2013.comparative`), for *at least as*, and reads mixed adjectives
+  as counting dimensions, after Sassoon 2015, where her 2013 article lets context choose *every*
+  or *some*.
 * `Acyclic` is the paper's three-term condition, not Sen's acyclicity, which forbids strict cycles
   of every length; the Condorcet cycle violates both.
 
@@ -67,7 +71,7 @@ comparative is vague.
 
 namespace DAmbrosioHedden2024
 
-open Aggregation Finset Quantifier Trivalent
+open Aggregation Finset Quantifier Sassoon2013 Trivalent
 
 variable {ι O K : Type*}
 
@@ -266,12 +270,16 @@ section Linear
 
 variable [LinearOrder K]
 
-theorem not_completeValued_sassoon_every [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
-    ¬ CompleteValued (sassoon (Det.every .univ) : Rule ι O K) :=
-  sassoon_every (ι := ι) (O := O) (K := K) ▸ not_completeValued_paretoRule
+theorem not_completeValued_sassoon_of_mem_conjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K]
+    {d : Det ι} (hd : d ∈ DimensionBindingType.conjunctive.dets) :
+    ¬ CompleteValued (sassoon (d .univ) : Rule ι O K) := by
+  obtain rfl : d = Det.every := hd
+  exact sassoon_every (ι := ι) (O := O) (K := K) ▸ not_completeValued_paretoRule
 
-theorem not_strongPareto_sassoon_some [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
-    ¬ StrongPareto (sassoon (Det.some .univ) : Rule ι O K) := by
+theorem not_strongPareto_sassoon_of_mem_disjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K]
+    {d : Det ι} (hd : d ∈ DimensionBindingType.disjunctive.dets) :
+    ¬ StrongPareto (sassoon (d .univ) : Rule ι O K) := by
+  obtain rfl : d = Det.some := hd
   intro h
   obtain ⟨i, j, hij⟩ := exists_pair_ne ι
   obtain ⟨x, y, hxy⟩ := exists_pair_ne O
