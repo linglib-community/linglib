@@ -168,13 +168,13 @@ end Only
 
 /-- With a genuine ordering source, the antecedent of Kratzer's conditional necessity is not
 downward entailing (73). -/
-theorem not_antitone_conditionalNecessity :
+theorem not_antitone_humanNecessity_restrict :
     ¬ Antitone fun α : Set (Fin 2) ↦
-      {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {{0}}) α (· = 0) w} :=
+      {w | {0} ∈ humanNecessity (Background.restrict (fun _ ↦ ∅) α) (fun _ ↦ {{0}}) w} :=
   fun h ↦ by
     have := @h {1} .univ (Set.subset_univ _) 0
-    simp only [Restrictor.conditionalNecessity_iff_necessity_of_finite, necessity_iff, bestWorlds,
-      Preorder.mem_minimals_iff,
+    simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
+      bestWorlds, Preorder.mem_minimals_iff,
       Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,

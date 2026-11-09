@@ -106,18 +106,18 @@ def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : Background W :=
 reference time in every best world. -/
 def futureClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  necessity (modalBaseAt mb t) h (fun w' ↦ ∃ t', t ≤ t' ∧ p t' w') w
+  bestWorlds (modalBaseAt mb t) h w ⊆ {w' | ∃ t', t ≤ t' ∧ p t' w'}
 
 /-- The at-issue content of *č̓ɛ* and *must*, (87) and (96), is that the prejacent holds at the
 reference time in every best world. -/
 def necessityClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  necessity (modalBaseAt mb t) h (fun w' ↦ p t w') w
+  bestWorlds (modalBaseAt mb t) h w ⊆ {w' | p t w'}
 
 theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Background W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
     futureClaim mb h p t w :=
-  fun w' hw' ↦ ⟨t, le_rfl, hc w' hw'⟩
+  fun _ hw' ↦ ⟨t, le_rfl, hc hw'⟩
 
 /-! ### The evidence acquisition time -/
 

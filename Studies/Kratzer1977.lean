@@ -12,7 +12,7 @@ compatible with it, so she revises both to quantify over its consistent subsets:
 when every consistent subset extends to a consistent subset from which φ follows, and *can φ*
 when some consistent subset leaves φ compatible with all its consistent extensions. The revision
 is [necessity over the empty modal base with the premise set as ordering
-source](##mustInView_iff_humanNecessity). It [agrees with the first definitions on a consistent
+source](##mustInView_iff_mem_humanNecessity). It [agrees with the first definitions on a consistent
 premise set](##mustInView_iff_of_consistent) and, unlike them, [never makes a proposition and its
 negation both necessary](##canInView_of_mustInView). In a New Zealand whose judgments say
 that murder is a crime and that deer are, and are not, responsible for damage to young trees,
@@ -76,8 +76,8 @@ def CanInView (f : Background W) (φ : Set W) (i : W) : Prop :=
 /-- Definition 7 is necessity over the empty modal base with `f` as ordering source: a world
 stands for the premises it verifies, and a consistent subset for the worlds verifying it. This is
 the modal case of [lewis-1981]'s equivalence of premise and ordering semantics. -/
-theorem mustInView_iff_humanNecessity : MustInView f φ i ↔ humanNecessity ⊥ f (· ∈ φ) i := by
-  rw [humanNecessity, Filter.Eventually, Background.accessibleWorlds_bot, Filter.atBotOn_ofCriteria,
+theorem mustInView_iff_mem_humanNecessity : MustInView f φ i ↔ φ ∈ humanNecessity ⊥ f i := by
+  rw [humanNecessity, Background.accessibleWorlds_bot, Filter.atBotOn_ofCriteria,
     Filter.mem_atBotOn_satisfied_iff]
   simp [MustInView, consistentSubsets, Set.Nonempty, Set.subset_def, and_assoc]
 
@@ -88,32 +88,31 @@ theorem canInView_iff_not_mustInView_compl : CanInView f φ i ↔ ¬ MustInView 
 theorem mustInView_iff_not_canInView_compl : MustInView f φ i ↔ ¬ CanInView f φᶜ i := by
   rw [canInView_iff_not_mustInView_compl, compl_compl, not_not]
 
-theorem canInView_iff_humanPossibility : CanInView f φ i ↔ humanPossibility ⊥ f (· ∈ φ) i :=
-  canInView_iff_not_mustInView_compl.trans (not_congr mustInView_iff_humanNecessity)
+theorem canInView_iff_humanPossibility : CanInView f φ i ↔ humanPossibility ⊥ f i φ :=
+  canInView_iff_not_mustInView_compl.trans (not_congr mustInView_iff_mem_humanNecessity)
 
 /-- Whatever must be the case under Definition 7 can be under Definition 8, on every premise set:
 unlike Definitions 5 and 6, the revision never makes a proposition and its negation both
 necessary. -/
 theorem canInView_of_mustInView [Nonempty W] (h : MustInView f φ i) : CanInView f φ i := by
-  rw [mustInView_iff_humanNecessity] at h
-  rw [canInView_iff_not_mustInView_compl, mustInView_iff_humanNecessity]
-  have : (@Filter.atBotOn W W (premisePreorder (f i)) id
-      ((⊥ : Background W).accessibleWorlds i)).NeBot :=
-    letI := premisePreorder (f i)
-    Filter.atBotOn_neBot_iff.2 (by simp)
-  exact fun h' ↦ let ⟨_, hφ, hnφ⟩ := Filter.nonempty_of_mem (Filter.inter_mem h h'); hnφ hφ
+  rw [mustInView_iff_mem_humanNecessity] at h
+  rw [canInView_iff_not_mustInView_compl, mustInView_iff_mem_humanNecessity]
+  have : (humanNecessity ⊥ f i).NeBot :=
+    letI := premisePreorder (f i); Filter.atBotOn_neBot_iff.2 (by simp)
+  exact Filter.compl_notMem h
 
 -- On a consistent premise set Definition 7 is Definition 5, consequence from the premises
 theorem mustInView_iff_of_consistent (h : (⋂₀ f i).Nonempty) :
-    MustInView f φ i ↔ simpleNecessity f (· ∈ φ) i := by
-  rw [mustInView_iff_humanNecessity, humanNecessity_iff_simpleNecessity_sup, bot_sup_eq]
+    MustInView f φ i ↔ φ ∈ simpleNecessity f i := by
+  rw [mustInView_iff_mem_humanNecessity, humanNecessity_eq_simpleNecessity_sup, bot_sup_eq]
   rw [bot_sup_eq]
   exact h
 
 -- Definition 8 is Definition 6 on a consistent premise set
 theorem canInView_iff_of_consistent (h : (⋂₀ f i).Nonempty) :
-    CanInView f φ i ↔ simplePossibility f (· ∈ φ) i := by
-  simp [canInView_iff_not_mustInView_compl, mustInView_iff_of_consistent h]
+    CanInView f φ i ↔ simplePossibility f i φ := by
+  rw [canInView_iff_not_mustInView_compl, mustInView_iff_of_consistent h]
+  rfl
 
 -- The relation first tried and rejected as too strict, consequence from every consistent subset,
 -- holds only of a tautology, since the empty set is a consistent subset (p. 350)
@@ -131,14 +130,14 @@ theorem canInView_of_mem (hB : B ∈ consistentSubsets (f i)) (hφ : φ ∈ B) :
 -- A premise must hold when every world is bettered by one where it holds
 theorem mustInView_of_forall_exists_le (hφ : φ ∈ f i) (h : ∀ u, ∃ v, (v ≤[f i] u) ∧ v ∈ φ) :
     MustInView f φ i :=
-  mustInView_iff_humanNecessity.2 fun u _ ↦
+  mustInView_iff_mem_humanNecessity.2 fun u _ ↦
     let ⟨v, hvu, hv⟩ := h u
     ⟨v, by simp, hvu, fun _ _ hzv ↦ hzv φ hφ hv⟩
 
 -- A best world where `φ` fails refutes *must φ*
 theorem not_mustInView_of_mem_bestWorlds {u : W} (hu : u ∈ bestWorlds ⊥ f i) (hφ : u ∉ φ) :
     ¬ MustInView f φ i :=
-  fun h ↦ hφ (necessity_of_humanNecessity (mustInView_iff_humanNecessity.1 h) u hu)
+  fun h ↦ hφ (principal_bestWorlds_le_humanNecessity (mustInView_iff_mem_humanNecessity.1 h) hu)
 
 end Definitions
 
@@ -166,16 +165,20 @@ theorem judgments_inconsistent : ⋂₀ judgments = ∅ :=
   Set.eq_empty_of_forall_notMem fun w hw ↦ by simp [judgments, q] at hw
 
 -- Definition 5 makes (7) true
-theorem simpleNecessity_compl_p (w : World) :
-    simpleNecessity (Function.const World judgments) (· ∈ pᶜ) w := by
-  rw [simpleNecessity_iff_sInter_subset, Function.const_apply, judgments_inconsistent]
+theorem compl_p_mem_simpleNecessity (w : World) :
+    pᶜ ∈ simpleNecessity (Function.const World judgments) w := by
+  show ⋂₀ judgments ⊆ pᶜ
+  rw [judgments_inconsistent]
   exact Set.empty_subset _
 
 -- Definition 6 makes (8) false
 theorem not_simplePossibility_q (w : World) :
-    ¬ simplePossibility (Function.const World judgments) (· ∈ q) w := by
-  rw [simplePossibility_iff_not_disjoint, Function.const_apply, judgments_inconsistent, not_not]
-  exact Set.empty_disjoint _
+    ¬ simplePossibility (Function.const World judgments) w q := by
+  rw [simplePossibility_iff]
+  rintro ⟨v, hv, -⟩
+  have hv : v ∈ ⋂₀ judgments := hv
+  rw [judgments_inconsistent] at hv
+  exact hv
 
 -- The rejected relation: `p` does not follow from every consistent subset (p. 350)
 example : ¬ ∀ B ∈ consistentSubsets judgments, ⋂₀ B ⊆ p := by

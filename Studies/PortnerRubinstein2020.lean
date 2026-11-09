@@ -89,10 +89,10 @@ def spanish (m : Grammatical) (c : Content W) : Option ((W → Prop) → W → P
   if m.target = c.target then some fun p w ↦ m.interp (c.state w) p else none
 
 @[simp] theorem spanish_indicative_single (f : Background W) :
-    spanish .indicative (.single f) = some (simpleNecessity f) := rfl
+    spanish .indicative (.single f) = some fun p w ↦ ∀ᶠ v in simpleNecessity f w, p v := rfl
 
 @[simp] theorem spanish_subjunctive_pair (g f : Background W) :
-    spanish .subjunctive (.pair g f) = some (goodPossibility f g) := rfl
+    spanish .subjunctive (.pair g f) = some fun p w ↦ goodPossibility f g w {v | p v} := rfl
 
 @[simp] theorem spanish_subjunctive_single (f : Background W) :
     spanish .subjunctive (.single f) = none := rfl
@@ -113,8 +113,10 @@ noncomputable def french (m : Grammatical) (c : Content W) : Option ((W → Prop
 
 -- (49)
 theorem goodPossibility_eq_simpleNecessity_sup {f g : Background W}
-    (h : (f ⊔ g).IsConsistent) : goodPossibility f g = simpleNecessity (f ⊔ g) :=
-  funext₂ fun _ w ↦ propext (goodPossibility_iff_simpleNecessity_sup (h w))
+    (h : (f ⊔ g).IsConsistent) :
+    (fun p w ↦ goodPossibility f g w {v | p v}) =
+      fun (p : W → Prop) w ↦ ∀ᶠ v in simpleNecessity (f ⊔ g) w, p v :=
+  funext₂ fun _ w ↦ propext (goodPossibility_iff_mem_simpleNecessity_sup (h w))
 
 /-- Simplification changes the mood a content is interpreted in and never its meaning: French
 moods give a content exactly the meanings Spanish moods give it (p. 366). -/
@@ -190,13 +192,14 @@ theorem french_hope_eq_spanish_hope :
     goodPossibility_eq_simpleNecessity_sup B.consistent]
 
 /-- No one hopes for each of two outcomes their beliefs rule out together. -/
-theorem not_hope_both {p q : W → Prop} {w : W}
-    (hpq : ∀ v ∈ B.dox.accessibleWorlds w, ¬ (p v ∧ q v)) :
-    ¬ (goodPossibility B.dox B.bulc p w ∧ goodPossibility B.dox B.bulc q w) := by
+theorem not_hope_both {p q : Set W} {w : W}
+    (hpq : ∀ v ∈ B.dox.accessibleWorlds w, ¬ (v ∈ p ∧ v ∈ q)) :
+    ¬ (goodPossibility B.dox B.bulc w p ∧ goodPossibility B.dox B.bulc w q) := by
   rintro ⟨hp, hq⟩
   obtain ⟨b, hb⟩ := B.consistent w
   exact hpq b ((Background.accessibleWorlds_sup _ _ w).subset hb).1
-    ⟨simpleNecessity_sup_of_goodPossibility hp b hb, simpleNecessity_sup_of_goodPossibility hq b hb⟩
+    ⟨mem_simpleNecessity_sup_of_goodPossibility hp hb,
+      mem_simpleNecessity_sup_of_goodPossibility hq hb⟩
 
 /-! ### The fragments -/
 
@@ -267,7 +270,7 @@ def marriage : Backgrounds World where
 /-- The speaker wants to marry Alice and wants to marry Sue. -/
 theorem want_alice_and_want_sue (w : World) :
     ∃ φ, spanish .subjunctive marriage.want = some φ ∧ φ marriesAlice w ∧ φ marriesSue w :=
-  ⟨goodPossibility doxPlus bul, rfl,
+  ⟨fun p w ↦ goodPossibility doxPlus bul w {v | p v}, rfl,
     ⟨(true, false), by simp [doxPlus, marriesAlice, marriesSue],
       fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
     ⟨(false, true), by simp [doxPlus, marriesAlice, marriesSue],
@@ -287,7 +290,7 @@ theorem bestWorlds_want_alice_eq_false (w : World) :
 -- over them makes each marriage hoped for
 theorem hope_alice_and_hope_sue (w : World) :
     (bul.accessibleWorlds w).Nonempty ∧
-      goodPossibility dox bul marriesAlice w ∧ goodPossibility dox bul marriesSue w :=
+      goodPossibility dox bul w marriesAlice ∧ goodPossibility dox bul w marriesSue :=
   ⟨⟨(true, true), by simp [bul, marriesAlice, marriesSue]⟩,
     ⟨(true, false), by simp [dox, marriesAlice, marriesSue],
       fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
@@ -303,9 +306,9 @@ def bestSets (f g : Background W) (w : W) : Set (Set W) :=
     Preorder.satisfied (· ∈ ·) (g w) v = Preorder.satisfied (· ∈ ·) (g w) b}}
 
 -- Appendix B: under the Limit Assumption local necessity is truth throughout a best set.
-theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : W → Prop} {w : W}
+theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W} {w : W}
     (hlim : LimitAssumption f g w) :
-    goodPossibility f g p w ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, p v := by
+    goodPossibility f g w p ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, v ∈ p := by
   let o := premisePreorder (g w)
   refine ⟨fun ⟨u, hu, hp⟩ ↦ ?_, fun ⟨_, ⟨b, hb, hX⟩, hp⟩ ↦ ⟨b, hb.1, fun v hv hvb ↦ ?_⟩⟩
   · obtain ⟨b, hb, hbu⟩ := hlim u hu

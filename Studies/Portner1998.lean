@@ -100,12 +100,12 @@ theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) cros
     have hacc : ((⊥ : Background Bus) ⊔ notInterrupted).accessibleWorlds .hit = {.crosses} := by
       ext v; cases v <;> simp [notInterrupted]
     rw [bestWorlds_eq_accessibleWorlds_sup (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
-  rw [InProgress, necessity_iff, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
+  rw [InProgress, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
   rintro v rfl
   exact ⟨iv 0 3, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
 
 theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit := by
-  rw [InProgress, necessity_iff, circ, ite_eq_left rfl]
+  rw [InProgress, circ, ite_eq_left rfl]
   intro v hv
   have hacc : withBus.accessibleWorlds Bus.hit = {.hit} := by ext u; cases u <;> simp [withBus]
   obtain rfl : v = .hit := by simpa [hacc] using (mem_bestWorlds.1 hv).1
@@ -158,7 +158,7 @@ def ordinary : Background Army := fun _ ↦ {{.wipesOut}ᶜ}
 
 theorem not_prog_ordinary (w : Army) :
     ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
-  rw [InProgress, necessity_iff]
+  rw [InProgress]
   intro h
   have hbest : Army.killsDozens ∈ bestWorlds ordinary defeatsSoldiers w := by
     refine mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
@@ -175,7 +175,7 @@ theorem prog_hero :
   have hacc : ((⊥ : Background Army) ⊔ defeatsSoldiers).accessibleWorlds .wipesOut =
       {.wipesOut} := by
     ext v; cases v <;> simp [defeatsSoldiers]
-  rw [InProgress, necessity_iff, bestWorlds_eq_accessibleWorlds_sup
+  rw [InProgress, bestWorlds_eq_accessibleWorlds_sup
     (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rintro v rfl
   exact ⟨iv 0 10, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩

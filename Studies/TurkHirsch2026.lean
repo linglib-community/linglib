@@ -44,7 +44,8 @@ without any bound, `Tree.alternatives_withAlternatives_subset`.
 
 Propositions are sets of worlds. Σ and NEG are the positive and the negative `Polarity`, and
 denote its action on propositions, the identity and complementation. The deontic modal is
-`Modality.necessity` over a modal base and an ordering source. The lexicon is a finite set of
+truth at the best worlds, `Modality.bestWorlds`, of a modal base and an ordering source. The
+lexicon is a finite set of
 terminals of `PhraseStructure.Tree`, so that category match is the terminal clause of
 `Tree.withAlternatives`; the denotation of a tree is its terminal's operator and the identity
 elsewhere. Two-dimensional values are `WithAlternatives`, whose `<*>` is pointwise functional
@@ -96,7 +97,7 @@ and NEG complementation, and the deontic modal is necessity over the modal base 
 source. -/
 def Word.den : Word → Set W → Set W
   | .polarity s => (s • ·)
-  | .deontic => fun p ↦ {w | necessity f g (· ∈ p) w}
+  | .deontic => fun p ↦ {w | bestWorlds f g w ⊆ p}
 
 /-- A tree denotes its terminal's operator, and the identity elsewhere. -/
 def den : Tree Cat Word → Set W → Set W

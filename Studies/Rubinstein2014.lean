@@ -89,7 +89,7 @@ def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
 def verified (b : Backgrounds W) (w u : W) : Set (Set W) :=
   Preorder.satisfied (· ∈ ·) {q | q ∈ b.nonNegotiable w} u
 
-variable {b : Backgrounds W} {p : W → Prop} {w : W}
+variable {b : Backgrounds W} {p : Set W} {w : W}
 
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
@@ -122,35 +122,37 @@ theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
 /-! ### The two necessities ((41)–(42)) -/
 
 /-- Strong necessity (41) is simple necessity over the favored worlds. -/
-def strongNecessity (b : Backgrounds W) (p : W → Prop) (w : W) : Prop :=
-  ∀ v ∈ favoredWorlds b w, p v
+def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
+  favoredWorlds b w ⊆ p
 
 /-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
 ordering source. -/
-def weakNecessity (b : Backgrounds W) (p : W → Prop) (w : W) : Prop :=
-  ∀ v ∈ (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w), p v
+def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
+  (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w) ⊆ p
 
 /-- Strong necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the
 ordering source. -/
 theorem strongNecessity_iff :
     strongNecessity b p w ↔
-      necessity b.circumstances b.nonNegotiable p w := by
-  rw [strongNecessity, favoredWorlds_eq_bestWorlds]; rfl
+      bestWorlds b.circumstances b.nonNegotiable w ⊆ p := by
+  rw [strongNecessity, favoredWorlds_eq_bestWorlds]
 
 /-- Weak necessity is [von-fintel-iatridou-2008]'s with promoted priorities as primary and
 negotiable ones as secondary ordering source, differing only in presupposition (50). -/
 theorem weakNecessity_iff :
     weakNecessity b p w ↔
-      Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable p w := by
-  rw [weakNecessity, favoredWorlds_eq_bestWorlds, Modality.Directive.weakNecessity_iff]
+      p ∈ Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable w := by
+  rw [weakNecessity, favoredWorlds_eq_bestWorlds, Modality.Directive.mem_weakNecessity]
 
 theorem strong_entails_weak (h : strongNecessity b p w) : weakNecessity b p w :=
-  weakNecessity_iff.2 (Modality.Directive.weakNecessity_of_necessity (strongNecessity_iff.1 h))
+  weakNecessity_iff.2 (Modality.Directive.weakNecessity_le_principal
+    (Filter.mem_principal.2 (strongNecessity_iff.1 h)))
 
 theorem exists_weakNecessity_not_strongNecessity :
-    ∃ (b : Backgrounds Bool) (p : Bool → Prop) (w : Bool),
+    ∃ (b : Backgrounds Bool) (p : Set Bool) (w : Bool),
       weakNecessity b p w ∧ ¬ strongNecessity b p w :=
-  let ⟨f, g, g', p, w, hw, hn⟩ := Modality.Directive.exists_weakNecessity_not_necessity
+  let ⟨f, g, g', p, w, hw, hn⟩ :=
+    Modality.Directive.exists_mem_weakNecessity_not_bestWorlds_subset
   ⟨⟨f, g, g'⟩, p, w, weakNecessity_iff.2 hw, fun h ↦ hn (strongNecessity_iff.1 h)⟩
 
 theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = ∅) :
@@ -171,19 +173,19 @@ instance {ι κ : Type*} [Fintype ι] [DecidableEq κ] (commitment : ι → Fins
 
 /-- With `γ` the negotiable ideal and live among the favored worlds, *should γ* holds and *should
 ¬γ* fails (§3.4.2). -/
-theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {{v | γ v}})
-    (hlive : ∃ v ∈ favoredWorlds b w, γ v) :
-    weakNecessity b γ w ∧ ¬ weakNecessity b (fun v ↦ ¬ γ v) w := by
+theorem weakNecessity_ideal {γ : Set W} (hγ : b.negotiable w = {γ})
+    (hlive : ∃ v ∈ favoredWorlds b w, v ∈ γ) :
+    weakNecessity b γ w ∧ ¬ weakNecessity b γᶜ w := by
   obtain ⟨v, hv, hγv⟩ := hlive
   rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofCriteria_eq ⟨v, hv, by simpa⟩]
-  exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h v ⟨hv, by simpa⟩ hγv⟩
+  exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h ⟨hv, by simpa⟩ hγv⟩
 
 /-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
 both are live, *not should γ* yields *should ¬γ*. -/
-theorem weakNecessity_neg_of_not {γ : W → Prop}
-    (hchoice : b.negotiable w = {{v | γ v}} ∨ b.negotiable w = {{v | ¬ γ v}})
-    (hγ : ∃ v ∈ favoredWorlds b w, γ v) (hnγ : ∃ v ∈ favoredWorlds b w, ¬ γ v)
-    (h : ¬ weakNecessity b γ w) : weakNecessity b (fun v ↦ ¬ γ v) w := by
+theorem weakNecessity_neg_of_not {γ : Set W}
+    (hchoice : b.negotiable w = {γ} ∨ b.negotiable w = {γᶜ})
+    (hγ : ∃ v ∈ favoredWorlds b w, v ∈ γ) (hnγ : ∃ v ∈ favoredWorlds b w, v ∉ γ)
+    (h : ¬ weakNecessity b γ w) : weakNecessity b γᶜ w := by
   rcases hchoice with hc | hc
   · exact absurd (weakNecessity_ideal hc hγ).1 h
   · exact (weakNecessity_ideal hc hnγ).1
@@ -229,7 +231,7 @@ def commitmentBefore : Participant → Finset Ideal
 def commitmentAfter : Participant → Finset Ideal := fun _ ↦ {.domestic, .international}
 
 /-- Reporting all revenue. -/
-def reportAll (v : Revenue) : Prop := v.1 = true ∧ v.2 = true
+def reportAll : Set Revenue := {v | v.1 = true ∧ v.2 = true}
 
 private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, v ∈ i.holds} := by
@@ -258,7 +260,7 @@ theorem tax_shift (w : Revenue) :
     rintro v ⟨hd, hi⟩
     exact ⟨hd .domestic (by simp), hi _ ⟨.international, by simp, rfl⟩⟩
   · rw [strongNecessity, favoredWorlds_ofIdeals] at h
-    exact Bool.false_ne_true (h (true, false) (by simp [Ideal.holds])).2
+    exact Bool.false_ne_true (h (a := (true, false)) (by simp [Ideal.holds])).2
   · rw [favoredWorlds_ofIdeals] at hv
     exact ⟨hv .domestic (by simp), hv .international (by simp)⟩
 

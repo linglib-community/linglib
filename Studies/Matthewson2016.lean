@@ -114,10 +114,10 @@ def ProjectionMode.Admits : ProjectionMode → Background W → Prop
   | .content, _ => True
 
 /-- A modal base allows *must p, but not p* when at some world `p` is necessary and false. -/
-def Deniable (f : Background W) : Prop := ∃ p w, simpleNecessity f p w ∧ ¬ p w
+def Deniable (f : Background W) : Prop := ∃ (p : Set W) (w : W), p ∈ simpleNecessity f w ∧ w ∉ p
 
 theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
-  simp [Deniable, isRealistic_iff_simpleNecessity_le_id, Pi.le_def]
+  simpa [Deniable, isRealistic_iff_pure_le_simpleNecessity, Filter.le_def] using exists_comm
 
 /-- A mode is veridical over a space of worlds when no base it projects there allows the denial
 of a necessity claim. -/
@@ -127,7 +127,7 @@ def ProjectionMode.Veridical (μ : ProjectionMode) (W : Type*) : Prop :=
 theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .factual := by
   cases μ
   · exact iff_of_true (fun _ hf h ↦ deniable_iff_not_isRealistic.1 h hf) rfl
-  · refine iff_of_false (fun h ↦ h (fun _ ↦ {fun _ ↦ False}) trivial ?_) nofun
+  · refine iff_of_false (fun h ↦ h (fun _ ↦ {∅}) trivial ?_) nofun
     exact deniable_iff_not_isRealistic.2 fun hr ↦
       Background.mem_accessibleWorlds.1 (hr ‹Nonempty W›.some) _ (Set.mem_singleton _)
 

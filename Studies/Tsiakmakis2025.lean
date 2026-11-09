@@ -31,8 +31,8 @@ the apparent hosts and *min* in the hosts proper, (20) (`greek_expletive_negator
 
 ## Implementation notes
 
-Propositions are sets of worlds, NEG₁ is their complement, (93), and NEG₂ is the substrate's
-`Modality.necessity`, the best worlds of a modal base and an ordering source. Greek spells the two
+Propositions are sets of worlds, NEG₁ is their complement, (93), and NEG₂ is truth throughout
+the best worlds of a modal base and an ordering source, `Modality.bestWorlds`. Greek spells the two
 negators with the markers of its fragment (`Negator.greek`). The flavour of the ordering source
 varies by host and language, epistemic for Greek *min*, deontic for French fear-predicate *ne*, and
 is not fixed here. The NCI-licensing and left-periphery diagnostics, (40) and (44), are syntactic
@@ -64,11 +64,11 @@ variable {W : Type*} (f g : Background W)
 /-! ### The two negators (section 2) -/
 
 /-- (13): negative NEG₂, the negative *min*: the negation holds throughout the best worlds. -/
-def neg2 (p : Set W) : Set W := {w | necessity f g (· ∈ pᶜ) w}
+def neg2 (p : Set W) : Set W := {w | bestWorlds f g w ⊆ pᶜ}
 
 /-- (58), (94): expletive NEG₂, the expletive *min*: the modal component without the negation,
 a modal biased towards the proposition. -/
-def neg2Expl (p : Set W) : Set W := {w | necessity f g (· ∈ p) w}
+def neg2Expl (p : Set W) : Set W := {w | bestWorlds f g w ⊆ p}
 
 /-- (39), (47), (53): canonical *dhen* under expletive *min* is negative *min*. -/
 theorem neg2Expl_compl (p : Set W) : neg2Expl f g pᶜ = neg2 f g p := rfl
@@ -79,12 +79,12 @@ theorem neg2_compl (p : Set W) : neg2 f g pᶜ = neg2Expl f g p := by
 variable {f g}
 
 theorem not_possibility_compl_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g p) :
-    ¬ possibility f g (· ∈ pᶜ) w :=
-  (necessity_iff_not_possibility_not f g (· ∈ p) w).1 h
+    ¬ ∃ v ∈ bestWorlds f g w, v ∈ pᶜ :=
+  fun ⟨_, hv, hvc⟩ ↦ hvc (h hv)
 
 /-- The ignorance of a *min*-free question, (55b): both alternatives hold in some best world. -/
 def Ignorant (p : Set W) (w : W) : Prop :=
-  possibility f g (· ∈ p) w ∧ possibility f g (· ∈ pᶜ) w
+  (∃ v ∈ bestWorlds f g w, v ∈ p) ∧ ∃ v ∈ bestWorlds f g w, v ∈ pᶜ
 
 /-- (55): a question with expletive *min* is not the question of an ignorant speaker. -/
 theorem not_ignorant_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g p) :
@@ -93,7 +93,7 @@ theorem not_ignorant_of_mem_neg2Expl {p : Set W} {w : W} (h : w ∈ neg2Expl f g
 
 theorem bestWorlds_eq_empty_of_mem_neg2Expl_of_mem_neg2 {p : Set W} {w : W}
     (h₁ : w ∈ neg2Expl f g p) (h₂ : w ∈ neg2 f g p) : bestWorlds f g w = ∅ :=
-  Set.eq_empty_iff_forall_notMem.2 fun w' hw' ↦ h₂ w' hw' (h₁ w' hw')
+  Set.eq_empty_iff_forall_notMem.2 fun _ hw' ↦ h₂ hw' (h₁ hw')
 
 /-! ### The revised host inventory (section 5) -/
 

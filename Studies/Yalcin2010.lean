@@ -79,25 +79,25 @@ abbrev likelihood : Set W → Set W → Prop := Lewis (premisePreorder O).le
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
-  humanNecessity ⊥ (fun _ ↦ O) (· ∈ A) w
+  A ∈ humanNecessity ⊥ (fun _ ↦ O) w
 
 /-- Epistemic *might* at `w` is human possibility, the dual of `must`. -/
 def might (A : Set W) (w : W) : Prop :=
-  humanPossibility ⊥ (fun _ ↦ O) (· ∈ A) w
+  humanPossibility ⊥ (fun _ ↦ O) w A
 
 /-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  humanNecessity (Background.restrict ⊥ A) (fun _ ↦ O) (· ∈ B) w
+  B ∈ humanNecessity (Background.restrict ⊥ A) (fun _ ↦ O) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, humanNecessity_iff, Background.accessibleWorlds_bot]
+  simp [must, mem_humanNecessity, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, humanNecessity_iff, Background.mem_accessibleWorlds_restrict,
+  simp only [ifThen, mem_humanNecessity, Background.mem_accessibleWorlds_restrict,
     Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot

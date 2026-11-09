@@ -219,25 +219,25 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
 
 -- (19) [schwager-2006]
 theorem affirmation_consistent {f g : Background W}
-    (hne : (bestWorlds f g w).Nonempty) (hp : necessity f g (· ∈ p) w)
-    (hq : necessity f g (· ∈ q) w) : (p ∩ q).Nonempty :=
-  let ⟨u, hu⟩ := hne; ⟨u, hp u hu, hq u hu⟩
+    (hne : (bestWorlds f g w).Nonempty) (hp : bestWorlds f g w ⊆ p)
+    (hq : bestWorlds f g w ⊆ q) : (p ∩ q).Nonempty :=
+  let ⟨u, hu⟩ := hne; ⟨u, hp hu, hq hu⟩
 
 -- (20), (15) [kaufmann-schwager-2009]: the condition can hold of a content and its negation at
 -- once, so it does not predict the consistency of (15), unlike `imperatives_revise`
 theorem weak_affirmation_compl [Nontrivial W] :
     ∃ (f g : Background W) (w : W) (p : Set W),
-      ¬ necessity f g (· ∉ p) w ∧ ¬ necessity f g (· ∉ pᶜ) w := by
+      ¬ bestWorlds f g w ⊆ pᶜ ∧ ¬ bestWorlds f g w ⊆ pᶜᶜ := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne W
-  refine ⟨⊥, ⊥, x, {x}, fun h ↦ h x ?_ rfl, fun h ↦ h y ?_ hxy.symm⟩ <;> simp
+  refine ⟨⊥, ⊥, x, {x}, fun h ↦ h ?_ rfl, fun h ↦ h ?_ hxy.symm⟩ <;> simp
 
 /-! ### To-Do Lists -/
 
 -- §5.2 [portner-2007]
 theorem todo_not_must {f g : Background W} {φ ψ : Set W} {u : W}
     (hψ : ψ ∈ g w) (hφψ : ∀ v ∈ ψ, v ∉ φ) (hu : u ∈ bestWorlds f g w) (huψ : u ∈ ψ) :
-    ¬ necessity f (fun v ↦ insert φ (g v)) (· ∈ φ) w :=
-  not_necessity_insert hψ hφψ hu huψ (hφψ u huψ)
+    ¬ bestWorlds f (fun v ↦ insert φ (g v)) w ⊆ φ :=
+  fun h ↦ hφψ u huψ (h (mem_bestWorlds_insert hψ hφψ hu huψ))
 
 /-! ### Commitments as mood states
 
