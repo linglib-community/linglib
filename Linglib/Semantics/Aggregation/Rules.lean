@@ -3,6 +3,7 @@ module
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Comparable
 public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 public import Linglib.Semantics.Aggregation.Basic
 
@@ -67,6 +68,9 @@ theorem majority_apply : majority v x y ↔ #{i | v x i ≤ v y i} ≤ #{i | v y
 
 instance (v : Profile ι α K) : DecidableRel (majority v) :=
   Order.Preimage.decidable v _
+
+theorem majority_complete : Complete (majority : Rule ι α K) :=
+  fun _ ↦ ⟨fun _ _ ↦ le_total _ _⟩
 
 theorem majority_weakPareto [Nonempty ι] : WeakPareto (majority : Rule ι α K) := by
   intro v x y h
@@ -155,15 +159,45 @@ theorem paretoRule_anonymous : Anonymous (paretoRule : Rule ι α K) :=
     ⟨fun h i ↦ by simpa using h (σ.symm i), fun h i ↦ h _⟩
 
 theorem paretoRule_incomparable {i j : ι} (hi : v y i < v x i) (hj : v x j < v y j) :
-    ¬ paretoRule v x y ∧ ¬ paretoRule v y x :=
+    IncompRel (paretoRule v) x y :=
   ⟨fun h ↦ (h j).not_gt hj, fun h ↦ (h i).not_gt hi⟩
 
 end Pareto
 
-theorem paretoRule_ordinalInvariant [LinearOrder K] :
-    Invariant ordinal (paretoRule : Rule ι α K) :=
+section Linear
+
+variable [LinearOrder K]
+
+theorem paretoRule_ordinalInvariant : Invariant ordinal (paretoRule : Rule ι α K) :=
   invariant_preimage fun f hf ↦ funext₂ fun p q ↦ by
     simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.map_apply, (mem_ordinal.1 hf _).le_iff_le]
+
+variable [Nontrivial ι] [Nontrivial K]
+
+/-- Two distinct objects make a trade-off at some profile on which individual `i` ranks `x` strictly
+above `y`. -/
+theorem exists_incompRel_paretoRule {x y : α} (hxy : x ≠ y) (i : ι) :
+    ∃ v : Profile ι α K, v y i < v x i ∧ IncompRel (paretoRule v) x y := by
+  obtain ⟨j, hj⟩ := exists_ne i
+  obtain ⟨k, k', hk⟩ := exists_pair_lt K
+  classical
+  let v : Profile ι α K := fun z l ↦ if (z = x ↔ l = i) then k' else k
+  have hi : v y i < v x i := by simp [v, hxy.symm, hk]
+  exact ⟨v, hi, paretoRule_incomparable hi (j := j) (by simp [v, hj, hxy.symm, hk])⟩
+
+variable [Nontrivial α]
+
+theorem not_complete_paretoRule : ¬ Complete (paretoRule : Rule ι α K) := fun h ↦
+  let ⟨x, y, hxy⟩ := exists_pair_ne α
+  let ⟨v, _, hv⟩ := exists_incompRel_paretoRule (K := K) hxy (Classical.arbitrary ι)
+  hv.1 (((h v).total x y).resolve_right hv.2)
+
+theorem paretoRule_nonDictatorial : NonDictatorial (paretoRule : Rule ι α K) := fun i hi ↦
+  let ⟨x, y, hxy⟩ := exists_pair_ne α
+  let ⟨v, hv, h⟩ := exists_incompRel_paretoRule (K := K) hxy i
+  h.1 (hi v x y hv).1
+
+end Linear
 
 /-! ### The utilitarian rule -/
 
@@ -187,6 +221,12 @@ theorem utilitarian_paretoIndifferent : ParetoIndifferent (utilitarian c : Rule 
 
 theorem utilitarian_independent : Independent (utilitarian c : Rule ι α K) :=
   independent_preimage _
+
+/-- Weighting a single individual makes it a dictator. -/
+theorem isDictator_utilitarian_single [DecidableEq ι] (i : ι) :
+    IsDictator (utilitarian (Pi.single i 1) : Rule ι α K) i := fun v x y h ↦ by
+  simp only [AsymmRel, utilitarian_apply, single_dotProduct, one_mul]
+  exact ⟨h.le, h.not_ge⟩
 
 variable [IsStrictOrderedRing K]
 
@@ -220,6 +260,22 @@ theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i
   have := (hi v x y hv).1
   simp only [utilitarian_apply, hx, hy, mul_add, mul_comm (c j) (c i)] at this
   exact (lt_add_of_pos_right _ (mul_pos hj hj)).not_ge this
+
+/-- With positive weights on two or more individuals the utilitarian rule meets Arrow's conditions
+with cardinal unit comparability in place of ordinal non-comparability ([sen-1970]). -/
+theorem utilitarian_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial α] (hc : ∀ i, 0 < c i) :
+    Arrovian cardinalUnit (utilitarian c : Rule ι α K) :=
+  ⟨utilitarian_cardinalUnitInvariant c, utilitarian_weakOrderValued c,
+    utilitarian_weakPareto c (fun i ↦ (hc i).le) ⟨Classical.arbitrary ι, hc _⟩,
+    utilitarian_independent c,
+    utilitarian_nonDictatorial c fun i ↦ let ⟨j, hj⟩ := exists_ne i; ⟨j, hj, hc j⟩⟩
+
+theorem not_weakPareto_utilitarian_zero [Nontrivial α] :
+    ¬ WeakPareto (utilitarian 0 : Rule ι α K) := by
+  intro h
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  classical
+  exact (h (fun z _ ↦ if z = x then 1 else 0) x y fun _ ↦ by simp [hxy.symm]).2 (by simp)
 
 theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
     (hj : 0 < c j) : ¬ Invariant ratio (utilitarian c : Rule ι α K) := by

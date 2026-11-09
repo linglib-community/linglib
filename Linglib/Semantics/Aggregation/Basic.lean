@@ -33,6 +33,7 @@ outputs does exactly when it is independent and Pareto indifferent.
 * `Aggregation.Rule`: a relation on the objects for each profile of values.
 * `Aggregation.Invariant`: invariance under a class of transformation vectors.
 * `Aggregation.ParetoIndifferent`: objects with the same vector of values are indifferent.
+* `Aggregation.Arrovian`: Arrow's conditions, relative to a class of transformation vectors.
 
 ## Main statements
 
@@ -208,7 +209,12 @@ def Transitive : Prop := ∀ v, IsTrans α (a v)
 def Complete : Prop := ∀ v, Std.Total (a v)
 
 /-- Every output is a weak ordering, a complete preorder. -/
-def WeakOrderValued : Prop := Transitive a ∧ Complete a
+@[mk_iff]
+structure WeakOrderValued : Prop where
+  /-- Every output is transitive. -/
+  transitive : Transitive a
+  /-- Every output is complete. -/
+  complete : Complete a
 
 /-- Every output is a quasi-ordering, a preorder. -/
 def QuasiOrderValued : Prop := ∀ v, IsPreorder α (a v)
@@ -220,8 +226,8 @@ variable {a}
 
 theorem WeakOrderValued.quasiOrderValued (h : WeakOrderValued a) : QuasiOrderValued a :=
   fun v ↦
-    haveI := h.1 v
-    haveI := h.2 v
+    haveI := h.transitive v
+    haveI := h.complete v
     IsPreorder.mk
 
 variable (a) [Preorder K]
@@ -240,7 +246,28 @@ def IsDictator (i : ι) : Prop := ∀ v x y, v y i < v x i → AsymmRel (a v) x 
 /-- No individual is a dictator. -/
 def NonDictatorial : Prop := ∀ i, ¬ IsDictator a i
 
+variable {a}
+
+theorem StrongPareto.weakPareto [Nonempty ι] (h : StrongPareto a) : WeakPareto a :=
+  fun v x y hlt ↦ (h v x y).2 hlt.lt
+
 end Conditions
+
+/-- A rule meets Arrow's conditions relative to a class `T` of transformation vectors when it is
+invariant under `T`, outputs weak orderings, satisfies weak Pareto and independence, and has no
+dictator. Arrow's own conditions take `T` to be `ordinal`. -/
+@[mk_iff]
+structure Arrovian [Preorder K] (T : Set (ι → K → K)) (a : Rule ι α K) : Prop where
+  /-- The rule is invariant under `T`. -/
+  invariant : Invariant T a
+  /-- Every output is a weak ordering. -/
+  weakOrderValued : WeakOrderValued a
+  /-- The rule satisfies weak Pareto. -/
+  weakPareto : WeakPareto a
+  /-- The rule is independent of irrelevant alternatives. -/
+  independent : Independent a
+  /-- No individual is a dictator. -/
+  nonDictatorial : NonDictatorial a
 
 /-! ### Rules that rank vectors -/
 
