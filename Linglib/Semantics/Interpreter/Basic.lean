@@ -153,17 +153,18 @@ variable {T : Type u} {G : Grammar.{u, v} T} {N : Type v} {L : Type w} {W : T �
 word may be. -/
 def derivs (I : Interpreter G N) (lex : L → List (Σ a, W a)) :
     Skeleton N L → List (Σ a, Deriv G W a)
-  | .leaf x => (lex x).map fun p ↦ ⟨p.1, .leaf p.2⟩
-  | .unary n s => (I.derivs lex s).flatMap fun d ↦
-      (I.unary n d.1).map fun p ↦ ⟨p.1, .unary p.2 d.2⟩
-  | .binary n s₁ s₂ => (I.derivs lex s₁).flatMap fun d₁ ↦ (I.derivs lex s₂).flatMap fun d₂ ↦
-      (I.binary n d₁.1 d₂.1).map fun p ↦ ⟨p.1, .binary p.2 d₁.2 d₂.2⟩
+  | .leaf x => (lex x).map fun ⟨a, w⟩ ↦ ⟨a, .leaf w⟩
+  | .unary n s => (I.derivs lex s).flatMap fun ⟨a, d⟩ ↦
+      (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩
+  | .binary n s₁ s₂ => (I.derivs lex s₁).flatMap fun ⟨a, d₁⟩ ↦
+      (I.derivs lex s₂).flatMap fun ⟨b, d₂⟩ ↦
+        (I.binary n a b).map fun ⟨c, m⟩ ↦ ⟨c, .binary m d₁ d₂⟩
 
 /-- The values of the derivations over a bare structure, for a lexicon of typed items whose
 values `ρ` gives. The derivations are found from the types alone. -/
 def values (I : Interpreter G N) (M : Model G D) (ρ : ∀ {a : T}, W a → D a)
     (lex : L → List (Σ a, W a)) (s : Skeleton N L) : List (Σ a, D a) :=
-  (I.derivs lex s).map fun d ↦ ⟨d.1, d.2.eval M ρ⟩
+  (I.derivs lex s).map fun ⟨a, d⟩ ↦ ⟨a, d.eval M ρ⟩
 
 /-- The meanings of a bare structure, for a lexicon whose items are their values. -/
 def meanings (I : Interpreter G N) (M : Model G D) (lex : L → List (Σ a, D a)) :
@@ -173,7 +174,7 @@ def meanings (I : Interpreter G N) (M : Model G D) (lex : L → List (Σ a, D a)
 theorem values_eq_of_derivs_eq (I : Interpreter G N) (M : Model G D)
     (ρ : ∀ {a : T}, W a → D a) {lex : L → List (Σ a, W a)} {s : Skeleton N L}
     {ds : List (Σ a, Deriv G W a)} (h : I.derivs lex s = ds) :
-    I.values M ρ lex s = ds.map fun d ↦ ⟨d.1, d.2.eval M ρ⟩ := by
+    I.values M ρ lex s = ds.map fun ⟨a, d⟩ ↦ ⟨a, d.eval M ρ⟩ := by
   rw [values, h]
 
 end Interpreter
