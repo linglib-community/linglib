@@ -1,7 +1,7 @@
 {
  "book": "Levin1993",
  "bibkey": "levin-1993",
- "description": "The verb classes of Part II of Levin's English Verb Classes and Alternations, one per class page with a member list, in the book's order: the section number and title the book prints, the book page on which the class begins, the members by citation form, with her parenthetical glosses dropped, and those she marks with a question mark, and the property table. A property line names an alternation by its section number in Part One or a further property of the page, with the page's asterisk or question mark, its scope ('some verbs', 'most verbs'), and any further qualifier it prints. An attested family heading is the Part One subsection that lists the class: an unqualified 'Causative Alternation' is Part One's other causative alternations (1.1.2.3), as the book states in 1.1.2, and an attested 'Locative Alternation' is the spray/load, wipe or swarm alternation whose Part One list carries the class; the unintentional-interpretation headings that print a reflexive and a body-part sub-line are two lines. The lists and tables were checked against the book's pages.",
+ "description": "The verb classes of Part II of Levin's English Verb Classes and Alternations, one per class page with a member list, in the book's order: the section number and title the book prints, the book page on which the class begins, the members by citation form, with her parenthetical glosses dropped, and those she marks with a question mark, and the property table. A property line names an alternation by its section number in Part One or a further property of the page, with the mark the page puts before it, the members it applies to ('some verbs', 'most verbs', 'except kill'), and any further qualifier it prints. An attested family heading is the Part One subsection that lists the class: an unqualified 'Causative Alternation' is Part One's other causative alternations (1.1.2.3), as the book states in 1.1.2, and an attested 'Locative Alternation' is the spray/load, wipe or swarm alternation whose Part One list carries the class; the unintentional-interpretation headings that print a reflexive and a body-part sub-line are two lines. The lists and tables were checked against the book's pages.",
  "classes": [
   {
    "number": "9.1",
@@ -29,7 +29,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -39,7 +39,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -49,13 +49,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -83,7 +83,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -93,13 +93,24 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "judgment": "acceptable",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -144,7 +155,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -154,7 +165,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -164,13 +175,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -194,7 +205,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -203,7 +214,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -213,7 +224,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -223,13 +234,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -256,7 +267,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -265,7 +276,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -275,7 +286,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -286,7 +297,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -295,13 +306,13 @@
       7,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     }
@@ -329,7 +340,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -338,7 +349,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -349,7 +360,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -359,7 +370,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -368,13 +379,13 @@
       7,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -447,7 +458,7 @@
       3,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -458,7 +469,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": "based on locative variant"
     },
@@ -468,7 +479,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "based on with variant"
     },
@@ -477,7 +488,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -486,13 +497,13 @@
       7,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -606,7 +617,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -616,7 +627,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -625,13 +636,13 @@
       3,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "withAlternatesWithIn",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -759,7 +770,7 @@
       7,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -768,7 +779,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -777,7 +788,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -787,7 +798,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -859,7 +870,7 @@
       7,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -868,7 +879,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -878,7 +889,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -932,7 +943,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -941,7 +952,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -951,7 +962,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -977,7 +988,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -986,7 +997,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -996,7 +1007,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1020,7 +1031,7 @@
       3,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -1030,7 +1041,7 @@
       3,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -1039,7 +1050,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1050,22 +1061,25 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
-     "qualifier": "except clean"
+     "qualifier": null,
+     "exceptions": [
+      "clean"
+     ]
     },
     {
      "alternation": [
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedAdjective",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -1074,7 +1088,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1133,7 +1147,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1142,7 +1156,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -1152,7 +1166,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1162,13 +1176,13 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "unspecifiedObjectPlusLocativePP",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -1177,13 +1191,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1220,7 +1234,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1229,7 +1243,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1239,7 +1253,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1249,13 +1263,13 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "unspecifiedObjectPlusLocativePP",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -1264,13 +1278,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1334,7 +1348,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1343,7 +1357,7 @@
       2,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1352,7 +1366,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1362,7 +1376,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1429,7 +1443,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1439,13 +1453,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "ofAlternatesWithOut",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     }
@@ -1505,7 +1519,7 @@
       7,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1515,7 +1529,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1584,7 +1598,7 @@
       7,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1594,7 +1608,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1615,7 +1629,7 @@
       7,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1625,7 +1639,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1667,7 +1681,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -1676,7 +1690,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1686,7 +1700,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1696,7 +1710,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1705,7 +1719,7 @@
       7,
       7
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -1729,16 +1743,19 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
-     "qualifier": "except move"
+     "qualifier": null,
+     "exceptions": [
+      "move"
+     ]
     },
     {
      "alternation": [
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1749,7 +1766,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1759,13 +1776,13 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "coreferentialInterpretationVaries",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1786,7 +1803,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1795,7 +1812,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1805,7 +1822,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1815,7 +1832,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1824,7 +1841,7 @@
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1833,7 +1850,7 @@
       7,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1867,7 +1884,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -1876,7 +1893,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1886,7 +1903,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1896,13 +1913,13 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "coreferentialInterpretationVaries",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -1932,7 +1949,7 @@
       2,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "some",
      "qualifier": null
     },
@@ -1941,7 +1958,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1951,7 +1968,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1961,7 +1978,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -1970,7 +1987,7 @@
       7,
       7
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2002,7 +2019,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2012,7 +2029,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2022,7 +2039,7 @@
       2,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -2031,7 +2048,7 @@
       7,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2040,13 +2057,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -2080,7 +2097,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2089,7 +2106,7 @@
       2,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2099,7 +2116,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2136,7 +2153,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2145,7 +2162,7 @@
       2,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2155,7 +2172,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2193,7 +2210,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2202,7 +2219,7 @@
       2,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2212,7 +2229,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2241,7 +2258,7 @@
       2,
       6
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -2270,7 +2287,7 @@
       2,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2279,7 +2296,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2330,7 +2347,7 @@
    "properties": [
     {
      "property": "fromPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -2339,7 +2356,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2348,7 +2365,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2357,7 +2374,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2366,7 +2383,7 @@
       3,
       9
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -2403,7 +2420,7 @@
    "properties": [
     {
      "property": "fromPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -2412,7 +2429,7 @@
       2,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2421,7 +2438,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2430,7 +2447,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2439,7 +2456,7 @@
       3,
       9
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     }
@@ -2464,7 +2481,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2473,7 +2490,7 @@
       2,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2550,7 +2567,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2560,7 +2577,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2569,7 +2586,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -2592,13 +2609,13 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -2628,7 +2645,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2680,7 +2697,7 @@
       7,
       8
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2689,7 +2706,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -2698,7 +2715,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2707,7 +2724,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2717,7 +2734,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2727,13 +2744,13 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -2757,7 +2774,7 @@
       7,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2766,7 +2783,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2775,7 +2792,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2784,7 +2801,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2794,7 +2811,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -2837,7 +2854,7 @@
       2,
       8
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2846,7 +2863,7 @@
       2,
       9
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2855,7 +2872,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2864,7 +2881,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2874,7 +2891,7 @@
       5,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -2884,7 +2901,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -2894,7 +2911,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2904,7 +2921,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2913,7 +2930,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -2923,7 +2940,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -2933,7 +2950,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -2942,13 +2959,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -2978,7 +2995,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2987,7 +3004,7 @@
       2,
       9
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -2996,7 +3013,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3005,7 +3022,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3015,7 +3032,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3025,7 +3042,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3034,7 +3051,7 @@
       3,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3043,13 +3060,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3093,7 +3110,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3102,7 +3119,7 @@
       2,
       9
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3111,7 +3128,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3120,7 +3137,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3130,7 +3147,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3140,7 +3157,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3149,7 +3166,7 @@
       3,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3158,13 +3175,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "ingNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -3194,7 +3211,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -3204,7 +3221,7 @@
       5,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": "intransitive"
     }
@@ -3229,7 +3246,7 @@
       2,
       9
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3238,7 +3255,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3247,7 +3264,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3256,7 +3273,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3266,7 +3283,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3276,7 +3293,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3285,13 +3302,13 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -3323,7 +3340,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3332,7 +3349,7 @@
       2,
       9
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3341,7 +3358,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3350,7 +3367,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3360,7 +3377,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3370,7 +3387,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3379,16 +3396,27 @@
       3,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "alternation": [
       7,
-      6
+      6,
+      1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      2
+     ],
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3397,13 +3425,13 @@
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3432,7 +3460,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3441,7 +3469,7 @@
       2,
       12
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3451,7 +3479,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3461,7 +3489,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3470,7 +3498,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3481,7 +3509,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3491,7 +3519,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3501,13 +3529,13 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "pathPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -3516,13 +3544,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -3574,7 +3602,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3583,7 +3611,7 @@
       2,
       12
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3593,7 +3621,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -3603,7 +3631,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3612,7 +3640,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -3623,13 +3651,13 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3664,7 +3692,7 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3674,7 +3702,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": "intransitive"
     },
@@ -3684,7 +3712,7 @@
       5,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3694,7 +3722,7 @@
       5,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": "intransitive"
     },
@@ -3705,7 +3733,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -3715,7 +3743,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3780,7 +3808,7 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3790,7 +3818,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -3800,7 +3828,7 @@
       5,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3810,7 +3838,7 @@
       5,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -3821,7 +3849,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -3831,7 +3859,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3887,7 +3915,7 @@
       5,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3897,7 +3925,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -3907,7 +3935,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": "with a few exceptions"
     },
@@ -3917,7 +3945,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -3995,7 +4023,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -4005,7 +4033,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4015,7 +4043,7 @@
       5,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4025,7 +4053,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -4035,7 +4063,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4044,7 +4072,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4053,13 +4081,13 @@
       7,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4082,7 +4110,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4092,7 +4120,7 @@
       5,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4102,7 +4130,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -4134,7 +4162,7 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4144,7 +4172,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4154,7 +4182,7 @@
       5,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4164,7 +4192,7 @@
       5,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4175,7 +4203,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -4185,7 +4213,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4194,7 +4222,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -4234,7 +4262,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4244,7 +4272,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4254,7 +4282,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4264,7 +4292,7 @@
       5,
       6
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4275,7 +4303,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -4285,7 +4313,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4335,7 +4363,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4345,7 +4373,7 @@
       5,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4355,7 +4383,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": "a few exceptions"
     },
@@ -4365,7 +4393,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4387,7 +4415,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4397,7 +4425,7 @@
       5,
       6
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4407,7 +4435,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -4439,7 +4467,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4448,7 +4476,7 @@
       7,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4481,7 +4509,7 @@
       2,
       7
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4491,19 +4519,19 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "processNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "resultNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4544,7 +4572,7 @@
       2,
       7
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -4554,13 +4582,13 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4595,25 +4623,25 @@
       2,
       7
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "processNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "resultNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -4643,13 +4671,13 @@
       2,
       7
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4704,7 +4732,7 @@
       4,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4714,7 +4742,7 @@
       4,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4724,7 +4752,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4733,7 +4761,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4743,7 +4771,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -4752,7 +4780,7 @@
       3,
       8
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -4761,7 +4789,7 @@
       3,
       9
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     }
@@ -4786,7 +4814,7 @@
       4,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4796,7 +4824,7 @@
       4,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -4807,7 +4835,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -4853,7 +4881,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4862,7 +4890,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -4872,7 +4900,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -4912,7 +4940,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4921,7 +4949,7 @@
       2,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": null
     },
@@ -4931,7 +4959,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -4940,7 +4968,7 @@
       3,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -4979,7 +5007,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -4990,7 +5018,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -4999,7 +5027,7 @@
       3,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -5009,7 +5037,7 @@
       4,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     }
@@ -5036,7 +5064,7 @@
       4,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -5046,7 +5074,7 @@
       4,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": "intransitive"
     },
@@ -5057,7 +5085,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -5067,7 +5095,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -5077,7 +5105,7 @@
       4,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     }
@@ -5115,7 +5143,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -5124,7 +5152,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -5134,7 +5162,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -5144,7 +5172,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -5171,7 +5199,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -5227,7 +5255,7 @@
       2,
       14
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -5236,13 +5264,13 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "infinitivalCopularClause",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -5323,13 +5351,13 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "infinitivalCopularClause",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     }
@@ -5367,7 +5395,7 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -5376,13 +5404,13 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "infinitivalCopularClause",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -5417,7 +5445,7 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -5426,13 +5454,13 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "infinitivalCopularClause",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -5471,13 +5499,13 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "infinitivalCopularClause",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -5526,7 +5554,7 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -5602,7 +5630,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -5612,7 +5640,7 @@
       13,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -5622,7 +5650,7 @@
       13,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -5668,7 +5696,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -5719,7 +5747,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -5959,7 +5987,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": null
     },
@@ -5969,7 +5997,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -5979,19 +6007,29 @@
       2,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
+     "alternation": [
+      2,
+      13,
+      4
+     ],
+     "judgment": "acceptable",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
      "property": "extraposition",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "passivePrepositionChoice",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6000,26 +6038,26 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "derivedNominal",
      "reading": "passive",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "ableAdjective",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -6086,7 +6124,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6096,7 +6134,7 @@
       13,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6106,7 +6144,7 @@
       13,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6115,39 +6153,39 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "unspecified",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "extraposition",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "derivedNominal",
      "reading": "active",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "ableAdjective",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -6224,7 +6262,7 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -6248,7 +6286,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -6274,7 +6312,7 @@
       13,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6284,7 +6322,7 @@
       13,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6293,7 +6331,7 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6302,7 +6340,7 @@
       5,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     }
@@ -6336,7 +6374,7 @@
       5,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     }
@@ -6424,7 +6462,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6434,7 +6472,7 @@
       13,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6444,7 +6482,7 @@
       13,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6453,13 +6491,13 @@
       2,
       14
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "processNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -6486,7 +6524,7 @@
       13,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6496,7 +6534,7 @@
       13,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -6523,7 +6561,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -6708,7 +6746,7 @@
    "properties": [
     {
      "property": "collectiveNPSubject",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6718,7 +6756,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -6728,7 +6766,7 @@
       2,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -6738,7 +6776,7 @@
       4,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -6769,7 +6807,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -6779,7 +6817,7 @@
       2,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6789,7 +6827,7 @@
       4,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -6817,7 +6855,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -6827,7 +6865,7 @@
       2,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6837,7 +6875,7 @@
       4,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -6875,7 +6913,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -6895,40 +6933,40 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "required object",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "required toPhrase",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "absent",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "directSpeech",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "parentheticalUse",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -6937,19 +6975,19 @@
       5,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "impersonalPassive",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7045,26 +7083,26 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "optional toPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "directSpeech",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "parentheticalUse",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7073,7 +7111,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7082,7 +7120,7 @@
       7,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7091,13 +7129,13 @@
       7,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7134,39 +7172,39 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "optional object",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "sententialComplement",
      "goal": "optional toPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "directSpeech",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "parentheticalUse",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7185,7 +7223,7 @@
     {
      "property": "sententialComplement",
      "goal": "unspecified",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7195,7 +7233,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -7205,7 +7243,7 @@
       5,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -7215,7 +7253,7 @@
       2,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7225,13 +7263,13 @@
       4,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7259,7 +7297,7 @@
     {
      "property": "sententialComplement",
      "goal": "unspecified",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7269,7 +7307,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -7279,7 +7317,7 @@
       5,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -7289,7 +7327,7 @@
       2,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7299,7 +7337,7 @@
       4,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7342,7 +7380,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7369,19 +7407,19 @@
     {
      "property": "sententialComplement",
      "goal": "optional toPhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "directSpeech",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "parentheticalUse",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7390,13 +7428,13 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -7423,32 +7461,35 @@
       2,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
-     "qualifier": "except alert"
+     "qualifier": null,
+     "exceptions": [
+      "alert"
+     ]
     },
     {
      "property": "sententialComplement",
      "goal": "optional object",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "directSpeech",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "parentheticalUse",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": null
     }
@@ -7534,7 +7575,7 @@
       7,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7543,7 +7584,7 @@
       7,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7552,7 +7593,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7574,7 +7615,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7583,7 +7624,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7592,7 +7633,7 @@
       3,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7601,13 +7642,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7639,7 +7680,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -7648,13 +7689,13 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7682,7 +7723,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7691,13 +7732,13 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -7722,7 +7763,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7731,13 +7772,13 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7764,7 +7805,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7773,7 +7814,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7801,7 +7842,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -7810,7 +7851,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -7835,7 +7876,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7867,7 +7908,7 @@
       7,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
@@ -7876,13 +7917,13 @@
       7,
       5
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -7914,13 +7955,13 @@
       7,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "few",
      "qualifier": null
     },
     {
      "property": "substanceObject",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -7929,13 +7970,13 @@
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -7957,13 +7998,13 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8023,7 +8064,7 @@
       7,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -8032,7 +8073,7 @@
       7,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8041,13 +8082,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -8076,7 +8117,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8085,7 +8126,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8094,7 +8135,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8103,13 +8144,13 @@
       7,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -8176,7 +8217,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8185,7 +8226,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8194,13 +8235,13 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -8226,7 +8267,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8235,13 +8276,13 @@
       7,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -8268,7 +8309,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8277,13 +8318,16 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
-     "qualifier": "except sleep"
+     "qualifier": null,
+     "exceptions": [
+      "sleep"
+     ]
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -8312,7 +8356,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8321,7 +8365,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8330,7 +8374,7 @@
       7,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8359,7 +8403,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8385,7 +8429,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8395,7 +8439,7 @@
       1,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
@@ -8404,7 +8448,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -8428,7 +8472,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8437,7 +8481,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8470,7 +8514,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8527,7 +8571,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8536,7 +8580,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8569,7 +8613,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8579,7 +8623,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -8601,7 +8645,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8625,7 +8669,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8635,7 +8679,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -8686,7 +8730,7 @@
       2,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8696,7 +8740,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8719,7 +8763,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8742,7 +8786,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -8766,7 +8810,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8798,7 +8842,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8808,7 +8852,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8817,22 +8861,28 @@
       3,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
-     "qualifier": "except kill"
+     "qualifier": null,
+     "exceptions": [
+      "kill"
+     ]
     },
     {
      "alternation": [
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
-     "qualifier": "except kill"
+     "qualifier": null,
+     "exceptions": [
+      "kill"
+     ]
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -8865,9 +8915,14 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
-     "qualifier": "except asphyxiate, drown, suffocate"
+     "qualifier": null,
+     "exceptions": [
+      "asphyxiate",
+      "drown",
+      "suffocate"
+     ]
     },
     {
      "alternation": [
@@ -8875,7 +8930,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -8884,13 +8939,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -8931,7 +8986,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8940,7 +8995,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8949,7 +9004,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -8960,7 +9015,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -8969,19 +9024,19 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -9120,7 +9175,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -9129,7 +9184,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9138,7 +9193,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9149,7 +9204,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9158,7 +9213,7 @@
       7,
       8
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9167,19 +9222,19 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -9201,7 +9256,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9211,13 +9266,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -9265,7 +9320,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9275,7 +9330,7 @@
       1,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9285,7 +9340,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9294,7 +9349,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9303,7 +9358,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9312,19 +9367,19 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -9358,7 +9413,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9368,7 +9423,7 @@
       1,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9378,7 +9433,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -9388,7 +9443,7 @@
       4,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9397,7 +9452,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9406,7 +9461,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9415,13 +9470,13 @@
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -9455,7 +9510,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9465,7 +9520,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9474,7 +9529,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9483,7 +9538,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9492,7 +9547,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9501,7 +9556,7 @@
       2,
       12
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9511,7 +9566,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "some",
      "qualifier": null
     },
@@ -9521,7 +9576,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -9530,13 +9585,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -9564,7 +9619,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9574,7 +9629,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9583,7 +9638,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9592,7 +9647,7 @@
       2,
       8
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9601,7 +9656,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9610,7 +9665,7 @@
       2,
       12
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9619,13 +9674,13 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     }
@@ -9690,7 +9745,17 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9699,7 +9764,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9708,7 +9773,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9717,7 +9782,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -9726,7 +9791,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -9735,7 +9800,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -10013,7 +10078,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10023,7 +10088,7 @@
       1,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10032,7 +10097,7 @@
       3,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10041,7 +10106,7 @@
       1,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10051,7 +10116,7 @@
       3,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "intransitive"
     },
@@ -10061,7 +10126,7 @@
       3,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": "transitive"
     },
@@ -10070,7 +10135,7 @@
       6,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10079,7 +10144,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10088,7 +10153,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10097,7 +10162,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10106,7 +10171,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -10147,7 +10212,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10156,7 +10221,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10165,7 +10230,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -10208,11 +10273,21 @@
    "properties": [
     {
      "alternation": [
+      2,
+      13,
+      5
+     ],
+     "judgment": "acceptable",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
       1,
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10221,7 +10296,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10230,7 +10305,7 @@
       6,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10239,7 +10314,7 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10248,7 +10323,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10278,7 +10353,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10287,7 +10362,7 @@
       6,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10296,7 +10371,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10307,7 +10382,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10316,13 +10391,13 @@
       5,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -10370,7 +10445,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10379,7 +10454,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10388,7 +10463,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10398,7 +10473,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10407,7 +10482,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10468,7 +10543,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10477,7 +10552,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10487,7 +10562,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10497,7 +10572,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "most",
      "qualifier": "with a few exceptions"
     },
@@ -10506,13 +10581,13 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10566,7 +10641,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10575,7 +10650,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10584,7 +10659,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10595,7 +10670,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10604,7 +10679,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10632,7 +10707,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10641,7 +10716,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10650,7 +10725,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10660,7 +10735,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10669,13 +10744,13 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "erNominal",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10705,7 +10780,7 @@
       3,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10714,7 +10789,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10723,7 +10798,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10733,7 +10808,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10766,7 +10841,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10777,13 +10852,13 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -10805,7 +10880,7 @@
       2,
       3
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -10815,7 +10890,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10873,7 +10948,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10882,7 +10957,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10893,7 +10968,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -10902,7 +10977,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -10939,7 +11014,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -10948,7 +11023,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11007,7 +11082,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11017,7 +11092,7 @@
       2,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -11072,7 +11147,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -11081,7 +11156,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -11091,7 +11166,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "many",
      "qualifier": null
     },
@@ -11100,7 +11175,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11134,7 +11209,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11143,7 +11218,7 @@
       6,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11152,9 +11227,12 @@
       4,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
-     "qualifier": "except intrude"
+     "qualifier": null,
+     "exceptions": [
+      "intrude"
+     ]
     }
    ]
   },
@@ -11177,7 +11255,7 @@
       6,
       1
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
@@ -11186,7 +11264,7 @@
       6,
       2
      ],
-     "diacritic": "?",
+     "judgment": "marginal",
      "scope": "all",
      "qualifier": null
     },
@@ -11196,7 +11274,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11205,7 +11283,7 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11230,7 +11308,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11239,7 +11317,7 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11249,7 +11327,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -11284,13 +11362,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "bodyPartObject",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11299,7 +11377,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11308,7 +11386,7 @@
       7,
       8
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11346,7 +11424,7 @@
       6,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11355,7 +11433,7 @@
       6,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -11398,7 +11476,7 @@
       4,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11408,13 +11486,13 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "measurePhrase",
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11423,13 +11501,13 @@
       5,
       4
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "depictivePhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11438,7 +11516,7 @@
       7,
       5
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -11460,7 +11538,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -11499,7 +11577,7 @@
       2,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "most",
      "qualifier": null
     },
@@ -11509,7 +11587,7 @@
       4,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11518,7 +11596,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11527,7 +11605,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11672,7 +11750,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11682,7 +11760,7 @@
       4,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11691,7 +11769,7 @@
       6,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11700,13 +11778,13 @@
       6,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "measurePhrase",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11715,7 +11793,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11724,7 +11802,7 @@
       5,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11733,7 +11811,7 @@
       5,
       4
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -11742,13 +11820,13 @@
       7,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
     {
      "property": "zeroRelatedNominal",
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -11808,7 +11886,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11818,7 +11896,7 @@
       4,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11827,7 +11905,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11858,7 +11936,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11868,7 +11946,7 @@
       4,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     },
@@ -11877,7 +11955,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11918,7 +11996,7 @@
       2,
       2
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11927,7 +12005,7 @@
       7,
       5
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     },
@@ -11936,7 +12014,7 @@
       7,
       1
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -11963,7 +12041,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -11989,7 +12067,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12036,7 +12114,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12060,7 +12138,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "all",
      "qualifier": null
     }
@@ -12084,7 +12162,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -12094,7 +12172,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12117,7 +12195,7 @@
       5,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -12127,7 +12205,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12176,7 +12254,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12207,7 +12285,7 @@
       2,
       1
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     },
@@ -12216,7 +12294,7 @@
       2,
       14
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }
@@ -12251,7 +12329,7 @@
       2,
       3
      ],
-     "diacritic": "",
+     "judgment": "acceptable",
      "scope": "some",
      "qualifier": null
     }
@@ -12275,7 +12353,7 @@
       1,
       2
      ],
-     "diacritic": "*",
+     "judgment": "ungrammatical",
      "scope": "all",
      "qualifier": null
     }

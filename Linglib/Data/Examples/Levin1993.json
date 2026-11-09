@@ -1107,6 +1107,80 @@
     "verified": "page-image"
   },
   {
+    "id": "levin1993_is_murder",
+    "source": {
+      "bibkey": "levin-1993",
+      "paperLabel": "§42.1 (779a), p. 231"
+    },
+    "language": "stan1293",
+    "primaryText": "The dagger murdered Julius Caesar.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Brutus murdered Julius Caesar with a dagger.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "murder"
+      ],
+      [
+        "levin_class",
+        "42.1"
+      ],
+      [
+        "alternation",
+        "instrumentSubject"
+      ]
+    ],
+    "comment": "The murder verbs lack the instrument subject alternation, except kill.",
+    "verified": "page-image"
+  },
+  {
+    "id": "levin1993_is_kill",
+    "source": {
+      "bibkey": "levin-1993",
+      "paperLabel": "§42.1 (779b), p. 231"
+    },
+    "language": "stan1293",
+    "primaryText": "The DDT killed the insects.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "The exterminators killed the insects with DDT.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "kill"
+      ],
+      [
+        "levin_class",
+        "42.1"
+      ],
+      [
+        "alternation",
+        "instrumentSubject"
+      ]
+    ],
+    "comment": "Kill, the exception the starred heading names, shows the alternation.",
+    "verified": "page-image"
+  },
+  {
     "id": "levin1993_ia_run",
     "source": {
       "bibkey": "levin-1993",

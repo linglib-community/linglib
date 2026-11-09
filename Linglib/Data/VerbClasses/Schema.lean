@@ -1,20 +1,22 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Judgment
 
 /-!
 # Verb class catalogues: schema
 
 Typed schema for a book's catalogue of verb classes: for each class, the section number and title
 the book prints, its members, and its properties, each an alternation of the book's catalogue of
-alternations, named by its section number, or a further property, with the diacritic and scope the
-book gives it. Generated catalogues live in `Data/VerbClasses/<Book>.lean`, emitted from the
-canonical `<Book>.json` by `scripts/gen_verb_classes.py`.
+alternations, named by its section number, or a further property. A property is a numbered example
+line of the class's entry, so it carries the mark the book puts before an example (`Judgment`), and
+it applies to the members the book's qualification leaves it (`Scope.AppliesTo`). Generated
+catalogues live in `Data/VerbClasses/<Book>.lean`, emitted from the canonical `<Book>.json` by
+`scripts/gen_verb_classes.py`.
 
-This is data: it imports nothing from `Linglib/` and states no theorems. The vocabulary is that of
-Levin's catalogue: an alternation is named by its section number in her Part One, and the further
-properties are those her class descriptions name. A catalogue with another vocabulary, such as
-VerbNet's thematic roles and frames, needs its own schema.
+This is data: it imports from `Linglib/` only the marks of `Data/Examples` and states no theorems.
+The vocabulary is that of Levin's catalogue: an alternation is named by its section number in her
+Part One, and the further properties are those her class descriptions name. A catalogue with
+another vocabulary, such as VerbNet's thematic roles and frames, needs its own schema.
 
 ## References
 
@@ -25,23 +27,26 @@ VerbNet's thematic roles and frames, needs its own schema.
 
 namespace Data.VerbClasses
 
-/-- A property carries no diacritic, an asterisk for a property the class lacks, or a question
-mark for a marginal one. -/
-inductive Diacritic where
-  | none
-  | star
-  | question
-  deriving DecidableEq, Repr, Fintype, Inhabited
-
-/-- The share of a class's members that a property line speaks for, as the book qualifies it:
-all of them when it does not, or "most", "many", "some" or "a few" verbs. -/
+/-- The members of a class a property applies to, as the book qualifies the property: all of them
+but those it excepts, as in "except *kill*", when it does not qualify it otherwise, or "most",
+"many", "some" or "a few" verbs. -/
 inductive Scope where
-  | all
+  | all (exceptions : List String := [])
   | most
   | many
   | some
   | few
-  deriving DecidableEq, Repr, Fintype, Inhabited
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The property applies to the member `m`: the book qualifies it by no share of the class and
+does not except `m`. -/
+def Scope.AppliesTo : Scope → String → Prop
+  | .all exceptions, m => m ∉ exceptions
+  | _, _ => False
+
+instance : ∀ s m, Decidable (Scope.AppliesTo s m)
+  | .all exceptions, m => inferInstanceAs (Decidable (m ∉ exceptions))
+  | .most, _ | .many, _ | .some, _ | .few, _ => .isFalse id
 
 /-- A derived nominal may have only its active or only its passive interpretation. -/
 inductive NominalReading where
@@ -101,11 +106,17 @@ inductive Heading where
   | property (p : PageProperty)
   deriving DecidableEq, Repr
 
-/-- A line of a class's property table records what it names, its diacritic and scope, and any
-further qualifier the book prints with it, such as "based on with variant" or "except *kill*". -/
+/-- The section number of the alternation a heading names, if it names one. -/
+def Heading.number? : Heading → Option (List ℕ)
+  | .alternation n => some n
+  | .property _ => none
+
+/-- A line of a class's property table records what it names, the mark the book puts before it,
+the members it applies to, and any further qualifier the book prints with it, such as "based on
+*with* variant". -/
 structure PropertyLine where
   heading : Heading
-  diacritic : Diacritic
+  judgment : Judgment
   scope : Scope
   qualifier : Option String
   deriving DecidableEq, Repr
@@ -120,8 +131,6 @@ structure VerbClass where
   members : List String
   doubtful : List String
   properties : List PropertyLine
-  deriving Repr
-
-instance : Inhabited VerbClass := ⟨⟨"", "", 0, [], [], []⟩⟩
+  deriving Repr, Inhabited
 
 end Data.VerbClasses

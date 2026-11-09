@@ -12,13 +12,14 @@ The verb classes of Part II of Levin's English Verb Classes and Alternations, on
 with a member list, in the book's order: the section number and title the book prints, the book page
 on which the class begins, the members by citation form, with her parenthetical glosses dropped, and
 those she marks with a question mark, and the property table. A property line names an alternation
-by its section number in Part One or a further property of the page, with the page's asterisk or
-question mark, its scope ('some verbs', 'most verbs'), and any further qualifier it prints. An
-attested family heading is the Part One subsection that lists the class: an unqualified 'Causative
-Alternation' is Part One's other causative alternations (1.1.2.3), as the book states in 1.1.2, and
-an attested 'Locative Alternation' is the spray/load, wipe or swarm alternation whose Part One list
-carries the class; the unintentional-interpretation headings that print a reflexive and a body-part
-sub-line are two lines. The lists and tables were checked against the book's pages.
+by its section number in Part One or a further property of the page, with the mark the page puts
+before it, the members it applies to ('some verbs', 'most verbs', 'except kill'), and any further
+qualifier it prints. An attested family heading is the Part One subsection that lists the class: an
+unqualified 'Causative Alternation' is Part One's other causative alternations (1.1.2.3), as the
+book states in 1.1.2, and an attested 'Locative Alternation' is the spray/load, wipe or swarm
+alternation whose Part One list carries the class; the unintentional-interpretation headings that
+print a reflexive and a body-part sub-line are two lines. The lists and tables were checked against
+the book's pages.
 
 ## References
 
@@ -40,17 +41,20 @@ def chapter9 : List VerbClass := [
       "situate", "sling", "stash", "stow"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "9.2", page := 112,
     title := "Verbs of Putting in a Spatial Configuration",
     members :=
       ["dangle", "hang", "lay", "lean", "perch", "rest", "sit", "stand", "suspend"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .most, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "9.3", page := 113,
     title := "Funnel Verbs",
     members :=
@@ -59,40 +63,45 @@ def chapter9 : List VerbClass := [
       "squish", "sweep", "tuck", "wad", "wedge", "wipe", "wring"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "9.4", page := 114,
     title := "Verbs of Putting with a Specified Direction",
     members :=
       ["drop", "hoist", "lift", "lower", "raise"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "9.5", page := 115,
     title := "Pour Verbs",
     members :=
       ["dribble", "drip", "pour", "slop", "slosh", "spew", "spill", "spurt"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 7], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .few, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 7], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .few, none⟩] },
   { number := "9.6", page := 116,
     title := "Coil Verbs",
     members :=
       ["coil", "curl", "loop", "roll", "spin", "twirl", "twist", "whirl", "wind"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩, ⟨.alternation [7, 7], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 7], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "9.7", page := 117,
     title := "Spray/Load Verbs",
     members :=
@@ -104,11 +113,12 @@ def chapter9 : List VerbClass := [
       "vest", "wash", "wrap"],
     doubtful := ["prick", "vest", "wash"],
     properties :=
-      [⟨.alternation [2, 3, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .some, some "based on locative variant"⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, some "based on with variant"⟩,
-      ⟨.alternation [1, 3], .none, .some, none⟩, ⟨.alternation [7, 7], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, some "based on locative variant"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, some "based on with variant"⟩,
+      ⟨.alternation [1, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 7], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "9.8", page := 119,
     title := "Fill Verbs",
     members :=
@@ -126,9 +136,10 @@ def chapter9 : List VerbClass := [
       "veil", "vein", "wreathe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [3, 5], .none, .all, none⟩,
-      ⟨.property .withAlternatesWithIn, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 5], .acceptable, .all, none⟩,
+      ⟨.property .withAlternatesWithIn, .acceptable, .some, none⟩] },
   { number := "9.9", page := 120,
     title := "Butter Verbs",
     members :=
@@ -147,9 +158,10 @@ def chapter9 : List VerbClass := [
       "yoke", "zipcode"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 2], .none, .all, none⟩, ⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [7, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "9.10", page := 121,
     title := "Pocket Verbs",
     members :=
@@ -161,8 +173,9 @@ def chapter9 : List VerbClass := [
       "stable", "string", "tin", "trap", "tree", "warehouse"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 2], .star, .all, none⟩, ⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [7, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 10. -/
 def chapter10 : List VerbClass := [
@@ -176,29 +189,31 @@ def chapter10 : List VerbClass := [
       "withdraw", "wrench"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "10.2", page := 123,
     title := "Banish Verbs",
     members :=
       ["banish", "deport", "evacuate", "expel", "extradite", "recall", "remove"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "10.3", page := 124,
     title := "Clear Verbs",
     members :=
       ["clean", "clear", "drain", "empty"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 2], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 3, 5], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .all, some "except clean"⟩,
-      ⟨.alternation [7, 5], .star, .all, none⟩,
-      ⟨.property .zeroRelatedAdjective, .none, .some, none⟩,
-      ⟨.alternation [5, 3], .none, .all, none⟩] },
+      [⟨.alternation [2, 3, 2], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 3, 5], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, (.all ["clean"]), none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedAdjective, .acceptable, .some, none⟩,
+      ⟨.alternation [5, 3], .acceptable, .all, none⟩] },
   { number := "10.4.1", page := 125,
     title := "Manner Subclass",
     members :=
@@ -209,12 +224,13 @@ def chapter10 : List VerbClass := [
       "wring"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 3], .none, .all, none⟩, ⟨.alternation [1, 3], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 2, 1], .none, .some, none⟩,
-      ⟨.property .unspecifiedObjectPlusLocativePP, .none, .some, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .some, none⟩,
+      ⟨.property .unspecifiedObjectPlusLocativePP, .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "10.4.2", page := 127,
     title := "Instrument Subclass",
     members :=
@@ -222,12 +238,13 @@ def chapter10 : List VerbClass := [
       "sandpaper", "shear", "shovel", "siphon", "sponge", "towel", "vacuum"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 3], .none, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 2, 1], .none, .some, none⟩,
-      ⟨.property .unspecifiedObjectPlusLocativePP, .none, .some, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .some, none⟩,
+      ⟨.property .unspecifiedObjectPlusLocativePP, .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "10.5", page := 128,
     title := "Verbs of Possessional Deprivation: Steal Verbs",
     members :=
@@ -239,9 +256,10 @@ def chapter10 : List VerbClass := [
       "winkle", "withdraw", "wrest"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [2, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "10.6", page := 129,
     title := "Verbs of Possessional Deprivation: Cheat Verbs",
     members :=
@@ -253,8 +271,9 @@ def chapter10 : List VerbClass := [
       "sap", "strip", "swindle", "unburden", "void", "wean"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .ofAlternatesWithOut, .none, .few, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .ofAlternatesWithOut, .acceptable, .few, none⟩] },
   { number := "10.7", page := 130,
     title := "Pit Verbs",
     members :=
@@ -264,7 +283,8 @@ def chapter10 : List VerbClass := [
       "string", "tail", "tassel", "top", "vein", "weed", "wind", "worm", "zest"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 2], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [7, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "10.8", page := 130,
     title := "Debone Verbs",
     members :=
@@ -277,14 +297,16 @@ def chapter10 : List VerbClass := [
       "deworm"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 2], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [7, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "10.9", page := 131,
     title := "Mine Verbs",
     members :=
       ["mine", "quarry"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 2], .none, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [7, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 11. -/
 def chapter11 : List VerbClass := [
@@ -296,31 +318,34 @@ def chapter11 : List VerbClass := [
       "sneak", "transfer", "transport", "UPS"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .some, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 7], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 7], .ungrammatical, .all, none⟩] },
   { number := "11.2", page := 133,
     title := "Slide Verbs",
     members :=
       ["bounce", "float", "move", "roll", "slide"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, some "except move"⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩,
-      ⟨.property .coreferentialInterpretationVaries, .none, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, (.all ["move"]), none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.property .coreferentialInterpretationVaries, .acceptable, .all, none⟩] },
   { number := "11.3", page := 134,
     title := "Bring and Take",
     members :=
       ["bring", "take"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [7, 5], .star, .all, none⟩,
-      ⟨.alternation [7, 7], .none, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 7], .acceptable, .all, none⟩] },
   { number := "11.4", page := 135,
     title := "Carry Verbs",
     members :=
@@ -328,10 +353,11 @@ def chapter11 : List VerbClass := [
       "shove", "tote", "tow", "tug"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.property .coreferentialInterpretationVaries, .none, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .coreferentialInterpretationVaries, .acceptable, .all, none⟩] },
   { number := "11.5", page := 136,
     title := "Drive Verbs",
     members :=
@@ -339,10 +365,11 @@ def chapter11 : List VerbClass := [
       "wire"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .question, .some, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 7], .star, .all, none⟩] }]
+      [⟨.alternation [2, 1], .marginal, .some, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 7], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 12. -/
 def chapter12 : List VerbClass := [
@@ -352,10 +379,12 @@ def chapter12 : List VerbClass := [
       ["draw", "heave", "jerk", "press", "pull", "push", "shove", "thrust", "tug", "yank"],
     doubtful := ["draw", "thrust"],
     properties :=
-      [⟨.alternation [1, 3], .none, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 2, 7], .none, .some, none⟩, ⟨.alternation [7, 7], .none, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] }]
+      [⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 7], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 7], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 13. -/
 def chapter13 : List VerbClass := [
@@ -366,8 +395,9 @@ def chapter13 : List VerbClass := [
       "repay", "sell", "serve", "trade"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩, ⟨.alternation [2, 6], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 6], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "13.2", page := 138,
     title := "Contribute Verbs",
     members :=
@@ -376,8 +406,9 @@ def chapter13 : List VerbClass := [
       "sacrifice", "submit", "surrender", "transfer"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .star, .all, none⟩, ⟨.alternation [2, 6], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 6], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "13.3", page := 139,
     title := "Verbs of Future Having",
     members :=
@@ -386,8 +417,9 @@ def chapter13 : List VerbClass := [
       "yield"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩, ⟨.alternation [2, 6], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 6], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "13.4.1", page := 140,
     title := "Verbs of Fulfilling",
     members :=
@@ -395,7 +427,7 @@ def chapter13 : List VerbClass := [
       "trust"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 6], .none, .all, none⟩] },
+      [⟨.alternation [2, 6], .acceptable, .all, none⟩] },
   { number := "13.4.2", page := 141,
     title := "Equip Verbs",
     members :=
@@ -403,7 +435,8 @@ def chapter13 : List VerbClass := [
       "saddle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 6], .star, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩] },
+      [⟨.alternation [2, 6], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩] },
   { number := "13.5.1", page := 141,
     title := "Get Verbs",
     members :=
@@ -413,9 +446,11 @@ def chapter13 : List VerbClass := [
       "steal", "vote", "win"],
     doubtful := ["choose"],
     properties :=
-      [⟨.property .fromPhrase, .none, .most, none⟩, ⟨.alternation [2, 2], .none, .all, none⟩,
-      ⟨.alternation [2, 1], .star, .all, none⟩, ⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [3, 9], .none, .some, none⟩] },
+      [⟨.property .fromPhrase, .acceptable, .most, none⟩,
+      ⟨.alternation [2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 9], .acceptable, .some, none⟩] },
   { number := "13.5.2", page := 142,
     title := "Obtain Verbs",
     members :=
@@ -424,16 +459,19 @@ def chapter13 : List VerbClass := [
       "seize", "select", "snatch"],
     doubtful := ["cadge"],
     properties :=
-      [⟨.property .fromPhrase, .none, .most, none⟩, ⟨.alternation [2, 2], .star, .all, none⟩,
-      ⟨.alternation [2, 1], .star, .all, none⟩, ⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [3, 9], .none, .few, none⟩] },
+      [⟨.property .fromPhrase, .acceptable, .most, none⟩,
+      ⟨.alternation [2, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 9], .acceptable, .few, none⟩] },
   { number := "13.6", page := 143,
     title := "Verbs of Exchange",
     members :=
       ["barter", "change", "exchange", "substitute", "swap", "trade"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .star, .all, none⟩, ⟨.alternation [2, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 2], .ungrammatical, .all, none⟩] },
   { number := "13.7", page := 144,
     title := "Berry Verbs",
     members :=
@@ -462,16 +500,17 @@ def chapter15 : List VerbClass := [
       ["clasp", "clutch", "grasp", "grip", "handle", "hold", "wield"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [2, 12], .none, .some, none⟩] },
+      [⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .some, none⟩] },
   { number := "15.2", page := 145,
     title := "Keep Verbs",
     members :=
       ["hoard", "keep", "leave", "store"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] }]
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 16. -/
 def chapter16 : List VerbClass := [
@@ -482,7 +521,7 @@ def chapter16 : List VerbClass := [
       "seclude", "sequester", "shelter"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩] }]
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 17. -/
 def chapter17 : List VerbClass := [
@@ -494,20 +533,24 @@ def chapter17 : List VerbClass := [
       "shove", "slam", "slap", "sling", "smash", "tap", "throw", "tip", "toss"],
     doubtful := ["cast", "loft"],
     properties :=
-      [⟨.alternation [7, 8], .none, .all, none⟩, ⟨.alternation [2, 1], .none, .most, none⟩,
-      ⟨.alternation [2, 8], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [7, 8], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "17.2", page := 147,
     title := "Pelt Verbs",
     members :=
       ["bombard", "buffet", "pelt", "shower", "stone"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 8], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [2, 8], .star, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩] }]
+      [⟨.alternation [7, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 18. -/
 def chapter18 : List VerbClass := [
@@ -519,15 +562,19 @@ def chapter18 : List VerbClass := [
       "thump", "thwack", "whack"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 8], .none, .all, none⟩, ⟨.alternation [2, 9], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .none, .all, none⟩, ⟨.alternation [2, 12], .none, .all, none⟩,
-      ⟨.alternation [2, 5, 2], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 6, 1], .none, .some, none⟩,
-      ⟨.alternation [7, 6, 2], .none, .some, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 8], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 9], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 5, 2], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "18.2", page := 150,
     title := "Swat Verbs",
     members :=
@@ -535,12 +582,15 @@ def chapter18 : List VerbClass := [
       "swipe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 8], .star, .all, none⟩, ⟨.alternation [2, 9], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .none, .all, none⟩, ⟨.alternation [2, 12], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [3, 3], .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 9], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "18.3", page := 151,
     title := "Spank Verbs",
     members :=
@@ -549,20 +599,23 @@ def chapter18 : List VerbClass := [
       "strap", "thrash", "truncheon", "wallop", "whip", "whisk"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 8], .star, .all, none⟩, ⟨.alternation [2, 9], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [2, 12], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [3, 3], .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .ingNominal, .none, .most, none⟩] },
+      [⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 9], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .ingNominal, .acceptable, .most, none⟩] },
   { number := "18.4", page := 153,
     title := "Non-Agentive Verbs of Impact by Contact",
     members :=
       ["bang", "brush", "bump", "crash", "hit", "knock", "ram", "slam", "smash", "thud"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 5], .none, .some, some "intransitive"⟩] }]
+      [⟨.alternation [2, 5, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 5], .acceptable, .some, some "intransitive"⟩] }]
 
 /-- The classes of chapter 19. -/
 def chapter19 : List VerbClass := [
@@ -572,11 +625,14 @@ def chapter19 : List VerbClass := [
       ["dig", "jab", "pierce", "poke", "prick", "stick"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 9], .none, .all, none⟩, ⟨.alternation [2, 8], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .none, .some, none⟩, ⟨.alternation [2, 12], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] }]
+      [⟨.alternation [2, 9], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 20. -/
 def chapter20 : List VerbClass := [
@@ -587,12 +643,17 @@ def chapter20 : List VerbClass := [
       "stroke", "tickle", "touch"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 8], .star, .all, none⟩, ⟨.alternation [2, 9], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [2, 12], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [3, 3], .star, .all, none⟩,
-      ⟨.alternation [7, 6], .star, .all, none⟩, ⟨.alternation [7, 5], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] }]
+      [⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 9], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 6, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 21. -/
 def chapter21 : List VerbClass := [
@@ -602,14 +663,17 @@ def chapter21 : List VerbClass := [
       ["chip", "clip", "cut", "hack", "hew", "saw", "scrape", "scratch", "slash", "snip"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 3], .none, .all, none⟩, ⟨.alternation [2, 12], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 2, 6, 2], .none, .some, none⟩,
-      ⟨.alternation [7, 6, 1], .none, .some, none⟩,
-      ⟨.alternation [7, 6, 2], .none, .some, none⟩,
-      ⟨.property .pathPhrase, .none, .some, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .most, none⟩] },
+      [⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 12], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 2, 6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 6, 2], .acceptable, .some, none⟩,
+      ⟨.property .pathPhrase, .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .most, none⟩] },
   { number := "21.2", page := 157,
     title := "Carve Verbs",
     members :=
@@ -619,11 +683,13 @@ def chapter21 : List VerbClass := [
       "spear", "squash", "squish"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [2, 12], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 2, 6, 2], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] }]
+      [⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 2, 6, 2], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 22. -/
 def chapter22 : List VerbClass := [
@@ -634,12 +700,12 @@ def chapter22 : List VerbClass := [
       "link", "merge", "mingle", "mix", "network", "pool"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 1], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 4], .none, .most, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 2], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 5], .none, .most, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .most, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 5, 1], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .most, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 2], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 5], .acceptable, .most, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩] },
   { number := "22.2", page := 160,
     title := "Amalgamate Verbs",
     members :=
@@ -651,12 +717,12 @@ def chapter22 : List VerbClass := [
       "muddle", "oppose", "pair", "rhyme", "team", "total", "unify", "unite", "wed"],
     doubtful := ["pair", "team"],
     properties :=
-      [⟨.alternation [2, 5, 1], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 2], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 5], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .most, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 5, 1], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 2], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 5], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩] },
   { number := "22.3", page := 161,
     title := "Shake Verbs",
     members :=
@@ -666,10 +732,10 @@ def chapter22 : List VerbClass := [
       "shuffle", "splice", "stick", "stir", "swirl", "weld", "whip", "whisk"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 2], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .most, some "with a few exceptions"⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 5, 2], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .most, some "with a few exceptions"⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩] },
   { number := "22.4", page := 162,
     title := "Tape Verbs",
     members :=
@@ -682,22 +748,23 @@ def chapter22 : List VerbClass := [
       "wire", "yoke", "zip"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [2, 5, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 2], .none, .all, some "transitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.alternation [7, 2], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 5, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 2], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 2], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "22.5", page := 164,
     title := "Cling Verbs",
     members :=
       ["adhere", "cleave", "cling"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 5], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [2, 5, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 5], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 23. -/
 def chapter23 : List VerbClass := [
@@ -708,13 +775,13 @@ def chapter23 : List VerbClass := [
       "divide", "divorce", "part", "segregate", "separate", "sever"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 1], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 3], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 6], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩,
-      ⟨.alternation [2, 3], .star, .all, none⟩] },
+      [⟨.alternation [2, 5, 1], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 3], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 6], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩] },
   { number := "23.2", page := 166,
     title := "Split Verbs",
     members :=
@@ -722,12 +789,12 @@ def chapter23 : List VerbClass := [
       "roll", "saw", "shove", "slip", "split", "tear", "tug", "yank"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 3], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 6], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .most, none⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 5, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 3], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 6], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩] },
   { number := "23.3", page := 167,
     title := "Disassemble Verbs",
     members :=
@@ -737,19 +804,19 @@ def chapter23 : List VerbClass := [
       "unscrew", "unshackle", "unstaple", "unstitch", "untie", "unzip"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 5, 3], .star, .all, some "transitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .most, some "a few exceptions"⟩,
-      ⟨.alternation [1, 1, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 5, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 5, 3], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .most, some "a few exceptions"⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩] },
   { number := "23.4", page := 167,
     title := "Differ Verbs",
     members :=
       ["differ", "diverge"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 6], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 6], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 24. -/
 def chapter24 : List VerbClass := [
@@ -760,7 +827,8 @@ def chapter24 : List VerbClass := [
       "spraypaint", "stain", "tint", "varnish"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 5], .none, .all, none⟩, ⟨.alternation [7, 2], .none, .all, none⟩] }]
+      [⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 2], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 25. -/
 def chapter25 : List VerbClass := [
@@ -771,9 +839,10 @@ def chapter25 : List VerbClass := [
       "mark", "paint", "set", "sign", "stamp", "tattoo"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 7], .none, .all, none⟩, ⟨.alternation [1, 2, 1], .none, .all, none⟩,
-      ⟨.property .processNominal, .none, .all, none⟩,
-      ⟨.property .resultNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 7], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.property .processNominal, .acceptable, .all, none⟩,
+      ⟨.property .resultNominal, .acceptable, .all, none⟩] },
   { number := "25.2", page := 170,
     title := "Scribble Verbs",
     members :=
@@ -782,8 +851,9 @@ def chapter25 : List VerbClass := [
       "stencil", "trace", "type", "write"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 7], .star, .all, none⟩, ⟨.alternation [1, 2, 1], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 7], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "25.3", page := 171,
     title := "Illustrate Verbs",
     members :=
@@ -792,9 +862,10 @@ def chapter25 : List VerbClass := [
       "tag"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 7], .star, .all, none⟩, ⟨.property .processNominal, .none, .some, none⟩,
-      ⟨.property .resultNominal, .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 7], .ungrammatical, .all, none⟩,
+      ⟨.property .processNominal, .acceptable, .some, none⟩,
+      ⟨.property .resultNominal, .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "25.4", page := 171,
     title := "Transcribe Verbs",
     members :=
@@ -802,8 +873,8 @@ def chapter25 : List VerbClass := [
       "televise", "transcribe", "type"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 7], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] }]
+      [⟨.alternation [2, 7], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 26. -/
 def chapter26 : List VerbClass := [
@@ -816,20 +887,22 @@ def chapter26 : List VerbClass := [
       "sculpt", "sew", "shape", "spin", "stitch", "weave", "whittle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 1], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 4, 3], .star, .all, some "transitive"⟩,
-      ⟨.alternation [1, 2, 1], .none, .all, none⟩, ⟨.alternation [2, 2], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [3, 8], .none, .some, none⟩,
-      ⟨.alternation [3, 9], .none, .few, none⟩] },
+      [⟨.alternation [2, 4, 1], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 4, 3], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 8], .acceptable, .some, none⟩,
+      ⟨.alternation [3, 9], .acceptable, .few, none⟩] },
   { number := "26.2", page := 174,
     title := "Grow Verbs",
     members :=
       ["develop", "evolve", "grow", "hatch", "mature"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 2], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 4, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .all, none⟩] },
+      [⟨.alternation [2, 4, 2], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 4, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩] },
   { number := "26.3", page := 175,
     title := "Verbs of Preparing",
     members :=
@@ -838,9 +911,9 @@ def chapter26 : List VerbClass := [
       "set", "softboil", "toast", "toss", "wash"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 2], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 4, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "26.4", page := 175,
     title := "Create Verbs",
     members :=
@@ -849,9 +922,10 @@ def chapter26 : List VerbClass := [
       "recreate", "style", "synthesize"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 2], .star, .most, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [3, 8], .star, .all, none⟩] },
+      [⟨.alternation [2, 4, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 2], .ungrammatical, .most, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 8], .ungrammatical, .all, none⟩] },
   { number := "26.5", page := 176,
     title := "Knead Verbs",
     members :=
@@ -859,21 +933,21 @@ def chapter26 : List VerbClass := [
       "squash", "squeeze", "squish", "twirl", "twist", "wad", "whip", "wind", "work"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .some, none⟩,
-      ⟨.alternation [3, 8], .star, .all, none⟩,
-      ⟨.alternation [2, 4, 3], .star, .all, some "transitive"⟩] },
+      [⟨.alternation [2, 4, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [3, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 4, 3], .ungrammatical, .all, some "transitive"⟩] },
   { number := "26.6", page := 177,
     title := "Turn Verbs",
     members :=
       ["alter", "change", "convert", "metamorphose", "transform", "transmute", "turn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 4, 3], .none, .all, some "transitive"⟩,
-      ⟨.alternation [2, 4, 4], .none, .most, some "intransitive"⟩,
-      ⟨.alternation [1, 1, 2, 1], .none, .most, none⟩,
-      ⟨.alternation [2, 4, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 4, 2], .star, .all, some "intransitive"⟩] },
+      [⟨.alternation [2, 4, 3], .acceptable, .all, some "transitive"⟩,
+      ⟨.alternation [2, 4, 4], .acceptable, .most, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [2, 4, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 4, 2], .ungrammatical, .all, some "intransitive"⟩] },
   { number := "26.7", page := 178,
     title := "Performance Verbs",
     members :=
@@ -882,9 +956,10 @@ def chapter26 : List VerbClass := [
       "write"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .some, none⟩, ⟨.alternation [2, 2], .none, .some, none⟩,
-      ⟨.alternation [1, 2, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [2, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [2, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 27. -/
 def chapter27 : List VerbClass := [
@@ -894,7 +969,7 @@ def chapter27 : List VerbClass := [
       ["beget", "cause", "create", "engender", "generate", "shape", "spawn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 28. -/
 def chapter28 : List VerbClass := [
@@ -916,8 +991,9 @@ def chapter29 : List VerbClass := [
       "report", "want"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 14], .none, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.property .infinitivalCopularClause, .none, .some, none⟩] },
+      [⟨.alternation [2, 14], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .infinitivalCopularClause, .acceptable, .some, none⟩] },
   { number := "29.2", page := 181,
     title := "Characterize Verbs",
     members :=
@@ -931,8 +1007,8 @@ def chapter29 : List VerbClass := [
       "take", "train", "treat", "use", "value", "view", "visualize"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 14], .star, .all, none⟩,
-      ⟨.property .infinitivalCopularClause, .none, .few, none⟩] },
+      [⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.property .infinitivalCopularClause, .acceptable, .few, none⟩] },
   { number := "29.3", page := 182,
     title := "Dub Verbs",
     members :=
@@ -941,8 +1017,9 @@ def chapter29 : List VerbClass := [
       "vote"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 14], .star, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.property .infinitivalCopularClause, .star, .all, none⟩] },
+      [⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .infinitivalCopularClause, .ungrammatical, .all, none⟩] },
   { number := "29.4", page := 182,
     title := "Declare Verbs",
     members :=
@@ -950,8 +1027,9 @@ def chapter29 : List VerbClass := [
       "judge", "presume", "profess", "prove", "suppose", "think", "warrant"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 14], .star, .all, none⟩, ⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.property .infinitivalCopularClause, .none, .all, none⟩] },
+      [⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .infinitivalCopularClause, .acceptable, .all, none⟩] },
   { number := "29.5", page := 183,
     title := "Conjecture Verbs",
     members :=
@@ -960,8 +1038,8 @@ def chapter29 : List VerbClass := [
       "repute", "show", "suspect"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 14], .star, .all, none⟩,
-      ⟨.property .infinitivalCopularClause, .none, .all, none⟩] },
+      [⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.property .infinitivalCopularClause, .acceptable, .all, none⟩] },
   { number := "29.6", page := 183,
     title := "Masquerade Verbs",
     members :=
@@ -977,7 +1055,7 @@ def chapter29 : List VerbClass := [
       "pauper", "recruit", "widow"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .none, .all, none⟩] },
+      [⟨.alternation [5, 1], .acceptable, .all, none⟩] },
   { number := "29.8", page := 184,
     title := "Captain Verbs",
     members :=
@@ -998,8 +1076,9 @@ def chapter30 : List VerbClass := [
       ["detect", "discern", "feel", "hear", "notice", "see", "sense", "smell", "taste"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [2, 13, 1], .star, .all, none⟩,
-      ⟨.alternation [2, 13, 2], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 13, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 13, 2], .acceptable, .all, none⟩] },
   { number := "30.2", page := 186,
     title := "Sight Verbs",
     members :=
@@ -1008,7 +1087,7 @@ def chapter30 : List VerbClass := [
       "scrutinize", "sight", "spot", "spy", "study", "survey", "view", "watch", "witness"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 1], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩] },
   { number := "30.3", page := 187,
     title := "Peer Verbs",
     members :=
@@ -1023,7 +1102,7 @@ def chapter30 : List VerbClass := [
       ["feel", "look", "smell", "sound", "taste"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .star, .all, none⟩] }]
+      [⟨.alternation [5, 1], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 31. -/
 def chapter31 : List VerbClass := [
@@ -1061,14 +1140,16 @@ def chapter31 : List VerbClass := [
       "weary", "worry", "wound", "wow"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .most, none⟩, ⟨.alternation [1, 1, 1], .none, .most, none⟩,
-      ⟨.alternation [1, 2, 5], .none, .all, none⟩,
-      ⟨.property .extraposition, .none, .all, none⟩,
-      ⟨.property .passivePrepositionChoice, .none, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property (.derivedNominal .passive), .none, .all, none⟩,
-      ⟨.property .erNominal, .none, .some, none⟩,
-      ⟨.property .ableAdjective, .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .most, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 2, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 13, 4], .acceptable, .all, some "transitive"⟩,
+      ⟨.property .extraposition, .acceptable, .all, none⟩,
+      ⟨.property .passivePrepositionChoice, .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property (.derivedNominal .passive), .acceptable, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .some, none⟩,
+      ⟨.property .ableAdjective, .acceptable, .some, none⟩] },
   { number := "31.2", page := 191,
     title := "Admire Verbs",
     members :=
@@ -1080,13 +1161,15 @@ def chapter31 : List VerbClass := [
       "venerate", "worship"],
     doubtful := ["rue"],
     properties :=
-      [⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [2, 13, 1], .none, .all, none⟩,
-      ⟨.alternation [2, 13, 2], .none, .all, none⟩, ⟨.alternation [2, 14], .star, .all, none⟩,
-      ⟨.property (.sententialComplement .unspecified), .none, .some, none⟩,
-      ⟨.property .extraposition, .none, .some, none⟩,
-      ⟨.property (.derivedNominal .active), .none, .all, none⟩,
-      ⟨.property .ableAdjective, .none, .all, none⟩,
-      ⟨.property .erNominal, .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 13, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 13, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.property (.sententialComplement .unspecified), .acceptable, .some, none⟩,
+      ⟨.property .extraposition, .acceptable, .some, none⟩,
+      ⟨.property (.derivedNominal .active), .acceptable, .all, none⟩,
+      ⟨.property .ableAdjective, .acceptable, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .all, none⟩] },
   { number := "31.3", page := 192,
     title := "Marvel Verbs",
     members :=
@@ -1099,14 +1182,14 @@ def chapter31 : List VerbClass := [
       "weary", "weep", "wonder", "worry"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .none, .some, none⟩] },
+      [⟨.alternation [5, 1], .acceptable, .some, none⟩] },
   { number := "31.4", page := 193,
     title := "Appeal Verbs",
     members :=
       ["appeal", "grate", "jar", "matter", "niggle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .star, .all, none⟩] }]
+      [⟨.alternation [5, 1], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 32. -/
 def chapter32 : List VerbClass := [
@@ -1116,9 +1199,10 @@ def chapter32 : List VerbClass := [
       ["covet", "crave", "desire", "fancy", "need", "want"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 13, 1], .none, .all, none⟩, ⟨.alternation [2, 13, 2], .star, .all, none⟩,
-      ⟨.alternation [2, 14], .star, .all, none⟩,
-      ⟨.alternation [5, 1], .question, .all, none⟩] },
+      [⟨.alternation [2, 13, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 13, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 14], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 1], .marginal, .all, none⟩] },
   { number := "32.2", page := 194,
     title := "Long Verbs",
     members :=
@@ -1126,7 +1210,7 @@ def chapter32 : List VerbClass := [
       "pine", "pray", "thirst", "wish", "yearn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .question, .all, none⟩] }]
+      [⟨.alternation [5, 1], .marginal, .all, none⟩] }]
 
 /-- The classes of chapter 33. -/
 def chapter33 : List VerbClass := [
@@ -1144,10 +1228,11 @@ def chapter33 : List VerbClass := [
       "shame", "snub", "thank", "toast", "upbraid", "victimize", "vilify", "welcome"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [2, 13, 1], .none, .all, none⟩,
-      ⟨.alternation [2, 13, 2], .star, .all, none⟩,
-      ⟨.alternation [2, 14], .none, .some, none⟩,
-      ⟨.property .processNominal, .none, .some, none⟩] }]
+      [⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 13, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 13, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 14], .acceptable, .some, none⟩,
+      ⟨.property .processNominal, .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 34. -/
 def chapter34 : List VerbClass := [
@@ -1157,8 +1242,8 @@ def chapter34 : List VerbClass := [
       ["analyze", "assess", "audit", "evaluate", "review", "scrutinize", "study"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 13, 1], .none, .all, none⟩,
-      ⟨.alternation [2, 13, 2], .star, .all, none⟩] }]
+      [⟨.alternation [2, 13, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 13, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 35. -/
 def chapter35 : List VerbClass := [
@@ -1168,7 +1253,7 @@ def chapter35 : List VerbClass := [
       ["dig", "feel", "fish", "hunt", "mine", "poach", "scrounge"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .none, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .acceptable, .all, none⟩] },
   { number := "35.2", page := 198,
     title := "Search Verbs",
     members :=
@@ -1224,10 +1309,10 @@ def chapter36 : List VerbClass := [
       "squabble", "struggle", "tilt", "tussle", "vie", "war", "wrangle", "wrestle"],
     doubtful := [],
     properties :=
-      [⟨.property .collectiveNPSubject, .none, .all, none⟩,
-      ⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 2, 4], .star, .all, none⟩,
-      ⟨.alternation [1, 4, 2], .star, .all, none⟩] },
+      [⟨.property .collectiveNPSubject, .acceptable, .all, none⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 2, 4], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 4, 2], .ungrammatical, .all, none⟩] },
   { number := "36.2", page := 201,
     title := "Marry Verbs",
     members :=
@@ -1235,18 +1320,18 @@ def chapter36 : List VerbClass := [
       "pet"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 2, 4], .none, .all, none⟩,
-      ⟨.alternation [1, 4, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 5, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 2, 4], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 4, 2], .ungrammatical, .all, none⟩] },
   { number := "36.3", page := 201,
     title := "Meet Verbs",
     members :=
       ["battle", "box", "consult", "debate", "fight", "meet", "play", "visit"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 2, 4], .none, .all, none⟩,
-      ⟨.alternation [1, 4, 2], .none, .all, none⟩] }]
+      [⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 2, 4], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 4, 2], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 37. -/
 def chapter37 : List VerbClass := [
@@ -1257,22 +1342,22 @@ def chapter37 : List VerbClass := [
       "quote", "read", "recite", "relay", "show", "teach", "tell", "write"],
     doubtful := ["pose"],
     properties :=
-      [⟨.alternation [2, 1], .none, .most, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .most, none⟩] },
   { number := "37.2", page := 203,
     title := "Tell",
     members :=
       ["tell"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩,
-      ⟨.property (.sententialComplement (.required .object)), .none, .all, none⟩,
-      ⟨.property (.sententialComplement (.required .toPhrase)), .star, .all, none⟩,
-      ⟨.property (.sententialComplement .absent), .star, .all, none⟩,
-      ⟨.property .directSpeech, .none, .all, none⟩,
-      ⟨.property .parentheticalUse, .none, .all, none⟩,
-      ⟨.alternation [5, 1], .none, .all, none⟩,
-      ⟨.property .impersonalPassive, .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.property (.sententialComplement (.required .object)), .acceptable, .all, none⟩,
+      ⟨.property (.sententialComplement (.required .toPhrase)), .ungrammatical, .all, none⟩,
+      ⟨.property (.sententialComplement .absent), .ungrammatical, .all, none⟩,
+      ⟨.property .directSpeech, .acceptable, .all, none⟩,
+      ⟨.property .parentheticalUse, .acceptable, .all, none⟩,
+      ⟨.alternation [5, 1], .acceptable, .all, none⟩,
+      ⟨.property .impersonalPassive, .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .all, none⟩] },
   { number := "37.3", page := 204,
     title := "Verbs of Manner of Speaking",
     members :=
@@ -1287,13 +1372,14 @@ def chapter37 : List VerbClass := [
       "yap", "yell", "yelp", "yodel"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .star, .all, none⟩,
-      ⟨.property (.sententialComplement (.optional .toPhrase)), .none, .all, none⟩,
-      ⟨.property .directSpeech, .none, .all, none⟩,
-      ⟨.property .parentheticalUse, .none, .all, none⟩,
-      ⟨.alternation [5, 1], .star, .all, none⟩, ⟨.alternation [7, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 1], .question, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.property (.sententialComplement (.optional .toPhrase)), .acceptable, .all, none⟩,
+      ⟨.property .directSpeech, .acceptable, .all, none⟩,
+      ⟨.property .parentheticalUse, .acceptable, .all, none⟩,
+      ⟨.alternation [5, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 1], .marginal, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "37.4", page := 206,
     title := "Verbs of Instrument of Communication",
     members :=
@@ -1302,24 +1388,24 @@ def chapter37 : List VerbClass := [
       "wireless"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩,
-      ⟨.property (.sententialComplement (.optional .object)), .none, .all, none⟩,
-      ⟨.property (.sententialComplement (.optional .toPhrase)), .none, .all, none⟩,
-      ⟨.property .directSpeech, .none, .all, none⟩,
-      ⟨.property .parentheticalUse, .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩,
+      ⟨.property (.sententialComplement (.optional .object)), .acceptable, .all, none⟩,
+      ⟨.property (.sententialComplement (.optional .toPhrase)), .acceptable, .all, none⟩,
+      ⟨.property .directSpeech, .acceptable, .all, none⟩,
+      ⟨.property .parentheticalUse, .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "37.5", page := 207,
     title := "Talk Verbs",
     members :=
       ["speak", "talk"],
     doubtful := [],
     properties :=
-      [⟨.property (.sententialComplement .unspecified), .star, .all, none⟩,
-      ⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 5], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 2, 4], .star, .all, none⟩,
-      ⟨.alternation [1, 4, 2], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.property (.sententialComplement .unspecified), .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 5], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 2, 4], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 4, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "37.6", page := 208,
     title := "Chitchat Verbs",
     members :=
@@ -1327,11 +1413,11 @@ def chapter37 : List VerbClass := [
       "schmooze", "yak"],
     doubtful := [],
     properties :=
-      [⟨.property (.sententialComplement .unspecified), .star, .all, none⟩,
-      ⟨.alternation [2, 5, 4], .none, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 5, 5], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [1, 2, 4], .star, .all, none⟩,
-      ⟨.alternation [1, 4, 2], .star, .all, none⟩] },
+      [⟨.property (.sententialComplement .unspecified), .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 5, 4], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 5, 5], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 2, 4], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 4, 2], .ungrammatical, .all, none⟩] },
   { number := "37.7", page := 209,
     title := "Say Verbs",
     members :=
@@ -1340,7 +1426,7 @@ def chapter37 : List VerbClass := [
       "relate", "remark", "repeat", "report", "reveal", "say", "state", "suggest"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .star, .all, none⟩] },
+      [⟨.alternation [2, 1], .ungrammatical, .all, none⟩] },
   { number := "37.8", page := 210,
     title := "Complain Verbs",
     members :=
@@ -1348,22 +1434,22 @@ def chapter37 : List VerbClass := [
       "object"],
     doubtful := [],
     properties :=
-      [⟨.property (.sententialComplement (.optional .toPhrase)), .none, .all, none⟩,
-      ⟨.property .directSpeech, .none, .all, none⟩,
-      ⟨.property .parentheticalUse, .none, .all, none⟩,
-      ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .most, none⟩] },
+      [⟨.property (.sententialComplement (.optional .toPhrase)), .acceptable, .all, none⟩,
+      ⟨.property .directSpeech, .acceptable, .all, none⟩,
+      ⟨.property .parentheticalUse, .acceptable, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .most, none⟩] },
   { number := "37.9", page := 211,
     title := "Advise Verbs",
     members :=
       ["admonish", "advise", "alert", "caution", "counsel", "instruct", "warn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 5], .none, .all, some "except alert"⟩,
-      ⟨.property (.sententialComplement (.optional .object)), .none, .all, none⟩,
-      ⟨.property .directSpeech, .none, .all, none⟩,
-      ⟨.property .parentheticalUse, .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .most, none⟩] }]
+      [⟨.alternation [1, 2, 5], .acceptable, (.all ["alert"]), none⟩,
+      ⟨.property (.sententialComplement (.optional .object)), .acceptable, .all, none⟩,
+      ⟨.property .directSpeech, .acceptable, .all, none⟩,
+      ⟨.property .parentheticalUse, .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .most, none⟩] }]
 
 /-- The classes of chapter 38. -/
 def chapter38 : List VerbClass := [
@@ -1380,8 +1466,9 @@ def chapter38 : List VerbClass := [
       "yowl"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 8], .star, .all, none⟩, ⟨.alternation [7, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩] }]
+      [⟨.alternation [7, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 39. -/
 def chapter39 : List VerbClass := [
@@ -1391,9 +1478,11 @@ def chapter39 : List VerbClass := [
       ["drink", "eat"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .none, .all, none⟩, ⟨.alternation [1, 3], .none, .all, none⟩,
-      ⟨.alternation [3, 3], .star, .all, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "39.2", page := 214,
     title := "Chew Verbs",
     members :=
@@ -1401,45 +1490,50 @@ def chapter39 : List VerbClass := [
       "suck"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .none, .all, none⟩, ⟨.alternation [1, 3], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "39.3", page := 214,
     title := "Gobble Verbs",
     members :=
       ["bolt", "gobble", "gulp", "guzzle", "quaff", "swallow", "swig", "wolf"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [1, 2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "39.4", page := 215,
     title := "Devour Verbs",
     members :=
       ["consume", "devour", "imbibe", "ingest", "swill"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .all, none⟩] },
   { number := "39.5", page := 215,
     title := "Dine Verbs",
     members :=
       ["banquet", "breakfast", "luncheon", "nosh", "picnic", "snack", "sup"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩] },
   { number := "39.6", page := 216,
     title := "Gorge Verbs",
     members :=
       ["exist", "feed", "flourish", "gorge", "live", "prosper", "survive", "thrive"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 1], .star, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩] },
   { number := "39.7", page := 216,
     title := "Verbs of Feeding",
     members :=
       ["bottlefeed", "breastfeed", "feed", "forcefeed", "handfeed", "spoonfeed"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .none, .all, none⟩] }]
+      [⟨.alternation [2, 1], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 40. -/
 def chapter40 : List VerbClass := [
@@ -1450,8 +1544,8 @@ def chapter40 : List VerbClass := [
       "swallow", "wheeze", "yawn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .question, .all, none⟩, ⟨.alternation [7, 5], .question, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [7, 1], .marginal, .all, none⟩, ⟨.alternation [7, 5], .marginal, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "40.1.2", page := 218,
     title := "Breathe Verbs",
     members :=
@@ -1459,17 +1553,18 @@ def chapter40 : List VerbClass := [
       "weep"],
     doubtful := ["weep"],
     properties :=
-      [⟨.alternation [7, 1], .none, .few, none⟩, ⟨.property .substanceObject, .none, .most, none⟩,
-      ⟨.alternation [7, 5], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .most, none⟩] },
+      [⟨.alternation [7, 1], .acceptable, .few, none⟩,
+      ⟨.property .substanceObject, .acceptable, .most, none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .most, none⟩] },
   { number := "40.1.3", page := 218,
     title := "Exhale Verbs",
     members :=
       ["exhale", "inhale", "perspire"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .all, none⟩] },
+      [⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .all, none⟩] },
   { number := "40.2", page := 219,
     title := "Verbs of Nonverbal Expression",
     members :=
@@ -1480,18 +1575,21 @@ def chapter40 : List VerbClass := [
       "weep", "whistle", "yawn"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .none, .some, none⟩, ⟨.alternation [7, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .most, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .most, none⟩] },
+      [⟨.alternation [7, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .most, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .most, none⟩] },
   { number := "40.3.1", page := 220,
     title := "Wink Verbs",
     members :=
       ["blink", "clap", "nod", "point", "shrug", "squint", "wag", "wave", "wink"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 2], .none, .all, none⟩, ⟨.alternation [5, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 1], .star, .all, none⟩, ⟨.alternation [7, 3], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [1, 2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 3], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "40.3.2", page := 221,
     title := "Crane Verbs",
     members :=
@@ -1502,34 +1600,37 @@ def chapter40 : List VerbClass := [
       "twiddle", "twitch", "wag", "waggle", "wiggle", "wring", "wrinkle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 2], .none, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.alternation [5, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [1, 2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "40.3.3", page := 222,
     title := "Curtsey Verbs",
     members :=
       ["bob", "bow", "curtsey", "genuflect", "kneel", "salaam", "salute"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .star, .all, none⟩, ⟨.alternation [7, 3], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 3], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "40.4", page := 222,
     title := "Snooze Verbs",
     members :=
       ["catnap", "doze", "drowse", "nap", "sleep", "slumber", "snooze"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [7, 1], .star, .all, some "except sleep"⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, (.all ["sleep"]), none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "40.5", page := 223,
     title := "Flinch Verbs",
     members :=
       ["balk", "cower", "cringe", "flinch", "recoil", "shrink", "wince"],
     doubtful := ["balk"],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 3], .ungrammatical, .all, none⟩] },
   { number := "40.6", page := 223,
     title := "Verbs of Body-Internal States of Existence",
     members :=
@@ -1537,23 +1638,24 @@ def chapter40 : List VerbClass := [
       "writhe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "40.7", page := 224,
     title := "Suffocate Verbs",
     members :=
       ["asphyxiate", "choke", "drown", "stifle", "suffocate"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 1], .question, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .marginal, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .some, none⟩] },
   { number := "40.8.1", page := 224,
     title := "Pain Verbs",
     members :=
       ["ache", "bother", "hurt", "itch", "pain"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .star, .all, none⟩, ⟨.alternation [5, 1], .star, .all, none⟩] },
+      [⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 1], .ungrammatical, .all, none⟩] },
   { number := "40.8.2", page := 225,
     title := "Tingle Verbs",
     members :=
@@ -1561,7 +1663,7 @@ def chapter40 : List VerbClass := [
       "swim", "throb", "tickle", "tingle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [7, 1], .star, .all, none⟩] },
+      [⟨.alternation [7, 1], .ungrammatical, .all, none⟩] },
   { number := "40.8.3", page := 225,
     title := "Hurt Verbs",
     members :=
@@ -1577,7 +1679,8 @@ def chapter40 : List VerbClass := [
       ["blanch", "faint", "sicken", "swoon"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 41. -/
 def chapter41 : List VerbClass := [
@@ -1588,22 +1691,23 @@ def chapter41 : List VerbClass := [
       "strip", "undress", "wash"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 2, 3], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 2, 3], .acceptable, .all, none⟩] },
   { number := "41.1.2", page := 228,
     title := "Groom Verbs",
     members :=
       ["curry", "groom"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 3], .ungrammatical, .all, none⟩] },
   { number := "41.2.1", page := 228,
     title := "Floss Verbs",
     members :=
       ["brush", "floss", "shave", "wash"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 3], .star, .all, none⟩, ⟨.alternation [1, 2, 2], .none, .all, none⟩] },
+      [⟨.alternation [1, 2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 2], .acceptable, .all, none⟩] },
   { number := "41.2.2", page := 229,
     title := "Braid Verbs",
     members :=
@@ -1613,28 +1717,29 @@ def chapter41 : List VerbClass := [
       "wave"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 2], .star, .all, none⟩, ⟨.alternation [1, 2, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 2, 3], .ungrammatical, .all, none⟩] },
   { number := "41.3.1", page := 229,
     title := "Simple Verbs of Dressing",
     members :=
       ["doff", "don", "wear"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 3], .star, .all, none⟩] },
+      [⟨.alternation [1, 2, 3], .ungrammatical, .all, none⟩] },
   { number := "41.3.2", page := 229,
     title := "Verbs of Dressing Well",
     members :=
       ["doll", "dress", "spruce", "tog"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 3], .none, .all, none⟩] },
+      [⟨.alternation [5, 3], .acceptable, .all, none⟩] },
   { number := "41.3.3", page := 230,
     title := "Verbs of Being Dressed",
     members :=
       ["attire", "clad", "garb", "robe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 2, 3], .star, .all, none⟩] }]
+      [⟨.alternation [1, 2, 3], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 42. -/
 def chapter42 : List VerbClass := [
@@ -1645,10 +1750,11 @@ def chapter42 : List VerbClass := [
       "liquidate", "massacre", "murder", "slaughter", "slay"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [3, 3], .star, .all, some "except kill"⟩,
-      ⟨.alternation [7, 5], .star, .all, some "except kill"⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .ungrammatical, (.all ["kill"]), none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, (.all ["kill"]), none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "42.2", page := 232,
     title := "Poison Verbs",
     members :=
@@ -1656,9 +1762,10 @@ def chapter42 : List VerbClass := [
       "shoot", "smother", "stab", "strangle", "suffocate"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, some "except asphyxiate, drown, suffocate"⟩,
-      ⟨.alternation [1, 1, 1], .star, .all, none⟩, ⟨.alternation [7, 5], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, (.all ["asphyxiate", "drown", "suffocate"]), none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 43. -/
 def chapter43 : List VerbClass := [
@@ -1670,11 +1777,13 @@ def chapter43 : List VerbClass := [
       "shimmer", "shine", "sparkle", "twinkle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 4], .none, .all, none⟩, ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.alternation [6, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .some, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩, ⟨.property .erNominal, .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3, 4], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "43.2", page := 234,
     title := "Verbs of Sound Emission",
     members :=
@@ -1693,20 +1802,23 @@ def chapter43 : List VerbClass := [
       "whir", "whish", "whistle", "whoosh", "whump", "zing"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 4], .none, .most, none⟩, ⟨.alternation [6, 2], .none, .some, none⟩,
-      ⟨.alternation [6, 1], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .all, none⟩,
-      ⟨.alternation [7, 8], .none, .all, none⟩, ⟨.alternation [5, 4], .star, .all, none⟩,
-      ⟨.property .erNominal, .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3, 4], .acceptable, .most, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 8], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "43.3", page := 236,
     title := "Verbs of Smell Emission",
     members :=
       ["reek", "smell", "stink"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .none, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [2, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "43.4", page := 237,
     title := "Verbs of Substance Emission",
     members :=
@@ -1715,11 +1827,14 @@ def chapter43 : List VerbClass := [
       "spout", "sprout", "spurt", "squirt", "steam", "stream", "sweat"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 3], .none, .some, none⟩, ⟨.alternation [1, 1, 3], .none, .all, none⟩,
-      ⟨.alternation [2, 3, 4], .none, .some, none⟩, ⟨.alternation [6, 2], .none, .some, none⟩,
-      ⟨.alternation [6, 1], .none, .some, none⟩, ⟨.alternation [5, 4], .star, .all, none⟩,
-      ⟨.property .erNominal, .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] }]
+      [⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 3, 4], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 44. -/
 def chapter44 : List VerbClass := [
@@ -1730,11 +1845,14 @@ def chapter44 : List VerbClass := [
       "extirpate", "obliterate", "ravage", "raze", "ruin", "waste", "wreck"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [1, 1, 1], .star, .all, none⟩,
-      ⟨.alternation [2, 4, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [2, 4, 3], .star, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [7, 5], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 4, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [2, 4, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 45. -/
 def chapter45 : List VerbClass := [
@@ -1745,23 +1863,30 @@ def chapter45 : List VerbClass := [
       "splinter", "split", "tear"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 1], .none, .all, none⟩, ⟨.alternation [1, 1, 1], .none, .all, none⟩,
-      ⟨.alternation [3, 3], .none, .all, none⟩, ⟨.alternation [2, 8], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [2, 12], .star, .all, none⟩,
-      ⟨.alternation [7, 6, 1], .star, .some, none⟩,
-      ⟨.alternation [7, 6, 2], .none, .some, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 6, 1], .ungrammatical, .some, none⟩,
+      ⟨.alternation [7, 6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .all, none⟩] },
   { number := "45.2", page := 242,
     title := "Bend Verbs",
     members :=
       ["bend", "crease", "crinkle", "crumple", "fold", "rumple", "wrinkle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 1], .none, .all, none⟩, ⟨.alternation [1, 1, 1], .none, .all, none⟩,
-      ⟨.alternation [3, 3], .none, .all, none⟩, ⟨.alternation [2, 8], .star, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [2, 12], .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .most, none⟩] },
+      [⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 8], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 12], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .most, none⟩] },
   { number := "45.3", page := 243,
     title := "Cooking Verbs",
     members :=
@@ -1773,9 +1898,13 @@ def chapter45 : List VerbClass := [
       "steam-bake", "stew", "stir-fry", "toast"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 1], .none, .all, none⟩, ⟨.alternation [3, 3], .none, .all, none⟩,
-      ⟨.alternation [1, 3], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩, ⟨.alternation [5, 3], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 3], .acceptable, .all, none⟩] },
   { number := "45.4", page := 244,
     title := "Other Alternating Verbs of Change of State",
     members :=
@@ -1814,13 +1943,17 @@ def chapter45 : List VerbClass := [
       "widen", "worsen", "yellow"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 1], .none, .all, none⟩, ⟨.alternation [1, 1, 1], .none, .all, none⟩,
-      ⟨.alternation [3, 3], .none, .all, none⟩, ⟨.alternation [1, 3], .star, .all, none⟩,
-      ⟨.alternation [2, 3, 4], .star, .all, some "intransitive"⟩,
-      ⟨.alternation [2, 3, 1], .star, .all, some "transitive"⟩,
-      ⟨.alternation [6, 2], .star, .all, none⟩, ⟨.alternation [6, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 1], .star, .all, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.alternation [5, 3], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [3, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 3, 4], .ungrammatical, .all, some "intransitive"⟩,
+      ⟨.alternation [2, 3, 1], .ungrammatical, .all, some "transitive"⟩,
+      ⟨.alternation [6, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 3], .acceptable, .all, none⟩] },
   { number := "45.5", page := 246,
     title := "Verbs of Entity-Specific Change of State",
     members :=
@@ -1829,8 +1962,9 @@ def chapter45 : List VerbClass := [
       "tarnish", "wilt", "wither"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.alternation [5, 4], .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .acceptable, .some, none⟩] },
   { number := "45.6", page := 247,
     title := "Verbs of Calibratable Changes of State",
     members :=
@@ -1839,9 +1973,12 @@ def chapter45 : List VerbClass := [
       "plunge", "rise", "rocket", "skyrocket", "soar", "surge", "tumble", "vary"],
     doubtful := ["mushroom"],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.alternation [6, 1], .star, .all, none⟩,
-      ⟨.alternation [6, 2], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩] }]
+      [⟨.alternation [2, 13, 5], .acceptable, .all, some "intransitive"⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 46. -/
 def chapter46 : List VerbClass := [
@@ -1852,11 +1989,12 @@ def chapter46 : List VerbClass := [
       "stop"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .star, .all, none⟩, ⟨.alternation [6, 2], .star, .all, none⟩,
-      ⟨.alternation [2, 3], .star, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .some, none⟩,
-      ⟨.alternation [5, 3], .star, .all, none⟩,
-      ⟨.property .erNominal, .none, .some, none⟩] }]
+      [⟨.alternation [6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 3], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 47. -/
 def chapter47 : List VerbClass := [
@@ -1869,9 +2007,11 @@ def chapter47 : List VerbClass := [
       "tower", "wait"],
     doubtful := ["correspond", "depend"],
     properties :=
-      [⟨.alternation [6, 1], .none, .all, none⟩, ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩] },
+      [⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩] },
   { number := "47.2", page := 250,
     title := "Verbs of Entity-Specific Modes of Being",
     members :=
@@ -1882,10 +2022,12 @@ def chapter47 : List VerbClass := [
       "stagnate", "stream", "sweep", "tarnish", "trickle", "wilt", "wither"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .none, .some, none⟩, ⟨.alternation [6, 2], .none, .some, none⟩,
-      ⟨.alternation [2, 3, 4], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .most, some "with a few exceptions"⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩, ⟨.property .erNominal, .star, .all, none⟩] },
+      [⟨.alternation [6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [2, 3, 4], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .most, some "with a few exceptions"⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .ungrammatical, .all, none⟩] },
   { number := "47.3", page := 251,
     title := "Verbs of Modes of Being Involving Motion",
     members :=
@@ -1895,28 +2037,33 @@ def chapter47 : List VerbClass := [
       "undulate", "vibrate", "waft", "wave", "waver", "wiggle", "wobble", "writhe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [6, 1], .none, .some, none⟩,
-      ⟨.alternation [6, 2], .none, .some, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .some, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩] },
   { number := "47.4", page := 252,
     title := "Verbs of Sound Existence",
     members :=
       ["din", "echo", "resonate", "resound", "reverberate", "sound"],
     doubtful := ["din"],
     properties :=
-      [⟨.alternation [2, 3, 4], .none, .all, none⟩, ⟨.alternation [6, 1], .none, .all, none⟩,
-      ⟨.alternation [6, 2], .none, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩, ⟨.property .erNominal, .star, .all, none⟩] },
+      [⟨.alternation [2, 3, 4], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.property .erNominal, .ungrammatical, .all, none⟩] },
   { number := "47.5.1", page := 253,
     title := "Swarm Verbs",
     members :=
       ["abound", "bustle", "crawl", "creep", "hop", "run", "swarm", "swim", "teem", "throng"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3, 4], .none, .all, none⟩, ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.alternation [6, 1], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 3, 4], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "47.5.2", page := 254,
     title := "Herd Verbs",
     members :=
@@ -1924,15 +2071,17 @@ def chapter47 : List VerbClass := [
       "convene", "flock", "gather", "group", "herd", "huddle", "mass"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 2, 3], .none, .some, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "47.5.3", page := 254,
     title := "Bulge Verbs",
     members :=
       ["bristle", "bulge", "seethe"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 3], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [2, 3], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "47.6", page := 255,
     title := "Verbs of Spatial Configuration",
     members :=
@@ -1942,9 +2091,10 @@ def chapter47 : List VerbClass := [
       "slump", "sprawl", "squat", "stand", "stoop", "straddle", "swing", "tilt", "tower"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .none, .all, none⟩, ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2, 3], .none, .some, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩] },
+      [⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩] },
   { number := "47.7", page := 256,
     title := "Meander Verbs",
     members :=
@@ -1952,7 +2102,8 @@ def chapter47 : List VerbClass := [
       "stretch", "sweep", "tumble", "turn", "twist", "wander", "weave", "wind"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 2], .none, .all, none⟩, ⟨.alternation [6, 1], .none, .all, none⟩] },
+      [⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .all, none⟩] },
   { number := "47.8", page := 257,
     title := "Verbs of Contiguous Location",
     members :=
@@ -1963,7 +2114,8 @@ def chapter47 : List VerbClass := [
       "surmount", "surround", "top", "touch", "underlie"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 3], .none, .all, none⟩, ⟨.alternation [1, 2, 4], .none, .some, none⟩] }]
+      [⟨.alternation [5, 3], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 2, 4], .acceptable, .some, none⟩] }]
 
 /-- The classes of chapter 48. -/
 def chapter48 : List VerbClass := [
@@ -1976,9 +2128,10 @@ def chapter48 : List VerbClass := [
       "spread", "steal", "stem", "stream", "supervene", "surge", "turn up", "wax"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .none, .most, none⟩, ⟨.alternation [6, 2], .none, .most, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .many, none⟩,
-      ⟨.alternation [5, 4], .none, .all, none⟩] },
+      [⟨.alternation [6, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .many, none⟩,
+      ⟨.alternation [5, 4], .acceptable, .all, none⟩] },
   { number := "48.1.2", page := 259,
     title := "Reflexive Verbs of Appearance",
     members :=
@@ -1986,25 +2139,27 @@ def chapter48 : List VerbClass := [
       "present", "proffer", "recommend", "shape", "show", "suggest"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .star, .all, none⟩, ⟨.alternation [6, 2], .star, .all, none⟩,
-      ⟨.alternation [4, 2], .none, .all, some "except intrude"⟩] },
+      [⟨.alternation [6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [4, 2], .acceptable, (.all ["intrude"]), none⟩] },
   { number := "48.2", page := 260,
     title := "Verbs of Disappearance",
     members :=
       ["die", "disappear", "expire", "lapse", "perish", "vanish"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .question, .all, none⟩, ⟨.alternation [6, 2], .question, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.alternation [5, 4], .none, .all, none⟩] },
+      [⟨.alternation [6, 1], .marginal, .all, none⟩, ⟨.alternation [6, 2], .marginal, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .acceptable, .all, none⟩] },
   { number := "48.3", page := 260,
     title := "Verbs of Occurrence",
     members :=
       ["ensue", "eventuate", "happen", "occur", "recur", "transpire"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .none, .all, none⟩, ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 49. -/
 def chapter49 : List VerbClass := [
@@ -2015,8 +2170,10 @@ def chapter49 : List VerbClass := [
       "twitch", "waggle", "wiggle", "wobble", "wriggle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩, ⟨.property .bodyPartObject, .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .some, none⟩, ⟨.alternation [7, 8], .none, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .bodyPartObject, .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 8], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 50. -/
 def chapter50 : List VerbClass := [
@@ -2027,7 +2184,8 @@ def chapter50 : List VerbClass := [
       "sit", "slouch", "slump", "sprawl", "squat", "stand", "stoop", "straddle"],
     doubtful := [],
     properties :=
-      [⟨.alternation [6, 1], .star, .all, none⟩, ⟨.alternation [6, 2], .star, .all, none⟩] }]
+      [⟨.alternation [6, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [6, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 51. -/
 def chapter51 : List VerbClass := [
@@ -2039,17 +2197,19 @@ def chapter51 : List VerbClass := [
       "tumble"],
     doubtful := ["climb", "cross"],
     properties :=
-      [⟨.alternation [1, 4, 1], .none, .some, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩,
-      ⟨.property .measurePhrase, .star, .all, none⟩, ⟨.alternation [5, 4], .none, .all, none⟩,
-      ⟨.property .depictivePhrase, .none, .all, none⟩,
-      ⟨.alternation [7, 5], .star, .all, none⟩] },
+      [⟨.alternation [1, 4, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩,
+      ⟨.property .measurePhrase, .ungrammatical, .all, none⟩,
+      ⟨.alternation [5, 4], .acceptable, .all, none⟩,
+      ⟨.property .depictivePhrase, .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .ungrammatical, .all, none⟩] },
   { number := "51.2", page := 264,
     title := "Leave Verbs",
     members :=
       ["abandon", "desert", "leave"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 3], .none, .some, none⟩] },
+      [⟨.alternation [5, 3], .acceptable, .some, none⟩] },
   { number := "51.3.1", page := 264,
     title := "Roll Verbs",
     members :=
@@ -2057,8 +2217,10 @@ def chapter51 : List VerbClass := [
       "slide", "spin", "swing", "turn", "twirl", "twist", "whirl", "wind"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 1], .none, .most, none⟩, ⟨.alternation [1, 4, 1], .star, .all, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩, ⟨.alternation [5, 3], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 1], .acceptable, .most, none⟩,
+      ⟨.alternation [1, 4, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 3], .acceptable, .all, none⟩] },
   { number := "51.3.2", page := 265,
     title := "Run Verbs",
     members :=
@@ -2078,13 +2240,16 @@ def chapter51 : List VerbClass := [
       "trundle", "vault", "waddle", "wade", "walk", "wander", "whiz", "zigzag", "zoom"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 2], .none, .some, none⟩,
-      ⟨.alternation [1, 4, 1], .none, .some, none⟩, ⟨.alternation [6, 1], .none, .all, none⟩,
-      ⟨.alternation [6, 2], .none, .all, none⟩,
-      ⟨.property .measurePhrase, .none, .some, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩, ⟨.alternation [5, 3], .none, .some, none⟩,
-      ⟨.alternation [5, 4], .star, .all, none⟩, ⟨.alternation [7, 1], .star, .all, none⟩,
-      ⟨.property .zeroRelatedNominal, .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 4, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [6, 1], .acceptable, .all, none⟩,
+      ⟨.alternation [6, 2], .acceptable, .all, none⟩,
+      ⟨.property .measurePhrase, .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [5, 3], .acceptable, .some, none⟩,
+      ⟨.alternation [5, 4], .ungrammatical, .all, none⟩,
+      ⟨.alternation [7, 1], .ungrammatical, .all, none⟩,
+      ⟨.property .zeroRelatedNominal, .acceptable, .some, none⟩] },
   { number := "51.4.1", page := 267,
     title := "Verbs That Are Vehicle Names",
     members :=
@@ -2095,18 +2260,18 @@ def chapter51 : List VerbClass := [
       "trolley", "van", "yacht"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 2], .none, .some, none⟩,
-      ⟨.alternation [1, 4, 1], .none, .some, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 4, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩] },
   { number := "51.4.2", page := 268,
     title := "Verbs That Are Not Vehicle Names",
     members :=
       ["cruise", "drive", "fly", "oar", "paddle", "pedal", "ride", "row", "sail", "tack"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 2], .none, .some, none⟩,
-      ⟨.alternation [1, 4, 1], .none, .some, none⟩,
-      ⟨.alternation [7, 5], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 2], .acceptable, .some, none⟩,
+      ⟨.alternation [1, 4, 1], .acceptable, .some, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩] },
   { number := "51.5", page := 268,
     title := "Waltz Verbs",
     members :=
@@ -2115,22 +2280,23 @@ def chapter51 : List VerbClass := [
       "tapdance", "waltz"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 2], .none, .all, none⟩, ⟨.alternation [7, 5], .none, .all, none⟩,
-      ⟨.alternation [7, 1], .none, .all, none⟩] },
+      [⟨.alternation [1, 1, 2, 2], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 5], .acceptable, .all, none⟩,
+      ⟨.alternation [7, 1], .acceptable, .all, none⟩] },
   { number := "51.6", page := 269,
     title := "Chase Verbs",
     members :=
       ["chase", "follow", "pursue", "shadow", "tail", "track", "trail"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "51.7", page := 270,
     title := "Accompany Verbs",
     members :=
       ["accompany", "conduct", "escort", "guide", "lead", "shepherd"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 52. -/
 def chapter52 : List VerbClass := [
@@ -2150,14 +2316,14 @@ def chapter53 : List VerbClass := [
       ["dally", "dawdle", "delay", "dither", "hesitate", "linger", "loiter", "tarry"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "53.2", page := 271,
     title := "Verbs of Rushing",
     members :=
       ["hasten", "hurry", "rush"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 3], .none, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2, 3], .acceptable, .all, none⟩] }]
 
 /-- The classes of chapter 54. -/
 def chapter54 : List VerbClass := [
@@ -2167,14 +2333,16 @@ def chapter54 : List VerbClass := [
       ["measure", "read", "register", "total", "weigh"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [5, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "54.2", page := 272,
     title := "Cost Verbs",
     members :=
       ["carry", "cost", "last", "take"],
     doubtful := [],
     properties :=
-      [⟨.alternation [5, 1], .star, .all, none⟩, ⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [5, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "54.3", page := 273,
     title := "Fit Verbs",
     members :=
@@ -2189,7 +2357,7 @@ def chapter54 : List VerbClass := [
       ["appraise", "assess", "estimate", "fix", "peg", "price", "rate", "value"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] },
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] },
   { number := "54.5", page := 274,
     title := "Bill Verbs",
     members :=
@@ -2197,7 +2365,8 @@ def chapter54 : List VerbClass := [
       "undercharge", "wager"],
     doubtful := [],
     properties :=
-      [⟨.alternation [2, 1], .star, .all, none⟩, ⟨.alternation [2, 14], .star, .all, none⟩] }]
+      [⟨.alternation [2, 1], .ungrammatical, .all, none⟩,
+      ⟨.alternation [2, 14], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 55. -/
 def chapter55 : List VerbClass := [
@@ -2208,14 +2377,14 @@ def chapter55 : List VerbClass := [
       "repeat", "resume", "start", "stop", "terminate"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2, 3], .none, .some, none⟩] },
+      [⟨.alternation [1, 1, 2, 3], .acceptable, .some, none⟩] },
   { number := "55.2", page := 275,
     title := "Complete Verbs",
     members :=
       ["complete", "discontinue", "initiate", "quit"],
     doubtful := [],
     properties :=
-      [⟨.alternation [1, 1, 2], .star, .all, none⟩] }]
+      [⟨.alternation [1, 1, 2], .ungrammatical, .all, none⟩] }]
 
 /-- The classes of chapter 56. -/
 def chapter56 : List VerbClass := [

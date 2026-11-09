@@ -6,7 +6,8 @@ entry per class in the book's order: the section number and title as printed, th
 class begins, the members and the members marked doubtful, and the property table. A property line
 names an alternation by its section number in the book's catalogue of alternations
 (`"alternation"`) or a further property (`"property"`, with `"reading"` for a derived nominal and
-`"goal"` for a sentential complement), with its diacritic (`""`, `"*"`, `"?"`), scope and any
+`"goal"` for a sentential complement), with the judgment the book's mark gives it (`"acceptable"`,
+`"ungrammatical"`, `"marginal"`), its scope with the members it excepts (`"exceptions"`), and any
 further printed qualifier. This emits the typed Lean module `Linglib/Data/VerbClasses/<Book>.lean`
 (`<Book>.classes`). The generated Lean is never hand-edited: edit the JSON and re-run.
 
@@ -24,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "VerbClasses"
 ALTERNATIONS = ROOT / "Linglib" / "Semantics" / "ArgumentStructure" / "LevinClass" / "Alternation.lean"
 
-DIACRITICS = {"": ".none", "*": ".star", "?": ".question"}
+JUDGMENTS = {"acceptable", "ungrammatical", "marginal"}
 SCOPES = {"all", "most", "many", "some", "few"}
 PLAIN = {"zeroRelatedNominal", "erNominal", "ingNominal", "processNominal", "resultNominal",
          "ableAdjective", "zeroRelatedAdjective", "extraposition", "directSpeech",
@@ -65,12 +66,24 @@ def heading(line: dict, known: set) -> str:
     raise ValueError(f"bad property line {line}")
 
 
-def property_line(line: dict, known: set) -> str:
-    if line["diacritic"] not in DIACRITICS or line["scope"] not in SCOPES:
-        raise ValueError(f"bad diacritic or scope {line}")
+def scope(line: dict, members: list) -> str:
+    exceptions = line.get("exceptions", [])
+    if line["scope"] not in SCOPES or exceptions and line["scope"] != "all":
+        raise ValueError(f"bad scope {line}")
+    for m in exceptions:
+        if m not in members:
+            raise ValueError(f"excepted verb {m} is not a member: {line}")
+    if exceptions:
+        return f"(.all [{', '.join(lean_string(m) for m in exceptions)}])"
+    return f".{line['scope']}"
+
+
+def property_line(line: dict, known: set, members: list) -> str:
+    if line["judgment"] not in JUDGMENTS:
+        raise ValueError(f"bad judgment {line}")
     q = line.get("qualifier")
     qual = "none" if q is None else f"some {lean_string(q)}"
-    return f"⟨{heading(line, known)}, {DIACRITICS[line['diacritic']]}, .{line['scope']}, {qual}⟩"
+    return f"⟨{heading(line, known)}, .{line['judgment']}, {scope(line, members)}, {qual}⟩"
 
 
 def wrap_list(items: list, indent: int, tail: int = 4) -> str:
@@ -111,7 +124,7 @@ def render_class(page: dict, known: set) -> str:
             raise ValueError(f"doubtful member {d} not listed on {page['number']}")
     members = wrap_list([lean_string(m) for m in page["members"]], 6)
     doubtful = wrap_list([lean_string(m) for m in page["doubtful"]], 6)
-    props = wrap_list([property_line(l, known) for l in page["properties"]], 6)
+    props = wrap_list([property_line(l, known, page["members"]) for l in page["properties"]], 6)
     return (f"  {{ number := {lean_string(page['number'])}, page := {page['page']},\n"
             f"    title := {lean_string(page['title'])},\n"
             f"    members :=\n      {members},\n"

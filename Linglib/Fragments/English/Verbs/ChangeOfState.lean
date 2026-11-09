@@ -387,11 +387,17 @@ def rust : Verb where
   scaleDimension := some .corrosion
   levinClasses := {LevinClass.entitySpecificChangeOfState, .entitySpecificModeOfBeing}
 
-/-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
-    Degree achievement: open scale (no maximum quantity). -/
+/-- *increase* is a degree achievement on an open scale, with no maximum quantity. Levin lists it
+with her other alternating verbs of change of state (45.4), whose transitive takes an agent or an
+instrument subject, and with her verbs of calibratable change of state (45.6), which have no
+transitive ([levin-1993] pp. 245, 247); its frames are those of the first. -/
 def increase : Verb where
   morphs := [.root "increase"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.intransitive, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .quantity
   levinClasses := {LevinClass.calibratableChangeOfState, .otherChangeOfState}
