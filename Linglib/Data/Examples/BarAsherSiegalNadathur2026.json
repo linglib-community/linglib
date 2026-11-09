@@ -1,0 +1,100 @@
+[
+  {
+    "id": "basn2026_40_switchedOn",
+    "source": {"bibkey": "bar-asher-siegal-nadathur-2026", "paperLabel": "(40)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nur is opening the door.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The door is known to be unlocked, and Nur has just flipped the switch in the electrical cabinet, allowing electricity to flow, but has not yet pressed the button that opens the door.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "open the door"],
+      ["aspect", "progressive"]
+    ],
+    "comment": "The handle and the button are left undetermined, the highlighted row in the first column of Table 2.",
+    "verified": "page-image"
+  },
+  {
+    "id": "basn2026_40_realistic",
+    "source": {"bibkey": "bar-asher-siegal-nadathur-2026", "paperLabel": "(40)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nur is opening the door.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The door is known to be unlocked and the electricity is flowing, and Nur has neither turned the door handle nor pressed the button, so the door is closed.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "open the door"],
+      ["aspect", "progressive"]
+    ],
+    "comment": "The highlighted row in the second column of Table 2. The paper says the analysis appears to falsify (40) here, against intuition.",
+    "verified": "page-image"
+  },
+  {
+    "id": "basn2026_43a_handle",
+    "source": {"bibkey": "bar-asher-siegal-nadathur-2026", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nur is opening the door.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The status of the lock is unknown, and Nur has turned the door handle.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "open the door"],
+      ["aspect", "progressive"]
+    ],
+    "comment": "Infelicitous because the lock's state, a globally necessary condition, is undetermined.",
+    "verified": "page-image"
+  },
+  {
+    "id": "basn2026_43a_button",
+    "source": {"bibkey": "bar-asher-siegal-nadathur-2026", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nur is opening the door.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The status of the lock is unknown, and Nur has pressed the door-open button.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "open the door"],
+      ["aspect", "progressive"]
+    ],
+    "comment": "Infelicitous because the lock's state, a globally necessary condition, is undetermined.",
+    "verified": "page-image"
+  },
+  {
+    "id": "basn2026_43b",
+    "source": {"bibkey": "bar-asher-siegal-nadathur-2026", "paperLabel": "(43b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nur is trying to open the door.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The status of the lock is unknown, and Nur has either turned the door handle or pressed the door-open button.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "try to open the door"],
+      ["aspect", "progressive"]
+    ],
+    "comment": "The strongest claim that can be truthfully made in either context of (43a).",
+    "verified": "page-image"
+  }
+]

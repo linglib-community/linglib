@@ -12,9 +12,9 @@ what has been decided about its parents alone.
 * In the strict development of Schulz and of Nadathur, a variable is settled once all its parents
   are, and its equation then gives the same value in every context (`CausalModel.CausallyEntails`).
 * In the Kleene development used by Baglini and Bar-Asher Siegal, a variable is forced to a value
-  when every completion of what is known about its parents gives that value in every context,
-  so a turned handle on an unlocked door forces the door open while other inputs are unknown
-  (`CausalModel.Forced`).
+  when every completion of what is known about its parents gives that value in every context
+  (`CausalModel.ForcedBy`), so a turned handle on an unlocked door forces the door open while
+  other inputs are unknown (`CausalModel.Forced`).
 
 Both are fixed points of maps that compute each variable from its parents
 (`WellFounded.fixedPoint`). The strict development settles less than the Kleene one
@@ -25,6 +25,7 @@ an intervention settles, in every context under that intervention
 
 ## Main definitions
 
+* `CausalModel.ForcedBy`: the value of an equation in Kleene's strong three-valued reading
 * `CausalModel.Forced`: the Kleene development of an observation
 * `CausalModel.CausallyEntails`: the strict development of an observation
 
@@ -70,42 +71,74 @@ namespace CausalModel
 
 variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α)
 
+/-- `M.ForcedBy P v x` says that what `P` settles about the parents of `v` forces `v` to `x`: the
+equation of `v` gives `x` in every context and on every assignment agreeing with it. This is the
+three-valued value of the equation that every completion agrees on, which for an equation reading
+each parent once is its value in Kleene's strong logic. -/
+def ForcedBy (P : ∀ v, α v → Prop) (v : V) (x : α v) : Prop :=
+  ∀ u y, (∀ w, M.graph.Adj w v → ∀ z, P w z → y w = z) → M.eqn v u y = x
+
 /-- `M.forcedStep s P` is one round of Kleene development from the observation `s`, given what
 `P` has settled. A variable is settled to `x` when `s` settles it so, or when `s` leaves it open
-and its equation gives `x` in every context and on every assignment agreeing with what `P`
-settles about its parents. -/
+and `P` forces it to `x`. -/
 def forcedStep (s : ∀ v, Flat (α v)) (P : ∀ v, α v → Prop) : ∀ v, α v → Prop := fun v x ↦
-  s v = ↑x ∨ s v = ⊥ ∧
-    ∀ u y, (∀ w, M.graph.Adj w v → ∀ z, P w z → y w = z) → M.eqn v u y = x
+  s v = ↑x ∨ s v = ⊥ ∧ M.ForcedBy P v x
 
 /-- `M.entailsStep s P` is one round of strict development from the observation `s`. It is
 `forcedStep`, except that a variable `s` leaves open is settled only once all its parents are. -/
 def entailsStep (s : ∀ v, Flat (α v)) (P : ∀ v, α v → Prop) : ∀ v, α v → Prop := fun v x ↦
-  s v = ↑x ∨ s v = ⊥ ∧ (∀ w, M.graph.Adj w v → ∃ z, P w z) ∧
-    ∀ u y, (∀ w, M.graph.Adj w v → ∀ z, P w z → y w = z) → M.eqn v u y = x
+  s v = ↑x ∨ s v = ⊥ ∧ (∀ w, M.graph.Adj w v → ∃ z, P w z) ∧ M.ForcedBy P v x
 
 variable {M}
 
+/-- Settling more about the parents forces no less. -/
+theorem ForcedBy.mono {P Q : ∀ v, α v → Prop} {v : V} {x : α v}
+    (hPQ : ∀ w, M.graph.Adj w v → ∀ z, P w z → Q w z) (h : M.ForcedBy P v x) :
+    M.ForcedBy Q v x :=
+  fun u y hy ↦ h u y fun w hw z hz ↦ hy w hw z (hPQ w hw z hz)
+
+theorem forcedBy_congr {P Q : ∀ v, α v → Prop} {v : V} {x : α v}
+    (h : ∀ w, M.graph.Adj w v → P w = Q w) : M.ForcedBy P v x ↔ M.ForcedBy Q v x :=
+  ⟨.mono fun w hw _ ↦ (h w hw ▸ ·), .mono fun w hw _ ↦ ((h w hw).symm ▸ ·)⟩
+
+section Parents
+
+variable [DecidableRel M.graph.Adj] [∀ v, Inhabited (α v)]
+
+/-- Being forced reads only the parents: it is enough to complete what is settled about them,
+the other variables taking their default values. -/
+theorem forcedBy_iff_parents {P : ∀ v, α v → Prop} {v : V} {x : α v} :
+    M.ForcedBy P v x ↔ ∀ u (p : ∀ w : {w // M.graph.Adj w v}, α w),
+      (∀ (w : {w // M.graph.Adj w v}) z, P w z → p w = z) →
+        M.eqn v u (fun w ↦ if h : M.graph.Adj w v then p ⟨w, h⟩ else default) = x := by
+  refine ⟨fun h u p hp ↦ h u _ fun w hw z hz ↦ ?_, fun h u y hy ↦ ?_⟩
+  · simpa [hw] using hp ⟨w, hw⟩ z hz
+  · have heq : M.eqn v u y = M.eqn v u fun w ↦ if h : M.graph.Adj w v then y w else default :=
+      M.dependsOn_eqn v u fun w (hw : M.graph.Adj w v) ↦ by simp [hw]
+    exact heq.trans (h u (fun w ↦ y w) fun w z hz ↦ hy w w.2 z hz)
+
+/-- In a finite model, being forced is decided over the assignments to the parents alone. -/
+instance [Fintype U] [Fintype V] [DecidableEq V] [∀ v, Fintype (α v)] [∀ v, DecidableEq (α v)]
+    (P : ∀ v, α v → Prop) [∀ w z, Decidable (P w z)] (v : V) (x : α v) :
+    Decidable (M.ForcedBy P v x) :=
+  decidable_of_iff _ forcedBy_iff_parents.symm
+
+end Parents
+
 theorem dependsOn_forcedStep (s : ∀ v, Flat (α v)) (v : V) :
-    DependsOn (M.forcedStep s · v) {w | M.graph.Adj w v} := fun P Q h ↦ by
-  funext x
-  refine propext (or_congr_right (and_congr_right fun _ ↦ forall₂_congr fun u y ↦
-    imp_congr_left (forall₂_congr fun w hw ↦ ?_)))
-  rw [h w hw]
+    DependsOn (M.forcedStep s · v) {w | M.graph.Adj w v} := fun _ _ h ↦
+  funext fun _ ↦ propext <| or_congr_right <| and_congr_right fun _ ↦ forcedBy_congr h
 
 theorem dependsOn_entailsStep (s : ∀ v, Flat (α v)) (v : V) :
-    DependsOn (M.entailsStep s · v) {w | M.graph.Adj w v} := fun P Q h ↦ by
-  funext x
-  refine propext (or_congr_right (and_congr_right fun _ ↦ and_congr
-    (forall₂_congr fun w hw ↦ by rw [h w hw]) (forall₂_congr fun u y ↦
-      imp_congr_left (forall₂_congr fun w hw ↦ ?_))))
-  rw [h w hw]
+    DependsOn (M.entailsStep s · v) {w | M.graph.Adj w v} := fun _ _ h ↦
+  funext fun _ ↦ propext <| or_congr_right <| and_congr_right fun _ ↦
+    and_congr (forall₂_congr fun w hw ↦ by rw [h w hw]) (forcedBy_congr h)
 
 theorem entailsStep_le_forcedStep (s : ∀ v, Flat (α v)) {P Q : ∀ v, α v → Prop} (h : P ≤ Q) :
     M.entailsStep s P ≤ M.forcedStep s Q := by
   rintro v x (hx | ⟨hs, -, hx⟩)
   · exact .inl hx
-  · exact .inr ⟨hs, fun u y hy ↦ hx u y fun w hw z hz ↦ hy w hw z (h w z hz)⟩
+  · exact .inr ⟨hs, hx.mono fun w _ z ↦ h w z⟩
 
 variable (M) [hM : M.IsAcyclic]
 
@@ -119,14 +152,12 @@ def CausallyEntails (s : ∀ v, Flat (α v)) (v : V) (x : α v) : Prop :=
 
 variable {M} {s : ∀ v, Flat (α v)} {v : V} {x : α v}
 
-theorem forced_iff : M.Forced s v x ↔ s v = ↑x ∨ s v = ⊥ ∧
-    ∀ u y, (∀ w, M.graph.Adj w v → ∀ z, M.Forced s w z → y w = z) → M.eqn v u y = x :=
+theorem forced_iff : M.Forced s v x ↔ s v = ↑x ∨ s v = ⊥ ∧ M.ForcedBy (M.Forced s) v x :=
   Iff.of_eq (congrFun (WellFounded.fixedPoint_apply (dependsOn_forcedStep s) v) x)
 
 theorem causallyEntails_iff : M.CausallyEntails s v x ↔ s v = ↑x ∨ s v = ⊥ ∧
     (∀ w, M.graph.Adj w v → ∃ z, M.CausallyEntails s w z) ∧
-    ∀ u y, (∀ w, M.graph.Adj w v → ∀ z, M.CausallyEntails s w z → y w = z) →
-      M.eqn v u y = x :=
+      M.ForcedBy (M.CausallyEntails s) v x :=
   Iff.of_eq (congrFun (WellFounded.fixedPoint_apply (dependsOn_entailsStep s) v) x)
 
 theorem causallyEntails_root_iff {t : ∀ v, Flat (α v)} {v : V} {x : α v}
@@ -347,7 +378,7 @@ theorem causallyEntails_iff_develop {s : ∀ v, Flat (α v)} {v : V} {x : α v} 
           ∀ w, M.graph.Adj w v → ∀ z : α w, M.develop s w = ↑z → y w = z :=
       fun y ↦ forall₂_congr fun w hw ↦ forall_congr' fun z ↦ by rw [ih w hw]
     rw [causallyEntails_iff, develop_apply, developStep]
-    simp only [hcons]
+    simp only [ForcedBy, hcons]
     cases hs : s v with
     | coe a => simp [Flat.coe_inj]
     | bot =>
@@ -452,7 +483,7 @@ theorem forced_iff_developKleene {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
         | bot => simp
         | coe a => simp [Flat.coe_le_coe, eq_comm]
     rw [forced_iff, developKleene_apply, developKleeneStep]
-    simp only [hcons]
+    simp only [ForcedBy, hcons]
     set y₀ : ∀ w, α w := fun w ↦ (M.developKleene s w).unbotD default
     have hy₀ : ∀ w, M.graph.Adj w v → M.developKleene s w ≤ ↑(y₀ w) := fun w _ ↦ by
       simp only [y₀]; cases M.developKleene s w with
