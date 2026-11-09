@@ -103,12 +103,12 @@ def digits? (cs : List Char) : Option ℕ :=
     some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
 
-/-- `wordsOf s` is the words of the text `s`, lowercased: its maximal runs of characters other
-than whitespace and punctuation, so that an apostrophe stays inside a word. -/
+/-- `wordsOf s` is the list of words of the text `s`, lowercased. A word is a maximal run of
+characters other than whitespace and punctuation, so an apostrophe stays inside a word. -/
 def wordsOf (s : String) : List (List Char) :=
   go s.toList []
 where
-  /-- The words of `cs`, the word in progress being `w` reversed. -/
+  /-- The words of `cs`, where the word in progress is `w` in reverse order. -/
   go : List Char → List Char → List (List Char)
     | [], w => if w = [] then [] else [w.reverse]
     | c :: cs, w =>

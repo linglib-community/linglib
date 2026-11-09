@@ -8,19 +8,20 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Butt, Benjamin and Moreira Rodríguez (2019): Spanish negative words with positive meaning
 
-The Spanish negative words *nadie*, *nada*, *ninguno*, *nunca* and *jamás* need a negative before
-the verb when they follow it, and also mean 'anyone', 'anything', 'ever' after comparisons, under
-expressions of doubt, denial and impossibility, in questions expecting the answer 'no', and after
-*antes de*, *antes que* and *sin*; *jamás* never follows a comparison. Each example is linked to the
-Fragment entry it contains and the named context it stands in, and the licensing theory [admits
-every acceptable example](##ButtEtAl2019.acceptable_admitted) but [also admits *jamás* after a
-comparison](##ButtEtAl2019.jamás_comparative), a restriction no strength class states.
+The Spanish negative words *nadie*, *nada*, *ninguno*, *nunca*, and *jamás* require a negative
+before the verb when they follow it. They also have the positive meanings 'anyone', 'anything', and
+'ever' after comparisons, under expressions of doubt, denial, and impossibility, in questions that
+expect the answer 'no', and after *antes de*, *antes que*, and *sin*. However, *jamás* never
+follows a comparison. Each example is linked to the lexical entry it contains and to the named
+context in which it stands. The licensing theory [admits every acceptable
+example](##ButtEtAl2019.acceptable_admitted). It [also admits *jamás* after a
+comparison](##ButtEtAl2019.jamás_comparative), a restriction that no strength class expresses.
 
 ## Implementation notes
 
-* A comparison with a noun phrase after *que* is linked to the clausal comparative, the licensing
-  theory's routing of a surface *than NP*, and *negarse a* 'refuse' to *deny*.
-* The examples after *imposible*, *no tolerar* and *no saber* stand in no named context and are
+* A comparison with a noun phrase after *que* is linked to the clausal comparative, which is where
+  the licensing theory routes a surface *than NP*. *Negarse a* 'refuse' is linked to *deny*.
+* The examples after *imposible*, *no tolerar*, and *no saber* stand in no named context and are
   not linked.
 
 ## References
@@ -34,12 +35,12 @@ namespace ButtEtAl2019
 
 open PolarityItem Spanish.PolarityItems Examples
 
-/-- A link from an example to the Fragment entry it contains and the named context it stands
-in. -/
+/-- A link from an example to the lexical entry it contains and to the named context in which it
+stands. -/
 structure Link where
   /-- The polarity item. -/
   item : PolarityItem
-  /-- The context it stands in. -/
+  /-- The context in which the item stands. -/
   context : LicensingContext
 
 /-- The links of the examples. -/
@@ -62,19 +63,19 @@ def links : List (Datum × Link) :=
     (insincero, ⟨ninguno, .conditionalAntecedent⟩), (noSaleNunca, ⟨nunca, .negation⟩),
     (noSaleJamas, ⟨jamás, .negation⟩), (seVio, ⟨jamás, .question⟩)]
 
--- each link's item is a word of its example, so a link to the wrong item fails
+-- The item of each link is a word of its example, so a link to the wrong item fails.
 theorem links_attested :
     ∀ p ∈ links, p.2.item.form.toList ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-/-- The licensing theory admits the item of every acceptable example in the context it stands
-in. -/
+/-- The licensing theory admits the item of every acceptable example in the context in which it
+stands. -/
 theorem acceptable_admitted :
     ∀ p ∈ links, p.1.judgment = .acceptable → p.2.context.licenser.Admits p.2.item := by
   decide +kernel
 
-/-- *Jamás* cannot follow a comparison, but the licensing theory admits it there, as it admits every
-weak negative polarity item in an anti-additive context. -/
+/-- *Jamás* cannot follow a comparison. The licensing theory nevertheless admits it there, since it
+admits every weak negative polarity item in an anti-additive context. -/
 theorem jamás_comparative :
     tempranoJamas.judgment = .ungrammatical ∧
       LicensingContext.clausalComparative.licenser.Admits jamás := by

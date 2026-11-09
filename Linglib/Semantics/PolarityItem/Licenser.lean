@@ -14,61 +14,67 @@ public import Linglib.Semantics.PolarityItem.Basic
 /-!
 # Licensers
 
-A *licenser* is the operator a construction places over the position of a polarity item, given
-as a family of operators indexed by what the construction leaves open (the model, a restrictor, a
-bound or an accessibility relation). It is classical (a map between bounded lattices), scalar (one
-with stronger scale-mates), Strawsonian (von Fintel's map into trivalent propositions), modal, or
-a wh-question. A licenser has a plain meaning below the exhaustivity operator and, after
-Gajewski, a meaning above it that adds its direct implicature, the exhaustification against its
-stronger scale-mates; only a scalar licenser has a direct implicature.
+A *licenser* is the operator that a construction places over the position of a polarity item. It
+is given as a family of operators indexed by whatever the construction leaves open, such as the
+model, a restrictor, a bound, or an accessibility relation. A licenser is of one of five kinds. A
+*classical* licenser is a map between bounded lattices. A *scalar* licenser is such a map that has
+stronger scale-mates. A *Strawsonian* licenser is von Fintel's map into trivalent propositions.
+The remaining kinds are a *modal* licenser and a wh-question. Following Gajewski, a licenser has a
+plain meaning below the exhaustivity operator and a second meaning above it. The meaning above
+the operator adds the *direct implicature* of the licenser, which is its exhaustification against
+its stronger scale-mates. Only a scalar licenser has a direct implicature.
 
-A context *licenses* a `PolarityItem` when the licenser it places over the item carries the
-strength the item needs, licenses free choice and the item is a free choice item, or is a question
-and the item a weak negative polarity item; it *anti-licenses* an item when its licenser holds the
-blocking strength outright. A non-trivial classical context [admits an item exactly when its
-strength lies in the item's interval](##PolarityItem.Licenser.admits_iff_carried_mem_Ico); it
-[blocks the positive polarity items of a strength exactly where it licenses the negative
-ones](##PolarityItem.Licenser.antiLicenses_iff_licenses), and an antimorphic context [blocks them
-all](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
+A context *licenses* a `PolarityItem` in one of three ways. Its licenser may carry the strength
+of negation that the item requires. Its licenser may license free choice, in which case the item
+must be a free choice item. Finally, its licenser may be a question, in which case the item must
+be a weak negative polarity item. A context *anti-licenses* an item when its licenser holds the
+blocking strength of the item outright. A non-trivial classical context [admits an item exactly
+when the strength it carries lies in the interval of the
+item](##PolarityItem.Licenser.admits_iff_carried_mem_Ico). Such a context [blocks the positive
+polarity items of a strength exactly where it licenses the negative polarity items of that
+strength](##PolarityItem.Licenser.antiLicenses_iff_licenses), and an antimorphic context [blocks
+every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 
 ## Main definitions
 
 * `PolarityItem.Licenser`: the five kinds of licenser.
-* `PolarityItem.Licenser.exhaustified`: the licenser with its direct implicature factored in.
+* `PolarityItem.Licenser.exhaustified`: the meaning of a licenser above the exhaustivity operator,
+  with its direct implicature added.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
-  `PolarityItem.Licenser.IsStrawsonUE`: a signature held outright, and downward and upward
-  entailment modulo presupposition.
-* `PolarityItem.Licenser.Carries`: a strength of negation carried. Von Fintel asks the plain meaning
-  to be downward entailing modulo presupposition, Bylinina and Nouwen add that it not be upward
-  entailing as well, and a stronger strength must hold outright of the exhaustified meaning.
+  `PolarityItem.Licenser.IsStrawsonUE`: a signature that a licenser holds outright, and downward
+  and upward entailment modulo presupposition.
+* `PolarityItem.Licenser.Carries`: a strength of negation that a licenser carries. Von Fintel
+  requires the plain meaning to be downward entailing modulo presupposition, and Bylinina and
+  Nouwen add that it must not be upward entailing as well. A strength above weak must in addition
+  hold outright of the exhaustified meaning.
 * `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`,
-  `PolarityItem.Licenser.LicensesByRelevance`: the strengthening route of a downward-entailing
-  licenser (Kadmon and Landman), the free-choice route of a modal licenser (Chierchia) and the
-  relevance route of a question (van Rooy).
+  `PolarityItem.Licenser.LicensesByRelevance`: the three routes of licensing. A downward-entailing
+  licenser licenses by strengthening, after Kadmon and Landman, a modal licenser licenses by free
+  choice, after Chierchia, and a question licenses by relevance, after van Rooy.
 * `PolarityItem.Licenser.Licenses`, `PolarityItem.Licenser.AntiLicenses`,
-  `PolarityItem.Licenser.Admits`: the licensing relation between a licenser and an item.
+  `PolarityItem.Licenser.Admits`: the licensing relations between a licenser and an item.
 
 ## Main statements
 
-* `PolarityItem.Licenser.licensesByStrengthening_iff`: widening strengthens under a licenser
-  exactly when the licenser is downward entailing modulo presupposition.
+* `PolarityItem.Licenser.licensesByStrengthening_iff`: widening the domain strengthens under a
+  licenser exactly when the licenser is downward entailing modulo presupposition.
 
 ## Implementation notes
 
-* Licensing reads the meaning modulo presupposition and with its direct implicature, after von
-  Fintel and Gajewski; anti-licensing reads the plain meaning, as van der Wouden and Szabolcsi state
-  it, for whom presuppositional operators such as *only* and *regret* rescue a positive polarity
-  item rather than block it.
-* Gajewski asks only for downward entailment of the exhaustified meaning; Zwarts's strengths are
-  kept here, and agree with Gajewski's condition at the endpoints of the scale.
-* The unit conditions of `ProjectivitySignature.HoldsFor` do not exclude constant maps, which are
-  downward entailing and, if constantly false, anti-additive; requiring weak strength not to be
-  upward entailing as well excludes them, since a map monotone both ways modulo presupposition
-  takes one value at comparable arguments where defined
-  (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
-* The question route states the weak form the theory of question value proves, that widening
-  never lowers the question's value; van Rooy's strict condition for rhetorical questions is not
-  formalized.
+* Licensing is evaluated on the meaning modulo presupposition and with its direct implicature,
+  following von Fintel and Gajewski. Anti-licensing is evaluated on the plain meaning, as van der
+  Wouden and Szabolcsi state it. On their account, presuppositional operators such as *only* and
+  *regret* rescue a positive polarity item instead of blocking it.
+* Gajewski requires only that the exhaustified meaning be downward entailing. Zwarts's strengths
+  are retained here, and they agree with Gajewski's condition at the endpoints of the scale.
+* The unit conditions of `ProjectivitySignature.HoldsFor` do not exclude constant maps. A constant
+  map is downward entailing, and a constantly false map is anti-additive. The requirement that
+  weak strength not be upward entailing as well excludes them, since a map that is monotone in
+  both directions modulo presupposition takes a single value at comparable arguments where it is
+  defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
+* The question route states the weak form that the theory of question value proves, namely that
+  widening the domain never lowers the value of the question. Van Rooy's strict condition for
+  rhetorical questions is not formalized.
 
 ## References
 
@@ -142,17 +148,17 @@ structure ModalFamily where
   /-- The operator at each parameter. -/
   op : ∀ p, Set (W p) → Set (W p)
 
-/-- A family of operators on a scale with stronger mates, each paired with its meaning enriched
-by its direct implicature, the exhaustification against those mates ([gajewski-2011]'s `O` with
-`ALT-1`). -/
+/-- A family of operators on a scale with stronger scale-mates. Each operator is paired with its
+meaning enriched by its direct implicature, which is its exhaustification against those
+scale-mates ([gajewski-2011]'s `O` with `ALT-1`). -/
 structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
 end Licenser
 
-/-- The operator that a construction places over the position of a polarity item is classical,
-scalar (with its enrichment), into trivalent propositions, modal, or a question. -/
+/-- The operator that a construction places over the position of a polarity item. It is
+classical, scalar with its enrichment, a map into trivalent propositions, modal, or a question. -/
 inductive Licenser : Type 2 where
   | classical (F : Licenser.OperatorFamily)
   | scalar (F : Licenser.ScalarFamily)
@@ -160,9 +166,9 @@ inductive Licenser : Type 2 where
   | modal (F : Licenser.ModalFamily)
   | question
 
-/-- A context licenses polarity items by strengthening, as a generic context licensing free choice
-items ([kadmon-landman-1993], [dayal-1996]), or by the relevance of a question
-([van-rooy-2003-npi]). -/
+/-- The route by which a context licenses polarity items. A context licenses by strengthening, as
+a generic context that licenses free choice items ([kadmon-landman-1993], [dayal-1996]), or by
+the relevance of a question ([van-rooy-2003-npi]). -/
 inductive LicensingMechanism where
   | strengthening
   | genericIndefinite
@@ -171,14 +177,15 @@ inductive LicensingMechanism where
 
 namespace Licenser
 
-/-- Above the exhaustivity operator, a scalar licenser has the meaning of its enriched operators,
-and any other licenser keeps its own meaning. -/
+/-- The meaning of a licenser above the exhaustivity operator. A scalar licenser takes the meaning
+of its enriched operators, and any other licenser keeps its own meaning. -/
 def exhaustified : Licenser → Licenser
   | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L
 
-/-- A licenser holds a signature outright when every operator in its family does; an operator into
-trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
+/-- A licenser *holds* a signature outright when every operator in its family does. An operator
+into trivalent propositions holds the signature on its truth set, and a scalar operator holds it
+on its plain meaning. -/
 def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
   | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
@@ -194,17 +201,18 @@ def IsStrawsonDE : Licenser → Prop
   | .question => False
 
 /-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
-modulo its presupposition; a constant operator is both this and downward entailing. -/
+modulo its presupposition. A constant operator is both upward and downward entailing. -/
 def IsStrawsonUE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Monotone (F.op p)
   | .strawson F => ∀ p, Presupposition.IsStrawsonUE (F.op p)
   | .modal F => ∀ p, Monotone (F.op p)
   | .question => False
 
-/-- A licenser carries weak strength when it is downward and not upward entailing modulo
-presupposition, the condition [von-fintel-1999], [gajewski-2011]'s Condition 1 and
-[bylinina-nouwen-2018]'s (53) put on the meaning below the exhaustivity operator. It carries a
-stronger strength when, in addition, its exhaustified meaning holds that strength outright. -/
+/-- A licenser *carries* weak strength when it is downward entailing and not upward entailing
+modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2011]'s Condition
+1, and [bylinina-nouwen-2018]'s (53) place on the meaning below the exhaustivity operator. A
+licenser carries a stronger strength when, in addition, its exhaustified meaning holds that
+strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toProjectivitySignature
@@ -218,8 +226,8 @@ variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder 
 def ofOperator (f : σ → P) : Licenser :=
   .classical { Param := PUnit, Dom := fun _ ↦ σ, Cod := fun _ ↦ P, op := fun _ ↦ f }
 
-/-- A single operator carries a strength of negation when it is in the function class of the
-strength and is not upward entailing. -/
+/-- A single operator carries a strength of negation exactly when it is in the function class of
+the strength and is not upward entailing. -/
 theorem carries_ofOperator_iff :
     (ofOperator f).Carries s ↔ s.toProjectivitySignature.HoldsFor f ∧ ¬Monotone f := by
   have ha (h : s.toProjectivitySignature.HoldsFor f) : Antitone f :=
@@ -240,9 +248,9 @@ def mechanism : Licenser → LicensingMechanism
   | .modal _ => .genericIndefinite
   | .question => .entropy
 
-/-- A licenser licenses by strengthening when, under each of its operators, widening the domain of
-an existential strengthens the result: the existential over the wider domain entails, modulo
-presupposition, the existential over the narrower one ([kadmon-landman-1993]). -/
+/-- A licenser *licenses by strengthening* when widening the domain of an existential strengthens
+the result under each of its operators. That is, the existential over the wider domain entails,
+modulo presupposition, the existential over the narrower domain ([kadmon-landman-1993]). -/
 def LicensesByStrengthening : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p (E : Type) (P : E → F.Dom p) ⦃D D' : Finset E⦄,
       D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
@@ -252,16 +260,16 @@ def LicensesByStrengthening : Licenser → Prop
       D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
   | .question => False
 
-/-- A modal licenser licenses free choice when, under one of its operators and over a domain of at
-least two possible witnesses, the antiexhaustified existential is consistent
+/-- A modal licenser *licenses free choice* when the antiexhaustified existential is consistent
+under one of its operators, over a domain of at least two possible witnesses
 ([chierchia-2006]). -/
 def LicensesFreeChoice : Licenser → Prop
   | .modal F => ∃ p, ∃ (E : Type) (P : E → Set (F.W p)) (D : Finset E), 1 < D.card ∧
       (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
-/-- A question licenses a domain widener by relevance, since widening the domain of a wh-question
-never lowers its value in any decision problem ([van-rooy-2003-npi]). -/
+/-- A question *licenses by relevance* an item that widens its domain, since widening the domain
+of a wh-question never lowers its value in any decision problem ([van-rooy-2003-npi]). -/
 def LicensesByRelevance : Licenser → Prop
   | .question => ∀ {W A D : Type} [Fintype W] [DecidableEq W] [DecidableEq D] [MeasurableSpace W]
       [DiscreteMeasurableSpace W] [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W)
@@ -294,8 +302,8 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | modal F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
   | question => exact h
 
-/-- Widening strengthens under every operator of a licenser exactly when the licenser is downward
-entailing modulo presupposition. -/
+/-- Widening the domain strengthens under every operator of a licenser exactly when the licenser
+is downward entailing modulo presupposition. -/
 theorem licensesByStrengthening_iff : L.LicensesByStrengthening ↔ L.IsStrawsonDE := by
   classical
   rcases L with F | ⟨F, _⟩ | F | _ | _
@@ -324,7 +332,7 @@ theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
   | weak => exact absurd rfl hs
   | antiAdditive | antiMorphic => exact Iff.rfl
 
-/-- A classical licenser carries a strength exactly when it holds it outright and is
+/-- A classical licenser carries a strength exactly when it holds that strength outright and is
 non-trivial. -/
 theorem carries_classical_iff {F : OperatorFamily} :
     (classical F).Carries s ↔
@@ -337,8 +345,8 @@ theorem carries_classical_iff {F : OperatorFamily} :
       ⟨⟨isStrawsonDE_of_holds_anti (h.1.toProjectivitySignature_of_le (s := .weak) (by decide)),
         h.2⟩, h.1⟩⟩
 
-/-- A non-trivial classical licenser holding exactly the strengths up to `s₀` carries exactly
-those. -/
+/-- A non-trivial classical licenser that holds exactly the strengths up to `s₀` carries exactly
+those strengths. -/
 theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
     (hn : ¬ (classical F).IsStrawsonUE)
     (h : ∀ s, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
@@ -355,8 +363,9 @@ theorem not_holds_toProjectivitySignature (h : ¬ L.Holds .anti) :
     ¬ L.Holds s.toProjectivitySignature := fun hs ↦
   h (hs.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
 
-/-- A non-trivial licenser that is downward entailing modulo presupposition, and not outright once
-its direct implicature is factored in, carries exactly weak strength ([gajewski-2011]). -/
+/-- A non-trivial licenser that is downward entailing modulo presupposition, but not downward
+entailing outright once its direct implicature is added, carries exactly weak strength
+([gajewski-2011]). -/
 theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
     (h : ¬ L.exhaustified.Holds .anti) : L.Carries s ↔ s = .weak := by
   cases s with
@@ -366,19 +375,20 @@ theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
 
 /-! ### The strengths a licenser carries and holds
 
-The strengths a licenser carries form a lower set of the chain of strengths, and so do those it
-holds outright, so each set is fixed by its greatest element. These are taken in the chain extended
-by a least element, for none, and a greatest, above every strength, where the requirement and the
-blocker of a polarity item also live. -/
+The strengths that a licenser carries form a lower set of the chain of strengths, and so do the
+strengths that it holds outright. Each set is therefore determined by its greatest element. The
+greatest element is taken in the chain extended by a least element, which stands for no strength,
+and by a greatest element above every strength. The requirement and the blocker of a polarity
+item are taken in the same extended chain. -/
 
 open scoped Classical in
-/-- The greatest strength of negation a licenser carries, `⊥` if it carries none. -/
+/-- The greatest strength of negation that a licenser carries, or `⊥` if it carries none. -/
 noncomputable def carried (L : Licenser) : WithBot (WithTop Negation.Strength) :=
   (Finset.univ.filter L.Carries).sup
     fun s ↦ ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
 
 open scoped Classical in
-/-- The greatest strength of negation a licenser holds outright, `⊥` if it holds none. -/
+/-- The greatest strength of negation that a licenser holds outright, or `⊥` if it holds none. -/
 noncomputable def held (L : Licenser) : WithBot (WithTop Negation.Strength) :=
   (Finset.univ.filter fun s : Negation.Strength ↦ L.Holds s.toProjectivitySignature).sup
     fun s ↦ ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
@@ -422,7 +432,7 @@ theorem held_lt_top : L.held < ⊤ := by
   unfold held
   exact sup_filter_lt_top _
 
-/-- A non-trivial classical licenser carries what it holds. -/
+/-- A non-trivial classical licenser carries exactly the strengths that it holds. -/
 theorem carried_classical {F : OperatorFamily} (hn : ¬ (classical F).IsStrawsonUE) :
     (classical F).carried = (classical F).held := by
   classical
@@ -436,19 +446,19 @@ namespace Licenser
 
 variable (L : Licenser) (e : PolarityItem)
 
-/-- A context **licenses** an item when its licenser carries the item's licensor, licenses free
-choice and the item is a free choice item, or licenses by relevance and the item is a weak negative
-polarity item. -/
+/-- A context **licenses** an item in one of three cases. Its licenser carries the licensor of the
+item, its licenser licenses free choice and the item is a free choice item, or its licenser
+licenses by relevance and the item is a weak negative polarity item. -/
 def Licenses : Prop :=
   (∃ r ∈ e.licensor, L.Carries r) ∨ (L.LicensesFreeChoice ∧ e.IsFCI) ∨
     (L.LicensesByRelevance ∧ e.licensor = some .weak)
 
-/-- A context **anti-licenses** an item when its licenser holds outright, on its plain meaning, the
-strength that blocks the item ([vanderwouden-1997]'s laws (180), [szabolcsi-2004]'s (42)). -/
+/-- A context **anti-licenses** an item when its licenser holds the strength that blocks the item
+outright, on its plain meaning ([vanderwouden-1997]'s laws (180), [szabolcsi-2004]'s (42)). -/
 def AntiLicenses : Prop := ∃ r ∈ e.antiLicensor, L.Holds r.toProjectivitySignature
 
-/-- A context **admits** an item when it licenses the item, if the item needs licensing, and does
-not anti-license it. -/
+/-- A context **admits** an item when it does not anti-license the item and, if the item requires
+licensing, licenses it. -/
 def Admits : Prop := (e.IsNPI ∨ e.IsFCI → L.Licenses e) ∧ ¬ L.AntiLicenses e
 
 variable {L e} {e' : PolarityItem} {F : OperatorFamily} {r r' : Negation.Strength}
@@ -473,8 +483,8 @@ theorem admits_of_not_holds (he : e.licensor = none) (hf : ¬ e.IsFCI)
   (admits_iff_not_antiLicenses (by simp [IsNPI, he]) hf).2 fun ⟨_, hr, hh⟩ ↦
     h (Option.some_inj.1 (hr.symm.trans ha) ▸ hh)
 
-/-- An item needing a strength above weak, and not a free choice item, is licensed exactly by the
-contexts whose licenser carries that strength. -/
+/-- An item that requires a strength above weak and is not a free choice item is licensed exactly
+by the contexts whose licenser carries that strength. -/
 theorem licenses_iff_carries (he : e.licensor = some r) (hr : r ≠ .weak) (hf : ¬ e.IsFCI) :
     L.Licenses e ↔ L.Carries r := by
   simp [Licenses, he, hr, hf]
@@ -493,7 +503,7 @@ theorem Licenses.of_licensor_le (he : e.licensor = some r) (he' : e'.licensor = 
     exact .inr (.inr ⟨hc, he'.trans (congrArg _ (Negation.Strength.le_weak_iff.1 hr))⟩)
 
 /-- A non-trivial classical context blocks the positive polarity items of a strength exactly where
-it licenses the negative polarity items of that strength, the mirror image of
+it licenses the negative polarity items of that strength. This is the mirror image of
 [vanderwouden-1997]'s (181). -/
 theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE)
     (h : e.antiLicensor = e'.licensor) :
@@ -501,23 +511,24 @@ theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE)
   simp only [AntiLicenses, Licenses, h, carries_classical_iff, and_iff_left hn, LicensesFreeChoice,
     LicensesByRelevance, false_and, or_false]
 
-/-- A licensing context without the free-choice and the relevance routes licenses an item exactly
-when it carries what the item needs. -/
+/-- A licensing context that has neither the free-choice route nor the relevance route licenses an
+item exactly when it carries the strength that the item requires. -/
 theorem licenses_iff_requirement_le (hfc : ¬ L.LicensesFreeChoice)
     (hrel : ¬ L.LicensesByRelevance) : L.Licenses e ↔ e.IsNPI ∧ e.requirement ≤ L.carried := by
   rcases h : e.licensor with _ | r
   · simp [Licenses, IsNPI, hfc, hrel, h]
   · simp [Licenses, IsNPI, requirement, hfc, hrel, h, coe_le_carried_iff]
 
-/-- A context blocks an item exactly when it holds what blocks the item. -/
+/-- A context blocks an item exactly when it holds the strength that blocks the item. -/
 theorem antiLicenses_iff_blocker_le : L.AntiLicenses e ↔ e.blocker ≤ L.held := by
   rcases h : e.antiLicensor with _ | r
   · simp [AntiLicenses, blocker, h, not_le.2 held_lt_top]
   · simp [AntiLicenses, blocker, h, coe_le_held_iff]
 
 /-- A non-trivial classical context admits an item that is not a free choice item exactly when the
-strength it carries lies between what the item needs and what blocks it; the rows of
-[vanderwouden-1997]'s table (182) are the strengths and its columns the items' intervals. -/
+strength it carries lies between the strength that the item requires and the strength that blocks
+it. The rows of [vanderwouden-1997]'s table (182) are the strengths, and its columns are the
+intervals of the items. -/
 theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) (hf : ¬ e.IsFCI) :
     (classical F).Admits e ↔ (classical F).carried ∈ Set.Ico e.requirement e.blocker := by
   rw [Set.mem_Ico, Admits, licenses_iff_requirement_le id id, antiLicenses_iff_blocker_le,
@@ -526,7 +537,8 @@ theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) (hf : ¬
   · simp [IsNPI, IsFCI, requirement, h, hf]
   · simp [IsNPI, h]
 
-/-- An antimorphic context blocks every positive polarity item, [vanderwouden-1997]'s (169). -/
+/-- An antimorphic context blocks every positive polarity item, which is [vanderwouden-1997]'s
+(169). -/
 theorem antiLicenses_iff_isPPI (h : L.Holds .antiAddMult) : L.AntiLicenses e ↔ e.IsPPI :=
   ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩, fun he ↦
     let ⟨r, hr⟩ := Option.isSome_iff_exists.1 he

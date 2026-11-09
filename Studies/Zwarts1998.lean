@@ -9,13 +9,14 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Zwarts (1998): Three types of polarity
 
-Zwarts opens with Dutch and German negative polarity items of two kinds. The weak ones, Dutch
-*hoeven* 'need' and *kunnen velen* 'can abide', German *brauchen* 'need' and *ausstehen können* 'can
-stand', are fine under *at most n*, *few*, *no one* and *none of*; the strong ones, Dutch *ook maar
-iets* 'anything at all' and *bijster* 'very', German *auch nur irgendetwas* and *sonderlich*, only
-under the last two, which are anti-additive. Each example is linked to the Fragment entries of its
-item and the named context of its quantifier, and the licensing theory [predicts every
-judgment](##Zwarts1998.judgments_predicted), since *at most n* and *few* carry only weak strength.
+Zwarts calls a negative polarity item *weak* if it is acceptable in every downward-entailing context
+and *strong* if it is acceptable only in anti-additive contexts. Dutch *hoeven* 'need' and *kunnen
+velen* 'can abide' and German *brauchen* 'need' and *ausstehen können* 'can stand' are weak, and
+occur under *at most n*, *few*, *no one*, and *none of*. Dutch *ook maar iets* 'anything at all' and
+*bijster* 'very' and German *auch nur irgendetwas* and *sonderlich* are strong, and occur only under
+the last two. Each example is linked to the lexical entry of its item and to the named context of
+its quantifier. Since *at most n* and *few* are downward entailing but not anti-additive, the
+licensing theory [predicts every judgment](##Zwarts1998.judgments_predicted).
 
 ## References
 
@@ -28,14 +29,14 @@ namespace Zwarts1998
 
 open PolarityItem Examples
 
-/-- A link from an example to the Fragment entry of its polarity item, the named context of the
-quantifier above it, and the item's words as printed. -/
+/-- A link from an example to the lexical entry of its polarity item, to the named context of the
+quantifier above it, and to the words of the item as printed. -/
 structure Link where
   /-- The polarity item. -/
   item : PolarityItem
-  /-- The context it stands in. -/
+  /-- The context in which the item stands. -/
   context : LicensingContext
-  /-- The item's words as printed. -/
+  /-- The words of the item as printed. -/
   words : List String
 
 open Dutch.PolarityItems German.PolarityItems in
@@ -54,15 +55,16 @@ def links : List (Datum × Link) :=
     (ex_4b, ⟨auchNurIrgendetwas, .nobody, ["auch", "nur", "irgendetwas"]⟩),
     (ex_4c, ⟨sonderlich, .few, ["sonderlich"]⟩), (ex_4d, ⟨sonderlich, .nobody, ["sonderlich"]⟩)]
 
--- each link's words are words of its example and of its entry's form, so a link to the wrong
--- entry fails
+-- The words of each link occur in its example and in the form of its entry, so a link to the
+-- wrong entry fails.
 theorem links_attested :
     ∀ p ∈ links, ∀ w ∈ p.2.words,
       w.toList ∈ Datum.wordsOf p.1.primaryText ∧ w.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- The licensing theory admits each example's item in its context exactly when Zwarts judges the
-example acceptable: the weak items everywhere, the strong ones only under *no one* and *none of*. -/
+/-- The licensing theory admits the item of each example in its context exactly when Zwarts judges
+the example acceptable. The weak items are admitted in every context, and the strong items only
+under *no one* and *none of*. -/
 theorem judgments_predicted :
     ∀ p ∈ links, (p.1.judgment = .acceptable ↔ p.2.context.licenser.Admits p.2.item) := by
   decide +kernel

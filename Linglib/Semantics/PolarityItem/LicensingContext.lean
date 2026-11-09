@@ -21,50 +21,57 @@ public import Mathlib.Basic.Rel
 /-!
 # Licensing contexts
 
-A licensing context is a construction that can host a polarity item. It places a licenser over the
-item and realizes a function of Haspelmath's implicational map, where it realizes one, and what its
-licenser carries is a theorem about the operators it denotes. Clausal negation is anti-morphic.
-*Nobody*, the restrictors of a universal and of *no*, *without*, *deny*, negation over a neg-raising
-attitude, *before*, *too … to* and the clausal comparative are anti-additive and no more, and
-*doubt* downward entailing and no more, all but *before* by composing negation with a positive
-operator that is not additive. *Few* and *at most* are scalar: downward entailing, and not even that
-once exhaustified against the stronger *no* and *at most n − 1*, the determiner exhaustification
-`Quantifier.Det.exhaustified`. Every downward entailing context is so non-trivially. Focus *only*,
-adversatives, superlatives, conditional antecedents and temporal *since* are downward entailing only
-modulo their presuppositions, the modals, imperatives, generics and free relatives are modal
-licensers, and questions license by relevance. A study can state the theory of a licenser of its
-own; the named constructions are the shared inventory that lexical entries cite.
+A *licensing context* is a construction that can host a polarity item. It places a licenser over
+the position of the item, and it realizes a function of Haspelmath's implicational map when it
+realizes one. The strength of negation that its licenser carries is a theorem about the operators
+that the construction denotes. Clausal negation is anti-morphic. *Nobody*, the restrictors of a
+universal and of *no*, *without*, *deny*, negation over a neg-raising attitude, *before*,
+*too … to*, and the clausal comparative are anti-additive and no stronger, and *doubt* is downward
+entailing and no stronger. Each of these except *before* has its strength because it composes
+negation with a positive operator that is not additive. *Few* and *at most* are scalar. They are
+downward entailing, but they are no longer downward entailing once they are exhaustified against
+the stronger *no* and *at most n − 1*, which is the determiner exhaustification
+`Quantifier.Det.exhaustified`. Every downward entailing context is downward entailing
+non-trivially, and not merely by being constant. Focus *only*, adversatives, superlatives,
+conditional antecedents, and temporal *since* are downward entailing only modulo their
+presuppositions. The modals, imperatives, generics, and free relatives are modal licensers, and
+questions license by relevance. A study may state the theory of a licenser of its own. The named
+constructions are the shared inventory that lexical entries cite.
 
 ## Main declarations
 
 * `PolarityItem.LicensingContext`: the named constructions.
 * `PolarityItem.LicensingContext.licenser`, `PolarityItem.LicensingContext.haspelmath`: the
-  operator a construction places over the item and its function on Haspelmath's map.
+  operator that a construction places over the item, and the function of Haspelmath's map that
+  the construction realizes.
 * `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
-  `not_holds_exhaustified_few`, …: the certificates of each context's licenser, from which the
-  instances decide what it carries and holds.
+  `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
+  the decidability instances compute what it carries and holds.
 
 ## Implementation notes
 
-* A context is a name, so a study linking an example to the context it stands in links
-  computable data with decidable equality, while the licenser, often defined classically, is a
-  function of the name. Distinct constructions can share a licenser: the necessity modal, the
-  imperative, the generic and the free relative are all necessities, and the clausal comparative
-  and *too … to* both exceed the clause's degrees, and *deny* and negation over a neg-raising
-  attitude both assert the attitude of the negated complement.
-* The inventory is the contexts the library gives a semantics, not an exhaustive list. It realizes
-  seven of Haspelmath's nine functions, the necessity modal and the imperative realizing the
-  irrealis non-specific one; many licensers of the downward-entailing literature are still
-  missing, such as negative adverbs, *neither … nor* or *not every*.
-* *Before* is Anscombe's universal reading, *before ever*. *Too … to* is the
-  subject's degree exceeding every degree at which the infinitive holds, after Meier. *Doubt* is not
-  believing and *deny* asserting the negation, over a doxastic or assertoric accessibility.
+* A context is a name. A study that links an example to the context in which it stands therefore
+  links computable data with decidable equality, while the licenser, which is often defined
+  classically, is a function of the name. Distinct constructions can share a licenser. The
+  necessity modal, the imperative, the generic, and the free relative are all necessities. The
+  clausal comparative and *too … to* both place the compared individual above the degrees of the
+  clause, and *deny* and negation over a neg-raising attitude both assert that the attitude holds
+  of the negated complement.
+* The inventory consists of the contexts to which the library gives a semantics, and it is not an
+  exhaustive list. It realizes seven of Haspelmath's nine functions, with the necessity modal and
+  the imperative realizing the irrealis non-specific function. Many licensers of the literature on
+  downward entailment are still missing, such as negative adverbs, *neither … nor*, and
+  *not every*.
+* *Before* receives Anscombe's universal reading, *before ever*. *Too … to* states that the degree
+  of the subject exceeds every degree at which the infinitive holds, after Meier. *Doubt* is
+  analysed as not believing the complement, and *deny* as asserting its negation, each over a
+  doxastic or assertoric accessibility relation.
 * The free relative is read as a necessity over its alternatives, with the modal presupposition of
-  *-ever*; the generic is a necessity over normal worlds.
-* Haspelmath's placements are his book's. *Nobody*, *before*-clauses and adversatives sit between
-  direct and indirect negation there, so they realize no function here, nor do the rows outside
-  the map's inventory.
+  *-ever*. The generic is read as a necessity over normal worlds.
+* The placements on Haspelmath's map are those of his book. *Nobody*, *before*-clauses, and
+  adversatives sit between direct and indirect negation there, so they realize no function here.
+  The constructions outside the inventory of the map realize no function either.
 
 ## References
 
@@ -92,9 +99,10 @@ namespace Quantifier.Det
 
 variable {α : Type*} {Q Q' : Det α} {C : Set (Det α)} {A P : Set α}
 
-/-- The determiner `Q` exhaustified against its scale-mates `C` holds, at each restrictor, of the
-scopes where `Q` holds and every scale-mate holding there is entailed, entailment holding the
-restrictor fixed and quantifying over scopes ([gajewski-2011]'s `O` with `ALT-1`). -/
+/-- The determiner `Q` exhaustified against its scale-mates `C`. At each restrictor, it holds of
+the scopes at which `Q` holds and every scale-mate that holds there is entailed by `Q`. Entailment
+is evaluated with the restrictor fixed and quantifies over scopes ([gajewski-2011]'s `O` with
+`ALT-1`). -/
 def exhaustified (Q : Det α) (C : Set (Det α)) : Det α :=
   fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
 
@@ -143,49 +151,54 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Quantifier Quantifier.Det Tense Indefinite
 
-/-- A licensing context is a construction that can host a polarity item. What it does to the item
-is the licenser it places over the item's position (`LicensingContext.licenser`), and where it sits
-typologically is the function of [haspelmath-1997]'s implicational map it realizes
+/-- A licensing context is a construction that can host a polarity item. Its effect on the item is
+the licenser that it places over the position of the item (`LicensingContext.licenser`), and its
+typological position is the function of [haspelmath-1997]'s implicational map that it realizes
 (`LicensingContext.haspelmath`). Distinct constructions can share a licenser, as the necessity
-modal, the imperative, the generic and the free relative do. -/
+modal, the imperative, the generic, and the free relative do. -/
 inductive LicensingContext where
-  /-- Clausal negation, as in *not*, complement over predicates. -/
+  /-- Clausal negation, as in *not*, which is complementation over predicates. -/
   | negation
-  /-- A negative quantifier, as in *nobody*, over a restrictor true of something. -/
+  /-- A negative quantifier, as in *nobody*, over a restrictor that is true of something. -/
   | nobody
-  /-- *Few* NP, the proportional reading of the English fragment, below the stronger *no* on its
-  scale. -/
+  /-- *Few* NP, in the proportional reading of the English fragment, which lies below the stronger
+  *no* on its scale. -/
   | few
-  /-- *At most n* NP, below the stronger *at most n − 1* on its scale. -/
+  /-- *At most n* NP, which lies below the stronger *at most n − 1* on its scale. -/
   | atMost
-  /-- The restrictor of a universal, as in *everyone who*, over a scope false of something. -/
+  /-- The restrictor of a universal, as in *everyone who*, over a scope that is false of
+  something. -/
   | universalRestrictor
-  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope true of something.
-  -/
+  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope that is true of
+  something. -/
   | noRestrictor
-  /-- A *without*-phrase, the matrix predicate holding without the phrase's. -/
+  /-- A *without*-phrase, in which the matrix predicate holds without the predicate of the
+  phrase. -/
   | withoutClause
-  /-- A *before*-clause, Anscombe's universal *before*. -/
+  /-- A *before*-clause, in Anscombe's universal reading of *before*. -/
   | beforeClause
-  /-- A clausal comparative, *taller than S*, the individual above every degree of the clause. -/
+  /-- A clausal comparative, as in *taller than S*, which places the individual above every degree
+  of the clause. -/
   | clausalComparative
-  /-- *Too* ADJ *to* VP, the individual above every degree at which the infinitive holds. -/
+  /-- *Too* ADJ *to* VP, which places the individual above every degree at which the infinitive
+  holds. -/
   | tooTo
-  /-- A verb of doubting, as in *I doubt that*, which does not believe its complement. -/
+  /-- A verb of doubting, as in *I doubt that*, whose subject does not believe the complement. -/
   | doubtVerb
-  /-- A verb of denying, as in *she denied that*, which asserts the negation of its complement. -/
+  /-- A verb of denying, as in *she denied that*, whose subject asserts the negation of the
+  complement. -/
   | denyVerb
-  /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*,
-  read with the attitude's excluded middle as the attitude over the negated complement
-  ([gajewski-2007]). -/
+  /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*.
+  With the excluded middle of the attitude, it is read as the attitude toward the negated
+  complement ([gajewski-2007]). -/
   | superordinateNegation
-  /-- The scope of focus *only*, von Fintel's *only*. -/
+  /-- The scope of focus *only*, in von Fintel's analysis. -/
   | onlyFocus
-  /-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
+  /-- An adversative predicate, as in *sorry*, *surprised*, and *regret*. -/
   | adversative
   /-- A superlative, in its comparison class. -/
   | superlative
-  /-- The antecedent of a conditional, the modal-horizon counterfactual. -/
+  /-- The antecedent of a conditional, analysed as the modal-horizon counterfactual. -/
   | conditionalAntecedent
   /-- Temporal *since*, as in *it's been five years since*. -/
   | sinceTemporal
@@ -195,18 +208,19 @@ inductive LicensingContext where
   | modalPossibility
   /-- A necessity modal. -/
   | modalNecessity
-  /-- An imperative, a necessity over what is commanded. -/
+  /-- An imperative, read as a necessity over what is commanded. -/
   | imperative
-  /-- A generic sentence, a necessity over normal worlds. -/
+  /-- A generic sentence, read as a necessity over normal worlds. -/
   | generic
-  /-- A free relative, as in *whatever*, *whoever*, a necessity over its alternatives. -/
+  /-- A free relative, as in *whatever* and *whoever*, read as a necessity over its
+  alternatives. -/
   | freeRelative
   deriving DecidableEq, Fintype, Repr
 
-/-- The function of [haspelmath-1997]'s implicational map a construction realizes, if any.
-The necessity modal and the imperative are irrealis non-specific environments: the book finds
-free-choice items unacceptable under necessity, in striking contrast to possibility, and in
-imperatives acceptable only when the imperative is read as a permission. -/
+/-- The function of [haspelmath-1997]'s implicational map that a construction realizes, if any.
+The necessity modal and the imperative are irrealis non-specific environments. The book finds
+free-choice items unacceptable under necessity, in contrast to possibility, and acceptable in
+imperatives only when the imperative is read as a permission. -/
 def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | negation => some .directNeg
   | withoutClause | doubtVerb | denyVerb | superordinateNegation => some .indirectNeg
@@ -236,15 +250,15 @@ structure FinitePredicate extends Predicate where
 
 attribute [instance] FinitePredicate.fin
 
-/-- A predicate true of something, the restrictor of a negative quantifier. -/
+/-- A predicate that is true of something, as the restrictor of a negative quantifier is. -/
 structure NonemptyPredicate extends Predicate where
   nonempty : A.Nonempty
 
-/-- A predicate false of something, the scope of a universal. -/
+/-- A predicate that is false of something, as the scope of a universal is. -/
 structure NonuniversalPredicate extends Predicate where
   nonuniversal : ∃ x, x ∉ A
 
-/-- A bound and a finite predicate, the restrictor of *at most n*. -/
+/-- A finite predicate together with a bound, as the restrictor of *at most n* is. -/
 structure BoundedPredicate extends FinitePredicate where
   /-- The bound. -/
   n : ℕ
@@ -304,7 +318,7 @@ structure Focus where
   /-- The focused individual. -/
   x : ι
 
-/-- The doxastic state, the domain and the ordering source of an adversative attitude. -/
+/-- The doxastic state, the domain, and the ordering source of an adversative attitude. -/
 structure Attitude where
   /-- The worlds. -/
   W : Type
@@ -356,7 +370,8 @@ attribute [instance] Ago.ord
 
 /-! ### The licensers of the contexts -/
 
-/-- The degrees a clause leaves the compared individual above. -/
+/-- The family of operators stating that the compared individual exceeds every degree of a
+clause. -/
 abbrev exceedsFamily : Licenser.OperatorFamily :=
   ⟨Measured, fun p ↦ Set p.D, fun _ ↦ Prop, fun p Δ ↦ p.μ p.x ∈ strictUpperBounds Δ⟩
 
@@ -400,13 +415,14 @@ noncomputable def licenser : LicensingContext → Licenser
 
 /-! ### Classical licensers
 
-Six classical licensers are a positive operator composed with negation. *Nobody*, the restrictor of
-a universal, the clausal comparative and *too … to* are the scope of a universal after negation,
-over individuals or degrees; *deny* is necessity after negation and *without* a meet after negation,
-and *doubt* is negation after necessity. Each holds the strengths dual to the classes of its
-positive operator (`Negation.Strength.forall_holdsFor_iff_le_antiAdditive`), and so is
-anti-additive and no more, or for *doubt* downward entailing and no more, because the universal's
-scope, necessity and a meet are multiplicative and not additive. -/
+Six of the classical licensers are a positive operator composed with negation. *Nobody*, the
+restrictor of a universal, the clausal comparative, and *too … to* are the scope of a universal
+applied after negation, over individuals or degrees. *Deny* is necessity applied after negation,
+*without* is a meet applied after negation, and *doubt* is negation applied after necessity. Each
+holds the strengths dual to the classes of its positive operator
+(`Negation.Strength.forall_holdsFor_iff_le_antiAdditive`). Since the scope of a universal,
+necessity, and a meet are multiplicative and not additive, each of these licensers is
+anti-additive and no stronger, except *doubt*, which is downward entailing and no stronger. -/
 
 private theorem holdsFor_mult_mem_core {W : Type} {R : SetRel W W} {w : W} (h : ∃ v, (w, v) ∈ R) :
     ProjectivitySignature.mult.HoldsFor fun P ↦ w ∈ R.core P := by
@@ -420,7 +436,7 @@ private theorem holdsFor_mono_mem_core {W : Type} {R : SetRel W W} {w : W} :
     ProjectivitySignature.mono.HoldsFor fun P ↦ w ∈ R.core P :=
   ProjectivitySignature.holdsFor_mono_iff.2 fun _ _ hPQ hP ↦ SetRel.core_mono hPQ hP
 
-/-- Necessity is not additive at a world accessing two worlds. -/
+/-- Necessity is not additive at a world that accesses two worlds. -/
 private theorem not_holdsFor_additive_mem_core :
     ¬ ProjectivitySignature.additive.HoldsFor
       fun P ↦ true ∈ SetRel.core (.univ : SetRel Bool Bool) P :=
@@ -480,7 +496,7 @@ theorem holds_atMost_iff {s : Negation.Strength} :
   decide
 
 /-- The restrictor of a universal is the scope of a universal over the complement of its scope,
-after negation. -/
+applied after negation. -/
 theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     universalRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   Negation.Strength.forall_holdsFor_iff_le_antiAdditive
@@ -491,8 +507,8 @@ theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     ⟨⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩, not_holdsFor_additive_every (a := true)
       (b := false) (Set.notMem_empty _) (Set.notMem_empty _) (by decide)⟩
 
-/-- The restrictor of *no* is the scope of a universal over the scope, after negation, since *no*
-is symmetric. -/
+/-- Since *no* is symmetric, the restrictor of *no* is the scope of a universal over the scope,
+applied after negation. -/
 theorem holds_noRestrictor_iff {s : Negation.Strength} :
     noRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : NonemptyPredicate ↦
@@ -518,8 +534,8 @@ theorem holds_beforeClause_iff {s : Negation.Strength} :
   have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
   simp [beforeEver, timeTrace] at this
 
-/-- The degrees a clause leaves the compared individual above are the scope of a universal over
-the degrees from the individual's up, after negation. -/
+/-- The operator placing the compared individual above the degrees of a clause is the scope of a
+universal over the degrees from the degree of the individual upward, applied after negation. -/
 theorem holds_exceedsFamily_iff {s : Negation.Strength} :
     (classical exceedsFamily).Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
   Negation.Strength.forall_holdsFor_iff_le_antiAdditive
@@ -553,8 +569,8 @@ theorem holds_denyVerb_iff {s : Negation.Strength} :
 
 /-! ### Non-triviality
 
-Each downward entailing licenser has an operator that is not upward entailing, so it is not
-downward entailing by being constant. -/
+Each downward entailing licenser has an operator that is not upward entailing. It is therefore not
+downward entailing merely by being constant. -/
 
 theorem not_isStrawsonUE_negation : ¬ negation.licenser.IsStrawsonUE :=
   not_forall.2 ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
@@ -621,8 +637,8 @@ theorem not_isStrawsonUE_sinceTemporal : ¬ sinceTemporal.licenser.IsStrawsonUE 
 
 /-! ### Scalar licensers
 
-*Few* and *at most n* exhaustified against their stronger scale-mates assert *some*, so they are
-not downward entailing ([gajewski-2011]'s (45), (48)). -/
+Once *few* and *at most n* are exhaustified against their stronger scale-mates, they assert
+*some*, and so they are not downward entailing ([gajewski-2011]'s (45), (48)). -/
 
 theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .anti := fun h ↦ by
   have hA : ¬ Det.few (Set.univ : Set (Fin 3)) ≤ Det.no Set.univ := fun hle ↦
@@ -684,8 +700,8 @@ theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h
 
 /-! ### Modal licensers and questions -/
 
-/-- Over three worlds, the first accessing the other two, each the one world where one of two
-individuals is a witness. -/
+/-- A frame over three worlds in which the first world accesses the other two, and each of the
+other two is the one world at which one of two individuals is a witness. -/
 private def branching : SetRel (Fin 3) (Fin 3) := {p | p.1 = 0 ∧ p.2 ≠ 0}
 
 private def witnessAt (d : Fin 2) : Set (Fin 3) := {d.succ}
@@ -714,13 +730,15 @@ theorem isStrawsonUE_necessityFamily : (Licenser.modal necessityFamily).IsStraws
 theorem isStrawsonUE_modalPossibility : modalPossibility.licenser.IsStrawsonUE :=
   fun _ ↦ SetRel.preimage_mono
 
-/-- Necessity is not downward entailing: at a world that accesses itself it is the identity. -/
+/-- Necessity is not downward entailing, since it is the identity at a world that accesses
+itself. -/
 theorem not_holds_anti_necessityFamily : ¬ (Licenser.modal necessityFamily).Holds .anti :=
   fun h ↦ by
     have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.core] at this
 
-/-- Possibility is not downward entailing: at a world that accesses itself it is the identity. -/
+/-- Possibility is not downward entailing, since it is the identity at a world that accesses
+itself. -/
 theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .anti :=
   fun h ↦ by
     have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
@@ -815,8 +833,8 @@ instance (c : LicensingContext) : Decidable c.licenser.LicensesByRelevance :=
 
 /-! ### Deciding licensing at the named contexts
 
-The instances are indexed by the context rather than its licenser, so that a computable definition
-deciding an item against a named context does not compute the licenser. -/
+The instances are indexed by the context rather than by its licenser, so that a computable
+definition that decides an item against a named context does not compute the licenser. -/
 
 instance (c : LicensingContext) : DecidablePred c.licenser.Licenses :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))

@@ -10,12 +10,14 @@ public import Linglib.Semantics.Negation.Strength
 /-!
 # Polarity items
 
-A *polarity item* is a lexical item with a defective distribution, graded by Zwarts's strengths of
-negation: a negative polarity item needs at least some strength and a positive polarity item is
-blocked by at least some strength, so that Dutch *ooit* 'ever', having both, is bipolar, and a free
-choice item is licensed by the generic contexts. An item so spans an interval of strengths, from
-[the one it needs](##PolarityItem.requirement) to [the one that blocks it](##PolarityItem.blocker).
-Which licensers admit it is the subject of `Semantics/PolarityItem/Licenser.lean`.
+A *polarity item* is a lexical item whose distribution is restricted to certain contexts. The
+restriction is graded by Zwarts's strengths of negation. A *negative polarity item* requires at
+least some strength of negation, and a *positive polarity item* is blocked by at least some
+strength. An item may be both, as Dutch *ooit* 'ever' is, in which case it is *bipolar*. A *free
+choice item* is licensed by the generic contexts. Each item therefore spans an interval of
+strengths, from [the strength it requires](##PolarityItem.requirement) to [the strength that
+blocks it](##PolarityItem.blocker). The licensers that admit an item are the subject of
+`Semantics/PolarityItem/Licenser.lean`.
 
 ## References
 
@@ -27,17 +29,18 @@ Which licensers admit it is the subject of `Semantics/PolarityItem/Licenser.lean
 
 @[expose] public section
 
-/-- A polarity-sensitive lexical item: its form, the weakest strength of negation that licenses
-it and the weakest that blocks it, and whether the generic contexts license it. -/
+/-- A polarity-sensitive lexical item. The record holds the form of the item, the weakest
+strength of negation that licenses it, the weakest strength that blocks it, and whether the
+generic contexts license it. -/
 structure PolarityItem where
   /-- The surface form. -/
   form : String
-  /-- The weakest strength of negation that licenses the item, if it is a negative polarity
-  item. A negative concord item that needs clausemate negation carries `antiMorphic`, the
-  strength of clausal negation alone. -/
+  /-- The weakest strength of negation that licenses the item, when the item is a negative
+  polarity item. A negative concord item that requires clausemate negation carries
+  `antiMorphic`, which is the strength of clausal negation alone. -/
   licensor : Option Negation.Strength := none
-  /-- The weakest strength of negation that blocks the item, if it is a positive polarity
-  item. -/
+  /-- The weakest strength of negation that blocks the item, when the item is a positive
+  polarity item. -/
   antiLicensor : Option Negation.Strength := none
   /-- Whether the generic contexts license the item. -/
   freeChoice : Bool := false
@@ -53,12 +56,12 @@ abbrev IsPPI (e : PolarityItem) : Prop := e.antiLicensor.isSome
 /-- An item is a **free choice item** when the generic contexts license it. -/
 abbrev IsFCI (e : PolarityItem) : Prop := e.freeChoice = true
 
-/-- The strength of negation an item needs, `⊥` if it needs none. -/
+/-- The strength of negation that an item requires, or `⊥` if it requires none. -/
 def requirement (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
   e.licensor.elim ⊥ fun s ↦
     ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
 
-/-- The strength of negation that blocks an item, `⊤` if none does. -/
+/-- The strength of negation that blocks an item, or `⊤` if none does. -/
 def blocker (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
   e.antiLicensor.elim ⊤ fun s ↦
     ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
