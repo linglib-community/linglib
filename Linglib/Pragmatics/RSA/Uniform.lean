@@ -83,14 +83,6 @@ theorem profile_le_profile_univ [Fintype U] [DecidableEq U] :
 
 end Profile
 
-private theorem support_nonempty {W X : Type*} [Fintype W] [MeasurableSpace W]
-    [MeasurableSingletonClass W] {b : X → Measure W} {x : X} [IsProbabilityMeasure (b x)]
-    {S : Finset W} (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) : S.Nonempty := by
-  by_contra h
-  refine one_ne_zero (α := ℝ≥0∞) ?_
-  rw [← measure_univ (μ := b x), ← Finset.coe_univ, ← sum_measure_singleton]
-  exact Finset.sum_eq_zero fun w _ ↦ not_not.1 fun hw ↦ h ⟨w, (hS w).1 hw⟩
-
 private theorem sum_div_lt_sum_div_of_cleared {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b z : ι → ℕ} (hb : ∀ i, b i ≠ 0 → z i ≠ 0)
     (hlt : ∑ i, a i * ∏ j ∈ Finset.univ.erase i, z j < ∑ i, b i * ∏ j ∈ Finset.univ.erase i, z j) :
@@ -110,6 +102,12 @@ private theorem sum_div_lt_sum_div_of_cleared {ι : Type*} [Fintype ι] [Decidab
       mul_div_assoc, div_self (hz i).ne', mul_one]
   rw [← mul_lt_mul_iff_left₀ (Finset.prod_pos fun j _ ↦ hz j), key, key]
   exact_mod_cast hlt
+
+private theorem ae_mem_iff {W : Type*} [MeasurableSpace W] [Countable W]
+    [MeasurableSingletonClass W] {μ : Measure W} {S : Finset W} (hS : ∀ w, μ {w} ≠ 0 ↔ w ∈ S)
+    (t : Set W) : (∀ᵐ w ∂μ, w ∈ t) ↔ ↑S ⊆ t := by
+  rw [ae_iff_of_countable]
+  exact ⟨fun h v hv ↦ h v ((hS v).2 hv), fun h v hv ↦ h ((hS v).1 hv)⟩
 
 private theorem natCast_inv_rpow_ne_zero {n : ℕ} (hn : n ≠ 0) (α : ℝ) :
     ((n : ℝ≥0∞)⁻¹) ^ α ≠ 0 := by
@@ -286,49 +284,53 @@ with weight the inverse size of its extension to the power `α`. -/
 
 section Belief
 
-variable [DecidableEq W] {X : Type*} {α : ℝ} {b : X → Measure W} {x : X}
-  [IsProbabilityMeasure (b x)] {S : Finset W}
+variable {X : Type*} [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] {α : ℝ}
+  {b : X → Measure W} {x : X} [IsProbabilityMeasure (b x)] {S : Finset W}
 
-private theorem weight_eq (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
-    (b x).geomMean (fun w ↦ L₀ u {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * (0 : U → ℝ) u))) =
-      if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
-  rw [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  split_ifs with h
-  · rw [Measure.geomMean_of_forall_eq fun w hw ↦ by
-      rw [listener_uniformOn_truthful_apply_singleton, ite_eq_left (h ((hS w).1 hw))]]
-  · obtain ⟨w, hw, hwu⟩ := Finset.not_subset.1 h
-    rw [Measure.geomMean_eq_zero_iff.2 ⟨w, (hS w).2 hw, by
-      rw [listener_uniformOn_truthful_apply_singleton, ite_eq_right hwu]⟩,
-      ENNReal.zero_rpow_of_pos hα]
-
-variable [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X]
-
-theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
-    speaker α 0 L₀ b x {u} = (if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
-      ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
-  simp only [speaker_apply_singleton, weight_eq sem hα hS]
-
-theorem speaker_uniformOn_real_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
-    (speaker α 0 L₀ b x).real {u} = (if S ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
-      ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 := by
-  have hne (u' : U) : (if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0) ≠ ∞ := by
-    split_ifs with h
-    exacts [natCast_inv_rpow_ne_top (Finset.card_ne_zero.2 ((support_nonempty hS).mono h)) α,
-      ENNReal.zero_ne_top]
-  rw [measureReal_def, speaker_uniformOn_apply_singleton sem hα hS, ENNReal.toReal_div,
-    ENNReal.toReal_sum fun u' _ ↦ hne u']
-  simp only [apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
-    ENNReal.toReal_inv, ENNReal.toReal_natCast]
-
-omit [DecidableEq W] in
 /-- A speaker whose belief entails exactly the utterances true at a state speaks as one who knows
 that state. -/
 theorem speaker_uniformOn_apply_eq_dirac (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) {w : W}
     (h : ∀ u, S ⊆ sem u ↔ w ∈ sem u) : speaker α 0 L₀ b x = S₁[α] w :=
   (speaker_listener_truthful_apply_eq_iff hα (absolutelyContinuous_uniformOn_univ _)
     (absolutelyContinuous_uniformOn_univ _)).2 fun u ↦ by
-      rw [ae_iff_of_countable, ae_dirac_iff .of_discrete, Finset.mem_coe, ← h u]
-      exact ⟨fun h' v hv ↦ h' v ((hS v).2 hv), fun h' v hv ↦ h' ((hS v).1 hv)⟩
+      rw [ae_mem_iff hS, ae_dirac_iff .of_discrete, Finset.coe_subset, Finset.mem_coe, h u]
+
+variable [DecidableEq W]
+
+/-- A speaker with a belief of support `S` weighs each utterance true throughout `S` by the
+inverse size of its extension to the power `α`: the uniform case of
+`RSA.speaker_listener_truthful_apply_singleton`. -/
+theorem speaker_uniformOn_apply_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
+    speaker α 0 L₀ b x {u} = (if S ⊆ sem u then ((sem u).card : ℝ≥0∞)⁻¹ ^ α else 0) /
+      ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0 := by
+  have : Nonempty W := nonempty_of_isProbabilityMeasure (b x)
+  have hW : (Fintype.card W : ℝ≥0∞) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
+  have key (v : U) : {v | ∀ᵐ w ∂b x, w ∈ (sem v : Set W)}.indicator (fun v ↦
+        (uniformOn Set.univ (sem v : Set W))⁻¹ ^ α *
+          ENNReal.ofReal (Real.exp (-(α * (0 : U → ℝ) v)))) v =
+      (Fintype.card W : ℝ≥0∞) ^ α * if S ⊆ sem v then ((sem v).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
+    simp only [Set.indicator, Set.mem_ofPred_eq, ae_mem_iff hS, Finset.coe_subset, Pi.zero_apply,
+      mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+    split_ifs
+    · rw [uniformOn_univ, Measure.count_apply_finset, ENNReal.inv_div (.inl (by simp)) (.inl hW),
+        div_eq_mul_inv, ENNReal.mul_rpow_of_nonneg _ _ hα.le]
+    · rw [mul_zero]
+  rw [speaker_listener_truthful_apply_singleton hα (absolutelyContinuous_uniformOn_univ _), key,
+    Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum, ENNReal.mul_div_mul_left _ _
+      (ENNReal.rpow_pos (pos_iff_ne_zero.2 hW) (by simp)).ne'
+      (ENNReal.rpow_ne_top_of_nonneg hα.le (by simp))]
+
+theorem speaker_uniformOn_real_singleton (hα : 0 < α) (hS : ∀ w, b x {w} ≠ 0 ↔ w ∈ S) (u : U) :
+    (speaker α 0 L₀ b x).real {u} = (if S ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
+      ∑ u', if S ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 := by
+  have hS0 : S.Nonempty := (ae_iff_of_countable.2 fun w hw ↦ (hS w).1 hw).exists
+  have hne (u' : U) : (if S ⊆ sem u' then ((sem u').card : ℝ≥0∞)⁻¹ ^ α else 0) ≠ ∞ := by
+    split_ifs with h
+    exacts [natCast_inv_rpow_ne_top (Finset.card_ne_zero.2 (hS0.mono h)) α, ENNReal.zero_ne_top]
+  rw [measureReal_def, speaker_uniformOn_apply_singleton sem hα hS, ENNReal.toReal_div,
+    ENNReal.toReal_sum fun u' _ ↦ hne u']
+  simp only [apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
+    ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
 end Belief
 
