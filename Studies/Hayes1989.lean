@@ -264,13 +264,10 @@ def syllabify (wbp : Bool) (limit : ℕ := 2) : MoraicForm α :=
   let vMorae := u.nuclei.flatMap fun v ↦ (List.range (u.morae v)).map fun k ↦ (v, Mora.of v k)
   let cMorae := u.codas.filterMap fun p ↦
     if u.Projects wbp limit p.1 p.2 then some (p.1, Mora.of p.2) else none
-  { melody := u.map Prod.fst
-    syllables := u.nuclei.toFinset
-    morae := ((vMorae ++ cMorae).map Prod.snd).toFinset
-    syllableMora := (vMorae ++ cMorae).toFinset
-    syllableSegment := u.onsets.toFinset
-    moraSegment := (vMorae.map (fun p ↦ (p.2, p.2.slot)) ++
-      u.codas.map fun p ↦ (u.codaMora wbp limit p.1 p.2, p.2)).toFinset }
+  .ofLines (u.map Prod.fst) (syllableMora := (vMorae ++ cMorae).toFinset)
+    (syllableSegment := u.onsets.toFinset)
+    (moraSegment := (vMorae.map (fun p ↦ (p.2, p.2.slot)) ++
+      u.codas.map fun p ↦ (u.codaMora wbp limit p.1 p.2, p.2)).toFinset)
 
 end Underlying
 

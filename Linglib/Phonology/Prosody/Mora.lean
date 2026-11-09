@@ -25,6 +25,8 @@ its coda's mora as its only one ([vasquez-aguilar-etal-2026]).
 ## Main definitions
 
 * `Prosody.Mora`, `Prosody.MoraicForm`: a mora node, and a moraic representation.
+* `MoraicForm.ofLines`: the form given by its lines, with the nodes they join.
+* `MoraicForm.head`: the segment that heads a mora.
 * `MoraicForm.syllablesOf`, `MoraicForm.moraeOf`: the syllables of a word, the morae of a
   syllable.
 * `MoraicForm.moraSpan`, `MoraicForm.yield`, `MoraicForm.wordYield`: the slots a mora, a
@@ -131,6 +133,26 @@ instance [DecidableEq α] : DecidableEq (MoraicForm α) := fun X Y ↦
 /-- The slots of the melody. -/
 def slots : Finset ℕ := range X.melody.length
 
+/-- The form over `melody` with the given lines and with the nodes they join, as a graph is
+given by its edges. A node joined by no line, such as a stranded mora, is added afterwards. -/
+def ofLines (melody : List α) (wordSyllable : Finset (ℕ × ℕ) := ∅)
+    (syllableMora : Finset (ℕ × Mora) := ∅) (wordSegment : Finset (ℕ × ℕ) := ∅)
+    (syllableSegment : Finset (ℕ × ℕ) := ∅) (moraSegment : Finset (Mora × ℕ) := ∅) :
+    MoraicForm α where
+  melody := melody
+  words := wordSyllable.image Prod.fst ∪ wordSegment.image Prod.fst
+  syllables := wordSyllable.image Prod.snd ∪ syllableMora.image Prod.fst ∪
+    syllableSegment.image Prod.fst
+  morae := syllableMora.image Prod.snd ∪ moraSegment.image Prod.fst
+  wordSyllable := wordSyllable
+  syllableMora := syllableMora
+  wordSegment := wordSegment
+  syllableSegment := syllableSegment
+  moraSegment := moraSegment
+
+/-- The segment that heads mora `m`. -/
+def head (m : Mora) : Option α := X.melody[m.slot]?
+
 /-! ### Domination -/
 
 /-- The syllables of word `w`. -/
@@ -218,6 +240,36 @@ theorem mem_wordYield {w i : ℕ} :
 theorem weight_eq_zero_iff {s : ℕ} :
     X.weight s = 0 ↔ ∀ m ∈ X.morae, (s, m) ∉ X.syllableMora := by
   simp [weight, Finset.eq_empty_iff_forall_notMem]
+
+theorem head_eq_some {m : Mora} {x : α} :
+    X.head m = some x ↔ ∃ h : m.slot < X.melody.length, X.melody[m.slot] = x :=
+  List.getElem?_eq_some_iff
+
+/-! ### Forms given by their lines -/
+
+section OfLines
+
+variable {melody : List α} {wordSyllable syllableSegment wordSegment : Finset (ℕ × ℕ)}
+  {syllableMora : Finset (ℕ × Mora)} {moraSegment : Finset (Mora × ℕ)}
+
+@[simp] theorem mem_morae_ofLines {m : Mora} :
+    m ∈ (ofLines melody wordSyllable syllableMora wordSegment syllableSegment moraSegment).morae ↔
+      (∃ s, (s, m) ∈ syllableMora) ∨ ∃ i, (m, i) ∈ moraSegment := by
+  simp [ofLines]
+
+@[simp] theorem mem_syllables_ofLines {s : ℕ} :
+    s ∈ (ofLines melody wordSyllable syllableMora wordSegment syllableSegment
+      moraSegment).syllables ↔
+      (∃ w, (w, s) ∈ wordSyllable) ∨ (∃ m, (s, m) ∈ syllableMora) ∨
+        ∃ i, (s, i) ∈ syllableSegment := by
+  simp [ofLines]
+
+@[simp] theorem mem_words_ofLines {w : ℕ} :
+    w ∈ (ofLines melody wordSyllable syllableMora wordSegment syllableSegment moraSegment).words ↔
+      (∃ s, (w, s) ∈ wordSyllable) ∨ ∃ i, (w, i) ∈ wordSegment := by
+  simp [ofLines]
+
+end OfLines
 
 /-! ### Well-formedness and crossing -/
 
