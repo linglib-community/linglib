@@ -1,0 +1,185 @@
+[
+  {
+    "id": "broekhuiscorver2026_26c",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(26c), p. 9"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De wandeling er op duurde 10 uur.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["wandeling", "hike"], ["er", "there"], ["op", "on"], ["duurde", "lasted"],
+      ["10", "10"], ["uur", "hour"]
+    ],
+    "translation": "The hike on/*up it lasted 10 hours.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "on it", "judgment": "acceptable"},
+      {"name": "up it", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_56b",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(56b), p. 20"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Het café staat daar vaak pal naast.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["café", "café"], ["staat", "stands"], ["daar", "there"], ["vaak", "often"],
+      ["pal", "right"], ["naast", "next.to"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Glosses as printed for (56a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_57b",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(57b), p. 20"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "De luchtballon hangt er nu hoog boven.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["luchtballon", "balloon"], ["hangt", "hangs"], ["er", "there"], ["nu", "now"],
+      ["hoog", "high"], ["boven", "above"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_58b",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(58b), p. 20"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Marie gaat het bos nooit alleen in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["gaat", "goes"], ["het", "the"], ["bos", "woods"], ["nooit", "never"],
+      ["alleen", "alone"], ["in", "into"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_58c",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(58c), p. 20"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "het bos dat Marie nooit alleen in gaat",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["het", "the"], ["bos", "forest"], ["dat", "that"], ["Marie", "Marie"], ["nooit", "never"],
+      ["alleen", "alone"], ["in", "into"], ["gaat", "goes"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_59b_daar",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(59b), p. 21"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is daar gisteren van af gesprongen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["daar", "there"], ["gisteren", "yesterday"], ["van", "from"],
+      ["af", "AF"], ["gesprongen", "jumped"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_59b_dak",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(59b), p. 21"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan is het dak gisteren van af gesprongen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "Jan"], ["is", "is"], ["het", "the"], ["dak", "roof"], ["gisteren", "yesterday"],
+      ["van", "from"], ["af", "AF"], ["gesprongen", "jumped"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_59c_waar",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(59c), p. 21"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Waar is Jan van af gesprongen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Waar", "where"], ["is", "is"], ["Jan", "Jan"], ["van", "from"], ["af", "AF"],
+      ["gesprongen", "jumped"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "broekhuiscorver2026_59c_dak",
+    "source": {"bibkey": "broekhuis-corver-2026a", "paperLabel": "(59c), p. 21"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Welk dak is Jan van af gesprongen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Welk", "which"], ["dak", "roof"], ["is", "is"], ["Jan", "Jan"], ["van", "from"],
+      ["af", "AF"], ["gesprongen", "jumped"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

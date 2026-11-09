@@ -107,7 +107,7 @@ inductive LocativeClass where
 inductive Reading where
   | location
   | path
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A narrow locative denotes a location, a point locative a path and no location, and an extended
 locative either an extended location or a path. -/
