@@ -112,6 +112,9 @@ def domain (g : PartialAssign Var D) : Set Var := {x | g x ≠ ⊥}
 
 @[simp] theorem mem_domain : x ∈ g.domain ↔ g x ≠ ⊥ := Iff.rfl
 
+instance [DecidableEq D] (g : PartialAssign Var D) : DecidablePred (· ∈ g.domain) :=
+  fun x ↦ inferInstanceAs (Decidable (g x ≠ ⊥))
+
 @[simp] theorem domain_bot : (⊥ : PartialAssign Var D).domain = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ h ↦ h rfl
 
