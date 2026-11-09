@@ -96,7 +96,7 @@ open Classical in
 undefined; the existential is true when its scope is, false when every value falsifies the
 scope, undefined otherwise. The universal and the strong-truth operator belong to the full
 system and are left undefined here. -/
-noncomputable def eval : Formula P R → W → PartialAssign ℕ D → Trivalent
+noncomputable def eval : Formula P R → W → PartialAssignment ℕ D → Trivalent
   | .pred p x, w, g =>
     match g x with
     | ⊥ => .undefined
@@ -119,64 +119,64 @@ noncomputable def eval : Formula P R → W → PartialAssign ℕ D → Trivalent
   | .all _ _, _, _ | .strong _, _, _ => .undefined
 
 /-- A sentence is true at a world when some assignment makes it true. -/
-def TrueAt (φ : Formula P R) (w : W) : Prop := ∃ g : PartialAssign ℕ D, eval M φ w g = .true
+def TrueAt (φ : Formula P R) (w : W) : Prop := ∃ g : PartialAssignment ℕ D, eval M φ w g = .true
 
 variable {M}
 
-theorem eval_pred_of_eq_bot {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
+theorem eval_pred_of_eq_bot {p : P} {x : ℕ} {w : W} {g : PartialAssignment ℕ D} (h : g x = ⊥) :
     eval M (.pred p x) w g = .undefined := by
   simp [eval, h]
 
 open Classical in
-theorem eval_pred_of_eq_coe {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} {d : D}
+theorem eval_pred_of_eq_coe {p : P} {x : ℕ} {w : W} {g : PartialAssignment ℕ D} {d : D}
     (h : g x = ↑d) : eval M (.pred p x) w g = ofProp (d ∈ M.pred p w) := by
   simp [eval, h]
 
-theorem eval_pred_eq_true_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_pred_eq_true_iff {p : P} {x : ℕ} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.pred p x) w g = .true ↔ ∃ d : D, g x = ↑d ∧ d ∈ M.pred p w := by
   cases h : g x with
   | bot => simp [eval_pred_of_eq_bot h]
   | coe d => simp [eval_pred_of_eq_coe h]
 
-theorem eval_pred_eq_false_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_pred_eq_false_iff {p : P} {x : ℕ} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.pred p x) w g = .false ↔ ∃ d : D, g x = ↑d ∧ d ∉ M.pred p w := by
   cases h : g x with
   | bot => simp [eval_pred_of_eq_bot h]
   | coe d => simp [eval_pred_of_eq_coe h]
 
-theorem eval_valued_of_ne_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x ≠ ⊥) :
+theorem eval_valued_of_ne_bot {x : ℕ} {w : W} {g : PartialAssignment ℕ D} (h : g x ≠ ⊥) :
     eval M (.valued x) w g = .true := by
   obtain ⟨d, hd⟩ := Flat.ne_bot_iff_exists.1 h
   simp [eval, hd]
 
-theorem eval_valued_of_eq_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
+theorem eval_valued_of_eq_bot {x : ℕ} {w : W} {g : PartialAssignment ℕ D} (h : g x = ⊥) :
     eval M (.valued x) w g = .false := by
   simp [eval, h]
 
 @[simp] theorem eval_valued_bot (x : ℕ) (w : W) :
-    eval M (.valued x) w (⊥ : PartialAssign ℕ D) = .false := rfl
+    eval M (.valued x) w (⊥ : PartialAssignment ℕ D) = .false := rfl
 
-theorem eval_not {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_not {φ : Formula P R} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.not φ) w g = (eval M φ w g)ᶜ := rfl
 
-theorem eval_and {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_and {φ ψ : Formula P R} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.and φ ψ) w g = meetMiddle (eval M φ w g) (eval M ψ w g) := rfl
 
-theorem eval_or {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_or {φ ψ : Formula P R} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.or φ ψ) w g = joinMiddle (eval M φ w g) (eval M ψ w g) := rfl
 
-theorem eval_ex_eq_true_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_ex_eq_true_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.ex x φ) w g = .true ↔ eval M φ w g = .true := by
   simp only [eval]
   split_ifs with h h' <;> simp [h]
 
-theorem eval_ex_eq_false_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
+theorem eval_ex_eq_false_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssignment ℕ D} :
     eval M (.ex x φ) w g = .false ↔
       eval M φ w g ≠ .true ∧ ∀ a, eval M φ w (g.update x a) = .false := by
   simp only [eval]
   split_ifs <;> simp [*]
 
-theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D}
+theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssignment ℕ D}
     (h : eval M (.ex x (.pred p x)) w g = .true) : g x ≠ ⊥ := by
   obtain ⟨d, hd, -⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h)
   simp [hd]
@@ -197,7 +197,7 @@ theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
     rw [hd] at hd'
     exact ⟨d, hT, Flat.coe_inj.1 hd' ▸ hQ⟩
   · rintro ⟨d, hT, hQ⟩
-    refine ⟨PartialAssign.single x d, ?_⟩
+    refine ⟨PartialAssignment.single x d, ?_⟩
     rw [eval_and, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hT⟩),
       Trivalent.meetMiddle_true_left]
     exact eval_pred_eq_true_iff.2 ⟨d, by simp, hQ⟩
@@ -214,7 +214,7 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       intro d hd
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
-      rw [PartialAssign.update_self] at hd'
+      rw [PartialAssignment.update_self] at hd'
       exact hnot (Flat.coe_inj.1 hd' ▸ hd)
     | undefined => simp [hE, Trivalent.joinMiddle_undefined_left] at hg
     | true =>
@@ -225,12 +225,12 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       rw [hd] at hd'
       exact ⟨d, hB, Flat.coe_inj.1 hd' ▸ hF⟩
   · rintro (hnone | ⟨d, hB, hF⟩)
-    · refine ⟨(⊥ : PartialAssign ℕ D), ?_⟩
+    · refine ⟨(⊥ : PartialAssignment ℕ D), ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_false_iff.2 ⟨?_, fun a ↦ ?_⟩]
       · rfl
       · rw [eval_pred_of_eq_bot rfl]; decide
-      · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssign.update_self _ _ _, hnone a⟩
-    · refine ⟨PartialAssign.single x d, ?_⟩
+      · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssignment.update_self _ _ _, hnone a⟩
+    · refine ⟨PartialAssignment.single x d, ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hB⟩),
         Trivalent.compl_true, Trivalent.joinMiddle_false_left]
       exact eval_pred_eq_true_iff.2 ⟨d, by simp, hF⟩
@@ -269,25 +269,25 @@ end Contexts
 theorem not_transparent_id_null [Nonempty W] (x : ℕ) :
     ¬ Transparent (eval M) nullCtx id (.valued x) := by
   intro h
-  have := h (.not (.valued x)) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
+  have := h (.not (.valued x)) (Classical.arbitrary W, (⊥ : PartialAssignment ℕ D)) trivial
   simp only [id, eval_and, eval_not, eval_valued_bot] at this
   exact absurd this (by decide)
 
-theorem transparent_id_of_valued {C : Set (W × PartialAssign ℕ D)} {x : ℕ}
+theorem transparent_id_of_valued {C : Set (W × PartialAssignment ℕ D)} {x : ℕ}
     (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
     Transparent (eval M) C id (.valued x) := fun _ p hp ↦ by
   simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), Trivalent.meetMiddle_true_left]
 
-theorem ne_bot_of_mem_update_ex {C : Set (W × PartialAssign ℕ D)} {T : P} {x : ℕ}
-    {p : W × PartialAssign ℕ D}
+theorem ne_bot_of_mem_update_ex {C : Set (W × PartialAssignment ℕ D)} {T : P} {x : ℕ}
+    {p : W × PartialAssignment ℕ D}
     (hp : p ∈ update (eval M) C (.ex x (.pred T x))) : p.2 x ≠ ⊥ :=
   ne_bot_of_eval_ex_pred hp.2
 
-theorem transparent_id_of_update_ex (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
+theorem transparent_id_of_update_ex (C : Set (W × PartialAssignment ℕ D)) (T : P) (x : ℕ) :
     Transparent (eval M) (update (eval M) C (.ex x (.pred T x))) id (.valued x) :=
   transparent_id_of_valued fun _ hp ↦ ne_bot_of_mem_update_ex hp
 
-theorem transparent_forward_conj (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
+theorem transparent_forward_conj (C : Set (W × PartialAssignment ℕ D)) (T : P) (x : ℕ) :
     Transparent (eval M) C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_and]
   exact conj_transparency_parametric _ _ _ fun h ↦ eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred h)
@@ -295,12 +295,12 @@ theorem transparent_forward_conj (C : Set (W × PartialAssign ℕ D)) (T : P) (x
 theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
     ¬ Transparent (eval M) nullCtx (fun ψ ↦ .and ψ (.ex x (.pred T x))) (.valued x) := by
   intro h
-  have := h (.pred T x) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
-  simp only [eval_and, eval_valued_bot, eval_pred_of_eq_bot (g := (⊥ : PartialAssign ℕ D)) rfl,
+  have := h (.pred T x) (Classical.arbitrary W, (⊥ : PartialAssignment ℕ D)) trivial
+  simp only [eval_and, eval_valued_bot, eval_pred_of_eq_bot (g := (⊥ : PartialAssignment ℕ D)) rfl,
     Trivalent.meetMiddle_false_left, Trivalent.meetMiddle_undefined_left] at this
   exact absurd this (by decide)
 
-theorem transparent_bathroom (C : Set (W × PartialAssign ℕ D)) (B : P) (x : ℕ) :
+theorem transparent_bathroom (C : Set (W × PartialAssignment ℕ D)) (B : P) (x : ℕ) :
     Transparent (eval M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_or, eval_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
@@ -310,13 +310,13 @@ theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ 
     ¬ Transparent (eval M) nullCtx (fun ψ ↦ .or ψ (.not (.ex x (.pred B x)))) (.valued x) := by
   intro h
   obtain ⟨w, d, hd⟩ := hw
-  have := h (.or (.valued x) (.not (.valued x))) (w, (⊥ : PartialAssign ℕ D)) trivial
-  have hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) = .undefined := by
-    cases hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) with
+  have := h (.or (.valued x) (.not (.valued x))) (w, (⊥ : PartialAssignment ℕ D)) trivial
+  have hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssignment ℕ D) = .undefined := by
+    cases hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssignment ℕ D) with
     | false =>
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
-      rw [PartialAssign.update_self] at hd'
+      rw [PartialAssignment.update_self] at hd'
       exact (hnot (Flat.coe_inj.1 hd' ▸ hd)).elim
     | undefined => rfl
     | true =>
@@ -373,7 +373,7 @@ theorem not_felicitous_pred_null [Nonempty W] (Q : P) (x : ℕ) :
   not_transparent_id_null x (h (id, .valued x) (by simp [Formula.occurrences]))
 
 -- §3.1
-theorem felicitousDiscourse_ex_pred (C : Set (W × PartialAssign ℕ D)) (T Q : P) (x : ℕ) :
+theorem felicitousDiscourse_ex_pred (C : Set (W × PartialAssignment ℕ D)) (T Q : P) (x : ℕ) :
     FelicitousDiscourse (eval M) C [.ex x (.pred T x), .pred Q x] := by
   refine ⟨fun o ho ↦ by simp [Formula.occurrences] at ho, fun o ho ↦ ?_, trivial⟩
   simp only [Formula.occurrences, List.not_mem_nil, ite_false, List.mem_singleton] at ho
@@ -381,7 +381,7 @@ theorem felicitousDiscourse_ex_pred (C : Set (W × PartialAssign ℕ D)) (T Q : 
   exact transparent_id_of_update_ex C T x
 
 /-- *A table is in the room and it is purple* is felicitous in every context ((9)). -/
-theorem felicitous_forward_conj (C : Set (W × PartialAssign ℕ D)) (T Q : P) (x : ℕ) :
+theorem felicitous_forward_conj (C : Set (W × PartialAssignment ℕ D)) (T Q : P) (x : ℕ) :
     Felicitous (eval M) C (.and (.ex x (.pred T x)) (.pred Q x)) := by
   intro o ho
   simp [Formula.occurrences] at ho
@@ -398,7 +398,7 @@ theorem not_felicitous_reverse_conj [Nonempty W] (T Q : P) (x : ℕ) :
   exact this φ p hp
 
 /-- The bathroom sentence is felicitous in every context ((11)). -/
-theorem felicitous_bathroom (C : Set (W × PartialAssign ℕ D)) (B H : P) (x : ℕ) :
+theorem felicitous_bathroom (C : Set (W × PartialAssignment ℕ D)) (B H : P) (x : ℕ) :
     Felicitous (eval M) C (.or (.not (.ex x (.pred B x))) (.pred H x)) := by
   intro o ho
   simp [Formula.occurrences] at ho
@@ -413,7 +413,7 @@ theorem not_felicitous_reverse_bathroom (B H : P) (x : ℕ) (hw : ∃ w d, d ∈
 
 /-! ### Novelty -/
 
-theorem eval_and_ex_ex_eq_true_iff (p q : P) (x : ℕ) (w : W) (g : PartialAssign ℕ D) :
+theorem eval_and_ex_ex_eq_true_iff (p q : P) (x : ℕ) (w : W) (g : PartialAssignment ℕ D) :
     eval M (.and (.ex x (.pred p x)) (.ex x (.pred q x))) w g = .true ↔
       eval M (.ex x (.and (.pred p x) (.pred q x))) w g = .true := by
   rw [eval_ex_eq_true_iff, eval_and, eval_and]
@@ -457,14 +457,14 @@ theorem not_novel_stone (T A E : P) (x : ℕ) :
 theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAt M (.not (.ex x (.not (.ex y (.rel S x y))))) w ↔
       ∃ b, ∀ a, (a, b) ∈ M.rel S w := by
-  have key : ∀ (g : PartialAssign ℕ D) (a : D),
+  have key : ∀ (g : PartialAssignment ℕ D) (a : D),
       eval M (.not (.ex y (.rel S x y))) w (g.update x a) = .false ↔
         ∃ b : D, g y = ↑b ∧ (a, b) ∈ M.rel S w := by
     intro g a
     rw [eval_not, Trivalent.compl_eq_false_iff, eval_ex_eq_true_iff]
     cases hy : g y with
-    | bot => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
-    | coe b => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
+    | bot => simp [eval, hy, PartialAssignment.update_of_ne hxy.symm]
+    | coe b => simp [eval, hy, PartialAssignment.update_of_ne hxy.symm]
   constructor
   · rintro ⟨g, hg⟩
     rw [eval_not, Trivalent.compl_eq_true_iff, eval_ex_eq_false_iff] at hg
@@ -476,13 +476,13 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     rw [hb] at hb'
     exact Flat.coe_inj.1 hb' ▸ hS
   · rintro ⟨b, hb⟩
-    refine ⟨PartialAssign.single y b, ?_⟩
+    refine ⟨PartialAssignment.single y b, ?_⟩
     rw [eval_not, Trivalent.compl_eq_true_iff, eval_ex_eq_false_iff]
     refine ⟨fun hne ↦ ?_, fun a ↦ (key _ a).2 ⟨b, by simp, hb a⟩⟩
     rw [eval_not, Trivalent.compl_eq_true_iff, eval_ex_eq_false_iff] at hne
     obtain ⟨a₀⟩ := ‹Nonempty D›
     have := hne.2 a₀
-    simp [eval, PartialAssign.update_of_ne hxy, PartialAssign.single_eq_of_ne hxy] at this
+    simp [eval, PartialAssignment.update_of_ne hxy, PartialAssignment.single_eq_of_ne hxy] at this
 
 /-! ### The full system: plural assignments -/
 
@@ -677,10 +677,10 @@ theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b)
 
 variable (D) in
 /-- The plural assignment mapping `x` to every individual, one row each. -/
-def covering (x : ℕ) : PluralAssign ℕ D := Set.range (PartialAssign.single x)
+def covering (x : ℕ) : PluralAssign ℕ D := Set.range (PartialAssignment.single x)
 
 theorem restrict_covering_nonempty (x : ℕ) (a : D) : ((covering D x).restrict x a).Nonempty :=
-  ⟨PartialAssign.single x a, ⟨a, rfl⟩, by simp⟩
+  ⟨PartialAssignment.single x a, ⟨a, rfl⟩, by simp⟩
 
 theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (x : ℕ)
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
@@ -731,8 +731,8 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
         exact hnone d hd
       · exact ⟨restrict_covering_nonempty x a, evalP_pred_eq_false_iff.2
           ⟨a, PluralAssign.value_restrict (restrict_covering_nonempty x a), hnone a⟩⟩
-    · refine ⟨{PartialAssign.single x d}, ?_⟩
-      have hsing : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+    · refine ⟨{PartialAssignment.single x d}, ?_⟩
+      have hsing : ({PartialAssignment.single x d} : PluralAssign ℕ D).value x = {d} :=
         PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
       rw [evalP_or, evalP_not, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hsing, hB⟩),
         Trivalent.compl_true, Trivalent.joinMiddle_false_left]
@@ -740,19 +740,19 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
 
 /-- The plural assignment pairing each individual `a` at `x` with `f a` at `y`. -/
 def pairing (x y : ℕ) (f : D → D) : PluralAssign ℕ D :=
-  Set.range fun a ↦ (PartialAssign.single x a).update y (f a)
+  Set.range fun a ↦ (PartialAssignment.single x a).update y (f a)
 
 theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
     ((pairing x y f).restrict x a).Nonempty ∧
       ((pairing x y f).restrict x a).value y = {f a} := by
-  have hmem : ∀ a', (PartialAssign.single x a').update y (f a') ∈
+  have hmem : ∀ a', (PartialAssignment.single x a').update y (f a') ∈
       (pairing x y f).restrict x a ↔ a' = a := by
     intro a'
     constructor
     · rintro ⟨-, h⟩
-      simpa [PartialAssign.update_of_ne hxy] using h
+      simpa [PartialAssignment.update_of_ne hxy] using h
     · rintro rfl
-      exact ⟨⟨a', rfl⟩, by simp [PartialAssign.update_of_ne hxy]⟩
+      exact ⟨⟨a', rfl⟩, by simp [PartialAssignment.update_of_ne hxy]⟩
   refine ⟨⟨_, (hmem a).2 rfl⟩, PluralAssign.value_eq_singleton_iff.2 ⟨⟨_, (hmem a).2 rfl, by simp⟩,
     ?_⟩⟩
   rintro g ⟨⟨a', rfl⟩, hga⟩ -
@@ -783,11 +783,11 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       obtain ⟨a₀⟩ := ‹Nonempty D›
       obtain ⟨-, hfalse⟩ := hall (f a₀)
       obtain ⟨a', b', ha', hb', hn⟩ := evalP_rel_eq_false_iff.1 hfalse
-      have hg₀ : (PartialAssign.single x a₀).update y (f a₀) ∈
+      have hg₀ : (PartialAssignment.single x a₀).update y (f a₀) ∈
           (pairing x y f).restrict y (f a₀) :=
         ⟨⟨a₀, rfl⟩, by simp⟩
       have hx : a₀ = a' :=
-        PluralAssign.eq_of_mem_restrict ha' ⟨hg₀, by simp [PartialAssign.update_of_ne hxy]⟩
+        PluralAssign.eq_of_mem_restrict ha' ⟨hg₀, by simp [PartialAssignment.update_of_ne hxy]⟩
       rw [← hx, (PluralAssign.value_restrict_eq_singleton_iff.1 hb').2] at hn
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
@@ -832,10 +832,10 @@ theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ :
     (hF₂ : b₂ ∉ M.pred F w) :
     TrueAtP M (.and (.ex x (.pred B x)) (.pred F x)) w ∧
       ¬ StronglyTrueAt M (.and (.ex x (.pred B x)) (.pred F x)) w := by
-  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+  have hs : ∀ d : D, ({PartialAssignment.single x d} : PluralAssign ℕ D).value x = {d} :=
     fun d ↦ PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
-  refine ⟨⟨{PartialAssign.single x b₁}, ?_⟩,
-    fun h ↦ h.2 {PartialAssign.single x b₂} ?_⟩
+  refine ⟨⟨{PartialAssignment.single x b₁}, ?_⟩,
+    fun h ↦ h.2 {PartialAssignment.single x b₂} ?_⟩
   · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, h₁⟩),
       Trivalent.meetMiddle_true_left]
     exact evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, hF₁⟩
@@ -861,7 +861,7 @@ theorem evalP_strong_congr {φ ψ : Formula P R} {w : W}
 theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ D) :
     evalP M (.strong (.valued x)) w G = .undefined := by
   obtain ⟨d⟩ := ‹Nonempty D›
-  have ht : evalP M (.valued x) w {PartialAssign.single x d} = .true :=
+  have ht : evalP M (.valued x) w {PartialAssignment.single x d} = .true :=
     evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)⟩
   have hf : evalP M (.valued x) w ∅ = .false :=
     evalP_valued_eq_false_iff.2 (by simp)
@@ -878,13 +878,13 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
     rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
       evalP_pred_eq_true_iff, evalP_strong_eq_true_iff] at hG
     obtain ⟨⟨d, -, hd⟩, -, hall⟩ := hG
-    refine ⟨⟨d, hd⟩, fun d ↦ by_contra fun hn ↦ hall {PartialAssign.single x d} ?_⟩
+    refine ⟨⟨d, hd⟩, fun d ↦ by_contra fun hn ↦ hall {PartialAssignment.single x d} ?_⟩
     exact evalP_pred_eq_false_iff.2 ⟨d, PluralAssign.value_singleton_eq_singleton_iff.2 (by simp),
       hn⟩
   · rintro ⟨⟨d, hd⟩, hall⟩
-    have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+    have hs : ({PartialAssignment.single x d} : PluralAssign ℕ D).value x = {d} :=
       PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
-    refine ⟨{PartialAssign.single x d}, ?_⟩
+    refine ⟨{PartialAssignment.single x d}, ?_⟩
     rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
       evalP_strong_eq_true_iff]
     refine ⟨evalP_pred_eq_true_iff.2 ⟨d, hs, hd⟩, evalP_pred_eq_true_iff.2 ⟨d, hs, hall d⟩,
@@ -1037,8 +1037,8 @@ theorem restrict_iUnion_rows {rows : D → PluralAssign ℕ D} (h : ∀ e, ∀ g
   rwa [Flat.coe_inj.1 ((h e' g hg).symm.trans hgx)] at hg
 
 theorem update_single_apply_left (hxy : x ≠ y) (e v : D) :
-    (PartialAssign.single x e).update y v x = ↑e := by
-  simp [PartialAssign.update_of_ne hxy]
+    (PartialAssignment.single x e).update y v x = ↑e := by
+  simp [PartialAssignment.update_of_ne hxy]
 
 -- (31)
 theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠ y) :
@@ -1129,7 +1129,7 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
       exact ⟨b, fun _ ↦ hb⟩
     · exact ⟨c, fun h ↦ absurd h hs⟩
   choose f hf using h'
-  let row : D → D → PartialAssign ℕ D := fun e v ↦ (PartialAssign.single x e).update y v
+  let row : D → D → PartialAssignment ℕ D := fun e v ↦ (PartialAssignment.single x e).update y v
   let rows : D → PluralAssign ℕ D := fun e ↦
     if e ∈ M.pred S w then {row e (f e)} else {row e c, row e d}
   have hrows : ∀ e, ∀ g ∈ rows e, g x = ↑e := fun e g hg ↦ by
@@ -1153,7 +1153,7 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
     simp only [rows, he₀, ite_false] at hv
     have h1 := (PluralAssign.value_eq_singleton_iff.1 hv).2 (row e₀ c) (by simp) (by simp [row])
     have h2 := (PluralAssign.value_eq_singleton_iff.1 hv).2 (row e₀ d) (by simp) (by simp [row])
-    simp only [row, PartialAssign.update_self] at h1 h2
+    simp only [row, PartialAssignment.update_self] at h1 h2
     exact hcd (Flat.coe_inj.1 (h1.trans h2.symm))
   have hA : evalP M (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y))))) w
       (⋃ e, rows e) = .true := evalP_all_eq_true_iff.2 fun e ↦ ⟨hne e, by
@@ -1231,11 +1231,11 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
         · exact ⟨Classical.arbitrary D, fun _ h ↦ absurd h hd⟩
       · exact ⟨Classical.arbitrary D, fun h ↦ absurd h ha⟩
     choose f hf using h'
-    let row : D → D → PartialAssign ℕ D := fun e v ↦ (PartialAssign.single x e).update y v
+    let row : D → D → PartialAssignment ℕ D := fun e v ↦ (PartialAssignment.single x e).update y v
     let rows : D → PluralAssign ℕ D := fun e ↦
       if e ∈ M.pred F w then
         if ∃ d ∈ M.pred Dn w, (e, d) ∈ M.rel O w then {row e (f e)} else Set.range (row e)
-      else {PartialAssign.single x e}
+      else {PartialAssignment.single x e}
     have hrows : ∀ e, ∀ g ∈ rows e, g x = ↑e := fun e g hg ↦ by
       simp only [rows] at hg
       split_ifs at hg
@@ -1282,7 +1282,7 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
               simp only [PluralAssign.mem_restrict, Set.mem_range, Set.mem_singleton_iff]
               constructor
               · rintro ⟨⟨v', rfl⟩, hv⟩
-                simp only [row, PartialAssign.update_self] at hv
+                simp only [row, PartialAssignment.update_self] at hv
                 rw [Flat.coe_inj.1 hv]
               · rintro rfl
                 exact ⟨⟨v, rfl⟩, by simp [row]⟩
@@ -1290,7 +1290,7 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
             refine ⟨Set.singleton_nonempty _, ?_⟩
             have hsy : ({row e v} : PluralAssign ℕ D).value y = {v} := by simp [row]
             have hsx' : ({row e v} : PluralAssign ℕ D).value x = {e} := by
-              simp [row, PartialAssign.update_of_ne hxy]
+              simp [row, PartialAssignment.update_of_ne hxy]
             rw [evalP_and]
             by_cases hv : v ∈ M.pred Dn w
             · rw [evalP_pred_eq_true_iff.2 ⟨v, hsy, hv⟩, Trivalent.meetMiddle_true_left]
@@ -1367,9 +1367,9 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
         · rw [evalP_pred_eq_true_iff.2 ⟨e, hs, he⟩, Trivalent.meetMiddle_true_left]
           exact evalP_pred_eq_false_iff.2 ⟨e, hs, fun h ↦ hnone e ⟨he, h⟩⟩
         · rw [evalP_pred_eq_false_iff.2 ⟨e, hs, he⟩, Trivalent.meetMiddle_false_left]
-    · have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+    · have hs : ({PartialAssignment.single x d} : PluralAssign ℕ D).value x = {d} :=
         PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
-      refine ⟨{PartialAssign.single x d}, ?_⟩
+      refine ⟨{PartialAssignment.single x d}, ?_⟩
       rw [evalP_not, evalP_and, evalP_ex_eq_true_iff.2 (by
           rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
           exact ⟨evalP_pred_eq_true_iff.2 ⟨d, hs, hDk⟩, evalP_pred_eq_true_iff.2 ⟨d, hs, hOS⟩⟩),
@@ -1381,18 +1381,18 @@ and every bathroom is upstairs ((47a)). -/
 theorem stronglyTrueAt_ex_and_iff (B F : P) :
     StronglyTrueAt M (.and (.ex x (.pred B x)) (.pred F x)) w ↔
       (∃ d, d ∈ M.pred B w) ∧ ∀ d ∈ M.pred B w, d ∈ M.pred F w := by
-  have hs : ∀ d : D, ({PartialAssign.single x d} : PluralAssign ℕ D).value x = {d} :=
+  have hs : ∀ d : D, ({PartialAssignment.single x d} : PluralAssign ℕ D).value x = {d} :=
     fun d ↦ PluralAssign.value_singleton_eq_singleton_iff.2 (by simp)
   constructor
   · rintro ⟨⟨G, hG⟩, hnf⟩
     rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff] at hG
     obtain ⟨d, -, hd⟩ := evalP_pred_eq_true_iff.1 hG.1
-    refine ⟨⟨d, hd⟩, fun d' hd' ↦ by_contra fun hn ↦ hnf {PartialAssign.single x d'} ?_⟩
+    refine ⟨⟨d, hd⟩, fun d' hd' ↦ by_contra fun hn ↦ hnf {PartialAssignment.single x d'} ?_⟩
     rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d', hs d', hd'⟩),
       Trivalent.meetMiddle_true_left]
     exact evalP_pred_eq_false_iff.2 ⟨d', hs d', hn⟩
   · rintro ⟨⟨d, hd⟩, hall⟩
-    refine ⟨⟨{PartialAssign.single x d}, ?_⟩, fun G hG ↦ ?_⟩
+    refine ⟨⟨{PartialAssignment.single x d}, ?_⟩, fun G hG ↦ ?_⟩
     · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hs d, hd⟩),
         Trivalent.meetMiddle_true_left]
       exact evalP_pred_eq_true_iff.2 ⟨d, hs d, hall d hd⟩

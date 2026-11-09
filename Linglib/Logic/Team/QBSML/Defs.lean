@@ -69,13 +69,13 @@ variable {W Var Domain : Type*}
 
 /-- An index `⟨w, g⟩` pairs a world with a partial assignment ([aloni-vanormondt-2023]
 Definition 4.2). -/
-abbrev Index (W Var Domain : Type*) := W × PartialAssign Var Domain
+abbrev Index (W Var Domain : Type*) := W × PartialAssignment Var Domain
 
 /-- The world component of an index. -/
 abbrev Index.world (i : Index W Var Domain) : W := i.1
 
 /-- The assignment component of an index. -/
-abbrev Index.assign (i : Index W Var Domain) : PartialAssign Var Domain := i.2
+abbrev Index.assign (i : Index W Var Domain) : PartialAssignment Var Domain := i.2
 
 section Update
 
@@ -123,11 +123,11 @@ variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 
 /-- The pairing `X[g] = {⟨w, g⟩ | w ∈ X}` of a set of worlds with one assignment
 ([aloni-vanormondt-2023] Definition 4.9). -/
-def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
+def State.modalLift (X : Finset W) (g : PartialAssignment Var Domain) :
     Finset (Index W Var Domain) :=
   X.image fun v ↦ (v, g)
 
-variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssign Var Domain}
+variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssignment Var Domain}
 
 @[simp] theorem State.mem_modalLift {i : Index W Var Domain} :
     i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g where
@@ -138,7 +138,7 @@ variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssign Var
     rintro ⟨h, rfl⟩
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
-@[simp] theorem State.modalLift_singleton (w : W) (g : PartialAssign Var Domain) :
+@[simp] theorem State.modalLift_singleton (w : W) (g : PartialAssignment Var Domain) :
     State.modalLift {w} g = {(w, g)} :=
   Finset.image_singleton ..
 

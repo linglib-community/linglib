@@ -21,7 +21,7 @@ from the empty input (Def. 1.4.5, `DRS.IsTrue`).
 ## Implementation notes
 
 The truth conditions are claims over arbitrary models, proved by unfolding the verifying
-embeddings; the witnesses are built from `⊥` by `PartialAssign.update`. Names enter a DRS as the
+embeddings; the witnesses are built from `⊥` by `PartialAssignment.update`. Names enter a DRS as the
 unary conditions the construction algorithm writes for them.
 
 ## References
@@ -54,11 +54,11 @@ variable {M : Type*} [krLang.Structure M]
 abbrev rm {n} (R : krLang.Relations n) (x : Fin n → M) : Prop := Structure.RelMap R x
 
 omit [krLang.Structure M] in
-private theorem flat_inj {g : PartialAssign ℕ M} {a : ℕ} {m n : M}
+private theorem flat_inj {g : PartialAssignment ℕ M} {a : ℕ} {m n : M}
     (h1 : g a = ↑m) (h2 : g a = ↑n) : m = n :=
   Flat.coe_injective (h1.symm.trans h2)
 
-private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : PartialAssign ℕ M} :
+private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : PartialAssignment ℕ M} :
     (Condition.atom ⟨R, ![a]⟩ : Condition krLang ℕ).Holds g ↔
       ∃ m : M, g a = ↑m ∧ rm R ![m] := by
   rw [Condition.holds_atom]
@@ -71,7 +71,7 @@ private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : PartialAssig
     fin_cases i
     exact hm
 
-private theorem holds_atom2 {R : krLang.Relations 2} {a b : ℕ} {g : PartialAssign ℕ M} :
+private theorem holds_atom2 {R : krLang.Relations 2} {a b : ℕ} {g : PartialAssignment ℕ M} :
     (Condition.atom ⟨R, ![a, b]⟩ : Condition krLang ℕ).Holds g ↔
       ∃ m n : M, g a = ↑m ∧ g b = ↑n ∧ rm R ![m, n] := by
   rw [Condition.holds_atom]
@@ -112,7 +112,7 @@ theorem ulysses_tc :
     rw [flat_inj hp hm3, flat_inj hm2 hy, flat_inj hq hn4, flat_inj hn1 hx] at hfasc
     exact ⟨x, y, hjones, hulysses, howns, hfasc⟩
   · rintro ⟨x, y, hj, hu, ho, hf⟩
-    refine ⟨((((⊥ : PartialAssign ℕ M).update 1 x).update 2 y).update 3 y).update 4 x, ?_⟩
+    refine ⟨((((⊥ : PartialAssignment ℕ M).update 1 x).update 2 y).update 3 y).update 4 x, ?_⟩
     rw [ulyssesDiscourse, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
     refine ⟨bot_le, ?_, holds_atom1.mpr ⟨x, by simp, hj⟩, holds_atom1.mpr ⟨y, by simp, hu⟩,
@@ -120,7 +120,7 @@ theorem ulysses_tc :
         ⟨y, by simp, by simp⟩, (Condition.holds_eq 4 1).mpr ⟨x, by simp, by simp⟩,
       holds_atom2.mpr ⟨y, x, by simp, by simp, hf⟩⟩
     ext n
-    simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+    simp only [PartialAssignment.domain_update, PartialAssignment.domain_bot, Set.mem_insert_iff,
       Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
       Set.mem_singleton_iff]
     tauto
@@ -155,12 +155,12 @@ theorem porsche_tc :
         rw [hdom]
         simp
       simpa using h2
-    refine ⟨(PartialAssign.covBy_update h2bot y).le, ?_,
+    refine ⟨(PartialAssignment.covBy_update h2bot y).le, ?_,
       holds_atom1.mpr ⟨y, by simp, hp⟩, holds_atom2.mpr ⟨x, y, by simp [hx], by simp, ho⟩⟩
-    rw [PartialAssign.domain_update, Set.insert_eq, Finset.coe_singleton]
+    rw [PartialAssignment.domain_update, Set.insert_eq, Finset.coe_singleton]
     exact Set.union_comm _ _
   · rintro ⟨x, hj, hn⟩
-    refine ⟨PartialAssign.single 1 x, ?_⟩
+    refine ⟨PartialAssignment.single 1 x, ?_⟩
     rw [porscheDiscourse, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
     refine ⟨bot_le, by simp, holds_atom1.mpr ⟨x, by simp, hj⟩, ?_⟩
@@ -168,8 +168,8 @@ theorem porsche_tc :
     obtain ⟨y, hy, hporsche⟩ := holds_atom1.mp hp
     obtain ⟨x', y', hx', hy', howns⟩ := holds_atom2.mp ho
     have h1 : g' 1 = ↑x := by
-      have h := PartialAssign.le_iff_eqOn_domain.mp hle' (x := 1) (by simp)
-      rw [PartialAssign.single_eq_same] at h
+      have h := PartialAssignment.le_iff_eqOn_domain.mp hle' (x := 1) (by simp)
+      rw [PartialAssignment.single_eq_same] at h
       exact h.symm
     rw [flat_inj hx' h1, flat_inj hy' hy] at howns
     exact hn ⟨y, hporsche, howns⟩
@@ -206,26 +206,28 @@ theorem donkey_universal_reading :
       rm .beats ![e₁, e₂] := by
   constructor
   · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    have hg : g = ⊥ := PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+    have hg : g = ⊥ := PartialAssignment.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
     subst hg
-    have hante : donkeyAnte.Verifies (⊥ : PartialAssign ℕ M)
-        (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) := by
+    have hante : donkeyAnte.Verifies (⊥ : PartialAssignment ℕ M)
+        (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) := by
       rw [donkeyAnte, DRS.verifies_mk]
       simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
       refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩, holds_atom1.mpr ⟨e₂, by simp, hd⟩,
         holds_atom2.mpr ⟨e₁, e₂, by simp, by simp, ho⟩⟩
       ext n
-      simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+      simp only [PartialAssignment.domain_update, PartialAssignment.domain_bot, Set.mem_insert_iff,
         Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
         Set.mem_singleton_iff]
       tauto
     obtain ⟨g₂, hle₂, hdom₂, hb, -⟩ := himp _ hante
-    have hg₂ : g₂ = ((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂ :=
-      PartialAssign.eq_of_le_of_domain_subset hle₂ (by rw [hdom₂]; simp)
+    have hg₂ : g₂ = ((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂ :=
+      PartialAssignment.eq_of_le_of_domain_subset hle₂ (by rw [hdom₂]; simp)
     obtain ⟨m, n, hm, hn, hbeats⟩ := holds_atom2.mp hb
     rw [hg₂] at hm hn
-    rw [← flat_inj (show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp) hm,
-      ← flat_inj (show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp) hn]
+    rw [← flat_inj
+        (show (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp) hm,
+      ← flat_inj
+        (show (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp) hn]
       at hbeats
     exact hbeats
   · intro hall
@@ -258,16 +260,16 @@ theorem donkeyPronoun_tc :
       rm .beats ![e₁, e₂] := by
   constructor
   · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    have hg : g = ⊥ := PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+    have hg : g = ⊥ := PartialAssignment.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
     subst hg
-    have hante : donkeyAnte.Verifies (⊥ : PartialAssign ℕ M)
-        (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) := by
+    have hante : donkeyAnte.Verifies (⊥ : PartialAssignment ℕ M)
+        (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) := by
       rw [donkeyAnte, DRS.verifies_mk]
       simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
       refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩, holds_atom1.mpr ⟨e₂, by simp, hd⟩,
         holds_atom2.mpr ⟨e₁, e₂, by simp, by simp, ho⟩⟩
       ext n
-      simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+      simp only [PartialAssignment.domain_update, PartialAssignment.domain_bot, Set.mem_insert_iff,
         Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
         Set.mem_singleton_iff]
       tauto
@@ -275,14 +277,14 @@ theorem donkeyPronoun_tc :
     obtain ⟨m', hm3, hm2⟩ := h32
     obtain ⟨m, n, hm, hn, hbeats⟩ := holds_atom2.mp hb
     have h1 : g₂ 1 = ↑e₁ := by
-      have h := PartialAssign.le_iff_eqOn_domain.mp hle₂ (x := 1)
-        (by simp [PartialAssign.domain_update])
-      rw [show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp] at h
+      have h := PartialAssignment.le_iff_eqOn_domain.mp hle₂ (x := 1)
+        (by simp [PartialAssignment.domain_update])
+      rw [show (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp] at h
       exact h.symm
     have h2 : g₂ 2 = ↑e₂ := by
-      have h := PartialAssign.le_iff_eqOn_domain.mp hle₂ (x := 2)
-        (by simp [PartialAssign.domain_update])
-      rw [show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp] at h
+      have h := PartialAssignment.le_iff_eqOn_domain.mp hle₂ (x := 2)
+        (by simp [PartialAssignment.domain_update])
+      rw [show (((⊥ : PartialAssignment ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp] at h
       exact h.symm
     rw [flat_inj hm h1, flat_inj hn hm3, flat_inj hm2 h2] at hbeats
     exact hbeats
@@ -304,11 +306,11 @@ theorem donkeyPronoun_tc :
     refine ⟨g₁.update 3 e₂, ?_⟩
     rw [donkeyPronounCons, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
-    refine ⟨(PartialAssign.covBy_update h3bot e₂).le, ?_,
+    refine ⟨(PartialAssignment.covBy_update h3bot e₂).le, ?_,
       (Condition.holds_eq 3 2).mpr ⟨e₂, by simp, by simp [h2]⟩,
       holds_atom2.mpr ⟨e₁, e₂, by simp [h1], by simp,
         hall e₁ e₂ ⟨hfarmer, hdonkey, howns⟩⟩⟩
-    rw [PartialAssign.domain_update, Set.insert_eq, Finset.coe_singleton]
+    rw [PartialAssignment.domain_update, Set.insert_eq, Finset.coe_singleton]
     exact Set.union_comm _ _
 
 /-- Completing the pronoun directly or by a referent and an equation gives the same truth

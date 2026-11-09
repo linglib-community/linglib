@@ -123,7 +123,7 @@ abbrev u₄ : ℕ := 4
 abbrev w : ℕ := 5
 
 /-- A row of a sample state, from its defined discourse referents. -/
-def row {E : Type*} (l : List (ℕ × E)) : PartialAssign ℕ E :=
+def row {E : Type*} (l : List (ℕ × E)) : PartialAssignment ℕ E :=
   fun u ↦ (l.find? (·.1 == u)).elim ⊥ fun p ↦ ↑p.2
 
 theorem row_pair_left {E : Type*} (u v : ℕ) (a b : E) : row [(u, a), (v, b)] u = ↑a := by
@@ -134,11 +134,11 @@ theorem row_pair_right {E : Type*} {u v : ℕ} (h : u ≠ v) (a b : E) :
   simp [row, h]
 
 /-- The plural information state with the given rows. -/
-def ofRows (rows : List (PartialAssign ℕ Ind)) : PluralAssign ℕ Ind := {g | g ∈ rows}
+def ofRows (rows : List (PartialAssignment ℕ Ind)) : PluralAssign ℕ Ind := {g | g ∈ rows}
 
 section Rows
 
-variable {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ} {u u' : ℕ}
+variable {rows : List (PartialAssignment ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ} {u u' : ℕ}
 
 theorem bindingCond_ofRows : bindingCond u u' (ofRows rows) Δ ↔ ∀ s ∈ rows, s u = s u' := by
   simp [bindingCond, ofRows]
@@ -165,24 +165,24 @@ theorem mem_dep_ofRows {a b : Ind} :
     (a, b) ∈ dep u u' (ofRows rows) ↔ ∃ s ∈ rows, s u = ↑a ∧ s u' = ↑b := by
   simp [dep, ofRows]
 
-theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : PartialAssign ℕ Ind}
+theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : PartialAssignment ℕ Ind}
     {a b : Ind} :
     (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ s) ↔
       ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑a ∧ t u' = ↑b := by
   simp [dep, eqClass, ofRows, hΔ, and_assoc]
 
 /-- The values of `u` summed over the `Δ`-class of `s`, as a finset. -/
-def sumRows (rows : List (PartialAssign ℕ Ind)) (Δl : List ℕ) (s : PartialAssign ℕ Ind)
+def sumRows (rows : List (PartialAssignment ℕ Ind)) (Δl : List ℕ) (s : PartialAssignment ℕ Ind)
     (u : ℕ) : Finset Ind :=
   Finset.univ.filter fun d ↦ ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d
 
-theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : PartialAssign ℕ Ind) :
+theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : PartialAssignment ℕ Ind) :
     (↑(sumRows rows Δl s u) : Set Ind) =
       value u (eqClass (ofRows rows) Δ s) := by
   ext d
   simp [sumRows, value, eqClass, ofRows, hΔ, and_assoc]
 
-theorem mem_ofRows {s : PartialAssign ℕ Ind} : s ∈ ofRows rows ↔ s ∈ rows := Iff.rfl
+theorem mem_ofRows {s : PartialAssignment ℕ Ind} : s ∈ ofRows rows ↔ s ∈ rows := Iff.rfl
 
 theorem value_ofRows : value u (ofRows rows) = ↑(sumRows rows [] (row []) u) := by
   rw [coe_sumRows (Δ := ∅) (by simp), eqClass_empty]
@@ -194,7 +194,7 @@ state, the values of `u` summed over the state's class number `n` ((27), (28b)).
 def atomsCond (n : ℕ) (u : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, (value u (eqClass S Δ s)).ncard = n
 
-theorem atomsCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ}
+theorem atomsCond_ofRows {rows : List (PartialAssignment ℕ Ind)} {Δ : Set ℕ} {Δl : List ℕ}
     {n u : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     atomsCond n u (ofRows rows) Δ ↔ ∀ s ∈ rows, (sumRows rows Δl s u).card = n := by
   have key : ∀ s, (value u (eqClass (ofRows rows) Δ s)).ncard =
@@ -209,7 +209,7 @@ referents, so `Δ` is idle. -/
 def relCond {E : Type*} (P : E → E → Prop) (u v : ℕ) : PPDRSCond E := fun S _ ↦
   S.Nonempty ∧ ∀ s ∈ S, ∃ a b : E, s u = ↑a ∧ s v = ↑b ∧ P a b
 
-theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
+theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (PartialAssignment ℕ Ind)} {Δ : Set ℕ}
     {u v : ℕ} :
     relCond P u v (ofRows rows) Δ ↔
       rows ≠ [] ∧ ∀ s ∈ rows, ∃ a b : Ind, s u = ↑a ∧ s v = ↑b ∧ P a b :=
@@ -220,7 +220,7 @@ the class. This is the reading under which (23b) is not representable (§2.3). -
 def distributedGroupIdentityCond (uAnaph uAnt : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, value uAnaph (eqClass S Δ s) = value uAnt (eqClass S Δ s)
 
-theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
+theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssignment ℕ Ind)} {Δ : Set ℕ}
     {Δl : List ℕ} {u u' : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     distributedGroupIdentityCond u u' (ofRows rows) Δ ↔
       ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
@@ -231,13 +231,13 @@ theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssign ℕ Ind)
 /-! ### Anaphora under distribution (§2.3) -/
 
 /-- The lawyers hired secretaries they each liked, `u₃` bound to `u₁` (24c). -/
-def lawyersBound : List (PartialAssign ℕ Ind) :=
+def lawyersBound : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer2), (u₂, .secretary2), (u₃, .lawyer2)],
    row [(u₁, .lawyer3), (u₂, .secretary3), (u₃, .lawyer3)]]
 
 /-- The lawyers hired secretaries all of them liked, `∪u₃ → ∪u₁` under `δ_{u₁}` (31c). -/
-def lawyersGroup : List (PartialAssign ℕ Ind) :=
+def lawyersGroup : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer1)],
    row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer2)],
    row [(u₁, .lawyer1), (u₂, .secretary1), (u₃, .lawyer3)],
@@ -421,8 +421,8 @@ theorem introPartial_comp_iff (h : u ≠ u') :
   · rintro ⟨⟨o₀, ho₀⟩, hdom⟩
     have hdef : ∀ o ∈ O, o u' ≠ ⊥ ∧ o u ≠ ⊥ := fun o ho ↦
       ⟨(hdom o ho u').2 (Or.inl rfl), (hdom o ho u).2 (Or.inr rfl)⟩
-    set k : PartialAssign ℕ E → PartialAssign ℕ E := fun o ↦ Function.update ⊥ u' (o u')
-    have hk : ∀ o ∈ O, (⊥ : PartialAssign ℕ E) ~[extend u'] k o := fun o ho ↦
+    set k : PartialAssignment ℕ E → PartialAssignment ℕ E := fun o ↦ Function.update ⊥ u' (o u')
+    have hk : ∀ o ∈ O, (⊥ : PartialAssignment ℕ E) ~[extend u'] k o := fun o ho ↦
       mem_extend.2 ⟨rfl, by simpa [k] using (hdef o ho).1,
         fun v hv ↦ by simp [k, Function.update_of_ne hv]⟩
     have hko : ∀ o ∈ O, k o ~[extend u] o := fun o ho ↦ by
@@ -450,7 +450,8 @@ theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
   rw [weakReciprocity_iff_exists_reciprocalDRS h]
   refine ⟨fun ⟨S, hS⟩ ↦ ?_, fun ⟨O, _, hO⟩ ↦ ⟨O, hO⟩⟩
   obtain ⟨hX, hX', hne, hP⟩ := reciprocalDRS_iff.1 hS
-  set r : PartialAssign ℕ E → PartialAssign ℕ E := fun s v ↦ if v = u' ∨ v = u then s v else ⊥
+  set r : PartialAssignment ℕ E → PartialAssignment ℕ E :=
+    fun s v ↦ if v = u' ∨ v = u then s v else ⊥
   have hr : ∀ s v, (v = u' ∨ v = u) → r s v = s v := fun _ _ hv ↦ ite_eq_left hv
   have hval : ∀ w, (w = u' ∨ w = u) → value w (r '' S) = value w S := fun w hw ↦ by
     ext x
@@ -500,14 +501,14 @@ private theorem mem_u₁w : ∀ v, v ∈ ({u₁, w} : Set ℕ) ↔ v ∈ [u₁, 
 private theorem mem_w : ∀ v, v ∈ ({w} : Set ℕ) ↔ v ∈ [w] := by simp
 
 /-- Each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w` (49). -/
-def girlsNarrow : List (PartialAssign ℕ Ind) :=
+def girlsNarrow : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
 /-- Each girl thought "I will win", `u₂ → u₁` (51). -/
-def girlsWide : List (PartialAssign ℕ Ind) :=
+def girlsWide : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
@@ -522,7 +523,7 @@ theorem win_readings :
   decide
 
 /-- Each girl thought "we saw each other", the reciprocal inside the belief (53). -/
-def sawNarrow : List (PartialAssign ℕ Ind) :=
+def sawNarrow : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1), (u₃, .girl2)],
    row [(u₁, .girl1), (w, .world1), (u₂, .girl2), (u₃, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl1), (u₃, .girl2)],
@@ -530,13 +531,13 @@ def sawNarrow : List (PartialAssign ℕ Ind) :=
 
 /-- Each girl thought "I saw her", the reciprocal and its antecedent lifted to the matrix DRS
 (55). -/
-def sawWide : List (PartialAssign ℕ Ind) :=
+def sawWide : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl1), (u₃, .girl2), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl2), (u₃, .girl1), (w, .world2)]]
 
 /-- In the crossed reading of (56), girl1 thought girl2 saw girl1 and girl2 thought girl1
 saw girl2. -/
-def sawCrossed : List (PartialAssign ℕ Ind) :=
+def sawCrossed : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .girl1), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .girl2), (w, .world2)]]
 
@@ -565,7 +566,7 @@ theorem saw_crossed :
 /-- A bound antecedent cannot cooccur with a low reciprocal (§3.3). -/
 theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
     {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
-    (hr : reciprocityCond v₃ v₂ S Δ) {s : PartialAssign ℕ E} (hs : s ∈ S) {d : E}
+    (hr : reciprocityCond v₃ v₂ S Δ) {s : PartialAssignment ℕ E} (hs : s ∈ S) {d : E}
     (hd : s v₂ = ↑d) : False := by
   have hmem : d ∈ value v₂ S := ⟨s, hs, hd⟩
   rw [← hr.1 s hs] at hmem
@@ -574,7 +575,7 @@ theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ
   exact hr.2 t ht d d ht₃ ht₂ rfl
 
 /-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
-def beatModal : List (PartialAssign ℕ Ind) :=
+def beatModal : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (w, .world1)],
    row [(u₁, .chris), (u₂, .tracy), (w, .world1)],
    row [(u₁, .tracy), (u₂, .chris), (w, .world2)],
@@ -594,7 +595,7 @@ theorem beat_modal :
 
 /-- The mixed construal of the Cheyenne affix (78c) has one child scratching herself and two
 scratching each other. -/
-def scratchMixed : List (PartialAssign ℕ Ind) :=
+def scratchMixed : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .child1), (u₂, .child1)],
    row [(u₁, .child2), (u₂, .child3)],
    row [(u₁, .child3), (u₂, .child2)]]
@@ -610,13 +611,13 @@ theorem scratch_mixed :
 
 /-- Each girl gave the other a picture of herself, the second reciprocal anteceded by the
 first (85c). -/
-def picturesSecond : List (PartialAssign ℕ Ind) :=
+def picturesSecond : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl2)]]
 
 /-- Each girl gave the other a picture of the other, both reciprocals anteceded by the
 subject (86c). -/
-def picturesSubject : List (PartialAssign ℕ Ind) :=
+def picturesSubject : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl2)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl1)]]
 
@@ -634,7 +635,7 @@ theorem pictures_readings :
   exact ⟨⟨by decide, by decide, by decide⟩, by decide, by decide, by decide⟩
 
 /-- The forks propped against each other, each on one other (93). -/
-def forks : List (PartialAssign ℕ Ind) :=
+def forks : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .fork1), (u₂, .fork2)],
    row [(u₁, .fork2), (u₂, .fork3)],
    row [(u₁, .fork3), (u₂, .fork1)]]
@@ -657,7 +658,7 @@ theorem forks_weak :
   decide
 
 /-- The sailors worked together on each other's ships (96c). -/
-def sailors : List (PartialAssign ℕ Ind) :=
+def sailors : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .sailor1), (u₂, .ship1), (u₃, .sailor2)],
    row [(u₁, .sailor2), (u₂, .ship2), (u₃, .sailor3)],
    row [(u₁, .sailor3), (u₂, .ship3), (u₃, .sailor1)]]
@@ -846,13 +847,13 @@ nothing known against any two of them knowing each other. -/
 abbrev boysKnow : PluralAssign ℕ Ind → Prop := ReciprocalDRS (fun _ _ ↦ True) ↑boys u₂ u₁
 
 /-- A minimal state for (125), (126a). -/
-def boysMinimal : List (PartialAssign ℕ Ind) :=
+def boysMinimal : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
    row [(u₁, .boy3), (u₂, .boy1)]]
 
 /-- The strong reciprocal reading (126b). -/
-def boysStrong : List (PartialAssign ℕ Ind) :=
+def boysStrong : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .boy1), (u₂, .boy2)],
    row [(u₁, .boy2), (u₂, .boy3)],
    row [(u₁, .boy3), (u₂, .boy1)],
@@ -889,7 +890,7 @@ theorem maximize_strong :
 
 /-- By §6.2, the classmates gave each other pictures of each other, each maximizing pairwise, so
 that each gave a picture of herself to each of the others. -/
-def classmates : List (PartialAssign ℕ Ind) :=
+def classmates : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (u₃, .picture1), (u₄, .tracy)],
    row [(u₁, .tracy), (u₂, .matty), (u₃, .picture1), (u₄, .tracy)],
    row [(u₁, .chris), (u₂, .tracy), (u₃, .picture2), (u₄, .chris)],
@@ -911,7 +912,7 @@ theorem classmates_pairwise :
 
 /-- In the wide construal of (135), each of Tracy, Matty and Chris believes that she praised the
 two others (136). -/
-def praisedWide : List (PartialAssign ℕ Ind) :=
+def praisedWide : List (PartialAssignment ℕ Ind) :=
   [row [(u₁, .chris), (u₂, .chris), (u₃, .tracy), (w, .world1)],
    row [(u₁, .chris), (u₂, .chris), (u₃, .matty), (w, .world1)],
    row [(u₁, .tracy), (u₂, .tracy), (u₃, .chris), (w, .world2)],

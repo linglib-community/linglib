@@ -85,9 +85,9 @@ inductive Order where
 partially, and a domain variable pairs every individual with an assignment. -/
 structure Assign (V Δ E : Type*) where
   /-- The values of the individual variables. -/
-  ind : PartialAssign V E
+  ind : PartialAssignment V E
   /-- The value of each domain variable, pairing every individual with an assignment. -/
-  dom : Δ → E → PartialAssign V E
+  dom : Δ → E → PartialAssignment V E
 
 namespace Assign
 
@@ -98,7 +98,7 @@ instance : CoeFun (Assign V Δ E) (fun _ ↦ V → Flat E) := ⟨fun g ↦ g.ind
 /-- The assignment valuing no individual variable and pairing every individual with it. -/
 instance : Bot (Assign V Δ E) := ⟨⟨⊥, fun _ _ ↦ ⊥⟩⟩
 
-@[simp] theorem coe_mk (i : PartialAssign V E) (d : Δ → E → PartialAssign V E) (x : V) :
+@[simp] theorem coe_mk (i : PartialAssignment V E) (d : Δ → E → PartialAssignment V E) (x : V) :
     (⟨i, d⟩ : Assign V Δ E) x = i x := rfl
 
 @[simp] theorem bot_apply (x : V) : (⊥ : Assign V Δ E) x = ⊥ := rfl
@@ -108,15 +108,15 @@ variable [DecidableEq V] {g : Assign V Δ E} {x y : V} {a : E}
 /-- `g[x→a]`, the assignment resetting the individual variable `x` to `a`. -/
 def update (g : Assign V Δ E) (x : V) (a : E) : Assign V Δ E := ⟨g.ind.update x a, g.dom⟩
 
-@[simp] theorem update_apply_self : g.update x a x = ↑a := PartialAssign.update_self x a g.ind
+@[simp] theorem update_apply_self : g.update x a x = ↑a := PartialAssignment.update_self x a g.ind
 
 @[simp] theorem update_apply_of_ne (h : y ≠ x) : g.update x a y = g y :=
-  PartialAssign.update_of_ne h a g.ind
+  PartialAssignment.update_of_ne h a g.ind
 
 theorem update_eq_self (h : g x = ↑a) : g.update x a = g := by
   cases g
   simp only [update, mk.injEq, and_true]
-  exact PartialAssign.update_eq_self h
+  exact PartialAssignment.update_eq_self h
 
 /-- The assignment at which a quantifier over the domain variable `δ` evaluates its restrictor
 and scope at the individual `a`, the paired assignment reset at `x` to `a` (p. 1110). -/
@@ -999,13 +999,13 @@ theorem realize_ex21b_iff_of_familiar (hxy : x ≠ y)
     (ex21b Pa Lv x y δ Q).Realize I g w ↔ Q.toDet (fun a ↦ (I w).RelMap Pa ![a])
       (fun a ↦ (I w).RelMap Pa ![a] ∧ ∃ b : E, g y = ↑b ∧ (I w).RelMap Lv ![a, b]) := by
   have hdom : ∀ a, (g.pair δ x a) y = g y := fun a ↦ by
-    rw [Assign.pair_apply, PartialAssign.update_of_ne (Ne.symm hxy), (hs a).2.2 y hy]
+    rw [Assign.pair_apply, PartialAssignment.update_of_ne (Ne.symm hxy), (hs a).2.2 y hy]
   have hP : ∀ a, (atom₁ Pa x : Formula L V Δ).Realize I (g.pair δ x a) w ↔ (I w).RelMap Pa ![a] :=
     fun a ↦ by simp [Assign.pair_apply]
   have hL : ∀ a, (iota y (top y) (atom₂ Lv x y) : Formula L V Δ).Realize I (g.pair δ x a) w ↔
       ∃ b : E, g y = ↑b ∧ (I w).RelMap Lv ![a, b] := fun a ↦ by
     simp only [realize_iota, realize_top, realize_atom₂, hdom, Assign.pair_apply,
-      PartialAssign.update_self, Flat.coe_inj]
+      PartialAssignment.update_self, Flat.coe_inj]
     constructor
     · rintro ⟨-, a', b, rfl, hb, hR⟩; exact ⟨b, hb, hR⟩
     · rintro ⟨b, hb, hR⟩; exact ⟨by rw [hb]; exact Flat.coe_ne_bot, a, b, rfl, hb, hR⟩
@@ -1058,17 +1058,17 @@ theorem realize_ex22b_iff (hxy : x ≠ y) :
     constructor
     · rintro ⟨b, ⟨b', hb', hy'⟩, b₁, a₁, hb₁, ha₁, hOf⟩
       rw [Assign.update_apply_self, Flat.coe_inj] at hy' hb₁
-      rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssign.update_self,
+      rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssignment.update_self,
         Flat.coe_inj] at ha₁
       subst hy' hb₁ ha₁
       exact ⟨b, hb', hOf⟩
     · rintro ⟨b, hCh, hOf⟩
       exact ⟨b, ⟨b, hCh, by simp⟩, b, a, by simp, by
-        rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssign.update_self], hOf⟩
+        rw [Assign.update_apply_of_ne hxy, Assign.pair_apply, PartialAssignment.update_self], hOf⟩
   have hq : ∀ a, (iota y (top y) (atom₂ Lv x y) : Formula L V Δ).Realize I (g.pair δ x a) w ↔
       ∃ b : E, g.dom δ a y = ↑b ∧ (I w).RelMap Lv ![a, b] := fun a ↦ by
     simp only [realize_iota, realize_top, realize_atom₂, Assign.pair_apply,
-      PartialAssign.update_of_ne (Ne.symm hxy), PartialAssign.update_self, Flat.coe_inj]
+      PartialAssignment.update_of_ne (Ne.symm hxy), PartialAssignment.update_self, Flat.coe_inj]
     constructor
     · rintro ⟨-, a', b, rfl, hb, hR⟩; exact ⟨b, hb, hR⟩
     · rintro ⟨b, hb, hR⟩; exact ⟨by rw [hb]; exact Flat.coe_ne_bot, a, b, rfl, hb, hR⟩

@@ -86,7 +86,7 @@ private theorem marbleOut_isTrue_iff (w : Bool) :
     exact hout
   · rintro rfl
     letI := bag true
-    refine ⟨PartialAssign.single 0 0, ?_⟩
+    refine ⟨PartialAssignment.single 0 0, ?_⟩
     rw [marbleOut, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
     exact ⟨bot_le, by simp,
@@ -101,7 +101,7 @@ private theorem coinOut_isTrue_iff (w : Bool) :
     exact hout
   · rintro rfl
     letI := bag true
-    refine ⟨PartialAssign.single 0 1, ?_⟩
+    refine ⟨PartialAssignment.single 0 1, ?_⟩
     rw [coinOut, DRS.verifies_mk]
     simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
     exact ⟨bot_le, by simp,
@@ -117,12 +117,12 @@ theorem marble_worlds_eq_coin :
 
 /-- The point of world `true` whose referent `0` carries the entity `d`. -/
 def witness (d : Fin 2) : Possibility Bool ℕ (Flat (Fin 2)) :=
-  ⟨true, PartialAssign.single 0 d⟩
+  ⟨true, PartialAssignment.single 0 d⟩
 
 set_option linter.style.haveILetI false in
 theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
   letI := bag true
-  show marbleOut.Verifies ⊥ (PartialAssign.single 0 0)
+  show marbleOut.Verifies ⊥ (PartialAssignment.single 0 0)
   rw [marbleOut, DRS.verifies_mk]
   simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
   exact ⟨bot_le, by simp,

@@ -42,28 +42,28 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} {W : Type y}
 variable (interp : W → L.Structure M)
 
 /-- `⟨f, g⟩` verifies `K` in the model at the world `w` (Def. 19). -/
-def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : PartialAssign V M) : Prop :=
+def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : PartialAssignment V M) : Prop :=
   letI := interp w
   K.Verifies f g
 
 variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Flat M)} {I : State W V M}
 
-theorem DRS.verifiesAt_iff {w : W} {f g : PartialAssign V M} :
+theorem DRS.verifiesAt_iff {w : W} {f g : PartialAssignment V M} :
     K.VerifiesAt interp w f g ↔
       f ≤ g ∧ g.domain = f.domain ∪ ↑K.referents ∧
         (letI := interp w; Condition.HoldsAll K.conditions g) :=
   letI := interp w
   DRS.verifies_iff
 
-theorem DRS.VerifiesAt.le {w : W} {f g : PartialAssign V M}
+theorem DRS.VerifiesAt.le {w : W} {f g : PartialAssignment V M}
     (h : K.VerifiesAt interp w f g) : f ≤ g :=
   ((DRS.verifiesAt_iff interp).mp h).1
 
-theorem DRS.VerifiesAt.domain_eq {w : W} {f g : PartialAssign V M}
+theorem DRS.VerifiesAt.domain_eq {w : W} {f g : PartialAssignment V M}
     (h : K.VerifiesAt interp w f g) : g.domain = f.domain ∪ ↑K.referents :=
   ((DRS.verifiesAt_iff interp).mp h).2.1
 
-theorem DRS.VerifiesAt.holdsAll {w : W} {f g : PartialAssign V M}
+theorem DRS.VerifiesAt.holdsAll {w : W} {f g : PartialAssignment V M}
     (h : K.VerifiesAt interp w f g) :
     letI := interp w; Condition.HoldsAll K.conditions g :=
   ((DRS.verifiesAt_iff interp).mp h).2.2
@@ -88,10 +88,10 @@ theorem DRS.mem_ccp :
 
 /-- The information state a DRS expresses relative to an assignment of its free referents
 (Def. 29(ii)). -/
-def DRS.relState (K : DRS L V) (g : PartialAssign V M) : State W V M :=
+def DRS.relState (K : DRS L V) (g : PartialAssignment V M) : State W V M :=
   {q | K.VerifiesAt interp q.world g q.assignment}
 
-theorem DRS.mem_relState {g : PartialAssign V M} :
+theorem DRS.mem_relState {g : PartialAssignment V M} :
     q ∈ K.relState interp g ↔ K.VerifiesAt interp q.world g q.assignment := Iff.rfl
 
 /-- The information state a proper DRS expresses (Def. 22), the state relative to the empty
@@ -104,7 +104,7 @@ theorem DRS.mem_state : q ∈ K.state interp ↔ K.VerifiesAt interp q.world ⊥
 theorem DRS.uniformAt_state : State.UniformAt ↑K.referents (K.state interp) := by
   intro q hq
   have h := DRS.VerifiesAt.domain_eq interp hq
-  rwa [PartialAssign.domain_bot, Set.empty_union, Possibility.domain_assignment] at h
+  rwa [PartialAssignment.domain_bot, Set.empty_union, Possibility.domain_assignment] at h
 
 /-- Def. 22 is the context change potential's value on the initial state. -/
 theorem DRS.ccp_top : K.ccp interp (⊤ : State W V M) = K.state interp := by

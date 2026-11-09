@@ -76,22 +76,22 @@ variable {D : Type}
 /-! ### Dynamic propositions -/
 
 /-- The State.Set applicative over partial assignments (Def. A.3). -/
-abbrev StateSet (D : Type) := StateT (PartialAssign ℕ D) Set
+abbrev StateSet (D : Type) := StateT (PartialAssignment ℕ D) Set
 
 /-! ### Atomic sentences -/
 
 open Classical in
 /-- The value of `P n` at `g`, `∂ (n ∈ dom g) ∧ gₙ ∈ P`, with Beaver's ∂ and a weak Kleene
 conjunction (Def. 2.2 and fn. 10). -/
-noncomputable def valueAt (P : Set D) (g : PartialAssign ℕ D) (n : ℕ) : Trivalent :=
+noncomputable def valueAt (P : Set D) (g : PartialAssignment ℕ D) (n : ℕ) : Trivalent :=
   meetWeak (((ofProp (g n ≠ ⊥)) ⊔ .undefined)) (ofProp (∃ d : D, g n = ↑d ∧ d ∈ P))
 
-@[simp] theorem valueAt_of_eq_bot (P : Set D) {g : PartialAssign ℕ D} {n : ℕ} (h : g n = ⊥) :
+@[simp] theorem valueAt_of_eq_bot (P : Set D) {g : PartialAssignment ℕ D} {n : ℕ} (h : g n = ⊥) :
     valueAt P g n = .undefined := by
   simp [valueAt, h]
 
 open Classical in
-@[simp] theorem valueAt_of_eq_coe (P : Set D) {g : PartialAssign ℕ D} {n : ℕ} {d : D}
+@[simp] theorem valueAt_of_eq_coe (P : Set D) {g : PartialAssignment ℕ D} {n : ℕ} {d : D}
     (h : g n = ↑d) : valueAt P g n = ofProp (d ∈ P) := by
   simp [valueAt, h]
 
@@ -104,12 +104,12 @@ assignment. -/
 noncomputable def atomConst (P : Set D) (c : D) : StateSet D Trivalent :=
   pure (ofProp (c ∈ P))
 
-@[simp] theorem mem_atom {P : Set D} {n : ℕ} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} : p ∈ atom P n g ↔ p = (valueAt P g n, g) := Iff.rfl
+@[simp] theorem mem_atom {P : Set D} {n : ℕ} {g : PartialAssignment ℕ D}
+    {p : Trivalent × PartialAssignment ℕ D} : p ∈ atom P n g ↔ p = (valueAt P g n, g) := Iff.rfl
 
 open Classical in
-@[simp] theorem mem_atomConst {P : Set D} {c : D} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} : p ∈ atomConst P c g ↔ p = (ofProp (c ∈ P), g) :=
+@[simp] theorem mem_atomConst {P : Set D} {c : D} {g : PartialAssignment ℕ D}
+    {p : Trivalent × PartialAssignment ℕ D} : p ∈ atomConst P c g ↔ p = (ofProp (c ∈ P), g) :=
   Iff.rfl
 
 /-! ### Connectives
@@ -136,27 +136,27 @@ example : LawfulApplicative (StateSet D) := inferInstance
 
 /-- `extension v m g` is the set of outputs of `m` at `g` tagged `v`; at `true`, `false` and
 `undefined` these are the positive, negative and maybe extensions (Def. 2.5). -/
-def extension (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
-    Set (PartialAssign ℕ D) :=
+def extension (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) :
+    Set (PartialAssignment ℕ D) :=
   {h | (v, h) ∈ m g}
 
-@[simp] theorem mem_extension {v : Trivalent} {m : StateSet D Trivalent} {g h : PartialAssign ℕ D} :
-    h ∈ extension v m g ↔ (v, h) ∈ m g := Iff.rfl
+@[simp] theorem mem_extension {v : Trivalent} {m : StateSet D Trivalent}
+    {g h : PartialAssignment ℕ D} : h ∈ extension v m g ↔ (v, h) ∈ m g := Iff.rfl
 
 /-- `m` is true at `g` when its positive extension is nonempty (Def. 2.6). -/
-def IsTrue (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
+def IsTrue (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) : Prop :=
   (extension .true m g).Nonempty
 
 /-- `m` is false at `g` when it has no positive output and some negative one (Def. 2.6). -/
-def IsFalse (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
+def IsFalse (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) : Prop :=
   extension .true m g = ∅ ∧ (extension .false m g).Nonempty
 
 /-- `m` is maybe at `g` when all its outputs are tagged maybe (Def. 2.6). -/
-def IsIndet (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
+def IsIndet (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) : Prop :=
   extension .true m g = ∅ ∧ extension .false m g = ∅ ∧ (extension .undefined m g).Nonempty
 
 -- Def. 3.2
-theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : PartialAssign ℕ D} :
+theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : PartialAssignment ℕ D} :
     IsTrue m g ∨ IsFalse m g ↔
       (extension .true m g).Nonempty ∨ (extension .false m g).Nonempty := by
   rcases (extension .true m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
@@ -169,7 +169,7 @@ theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) :
   exact ⟨fun ⟨t, ht, hp⟩ ↦ by rwa [← ht, Trivalent.compl_compl],
     fun hp ↦ ⟨vᶜ, Trivalent.compl_compl v, hp⟩⟩
 
-theorem extension_neg (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
+theorem extension_neg (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) :
     extension v (neg m) g = extension (vᶜ) m g :=
   Set.ext fun h ↦ Set.ext_iff.1 (rel_neg v m) (g, h)
 
@@ -202,14 +202,14 @@ inductive Existential where
   deriving DecidableEq, Repr
 
 /-- When an existential may reset `n` at `g`. -/
-def Existential.Fresh : Existential → PartialAssign ℕ D → ℕ → Prop
+def Existential.Fresh : Existential → PartialAssignment ℕ D → ℕ → Prop
   | .destructive, _, _ => True
   | .guarded, g, n => g n = ⊥
 
-@[simp] theorem Existential.fresh_destructive (g : PartialAssign ℕ D) (n : ℕ) :
+@[simp] theorem Existential.fresh_destructive (g : PartialAssignment ℕ D) (n : ℕ) :
     Existential.destructive.Fresh g n := trivial
 
-@[simp] theorem Existential.fresh_guarded_iff (g : PartialAssign ℕ D) (n : ℕ) :
+@[simp] theorem Existential.fresh_guarded_iff (g : PartialAssignment ℕ D) (n : ℕ) :
     Existential.guarded.Fresh g n ↔ g n = ⊥ := Iff.rfl
 
 /-- The DPL existential takes the union of `m` over the resets of `n` when it may reset `n`, and is
@@ -228,26 +228,27 @@ def exists_ (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D 
   positiveClosure (dplExists e n m)
 
 @[simp] theorem mem_dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
-    {g : PartialAssign ℕ D} {p : Trivalent × PartialAssign ℕ D} :
+    {g : PartialAssignment ℕ D} {p : Trivalent × PartialAssignment ℕ D} :
     p ∈ dplExists e n m g ↔
       (e.Fresh g n ∧ ∃ x, p ∈ m (g.update n x)) ∨ (¬ e.Fresh g n ∧ p = (.undefined, g)) :=
   Iff.rfl
 
-@[simp] theorem mem_positiveClosure {m : StateSet D Trivalent} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} :
+@[simp] theorem mem_positiveClosure {m : StateSet D Trivalent} {g : PartialAssignment ℕ D}
+    {p : Trivalent × PartialAssignment ℕ D} :
     p ∈ positiveClosure m g ↔ (p.1 = .true ∧ p ∈ m g) ∨ (IsFalse m g ∧ p = (.false, g)) ∨
       (IsIndet m g ∧ p = (.undefined, g)) := by
   simp only [positiveClosure, Set.mem_union, Set.mem_ofPred_eq, or_assoc]
 
 -- (19a)
-@[simp] theorem extension_true_positiveClosure (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
+@[simp] theorem extension_true_positiveClosure (m : StateSet D Trivalent)
+    (g : PartialAssignment ℕ D) :
     extension .true (positiveClosure m) g = extension .true m g := by
   ext h
   simp only [mem_extension, mem_positiveClosure, true_and, Prod.mk.injEq]
   exact ⟨by rintro (h | ⟨-, ⟨⟩, -⟩ | ⟨-, ⟨⟩, -⟩); exact h, Or.inl⟩
 
 -- (19b)
-theorem extension_false_positiveClosure (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
+theorem extension_false_positiveClosure (m : StateSet D Trivalent) (g : PartialAssignment ℕ D) :
     extension .false (positiveClosure m) g = {h | IsFalse m g ∧ h = g} := by
   ext h
   simp only [mem_extension, mem_positiveClosure, Prod.mk.injEq, Set.mem_ofPred_eq]
@@ -267,7 +268,7 @@ theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
     · exact .inl ⟨hf, x, t, ht, rfl⟩
     · exact .inr ⟨hf, rfl, rfl⟩
 
-theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D Trivalent} {g : PartialAssign ℕ D}
+theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D Trivalent} {g : PartialAssignment ℕ D}
     (hg : g n ≠ ⊥) : exists_ .guarded n m g = {(.undefined, g)} := by
   have heps : dplExists .guarded n m g = {(.undefined, g)} := by
     ext p; simp [mem_dplExists, hg]
@@ -305,9 +306,10 @@ the false outputs exactly when a true one exists (App. A). -/
 theorem not_exists_bind_eq_positiveClosure :
     ¬ ∃ k : Trivalent → StateSet D Trivalent, ∀ m, positiveClosure m = m >>= k := by
   rintro ⟨k, hk⟩
-  have hk₀ : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∈ k .false ⊥ := by
+  have hk₀ : ((.false : Trivalent), (⊥ : PartialAssignment ℕ D)) ∈ k .false ⊥ := by
     have h := hk (pure .false)
-    have : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∈ positiveClosure (pure .false) ⊥ := by
+    have : ((.false : Trivalent), (⊥ : PartialAssignment ℕ D)) ∈
+        positiveClosure (pure .false) ⊥ := by
       rw [mem_positiveClosure]
       refine .inr (.inl ⟨⟨?_, ⊥, rfl⟩, rfl⟩)
       ext h
@@ -315,7 +317,7 @@ theorem not_exists_bind_eq_positiveClosure :
     rw [h] at this
     simpa using this
   let both : StateSet D Trivalent := fun g ↦ {(.true, g), (.false, g)}
-  have hf : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∉ positiveClosure both ⊥ := by
+  have hf : ((.false : Trivalent), (⊥ : PartialAssignment ℕ D)) ∉ positiveClosure both ⊥ := by
     simp [mem_positiveClosure, IsFalse, IsIndet, both, Set.eq_empty_iff_forall_notMem]
   exact hf (hk both ▸ Set.mem_stateT_bind _ _ _ _ |>.2 ⟨(.false, ⊥), by simp [both], hk₀⟩)
 
@@ -354,19 +356,19 @@ theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
     ¬ Update.IsTest (StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true) := by
   obtain ⟨x⟩ := ‹Nonempty D›
   intro h
-  have hmem : ((⊥ : PartialAssign ℕ D), (⊥ : PartialAssign ℕ D).update 1 x) ∈
+  have hmem : ((⊥ : PartialAssignment ℕ D), (⊥ : PartialAssignment ℕ D).update 1 x) ∈
       StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true := by
     rw [rel_neg]
     show (.false, _) ∈ dplExists _ _ _ _
     simp only [mem_dplExists]
     exact .inl ⟨trivial, x, by simp⟩
-  have h1 : (⊥ : PartialAssign ℕ D) = (⊥ : PartialAssign ℕ D).update 1 x := h hmem
+  have h1 : (⊥ : PartialAssignment ℕ D) = (⊥ : PartialAssignment ℕ D).update 1 x := h hmem
   simpa using congrFun h1 1
 
 /-! ### The extensions of the connectives -/
 
 -- (32a)
-theorem mem_extension_true_disj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
+theorem mem_extension_true_disj {m n : StateSet D Trivalent} {g i : PartialAssignment ℕ D} :
     i ∈ extension .true (disj m n) g ↔
       (∃ h ∈ extension .true m g, ∃ u, (u, i) ∈ n h) ∨
         ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
@@ -374,7 +376,7 @@ theorem mem_extension_true_disj {m n : StateSet D Trivalent} {g i : PartialAssig
   grind [Trivalent.sup_eq_true_iff]
 
 -- (32b)
-theorem mem_extension_false_disj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
+theorem mem_extension_false_disj {m n : StateSet D Trivalent} {g i : PartialAssignment ℕ D} :
     i ∈ extension .false (disj m n) g ↔ ∃ h ∈ extension .false m g, i ∈ extension .false n h := by
   have : (g, i) ∈ StateT.rel (disj m n) .false ↔
       (g, i) ∈ StateT.rel m .false ○ StateT.rel n .false := by
@@ -382,7 +384,7 @@ theorem mem_extension_false_disj {m n : StateSet D Trivalent} {g i : PartialAssi
   simpa [SetRel.mem_comp] using this
 
 -- (38a)
-theorem mem_extension_true_imp {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
+theorem mem_extension_true_imp {m n : StateSet D Trivalent} {g i : PartialAssignment ℕ D} :
     i ∈ extension .true (imp m n) g ↔
       (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
         ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
@@ -390,7 +392,7 @@ theorem mem_extension_true_imp {m n : StateSet D Trivalent} {g i : PartialAssign
   grind [Trivalent.sup_eq_true_iff, Trivalent.compl_eq_true_iff]
 
 -- (26b)
-theorem mem_extension_false_conj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
+theorem mem_extension_false_conj {m n : StateSet D Trivalent} {g i : PartialAssignment ℕ D} :
     i ∈ extension .false (conj m n) g ↔
       (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
         ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .false n h := by
@@ -399,7 +401,7 @@ theorem mem_extension_false_conj {m n : StateSet D Trivalent} {g i : PartialAssi
 
 /-! ### Egli's theorem -/
 
-theorem mem_extension_true_conj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
+theorem mem_extension_true_conj {m n : StateSet D Trivalent} {g i : PartialAssignment ℕ D} :
     i ∈ extension .true (conj m n) g ↔ ∃ h ∈ extension .true m g, i ∈ extension .true n h := by
   have : (g, i) ∈ StateT.rel (conj m n) .true ↔
       (g, i) ∈ StateT.rel m .true ○ StateT.rel n .true := by
@@ -407,7 +409,7 @@ theorem mem_extension_true_conj {m n : StateSet D Trivalent} {g i : PartialAssig
   simpa [SetRel.mem_comp] using this
 
 /-- Egli's theorem for positive extensions, for either existential (Obs. 2.4). -/
-theorem egli (e : Existential) (n : ℕ) (m k : StateSet D Trivalent) (g : PartialAssign ℕ D) :
+theorem egli (e : Existential) (n : ℕ) (m k : StateSet D Trivalent) (g : PartialAssignment ℕ D) :
     extension .true (exists_ e n (conj m k)) g = extension .true (conj (exists_ e n m) k) g := by
   ext i
   rw [mem_extension_true_conj]
@@ -434,11 +436,11 @@ section Atoms
 
 open Classical
 
-variable (W B U : Set D) {e : Existential} {n : ℕ} {g : PartialAssign ℕ D}
+variable (W B U : Set D) {e : Existential} {n : ℕ} {g : PartialAssignment ℕ D}
 
-theorem mem_atom_update (x : D) {v : Trivalent} {h : PartialAssign ℕ D} :
+theorem mem_atom_update (x : D) {v : Trivalent} {h : PartialAssignment ℕ D} :
     (v, h) ∈ atom W n (g.update n x) ↔ v = ofProp (x ∈ W) ∧ h = g.update n x := by
-  rw [mem_atom, valueAt_of_eq_coe W (PartialAssign.update_self n x g), Prod.mk.injEq]
+  rw [mem_atom, valueAt_of_eq_coe W (PartialAssignment.update_self n x g), Prod.mk.injEq]
 
 theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
   funext g
@@ -617,11 +619,11 @@ theorem not_egli_negative [Nonempty D] :
       extension .false (conj (exists_ .destructive 1 (atom Set.univ 1)) (atom ∅ 1)) ⊥ := by
   obtain ⟨x⟩ := ‹Nonempty D›
   intro h
-  have hl : (⊥ : PartialAssign ℕ D) ∈ extension .false
+  have hl : (⊥ : PartialAssignment ℕ D) ∈ extension .false
       (exists_ .destructive 1 (conj (atom (Set.univ : Set D) 1) (atom ∅ 1))) ⊥ := by
     rw [exists_, extension_false_positiveClosure]
     refine ⟨⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ ?_,
-      ⟨(⊥ : PartialAssign ℕ D).update 1 x, ?_⟩⟩, rfl⟩
+      ⟨(⊥ : PartialAssignment ℕ D).update 1 x, ?_⟩⟩, rfl⟩
     · rw [mem_extension, mem_dplExists] at hi
       rcases hi with ⟨-, y, hy⟩ | ⟨h, -⟩
       · rw [← mem_extension, mem_extension_true_conj] at hy
@@ -633,7 +635,7 @@ theorem not_egli_negative [Nonempty D] :
     · rw [mem_extension, mem_dplExists]
       refine .inl ⟨trivial, x, ?_⟩
       rw [← mem_extension, mem_extension_false_conj]
-      refine .inr ⟨.true, (⊥ : PartialAssign ℕ D).update 1 x, by rw [mem_atom_update]; simp, ?_⟩
+      refine .inr ⟨.true, (⊥ : PartialAssignment ℕ D).update 1 x, by rw [mem_atom_update]; simp, ?_⟩
       rw [mem_extension, mem_atom_update]; simp
   rw [h, mem_extension_false_conj] at hl
   rcases hl with ⟨j, hj, -⟩ | ⟨t, j, hj, hk⟩
@@ -651,14 +653,15 @@ theorem not_egli_negative [Nonempty D] :
       · exact h trivial
     all_goals
       rw [extension_true_dplExists_atom _ (Existential.fresh_destructive _ _)] at hT
-      exact Set.eq_empty_iff_forall_notMem.1 hT ((⊥ : PartialAssign ℕ D).update 1 x)
+      exact Set.eq_empty_iff_forall_notMem.1 hT ((⊥ : PartialAssignment ℕ D).update 1 x)
         ⟨x, trivial, rfl⟩
 
 
 /-! ### Outputs value what their inputs value -/
 
 /-- An assignment's relation to the assignments that value every variable it values. -/
-def domainLE : SetRel (PartialAssign ℕ D) (PartialAssign ℕ D) := {p | p.1.domain ⊆ p.2.domain}
+def domainLE : SetRel (PartialAssignment ℕ D) (PartialAssignment ℕ D) :=
+  {p | p.1.domain ⊆ p.2.domain}
 
 instance : (domainLE (D := D)).IsRefl := ⟨fun g ↦ show g.domain ⊆ g.domain from subset_rfl⟩
 
@@ -668,7 +671,7 @@ instance : (domainLE (D := D)).IsTrans := ⟨fun _ _ _ h₁ h₂ ↦ Set.Subset.
 def Expanding (m : StateSet D Trivalent) : Prop := ∀ t, StateT.rel m t ⊆ domainLE
 
 theorem Expanding.domain_subset {m : StateSet D Trivalent} (hm : Expanding m)
-    {g h : PartialAssign ℕ D} {t : Trivalent} (hh : (t, h) ∈ m g) : g.domain ⊆ h.domain :=
+    {g h : PartialAssignment ℕ D} {t : Trivalent} (hh : (t, h) ∈ m g) : g.domain ⊆ h.domain :=
   hm t (show (g, h) ∈ StateT.rel m t from hh)
 
 theorem expanding_atom (P : Set D) (n : ℕ) : Expanding (atom P n) := by
@@ -708,7 +711,7 @@ theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalen
   · refine fun y hy ↦ hm.domain_subset hx ?_
     by_cases hyn : y = n
     · subst hyn; simp
-    · rw [PartialAssign.mem_domain, PartialAssign.update_of_ne hyn]; exact hy
+    · rw [PartialAssignment.mem_domain, PartialAssignment.update_of_ne hyn]; exact hy
   · rw [(Prod.mk.inj hx).2]
 
 theorem Expanding.positiveClosure {m : StateSet D Trivalent} (hm : Expanding m) :
@@ -723,7 +726,7 @@ theorem Expanding.exists_ {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
     Expanding (exists_ e n m) := hm.dplExists.positiveClosure
 
 theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
-    (hm : Expanding m) {g h : PartialAssign ℕ D} (hh : h ∈ extension .true (exists_ e n m) g) :
+    (hm : Expanding m) {g h : PartialAssignment ℕ D} (hh : h ∈ extension .true (exists_ e n m) g) :
     h n ≠ ⊥ := by
   rw [exists_, extension_true_positiveClosure, mem_extension, mem_dplExists] at hh
   rcases hh with ⟨-, x, hx⟩ | ⟨-, hx⟩
@@ -733,7 +736,7 @@ theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : Sta
 /-! ### The guarded existential and the dynamic Hurford constraint -/
 
 -- fn. 26, (61)
-theorem extension_true_conj_exists_guarded (L P : Set D) (g : PartialAssign ℕ D) :
+theorem extension_true_conj_exists_guarded (L P : Set D) (g : PartialAssignment ℕ D) :
     extension .true (conj (exists_ .guarded 1 (atom L 1)) (exists_ .guarded 1 (atom P 1))) g =
       ∅ := by
   ext i
@@ -752,14 +755,14 @@ def HurfordOdd {M : Type*} (φ ψ : M → StateSet D Trivalent) : Prop :=
     ∀ x g, extension .true (conj (φ x) (neg (ψ x))) g = ∅
 
 theorem eq_and_isFalse_of_mem_extension_true_neg_exists {e : Existential} {n : ℕ}
-    {m : StateSet D Trivalent} {g h : PartialAssign ℕ D}
+    {m : StateSet D Trivalent} {g h : PartialAssignment ℕ D}
     (hh : h ∈ extension .true (neg (exists_ e n m)) g) :
     h = g ∧ IsFalse (dplExists e n m) g := by
   rw [extension_neg, Trivalent.compl_true, exists_, extension_false_positiveClosure] at hh
   exact ⟨hh.2, hh.1⟩
 
 theorem fresh_of_isFalse_dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
-    {g : PartialAssign ℕ D} (h : IsFalse (dplExists e n m) g) : e.Fresh g n := by
+    {g : PartialAssignment ℕ D} (h : IsFalse (dplExists e n m) g) : e.Fresh g n := by
   by_contra hf
   obtain ⟨-, j, hj⟩ := h
   rw [mem_extension, mem_dplExists] at hj
@@ -799,23 +802,23 @@ theorem not_hurfordOdd_someone_or_they_destructive :
     ¬ HurfordOdd (fun M : Set Bool × Set Bool ↦ exists_ .destructive 1 (atom M.1 1))
       (fun M ↦ atom M.2 1) := by
   rintro (h | h)
-  · have := h (∅, Set.univ) ((⊥ : PartialAssign ℕ Bool).update 1 true)
-    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssign ℕ Bool).update 1 true)) ?_
+  · have := h (∅, Set.univ) ((⊥ : PartialAssignment ℕ Bool).update 1 true)
+    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssignment ℕ Bool).update 1 true)) ?_
     rw [mem_extension_true_conj]
     dsimp only
-    refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
+    refine ⟨(⊥ : PartialAssignment ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_neg_exists_atom _ (Existential.fresh_destructive _ _)]; exact ⟨rfl, rfl⟩
-    · rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
+    · rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssignment.update_self 1 true ⊥)]
       simp
   · have := h (Set.univ, ∅) ⊥
-    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssign ℕ Bool).update 1 true)) ?_
+    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssignment ℕ Bool).update 1 true)) ?_
     rw [mem_extension_true_conj]
     dsimp only
-    refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
+    refine ⟨(⊥ : PartialAssignment ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_exists_atom _ (Existential.fresh_destructive _ _)]
       exact ⟨true, trivial, rfl⟩
     · rw [extension_neg, mem_extension, mem_atom,
-        valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
+        valueAt_of_eq_coe _ (PartialAssignment.update_self 1 true ⊥)]
       simp
 
 -- (70)
@@ -824,22 +827,22 @@ theorem not_hurfordOdd_bathroom_destructive :
       (fun M ↦ atom M.2 1) := by
   rintro (h | h)
   · have := h (Set.univ, Set.univ) ⊥
-    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssign ℕ Bool).update 1 true)) ?_
+    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssignment ℕ Bool).update 1 true)) ?_
     rw [mem_extension_true_conj, neg_neg]
     dsimp only
-    refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
+    refine ⟨(⊥ : PartialAssignment ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_exists_atom _ (Existential.fresh_destructive _ _)]
       exact ⟨true, trivial, rfl⟩
-    · rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
+    · rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssignment.update_self 1 true ⊥)]
       simp
-  · have := h (∅, ∅) ((⊥ : PartialAssign ℕ Bool).update 1 true)
-    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssign ℕ Bool).update 1 true)) ?_
+  · have := h (∅, ∅) ((⊥ : PartialAssignment ℕ Bool).update 1 true)
+    refine (Set.eq_empty_iff_forall_notMem.1 this ((⊥ : PartialAssignment ℕ Bool).update 1 true)) ?_
     rw [mem_extension_true_conj]
     dsimp only
-    refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
+    refine ⟨(⊥ : PartialAssignment ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_neg_exists_atom _ (Existential.fresh_destructive _ _)]; exact ⟨rfl, rfl⟩
     · rw [extension_neg, mem_extension, mem_atom,
-        valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
+        valueAt_of_eq_coe _ (PartialAssignment.update_self 1 true ⊥)]
       simp
 
 -- (70), (68)
@@ -857,7 +860,7 @@ theorem hurfordOdd_someone_or_someone_sitting [Nonempty D] (e : Existential) :
   rcases hi with ⟨-, x, hx⟩ | ⟨-, hx⟩
   · rw [← mem_extension, mem_extension_true_conj] at hx
     obtain ⟨j, hj, -⟩ := hx
-    rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssign.update_self 2 x h)] at hj
+    rw [mem_extension, mem_atom, valueAt_of_eq_coe _ (PartialAssignment.update_self 2 x h)] at hj
     simp [hA] at hj
   · exact absurd (Prod.mk.inj hx).1 (by decide)
 
@@ -880,7 +883,7 @@ def update (c : State W ℕ D) (φ : W → StateSet D Trivalent) : State W ℕ D
   {p | Defined c φ ∧ ∃ q ∈ c, q.world = p.world ∧
     p.assignment ∈ extension .true (φ q.world) q.assignment}
 
-theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} {n : ℕ}
+theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssignment ℕ D} {n : ℕ}
     (h : g n = ⊥) : e.Fresh g n := by
   cases e
   · trivial
@@ -930,7 +933,7 @@ theorem conj_atom_atom (L H : Set D) (n : ℕ) : conj (atom L n) (atom H n) = at
     exact ⟨_, _, ⟨rfl, rfl⟩, _, ⟨rfl, rfl⟩, key.symm⟩
 
 theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ)
-    (g : PartialAssign ℕ D) : (exists_ e n (atom W n) g).Nonempty := by
+    (g : PartialAssignment ℕ D) : (exists_ e n (atom W n) g).Nonempty := by
   by_cases hf : e.Fresh g n
   · rcases Set.eq_empty_or_nonempty W with hW | ⟨x, hx⟩
     · refine ⟨(.false, g), ?_⟩
@@ -944,9 +947,9 @@ theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ
     · rw [exists_guarded_of_ne_bot hf]; exact Set.singleton_nonempty _
 
 
-variable {e : Existential} {g : PartialAssign ℕ D}
+variable {e : Existential} {g : PartialAssignment ℕ D}
 
-theorem mem_atomConst_iff {P : Set D} {c : D} {v : Trivalent} {h : PartialAssign ℕ D} :
+theorem mem_atomConst_iff {P : Set D} {c : D} {v : Trivalent} {h : PartialAssignment ℕ D} :
     (v, h) ∈ atomConst P c g ↔ v = ofProp (c ∈ P) ∧ h = g := by
   rw [mem_atomConst, Prod.mk.injEq]
 
@@ -1055,7 +1058,7 @@ theorem familiar_update_update_disj (A Dis : W → Set D) (ev : D) :
 
 theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : W} {x : D}
     (hx : x ∈ A w) (hev : ev ∉ Dis w) :
-    (⟨w, (⊥ : PartialAssign ℕ D).update 1 x⟩ : Possibility W ℕ (Flat D)) ∈
+    (⟨w, (⊥ : PartialAssignment ℕ D).update 1 x⟩ : Possibility W ℕ (Flat D)) ∈
       update (update (⊤ : State W ℕ D)
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev))
       fun w ↦ neg (atomConst (Dis w) ev) := by
@@ -1063,7 +1066,7 @@ theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : 
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev) := fun p hp ↦
     isTrue_or_isFalse_disj_exists_atomConst _ _ _
       (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
-  refine ⟨fun p _ ↦ ?_, ⟨w, (⊥ : PartialAssign ℕ D).update 1 x⟩,
+  refine ⟨fun p _ ↦ ?_, ⟨w, (⊥ : PartialAssignment ℕ D).update 1 x⟩,
     ⟨hdef, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩, rfl, ?_⟩
   · by_cases hc : ev ∈ Dis p.world
     · exact .inr ⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ by
@@ -1090,7 +1093,7 @@ theorem familiar_update_stone (L P H : W → Set D) :
 
 
 theorem snd_eq_of_mem_exists_atom {W : Set D} {n : ℕ} (hW : W = ∅) (hf : e.Fresh g n)
-    {p : Trivalent × PartialAssign ℕ D} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
+    {p : Trivalent × PartialAssignment ℕ D} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
   rw [exists_, mem_positiveClosure] at hp
   rcases hp with ⟨h1, hp⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩
   · obtain ⟨t, h⟩ := p
@@ -1135,7 +1138,8 @@ theorem exists_mem_update_stone [Nonempty D] (L P H : W → Set D) {w : W} {x : 
       disj (exists_ e 1 (conj (atom (L w) 1) (atom (H w) 1)))
         (exists_ e 1 (conj (atom (P w) 1) (atom (H w) 1))) := by
   simp only [conj_atom_atom]
-  obtain ⟨⟨u, i⟩, hu⟩ := nonempty_exists_atom e (P w ∩ H w) 1 ((⊥ : PartialAssign ℕ D).update 1 x)
+  obtain ⟨⟨u, i⟩, hu⟩ :=
+    nonempty_exists_atom e (P w ∩ H w) 1 ((⊥ : PartialAssignment ℕ D).update 1 x)
   refine ⟨i, fun p hp ↦ isTrue_or_isFalse_disj_exists_atom _ _ (State.mem_top.1 hp 1), ⟨w, ⊥⟩,
     State.mem_top.2 fun _ ↦ rfl, rfl, mem_extension_true_disj.2 (.inl ⟨_, ?_, u, hu⟩)⟩
   rw [extension_true_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨x, hx, rfl⟩

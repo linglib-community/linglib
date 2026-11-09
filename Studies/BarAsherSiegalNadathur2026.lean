@@ -21,7 +21,7 @@ sufficient sets [drop the door's button](##electronic_differs). *Nur is opening 
   completion of the parents' settled values agrees in every context, the supervaluation. The paper
   calls its tables strong Kleene; the two readings differ on an equation such as $p \vee \neg p$.
 * Necessity quantifies over the consistent situations over the same variables, which are decided
-  through their values on those variables (`PartialAssign.forall_domain_eq_iff`).
+  through their values on those variables (`PartialAssignment.forall_domain_eq_iff`).
 * Times form any preorder; the door's histories put the reference time at 1 and the interval just
   before it at 0.
 * Each sufficient set for non-culmination is the only consistent situation over its variables
@@ -80,8 +80,8 @@ open CausalModel
 
 /-! ### Situations and causal consistency
 
-A situation (28b) is a partial assignment of truth values, `PartialAssign V Bool`, and its domain
-(28c) is `PartialAssign.domain`. -/
+A situation (28b) is a partial assignment of truth values, `PartialAssignment V Bool`, and its
+domain (28c) is `PartialAssignment.domain`. -/
 
 section Model
 
@@ -89,19 +89,19 @@ variable {U V : Type*} (M : CausalModel U V fun _ ↦ Bool)
 
 /-- Causal consistency (29): every settled dependent variable has the value that what `s` settles
 about its parents forces. -/
-def Consistent (s : PartialAssign V Bool) : Prop :=
+def Consistent (s : PartialAssignment V Bool) : Prop :=
   ∀ v, (∃ w, M.graph.Adj w v) → ∀ b : Bool, s v = ↑b → M.ForcedBy (s · = ↑·) v b
 
 /-- Causal necessity (30a): the fact `s` settles at `x` is necessary for the one it settles at
 `y` when `x` is a causal ancestor of `y` and every consistent situation over the same variables
 that changes `x` changes `y`. -/
-def Necessary (s : PartialAssign V Bool) (x y : V) : Prop :=
+def Necessary (s : PartialAssignment V Bool) (x y : V) : Prop :=
   Relation.TransGen M.graph.Adj x y ∧
     ∀ s', s'.domain = s.domain → Consistent M s' → s' x ≠ s x → s' y ≠ s y
 
 /-- Causal sufficiency (30b): `s` is consistent, settles `y` at `b`, and each of its other facts
 is necessary for that one. The kernel of `s` is then a sufficient set for ⟨y, b⟩. -/
-def IsSufficient (s : PartialAssign V Bool) (y : V) (b : Bool) : Prop :=
+def IsSufficient (s : PartialAssignment V Bool) (y : V) (b : Bool) : Prop :=
   Consistent M s ∧ s y = ↑b ∧ ∀ x ∈ s.domain, x ≠ y → Necessary M s x y
 
 /-! ### The progressive -/
@@ -116,18 +116,18 @@ def Felicitous (c : V) : Prop := ∃ S, IsSufficient M S c true
 
 /-- INIT (36a): at time `t` the history `σ` settles some fact of a culmination procedure that it
 did not settle throughout an interval just before `t`. -/
-def Init (c : V) (σ : T → PartialAssign V Bool) (t : T) : Prop :=
+def Init (c : V) (σ : T → PartialAssignment V Bool) (t : T) : Prop :=
   ∃ S, IsSufficient M S c true ∧ ∃ v, ∃ b : Bool, S v = ↑b ∧ σ t v = ↑b ∧
     ∃ t' < t, ∀ t'' ∈ Set.Ico t' t, σ t'' v ≠ ↑b
 
 /-- CUL (36b-i): some culmination procedure is completely realized. -/
-def Cul (c : V) (s : PartialAssign V Bool) : Prop := ∃ S, IsSufficient M S c true ∧ S ≤ s
+def Cul (c : V) (s : PartialAssignment V Bool) : Prop := ∃ S, IsSufficient M S c true ∧ S ≤ s
 
 /-- TERM (36b-ii): some sufficient set for non-culmination is completely realized. -/
-def Term (c : V) (s : PartialAssign V Bool) : Prop := ∃ S, IsSufficient M S c false ∧ S ≤ s
+def Term (c : V) (s : PartialAssignment V Bool) : Prop := ∃ S, IsSufficient M S c false ∧ S ≤ s
 
 /-- The progressive (35): initiated, and neither culminated nor terminated. -/
-def Prog (c : V) (σ : T → PartialAssign V Bool) (t : T) : Prop :=
+def Prog (c : V) (σ : T → PartialAssignment V Bool) (t : T) : Prop :=
   Init M c σ t ∧ ¬ (Cul M c (σ t) ∨ Term M c (σ t))
 
 variable [DecidableEq V]
@@ -139,7 +139,7 @@ def GloballyNecessary (c v : V) (b : Bool) : Prop :=
 
 /-- Definedness (45): the progressive is defined when every globally necessary condition is
 settled at reference time. -/
-def Defined (c : V) (s : PartialAssign V Bool) : Prop :=
+def Defined (c : V) (s : PartialAssignment V Bool) : Prop :=
   ∀ v b, GloballyNecessary M c v b → v ∈ s.domain
 
 end Progressive
@@ -148,7 +148,7 @@ variable {M}
 
 /-- A sufficient set is a consistent situation over causal ancestors of its effect that is the only
 consistent situation over its variables giving the effect its value. -/
-theorem isSufficient_iff {s : PartialAssign V Bool} {y : V} {b : Bool} :
+theorem isSufficient_iff {s : PartialAssignment V Bool} {y : V} {b : Bool} :
     IsSufficient M s y b ↔ Consistent M s ∧ s y = ↑b ∧
       (∀ x ∈ s.domain, x ≠ y → Relation.TransGen M.graph.Adj x y) ∧
         ∀ s', s'.domain = s.domain → Consistent M s' → s' y = s y → s' = s := by
@@ -162,16 +162,16 @@ theorem isSufficient_iff {s : PartialAssign V Bool} {y : V} {b : Bool} :
   · have hv' : v ∉ s'.domain := hd ▸ hv
     rw [not_not.1 hv, not_not.1 hv']
 
-theorem IsSufficient.eq_of_le {S s : PartialAssign V Bool} {y : V} {b : Bool}
+theorem IsSufficient.eq_of_le {S s : PartialAssignment V Bool} {y : V} {b : Bool}
     (h : IsSufficient M S y b) (hle : S ≤ s) : s y = ↑b :=
   Flat.coe_le_iff.1 (h.2.1 ▸ hle y)
 
-theorem not_cul_or_term {c : V} {s : PartialAssign V Bool} (h : s c = ⊥) :
+theorem not_cul_or_term {c : V} {s : PartialAssignment V Bool} (h : s c = ⊥) :
     ¬ (Cul M c s ∨ Term M c s) := by
   rintro (⟨S, hS, hle⟩ | ⟨S, hS, hle⟩) <;> exact Flat.coe_ne_bot ((hS.eq_of_le hle).symm.trans h)
 
 -- (36a): an unchanging history initiates nothing
-theorem not_init_const {T : Type*} [Preorder T] {c : V} {s : PartialAssign V Bool} {t : T} :
+theorem not_init_const {T : Type*} [Preorder T] {c : V} {s : PartialAssignment V Bool} {t : T} :
     ¬ Init M c (fun _ ↦ s) t := by
   rintro ⟨-, -, v, b, -, hs, t', ht', h⟩
   exact h t' ⟨le_rfl, ht'⟩ hs
@@ -180,7 +180,7 @@ variable [DecidableEq V]
 
 /-- With its effect erased, a sufficient set forces the effect in the Kleene development, so it is
 a sufficient set in the sense of Baglini and Bar-Asher Siegal. -/
-theorem IsSufficient.isSufficientSet [M.IsAcyclic] {S : PartialAssign V Bool} {y : V} {b : Bool}
+theorem IsSufficient.isSufficientSet [M.IsAcyclic] {S : PartialAssignment V Bool} {y : V} {b : Bool}
     (h : IsSufficient M S y b) (hy : ∃ w, M.graph.Adj w y) :
     BarAsherSiegal2026.IsSufficientSet M (Function.update S y ⊥) y b := by
   refine ⟨Function.update_self .., forced_iff.2 (.inr ⟨Function.update_self .., ?_⟩)⟩
@@ -193,13 +193,13 @@ variable [Fintype V]
 
 variable [Fintype U] [DecidableRel M.graph.Adj]
 
-instance (s : PartialAssign V Bool) : Decidable (Consistent M s) := by
+instance (s : PartialAssignment V Bool) : Decidable (Consistent M s) := by
   unfold Consistent; infer_instance
 
-instance (s : PartialAssign V Bool) (x y : V) : Decidable (Necessary M s x y) := by
+instance (s : PartialAssignment V Bool) (x y : V) : Decidable (Necessary M s x y) := by
   unfold Necessary; infer_instance
 
-instance (s : PartialAssign V Bool) (y : V) (b : Bool) : Decidable (IsSufficient M s y b) :=
+instance (s : PartialAssignment V Bool) (y : V) (b : Bool) : Decidable (IsSufficient M s y b) :=
   decidable_of_iff _ isSufficient_iff.symm
 
 instance (c v : V) (b : Bool) : Decidable (GloballyNecessary M c v b) := by
@@ -249,7 +249,7 @@ instance : DecidableRel printed.graph.Adj := fun w v ↦ inferInstanceAs (Decida
 open V
 
 /-- The situation of (25b): the first switch down, the second up, the light off. -/
-def s25b : PartialAssign V Bool := [s₁ ← false, s₂ ← true, light ← false]
+def s25b : PartialAssignment V Bool := [s₁ ← false, s₂ ← true, light ← false]
 
 -- (25b), (29)
 theorem consistent_25b : Consistent model s25b ∧
@@ -292,22 +292,22 @@ open BarAsherSiegal2026 (V model manual automatic IsMinimalSufficientSet)
 open BarAsherSiegal2026.V
 
 /-- The mechanical procedure (38a): handle turned, door unlocked, door open. -/
-def sMech : PartialAssign V Bool := [handle ← true, lock ← false, doorOpens ← true]
+def sMech : PartialAssignment V Bool := [handle ← true, lock ← false, doorOpens ← true]
 
 /-- The electronic procedure (38b): door unlocked, power on, button pressed, circuit closed, door
 open. -/
-def sElec : PartialAssign V Bool :=
+def sElec : PartialAssignment V Bool :=
   [lock ← false, electricity ← true, button ← true, circuit ← true, doorOpens ← true]
 
 /-- Non-culmination by the lock (39a). -/
-def sLock : PartialAssign V Bool := [lock ← true, doorOpens ← false]
+def sLock : PartialAssignment V Bool := [lock ← true, doorOpens ← false]
 
 /-- Non-culmination with the handle unturned and no power (39b), with the effect fact. -/
-def sNotElec : PartialAssign V Bool := [handle ← false, electricity ← false, doorOpens ← false]
+def sNotElec : PartialAssignment V Bool := [handle ← false, electricity ← false, doorOpens ← false]
 
 /-- Non-culmination with the handle unturned and the button unpressed (39c), with the effect
 fact. -/
-def sNotCirc : PartialAssign V Bool :=
+def sNotCirc : PartialAssignment V Bool :=
   [handle ← false, button ← false, circuit ← false, doorOpens ← false]
 
 theorem sMech_sufficient : IsSufficient model sMech doorOpens true := by decide +kernel
@@ -345,7 +345,7 @@ theorem button_necessary :
   decide +kernel
 
 -- the circuit's equation reads the button alone
-theorem button_mem_domain_of_circuit {s : PartialAssign V Bool} (hs : Consistent model s)
+theorem button_mem_domain_of_circuit {s : PartialAssignment V Bool} (hs : Consistent model s)
     (hc : circuit ∈ s.domain) : button ∈ s.domain := by
   have hadj : ∀ w, model.graph.Adj w circuit → w = button := by decide
   obtain ⟨c, hc⟩ := Flat.ne_bot_iff_exists.1 hc
@@ -369,13 +369,13 @@ theorem electronic_differs :
 
 /-- Before reference time the door is unlocked and the power off; at it, Nur has switched the
 power on, leaving handle and button undetermined. -/
-def switchingOn : ℕ → PartialAssign V Bool
+def switchingOn : ℕ → PartialAssignment V Bool
   | 0 => [lock ← false, electricity ← false]
   | _ => [lock ← false, electricity ← true]
 
 /-- The realistic context of (40): Nur switches the power on, having turned neither the handle
 nor the button, so the door is closed. -/
-def realistic : ℕ → PartialAssign V Bool
+def realistic : ℕ → PartialAssignment V Bool
   | 0 => [handle ← false, lock ← false, electricity ← false, button ← false, circuit ← false,
       doorOpens ← false]
   | _ => [handle ← false, lock ← false, electricity ← true, button ← false, circuit ← false,
@@ -402,12 +402,12 @@ theorem globallyNecessary_iff {v : V} {b : Bool} :
 
 /-- The progressive of *open the door* is defined exactly when the lock is settled, the lock
 being the door's only globally necessary condition. -/
-theorem defined_iff {s : PartialAssign V Bool} : Defined model doorOpens s ↔ lock ∈ s.domain :=
+theorem defined_iff {s : PartialAssignment V Bool} : Defined model doorOpens s ↔ lock ∈ s.domain :=
   ⟨fun hd ↦ hd lock false (globallyNecessary_iff.2 ⟨rfl, rfl⟩),
     fun h _ _ hv ↦ (globallyNecessary_iff.1 hv).1 ▸ h⟩
 
 /-- With the lock's state unknown, Nur has turned the handle. -/
-def handleTurned : ℕ → PartialAssign V Bool
+def handleTurned : ℕ → PartialAssignment V Bool
   | 0 => [handle ← false]
   | _ => [handle ← true]
 

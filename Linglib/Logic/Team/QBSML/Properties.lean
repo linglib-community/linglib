@@ -260,8 +260,8 @@ private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var
   rw [Index.assign_update]
   by_cases hy : y = x
   · subst hy
-    rw [PartialAssign.update_self, Function.update_self]
-  · rw [PartialAssign.update_of_ne hy, Function.update_of_ne hy]
+    rw [PartialAssignment.update_self, Function.update_self]
+  · rw [PartialAssignment.update_of_ne hy, Function.update_of_ne hy]
     exact hv y
 
 section Realize

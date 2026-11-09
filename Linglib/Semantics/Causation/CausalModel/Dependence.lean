@@ -230,14 +230,14 @@ functions, so necessity installs this one locally. -/
 /-- Over finitely many variables of a finite type, a claim about every partial assignment with a
 given domain is decided by the values on that domain. -/
 instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
-    [DecidablePred (· ∈ X)] (P : PartialAssign Var D → Prop) [DecidablePred P] :
-    Decidable (∀ g, PartialAssign.domain g = X → P g) :=
-  decidable_of_iff _ PartialAssign.forall_domain_eq_iff.symm
+    [DecidablePred (· ∈ X)] (P : PartialAssignment Var D → Prop) [DecidablePred P] :
+    Decidable (∀ g, PartialAssignment.domain g = X → P g) :=
+  decidable_of_iff _ PartialAssignment.forall_domain_eq_iff.symm
 
 instance {Var D : Type*} [Fintype Var] [DecidableEq Var] [Fintype D] {X : Set Var}
-    [DecidablePred (· ∈ X)] (P : PartialAssign Var D → Prop) [DecidablePred P] :
-    Decidable (∃ g, PartialAssign.domain g = X ∧ P g) :=
-  decidable_of_iff _ PartialAssign.exists_domain_eq_iff.symm
+    [DecidablePred (· ∈ X)] (P : PartialAssignment Var D → Prop) [DecidablePred P] :
+    Decidable (∃ g, PartialAssignment.domain g = X ∧ P g) :=
+  decidable_of_iff _ PartialAssignment.exists_domain_eq_iff.symm
 
 instance (r : (∀ v, Flat (α v)) → (∀ v, Flat (α v)) → Prop) [∀ s s', Decidable (r s s')]
     (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :

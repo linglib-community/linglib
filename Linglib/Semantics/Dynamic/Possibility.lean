@@ -10,7 +10,7 @@ public import Mathlib.Logic.Function.Basic
 
 This file defines a *possibility* — a world paired with an assignment
 of discourse referents — and the structure of its partial points, whose
-assignments are `PartialAssign`s, `Flat`-valued: the descent order,
+assignments are `PartialAssignment`s, `Flat`-valued: the descent order,
 compatibility and union, restriction, and the classification of each
 stratum as world–assignment pairs.
 
@@ -70,11 +70,11 @@ theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, p.assignment x ≤ q.a
 
 /-- The domain of a partial point is the set of referents it defines. -/
 def domain (p : Possibility W V (Flat M)) : Set V :=
-  PartialAssign.domain p.assignment
+  PartialAssignment.domain p.assignment
 
 @[simp] theorem mem_domain {v : V} : v ∈ p.domain ↔ p.assignment v ≠ ⊥ := Iff.rfl
 
-@[simp] theorem domain_assignment : PartialAssign.domain p.assignment = p.domain := rfl
+@[simp] theorem domain_assignment : PartialAssignment.domain p.assignment = p.domain := rfl
 
 theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
   (ne_bot_of_le_ne_bot · (h.2 v))
@@ -276,14 +276,14 @@ theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
 
 open Classical in
 /-- Partial points with domain `X` are exactly world–`X`-assignment pairs, by
-`PartialAssign.domainEquiv` on the assignment. -/
+`PartialAssignment.domainEquiv` on the assignment. -/
 noncomputable def domainEquiv (X : Set V) :
     {p : Possibility W V (Flat M) // p.domain = X} ≃ W × (X → M) where
-  toFun p := (p.1.world, PartialAssign.domainEquiv X ⟨p.1.assignment, p.2⟩)
-  invFun e := ⟨⟨e.1, PartialAssign.ofSubtype e.2⟩, PartialAssign.domain_ofSubtype e.2⟩
+  toFun p := (p.1.world, PartialAssignment.domainEquiv X ⟨p.1.assignment, p.2⟩)
+  invFun e := ⟨⟨e.1, PartialAssignment.ofSubtype e.2⟩, PartialAssignment.domain_ofSubtype e.2⟩
   left_inv p := Subtype.ext <| Possibility.ext rfl <|
-    congrArg Subtype.val ((PartialAssign.domainEquiv X).left_inv ⟨p.1.assignment, p.2⟩)
-  right_inv e := Prod.ext rfl ((PartialAssign.domainEquiv X).right_inv e.2)
+    congrArg Subtype.val ((PartialAssignment.domainEquiv X).left_inv ⟨p.1.assignment, p.2⟩)
+  right_inv e := Prod.ext rfl ((PartialAssignment.domainEquiv X).right_inv e.2)
 
 theorem restrict_domainEquiv_symm (h : Y ⊆ X) (e : W × (X → M)) :
     ((domainEquiv X).symm e).1.restrict Y =
