@@ -1,37 +1,53 @@
 module
 
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Causation.CausalModel.Defs
 
 /-!
-# Observation and intervention in causal models
+# Counterfactuals in a causal model
 
-A partial assignment `s : ∀ v, Flat (α v)` can be read two ways in a causal model. As an
-intervention it holds the variables it settles at their values (`CausalModel.solve`). As an
-observation it picks out the contexts whose actual world agrees with it,
-`CausalModel.contexts`, the conditioning step of Pearl's evaluation of a counterfactual.
-
-The solution at a variable depends only on the intervention at that variable and its ancestors
-(`CausalModel.solve_congr`), so an intervention leaves every variable it cannot reach as it was
-(`CausalModel.solve_update_of_not_reflTransGen`).
+This file develops the logic of interventions in an acyclic causal model. The solution of a
+submodel is the world an intervention brings about, and read as a counterfactual, the value a
+variable would have had, had the intervened variables been held at their values. Galles and Pearl
+show that these counterfactuals satisfy composition, effectiveness and reversibility, and that in
+a recursive model the first two are complete; all three hold here. A submodel is itself an acyclic
+model, so each law is stated once, for an arbitrary model. An observation is a situation, a
+partial assignment of values, and picks out the contexts whose actual world agrees with it;
+conditioning a counterfactual on evidence restricts it to them.
 
 ## Main definitions
 
-* `CausalModel.world`: the actual world of a context, as a total partial assignment
 * `CausalModel.contexts`: the contexts in which an observation holds
 
 ## Main results
 
-* `CausalModel.solve_congr`: interventions agreeing on a variable's ancestors agree there
-* `CausalModel.solve_update_of_not_reflTransGen`: intervening on `c` leaves what `c` does not
-  reach unchanged
-* `CausalModel.solve_update_of_solve_eq`: intervening to hold a variable at its value changes
-  nothing
-* `CausalModel.solve_eq_solve_bot_of_mem_contexts`: imposing an observation that holds changes
-  nothing
+* `CausalModel.solve_intervene_of_mem`: effectiveness
+* `CausalModel.solve_intervene_eq_iff`: consistency, which in a submodel is composition
+* `CausalModel.solve_intervene_of_not_reflTransGen`: an intervention leaves every variable that
+  no intervened variable is an ancestor of as it was
+* `CausalModel.solve_eq_of_solve_intervene_of_solve_intervene`: reversibility
+
+## Implementation notes
+
+Galles and Pearl state composition as the claim that holding a variable at the value it takes
+under an intervention changes nothing. In the submodel of that intervention this is consistency,
+and it needs no statement of its own.
+
+An observation is a situation in the sense of Schulz and Nadathur, a function to values or the
+undetermined value, `∀ v, Flat (α v)`, and one situation extends another (a supersituation) in the
+pointwise flat order, `Flat.pi_le_iff`. The situation of an intervention holding `X` at `x` is the
+everywhere undetermined situation updated on `X`, `Function.updateFinset ⊥ X fun v ↦ ↑(x v)`, as
+Schulz builds the situation of a set of literals; `[c ← x]` is its case for one variable. The
+contexts of an observation are the subteam of Barbero and Sandu: conditioning on it filters
+contexts, where an intervention changes the model.
 
 ## References
 
-* [pearl-2000]
+* [galles-pearl-1998]
+* [halpern-2000]
+* [schulz-2011]
+* [nadathur-2023-implicatives]
+* [barbero-sandu-2021]
 -/
 
 @[expose] public section
@@ -40,82 +56,86 @@ namespace CausalModel
 
 open Relation
 
-variable {U V : Type*} {α : V → Type*} {M : CausalModel U V α} [∀ v, Nonempty (α v)]
-  [hM : M.IsAcyclic]
+variable {U V : Type*} {α : V → Type*} {M : CausalModel U V α}
 
-section Locality
+section Intervention
 
-/-- Interventions that agree on a variable and all its ancestors give it the same value. -/
-theorem solve_congr {I J : ∀ v, Flat (α v)} {v : V}
-    (h : ∀ w, ReflTransGen M.graph.Adj w v → I w = J w) (u : U) :
-    M.solve I u v = M.solve J u v := by
-  induction v using hM.induction with
-  | _ v ih =>
-    rw [solve_apply, solve_apply, h v .refl]
-    congr 1
-    exact M.dependsOn_eqn v u fun w (hw : M.graph.Adj w v) ↦
-      ih w hw fun w' hw' ↦ h w' (hw'.tail hw)
+variable [∀ v, Nonempty (α v)] [hM : M.IsAcyclic] [DecidableEq V] {X : Finset V}
+  {x : ∀ v : X, α v} {u : U} {v : V}
 
-variable [DecidableEq V]
+/-- Effectiveness: an intervention holds in the world it brings about. -/
+theorem solve_intervene_of_mem (h : v ∈ X) : (M.intervene X x).solve u v = x ⟨v, h⟩ := by
+  rw [solve_apply, intervene_eqn_of_mem h]
 
-@[simp] theorem solve_update_self (I : ∀ v, Flat (α v)) (c : V) (x : α c) (u : U) :
-    M.solve (Function.update I c ↑x) u c = x :=
-  solve_of_eq_coe (Function.update_self ..) u
+theorem solve_intervene_of_notMem (h : v ∉ X) :
+    (M.intervene X x).solve u v = M.eqn v u ((M.intervene X x).solve u) := by
+  rw [solve_apply, intervene_eqn_of_notMem h]
 
-/-- Intervening on `c` leaves every variable that `c` is not an ancestor of unchanged. -/
-theorem solve_update_of_not_reflTransGen {c v : V} (h : ¬ ReflTransGen M.graph.Adj c v)
-    (I : ∀ v, Flat (α v)) (x : Flat (α c)) (u : U) :
-    M.solve (Function.update I c x) u v = M.solve I u v :=
-  solve_congr (fun w hw ↦ Function.update_of_ne (fun hwc : w = c ↦ h (hwc ▸ hw)) x I) u
+@[simp] theorem solve_intervene_singleton_self (c : V) (a : α c) : M[c ← a].solve u c = a :=
+  solve_intervene_of_mem (Finset.mem_singleton_self c)
 
-/-- Intervening on `c` to hold it at the value it takes anyway changes nothing. -/
-theorem solve_update_of_solve_eq {I : ∀ v, Flat (α v)} {c : V} {x : α c} {u : U}
-    (h : M.solve I u c = x) : M.solve (Function.update I c ↑x) u = M.solve I u := by
-  refine (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm
-  rw [step_apply]
-  rcases eq_or_ne v c with rfl | hv
-  · rw [Function.update_self, Flat.unbotD_coe, h]
-  · rw [Function.update_of_ne hv, ← solve_apply]
+/-- Consistency: an intervention changes nothing exactly when the actual world already gives its
+variables their values. In the submodel of another intervention this is composition. -/
+theorem solve_intervene_eq_iff :
+    (M.intervene X x).solve u = M.solve u ↔ X.restrict (M.solve u) = x := by
+  refine ⟨fun h ↦ funext fun ⟨v, hv⟩ ↦ h ▸ solve_intervene_of_mem hv,
+    fun h ↦ (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm⟩
+  by_cases hv : v ∈ X
+  · rw [step_apply, intervene_eqn_of_mem hv, ← h]; rfl
+  · rw [step_apply, intervene_eqn_of_notMem hv, ← solve_apply]
 
-end Locality
+theorem solve_intervene_singleton_eq_iff {c : V} {a : α c} :
+    M[c ← a].solve u = M.solve u ↔ M.solve u c = a := by
+  rw [solve_intervene_eq_iff]
+  refine ⟨fun h ↦ congrFun h ⟨c, Finset.mem_singleton_self c⟩, fun h ↦ funext fun ⟨v, hv⟩ ↦ ?_⟩
+  obtain rfl := Finset.mem_singleton.1 hv
+  exact h
+
+/-- Intervening only on variables that are not ancestors of `v` leaves `v` as it was, so every
+ordering of the variables along the graph is a causal ordering in the sense of Galles and
+Pearl. -/
+theorem solve_intervene_of_not_reflTransGen (h : ∀ c ∈ X, ¬ ReflTransGen M.graph.Adj c v) :
+    (M.intervene X x).solve u v = M.solve u v :=
+  WellFounded.fixedPoint_congr (hr := hM) (dependsOn_step (M := M.intervene X x) u)
+    (dependsOn_step u) fun w hw _ ↦ intervene_eqn_of_notMem (fun hwX ↦ h w hwX hw) _ _
+
+theorem solve_intervene_singleton_of_not_reflTransGen {c : V}
+    (h : ¬ ReflTransGen M.graph.Adj c v) (a : α c) : M[c ← a].solve u v = M.solve u v :=
+  solve_intervene_of_not_reflTransGen fun _ hc ↦ Finset.mem_singleton.1 hc ▸ h
+
+/-- Reversibility: if holding `w` at `b` gives `y` the value `a` and holding `y` at `a` gives `w`
+the value `b`, then `y` has the value `a` without either intervention. One of the two variables is
+not an ancestor of the other, so one intervention leaves the other variable as it was. -/
+theorem solve_eq_of_solve_intervene_of_solve_intervene {y w : V} (hyw : y ≠ w) {a : α y}
+    {b : α w} (hy : M[w ← b].solve u y = a) (hw : M[y ← a].solve u w = b) :
+    M.solve u y = a := by
+  by_cases hwy : ReflTransGen M.graph.Adj w y
+  · have hyw' : ¬ ReflTransGen M.graph.Adj y w := fun h ↦
+      hyw (h.antisymm (fun _ h ↦ _root_.asymm h h) hwy)
+    rw [solve_intervene_singleton_of_not_reflTransGen hyw'] at hw
+    rwa [solve_intervene_singleton_eq_iff.2 hw] at hy
+  · rwa [solve_intervene_singleton_of_not_reflTransGen hwy] at hy
+
+end Intervention
 
 section Observation
 
-variable (M)
+variable [∀ v, Nonempty (α v)] [M.IsAcyclic] {s : ∀ v, Flat (α v)} {u : U}
 
-/-- `M.world u` is the actual world of the context `u`, the solution under no intervention with
-every variable settled. -/
-noncomputable def world (u : U) : ∀ v, Flat (α v) := fun v ↦ ↑(M.solve ⊥ u v)
-
+variable (M) in
 /-- `M.contexts s` is the set of contexts in which the observation `s` holds, those whose actual
-world settles every variable `s` settles, at the same value. -/
-def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ M.world u}
-
-variable {M}
+world gives every variable `s` settles the value `s` settles it to. A counterfactual conditioned
+on `s` is evaluated over these contexts. -/
+def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ fun v ↦ ↑(M.solve u v)}
 
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
 
 theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
 
-/-- In a context where the observation holds, imposing it as an intervention changes nothing. -/
-theorem solve_eq_solve_bot_of_mem_contexts {s : ∀ v, Flat (α v)} {u : U} (hu : u ∈ M.contexts s) :
-    M.solve s u = M.solve ⊥ u := by
-  refine (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm
-  rw [step_apply]
-  cases hs : s v with
-  | bot => exact (solve_of_eq_bot rfl u).symm
-  | coe a =>
-    have h : (↑a : Flat (α v)) ≤ ↑(M.solve ⊥ u v) := hs ▸ hu v
-    rw [Flat.unbotD_coe, Flat.coe_le_coe.1 h]
-
-theorem mem_contexts_update [DecidableEq V] {s : ∀ v, Flat (α v)} {u : U}
-    (hu : u ∈ M.contexts s) {c : V} {x : α c} (hx : M.solve ⊥ u c = x) :
-    u ∈ M.contexts (Function.update s c ↑x) := by
-  intro v
-  rcases eq_or_ne v c with rfl | hv
-  · rw [Function.update_self, ← hx]; exact le_rfl
-  · rw [Function.update_of_ne hv]; exact hu v
+theorem mem_contexts_update [DecidableEq V] (hu : u ∈ M.contexts s) {c : V} {x : α c}
+    (hx : M.solve u c = x) : u ∈ M.contexts (Function.update s c ↑x) :=
+  update_le_iff.2 ⟨by rw [hx], fun v _ ↦ hu v⟩
 
 end Observation
 

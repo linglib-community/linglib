@@ -50,7 +50,7 @@ open Glass2025 CausalModel Relation
 setting it false give `e` different values. -/
 def Upstream {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
     (u : U) (c e : V) : Prop :=
-  M.solve [c ← true] u e ≠ M.solve [c ← false] u e
+  M[c ← true].solve u e ≠ M[c ← false].solve u e
 
 noncomputable instance {U V : Type*} [Fintype V] [DecidableEq V]
     (M : CausalModel U V fun _ ↦ Bool)
@@ -60,7 +60,8 @@ noncomputable instance {U V : Type*} [Fintype V] [DecidableEq V]
 theorem not_upstream_of_not_reflTransGen {U V : Type*} [DecidableEq V]
     {M : CausalModel U V fun _ ↦ Bool} [M.IsAcyclic] {c e : V}
     (h : ¬ ReflTransGen M.graph.Adj c e) (u : U) : ¬ Upstream M u c e := fun hu ↦
-  hu (by rw [solve_update_of_not_reflTransGen h, solve_update_of_not_reflTransGen h])
+  hu (by rw [solve_intervene_singleton_of_not_reflTransGen h,
+    solve_intervene_singleton_of_not_reflTransGen h])
 
 /-! ### The belief-formation model -/
 

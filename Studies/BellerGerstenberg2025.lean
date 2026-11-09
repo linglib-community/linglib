@@ -284,19 +284,19 @@ variable {U V : Type*} [Fintype V] [DecidableEq V]
 /-- The aspect profile of `cause → effect` in the context `u` of a deterministic model. `W` is
 whether-causation (1), that had the cause been absent the effect would not have been present. `H` is
 a direct law, and `S` is sufficient-causation (3), whether-causation under the intervention
-`removed` that takes the alternative causes away. -/
+holding the alternative causes `R` at the values `r` that take them away. -/
 noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
-    [DecidableRel M.graph.Adj] (removed : V → Flat Bool) (u : U) (cause effect : V) :
+    [DecidableRel M.graph.Adj] (R : Finset V) (r : ∀ v : R, Bool) (u : U) (cause effect : V) :
     CausalWorld where
-  whether := decide (M.solve [cause ← false] u effect ≠ true)
+  whether := decide (M[cause ← false].solve u effect ≠ true)
   how := decide (M.graph.Adj cause effect)
-  sufficient := decide (M.solve (Function.update removed cause ↑false) u effect ≠ true)
+  sufficient := decide ((M.intervene R r)[cause ← false].solve u effect ≠ true)
 
 /-- Michottean launching, in the context where the cause occurs, computes the profile of the
 first scenario, since with no alternative causes to remove sufficient-causation is
 whether-causation. -/
 theorem launch_ofModel :
-    CausalWorld.ofModel launch ⊥ ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
+    CausalWorld.ofModel launch ∅ isEmptyElim ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
   decide
 
 end Structural

@@ -37,12 +37,16 @@ roots, as in the paper's dynamics. The sufficiency verdicts are decided over the
 necessity verdicts are proved through the equations, which make every path to the effect run through
 the nerve.
 
+The paper argues its necessity verdicts from the background variables alone, so necessity is read
+over the exogenous settlements, a subset of the consistent supersituations
+(`isConsistentSupersituation_of_isExogenousSettlement`).
+
+## Errata
+
 Definition 10b ranges over the consistent supersituations of Definition 9b
-(`IsConsistentSupersituation`), and over them the verdicts on (34c) and (34d) fail: settling the
-message, which the background leaves open, reaches communication without the nerve
-(`Consistent.not_nrv_necessary_for_com`). The paper argues those verdicts from the background
-variables alone, so necessity is read over the exogenous settlements, a subset of the consistent
-supersituations (`isConsistentSupersituation_of_isExogenousSettlement`).
+(`IsConsistentSupersituation`), and over them the paper's own verdicts on (34c) and (34d) fail:
+settling the message, which the background leaves open, reaches communication without the nerve
+(`Consistent.not_nrv_necessary_for_com`).
 
 ## TODO
 
@@ -105,7 +109,7 @@ fact is a variable with a value, and one fact is sufficient (Definition 10a) or 
 (Definition 10b, over the exogenous settlements) for another relative to `s`, which does not settle
 the first (the preamble of Definition 10). -/
 def causalInterpretation (s : V → Flat Bool) : Interpretation (V × Bool) (M.contexts s) where
-  Holds a u := M.solve ⊥ u a.1 = a.2
+  Holds a u := M.solve u a.1 = a.2
   neg a := (a.1, !a.2)
   holds_neg a u := by rcases a with ⟨v, x⟩; cases x <;> simp
   Sufficient a b _ := ¬ M.CausallyEntails s a.1 a.2 ∧ M.CausallySufficient s a.1 a.2 b.1 b.2
@@ -218,14 +222,14 @@ theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) :
 
 /-- (34a) entails that Dreyfus sent the message. -/
 theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : dare .MSG u = .true) :
-    dreyfusModel.solve ⊥ u .MSG = true := by
+    dreyfusModel.solve u .MSG = true := by
   have h' : (Polarity.positive • dare .MSG) u = .true := by simpa using h
   exact holds_signed_of_implied_eq (m := .positive) (q := .positive) rfl h'
 
 /-- (34b) *Dreyfus did not dare to send a message to the Germans* entails that he did not send
 it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
-    (h : ((dare .MSG)ᶜ) u = .true) : dreyfusModel.solve ⊥ u .MSG ≠ true := by
+    (h : ((dare .MSG)ᶜ) u = .true) : dreyfusModel.solve u .MSG ≠ true := by
   have h' : (Polarity.negative • dare .MSG) u = .true := by simpa using h
   exact ((causalInterpretation dreyfusModel dreyfusBg).holds_neg _ u).1
     (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h')

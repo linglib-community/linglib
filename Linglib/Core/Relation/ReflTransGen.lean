@@ -31,8 +31,8 @@ finite simple graphs (`SimpleGraph.Reachable`), not for an arbitrary relation.
 * `decidable_of_finset_step` and its wrappers for a list-valued successor function, a decidable
   relation with a bounding list, and a `Fintype` carrier; the `TransGen` siblings; and the two
   `DecidableRel` instances over a `Fintype`.
-* `total_of_left_unique`, `of_forall_exists`, `exists_boundary`: order-theoretic facts about
-  the closure.
+* `total_of_left_unique`, `of_forall_exists`, `antisymm`, `exists_boundary`: order-theoretic
+  facts about the closure.
 * `Finite.wellFounded_of_irrefl_transGen`, `Relation.TransGen.card_filter_lt_card_filter`: on a
   finite carrier, a relation with irreflexive transitive closure is well founded, and counting
   predecessors ranks it.
@@ -280,6 +280,15 @@ theorem of_forall_exists [Finite α] {r : α → α → Prop}
   · obtain ⟨u, hu⟩ := h v hv
     exact (ih u (Relation.TransGen.single hu)).tail hu
 
+/-- The closure of an acyclic relation is antisymmetric: two converse paths would close a cycle. -/
+theorem antisymm {r : α → α → Prop} (hirr : ∀ v, ¬ Relation.TransGen r v v) {a b : α}
+    (hab : Relation.ReflTransGen r a b) (hba : Relation.ReflTransGen r b a) : a = b := by
+  rcases Relation.reflTransGen_iff_eq_or_transGen.1 hab with rfl | hab'
+  · rfl
+  rcases Relation.reflTransGen_iff_eq_or_transGen.1 hba with rfl | hba'
+  · rfl
+  exact absurd (hab'.trans hba') (hirr a)
+
 /-! ### Crossing a boundary -/
 
 /-- A reflexive-transitive path from inside `S` to outside it crosses the
@@ -382,12 +391,7 @@ antisymmetry holds because two converse chains would close a cycle. -/
   le := Relation.ReflTransGen covers
   le_refl _ := Relation.ReflTransGen.refl
   le_trans _ _ _ := Relation.ReflTransGen.trans
-  le_antisymm a b hab hba := by
-    rcases (Relation.reflTransGen_iff_eq_or_transGen.1 hab) with rfl | hab'
-    · rfl
-    rcases (Relation.reflTransGen_iff_eq_or_transGen.1 hba) with rfl | hba'
-    · rfl
-    exact absurd (hab'.trans hba') (h a)
+  le_antisymm _ _ := Relation.ReflTransGen.antisymm h
 
 /-- The partial order whose `≤` is the reflexive transitive closure of `covers`, given a `rank`
 that every `covers` edge strictly decreases. -/

@@ -16,7 +16,7 @@ causally on a distinct event when whether the one occurs depends counterfactuall
 other does, and causation is the ancestral of causal dependence among actual events. On a
 deterministic causal model, every similarity that favours worlds keeping to the actual course of
 events longer and violating fewer laws, however it weighs the two, makes [the counterfactual of
-setting a variable the intervention](##mem_variablyStrictImp_iff_solve_update), which [does not
+setting a variable the intervention](##mem_variablyStrictImp_iff_solve_intervene), which [does not
 backtrack](##mem_variablyStrictImp_similarity_of_not_reflTransGen). Among actual events [causal
 dependence is then the but-for test](##mem_dependsCausally_iff_of_actual), and the analysis
 separates [a cause from its epiphenomena](##Epiphenomena.epiphenomena) and [a preempting cause from
@@ -91,7 +91,7 @@ variable {U V : Type*} {α : V → Type*} [∀ v, Nonempty (α v)] (M : CausalMo
 the least rank in the causal order of a variable where `x` differs from the actual world, and
 `⊤` where it differs nowhere. -/
 noncomputable def divergence (u : U) (x : ∀ v, α v) : WithTop Ordinal :=
-  ⨅ (v) (_ : x v ≠ M.solve ⊥ u v), ↑(WellFounded.rank M.graph.Adj v)
+  ⨅ (v) (_ : x v ≠ M.solve u v), ↑(WellFounded.rank M.graph.Adj v)
 
 /-- The variables whose law, the structural equation, the world `x` violates in the context
 `u`. -/
@@ -112,46 +112,40 @@ noncomputable abbrev similarity (u : U) : Preorder (∀ v, α v) :=
 
 variable {M}
 
-theorem divergence_eq_top_iff : divergence M u x = ⊤ ↔ x = M.solve ⊥ u := by
+theorem divergence_eq_top_iff : divergence M u x = ⊤ ↔ x = M.solve u := by
   simp [divergence, funext_iff]
 
 @[simp]
-theorem divergence_solve_bot : divergence M u (M.solve ⊥ u) = ⊤ :=
+theorem divergence_solve : divergence M u (M.solve u) = ⊤ :=
   divergence_eq_top_iff.2 rfl
 
-theorem divergence_le {v : V} (hv : x v ≠ M.solve ⊥ u v) :
+theorem divergence_le {v : V} (hv : x v ≠ M.solve u v) :
     divergence M u x ≤ WellFounded.rank M.graph.Adj v :=
   iInf₂_le v hv
 
 -- p. 567
-theorem violations_eq_empty_iff : violations M u x = ∅ ↔ x = M.solve ⊥ u := by
+theorem violations_eq_empty_iff : violations M u x = ∅ ↔ x = M.solve u := by
   rw [Set.eq_empty_iff_forall_notMem, ← isFixedPt_iff_eq_solve, Function.IsFixedPt, funext_iff]
   simp [violations, step_apply, eq_comm]
 
 -- p. 567
-theorem mem_violations_of_le_divergence (hx : x c ≠ M.solve ⊥ u c)
+theorem mem_violations_of_le_divergence (hx : x c ≠ M.solve u c)
     (h : ↑(WellFounded.rank M.graph.Adj c) ≤ divergence M u x) : c ∈ violations M u x := by
-  have hpar : ∀ w ∈ {w | M.graph.Adj w c}, x w = M.solve ⊥ u w := fun w hw ↦
+  have hpar : ∀ w ∈ {w | M.graph.Adj w c}, x w = M.solve u w := fun w hw ↦
     by_contra fun hne ↦ (divergence_le hne).not_gt
       (WithTop.coe_lt_coe.2 (WellFounded.rank_lt_of_rel hw) |>.trans_le h)
   change x c ≠ M.eqn c u x
-  rwa [M.dependsOn_eqn c u hpar, ← solve_of_eq_bot rfl u]
+  rwa [M.dependsOn_eqn c u hpar, ← solve_apply u c]
 
-private theorem rank_le_of_reflTransGen {β : Type*} {r : β → β → Prop} [WellFounded r]
-    {a b : β} (h : ReflTransGen r a b) : WellFounded.rank r a ≤ WellFounded.rank r b := by
-  induction h with
-  | refl => exact le_rfl
-  | tail _ h ih => exact ih.trans (WellFounded.rank_lt_of_rel h).le
-
-theorem score_solve_bot_lt (hx : x ≠ M.solve ⊥ u) : score M u (M.solve ⊥ u) < score M u x := by
+theorem score_solve_lt (hx : x ≠ M.solve u) : score M u (M.solve u) < score M u x := by
   refine Prod.lt_iff.2 (.inl ⟨?_, ?_⟩)
-  · rw [score, score, OrderDual.toDual_lt_toDual, divergence_solve_bot]
+  · rw [score, score, OrderDual.toDual_lt_toDual, divergence_solve]
     exact lt_top_iff_ne_top.2 (mt divergence_eq_top_iff.1 hx)
   · simp [score, violations_eq_empty_iff.2 rfl]
 
 -- p. 560
-theorem similarity_lt_of_ne (hx : x ≠ M.solve ⊥ u) : (similarity M u).lt (M.solve ⊥ u) x :=
-  Prod.Lex.toLex_strictMono (score_solve_bot_lt hx)
+theorem similarity_lt_of_ne (hx : x ≠ M.solve u) : (similarity M u).lt (M.solve u) x :=
+  Prod.Lex.toLex_strictMono (score_solve_lt hx)
 
 -- p. 560
 instance similarity_total : Std.Total (similarity M u).le :=
@@ -161,38 +155,40 @@ variable [DecidableEq V] {b : α c}
 
 -- A world that sets `c` to `b` and obeys every other law is the intervention.
 private theorem eq_solve_of_violations_subset (hx : x c = b) (h : violations M u x ⊆ {c}) :
-    x = M.solve [c ← b] u :=
+    x = M[c ← b].solve u :=
   eq_solve_of_isFixedPt <| funext fun v ↦ by
     rw [step_apply]
     rcases eq_or_ne v c with rfl | hv
-    · rw [Function.update_self, Flat.unbotD_coe, hx]
-    · rw [Function.update_of_ne hv]
+    · rw [intervene_eqn_of_mem (Finset.mem_singleton_self v)]; exact hx.symm
+    · rw [intervene_eqn_of_notMem (by simpa using hv)]
       exact (not_not.1 fun hn ↦ hv (h hn)).symm
 
-private theorem divergence_solve_update (hb : b ≠ M.solve ⊥ u c) :
-    divergence M u (M.solve [c ← b] u) = WellFounded.rank M.graph.Adj c := by
-  refine le_antisymm (divergence_le (by rwa [solve_update_self])) (le_iInf₂ fun v hv ↦ ?_)
-  refine WithTop.coe_le_coe.2 (rank_le_of_reflTransGen (by_contra fun h ↦ hv ?_))
-  exact solve_update_of_not_reflTransGen h ⊥ _ u
+private theorem divergence_solve_intervene (hb : b ≠ M.solve u c) :
+    divergence M u (M[c ← b].solve u) = WellFounded.rank M.graph.Adj c := by
+  refine le_antisymm (divergence_le (by rwa [solve_intervene_singleton_self]))
+    (le_iInf₂ fun v hv ↦ ?_)
+  refine WithTop.coe_le_coe.2 (ReflTransGen.rank_le (rank := WellFounded.rank M.graph.Adj)
+    (fun _ _ ↦ WellFounded.rank_lt_of_rel) (by_contra fun h ↦ hv ?_ : ReflTransGen _ c v).swap)
+  exact solve_intervene_singleton_of_not_reflTransGen h b
 
-private theorem violations_solve_update (hb : b ≠ M.solve ⊥ u c) :
-    violations M u (M.solve [c ← b] u) = {c} := by
+private theorem violations_solve_intervene (hb : b ≠ M.solve u c) :
+    violations M u (M[c ← b].solve u) = {c} := by
   refine Set.eq_singleton_iff_unique_mem.2 ⟨mem_violations_of_le_divergence ?_ ?_, fun v hv ↦ ?_⟩
-  · rwa [solve_update_self]
-  · rw [divergence_solve_update hb]
+  · rwa [solve_intervene_singleton_self]
+  · rw [divergence_solve_intervene hb]
   · by_contra hvc
-    exact hv (solve_of_eq_bot (Function.update_of_ne hvc _ _) u)
+    exact hv (solve_intervene_of_notMem (by simpa using hvc))
 
 -- Every other world where `c` is `b` departs no later than the intervention and violates no fewer
 -- laws, and departs earlier or violates more.
-theorem score_solve_update_lt (hx : x c = b) (hne : x ≠ M.solve [c ← b] u) :
-    score M u (M.solve [c ← b] u) < score M u x := by
-  rcases eq_or_ne b (M.solve ⊥ u c) with rfl | hb
-  · rw [solve_update_of_solve_eq rfl] at hne ⊢
-    exact score_solve_bot_lt hne
-  have hxc : x c ≠ M.solve ⊥ u c := hx ▸ hb
+theorem score_solve_intervene_lt (hx : x c = b) (hne : x ≠ M[c ← b].solve u) :
+    score M u (M[c ← b].solve u) < score M u x := by
+  rcases eq_or_ne b (M.solve u c) with rfl | hb
+  · rw [solve_intervene_singleton_eq_iff.2 rfl] at hne ⊢
+    exact score_solve_lt hne
+  have hxc : x c ≠ M.solve u c := hx ▸ hb
   simp only [score, Prod.lt_iff, OrderDual.toDual_lt_toDual, OrderDual.toDual_le_toDual,
-    divergence_solve_update hb, violations_solve_update hb, Set.encard_singleton]
+    divergence_solve_intervene hb, violations_solve_intervene hb, Set.encard_singleton]
   rcases (divergence_le hxc).lt_or_eq with h | h
   · refine .inl ⟨h, Set.one_le_encard_iff_nonempty.2 (Set.nonempty_iff_ne_empty.2 ?_)⟩
     exact mt violations_eq_empty_iff.1 fun h ↦ hxc (h ▸ rfl)
@@ -205,25 +201,25 @@ events later or violates fewer laws, however it weighs the two, the counterfactu
 sets the variable `c` to `b` holds exactly when its consequent holds in the world of the
 intervention setting `c` to `b`. The closest such world keeps to the actual course of events until
 the time of `c` and violates only the law of `c` (pp. 566–567). -/
-theorem mem_variablyStrictImp_iff_solve_update {ord : U → Preorder (∀ v, α v)}
+theorem mem_variablyStrictImp_iff_solve_intervene {ord : U → Preorder (∀ v, α v)}
     (hord : ∀ x y, score M u x < score M u y → (ord u).lt x y) {C : Set (∀ v, α v)} :
-    u ∈ variablyStrictImp (fun _ ↦ Set.univ) ord {x | x c = b} C ↔ M.solve [c ← b] u ∈ C := by
+    u ∈ variablyStrictImp (fun _ ↦ Set.univ) ord {x | x c = b} C ↔ M[c ← b].solve u ∈ C := by
   let := ord u
-  have hlt (x : ∀ v, α v) (hx : x c = b) (hne : x ≠ M.solve [c ← b] u) :
-      M.solve [c ← b] u < x :=
-    hord _ _ (score_solve_update_lt hx hne)
-  have h : @Filter.atBotOn _ _ (ord u) id {x | x c = b} = pure (M.solve [c ← b] u) :=
-    Filter.atBotOn_eq_pure (solve_update_self ⊥ c b u)
+  have hlt (x : ∀ v, α v) (hx : x c = b) (hne : x ≠ M[c ← b].solve u) :
+      M[c ← b].solve u < x :=
+    hord _ _ (score_solve_intervene_lt hx hne)
+  have h : @Filter.atBotOn _ _ (ord u) id {x | x c = b} = pure (M[c ← b].solve u) :=
+    Filter.atBotOn_eq_pure (solve_intervene_singleton_self c b)
       (fun x hx ↦ by
-        rcases eq_or_ne x (M.solve [c ← b] u) with rfl | hne
+        rcases eq_or_ne x (M[c ← b].solve u) with rfl | hne
         exacts [le_rfl, (hlt x hx hne).le])
       (fun x hx hle ↦ by_contra fun hne ↦ (hlt x hx hne).not_ge hle)
   rw [mem_variablyStrictImp, Set.univ_inter, h, Filter.mem_pure]
 
 theorem mem_variablyStrictImp_similarity_iff {C : Set (∀ v, α v)} :
     u ∈ variablyStrictImp (fun _ ↦ Set.univ) (similarity M) {x | x c = b} C ↔
-      M.solve [c ← b] u ∈ C :=
-  mem_variablyStrictImp_iff_solve_update fun _ _ ↦ (Prod.Lex.toLex_strictMono ·)
+      M[c ← b].solve u ∈ C :=
+  mem_variablyStrictImp_iff_solve_intervene fun _ _ ↦ (Prod.Lex.toLex_strictMono ·)
 
 /-- Had `c` been other than it is, every event that `c` does not reach would have been as it
 actually was: the counterfactual does not backtrack, and had an effect been absent its cause would
@@ -231,8 +227,8 @@ have occurred just as it did (p. 566). -/
 theorem mem_variablyStrictImp_similarity_of_not_reflTransGen {v : V}
     (h : ¬ ReflTransGen M.graph.Adj c v) :
     u ∈ variablyStrictImp (fun _ ↦ Set.univ) (similarity M) {x | x c = b}
-      {x | x v = M.solve ⊥ u v} :=
-  mem_variablyStrictImp_similarity_iff.2 (solve_update_of_not_reflTransGen h ⊥ _ u)
+      {x | x v = M.solve u v} :=
+  mem_variablyStrictImp_similarity_iff.2 (solve_intervene_singleton_of_not_reflTransGen h b)
 
 end Similarity
 
@@ -250,37 +246,37 @@ def occurs (c : V) : Set (V → Bool) :=
 a finite sequence of actual events, each distinct from the one before and depending causally on
 it. -/
 def Cause (u : U) : V → V → Prop :=
-  TransGen fun c e ↦ c ≠ e ∧ M.solve ⊥ u c = true ∧ M.solve ⊥ u e = true ∧
+  TransGen fun c e ↦ c ≠ e ∧ M.solve u c = true ∧ M.solve u e = true ∧
     u ∈ dependsCausally (fun _ ↦ Set.univ) (similarity M) (occurs c) (occurs e)
 
 variable {M}
 
 theorem mem_dependsCausally_iff_solve [DecidableEq V] :
     u ∈ dependsCausally (fun _ ↦ Set.univ) (similarity M) (occurs c) (occurs e) ↔
-      M.solve [c ← true] u e = true ∧ M.solve [c ← false] u e = false := by
+      M[c ← true].solve u e = true ∧ M[c ← false].solve u e = false := by
   simp only [mem_dependsCausally, occurs, Set.compl_ofPred, Bool.not_eq_true,
     mem_variablyStrictImp_similarity_iff, Set.mem_ofPred_eq]
 
 /-- Among actual events, `e` depends causally on `c` exactly when, had `c` not been, `e` would
 not have been (p. 563). -/
-theorem mem_dependsCausally_iff_of_actual [DecidableEq V] (hc : M.solve ⊥ u c = true)
-    (he : M.solve ⊥ u e = true) :
+theorem mem_dependsCausally_iff_of_actual [DecidableEq V] (hc : M.solve u c = true)
+    (he : M.solve u e = true) :
     u ∈ dependsCausally (fun _ ↦ Set.univ) (similarity M) (occurs c) (occurs e) ↔
-      M.solve [c ← false] u e = false := by
-  rw [mem_dependsCausally_iff_solve, solve_update_of_solve_eq hc, he]
+      M[c ← false].solve u e = false := by
+  rw [mem_dependsCausally_iff_solve, solve_intervene_singleton_eq_iff.2 hc, he]
   exact and_iff_right rfl
 
 -- p. 563
-theorem mem_dependsCausally_iff_of_not_actual [DecidableEq V] (hc : M.solve ⊥ u c = false)
-    (he : M.solve ⊥ u e = false) :
+theorem mem_dependsCausally_iff_of_not_actual [DecidableEq V] (hc : M.solve u c = false)
+    (he : M.solve u e = false) :
     u ∈ dependsCausally (fun _ ↦ Set.univ) (similarity M) (occurs c) (occurs e) ↔
-      M.solve [c ← true] u e = true := by
-  rw [mem_dependsCausally_iff_solve, solve_update_of_solve_eq hc, he]
+      M[c ← true].solve u e = true := by
+  rw [mem_dependsCausally_iff_solve, solve_intervene_singleton_eq_iff.2 hc, he]
   exact and_iff_left rfl
 
 -- p. 563
-theorem cause_of_mem_dependsCausally (hce : c ≠ e) (hc : M.solve ⊥ u c = true)
-    (he : M.solve ⊥ u e = true)
+theorem cause_of_mem_dependsCausally (hce : c ≠ e) (hc : M.solve u c = true)
+    (he : M.solve u e = true)
     (h : u ∈ dependsCausally (fun _ ↦ Set.univ) (similarity M) (occurs c) (occurs e)) :
     Cause M u c e :=
   .single ⟨hce, hc, he, h⟩
@@ -294,7 +290,7 @@ theorem Cause.transGen_adj (h : Cause M u c e) : TransGen M.graph.Adj c e := by
   refine TransGen.closed (fun c e ⟨hce, hc, he, hdep⟩ ↦ ?_) _ _ h
   refine (reflTransGen_iff_eq_or_transGen.1 (by_contra fun hp ↦ ?_)).resolve_left hce.symm
   have h := (mem_dependsCausally_iff_of_actual hc he).1 hdep
-  rw [solve_update_of_not_reflTransGen hp, he] at h
+  rw [solve_intervene_singleton_of_not_reflTransGen hp, he] at h
   exact Bool.noConfusion h
 
 -- The paper does not rule out causal loops (p. 565); an acyclic model has none.
@@ -397,7 +393,7 @@ theorem preemption :
 -- p. 567: had `d` been absent, `c₁` would still have been there to interfere with `c₂`.
 theorem c₁_of_not_d (u : Context) :
     u ∈ variablyStrictImp (fun _ ↦ Set.univ) (similarity sem) {x | x .d = false}
-      {x | x .c₁ = sem.solve ⊥ u .c₁} :=
+      {x | x .c₁ = sem.solve u .c₁} :=
   mem_variablyStrictImp_similarity_of_not_reflTransGen (by decide)
 
 end Preemption

@@ -160,25 +160,26 @@ variable {U V : Type*} {α : V → Type*} [DecidableEq V] [MeasurableSpace U]
   (M : CausalModel U V α) [M.IsAcyclic] [∀ v, Nonempty (α v)]
 
 /-- The paper's INT over a causal model instantiates `intentionDegree` with `pr a′` the
-    probability, over contexts drawn from `ν`, that under the intervention `I` the action variable
-    takes the value `a′` and the outcome satisfies the goal: the paper's
+    probability, over contexts drawn from `ν`, that under the intervention holding `X` at `x` the
+    action variable takes the value `a′` and the outcome satisfies the goal: the paper's
     `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
-noncomputable def modelIntention (ν : MeasureTheory.Measure U) (I : ∀ v, Flat (α v))
+noncomputable def modelIntention (ν : MeasureTheory.Measure U) (X : Finset V) (x : ∀ v : X, α v)
     (act : V) [Fintype (α act)] (goal : Set (∀ v, α v)) (w : α act → ℝ≥0) (a : α act) : ℝ≥0∞ :=
-  intentionDegree (fun a' ↦ ν {u | M.solve I u act = a' ∧ M.solve I u ∈ goal}) w a
+  intentionDegree
+    (fun a' ↦ ν {u | (M.intervene X x).solve u act = a' ∧ (M.intervene X x).solve u ∈ goal}) w a
 
 /-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the probability, among the
     contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
     `e = y`. -/
 noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) (c : V) (x : α c)
     (e : V) (y : α e) : ℝ≥0∞ :=
-  ProbabilityTheory.cond ν (M.contexts obs) {u | M.solve [c ← x] u e = y}
+  ProbabilityTheory.cond ν (M.contexts obs) {u | M[c ← x].solve u e = y}
 
 variable {M}
 
 theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν] (c : V)
     (x : α c) (e : V) (y : α e) :
-    suf M ν ⊥ c x e y = ν {u | M.solve [c ← x] u e = y} := by
+    suf M ν ⊥ c x e y = ν {u | M[c ← x].solve u e = y} := by
   rw [suf, contexts_bot, ProbabilityTheory.cond_univ]
 
 /-! ### Deterministic limit
@@ -192,7 +193,7 @@ strictly stronger than maximal graded SUF. -/
 open Classical in
 theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e : V) (y : α e) :
     suf M (MeasureTheory.Measure.dirac u₀) ⊥ c x e y =
-      if M.solve [c ← x] u₀ e = y then 1 else 0 := by
+      if M[c ← x].solve u₀ e = y then 1 else 0 := by
   rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
@@ -203,8 +204,8 @@ theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProba
     suf M ν ⊥ c x e y = 1 := by
   have h' := h.1.2
   rw [Function.update_idem] at h'
-  have hall : {u | M.solve [c ← x] u e = y} = Set.univ :=
-    Set.eq_univ_of_forall h'.solve_eq_of_intervene
+  have hall : {u | M[c ← x].solve u e = y} = Set.univ :=
+    Set.eq_univ_of_forall h'.solve_intervene_singleton_eq
   rw [suf_bot, hall, MeasureTheory.measure_univ]
 
 end Model
@@ -278,7 +279,7 @@ noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
   p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
 
 theorem effect_iff (b : Bool) :
-    model.solve [.cause ← true] b .effect = true ↔ b = true := by
+    model[.cause ← true].solve b .effect = true ↔ b = true := by
   cases b <;> decide
 
 /-- SUF is the probability of the noise, graded as the paper's measure requires. -/
@@ -286,7 +287,7 @@ theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
     suf model (background p) ⊥ .cause true .effect true = p := by
   have : MeasureTheory.IsProbabilityMeasure (background p) :=
     ⟨by simp [background, add_tsub_cancel_of_le hp]⟩
-  have h : {b : Bool | model.solve [.cause ← true] b .effect = true} = {true} :=
+  have h : {b : Bool | model[.cause ← true].solve b .effect = true} = {true} :=
     Set.ext fun b ↦ effect_iff b
   rw [suf_bot, h]
   simp [background]
