@@ -102,15 +102,38 @@ theorem yield_raise_perm (n : ℕ) (p : List ℕ) (t : Tree C W) :
 
 /-- One step of covert movement: a constituent of a subtree raises to that subtree's edge. -/
 inductive Raises : Tree C W → Tree C W → Prop
-  | intro (t s : Tree C W) (q p : List ℕ) (n : ℕ) : t[q]? = some s → (s[p]?).isSome →
+  | intro {t s a : Tree C W} {q p : List ℕ} (n : ℕ) : t[q]? = some s → s[p]? = some a →
       Raises t (t.replaceAt q (s.raise n p))
 
 /-- `t'` is a logical form of `t` when covert movement derives it. -/
 def IsLogicalForm : Tree C W → Tree C W → Prop := Relation.ReflTransGen Raises
 
+/-- Raising to the edge of the whole tree is a step. -/
+theorem raises_raise {t a : Tree C W} {p : List ℕ} (h : t[p]? = some a) (n : ℕ) :
+    Raises t (t.raise n p) :=
+  .intro (q := []) n rfl h
+
+namespace IsLogicalForm
+
+@[refl] protected theorem refl (t : Tree C W) : IsLogicalForm t t := Relation.ReflTransGen.refl
+
+@[trans] protected theorem trans {t t' t'' : Tree C W} (h : IsLogicalForm t t')
+    (h' : IsLogicalForm t' t'') : IsLogicalForm t t'' :=
+  Relation.ReflTransGen.trans h h'
+
+/-- A tree with a constituent raised to its edge is a logical form of it. -/
+protected theorem raise {t t' a : Tree C W} {p : List ℕ} (h : IsLogicalForm t t')
+    (ha : t'[p]? = some a) (n : ℕ) : IsLogicalForm t (t'.raise n p) :=
+  .tail h (raises_raise ha n)
+
+end IsLogicalForm
+
+theorem Raises.isLogicalForm {t t' : Tree C W} (h : Raises t t') : IsLogicalForm t t' :=
+  .single h
+
 theorem Raises.terminals_perm {t t' : Tree C W} (h : Raises t t') :
     t'.terminals.Perm t.terminals := by
-  cases h with | intro s q p n hq hp => ?_
+  cases h with | @intro s a q p n hq hp => ?_
   have h₁ := RoseTree.leafList_replaceAt hq (s.raise n p)
   have h₂ := RoseTree.take_append_leafList_append_drop hq
   rw [terminals, terminals, h₁]

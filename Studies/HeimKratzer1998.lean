@@ -606,17 +606,27 @@ def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
   (sentence.raise 1 ([0])).raise 2 ([1, 0, 1, 1])
 
 theorem isLogicalForm_tree_surface : IsLogicalForm sentence tree_surface :=
-  .tail (.single (.intro sentence sentence ([]) ([1, 1]) 2 rfl rfl))
-    (.intro _ (sentence.raise 2 ([1, 1])) ([]) ([1, 0, 0]) 1 rfl rfl)
+  ((IsLogicalForm.refl sentence).raise rfl 2).raise rfl 1
 
 theorem isLogicalForm_tree_inverse : IsLogicalForm sentence tree_inverse :=
-  .tail (.single (.intro sentence sentence ([]) ([0]) 1 rfl rfl))
-    (.intro _ (sentence.raise 1 ([0])) ([]) ([1, 0, 1, 1]) 2 rfl rfl)
+  ((IsLogicalForm.refl sentence).raise rfl 1).raise rfl 2
 
 /-- A name's trace has the name's own type, so raising *John* in *John sleeps* changes nothing. -/
 example : interp toyLexicon g₀ ((tree% [⟨"John"⟩ ⟨"sleeps"⟩] : Tree Unit String).raise 1 ([0])) =
     interp toyLexicon g₀ (tree% [⟨"John"⟩ ⟨"sleeps"⟩]) :=
-  interpWith_raise (v := ToyEntity.john) rfl (by decide) (by decide) (by decide) rfl rfl
+  interpWith_raise (v := ToyEntity.john) rfl (by decide) (by decide) (by decide) rfl
+
+/-- Raising needs a new index. In `[every person [1 [t₂ [sees t₁]]]]` the object trace is bound by
+*every person*; raising `t₂` under that binder with the index 1 again captures the object trace,
+and the quantifier's variable no longer occurs in its scope. -/
+example :
+    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
+      [λ 1 [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]]]) =
+        some ⟨Ty.t, every person fun x ↦ Toy.sees x .john⟩ ∧
+    interp lex g₀ (tree% [[⟨.inl English.Determiners.every⟩ ⟨.inr "person"⟩]
+      [λ 1 ((tree% [(.tr 2) [⟨.inr "sees"⟩ (.tr 1)]]).raise 1 ([0]))]]) =
+        some ⟨Ty.t, every person fun _ ↦ Toy.sees .john .john⟩ :=
+  ⟨rfl, rfl⟩
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=

@@ -134,18 +134,20 @@ theorem realize_raise
     {g : ∀ k, A.Val (Γ k)} {t a : Tree C L} {p : List ℕ} {n : ℕ}
     (h : t[p]? = some a) (hn : n ∉ t.freeIndices)
     (hnb : n ∉ t.bindersAbove p) (hab : Disjoint (t.bindersAbove p) a.freeIndices)
-    {v : A.Val (Γ n)} (ha : realize A Γ lex g a = some ⟨Γ n, A.var v⟩)
-    (ht : (realize A Γ lex g t).isSome) :
+    {v : A.Val (Γ n)} (ha : realize A Γ lex g a = some ⟨Γ n, A.var v⟩) :
     realize A Γ lex g (t.raise n p) = realize A Γ lex g t := by
   have hsub := realize_replaceAt_trace A Γ lex (Tree.cat a) h hn hnb hab ha
-  obtain ⟨⟨τ, d⟩, hd⟩ := Option.isSome_iff_exists.mp ht
   have hty := (realize_map_fst A Γ lex g (t.replaceAt p (trace n (Tree.cat a)))).trans
     (realize_map_fst A Γ lex (Function.update g n v) _).symm
-  rw [hsub, hd] at hty
-  obtain ⟨⟨τ', d'⟩, hd', (rfl : τ' = τ)⟩ := Option.map_eq_some_iff.mp hty
-  rw [raise_of_getElem? h, adjoin, realize_phrase_binary, realize_bind, ha, hd', hd]
-  simp only [Option.bind_some, Option.map_some]
-  rw [Mode.combine?_fn_right, hβ, hsub, hd, valueAt_some]
+  rw [raise_of_getElem? h, adjoin, realize_phrase_binary, realize_bind, ha, Option.bind_some]
+  rw [hsub] at hty
+  rcases hd : realize A Γ lex g t with _ | ⟨τ, d⟩
+  · rw [hd, Option.map_none, Option.map_eq_none_iff] at hty
+    rw [hty, Option.map_none, Option.bind_none]
+  · rw [hd] at hty
+    obtain ⟨⟨τ', d'⟩, hd', (rfl : τ' = τ)⟩ := Option.map_eq_some_iff.mp hty
+    rw [hd', Option.map_some, Option.bind_some, Mode.combine?_fn_right, hβ, hsub, hd,
+      valueAt_some]
 
 end Semantics
 
@@ -159,10 +161,9 @@ theorem interpWith_raise {Γ : ℕ → Ty} {lex : L → Option (Denotation E W I
     {g : ∀ k, Ty.Domain E W (Γ k) S} {t a : Tree C L} {p : List ℕ} {n : ℕ}
     (h : t[p]? = some a) (hn : n ∉ t.freeIndices)
     (hnb : n ∉ t.bindersAbove p) (hab : Disjoint (t.bindersAbove p) a.freeIndices)
-    {v : Ty.Domain E W (Γ n) S} (ha : interpWith Γ lex g a = some ⟨Γ n, v⟩)
-    (ht : (interpWith Γ lex g t).isSome) :
+    {v : Ty.Domain E W (Γ n) S} (ha : interpWith Γ lex g a = some ⟨Γ n, v⟩) :
     interpWith Γ lex g (t.raise n p) = interpWith Γ lex g t :=
-  realize_raise _ Γ lex (fun _ _ ↦ rfl) h hn hnb hab ha ht
+  realize_raise _ Γ lex (fun _ _ ↦ rfl) h hn hnb hab ha
 
 end Total
 
