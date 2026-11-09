@@ -1,27 +1,24 @@
 module
 
 public import Mathlib.Data.PNat.Defs
-public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Phonology.Segmental.Basic
 public import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Syllables
 
-This file defines syllables, the levels of the prosodic hierarchy, and the prosodic tree over
-them. A syllable is a non-moraic onset over a spine of morae headed by the nucleus, and its
-weight is its number of morae. A node of the tree may dominate only nodes of its own level or
-below.
+This file defines nucleus-headed syllables, the levels of the prosodic hierarchy, and the
+prosodic tree over them. A nucleus-headed syllable is an onset over a spine of morae whose first
+mora is the nucleus, and its weight is its number of morae. A node of the tree may dominate only
+nodes of its own level or below.
 
 ## Main definitions
 
-* `Syllable`: a headed moraic syllable, with an `onset`, the nucleus `head` mora, and the
-  `tail` of further morae.
-* `Syllable.morae`, `moraCount`, `weight`, `IsHeavy`, `IsLight`: the spine of morae, its
-  length, and the weight predicates.
-* `Syllable.ofCV`, `ofVowel`, `ofLongVowel`, `mk'`, `ofMorae`: constructors from segments and
-  from morae.
-* `Syllable.yield`, `Syllable.toOnsetRime`: the segment string of a syllable, and its
-  onset-rime structure.
+* `Syllable`: a nucleus-headed syllable, with an `onset`, the `nucleus` that bears its first
+  mora, and the `tail` of further morae.
+* `Syllable.moraCount`, `weight`, `IsHeavy`, `IsLight`: the number of morae and the weight
+  predicates.
+* `Syllable.ofVowel`, `ofLongVowel`: the open syllables of a short and of a long vowel.
 * `nucleusSplit`: a string split at its first run of syllabic segments.
 * `Syllable.Weight`, `Yield`: a mora count, and the weight profile of a string of syllables.
 * `Level`, `Constituent`, `Tree`: the levels σ < f < ω < φ < ι, the prosodic constituents, and
@@ -30,12 +27,14 @@ below.
 
 ## Main statements
 
-* `Syllable.toOnsetRime_weight`: the rime of a syllable has as many morae as the syllable has
-  weight.
 * `Tree.recLeafBranch`: induction on a prosodic tree with the syllable leaves as base case.
 
 ## Implementation notes
 
+* A `Syllable` is the special case of a syllable of a `MoraicForm` in which the nucleus bears
+  the first mora, so that every syllable is at least light. [vasquez-aguilar-etal-2026] shows
+  that a language need not observe it: in Shiwilu a syllable whose nucleus is the interior vowel
+  takes its only mora from its coda.
 * `Syllable.Weight` is `Nat`, the mora count, and `Weight.light`, `heavy`, and `superheavy`
   name one, two, and three morae.
 * In `Constituent` the level is the constructor, so that a weight on a foot or a head mark on
@@ -46,20 +45,25 @@ below.
   which she takes to be violable, are the constraints `noRec` and `parseInto`, not part of
   `Constituent.Licenses`.
 
+## TODO
+
+* Read `Syllable` off the syllables of a `MoraicForm` that the nucleus heads, and its weight off
+  `MoraicForm.weight`.
+
 ## References
 
 * [E. Selkirk, *The Role of Prosodic Categories in English Word Stress* (1980)][selkirk-1980]
 * [L. M. Hyman, *A Theory of Phonological Weight* (1985)][hyman-1985]
 * [M. Nespor and I. Vogel, *Prosodic Phonology* (1986)][nespor-vogel-1986]
 * [B. Hayes, *Compensatory Lengthening in Moraic Phonology* (1989)][hayes-1989]
-* [G. N. Clements, *The role of the sonority cycle in core syllabification*
-  (1990)][clements-1990]
 * [J. J. McCarthy and A. Prince, *Prosodic Morphology: Constraint Interaction and
   Satisfaction* (1993)][mccarthy-prince-1993]
 * [E. Selkirk, *The Prosodic Structure of Function Words* (1996)][selkirk-1996]
 * [J. Itô and A. Mester, *Japanese Morphophonemics: Markedness and Word Structure*
   (2003)][ito-mester-2003]
 * [H. Dolatian, *Computational Locality of Cyclic Phonology in Armenian* (2020)][dolatian-2020]
+* [A. Vásquez-Aguilar, M. K. Gordon, A. Katsika and S. Th. Gries, *Moraicity, gemination and
+  syllable well-formedness in Shiwilu* (2026)][vasquez-aguilar-etal-2026]
 -/
 
 @[expose] public section
@@ -70,24 +74,22 @@ open Phonology (Segment)
 
 /-! ### Syllables -/
 
-/-- A syllable is a headed moraic constituent, as in [hayes-1989]: a non-moraic `onset`, the
-    nucleus `head` mora, which is mandatory and comes first, and a `tail` of further morae, those
-    of a long vowel and of a moraic coda. -/
+/-- A nucleus-headed syllable: a non-moraic `onset`, the `nucleus`, which bears the first mora,
+and the `tail` of further morae, those of a long vowel and of a moraic coda, each given by the
+melody it dominates. -/
 structure Syllable where
   /-- The non-moraic onset melody. -/
   onset : List Segment
-  /-- The nucleus mora, the head of the syllable and its sonority peak under the Sonority
-      Sequencing Principle of [clements-1990]; its presence gives the syllable at least one
-      mora. -/
-  head  : Mora
-  /-- The further morae: those of a long vowel and of a moraic coda. -/
-  tail  : List Mora
+  /-- The nucleus, the melody of the first mora. -/
+  nucleus : List Segment
+  /-- The melodies of the further morae. -/
+  tail : List (List Segment)
   deriving DecidableEq
 
 namespace Syllable
 
 /-- Syllable weight is the mora count; `Weight.light`, `heavy`, and `superheavy` name one, two,
-    and three morae. -/
+and three morae. -/
 abbrev Weight := Nat
 
 namespace Weight
@@ -96,20 +98,11 @@ abbrev heavy : Weight := 2
 abbrev superheavy : Weight := 3
 end Weight
 
-/-- The spine of morae, nucleus first. -/
-def morae (σ : Syllable) : List Mora := σ.head :: σ.tail
-
-/-- The nucleus, the head mora. -/
-abbrev nucleusMora (σ : Syllable) : Mora := σ.head
-
-/-- The segments of the nucleus. -/
-def nucleusSegments (σ : Syllable) : List Segment := σ.head.dominates
-
-/-- The number of morae. -/
-def moraCount (σ : Syllable) : Nat := σ.morae.length
+/-- The number of morae: the nucleus mora and the tail. -/
+def moraCount (σ : Syllable) : Nat := σ.tail.length + 1
 
 /-- The weight of a syllable, its mora count: the weight units of [hyman-1985] and the morae of
-    [hayes-1989]. -/
+[hayes-1989]. -/
 abbrev weight (σ : Syllable) : Weight := σ.moraCount
 
 theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
@@ -125,36 +118,12 @@ def IsLight (σ : Syllable) : Prop := σ.weight = Weight.light
 instance (σ : Syllable) : Decidable σ.IsHeavy := by unfold IsHeavy; infer_instance
 instance (σ : Syllable) : Decidable σ.IsLight := by unfold IsLight; infer_instance
 
-/-- A syllable from an onset, a nucleus mora, and any further morae. -/
-def mk' (onset : List Segment) (nucleus : Mora) (coda : List Mora := []) : Syllable :=
-  ⟨onset, nucleus, coda⟩
-
-/-- A syllable from an onset and a non-empty list of morae, the first being the nucleus. -/
-def ofMorae (onset : List Segment) (ms : List Mora) (h : ms ≠ [] := by simp) : Syllable :=
-  ⟨onset, ms.head h, ms.tail⟩
-
-/-- A syllable from onset, nucleus, and coda segments. Each nucleus segment projects a mora, the
-    first being the head. Under Weight by Position ([hayes-1989]) the first coda segment projects
-    a mora of its own and any further coda segments attach to it; without it the coda attaches
-    to the last nucleus mora. The nucleus must be non-empty. -/
-def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true)
-    (hn : nucleus ≠ [] := by simp) : Syllable :=
-  match nucleus, hn with
-  | [], h => (h rfl).elim
-  | n₀ :: ns, _ =>
-    match wbp, coda with
-    | true, c :: cs => ⟨onset, Mora.of n₀, ns.map Mora.of ++ [(Mora.of c).attach cs]⟩
-    | _, _ =>
-      match (ns.map Mora.of).reverse with
-      | last :: rest => ⟨onset, Mora.of n₀, rest.reverse ++ [last.attach coda]⟩
-      | []           => ⟨onset, (Mora.of n₀).attach coda, []⟩
-
 /-- The open syllable of an onset and a short vowel has one mora. -/
-def ofVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, []⟩
+def ofVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, [v], []⟩
 
 /-- The open syllable of an onset and a long vowel has two morae dominating the same melody
 ([hayes-1989]). -/
-def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, [.of v]⟩
+def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, [v], [[v]]⟩
 
 @[simp] theorem moraCount_ofVowel (onset : List Segment) (v : Segment) :
     (ofVowel onset v).moraCount = 1 := rfl
@@ -162,30 +131,7 @@ def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of
 @[simp] theorem moraCount_ofLongVowel (onset : List Segment) (v : Segment) :
     (ofLongVowel onset v).moraCount = 2 := rfl
 
-/-- The segment string, or *yield*, of a syllable: its onset followed by the segments of its
-    morae. -/
-def yield (σ : Syllable) : List Segment := σ.onset ++ σ.morae.flatMap (·.dominates)
-
 end Syllable
-
-/-! ### Onset-rime structure -/
-
-/-- The *onset-rime structure* of a syllable, an onset over a rime, as a re-representation of the
-    moraic `Syllable`, which [hyman-1985] argues has no onset-rime opposition of its own. -/
-structure OnsetRime where
-  /-- The non-moraic onset melody. -/
-  onset : List Segment
-  /-- The rime, the spine of morae. -/
-  rime  : List Mora
-  deriving DecidableEq
-
-/-- The onset-rime structure of a syllable, whose rime is the spine of morae. -/
-def Syllable.toOnsetRime (σ : Syllable) : OnsetRime := ⟨σ.onset, σ.morae⟩
-
-/-- The rime of a syllable has as many morae as the syllable has weight, so that the moraic and
-    onset-rime representations agree on weight. -/
-theorem Syllable.toOnsetRime_weight (σ : Syllable) :
-    σ.toOnsetRime.rime.length = σ.moraCount := rfl
 
 /-! ### The nucleus of a string -/
 
